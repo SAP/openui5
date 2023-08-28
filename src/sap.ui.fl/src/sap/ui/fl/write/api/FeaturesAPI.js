@@ -23,7 +23,6 @@ sap.ui.define([
 	 */
 
 	var FeaturesAPI = /** @lends sap.ui.fl.write.api.FeaturesAPI */ {
-
 		/**
 		 * Determines if the current runtime can publish flexibility content in the connected backend.
 		 *
@@ -140,25 +139,6 @@ sap.ui.define([
 				});
 			}
 			return Promise.resolve(false);
-		},
-
-		/**
-		 * Checks if context sharing is enabled.
-		 *
-		 * @param {string} sLayer - Layer to get correct connector
-		 * @returns {Promise<boolean>} Resolves to a boolean indicating if context sharing is enabled
-		 * @private
-		 * @deprecated
-		 * @ui5-restricted sap.ui.fl.write.api.ContextSharingAPI
-		 */
-		isContextSharingEnabled(sLayer) {
-			if (sLayer !== Layer.CUSTOMER) {
-				return Promise.resolve(false);
-			}
-			return Settings.getInstance()
-			.then(function(oSettings) {
-				return oSettings.isContextSharingEnabled({layer: sLayer});
-			});
 		}
 	};
 

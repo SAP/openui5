@@ -12,8 +12,12 @@ sap.ui.define([
 	"sap/ui/core/ResizeHandler",
 	"sap/m/library",
 	"sap/ui/util/Mobile",
-	"sap/ui/core/Core"
-], function (jQuery, GenericTile, NumericContent, Table, Column, ColumnListItem, JSONModel, TileContent, TooltipBase, ResizeHandler, library, Mobile, oCore) {
+	"sap/ui/core/Core",
+	"sap/m/Toolbar",
+	"sap/m/Label",
+	"sap/m/ToolbarSpacer",
+	"sap/m/Button"
+], function(jQuery, GenericTile, NumericContent, Table, Column, ColumnListItem, JSONModel, TileContent, TooltipBase, ResizeHandler, library, Mobile, oCore, Toolbar, Label, ToolbarSpacer, Button) {
 	"use strict";
 
 	var oResourceBundle = oCore.getLibraryResourceBundle("sap.m");
@@ -142,39 +146,10 @@ sap.ui.define([
 		assert.strictEqual(oSpy.callCount, 1, "setPointerOnIcon was called.");
 	});
 
-	/**
-	 * @deprecated Since version 1.38.0.
-	 */
-	QUnit.test("setIndicator function", function (assert) {
-		var fnAssert = function (sExpectedIcon, sExpectedIndicator) {
-			assert.strictEqual(this.oNumericContent._oIndicatorIcon.getSrc(), sExpectedIcon, "Indicator icon src should be correct.");
-			assert.strictEqual(this.oNumericContent._oIndicatorIcon.getSize(), "0.875rem", "Indicator icon size should be correct.");
-			assert.ok(this.oNumericContent._oIndicatorIcon.hasStyleClass("sapMNCIndIcon"), "Indicator icon size should have correct style class.");
-			assert.strictEqual(this.oNumericContent.getIndicator(), sExpectedIndicator, "Indicator property should be set correctly.");
-		}.bind(this);
-
-		// Act
-		this.oNumericContent.setIndicator(DeviationIndicator.Down);
-		// Assert
-		fnAssert("sap-icon://down", DeviationIndicator.Down);
-		// Act
-		this.oNumericContent.setIndicator(DeviationIndicator.None);
-		// Assert
-		fnAssert("sap-icon://none", DeviationIndicator.None);
-		// Act
-		this.oNumericContent.setIndicator(DeviationIndicator.Up);
-		// Assert
-		fnAssert("sap-icon://up", DeviationIndicator.Up);
-		// Act
-		this.oNumericContent.setIndicator();
-		// Assert
-		fnAssert("sap-icon://none", DeviationIndicator.None);
-	});
-
 	QUnit.module("Rendering test - sap.m.NumericContent inside sap.m.Table");
 
 	QUnit.test("Numeric content inside sap.m.Table", function(assert) {
-		var oModel = new sap.ui.model.json.JSONModel();
+		var oModel = new JSONModel();
 				oModel.setData({
 					numbers: [
 						{
@@ -185,18 +160,18 @@ sap.ui.define([
 						}]
 				});
 
-				var oTable = new sap.m.Table("idRandomDataTable", {
-					headerToolbar: new sap.m.Toolbar({
-						content: [new sap.m.Label({
+				var oTable = new Table("idRandomDataTable", {
+					headerToolbar: new Toolbar({
+						content: [new Label({
 							text: "Test"
-						}), new sap.m.ToolbarSpacer({}), new sap.m.Button("idPersonalizationButton", {
+						}), new ToolbarSpacer({}), new Button("idPersonalizationButton", {
 							icon: "sap-icon://person-placeholder"
 						})]
 					}),
 
-					columns: [new sap.m.Column({
+					columns: [new Column({
 						width: "2em",
-						header: new sap.m.Label({
+						header: new Label({
 							text: "Number1"
 						})
 
@@ -206,9 +181,9 @@ sap.ui.define([
 
 				oTable.setModel(oModel);
 
-				oTable.bindItems("/numbers", new sap.m.ColumnListItem({
+				oTable.bindItems("/numbers", new ColumnListItem({
 
-					cells: [new sap.m.NumericContent({
+					cells: [new NumericContent({
 						value: "{number1}"
 					})]
 
@@ -743,5 +718,4 @@ sap.ui.define([
 		var sAttributeValue = oCurrentObject.$().attr(sAttribute);
 		return typeof sAttributeValue !== typeof undefined && sAttributeValue !== false;
 	}
-
 });

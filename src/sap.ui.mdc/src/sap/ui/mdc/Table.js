@@ -166,16 +166,7 @@ sap.ui.define([
 					defaultValue: null,
 					invalidate: true
 				},
-				/**
-				 * This property has no effect and will be rmoved soon.
-				 * @deprecated Do not use.
-				 */
-				height: {
-					type: "sap.ui.core.CSSSize",
-					group: "Dimension",
-					defaultValue: null,
-					invalidate: true
-				},
+
 				/**
 				 * Personalization options for the table.<br>
 				 * <b>Note:</b> The order of the options does not influence the position on the UI.
@@ -186,6 +177,7 @@ sap.ui.define([
 					type: "sap.ui.mdc.enums.TableP13nMode[]",
 					defaultValue: []
 				},
+
 				/**
 				 * Path to <code>TableDelegate</code> module that provides the required APIs to create table content.<br>
 				 * <b>Note:</b> Ensure that the related file can be requested (any required library has to be loaded before that).<br>
@@ -200,6 +192,7 @@ sap.ui.define([
 						payload: {}
 					}
 				},
+
 				/**
 				 * Semantic level of the header.
 				 * For more information, see {@link sap.m.Title#setLevel}.
@@ -211,6 +204,7 @@ sap.ui.define([
 					group: "Appearance",
 					defaultValue: TitleLevel.Auto
 				},
+
 				/**
 				 * Defines style of the header.
 				 * For more information, see {@link sap.m.Title#setTitleStyle}.
@@ -222,6 +216,7 @@ sap.ui.define([
 					type: "sap.ui.core.TitleLevel",
 					group: "Appearance"
 				},
+
 				/**
 				 * Determines whether to bind the table automatically after the initial creation or re-creation of the table.
 				 */
@@ -230,6 +225,7 @@ sap.ui.define([
 					group: "Misc",
 					defaultValue: true
 				},
+
 				/**
 				 * Header text that is shown in the table.
 				 */
@@ -238,6 +234,7 @@ sap.ui.define([
 					group: "Misc",
 					defaultValue: null
 				},
+
 				/**
 				 * Determines whether the header text is shown in the table. Regardless of its value, the given header text is used to label the table
 				 * correctly for accessibility purposes.
@@ -249,6 +246,7 @@ sap.ui.define([
 					group: "Misc",
 					defaultValue: true
 				},
+
 				/**
 				 * If no tooltip has been provided for a column, the column header text will automatically be applied
 				 * as a tooltip for the column.
@@ -260,6 +258,7 @@ sap.ui.define([
 					group: "Misc",
 					defaultValue: false
 				},
+
 				/**
 				 * Selection mode of the table. Specifies whether single or multiple rows can be selected and how the selection can be extended. It
 				 * may also influence the visual appearance.
@@ -271,6 +270,7 @@ sap.ui.define([
 					type: "sap.ui.mdc.enums.TableSelectionMode",
 					defaultValue: TableSelectionMode.None
 				},
+
 				/**
 				 * Determines whether the number of rows is shown along with the header text. If set to <code>false</code>, the number of rows is not
 				 * shown on the user interface.<br>
@@ -368,6 +368,7 @@ sap.ui.define([
 					type: "int",
 					defaultValue: 100
 				},
+
 				/**
 				 * Determines whether column resizing is enabled.
 				 *
@@ -378,6 +379,7 @@ sap.ui.define([
 					group: "Behavior",
 					defaultValue: true
 				},
+
 				/**
 				 * Determines whether the Paste button is visible.
 				 *
@@ -388,6 +390,7 @@ sap.ui.define([
 					group: "Behavior",
 					defaultValue: false
 				},
+
 				/**
 				 * Determines whether the Paste button is enabled.
 				 *
@@ -398,6 +401,7 @@ sap.ui.define([
 					group: "Behavior",
 					defaultValue: true
 				},
+
 				/**
 				 * Defines the multi-selection mode for the control.
 				 * If this property is set to the <code>Default</code> value, the <code>ResponsiveTable</code> type control renders the Select All

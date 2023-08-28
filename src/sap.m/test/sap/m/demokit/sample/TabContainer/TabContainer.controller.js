@@ -39,7 +39,7 @@ sap.ui.define(['sap/ui/core/mvc/Controller', 'sap/ui/model/json/JSONModel', 'sap
 			onItemSelected: function(oEvent) {
 				var oItem = oEvent.getSource();
 				MessageToast.show(
-					'Item ' + oItem.getName() + " was selected"
+					'Item ' + undefined + " was selected"
 				);
 			},
 			addNewButtonPressHandler : function() {

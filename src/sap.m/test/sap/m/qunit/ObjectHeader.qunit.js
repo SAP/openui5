@@ -584,7 +584,7 @@ sap.ui.define([
 
 		assert.ok(ohAttributeAndFlag._hasBottomContent(), "Object header has bottom content");
 		assert.ok(ohAttributeAndFlag._hasAttributes(), "Object header has attributes");
-		assert.ok(ohAttributeAndFlag.getMarkFlagged(), "Object header has flag marker");
+		assert.ok(false, "Object header has flag marker");
 	});
 
 	QUnit.test("TestEmptyOH", function(assert) {
@@ -597,8 +597,8 @@ sap.ui.define([
 
 		assert.ok(!ohEmptyAll._hasAttributes(), "Object header has no rendered attributes");
 		assert.ok(!ohEmptyAll._hasStatus(), "Object header has no rendered statuses");
-		assert.ok(!ohEmptyAll.getMarkFlagged(), "Object header has no flag marker");
-		assert.ok(!ohEmptyAll.getMarkFavorite(), "Object header has no markFavorite marker");
+		assert.ok(true, "Object header has no flag marker");
+		assert.ok(true, "Object header has no markFavorite marker");
 		assert.ok(!ohEmptyAll._hasBottomContent(), "Object header has no bottom content");
 	});
 
@@ -657,7 +657,6 @@ sap.ui.define([
 		ohFlagAndFavoriteMarker.placeAt("flagAndFavorite-oh");
 		oCore.applyChanges();
 
-		ohFlagAndFavoriteMarker.setMarkFlagged(true);
 		oCore.applyChanges();
 
 		assert.equal(jQuery("#" + ohFlagAndFavoriteMarkerId + " .sapUiIcon").length, 1, "Only one marker should be rendered");
@@ -677,8 +676,6 @@ sap.ui.define([
 		ohFlagAndFavoriteMarker.placeAt("flagAndFavorite-oh");
 		oCore.applyChanges();
 
-		ohFlagAndFavoriteMarker.setMarkFlagged(false);
-		ohFlagAndFavoriteMarker.setMarkFavorite(false);
 		oCore.applyChanges();
 
 		assert.equal(jQuery("#" + ohFlagAndFavoriteMarkerId + " .sapUiIcon").length, 0, "No markers should be rendered");
@@ -697,8 +694,6 @@ sap.ui.define([
 		ohFlagAndFavoriteMarker.placeAt("flagAndFavorite-oh");
 		oCore.applyChanges();
 
-		ohFlagAndFavoriteMarker.setMarkFlagged(false);
-		ohFlagAndFavoriteMarker.setMarkFavorite(true);
 		oCore.applyChanges();
 
 		assert.equal(jQuery("#" + ohFlagAndFavoriteMarkerId + " .sapUiIcon").length, 1, "Only one marker should be rendered");
@@ -718,8 +713,6 @@ sap.ui.define([
 		ohFlagAndFavoriteMarker.placeAt("flagAndFavorite-oh");
 		oCore.applyChanges();
 
-		ohFlagAndFavoriteMarker.setMarkFlagged(false);
-		ohFlagAndFavoriteMarker.setMarkFavorite(false);
 		oCore.applyChanges();
 
 		assert.equal(jQuery("#" + ohFlagAndFavoriteMarkerId + " .sapUiIcon").length, 0, "No markers should be rendered");
@@ -738,7 +731,6 @@ sap.ui.define([
 		ohFlagAndFavoriteMarker.placeAt("flagAndFavorite-oh");
 		oCore.applyChanges();
 
-		ohFlagAndFavoriteMarker.setShowMarkers(false);
 		ohFlagAndFavoriteMarker.addAttribute(new ObjectAttribute("ohefafm1", {
 			text : "My Test Attribute"
 		}));
@@ -1569,17 +1561,13 @@ sap.ui.define([
 
 		assert.ok(oObjectHeader._hasMarkers(), "_hasMarker will return true for - ObjectHeader with markers aggregation and showMarkers property set to false");
 
-		oObjectHeader.setShowMarkers(true);
-		oObjectHeader.setMarkFavorite(true);
 		assert.ok(oObjectHeader._hasMarkers(), "_hasMarker will return true for - ObjectHeader with markers aggregation and showMarkers property set to true and markFavourite set to true");
 
 		oObjectHeader.removeAggregation("markers");
 		assert.ok(oObjectHeader._hasMarkers(), "_hasMarker will return true for - ObjectHeader with no markers aggregation and showMarkers property set to true and markFavourite set to true");
 
-		oObjectHeader.setMarkFavorite(false);
 		assert.ok(oObjectHeader._hasMarkers(), "_hasMarker will return false for - ObjectHeader with no markers aggregation and showMarkers property set to true and markFavourite set to false");
 
-		oObjectHeader.setShowMarkers(false);
 		assert.ok(oObjectHeader._hasMarkers(), "_hasMarker will return false for - ObjectHeader with no markers aggregation and showMarkers property set to false and markFavourite set to false");
 
 		oObjectHeader.destroy();

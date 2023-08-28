@@ -1,8 +1,7 @@
 sap.ui.define([
-	'sap/ui/core/XMLComposite'
-], function(XMLComposite) {
+], function() {
 	"use strict";
-	var TextToggleButton = XMLComposite.extend("composites.TextToggleButton", {
+	var TextToggleButton = undefined/*XMLComposite*/.extend("composites.TextToggleButton", {
 		metadata: {
 			properties: {
 				text: {
@@ -16,7 +15,7 @@ sap.ui.define([
 			}
 		},
 		constructor: function(sId, mSettings) {
-			XMLComposite.apply(this,arguments);
+			undefined/*XMLComposite*/.apply(this,arguments);
 			this._iRetemplateCount = 0;
 		}
 	});
@@ -32,7 +31,7 @@ sap.ui.define([
 	};
 
 	TextToggleButton.prototype.fragmentRetemplating = function() {
-		XMLComposite.prototype.fragmentRetemplating.apply(this,arguments);
+		undefined/*XMLComposite*/.prototype.fragmentRetemplating.apply(this,arguments);
 		this._iRetemplateCount++;
 	};
 

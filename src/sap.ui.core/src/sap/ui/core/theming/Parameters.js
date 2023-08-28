@@ -23,9 +23,9 @@ sap.ui.define([
 	'./ThemeHelper'
 ],
 	function(Core, Configuration, Library, Theming, URI, Element, UriParameters, Log, extend, syncFetch, ThemeManager, ThemeHelper) {
-	"use strict";
+		"use strict";
 
-	var syncCallBehavior = Configuration.getSyncCallBehavior();
+		var syncCallBehavior = Configuration.getSyncCallBehavior();
 
 		/**
 		 * A helper used for (read-only) access to CSS parameters at runtime.
@@ -766,17 +766,6 @@ sap.ui.define([
 		 * Resets the CSS parameters which finally will reload the parameters
 		 * the next time they are queried via the method <code>get</code>.
 		 *
-		 * @public
-		 * @deprecated since 1.92
-		 */
-		Parameters.reset = function() {
-			this._reset.apply(this, arguments);
-		};
-
-		/**
-		 * Resets the CSS parameters which finally will reload the parameters
-		 * the next time they are queried via the method <code>get</code>.
-		 *
 		 * @private
 		 * @ui5-restricted sap.ui.core.theming
 		 */
@@ -817,6 +806,5 @@ sap.ui.define([
 			return logo;
 		};
 
-	return Parameters;
-
-}, /* bExport= */ true);
+		return Parameters;
+	}, /* bExport= */ true);

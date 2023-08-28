@@ -565,13 +565,6 @@ sap.ui.define([
 				var sModuleName = sControlType.replace(/\./g, "/");
 				var fnControlType = sap.ui.require(sModuleName);
 				if ( fnControlType == null ) {
-					/**
-					 * @deprecated since 1.56 together with lazy loading as it implies sync loading
-					 */
-					if (Global.lazyRequire._isStub(sControlType)) {
-						this._oLogger.debug("The control type " + sControlType + " is currently a lazy stub.");
-						return null;
-					}
 					fnControlType = ObjectPath.get(sControlType);
 					if ( typeof fnControlType === "function" ) {
 						this._oLogger.debug("The control type " + sControlType + " could only be retrieved via global name.");
@@ -622,14 +615,6 @@ sap.ui.define([
 				var vControlType = oOptions.controlType;
 				//retrieve the constructor instance
 				if (typeof vControlType !== "string") {
-					/**
-					 * @deprecated since 1.56 together with lazy loading as it implies sync loading
-					 */
-					if (vControlType && vControlType._sapUiLazyLoader) {
-						// no way of getting the control type's name without actually calling it
-						this._oLogger.debug("The control type is currently a lazy stub");
-						return false;
-					}
 					// undefined - oOptions has no control type filter that's fine
 					// defined - it is a constructor since we checked that it is no lazy stub
 					return true;

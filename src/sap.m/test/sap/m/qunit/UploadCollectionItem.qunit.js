@@ -1,13 +1,12 @@
 /*global QUnit, sinon */
 sap.ui.define([
-	"sap/m/UploadCollectionItem",
 	"sap/m/ObjectAttribute",
 	"sap/m/ObjectMarker",
 	"sap/m/library",
 	"sap/ui/Device",
 	"sap/ui/core/util/File",
 	"sap/ui/core/Core"
-], function(UploadCollectionItem, ObjectAttribute, ObjectMarker, mlibrary, Device, File, oCore) {
+], function(ObjectAttribute, ObjectMarker, mlibrary, Device, File, oCore) {
 	"use strict";
 
 
@@ -17,7 +16,7 @@ sap.ui.define([
 
 	QUnit.module("Initial Test deprecated properties", {
 		beforeEach : function() {
-			this.oUploadCollectionItem = new UploadCollectionItem({
+			this.oUploadCollectionItem = new undefined/*UploadCollectionItem*/({
 				contributor : "Susan Baker",
 				documentId : "64469d2f-b3c4-a517-20d6-f91ebf85b9da",
 				enableEdit : true,
@@ -71,7 +70,7 @@ sap.ui.define([
 
 	QUnit.module("Deprecated properties with setter", {
 		beforeEach : function() {
-			this.oUploadCollectionItem = new UploadCollectionItem({
+			this.oUploadCollectionItem = new undefined/*UploadCollectionItem*/({
 				documentId : "64469d2f-b3c4-a517-20d6-f91ebf85b9da",
 				enableEdit : true,
 				enableDelete : true,
@@ -109,7 +108,7 @@ sap.ui.define([
 
 	QUnit.module("Deprecated properties with pre-filled aggregation", {
 		beforeEach : function() {
-			this.oUploadCollectionItem = new UploadCollectionItem({
+			this.oUploadCollectionItem = new undefined/*UploadCollectionItem*/({
 				attributes : [ new ObjectAttribute({
 					active : false,
 					text : "Test"
@@ -192,7 +191,7 @@ sap.ui.define([
 
 	QUnit.module("Test getter for all attributes", {
 		beforeEach : function() {
-			this.oUploadCollectionItem = new UploadCollectionItem({
+			this.oUploadCollectionItem = new undefined/*UploadCollectionItem*/({
 				attributes : [ new ObjectAttribute({
 					active : false,
 					text : "Test"
@@ -226,7 +225,7 @@ sap.ui.define([
 
 	QUnit.module("UploadCollectionItem selected", {
 		beforeEach : function() {
-			this.oUploadCollectionItem = new UploadCollectionItem({
+			this.oUploadCollectionItem = new undefined/*UploadCollectionItem*/({
 				attributes : [ new ObjectAttribute({
 					active : false,
 					text : "Test"
@@ -254,7 +253,7 @@ sap.ui.define([
 
 	QUnit.module("UploadCollectionItem with markers", {
 		beforeEach : function() {
-			this.oUploadCollectionItem = new UploadCollectionItem({
+			this.oUploadCollectionItem = new undefined/*UploadCollectionItem*/({
 				markers : [ new ObjectMarker({
 					type : "Locked",
 					visibility : "IconOnly"
@@ -280,7 +279,7 @@ sap.ui.define([
 
 	QUnit.module("Download method - XMLHttpRequest", {
 		beforeEach : function() {
-			this.oUploadCollectionItem = new UploadCollectionItem({
+			this.oUploadCollectionItem = new undefined/*UploadCollectionItem*/({
 				contributor : "Susan Baker",
 				documentId : "64469d2f-b3c4-a517-20d6-f91ebf85b9da",
 				enableEdit : true,
@@ -362,7 +361,7 @@ sap.ui.define([
 
 	QUnit.module("Download Methods", {
 		beforeEach : function() {
-			this.oUploadCollectionItem = new UploadCollectionItem({
+			this.oUploadCollectionItem = new undefined/*UploadCollectionItem*/({
 				contributor : "Susan Baker",
 				documentId : "64469d2f-b3c4-a517-20d6-f91ebf85b9da",
 				enableEdit : true,
@@ -420,7 +419,7 @@ sap.ui.define([
 
 	QUnit.module("Items related control instance management", {
 		beforeEach : function() {
-			this.oItem = new UploadCollectionItem();
+			this.oItem = new undefined/*UploadCollectionItem*/();
 		},
 		afterEach : function() {
 			if (this.oItem) {

@@ -8,7 +8,7 @@ sap.ui.define([
 ],	function (Core, XMLView, Page) {
 	"use strict";
 
-	Core.attachInit(function () {
+	Core.ready(function () {
 
 		XMLView.create({
 			viewName: "sap.ui.testrecorder.ui.views.Main"

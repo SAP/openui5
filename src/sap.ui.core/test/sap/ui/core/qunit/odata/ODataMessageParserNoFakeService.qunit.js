@@ -1410,13 +1410,6 @@ sap.ui.define([
 		assert.deepEqual(oMessage.technicalDetails,
 			{headers : "~headers", statusCode : "~statusCode"});
 		assert.strictEqual(oMessage.type, oExpectedMessage.type);
-		/**
-		 * @deprecated As of version 1.79.0
-		*/
-		(function () {
-			assert.strictEqual(oMessage.fullTarget, "~fullTargetFrom_createTarget0");
-			assert.strictEqual(oMessage.target, "~targetFrom_createTarget0");
-		}());
 	});
 });
 

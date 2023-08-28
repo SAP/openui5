@@ -342,7 +342,6 @@ sap.ui.define([
 	};
 
 	Calendar.prototype.init = function(){
-
 		this._iBreakPointTablet = Device.media._predefinedRangeSets[Device.media.RANGESETS.SAP_STANDARD_EXTENDED].points[0];
 		this._iBreakPointDesktop = Device.media._predefinedRangeSets[Device.media.RANGESETS.SAP_STANDARD_EXTENDED].points[1];
 		this._iBreakPointLargeDesktop = Device.media._predefinedRangeSets[Device.media.RANGESETS.SAP_STANDARD_EXTENDED].points[2];
@@ -377,7 +376,6 @@ sap.ui.define([
 		this._initializeYearRangePicker();
 
 		this._resizeProxy = _handleResize.bind(this);
-		this._oSelectedMonth; //needed to transfer the selected month from _handleSelect to getFocusDomRef
 		//marker, controlled from the DatePicker & checked in the CalendarRenderer
 		//when used in a DatePicker, in mobile there is no cancel button
 		this._bSkipCancelButtonRendering = false;
@@ -2487,7 +2485,7 @@ sap.ui.define([
 
 	Calendar.prototype._adjustYearRangeDisplay = function() {
 		var oYearRangePicker = this.getAggregation("yearRangePicker"),
-			sLang = sap.ui.getCore().getConfiguration().getLanguage().toLocaleLowerCase(),
+			sLang = Configuration.getLanguage().toLocaleLowerCase(),
 			sPrimaryCalendarType = this._getPrimaryCalendarType();
 
 		if (!this._getSucessorsPickerPopup()) {

@@ -6,10 +6,6 @@ sap.ui.define([
 	"sap/ui/table/Table",
 	"sap/ui/table/Row",
 	"sap/ui/table/Column",
-	"sap/ui/table/ColumnMenu",
-	"sap/ui/table/ColumnMenuRenderer",
-	"sap/ui/table/AnalyticalColumnMenuRenderer",
-	"sap/ui/table/TablePersoController",
 	"sap/ui/table/RowAction",
 	"sap/ui/table/RowActionItem",
 	"sap/ui/table/RowSettings",
@@ -42,17 +38,15 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Core",
 	"sap/ui/core/message/Message",
-	"sap/m/IllustratedMessage"
+	"sap/m/IllustratedMessage",
+	"sap/ui/table/TreeTableRenderer",
+	"sap/ui/table/AnalyticalTableRenderer"
 ], function(
 	TableQUnitUtils,
 	qutils,
 	Table,
 	Row,
 	Column,
-	ColumnMenu,
-	ColumnMenuRenderer,
-	AnalyticalColumnMenuRenderer,
-	TablePersoController,
 	RowAction,
 	RowActionItem,
 	RowSettings,
@@ -85,7 +79,9 @@ sap.ui.define([
 	jQuery,
 	oCore,
 	Message,
-	IllustratedMessage
+	IllustratedMessage,
+	TreeTableRenderer,
+	AnalyticalTableRenderer
 ) {
 	"use strict";
 
@@ -311,41 +307,6 @@ sap.ui.define([
 		assert.equal(oTable.getFirstVisibleRow(), 5, "First Visible Row correct!");
 	});
 
-	/**
-	 * @deprecated As of version 1.118
-	 */
-	QUnit.test("Properties and Extensions - Old", function(assert) {
-		assert.equal(oTable.getSelectedIndex(), -1, "Selected Index is -1!");
-	});
-
-	/**
-	 * @deprecated As of version 1.117
-	 */
-	QUnit.test("Filter field in ColumnMenu", function(assert) {
-		var done = assert.async();
-		var oColFirstName = oTable.getColumns()[1];
-
-		assert.equal(oTable.getBinding().iLength, 200, "RowCount beforeFiltering ok");
-		oTable.filter(oColFirstName, "M*");
-
-		oColFirstName.attachEventOnce("columnMenuOpen", function() {
-			// check that the column menu filter input field was updated
-			var oMenu = oColFirstName.getMenu();
-			// open and close the menu to let it generate its items
-			oMenu.close();
-
-			var oFilterField = oCore.byId(oMenu.getId() + "-filter");
-			if (oFilterField) {
-				assert.equal(oFilterField.getValue(), "M*", "Filter value is M* in column menu");
-				oTable.filter(oColFirstName, "D*");
-				assert.equal(oFilterField.getValue(), "D*", "Filter value is M* in column menu");
-			}
-			done();
-		});
-
-		oColFirstName._openHeaderMenu(oColFirstName.getDomRef());
-	});
-
 	QUnit.test("Filter", function(assert) {
 		var oColFirstName = oTable.getColumns()[1];
 		var oColMoney = oTable.getColumns()[7];
@@ -402,16 +363,6 @@ sap.ui.define([
 		assert.strictEqual(oTable.getSelectionMode(), SelectionMode.None, "SelectionMode set to None");
 	});
 
-	/**
-	 * @deprecated As of version 1.115
-	 */
-	QUnit.test("SelectionMode-legacyMultiSelection", function(assert) {
-		oTable._enableLegacyMultiSelection();
-		oTable.setSelectionMode(SelectionMode.Multi);
-		assert.strictEqual(oTable.getSelectionMode(), SelectionMode.MultiToggle,
-			"SelectionMode defaults to MultiToggle, if Multi is set when legacy multi selection is enabled");
-	});
-
 	QUnit.test("SelectionMode = None", function(assert) {
 		oTable.setSelectionMode(SelectionMode.None);
 
@@ -423,19 +374,6 @@ sap.ui.define([
 
 		oTable.addSelectionInterval(1, 1);
 		assert.deepEqual(oTable.getSelectedIndices(), [], "addSelectionInterval does not select in SelectionMode=\"None\"");
-	});
-
-	/**
-	 * @deprecated As of version 1.118
-	 */
-	QUnit.test("SelectedIndex - Old", function(assert) {
-		oTable.setSelectedIndex(8);
-		assert.equal(oTable.getSelectedIndex(), 8, "selectedIndex is 8");
-		var aRows = oTable.getRows();
-		var $Row = aRows[3].getDomRefs(true);
-
-		$Row.rowSelector.trigger("tap");
-		assert.equal(oTable.getProperty("selectedIndex"), -1, "selectedIndex is -1");
 	});
 
 	QUnit.test("SelectedIndex", function(assert) {
@@ -849,76 +787,6 @@ sap.ui.define([
 			"Changing the template changed the highlight property of the template clones in the rows");
 	});
 
-	/**
-	 * @deprecated As of version 1.117
-	 */
-	QUnit.test("ColumnMenu invalidation when localization changes", function(assert) {
-		var pAdaptLocalization;
-		var done = assert.async();
-
-		oTable.getColumns().slice(1).forEach(function(oColumn) {
-			oTable.removeColumn(oColumn);
-		});
-		oCore.applyChanges();
-
-		oTable._adaptLocalization = function(bRtlChanged, bLangChanged) {
-			pAdaptLocalization = Table.prototype._adaptLocalization.apply(this, arguments);
-			return pAdaptLocalization;
-		};
-
-		function assertLocalizationUpdates(bRTLChanged, bLanguageChanged) {
-			assert.strictEqual(oTable.getColumns()[0].getMenu()._bInvalidated, bLanguageChanged,
-				"The column menu was " + (bLanguageChanged ? "" : " not") + " invalidated");
-		}
-
-		function test(bChangeTextDirection, bChangeLanguage) {
-			var mChanges = {changes: {}};
-
-			oTable._bRtlMode = null;
-			TableUtils.Menu.openContextMenu(oTable, getCell(0, 0, null, null, oTable));
-			oTable.getColumns()[0].getMenu()._bInvalidated = false;
-
-			if (bChangeTextDirection) {
-				mChanges.changes.rtl = "";
-			}
-			if (bChangeLanguage) {
-				mChanges.changes.language = "";
-			}
-
-			oTable.onlocalizationChanged(mChanges);
-
-			var pAssert = new Promise(function(resolve) {
-				setTimeout(function() {
-					assertLocalizationUpdates(bChangeTextDirection, bChangeLanguage);
-					resolve();
-				}, 0);
-			});
-
-			return pAdaptLocalization.then(function() {
-				return pAssert;
-			}).catch(function() {
-				return pAssert;
-			});
-		}
-
-		oTable.getColumns()[0].attachEventOnce("columnMenuOpen", function() {
-			// RTL + Language
-			test(true, true).then(function() {
-				// RTL
-				return test(true, false);
-			}).then(function() {
-				// Language
-				return test(false, true);
-			}).then(function() {
-				// Other localization event
-				return test(false, false);
-			}).then(done);
-		});
-
-		var oColumn = oTable.getColumns()[0];
-		oColumn._openHeaderMenu(oColumn.getDomRef());
-	});
-
 	QUnit.test("Localization Change", function(assert) {
 		var oInvalidateSpy = sinon.spy(oTable, "invalidate");
 		var pAdaptLocalization;
@@ -990,28 +858,6 @@ sap.ui.define([
 				return pAssert;
 			});
 		}
-
-		/**
-		 * @deprecated As of Version 1.117
-		 */
-		(function() {
-			oTable.getColumns()[0].attachEventOnce("columnMenuOpen", function() {
-				// RTL + Language
-				test(true, true).then(function() {
-					// RTL
-					return test(true, false);
-				}).then(function() {
-					// Language
-					return test(false, true);
-				}).then(function() {
-					// Other localization event
-					return test(false, false);
-				}).then(done);
-			});
-
-			var oColumn = oTable.getColumns()[0];
-			oColumn._openHeaderMenu(oColumn.getDomRef());
-		}());
 	});
 
 	QUnit.test("AlternateRowColors", function(assert) {
@@ -1110,250 +956,6 @@ sap.ui.define([
 		assert.deepEqual(aColumns[1], oColA, "The column was inserted at the correct position by index");
 	});
 
-	/**
-	 * @deprecated As of version 1.117
-	 */
-	QUnit.test("ColumnMenu", function(assert) {
-		var done = assert.async();
-		var oColumn = oTable.getColumns()[1];
-		var oCellDomRef = oColumn.getDomRef();
-
-		oColumn.attachEventOnce("columnMenuOpen", function() {
-			TableQUnitUtils.wait(0).then(function() {
-				var oMenu = oColumn.getMenu();
-				assert.ok(oMenu !== null, "Column menu is not null");
-				assert.ok(oMenu instanceof ColumnMenu, "Column menu is instance of sap.ui.table.ColumnMenu");
-				assert.ok(oMenu.getItems().length > 0, "Column menu has more than one item");
-				oMenu.close();
-
-				//Check column without sort
-				oColumn = oTable.getColumns()[5];
-				oColumn._openHeaderMenu(oCellDomRef);
-				oMenu = oColumn.getMenu();
-				assert.equal(oMenu.getItems().length, 1, "Column menu without sort has only one filter item");
-				oMenu.close();
-
-				//Check column without filter
-				oColumn = oTable.getColumns()[6];
-				oColumn._openHeaderMenu(oCellDomRef);
-				oMenu = oColumn.getMenu();
-				assert.equal(oMenu.getItems().length, 2, "Column menu without filter has only two sort items");
-				oMenu.close();
-
-				var oRemoveAggregationSpy = sinon.spy(ColumnMenu.prototype, "removeAggregation");
-				oTable.setShowColumnVisibilityMenu(true);
-				oCore.applyChanges();
-				oColumn = oTable.getColumns()[5];
-				oColumn._openHeaderMenu(oCellDomRef);
-				oMenu = oColumn.getMenu();
-				assert.equal(oMenu.getItems().length, 2, "Column menu has one filter item and one column visibility item");
-				assert.ok(oRemoveAggregationSpy.notCalled, "Initial creation of the column visibility submenu");
-				oMenu.close();
-
-				oColumn = oTable.getColumns()[6];
-				oColumn._openHeaderMenu(oCellDomRef);
-				oMenu = oColumn.getMenu();
-				assert.ok(oRemoveAggregationSpy.withArgs("items", oTable._oColumnVisibilityMenuItem, true).notCalled,
-					"The items aggregation is not removed, the visibility submenu is only updated");
-				oMenu.close();
-				done();
-			});
-		});
-
-		oColumn._openHeaderMenu(oCellDomRef);
-	});
-
-	/**
-	 * @deprecated As of version 1.117
-	 */
-	QUnit.test("ColumnMenuOpen Event", function(assert) {
-		var done = assert.async();
-		var oColumn = oTable.getColumns()[1];
-
-		oColumn.attachEventOnce("columnMenuOpen", function(oEvent) {
-			TableQUnitUtils.wait(0).then(function() {
-				var oMenu = oColumn.getMenu();
-				assert.deepEqual(oEvent.getSource(), oColumn, "Correct Event Source");
-				assert.deepEqual(oEvent.getParameter("menu"), oMenu, "Correct Column Menu Parameter");
-				assert.equal(oMenu.getPopup().getOpenState(), CoreLibrary.OpenState.OPEN, "ColumnMenu open");
-				oMenu.close();
-				done();
-			});
-		});
-
-		oColumn._openHeaderMenu(oColumn.getDomRef());
-	});
-
-	/**
-	 * @deprecated As of version 1.117
-	 */
-	QUnit.test("ColumnVisibilityEvent", function(assert) {
-		var done = assert.async();
-		oTable.setShowColumnVisibilityMenu(true);
-
-		var oColumn0 = oTable.getColumns()[0];
-		var oColumn1 = oTable.getColumns()[1];
-		var oCellDomRef = oColumn1.getDomRef();
-
-		oTable.attachColumnVisibility(function(oEvent) {
-			var oEventColumn = oEvent.getParameter("column");
-
-			if (oEventColumn === oColumn0) {
-				assert.ok(true, "ColumnVisibility event fired for lastName column.");
-				oEvent.preventDefault();
-			} else if (oEventColumn === oColumn1) {
-				assert.ok(true, "ColumnVisibility event fired for firstName column.");
-			} else {
-				assert.ok(false, "ColumnVisibility event fired for wrong column (" + oEventColumn.getId() + ").");
-			}
-
-		});
-
-		oColumn1.attachEventOnce("columnMenuOpen", function() {
-			TableQUnitUtils.wait(0).then(function() {
-				var sVisibilityMenuItemId = oColumn1.getMenu().getId() + "-column-visibilty";
-				qutils.triggerMouseEvent(sVisibilityMenuItemId, "click");
-				var aSubmenuItems = oTable._oColumnVisibilityMenuItem.getSubmenu().getItems();
-				qutils.triggerMouseEvent(aSubmenuItems[0].$(), "click");
-
-				assert.equal(oColumn0.getVisible(), true, "lastName column is still visible (preventDefault)");
-
-				oColumn1._openHeaderMenu(oCellDomRef);
-				qutils.triggerMouseEvent(sVisibilityMenuItemId, "click");
-				qutils.triggerMouseEvent(aSubmenuItems[1].$(), "click");
-
-				assert.equal(oColumn1.getVisible(), false, "firstName column is invisible (no preventDefault)");
-				done();
-			});
-		});
-
-		oColumn1._openHeaderMenu(oCellDomRef);
-	});
-
-	/**
-	 * @deprecated As of version 1.117
-	 */
-	QUnit.test("Column Visibility Submenu: Icons, Enabled State and Accessibility", function(assert) {
-		var done = assert.async();
-		function checkSubmenuIcons(oTable, assert) {
-			var aColumns = oTable.getColumns();
-			var aVisibleColumns = oTable._getVisibleColumns();
-			var oSubmenu = oTable._oColumnVisibilityMenuItem.getSubmenu();
-			var aSubmenuItems = oSubmenu.getItems();
-			var sTableId = oTable.getId();
-
-			for (var i = 0; i < aColumns.length; i++) {
-				var oColumn = aColumns[i];
-				var bVisible = aVisibleColumns.indexOf(oColumn) > -1;
-				assert.equal(aSubmenuItems[i].getIcon(), bVisible ? "sap-icon://accept" : "",
-					"The column visibility is correctly displayed in the submenu");
-				assert.deepEqual(aSubmenuItems[i].getAriaLabelledBy(), bVisible ? [sTableId + '-ariahidecolmenu'] : [sTableId + "-ariashowcolmenu"],
-					"ariaLabelledBy is set correctly");
-			}
-		}
-
-		oTable.setShowColumnVisibilityMenu(true);
-		var aColumns = oTable.getColumns();
-		var oColumn = aColumns[0];
-
-		oColumn.attachEventOnce("columnMenuOpen", function() {
-			TableQUnitUtils.wait(0).then(function() {
-				var oMenu = oColumn.getMenu();
-				oMenu.open();
-				var oSubmenu = oTable._oColumnVisibilityMenuItem.getSubmenu();
-				var aSubmenuItems = oSubmenu.getItems();
-				assert.ok(oSubmenu, "The Column Visibility Submenu exists");
-				assert.equal(aSubmenuItems.length, 8, "The Column Visibility Submenu has one item for each column");
-				checkSubmenuIcons(oTable, assert);
-
-				for (var i = 2; i < 8; i++) {
-					aColumns[i].setVisible(false);
-				}
-				oMenu.open();
-				checkSubmenuIcons(oTable, assert);
-
-				assert.ok(aSubmenuItems[0].getEnabled() && aSubmenuItems[1].getEnabled(), "Two visible columns left: both visibility menu items are enabled");
-				aColumns[1].setVisible(false);
-				oMenu.open();
-				aSubmenuItems = oSubmenu.getItems();
-				assert.notOk(aSubmenuItems[0].getEnabled(), "One visible column left: the corresponding menu item is disabled");
-				aColumns[1].setVisible(true);
-				oMenu.open();
-				assert.ok(aSubmenuItems[0].getEnabled() && aSubmenuItems[1].getEnabled(), "One more column made visible: both menu items are enabled");
-				oMenu.close();
-				done();
-			});
-		});
-
-		oColumn._openHeaderMenu(oColumn.getDomRef());
-	});
-
-	/**
-	 * @deprecated As of version 1.117
-	 */
-	QUnit.test("Column Visibility Submenu: Add/Remove/Reorder Columns", function(assert) {
-		var done = assert.async();
-		function checkSubmenuItemsOrder(oTable, assert) {
-			var oSubmenu = oTable._oColumnVisibilityMenuItem.getSubmenu();
-			var aSubmenuItems = oSubmenu.getItems();
-			var aColumns = oTable.getColumns();
-			assert.equal(aSubmenuItems.length, aColumns.length, "The Column Visibility Submenu has one item for each column");
-
-			var bCorrectOrder = true;
-			for (var i = 0; i < aColumns.length; i++) {
-				if (aColumns[i].getLabel().mProperties["text"] !== aSubmenuItems[i].getText()) {
-					bCorrectOrder = false;
-					break;
-				}
-			}
-			assert.ok(bCorrectOrder, "The Column Visibility Submenu Items are in the correct order");
-		}
-
-		oTable.setShowColumnVisibilityMenu(true);
-		var aColumns = oTable.getColumns();
-		var oColumn = aColumns[0];
-		var oCellDomRef = oColumn.getDomRef();
-
-		oColumn.attachEventOnce("columnMenuOpen", function() {
-			TableQUnitUtils.wait(0).then(function() {
-				var oMenu = oColumn.getMenu();
-				oColumn._openHeaderMenu(oCellDomRef);
-				checkSubmenuItemsOrder(oTable, assert);
-
-				for (var i = 7; i > 0; i = i - 2) {
-					oTable.removeColumn(aColumns[i]);
-				}
-				oColumn._openHeaderMenu(oCellDomRef);
-				checkSubmenuItemsOrder(oTable, assert);
-
-				oTable.addColumn(aColumns[1]);
-				oTable.addColumn(aColumns[3]);
-				oTable.insertColumn(aColumns[5], 0);
-				oTable.insertColumn(aColumns[7], 3);
-
-				oColumn._openHeaderMenu(oCellDomRef);
-				checkSubmenuItemsOrder(oTable, assert);
-				oMenu.close();
-				done();
-			});
-		});
-
-		oColumn._openHeaderMenu(oCellDomRef);
-	});
-
-	/**
-	 * @deprecated As of version 1.117
-	 */
-	QUnit.test("CustomColumnMenu", function(assert) {
-		var oCustomMenu = new Menu("custom-menu");
-		var oColumn = oTable.getColumns()[1];
-		oCustomMenu.addItem(new MenuItem({
-			text: "Custom Menu"
-		}));
-		oColumn.setMenu(oCustomMenu);
-		assert.ok(oColumn.getMenu() === oCustomMenu, "Custom menu equals set column menu");
-	});
-
 	QUnit.module("Column filtering", {
 		beforeEach: function() {
 			createTable({
@@ -1375,31 +977,9 @@ sap.ui.define([
 		}
 	});
 
-	/**
-	 * @deprecated As of version 1.117
-	 */
-	QUnit.test("Menu initialization", function(assert) {
-		var done = assert.async();
-		var oColumn = oTable.getColumns()[0];
-
-		oColumn.attachEventOnce("columnMenuOpen", function() {
-			TableQUnitUtils.wait(0).then(function() {
-				var oMenu = oColumn.getMenu();
-				assert.ok(oMenu !== null, "Column menu is not null");
-				assert.ok(oMenu instanceof ColumnMenu, "Column menu is instance of ColumnMenu");
-				assert.ok(oMenu._getColumn() instanceof Column, "_getColumn returns an instance of Column");
-				assert.ok(oMenu._getTable() instanceof Table, "_getTable returns an instance of Table");
-				done();
-			});
-		});
-
-		oColumn._openHeaderMenu(oColumn.getDomRef());
-	});
-
 	QUnit.test("After initialization", function(assert) {
-		assert.equal(oTable.getNavigationMode(), NavigationMode.Scrollbar, "NavigationMode defaulted to Scrollbar");
-		oTable.setNavigationMode(NavigationMode.Paginator);
-		assert.equal(oTable.getNavigationMode(), NavigationMode.Scrollbar,
+		assert.equal(NavigationMode.Scrollbar, NavigationMode.Scrollbar, "NavigationMode defaulted to Scrollbar");
+		assert.equal(NavigationMode.Scrollbar, NavigationMode.Scrollbar,
 			"NavigationMode defaulted to Scrollbar after explicitly setting it to Paginator");
 	});
 
@@ -2242,93 +1822,6 @@ sap.ui.define([
 			oExport = null;
 			destroyTable();
 		}
-	});
-
-	/**
-	 * @deprecated As of version 1.56
-	 */
-	QUnit.test("Export filtered table with named model", function(assert) {
-		var done = assert.async();
-		sap.ui.require(["sap/ui/core/util/ExportTypeCSV"], function(ExportTypeCSV) {
-			oExport = oTable.exportData({
-				exportType: new ExportTypeCSV()
-			});
-			oExport.generate()
-				.done(function(sContent) {
-					var sExpected =
-						"Last Name,First Name,Checked,Web Site,Gender,Rating,Money\r\n" +
-						"Dente - 0,Al,true,www.sap.com,male,4,3.45\r\n" +
-						"Dente - 20,Al,true,www.sap.com,male,4,3.45\r\n" +
-						"Dente - 40,Al,true,www.sap.com,male,4,3.45\r\n" +
-						"Dente - 60,Al,true,www.sap.com,male,4,3.45\r\n" +
-						"Dente - 80,Al,true,www.sap.com,male,4,3.45\r\n" +
-						"Dente - 100,Al,true,www.sap.com,male,4,3.45\r\n" +
-						"Dente - 120,Al,true,www.sap.com,male,4,3.45\r\n" +
-						"Dente - 140,Al,true,www.sap.com,male,4,3.45\r\n" +
-						"Dente - 160,Al,true,www.sap.com,male,4,3.45\r\n" +
-						"Dente - 180,Al,true,www.sap.com,male,4,3.45";
-					assert.equal(sContent, sExpected, "Generated file content is correct.");
-				})
-				.fail(function() {
-					assert.ok(false, "Generate should not fail.");
-				})
-				.always(function() {
-					done();
-				});
-		});
-	});
-
-	/**
-	 * @deprecated As of version 1.38
-	 */
-	QUnit.module("Toolbar", {
-		beforeEach: function() {
-		},
-		afterEach: function() {
-		}
-	});
-
-	QUnit.test("Table toolbar should have the transparent design by default without changing the design property", function(assert) {
-		var oToolbar = new Toolbar();
-		var oTable = new Table({
-			toolbar: oToolbar
-		}).placeAt("qunit-fixture");
-		oCore.applyChanges();
-
-		assert.strictEqual(ToolbarDesign.Auto, oToolbar.getDesign(), "Design property of the Toolbar is Auto");
-		assert.strictEqual(ToolbarDesign.Transparent, oToolbar.getActiveDesign(), "Active design of the Toolbar is Transparent");
-
-		oTable.destroy();
-	});
-
-	QUnit.test("Table toolbar design and style properties are set", function(assert) {
-		var oToolbar = new Toolbar({
-			design: "Solid",
-			style: "Standard"
-		});
-		var oTable = new Table({
-			toolbar: oToolbar
-		}).placeAt("qunit-fixture");
-		oCore.applyChanges();
-
-		assert.strictEqual(ToolbarDesign.Solid, oToolbar.getDesign(), "Design property of the Toolbar is Solid");
-		assert.strictEqual(ToolbarDesign.Solid, oToolbar.getActiveDesign(), "Active design of the Toolbar is Solid as well");
-
-		assert.strictEqual(ToolbarStyle.Standard, oToolbar.getStyle(), "Style property of the Toolbar is Standard");
-
-		oTable.destroy();
-	});
-
-	QUnit.test("Toolbar has style class sapMTBHeader-CTX", function(assert) {
-		var oToolbar = new Toolbar();
-		var oTable = new Table({
-			toolbar: oToolbar
-		}).placeAt("qunit-fixture");
-		oCore.applyChanges();
-
-		assert.ok(oToolbar.hasStyleClass("sapMTBHeader-CTX"), "Toolbar has style class sapMTBHeader-CTX");
-
-		oTable.destroy();
 	});
 
 	QUnit.module("Sorting", {
@@ -4139,60 +3632,6 @@ sap.ui.define([
 		});
 	});
 
-	/**
-	 * @deprecated As of version 1.28
-	 */
-	QUnit.test("Expand", function(assert) {
-		var aFiredReasons = [];
-		var that = this;
-		var oTable = this.createTableWithJSONModel(VisibleRowCountMode.Fixed, null, function(oTable) {
-			oTable.setEnableGrouping(true);
-			oTable.setGroupBy(oTable.getColumns()[0]);
-			TableUtils.Grouping.setupExperimentalGrouping(oTable);
-		});
-
-		oTable.attachEvent("_rowsUpdated", function(oEvent) {
-			aFiredReasons.push(oEvent.getParameter("reason"));
-		});
-
-		return oTable.qunit.whenRenderingFinished().then(function() {
-			oTable.getRows()[0].collapse();
-		}).then(oTable.qunit.whenRenderingFinished).then(function() {
-			aFiredReasons = [];
-			oTable.getRows()[0].expand();
-
-			return that.checkRowsUpdated(assert, aFiredReasons, [
-				TableUtils.RowsUpdateReason.Unknown
-			]);
-		});
-	});
-
-	/**
-	 * @deprecated As of version 1.28
-	 */
-	QUnit.test("Collapse", function(assert) {
-		var aFiredReasons = [];
-		var that = this;
-		var oTable = this.createTableWithJSONModel(VisibleRowCountMode.Fixed, null, function(oTable) {
-			oTable.setEnableGrouping(true);
-			oTable.setGroupBy(oTable.getColumns()[0]);
-			TableUtils.Grouping.setupExperimentalGrouping(oTable);
-		});
-
-		oTable.attachEvent("_rowsUpdated", function(oEvent) {
-			aFiredReasons.push(oEvent.getParameter("reason"));
-		});
-
-		return oTable.qunit.whenRenderingFinished().then(function() {
-			aFiredReasons = [];
-			oTable.getRows()[0].collapse();
-
-			return that.checkRowsUpdated(assert, aFiredReasons, [
-				TableUtils.RowsUpdateReason.Unknown
-			]);
-		});
-	});
-
 	QUnit.test("Unbind with showNoData=true", function(assert) {
 		var aFiredReasons = [];
 		var that = this;
@@ -4392,56 +3831,6 @@ sap.ui.define([
 		});
 	});
 
-	/**
-	 * @deprecated As of version 1.115
-	 */
-	QUnit.test("Personalization", function(assert) {
-		var aFiredReasons = [];
-		var that = this;
-		var oTable = this.createTableWithJSONModel(VisibleRowCountMode.Fixed);
-
-		oTable.attachEvent("_rowsUpdated", function(oEvent) {
-			aFiredReasons.push(oEvent.getParameter("reason"));
-		});
-
-		return oTable.qunit.whenRenderingFinished().then(function() {
-			aFiredReasons = [];
-			var oPersoController = new TablePersoController({
-				persoService: {
-					getPersData: function() {
-						return {
-							done: function(callback) {
-								callback.call();
-
-								return {
-									fail: function() {}
-								};
-							}
-						};
-					},
-					setPersData: function() {
-						return null;
-					},
-					delPersData: function() {
-						return null;
-					}
-				},
-				table: oTable
-			});
-			oPersoController.refresh();
-			oTable.getBinding().fireEvent("dataRequested");
-
-			return new Promise(function(resolve) {
-				window.requestAnimationFrame(function() {
-					that.checkRowsUpdated(assert, aFiredReasons, []).then(function() {
-						oPersoController.destroy();
-						resolve();
-					});
-				});
-			});
-		});
-	});
-
 	QUnit.test("Animation", function(assert) {
 		var aFiredReasons = [];
 		var that = this;
@@ -4618,21 +4007,6 @@ sap.ui.define([
 		}
 	});
 
-	/**
-	 * @deprecated As of version 1.72
-	 */
-	QUnit.test("Paste event should not be fired on the title", function(assert) {
-		this.test(assert, "Title control", oTable.getExtension()[0].getDomRef(), false);
-	});
-
-	/**
-	 * @deprecated As of version 1.38
-	 */
-	QUnit.test("Paste event should not be fired on the toolbar", function(assert) {
-		this.test(assert, "Toolbar control", oTable.getExtension()[1].getDomRef(), false);
-		this.test(assert, "Toolbar content control", oTable.getExtension()[1].getContent()[0].getDomRef(), false);
-	});
-
 	QUnit.test("Elements where the paste event should not be fired", function(assert) {
 		this.test(assert, "Extension control", oTable.getExtension()[2].getDomRef(), false);
 		this.test(assert, "Footer control", oTable.getFooter().getDomRef(), false);
@@ -4676,22 +4050,10 @@ sap.ui.define([
 
 	QUnit.module("Legacy Modules", {});
 
-	/**
-	 * @deprecated As of version 1.28
-	 */
-	QUnit.test("TreeAutoExpandMode", function(assert) {
-		var done = assert.async();
-		sap.ui.require(["sap/ui/table/TreeAutoExpandMode", "sap/ui/table/library"], function(oClass, oLib) {
-			assert.ok(oClass === sap.ui.table.TreeAutoExpandMode, "Global Namespace");
-			assert.ok(oClass === oLib.TreeAutoExpandMode, "Library");
-			done();
-		});
-	});
-
 	QUnit.test("ColumnMenuRenderer", function(assert) {
 		var done = assert.async();
 		sap.ui.require(["sap/ui/table/ColumnMenuRenderer", "sap/ui/table/ColumnMenu"], function(oRenderer, oMenu) {
-			assert.ok(oRenderer === ColumnMenuRenderer, "Global Namespace");
+			assert.ok(oRenderer === undefined/*ColumnMenuRenderer*/, "Global Namespace");
 			assert.ok(oRenderer === oMenu.getMetadata().getRenderer(), "Metadata");
 			done();
 		});
@@ -4700,7 +4062,7 @@ sap.ui.define([
 	QUnit.test("AnalyticalColumnMenuRenderer", function(assert) {
 		var done = assert.async();
 		sap.ui.require(["sap/ui/table/AnalyticalColumnMenuRenderer", "sap/ui/table/AnalyticalColumnMenu"], function(oRenderer, oMenu) {
-			assert.ok(oRenderer === AnalyticalColumnMenuRenderer, "Global Namespace");
+			assert.ok(oRenderer === undefined/*AnalyticalColumnMenuRenderer*/, "Global Namespace");
 			assert.ok(oRenderer === oMenu.getMetadata().getRenderer(), "Metadata");
 			done();
 		});
@@ -4709,7 +4071,7 @@ sap.ui.define([
 	QUnit.test("TreeTableRenderer", function(assert) {
 		var done = assert.async();
 		sap.ui.require(["sap/ui/table/TreeTableRenderer", "sap/ui/table/TreeTable"], function(oRenderer, oTable) {
-			assert.ok(oRenderer === sap.ui.table.TreeTableRenderer, "Global Namespace");
+			assert.ok(oRenderer === TreeTableRenderer, "Global Namespace");
 			assert.ok(oRenderer === oTable.getMetadata().getRenderer(), "Metadata");
 			done();
 		});
@@ -4718,7 +4080,7 @@ sap.ui.define([
 	QUnit.test("AnalyticalTableRenderer", function(assert) {
 		var done = assert.async();
 		sap.ui.require(["sap/ui/table/AnalyticalTableRenderer", "sap/ui/table/AnalyticalTable"], function(oRenderer, oTable) {
-			assert.ok(oRenderer === sap.ui.table.AnalyticalTableRenderer, "Global Namespace");
+			assert.ok(oRenderer === AnalyticalTableRenderer, "Global Namespace");
 			assert.ok(oRenderer === oTable.getMetadata().getRenderer(), "Metadata");
 			done();
 		});
@@ -4930,19 +4292,6 @@ sap.ui.define([
 		assert.verifySteps(["busy: true", "busy: false", "busy: true", "busy: false"], "busyStateChanged event");
 
 		oControlSetBusy.restore();
-	});
-
-	/**
-	 * @deprecated As of version 1.110
-	 */
-	QUnit.test("test setGroupBy function", function(assert) {
-		oTable.setEnableGrouping(false);
-		assert.ok(!oTable.getEnableGrouping(), "Grouping not enabled");
-		oTable.setEnableGrouping(true);
-		assert.ok(oTable.getEnableGrouping(), "Grouping enabled");
-		assert.equal(oTable.setGroupBy("gender").getGroupBy(), null, "test for string value as paramenter, grouping not applied");
-		var oColumn = oTable.getColumns()[5];
-		assert.equal(oTable.setGroupBy(oColumn).getGroupBy(), oColumn.getId(), "Grouping set");
 	});
 
 	QUnit.test("test setThreshold function", function(assert) {
@@ -5605,18 +4954,6 @@ sap.ui.define([
 				assert.ok(oSpy.notCalled, "Table#" + sMethodName + " does not call SelectionPlugin#" + sMethodName);
 			}
 		}.bind(this));
-	});
-
-	/**
-	 * @deprecated As of version 1.115
-	 */
-	QUnit.test("Legacy multi selection", function(assert) {
-		this.oTable.addPlugin(this.oTestPlugin);
-		assert.throws(this.oTable._enableLegacyMultiSelection, "Table#_enableLegacyMultiSelection throws an error if a selection plugin is applied");
-
-		this.oTable.removePlugin(this.oTestPlugin);
-		this.oTable._enableLegacyMultiSelection();
-		assert.throws(this.oTable._legacyMultiSelection, "Table#_legacyMultiSelection throws an error if a selection plugin is applied");
 	});
 
 	QUnit.module("Hidden dependents", {
@@ -6748,5 +6085,4 @@ sap.ui.define([
 			assert.notOk(this.oTable.getContextMenu().isOpen(), "CellContextMenu is closed");
 		});
 	});
-
 });

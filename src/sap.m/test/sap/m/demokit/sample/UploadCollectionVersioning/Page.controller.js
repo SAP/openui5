@@ -2,10 +2,9 @@ sap.ui.define([
 	"sap/base/util/deepExtend",
 	"sap/ui/core/mvc/Controller",
 	"sap/m/MessageToast",
-	"sap/m/UploadCollectionParameter",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/format/FileSizeFormat"
-], function(deepExtend, Controller, MessageToast, UploadCollectionParameter, JSONModel, FileSizeFormat) {
+], function(deepExtend, Controller, MessageToast, JSONModel, FileSizeFormat) {
 	"use strict";
 
 	return Controller.extend("sap.m.sample.UploadCollectionVersioning.Page", {
@@ -42,7 +41,7 @@ sap.ui.define([
 		onChange: function(oEvent) {
 			var oUploadCollection = oEvent.getSource();
 			// Header Token
-			var oCustomerHeaderToken = new UploadCollectionParameter({
+			var oCustomerHeaderToken = new undefined/*UploadCollectionParameter*/({
 				name: "x-csrf-token",
 				value: "securityTokenFromModel"
 			});
@@ -113,7 +112,7 @@ sap.ui.define([
 
 		onBeforeUploadStarts: function(oEvent) {
 			// Header Slug
-			var oCustomerHeaderSlug = new UploadCollectionParameter({
+			var oCustomerHeaderSlug = new undefined/*UploadCollectionParameter*/({
 				name: "slug",
 				value: oEvent.getParameter("fileName")
 			});

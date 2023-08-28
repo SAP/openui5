@@ -57,65 +57,65 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-[{Foo : true}, {}].forEach(function (mChangedEntities, i) {
-		QUnit.test("_hasChangedEntity: no changes detected, " + i, function (assert) {
-		var oBinding = {
-				_map : function () {}
-			},
-			bResult;
+	[{Foo : true}, {}].forEach(function (mChangedEntities, i) {
+			QUnit.test("_hasChangedEntity: no changes detected, " + i, function (assert) {
+			var oBinding = {
+					_map : function () {}
+				},
+				bResult;
 
-		this.mock(oBinding).expects("_map").withExactArgs(sinon.match.func)
-			.callsFake(function (fnMap) {
-				var oRecursionBreaker = {broken : false};
+			this.mock(oBinding).expects("_map").withExactArgs(sinon.match.func)
+				.callsFake(function (fnMap) {
+					var oRecursionBreaker = {broken : false};
 
-				fnMap({key : "notMatched"}, oRecursionBreaker);
-				fnMap(/*server index node not yet read*/undefined, oRecursionBreaker);
-				assert.strictEqual(oRecursionBreaker.broken, false);
-			});
+					fnMap({key : "notMatched"}, oRecursionBreaker);
+					fnMap(/*server index node not yet read*/undefined, oRecursionBreaker);
+					assert.strictEqual(oRecursionBreaker.broken, false);
+				});
 
-		// code under test
-		bResult = ODataTreeBindingFlat.prototype._hasChangedEntity.call(oBinding, mChangedEntities);
+			// code under test
+			bResult = ODataTreeBindingFlat.prototype._hasChangedEntity.call(oBinding, mChangedEntities);
 
-		assert.strictEqual(bResult, false);
+			assert.strictEqual(bResult, false);
+		});
 	});
-});
 
 	//*********************************************************************************************
-[{
-	call0 : {bBrokenValue : true, sKey : "~changedEntityKey"}
-}, {
-	call0 : {bBrokenValue : false, sKey : "foo"},
-	call1 : {bBrokenValue : true, sKey : "~changedEntityKey"}
-}].forEach(function (oFixture, i) {
-	QUnit.test("_hasChangedEntity: changes detected, " + i, function (assert) {
-		var oBinding = {
-				_map : function () {}
-			},
-			mChangedEntities = {"~changedEntityKey" : true},
-			bResult;
+	[{
+		call0 : {bBrokenValue : true, sKey : "~changedEntityKey"}
+	}, {
+		call0 : {bBrokenValue : false, sKey : "foo"},
+		call1 : {bBrokenValue : true, sKey : "~changedEntityKey"}
+	}].forEach(function (oFixture, i) {
+		QUnit.test("_hasChangedEntity: changes detected, " + i, function (assert) {
+			var oBinding = {
+					_map : function () {}
+				},
+				mChangedEntities = {"~changedEntityKey" : true},
+				bResult;
 
-		this.mock(oBinding).expects("_map").withExactArgs(sinon.match.func)
-			.callsFake(function (fnMap) {
-				var oRecursionBreaker = {broken : false};
+			this.mock(oBinding).expects("_map").withExactArgs(sinon.match.func)
+				.callsFake(function (fnMap) {
+					var oRecursionBreaker = {broken : false};
 
-				fnMap({key : oFixture.call0.sKey}, oRecursionBreaker);
-				assert.strictEqual(oRecursionBreaker.broken, oFixture.call0.bBrokenValue,
-					"key: " + oFixture.call0.sKey);
+					fnMap({key : oFixture.call0.sKey}, oRecursionBreaker);
+					assert.strictEqual(oRecursionBreaker.broken, oFixture.call0.bBrokenValue,
+						"key: " + oFixture.call0.sKey);
 
-				if (!oRecursionBreaker.broken) {
-					// if oRecursionBreaker.broken is true ODataTreeBindingFlat#_map stops iterating
-					fnMap({key : oFixture.call1.sKey}, oRecursionBreaker);
-					assert.strictEqual(oRecursionBreaker.broken, oFixture.call1.bBrokenValue,
-						"key: " + oFixture.call1.sKey);
-				}
-			});
+					if (!oRecursionBreaker.broken) {
+						// if oRecursionBreaker.broken is true ODataTreeBindingFlat#_map stops iterating
+						fnMap({key : oFixture.call1.sKey}, oRecursionBreaker);
+						assert.strictEqual(oRecursionBreaker.broken, oFixture.call1.bBrokenValue,
+							"key: " + oFixture.call1.sKey);
+					}
+				});
 
-		// code under test
-		bResult = ODataTreeBindingFlat.prototype._hasChangedEntity.call(oBinding, mChangedEntities);
+			// code under test
+			bResult = ODataTreeBindingFlat.prototype._hasChangedEntity.call(oBinding, mChangedEntities);
 
-		assert.strictEqual(bResult, true);
+			assert.strictEqual(bResult, true);
+		});
 	});
-});
 
 	//*********************************************************************************************
 	QUnit.test("getContexts: delegates to _getContextsOrNodes", function (assert) {
@@ -156,43 +156,43 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-[{
-	inputParameters : undefined,
-	expectedParameters : {groupId : "~groupId", refreshAfterChange : false}
-}, {
-	inputParameters : {bar : "~baz", groupId : "~value0", refreshAfterChange : "~value1"},
-	expectedParameters : {bar : "~baz", groupId : "~groupId", refreshAfterChange : false}
-}].forEach(function (oFixture, i) {
-	QUnit.test("createEntry: resolved binding, #" + i, function (assert) {
-		var oBinding = {
-				oModel : {
-					_resolveGroup : function () {},
-					createEntry : function () {}
-				},
-				getResolvedPath : function () {}
-			};
+	[{
+		inputParameters : undefined,
+		expectedParameters : {groupId : "~groupId", refreshAfterChange : false}
+	}, {
+		inputParameters : {bar : "~baz", groupId : "~value0", refreshAfterChange : "~value1"},
+		expectedParameters : {bar : "~baz", groupId : "~groupId", refreshAfterChange : false}
+	}].forEach(function (oFixture, i) {
+		QUnit.test("createEntry: resolved binding, #" + i, function (assert) {
+			var oBinding = {
+					oModel : {
+						_resolveGroup : function () {},
+						createEntry : function () {}
+					},
+					getResolvedPath : function () {}
+				};
 
-		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("/foo");
-		this.mock(oBinding.oModel).expects("_resolveGroup")
-			.withExactArgs("/foo")
-			.returns({groupId : "~groupId"});
-		this.mock(oBinding.oModel).expects("createEntry")
-			.withExactArgs("/foo", sinon.match(function (mParameters0) {
-				if (oFixture.inputParameters) {
-					assert.strictEqual(mParameters0, oFixture.inputParameters);
-				}
-				assert.deepEqual(mParameters0, oFixture.expectedParameters);
+			this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("/foo");
+			this.mock(oBinding.oModel).expects("_resolveGroup")
+				.withExactArgs("/foo")
+				.returns({groupId : "~groupId"});
+			this.mock(oBinding.oModel).expects("createEntry")
+				.withExactArgs("/foo", sinon.match(function (mParameters0) {
+					if (oFixture.inputParameters) {
+						assert.strictEqual(mParameters0, oFixture.inputParameters);
+					}
+					assert.deepEqual(mParameters0, oFixture.expectedParameters);
 
-				return true;
-			}))
-			.returns("~createdContext");
+					return true;
+				}))
+				.returns("~createdContext");
 
-		// code under test
-		assert.strictEqual(
-			ODataTreeBindingFlat.prototype.createEntry.call(oBinding, oFixture.inputParameters),
-			"~createdContext");
+			// code under test
+			assert.strictEqual(
+				ODataTreeBindingFlat.prototype.createEntry.call(oBinding, oFixture.inputParameters),
+				"~createdContext");
+		});
 	});
-});
 
 	//*********************************************************************************************
 	QUnit.test("createEntry: unresolved binding", function (assert) {
@@ -210,91 +210,24 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-[{
-	parameters: {expand : "~expand"},
-	error: new Error("Parameter 'expand' is not supported")
- }, {
-	parameters: {inactive : "~inactive"},
-	error: new Error("Parameter 'inactive' is not supported")
-}].forEach((oFixture) => {
-	QUnit.test("createEntry: unsupported parameter", function (assert) {
-		const oBinding = {
-				getResolvedPath() {}
-			};
-		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("~sPath");
+	[{
+		parameters: {expand : "~expand"},
+		error: new Error("Parameter 'expand' is not supported")
+	 }, {
+		parameters: {inactive : "~inactive"},
+		error: new Error("Parameter 'inactive' is not supported")
+	}].forEach((oFixture) => {
+		QUnit.test("createEntry: unsupported parameter", function (assert) {
+			const oBinding = {
+					getResolvedPath() {}
+				};
+			this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("~sPath");
 
-		assert.throws(() => {
-			// code under test
-			ODataTreeBindingFlat.prototype.createEntry.call(oBinding, oFixture.parameters);
-		}, oFixture.error );
-	});
-});
-	/**
-	 * @deprecated As of version 1.104.0
-	 */
-	QUnit.test("submitChanges: unresolved binding", function (assert) {
-		var oBinding = {
-				getPath : function () {},
-				getResolvedPath : function () {}
-			};
-
-		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns(undefined);
-		this.mock(oBinding).expects("getPath").withExactArgs().returns("~path");
-		this.oLogMock.expects("error")
-			.withExactArgs("#submitChanges failed: binding is unresolved", "~path", sClassName);
-
-		// code under test
-		ODataTreeBindingFlat.prototype.submitChanges.call(oBinding);
-	});
-	/**
-	 * @deprecated As of version 1.104.0
-	 */
-	QUnit.test("submitChanges: call ODataModel#submitChanges", function (assert) {
-		var oBinding = {
-				_bSubmitChangesCalled : false,
-				oModel : {
-					_resolveGroup : function () {},
-					submitChanges : function () {}
-				},
-				getResolvedPath : function () {}
-			};
-
-		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("/foo");
-		this.mock(oBinding.oModel).expects("_resolveGroup")
-			.withExactArgs("/foo")
-			.returns({groupId : "~groupId"});
-		this.mock(oBinding.oModel).expects("submitChanges").withExactArgs({groupId : "~groupId"});
-
-		// code under test
-		ODataTreeBindingFlat.prototype.submitChanges.call(oBinding);
-
-		assert.strictEqual(oBinding._bSubmitChangesCalled, true);
-	});
-	/**
-	 * @deprecated As of version 1.104.0
-	 */
-	QUnit.test("submitChanges: call ODataModel#submitChanges (w/ mParameters)", function (assert) {
-		var oBinding = {
-				_bSubmitChangesCalled : false,
-				oModel : {
-					_resolveGroup : function () {},
-					submitChanges : function () {}
-				},
-				getResolvedPath : function () {}
-			},
-			mParameters = {groupId : "~oldGroup"};
-
-		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("/foo");
-		this.mock(oBinding.oModel).expects("_resolveGroup")
-			.withExactArgs("/foo")
-			.returns({groupId : "~groupId"});
-		this.mock(oBinding.oModel).expects("submitChanges")
-			.withExactArgs(sinon.match.same(mParameters).and(sinon.match({groupId : "~groupId"})));
-
-		// code under test
-		ODataTreeBindingFlat.prototype.submitChanges.call(oBinding, mParameters);
-
-		assert.strictEqual(oBinding._bSubmitChangesCalled, true);
+			assert.throws(() => {
+				// code under test
+				ODataTreeBindingFlat.prototype.createEntry.call(oBinding, oFixture.parameters);
+			}, oFixture.error );
+		});
 	});
 
 	//*********************************************************************************************
@@ -385,77 +318,77 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-[
-	[{statusCode : "200"}, {statusCode : "300"}],
-	[{statusCode : "200"}, {statusCode : "199"}]
-].forEach(function (aChangeResponses, i) {
-	QUnit.test("_submitChanges: error in change response, success handler does nothing: " + i,
-			function (assert) {
-		var oBinding = {
-				_generateSubmitData : function () {},
-				_optimizeChanges : function () {},
-				getResolvedPath : function () {}
-			},
-			oOptimizedChanges = {foo : [], bar : ["baz"]},
-			mParameters = {},
-			oResponseData = {__batchResponses : [{__changeResponses : aChangeResponses}]};
+	[
+		[{statusCode : "200"}, {statusCode : "300"}],
+		[{statusCode : "200"}, {statusCode : "199"}]
+	].forEach(function (aChangeResponses, i) {
+		QUnit.test("_submitChanges: error in change response, success handler does nothing: " + i,
+				function (assert) {
+			var oBinding = {
+					_generateSubmitData : function () {},
+					_optimizeChanges : function () {},
+					getResolvedPath : function () {}
+				},
+				oOptimizedChanges = {foo : [], bar : ["baz"]},
+				mParameters = {},
+				oResponseData = {__batchResponses : [{__changeResponses : aChangeResponses}]};
 
-		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("/foo");
-		this.mock(oBinding).expects("_optimizeChanges").withExactArgs().returns(oOptimizedChanges);
-		this.mock(oBinding).expects("_generateSubmitData")
-			.withExactArgs(sinon.match.same(oOptimizedChanges), sinon.match.func);
+			this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("/foo");
+			this.mock(oBinding).expects("_optimizeChanges").withExactArgs().returns(oOptimizedChanges);
+			this.mock(oBinding).expects("_generateSubmitData")
+				.withExactArgs(sinon.match.same(oOptimizedChanges), sinon.match.func);
 
-		// code under test
-		ODataTreeBindingFlat.prototype._submitChanges.call(oBinding, mParameters);
+			// code under test
+			ODataTreeBindingFlat.prototype._submitChanges.call(oBinding, mParameters);
 
-		// code under test: success handler does nothing
-		mParameters.success(oResponseData);
+			// code under test: success handler does nothing
+			mParameters.success(oResponseData);
+		});
 	});
-});
 
 	//*********************************************************************************************
-[false, true].forEach(function(bRestoreTreeStateSupported) {
-	var sTitle = "_submitChanges: successful submit, _isRestoreTreeStateSupported="
-			+ bRestoreTreeStateSupported + "; call "
-			+ (bRestoreTreeStateSupported ? "_restoreTreeState" : "_refresh");
+	[false, true].forEach(function(bRestoreTreeStateSupported) {
+		var sTitle = "_submitChanges: successful submit, _isRestoreTreeStateSupported="
+				+ bRestoreTreeStateSupported + "; call "
+				+ (bRestoreTreeStateSupported ? "_restoreTreeState" : "_refresh");
 
-	QUnit.test(sTitle, function (assert) {
-		var oBinding = {
-				oModel : {submitChanges : function () {}},
-				_generateSubmitData : function () {},
-				_isRestoreTreeStateSupported : function () {},
-				_optimizeChanges : function () {},
-				_refresh : function () {},
-				_restoreTreeState : function () {},
-				getResolvedPath : function () {}
-			},
-			oOptimizedChanges = {foo : [], bar : ["baz"]},
-			mParameters = {},
-			oResponseData = {__batchResponses : [{__changeResponses : [{statusCode : "200"}]}]};
+		QUnit.test(sTitle, function (assert) {
+			var oBinding = {
+					oModel : {submitChanges : function () {}},
+					_generateSubmitData : function () {},
+					_isRestoreTreeStateSupported : function () {},
+					_optimizeChanges : function () {},
+					_refresh : function () {},
+					_restoreTreeState : function () {},
+					getResolvedPath : function () {}
+				},
+				oOptimizedChanges = {foo : [], bar : ["baz"]},
+				mParameters = {},
+				oResponseData = {__batchResponses : [{__changeResponses : [{statusCode : "200"}]}]};
 
-		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("~sResolvedPath");
-		this.mock(oBinding).expects("_optimizeChanges").withExactArgs().returns(oOptimizedChanges);
-		this.mock(oBinding).expects("_generateSubmitData")
-			.withExactArgs(sinon.match.same(oOptimizedChanges), sinon.match.func);
+			this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("~sResolvedPath");
+			this.mock(oBinding).expects("_optimizeChanges").withExactArgs().returns(oOptimizedChanges);
+			this.mock(oBinding).expects("_generateSubmitData")
+				.withExactArgs(sinon.match.same(oOptimizedChanges), sinon.match.func);
 
-		// code under test
-		ODataTreeBindingFlat.prototype._submitChanges.call(oBinding, mParameters);
+			// code under test
+			ODataTreeBindingFlat.prototype._submitChanges.call(oBinding, mParameters);
 
-		this.mock(oBinding).expects("_isRestoreTreeStateSupported")
-			.withExactArgs()
-			.returns(bRestoreTreeStateSupported);
-		this.mock(oBinding).expects("_restoreTreeState")
-			.withExactArgs(sinon.match.same(oOptimizedChanges))
-			.exactly(bRestoreTreeStateSupported ? 1 : 0)
-			.returns(Promise.resolve());
-		this.mock(oBinding).expects("_refresh")
-			.withExactArgs(true)
-			.exactly(bRestoreTreeStateSupported ? 0 : 1);
+			this.mock(oBinding).expects("_isRestoreTreeStateSupported")
+				.withExactArgs()
+				.returns(bRestoreTreeStateSupported);
+			this.mock(oBinding).expects("_restoreTreeState")
+				.withExactArgs(sinon.match.same(oOptimizedChanges))
+				.exactly(bRestoreTreeStateSupported ? 1 : 0)
+				.returns(Promise.resolve());
+			this.mock(oBinding).expects("_refresh")
+				.withExactArgs(true)
+				.exactly(bRestoreTreeStateSupported ? 0 : 1);
 
-		// code under test
-		mParameters.success(oResponseData);
+			// code under test
+			mParameters.success(oResponseData);
+		});
 	});
-});
 
 	//*********************************************************************************************
 	QUnit.test("_submitChanges: _restoreTreeState returns rejected promise", function (assert) {
@@ -497,89 +430,89 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-[false, true].forEach(function(bRefresh, i) {
-	QUnit.test("_submitChanges: successful submit but generating submit data failed, don't restore"
-			+ " tree state but refresh if not yet rereshed; #" + i, function (assert) {
-		var oBinding = {
-				bRefresh : "~bRefresh",
-				oModel : {
-					_resolveGroup : function () {},
-					submitChanges : function () {}
+	[false, true].forEach(function(bRefresh, i) {
+		QUnit.test("_submitChanges: successful submit but generating submit data failed, don't restore"
+				+ " tree state but refresh if not yet rereshed; #" + i, function (assert) {
+			var oBinding = {
+					bRefresh : "~bRefresh",
+					oModel : {
+						_resolveGroup : function () {},
+						submitChanges : function () {}
+					},
+					_generateSubmitData : function () {},
+					_optimizeChanges : function () {},
+					_refresh : function () {},
+					getResolvedPath : function () {}
 				},
-				_generateSubmitData : function () {},
-				_optimizeChanges : function () {},
-				_refresh : function () {},
-				getResolvedPath : function () {}
-			},
-			oOptimizedChanges = {foo : [], bar : ["baz"]},
-			mParameters = {groupId : "~groupId"},
-			oResponseData = {__batchResponses : [{__changeResponses : [{statusCode : "200"}]}]},
-			that = this;
+				oOptimizedChanges = {foo : [], bar : ["baz"]},
+				mParameters = {groupId : "~groupId"},
+				oResponseData = {__batchResponses : [{__changeResponses : [{statusCode : "200"}]}]},
+				that = this;
 
-		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("~sResolvedPath");
-		this.mock(oBinding.oModel).expects("_resolveGroup")
-			.withExactArgs("~sResolvedPath")
-			.returns({groupId : "~groupId"});
-		this.mock(oBinding).expects("_optimizeChanges").withExactArgs().returns(oOptimizedChanges);
-		this.mock(oBinding).expects("_generateSubmitData")
-			.withExactArgs(sinon.match.same(oOptimizedChanges), sinon.match.func)
-			.callsFake(function (oOptimizedChanges, fnError) {
-				that.oLogMock.expects("error")
-					.withExactArgs("Tree state restoration request failed for binding: "
-						+ "~sResolvedPath", "~error", sClassName);
+			this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("~sResolvedPath");
+			this.mock(oBinding.oModel).expects("_resolveGroup")
+				.withExactArgs("~sResolvedPath")
+				.returns({groupId : "~groupId"});
+			this.mock(oBinding).expects("_optimizeChanges").withExactArgs().returns(oOptimizedChanges);
+			this.mock(oBinding).expects("_generateSubmitData")
+				.withExactArgs(sinon.match.same(oOptimizedChanges), sinon.match.func)
+				.callsFake(function (oOptimizedChanges, fnError) {
+					that.oLogMock.expects("error")
+						.withExactArgs("Tree state restoration request failed for binding: "
+							+ "~sResolvedPath", "~error", sClassName);
 
-				// code under test
-				fnError("~error");
-			});
+					// code under test
+					fnError("~error");
+				});
 
-		// code under test
-		ODataTreeBindingFlat.prototype._submitChanges.call(oBinding, mParameters);
+			// code under test
+			ODataTreeBindingFlat.prototype._submitChanges.call(oBinding, mParameters);
 
-		assert.strictEqual(oBinding.bRefresh, false);
+			assert.strictEqual(oBinding.bRefresh, false);
 
-		oBinding.bRefresh = bRefresh;
-		this.mock(oBinding).expects("_refresh").withExactArgs(true).exactly(bRefresh ? 0 : 1);
+			oBinding.bRefresh = bRefresh;
+			this.mock(oBinding).expects("_refresh").withExactArgs(true).exactly(bRefresh ? 0 : 1);
 
-		// code under test
-		mParameters.success(oResponseData);
+			// code under test
+			mParameters.success(oResponseData);
+		});
 	});
-});
 
 	//*********************************************************************************************
-[
-	{},
-	{__batchResponses : []},
-	{__batchResponses : [{}]},
-	{__batchResponses : [{__changeResponses : []}]}
-].forEach(function (oResponseData, i) {
-	var sTitle = "_submitChanges: success handler logs warning if batch responses or change"
-			+ " responses are missing: " + i;
+	[
+		{},
+		{__batchResponses : []},
+		{__batchResponses : [{}]},
+		{__batchResponses : [{__changeResponses : []}]}
+	].forEach(function (oResponseData, i) {
+		var sTitle = "_submitChanges: success handler logs warning if batch responses or change"
+				+ " responses are missing: " + i;
 
-	QUnit.test(sTitle, function (assert) {
-		var oBinding = {
-				_generateSubmitData : function () {},
-				_optimizeChanges : function () {},
-				getResolvedPath : function () {}
-			},
-			oOptimizedChanges = {foo : [], bar : ["baz"]},
-			mParameters = {};
+		QUnit.test(sTitle, function (assert) {
+			var oBinding = {
+					_generateSubmitData : function () {},
+					_optimizeChanges : function () {},
+					getResolvedPath : function () {}
+				},
+				oOptimizedChanges = {foo : [], bar : ["baz"]},
+				mParameters = {};
 
-		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("/foo");
-		this.mock(oBinding).expects("_optimizeChanges").withExactArgs().returns(oOptimizedChanges);
-		this.mock(oBinding).expects("_generateSubmitData")
-			.withExactArgs(sinon.match.same(oOptimizedChanges), sinon.match.func);
+			this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("/foo");
+			this.mock(oBinding).expects("_optimizeChanges").withExactArgs().returns(oOptimizedChanges);
+			this.mock(oBinding).expects("_generateSubmitData")
+				.withExactArgs(sinon.match.same(oOptimizedChanges), sinon.match.func);
 
-		// code under test
-		ODataTreeBindingFlat.prototype._submitChanges.call(oBinding, mParameters);
+			// code under test
+			ODataTreeBindingFlat.prototype._submitChanges.call(oBinding, mParameters);
 
-		this.oLogMock.expects("warning")
-			.withExactArgs("#submitChanges: no change response in batch response", "/foo",
-				sClassName);
+			this.oLogMock.expects("warning")
+				.withExactArgs("#submitChanges: no change response in batch response", "/foo",
+					sClassName);
 
-		// code under test
-		mParameters.success(oResponseData, "~oResponse");
+			// code under test
+			mParameters.success(oResponseData, "~oResponse");
+		});
 	});
-});
 
 	//*********************************************************************************************
 	QUnit.test("_submitChanges: success handler logs no warning if no request was sent",
@@ -605,159 +538,159 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-["~sNewlyGeneratedId", undefined].forEach(function (sNewlyGeneratedId) {
-	[true, false, undefined].forEach(function (bIsTransient) {
-	var sTitle = "_ensureHierarchyNodeIDForContext: use isTransient, bIsTransient=" + bIsTransient
-			+ ", sNewlyGeneratedId=" + sNewlyGeneratedId;
+	["~sNewlyGeneratedId", undefined].forEach(function (sNewlyGeneratedId) {
+		[true, false, undefined].forEach(function (bIsTransient) {
+		var sTitle = "_ensureHierarchyNodeIDForContext: use isTransient, bIsTransient=" + bIsTransient
+				+ ", sNewlyGeneratedId=" + sNewlyGeneratedId;
 
-	QUnit.test(sTitle, function (assert) {
-		var oBinding = {
-				oModel : {setProperty : function () {}},
-				oTreeProperties : {"hierarchy-node-for" : "foo"}
-			},
-			oContext = {// a sap.ui.model.odata.v2.Context instance
-				getProperty : function () {},
-				isTransient : function () {}
-			};
-
-		this.mock(oContext).expects("getProperty").withExactArgs("foo").returns(sNewlyGeneratedId);
-		this.mock(oContext).expects("isTransient").withExactArgs().returns(bIsTransient);
-		this.mock(oBinding.oModel).expects("setProperty")
-			//TODO: replace with uid mock
-			.withExactArgs("foo", /* uid */sinon.match.string, sinon.match.same(oContext))
-			.exactly(bIsTransient !== true || sNewlyGeneratedId ? 0 : 1);
-
-		// code under test
-		ODataTreeBindingFlat.prototype._ensureHierarchyNodeIDForContext.call(oBinding, oContext);
-	});
-	});
-});
-
-	//*********************************************************************************************
-[
-	{restoreTreeStateSupported : undefined, result : true},
-	{restoreTreeStateSupported : false, result : true},
-	{restoreTreeStateSupported : true, result : false}
-].forEach(function (oFixture, i) {
-	QUnit.test("_isRefreshAfterChangeAllowed: #" + i, function (assert) {
-		var oBinding = {
-				_isRestoreTreeStateSupported : function () {}
-			};
-
-		this.mock(oBinding).expects("_isRestoreTreeStateSupported")
-			.withExactArgs()
-			.returns(oFixture.restoreTreeStateSupported);
-
-		// code under test
-		assert.strictEqual(
-			ODataTreeBindingFlat.prototype._isRefreshAfterChangeAllowed.call(oBinding),
-			oFixture.result);
-	});
-});
-
-[{
-	binding : {_bRestoreTreeStateAfterChange : undefined, aApplicationFilters : undefined},
-	result : undefined
-}, {
-	binding : {_bRestoreTreeStateAfterChange : false, aApplicationFilters : undefined},
-	result : false
-}, {
-	binding : {_bRestoreTreeStateAfterChange : false, aApplicationFilters : []},
-	result : false
-}, {
-	binding : {_bRestoreTreeStateAfterChange : true, aApplicationFilters : ["~foo"]},
-	result : false
-}, {
-	binding : {_bRestoreTreeStateAfterChange : true, aApplicationFilters : undefined},
-	result : true
-}, {
-	binding : {_bRestoreTreeStateAfterChange : true, aApplicationFilters : []},
-	result : true
-}].forEach(function (oFixture, i) {
-	//*********************************************************************************************
-	QUnit.test("_isRestoreTreeStateSupported: #" + i, function (assert) {
-		// code under test
-		assert.strictEqual(
-			ODataTreeBindingFlat.prototype._isRestoreTreeStateSupported.call(oFixture.binding),
-			oFixture.result);
-	});
-});
-
-	//*********************************************************************************************
-[false, true].forEach(function (bRestoreTreeStateSupported) {
-	var sTitle = "_generateSubmitData: for moved nodes (restoreTreeStateSupported="
-			+ bRestoreTreeStateSupported + ")";
-
-	QUnit.test(sTitle, function (assert) {
-		var oBinding = {
-				oModel : {
-					_resolveGroup : function () {},
-					setProperty : function () {}
+		QUnit.test(sTitle, function (assert) {
+			var oBinding = {
+					oModel : {setProperty : function () {}},
+					oTreeProperties : {"hierarchy-node-for" : "foo"}
 				},
-				oTreeProperties : {
-					"hierarchy-node-for" : "~hierarchyNode",
-					"hierarchy-parent-node-for" : "~hierarchyParentNode"
-				},
-				_generatePreorderPositionRequest : function () {},
-				_generateSiblingsPositionRequest : function () {},
-				_isRestoreTreeStateSupported : function () {},
-				getResolvedPath : function () {}
-			},
-			oBindingMock = this.mock(oBinding),
-			oModelMock = this.mock(oBinding.oModel),
-			fnNewNode = function (oContext) {
-				return {
-					context : oContext,
-					parent : {context : {getProperty : function () {}}}
+				oContext = {// a sap.ui.model.odata.v2.Context instance
+					getProperty : function () {},
+					isTransient : function () {}
 				};
-			},
-			oOptimizedChanges = {
-				added : [],
-				moved : [fnNewNode("context0"), fnNewNode("context1")],
-				removed : [],
-				creationCancelled : []
-			};
 
-		oBindingMock.expects("getResolvedPath").withExactArgs().returns("/foo");
-		oModelMock.expects("_resolveGroup").withExactArgs("/foo").returns({groupId : "~groupId"});
-		this.mock(oOptimizedChanges.moved[0].parent.context).expects("getProperty")
-			.withExactArgs("~hierarchyNode")
-			.returns("~parentID0");
-		oModelMock.expects("setProperty")
-			.withExactArgs("~hierarchyParentNode", "~parentID0", "context0");
-		oBindingMock.expects("_isRestoreTreeStateSupported")
-			.withExactArgs()
-			.returns(bRestoreTreeStateSupported);
-		oBindingMock.expects("_generatePreorderPositionRequest")
-			.withExactArgs(sinon.match.same(oOptimizedChanges.moved[0]),
-				{groupId : "~groupId", error : "~fnRestoreRequestErrorHandler"})
-			.exactly(bRestoreTreeStateSupported ? 1 : 0);
-		oBindingMock.expects("_generateSiblingsPositionRequest")
-			.withExactArgs(sinon.match.same(oOptimizedChanges.moved[0]),
-				{groupId : "~groupId", error : "~fnRestoreRequestErrorHandler"})
-			.exactly(bRestoreTreeStateSupported ? 1 : 0);
-		this.mock(oOptimizedChanges.moved[1].parent.context).expects("getProperty")
-			.withExactArgs("~hierarchyNode")
-			.returns("~parentID1");
-		oModelMock.expects("setProperty")
-			.withExactArgs("~hierarchyParentNode", "~parentID1", "context1");
-		oBindingMock.expects("_isRestoreTreeStateSupported")
-			.withExactArgs()
-			.returns(bRestoreTreeStateSupported);
-		oBindingMock.expects("_generatePreorderPositionRequest")
-			.withExactArgs(sinon.match.same(oOptimizedChanges.moved[1]),
-				{groupId : "~groupId", error : "~fnRestoreRequestErrorHandler"})
-			.exactly(bRestoreTreeStateSupported ? 1 : 0);
-		oBindingMock.expects("_generateSiblingsPositionRequest")
-			.withExactArgs(sinon.match.same(oOptimizedChanges.moved[1]),
-				{groupId : "~groupId", error : "~fnRestoreRequestErrorHandler"})
-			.exactly(bRestoreTreeStateSupported ? 1 : 0);
+			this.mock(oContext).expects("getProperty").withExactArgs("foo").returns(sNewlyGeneratedId);
+			this.mock(oContext).expects("isTransient").withExactArgs().returns(bIsTransient);
+			this.mock(oBinding.oModel).expects("setProperty")
+				//TODO: replace with uid mock
+				.withExactArgs("foo", /* uid */sinon.match.string, sinon.match.same(oContext))
+				.exactly(bIsTransient !== true || sNewlyGeneratedId ? 0 : 1);
 
-		// code under test
-		ODataTreeBindingFlat.prototype._generateSubmitData.call(oBinding, oOptimizedChanges,
-			"~fnRestoreRequestErrorHandler");
+			// code under test
+			ODataTreeBindingFlat.prototype._ensureHierarchyNodeIDForContext.call(oBinding, oContext);
+		});
+		});
 	});
-});
+
+	//*********************************************************************************************
+	[
+		{restoreTreeStateSupported : undefined, result : true},
+		{restoreTreeStateSupported : false, result : true},
+		{restoreTreeStateSupported : true, result : false}
+	].forEach(function (oFixture, i) {
+		QUnit.test("_isRefreshAfterChangeAllowed: #" + i, function (assert) {
+			var oBinding = {
+					_isRestoreTreeStateSupported : function () {}
+				};
+
+			this.mock(oBinding).expects("_isRestoreTreeStateSupported")
+				.withExactArgs()
+				.returns(oFixture.restoreTreeStateSupported);
+
+			// code under test
+			assert.strictEqual(
+				ODataTreeBindingFlat.prototype._isRefreshAfterChangeAllowed.call(oBinding),
+				oFixture.result);
+		});
+	});
+
+	[{
+		binding : {_bRestoreTreeStateAfterChange : undefined, aApplicationFilters : undefined},
+		result : undefined
+	}, {
+		binding : {_bRestoreTreeStateAfterChange : false, aApplicationFilters : undefined},
+		result : false
+	}, {
+		binding : {_bRestoreTreeStateAfterChange : false, aApplicationFilters : []},
+		result : false
+	}, {
+		binding : {_bRestoreTreeStateAfterChange : true, aApplicationFilters : ["~foo"]},
+		result : false
+	}, {
+		binding : {_bRestoreTreeStateAfterChange : true, aApplicationFilters : undefined},
+		result : true
+	}, {
+		binding : {_bRestoreTreeStateAfterChange : true, aApplicationFilters : []},
+		result : true
+	}].forEach(function (oFixture, i) {
+		//*********************************************************************************************
+		QUnit.test("_isRestoreTreeStateSupported: #" + i, function (assert) {
+			// code under test
+			assert.strictEqual(
+				ODataTreeBindingFlat.prototype._isRestoreTreeStateSupported.call(oFixture.binding),
+				oFixture.result);
+		});
+	});
+
+	//*********************************************************************************************
+	[false, true].forEach(function (bRestoreTreeStateSupported) {
+		var sTitle = "_generateSubmitData: for moved nodes (restoreTreeStateSupported="
+				+ bRestoreTreeStateSupported + ")";
+
+		QUnit.test(sTitle, function (assert) {
+			var oBinding = {
+					oModel : {
+						_resolveGroup : function () {},
+						setProperty : function () {}
+					},
+					oTreeProperties : {
+						"hierarchy-node-for" : "~hierarchyNode",
+						"hierarchy-parent-node-for" : "~hierarchyParentNode"
+					},
+					_generatePreorderPositionRequest : function () {},
+					_generateSiblingsPositionRequest : function () {},
+					_isRestoreTreeStateSupported : function () {},
+					getResolvedPath : function () {}
+				},
+				oBindingMock = this.mock(oBinding),
+				oModelMock = this.mock(oBinding.oModel),
+				fnNewNode = function (oContext) {
+					return {
+						context : oContext,
+						parent : {context : {getProperty : function () {}}}
+					};
+				},
+				oOptimizedChanges = {
+					added : [],
+					moved : [fnNewNode("context0"), fnNewNode("context1")],
+					removed : [],
+					creationCancelled : []
+				};
+
+			oBindingMock.expects("getResolvedPath").withExactArgs().returns("/foo");
+			oModelMock.expects("_resolveGroup").withExactArgs("/foo").returns({groupId : "~groupId"});
+			this.mock(oOptimizedChanges.moved[0].parent.context).expects("getProperty")
+				.withExactArgs("~hierarchyNode")
+				.returns("~parentID0");
+			oModelMock.expects("setProperty")
+				.withExactArgs("~hierarchyParentNode", "~parentID0", "context0");
+			oBindingMock.expects("_isRestoreTreeStateSupported")
+				.withExactArgs()
+				.returns(bRestoreTreeStateSupported);
+			oBindingMock.expects("_generatePreorderPositionRequest")
+				.withExactArgs(sinon.match.same(oOptimizedChanges.moved[0]),
+					{groupId : "~groupId", error : "~fnRestoreRequestErrorHandler"})
+				.exactly(bRestoreTreeStateSupported ? 1 : 0);
+			oBindingMock.expects("_generateSiblingsPositionRequest")
+				.withExactArgs(sinon.match.same(oOptimizedChanges.moved[0]),
+					{groupId : "~groupId", error : "~fnRestoreRequestErrorHandler"})
+				.exactly(bRestoreTreeStateSupported ? 1 : 0);
+			this.mock(oOptimizedChanges.moved[1].parent.context).expects("getProperty")
+				.withExactArgs("~hierarchyNode")
+				.returns("~parentID1");
+			oModelMock.expects("setProperty")
+				.withExactArgs("~hierarchyParentNode", "~parentID1", "context1");
+			oBindingMock.expects("_isRestoreTreeStateSupported")
+				.withExactArgs()
+				.returns(bRestoreTreeStateSupported);
+			oBindingMock.expects("_generatePreorderPositionRequest")
+				.withExactArgs(sinon.match.same(oOptimizedChanges.moved[1]),
+					{groupId : "~groupId", error : "~fnRestoreRequestErrorHandler"})
+				.exactly(bRestoreTreeStateSupported ? 1 : 0);
+			oBindingMock.expects("_generateSiblingsPositionRequest")
+				.withExactArgs(sinon.match.same(oOptimizedChanges.moved[1]),
+					{groupId : "~groupId", error : "~fnRestoreRequestErrorHandler"})
+				.exactly(bRestoreTreeStateSupported ? 1 : 0);
+
+			// code under test
+			ODataTreeBindingFlat.prototype._generateSubmitData.call(oBinding, oOptimizedChanges,
+				"~fnRestoreRequestErrorHandler");
+		});
+	});
 
 	//*********************************************************************************************
 	QUnit.test("_generateDeleteRequest: for added node", function (assert) {
@@ -828,28 +761,28 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-[
-	{added : [{/*node*/}], creationCancelled : [], moved : [], removed : []},
-	{added : [], creationCancelled : [], moved : [{/*node*/}], removed : []},
-	{added : [], creationCancelled : [], moved : [], removed : [{/*node*/}]}
-].forEach(function (oOptimizedChanges, i) {
-	QUnit.test("_hasPendingChanges: with changed nodes: " + i, function (assert) {
-		var oBinding = {
-				_aAllChangedNodes : [{/*node*/}],
-				_optimizeChanges : function () {},
-				isResolved : function () {}
-			};
+	[
+		{added : [{/*node*/}], creationCancelled : [], moved : [], removed : []},
+		{added : [], creationCancelled : [], moved : [{/*node*/}], removed : []},
+		{added : [], creationCancelled : [], moved : [], removed : [{/*node*/}]}
+	].forEach(function (oOptimizedChanges, i) {
+		QUnit.test("_hasPendingChanges: with changed nodes: " + i, function (assert) {
+			var oBinding = {
+					_aAllChangedNodes : [{/*node*/}],
+					_optimizeChanges : function () {},
+					isResolved : function () {}
+				};
 
-		this.mock(oBinding).expects("isResolved").withExactArgs().returns(true);
-		this.mock(oBinding).expects("_optimizeChanges")
-			.withExactArgs()
-			.returns(oOptimizedChanges);
+			this.mock(oBinding).expects("isResolved").withExactArgs().returns(true);
+			this.mock(oBinding).expects("_optimizeChanges")
+				.withExactArgs()
+				.returns(oOptimizedChanges);
 
-		// code under test
-		assert.strictEqual(ODataTreeBindingFlat.prototype._hasPendingChanges.call(oBinding),
-			true);
+			// code under test
+			assert.strictEqual(ODataTreeBindingFlat.prototype._hasPendingChanges.call(oBinding),
+				true);
+		});
 	});
-});
 
 	//*********************************************************************************************
 	QUnit.test("_hasPendingChanges: cancelled creations", function (assert) {
@@ -962,77 +895,77 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-["~someBindingPath", "~path/to/entity", "entity/to/~path"].forEach(function (sPath, i) {
-	QUnit.test("_resetChanges: aPaths doesn't match binding #" + i, function (assert) {
-		var oBinding = {
-				_aAllChangedNodes : ["~change"],
-				getResolvedPath : function () {}
-			};
+	["~someBindingPath", "~path/to/entity", "entity/to/~path"].forEach(function (sPath, i) {
+		QUnit.test("_resetChanges: aPaths doesn't match binding #" + i, function (assert) {
+			var oBinding = {
+					_aAllChangedNodes : ["~change"],
+					getResolvedPath : function () {}
+				};
 
-		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("~path");
+			this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("~path");
 
-		// code under test
-		ODataTreeBindingFlat.prototype._resetChanges.call(oBinding, [sPath]);
+			// code under test
+			ODataTreeBindingFlat.prototype._resetChanges.call(oBinding, [sPath]);
+		});
 	});
-});
 
 	//*********************************************************************************************
-[undefined, ["foo", "~path", "bar"]].forEach(function (aPaths) {
-	QUnit.test("_resetChanges: " + (aPaths ? "with" : "without") + " aPaths", function (assert) {
-		var oBinding = {
-				_aAdded : ["~change0", "~change1"],
-				_aAllChangedNodes : ["~change0", "~change1", "~change2", "~change3"],
-				_aRemoved : ["~change2", "~change3"],
-				_cleanTreeStateMaps : function () {},
-				_fireChange : function () {},
-				getResolvedPath : function () {}
-			},
-			oTreeBindingFlatMock = this.mock(ODataTreeBindingFlat);
+	[undefined, ["foo", "~path", "bar"]].forEach(function (aPaths) {
+		QUnit.test("_resetChanges: " + (aPaths ? "with" : "without") + " aPaths", function (assert) {
+			var oBinding = {
+					_aAdded : ["~change0", "~change1"],
+					_aAllChangedNodes : ["~change0", "~change1", "~change2", "~change3"],
+					_aRemoved : ["~change2", "~change3"],
+					_cleanTreeStateMaps : function () {},
+					_fireChange : function () {},
+					getResolvedPath : function () {}
+				},
+				oTreeBindingFlatMock = this.mock(ODataTreeBindingFlat);
 
-		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("~path");
-		oTreeBindingFlatMock.expects("_resetMovedOrRemovedNode").withExactArgs("~change2");
-		oTreeBindingFlatMock.expects("_resetMovedOrRemovedNode").withExactArgs("~change3");
-		oTreeBindingFlatMock.expects("_resetParentState").withExactArgs("~change0");
-		oTreeBindingFlatMock.expects("_resetParentState").withExactArgs("~change1");
-		this.mock(oBinding).expects("_cleanTreeStateMaps").withExactArgs();
-		this.mock(oBinding).expects("_fireChange").withExactArgs({reason: ChangeReason.Change});
+			this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("~path");
+			oTreeBindingFlatMock.expects("_resetMovedOrRemovedNode").withExactArgs("~change2");
+			oTreeBindingFlatMock.expects("_resetMovedOrRemovedNode").withExactArgs("~change3");
+			oTreeBindingFlatMock.expects("_resetParentState").withExactArgs("~change0");
+			oTreeBindingFlatMock.expects("_resetParentState").withExactArgs("~change1");
+			this.mock(oBinding).expects("_cleanTreeStateMaps").withExactArgs();
+			this.mock(oBinding).expects("_fireChange").withExactArgs({reason: ChangeReason.Change});
 
-		// code under test
-		ODataTreeBindingFlat.prototype._resetChanges.call(oBinding, aPaths);
+			// code under test
+			ODataTreeBindingFlat.prototype._resetChanges.call(oBinding, aPaths);
 
-		assert.deepEqual(oBinding._mSubtreeHandles, {});
-		assert.deepEqual(oBinding._aAdded, []);
-		assert.deepEqual(oBinding._aRemoved, []);
-		assert.deepEqual(oBinding._aAllChangedNodes, []);
-		assert.deepEqual(oBinding._aNodeCache, []);
+			assert.deepEqual(oBinding._mSubtreeHandles, {});
+			assert.deepEqual(oBinding._aAdded, []);
+			assert.deepEqual(oBinding._aRemoved, []);
+			assert.deepEqual(oBinding._aAllChangedNodes, []);
+			assert.deepEqual(oBinding._aNodeCache, []);
+		});
 	});
-});
 
 	//*********************************************************************************************
-[{
-	inputNode : {foo : "bar", parent : null},
-	expectedResult : {foo : "bar", parent : null}
-}, {
-	inputNode : {foo : "bar", parent : {initiallyIsLeaf : false}},
-	expectedResult : {foo : "bar", parent : {initiallyIsLeaf : false, addedSubtrees : []}}
-}, {
-	inputNode : {foo : "bar", parent : {initiallyIsLeaf : true, nodeState : {}}},
-	expectedResult : {
-		foo : "bar",
-		parent : {
-			initiallyIsLeaf : true,
-			addedSubtrees : [],
-			nodeState : {collapsed : false, expanded : false, isLeaf : true}
+	[{
+		inputNode : {foo : "bar", parent : null},
+		expectedResult : {foo : "bar", parent : null}
+	}, {
+		inputNode : {foo : "bar", parent : {initiallyIsLeaf : false}},
+		expectedResult : {foo : "bar", parent : {initiallyIsLeaf : false, addedSubtrees : []}}
+	}, {
+		inputNode : {foo : "bar", parent : {initiallyIsLeaf : true, nodeState : {}}},
+		expectedResult : {
+			foo : "bar",
+			parent : {
+				initiallyIsLeaf : true,
+				addedSubtrees : [],
+				nodeState : {collapsed : false, expanded : false, isLeaf : true}
+			}
 		}
-	}
-}].forEach(function (oFixture, i) {
-	QUnit.test("_resetParentState: #" + i, function (assert) {
-		// code under test
-		ODataTreeBindingFlat._resetParentState(oFixture.inputNode);
+	}].forEach(function (oFixture, i) {
+		QUnit.test("_resetParentState: #" + i, function (assert) {
+			// code under test
+			ODataTreeBindingFlat._resetParentState(oFixture.inputNode);
 
-		assert.deepEqual(oFixture.inputNode, oFixture.expectedResult);
+			assert.deepEqual(oFixture.inputNode, oFixture.expectedResult);
+		});
 	});
-});
 
 	//*********************************************************************************************
 	QUnit.test("_resetMovedOrRemovedNode", function (assert) {
@@ -1061,143 +994,143 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-["leaf", "collapsed"].forEach(function (sDrillState) {
-	var sTitle = "_addServerIndexNodes: node has initiallyIsLeaf (drill state = " + sDrillState
-			+ ")";
+	["leaf", "collapsed"].forEach(function (sDrillState) {
+		var sTitle = "_addServerIndexNodes: node has initiallyIsLeaf (drill state = " + sDrillState
+				+ ")";
 
-	QUnit.test(sTitle, function (assert) {
-		var oBinding = {
-				_iLowestServerLevel : null,
-				_aNodes : [],
-				_mSelected : {},
-				oModel : {
-					getContext : function () {},
-					getKey : function () {}
+		QUnit.test(sTitle, function (assert) {
+			var oBinding = {
+					_iLowestServerLevel : null,
+					_aNodes : [],
+					_mSelected : {},
+					oModel : {
+						getContext : function () {},
+						getKey : function () {}
+					},
+					oTreeProperties : {
+						"hierarchy-drill-state-for" : "drillStateFor",
+						"hierarchy-level-for" : "levelFor",
+						"hierarchy-node-descendant-count-for" : "nodeDescendantCountFor"
+					}
 				},
-				oTreeProperties : {
-					"hierarchy-drill-state-for" : "drillStateFor",
-					"hierarchy-level-for" : "levelFor",
-					"hierarchy-node-descendant-count-for" : "nodeDescendantCountFor"
-				}
-			},
-			oData = {
-				__count : "1",
-				results : [{
-					drillStateFor : sDrillState,
-					levelFor : "~level",
-					nodeDescendantCountFor : "~magnitude"
-				}]
-			},
-			oExpectedNode = {
-				addedSubtrees : [],
-				children : [],
-				context : "~context",
-				initiallyCollapsed : false,
-				initiallyIsLeaf : false,
-				isDeepOne : false,
-				key : "~key",
-				level : "~level",
-				magnitude : "~magnitude",
-				nodeState : {
-					collapsed : false,
-					expanded : false,
-					isLeaf : false,
-					selected : false
+				oData = {
+					__count : "1",
+					results : [{
+						drillStateFor : sDrillState,
+						levelFor : "~level",
+						nodeDescendantCountFor : "~magnitude"
+					}]
 				},
-				originalLevel : "~level",
-				originalParent  : null,
-				parent : null,
-				serverIndex : 0
-			};
+				oExpectedNode = {
+					addedSubtrees : [],
+					children : [],
+					context : "~context",
+					initiallyCollapsed : false,
+					initiallyIsLeaf : false,
+					isDeepOne : false,
+					key : "~key",
+					level : "~level",
+					magnitude : "~magnitude",
+					nodeState : {
+						collapsed : false,
+						expanded : false,
+						isLeaf : false,
+						selected : false
+					},
+					originalLevel : "~level",
+					originalParent  : null,
+					parent : null,
+					serverIndex : 0
+				};
 
-		if (sDrillState === "leaf") {
-			oExpectedNode.initiallyIsLeaf = true;
-			oExpectedNode.nodeState.isLeaf = true;
-		} else if (sDrillState === "collapsed") {
-			oExpectedNode.initiallyCollapsed = true;
-			oExpectedNode.nodeState.collapsed = true;
-		}
+			if (sDrillState === "leaf") {
+				oExpectedNode.initiallyIsLeaf = true;
+				oExpectedNode.nodeState.isLeaf = true;
+			} else if (sDrillState === "collapsed") {
+				oExpectedNode.initiallyCollapsed = true;
+				oExpectedNode.nodeState.collapsed = true;
+			}
 
-		this.mock(oBinding.oModel).expects("getKey")
-			.withExactArgs(sinon.match.same(oData.results[0]))
-			.returns("~key");
-		this.mock(oBinding.oModel).expects("getContext").withExactArgs("/~key").returns("~context");
+			this.mock(oBinding.oModel).expects("getKey")
+				.withExactArgs(sinon.match.same(oData.results[0]))
+				.returns("~key");
+			this.mock(oBinding.oModel).expects("getContext").withExactArgs("/~key").returns("~context");
 
-		// code under test
-		ODataTreeBindingFlat.prototype._addServerIndexNodes.call(oBinding, oData, 0);
+			// code under test
+			ODataTreeBindingFlat.prototype._addServerIndexNodes.call(oBinding, oData, 0);
 
-		assert.strictEqual(oBinding._bLengthFinal, true);
-		assert.deepEqual(oBinding._aNodes, [oExpectedNode]);
-		assert.strictEqual(oBinding._iLowestServerLevel, "~level");
+			assert.strictEqual(oBinding._bLengthFinal, true);
+			assert.deepEqual(oBinding._aNodes, [oExpectedNode]);
+			assert.strictEqual(oBinding._iLowestServerLevel, "~level");
+		});
 	});
-});
 
 	//*********************************************************************************************
-["leaf", "collapsed"].forEach(function (sDrillState) {
-	var sTitle = "_createChildNode: node has initiallyIsLeaf (drill state = " + sDrillState + ")";
+	["leaf", "collapsed"].forEach(function (sDrillState) {
+		var sTitle = "_createChildNode: node has initiallyIsLeaf (drill state = " + sDrillState + ")";
 
-	QUnit.test(sTitle, function (assert) {
-		var oBinding = {
-				_mSelected : {},
-				oModel : {
-					getContext : function () {},
-					getKey : function () {}
+		QUnit.test(sTitle, function (assert) {
+			var oBinding = {
+					_mSelected : {},
+					oModel : {
+						getContext : function () {},
+						getKey : function () {}
+					},
+					oTreeProperties : {
+						"hierarchy-drill-state-for" : "drillStateFor"
+					}
 				},
-				oTreeProperties : {
-					"hierarchy-drill-state-for" : "drillStateFor"
-				}
-			},
-			oEntry = {drillStateFor : sDrillState},
-			oParent = {
-				children : [],
-				level : 3,
-				serverIndex : "~serverIndex"
-			},
-			oExpectedNode = {
-				addedSubtrees : [],
-				children : [],
-				containingServerIndex : "~serverIndex",
-				context : "~context",
-				initiallyCollapsed : false,
-				initiallyIsLeaf : false,
-				isDeepOne : true,
-				key : "~key",
-				level : 4,
-				magnitude : 0,
-				nodeState : {
-					collapsed : false,
-					expanded : false,
-					isLeaf : false,
-					selected : false
+				oEntry = {drillStateFor : sDrillState},
+				oParent = {
+					children : [],
+					level : 3,
+					serverIndex : "~serverIndex"
 				},
-				originalLevel : 4,
-				originalParent : oParent,
-				parent : oParent,
-				positionInParent : 42
-			},
-			oResult;
+				oExpectedNode = {
+					addedSubtrees : [],
+					children : [],
+					containingServerIndex : "~serverIndex",
+					context : "~context",
+					initiallyCollapsed : false,
+					initiallyIsLeaf : false,
+					isDeepOne : true,
+					key : "~key",
+					level : 4,
+					magnitude : 0,
+					nodeState : {
+						collapsed : false,
+						expanded : false,
+						isLeaf : false,
+						selected : false
+					},
+					originalLevel : 4,
+					originalParent : oParent,
+					parent : oParent,
+					positionInParent : 42
+				},
+				oResult;
 
-		if (sDrillState === "leaf") {
-			oExpectedNode.initiallyIsLeaf = true;
-			oExpectedNode.nodeState.isLeaf = true;
-		} else if (sDrillState === "collapsed") {
-			oExpectedNode.initiallyCollapsed = true;
-			oExpectedNode.nodeState.collapsed = true;
-		}
+			if (sDrillState === "leaf") {
+				oExpectedNode.initiallyIsLeaf = true;
+				oExpectedNode.nodeState.isLeaf = true;
+			} else if (sDrillState === "collapsed") {
+				oExpectedNode.initiallyCollapsed = true;
+				oExpectedNode.nodeState.collapsed = true;
+			}
 
-		this.mock(oBinding.oModel).expects("getKey")
-			.withExactArgs(sinon.match.same(oEntry))
-			.returns("~key");
-		this.mock(oBinding.oModel).expects("getContext").withExactArgs("/~key").returns("~context");
+			this.mock(oBinding.oModel).expects("getKey")
+				.withExactArgs(sinon.match.same(oEntry))
+				.returns("~key");
+			this.mock(oBinding.oModel).expects("getContext").withExactArgs("/~key").returns("~context");
 
-		// code under test
-		oResult = ODataTreeBindingFlat.prototype._createChildNode.call(oBinding, oEntry, oParent,
-			42);
+			// code under test
+			oResult = ODataTreeBindingFlat.prototype._createChildNode.call(oBinding, oEntry, oParent,
+				42);
 
-		assert.deepEqual(oResult, oExpectedNode);
-		assert.strictEqual(oResult, oParent.children[42]);
+			assert.deepEqual(oResult, oExpectedNode);
+			assert.strictEqual(oResult, oParent.children[42]);
+		});
 	});
-});
 
 	//*********************************************************************************************
 	QUnit.test("_collectDeepNodes", function (assert) {
@@ -1256,159 +1189,159 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-[true, false].forEach(function (bHasCollapsedNodes) {
-	var sTitle = "_executeRestoreTreeState: success, " + (bHasCollapsedNodes ? "with" : "without")
-			+ " collapsed nodes";
+	[true, false].forEach(function (bHasCollapsedNodes) {
+		var sTitle = "_executeRestoreTreeState: success, " + (bHasCollapsedNodes ? "with" : "without")
+				+ " collapsed nodes";
 
-	QUnit.test(sTitle, function (assert) {
-		var fnCollapseNodesCallback, fnResolve, pResult,
-			oBinding = {
-				_aCollapsed : bHasCollapsedNodes
-					? [{key : "~collapsed0"}, {key : "~collapsed1"}]
-					: [],
-				_aNodes : "~aNodes",
-				_adaptSections : function () {},
-				_collectDeepNodes : function () {},
-				_collectServerSections : function () {},
-				_filterChangesForDeepSections : function () {},
-				_filterChangeForServerSections : function () {},
-				_map : function () {},
-				_optimizeOptimizedChanges : function () {},
-				_restoreChildren : function () {},
-				_restoreServerIndexNodes : function () {},
-				collapse : function () {},
-				resetData : function () {}
-			},
-			oBindingMock = this.mock(oBinding),
-			mFilteredDeepNodeChanges = {
-				"~parent1" : "~change1",
-				"~parent2" : "~change2"
-			},
-			aDeepNodeSections = [{
-				aChildSections : [{iSkip : 0, iTop : 5}],
-				oParentNode : {key : "~parent0"}
-			}, {
-				aChildSections : [],
-				oParentNode : {key : "~parent1"}
-			}, {
-				aChildSections : [{iSkip : 0, iTop : 3}, {iSkip : 10, iTop : 5}],
-				oParentNode : {key : "~parent2"}
-			}],
-			oResponseDeepNode0 = {/*oResponse*/},
-			oResponseDeepNode1 = {statusCode : 0}, // request aborted
-			oResponseDeepNode2 = {/*oResponse*/},
-			pDeepNode0 = Promise.resolve(oResponseDeepNode0),
-			pDeepNode1 = Promise.reject(oResponseDeepNode1),
-			pDeepNode2 = new Promise(function (resolve) {
-				fnResolve = resolve;
-			}),
-			oResponseServerIndexNodes0 = {/*oResponse*/},
-			oResponseServerIndexNodes1 = {/*oResponse*/},
-			aSections = [{iSkip : 5, iTop : 10}, {iSkip : 42, iTop : 13}],
-			pServerIndexNodes0 = Promise.resolve(oResponseServerIndexNodes0),
-			pServerIndexNodes1 = Promise.resolve(oResponseServerIndexNodes1);
+		QUnit.test(sTitle, function (assert) {
+			var fnCollapseNodesCallback, fnResolve, pResult,
+				oBinding = {
+					_aCollapsed : bHasCollapsedNodes
+						? [{key : "~collapsed0"}, {key : "~collapsed1"}]
+						: [],
+					_aNodes : "~aNodes",
+					_adaptSections : function () {},
+					_collectDeepNodes : function () {},
+					_collectServerSections : function () {},
+					_filterChangesForDeepSections : function () {},
+					_filterChangeForServerSections : function () {},
+					_map : function () {},
+					_optimizeOptimizedChanges : function () {},
+					_restoreChildren : function () {},
+					_restoreServerIndexNodes : function () {},
+					collapse : function () {},
+					resetData : function () {}
+				},
+				oBindingMock = this.mock(oBinding),
+				mFilteredDeepNodeChanges = {
+					"~parent1" : "~change1",
+					"~parent2" : "~change2"
+				},
+				aDeepNodeSections = [{
+					aChildSections : [{iSkip : 0, iTop : 5}],
+					oParentNode : {key : "~parent0"}
+				}, {
+					aChildSections : [],
+					oParentNode : {key : "~parent1"}
+				}, {
+					aChildSections : [{iSkip : 0, iTop : 3}, {iSkip : 10, iTop : 5}],
+					oParentNode : {key : "~parent2"}
+				}],
+				oResponseDeepNode0 = {/*oResponse*/},
+				oResponseDeepNode1 = {statusCode : 0}, // request aborted
+				oResponseDeepNode2 = {/*oResponse*/},
+				pDeepNode0 = Promise.resolve(oResponseDeepNode0),
+				pDeepNode1 = Promise.reject(oResponseDeepNode1),
+				pDeepNode2 = new Promise(function (resolve) {
+					fnResolve = resolve;
+				}),
+				oResponseServerIndexNodes0 = {/*oResponse*/},
+				oResponseServerIndexNodes1 = {/*oResponse*/},
+				aSections = [{iSkip : 5, iTop : 10}, {iSkip : 42, iTop : 13}],
+				pServerIndexNodes0 = Promise.resolve(oResponseServerIndexNodes0),
+				pServerIndexNodes1 = Promise.resolve(oResponseServerIndexNodes1);
 
-		oBindingMock.expects("_collectServerSections").withExactArgs("~aNodes").returns(aSections);
-		oBindingMock.expects("_optimizeOptimizedChanges")
-			.withExactArgs("~optimizedChanges")
-			.returns("~optimizedOptimizedChanges");
-		oBindingMock.expects("_filterChangeForServerSections")
-			.withExactArgs("~optimizedOptimizedChanges")
-			.returns("~filteredServerIndexChanges");
-		oBindingMock.expects("_adaptSections")
-			.withExactArgs(sinon.match.same(aSections), "~filteredServerIndexChanges");
-		oBindingMock.expects("_restoreServerIndexNodes")
-			.withExactArgs(5, 10, true)
-			.returns(pServerIndexNodes0);
-		oBindingMock.expects("_restoreServerIndexNodes")
-			.withExactArgs(42, 13, false)
-			.returns(pServerIndexNodes1);
-		oBindingMock.expects("_filterChangesForDeepSections")
-			.withExactArgs("~optimizedOptimizedChanges")
-			.returns(mFilteredDeepNodeChanges);
-		oBindingMock.expects("_collectDeepNodes").withExactArgs().returns(aDeepNodeSections);
-		oBindingMock.expects("_adaptSections")
-			.withExactArgs(sinon.match.same(aDeepNodeSections[1].aChildSections), "~change1",
-				{ignoreMagnitude: true, indexName: "positionInParent"});
-		oBindingMock.expects("_adaptSections")
-			.withExactArgs(sinon.match.same(aDeepNodeSections[2].aChildSections), "~change2",
-				{ignoreMagnitude : true, indexName : "positionInParent"});
-		oBindingMock.expects("_restoreChildren")
-			.withExactArgs(sinon.match.same(aDeepNodeSections[0].oParentNode), 0, 5)
-			.returns(pDeepNode0);
-		oBindingMock.expects("_restoreChildren")
-			.withExactArgs(sinon.match.same(aDeepNodeSections[2].oParentNode), 0, 3)
-			.returns(pDeepNode1);
-		oBindingMock.expects("_restoreChildren")
-			.withExactArgs(sinon.match.same(aDeepNodeSections[2].oParentNode), 10, 5)
-			.returns(pDeepNode2);
-		oBindingMock.expects("resetData").withExactArgs(true);
+			oBindingMock.expects("_collectServerSections").withExactArgs("~aNodes").returns(aSections);
+			oBindingMock.expects("_optimizeOptimizedChanges")
+				.withExactArgs("~optimizedChanges")
+				.returns("~optimizedOptimizedChanges");
+			oBindingMock.expects("_filterChangeForServerSections")
+				.withExactArgs("~optimizedOptimizedChanges")
+				.returns("~filteredServerIndexChanges");
+			oBindingMock.expects("_adaptSections")
+				.withExactArgs(sinon.match.same(aSections), "~filteredServerIndexChanges");
+			oBindingMock.expects("_restoreServerIndexNodes")
+				.withExactArgs(5, 10, true)
+				.returns(pServerIndexNodes0);
+			oBindingMock.expects("_restoreServerIndexNodes")
+				.withExactArgs(42, 13, false)
+				.returns(pServerIndexNodes1);
+			oBindingMock.expects("_filterChangesForDeepSections")
+				.withExactArgs("~optimizedOptimizedChanges")
+				.returns(mFilteredDeepNodeChanges);
+			oBindingMock.expects("_collectDeepNodes").withExactArgs().returns(aDeepNodeSections);
+			oBindingMock.expects("_adaptSections")
+				.withExactArgs(sinon.match.same(aDeepNodeSections[1].aChildSections), "~change1",
+					{ignoreMagnitude: true, indexName: "positionInParent"});
+			oBindingMock.expects("_adaptSections")
+				.withExactArgs(sinon.match.same(aDeepNodeSections[2].aChildSections), "~change2",
+					{ignoreMagnitude : true, indexName : "positionInParent"});
+			oBindingMock.expects("_restoreChildren")
+				.withExactArgs(sinon.match.same(aDeepNodeSections[0].oParentNode), 0, 5)
+				.returns(pDeepNode0);
+			oBindingMock.expects("_restoreChildren")
+				.withExactArgs(sinon.match.same(aDeepNodeSections[2].oParentNode), 0, 3)
+				.returns(pDeepNode1);
+			oBindingMock.expects("_restoreChildren")
+				.withExactArgs(sinon.match.same(aDeepNodeSections[2].oParentNode), 10, 5)
+				.returns(pDeepNode2);
+			oBindingMock.expects("resetData").withExactArgs(true);
 
-		// code under test
-		pResult = ODataTreeBindingFlat.prototype._executeRestoreTreeState.call(oBinding,
-			"~optimizedChanges");
+			// code under test
+			pResult = ODataTreeBindingFlat.prototype._executeRestoreTreeState.call(oBinding,
+				"~optimizedChanges");
 
-		assert.ok(pResult instanceof Promise);
+			assert.ok(pResult instanceof Promise);
 
-		oBindingMock.expects("_map")
-			.withExactArgs(sinon.match.func)
-			.exactly(bHasCollapsedNodes ? 1 : 0)
-			.callsFake(function (fnCallback) {
-				fnCollapseNodesCallback = fnCallback;
+			oBindingMock.expects("_map")
+				.withExactArgs(sinon.match.func)
+				.exactly(bHasCollapsedNodes ? 1 : 0)
+				.callsFake(function (fnCallback) {
+					fnCollapseNodesCallback = fnCallback;
+				});
+
+			// code under test
+			fnResolve(oResponseDeepNode2);
+
+			return Promise.all([
+				pResult, pServerIndexNodes0, pServerIndexNodes1, pDeepNode0, pDeepNode2,
+				pDeepNode0.catch(function () {/* rejected as expected*/})
+			]).then(function (aResult) {
+				var oNode, oRecursionBreaker = {broken : false};
+
+				assert.deepEqual(aResult[0], [
+					{responseData : {}},
+					{responseData : {}},
+					{responseData : {}},
+					{error : oResponseDeepNode1},
+					{responseData : {}}
+				]);
+				assert.strictEqual(aResult[0][0].responseData, oResponseServerIndexNodes0);
+				assert.strictEqual(aResult[0][1].responseData, oResponseServerIndexNodes1);
+				assert.strictEqual(aResult[0][2].responseData, oResponseDeepNode0);
+				assert.strictEqual(aResult[0][3].error, oResponseDeepNode1);
+				assert.strictEqual(aResult[0][4].responseData, oResponseDeepNode2);
+
+				if (bHasCollapsedNodes) {
+					// code under test
+					fnCollapseNodesCallback(undefined, oRecursionBreaker);
+
+					assert.strictEqual(oRecursionBreaker.broken, false);
+
+					// code under test
+					fnCollapseNodesCallback({key : "notCollapsed"}, oRecursionBreaker);
+
+					assert.strictEqual(oRecursionBreaker.broken, false);
+
+					oNode = {key : "~collapsed1"};
+					oBindingMock.expects("collapse").withExactArgs(sinon.match.same(oNode), true);
+
+					// code under test
+					fnCollapseNodesCallback(oNode, oRecursionBreaker);
+
+					assert.strictEqual(oRecursionBreaker.broken, false);
+
+					oNode = {key : "~collapsed0"};
+					oBindingMock.expects("collapse").withExactArgs(sinon.match.same(oNode), true);
+
+					// code under test
+					fnCollapseNodesCallback(oNode, oRecursionBreaker);
+
+					assert.strictEqual(oRecursionBreaker.broken, true);
+				}
 			});
-
-		// code under test
-		fnResolve(oResponseDeepNode2);
-
-		return Promise.all([
-			pResult, pServerIndexNodes0, pServerIndexNodes1, pDeepNode0, pDeepNode2,
-			pDeepNode0.catch(function () {/* rejected as expected*/})
-		]).then(function (aResult) {
-			var oNode, oRecursionBreaker = {broken : false};
-
-			assert.deepEqual(aResult[0], [
-				{responseData : {}},
-				{responseData : {}},
-				{responseData : {}},
-				{error : oResponseDeepNode1},
-				{responseData : {}}
-			]);
-			assert.strictEqual(aResult[0][0].responseData, oResponseServerIndexNodes0);
-			assert.strictEqual(aResult[0][1].responseData, oResponseServerIndexNodes1);
-			assert.strictEqual(aResult[0][2].responseData, oResponseDeepNode0);
-			assert.strictEqual(aResult[0][3].error, oResponseDeepNode1);
-			assert.strictEqual(aResult[0][4].responseData, oResponseDeepNode2);
-
-			if (bHasCollapsedNodes) {
-				// code under test
-				fnCollapseNodesCallback(undefined, oRecursionBreaker);
-
-				assert.strictEqual(oRecursionBreaker.broken, false);
-
-				// code under test
-				fnCollapseNodesCallback({key : "notCollapsed"}, oRecursionBreaker);
-
-				assert.strictEqual(oRecursionBreaker.broken, false);
-
-				oNode = {key : "~collapsed1"};
-				oBindingMock.expects("collapse").withExactArgs(sinon.match.same(oNode), true);
-
-				// code under test
-				fnCollapseNodesCallback(oNode, oRecursionBreaker);
-
-				assert.strictEqual(oRecursionBreaker.broken, false);
-
-				oNode = {key : "~collapsed0"};
-				oBindingMock.expects("collapse").withExactArgs(sinon.match.same(oNode), true);
-
-				// code under test
-				fnCollapseNodesCallback(oNode, oRecursionBreaker);
-
-				assert.strictEqual(oRecursionBreaker.broken, true);
-			}
 		});
 	});
-});
 
 	//*********************************************************************************************
 	QUnit.test("_executeRestoreTreeState: all aborted", function (assert) {
@@ -1482,122 +1415,122 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-["~errorMessage", {value : "~errorMessage"}].forEach(function (vMessage, i) {
-	QUnit.test("_executeRestoreTreeState: #" + i, function (assert) {
-		var pResult,
-			oBinding = {
-				_aCollapsed : [],
-				_aNodes : "~aNodes",
-				_adaptSections : function () {},
-				_collectDeepNodes : function () {},
-				_collectServerSections : function () {},
-				_filterChangesForDeepSections : function () {},
-				_filterChangeForServerSections : function () {},
-				_map : function () {},
-				_optimizeOptimizedChanges : function () {},
-				_restoreChildren : function () {},
-				_restoreServerIndexNodes : function () {},
-				resetData : function () {}
-			},
-			oBindingMock = this.mock(oBinding),
-			oResponseServerIndexNodes0 = { // server error
-				message : vMessage,
-				statusCode : 500
-			},
-			aSections = [{iSkip : 5, iTop : 10}],
-			pServerIndexNodes0 = Promise.reject(oResponseServerIndexNodes0);
+	["~errorMessage", {value : "~errorMessage"}].forEach(function (vMessage, i) {
+		QUnit.test("_executeRestoreTreeState: #" + i, function (assert) {
+			var pResult,
+				oBinding = {
+					_aCollapsed : [],
+					_aNodes : "~aNodes",
+					_adaptSections : function () {},
+					_collectDeepNodes : function () {},
+					_collectServerSections : function () {},
+					_filterChangesForDeepSections : function () {},
+					_filterChangeForServerSections : function () {},
+					_map : function () {},
+					_optimizeOptimizedChanges : function () {},
+					_restoreChildren : function () {},
+					_restoreServerIndexNodes : function () {},
+					resetData : function () {}
+				},
+				oBindingMock = this.mock(oBinding),
+				oResponseServerIndexNodes0 = { // server error
+					message : vMessage,
+					statusCode : 500
+				},
+				aSections = [{iSkip : 5, iTop : 10}],
+				pServerIndexNodes0 = Promise.reject(oResponseServerIndexNodes0);
 
-		oBindingMock.expects("_collectServerSections").withExactArgs("~aNodes").returns(aSections);
-		oBindingMock.expects("_optimizeOptimizedChanges")
-			.withExactArgs("~optimizedChanges")
-			.returns("~optimizedOptimizedChanges");
-		oBindingMock.expects("_filterChangeForServerSections")
-			.withExactArgs("~optimizedOptimizedChanges")
-			.returns("~filteredServerIndexChanges");
-		oBindingMock.expects("_adaptSections")
-			.withExactArgs(sinon.match.same(aSections), "~filteredServerIndexChanges");
-		oBindingMock.expects("_restoreServerIndexNodes")
-			.withExactArgs(5, 10, true)
-			.returns(pServerIndexNodes0);
-		oBindingMock.expects("_filterChangesForDeepSections")
-			.withExactArgs("~optimizedOptimizedChanges")
-			.returns({/*mFilteredDeepNodeChanges*/});
-		oBindingMock.expects("_collectDeepNodes").withExactArgs().returns([/*aDeepNodeSections*/]);
-		oBindingMock.expects("resetData").withExactArgs(true);
-		oBindingMock.expects("_map").never();
+			oBindingMock.expects("_collectServerSections").withExactArgs("~aNodes").returns(aSections);
+			oBindingMock.expects("_optimizeOptimizedChanges")
+				.withExactArgs("~optimizedChanges")
+				.returns("~optimizedOptimizedChanges");
+			oBindingMock.expects("_filterChangeForServerSections")
+				.withExactArgs("~optimizedOptimizedChanges")
+				.returns("~filteredServerIndexChanges");
+			oBindingMock.expects("_adaptSections")
+				.withExactArgs(sinon.match.same(aSections), "~filteredServerIndexChanges");
+			oBindingMock.expects("_restoreServerIndexNodes")
+				.withExactArgs(5, 10, true)
+				.returns(pServerIndexNodes0);
+			oBindingMock.expects("_filterChangesForDeepSections")
+				.withExactArgs("~optimizedOptimizedChanges")
+				.returns({/*mFilteredDeepNodeChanges*/});
+			oBindingMock.expects("_collectDeepNodes").withExactArgs().returns([/*aDeepNodeSections*/]);
+			oBindingMock.expects("resetData").withExactArgs(true);
+			oBindingMock.expects("_map").never();
 
-		// code under test
-		pResult = ODataTreeBindingFlat.prototype._executeRestoreTreeState.call(oBinding,
-			"~optimizedChanges");
+			// code under test
+			pResult = ODataTreeBindingFlat.prototype._executeRestoreTreeState.call(oBinding,
+				"~optimizedChanges");
 
-		assert.ok(pResult instanceof Promise);
+			assert.ok(pResult instanceof Promise);
 
-		return Promise.all([
-			pResult,
-			pServerIndexNodes0.catch(function () {/* rejected as expected*/})
-		]).then(function (aResult) {
-			assert.ok(false, "unexpected success");
-		}, function (oError) {
-			assert.ok(oError instanceof Error);
-			assert.strictEqual(oError.message, "Tree state restoration request failed. Complete or"
-				+ " partial tree state might get lost. Error: ~errorMessage");
+			return Promise.all([
+				pResult,
+				pServerIndexNodes0.catch(function () {/* rejected as expected*/})
+			]).then(function (aResult) {
+				assert.ok(false, "unexpected success");
+			}, function (oError) {
+				assert.ok(oError instanceof Error);
+				assert.strictEqual(oError.message, "Tree state restoration request failed. Complete or"
+					+ " partial tree state might get lost. Error: ~errorMessage");
+			});
 		});
 	});
-});
 
 	//*********************************************************************************************
-[{
-	nodeKey : "~foo",
-	drillState : "collapsed",
-	expectedIsDeepOne : false,
-	expectedInitiallyCollapsed : true
-}, {
-	nodeKey : "~bar",
-	drillState : "leaf",
-	expectedIsDeepOne : true,
-	expectedInitiallyCollapsed : false
-}].forEach(function (oFixture, i) {
-	QUnit.test("_updateNodeInfoAfterSave: " + i, function (assert) {
-		var oNode0 = {context : {getProperty : function () {}}},
-			oNode1 = {context : {getProperty : function () {}}},
-			oContextMock0 = this.mock(oNode0.context),
-			oContextMock1 = this.mock(oNode1.context),
-			oBinding = {
-				_aAdded : [oNode0],
-				oTreeProperties : {
-					"hierarchy-drill-state-for" : "drillState",
-					"hierarchy-node-for" : "nodeKey"
-				}
-			},
-			aEntities = [{nodeKey : "~baz"}, {nodeKey : "~foo"}];
+	[{
+		nodeKey : "~foo",
+		drillState : "collapsed",
+		expectedIsDeepOne : false,
+		expectedInitiallyCollapsed : true
+	}, {
+		nodeKey : "~bar",
+		drillState : "leaf",
+		expectedIsDeepOne : true,
+		expectedInitiallyCollapsed : false
+	}].forEach(function (oFixture, i) {
+		QUnit.test("_updateNodeInfoAfterSave: " + i, function (assert) {
+			var oNode0 = {context : {getProperty : function () {}}},
+				oNode1 = {context : {getProperty : function () {}}},
+				oContextMock0 = this.mock(oNode0.context),
+				oContextMock1 = this.mock(oNode1.context),
+				oBinding = {
+					_aAdded : [oNode0],
+					oTreeProperties : {
+						"hierarchy-drill-state-for" : "drillState",
+						"hierarchy-node-for" : "nodeKey"
+					}
+				},
+				aEntities = [{nodeKey : "~baz"}, {nodeKey : "~foo"}];
 
-		oContextMock0.expects("getProperty").withExactArgs("nodeKey").returns(oFixture.nodeKey);
-		oContextMock0.expects("getProperty")
-			.withExactArgs("drillState")
-			.returns(oFixture.drillState);
+			oContextMock0.expects("getProperty").withExactArgs("nodeKey").returns(oFixture.nodeKey);
+			oContextMock0.expects("getProperty")
+				.withExactArgs("drillState")
+				.returns(oFixture.drillState);
 
-		// code under test - added node
-		ODataTreeBindingFlat.prototype._updateNodeInfoAfterSave.call(oBinding, oNode0, aEntities);
+			// code under test - added node
+			ODataTreeBindingFlat.prototype._updateNodeInfoAfterSave.call(oBinding, oNode0, aEntities);
 
-		assert.deepEqual(oNode0.isDeepOne, oFixture.expectedIsDeepOne);
-		assert.deepEqual(oNode0.initiallyCollapsed, oFixture.expectedInitiallyCollapsed);
-		assert.deepEqual(oNode0.newIsDeepOne, undefined);
-		assert.deepEqual(oNode0.newInitiallyCollapsed, undefined);
+			assert.deepEqual(oNode0.isDeepOne, oFixture.expectedIsDeepOne);
+			assert.deepEqual(oNode0.initiallyCollapsed, oFixture.expectedInitiallyCollapsed);
+			assert.deepEqual(oNode0.newIsDeepOne, undefined);
+			assert.deepEqual(oNode0.newInitiallyCollapsed, undefined);
 
-		oContextMock1.expects("getProperty").withExactArgs("nodeKey").returns(oFixture.nodeKey);
-		oContextMock1.expects("getProperty")
-			.withExactArgs("drillState")
-			.returns(oFixture.drillState);
+			oContextMock1.expects("getProperty").withExactArgs("nodeKey").returns(oFixture.nodeKey);
+			oContextMock1.expects("getProperty")
+				.withExactArgs("drillState")
+				.returns(oFixture.drillState);
 
-		// code under test - moved node
-		ODataTreeBindingFlat.prototype._updateNodeInfoAfterSave.call(oBinding, oNode1, aEntities);
+			// code under test - moved node
+			ODataTreeBindingFlat.prototype._updateNodeInfoAfterSave.call(oBinding, oNode1, aEntities);
 
-		assert.deepEqual(oNode1.isDeepOne, undefined);
-		assert.deepEqual(oNode1.initiallyCollapsed, undefined);
-		assert.deepEqual(oNode1.newIsDeepOne, oFixture.expectedIsDeepOne);
-		assert.deepEqual(oNode1.newInitiallyCollapsed, oFixture.expectedInitiallyCollapsed);
+			assert.deepEqual(oNode1.isDeepOne, undefined);
+			assert.deepEqual(oNode1.initiallyCollapsed, undefined);
+			assert.deepEqual(oNode1.newIsDeepOne, oFixture.expectedIsDeepOne);
+			assert.deepEqual(oNode1.newInitiallyCollapsed, oFixture.expectedInitiallyCollapsed);
+		});
 	});
-});
 
 	//*********************************************************************************************
 	QUnit.test("_generatePreorderPositionRequest: unresolved binding", function (assert) {

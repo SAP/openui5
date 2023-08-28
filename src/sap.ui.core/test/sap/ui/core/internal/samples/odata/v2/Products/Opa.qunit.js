@@ -8,18 +8,19 @@ sap.ui.require([
 	"sap/ui/core/Core",
 	"sap/ui/core/internal/samples/odata/v2/Products/pages/Main",
 	"sap/ui/test/opaQunit",
-	"sap/ui/test/TestUtils"
-], function (Core, Main, opaTest, TestUtils) {
+	"sap/ui/test/TestUtils",
+	"sap/ui/core/Configuration"
+], function(Core, Main, opaTest, TestUtils, Configuration) {
 	"use strict";
 	Core.ready().then(function () {
-		var sDefaultLanguage = sap.ui.getCore().getConfiguration().getLanguage();
+		var sDefaultLanguage = Configuration.getLanguage();
 
 		QUnit.module("sap.ui.core.internal.samples.odata.v2.Products", {
 			before : function () {
-				sap.ui.getCore().getConfiguration().setLanguage("en-US");
+				Configuration.setLanguage("en-US");
 			},
 			after : function () {
-				sap.ui.getCore().getConfiguration().setLanguage(sDefaultLanguage);
+				Configuration.setLanguage(sDefaultLanguage);
 			}
 		});
 

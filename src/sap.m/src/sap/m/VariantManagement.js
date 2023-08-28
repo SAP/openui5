@@ -1409,7 +1409,7 @@ sap.ui.define([
 	};
 
 	VariantManagement.prototype._isInErrorContexts = function() {
-		return this._oRolesComponentContainer.getComponentInstance().hasErrorsAndShowErrorMessage();
+		return false;
 	};
 
 	VariantManagement.prototype._isRestricted = function(mContexts) {

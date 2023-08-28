@@ -38,9 +38,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("sap.ui.mdc.link.Panel: display", {
-		beforeEach: function() {
-			this.oPanel;
-		},
+		beforeEach: function() {},
 		afterEach: function() {
 			this.oPanel.destroy();
 		}
@@ -172,9 +170,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("sap.ui.mdc.link.Panel: visibility of items", {
-		beforeEach: function() {
-			this.oPanel;
-		},
+		beforeEach: function() {},
 		afterEach: function() {
 			this.oPanel.destroy();
 		}
@@ -249,9 +245,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("sap.ui.mdc.link.Panel: default icon", {
-		beforeEach: function() {
-			this.oPanel;
-		},
+		beforeEach: function() {},
 		afterEach: function() {
 			this.oPanel.destroy();
 		}

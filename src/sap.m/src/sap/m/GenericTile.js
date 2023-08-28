@@ -22,8 +22,9 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/library",
 	"sap/ui/core/Configuration",
-	"sap/ui/core/InvisibleText"
-], function (
+	"sap/ui/core/InvisibleText",
+	"sap/ui/core/Core"
+], function(
 	library,
 	Control,
 	Text,
@@ -43,7 +44,8 @@ sap.ui.define([
 	jQuery,
 	coreLibrary,
 	Configuration,
-	InvisibleText
+	InvisibleText,
+	Core
 ) {
 	"use strict";
 
@@ -94,148 +96,171 @@ sap.ui.define([
 				 * The mode of the GenericTile.
 				 */
 				mode: {type: "sap.m.GenericTileMode", group: "Appearance", defaultValue: GenericTileMode.ContentMode},
+
 				/**
 				 * The header of the tile.
 				 */
 				header: {type: "string", group: "Appearance", defaultValue: null},
+
 				/**
 				 * The subheader of the tile.
 				 */
 				subheader: {type: "string", group: "Appearance", defaultValue: null},
+
 				/**
 				 * The message that appears when the control is in the Failed state.
 				 */
 				failedText: {type: "string", group: "Appearance", defaultValue: null},
-				/**
-				 * The size of the tile. If not set, then the default size is applied based on the device.
-				 * @deprecated Since version 1.38.0. The GenericTile control has now a fixed size, depending on the used media (desktop, tablet or phone).
-				 */
-				size: {type: "sap.m.Size", group: "Misc", defaultValue: Size.Auto, deprecated: true},
+
 				/**
 				 * The FrameType: OneByOne, TwoByOne, OneByHalf, or TwoByHalf. Default set to OneByOne if property is not defined or set to Auto by the app.
 				 */
 				frameType: {type: "sap.m.FrameType", group: "Misc", defaultValue: FrameType.OneByOne},
+
 				/**
 				 * Backend system context information
 				 * @since 1.92.0
 				 * @experimental Since 1.92
 				 */
 				systemInfo: {type:"string",  group: "Misc", defaultValue:null},
+
 				/**
 				 * Application information such as ID/Shortcut
 				 * @since 1.92.0
 				 * @experimental Since 1.92
 				 */
 				appShortcut: {type:"string",  group: "Misc", defaultValue:null},
+
 				/**
 				 * The URI of the background image.
 				 */
 				backgroundImage: {type: "sap.ui.core.URI", group: "Misc", defaultValue: null},
+
 				/**
 				 * The image to be displayed as a graphical element within the header. This can be an image or an icon from the icon font.
 				 */
 				headerImage: {type: "sap.ui.core.URI", group: "Misc", defaultValue: null},
+
 				/**
 				 * The load status.
 				 */
 				state: {type: "sap.m.LoadState", group: "Misc", defaultValue: LoadState.Loaded},
+
 				/**
 				 * Description of a header image that is used in the tooltip.
 				 */
 				imageDescription: {type: "string", group: "Accessibility", defaultValue: null},
+
 				/**
 				 * Changes the visualization in order to enable additional actions with the Generic Tile.
 				 * @since 1.46.0
 				 */
 				scope: {type: "sap.m.GenericTileScope", group: "Misc", defaultValue: GenericTileScope.Display},
+
 				/**
 				 *  If set to <code>TileSizeBehavior.Small</code>, the tile size is the same as it would be on a small-screened phone (374px wide and lower),
 				 *  regardless of the screen size of the actual device being used.
 				 *  If set to <code>TileSizeBehavior.Responsive</code>, the tile size adapts to the size of the screen.
 				 */
 				sizeBehavior: {type: "sap.m.TileSizeBehavior", defaultValue: TileSizeBehavior.Responsive},
+
 				/**
 				 * Additional description for aria-label. The aria-label is rendered before the standard aria-label.
 				 * @since 1.50.0
 				 */
 				ariaLabel: {type: "string", group: "Accessibility", defaultValue: null},
+
 				/**
 				 * Additional description for aria-role.
 				 * @since 1.83
 				 */
 				ariaRole: {type: "string", group: "Accessibility", defaultValue: null},
+
 				/**
 				 * Additional description for aria-roledescription.
 				 * @since 1.83
 				 */
 				ariaRoleDescription: {type: "string", group: "Accessibility", defaultValue: null},
+
 				/**
 				 * Renders the given link as root element and therefore enables the open in new tab / window functionality
 				 * @since 1.76
 				 */
 				url: {type: "sap.ui.core.URI", group: "Misc", defaultValue: null},
+
 				/**
 				 * Renders the given link as a button, enabling the option of opening the link in new tab/window functionality.
 				 * Works only in ArticleMode.
 				 * @experimental since 1.96
 				 */
 				enableNavigationButton: {type: "boolean", group: "Misc", defaultValue: false},
+
 				/**
 				 * Disables press event for the tile control.
 				 * @experimental since 1.96
 				 */
-				 pressEnabled: {type: "boolean", group: "Misc", defaultValue: true},
-				 /**
-				 * Text for navigate action button. Default Value is "Read More".
-				 * Works only in ArticleMode.
-				 * @experimental since 1.96
-				 */
+				pressEnabled: {type: "boolean", group: "Misc", defaultValue: true},
+
+				/**
+				* Text for navigate action button. Default Value is "Read More".
+				* Works only in ArticleMode.
+				* @experimental since 1.96
+				*/
 				navigationButtonText: {type: "string", group: "Misc", defaultValue: null},
+
 				/**
 				 * Defines the type of text wrapping to be used (hyphenated or normal).
 				 * @since 1.60
 				 */
 				wrappingType: {type: "sap.m.WrappingType", group: "Appearance", defaultValue: WrappingType.Normal},
+
 				/**
 				 * Width of the control.
 				 * @since 1.72
 				 */
 				width: {type: "sap.ui.core.CSSSize", group: "Appearance"},
+
 				/**
 				 * Tooltip text which is added at the tooltip generated by the control.
 				 * @since 1.82
 				 */
 				additionalTooltip: {type: "string", group: "Accessibility", defaultValue: null},
+
 				/**
 				 * Icon of the GenericTile. Only applicable for IconMode.
 				 * @since 1.96
 				 * @experimental Since 1.96
 				*/
 				tileIcon: {type: "sap.ui.core.URI"},
+
 				/**
 				 * Background color of the GenericTile. Only applicable for IconMode.
 				 * @since 1.96
 				 * @experimental Since 1.96
 				*/
 				backgroundColor: {type: "string", group: "Appearance",defaultValue : DEFAULT_BG_COLOR},
+
 				/**
 				 * The semantic color of the value.
 				 * @experimental Since 1.95
 				 * @since 1.95
 				 */
 				valueColor: {type: "sap.m.ValueColor", group: "Appearance", defaultValue: "None"},
+
 				/**
 				 * The load state of the tileIcon.
 				 * @experimental Since 1.103
 				 * @since 1.103
 				 */
 				iconLoaded: {type: "boolean", group: "Misc", defaultValue: true},
+
 				/**
 				 * The Tile rerenders on theme change.
 				 * @experimental Since 1.106
 				 * @since 1.106
 				 */
-				 renderOnThemeChange: {type: "boolean", group: "Misc", defaultValue: false},
+				renderOnThemeChange: {type: "boolean", group: "Misc", defaultValue: false},
+
 				/**
 				 * Show Badge Information associated with a Tile. Limited to 3 characters.
 				 * When enabled, the badge information is displayed inside a folder icon.
@@ -245,6 +270,7 @@ sap.ui.define([
 				 * @since 1.113
 				 */
 				tileBadge: { type: "string", group: "Misc", defaultValue: "" },
+
 				/**
 				 * Sets the offset for the Drop Area associated with a Generic Tile.
 				 * The offset is applied uniformly to all the tile edges.
@@ -261,40 +287,40 @@ sap.ui.define([
 				 * The content of the tile.
 				 */
 				tileContent: {type: "sap.m.TileContent", multiple: true, bindable: "bindable"},
-				/**
-				 * An icon or image to be displayed in the control.
-				 * This aggregation is deprecated since version 1.36.0, to display an icon or image use sap.m.ImageContent control instead.
-				 * @deprecated since version 1.36.0. This aggregation is deprecated, use sap.m.ImageContent control to display an icon instead.
-				 */
-				icon: {type: "sap.ui.core.Control", multiple: false, deprecated: true},
+
 				/**
 				 * Action buttons added in ActionMode.
 				 * @experimental since 1.96
 				 */
 				actionButtons: {type: "sap.m.Button", multiple: true, bindable: "bindable"},
+
 				/**
 				 * The hidden aggregation for the title.
 				 */
 				_titleText: {type: "sap.m.Text", multiple: false, visibility: "hidden"},
+
 				/**
 				 * The hidden aggregation for the message in the failed state.
 				 */
 				_failedMessageText: {type: "sap.m.Text", multiple: false, visibility: "hidden"},
+
 				/**
 				 * The hidden aggregation that uses this id in aria-describedby attribute.
 				 */
 				_invisibleText: {type:"sap.ui.core.InvisibleText",multiple: false, visibility: "hidden"},
+
 				/**
 				 * The hidden aggregation for the Tile Icon Works only in IconMode.
 				 * @experimental since 1.96
 				 * @private
 				 */
 				_tileIcon: {type: "sap.ui.core.Icon", multiple: false, visibility: "hidden"},
-				 /**
-				 * The hidden aggregation for the Tile Icon Image. Works only in IconMode.
-				 * @experimental since 1.96
-				 * @private
-				 */
+
+				/**
+				* The hidden aggregation for the Tile Icon Image. Works only in IconMode.
+				* @experimental since 1.96
+				* @private
+				*/
 				_tileIconImage: {type: "sap.m.Image", multiple: false, visibility: "hidden"}
 			},
 			events: {
@@ -414,7 +440,7 @@ sap.ui.define([
 		this._bThemeApplied = true;
 		if (!sap.ui.getCore().isInitialized()) {
 			this._bThemeApplied = false;
-			sap.ui.getCore().attachInit(this._handleCoreInitialized.bind(this));
+			Core.ready(this._handleCoreInitialized.bind(this));
 		} else {
 			this._handleCoreInitialized();
 		}

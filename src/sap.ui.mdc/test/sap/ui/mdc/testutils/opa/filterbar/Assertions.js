@@ -97,7 +97,7 @@ sap.ui.define([
 				Opa5.assert.strictEqual(aFilterFields.length, aLabelNames.length, "The exact number of filter fields were found");
 
 				var oFilterBar = aFilterFields[0].getParent(),
-					aFilterFieldsReOrdered = oFilterBar.getFilterItems();
+					aFilterFieldsReOrdered = [];
 
 				if (aFilterFieldsReOrdered.length === aLabelNames.length) {
 					aLabelNames.forEach(function(sLabel, iIndex) {

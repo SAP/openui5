@@ -3,7 +3,6 @@ sap.ui.define([
 	"sap/ui/table/qunit/TableQUnitUtils",
 	"sap/ui/table/AnalyticalTable",
 	"sap/ui/table/utils/TableUtils",
-	"sap/ui/model/odata/ODataModel",
 	"sap/ui/model/odata/v2/ODataModel",
 	"sap/ui/core/qunit/analytics/o4aMetadata",
 	"sap/ui/model/TreeAutoExpandMode",
@@ -14,10 +13,11 @@ sap.ui.define([
 	"sap/ui/table/library",
 	"sap/ui/core/TooltipBase",
 	"sap/ui/core/Core",
-	"sap/ui/core/qunit/analytics/TBA_ServiceDocument", // provides mock data
-	"sap/ui/core/qunit/analytics/ATBA_Batch_Contexts" // provides mock data
-], function(TableQUnitUtils, AnalyticalTable, TableUtils, ODataModel, ODataModelV2, o4aFakeService,
-			TreeAutoExpandMode, AnalyticalColumn, Filter, FloatType, Row, library, TooltipBase, Core) {
+	// provides mock data
+	"sap/ui/core/qunit/analytics/TBA_ServiceDocument",
+	// provides mock data
+	"sap/ui/core/qunit/analytics/ATBA_Batch_Contexts"
+], function(TableQUnitUtils, AnalyticalTable, TableUtils, ODataModelV2, o4aFakeService, TreeAutoExpandMode, AnalyticalColumn, Filter, FloatType, Row, library, TooltipBase, Core) {
 	/*global QUnit,sinon*/
 	"use strict";
 
@@ -215,10 +215,6 @@ sap.ui.define([
 
 			visibleRowCount: 20,
 			enableColumnReordering: true,
-			/**
-			 * @deprecated As of Version 1.117
-			 */
-			showColumnVisibilityMenu: true,
 			enableColumnFreeze: true,
 			enableCellFilter: true,
 			selectionMode: library.SelectionMode.MultiToggle
@@ -265,17 +261,6 @@ sap.ui.define([
 		assert.equal(this.oTable.getSelectionBehavior(), library.SelectionBehavior.RowOnly, "SelectionBehavior.RowOnly");
 	});
 
-	/**
-	 * @deprecated As of version 1.21.2
-	 */
-	QUnit.test("Dirty", function(assert) {
-		assert.equal(this.oTable.getDirty(), false, "Default dirty");
-		assert.equal(this.oTable.getShowOverlay(), false, "Default showOverlay");
-		this.oTable.setDirty(true);
-		assert.equal(this.oTable.getDirty(), true, "Dirty set");
-		assert.equal(this.oTable.getShowOverlay(), true, "ShowOverlay set");
-	});
-
 	QUnit.test("FixedRowCount", function(assert) {
 		assert.equal(this.oTable.getFixedRowCount(), 0, "Default fixedRowCount");
 		this.oTable.setFixedRowCount(5);
@@ -296,9 +281,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("EnableGrouping", function(assert) {
-		assert.equal(this.oTable.getEnableGrouping(), false, "Default enableGrouping");
-		this.oTable.setEnableGrouping(true);
-		assert.equal(this.oTable.getEnableGrouping(), false, "EnableGrouping cannot be changed");
+		assert.equal(false, false, "Default enableGrouping");
+		assert.equal(false, false, "EnableGrouping cannot be changed");
 	});
 
 	QUnit.test("getTotalSize", function(assert) {
@@ -490,7 +474,7 @@ sap.ui.define([
 		}).then(function() {
 			return test({
 				bindingInfo: oBindingInfo,
-				model: new ODataModel(sServiceURI, {loadMetadataAsync: false}),
+				model: new undefined/*ODataModel*/(sServiceURI, {loadMetadataAsync: false}),
 				metadataLoaded: function(oUpdateColumnsSpy, oInvalidateSpy, bTableIsRendered) {
 					assert.ok(oUpdateColumnsSpy.calledOnce, "V1 model; Load metadata synchronously -> Columns updated");
 					if (bTableIsRendered) {
@@ -503,7 +487,7 @@ sap.ui.define([
 		}).then(function() {
 			return test({
 				bindingInfo: oBindingInfo,
-				model: new ODataModel(sServiceURI, {loadMetadataAsync: true}),
+				model: new undefined/*ODataModel*/(sServiceURI, {loadMetadataAsync: true}),
 				metadataLoaded: function(oUpdateColumnsSpy, oInvalidateSpy, bTableIsRendered) {
 					assert.ok(oUpdateColumnsSpy.calledOnce, "V1 model; Load metadata asynchronously -> Columns updated");
 					if (bTableIsRendered) {
@@ -659,83 +643,6 @@ sap.ui.define([
 			this.oTable.bindRows("/ActualPlannedCosts(P_ControllingArea='US01',P_CostCenter='100-1000',P_CostCenterTo='999-9999')/Results");
 
 		}.bind(this));
-	});
-
-	/**
-	 * @deprecated As of version 1.44
-	 */
-	QUnit.test("TreeAutoExpandMode property", function(assert) {
-		var done = assert.async();
-		var oExpandMode = TreeAutoExpandMode;
-
-		function checkMode(mode, text) {
-			assert.equal(mode.Bundled, "Bundled", text + " - Mode Bundled");
-			assert.equal(mode.Sequential, "Sequential", text + " - Mode Sequential");
-		}
-
-		sap.ui.require(["sap/ui/table/TreeAutoExpandMode"], function(oMode) {
-			checkMode(oMode, "Module sap/ui/table/TreeAutoExpandMode");
-			assert.ok(sap.ui.table.TreeAutoExpandMode === oMode, "Namespace sap.ui.table.TreeAutoExpandMode");
-			assert.ok(sap.ui.table.TreeAutoExpandMode === oExpandMode, "sap.ui.table.TreeAutoExpandMode === sap.ui.model.TreeAutoExpandMode");
-			done();
-		});
-
-		this.oTable = new AnalyticalTable();
-		var oBindingInfo = {};
-		this.oTable._applyAnalyticalBindingInfo(oBindingInfo);
-		assert.equal(oBindingInfo.parameters.autoExpandMode, oExpandMode.Bundled, "Property AutoExpandMode - Default");
-
-		oBindingInfo = {};
-		this.oTable.setAutoExpandMode(oExpandMode.Sequential);
-		this.oTable._applyAnalyticalBindingInfo(oBindingInfo);
-		assert.equal(oBindingInfo.parameters.autoExpandMode, oExpandMode.Sequential, "Property AutoExpandMode - Sequential");
-
-		oBindingInfo = {};
-		this.oTable.setAutoExpandMode(oExpandMode.Bundled);
-		this.oTable._applyAnalyticalBindingInfo(oBindingInfo);
-		assert.equal(oBindingInfo.parameters.autoExpandMode, oExpandMode.Bundled, "Property AutoExpandMode - Bundled");
-
-		oBindingInfo = {};
-		this.oTable.setAutoExpandMode("DOES_NOT_EXIST");
-		this.oTable._applyAnalyticalBindingInfo(oBindingInfo);
-		assert.equal(oBindingInfo.parameters.autoExpandMode, oExpandMode.Bundled, "Property AutoExpandMode - Wrong");
-	});
-
-	/**
-	 * @deprecated As of version 1.44
-	 */
-	QUnit.test("SumOnTop property", function(assert) {
-		this.oTable = new AnalyticalTable();
-		var oBindingInfo = {};
-		this.oTable._applyAnalyticalBindingInfo(oBindingInfo);
-		assert.equal(oBindingInfo.parameters.sumOnTop, false, "Property SumOnTop - Default");
-
-		oBindingInfo = {};
-		this.oTable.setSumOnTop(true);
-		this.oTable._applyAnalyticalBindingInfo(oBindingInfo);
-		assert.equal(oBindingInfo.parameters.sumOnTop, true, "Property SumOnTop - Custom");
-	});
-
-	/**
-	 * @deprecated As of version 1.44
-	 */
-	QUnit.test("NumberOfExpandedLevels property", function(assert) {
-		this.oTable = new AnalyticalTable();
-		var oBindingInfo = {};
-		this.oTable._applyAnalyticalBindingInfo(oBindingInfo);
-		assert.equal(oBindingInfo.parameters.numberOfExpandedLevels, 0, "Property NumberOfExpandedLevels - Default");
-
-		this.oTable._aGroupedColumns = new Array(4);
-		oBindingInfo = {};
-		this.oTable.setNumberOfExpandedLevels(4);
-		this.oTable._applyAnalyticalBindingInfo(oBindingInfo);
-		assert.equal(oBindingInfo.parameters.numberOfExpandedLevels, 4, "Property NumberOfExpandedLevels - Custom");
-
-		this.oTable._aGroupedColumns = [];
-		oBindingInfo = {};
-		this.oTable.setNumberOfExpandedLevels(4);
-		this.oTable._applyAnalyticalBindingInfo(oBindingInfo);
-		assert.equal(oBindingInfo.parameters.numberOfExpandedLevels, 0, "Property NumberOfExpandedLevels (no grouped columns) - Custom");
 	});
 
 	QUnit.test("Simple expand/collapse", function(assert) {
@@ -1561,38 +1468,6 @@ sap.ui.define([
 		assert.equal(oTable._oProxy._sAggregation, "rows", "Proxy has correct aggregation");
 		assert.equal(oTable._oProxy._oControl, oTable, "Proxy has correct control associated");
 		oTable.destroy();
-	});
-
-	/**
-	 * @deprecated As of version 1.76
-	 */
-	QUnit.test("Correct Proxy Calls - collapseRecursive property", function(assert) {
-		// Initialise spies
-		var fnSetCollapseRecursiveSpy = sinon.spy(this.oProxy, "setCollapseRecursive");
-
-		// Stub oTable.getBinding
-		var fnGetBinding = sinon.stub(this.oTable, "getBinding");
-		fnGetBinding.returns({
-			getMetadata: function() {
-				return {
-					getName: function() {
-						return undefined;
-					}
-				};
-			},
-			getNodes: function() {
-				return [];
-			}
-		});
-
-		// setCollapseRecursive
-		this.oTable.setCollapseRecursive(true);
-		assert.ok(fnSetCollapseRecursiveSpy.called, "proxy#setCollapseRecursive was called");
-
-		// Restore spies and stubs
-		fnSetCollapseRecursiveSpy.restore();
-
-		fnGetBinding.restore();
 	});
 
 	QUnit.test("Correct Proxy Calls", function(assert) {

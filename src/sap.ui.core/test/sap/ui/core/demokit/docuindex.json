@@ -15,106 +15,111 @@
 			}
 		]
 	},
-	"explored" : {
-		"entitiesDefaults" : {
-			"formFactors" : "-"
+	"explored": {
+		"entitiesDefaults": {
+			"formFactors": "-"
 		},
 		"samplesRef": [
 			{
-				"namespace" : "sap.ui.core.sample",
-				"ref" : "test-resources/sap/ui/core/demokit/sample"
+				"namespace": "sap.ui.core.sample",
+				"ref": "test-resources/sap/ui/core/demokit/sample"
 			},
 			{
-				"namespace" : "sap.ui.core.tutorial",
-				"ref" : "test-resources/sap/ui/core/demokit/tutorial"
+				"namespace": "sap.ui.core.tutorial",
+				"ref": "test-resources/sap/ui/core/demokit/tutorial"
 			}
 		],
-		"entities" : [
+		"entities": [
 			{
-				"id" : "sap.ui.core.BusyIndicator",
-				"name" : "Global Busy Indicator",
-				"category" : "Display",
-				"since" : "1.0",
-				"samples" : [
+				"id": "sap.ui.core.BusyIndicator",
+				"name": "Global Busy Indicator",
+				"category": "Display",
+				"since": "1.0",
+				"samples": [
 					"sap.ui.core.sample.BusyIndicator"
 				]
 			},
 			{
-				"id" : "sap.ui.core.Control",
-				"name" : "Control",
-				"category" : "Display",
-				"since" : "1.0",
-				"samples" : [
+				"id": "sap.ui.core.Control",
+				"name": "Control",
+				"category": "Display",
+				"since": "1.0",
+				"samples": [
 					"sap.ui.core.sample.ControlBusyIndicator",
 					"sap.ui.core.sample.FieldGroup"
 				]
 			},
 			{
-				"id" : "sap.ui.core.HTML",
-				"name" : "HTML",
-				"category" : "Display",
-				"since" : "1.0",
-				"samples" : [
+				"id": "sap.ui.core.HTML",
+				"name": "HTML",
+				"category": "Display",
+				"since": "1.0",
+				"samples": [
 					"sap.ui.core.sample.Html",
 					"sap.ui.core.sample.Html.static",
 					"sap.ui.core.sample.Html.preserveDOM"
 				]
 			},
 			{
-				"id" : "sap.ui.core.Icon",
-				"name" : "Icon",
-				"category" : "Display",
-				"since" : "1.12",
-				"samples" : [ "sap.ui.core.sample.Icon" ]
+				"id": "sap.ui.core.Icon",
+				"name": "Icon",
+				"category": "Display",
+				"since": "1.12",
+				"samples": [
+					"sap.ui.core.sample.Icon"
+				]
 			},
 			{
-				"id" : "sap.ui.core.InvisibleMessage",
-				"name" : "InvisibleMessage",
-				"category" : "Display",
-				"since" : "1.78",
-				"samples" : [ "sap.ui.core.sample.InvisibleMessage" ]
+				"id": "sap.ui.core.InvisibleMessage",
+				"name": "InvisibleMessage",
+				"category": "Display",
+				"since": "1.78",
+				"samples": [
+					"sap.ui.core.sample.InvisibleMessage"
+				]
 			},
 			{
-				"id" : "sap.ui.core.InvisibleText",
-				"name" : "InvisibleText",
-				"category" : "Display",
-				"since" : "1.28",
-				"samples" : [ "sap.ui.core.sample.InvisibleText" ]
+				"id": "sap.ui.core.InvisibleText",
+				"name": "InvisibleText",
+				"category": "Display",
+				"since": "1.28",
+				"samples": [
+					"sap.ui.core.sample.InvisibleText"
+				]
 			},
 			{
-				"id" : "sap.ui.core.CommandExecution",
-				"name" : "Commands",
-				"category" : "Action",
-				"since" : "1.70",
-				"samples" : [ "sap.ui.core.sample.Commands" ]
+				"id": "sap.ui.core.CommandExecution",
+				"name": "Commands",
+				"category": "Action",
+				"since": "1.70",
+				"samples": [
+					"sap.ui.core.sample.Commands"
+				]
 			},
 			{
-				"id" : "sap.ui.core.mvc.View",
-				"name" : "View",
-				"category" : "Display",
-				"formFactors" : "-",
-				"since" : "1.30",
-				"samples" : [
+				"id": "sap.ui.core.mvc.View",
+				"name": "View",
+				"category": "Display",
+				"formFactors": "-",
+				"since": "1.30",
+				"samples": [
 					"sap.ui.core.sample.View.async",
 					"sap.ui.core.sample.View.preprocessor"
 				]
 			},
 			{
-				"id" : "sap.ui.core.XMLComposite",
-				"name" : "XML Composite Control",
-				"category" : "Display",
-				"since" : "1.56",
-				"samples" : [
-					"sap.ui.core.sample.XMLComposite.01",
-					"sap.ui.core.sample.XMLComposite.02"
-				]
+				"id": "sap.ui.core.XMLComposite",
+				"name": "XML Composite Control",
+				"category": "Display",
+				"since": "1.56",
+				"samples": []
 			},
 			{
-				"id" : "sap.ui.core.mvc.XMLView",
-				"name" : "XMLView",
-				"category" : "Display",
-				"since" : "1.26",
-				"samples" : [
+				"id": "sap.ui.core.mvc.XMLView",
+				"name": "XMLView",
+				"category": "Display",
+				"since": "1.26",
+				"samples": [
 					"sap.ui.core.sample.ViewTemplate.scenario",
 					"sap.ui.core.sample.ViewTemplate.scenario.extension",
 					"sap.ui.core.sample.ViewTemplate.tiny",
@@ -132,11 +137,11 @@
 				]
 			},
 			{
-				"id" : "sap.ui.test.Opa5",
-				"name" : "OPA5",
-				"category" : "Testing",
-				"since" : "1.24",
-				"samples" : [
+				"id": "sap.ui.test.Opa5",
+				"name": "OPA5",
+				"category": "Testing",
+				"since": "1.24",
+				"samples": [
 					"sap.ui.core.sample.OpaGetStarted",
 					"sap.ui.core.sample.OpaMatchers",
 					"sap.ui.core.sample.OpaById",
@@ -191,11 +196,11 @@
 				]
 			},
 			{
-				"id" : "sap.ui.test.gherkin",
-				"name" : "Gherkin",
-				"category" : "Testing",
-				"since" : "1.40",
-				"samples" : [
+				"id": "sap.ui.test.gherkin",
+				"name": "Gherkin",
+				"category": "Testing",
+				"since": "1.40",
+				"samples": [
 					"sap.ui.core.sample.gherkin.GherkinWithQUnit",
 					"sap.ui.core.sample.gherkin.GherkinWithOPA5",
 					"sap.ui.core.sample.gherkin.GherkinWithPageObjects",
@@ -203,50 +208,50 @@
 				]
 			},
 			{
-				"id" : "sap.ui.core.theming",
-				"name" : "Theming",
-				"category" : "Theming",
-				"since" : "1.26",
-				"samples" : [
+				"id": "sap.ui.core.theming",
+				"name": "Theming",
+				"category": "Theming",
+				"since": "1.26",
+				"samples": [
 					"sap.ui.core.sample.ThemeCustomClasses",
 					"sap.ui.core.sample.BasicThemeParameters"
 				]
 			},
-		 	{
-				"id" : "sap.ui.core.routing.Targets",
-				"name" : "Targets",
-				"category" : "Routing",
-				"since" : "1.28",
-				"samples" : [
+			{
+				"id": "sap.ui.core.routing.Targets",
+				"name": "Targets",
+				"category": "Routing",
+				"since": "1.28",
+				"samples": [
 					"sap.ui.core.sample.TargetsStandalone"
 				]
 			},
 			{
-				"id" : "sap.ui.core.routing.Route",
-				"name" : "Route",
-				"category" : "Routing",
-				"since" : "1.16",
-				"samples" : [
+				"id": "sap.ui.core.routing.Route",
+				"name": "Route",
+				"category": "Routing",
+				"since": "1.16",
+				"samples": [
 					"sap.ui.core.sample.PatternMatching"
 				]
 			},
 			{
-				"id" : "sap.ui.core.routing.Router",
-				"name" : "Router",
-				"category" : "Routing",
-				"since" : "1.16",
-				"samples" : [
+				"id": "sap.ui.core.routing.Router",
+				"name": "Router",
+				"category": "Routing",
+				"since": "1.16",
+				"samples": [
 					"sap.ui.core.sample.RoutingFullscreen",
 					"sap.ui.core.sample.RoutingMasterDetail",
 					"sap.ui.core.sample.RoutingNestedComponent"
 				]
 			},
 			{
-				"id" : "sap.ui.model.odata.v4.ODataModel",
-				"name" : "OData V4 Model",
-				"category" : "Data Binding",
-				"since" : "1.38",
-				"samples" : [
+				"id": "sap.ui.model.odata.v4.ODataModel",
+				"name": "OData V4 Model",
+				"category": "Data Binding",
+				"since": "1.38",
+				"samples": [
 					"sap.ui.core.sample.odata.v4.ConsumeV2Service",
 					"sap.ui.core.sample.odata.v4.DeepCreate",
 					"sap.ui.core.sample.odata.v4.Draft",
@@ -258,11 +263,11 @@
 				]
 			},
 			{
-				"id" : "sap.ui.model.odata.type",
-				"name" : "OData Types (V2 and V4)",
-				"category" : "Data Binding",
-				"since" : "1.27",
-				"samples" : [
+				"id": "sap.ui.model.odata.type",
+				"name": "OData Types (V2 and V4)",
+				"category": "Data Binding",
+				"since": "1.27",
+				"samples": [
 					"sap.ui.core.sample.odata.types.v2.DateTime",
 					"sap.ui.core.sample.odata.types.v2.DateTimeOffset",
 					"sap.ui.core.sample.odata.types.v2.Time",
@@ -272,112 +277,112 @@
 				]
 			},
 			{
-				"id" : "sap.ui.model.odata.type.Date",
-				"name" : "Date Type (OData V4)",
-				"category" : "Data Binding",
-				"since" : "1.37",
-				"samples" : [
+				"id": "sap.ui.model.odata.type.Date",
+				"name": "Date Type (OData V4)",
+				"category": "Data Binding",
+				"since": "1.37",
+				"samples": [
 					"sap.ui.core.sample.odata.types.v4.Date"
 				]
 			},
 			{
-				"id" : "sap.ui.model.odata.type.DateTime",
-				"name" : "DateTime Type (OData V2)",
-				"category" : "Data Binding",
-				"since" : "1.27",
-				"samples" : [
+				"id": "sap.ui.model.odata.type.DateTime",
+				"name": "DateTime Type (OData V2)",
+				"category": "Data Binding",
+				"since": "1.27",
+				"samples": [
 					"sap.ui.core.sample.odata.types.v2.DateTime"
 				]
 			},
 			{
-				"id" : "sap.ui.model.odata.type.DateTimeOffset",
-				"name" : "DateTimeOffset Type (OData V2 and V4)",
-				"category" : "Data Binding",
-				"since" : "1.27",
-				"samples" : [
+				"id": "sap.ui.model.odata.type.DateTimeOffset",
+				"name": "DateTimeOffset Type (OData V2 and V4)",
+				"category": "Data Binding",
+				"since": "1.27",
+				"samples": [
 					"sap.ui.core.sample.odata.types.v2.DateTimeOffset",
 					"sap.ui.core.sample.odata.types.v4.DateTimeOffset"
 				]
 			},
 			{
-				"id" : "sap.ui.model.odata.type.Time",
-				"name" : "Time Type (OData V2)",
-				"category" : "Data Binding",
-				"since" : "1.27",
-				"samples" : [
+				"id": "sap.ui.model.odata.type.Time",
+				"name": "Time Type (OData V2)",
+				"category": "Data Binding",
+				"since": "1.27",
+				"samples": [
 					"sap.ui.core.sample.odata.types.v2.Time"
 				]
 			},
 			{
-				"id" : "sap.ui.model.odata.type.TimeOfDay",
-				"name" : "TimeOfDay Type (OData V4)",
-				"category" : "Data Binding",
-				"since" : "1.37",
-				"samples" : [
+				"id": "sap.ui.model.odata.type.TimeOfDay",
+				"name": "TimeOfDay Type (OData V4)",
+				"category": "Data Binding",
+				"since": "1.37",
+				"samples": [
 					"sap.ui.core.sample.odata.types.v4.TimeOfDay"
 				]
 			},
 			{
-				"id" : "sap.ui.model.type.Date",
-				"name" : "Date Type",
-				"category" : "Data Binding",
-				"since" : "1.10",
-				"samples" : [
+				"id": "sap.ui.model.type.Date",
+				"name": "Date Type",
+				"category": "Data Binding",
+				"since": "1.10",
+				"samples": [
 					"sap.ui.core.sample.TypeDateAsDate",
 					"sap.ui.core.sample.TypeDateAsString"
 				]
 			},
 			{
-				"id" : "sap.ui.model.type.DateTime",
-				"name" : "DateTime Type",
-				"category" : "Data Binding",
-				"since" : "1.28",
-				"samples" : [
+				"id": "sap.ui.model.type.DateTime",
+				"name": "DateTime Type",
+				"category": "Data Binding",
+				"since": "1.28",
+				"samples": [
 					"sap.ui.core.sample.TypeDateTime"
 				]
 			},
 			{
-				"id" : "sap.ui.model.type.Time",
-				"name" : "Time Type",
-				"category" : "Data Binding",
-				"since" : "1.28",
-				"samples" : [
+				"id": "sap.ui.model.type.Time",
+				"name": "Time Type",
+				"category": "Data Binding",
+				"since": "1.28",
+				"samples": [
 					"sap.ui.core.sample.TypeTimeAsTime"
 				]
 			},
 			{
-				"id" : "sap.ui.model.type.Integer",
-				"name" : "Integer Type",
-				"category" : "Data Binding",
-				"since" : "1.28",
-				"samples" : [
+				"id": "sap.ui.model.type.Integer",
+				"name": "Integer Type",
+				"category": "Data Binding",
+				"since": "1.28",
+				"samples": [
 					"sap.ui.core.sample.TypeInteger"
 				]
 			},
 			{
-				"id" : "sap.ui.model.type.Float",
-				"name" : "Float Type",
-				"category" : "Data Binding",
-				"since" : "1.28",
-				"samples" : [
+				"id": "sap.ui.model.type.Float",
+				"name": "Float Type",
+				"category": "Data Binding",
+				"since": "1.28",
+				"samples": [
 					"sap.ui.core.sample.TypeFloat"
 				]
 			},
 			{
-				"id" : "sap.ui.model.type.Currency",
-				"name" : "Currency Type",
-				"category" : "Data Binding",
-				"since" : "1.28",
-				"samples" : [
+				"id": "sap.ui.model.type.Currency",
+				"name": "Currency Type",
+				"category": "Data Binding",
+				"since": "1.28",
+				"samples": [
 					"sap.ui.core.sample.TypeCurrency"
 				]
 			},
 			{
-				"id" : "sap.ui.model.type.FileSize",
-				"name" : "FileSize Type",
-				"category" : "Data Binding",
-				"since" : "1.28",
-				"samples" : [
+				"id": "sap.ui.model.type.FileSize",
+				"name": "FileSize Type",
+				"category": "Data Binding",
+				"since": "1.28",
+				"samples": [
 					"sap.ui.core.sample.TypeFileSize"
 				]
 			},
@@ -447,7 +452,7 @@
 					"Aggregation Binding Using A Factory Function"
 				]
 			},
-		    {
+			{
 				"id": "sap.ui.core.tutorial.mockserver",
 				"name": "OData V2 Mock Server",
 				"category": "Tutorial",
@@ -456,12 +461,12 @@
 				"description": "In this tutorial, we will explore some advanced features of the OData V2 mock server.",
 				"docuLink": "topic/3a9728ec31f94ca18a7d543ce419d85d",
 				"samplesAsSteps": [
-				  "Initial App Without Data",
-				  "Creating a Mock Server to Simulate Data",
-				  "Handling Custom URL Parameters",
-				  "Calling a Function Import"
+					"Initial App Without Data",
+					"Creating a Mock Server to Simulate Data",
+					"Handling Custom URL Parameters",
+					"Calling a Function Import"
 				]
-		    },
+			},
 			{
 				"id": "sap.ui.core.tutorial.odatav4",
 				"name": "OData V4",
@@ -485,7 +490,7 @@
 				]
 			}
 		],
-		"samples" : [
+		"samples": [
 			{
 				"id": "sap.ui.core.sample.odata.types.v2.DateTime",
 				"name": "OData V2 Dates - Use sap.ui.model.odata.type.DateTime for Edm.DateTime",
@@ -592,14 +597,14 @@
 				"description": "Formats the number by using the parameters defined for the given currency code. Either currency symbol, currency code or none of them can be included in the final formatted string. It parses the given string into an array which contains both the currency number and currency code."
 			},
 			{
-				"id" : "sap.ui.core.sample.InvisibleMessage",
-				"name" : "InvisibleMessage",
-				"description" : "The InvisibleMessage provides a way to programmaticaly expose dynamic content changes in a way that can be announced by screen readers."
+				"id": "sap.ui.core.sample.InvisibleMessage",
+				"name": "InvisibleMessage",
+				"description": "The InvisibleMessage provides a way to programmaticaly expose dynamic content changes in a way that can be announced by screen readers."
 			},
 			{
-				"id" : "sap.ui.core.sample.InvisibleText",
-				"name" : "InvisibleText",
-				"description" : "Many controls provide the associations ariaLabelledBy and ariaDescribedBy for accessibility purposes. The InvisibleText control can be used by application to provide hidden texts on the UI which can be referenced via these associations."
+				"id": "sap.ui.core.sample.InvisibleText",
+				"name": "InvisibleText",
+				"description": "Many controls provide the associations ariaLabelledBy and ariaDescribedBy for accessibility purposes. The InvisibleText control can be used by application to provide hidden texts on the UI which can be referenced via these associations."
 			},
 			{
 				"id": "sap.ui.core.sample.View.async",
@@ -650,16 +655,6 @@
 				"id": "sap.ui.core.sample.odata.v4.SalesOrderTP100_V2",
 				"name": "Sales Orders TP100 via OData V2 Service",
 				"description": "Example for consuming an OData V2 Service via an OData V4 Model"
-			},
-			{
-				"id": "sap.ui.core.sample.XMLComposite.01",
-				"name": "XMLComposite: basic example",
-				"description": "Basic example to show the structure of an XML composite control"
-			},
-			{
-				"id": "sap.ui.core.sample.XMLComposite.02",
-				"name": "XMLComposite: example showing usage of aggregation",
-				"description": "Example showing how aggregations can be dealt with in an XML composite control"
 			},
 			{
 				"id": "sap.ui.core.sample.ViewTemplate.scenario",
@@ -727,39 +722,39 @@
 				"description": "How to use Gherkin and OPA5 to load a UIComponent and run behavior driven development tests on it"
 			},
 			{
-				"id" : "sap.ui.core.sample.ThemeCustomClasses",
-				"name" : "Theme-independent CSS-classes",
-				"description" : "Sample display of 'sapTheme'-prefixed CSS classes for theme-independent styling of custom HTML/Controls. The set displayed is to be used to style static HTML elements."
+				"id": "sap.ui.core.sample.ThemeCustomClasses",
+				"name": "Theme-independent CSS-classes",
+				"description": "Sample display of 'sapTheme'-prefixed CSS classes for theme-independent styling of custom HTML/Controls. The set displayed is to be used to style static HTML elements."
 			},
 			{
-				"id" : "sap.ui.core.sample.BasicThemeParameters",
-				"name" : "Basic Theme Parameters",
-				"description" : "Sample provides a link to the Theme Parameter Toolbox. There you can easily search, preview, and filter semantic theme parameters."
+				"id": "sap.ui.core.sample.BasicThemeParameters",
+				"name": "Basic Theme Parameters",
+				"description": "Sample provides a link to the Theme Parameter Toolbox. There you can easily search, preview, and filter semantic theme parameters."
 			},
 			{
-				"id" : "sap.ui.core.sample.PatternMatching",
-				"name" : "Route Patterns",
-				"description" : "Syntax for the Route pattern property."
+				"id": "sap.ui.core.sample.PatternMatching",
+				"name": "Route Patterns",
+				"description": "Syntax for the Route pattern property."
 			},
 			{
-				"id" : "sap.ui.core.sample.TargetsStandalone",
-				"name" : "Targets without a Router",
-				"description" : "If you do not need bookmarks, a router is too complicated you can use Targets to lazy load your views and navigate through your application."
+				"id": "sap.ui.core.sample.TargetsStandalone",
+				"name": "Targets without a Router",
+				"description": "If you do not need bookmarks, a router is too complicated you can use Targets to lazy load your views and navigate through your application."
 			},
 			{
-				"id" : "sap.ui.core.sample.RoutingFullscreen",
-				"name" : "Routing between Fullscreen pages a simple sample",
-				"description" : "A mini app with 2 pages. Both are bookmarkable."
+				"id": "sap.ui.core.sample.RoutingFullscreen",
+				"name": "Routing between Fullscreen pages a simple sample",
+				"description": "A mini app with 2 pages. Both are bookmarkable."
 			},
 			{
-				"id" : "sap.ui.core.sample.RoutingMasterDetail",
-				"name" : "Routing in a split screen layout with the master detail pattern",
-				"description" : "A mini app with 2 detail pages. Both are bookmarkable."
+				"id": "sap.ui.core.sample.RoutingMasterDetail",
+				"name": "Routing in a split screen layout with the master detail pattern",
+				"description": "A mini app with 2 detail pages. Both are bookmarkable."
 			},
 			{
-				"id" : "sap.ui.core.sample.RoutingNestedComponent",
-				"name" : "Routing with nested components consuming data from a mocked OData V2 service",
-				"description" : "An app that shows how nested components with enabled routing can be used. This app uses a mocked OData V2 service and shows the 'Products', 'Categories' and 'Suppliers' entity sets and the relationships between them."
+				"id": "sap.ui.core.sample.RoutingNestedComponent",
+				"name": "Routing with nested components consuming data from a mocked OData V2 service",
+				"description": "An app that shows how nested components with enabled routing can be used. This app uses a mocked OData V2 service and shows the 'Products', 'Categories' and 'Suppliers' entity sets and the relationships between them."
 			},
 			{
 				"id": "sap.ui.core.sample.matcher.BindingPath",
@@ -857,8 +852,8 @@
 				"description": "This sample demonstrates usage of the Hyphenation API"
 			},
 			{
-				"id" : "sap.ui.core.sample.Commands",
-				"name" : "Commands",
+				"id": "sap.ui.core.sample.Commands",
+				"name": "Commands",
 				"description": "This example demonstrates how to define shortcuts using commands in your application"
 			}
 		]

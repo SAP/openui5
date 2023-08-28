@@ -156,24 +156,6 @@ sap.ui.define([
 			var oUriParams = UriParameters.fromQuery(window.location.search);
 			var sIsHotfixMode = oUriParams.get("hotfix");
 			return SmartVariantManagementApplyAPI.isVendorLayer() && (sIsHotfixMode === "true");
-		},
-
-		/**
-		 * Retrieves the default variant for the current control synchronously. WARNING: The consumer has to make sure that the
-		 * changes have already been retrieved with <code>getChanges</code>.
-		 * It's recommended to use the async API <code>getDefaultVariantId</code>, which works regardless of any preconditions.
-		 *
-		 * @param {object} mPropertyBag - Object with parameters as properties
-		 * @param {sap.ui.comp.smartvariants.SmartVariantManagement} mPropertyBag.control - SAPUI5 Smart Variant Management control
-		 * @returns {string} ID of the default variant
-		 * @private
-		 * @ui5-restricted
-		 * @deprecated
-		 */
-		getDefaultVariantId(mPropertyBag) {
-			var aDefaultVariantChanges = getVariantsMapForKey(mPropertyBag.control).defaultVariants;
-			var oChange = aDefaultVariantChanges[aDefaultVariantChanges.length - 1];
-			return oChange ? oChange.getContent().defaultVariantName : "";
 		}
 	};
 

@@ -825,27 +825,6 @@ sap.ui.define([
 		}
 	});
 
-	/**
-	 * @deprecated As of version 1.110
-	 */
-	QUnit.test("Sync view created via constructor", function(assert) {
-		assert.expect(2);
-		var done = assert.async();
-
-		sap.ui.require([
-			"testdata/mvc/TypedViewSyncCreateContent"
-		], function(TypedView) {
-			var oTypedView = new TypedView();
-			assert.ok(oTypedView.isA("testdata.mvc.TypedView"), "Views is a typed view");
-			assert.ok(oTypedView.byId("myPanel").isA("sap.m.Panel"), "Content created successfully");
-			oTypedView.destroy();
-			done();
-		}, function() {
-			assert.ok(false, "loading the view class failed");
-			done();
-		});
-	});
-
 	QUnit.test("Created via View.create", function(assert) {
 		assert.expect(3);
 

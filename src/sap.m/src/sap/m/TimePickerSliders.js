@@ -177,8 +177,6 @@ sap.ui.define([
 
 			this.setDisplayFormat(sDefaultDisplayFormat);
 			this._setTimeValues();
-			this._iMinutes; //needed for the 2400 scenario to store the minutes when scrolling before and after 24
-			this._iSeconds; //needed for the 2400 scenario to store the seconds when scrolling before and after 24
 		};
 
 		/**

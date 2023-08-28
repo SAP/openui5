@@ -281,24 +281,6 @@ sap.ui.define([
 	 */
 
 	/**
-	 * Returns the year of the embedded date instance minus 1900 according to the configured time zone and
-	 * selected calender. In case of the Gregorian calendar the 1900 is subtracted from the year value.
-	 *
-	 * @returns {int}
-	 *   The year of the embedded date instance (minus 1900 if the Gregorian calendar is selected)
-	 *   according to the configured time zone and selected calender
-	 *
-	 * @deprecated for the Gregorian calendar since version 1.111.0 as it is deprecated in
-	 *   JavaScript Date, it can be used with other calendars. It still is recommended to use
-	 *   {@link #getFullYear} instead, independent on the selected calender
-	 *
-	 * @function
-	 * @name sap.ui.core.date.UniversalDate.prototype.getYear
-	 * @private
-	 * @ui5-restricted SAPUI5 Distribution Layer Libraries
-	 */
-
-	/**
 	 * Returns the timestamp in milliseconds of the embedded date based on the UNIX epoch.
 	 *
 	 * @returns {int}
@@ -639,26 +621,6 @@ sap.ui.define([
 	 *
 	 * @function
 	 * @name sap.ui.core.date.UniversalDate.prototype.setUTCSeconds
-	 * @private
-	 * @ui5-restricted SAPUI5 Distribution Layer Libraries
-	 */
-
-	/**
-	 * Sets the year for the embedded date instance considering the configured time zone and the
-	 * selected calender. In case of the Gregorian calendar, 1900 is added to the year value
-	 *
-	 * @param {int} yearValue
-	 *   An integer representing the new year value (plus 1900 for the Gregorian calendar)
-	 * @returns {int}
-	 *   The milliseconds of the new timestamp based on the UNIX epoch, or <code>NaN</code> if the
-	 *   timestamp could not be updated. The new timestamp is a Gregorian timestamp.
-	 *
-	 * @deprecated for the Gregorian calendar since version 1.111.0 as it is deprecated in
-	 *   JavaScript Date, it can be used with other calendars. It still is recommended to use
-	 *   {@link #getFullYear} instead, independent on the selected calender
-	 *
-	 * @function
-	 * @name sap.ui.core.date.UniversalDate.prototype.setYear
 	 * @private
 	 * @ui5-restricted SAPUI5 Distribution Layer Libraries
 	 */

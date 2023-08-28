@@ -61,17 +61,10 @@ sap.ui.define([
 			library : "sap.m",
 			designtime: "sap/m/designtime/ObjectNumber.designtime",
 			properties : {
-
 				/**
 				 * Defines the number field.
 				 */
 				number : {type : "string", group : "Misc", defaultValue : null},
-
-				/**
-				 * Defines the number units qualifier.
-				 * @deprecated as of version 1.16.1, replaced by <code>unit</code> property
-				 */
-				numberUnit : {type : "string", group : "Misc", defaultValue : null, deprecated: true},
 
 				/**
 				 * Indicates if the object number should appear emphasized.

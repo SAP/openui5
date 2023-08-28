@@ -48,7 +48,7 @@ sap.ui.define([
 			oRm.class("sapMNCAnimation");
 		}
 		if (oControl.getWidth()) {
-			oRm.style("width", oControl.getSize());
+			oRm.style("width", "Auto");
 
 		}
 		oRm.class("sapMNC");

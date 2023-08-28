@@ -33,17 +33,6 @@ sap.ui.define([
 		assert.ok(oLogCollector.getAndClearLog().match("fixture/pendingModule"));
 	});
 
-	/**
-	 * @deprecated together with sync module loading
-	 */
-	QUnit.test("Should wait for pending sync module - xhrWaiter", function (assert) {
-		sap.ui.requireSync(["fixture/pendingModuleSync"]);
-		assert.ok(!_moduleWaiter.hasPending());
-		assert.ok(!_XHRWaiter.hasPending());
-		assert.ok(oLogCollector.getAndClearLog().match(/Finished:\nXHR: URL:.*fixture\/pendingModuleSync/mg));
-		delete window.fixture; // cleanup
-	});
-
 	function testPendingScript(async, defer, assert, fnDone) {
 		var oScript = document.createElement("script");
 		oScript["s" + "rc"] = "test-resources/sap/ui/core/qunit/opa/fixture/pendingScript.js";

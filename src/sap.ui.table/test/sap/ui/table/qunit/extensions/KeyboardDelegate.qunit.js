@@ -47,7 +47,7 @@ sap.ui.define([
 	// Checks whether the given DomRef is contained or equals (in) one of the given container
 	function isContained(aContainers, oRef) {
 		for (var i = 0; i < aContainers.length; i++) {
-			if (aContainers[i] === oRef || jQuery.contains(aContainers[i], oRef)) {
+			if (aContainers[i] === oRef || aContainers[i] !== oRef && aContainers[i].contains(oRef)) {
 				return true;
 			}
 		}
@@ -404,23 +404,6 @@ sap.ui.define([
 			"Returned False: Pressing a key on a column header cell can not toggle a group");
 		assert.ok(!KeyboardDelegate._allowsToggleExpandedState(oTable, getSelectAll()[0]),
 			"Returned False: Pressing a key on the SelectAll cell can not toggle a group");
-	});
-
-	/**
-	 * @deprecated As of version 1.118.
-	 */
-	QUnit.test("_allowsToggleExpandedState with grouping", function(assert) {
-		initRowActions(oTable, 2, 2);
-		oTable.setEnableGrouping(true);
-		oTable.setGroupBy(oTable.getColumns()[0]);
-		oCore.applyChanges();
-
-		assert.ok(KeyboardDelegate._allowsToggleExpandedState(oTable, getCell(0, 1)[0]),
-			"Returned True: Pressing a key on a data cell in a grouping row can toggle a group");
-		assert.ok(KeyboardDelegate._allowsToggleExpandedState(oTable, getRowHeader(0)[0]),
-			"Returned True: Pressing a key on a row header cell in a grouping row can toggle a group");
-		assert.ok(KeyboardDelegate._allowsToggleExpandedState(oTable, getRowAction(0)[0]),
-			"Returned True: Pressing a key on a row action cell in a grouping row can toggle a group");
 	});
 
 	QUnit.test("_allowsToggleExpandedState - TreeTable", function(assert) {
@@ -1142,48 +1125,6 @@ sap.ui.define([
 				TableUtils.Hook.deregister(this.oTable, TableUtils.Hook.Keys.Row.UpdateState, updateRowState);
 			}.bind(this));
 		}
-	});
-
-	/**
-	 * @deprecated As of version 1.28
-	 */
-	QUnit.test("Grouped", function(assert) {
-		var oTable = this.oTable;
-		var oRow = oTable.getRows()[0];
-		var aRowInfo = [{
-			title: "A",
-			state: {type: oRow.Type.Standard, expandable: true, expanded: true},
-			expectContentHidden: false
-		}, {
-			title: "B",
-			state: {type: oRow.Type.Standard, expandable: true, expanded: true},
-			expectContentHidden: true
-		}, {
-			title: "C",
-			state: {type: oRow.Type.GroupHeader, expandable: true, expanded: true},
-			expectContentHidden: true
-		}, {
-			title: "D",
-			state: {type: oRow.Type.Summary, expandable: true, expanded: true},
-			expectContentHidden: true
-		}, {
-			title: "E",
-			state: {type: oRow.Type.Standard, expandable: true, expanded: true},
-			expectContentHidden: true
-		}, {
-			title: "F",
-			state: {type: oRow.Type.Standard, expandable: true, expanded: true},
-			expectContentHidden: true
-		}];
-
-		this.setRowStates(aRowInfo.map(function(mRowInfo) {
-			return mRowInfo.state;
-		}));
-		oCore.applyChanges();
-
-		return this.oTable.qunit.whenRenderingFinished().then(function() {
-			this.testArrowKeys(assert);
-		}.bind(this));
 	});
 
 	QUnit.test("Fixed columns", function(assert) {
@@ -5142,42 +5083,6 @@ sap.ui.define([
 		});
 	});
 
-	/**
-	 * Opens a column header context menu and closes it by pressing the Escape key.
-	 *
-	 * @param {string} sKey The key to press.
-	 * @param {boolean} bKeyDown Whether to trigger key down or key up.
-	 * @param {boolean} bShift Whether to simulate a pressed shift key.
-	 * @param {Object} assert QUnit assert object.
-	 * @private
-	 * @deprecated As of Version 1.117
-	 */
-	function _testColumnHeaderContextMenus(sKey, bKeyDown, bShift, assert) {
-		return new Promise(function(resolve) {
-			var oColumn = oTable.getColumns()[0];
-			var oElem = checkFocus(getColumnHeader(0, true), assert);
-
-			oColumn.attachEventOnce("columnMenuOpen", function() {
-				TableQUnitUtils.wait(0).then(function() {
-					var oColumnMenu = oColumn.getMenu();
-
-					assert.ok(oColumnMenu.bOpen, "Menu is opened");
-					var bFirstItemHovered = oColumnMenu.$().find("li:first").hasClass("sapUiMnuItmHov");
-					assert.strictEqual(bFirstItemHovered, true, "The first item in the menu is hovered");
-					qutils.triggerKeydown(document.activeElement, Key.ESCAPE, false, false, false);
-					assert.ok(!oColumnMenu.bOpen, "Menu is closed");
-					checkFocus(oElem, assert);
-
-					oColumnMenu.close();
-					return resolve();
-				});
-			});
-
-			oColumn.setSortProperty("dummy");
-			oColumn._openHeaderMenu(oColumn.getDomRef());
-		});
-	}
-
 	QUnit.module("Interaction > Space & Enter", {
 		beforeEach: function() {
 			setupTest();
@@ -5190,50 +5095,12 @@ sap.ui.define([
 		}
 	});
 
-	/**
-	 * @deprecated As of version 1.117
-	 */
-	QUnit.test("On a Column Header", function(assert) {
-		var done = assert.async();
-		_testColumnHeaderContextMenus(Key.SPACE, false, false, assert).then(function() {
-			return _testColumnHeaderContextMenus(Key.ENTER, false, false, assert);
-		}).then(done);
-	});
-
 	QUnit.test("On SelectAll", function(assert) {
 		oTable.clearSelection();
 		oCore.applyChanges();
 
 		var oElem = checkFocus(getSelectAll(true), assert);
 
-		// Space
-		assert.ok(oTable.getSelectedIndices().length === 0, "No rows are selected");
-		qutils.triggerKeyup(oElem, Key.SPACE, false, false, false);
-		assert.ok(legacyAreAllRowsSelected(oTable), "All rows are selected");
-		qutils.triggerKeyup(oElem, Key.SPACE, false, false, false);
-		assert.ok(oTable.getSelectedIndices().length === 0, "No rows are selected");
-		qutils.triggerKeyup(oElem, Key.SPACE, false, false, true);
-		assert.ok(oTable.getSelectedIndices().length === 0, "No rows are selected");
-
-		// Enter
-		qutils.triggerKeydown(oElem, Key.ENTER, false, false, false);
-		assert.ok(legacyAreAllRowsSelected(oTable), "All rows are selected");
-		qutils.triggerKeydown(oElem, Key.ENTER, false, false, false);
-		assert.ok(oTable.getSelectedIndices().length === 0, "No rows are selected");
-		qutils.triggerKeydown(oElem, Key.ENTER, false, false, true);
-		assert.ok(oTable.getSelectedIndices().length === 0, "No rows are selected");
-	});
-
-	/**
-	 * @deprecated As of version 1.115
-	 */
-	QUnit.test("On SelectAll - legacyMultiSelection", function(assert) {
-		oTable.clearSelection();
-		oCore.applyChanges();
-
-		var oElem = checkFocus(getSelectAll(true), assert);
-
-		oTable._enableLegacyMultiSelection();
 		// Space
 		assert.ok(oTable.getSelectedIndices().length === 0, "No rows are selected");
 		qutils.triggerKeyup(oElem, Key.SPACE, false, false, false);
@@ -5274,72 +5141,6 @@ sap.ui.define([
 		this.assertSelection(assert, 0, true);
 		qutils.triggerKeydown(oElem1, Key.ENTER, false, false, false);
 		this.assertSelection(assert, 0, false);
-	});
-
-	/**
-	 * @deprecated As of version 1.115
-	 */
-	QUnit.test("On a Row Header - legacyMultiSelection", function(assert) {
-		oTable.clearSelection();
-		oCore.applyChanges();
-
-		var oElem1 = checkFocus(getRowHeader(0, true), assert);
-		var oElem2 = checkFocus(getRowHeader(1, true), assert);
-
-		oTable._enableLegacyMultiSelection();
-		//Space
-		qutils.triggerKeyup(oElem2, Key.SPACE, false, false, false);
-		this.assertSelection(assert, 0, false);
-		this.assertSelection(assert, 1, true);
-		qutils.triggerKeyup(oElem1, Key.SPACE, false, false, false);
-		this.assertSelection(assert, 0, true);
-		this.assertSelection(assert, 1, false);
-		qutils.triggerKeyup(oElem2, Key.SPACE, false, false, true);
-		this.assertSelection(assert, 0, true);
-		this.assertSelection(assert, 1, true);
-		qutils.triggerKeyup(oElem1, Key.SPACE, false, false, true);
-		this.assertSelection(assert, 0, false);
-		this.assertSelection(assert, 1, true);
-		qutils.triggerKeyup(oElem1, Key.SPACE, false, false, true);
-		this.assertSelection(assert, 0, true);
-		this.assertSelection(assert, 1, true);
-		qutils.triggerKeyup(oElem2, Key.SPACE, false, false, false);
-		this.assertSelection(assert, 0, false);
-		this.assertSelection(assert, 1, true);
-
-		qutils.triggerKeydown(oElem2, Key.SHIFT, false, false, false); // Start selection mode.
-		qutils.triggerKeydown(oElem2, Key.Arrow.UP, true, false, false);
-		this.assertSelection(assert, 0, true);
-		this.assertSelection(assert, 1, true);
-		qutils.triggerKeyup(oElem1, Key.SPACE, true, false, false);
-		this.assertSelection(assert, 0, false);
-		this.assertSelection(assert, 1, true);
-		qutils.triggerKeydown(oElem2, Key.Arrow.DOWN, true, false, false);
-		this.assertSelection(assert, 0, false);
-		this.assertSelection(assert, 1, false);
-		qutils.triggerKeyup(oElem2, Key.SPACE, true, false, false);
-		this.assertSelection(assert, 0, false);
-		this.assertSelection(assert, 1, true);
-
-		//Enter
-		qutils.triggerKeydown(oElem2, Key.ENTER, false, false, false);
-		this.assertSelection(assert, 0, false);
-		this.assertSelection(assert, 1, false);
-		qutils.triggerKeydown(oElem1, Key.ENTER, false, false, false);
-		this.assertSelection(assert, 0, true);
-		this.assertSelection(assert, 1, false);
-		qutils.triggerKeyup(oElem2, Key.ENTER, false, false, true);
-		this.assertSelection(assert, 0, true);
-		this.assertSelection(assert, 1, true);
-		qutils.triggerKeyup(oElem1, Key.ENTER, false, false, true);
-		this.assertSelection(assert, 0, false);
-		this.assertSelection(assert, 1, true);
-		qutils.triggerKeyup(oElem1, Key.ENTER, false, false, true);
-		this.assertSelection(assert, 0, true);
-		this.assertSelection(assert, 1, true);
-		qutils.triggerKeydown(oElem2, Key.ENTER, false, false, false);
-		this.assertSelection(assert, 0, false);
-		this.assertSelection(assert, 1, true);
 	});
 
 	QUnit.test("On a Data Cell - SelectionBehavior = Row", function(assert) {
@@ -5402,90 +5203,6 @@ sap.ui.define([
 		bPreventDefault = false;
 	});
 
-	/**
-	 * @deprecated As of version 1.115
-	 */
-	QUnit.test("On a Data Cell - SelectionBehavior = Row - legacyMultiSelection", function(assert) {
-		var iCallCount = 0;
-		var bPreventDefault = false;
-
-		oTable.clearSelection();
-		oTable.setSelectionBehavior(library.SelectionBehavior.Row);
-		oTable.attachCellClick(function(oEvent) {
-			iCallCount++;
-			if (bPreventDefault) {
-				oEvent.preventDefault();
-			}
-		});
-		oCore.applyChanges();
-
-		var oElem1 = checkFocus(getCell(0, 0, true), assert);
-		var oElem2 = checkFocus(getCell(1, 0, true), assert);
-		oTable._enableLegacyMultiSelection();
-		// Space
-		this.assertSelection(assert, 0, false);
-		this.assertSelection(assert, 1, false);
-		assert.strictEqual(iCallCount, 0, "Click handler not called");
-		iCallCount = 0;
-		qutils.triggerKeyup(oElem1, Key.SPACE, false, false, true);
-		this.assertSelection(assert, 0, true);
-		this.assertSelection(assert, 1, false);
-		assert.strictEqual(iCallCount, 1, "Click handler called");
-		iCallCount = 0;
-		qutils.triggerKeyup(oElem2, Key.SPACE, false, false, false);
-		this.assertSelection(assert, 0, false);
-		this.assertSelection(assert, 1, true);
-		assert.strictEqual(iCallCount, 1, "Click handler called");
-
-		qutils.triggerKeydown(oElem2, Key.SHIFT, false, false, false); // Start selection mode.
-		qutils.triggerKeydown(oElem2, Key.Arrow.UP, true, false, false);
-		this.assertSelection(assert, 0, true);
-		this.assertSelection(assert, 1, true);
-		qutils.triggerKeyup(oElem1, Key.SPACE, true, false, false);
-		this.assertSelection(assert, 0, false);
-		this.assertSelection(assert, 1, true);
-		qutils.triggerKeydown(oElem2, Key.Arrow.DOWN, true, false, false);
-		this.assertSelection(assert, 0, false);
-		this.assertSelection(assert, 1, false);
-		qutils.triggerKeyup(oElem2, Key.SPACE, false, false, false);
-		this.assertSelection(assert, 0, false);
-		this.assertSelection(assert, 1, true);
-		qutils.triggerKeyup(oElem1, Key.SPACE, true, false, false);
-		this.assertSelection(assert, 0, true);
-		this.assertSelection(assert, 1, true);
-		qutils.triggerKeyup(oElem1, Key.SPACE, true, false, false);
-		this.assertSelection(assert, 0, false);
-		this.assertSelection(assert, 1, true);
-
-		iCallCount = 0;
-		bPreventDefault = true;
-		qutils.triggerKeyup(oElem2, Key.SPACE, false, false, true);
-		this.assertSelection(assert, 0, false);
-		this.assertSelection(assert, 1, true);
-		assert.strictEqual(iCallCount, 1, "Click handler called but selection not changed");
-		iCallCount = 0;
-		bPreventDefault = false;
-
-		// Enter
-		qutils.triggerKeydown(oElem1, Key.ENTER, false, false, false);
-		this.assertSelection(assert, 0, true);
-		this.assertSelection(assert, 1, false);
-		assert.strictEqual(iCallCount, 1, "Click handler called");
-		iCallCount = 0;
-		qutils.triggerKeyup(oElem2, Key.ENTER, false, false, true);
-		this.assertSelection(assert, 0, true);
-		this.assertSelection(assert, 1, true);
-		assert.strictEqual(iCallCount, 1, "Click handler called");
-		iCallCount = 0;
-		bPreventDefault = true;
-		qutils.triggerKeyup(oElem2, Key.ENTER, false, false, true);
-		this.assertSelection(assert, 0, true);
-		this.assertSelection(assert, 1, true);
-		assert.strictEqual(iCallCount, 1, "Click handler called but selection not changed");
-		iCallCount = 0;
-		bPreventDefault = false;
-	});
-
 	QUnit.test("On a Data Cell - SelectionBehavior = RowSelector", function(assert) {
 		var cellClickEventHandler = this.spy();
 
@@ -5510,58 +5227,6 @@ sap.ui.define([
 		this.assertSelection(assert, 0, false);
 		assert.strictEqual(cellClickEventHandler.callCount, 3, "Click handler called: 3");
 		qutils.triggerKeydown(oElem1, Key.ENTER, false, false, false);
-		this.assertSelection(assert, 0, false);
-		assert.strictEqual(cellClickEventHandler.callCount, 4, "Click handler called: 4");
-	});
-
-	/**
-	 * @deprecated As of version 1.115
-	 */
-	QUnit.test("On a Data Cell - SelectionBehavior = RowSelector - legacyMultiSelection", function(assert) {
-		var cellClickEventHandler = this.spy();
-
-		oTable.clearSelection();
-		oTable.attachCellClick(cellClickEventHandler);
-		oCore.applyChanges();
-
-		var oElem2 = checkFocus(getCell(1, 0, true), assert);
-		var oElem1 = checkFocus(getCell(0, 0, true), assert);
-
-		oTable._enableLegacyMultiSelection();
-		// Space
-		qutils.triggerKeyup(oElem1, Key.SPACE, false, false, false);
-		this.assertSelection(assert, 0, false);
-		assert.strictEqual(cellClickEventHandler.callCount, 1, "Click handler called: 1");
-		qutils.triggerKeyup(oElem1, Key.SPACE, false, false, true);
-		this.assertSelection(assert, 0, false);
-		assert.strictEqual(cellClickEventHandler.callCount, 2, "Click handler called: 2");
-
-		qutils.triggerKeyup(oElem1, Key.SPACE, true, false, false);
-		this.assertSelection(assert, 0, true);
-		qutils.triggerKeyup(oElem1, Key.SPACE, true, false, false);
-		this.assertSelection(assert, 0, false);
-
-		this.assertSelection(assert, 0, false);
-		this.assertSelection(assert, 1, false);
-		qutils.triggerKeyup(oElem1, Key.SPACE, true, false, false);
-		this.assertSelection(assert, 0, true);
-		this.assertSelection(assert, 1, false);
-		qutils.triggerKeydown(oElem1, Key.SHIFT, false, false, false); // Start selection mode.
-		qutils.triggerKeydown(oElem1, Key.Arrow.DOWN, true, false, false);
-		this.assertSelection(assert, 0, true);
-		this.assertSelection(assert, 1, true);
-		qutils.triggerKeyup(oElem2, Key.SPACE, true, false, false);
-		this.assertSelection(assert, 0, true);
-		this.assertSelection(assert, 1, false);
-		qutils.triggerKeydown(oElem2, Key.Arrow.UP, true, false, false);
-		this.assertSelection(assert, 0, false);
-		this.assertSelection(assert, 1, false);
-
-		// Enter
-		qutils.triggerKeydown(oElem1, Key.ENTER, false, false, false);
-		this.assertSelection(assert, 0, false);
-		assert.strictEqual(cellClickEventHandler.callCount, 3, "Click handler called: 3");
-		qutils.triggerKeyup(oElem1, Key.ENTER, false, false, true);
 		this.assertSelection(assert, 0, false);
 		assert.strictEqual(cellClickEventHandler.callCount, 4, "Click handler called: 4");
 	});
@@ -5600,8 +5265,6 @@ sap.ui.define([
 		var oRowToggleExpandedState = this.spy(oTable.getRows()[0], "toggleExpandedState");
 
 		oTable.clearSelection();
-		oTable.setEnableGrouping(true);
-		oTable.setGroupBy(oTable._getVisibleColumns()[0]);
 		oTable.attachCellClick(cellClickEventHandler);
 		oCore.applyChanges();
 
@@ -5807,7 +5470,6 @@ sap.ui.define([
 	QUnit.test("On element that is not a cell", function(assert) {
 		oTable.addExtension(new TestInputControl());
 		oTable.setFooter(new TestInputControl());
-		oTable.setTitle(new TestInputControl());
 		oTable.addEventDelegate({
 			onkeydown: function(oEvent) {
 				assert.ok(!oEvent.isDefaultPrevented(), "Default action was not prevented");
@@ -5822,7 +5484,7 @@ sap.ui.define([
 		var aTestElements = [
 			oTable.getExtension()[0].getDomRef(),
 			oTable.getFooter().getDomRef(),
-			oTable.getTitle().getDomRef(),
+			null.getDomRef(),
 			oCell,
 			oTable.getRows()[0].getCells()[0].getDomRef(),
 			oTable.getRows()[0].getCells()[1].getDomRef()
@@ -5924,8 +5586,6 @@ sap.ui.define([
 	QUnit.module("Interaction > Alt+ArrowUp & Alt+ArrowDown (Expand/Collapse Group)", {
 		beforeEach: function() {
 			setupTest();
-			oTable.setEnableGrouping(true);
-			oTable.setGroupBy(oTable.getColumns()[0]);
 			oCore.applyChanges();
 		},
 		afterEach: function() {
@@ -6017,8 +5677,6 @@ sap.ui.define([
 	QUnit.module("Interaction > F4 (Expand/Collapse Group)", {
 		beforeEach: function() {
 			setupTest();
-			oTable.setEnableGrouping(true);
-			oTable.setGroupBy(oTable.getColumns()[0]);
 			oCore.applyChanges();
 		},
 		afterEach: function() {
@@ -6104,8 +5762,6 @@ sap.ui.define([
 	QUnit.module("Interaction > Plus & Minus (Expand/Collapse Group)", {
 		beforeEach: function() {
 			setupTest();
-			oTable.setEnableGrouping(true);
-			oTable.setGroupBy(oTable.getColumns()[0]);
 			oCore.applyChanges();
 		},
 		afterEach: function() {
@@ -6368,9 +6024,6 @@ sap.ui.define([
 			checkFocus(getSelectAll(), assert);
 			assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Table is in Navigation Mode");
 
-			// Group header icon cell
-			oTable.setEnableGrouping(true);
-			oTable.setGroupBy(oTable.getColumns()[0]);
 			oTable.getRows()[0].toggleExpandedState();
 			oCore.applyChanges();
 
@@ -6391,7 +6044,6 @@ sap.ui.define([
 				assert.ok(!oTable._getKeyboardExtension().isInActionMode(), sKeyCombination + ": Table is in Navigation Mode");
 			}
 
-			oTable.setEnableGrouping(false);
 			oCore.applyChanges();
 		},
 
@@ -6505,9 +6157,6 @@ sap.ui.define([
 		checkFocus(getRowHeader(0, true), assert);
 		assert.ok(oTable._getKeyboardExtension().isInActionMode(), "Focus row selector cell: Table is in Action Mode");
 
-		// Stay in Action Mode: Focus a group header icon cell.
-		oTable.setEnableGrouping(true);
-		oTable.setGroupBy(oTable.getColumns()[0]);
 		oCore.applyChanges();
 
 		oElement = checkFocus(getRowHeader(0, true), assert)[0];

@@ -696,7 +696,6 @@ sap.ui.define([
 	 */
 
 	ObjectPageLayout.prototype.onBeforeRendering = function () {
-
 		var oHeaderContent,
 			bPinnable;
 
@@ -729,11 +728,6 @@ sap.ui.define([
 		this._bHeaderInTitleArea = this._shouldPreserveHeaderInTitleArea();
 
 		this._createHeaderContent();
-
-		/**
-		 * @deprecated As of version 1.40.1
-		 */
-		this._getHeaderContent().setContentDesign(this._getHeaderDesign());
 
 		this._oABHelper._getAnchorBar().setProperty("upperCase", this.getUpperCaseAnchorBar(), true);
 
@@ -3838,47 +3832,10 @@ sap.ui.define([
 	ObjectPageLayout.prototype._adjustHeaderBackgroundSize = function () {
 		// Update the background image size and position
 		var oHeaderTitle = this.getHeaderTitle();
-
-		/**
-		 * @deprecated As of version 1.40.1
-		 */
-		if (oHeaderTitle && oHeaderTitle.getHeaderDesign() == "Dark") {
-
-			if (!this._shouldPreserveHeaderInTitleArea()) {
-				this.iTotalHeaderSize = this.iHeaderTitleHeight + this.iHeaderContentHeight;
-				this._$headerContent.css("background-size", "100% " + this.iTotalHeaderSize + "px");
-			} else {
-				// The header size in this case contains the header content and the anchor bar, we have to exclude the anchor bar, since no background is applyied to it
-				this.iTotalHeaderSize = this.iHeaderTitleHeight - this._$stickyAnchorBar.height();
-				// here the sticky header content has to be updated not the content like in the upper case
-				this._$stickyHeaderContent.css("background-size", "100% " + this.iTotalHeaderSize + "px");
-			}
-
-			oHeaderTitle.$().css("background-size", "100% " + this.iTotalHeaderSize + "px");
-
-			this._adjustHeaderTitleBackgroundPosition(0);
-		}
 	};
 
 	ObjectPageLayout.prototype._adjustHeaderTitleBackgroundPosition = function (iScrollTop) {
-
 		var oHeaderTitle = this.getHeaderTitle();
-
-		/**
-		 * @deprecated As of version 1.40.1
-		 */
-		if (oHeaderTitle && oHeaderTitle.getHeaderDesign() == "Dark") {
-			if (this._bStickyAnchorBar) {
-				oHeaderTitle.$().css("background-position", "0px " + ((this.iTotalHeaderSize - this.iHeaderTitleHeightStickied) * -1) + "px");
-			} else {
-				if (this._shouldPreserveHeaderInTitleArea()) {
-					// If the header is always expanded, there is no neeed to scroll the background so we setting it to 0 position
-					oHeaderTitle.$().css("background-position", "0px 0px");
-				} else {
-					oHeaderTitle.$().css("background-position", "0px " + (this.iHeaderTitleHeight + this.iHeaderContentHeight - this.iTotalHeaderSize - iScrollTop) + "px");
-				}
-			}
-		}
 	};
 
 	ObjectPageLayout.prototype._adjustHeaderHeights = function () {
@@ -4036,12 +3993,6 @@ sap.ui.define([
 		var oHeader = this.getHeaderTitle(),
 			sDesign = library.ObjectPageHeaderDesign.Light;
 
-		/**
-		 * @deprecated As of version 1.40.1
-		 */
-		if (oHeader != null) {
-			sDesign = oHeader.getHeaderDesign();
-		}
 		return sDesign;
 	};
 

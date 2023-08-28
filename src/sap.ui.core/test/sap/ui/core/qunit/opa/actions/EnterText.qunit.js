@@ -105,10 +105,10 @@ sap.ui.define([
 
 			// if no focus functions are defined - define them to spy on them
 			if (!oControl.onfocusin) {
-				oControl.onfocusin = $.noop;
+				oControl.onfocusin = function() {};
 			}
 			if (!oControl.onsapfocusleave) {
-				oControl.onsapfocusleave = $.noop;
+				oControl.onsapfocusleave = function() {};
 			}
 			var fnOnSapFocusInSpy = sinon.spy(oControl, "onfocusin");
 			var fnOnSapFocusLeaveSpy = sinon.spy(oControl, "onsapfocusleave");

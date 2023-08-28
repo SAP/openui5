@@ -459,25 +459,6 @@ sap.ui.define([
 			},
 			associations: {
 				/**
-				 * Optional <code>FieldHelp</code>.
-				 *
-				 * This is an association that allows the usage of one <code>ValueHelp</code> instance for multiple fields.
-				 *
-				 * <b>Note:</b> If the field is inside of a table, do not set the <code>ValueHelp</code> instance as <code>dependent</code>
-				 * to the field. If you do, every field instance in every table row gets a clone of it.
-				 * Put the <code>ValueHelp</code> instance e.g. as dependent on the table or page.
-				 * The <code>FieldHelp</code> instance must be somewhere in the control tree, otherwise there might
-				 * be rendering or update issues.
-				 *
-				 * <b>Note:</b> For <code>Boolean</code> fields, no <code>ValueHelp</code> should be added, but a default <code>ValueHelp</code> used instead.
-				 * @deprecated as of 1.114.0, replaced by {@link #setValueHelp valueHelp} association
-				 */
-				fieldHelp: {
-					type: "sap.ui.mdc.ValueHelp",
-					multiple: false
-				},
-
-				/**
 				 * Optional <code>ValueHelp</code>.
 				 *
 				 * This is an association that allows the usage of one <code>ValueHelp</code> instance for multiple fields.
@@ -2681,7 +2662,7 @@ sap.ui.define([
 	// TODO: remove this function and replace by getValueHelp once FieldHelp association is completetly removed.
 	FieldBase.prototype._getValueHelp = function() {
 
-		return this.getValueHelp() || (this.getFieldHelp && this.getFieldHelp()); // as getFieldHelp not exist in legacy-free UI5
+		return this.getValueHelp() || (this.getFieldHelp && null); // as getFieldHelp not exist in legacy-free UI5
 
 	};
 

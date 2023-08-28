@@ -56,6 +56,7 @@ sap.ui.define(function() {
 					"xx-waitForTheme" : true
 				}
 			},
+
 			// *************************************************************************
 			// Tests considering CLDR / LocaleData
 			// *************************************************************************
@@ -71,6 +72,7 @@ sap.ui.define(function() {
 					language : "en-US"
 				}
 			},
+
 			// *************************************************************************
 			// Tests considering Formatters
 			// *************************************************************************
@@ -83,6 +85,7 @@ sap.ui.define(function() {
 					language : "en-US"
 				}
 			},
+
 			NumberFormat : {
 				// not in 1RingModels.qunit because test has to be refactored
 				title : "sap.ui.core.format.NumberFormat",
@@ -91,6 +94,7 @@ sap.ui.define(function() {
 					language : "en-US"
 				}
 			},
+
 			NumberFormatCurrencies : {
 				// not in 1RingModels.qunit because test has to be refactored
 				title : "sap.ui.core.format.NumberFormatCurrencies",
@@ -99,6 +103,7 @@ sap.ui.define(function() {
 					language : "en-US"
 				}
 			},
+
 			NumberFormatCurrenciesTrailing : {
 				// not in 1RingModels.qunit because test has to be refactored
 				title : "sap.ui.core.format.NumberFormatCurrenciesTrailing",
@@ -107,6 +112,7 @@ sap.ui.define(function() {
 					language : "en-US"
 				}
 			},
+
 			// *************************************************************************
 			// Tests considering model base types
 			// *************************************************************************
@@ -119,21 +125,17 @@ sap.ui.define(function() {
 					language : "en-US"
 				}
 			},
+
 			DataBinding : {
 				// not in 1RingModels.qunit because ODataModelFakeService is used
 				title : "sap.ui.model.* (DataBinding)",
 				module : ["test-resources/sap/ui/core/qunit/DataBinding.qunit"]
 			},
+
 			ListBinding : {
 				// not in 1RingModels.qunit because test has to be refactored
 				title : "sap.ui.model.* (ListBinding)",
 				module : ["test-resources/sap/ui/core/qunit/ListBinding.qunit"]
-			},
-			/** @deprecated As of version 1.11.1 reason bindContext*/
-			MasterDetail : {
-				// not in 1RingModels.qunit because test has to be refactored
-				title : "sap.ui.model.* (MasterDetail_legacyAPIs)",
-				module : ["test-resources/sap/ui/core/qunit/MasterDetail_legacyAPIs.qunit"]
 			},
 
 			// *************************************************************************
@@ -145,6 +147,7 @@ sap.ui.define(function() {
 				module : ["test-resources/sap/ui/core/qunit/analytics/AnalyticalBinding.qunit"],
 				sinon : 1
 			},
+
 			// contained in sap.ui.table/test/sap/ui/table/qunit/testsuite.qunit.js
 			AnalyticalTable : {
 				title : "sap.ui.table.qunit.AnalyticalTable.qunit",
@@ -179,12 +182,14 @@ sap.ui.define(function() {
 				module : ["test-resources/sap/ui/core/qunit/odata/v2/CanonicalRequests.qunit"],
 				sinon : 1
 			},
+
 			// contained in testsuite.messages.qunit.js
 			messagesEnd2End : {
 				// not in 1RingModels.qunit because of MockServer usage
 				title : "Messaging (messagesEnd2End.qunit)",
 				module : ["test-resources/sap/ui/core/qunit/messages/messagesEnd2End.qunit"]
 			},
+
 			messagesGeneral : {
 				// not in 1RingModels.qunit because of MockServer usage
 				title : "Messaging (messagesGeneral.qunit)",
@@ -197,6 +202,7 @@ sap.ui.define(function() {
 					"xx-handleValidation" : true
 				}
 			},
+
 			// contained in testsuite.databinding.qunit.js
 			ODataMessageParser : {
 				// not in 1RingModels.qunit because of ODataMessagesFakeService usage
@@ -216,12 +222,7 @@ sap.ui.define(function() {
 					language : "en-US"
 				}
 			},
-			/** @deprecated As of version 1.66.0 */
-			ODataListBinding : {
-				// not in 1RingModels.qunit because of ODataModelFakeService usage
-				title : "sap.ui.model.odata.ODataListBinding",
-				module : ["test-resources/sap/ui/core/qunit/odata/ODataListBinding_legacyAPIs.qunit"]
-			},
+
 			ODataMetadata : {
 				// not in 1RingModels.qunit because of MockServer usage
 				title : "sap.ui.model.odata.ODataMetadata",
@@ -231,28 +232,7 @@ sap.ui.define(function() {
 				},
 				sinon : 1
 			},
-			/** @deprecated As of version 1.48.0 */
-			ODataModel : {
-				// not in 1RingModels.qunit because of ODataModelFakeService usage
-				title : "sap.ui.model.odata.ODataModel (ODataModel_legacyAPIs)",
-				module : ["test-resources/sap/ui/core/qunit/odata/ODataModel_legacyAPIs.qunit"]
-			},
-			/** @deprecated As of version 1.48.0 reason sap.ui.model.odata.ODataModel */
-			ODataSharedMetadata : {
-				// not in 1RingModels.qunit because of ODataModelFakeService usage
-				title : "sap.ui.model.odata.ODataModel (ODataSharedMetadata_legacyAPIs)",
-				module : ["test-resources/sap/ui/core/qunit/odata/ODataSharedMetadata_legacyAPIs.qunit"],
-				sinon : {
-					useFakeTimers : true
-				}
-			},
-			/** @deprecated As of version 1.28.0 */
-			ODataTreeBinding : {
-				// not in 1RingModels.qunit because of MockServer usage
-				title : "sap.ui.model.odata.ODataTreeBinding (ODataTreeBinding_legacyAPIs)",
-				module : ["test-resources/sap/ui/core/qunit/odata/ODataTreeBinding_legacyAPIs.qunit"],
-				sinon : 1
-			},
+
 			ODataTreeBindingAdapter : {
 				// not in 1RingModels.qunit because of MockServer usage
 				title : "sap.ui.model.odata.ODataTreeBindingAdapter",
@@ -268,26 +248,25 @@ sap.ui.define(function() {
 				title : "DerivedTypes",
 				module : ["test-resources/sap/ui/core/qunit/odata/v2/DerivedTypes.qunit"]
 			},
+
 			ODataAnnotationsV2 : {
 				// not in 1RingModels.qunit because of ODataAnnotationsFakeService usage
 				title : "sap.ui.model.odata.v2.ODataAnnotations",
 				module : ["test-resources/sap/ui/core/qunit/odata/v2/ODataAnnotationsV2.qunit"]
 			},
+
 			ODataPropertyBinding : {
 				// not in 1RingModels.qunit because of ODataModelFakeService usage
 				title : "sap.ui.model.odata.v2.ODataPropertyBinding",
 				module : ["test-resources/sap/ui/core/qunit/odata/v2/ODataPropertyBinding.qunit"]
 			},
+
 			ODataV2ListBinding : {
 				// not in 1RingModels.qunit because of ODataModelFakeService usage
 				title : "sap.ui.model.odata.v2.ODataListBinding",
 				module : ["test-resources/sap/ui/core/qunit/odata/v2/ODataV2ListBinding.qunit"]
 			},
-			/** @deprecated As of version 1.22.0, reason sap.ui.model.odata.Filter */
-			ODataV2ListBinding_Filter_legacyAPIs: {
-				title: "sap.ui.model.odata.v2.ODataListBinding_Filter - QUnit tests",
-				module : ["test-resources/sap/ui/core/qunit/odata/v2/ODataV2ListBinding_Filter_legacyAPIs.qunit"]
-			},
+
 			ODataV2ListBinding_Paging : {
 				// not in 1RingModels.qunit because of ODataModelFakeService usage
 				title : "sap.ui.model.odata.v2.ODataListBinding - Paging",
@@ -295,11 +274,13 @@ sap.ui.define(function() {
 					"test-resources/sap/ui/core/qunit/odata/v2/ODataV2ListBinding_Paging.qunit"
 				]
 			},
+
 			ODataV2Model : {
 				// not in 1RingModels.qunit because of ODataModelFakeService usage
 				title : "sap.ui.model.odata.v2.ODataModel (ODataV2Model)",
 				module : ["test-resources/sap/ui/core/qunit/odata/v2/ODataV2Model.qunit"]
 			},
+
 			ODataV2TreeBinding : {
 				// not in 1RingModels.qunit because of MockServer usage
 				title : "sap.ui.model.odata.v2.ODataTreeBinding",
@@ -309,6 +290,7 @@ sap.ui.define(function() {
 				},
 				sinon : 1
 			},
+
 			ODataV2TreeBindingFlat_MockSrv : {
 				// not in 1RingModels.qunit because of MockServer usage
 				title : "sap.ui.model.odata.ODataTreeBindingFlat (MockSrv)",
@@ -317,6 +299,7 @@ sap.ui.define(function() {
 				],
 				sinon : 1
 			},
+
 			ODataV2TreeBindingFlat_FakeSrv : {
 				// not in 1RingModels.qunit because of ODataModelFakeService usage
 				title : "sap.ui.model.odata.ODataTreeBindingFlat (FakeSrv)",
@@ -324,12 +307,14 @@ sap.ui.define(function() {
 					"test-resources/sap/ui/core/qunit/odata/v2/ODataV2TreeBindingFlat_FakeSrv.qunit"
 				]
 			},
+
 			PendingChanges : {
 				// not in 1RingModels.qunit because of MockServer usage
 				title : "sap.ui.model.odata.v2.ODataModel - Get all pending changes",
 				module : ["test-resources/sap/ui/core/qunit/odata/v2/PendingChanges.qunit"],
 				sinon : 1
 			},
+
 			V2ODataModel : {
 				// not in 1RingModels.qunit because of MockServer usage
 				title : "sap.ui.model.odata.v2.ODataModel (V2ODataModel.qunit)",
@@ -339,6 +324,7 @@ sap.ui.define(function() {
 					language : "en-US"
 				}
 			},
+
 			V2ODataModelB : {
 				// not in 1RingModels.qunit because of MockServer usage
 				title : "sap.ui.model.odata.v2.ODataModel (V2ODataModelB.qunit)",
@@ -348,6 +334,7 @@ sap.ui.define(function() {
 					language : "en-US"
 				}
 			},
+
 			V2ODataModelDataState : {
 				// not in 1RingModels.qunit because of MockServer usage
 				title : "sap.ui.model.odata.v2.ODataModel (V2ODataModelDataState.qunit)",

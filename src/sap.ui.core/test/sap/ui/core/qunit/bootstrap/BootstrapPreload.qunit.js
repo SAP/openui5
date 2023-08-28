@@ -1,10 +1,9 @@
 /*global QUnit */
 sap.ui.define([
 	"sap/ui/Device",
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Configuration",
 	"sap/ui/core/Core"
-], function(Device, jQuery, Configuration, Core) {
+], function(Device, Configuration, Core) {
 	"use strict";
 
 	QUnit.test("Check Existance of Core", function(assert) {

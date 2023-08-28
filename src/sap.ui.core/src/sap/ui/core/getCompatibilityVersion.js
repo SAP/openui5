@@ -35,7 +35,6 @@ sap.ui.define([
 	 * @param {string} sFeature the key of desired feature
 	 * @return {module:sap/base/util/Version} the used compatibility version
 	 * @public
-	 * @deprecated As of version 1.119.0
 	 */
 	const fnGetCompatibilityVersion = (sFeature) => {
 		const PARAM_CVERS = "sapUiCompatversion";

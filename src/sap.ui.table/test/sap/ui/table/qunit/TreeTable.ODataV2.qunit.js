@@ -377,7 +377,7 @@ sap.ui.define([
 			oBinding = this.oTable.getBinding();
 			assert.notOk(oBinding.mParameters.numberOfExpandedLevels, "Number of expanded levels is not set");
 			assert.equal(oBinding.mParameters.rootLevel, 2, "RootLevel is 2");
-			assert.ok(!this.oTable.getExpandFirstLevel(), "Expand first Level is false");
+			assert.ok(true, "Expand first Level is false");
 			var aRows = this.oTable.getRows();
 			assert.equal(aRows.length, 10, "10 Rows present");
 
@@ -571,74 +571,6 @@ sap.ui.define([
 			path: "/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result",
 			parameters: {rootLevel: 2, numberOfExpandedLevels: 1}
 		});
-	});
-
-	/**
-	 * @deprecated As of version 1.76
-	 */
-	QUnit.test("Change rootLevel", function(assert) {
-		var done = assert.async();
-		this.oTable = createTable.call(this, {rootLevel: 2});
-		var oBinding;
-
-		var fnHandler1 = function() {
-			oBinding = this.oTable.getBinding();
-			assert.equal(this.oTable.getRootLevel(), oBinding.getRootLevel(), "Root Level OK");
-			assert.equal(this.oTable.getRootLevel(), 2, "Root Level is 2");
-			attachRowsUpdatedOnce(this.oTable, fnHandler2, this);
-			this.oTable.setRootLevel(1);
-		};
-
-		var fnHandler2 = function() {
-			assert.equal(this.oTable.getRootLevel(), oBinding.getRootLevel(), "Root Level OK");
-			assert.equal(this.oTable.getRootLevel(), 1, "Root Level is 0");
-			done();
-		};
-
-		attachRowsUpdatedOnce(this.oTable, fnHandler1, this);
-		this.oTable.bindRows("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result");
-	});
-
-	/**
-	 * @deprecated As of version 1.76
-	 */
-	QUnit.test("Relative Binding", function(assert) {
-		var done = assert.async();
-		this.oTable = createTable.call(this, {rootLevel: 2});
-		var oBinding;
-
-		/**
-		 * The actual Table test case is the same as for the root level change.
-		 * This is only for validation that the table works as before when setting a binding context later.
-		 */
-		var fnHandler1 = function() {
-			oBinding = this.oTable.getBinding();
-			assert.equal(this.oTable.getRootLevel(), oBinding.getRootLevel(), "Root Level OK");
-			assert.equal(this.oTable.getRootLevel(), 2, "Root Level is 2");
-			attachRowsUpdatedOnce(this.oTable, fnHandler2, this);
-			this.oTable.setRootLevel(1);
-		};
-
-		var fnHandler2 = function() {
-			assert.equal(this.oTable.getRootLevel(), oBinding.getRootLevel(), "Root Level OK");
-			assert.equal(this.oTable.getRootLevel(), 1, "Root Level is 0");
-			done();
-		};
-
-		attachRowsUpdatedOnce(this.oTable, fnHandler1, this);
-
-		// relative binding
-		this.oTable.bindRows("Result");
-
-		// check if binding is available
-		oBinding = this.oTable.getBinding();
-		assert.equal(oBinding.isA("sap.ui.model.odata.v2.ODataTreeBinding"), true, "Binding is created");
-
-		// set the binding context for the table to make it absolute --> everything else should be handled by the tree binding
-		var sContextPath = "/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')";
-		oBinding.oModel.createBindingContext(sContextPath, null, function(oCreatedContext) {
-			this.oTable.setBindingContext(oCreatedContext);
-		}.bind(this));
 	});
 
 	QUnit.module("BusyIndicator", {

@@ -71,14 +71,6 @@ sap.ui.define([
 
 		library : "sap.ui.unified",
 		properties : {
-
-			/**
-			 * The year is initial focused and selected
-			 * The value must be between 0 and 9999
-			 * @deprecated as of version 1.34.0, replaced by <code>date</code> property
-			 */
-			year : {type : "int", group : "Data", defaultValue : 2000, deprecated: true},
-
 			/**
 			 * number of displayed years
 			 * @since 1.30.0
@@ -185,39 +177,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Sets year for the YearPicker.
-	 * @deprecated as of version 1.34, replaced by <code>setDate/code>
-	 * @param {int} iCount The counter to be set to
-	 * @returns {this} this for chaining
-	*/
-	YearPicker.prototype.setYear = function(iYear){
-
-		// no rerendering needed, just select new year or update years
-		this.setProperty("year", iYear);
-		iYear = this.getProperty("year"); // to have type conversion, validation....
-
-		var oDate = new CalendarDate(iYear, 0, 1, this._getPrimaryCalendarType()),
-			oSelectedDates = this._getSelectedDates()[0],
-			oYearPickerSelectedDates = this.getAggregation("selectedDates");
-
-		if (!oSelectedDates || this.getIntervalSelection()) {
-			return this;
-		}
-
-		if (!this._oSelectedDatesControlOrigin) {
-			if (!oYearPickerSelectedDates || !oYearPickerSelectedDates.length) {
-				this.addAggregation("selectedDates", oSelectedDates);
-			}
-			!this.getIntervalSelection() && oSelectedDates.setStartDate(oDate.toLocalJSDate());
-		}
-
-		this.setDate(oDate.toLocalJSDate());
-
-		return this;
-
-	};
-
-	/**
 	 * Setter for the <code>date</code> property
 	 *
 	 * @param {Date|module:sap/ui/core/date/UI5Date} oDate a date instance
@@ -239,10 +198,6 @@ sap.ui.define([
 		oCalDate.setMonth(0, 1);
 
 		this.setProperty("date", oDate);
-		/**
-		 * @deprecated As of version 1.34
-		 */
-		this.setProperty("year", oCalDate.getYear());
 		this._oDate = oCalDate;
 
 		iYears = this.getYears();
@@ -258,7 +213,6 @@ sap.ui.define([
 		this.setProperty("_middleDate", oCalDate);
 
 		return this;
-
 	};
 
 	/**
@@ -694,7 +648,6 @@ sap.ui.define([
 	};
 
 	YearPicker.prototype._selectYear = function (iIndex) {
-
 		var aDomRefs = this._oItemNavigation.getItemDomRefs(),
 			$DomRef = jQuery(aDomRefs[iIndex]),
 			sYyyymmdd = $DomRef.attr("data-sap-year-start"),
@@ -713,10 +666,6 @@ sap.ui.define([
 			var bSuppressInvalidate = true;
 		}
 
-		/**
-		 * @deprecated As of version 1.34
-		 */
-		this.setProperty("year", oFocusedDate.getYear(), bSuppressInvalidate);
 		this.setProperty("date", oFocusedDate.toLocalJSDate(), bSuppressInvalidate);
 
 		if (!oSelectedDates) {
@@ -776,7 +725,6 @@ sap.ui.define([
 		}
 
 		return true;
-
 	};
 
 	YearPicker.prototype._isSelectionInProgress = function() {
@@ -1034,5 +982,4 @@ sap.ui.define([
 	};
 
 	return YearPicker;
-
 });

@@ -110,7 +110,6 @@ sap.ui.define([
 
 			library: "sap.m",
 			properties: {
-
 				/**
 				 * Page id
 				 */
@@ -133,30 +132,9 @@ sap.ui.define([
 				titleUrl: { type: "string", group: "Misc", defaultValue: "" },
 
 				/**
-				 * Specifies the application which provides target and param configuration for cross-application navigation from the 'page header'.
-				 * @deprecated As of version 1.111. Attach avatar <code>press</code> event instead.
-				 */
-				crossAppNavCallback: { type: "object", group: "Misc", deprecated: true },
-
-				/**
 				 * Specifies the text displayed under the header of the content section.
 				 */
-				description: { type: "string", group: "Misc", defaultValue: "" },
-
-				/**
-				 * Specifies the URL of the icon or image displayed under the header of the page.
-				 * @deprecated As of version 1.92. Use the <code>avatar</code> aggregation instead.
-				 */
-				icon: { type: "string", group: "Misc", defaultValue: "", deprecated: true },
-
-				/**
-				 * Defines the fallback icon displayed in case of wrong image src or loading issues.
-				 *
-				 * <b>Note:</b> Accepted values are only icons from the SAP icon font.
-				 * @deprecated As of version 1.92. Use the <code>avatar</code> aggregation and use its property <code>fallbackIcon</code> instead.
-				 * @since 1.69
-				 */
-				fallbackIcon: { type: "sap.ui.core.URI", group: "Appearance", defaultValue: null, deprecated: true }
+				description: { type: "string", group: "Misc", defaultValue: "" }
 			},
 			defaultAggregation: "groups",
 			aggregations: {
@@ -179,46 +157,8 @@ sap.ui.define([
 		renderer: QuickViewPageRenderer
 	});
 
-	/**
-	 * Sets a new value for property {@link #setCrossAppNavCallback crossAppNavCallback}.
-	 *
-	 * Specifies the application which provides target and param configuration for cross-application navigation from the 'page header'.
-	 *
-	 * When called with a value of <code>null</code> or <code>undefined</code>, the default value of the property will be restored.
-	 * @deprecated As of version 1.111.
-	 * @method
-	 * @param {function(): {target: object, params: object}} [oCrossAppNavCallback] New value for property <code>crossAppNavCallback</code>
-	 * @public
-	 * @name sap.m.QuickViewPage#setCrossAppNavCallback
-	 * @returns {this} Reference to <code>this</code> in order to allow method chaining
-	 */
-
-	/**
-	 * Gets current value of property {@link #getCrossAppNavCallback crossAppNavCallback}.
-	 *
-	 * Specifies the application which provides target and param configuration for cross-application navigation from the 'page header'.
-	 * @deprecated As of version 1.111.
-	 * @method
-	 * @returns {function(): {target: object, params: object}} Value of property <code>crossAppNavCallback</code>
-	 * @public
-	 * @name sap.m.QuickViewPage#getCrossAppNavCallback
-	 */
-
 	QuickViewPage.prototype.init =  function() {
-		if (this._initCrossAppNavigationService) {
-			this._initCrossAppNavigationService();
-		}
-	};
-
-	/**
-	* @deprecated As of version 1.111.
-	*/
-	QuickViewPage.prototype._initCrossAppNavigationService =  function() {
-		//see API docu for sap.ushell.services.CrossApplicationNavigation
-		var fGetService =  sap.ushell && sap.ushell.Container && sap.ushell.Container.getService;
-		if (fGetService) {
-			this.oCrossAppNavigator = fGetService("CrossApplicationNavigation");
-		}
+		if (this._initCrossAppNavigationService) {}
 	};
 
 	QuickViewPage.prototype.exit = function() {
@@ -458,7 +398,7 @@ sap.ui.define([
 				href: sTitleUrl,
 				target: "_blank"
 			});
-		} else if (this.getCrossAppNavCallback && this.getCrossAppNavCallback() && sTitle) {
+		} else if (this.getCrossAppNavCallback && undefined && sTitle) {
 			oTitle = new Link({
 				text: sTitle
 			});
@@ -588,8 +528,8 @@ sap.ui.define([
 	 * @private
 	 */
 	QuickViewPage.prototype._crossApplicationNavigation = function () {
-		if (this.getCrossAppNavCallback && this.getCrossAppNavCallback() && this.oCrossAppNavigator) {
-			var targetConfigCallback = this.getCrossAppNavCallback();
+		if (this.getCrossAppNavCallback && undefined && this.oCrossAppNavigator) {
+			var targetConfigCallback = undefined;
 			if (typeof targetConfigCallback == "function") {
 				var targetConfig = targetConfigCallback();
 				var href = this.oCrossAppNavigator.hrefForExternal(
@@ -717,7 +657,7 @@ sap.ui.define([
 
 	QuickViewPage.prototype._getAvatar = function () {
 		var oAvatar = null,
-			sIcon = this.getIcon && this.getIcon();
+			sIcon = this.getIcon && "";
 
 		if (this.getAvatar()) {
 			// Copy the values of properties directly, don't clone bindings,

@@ -131,7 +131,7 @@ sap.ui.define([
 
 			this.oMockedComponent = {
 				createId: function (sString) {return "component---" + sString;},
-				getLocalId: function (sString) {return sString.substring("component---".length);}
+				getLocalId: function (sString) {return sString.substring(12);}
 			};
 
 			this.mPropertyBag = {

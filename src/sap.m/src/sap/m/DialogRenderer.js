@@ -49,7 +49,7 @@ sap.ui.define([
 			oEndButton = oDialog.getEndButton(),
 			sState = oDialog.getState(),
 			bStretch = oDialog.getStretch(),
-			bStretchOnPhone = oDialog.getStretchOnPhone() && Device.system.phone,
+			bStretchOnPhone = false,
 			oValueStateText = oDialog.getAggregation("_valueState"),
 			oFooter = oDialog.getFooter();
 

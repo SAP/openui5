@@ -1,7 +1,7 @@
-sap.ui.define(['sap/ui/core/XMLComposite'],
-	function(XMLComposite) {
+sap.ui.define([],
+	function() {
 	"use strict";
-	var FfText = XMLComposite.extend("composites.FfText", {
+	var FfText = undefined/*XMLComposite*/.extend("composites.FfText", {
 		metadata: {
 			aggregations: {
 				items: {

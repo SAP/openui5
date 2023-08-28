@@ -5,8 +5,9 @@ sap.ui.define([
 	"sap/ui/test/PageObjectFactory",
 	"sap/base/Log",
 	"./utils/view",
-	"sap/ui/qunit/utils/nextUIUpdate"
-], function (Opa, Opa5, PageObjectFactory, Log, viewUtils, nextUIUpdate) {
+	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/thirdparty/jquery"
+], function(Opa, Opa5, PageObjectFactory, Log, viewUtils, nextUIUpdate, jQuery) {
 	"use strict";
 
 	// preset some globals to avoid issues with QUnit's 'noglobals' option

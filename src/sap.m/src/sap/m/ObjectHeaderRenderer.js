@@ -125,11 +125,11 @@ sap.ui.define([
 		for (var i = 0; i < aChildren.length; i++) {
 			oOH.__controlsToBeRendered[aChildren[i].getId()] = aChildren[i];
 		}
-		var oChild = oOH.getFirstStatus();
+		var oChild = null;
 		if (oChild) {
 			oOH.__controlsToBeRendered[oChild.getId()] = oChild;
 		}
-		oChild = oOH.getSecondStatus();
+		oChild = null;
 		if (oChild) {
 			oOH.__controlsToBeRendered[oChild.getId()] = oChild;
 		}
@@ -235,13 +235,6 @@ sap.ui.define([
 	 */
 	ObjectHeaderRenderer._getVisibleStatuses = function(oOH) {
 		var aVisibleStatuses = [];
-
-		if (oOH.getFirstStatus() && oOH.getFirstStatus().getVisible()) {
-			aVisibleStatuses.push([oOH.getFirstStatus()]);
-		}
-		if (oOH.getSecondStatus() && oOH.getSecondStatus().getVisible()) {
-			aVisibleStatuses.push([oOH.getSecondStatus()]);
-		}
 
 		if (oOH.getStatuses()) {
 			var aStatuses = oOH.getStatuses();
@@ -1148,8 +1141,6 @@ sap.ui.define([
 				}
 			} else if (oHeaderContainer.isA("sap.m.HeaderContainer")) {
 				return !!oHeaderContainer.getContent().length;
-			} else if (oHeaderContainer.isA("sap.suite.ui.commons.HeaderContainer")) {
-				return !!oHeaderContainer.getItems().length;
 			}
 		}
 		return false;

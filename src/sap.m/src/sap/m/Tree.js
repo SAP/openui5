@@ -7,7 +7,6 @@ sap.ui.define([
 	'./ListBase',
 	'./library',
 	'sap/ui/model/ClientTreeBindingAdapter',
-	'sap/ui/model/TreeBindingCompatibilityAdapter',
 	'./TreeRenderer',
 	"sap/base/Log",
 	"sap/base/assert",
@@ -17,7 +16,6 @@ function(
 	ListBase,
 	library,
 	ClientTreeBindingAdapter,
-	TreeBindingCompatibilityAdapter,
 	TreeRenderer,
 	Log,
 	assert,
@@ -101,9 +99,6 @@ function(
 				oBinding.applyAdapterInterface();
 			} else if (oBinding.isA("sap.ui.model.ClientTreeBinding")) {
 				ClientTreeBindingAdapter.apply(oBinding);
-			} else if (oBinding.isA("sap.ui.model.odata.ODataTreeBinding")) {
-				// use legacy tree binding adapter
-				TreeBindingCompatibilityAdapter(oBinding, this);
 			} else {
 				Log.error("TreeBinding is not supported for the " + this);
 			}
@@ -219,66 +214,6 @@ function(
 				});
 			}
 		}
-	};
-
-	/**
-	 * The <code>growing</code> property is not supported for control <code>Tree</code>.
-	 * @public
-	 * @param {boolean} bValue New value for the <code>growing</code> property, ignored.
-	 * @returns {this} Returns <code>this</code> to allow method chaining
-	 * @deprecated As of version 1.46.
-	 */
-	Tree.prototype.setGrowing = function(bValue) {
-		Log.error("Growing feature of " + this + " is not supported!");
-		return this;
-	};
-
-	/**
-	 * The <code>growingThreshold</code> property is not supported for control <code>Tree</code>.
-	 * @public
-	 * @param {int} iValue New value for the <code>growingThreshold</code> property, ignored.
-	 * @returns {this} Returns <code>this</code> to allow method chaining
-	 * @deprecated As of version 1.46.
-	 */
-	Tree.prototype.setGrowingThreshold = function(iValue) {
-		Log.error("GrowingThreshold of " + this + " is not supported!");
-		return this;
-	};
-
-	/**
-	 * The <code>growingTriggerText</code> property is not supported for control <code>Tree</code>.
-	 * @public
-	 * @param {string} sValue New value for the <code>growingTriggerText</code> property, ignored.
-	 * @returns {this} Returns <code>this</code> to allow method chaining
-	 * @deprecated As of version 1.46.
-	 */
-	Tree.prototype.setGrowingTriggerText = function(sValue) {
-		Log.error("GrowingTriggerText of " + this + " is not supported!");
-		return this;
-	};
-
-	/**
-	 * The <code>growingScrollToLoad</code> property is not supported for control <code>Tree</code>.
-	 * @public
-	 * @param {boolean} bValue New value for the <code>growingScrollToLoad</code> property, ignored.
-	 * @returns {this} Returns <code>this</code> to allow method chaining
-	 * @deprecated As of version 1.46.
-	 */
-	Tree.prototype.setGrowingScrollToLoad = function(bValue) {
-		Log.error("GrowingScrollToLoad of " + this + " is not supported!");
-		return this;
-	};
-
-	/**
-	 * The <code>growingDirection</code> property is not supported for control <code>Tree</code>.
-	 * @public
-	 * @param {sap.m.ListGrowingDirection} sValue New value for the <code>growingDirection</code> property, ignored.
-	 * @returns {this} Returns <code>this</code> to allow method chaining
-	 * @deprecated As of version 1.46.
-	 */
-	Tree.prototype.setGrowingDirection = function(sValue) {
-		Log.error("GrowingDirection of " + this + " is not supported!");
-		return this;
 	};
 
 	/**
@@ -438,5 +373,4 @@ function(
 	Tree.prototype.setLastGroupHeader = function() {};
 
 	return Tree;
-
 });

@@ -170,7 +170,6 @@ sap.ui.define([
 	});
 
 	QUnit.test("Default Property Values & Override", function(assert) {
-
 		var oFF = new FacetFilter();
 		assert.strictEqual(oFF.getVisible(), true, "Visibility should be enabled by default");
 		assert.strictEqual(oFF.getShowPersonalization(), false, "Personalization should disabled by default");
@@ -183,10 +182,6 @@ sap.ui.define([
 
 		var oFFL1 = new FacetFilterList();
 		assert.strictEqual(oFFL1.getActive(), true, "List active should be enabled by default");
-		/**
-		 * @deprecated As of version 1.20
-		 */
-		assert.strictEqual(oFFL1.getMultiSelect(), true, "List multi select should be enabled by default");
 		assert.strictEqual(oFFL1.getMode(), ListMode.MultiSelect, "List mode should be MultiSelect by default");
 		assert.strictEqual(oFFL1.getGrowing(), true, 'Growing is enabled by default');
 		assert.strictEqual(oFFL1.getShowRemoveFacetIcon(), true, "Remove icon should be shown by default");
@@ -201,10 +196,6 @@ sap.ui.define([
 			mode: ListMode.SingleSelectMaster
 		});
 		assert.strictEqual(oFFL2.getActive(), false, "List active should be disabled");
-		/**
-		 * @deprecated As of version 1.20
-		 */
-		assert.strictEqual(oFFL2.getMultiSelect(), false, "List multi select should be disabled");
 		assert.strictEqual(oFFL2.getMode(), ListMode.SingleSelectMaster, "List mode should be SingleSelectMaster");
 		assert.strictEqual(oFFL2.getGrowing(), false, 'Growing should be disabled');
 		oFFL2.destroy();
@@ -1135,12 +1126,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("FacetFilterList.init", function(assert) {
-
 		var oFFL = new FacetFilterList();
-		/**
-		 * @deprecated As of version 1.20
-		 */
-		assert.strictEqual(oFFL.getMultiSelect(), true, "List multiSelect should be enabled by default");
 		assert.strictEqual(oFFL.getMode(), ListMode.MultiSelect, "List mode should be MultiSelect by default");
 		assert.strictEqual(oFFL.getIncludeItemInSelection(), true, "List item selection should include the whole item by default");
 
@@ -1966,42 +1952,14 @@ sap.ui.define([
 
 	QUnit.module("Public API");
 
-	/**
-	 * @deprecated As of version 1.18 <code>setCount</code> has been replaced by <code>setCounter</code>
-	 */
-	QUnit.test("FacetFilterItem.setCount", function(assert) {
-
-		var iCount1 = 14, iCount2 = 67;
-		var oItem = new FacetFilterItem();
-
-		oItem.setCount(iCount1);
-		assert.equal(oItem.getCount(), iCount1, "Item count should be set");
-		assert.equal(oItem.getCounter(), iCount1, "Item counter should be set to the same value");
-
-		oItem.setCount(iCount2);
-		assert.equal(oItem.getCount(), iCount2, "Item count should be set");
-		assert.equal(oItem.getCounter(), iCount2, "Item counter should be set to the same value");
-
-		oItem.destroy();
-	});
-
 	QUnit.test("FacetFilterItem.setCounter", function(assert) {
-
 		var iCount1 = 14, iCount2 = 67;
 		var oItem = new FacetFilterItem();
 
 		oItem.setCounter(iCount1);
-		/**
-		 * @deprecated As of version 1.18
-		 */
-		assert.equal(oItem.getCount(), iCount1, "Item count should be set");
 		assert.equal(oItem.getCounter(), iCount1, "Item counter should be set to the same value");
 
 		oItem.setCounter(iCount2);
-		/**
-		 * @deprecated As of version 1.18
-		 */
-		assert.equal(oItem.getCount(), iCount2, "Item count should be set");
 		assert.equal(oItem.getCounter(), iCount2, "Item counter should be set to the same value");
 
 		oItem.destroy();

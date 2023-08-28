@@ -47,10 +47,6 @@ sap.ui.define(['./BarInPageEnabler', 'sap/ui/Device', "sap/base/Log", 'sap/m/HBo
 			"level":  oControl._getRootAriaLevel()
 		});
 
-		if (oControl.getTranslucent() && Device.support.touch) {
-			oRM.class("sapMBarTranslucent");
-		}
-
 		oRM.class("sapMBar-CTX");
 	};
 
@@ -84,34 +80,15 @@ sap.ui.define(['./BarInPageEnabler', 'sap/ui/Device', "sap/base/Log", 'sap/m/HBo
 		oRM.openStart("div", oControl.getId() + "-BarMiddle");
 		oRM.class("sapMBarMiddle");
 		oRM.openEnd();
-		if (oControl.getEnableFlexBox()) {
-			oControl._oflexBox = oControl._oflexBox
-				|| new HBox(oControl.getId() + "-BarPH", {
-					alignItems: "Center"
-				}).addStyleClass("sapMBarPH").setParent(oControl, null, true);
-			var bContentLeft = !!oControl.getContentLeft().length,
-				bContentMiddle = !!oControl.getContentMiddle().length,
-				bContentRight = !!oControl.getContentRight().length;
-			if (bContentMiddle && !bContentLeft && !bContentRight) {
-				oControl._oflexBox.addStyleClass("sapMBarFlexBoxWidth100");
+		oRM.openStart("div", oControl.getId() + "-BarPH");
+		oRM.class("sapMBarPH");
+		oRM.class("sapMBarContainer");
+		writeWidthIfContentOccupiesWholeArea("middle", oRM, oControl);
+		oRM.openEnd();
 
-			}
-			oControl.getContentMiddle().forEach(function(oMidContent) {
-				oControl._oflexBox.addItem(oMidContent);
-			});
+		this.renderAllControls(oControl.getContentMiddle(), oRM, oControl);
 
-			oRM.renderControl(oControl._oflexBox);
-		} else {
-			oRM.openStart("div", oControl.getId() + "-BarPH");
-			oRM.class("sapMBarPH");
-			oRM.class("sapMBarContainer");
-			writeWidthIfContentOccupiesWholeArea("middle", oRM, oControl);
-			oRM.openEnd();
-
-			this.renderAllControls(oControl.getContentMiddle(), oRM, oControl);
-
-			oRM.close("div");
-		}
+		oRM.close("div");
 		oRM.close("div");
 
 		//right content area

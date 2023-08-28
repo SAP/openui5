@@ -79,13 +79,7 @@ sap.ui.define([
 					multiple: false
 				}
 			},
-			events: {
-				/**
-				 * This event is fired when the content of the table is updated.
-				 * @deprecated since 1.118.0 - This event is not fired or consumed anymore
-				 */
-				contentUpdated: {}
-			},
+			events: {},
 			defaultAggregation: "table"
 		}
 	});

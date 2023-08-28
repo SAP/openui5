@@ -2,7 +2,6 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/mvc/Controller",
 	"sap/m/MessageToast",
-	"sap/m/UploadCollectionParameter",
 	"sap/ui/core/Fragment",
 	"sap/ui/core/syncStyleClass",
 	"sap/ui/model/Filter",
@@ -10,7 +9,7 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/m/GroupHeaderListItem",
 	"sap/ui/core/format/FileSizeFormat"
-], function(jQuery, Controller, MessageToast, UploadCollectionParameter, Fragment, syncStyleClass, Filter, Sorter, JSONModel, GroupHeaderListItem, FileSizeFormat) {
+], function(jQuery, Controller, MessageToast, Fragment, syncStyleClass, Filter, Sorter, JSONModel, GroupHeaderListItem, FileSizeFormat) {
 	"use strict";
 
 	return Controller.extend("sap.m.sample.UploadCollectionSortingFiltering.Page", {

@@ -12,15 +12,19 @@ sap.ui.define(function() {
 			messagesDataBinding: {
 				title: "Messaging: DataBinding Messages"
 			},
+
 			Message: {
 				title: "Messaging: sap.ui.core.message.Message"
 			},
+
 			Messaging: {
 				title: "Messaging: sap.ui.core.message.Messaging"
 			},
+
 			MessageMixin: {
 				title: "Messaging: sap.ui.core.message.MessageMixin"
 			},
+
 			messagesGeneral: {
 				title: "Messaging: General",
 				ui5: {
@@ -28,14 +32,7 @@ sap.ui.define(function() {
 					language: "en"
 				}
 			},
-			messagesGeneral_legacyAPIs: {
-				title: "Messaging: General",
-				ui5: {
-					libs: "sap.m,sap.ui.layout",
-					language: "en",
-					"xx-handleValidation": true
-				}
-			},
+
 			messagesUsage: {
 				title: "Messaging: Usage",
 				loader: {
@@ -48,6 +45,7 @@ sap.ui.define(function() {
 					language: "en"
 				}
 			},
+
 			messagesEnd2End: {
 				title: "Messaging: End2End"
 			}

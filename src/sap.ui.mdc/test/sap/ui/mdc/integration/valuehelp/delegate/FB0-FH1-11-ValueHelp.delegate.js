@@ -196,7 +196,7 @@ sap.ui.define([
 
 		if (oFilterBar) {
 
-			var bHasCountryFilter = oFilterBar.getFilterItems().find(function (oFilterItem) {
+			var bHasCountryFilter = [].find(function (oFilterItem) {
 				return oFilterItem.getBinding("conditions").sPath.indexOf("countryOfOrigin_code") >= 0;
 			});
 

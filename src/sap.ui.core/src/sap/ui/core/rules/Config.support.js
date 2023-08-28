@@ -197,10 +197,10 @@ sap.ui.define([
 						var sDeclaredModule = aDeclaredModules[i];
 						if (sDeclaredModule.indexOf(sLibraryWithDot) === 0 &&
 							mLibraries[sLibrary].types.indexOf(sDeclaredModule) === -1 &&
-							sDeclaredModule.lastIndexOf(".library") !== sDeclaredModule.length - ".library".length &&
-							sDeclaredModule.lastIndexOf(".library-preload") !== sDeclaredModule.length - ".library-preload".length &&
-							sDeclaredModule.lastIndexOf(".flexibility") !== sDeclaredModule.length - ".flexibility".length &&
-							sDeclaredModule.lastIndexOf(".support") !== sDeclaredModule.length - ".support".length) {
+							sDeclaredModule.lastIndexOf(".library") !== sDeclaredModule.length - 8 &&
+							sDeclaredModule.lastIndexOf(".library-preload") !== sDeclaredModule.length - 16 &&
+							sDeclaredModule.lastIndexOf(".flexibility") !== sDeclaredModule.length - 12 &&
+							sDeclaredModule.lastIndexOf(".support") !== sDeclaredModule.length - 8) {
 							delete mLibraries[sLibrary];
 							break;
 						}
@@ -251,7 +251,7 @@ sap.ui.define([
 			href: 'https://sdk.openui5.org/topic/8521ad1955f340f9a6207d615c88d7fd'
 		}],
 		check: function(oIssueManager, oCoreFacade, oScope) {
-			var mComponents = oCoreFacade.getComponents();
+			var mComponents = null;
 			var mComponentReuseUsage = {};
 			var bComponentLazyKnown = false;
 
@@ -298,7 +298,7 @@ sap.ui.define([
 			href: 'https://sdk.openui5.org/topic/346599f0890d4dfaaa11c6b4ffa96312'
 		}],
 		check: function(oIssueManager, oCoreFacade, oScope) {
-			var mComponents = oCoreFacade.getComponents();
+			var mComponents = null;
 			var mComponentUsage = {};
 			var bComponentUsagesUsed = false;
 
@@ -348,7 +348,7 @@ sap.ui.define([
 			href: 'https://sdk.openui5.org/topic/26ba6a5c1e5c417f8b21cce1411dba2c'
 		}],
 		check: function(oIssueManager, oCoreFacade, oScope) {
-			var mComponents = oCoreFacade.getComponents();
+			var mComponents = null;
 			var mComponentsWithRelevantModels = {};
 			var bModelPreloadKnown = false;
 
@@ -403,7 +403,7 @@ sap.ui.define([
 			href: 'https://sdk.openui5.org/api/sap.ui.model.odata.v4.ODataModel'
 		}],
 		check: function(oIssueManager, oCoreFacade, oScope) {
-			var mComponents = oCoreFacade.getComponents();
+			var mComponents = null;
 
 			Object.keys(mComponents).forEach(function(sComponentId) {
 				var oManifest = mComponents[sComponentId].getManifest(),
@@ -457,7 +457,7 @@ sap.ui.define([
 			href: "https://sdk.openui5.org/topic/f1430c0337534d469da3a56307ff76af"
 		}],
 		check: function(oIssueManager, oCoreFacade, oScope) {
-			var mComponents = oCoreFacade.getComponents();
+			var mComponents = null;
 			var mComponentsRoutingSync = {};
 
 			// 1. Collect XML views in analyzed scope

@@ -256,7 +256,7 @@ sap.ui.define([
 		var bIsTypeahead = oContent.isTypeahead();
 
 		var oFilterBar = !bIsTypeahead && oContent.getFilterBar();
-		var bFilterBarHasCountryFilter = oFilterBar && oFilterBar.getFilterItems().find(function (oFilterItem) {
+		var bFilterBarHasCountryFilter = oFilterBar && [].find(function (oFilterItem) {
 			return oFilterItem.getBinding("conditions").sPath.indexOf("salesOrganization") >= 0;
 		});
 

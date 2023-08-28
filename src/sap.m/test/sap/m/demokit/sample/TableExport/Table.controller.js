@@ -1,11 +1,9 @@
 sap.ui.define([
-		'sap/m/MessageBox',
-		'./Formatter',
-		'sap/ui/core/mvc/Controller',
-		'sap/ui/core/util/Export',
-		'sap/ui/core/util/ExportTypeCSV',
-		'sap/ui/model/json/JSONModel'
-	], function(MessageBox, Formatter, Controller, Export, ExportTypeCSV, JSONModel) {
+	'sap/m/MessageBox',
+	'./Formatter',
+	'sap/ui/core/mvc/Controller',
+	'sap/ui/model/json/JSONModel'
+], function(MessageBox, Formatter, Controller, JSONModel) {
 	"use strict";
 
 	var TableController = Controller.extend("sap.m.sample.TableExport.Table", {
@@ -19,10 +17,10 @@ sap.ui.define([
 
 		onDataExport : function(oEvent) {
 
-			var oExport = new Export({
+			var oExport = new undefined/*Export*/({
 
 				// Type that will be used to generate the content. Own ExportType's can be created to support other formats
-				exportType : new ExportTypeCSV({
+				exportType : new undefined/*ExportTypeCSV*/({
 					separatorChar : ";"
 				}),
 

@@ -382,7 +382,7 @@ sap.ui.define([
 		oSecondsSetEnabled = this.spy(oSecondsInput, "setEnabled");
 
 		// act
-		this.oTPI._handleHoursChange({ getParameter: function() { "23"; } });
+		this.oTPI._handleHoursChange({ getParameter: function() {} });
 
 		// assert
 		assert.ok(oMinutesSetEnabled.calledWithExactly(true), "Minutes input should be enabled");

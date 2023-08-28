@@ -34,7 +34,6 @@ sap.ui.define([
 				var id = oHeader.getId();
 
 				rm.write("<div");
-				rm.writeControlData(oHeader);
 				rm.writeAttribute("class", "sapUiUfdShellHeader");
 				if (Configuration.getAccessibility()) {
 					rm.writeAttribute("role", "toolbar");

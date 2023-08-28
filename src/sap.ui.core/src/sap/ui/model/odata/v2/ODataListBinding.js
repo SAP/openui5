@@ -20,12 +20,11 @@ sap.ui.define([
 	"sap/ui/model/Sorter",
 	"sap/ui/model/SorterProcessor",
 	"sap/ui/model/odata/CountMode",
-	"sap/ui/model/odata/Filter",
 	"sap/ui/model/odata/ODataUtils",
 	"sap/ui/model/odata/OperationMode"
 ], function(assert, Log, deepEqual, each, isEmptyObject,  uid, ChangeReason, Context, Filter,
 		FilterOperator, FilterProcessor, FilterType, ListBinding, Sorter, SorterProcessor,
-		CountMode, ODataFilter, ODataUtils,  OperationMode) {
+		CountMode, ODataUtils,  OperationMode) {
 	"use strict";
 
 	var sClassName = "sap.ui.model.odata.v2.ODataListBinding",
@@ -323,7 +322,7 @@ sap.ui.define([
 
 		// OperationMode.Auto: handle synchronized count to check what the actual internal operation mode should be
 		// but only when using CountMode.Request or Both.
-		if (!this.bLengthFinal && this.sOperationMode == OperationMode.Auto && (this.sCountMode == CountMode.Request || this.sCountMode == CountMode.Both)) {
+		if (!this.bLengthFinal && false && (this.sCountMode == CountMode.Request || false)) {
 			if (!this.bLengthRequested) {
 				this._getLength();
 				this.bLengthRequested = true;
@@ -349,12 +348,6 @@ sap.ui.define([
 			iMaximumPrefetchSize = 0;
 		}
 
-		// re-set the threshold in OperationMode.Auto
-		if (this.sOperationMode == OperationMode.Auto) {
-			if (this.iThreshold >= 0) {
-				iMaximumPrefetchSize = Math.max(this.iThreshold, iMaximumPrefetchSize);
-			}
-		}
 		aContexts = this._getContexts(iStartIndex, iLength);
 		if (this._hasTransientParentContext()) {
 			// skip #loadData
@@ -712,9 +705,9 @@ sap.ui.define([
 	 * @return {boolean} Whether clientmode should be used
 	 */
 	ODataListBinding.prototype.useClientMode = function() {
-		return (this.sOperationMode === OperationMode.Client ||
-			this.sOperationMode === OperationMode.Auto && !this.bThresholdRejected ||
-			this.sOperationMode !== OperationMode.Server && this.bUseExpandedList);
+		return this.sOperationMode === OperationMode.Client ||
+			false ||
+			this.sOperationMode !== OperationMode.Server && this.bUseExpandedList;
 	};
 
 	/**
@@ -826,7 +819,7 @@ sap.ui.define([
 		if (this.sCountMode == CountMode.InlineRepeat ||
 			!this.bLengthFinal &&
 			(this.sCountMode === CountMode.Inline ||
-			 this.sCountMode === CountMode.Both)) {
+			 false)) {
 			aParams.push("$inlinecount=allpages");
 			bInlineCountRequested = true;
 		}
@@ -837,27 +830,6 @@ sap.ui.define([
 			if (bInlineCountRequested && oData.__count !== undefined) {
 				that.iLength = parseInt(oData.__count);
 				that.bLengthFinal = true;
-
-				// in the OpertionMode.Auto, we check if the count is LE than the given threshold (which also was requested!)
-				if (that.sOperationMode == OperationMode.Auto) {
-					if (that.iLength <= that.mParameters.threshold) {
-						//the requested data is enough to satisfy the threshold
-						that.bThresholdRejected = false;
-					} else {
-						that.bThresholdRejected = true;
-
-						//clean up successful request
-						delete that.mRequestHandles[sGuid];
-						that.bPendingRequest = false;
-
-						// If request is originating from this binding, change must be fired afterwards
-						that.bNeedsUpdate = true;
-
-						// return since we can't do anything here anymore,
-						// we have to trigger the loading again, this time with application filters
-						return;
-					}
-				}
 			}
 
 			if (that.useClientMode()) {
@@ -1022,11 +994,11 @@ sap.ui.define([
 			aParams = [],
 			that = this;
 
-		if (this.sCountMode !== CountMode.Request && this.sCountMode !== CountMode.Both) {
+		if (this.sCountMode !== CountMode.Request && true) {
 			return;
 		}
 
-		this._addFilterQueryOption(aParams, this.sOperationMode !== OperationMode.Auto);
+		this._addFilterQueryOption(aParams, true);
 		// use only custom params for count and not expand,select params
 		if (this.mParameters && this.mParameters.custom) {
 			var oCust = { custom: {}};
@@ -1041,18 +1013,6 @@ sap.ui.define([
 			that.bLengthFinal = true;
 			that.bLengthRequested = true;
 			that.oCountHandle = null;
-
-			// in the OperationMode.Auto, we check if the count is LE than the given threshold and
-			// set the client operation flag accordingly
-			if (that.sOperationMode == OperationMode.Auto) {
-				if (that.iLength <= that.mParameters.threshold) {
-					that.bThresholdRejected = false;
-				} else {
-					that.bThresholdRejected = true;
-				}
-				// fire change because of synchronized $count
-				that._fireChange({reason: ChangeReason.Change});
-			}
 		}
 
 		function _handleError(oError) {
@@ -1542,8 +1502,6 @@ sap.ui.define([
 				this.sChangeReason = ChangeReason.Sort;
 				this._fireRefresh({reason : this.sChangeReason});
 			}
-			/** @deprecated As of version 1.11.0 */
-			this._fireSort({sorter: aSorters});
 			bSuccess = true;
 		}
 
@@ -1764,12 +1722,6 @@ sap.ui.define([
 				this.sChangeReason = ChangeReason.Filter;
 				this._fireRefresh({reason: this.sChangeReason});
 			}
-			/** @deprecated As of version 1.11.0 */
-			if (sFilterType === FilterType.Application) {
-				this._fireFilter({filters: this.aApplicationFilters});
-			} else {
-				this._fireFilter({filters: this.aFilters});
-			}
 			bSuccess = true;
 		}
 
@@ -1786,12 +1738,15 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataListBinding.prototype.convertFilters = function() {
-		this.aFilters = this.aFilters.map(function(oFilter) {
-			return oFilter instanceof ODataFilter ? oFilter.convert() : oFilter;
-		});
-		this.aApplicationFilters = this.aApplicationFilters.map(function(oFilter) {
-			return oFilter instanceof ODataFilter ? oFilter.convert() : oFilter;
-		});
+		var ODataFilter = sap.ui.require("sap/ui/model/odata/Filter");
+		if ( ODataFilter ) {
+			this.aFilters = this.aFilters.map(function(oFilter) {
+				return oFilter instanceof ODataFilter ? oFilter.convert() : oFilter;
+			});
+			this.aApplicationFilters = this.aApplicationFilters.map(function(oFilter) {
+				return oFilter instanceof ODataFilter ? oFilter.convert() : oFilter;
+			});
+		}
 	};
 
 	ODataListBinding.prototype.applyFilter = function() {

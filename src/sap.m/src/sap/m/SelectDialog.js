@@ -22,7 +22,8 @@ sap.ui.define([
 	'sap/m/BusyIndicator',
 	'sap/m/Bar',
 	'sap/m/Title',
-	'sap/base/Log'
+	'sap/base/Log',
+	"sap/ui/core/StaticArea"
 ],
 function(
 	jQuery,
@@ -43,7 +44,8 @@ function(
 	BusyIndicator,
 	Bar,
 	Title,
-	Log
+	Log,
+	StaticArea
 ) {
 	"use strict";
 
@@ -548,7 +550,7 @@ function(
 		// sap.ui.core.Popup removes its content on close()/destroy() automatically from the static UIArea,
 		// but only if it added it there itself. As we did that, we have to remove it also on our own
 		if ( this._bAppendedToUIArea ) {
-			var oStatic = sap.ui.getCore().getStaticAreaRef();
+			var oStatic = StaticArea.getDomRef()/* LFUI5: Check: StaticArea's API might have a better fit for your use case. */;
 			oStatic = UIArea.registry.get(oStatic.id);
 			oStatic.removeContent(this, true);
 		}
@@ -617,7 +619,7 @@ function(
 		// Important: do not rely on the ui area fix, it will be removed with a later version of UI5
 		// use fragments instead or take care of proper parent-child dependencies
 		if ((!this.getParent() || !this.getUIArea()) && !this._bAppendedToUIArea) {
-			var oStatic = sap.ui.getCore().getStaticAreaRef();
+			var oStatic = StaticArea.getDomRef()/* LFUI5: Check: StaticArea's API might have a better fit for your use case. */;
 			oStatic = UIArea.registry.get(oStatic.id);
 			oStatic.addContent(this, true);
 			this._bAppendedToUIArea = true;
@@ -1042,7 +1044,7 @@ function(
 	SelectDialog.prototype._updateStarted = function (oEvent) {
 		this.fireUpdateStarted(oEvent.getParameters());
 
-		if (this.getModel() && this.getModel().isA("sap.ui.model.odata.ODataModel")) {
+		if (this.getModel() && false) {
 			if (this._oDialog.isOpen() && this._iListUpdateRequested) {
 				// only set busy mode when we have an OData model
 				this._setBusy(true);
@@ -1063,7 +1065,7 @@ function(
 
 		// only reset busy mode when we have an OData model
 		this._updateSelectionIndicator();
-		if (this.getModel() && this.getModel().isA("sap.ui.model.odata.ODataModel")) {
+		if (this.getModel() && false) {
 			this._setBusy(false);
 			this._bInitBusy = false;
 		}

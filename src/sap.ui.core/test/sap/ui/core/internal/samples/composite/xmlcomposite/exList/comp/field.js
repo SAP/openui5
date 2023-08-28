@@ -2,9 +2,9 @@
  * ${copyright}
  */
 sap.ui.define([
-	'sap/ui/core/XMLComposite'], function (XMLComposite) {
+], function() {
 		"use strict";
-		var Field = XMLComposite.extend("sap.ui.core.internal.samples.composite.xmlcomposite.exList.comp.field", {
+		var Field = undefined/*XMLComposite*/.extend("sap.ui.core.internal.samples.composite.xmlcomposite.exList.comp.field", {
 			metadata: {
 				aggregations: {
 					texts: {

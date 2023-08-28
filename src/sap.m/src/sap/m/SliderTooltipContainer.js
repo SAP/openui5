@@ -327,10 +327,10 @@ function(
 		};
 
 		SliderTooltipContainer.prototype.onmouseout = function (oEvent) {
-			var bSliderFocused = jQuery.contains(this._oParentSlider.getDomRef(), document.activeElement),
-				bContainerFocused = jQuery.contains(this.getDomRef(), document.activeElement),
-				bToSlider = jQuery.contains(this._oParentSlider.getDomRef(), oEvent.toElement),
-				bToTooltipContainer = jQuery.contains(this.getDomRef(), oEvent.toElement);
+			var bSliderFocused = this._oParentSlider.getDomRef() !== document.activeElement && this._oParentSlider.getDomRef().contains(document.activeElement),
+				bContainerFocused = this.getDomRef() !== document.activeElement && this.getDomRef().contains(document.activeElement),
+				bToSlider = this._oParentSlider.getDomRef() !== oEvent.toElement && this._oParentSlider.getDomRef().contains(oEvent.toElement),
+				bToTooltipContainer = this.getDomRef() !== oEvent.toElement && this.getDomRef().contains(oEvent.toElement);
 
 			if (bSliderFocused || bContainerFocused || bToSlider || bToTooltipContainer) {
 				return;
@@ -340,7 +340,7 @@ function(
 		};
 
 		SliderTooltipContainer.prototype.onfocusout = function (oEvent) {
-			if (jQuery.contains(this._$ParentSlider[0], oEvent.relatedTarget) || jQuery.contains(this.getDomRef(), oEvent.relatedTarget)) {
+			if (this._$ParentSlider[0] !== oEvent.relatedTarget && this._$ParentSlider[0].contains(oEvent.relatedTarget) || this.getDomRef() !== oEvent.relatedTarget && this.getDomRef().contains(oEvent.relatedTarget)) {
 				return;
 			}
 

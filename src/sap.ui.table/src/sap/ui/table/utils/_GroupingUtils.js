@@ -5,9 +5,8 @@
 // Provides helper sap.ui.table.utils._GroupingUtils.
 sap.ui.define([
 	"sap/ui/model/Sorter",
-	"sap/ui/Device",
-	"sap/ui/thirdparty/jquery"
-], function(Sorter, Device, jQuery) {
+	"sap/ui/Device"
+], function(Sorter, Device) {
 	"use strict";
 
 	/**
@@ -27,7 +26,8 @@ sap.ui.define([
 	 * @private
 	 */
 	var GroupingUtils = {
-		TableUtils: null, // Avoid cyclic dependency. Will be filled by TableUtils
+		// Avoid cyclic dependency. Will be filled by TableUtils
+		TableUtils: null,
 
 		/**
 		 * The visual appearance of the table is influenced by the chosen hierarchy mode, which influences how the state of rows is interpreted.
@@ -399,156 +399,6 @@ sap.ui.define([
 					GroupingUtils.cleanupTableRowForGrouping(oRow);
 				});
 			}
-		},
-
-		/*
-		 * EXPERIMENTAL Grouping Feature of sap.ui.table.Table:
-		 *
-		 * Overrides the getBinding to inject the grouping information into the JSON model.
-		 *
-		 * TODO:
-		 *   - Grouping is not really possible for models based on OData:
-		 *     - it works when loading data from the beginning because in this case the
-		 *       model has the relevant information (distinct values) to determine the
-		 *       count of rows and add them properly in the scrollbar as well as adding
-		 *       the group information to the contexts array which is used by the
-		 *       _modifyRow to display the group headers
-		 *     - it doesn't work when not knowing how many groups are available before
-		 *       and on which position the group header has to be added - e.g. when
-		 *       displaying a snapshot in the middle of the model.
-		 *   - For OData it might be a server-side feature?
-		 */
-
-		/**
-		 * Initializes the experimental grouping for sap.ui.table.Table.
-		 *
-		 * @param {sap.ui.table.Table} oTable Instance of the table.
-		 * @deprecated As of version 1.118.
-		 */
-		setupExperimentalGrouping: function(oTable) {
-			if (!oTable.getEnableGrouping()) {
-				return;
-			}
-
-			var oBinding = oTable.getBinding();
-
-			// check for grouping being supported or not (only for client ListBindings!!)
-			var oGroupBy = sap.ui.getCore().byId(oTable.getGroupBy());
-			var bIsSupported = oGroupBy && oGroupBy.getGrouped() && GroupingUtils.TableUtils.isA(oBinding, "sap.ui.model.ClientListBinding");
-
-			// only enhance the binding if it has not been done yet and supported!
-			if (!bIsSupported || oBinding._modified) {
-				return;
-			}
-
-			// once the binding is modified we always return the modified binding
-			// and don't wanna modifiy the binding once again
-			oBinding._modified = true;
-
-			// set the table into grouping mode
-			GroupingUtils.setToDefaultGroupMode(oTable);
-
-			// we use sorting finally to sort the values and afterwards group them
-			var sPropertyName = oGroupBy.getSortProperty();
-			oBinding.sort(new Sorter(sPropertyName));
-
-			// fetch the contexts from the original binding
-			var iLength = oTable._getTotalRowCount(),
-				aContexts = oBinding.getContexts(0, iLength);
-
-			// add the context information for the group headers which are later on
-			// used for displaying the grouping information of each group
-			var sKey;
-			var iCounter = 0;
-			for (var i = iLength - 1; i >= 0; i--) {
-				var sNewKey = aContexts[i].getProperty(sPropertyName);
-				if (!sKey) {
-					sKey = sNewKey;
-				}
-				if (sKey !== sNewKey) {
-					var oGroupContext = aContexts[i + 1].getModel().getContext("/sap.ui.table.GroupInfo" + i);
-					oGroupContext.__groupInfo = {
-						oContext: aContexts[i + 1],
-						name: sKey,
-						count: iCounter,
-						groupHeader: true,
-						expanded: true
-					};
-					aContexts.splice(i + 1, 0,
-						oGroupContext
-					);
-					sKey = sNewKey;
-					iCounter = 0;
-				}
-				iCounter++;
-			}
-			var oGroupContext = aContexts[0].getModel().getContext("/sap.ui.table.GroupInfo");
-			oGroupContext.__groupInfo = {
-				oContext: aContexts[0],
-				name: sKey,
-				count: iCounter,
-				groupHeader: true,
-				expanded: true
-			};
-			aContexts.splice(0, 0, oGroupContext);
-
-			// extend the binding and hook into the relevant functions to provide access to the grouping information
-			jQuery.extend(oBinding, {
-				getLength: function() {
-					return aContexts.length;
-				},
-				getContexts: function(iStartIndex, iLength) {
-					return aContexts.slice(iStartIndex, iStartIndex + iLength);
-				}
-			});
-
-			function isGroupHeader(iIndex) {
-				var oContext = aContexts[iIndex];
-				return (oContext && oContext.__groupInfo && oContext.__groupInfo.groupHeader) === true;
-			}
-
-			oTable._experimentalGroupingRowState = function(oState) {
-				var oContext = oState.context;
-
-				if ((oContext && oContext.__groupInfo && oContext.__groupInfo.groupHeader) === true) {
-					oState.type = oState.Type.GroupHeader;
-				}
-				oState.title = oContext && oContext.__groupInfo && oContext.__groupInfo.name + " - " + oContext.__groupInfo.count;
-				oState.expandable = oState.type === oState.Type.GroupHeader;
-				oState.expanded = oState.expandable && oContext.__groupInfo && oContext.__groupInfo.expanded;
-				oState.level = oState.expandable ? 1 : 2;
-				oState.contentHidden = oState.expandable;
-			};
-
-			oTable._experimentalGroupingExpand = function(oRow) {
-				var iRowIndex = oRow.getIndex();
-				if (isGroupHeader(iRowIndex) && !aContexts[iRowIndex].__groupInfo.expanded) {
-					for (var i = 0; i < aContexts[iRowIndex].__childs.length; i++) {
-						aContexts.splice(iRowIndex + 1 + i, 0, aContexts[iRowIndex].__childs[i]);
-					}
-					delete aContexts[iRowIndex].__childs;
-					aContexts[iRowIndex].__groupInfo.expanded = true;
-					oBinding._fireChange();
-				}
-			};
-
-			oTable._experimentalGroupingCollapse = function(oRow) {
-				var iRowIndex = oRow.getIndex();
-				if (isGroupHeader(iRowIndex) && aContexts[iRowIndex].__groupInfo.expanded) {
-					aContexts[iRowIndex].__childs = aContexts.splice(iRowIndex + 1, aContexts[iRowIndex].__groupInfo.count);
-					aContexts[iRowIndex].__groupInfo.expanded = false;
-					oBinding._fireChange();
-				}
-			};
-
-			var Hook = GroupingUtils.TableUtils.Hook;
-			Hook.register(oTable, Hook.Keys.Row.UpdateState, oTable._experimentalGroupingRowState);
-			Hook.register(oTable, Hook.Keys.Row.Expand, oTable._experimentalGroupingExpand);
-			Hook.register(oTable, Hook.Keys.Row.Collapse, oTable._experimentalGroupingCollapse);
-
-			// the table need to fetch the updated/changed contexts again, therefore requires the binding to fire a change event
-			oTable._mTimeouts.groupingFireBindingChange = oTable._mTimeouts.groupingFireBindingChange || window.setTimeout(
-				function() { oBinding._fireChange(); }, 0);
 		},
 
 		/**

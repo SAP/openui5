@@ -19,7 +19,7 @@
 		// the context path - this section makes sure to remove the duplicate
 		// test-resources segments in the path
 		if (sTestPage.indexOf("/test-resources/test-resources") === 0 || sTestPage.indexOf("/test-resources/resources") === 0) {
-			sTestPage = sTestPage.substr("/test-resources".length);
+			sTestPage = sTestPage.substr(15);
 		}
 		this.aPages.push(sTestPage);
 	};

@@ -1598,36 +1598,7 @@ sap.ui.define([
 		// 3. Check for priority given by layout data (standard use case)
 		oLayoutData = vControl.getLayoutData && vControl.getLayoutData();
 		if (oLayoutData && oLayoutData instanceof OverflowToolbarLayoutData) {
-
-			/**
-			 * @deprecated since 1.32
-			 */
-			if (oLayoutData.getMoveToOverflow() === false) {
-				return OverflowToolbarPriority.NeverOverflow;
-			}
-
-			/**
-			 * @deprecated since 1.32
-			 */
-			if (oLayoutData.getStayInOverflow() === true) {
-				return OverflowToolbarPriority.AlwaysOverflow;
-			}
-
 			sPriority = oLayoutData.getPriority();
-
-			/**
-			 * @deprecated since 1.48
-			 */
-			if (sPriority === OverflowToolbarPriority.Never) {
-				return OverflowToolbarPriority.NeverOverflow;
-			}
-
-			/**
-			 * @deprecated since 1.48
-			 */
-			if (sPriority === OverflowToolbarPriority.Always) {
-				return OverflowToolbarPriority.AlwaysOverflow;
-			}
 
 			return sPriority;
 		}

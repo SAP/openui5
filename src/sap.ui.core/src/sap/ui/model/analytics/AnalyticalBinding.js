@@ -347,7 +347,7 @@ sap.ui.define([
 			if (mParameters.countMode == CountMode.None) {
 				oLogger.fatal("requested count mode is ignored; OData requests will include"
 					+ " $inlinecount options");
-			} else if (mParameters.countMode == CountMode.Request || mParameters.countMode == CountMode.Both) {
+			} else if (mParameters.countMode == CountMode.Request || false) {
 				oLogger.warning("default count mode is ignored; OData requests will include"
 					+ " $inlinecount options");
 			} else if (this.oModel.sDefaultCountMode == CountMode.Request) {
@@ -725,23 +725,6 @@ sap.ui.define([
 	 */
 	AnalyticalBinding.prototype.getCount = function () {
 		return this.iTotalSize >= 0 ? this.iTotalSize : undefined;
-	};
-
-	/**
-	 * Gets the total number of leaves or <code>-1</code> if this is unknown.
-	 *
-	 * @return {number}
-	 *   The total number of leaves, or <code>-1</code> if the number is not yet known or if the
-	 *   binding parameter <code>provideTotalResultSize</code> is set to <code>false</code>
-	 *
-	 * @public
-	 * @deprecated Since 1.92 use {@link #getCount} instead
-	 */
-	AnalyticalBinding.prototype.getTotalSize = function() {
-		if (!this.bProvideTotalSize) {
-			oLogger.fatal("total size of result explicitly turned off, but getter invoked");
-		}
-		return this.iTotalSize;
 	};
 
 	/**
@@ -1578,10 +1561,6 @@ sap.ui.define([
 		const sModelName = oModel.getMetadata().getName();
 		let iVersion = sModelName === "sap.ui.model.odata.v2.ODataModel" ? 2 : null;
 
-		/** @deprecated As of version 1.48.0 */
-		if (sModelName === "sap.ui.model.odata.ODataModel") {
-			iVersion = 1;
-		}
 		return iVersion;
 	};
 
@@ -2757,11 +2736,6 @@ sap.ui.define([
 				   where the set of all operations included in the batch request becomes known and this condition can be checked. */
 				this._registerNewRequest(oRequestDetails.sRequestId);
 
-				/** @deprecated As of version 1.48.0 */
-				if (this.iModelVersion === 1) {
-					//V1 - use createBatchOperation
-					aBatchQueryRequest.push(this.oModel.createBatchOperation(sPath.replace(/\ /g, "%20"), "GET"));
-				}
 				if (this.iModelVersion === 2) {
 					var aUrlParameters = this._getQueryODataRequestOptions(oAnalyticalQueryRequest,
 							oRequestDetails.bIsLeafGroupsRequest,  {encode: true});
@@ -2792,16 +2766,6 @@ sap.ui.define([
 			// fire events to indicate sending of a new request
 			this.fireDataRequested();
 
-			/** @deprecated As of version 1.48.0 */
-			if (this.iModelVersion === 1) {
-				this.oModel.addBatchReadOperations(aBatchQueryRequest);
-				oBatchRequestHandle = this.oModel.submitBatch(fnSuccess, fnError, true, true);
-
-				this.oModel.fireRequestSent({url : this.oModel.sServiceUrl + "/$batch", type : "POST", async : true,
-					info: "",
-					infoObject : {}
-				});
-			}
 			if (this.iModelVersion === 2) {
 				// fake a uniform request handle, so the original code works with the v2 ODataModel
 				// the v2 model does not return an overall request handle for the batch request
@@ -2886,32 +2850,6 @@ sap.ui.define([
 
 			// raise event here since there is no separate fnCompleted handler for batch requests
 			that.fireDataReceived({data: oData});
-
-			/** @deprecated As of version 1.48.0 */
-			if (that.iModelVersion === 1) {
-				let bOverallSuccess = true; // determine the logical success status: true iff all operations succeeded
-				let oV1Errors = {}; // check for possible V1 errors
-				// retrieve the errors from the model and reset the success flag
-				const aBatchErrors = that.oModel._getBatchErrors(oData);
-				if (aBatchErrors.length > 0) {
-					bOverallSuccess = false;
-					oV1Errors = that.oModel._handleError(aBatchErrors[0]);
-				}
-
-				// fire event to indicate completion of request
-				that.oModel.fireRequestCompleted({url : response.requestUri, type : "POST", async : true,
-					info: "",
-					infoObject : {},
-					success: bOverallSuccess,
-					errorobject: bOverallSuccess ? {} : oV1Errors
-				});
-				// notify all bindings of the model that the data has been changed!
-				// e.g. controls in the rows need to be updated as well
-				// fire only the change event is not sufficient for other bindings
-				if (bOverallSuccess) {
-					that.oModel.checkUpdate();
-				}
-			}
 		}
 
 		function fnError (oError) {
@@ -2930,11 +2868,6 @@ sap.ui.define([
 				return;
 			}
 
-			/** @deprecated As of version 1.48.0 */
-			if (that.iModelVersion === 1) {
-				oError = that.oModel._handleError(oError);
-			}
-
 			// fire event to indicate completion of request
 			that.oModel.fireRequestCompleted({url : "", type : "POST", async : true,
 				info: "",
@@ -2942,11 +2875,6 @@ sap.ui.define([
 				success: false,
 				errorobject: oError});
 
-			/** @deprecated As of version 1.48.0 */
-			if (that.iModelVersion === 1) {
-				// Legacy Code: Unsure if this is need for OData V1 Model...
-				that.oModel.fireRequestFailed(oError);
-			}
 			that.fireDataReceived();
 		}
 	};
@@ -3008,11 +2936,6 @@ sap.ui.define([
 		oLogger.debug("AnalyticalBinding: executing query request");
 
 		var iRequestHandleId = this._getIdForNewRequestHandle();
-		/** @deprecated As of version 1.48.0 */
-		if (this.iModelVersion === 1) {
-			//trigger data loading, the request handle is registered during the fnHandleUpdate callback, used by the V1 model
-			this.oModel._loadData(sPath, aParam, fnSuccess, fnError, false, fnUpdateHandle, fnCompleted);
-		}
 		if (this.iModelVersion === 2) {
 			if (this.sCustomParams) {
 				aParam.push(this.sCustomParams);
@@ -3093,7 +3016,6 @@ sap.ui.define([
 		function fnUpdateHandle(oRequestHandle) {
 			that._registerNewRequestHandle(iRequestHandleId, oRequestHandle);
 		}
-
 	};
 
 	/**

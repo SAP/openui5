@@ -73,23 +73,7 @@ sap.ui.define([
 				 */
 				homeIcon : {type : "any", group : "Misc", defaultValue : null}
 			},
-			events : {
-
-				/**
-				 * Fires when orientation (portrait/landscape) is changed.
-				 * @deprecated Since version 1.87, use {@link sap.ui.Device.orientation.attachHandler} instead.
-				 */
-				orientationChange : {
-					deprecated: true,
-					parameters : {
-
-						/**
-						 * Returns true if the device is in landscape mode.
-						 */
-						landscape : {type : "boolean"}
-					}
-				}
-			},
+			events : {},
 			designtime: "sap/m/designtime/SplitApp.designtime"
 		},
 
@@ -167,11 +151,7 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	SplitApp.prototype._onOrientationChange = function(){
-		this.fireOrientationChange({
-			landscape: Device.orientation.landscape
-		});
-	};
+	SplitApp.prototype._onOrientationChange = function(){};
 
 	return SplitApp;
 

@@ -474,7 +474,7 @@ sap.ui.define([
 			this._getTabStrip().addItem(
 				new TabStripItem({
 					key: oItem.getId(),
-					text: oItem.getName(),
+					text: undefined,
 					additionalText: oItem.getAdditionalText(),
 					icon: oItem.getIcon(),
 					iconTooltip: oItem.getIconTooltip(),
@@ -512,7 +512,7 @@ sap.ui.define([
 			this._getTabStrip().insertItem(
 				new TabStripItem({
 					key: oItem.getId(),
-					text: oItem.getName(),
+					text: undefined,
 					additionalText: oItem.getAdditionalText(),
 					icon: oItem.getIcon(),
 					iconTooltip: oItem.getIconTooltip(),

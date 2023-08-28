@@ -118,27 +118,6 @@ sap.ui.define([
 		oUIArea.remove();
 	});
 
-	/**
-	 * @deprecated As of 1.69
-	 */
-	QUnit.test("Element isn't focusable when it's blocked", async function(assert) {
-		var oUIArea = createAndAppendDiv("uiarea_focus");
-
-		var oInput = new Input();
-		oInput.placeAt("uiarea_focus");
-		await nextUIUpdate();
-
-		assert.ok(oInput.isFocusable(), "The input control should now be focusable");
-
-		oInput.setBlocked(true);
-		await nextUIUpdate();
-
-		assert.ok(!oInput.isFocusable(), "The input control should be not focusable because it's blocked");
-
-		oInput.destroy();
-		oUIArea.remove();
-	});
-
 	QUnit.test("Element isn't focusable when its parent is busy", async function(assert) {
 		var oUIArea = createAndAppendDiv("uiarea_focus");
 
@@ -154,31 +133,6 @@ sap.ui.define([
 		assert.ok(oInput.isFocusable(), "The input control should now be focusable");
 
 		oPanel.setBusy(true);
-		await nextUIUpdate();
-
-		assert.ok(!oInput.isFocusable(), "The input control should be not focusable because its parent is busy");
-
-		oPanel.destroy();
-		oUIArea.remove();
-	});
-
-	/**
-	 * @deprecated As of 1.69
-	 */
-	QUnit.test("Element isn't focusable when its parent is blocked", async function(assert) {
-		var oUIArea = createAndAppendDiv("uiarea_focus");
-
-		var oInput = new Input();
-		var oPanel = new Panel({
-			content: oInput
-		});
-		oPanel.placeAt("uiarea_focus");
-		await nextUIUpdate();
-
-		assert.ok(!oPanel.isFocusable(), "Panel doesn't have focusable DOM element");
-		assert.ok(oInput.isFocusable(), "The input control should now be focusable");
-
-		oPanel.setBlocked(true);
 		await nextUIUpdate();
 
 		assert.ok(!oInput.isFocusable(), "The input control should be not focusable because its parent is busy");

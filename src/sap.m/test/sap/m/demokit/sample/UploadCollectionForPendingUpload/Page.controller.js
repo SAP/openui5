@@ -2,10 +2,9 @@ sap.ui.define([
 	"sap/ui/core/mvc/Controller",
 	"sap/m/MessageBox",
 	"sap/m/MessageToast",
-	"sap/m/UploadCollectionParameter",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/Device"
-], function(Controller, MessageBox, MessageToast, UploadCollectionParameter, JSONModel, Device) {
+], function(Controller, MessageBox, MessageToast, JSONModel, Device) {
 	"use strict";
 
 	return Controller.extend("sap.m.sample.UploadCollectionForPendingUpload.Page", {
@@ -16,7 +15,7 @@ sap.ui.define([
 		onChange: function(oEvent) {
 			var oUploadCollection = oEvent.getSource();
 			// Header Token
-			var oCustomerHeaderToken = new UploadCollectionParameter({
+			var oCustomerHeaderToken = new undefined/*UploadCollectionParameter*/({
 				name: "x-csrf-token",
 				value: "securityTokenFromModel"
 			});
@@ -63,7 +62,7 @@ sap.ui.define([
 
 		onBeforeUploadStarts: function(oEvent) {
 			// Header Slug
-			var oCustomerHeaderSlug = new UploadCollectionParameter({
+			var oCustomerHeaderSlug = new undefined/*UploadCollectionParameter*/({
 				name: "slug",
 				value: oEvent.getParameter("fileName")
 			});

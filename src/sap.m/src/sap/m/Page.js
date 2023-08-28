@@ -103,7 +103,6 @@ function(
 
 				library: "sap.m",
 				properties: {
-
 					/**
 					 * The title text appearing in the page header bar.
 					 */
@@ -137,13 +136,6 @@ function(
 					showSubHeader: {type: "boolean", group: "Appearance", defaultValue: true},
 
 					/**
-					 * The text of the nav button when running in iOS (if shown) in case it deviates from the default, which is "Back". This property is mvi-theme-dependent and will not have any effect in other themes.
-					 * @deprecated Since version 1.20.
-					 * Deprecated since the MVI theme is removed now. This property only affected the NavButton in that theme.
-					 */
-					navButtonText: {type: "string", group: "Misc", defaultValue: null, deprecated: true},
-
-					/**
 					 * The tooltip of the nav button
 					 *
 					 * Since version 1.34
@@ -159,32 +151,12 @@ function(
 					enableScrolling: {type: "boolean", group: "Behavior", defaultValue: true},
 
 					/**
-					 * the icon that is rendered in the page header bar in non-iOS phone/tablet platforms. This property is theme-dependent and only has an effect in the MVI theme.
-					 * @deprecated Since version 1.20.
-					 * Deprecated since the MVI theme is removed now. This property only affected the NavButton in that theme.
-					 */
-					icon: {type: "sap.ui.core.URI", group: "Appearance", defaultValue: null, deprecated: true},
-
-					/**
 					 * This property is used to set the background color of a page. When a list is placed inside a page, the value "List" should be used to display a gray background. "Standard", with the default background color, is used if not specified.
 					 */
 					backgroundDesign: {
 						type: "sap.m.PageBackgroundDesign",
 						group: "Appearance",
 						defaultValue: PageBackgroundDesign.Standard
-					},
-
-					/**
-					 * This property is used to set the appearance of the NavButton. By default when showNavButton is set to true, a back button will be shown in iOS and an up button in other platforms. In case you want to show a normal button in the left header area, you can set the value to "Default".
-					 * @since 1.12
-					 * @deprecated Since version 1.20.
-					 * Deprecated since the MVI theme is removed now. This property is only usable with a Button text in that theme.
-					 */
-					navButtonType: {
-						type: "sap.m.ButtonType",
-						group: "Appearance",
-						defaultValue: ButtonType.Back,
-						deprecated: true
 					},
 
 					/**
@@ -257,14 +229,6 @@ function(
 					_internalHeader: {type: "sap.m.IBar", multiple: false, visibility: "hidden"}
 				},
 				events: {
-
-					/**
-					 * this event is fired when Nav Button is tapped
-					 * @deprecated Since version 1.12.2.
-					 * the navButtonPress event is replacing this event
-					 */
-					navButtonTap: {deprecated: true},
-
 					/**
 					 * this event is fired when Nav Button is pressed
 					 * @since 1.12.2
@@ -412,12 +376,11 @@ function(
 				this._navBtn = new Button(this.getId() + "-navButton", {
 					press: function () {
 						this.fireNavButtonPress();
-						this.fireNavButtonTap();
 					}.bind(this)
 				});
 			}
 
-			this._navBtn.setType(this.getNavButtonType());
+			this._navBtn.setType(ButtonType.Back);
 			this._navBtn.setTooltip(sBackText);
 		};
 

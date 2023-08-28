@@ -1,4 +1,4 @@
-0;/*global QUnit */
+/*global QUnit */
 sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/m/library",

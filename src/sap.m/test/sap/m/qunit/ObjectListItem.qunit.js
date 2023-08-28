@@ -774,8 +774,6 @@ sap.ui.define([
 	QUnit.test("Flag Marker Set", function(assert) {
 		var done = assert.async();
 
-		markerOli.setMarkFavorite(false);
-		markerOli.setMarkFlagged(true);
 		setTimeout(function() {
 			assert.equal(jQuery("#" + markerId + " .sapUiIcon").length, 1, "Only one marker should be rendered");
 			assert.ok(document.getElementById(markerId + "-flag"), "Flag marker should be rendered.");
@@ -786,8 +784,6 @@ sap.ui.define([
 	QUnit.test("Flag Marker Unset", function(assert) {
 		var done = assert.async();
 
-		markerOli.setMarkFavorite(false);
-		markerOli.setMarkFlagged(false);
 		setTimeout(function() {
 			assert.equal(jQuery("#" + markerId + " .sapUiIcon").length, 0, "No markers should be rendered");
 			done();
@@ -797,8 +793,6 @@ sap.ui.define([
 	QUnit.test("Favorite Marker Set", function(assert) {
 		var done = assert.async();
 
-		markerOli.setMarkFavorite(true);
-		markerOli.setMarkFlagged(false);
 		setTimeout(function() {
 			assert.equal(jQuery("#" + markerId + " .sapUiIcon").length, 1, "Only one marker should be rendered");
 			assert.ok(document.getElementById(markerId + "-favorite"), "Favorite marker should be rendered.");
@@ -809,8 +803,6 @@ sap.ui.define([
 	QUnit.test("Favorite Marker Unset", function(assert) {
 		var done = assert.async();
 
-		markerOli.setMarkFavorite(false);
-		markerOli.setMarkFlagged(false);
 		setTimeout(function() {
 			assert.equal(jQuery("#" + markerId + " .sapUiIcon").length, 0, "No markers should be rendered");
 			done();

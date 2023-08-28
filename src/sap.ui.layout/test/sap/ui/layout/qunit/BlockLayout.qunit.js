@@ -377,53 +377,6 @@ sap.ui.define([
 		oBlockLayout.destroy();
 	});
 
-	/**
-	 * @deprecated since 1.50
-	 */
-	QUnit.test("Mixed BlockLayout with an accent cell", function (assert) {
-		jQuery("#qunit-fixture").width(1200);
-		var oCell1 = new BlockLayoutCell({width: 1}),
-			oCell2 = new BlockLayoutCell({width: 1}),
-			oRow = new BlockLayoutRow({
-				content: [oCell1, oCell2],
-				accentCells: [oCell1]
-			}),
-			oBlockLayout = new BlockLayout({
-				background: BlockBackgroundType.Mixed,
-				content: [oRow]
-			}).placeAt("qunit-fixture");
-
-		var oSpy = this.spy(oRow, "_processMixedCellStyles");
-
-
-		Core.applyChanges();
-
-		// Assert
-		assert.ok(oSpy.called, "Mixed layout cell processor has been called");
-		assert.strictEqual(oRow.getAccentCells()[0], oCell1.getId(), "Should have set Cell1 as an accent cell");
-		assert.ok(oCell1.hasStyleClass("sapContrast"), "Should have set proper CSS classes");
-		assert.ok(oCell1.hasStyleClass("sapContrastPlus"), "Should have set proper CSS classes");
-
-		// Act
-		oRow.addAccentCell(oCell2);
-		oBlockLayout.addStyleClass("sapUiBlockLayoutSizeL"); //Mock the screen size
-		Core.applyChanges();
-
-		// Assert
-		assert.notEqual(oRow.getAccentCells()[0], oCell1.getId(), "Should have removed Cell1 as an accent cell");
-		assert.ok(!oCell1.hasStyleClass("sapContrast"), "Should have removed the contrast containers from Cell1");
-		assert.ok(!oCell1.hasStyleClass("sapContrastPlus"), "Should have removed the contrast containers from Cell1");
-
-		assert.strictEqual(oRow.getAccentCells()[0], oCell2.getId(), "Should have set Cell2 as an accent cell");
-		assert.ok(oCell2.hasStyleClass("sapContrast"), "Should have set proper CSS classes");
-		assert.ok(oCell2.hasStyleClass("sapContrastPlus"), "Should have set proper CSS classes");
-
-		// Cleanup
-		oCell1 = null;
-		oRow = null;
-		oBlockLayout.destroy();
-	});
-
 	QUnit.test("Accent BlockLayout with an accent cells", function (assert) {
 		var oCell1 = new BlockLayoutCell({width: 1}),
 			oCell2 = new BlockLayoutCell({width: 1}),

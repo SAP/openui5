@@ -45,7 +45,7 @@ sap.ui.define([
 	// shortcut for sap.ui.core.ValueState
 	var ValueState = coreLibrary.ValueState;
 
-	oCore.attachInit(function() {
+	oCore.ready(function() {
 		Configuration.setLanguage("en-US");
 	});
 

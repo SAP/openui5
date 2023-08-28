@@ -34,7 +34,6 @@ sap.ui.define([
 	extend,
 	isEmptyObject
 ) {
-
 	"use strict";
 
 	// shortcut for the sap.ui.core.ID type
@@ -1125,19 +1124,19 @@ sap.ui.define([
 	 * @private
 	 * @ui5-restricted sap.ui.core
 	 */
-	 ManagedObject.runWithOwner = function(fn, sOwnerId, oThisArg) {
+	ManagedObject.runWithOwner = function(fn, sOwnerId, oThisArg) {
 
-		assert(typeof fn === "function", "fn must be a function");
+	   assert(typeof fn === "function", "fn must be a function");
 
-		var oldOwnerId = ManagedObject._sOwnerId;
-		try {
-			ManagedObject._sOwnerId = sOwnerId;
-			return fn.call(oThisArg);
-		} finally {
-			ManagedObject._sOwnerId = oldOwnerId;
-		}
+	   var oldOwnerId = ManagedObject._sOwnerId;
+	   try {
+		   ManagedObject._sOwnerId = sOwnerId;
+		   return fn.call(oThisArg);
+	   } finally {
+		   ManagedObject._sOwnerId = oldOwnerId;
+	   }
 
-	};
+   };
 
 	/**
 	 * Sets all the properties, aggregations, associations and event handlers as given in
@@ -2986,23 +2985,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Determines whether a given object contains binding information instead of a
-	 * value or aggregated controls. The method is used in applySettings for processing
-	 * the JSON notation of properties/aggregations in the constructor.
-	 *
-	 * @param {object} oValue the value
-	 * @param {object} oKeyInfo the metadata of the property
-	 *
-	 * @returns {boolean} whether the value contains binding information
-	 *
-	 * @private
-	 * @deprecated
-	 */
-	ManagedObject.prototype.isBinding = function(oValue, oKeyInfo) {
-		return typeof this.extractBindingInfo(oValue) === "object";
-	};
-
-	/**
 	 * Checks whether the given value can be interpreted as a binding info and
 	 * returns that binding info or an unescaped string or undefined when it is not.
 	 *
@@ -3214,33 +3196,6 @@ sap.ui.define([
 	};
 
 	ManagedObject.prototype._unbindObject = logError.bind(null, "_unbindObject");
-
-	/**
-	 * Bind the object to the referenced entity in the model, which is used as the binding context
-	 * to resolve bound properties or aggregations of the object itself and all of its children
-	 * relatively to the given path.
-	 *
-	 * @deprecated Since 1.11.1, please use {@link #bindObject} instead.
-	 * @param {string} sPath the binding path
-	 * @returns {this} reference to the instance itself
-	 * @public
-	 */
-	ManagedObject.prototype.bindContext = function(sPath) {
-		return this.bindObject(sPath);
-	};
-
-	/**
-	 * Removes the defined binding context of this object, all bindings will now resolve
-	 * relative to the parent context again.
-	 *
-	 * @deprecated Since 1.11.1, please use {@link #unbindObject} instead.
-	 * @param {string} [sModelName] name of the model to remove the context for.
-	 * @returns {this} reference to the instance itself
-	 * @public
-	 */
-	ManagedObject.prototype.unbindContext = function(sModelName) {
-		return this.unbindObject(sModelName);
-	};
 
 	/**
 	 * Configuration for the binding of a managed property.
@@ -4781,5 +4736,4 @@ sap.ui.define([
 	ManagedObject._defaultContextualSettings = {};
 
 	return ManagedObject;
-
 });

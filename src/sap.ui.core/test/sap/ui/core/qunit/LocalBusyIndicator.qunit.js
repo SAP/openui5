@@ -1,6 +1,5 @@
 /*global QUnit, sinon */
 sap.ui.define([
-	"sap/ui/core/LocalBusyIndicatorSupport",
 	"sap/m/BusyDialog",
 	"sap/m/Button",
 	"sap/m/List",
@@ -13,14 +12,16 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/qunit/QUnitUtils",
-	"sap/ui/qunit/utils/nextUIUpdate"
-], function(LocalBusyIndicatorSupport, BusyDialog, Button, List, Slider, StandardListItem, VBox, Control, Element, XMLView, KeyCodes, jQuery, qutils, nextUIUpdate) {
+	"sap/ui/qunit/utils/nextUIUpdate",
+	/* jQuery custom selectors ":sapTabbable"*/
+	"sap/ui/dom/jquery/Selectors"
+], function(BusyDialog, Button, List, Slider, StandardListItem, VBox, Control, Element, XMLView, KeyCodes, jQuery, qutils, nextUIUpdate) {
 	"use strict";
 
 	// Checks whether the given DomRef is contained or equals (in) one of the given container
 	function isContained(aContainers, oRef) {
 		for (var i = 0; i < aContainers.length; i++) {
-			if (aContainers[i] === oRef || jQuery.contains(aContainers[i], oRef)) {
+			if (aContainers[i] === oRef || aContainers[i] !== oRef && aContainers[i].contains(oRef)) {
 				return true;
 			}
 		}
@@ -34,9 +35,11 @@ sap.ui.define([
 
 		if (bNext) {
 			$All = jQuery.merge($Ref.find("*"), jQuery.merge($Ref.nextAll(), $Ref.parents().nextAll()));
+			// jQuery custom selectors ":sapTabbable"
 			$Tabbables = $All.find(':sapTabbable').addBack(':sapTabbable');
 		} else {
 			$All = jQuery.merge($Ref.prevAll(), $Ref.parents().prevAll());
+			// jQuery custom selectors ":sapTabbable"
 			$Tabbables = jQuery.merge($Ref.parents(':sapTabbable'), $All.find(':sapTabbable').addBack(':sapTabbable'));
 		}
 
@@ -717,35 +720,4 @@ sap.ui.define([
 			this.oLogSpy.restore();
 		}
 	});
-
-	/**
-	 * @deprecated Since 1.15
-	 */
-	QUnit.test("LocalBusyIndicatorSupport", function(assert) {
-
-		assert.equal(typeof Control.prototype.setDelay, "undefined", "Control#setDelay should not be available by default");
-
-		// apply deprecated LocalBusyIndicatorSupport to Control prototype to make "setDelay" method available
-		LocalBusyIndicatorSupport.apply(Control.prototype);
-
-		assert.equal(Control.prototype.setDelay, Control.prototype.setBusyIndicatorDelay,
-			"Control#setDelay should be available and a reference to #setBusyIndicatorDelay after applying legacy support");
-
-		assert.ok(this.oLogSpy.notCalled, "No error should be logged");
-
-	});
-
-	/**
-	 * @deprecated Since 1.15
-	 */
-	QUnit.test("LocalBusyIndicatorSupport (error handling)", function(assert) {
-
-		// apply deprecated LocalBusyIndicatorSupport to a specific control
-		LocalBusyIndicatorSupport.apply(Button.prototype);
-
-		// LocalBusyIndicatorSupport should log an error when applying on a specific control
-		sinon.assert.calledWithExactly(this.oLogSpy, "Only controls can use the LocalBusyIndicator", Button.prototype);
-
-	});
-
 });

@@ -1,7 +1,6 @@
 sap.ui.define([
 	"sap/m/App",
 	"sap/m/Page",
-	"sap/ui/model/odata/ODataModel",
 	"sap/m/FacetFilterList",
 	"sap/m/FacetFilterItem",
 	"sap/ui/model/type/Date",
@@ -27,7 +26,6 @@ sap.ui.define([
 ], function(
 	App,
 	Page,
-	ODataModel,
 	FacetFilterList,
 	FacetFilterItem,
 	TypeDate,
@@ -142,9 +140,9 @@ sap.ui.define([
 
 	var fnOData = function() {
 
-		var oDataModel1 = new ODataModel("/uilib-sample/proxy/http/services.odata.org/V3/Northwind/Northwind.svc", true);
+		var oDataModel1 = new undefined/*ODataModel*/("/uilib-sample/proxy/http/services.odata.org/V3/Northwind/Northwind.svc", true);
 		oDataModel1.setSizeLimit(5);
-		var oDataModel2 = new ODataModel("/uilib-sample/proxy/http/services.odata.org/V3/Northwind/Northwind.svc", true);
+		var oDataModel2 = new undefined/*ODataModel*/("/uilib-sample/proxy/http/services.odata.org/V3/Northwind/Northwind.svc", true);
 
 		oDataModel1.attachRequestCompleted(function (oEvent) {
 			Log.info("oData Request completed: " + oEvent.getParameters());
@@ -429,7 +427,7 @@ sap.ui.define([
 		var oRadioSingleSelect = new RadioButton({
 
 			groupName: "FFLSelectionMode",
-			selected: !oFF.getLists()[0].getMultiSelect(),
+			selected: false,
 			text: "Single Select",
 			select: function(oEvent) {
 
@@ -441,7 +439,7 @@ sap.ui.define([
 		var oRadioMultiSelect = new RadioButton({
 
 			groupName: "FFLSelectionMode",
-			selected: oFF.getLists()[0].getMultiSelect(),
+			selected: true,
 			text: "Multi Select",
 			select: function(oEvent) {
 
@@ -943,7 +941,7 @@ sap.ui.define([
 
 	function fnDependentFacets() {
 
-		var oCategoriesModel = new ODataModel(
+		var oCategoriesModel = new undefined/*ODataModel*/(
 				"/uilib-sample/proxy/http/services.odata.org/V3/Northwind/Northwind.svc", true);
 
 		var oCategoriesFFL = new FacetFilterList({ // create the categories facet list
@@ -962,7 +960,7 @@ sap.ui.define([
 		oCategoriesFFL.setModel(oCategoriesModel); // set the data model
 
 		// create the data model for the products facet list
-		var oProductsModel = new ODataModel(
+		var oProductsModel = new undefined/*ODataModel*/(
 				"/uilib-sample/proxy/http/services.odata.org/V3/Northwind/Northwind.svc", true);
 
 		var oProductsFFL = new FacetFilterList({

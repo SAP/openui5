@@ -431,32 +431,24 @@ sap.ui.define([
 
 	page.addContent(new CheckBox({
 		text: "Show Markers",
-		selected: markersAndStatuses.getShowMarkers(),
-		select: function() {
-			markersAndStatuses.setShowMarkers(this.getSelected());
-		}
+		selected: false,
+		select: function() {}
 	}));
 
 	page.addContent(new Button({
 		id: "flag-button",
 		text: "Flag",
-		press: function() {
-			markersAndStatuses.setMarkFlagged(!markersAndStatuses.getMarkFlagged());
-		}
+		press: function() {}
 	}));
 	page.addContent(new Button({
 		id: "favorite-button",
 		text: "Favorite",
-		press: function() {
-			markersAndStatuses.setMarkFavorite(!markersAndStatuses.getMarkFavorite());
-		}
+		press: function() {}
 	}));
 	page.addContent(new Button({
 		id: "locked-button",
 		text: "Locked",
-		press: function() {
-			markersAndStatuses.setMarkLocked(!markersAndStatuses.getMarkLocked());
-		}
+		press: function() {}
 	}));
 	app.placeAt('body');
 });

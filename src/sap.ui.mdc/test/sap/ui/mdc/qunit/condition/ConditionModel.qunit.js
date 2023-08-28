@@ -52,37 +52,6 @@ sap.ui.define([
 		assert.ok(sData === '{"conditions":{},"fieldPath":{}}', "Default Data exist");
 	});
 
-	/**
-	 * @deprecated use the sap.ui.mdc.condition.Condition.createItemCondition or sap.ui.mdc.condition.Condition.createCondition
-	 */
-	QUnit.test("ConditionModel.createCondition", function(assert) {
-		var oCondition = oConditionModel.createCondition("fieldPath1", "EQ", ["foo"]); // test deprecated function for compatibility reasons
-		assert.equal(oCondition.operator, "EQ", "condition.operator must be 'EQ'");
-		assert.equal(oCondition.values.length, 1, "condition.values.length must be 1");
-		assert.equal(oCondition.values[0], "foo", "condition.value[0] must be 'foo'");
-		assert.notOk(oCondition.validated, "Condition validated unknown");
-
-		oCondition = Condition.createCondition("GT", [100]);
-		assert.equal(oCondition.operator, "GT", "condition.operator must be 'GT'");
-		assert.equal(oCondition.values.length, 1, "condition.values.length must be 1");
-		assert.equal(oCondition.values[0], 100, "condition.value[0] must be 100");
-		assert.notOk(oCondition.validated, "Condition validated unknown");
-
-		oCondition = oConditionModel.createItemCondition("fieldPath3", "key", "description"); // test deprecated function for compatibility reasons
-		assert.equal(oCondition.operator, "EQ", "condition.operator must be 'EQ'");
-		assert.equal(oCondition.values.length, 2, "condition.values.length must be 2");
-		assert.equal(oCondition.values[0], "key", "condition.value[0] must be 'key'");
-		assert.equal(oCondition.values[1], "description", "condition.value[1] must be 'description'");
-		assert.equal(oCondition.validated, ConditionValidated.Validated, "Condition is validated");
-
-		oCondition = Condition.createItemCondition("key", "description");
-		assert.equal(oCondition.operator, "EQ", "condition.operator must be 'EQ'");
-		assert.equal(oCondition.values.length, 2, "condition.values.length must be 2");
-		assert.equal(oCondition.values[0], "key", "condition.value[0] must be 'key'");
-		assert.equal(oCondition.values[1], "description", "condition.value[1] must be 'description'");
-		assert.equal(oCondition.validated, ConditionValidated.Validated, "Condition is validated");
-	});
-
 	QUnit.test("ConditionModel.add/removeConditions", function(assert) {
 		oConditionModel.attachPropertyChange(handlePropertyChange);
 
@@ -822,5 +791,4 @@ sap.ui.define([
 			}, 0);
 		}, 0);
 	});
-
 });

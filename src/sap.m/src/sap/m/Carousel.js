@@ -137,7 +137,6 @@ sap.ui.define([
 			library : "sap.m",
 			designtime: "sap/m/designtime/Carousel.designtime",
 			properties : {
-
 				/**
 				 * The height of the carousel. Note that when a percentage value is used, the height of the surrounding container must be defined.
 				 */
@@ -162,13 +161,6 @@ sap.ui.define([
 				 * Defines where the carousel's page indicator is displayed. Possible values are sap.m.PlacementType.Top, sap.m.PlacementType.Bottom. Other values are ignored and the default value will be applied. The default value is sap.m.PlacementType.Bottom.
 				 */
 				pageIndicatorPlacement : {type : "sap.m.PlacementType", group : "Appearance", defaultValue : PlacementType.Bottom},
-
-				/**
-				 * Show or hide busy indicator in the carousel when loading pages after swipe.
-				 * @deprecated Since version 1.18.7.
-				 * Since 1.18.7 pages are no longer loaded or unloaded. Therefore busy indicator is not necessary any longer.
-				 */
-				showBusyIndicator : {type : "boolean", group : "Appearance", defaultValue : true, deprecated: true},
 
 				/**
 				 * Defines where the carousel's arrows are placed. Default is <code>sap.m.CarouselArrowsPlacement.Content</code> used to
@@ -228,37 +220,6 @@ sap.ui.define([
 				activePage : {type : "sap.ui.core.Control", multiple : false}
 			},
 			events : {
-
-				/**
-				 * Carousel requires a new page to be loaded. This event may be used to fill the content of that page
-				 * @deprecated Since version 1.18.7.
-				 * Since 1.18.7 pages are no longer loaded or unloaded
-				 */
-				loadPage : {deprecated: true,
-					parameters : {
-
-						/**
-						 * Id of the page which will be loaded
-						 */
-						pageId : {type : "string"}
-					}
-				},
-
-				/**
-				 * Carousel does not display a page any longer and unloads it. This event may be used to clean up the content of that page.
-				 * @deprecated Since version 1.18.7.
-				 * Since 1.18.7 pages are no longer loaded or unloaded
-				 */
-				unloadPage : {deprecated: true,
-					parameters : {
-
-						/**
-						 * Id of the page which will be unloaded
-						 */
-						pageId : {type : "string"}
-					}
-				},
-
 				/**
 				 * This event is fired after a carousel swipe has been completed.
 				 * It is triggered both by physical swipe events and through API carousel manipulations such as calling
@@ -1046,18 +1007,18 @@ sap.ui.define([
 	 * Focus the last interactive element inside the active page, or the page itself
 	 * @param {jQuery.Event} oEvent the event
 	 */
-	 Carousel.prototype._focusPrevious = function(oEvent) {
-		var oActivePageDomRef = this.getFocusDomRef();
+	Carousel.prototype._focusPrevious = function(oEvent) {
+	   var oActivePageDomRef = this.getFocusDomRef();
 
-		if (!oActivePageDomRef) {
-			return;
-		}
+	   if (!oActivePageDomRef) {
+		   return;
+	   }
 
-		var $activePage = jQuery(oActivePageDomRef);
-		var $activePageTabbables = this._getActivePageTabbables();
+	   var $activePage = jQuery(oActivePageDomRef);
+	   var $activePageTabbables = this._getActivePageTabbables();
 
-		$activePage.add($activePageTabbables).eq(-1).trigger("focus");
-	};
+	   $activePage.add($activePageTabbables).eq(-1).trigger("focus");
+   };
 
 	/**
 	 * Handler for focus event
@@ -1451,34 +1412,6 @@ sap.ui.define([
 	 */
 	Carousel.prototype._getClosestPage = function (oElement) {
 		return Element.closestTo(jQuery(oElement).closest(".sapMCrsPage")[0]);
-	};
-
-	//================================================================================
-	// DEPRECATED METHODS
-	//================================================================================
-
-	/*
-	 * API method to set whether the carousel should display the busy indicators.
-	 * This property has been deprecated since 1.18.7. Does nothing and returns the carousel reference.
-	 *
-	 * @deprecated
-	 * @public
-	 */
-	Carousel.prototype.setShowBusyIndicator = function() {
-		Log.warning("sap.m.Carousel: Deprecated function 'setShowBusyIndicator' called. Does nothing.");
-		return this;
-	};
-
-	/*
-	 * API method to check whether the carousel should display the busy indicators.
-	 * This property has been deprecated since 1.18.7. Always returns false,
-	 *
-	 * @deprecated
-	 * @public
-	 */
-	Carousel.prototype.getShowBusyIndicator = function() {
-		Log.warning("sap.m.Carousel: Deprecated function 'getShowBusyIndicator' called. Does nothing.");
-		return false;
 	};
 
 	/*

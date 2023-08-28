@@ -77,7 +77,6 @@ sap.ui.define([
 
 			library : "sap.ui.layout",
 			properties : {
-
 				/**
 				 * The maximum amount of groups (<code>{@link sap.ui.layout.form.FormContainer FormContainers}</code>) per row that is used before a new row is started.
 				 *
@@ -85,18 +84,6 @@ sap.ui.define([
 				 * Please use the properties <code>ColumnsL</code> and <code>ColumnsM</code> in this case.
 				 */
 				maxContainerCols : {type : "int", group : "Appearance", defaultValue : 2},
-
-				/**
-				 * The overall minimum width in pixels that is used for the <code>SimpleForm</code>.
-				 *
-				 * If the available width is below the given <code>minWidth</code> the <code>SimpleForm</code> will create a new row for the next group (<code>{@link sap.ui.layout.form.FormContainer FormContainer}</code>).
-				 * The default value is -1, meaning that inner groups (<code>{@link sap.ui.layout.form.FormContainer FormContainers}</code>) will be stacked until <code>maxContainerCols</code> is reached,
-				 * irrespective of whether a <code>width</code> is reached or the available parents width is reached.
-				 *
-				 * <b>Note:</b> This property is only used if a <code>ResponsiveLayout</code> is used as a layout.
-				 * @deprecated As of version 1.93, use another <code>Layout</code>
-				 */
-				minWidth : {type : "int", group : "Appearance", defaultValue : -1},
 
 				/**
 				 * Width of the form.
@@ -119,14 +106,6 @@ sap.ui.define([
 				 * Also, controls that do not fit the mode might be rendered incorrectly.
 				 */
 				editable : {type : "boolean", group : "Misc", defaultValue : null},
-
-				/**
-				 * Specifies the min-width in pixels of the label in all form rows.
-				 *
-				 * <b>Note:</b> This property is only used if a <code>ResponsiveLayout</code> is used as a layout.
-				 * @deprecated As of version 1.93, use another <code>Layout</code>
-				 */
-				labelMinWidth : {type : "int", group : "Misc", defaultValue : 192},
 
 				/**
 				 * The <code>FormLayout</code> that is used to render the <code>SimpleForm</code>.
@@ -474,8 +453,8 @@ sap.ui.define([
 
 		var oForm = this.getAggregation("form");
 		var sLayout = this.getLayout();
-		if ((!this._bResponsiveLayoutRequested && sLayout === SimpleFormLayout.ResponsiveLayout) ||
-				(!this._bGridLayoutRequested && sLayout === SimpleFormLayout.GridLayout) ||
+		if ((!this._bResponsiveLayoutRequested && false) ||
+				(!this._bGridLayoutRequested && false) ||
 				(!this._bResponsiveGridLayoutRequested && sLayout === SimpleFormLayout.ResponsiveGridLayout) ||
 				(!this._bColumnLayoutRequested && sLayout === SimpleFormLayout.ColumnLayout)) {
 			// if Layout is still loaded do it after it is loaded
@@ -491,21 +470,7 @@ sap.ui.define([
 
 	};
 
-	SimpleForm.prototype.onAfterRendering = function() {
-
-		if (this.getLayout() == SimpleFormLayout.ResponsiveLayout) {
-			this._bChangedByMe = true;
-			this.$().css("visibility", "hidden"); //avoid that a wrong layouting is visible
-			this._applyLinebreaks();
-
-			//attach the resize handler (only if layout an ResizeHandler already loaded)
-			if (!this._bResponsiveLayoutRequested && ResizeHandler) {
-				this._sResizeListenerId = ResizeHandler.register(this.getDomRef(),  jQuery.proxy(this._resize, this));
-			}
-			this._bChangedByMe = false;
-		}
-
-	};
+	SimpleForm.prototype.onAfterRendering = function() {};
 
 	SimpleForm.prototype.setEditable = function(bEditable) {
 
@@ -545,29 +510,6 @@ sap.ui.define([
 		oForm.destroyToolbar();
 
 		this._bChangedByMe = false;
-		return this;
-
-	};
-
-	SimpleForm.prototype.setLabelMinWidth = function(iLabelMinWidth) {
-
-		this.setProperty("labelMinWidth", iLabelMinWidth, true);
-
-		if (this.getLayout() == SimpleFormLayout.ResponsiveLayout) {
-			this._bLayoutDataChangedByMe = true;
-			var aContent = this.getContent();
-			for (var i = 0; i < aContent.length; i++) {
-				var oElement = aContent[i];
-				if (oElement.isA("sap.ui.core.Label")) {
-					var oLayoutData = _getFieldLayoutData.call(this, oElement);
-					if (oLayoutData && oLayoutData.isA("sap.ui.layout.ResponsiveFlowLayoutData") && _isMyLayoutData.call(this, oLayoutData)) {
-						oLayoutData.setMinWidth(iLabelMinWidth);
-					}
-				}
-			}
-			this._bLayoutDataChangedByMe = false;
-		}
-
 		return this;
 
 	};
@@ -647,7 +589,7 @@ sap.ui.define([
 					oFormContainer = oParent.getParent();
 					oFormElement = oParent;
 					oLayoutData = _getFieldLayoutData.call(this, oElement);
-					if (oLayoutData && oLayoutData.isA("sap.ui.layout.ResponsiveFlowLayoutData") && sLayout === SimpleFormLayout.ResponsiveLayout &&
+					if (oLayoutData && oLayoutData.isA("sap.ui.layout.ResponsiveFlowLayoutData") && false &&
 							!_isMyLayoutData.call(this, oLayoutData) && oLayoutData.getLinebreak()) {
 						oFormElement = _addFormElement.call(this, oFormContainer);
 					}
@@ -841,7 +783,7 @@ sap.ui.define([
 				if (aFormElements.length == 0) {
 					// FormContainer has no FormElements -> create one
 					oFormElement = _addFormElement.call(this, oFormContainer);
-				} else if (oLayoutData && oLayoutData.isA("sap.ui.layout.ResponsiveFlowLayoutData") && sLayout === SimpleFormLayout.ResponsiveLayout &&
+				} else if (oLayoutData && oLayoutData.isA("sap.ui.layout.ResponsiveFlowLayoutData") && false &&
 									 !_isMyLayoutData.call(this, oLayoutData) && oLayoutData.getLinebreak()) {
 					oFormElement = _addFormElement.call(this, oFormContainer);
 				} else {
@@ -858,7 +800,7 @@ sap.ui.define([
 				if (iElementIndex == 0) {
 					// it's already the first FormElement -> insert a new one before
 					oFormElement = _insertFormElement.call(this, oFormContainer, null, 0);
-				} else if (oLayoutData && oLayoutData.isA("sap.ui.layout.ResponsiveFlowLayoutData") && sLayout === SimpleFormLayout.ResponsiveLayout &&
+				} else if (oLayoutData && oLayoutData.isA("sap.ui.layout.ResponsiveFlowLayoutData") && false &&
 									 !_isMyLayoutData.call(this, oLayoutData) && oLayoutData.getLinebreak()) {
 					oFormElement = _insertFormElement.call(this, oFormContainer, null, iElementIndex);
 				} else {
@@ -870,7 +812,7 @@ sap.ui.define([
 				// insert new field into same FormElement before old field
 				oFormElement = oOldElement.getParent();
 				iFieldIndex = oFormElement.indexOfField(oOldElement);
-				if (oLayoutData && oLayoutData.isA("sap.ui.layout.ResponsiveFlowLayoutData") && sLayout === SimpleFormLayout.ResponsiveLayout &&
+				if (oLayoutData && oLayoutData.isA("sap.ui.layout.ResponsiveFlowLayoutData") && false &&
 						!_isMyLayoutData.call(this, oLayoutData) && oLayoutData.getLinebreak() && iFieldIndex > 0) {
 					// split FormElement
 					oFormContainer = oFormElement.getParent();
@@ -1181,40 +1123,6 @@ sap.ui.define([
 			var oLayout;
 
 			switch (this.getLayout()) {
-			case SimpleFormLayout.ResponsiveLayout:
-				if ((!ResponsiveLayout || !ResponsiveFlowLayoutData || !ResizeHandler) && !this._bResponsiveLayoutRequested) {
-					ResponsiveLayout = sap.ui.require("sap/ui/layout/form/ResponsiveLayout");
-					ResponsiveFlowLayoutData = sap.ui.require("sap/ui/layout/ResponsiveFlowLayoutData");
-					ResizeHandler = sap.ui.require("sap/ui/core/ResizeHandler");
-					if (!ResponsiveLayout || !ResponsiveFlowLayoutData || !ResizeHandler) {
-						sap.ui.require(["sap/ui/layout/form/ResponsiveLayout",
-						                "sap/ui/layout/ResponsiveFlowLayoutData",
-										"sap/ui/core/ResizeHandler"],
-						                _ResponsiveLayoutLoaded.bind(this));
-						this._bResponsiveLayoutRequested = true;
-					}
-				}
-				if (ResponsiveLayout && ResponsiveFlowLayoutData) {
-					oLayout = new ResponsiveLayout(this.getId() + "--Layout");
-				}
-				break;
-			case SimpleFormLayout.GridLayout:
-				if ((!GridLayout || !GridContainerData || !GridElementData) && !this._bGridLayoutRequested) {
-					GridLayout = sap.ui.require("sap/ui/layout/form/GridLayout");
-					GridContainerData = sap.ui.require("sap/ui/layout/form/GridContainerData");
-					GridElementData = sap.ui.require("sap/ui/layout/form/GridElementData");
-					if (!GridLayout || !GridContainerData || !GridElementData) {
-						sap.ui.require(["sap/ui/layout/form/GridLayout",
-						                "sap/ui/layout/form/GridContainerData",
-						                "sap/ui/layout/form/GridElementData"],
-						                _GridLayoutLoaded.bind(this));
-						this._bGridLayoutRequested = true;
-					}
-				}
-				if (GridLayout && GridContainerData && GridElementData) {
-					oLayout = new GridLayout(this.getId() + "--Layout");
-				}
-				break;
 			case SimpleFormLayout.ResponsiveGridLayout:
 				if (!ResponsiveGridLayout && !this._bResponsiveGridLayoutRequested) {
 					ResponsiveGridLayout = sap.ui.require("sap/ui/layout/form/ResponsiveGridLayout");
@@ -1227,6 +1135,7 @@ sap.ui.define([
 					oLayout = new ResponsiveGridLayout(this.getId() + "--Layout");
 				}
 				break;
+			// no default
 			case SimpleFormLayout.ColumnLayout:
 				if (!ColumnLayout && !this._bColumnLayoutRequested) {
 					ColumnLayout = sap.ui.require("sap/ui/layout/form/ColumnLayout");
@@ -1239,7 +1148,6 @@ sap.ui.define([
 					oLayout = new ColumnLayout(this.getId() + "--Layout");
 				}
 				break;
-			// no default
 			}
 
 			if (oLayout) {
@@ -1254,32 +1162,17 @@ sap.ui.define([
 	}
 
 	function _ResponsiveLayoutLoaded(fnResponsiveLayout, fnResponsiveFlowLayoutData, fnResizeHandler) {
-
 		ResponsiveLayout = fnResponsiveLayout;
 		ResponsiveFlowLayoutData = fnResponsiveFlowLayoutData;
 		ResizeHandler = fnResizeHandler;
 		this._bResponsiveLayoutRequested = false;
-
-		if (this.getLayout() == SimpleFormLayout.ResponsiveLayout) { // as layout might changed
-			_updateLayoutAfterLoaded.call(this);
-			if (this.getDomRef() && !this._sResizeListenerId) { // register resize handler after layout and ResizeHandler is loaded
-				this._sResizeListenerId = ResizeHandler.register(this.getDomRef(),  jQuery.proxy(this._resize, this));
-			}
-		}
-
 	}
 
 	function _GridLayoutLoaded(fnGridLayout, fnGridContainerData, fnGridElementData) {
-
 		GridLayout = fnGridLayout;
 		GridContainerData = fnGridContainerData;
 		GridElementData = fnGridElementData;
 		this._bGridLayoutRequested = false;
-
-		if (this.getLayout() == SimpleFormLayout.GridLayout) { // as layout might changed
-			_updateLayoutAfterLoaded.call(this);
-		}
-
 	}
 
 	function _ResponsiveGridLayoutLoaded(fnResponsiveGridLayout) {
@@ -1373,7 +1266,7 @@ sap.ui.define([
 
 				var oLabel = oElement.getLabel();
 				if (oLabel) {
-					_createFieldLayoutData.call(this, oLabel, this._iLabelWeight, false, true, this.getLabelMinWidth());
+					_createFieldLayoutData.call(this, oLabel, this._iLabelWeight, false, true, 192);
 				}
 
 				var aFields = oElement.getFields();
@@ -1402,18 +1295,6 @@ sap.ui.define([
 		oLayout.setBackgroundDesign(this.getBackgroundDesign());
 
 		switch (sLayout) {
-		case SimpleFormLayout.ResponsiveLayout:
-			// set the default values for linebreakes to avoid flickering for default case
-			this._applyLinebreaks();
-
-			for ( var i = 0; i < this._changedFormElements.length; i++) {
-				var oFormElement = this._changedFormElements[i];
-				_applyFieldWeight.call(this, oFormElement);
-			}
-			break;
-		case SimpleFormLayout.GridLayout:
-			_applyContainerSize.call(this);
-			break;
 		case SimpleFormLayout.ResponsiveGridLayout:
 			oLayout.setLabelSpanXL(this.getLabelSpanXL());
 			oLayout.setLabelSpanL(this.getLabelSpanL());
@@ -1432,6 +1313,7 @@ sap.ui.define([
 			oLayout.setBreakpointL(this.getBreakpointL());
 			oLayout.setBreakpointM(this.getBreakpointM());
 			break;
+		// no default
 		case SimpleFormLayout.ColumnLayout:
 			oLayout.setColumnsXL(this.getColumnsXL() > 0 ? this.getColumnsXL() : this.getColumnsL());
 			oLayout.setColumnsL(this.getColumnsL());
@@ -1439,7 +1321,6 @@ sap.ui.define([
 			oLayout.setLabelCellsLarge(this.getLabelSpanL());
 			oLayout.setEmptyCellsLarge(this.getEmptySpanL());
 			break;
-			// no default
 		}
 
 		this._changedFormElements = [];
@@ -1488,19 +1369,13 @@ sap.ui.define([
 		var oLayoutData;
 
 		switch (this.getLayout()) {
-		case SimpleFormLayout.ResponsiveLayout:
-			oLayoutData = FormLayout.prototype.getLayoutDataForElement(oField, "sap.ui.layout.ResponsiveFlowLayoutData");
-			break;
-		case SimpleFormLayout.GridLayout:
-			oLayoutData = FormLayout.prototype.getLayoutDataForElement(oField, "sap.ui.layout.form.GridElementData");
-			break;
 		case SimpleFormLayout.ResponsiveGridLayout:
 			oLayoutData = FormLayout.prototype.getLayoutDataForElement(oField, "sap.ui.layout.GridData");
 			break;
+		// no default
 		case SimpleFormLayout.ColumnLayout:
 			oLayoutData = FormLayout.prototype.getLayoutDataForElement(oField, "sap.ui.layout.form.ColumnElementData");
 			break;
-			// no default
 		}
 
 		return oLayoutData;
@@ -1510,9 +1385,7 @@ sap.ui.define([
 	function _checkLayoutDataReady() {
 
 		var sLayout = this.getLayout();
-		if ((sLayout === SimpleFormLayout.ResponsiveLayout && this._bResponsiveLayoutRequested) ||
-				(sLayout === SimpleFormLayout.GridLayout && this._bGridLayoutRequested) ||
-				(sLayout === SimpleFormLayout.ResponsiveGridLayout && this._bResponsiveGridLayoutRequested) ||
+		if (sLayout === SimpleFormLayout.ResponsiveGridLayout && this._bResponsiveGridLayoutRequested ||
 				(sLayout === SimpleFormLayout.ColumnLayout && this._bColumnLayoutRequested)) {
 			// LayoutData waiting to be loaded -> are set after they are loaded
 			return false;
@@ -1534,10 +1407,7 @@ sap.ui.define([
 	}
 
 	function _createFieldLayoutData(oField, iWeight, bLinebreak, bLinebreakable, iMinWidth) {
-
-		if (this.getLayout() != SimpleFormLayout.ResponsiveLayout) {
-			return;
-		}
+		return;
 
 		if (!_checkLayoutDataReady.call(this)) {
 			// LayoutData waiting to be loaded -> are set after they are loaded
@@ -1559,14 +1429,10 @@ sap.ui.define([
 		}
 
 		this._bLayoutDataChangedByMe = false;
-
 	}
 
 	function _createElementLayoutData(oElement) {
-
-		if (this.getLayout() != SimpleFormLayout.ResponsiveLayout) {
-			return;
-		}
+		return;
 
 		if (!_checkLayoutDataReady.call(this)) {
 			// LayoutData waiting to be loaded -> are set after they are loaded
@@ -1578,16 +1444,11 @@ sap.ui.define([
 		oElement.setLayoutData(new ResponsiveFlowLayoutData({linebreak:true, margin:false}));
 
 		this._bLayoutDataChangedByMe = false;
-
 	}
 
 	function _createContainerLayoutData(oContainer) {
-
 		var sLayout = this.getLayout();
-		if (sLayout != SimpleFormLayout.ResponsiveLayout &&
-				sLayout != SimpleFormLayout.GridLayout) {
-			return;
-		}
+		return;
 
 		if (!_checkLayoutDataReady.call(this)) {
 			// LayoutData waiting to be loaded -> are set after they are loaded
@@ -1597,21 +1458,10 @@ sap.ui.define([
 		this._bLayoutDataChangedByMe = true;
 
 		switch (sLayout) {
-		case SimpleFormLayout.ResponsiveLayout:
-			oContainer.setLayoutData(new ResponsiveFlowLayoutData({minWidth:280}));
-			break;
-		case SimpleFormLayout.GridLayout:
-			if (this.getMaxContainerCols() > 1) {
-				oContainer.setLayoutData(new GridContainerData({halfGrid: true}));
-			} else {
-				oContainer.setLayoutData(new GridContainerData({halfGrid: false}));
-			}
-			break;
-			// no default
+
 		}
 
 		this._bLayoutDataChangedByMe = false;
-
 	}
 
 	function _removeLayoutData(oElement) {
@@ -1668,7 +1518,7 @@ sap.ui.define([
 			sId = this.getId() + "--" + oLabel.getId() + "--FE";
 			oLabel.addStyleClass("sapUiFormLabel-CTX");
 			if (!_getFieldLayoutData.call(this, oLabel)) {
-				_createFieldLayoutData.call(this, oLabel, this._iLabelWeight, false, true, this.getLabelMinWidth());
+				_createFieldLayoutData.call(this, oLabel, this._iLabelWeight, false, true, 192);
 			}
 			mSettings["label"] = oLabel;
 		} else {
@@ -1821,7 +1671,7 @@ sap.ui.define([
 		for (var i = 1; i < aContainers.length; i++) {
 			var oContainer = aContainers[i],
 			oLayoutData = oContainer.getLayoutData();
-			if (!oDomRef || o$.outerWidth(true) > this.getMinWidth()) {
+			if (!oDomRef || o$.outerWidth(true) > -1) {
 				// if not already rendered use default values according to column number
 				if (i % this.getMaxContainerCols() == 0) {
 					oLayoutData.setLinebreak(true);
@@ -2010,17 +1860,7 @@ sap.ui.define([
 
 		if (!this._bLayoutDataChangedByMe && !this._bIsBeingDestroyed) {
 			switch (this.getLayout()) {
-			case SimpleFormLayout.ResponsiveLayout:
-				var oControl = oEvent.srcControl;
-				var oParent = oControl.getParent();
-				if (oParent instanceof FormElement) {
-					// as linebreak change can change assignment to FormElement remove and insert field
-					var iIndex = this.indexOfContent(oControl);
-					this.removeContent(oControl);
-					this.insertContent(oControl, iIndex);
-				}
-				break;
-				// no default
+
 			}
 		}
 
@@ -2044,5 +1884,4 @@ sap.ui.define([
 	};
 
 	return SimpleForm;
-
 });

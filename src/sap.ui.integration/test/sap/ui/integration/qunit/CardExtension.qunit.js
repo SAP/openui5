@@ -4,12 +4,16 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/core/Core",
 	"sap/ui/integration/widgets/Card",
-	"sap/ui/integration/Extension"
-], function (
+	"sap/ui/integration/Extension",
+	"sap/m/IllustratedMessageType",
+	"sap/m/IllustrationPool"
+], function(
 	Log,
 	Core,
 	Card,
-	Extension
+	Extension,
+	IllustratedMessageType,
+	IllustrationPool
 ) {
 	"use strict";
 
@@ -325,108 +329,6 @@ sap.ui.define([
 		this.oCard.placeAt(DOM_RENDER_LOCATION);
 	});
 
-	/**
-	 * @deprecated Since version 1.85
-	 */
-	QUnit.module("Actions - Legacy", {
-		beforeEach: function () {
-			this.oCard = new Card({
-				baseUrl: "test-resources/sap/ui/integration/qunit/testResources/",
-				manifest: {
-					"sap.app": {
-						"id": "test"
-					},
-					"sap.card": {
-						"type": "List",
-						"header": {
-							"title": "Title",
-							"subTitle": "Sub Title"
-						},
-						"extension": "./extensions/ExtensionLegacy"
-					}
-				}
-			});
-		},
-		afterEach: function () {
-			this.oCard.destroy();
-			this.oCard = null;
-		}
-	});
-
-	QUnit.test("Initial actions", function (assert) {
-		// arrange
-		var done = assert.async(),
-			oHeader,
-			aActionButtons;
-
-		this.oCard.attachEvent("_ready", function () {
-			Core.applyChanges();
-
-			oHeader = this.oCard.getCardHeader();
-			aActionButtons = oHeader.getToolbar().getAggregation("_actionSheet").getButtons();
-
-			assert.strictEqual(aActionButtons.length, 1, "there is 1 action");
-			assert.strictEqual(aActionButtons[0].getText(), "AutoOpen - SAP website - Extension", "action text is correct");
-
-			done();
-		}.bind(this));
-
-		// act
-		this.oCard.placeAt(DOM_RENDER_LOCATION);
-	});
-
-	QUnit.test("setActions method", function (assert) {
-		// arrange
-		var done = assert.async(),
-			oHeader,
-			aActionButtons,
-			oToolbar,
-			aNewActions = [
-				{
-					type: 'Navigation',
-					url: "http://www.sap.com",
-					target: "_blank",
-					text: 'Action 1'
-				},
-				{
-					type: 'Navigation',
-					url: "http://www.sap.com",
-					target: "_blank",
-					text: 'Action 2'
-				}
-			];
-
-		this.oCard.attachEvent("_ready", function () {
-			Core.applyChanges();
-
-			oHeader = this.oCard.getCardHeader();
-			oToolbar = oHeader.getToolbar();
-
-			// set new actions
-			this.oCard.getAggregation("_extension").setActions(aNewActions);
-			Core.applyChanges();
-
-			assert.strictEqual(oToolbar, oHeader.getToolbar(), "The toolbar is kept the same");
-
-			oToolbar = oHeader.getToolbar();
-			aActionButtons = oToolbar.getAggregation("_actionSheet").getButtons();
-
-			assert.strictEqual(aActionButtons.length, 2, "there are 2 actions");
-			assert.strictEqual(aActionButtons[0].getText(), "Action 1", "action text is correct");
-			assert.strictEqual(aActionButtons[1].getText(), "Action 2", "action text is correct");
-
-			// set the new actions again
-			this.oCard.getAggregation("_extension").setActions(aNewActions);
-
-			assert.strictEqual(oToolbar, oHeader.getToolbar(), "the actions toolbar is not changed");
-
-			done();
-		}.bind(this));
-
-		// act
-		this.oCard.placeAt(DOM_RENDER_LOCATION);
-	});
-
 	QUnit.module("Custom Formatters", {
 		beforeEach: function () {
 			this.oCard = new Card({
@@ -710,7 +612,7 @@ sap.ui.define([
 			var oMessage = this.oCard.getCardContent().getAggregation("_blockingMessage");
 
 			// Assert
-			assert.strictEqual(oMessage.getIllustrationType(), sap.m.IllustratedMessageType.SimpleError, "The no data message type set by expression binding is correct");
+			assert.strictEqual(oMessage.getIllustrationType(), IllustratedMessageType.SimpleError, "The no data message type set by expression binding is correct");
 			assert.strictEqual(oMessage.getDescription(), "Test", "The no data message description set by expression binding is correct");
 			assert.strictEqual(oMessage.getTitle(), "No Data", "The no data message title set by expression binding is correct");
 			assert.strictEqual(oMessage.getIllustrationSize(), "Auto", "The no data message size set by expression binding is correct");
@@ -767,7 +669,7 @@ sap.ui.define([
 		};
 
 		// register tnt illustration set
-		sap.m.IllustrationPool.registerIllustrationSet(oTntSet, false);
+		IllustrationPool.registerIllustrationSet(oTntSet, false);
 
 		this.oCard.attachEventOnce("_ready", function () {
 			Core.applyChanges();

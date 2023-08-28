@@ -2133,30 +2133,6 @@ sap.ui.define([
 		}
 	});
 
-	/**
-	 * @deprecated Since version 1.46.
-	 */
-	QUnit.test("tokens change event", function(assert) {
-		var eventType;
-		this.multiInput1.attachTokenChange(function(args){
-			eventType = args.getParameter("type");
-		});
-
-		var token1 = new Token();
-		this.multiInput1.addToken(token1);
-		Core.applyChanges();
-
-		assert.equal(eventType, MultiInput.TokenChangeType.Added, "added event raised");
-
-		this.multiInput1.removeToken(token1);
-		Core.applyChanges();
-
-		this.multiInput1.removeAllTokens();
-		Core.applyChanges();
-
-		assert.equal(eventType, MultiInput.TokenChangeType.RemovedAll, "removedAll event raised");
-	});
-
 	QUnit.test("tokenUpdate event", function(assert) {
 		var eventType,
 			token1 = new Token({key: "test", text: "test", selected: true}),
@@ -4262,5 +4238,4 @@ sap.ui.define([
 		oMultiInput.destroy();
 		oDummyBtn.destroy();
 	});
-
 });

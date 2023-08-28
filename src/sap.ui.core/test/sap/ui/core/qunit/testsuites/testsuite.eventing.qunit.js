@@ -21,19 +21,24 @@ sap.ui.define(function() {
 					}
 				}
 			},
+
 			CustomFastNavigation: {
 				autostart: false
 			},
+
 			EventBus: {
 				title: "Test Page for EventBus Class"
 			},
+
 			EventProvider: {
 				title: "Test Page for EventProvider Class"
 			},
+
 			FastNavigation: {
 				title: "QUnit page for Fast Keyboard Navigation (F6)",
 				autostart: false
 			},
+
 			FastNavigationWithWebComponents: {
 				title: "QUnit page for Fast Keyboard Navigation (F6) using Web Components",
 				autostart: false,
@@ -46,22 +51,17 @@ sap.ui.define(function() {
 					libs: "sap.ui.webc.main"
 				}
 			},
+
 			FocusHandler: {
 				ui5: {
 					libs: "sap.m"
 				}
 			},
+
 			IntervalTrigger: {
 				title: "Test Page for IntervalTrigger Class"
 			},
-			/**
-			 * @deprecated since 1.58
-			 */
-			"jquery.sap.events": {
-				/* own page kept because of custom styles and DOM (but uses runTest.js) */
-				page: "test-resources/sap/ui/core/qunit/jquery.sap.events.qunit.html",
-				title: "QUnit tests: jquery.sap.events.js, Core Event Handling"
-			},
+
 			"events/PasteEventFix": {
 				title: "sap.ui.events.PasteEventFix"
 			}

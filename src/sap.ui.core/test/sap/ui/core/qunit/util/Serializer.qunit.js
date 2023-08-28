@@ -66,26 +66,6 @@ sap.ui.define([
 		}
 	});
 
-	/**
-	 * @deprecated As of 1.108
-	 */
-	QUnit.test("Generate & Call Delegate HTML Serializing", function(assert) {
-		var oHTML = new HTMLDelegate();
-		var aExpectedResults = [
-			"<div id=\"myTitleSimple1\" data-sap-ui-type=\"sap.test.TestControl\"></div>",
-			"<div id=\"myTitleSimple2\" data-sap-ui-type=\"sap.test.TestControl\" data-field-group-ids=\"Test1,Test2\"></div>",
-			"<div id=\"myTitleSimple3\" data-sap-ui-type=\"sap.test.TestControl\"></div>"
-		];
-
-		var aContent = this.oTestContainer.getContent();
-		for (var i = 0; i < aContent.length; i++) {
-			var oControlSerializer = new Serializer(aContent[i], oHTML, false);
-			var s = oControlSerializer.serialize();
-			assert.equal(s, aExpectedResults[i], "The generated string is right for control " + aContent[i].getId());
-		}
-
-	});
-
 	QUnit.test("Generate & Call Delegate XML Serializing", function(assert) {
 		var oXML = new XMLDelegate();
 		var aExpectedResults = [
@@ -126,39 +106,6 @@ sap.ui.define([
 			this.oTestContainer.destroy();
 			this.oTestControl2.destroy();
 		}
-	});
-
-	/**
-	 * @deprecated As of 1.108
-	 */
-	QUnit.test("Complex HTML Serializing", function(assert) {
-		var oHTML = new HTMLDelegate();
-
-		var sExpectedResult = [
-			'<div id=\"myTestContainer\" data-sap-ui-type=\"sap.test.TestContainer\">',
-				'<div data-sap-ui-aggregation=\"customData\">',
-					'<div data-sap-ui-type=\"sap.ui.core.CustomData\" data-key=\"sap-ui-fastnavgroup\" data-value=\"true\" data-write-to-dom=\"true\"></div>',
-				'</div>',
-				'<div data-sap-ui-aggregation=\"content\">',
-					'<div id=\"myTestButton\" data-sap-ui-type=\"sap.test.TestControl\" data-aria-described-by=\"myTestButton2\">',
-						'<div data-sap-ui-aggregation=\"customData\">',
-							'<div data-sap-ui-type=\"sap.ui.core.CustomData\" data-key=\"myCustomData\" data-value=\"myValue\"></div>',
-						'</div>',
-					'</div>',
-				'</div>',
-				'<div data-sap-ui-aggregation=\"title\">',
-					'<div id=\"myTitle\" data-sap-ui-type=\"sap.test.TestControl\" data-text=\"My TestContainer\"></div>',
-				'</div>',
-			'</div>'
-		].join('');
-
-		var aCode = [];
-		var aContent = this.oTestContent;
-		for (var i = 0; i < aContent.length; i++) {
-			var oControlSerializer = new Serializer(aContent[i], oHTML, false);
-			aCode.push(oControlSerializer.serialize());
-		}
-		assert.equal(unescapeSpace(aCode.join("")), sExpectedResult, "The generated string is right");
 	});
 
 	QUnit.test("Complex XML Serializing", function(assert) {

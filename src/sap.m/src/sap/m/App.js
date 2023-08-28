@@ -141,22 +141,7 @@ sap.ui.define([
 				 */
 				 isTopLevel : {type : "boolean", group : "Behavior", defaultValue : true}
 			},
-			events : {
-
-				/**
-				 * Fired when the orientation (portrait/landscape) of the device is changed.
-				 * @deprecated As of version 1.20.0, use {@link sap.ui.Device.orientation.attachHandler} instead.
-				 */
-				orientationChange : {deprecated: true,
-					parameters : {
-
-						/**
-						 * Whether the device is in landscape orientation.
-						 */
-						landscape : {type : "boolean"}
-					}
-				}
-			}
+			events : {}
 		},
 
 		renderer: AppRenderer
@@ -173,10 +158,6 @@ sap.ui.define([
 			preventScroll: !this._debugZoomAndScroll,
 			rootId: this.getId()
 		});
-		/**
-		 * @deprecated As of version 1.20.0, <code>orientationChange</code> event is deprecated
-		 */
-		jQuery(window).on("resize", jQuery.proxy(this._handleOrientationChange, this));
 	};
 
 
@@ -240,7 +221,6 @@ sap.ui.define([
 		var $window = jQuery(window);
 		var isLandscape = $window.width() > $window.height();
 		if (this._oldIsLandscape !== isLandscape) {
-			this.fireOrientationChange({landscape: isLandscape});
 			this._oldIsLandscape = isLandscape;
 		}
 	};

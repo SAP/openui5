@@ -46,7 +46,8 @@ function(
 			});
 
 			this.oButton.invalidate();
-			this.oButton.rerender();
+			this.oButton.invalidate();
+			oCore.applyChanges();
 		});
 	});
 

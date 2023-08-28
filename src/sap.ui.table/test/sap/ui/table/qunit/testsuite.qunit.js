@@ -47,6 +47,7 @@ sap.ui.define([
 					libs: []
 				}
 			},
+
 			"ExploredSamples": {
 				group: "Library",
 				runAfterLoader: "sap/ui/demo/mock/qunit/SampleTesterErrorHandler",
@@ -64,6 +65,7 @@ sap.ui.define([
 					libs: ["sap.ui.table", "sap.ui.unified", "sap.m"]
 				}
 			},
+
 			"Table-RTL": {
 				ui5: {
 					// Test has dependencies to sap.ui.unified and sap.m modules
@@ -72,20 +74,24 @@ sap.ui.define([
 					"xx-waitForTheme": "init"
 				}
 			},
+
 			"Table with ODataV2": {
 				module: "./Table.ODataV2.qunit"
 			},
+
 			"Column": {
 				ui5: {
 					// Test has dependencies to sap.ui.unified modules
 					libs: ["sap.ui.table", "sap.ui.unified"]
 				}
 			},
+
 			// Menus
 			"ColumnHeaderMenuAdapter": {
 				group: "Menus",
 				module: "./menus/{name}.qunit"
 			},
+
 			"MobileColumnHeaderMenuAdapter": {
 				group: "Menus",
 				module: "./menus/{name}.qunit",
@@ -94,39 +100,28 @@ sap.ui.define([
 					libs: ["sap.m"]
 				}
 			},
-			/**
-			 * @deprecated As of Version 1.117
-			 */
-			"LegacyColumnMenuAdapter": {
-				group: "Menus",
-				module: "./menus/{name}.qunit"
-			},
+
 			"Row": {},
 			"RowAction": {},
 			"RowSettings": {},
+
 			"CreationRow": {
 				ui5: {
 					// The test and sap.ui.table.CreationRow have dependencies to sap.m modules
 					libs: ["sap.ui.table", "sap.m"]
 				}
 			},
-			/**
-			 * @deprecated since 1.115
-			 */
-			"TablePersoController": {
-				ui5: {
-					// sap.ui.table.TablePersoController requires sap.m.TablePersoDialog
-					libs: ["sap.ui.table", "sap.m"]
-				}
-			},
+
 			"TreeTable": {
 			},
+
 			"TreeTable with ODataV2": {
 				module: "./TreeTable.ODataV2.qunit",
 				coverage: {
 					only: null /*full report*/
 				}
 			},
+
 			"AnalyticalTable": {},
 			"AnalyticalColumn": {},
 			"TableColumnHeaders": {},
@@ -140,10 +135,12 @@ sap.ui.define([
 					libs: ["sap.ui.table", "sap.m"]
 				}
 			},
+
 			"ColumnUtils": {
 				group: "Utils",
 				module: "./utils/_{name}.qunit"
 			},
+
 			"MenuUtils": {
 				group: "Utils",
 				module: "./utils/_{name}.qunit",
@@ -152,14 +149,17 @@ sap.ui.define([
 					libs: ["sap.ui.table", "sap/ui/unified", "sap.m"]
 				}
 			},
+
 			"GroupingUtils": {
 				group: "Utils",
 				module: "./utils/_{name}.qunit"
 			},
+
 			"BindingUtils": {
 				group: "Utils",
 				module: "./utils/_{name}.qunit"
 			},
+
 			"HookUtils": {
 				group: "Utils",
 				module: "./utils/_{name}.qunit"
@@ -170,18 +170,22 @@ sap.ui.define([
 				group: "Extensions",
 				module: "./extensions/{name}.qunit"
 			},
+
 			"Accessibility": {
 				group: "Extensions",
 				module: "./extensions/{name}.qunit"
 			},
+
 			"Keyboard": {
 				group: "Extensions",
 				module: "./extensions/{name}.qunit"
 			},
+
 			"KeyboardDelegate": {
 				group: "Extensions",
 				module: "./extensions/{name}.qunit"
 			},
+
 			"KeyboardDelegate-RTL": {
 				group: "Extensions",
 				module: "./extensions/KeyboardDelegate.qunit",
@@ -190,14 +194,17 @@ sap.ui.define([
 					"xx-waitForTheme": "init"
 				}
 			},
+
 			"Pointer": {
 				group: "Extensions",
 				module: "./extensions/{name}.qunit"
 			},
+
 			"Scrolling": {
 				group: "Extensions",
 				module: "./extensions/{name}.qunit"
 			},
+
 			"Scrolling-RTL": {
 				group: "Extensions",
 				module: "./extensions/{name}.qunit",
@@ -206,14 +213,17 @@ sap.ui.define([
 					"xx-waitForTheme": "init"
 				}
 			},
+
 			"ScrollingIOS": {
 				group: "Extensions",
 				module: "./extensions/{name}.qunit"
 			},
+
 			"DragAndDrop": {
 				group: "Extensions",
 				module: "./extensions/{name}.qunit"
 			},
+
 			"Synchronization": {
 				group: "Extensions",
 				module: "./extensions/{name}.qunit"
@@ -230,30 +240,37 @@ sap.ui.define([
 				group: "Row Mode",
 				module: "./rowmodes/{name}.qunit"
 			},
+
 			"Fixed": {
 				group: "Row Mode",
 				module: "./rowmodes/{name}.qunit"
 			},
+
 			"Fixed with ODataV2": {
 				group: "Row Mode",
 				module: "./rowmodes/Fixed.ODataV2.qunit"
 			},
+
 			"Interactive": {
 				group: "Row Mode",
 				module: "./rowmodes/{name}.qunit"
 			},
+
 			"Interactive with ODataV2": {
 				group: "Row Mode",
 				module: "./rowmodes/Interactive.ODataV2.qunit"
 			},
+
 			"Auto": {
 				group: "Row Mode",
 				module: "./rowmodes/{name}.qunit"
 			},
+
 			"Auto with ODataV2": {
 				group: "Row Mode",
 				module: "./rowmodes/Auto.ODataV2.qunit"
 			},
+
 			"Variable": {
 				group: "Row Mode",
 				module: "./rowmodes/{name}.qunit"
@@ -264,18 +281,22 @@ sap.ui.define([
 				group: "Plugins",
 				module: "./plugins/{name}.qunit"
 			},
+
 			"SelectionModelSelection": {
 				group: "Plugins",
 				module: "./plugins/{name}.qunit"
 			},
+
 			"SelectionModelSelection with ODataV2": {
 				group: "Plugins",
 				module: "./plugins/SelectionModelSelection.ODataV2.qunit"
 			},
+
 			"BindingSelection (TreeBinding)": {
 				group: "Plugins",
 				module: "./plugins/BindingSelection.TreeBinding.qunit"
 			},
+
 			"MultiSelectionPlugin": {
 				group: "Plugins",
 				module: "./plugins/{name}.qunit",
@@ -284,6 +305,7 @@ sap.ui.define([
 					libs: ["sap.ui.table", "sap.m"]
 				}
 			},
+
 			"MultiSelectionPlugin with ODataV2 (ListBinding)": {
 				group: "Plugins",
 				module: "./plugins/MultiSelectionPlugin.ODataV2.ListBinding.qunit",
@@ -292,6 +314,7 @@ sap.ui.define([
 					libs: ["sap.ui.table", "sap.m"]
 				}
 			},
+
 			"MultiSelectionPlugin with ODataV2 (TreeBinding)": {
 				group: "Plugins",
 				module: "./plugins/MultiSelectionPlugin.ODataV2.TreeBinding.qunit",
@@ -300,6 +323,7 @@ sap.ui.define([
 					libs: ["sap.ui.table", "sap.m"]
 				}
 			},
+
 			"MultiSelectionPlugin with ODataV2 (AnalyticalBinding)": {
 				group: "Plugins",
 				module: "./plugins/MultiSelectionPlugin.ODataV2.AnalyticalBinding.qunit",
@@ -308,6 +332,7 @@ sap.ui.define([
 					libs: ["sap.ui.table", "sap.m"]
 				}
 			},
+
 			"MultiSelectionPlugin with ODataV4": {
 				group: "Plugins",
 				module: "./plugins/MultiSelectionPlugin.ODataV4.qunit",
@@ -316,6 +341,7 @@ sap.ui.define([
 					libs: ["sap.ui.table", "sap.m"]
 				}
 			},
+
 			"Support of external plugins": {
 				group: "Plugins",
 				module: "./plugins/SupportOfExternalPlugins.qunit",
@@ -324,10 +350,12 @@ sap.ui.define([
 					libs: ["sap.ui.table", "sap.m"]
 				}
 			},
+
 			"V4Aggregation": {
 				group: "Plugins",
 				module: "./plugins/{name}.qunit"
 			},
+
 			"Generic Testsuite": {
 				page: "test-resources/sap/ui/table/qunit/testsuite.generic.qunit.html"
 			}

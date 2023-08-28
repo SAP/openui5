@@ -202,38 +202,6 @@ sap.ui.define([
 		});
 	});
 
-	/**
-	 * @deprecated As of version 1.110
-	 */
-	QUnit.test("Menu entries - QuickGroup", function(assert) {
-		var that = this;
-		var oColumn, oMenu;
-
-		return this.openColumnMenu(0).then(function() {
-			oColumn = that.oTable.getColumns()[0];
-			oMenu = oColumn.getHeaderMenuInstance();
-
-			var oQuickGroup = that.getQuickAction(oMenu, "QuickGroup");
-			var aQuickGroupItems = oQuickGroup.getItems();
-			assert.equal(aQuickGroupItems.length, 1, "Quick group item count");
-			assert.strictEqual(aQuickGroupItems[0].getKey(), undefined, "Quick group 'key'");
-			assert.strictEqual(aQuickGroupItems[0].getLabel(), oColumn.getLabel().getText(), "Quick group 'label'");
-			assert.strictEqual(aQuickGroupItems[0].getGrouped(), false, "Quick group 'grouped'");
-
-			return that.openColumnMenu(1);
-		}).then(function() {
-			oColumn = that.oTable.getColumns()[1];
-			oMenu = oColumn.getHeaderMenuInstance();
-
-			var oQuickGroup = that.getQuickAction(oMenu, "QuickGroup");
-			var aQuickGroupItems = oQuickGroup.getItems();
-			assert.equal(aQuickGroupItems.length, 1, "Quick group item count");
-			assert.strictEqual(aQuickGroupItems[0].getKey(), undefined, "Quick group 'key'");
-			assert.strictEqual(aQuickGroupItems[0].getLabel(), oColumn.getLabel().getText(), "Quick group 'label'");
-			assert.strictEqual(aQuickGroupItems[0].getGrouped(), false, "Quick group 'grouped'");
-		});
-	});
-
 	QUnit.test("Quick Sort", function(assert) {
 		var that = this;
 		var oTable = this.oTable;
@@ -320,36 +288,6 @@ sap.ui.define([
 				});
 				oCustomFilter.firePress();
 			});
-		});
-	});
-
-	/**
-	 * @deprecated As of version 1.110
-	 */
-	QUnit.test("Quick Group", function(assert) {
-		var that = this;
-		var oTable = this.oTable;
-		var oColumnSetGroupedSpy = this.spy(this.oColumn1, "_setGrouped");
-		var oMenu, oQuickGroup;
-
-		return this.openColumnMenu(0).then(function() {
-			oMenu = oTable.getColumns()[0].getHeaderMenuInstance();
-			oQuickGroup = that.getQuickAction(oMenu, "QuickGroup");
-			var aContent = oQuickGroup.getContent();
-
-			qutils.triggerMouseEvent(aContent[0].getId(), "mousedown", null, null, null, null, 0);
-			qutils.triggerMouseEvent(aContent[0].getId(), "click");
-
-			assert.ok(oColumnSetGroupedSpy.calledOnceWithExactly(true), "Column#_setGrouped is called once with the correct parameters");
-			oTable.getColumns()[0]._setGrouped(false);
-			return that.closeMenu(oMenu);
-		}).then(function() {
-			oTable.setEnableGrouping(false);
-			return that.openColumnMenu(0);
-		}).then(function() {
-			oMenu = oTable.getColumns()[0].getHeaderMenuInstance();
-			assert.ok(that.getQuickAction(oMenu, "QuickGroup") === oQuickGroup, "The QuickGroup instance is not destroyed");
-			assert.notOk(oQuickGroup.getVisible(), "The QuickGroup is not visible");
 		});
 	});
 

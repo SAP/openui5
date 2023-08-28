@@ -359,7 +359,6 @@ sap.ui.define([
 						new SegmentedButtonItem(this.getId() + "-Switch-Clk", {key: "Clk", text: sTimeText})
 					]
 				});
-				oSwitcher.attachSelect(this._handleSelect, this);
 
 				this.setAggregation("_switcher", oSwitcher);
 			}

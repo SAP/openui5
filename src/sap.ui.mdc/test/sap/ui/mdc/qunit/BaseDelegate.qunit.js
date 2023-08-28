@@ -16,7 +16,7 @@ sap.ui.define([
 		}
 
 		sinon.spy(BaseDelegate, "getTypeMap");
-		var oTypeUtil = BaseDelegate.getTypeUtil();
+		var oTypeUtil = null;
 		assert.ok(BaseDelegate.getTypeMap.calledOnce, "calls getTypeMap");
 		assert.equal(oTypeUtil, BaseDelegate.getTypeMap(), "returns getTypeMap result");
 	});

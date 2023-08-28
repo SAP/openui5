@@ -6,8 +6,9 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/m/PDFViewerRenderer",
 	"sap/m/library",
-	"sap/ui/Device"
-], function (jQuery, TestUtils, JSONModel, PDFViewerRenderer, library, Device) {
+	"sap/ui/Device",
+	"sap/ui/core/Core"
+], function(jQuery, TestUtils, JSONModel, PDFViewerRenderer, library, Device, Core) {
 	"use strict";
 
 	// shortcut for sap.m.PDFViewerDisplayType
@@ -177,9 +178,10 @@ sap.ui.define([
 
 		TestUtils.wait(2000)()
 			.then(function () {
-				oModel.setData({showDownloadButton: true}, true);
-				TestUtils.rerender();
-			})
+			oModel.setData({showDownloadButton: true}, true);
+			TestUtils.invalidate();
+			Core.applyChanges();
+		})
 			.then(TestUtils.wait(2000))
 			.then(function () {
 				var oOverflowToolbar = oPdfViewer.$('overflowToolbar');
@@ -192,9 +194,10 @@ sap.ui.define([
 				assert.ok(oDownloadButton.length === 1, 'Download button should be visible');
 			})
 			.then(function () {
-				oModel.setData({showDownloadButton: false}, true);
-				TestUtils.rerender();
-			})
+			oModel.setData({showDownloadButton: false}, true);
+			TestUtils.invalidate();
+			Core.applyChanges();
+		})
 			.then(TestUtils.wait(2000))
 			.then(function () {
 				var oOverflowToolbar = oPdfViewer.$('overflowToolbar');
@@ -232,28 +235,33 @@ sap.ui.define([
 			assert.ok(fnIsContentDisplayed(), "Content is displayed in Auto mode");
 
 			oPdfViewer.setDisplayType(PDFViewerDisplayType.Embedded);
-			TestUtils.rerender();
+			TestUtils.invalidate();
+			Core.applyChanges();
 			assert.equal(oPdfViewer.getDisplayType(), PDFViewerDisplayType.Embedded, "Set displayType to Embedded mode");
 			assert.ok(fnIsContentDisplayed(), "Content is displayed in Embedded mode");
 
 			oPdfViewer.setDisplayType(PDFViewerDisplayType.Link);
-			TestUtils.rerender();
+			TestUtils.invalidate();
+			Core.applyChanges();
 			assert.equal(oPdfViewer.getDisplayType(), PDFViewerDisplayType.Link, "Set displayType to Link mode");
 			assert.ok(oPdfViewer.$("toolbarDownloadButton").length === 1, "Download button is displayed in Link mode");
 			assert.notOk(fnIsContentDisplayed(), "Content is not displayed in Link mode");
 
 			oPdfViewer.setShowDownloadButton(false);
-			oPdfViewer.rerender();
+			oPdfViewer.invalidate();
+			Core.applyChanges();
 			assert.ok(oPdfViewer.$("toolbarDownloadButton").length === 1, "Download button is displayed in Link mode always");
 
 			oPdfViewer.setDisplayType(PDFViewerDisplayType.Auto);
-			oPdfViewer.rerender();
+			oPdfViewer.invalidate();
+			Core.applyChanges();
 			assert.notOk(oPdfViewer.$("toolbarDownloadButton").length === 1, "Download button is not displayed in Auto mode");
 
 			Device.system.desktop = false;
 			Device.system.phone = true;
 			oPdfViewer.setDisplayType(PDFViewerDisplayType.Embedded);
-			TestUtils.rerender();
+			TestUtils.invalidate();
+			Core.applyChanges();
 			assert.ok(!fnIsErrorContentDisplayed(), "Error Content is not displayed in Mobile and Embedded mode");
 			Device.system.desktop = true;
 			Device.system.phone = false;

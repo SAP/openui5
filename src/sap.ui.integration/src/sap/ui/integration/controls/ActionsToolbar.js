@@ -155,7 +155,7 @@ sap.ui.define([
 		}
 
 		if (oExtension) {
-			aActions = aActions.concat(oExtension.getActions() || []);
+			aActions = aActions.concat([]);
 		}
 
 		this._aActions = aActions;

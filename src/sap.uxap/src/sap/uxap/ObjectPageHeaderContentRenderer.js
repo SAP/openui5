@@ -4,7 +4,9 @@
 
 sap.ui.define([
 	"./ObjectPageHeaderRenderer",
-	"./ObjectImageHelper"], function (ObjectPageHeaderRenderer, ObjectImageHelper) {
+	"./ObjectImageHelper",
+	"sap/uxap/library"
+], function(ObjectPageHeaderRenderer, ObjectImageHelper, library) {
 	"use strict";
 
 	/**
@@ -33,7 +35,7 @@ sap.ui.define([
 				/**
 				 * @deprecated As of version 1.40.1
 				 */
-				.class("sapUxAPObjectPageHeaderContentDesign-" + oControl.getContentDesign());
+				.class("sapUxAPObjectPageHeaderContentDesign-" + library.ObjectPageHeaderDesign.Light);
 
 			if (oHeader) {
 				oRm.class('sapUxAPObjectPageContentObjectImage-' + oHeader.getObjectImageShape());
@@ -46,10 +48,6 @@ sap.ui.define([
 		if (bRenderEditBtn) {
 			oRm.class("sapUxAPObjectPageHeaderContentCellLeft");
 		} else {
-			/**
-			 * @deprecated As of version 1.40.1
-			 */
-			oRm.class("sapUxAPObjectPageHeaderContentDesign-" + oControl.getContentDesign());
 			if (oHeader) {
 				oRm.class('sapUxAPObjectPageContentObjectImage-' + oHeader.getObjectImageShape());
 			}

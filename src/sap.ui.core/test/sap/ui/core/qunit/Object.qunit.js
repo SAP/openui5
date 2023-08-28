@@ -7,7 +7,6 @@ sap.ui.define([
 	"use strict";
 
 	function testsuite(caption, TestClass, sTestClassName, TestSubClass, sTestSubClassName) {
-
 		QUnit.module(caption, {
 			beforeEach: function() {
 				this.oObject = new BaseObject();
@@ -21,27 +20,6 @@ sap.ui.define([
 			assert.ok(this.oObject.getInterface === BaseObject.prototype.getInterface, "fresh object doesn't have own getInterface implementation");
 		});
 
-		/**
-		 * @deprecated
-		 */
-		QUnit.test("GetInterface", function(assert) {
-			var oIntf1 = this.oNewClassInstance.getInterface();
-			assert.ok(oIntf1 != null, "interface returned");
-			// assert("object has interface member", this.oObject.oInterface && typeof this.oObject.oInterface === "object" );
-			assert.ok(this.oNewClassInstance.getInterface !== BaseObject.prototype.getInterface, "object has own getInterface implementation");
-			var oIntf2 = this.oNewClassInstance.getInterface();
-			assert.ok(oIntf1 === oIntf2, "stable interface");
-			for (var m in oIntf1) {
-				if (typeof oIntf1[m] === "function") {
-					assert.ok(this.oNewClassInstance.getMetadata()._aAllPublicMethods.indexOf(m) >= 0, "interface has only functions from the list");
-					// TODO the following tests only work for methods that have stable results and that don't require arguments
-					var r1 = this.oNewClassInstance[m]();
-					var r2 = oIntf1[m]();
-					assert.strictEqual(r2, r1, "same values returned");
-				}
-			}
-		});
-
 		QUnit.test("GetMetadata", function(assert) {
 			assert.ok(this.oNewClassInstance.getMetadata() != false, "metadata available");
 			assert.ok(this.oNewSubClassInstance.getMetadata() != false, "metadata available");
@@ -52,16 +30,6 @@ sap.ui.define([
 			assert.strictEqual(this.oNewClassInstance.getMetadata().getParent().getName(), "sap.ui.base.Object", "basetype as expected");
 			assert.ok(this.oNewSubClassInstance.getMetadata().getParent() != false, "basetype set");
 			assert.strictEqual(this.oNewSubClassInstance.getMetadata().getParent(), this.oNewClassInstance.getMetadata(), "basetype as expected");
-		});
-
-		/**
-		 * @deprecated As of version 1.111 All deprecated APIs
-		 */
-		QUnit.test("PublicMethods", function(assert) {
-			assert.deepEqual(this.oNewClassInstance.getMetadata().getPublicMethods(), ["method1"], "public methods");
-			assert.deepEqual(this.oNewClassInstance.getMetadata().getAllPublicMethods(), ["method1"], "public methods");
-			assert.deepEqual(this.oNewSubClassInstance.getMetadata().getPublicMethods(), ["method2"], "public methods");
-			assert.deepEqual(this.oNewSubClassInstance.getMetadata().getAllPublicMethods(), ["method1", "method2"], "public methods");
 		});
 
 		QUnit.test("Interfaces", function(assert) {

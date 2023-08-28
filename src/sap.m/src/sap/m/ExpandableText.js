@@ -346,7 +346,7 @@ function(library,
 						// force the re-rendering of the link,
 						// so the popover won't flickering,
 						// because of text changing
-						showMoreLink.rerender();
+						showMoreLink.invalidate();
 
 						oPopover.removeAllAriaLabelledBy();
 						oPopover.destroyContent();

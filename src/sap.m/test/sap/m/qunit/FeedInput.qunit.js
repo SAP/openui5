@@ -38,13 +38,6 @@ sap.ui.define([
 		assert.strictEqual(this.oFeedInput.$().attr("aria-label"), oRb.getText("FEED_INPUT_ARIA_LABEL"), "aria-label is 'Your Input'");
 	});
 
-	/**
-	 * @deprecated Since version 1.88.
-	 */
-	QUnit.test("Default value of ariaLabelForPicture property", function (assert) {
-		assert.strictEqual(this.oFeedInput.getAriaLabelForPicture(), "", "ariaLabelForPicture is ''");
-	});
-
 	QUnit.test("ButtonTooltip", function (assert) {
 		this.oFeedInput.setButtonTooltip("My Submit");
 		assert.strictEqual(this.oFeedInput.getButtonTooltip(), "My Submit", "Getter should return correct non-default value");
@@ -408,5 +401,4 @@ sap.ui.define([
 		qutils.triggerKeyEvent("keypress", "input-button", KeyCodes.A);
 		qutils.triggerKeyup("input-button", KeyCodes.A);
 	});
-
 });

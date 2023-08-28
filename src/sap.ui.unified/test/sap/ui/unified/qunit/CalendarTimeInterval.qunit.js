@@ -386,7 +386,6 @@ sap.ui.define([
 	});
 
 	QUnit.test("After Rerendering, the focus is not stolen from an external control (i.e. a button)", function(assert) {
-
 		//Prepare
 		var oCalendarTimeInt = new CalendarTimeInterval(),
 			oExternalControl = new CalendarTimeInterval("extControl"),
@@ -403,7 +402,9 @@ sap.ui.define([
 		_assertFocus(oElementToFocus, "Prerequisites check: 'extControl' (another MonthInterval) should be focused", assert);
 
 		//Act
-		oCalendarTimeInt.rerender();
+		oCalendarTimeInt.invalidate();
+
+		oCore.applyChanges();
 
 		//Assert
 		_assertFocus(oElementToFocus, "After rerendering, the focus should stay on the 'extControl' (TimeInterval)", assert);

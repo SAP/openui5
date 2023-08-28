@@ -162,34 +162,6 @@ sap.ui.define([
 					assert.strictEqual(bReturnValue, bValueToBeSet, `then ${bValueToBeSet} is returned`);
 				});
 			});
-
-			/**
-			 * @deprecated Since version 1.108
-			 */
-			QUnit.test(`given isContextSharingEnabled is called for all existing layer in a${bValueToBeSet ? "n ABAP system" : " non ABAP system"}`, function(assert) {
-				sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([
-					bValueToBeSet ? {connector: "LrepConnector"} : {connector: "NeoLrepConnector"}
-				]);
-				sandbox.stub(Settings, "getInstance").resolves({
-					isContextSharingEnabled() {
-						return bValueToBeSet;
-					}
-				});
-
-				var aSetupForLayers = [];
-				for (var layer in Layer) {
-					aSetupForLayers.push({
-						layer,
-						expectedResult: (layer === Layer.CUSTOMER && bValueToBeSet) // only the ABAP Key USer should have the feature
-					});
-				}
-
-				return Promise.all(aSetupForLayers.map(function(oSetup) {
-					return FeaturesAPI.isContextSharingEnabled(oSetup.layer).then(function(bContextSharingEnabled) {
-						assert.equal(bContextSharingEnabled, oSetup.expectedResult, `then the returned flag is correct for layer ${oSetup.layer}`);
-					});
-				}));
-			});
 		});
 	});
 });

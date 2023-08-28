@@ -39,11 +39,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("sap.ui.mdc.flp.FlpLinkDelegate: 'semanticObjects'", {
-		beforeEach: function() {
-			// startMockServer("test-resources/sap/ui/mdc/qunit/link/mockserver/metadata.xml", "test-resources/sap/ui/mdc/qunit/link/mockserver/", "/odataFake/");
-			// this.oODataModel = new ODataModel("/odataFake/");
-			this.oLink;
-		},
+		beforeEach: function() {},
 		afterEach: function() {
 			// stopMockServer();
 			this.oLink.destroy();
@@ -443,7 +439,6 @@ sap.ui.define([
 
 	QUnit.module("sap.ui.mdc.flp.FlpLinkDelegate: 'retrieveNavigationTargets'", {
 		beforeEach: function() {
-			this.oLink;
 			FakeFlpConnector.enableFakeConnector({
 				SemanticObjectEmpty: {
 					links: []
@@ -605,7 +600,6 @@ sap.ui.define([
 
 	QUnit.module("sap.ui.mdc.flp.FlpLinkDelegate: 'retrieveNavigationTargets' and main item", {
 		beforeEach: function() {
-			this.oLink;
 			FakeFlpConnector.enableFakeConnector({
 				SemanticObjectDisplayFactSheet: {
 					links: [
@@ -626,7 +620,6 @@ sap.ui.define([
 
 	QUnit.module("sap.ui.mdc.flp.FlpLinkDelegate: 'semanticObjectUnavailableActions'", {
 		beforeEach: function() {
-			this.oLink;
 			FakeFlpConnector.enableFakeConnector({
 				SemanticObjectTwoIntents: {
 					links: [

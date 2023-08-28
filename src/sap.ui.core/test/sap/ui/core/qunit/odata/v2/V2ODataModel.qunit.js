@@ -27,7 +27,6 @@ sap.ui.define([
 		library, Messaging, Message, MockServer, ChangeReason, Filter, Sorter, UpdateMethod, ODataModel,
 		DateTime, createAndAppendDiv, nextUIUpdate, Table, Column
 ) {
-
 	"use strict";
 
 	// shortcut for sap.ui.core.MessageType
@@ -207,229 +206,33 @@ sap.ui.define([
 			assert.ok(false, "Promise rejected");
 		});
 	});
-	/** @deprecated As of version 1.42.0 */
-	QUnit.test("test metadata promise and refresh", function(assert) {
-		var done = assert.async();
+	[true, false].forEach(function (bSuccess) {
+		QUnit.test("Metadata promise " + (bSuccess ? "fulfilled" : "rejected"), function(assert) {
+			var done = assert.async(),
+				oTest = {
+					resolved : function () {},
+					rejected : function () {}
+				},
+				oTestMock = this.mock(oTest);
 
-		var oPromise = oModel.metadataLoaded();
-		assert.ok(oPromise, "promise exists");
-		oPromise.then(function(result){
-			assert.ok(true, "Promise resolved");
-			var oNewP = oModel.refreshMetadata();
-			assert.ok(oNewP, "oNewP promise exists");
-			return oNewP;
-		}, function(){
-			assert.ok(false, "Promise rejected");
-		})
-		.then(function(result){
-			assert.ok(true, "oNewP Promise resolved");
-			var oNewP2 = oModel.refreshMetadata();
-			assert.ok(oNewP2, "oNewP2 promise exists");
-			return oNewP2;
-		}, function(){
-			assert.ok(false, "oNewP Promise rejected");
-		})
-		.then(function(result){
-			assert.ok(true, "oNewP2 Promise resolved");
-			done();
-		}, function(){
-			assert.ok(false, "oNewP2 Promise rejected");
-		});
-	});
-	/** @deprecated As of version 1.42.0 */
-	QUnit.test("test metadata promise rejected refresh", function(assert) {
-		var done = assert.async();
-
-		oModel.destroy();
-		oModel = initModel(undefined, "/doesnotWork/");
-
-		var oPromise = oModel.metadataLoaded();
-		assert.ok(oPromise, "promise exists");
-		oPromise.then(function(result){
-			assert.ok(false, "Promise resolved which should not happen");
-		}, function(){
-			assert.ok(false, "Promise rejected which should never happen");
-		});
-
-		var oNewP = oModel.refreshMetadata();
-		assert.ok(oNewP, "oNewP promise exists");
-		oNewP.then(function(result){
-			assert.ok(false, "oNewP Promise resolved");
-		}, function(){
-			assert.ok(true, "oNewP Promise rejected");
 			cleanSharedData();
-			done();
+			oModel.destroy();
+			oModel = initModel(undefined, bSuccess ? sServiceUri : "/doesnotWork/");
+
+			if (bSuccess) {
+				oTestMock.expects("resolved");
+				oTestMock.expects("rejected").never();
+			} else {
+				oTestMock.expects("resolved").never();
+				oTestMock.expects("rejected");
+			}
+
+			return oModel.metadataLoaded(true).then(oTest.resolved, oTest.rejected)
+				.finally(function () {
+					cleanSharedData();
+					done();
+				});
 		});
-
-	});
-	/** @deprecated As of version 1.42.0 */
-	QUnit.test("test metadata promise rejected refresh and resolve", function(assert) {
-		var done = assert.async();
-		cleanSharedData();
-
-		oModel.destroy();
-		oModel = initModel(undefined, "/doesnotWork/");
-
-		var oPromise = oModel.metadataLoaded();
-		assert.ok(oPromise, "promise exists");
-		oPromise.then(function(result){
-			assert.ok(true, "Promise resolved after metadata url is fixed");
-			done();
-		}, function(){
-			assert.ok(false, "Promise rejected which should never happen");
-		});
-
-		var oNewP = oModel.refreshMetadata();
-		assert.ok(oNewP, "oNewP promise exists");
-		oNewP.then(function(result){
-			assert.ok(false, "oNewP Promise resolved");
-		}, function(){
-			assert.ok(true, "oNewP Promise rejected");
-			// fix url
-			oModel.oMetadata.sUrl = sServiceUri + "$metadata";
-			var oNewP2 = oModel.refreshMetadata();
-			assert.ok(oNewP2, "oNewP2 promise exists");
-			return oNewP2;
-		})
-		.then(function(result){
-			assert.ok(true, "oNewP2 Promise resolved");
-			cleanSharedData();
-		}, function(){
-			assert.ok(false, "oNewP2 Promise rejected");
-		});
-
-	});
-
-	//*********************************************************************************************
-[true, false].forEach(function (bSuccess) {
-	QUnit.test("Metadata promise " + (bSuccess ? "fulfilled" : "rejected"), function(assert) {
-		var done = assert.async(),
-			oTest = {
-				resolved : function () {},
-				rejected : function () {}
-			},
-			oTestMock = this.mock(oTest);
-
-		cleanSharedData();
-		oModel.destroy();
-		oModel = initModel(undefined, bSuccess ? sServiceUri : "/doesnotWork/");
-
-		if (bSuccess) {
-			oTestMock.expects("resolved");
-			oTestMock.expects("rejected").never();
-		} else {
-			oTestMock.expects("resolved").never();
-			oTestMock.expects("rejected");
-		}
-
-		return oModel.metadataLoaded(true).then(oTest.resolved, oTest.rejected)
-			.finally(function () {
-				cleanSharedData();
-				done();
-			});
-	});
-});
-
-	/** @deprecated As of version 1.42.0 */
-	QUnit.test("test metadata promise ok then refresh failed", function(assert) {
-		var done = assert.async();
-
-		var sTempService = sServiceUri;
-		var oPromise = oModel.metadataLoaded();
-		assert.ok(oPromise, "promise exists");
-		oPromise.then(function(result){
-			assert.ok(true, "Promise resolved");
-			sServiceUri = "/doesnotWork/";
-			oModel.oMetadata.sUrl = sServiceUri + "$metadata";
-			var oNewP = oModel.refreshMetadata();
-			assert.ok(oNewP, "oNewP promise exists");
-			return oNewP;
-		}, function(){
-			assert.ok(false, "Promise rejected which should never happen");
-		})
-		.then(function(result){
-			assert.ok(false, "oNewP Promise resolved");
-		}, function(){
-			assert.ok(true, "oNewP Promise rejected");
-			cleanSharedData();
-			sServiceUri = sTempService;
-			done();
-		});
-	});
-	/** @deprecated As of version 1.42.0 */
-	QUnit.test("test metadata promise ok then refresh failed then refresh ok", function(assert) {
-		var done = assert.async();
-
-		var oPromise = oModel.metadataLoaded();
-		var sTempService = sServiceUri;
-		assert.ok(oPromise, "promise exists");
-		oPromise.then(function(result){
-			assert.ok(true, "Promise resolved");
-			sServiceUri = "/doesnotWork/";
-			oModel.oMetadata.sUrl = sServiceUri + "$metadata";
-			var oNewP = oModel.refreshMetadata();
-			assert.ok(oNewP, "oNewP promise exists");
-			return oNewP;
-		}, function(){
-			assert.ok(false, "Promise rejected which should never happen");
-		})
-		.then(function(result){
-			assert.ok(false, "oNewP Promise resolved");
-		}, function(){
-			assert.ok(true, "oNewP Promise rejected");
-			// fix url
-			oModel.oMetadata.sUrl = sTempService + "$metadata";
-			var oNewP2 = oModel.refreshMetadata();
-			assert.ok(oNewP2, "oNewP promise exists");
-			return oNewP2;
-		})
-		.then(function(result){
-			assert.ok(true, "oNewP2 Promise resolved");
-			cleanSharedData();
-			sServiceUri = sTempService;
-			done();
-		}, function(){
-			assert.ok(false, "oNewP2 Promise rejected");
-		});
-
-	});
-	/** @deprecated As of version 1.42.0 */
-	QUnit.test("test metadata isMetadataLoadingFailed", function(assert) {
-		var done = assert.async();
-
-		assert.ok(!oModel.isMetadataLoadingFailed(), "check metadata loaded");
-		var oPromise = oModel.metadataLoaded();
-		var sTempService = sServiceUri;
-		assert.ok(oPromise, "promise exists");
-		oPromise.then(function(result){
-			assert.ok(!oModel.isMetadataLoadingFailed(), "check metadata loaded");
-			sServiceUri = "/doesnotWork/";
-			oModel.oMetadata.sUrl = sServiceUri + "$metadata";
-			var oNewP = oModel.refreshMetadata();
-			assert.ok(oNewP, "oNewP promise exists");
-			return oNewP;
-		}, function(){
-			assert.ok(false, "Promise rejected which should never happen");
-		})
-		.then(function(result){
-			assert.ok(false, "oNewP Promise resolved");
-		}, function(){
-			assert.ok(oModel.isMetadataLoadingFailed(), "check metadata loaded failed");
-			// fix url
-			oModel.oMetadata.sUrl = sTempService + "$metadata";
-			var oNewP2 = oModel.refreshMetadata();
-			assert.ok(oNewP2, "oNewP promise exists");
-			return oNewP2;
-		})
-		.then(function(result){
-			assert.ok(!oModel.isMetadataLoadingFailed(), "check metadata loaded");
-			cleanSharedData();
-			sServiceUri = sTempService;
-			done();
-		}, function(){
-			assert.ok(false, "oNewP2 Promise rejected");
-		});
-
 	});
 
 	QUnit.test("test oDataModel read filter test", function(assert) {
@@ -1993,37 +1796,6 @@ sap.ui.define([
 		});
 	});
 
-	/** @deprecated As of version 1.95.0, reason sap.ui.model.odata.v2.ODataModel#deleteCreatedEntry */
-	QUnit.test("test oDataModel deleteCreatedEntry - messages should be deleted", function(assert) {
-		var done = assert.async();
-		oModel.metadataLoaded().then(function() {
-			var oContext = oModel.createEntry("/ProductSet");
-			var oContextPath = oContext.getPath();
-
-			var oMessage = new Message({
-				message: "Message1",
-				description: "Message1 description",
-				type: MessageType.Error,
-				target: oContextPath,
-				processor: oModel
-			});
-			var oMessage2 = new Message({
-				message: "Message2",
-				description: "Message2 description",
-				type: MessageType.Error,
-				target: oContextPath,
-				processor: oModel
-			});
-			Messaging.addMessages([oMessage, oMessage2]);
-			assert.ok(oModel.hasPendingChanges(), "model has pending changes");
-			assert.ok(oModel.getMessagesByEntity(oContextPath), "Messages set");
-			assert.strictEqual(oModel.getMessagesByEntity(oContextPath).length, 2, "2 Messages set");
-			oModel.deleteCreatedEntry(oContext);
-			assert.strictEqual(oModel.getMessagesByEntity(oContextPath).length, 0, "Messages deleted");
-			done();
-		});
-	});
-
 	QUnit.test("test oDataModel setProperty: resetChanges - messages should be deleted 2", function(assert) {
 		var done = assert.async();
 		var oSpy;
@@ -3235,151 +3007,6 @@ sap.ui.define([
 			if (iCount === 1) {
 				done();
 			}
-		});
-		oModel.metadataLoaded().then(fnTest);
-	});
-
-	/** @deprecated As of version 1.95.0, reason sap.ui.model.odata.v2.ODataModel#deleteCreatedEntry */
-	QUnit.test("test oDataModel createEntry and deleteCreatedEntry", function(assert) {
-		var done = assert.async();
-		var oContext;
-
-		oModel.setDeferredGroups(["myId"]);
-		oModel.setChangeGroups({
-			"Product": {
-				groupId: "myId",
-				changeSetId: "Test",
-				single: true
-			}
-		});
-
-		var fnTest = function(){
-			oContext = oModel.createEntry("/ProductSet", {properties: {
-					"ProductID":"AD-1234",
-					"TypeCode":"AD",
-					"Category":"Computer system accessories",
-					"Name":"TestEntry",
-					"NameLanguage":"E",
-					"Description":"Flyer for our product palette",
-					"DescriptionLanguage":"E",
-					"SupplierID":"0100000015",
-					"SupplierName":"Robert Brown Entertainment",
-					"TaxTarifCode":1,
-					"MeasureUnit":"EA",
-					"WeightMeasure":"0.01",
-					"WeightUnit":"KG",
-					"CurrencyCode":"CAD",
-					"Price":"0.0",
-					"Width":"0.46",
-					"Depth":"0.3",
-					"Height":"0.03",
-					"DimUnit":"M"
-			}, batchGroupId: "myId"});
-
-			oModel.deleteCreatedEntry(oContext);
-			var oSpy = sinon.spy(oModel, "_submitBatchRequest");
-			oModel.submitChanges({
-				success : function(oData, oResponse) {
-					assert.strictEqual(oSpy.callCount, 0, "No request sent");
-					assert.ok(true, "success handler called even no changes were submitted");
-					assert.ok(!oResponse, "no response passed");
-					assert.strictEqual(typeof oData, 'object', "data is object");
-					assert.ok(isEmptyObject(oData), "data is empty object");
-				},
-				error : function(oError) {
-					assert.ok(false, "should not land here");
-				}
-			});
-			setTimeout(function() {
-				assert.ok(true, 'no request sent');
-				done();
-			});
-		};
-		oModel.attachBatchRequestCompleted(this, function(test) {
-			assert.ok(false, "should not land here");
-		});
-		oModel.metadataLoaded().then(fnTest);
-	});
-
-	/** @deprecated As of version 1.95.0, reason sap.ui.model.odata.v2.ODataModel#deleteCreatedEntry */
-	QUnit.test("test oDataModel 2 times createEntry and one deleteCreatedEntry", function(assert) {
-		var done = assert.async();
-		var oContext;
-
-		oModel.setDeferredGroups(["myId"]);
-		oModel.setChangeGroups({
-			"Product": {
-				groupId: "myId",
-				changeSetId: "Test",
-				single: true
-			}
-		});
-
-		var fnTest = function(){
-			oContext = oModel.createEntry("/ProductSet", {properties: {
-					"ProductID":"AD-1234",
-					"TypeCode":"AD",
-					"Category":"Computer system accessories",
-					"Name":"TestEntry",
-					"NameLanguage":"E",
-					"Description":"Flyer for our product palette",
-					"DescriptionLanguage":"E",
-					"SupplierID":"0100000015",
-					"SupplierName":"Robert Brown Entertainment",
-					"TaxTarifCode":1,
-					"MeasureUnit":"EA",
-					"WeightMeasure":"0.01",
-					"WeightUnit":"KG",
-					"CurrencyCode":"CAD",
-					"Price":"0.0",
-					"Width":"0.46",
-					"Depth":"0.3",
-					"Height":"0.03",
-					"DimUnit":"M"
-			}, batchGroupId: "myId"});
-
-			oModel.deleteCreatedEntry(oContext);
-
-			oModel.createEntry("/ProductSet", {properties: {
-				"ProductID":"AD-1235",
-				"TypeCode":"AD",
-				"Category":"Computer system accessories",
-				"Name":"TestEntry",
-				"NameLanguage":"E",
-				"Description":"Flyer for our product palette",
-				"DescriptionLanguage":"E",
-				"SupplierID":"0100000015",
-				"SupplierName":"Robert Brown Entertainment",
-				"TaxTarifCode":1,
-				"MeasureUnit":"EA",
-				"WeightMeasure":"0.01",
-				"WeightUnit":"KG",
-				"CurrencyCode":"CAD",
-				"Price":"0.0",
-				"Width":"0.46",
-				"Depth":"0.3",
-				"Height":"0.03",
-				"DimUnit":"M"
-		}, batchGroupId: "myId"});
-
-			oModel.submitChanges({
-				success : function(oData, oResponse) {
-					assert.ok(true, "should land here");
-				},
-				error : function(oError) {
-					assert.ok(false, "should not land here");
-				}
-			});
-
-		};
-		oModel.attachBatchRequestCompleted(this, function(oEvent) {
-			assert.ok(true, "should land here");
-			var aRequests = oEvent.getParameter('requests');
-			assert.equal(aRequests.length, 1, "should contain one request");
-			assert.equal(aRequests[0].success, true, "request successful");
-			assert.equal(aRequests[0].url, "ProductSet", "request successful");
-			assert.equal(aRequests[0].response.statusCode, "201", "response code");
-			done();
 		});
 		oModel.metadataLoaded().then(fnTest);
 	});
@@ -6317,18 +5944,18 @@ sap.ui.define([
 		});
 	});
 
-		QUnit.test("test oDataModel callFunction: null Parameter", function(assert) {
-		var done = assert.async();
-		oModel.callFunction("/SalesOrder_Confirm",{
-			method: "POST",
-			urlParameters: {"SalesOrderID": "null"}
-		});
-
-		oModel.attachRequestSent(this, function(oEventInfo) {
-			assert.strictEqual(oEventInfo.getParameter("url"), "SalesOrder_Confirm?SalesOrderID='null'", "Valid parameter is added to URL");
-			done();
-		});
+	QUnit.test("test oDataModel callFunction: null Parameter", function(assert) {
+	var done = assert.async();
+	oModel.callFunction("/SalesOrder_Confirm",{
+		method: "POST",
+		urlParameters: {"SalesOrderID": "null"}
 	});
+
+	oModel.attachRequestSent(this, function(oEventInfo) {
+		assert.strictEqual(oEventInfo.getParameter("url"), "SalesOrder_Confirm?SalesOrderID='null'", "Valid parameter is added to URL");
+		done();
+	});
+});
 
 	QUnit.test("test oDataModel callFunction: parameters are preserved", function(assert) {
 		var done = assert.async();

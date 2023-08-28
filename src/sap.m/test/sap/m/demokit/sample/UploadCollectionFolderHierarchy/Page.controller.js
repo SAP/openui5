@@ -3,9 +3,8 @@ sap.ui.define([
 	"sap/ui/core/mvc/Controller",
 	"sap/m/MessageToast",
 	"sap/m/MessageBox",
-	"sap/m/UploadCollectionItem",
 	"sap/ui/model/json/JSONModel"
-], function(jQuery, Controller, MessageToast, MessageBox, UploadCollectionItem, JSONModel) {
+], function(jQuery, Controller, MessageToast, MessageBox, JSONModel) {
 	"use strict";
 
 	return Controller.extend("sap.m.sample.UploadCollectionFolderHierarchy.Page", {
@@ -122,7 +121,7 @@ sap.ui.define([
 		},
 
 		uploadCollectionItemFactory: function(id, context) {
-			var oItem = new UploadCollectionItem(id, {
+			var oItem = new undefined/*UploadCollectionItem*/(id, {
 				documentId: "{documentId}",
 				fileName: "{fileName}",
 				mimeType: "{mimeType}",

@@ -339,7 +339,7 @@ function(
 	};
 
 	Toolbar.prototype.onLayoutDataChange = function() {
-		this.rerender();
+		this.invalidate();
 	};
 
 	Toolbar.prototype.addContent = function(oControl) {

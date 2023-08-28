@@ -19,6 +19,7 @@ sap.ui.define([
 	'sap/base/security/encodeXML',
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Configuration",
+	"sap/ui/core/StaticArea",
 	// jQuery Plugin "addAriaDescribedBy"
 	'sap/ui/dom/jquery/Aria'
 ], function(
@@ -34,11 +35,9 @@ sap.ui.define([
 	Log,
 	encodeXML,
 	jQuery,
-	Configuration
+	Configuration,
+	StaticArea
 ) {
-
-
-
 	// shortcut for sap.ui.core.ValueState
 	var ValueState = coreLibrary.ValueState;
 	var HttpRequestMethod = library.FileUploaderHttpRequestMethod;
@@ -867,7 +866,7 @@ sap.ui.define([
 		// remove the IFRAME
 		if (this.oIFrameRef) {
 			jQuery(this.oIFrameRef).off();
-			sap.ui.getCore().getStaticAreaRef().removeChild(this.oIFrameRef);
+			StaticArea.getDomRef()/* LFUI5: Check: StaticArea's API might have a better fit for your use case. */.removeChild(this.oIFrameRef);
 			this.oIFrameRef = null;
 		}
 
@@ -896,7 +895,7 @@ sap.ui.define([
 	 */
 	FileUploader.prototype.onBeforeRendering = function() {
 		// store the file uploader outside in the static area
-		var oStaticArea = sap.ui.getCore().getStaticAreaRef();
+		var oStaticArea = StaticArea.getDomRef()/* LFUI5: Check: StaticArea's API might have a better fit for your use case. */;
 		jQuery(this.oFileUpload).appendTo(oStaticArea);
 
 		if (!this.getName()) {
@@ -1890,42 +1889,33 @@ sap.ui.define([
 	 * Helper to retrieve the I18N texts for a button
 	 * @private
 	 */
-	 FileUploader.prototype.getBrowseText = function() {
+	FileUploader.prototype.getBrowseText = function() {
 
-		// as the text is the same for all FileUploaders, get it only once
-		if (!FileUploader.prototype._sBrowseText) {
-			var rb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified");
-			FileUploader.prototype._sBrowseText = rb.getText("FILEUPLOAD_BROWSE");
-		}
+	   // as the text is the same for all FileUploaders, get it only once
+	   if (!FileUploader.prototype._sBrowseText) {
+		   var rb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified");
+		   FileUploader.prototype._sBrowseText = rb.getText("FILEUPLOAD_BROWSE");
+	   }
 
-		return FileUploader.prototype._sBrowseText ? FileUploader.prototype._sBrowseText : "Browse...";
+	   return FileUploader.prototype._sBrowseText ? FileUploader.prototype._sBrowseText : "Browse...";
 
-	};
+   };
 
 	/**
 	 * Helper to retrieve the I18N text for the tooltip when there is no file chosen
 	 * @private
 	 */
-	 FileUploader.prototype._getNoFileChosenText = function() {
+	FileUploader.prototype._getNoFileChosenText = function() {
 
-		// as the text is the same for all FileUploaders, get it only once
-		if (!FileUploader.prototype._sNoFileChosenText) {
-			var rb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified");
-			FileUploader.prototype._sNoFileChosenText = rb.getText("FILEUPLOAD_NO_FILE_CHOSEN");
-		}
+	   // as the text is the same for all FileUploaders, get it only once
+	   if (!FileUploader.prototype._sNoFileChosenText) {
+		   var rb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified");
+		   FileUploader.prototype._sNoFileChosenText = rb.getText("FILEUPLOAD_NO_FILE_CHOSEN");
+	   }
 
-		return FileUploader.prototype._sNoFileChosenText ? FileUploader.prototype._sNoFileChosenText : "No file chosen";
+	   return FileUploader.prototype._sNoFileChosenText ? FileUploader.prototype._sNoFileChosenText : "No file chosen";
 
-	};
-
-	/**
-	 * Getter for shortened value.
-	 * @private
-	 * @deprecated the value now is the short value (filename only)!
-	 */
-	FileUploader.prototype.getShortenValue = function() {
-		return this.getValue();
-	};
+   };
 
 	/**
 	 * Prepares the hidden IFrame for uploading the file (in static area).
@@ -1940,7 +1930,7 @@ sap.ui.define([
 			oIFrameRef.style.display = "none";
 			/*eslint-enable no-script-url */
 			oIFrameRef.id = this.getId() + "-frame";
-			sap.ui.getCore().getStaticAreaRef().appendChild(oIFrameRef);
+			StaticArea.getDomRef()/* LFUI5: Check: StaticArea's API might have a better fit for your use case. */.appendChild(oIFrameRef);
 			oIFrameRef.contentWindow.name = this.getId() + "-frame";
 
 			// sink the load event of the upload iframe
@@ -2153,5 +2143,4 @@ sap.ui.define([
 	};
 
 	return FileUploader;
-
 });

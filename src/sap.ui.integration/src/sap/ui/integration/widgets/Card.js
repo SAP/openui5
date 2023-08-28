@@ -194,7 +194,6 @@ sap.ui.define([
 		metadata: {
 			library: "sap.ui.integration",
 			properties: {
-
 				/**
 				 * Optional property which can be used by the host to reference the card.
 				 * It will be forwarded to any children cards.
@@ -285,19 +284,6 @@ sap.ui.define([
 				 */
 				manifestChanges: {
 					type: "object[]"
-				},
-
-				/**
-				 * Defines if the card should be displayed with mock data. To be used with component cards.
-				 * @experimental Since 1.109
-				 * @private
-				 * @since 1.109
-				 * @deprecated Since 1.112. Use <code>previewMode</code> instead.
-				 */
-				useMockData: {
-					type: "boolean",
-					defaultValue: false,
-					visibility: "hidden"
 				},
 
 				/**
@@ -424,20 +410,11 @@ sap.ui.define([
 				action: {
 					allowPreventDefault: true,
 					parameters: {
-
 						/**
 						 * The action source.
 						 */
 						actionSource: {
 							type: "sap.ui.core.Control"
-						},
-
-						/**
-						 * The manifest parameters related to the triggered action.
-						 * @deprecated Since 1.76 Use the <code>parameters</code> parameter instead.
-						 */
-						manifestParameters: {
-							type: "object"
 						},
 
 						/**
@@ -1285,7 +1262,7 @@ sap.ui.define([
 		}
 
 		if (oExtension) {
-			aActions = aActions.concat(oExtension.getActions() || []);
+			aActions = aActions.concat([]);
 		}
 
 		if (deepEqual(aActions, this._getActionsToolbar()._aActions)) {
@@ -2483,59 +2460,6 @@ sap.ui.define([
 		});
 	};
 
-	/**
-	 * Provides information if the card has no data to be displayed in the content.
-	 * <b>Note:</b> Should be used after the <code>stateChanged</code> event is fired.
-	 *
-	 * @private
-	 * @experimental since 1.113
-	 * @deprecated since 1.114
-	 * @returns {boolean} Whether 'No Data' is displayed in the card
-	 */
-	Card.prototype.hasNoData = function () {
-		return this.getBlockingMessage() && this.getBlockingMessage().type === CardBlockingMessageType.NoData;
-	};
-
-	/**
-	 * Show 'No Data' in the card's content area.
-	 * Should be used only by component cards, no earlier than the <code>onCardReady</code> lifecycle hook.
-	 *
-	 * @private
-	 * @experimental since 1.113
-	 * @deprecated since 1.114
-	 * @param {object} oSettings 'No Data' settings
-	 * @param {sap.m.IllustratedMessageType} oSettings.type Illustration type
-	 * @param {sap.m.IllustratedMessageSize} [oSettings.size=sap.m.IllustratedMessageSize.Auto] Illustration size
-	 * @param {string} oSettings.title Title
-	 * @param {string} [oSettings.description] Description
-	 */
-	Card.prototype.showNoData = function (oSettings) {
-		this.showBlockingMessage({
-			type: CardBlockingMessageType.NoData,
-			illustrationType: oSettings.type,
-			illustrationSize: oSettings.size,
-			title: oSettings.title,
-			description: oSettings.description
-		});
-	};
-
-	/**
-	 * Sets if the card should be in a preview only mode or not.
-	 *
-	 * To be used only inside the designtime.
-	 *
-	 * @deprecated since 1.112
-	 * @private
-	 * @param {boolean} bIsPreviewMode True if the card should be in preview mode.
-	 */
-	Card.prototype._setPreviewMode = function (bIsPreviewMode) {
-		if (bIsPreviewMode) {
-			this.setPreviewMode(CardPreviewMode.Abstract);
-		} else {
-			this.setPreviewMode(CardPreviewMode.Off);
-		}
-	};
-
 	Card.prototype.setPreviewMode = function (sPreviewMode) {
 		var sOldMode = this.getPreviewMode();
 		this.setProperty("previewMode", sPreviewMode);
@@ -2821,22 +2745,22 @@ sap.ui.define([
 	/**
 	 * @private
 	 */
-	 Card.prototype.getContentMinItems = function (oContentConfig) {
-		var vMinItems = BindingResolver.resolveValue(oContentConfig.minItems, this),
-			iMinItems;
+	Card.prototype.getContentMinItems = function (oContentConfig) {
+	   var vMinItems = BindingResolver.resolveValue(oContentConfig.minItems, this),
+		   iMinItems;
 
-		if (vMinItems == null) {
-			return this.getContentPageSize(oContentConfig);
-		}
+	   if (vMinItems == null) {
+		   return this.getContentPageSize(oContentConfig);
+	   }
 
-		iMinItems = parseInt(vMinItems);
-		if (isNaN(iMinItems)) {
-			Log.error("Value for minItems must be integer.");
-			return null;
-		}
+	   iMinItems = parseInt(vMinItems);
+	   if (isNaN(iMinItems)) {
+		   Log.error("Value for minItems must be integer.");
+		   return null;
+	   }
 
-		return iMinItems;
-	};
+	   return iMinItems;
+   };
 
 	Card.prototype.hasPaginator = function () {
 		var oManifestFooter = this._oCardManifest.get(MANIFEST_PATHS.FOOTER);

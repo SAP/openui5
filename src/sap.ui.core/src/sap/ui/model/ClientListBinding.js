@@ -284,7 +284,6 @@ sap.ui.define([
 		this.bIgnoreSuspend = true;
 
 		this._fireChange({reason: ChangeReason.Sort});
-		this._fireSort({sorter: aSorters});
 		this.bIgnoreSuspend = false;
 
 		return this;
@@ -355,11 +354,7 @@ sap.ui.define([
 		this.bIgnoreSuspend = true;
 
 		this._fireChange({reason: ChangeReason.Filter});
-		if (sFilterType == FilterType.Application) {
-			this._fireFilter({filters: this.aApplicationFilters});
-		} else {
-			this._fireFilter({filters: this.aFilters});
-		}
+		if (sFilterType == FilterType.Application) {} else {}
 		this.bIgnoreSuspend = false;
 
 		return this;

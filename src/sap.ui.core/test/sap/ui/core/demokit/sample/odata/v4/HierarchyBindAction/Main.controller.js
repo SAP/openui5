@@ -7,6 +7,9 @@ sap.ui.define([
 ], function (MessageBox, Controller) {
 	"use strict";
 
+	// shortcut for sap.m.MessageBox.Action
+	var Action = MessageBox.Action;
+
 	return Controller.extend("sap.ui.core.sample.odata.v4.HierarchyBindAction.Main", {
 		onCreate : async function (oEvent) {
 			try {
@@ -25,8 +28,8 @@ sap.ui.define([
 				const oNode = oEvent.getSource().getBindingContext();
 				oNode.delete("noSubmit");
 				MessageBox.confirm("Restore again (undo cut)", {
-					actions : sap.m.MessageBox.Action.OK,
-					emphasizedAction : sap.m.MessageBox.Action.OK,
+					actions : Action.OK,
+					emphasizedAction : Action.OK,
 					onClose : function () {
 						oNode.resetChanges();
 					}

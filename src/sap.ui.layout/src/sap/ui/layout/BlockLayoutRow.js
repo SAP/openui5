@@ -292,51 +292,6 @@ sap.ui.define([
 		};
 
 		/**
-		 * Adjusts accents cells for Mixed background layout
-		 * @private
-		 * @method
-		 * @param {string} sId The ID of the row that will be processed
-		 * @param {Array} aCells Cells in the current row
-		 * @returns {this}
-		 * @deprecated since 1.50, together with BlockBackgroundType.Mixed
-		 */
-		BlockLayoutRow.prototype._processMixedCellStyles = function (sId, aCells) {
-			var oBlockLayout, bProcessAccentCells;
-
-			if (!aCells || !aCells.length) {
-				return this;
-			}
-
-			oBlockLayout = this.getParent();
-			bProcessAccentCells = oBlockLayout && (oBlockLayout.hasStyleClass("sapUiBlockLayoutSizeL") || oBlockLayout.hasStyleClass("sapUiBlockLayoutSizeXL"));
-
-			aCells.forEach(function (oCell) {
-				var oColorSets, bUseContrast2;
-
-				// Accent only on a cell with 25% width and L, XL sizes
-				if (bProcessAccentCells && oCell.getId() === sId && oCell.getWidth() === 1) {
-					oCell.addStyleClass("sapContrast").addStyleClass("sapContrastPlus");
-
-					oColorSets = BlockRowColorSets;
-					bUseContrast2 = this._hasStyleClass("sapUiBlockLayoutBackground" + oColorSets.ColorSet1, BlockBackgroundType.Mixed, false, oColorSets.ColorSet1) ||
-						this._hasStyleClass("sapUiBlockLayoutBackground" + oColorSets.ColorSet1, BlockBackgroundType.Mixed, true, oColorSets.ColorSet1);
-
-					if (bUseContrast2) {
-						oCell.addStyleClass("sapUiBlockLayoutBackgroundContrast2");
-					}
-				} else if ((!bProcessAccentCells || oCell.getId() !== sId) && (oCell.hasStyleClass("sapContrast") || oCell.hasStyleClass("sapContrastPlus"))) {
-					oCell.removeStyleClass("sapContrast").removeStyleClass("sapContrastPlus").removeStyleClass("sapUiBlockLayoutBackgroundContrast2");
-
-					this.removeAssociation("accentCells", oCell);
-
-					Log.warning(sId + " was removed as accent cell. Only one cell at a time could be accented for Mixed layout background");
-				}
-			}, this);
-
-			return this;
-		};
-
-		/**
 		 * Adjusts accents cells for Accent background layout.
 		 * @private
 		 * @method

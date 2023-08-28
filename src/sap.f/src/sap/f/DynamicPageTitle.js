@@ -42,11 +42,6 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	/**
-	 * @deprecated As of version 1.54
-	 */
-	var DynamicPageTitleArea = library.DynamicPageTitleArea;
-
 	var	ToolbarStyle = mobileLibrary.ToolbarStyle;
 
 	var	InvisibleMessageMode = CoreLibrary.InvisibleMessageMode;
@@ -102,25 +97,6 @@ sap.ui.define([
 		metadata: {
 			library: "sap.f",
 			properties: {
-				/**
-				* Determines which of the <code>DynamicPageTitle</code> areas (Begin, Middle) is primary.
-				*
-				* <b>Note:</b> The primary area is shrinking at lower rate, remaining visible as much as it can.
-				*
-				* @since 1.50
-				* @deprecated Since version 1.54. Please use the <code>areaShrinkRatio</code> property instead.
-				* The value of <code>areaShrinkRatio</code> must be set in <code>Heading:Content:Actions</code> format
-				* where Heading, Content and Actions are numbers greater than or equal to 0. The greater value a
-				* section has the faster it shrinks when the screen size is being reduced.
-				*
-				* <code>primaryArea=Begin</code> can be achieved by setting a low number for the Heading area to
-				* <code>areaShrinkRatio</code>, for example <code>1:1.6:1.6</code>.
-				*
-				* <code>primaryArea=Middle</code> can be achieved by setting a low number for the Content area to
-				* <code>areaShrinkRatio</code>, for example <code>1.6:1:1.6</code>.
-				*/
-				primaryArea : {type: "sap.f.DynamicPageTitleArea", group: "Appearance", defaultValue: DynamicPageTitleArea.Begin, deprecated: true},
-
 				/**
 				 * Assigns shrinking ratio to the <code>DynamicPageTitle</code> areas (Heading, Content, Actions).
 				 * The greater value a section has the faster it shrinks when the screen size is being reduced.
@@ -465,35 +441,6 @@ sap.ui.define([
 		this._destroyInvisibleTexts();
 	};
 
-	/* ========== PUBLIC METHODS  ========== */
-
-	DynamicPageTitle.prototype.setPrimaryArea = function (sArea) {
-		var sAreaShrinkRatio = this.getAreaShrinkRatio(),
-			oShrinkFactorsInfo = this._getShrinkFactorsObject(),
-			sAreaShrinkRatioDefaultValue = this.getMetadata().getProperty("areaShrinkRatio").getDefaultValue();
-
-		if (!this.getDomRef()) {
-			return this.setProperty("primaryArea", sArea, true);
-		}
-
-		if (sAreaShrinkRatio !== sAreaShrinkRatioDefaultValue) {
-			return this.setProperty("primaryArea", sArea, true);
-		}
-
-		// areaShrinkRatio is not set and primaryArea is set to Begin - use areaShrinkRatio default values
-		if (sArea === DynamicPageTitleArea.Begin) {
-			this._setShrinkFactors(oShrinkFactorsInfo.headingAreaShrinkFactor,
-									oShrinkFactorsInfo.contentAreaShrinkFactor,
-									oShrinkFactorsInfo.actionsAreaShrinkFactor);
-		} else { // areaShrinkRatio is not set and primaryArea is set to Middle - use primaryArea values
-			this._setShrinkFactors(DynamicPageTitle.PRIMARY_AREA_MIDDLE_SHRINK_FACTORS.headingAreaShrinkFactor,
-									DynamicPageTitle.PRIMARY_AREA_MIDDLE_SHRINK_FACTORS.contentAreaShrinkFactor,
-									DynamicPageTitle.PRIMARY_AREA_MIDDLE_SHRINK_FACTORS.actionsAreaShrinkFactor);
-		}
-
-		return this.setProperty("primaryArea", sArea, true);
-	};
-
 	/**
 	 * Sets the value of the <code>areaShrinkRatio</code> property.
 	 *
@@ -509,13 +456,6 @@ sap.ui.define([
 		this.setProperty("areaShrinkRatio", sAreaShrinkRatio, true);
 
 		var oShrinkFactorsInfo = this._getShrinkFactorsObject();
-
-		/**
-		 * @deprecated As of version 1.54
-		 */
-		if (this.getPrimaryArea() === DynamicPageTitleArea.Middle) {
-			Log.warning("DynamicPageTitle :: Property primaryArea is disregarded when areaShrinkRatio is set.", this);
-		}
 
 		// scale priority factors
 		if (oShrinkFactorsInfo.headingAreaShrinkFactor > 1 && oShrinkFactorsInfo.contentAreaShrinkFactor > 1 && oShrinkFactorsInfo.actionsAreaShrinkFactor > 1) {
@@ -1304,11 +1244,6 @@ sap.ui.define([
 			sAreaShrinkRatioDefaultValue = this.getMetadata().getProperty("areaShrinkRatio").getDefaultValue(),
 			bAriaShrinkRatioDefault = this.getAreaShrinkRatio() === sAreaShrinkRatioDefaultValue;
 
-		/**
-		 * @deprecated As of version 1.54
-		 */
-		bAriaShrinkRatioDefault = bAriaShrinkRatioDefault && this.getPrimaryArea() === DynamicPageTitleArea.Middle;
-
 		// if areaShrinkRatio is set to default value (or not set at all)
 		// use shrink factors defined for primaryArea
 		if (bAriaShrinkRatioDefault) {
@@ -1437,19 +1372,19 @@ sap.ui.define([
 	 * @param oEvent
 	 * @private
 	 */
-		DynamicPageTitle.prototype._onContentMinWidthChange = function (oEvent) {
-		var iMinWidth = oEvent.getParameter("minWidth"),
-			sMinWidth = iMinWidth > 0 ? iMinWidth + "px" : "",
-			$node = oEvent.getSource().$().parent();
+	DynamicPageTitle.prototype._onContentMinWidthChange = function (oEvent) {
+	var iMinWidth = oEvent.getParameter("minWidth"),
+		sMinWidth = iMinWidth > 0 ? iMinWidth + "px" : "",
+		$node = oEvent.getSource().$().parent();
 
-		$node.css({ "min-width": sMinWidth });
+	$node.css({ "min-width": sMinWidth });
 
-		if ($node.hasClass("sapFDynamicPageTitleMainContent")) {
-			this._sContentAreaMinWidth = sMinWidth;
-		} else if ($node.hasClass("sapFDynamicPageTitleMainActions")) {
-			this._sActionsAreaMinWidth = sMinWidth;
-		}
-	};
+	if ($node.hasClass("sapFDynamicPageTitleMainContent")) {
+		this._sContentAreaMinWidth = sMinWidth;
+	} else if ($node.hasClass("sapFDynamicPageTitleMainActions")) {
+		this._sActionsAreaMinWidth = sMinWidth;
+	}
+};
 
 	/**
 	 * Sets (if iContentSize is non-zero) or resets (otherwise) the flex-basis of the HTML element where the

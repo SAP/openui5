@@ -35,14 +35,10 @@ sap.ui.define([
 			designtime: "sap/m/designtime/NewsContent.designtime",
 			properties : {
 				/**
-				 * Updates the size of the chart. If not set then the default size is applied based on the device tile.
-				 * @deprecated Since version 1.38.0. The NewsContent control has now a fixed size, depending on the used media (desktop, tablet or phone).
-				 */
-				"size" : {type : "sap.m.Size", group : "Misc", defaultValue : "Auto", deprecated: true},
-				/**
 				 * The content text.
 				 */
 				"contentText" : {type : "string", group : "Misc", defaultValue : null},
+
 				/**
 				 * The subheader.
 				 */

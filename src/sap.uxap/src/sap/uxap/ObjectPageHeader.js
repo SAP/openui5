@@ -98,7 +98,6 @@ sap.ui.define([
 			library: "sap.uxap",
 			interfaces: ["sap.uxap.IHeaderTitle"],
 			properties: {
-
 				/**
 				 * The URL of the image, representing the business object
 				 */
@@ -163,18 +162,6 @@ sap.ui.define([
 				isActionAreaAlwaysVisible: {type: "boolean", defaultValue: true},
 
 				/**
-				 * Determines the design of the header - Light or Dark.
-				 * <b>Note: </b>This property is deprecated. It will continue to work in the Blue Crystal theme,
-				 * but it will not be taken into account for the Belize themes.
-				 * @deprecated As of version 1.40.1
-				 */
-				headerDesign: {
-					type: "sap.uxap.ObjectPageHeaderDesign",
-					defaultValue: ObjectPageHeaderDesign.Light,
-					deprecated: true
-				},
-
-				/**
 				 * When set to true, the selector arrow icon/image is shown and can be pressed.
 				 */
 				showTitleSelector: {type: "boolean", group: "Misc", defaultValue: false},
@@ -214,7 +201,6 @@ sap.ui.define([
 			},
 			defaultAggregation: "actions",
 			aggregations: {
-
 				/**
 				 *
 				 * Internal aggregation for the legacy breadCrumbsLinks.
@@ -228,13 +214,6 @@ sap.ui.define([
 				 * @since 1.50
 				 */
 				breadcrumbs: {type: "sap.m.Breadcrumbs", multiple: false, singularName: "breadcrumb"},
-
-				/**
-				 *
-				 * A list of all the active link elements in the BreadCrumbs control.
-				 * @deprecated As of version 1.50, use the <code>breadcrumbs</code> aggregation instead.
-				 */
-				breadCrumbsLinks: {type: "sap.m.Link", multiple: true, singularName: "breadCrumbLink", deprecated: true},
 
 				/**
 				 *
@@ -253,6 +232,7 @@ sap.ui.define([
 				 * Icon for the identifier line.
 				 */
 				_objectImage: {type: "sap.ui.core.Control", multiple: false, visibility: "hidden"},
+
 				_placeholder: {type: "sap.m.Avatar", multiple: false, visibility: "hidden"},
 				_lockIconCont: {type: "sap.m.Button", multiple: false, visibility: "hidden"},
 				_lockIcon: {type: "sap.m.Button", multiple: false, visibility: "hidden"},
@@ -378,19 +358,6 @@ sap.ui.define([
 		this._oChangesIcon = this._lazyLoadInternalAggregation("_changesIcon", true).attachPress(this._handleChangesPress, this);
 		this._oChangesIconCont = this._lazyLoadInternalAggregation("_changesIconCont", true).attachPress(this._handleChangesPress, this);
 	};
-
-	/**
-	 * @deprecated As of version 1.50, <code>breadCrumbsLinks</code> has been deprecated
-	 */
-	ObjectPageHeader.getMetadata().forwardAggregation(
-		"breadCrumbsLinks",
-		{
-			getter: function() { // TODO: is invalidation needed for non-getters?
-				return this._lazyLoadInternalAggregation("_breadCrumbs");
-			},
-			aggregation: "links"
-		}
-	);
 
 	ObjectPageHeader.prototype._handleOverflowButtonPress = function (oEvent) {
 		this._oOverflowActionSheet.openBy(this._oOverflowButton);
@@ -532,17 +499,6 @@ sap.ui.define([
 		this._setAggregationTooltip("_titleArrowIcon", vTooltip);
 		this._setAggregationTooltip("_titleArrowIconCont", vTooltip);
 
-		return this;
-	};
-
-	/**
-	 * @deprecated As of version 1.40.1
-	 */
-	ObjectPageHeader.prototype.setHeaderDesign = function (sHeaderDesign) {
-		this.setProperty("headerDesign", sHeaderDesign);
-		if (this.getParent()) {
-			this.getParent().invalidate(); // Force rerendering of ObjectPageLayout if the design change
-		}
 		return this;
 	};
 

@@ -974,13 +974,6 @@ sap.ui.define([
 			Log.info("sap.ui.core.support.Support.info initialized.");
 		}
 
-		/**
-		 * @deprecated
-		 */
-		if (!bAsync) {
-			injectSupportInfo.apply(null, aModulesWhereToInjectSupportInfo.map(sap.ui.requireSync) ); // legacy-relevant: Sync path
-			return;
-		}
 		sap.ui.require(aModulesWhereToInjectSupportInfo, injectSupportInfo);
 	};
 

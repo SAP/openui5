@@ -1,57 +1,53 @@
 {
-  "name": "@openui5/testsuite",
-  "private": true,
-  "version": "1.119.0-SNAPSHOT",
-  "description": "OpenUI5 Testsuite Application",
-  "author": "SAP SE (https://www.sap.com)",
-  "license": "Apache-2.0",
-  "keywords": [
-    "openui5",
-    "sapui5",
-    "ui5"
-  ],
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/SAP/openui5.git"
-  },
-  "scripts": {
-    "start": "ui5 serve",
-    "testsuite": "ui5 serve --open \"/test-resources/testsuite/testframe.html\"",
-    "sdk": "npm run build-sdk && npm run serve-sdk",
-    "build-sdk": "node ../../lib/builder/jsdocBuilder.mjs",
-    "serve-sdk": "ws --compress -d dist"
-  },
-  "dependencies": {
-    "@openui5/sap.f": "1.119.0-SNAPSHOT",
-    "@openui5/sap.m": "1.119.0-SNAPSHOT",
-    "@openui5/sap.tnt": "1.119.0-SNAPSHOT",
-    "@openui5/sap.ui.codeeditor": "1.119.0-SNAPSHOT",
-    "@openui5/sap.ui.commons": "1.119.0-SNAPSHOT",
-    "@openui5/sap.ui.core": "1.119.0-SNAPSHOT",
-    "@openui5/sap.ui.documentation": "1.119.0-SNAPSHOT",
-    "@openui5/sap.ui.dt": "1.119.0-SNAPSHOT",
-    "@openui5/sap.ui.fl": "1.119.0-SNAPSHOT",
-    "@openui5/sap.ui.integration": "1.119.0-SNAPSHOT",
-    "@openui5/sap.ui.layout": "1.119.0-SNAPSHOT",
-    "@openui5/sap.ui.mdc": "1.119.0-SNAPSHOT",
-    "@openui5/sap.ui.rta": "1.119.0-SNAPSHOT",
-    "@openui5/sap.ui.suite": "1.119.0-SNAPSHOT",
-    "@openui5/sap.ui.support": "1.119.0-SNAPSHOT",
-    "@openui5/sap.ui.table": "1.119.0-SNAPSHOT",
-    "@openui5/sap.ui.testrecorder": "1.119.0-SNAPSHOT",
-    "@openui5/sap.ui.unified": "1.119.0-SNAPSHOT",
-    "@openui5/sap.ui.ux3": "1.119.0-SNAPSHOT",
-    "@openui5/sap.ui.webc.common": "1.119.0-SNAPSHOT",
-    "@openui5/sap.ui.webc.fiori": "1.119.0-SNAPSHOT",
-    "@openui5/sap.ui.webc.main": "1.119.0-SNAPSHOT",
-    "@openui5/sap.uxap": "1.119.0-SNAPSHOT",
-    "@openui5/themelib_sap_belize": "1.119.0-SNAPSHOT",
-    "@openui5/themelib_sap_bluecrystal": "1.119.0-SNAPSHOT",
-    "@openui5/themelib_sap_fiori_3": "1.119.0-SNAPSHOT",
-    "@openui5/themelib_sap_horizon": "1.119.0-SNAPSHOT"
-  },
-  "devDependencies": {
-    "@ui5/middleware-code-coverage": "^1.0.3",
-    "local-web-server": "^5.3.0"
-  }
+	"name": "@openui5/testsuite",
+	"private": true,
+	"version": "2.0.0-SNAPSHOT",
+	"description": "OpenUI5 Testsuite Application",
+	"author": "SAP SE (https://www.sap.com)",
+	"license": "Apache-2.0",
+	"keywords": [
+		"openui5",
+		"sapui5",
+		"ui5"
+	],
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/SAP/openui5.git"
+	},
+	"scripts": {
+		"start": "ui5 serve",
+		"testsuite": "ui5 serve --open \"/test-resources/testsuite/testframe.html\"",
+		"sdk": "npm run build-sdk && npm run serve-sdk",
+		"build-sdk": "node ../../lib/builder/jsdocBuilder.mjs",
+		"serve-sdk": "ws --compress -d dist"
+	},
+	"dependencies": {
+		"@openui5/sap.f": "2.0.0-SNAPSHOT",
+		"@openui5/sap.m": "2.0.0-SNAPSHOT",
+		"@openui5/sap.tnt": "2.0.0-SNAPSHOT",
+		"@openui5/sap.ui.codeeditor": "2.0.0-SNAPSHOT",
+		"@openui5/sap.ui.core": "2.0.0-SNAPSHOT",
+		"@openui5/sap.ui.documentation": "2.0.0-SNAPSHOT",
+		"@openui5/sap.ui.dt": "2.0.0-SNAPSHOT",
+		"@openui5/sap.ui.fl": "2.0.0-SNAPSHOT",
+		"@openui5/sap.ui.integration": "2.0.0-SNAPSHOT",
+		"@openui5/sap.ui.layout": "2.0.0-SNAPSHOT",
+		"@openui5/sap.ui.mdc": "2.0.0-SNAPSHOT",
+		"@openui5/sap.ui.rta": "2.0.0-SNAPSHOT",
+		"@openui5/sap.ui.support": "2.0.0-SNAPSHOT",
+		"@openui5/sap.ui.table": "2.0.0-SNAPSHOT",
+		"@openui5/sap.ui.testrecorder": "2.0.0-SNAPSHOT",
+		"@openui5/sap.ui.unified": "2.0.0-SNAPSHOT",
+		"@openui5/sap.ui.webc.common": "2.0.0-SNAPSHOT",
+		"@openui5/sap.ui.webc.fiori": "2.0.0-SNAPSHOT",
+		"@openui5/sap.ui.webc.main": "2.0.0-SNAPSHOT",
+		"@openui5/sap.uxap": "2.0.0-SNAPSHOT",
+		"@openui5/themelib_sap_belize": "2.0.0-SNAPSHOT",
+		"@openui5/themelib_sap_fiori_3": "2.0.0-SNAPSHOT",
+		"@openui5/themelib_sap_horizon": "2.0.0-SNAPSHOT"
+	},
+	"devDependencies": {
+		"@ui5/middleware-code-coverage": "^1.0.3",
+		"local-web-server": "^5.3.0"
+	}
 }

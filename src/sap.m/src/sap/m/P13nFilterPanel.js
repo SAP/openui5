@@ -320,33 +320,6 @@ sap.ui.define([
 		}
 	};
 
-	/**
-	 * Setter for a KeyFields array.
-	 *
-	 * @private
-	 * @deprecated Since 1.34. This method does not work anymore - you should use the Items aggregation
-	 * @param {array} aKeyFields - array of KeyFields [{key: "CompanyCode", text: "ID"}, {key:"CompanyName", text : "Name"}]
-	 * @param {array} aKeyFieldsExclude - array of exclude KeyFields
-	 */
-	P13nFilterPanel.prototype.setKeyFields = function(aKeyFields, aKeyFieldsExclude) {
-		this._aKeyFields = aKeyFields;
-
-		if (this._oIncludeFilterPanel) {
-			aKeyFields.some(function(oKeyField){
-				if (oKeyField.isDefault){
-					this._oIncludeFilterPanel.setAutoAddNewRow(true);
-				}
-			}.bind(this));
-			this._oIncludeFilterPanel.setKeyFields(aKeyFields);
-		}
-		if (this._oExcludeFilterPanel) {
-			this._oExcludeFilterPanel.setKeyFields(
-				(Array.isArray(aKeyFieldsExclude) && aKeyFieldsExclude.length > 0) ? aKeyFieldsExclude : aKeyFields
-			);
-		}
-
-	};
-
 	P13nFilterPanel.prototype.getKeyFields = function() {
 		return this._aKeyFields;
 	};
@@ -495,7 +468,7 @@ sap.ui.define([
 			aKeyFields = [];
 			sModelName = (this.getBindingInfo("items") || {}).model;
 
-            this.getItems().forEach(function(oItem) {
+			this.getItems().forEach(function(oItem) {
 				var oContext = oItem.getBindingContext(sModelName),
 					oField,
 					bNullable,
@@ -539,14 +512,6 @@ sap.ui.define([
 
 				this._modifyFieldOperationsBasedOnMaxLength(oField);
 			}, this);
-
-            /**
-             * @deprecated Since 1.34. This method does not work anymore - you should use the Items aggregation
-             * @private
-             */
-            (function() {
-                this.setKeyFields && this.setKeyFields(aKeyFields, aKeyFieldsExclude);
-            }.bind(this))();
 
 			var aConditions = [];
 			sModelName = (this.getBindingInfo("filterItems") || {}).model;
@@ -887,5 +852,4 @@ sap.ui.define([
 	};
 
 	return P13nFilterPanel;
-
 });

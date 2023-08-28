@@ -5,7 +5,6 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/core/Control",
 	"sap/ui/core/Fragment",
-	"sap/ui/core/ValueState",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/write/api/ContextBasedAdaptationsAPI",
@@ -13,13 +12,13 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/rta/toolbar/Adaptation",
 	"sap/ui/rta/toolbar/contextBased/SaveAsAdaptation",
-	"sap/ui/thirdparty/sinon-4"
+	"sap/ui/thirdparty/sinon-4",
+	"sap/ui/core/library"
 ], function(
 	RtaQunitUtils,
 	Core,
 	Control,
 	Fragment,
-	ValueState,
 	Layer,
 	ManifestUtils,
 	ContextBasedAdaptationsAPI,
@@ -27,9 +26,13 @@ sap.ui.define([
 	JSONModel,
 	Adaptation,
 	SaveAsAdaptation,
-	sinon
+	sinon,
+	library
 ) {
 	"use strict";
+
+	// shortcut for sap.ui.core.ValueState
+	var ValueState = library.ValueState;
 
 	var sandbox = sinon.createSandbox();
 

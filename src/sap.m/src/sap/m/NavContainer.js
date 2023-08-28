@@ -1859,11 +1859,6 @@ sap.ui.define([
 			if (this.getDomRef()) {
 				this._ensurePageStackInitialized();
 
-				/**
-				 * @deprecated since 1.70
-				 */
-				rerender = this.rerender.bind(this);
-
 				rerender();
 			}
 		}
@@ -1885,11 +1880,6 @@ sap.ui.define([
 			this._fireAdaptableContentChange(oPage);
 			if (this.getDomRef()) {
 				this._ensurePageStackInitialized();
-
-				/**
-				 * @deprecated since 1.70
-				 */
-				rerender = this.rerender.bind(this);
 
 				rerender();
 			}

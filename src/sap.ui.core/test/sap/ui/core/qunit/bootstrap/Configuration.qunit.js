@@ -902,72 +902,6 @@ sap.ui.define([
 		oStub.restore();
 	});
 
-	/**
-	 * Tests the interaction between the legacy "animation" and the modern "animationMode" settings.
-	 * If only the legacy "animation" settings is given, the modern "animationMode" settings is
-	 * automatically set accordingly.
-	 * @deprecated As of version 1.110
-	 */
-	QUnit.module("[Legacy] Animation & AnimationMode interaction", {
-		beforeEach: function() {
-			this.mParams = {};
-			BaseConfig._.invalidate();
-			this.oGlobalConfigStub = sinon.stub(GlobalConfigurationProvider, "get");
-			this.oGlobalConfigStub.callsFake(function(sKey) {
-				if (this.mParams[sKey] !== undefined) {
-					return this.mParams[sKey];
-				} else {
-					return this.oGlobalConfigStub.wrappedMethod.call(this, sKey);
-				}
-			}.bind(this));
-			this.oBaseStub = sinon.stub(BaseConfig, "get");
-			this.oBaseStub.callsFake(function(mParameters) {
-				mParameters.provider = undefined;
-				return this.oBaseStub.wrappedMethod.call(this, mParameters);
-			}.bind(this));
-		},
-		afterEach: function() {
-			this.oGlobalConfigStub.restore();
-			this.oBaseStub.restore();
-		}
-	});
-
-	QUnit.test("Default animation and animation mode", function(assert) {
-		assert.ok(Configuration.getAnimation(), "Default animation.");
-		assert.equal(Configuration.getAnimationMode(), AnimationMode.full, "Default animation mode.");
-	});
-
-	QUnit.test("Animation is off, default animation mode", function(assert) {
-		this.mParams.sapUiAnimation = false;
-		this.mParams.sapUiAnimationMode = undefined;
-		assert.ok(!Configuration.getAnimation(), "Animation should be off.");
-		assert.equal(Configuration.getAnimationMode(), AnimationMode.minimal, "Animation mode should switch to " + AnimationMode.minimal + ".");
-	});
-
-	QUnit.test("Animation is off, valid but not possible mode is set and sanitized", function(assert) {
-		this.mParams.sapUiAnimation = false;
-		this.mParams.sapUiAnimationMode = AnimationMode.basic;
-		assert.ok(Configuration.getAnimation(), "Animation should be on because animation mode overwrites animation.");
-		assert.equal(Configuration.getAnimationMode(), AnimationMode.basic, "Animation mode should switch to " + AnimationMode.basic + ".");
-	});
-
-	QUnit.test("Valid animation modes from enumeration & side-effect on 'animation' setting", function(assert) {
-		for (var sAnimationModeKey in AnimationMode) {
-			if (AnimationMode.hasOwnProperty(sAnimationModeKey)) {
-				BaseConfig._.invalidate();
-				var sAnimationMode = AnimationMode[sAnimationModeKey];
-				this.mParams.sapUiAnimation = false;
-				this.mParams.sapUiAnimationMode = sAnimationMode;
-				if (sAnimationMode === AnimationMode.none || sAnimationMode === AnimationMode.minimal) {
-					assert.ok(!Configuration.getAnimation(), "Animation is switched to off because of animation mode.");
-				} else {
-					assert.ok(Configuration.getAnimation(), "Animation is switched to on because of animation mode.");
-				}
-				assert.equal(Configuration.getAnimationMode(), sAnimationMode, "Test for animation mode: " + sAnimationMode);
-			}
-		}
-	});
-
 	QUnit.module("AnimationMode initial setting evaluation", {
 		beforeEach: function() {
 			this.mParams = {};
@@ -993,10 +927,6 @@ sap.ui.define([
 	});
 
 	QUnit.test("Invalid animation mode", function(assert) {
-		/**
-		 * @deprecated As of version 1.50.0, replaced by {@link sap.ui.core.Configuration#getAnimationMode}
-		 */
-		this.mParams.sapUiAnimation = false;
 		this.mParams.sapUiAnimationMode = "someuUnsupportedStringValue";
 		assert.throws(
 			function() { Configuration.getAnimationMode(); },
@@ -1010,10 +940,6 @@ sap.ui.define([
 			if (AnimationMode.hasOwnProperty(sAnimationModeKey)) {
 				BaseConfig._.invalidate();
 				var sAnimationMode = AnimationMode[sAnimationModeKey];
-				/**
-				 * @deprecated As of version 1.50.0, replaced by {@link sap.ui.core.Configuration#getAnimationMode}
-				 */
-				this.mParams.sapUiAnimation = false;
 				this.mParams.sapUiAnimationMode = sAnimationMode;
 				assert.equal(Configuration.getAnimationMode(), sAnimationMode, "Test for animation mode: " + sAnimationMode);
 			}
@@ -1052,19 +978,11 @@ sap.ui.define([
 		// Check if default values are set
 		assert.equal(oConfiguration.getAnimationMode(), AnimationMode.full, "Default animation mode is " + AnimationMode.full + ".");
 		assert.equal(getHtmlAttribute("data-sap-ui-animation-mode"), AnimationMode.full, "Default animation mode should be injected as attribute.");
-		/**
-		 * @deprecated As of version 1.50.0, replaced by {@link sap.ui.core.Configuration#getAnimationMode}
-		 */
-		assert.equal(getHtmlAttribute("data-sap-ui-animation"), "on", "Default animation should be injected as attribute.");
 
 		// Change animation mode
 		oConfiguration.setAnimationMode(AnimationMode.none);
 		assert.equal(oConfiguration.getAnimationMode(), AnimationMode.none, "Animation mode should switch to " + AnimationMode.none + ".");
 		assert.equal(getHtmlAttribute("data-sap-ui-animation-mode"), AnimationMode.none, "Animation mode should be injected as attribute.");
-		/**
-		 * @deprecated As of version 1.50.0, replaced by {@link sap.ui.core.Configuration#getAnimationMode}
-		 */
-		assert.equal(getHtmlAttribute("data-sap-ui-animation"), "off", "Animation should be turned off.");
 	});
 
 	QUnit.test("Invalid animation mode", function(assert) {
@@ -1317,18 +1235,10 @@ sap.ui.define([
 
 	QUnit.module("Allowlist configuration options", {
 		beforeEach: function() {
-			/**
-			 * @deprecated Since 1.85.0.
-			 */
-			delete window["sap-ui-config"]["whitelistservice"];
 			delete window["sap-ui-config"]["allowlistservice"];
 			delete window["sap-ui-config"]["frameoptionsconfig"];
 		},
 		afterEach: function() {
-			/**
-			 * @deprecated Since 1.85.0.
-			 */
-			delete window["sap-ui-config"]["whitelistservice"];
 			delete window["sap-ui-config"]["allowlistservice"];
 			delete window["sap-ui-config"]["frameoptionsconfig"];
 			if (this.oMetaWhiteList) {
@@ -1342,58 +1252,12 @@ sap.ui.define([
 		}
 	});
 
-	// Whitelist service only
-	// SAP strives to replace insensitive terms with inclusive language.
-	// Since APIs cannot be renamed or immediately removed for compatibility reasons, this API has been deprecated.
-	/**
-	 * @deprecated Since 1.85.0.
-	 */
-	QUnit.test("whitelistService", function(assert) {
-		var SERVICE_URL = "/service/url/from/config";
-		window["sap-ui-config"]["whitelistservice"] = SERVICE_URL;
-		Configuration.setCore();
-		assert.equal(Configuration.getWhitelistService(), SERVICE_URL, "Deprecated getWhitelistService should return service url");
-		assert.equal(Configuration.getAllowlistService(), SERVICE_URL, "Successor getAllowlistService should return service url");
-	});
-
-	/**
-	 * @deprecated Since 1.85.0.
-	 */
-	QUnit.test("sap.whitelistService meta tag", function(assert) {
-		var SERVICE_URL = "/service/url/from/meta";
-		this.oMetaWhiteList = document.createElement('meta');
-		this.oMetaWhiteList.setAttribute('name', 'sap.whitelistService');
-		this.oMetaWhiteList.setAttribute('content', SERVICE_URL);
-		document.head.appendChild(this.oMetaWhiteList);
-
-		Configuration.setCore();
-		assert.equal(Configuration.getWhitelistService(), SERVICE_URL, "Deprecated getWhitelistService should return service url");
-		assert.equal(Configuration.getAllowlistService(), SERVICE_URL, "Successor getAllowlistService should return service url");
-	});
-
-	/**
-	 * @deprecated Since 1.85.0.
-	 */
-	QUnit.test("frameOptionsConfig.whitelist", function(assert) {
-		var LIST = "example.com";
-		window["sap-ui-config"]["frameoptionsconfig"] = {
-			whitelist: LIST
-		};
-		Configuration.setCore();
-		assert.equal(Configuration.getValue("frameOptionsConfig").whitelist, LIST, "Deprecated frameOptionsConfig.whitelist should be set");
-		assert.equal(Configuration.getValue("frameOptionsConfig").allowlist, LIST, "Successor frameOptionsConfig.allowlist should be set");
-	});
-
 	// AllowList Service only
 	QUnit.test("allowlistService", function(assert) {
 		var SERVICE_URL = "/service/url/from/config";
 		window["sap-ui-config"]["allowlistservice"] = SERVICE_URL;
 		Configuration.setCore();
 		assert.equal(Configuration.getAllowlistService(), SERVICE_URL, "Successor getAllowlistService should return service url");
-		/**
-		 * @deprecated Since 1.85.0.
-		 */
-		assert.equal(Configuration.getWhitelistService(), SERVICE_URL, "Deprecated getWhitelistService should return service url");
 	});
 
 	QUnit.test("sap.allowlistService meta tag", function(assert) {
@@ -1405,10 +1269,6 @@ sap.ui.define([
 
 		Configuration.setCore();
 		assert.equal(Configuration.getAllowlistService(), SERVICE_URL, "Successor getAllowlistService should return service url");
-		/**
-		 * @deprecated Since 1.85.0.
-		 */
-		assert.equal(Configuration.getWhitelistService(), SERVICE_URL, "Deprecated getWhitelistService should return service url");
 	});
 
 	QUnit.test("frameOptionsConfig.allowlist", function(assert) {
@@ -1417,59 +1277,6 @@ sap.ui.define([
 			allowlist: LIST
 		};
 		Configuration.setCore();
-		assert.equal(Configuration.getValue("frameOptionsConfig").allowlist, LIST, "Successor frameOptionsConfig.allowlist should be set");
-		/**
-		 * @deprecated Since 1.85.0.
-		 */
-		assert.equal(Configuration.getValue("frameOptionsConfig").whitelist, undefined, "Deprecated frameOptionsConfig.whitelist should not be set");
-	});
-
-	// AllowList mixed with WhiteList Service (AllowList should be preferred)
-	// SAP strives to replace insensitive terms with inclusive language.
-	// Since APIs cannot be renamed or immediately removed for compatibility reasons, this API has been deprecated.
-	/**
-	 * @deprecated Since 1.85.0.
-	 */
-	QUnit.test("whitelistService mixed with allowlistService", function(assert) {
-		var SERVICE_URL = "/service/url/from/config";
-		window["sap-ui-config"]["whitelistservice"] = SERVICE_URL;
-		window["sap-ui-config"]["allowlistservice"] = SERVICE_URL;
-		Configuration.setCore();
-		assert.equal(Configuration.getWhitelistService(), SERVICE_URL, "Deprecated getWhitelistService should return service url");
-		assert.equal(Configuration.getAllowlistService(), SERVICE_URL, "Successor getAllowlistService should return service url");
-	});
-
-	/**
-	 * @deprecated Since 1.85.0.
-	 */
-	QUnit.test("sap.whitelistService mixed with sap.allowlistService meta tag", function(assert) {
-		var SERVICE_URL = "/service/url/from/meta";
-		this.oMetaWhiteList = document.createElement('meta');
-		this.oMetaWhiteList.setAttribute('name', 'sap.whitelistService');
-		this.oMetaWhiteList.setAttribute('content', SERVICE_URL);
-		document.head.appendChild(this.oMetaWhiteList);
-
-		this.oMetaAllowList = document.createElement('meta');
-		this.oMetaAllowList.setAttribute('name', 'sap.allowlistService');
-		this.oMetaAllowList.setAttribute('content', SERVICE_URL);
-		document.head.appendChild(this.oMetaAllowList);
-
-		Configuration.setCore();
-		assert.equal(Configuration.getWhitelistService(), SERVICE_URL, "Deprecated getWhitelistService should return service url");
-		assert.equal(Configuration.getAllowlistService(), SERVICE_URL, "Successor getAllowlistService should return service url");
-	});
-
-	/**
-	 * @deprecated Since 1.85.0.
-	 */
-	QUnit.test("frameOptionsConfig.whitelist mixed with frameoptions.allowlist", function(assert) {
-		var LIST = "example.com";
-		window["sap-ui-config"]["frameoptionsconfig"] = {
-			allowlist: LIST,
-			whitelist: LIST
-		};
-		Configuration.setCore();
-		assert.equal(Configuration.getValue("frameOptionsConfig").whitelist, LIST, "Deprecated frameOptionsConfig.whitelist should be set");
 		assert.equal(Configuration.getValue("frameOptionsConfig").allowlist, LIST, "Successor frameOptionsConfig.allowlist should be set");
 	});
 

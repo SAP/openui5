@@ -1,3 +1,0 @@
-<layout:HorizontalLayout xmlns:layout="sap.ui.layout" xmlns="sap.m">
-	<Button text="{/someText}" />
-</layout:HorizontalLayout>

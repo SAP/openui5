@@ -75,7 +75,7 @@ sap.ui.define([
 							}
 						}
 
-						if (mResponseParameter.mDeepSalesOrderMsg !== "NoMsg" && oXhr.url.indexOf("/BusinessPartnerSet('0100000000')" >= 0)) {
+						if (mResponseParameter.mDeepSalesOrderMsg !== "NoMsg" && oXhr.url.indexOf(false)) {
 							oMessages = {
 								code: "MESSAGE/CODE",
 								message: "Operation failed",

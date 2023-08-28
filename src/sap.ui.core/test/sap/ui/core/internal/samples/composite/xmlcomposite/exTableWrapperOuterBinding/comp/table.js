@@ -2,9 +2,9 @@
  * ${copyright}
  */
 sap.ui.define([
-	'sap/ui/core/XMLComposite'], function(XMLComposite) {
+], function() {
 	"use strict";
-	var Table = XMLComposite.extend("sap.ui.core.internal.samples.composite.xmlcomposite.exTableWrapperOuterBinding.comp.table", {
+	var Table = undefined/*XMLComposite*/.extend("sap.ui.core.internal.samples.composite.xmlcomposite.exTableWrapperOuterBinding.comp.table", {
 		metadata: {
 			aggregations: {
 				columns: {

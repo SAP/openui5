@@ -1819,7 +1819,7 @@ sap.ui.define([
 					return sResult.endsWith("value}");
 				});
 				aContextEntries = aResult.map(function (sResult) {
-					return sResult.substring("{context>".length, sResult.length - 1);
+					return sResult.substring(9, sResult.length - 1);
 				});
 				aContextEntries.forEach(function (sContextEntry) {
 					oContextModel.getProperty(sContextEntry);

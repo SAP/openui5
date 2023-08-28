@@ -36,38 +36,40 @@ sap.ui.define(['./library', 'sap/ui/core/library', 'sap/ui/core/Control', './Til
 				 * The footer text of the tile.
 				 */
 				"footer" : {type : "string", group : "Appearance", defaultValue : null},
+
 				/**
 				 * The semantic color of the footer.
 				 * @since 1.44
 				 */
 				"footerColor" : {type : "sap.m.ValueColor", group : "Appearance", defaultValue : "Neutral"},
-				/**
-				 * Updates the size of the tile. If it is not set, then the default size is applied based on the device tile.
-				 * @deprecated Since version 1.38.0. The TileContent control has now a fixed size, depending on the used media (desktop, tablet or phone).
-				 */
-				"size" : {type : "sap.m.Size", group : "Appearance", defaultValue : "Auto", deprecated: true},
+
 				/**
 				 * The percent sign, the currency symbol, or the unit of measure.
 				 */
 				"unit" : {type : "string", group : "Data", defaultValue : null},
+
 				/**
 				 * Disables control if true.
 				 */
 				"disabled" : {type : "boolean", group : "Behavior", defaultValue : false},
+
 				/**
 				 * Frame types: 1x1, 2x1, and auto.
 				 */
 				"frameType" : {type : "sap.m.FrameType", group : "Appearance", defaultValue : "Auto"},
+
 				/**
 				 * Adds a priority badge before the content. Works only in Generic Tile ActionMode.
 				 * @experimental Since 1.96
 				 */
 				"priority" : {type: "sap.m.Priority", group: "Misc", defaultValue: Priority.None},
+
 				/**
 				 * Sets the Text inside the Priority badge in Generic Tile ActionMode.
 				 * @experimental Since 1.103
 				 */
-				 "priorityText" : {type: "string", group: "Misc", defaultValue: null},
+				"priorityText" : {type: "string", group: "Misc", defaultValue: null},
+
 				/**
 				 * The load status.
 				 * @since 1.100.0

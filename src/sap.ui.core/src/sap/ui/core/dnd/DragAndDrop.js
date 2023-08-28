@@ -7,9 +7,10 @@ sap.ui.define([
 	"sap/ui/core/Element",
 	"../UIArea",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Configuration"
+	"sap/ui/core/Configuration",
+	"sap/ui/core/StaticArea"
 ],
-function(lib, Device, Element, UIArea, jQuery, Configuration) {
+function(lib, Device, Element, UIArea, jQuery, Configuration, StaticArea) {
 	"use strict";
 
 	var RelativeDropPosition = lib.dnd.RelativeDropPosition;
@@ -293,7 +294,7 @@ function(lib, Device, Element, UIArea, jQuery, Configuration) {
 		}
 
 		$DropIndicator = jQuery("<div class='sapUiDnDIndicator'></div>");
-		jQuery(sap.ui.getCore().getStaticAreaRef()).append($DropIndicator);
+		jQuery(StaticArea.getDomRef()/* LFUI5: Check: StaticArea's API might have a better fit for your use case. */).append($DropIndicator);
 		return $DropIndicator;
 	}
 

@@ -295,14 +295,15 @@ sap.ui.define([
 		aDates[1].focus();
 
 		//Act
-		this.oCal.rerender();
+		this.oCal.invalidate();
+
+		oCore.applyChanges();
 
 		//Assert
 		_assertFocus(aDates[1], aDates[1].id, "Calendar: after rerendering  second day still has focus", assert);
 	});
 
 	QUnit.test("After Rerendering, the focus is not stolen from an external control (i.e. a button)", function(assert) {
-
 		//Prepare
 		var oCalendarDateInt = new CalendarDateInterval(),
 			oExternalControl = new CalendarDateInterval("extControl"),
@@ -320,7 +321,9 @@ sap.ui.define([
 		_assertFocus(oExternalControl.getDomRef(), sExpected, "Prerequisites check: 'extControl' (another DateInterval) should be focused", assert);
 
 		//Act
-		oCalendarDateInt.rerender();
+		oCalendarDateInt.invalidate();
+
+		oCore.applyChanges();
 
 		//Assert
 		_assertFocus(oExternalControl.getDomRef(), sExpected, "After rerendering, the focus should stay on the 'extControl' (another MonthInterval)", assert);

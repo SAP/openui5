@@ -159,7 +159,7 @@ sap.ui.define([
 					}
 					var oMessageStrip = oControl._messageStrip;
 					if (oControl._level !== "1" && oMessageStrip) {
-						oMessageStrip.rerender();
+						oMessageStrip.invalidate();
 					}
 					if (oControl.getExpanded()) {
 						// handle error message for sub panel/tab

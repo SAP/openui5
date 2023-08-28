@@ -311,14 +311,6 @@ sap.ui.define([
 			return;
 		}
 
-		/**
-		 * @deprecated since 1.58 as jQuery.sap.registerResourcePath has been deprecated.
-		 */
-		if (oFrameJQuery && oFrameJQuery.sap && oFrameJQuery.sap.registerResourcePath) {
-			oFrameJQuery.sap.registerResourcePath(sResource, sAbsoluteOpaPath);
-			return;
-		}
-
 		throw new Error("iFrameLauncher.js: UI5 module system not found.");
 	}
 

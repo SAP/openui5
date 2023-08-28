@@ -1502,118 +1502,6 @@ sap.ui.define([
 		return View.create(oViewOptions);
 	}
 
-	/**
-	 * @deprecated As of version 1.28
-	 */
-	QUnit.module("views - creation and caching", {
-		beforeEach: function () {
-			// System under test + Arrange
-			this.oRouter = fnCreateRouter();
-
-			return createXmlView().then(function(oView){
-				this.oView = oView;
-				this.fnLegayCreateViewStub = this.stub(View, "_create").callsFake(function (oViewOptions) {
-					return oView;
-				});
-
-			}.bind(this));
-		},
-		afterEach: function () {
-			this.oRouter.destroy();
-		}
-	});
-
-	QUnit.test("Should create a view", function (assert) {
-		// Act
-		var oExpectedView = this.oRouter.getView("foo", ViewType.XML, "baz");
-
-		// Assert
-		assert.deepEqual(oExpectedView.getContent(), this.oView.getContent(), "the view was created");
-		assert.strictEqual(this.fnLegayCreateViewStub.callCount, 1, "the stub was invoked");
-		var oCallArguments = this.fnLegayCreateViewStub.getCall(0).args[0];
-		assert.strictEqual(oCallArguments.viewName, "foo", "Did pass the viewname");
-		assert.strictEqual(oCallArguments.type, ViewType.XML, "Did pass the type");
-		assert.strictEqual(oCallArguments.id, "baz", "Did pass the id");
-	});
-
-
-	QUnit.test("Should set a view to the cache", function (assert) {
-		// Act
-		var oExpectedRouter = this.oRouter.setView("foo.bar", this.oView);
-		var oRetrievedView = this.oRouter.getView("foo.bar", "bar");
-
-		// Assert
-		assert.strictEqual(oRetrievedView, this.oView, "the view was returned");
-		assert.strictEqual(oExpectedRouter, this.oRouter, "able to chain this function");
-		assert.strictEqual(this.fnLegayCreateViewStub.callCount, 0, "the stub not invoked - view was loaded from the cache");
-	});
-
-	/**
-	 * @deprecated As of version 1.28
-	 */
-	QUnit.module("View events", {
-		beforeEach: function () {
-			// System under test + Arrange
-			this.oRouter = fnCreateRouter();
-		},
-		afterEach: function () {
-			this.oRouter.destroy();
-		}
-	});
-
-	QUnit.test("should be able to fire/attach/detach the created event", function(assert) {
-		// Arrange
-		var oParameters = { foo : "bar" },
-			oListener = {},
-			oData = { some : "data" },
-			fnEventSpy = this.spy(function(oEvent, oActualData) {
-				assert.strictEqual(oActualData, oData, "the data is correct");
-				assert.strictEqual(oEvent.getParameters(), oParameters, "the parameters are correct");
-				assert.strictEqual(this, oListener, "the this pointer is correct");
-			}),
-			oFireReturnValue,
-			oDetachReturnValue,
-			oAttachReturnValue = this.oRouter.attachViewCreated(oData, fnEventSpy, oListener);
-
-		// Act
-		oFireReturnValue = this.oRouter.fireViewCreated(oParameters);
-		oDetachReturnValue = this.oRouter.detachViewCreated(fnEventSpy, oListener);
-		this.oRouter.fireViewCreated();
-
-		// Assert
-		assert.strictEqual(fnEventSpy.callCount, 1, "did call the attach spy only once");
-		assert.strictEqual(oAttachReturnValue, this.oRouter, "did return this for chaining for attach");
-		assert.strictEqual(oDetachReturnValue, this.oRouter, "did return this for chaining for detach");
-		assert.strictEqual(oFireReturnValue, this.oRouter, "did return this for chaining for fire");
-	});
-
-	QUnit.test("Should fire the view created event if a view is created", function (assert) {
-		// Arrange
-		var sViewType = ViewType.XML,
-			sViewName = "foo",
-			oParameters,
-			fnEventSpy = this.spy(function (oEvent) {
-				oParameters = oEvent.getParameters();
-			});
-
-		return createXmlView().then(function (oView) {
-			this.stub(View, "_create").callsFake(function () {
-				return oView;
-			});
-
-			this.oRouter.attachViewCreated(fnEventSpy);
-
-			// Act
-			this.oRouter.getView(sViewName, sViewType);
-
-			// Assert
-			assert.strictEqual(fnEventSpy.callCount, 1, "The view created event was fired");
-			assert.strictEqual(oParameters.view, oView, "Did pass the view to the event parameters");
-			assert.strictEqual(oParameters.viewName, sViewName, "Did pass the viewName to the event parameters");
-			assert.strictEqual(oParameters.type, sViewType, "Did pass the viewType to the event parameters");
-		}.bind(this));
-	});
-
 	QUnit.module("titleChanged event", {
 		beforeEach: function() {
 			hasher.setHash("");
@@ -1902,37 +1790,6 @@ sap.ui.define([
 					}.bind(this), 0);
 				}.bind(this));
 			}.bind(this));
-	});
-
-	/**
-	 * @deprecated As of version 1.28
-	 */
-	QUnit.module("component", {
-		beforeEach: function () {
-			return createXmlView().then(function (oView) {
-				this.oView = oView;
-				this.fnGenericCreateViewStub = this.stub(View, "_create").callsFake(function () {
-					return oView;
-				});
-			}.bind(this));
-		}
-	});
-
-	QUnit.test("Should create a view with an component", function (assert) {
-		// Arrange
-		var oUIComponent = new UIComponent({}),
-			fnOwnerSpy = this.spy(oUIComponent, "runAsOwner"),
-			oRouter = fnCreateRouter({}, {}, oUIComponent);
-
-		// Act
-		oRouter.getView("foo", ViewType.XML);
-
-		// Assert
-		assert.strictEqual(fnOwnerSpy.callCount, 1, "Did run with owner");
-		assert.ok(fnOwnerSpy.calledBefore(this.fnGenericCreateViewStub), "Did invoke the owner function before creating the view");
-
-		// Cleanup
-		oRouter.destroy();
 	});
 
 	QUnit.module("targets", {
@@ -2428,48 +2285,6 @@ sap.ui.define([
 			assert.ok(oPanel.isA("sap.m.Panel"), "The view's content is created");
 
 			oRouteMatchedSpy.restore();
-		});
-	});
-
-	/**
-	 * @deprecated As of version 1.56
-	 */
-	QUnit.module("Special Asynchronity Combination Among Component, Root View", {
-		beforeEach: function() {
-			hasher.setHash("");
-		}
-	});
-
-	QUnit.test("Async Component with sync root view and router initialize in controller of root view", function(assert) {
-		var oFireRouteMatchedSpy = sinon.spy(Router.prototype, "fireRouteMatched");
-		return Component.create({
-			name: "test.routing.target.syncrootview",
-			manifest: false
-		}).then(function(oComponent){
-			return new Promise(function(resolve, reject) {
-				var oRootView = oComponent.getRootControl();
-				var oRouter = oComponent.getRouter();
-
-				function check() {
-					var oContainer = oRootView.byId("container");
-					assert.equal(oContainer.getPages().length, 1, "The target view is added to the container");
-
-					var oPanel = oContainer.getPages()[0].byId("panel");
-					assert.ok(oPanel.isA("sap.m.Panel"), "The home target is displayed");
-
-					oComponent.destroy();
-					oFireRouteMatchedSpy.restore();
-					resolve();
-				}
-
-				if (oFireRouteMatchedSpy.callCount == 1) {
-					check();
-				} else {
-					oRouter.attachRouteMatched(function() {
-						check();
-					});
-				}
-			});
 		});
 	});
 
@@ -3115,25 +2930,6 @@ sap.ui.define([
 	});
 
 	QUnit.module("Router in nested component (edge cases)");
-
-	/**
-	 * @deprecated As of version 1.90
-	 */
-	QUnit.test("Should throw an error if a nested component has configured synchronous routing", function(assert){
-		return Component.create({
-			name: "qunit.router.component.nestedComponentSync.Parent",
-			id: "asyncParent"
-		}).then(function(oParentComponent) {
-			var oHomeRoute = oParentComponent.getRouter().getRoute("home");
-			var oHomeRouteMatchedSpy = sinon.spy(oHomeRoute, "_routeMatched");
-
-			oParentComponent.getRouter().initialize();
-			assert.equal(oHomeRouteMatchedSpy.callCount, 1, "The home route should be matched once");
-			return oHomeRouteMatchedSpy.getCall(0).returnValue.catch(function(oError){
-				assert.equal(oError.message, "The router of component 'asyncParent---syncChildComponent' which is loaded via the target 'home' is defined as synchronous which is not supported using as a nested component.", "The correct error should be thrown.");
-			});
-		});
-	});
 
 
 	QUnit.module("Router in IAsyncContentCreation with nested component", {

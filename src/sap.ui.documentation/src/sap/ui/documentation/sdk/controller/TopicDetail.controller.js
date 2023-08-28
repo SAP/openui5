@@ -46,15 +46,7 @@ sap.ui.define([
 	) {
 		"use strict";
 
-		var GIT_HUB_DOCS_URL = "https://sap.github.io/openui5-docs/#/",
-			REGEX = {
-				SPECIAL_CHARS: /[\\\/:*\?"<>|]/g,
-				SPACES: /\s+/g
-			};
-
 		return BaseController.extend("sap.ui.documentation.sdk.controller.TopicDetail", {
-
-
 			/* =========================================================== */
 			/* lifecycle methods										   */
 			/* =========================================================== */
@@ -512,35 +504,7 @@ sap.ui.define([
 
 			onEditGitHubPress: function(oEvent) {
 				openWindow(this.jsonDefModel.getProperty("/mdEditLink"));
-			},
-
-			/**
-			 * Transforms a URL from the SAPUI5 documentation into the corresponding URL in the GitHub repo,
-			 * following the rules:
-			 * The GitHub URL starts with <code>GIT_HUB_DOCS_URL</code>
-			 * and the filename is calculated from the topic title in the following way:
-			 * 1) Special symbols are removed \ / : * ? “ < > |
-			 * 2) All empty spaces are replaced with “_” and one additional “_” is added at the end
-			 * 3) The first seven symbols from the ID used in the Demo Kit URLs are added at the end
-			 * 4) The file type is added at the end “.md”
-			 *
-			 * @param {string} sUrl the url of the file in the internal repo
-			 * @param {string} sTitle the title of the file
-			 * @returns {string} the url of the file in the GitHub repo
-			 * @private
-			 * @deprecated since v1.107.0
-			 */
-			_formatToGitHubUrl: function(sUrl, sTitle) {
-				var sGitHubFileName = sTitle.trim()
-					.replace(REGEX.SPECIAL_CHARS, "") // remove special chars
-					.replace(REGEX.SPACES, "_"); // replace remaining spaces with delimiter char
-				sGitHubFileName += "_"; // end the text with a single delimiter char
-				sGitHubFileName += sUrl.split("/").pop().substring(0, 7); // concat the first 7 symbols of the original filename
-				sGitHubFileName += ".md";
-				return GIT_HUB_DOCS_URL + sGitHubFileName;
 			}
-
 		});
-
 	}
 );

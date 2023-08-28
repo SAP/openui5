@@ -7,8 +7,9 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/thirdparty/sinon",
 	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/core/StaticArea",
 	"sap/ui/thirdparty/sinon-qunit"
-], function (Core, coreLibrary, InvisibleMessage, Log, sinon, nextUIUpdate) {
+], function(Core, coreLibrary, InvisibleMessage, Log, sinon, nextUIUpdate, StaticArea) {
 	"use strict";
 
 	var InvisibleMessageMode = coreLibrary.InvisibleMessageMode;
@@ -26,7 +27,7 @@ sap.ui.define([
 	QUnit.test("Element announcing", function(assert) {
 		// Arrange
 		var oInvisibleMessage = InvisibleMessage.getInstance(),
-			oStatic = Core.getStaticAreaRef(),
+			oStatic = StaticArea.getDomRef()/* LFUI5: Check: StaticArea's API might have a better fit for your use case. */,
 			fnInfoSpy = this.spy(Log, "info"),
 			oPoliteMarkup, oAssertiveMarkup;
 
@@ -47,7 +48,7 @@ sap.ui.define([
 	QUnit.test("Clearing of element content", async function(assert) {
 		// Arrange
 		var oInvisibleMessage = InvisibleMessage.getInstance(),
-			oStatic = Core.getStaticAreaRef(),
+			oStatic = StaticArea.getDomRef()/* LFUI5: Check: StaticArea's API might have a better fit for your use case. */,
 			oAssertiveMarkup;
 
 		this.clock = sinon.useFakeTimers();

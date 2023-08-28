@@ -38,27 +38,6 @@ sap.ui.define([
 
 	QUnit.module("parseViewAttributes");
 
-	/**
-	 * @deprecated As of version 1.110
-	 */
-	QUnit.test("return value - legacy factory API", function(assert) {
-		var oView = sap.ui.xmlview({
-			viewContent: sRootView
-		});
-
-		var oSpy = this.spy(oView, "applySettings");
-
-		var xmlNode = XMLHelper.parse(sView).documentElement;
-		XMLTemplateProcessor.parseTemplate(xmlNode, oView, mSettings);
-
-		assert.strictEqual(oSpy.callCount, 1, "applySettings is called once within the parsing process");
-		var mSettings = oSpy.getCall(0).args[0];
-
-		assert.strictEqual(mSettings.displayBlock, true, "displayBlock is parsed");
-		assert.strictEqual(mSettings.height, "100%", "height is parsed");
-		assert.notOk(mSettings.hasOwnProperty("unknownProperty"), "unknownProperty should be ignored");
-	});
-
 	QUnit.test("return value", function(assert) {
 		return XMLView.create({
 			definition: sRootView
@@ -97,102 +76,6 @@ sap.ui.define([
 	QUnit.test("Error Logging of invalid type values", function (assert) {
 		assert.ok(this.oLogSpy.calledOnce, "Log.error was only called once");
 		assert.ok(this.oLogSpy.alwaysCalledWithExactly("Value 'somethingInvalid' is not valid for type 'sap.m.ButtonType'."), "Log.error spy was called");
-	});
-
-	/**
-	 * @deprecated As of version 1.110
-	 */
-	QUnit.module("enrichTemplateIds - legacy factory API", {
-		beforeEach: function () {
-			this.oView = sap.ui.xmlview({
-				viewContent: sRootView,
-				id: "root",
-				async: true
-			});
-			this.xml = XMLHelper.parse(sView);
-		},
-		afterEach: function() {
-			this.oView.destroy();
-		}
-	});
-
-	QUnit.test("create IDs", function(assert) {
-		return this.oView.loaded().then(function() {
-			assert.ok(jQuery.isXMLDoc(this.xml), "valid xml document as input");
-			var xml = XMLTemplateProcessor.enrichTemplateIds(this.xml.documentElement, this.oView);
-			assert.ok(jQuery.isXMLDoc(xml), "valid xml document returned");
-			assert.strictEqual(xml.parentNode, this.xml, "no copying");
-			var node = jQuery(this.xml).find("#root--button")[0];
-			assert.ok(node, "control was found by full id");
-			assert.equal(node.nodeName, "Button", "button is a button");
-			assert.equal(node.getAttributeNS("http://schemas.sap.com/sapui5/extension/sap.ui.core.Internal/1", "id"), "true", "full id flag is set to true");
-		}.bind(this));
-	});
-
-	QUnit.test("create Controls", function(assert) {
-		return this.oView.loaded().then(function() {
-			XMLTemplateProcessor.enrichTemplateIds(this.xml.documentElement, this.oView);
-			assert.ok(!this.oView.byId("button"), "no control has been created yet");
-			XMLTemplateProcessor.parseTemplate(this.xml.documentElement, this.oView);
-			assert.ok(this.oView.byId("button"), "button control is created");
-		}.bind(this));
-	});
-
-	QUnit.test("do not create stashed Controls", function(assert) {
-		return this.oView.loaded().then(function() {
-			XMLTemplateProcessor.enrichTemplateIds(this.xml.documentElement, this.oView);
-			assert.ok(!this.oView.byId("stashedButton"), "no stashed control has been created yet");
-			XMLTemplateProcessor.parseTemplate(this.xml.documentElement, this.oView);
-			assert.ok(this.oView.byId("stashedButton"), "stashed button control is created");
-		}.bind(this));
-	});
-
-	QUnit.test("do not process ExtensionPoints", function(assert) {
-		return this.oView.loaded().then(function() {
-			// Preferrably we should test with a spy on "ExtensionPoint", but due
-			// to the AMD module handling it is not possible to place one
-			var node = jQuery(this.xml).find("#extensionButton")[0];
-			XMLTemplateProcessor.enrichTemplateIds(this.xml.documentElement, this.oView);
-			assert.equal(node.getAttribute("id"), "extensionButton", "id was not enriched");
-			XMLTemplateProcessor.parseTemplate(this.xml.documentElement, this.oView);
-			assert.ok(this.oView.byId("extensionButton"), "extension button is created");
-		}.bind(this));
-	});
-
-	QUnit.test("do not collect known namespaces as custom settings", function(assert) {
-		var oXMLSerializer = new XMLSerializer();
-		return this.oView.loaded().then(function() {
-			XMLTemplateProcessor.enrichTemplateIds(this.xml.documentElement, this.oView);
-			// serialize and deserialize the XML to enforce the namespaced attributes
-			this.xml = XMLHelper.parse(
-				oXMLSerializer.serializeToString(this.xml.documentElement)
-			);
-			XMLTemplateProcessor.parseTemplate(this.xml.documentElement, this.oView);
-			// no custom settings for known namespaces at all
-			assert.equal(
-				this.oView.data("sap-ui-custom-settings"), null,
-					"no custom setting should have been collected (view)");
-			assert.equal(
-				this.oView.byId("panel").data("sap-ui-custom-settings"), null,
-					"no custom setting should have been collected (panel)");
-			assert.equal(
-				this.oView.byId("button").data("sap-ui-custom-settings"), null,
-					"no custom setting should have been collected (button)");
-			assert.equal(
-				this.oView.byId("buttonRequire").data("sap-ui-custom-settings"), null,
-					"no custom setting should have been collected (button with core:require)");
-			// only custom settings for unknown namespaces, e.g. dt
-			// but no additional settings for known namespaces
-			assert.deepEqual(
-				this.oView.byId("buttonWithDTDataAndRequire").data("sap-ui-custom-settings"),
-				{
-					"sap.ui.dt": {
-						"test": "testvalue2"
-					}
-				},
-				"custom setting should have been collected only for unknown namespaces (button with dt:test & core:require)");
-
-		}.bind(this));
 	});
 
 	QUnit.module("enrichTemplateIds", {
@@ -292,34 +175,6 @@ sap.ui.define([
 
 	QUnit.module("General");
 
-	/**
-	 * @deprecated As of version 1.110
-	 */
-	QUnit.test("on design mode create Controls and fragment with correct declarativeSourceInfo (legacy factory API)", function (assert) {
-		var fnOrigGetDesignMode = Configuration.getDesignMode;
-		Configuration.getDesignMode = function () {
-			return true;
-		};
-		var oView = sap.ui.view({
-			viewName: "my.View",
-			type: ViewType.XML
-		});
-		Configuration.getDesignMode = fnOrigGetDesignMode;
-		return oView.loaded().then(function () {
-			var oButton = oView.byId("button");
-			assert.ok(oButton, "button control is created");
-			assert.equal(oButton._sapui_declarativeSourceInfo.xmlNode.getAttribute("text"), "Button");
-			var xmlRootNode = oButton._sapui_declarativeSourceInfo.xmlRootNode;
-			assert.equal(xmlRootNode.getAttribute("controllerName"), "my.View");
-			var oLabel = oView.byId("namedName");
-			assert.equal(oLabel._sapui_declarativeSourceInfo.xmlNode.getAttribute("text"), "{named>name}");
-			assert.equal(oLabel.getParent()._sapui_declarativeSourceInfo.fragmentName, "my.Fragment");
-			assert.equal(oLabel._sapui_declarativeSourceInfo.xmlRootNode, xmlRootNode);
-			assert.equal(oLabel.getParent()._sapui_declarativeSourceInfo.xmlRootNode, xmlRootNode);
-			oView.destroy();
-		});
-	});
-
 	QUnit.test("on design mode create Controls and fragment with correct declarativeSourceInfo", function (assert) {
 		var fnOrigGetDesignMode = Configuration.getDesignMode;
 		Configuration.getDesignMode = function () {
@@ -346,23 +201,6 @@ sap.ui.define([
 		});
 	});
 
-	/**
-	 * @deprecated As of version 1.110
-	 */
-	QUnit.test("on regular mode create Controls and fragment with no declarativeSourceInfo (legacy factory API)", function (assert) {
-		return sap.ui.view({
-			viewName: "my.View",
-			type: ViewType.XML
-		}).loaded().then(function (oView) {
-			var oButton = oView.byId("button");
-			assert.ok(oButton, "button control is created");
-			assert.notOk(oButton.hasOwnProperty("_sapui_declarativeSourceInfo"));
-			var oLabel = oView.byId("namedName");
-			assert.notOk(oLabel.hasOwnProperty("_sapui_declarativeSourceInfo"));
-			oView.destroy();
-		});
-	});
-
 	QUnit.test("on regular mode create Controls and fragment with no declarativeSourceInfo", function (assert) {
 		return View.create({
 			viewName: "my.View",
@@ -378,26 +216,6 @@ sap.ui.define([
 	});
 
 	QUnit.module("Metadata Contexts");
-
-	/**
-	 * @deprecated As of version 1.110
-	 */
-	QUnit.test("On regular controls with metadataContexts the XMLTemplateProcessor._preprocessMetadataContexts is called (legacy factory API)", function (assert) {
-		var mMetadataContexts = {};
-
-		XMLTemplateProcessor._preprocessMetadataContexts = function(sClassName, mSettings, oContext) {
-			mMetadataContexts = mSettings.metadataContexts;
-		};
-
-		return sap.ui.view({
-			viewName: "my.View",
-			type: ViewType.XML
-		}).loaded().then(function (oView) {
-			assert.ok(mMetadataContexts,"XMLTemplateProcessor._preprocessMetadataContexts is called");
-			oView.destroy();
-			XMLTemplateProcessor._preprocessMetadataContexts = null;
-		});
-	});
 
 	QUnit.test("On regular controls with metadataContexts the XMLTemplateProcessor._preprocessMetadataContexts is called", function (assert) {
 		var mMetadataContexts = {};
@@ -488,44 +306,6 @@ sap.ui.define([
 		assert.ok(sError,"Not ending with binding in {model: 'model', path: '/path'}{path: '/path', name: 'context1'},{path: '/any', name: 'context2'}huhuhuh is detected");
 	});
 
-	/**
-	 * @deprecated As of version 1.110
-	 */
-	QUnit.module("Custom Settings - legacy factory API", {
-		beforeEach: function () {
-			this.oView = sap.ui.xmlview({
-				viewContent: sView,
-				id: "view",
-				async: true
-			});
-			this.xml = XMLHelper.parse(sView);
-		},
-		afterEach: function () {
-			this.oView.destroy();
-		}
-	});
-
-	QUnit.test("Adding and cloning of sap-ui-custom-settings from xml namespaced attributes", function (assert) {
-		return this.oView.loaded().then(function () {
-			var oButton = this.oView.byId("buttonWithDTData"),
-				mCustomSettings = oButton.data("sap-ui-custom-settings");
-			assert.ok(mCustomSettings != null, "Custom Settings available for button with namespace sap.ui.dt");
-			assert.ok(mCustomSettings["sap.ui.dt"].test === "testvalue", "Custom Settings test available for button in namespace sap.ui.dt");
-			assert.ok(mCustomSettings["sap.ui.dt"] !== null, "Custom Settings available for button with namespace sap.ui.dt");
-			assert.ok(mCustomSettings["sap.ui.dt"]["test"] === "testvalue", "Custom Settings available for button in namespace sap.ui.dt/test");
-			assert.ok(mCustomSettings["notexisting"] === undefined, "Custom Settings available for button with not existing namespace");
-
-			var oClone = oButton.clone(),
-				mCustomSettingsClone = oClone.data("sap-ui-custom-settings");
-			assert.ok(mCustomSettingsClone !== null, "Custom Settings available for clone with namespace sap.ui.dt");
-			assert.ok(mCustomSettingsClone["sap.ui.dt"].test === "testvalue", "Custom Settings test available for clone in namespace sap.ui.dt");
-			assert.ok(mCustomSettingsClone["sap.ui.dt"] === mCustomSettings["sap.ui.dt"], "Custom Settings available for clone with namespace sap.ui.dt and is a reference");
-			assert.ok(mCustomSettingsClone["sap.ui.dt"] != null, "Custom Settings available for clone with namespace sap.ui.dt");
-			assert.ok(mCustomSettingsClone["sap.ui.dt"]["test"] === "testvalue", "Custom Settings available for clone in namespace sap.ui.dt/test");
-			assert.ok(mCustomSettingsClone["notexisting"] === undefined, "Custom Settings available for clone with not existing namespace");
-		}.bind(this));
-	});
-
 	QUnit.module("Custom Settings",{
 		beforeEach: function() {
 			this.pView = XMLView.create({
@@ -561,5 +341,4 @@ sap.ui.define([
 			assert.ok(mCustomSettingsClone["notexisting"] === undefined,"Custom Settings available for clone with not existing namespace");
 		});
 	});
-
 });

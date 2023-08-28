@@ -10,8 +10,9 @@ sap.ui.define([
 	"sap/ui/layout/VerticalLayout",
 	"sap/ui/testlib/TestButton",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/qunit/utils/nextUIUpdate"
-], function(ComponentContainer, Control, Element, HTML, RenderManager, UIArea, UIComponent, VerticalLayout, TestButton, jQuery, nextUIUpdate) {
+	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/core/Core"
+], function(ComponentContainer, Control, Element, HTML, RenderManager, UIArea, UIComponent, VerticalLayout, TestButton, jQuery, nextUIUpdate, Core) {
 	"use strict";
 
 	var normalize = (function() {
@@ -378,7 +379,8 @@ sap.ui.define([
 		await nextUIUpdate();
 
 		var oGrandChildDom = oGrandChild.getDomRef();
-		oUiComponentContainer.rerender();
+		oUiComponentContainer.invalidate();
+		Core.applyChanges();
 		assert.ok(oGrandChildDom === oGrandChild.getDomRef(), "oGrandChild DOM reference has not changed after ComponentContainer rerender");
 
 		oChild2.addContent(oChild1.removeContent(0));
@@ -465,7 +467,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("predefined content, rerender HTMLControl", function(assert) {
-		Element.registry.get("html4").rerender();
+		Element.registry.get("html4").invalidate();
+		Core.applyChanges();
 		// rerender is not async -> check immediately
 		okFragment(assert, FRAGMENT_3, "uiAreaB", "UIArea contains expected HTML fragment");
 	});

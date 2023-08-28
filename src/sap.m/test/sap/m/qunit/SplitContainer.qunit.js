@@ -4,7 +4,6 @@ sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	'sap/ui/core/Core',
-	"sap/ui/thirdparty/jquery",
 	"sap/m/SplitContainer",
 	"sap/m/ScrollContainer",
 	"sap/m/Page",
@@ -25,7 +24,6 @@ sap.ui.define([
 	qutils,
 	createAndAppendDiv,
 	Core,
-	jQuery,
 	SplitContainer,
 	ScrollContainer,
 	Page,
@@ -506,13 +504,13 @@ sap.ui.define([
 		oSplitContainer.placeAt("content");
 		Core.applyChanges();
 
-		assert.ok(jQuery.contains(oPage.getDomRef(), oSplitContainer._oShowMasterBtn.getDomRef()), "Master button is rendered");
+		assert.ok(oPage.getDomRef() !== oSplitContainer._oShowMasterBtn.getDomRef() && oPage.getDomRef().contains(oSplitContainer._oShowMasterBtn.getDomRef()), "Master button is rendered");
 
 		var oHeader = new Bar();
 		oPage.setCustomHeader(oHeader);
 		Core.applyChanges();
 
-		assert.ok(jQuery.contains(oHeader.getDomRef(), oSplitContainer._oShowMasterBtn.getDomRef()), "Master button is inserted into the custom header");
+		assert.ok(oHeader.getDomRef() !== oSplitContainer._oShowMasterBtn.getDomRef() && oHeader.getDomRef().contains(oSplitContainer._oShowMasterBtn.getDomRef()), "Master button is inserted into the custom header");
 
 		oSplitContainer.removeDetailPage(oPage);
 		assert.strictEqual(oPage.setCustomHeader, Page.prototype.setCustomHeader, "setCustomHeader function is restored after remove the Page from SplitContainer");

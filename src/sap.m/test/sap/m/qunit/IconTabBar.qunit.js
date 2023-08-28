@@ -344,41 +344,6 @@ sap.ui.define([
 		oIconTabBar.destroy();
 	});
 
-	/**
-	 * @deprecated As of 1.15.0.
-	 */
-	QUnit.test("getShowSelection()", function(assert) {
-
-		// Arrange
-		var oIconTabBar = new IconTabBar({
-			showSelection: false
-		});
-
-		// Assert
-		assert.ok(!oIconTabBar.getShowSelection(), "getShowSelection is correct");
-
-		// Clean up
-		oIconTabBar.destroy();
-	});
-
-	/**
-	 * @deprecated As of 1.15.0.
-	 */
-	QUnit.test("setShowSelection()", function(assert) {
-
-		// Arrange
-		var oIconTabBar = new IconTabBar();
-
-		// Act
-		oIconTabBar.setShowSelection(false);
-
-		// Assert
-		assert.ok(!oIconTabBar.getShowSelection(), "showSelection is set to false");
-
-		// Clean up
-		oIconTabBar.destroy();
-	});
-
 	QUnit.test("setExpandable()", function(assert) {
 
 		// Arrange

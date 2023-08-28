@@ -41,7 +41,7 @@ sap.ui.define([
 			return;
 		}
 
-		Core.attachInit(function () {
+		Core.ready(function () {
 			var oComponent = Core.getComponent("container-scp");
 
 			if (oComponent) {

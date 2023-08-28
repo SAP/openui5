@@ -59,28 +59,6 @@ sap.ui.define([
 		}
 	});
 
-	/**
-	 * @deprecated Since version 1.20.0
-	 */
-	QUnit.test("orientationChange event", function(assert) {
-		var landscape;
-
-		function onOrientationChange(evt) {
-			landscape = evt.getParameter("landscape");
-		}
-
-		app.attachOrientationChange(onOrientationChange);
-
-		assert.equal(landscape, undefined, "handler for orientationChange should not have been called yet");
-		app._handleOrientationChange();
-		assert.ok(landscape !== undefined, "handler for orientationChange should have been called");
-
-		var isLandscape = jQuery(window).width() > jQuery(window).height();
-		assert.equal(landscape, isLandscape, "'landscape' parameter should contain the current orientation");
-
-		app.detachOrientationChange(onOrientationChange);
-	});
-
 	QUnit.test("Dimensions", function(assert) {
 		var appDom = document.getElementById("myFirstApp");
 		var ww = document.body.getBoundingClientRect().width;

@@ -1805,74 +1805,6 @@ sap.ui.define([
 
 	});
 
-	/** @deprecated As of version 1.102.0, reason sap.ui.model.odata.OperationMode.Auto */
-	QUnit.test("Check correct initial tree-build in OperationMode.Auto", function(assert) {
-		var done = assert.async();
-		createTreeBindingAdapter("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", [], null, {
-			operationMode: "Auto",
-			rootLevel: 2,
-			numberOfExpandedLevels: 1,
-			threshold: 300
-		});
-
-		// change handler called after the $count returns
-		function countChangeHandler() {
-			oBinding.detachChange(countChangeHandler);
-			assert.ok(oBinding.bClientOperation, "Binding is internally running in Client-Mode");
-
-			// trigger data request
-			oBinding.attachChange(dataChangeHandler);
-			oBinding.getContexts(1, 10);
-		}
-
-		// change handler called after the data returned
-		function dataChangeHandler() {
-			oBinding.detachChange(dataChangeHandler);
-
-			// retrieve the data and check it
-			var aContexts = oBinding.getContexts(1, 10);
-
-			// check return value of getContexts call
-			assert.equal(aContexts[0].getProperty("HierarchyNode"), "000003", "Node 1 is 000003");
-			assert.equal(aContexts[0].getProperty("FinancialStatementItemText"), "Ausstehende Kapital-Einlagen",
-				"Node 1 is 'Ausstehende Kapital-Einlagen'");
-			assert.equal(aContexts[0].getProperty("FinStatementHierarchyLevelVal"), 3, "Node 1 is a 1st level node");
-
-			assert.equal(aContexts[7].getProperty("HierarchyNode"), "000362", "Node 8 is 'P A S S I V A'");
-			assert.equal(aContexts[7].getProperty("FinancialStatementItemText"), "P A S S I V A", "Node 8 is 'P A S S I V A'");
-			assert.equal(aContexts[7].getProperty("FinStatementHierarchyLevelVal"), 2, "Node 8 is a top-level node");
-
-			// check internal tree state
-			var oN000002 = oBinding.findNode(0);
-			var oN000003 = oBinding.findNode(1);
-
-			assert.equal(oN000002.groupID, "/000002/", "Correct node for index 0 found.");
-			assert.equal(oN000003.groupID, "/000002/000003/", "Correct node for index 1 found.");
-
-			var oN000002_test2 = oBinding.getNodeByIndex(0);
-			var oN000003_test2 = oBinding.getNodeByIndex(1);
-
-			assert.deepEqual(oN000002, oN000002_test2, "Correct node for index 0 found via getNodeByIndex.");
-			assert.deepEqual(oN000003, oN000003_test2, "Correct node for index 1 found via getNodeByIndex.");
-
-			// check if contexts are correctly returned via getContextByIndex vs getContexts
-			// Beware: Indices are shifted by 1, as the context array starts with 0
-			var oContext000003 = oBinding.getContextByIndex(1);
-			var oContext000008 = oBinding.getContextByIndex(2);
-
-			assert.equal(oContext000003.getProperty("HierarchyNode"), aContexts[0].getProperty("HierarchyNode"),
-				"Context 000003 via different API calls is identical.");
-			assert.equal(oContext000008.getProperty("HierarchyNode"), aContexts[1].getProperty("HierarchyNode"),
-				"Context 000008 via different API calls is identical.");
-
-			done();
-		}
-
-		// trigger $count in op mode auto
-		oBinding.attachChange(countChangeHandler);
-		oBinding.getContexts(1, 10);
-	});
-
 	QUnit.test("Check correct initial tree-build in OperationMode.Client", function(assert) {
 		var done = assert.async();
 		createTreeBindingAdapter("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", [], null, {
@@ -2200,5 +2132,4 @@ sap.ui.define([
 		});
 		oBinding.getContexts(0, 100);
 	});
-
 });

@@ -84,7 +84,6 @@ sap.ui.define([
 			],
 			library : "sap.m",
 			properties : {
-
 				/**
 				 * Input Value.
 				 */
@@ -116,25 +115,11 @@ sap.ui.define([
 				placeholder : {type : "string", group : "Misc", defaultValue : null},
 
 				/**
-				 * Set to <code>false</code> to hide the magnifier icon.
-				 * @deprecated Since version 1.16.0.
-				 * This parameter is deprecated. Use "showSearchButton" instead.
-				 */
-				showMagnifier : {type : "boolean", group : "Misc", defaultValue : true, deprecated: true},
-
-				/**
 				 * Set to <code>true</code> to display a refresh button in place of the search icon. By pressing the refresh button or F5 key on keyboard, the user can reload the results list without changing the search string.
 				 * Note: if "showSearchButton" property is set to <code>false</code>, both the search and refresh buttons are not displayed even if the "showRefreshButton" property is true.
 				 * @since 1.16
 				 */
 				showRefreshButton : {type : "boolean", group : "Behavior", defaultValue : false},
-
-				/**
-				 * Tooltip text of the refresh button. If it is not set, the Default tooltip text is the word "Refresh" in the current local language (if supported) or in English. Tooltips are not displayed on touch devices.
-				 * @deprecated Since version 1.110.0.
-				 * @since 1.16
-				 */
-				refreshButtonTooltip : {type : "string", group : "Misc", defaultValue : null},
 
 				/**
 				 * Set to <code>true</code> to show the search button with the magnifier icon.
@@ -148,15 +133,7 @@ sap.ui.define([
 				 * On a phone device, a full screen dialog with suggestions is always shown even if the suggestions list is empty.
 				 * @since 1.34
 				 */
-				enableSuggestions : {type : "boolean", group : "Behavior", defaultValue : false},
-
-				/**
-				 * Normally, search text is selected for copy when the SearchField is focused by keyboard navigation. If an application re-renders the SearchField during the liveChange event, set this property to <code>false</code> to disable text selection by focus.
-				 * @since 1.20
-				 * @deprecated Since version 1.38.
-				 * This parameter is deprecated and has no effect in run time. The cursor position of a focused search field is restored after re-rendering automatically.
-				 */
-				selectOnFocus : {type : "boolean", group : "Behavior", defaultValue : true, deprecated: true}
+				enableSuggestions : {type : "boolean", group : "Behavior", defaultValue : false}
 			},
 			associations : {
 

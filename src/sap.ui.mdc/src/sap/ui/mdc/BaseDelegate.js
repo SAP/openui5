@@ -23,23 +23,6 @@ sap.ui.define(['sap/ui/mdc/enums/BaseType', 'sap/ui/mdc/DefaultTypeMap', "sap/ba
 	 */
 	var BaseDelegate = {};
 
-	/**
-	* Returns a TypeUtil for this delegate.
-	*
-	* @param {sap.ui.mdc.Control} oControl Delegate payload object
-	* @return {sap.ui.mdc.util.TypeUtil|module:sap/ui/mdc/util/TypeMap} configured TypeUtil/TypeMap
-	* @since 1.79.0
-	* @deprecated since 1.115.0 - please see {@link #getTypeMap}
-	*
-	*/
-	BaseDelegate.getTypeUtil = function (oControl) {
-		if (this.getTypeMap && this.getTypeMap.__mapped) {
-			return this.getTypeMap.getOriginalMethod().call(this, oControl);
-		} else {
-			return this.getTypeMap(oControl);
-		}
-	};
-
 
 
 	/**

@@ -238,35 +238,21 @@ sap.ui.define([
 		});
 		assert.strictEqual(oDateFormat.format(null, "America/New_York"), "Americas, New York",
 			"timezone present in pattern");
-		/** @deprecated As of version 1.101.0 */
-		(function () {
-			oDateFormat = DateFormat.getDateTimeWithTimezoneInstance({showTimezone: "Only"});
-			assert.strictEqual(oDateFormat.format(null, "America/New_York"), "Americas, New York",
-				"timezone present in pattern");
-
-			oDateFormat = DateFormat.getDateTimeWithTimezoneInstance({showTimezone: "Hide"});
-			assert.strictEqual(oDateFormat.format(null, "America/New_York"), "",
-				"timezone not present in pattern");
-
-			oDateFormat = DateFormat.getDateTimeWithTimezoneInstance({showTimezone: "Show"});
-			assert.strictEqual(oDateFormat.format(null, "America/New_York"), "Americas, New York",
-				"timezone present in pattern");
-		}());
 	});
 
-[
-	{},
-	{showDate: false, showTime: false},
-	{showTimezone: false},
-	{pattern: "'foo'"}
-].forEach(function (oFormatOptions, i) {
-	QUnit.test("format invalid time zone, #" + i, function (assert) {
-		var oDateFormat = DateFormat.getDateTimeWithTimezoneInstance(oFormatOptions);
+	[
+		{},
+		{showDate: false, showTime: false},
+		{showTimezone: false},
+		{pattern: "'foo'"}
+	].forEach(function (oFormatOptions, i) {
+		QUnit.test("format invalid time zone, #" + i, function (assert) {
+			var oDateFormat = DateFormat.getDateTimeWithTimezoneInstance(oFormatOptions);
 
-		assert.strictEqual(oDateFormat.format(UI5Date.getInstance(), "NotValid"), "",
-			"invalid timezone specified");
+			assert.strictEqual(oDateFormat.format(UI5Date.getInstance(), "NotValid"), "",
+				"invalid timezone specified");
+		});
 	});
-});
 
 	QUnit.test("Timezone parameter of improper value", function (assert) {
 		var oDateTimeWithTimezoneFormat = DateFormat.getDateTimeWithTimezoneInstance();
@@ -735,27 +721,27 @@ sap.ui.define([
 		assert.strictEqual(oParseResult1[1], "America/New_York");
 	});
 
-[
-	{},
-	{showDate: false, showTime: false},
-	{showTimezone: false},
-	{pattern: "'foo'"}
-].forEach(function (oFormatOptions, i) {
-	QUnit.test("Formatted input string is null, #" + i, function (assert) {
-		var oDateFormat = DateFormat.getDateTimeWithTimezoneInstance(oFormatOptions);
+	[
+		{},
+		{showDate: false, showTime: false},
+		{showTimezone: false},
+		{pattern: "'foo'"}
+	].forEach(function (oFormatOptions, i) {
+		QUnit.test("Formatted input string is null, #" + i, function (assert) {
+			var oDateFormat = DateFormat.getDateTimeWithTimezoneInstance(oFormatOptions);
 
-		// code under test
-		assert.strictEqual(oDateFormat.parse(null, "America/New_York"), null, "cannot be parsed");
+			// code under test
+			assert.strictEqual(oDateFormat.parse(null, "America/New_York"), null, "cannot be parsed");
+		});
+
+		QUnit.test("Invalid time zone parameter, #" + i, function (assert) {
+			var oDateFormat = DateFormat.getDateTimeWithTimezoneInstance(oFormatOptions);
+
+			// code under test
+			assert.strictEqual(oDateFormat.parse("2021-10-13T13:22:33 Americas, New York", "NotValid"), null,
+				"invalid timezone parameter supplied");
+		});
 	});
-
-	QUnit.test("Invalid time zone parameter, #" + i, function (assert) {
-		var oDateFormat = DateFormat.getDateTimeWithTimezoneInstance(oFormatOptions);
-
-		// code under test
-		assert.strictEqual(oDateFormat.parse("2021-10-13T13:22:33 Americas, New York", "NotValid"), null,
-			"invalid timezone parameter supplied");
-	});
-});
 
 	QUnit.test("only show timezone", function (assert) {
 		var oDateFormatWithPattern = DateFormat.getDateTimeWithTimezoneInstance({
@@ -899,26 +885,26 @@ sap.ui.define([
 		}
 	});
 
-["ar", "he", "tr", "de", "en", "uk", "th", "zh_TW", "zh_CN"].forEach(function(sLocale) {
-	var oDate = UI5Date.getInstance("2021-10-13T02:22:33Z");
-	QUnit.test("Timezone integration all timezones for " + sLocale, function (assert) {
-		var oLocale = new Locale(sLocale);
-		var oLocaleData = LocaleData.getInstance(oLocale);
-		var mTimezoneTranslations = oLocaleData.getTimezoneTranslations();
+	["ar", "he", "tr", "de", "en", "uk", "th", "zh_TW", "zh_CN"].forEach(function(sLocale) {
+		var oDate = UI5Date.getInstance("2021-10-13T02:22:33Z");
+		QUnit.test("Timezone integration all timezones for " + sLocale, function (assert) {
+			var oLocale = new Locale(sLocale);
+			var oLocaleData = LocaleData.getInstance(oLocale);
+			var mTimezoneTranslations = oLocaleData.getTimezoneTranslations();
 
-		var oDateFormat = DateFormat.getDateTimeWithTimezoneInstance(oLocale);
-		Object.keys(mTimezoneTranslations).forEach(function(sTimezone) {
-			var sFormatted = oDateFormat.format(oDate, sTimezone);
-			var oParsed = oDateFormat.parse(sFormatted, sTimezone);
+			var oDateFormat = DateFormat.getDateTimeWithTimezoneInstance(oLocale);
+			Object.keys(mTimezoneTranslations).forEach(function(sTimezone) {
+				var sFormatted = oDateFormat.format(oDate, sTimezone);
+				var oParsed = oDateFormat.parse(sFormatted, sTimezone);
 
-			assert.deepEqual(oParsed, [oDate, sTimezone], "parsed date and timezone match for " + sTimezone);
+				assert.deepEqual(oParsed, [oDate, sTimezone], "parsed date and timezone match for " + sTimezone);
 
-			// check also parse with different timezone parameter
-			oParsed = oDateFormat.parse(sFormatted, "Europe/Amsterdam");
-			assert.deepEqual(oParsed, [oDate, sTimezone], "parsed date and different timezone match for " + sTimezone);
+				// check also parse with different timezone parameter
+				oParsed = oDateFormat.parse(sFormatted, "Europe/Amsterdam");
+				assert.deepEqual(oParsed, [oDate, sTimezone], "parsed date and different timezone match for " + sTimezone);
+			});
 		});
 	});
-});
 
 	QUnit.test("Timezone translation special cases", function (assert) {
 		var oDate = UI5Date.getInstance("2021-10-04T02:22:33Z");
@@ -1364,64 +1350,4 @@ sap.ui.define([
 		assert.strictEqual(oParseResult1[1], "America/New_York",
 			"The timezone is provided in date string, it is used to calculate the date.");
 	});
-/** @deprecated As of version 1.101.0 */
-sap.ui.require([
-	"sap/ui/core/format/DateFormatTimezoneDisplay"
-], function (DateFormatTimezoneDisplay) {
-[{
-	formatOptions: {showTimezone: DateFormatTimezoneDisplay.Hide},
-	expected: {showDate: undefined, showTime: undefined, showTimezone: false}
-}, {
-	formatOptions: {showTimezone: DateFormatTimezoneDisplay.Only},
-	expected: {showDate: false, showTime: false, showTimezone: true}
-}, {
-	formatOptions: {showTimezone: DateFormatTimezoneDisplay.Show},
-	expected: {showDate: undefined, showTime: undefined, showTimezone: true}
-}].forEach(function (oFixture, i) {
-	QUnit.test("Mapping of deprecated format options, #" + i, function (assert) {
-		// code under test
-		var oDateFormat = DateFormat.getDateTimeWithTimezoneInstance(oFixture.formatOptions);
-
-		assert.strictEqual(oDateFormat.oFormatOptions.showDate, oFixture.expected.showDate);
-		assert.strictEqual(oDateFormat.oFormatOptions.showTime, oFixture.expected.showTime);
-		assert.strictEqual(oDateFormat.oFormatOptions.showTimezone, oFixture.expected.showTimezone);
-	});
-});
-
-[
-	{showDate: false, showTimezone: DateFormatTimezoneDisplay.Show},
-	{showDate: true, showTimezone: DateFormatTimezoneDisplay.Show},
-	{showTime: false, showTimezone: DateFormatTimezoneDisplay.Show},
-	{showTime: true, showTimezone: DateFormatTimezoneDisplay.Show},
-	{showDate: false, showTimezone: DateFormatTimezoneDisplay.Only},
-	{showDate: true, showTimezone: DateFormatTimezoneDisplay.Only},
-	{showTime: false, showTimezone: DateFormatTimezoneDisplay.Only},
-	{showTime: true, showTimezone: DateFormatTimezoneDisplay.Only}
-].forEach(function (oFormatOptions, i) {
-	QUnit.test("Mapping of 'Show'/'Only' if showDate or showTime are set, #" + i, function (assert) {
-		// code under test
-		var oDateFormat = DateFormat.getDateTimeWithTimezoneInstance(oFormatOptions);
-
-		assert.strictEqual(oDateFormat.oFormatOptions.showDate, oFormatOptions.showDate);
-		assert.strictEqual(oDateFormat.oFormatOptions.showTime, oFormatOptions.showTime);
-		assert.strictEqual(oDateFormat.oFormatOptions.showTimezone, true);
-	});
-});
-
-[
-	{showDate: false, showTimezone: DateFormatTimezoneDisplay.Hide},
-	{showDate: true, showTimezone: DateFormatTimezoneDisplay.Hide},
-	{showTime: false, showTimezone: DateFormatTimezoneDisplay.Hide},
-	{showTime: true, showTimezone: DateFormatTimezoneDisplay.Hide}
-].forEach(function (oFormatOptions, i) {
-	QUnit.test("Mapping of 'Hide' if showDate or showTime are set, #" + i, function (assert) {
-		// code under test
-		var oDateFormat = DateFormat.getDateTimeWithTimezoneInstance(oFormatOptions);
-
-		assert.strictEqual(oDateFormat.oFormatOptions.showDate, oFormatOptions.showDate);
-		assert.strictEqual(oDateFormat.oFormatOptions.showTime, oFormatOptions.showTime);
-		assert.strictEqual(oDateFormat.oFormatOptions.showTimezone, false);
-	});
-});
-});
 });

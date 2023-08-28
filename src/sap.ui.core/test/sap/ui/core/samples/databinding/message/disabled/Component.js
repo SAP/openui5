@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['sap/m/Button', 'sap/m/DateTimeInput', 'sap/m/Input', 'sap/m/Label', 'sap/m/RadioButton', 'sap/m/Select', 'sap/ui/core/Item', 'sap/ui/core/Title', 'sap/ui/core/UIComponent', 'sap/ui/core/message/Message', 'sap/ui/layout/GridData', 'sap/ui/layout/form/Form', 'sap/ui/layout/form/FormContainer', 'sap/ui/layout/form/FormElement', 'sap/ui/layout/form/ResponsiveGridLayout', 'sap/ui/model/type/Date', 'sap/ui/model/type/Integer', 'sap/ui/model/type/String'],
-	function(Button, DateTimeInput, Input, Label, RadioButton, Select, Item, Title, UIComponent, Message, GridData, Form, FormContainer, FormElement, ResponsiveGridLayout, TypeDate, Integer, TypeString) {
+sap.ui.define(['sap/m/Button', 'sap/m/Input', 'sap/m/Label', 'sap/m/RadioButton', 'sap/m/Select', 'sap/ui/core/Item', 'sap/ui/core/Title', 'sap/ui/core/UIComponent', 'sap/ui/core/message/Message', 'sap/ui/layout/GridData', 'sap/ui/layout/form/Form', 'sap/ui/layout/form/FormContainer', 'sap/ui/layout/form/FormElement', 'sap/ui/layout/form/ResponsiveGridLayout', 'sap/ui/model/type/Date', 'sap/ui/model/type/Integer', 'sap/ui/model/type/String'],
+	function(Button, Input, Label, RadioButton, Select, Item, Title, UIComponent, Message, GridData, Form, FormContainer, FormElement, ResponsiveGridLayout, TypeDate, Integer, TypeString) {
 	"use strict";
 
 	/*global oModel */
@@ -58,7 +58,7 @@ sap.ui.define(['sap/m/Button', 'sap/m/DateTimeInput', 'sap/m/Input', 'sap/m/Labe
 						new FormElement({
 							label: "Date of birth",
 							fields: [
-								new DateTimeInput({value: {path:"birthdate", type: oDate}})
+								new undefined/*DateTimeInput*/({value: {path:"birthdate", type: oDate}})
 							]
 						}),
 						new FormElement({

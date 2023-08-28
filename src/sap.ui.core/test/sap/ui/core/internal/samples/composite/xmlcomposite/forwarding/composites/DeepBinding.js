@@ -1,7 +1,7 @@
-sap.ui.define(['sap/ui/core/XMLComposite'],
-	function (XMLComposite) {
+sap.ui.define([],
+	function() {
 		"use strict";
-		var DeepBinding = XMLComposite.extend("composites.DeepBinding", {
+		var DeepBinding = undefined/*XMLComposite*/.extend("composites.DeepBinding", {
 			metadata: {
 				properties: {
 					text: {

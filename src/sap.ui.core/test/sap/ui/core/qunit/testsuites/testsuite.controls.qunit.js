@@ -17,6 +17,7 @@ sap.ui.define(function() {
 					reorder: false
 				}
 			},
+
 			FieldGroup: {
 				qunit: {
 					reorder: false
@@ -26,6 +27,7 @@ sap.ui.define(function() {
 					libs: "sap.ui.layout,sap.m"
 				}
 			},
+
 			HTML: {
 				title: "QUnit Page for HTML control",
 				loader: {
@@ -35,12 +37,13 @@ sap.ui.define(function() {
 				},
 				ui5: {
 					libs: "sap.ui.core,sap.ui.testlib,sap.ui.layout",
-					theme: "sap_bluecrystal"
+					theme: "sap_horizon"
 				},
 				qunit: {
 					reorder: false
 				}
 			},
+
 			HTMLinGWT: {
 				title: "QUnit Page for HTML Container in GWT Usage",
 				ui5: {
@@ -50,6 +53,7 @@ sap.ui.define(function() {
 					reorder: false
 				}
 			},
+
 			Icon: {
 				title: "sap.ui.core.Icon",
 				ui5: {
@@ -60,6 +64,7 @@ sap.ui.define(function() {
 					qunitBridge: true
 				}
 			},
+
 			InvisibleText: {
 				title: "sap.ui.core.InvisibleText",
 				ui5: {
@@ -71,6 +76,7 @@ sap.ui.define(function() {
 					qunitBridge: true
 				}
 			},
+
 			LocalBusyIndicator: {
 				title: "sap.ui.core.LocalBusyIndicator",
 				ui5: {
@@ -82,19 +88,11 @@ sap.ui.define(function() {
 					useFakeTimers: false
 				}
 			},
-			/**
-			 * @deprecated as of version 1.56
-			 */
-			ScrollBar: {
-				title: "sap.ui.core.ScrollBar",
-				sinon: {
-					version: 4,
-					qunitBridge: true
-				}
-			},
+
 			TooltipBase: {
 				title: "sap.ui.core.TooltipBase"
 			},
+
 			"util/SelectionModel": {
 				title: "sap.ui.core.SelectionModel"
 			}

@@ -1,8 +1,8 @@
 sap.ui.define([
-	'sap/ui/core/XMLComposite'],
-	function(XMLComposite) {
+],
+	function() {
 	"use strict";
-	var SimpleText = XMLComposite.extend("composites.SimpleText", {
+	var SimpleText = undefined/*XMLComposite*/.extend("composites.SimpleText", {
 		metadata: {
 			properties: {
 				text: { type: "string", defaultValue: "Default Text"}

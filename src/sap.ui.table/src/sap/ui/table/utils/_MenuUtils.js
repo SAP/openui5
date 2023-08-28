@@ -101,27 +101,6 @@ sap.ui.define([
 					oRowBindingContext = oRow.getBindingContext(oRowBindingInfo.model);
 				}
 
-				/**
-				 * @deprecated As of version 1.21.0
-				 */
-				if (iColumnIndex >= 0) {
-					bExecuteDefault = oTable.fireCellContextmenu({
-						rowIndex: oRow.getIndex(),
-						columnIndex: iColumnIndex,
-						columnId: oRowColCell.column.getId(),
-						cellControl: oRowColCell.cell,
-						rowBindingContext: oRowBindingContext,
-						cellDomRef: oCell
-					});
-				}
-
-				/**
-				 * @deprecated As of version 1.21.0
-				 */
-				if (!bExecuteDefault) {
-					return true;
-				}
-
 				// fire beforeOpenContextMenu event
 				var oRowContextMenu = oTable.getContextMenu();
 

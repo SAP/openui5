@@ -64,15 +64,16 @@ function(
 	 */
 	var SegmentedButton = Control.extend("sap.m.SegmentedButton", /** @lends sap.m.SegmentedButton.prototype */ {
 		metadata : {
-
 			interfaces : [
 				"sap.ui.core.IFormContent",
 				"sap.m.IOverflowToolbarContent",
 				"sap.m.IToolbarInteractiveControl"
 			],
+
 			library : "sap.m",
 			designtime: "sap/m/designtime/SegmentedButton.designtime",
 			publicMethods : ["createButton"],
+
 			properties : {
 
 				/**
@@ -92,14 +93,13 @@ function(
 				 */
 				selectedKey: { type: "string", group: "Data", defaultValue: "", bindable: "bindable" }
 			},
-			defaultAggregation : "buttons",
+
 			aggregations : {
 
 				/**
-				 * The buttons of the SegmentedButton control. The items set in this aggregation are used as an interface for the buttons displayed by the control. Only the properties ID, icon, text, enabled and textDirections of the Button control are evaluated. Setting other properties of the button will have no effect. Alternatively, you can use the createButton method to add buttons.
-				 * @deprecated as of 1.28.0, replaced by <code>items</code> aggregation
-				 */
-				buttons : {type : "sap.m.Button", multiple : true, singularName : "button", deprecated: true},
+								 * The buttons of the SegmentedButton control. The items set in this aggregation are used as an interface for the buttons displayed by the control. Only the properties ID, icon, text, enabled and textDirections of the Button control are evaluated. Setting other properties of the button will have no effect. Alternatively, you can use the createButton method to add buttons.
+								 */
+				buttons : {type : "sap.m.Button", multiple : true, singularName : "button", visibility: "hidden"},
 
 				/**
 				 * Aggregation of items to be displayed. The items set in this aggregation are used as an interface for the buttons displayed by the control.
@@ -115,14 +115,14 @@ function(
 				 */
 				_select: { type : "sap.m.Select", multiple : false, visibility : "hidden"}
 			},
+
 			associations : {
 
 				/**
-				 * A reference to the currently selected button control. By default or if the association is set to false (null, undefined, "", false), the first button will be selected.
-				 * If the association is set to an invalid value (for example, an ID of a button that does not exist) the selection on the SegmentedButton will be removed.
-				 * @deprecated as of version 1.52, replaced by <code>selectedItem</code> association
-				 */
-				selectedButton : {deprecated: true, type : "sap.m.Button", multiple : false},
+								 * A reference to the currently selected button control. By default or if the association is set to false (null, undefined, "", false), the first button will be selected.
+								 * If the association is set to an invalid value (for example, an ID of a button that does not exist) the selection on the SegmentedButton will be removed.
+								 */
+				selectedButton : {type : "sap.m.Button", multiple : false, visibility: "hidden"},
 
 				/**
 				 * A reference to the currently selected item control.
@@ -140,33 +140,8 @@ function(
 				 */
 				ariaLabelledBy : {type : "sap.ui.core.Control", multiple : true, singularName : "ariaLabelledBy"}
 			},
+
 			events : {
-
-				/**
-				 * Fires when the user selects a button, which returns the ID and button object.
-				 * @deprecated as of version 1.52, replaced by <code>selectionChange</code> event
-				 */
-				select : {
-					deprecated: true,
-					parameters : {
-
-						/**
-						 * Reference to the button, that has been selected.
-						 */
-						button : {type : "sap.m.Button"},
-
-						/**
-						 * ID of the button, which has been selected.
-						 */
-						id : {type : "string"},
-
-						/**
-						 * Key of the button, which has been selected. This property is only filled when the control is initiated with the items aggregation.
-						 * @since 1.28.0
-						 */
-						key : {type : "string"}
-					}
-				},
 				/**
 				 * Fires when the user selects an item, which returns the item object.
 				 * @since 1.52
@@ -180,6 +155,7 @@ function(
 					}
 				}
 			},
+
 			dnd: { draggable: true, droppable: false }
 		},
 
@@ -771,13 +747,6 @@ function(
 			this.setAssociation('selectedItem', oItemPressed, true);
 			this.fireSelectionChange({
 				item: oItemPressed
-			});
-
-			// support old API
-			this.fireSelect({
-				button: oButtonPressed,
-				id: oButtonPressed.getId(),
-				key: this.getSelectedKey()
 			});
 		}
 	};

@@ -24,6 +24,7 @@ sap.ui.define(function () {
 					}
 				}
 			},
+
 			"config/modelPreloadAndEarlyRequests": {
 				title: "QUnit Tests for 'modelPreloadAndEarlyRequests' rules",
 				ui5 : {
@@ -37,29 +38,28 @@ sap.ui.define(function () {
 					}
 				}
 			},
-			/**
-			 * @deprecated As of version 1.111
-			 */
-			"app/globalApiUsage": {
-				title: "QUnit Tests for 'global api usage' rules"
-			},
+
 			"app/jquerySapUsage": {
 				title: "QUnit Tests for 'jquery sap usage' rules"
 			},
+
 			"app/syncFactoryLoading": {
 				title: "QUnit Tests for 'sync fragment loading' rules"
 			},
+
 			"app/syncXHR": {
 				title: "QUnit Tests for 'sync XHR' rules",
 				qunit: {
 					reorder: false
 				}
 			},
+
 			"app/syncXHRBootstrap": {
 				title: "QUnit Tests for 'sync XHR bootstrap' rules",
 				bootCore: false,
 				page: "test-resources/sap/ui/core/qunit/rule/app/syncXHRBootstrap.qunit.html?sap-language=en"
 			},
+
 			"app/syncXHRBootstrapDebug": {
 				/*
 				 * Test never worked as expected as the debug mode could not be activated via window["sap-ui-config"].
@@ -73,6 +73,7 @@ sap.ui.define(function () {
 				bootCore: false,
 				page: "test-resources/sap/ui/core/qunit/rule/app/syncXHRBootstrapDebug.qunit.html?sap-language=en"
 			},
+
 			"app/controllerExtension": {
 				title: "QUnit Tests for controller extensions",
 				loader: {
@@ -81,23 +82,7 @@ sap.ui.define(function () {
 					}
 				}
 			},
-			/**
-			 * @deprecated As of version 1.111
-			 */
-			"app/controllerExtension_legacyAPIs": {
-				title: "QUnit Tests for controller extensions - legacy APIs",
-				loader: {
-					paths: {
-						"mvc": "test-resources/sap/ui/core/qunit/mvc"
-					}
-				}
-			},
-			/**
-			 * @deprecated As of version 1.111
-			 */
-			"app/deprecatedJSViewUsage": {
-				title: "QUnit Tests for 'deprecated JSView usage' rule"
-			},
+
 			"app/lowerCaseControlsInViews": {
 				title: "QUnit Tests for 'xmlViewLowerCaseControl' rule",
 				loader: {
@@ -106,9 +91,11 @@ sap.ui.define(function () {
 					}
 				}
 			},
+
 			"misc/silentEventBus": {
 				title: "QUnit Tests for 'silent event bus usage' rules"
 			},
+
 			"model/modelSupport": {
 				title: "QUnit Tests for model rules"
 			}

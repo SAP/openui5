@@ -899,9 +899,9 @@ sap.ui.define([
 			if ($li.hasClass("sapUiControlTreeElement")) {
 				$(".sapUiControlTreeElement > div").removeClass("sapUiSupportControlTreeSelected");
 				$li.children("div").addClass("sapUiSupportControlTreeSelected");
-				this._oStub.sendEvent("sapUiSupportSelectorHighlight", {id: $li.attr("id").substring("sap-debug-controltree-".length)});
+				this._oStub.sendEvent("sapUiSupportSelectorHighlight", {id: $li.attr("id").substring(22)});
 
-				var sId = $li.attr("id").substring("sap-debug-controltree-".length);
+				var sId = $li.attr("id").substring(22);
 
 				if ($span.hasClass("sapUiSupportControlTreeBreakpointCount")) {
 					this._currentTab = this._tab.breakpoints;
@@ -1153,7 +1153,7 @@ sap.ui.define([
 			if ($sret.length === 0) {
 				return undefined;
 			} else {
-				return $sret.parent().attr("id").substring("sap-debug-controltree-".length);
+				return $sret.parent().attr("id").substring(22);
 			}
 		};
 
@@ -1396,7 +1396,6 @@ sap.ui.define([
 					var mAssoc = mElement.association[i];
 
 					if (!mAllElements[mAssoc.id]) {
-
 						var oType = ObjectPath.get(mAssoc.type || "");
 
 						if (!(typeof oType === "function")) {
@@ -1416,14 +1415,6 @@ sap.ui.define([
 							break;
 						default:
 							break;
-						}
-
-						/**
-						 * @deprecated As of version 1.58
-						 */
-						if (sStereotype === "template") {
-							var Template = sap.ui.requireSync("sap/ui/core/tmpl/Template");
-							oObj = Template.byId(mAssoc.id);
 						}
 
 						if (!oObj) {

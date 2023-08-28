@@ -558,21 +558,6 @@ sap.ui.define([
 			return this.execPromiseQueueSequentially(aPromiseQueue, bThrowError, bAsync);
 		},
 
-		/**
-		 * Class that behaves like a promise (es6), but is synchronous. Implements <code>then</code> and <code>catch</code> functions.
-		 * After instantiating can be used similar to standard Promises but synchronously.
-		 * As soon as one of the callback functions returns a Promise the asynchronous Promise replaces the FakePromise in
-		 * further processing.
-		 *
-		 * @class sap.ui.fl.Utils.FakePromise
-		 * @param {any} vInitialValue - value on resolve FakePromise
-		 * @param {any} vError - value on reject FakePromise
-		 * @param {string} sInitialPromiseIdentifier - value identifies previous promise in chain. If the identifier is passed to the function and don't match with the FakePromiseIdentifier then native Promise execution is used for further processing
-		 * @returns {sap.ui.fl.Utils.FakePromise|Promise} Returns instantiated FakePromise only if no Promise is passed by value parameter
-		 * @deprecated As of Version 1.114
-		 * @private
-		 * @ui5-restricted
-		 */
 		// eslint-disable-next-line object-shorthand
 		FakePromise: function(vInitialValue, vError, sInitialPromiseIdentifier) {
 			Utils.FakePromise.fakePromiseIdentifier = "sap.ui.fl.Utils.FakePromise";

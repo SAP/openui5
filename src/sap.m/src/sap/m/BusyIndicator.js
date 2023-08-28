@@ -56,7 +56,6 @@ sap.ui.define([
 
 			library : "sap.m",
 			properties : {
-
 				/**
 				 * Defines text to be displayed below the busy indicator.
 				 * It can be used to inform the user of the current operation.
@@ -107,14 +106,7 @@ sap.ui.define([
 				 * The animation consists of three circles, each of which will be this size.
 				 * Therefore the total width of the control amounts to three times the given size.
 				 */
-				size : {type : "sap.ui.core.CSSSize", group : "Misc", defaultValue : "1rem"},
-
-				/**
-				 * Setting this property will not have any effect on the appearance of the BusyIndicator
-				 * in versions greater than or equal to 1.32.1
-				 * @deprecated Since version 1.32.1
-				 */
-				design : {type : "string", group : "Appearance", defaultValue : "auto", deprecated: true}
+				size : {type : "sap.ui.core.CSSSize", group : "Misc", defaultValue : "1rem"}
 			},
 			associations: {
 				/**

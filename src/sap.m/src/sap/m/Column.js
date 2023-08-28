@@ -55,7 +55,6 @@ sap.ui.define([
 
 		library : "sap.m",
 		properties : {
-
 			/**
 			 * Defines the width of the column. If you leave it empty then this column covers the remaining space.
 			 * <b>Note:</b> When setting <code>autoPopinMode=true</code> on the table, the columns with a fixed width must
@@ -109,15 +108,6 @@ sap.ui.define([
 			 * See {@link sap.m.Table#getAutoPopinMode}
 			 */
 			demandPopin : {type : "boolean", group : "Behavior", defaultValue : false},
-
-			/**
-			 * Horizontal alignment of the pop-in content. Available alignment settings are "Begin", "Center", "End", "Left", and "Right".
-			 *
-			 * <b>Note:</b> Controls with a text align do not inherit the horizontal alignment.
-			 * @deprecated Since version 1.14.
-			 * Use popinDisplay property instead.
-			 */
-			popinHAlign : {type : "sap.ui.core.TextAlign", group : "Appearance", defaultValue : TextAlign.Begin, deprecated: true},
 
 			/**
 			 * Defines enumerated display options for the pop-in.

@@ -31,27 +31,34 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 			AsyncXMLView: {
 				title: "QUnit Page for async sap.ui.core.mvc.XMLView"
 			},
+
 			Controller: {
 				sinon: true
 			},
+
 			EventHandlerResolver: {
 				title: "QUnit Page for async sap.ui.core.mvc.EventHandlerResolver"
 			},
+
 			View: {
 				title: "QUnit Page for sap.ui.core.mvc.View"
 			},
+
 			XMLView: {
 				title: "QUnit Page for sap.ui.core.mvc.XMLView + sap.ui.core.mvc.Controller",
 				qunit: {
 					reorder: false
 				}
 			},
+
 			"extensions/Controllerextensions": {
 				title: "QUnit Page for Controller Extensions"
 			},
+
 			"extensions/Controllerextensions_legacy": {
 				title: "QUnit Page for Controller Extensions with old 'override' property"
 			},
+
 			"extensions/ControllerMetadata": {
 				title: "QUnit Page for Controller Metadata",
 				loader: {
@@ -60,6 +67,7 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 					}
 				}
 			},
+
 			"viewprocessing/ViewProcessing": {
 				title: "QUnit Page for sap.ui.core.qunit.mvc.viewprocessing.ViewProcessing",
 				loader: {
@@ -68,6 +76,7 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 					}
 				}
 			},
+
 			XMLTemplateProcessor: {
 				title: "QUnit Page for XMLTemplateProcessor (sync)",
 				loader: {
@@ -76,6 +85,7 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 					}
 				}
 			},
+
 			XMLTemplateProcessorAsync: {
 				title: "QUnit Page for XMLTemplateProcessor (async)",
 				loader: {
@@ -85,14 +95,7 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 					}
 				}
 			},
-			XMLTemplateProcessorAsync_unavoidablyUsingInlineStyle: {
-				title: "QUnit Page for XMLTemplateProcessor (async, unavoidably using inline style)",
-				loader: {
-					paths: {
-						"testdata": "test-resources/sap/ui/core/qunit/testdata"
-					}
-				}
-			},
+
 			XMLTemplateProcessorRequireXML: {
 				title: "QUnit Page for XMLTemplateProcessor - Require in XML",
 				loader: {
@@ -101,20 +104,24 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 					}
 				}
 			},
+
 			CacheManager: {
 				title: "sap.ui.core.cache.CacheManager",
 				module: "test-resources/sap/ui/core/qunit/CacheManager.qunit"
 			},
+
 			CommandExecution: {
 				title: "sap.ui.core.CommandExecution",
 				module: "test-resources/sap/ui/core/qunit/CommandExecution.qunit"
 			},
+
 			Declarative: {
 				title: "sap.ui.core.DeclarativeSupport",
 				// we keep the HTML page here, because of the complex test fixture
 				page: "test-resources/sap/ui/core/qunit/Declarative.qunit.html",
 				module: "test-resources/sap/ui/core/qunit/Declarative.qunit"
 			},
+
 			Fragment: {
 				title: "sap.ui.core.Fragment",
 				loader: {
@@ -127,137 +134,31 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 				},
 				module: "test-resources/sap/ui/core/qunit/Fragment.qunit"
 			},
-			"Fragment_unavoidablySync": {
-				title: "sap.ui.core.Fragment (sync)",
-				module: "test-resources/sap/ui/core/qunit/Fragment_unavoidablySync.qunit"
-			},
+
 			Shortcut: {
 				title: "sap.ui.core.Shortcut",
 				module: "test-resources/sap/ui/core/qunit/Shortcut.qunit"
 			},
+
 			ShortcutHelper: {
 				title: "sap.ui.core.util.ShortcutHelper",
 				module: "test-resources/sap/ui/core/qunit/ShortcutHelper.qunit"
 			},
+
 			ShortcutHints: {
 				title: "sap.ui.core.ShortcutHintsMixin",
 				module: "test-resources/sap/ui/core/qunit/ShortcutHints.qunit"
 			},
+
 			XMLHelper: {
 				title: "sap.ui.core.util.XMLHelper",
 				module: "test-resources/sap/ui/core/qunit/util/XMLHelper.qunit"
 			},
+
 			LRUPersistentCache: {
 				title: "sap.ui.core.cache.LRUPersistentCache",
 				autostart: false,
 				module: "test-resources/sap/ui/core/qunit/LRUPersistentCache.qunit"
-			},
-
-			/**
-			 * legacy API tests
-			 */
-			/**
-			 * @deprecated As of 1.108
-			 */
-			"../mvc_legacyAPIs/AsyncHTMLView_legacyAPIs": {
-				title: "QUnit Page for async sap.ui.core.mvc.HTMLView"
-			},
-			/**
-			 * @deprecated As of version 1.111
-			 */
-			"../mvc_legacyAPIs/AsyncJSONView_legacyAPIs": {
-				title: "QUnit Page for async sap.ui.core.mvc.JSONView"
-			},
-			/**
-			 * @deprecated As of version 1.110
-			 */
-			"../mvc_legacyAPIs/AsyncJSView_legacyAPIs": {
-				title: "QUnit Page for async sap.ui.core.mvc.JSView"
-			},
-			/**
-			 * @deprecated As of version 1.110
-			 */
-			"../mvc_legacyAPIs/AsyncXMLView_legacyAPIs": {
-				title: "QUnit Page for async sap.ui.core.mvc.XMLView - legacy APIs"
-			},
-			/**
-			 * @deprecated As of version 1.110
-			 */
-			"../mvc_legacyAPIs/Controller_legacyAPIs": {
-				sinon: true
-			},
-			/**
-			 * @deprecated As of 1.108
-			 */
-			"../mvc_legacyAPIs/HTMLView_legacyAPIs": {
-				title: "QUnit Page for sap.ui.core.mvc.HTMLView + sap.ui.core.mvc.Controller",
-				sinon: false
-			},
-			/**
-			 * @deprecated As of 1.110
-			 */
-			"../mvc_legacyAPIs/JSONView_legacyAPIs": {
-				title: "QUnit Page for sap.ui.core.mvc.JSONView + sap.ui.core.mvc.Controller - legacy APIs",
-				sinon: true
-			},
-			/**
-			 * @deprecated As of 1.110
-			 */
-			"../mvc_legacyAPIs/JSView_legacyAPIs": {
-				title: "QUnit Page for sap.ui.core.mvc.JSView + sap.ui.core.mvc.Controller",
-				sinon: false
-			},
-			/**
-			 * @deprecated As of version 1.110
-			 */
-			"../mvc_legacyAPIs/View_legacyAPIs": {
-				title: "QUnit Page for sap.ui.core.mvc.View - legacy APIs"
-			},
-			/**
-			 * @deprecated As of 1.110
-			 */
-			"../mvc_legacyAPIs/XMLView_legacyAPIs": {
-				title: "QUnit Page for sap.ui.core.mvc.XMLView + sap.ui.core.mvc.Controller - legacy APIs",
-				qunit: {
-					reorder: false
-				}
-			},
-			/**
-			 * @deprecated As of version 1.110
-			 */
-			"viewprocessing/ViewProcessing_legacyAPIs": {
-				title: "QUnit Page for sap.ui.core.qunit.mvc.viewprocessing.ViewProcessing - legacy APIs",
-				loader: {
-					paths: {
-						"sap/ui/core/qunit/mvc/viewprocessing": "test-resources/sap/ui/core/qunit/mvc/viewprocessing/"
-					}
-				}
-			},
-			/**
-			 * @deprecated As of version 1.110
-			 */
-			"../mvc_legacyAPIs/XMLTemplateProcessorRequireXML_legacyAPIs": {
-				title: "QUnit Page for XMLTemplateProcessor - Require in XML - legacy APIs",
-				loader: {
-					paths: {
-						"testdata": "test-resources/sap/ui/core/qunit/testdata"
-					}
-				}
-			},
-			/**
-			 * @deprecated As of 1.110
-			 */
-			"Fragment_legacyAPIs": {
-				title: "sap.ui.core.Fragment - legacy APIs",
-				loader: {
-					paths: {
-						"my": "test-resources/sap/ui/core/qunit/fragment/"
-					}
-				},
-				qunit: {
-					reorder: false
-				},
-				module: "test-resources/sap/ui/core/qunit/Fragment_legacyAPIs.qunit"
 			}
 		}
 	};

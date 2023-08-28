@@ -15,7 +15,7 @@
 
 	<groupId>com.sap.openui5</groupId>
 	<artifactId>reactor</artifactId>
-	<version>1.119.0-SNAPSHOT</version><!--MainVersion-->
+	<version>2.0.0-SNAPSHOT</version><!--MainVersion-->
 	<packaging>pom</packaging>
 
 
@@ -39,10 +39,7 @@
 		<module>src/sap.ui.layout</module>
 		<module>src/sap.m</module>
 		<module>src/sap.f</module>
-		<module>src/sap.ui.commons</module>
 		<module>src/sap.ui.table</module>
-		<module>src/sap.ui.ux3</module>
-		<module>src/sap.ui.suite</module>
 		<module>src/sap.ui.documentation</module>
 		<module>src/sap.ui.dt</module>
 		<module>src/sap.tnt</module>
@@ -59,7 +56,6 @@
 		<module>src/sap.ui.webc.fiori</module>
 
 		<!-- theme libraries -->
-		<module>src/themelib_sap_bluecrystal</module>
 		<module>src/themelib_sap_belize</module>
 		<module>src/themelib_sap_fiori_3</module>
 		<module>src/themelib_sap_horizon</module>

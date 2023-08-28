@@ -3236,31 +3236,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Submits the queued changes regarding this binding instance.
-	 * Note: Only changes for this binding's groupId are submitted hence mParameters.groupId is
-	 * overwritten with this binding instance's groupId.
-	 *
-	 * @param {object} [mParameters]
-	 *   A map of parameters as described in {@link sap.ui.model.odata.v2.ODataModel#submitChanges}
-	 *
-	 * @deprecated Since 1.104 use {@link sap.ui.model.odata.v2.ODataModel#submitChanges} instead
-	 * @private
-	 * @ui5-restricted
-	 */
-	ODataTreeBindingFlat.prototype.submitChanges = function (mParameters) {
-		var sResolvedPath = this.getResolvedPath();
-
-		if (!sResolvedPath) {
-			Log.error("#submitChanges failed: binding is unresolved", this.getPath(), sClassName);
-			return;
-		}
-		this._bSubmitChangesCalled = true;
-		mParameters = mParameters || {};
-		mParameters.groupId = this.oModel._resolveGroup(sResolvedPath).groupId;
-		this.oModel.submitChanges(mParameters);
-	};
-
-	/**
 	 * Prepares all hierarchy changes for this binding instance. Enhances the parameter
 	 * <code>mParameters</code> with a new <code>success</code> handler which takes care of needed
 	 * follow-up requests, either for restoring the tree state or for a binding refresh.
@@ -5048,5 +5023,4 @@ sap.ui.define([
 	};
 
 	return ODataTreeBindingFlat;
-
 }, /* bExport= */ true);

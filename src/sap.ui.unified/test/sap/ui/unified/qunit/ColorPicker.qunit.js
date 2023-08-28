@@ -14,7 +14,8 @@ sap.ui.define([
 	"sap/ui/Device",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/ui/base/Object"
 ], function(
 	ColorPicker,
 	ColorPickerDisplayMode,
@@ -29,7 +30,8 @@ sap.ui.define([
 	Device,
 	KeyCodes,
 	jQuery,
-	oCore
+	oCore,
+	BaseObject
 ) {
 	"use strict";
 
@@ -450,7 +452,7 @@ sap.ui.define([
 			oHL = this.oCP._createRowFromInput(oInput, sTooltipID, "Static label", "Unit label");
 
 			// Assert
-			oAssert.ok(oHL instanceof sap.ui.layout.HorizontalLayout,
+			oAssert.ok(BaseObject.isA(oHL, "sap.ui.layout.HorizontalLayout"),
 				"The returned control should be instance of sap.ui.layout.HorizontalLayout");
 
 			oAssert.strictEqual(oInput.getTooltip(), sTooltipResult,

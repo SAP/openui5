@@ -160,7 +160,7 @@ sap.ui.define([
 
 			oRootView.loaded().then(function (oRootView) {
 				var	oApp = oRootView.byId("splitApp"),
-					oView = this.getView(viewName, viewType);
+					oView = null;
 
 				oApp.addPage(oView, master);
 				oApp.toDetail(oView.getId(), "show", data);

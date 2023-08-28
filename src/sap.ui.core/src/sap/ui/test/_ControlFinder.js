@@ -127,13 +127,13 @@ sap.ui.define([
 		return Object.keys(properties).indexOf(sProperty) > -1 ? properties[sProperty] : null;
 	};
 
-	 /**
-	 * Retrieves the ID suffix of a DOM element that is part of the given UI5 control
-	 * @param {Element} oElement DOM element
-	 * @param {sap.ui.core.Control} oControl UI5 control
-	 * @returns {string|false} ID suffix or false if the suffix can't be determined
-	 * @private
-	 */
+	/**
+	* Retrieves the ID suffix of a DOM element that is part of the given UI5 control
+	* @param {Element} oElement DOM element
+	* @param {sap.ui.core.Control} oControl UI5 control
+	* @returns {string|false} ID suffix or false if the suffix can't be determined
+	* @private
+	*/
 	_ControlFinder._getDomElementIDSuffix = function (oElement, oControl) {
 		var sElementId = oElement.id;
 		var sDelimiter = "-";
@@ -165,11 +165,11 @@ sap.ui.define([
 		return oElement.attr("data-sap-ui");
 	};
 
-	 /**
-	 * Get latest log collected during control/element search
-	 * @returns {string} string of concatenated logs
-	 * @private
-	 */
+	/**
+	* Get latest log collected during control/element search
+	* @returns {string} string of concatenated logs
+	* @private
+	*/
 	_ControlFinder._getLatestLog = function () {
 		return aLogs && aLogs.pop();
 	};
@@ -188,18 +188,6 @@ sap.ui.define([
 	var fnClosestTo = function ($Element) {
 		return UI5Element.closestTo($Element[0]);
 	};
-
-	/**
-	 * Fallback to an implementation based on jQuery plugin when UI5Element.closestTo does not
-	 * exist yet (when the application under test is executed with a much older UI5 version).
-	 *
-	 * @deprecated Since 1.106
-	 */
-	if (typeof UI5Element.closestTo !== "function") {
-		fnClosestTo = function (oElement) {
-			return jQuery(oElement).control(0); // legacy-relevant: fallback for older UI5 versions
-		};
-	}
 
 	/**
 	 * check if a selector contains "expansion" values, meaning values that are nested selector objects

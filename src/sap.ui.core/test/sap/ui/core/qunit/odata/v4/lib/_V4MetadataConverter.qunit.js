@@ -2,7 +2,7 @@
  * ${copyright}
  */
 sap.ui.define([
-	"jquery.sap.global",
+	"sap/ui/thirdparty/jquery",
 	"sap/base/Log",
 	"sap/ui/model/odata/v4/lib/_V4MetadataConverter",
 	"sap/ui/test/TestUtils",

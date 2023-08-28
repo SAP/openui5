@@ -73,18 +73,11 @@ sap.ui.define([
 			],
 			library : "sap.ui.unified",
 			properties : {
-
 				/**
 				 * When a menu is disabled none of its items can be selected by the user.
 				 * The enabled property of an item (@link sap.ui.unified.MenuItemBase#getEnabled) has no effect when the menu of the item is disabled.
 				 */
 				enabled : {type : "boolean", group : "Behavior", defaultValue : true},
-
-				/**
-				 * Accessible label / description of the menu for assistive technologies like screenreaders.
-				 * @deprecated as of version 1.27.0, replaced by <code>ariaLabelledBy</code> association
-				 */
-				ariaDescription : {type : "string", group : "Accessibility", defaultValue : null, deprecated: true},
 
 				/**
 				 * The maximum number of items which are displayed before an overflow mechanism takes effect.
@@ -1159,7 +1152,7 @@ sap.ui.define([
 		}
 
 		oMenu.invalidate();
-		oMenu.rerender();
+		oMenu.invalidate();
 	};
 
 	Menu.prototype.focus = function(){

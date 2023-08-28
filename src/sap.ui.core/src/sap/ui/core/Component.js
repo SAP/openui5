@@ -636,26 +636,6 @@ sap.ui.define([
 		}
 	};
 
-	/**
-	 * Activates the Customizing configuration for the given Component.
-	 * @param {string} sComponentName the name of the component to activate
-	 * @private
-	 * @deprecated Since 1.21.0 as it is handled by component instantiation
-	 */
-	Component.activateCustomizing = function(sComponentName) {
-		// noop since it will be handled by component instantiation
-	};
-
-	/**
-	 * Deactivates the Customizing configuration for the given Component.
-	 * @param {string} sComponentName Name of the Component to activate
-	 * @private
-	 * @deprecated Since 1.21.0 as it is handled by component termination
-	 */
-	Component.deactivateCustomizing = function(sComponentName) {
-		// noop since it will be handled by component termination
-	};
-
 	// ---- Ownership functionality ------------------------------------------------------------
 
 	//
@@ -1697,7 +1677,7 @@ sap.ui.define([
 			}
 			var oClassMetadata = fnClass.getMetadata();
 
-			var bIsV1Model = oClassMetadata.isA("sap.ui.model.odata.ODataModel");
+			var bIsV1Model = false;
 			var bIsV2Model = oClassMetadata.isA("sap.ui.model.odata.v2.ODataModel");
 			var bIsV4Model = oClassMetadata.isA("sap.ui.model.odata.v4.ODataModel");
 			var bIsResourceModel = oClassMetadata.isA("sap.ui.model.resource.ResourceModel");
@@ -2407,103 +2387,6 @@ sap.ui.define([
 		return componentFactory(mParameters);
 	};
 
-	/**
-	 * Creates a new instance of a <code>Component</code> or returns the instance
-	 * of an existing <code>Component</code>.
-	 *
-	 * If you want to look up an existing <code>Component</code> you can call
-	 * this function with a Component ID as parameter:
-	 * <pre>
-	 *   var oComponent = sap.ui.component(sComponentId);
-	 * </pre>
-	 *
-	 * To create a new instance of a component you pass a component configuration
-	 * object into this function:
-	 * <pre>
-	 *   var oComponent = sap.ui.component({
-	 *     name: "my.Component",
-	 *     url: "my/component/location",
-	 *     id: "myCompId1"
-	 *   });
-	 * </pre>
-	 *
-	 * @param {string|object} vConfig ID of an existing Component or the configuration object to create the Component
-	 * @param {string} vConfig.name Name of the Component to load, as a dot-separated name;
-	 *              Even when an alternative location is specified from which the manifest should be loaded (e.g.
-	 *              <code>vConfig.manifest</code> is set to a non-empty string), then the name specified in that
-	 *              manifest will be ignored and this name will be used instead to determine the module to be loaded.
-	 * @param {string} [vConfig.url] Alternative location from where to load the Component. If a <code>manifestUrl</code> is given, this URL specifies the location of the final component defined via that manifest, otherwise it specifies the location of the component defined via its name <code>vConfig.name</code>.
-	 * @param {object} [vConfig.componentData] Initial data of the Component (@see sap.ui.core.Component#getComponentData)
-	 * @param {string} [vConfig.id] sId of the new Component
-	 * @param {object} [vConfig.settings] Settings of the new Component
-	 * @param {string[]} [vConfig.activeTerminologies] List of active terminologies.
-	 *              The order of the given active terminologies is significant. The {@link module:sap/base/i18n/ResourceBundle ResourceBundle} API
-	 *              documentation describes the processing behavior in more detail.
-	 *              Please also have a look at this dev-guide chapter for general usage instructions: {@link topic:eba8d25a31ef416ead876e091e67824e Text Verticalization}.
-	 * @param {boolean} [vConfig.async] Indicates whether the Component creation should be done asynchronously; defaults to true when using the manifest property with a truthy value otherwise the default is false (experimental setting)
-	 * @param {object} [vConfig.asyncHints] @since 1.27.0 Hints for the asynchronous loading.
-	 *     <b>Beware:</b> This parameter is only used internally by the UI5 framework and compatibility cannot be guaranteed.
-	 *     The parameter must not be used in productive code, except in code delivered by the UI5 teams.
-	 * @param {string[]} [vConfig.asyncHints.libs] Libraries that should be (pre-)loaded before the Component (experimental setting)
-	 * @param {string[]} [vConfig.asyncHints.components] Components that should be (pre-)loaded before the Component (experimental setting)
-	 * @param {Promise|Promise[]} [vConfig.asyncHints.waitFor] @since 1.37.0 a <code>Promise</code> or and array of <code>Promise</code>s for which the Component instantiation should wait (experimental setting)
-	 * @param {boolean|string|object} [vConfig.manifest=undefined] @since 1.49.0 Controls when and from where to load the manifest for the Component.
-	 *              When set to any truthy value, the manifest will be loaded asynchronously by default and evaluated before the Component controller, if it is set to a falsy value
-	 *              other than <code>undefined</code>, the manifest will be loaded after the controller.
-	 *              A non-empty string value will be interpreted as the URL location from where to load the manifest.
-	 *              A non-null object value will be interpreted as manifest content.
-	 *              Setting this property to a value other than <code>undefined</code>, completely deactivates the properties
-	 *              <code>manifestUrl</code> and <code>manifestFirst</code>, no matter what their values are.
-	 * @param {string} [vConfig.manifestUrl] @since 1.33.0 Specifies the URL from where the manifest should be loaded from
-	 *              Using this property implies <code>vConfig.manifestFirst=true</code>.
-	 *              <br/><b>DEPRECATED since 1.49.0, use <code>vConfig.manifest=url</code> instead!</b>.
-	 *              Note that this property is ignored when <code>vConfig.manifest</code> has a value other than <code>undefined</code>.
-	 * @param {boolean} [vConfig.manifestFirst] @since 1.33.0 defines whether the manifest is loaded before or after the
-	 *              Component controller. Defaults to <code>sap.ui.getCore().getConfiguration().getManifestFirst()</code>
-	 *              <br/><b>DEPRECATED since 1.49.0, use <code>vConfig.manifest=true|false</code> instead!</b>
-	 *              Note that this property is ignored when <code>vConfig.manifest</code> has a value other than <code>undefined</code>.
-	 * @param {string} [vConfig.handleValidation=false] If set to <code>true</code> validation of the component is handled by the <code>Messaging</code>
-	 * @returns {sap.ui.core.Component|Promise} the Component instance or a Promise in case of asynchronous loading
-	 *
-	 * @deprecated Since 1.56, use {@link sap.ui.core.Component.get Component.get} or {@link sap.ui.core.Component.create Component.create} instead.
-	 *   Note: {@link sap.ui.core.Component.create Component.create} does not support synchronous loading or the deprecated options <em>manifestFirst</em> and <em>manifestUrl</em>.
-	 * @public
-	 * @static
-	 * @since 1.15.0
-	 * @ui5-global-only
-	 */
-	sap.ui.component = function(vConfig) {
-		// a parameter must be given!
-		if (!vConfig) {
-			throw new Error("sap.ui.component cannot be called without parameter!");
-		}
-
-		var fnLogProperties = function(name) {
-			return {
-				type: "sap.ui.component",
-				name: name
-			};
-		};
-
-		if (typeof vConfig === 'string') {
-			Log.warning("Do not use deprecated function 'sap.ui.component' (" + vConfig + ") + for Component instance lookup. " +
-				"Use 'Component.get' instead", "sap.ui.component", null, fnLogProperties.bind(null, vConfig));
-			// when only a string is given, then this function behaves like a
-			// getter and returns an existing component instance
-			return Component.get(vConfig);
-		}
-
-		if (vConfig.async) {
-			Log.info("Do not use deprecated factory function 'sap.ui.component' (" + vConfig["name"] + "). " +
-				"Use 'Component.create' instead", "sap.ui.component", null, fnLogProperties.bind(null, vConfig["name"]));
-		} else {
-			Log.warning("Do not use synchronous component creation (" + vConfig["name"] + ")! " +
-				"Use the new asynchronous factory 'Component.create' instead", "sap.ui.component", null, fnLogProperties.bind(null, vConfig["name"]));
-		}
-
-		return componentFactory(vConfig, /*bLegacy=*/true);
-	};
-
 	/*
 	 * Part of the old sap.ui.component implementation than can be re-used by the new factory
 	 */
@@ -2746,68 +2629,6 @@ sap.ui.define([
 	Component.get = function (sId) {
 		// lookup and return the component
 		return Component.registry.get(sId);
-	};
-
-	/**
-	 * Load a component without instantiating it.
-	 *
-	 * Provides support for loading components asynchronously by setting
-	 * <code>oConfig.async</code> to true. In that case, the method returns a JavaScript 6
-	 * Promise that will be fulfilled with the component class after loading.
-	 *
-	 * Using <code>async = true</code> doesn't necessarily mean that no more synchronous loading
-	 * occurs. Both the framework as well as component implementations might still execute
-	 * synchronous requests. The contract for <code>async = true</code> just allows to use
-	 * async calls.
-	 *
-	 * When a manifest.json is referenced in oConfig this manifest is not used for the derived instances of the Component class.
-	 * The manifest/manifest url must be provided for every instance explicitly.
-	 *
-	 * Since 1.27.0, when asynchronous loading is used, additional <code>asyncHints</code> can be provided.
-	 * This parameter is only used internally by the UI5 framework and compatibility cannot be guaranteed.
-	 * The parameter must not be used in productive code, except in code delivered by the UI5 teams.
-	 *
-	 * <ul>
-	 * <li><code>oConfig.asyncHints.components : string[]</code>a list of components needed by the current component and its subcomponents
-	 *     The framework will try to preload these components (their Component-preload.js) asynchronously, errors will be ignored.
-	 *     Please note that the framework has no knowledge about whether a Component provides a preload file or whether it is bundled
-	 *     in some library preload. If Components are listed in the hints section, they will be preloaded.</li>
-	 * <li><code>oConfig.asyncHints.libs : string[]</code>libraries needed by the Component and its subcomponents.
-	 *     The framework will asynchronously load those libraries, if they're not loaded yet.</li>
-	 * <li><code>oConfig.asyncHints.preloadBundles : string[]</code>a list of additional preload bundles
-	 *     The framework will try to load these bundles asynchronously before requiring the Component, errors will be ignored.
-	 *     The named modules must only represent preload bundles. If they are normal modules, their dependencies
-	 *     will be loaded with the normal synchronous request mechanism and performance might degrade.</li>
-	 * <li><code>oConfig.asyncHints.preloadOnly : boolean (default: false)</code> whether only the preloads should be done,
-	 *     but not the loading of the Component controller class itself.
-	 * </ul>
-	 *
-	 * If Components and/or libraries are listed in the hints section, all the corresponding preload files will
-	 * be requested in parallel. The constructor class will only be required after all of them are rejected or resolved.
-	 * Instead of specifying just the name of a component or library in the hints, an object might be given that contains a
-	 * mandatory <code>name</code> property and, optionally, an <code>url</code> that will be used for a <code>registerModulePath</code>
-	 * and/or a <code>lazy</code> property. When <code>lazy</code> is set to a truthy value, only a necessary <code>registerModulePath</code>
-	 * will be executed, but the corresponding component or lib won't be preloaded. For preload bundles, also an object might be given
-	 * instead of a simple name, but there only the <code>url</code> property is supported, not the <code>lazy</code> property.
-	 *
-	 * Note: so far, only the requests for the preload files (library and/or component) are executed asynchronously.
-	 * If a preload is deactivated by configuration (e.g. debug mode), then remaining requests still might be synchronous.
-	 *
-	 * @param {object} oConfig Configuration object describing the Component to be loaded. See {@link sap.ui.component} for more information.
-	 * @returns {function|Promise} Constructor of the component class or a Promise that will be fulfilled with the same
-	 *
-	 * @deprecated since 1.56, use {@link sap.ui.core.Component.load}
-	 * @since 1.16.3
-	 * @static
-	 * @public
-	 * @ui5-global-only
-	 */
-	sap.ui.component.load = function(oConfig, bFailOnError) {
-		Log.warning("Do not use deprecated function 'sap.ui.component.load'! Use 'Component.load' instead");
-		return loadComponent(oConfig, {
-			failOnError: bFailOnError,
-			preloadOnly: oConfig.asyncHints && oConfig.asyncHints.preloadOnly
-		});
 	};
 
 	/**

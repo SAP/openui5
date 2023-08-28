@@ -97,7 +97,6 @@ sap.ui.define([
 
 		library : "sap.ui.unified",
 		properties : {
-
 			/**
 			 * Start date, as UI5Date or JavaScript Date object, of the row. As default, the current date is used.
 			 */
@@ -201,16 +200,6 @@ sap.ui.define([
 			 * and the default value is applied.
 			 */
 			groupAppointmentsMode : {type : "sap.ui.unified.GroupAppointmentsMode", group : "Appearance", defaultValue : GroupAppointmentsMode.Collapsed},
-
-			/**
-			 * If set the appointments without text (only title) are rendered with a smaller height.
-			 *
-			 * <b>Note:</b> On phone devices this property is ignored, appointments are always rendered in full height
-			 * to allow touching.
-			 * @deprecated Since version 1.81. Please use the <code>appointmentHeight</code> with value "Automatic" property instead.
-			 * @since 1.38.0
-			 */
-			appointmentsReducedHeight : {type : "boolean", group : "Appearance", defaultValue : false, deprecated: true},
 
 			/**
 			 * Defines the visualization of the <code>CalendarAppoinment</code>
@@ -517,7 +506,7 @@ sap.ui.define([
 	};
 
 	CalendarRow.prototype._getAppointmentReducedHeight = function(oAppointment){
-		var bReducedHeight = !Device.system.phone && this.getAppointmentsReducedHeight() && oAppointment.size === CalendarAppointmentHeight.Regular;
+		var bReducedHeight = !Device.system.phone && false && oAppointment.size === CalendarAppointmentHeight.Regular;
 
 		return bReducedHeight;
 	};

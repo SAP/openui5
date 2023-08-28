@@ -362,33 +362,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns a metadata object for class <code>sap.ui.core.ResizeHandler</code>.
-	 *
-	 * @returns {sap.ui.base.Metadata} Metadata object describing this class
-	 *
-	 * @function
-	 * @name sap.ui.core.ResizeHandler.getMetadata
-	 * @public
-	 * @deprecated Since version 1.110. As the class nature of ResizeHandler is deprecated since 1.103,
-	 *     the <code>getMetadata</code> method shouldn't be called either
-	 */
-
-	/**
-	 * Creates a new subclass of class <code>sap.ui.core.ResizeHandler</code>.
-	 *
-	 * @param {string} sClassName Name of the class being created
-	 * @param {object} [oClassInfo] Object literal with information about the class
-	 * @param {function} [FNMetaImpl] Constructor function for the metadata object; if not given, it defaults to the metadata implementation used by this class
-	 * @returns {function} Created class / constructor function
-	 *
-	 * @function
-	 * @name sap.ui.core.ResizeHandler.extend
-	 * @public
-	 * @deprecated Since version 1.110. As the class nature of ResizeHandler is deprecated since 1.103,
-	 *     the <code>extend</code> method shouldn't be called either
-	 */
-
-	/**
 	 * @private
 	 */
 	oResizeHandler = new ResizeHandler();

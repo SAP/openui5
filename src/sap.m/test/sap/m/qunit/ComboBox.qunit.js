@@ -2234,34 +2234,34 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-		QUnit.test("aria-activedescendant attribute should not be set if an item is selected but the picker is not opened", function (assert) {
-		var oComboBox = new ComboBox({
-			items: [
-				new Item("focusedItem", {
-					key: "GER",
-					text: "Germany"
-				})
-			]
-		});
-
-		// Arrange
-		oComboBox.placeAt("content");
-		oCore.applyChanges();
-
-		// Act
-		oComboBox.focus();
-		this.clock.tick();
-		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN);
-		oCore.applyChanges();
-
-		this.clock.tick(300);
-
-		// Assert
-		assert.notOk(jQuery(oComboBox.getFocusDomRef()).attr("aria-activedescendant"), 'The "aria-activedescendant" attribute is notif an item is selected but te picker is not opened');
-
-		// Cleanup
-		oComboBox.destroy();
+	QUnit.test("aria-activedescendant attribute should not be set if an item is selected but the picker is not opened", function (assert) {
+	var oComboBox = new ComboBox({
+		items: [
+			new Item("focusedItem", {
+				key: "GER",
+				text: "Germany"
+			})
+		]
 	});
+
+	// Arrange
+	oComboBox.placeAt("content");
+	oCore.applyChanges();
+
+	// Act
+	oComboBox.focus();
+	this.clock.tick();
+	qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN);
+	oCore.applyChanges();
+
+	this.clock.tick(300);
+
+	// Assert
+	assert.notOk(jQuery(oComboBox.getFocusDomRef()).attr("aria-activedescendant"), 'The "aria-activedescendant" attribute is notif an item is selected but te picker is not opened');
+
+	// Cleanup
+	oComboBox.destroy();
+});
 
 	QUnit.test("aria-activedescendant attribute should be set if an item is selected snd then the picker is opened", function (assert) {
 		var oExpectedItem;
@@ -8328,7 +8328,6 @@ sap.ui.define([
 
 	// BCP 1570441294
 	QUnit.test("onfocusin it should correctly restore the selection of the text after re-rendering", function (assert) {
-
 		this.stub(Device, "system", {
 			desktop: true,
 			phone: false,
@@ -8357,7 +8356,8 @@ sap.ui.define([
 		});
 
 		// act
-		oComboBox.rerender();
+		oComboBox.invalidate();
+		oCore.applyChanges();
 		this.clock.tick(0);	// tick the clock ahead 0ms millisecond to make sure the async call to .selectText() in the focusin event handler does not override the type ahead
 
 		// assert
@@ -10263,7 +10263,8 @@ sap.ui.define([
 				new Item({key: "T1", text: "Text"})
 			],
 			selectionChange: function onSelectionChange() {
-				oForm.rerender();
+				oForm.invalidate();
+				oCore.applyChanges();
 			}
 		});
 		oComboBox.syncPickerContent();
@@ -11108,7 +11109,8 @@ sap.ui.define([
 
 	QUnit.test('Input text selection "with" re-rendering on selection change', function (assert) {
 		this.comboBox.attachEvent('selectionChange', function () {
-			this.comboBox.rerender();
+			this.comboBox.invalidate();
+			oCore.applyChanges();
 		}.bind(this));
 
 		this.comboBox._$input.trigger("focus").val("n").trigger("input");
@@ -11184,27 +11186,6 @@ sap.ui.define([
 		assert.ok(oHandleInputEventSpy.called, "handleInputValidation should be called on input");
 		assert.notOk(oUpdateDomValueSpy.called, "Type ahead should not be called while composing");
 
-	});
-
-	/**
-	 * @deprecated As of version 1.62
-	 */
-	QUnit.module("Deprecated methods");
-
-	QUnit.test("log warning when trying to use ComboBox.getList().", function (assert) {
-		assert.expect(4);
-		var fnWarningSpy = this.spy(Log, "warning");
-
-		var oComboBox = new ComboBox();
-
-		oComboBox.getList();
-
-		assert.strictEqual(fnWarningSpy.callCount, 1, "Exactly 1 warning has been logged");
-		assert.strictEqual(fnWarningSpy.firstCall.args[0], "[Warning]:", "First argument correct.");
-		assert.strictEqual(fnWarningSpy.firstCall.args[1], "You are attempting to use deprecated method 'getList()', please refer to SAP note 2746748.", "Second argument correct.");
-		assert.strictEqual(fnWarningSpy.firstCall.args[2], oComboBox, "Third argument correct.");
-
-		oComboBox.destroy();
 	});
 
 	QUnit.module("_mapItemToListItem", {

@@ -174,7 +174,6 @@ function(
 			],
 			library : "sap.m",
 			properties : {
-
 				/**
 				 * HTML type of the internal <code>input</code> tag (e.g. Text, Number, Email, Phone).
 				 * The particular effect of this property differs depending on the browser and the current language settings,
@@ -194,15 +193,6 @@ function(
 				 * The <code>maxLength</code> property has effect only when the value is modified by user interaction.
 				 */
 				maxLength : {type : "int", group : "Behavior", defaultValue : 0},
-
-				/**
-				 * Only used if type=date and no datepicker is available.
-				 * The data is displayed and the user input is parsed according to this format.
-				 * <b>Note:</b> The value property is always of the form RFC 3339 (YYYY-MM-dd).
-				 * @deprecated Since version 1.9.1.
-				 * <code>sap.m.DatePicker</code>, <code>sap.m.TimePicker</code> or <code>sap.m.DateTimePicker</code> should be used for date/time inputs and formating.
-				 */
-				dateFormat : {type : "string", group : "Misc", defaultValue : 'YYYY-MM-dd', deprecated: true},
 
 				/**
 				 * If set to true, a value help indicator will be displayed inside the control. When clicked the event "valueHelpRequest" will be fired.
@@ -274,6 +264,7 @@ function(
 				 * @since 1.24
 				 */
 				valueLiveUpdate : {type : "boolean", group : "Behavior", defaultValue : false},
+
 				/**
 				 * Defines the key of the selected item.
 				 *
@@ -281,16 +272,19 @@ function(
 				 * @since 1.44
 				 */
 				selectedKey: {type: "string", group: "Data", defaultValue: ""},
+
 				/**
 				 * Defines the display text format mode.
 				 * @since 1.44
 				 */
 				textFormatMode: {type: "sap.m.InputTextFormatMode", group: "Misc", defaultValue: InputTextFormatMode.Value},
+
 				/**
 				 * Defines the display text formatter function.
 				 * @since 1.44
 				 */
 				textFormatter: {type: "function", group: "Misc", defaultValue: null},
+
 				/**
 				 * Defines the validation callback function called when a suggestion row gets selected.
 				 * @since 1.44
@@ -314,7 +308,7 @@ function(
 				 * <code>minScreenWidth</code> properties of the <code>sap.m.Column</code> control by itself.
 				 * @since 1.89
 				 */
-				 enableTableAutoPopinMode: {type: "boolean", group: "Behavior", defaultValue: false},
+				enableTableAutoPopinMode: {type: "boolean", group: "Behavior", defaultValue: false},
 
 				/**
 				 * Specifies whether autocomplete is enabled.

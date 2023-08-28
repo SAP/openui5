@@ -57,27 +57,25 @@ sap.ui.define([
 			"sap.ui.layout.cssgrid.IGridItemLayoutData"
 		],
 		controls: [
-			"sap.ui.layout.AlignedFlowLayout",
-			"sap.ui.layout.DynamicSideContent",
-			"sap.ui.layout.FixFlex",
-			"sap.ui.layout.Grid",
-			"sap.ui.layout.HorizontalLayout",
-			"sap.ui.layout.ResponsiveFlowLayout",
-			"sap.ui.layout.ResponsiveSplitter",
-			"sap.ui.layout.ResponsiveSplitterPage",
-			"sap.ui.layout.Splitter",
-			"sap.ui.layout.VerticalLayout",
-			"sap.ui.layout.BlockLayoutCell",
-			"sap.ui.layout.BlockLayoutRow",
-			"sap.ui.layout.BlockLayout",
-			"sap.ui.layout.form.Form",
-			"sap.ui.layout.form.FormLayout",
-			"sap.ui.layout.form.GridLayout",
-			"sap.ui.layout.form.ColumnLayout",
-			"sap.ui.layout.form.ResponsiveGridLayout",
-			"sap.ui.layout.form.ResponsiveLayout",
-			"sap.ui.layout.form.SimpleForm",
-			"sap.ui.layout.cssgrid.CSSGrid"
+		 "sap.ui.layout.AlignedFlowLayout",
+		 "sap.ui.layout.DynamicSideContent",
+		 "sap.ui.layout.FixFlex",
+		 "sap.ui.layout.Grid",
+		 "sap.ui.layout.HorizontalLayout",
+		 "sap.ui.layout.ResponsiveFlowLayout",
+		 "sap.ui.layout.ResponsiveSplitter",
+		 "sap.ui.layout.ResponsiveSplitterPage",
+		 "sap.ui.layout.Splitter",
+		 "sap.ui.layout.VerticalLayout",
+		 "sap.ui.layout.BlockLayoutCell",
+		 "sap.ui.layout.BlockLayoutRow",
+		 "sap.ui.layout.BlockLayout",
+		 "sap.ui.layout.form.Form",
+		 "sap.ui.layout.form.FormLayout",
+		 "sap.ui.layout.form.ColumnLayout",
+		 "sap.ui.layout.form.ResponsiveGridLayout",
+		 "sap.ui.layout.form.SimpleForm",
+		 "sap.ui.layout.cssgrid.CSSGrid"
 		],
 		elements: [
 			"sap.ui.layout.BlockLayoutCellData",
@@ -299,32 +297,29 @@ sap.ui.define([
 		 * @public
 		 */
 	thisLib.BlockBackgroundType = {
-		/**
-		 * Background is transparent
-		 * @public
-		 */
-		Default: "Default",
-		/**
-		 * Background is with predefined light colors
-		 * @public
-		 */
-		Light: "Light",
-		/**
-		 * Background with bright and dark background colors
-		 * @deprecated since 1.50
-		 * @public
-		 */
-		Mixed: "Mixed",
-		/**
-		 * Background with pre-defined accent colors
-		 * @public
-		 */
-		Accent: "Accent",
-		/**
-		 * For applications that want to make use of e.g. charts in the Blocks, this layout type has spacings around the Blocks
-		 * @public
-		 */
-		Dashboard: "Dashboard"
+	 /**
+	  * Background is transparent
+	  * @public
+	  */
+	 Default: "Default",
+
+	 /**
+	  * Background is with predefined light colors
+	  * @public
+	  */
+	 Light: "Light",
+
+	 /**
+	  * Background with pre-defined accent colors
+	  * @public
+	  */
+	 Accent: "Accent",
+
+	 /**
+	  * For applications that want to make use of e.g. charts in the Blocks, this layout type has spacings around the Blocks
+	  * @public
+	  */
+	 Dashboard: "Dashboard"
 	};
 
 	/**
@@ -526,37 +521,19 @@ sap.ui.define([
 	 * @since 1.16.0
 	 */
 	thisLib.form.SimpleFormLayout = {
+	 /**
+	  * Uses the <code>ResponsiveGridLayout</code> layout to render the <code>SimpleForm</code> control
+	  * @public
+	  * @since 1.16.0
+	  */
+	 ResponsiveGridLayout : "ResponsiveGridLayout",
 
-		/**
-		 * Uses the <code>ResponsiveLayout</code> layout to render the <code>SimpleForm</code> control
-		 * @public
-		 * @deprecated As of version 1.93, replaced by {@link sap.ui.layout.form.SimpleFormLayout.ColumnLayout ColumnLayout}
-		 */
-		ResponsiveLayout : "ResponsiveLayout",
-
-		/**
-		 * Uses the <code>GridLayout</code> layout to render the <code>SimpleForm</code> control
-		 * @public
-		 * @deprecated As of version 1.67.0,
-		 * as the <code>sap.ui.commons</code> library is deprecated, and the <code>GridLayout</code> must not be used in responsive applications.
-		 * Please use <code>ResponsiveGridLayout</code> or <code>ColumnLayout</code> instead.
-		 */
-		GridLayout : "GridLayout",
-
-		/**
-		 * Uses the <code>ResponsiveGridLayout</code> layout to render the <code>SimpleForm</code> control
-		 * @public
-		 * @since 1.16.0
-		 */
-		ResponsiveGridLayout : "ResponsiveGridLayout",
-
-		/**
-		 * Uses the <code>ColumnLayout</code> layout to render the <code>SimpleForm</code> control
-		 * @public
-		 * @since 1.56.0
-		 */
-		ColumnLayout : "ColumnLayout"
-
+	 /**
+	  * Uses the <code>ColumnLayout</code> layout to render the <code>SimpleForm</code> control
+	  * @public
+	  * @since 1.56.0
+	  */
+	 ColumnLayout : "ColumnLayout"
 	};
 
 	/**

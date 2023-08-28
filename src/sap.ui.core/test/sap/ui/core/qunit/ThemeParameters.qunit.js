@@ -397,8 +397,6 @@ sap.ui.define([
 	QUnit.test("Get parameter while CSS after Applied finished loading and before ThemeManager processed Applied event", function(assert) {
 		var sPrefixedLibId = "sap-ui-theme-testlibs.themeParameters.lib17";
 
-		// Setup
-		Parameters.reset();
 		var oCssPromise1 = createLinkElement(sPrefixedLibId, true);
 		var oCssPromise2 = createLinkElement(sPrefixedLibId, false);
 		return Promise.all([oCssPromise1, oCssPromise2]).then(function() {
@@ -651,8 +649,6 @@ sap.ui.define([
 	QUnit.test("Get parameter while CSS after Applied finished loading and before ThemeManager processed Applied event", function(assert) {
 		var sPrefixedLibId = "sap-ui-theme-testlibs.themeParameters.lib17";
 
-		// Setup
-		Parameters.reset();
 		var oCssPromise1 = createLinkElement(sPrefixedLibId, true);
 		var oCssPromise2 = createLinkElement(sPrefixedLibId, false);
 		return Promise.all([oCssPromise1, oCssPromise2]).then(function() {

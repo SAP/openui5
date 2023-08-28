@@ -10,19 +10,20 @@ sap.ui.require([
 	"sap/ui/test/Opa5",
 	"sap/ui/test/opaQunit",
 	"sap/ui/test/TestUtils",
-	"sap/ui/test/matchers/Properties"
-], function (Core, Any, Opa5, opaTest, TestUtils, Properties) {
+	"sap/ui/test/matchers/Properties",
+	"sap/ui/core/Configuration"
+], function(Core, Any, Opa5, opaTest, TestUtils, Properties, Configuration) {
 	"use strict";
 
 	Core.ready().then(function () {
-		var sDefaultLanguage = sap.ui.getCore().getConfiguration().getLanguage();
+		var sDefaultLanguage = Configuration.getLanguage();
 
 		QUnit.module("sap.ui.core.sample.ViewTemplate.scenario", {
 			before : function () {
-				sap.ui.getCore().getConfiguration().setLanguage("en-US");
+				Configuration.setLanguage("en-US");
 			},
 			after : function () {
-				sap.ui.getCore().getConfiguration().setLanguage(sDefaultLanguage);
+				Configuration.setLanguage(sDefaultLanguage);
 			}
 		});
 

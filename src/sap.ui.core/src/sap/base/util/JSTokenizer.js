@@ -34,9 +34,6 @@ sap.ui.define([], function() {
 	 * @ui5-restricted sap.ui.core
 	 */
 	var JSTokenizer = function() {
-
-		this.at; // The index of the current character
-		this.ch; // The current character
 		this.escapee = {
 			'"': '"',
 			'\'': '\'',
@@ -48,7 +45,6 @@ sap.ui.define([], function() {
 			r: '\r',
 			t: '\t'
 		};
-		this.text;
 	};
 
 

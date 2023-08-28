@@ -32,39 +32,39 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-[
-	"My exception",
-	{message : "My exception"}
-].forEach(function (vException) {
-	var sTitle = "getAnalyticalExtensions: throw error for given model: " + JSON.stringify(vException);
+	[
+		"My exception",
+		{message : "My exception"}
+	].forEach(function (vException) {
+		var sTitle = "getAnalyticalExtensions: throw error for given model: " + JSON.stringify(vException);
 
-	QUnit.test(sTitle, function (assert) {
-		const oModel = {};
-		this.mock(AnalyticalBinding).expects("_getModelVersion").withExactArgs(sinon.match.same(oModel)).returns(null);
-		this.mock(odata4analytics).expects("Model").throws(vException);
+		QUnit.test(sTitle, function (assert) {
+			const oModel = {};
+			this.mock(AnalyticalBinding).expects("_getModelVersion").withExactArgs(sinon.match.same(oModel)).returns(null);
+			this.mock(odata4analytics).expects("Model").throws(vException);
 
-		// code under test
-		assert.throws(() => ODataModelAdapter.prototype.getAnalyticalExtensions.apply(oModel),
-			new Error("Failed to instantiate analytical extensions for given OData model: My exception"));
+			// code under test
+			assert.throws(() => ODataModelAdapter.prototype.getAnalyticalExtensions.apply(oModel),
+				new Error("Failed to instantiate analytical extensions for given OData model: My exception"));
+		});
 	});
-});
 
 	//*********************************************************************************************
-[
-	{oModel: {}, iVersion: null},
-	{oModel: {getAnalyticalExtensions: "~getAnalyticalExtensions"}, iVersion: 2}
-].forEach((oFixture) => {
-	QUnit.test("ODataModelAdapter: calls _getModelVersion", function (assert) {
-		this.mock(AnalyticalBinding).expects("_getModelVersion")
-			.withExactArgs(sinon.match.same(oFixture.oModel))
-			.returns(oFixture.iVersion);
+	[
+		{oModel: {}, iVersion: null},
+		{oModel: {getAnalyticalExtensions: "~getAnalyticalExtensions"}, iVersion: 2}
+	].forEach((oFixture) => {
+		QUnit.test("ODataModelAdapter: calls _getModelVersion", function (assert) {
+			this.mock(AnalyticalBinding).expects("_getModelVersion")
+				.withExactArgs(sinon.match.same(oFixture.oModel))
+				.returns(oFixture.iVersion);
 
-		// code under test
-		ODataModelAdapter.apply(oFixture.oModel);
+			// code under test
+			ODataModelAdapter.apply(oFixture.oModel);
 
-		assert.strictEqual(oFixture.oModel._mPreadapterFunctions, undefined);
+			assert.strictEqual(oFixture.oModel._mPreadapterFunctions, undefined);
+		});
 	});
-});
 
 	//*********************************************************************************************
 	QUnit.test("ODataModelAdapter: for V2 model", function (assert) {
@@ -73,31 +73,6 @@ sap.ui.define([
 			bindTree: "~bindTree"
 		};
 		this.mock(AnalyticalBinding).expects("_getModelVersion").withExactArgs(sinon.match.same(oModel)).returns(2);
-
-		// code under test
-		ODataModelAdapter.apply(oModel);
-
-		assert.deepEqual(oModel._mPreadapterFunctions, {bindList: "~bindList", bindTree: "~bindTree"});
-		assert.strictEqual(oModel.bindList, ODataModelAdapter.prototype.bindList);
-		assert.strictEqual(oModel.bindTree, ODataModelAdapter.prototype.bindTree);
-		assert.strictEqual(oModel.getAnalyticalExtensions, ODataModelAdapter.prototype.getAnalyticalExtensions);
-		assert.strictEqual(oModel.setAnalyticalExtensions, ODataModelAdapter.prototype.setAnalyticalExtensions);
-	});
-
-	/** @deprecated As of version 1.48.0 */
-	QUnit.test("ODataModelAdapter: for V1 model", function (assert) {
-		const oModel = {
-			bindList: "~bindList",
-			bindTree: "~bindTree",
-			isCountSupported() {},
-			setCountSupported() {}
-		};
-		this.mock(AnalyticalBinding).expects("_getModelVersion").withExactArgs(sinon.match.same(oModel)).returns(1);
-		this.mock(oModel).expects("isCountSupported").withExactArgs().returns(true);
-		this.oLogMock.expects("info")
-			.withExactArgs("ODataModelAdapter: switched ODataModel to use inlinecount (mandatory for the"
-				+ " AnalyticalBinding)");
-		this.mock(oModel).expects("setCountSupported").withExactArgs(false);
 
 		// code under test
 		ODataModelAdapter.apply(oModel);

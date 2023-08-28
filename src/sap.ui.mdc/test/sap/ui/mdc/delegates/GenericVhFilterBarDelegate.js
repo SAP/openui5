@@ -39,7 +39,7 @@ sap.ui.define([
 		}
 
 		return new Promise(function(fResolve) {
-			var aFilterItems = oFilterBar.getFilterItems();
+			var aFilterItems = [];
 			oFilterBar.__aProperties = [];
 			aFilterItems.forEach(function(oFF){
 				addFilterField.call(this, oFF, oFilterBar.__aProperties);

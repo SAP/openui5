@@ -7,13 +7,12 @@ sap.ui.define([
 	'sap/ui/base/EventProvider',
 	'sap/ui/core/routing/Target',
 	'sap/ui/core/routing/async/Route',
-	'sap/ui/core/routing/sync/Route',
 	'sap/ui/core/Component',
 	"sap/base/Log",
 	"sap/base/assert",
 	"sap/base/util/deepExtend"
 ],
-	function(EventProvider, Target, asyncRoute, syncRoute, Component, Log, assert, deepExtend) {
+	function(EventProvider, Target, asyncRoute, Component, Log, assert, deepExtend) {
 	"use strict";
 
 		/**
@@ -125,7 +124,7 @@ sap.ui.define([
 					RouteStub,
 					async = oRouter._isAsync();
 
-				RouteStub = async ? asyncRoute : syncRoute;
+				RouteStub = async ? asyncRoute : undefined/*syncRoute*/;
 				for (var fn in RouteStub) {
 					this[fn] = RouteStub[fn];
 				}

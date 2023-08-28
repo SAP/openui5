@@ -2523,32 +2523,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns a promise for the "canonical path" of the entity for the given context.
-	 * According to <a href=
-	 * "https://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part2-url-conventions.html#canonical-urlurl4.1.1"
-	 * >"4.3.1 Canonical URL"</a> of the specification "OData Version 4.0 Part 2: URL Conventions",
-	 * this is the "name of the entity set associated with the entity followed by the key predicate
-	 * identifying the entity within the collection". Use the canonical path in
-	 * {@link sap.ui.core.Element#bindElement} to create an element binding.
-	 *
-	 * @param {sap.ui.model.odata.v4.Context} oEntityContext
-	 *   A context in this model which must point to a non-contained OData entity
-	 * @returns {Promise<string>}
-	 *   A promise which is resolved with the canonical path (e.g. "/SalesOrderList('0500000000')")
-	 *   in case of success, or rejected with an instance of <code>Error</code> in case of failure,
-	 *   e.g. when the given context does not point to an entity
-	 *
-	 * @deprecated since 1.39.0
-	 *   Use {@link sap.ui.model.odata.v4.Context#requestCanonicalPath} instead.
-	 * @public
-	 * @since 1.37.0
-	 */
-	ODataModel.prototype.requestCanonicalPath = function (oEntityContext) {
-		assert(oEntityContext.getModel() === this, "oEntityContext must belong to this model");
-		return oEntityContext.requestCanonicalPath();
-	};
-
-	/**
 	 * Requests the metadata for the given meta path and calculates the key predicate by taking the
 	 * key properties from the given entity instance.
 	 *

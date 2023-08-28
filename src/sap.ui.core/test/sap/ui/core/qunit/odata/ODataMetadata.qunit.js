@@ -2,21 +2,17 @@
 sap.ui.define([
 	"sap/ui/model/odata/_ODataMetaModelUtils",
 	"sap/ui/model/odata/ODataMetadata",
-	"sap/ui/model/odata/ODataModel",
 	"sap/ui/model/odata/v2/ODataModel",
 	"sap/ui/core/util/MockServer"
 ], function(
 	_ODataMetaModelUtils,
 	ODataMetadata,
-	V1ODataModel,
 	V2ODataModel,
 	MockServer
 ) {
 	"use strict";
 
 	var sServiceUri = "/MockSrv/";
-	/** @deprecated As of version 1.48.0, reason sap.ui.model.odata.ODataModel */
-	var sServiceUri3 = "/DOESNOTEXIST/";
 
 	var sDataRootPath =  "test-resources/sap/ui/core/qunit/model/";
 	var oServer;
@@ -31,12 +27,6 @@ sap.ui.define([
 		return oMockServer;
 	}
 
-	/** @deprecated As of version 1.48.0, reason sap.ui.model.odata.ODataModel */
-	function initModel(sUri) {
-		oModel = new V1ODataModel(sUri, true);
-		return oModel;
-	}
-
 	function initModelV2(sUri, mOptions){
 		oModel = new V2ODataModel(sUri, mOptions);
 		return oModel;
@@ -48,66 +38,6 @@ sap.ui.define([
 		oServer = initServer(sServiceUri, "model/metadata1.xml", sDataRootPath);
 		assert.ok(oServer,"Server initialized");
 	});
-
-/** @deprecated As of version 1.48.0, reason sap.ui.model.odata.ODataModel */
-(function() {
-	QUnit.test("init Model", function(assert) {
-		var oModel = initModel(sServiceUri);
-		assert.ok(oModel,"Model initialized");
-		assert.ok(oModel.getServiceMetadata(),"Metadata loaded");
-	});
-
-	QUnit.test("metadata failed handling", function(assert){
-		var done = assert.async();
-		var oModel = initModel(sServiceUri3);
-		var oModel2 = {};
-		var handleFailed1 = function(){
-			assert.ok(!oModel2.getServiceMetadata(), "Metadata on second model failed correctly");
-			oModel2.detachMetadataFailed(handleFailed1);
-			done();
-		};
-		var handleFailed2 = function(){
-			assert.ok(!oModel.getServiceMetadata(), "Metadata failed correctly");
-			assert.ok(oModel.oMetadata.isFailed(), "Failed on metadata object has been set correctly");
-			oModel2 = initModel(sServiceUri3);
-			oModel2.attachMetadataFailed(handleFailed1);
-			oModel.detachMetadataFailed(handleFailed2);
-		};
-		oModel.attachMetadataFailed(handleFailed2);
-	});
-	QUnit.test("get annotation 'sap:label'", function(assert) {
-		var oModel = initModel(sServiceUri);
-		assert.ok(oModel,"Model initialized");
-		assert.equal(oModel.getProperty("/#Flight/FlightConnectionID/@sap:label"),"Flight Number");
-	});
-	QUnit.test("get annotation 'sap:label' with namespace", function(assert) {
-		var oModel = initModel(sServiceUri);
-		assert.ok(oModel,"Model initialized");
-		assert.equal(oModel.getProperty("/#UNKNOWN.Flight/FlightConnectionID/@sap:label"), undefined, "Unknown namespace");
-		assert.equal(oModel.getProperty("/#RMTSAMPLEFLIGHT_2.Flight/FlightConnectionID/@sap:label"), "Flight Number", "Valid namespace");
-	});
-	QUnit.test("get attribute 'type'", function(assert) {
-		var oModel = initModel(sServiceUri);
-		assert.ok(oModel,"Model initialized");
-		assert.equal(oModel.getProperty("/#Flight/FlightConnectionID/@type"),"Edm.String");
-		assert.equal(oModel.getProperty("/#Flight/FirstClassOccupiedSeats/@type"),"Edm.Int32");
-	});
-	QUnit.test("get complexType attribute 'type' (not supported yet)", function(assert) {
-		assert.ok(!oModel.getProperty("/#Flight/FlightDetails/@type"),"only Property attributes could be resolved");
-	});
-	QUnit.test("get property/entity object (not supported)", function(assert) {
-		var oModel = initModel(sServiceUri);
-		assert.ok(oModel,"Model initialized");
-		assert.ok(!oModel.getProperty("/#Flight/FlightConnectionID"));
-		assert.ok(!oModel.getProperty("/#Flight"));
-	});
-	QUnit.test("get complexType property attributes", function(assert) {
-		assert.equal(oModel.getProperty("/#Flight/FlightDetails/DepartureTime/@type"),"Edm.Time");
-		assert.equal(oModel.getProperty("/#Flight/FlightDetails/DepartureTime/@sap:label"),"Departure");
-		oServer.stop();
-		oServer.destroy();
-	});
-}());
 
 	// Usually we should not test internal methods, but these might be candidates to be made publicly available
 	QUnit.module("ODataMetadata: Internal methods");
@@ -319,12 +249,6 @@ sap.ui.define([
 
 	oServer = initServer(sServiceUri, "model/metadata1.xml", sDataRootPath);
 
-	/** @deprecated As of version 1.48.0, reason sap.ui.model.odata.ODataModel */
-	var oModelV1 = initModel(sServiceUri),
-		pModelV1MetadataLoaded = new Promise(function(fnResolve, fnReject) {
-			oModelV1.attachMetadataLoaded(fnResolve);
-			oModelV1.attachMetadataFailed(fnReject);
-		});
 	var oModelV2 = initModelV2(sServiceUri);
 
 
@@ -332,12 +256,6 @@ sap.ui.define([
 		var done = assert.async();
 		if (oModel instanceof V2ODataModel) {
 			oModel.metadataLoaded().then(function () {
-				fnRealTest.apply(this, [assert, done].concat([].slice.call(arguments)));
-			});
-		}
-		/** @deprecated As of version 1.48.0, reason sap.ui.model.odata.ODataModel */
-		if (!(oModel instanceof V2ODataModel)) {
-			pModelV1MetadataLoaded.then(function () {
 				fnRealTest.apply(this, [assert, done].concat([].slice.call(arguments)));
 			});
 		}
@@ -349,8 +267,6 @@ sap.ui.define([
 			continue;
 		}
 
-		/** @deprecated As of version 1.48.0, reason sap.ui.model.odata.ODataModel */
-		QUnit.test("V1: " + sTest, fnWrapMetadataReady.bind(this, mInternalTests[sTest].bind(mInternalTests, oModelV1)));
 		QUnit.test("V2: " + sTest, fnWrapMetadataReady.bind(this, mInternalTests[sTest].bind(mInternalTests, oModelV2)));
 	}
 
@@ -431,8 +347,6 @@ sap.ui.define([
 		done();
 	};
 
-	/** @deprecated As of version 1.48.0, reason sap.ui.model.odata.ODataModel */
-	QUnit.test("V1: _getAnnotation method", fnWrapMetadataReady.bind(this, fnTestAnnotations.bind(this, oModelV1)));
 	QUnit.test("V2: _getAnnotation method", fnWrapMetadataReady.bind(this, fnTestAnnotations.bind(this, oModelV2)));
 
 
@@ -616,126 +530,126 @@ sap.ui.define([
 		});
 	});
 
-[{
-	iCacheItemReferencesCalls : 0,
-	sPath : "/SalesOrderSet('42')",
-	sReducedPath : "/SalesOrderSet('42')"
-}, {
-	iCacheItemReferencesCalls : 0,
-	sPath : "/SalesOrderSet('42')/ToLineItems(SalesOrderID='42',ItemPosition='10')",
-	sReducedPath : "/SalesOrderSet('42')/ToLineItems(SalesOrderID='42',ItemPosition='10')"
-}, {
-	iCacheItemReferencesCalls : 1,
-	sPath : "/SalesOrderSet('42')/ToLineItems(SalesOrderID='42',ItemPosition='10')/ToHeader",
-	sReducedPath : "/SalesOrderSet('42')"
-}, {
-	iCacheItemReferencesCalls : 1,
-	sPath : "/SalesOrderSet('42')/ToLineItems(SalesOrderID='42',ItemPosition='10')/ToHeader/Note",
-	sReducedPath : "/SalesOrderSet('42')/Note"
-}, {
-	iCacheItemReferencesCalls : 2,
-	sPath : "/SalesOrderSet('42')/ToLineItems(SalesOrderID='42',ItemPosition='10')/ToHeader"
-		+ "/ToLineItems(SalesOrderID='42',ItemPosition='10')/ToHeader/Note",
-	sReducedPath : "/SalesOrderSet('42')/Note"
-}, {
-	iCacheItemReferencesCalls : 1,
-	sPath : "/SalesOrderSet('42')/ToLineItems(SalesOrderID='42',ItemPosition='10')/ToProduct/Name",
-	sReducedPath :
-		"/SalesOrderSet('42')/ToLineItems(SalesOrderID='42',ItemPosition='10')/ToProduct/Name"
-}, {
-	iCacheItemReferencesCalls : 1,
-	sPath : "/SalesOrderSet('42')/ToBusinessPartner/Address/City",
-	sReducedPath : "/SalesOrderSet('42')/ToBusinessPartner/Address/City"
-}, {
-	iCacheItemReferencesCalls : 1,
-	sPath : "/SalesOrderLineItemSet(SalesOrderID='42',ItemPosition='10')/ToHeader"
-		+ "/ToLineItems(SalesOrderID='42',ItemPosition='10')/Note",
-	sReducedPath : "/SalesOrderLineItemSet(SalesOrderID='42',ItemPosition='10')/Note"
-}, {
-	iCacheItemReferencesCalls : 1,
-	sPath : "/SalesOrderLineItemSet(SalesOrderID='42',ItemPosition='10')/ToHeader"
-		+ "/ToLineItems(SalesOrderID='42',ItemPosition='20')/Note",
-	sReducedPath : "/SalesOrderLineItemSet(SalesOrderID='42',ItemPosition='10')/ToHeader"
-		+ "/ToLineItems(SalesOrderID='42',ItemPosition='20')/Note"
-}, {
-	iCacheItemReferencesCalls : 1,
-	sPath : "/SalesOrderLineItemSet(SalesOrderID='42',ItemPosition='10')/ToHeader/ToLineItems",
-	sReducedPath : "/SalesOrderLineItemSet(SalesOrderID='42',ItemPosition='10')/ToHeader"
-		+ "/ToLineItems"
-}, { // function import
-	iCacheItemReferencesCalls : 1,
-	sPath : "/SalesOrder_Confirm(SalesOrderID='42')"
-		+ "/ToLineItems(SalesOrderID='42',ItemPosition='10')/ToHeader/Note",
-	sReducedPath : "/SalesOrder_Confirm(SalesOrderID='42')/Note"
-}, { // multiple nested partners
-	iCacheItemReferencesCalls : 2,
-	sPath : "/SalesOrderSet('42')/ToBusinessPartner/ToContacts('aa-bb')/ToBusinessPartner"
-		+ "/ToSalesOrders('42')/Note",
-	sReducedPath : "/SalesOrderSet('42')/Note"
-}, { // must not fail for invalid paths
-	iCacheItemReferencesCalls : 1,
-	sPath : "/A/ToB/ToC/ToD/Foo",
-	sReducedPath : "/A/ToB/ToC/ToD/Foo"
-}].forEach(function (oFixture) {
-	var sPath = oFixture.sPath,
-		sReducedPath = oFixture.sReducedPath,
-		sTitle = "_getReducedPath: " + sPath + " -> " + sReducedPath;
-
-	QUnit.test(sTitle, function (assert) {
-		var oMetadata = this.oMetadata;
-
-		return oMetadata.loaded().then(function () {
-			sinon.spy(oMetadata, "_fillElementCaches");
-
-			// code under test
-			assert.strictEqual(oMetadata._getReducedPath(sPath), sReducedPath);
-
-			assert.strictEqual(oMetadata._fillElementCaches.callCount,
-				oFixture.iCacheItemReferencesCalls);
-			oMetadata._fillElementCaches.restore();
-		});
-	});
-});
-
-[
-	{sPath : "/SalesOrderSet('42')", aKeyNames : ["SalesOrderID"]},
-	{sPath : "/SalesOrderSet('42')/ToBusinessPartner", aKeyNames : ["BusinessPartnerID"]},
-	{sPath : "/SalesOrderSet('42')/ToLineItems", aKeyNames : ["SalesOrderID", "ItemPosition"]},
-	{
-		sPath : "/SalesOrderSet('42')/ToLineItems(SalesOrderID='42',ItemPosition='010')",
-		aKeyNames : ["SalesOrderID", "ItemPosition"]
-	},
-	{sPath : "/BusinessPartnerSet('42')/CompanyName", aKeyNames : undefined},
-	{sPath : "/BusinessPartnerSet('42')/Address", aKeyNames : undefined},
-	{
-		sPath : "/SalesOrderLineItemSet(SalesOrderID='42',ItemPosition='10')",
-		aKeyNames : ["SalesOrderID", "ItemPosition"]
+	[{
+		iCacheItemReferencesCalls : 0,
+		sPath : "/SalesOrderSet('42')",
+		sReducedPath : "/SalesOrderSet('42')"
 	}, {
-		sPath :  "/SalesOrder_Confirm(SalesOrderID='42')"
+		iCacheItemReferencesCalls : 0,
+		sPath : "/SalesOrderSet('42')/ToLineItems(SalesOrderID='42',ItemPosition='10')",
+		sReducedPath : "/SalesOrderSet('42')/ToLineItems(SalesOrderID='42',ItemPosition='10')"
+	}, {
+		iCacheItemReferencesCalls : 1,
+		sPath : "/SalesOrderSet('42')/ToLineItems(SalesOrderID='42',ItemPosition='10')/ToHeader",
+		sReducedPath : "/SalesOrderSet('42')"
+	}, {
+		iCacheItemReferencesCalls : 1,
+		sPath : "/SalesOrderSet('42')/ToLineItems(SalesOrderID='42',ItemPosition='10')/ToHeader/Note",
+		sReducedPath : "/SalesOrderSet('42')/Note"
+	}, {
+		iCacheItemReferencesCalls : 2,
+		sPath : "/SalesOrderSet('42')/ToLineItems(SalesOrderID='42',ItemPosition='10')/ToHeader"
 			+ "/ToLineItems(SalesOrderID='42',ItemPosition='10')/ToHeader/Note",
-		aKeyNames : undefined
+		sReducedPath : "/SalesOrderSet('42')/Note"
 	}, {
-		sPath :  "/SalesOrder_Confirm(SalesOrderID='42')"
-			+ "/ToLineItems(SalesOrderID='42',ItemPosition='10')/ToHeader",
-		aKeyNames : ["SalesOrderID"]
+		iCacheItemReferencesCalls : 1,
+		sPath : "/SalesOrderSet('42')/ToLineItems(SalesOrderID='42',ItemPosition='10')/ToProduct/Name",
+		sReducedPath :
+			"/SalesOrderSet('42')/ToLineItems(SalesOrderID='42',ItemPosition='10')/ToProduct/Name"
 	}, {
-		sPath :  "/SalesOrder_Confirm(SalesOrderID='42')"
-			+ "/ToLineItems(SalesOrderID='42',ItemPosition='10')",
-		aKeyNames : ["SalesOrderID", "ItemPosition"]
-	},
-	{sPath :  "/SalesOrder_Confirm(SalesOrderID='42')", aKeyNames : ["SalesOrderID"]},
-	{sPath : "/Foo", aKeyNames : undefined},
-	{sPath : "/Foo/bar", aKeyNames : undefined},
-	{sPath : "/Foo/bar/baz", aKeyNames : undefined}
-].forEach(function (oFixture) {
-	QUnit.test("getKeyPropertyNamesByPath: " + oFixture.sPath, function (assert) {
-		var oMetadata = this.oMetadata;
+		iCacheItemReferencesCalls : 1,
+		sPath : "/SalesOrderSet('42')/ToBusinessPartner/Address/City",
+		sReducedPath : "/SalesOrderSet('42')/ToBusinessPartner/Address/City"
+	}, {
+		iCacheItemReferencesCalls : 1,
+		sPath : "/SalesOrderLineItemSet(SalesOrderID='42',ItemPosition='10')/ToHeader"
+			+ "/ToLineItems(SalesOrderID='42',ItemPosition='10')/Note",
+		sReducedPath : "/SalesOrderLineItemSet(SalesOrderID='42',ItemPosition='10')/Note"
+	}, {
+		iCacheItemReferencesCalls : 1,
+		sPath : "/SalesOrderLineItemSet(SalesOrderID='42',ItemPosition='10')/ToHeader"
+			+ "/ToLineItems(SalesOrderID='42',ItemPosition='20')/Note",
+		sReducedPath : "/SalesOrderLineItemSet(SalesOrderID='42',ItemPosition='10')/ToHeader"
+			+ "/ToLineItems(SalesOrderID='42',ItemPosition='20')/Note"
+	}, {
+		iCacheItemReferencesCalls : 1,
+		sPath : "/SalesOrderLineItemSet(SalesOrderID='42',ItemPosition='10')/ToHeader/ToLineItems",
+		sReducedPath : "/SalesOrderLineItemSet(SalesOrderID='42',ItemPosition='10')/ToHeader"
+			+ "/ToLineItems"
+	}, { // function import
+		iCacheItemReferencesCalls : 1,
+		sPath : "/SalesOrder_Confirm(SalesOrderID='42')"
+			+ "/ToLineItems(SalesOrderID='42',ItemPosition='10')/ToHeader/Note",
+		sReducedPath : "/SalesOrder_Confirm(SalesOrderID='42')/Note"
+	}, { // multiple nested partners
+		iCacheItemReferencesCalls : 2,
+		sPath : "/SalesOrderSet('42')/ToBusinessPartner/ToContacts('aa-bb')/ToBusinessPartner"
+			+ "/ToSalesOrders('42')/Note",
+		sReducedPath : "/SalesOrderSet('42')/Note"
+	}, { // must not fail for invalid paths
+		iCacheItemReferencesCalls : 1,
+		sPath : "/A/ToB/ToC/ToD/Foo",
+		sReducedPath : "/A/ToB/ToC/ToD/Foo"
+	}].forEach(function (oFixture) {
+		var sPath = oFixture.sPath,
+			sReducedPath = oFixture.sReducedPath,
+			sTitle = "_getReducedPath: " + sPath + " -> " + sReducedPath;
 
-		return oMetadata.loaded().then(function () {
-			// code under test
-			assert.deepEqual(oMetadata.getKeyPropertyNamesByPath(oFixture.sPath),
-				oFixture.aKeyNames);
+		QUnit.test(sTitle, function (assert) {
+			var oMetadata = this.oMetadata;
+
+			return oMetadata.loaded().then(function () {
+				sinon.spy(oMetadata, "_fillElementCaches");
+
+				// code under test
+				assert.strictEqual(oMetadata._getReducedPath(sPath), sReducedPath);
+
+				assert.strictEqual(oMetadata._fillElementCaches.callCount,
+					oFixture.iCacheItemReferencesCalls);
+				oMetadata._fillElementCaches.restore();
+			});
 		});
 	});
-});
+
+	[
+		{sPath : "/SalesOrderSet('42')", aKeyNames : ["SalesOrderID"]},
+		{sPath : "/SalesOrderSet('42')/ToBusinessPartner", aKeyNames : ["BusinessPartnerID"]},
+		{sPath : "/SalesOrderSet('42')/ToLineItems", aKeyNames : ["SalesOrderID", "ItemPosition"]},
+		{
+			sPath : "/SalesOrderSet('42')/ToLineItems(SalesOrderID='42',ItemPosition='010')",
+			aKeyNames : ["SalesOrderID", "ItemPosition"]
+		},
+		{sPath : "/BusinessPartnerSet('42')/CompanyName", aKeyNames : undefined},
+		{sPath : "/BusinessPartnerSet('42')/Address", aKeyNames : undefined},
+		{
+			sPath : "/SalesOrderLineItemSet(SalesOrderID='42',ItemPosition='10')",
+			aKeyNames : ["SalesOrderID", "ItemPosition"]
+		}, {
+			sPath :  "/SalesOrder_Confirm(SalesOrderID='42')"
+				+ "/ToLineItems(SalesOrderID='42',ItemPosition='10')/ToHeader/Note",
+			aKeyNames : undefined
+		}, {
+			sPath :  "/SalesOrder_Confirm(SalesOrderID='42')"
+				+ "/ToLineItems(SalesOrderID='42',ItemPosition='10')/ToHeader",
+			aKeyNames : ["SalesOrderID"]
+		}, {
+			sPath :  "/SalesOrder_Confirm(SalesOrderID='42')"
+				+ "/ToLineItems(SalesOrderID='42',ItemPosition='10')",
+			aKeyNames : ["SalesOrderID", "ItemPosition"]
+		},
+		{sPath :  "/SalesOrder_Confirm(SalesOrderID='42')", aKeyNames : ["SalesOrderID"]},
+		{sPath : "/Foo", aKeyNames : undefined},
+		{sPath : "/Foo/bar", aKeyNames : undefined},
+		{sPath : "/Foo/bar/baz", aKeyNames : undefined}
+	].forEach(function (oFixture) {
+		QUnit.test("getKeyPropertyNamesByPath: " + oFixture.sPath, function (assert) {
+			var oMetadata = this.oMetadata;
+
+			return oMetadata.loaded().then(function () {
+				// code under test
+				assert.deepEqual(oMetadata.getKeyPropertyNamesByPath(oFixture.sPath),
+					oFixture.aKeyNames);
+			});
+		});
+	});
 });

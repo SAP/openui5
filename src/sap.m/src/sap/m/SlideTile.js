@@ -725,9 +725,9 @@ sap.ui.define([
 		if (this._sSize) {
 			this.$().removeClass(this._sSize);
 		}
-		this.$().addClass(oTile.getFrameType()).addClass(oTile.getSize());
+		this.$().addClass(oTile.getFrameType()).addClass(library.Size.Auto);
 		this._sFrameType = oTile.getFrameType();
-		this._sSize = oTile.getSize();
+		this._sSize = library.Size.Auto;
 	};
 
 	/**

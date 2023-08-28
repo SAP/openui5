@@ -16,7 +16,8 @@ sap.ui.define([
 	"sap/ui/model/FilterOperator",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/date/UI5Date",
-	"sap/ui/performance/Measurement"
+	"sap/ui/performance/Measurement",
+	"sap/ui/core/Configuration"
 ],
 function(
 	Log,
@@ -31,7 +32,8 @@ function(
 	FilterOperator,
 	JSONModel,
 	UI5Date,
-	Measurement
+	Measurement,
+	Configuration
 ) {
 	"use strict";
 
@@ -144,7 +146,7 @@ function(
 			hour: "numeric",
 			minute: "numeric"
 		};
-		var sLanguage = sap.ui.getCore().getConfiguration().getLanguage();
+		var sLanguage = Configuration.getLanguage();
 		return `${sModifiedBy}\n${oUi5Date.toLocaleTimeString(sLanguage, oOptions)}`;
 	}
 

@@ -238,7 +238,7 @@ sap.ui.define([
 			if ("$filter" in mQueryOptions) {
 				// not%20(ID%20eq%20'5.1.10'%20or%20ID%20eq%20'5.1.11')
 				const aIDs = mQueryOptions.$filter
-					.slice("not%20(".length, -")".length)
+					.slice(7, -1)
 					.split("%20or%20")
 					.map((sID_Predicate) => sID_Predicate.split("%20eq%20")[1].slice(1, -1));
 				aChildren = aChildren.filter((oChild) => !aIDs.includes(oChild.ID));
@@ -296,7 +296,7 @@ sap.ui.define([
 		// {"EMPLOYEE_2_MANAGER@odata.bind" : "EMPLOYEES('0')"}
 		const oBody = JSON.parse(oRequest.requestBody);
 		const sParentId = oBody["EMPLOYEE_2_MANAGER@odata.bind"]
-			.slice("EMPLOYEES('".length, -"')".length);
+			.slice(11, -2);
 		const oParent = mNodeById[sParentId];
 		const oNewChild = { // same order of keys than for "old" nodes ;-)
 			AGE : 0, // see below

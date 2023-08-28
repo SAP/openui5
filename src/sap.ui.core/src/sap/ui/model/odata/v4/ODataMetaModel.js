@@ -2235,26 +2235,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the maximum value of all "Last-Modified" response headers seen so far.
-	 *
-	 * @returns {Date}
-	 *   The maximum value of all "Last-Modified" (or, as a fallback, "Date") response headers seen
-	 *   so far when loading $metadata or annotation files. It is <code>new Date(0)</code> initially
-	 *   as long as no such files have been loaded. It becomes <code>new Date()</code> as soon as a
-	 *   file without such a header is loaded. Note that this value may change due to load-on-demand
-	 *   of "cross-service references" (see parameter <code>supportReferences</code> of
-	 *   {@link sap.ui.model.odata.v4.ODataModel#constructor}).
-	 *
-	 * @deprecated As of 1.51.0, use {@link #getETags} instead because modifications to old files
-	 *   may be shadowed by a new file in certain scenarios.
-	 * @public
-	 * @since 1.47.0
-	 */
-	ODataMetaModel.prototype.getLastModified = function () {
-		return this.oLastModified;
-	};
-
-	/**
 	 * Returns the OData metadata model context corresponding to the given OData data model path.
 	 *
 	 * @param {string} sPath

@@ -6,7 +6,6 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/Device",
 	"sap/ui/model/json/JSONModel",
-	"sap/m/MessagePage",
 	"sap/m/Bar",
 	"sap/m/Text",
 	"sap/m/Button",
@@ -27,7 +26,6 @@ sap.ui.define([
 	jQuery,
 	Device,
 	JSONModel,
-	MessagePage,
 	Bar,
 	Text,
 	Button,
@@ -327,28 +325,6 @@ sap.ui.define([
 
 		// Assert
 		assert.ok(jQuery("#myPage-title").hasClass("sapF2AdaptedTitle"), "title is adapted");
-	});
-
-	/**
-	 * @deprecated since 1.112
-	 */
-	QUnit.test("MessagePage title is adapted when bMoveTitle=true", function(assert) {
-		var oAdaptOptions = {bMoveTitle: true};
-		this.oMessagePage = new MessagePage("messagePage", {
-			title: "Some title"
-		});
-		this.oMessagePage.placeAt("content");
-		Core.applyChanges();
-
-		Fiori20Adapter.traverse(this.oMessagePage, oAdaptOptions);
-
-		Core.applyChanges();
-
-		// Assert
-		assert.ok(jQuery("#messagePage-title").hasClass("sapF2AdaptedTitle"), "title is adapted");
-
-		// Clean-up
-		this.oMessagePage.destroy();
 	});
 
 	QUnit.test("Title is adapted when header is replaced", function(assert) {
@@ -719,38 +695,6 @@ sap.ui.define([
 		// Assert
 		assert.ok(this.oPage.hasStyleClass("sapF2CollapsedHeader"), "header is collapsed");
 		assert.equal(oTitleInfo.text, "Test", "header is collapsed");
-		assert.strictEqual(oBackButton.getId(), sExpectedBackButtonId, "back button is correct");
-	});
-
-	/**
-	 * @deprecated since 1.112
-	 */
-	QUnit.test("Nested messagePage with empty header is ignored", function(assert) {
-
-		var oAdaptOptions = {bMoveTitle: true, bHideBackButton: true, bCollapseHeader: true},
-			oTitleInfo,
-			oBackButton,
-			sExpectedBackButtonId = this.oPage.getId() + "-navButton",
-			fnViewListener = function(oEvent) {
-				oTitleInfo = oEvent.getParameter("oTitleInfo");
-				oBackButton = oEvent.getParameter("oBackButton");
-			},
-			oSpy = this.spy(fnViewListener);
-
-		// Arrange
-		this.oPage.setTitle("Test");
-		this.oPage.setShowNavButton(true);
-		this.oPage.addContent(new MessagePage());
-
-		Fiori20Adapter.attachViewChange(oSpy);
-
-		// Act
-		Fiori20Adapter.traverse(this.oPage, oAdaptOptions);
-		Core.applyChanges();
-
-		// Assert
-		assert.ok(this.oPage.hasStyleClass("sapF2CollapsedHeader"), "header is collapsed");
-		assert.strictEqual(oTitleInfo.text, "Test", "header is collapsed");
 		assert.strictEqual(oBackButton.getId(), sExpectedBackButtonId, "back button is correct");
 	});
 

@@ -8,7 +8,8 @@ sap.ui.define([
 	'sap/m/Toolbar',
 	'sap/m/Button',
 	'sap/m/ResponsivePopover',
-	'sap/m/ToolbarSpacer'
+	'sap/m/ToolbarSpacer',
+	"sap/ui/core/StaticArea"
 ], function(
 	Control,
 	oCore,
@@ -16,7 +17,8 @@ sap.ui.define([
 	Toolbar,
 	Button,
 	ResponsivePopover,
-	ToolbarSpacer
+	ToolbarSpacer,
+	StaticArea
 ) {
 	"use strict";
 
@@ -169,7 +171,7 @@ sap.ui.define([
 		this._oToolbar.addContent(this._closeBtn);
 		// Append to static area of the UIArea once
 		if (!this._bAppendedToUIArea && !this.getParent()) {
-			var oStatic = oCore.getStaticAreaRef();
+			var oStatic = StaticArea.getDomRef()/* LFUI5: Check: StaticArea's API might have a better fit for your use case. */;
 			oStatic = UIArea.registry.get(oStatic.id);
 			oStatic.addContent(this, true);
 			this._bAppendedToUIArea = true;

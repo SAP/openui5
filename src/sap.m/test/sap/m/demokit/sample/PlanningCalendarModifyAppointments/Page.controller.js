@@ -552,7 +552,7 @@ sap.ui.define([
 					iIndexForRemoval;
 
 				if (!sPersonId){
-					sTempPath = this.sPath.slice(0,this.sPath.indexOf("appointments/") + "appointments/".length);
+					sTempPath = this.sPath.slice(0,this.sPath.indexOf("appointments/") + 13);
 				} else {
 					sTempPath = "/people/" + sPersonId + "/appointments";
 				}
@@ -571,7 +571,7 @@ sap.ui.define([
 				var oDetailsPopover = this.byId("detailsPopover"),
 					oBindingContext = oDetailsPopover.getBindingContext(),
 					oAppointment = oBindingContext.getObject(),
-					iPersonIdStartIndex = oBindingContext.getPath().indexOf("/people/") + "/people/".length,
+					iPersonIdStartIndex = oBindingContext.getPath().indexOf("/people/") + 8,
 					iPersonId = oBindingContext.getPath()[iPersonIdStartIndex];
 
 				this._removeAppointment(oAppointment, iPersonId);
@@ -706,7 +706,7 @@ sap.ui.define([
 			},
 
 			_appointmentOwnerChange: function(oNewAppointmentDialog){
-				var iSpathPersonId = this.sPath[this.sPath.indexOf("/people/") + "/people/".length],
+				var iSpathPersonId = this.sPath[this.sPath.indexOf("/people/") + 8],
 					iSelectedPerson = this.byId("selectPerson").getSelectedIndex(),
 					sTempPath = this.sPath,
 					iLastElementIndex = oNewAppointmentDialog.getModel().getProperty("/people/" + iSelectedPerson.toString() + "/appointments/").length.toString();
@@ -783,7 +783,7 @@ sap.ui.define([
 					oDateTimePickerEnd = this.byId("endDate"),
 					sSelectedInfo = oAppointment.info,
 					sSelectedTitle = oAppointment.title,
-					iSelectedPersonId = this.sPath[this.sPath.indexOf("/people/") + "/people/".length],
+					iSelectedPersonId = this.sPath[this.sPath.indexOf("/people/") + 8],
 					oPersonSelected = this.byId("selectPerson"),
 					oStartDate = this.byId("startDate"),
 					oEndDate = this.byId("endDate"),

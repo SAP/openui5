@@ -12,7 +12,6 @@ sap.ui.define([
 	"sap/ui/core/Item",
 	"sap/ui/core/library",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/model/odata/ODataModel",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
 	"sap/m/SelectRenderer",
@@ -29,7 +28,8 @@ sap.ui.define([
 	"sap/ui/core/ValueStateSupport",
 	"sap/ui/dom/getFirstEditableInput",
 	"sap/uxap/HierarchicalSelect",
-	"sap/ui/events/jquery/EventExtension" // side effect: provides jQuery.Event.prototype.isMarked
+	// side effect: provides jQuery.Event.prototype.isMarked
+	"sap/ui/events/jquery/EventExtension"
 ],
 	function(
 		jQuery,
@@ -44,7 +44,6 @@ sap.ui.define([
 		Item,
 		coreLibrary,
 		JSONModel,
-		ODataModel,
 		Filter,
 		FilterOperator,
 		SelectRenderer,
@@ -1951,7 +1950,7 @@ sap.ui.define([
 			// arrange
 			var sUri = "/service/";
 			var oMockServer = fnStartMockServer(sUri, 10);
-			var oModel = new ODataModel(sUri, true);
+			var oModel = new undefined/*ODataModel*/(sUri, true);
 			oSelect.setModel(oModel);
 			oSelect.placeAt("content");
 			Core.applyChanges();
@@ -1985,7 +1984,7 @@ sap.ui.define([
 			// arrange
 			var sUri = "/service/";
 			var oMockServer = fnStartMockServer(sUri, 10);
-			var oModel = new ODataModel(sUri, true);
+			var oModel = new undefined/*ODataModel*/(sUri, true);
 			oSelect.setModel(oModel);
 			oSelect.placeAt("content");
 			Core.applyChanges();
@@ -2020,7 +2019,7 @@ sap.ui.define([
 			var sUri = "/service/";
 			var iAutoRespondAfter = 10;
 			var oMockServer = fnStartMockServer(sUri, iAutoRespondAfter);
-			var oModel = new ODataModel(sUri, true);
+			var oModel = new undefined/*ODataModel*/(sUri, true);
 			oSelect.setModel(oModel);
 
 			// IDs and names of the products in the model:

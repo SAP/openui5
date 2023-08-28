@@ -147,15 +147,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the parsed and merged annotation data object.
-	 *
-	 * @public
-	 * @returns {object} The annotation data
-	 * @deprecated As of version 1.37.0, only kept for compatibility with V1 API, use {@link #getData} instead.
-	 */
-	ODataAnnotations.prototype.getAnnotationsData = ODataAnnotations.prototype.getData;
-
-	/**
 	 * Returns a map of custom headers that are sent with every request to an annotation URL.
 	 * @public
 	 * @returns {Object<string,string>} A map of all custom headers.
@@ -429,27 +420,27 @@ sap.ui.define([
 	 * @public
 	 */
 
-	 /**
-	 * Attaches the given callback to the {@link #event:loaded loaded} event.
-	 *
-	 * This event is fired when all annotations from a group of sources was successfully (loaded,) parsed and merged.
-	 * The parameter <code>result</code> will be set on the event argument and contains an array of all loaded sources as well
-	 * as Errors in the order in which they had been added.
-	 *
-	 * When called, the context of the event handler (its <code>this</code>) will be bound to <code>oListener</code>
-	 * if specified, otherwise it will be bound to this <code>sap.ui.model.odata.v2.ODataAnnotations</code> itself.
-	 *
-	 * @param {object}
-	 *            [oData] An application-specific payload object that will be passed to the event handler
-	 *            along with the event object when firing the event
-	 * @param {function}
-	 *            fnFunction The function to be called, when the event occurs
-	 * @param {object}
-	 *            [oListener] Context object to call the event handler with, defaults to this
-	 *            <code>ODataAnnotations</code> itself
-	 * @returns {this} Reference to <code>this</code> to allow method chaining
-	 * @public
-	 */
+	/**
+	* Attaches the given callback to the {@link #event:loaded loaded} event.
+	*
+	* This event is fired when all annotations from a group of sources was successfully (loaded,) parsed and merged.
+	* The parameter <code>result</code> will be set on the event argument and contains an array of all loaded sources as well
+	* as Errors in the order in which they had been added.
+	*
+	* When called, the context of the event handler (its <code>this</code>) will be bound to <code>oListener</code>
+	* if specified, otherwise it will be bound to this <code>sap.ui.model.odata.v2.ODataAnnotations</code> itself.
+	*
+	* @param {object}
+	*            [oData] An application-specific payload object that will be passed to the event handler
+	*            along with the event object when firing the event
+	* @param {function}
+	*            fnFunction The function to be called, when the event occurs
+	* @param {object}
+	*            [oListener] Context object to call the event handler with, defaults to this
+	*            <code>ODataAnnotations</code> itself
+	* @returns {this} Reference to <code>this</code> to allow method chaining
+	* @public
+	*/
 	ODataAnnotations.prototype.attachLoaded = function(oData, fnFunction, oListener) {
 		return this.attachEvent("loaded", oData, fnFunction, oListener);
 	};
@@ -842,5 +833,4 @@ sap.ui.define([
 	///////////////////////////////////////////////////// End Class ////////////////////////////////////////////////////
 
 	return ODataAnnotations;
-
 });

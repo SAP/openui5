@@ -2,15 +2,13 @@
 
 sap.ui.define("sap.m.qunit.UploadCollectionOpenFileDialog", [
 	"sap/ui/thirdparty/jquery",
-	"sap/m/UploadCollection",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/base/Event",
 	"sap/ui/Device",
-	"sap/m/UploadCollectionItem",
 	"sap/m/ObjectMarker",
 	"sap/base/Log",
 	"sap/ui/core/Core"
-], function (jQuery, UploadCollection, JSONModel, Event, Device, UploadCollectionItem, ObjectMarker, Log, oCore) {
+], function(jQuery, JSONModel, Event, Device, ObjectMarker, Log, oCore) {
 	"use strict";
 
 	var IMAGE_PATH = "test-resources/sap/m/images/";
@@ -78,7 +76,7 @@ sap.ui.define("sap.m.qunit.UploadCollectionOpenFileDialog", [
 	};
 
 	function createItemTemplate() {
-		return new UploadCollectionItem({
+		return new undefined/*UploadCollectionItem*/({
 			contributor: "{contributor}",
 			tooltip: "{tooltip}",
 			documentId: "{documentId}",
@@ -108,7 +106,7 @@ sap.ui.define("sap.m.qunit.UploadCollectionOpenFileDialog", [
 
 	QUnit.module("openFileDialog method", {
 		beforeEach: function () {
-			this.oUploadCollection = new UploadCollection({
+			this.oUploadCollection = new undefined/*UploadCollection*/({
 				items: {
 					path: "/items",
 					template: createItemTemplate(),
@@ -135,7 +133,7 @@ sap.ui.define("sap.m.qunit.UploadCollectionOpenFileDialog", [
 		var oReturnValue = this.oUploadCollection.openFileDialog(oItem);
 
 		// Assert
-		assert.ok(oReturnValue instanceof UploadCollection, "Function returns an instance of UploadCollection");
+		assert.ok(oReturnValue instanceof undefined/*UploadCollection*/, "Function returns an instance of UploadCollection");
 		assert.equal(Log.warning.callCount, 1, "Warning log was generated correctly");
 		assert.ok(Log.warning.calledWith("Version Upload cannot be used in multiple upload mode"), "Warning log was generated with the correct message");
 	});
@@ -150,7 +148,7 @@ sap.ui.define("sap.m.qunit.UploadCollectionOpenFileDialog", [
 		var aInputField = this.oUploadCollection._oFileUploader.$().find("input[type=file]");
 
 		// Assert
-		assert.ok(oReturnValue instanceof UploadCollection, "Function returns an instance of UploadCollection");
+		assert.ok(oReturnValue instanceof undefined/*UploadCollection*/, "Function returns an instance of UploadCollection");
 		assert.notEqual(aInputField, 0, "There is an input element with type=file in the FileUploader");
 		aInputField.one('click', function (oEvent) {
 			assert.ok(true, "Click event was triggered.");
@@ -168,7 +166,7 @@ sap.ui.define("sap.m.qunit.UploadCollectionOpenFileDialog", [
 		var aInputField = this.oUploadCollection._oFileUploader.$().find("input[type=file]");
 
 		// Assert
-		assert.ok(oReturnValue instanceof UploadCollection, "Function returns an instance of UploadCollection");
+		assert.ok(oReturnValue instanceof undefined/*UploadCollection*/, "Function returns an instance of UploadCollection");
 		assert.notEqual(aInputField, 0, "There is an input element with type=file in the FileUploader");
 		aInputField.one('click', function (oEvent) {
 			assert.ok(true, "Click event was triggered.");
@@ -192,7 +190,7 @@ sap.ui.define("sap.m.qunit.UploadCollectionOpenFileDialog", [
 
 	QUnit.module("openFileDialog Integration", {
 		beforeEach: function () {
-			this.oUploadCollection = new UploadCollection({
+			this.oUploadCollection = new undefined/*UploadCollection*/({
 				items: {
 					path: "/items",
 					template: createItemTemplate(),

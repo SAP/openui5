@@ -33,12 +33,15 @@ sap.ui.define(function () {
 					only: ["sap/f/AvatarGroup"]
 				}
 			},
+
 			"AvatarGroupItem": {
 				coverage: {
 					only: ["sap/f/AvatarGroupItem"]
 				}
 			},
+
 			"CalendarInCard": {},
+
 			"Card": {
 				coverage: {
 					only: ["sap/f/Card"]
@@ -47,16 +50,19 @@ sap.ui.define(function () {
 					useFakeTimers: true
 				}
 			},
+
 			"DynamicPage": {
 				coverage: {
 					only: ["sap/f/DynamicPage"]
 				}
 			},
+
 			"DynamicPageHeader": {
 				coverage: {
 					only: ["sap/f/DynamicPageHeader"]
 				}
 			},
+
 			"DynamicPageTitle": {
 				qunit: {
 					version: "edge"
@@ -68,11 +74,13 @@ sap.ui.define(function () {
 					only: ["sap/f/DynamicPageTitle"]
 				}
 			},
+
 			"DynamicPageWithStickySubheader": {
 				coverage: {
 					only: ["sap/f/DynamicPage"]
 				}
 			},
+
 			"ExploredSamples": {
 				loader: {
 					map: {
@@ -95,11 +103,13 @@ sap.ui.define(function () {
 				},
 				autostart: false
 			},
+
 			"FlexibleColumnLayout": {
 				coverage: {
 					only: ["sap/f/FlexibleColumnLayout"]
 				}
 			},
+
 			"GridContainer": {
 				ui5: {
 					compatVersion: "edge"
@@ -113,7 +123,9 @@ sap.ui.define(function () {
 					]
 				}
 			},
+
 			"GridContainerUtils": {},
+
 			"GridDropInfo": {
 				coverage: {
 					only: [
@@ -131,6 +143,7 @@ sap.ui.define(function () {
 					useFakeTimers: true
 				}
 			},
+
 			"GridContainerItemNavigation": {
 				coverage: {
 					only: [
@@ -144,6 +157,7 @@ sap.ui.define(function () {
 					useFakeTimers: true
 				}
 			},
+
 			"GridItemNavigation": {
 				coverage: {
 					only: [
@@ -155,6 +169,7 @@ sap.ui.define(function () {
 					version: "edge"
 				}
 			},
+
 			"GridList": {
 				coverage: {
 					only: ["sap/f/GridList"]
@@ -163,26 +178,31 @@ sap.ui.define(function () {
 					useFakeTimers: true
 				}
 			},
+
 			"GridListItem": {
 				coverage: {
 					only: ["sap/f/GridListItem"]
 				}
 			},
+
 			"GridNavigationMatrix": {
 				coverage: {
 					only: ["sap/f/GridNavigationMatrix"]
 				}
 			},
+
 			"ProductSwitchItem": {
 				coverage: {
 					only: ["sap/f/ProductSwitchItem"]
 				}
 			},
+
 			"ProductSwitch": {
 				coverage: {
 					only: ["sap/f/ProductSwitch"]
 				}
 			},
+
 			"Router": {
 				coverage: {
 					only: ["sap/f/Router"]
@@ -193,21 +213,25 @@ sap.ui.define(function () {
 					}
 				}
 			},
+
 			"SearchManager": {
 				coverage: {
 					only: ["sap/f/SearchManager"]
 				}
 			},
+
 			"SemanticContainer": {
 				coverage: {
 					only: ["sap/f/SemanticContainer"]
 				}
 			},
+
 			"SemanticPage": {
 				coverage: {
 					only: ["sap/f/SemanticPage"]
 				}
 			},
+
 			"ShellBar": {
 				title: "QUnit Test Page for sap.f.ShellBar",
 				qunit: {
@@ -230,6 +254,7 @@ sap.ui.define(function () {
 					language: "en"
 				}
 			},
+
 			"SidePanel": {
 				sinon: {
 					version: "edge"
@@ -238,49 +263,43 @@ sap.ui.define(function () {
 					only: ["sap/f/SidePanel"]
 				}
 			},
+
 			"TargetHandler": {
 				coverage: {
 					only: ["sap/f/routing/TargetHanlder"]
 				}
 			},
 
-			// -------------------------------------------------------------------------------
-			// Designtime tests:
-			// -------------------------------------------------------------------------------
-
-			/**
-			 * @deprecated since 1.73
-			 */
-			"Designtime-Avatar": {
-				group: "Designtime",
-				sinon: false,
-				module: "./designtime/Avatar.qunit"
-			},
 			"Designtime-DynamicPage": {
 				group: "Designtime",
 				sinon: false,
 				module: "./designtime/DynamicPage.qunit"
 			},
+
 			"Designtime-DynamicPageHeader": {
 				group: "Designtime",
 				sinon: false,
 				module: "./designtime/DynamicPageHeader.qunit"
 			},
+
 			"Designtime-DynamicPageTitle": {
 				group: "Designtime",
 				sinon: false,
 				module: "./designtime/DynamicPageTitle.qunit"
 			},
+
 			"Designtime-Library": {
 				group: "Designtime",
 				sinon: false,
 				module: "./designtime/Library.qunit"
 			},
+
 			"Designtime-SemanticPage": {
 				group: "Designtime",
 				sinon: false,
 				module: "./designtime/SemanticPage.qunit"
 			},
+
 			"Generic Testsuite": {
 				page: "test-resources/sap/f/qunit/testsuite.generic.qunit.html"
 			}

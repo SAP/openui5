@@ -378,21 +378,6 @@ sap.ui.define([
 		return this._sRequest || "";
 	};
 
-	// ----------------------------------------------------
-
-	// ----------------- temporary functions -------------
-
-	/**
-	 * Necessary due to consumers like Visual Editor still
-	 * calling this function with e.g. Variants
-	 * Should be removed after all consumers are adjusted.
-	 * @returns {object} file content as JSON object
-	 * @deprecated As of version 1.100
-	 */
-	FlexObject.prototype.getDefinition = function() {
-		return this.convertToFileContent();
-	};
-
 	FlexObject.prototype.getCreation = function() {
 		return this.getFlexObjectMetadata().creation;
 	};

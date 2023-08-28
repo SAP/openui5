@@ -1,7 +1,0 @@
-{
-  "sEntity": "Theme",
-  "sId": "sap_bluecrystal",
-  "oExtends": "base",
-  "sVendor": "SAP",
-  "sDeprecated" : "since version 1.40.0"
-}

@@ -235,53 +235,6 @@ sap.ui.define([
 		}
 	});
 
-	/**
-	 * @deprecated As of version 1.92
-	 */
-	QUnit.test("Deprecated property 'icon'", function (assert) {
-		// Arrange
-		var sIcon = "sap-icon://building";
-		this.oQuickViewPage.setIcon(sIcon);
-		Core.applyChanges();
-		var oAvatar = this.oQuickViewPage._mPageContent.header.getContent()[AVATAR_INDEX];
-
-		// Assert
-		assert.strictEqual(oAvatar.getSrc(), sIcon, "'icon' property should be correctly propagated to inner avatar");
-	});
-
-	/**
-	 * @deprecated As of version 1.111
-	 */
-	QUnit.test("crossApplicationNavigation when property 'icon and 'titleUrl' are set", function (assert) {
-		// Arrange
-		var oStub = sinon.stub(this.oQuickViewPage, "_crossApplicationNavigation");
-		this.oQuickViewPage.setTitleUrl("someTitleUrl");
-		this.oQuickViewPage.setAvatar(new Avatar({src: "sap-icon://building"}));
-		Core.applyChanges();
-		var oAvatar = this.oQuickViewPage._mPageContent.header.getContent()[AVATAR_INDEX];
-
-		// Act
-		QUnitUtils.triggerMouseEvent(oAvatar.getDomRef(), "tap");
-
-		// Assert
-		assert.ok(oStub.called, "crossApplicationNavigation should happen");
-	});
-
-	/**
-	 * @deprecated As of version 1.92
-	 */
-	QUnit.test("Deprecated property 'fallbackIcon'", function (assert) {
-		// Arrange
-		var sFallbackIcon = "sap-icon://error";
-		this.oQuickViewPage.setIcon("some/invalid/image.jpg");
-		this.oQuickViewPage.setFallbackIcon(sFallbackIcon);
-		Core.applyChanges();
-		var oAvatar = this.oQuickViewPage._mPageContent.header.getContent()[AVATAR_INDEX];
-
-		// Assert
-		assert.strictEqual(oAvatar.getFallbackIcon(), sFallbackIcon, "'fallbackIcon' property should be correctly propagated to inner avatar");
-	});
-
 	QUnit.module("Avatar", {
 		beforeEach: function () {
 			this.oQuickViewPage = new QuickViewPage();

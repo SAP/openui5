@@ -263,26 +263,6 @@ sap.ui.define([
 		oSpy.restore();
 	});
 
-	/**
-	 * @deprecated As of version 1.76
-	 */
-	QUnit.test("#setRootLevel", function(assert) {
-		var fnThrows = function() {
-			this.oProxy.setRootLevel(0);
-		};
-		assert.throws(fnThrows, /Setting the root level is not supported with your current binding./, "Setting root level is not supported in V4");
-	});
-
-	/**
-	 * @deprecated As of version 1.76
-	 */
-	QUnit.test("#setCollapseRecursive", function(assert) {
-		var fnThrows = function() {
-			this.oProxy.setCollapseRecursive(false);
-		};
-		assert.throws(fnThrows, /Setting 'collapseRecursive' is not supported with your current binding./, "Setting collapseRecursive is not supported in V4");
-	});
-
 	QUnit.test("#getLevel", function(assert) {
 		var fnGetContextByIndexStub = sinon.stub(this.oProxy, "getContextByIndex");
 		fnGetContextByIndexStub.returns({
@@ -511,48 +491,6 @@ sap.ui.define([
 
 		this.oProxy.expandToLevel(4);
 		assert.ok(bCalled, "Binding's collapseToLevel was called");
-	});
-
-	/**
-	 * @deprecated As of version 1.76
-	 */
-	QUnit.test("#setRootLevel", function(assert) {
-		var iRootLevel = -1;
-		this.fnGetBinding.returns({
-			getMetadata: function() {
-				return {
-					getName: function() {
-						return "sap.ui.model.odata.v2.ODataBinding";
-					}
-				};
-			},
-			setRootLevel: function(iLevel) {
-				iRootLevel = iLevel;
-			}
-		});
-		this.oProxy.setRootLevel(5);
-		assert.equal(iRootLevel, 5, "Root level is set to 5");
-	});
-
-	/**
-	 * @deprecated As of version 1.76
-	 */
-	QUnit.test("#setCollapseRecursive", function(assert) {
-		var bCollapseRecursive = false;
-		this.fnGetBinding.returns({
-			getMetadata: function() {
-				return {
-					getName: function() {
-						return "sap.ui.model.odata.v2.ODataBinding";
-					}
-				};
-			},
-			setCollapseRecursive: function(bCollapse) {
-				bCollapseRecursive = bCollapse;
-			}
-		});
-		this.oProxy.setCollapseRecursive(true);
-		assert.ok(bCollapseRecursive, "collapseRecursive is true");
 	});
 
 	QUnit.test("#getLevel", function(assert) {

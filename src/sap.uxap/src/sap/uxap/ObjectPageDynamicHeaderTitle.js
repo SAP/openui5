@@ -126,15 +126,6 @@ sap.ui.define([
 
 		/**
 		 * Required by the {@link sap.uxap.IHeaderTitle} interface.
-		 *
-		 * @deprecated As of version 1.40.1
-		 */
-		ObjectPageDynamicHeaderTitle.prototype.getHeaderDesign = function () {
-			return library.ObjectPageHeaderDesign.Light;
-		};
-
-		/**
-		 * Required by the {@link sap.uxap.IHeaderTitle} interface.
 		 */
 		ObjectPageDynamicHeaderTitle.prototype.snap = function (bUserInteraction) {
 			this._toggleState(false, bUserInteraction);
@@ -160,5 +151,4 @@ sap.ui.define([
 		};
 
 		return ObjectPageDynamicHeaderTitle;
-
 	});

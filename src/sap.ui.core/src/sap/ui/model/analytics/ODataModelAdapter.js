@@ -47,12 +47,6 @@ sap.ui.define(['./AnalyticalBinding', "./AnalyticalTreeBindingAdapter", './odata
 				this[fn] = ODataModelAdapter.prototype[fn];
 			}
 		}
-		/** @deprecated As of version 1.48.0 */
-		if (iModelVersion === 1 && this.isCountSupported()) {
-			// disable the count support (inline count is required for AnalyticalBinding)
-			Log.info("ODataModelAdapter: switched ODataModel to use inlinecount (mandatory for the AnalyticalBinding)");
-			this.setCountSupported(false);
-		}
 	};
 
 	/*

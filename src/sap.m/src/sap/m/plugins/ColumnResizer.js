@@ -164,7 +164,7 @@ sap.ui.define([
 	};
 
 	ColumnResizer.prototype._onmousemove = function(oEvent) {
-		if (bResizing || this.getControl().getBusy() || this.getControl().getBlocked()) {
+		if (bResizing || this.getControl().getBusy() || false) {
 			return;
 		}
 

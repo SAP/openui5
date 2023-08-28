@@ -1213,8 +1213,8 @@ function(
 				return;
 			}
 
-			var bSliderFocused = jQuery.contains(this.getDomRef(), oEvent.relatedTarget),
-				bTooltipFocused = jQuery.contains(this.getAggregation("_tooltipContainer").getDomRef(), oEvent.relatedTarget);
+			var bSliderFocused = this.getDomRef() !== oEvent.relatedTarget && this.getDomRef().contains(oEvent.relatedTarget),
+				bTooltipFocused = this.getAggregation("_tooltipContainer").getDomRef() !== oEvent.relatedTarget && this.getAggregation("_tooltipContainer").getDomRef().contains(oEvent.relatedTarget);
 
 			if (bSliderFocused || bTooltipFocused) {
 				return;
@@ -1230,7 +1230,7 @@ function(
 				this.getAggregation("_tooltipContainer").show(this);
 
 				oTooltipContainer = this.getAggregation("_tooltipContainer");
-				bTooltipFocused = jQuery.contains(oTooltipContainer.getDomRef(), document.activeElement);
+				bTooltipFocused = oTooltipContainer.getDomRef() !== document.activeElement && oTooltipContainer.getDomRef().contains(document.activeElement);
 				this._setAriaControls();
 
 				// do not update Tooltip's value if it is already focused
@@ -1250,18 +1250,18 @@ function(
 
 			var oTooltipContianerRef = this.getAggregation("_tooltipContainer").getDomRef(),
 				oSliderRef = this.getDomRef(),
-				bHandleFocused = jQuery.contains(oSliderRef, document.activeElement),
-				bTooltipFocused = jQuery.contains(oTooltipContianerRef, document.activeElement);
+				bHandleFocused = oSliderRef !== document.activeElement && oSliderRef.contains(document.activeElement),
+				bTooltipFocused = oTooltipContianerRef !== document.activeElement && oTooltipContianerRef.contains(document.activeElement);
 
 			if (!oTooltipContianerRef || bHandleFocused || bTooltipFocused) {
 				return;
 			}
 
-			if (jQuery.contains(this.getDomRef(), oEvent.toElement) || (oSliderRef === oEvent.toElement)) {
+			if (this.getDomRef() !== oEvent.toElement && this.getDomRef().contains(oEvent.toElement) || (oSliderRef === oEvent.toElement)) {
 				return;
 			}
 
-			if (jQuery.contains(this.getAggregation("_tooltipContainer").getDomRef(), oEvent.toElement)) {
+			if (this.getAggregation("_tooltipContainer").getDomRef() !== oEvent.toElement && this.getAggregation("_tooltipContainer").getDomRef().contains(oEvent.toElement)) {
 				return;
 			}
 

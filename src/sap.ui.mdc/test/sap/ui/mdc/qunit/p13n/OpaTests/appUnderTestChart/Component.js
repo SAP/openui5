@@ -9,12 +9,12 @@
  */
 sap.ui.define([
 	"sap/ui/core/sample/common/Component",
-	"sap/ui/fl/FakeLrepConnectorLocalStorage",
-	'sap/chart/library' // In here as chart lib cannot be loaded in manifest due to interference with sinon - workarround
-], function (
+	// In here as chart lib cannot be loaded in manifest due to interference with sinon - workarround
+	'sap/chart/library'
+], function(
 	CommonComponent,
-	FakeLrepConnectorLocalStorage,
-	chartLib // In here as chart lib cannot be loaded in manifest due to interference with sinon - workarround
+	// In here as chart lib cannot be loaded in manifest due to interference with sinon - workarround
+	chartLib
 ) {
 	"use strict";
 
@@ -26,7 +26,7 @@ sap.ui.define([
 		init: function () {
 			CommonComponent.prototype.init.apply(this, arguments);
 
-			FakeLrepConnectorLocalStorage.forTesting.synchronous.store("id_1550048095839_52_Copy", {
+			undefined/*FakeLrepConnectorLocalStorage*/.forTesting.synchronous.store("id_1550048095839_52_Copy", {
 				conditions: {},
 				content: {
 					title: "Language Visible On First Position"
@@ -54,7 +54,7 @@ sap.ui.define([
 				variantManagementReference: "IDViewOfAppUnderTestChart--IDVariantManagementOfAppUnderTestChart",
 				variantReference: "IDViewOfAppUnderTestChart--IDVariantManagementOfAppUnderTestChart"
 			});
-			FakeLrepConnectorLocalStorage.forTesting.synchronous.store("id_1550048095839_53_addItem", {
+			undefined/*FakeLrepConnectorLocalStorage*/.forTesting.synchronous.store("id_1550048095839_53_addItem", {
 				changeType: "addItem",
 				conditions: {},
 				content: {
@@ -93,7 +93,7 @@ sap.ui.define([
 				variantReference: "id_1550048095839_52_Copy"
 			});
 
-			FakeLrepConnectorLocalStorage.enableFakeConnector();
+			undefined/*FakeLrepConnectorLocalStorage*/.enableFakeConnector();
 		}
 	});
 });

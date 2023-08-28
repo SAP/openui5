@@ -9,8 +9,9 @@ sap.ui.define([
 	"../Plugin",
 	"../Support",
 	"sap/ui/thirdparty/jquery",
-	"sap/base/util/uid"
-], function (Core, Popup, Plugin, Support, jQuery, uid) {
+	"sap/base/util/uid",
+	"sap/ui/core/StaticArea"
+], function(Core, Popup, Plugin, Support, jQuery, uid, StaticArea) {
 	"use strict";
 
 		/**
@@ -58,7 +59,7 @@ sap.ui.define([
 					.openEnd()
 					.close("div");
 
-				rm.flush(Core.getStaticAreaRef(), false, true);
+				rm.flush(StaticArea.getDomRef()/* LFUI5: Check: StaticArea's API might have a better fit for your use case. */, false, true);
 				rm.destroy();
 
 				jPopupRef = jQuery(document.getElementById(this._sPopupId));

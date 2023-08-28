@@ -14,395 +14,360 @@ sap.ui.define([
 	Core,
 	TreeAutoExpandMode
 ) {
-	"use strict";
+ "use strict";
 
-	/**
-	 * Table-like controls, mainly for desktop scenarios.
-	 *
-	 * @namespace
-	 * @alias sap.ui.table
-	 * @author SAP SE
-	 * @version ${version}
-	 * @since 0.8
-	 * @public
-	 */
-	var thisLib = sap.ui.getCore().initLibrary({
-		name: "sap.ui.table",
-		version: "${version}",
-		dependencies: ["sap.ui.core", "sap.ui.unified"],
-		designtime: "sap/ui/table/designtime/library.designtime",
-		types: [
-			"sap.ui.table.NavigationMode",
-			"sap.ui.table.RowActionType",
-			"sap.ui.table.SelectionBehavior",
-			"sap.ui.table.SelectionMode",
-			"sap.ui.table.SortOrder",
-			"sap.ui.table.VisibleRowCountMode",
-			"sap.ui.table.TreeAutoExpandMode", /*Note: Only added here to ensure that a corresponding module is created automatically. Cannot be used as type for properties!*/
-			"sap.ui.table.plugins.SelectionMode"
-		],
-		interfaces: [],
-		controls: [
-			"sap.ui.table.AnalyticalColumnMenu",
-			"sap.ui.table.AnalyticalTable",
-			"sap.ui.table.ColumnMenu",
-			"sap.ui.table.CreationRow",
-			"sap.ui.table.Table",
-			"sap.ui.table.TreeTable",
-			"sap.ui.table.RowAction"
-		],
-		elements: [
-			"sap.ui.table.AnalyticalColumn",
-			"sap.ui.table.Column",
-			"sap.ui.table.Row",
-			"sap.ui.table.RowActionItem",
-			"sap.ui.table.RowSettings",
-			"sap.ui.table.rowmodes.RowMode",
-			"sap.ui.table.rowmodes.Fixed",
-			"sap.ui.table.rowmodes.Interactive",
-			"sap.ui.table.rowmodes.Auto",
-			"sap.ui.table.plugins.SelectionPlugin",
-			"sap.ui.table.plugins.MultiSelectionPlugin",
-			"sap.ui.table.plugins.ODataV4Selection"
-		],
-		extensions: {
-			flChangeHandlers: {
-				// Note: MoveElements change handling is deprecated
-				//
-				// "sap.ui.table.Table": {
-				// 	"moveElements": "default"
-				// },
-				// "sap.ui.table.AnalyticalTable": {
-				// 	"moveElements": "default"
-				// }
-			},
-			//Configuration used for rule loading of Support Assistant
-			"sap.ui.support": {
-				publicRules: true
-			}
-		}
-	});
+ /**
+  * Table-like controls, mainly for desktop scenarios.
+  *
+  * @namespace
+  * @alias sap.ui.table
+  * @author SAP SE
+  * @version ${version}
+  * @since 0.8
+  * @public
+  */
+ var thisLib = sap.ui.getCore().initLibrary({
+	 name: "sap.ui.table",
+	 version: "${version}",
+	 dependencies: ["sap.ui.core", "sap.ui.unified"],
+	 designtime: "sap/ui/table/designtime/library.designtime",
+	 types: [
+		 "sap.ui.table.NavigationMode",
+		 "sap.ui.table.RowActionType",
+		 "sap.ui.table.SelectionBehavior",
+		 "sap.ui.table.SelectionMode",
+		 "sap.ui.table.SortOrder",
+		 "sap.ui.table.VisibleRowCountMode",
+		 "sap.ui.table.TreeAutoExpandMode", /*Note: Only added here to ensure that a corresponding module is created automatically. Cannot be used as type for properties!*/
+		 "sap.ui.table.plugins.SelectionMode"
+	 ],
+	 interfaces: [],
+	 controls: [
+	  "sap.ui.table.AnalyticalTable",
+	  "sap.ui.table.CreationRow",
+	  "sap.ui.table.Table",
+	  "sap.ui.table.TreeTable",
+	  "sap.ui.table.RowAction"
+	 ],
+	 elements: [
+		 "sap.ui.table.AnalyticalColumn",
+		 "sap.ui.table.Column",
+		 "sap.ui.table.Row",
+		 "sap.ui.table.RowActionItem",
+		 "sap.ui.table.RowSettings",
+		 "sap.ui.table.rowmodes.RowMode",
+		 "sap.ui.table.rowmodes.Fixed",
+		 "sap.ui.table.rowmodes.Interactive",
+		 "sap.ui.table.rowmodes.Auto",
+		 "sap.ui.table.plugins.SelectionPlugin",
+		 "sap.ui.table.plugins.MultiSelectionPlugin",
+		 "sap.ui.table.plugins.ODataV4Selection"
+	 ],
+	 extensions: {
+		 flChangeHandlers: {
+			 // Note: MoveElements change handling is deprecated
+			 //
+			 // "sap.ui.table.Table": {
+			 // 	"moveElements": "default"
+			 // },
+			 // "sap.ui.table.AnalyticalTable": {
+			 // 	"moveElements": "default"
+			 // }
+		 },
+		 //Configuration used for rule loading of Support Assistant
+		 "sap.ui.support": {
+			 publicRules: true
+		 }
+	 }
+ });
 
-	/**
-	 * Navigation mode of the table
-	 *
-	 * @version ${version}
-	 * @enum {string}
-	 * @public
-	 */
-	thisLib.NavigationMode = {
+ /**
+  * Navigation mode of the table
+  *
+  * @version ${version}
+  * @enum {string}
+  * @public
+  */
+ thisLib.NavigationMode = {
+  /**
+   * Uses the scrollbar control.
+   * @public
+   */
+  Scrollbar: "Scrollbar"
+ };
 
-		/**
-		 * Uses the scrollbar control.
-		 * @public
-		 */
-		Scrollbar: "Scrollbar",
+ /**
+  * Row Action types.
+  *
+  * @version ${version}
+  * @enum {string}
+  * @public
+  */
+ thisLib.RowActionType = {
 
-		/**
-		 * Uses the paginator control.
-		 * This option must no longer be used. Using a scrollbar is the only navigation mode which is supported by
-		 * the <code>sap.ui.table</code> library. The <code>navigationMode</code> property has always been a visual representation. No matter which navigation mode
-		 * is used, data fetched from an OData service is loaded page-wise.
-		 * @public
-		 * @deprecated As of version 1.38, replaced by {@link sap.ui.table.NavigationMode.Scrollbar}
-		 */
-		Paginator: "Paginator"
+	 /**
+	  * Custom defined Row Action.
+	  * @public
+	  */
+	 Custom: "Custom",
 
-	};
+	 /**
+	  * Navigation Row Action.
+	  * @public
+	  */
+	 Navigation: "Navigation",
 
-	/**
-	 * Row Action types.
-	 *
-	 * @version ${version}
-	 * @enum {string}
-	 * @public
-	 */
-	thisLib.RowActionType = {
+	 /**
+	  * Delete Row Action.
+	  * @public
+	  */
+	 Delete: "Delete"
 
-		/**
-		 * Custom defined Row Action.
-		 * @public
-		 */
-		Custom: "Custom",
+ };
 
-		/**
-		 * Navigation Row Action.
-		 * @public
-		 */
-		Navigation: "Navigation",
+ /**
+  * Selection behavior of the table
+  *
+  * @version ${version}
+  * @enum {string}
+  * @public
+  */
+ thisLib.SelectionBehavior = {
 
-		/**
-		 * Delete Row Action.
-		 * @public
-		 */
-		Delete: "Delete"
+	 /**
+	  * Rows can be selected on the complete row.
+	  * @public
+	  */
+	 Row: "Row",
 
-	};
+	 /**
+	  * Rows can only be selected on the row selector.
+	  * @public
+	  */
+	 RowSelector: "RowSelector",
 
-	/**
-	 * Selection behavior of the table
-	 *
-	 * @version ${version}
-	 * @enum {string}
-	 * @public
-	 */
-	thisLib.SelectionBehavior = {
+	 /**
+	  * Rows can only be selected on the row (and the selector is hidden).
+	  * @public
+	  */
+	 RowOnly: "RowOnly"
 
-		/**
-		 * Rows can be selected on the complete row.
-		 * @public
-		 */
-		Row: "Row",
+ };
 
-		/**
-		 * Rows can only be selected on the row selector.
-		 * @public
-		 */
-		RowSelector: "RowSelector",
+ /**
+  * Selection mode of the table
+  *
+  * @version ${version}
+  * @enum {string}
+  * @public
+  */
+ thisLib.SelectionMode = {
+  /**
+   * Select multiple rows at a time (toggle behavior).
+   * @public
+   */
+  MultiToggle: "MultiToggle",
 
-		/**
-		 * Rows can only be selected on the row (and the selector is hidden).
-		 * @public
-		 */
-		RowOnly: "RowOnly"
+  /**
+   * Select one row at a time.
+   * @public
+   */
+  Single: "Single",
 
-	};
+  /**
+   * No rows can be selected.
+   * @public
+   */
+  None: "None"
+ };
 
-	/**
-	 * Selection mode of the table
-	 *
-	 * @version ${version}
-	 * @enum {string}
-	 * @public
-	 */
-	thisLib.SelectionMode = {
+ /**
+  * Sort order of a column
+  *
+  * @version ${version}
+  * @enum {string}
+  * @public
+  */
+ thisLib.SortOrder = {
 
-		/**
-		 * Select multiple rows at a time (toggle behavior).
-		 * @public
-		 */
-		MultiToggle: "MultiToggle",
+	 /**
+	  * Sort Order: ascending.
+	  * @public
+	  */
+	 Ascending: "Ascending",
 
-		/**
-		 * Select multiple rows at a time.
-		 * @public
-		 * @deprecated As of version 1.38, replaced by {@link sap.ui.table.SelectionMode.MultiToggle}
-		 */
-		Multi: "Multi",
+	 /**
+	  * Sort Order: descending.
+	  * @public
+	  */
+	 Descending: "Descending"
 
-		/**
-		 * Select one row at a time.
-		 * @public
-		 */
-		Single: "Single",
+ };
 
-		/**
-		 * No rows can be selected.
-		 * @public
-		 */
-		None: "None"
+ /**
+  * VisibleRowCountMode of the table
+  *
+  * @version ${version}
+  * @enum {string}
+  * @public
+  */
+ thisLib.VisibleRowCountMode = {
 
-	};
+	 /**
+	  * The table always has as many rows as defined in the <code>visibleRowCount</code> property.
+	  * @public
+	  */
+	 Fixed: "Fixed",
 
-	/**
-	 * Sort order of a column
-	 *
-	 * @version ${version}
-	 * @enum {string}
-	 * @public
-	 */
-	thisLib.SortOrder = {
+	 /**
+	  * The user can change the <code>visibleRowCount</code> by dragging a resizer.
+	  * @public
+	  */
+	 Interactive: "Interactive",
 
-		/**
-		 * Sort Order: ascending.
-		 * @public
-		 */
-		Ascending: "Ascending",
+	 /**
+	  * The table automatically fills the height of the surrounding container.
+	  * @public
+	  */
+	 Auto: "Auto"
 
-		/**
-		 * Sort Order: descending.
-		 * @public
-		 */
-		Descending: "Descending"
+ };
 
-	};
+ /**
+  * Shared DOM Reference IDs of the table.
+  *
+  * Contains IDs of shared DOM references, which should be accessible to inheriting controls via getDomRef() function.
+  *
+  * @version ${version}
+  * @enum {string}
+  * @public
+  */
+ thisLib.SharedDomRef = {
 
-	/**
-	 * VisibleRowCountMode of the table
-	 *
-	 * @version ${version}
-	 * @enum {string}
-	 * @public
-	 */
-	thisLib.VisibleRowCountMode = {
+	 /**
+	  * The element id of the Horizontal Scroll Bar of the sap.ui.table.Table.
+	  * @public
+	  */
+	 HorizontalScrollBar: "hsb",
 
-		/**
-		 * The table always has as many rows as defined in the <code>visibleRowCount</code> property.
-		 * @public
-		 */
-		Fixed: "Fixed",
+	 /**
+	  * The element id of the Vertical Scroll Bar of the sap.ui.table.Table.
+	  * @public
+	  */
+	 VerticalScrollBar: "vsb"
+ };
 
-		/**
-		 * The user can change the <code>visibleRowCount</code> by dragging a resizer.
-		 * @public
-		 */
-		Interactive: "Interactive",
+ /**
+  * Details about the group event to distinguish between different actions associated with grouping
+  * @enum {string}
+  * @public
+  * @type {{group: string, ungroup: string, ungroupAll: string, moveUp: string, moveDown: string, showGroupedColumn: string, hideGroupedColumn: string}}
+  */
+ thisLib.GroupEventType = {
+	 /**
+	  * Group Column
+	  * @public
+	  */
+	 group: "group",
+	 /**
+	  * Ungroup Column
+	  * @public
+	  */
+	 ungroup: "ungroup",
+	 /**
+	  * Ungroup All Columns
+	  * @public
+	  */
+	 ungroupAll: "ungroupAll",
+	 /**
+	  * Change the group order of the columns. Move column one position up in the group sequence
+	  * @public
+	  */
+	 moveUp: "moveUp",
+	 /**
+	  * Change the group order of the columns. Move column one position down in the group sequence
+	  * @public
+	  */
+	 moveDown: "moveDown",
+	 /**
+	  * Show grouped column also as a column, not just as group header
+	  * @public
+	  */
+	 showGroupedColumn: "showGroupedColumn",
+	 /**
+	  * Show grouped column only as group header
+	  * @public
+	  */
+	 hideGroupedColumn: "hideGroupedColumn"
+ };
 
-		/**
-		 * The table automatically fills the height of the surrounding container.
-		 * @public
-		 */
-		Auto: "Auto"
+ /**
+  * Enumeration of the <code>ResetAllMode</code> that can be used in a <code>TablePersoController</code>.
+  * @enum {string}
+  * @public
+  */
+ thisLib.ResetAllMode = {
 
-	};
+	 /**
+	  * Default behavior of the <code>TablePersoDialog</code> Reset All button.
+	  * @public
+	  */
+	 Default: "Default",
 
-	/**
-	 * Shared DOM Reference IDs of the table.
-	 *
-	 * Contains IDs of shared DOM references, which should be accessible to inheriting controls via getDomRef() function.
-	 *
-	 * @version ${version}
-	 * @enum {string}
-	 * @public
-	 */
-	thisLib.SharedDomRef = {
+	 /**
+	  * Resets the table to the default of the attached <code>PersoService</code>.
+	  * @public
+	  */
+	 ServiceDefault: "ServiceDefault",
 
-		/**
-		 * The element id of the Horizontal Scroll Bar of the sap.ui.table.Table.
-		 * @public
-		 */
-		HorizontalScrollBar: "hsb",
+	 /**
+	  * Resets the table to the result of <code>getResetPersData</code> of the attached <code>PersoService</code>.
+	  * @public
+	  */
+	 ServiceReset: "ServiceReset"
+ };
 
-		/**
-		 * The element id of the Vertical Scroll Bar of the sap.ui.table.Table.
-		 * @public
-		 */
-		VerticalScrollBar: "vsb"
-	};
+ // map the new Column to the old ColumnHeader
+ thisLib.ColumnHeader = thisLib.Column;
 
-	/**
-	 * Details about the group event to distinguish between different actions associated with grouping
-	 * @enum {string}
-	 * @public
-	 * @type {{group: string, ungroup: string, ungroupAll: string, moveUp: string, moveDown: string, showGroupedColumn: string, hideGroupedColumn: string}}
-	 */
-	thisLib.GroupEventType = {
-		/**
-		 * Group Column
-		 * @public
-		 */
-		group: "group",
-		/**
-		 * Ungroup Column
-		 * @public
-		 */
-		ungroup: "ungroup",
-		/**
-		 * Ungroup All Columns
-		 * @public
-		 */
-		ungroupAll: "ungroupAll",
-		/**
-		 * Change the group order of the columns. Move column one position up in the group sequence
-		 * @public
-		 */
-		moveUp: "moveUp",
-		/**
-		 * Change the group order of the columns. Move column one position down in the group sequence
-		 * @public
-		 */
-		moveDown: "moveDown",
-		/**
-		 * Show grouped column also as a column, not just as group header
-		 * @public
-		 */
-		showGroupedColumn: "showGroupedColumn",
-		/**
-		 * Show grouped column only as group header
-		 * @public
-		 */
-		hideGroupedColumn: "hideGroupedColumn"
-	};
+ // copy sap.ui.model.TreeAutoExpandMode onto the legacy type sap.ui.table.TreeAutoExpandMode
+ /**
+  * Different modes for setting the auto expand mode on tree or analytical bindings.
+  *
+  * This is an alias for {@link sap.ui.model.TreeAutoExpandMode} and kept for compatibility reasons.
+  *
+  * @version ${version}
+  * @typedef {sap.ui.model.TreeAutoExpandMode}
+  * @public
+  */
+ thisLib.TreeAutoExpandMode = TreeAutoExpandMode;
 
-	/**
-	 * Enumeration of the <code>ResetAllMode</code> that can be used in a <code>TablePersoController</code>.
-	 * @enum {string}
-	 * @public
-	 */
-	thisLib.ResetAllMode = {
+ if (!thisLib.plugins) {
+	 thisLib.plugins = {};
+ }
 
-		/**
-		 * Default behavior of the <code>TablePersoDialog</code> Reset All button.
-		 * @public
-		 */
-		Default: "Default",
+ /**
+  * Mode of a selection plugin
+  *
+  * @version ${version}
+  * @enum {string}
+  * @private
+  */
+ thisLib.plugins.SelectionMode = {
+	 /**
+	  * Only one row can be selected at a time.
+	  * @public
+	  */
+	 Single: "Single",
 
-		/**
-		 * Resets the table to the default of the attached <code>PersoService</code>.
-		 * @public
-		 */
-		ServiceDefault: "ServiceDefault",
+	 /**
+	  * Multiple rows can be selected.
+	  * @public
+	  */
+	 MultiToggle: "MultiToggle"
+ };
 
-		/**
-		 * Resets the table to the result of <code>getResetPersData</code> of the attached <code>PersoService</code>.
-		 * @public
-		 */
-		ServiceReset: "ServiceReset"
-	};
-
-	// map the new Column to the old ColumnHeader
-	thisLib.ColumnHeader = thisLib.Column;
-
-	// copy sap.ui.model.TreeAutoExpandMode onto the legacy type sap.ui.table.TreeAutoExpandMode
-	/**
-	 * Different modes for setting the auto expand mode on tree or analytical bindings.
-	 *
-	 * This is an alias for {@link sap.ui.model.TreeAutoExpandMode} and kept for compatibility reasons.
-	 *
-	 * @version ${version}
-	 * @typedef {sap.ui.model.TreeAutoExpandMode}
-	 * @public
-	 */
-	thisLib.TreeAutoExpandMode = TreeAutoExpandMode;
-
-	if (!thisLib.plugins) {
-		thisLib.plugins = {};
-	}
-
-	/**
-	 * Mode of a selection plugin
-	 *
-	 * @version ${version}
-	 * @enum {string}
-	 * @private
-	 */
-	thisLib.plugins.SelectionMode = {
-		/**
-		 * Only one row can be selected at a time.
-		 * @public
-		 */
-		Single: "Single",
-
-		/**
-		 * Multiple rows can be selected.
-		 * @public
-		 */
-		MultiToggle: "MultiToggle"
-	};
-
-	//factory for table to create labels and textviews to be overwritten by commons and mobile library
-	/**
-	 * @deprecated As of version 1.118
-	 */
-	if (!thisLib.TableHelper) {
-		thisLib.TableHelper = {
-			addTableClass: function() { return ""; }, /* must return some additional CSS class */
-			createLabel: function(mConfig) { throw new Error("no Label control available!"); }, /* must return a Label control */
-			createTextView: function(mConfig) { throw new Error("no TextView control available!"); }, /* must return a textview control */
-			bFinal: false /* if true, the helper must not be overwritten by an other library */
-		};
-	}
-
-	return thisLib;
-
+ //factory for table to create labels and textviews to be overwritten by commons and mobile library
+ /* -------------------------------------- */
+ return thisLib;
 });

@@ -451,24 +451,6 @@ sap.ui.define([
 	 */
 	DateFormat.getDateTimeWithTimezoneInstance = function(oFormatOptions, oLocale) {
 		if (oFormatOptions && !(oFormatOptions instanceof Locale)) {
-			/** @deprecated As of version 1.101.0 */
-			(function () {
-				// do not modify the input format options
-				oFormatOptions = Object.assign({}, oFormatOptions);
-				// translate old showTimezone values (backward compatibility)
-				if (typeof oFormatOptions.showTimezone === "string") {
-					var sShowTimezone = oFormatOptions.showTimezone;
-					if (oFormatOptions.showDate === undefined && oFormatOptions.showTime === undefined) {
-						if (sShowTimezone === "Hide") {
-							oFormatOptions.showTimezone = false;
-						} else if (sShowTimezone === "Only") {
-							oFormatOptions.showDate = false;
-							oFormatOptions.showTime = false;
-						}
-					}
-					oFormatOptions.showTimezone = sShowTimezone !== "Hide";
-				}
-			}());
 			if (oFormatOptions.showDate === false
 				&& oFormatOptions.showTime === false
 				&& oFormatOptions.showTimezone === false) {

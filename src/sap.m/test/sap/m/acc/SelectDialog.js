@@ -11,8 +11,7 @@ sap.ui.define([
 	"sap/ui/core/library",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
-	"sap/ui/model/json/JSONModel",
-	"sap/ui/model/odata/ODataModel"
+	"sap/ui/model/json/JSONModel"
 ], function(
 	App,
 	Button,
@@ -26,8 +25,7 @@ sap.ui.define([
 	coreLibrary,
 	Filter,
 	FilterOperator,
-	JSONModel,
-	ODataModel
+	JSONModel
 ) {
 	"use strict";
 

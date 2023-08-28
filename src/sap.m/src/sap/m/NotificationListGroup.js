@@ -71,7 +71,6 @@ function(
 		metadata: {
 			library: 'sap.m',
 			properties: {
-
 				/**
 				 * Determines if the group is collapsed or expanded.
 				 */
@@ -98,28 +97,7 @@ function(
 				 *
 				 *<b>Note:</b> Counter value represents the number of currently visible (loaded) items inside the group.
 				 */
-				showItemsCounter: {type: 'boolean', group: 'Behavior', defaultValue: true},
-
-				/**
-				 * Determines the notification group's author name.
-				 *
-				 * @deprecated As of version 1.73
-				 */
-				authorName: {type: 'string', group: 'Appearance', defaultValue: '', deprecated: true},
-
-				/**
-				 * Determines the URL of the notification group's author picture.
-				 *
-				 *  @deprecated As of version 1.73
-				 */
-				authorPicture: {type: 'sap.ui.core.URI', deprecated: true},
-
-				/**
-				 * Determines the due date of the NotificationListGroup.
-				 *
-				 *  @deprecated As of version 1.73
-				 */
-				datetime: {type: 'string', group: 'Appearance', defaultValue: '', deprecated: true}
+				showItemsCounter: {type: 'boolean', group: 'Behavior', defaultValue: true}
 			},
 			defaultAggregation : 'items',
 			aggregations: {

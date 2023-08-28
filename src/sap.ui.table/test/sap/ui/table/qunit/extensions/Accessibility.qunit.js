@@ -1486,15 +1486,6 @@ sap.ui.define([
 		oCore.applyChanges();
 	});
 
-	/**
-	 * @deprecated As of version 1.38
-	 */
-	QUnit.test("ARIA Attributes of Table Header", function(assert) {
-		var $Elem = oTable.$().find(".sapUiTableHdr");
-		assert.strictEqual($Elem.attr("role"), "heading", "role");
-		assert.strictEqual($Elem.attr("aria-level"), "2", "aria-level");
-	});
-
 	QUnit.test("ARIA Attributes of Table Elements", function(assert) {
 		var $Elem = oTable.$().find("table");
 		$Elem.each(function() {
@@ -1510,7 +1501,7 @@ sap.ui.define([
 		assert.strictEqual($Elem.attr("aria-rowcount"), "9", "aria-rowcount");
 		assert.strictEqual($Elem.attr("aria-colcount"), "6", "aria-colcount");
 		assert.strictEqual($Elem.attr("aria-multiselectable"), "true", "aria-multiselectable");
-		assert.strictEqual($Elem.attr("aria-labelledby"), oTable.getAriaLabelledBy() + " " + oTable.getTitle().getId(), "aria-labelledby");
+		assert.strictEqual($Elem.attr("aria-labelledby"), oTable.getAriaLabelledBy() + " " + null.getId(), "aria-labelledby");
 
 		oTable.attachEventOnce("rowsUpdated", function() {
 			assert.strictEqual($Elem.attr("aria-rowcount"), "4", "aria-rowcount after filter is applied");
@@ -1522,7 +1513,7 @@ sap.ui.define([
 			assert.strictEqual($Elem.attr("aria-colcount"), "7", "aria-colcount");
 			oTable.removeAriaLabelledBy(oTable.getAriaLabelledBy()[0]);
 			oCore.applyChanges();
-			assert.strictEqual($Elem.attr("aria-labelledby"), oTable.getTitle().getId(), "aria-labelledby when ariaLabelledBy association is empty array");
+			assert.strictEqual($Elem.attr("aria-labelledby"), null.getId(), "aria-labelledby when ariaLabelledBy association is empty array");
 			done();
 		});
 
@@ -1753,7 +1744,7 @@ sap.ui.define([
 		});
 		var $Elem = jQuery(document.getElementById(sTableId + "-overlay"));
 		assert.strictEqual($Elem.attr("aria-labelledby"),
-			oTable.getAriaLabelledBy() + " " + oTable.getTitle().getId() + " " + sTableId + "-ariainvalid", "aria-labelledby");
+			oTable.getAriaLabelledBy() + " " + null.getId() + " " + sTableId + "-ariainvalid", "aria-labelledby");
 		oTable.invalidate();
 		oCore.applyChanges();
 		$OverlayCoveredElements = oTable.$().find("[data-sap-ui-table-acc-covered*='overlay']");
@@ -1770,7 +1761,7 @@ sap.ui.define([
 		oCore.applyChanges();
 		$Elem = jQuery(document.getElementById(sTableId + "-overlay"));
 		assert.strictEqual($Elem.attr("aria-labelledby"),
-			oTable.getTitle().getId() + " " + sTableId + "-ariainvalid", "aria-labelledby when ariaLabelledBy association is empty array");
+			null.getId() + " " + sTableId + "-ariainvalid", "aria-labelledby when ariaLabelledBy association is empty array");
 	});
 
 	QUnit.test("ARIA for NoData", function(assert) {
@@ -1856,8 +1847,6 @@ sap.ui.define([
 			"Table: HiddenText cellacc is properly set");
 
 		oTable.setFixedColumnCount(0);
-		oTable.setEnableGrouping(true);
-		oTable.setGroupBy(oCol1);
 		oCore.applyChanges();
 
 		$Cell = getCell(1, 1, true, null, oTable);
@@ -1871,8 +1860,6 @@ sap.ui.define([
 			"TreeTable: HiddenText cellacc is properly set");
 
 		oTreeTable.setFixedColumnCount(0);
-		oTreeTable.setEnableGrouping(true);
-		oTreeTable.setGroupBy(oCol1);
 		oCore.applyChanges();
 
 		$Cell = getCell(1, 1, true, null, oTreeTable);

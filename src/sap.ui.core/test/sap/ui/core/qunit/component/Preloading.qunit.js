@@ -25,7 +25,6 @@ sap.ui.define([
 	UIComponentMetadata,
 	VersionInfo
 ) {
-
 	"use strict";
 	/*global sinon, QUnit*/
 
@@ -363,24 +362,6 @@ sap.ui.define([
 			name: "sap.test01.mycomp",
 			asyncHints: {
 				preloadOnly: true // this should only be passed to "Component.load"!
-			}
-		}).then(function(oComponent) {
-			assert.ok(oComponent instanceof Component, "Component has been created.");
-		});
-	});
-
-	/**
-	 * @deprecated Since 1.56
-	 */
-	QUnit.test("sap.ui.component: 'asyncHints.preloadOnly' should be ignored", function(assert) {
-
-		sap.ui.loader.config({paths:{"sap/test":"test-resources/sap/ui/core/qunit/component/testdata/async"}});
-
-		return sap.ui.component({
-			name: "sap.test.mycomp",
-			async: true,
-			asyncHints: {
-				preloadOnly: true // this should only be passed to "sap.ui.component.load"!
 			}
 		}).then(function(oComponent) {
 			assert.ok(oComponent instanceof Component, "Component has been created.");
@@ -852,5 +833,4 @@ sap.ui.define([
 		}.bind(this));
 
 	});
-
 });

@@ -147,9 +147,6 @@ sap.ui.define([
 
 			this.setDisplayFormat(sDefaultDisplayFormat);
 			this._setTimeValues();
-			this._sMinutes; //needed for the 2400 scenario to store the minutes and seconds when changing hour to 24 and back
-			this._sSeconds; //needed for the 2400 scenario to store the minutes and seconds when changing hour to 24 and back
-			this._clickAttached; // needed for focus capturing when click outside buttons
 
 			this._setAriaLabel(this._oResourceBundle.getText("TIMEPICKER_CLOCK_DIAL_LABEL"));
 			this._setAriaRoleDescription(this._oResourceBundle.getText("TIMEPICKER_INPUTS_ROLE_DESCRIPTION"));

@@ -426,7 +426,7 @@ sap.ui.define([
 	};
 
 	FormLayout.prototype.onBeforeFastNavigationFocus = function(oEvent){
-		if (jQuery.contains(this.getDomRef(), oEvent.source)) {
+		if (this.getDomRef() !== oEvent.source && this.getDomRef().contains(oEvent.source)) {
 			oEvent.srcControl = Element.closestTo(oEvent.source);
 			if (oEvent.forward) {
 				this.onsapskipforward(oEvent);

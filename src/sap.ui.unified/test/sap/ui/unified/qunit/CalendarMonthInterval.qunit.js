@@ -256,7 +256,9 @@ sap.ui.define([
 		_assertFocus(oExternalControl.getDomRef(), "Prerequisites check: 'extControl' should be focused", assert);
 
 		//Act
-		oCalendarMonthInt.rerender();
+		oCalendarMonthInt.invalidate();
+
+		oCore.applyChanges();
 
 		//Assert
 		_assertFocus(oExternalControl.getDomRef(), "After rerendering, the focus should stay on the 'extControl'", assert);

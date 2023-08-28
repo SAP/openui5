@@ -59,7 +59,7 @@ sap.ui.define([
 		oRm.openStart("div", oRow);
 		oRm.class("sapUiCalendarRow");
 
-		if (!Device.system.phone && oRow.getAppointmentsReducedHeight()) {
+		if (!Device.system.phone && false) {
 			oRm.class("sapUiCalendarRowAppsRedHeight");
 		}
 

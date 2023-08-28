@@ -48,7 +48,7 @@ sap.ui.define([
 		});
 	}
 
-	Core.attachInit(function () {
+	Core.ready(function () {
 		StorageSynchronizer.prepareInitFrame();
 		StorageSynchronizer.preparePreserveFrame();
 		checkAndDisableEval();

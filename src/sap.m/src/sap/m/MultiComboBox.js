@@ -473,7 +473,7 @@ function(
 	 * @private
 	 */
 	MultiComboBox.prototype.isFocusInTokenizer = function () {
-		return jQuery.contains(this.getAggregation("tokenizer").getFocusDomRef(), document.activeElement);
+		return this.getAggregation("tokenizer").getFocusDomRef() !== document.activeElement && this.getAggregation("tokenizer").getFocusDomRef().contains(document.activeElement);
 	};
 
 	/**
@@ -740,7 +740,7 @@ function(
 			oTokenizer = this.getAggregation("tokenizer");
 
 		// If focus target is outside of picker and the picker is fully opened
-		if (!this._bPickerIsOpening && (!oPicker || !oPicker.getFocusDomRef() || !oFocusDomRef || !jQuery.contains(oPicker.getFocusDomRef(), oFocusDomRef))) {
+		if (!this._bPickerIsOpening && (!oPicker || !oPicker.getFocusDomRef() || !oFocusDomRef || !(oPicker.getFocusDomRef() !== oFocusDomRef && oPicker.getFocusDomRef().contains(oFocusDomRef)))) {
 			this.setValue(null);
 
 			// fire change event only if the value of the MCB is not empty
@@ -749,7 +749,7 @@ function(
 			}
 
 			// if the focus is outside the MultiComboBox, the tokenizer should be collapsed
-			if (!jQuery.contains(this.getDomRef(), document.activeElement)) {
+			if (!(this.getDomRef() !== document.activeElement && this.getDomRef().contains(document.activeElement))) {
 				oTokenizer.setRenderMode(TokenizerRenderMode.Narrow);
 			}
 		}
@@ -780,7 +780,7 @@ function(
 		var oTokenizer = this.getAggregation("tokenizer");
 
 		if (bDropdownPickerType) {
-			bPreviousFocusInDropdown = oPickerDomRef && jQuery.contains(oPickerDomRef, oEvent.relatedTarget);
+			bPreviousFocusInDropdown = oPickerDomRef && (oPickerDomRef !== oEvent.relatedTarget && oPickerDomRef.contains(oEvent.relatedTarget));
 		}
 
 		if (this.getEditable() && oEvent.target === this.getDomRef("inner")) {
@@ -1483,7 +1483,7 @@ function(
 	 * @private
 	 */
 	MultiComboBox.prototype.onAfterClose = function() {
-		var bUseNarrow = !jQuery.contains(this.getDomRef(), document.activeElement) || this.isPickerDialog(),
+		var bUseNarrow = !(this.getDomRef() !== document.activeElement && this.getDomRef().contains(document.activeElement)) || this.isPickerDialog(),
 			oDomRef = this.getFocusDomRef();
 
 		oDomRef && this.getFocusDomRef().setAttribute("aria-expanded", "false");

@@ -35,10 +35,6 @@ sap.ui.define([
 
 	QUnit.test("Extend sap.ui.core.Control", async function(assert) {
 		let expectedAsserts = 4;
-		/**
-		 * @deprecated global exports are deprecated, therefore one assert will disappear in 2.0
-		 */
-		expectedAsserts += 1;
 
 		assert.expect(expectedAsserts);
 		assert.equal(window.my, undefined, "'my' should not be defined yet");
@@ -104,10 +100,6 @@ sap.ui.define([
 
 		// check control type
 		assert.ok(MyControl, "MyControl should be defined now");
-		/**
-		 * @deprecated global exports are deprecated
-		 */
-		assert.strictEqual(MyControl, ObjectPath.get("my.lib.MyControl"), "returned class and globally exported class should be identical");
 
 		var myControl = new MyControl("myControl", undefined, assert);
 
@@ -131,7 +123,6 @@ sap.ui.define([
 	});
 
 	QUnit.test("Instantiate new control type", function(assert) {
-
 		// check control instance
 		assert.ok(this.myControl, "myControl should be a control instance now");
 		assert.ok(this.myControl instanceof Control, "myControl should inherit from sap.ui.Core.Control");
@@ -143,12 +134,6 @@ sap.ui.define([
 		const MyControlRenderer = MyControl.getMetadata().getRenderer();
 		assert.ok(MyControlRenderer, "renderer of my.lib.MyControl should be defined");
 		assert.equal(typeof MyControlRenderer.render, "function", "render property must be a function");
-		/**
-		 * @deprecated global exports are deprecated
-		 */
-		assert.strictEqual(MyControlRenderer, ObjectPath.get("my.lib.MyControlRenderer"),
-			"even embedded renderers should be exported under the default global name");
-
 	});
 
 
@@ -256,20 +241,6 @@ sap.ui.define([
 		var events = md.getAllEvents();
 		assert.equal(Object.keys(events).length, 7, "there should be 7 public events");
 		assert.ok(events.somethingHappened, "there should be a 'somethingHappened' event");
-	});
-
-	/**
-	 * @deprecated As of 1.58
-	 */
-	QUnit.test("Metadata public methods", function(assert) {
-		var md = this.myControl.getMetadata();
-		var methods = md.getAllPublicMethods();
-		assert.ok(methods.length > 0, "there should be at least one public method");
-		assert.ok(methods.indexOf("add") >= 0, "'add' should be one of the public method");
-		assert.ok(methods.indexOf("init") < 0, "'init' must not be part of the public methods");
-		assert.ok(methods.indexOf("_secret") < 0, "'_secret' must not be part of the public methods");
-		assert.ok(methods.indexOf("onfocusin") < 0, "'onfocusin' must not be part of the public methods");
-		assert.ok(methods.indexOf("renderer") < 0, "'renderer' must not be part of the public methods");
 	});
 
 	QUnit.test("Metadata singluar names", function(assert) {
@@ -390,10 +361,6 @@ sap.ui.define([
 			}
 		});
 		assert.strictEqual(typeof MyInput, "function", "result is a function (a constructor)");
-		/**
-		 * @deprecated global exports are deprecated
-		 */
-		assert.strictEqual(MyInput, ObjectPath.get("my.lib.MyInput"), "returned class should be the same as the globally exported class");
 	});
 
 	QUnit.test("Instantiate MyInput", function(assert) {
@@ -497,20 +464,6 @@ sap.ui.define([
 		myObj.destroy();
 	});
 
-	/**
-	 * @deprecated As of 1.111
-	 */
-	QUnit.test("Instantiate inherited Object - getInterface", function(assert) {
-		var myObj = new MyObject("myObj");
-
-		// Object.getInterface() should work and return only the public method
-		var intf = myObj.getInterface();
-		assert.equal(typeof intf.renderer, "function", "'renderer' should be added as normal function to the public interface");
-		assert.equal(intf._secretRenderer, undefined, "'_secretRenderer' should NOT be added as normal function to the public interface");
-
-		myObj.destroy();
-	});
-
 
 	QUnit.test("Metadata defaulting", function(assert) {
 
@@ -575,5 +528,4 @@ sap.ui.define([
 		assert.equal(events.somethingElseHappened.name, "somethingElseHappened", "'somethingElseHappened' should have name 'somethingElseHappened'");
 		assert.equal(events.somethingElseHappened.allowPreventDefault, true, "'somethingElseHappened' should allow to preventDefault");
 	});
-
 });

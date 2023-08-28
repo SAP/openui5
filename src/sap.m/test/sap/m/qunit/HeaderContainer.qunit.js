@@ -200,7 +200,8 @@ sap.ui.define([
 		var oBackgroundDesignDefault = this.oHeaderContainer.getBackgroundDesign();
 		//act
 		this.oHeaderContainer.setBackgroundDesign(BackgroundDesign.Solid);
-		this.oHeaderContainer.rerender();
+		this.oHeaderContainer.invalidate();
+		oCore.applyChanges();
 		var oBackgroundDesignNew = this.oHeaderContainer.getBackgroundDesign();
 		var sCssClassNew = document.getElementById("headerContainer-scroll-area").className;
 		//assert
@@ -469,7 +470,7 @@ sap.ui.define([
 			//Act
 			this.oHeaderContainer.onsaptabprevious(oEvt);
 			//Assert
-			assert.notOk(jQuery.contains(this.oHeaderContainer.getDomRef(), document.activeElement), "Focus leaves away from the ScrollContainer");
+			assert.notOk(this.oHeaderContainer.getDomRef() !== document.activeElement && this.oHeaderContainer.getDomRef().contains(document.activeElement), "Focus leaves away from the ScrollContainer");
 			assert.equal(this.oHeaderContainer._oItemNavigation.getFocusedIndex(), 0, "The focused content index is still correct after the focus leaves away from the ScrollContainer");
 		});
 
@@ -679,7 +680,9 @@ sap.ui.define([
 	QUnit.test("Top padding is removed when scrolling to top edge in vertical layout", function (assert) {
 		//Arrange
 		this.oHeaderContainer.setOrientation("Vertical");
-		this.oHeaderContainer.rerender();
+		this.oHeaderContainer.invalidate();
+
+		oCore.applyChanges();
 
 		this.oHeaderContainer._oScrollCntr.scrollTo(0, 200, 0);
 		this.oHeaderContainer.$().addClass("sapMHrdrTopPadding");
@@ -692,7 +695,9 @@ sap.ui.define([
 	QUnit.test("Bottom padding is removed and top padding is added, when scrolling directly from top edge to the bottom edge in vertical layout", function (assert) {
 		//Arrange
 		this.oHeaderContainer.setOrientation("Vertical");
-		this.oHeaderContainer.rerender();
+		this.oHeaderContainer.invalidate();
+
+		oCore.applyChanges();
 
 		this.oHeaderContainer.$().addClass("sapMHrdrBottomPadding");
 		this.oHeaderContainer._oScrollCntr.getDomRef().style.height = "300px"; // set the client height smaller than scroll width so that HeaderContainer is scrollable
@@ -1108,7 +1113,9 @@ sap.ui.define([
 
 		oCore.byId("testID0").destroy();
 
-		this.oHeaderContainer.rerender();
+		this.oHeaderContainer.invalidate();
+
+		oCore.applyChanges();
 
 		$items = this.oHeaderContainer.$().find(".sapMHrdrCntrInner");
 		assert.equal($items.length, this.oHeaderContainer.getContent().length, "Length of the Header Container Contents is reduced by 1");
@@ -1120,7 +1127,9 @@ sap.ui.define([
 
 		oCore.byId("testID1").destroy();
 
-		this.oHeaderContainer.rerender();
+		this.oHeaderContainer.invalidate();
+
+		oCore.applyChanges();
 
 		$items = this.oHeaderContainer.$().find(".sapMHrdrCntrInner");
 		assert.equal($items.length, this.oHeaderContainer.getContent().length, "Length of the Header Container Contents is reduced by 2");
@@ -1132,7 +1141,9 @@ sap.ui.define([
 
 		oCore.byId("testID2").destroy();
 
-		this.oHeaderContainer.rerender();
+		this.oHeaderContainer.invalidate();
+
+		oCore.applyChanges();
 
 		$items = this.oHeaderContainer.$().find(".sapMHrdrCntrInner");
 		assert.equal($items.length, this.oHeaderContainer.getContent().length, "Length of the Header Container Contents is reduced by 3");
@@ -1141,7 +1152,6 @@ sap.ui.define([
 			assert.equal($items.eq(i).attr("aria-posinset"), i + 1,  "aria-posinset is " + (i + 1));
 			assert.equal($items.eq(i).attr("aria-setsize"), $items.length, "aria-setsize is " + $items.length );
 		}
-
 	});
 
 	QUnit.test("Content deleted at the end.", function (assert) {
@@ -1164,7 +1174,9 @@ sap.ui.define([
 
 		oCore.byId("testID4").destroy();
 
-		this.oHeaderContainer.rerender();
+		this.oHeaderContainer.invalidate();
+
+		oCore.applyChanges();
 
 		$items = this.oHeaderContainer.$().find(".sapMHrdrCntrInner");
 		assert.equal($items.length, this.oHeaderContainer.getContent().length, "Length of the Header Container Contents is reduced by 1");
@@ -1176,7 +1188,9 @@ sap.ui.define([
 
 		oCore.byId("testID3").destroy();
 
-		this.oHeaderContainer.rerender();
+		this.oHeaderContainer.invalidate();
+
+		oCore.applyChanges();
 
 		$items = this.oHeaderContainer.$().find(".sapMHrdrCntrInner");
 		assert.equal($items.length, this.oHeaderContainer.getContent().length, "Length of the Header Container Contents is reduced by 2");
@@ -1188,7 +1202,9 @@ sap.ui.define([
 
 		oCore.byId("testID2").destroy();
 
-		this.oHeaderContainer.rerender();
+		this.oHeaderContainer.invalidate();
+
+		oCore.applyChanges();
 
 		$items = this.oHeaderContainer.$().find(".sapMHrdrCntrInner");
 		assert.equal($items.length, this.oHeaderContainer.getContent().length, "Length of the Header Container Contents is reduced by 3");
@@ -1197,7 +1213,6 @@ sap.ui.define([
 			assert.equal($items.eq(i).attr("aria-posinset"), i + 1,  "aria-posinset is " + (i + 1));
 			assert.equal($items.eq(i).attr("aria-setsize"), $items.length, "aria-setsize is " + $items.length );
 		}
-
 	});
 
 	QUnit.test("Content deleted at Random.", function (assert) {
@@ -1220,7 +1235,9 @@ sap.ui.define([
 
 		oCore.byId("testID0").destroy();
 
-		this.oHeaderContainer.rerender();
+		this.oHeaderContainer.invalidate();
+
+		oCore.applyChanges();
 
 		$items = this.oHeaderContainer.$().find(".sapMHrdrCntrInner");
 		assert.equal($items.length, this.oHeaderContainer.getContent().length, "Length of the Header Container Contents is reduced by 1");
@@ -1232,7 +1249,9 @@ sap.ui.define([
 
 		oCore.byId("testID2").destroy();
 
-		this.oHeaderContainer.rerender();
+		this.oHeaderContainer.invalidate();
+
+		oCore.applyChanges();
 
 		$items = this.oHeaderContainer.$().find(".sapMHrdrCntrInner");
 		assert.equal($items.length, this.oHeaderContainer.getContent().length, "Length of the Header Container Contents is reduced by 2");
@@ -1244,7 +1263,9 @@ sap.ui.define([
 
 		oCore.byId("testID4").destroy();
 
-		this.oHeaderContainer.rerender();
+		this.oHeaderContainer.invalidate();
+
+		oCore.applyChanges();
 
 		$items = this.oHeaderContainer.$().find(".sapMHrdrCntrInner");
 		assert.equal($items.length, this.oHeaderContainer.getContent().length, "Length of the Header Container Contents is reduced by 3");
@@ -1253,7 +1274,6 @@ sap.ui.define([
 			assert.equal($items.eq(i).attr("aria-posinset"), i + 1,  "aria-posinset is " + (i + 1));
 			assert.equal($items.eq(i).attr("aria-setsize"), $items.length, "aria-setsize is " + $items.length );
 		}
-
 	});
 
 	QUnit.module("HeaderContainer in Mobile View", {

@@ -4,6 +4,7 @@ sap.ui.define(
 		"sap/ui/test/opaQunit",
 		"sap/ui/test/Opa5",
 		"sap/ui/core/Core",
+		"sap/ui/core/Configuration",
 		"./pages/contextBased/ManageAdaptationsDialog",
 		"./pages/contextBased/SaveContextBasedAdaptationDialog",
 		"./pages/contextVisibility/ContextsDialog",
@@ -11,7 +12,7 @@ sap.ui.define(
 		"./pages/AppPage",
 		"sap/ui/core/date/UI5Date"
 	],
-	function(opaTest, Opa5, oCore) {
+	function(opaTest, Opa5, oCore, Configuration) {
 		"use strict";
 
 		var oRtaResourceBundle = oCore.getLibraryResourceBundle("sap.ui.rta");
@@ -46,7 +47,7 @@ sap.ui.define(
 		}
 
 		function testLanguageDependentDateFormat(Then, sExpectedFormat, iColumnRow, sPropertyPath) {
-			var sCurrentLanguage = sap.ui.getCore().getConfiguration().getLanguage().toLocaleLowerCase();
+			var sCurrentLanguage = Configuration.getLanguage().toLocaleLowerCase();
 			// This opa test will only be executed if the browser language is english
 			if (sCurrentLanguage === "en") {
 				Then.onTheManageAdaptationsDialogPage.iShouldSeeCorrectDateFormat(sExpectedFormat, iColumnRow, sPropertyPath);

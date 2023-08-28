@@ -22,7 +22,7 @@
 				"type": "OData",
 				"settings": {
 					"odataVersion": "2.0",
-					"localUri" : "localService/metadata.xml"
+					"localUri": "localService/metadata.xml"
 				}
 			}
 		}
@@ -33,18 +33,17 @@
 			"desktop": true,
 			"tablet": true,
 			"phone": true
-		},
-		"supportedThemes": ["sap_belize"]
-  	},
+		}
+	},
 	"sap.ui5": {
 		"rootView": "sap.ui.core.sample.MessageManager.ODataBackendMessagesComp.view.App",
-		"handleValidation"  : true,
+		"handleValidation": true,
 		"dependencies": {
 			"minUI5Version": "1.98.0",
 			"libs": {
-				"sap.m": { },
-				"sap.ui.layout": { },
-				"sap.ui.unified": { }
+				"sap.m": {},
+				"sap.ui.layout": {},
+				"sap.ui.unified": {}
 			}
 		},
 		"models": {
@@ -60,12 +59,12 @@
 			},
 			"": {
 				"dataSource": "employeeRemote",
-				"settings" : {
+				"settings": {
 					"refreshAfterChange": false,
 					"defaultBindingMode": "TwoWay",
-					"defaultUpdateMethod" : "Put",
-					"skipMetadataAnnotationParsing" : true,
-					"disableHeadRequestForToken" : true
+					"defaultUpdateMethod": "Put",
+					"skipMetadataAnnotationParsing": true,
+					"disableHeadRequestForToken": true
 				}
 			}
 		},
@@ -82,15 +81,17 @@
 					"target": "notFound"
 				}
 			},
-			"routes": [{
-				"pattern": "",
-				"name": "employee",
-				"target": "employee"
-			}],
+			"routes": [
+				{
+					"pattern": "",
+					"name": "employee",
+					"target": "employee"
+				}
+			],
 			"targets": {
 				"employee": {
 					"name": "Employee",
-					"level" : 1
+					"level": 1
 				},
 				"notFound": {
 					"name": "NotFound",

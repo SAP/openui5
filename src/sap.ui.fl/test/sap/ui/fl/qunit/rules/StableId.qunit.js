@@ -32,57 +32,6 @@ sap.ui.define([
 	oCore
 ) {
 	"use strict";
-	/**
-	 * @deprecated Since version 1.54. Due to <code>sap.ui.dt.ElementOverlay.getAggregationOverlays</code> deprecation
-	 */
-	QUnit.module("Base functionality for app component's root view", {
-		beforeEach(assert) {
-			var fnDone = assert.async();
-			var CustomComponent = UIComponent.extend("sap.ui.dt.test.Component", {
-				createContent() {
-					return new VerticalLayout({
-						id: this.createId("layoutId"),
-						content: [
-							new Button(this.createId("buttonId")),
-							new Button({
-								text: "Missing stable id"
-							}),
-							new XMLView({ // Missing ID for view and implicit missing IDs for controls inside
-								viewContent:
-									'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m" xmlns:l="sap.ui.layout">' +
-										'<l:VerticalLayout id="layout">' +
-											'<m:Button text="Button 1" id="button1" />' +
-										"</l:VerticalLayout>" +
-									"</mvc:View>"
-							})
-						]
-					});
-				}
-			});
-			this.oComponent = new CustomComponent(); // Missing ID
-
-			this.oComponentContainer = new ComponentContainer("CompCont1", {
-				component: this.oComponent
-			});
-
-			this.oComponentContainer.placeAt("qunit-fixture");
-			oCore.applyChanges();
-
-			Bootstrap.initSupportRules(["true", "silent"], {
-				onReady: fnDone
-			});
-		},
-		afterEach() {
-			this.oComponentContainer.destroy();
-		}
-	}, function() {
-		testRule({
-			executionScopeType: "global",
-			libName: "sap.ui.fl",
-			ruleId: "stableId",
-			expectedNumberOfIssues: 5
-		});
-	});
 
 	QUnit.module("Base functionality for popups", {
 		beforeEach(assert) {

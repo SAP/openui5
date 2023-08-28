@@ -932,22 +932,6 @@ sap.ui.define([
 		},
 
 		/**
-		 * Simply returns <code>sAbsolutePath</code>.
-		 *
-		 * @param {string} sAbsolutePath
-		 *   some absolute path
-		 * @returns {string}
-		 *   <code>sAbsolutePath</code>
-		 * @deprecated since 1.93.0
-		 *   This function adjusted the path for the Maven/Java environment. Use a reverse proxy
-		 *   that forwards this path accordingly.
-		 */
-		proxy : function (sAbsolutePath) {
-			Log.warning("#proxy is no longer supported", null, "sap.ui.test.TestUtils");
-			return sAbsolutePath;
-		},
-
-		/**
 		 * Returns the value which has been stored with the given key using {@link #setData} and
 		 * resets it.
 		 *

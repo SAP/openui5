@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['sap/ui/base/EventProvider', './HTMLViewSerializer', './XMLViewSerializer', "sap/base/assert", "sap/ui/core/Configuration"],
-	function(EventProvider, HTMLViewSerializer, XMLViewSerializer, assert, Configuration) {
+sap.ui.define(['sap/ui/base/EventProvider', './XMLViewSerializer', "sap/base/assert", "sap/ui/core/Configuration"],
+	function(EventProvider, XMLViewSerializer, assert, Configuration) {
 	"use strict";
 
 
@@ -174,7 +174,7 @@ sap.ui.define(['sap/ui/base/EventProvider', './HTMLViewSerializer', './XMLViewSe
 		// create the appropriate view serializer
 
 		if (sType === "HTML") {
-			return new HTMLViewSerializer(
+			return new undefined/*HTMLViewSerializer*/(
 					oView,
 					this._oWindow,
 					fnGetControlId,

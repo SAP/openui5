@@ -12,7 +12,8 @@ sap.ui.define([
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/layout/VerticalLayout",
 	"sap/ui/qunit/QUnitUtils",
-	"sap/ui/thirdparty/sinon-4"
+	"sap/ui/thirdparty/sinon-4",
+	"sap/ui/thirdparty/jquery"
 ], function(
 	Button,
 	Page,
@@ -25,7 +26,8 @@ sap.ui.define([
 	OverlayRegistry,
 	VerticalLayout,
 	QUnitUtils,
-	sinon
+	sinon,
+	jQuery
 ) {
 	"use strict";
 

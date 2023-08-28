@@ -11,10 +11,15 @@ sap.ui.define([
 	'sap/ui/core/Core',
 	"sap/base/Log",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Configuration"
+	"sap/ui/core/Configuration",
+	"sap/ui/core/Element",
+	"sap/ui/core/UIArea"
 ],
-	function(InstanceManager, Popup, coreLibrary, Control, Device, Core, Log, jQuery, Configuration) {
+	function(InstanceManager, Popup, coreLibrary, Control, Device, Core, Log, jQuery, Configuration, Element, UIArea) {
 		"use strict";
+
+		// shortcut for sap.ui.core.UIArea.registry
+		var registry = UIArea.registry;
 
 		// shortcut for sap.ui.core.Dock
 		var Dock = coreLibrary.Dock;
@@ -403,8 +408,8 @@ sap.ui.define([
 		 * @public
 		 */
 		MessageToast.show = function(sMessage, mOptions) {
-			var oOpener = Core.byId(Core.getCurrentFocusedControlId()) || sap.ui.core.Element.closestTo(document.activeElement);
-			var oUI5Area = oOpener && oOpener.getUIArea && oOpener.getUIArea() || sap.ui.core.UIArea.registry.all()['body'] || sap.ui.core.UIArea.registry.all()['content'];
+			var oOpener = Core.byId(Core.getCurrentFocusedControlId()) || Element.closestTo(document.activeElement);
+			var oUI5Area = oOpener && oOpener.getUIArea && oOpener.getUIArea() || registry.all()['body'] || registry.all()['content'];
 			var oOpenerUI5Area = oOpener && oOpener.getUIArea  && oOpener.getUIArea();
 			var oAccSpan;
 			var that = MessageToast,

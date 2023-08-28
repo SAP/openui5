@@ -2293,36 +2293,36 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-["", "/"].forEach(function (sSeparator, i) {
-	QUnit.test("AnnotationHelper.format and operation overloads, " + i, function (assert) {
-		var sPath = "/T€AMS/name.space.OverloadedAction@Core.OperationAvailable"
-				+ sSeparator, // optional
-			oSyncPromise;
+	["", "/"].forEach(function (sSeparator, i) {
+		QUnit.test("AnnotationHelper.format and operation overloads, " + i, function (assert) {
+			var sPath = "/T€AMS/name.space.OverloadedAction@Core.OperationAvailable"
+					+ sSeparator, // optional
+				oSyncPromise;
 
-		this.oMetaModelMock.expects("fetchEntityContainer").atLeast(1)
-			.returns(SyncPromise.resolve(mScope));
-		this.mock(AnnotationHelper).expects("format")
-			.withExactArgs({$Path : "_it/Name"}, sinon.match({
-				$$valueAsPromise : undefined,
-				context : sinon.match({
-					oModel : this.oMetaModel,
-					sPath : sPath
-				}),
-				overload : sinon.match.same(aOverloadedAction[1]),
-				schemaChildName : "name.space.OverloadedAction"
-			})).callThrough(); // this is an integrative test
+			this.oMetaModelMock.expects("fetchEntityContainer").atLeast(1)
+				.returns(SyncPromise.resolve(mScope));
+			this.mock(AnnotationHelper).expects("format")
+				.withExactArgs({$Path : "_it/Name"}, sinon.match({
+					$$valueAsPromise : undefined,
+					context : sinon.match({
+						oModel : this.oMetaModel,
+						sPath : sPath
+					}),
+					overload : sinon.match.same(aOverloadedAction[1]),
+					schemaChildName : "name.space.OverloadedAction"
+				})).callThrough(); // this is an integrative test
 
-		// code under test
-		oSyncPromise = this.oMetaModel.fetchObject(sPath
-			+ "@@sap.ui.model.odata.v4.AnnotationHelper.format");
+			// code under test
+			oSyncPromise = this.oMetaModel.fetchObject(sPath
+				+ "@@sap.ui.model.odata.v4.AnnotationHelper.format");
 
-		assert.strictEqual(oSyncPromise.isFulfilled(), true);
-		assert.strictEqual(oSyncPromise.getResult(), "{path:'Name'" // Note: "_it/" removed!
-			+ ",type:'sap.ui.model.odata.type.String'"
-			+ ",constraints:{'maxLength':40,'nullable':false}"
-			+ ",formatOptions:{'parseKeepsEmptyString':true}}");
+			assert.strictEqual(oSyncPromise.isFulfilled(), true);
+			assert.strictEqual(oSyncPromise.getResult(), "{path:'Name'" // Note: "_it/" removed!
+				+ ",type:'sap.ui.model.odata.type.String'"
+				+ ",constraints:{'maxLength':40,'nullable':false}"
+				+ ",formatOptions:{'parseKeepsEmptyString':true}}");
+		});
 	});
-});
 
 	//*********************************************************************************************
 	QUnit.test("AnnotationHelper.format and parameters of operation overloads", function (assert) {
@@ -2388,55 +2388,55 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-[false, true].forEach(function (bWarn) {
-	QUnit.test("@@computedAnnotation with invalid arguments, bWarn = " + bWarn, function (assert) {
-		var oError = {
-				at : 2,
-				message : "Unexpected 'u'",
-				name : "SyntaxError",
-				text : "[undefined]"
-			},
-			sPath = "/T€AMS/@@computedAnnotation(undefined)",
-			oSyncPromise;
+	[false, true].forEach(function (bWarn) {
+		QUnit.test("@@computedAnnotation with invalid arguments, bWarn = " + bWarn, function (assert) {
+			var oError = {
+					at : 2,
+					message : "Unexpected 'u'",
+					name : "SyntaxError",
+					text : "[undefined]"
+				},
+				sPath = "/T€AMS/@@computedAnnotation(undefined)",
+				oSyncPromise;
 
-		this.oMetaModelMock.expects("fetchEntityContainer").atLeast(1)
-			.returns(SyncPromise.resolve(mScope));
-		this.mock(JSTokenizer).expects("parseJS").withExactArgs("[undefined]")
-			.throws(oError);
-		this.oLogMock.expects("isLoggable")
-			.withExactArgs(Log.Level.WARNING, sODataMetaModel).returns(bWarn);
-		this.oLogMock.expects("warning").exactly(bWarn ? 1 : 0)
-			.withExactArgs("Unexpected 'u': u<--ndefined", sPath, sODataMetaModel);
+			this.oMetaModelMock.expects("fetchEntityContainer").atLeast(1)
+				.returns(SyncPromise.resolve(mScope));
+			this.mock(JSTokenizer).expects("parseJS").withExactArgs("[undefined]")
+				.throws(oError);
+			this.oLogMock.expects("isLoggable")
+				.withExactArgs(Log.Level.WARNING, sODataMetaModel).returns(bWarn);
+			this.oLogMock.expects("warning").exactly(bWarn ? 1 : 0)
+				.withExactArgs("Unexpected 'u': u<--ndefined", sPath, sODataMetaModel);
 
-		// code under test
-		oSyncPromise = this.oMetaModel.fetchObject(sPath);
+			// code under test
+			oSyncPromise = this.oMetaModel.fetchObject(sPath);
 
-		assert.strictEqual(oSyncPromise.isFulfilled(), true);
-		assert.strictEqual(oSyncPromise.getResult(), undefined);
+			assert.strictEqual(oSyncPromise.isFulfilled(), true);
+			assert.strictEqual(oSyncPromise.getResult(), undefined);
+		});
 	});
-});
 
 	//*********************************************************************************************
-[false, true].forEach(function (bWarn) {
-	QUnit.test("@@computedAnnotation with wrong ), bWarn = " + bWarn, function (assert) {
-		var sPath = "/T€AMS/@@computedAnnotation() ",
-			oSyncPromise;
+	[false, true].forEach(function (bWarn) {
+		QUnit.test("@@computedAnnotation with wrong ), bWarn = " + bWarn, function (assert) {
+			var sPath = "/T€AMS/@@computedAnnotation() ",
+				oSyncPromise;
 
-		this.oMetaModelMock.expects("fetchEntityContainer").atLeast(1)
-			.returns(SyncPromise.resolve(mScope));
-		this.mock(JSTokenizer).expects("parseJS").never();
-		this.oLogMock.expects("isLoggable")
-			.withExactArgs(Log.Level.WARNING, sODataMetaModel).returns(bWarn);
-		this.oLogMock.expects("warning").exactly(bWarn ? 1 : 0)
-			.withExactArgs("Expected ')' instead of ' '", sPath, sODataMetaModel);
+			this.oMetaModelMock.expects("fetchEntityContainer").atLeast(1)
+				.returns(SyncPromise.resolve(mScope));
+			this.mock(JSTokenizer).expects("parseJS").never();
+			this.oLogMock.expects("isLoggable")
+				.withExactArgs(Log.Level.WARNING, sODataMetaModel).returns(bWarn);
+			this.oLogMock.expects("warning").exactly(bWarn ? 1 : 0)
+				.withExactArgs("Expected ')' instead of ' '", sPath, sODataMetaModel);
 
-		// code under test
-		oSyncPromise = this.oMetaModel.fetchObject(sPath);
+			// code under test
+			oSyncPromise = this.oMetaModel.fetchObject(sPath);
 
-		assert.strictEqual(oSyncPromise.isFulfilled(), true);
-		assert.strictEqual(oSyncPromise.getResult(), undefined);
+			assert.strictEqual(oSyncPromise.isFulfilled(), true);
+			assert.strictEqual(oSyncPromise.getResult(), undefined);
+		});
 	});
-});
 
 	//*********************************************************************************************
 	[false, true].forEach(function (bDebug) {
@@ -2951,61 +2951,61 @@ sap.ui.define([
 	//TODO later: support for facet DefaultValue?
 
 	//*********************************************************************************************
-[{
-	style : "short"
-}, {
-	parseKeepsEmptyString : true,
-	style : "short"
-}].forEach(function (mFormatOptions) {
-	var sFormatOptions = JSON.stringify(mFormatOptions),
-		sTitle = "fetchUI5Type: ignore only parseKeepsEmptyString w/ " + sFormatOptions;
+	[{
+		style : "short"
+	}, {
+		parseKeepsEmptyString : true,
+		style : "short"
+	}].forEach(function (mFormatOptions) {
+		var sFormatOptions = JSON.stringify(mFormatOptions),
+			sTitle = "fetchUI5Type: ignore only parseKeepsEmptyString w/ " + sFormatOptions;
 
-	QUnit.test(sTitle, function (assert) {
-		var sPath = "/EMPLOYEES('0')/ENTRYDATE";
+		QUnit.test(sTitle, function (assert) {
+			var sPath = "/EMPLOYEES('0')/ENTRYDATE";
 
-		this.expects4FetchUI5Type(sPath, {$Type : "Edm.Date"});
+			this.expects4FetchUI5Type(sPath, {$Type : "Edm.Date"});
 
-		// code under test
-		return this.oMetaModel.fetchUI5Type(sPath, mFormatOptions)
-			.then(function (oType) {
-				assert.strictEqual(JSON.stringify(mFormatOptions), sFormatOptions, "unchanged");
-				assert.strictEqual(oType.getName(), "sap.ui.model.odata.type.Date");
-				assert.deepEqual(oType.oFormatOptions, {style : "short"});
-				if (!("parseKeepsEmptyString" in mFormatOptions)) {
-					assert.strictEqual(oType.oFormatOptions, mFormatOptions, "no clone");
-				}
-			});
+			// code under test
+			return this.oMetaModel.fetchUI5Type(sPath, mFormatOptions)
+				.then(function (oType) {
+					assert.strictEqual(JSON.stringify(mFormatOptions), sFormatOptions, "unchanged");
+					assert.strictEqual(oType.getName(), "sap.ui.model.odata.type.Date");
+					assert.deepEqual(oType.oFormatOptions, {style : "short"});
+					if (!("parseKeepsEmptyString" in mFormatOptions)) {
+						assert.strictEqual(oType.oFormatOptions, mFormatOptions, "no clone");
+					}
+				});
+		});
 	});
-});
 
 	//*********************************************************************************************
-[{}, {parseKeepsEmptyString : true}].forEach(function (mFormatOptions) {
-	var sFormatOptions = JSON.stringify(mFormatOptions),
-		sTitle = "fetchUI5Type: caching w/ mFormatOptions = " + sFormatOptions;
+	[{}, {parseKeepsEmptyString : true}].forEach(function (mFormatOptions) {
+		var sFormatOptions = JSON.stringify(mFormatOptions),
+			sTitle = "fetchUI5Type: caching w/ mFormatOptions = " + sFormatOptions;
 
-	QUnit.test(sTitle, function (assert) {
-		var sPath = "/EMPLOYEES('0')/ENTRYDATE",
-			oProperty = {$Type : "Edm.Date"},
-			that = this;
+		QUnit.test(sTitle, function (assert) {
+			var sPath = "/EMPLOYEES('0')/ENTRYDATE",
+				oProperty = {$Type : "Edm.Date"},
+				that = this;
 
-		this.expects4FetchUI5Type(sPath, oProperty);
-		this.mock(Object).expects("assign").never(); // no clone needed
+			this.expects4FetchUI5Type(sPath, oProperty);
+			this.mock(Object).expects("assign").never(); // no clone needed
 
-		// code under test
-		return this.oMetaModel.fetchUI5Type(sPath, mFormatOptions)
-			.then(function (oType) {
-				assert.strictEqual(JSON.stringify(mFormatOptions), sFormatOptions, "unchanged");
-				assert.strictEqual(oType.getName(), "sap.ui.model.odata.type.Date");
-				assert.strictEqual(oType.oFormatOptions, undefined);
+			// code under test
+			return this.oMetaModel.fetchUI5Type(sPath, mFormatOptions)
+				.then(function (oType) {
+					assert.strictEqual(JSON.stringify(mFormatOptions), sFormatOptions, "unchanged");
+					assert.strictEqual(oType.getName(), "sap.ui.model.odata.type.Date");
+					assert.strictEqual(oType.oFormatOptions, undefined);
 
-				that.expects4FetchUI5Type(sPath, oProperty);
+					that.expects4FetchUI5Type(sPath, oProperty);
 
-				assert.strictEqual(
-					that.oMetaModel.getUI5Type(sPath, mFormatOptions), // code under test
-					oType, "cached");
-			});
+					assert.strictEqual(
+						that.oMetaModel.getUI5Type(sPath, mFormatOptions), // code under test
+						oType, "cached");
+				});
+		});
 	});
-});
 
 	//*********************************************************************************************
 	QUnit.test("fetchUI5Type: fetchObject fails", function (assert) {
@@ -4495,58 +4495,6 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	/**
-	 * @deprecated since 1.51.0
-	 */
-	QUnit.test("getLastModified", function (assert) {
-		var mEmptyScope = {
-				$Version : "4.0"
-			},
-			mNewScope = {
-				$Version : "4.0",
-				$Date : "Tue, 18 Apr 2017 14:40:29 GMT"
-			},
-			iNow = Date.now(),
-			mOldScope = {
-				$Version : "4.0",
-				$Date : "Tue, 18 Apr 2017 14:40:29 GMT", // $LastModified wins!
-				$LastModified : "Fri, 07 Apr 2017 11:21:50 GMT"
-			},
-			mOldScopeClone = clone(mOldScope),
-			sUrl = "/~/$metadata"; // Note: in real life, each URL is read at most once!
-
-		// code under test (together with c'tor)
-		assert.strictEqual(this.oMetaModel.getLastModified().getTime(), 0, "initial value");
-
-		// code under test
-		assert.strictEqual(this.oMetaModel.validate(sUrl, mOldScope), mOldScope);
-
-		assert.strictEqual(this.oMetaModel.getLastModified().toISOString(),
-			"2017-04-07T11:21:50.000Z", "old $LastModified is used");
-		assert.notOk("$LastModified" in mOldScope);
-
-		// code under test
-		assert.strictEqual(this.oMetaModel.validate(sUrl, mNewScope), mNewScope);
-
-		assert.strictEqual(this.oMetaModel.getLastModified().toISOString(),
-			"2017-04-18T14:40:29.000Z", "new $Date is used");
-		assert.notOk("$Date" in mNewScope);
-
-		// code under test
-		assert.strictEqual(this.oMetaModel.validate(sUrl, mOldScopeClone), mOldScopeClone);
-
-		assert.strictEqual(this.oMetaModel.getLastModified().toISOString(),
-			"2017-04-18T14:40:29.000Z", "new $Date wins, old $LastModified is ignored");
-		assert.notOk("$LastModified" in mOldScopeClone);
-
-		// code under test
-		assert.strictEqual(this.oMetaModel.validate(sUrl, mEmptyScope), mEmptyScope);
-
-		assert.ok(this.oMetaModel.getLastModified().getTime() >= iNow,
-			"missing $Date/$LastModified is like 'now': " + this.oMetaModel.getLastModified());
-	});
-
-	//*********************************************************************************************
 	QUnit.test("getETags", function (assert) {
 		var sETag = 'W/"..."',
 			mETags,
@@ -5170,54 +5118,54 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-[true, false].forEach(function (bAutoExpandSelect) {
-	QUnit.test("getOrCreateSharedModel, bAutoExpandSelect=" + bAutoExpandSelect, function (assert) {
-		var mHeaders = {"Accept-Language" : "ab-CD", "X-CSRF-Token" : "xyz"},
-			oMapGetExpectation,
-			oMapSetExpectation,
-			oModel = new ODataModel({serviceUrl : "/Foo/DataService/"}),
-			oMetaModel = oModel.getMetaModel(),
-			oMetaModelMock = this.mock(oMetaModel),
-			oSharedModel;
+	[true, false].forEach(function (bAutoExpandSelect) {
+		QUnit.test("getOrCreateSharedModel, bAutoExpandSelect=" + bAutoExpandSelect, function (assert) {
+			var mHeaders = {"Accept-Language" : "ab-CD", "X-CSRF-Token" : "xyz"},
+				oMapGetExpectation,
+				oMapSetExpectation,
+				oModel = new ODataModel({serviceUrl : "/Foo/DataService/"}),
+				oMetaModel = oModel.getMetaModel(),
+				oMetaModelMock = this.mock(oMetaModel),
+				oSharedModel;
 
-		oMetaModel.sLanguage = "~sLanguage~";
-		oMetaModelMock.expects("getAbsoluteServiceUrl")
-			.withExactArgs("../ValueListService/$metadata")
-			.returns("/Foo/ValueListService/");
-		oMetaModelMock.expects("getAbsoluteServiceUrl") // for second code under test
-			.withExactArgs("/Foo/ValueListService/$metadata")
-			.returns("/Foo/ValueListService/");
-		oMapGetExpectation = this.mock(Map.prototype).expects("get").twice() //for both c.u.t
-			.withExactArgs(bAutoExpandSelect + "/Foo/ValueListService/").callThrough();
-		this.mock(oModel).expects("getHttpHeaders").withExactArgs().returns(mHeaders);
-		oMapSetExpectation = this.mock(Map.prototype).expects("set")
-			.withArgs(bAutoExpandSelect + "/Foo/ValueListService/").callThrough();
-		// observe metadataUrlParams being passed along
-		// Note: "ab-CD" is derived from Configuration#getLanguageTag here, not from mHeaders!
-		this.mock(_MetadataRequestor).expects("create")
-			.withExactArgs({"Accept-Language" : "ab-CD"}, "4.0", undefined,
-				{"sap-language" : "~sLanguage~"}, undefined);
+			oMetaModel.sLanguage = "~sLanguage~";
+			oMetaModelMock.expects("getAbsoluteServiceUrl")
+				.withExactArgs("../ValueListService/$metadata")
+				.returns("/Foo/ValueListService/");
+			oMetaModelMock.expects("getAbsoluteServiceUrl") // for second code under test
+				.withExactArgs("/Foo/ValueListService/$metadata")
+				.returns("/Foo/ValueListService/");
+			oMapGetExpectation = this.mock(Map.prototype).expects("get").twice() //for both c.u.t
+				.withExactArgs(bAutoExpandSelect + "/Foo/ValueListService/").callThrough();
+			this.mock(oModel).expects("getHttpHeaders").withExactArgs().returns(mHeaders);
+			oMapSetExpectation = this.mock(Map.prototype).expects("set")
+				.withArgs(bAutoExpandSelect + "/Foo/ValueListService/").callThrough();
+			// observe metadataUrlParams being passed along
+			// Note: "ab-CD" is derived from Configuration#getLanguageTag here, not from mHeaders!
+			this.mock(_MetadataRequestor).expects("create")
+				.withExactArgs({"Accept-Language" : "ab-CD"}, "4.0", undefined,
+					{"sap-language" : "~sLanguage~"}, undefined);
 
-		// code under test
-		oSharedModel = oMetaModel.getOrCreateSharedModel("../ValueListService/$metadata",
-			undefined, bAutoExpandSelect);
+			// code under test
+			oSharedModel = oMetaModel.getOrCreateSharedModel("../ValueListService/$metadata",
+				undefined, bAutoExpandSelect);
 
-		assert.ok(oSharedModel instanceof ODataModel);
-		assert.deepEqual(oSharedModel.mHeaders, mHeaders);
-		assert.strictEqual(oSharedModel.sServiceUrl, "/Foo/ValueListService/");
-		assert.strictEqual(oSharedModel.bSharedRequests, true);
-		assert.strictEqual(oSharedModel.sOperationMode, OperationMode.Server);
-		assert.strictEqual(oSharedModel.getGroupId(), "$auto");
-		assert.strictEqual(oSharedModel.bAutoExpandSelect, !!bAutoExpandSelect);
+			assert.ok(oSharedModel instanceof ODataModel);
+			assert.deepEqual(oSharedModel.mHeaders, mHeaders);
+			assert.strictEqual(oSharedModel.sServiceUrl, "/Foo/ValueListService/");
+			assert.strictEqual(oSharedModel.bSharedRequests, true);
+			assert.strictEqual(oSharedModel.sOperationMode, OperationMode.Server);
+			assert.strictEqual(oSharedModel.getGroupId(), "$auto");
+			assert.strictEqual(oSharedModel.bAutoExpandSelect, !!bAutoExpandSelect);
 
-		// code under test
-		assert.strictEqual(oMetaModel.getOrCreateSharedModel("/Foo/ValueListService/$metadata",
-				undefined, bAutoExpandSelect),
-			oSharedModel);
+			// code under test
+			assert.strictEqual(oMetaModel.getOrCreateSharedModel("/Foo/ValueListService/$metadata",
+					undefined, bAutoExpandSelect),
+				oSharedModel);
 
-		assert.ok(oMapGetExpectation.alwaysCalledOn(oMapSetExpectation.thisValues[0]));
+			assert.ok(oMapGetExpectation.alwaysCalledOn(oMapSetExpectation.thisValues[0]));
+		});
 	});
-});
 
 	//*********************************************************************************************
 	QUnit.test("getOrCreateSharedModel, undefined and false are the same in cache",
@@ -5384,190 +5332,190 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-["ValueList", "ValueListMapping"].forEach(function (sValueList) {
-	QUnit.test("fetchValueListMappings: " + sValueList + ", property", function (assert) {
-		var oAnnotations = {},
-			oDefaultMapping = {CollectionPath : "default"},
-			oFooMapping = {CollectionPath : "foo"},
-			oProperty = {},
-			oValueListMetadata = {
-				$Annotations : {
-					"zui5_epm_sample.Product/Category" : oAnnotations,
-					"some.other.Target" : {}
-				}
-			},
-			oValueListModel = {
-				getMetaModel : function () {
-					return {
-						fetchEntityContainer : function () {
-							return Promise.resolve(oValueListMetadata);
-						}
-					};
-				}
-			};
+	["ValueList", "ValueListMapping"].forEach(function (sValueList) {
+		QUnit.test("fetchValueListMappings: " + sValueList + ", property", function (assert) {
+			var oAnnotations = {},
+				oDefaultMapping = {CollectionPath : "default"},
+				oFooMapping = {CollectionPath : "foo"},
+				oProperty = {},
+				oValueListMetadata = {
+					$Annotations : {
+						"zui5_epm_sample.Product/Category" : oAnnotations,
+						"some.other.Target" : {}
+					}
+				},
+				oValueListModel = {
+					getMetaModel : function () {
+						return {
+							fetchEntityContainer : function () {
+								return Promise.resolve(oValueListMetadata);
+							}
+						};
+					}
+				};
 
-		oAnnotations["@com.sap.vocabularies.Common.v1." + sValueList] = oDefaultMapping;
-		oAnnotations["@com.sap.vocabularies.Common.v1." + sValueList + "#foo"] = oFooMapping;
-		this.oMetaModelMock.expects("getObject").withExactArgs("/zui5_epm_sample.Product/Category")
-			.returns(oProperty);
+			oAnnotations["@com.sap.vocabularies.Common.v1." + sValueList] = oDefaultMapping;
+			oAnnotations["@com.sap.vocabularies.Common.v1." + sValueList + "#foo"] = oFooMapping;
+			this.oMetaModelMock.expects("getObject").withExactArgs("/zui5_epm_sample.Product/Category")
+				.returns(oProperty);
 
-		// code under test
-		return this.oMetaModel.fetchValueListMappings(oValueListModel, "zui5_epm_sample.Product",
-			oProperty
-		).then(function (oValueListMappings) {
-			assert.deepEqual(oValueListMappings, {
-				"" : oDefaultMapping,
-				foo : oFooMapping
+			// code under test
+			return this.oMetaModel.fetchValueListMappings(oValueListModel, "zui5_epm_sample.Product",
+				oProperty
+			).then(function (oValueListMappings) {
+				assert.deepEqual(oValueListMappings, {
+					"" : oDefaultMapping,
+					foo : oFooMapping
+				});
 			});
 		});
 	});
-});
 
 	//*********************************************************************************************
-["ValueList", "ValueListMapping"].forEach(function (sValueList) {
-	[false, true].forEach(function (b401) {
-		var sTitle = "fetchValueListMappings: " + sValueList + ", parameter, 4.01=" + b401;
+	["ValueList", "ValueListMapping"].forEach(function (sValueList) {
+		[false, true].forEach(function (b401) {
+			var sTitle = "fetchValueListMappings: " + sValueList + ", parameter, 4.01=" + b401;
 
-	QUnit.test(sTitle, function (assert) {
-		var oAnnotations = {},
-			oDefaultMapping = {CollectionPath : "default"},
-			oFooMapping = {CollectionPath : "foo"},
-			sTarget = b401 ? "name.space.Action()/Category" : "name.space.Action/Category",
-			oValueListMetadata = {
-				$Annotations : {
-					"name.space.Action(name.space.DoNotUse)/Category" : {},
-					"some.other.Target" : {}
-				}
-			},
-			oValueListModel = {
-				getMetaModel : function () {
-					return {
-						fetchEntityContainer : function () {
-							return Promise.resolve(oValueListMetadata);
-						}
-					};
-				}
-			};
+		QUnit.test(sTitle, function (assert) {
+			var oAnnotations = {},
+				oDefaultMapping = {CollectionPath : "default"},
+				oFooMapping = {CollectionPath : "foo"},
+				sTarget = b401 ? "name.space.Action()/Category" : "name.space.Action/Category",
+				oValueListMetadata = {
+					$Annotations : {
+						"name.space.Action(name.space.DoNotUse)/Category" : {},
+						"some.other.Target" : {}
+					}
+				},
+				oValueListModel = {
+					getMetaModel : function () {
+						return {
+							fetchEntityContainer : function () {
+								return Promise.resolve(oValueListMetadata);
+							}
+						};
+					}
+				};
 
-		oAnnotations["@com.sap.vocabularies.Common.v1." + sValueList] = oDefaultMapping;
-		oAnnotations["@com.sap.vocabularies.Common.v1." + sValueList + "#foo"] = oFooMapping;
-		oValueListMetadata.$Annotations[sTarget] = oAnnotations;
-		this.oMetaModelMock.expects("getObject").never();
+			oAnnotations["@com.sap.vocabularies.Common.v1." + sValueList] = oDefaultMapping;
+			oAnnotations["@com.sap.vocabularies.Common.v1." + sValueList + "#foo"] = oFooMapping;
+			oValueListMetadata.$Annotations[sTarget] = oAnnotations;
+			this.oMetaModelMock.expects("getObject").never();
 
-		// code under test
-		return this.oMetaModel.fetchValueListMappings(oValueListModel, "name.space.Action",
-			{$Name : "Category"}, [{/*$IsBound : false*/}]
-		).then(function (oValueListMappings) {
-			assert.deepEqual(oValueListMappings, {
-				"" : oDefaultMapping,
-				foo : oFooMapping
+			// code under test
+			return this.oMetaModel.fetchValueListMappings(oValueListModel, "name.space.Action",
+				{$Name : "Category"}, [{/*$IsBound : false*/}]
+			).then(function (oValueListMappings) {
+				assert.deepEqual(oValueListMappings, {
+					"" : oDefaultMapping,
+					foo : oFooMapping
+				});
+			});
+		});
+		});
+	});
+
+	//*********************************************************************************************
+	["ValueList", "ValueListMapping"].forEach(function (sValueList) {
+		[{
+			sIndividualOverloadTarget : "name.space.Action()/Category",
+			oOverload : {/*$IsBound : false*/}
+		}, {
+			sIndividualOverloadTarget : "name.space.Action(name.space.Entity)/Category",
+			oOverload : {
+				$IsBound : true,
+				$Parameter : [{
+					$Type : "name.space.Entity"
+				}]
+			}
+		}, {
+			sIndividualOverloadTarget : "name.space.Action(Collection(name.space.Entity))/Category",
+			oOverload : {
+				$IsBound : true,
+				$Parameter : [{
+					$isCollection : true,
+					$Type : "name.space.Entity"
+				}]
+			}
+		}].forEach(function (oFixture) {
+			var sTitle = "fetchValueListMappings: " + sValueList + ", 4.0 and 4.01, "
+					+ oFixture.sIndividualOverloadTarget;
+
+		QUnit.test(sTitle, function (assert) {
+			var oAnnotations4 = {},
+				oAnnotations401 = {},
+				oBarMapping = {CollectionPath : "bar"},
+				oDefaultMapping = {CollectionPath : "default"},
+				oFooMapping = {CollectionPath : "foo"},
+				oValueListMetadata = {
+					$Annotations : {
+						"name.space.Action/Category" : oAnnotations4,
+						"name.space.Action(name.space.DoNotUse)/Category" : {},
+						"some.other.Target" : {}
+					}
+				},
+				sValueListMetadata,
+				oValueListModel = {
+					getMetaModel : function () {
+						return {
+							fetchEntityContainer : function () {
+								return Promise.resolve(oValueListMetadata);
+							}
+						};
+					}
+				};
+
+			oAnnotations4["@com.sap.vocabularies.Common.v1." + sValueList] = {ignore : true};
+			oAnnotations4["@com.sap.vocabularies.Common.v1." + sValueList + "#foo"] = oFooMapping;
+			oAnnotations401["@com.sap.vocabularies.Common.v1." + sValueList] = oDefaultMapping;
+			oAnnotations401["@com.sap.vocabularies.Common.v1." + sValueList + "#bar"] = oBarMapping;
+			oValueListMetadata.$Annotations[oFixture.sIndividualOverloadTarget] = oAnnotations401;
+			sValueListMetadata = JSON.stringify(oValueListMetadata);
+			this.oMetaModelMock.expects("getObject").never();
+
+			// code under test
+			return this.oMetaModel.fetchValueListMappings(oValueListModel, "name.space.Action",
+				{$Name : "Category"}, [oFixture.oOverload]
+			).then(function (oValueListMappings) {
+				assert.deepEqual(oValueListMappings, {
+					"" : oDefaultMapping,
+					bar : oBarMapping,
+					foo : oFooMapping
+				});
+				assert.strictEqual(JSON.stringify(oValueListMetadata), sValueListMetadata);
+			});
+		});
+		});
+	});
+
+	//*********************************************************************************************
+	[[], [{}, {}]].forEach(function (aOverloads) {
+		var sTitle = "fetchValueListMappings: not a single overload, but " + aOverloads.length;
+
+		QUnit.test(sTitle, function (assert) {
+			var oValueListModel = {
+					getMetaModel : function () {
+						return {
+							fetchEntityContainer : function () {
+								return Promise.resolve({});
+							}
+						};
+					}
+				};
+
+			this.oMetaModelMock.expects("getObject").never();
+
+			// code under test
+			return this.oMetaModel.fetchValueListMappings(oValueListModel, "name.space.Action",
+				{$Name : "Category"}, aOverloads
+			).then(function () {
+				assert.ok(false);
+			}, function (oError) {
+				assert.strictEqual(oError.message,
+					"Expected a single overload, but found " + aOverloads.length);
 			});
 		});
 	});
-	});
-});
-
-	//*********************************************************************************************
-["ValueList", "ValueListMapping"].forEach(function (sValueList) {
-	[{
-		sIndividualOverloadTarget : "name.space.Action()/Category",
-		oOverload : {/*$IsBound : false*/}
-	}, {
-		sIndividualOverloadTarget : "name.space.Action(name.space.Entity)/Category",
-		oOverload : {
-			$IsBound : true,
-			$Parameter : [{
-				$Type : "name.space.Entity"
-			}]
-		}
-	}, {
-		sIndividualOverloadTarget : "name.space.Action(Collection(name.space.Entity))/Category",
-		oOverload : {
-			$IsBound : true,
-			$Parameter : [{
-				$isCollection : true,
-				$Type : "name.space.Entity"
-			}]
-		}
-	}].forEach(function (oFixture) {
-		var sTitle = "fetchValueListMappings: " + sValueList + ", 4.0 and 4.01, "
-				+ oFixture.sIndividualOverloadTarget;
-
-	QUnit.test(sTitle, function (assert) {
-		var oAnnotations4 = {},
-			oAnnotations401 = {},
-			oBarMapping = {CollectionPath : "bar"},
-			oDefaultMapping = {CollectionPath : "default"},
-			oFooMapping = {CollectionPath : "foo"},
-			oValueListMetadata = {
-				$Annotations : {
-					"name.space.Action/Category" : oAnnotations4,
-					"name.space.Action(name.space.DoNotUse)/Category" : {},
-					"some.other.Target" : {}
-				}
-			},
-			sValueListMetadata,
-			oValueListModel = {
-				getMetaModel : function () {
-					return {
-						fetchEntityContainer : function () {
-							return Promise.resolve(oValueListMetadata);
-						}
-					};
-				}
-			};
-
-		oAnnotations4["@com.sap.vocabularies.Common.v1." + sValueList] = {ignore : true};
-		oAnnotations4["@com.sap.vocabularies.Common.v1." + sValueList + "#foo"] = oFooMapping;
-		oAnnotations401["@com.sap.vocabularies.Common.v1." + sValueList] = oDefaultMapping;
-		oAnnotations401["@com.sap.vocabularies.Common.v1." + sValueList + "#bar"] = oBarMapping;
-		oValueListMetadata.$Annotations[oFixture.sIndividualOverloadTarget] = oAnnotations401;
-		sValueListMetadata = JSON.stringify(oValueListMetadata);
-		this.oMetaModelMock.expects("getObject").never();
-
-		// code under test
-		return this.oMetaModel.fetchValueListMappings(oValueListModel, "name.space.Action",
-			{$Name : "Category"}, [oFixture.oOverload]
-		).then(function (oValueListMappings) {
-			assert.deepEqual(oValueListMappings, {
-				"" : oDefaultMapping,
-				bar : oBarMapping,
-				foo : oFooMapping
-			});
-			assert.strictEqual(JSON.stringify(oValueListMetadata), sValueListMetadata);
-		});
-	});
-	});
-});
-
-	//*********************************************************************************************
-[[], [{}, {}]].forEach(function (aOverloads) {
-	var sTitle = "fetchValueListMappings: not a single overload, but " + aOverloads.length;
-
-	QUnit.test(sTitle, function (assert) {
-		var oValueListModel = {
-				getMetaModel : function () {
-					return {
-						fetchEntityContainer : function () {
-							return Promise.resolve({});
-						}
-					};
-				}
-			};
-
-		this.oMetaModelMock.expects("getObject").never();
-
-		// code under test
-		return this.oMetaModel.fetchValueListMappings(oValueListModel, "name.space.Action",
-			{$Name : "Category"}, aOverloads
-		).then(function () {
-			assert.ok(false);
-		}, function (oError) {
-			assert.strictEqual(oError.message,
-				"Expected a single overload, but found " + aOverloads.length);
-		});
-	});
-});
 
 	//*********************************************************************************************
 	[{
@@ -5717,46 +5665,182 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-[false, true].forEach(function (bFixed) {
-	[false, true].forEach(function (bError) {
-		// with bFixed, the error case is an empty result after filtering by relevant qualifiers,
-		// else it's a duplicate qualifier
-		var bDuplicate = !bFixed && bError,
-			sTitle = "requestValueListInfo: error=" + bError
-				+ "; ValueListWithFixedValues=" + bFixed;
+	[false, true].forEach(function (bFixed) {
+		[false, true].forEach(function (bError) {
+			// with bFixed, the error case is an empty result after filtering by relevant qualifiers,
+			// else it's a duplicate qualifier
+			var bDuplicate = !bFixed && bError,
+				sTitle = "requestValueListInfo: error=" + bError
+					+ "; ValueListWithFixedValues=" + bFixed;
 
-		QUnit.test(sTitle, function (assert) {
-			var oContext = {
-					getBinding : function () {}
-				},
-				sMappingUrl1 = "../ValueListService1/$metadata",
-				sMappingUrl2 = "../ValueListService2/$metadata",
-				sMappingUrlBar = "../ValueListServiceBar/$metadata",
-				oModel = new ODataModel({serviceUrl : "/Foo/DataService/"}),
-				oMetaModelMock = this.mock(oModel.getMetaModel()),
-				oProperty = {
-					$kind : "Property"
-				},
-				sPropertyPath = "/ProductList('HT-1000')/Category",
-				aValueListRelevantQualifiers = [],
-				oMetadata = {
-					$EntityContainer : "zui5_epm_sample.Container",
-					"zui5_epm_sample.Product" : {
-						$kind : "Entity",
-						Category : oProperty
+			QUnit.test(sTitle, function (assert) {
+				var oContext = {
+						getBinding : function () {}
 					},
-					$Annotations : {
-						"zui5_epm_sample.Product/Category" : {
-							"@com.sap.vocabularies.Common.v1.ValueListReferences" :
-								[sMappingUrl1, sMappingUrl2],
-							"@com.sap.vocabularies.Common.v1.ValueListReferences#bar" :
-								[sMappingUrlBar],
-							"@com.sap.vocabularies.Common.v1.ValueListReferences#bar@an.Annotation"
-								: true,
-							"@com.sap.vocabularies.Common.v1.ValueListRelevantQualifiers"
-								: aValueListRelevantQualifiers,
-							"@some.other.Annotation" : true
+					sMappingUrl1 = "../ValueListService1/$metadata",
+					sMappingUrl2 = "../ValueListService2/$metadata",
+					sMappingUrlBar = "../ValueListServiceBar/$metadata",
+					oModel = new ODataModel({serviceUrl : "/Foo/DataService/"}),
+					oMetaModelMock = this.mock(oModel.getMetaModel()),
+					oProperty = {
+						$kind : "Property"
+					},
+					sPropertyPath = "/ProductList('HT-1000')/Category",
+					aValueListRelevantQualifiers = [],
+					oMetadata = {
+						$EntityContainer : "zui5_epm_sample.Container",
+						"zui5_epm_sample.Product" : {
+							$kind : "Entity",
+							Category : oProperty
+						},
+						$Annotations : {
+							"zui5_epm_sample.Product/Category" : {
+								"@com.sap.vocabularies.Common.v1.ValueListReferences" :
+									[sMappingUrl1, sMappingUrl2],
+								"@com.sap.vocabularies.Common.v1.ValueListReferences#bar" :
+									[sMappingUrlBar],
+								"@com.sap.vocabularies.Common.v1.ValueListReferences#bar@an.Annotation"
+									: true,
+								"@com.sap.vocabularies.Common.v1.ValueListRelevantQualifiers"
+									: aValueListRelevantQualifiers,
+								"@some.other.Annotation" : true
+							}
+						},
+						"zui5_epm_sample.Container" : {
+							ProductList : {
+								$kind : "EntitySet",
+								$Type : "zui5_epm_sample.Product"
+							}
 						}
+					},
+					mValueListByRelevantQualifiers = {
+						qualifier : {
+							$model : "~model~",
+							CollectionPath : "/Collection"
+						}
+					},
+					oValueListMappings1 = {
+						"" : {CollectionPath : ""}
+					},
+					oValueListMappings2 = {
+						foo : {CollectionPath : "foo"}
+					},
+					oValueListMappingsBar = {},
+					oValueListModel1 = {sServiceUrl : sMappingUrl1},
+					oValueListModel2 = {sServiceUrl : sMappingUrl2},
+					oValueListModelBar = {sServiceUrl : sMappingUrlBar};
+
+				if (bFixed) {
+					oMetadata.$Annotations["zui5_epm_sample.Product/Category"]
+						["@com.sap.vocabularies.Common.v1.ValueListWithFixedValues"] = true;
+					if (bError) { // simulate empty result after filtering by relevant qualifiers
+						delete mValueListByRelevantQualifiers.qualifier;
+					}
+				}
+				oValueListMappingsBar[bDuplicate ? "" : "bar"] = {CollectionPath : "bar"};
+				oMetaModelMock.expects("fetchEntityContainer").atLeast(1)
+					.returns(SyncPromise.resolve(oMetadata));
+				oMetaModelMock.expects("getOrCreateSharedModel")
+					.withExactArgs(sMappingUrl1, undefined, undefined)
+					.returns(oValueListModel1);
+				oMetaModelMock.expects("fetchValueListMappings")
+					.withExactArgs(sinon.match.same(oValueListModel1), "zui5_epm_sample.Product",
+						sinon.match.same(oProperty), undefined)
+					.resolves(oValueListMappings1);
+				oMetaModelMock.expects("getOrCreateSharedModel")
+					.withExactArgs(sMappingUrl2, undefined, undefined)
+					.returns(oValueListModel2);
+				oMetaModelMock.expects("fetchValueListMappings")
+					.withExactArgs(sinon.match.same(oValueListModel2), "zui5_epm_sample.Product",
+						sinon.match.same(oProperty), undefined)
+					.resolves(oValueListMappings2);
+				oMetaModelMock.expects("getOrCreateSharedModel")
+					.withExactArgs(sMappingUrlBar, undefined, undefined)
+					.returns(oValueListModelBar);
+				oMetaModelMock.expects("fetchValueListMappings")
+					.withExactArgs(sinon.match.same(oValueListModelBar), "zui5_epm_sample.Product",
+						sinon.match.same(oProperty), undefined)
+					.returns(SyncPromise.resolve(oValueListMappingsBar));
+				oMetaModelMock.expects("filterValueListRelevantQualifiers").exactly(bDuplicate ? 0 : 1)
+					.withExactArgs({
+							"" : {
+								$model : oValueListModel1,
+								CollectionPath : ""
+							},
+							foo : {
+								$model : oValueListModel2,
+								CollectionPath : "foo"
+							},
+							bar : {
+								$model : oValueListModelBar,
+								CollectionPath : "bar"
+							}
+						}, sinon.match.same(aValueListRelevantQualifiers),
+						"/ProductList/Category"
+							+ "@com.sap.vocabularies.Common.v1.ValueListRelevantQualifiers",
+						sinon.match.same(oContext))
+					.resolves(mValueListByRelevantQualifiers);
+
+				// code under test
+				return oModel.getMetaModel()
+					.requestValueListInfo(sPropertyPath, undefined, oContext)
+					.then(function (oResult) {
+						assert.ok(!bError);
+						if (bFixed) {
+							assert.deepEqual(oResult, {
+								"" : {
+									$model : "~model~",
+									$qualifier : "qualifier",
+									CollectionPath : "/Collection"
+								}
+							});
+						} else {
+							assert.strictEqual(oResult, mValueListByRelevantQualifiers);
+						}
+					}, function (oError) {
+						assert.ok(bError);
+						assert.strictEqual(oError.message, bFixed
+							? "Annotation 'com.sap.vocabularies.Common.v1.ValueListWithFixedValues'"
+								+ " but not exactly one 'com.sap.vocabularies.Common.v1.ValueList'"
+								+ " for property " + sPropertyPath
+							: "Annotations 'com.sap.vocabularies.Common.v1.ValueList' with "
+								+ "identical qualifier '' for property " + sPropertyPath
+								+ " in " + sMappingUrl1 + " and " + sMappingUrlBar);
+					});
+			});
+		});
+	});
+
+	//*********************************************************************************************
+	[
+		"/ProductList('HT-1000')/name.space.Action/Category",
+		"/ProductList('HT-1000')/name.space.Action/$Parameter/Category"
+	].forEach(function (sPropertyPath) {
+		QUnit.test("requestValueListInfo: bound action parameter " + sPropertyPath, function (assert) {
+			var sMappingUrl = "../ValueListService/$metadata",
+				oModel = new ODataModel({serviceUrl : "/Foo/DataService/"}),
+				oMetadata = {
+					$Annotations : {
+						"name.space.Action/Category" : {
+							"@com.sap.vocabularies.Common.v1.ValueListReferences" : [sMappingUrl]
+						}
+					},
+					$EntityContainer : "zui5_epm_sample.Container",
+					"name.space.Action" : [{
+						$kind : "Action",
+						$IsBound : true,
+						$Parameter : [{
+							$Name : "_it",
+							$Type : "zui5_epm_sample.Product"
+						}, {
+							$Name : "Category"
+						}],
+						$ReturnType : {
+							$Type : "some.other.Type"
+						}
+					}],
+					"zui5_epm_sample.Product" : {
+						$kind : "Entity"
 					},
 					"zui5_epm_sample.Container" : {
 						ProductList : {
@@ -5765,171 +5849,35 @@ sap.ui.define([
 						}
 					}
 				},
-				mValueListByRelevantQualifiers = {
-					qualifier : {
-						$model : "~model~",
-						CollectionPath : "/Collection"
-					}
-				},
-				oValueListMappings1 = {
-					"" : {CollectionPath : ""}
-				},
-				oValueListMappings2 = {
-					foo : {CollectionPath : "foo"}
-				},
-				oValueListMappingsBar = {},
-				oValueListModel1 = {sServiceUrl : sMappingUrl1},
-				oValueListModel2 = {sServiceUrl : sMappingUrl2},
-				oValueListModelBar = {sServiceUrl : sMappingUrlBar};
+				oMetaModelMock = this.mock(oModel.getMetaModel()),
+				oValueListMappings = {"" : {CollectionPath : ""}},
+				oValueListModel = {sServiceUrl : sMappingUrl};
 
-			if (bFixed) {
-				oMetadata.$Annotations["zui5_epm_sample.Product/Category"]
-					["@com.sap.vocabularies.Common.v1.ValueListWithFixedValues"] = true;
-				if (bError) { // simulate empty result after filtering by relevant qualifiers
-					delete mValueListByRelevantQualifiers.qualifier;
-				}
-			}
-			oValueListMappingsBar[bDuplicate ? "" : "bar"] = {CollectionPath : "bar"};
 			oMetaModelMock.expects("fetchEntityContainer").atLeast(1)
 				.returns(SyncPromise.resolve(oMetadata));
 			oMetaModelMock.expects("getOrCreateSharedModel")
-				.withExactArgs(sMappingUrl1, undefined, undefined)
-				.returns(oValueListModel1);
-			oMetaModelMock.expects("fetchValueListMappings")
-				.withExactArgs(sinon.match.same(oValueListModel1), "zui5_epm_sample.Product",
-					sinon.match.same(oProperty), undefined)
-				.resolves(oValueListMappings1);
-			oMetaModelMock.expects("getOrCreateSharedModel")
-				.withExactArgs(sMappingUrl2, undefined, undefined)
-				.returns(oValueListModel2);
-			oMetaModelMock.expects("fetchValueListMappings")
-				.withExactArgs(sinon.match.same(oValueListModel2), "zui5_epm_sample.Product",
-					sinon.match.same(oProperty), undefined)
-				.resolves(oValueListMappings2);
-			oMetaModelMock.expects("getOrCreateSharedModel")
-				.withExactArgs(sMappingUrlBar, undefined, undefined)
-				.returns(oValueListModelBar);
-			oMetaModelMock.expects("fetchValueListMappings")
-				.withExactArgs(sinon.match.same(oValueListModelBar), "zui5_epm_sample.Product",
-					sinon.match.same(oProperty), undefined)
-				.returns(SyncPromise.resolve(oValueListMappingsBar));
-			oMetaModelMock.expects("filterValueListRelevantQualifiers").exactly(bDuplicate ? 0 : 1)
-				.withExactArgs({
-						"" : {
-							$model : oValueListModel1,
-							CollectionPath : ""
-						},
-						foo : {
-							$model : oValueListModel2,
-							CollectionPath : "foo"
-						},
-						bar : {
-							$model : oValueListModelBar,
-							CollectionPath : "bar"
-						}
-					}, sinon.match.same(aValueListRelevantQualifiers),
-					"/ProductList/Category"
-						+ "@com.sap.vocabularies.Common.v1.ValueListRelevantQualifiers",
-					sinon.match.same(oContext))
-				.resolves(mValueListByRelevantQualifiers);
+				.withExactArgs(sMappingUrl, undefined, undefined)
+				.returns(oValueListModel);
+			oMetaModelMock.expects("fetchValueListMappings").withExactArgs(
+					sinon.match.same(oValueListModel), "name.space.Action",
+					sinon.match.same(oMetadata["name.space.Action"][0].$Parameter[1]),
+					oMetadata["name.space.Action"])
+				.resolves(oValueListMappings);
+			oMetaModelMock.expects("filterValueListRelevantQualifiers").never();
 
 			// code under test
 			return oModel.getMetaModel()
-				.requestValueListInfo(sPropertyPath, undefined, oContext)
+				.requestValueListInfo(sPropertyPath, undefined, {/*not V4 context*/})
 				.then(function (oResult) {
-					assert.ok(!bError);
-					if (bFixed) {
-						assert.deepEqual(oResult, {
-							"" : {
-								$model : "~model~",
-								$qualifier : "qualifier",
-								CollectionPath : "/Collection"
-							}
-						});
-					} else {
-						assert.strictEqual(oResult, mValueListByRelevantQualifiers);
-					}
-				}, function (oError) {
-					assert.ok(bError);
-					assert.strictEqual(oError.message, bFixed
-						? "Annotation 'com.sap.vocabularies.Common.v1.ValueListWithFixedValues'"
-							+ " but not exactly one 'com.sap.vocabularies.Common.v1.ValueList'"
-							+ " for property " + sPropertyPath
-						: "Annotations 'com.sap.vocabularies.Common.v1.ValueList' with "
-							+ "identical qualifier '' for property " + sPropertyPath
-							+ " in " + sMappingUrl1 + " and " + sMappingUrlBar);
+					assert.deepEqual(oResult, {
+						"" : {
+							$model : oValueListModel,
+							CollectionPath : ""
+						}
+					});
 				});
 		});
 	});
-});
-
-	//*********************************************************************************************
-[
-	"/ProductList('HT-1000')/name.space.Action/Category",
-	"/ProductList('HT-1000')/name.space.Action/$Parameter/Category"
-].forEach(function (sPropertyPath) {
-	QUnit.test("requestValueListInfo: bound action parameter " + sPropertyPath, function (assert) {
-		var sMappingUrl = "../ValueListService/$metadata",
-			oModel = new ODataModel({serviceUrl : "/Foo/DataService/"}),
-			oMetadata = {
-				$Annotations : {
-					"name.space.Action/Category" : {
-						"@com.sap.vocabularies.Common.v1.ValueListReferences" : [sMappingUrl]
-					}
-				},
-				$EntityContainer : "zui5_epm_sample.Container",
-				"name.space.Action" : [{
-					$kind : "Action",
-					$IsBound : true,
-					$Parameter : [{
-						$Name : "_it",
-						$Type : "zui5_epm_sample.Product"
-					}, {
-						$Name : "Category"
-					}],
-					$ReturnType : {
-						$Type : "some.other.Type"
-					}
-				}],
-				"zui5_epm_sample.Product" : {
-					$kind : "Entity"
-				},
-				"zui5_epm_sample.Container" : {
-					ProductList : {
-						$kind : "EntitySet",
-						$Type : "zui5_epm_sample.Product"
-					}
-				}
-			},
-			oMetaModelMock = this.mock(oModel.getMetaModel()),
-			oValueListMappings = {"" : {CollectionPath : ""}},
-			oValueListModel = {sServiceUrl : sMappingUrl};
-
-		oMetaModelMock.expects("fetchEntityContainer").atLeast(1)
-			.returns(SyncPromise.resolve(oMetadata));
-		oMetaModelMock.expects("getOrCreateSharedModel")
-			.withExactArgs(sMappingUrl, undefined, undefined)
-			.returns(oValueListModel);
-		oMetaModelMock.expects("fetchValueListMappings").withExactArgs(
-				sinon.match.same(oValueListModel), "name.space.Action",
-				sinon.match.same(oMetadata["name.space.Action"][0].$Parameter[1]),
-				oMetadata["name.space.Action"])
-			.resolves(oValueListMappings);
-		oMetaModelMock.expects("filterValueListRelevantQualifiers").never();
-
-		// code under test
-		return oModel.getMetaModel()
-			.requestValueListInfo(sPropertyPath, undefined, {/*not V4 context*/})
-			.then(function (oResult) {
-				assert.deepEqual(oResult, {
-					"" : {
-						$model : oValueListModel,
-						CollectionPath : ""
-					}
-				});
-			});
-	});
-});
 
 	//*********************************************************************************************
 	//TODO Unknown qualified name some.other.Type at /name.space.Action/0/$ReturnType/$Type,
@@ -7129,95 +7077,95 @@ sap.ui.define([
 	//*********************************************************************************************
 	// Tests that each key is reduced to the corresponding value. The root path is the part of the
 	// key until the "|".
-forEach({
-	"/As(1)|AValue" : [],
-	"/As(1)|#reduce.path.Action" : [],
-	"/As(1)|AtoB/BValue" : [],
-	"/As(1)|AtoB/BtoA" : ["/As(1)"],
-	"/As(1)|AtoB/BtoA/AValue" : ["/As(1)/AValue"],
-	"/As(1)|AtoC/CtoA/AValue" : [], // potential backlink has no $Partner
-	"/As(1)|AtoDs(42)/DtoA/AValue" : ["/As(1)/AValue"],
-	"/As(1)|AtoDs(42)/DtoA/AtoC/CValue" : ["/As(1)/AtoC/CValue"],
-	"/Ds(1)|DtoA/AtoDs(42)/DValue" : [], // backlink via collection
-	"/As(1)|AtoDs/42/DtoA/AValue" : ["/As(1)/AValue"], // using index
-	"/Ds(1)|DtoCs/42" : [], // no partner, ends with index
-	"/Ds(1)|DtoA/AtoDs/42/DValue" : [], // backlink via collection w/ index
-	"/As(1)|AtoDs(42)/DtoBs(7)/BtoD/DValue" : ["/As(1)/AtoDs(42)/DValue"], // following a collection
-	"/As(1)/AtoB|BtoA/AValue" : [], // reduced path not shorter than base
-	// multiple nested reduction
-	"/As(1)|AtoB/BtoC/CtoB/BtoA/AValue" : ["/As(1)/AtoB/BtoA/AValue", "/As(1)/AValue"],
-	// multiple non-nested reductions
-	"/As(1)|AtoB/BtoA/AtoDs(11)/DtoA/AValue" :
-		["/As(1)/AtoDs(11)/DtoA/AValue", "/As(1)/AtoB/BtoA/AValue", "/As(1)/AValue"],
-	// multiple pairs w/ index
-	"/As(1)|AtoDs/-2/DtoBs(7)/BtoD/DtoA/AValue" :
-		["/As(1)/AtoDs/-2/DtoA/AValue", "/As(1)/AValue"],
-	// avoid duplicates (1:1 navigation)
-	"/As(1)|AtoB/BtoA/AtoB/BtoA/AValue" : ["/As(1)/AtoB/BtoA/AValue", "/As(1)/AValue"],
-	// avoid duplicates (1:* navigation)
-	"/As(1)|AtoDs(2)/DtoA/AtoDs(2)/DtoA/AValue" : ["/As(1)/AtoDs(2)/DtoA/AValue", "/As(1)/AValue"],
-	"/As(1)|AtoDs(42)/DtoA/AValue@Common.Label" : ["/As(1)/AValue@Common.Label"],
-	"/As(1)|AtoDs(42)/DtoA/@Common.Label" : ["/As(1)/@Common.Label"], // annotation at type A
-	"/As(1)|AtoDs(42)/DtoA@Common.Label" : [], // annotation at navigation property DtoA
-	// UI5 runtime annotation at type A
-	"/As(1)|AtoDs(42)/DtoA/@$ui5._/predicate" : ["/As(1)/@$ui5._/predicate"],
-	// property of binding parameter at 1st overloaded bound action
-	"/As(1)|reduce.path.Action(...)/$Parameter/_it/Value" : ["/As(1)/Value"],
-	// property of binding parameter at 2nd overloaded bound action
-	"/Ds(1)|reduce.path.Action(...)/$Parameter/Value/Value" : ["/Ds(1)/Value"],
-	// path reduction within the operation parameter
-	"/As(1)|reduce.path.Action(...)/$Parameter/_it/AtoB/BtoA/Value" :
-		["/As(1)/AtoB/BtoA/Value", "/As(1)/reduce.path.Action(...)/$Parameter/_it/Value",
-			"/As(1)/Value"],
-	// path reduction before the operation
-	"/As(1)|AtoB/BtoA/reduce.path.Action(...)/$Parameter/_it/Value" :
-		["/As(1)/reduce.path.Action(...)/$Parameter/_it/Value", "/As(1)/AtoB/BtoA/Value",
-			"/As(1)/Value"],
-	// nested path reduction incl. an operation parameter
-	"/As(1)|AtoB/reduce.path.Action(...)/$Parameter/_it/BtoA/Property" :
-		["/As(1)/AtoB/BtoA/Property", "/As(1)/Property"],
-	// property of binding parameter at 2nd overloaded bound action, without "$Parameter"
-	"/Ds(1)|reduce.path.Action(...)/Value/Value" : [],
-	// property of other parameter at bound action
-	"/As(1)|reduce.path.Action(...)/$Parameter/foo" : [],
-	// operation import
-	"/FunctionImport(...)|$Parameter/foo" : []
-}, function (sPath, aReducedPaths, sRootPath) {
-	QUnit.test("getAllPathReductions: " + sPath, function (assert) {
-		aReducedPaths = [sPath].concat(aReducedPaths);
-		this.oMetaModelMock.expects("fetchEntityContainer").atLeast(0)
-			.returns(SyncPromise.resolve(mReducedPathScope));
+	forEach({
+		"/As(1)|AValue" : [],
+		"/As(1)|#reduce.path.Action" : [],
+		"/As(1)|AtoB/BValue" : [],
+		"/As(1)|AtoB/BtoA" : ["/As(1)"],
+		"/As(1)|AtoB/BtoA/AValue" : ["/As(1)/AValue"],
+		"/As(1)|AtoC/CtoA/AValue" : [], // potential backlink has no $Partner
+		"/As(1)|AtoDs(42)/DtoA/AValue" : ["/As(1)/AValue"],
+		"/As(1)|AtoDs(42)/DtoA/AtoC/CValue" : ["/As(1)/AtoC/CValue"],
+		"/Ds(1)|DtoA/AtoDs(42)/DValue" : [], // backlink via collection
+		"/As(1)|AtoDs/42/DtoA/AValue" : ["/As(1)/AValue"], // using index
+		"/Ds(1)|DtoCs/42" : [], // no partner, ends with index
+		"/Ds(1)|DtoA/AtoDs/42/DValue" : [], // backlink via collection w/ index
+		"/As(1)|AtoDs(42)/DtoBs(7)/BtoD/DValue" : ["/As(1)/AtoDs(42)/DValue"], // following a collection
+		"/As(1)/AtoB|BtoA/AValue" : [], // reduced path not shorter than base
+		// multiple nested reduction
+		"/As(1)|AtoB/BtoC/CtoB/BtoA/AValue" : ["/As(1)/AtoB/BtoA/AValue", "/As(1)/AValue"],
+		// multiple non-nested reductions
+		"/As(1)|AtoB/BtoA/AtoDs(11)/DtoA/AValue" :
+			["/As(1)/AtoDs(11)/DtoA/AValue", "/As(1)/AtoB/BtoA/AValue", "/As(1)/AValue"],
+		// multiple pairs w/ index
+		"/As(1)|AtoDs/-2/DtoBs(7)/BtoD/DtoA/AValue" :
+			["/As(1)/AtoDs/-2/DtoA/AValue", "/As(1)/AValue"],
+		// avoid duplicates (1:1 navigation)
+		"/As(1)|AtoB/BtoA/AtoB/BtoA/AValue" : ["/As(1)/AtoB/BtoA/AValue", "/As(1)/AValue"],
+		// avoid duplicates (1:* navigation)
+		"/As(1)|AtoDs(2)/DtoA/AtoDs(2)/DtoA/AValue" : ["/As(1)/AtoDs(2)/DtoA/AValue", "/As(1)/AValue"],
+		"/As(1)|AtoDs(42)/DtoA/AValue@Common.Label" : ["/As(1)/AValue@Common.Label"],
+		"/As(1)|AtoDs(42)/DtoA/@Common.Label" : ["/As(1)/@Common.Label"], // annotation at type A
+		"/As(1)|AtoDs(42)/DtoA@Common.Label" : [], // annotation at navigation property DtoA
+		// UI5 runtime annotation at type A
+		"/As(1)|AtoDs(42)/DtoA/@$ui5._/predicate" : ["/As(1)/@$ui5._/predicate"],
+		// property of binding parameter at 1st overloaded bound action
+		"/As(1)|reduce.path.Action(...)/$Parameter/_it/Value" : ["/As(1)/Value"],
+		// property of binding parameter at 2nd overloaded bound action
+		"/Ds(1)|reduce.path.Action(...)/$Parameter/Value/Value" : ["/Ds(1)/Value"],
+		// path reduction within the operation parameter
+		"/As(1)|reduce.path.Action(...)/$Parameter/_it/AtoB/BtoA/Value" :
+			["/As(1)/AtoB/BtoA/Value", "/As(1)/reduce.path.Action(...)/$Parameter/_it/Value",
+				"/As(1)/Value"],
+		// path reduction before the operation
+		"/As(1)|AtoB/BtoA/reduce.path.Action(...)/$Parameter/_it/Value" :
+			["/As(1)/reduce.path.Action(...)/$Parameter/_it/Value", "/As(1)/AtoB/BtoA/Value",
+				"/As(1)/Value"],
+		// nested path reduction incl. an operation parameter
+		"/As(1)|AtoB/reduce.path.Action(...)/$Parameter/_it/BtoA/Property" :
+			["/As(1)/AtoB/BtoA/Property", "/As(1)/Property"],
+		// property of binding parameter at 2nd overloaded bound action, without "$Parameter"
+		"/Ds(1)|reduce.path.Action(...)/Value/Value" : [],
+		// property of other parameter at bound action
+		"/As(1)|reduce.path.Action(...)/$Parameter/foo" : [],
+		// operation import
+		"/FunctionImport(...)|$Parameter/foo" : []
+	}, function (sPath, aReducedPaths, sRootPath) {
+		QUnit.test("getAllPathReductions: " + sPath, function (assert) {
+			aReducedPaths = [sPath].concat(aReducedPaths);
+			this.oMetaModelMock.expects("fetchEntityContainer").atLeast(0)
+				.returns(SyncPromise.resolve(mReducedPathScope));
 
-		assert.deepEqual(this.oMetaModel.getAllPathReductions(sPath, sRootPath),
-			aReducedPaths, "collection");
+			assert.deepEqual(this.oMetaModel.getAllPathReductions(sPath, sRootPath),
+				aReducedPaths, "collection");
 
-		assert.deepEqual(this.oMetaModel.getAllPathReductions(sPath, sRootPath, true),
-			aReducedPaths.pop(), "single");
+			assert.deepEqual(this.oMetaModel.getAllPathReductions(sPath, sRootPath, true),
+				aReducedPaths.pop(), "single");
+		});
 	});
-});
 
 	//*********************************************************************************************
 	// Tests that each key is reduced to the corresponding value iff bNoReduceBeforeCollection is
 	// false.
-forEach({
-	"/As(1)|AtoB/BtoA/AtoDs(42)/DValue" : "/As(1)/AtoDs(42)/DValue",
-	"/As(1)|AtoB/BtoA/AtoDs" : "/As(1)/AtoDs"
-}, function (sPath, sReducedPath, sRootPath) {
-	QUnit.test("getAllPathReductions: (collections) " + sPath, function (assert) {
-		this.oMetaModelMock.expects("fetchEntityContainer").atLeast(0)
-			.returns(SyncPromise.resolve(mReducedPathScope));
+	forEach({
+		"/As(1)|AtoB/BtoA/AtoDs(42)/DValue" : "/As(1)/AtoDs(42)/DValue",
+		"/As(1)|AtoB/BtoA/AtoDs" : "/As(1)/AtoDs"
+	}, function (sPath, sReducedPath, sRootPath) {
+		QUnit.test("getAllPathReductions: (collections) " + sPath, function (assert) {
+			this.oMetaModelMock.expects("fetchEntityContainer").atLeast(0)
+				.returns(SyncPromise.resolve(mReducedPathScope));
 
-		assert.deepEqual(
-			this.oMetaModel.getAllPathReductions(sPath, sRootPath, true, true),
-			sPath
-		);
+			assert.deepEqual(
+				this.oMetaModel.getAllPathReductions(sPath, sRootPath, true, true),
+				sPath
+			);
 
-		assert.deepEqual(
-			this.oMetaModel.getAllPathReductions(sPath, sRootPath, true),
-			sReducedPath
-		);
+			assert.deepEqual(
+				this.oMetaModel.getAllPathReductions(sPath, sRootPath, true),
+				sReducedPath
+			);
+		});
 	});
-});
 
 	//*********************************************************************************************
 	QUnit.test("getAllPathReductions: binding parameter is collection", function (assert) {

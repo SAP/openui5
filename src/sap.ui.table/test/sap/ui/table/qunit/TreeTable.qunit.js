@@ -108,57 +108,6 @@ sap.ui.define([
 		assert.equal(this.table._getTotalRowCount(), 3, "Initial row count is correct");
 	});
 
-	/**
-	 * @deprecated As of version 1.46.3
-	 */
-	QUnit.test("ExpandFirstLevel", function(assert) {
-		var done = assert.async();
-		var that = this;
-
-		// check the behavior of the expand first level property (only used initially)
-		this.testAsync({
-			act: function() {
-				that.table.setExpandFirstLevel(true);
-				that.table.unbindRows().bindRows("/root");
-			},
-			test: function() {
-				assert.equal(that.table._getTotalRowCount(), 6, "ExpandFirstLevel=true: Row count is correct");
-			}
-		}).then(function() {
-			return that.testAsync({
-				act: function() {
-					that.table.setExpandFirstLevel(false);
-					that.table.unbindRows().bindRows("/root");
-				},
-				test: function() {
-					assert.equal(that.table._getTotalRowCount(), 3, "ExpandFirstLevel=false: Row count is correct");
-				}
-			});
-		}).then(function() {
-			return that.testAsync({
-				act: function() {
-					that.table.setExpandFirstLevel(true);
-					that.table.setModel(new JSONModel(getData()));
-					that.table.unbindRows().bindRows({
-						path: "/root",
-						parameters: {
-							numberOfExpandedLevels: 0,
-							rootLevel: 1,
-							collapseRecursive: false
-						}
-					});
-				},
-				test: function() {
-					assert.equal(that.table._getTotalRowCount(), 3, "ExpandFirstLevel=true and numberOfExpandedLevels=0: Row count is correct");
-					assert.equal(that.table.isExpanded(0), false, "Expanded state is correct");
-					assert.equal(that.table.getBindingInfo("rows").parameters.rootLevel, 1, "rootLevel is correct");
-					assert.equal(that.table.getBindingInfo("rows").parameters.collapseRecursive, false, "collapseRecursive is correct");
-					done();
-				}
-			});
-		});
-	});
-
 	QUnit.test("Insert and remove a row", function(assert) {
 		var done = assert.async();
 		var that = this;
@@ -482,22 +431,12 @@ sap.ui.define([
 		oTable.addSelectionInterval(1, 1);
 		oTable.addSelectionInterval(3, 3);
 
-		/**
-		 * @deprecated as of 1.118
-		 */
-		assert.ok(oTable.getSelectedIndex() == 3, "LeadIndex 0 is selected");
-
 		assert.deepEqual(oTable.getSelectedIndices(), [0, 1, 3], "Selected indices array is correct");
 		var oBinding = oTable.getBinding();
 		assert.ok(oBinding.getSelectedNodesCount() == 3, "# of selected nodes is correct");
 
 		// test clear selection
 		oTable.clearSelection();
-
-		/**
-		 * @deprecated as of 1.118
-		 */
-		assert.ok(oTable.getSelectedIndex() == -1, "LeadIndex is removed");
 
 		assert.deepEqual(oTable.getSelectedIndices(), [], "Selected indices array is correct");
 		assert.ok(oBinding.getSelectedNodesCount() == 0, "# of selected nodes is correct");
@@ -611,11 +550,6 @@ sap.ui.define([
 
 		this.table.setSelectedIndex(1);
 
-		/**
-		 * @deprecated as of 1.118
-		 */
-		assert.deepEqual(this.table.getSelectedIndex(), 1, "setSelectedIndex(1) - getSelectedIndex returns 1");
-
 		assert.deepEqual(this.table.getSelectedIndices(), [1], "setSelectedIndex(1) - getSelectedIndices returns [1]");
 		assert.deepEqual(this.table.isIndexSelected(0), false, "setSelectedIndex(1) - isIndexSelected(0) returns false");
 		assert.deepEqual(this.table.isIndexSelected(1), true, "setSelectedIndex(1) - isIndexSelected(1) returns true");
@@ -625,22 +559,12 @@ sap.ui.define([
 
 		this.table.collapse(0);
 
-		/**
-		 * @deprecated as of 1.118
-		 */
-		assert.deepEqual(this.table.getSelectedIndex(), -1, "collapse(0) - getSelectedIndex returns -1");
-
 		assert.deepEqual(this.table.getSelectedIndices(), [], "collapse(0) - getSelectedIndices returns []");
 		assert.deepEqual(this.table.isIndexSelected(0), false, "collapse(0) - isIndexSelected(0) returns false");
 		assert.deepEqual(this.table.isIndexSelected(1), false, "collapse(0) - isIndexSelected(1) returns false");
 		assert.deepEqual(this.table.isIndexSelected(2), false, "collapse(0) - isIndexSelected(2) returns false");
 
 		this.table.expand(0);
-
-		/**
-		 * @deprecated as of 1.118
-		 */
-		assert.deepEqual(this.table.getSelectedIndex(), -1, "expand(0) - getSelectedIndex returns -1");
 
 		assert.deepEqual(this.table.getSelectedIndices(), [], "expand(0) - getSelectedIndices returns []");
 		assert.deepEqual(this.table.isIndexSelected(0), false, "expand(0) - isIndexSelected(0) returns false");
@@ -651,11 +575,6 @@ sap.ui.define([
 
 		this.table.addSelectionInterval(1, 2);
 
-		/**
-		 * @deprecated as of 1.118
-		 */
-		assert.deepEqual(this.table.getSelectedIndex(), 2, "addSelectionInterval(1, 2) - getSelectedIndex returns 2");
-
 		assert.deepEqual(this.table.getSelectedIndices(), [2], "addSelectionInterval(1, 2) - getSelectedIndices returns [2]");
 		assert.deepEqual(this.table.isIndexSelected(0), false, "addSelectionInterval(1, 2) - isIndexSelected(0) returns false");
 		assert.deepEqual(this.table.isIndexSelected(1), false, "addSelectionInterval(1, 2) - isIndexSelected(1) returns false");
@@ -664,11 +583,6 @@ sap.ui.define([
 		assert.deepEqual(this.table.isIndexSelected(4), false, "addSelectionInterval(1, 2) - isIndexSelected(4) returns false");
 
 		this.table.clearSelection();
-
-		/**
-		 * @deprecated as of 1.118
-		 */
-		assert.deepEqual(this.table.getSelectedIndex(), -1, "clearSelection() - getSelectedIndex returns -1");
 
 		assert.deepEqual(this.table.getSelectedIndices(), [], "clearSelection() - getSelectedIndices returns []");
 		assert.deepEqual(this.table.isIndexSelected(0), false, "clearSelection() - isIndexSelected(0) returns false");
@@ -688,11 +602,6 @@ sap.ui.define([
 
 		this.table.setSelectedIndex(1);
 
-		/**
-		 * @deprecated as of 1.118
-		 */
-		assert.deepEqual(this.table.getSelectedIndex(), 1, "setSelectedIndex(1) - getSelectedIndex returns 1");
-
 		assert.deepEqual(this.table.getSelectedIndices(), [1], "setSelectedIndex(1) - getSelectedIndices returns [1]");
 		assert.deepEqual(this.table.isIndexSelected(0), false, "setSelectedIndex(1) - isIndexSelected(0) returns false");
 		assert.deepEqual(this.table.isIndexSelected(1), true, "setSelectedIndex(1) - isIndexSelected(1) returns true");
@@ -702,11 +611,6 @@ sap.ui.define([
 
 		this.table.collapse(0);
 
-		/**
-		 * @deprecated as of 1.118
-		 */
-		assert.deepEqual(this.table.getSelectedIndex(), -1, "collapse(0) - getSelectedIndex returns -1");
-
 		assert.deepEqual(this.table.getSelectedIndices(), [], "collapse(0) - getSelectedIndices returns []");
 		assert.deepEqual(this.table.isIndexSelected(0), false, "collapse(0) - isIndexSelected(0) returns false");
 		assert.deepEqual(this.table.isIndexSelected(1), false, "collapse(0) - isIndexSelected(1) returns false");
@@ -715,11 +619,6 @@ sap.ui.define([
 		assert.deepEqual(this.table.isIndexSelected(4), false, "collapse(0) - isIndexSelected(4) returns false");
 
 		this.table.expand(0);
-
-		/**
-		 * @deprecated as of 1.118
-		 */
-		assert.deepEqual(this.table.getSelectedIndex(), 1, "expand(0) - getSelectedIndex returns 1");
 
 		assert.deepEqual(this.table.getSelectedIndices(), [1], "expand(0) - getSelectedIndices returns [1]");
 		assert.deepEqual(this.table.isIndexSelected(0), false, "expand(0) - isIndexSelected(0) returns false");
@@ -731,22 +630,12 @@ sap.ui.define([
 		this.table.collapse(0);
 		this.table.setSelectedIndex(2);
 
-		/**
-		 * @deprecated as of 1.118
-		 */
-		assert.deepEqual(this.table.getSelectedIndex(), 2, "collapse(0), setSelectedIndex(2) - getSelectedIndex returns 1");
-
 		assert.deepEqual(this.table.getSelectedIndices(), [2], "collapse(0), setSelectedIndex(2) - getSelectedIndices returns [1]");
 		assert.deepEqual(this.table.isIndexSelected(0), false, "collapse(0), setSelectedIndex(2) - isIndexSelected(0) returns false");
 		assert.deepEqual(this.table.isIndexSelected(1), false, "collapse(0), setSelectedIndex(2) - isIndexSelected(1) returns false");
 		assert.deepEqual(this.table.isIndexSelected(2), true, "collapse(0), setSelectedIndex(2) - isIndexSelected(2) returns true");
 
 		this.table.expand(0);
-
-		/**
-		 * @deprecated as of 1.118
-		 */
-		assert.deepEqual(this.table.getSelectedIndex(), 4, "expand(0) - getSelectedIndex returns 4");
 
 		assert.deepEqual(this.table.getSelectedIndices(), [4], "expand(0) - getSelectedIndices returns [4]");
 		assert.deepEqual(this.table.isIndexSelected(0), false, "expand(0) - isIndexSelected(0) returns false");
@@ -756,11 +645,6 @@ sap.ui.define([
 		assert.deepEqual(this.table.isIndexSelected(4), true, "expand(0) - isIndexSelected(4) returns true");
 
 		this.table.addSelectionInterval(1, 2);
-
-		/**
-		 * @deprecated as of 1.118
-		 */
-		assert.deepEqual(this.table.getSelectedIndex(), 2, "addSelectionInterval(1, 2) - getSelectedIndex returns 2");
 
 		assert.deepEqual(this.table.getSelectedIndices(), [2], "addSelectionInterval(1, 2) - getSelectedIndices returns [2]");
 		assert.deepEqual(this.table.isIndexSelected(0), false, "addSelectionInterval(1, 2) - isIndexSelected(0) returns false");
@@ -772,22 +656,12 @@ sap.ui.define([
 		this.table.collapse(0);
 		this.table.clearSelection();
 
-		/**
-		 * @deprecated as of 1.118
-		 */
-		assert.deepEqual(this.table.getSelectedIndex(), -1, "collapse(0), clearSelection() - getSelectedIndex returns -1");
-
 		assert.deepEqual(this.table.getSelectedIndices(), [], "collapse(0), clearSelection() - getSelectedIndices returns []");
 		assert.deepEqual(this.table.isIndexSelected(0), false, "collapse(0), clearSelection() - isIndexSelected(0) returns false");
 		assert.deepEqual(this.table.isIndexSelected(1), false, "collapse(0), clearSelection() - isIndexSelected(1) returns false");
 		assert.deepEqual(this.table.isIndexSelected(2), false, "collapse(0), clearSelection() - isIndexSelected(2) returns false");
 
 		this.table.expand(0);
-
-		/**
-		 * @deprecated as of 1.118
-		 */
-		assert.deepEqual(this.table.getSelectedIndex(), -1, "collapse(0), clearSelection() - getSelectedIndex returns -1");
 
 		assert.deepEqual(this.table.getSelectedIndices(), [], "collapse(0), clearSelection() - getSelectedIndices returns []");
 		assert.deepEqual(this.table.isIndexSelected(0), false, "collapse(0), clearSelection() - isIndexSelected(0) returns false");
@@ -1122,41 +996,6 @@ sap.ui.define([
 		fnBindingInfoStub.restore();
 		fnGetModelStub.restore();
 		fnIsTreeBindingSpy.restore();
-	});
-
-	/**
-	 * @deprecated As of version 1.76
-	 */
-	QUnit.test("Correct Proxy Calls - rootLevel and collapseRecursive", function(assert) {
-		// Initialise spies
-		var fnSetRootLevelSpy = sinon.spy(this.oProxy, "setRootLevel");
-		var fnSetCollapseRecursiveSpy = sinon.spy(this.oProxy, "setCollapseRecursive");
-
-		// Stub oTable.getBinding
-		var fnGetBinding = sinon.stub(this.oTable, "getBinding");
-		fnGetBinding.returns({
-			getMetadata: function() {
-				return {
-					getName: function() {
-						return undefined;
-					}
-				};
-			}
-		});
-
-		// setRootLevel
-		this.oTable.setRootLevel(0);
-		assert.ok(fnSetRootLevelSpy.called, "proxy#setRootLevel was called");
-
-		// setCollapseRecursive
-		this.oTable.setCollapseRecursive(true);
-		assert.ok(fnSetCollapseRecursiveSpy.called, "proxy#setCollapseRecursive was called");
-
-		// Restore spies and stubs
-		fnSetRootLevelSpy.restore();
-		fnSetCollapseRecursiveSpy.restore();
-
-		fnGetBinding.restore();
 	});
 
 	QUnit.test("Correct Proxy Calls", function(assert) {

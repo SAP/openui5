@@ -10,15 +10,6 @@ sap.ui.define(["sap/ui/integration/Extension", "sap/base/Log"], function (Extens
 		init: function () {
 			Extension.prototype.init.apply(this, arguments);
 
-			this.setActions([
-				{
-					type: 'Navigation',
-					url: "http://www.sap.com",
-					target: "_blank",
-					text: 'AutoOpen - SAP website - Extension'
-				}
-			]);
-
 			this.attachAction(function (oEvent) {
 				Log.error("Action handled in the Extension:" + JSON.stringify(oEvent.getParameters().parameters));
 			});

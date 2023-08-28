@@ -23,7 +23,7 @@ sap.ui.define([
 	var privateLoaderAPI = sap.ui.loader._;
 
 	function _providesPublicMethods(/**sap.ui.base.Object*/oObject, /** function */ fnClass, /**boolean*/ bFailEarly) {
-		var aMethodNames = fnClass.getMetadata().getAllPublicMethods(),
+		var aMethodNames = null,
 			result = true,
 			sMethod;
 
@@ -67,28 +67,6 @@ sap.ui.define([
 	// ---------------------------------------------------------------------------
 
 	QUnit.module("Basic");
-
-	/**
-	 * @deprecated As of version 1.111, Core facade will be abandoned
-	 */
-	QUnit.test("facade", function(assert) {
-		assert.notStrictEqual(sap.ui.getCore(), oRealCore, "Facade should be different from the implementation");
-		assert.notOk(sap.ui.getCore() instanceof oRealCore.constructor, "Facade should not be an instance of sap.ui.core.Core");
-		assert.ok(sap.ui.getCore() instanceof Interface, "Facade should be an instance of sap.ui.base.Interface");
-		assert.strictEqual(sap.ui.getCore(), sap.ui.getCore(), "consecutive calls to sap.ui.getCore() should return the exact same facade");
-
-		var aMethodNames = oRealCore.getMetadata().getAllPublicMethods(),
-			oCoreInterface = sap.ui.getCore(),
-			i;
-
-		for ( i = 0; i < aMethodNames.length; i++ ) {
-			assert.ok(oCoreInterface[aMethodNames[i]] !== undefined, "expected interface method should actually exist: " + aMethodNames[i]);
-		}
-
-		for ( i in oCoreInterface ) {
-			assert.ok(aMethodNames.indexOf(i) >= 0, "actual method should be part of expected interface: " + i);
-		}
-	});
 
 	QUnit.test("CreateRenderManager", function(assert) {
 		var oRenderManager = new RenderManager();
@@ -136,45 +114,6 @@ sap.ui.define([
 	});
 
 	/**
-	 * Tests creation of an UIArea instance and afterwards checks whether it can be found via getUIArea method
-	 * @deprecated As of version 1.1
-	 */
-	QUnit.test("testCreateUIArea", function(assert) {
-		createAndAppendDiv("uiArea1");
-		var oUIArea = oCore.createUIArea("uiArea1");
-		assert.ok(!!oUIArea, "UIArea must be created and returned");
-		assert.ok(_providesPublicMethods(oUIArea, UIArea), "Expected instance of sap.ui.core.UIArea");
-		var oUIAreaCheck = oCore.getUIArea("uiArea1");
-		assert.ok(!!oUIAreaCheck, "UIArea must be returned");
-		assert.ok(_providesPublicMethods(oUIAreaCheck, UIArea), "Expected instance of sap.ui.core.UIArea");
-		assert.equal(oUIAreaCheck, oUIArea, "Returned UIArea must be the same as the one created before");
-	});
-
-	/**
-	 * @deprecated As of version 1.1
-	 */
-	QUnit.test("testSetRoot", function(assert) {
-		var oButton = new TestButton("test2Button", {text:"Hallo JSUnit"});
-		createAndAppendDiv("uiArea2");
-		oCore.setRoot("uiArea2", oButton);
-		var oUIAreaCheck = oCore.getUIArea("uiArea2");
-		assert.ok(oUIAreaCheck, "UIArea must be returned");
-		assert.ok(_providesPublicMethods(oUIAreaCheck, UIArea), "Expected instance of sap.ui.core.UIArea");
-	});
-
-	/**
-	 * @deprecated As of version 1.1
-	 */
-	QUnit.test("testGetElementById", function(assert) {
-		var oButton = new TestButton("test3Button", {text:"Hallo JSUnit"});
-		createAndAppendDiv("uiArea3");
-		oButton.placeAt("uiArea3");
-		var oButtonCheck = oCore.getElementById("test3Button");
-		assert.ok(oButtonCheck, "Button must be returned");
-		assert.equalControls(oButtonCheck, oButton, "Returned Button must be the same as the one created before");
-	});
-
-	/**
 	 * Tests that <code>sap.ui.getCore().notifyContentDensityChanged()</code> calls each control's #onThemeChanged method
 	 */
 	QUnit.test("test #notifyContentDensityChanged", function(assert) {
@@ -201,18 +140,6 @@ sap.ui.define([
 
 		//call to #notifyContentDensityChanged
 		oCore.notifyContentDensityChanged();
-	});
-
-	/**
-	 * @deprecated As of version 1.1
-	 */
-	QUnit.test("testGetControl", function(assert) {
-		var oButton = new TestButton("test4Button", {text:"Hallo JSUnit"});
-		createAndAppendDiv("uiArea4");
-		oButton.placeAt("uiArea4");
-		var oButtonCheck = oCore.getControl("test4Button");
-		assert.ok(oButtonCheck, "Button must be returned");
-		assert.equalControls(oButtonCheck, oButton, "Returned Button must be the same as the one created before");
 	});
 
 	QUnit.test("testSetThemeRoot", function(assert) {
@@ -824,5 +751,4 @@ sap.ui.define([
 		oElementA.destroy();
 		oElementB.destroy();
 	});
-
 });

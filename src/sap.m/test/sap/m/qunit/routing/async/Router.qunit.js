@@ -212,7 +212,7 @@ sap.ui.define([
 					return oRouteMatchedSpy.returnValues[0].then(function () {
 						// Assert
 						assert.strictEqual(fnBackSpy.callCount, 1, "Did execute a back navigation");
-						assert.strictEqual(fnBackSpy.firstCall.args[0], oRouter.getView("sap.ui.test.views.second").getId(), "The second page was target of the back navigation");
+						assert.strictEqual(fnBackSpy.firstCall.args[0], null.getId(), "The second page was target of the back navigation");
 
 						// Cleanup
 						oRouter.destroy();
@@ -279,7 +279,7 @@ sap.ui.define([
 				return oRouteMatchedSpy.returnValues[0].then(function () {
 					// Assert
 					assert.strictEqual(fnBackSpy.callCount, 1, "Did execute a back navigation");
-					assert.strictEqual(fnBackSpy.firstCall.args[0], oRouter.getView("sap.ui.test.views.third").getId(), "The second page was target of the back navigation");
+					assert.strictEqual(fnBackSpy.firstCall.args[0], null.getId(), "The second page was target of the back navigation");
 
 					// Cleanup
 					oRouter.destroy();
@@ -314,7 +314,7 @@ sap.ui.define([
 
 			// views
 			helpers.createViewAndController("Master").then(function () {
-				oRouter.getView("sap.ui.test.views.Master", "XML").addEventDelegate({
+				null.addEventDelegate({
 					onBeforeShow: function (oEvent) {
 						data = oEvent.data.id;
 					}
@@ -353,7 +353,7 @@ sap.ui.define([
 
 		// views
 		helpers.createViewAndController("view1").then(function () {
-			oRouter.getView("sap.ui.test.views.view1", "XML").addEventDelegate({
+			null.addEventDelegate({
 				onBeforeShow: function(oEvent) {
 					data = oEvent.data.id;
 					// Assert
@@ -411,12 +411,12 @@ sap.ui.define([
 			helpers.createViewAndController("Master"),
 			helpers.createViewAndController("Detail")
 		]).then(function() {
-			oRouter.getView("sap.ui.test.views.Master", "XML").addEventDelegate({
+			null.addEventDelegate({
 				onBeforeShow: function(oEvent) {
 					oMasterData = oEvent.data.id;
 				}
 			});
-			oRouter.getView("sap.ui.test.views.Detail", "XML").addEventDelegate({
+			null.addEventDelegate({
 				onBeforeShow: function(oEvent) {
 					oDetailData = oEvent.data.id;
 					// Assert

@@ -25,8 +25,9 @@ sap.ui.define([
 	"sap/ui/layout/form/ResponsiveGridLayout",
 	"sap/ui/layout/form/FormContainer",
 	"sap/ui/layout/form/FormElement",
-	"sap/m/Label"
-], function (
+	"sap/m/Label",
+	"sap/ui/core/StaticArea"
+], function(
 	ResponsivePopover,
 	Button,
 	Toolbar,
@@ -50,7 +51,8 @@ sap.ui.define([
 	ResponsiveGridLayout,
 	FormContainer,
 	FormElement,
-	Label
+	Label,
+	StaticArea
 ) {
 	"use strict";
 
@@ -199,7 +201,7 @@ sap.ui.define([
 		this._initItemsContainer();
 
 		if (!this.getParent()) {
-			UIArea.registry.get(Core.getStaticAreaRef().id).addContent(this, true);
+			UIArea.registry.get(StaticArea.getDomRef()/* LFUI5: Check: StaticArea's API might have a better fit for your use case. */.id).addContent(this, true);
 		}
 
 		this._oPopover.openBy(oAnchor);
@@ -326,7 +328,7 @@ sap.ui.define([
 		}
 
 		if (oEvent.type == "mousedown" || oEvent.type == "touchstart") {
-			if (!containsOrEquals(this.getDomRef(), oEvent.target) && !containsOrEquals(Core.getStaticAreaRef(), oEvent.target) && !isInControlTree(this, Element.closestTo(oEvent.target))) {
+			if (!containsOrEquals(this.getDomRef(), oEvent.target) && !containsOrEquals(StaticArea.getDomRef()/* LFUI5: Check: StaticArea's API might have a better fit for your use case. */, oEvent.target) && !isInControlTree(this, Element.closestTo(oEvent.target))) {
 				this.close();
 			}
 		}

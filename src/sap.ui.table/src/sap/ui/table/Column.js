@@ -78,7 +78,6 @@ sap.ui.define([
 
 		library: "sap.ui.table",
 		properties: {
-
 			/**
 			 * Width of the column in CSS units.
 			 * Default value is <code>auto</code>, see <a href="https://www.w3.org/TR/CSS2/tables.html#width-layout"></a>
@@ -99,16 +98,6 @@ sap.ui.define([
 			 * @since 1.44.1
 			 */
 			minWidth: {type: "int", group: "Dimension", defaultValue: 0},
-
-			/**
-			 * If the table is wider than the sum of widths of the visible columns, the columns will be
-			 * resized proportionally to their widths that were set originally. If set to false, the column will be displayed in the
-			 * original width. If all columns are set to not be flexible, an extra "dummy" column will be
-			 * created at the end of the table.
-			 * @deprecated As of version 1.44 this property has no effect. Use the property <code>minWidth</code> in combination with the property
-			 * <code>width="auto"</code> instead.
-			 */
-			flexible: {type: "boolean", group: "Behavior", defaultValue: true, deprecated: true},
 
 			/**
 			 * If set to true, the column can be resized either using the resize bar (by mouse) or using
@@ -213,12 +202,6 @@ sap.ui.define([
 			filterType: {type: "any", group: "Misc", defaultValue: null},
 
 			/**
-			 * Indicates if the column is grouped.
-			 * @deprecated As of version 1.118.
-			 */
-			grouped: {type: "boolean", group: "Appearance", defaultValue: false, deprecated: true},
-
-			/**
 			 * Invisible controls are not rendered.
 			 */
 			visible: {type: "boolean", group: "Appearance", defaultValue: true},
@@ -269,7 +252,6 @@ sap.ui.define([
 		},
 		defaultAggregation: "label",
 		aggregations: {
-
 			/**
 			 * Label of the column which is displayed in the column header. This aggregation is for the standard behavior,
 			 * where you only want to display one single row header. If a string is supplied, a default label control will be
@@ -313,19 +295,7 @@ sap.ui.define([
 			 * @private
 			 * @ui5-restricted sap.ui.mdc
 			 */
-			creationTemplate: {type: "sap.ui.core.Control", multiple: false, visibility: "hidden"},
-
-			/**
-			 * The menu used by the column. By default the {@link sap.ui.table.ColumnMenu} is used.
-			 *
-			 * <b>Note:</b> Applications must not use or change the default <code>sap.ui.table.ColumnMenu</code> of
-			 * a column in any way or create own instances of <code>sap.ui.table.ColumnMenu</code>.
-			 * To add a custom menu to a column, use the aggregation <code>menu</code> with a new instance of
-			 * <code>sap.ui.unified.Menu</code>.
-			 *
-			 * @deprecated As of version 1.117, use the <code>headerMenu</code> association instead.
-			 */
-			menu: {type: "sap.ui.unified.Menu", multiple: false}
+			creationTemplate: {type: "sap.ui.core.Control", multiple: false, visibility: "hidden"}
 		},
 		associations: {
 			/**
@@ -335,23 +305,7 @@ sap.ui.define([
 			 */
 			headerMenu: {type: "sap.ui.core.IColumnHeaderMenu", multiple: false}
 		},
-		events: {
-			/**
-			 * Fires before the column menu is opened.
-			 * @since 1.33.0
-			 *
-			 * @deprecated As of version 1.117.
-			 */
-			columnMenuOpen: {
-				allowPreventDefault: true,
-				parameters: {
-					/**
-					 * Refence to the selected <code>menu</code> instance to be opened.
-					 */
-					menu: {type: "sap.ui.unified.Menu"}
-				}
-			}
-		}
+		events: {}
 	}});
 
 	/** default filter type for the columns */
@@ -579,30 +533,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Checks whether the menu has items. This function considers table and column
-	 * properties to determine whether the column menu would have items.
-	 * @returns {boolean} True if the menu has or could have items.
-	 * @private
-	 * @deprecated As of Version 1.117
-	 */
-	Column.prototype._menuHasItems = function() {
-		var oTable = this._getTable();
-		var bHasOwnItems = (oTable ? oTable.getEnableColumnFreeze() : false)
-			|| (oTable ? oTable.getShowColumnVisibilityMenu() : false)
-			|| this.isSortableByMenu()
-			|| this.isFilterableByMenu()
-			|| this.isGroupableByMenu();
-
-		if (bHasOwnItems) {
-			return true;
-		}
-
-		return TableUtils.Hook.call(oTable, TableUtils.Hook.Keys.Column.MenuItemNotification, this).some(function(bValue) {
-			return bValue;
-		});
-	};
-
-	/**
 	 * This function checks whether a filter column menu item will be created. Although it evaluates some column
 	 * properties, it does not check the metadata.
 	 *
@@ -628,23 +558,6 @@ sap.ui.define([
 	 */
 	Column.prototype.isSortableByMenu = function() {
 		return !!(this.getSortProperty() && this.getShowSortMenuEntry());
-	};
-
-	/**
-	 * This function checks whether a grouping column menu item will be created. Although it evaluates some column
-	 * properties, it does not check the metadata. Since a property of the table must be checked, this function will
-	 * return false when the column is not a child of a table.
-	 *
-	 * For Columns the following applies:
-	 * - sortProperty must be defined
-	 * - showFilterMenuEntry must be true (which is the default)
-	 *
-	 * @deprecated As of version 1.118.
-	 * @returns {boolean}
-	 */
-	Column.prototype.isGroupableByMenu = function() {
-		var oTable = this.getParent();
-		return !!(oTable && oTable.getEnableGrouping && oTable.getEnableGrouping() && this.getSortProperty());
 	};
 
 	/*
@@ -683,10 +596,6 @@ sap.ui.define([
 
 	Column.prototype._openHeaderMenu = function(oDomRef) {
 		var oHeaderMenu = this.getHeaderMenuInstance();
-		/**
-		 * @deprecated As of Version 1.117
-		 */
-		this._cellPressed = oDomRef;
 		ColumnHeaderMenuAdapter.activateFor(this).then(function() {
 			if (oHeaderMenu) {
 				oHeaderMenu.openBy(oDomRef);
@@ -701,41 +610,8 @@ sap.ui.define([
 		}
 	};
 
-	/**
-	 * @deprecated As of version 1.118.
-	 * @private
-	*/
-	Column.prototype._setGrouped = function(bGrouped) {
-		var oTable = this._getTable();
-		oTable.setGroupBy(bGrouped ? this : null);
-	};
-
 	Column.prototype._isAggregatableByMenu = function() {
 		return false;
-	};
-
-	/**
-	 * Toggles the sort order of the column.
-	 *
-	 * @public
-	 * @deprecated Since version 1.5.1.
-	 * Please use the function "sap.ui.Table.prototype.sort".
-	 */
-	Column.prototype.toggleSort = function() {
-		// by default we sort ascending / only if already is sorted ascending then we toggle
-		this.sort(this.getSorted() && this.getSortOrder() === SortOrder.Ascending);
-	};
-
-	/**
-	 * Sorts the current column ascending or descending.
-	 *
-	 * @param {boolean} bDescending Sort order of the column (if undefined the default will be ascending)
-	 * @returns {this} Reference to <code>this</code> in order to allow method chaining
-	 * @public
-	 * @deprecated Since version 1.5.1. Please use the function "sap.ui.Table.prototype.sort".
-	 */
-	Column.prototype.sort = function(bDescending, bAdd) {
-		return this._sort(bDescending, bAdd);
 	};
 
 	Column.prototype._sort = function(bDescending, bAdd) {
@@ -973,11 +849,6 @@ sap.ui.define([
 					if (oFilter) {
 						aFilters.push(oFilter);
 					}
-
-					/**
-					* @deprecated As of Version 1.117
-					*/
-					TableUtils.Hook.call(this._getTable(), TableUtils.Hook.Keys.Column.SetFilterState, oCol, sState);
 				}
 				oTable.getBinding().filter(aFilters, FilterType.Control);
 
@@ -1009,11 +880,6 @@ sap.ui.define([
 	 */
 	Column.prototype.shouldRender = function() {
 		var bShouldRender = this.getVisible() && this.getTemplate() != null;
-
-		/**
-		 * @deprecated As of Version 1.118
-		 */
-		bShouldRender = bShouldRender && !this.getGrouped();
 
 		return bShouldRender;
 	};
@@ -1327,5 +1193,4 @@ sap.ui.define([
 	};
 
 	return Column;
-
 });

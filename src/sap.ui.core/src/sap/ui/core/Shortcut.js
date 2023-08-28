@@ -4,11 +4,13 @@
 
 sap.ui.define([
 	"sap/ui/core/util/ShortcutHelper",
-	'sap/base/assert'
+	'sap/base/assert',
+	"sap/ui/core/StaticArea"
 ], function(
-		ShortcutHelper,
-		assert
-	) {
+	ShortcutHelper,
+	assert,
+	StaticArea
+) {
 	"use strict";
 
 	/**
@@ -92,7 +94,7 @@ sap.ui.define([
 			function wrapCallback() {
 				var oFocusedElement = document.activeElement,
 					oSpan = document.createElement("span"),
-					oStaticUiAreaDomRef = sap.ui.getCore().getStaticAreaRef(),
+					oStaticUiAreaDomRef = StaticArea.getDomRef()/* LFUI5: Check: StaticArea's API might have a better fit for your use case. */,
 					args = arguments;
 
 				oSpan.setAttribute("tabindex", 0);

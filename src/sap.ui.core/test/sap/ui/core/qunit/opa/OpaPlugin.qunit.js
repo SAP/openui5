@@ -208,37 +208,6 @@ sap.ui.define([
 		}
 	});
 
-	/**
-	 * @deprecated since 1.56 together with lazy loading as it implies sync loading
-	 */
-	QUnit.test("Should retrieve a controls even if the control is a lazy stub", function(assert) {
-		assert.ok(sap.ui.lazyRequire._isStub("sap.m.ComboBox"), "Combo box is still a stub");
-
-		// Act - combo box is a lazy stub
-		var aRetrievedControls = this.oPlugin.getMatchingControls({
-			controlType : sap.m.ComboBox // must remain a global to test against lazy stubs
-		});
-
-		// Assert
-		assert.strictEqual(aRetrievedControls.length, 0);
-		sinon.assert.calledWith(this.fnLogSpy, "The control type is currently a lazy stub");
-	});
-
-	/**
-	 * @deprecated since 1.56 together with lazy loading as it implies sync loading
-	 */
-	QUnit.test("Should retrieve a controls even if the control is a lazy stub", function(assert) {
-		assert.ok(sap.ui.lazyRequire._isStub("sap.m.Select"), "Select is still a stub");
-
-		// Act - combo box is a lazy stub
-		var aRetrievedControls = this.oPlugin.getMatchingControls({
-			controlType : "sap.m.Select"
-		});
-
-		// Assert
-		assert.strictEqual(aRetrievedControls.length, 0);
-	});
-
 	QUnit.test("Should return all controls", function (assert) {
 		var aAllControls = this.oPlugin.getMatchingControls();
 
@@ -326,10 +295,6 @@ sap.ui.define([
 		});
 
 		assert.strictEqual(oResult.length, 0, "Result was null");
-		/**
-		 * @deprecated since 1.56 together with lazy loading as it implies sync loading
-		 */
-		sinon.assert.calledWith(this.fnLogSpy, "The control type sap.m.MessageToast must be a function.");
 	});
 
 	QUnit.test("Should retrieve a control by a global id and control type", function(assert) {

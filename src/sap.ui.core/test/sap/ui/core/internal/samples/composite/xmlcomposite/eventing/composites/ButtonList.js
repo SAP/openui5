@@ -1,8 +1,8 @@
 sap.ui.define([
-	'sap/ui/core/XMLComposite'],
-	function(XMLComposite) {
+],
+	function() {
 	"use strict";
-	var ButtonList = XMLComposite.extend("composites.ButtonList", {
+	var ButtonList = undefined/*XMLComposite*/.extend("composites.ButtonList", {
 		metadata: {
 			aggregations: {
 				items: {

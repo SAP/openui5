@@ -1,8 +1,7 @@
 sap.ui.define([
-	'sap/ui/core/XMLComposite'
-], function (XMLComposite) {
+], function() {
 	"use strict";
-	return XMLComposite.extend("composites.TextList", {
+	return undefined/*XMLComposite*/.extend("composites.TextList", {
 		metadata: {
 			aggregations: {
 				texts: {

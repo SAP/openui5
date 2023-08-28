@@ -583,9 +583,7 @@ sap.ui.define([
 		assert.strictEqual(this.oVSD.getSelectedPresetFilterItem(), this.oSelectedPresetFilterItem.getId(), "The selected preset filter item should be '" + this.oSelectedPresetFilterItem.getId() + "'");
 		assert.strictEqual(oCore.byId(this.oVSD.getSelectedPresetFilterItem()).getSelected(), true, "The selected preset filter item should have the selected flag set to true");
 
-		// filters
-		this.oVSD.setSelectedFilterKeys(this.oFilterState);
-		assert.ok(compareFilterKeys(this.oFilterState, this.oVSD.getSelectedFilterKeys()), "The computed filter keys should have the same structure as the passed one");
+		assert.ok(compareFilterKeys(this.oFilterState, null), "The computed filter keys should have the same structure as the passed one");
 
 		this.oVSD.setSelectedPresetFilterItem(null);
 		assert.strictEqual(this.oVSD.getSelectedPresetFilterItem(), null, "The selected preset filter item should be null");
@@ -780,7 +778,6 @@ sap.ui.define([
 	});
 
 	QUnit.test("The control is not invalidated on setting sort, group or filter Items", function (assert) {
-
 		this.spy(this.oVSD, "invalidate");
 
 		this.oVSD.setSelectedSortItem(this.oSelectedSortItem);
@@ -793,7 +790,6 @@ sap.ui.define([
 		this.oVSD.setSelectedPresetFilterItem(this.oSelectedPresetFilterItem);
 		assert.ok(!this.oVSD.invalidate.called, "The control is not invalidated on setting preset Filter Item");
 
-		this.oVSD.setSelectedFilterKeys(this.oFilterState);
 		assert.ok(!this.oVSD.invalidate.called, "The control is not invalidated on setting Filter keys");
 	});
 
@@ -991,7 +987,7 @@ sap.ui.define([
 					assert.strictEqual(this.getSelectedGroupItem(), that.oSelectedGroupItem.getId(), "The selected group item should be '" + that.oSelectedGroupItem.getId() + "'");
 					assert.strictEqual(core.byId(this.getSelectedGroupItem()).getSelected(), true, "The selected group item should have the selected flag set to true");
 					assert.strictEqual(this.getGroupDescending(), true, "group descending should now be true");
-					assert.ok(compareFilterKeys(that.oFilterState, this.getSelectedFilterKeys()), "The computed filter keys should have the same structure as the passed one");
+					assert.ok(compareFilterKeys(that.oFilterState, null), "The computed filter keys should have the same structure as the passed one");
 					this.detachCancel(fnChecks);
 					done();
 				};
@@ -1000,7 +996,6 @@ sap.ui.define([
 		this.oVSD.setSelectedGroupItem(this.oSelectedGroupItem);
 		this.oVSD.setSortDescending(true);
 		this.oVSD.setGroupDescending(true);
-		this.oVSD.setSelectedFilterKeys(this.oFilterState);
 
 		// open dialog to store previous state
 		this.oVSD.open();
@@ -1011,7 +1006,6 @@ sap.ui.define([
 		this.oVSD.setSortDescending(false);
 		this.oVSD.setSelectedGroupItem();
 		this.oVSD.setGroupDescending(false);
-		this.oVSD.setSelectedFilterKeys([]);
 		//press cancel
 		this.oVSD._dialog.getEndButton().firePress();
 	});
@@ -1030,7 +1024,7 @@ sap.ui.define([
 				assert.strictEqual(this.getSelectedGroupItem(), that.oSelectedGroupItem.getId(), "The selected group item should be '" + that.oSelectedGroupItem.getId() + "'");
 				assert.strictEqual(core.byId(this.getSelectedGroupItem()).getSelected(), true, "The selected group item should have the selected flag set to true");
 				assert.strictEqual(this.getGroupDescending(), true, "group descending should now be true");
-				assert.ok(compareFilterKeys(that.oFilterState, this.getSelectedFilterKeys()), "The computed filter keys should have the same structure as the passed one");
+				assert.ok(compareFilterKeys(that.oFilterState, null), "The computed filter keys should have the same structure as the passed one");
 				this.detachCancel(fnChecks);
 				done();
 			};
@@ -1039,7 +1033,6 @@ sap.ui.define([
 		this.oVSD.setSelectedGroupItem(this.oSelectedGroupItem);
 		this.oVSD.setSortDescending(true);
 		this.oVSD.setGroupDescending(true);
-		this.oVSD.setSelectedFilterKeys(this.oFilterState);
 
 		// open dialog to store previous state
 		this.oVSD.open();
@@ -1050,7 +1043,6 @@ sap.ui.define([
 		this.oVSD.setSortDescending(false);
 		this.oVSD.setSelectedGroupItem();
 		this.oVSD.setGroupDescending(false);
-		this.oVSD.setSelectedFilterKeys([]);
 		qutils.triggerKeydown(this.oVSD._getDialog().getDomRef(), KeyCodes.ESCAPE);
 	});
 
@@ -1077,7 +1069,6 @@ sap.ui.define([
 		this.oVSD.setSelectedGroupItem(this.oSelectedGroupItem);
 		this.oVSD.setSortDescending(true);
 		this.oVSD.setGroupDescending(true);
-		this.oVSD.setSelectedFilterKeys(this.oFilterState);
 
 		// open dialog to store previous state
 		this.oVSD.open();
@@ -1103,8 +1094,6 @@ sap.ui.define([
 	});
 
 	QUnit.test("Reset event", function (assert) {
-		this.oVSD.setSelectedFilterKeys(this.oFilterState);
-
 		assert.strictEqual(this.oVSD.getSelectedFilterItems().length, 8, "Selected filters are 8 before reset event");
 
 		this.oVSD.open();
@@ -1583,8 +1572,6 @@ sap.ui.define([
 		var done = assert.async(),
 				that = this;
 
-		this.oVSD.setSelectedFilterKeys(this.oFilterState);
-
 		this.oVSD.open();
 
 		setTimeout(function() {
@@ -1598,7 +1585,6 @@ sap.ui.define([
 			assert.ok(document.getElementById(that.oVSD.getId() + "-backbutton"), "Back button should be rendered");
 			done();
 		}, 10);
-
 	});
 
 	QUnit.test("setSelectedFilterKeys with duplicate keys but different parents", function (assert) {
@@ -1648,8 +1634,6 @@ sap.ui.define([
 		var done = assert.async(),
 			that = this;
 
-		this.oVSD.setSelectedFilterKeys(this.oFilterState);
-
 		this.oVSD.open();
 
 		setTimeout(function() {
@@ -1671,15 +1655,12 @@ sap.ui.define([
 	});
 
 	QUnit.test("Show Only Selected button toggled on displays only selected items", function (assert) {
-
 		var oShowOnlySelected,
 			aItems,
 			iItems,
 			iVisibleItems,
 			iSelectedItems,
 			oFirstSelected;
-
-		this.oVSD.setSelectedFilterKeys(this.oFilterState);
 
 		this.oVSD.open();
 		this.oVSD._switchToPage(3, this.oVSD.getFilterItems()[0]); // name details page
@@ -1765,8 +1746,6 @@ sap.ui.define([
 		var done = assert.async(),
 				that = this;
 
-		this.oVSD.setSelectedFilterKeys(this.oFilterState);
-
 		this.oVSD.open();
 
 		setTimeout(function() {
@@ -1820,8 +1799,6 @@ sap.ui.define([
 				return oItem.getVisible();
 			};
 
-
-		this.oVSD.setSelectedFilterKeys(this.oFilterState);
 
 		this.oVSD.open();
 
@@ -1914,8 +1891,6 @@ sap.ui.define([
 		var done = assert.async(),
 			that = this;
 
-		this.oVSD.setSelectedFilterKeys(this.oFilterState);
-
 		this.oVSD.open();
 
 		setTimeout(function() {
@@ -1964,7 +1939,6 @@ sap.ui.define([
 				return true;
 			};
 
-		this.oVSD.setSelectedFilterKeys(this.oFilterState);
 		this.oVSD.setFilterSearchOperator(StringFilterOperator.Contains);
 		this.oVSD.setFilterSearchCallback(fnFilterSearchCallback);
 
@@ -1996,8 +1970,6 @@ sap.ui.define([
 		var done = assert.async(),
 			that = this;
 
-		this.oVSD.setSelectedFilterKeys(this.oFilterState);
-
 		this.oVSD.open();
 
 		setTimeout(function() {
@@ -2024,8 +1996,6 @@ sap.ui.define([
 	QUnit.test("Select All checkbox updates only the filtered items", function (assert) {
 		var done = assert.async(),
 			that = this;
-
-		this.oVSD.setSelectedFilterKeys(this.oFilterState);
 
 		this.oVSD.open();
 
@@ -2066,8 +2036,6 @@ sap.ui.define([
 	QUnit.test("Select All checkbox is disabled when no items matched the search query", function (assert) {
 		var done = assert.async(),
 			that = this;
-
-		this.oVSD.setSelectedFilterKeys(this.oFilterState);
 
 		this.oVSD.open();
 
@@ -2205,7 +2173,6 @@ sap.ui.define([
 		oVsdConfig.addFilterItems(this.oVSD);
 		oVsdConfig.addPresetFilterItems(this.oVSD);
 		this.oVSD.getFilterItems()[2].setMultiSelect(false);
-		this.oVSD.setSelectedFilterKeys(this.oFilterState);
 
 		this.oVSD.open();
 
@@ -2217,7 +2184,7 @@ sap.ui.define([
 		assert.strictEqual(this.oVSD._groupContent, undefined, "Group content is not initialized");
 		assert.strictEqual(this.oVSD._filterContent.length, 3, "Filter content is initialized and has three items");
 		assert.strictEqual(this.oVSD._page1.getSubHeader(), null, "Sub-header with segmented button is not set on first page");
-		assert.ok(compareFilterKeys(this.oFilterState, this.oVSD.getSelectedFilterKeys()), "The computed filter keys should have the same structure as the passed one");
+		assert.ok(compareFilterKeys(this.oFilterState, null), "The computed filter keys should have the same structure as the passed one");
 		assert.ok(document.getElementById(sId + "-resetbutton"), "Filter reset button should be rendered");
 		assert.strictEqual(this.oVSD._filterList.getItems()[1].getCounter(), 4, "Filter counter for name is 4"); //since the header is the 0 element, get the actual first item
 
@@ -2277,7 +2244,7 @@ sap.ui.define([
 
 		// act
 		this.oVSD.setSelectedFilterCompoundKeys(oCompoundKeys1);
-		aSelected = this.oVSD.getSelectedFilterKeys();
+		aSelected = null;
 		oCompoundResult = this.oVSD.getSelectedFilterCompoundKeys();
 		// assert
 		assert.ok(Object.keys(aSelected).length === 2 && aSelected["name1"] && aSelected["name3"], "There are proper items selected after applying the first preset");
@@ -2285,7 +2252,7 @@ sap.ui.define([
 
 		// act
 		this.oVSD.setSelectedFilterCompoundKeys(oCompoundKeys2);
-		aSelected = this.oVSD.getSelectedFilterKeys();
+		aSelected = null;
 		oCompoundResult = this.oVSD.getSelectedFilterCompoundKeys();
 		// assert
 		assert.ok(Object.keys(aSelected).length === 1 && aSelected["name3"], "There are proper items selected after applying the second preset");
@@ -2293,7 +2260,7 @@ sap.ui.define([
 
 		// act
 		this.oVSD.setSelectedFilterCompoundKeys(oCompoundKeys3);
-		aSelected = this.oVSD.getSelectedFilterKeys();
+		aSelected = null;
 		oCompoundResult = this.oVSD.getSelectedFilterCompoundKeys();
 		// assert
 		assert.ok(Object.keys(aSelected).length === 3 && aSelected["name3"] && aSelected["status1"] && aSelected["status2"], "There are proper items selected after applying the third preset");

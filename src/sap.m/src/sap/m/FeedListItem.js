@@ -212,13 +212,6 @@ function(
 				 */
 				senderPress: {
 					parameters: {
-
-						/**
-						 * Dom reference of the feed item's sender string to be used for positioning.
-						 * @deprecated Since version 1.28.36. This parameter is deprecated, use parameter getDomRef instead.
-						 */
-
-						domRef: {type: "string"},
 						/**
 						 * Function to retrieve the DOM reference for the <code>senderPress</code> event.
 						 * The function returns the DOM element of the sender link or null
@@ -232,13 +225,6 @@ function(
 				 */
 				iconPress: {
 					parameters: {
-
-						/**
-						 * Dom reference of the feed item's icon to be used for positioning.
-						 * @deprecated Since version 1.28.36. This parameter is deprecated, use parameter getDomRef instead.
-						 */
-						domRef: {type: "string"},
-
 						/**
 						 * Function to retrieve the DOM reference for the <code>iconPress</code> event.
 						 * The function returns the DOM element of the icon or null

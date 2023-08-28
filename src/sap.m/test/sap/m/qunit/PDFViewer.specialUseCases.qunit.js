@@ -3,8 +3,9 @@
 sap.ui.define( [
 	"./PDFViewerTestUtils",
 	"sap/ui/Device",
-	"sap/m/PDFViewerRenderer"
-], function (TestUtils, Device, PDFViewerRenderer) {
+	"sap/m/PDFViewerRenderer",
+	"sap/ui/core/Core"
+], function(TestUtils, Device, PDFViewerRenderer, Core) {
 	"use strict";
 
 	var oPDFViewer;
@@ -104,24 +105,26 @@ sap.ui.define( [
 
 		TestUtils.wait(4000)()
 			.then(function () {
-				assert.ok(oPDFViewer.$().find('.sapMPDFViewerError').length === 1, 'The error content is missing');
-				oPDFViewer.detachLoaded(fnLoadedFailListener);
-				oPDFViewer.detachError(fnErrorOkListener);
-				oPDFViewer.attachLoaded(fnLoadedOkListener);
-				oPDFViewer.attachError(fnErrorFailListener);
-				oPDFViewer.setSource("test-resources/sap/m/qunit/pdfviewer/sample-file.pdf");
-				TestUtils.rerender();
-			})
+			assert.ok(oPDFViewer.$().find('.sapMPDFViewerError').length === 1, 'The error content is missing');
+			oPDFViewer.detachLoaded(fnLoadedFailListener);
+			oPDFViewer.detachError(fnErrorOkListener);
+			oPDFViewer.attachLoaded(fnLoadedOkListener);
+			oPDFViewer.attachError(fnErrorFailListener);
+			oPDFViewer.setSource("test-resources/sap/m/qunit/pdfviewer/sample-file.pdf");
+			TestUtils.invalidate();
+			Core.applyChanges();
+		})
 			.then(TestUtils.wait(4000))
 			.then(function () {
-				assert.ok(oPDFViewer.$().find('.sapMPDFViewerError').length === 0, 'The error content should be hidden');
-				oPDFViewer.detachLoaded(fnLoadedOkListener);
-				oPDFViewer.detachError(fnErrorFailListener);
-				oPDFViewer.attachLoaded(fnLoadedFailListener);
-				oPDFViewer.attachError(fnErrorOkListener);
-				oPDFViewer.setSource("test-resources/sap/m/qunit/pdfviewer/not-existing");
-				TestUtils.rerender();
-			})
+			assert.ok(oPDFViewer.$().find('.sapMPDFViewerError').length === 0, 'The error content should be hidden');
+			oPDFViewer.detachLoaded(fnLoadedOkListener);
+			oPDFViewer.detachError(fnErrorFailListener);
+			oPDFViewer.attachLoaded(fnLoadedFailListener);
+			oPDFViewer.attachError(fnErrorOkListener);
+			oPDFViewer.setSource("test-resources/sap/m/qunit/pdfviewer/not-existing");
+			TestUtils.invalidate();
+			Core.applyChanges();
+		})
 			.then(TestUtils.wait(4000))
 			.then(function () {
 				assert.ok(oPDFViewer.$().find('.sapMPDFViewerError').length === 1, 'The error content is missing');

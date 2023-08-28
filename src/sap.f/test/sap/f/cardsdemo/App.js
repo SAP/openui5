@@ -7,7 +7,7 @@ sap.ui.define([
 ], function (Core, ComponentContainer) {
 	"use strict";
 
-	Core.attachInit(function () {
+	Core.ready(function () {
 		new ComponentContainer({
 			name: "sap.f.cardsdemo",
 			settings: {

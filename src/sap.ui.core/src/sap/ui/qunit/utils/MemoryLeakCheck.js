@@ -116,7 +116,7 @@ sap.ui.define([ 'sap/ui/core/Element', 'sap/ui/core/Control', "sap/ui/qunit/util
 				oControl2.placeAt("qunit-fixture");
 				await nextUIUpdate();
 
-				oControl2.rerender(); // just re-render again - this finds problems
+				oControl2.invalidate(); // just re-render again - this finds problems
 			}
 
 			if (fnSomeAdditionalFunction) {

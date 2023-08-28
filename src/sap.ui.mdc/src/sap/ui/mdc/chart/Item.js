@@ -27,25 +27,20 @@ sap.ui.define([
                 properties: {
                     /**
                      * The unique identifier of the chart item that reflects the name of the data property in the resulting data set.
-                     * @deprecated Since 1.115. Please use <code>propertyKey</code> instead.
-                     */
-                    name: {
-                        type: "string"
-                    },
-                    /**
-                     * The unique identifier of the chart item that reflects the name of the data property in the resulting data set.
                      *
                      * @since 1.115
                      */
                     propertyKey: {
                         type: "string"
                     },
+
                     /**
                      * Label for the item, either as a string literal or by a pointer, using the binding to some property containing the label.
                      */
                     label: {
                         type: "string"
                     },
+
                     /**
                      * Specifies the type of the item for the chart (groupable and aggregatable).
                      * This is specific for the used chart library.
@@ -54,6 +49,7 @@ sap.ui.define([
                         type: "string",
                         defaultValue: ""
                     },
+
                     /**
                      * Specifies the role of the item for the chart (category, axis1...).
                      * This is specific for the used chart library.<br>
@@ -70,7 +66,7 @@ sap.ui.define([
     //Temporary fallback for compatibility until the dataProperty can be removed
     Item.prototype.getPropertyKey = function() {
 		var sPropertyKey = this.getProperty("propertyKey");
-		return sPropertyKey || this.getName();
+		return sPropertyKey || undefined;
 	};
 
     return Item;

@@ -1,7 +1,7 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(["sap/ui/core/XMLComposite", "./library", "sap/ui/core/Item"], function(XMLComposite, library, Item) {
+sap.ui.define(["./library", "sap/ui/core/Item"], function(library, Item) {
 	"use strict";
 
 	/**
@@ -22,7 +22,7 @@ sap.ui.define(["sap/ui/core/XMLComposite", "./library", "sap/ui/core/Item"], fun
 	 * @private
 	 * @ui5-restricted sap.m.MultiEditField
 	 */
-	var MultiEditField = XMLComposite.extend("sap.m.MultiEditField", /** @lends sap.m.MultiEditField.prototype */ {
+	var MultiEditField = undefined/*XMLComposite*/.extend("sap.m.MultiEditField", /** @lends sap.m.MultiEditField.prototype */ {
 		metadata: {
 			interfaces: ["sap.ui.core.IFormContent"],
 			library: "sap.m",

@@ -66,7 +66,7 @@ sap.ui.define(["sap/ui/support/library", "sap/ui/layout/library"],
 			oScope.getElementsByClassName("sap.ui.layout.form.Form")
 				.forEach(function (oForm) {
 					var oLayout = oForm.getLayout();
-					if (oLayout && oLayout.isA("sap.ui.layout.form.ResponsiveLayout")) {
+					if (oLayout && false) {
 						var oParent = oForm.getParent();
 						var sId;
 						var sName = "Form";
@@ -443,10 +443,8 @@ sap.ui.define(["sap/ui/support/library", "sap/ui/layout/library"],
 					checkProperty("breakpointM");
 				}
 
-				if (sLayout != SimpleFormLayout.ResponsiveLayout) {
-					checkProperty("minWidth");
-					checkProperty("labelMinWidth");
-				}
+				checkProperty("minWidth");
+				checkProperty("labelMinWidth");
 
 				if (sLayout == SimpleFormLayout.ResponsiveGridLayout) {
 					checkProperty("maxContainerCols");
@@ -459,7 +457,6 @@ sap.ui.define(["sap/ui/support/library", "sap/ui/layout/library"],
 						context: {id: sId}
 					});
 				}
-
 			});
 		}
 	};

@@ -1,16 +1,23 @@
-(function() {
+sap.ui.define([
+	"sap/ui/core/IconPool",
+	"sap/ui/thirdparty/jquery",
+	"sap/m/SearchField",
+	"sap/ui/core/Control",
+	"sap/base/Log",
+	"sap/base/util/UriParameters"
+], function(IconPool, jQuery, SearchField, Control, Log, UriParameters) {
 	"use strict";
 
 	try {
 		sap.ui.getCore().loadLibrary("sap.m");
 	} catch (e) {
-		jQuery.sap.log.error("This test page requires the library 'sap.m' which is not available.");
+		Log.error("This test page requires the library 'sap.m' which is not available.");
 		throw (e);
 	}
 
 
 	window.createTestSearchField = function (sId, fOnSearch){
-		var oSF =  new sap.m.SearchField(sId, {
+		var oSF =  new SearchField(sId, {
 			search: fOnSearch || function(){},
 			width: "100%"
 		});
@@ -180,7 +187,7 @@
 	"et iusto odio dignissim qui blandit praesent luptatum zzril delenit " +
 	"augue duis dolore te feugait nulla facilisi.\n\n";
 
-	sap.ui.core.Control.extend("SearchFieldPlaceHolder", {
+	Control.extend("SearchFieldPlaceHolder", {
 		metadata : {
 			events: {
 				"search" : {}
@@ -189,7 +196,6 @@
 
 		renderer: function(rm, ctrl){
 			rm.write("<div");
-			rm.writeControlData(ctrl);
 			rm.writeAttribute("class", "SearchFieldPlaceHolder");
 			rm.writeAttribute("tabindex", "0");
 			rm.write(">Placeholder for a SearchField Control</div>");
@@ -200,7 +206,7 @@
 		}
 	});
 
-	sap.ui.core.Control.extend("CurtainContent", {
+	Control.extend("CurtainContent", {
 		metadata : {
 			properties: {
 				"text" : "string",
@@ -215,7 +221,6 @@
 			rm.write("<div");
 			rm.addClass("CurtainContent");
 			rm.writeClasses();
-			rm.writeControlData(ctrl);
 			rm.write("><header");
 			rm.addClass("_sapUiUfdShellSubHdr");
 			rm.writeClasses();
@@ -235,21 +240,17 @@
 		}
 	});
 
-	jQuery.sap.require("sap.ui.core.IconPool");
-
 	jQuery(function(){
 		jQuery("head").append("<link type='text/css' rel='stylesheet' href='resources/ShellTestPage.css'>");
 	});
 
 
-	jQuery.sap.require("jquery.sap.script");
-	var sLogo = jQuery.sap.getUriParameters().get("logo");
+	var sLogo = UriParameters.fromQuery(window.location.search).get("logo");
 	if (sLogo){
 		sLogo = "images/" + sLogo;
 	} else {
-		sLogo = jQuery.sap.getModulePath("sap.ui.core", '/') + "mimes/logo/sap_50x26.png";
+		sLogo = sap.ui.require.toUrl("sap/ui/core") + "/" + "mimes/logo/sap_50x26.png";
 	}
 
 	window.sLogo = sLogo;
-
-})();
+});

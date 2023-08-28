@@ -507,19 +507,6 @@ sap.ui.define([
 
 			assert.strictEqual(oPopover3._oCalcedPos, expectedPlace);
 
-			/**
-			 * @deprecated Since version 1.36
-			 *
-			 * Repeat the test a second time for the legacy values of PlacementType
-			 */
-			if (placement.includes("Preferred")) {
-				const legacyPlacement = placement.replace("Preferred", "Prefered");
-				oPopover3.setPlacement(legacyPlacement);
-				oPopover3._calcPlacement();
-
-				assert.strictEqual(oPopover3._oCalcedPos, expectedPlace);
-			}
-
 			stubOpenByRef.restore();
 			stubOffset.restore();
 			stubOffsetTop.restore();
@@ -1513,7 +1500,8 @@ sap.ui.define([
 		assert.ok(oPopover.isOpen(), "Popover should be opened");
 		assert.ok(oPopover.$().offset().top > oButton.$().offset().top, "Popover should be placed below the button");
 
-		oButton.rerender();
+		oButton.invalidate();
+		oCore.applyChanges();
 		// simulate a content resize
 		oPopover._onOrientationChange();
 		oPopover.close();
@@ -1604,7 +1592,9 @@ sap.ui.define([
 			assert.equal(domQuery[0].getAttribute("aria-hidden"), "true", "Aria-hidden should be added to the icon.");
 
 			this.oPopover.setResizable(false);
-			this.oPopover.rerender();
+			this.oPopover.invalidate();
+
+			oCore.applyChanges();
 
 			// Assert when not resizable
 			domQuery = this.oPopover.getDomRef().querySelectorAll('.sapMPopoverResizeHandle');
@@ -2515,7 +2505,7 @@ sap.ui.define([
 		try {
 			oButton.firePress();
 			oCore.applyChanges();
-		} catch (e) { e; }
+		} catch (e) {}
 
 		// Assert
 		assert.ok(!oOpenerSpy.threw(), "Destroyed and closed silently without exception");

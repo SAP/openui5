@@ -620,15 +620,12 @@ sap.ui.define([
 				this._iLimit = oControl.getGrowingThreshold();
 			}
 
-			// pre-initialize items during the request is ongoing (but not for v1 ODataModel, since it is synchronous)
-			if (!oBinding.isA("sap.ui.model.odata.ODataListBinding")) {
-				if (oControl._bBusy) {
+			if (oControl._bBusy) {
+				setTimeout(this.fillItemsPool.bind(this));
+			} else {
+				oBinding.attachEventOnce("dataRequested", function() {
 					setTimeout(this.fillItemsPool.bind(this));
-				} else {
-					oBinding.attachEventOnce("dataRequested", function() {
-						setTimeout(this.fillItemsPool.bind(this));
-					}, this);
-				}
+				}, this);
 			}
 
 			// send the request to get the context

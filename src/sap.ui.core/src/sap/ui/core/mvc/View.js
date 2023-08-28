@@ -525,7 +525,7 @@ sap.ui.define([
 
 		// typed views are prefixed with "module:" and contains slashes
 		if (this.sViewName && this.sViewName.startsWith("module:")) {
-			this.sViewName = this.sViewName.slice("module:".length).replace(/\//g, ".");
+			this.sViewName = this.sViewName.slice(7).replace(/\//g, ".");
 		}
 
 		var that = this;
@@ -1110,69 +1110,6 @@ sap.ui.define([
 	View._create = viewFactory;
 
 	/**
-	 * Creates a view of the given type, name and with the given ID.
-	 *
-	 * @param {string} [sId] The ID of the newly created view, only allowed for instance creation. If no ID is given,
-	 * an ID will be generated. For view definition, skip this parameter and use <code>vView</code> as the first parameter.
-	 * @param {string|object} [vView] The view name or view configuration object.
-	 * @param {object} [vView.id] Specifies an ID for the view instance. If no ID is given,
-	 * an ID will be generated.
-	 * @param {object} [vView.viewName] Corresponds to an XML module that can be loaded
-	 * via the module system (vView.viewName + suffix ".view.xml").
-	 * @param {sap.ui.core.mvc.Controller} [vView.controller] The controller instance must be a valid controller implementation.
-	 * The given controller instance overrides the controller defined in the view definition.
-	 * @param {boolean} [vView.async] Whether the view source is loaded asynchronously. In asynchronous mode, the view is returned empty,
-	 * and the view content is loaded asynchronously.
-	 * @param {sap.ui.core.mvc.ViewType} [vView.type] Specifies what kind of view will be instantiated. All valid
-	 * view types are listed in the enumeration {@link sap.ui.core.mvc.ViewType}.
-	 * @param {object} [vView.viewData] Holds application specific data. This data is available
-	 * during the whole lifecycle of the view and the controller, for example in the constructor and in the {@link sap.ui.core.mvc.Controller.onInit onInit} hook.
-	 * @param {Map<string,object[]>} [vView.preprocessors] Holds a map from the specified preprocessor type (e.g. "xml") to an array of
-	 * preprocessor configurations. Each configuration consists of a <code>preprocessor</code> property (optional when
-	 * registered as on-demand preprocessor) and may contain further preprocessor-specific settings.
-	 * @param {string|sap.ui.core.mvc.View.Preprocessor|function} [vView.preprocessors.preprocessor]
-	 * The used preprocessor. For further information see {@link sap.ui.core.mvc.View.Preprocessor.process}.
-	 * Do not set properties starting with an underscore, such as <code>_sProperty</code>, as these are reserved for internal purposes.
-	 * When several preprocessors are provided for one hook, it has to be made sure that they do not conflict when being processed serially.
-	 *
-	 * </br><strong>Note</strong>: These preprocessors are only available to this instance. For global or
-	 * on-demand availability use {@link sap.ui.core.mvc.XMLView.registerPreprocessor}.
-	 *
-	 * </br><strong>Note</strong>: Please note that preprocessors in general are currently only available
-	 * for {@link sap.ui.core.mvc.XMLView XMLViews}.
-	 *
-	 * </br><strong>Note</strong>: Preprocessors only work in asynchronous views and will be ignored by default
-	 * when the view is instantiated synchronously, as this could have unexpected side effects.
-	 * You may override this behaviour by setting the <code>bSyncSupport</code> flag
-	 * of the preprocessor to <code>true</code>.
-	 *
-	 * @public
-	 * @static
-	 * @deprecated Since 1.56. Use {@link sap.ui.core.mvc.View.extend View.extend} to define the view class
-	 * and {@link sap.ui.core.mvc.View.create View.create} to create view instances
-	 * @return {sap.ui.core.mvc.View} the created View instance
-	 * @ui5-global-only
-	 */
-	sap.ui.view = function(sId, vView, sType /* internal, used by factory functions */) {
-		var sViewName = typeof sId === "string" ? sId : vView;
-		sViewName = typeof sViewName === "object" ? sViewName.viewName : sViewName;
-
-		Log.warning(
-			"Do not use deprecated view factory functions (View: " + sViewName + "). " +
-			"Use the static create function on the view module instead: [XML|HTML|JSON]View.create().",
-			"sap.ui.view",
-			null,
-			function () {
-				return {
-					type: "sap.ui.view",
-					name: sViewName
-				};
-			}
-		);
-		return viewFactory(sId, vView, sType);
-	};
-
-	/**
 	 * The old sap.ui.view implementation
 	 *
 	 * @param {string} sId id of the newly created view, only allowed for instance creation
@@ -1260,16 +1197,10 @@ sap.ui.define([
 		}
 		if (!oViewSettings.type) {
 			throw new Error("No view type specified.");
-		} else if (oViewSettings.type === ViewType.JS) {
-			sViewClass = 'sap/ui/core/mvc/JSView';
 		} else if (oViewSettings.type === ViewType.JSON) {
 			sViewClass = 'sap/ui/core/mvc/JSONView';
 		} else if (oViewSettings.type === ViewType.XML) {
 			sViewClass = 'sap/ui/core/mvc/XMLView';
-		} else if (oViewSettings.type === ViewType.HTML) {
-			sViewClass = 'sap/ui/core/mvc/HTMLView';
-		} else if (oViewSettings.type === ViewType.Template) {
-			sViewClass = 'sap/ui/core/mvc/TemplateView';
 		} else { // unknown view type
 			throw new Error("Unknown view type " + oViewSettings.type + " specified.");
 		}
@@ -1290,16 +1221,16 @@ sap.ui.define([
 	}
 
 	/**
-	 * Returns a Promise representing the state of the view initialization.
-	 *
-	 * For views that are loading asynchronously (by setting async=true) this Promise is created by view
-	 * initialization. Synchronously loading views get wrapped in an immediately resolving Promise.
-	 *
-	 * @since 1.30
-	 * @public
-	 * @deprecated since 1.66: Use {@link sap.ui.core.mvc.View.create View.create} instead
-	 * @return {Promise<sap.ui.core.mvc.View>} resolves with the complete view instance, rejects with any thrown error
-	 */
+		 * Returns a Promise representing the state of the view initialization.
+		 *
+		 * For views that are loading asynchronously (by setting async=true) this Promise is created by view
+		 * initialization. Synchronously loading views get wrapped in an immediately resolving Promise.
+		 *
+		 * @since 1.30
+		 * @return {Promise<sap.ui.core.mvc.View>} resolves with the complete view instance, rejects with any thrown error
+		 * @private
+		 * @ui5-restricted sap.ui.core
+		 */
 	View.prototype.loaded = function() {
 		if (this.oAsyncState && this.oAsyncState.promise) {
 			return this.oAsyncState.promise;
@@ -1319,7 +1250,7 @@ sap.ui.define([
 	View._getModuleName = function(mSettings) {
 		var sModuleName;
 		if (mSettings.viewName && mSettings.viewName.startsWith("module:")) {
-			sModuleName = mSettings.viewName.slice("module:".length);
+			sModuleName = mSettings.viewName.slice(7);
 		}
 		return sModuleName;
 	};
@@ -1408,19 +1339,19 @@ sap.ui.define([
 	 * @function
 	 */
 
-	 /**
-	 * A method to be implemented by typed views, returning the flag whether to prefix the IDs of controls
-	 * automatically or not, if the controls are created inside the {@link sap.ui.core.mvc.View#createContent}
-	 * function. By default this feature is not activated.
-	 *
-	 * You can overwrite this function and return <code>true</code> to activate the automatic prefixing.
-	 *
-	 * <b>Note</b>: Auto-prefixing is only available for synchronous content creation. For asynchronous content creation use {@link #createId} instead, to prefix the IDs programmatically.
-	 *
-	 * @since 1.88
-	 * @returns {boolean} Whether the control IDs should be prefixed automatically
-	 * @protected
-	 */
+	/**
+	* A method to be implemented by typed views, returning the flag whether to prefix the IDs of controls
+	* automatically or not, if the controls are created inside the {@link sap.ui.core.mvc.View#createContent}
+	* function. By default this feature is not activated.
+	*
+	* You can overwrite this function and return <code>true</code> to activate the automatic prefixing.
+	*
+	* <b>Note</b>: Auto-prefixing is only available for synchronous content creation. For asynchronous content creation use {@link #createId} instead, to prefix the IDs programmatically.
+	*
+	* @since 1.88
+	* @returns {boolean} Whether the control IDs should be prefixed automatically
+	* @protected
+	*/
 	View.prototype.getAutoPrefixId = function() {
 		return false;
 	};
@@ -1471,5 +1402,4 @@ sap.ui.define([
 	};
 
 	return View;
-
 });

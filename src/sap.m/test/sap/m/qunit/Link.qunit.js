@@ -68,7 +68,7 @@ sap.ui.define([
 
 	QUnit.test("href", function(assert) {
 		var href = oLink1.getDomRef().href;
-		assert.strictEqual(href.indexOf("x.html"), href.length - "x.html".length, "oLink1 href should be correct");
+		assert.strictEqual(href.indexOf("x.html"), href.length - 6, "oLink1 href should be correct");
 	});
 
 	QUnit.test("Target", function(assert) {

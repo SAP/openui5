@@ -8,15 +8,17 @@ sap.ui.define([
 	"sap/ui/core/format/DateFormat",
 	"sap/ui/core/date/UniversalDate",
 	"sap/ui/core/library",
-	"sap/m/Text"
-], function (
+	"sap/m/Text",
+	"./BaseHeaderRenderer"
+], function(
 	Control,
 	Core,
 	IntervalTrigger,
 	DateFormat,
 	UniversalDate,
 	coreLibrary,
-	Text
+	Text,
+	BaseHeaderRenderer
 ) {
 	"use strict";
 
@@ -112,7 +114,9 @@ sap.ui.define([
 				 */
 				bannerLines: { type: "sap.m.Text", group: "Appearance", multiple: true  }
 			}
-		}
+		},
+
+		renderer: BaseHeaderRenderer
 	});
 
 	BaseHeader.prototype.init = function () {

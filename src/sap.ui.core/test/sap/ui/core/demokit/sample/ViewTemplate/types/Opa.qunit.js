@@ -12,21 +12,22 @@ sap.ui.require([
 	"sap/ui/core/sample/common/pages/Any",
 	"sap/ui/core/sample/ViewTemplate/types/pages/Main",
 	"sap/ui/test/opaQunit",
-	"sap/ui/test/TestUtils"
-], function (Log, Core, library, UI5Date, DateFormat, Any, Main, opaTest, TestUtils) {
+	"sap/ui/test/TestUtils",
+	"sap/ui/core/Configuration"
+], function(Log, Core, library, UI5Date, DateFormat, Any, Main, opaTest, TestUtils, Configuration) {
 	"use strict";
 
 	Core.ready().then(function () {
-		var sDefaultLanguage = sap.ui.getCore().getConfiguration().getLanguage(),
+		var sDefaultLanguage = Configuration.getLanguage(),
 			MessageType = library.MessageType, // shortcut for sap.ui.core.MessageType
 			ValueState = library.ValueState; // shortcut for sap.ui.core.ValueState
 
 		QUnit.module("sap.ui.core.sample.ViewTemplate.types", {
 			before : function () {
-				sap.ui.getCore().getConfiguration().setLanguage("en-US");
+				Configuration.setLanguage("en-US");
 			},
 			after : function () {
-				sap.ui.getCore().getConfiguration().setLanguage(sDefaultLanguage);
+				Configuration.setLanguage(sDefaultLanguage);
 			}
 		});
 

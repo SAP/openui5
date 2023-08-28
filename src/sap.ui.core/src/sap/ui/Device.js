@@ -507,19 +507,6 @@ if (typeof window.sap.ui !== "object") {
 	 * @public
 	 */
 	/**
-	 * If this flag is set to <code>true</code>, the Safari browser runs in webview mode on iOS.
-	 *
-	 * <b>Note:</b> Since iOS 11 it is no longer reliably possible to detect whether an application runs in <code>webview</code>.
-	 * The flag is <code>true</code> if the browser's user agent contains 'SAPFioriClient'. Applications
-	 * using WKWebView have the possibility to customize the user agent, and to explicitly add this information.
-	 *
-	 * @name sap.ui.Device.browser.webview
-	 * @deprecated as of version 1.98.
-	 * @type boolean
-	 * @since 1.31.0
-	 * @public
-	 */
-	/**
 	 * The version of the used Webkit engine, if available.
 	 *
 	 * @see sap.ui.Device.browser.webkit

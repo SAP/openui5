@@ -244,10 +244,6 @@ sap.ui.define([],
 			oRm.openStart("header", oControl.getId() + sId)
 				.class("ui-helper-clearfix")
 				.class("sapUxAPObjectPageHeaderDetails");
-			/**
-			 * @deprecated As of version 1.40.1
-			 */
-			oRm.class("sapUxAPObjectPageHeaderDetailsDesign-" + oControl._getHeaderDesign());
 
 			if (bApplyBelizePlusClass) {
 				oRm.class("sapContrastPlus");

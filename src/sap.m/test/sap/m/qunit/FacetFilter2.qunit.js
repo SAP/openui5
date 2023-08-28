@@ -582,30 +582,11 @@ sap.ui.define([
 		destroyFF(oFF);
 	});
 
-	/**
-	 * @deprecated As of version 1.20 the property <code>multiSelect</code> has been replaced by the property <code>mode</code>
-	 */
-	QUnit.test("FacetFilterList.multiSelect", function(assert) {
-
-		var oFFL = new FacetFilterList();
-
-		assert.ok(oFFL.setMultiSelect(false), "setMultiSelect should support method chaining");
-		assert.strictEqual(oFFL.getMultiSelect(), false, "List multiSelect should be changed to false");
-		assert.strictEqual(oFFL.getMode(), ListMode.SingleSelectMaster,
-				"List mode should be changed to SingleSelectMaster");
-		oFFL.destroy();
-	});
-
 	QUnit.test("FacetFilterList.mode", function(assert) {
-
 		var oFFL = new FacetFilterList();
 
 		assert.ok(oFFL.setMode(ListMode.SingleSelectMaster), "setMode should support method chaining");
 		assert.strictEqual(oFFL.getMode(), ListMode.SingleSelectMaster, "List mode should be SingleSelectMaster");
-		/**
-		 * @deprecated As of version 1.20
-		 */
-		assert.strictEqual(oFFL.getMultiSelect(), false, "List multiSelect should be changed to false");
 
 		oFFL.setMode(ListMode.None);
 		oFFL.setMode(ListMode.SingleSelect);

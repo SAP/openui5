@@ -115,7 +115,7 @@ sap.ui.define([
 		}
 	}
 
-	oCore.attachInit(_onload);
+	oCore.ready(_onload);
 
 	return {
 		setFrameLayout: setFrameLayout,

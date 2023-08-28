@@ -178,19 +178,6 @@ sap.ui.define([
 			},
 			events: {
 				/**
-				 * Event fired after the popover is opened.
-				 * @deprecated As of version 1.72. Use the appropriate event from the wrapper control, instead.
-				 */
-				afterOpen: {
-					parameters: {
-						/**
-						 * This refers to the control which opens the popover.
-						 */
-						openBy: {type: "sap.ui.core.Control"}
-					},
-					deprecated: true
-				},
-				/**
 				 * Event fired when description is shown.
 				 */
 				itemSelect: {
@@ -206,6 +193,7 @@ sap.ui.define([
 						messageTypeFilter: {type: "sap.ui.core.MessageType"}
 					}
 				},
+
 				/**
 				 * Event fired when one of the lists is shown when (not) filtered  by type.
 				 */
@@ -217,10 +205,12 @@ sap.ui.define([
 						messageTypeFilter: {type: "sap.ui.core.MessageType"}
 					}
 				},
+
 				/**
 				 * Event fired when the long text description data from a remote URL is loaded.
 				 */
 				longtextLoaded: {},
+
 				/**
 				 * Event fired when a validation of a URL from long text description is ready.
 				 */

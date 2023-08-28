@@ -60,7 +60,6 @@ sap.ui.define([
 		Model, CountMode, MessageScope, ODataMetadata, ODataMetaModel, ODataMessageParser,
 		ODataPropertyBinding, ODataUtils, OperationMode, UpdateMethod, OData, URI, isCrossOriginURL
 ) {
-
 	"use strict";
 
 	var sClassName = "sap.ui.model.odata.v2.ODataModel",
@@ -1001,32 +1000,6 @@ sap.ui.define([
 		}
 	};
 
-
-
-	/**
-	 * Refreshes the metadata for this model, for example when the request for metadata has failed.
-	 *
-	 * <b>Note</b>: Do not use <code>refreshMetadata</code> if the metadata is outdated or should be
-	 * updated. This will lead to inconsistent data in the application.
-	 *
-	 * Returns a new promise which can be resolved or rejected depending on the metadata loading
-	 * state.
-	 *
-	 * @returns {Promise|undefined}
-	 *   A promise on metadata loaded state or <code>undefined</code> if metadata is not initialized
-	 *   or currently refreshed
-	 *
-	 * @deprecated As of version 1.42.
-	 *
-	 * @public
-	 */
-	ODataModel.prototype.refreshMetadata = function() {
-		if (this.oMetadata && this.oMetadata.refresh) {
-			return this.oMetadata.refresh();
-		}
-
-		return undefined;
-	};
 
 
 	/**
@@ -3135,7 +3108,7 @@ sap.ui.define([
 		var oChangedNode, oCodeListPromise, sCodeListTerm, sDataPath, sKey, oMetaContext,
 			oMetaModel, sMetaPath, oOrigNode, sResolvedPath, iSeparator,
 			vUnresolvedDefault = bUseUndefinedIfUnresolved ? undefined : null,
-			oNode = this.isLegacySyntax() ? this.oData : vUnresolvedDefault;
+			oNode = vUnresolvedDefault;
 
 		sResolvedPath = this.resolve(sPath, oContext, this.bCanonicalRequests);
 		if (!sResolvedPath && this.bCanonicalRequests) {
@@ -4839,25 +4812,6 @@ sap.ui.define([
 		};
 	};
 
-	/**
-	 * Return requested data as object if the data has already been loaded and stored in the model.
-	 *
-	 * @param {string} sPath A string containing the path to the data object that should be returned.
-	 * @param {object} [oContext] The optional context which is used with the <code>sPath</code> to retrieve the requested data.
-	 * @param {boolean} [bIncludeExpandEntries=null] This parameter should be set when a URI or custom parameter
-	 * with a <code>$expand</code> system query option was used to retrieve associated entries embedded.
-	 * If set to <code>true</code> then the <code>getProperty</code> function returns a desired property value or entry and includes the associated expand entries (if any).
-	 * If set to <code>false</code> the associated/expanded entry properties are removed and not included in the
-	 * desired entry as properties at all. This is useful for performing updates on the base entry only. Note: A copy, not a reference of the entry will be returned.
-	 *
-	 * @return {object} Object containing the requested data if the path is valid.
-	 * @public
-	 * @deprecated As of version 1.24, please use {@link #getProperty} instead
-	 */
-	ODataModel.prototype.getData = function(sPath, oContext, bIncludeExpandEntries) {
-		return this.getProperty(sPath, oContext, bIncludeExpandEntries);
-	};
-
 	ODataModel.prototype._getODataHandler = function(sUrl) {
 		if (sUrl.indexOf("$batch") > -1) {
 			return OData.batchHandler;
@@ -4915,14 +4869,14 @@ sap.ui.define([
 	 * @param {string} sKey The key to an Entity e.g.: Customer(4711)
 	 * @public
 	 */
-	 ODataModel.prototype.forceEntityUpdate = function(sKey) {
-		 var oData = this.mChangedEntities[sKey];
-		 if (oData && oData.__metadata) {
-			 oData.__metadata.etag = '*';
-		 } else {
-			 Log.error(this + " - Entity with key " + sKey + " does not exist or has no change");
-		 }
-	 };
+	ODataModel.prototype.forceEntityUpdate = function(sKey) {
+		var oData = this.mChangedEntities[sKey];
+		if (oData && oData.__metadata) {
+			oData.__metadata.etag = '*';
+		} else {
+			Log.error(this + " - Entity with key " + sKey + " does not exist or has no change");
+		}
+	};
 
 	/**
 	 * Creation of a request object
@@ -5790,91 +5744,91 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	 ODataModel.prototype._read = function(sPath, mParameters, bSideEffects) {
-		var bCanonical, oContext, fnError, sETag, aFilters, sGroupId, mHeaders, sMethod, oRequest,
-			aSorters, fnSuccess, bUpdateAggregatedMessages, aUrlParams, mUrlParams,
-			that = this;
+	ODataModel.prototype._read = function(sPath, mParameters, bSideEffects) {
+	   var bCanonical, oContext, fnError, sETag, aFilters, sGroupId, mHeaders, sMethod, oRequest,
+		   aSorters, fnSuccess, bUpdateAggregatedMessages, aUrlParams, mUrlParams,
+		   that = this;
 
-		if (mParameters) {
-			bCanonical = mParameters.canonicalRequest;
-			oContext = mParameters.context;
-			fnError = mParameters.error;
-			aFilters = mParameters.filters;
-			sGroupId = mParameters.groupId || mParameters.batchGroupId;
-			mHeaders = mParameters.headers;
-			aSorters = mParameters.sorters;
-			fnSuccess = mParameters.success;
-			bUpdateAggregatedMessages = mParameters.updateAggregatedMessages;
-			mUrlParams = mParameters.urlParameters;
-		}
-		bCanonical = this._isCanonicalRequestNeeded(bCanonical);
+	   if (mParameters) {
+		   bCanonical = mParameters.canonicalRequest;
+		   oContext = mParameters.context;
+		   fnError = mParameters.error;
+		   aFilters = mParameters.filters;
+		   sGroupId = mParameters.groupId || mParameters.batchGroupId;
+		   mHeaders = mParameters.headers;
+		   aSorters = mParameters.sorters;
+		   fnSuccess = mParameters.success;
+		   bUpdateAggregatedMessages = mParameters.updateAggregatedMessages;
+		   mUrlParams = mParameters.urlParameters;
+	   }
+	   bCanonical = this._isCanonicalRequestNeeded(bCanonical);
 
-		if (sPath && sPath.indexOf('?') !== -1) {
-			sPath = sPath.slice(0, sPath.indexOf('?'));
-		}
+	   if (sPath && sPath.indexOf('?') !== -1) {
+		   sPath = sPath.slice(0, sPath.indexOf('?'));
+	   }
 
-		//if the read is triggered via a refresh we should use the refreshGroupId instead
-		if (this.sRefreshGroupId) {
-			sGroupId = this.sRefreshGroupId;
-		}
+	   //if the read is triggered via a refresh we should use the refreshGroupId instead
+	   if (this.sRefreshGroupId) {
+		   sGroupId = this.sRefreshGroupId;
+	   }
 
-		aUrlParams = ODataUtils._createUrlParamsArray(mUrlParams);
+	   aUrlParams = ODataUtils._createUrlParamsArray(mUrlParams);
 
-		mHeaders = this._getHeaders(mHeaders, true);
+	   mHeaders = this._getHeaders(mHeaders, true);
 
-		sMethod = "GET";
-		sETag = this._getETag(sPath, oContext);
+	   sMethod = "GET";
+	   sETag = this._getETag(sPath, oContext);
 
-		var oRequestHandle = {
-			abort: function() {
-				if (oRequest) {
-					oRequest._aborted = true;
-				}
-			}
-		};
+	   var oRequestHandle = {
+		   abort: function() {
+			   if (oRequest) {
+				   oRequest._aborted = true;
+			   }
+		   }
+	   };
 
-		function createReadRequest(requestHandle) {
-			var oEntityType, oFilter, sFilterParams, mRequests, sSorterParams, sUrl,
-				sDeepPath = that.resolveDeep(sPath, oContext),
-				sResourcePath = that._getResourcePath(bCanonical, sDeepPath, sPath, oContext);
+	   function createReadRequest(requestHandle) {
+		   var oEntityType, oFilter, sFilterParams, mRequests, sSorterParams, sUrl,
+			   sDeepPath = that.resolveDeep(sPath, oContext),
+			   sResourcePath = that._getResourcePath(bCanonical, sDeepPath, sPath, oContext);
 
-			// Add filter/sorter to URL parameters
-			sSorterParams = ODataUtils.createSortParams(aSorters);
-			if (sSorterParams) {
-				aUrlParams.push(sSorterParams);
-			}
+		   // Add filter/sorter to URL parameters
+		   sSorterParams = ODataUtils.createSortParams(aSorters);
+		   if (sSorterParams) {
+			   aUrlParams.push(sSorterParams);
+		   }
 
-			oEntityType = that.oMetadata._getEntityTypeByPath(sResourcePath);
+		   oEntityType = that.oMetadata._getEntityTypeByPath(sResourcePath);
 
-			oFilter = FilterProcessor.groupFilters(aFilters);
-			sFilterParams = ODataUtils.createFilterParams(oFilter, that.oMetadata, oEntityType);
-			if (sFilterParams) {
-				aUrlParams.push(sFilterParams);
-			}
+		   oFilter = FilterProcessor.groupFilters(aFilters);
+		   sFilterParams = ODataUtils.createFilterParams(oFilter, that.oMetadata, oEntityType);
+		   if (sFilterParams) {
+			   aUrlParams.push(sFilterParams);
+		   }
 
-			sUrl = that._createRequestUrlWithNormalizedPath(sResourcePath, aUrlParams,
-				that.bUseBatch);
-			oRequest = that._createRequest(sUrl, sDeepPath, sMethod, mHeaders, null, sETag,
-				undefined, bUpdateAggregatedMessages, bSideEffects);
+		   sUrl = that._createRequestUrlWithNormalizedPath(sResourcePath, aUrlParams,
+			   that.bUseBatch);
+		   oRequest = that._createRequest(sUrl, sDeepPath, sMethod, mHeaders, null, sETag,
+			   undefined, bUpdateAggregatedMessages, bSideEffects);
 
-			mRequests = that.mRequests;
-			if (sGroupId in that.mDeferredGroups) {
-				mRequests = that.mDeferredRequests;
-			}
-			that._pushToRequestQueue(mRequests, sGroupId, null, oRequest, fnSuccess, fnError, requestHandle, false);
+		   mRequests = that.mRequests;
+		   if (sGroupId in that.mDeferredGroups) {
+			   mRequests = that.mDeferredRequests;
+		   }
+		   that._pushToRequestQueue(mRequests, sGroupId, null, oRequest, fnSuccess, fnError, requestHandle, false);
 
-			return oRequest;
-		}
+		   return oRequest;
+	   }
 
-		// In case we are in batch mode and are processing refreshes before sending changes to the server,
-		// the request must be processed synchronously to be contained in the same batch as the changes
-		if (this.bUseBatch && this.bIncludeInCurrentBatch) {
-			oRequest = createReadRequest(oRequestHandle);
-			return oRequestHandle;
-		} else {
-			return this._processRequest(createReadRequest, fnError);
-		}
-	};
+	   // In case we are in batch mode and are processing refreshes before sending changes to the server,
+	   // the request must be processed synchronously to be contained in the same batch as the changes
+	   if (this.bUseBatch && this.bIncludeInCurrentBatch) {
+		   oRequest = createReadRequest(oRequestHandle);
+		   return oRequestHandle;
+	   } else {
+		   return this._processRequest(createReadRequest, fnError);
+	   }
+   };
 
 	/**
 	 * Requests side effects for the entity referred to by the given context using a GET request
@@ -6946,34 +6900,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Deletes a created entry from the request queue and from the model.
-	 *
-	 * <b>Note:</b> Controls are not updated. Use {@link #resetChanges} instead to update also the
-	 * controls, for example:<br />
-	 * <code>oModel.resetChanges([oContext.getPath()], undefined, true);</code>
-	 *
-	 * @param {sap.ui.model.Context} oContext The context object pointing to the created entry
-	 * @public
-	 * @deprecated since 1.95.0; use {@link #resetChanges} instead
-	 */
-	ODataModel.prototype.deleteCreatedEntry = function (oContext) {
-		var sGroupId, sKey,
-			that = this;
-
-		if (oContext) {
-			sKey = oContext.getPath().substr(1);
-			sGroupId = this._resolveGroup(sKey).groupId;
-			that.oMetadata.loaded().then(function() {
-				that.abortInternalRequest(sGroupId, {requestKey: sKey});
-			});
-			that._removeEntity(sKey);
-			//cleanup Messages for created Entry
-			Messaging.removeMessages(
-				this.getMessagesByEntity(oContext.getPath(), true));
-		}
-	};
-
-	/**
 	 * Creates a new entry object which is described by the metadata of the entity type of the
 	 * specified <code>sPath</code> Name. A context object is returned which can be used to bind
 	 * against the newly created object. See
@@ -7665,19 +7591,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Setting batch groups as deferred.
-	 *
-	 * Requests that belong to a deferred batch group have to be sent by explicitly calling {@link #submitChanges}.
-	 *
-	 * @param {array} aGroupIds Array of batch group IDs that should be set as deferred
-	 * @deprecated Since 1.32 use {@link #setDeferredGroups} instead
-	 * @public
-	 */
-	ODataModel.prototype.setDeferredBatchGroups = function(aGroupIds) {
-		this.setDeferredGroups(aGroupIds);
-	};
-
-	/**
 	 * Setting request groups as deferred. <b>Note:</b> This will overwrite existing deferred
 	 * groups, including the default group "changes".
 	 *
@@ -7696,17 +7609,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the array of batch group IDs that are set as deferred
-	 *
-	 * @returns {array} aGroupIds The array of deferred batch group IDs
-	 * @deprecated Since 1.32 use {@link #getDeferredGroups} instead
-	 * @public
-	 */
-	ODataModel.prototype.getDeferredBatchGroups = function() {
-		return this.getDeferredGroups();
-	};
-
-	/**
 	 * Returns the array of group IDs that are set as deferred.
 	 *
 	 * @returns {array} aGroupIds The array of deferred group IDs
@@ -7714,45 +7616,6 @@ sap.ui.define([
 	 */
 	ODataModel.prototype.getDeferredGroups = function() {
 		return Object.keys(this.mDeferredGroups);
-	};
-
-	/**
-	 * Definition of a change group.
-	 *
-	 * @typedef {object} sap.ui.model.odata.v2.ODataModel.ChangeGroupDefinition
-	 * @property {string} groupId Id of the batch group
-	 * @property {string} [changeSetId] ID of a <code>ChangeSet</code> which bundles the changes for the entity type.
-	 * @property {boolean} [single=true] Defines if every change will get an own change set
-	 * @public
-	 */
-
-	/**
-	 * Definition of batch groups per entity type for two-way binding changes.
-	 *
-	 * @param {Object<string,sap.ui.model.odata.v2.ODataModel.ChangeGroupDefinition>} mGroups A map containing the definition of batch groups for two-way binding changes. The map has the
-	 * following format:
-	 * <pre>
-	 * {
-	 *   "EntityTypeName": {
-	 *     batchGroupId: "ID",
-	 *     [changeSetId: "ID",]
-	 *     [single: true/false,]
-	 *   }
-	 * }
-	 * </pre>
-	 * <ul>
-	 * <li><code>batchGroupId</code>: Defines the batch group for changes of the defined <i>EntityTypeName</i></li>
-	 * <li><code>changeSetId</code>: ID of a <code>ChangeSet</code> which bundles the changes for the entity type.</li>
-	 * <li><code>single</code>: Defines if every change will get an own change set (defaults to <code>true</code>)</li>
-	 * </ul>
-	 * @deprecated Since 1.32 Use {@link #setChangeGroups} instead
-	 * @public
-	 */
-	ODataModel.prototype.setChangeBatchGroups = function(mGroups) {
-		each(mGroups, function(sEntityName, oGroup) {
-			oGroup.groupId = oGroup.batchGroupId;
-		});
-		this.setChangeGroups(mGroups);
 	};
 
 	/**
@@ -7779,18 +7642,6 @@ sap.ui.define([
 	 */
 	ODataModel.prototype.setChangeGroups = function(mGroups) {
 		this.mChangeGroups = mGroups;
-	};
-
-	/**
-	 * Returns the definition of batch groups per entity type for two-way binding changes.
-	 *
-	 * @returns {Object<string,sap.ui.model.odata.v2.ODataModel.ChangeGroupDefinition>}
-	 *   Definition of batch groups for two-way binding changes, keyed by entity names.
-	 * @deprecated Since 1.36 use {@link #getChangeGroups} instead
-	 * @public
-	 */
-	ODataModel.prototype.getChangeBatchGroups = function() {
-		return this.getChangeGroups();
 	};
 
 	/**

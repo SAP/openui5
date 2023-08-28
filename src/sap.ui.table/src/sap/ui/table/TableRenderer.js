@@ -68,28 +68,9 @@ sap.ui.define(['sap/ui/Device', './library', "./Column", './utils/TableUtils', "
 			rm.class("sapUiTableRowHighlights"); // show row highlights
 		}
 
-		/**
-		 * @deprecated As of version 1.118
-		 */
-		try {
-			// This class flags whether the sap.m. library is loaded or not.
-			var sSapMTableClass = TableUtils._getTableTemplateHelper(true).addTableClass();
-			if (sSapMTableClass) {
-				rm.class(sSapMTableClass);
-			}
-		} catch (e) {
-			// ignore
-		}
-
 		var oScrollExtension = oTable._getScrollExtension();
 		if (oScrollExtension.isVerticalScrollbarRequired() && !oScrollExtension.isVerticalScrollbarExternal()) {
 			rm.class("sapUiTableVScr"); // show vertical scrollbar
-		}
-		/**
-		* @deprecated As of Version 1.115
-		*/
-		if (oTable.getEditable && oTable.getEditable()) {
-			rm.class("sapUiTableEdt"); // editable (background color)
 		}
 
 		if (TableUtils.hasRowActions(oTable)) {
@@ -130,14 +111,6 @@ sap.ui.define(['sap/ui/Device', './library', "./Column", './utils/TableUtils', "
 		rm.openEnd();
 
 		rm.renderControl(oTable.getAggregation("_messageStrip"));
-
-		if (oTable.getTitle()) {
-			this.renderHeader(rm, oTable, oTable.getTitle());
-		}
-
-		if (oTable.getToolbar()) {
-			this.renderToolbar(rm, oTable, oTable.getToolbar());
-		}
 
 		if (oTable.getExtension() && oTable.getExtension().length > 0) {
 			this.renderExtensions(rm, oTable, oTable.getExtension());
@@ -529,12 +502,6 @@ sap.ui.define(['sap/ui/Device', './library', "./Column", './utils/TableUtils', "
 
 		var oColumnHeaderMenu = oColumn.getHeaderMenuInstance();
 		if (oTable.getEnableColumnReordering() || oTable.hasListeners("columnSelect") || oColumnHeaderMenu && oColumnHeaderMenu.getAriaHasPopupType() !== "None") {
-			rm.class("sapUiTableHeaderCellActive");
-		}
-		/**
-		 * @deprecated As of Version 1.117
-		 */
-		if (!oTable.getEnableColumnReordering() && !oTable.hasListeners("columnSelect") && !oColumnHeaderMenu && oColumn._menuHasItems()) {
 			rm.class("sapUiTableHeaderCellActive");
 		}
 		if (bIsFirstColumn) {

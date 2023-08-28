@@ -4,15 +4,6 @@
 sap.ui.define([], function() {
 	"use strict";
 
-	/**
-	 * Utitlity class for metadata interpretation inside delegate classes
-	 *
-	 * @private
-	 * @since 1.62
-	 * @deprecated This module should not be used and will be removed in future versions!
-	 */
-	var util = function() {};
-
 	util.fetchAllAnnotations = function(oMetaModel, sEntityPath) {
 		var oCtx = oMetaModel.getMetaContext(sEntityPath);
 		return oMetaModel.requestObject("@", oCtx).then( function (mAnnos) {

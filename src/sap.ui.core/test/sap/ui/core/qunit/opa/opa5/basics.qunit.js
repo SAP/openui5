@@ -4,7 +4,6 @@ sap.ui.define([
 	"sap/ui/test/Opa",
 	"sap/ui/test/Opa5",
 	"sap/ui/test/opaQunit",
-	"sap/ui/thirdparty/jquery",
 	"sap/m/Button",
 	"sap/ui/thirdparty/URI",
 	"sap/ui/test/_OpaLogger",
@@ -12,7 +11,7 @@ sap.ui.define([
 	"sap/ui/test/autowaiter/_autoWaiter",
 	"../utils/sinon",
 	"sap/ui/qunit/utils/nextUIUpdate"
-], function (XMLView, Opa, Opa5, opaTest, $, Button, URI, _OpaLogger, _OpaUriParameterParser, _autoWaiter, sinonUtils, nextUIUpdate) {
+], function(XMLView, Opa, Opa5, opaTest, Button, URI, _OpaLogger, _OpaUriParameterParser, _autoWaiter, sinonUtils, nextUIUpdate) {
 	"use strict";
 
 	QUnit.test("Should not execute the test in debug mode", function (assert) {
@@ -290,12 +289,12 @@ sap.ui.define([
 			timeout: 10,
 			pollingInterval: 20,
 			visible: true,
-			matchers: $.noop,
-			check: $.noop,
-			success: $.noop,
-			error: $.noop,
+			matchers: function() {},
+			check: function() {},
+			success: function() {},
+			error: function() {},
 			errorMessage: "foo",
-			actions: $.noop,
+			actions: function() {},
 			_stackDropCount: 1,
 			_stack: "foo"
 		});

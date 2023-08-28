@@ -1,14 +1,14 @@
 /*global QUnit*/
 
-(function () {
+sap.ui.define([
+	"sap/ui/qunit/qunit-css",
+	"sap/ui/thirdparty/qunit",
+	"sap/ui/qunit/qunit-junit",
+	"sap/ui/qunit/qunit-coverage",
+	"sap/ui/thirdparty/sinon",
+	"sap/ui/thirdparty/sinon-qunit"
+], function(qunitCss, qunit, qunitJunit, qunitCoverage, sinon, sinonQunit) {
 	'use strict';
-
-	jQuery.sap.require('sap.ui.qunit.qunit-css');
-	jQuery.sap.require('sap.ui.thirdparty.qunit');
-	jQuery.sap.require('sap.ui.qunit.qunit-junit');
-	jQuery.sap.require('sap.ui.qunit.qunit-coverage');
-	jQuery.sap.require('sap.ui.thirdparty.sinon');
-	jQuery.sap.require('sap.ui.thirdparty.sinon-qunit');
 
 	sap.ui.require(
 		['sap/ui/test/Opa5', 'sap/ui/test/opaQunit', 'sap/ui/test/actions/Press'],
@@ -38,4 +38,4 @@
 			});
 
 		});
-})();
+});

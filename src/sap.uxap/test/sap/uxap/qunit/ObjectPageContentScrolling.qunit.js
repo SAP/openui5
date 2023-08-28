@@ -870,7 +870,6 @@ function(Core, ObjectPageSubSection, ObjectPageSection, ObjectPageLayout, Object
 			fnCheckPosition = function() {
 				$mobileAnchor = oSection.$("header");
 				iPositionTopBefore = lib.Utilities.getChildPosition($mobileAnchor, oObjectPage._$contentContainer).top;
-				iPositionTopAfter;
 
 				// Act
 				oObjectPage.getDomRef().style.position = "relative";

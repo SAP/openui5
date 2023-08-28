@@ -17,12 +17,10 @@ sap.ui.define([
 
 	var oAdapterRegistry = new window.Map();
 	var mAdapterMapping = {
-		/**
-		* @deprecated As of Version 1.117
-		*/
-		"default": "LegacyColumnMenuAdapter",
 		"sap.m.table.columnmenu.Menu": "MobileColumnHeaderMenuAdapter",
-		"sap.ui.table.test.Menu": "test/TestAdapter" // needed for qunit tests
+
+		// needed for qunit tests
+		"sap.ui.table.test.Menu": "test/TestAdapter"
 	};
 
 	/**
@@ -84,13 +82,6 @@ sap.ui.define([
 					mRegistryData = oAdapterRegistry.get(sAdapterName);
 					mRegistryData.adapter = new Adapter();
 					mRegistryData.adapter._injectMenuItems(mRegistryData.activeFor.getHeaderMenuInstance(), mRegistryData.activeFor);
-
-					/**
-					* @deprecated As of Version 1.117
-					*/
-					if (sAdapterName === "LegacyColumnMenuAdapter") {
-						TableUtils.Hook.register(oColumn._getTable(), TableUtils.Hook.Keys.Table.InvalidateColumnMenus, mRegistryData.adapter._invalidateAllMenus, mRegistryData.adapter);
-					}
 				}),
 				columns: [oColumn],
 				activeFor: oColumn

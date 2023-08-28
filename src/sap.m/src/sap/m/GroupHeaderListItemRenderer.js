@@ -61,9 +61,6 @@ sap.ui.define(["sap/ui/core/Core", "sap/ui/core/library", "sap/ui/core/Renderer"
 	 */
 	GroupHeaderListItemRenderer.renderLIAttributes = function(rm, oLI) {
 		rm.class("sapMGHLI");
-		if (oLI.getUpperCase()) {
-			rm.class("sapMGHLIUpperCase");
-		}
 
 		var oTable = oLI.getTable();
 		if (oTable) {

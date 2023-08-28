@@ -576,7 +576,7 @@ sap.ui.define([
 		this.oTPS._iSeconds = iExpectedSeconds;
 
 		// act
-		this.oTPS._handleHoursChange({ getParameter: function() { "23"; } });
+		this.oTPS._handleHoursChange({ getParameter: function() {} });
 
 		// assert
 		assert.ok(oMinutesSlider._setEnabled.calledWithExactly(true), "Minutes slider should be enabled");

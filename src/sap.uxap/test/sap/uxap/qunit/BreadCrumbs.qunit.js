@@ -212,7 +212,9 @@ function($, KeyCodes, Core, QUtils, Link, Text, BreadCrumbs, Icon, Item, Select,
 	QUnit.test("The control is rendered in overflow mode", function (assert) {
 		this.baseCaseTests(assert);
 		this.oBreadCrumbs._bUseOverflowSelect = true;
-		this.oBreadCrumbs.rerender();
+		this.oBreadCrumbs.invalidate();
+
+		Core.applyChanges();
 
 		var $breadCrumbs = this.oBreadCrumbs.$(),
 			$overflowDots = $breadCrumbs.find("span.sapUxAPBreadCrumbsDots"),

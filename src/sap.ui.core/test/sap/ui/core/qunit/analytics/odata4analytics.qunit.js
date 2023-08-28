@@ -1798,49 +1798,6 @@ sap.ui.define([
 			odata4analytics.helper.deepEqual(aOldColumns, aNewColumns, o.formatterChanged),
 			1);
 	});
-
-/** @deprecated As of version 1.94.0 */
-[{
-	sModel : "sap/ui/model/odata/ODataModel",
-	mParameter : undefined
-}, {
-	sModel : "sap/ui/model/odata/ODataModel",
-	mParameter : {modelVersion : 1}
-}, {
-	sModel : "sap/ui/model/odata/v2/ODataModel",
-	mParameter : {modelVersion : 2}
-}].forEach((oFixture) => {
-	[true, false].forEach((bPreloaded) => {
-	QUnit.test(`Model#_init: requires ${oFixture.sModel} instance, already loaded: ${bPreloaded}`, function (assert) {
-		const oODataModelClassMock = this.mock();
-		const oSapUiMock = this.mock(sap.ui);
-		oSapUiMock.expects("require")
-			.withExactArgs(oFixture.sModel)
-			.returns(bPreloaded ? oODataModelClassMock : undefined);
-		oSapUiMock.expects("requireSync")
-			.withExactArgs(oFixture.sModel)
-			.exactly(bPreloaded ? 0 : 1)
-			.returns(oODataModelClassMock);
-		const oODataModel = {getServiceMetadata() {}, attachMetadataLoaded() {}};
-		oODataModelClassMock.withExactArgs("~sServiceURI").returns(oODataModel);
-		const oODataModelMock = this.mock(oODataModel);
-		oODataModelMock.expects("getServiceMetadata")
-			.withExactArgs()
-			.exactly(2)
-			.returns(undefined);
-		oODataModelMock.expects("attachMetadataLoaded").withExactArgs(sinon.match.func);
-		const oModel = {};
-
-		// code under test
-		odata4analytics.Model.prototype._init.call(oModel, new odata4analytics.Model.ReferenceByURI("~sServiceURI"),
-			oFixture.mParameter);
-
-		assert.strictEqual(oModel._mParameter, oFixture.mParameter);
-		assert.deepEqual(oModel._oActivatedWorkarounds, {});
-		assert.strictEqual(oModel._oModel, oODataModel);
-	});
-	});
-});
 });
 //TODO QueryResultRequest: aggregation level and measure handling, setResourcePath,
 // includeDimensionKeyTextAttributes, includeMeasureRawFormattedValueUnit

@@ -1034,172 +1034,6 @@ sap.ui.define([
 	QUnit.test("Message with groups (write) - Batch: on,  JSON: false", fnTestWriteBatchGroups.bind(this, true,  false));
 
 
-/** @deprecated As of version 1.79.0, reason sap.ui.core.message.Message#getTarget */
-(function() {
-	var fnTestFunctionImport = function(assert) {
-		var done = assert.async();
-
-		assert.expect(10);
-		var oModel = new ODataModel("fakeservice://testdata/odata/northwind/", { tokenHandling: false, useBatch: false });
-		Messaging.removeAllMessages();
-		var oMessageModel = Messaging.getMessageModel();
-
-		assert.equal(oMessageModel.getProperty("/").length, 0, "No messages are set at the beginning of the test");
-
-		oModel.attachMetadataLoaded(function() {
-			var aMessages = oMessageModel.getProperty("/");
-
-			assert.equal(aMessages.length, 0, "No messages are set at the after metadata was loaded");
-
-			oModel.read("/Products(1)", {
-				success: function() {
-					var aMessages = oMessageModel.getProperty("/");
-					var aMessageTagets = aMessages.map(function(oMessage) { return oMessage.getTarget(); });
-
-					assert.equal(aMessages.length, 2, "Two messages are set at the beginning of the test");
-					assert.ok(aMessageTagets.indexOf("/Products") > -1, "Message targetting '/Products' has been received.");
-					assert.ok(aMessageTagets.indexOf("/Products(1)/ProductName") > -1, "Message targetting '/Products(1)/ProductName' has been received.");
-					oModel.read("/Products(1)/Supplier", {
-						success: function() {
-							var aMessages = oMessageModel.getProperty("/");
-							var aMessageTagets = aMessages.map(function(oMessage) { return oMessage.getTarget(); });
-
-							assert.equal(aMessages.length, 4, "Four messages are set at the beginning of the test");
-
-							assert.ok(aMessageTagets.indexOf("/Products") > -1, "Message targetting '/Products' has been received.");
-							assert.ok(aMessageTagets.indexOf("/Products(1)/ProductName") > -1, "Message targetting '/Products(1)/ProductName' has been received.");
-							assert.ok(aMessageTagets.indexOf("/Suppliers") > -1, "Message targetting '/Products' has been received.");
-							var sSupplierNameTarget = aMessageTagets.reduce(function(sPrevious, sValue) {
-								return sValue.indexOf(")/SupplierName") > -1 ? sValue : sPrevious;
-							});
-							assert.ok(/\/Suppliers\(.{1,2}\)\/SupplierName/.test(sSupplierNameTarget), "Message targetting '/Suppliers(XXX)/SupplierName' has been received.");
-
-							oModel.destroy();
-							done();
-						}
-					});
-				}
-			});
-
-
-
-		});
-	};
-
-	QUnit.test("Messages for NavigationProperties",  fnTestFunctionImport);
-
-
-
-	var fnTestFunctionImportWithInvalidTarget = function(assert) {
-		var done = assert.async();
-
-		assert.expect(26);
-		var oModel = new ODataModel("fakeservice://testdata/odata/northwind/", { tokenHandling: false, useBatch: false });
-		Messaging.removeAllMessages();
-		var oMessageModel = Messaging.getMessageModel();
-		var oMessage;
-
-		assert.equal(oMessageModel.getProperty("/").length, 0, "No messages are set at the beginning of the test");
-
-		oModel.attachMetadataLoaded(function() {
-			var aMessages = oMessageModel.getProperty("/");
-
-			assert.equal(aMessages.length, 0, "No messages are set at the after metadata was loaded");
-
-			oModel.read("/Products(1)", {
-				success: function() {
-					var aMessages = oMessageModel.getProperty("/");
-					var aMessageTagets = aMessages.map(function(oMessage) { return oMessage.getTarget(); });
-
-					assert.equal(aMessages.length, 2, "Two messages are set after the entity was read");
-					assert.ok(aMessageTagets.indexOf("/Products") > -1, "Message targetting '/Products' has been received.");
-					assert.ok(aMessageTagets.indexOf("/Products(1)/ProductName") > -1, "Message targetting '/Products(1)/ProductName' has been received.");
-
-					oModel.callFunction("/functionWithInvalidTarget", {
-						method: "POST",
-						success: function() {
-							var aMessages = oMessageModel.getProperty("/");
-							var aMessageTagets = aMessages.map(function(oMessage) { return oMessage.getTarget(); });
-
-							assert.equal(aMessages.length, 3, "Three messages are set after the FunctionImport returned");
-
-							assert.ok(aMessageTagets.indexOf("/Products") > -1, "Message targetting '/Products' is still there.");
-							assert.ok(aMessageTagets.indexOf("/Products(1)/SupplierID") > -1, "Message targetting '/Products(1)/SupplierID' has been received.");
-							assert.ok(aMessageTagets.indexOf("/PersistedMessages/functionWithInvalidTarget") > -1, "Message targetting '/PersistedMessages/functionWithInvalidTarget' has been received.");
-
-							assert.ok(aMessageTagets.indexOf("/Products(1)/ProductName") === -1, "Message targetting '/Products(1)/ProductName' has been removed.");
-
-							oModel.read("/Products(1)", {
-								success: function() {
-									var aMessages = oMessageModel.getProperty("/");
-									var aMessageTagets = aMessages.map(function(oMessage) { return oMessage.getTarget(); });
-
-									assert.equal(aMessages.length, 3, "Three messages are set after /Products(1) is requested again");
-
-									assert.ok(aMessageTagets.indexOf("/Products") > -1, "Message targetting '/Products' has been received.");
-									assert.ok(aMessageTagets.indexOf("/Products(1)/ProductName") > -1, "Message targetting '/Products(1)/ProductName' has been received.");
-									assert.ok(aMessageTagets.indexOf("/PersistedMessages/functionWithInvalidTarget") > -1, "Message targetting '/PersistedMessages/functionWithInvalidTarget' has been kept.");
-
-									assert.ok(aMessageTagets.indexOf("/Products(1)/SupplierID") === -1, "Message targetting '/Products(1)/SupplierID' has been removed.");
-
-									oModel.callFunction("/functionWithInvalidTarget", {
-										method: "POST",
-										success: function() {
-											var aMessages = oMessageModel.getProperty("/");
-											var aMessageTagets = aMessages.map(function(oMessage) { return oMessage.getTarget(); });
-
-											assert.equal(aMessages.length, 3, "Three messages are set after FunctionImport is called again");
-
-											assert.ok(aMessageTagets.indexOf("/Products") > -1, "Message targetting '/Products' is still there.");
-											assert.ok(aMessageTagets.indexOf("/Products(1)/SupplierID") > -1, "Message targetting '/Products(1)/SupplierID' has been received.");
-											assert.ok(aMessageTagets.indexOf("/PersistedMessages/functionWithInvalidTarget") > -1, "Message targetting '/PersistedMessages/functionWithInvalidTarget' has been received.");
-
-											assert.ok(aMessageTagets.indexOf("/Products(1)/ProductName") === -1, "Message targetting '/Products(1)/ProductName' has been removed.");
-
-
-											oModel.callFunction("/functionWithInvalidReturnType", {
-												method: "POST",
-												success: function() {
-													var aMessages = oMessageModel.getProperty("/");
-													oMessage = aMessages.filter(function(oMessage) { return oMessage.getTarget() === ""; })[0];
-
-													assert.strictEqual(aMessages.length, 4, "Four messages are set after FunctionImport is called again");
-													assert.strictEqual(typeof oMessage, "object", "Message with empty target was created.");
-													assert.strictEqual(oMessage.message, "This is FunctionImport specific message with an invalid return type.");
-
-													oModel.callFunction("/functionWithInvalidEntitySet", {
-														method: "POST",
-														success: function() {
-															var aMessages = oMessageModel.getProperty("/");
-															oMessage = aMessages.filter(function(oMessage) { return oMessage.getTarget() === ""; })[0];
-
-															assert.strictEqual(aMessages.length, 4, "Four messages are set after FunctionImport is called again");
-															assert.strictEqual(typeof oMessage, "object", "Message with empty target was created.");
-															assert.strictEqual(oMessage.message, "This is FunctionImport specific message with an invalid entityset.");
-
-															oModel.destroy();
-															done();
-														}
-													});
-												}
-											});
-										}
-									});
-								}
-							});
-						}
-					});
-				}
-			});
-
-
-
-		});
-	};
-
-	QUnit.test("Messages with 'invalid' targets",  fnTestFunctionImportWithInvalidTarget);
-}());
-
 	var fnTestRemoveMessagesWithBinding = function(assert) {
 		var done = assert.async();
 
@@ -1512,45 +1346,45 @@ sap.ui.define([
 	QUnit.test("Propagate Message: Binding to NavProp", fnTestNavProp);
 
 
-		var oResponseGET200MsgScope = {
-			statusCode: "200",
-			body: "OK",
-			headers: {
-				"Content-Type": "text/plain;charset=utf-8",
-				"DataServiceVersion": "2.0;",
-				"sap-message": JSON.stringify({
-					"code": "999",
-					"message": "This is test message",
-					"severity": "error",
-					"details": []
-				})
-			}
-		};
+	var oResponseGET200MsgScope = {
+		statusCode: "200",
+		body: "OK",
+		headers: {
+			"Content-Type": "text/plain;charset=utf-8",
+			"DataServiceVersion": "2.0;",
+			"sap-message": JSON.stringify({
+				"code": "999",
+				"message": "This is test message",
+				"severity": "error",
+				"details": []
+			})
+		}
+	};
 
-		var oResponseGET200SuccessMsgScope = {
-			statusCode: "200",
-			body: "OK",
-			headers: {
-				"Content-Type": "text/plain;charset=utf-8",
-				"DataServiceVersion": "2.0;"
-			}
-		};
+	var oResponseGET200SuccessMsgScope = {
+		statusCode: "200",
+		body: "OK",
+		headers: {
+			"Content-Type": "text/plain;charset=utf-8",
+			"DataServiceVersion": "2.0;"
+		}
+	};
 
-		var oResponseGET400MsgScope = {
-			statusCode: "400",
-			body: JSON.stringify({
-				"error": {
-					"message": {
-						"value": "Bad Request - ..."
-					},
-					"code": "999"
-				}
-			}),
-			headers: {
-				"Content-Type": "text/plain;charset=utf-8",
-				"DataServiceVersion": "2.0;"
+	var oResponseGET400MsgScope = {
+		statusCode: "400",
+		body: JSON.stringify({
+			"error": {
+				"message": {
+					"value": "Bad Request - ..."
+				},
+				"code": "999"
 			}
-		};
+		}),
+		headers: {
+			"Content-Type": "text/plain;charset=utf-8",
+			"DataServiceVersion": "2.0;"
+		}
+	};
 
 
 	QUnit.test("ODataMessageParser: Keep messages when request failed - Message scope supported", function(assert) {

@@ -214,10 +214,7 @@ sap.ui.define([
 		oCalendar._handleTodayPress();
 		oCore.applyChanges();
 		// Assert
-		/**
-		 * @deprecated As of version 1.34
-		 */
-		assert.equal(oYearPicker.getYear(), 2020, "year is correct");
+		/* -------------------------------------- */
 		assert.equal(oYearPicker.getDate().getFullYear(), 2020, "year is correct");
 		assert.equal(oPickerBtn.getText(), "2010 - 2029", "picker text is correct");
 
@@ -229,10 +226,7 @@ sap.ui.define([
 		oCalendar._handleTodayPress();
 		oCore.applyChanges();
 		// Assert
-		/**
-		 * @deprecated As of version 1.34
-		 */
-		assert.equal(oYearRangePicker.getYear(), 2010, "year range is correct");
+		/* -------------------------------------- */
 		assert.equal(oYearRangePicker.getDate().getFullYear(), 2010, "year range is correct");
 		assert.notOk(oPickerBtn.getVisible(), "picker button is not visible");
 		assert.strictEqual(oAddMonthDelegateSpy.callCount, 4, "Month focus delegate is added");

@@ -6,7 +6,8 @@ sap.ui.define([
 	"sap/m/Text",
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/unified/FileUploader",
-	"sap/ui/unified/FileUploaderParameter"
+	"sap/ui/unified/FileUploaderParameter",
+	"sap/ui/core/mvc/Controller"
 ], function(Log, Button, Label, MessageBox, Text, XMLView, FileUploader, FileUploaderParameter) {
 	"use strict";
 

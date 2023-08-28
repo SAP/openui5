@@ -83,36 +83,6 @@ sap.ui.define([
 		sut.destroy();
 	});
 
-	/**
-	 * @deprecated as of version 1.24.0
-	 */
-	QUnit.test("Render (Deprecated Properties)", function(assert) {
-
-		//SUT
-		var sTitle = "My Title";
-		var sText = "My Text";
-		var sut = new ObjectIdentifier({
-			title : sTitle,
-			text : sText,
-			badgeNotes : true,
-			badgePeople : true,
-			badgeAttachments : true,
-			visible : true
-		});
-
-		//Act
-		sut.placeAt("content");
-		oCore.applyChanges();
-
-		//Assert
-		assert.ok(sut.getDomRef("attachments-icon"), "Attachments icon is rendered.");
-		assert.ok(sut.getDomRef("notes-icon"), "Notes icon is rendered.");
-		assert.ok(sut.getDomRef("people-icon"), "People icon is rendered.");
-
-		//Cleanup
-		sut.destroy();
-	});
-
 	QUnit.test("NotVisible", function(assert) {
 		//SUT
 		var sut = new ObjectIdentifier("NotVisible");
@@ -128,42 +98,6 @@ sap.ui.define([
 		//Cleanup
 		sut.destroy();
 
-	});
-
-	/**
-	 * @deprecated as of version 1.24.0
-	 */
-	QUnit.test("Destroy (Deprecated Parts)", function(assert) {
-
-		//SUT
-		var sTitle = "My Title";
-		var sText = "My Text";
-		var sut = new ObjectIdentifier({
-			title : sTitle,
-			text : sText,
-			badgeNotes : true,
-			badgePeople : true,
-			badgeAttachments : true
-		});
-
-		//Act
-		sut.placeAt("content");
-		oCore.applyChanges();
-
-		//Assert
-		assert.ok(sut.getDomRef("attachments-icon"), "Attachments icon is rendered.");
-		assert.ok(sut.getDomRef("notes-icon"), "Notes icon is rendered.");
-		assert.ok(sut.getDomRef("people-icon"), "People icon is rendered.");
-
-		sut.destroy();
-
-		var sDestroyed = " should be destroyed";
-		assert.ok(!oCore.byId(sut.getId() + "-attachments-icon"), "Attachments icon" + sDestroyed);
-		assert.ok(!oCore.byId(sut.getId() + "-notes-icon"), "Notes icon" + sDestroyed);
-		assert.ok(!oCore.byId(sut.getId() + "-people-icon"), "People icon" + sDestroyed);
-
-		//Cleanup
-		sut.destroy();
 	});
 
 	/***********************************************************************************************************************/
@@ -640,31 +574,6 @@ sap.ui.define([
 
 		//Assert
 		assert.equal(sut.$().find(".sapMObjectIdentifierTopRow").css("display"), "none", "top row is hidden");
-
-		//Cleanup
-		sut.destroy();
-	});
-
-	/**
-	 * @deprecated as of version 1.24.0
-	 */
-	QUnit.test("Should not display top row when there aren't badges (assuming there's also no title)", function(assert) {
-		//Arrange
-		var sut = new ObjectIdentifier({
-			text: "test text"
-		});
-		sut.placeAt("qunit-fixture");
-		oCore.applyChanges();
-
-		//Assert
-		assert.equal(sut.$().find(".sapMObjectIdentifierTopRow").css("display"), "none", "top row is hidden");
-
-		//Act
-		sut.setBadgeNotes(true);
-		oCore.applyChanges();
-
-		//Assert
-		assert.ok(sut.$().find(".sapMObjectIdentifierTopRow").is(":visible"), "top row is visible");
 
 		//Cleanup
 		sut.destroy();

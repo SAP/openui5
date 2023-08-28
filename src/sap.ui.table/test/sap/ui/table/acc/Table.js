@@ -65,7 +65,6 @@ sap.ui.define([
 	// create table with supported sap.m controls
 	var oTable = new Table();
 
-	oTable.setTitle("Tango");
 	oTable.setFooter("Sierra");
 	oTable.setSelectionMode(SelectionMode.MultiToggle);
 

@@ -38,6 +38,9 @@ sap.ui.define([
 			DragDropInfo, DropInfo, Library, UploadSetToolbarPlaceholder, IllustratedMessage,IllustratedMessageType, IllustratedMessageSize, Core, InvisibleText, Menu, MenuItem, MenuButton) {
 	"use strict";
 
+	// shortcut for sap.m.MenuButtonMode
+	var MenuButtonMode = MobileLibrary.MenuButtonMode;
+
 	var UploadType = Library.UploadType;
 
 	/**
@@ -1280,10 +1283,10 @@ sap.ui.define([
 	 * @public
 	 * @since 1.100.0
 	 */
-	 UploadSet.prototype.getSelectedItems = function() {
-		var aSelectedListItems = this._oList.getSelectedItems();
-		return this._getUploadSetItemsByListItems(aSelectedListItems);
-	};
+	UploadSet.prototype.getSelectedItems = function() {
+	   var aSelectedListItems = this._oList.getSelectedItems();
+	   return this._getUploadSetItemsByListItems(aSelectedListItems);
+   };
 
 	/**
 	 * Retrieves the currently selected UploadSetItem.
@@ -1307,11 +1310,11 @@ sap.ui.define([
 	 * @public
 	 * @since 1.100.0
 	 */
-	 UploadSet.prototype.setSelectedItemById = function(id, select) {
-		this._oList.setSelectedItemById(id + "-listItem", select);
-		this._setSelectedForItems([this._getUploadSetItemById(id)], select);
-		return this;
-	};
+	UploadSet.prototype.setSelectedItemById = function(id, select) {
+	   this._oList.setSelectedItemById(id + "-listItem", select);
+	   this._setSelectedForItems([this._getUploadSetItemById(id)], select);
+	   return this;
+   };
 
 	/**
 	 * Selects or deselects the given list item.
@@ -1321,9 +1324,9 @@ sap.ui.define([
 	 * @public
 	 * @since 1.100.0
 	 */
-	 UploadSet.prototype.setSelectedItem = function(uploadSetItem, select) {
-		return this.setSelectedItemById(uploadSetItem.getId(), select);
-	};
+	UploadSet.prototype.setSelectedItem = function(uploadSetItem, select) {
+	   return this.setSelectedItemById(uploadSetItem.getId(), select);
+   };
 
 	/**
 	 * Select all items in "MultiSelection" mode.
@@ -1331,14 +1334,14 @@ sap.ui.define([
 	 * @public
 	 * @since 1.100.0
 	 */
-	 UploadSet.prototype.selectAll = function() {
-		var aSelectedList = this._oList.selectAll();
-		if (aSelectedList.getItems().length !== this.getItems().length) {
-			Log.info("Internal 'List' and external 'UploadSet' are not in sync.");
-		}
-		this._setSelectedForItems(this.getItems(), true);
-		return this;
-	};
+	UploadSet.prototype.selectAll = function() {
+	   var aSelectedList = this._oList.selectAll();
+	   if (aSelectedList.getItems().length !== this.getItems().length) {
+		   Log.info("Internal 'List' and external 'UploadSet' are not in sync.");
+	   }
+	   this._setSelectedForItems(this.getItems(), true);
+	   return this;
+   };
 
 	/**
 	 * Opens the FileUploader dialog. When an UploadSetItem is provided, this method can be used to update a file with a new version.
@@ -1347,21 +1350,21 @@ sap.ui.define([
 	 * @since 1.103.0
 	 * @public
 	 */
-	 UploadSet.prototype.openFileDialog = function(item) {
-		if (this._oFileUploader) {
-			if (item) {
-				if (!this._oFileUploader.getMultiple()) {
-					this._oItemToUpdate = item;
-					this._oFileUploader.$().find("input[type=file]").trigger("click");
-				} else {
-					Log.warning("Version Upload cannot be used in multiple upload mode");
-				}
-			} else {
-				this._oFileUploader.$().find("input[type=file]").trigger("click");
-			}
-		}
-		return this;
-	};
+	UploadSet.prototype.openFileDialog = function(item) {
+	   if (this._oFileUploader) {
+		   if (item) {
+			   if (!this._oFileUploader.getMultiple()) {
+				   this._oItemToUpdate = item;
+				   this._oFileUploader.$().find("input[type=file]").trigger("click");
+			   } else {
+				   Log.warning("Version Upload cannot be used in multiple upload mode");
+			   }
+		   } else {
+			   this._oFileUploader.$().find("input[type=file]").trigger("click");
+		   }
+	   }
+	   return this;
+   };
 
 	/* ============== */
 	/* Event handlers */
@@ -1862,18 +1865,18 @@ sap.ui.define([
 	 * @param {boolean} selected The new selection state
 	 * @private
 	 */
-	 UploadSet.prototype._setSelectedForItems = function(uploadSetItemsToUpdate, selected) {
-		//Reset all 'selected' values in UploadSetItems
-		if (this.getMode() !== Library.ListMode.MultiSelect && selected) {
-			var aUploadSetItems = this.getItems();
-			for (var j = 0; j < aUploadSetItems.length; j++) {
-				aUploadSetItems[j].setSelected(false);
-			}
-		}
-		for (var i = 0; i < uploadSetItemsToUpdate.length; i++) {
-			uploadSetItemsToUpdate[i].setSelected(selected);
-		}
-	};
+	UploadSet.prototype._setSelectedForItems = function(uploadSetItemsToUpdate, selected) {
+	   //Reset all 'selected' values in UploadSetItems
+	   if (this.getMode() !== Library.ListMode.MultiSelect && selected) {
+		   var aUploadSetItems = this.getItems();
+		   for (var j = 0; j < aUploadSetItems.length; j++) {
+			   aUploadSetItems[j].setSelected(false);
+		   }
+	   }
+	   for (var i = 0; i < uploadSetItemsToUpdate.length; i++) {
+		   uploadSetItemsToUpdate[i].setSelected(selected);
+	   }
+   };
 
 	/**
 	 * Returns UploadSetItem based on the items aggregation
@@ -1881,15 +1884,15 @@ sap.ui.define([
 	 * @returns {sap.m.upload.UploadSetItem} The matching UploadSetItem
 	 * @private
 	 */
-	 UploadSet.prototype._getUploadSetItemById = function(uploadSetItemId) {
-		var aAllItems = this.getItems();
-		for (var i = 0; i < aAllItems.length; i++) {
-			if (aAllItems[i].getId() === uploadSetItemId) {
-				return aAllItems[i];
-			}
-		}
-		return null;
-	};
+	UploadSet.prototype._getUploadSetItemById = function(uploadSetItemId) {
+	   var aAllItems = this.getItems();
+	   for (var i = 0; i < aAllItems.length; i++) {
+		   if (aAllItems[i].getId() === uploadSetItemId) {
+			   return aAllItems[i];
+		   }
+	   }
+	   return null;
+   };
 
 	/**
 	 * Returns an array of UploadSet items based on the items aggregation
@@ -1897,64 +1900,64 @@ sap.ui.define([
 	 * @returns {sap.m.upload.UploadSetItem[]} The matching UploadSetItems
 	 * @private
 	 */
-	 UploadSet.prototype._getUploadSetItemsByListItems = function(listItems) {
-		var aUploadSetItems = [];
-		var aLocalUploadSetItems = this.getItems();
+	UploadSet.prototype._getUploadSetItemsByListItems = function(listItems) {
+	   var aUploadSetItems = [];
+	   var aLocalUploadSetItems = this.getItems();
 
-		if (listItems) {
-			for (var i = 0; i < listItems.length; i++) {
-				for (var j = 0; j < aLocalUploadSetItems.length; j++) {
-					if (listItems[i].getId() === aLocalUploadSetItems[j].getId() + "-listItem") {
-						aUploadSetItems.push(aLocalUploadSetItems[j]);
-						break;
-					}
-				}
-			}
-			return aUploadSetItems;
-		}
-		return null;
-	};
+	   if (listItems) {
+		   for (var i = 0; i < listItems.length; i++) {
+			   for (var j = 0; j < aLocalUploadSetItems.length; j++) {
+				   if (listItems[i].getId() === aLocalUploadSetItems[j].getId() + "-listItem") {
+					   aUploadSetItems.push(aLocalUploadSetItems[j]);
+					   break;
+				   }
+			   }
+		   }
+		   return aUploadSetItems;
+	   }
+	   return null;
+   };
 
 	/**
 	 * Destroy the items in the List.
 	 * @private
 	 */
-	 UploadSet.prototype._clearGroupHeaders = function() {
-		this.getList().getItems().forEach(function(oItem) {
-			if (oItem.isGroupHeader()) {
-				oItem.destroy(false);
-			}
-		});
-	};
+	UploadSet.prototype._clearGroupHeaders = function() {
+	   this.getList().getItems().forEach(function(oItem) {
+		   if (oItem.isGroupHeader()) {
+			   oItem.destroy(false);
+		   }
+	   });
+   };
 
 	/**
 	 * Map group for item.
 	 * @param {sap.m.upload.UploadSetItem} item The UploadSetItem to map group
 	 * @private
 	 */
-	 UploadSet.prototype._mapGroupForItem = function(item) {
-		var oItemsBinding = this.getBinding("items"),
-			sModelName = this.getBindingInfo("items") ? this.getBindingInfo("items").model : undefined,
-			fnGroupHeader = this.getBindingInfo("items") ? this.getBindingInfo("items").groupHeaderFactory : null;
-		var fnGroup = function(oItem) {
-			//Added sModelName to consider named model cases if empty default model is picked without checking model bind to items.
-			return oItem.getBindingContext(sModelName) ? oItemsBinding.getGroup(oItem.getBindingContext(sModelName)) : null;
-		};
-		var fnGroupKey = function(item) {
-			return fnGroup(item) && fnGroup(item).key;
-		};
+	UploadSet.prototype._mapGroupForItem = function(item) {
+	   var oItemsBinding = this.getBinding("items"),
+		   sModelName = this.getBindingInfo("items") ? this.getBindingInfo("items").model : undefined,
+		   fnGroupHeader = this.getBindingInfo("items") ? this.getBindingInfo("items").groupHeaderFactory : null;
+	   var fnGroup = function(oItem) {
+		   //Added sModelName to consider named model cases if empty default model is picked without checking model bind to items.
+		   return oItem.getBindingContext(sModelName) ? oItemsBinding.getGroup(oItem.getBindingContext(sModelName)) : null;
+	   };
+	   var fnGroupKey = function(item) {
+		   return fnGroup(item) && fnGroup(item).key;
+	   };
 
-		if (oItemsBinding && oItemsBinding.isGrouped() && item) {
-			if ( !this._aGroupHeadersAdded.some( function(group){ return group === fnGroupKey(item);} ) ) {
-				if (fnGroupHeader) {
-					this.getList().addItemGroup(fnGroup(item), fnGroupHeader(fnGroup(item)), true);
-				} else if (fnGroup(item)) {
-					this.getList().addItemGroup(fnGroup(item), null, true);
-				}
-				this._aGroupHeadersAdded.push(fnGroupKey(item));
-			}
-		}
-	};
+	   if (oItemsBinding && oItemsBinding.isGrouped() && item) {
+		   if ( !this._aGroupHeadersAdded.some( function(group){ return group === fnGroupKey(item);} ) ) {
+			   if (fnGroupHeader) {
+				   this.getList().addItemGroup(fnGroup(item), fnGroupHeader(fnGroup(item)), true);
+			   } else if (fnGroup(item)) {
+				   this.getList().addItemGroup(fnGroup(item), null, true);
+			   }
+			   this._aGroupHeadersAdded.push(fnGroupKey(item));
+		   }
+	   }
+   };
 
 	/**
 	 * Fills list with uploadSet items.
@@ -1980,24 +1983,24 @@ sap.ui.define([
 	 * @return {int} The position of the placeholder or -1 if there's no placeholder.
 	 * @private
 	 */
-	 UploadSet.prototype._getFileUploaderPlaceHolderPosition = function(toolbar) {
-		for (var i = 0; i < toolbar.getContent().length; i++) {
-			if (toolbar.getContent()[i] instanceof UploadSetToolbarPlaceholder) {
-				return i;
-			}
-		}
-		return -1;
-	};
+	UploadSet.prototype._getFileUploaderPlaceHolderPosition = function(toolbar) {
+	   for (var i = 0; i < toolbar.getContent().length; i++) {
+		   if (toolbar.getContent()[i] instanceof UploadSetToolbarPlaceholder) {
+			   return i;
+		   }
+	   }
+	   return -1;
+   };
 
 	/**
 	 * Inserts the given FileUploader object into the current Toolbar at the position of the placeholder.
 	 * @param {sap.ui.unified.FileUploader} fileUploader The FileUploader object to insert into the Toolbar
 	 * @private
 	 */
-	 UploadSet.prototype._setFileUploaderInToolbar = function(fileUploader) {
-		this._oToolbar.getContent()[this._iFileUploaderPH].setVisible(false);
-		this._oToolbar.insertContent(fileUploader, this._iFileUploaderPH);
-	};
+	UploadSet.prototype._setFileUploaderInToolbar = function(fileUploader) {
+	   this._oToolbar.getContent()[this._iFileUploaderPH].setVisible(false);
+	   this._oToolbar.insertContent(fileUploader, this._iFileUploaderPH);
+   };
 
 	/**
 	 * Returns CloudFile picker menu button
@@ -2008,7 +2011,7 @@ sap.ui.define([
 		if (this.getCloudFilePickerEnabled()) {
 			this._oMenuButton = new MenuButton({
 				text: this._oRb.getText("UPLOAD_SET_DEFAULT_LFP_BUTTON_TEXT"),
-				buttonMode: sap.m.MenuButtonMode.Split,
+				buttonMode: MenuButtonMode.Split,
 				menu: this._getMenuButtonItems(),
 				defaultAction: this._openFileUploaderPicker.bind(this)
 			});
@@ -2032,25 +2035,25 @@ sap.ui.define([
 	 * @private
 	 * @returns {Object} cloudFile picker instance
 	 */
-	 UploadSet.prototype._invokeCloudFilePicker = function() {
-		 var oCloudFilePickerInstance = null;
-		 if (this._cloudFilePickerControl) {
-			oCloudFilePickerInstance = this._getCloudFilePickerInstance();
-			oCloudFilePickerInstance.open();
-		 } else {
-			 // Dynamically load and cache CloudFilePicker control for first time
-			 this._loadCloudFilePickerDependency()
-			 .then(function(cloudFilePicker){
-				this._cloudFilePickerControl = cloudFilePicker;
-				oCloudFilePickerInstance = this._getCloudFilePickerInstance();
-				oCloudFilePickerInstance.open();
-			 }.bind(this))
-			 .catch(function(error) {
-				 Log.error(error);
-			 });
-		 }
-		return oCloudFilePickerInstance;
-	};
+	UploadSet.prototype._invokeCloudFilePicker = function() {
+		var oCloudFilePickerInstance = null;
+		if (this._cloudFilePickerControl) {
+		   oCloudFilePickerInstance = this._getCloudFilePickerInstance();
+		   oCloudFilePickerInstance.open();
+		} else {
+			// Dynamically load and cache CloudFilePicker control for first time
+			this._loadCloudFilePickerDependency()
+			.then(function(cloudFilePicker){
+			   this._cloudFilePickerControl = cloudFilePicker;
+			   oCloudFilePickerInstance = this._getCloudFilePickerInstance();
+			   oCloudFilePickerInstance.open();
+			}.bind(this))
+			.catch(function(error) {
+				Log.error(error);
+			});
+		}
+	   return oCloudFilePickerInstance;
+   };
 
 	/**
 	 * Event handler for CloudFile picker selector

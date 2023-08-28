@@ -15,29 +15,6 @@ sap.ui.define([
 
 	var sandbox = sinon.createSandbox();
 
-	/**
-	 * @deprecated As of version 1.107
-	 */
-	QUnit.module("sap.ui.fl.changeHandler.Base", {
-		beforeEach() {
-			this.oBaseHandler = Base;
-		},
-		afterEach() {
-		}
-	}, function() {
-		QUnit.test("setTextInChange", function(assert) {
-			var oChange = {
-				selector: {
-					id: "QUnit.testkey"
-				}
-			};
-			this.oBaseHandler.setTextInChange(oChange, "fieldLabel", "new field label", "XFLD");
-			assert.ok(oChange.texts.fieldLabel);
-			assert.equal(oChange.texts.fieldLabel.value, "new field label");
-			assert.equal(oChange.texts.fieldLabel.type, "XFLD");
-		});
-	});
-
 	QUnit.module("sap.ui.fl.changeHandler.Base.instantiateFragment on JSControlTreeModifier", {
 		before() {
 			// predefine some modules

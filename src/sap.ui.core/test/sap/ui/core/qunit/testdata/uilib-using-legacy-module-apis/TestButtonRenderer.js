@@ -34,7 +34,6 @@ sap.ui.testlib.TestButtonRenderer.render = function(oRenderManager, oButton) {
 
 	// button is rendered as a "<button>" element
 	rm.write("<button");
-	rm.writeControlData(oButton);
 	if (oButton.getTooltip_AsString()) {
 		rm.writeAttributeEscaped("title", oButton.getTooltip_AsString());
 	}

@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(["sap/ui/core/Configuration"],
-	function(Configuration) {
+sap.ui.define(["sap/ui/core/Configuration", "sap/ui/base/Object"],
+	function(Configuration, BaseObject) {
 	"use strict";
 
 
@@ -231,7 +231,7 @@ sap.ui.define(["sap/ui/core/Configuration"],
 	};
 
 	HeaderRenderer._isTwoMonthsCalendar = function (oHead) {
-		return (oHead.getParent() instanceof sap.ui.unified.Calendar && (oHead.getParent().getMonths() >= 2));
+		return BaseObject.isA(oHead.getParent(), "sap.ui.unified.Calendar") && (oHead.getParent().getMonths() >= 2);
 	};
 
 	return HeaderRenderer;

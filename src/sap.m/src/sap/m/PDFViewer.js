@@ -64,11 +64,13 @@ sap.ui.define([
 						 * the parent container. Can be set to a percent, pixel, or em value.
 						 */
 						height: {type: "sap.ui.core.CSSSize", group: "Dimension", defaultValue: "100%"},
+
 						/**
 						 * Defines the width of the PDF viewer control, respective to the width of the
 						 * parent container. Can be set to a percent, pixel, or em value.
 						 */
 						width: {type: "sap.ui.core.CSSSize", group: "Dimension", defaultValue: "100%"},
+
 						/**
 						 * Specifies the path to the PDF file to display. Can be set to a relative or
 						 * an absolute path.<br>
@@ -78,22 +80,12 @@ sap.ui.define([
 						 * URL filtering, see {@link topic:91f3768f6f4d1014b6dd926db0e91070 URLList Validator Filtering}.
 						 */
 						source: {type: "sap.ui.core.URI", group: "Misc", defaultValue: null},
-						/**
-						 * A custom error message that is displayed when the PDF file cannot be loaded.
-						 * @deprecated As of version 1.50.0, replaced by {@link sap.m.PDFViewer#getErrorPlaceholderMessage}.
-						 */
-						errorMessage: {type: "string", group: "Misc", defaultValue: null, deprecated: true},
+
 						/**
 						 * A custom text that is displayed instead of the PDF file content when the PDF
 						 * file cannot be loaded.
 						 */
 						errorPlaceholderMessage: {type: "string", group: "Misc", defaultValue: null},
-						/**
-						 * A custom title for the PDF viewer popup dialog. Works only if the PDF viewer
-						 * is set to open in a popup dialog.
-						 * @deprecated As of version 1.50.0, replaced by {@link sap.m.PDFViewer#getTitle}.
-						 */
-						popupHeaderTitle: {type: "string", group: "Misc", defaultValue: null, deprecated: true},
 
 						/**
 						 * A custom title for the PDF viewer.

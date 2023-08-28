@@ -17,10 +17,7 @@
 			"desktop": true,
 			"tablet": true,
 			"phone": true
-		},
-		"supportedThemes": [
-			"sap_belize"
-		]
+		}
 	},
 	"sap.ui5": {
 		"_version": "1.11.0",

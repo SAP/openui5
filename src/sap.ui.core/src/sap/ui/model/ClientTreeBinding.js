@@ -296,7 +296,6 @@ sap.ui.define([
 		}
 		this._mLengthsCache = {};
 		this._fireChange({reason: "filter"});
-		this._fireFilter({filters: aFilters});
 
 		return this;
 	};

@@ -656,16 +656,6 @@ sap.ui.define([
 
 	});
 
-	/**
-	 * @deprecated Not supported, this property is not supported for the <code>Field</code>.
-	 */
-	QUnit.test("maxConditions", function(assert) {
-
-		assert.equal(oFieldEdit.getMaxConditions(), 1, "MaxConditions is 1");
-		_checkException(assert, oFieldEdit, oFieldEdit.setMaxConditions, "setMaxConditions", 2);
-
-	});
-
 	QUnit.module("Eventing", {
 		beforeEach: function() {
 			FieldBaseDelegateODataDefaultTypes.enable();
@@ -1713,5 +1703,4 @@ sap.ui.define([
 		assert.notOk(oMyOriginalType, "no type used in ConditionsType as originalDateType");
 
 	});
-
 });

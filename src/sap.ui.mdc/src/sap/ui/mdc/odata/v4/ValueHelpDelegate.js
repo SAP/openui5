@@ -18,22 +18,6 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	/**
-	 * Delegate for {@link sap.ui.mdc.ValueHelp ValueHelp} used in oData v4 environment.<br>
-	 * <b>Note:</b> The class is experimental and the API/behavior is not finalized and hence this should not be used for productive usage.
-	 *
-	 * @namespace
-	 * @author SAP SE
-	 * @private
-	 * @ui5-restricted sap.fe
-	 * @experimental As of version 1.95
-	 * @since 1.95.0
-	 * @extends module:sap/ui/mdc/ValueHelpDelegate
-	 * @alias module:sap/ui/mdc/odata/v4/ValueHelpDelegate
-	 * @deprecated This module should not be used and will be removed in future versions!
-	 */
-	var ODataV4ValueHelpDelegate = Object.assign({}, ValueHelpDelegate);
-
 	ODataV4ValueHelpDelegate.getTypeMap = function (oPayload) {
 		return ODataV4TypeMap;
 	};

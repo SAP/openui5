@@ -34,6 +34,7 @@ sap.ui.define([
 					only: ["sap/ui/fl/initial/_internal/changeHandlers/ChangeHandlerRegistration"]
 				}
 			},
+
 			"initial/_internal/changeHandlers/ChangeHandlerStorage": {
 				group: "Initial Internal",
 				coverage: {
@@ -47,6 +48,7 @@ sap.ui.define([
 					}
 				}
 			},
+
 			"initial/_internal/connectors/StaticFileConnector": {
 				group: "Initial Internal",
 				coverage: {
@@ -58,6 +60,7 @@ sap.ui.define([
 					flexibilityServices: '[{"connector": "StaticFileConnector", "layers": []}]'
 				}
 			},
+
 			"initial/_internal/connectors/LrepConnector": {
 				group: "Initial Internal",
 				coverage: {
@@ -67,24 +70,28 @@ sap.ui.define([
 					]
 				}
 			},
+
 			"initial/_internal/connectors/PersonalizationConnector": {
 				group: "Initial Internal",
 				coverage: {
 					only: ["sap/ui/fl/initial/_internal/connectors/PersonalizationConnector"]
 				}
 			},
+
 			"initial/_internal/connectors/KeyUserConnector": {
 				group: "Initial Internal",
 				coverage: {
 					only: ["sap/ui/fl/initial/_internal/connectors/KeyUserConnector"]
 				}
 			},
+
 			"initial/_internal/connectors/Utils": {
 				group: "Initial Internal",
 				coverage: {
 					only: ["sap/ui/fl/initial/_internal/connectors/Utils"]
 				}
 			},
+
 			"initial/_internal/Storage": {
 				group: "Initial Internal",
 				ui5: {
@@ -98,12 +105,14 @@ sap.ui.define([
 					only: ["sap/ui/fl/initial/_internal/Storage"]
 				}
 			},
+
 			"initial/_internal/StorageUtils": {
 				group: "Initial Internal",
 				coverage: {
 					only: ["sap/ui/fl/initial/_internal/StorageUtils"]
 				}
 			},
+
 			"initial/_internal/storageResultDisassemble": {
 				group: "Initial Internal",
 				coverage: {
@@ -117,12 +126,14 @@ sap.ui.define([
 					only: ["sap/ui/fl/apply/api/FlexRuntimeInfoAPI"]
 				}
 			},
+
 			"apply/api/ControlVariantApplyAPI": {
 				group: "Apply API",
 				coverage: {
 					only: ["sap/ui/fl/apply/api/ControlVariantApplyAPI"]
 				}
 			},
+
 			"apply/api/DelegateMediatorAPI": {
 				group: "Apply API",
 				coverage: {
@@ -132,12 +143,14 @@ sap.ui.define([
 					]
 				}
 			},
+
 			"apply/api/SmartVariantManagementApplyAPI": {
 				group: "Apply API",
 				coverage: {
 					only: ["sap/ui/fl/apply/api/SmartVariantManagementApplyAPI"]
 				}
 			},
+
 			"apply/api/UI2PersonalizationApplyAPI": {
 				group: "Apply API",
 				coverage: {
@@ -151,154 +164,161 @@ sap.ui.define([
 					only: ["sap/ui/fl/apply/_internal/changes/Applier"]
 				}
 			},
+
 			"apply/_internal/changes/FlexCustomData": {
 				group: "Apply Internal",
 				coverage: {
 					only: ["sap/ui/fl/apply/_internal/changes/FlexCustomData"]
 				}
 			},
+
 			"apply/_internal/changes/Utils": {
 				group: "Apply Internal",
 				coverage: {
 					only: ["sap/ui/fl/apply/_internal/changes/Utils"]
 				}
 			},
+
 			"apply/_internal/changes/Reverter": {
 				group: "Apply Internal",
 				coverage: {
 					only: ["sap/ui/fl/apply/_internal/changes/Reverter"]
 				}
 			},
+
 			"apply/_internal/changes/descriptor/ui5/AddLibrary": {
 				group: "Apply Internal - Descriptor Change Merger",
 				coverage: {
 					only: ["sap/ui/fl/apply/_internal/changes/descriptor/ui5/AddLibrary"]
 				}
 			},
+
 			"apply/_internal/changes/descriptor/ui5/AddNewModel": {
 				group: "Apply Internal - Descriptor Change Merger",
 				coverage: {
 					only: ["sap/ui/fl/apply/_internal/changes/descriptor/ui5/AddNewModel"]
 				}
 			},
+
 			"apply/_internal/changes/descriptor/app/AddAnnotationsToOData": {
 				group: "Apply Internal - Descriptor Change Merger",
 				coverage: {
 					only: ["sap/ui/fl/apply/_internal/changes/descriptor/app/AddAnnotationsToOData"]
 				}
 			},
+
 			"apply/_internal/changes/descriptor/app/RemoveAllInboundsExceptOne": {
 				group: "Apply Internal - Descriptor Change Merger",
 				coverage: {
 					only: ["sap/ui/fl/apply/_internal/changes/descriptor/app/RemoveAllInboundsExceptOne"]
 				}
 			},
+
 			"apply/_internal/changes/descriptor/app/ChangeInbound": {
 				group: "Apply Internal - Descriptor Change Merger",
 				coverage: {
 					only: ["sap/ui/fl/apply/_internal/changes/descriptor/app/ChangeInbound", "sap/ui/fl/util/DescriptorChangeCheck", "sap/ui/fl/util/changePropertyValueByPath"]
 				}
 			},
+
 			"apply/_internal/changes/descriptor/app/AddNewInbound": {
 				group: "Apply Internal - Descriptor Change Merger",
 				coverage: {
 					only: ["sap/ui/fl/apply/_internal/changes/descriptor/app/AddNewInbound", "sap/ui/fl/util/DescriptorChangeCheck"]
 				}
 			},
+
 			"apply/_internal/changes/descriptor/ui5/SetMinUI5Version": {
 				group: "Apply Internal - Descriptor Change Merger",
 				coverage: {
 					only: ["sap/ui/fl/apply/_internal/changes/descriptor/ui5/SetMinUI5Version"]
 				}
 			},
+
 			"apply/_internal/changes/descriptor/ui5/AddNewModelEnhanceWith": {
 				group: "Apply Internal - Descriptor Change Merger",
 				coverage: {
 					only: ["sap/ui/fl/apply/_internal/changes/descriptor/ui5/AddNewModelEnhanceWith"]
 				}
 			},
+
 			"apply/_internal/changes/descriptor/ui5/AddComponentUsages": {
 				group: "Apply Internal - Descriptor Change Merger",
 				coverage: {
 					only: ["sap/ui/fl/apply/_internal/changes/descriptor/ui5/AddComponentUsages"]
 				}
 			},
+
 			"apply/_internal/changes/descriptor/app/ChangeDataSource": {
 				group: "Apply Internal - Descriptor Change Merger",
 				coverage: {
 					only: ["sap/ui/fl/apply/_internal/changes/descriptor/app/ChangeDataSource", "sap/ui/fl/util/DescriptorChangeCheck", "sap/ui/fl/util/changePropertyValueByPath"]
 				}
 			},
+
 			"apply/_internal/changes/descriptor/app/SetTitle": {
 				group: "Apply Internal - Descriptor Change Merger",
 				coverage: {
 					only: ["sap/ui/fl/apply/_internal/changes/descriptor/app/SetTitle"]
 				}
 			},
+
 			"apply/_internal/changes/descriptor/fiori/SetRegistrationIds": {
 				group: "Apply Internal - Descriptor Change Merger",
 				coverage: {
 					only: ["sap/ui/fl/apply/_internal/changes/descriptor/fiori/SetRegistrationIds"]
 				}
 			},
+
 			"apply/_internal/changes/descriptor/ui5/SetFlexExtensionPointEnabled": {
 				group: "Apply Internal - Descriptor Change Merger",
 				coverage: {
 					only: ["sap/ui/fl/apply/_internal/changes/descriptor/ui5/SetFlexExtensionPointEnabled"]
 				}
 			},
+
 			"apply/_internal/changes/descriptor/fiori/SetAbstract": {
 				group: "Apply Internal - Descriptor Change Merger",
 				coverage: {
 					only: ["sap/ui/fl/apply/_internal/changes/descriptor/fiori/SetAbstract"]
 				}
 			},
+
 			"apply/_internal/changes/descriptor/Preprocessor": {
 				group: "Apply Internal - Descriptor Change Merger",
 				coverage: {
 					only: ["sap/ui/fl/apply/_internal/changes/descriptor/Preprocessor"]
 				}
 			},
+
 			"apply/_internal/changes/descriptor/Applier": {
 				group: "Apply Internal - Descriptor Change Merger",
 				coverage: {
 					only: ["sap/ui/fl/apply/_internal/changes/descriptor/Applier"]
 				}
 			},
+
 			"apply/_internal/changes/descriptor/ApplyStrategyFactory": {
 				group: "Apply Internal - Descriptor Change Merger",
 				coverage: {
 					only: ["sap/ui/fl/apply/_internal/changes/descriptor/ApplyStrategyFactory"]
 				}
 			},
+
 			"apply/_internal/changes/descriptor/ApplyUtil": {
 				group: "Apply Internal - Descriptor Change Merger",
 				coverage: {
 					only: ["sap/ui/fl/apply/_internal/changes/descriptor/ApplyUtil"]
 				}
 			},
+
 			"util/DescriptorChangeCheck": {
 				group: "Util - DescriptorChangeCheck",
 				coverage: {
 					only: ["sap/ui/fl/util/DescriptorChangeCheck"]
 				}
 			},
-			/**
-			 * @deprecated Since 1.84
-			 */
-			"apply/_internal/connectors/ObjectStorageConnector": {
-				group: "Apply Internal",
-				coverage: {
-					only: [
-						"sap/ui/fl/apply/_internal/connectors/ObjectStorageConnector",
-						"sap/ui/fl/write/_internal/connectors/LocalStorageConnector",
-						"sap/ui/fl/write/_internal/connectors/SessionStorageConnector"
-					]
-				},
-				ui5: {
-					flexibilityServices: '[{"connector": "ObjectStorageConnector", "layers": []}]'
-				}
-			},
+
 			"apply/_internal/connectors/ObjectStorageUtils": {
 				group: "Apply Internal",
 				coverage: {
@@ -312,6 +332,7 @@ sap.ui.define([
 					only: ["sap/ui/fl/apply/_internal/controlVariants/URLHandler"]
 				}
 			},
+
 			"apply/_internal/controlVariants/Utils": {
 				group: "Apply Internal",
 				coverage: {
@@ -325,6 +346,7 @@ sap.ui.define([
 					only: ["sap/ui/fl/apply/_internal/flexObjects/AppDescriptorChange"]
 				}
 			},
+
 			"apply/_internal/flexObjects/CompVariant": {
 				group: "Apply Internal",
 				coverage: {
@@ -336,36 +358,42 @@ sap.ui.define([
 					}
 				}
 			},
+
 			"apply/_internal/flexObjects/ControllerExtensionChange": {
 				group: "Apply Internal",
 				coverage: {
 					only: ["sap/ui/fl/apply/_internal/flexObjects/ControllerExtensionChange"]
 				}
 			},
+
 			"apply/_internal/flexObjects/FlexObject": {
 				group: "Apply Internal",
 				coverage: {
 					only: ["sap/ui/fl/apply/_internal/flexObjects/FlexObject.js"]
 				}
 			},
+
 			"apply/_internal/flexObjects/FlexObjectFactory": {
 				group: "Apply Internal",
 				coverage: {
 					only: ["sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory"]
 				}
 			},
+
 			"apply/_internal/flexObjects/FlVariant": {
 				group: "Apply Internal",
 				coverage: {
 					only: ["sap/ui/fl/apply/_internal/flexObjects/FlVariant"]
 				}
 			},
+
 			"apply/_internal/flexObjects/UIChange": {
 				group: "Apply Internal",
 				coverage: {
 					only: ["sap/ui/fl/apply/_internal/flexObjects/UIChange"]
 				}
 			},
+
 			"apply/_internal/flexObjects/Variant": {
 				group: "Apply Internal",
 				coverage: {
@@ -384,12 +412,14 @@ sap.ui.define([
 					only: ["sap/ui/fl/apply/_internal/flexState/changes/DependencyHandler"]
 				}
 			},
+
 			"apply/_internal/flexState/changes/ExtensionPointState": {
 				group: "Apply Internal",
 				coverage: {
 					only: ["sap/ui/fl/apply/_internal/flexState/changes/ExtensionPointState"]
 				}
 			},
+
 			"apply/_internal/flexState/controlVariants/VariantManagementState": {
 				group: "Apply Internal",
 				coverage: {
@@ -404,60 +434,70 @@ sap.ui.define([
 					}
 				}
 			},
+
 			"apply/_internal/flexState/controlVariants/Switcher": {
 				group: "Apply Internal",
 				coverage: {
 					only: ["sap/ui/fl/apply/_internal/flexState/controlVariants/Switcher"]
 				}
 			},
+
 			"apply/_internal/flexState/UI2Personalization/UI2PersonalizationState": {
 				group: "Apply Internal",
 				coverage: {
 					only: ["sap/ui/fl/apply/_internal/flexState/UI2Personalization/UI2PersonalizationState"]
 				}
 			},
+
 			"apply/_internal/flexState/FlexState": {
 				group: "Apply Internal",
 				coverage: {
 					only: ["sap/ui/fl/apply/_internal/flexState/FlexState"]
 				}
 			},
+
 			"apply/_internal/flexState/DataSelector": {
 				group: "Apply Internal",
 				coverage: {
 					only: ["sap/ui/fl/apply/_internal/flexState/DataSelector"]
 				}
 			},
+
 			"apply/_internal/flexState/Loader": {
 				group: "Apply Internal",
 				coverage: {
 					only: ["sap/ui/fl/apply/_internal/flexState/Loader"]
 				}
 			},
+
 			"apply/_internal/flexState/ManifestUtils": {
 				group: "Apply Internal",
 				coverage: {
 					only: ["sap/ui/fl/apply/_internal/flexState/ManifestUtils"]
 				}
 			},
+
 			"apply/_internal/flexState/appDescriptorChanges/prepareAppDescriptorMap": {
 				group: "Apply Internal",
 				coverage: {
 					only: ["sap/ui/fl/apply/_internal/flexState/appDescriptorChanges/prepareAppDescriptorMap"]
 				}
 			},
+
 			"apply/_internal/flexState/compVariants/prepareCompVariantsMap": {
 				group: "Apply Internal",
 				coverage: {
 					only: ["sap/ui/fl/apply/_internal/flexState/compVariants/prepareCompVariantsMap"]
 				}
 			},
+
 			"apply/_internal/flexState/compVariants/Utils": {
 				group: "Apply Internal",
 				coverage: {
 					only: ["sap/ui/fl/apply/_internal/flexState/compVariants/Utils"]
 				}
 			},
+
 			"apply/_internal/preprocessors/ControllerExtension": {
 				group: "Apply Internal",
 				coverage: {
@@ -469,6 +509,7 @@ sap.ui.define([
 					}
 				}
 			},
+
 			"apply/_internal/preprocessors/ComponentLifecycleHooks": {
 				group: "Apply Internal",
 				coverage: {
@@ -480,12 +521,14 @@ sap.ui.define([
 					}
 				}
 			},
+
 			"apply/_internal/preprocessors/EventHistory": {
 				group: "Apply Internal",
 				coverage: {
 					only: ["sap/ui/fl/apply/_internal/preprocessors/EventHistory"]
 				}
 			},
+
 			"apply/_internal/preprocessors/RegistrationDelegator": {
 				group: "Apply Internal",
 				coverage: {
@@ -495,12 +538,14 @@ sap.ui.define([
 					libs: null // The fl library is being loaded inside the test
 				}
 			},
+
 			"apply/_internal/preprocessors/XmlPreprocessor": {
 				group: "Apply Internal",
 				coverage: {
 					only: ["sap/ui/fl/apply/_internal/preprocessors/XmlPreprocessor"]
 				}
 			},
+
 			"apply/_internal/extensionPoint/Processor": {
 				group: "Apply Internal",
 				coverage: {
@@ -514,46 +559,35 @@ sap.ui.define([
 					"xx-designMode": true
 				}
 			},
-			/**
-			 * @deprecated Since 1.77
-			 */
-			"apply/_internal/extensionPoint/ProcessorLegacy": {
-				group: "Apply Internal",
-				coverage: {
-					only: ["sap/ui/fl/apply/_internal/extensionPoint/ProcessorLegacy"]
-				},
-				ui5: {
-					resourceroots: {
-						"sap/ui/fl/qunit/extensionPoint": "test-resources/sap/ui/fl/qunit/apply/_internal/extensionPoint"
-					},
-					"xx-suppressDeactivationOfControllerCode": true,
-					"xx-designMode": true
-				}
-			},
+
 			"write/api/AppVariantWriteAPI": {
 				group: "Write API",
 				coverage: {
 					only: ["sap/ui/fl/write/api/AppVariantWriteAPI"]
 				}
 			},
+
 			"write/api/ChangesWriteAPI": {
 				group: "Write API",
 				coverage: {
 					only: ["sap/ui/fl/write/api/ChangesWriteAPI"]
 				}
 			},
+
 			"write/api/ContextBasedAdaptationsAPI": {
 				group: "Write API",
 				coverage: {
 					only: ["sap/ui/fl/write/api/ContextBasedAdaptationsAPI"]
 				}
 			},
+
 			"write/api/ContextSharingAPI": {
 				group: "Write API",
 				coverage: {
 					only: ["sap/ui/fl/write/api/ContextSharingAPI"]
 				}
 			},
+
 			"write/api/ControlPersonalizationWriteAPI": {
 				group: "Write API",
 				coverage: {
@@ -563,84 +597,98 @@ sap.ui.define([
 					flexibilityServices: '[{"connector": "SessionStorageConnector"}]'
 				}
 			},
+
 			"write/api/ExtensionPointRegistryAPI": {
 				group: "Write API",
 				coverage: {
 					only: ["sap/ui/fl/write/api/ExtensionPointRegistryAPI"]
 				}
 			},
+
 			"write/api/FeaturesAPI": {
 				group: "Write API",
 				coverage: {
 					only: ["sap/ui/fl/write/api/FeaturesAPI"]
 				}
 			},
+
 			"write/api/FieldExtensibility": {
 				group: "Write API",
 				coverage: {
 					only: ["sap/ui/fl/write/api/FieldExtensibility"]
 				}
 			},
+
 			"write/api/PersistenceWriteAPI": {
 				group: "Write API",
 				coverage: {
 					only: ["sap/ui/fl/write/api/PersistenceWriteAPI"]
 				}
 			},
+
 			"write/api/ReloadInfoAPI": {
 				group: "Write API",
 				coverage: {
 					only: ["sap/ui/fl/write/api/ReloadInfoAPI"]
 				}
 			},
+
 			"write/api/TranslationAPI": {
 				group: "Write API",
 				coverage: {
 					only: ["sap/ui/fl/write/api/TranslationAPI"]
 				}
 			},
+
 			"write/api/SmartBusinessWriteAPI": {
 				group: "Write API",
 				coverage: {
 					only: ["sap/ui/fl/write/api/SmartBusinessWriteAPI"]
 				}
 			},
+
 			"write/api/SmartVariantManagementWriteAPI": {
 				group: "Write API",
 				coverage: {
 					only: ["sap/ui/fl/write/api/SmartVariantManagementWriteAPI"]
 				}
 			},
+
 			"write/api/UI2PersonalizationWriteAPI": {
 				group: "Write API",
 				coverage: {
 					only: ["sap/ui/fl/write/api/UI2PersonalizationWriteAPI"]
 				}
 			},
+
 			"write/api/VersionsAPI": {
 				group: "Write API",
 				coverage: {
 					only: ["sap/ui/fl/write/api/VersionsAPI"]
 				}
 			},
+
 			"write/api/LocalResetAPI": {
 				group: "Write API",
 				coverage: {
 					only: ["sap/ui/fl/write/api/LocalResetAPI"]
 				}
 			},
+
 			"write/_internal/Storage": {
 				group: "Write Internal",
 				coverage: {
 					only: ["sap/ui/fl/write/_internal/Storage"]
 				}
 			},
+
 			"write/_internal/Versions": {
 				group: "Write Internal",
 				coverage: {
 					only: ["sap/ui/fl/write/_internal/Versions"]
 				}
 			},
+
 			"write/_internal/flexState/FlexObjectState": {
 				group: "Write Internal",
 				coverage: {
@@ -650,12 +698,14 @@ sap.ui.define([
 					flexibilityServices: '[{"connector": "SessionStorageConnector"}]'
 				}
 			},
+
 			"write/_internal/flexState/compVariants/CompVariantState": {
 				group: "Write Internal",
 				coverage: {
 					only: ["sap/ui/fl/write/_internal/flexState/compVariants/CompVariantState"]
 				}
 			},
+
 			"write/_internal/connectors/ObjectPathConnector": {
 				group: "Write Internal",
 				coverage: {
@@ -667,24 +717,28 @@ sap.ui.define([
 					flexibilityServices: '[{"connector": "ObjectStorageConnector", "layers": []}]'
 				}
 			},
+
 			"write/_internal/connectors/Utils": {
 				group: "Write Internal",
 				coverage: {
 					only: ["sap/ui/fl/write/_internal/connectors/Utils"]
 				}
 			},
+
 			"write/_internal/connectors/PersonalizationConnector": {
 				group: "Write Internal",
 				coverage: {
 					only: ["sap/ui/fl/write/_internal/connectors/PersonalizationConnector"]
 				}
 			},
+
 			"write/_internal/StorageFeaturesMerger": {
 				group: "Write Internal",
 				coverage: {
 					only: ["sap/ui/fl/write/_internal/StorageFeaturesMerger"]
 				}
 			},
+
 			"write/_internal/connectors/JsObjectConnector": {
 				group: "Write Internal",
 				coverage: {
@@ -696,6 +750,7 @@ sap.ui.define([
 					flexibilityServices: '[{"connector": "JsObjectConnector", "layers": []}]'
 				}
 			},
+
 			"write/_internal/connectors/LrepConnector": {
 				group: "Write Internal",
 				coverage: {
@@ -706,24 +761,28 @@ sap.ui.define([
 					]
 				}
 			},
+
 			"write/_internal/connectors/KeyUserConnector": {
 				group: "Write Internal",
 				coverage: {
 					only: ["sap/ui/fl/write/_internal/connectors/KeyUserConnector"]
 				}
 			},
+
 			"write/_internal/connectors/NeoLrepConnector": {
 				group: "Write Internal",
 				coverage: {
 					only: ["sap/ui/fl/write/_internal/connectors/NeoLrepConnector"]
 				}
 			},
+
 			"write/_internal/delegates/ODataV4ReadDelegate": {
 				group: "Write Internal",
 				coverage: {
 					only: ["sap/ui/fl/write/_internal/delegates/ODataV4ReadDelegate"]
 				}
 			},
+
 			"write/_internal/extensionPoint/Registry": {
 				group: "Write Internal",
 				coverage: {
@@ -736,6 +795,7 @@ sap.ui.define([
 					}
 				}
 			},
+
 			"write/_internal/extensionPoint/Processor": {
 				group: "Write Internal",
 				coverage: {
@@ -749,78 +809,56 @@ sap.ui.define([
 					"xx-designMode": true
 				}
 			},
-			/**
-			 * @deprecated Since 1.77
-			 */
-			"write/_internal/extensionPoint/ProcessorLegacy": {
-				group: "Write Internal",
-				coverage: {
-					only: ["sap/ui/fl/write/_internal/extensionPoint/ProcessorLegacy"]
-				},
-				ui5: {
-					resourceroots: {
-						"sap/ui/fl/qunit/extensionPoint": "test-resources/sap/ui/fl/qunit/apply/_internal/extensionPoint"
-					},
-					"xx-suppressDeactivationOfControllerCode": true,
-					"xx-designMode": true
-				}
-			},
+
 			"write/_internal/fieldExtensibility/ABAPExtensibilityVariantFactory": {
 				group: "Write Internal",
 				coverage: {
 					only: ["sap/ui/fl/write/_internal/fieldExtensibility/ABAPExtensibilityVariantFactory"]
 				}
 			},
+
 			"write/_internal/fieldExtensibility/SingleTenantABAPExtensibilityVariant": {
 				group: "Write Internal",
 				coverage: {
 					only: ["sap/ui/fl/write/_internal/fieldExtensibility/SingleTenantABAPExtensibilityVariant"]
 				}
 			},
+
 			"write/_internal/fieldExtensibility/MultiTenantABAPExtensibilityVariant": {
 				group: "Write Internal",
 				coverage: {
 					only: ["sap/ui/fl/write/_internal/fieldExtensibility/MultiTenantABAPExtensibilityVariant"]
 				}
 			},
+
 			"write/_internal/fieldExtensibility/UriParser": {
 				group: "Write Internal",
 				coverage: {
 					only: ["sap/ui/fl/write/_internal/fieldExtensibility/UriParser"]
 				}
 			},
+
 			"write/_internal/fieldExtensibility/Utils": {
 				group: "Write Internal",
 				coverage: {
 					only: ["sap/ui/fl/write/_internal/fieldExtensibility/Utils"]
 				}
 			},
+
 			"write/_internal/fieldExtensibility/ServiceValidation": {
 				group: "Write Internal",
 				coverage: {
 					only: ["sap/ui/fl/write/_internal/fieldExtensibility/ServiceValidation"]
 				}
 			},
+
 			"write/_internal/fieldExtensibility/cap/dialog/CustomFieldCAPDialog": {
 				group: "Write Internal",
 				coverage: {
 					only: ["sap/ui/fl/write/_internal/fieldExtensibility/cap/dialog/CustomFieldCAPDialog"]
 				}
 			},
-			// Team Gravity tests
-			/**
-			* @deprecated Since version 1.73
-			*/
-			"descriptorRelated/api/Api": {
-				group: "Descriptor related APIs",
-				coverage: {
-					only: [
-						"sap/ui/fl/descriptorRelated/api/DescriptorChangeFactory",
-						"sap/ui/fl/descriptorRelated/api/DescriptorVariantFactory",
-						"sap/ui/fl/descriptorRelated/api/DescriptorInlineChangeFactory"
-					]
-				}
-			},
+
 			"write/_internal/appVariant/AppVariantFactory": {
 				group: "Internal app variant related APIs",
 				coverage: {
@@ -830,6 +868,7 @@ sap.ui.define([
 					]
 				}
 			},
+
 			"write/_internal/appVariant/AppVariantInlineChangeFactory": {
 				group: "Internal app variant inline change related APIs",
 				coverage: {
@@ -840,28 +879,14 @@ sap.ui.define([
 					]
 				}
 			},
+
 			"write/api/connectors/FileListBaseConnector": {
 				group: "Write API conntectors",
 				coverage: {
 					only: ["sap/ui/fl/write/api/connectors/FileListBaseConnector"]
 				}
 			},
-			/**
-			 * @deprecated Since 1.84
-			 */
-			"write/api/connectors/ObjectStorageConnector": {
-				group: "Write API conntectors",
-				coverage: {
-					only: [
-						"sap/ui/fl/write/api/connectors/ObjectStorageConnector",
-						"sap/ui/fl/write/_internal/connectors/LocalStorageConnector",
-						"sap/ui/fl/write/_internal/connectors/SessionStorageConnector"
-					]
-				},
-				ui5: {
-					flexibilityServices: '[{"connector": "ObjectStorageConnector", "layers": []}]'
-				}
-			},
+
 			"descriptorRelated/internal/Utils": {
 				group: "Descriptor related Utils",
 				coverage: {
@@ -880,11 +905,13 @@ sap.ui.define([
 					}
 				}
 			},
+
 			ChangePersistenceFactory: {
 				coverage: {
 					only: ["sap/ui/fl/ChangePersistenceFactory"]
 				}
 			},
+
 			FlexController: {
 				coverage: {
 					only: ["sap/ui/fl/FlexController"]
@@ -895,22 +922,26 @@ sap.ui.define([
 					}
 				}
 			},
+
 			FlexControllerFactory: {
 				coverage: {
 					only: ["sap/ui/fl/FlexControllerFactory"]
 				}
 			},
+
 			"util/ManagedObjectModel": {
 				coverage: {
 					only: ["sap/ui/fl/util/ManagedObjectModel"]
 				}
 			},
+
 			"util/IFrame": {
 				group: "IFrame control",
 				coverage: {
 					only: ["sap/ui/fl/util/IFrame"]
 				}
 			},
+
 			"util/resolveBinding": {
 				coverage: {
 					only: ["sap/ui/fl/util/resolveBinding"]
@@ -929,6 +960,7 @@ sap.ui.define([
 					}
 				}
 			},
+
 			"changeHandler/AddXML": {
 				group: "ChangeHandler",
 				coverage: {
@@ -940,6 +972,7 @@ sap.ui.define([
 					}
 				}
 			},
+
 			"changeHandler/AddXMLAtExtensionPoint": {
 				group: "ChangeHandler",
 				coverage: {
@@ -951,6 +984,7 @@ sap.ui.define([
 					}
 				}
 			},
+
 			"changeHandler/BaseAddViaDelegate": {
 				group: "ChangeHandler",
 				coverage: {
@@ -962,6 +996,7 @@ sap.ui.define([
 					}
 				}
 			},
+
 			"changeHandler/BaseAddXml": {
 				group: "ChangeHandler",
 				coverage: {
@@ -973,12 +1008,14 @@ sap.ui.define([
 					}
 				}
 			},
+
 			"changeHandler/Base": {
 				group: "ChangeHandler",
 				coverage: {
 					only: ["sap/ui/fl/changeHandler/Base"]
 				}
 			},
+
 			"changeHandler/BaseRename": {
 				group: "ChangeHandler",
 				coverage: {
@@ -990,12 +1027,14 @@ sap.ui.define([
 					}
 				}
 			},
+
 			"changeHandler/HideControl": {
 				group: "ChangeHandler",
 				coverage: {
 					only: ["sap/ui/fl/changeHandler/HideControl"]
 				}
 			},
+
 			"changeHandler/MoveControls": {
 				group: "ChangeHandler",
 				coverage: {
@@ -1007,6 +1046,7 @@ sap.ui.define([
 					}
 				}
 			},
+
 			"changeHandler/MoveElements": {
 				group: "ChangeHandler",
 				coverage: {
@@ -1018,6 +1058,7 @@ sap.ui.define([
 					}
 				}
 			},
+
 			"changeHandler/PropertyBindingChange": {
 				group: "ChangeHandler",
 				coverage: {
@@ -1028,30 +1069,35 @@ sap.ui.define([
 					"xx-designMode": "true"
 				}
 			},
+
 			"changeHandler/PropertyChange": {
 				group: "ChangeHandler",
 				coverage: {
 					only: ["sap/ui/fl/changeHandler/PropertyChange"]
 				}
 			},
+
 			"changeHandler/StashControl": {
 				group: "ChangeHandler",
 				coverage: {
 					only: ["sap/ui/fl/changeHandler/StashControl"]
 				}
 			},
+
 			"changeHandler/UnhideControl": {
 				group: "ChangeHandler",
 				coverage: {
 					only: ["sap/ui/fl/changeHandler/UnhideControl"]
 				}
 			},
+
 			"changeHandler/UnstashControl": {
 				group: "ChangeHandler",
 				coverage: {
 					only: ["sap/ui/fl/changeHandler/UnstashControl"]
 				}
 			},
+
 			"changeHandler/UpdateIFrame": {
 				group: "ChangeHandler",
 				coverage: {
@@ -1078,6 +1124,7 @@ sap.ui.define([
 					only: ["sap/ui/fl/variants/VariantManagement"]
 				}
 			},
+
 			"variants/VariantModel": {
 				group: "Variants",
 				ui5: {
@@ -1090,18 +1137,21 @@ sap.ui.define([
 					only: ["sap/ui/fl/variants/VariantModel"]
 				}
 			},
+
 			"variants/context/ContextVisibility.controller": {
 				group: "Variants",
 				coverage: {
 					only: ["sap/ui/fl/variants/context/controller/"]
 				}
 			},
+
 			"variants/context/ContextVisibilityIntegration": {
 				group: "Variants",
 				coverage: {
 					only: ["sap/ui/fl/variants/context/"]
 				}
 			},
+
 			"variants/context/ContextVisibilityComponent": {
 				group: "Variants",
 				coverage: {
@@ -1118,6 +1168,7 @@ sap.ui.define([
 					libs: null // The fl library is being loaded inside the test
 				}
 			},
+
 			libraryInTrial1: {
 				coverage: {
 					only: ["sap/ui/fl/library"]
@@ -1126,6 +1177,7 @@ sap.ui.define([
 					libs: null // The fl library is being loaded inside the test
 				}
 			},
+
 			libraryInTrial2: {
 				coverage: {
 					only: ["sap/ui/fl/library"]
@@ -1134,6 +1186,7 @@ sap.ui.define([
 					libs: null // The fl library is being loaded inside the test
 				}
 			},
+
 			libraryInTrial3: {
 				coverage: {
 					only: ["sap/ui/fl/library"]
@@ -1142,19 +1195,13 @@ sap.ui.define([
 					libs: null // The fl library is being loaded inside the test
 				}
 			},
-			/**
-			 * @deprecated Since 1.70
-			 */
-			FakeLrepConnector: {
-				coverage: {
-					only: ["sap/ui/fl/FakeLrepConnector"]
-				}
-			},
+
 			Utils: {
 				coverage: {
 					only: ["sap/ui/fl/Utils"]
 				}
 			},
+
 			LayerUtils: {
 				coverage: {
 					only: ["sap/ui/fl/LayerUtils"]
@@ -1170,6 +1217,7 @@ sap.ui.define([
 					}
 				}
 			},
+
 			// Support
 			"support/apps/contentbrowser/controller/ContentDetails.controller": {
 				group: "Support",
@@ -1177,36 +1225,42 @@ sap.ui.define([
 					only: ["sap/ui/fl/support"]
 				}
 			},
+
 			"support/apps/contentbrowser/controller/ContentDetailsEdit.controller": {
 				group: "Support",
 				coverage: {
 					only: ["sap/ui/fl/support"]
 				}
 			},
+
 			"support/apps/contentbrowser/controller/LayerContentMaster.controller": {
 				group: "Support",
 				coverage: {
 					only: ["sap/ui/fl/support"]
 				}
 			},
+
 			"support/apps/contentbrowser/controller/Layers.controller": {
 				group: "Support",
 				coverage: {
 					only: ["sap/ui/fl/support"]
 				}
 			},
+
 			"support/apps/contentbrowser/lrepConnector/LRepConnector": {
 				group: "Support",
 				coverage: {
 					only: ["sap/ui/fl/support"]
 				}
 			},
+
 			"support/apps/contentbrowser/utils/DataUtils": {
 				group: "Support",
 				coverage: {
 					only: ["sap/ui/fl/support"]
 				}
 			},
+
 			"support/apps/contentbrowser/utils/ErrorUtils": {
 				group: "Support",
 				coverage: {
@@ -1221,21 +1275,25 @@ sap.ui.define([
 					only: ["sap/ui/fl/write/_internal/transport/TransportDialog"]
 				}
 			},
+
 			"write/_internal/transport/TransportSelection": {
 				group: "Transport",
 				coverage: {
 					only: ["sap/ui/fl/write/_internal/transport/TransportSelection"]
 				}
 			},
+
 			"write/_internal/transport/Transports": {
 				group: "Transport",
 				coverage: {
 					only: ["sap/ui/fl/write/_internal/transport/Transports"]
 				}
 			},
+
 			"designtime/Library": {
 				group: "DesignTime"
 			},
+
 			"integration/async/ComponentWithView": {
 				group: "Integration/async",
 				ui5: {
@@ -1244,6 +1302,7 @@ sap.ui.define([
 					}
 				}
 			},
+
 			"integration/FlexInReuseComponents": {
 				group: "Integration",
 				ui5: {
@@ -1252,12 +1311,14 @@ sap.ui.define([
 					}
 				}
 			},
+
 			"registry/Settings": {
 				group: "Registry",
 				coverage: {
 					only: ["sap/ui/fl/registry/Settings"]
 				}
 			},
+
 			// OVP key user test scenarios
 			"apply/_internal/changes/descriptor/ovp/ChangeCard": {
 				group: "Apply Internal - OVP Change card",
@@ -1265,18 +1326,21 @@ sap.ui.define([
 					only: ["sap/ui/fl/apply/_internal/changes/descriptor/ovp/ChangeCard"]
 				}
 			},
+
 			"apply/_internal/changes/descriptor/ovp/AddNewCard": {
 				group: "Apply Internal - OVP Add new card",
 				coverage: {
 					only: ["sap/ui/fl/apply/_internal/changes/descriptor/ovp/AddNewCard"]
 				}
 			},
+
 			"apply/_internal/changes/descriptor/ovp/DeleteCard": {
 				group: "Apply Internal - OVP Delete card",
 				coverage: {
 					only: ["sap/ui/fl/apply/_internal/changes/descriptor/ovp/DeleteCard"]
 				}
 			},
+
 			"Generic Testsuite": {
 				page: "test-resources/sap/ui/fl/qunit/testsuite.generic.qunit.html"
 			}

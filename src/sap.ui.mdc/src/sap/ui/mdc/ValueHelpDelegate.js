@@ -138,24 +138,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Changes the search string.
-	 *
-	 * If <code>$search</code> is used, depending on which back-end service is used, the search string might need to be escaped.
-	 *
-	 * @param {sap.ui.mdc.ValueHelp} oValueHelp The <code>ValueHelp</code> control instance
-	 * @param {boolean} bTypeahead <code>true</code> if the search is called for a type-ahead
-	 * @param {string} sSearch Search string
-	 * @returns {string} Search string to use
-	 * @since 1.97.0
-	 * @private
-	 * @ui5-restricted sap.fe
- 	 * @deprecated (since 1.110.0) - replaced by {@link sap.ui.mdc.ValueHelpDelegate.updateBinding}
-	 */
-	 ValueHelpDelegate.adjustSearch = function(oValueHelp, bTypeahead, sSearch) {
-		return sSearch;
-	};
-
-	/**
 	 * Executes a filter in a <code>ListBinding</code>.
 	 *
 	 * @param {sap.ui.mdc.ValueHelp} oValueHelp The <code>ValueHelp</code> control instance
@@ -203,48 +185,6 @@ sap.ui.define([
 	ValueHelpDelegate.onConditionPropagation = function (oValueHelp, sReason, oConfig) {
 
 	};
-
-	/**
-	 * Provides an initial condition configuration every time value help content is shown.
-	 *
-	 * <b>Note:</b> Make sure to provide the type information of the corresponding properties of
-	 * the <code>FilterBar</code>.
-	 *
-	 * <b>Note:</b> Be aware that setting the condition for the search field or type-ahead could
-	 * lead to unwanted side effects.
-	 *
-	 * @param {sap.ui.mdc.ValueHelp} oValueHelp The <code>ValueHelp</code> control instance
- 	 * @param {sap.ui.mdc.valuehelp.base.FilterableListContent} oContent <code>ValueHelp</code> content requesting conditions configuration
-	 * @param {sap.ui.core.Control} oControl Instance of the calling control
-	 * @returns {Promise<object>|object} Returns a map of conditions suitable for a {@link sap.ui.mdc.FilterBar FilterBar} control
-	 * @private
-	 * @ui5-restricted sap.fe
-	 * @since 1.101.0
-	 * @deprecated (since 1.106.0) - replaced by {@link sap.ui.mdc.ValueHelpDelegate.getFilterConditions}
-	 */
-	ValueHelpDelegate.getInitialFilterConditions = function (oValueHelp, oContent, oControl) {
-
-		var oConditions = {};
-		return oConditions;
-
-	};
-
-	/**
-	 * Provides the possibility to customize selections in 'Select from list' scenarios.
-	 * By default, only condition keys are taken into consideration. This might be extended with payload dependent filters.
-	 *
-	 * @param {sap.ui.mdc.ValueHelp} oValueHelp The <code>ValueHelp</code> control instance
- 	 * @param {sap.ui.mdc.valuehelp.base.FilterableListContent} oContent <code>ValueHelp</code> content instance
-	 * @param {object} oItem - Entry of a given list
- 	 * @param {method} oItem.getBindingContext - Get the binding context of this object for the given model name.
-	 * @param {sap.ui.mdc.condition.ConditionObject[]} aConditions current conditions
-	 * @returns {boolean} <code>true</code> if item is selected
-	 * @public
-	 * @since 1.101.0
-  	 * @deprecated (since 1.118.0) - replaced by {@link sap.ui.mdc.ValueHelpDelegate.findConditionsForContext}
-	 * @name sap.ui.mdc.ValueHelpDelegate#isFilterableListItemSelected
-	 * @function
-	 */
 
 	/**
 	 * Find all conditions, which are represented by the given context for 'Select from list' scenarios.

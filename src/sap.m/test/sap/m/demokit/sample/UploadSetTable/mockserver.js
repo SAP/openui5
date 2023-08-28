@@ -1,10 +1,9 @@
 sap.ui.define([
 	"sap/ui/base/ManagedObject",
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon",
 	"require",
 	"sap/base/util/UriParameters"
-], function (ManagedObject, jQuery, sinon, require, UriParameters) {
+], function(ManagedObject, sinon, require, UriParameters) {
 	"use strict";
 
 	// mockserver to intercept the XMLHTTP requests and respond with custom data

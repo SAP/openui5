@@ -304,7 +304,7 @@ sap.ui.define([
 		if (!oRootNode) {
 			return null;
 		}
-		var oNode = this.isLegacySyntax() ? [oRootNode] : [];
+		var oNode = [];
 		if (oContext instanceof Context) {
 			oNode = this._getObject(oContext.getPath());
 		} else if (oContext) {
@@ -462,7 +462,7 @@ sap.ui.define([
 			if (oContext) {
 				sResolvedPath = oContext.getPath() + "/" + sPath;
 			} else {
-				sResolvedPath = this.isLegacySyntax() ? "/" + sPath : undefined;
+				sResolvedPath = undefined;
 			}
 		}
 		return sResolvedPath;

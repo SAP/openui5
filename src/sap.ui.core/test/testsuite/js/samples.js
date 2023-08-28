@@ -385,7 +385,7 @@ sap.ui.define([
 				var match = /^test-resources\/(.*)\/qunit\/(.*)$/.exec(oTestConfig.module);
 				if ( match ) {
 					var libPrefix = findLibPrefix(match[1]);
-					var name = oTestConfig.module.slice("test-resources\/".length + libPrefix.length + 1) + ".js";
+					var name = oTestConfig.module.slice(15 + libPrefix.length + 1) + ".js";
 					return {
 						lib: libPrefix.replace(/\//g, "."),
 						name: name,

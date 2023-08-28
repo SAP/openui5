@@ -1,8 +1,6 @@
 /*global QUnit */
 
 sap.ui.define("sap.m.qunit.UploadCollectionToolbar", [
-	"sap/m/UploadCollection",
-	"sap/m/UploadCollectionToolbarPlaceholder",
 	"sap/m/Title",
 	"sap/m/ToolbarSpacer",
 	"sap/ui/unified/FileUploader",
@@ -11,13 +9,12 @@ sap.ui.define("sap.m.qunit.UploadCollectionToolbar", [
 	"sap/m/ToggleButton",
 	"sap/base/Log",
 	"sap/ui/core/Core"
-], function (UploadCollection, UploadCollectionToolbarPlaceholder, Title, ToolbarSpacer, FileUploader, Button,
-			 OverflowToolbar, ToggleButton, Log, oCore) {
+], function(Title, ToolbarSpacer, FileUploader, Button, OverflowToolbar, ToggleButton, Log, oCore) {
 	"use strict";
 
 	QUnit.module("Toolbar Default", {
 		beforeEach: function () {
-			this.oUploadCollection = new UploadCollection("noToolbarTest", {});
+			this.oUploadCollection = new undefined/*UploadCollection*/("noToolbarTest", {});
 			this.oUploadCollection.placeAt("qunit-fixture");
 			oCore.applyChanges();
 		},
@@ -49,7 +46,7 @@ sap.ui.define("sap.m.qunit.UploadCollectionToolbar", [
 		var oInfoLogStub = this.stub(Log, "info");
 
 		//Act
-		this.oUploadCollection = new UploadCollection("noPHToolbarTest", {
+		this.oUploadCollection = new undefined/*UploadCollection*/("noPHToolbarTest", {
 			toolbar: new OverflowToolbar({
 				content: [new Button({text: "Filter"}),
 					new ToolbarSpacer(),
@@ -78,11 +75,11 @@ sap.ui.define("sap.m.qunit.UploadCollectionToolbar", [
 
 	QUnit.module("Toolbar Custom", {
 		beforeEach: function () {
-			this.oUploadCollection = new UploadCollection("PHToolbarTest", {
+			this.oUploadCollection = new undefined/*UploadCollection*/("PHToolbarTest", {
 				toolbar: new OverflowToolbar({
 					content: [new Button("element1", {text: "Filter"}),
 						new ToolbarSpacer("element2"),
-						new UploadCollectionToolbarPlaceholder("element3"),
+						new undefined/*UploadCollectionToolbarPlaceholder*/("element3"),
 						new Button("element4", {icon: "sap-icon://money-bills"}),
 						new Button("element5", {text: "New"}),
 						new ToggleButton("element6", {text: "Toggle"}),
@@ -105,7 +102,7 @@ sap.ui.define("sap.m.qunit.UploadCollectionToolbar", [
 		assert.ok(aToolbarElements[0] instanceof Button, "First element is a sap.m.Title");
 		assert.ok(aToolbarElements[1] instanceof ToolbarSpacer, "Second element is a sap.m.ToolbarSpacer");
 		assert.ok(aToolbarElements[2] instanceof FileUploader, "Third element is a sap.ui.unified.FileUploader");
-		assert.ok(aToolbarElements[3] instanceof UploadCollectionToolbarPlaceholder, "Fourth element is an instance of sap.m.UploadCollectionToolbarPlaceholder");
+		assert.ok(aToolbarElements[3] instanceof undefined/*UploadCollectionToolbarPlaceholder*/, "Fourth element is an instance of sap.m.UploadCollectionToolbarPlaceholder");
 		assert.ok(aToolbarElements[4] instanceof Button, "Fifth element is an instance of sap.m.Button");
 		assert.ok(aToolbarElements[5] instanceof Button, "Sixth element is an instance of sap.m.Button");
 		assert.ok(aToolbarElements[6] instanceof Button, "Seventh element is an instance of sap.m.Button");

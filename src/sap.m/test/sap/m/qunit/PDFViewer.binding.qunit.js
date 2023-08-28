@@ -3,8 +3,9 @@
 sap.ui.define([
 	"./PDFViewerTestUtils",
 	"sap/ui/model/json/JSONModel",
-	"sap/m/PDFViewerRenderer"
-], function (TestUtils, JSONModel, PDFViewerRenderer) {
+	"sap/m/PDFViewerRenderer",
+	"sap/ui/core/Core"
+], function(TestUtils, JSONModel, PDFViewerRenderer, Core) {
 	"use strict";
 
 	var oPdfViewer = null;
@@ -81,7 +82,8 @@ sap.ui.define([
 			});
 			assert.equal(oPdfViewer.getSource(), sExpectedSource);
 
-			TestUtils.rerender();
+			TestUtils.invalidate();
+			Core.applyChanges();
 			return Promise.resolve();
 		};
 
@@ -129,7 +131,8 @@ sap.ui.define([
 			oPdfViewer.setSource(sExpectedSource);
 			assert.equal(oModel.getProperty('/source'), sExpectedSource);
 
-			TestUtils.rerender();
+			TestUtils.invalidate();
+			Core.applyChanges();
 		};
 
 		oPdfViewer = TestUtils.createPdfViewer(oOptions);

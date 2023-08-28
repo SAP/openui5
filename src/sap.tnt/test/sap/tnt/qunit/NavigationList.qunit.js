@@ -13,7 +13,8 @@ sap.ui.define([
 	'sap/m/Page',
 	'sap/tnt/NavigationList',
 	'sap/tnt/NavigationListItem',
-	'sap/ui/qunit/utils/waitForThemeApplied'
+	'sap/ui/qunit/utils/waitForThemeApplied',
+	"sap/m/Dialog"
 ], function(
 	Log,
 	Core,
@@ -27,7 +28,8 @@ sap.ui.define([
 	Page,
 	NavigationList,
 	NavigationListItem,
-	waitForThemeApplied
+	waitForThemeApplied,
+	Dialog
 ) {
 	'use strict';
 
@@ -423,7 +425,7 @@ sap.ui.define([
 		this.clock.tick(500);
 		assert.strictEqual(document.activeElement.title, "Root 1", "The first item is focused");
 
-		var oDialog = new sap.m.Dialog();
+		var oDialog = new Dialog();
 		oFirstItem.attachSelect(function(){oDialog.open();});
 		oFirstItem.fireSelect();
 		Core.applyChanges();

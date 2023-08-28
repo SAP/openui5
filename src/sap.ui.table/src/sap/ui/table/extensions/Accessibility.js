@@ -722,12 +722,6 @@ sap.ui.define([
 								mAttributes["aria-haspopup"] = sPopupType.toLowerCase();
 							}
 						}
-						/**
-						 * @deprecated As of Version 1.117
-						 */
-						if (!oColumnHeaderMenu && oColumn._menuHasItems()) {
-							mAttributes["aria-haspopup"] = "menu";
-						}
 					}
 					break;
 
@@ -761,13 +755,11 @@ sap.ui.define([
 				case AccExtension.ELEMENTTYPES.CONTAINER: //The table container
 					break;
 
-				case AccExtension.ELEMENTTYPES.CONTENT: //The content area of the table which contains all the table elements, rowheaders, columnheaders, etc
+				case //The content area of the table which contains all the table elements, rowheaders, columnheaders, etc
+				AccExtension.ELEMENTTYPES.CONTENT:
 					mAttributes["role"] = TableUtils.Grouping.isInGroupMode(oTable) || TableUtils.Grouping.isInTreeMode(oTable) ? "treegrid" : "grid";
 
 					mAttributes["aria-labelledby"] = [].concat(oTable.getAriaLabelledBy());
-					if (oTable.getTitle()) {
-						mAttributes["aria-labelledby"].push(oTable.getTitle().getId());
-					}
 
 					if (oTable.getSelectionMode() === SelectionMode.MultiToggle) {
 						mAttributes["aria-multiselectable"] = "true";
@@ -916,12 +908,10 @@ sap.ui.define([
 					addAriaForOverlayOrNoData(oTable, mAttributes, true, false);
 					break;
 
-				case AccExtension.ELEMENTTYPES.OVERLAY: //The overlay container
+				case //The overlay container
+				AccExtension.ELEMENTTYPES.OVERLAY:
 					mAttributes["role"] = "region";
 					mAttributes["aria-labelledby"] = [].concat(oTable.getAriaLabelledBy());
-					if (oTable.getTitle()) {
-						mAttributes["aria-labelledby"].push(oTable.getTitle().getId());
-					}
 					mAttributes["aria-labelledby"].push(sTableId + "-ariainvalid");
 					break;
 

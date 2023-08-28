@@ -39,7 +39,6 @@ sap.ui.define(['sap/ui/core/LayoutData', './library', "sap/base/Log"],
 
 		library : "sap.ui.layout",
 		properties : {
-
 			/**
 			 * A string type that represents the span values of the <code>Grid</code> for large, medium and small screens.
 			 *
@@ -168,81 +167,11 @@ sap.ui.define(['sap/ui/core/LayoutData', './library', "sap/base/Log"],
 			 * Optional. If set to <code>true</code>, the control causes a line break on small screens
 			 * within the <code>Grid</code> and becomes the first within the next line.
 			 */
-			linebreakS : {type : "boolean", group : "Misc", defaultValue : false},
-
-			/**
-			 * Deprecated. Defines a span value for large screens.
-			 * This value overwrites the value for large screens defined in the <code>span</code> property.
-			 *
-			 * @deprecated As of version 1.17.1. Use the <code>spanL</code> property instead.
-			 */
-			spanLarge : {type : "int", group : "Behavior", defaultValue : null, deprecated: true},
-
-			/**
-			 * Deprecated. Defines a span value for medium screens.
-			 * This value overwrites the value for medium screens defined in the <code>span</code> property.
-			 *
-			 * @deprecated As of version 1.17.1. Use the <code>spanM</code> property instead.
-			 */
-			spanMedium : {type : "int", group : "Behavior", defaultValue : null, deprecated: true},
-
-			/**
-			 * Deprecated. Defines a span value for small screens.
-			 * This value overwrites the value for small screens defined in the <code>span</code> property.
-			 *
-			 * @deprecated As of version 1.17.1. Use the <code>spanS</code> property instead.
-			 */
-			spanSmall : {type : "int", group : "Behavior", defaultValue : null, deprecated: true},
-
-			/**
-			 * Deprecated. Defines an indent value for large screens.
-			 * This value overwrites the value for large screens defined in the <code>indent</code> property.
-			 *
-			 * @deprecated As of version 1.17.1. Use the <code>indentL</code> property instead.
-			 */
-			indentLarge : {type : "int", group : "Behavior", defaultValue : null, deprecated: true},
-
-			/**
-			 * Deprecated. Defines an indent value for medium screens.
-			 * This value overwrites the value for medium screens defined in the <code>indent</code> property.
-			 *
-			 * @deprecated As of version 1.17.1. Use the <code>indentM</code> property instead.
-			 */
-			indentMedium : {type : "int", group : "Behavior", defaultValue : null, deprecated: true},
-
-			/**
-			 * Deprecated. Defines an indent value for small screens.
-			 * This value overwrites the value for small screens defined in the <code>indent</code> property.
-			 *
-			 * @deprecated As of version 1.17.1. Use <code>indentS</code> property instead.
-			 */
-			indentSmall : {type : "int", group : "Behavior", defaultValue : null, deprecated: true},
-
-			/**
-			 * Deprecated. Defines if this control is visible on large screens.
-			 *
-			 * @deprecated As of version 1.17.1. Use the <code>visibleL</code> property instead.
-			 */
-			visibleOnLarge : {type : "boolean", group : "Behavior", defaultValue : true, deprecated: true},
-
-			/**
-			 * Deprecated. Defines if this control is visible on medium screens.
-			 *
-			 * @deprecated As of version 1.17.1. Use the <code>visibleM</code> property instead.
-			 */
-			visibleOnMedium : {type : "boolean", group : "Behavior", defaultValue : true, deprecated: true},
-
-			/**
-			 * Deprecated. Defines if this control is visible on small screens.
-			 *
-			 * @deprecated As of version 1.17.1. Use the <code>visibleS</code> property instead.
-			 */
-			visibleOnSmall : {type : "boolean", group : "Behavior", defaultValue : true, deprecated: true}
+			linebreakS : {type : "boolean", group : "Misc", defaultValue : false}
 		}
 	}});
 
 	(function() {
-
 		GridData.prototype._setStylesInternal = function(sStyles) {
 			if (sStyles && sStyles.length > 0) {
 				this._sStylesInternal = sStyles;
@@ -380,102 +309,6 @@ sap.ui.define(['sap/ui/core/LayoutData', './library', "sap/base/Log"],
 		GridData.prototype._getLinebreakXLChanged = function() {
 			return this._bLinebreakXLChanged;
 		};
-
-		// Deprecated properties handling
-		//Setter
-		GridData.prototype.setSpanLarge = function(iSpan) {
-			this.setSpanL(iSpan);
-			Log.warning("Deprecated property spanLarge is used, please use spanL instead.");
-			return this;
-		};
-
-		GridData.prototype.setSpanMedium = function(iSpan) {
-			Log.warning("Deprecated property spanMedium is used, please use spanM instead.");
-			return this.setSpanM(iSpan);
-		};
-
-		GridData.prototype.setSpanSmall = function(iSpan) {
-			Log.warning("Deprecated property spanSmall is used, please use spanS instead.");
-			return this.setSpanS(iSpan);
-		};
-
-		GridData.prototype.setIndentLarge = function(iIndent) {
-			Log.warning("Deprecated property indentLarge is used, please use indentL instead.");
-			return this.setIndentL(iIndent);
-		};
-
-		GridData.prototype.setIndentMedium = function(iIndent) {
-			Log.warning("Deprecated property indentMedium is used, please use indentM instead.");
-			return this.setIndentM(iIndent);
-		};
-
-		GridData.prototype.setIndentSmall = function(iIndent) {
-			Log.warning("Deprecated property indentSmall is used, please use indentS instead.");
-			return this.setIndentS(iIndent);
-		};
-
-		GridData.prototype.setVisibleOnLarge = function(bVisible) {
-			Log.warning("Deprecated property visibleOnLarge is used, please use visibleL instead.");
-			return this.setVisibleL(bVisible);
-		};
-
-		GridData.prototype.setVisibleOnMedium = function(bVisible) {
-			Log.warning("Deprecated property visibleOnMedium is used, please use visibleM instead.");
-			return this.setVisibleM(bVisible);
-		};
-
-		GridData.prototype.setVisibleOnSmall = function(bVisible) {
-			Log.warning("Deprecated property visibleOnSmall is used, please use visibleS instead.");
-			return this.setVisibleS(bVisible);
-		};
-
-
-		// Getter
-		GridData.prototype.getSpanLarge = function() {
-			Log.warning("Deprecated property spanLarge is used, please use spanL instead.");
-			return this.getSpanL();
-		};
-
-		GridData.prototype.getSpanMedium = function() {
-			Log.warning("Deprecated property spanMedium is used, please use spanM instead.");
-			return this.getSpanM();
-		};
-
-		GridData.prototype.getSpanSmall = function() {
-			Log.warning("Deprecated property spanSmall is used, please use spanS instead.");
-			return this.getSpanS();
-		};
-
-		GridData.prototype.getIndentLarge = function() {
-			Log.warning("Deprecated property indentLarge is used, please use indentL instead.");
-			return this.getIndentL();
-		};
-
-		GridData.prototype.getIndentMedium = function() {
-			Log.warning("Deprecated property indentMedium is used, please use indentM instead.");
-			return this.getIndentM();
-		};
-
-		GridData.prototype.getIndentSmall = function() {
-			Log.warning("Deprecated property indentSmall is used, please use indentS instead.");
-			return this.getIndentS();
-		};
-
-		GridData.prototype.getVisibleOnLarge = function() {
-			Log.warning("Deprecated property visibleOnLarge is used, please use visibleL instead.");
-			return this.getVisibleL();
-		};
-
-		GridData.prototype.getVisibleOnMedium = function() {
-			Log.warning("Deprecated property visibleOnMedium is used, please use visibleM instead.");
-			return this.getVisibleM();
-		};
-
-		GridData.prototype.getVisibleOnSmall = function() {
-			Log.warning("Deprecated property visibleOnSmall is used, please use visibleS instead.");
-			return this.getVisibleS();
-		};
-
 	}());
 
 

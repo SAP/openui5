@@ -5,13 +5,12 @@ sap.ui.define([
 	"sap/ui/core/mvc/Controller",
 	"sap/m/ObjectMarker",
 	"sap/m/MessageToast",
-	"sap/m/UploadCollectionParameter",
 	"sap/m/library",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/format/FileSizeFormat",
 	"sap/ui/Device",
 	"sap/ui/core/Fragment"
-], function(jQuery, deepExtend, syncStyleClass, Controller, ObjectMarker, MessageToast, UploadCollectionParameter, MobileLibrary, JSONModel, FileSizeFormat, Device, Fragment) {
+], function(jQuery, deepExtend, syncStyleClass, Controller, ObjectMarker, MessageToast, MobileLibrary, JSONModel, FileSizeFormat, Device, Fragment) {
 	"use strict";
 
 	var ListMode = MobileLibrary.ListMode,
@@ -91,7 +90,7 @@ sap.ui.define([
 		onChange: function(oEvent) {
 			var oUploadCollection = oEvent.getSource();
 			// Header Token
-			var oCustomerHeaderToken = new UploadCollectionParameter({
+			var oCustomerHeaderToken = new undefined/*UploadCollectionParameter*/({
 				name: "x-csrf-token",
 				value: "securityTokenFromModel"
 			});
@@ -217,7 +216,7 @@ sap.ui.define([
 
 		onBeforeUploadStarts: function(oEvent) {
 			// Header Slug
-			var oCustomerHeaderSlug = new UploadCollectionParameter({
+			var oCustomerHeaderSlug = new undefined/*UploadCollectionParameter*/({
 				name: "slug",
 				value: oEvent.getParameter("fileName")
 			});

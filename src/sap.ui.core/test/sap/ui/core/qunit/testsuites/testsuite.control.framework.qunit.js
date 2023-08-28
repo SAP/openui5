@@ -14,26 +14,22 @@ sap.ui.define(function() {
 			module: "test-resources/sap/ui/core/qunit/{name}.qunit"
 		},
 		tests: {
-			/**
-			 * @deprecated since 1.58
-			 */
-			"jquery.sap.ui": {
-				page: "test-resources/sap/ui/core/qunit/jquery.sap.ui.qunit.html",
-				title: "jquery.sap.ui"
-			},
 			BlockLayerUtils: {
 				title: "sap.ui.core.BlockLayerUtils",
 				ui5: {
 					libs: "sap.m"
 				}
 			},
+
 			"util/BusyIndicator": {
 				title: "sap.ui.core.BusyIndicator"
 			},
+
 			"util/BusyIndicatorNoCore": {
 				title: "sap.ui.core.BusyIndicator (no core)",
 				bootCore: false
 			},
+
 			"util/BusyIndicatorRTL": {
 				title: "sap.ui.core.BusyIndicator (RTL)",
 				ui5: {
@@ -41,6 +37,7 @@ sap.ui.define(function() {
 					"xx-waitForTheme": "init"
 				}
 			},
+
 			ControlDefinition: {
 				title: "sap.ui.core.Control (ControlDefinition)",
 				qunit: {
@@ -55,9 +52,11 @@ sap.ui.define(function() {
 					libs: "sap.m"
 				}
 			},
+
 			ControlRenderer: {
 				title: "sap.ui.core.Control (ControlRenderer)"
 			},
+
 			CustomStyleClassSupport: {
 				title: "sap.ui.core.CustomStyleClassSupport",
 				loader: {
@@ -70,6 +69,7 @@ sap.ui.define(function() {
 					theme: "sap_hcb"
 				}
 			},
+
 			Element: {
 				title: "sap.ui.core.Element",
 				loader:{
@@ -93,6 +93,7 @@ sap.ui.define(function() {
 					"testdata/core/Element_sourceInfo.qunit"
 				]
 			},
+
 			IconPool: {
 				title: "sap.ui.core.IconPool",
 				ui5: {
@@ -104,6 +105,7 @@ sap.ui.define(function() {
 					}
 				}
 			},
+
 			"IconPool-custom-theme": {
 				title: "sap.ui.core.IconPool: Custom theme",
 				ui5: {
@@ -118,15 +120,19 @@ sap.ui.define(function() {
 					}
 				}
 			},
+
 			"util/InvisibleMessage": {
 				title : "sap.ui.core.InvisibleMessage"
 			},
+
 			"util/LabelEnablement": {
 				title: "sap.ui.core.LabelEnablement"
 			},
+
 			Patcher: {
 				title: "sap.ui.core.Patcher"
 			},
+
 			PlaceAt: {
 				title: "sap.ui.core: Control.placeAt / Core.setRoot",
 				ui5: {
@@ -134,6 +140,7 @@ sap.ui.define(function() {
 					language: "en"
 				}
 			},
+
 			"util/Popup": {
 				title: "sap.ui.core.Popup",
 				page: "test-resources/sap/ui/core/qunit/util/Popup.qunit.html",
@@ -141,6 +148,7 @@ sap.ui.define(function() {
 					reorder: false
 				}
 			},
+
 			"util/Popup-rtl": {
 				title: "sap.ui.core.Popup",
 				page: "test-resources/sap/ui/core/qunit/util/Popup.qunit.html?sap-ui-rtl=true",
@@ -148,9 +156,11 @@ sap.ui.define(function() {
 					reorder: false
 				}
 			},
+
 			RenderManager: {
 				title: "sap.ui.core.RenderManager"
 			},
+
 			ResizeHandler: {
 				title: "sap.ui.core.ResizeHandler",
 				qunit: {
@@ -160,6 +170,7 @@ sap.ui.define(function() {
 					theme: "base"
 				}
 			},
+
 			StashedControlSupport: {
 				title: "sap.ui.core.StashedControlSupport",
 				loader: {
@@ -169,6 +180,7 @@ sap.ui.define(function() {
 					}
 				}
 			},
+
 			UIArea: {
 				title: "sap.ui.core.UIArea",
 				loader: {
@@ -177,6 +189,7 @@ sap.ui.define(function() {
 					}
 				}
 			},
+
 			"util/ValueStateSupport": {
 				ui5: {
 					libs: "sap.m"

@@ -1,8 +1,9 @@
 sap.ui.define([
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/model/odata/v2/ODataModel",
-	"sap/m/sample/InputModelUpdate/localService/mockserver"
-], function(Controller, ODataModel, mockserver) {
+	"sap/m/sample/InputModelUpdate/localService/mockserver",
+	"sap/ui/model/json/JSONModel"
+], function(Controller, ODataModel, mockserver, JSONModel) {
 	"use strict";
 
 	return Controller.extend("sap.m.sample.InputModelUpdate.C", {
@@ -11,7 +12,7 @@ sap.ui.define([
 			var sODataServiceUrl = "/here/goes/your/odata/service/url/";
 
 			// Create a new JSON model instance for storing the initial and current values of the input field
-			var oHelpModel = new sap.ui.model.json.JSONModel({
+			var oHelpModel = new JSONModel({
 				"initialValue": "Martin",
 				"currentValue": "Martin"
 			});

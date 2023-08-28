@@ -141,22 +141,22 @@ function (
 		oTitle.destroy();
 	  });
 
-	  QUnit.test("DynamicPageTitle - AriaLabelledBy is not undefined, when no heading is presented, as default heading text is available", function (assert) {
-		// Arrange
-		var oTitle = oFactory.getDynamicPageTitle();
+	QUnit.test("DynamicPageTitle - AriaLabelledBy is not undefined, when no heading is presented, as default heading text is available", function (assert) {
+	  // Arrange
+	  var oTitle = oFactory.getDynamicPageTitle();
 
-		//Act
-		oTitle.destroyAggregation("heading");
+	  //Act
+	  oTitle.destroyAggregation("heading");
 
-		oUtil.renderObject(oTitle);
-		Core.applyChanges();
+	  oUtil.renderObject(oTitle);
+	  Core.applyChanges();
 
-		//Assert
-		assert.ok(oTitle._getFocusSpan()[0].getAttribute("aria-labelledby") != "undefined", "AriaLabelledBy is not undefined, when no heading is presented");
+	  //Assert
+	  assert.ok(oTitle._getFocusSpan()[0].getAttribute("aria-labelledby") != "undefined", "AriaLabelledBy is not undefined, when no heading is presented");
 
-		//Cleanup
-		oTitle.destroy();
-	  });
+	  //Cleanup
+	  oTitle.destroy();
+	});
 
 	QUnit.module("DynamicPage - Rendering - Title with Breadcrumbs", {
 		beforeEach: function () {
@@ -999,18 +999,6 @@ function (
 
 		// clean
 		vResult = null;
-	});
-
-	/**
-	 * @deprecated Since version 1.54
-	 */
-	QUnit.test("test primaryArea", function (assert) {
-		var DynamicPageTitleArea = fioriLibrary.DynamicPageTitleArea,
-			oDynamicPageTitle = this.oDynamicPageTitle,
-			sBeginArea = DynamicPageTitleArea.Begin;
-
-		// Assert default: primary area is "Begin"
-		assert.equal(oDynamicPageTitle.getPrimaryArea(), sBeginArea, "is the default one");
 	});
 
 	QUnit.test("test areaShrinkRatio", function (assert) {

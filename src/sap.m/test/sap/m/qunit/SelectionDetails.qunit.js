@@ -19,10 +19,32 @@ sap.ui.define([
 	"sap/ui/Device",
 	"sap/ui/base/ManagedObject",
 	"sap/ui/core/Control",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/m/library",
+	"sap/ui/layout/library"
 ], function(
-	jQuery, NavContainer, ResponsivePopover, Page, Toolbar, OverflowToolbar, ToolbarSpacer, Button, List, StandardListItem,
-	FixFlex, ScrollContainer, Title, SelectionDetails, Item, SelectionDetailsItem, Device, ManagedObject, Control, oCore
+	jQuery,
+	NavContainer,
+	ResponsivePopover,
+	Page,
+	Toolbar,
+	OverflowToolbar,
+	ToolbarSpacer,
+	Button,
+	List,
+	StandardListItem,
+	FixFlex,
+	ScrollContainer,
+	Title,
+	SelectionDetails,
+	Item,
+	SelectionDetailsItem,
+	Device,
+	ManagedObject,
+	Control,
+	oCore,
+	mobileLibrary,
+	layoutLibrary
 ) {
 	"use strict";
 
@@ -188,14 +210,14 @@ sap.ui.define([
 			this.oSelectionDetails.placeAt("qunit-fixture");
 			oCore.applyChanges();
 
-			sinon.spy(sap.m, "ResponsivePopover");
-			sinon.spy(sap.m, "Page");
-			sinon.spy(sap.m, "List");
-			sinon.spy(sap.ui.layout, "FixFlex");
-			sinon.spy(sap.m, "NavContainer");
+			sinon.spy(mobileLibrary, "ResponsivePopover");
+			sinon.spy(mobileLibrary, "Page");
+			sinon.spy(mobileLibrary, "List");
+			sinon.spy(layoutLibrary, "FixFlex");
+			sinon.spy(mobileLibrary, "NavContainer");
 			this._aGetPopoverArgs = [
-				sap.m.NavContainer, sap.m.ResponsivePopover, sap.m.Toolbar, sap.m.ToolbarSpacer, sap.m.Page,
-				sap.m.List, sap.ui.layout.FixFlex, sap.m.ScrollContainer, sap.m.Title
+				NavContainer, ResponsivePopover, Toolbar, ToolbarSpacer, Page,
+				List, FixFlex, ScrollContainer, Title
 			];
 		},
 		afterEach: function() {

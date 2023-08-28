@@ -105,7 +105,6 @@ sap.ui.define([
 		library: "sap.ui.table",
 		dnd: true,
 		properties: {
-
 			/**
 			 * Width of the Table.
 			 */
@@ -175,33 +174,6 @@ sap.ui.define([
 			selectionBehavior: {type: "sap.ui.table.SelectionBehavior", group: "Behavior", defaultValue: SelectionBehavior.RowSelector},
 
 			/**
-			 * Zero-based index of selected item. Index value for no selection is -1.
-			 * When multi-selection is enabled and multiple items are selected, the method returns
-			 * the lead selected item. Sets the zero-based index of the currently selected item. This method
-			 * removes any previous selections. When the given index is invalid, the call is ignored.
-			 * <b>Note:</b> If the rows of the table are bound, the value of the property is reset to -1.
-			 * If a selection plugin is applied to the table, the property is not bindable.
-			 *
-			 * @deprecated As of version 1.69, replaced by {@link sap.ui.table.Table#getSelectedIndices} and
-			 * {@link sap.ui.table.Table#setSelectedIndex}
-			 */
-			selectedIndex: {type: "int", group: "Appearance", defaultValue: -1, deprecated: true},
-
-			/**
-			 * Flag whether the controls of the Table are editable or not (currently this only controls the background color in certain themes!)
-			 *
-			 * @deprecated As of version 1.115
-			 */
-			editable: {type: "boolean", group: "Behavior", defaultValue: true, deprecated: true},
-
-			/**
-			 * This property has been deprecated and must not be used anymore, since <code>Scrollbar</code> is the only supported option.
-			 *
-			 * @deprecated As of version 1.38
-			 */
-			navigationMode: {type: "sap.ui.table.NavigationMode", group: "Behavior", defaultValue: NavigationMode.Scrollbar, deprecated: true},
-
-			/**
 			 * Defines how many additional (not yet visible) data records from the back-end system are pre-fetched to enable smooth scrolling.
 			 * The threshold is always added to the <code>visibleRowCount</code>. If the <code>visibleRowCount</code> is 10 and the
 			 * <code>threshold</code> is 100, there will be 110 records fetched with the initial load.
@@ -215,35 +187,6 @@ sap.ui.define([
 			 * Flag to enable or disable column reordering
 			 */
 			enableColumnReordering: {type: "boolean", group: "Behavior", defaultValue: true},
-
-			/**
-			 * Enables or disables grouping. If grouping is enabled, the table is grouped by the column which is defined
-			 * in the <code>groupBy</code> association.
-			 *
-			 * The following restrictions apply:
-			 * <ul>
-			 *  <li>Only client models are supported (e.g. {@link sap.ui.model.json.JSONModel}). Grouping does not work with OData models.</li>
-			 *  <li>The table can only be grouped by <b>one</b> column at a time. Grouping by another column will remove the current grouping.</li>
-			 *  <li>For the grouping to work correctly, {@link sap.ui.table.Column#getSortProperty sortProperty} must be set for the grouped
-			 *      column.</li>
-			 *  <li>If grouping has been done, sorting and filtering is not possible. Any existing sorting and filtering rules do no longer apply.
-			 *      The UI is not updated accordingly (e.g. menu items, sort and filter icons).</li>
-			 *  <li>The column, by which the table is grouped, is not visible. It will become visible again only if the table is grouped by another
-			 *      column or grouping is disabled.</li>
-			 * </ul>
-			 *
-			 * @see sap.ui.table.Table#setGroupBy
-			 * @deprecated As of version 1.110, this feature has a limited functionality and should not be used anymore.
-			 */
-			enableGrouping: {type: "boolean", group: "Behavior", defaultValue: false, deprecated: true},
-
-			/**
-			 * Flag to show or hide the column visibility menu. This menu will get displayed in each
-			 * generated column header menu. It allows to show or hide columns
-			 * @deprecated As of Version 1.117, use a <code>ColumnMenu</code> with a custom menu item in the <code>headerMenu</code> association
-			 * instead.
-			 */
-			showColumnVisibilityMenu: {type: "boolean", group: "Appearance", defaultValue: false},
 
 			/**
 			 * Flag whether to show the no data overlay or not once the table is empty. If set to false
@@ -370,28 +313,12 @@ sap.ui.define([
 		},
 		defaultAggregation: "columns",
 		aggregations: {
-
-			/**
-			 * Control or text of title section of the Table (if not set it will be hidden)
-			 *
-			 * @deprecated As of version 1.72. Use, for example, a <code>sap.m.Title</code> control in the <code>extension</code> aggregation instead.
-			 */
-			title: {type: "sap.ui.core.Control", altTypes: ["string"], multiple: false, deprecated: true},
-
 			/**
 			 * Control or text of footer section of the Table (if not set it will be hidden).
 			 *
 			 * <b>Note:</b> The <code>altType</code> string is deprecated as of version 1.118. Use a <code>Control</code> instead.
 			 */
 			footer: {type: "sap.ui.core.Control", altTypes: ["string"], multiple: false},
-
-			/**
-			 * Toolbar of the Table
-			 * If not set, no toolbar area will be rendered.
-			 * Note: The CSS class sapMTBHeader-CTX is applied on the given toolbar.
-			 * @deprecated As of version 1.38. This aggregation is deprecated, use the <code>extension</code> aggregation instead.
-			 */
-			toolbar: {type: "sap.ui.core.Toolbar", multiple: false, deprecated: true},
 
 			/**
 			 * Extension section of the Table.
@@ -519,25 +446,12 @@ sap.ui.define([
 			_hiddenDependents: {type: "sap.ui.core.Element", multiple: true, visibility: "hidden"}
 		},
 		associations: {
-
-			/**
-			 * The column by which the table is grouped. Grouping will only be performed if <code>enableGrouping</code> is set to <code>true</code>.
-			 * Setting <code>groupBy</code> in the view does not work and throws an error. It can only be set if the column by which the table
-			 * is grouped is already part of the <code>columns</code> aggregation of the table.
-			 *
-			 * @experimental Since 1.28. This feature has a limited functionality.
-			 * @see sap.ui.table.Table#setEnableGrouping
-			 * @deprecated As of version 1.110.
-			 */
-			groupBy: {type: "sap.ui.table.Column", multiple: false, deprecated: true},
-
 			/**
 			 * Association to controls / ids which label this control (see WAI-ARIA attribute aria-labelledby).
 			 */
 			ariaLabelledBy: {type: "sap.ui.core.Control", multiple: true, singularName: "ariaLabelledBy"}
 		},
 		events: {
-
 			/**
 			 * fired when the row selection of the table has been changed (the event parameters can be used to determine
 			 * selection changes - to find out the selected rows you should better use the table selection API)
@@ -683,41 +597,6 @@ sap.ui.define([
 			},
 
 			/**
-			 * fired when the table is grouped (experimental!).
-			 * @deprecated As of version 1.118.
-			 */
-			group: {
-				allowPreventDefault: true,
-				parameters: {
-					/**
-					 * grouped column.
-					 */
-					column: {type: "sap.ui.table.Column"}
-				},
-				deprecated: true
-			},
-
-			/**
-			 * fired when the visibility of a table column is changed.
-			 * @deprecated As of Version 1.117
-			 */
-			columnVisibility: {
-				allowPreventDefault: true,
-				parameters: {
-
-					/**
-					 * affected column.
-					 */
-					column: {type: "sap.ui.table.Column"},
-
-					/**
-					 * new value of the visible property.
-					 */
-					newVisible: {type: "boolean"}
-				}
-			},
-
-			/**
 			 * fired when the user clicks a cell of the table (experimental!).
 			 * @since 1.21.0
 			 */
@@ -755,48 +634,6 @@ sap.ui.define([
 					 */
 					rowBindingContext: {type: "sap.ui.model.Context"}
 				}
-			},
-
-			/**
-			 * fired when the user clicks a cell of the table.
-			 * @since 1.21.0
-			 * @deprecated As of version 1.54, replaced by <code>beforeOpenContextMenu</code>.
-			 */
-			cellContextmenu: {
-				allowPreventDefault: true,
-				parameters: {
-					/**
-					 * The control of the cell.
-					 */
-					cellControl: {type: "sap.ui.core.Control"},
-
-					/**
-					 * DOM reference of the clicked cell. Can be used to position the context menu.
-					 */
-					cellDomRef: {type: "Object"},
-
-					/**
-					 * Row index of the selected cell.
-					 */
-					rowIndex: {type: "int"},
-
-					/**
-					 * Column index of the selected cell. This is the index of visible columns and might differ from
-					 * the index maintained in the column aggregation.
-					 */
-					columnIndex: {type: "int"},
-
-					/**
-					 * Column ID of the selected cell.
-					 */
-					columnId: {type: "string"},
-
-					/**
-					 * Row binding context of the selected cell.
-					 */
-					rowBindingContext: {type: "sap.ui.model.Context"}
-				},
-				deprecated: true
 			},
 
 			/**
@@ -1180,11 +1017,6 @@ sap.ui.define([
 			if (bLangChanged) {
 				// Clear the cell context menu.
 				TableUtils.Menu.cleanupDefaultContentCellContextMenu(this);
-
-				/**
-				 * @deprecated As of Version 1.117
-				 */
-				this._invalidateColumnMenus(); // Update the column menus.
 			}
 		}.bind(this));
 	};
@@ -1382,12 +1214,6 @@ sap.ui.define([
 
 			if (this._bIgnoreFixedColumnCount !== bIgnoreFixedColumnCountCandidate) {
 				this._bIgnoreFixedColumnCount = bIgnoreFixedColumnCountCandidate;
-				/**
-				 * @deprecated As of Version 1.117
-				 */
-				if (this.getEnableColumnFreeze()) {
-					this._invalidateColumnMenus();
-				}
 				this.invalidate();
 			}
 		}
@@ -1718,25 +1544,6 @@ sap.ui.define([
 		return this;
 	};
 
-	// =============================================================================
-	// PUBLIC TABLE API
-	// =============================================================================
-
-	/*
-	 * @see JSDoc generated by SAPUI5 control API generator
-	 */
-	Table.prototype.setTitle = function(vTitle) {
-		var oTitle = vTitle;
-		if (typeof (vTitle) === "string" || vTitle instanceof String) {
-			oTitle = TableUtils._getTableTemplateHelper().createTextView({
-				text: vTitle
-			});
-			oTitle.addStyleClass("sapUiTableHdrTitle");
-		}
-		this.setAggregation("title", oTitle);
-		return this;
-	};
-
 	/*
 	 * @see JSDoc generated by SAPUI5 control API generator
 	 */
@@ -1759,12 +1566,6 @@ sap.ui.define([
 	 * @public
 	 */
 	Table.prototype.setSelectionMode = function(sSelectionMode) {
-		if (sSelectionMode === SelectionMode.Multi) {
-			sSelectionMode = SelectionMode.MultiToggle;
-			Log.warning("The selection mode 'Multi' is deprecated and must not be used anymore."
-						+ " Your setting was defaulted to selection mode 'MultiToggle'", this);
-		}
-
 		if (this._hasSelectionPlugin()) {
 			Log.error("If a selection plugin is applied to the table, the selection mode is controlled by the plugin.", this);
 		} else {
@@ -2004,8 +1805,6 @@ sap.ui.define([
 		Control.prototype._bindAggregation.call(this, sName, oBindingInfo);
 
 		if (sName === "rows") {
-			TableUtils.Grouping.setupExperimentalGrouping(this);
-
 			var oBinding = this.getBinding();
 			var oModel = oBinding ? oBinding.getModel() : null;
 
@@ -2332,12 +2131,6 @@ sap.ui.define([
 	Table.prototype.setTooltip = function(vTooltip) {
 		Log.warning("The aggregation tooltip is not supported for sap.ui.table.Table", this);
 		return this.setAggregation("tooltip", vTooltip, true);
-	};
-
-	Table.prototype.setNavigationMode = function() {
-		this.setProperty("navigationMode", NavigationMode.Scrollbar, true);
-		Log.error("The navigationMode property is deprecated and must not be used anymore. Your setting was defaulted to 'Scrollbar'", this);
-		return this;
 	};
 
 	/**
@@ -3262,13 +3055,6 @@ sap.ui.define([
 		var bSelectAll = oEvent.getParameter("selectAll");
 		var iRowIndex = this._iSourceRowIndex !== undefined ? this._iSourceRowIndex : oSelectionPlugin.getSelectedIndex();
 
-		/**
-		* @deprecated As of Version 1.69
-		*/
-		if (this.getMetadata().hasProperty("selectedIndex")) {
-			this.setProperty("selectedIndex", oSelectionPlugin.getSelectedIndex(), true);
-		}
-
 		this.fireRowSelectionChange({
 			rowIndex: iRowIndex,
 			rowContext: this.getContextByIndex(iRowIndex),
@@ -3306,26 +3092,6 @@ sap.ui.define([
 		}
 
 		return oContext || null;
-	};
-
-	// =============================================================================
-	// SELECTION API
-	// =============================================================================
-
-	/**
-	 * Retrieves the lead selection index.
-	 *
-	 * @returns {int} Currently Selected Index.
-	 * @throws {Error} If a selection plugin is applied
-	 * @public
-	 * @deprecated As of version 1.69, replaced by {@link sap.ui.table.Table#getSelectedIndices}
-	 */
-	Table.prototype.getSelectedIndex = function() {
-		if (this._hasSelectionPlugin()) {
-			throw new Error("Unsupported operation: sap.ui.table.Table#getSelectedIndex must not be called if a selection plugin is applied.");
-		}
-
-		return this._getSelectionPlugin().getSelectedIndex();
 	};
 
 	/**
@@ -3468,66 +3234,6 @@ sap.ui.define([
 		return this._getSelectionPlugin().isIndexSelected(iIndex);
 	};
 
-	// =============================================================================
-	// GROUPING
-	// =============================================================================
-
-	/*
-	 * @see JSDoc generated by SAPUI5 control API generator
-	 *
-	 * @deprecated As of version 1.118.
-	 */
-	Table.prototype.setGroupBy = function(vValue) {
-		var oGroupByColumn = vValue;
-		var oOldGroupByColumn = sap.ui.getCore().byId(this.getGroupBy());
-
-		if (typeof oGroupByColumn === "string") {
-			oGroupByColumn = sap.ui.getCore().byId(oGroupByColumn);
-		}
-
-		// only for columns we do the full handling here - otherwise the method
-		// setAssociation will fail below with a specific fwk error message
-		var bReset = false;
-		if (oGroupByColumn instanceof Column && oGroupByColumn !== oOldGroupByColumn) {
-
-			// check for column being part of the columns aggregation
-			if (this.getColumns().indexOf(oGroupByColumn) === -1) {
-				throw new Error("Column has to be part of the columns aggregation!");
-			}
-
-			// fire the event (to allow to cancel the event)
-			var bExecuteDefault = this.fireGroup({column: oGroupByColumn, groupedColumns: [oGroupByColumn.getId()], type: GroupEventType.group});
-
-			// first we reset the grouping indicator of the old column (will show the column)
-			if (oOldGroupByColumn) {
-				oOldGroupByColumn.setGrouped(false);
-				bReset = true;
-			}
-
-			// then we set the grouping indicator of the new column (will hide the column)
-			// ==> only if the default behavior is not prevented
-			if (bExecuteDefault && this.getEnableGrouping()) {
-				oGroupByColumn.setGrouped(true);
-			}
-		}
-
-		// reset the binding when no value is given or the binding needs to be reseted
-		// TODO: think about a better handling to recreate the group binding
-		if (!oGroupByColumn || bReset) {
-			if (oOldGroupByColumn) {
-				oOldGroupByColumn.setGrouped(false);
-			}
-
-			TableUtils.Grouping.resetExperimentalGrouping(this);
-		}
-
-		// set the new group by column (TODO: undefined doesn't work!)
-		this.setAssociation("groupBy", oGroupByColumn);
-		TableUtils.Grouping.setupExperimentalGrouping(this);
-
-		return this;
-	};
-
 	/**
 	 * Get the binding object for a specific aggregation/property.
 	 *
@@ -3537,28 +3243,6 @@ sap.ui.define([
 	 */
 	Table.prototype.getBinding = function(sName) {
 		return Control.prototype.getBinding.call(this, sName == null ? "rows" : sName);
-	};
-
-	/*
-	 * @see JSDoc generated by SAPUI5 control API generator
-	 * @deprecated As of version 1.118.
-	 */
-	Table.prototype.setEnableGrouping = function(bEnableGrouping) {
-		var oGroupedByColumn = sap.ui.getCore().byId(this.getGroupBy());
-
-		this.setProperty("enableGrouping", bEnableGrouping);
-
-		if (oGroupedByColumn) {
-			oGroupedByColumn.setGrouped(bEnableGrouping);
-		}
-
-		if (bEnableGrouping) {
-			TableUtils.Grouping.setupExperimentalGrouping(this);
-		} else {
-			TableUtils.Grouping.resetExperimentalGrouping(this);
-		}
-
-		return this;
 	};
 
 	/**
@@ -3625,13 +3309,6 @@ sap.ui.define([
 
 		this._collectTableSizes(); // Avoid double rendering if the fixed column count needs to be adjusted.
 
-		/**
-		 * @deprecated As of Version 1.117
-		 */
-		if (this.getEnableColumnFreeze()) {
-			this._invalidateColumnMenus();
-		}
-
 		return this;
 	};
 
@@ -3691,15 +3368,6 @@ sap.ui.define([
 	Table.prototype.setThreshold = function(iThreshold) {
 		this.setProperty("threshold", iThreshold, true);
 		return this;
-	};
-
-	/**
-	 * Invalidates all column menus.
-	 * @private
-	 * @deprecated As of Version 1.117
-	 */
-	Table.prototype._invalidateColumnMenus = function() {
-		TableUtils.Hook.call(this, TableUtils.Hook.Keys.Table.InvalidateColumnMenus, this);
 	};
 
 	/**
@@ -3856,81 +3524,6 @@ sap.ui.define([
 			delete _private(oTable).bIsLoadingNoColumnsMessage;
 		});
 	}
-
-	/**
-	 * Creates a new {@link sap.ui.core.util.Export} object and fills row/column information from the table if not provided. For the cell content,
-	 * the column's "sortProperty" will be used (experimental!)
-	 *
-	 * <p><b>Please note: This method uses synchronous requests. Support and functioning ends with the support for synchronous requests in
-	 * browsers.</b></p>
-	 *
-	 * @param {object} [mSettings] settings for the new Export, see {@link sap.ui.core.util.Export} <code>constructor</code>
-	 * @returns {sap.ui.core.util.Export} Export object
-	 * @experimental Experimental because the property for the column/cell definitions (sortProperty) could change in future.
-	 * @deprecated As of version 1.56, replaced by the <code>sap.ui.export</code> library.
-	 * @public
-	 */
-	Table.prototype.exportData = function(mSettings) {
-		var Export = sap.ui.requireSync("sap/ui/core/util/Export");
-
-		mSettings = mSettings || {};
-
-		if (!mSettings.rows) {
-			var oBinding = this.getBinding(),
-				oBindingInfo = this.getBindingInfo("rows");
-
-			var aFilters = oBinding.aFilters.concat(oBinding.aApplicationFilters);
-
-			mSettings.rows = {
-				path: oBindingInfo.path,
-				model: oBindingInfo.model,
-				sorter: oBinding.aSorters,
-				filters: aFilters,
-				parameters: oBindingInfo.parameters
-			};
-		}
-
-		// by default we choose the export type CSV
-		if (!mSettings.exportType) {
-			var ExportTypeCSV = sap.ui.requireSync("sap/ui/core/util/ExportTypeCSV");
-			mSettings.exportType = new ExportTypeCSV();
-		}
-
-		var sModelName = mSettings.rows.model;
-		if (!sModelName) {
-			// if a model separator is found in the path, extract model name from there
-			var sPath = mSettings.rows.path;
-			var iSeparatorPos = sPath.indexOf(">");
-			if (iSeparatorPos > 0) {
-				sModelName = sPath.substr(0, iSeparatorPos);
-			}
-		}
-
-		if (!mSettings.columns) {
-			mSettings.columns = [];
-
-			var aColumns = this.getColumns();
-			for (var i = 0, l = aColumns.length; i < l; i++) {
-				var oColumn = aColumns[i];
-				if (oColumn.getSortProperty()) {
-					mSettings.columns.push({
-						name: oColumn.getLabel().getText(),
-						template: {
-							content: {
-								path: oColumn.getSortProperty(),
-								model: sModelName
-							}
-						}
-					});
-				}
-			}
-		}
-
-		var oExport = new Export(mSettings);
-		this.addDependent(oExport);
-
-		return oExport;
-	};
 
 	/**
 	 *
@@ -4441,41 +4034,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Enables the legacy multi selection behavior for mouse interaction.
-	 *
-	 * @throws {Error} If a selection plugin is applied
-	 * @private
-	 * @ui5-restricted sap.watt.hanaplugins.editor.plugin.hdbcalculationview
-	 * @deprecated As of version 1.115
-	 */
-	Table.prototype._enableLegacyMultiSelection = function() {
-		if (this._hasSelectionPlugin()) {
-			throw new Error("Unsupported operation: sap.ui.table.Table#_enableLegacyMultiSelection must not be called"
-							+ " if a selection plugin is applied.");
-		}
-
-		this._legacyMultiSelection = function(iIndex, oEvent) {
-			if (this._hasSelectionPlugin()) {
-				throw new Error("Unsupported operation: The legacy multi selection is not supported if a selection plugin is applied");
-			}
-
-			var bAdd = !!(oEvent.metaKey || oEvent.ctrlKey);
-
-			if (!this.isIndexSelected(iIndex)) {
-				if (bAdd) {
-					this.addSelectionInterval(iIndex, iIndex);
-				} else {
-					this.setSelectedIndex(iIndex);
-				}
-			} else if (bAdd || this.getSelectedIndices().length === 1) {
-				this.removeSelectionInterval(iIndex, iIndex);
-			} else {
-				this.setSelectedIndex(iIndex);
-			}
-		}.bind(this);
-	};
-
-	/**
 	 * Sets constraints on the row counts of the table. May impact the result of the row count computation in the row modes.
 	 * The setter for the hidden property may only be used indirectly by plugins and may not be used otherwise.
 	 *
@@ -4488,5 +4046,4 @@ sap.ui.define([
 	};
 
 	return Table;
-
 });

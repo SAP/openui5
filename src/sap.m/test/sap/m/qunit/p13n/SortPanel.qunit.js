@@ -64,17 +64,12 @@ sap.ui.define([
 		];
 		assert.deepEqual(this.oSortPanel.getP13nData(true), aSortState, "Correct sort state");
 
-		//Change sort order of 'key1' to descending
-		oSegmentedButton.fireSelect({
-			key: "desc"
-		});
 		assert.equal(oSortOrderText.getText(), "Descending", "Correct sort order text");
 		var aNewSortState = [
 			{name: "key1", sorted: true, descending: true},
 			{name: "key2", sorted: true, descending: false}
 		];
 		assert.deepEqual(this.oSortPanel.getP13nData(true), aNewSortState, "Correct sort state");
-
 	});
 
 	QUnit.test("Check that key change does not reset 'descending'", function(assert){
@@ -91,10 +86,6 @@ sap.ui.define([
 		];
 		assert.deepEqual(this.oSortPanel.getP13nData(true), aSortState, "Correct sort state");
 
-		// 1) Change sort order of 'key1' to descending
-		oSegmentedButton.fireSelect({
-			key: "desc"
-		});
 		oSegmentedButton.setSelectedKey("desc");
 
 		oKeySelected.setSelection(oKeySelected.getItems()[2]);

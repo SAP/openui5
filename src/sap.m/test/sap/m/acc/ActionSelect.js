@@ -1,5 +1,4 @@
 sap.ui.define([
-	"sap/m/ActionSelect",
 	"sap/m/App",
 	"sap/m/Button",
 	"sap/m/CheckBox",
@@ -14,7 +13,6 @@ sap.ui.define([
 	"sap/ui/core/library",
 	"sap/ui/layout/Grid"
 ], function(
-	ActionSelect,
 	App,
 	Button,
 	CheckBox,
@@ -40,7 +38,7 @@ sap.ui.define([
 	var oApp = new App("myApp", {
 				initialPage:"page1"
 		}),
-		oActionSelect0 = new ActionSelect("default_sample", { // the selected item is not specified, the first one will be selected
+		oActionSelect0 = new undefined/*ActionSelect*/("default_sample", { // the selected item is not specified, the first one will be selected
 			width: "33%",
 			items: [
 				new Item({
@@ -66,7 +64,7 @@ sap.ui.define([
 			text: "ActionSelect with type Default:",
 			labelFor: oActionSelect0
 		}),
-		oActionSelect1 = new ActionSelect("icon_only",{	// the selected item is not specified, the first one will be selected
+		oActionSelect1 = new undefined/*ActionSelect*/("icon_only",{	// the selected item is not specified, the first one will be selected
 			type: SelectType.IconOnly,
 			icon: IconPool.getIconURI("filter"),
 			autoAdjustWidth: true,

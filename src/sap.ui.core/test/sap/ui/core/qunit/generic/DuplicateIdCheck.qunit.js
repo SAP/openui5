@@ -6,8 +6,9 @@
 sap.ui.define([
 	"sap/ui/test/generic/TestBase",
 	"sap/ui/test/generic/Utils",
-	"sap/ui/qunit/utils/nextUIUpdate"
-], function (TestBase, Utils, nextUIUpdate) {
+	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/core/Core"
+], function(TestBase, Utils, nextUIUpdate, Core) {
 	"use strict";
 
 	/**
@@ -82,8 +83,10 @@ sap.ui.define([
 						oControl2.placeAt("qunit-fixture");
 						await nextUIUpdate();
 
-						oControl1.rerender();
-						oControl2.rerender();
+						oControl1.invalidate();
+						Core.applyChanges();
+						oControl2.invalidate();
+						Core.applyChanges();
 						await nextUIUpdate();
 
 						assert.ok(true, sControlName + " can be instantiated multiple times without duplicate ID errors.");

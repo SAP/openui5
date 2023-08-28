@@ -18,6 +18,7 @@ sap.ui.define([
 		 * @public
 		 */
 		init : function () {
+			// TODO: migration not possible. jQuery.sap.syncGetJSON is deprecated. Please use <code>fetch</code> API or native <code>XMLHttpRequest</code>
 			var oUriParameters = UriParameters.fromQuery(window.location.search),
 				sJsonFilesUrl = sap.ui.require.toUrl((_sJsonFilesModulePath).replace(/\./g, "/")),
 				sManifestUrl = sap.ui.require.toUrl((_sAppModulePath + "manifest").replace(/\./g, "/")) + ".json",

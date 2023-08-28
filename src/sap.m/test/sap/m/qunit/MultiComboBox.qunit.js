@@ -4644,7 +4644,9 @@ sap.ui.define([
 		oMultiComboBox._getList().getItems()[0].focus();
 
 		// act
-		oMultiComboBox.rerender();
+		oMultiComboBox.invalidate();
+
+		oCore.applyChanges();
 
 		this.clock.tick(500);
 

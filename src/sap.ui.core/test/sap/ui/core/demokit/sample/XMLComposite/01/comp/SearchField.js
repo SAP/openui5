@@ -1,6 +1,6 @@
-sap.ui.define(['sap/ui/core/XMLComposite'], function(XMLComposite) {
+sap.ui.define([], function() {
 	"use strict";
-	var oSearchField = XMLComposite.extend("sap.ui.core.sample.XMLComposite.01.comp.SearchField", {
+	var oSearchField = undefined/*XMLComposite*/.extend("sap.ui.core.sample.XMLComposite.01.comp.SearchField", {
 		metadata: {
 			properties: {
 				placeholder: { type: "string", defaultValue: "Enter Search Term..." },

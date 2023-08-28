@@ -14,7 +14,8 @@ sap.ui.define([
 	'./ResponsivePopoverRenderer',
 	'./Toolbar',
 	'./ToolbarSpacer',
-	'./Button'
+	'./Button',
+	"sap/ui/core/StaticArea"
 ],
 	function(
 		Dialog,
@@ -27,7 +28,8 @@ sap.ui.define([
 		ResponsivePopoverRenderer,
 		Toolbar,
 		ToolbarSpacer,
-		Button
+		Button,
+		StaticArea
 	) {
 	"use strict";
 
@@ -425,7 +427,7 @@ sap.ui.define([
 	 */
 	ResponsivePopover.prototype.openBy = function(oParent){
 		if (!this._bAppendedToUIArea && !this.getParent()) {
-			var oStatic = sap.ui.getCore().getStaticAreaRef();
+			var oStatic = StaticArea.getDomRef()/* LFUI5: Check: StaticArea's API might have a better fit for your use case. */;
 			oStatic = UIArea.registry.get(oStatic.id);
 			oStatic.addContent(this, true);
 			this._bAppendedToUIArea = true;

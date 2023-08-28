@@ -670,7 +670,7 @@ sap.ui.define([
 			var sPath = oEvent.getParameter("path");
 			if (sPath.indexOf("/conditions/") === 0) {
 
-				var sFieldPath = sPath.substring("/conditions/".length);
+				var sFieldPath = sPath.substring(12);
 
 				var aConditions = oEvent.getParameter("value");
 

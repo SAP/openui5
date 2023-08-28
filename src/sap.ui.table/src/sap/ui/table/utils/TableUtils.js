@@ -1569,16 +1569,6 @@ sap.ui.define([
 							"anymore for the aggragations footer and title and the aggregations label and template of " +
 							"the sap.ui.table.Columns. Use concrete controls for those aggregations instead of altType string.";
 
-			/**
-			 * @deprecated As of version 1.118
-			 */
-			if (library.TableHelper) {
-				if (!bCallByAPI) {
-					Log.warning(sMessage);
-				}
-				return library.TableHelper;
-			}
-
 			throw new Error(sMessage);
 		}
 	};

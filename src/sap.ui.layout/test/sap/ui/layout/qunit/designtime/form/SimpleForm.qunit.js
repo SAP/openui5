@@ -43,7 +43,6 @@ sap.ui.define([
 		});
 	})
 	.then(function() {
-
 		var TEST_DELEGATE_PATH = "sap/ui/rta/enablement/TestDelegate";
 		//ensure a default delegate exists for a model not used anywhere else
 		var SomeModel = JSONModel.extend("sap.ui.layout.simpleform.qunit.test.Model");
@@ -564,10 +563,6 @@ sap.ui.define([
 			});
 		}
 
-		/**
-		 * @deprecated As of version 1.67.0
-		 */
-		fnParameterizedTest(SimpleFormLayout.GridLayout);
 		fnParameterizedTest(SimpleFormLayout.ResponsiveGridLayout);
 		fnParameterizedTest(SimpleFormLayout.ColumnLayout);
 	});

@@ -3172,27 +3172,6 @@ function (
 		}
 	});
 
-	/**
-	 * @deprecated since 1.58
-	 */
-	QUnit.test("Test flex-basis styles when primaryArea=Middle", function(assert) {
-		// arrange
-		var oTitle = Core.byId("comp---view--DynamicPageTitle"),
-			oHeading = oTitle.$("left-inner"),
-			oContent = oTitle.$("content"),
-			oActions = oTitle.$("mainActions");
-
-		// act
-		oTitle.setPrimaryArea("Middle");
-
-		Core.applyChanges();
-
-		// assert
-		assert.equal(parseFloat(oHeading.css("flex-shrink")).toFixed(1), 1.6, "Heading shrink factor is correct");
-		assert.equal(parseFloat(oContent.css("flex-shrink")).toFixed(1), 1, "Content shrink factor is correct");
-		assert.equal(parseFloat(oActions.css("flex-shrink")).toFixed(1), 1.6, "Actions shrink factor is correct");
-	});
-
 	QUnit.test("Test flex-basis styles when areaShrinkRatio is set", function(assert) {
 		// arrange
 		var oTitle = Core.byId("comp---view--DynamicPageTitle"),
@@ -3201,28 +3180,6 @@ function (
 			oActions = oTitle.$("mainActions");
 
 		// act
-		oTitle.setAreaShrinkRatio("1:2:4");
-
-		Core.applyChanges();
-
-		// assert
-		assert.equal(parseFloat(oHeading.css("flex-shrink")).toFixed(1), 1, "Heading shrink factor is correct");
-		assert.equal(parseFloat(oContent.css("flex-shrink")).toFixed(1), 2, "Content shrink factor is correct");
-		assert.equal(parseFloat(oActions.css("flex-shrink")).toFixed(1), 4, "Actions shrink factor is correct");
-	});
-
-	/**
-	 * @deprecated since 1.58
-	 */
-	QUnit.test("Test flex-basis styles when primaryArea=Middle and areaShrinkRatio is set", function(assert) {
-		// arrange
-		var oTitle = Core.byId("comp---view--DynamicPageTitle"),
-			oHeading = oTitle.$("left-inner"),
-			oContent = oTitle.$("content"),
-			oActions = oTitle.$("mainActions");
-
-		// act
-		oTitle.setPrimaryArea("Middle");
 		oTitle.setAreaShrinkRatio("1:2:4");
 
 		Core.applyChanges();

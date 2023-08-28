@@ -565,7 +565,6 @@ sap.ui.define([
 	QUnit.module("Message dialog");
 
 	QUnit.test("Footer rendering", function (assert) {
-
 		var oDialog = new Dialog({
 			type: DialogType.Message,
 			buttons: [
@@ -576,7 +575,8 @@ sap.ui.define([
 		oDialog.open();
 		this.clock.tick(500);
 
-		oDialog._oToolbar.rerender();
+		oDialog._oToolbar.invalidate();
+		Core.applyChanges();
 		this.clock.tick(500);
 
 		var $toolbar = oDialog._oToolbar.$();
@@ -708,46 +708,6 @@ sap.ui.define([
 		assert.ok(oDialog.getDomRef('scrollCont').classList.contains('sapMDialogStretchContent'), "Stretched dialog should have class sapMDialogStretchContent");
 		oDialog.destroy();
 		jQuery("html").css("overflow", ""); // restore scrollbar after test
-	});
-
-	/**
-	 * @deprecated Since version 1.13.1
-	 */
-	QUnit.test("Dialog: set stretchOnPhone to true should not stretch on desktop", function (assert) {
-		var oDialog = new Dialog({
-			stretchOnPhone: true
-		});
-
-		oDialog.open();
-		assert.ok(oDialog.isOpen(), "Dialog is already open");
-		this.clock.tick(500);
-		assert.ok(!oDialog.$().hasClass("sapMDialogStretched"), "Dilog should not has sapMDialogStretched class");
-
-		oDialog.destroy();
-	});
-
-	/**
-	 * @deprecated Since version 1.13.1
-	 */
-	QUnit.test("Dialog: set stretchOnPhone to true should stretch on phone", function (assert) {
-		var oSystem = {
-			desktop: false,
-			tablet: false,
-			phone: true
-		};
-
-		this.stub(Device, "system", oSystem);
-
-		var oDialog = new Dialog({
-			stretchOnPhone: true
-		});
-
-		oDialog.open();
-		assert.ok(oDialog.isOpen(), "Dialog is already open");
-		this.clock.tick(500);
-		assert.ok(oDialog.$().hasClass("sapMDialogStretched"), "Dilog should has sapMDialogStretched class");
-
-		oDialog.destroy();
 	});
 
 	QUnit.test("Dialog: set contentWidth when stretch set to true", function (assert) {
@@ -1037,29 +997,6 @@ sap.ui.define([
 		});
 
 		jQuery("html").removeClass("sap-phone");
-	});
-
-	/**
-	 * @deprecated Since version 1.15.1
-	 */
-	QUnit.test("Deprecated: Setting left and right buttons", function (assert) {
-		// Arrange
-		var oDialog = new Dialog();
-		var testButton = new Button();
-		var testButton2 = new Button();
-
-		// Act
-		oDialog.setLeftButton(testButton);
-		oDialog.setRightButton(testButton2);
-
-		Core.applyChanges();
-
-		// Assert
-		assert.strictEqual(oDialog.getLeftButton(), testButton.getId(), 'Setting the left button');
-		assert.strictEqual(oDialog.getRightButton(), testButton2.getId(), 'Setting the left button');
-
-		// Clean up
-		oDialog.destroy();
 	});
 
 	QUnit.test("Set role", function (assert) {

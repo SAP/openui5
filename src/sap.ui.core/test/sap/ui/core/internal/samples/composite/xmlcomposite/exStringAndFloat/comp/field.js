@@ -2,10 +2,10 @@
  * ${copyright}
  */
 sap.ui.define([
-	'sap/ui/core/XMLComposite', 'sap/ui/model/type/Float'
-], function (XMLComposite, Float) {
+	'sap/ui/model/type/Float'
+], function(Float) {
 	"use strict";
-	var Field = XMLComposite.extend("sap.ui.core.internal.samples.composite.xmlcomposite.ex2.comp.field", {
+	var Field = undefined/*XMLComposite*/.extend("sap.ui.core.internal.samples.composite.xmlcomposite.ex2.comp.field", {
 		metadata: {
 			properties: {
 				valueFloat: {

@@ -3584,9 +3584,9 @@ sap.ui
 				};
 
 				if (sString.indexOf("datetimeoffset") > -1) {
-					return "/Date(" + fnNoOffset(sString.substring("datetimeoffset'".length, sString.length - 1)) + ")/";
+					return "/Date(" + fnNoOffset(sString.substring(15, sString.length - 1)) + ")/";
 				} else {
-					return "/Date(" + fnNoOffset(sString.substring("datetime'".length, sString.length - 1)) + ")/";
+					return "/Date(" + fnNoOffset(sString.substring(9, sString.length - 1)) + ")/";
 				}
 			};
 

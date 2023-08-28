@@ -4,10 +4,8 @@ sap.ui.define([
 	"sap/ui/core/Configuration",
 	'sap/ui/model/odata/ODataUtils',
 	'sap/ui/model/Filter',
-	'sap/ui/model/odata/Filter',
 	'sap/ui/model/FilterOperator'
-], function(CalendarType, Configuration, ODataUtils, Filter, ODataFilter, FilterOperator) {
-
+], function(CalendarType, Configuration, ODataUtils, Filter, FilterOperator) {
 	"use strict";
 
 	function time(iMillis) {
@@ -621,29 +619,6 @@ sap.ui.define([
 		assert.equal(sFilterString, "$filter=false", "Filter string should be returned.");
 	});
 
-	/** @deprecated As of version 1.22.0 reason sap.ui.model.odata.Filter*/
-	QUnit.test("createFilterParams: Use API with deprecated sap.ui.model.odata.Filter", function(assert) {
-		var oFilter1 = new ODataFilter('Customer',[{
-			operator: 'EQ',
-			value1: "test0"
-		}]);
-
-		var oFilter2 = new ODataFilter('CollectionSegment',[{
-			operator: 'EQ',
-			value1: "test1"
-		}]);
-
-		var oFilter3 = new ODataFilter('CompanyCode',[{
-			operator: 'EQ',
-			value1: "test2"
-		}]);
-
-		var aFilters = [oFilter1, oFilter2, oFilter3];
-
-		var sFilterString = ODataUtils.createFilterParams(aFilters);
-		assert.equal(sFilterString, "$filter=Customer%20eq%20test0%20and%20CollectionSegment%20eq%20test1%20and%20CompanyCode%20eq%20test2", "Filter string should be returned.");
-	});
-
 	//*********************************************************************************************
 	QUnit.test("_mergeIntervals", function (assert) {
 		// code under test: without interval
@@ -656,136 +631,136 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-[{
-	description : "range w/o prefetch, no elements",
-	range : [0, 10, 0],
-	readRange : {start : 0, length : 10},
-	aElements : [],
-	intervals : [{start : 0, end : 10}]
-}, {
-	description : "range w/o prefetch, 1 element",
-	range : [0, 10, 0],
-	readRange : {start : 0, length : 10},
-	aElements : [{}],
-	intervals : [{start : 1, end : 10}]
-}, {
-	description : "range w/o prefetch, 1 element, limit = 1",
-	range : [0, 10, 0],
-	readRange : {start : 0, length : 10},
-	aElements : [{}],
-	limit : 1,
-	intervals : []
-}, {
-	description : "range w/o prefetch, 3 elements, limit 9, 2 gaps",
-	range : [0, 10, 0],
-	readRange : {start : 0, length : 10},
-	aElements : [{}, undefined, undefined, {}, undefined, {}],
-	limit : 9,
-	intervals : [{start : 1, end : 3}, {start : 4, end : 5}, {start : 6, end : 9}]
-}, {
-	description : "range w/ prefetch, no elements, left gap < prefetch",
-	range : [51, 10, 100],
-	readRange : {start : 0, length : 161},
-	aElements : [],
-	intervals : [{start : 0, end : 161}]
-}, {
-	description : "range w/ prefetch, no elements, left gap > prefetch",
-	range : [151, 10, 100],
-	readRange : {start : 51, length : 210},
-	aElements : [],
-	intervals : [{start : 51, end : 261}]
-}, {
-	description : "range w/ prefetch outside of limit, 3 elements, limit 111, 2 gaps",
-	range : [6, 10, 100],
-	readRange : {start : 0, length : 116},
-	aElements : [{}, undefined, undefined, {}, undefined, {}],
-	limit : 111,
-	intervals : [{start : 1, end : 3}, {start : 4, end : 5}, {start : 6, end : 111}]
-}].forEach(function (oFixture) {
-	QUnit.test("_getReadIntervals: " + oFixture.description, function (assert) {
-		var aIntervals;
+	[{
+		description : "range w/o prefetch, no elements",
+		range : [0, 10, 0],
+		readRange : {start : 0, length : 10},
+		aElements : [],
+		intervals : [{start : 0, end : 10}]
+	}, {
+		description : "range w/o prefetch, 1 element",
+		range : [0, 10, 0],
+		readRange : {start : 0, length : 10},
+		aElements : [{}],
+		intervals : [{start : 1, end : 10}]
+	}, {
+		description : "range w/o prefetch, 1 element, limit = 1",
+		range : [0, 10, 0],
+		readRange : {start : 0, length : 10},
+		aElements : [{}],
+		limit : 1,
+		intervals : []
+	}, {
+		description : "range w/o prefetch, 3 elements, limit 9, 2 gaps",
+		range : [0, 10, 0],
+		readRange : {start : 0, length : 10},
+		aElements : [{}, undefined, undefined, {}, undefined, {}],
+		limit : 9,
+		intervals : [{start : 1, end : 3}, {start : 4, end : 5}, {start : 6, end : 9}]
+	}, {
+		description : "range w/ prefetch, no elements, left gap < prefetch",
+		range : [51, 10, 100],
+		readRange : {start : 0, length : 161},
+		aElements : [],
+		intervals : [{start : 0, end : 161}]
+	}, {
+		description : "range w/ prefetch, no elements, left gap > prefetch",
+		range : [151, 10, 100],
+		readRange : {start : 51, length : 210},
+		aElements : [],
+		intervals : [{start : 51, end : 261}]
+	}, {
+		description : "range w/ prefetch outside of limit, 3 elements, limit 111, 2 gaps",
+		range : [6, 10, 100],
+		readRange : {start : 0, length : 116},
+		aElements : [{}, undefined, undefined, {}, undefined, {}],
+		limit : 111,
+		intervals : [{start : 1, end : 3}, {start : 4, end : 5}, {start : 6, end : 111}]
+	}].forEach(function (oFixture) {
+		QUnit.test("_getReadIntervals: " + oFixture.description, function (assert) {
+			var aIntervals;
 
-		this.mock(ODataUtils).expects("_getReadRange")
-			.withExactArgs(sinon.match.same(oFixture.aElements), oFixture.range[0],
-				oFixture.range[1], oFixture.range[2])
-			.returns(oFixture.readRange);
+			this.mock(ODataUtils).expects("_getReadRange")
+				.withExactArgs(sinon.match.same(oFixture.aElements), oFixture.range[0],
+					oFixture.range[1], oFixture.range[2])
+				.returns(oFixture.readRange);
 
-		// code under test
-		aIntervals = ODataUtils._getReadIntervals(oFixture.aElements, oFixture.range[0],
-			oFixture.range[1], oFixture.range[2], oFixture.limit);
+			// code under test
+			aIntervals = ODataUtils._getReadIntervals(oFixture.aElements, oFixture.range[0],
+				oFixture.range[1], oFixture.range[2], oFixture.limit);
 
-		assert.deepEqual(aIntervals, oFixture.intervals);
+			assert.deepEqual(aIntervals, oFixture.intervals);
+		});
 	});
-});
 
 	//*********************************************************************************************
-[{ // no prefetch
-	range : [0, 10, 0],
-	expected : {start : 0, length : 10}
-}, {
-	range : [40, 10, 0],
-	expected : {start : 40, length : 10}
-}, {
-	current : [[40, 50]],
-	range : [40, 10, 0],
-	expected : {start : 40, length : 10}
-}, {
-	current : [[50, 110]],
-	range : [100, 20, 0],
-	expected : {start : 100, length : 20}
-}, { // initial read with prefetch
-	range : [0, 10, 100],
-	expected : {start : 0, length : 110}
-}, { // iPrefetchLength / 2 available on both sides
-	current : [[0, 110]],
-	range : [50, 10, 100],
-	expected : {start : 50, length : 10}
-}, { // missing a row at the end
-	current : [[0, 110]],
-	range : [51, 10, 100],
-	expected : {start : 51, length : 110}
-}, { // missing a row before the start
-	current : [[100, 260]],
-	range : [149, 10, 100],
-	expected : {start : 49, length : 110}
-}, { // missing a row before the start, do not read beyond 0
-	current : [[40, 200]],
-	range : [89, 10, 100],
-	expected : {start : 0, length : 99}
-}, { // missing data on both sides, do not read beyond 0
-	range : [430, 10, 100],
-	expected : {start : 330, length : 210}
-}, { // missing data on both sides, do not read beyond 0
-	current : [[40, 100]],
-	range : [89, 10, 100],
-	expected : {start : 0, length : 199}
-}, { // fetch all data
-	range : [0, 0, Infinity],
-	expected : {start : 0, length : Infinity}
-}, { // fetch all data with offset
-	range : [1, 0, Infinity],
-	expected : {start : 0, length : Infinity}
-}].forEach(function (oFixture) {
-	QUnit.test("_getReadRange: " + oFixture.range, function (assert) {
-		var aElements = [],
-			oResult;
+	[{ // no prefetch
+		range : [0, 10, 0],
+		expected : {start : 0, length : 10}
+	}, {
+		range : [40, 10, 0],
+		expected : {start : 40, length : 10}
+	}, {
+		current : [[40, 50]],
+		range : [40, 10, 0],
+		expected : {start : 40, length : 10}
+	}, {
+		current : [[50, 110]],
+		range : [100, 20, 0],
+		expected : {start : 100, length : 20}
+	}, { // initial read with prefetch
+		range : [0, 10, 100],
+		expected : {start : 0, length : 110}
+	}, { // iPrefetchLength / 2 available on both sides
+		current : [[0, 110]],
+		range : [50, 10, 100],
+		expected : {start : 50, length : 10}
+	}, { // missing a row at the end
+		current : [[0, 110]],
+		range : [51, 10, 100],
+		expected : {start : 51, length : 110}
+	}, { // missing a row before the start
+		current : [[100, 260]],
+		range : [149, 10, 100],
+		expected : {start : 49, length : 110}
+	}, { // missing a row before the start, do not read beyond 0
+		current : [[40, 200]],
+		range : [89, 10, 100],
+		expected : {start : 0, length : 99}
+	}, { // missing data on both sides, do not read beyond 0
+		range : [430, 10, 100],
+		expected : {start : 330, length : 210}
+	}, { // missing data on both sides, do not read beyond 0
+		current : [[40, 100]],
+		range : [89, 10, 100],
+		expected : {start : 0, length : 199}
+	}, { // fetch all data
+		range : [0, 0, Infinity],
+		expected : {start : 0, length : Infinity}
+	}, { // fetch all data with offset
+		range : [1, 0, Infinity],
+		expected : {start : 0, length : Infinity}
+	}].forEach(function (oFixture) {
+		QUnit.test("_getReadRange: " + oFixture.range, function (assert) {
+			var aElements = [],
+				oResult;
 
-		// prepare elements array
-		if (oFixture.current) {
-			oFixture.current.forEach(function (aRange) {
-				var i, n;
+			// prepare elements array
+			if (oFixture.current) {
+				oFixture.current.forEach(function (aRange) {
+					var i, n;
 
-				for (i = aRange[0], n = aRange[1]; i < n; i += 1) {
-					aElements[i] = i;
-				}
-			});
-		}
+					for (i = aRange[0], n = aRange[1]; i < n; i += 1) {
+						aElements[i] = i;
+					}
+				});
+			}
 
-		// code under test
-		oResult = ODataUtils._getReadRange(aElements, oFixture.range[0], oFixture.range[1],
-				oFixture.range[2]);
+			// code under test
+			oResult = ODataUtils._getReadRange(aElements, oFixture.range[0], oFixture.range[1],
+					oFixture.range[2]);
 
-		assert.deepEqual(oResult, oFixture.expected);
+			assert.deepEqual(oResult, oFixture.expected);
+		});
 	});
-});
 });

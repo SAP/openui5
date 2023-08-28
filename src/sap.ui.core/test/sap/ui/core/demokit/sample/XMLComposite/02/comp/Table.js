@@ -1,6 +1,6 @@
-sap.ui.define(['sap/ui/core/XMLComposite'], function (XMLComposite) {
+sap.ui.define([], function() {
 	"use strict";
-	var oTable = XMLComposite.extend("sap.ui.core.sample.XMLComposite.02.comp.Table", {
+	var oTable = undefined/*XMLComposite*/.extend("sap.ui.core.sample.XMLComposite.02.comp.Table", {
 		metadata: {
 			aggregations: {
 				content: {

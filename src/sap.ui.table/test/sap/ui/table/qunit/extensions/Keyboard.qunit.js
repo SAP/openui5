@@ -490,7 +490,9 @@ sap.ui.define([
 
 			oInitItemNavigationSpy.resetHistory();
 			oOnFocusInSpy.resetHistory();
-			oTable.rerender();
+			oTable.invalidate();
+
+			oCore.applyChanges();
 
 			assert.ok(oInitItemNavigationSpy.calledOnce, "Re-rendered when focus was on " + sId + ": The item navigation was reinitialized");
 			assert.strictEqual(document.activeElement.id, sId, "Re-rendered when focus was on " + sId + ": The correct element is focused");

@@ -104,30 +104,6 @@ sap.ui.define([
 	});
 
 
-	/**
-	 * @deprecated As of version 1.50.0.
-	 */
-	QUnit.test('Header is shown when the title is filled', function (assert) {
-		assert.expect(3);
-		var done = assert.async();
-
-		var oOptions = {
-			"source": "test-resources/sap/m/qunit/pdfviewer/sample-file.pdf",
-			"popupHeaderTitle": "Custom header title",
-			"loaded": function () {
-				assert.ok(true, "'Load' event fired.");
-
-				var oTitleNode = $('.sapMDialogTitle.sapMTitle');
-				assert.ok(oTitleNode.length === 1, 'Header has to be shown');
-				assert.ok(oTitleNode.find("*:contains('Custom header title')").length === 1, "Header contains correct title");
-				done();
-			}
-		};
-		oPdfViewer = TestUtils.createPdfViewer(oOptions);
-
-		oPdfViewer.open();
-	});
-
 	QUnit.test('Header is shown when the title is not filled', function (assert) {
 		assert.expect(2);
 		var done = assert.async();
@@ -146,32 +122,6 @@ sap.ui.define([
 
 				assert.ok(false, err);
 				done();
-			}
-		};
-		oPdfViewer = TestUtils.createPdfViewer(oOptions);
-
-		oPdfViewer.open();
-	});
-
-	/**
-	 * @deprecated As of version 1.50.0
-	 */
-	QUnit.test('Header is shown when the title is empty string', function (assert) {
-		assert.expect(2);
-		var done = assert.async();
-
-		var oOptions = {
-			"source": "test-resources/sap/m/qunit/pdfviewer/sample-file.pdf",
-			"popupHeaderTitle": "",
-			"loaded": function () {
-				assert.ok(true, "'Load' event fired.");
-
-				var oHeaderNode = oPdfViewer.$('popup-header');
-				assert.ok(oHeaderNode.length === 1, 'Header has to be shown');
-				done();
-			},
-			"error": function () {
-				assert.ok(false, "'Error' event fired");
 			}
 		};
 		oPdfViewer = TestUtils.createPdfViewer(oOptions);
@@ -245,5 +195,4 @@ sap.ui.define([
 
 		oPdfViewer.open();
 	});
-
 });

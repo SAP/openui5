@@ -490,20 +490,6 @@ sap.ui.define([
 			return oRequest;
 		}
 
-		/**
-		 * @deprecated since 1.113
-		 */
-		if (oHost.modifyRequestHeaders) {
-			oRequest.options.headers = new Headers(oHost.modifyRequestHeaders(Object.fromEntries(oRequest.options.headers), oSettings, oCard));
-		}
-
-		/**
-		 * @deprecated since 1.113
-		 */
-		if (oHost.modifyRequest) {
-			oRequest = oHost.modifyRequest(oRequest, oSettings, oCard);
-		}
-
 		return oRequest;
 	};
 

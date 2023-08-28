@@ -25,8 +25,11 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	"sap/base/Log",
 	"sap/ui/core/Configuration",
-	"sap/ui/dom/jquery/Focusable", // jQuery Plugin "firstFocusableDomRef", "lastFocusableDomRef"
-	"sap/ui/dom/jquery/rect" // jQuery Plugin "rect"
+	"sap/ui/core/StaticArea",
+	// jQuery Plugin "firstFocusableDomRef", "lastFocusableDomRef"
+	"sap/ui/dom/jquery/Focusable",
+	// jQuery Plugin "rect"
+	"sap/ui/dom/jquery/rect"
 ],
 	function(
 		Bar,
@@ -49,7 +52,8 @@ sap.ui.define([
 		getScrollbarSize,
 		KeyCodes,
 		Log,
-		Configuration
+		Configuration,
+		StaticArea
 	) {
 		"use strict";
 
@@ -132,7 +136,6 @@ sap.ui.define([
 				],
 				library: "sap.m",
 				properties: {
-
 					/**
 					 * This is the information about on which side will the popover be placed at. Possible values are sap.m.PlacementType.Left, sap.m.PlacementType.Right, sap.m.PlacementType.Top, sap.m.PlacementType.Bottom, sap.m.PlacementType.Horizontal, sap.m.PlacementType.HorizontalPreferredLeft, sap.m.PlacementType.HorizontalPreferredRight, sap.m.PlacementType.Vertical, sap.m.PlacementType.VerticalPreferredTop, sap.m.PlacementType.VerticalPreferredBottom, sap.m.PlacementType.Auto. The default value is sap.m.PlacementType.Right. Setting this property while popover is open won't cause any rerendering of the popover, but it will take effect when it's opened again.
 					 */
@@ -194,12 +197,6 @@ sap.ui.define([
 					contentHeight: {type: "sap.ui.core.CSSSize", group: "Dimension", defaultValue: null},
 
 					/**
-					 * This property is deprecated. Please use properties verticalScrolling and horizontalScrolling instead. If you still use this property it will be mapped on the new properties verticalScrolling and horizontalScrolling.
-					 * @deprecated Since version 1.15.0.
-					 */
-					enableScrolling: {type: "boolean", group: "Misc", defaultValue: true, deprecated: true},
-
-					/**
 					 * This property indicates if user can scroll vertically inside popover when the content is bigger than the content area. However, when scrollable control (sap.m.ScrollContainer, sap.m.Page) is in the popover, this property needs to be set to false to disable the scrolling in popover in order to make the scrolling in the child control work properly.
 					 * Popover detects if there's sap.m.NavContainer, sap.m.Page, or sap.m.ScrollContainer as direct child added to Popover. If there is, Popover will turn off scrolling by setting this property to false automatically ignoring the existing value of this property.
 					 * @since 1.15.0
@@ -212,13 +209,6 @@ sap.ui.define([
 					 * @since 1.15.0
 					 */
 					horizontalScrolling: {type: "boolean", group: "Misc", defaultValue: true},
-
-					/**
-					 * Whether bouncing is enabled.
-					 * @since 1.16.5
-					 * @deprecated since 1.42. This parameter is obsolete and has no effect.
-					 */
-					bounce: {type: "boolean", group: "Behavior", defaultValue: null, deprecated: true},
 
 					/**
 					 * Whether resize option is enabled.
@@ -297,23 +287,6 @@ sap.ui.define([
 					endButton: {type: "sap.ui.core.Control", multiple: false}
 				},
 				associations: {
-
-					/**
-					 * LeftButton is shown at the left edge of the bar in iOS, and at the right side of the bar for the other platforms. Please set this to null if you want to remove the left button from the bar. And the button is only removed from the bar, not destroyed. When showHeader is set to false, this property will be ignored.
-					 * @deprecated Since version 1.15.1.
-					 *
-					 * This property has been deprecated since 1.15.1. Please use the beginButton instead.
-					 */
-					leftButton: {type: "sap.m.Button", multiple: false, deprecated: true},
-
-					/**
-					 * RightButton is always shown at the right edge of the bar. Please set this to null if you want to remove the right button from the bar. And the button is only removed from the bar, not destroyed. When showHeader is set to false, this property will be ignored.
-					 * @deprecated Since version 1.15.1.
-					 *
-					 * This property has been deprecated since 1.15.1. Please use the endButton instead.
-					 */
-					rightButton: {type: "sap.m.Button", multiple: false, deprecated: true},
-
 					/**
 					 * Focus on the popover is set in the sequence of <code>beginButton</code> and <code>endButton</code>, when available. But if a control other than these two buttons needs to get the focus, set the <code>initialFocus</code> with the control which should be focused on.
 					 * @since 1.15.0
@@ -1423,27 +1396,23 @@ sap.ui.define([
 
 			//calculate the position of the popover
 			switch (oPlacement) {
-				case PlacementType.Auto:
-					this._calcAuto();
-					break;
-				case PlacementType.Vertical:
-				case PlacementType.VerticalPreferedTop:
-				case PlacementType.VerticalPreferredTop:
-				case PlacementType.VerticalPreferedBottom:
-				case PlacementType.VerticalPreferredBottom:
-				case PlacementType.PreferredTopOrFlip:
-				case PlacementType.PreferredBottomOrFlip:
-					this._calcVertical();
-					break;
-				case PlacementType.Horizontal:
-				case PlacementType.HorizontalPreferedLeft:
-				case PlacementType.HorizontalPreferredLeft:
-				case PlacementType.HorizontalPreferedRight:
-				case PlacementType.HorizontalPreferredRight:
-				case PlacementType.PreferredRightOrFlip:
-				case PlacementType.PreferredLeftOrFlip:
-					this._calcHorizontal();
-					break;
+			case PlacementType.Auto:
+				this._calcAuto();
+				break;
+			case PlacementType.Vertical:
+			case PlacementType.VerticalPreferredTop:
+			case PlacementType.VerticalPreferredBottom:
+			case PlacementType.PreferredTopOrFlip:
+			case PlacementType.PreferredBottomOrFlip:
+				this._calcVertical();
+				break;
+			case PlacementType.Horizontal:
+			case PlacementType.HorizontalPreferredLeft:
+			case PlacementType.HorizontalPreferredRight:
+			case PlacementType.PreferredRightOrFlip:
+			case PlacementType.PreferredLeftOrFlip:
+				this._calcHorizontal();
+				break;
 			}
 			//set flag to avoid calling _applyPosition
 			this._bPosCalced = true;
@@ -1465,8 +1434,8 @@ sap.ui.define([
 		Popover.prototype._calcVertical = function () {
 			var $parent = jQuery(this._getOpenByDomRef());
 			var bHasParent = $parent[0] !== undefined;
-			var bPreferredPlacementTop = this.getPlacement() === PlacementType.VerticalPreferedTop || this.getPlacement() === PlacementType.VerticalPreferredTop;
-			var bPreferredPlacementBottom = this.getPlacement() === PlacementType.VerticalPreferedBottom || this.getPlacement() === PlacementType.VerticalPreferredBottom;
+			var bPreferredPlacementTop = this.getPlacement() === PlacementType.VerticalPreferredTop;
+			var bPreferredPlacementBottom = this.getPlacement() === PlacementType.VerticalPreferredBottom;
 			var bPreferredTopOrFlip = this.getPlacement() === PlacementType.PreferredTopOrFlip;
 			var bPreferredBottomOrFlip = this.getPlacement() === PlacementType.PreferredBottomOrFlip;
 			var iParentTop = bHasParent ? $parent[0].getBoundingClientRect().top : 0;
@@ -1508,8 +1477,8 @@ sap.ui.define([
 		Popover.prototype._calcHorizontal = function () {
 			var $parent = jQuery(this._getOpenByDomRef());
 			var bHasParent = $parent[0] !== undefined;
-			var bPreferredPlacementLeft = this.getPlacement() === PlacementType.HorizontalPreferedLeft || this.getPlacement() === PlacementType.HorizontalPreferredLeft;
-			var bPreferredPlacementRight = this.getPlacement() === PlacementType.HorizontalPreferedRight || this.getPlacement() === PlacementType.HorizontalPreferredRight;
+			var bPreferredPlacementLeft = this.getPlacement() === PlacementType.HorizontalPreferredLeft;
+			var bPreferredPlacementRight = this.getPlacement() === PlacementType.HorizontalPreferredRight;
 			var iParentLeft = bHasParent ? $parent[0].getBoundingClientRect().left : 0;
 			var iParentWidth = bHasParent ? $parent[0].getBoundingClientRect().width : 0;
 			var iOffsetX = this._getOffsetX();
@@ -2205,7 +2174,7 @@ sap.ui.define([
 		 */
 		Popover.prototype._isPopupElement = function (oDOMNode) {
 			var oParentDomRef = this._getOpenByDomRef();
-			return !!(jQuery(oDOMNode).closest(sap.ui.getCore().getStaticAreaRef()).length) || !!(jQuery(oDOMNode).closest(oParentDomRef).length);
+			return !!(jQuery(oDOMNode).closest(StaticArea.getDomRef()/* LFUI5: Check: StaticArea's API might have a better fit for your use case. */).length) || !!(jQuery(oDOMNode).closest(oParentDomRef).length);
 		};
 
 		/**
@@ -2557,26 +2526,6 @@ sap.ui.define([
 			return this;
 		};
 
-		Popover.prototype.setLeftButton = function (vButton) {
-			if (!(vButton instanceof Button)) {
-				vButton = Element.registry.get(vButton);
-			}
-
-			//setting leftButton also sets the beginButton
-			this.setBeginButton(vButton);
-			return this.setAssociation("leftButton", vButton);
-		};
-
-		Popover.prototype.setRightButton = function (vButton) {
-			if (!(vButton instanceof Button)) {
-				vButton = Element.registry.get(vButton);
-			}
-
-			//setting rightButton also sets the endButton
-			this.setEndButton(vButton);
-			return this.setAssociation("rightButton", vButton);
-		};
-
 		/**
 		 * Setter for property <code>modal</code>.
 		 * This overwrites the default setter of the property <code>modal</code> to avoid rerendering the whole popover control.
@@ -2598,14 +2547,6 @@ sap.ui.define([
 			// suppress re-rendering
 			this.setProperty("modal", bModal, true);
 
-			return this;
-		};
-
-		Popover.prototype.setEnableScrolling = function (bValue) {
-			//map deprecated property to new properties
-			this.setHorizontalScrolling(bValue);
-			this.setVerticalScrolling(bValue);
-			this.setProperty("enableScrolling", bValue);
 			return this;
 		};
 

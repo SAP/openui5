@@ -2,10 +2,9 @@
  * ${copyright}
  */
 sap.ui.define([
-	'sap/ui/core/XMLComposite'
-], function(XMLComposite) {
+], function() {
 	"use strict";
-	return XMLComposite.extend("composites.Abstract", {
+	return undefined/*XMLComposite*/.extend("composites.Abstract", {
 		metadata: {
 			"abstract": true
 		}

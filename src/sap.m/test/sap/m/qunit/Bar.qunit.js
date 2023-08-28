@@ -175,31 +175,6 @@ sap.ui.define([
 
 	});
 
-	/**
-	 * @deprecated since version 1.16
-	 */
-	QUnit.test("Deprecated property 'enableFlexBox': should add and remove the flex box", function(assert) {
-
-		var bar = new Bar("myBar2", {
-			enableFlexBox: true,
-			contentLeft: [ new Image({src: "../images/SAPUI5.jpg"})],
-			contentMiddle: [ new Label({text: "my Bar 1"})],
-			contentRight: [ new Button({text: "Edit"})]
-		}).placeAt("qunit-fixture");
-		oCore.applyChanges();
-
-		assert.ok(jQuery("#myBar2-BarPH").hasClass("sapMFlexBox"), "header placeholder should be a FlexBox with class sapMFlexBox");
-		assert.ok(jQuery("#myBar2-BarPH").hasClass("sapMHBox"), "header placeholder should be a HBox with class sapMHBox");
-
-		bar.setEnableFlexBox(false);
-		oCore.applyChanges();
-
-		assert.ok(!jQuery("#myBar2-BarPH").hasClass("sapMFlexBox"), "header placeholder should not be a FlexBox with class sapMFlexBox");
-		assert.ok(!jQuery("#myBar2-BarPH").hasClass("sapMHBox"), "header placeholder should not be a HBox with class sapMHBox");
-
-		bar.destroy();
-	});
-
 	QUnit.test("Should set the translucent class if on a touch device", function(assert) {
 		var //System under Test
 			sut = new Bar({
@@ -645,8 +620,6 @@ sap.ui.define([
 
 		assert.strictEqual(oBarInternals.$right.outerWidth(), 225 + iStartEndPadding, "right outerWidth is correct");
 
-		//Change to flexbox mode
-		sut.setEnableFlexBox(true);
 		oCore.applyChanges();
 
 		//Assert
@@ -726,8 +699,6 @@ sap.ui.define([
 
 		assert.strictEqual(oBarInternals.$right.outerWidth(), 100 + iStartEndPadding, "right outerWidth is correct");
 
-		//Change to flexbox mode
-		sut.setEnableFlexBox(true);
 		oCore.applyChanges();
 
 		//Assert
@@ -1009,5 +980,4 @@ sap.ui.define([
 		// cleanup
 		oBar.destroy();
 	});
-
 });

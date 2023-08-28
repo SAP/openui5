@@ -253,110 +253,110 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-[{
-	bIsPreliminary : true,
-	bIsUpdated : false,
-	bSameContext : false,
-	bUsePreliminary : true
-}, {
-	bIsPreliminary : false,
-	bIsUpdated : false,
-	bSameContext : false,
-	bUsePreliminary : false
-}, {
-	bIsPreliminary : false,
-	bIsUpdated : false,
-	bSameContext : true,
-	bUsePreliminary : true
-}, {
-	bIsPreliminary : false,
-	bIsUpdated : true,
-	bSameContext : false,
-	bUsePreliminary : true
-}, {
-	bIsPreliminary : false,
-	bIsUpdated : true,
-	bSameContext : true,
-	bUsePreliminary : false
-}].forEach(function (oFixture, i) {
-	QUnit.test("setContext: context changed, relative, resolved, " + i, function (assert) {
-		var oNewContext = {
-				isPreliminary : function () {},
-				isUpdated : function () {}
-			},
-			oBinding = {
-				oContext : oFixture.bSameContext ? oNewContext : "oContext",
-				_fireChange : function () {},
-				_initialize : function () {},
-				getResolvedPath : function () {},
-				isRelative : function () {},
-				resetData : function () {},
-				bUsePreliminaryContext : oFixture.bUsePreliminary
-			},
-			oBindingMock = this.mock(oBinding),
-			oExpectation,
-			oNewContextMock = this.mock(oNewContext);
+	[{
+		bIsPreliminary : true,
+		bIsUpdated : false,
+		bSameContext : false,
+		bUsePreliminary : true
+	}, {
+		bIsPreliminary : false,
+		bIsUpdated : false,
+		bSameContext : false,
+		bUsePreliminary : false
+	}, {
+		bIsPreliminary : false,
+		bIsUpdated : false,
+		bSameContext : true,
+		bUsePreliminary : true
+	}, {
+		bIsPreliminary : false,
+		bIsUpdated : true,
+		bSameContext : false,
+		bUsePreliminary : true
+	}, {
+		bIsPreliminary : false,
+		bIsUpdated : true,
+		bSameContext : true,
+		bUsePreliminary : false
+	}].forEach(function (oFixture, i) {
+		QUnit.test("setContext: context changed, relative, resolved, " + i, function (assert) {
+			var oNewContext = {
+					isPreliminary : function () {},
+					isUpdated : function () {}
+				},
+				oBinding = {
+					oContext : oFixture.bSameContext ? oNewContext : "oContext",
+					_fireChange : function () {},
+					_initialize : function () {},
+					getResolvedPath : function () {},
+					isRelative : function () {},
+					resetData : function () {},
+					bUsePreliminaryContext : oFixture.bUsePreliminary
+				},
+				oBindingMock = this.mock(oBinding),
+				oExpectation,
+				oNewContextMock = this.mock(oNewContext);
 
-		oNewContextMock.expects("isPreliminary").withExactArgs().returns(oFixture.bIsPreliminary);
-		oNewContextMock.expects("isUpdated").withExactArgs().returns(oFixture.bIsUpdated);
-		this.mock(Context).expects("hasChanged")
-			.withExactArgs(oFixture.bSameContext ? oNewContext : "oContext",
-				sinon.match.same(oNewContext))
-			.returns(true);
-		oBindingMock.expects("isRelative").withExactArgs().returns(true);
-		oBindingMock.expects("getResolvedPath").withExactArgs().returns("sResolvedPath");
-		oBindingMock.expects("resetData").withExactArgs();
-		oExpectation = oBindingMock.expects("_initialize").withExactArgs(sinon.match.func);
-		oBindingMock.expects("_fireChange").withExactArgs({reason : ChangeReason.Context})
-			.on(oBinding);
-		oExpectation.callsArgOn(0, oBinding);
+			oNewContextMock.expects("isPreliminary").withExactArgs().returns(oFixture.bIsPreliminary);
+			oNewContextMock.expects("isUpdated").withExactArgs().returns(oFixture.bIsUpdated);
+			this.mock(Context).expects("hasChanged")
+				.withExactArgs(oFixture.bSameContext ? oNewContext : "oContext",
+					sinon.match.same(oNewContext))
+				.returns(true);
+			oBindingMock.expects("isRelative").withExactArgs().returns(true);
+			oBindingMock.expects("getResolvedPath").withExactArgs().returns("sResolvedPath");
+			oBindingMock.expects("resetData").withExactArgs();
+			oExpectation = oBindingMock.expects("_initialize").withExactArgs(sinon.match.func);
+			oBindingMock.expects("_fireChange").withExactArgs({reason : ChangeReason.Context})
+				.on(oBinding);
+			oExpectation.callsArgOn(0, oBinding);
 
-		// code under test
-		ODataTreeBinding.prototype.setContext.call(oBinding, oNewContext);
+			// code under test
+			ODataTreeBinding.prototype.setContext.call(oBinding, oNewContext);
 
-		assert.strictEqual(oBinding.oContext, oNewContext);
+			assert.strictEqual(oBinding.oContext, oNewContext);
+		});
 	});
-});
 
 	//*********************************************************************************************
-[undefined, "oAllKeys", "oKeys", "_aNodes"].forEach(function (sProperty, i) {
-	QUnit.test("setContext: context changed, relative, unresolved, " + i, function (assert) {
-		var oBinding = {
-				oContext : "oContext",
-				_fireChange : function () {},
-				_initialize : function () {},
-				getResolvedPath : function () {},
-				isRelative : function () {},
-				resetData : function () {}
-			},
-			oBindingMock = this.mock(oBinding),
-			oNewContext = {
-				isPreliminary : function () {},
-				isUpdated : function () {}
-			},
-			oNewContextMock = this.mock(oNewContext);
+	[undefined, "oAllKeys", "oKeys", "_aNodes"].forEach(function (sProperty, i) {
+		QUnit.test("setContext: context changed, relative, unresolved, " + i, function (assert) {
+			var oBinding = {
+					oContext : "oContext",
+					_fireChange : function () {},
+					_initialize : function () {},
+					getResolvedPath : function () {},
+					isRelative : function () {},
+					resetData : function () {}
+				},
+				oBindingMock = this.mock(oBinding),
+				oNewContext = {
+					isPreliminary : function () {},
+					isUpdated : function () {}
+				},
+				oNewContextMock = this.mock(oNewContext);
 
-		if (sProperty) {
-			oBinding[sProperty] = /*non-empty object*/{foo : "bar"};
-		}
+			if (sProperty) {
+				oBinding[sProperty] = /*non-empty object*/{foo : "bar"};
+			}
 
-		oNewContextMock.expects("isPreliminary").withExactArgs().returns(false);
-		oNewContextMock.expects("isUpdated").withExactArgs().returns(false);
-		this.mock(Context).expects("hasChanged")
-			.withExactArgs("oContext", sinon.match.same(oNewContext))
-			.returns(true);
-		oBindingMock.expects("isRelative").withExactArgs().returns(true);
-		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns(undefined);
-		oBindingMock.expects("resetData").exactly(sProperty ? 1 : 0).withExactArgs();
-		oBindingMock.expects("_fireChange").exactly(sProperty ? 1 : 0)
-			.withExactArgs({reason : ChangeReason.Context});
+			oNewContextMock.expects("isPreliminary").withExactArgs().returns(false);
+			oNewContextMock.expects("isUpdated").withExactArgs().returns(false);
+			this.mock(Context).expects("hasChanged")
+				.withExactArgs("oContext", sinon.match.same(oNewContext))
+				.returns(true);
+			oBindingMock.expects("isRelative").withExactArgs().returns(true);
+			this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns(undefined);
+			oBindingMock.expects("resetData").exactly(sProperty ? 1 : 0).withExactArgs();
+			oBindingMock.expects("_fireChange").exactly(sProperty ? 1 : 0)
+				.withExactArgs({reason : ChangeReason.Context});
 
-		// code under test
-		ODataTreeBinding.prototype.setContext.call(oBinding, oNewContext);
+			// code under test
+			ODataTreeBinding.prototype.setContext.call(oBinding, oNewContext);
 
-		assert.strictEqual(oBinding.oContext, oNewContext);
+			assert.strictEqual(oBinding.oContext, oNewContext);
+		});
 	});
-});
 
 	//*********************************************************************************************
 	QUnit.test("setContext: preliminary context, not used", function (assert) {
@@ -405,36 +405,36 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-[{"~changedEntityKey" : true}, {Foo : true}, {}, undefined].forEach(function (mChangedEntities, i) {
-	QUnit.test("_refresh: test with given mChangedEntities: " + i, function (assert) {
-		var oBinding = {
-				_hasChangedEntity : function () {},
-				_fireRefresh : function () {},
-				_isRefreshAfterChangeAllowed : function () {},
-				resetData : function () {}
-			},
-			bExpectChange = !mChangedEntities || mChangedEntities["~changedEntityKey"];
+	[{"~changedEntityKey" : true}, {Foo : true}, {}, undefined].forEach(function (mChangedEntities, i) {
+		QUnit.test("_refresh: test with given mChangedEntities: " + i, function (assert) {
+			var oBinding = {
+					_hasChangedEntity : function () {},
+					_fireRefresh : function () {},
+					_isRefreshAfterChangeAllowed : function () {},
+					resetData : function () {}
+				},
+				bExpectChange = !mChangedEntities || mChangedEntities["~changedEntityKey"];
 
-		this.mock(oBinding).expects("_isRefreshAfterChangeAllowed")
-			.withExactArgs()
-			.exactly(mChangedEntities ? 1 : 0)
-			.returns(true);
-		this.mock(oBinding).expects("_hasChangedEntity")
-			.withExactArgs(mChangedEntities)
-			.returns(bExpectChange ? true : false)
-			.exactly(mChangedEntities ? 1 : 0);
-		this.mock(oBinding).expects("resetData").exactly(bExpectChange ? 1 : 0);
-		this.mock(oBinding).expects("_fireRefresh").withExactArgs({reason: ChangeReason.Refresh})
-			.exactly(bExpectChange ? 1 : 0);
+			this.mock(oBinding).expects("_isRefreshAfterChangeAllowed")
+				.withExactArgs()
+				.exactly(mChangedEntities ? 1 : 0)
+				.returns(true);
+			this.mock(oBinding).expects("_hasChangedEntity")
+				.withExactArgs(mChangedEntities)
+				.returns(bExpectChange ? true : false)
+				.exactly(mChangedEntities ? 1 : 0);
+			this.mock(oBinding).expects("resetData").exactly(bExpectChange ? 1 : 0);
+			this.mock(oBinding).expects("_fireRefresh").withExactArgs({reason: ChangeReason.Refresh})
+				.exactly(bExpectChange ? 1 : 0);
 
-		// code under test
-		ODataTreeBinding.prototype._refresh.call(oBinding, /*bForceUpdate*/undefined,
-			mChangedEntities, /*mEntityTypes*/undefined);
+			// code under test
+			ODataTreeBinding.prototype._refresh.call(oBinding, /*bForceUpdate*/undefined,
+				mChangedEntities, /*mEntityTypes*/undefined);
 
-		assert.strictEqual(oBinding.bNeedsUpdate, bExpectChange ? false : undefined);
-		assert.strictEqual(oBinding.bRefresh, bExpectChange ? true : undefined);
+			assert.strictEqual(oBinding.bNeedsUpdate, bExpectChange ? false : undefined);
+			assert.strictEqual(oBinding.bRefresh, bExpectChange ? true : undefined);
+		});
 	});
-});
 
 	//*********************************************************************************************
 	QUnit.test("_refresh: don't check _hasChangedEntity if refreshAfterChange is not allowed",
@@ -473,45 +473,45 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-[{"~changedEntityKey" : true}, {Foo : true}, {}].forEach(function (mChangedEntities, i) {
-	QUnit.test("_hasChangedEntity: " + i, function (assert) {
-		var oBinding = {
-				oKeys : {
-					"foo" : ["baz", "bar"],
-					"~nodeKeys" : ["foobar", "~changedEntityKey"]
-				}
-			},
-			bExpectChange = mChangedEntities["~changedEntityKey"],
-			bResult;
+	[{"~changedEntityKey" : true}, {Foo : true}, {}].forEach(function (mChangedEntities, i) {
+		QUnit.test("_hasChangedEntity: " + i, function (assert) {
+			var oBinding = {
+					oKeys : {
+						"foo" : ["baz", "bar"],
+						"~nodeKeys" : ["foobar", "~changedEntityKey"]
+					}
+				},
+				bExpectChange = mChangedEntities["~changedEntityKey"],
+				bResult;
 
-		// code under test
-		bResult = ODataTreeBinding.prototype._hasChangedEntity.call(oBinding, mChangedEntities);
+			// code under test
+			bResult = ODataTreeBinding.prototype._hasChangedEntity.call(oBinding, mChangedEntities);
 
-		assert.strictEqual(bResult, bExpectChange ? true : false);
+			assert.strictEqual(bResult, bExpectChange ? true : false);
+		});
 	});
-});
 
 	//*********************************************************************************************
-["~resolvedPath", undefined].forEach(function (sResolvedPath, i) {
-	QUnit.test("getDownloadUrl: getResolvedPath is called, " + i, function (assert) {
-		var oBinding = {
-				oModel : {_createRequestUrl : function () {}},
-				getFilterParams : function () {},
-				getResolvedPath : function () {}
-			};
+	["~resolvedPath", undefined].forEach(function (sResolvedPath, i) {
+		QUnit.test("getDownloadUrl: getResolvedPath is called, " + i, function (assert) {
+			var oBinding = {
+					oModel : {_createRequestUrl : function () {}},
+					getFilterParams : function () {},
+					getResolvedPath : function () {}
+				};
 
-		this.mock(oBinding).expects("getFilterParams").withExactArgs().returns(undefined);
-		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns(sResolvedPath);
-		this.mock(oBinding.oModel).expects("_createRequestUrl")
-			.withExactArgs(sResolvedPath, null, [])
-			.exactly(sResolvedPath ? 1 : 0)
-			.returns("~requestUrl");
+			this.mock(oBinding).expects("getFilterParams").withExactArgs().returns(undefined);
+			this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns(sResolvedPath);
+			this.mock(oBinding.oModel).expects("_createRequestUrl")
+				.withExactArgs(sResolvedPath, null, [])
+				.exactly(sResolvedPath ? 1 : 0)
+				.returns("~requestUrl");
 
-		// code under test
-		assert.strictEqual(ODataTreeBinding.prototype.getDownloadUrl.call(oBinding),
-			sResolvedPath ? "~requestUrl" : undefined);
+			// code under test
+			assert.strictEqual(ODataTreeBinding.prototype.getDownloadUrl.call(oBinding),
+				sResolvedPath ? "~requestUrl" : undefined);
+		});
 	});
-});
 
 	//*********************************************************************************************
 	QUnit.test("_getEntityType: getResolvedPath is called", function (assert) {
@@ -882,21 +882,6 @@ sap.ui.define([
 				"~ilength", "~iThreshold"),
 			"~V2Context[]");
 	});
-	/** @deprecated As of version 1.102.0, reason OperationMode.Auto */
-	QUnit.test("_getContextsForNodeId: with operation mode 'Auto' and without"
-			+ " iTotalCollectionCount", function (assert) {
-		var oBinding = {
-				bCollectionCountRequested : true,
-				sOperationMode : OperationMode.Auto,
-				iTotalCollectionCount : null
-			};
-
-		// code under test
-		assert.deepEqual(
-			ODataTreeBinding.prototype._getContextsForNodeId.call(oBinding, "~sNodeId",
-					"~iStartIndex", "~iLength", "~iThreshold", "~mRequestParameters"),
-				[]);
-	});
 
 	//*********************************************************************************************
 	QUnit.test("_getContextsForNodeId: no keys for node ID available", function (assert) {
@@ -1033,48 +1018,48 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-[{
-	sModuleName : "sap/ui/model/odata/ODataTreeBindingAdapter",
-	oTreeProperties : {}
-},{
-	sModuleName : "sap/ui/model/odata/ODataTreeBindingFlat",
-	sOperationMode : OperationMode.Server,
-	oTreeProperties : {
-		"hierarchy-node-descendant-count-for" : "foo"
-	}
-}].forEach(function (oFixture, i) {
-	QUnit.test("_applyAdapter: with tree annotations, " + i, function () {
-		var oAdapter = {apply : function () {}},
-			oMetadata = {_getEntityTypeByPath : function () {}},
-			oBinding = {
-				getResolvedPath : function () {},
-				bHasTreeAnnotations : true,
-				oModel : {
-					oMetadata : oMetadata
+	[{
+		sModuleName : "sap/ui/model/odata/ODataTreeBindingAdapter",
+		oTreeProperties : {}
+	},{
+		sModuleName : "sap/ui/model/odata/ODataTreeBindingFlat",
+		sOperationMode : OperationMode.Server,
+		oTreeProperties : {
+			"hierarchy-node-descendant-count-for" : "foo"
+		}
+	}].forEach(function (oFixture, i) {
+		QUnit.test("_applyAdapter: with tree annotations, " + i, function () {
+			var oAdapter = {apply : function () {}},
+				oMetadata = {_getEntityTypeByPath : function () {}},
+				oBinding = {
+					getResolvedPath : function () {},
+					bHasTreeAnnotations : true,
+					oModel : {
+						oMetadata : oMetadata
+					},
+					sOperationMode : oFixture.sOperationMode,
+					mParameters : {},
+					oTreeProperties : oFixture.oTreeProperties
 				},
-				sOperationMode : oFixture.sOperationMode,
-				mParameters : {},
-				oTreeProperties : oFixture.oTreeProperties
-			},
-			oEntityType = {property : []},
-			oEventProvider = {fnFireEvent : function () {}},
-			oExpectation;
+				oEntityType = {property : []},
+				oEventProvider = {fnFireEvent : function () {}},
+				oExpectation;
 
-		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("~resolvedPath");
-		this.mock(oMetadata).expects("_getEntityTypeByPath")
-			.withExactArgs("~resolvedPath")
-			.returns(oEntityType);
+			this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("~resolvedPath");
+			this.mock(oMetadata).expects("_getEntityTypeByPath")
+				.withExactArgs("~resolvedPath")
+				.returns(oEntityType);
 
-		oExpectation = this.mock(sap.ui).expects("require")
-			.withExactArgs([oFixture.sModuleName], sinon.match.func);
-		this.mock(oAdapter).expects("apply").withExactArgs(sinon.match.same(oBinding));
-		this.mock(oEventProvider).expects("fnFireEvent").withExactArgs();
-		oExpectation.callsArgWith(1, oAdapter);
+			oExpectation = this.mock(sap.ui).expects("require")
+				.withExactArgs([oFixture.sModuleName], sinon.match.func);
+			this.mock(oAdapter).expects("apply").withExactArgs(sinon.match.same(oBinding));
+			this.mock(oEventProvider).expects("fnFireEvent").withExactArgs();
+			oExpectation.callsArgWith(1, oAdapter);
 
-		// code under test
-		ODataTreeBinding.prototype._applyAdapter.call(oBinding, oEventProvider.fnFireEvent);
+			// code under test
+			ODataTreeBinding.prototype._applyAdapter.call(oBinding, oEventProvider.fnFireEvent);
+		});
 	});
-});
 
 	//*********************************************************************************************
 	QUnit.test("_applyAdapter: error case", function () {
@@ -1118,37 +1103,37 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-[null, 0].forEach(function (vTotalCollectionCount) {
-	var sTitle = "_loadCompleteTreeWithAnnotations: don't add $top to URLParams: "
-			+ "TotalCollectionCount = " + vTotalCollectionCount;
+	[null, 0].forEach(function (vTotalCollectionCount) {
+		var sTitle = "_loadCompleteTreeWithAnnotations: don't add $top to URLParams: "
+				+ "TotalCollectionCount = " + vTotalCollectionCount;
 
-	QUnit.test(sTitle, function (assert) {
-		var oBinding = {
-				sGroupId : "~groupId",
-				oModel : {read : function () {}},
-				mRequestHandles : {},
-				bSkipDataEvents : true,
-				aSorters : "~sorters",
-				iTotalCollectionCount : vTotalCollectionCount,
-				getResolvedPath : function () {}
-			},
-			aUrlParams = ["~custom"];
+		QUnit.test(sTitle, function (assert) {
+			var oBinding = {
+					sGroupId : "~groupId",
+					oModel : {read : function () {}},
+					mRequestHandles : {},
+					bSkipDataEvents : true,
+					aSorters : "~sorters",
+					iTotalCollectionCount : vTotalCollectionCount,
+					getResolvedPath : function () {}
+				},
+				aUrlParams = ["~custom"];
 
-		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("~resolvedPath");
-		this.mock(oBinding.oModel).expects("read")
-			.withExactArgs("~resolvedPath", {
-				urlParameters : sinon.match.same(aUrlParams)
-					.and(sinon.match(["~custom"])),
-				success : sinon.match.func,
-				error : sinon.match.func,
-				sorters : "~sorters",
-				groupId : "~groupId"
-			});
+			this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("~resolvedPath");
+			this.mock(oBinding.oModel).expects("read")
+				.withExactArgs("~resolvedPath", {
+					urlParameters : sinon.match.same(aUrlParams)
+						.and(sinon.match(["~custom"])),
+					success : sinon.match.func,
+					error : sinon.match.func,
+					sorters : "~sorters",
+					groupId : "~groupId"
+				});
 
-		// code under test
-		ODataTreeBinding.prototype._loadCompleteTreeWithAnnotations.call(oBinding, aUrlParams);
+			// code under test
+			ODataTreeBinding.prototype._loadCompleteTreeWithAnnotations.call(oBinding, aUrlParams);
+		});
 	});
-});
 
 	//*********************************************************************************************
 	QUnit.test("_isRefreshAfterChangeAllowed", function (assert) {
@@ -1157,33 +1142,33 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-[
-	{filter: [], groupFilter: undefined, resultFilter: []},
-	{filter: ["filter0"], groupFilter: undefined, resultFilter: ["filter0"]},
-	{filter: ["filter0", "filter1"], groupFilter: "~groupedFilters", resultFilter: ["~groupedFilters"]}
-].forEach(function (oFixture, i) {
-	QUnit.test("filter: group filters of type Application #" + i, function (assert) {
-		var oBinding = {
-				aApplicationFilters: "~oldFilters",
-				oModel: {checkFilterOperation: function () {}},
-				_fireRefresh: function () {},
-				resetData: function () {}
-			};
+	[
+		{filter: [], groupFilter: undefined, resultFilter: []},
+		{filter: ["filter0"], groupFilter: undefined, resultFilter: ["filter0"]},
+		{filter: ["filter0", "filter1"], groupFilter: "~groupedFilters", resultFilter: ["~groupedFilters"]}
+	].forEach(function (oFixture, i) {
+		QUnit.test("filter: group filters of type Application #" + i, function (assert) {
+			var oBinding = {
+					aApplicationFilters: "~oldFilters",
+					oModel: {checkFilterOperation: function () {}},
+					_fireRefresh: function () {},
+					resetData: function () {}
+				};
 
-		this.mock(oBinding.oModel).expects("checkFilterOperation").withExactArgs(oFixture.filter);
-		this.mock(FilterProcessor).expects("groupFilters")
-			.withExactArgs(sinon.match.same(oFixture.filter))
-			.exactly(oFixture.groupFilter ? 1 : 0)
-			.returns(oFixture.groupFilter);
-		this.mock(oBinding).expects("resetData").withExactArgs();
-		this.mock(oBinding).expects("_fireRefresh").withExactArgs({reason: ChangeReason.Filter});
+			this.mock(oBinding.oModel).expects("checkFilterOperation").withExactArgs(oFixture.filter);
+			this.mock(FilterProcessor).expects("groupFilters")
+				.withExactArgs(sinon.match.same(oFixture.filter))
+				.exactly(oFixture.groupFilter ? 1 : 0)
+				.returns(oFixture.groupFilter);
+			this.mock(oBinding).expects("resetData").withExactArgs();
+			this.mock(oBinding).expects("_fireRefresh").withExactArgs({reason: ChangeReason.Filter});
 
-		// code under test
-		ODataTreeBinding.prototype.filter.call(oBinding, oFixture.filter, FilterType.Application);
+			// code under test
+			ODataTreeBinding.prototype.filter.call(oBinding, oFixture.filter, FilterType.Application);
 
-		assert.deepEqual(oBinding.aApplicationFilters, oFixture.resultFilter);
+			assert.deepEqual(oBinding.aApplicationFilters, oFixture.resultFilter);
+		});
 	});
-});
 
 	//*********************************************************************************************
 	QUnit.test("getFilterInfo", function (assert) {

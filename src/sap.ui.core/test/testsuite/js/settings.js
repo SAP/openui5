@@ -4,11 +4,10 @@ sap.ui.define([
 	"sap/ui/layout/form/Form",
 	"sap/ui/layout/form/FormContainer",
 	"sap/ui/layout/form/FormElement",
-	"sap/ui/layout/form/GridLayout",
 	"sap/ui/core/ListItem",
 	"sap/m/ComboBox",
 	"sap/m/CheckBox"
-], function(testfwk, oCore, Form, FormContainer, FormElement, GridLayout, ListItem, ComboBox, CheckBox) {
+], function(testfwk, oCore, Form, FormContainer, FormElement, ListItem, ComboBox, CheckBox) {
 	"use strict";
 
 	function updateItems(oCombo, mValues, sDefault) {
@@ -30,7 +29,7 @@ sap.ui.define([
 
 		new Form({
 			editable: true,
-			layout: new GridLayout({
+			layout: new undefined/*GridLayout*/({
 				singleColumn: true
 			}),
 			formContainers: [
@@ -112,6 +111,6 @@ sap.ui.define([
 
 	}
 
-	oCore.attachInit(createUI);
+	oCore.ready(createUI);
 
 });

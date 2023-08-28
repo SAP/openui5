@@ -32,7 +32,6 @@ sap.ui.define(['./library', 'sap/ui/core/Core'],
 	 *            rendered
 	 */
 	ObjectIdentifierRenderer.render = function(oRm, oOI) {
-
 		var sTooltip;
 
 		// Return immediately if control is invisible
@@ -73,28 +72,6 @@ sap.ui.define(['./library', 'sap/ui/core/Core'],
 		oRm.class("sapMObjectIdentifierIcons");
 
 		oRm.openEnd();
-
-		if (oOI.getBadgeAttachments()) {
-			oRm.openStart("span"); // Icon span begins
-			oRm.class("sapMObjectIdentifierIconSpan");
-			oRm.openEnd();
-			oRm.renderControl(oOI._getAttachmentsIcon());
-			oRm.close("span"); // Icon span ends
-		}
-		if (oOI.getBadgeNotes()) {
-			oRm.openStart("span"); // Icon span begins
-			oRm.class("sapMObjectIdentifierIconSpan");
-			oRm.openEnd();
-			oRm.renderControl(oOI._getNotesIcon());
-			oRm.close("span"); // Icon span ends
-		}
-		if (oOI.getBadgePeople()) {
-			oRm.openStart("span"); // Icon span begins
-			oRm.class("sapMObjectIdentifierIconSpan");
-			oRm.openEnd();
-			oRm.renderControl(oOI._getPeopleIcon());
-			oRm.close("span"); // Icon span ends
-		}
 
 		oRm.close("div"); // Icons end
 

@@ -641,7 +641,7 @@ sap.ui.define("test-resources/sap/ui/table/Settings", [
 						if (!sDensity || sDensity.indexOf("sapUiSize") === -1) {
 							return null;
 						}
-						return sDensity.substring("sapUiSize".length, sDensity.length).toUpperCase();
+						return sDensity.substring(9, sDensity.length).toUpperCase();
 					},
 					choice: {
 						COZY: {
@@ -1120,16 +1120,14 @@ sap.ui.define("test-resources/sap/ui/table/Settings", [
 				if (oTable.isA("sap.ui.table.TreeTable")) {
 					return oTable.getUseGroupMode();
 				} else {
-					return oTable.getEnableGrouping();
+					return false;
 				}
 			},
 			input: "boolean",
 			action: function(oTable, bValue) {
 				if (oTable.isA("sap.ui.table.TreeTable")) {
 					oTable.setUseGroupMode(bValue);
-				} else {
-					oTable.setEnableGrouping(bValue);
-				}
+				} else {}
 			}
 		},
 		TOOLTIPS: {
@@ -1677,7 +1675,7 @@ sap.ui.define("test-resources/sap/ui/table/Settings", [
 		}
 
 		for (var sKey in window.localStorage) {
-			if (sKey.substring(0, "TableSettings_".length) === "TableSettings_") {
+			if (sKey.substring(0, 14) === "TableSettings_") {
 				mSettings[sKey.replace("TableSettings_", "")] = window.localStorage.getItem(sKey);
 			}
 		}

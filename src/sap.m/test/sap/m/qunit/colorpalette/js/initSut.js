@@ -1,11 +1,13 @@
 sap.ui.require([
-	"sap/ui/core/ComponentContainer"
+	"sap/ui/core/ComponentContainer",
+	"sap/ui/core/Core"
 ], function(
-	ComponentContainer
+	ComponentContainer,
+	Core
 ) {
 	"use strict";
 
-	sap.ui.getCore().attachInit(function() {
+	Core.ready(function() {
 		new ComponentContainer({
 			height: "100%",
 			width: "100%",

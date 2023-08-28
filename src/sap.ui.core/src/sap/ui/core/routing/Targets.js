@@ -5,12 +5,11 @@ sap.ui.define([
 	'sap/ui/base/EventProvider',
 	'./Target',
 	'./async/Targets',
-	'./sync/Targets',
 	"sap/base/util/UriParameters",
 	"sap/base/Log",
 	"sap/base/util/deepExtend"
 ],
-	function(EventProvider, Target, asyncTargets, syncTargets, UriParameters, Log, deepExtend) {
+	function(EventProvider, Target, asyncTargets, UriParameters, Log, deepExtend) {
 		"use strict";
 
 		/**
@@ -114,7 +113,7 @@ sap.ui.define([
 				}
 
 				// branch by abstraction
-				var TargetsStub = this._oConfig._async ?  asyncTargets : syncTargets;
+				var TargetsStub = this._oConfig._async ?  asyncTargets : undefined/*syncTargets*/;
 				for (var fn in TargetsStub) {
 					this[fn] = TargetsStub[fn];
 				}

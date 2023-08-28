@@ -15,11 +15,10 @@ sap.ui.define([
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/core/mvc/View",
 	"sap/ui/core/mvc/XMLView",
-	"sap/ui/core/mvc/JSView",
 	"sap/ui/core/mvc/Controller",
 	"sap/base/util/LoaderExtensions",
 	"sap/ui/thirdparty/jquery"
-], function (Log, qutils, Core, Component, Fragment, Element, XMLTemplateProcessor, Panel, Button, HorizontalLayout, JSONModel, createAndAppendDiv, nextUIUpdate, View, XMLView, JSView, Controller, LoaderExtensions, jQuery) {
+], function(Log, qutils, Core, Component, Fragment, Element, XMLTemplateProcessor, Panel, Button, HorizontalLayout, JSONModel, createAndAppendDiv, nextUIUpdate, View, XMLView, Controller, LoaderExtensions, jQuery) {
 	"use strict";
 
 	createAndAppendDiv(["content1", "content2", "content3", "content4", "binding"]);

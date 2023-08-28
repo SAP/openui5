@@ -1302,27 +1302,6 @@ sap.ui.define([
 		// register interface types
 		DataType.registerInterfaceTypes(oLib.interfaces);
 
-		// Declare a module for each (non-builtin) simple type
-		// Only needed for backward compatibility: some code 'requires' such types although they never have been modules on their own
-		for (i = 0; i < oLib.types.length; i++) {
-			if ( !/^(any|boolean|float|int|string|object|void)$/.test(oLib.types[i]) ) {
-				sap.ui.loader._.declareModule(oLib.types[i].replace(/\./g, "/") + ".js");
-
-				// ensure parent namespace of the type
-				var sNamespacePrefix = oLib.types[i].substring(0, oLib.types[i].lastIndexOf("."));
-				if (ObjectPath.get(sNamespacePrefix) === undefined) {
-					// parent type namespace does not exists, so we create its
-					ObjectPath.create(sNamespacePrefix);
-				}
-			}
-		}
-
-		// create lazy loading stubs for all controls and elements
-		var aElements = oLib.controls.concat(oLib.elements);
-		for (i = 0; i < aElements.length; i++) {
-			sap.ui.lazyRequire(aElements[i], "new extend getMetadata"); // TODO don't create an 'extend' stub for final classes
-		}
-
 			// include the library theme, but only if it has not been suppressed in library metadata or by configuration
 		if (!oLib.noLibraryCSS) {
 			var oLibThemingInfo = {

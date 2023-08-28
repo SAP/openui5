@@ -1321,7 +1321,7 @@ var FrameType = library.FrameType;
 	// Checks whether the given DomRef is contained or equals (in) one of the given container
 	function isContained(aContainers, oRef) {
 		for (var i = 0; i < aContainers.length; i++) {
-			if (aContainers[i] === oRef || jQuery.contains(aContainers[i], oRef)) {
+			if (aContainers[i] === oRef || aContainers[i] !== oRef && aContainers[i].contains(oRef)) {
 				return true;
 			}
 		}

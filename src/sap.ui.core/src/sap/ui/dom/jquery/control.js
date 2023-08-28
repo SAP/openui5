@@ -14,18 +14,6 @@ sap.ui.define(['sap/ui/thirdparty/jquery', 'sap/ui/Global'],
 	 * @since 1.58
 	 */
 
-	/**
-	 * Extension function to the jQuery.fn which identifies SAPUI5 controls in the given jQuery context.
-	 *
-	 * @param {int} [iIndex] Optional parameter to return the control instance at the given index in the array.
-	 * @param {boolean} [bIncludeRelated] Whether or not to respect the associated DOM elements to a control via <code>data-sap-ui-related</code> attribute.
-	 * @returns {sap.ui.core.Control[] | sap.ui.core.Control | null} Depending on the given context and index parameter an array of controls, an instance or <code>null</code>.
-	 * @name jQuery#control
-	 * @function
-	 * @public
-	 * @deprecated Since 1.106. Instead, use {@link sap.ui.core.Element.closestTo}.
-	 * @requires module:sap/ui/dom/jquery/control
-	 */
 	jQuery.fn.control = function(iIndex, bIncludeRelated) {
 		var aControls = this.map(function() {
 			var sControlId;

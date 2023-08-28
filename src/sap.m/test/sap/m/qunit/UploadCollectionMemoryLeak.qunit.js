@@ -1,8 +1,6 @@
 /*global QUnit */
 sap.ui.define([
 	"sap/ui/base/ManagedObject",
-	"sap/m/UploadCollectionItem",
-	"sap/m/UploadCollection",
 	"sap/m/ObjectAttribute",
 	"sap/m/ObjectStatus",
 	"sap/m/ObjectMarker",
@@ -14,8 +12,7 @@ sap.ui.define([
 	"sap/ui/base/Event",
 	"sap/ui/core/library",
 	"sap/ui/core/Core"
-], function (ManagedObject, UploadCollectionItem, UploadCollection, ObjectAttribute, ObjectStatus, ObjectMarker, Label,
-			 JSONModel, mlibrary, Sorter, MessageBox, Event, library, oCore) {
+], function(ManagedObject, ObjectAttribute, ObjectStatus, ObjectMarker, Label, JSONModel, mlibrary, Sorter, MessageBox, Event, library, oCore) {
 	"use strict";
 
 	// shortcut for sap.ui.core.ValueState
@@ -56,7 +53,7 @@ sap.ui.define([
 	}
 
 	function getItem() {
-		return new UploadCollectionItem({
+		return new undefined/*UploadCollectionItem*/({
 			contributor: "Otto",
 			documentId: "4711",
 			fileName: "MyBusinessPlan.gif",
@@ -136,7 +133,7 @@ sap.ui.define([
 		}
 	});
 	QUnit.skip("UCI read only", function (assert) {
-		var oCollection = new UploadCollection({
+		var oCollection = new undefined/*UploadCollection*/({
 			items: [this.oItem]
 		}).placeAt("qunit-fixture");
 		oCore.applyChanges();
@@ -146,7 +143,7 @@ sap.ui.define([
 
 	QUnit.skip("UCI without thumbnail url", function (assert) {
 		this.oItem.setThumbnailUrl();
-		var oCollection = new UploadCollection({
+		var oCollection = new undefined/*UploadCollection*/({
 			items: [this.oItem]
 		}).placeAt("qunit-fixture");
 		oCore.applyChanges();
@@ -159,7 +156,7 @@ sap.ui.define([
 		this.oItem.setEnableDelete(true);
 		this.oItem.setVisibleEdit(true);
 		this.oItem.setVisibleDelete(true);
-		var oCollection = new UploadCollection({
+		var oCollection = new undefined/*UploadCollection*/({
 			items: [this.oItem]
 		}).placeAt("qunit-fixture");
 		oCore.applyChanges();
@@ -197,10 +194,10 @@ sap.ui.define([
 				}
 			]
 		});
-		var oCollection = new UploadCollection({
+		var oCollection = new undefined/*UploadCollection*/({
 			items: {
 				path: "/items",
-				template: new UploadCollectionItem({
+				template: new undefined/*UploadCollectionItem*/({
 					contributor: "{contributor}",
 					documentId: "{documentId}",
 					fileName: "{fileName}f",
@@ -230,7 +227,7 @@ sap.ui.define([
 	QUnit.skip("UCI enter edit", function (assert) {
 		this.oItem.setEnableEdit(true);
 		this.oItem.setVisibleEdit(true);
-		var oCollection = new UploadCollection({
+		var oCollection = new undefined/*UploadCollection*/({
 			items: [this.oItem]
 		}).placeAt("qunit-fixture");
 		oCore.applyChanges();
@@ -243,7 +240,7 @@ sap.ui.define([
 	QUnit.skip("UCI enter edit - cancel edit", function (assert) {
 		this.oItem.setEnableEdit(true);
 		this.oItem.setVisibleEdit(true);
-		var oCollection = new UploadCollection({
+		var oCollection = new undefined/*UploadCollection*/({
 			items: [this.oItem]
 		}).placeAt("qunit-fixture");
 		oCore.applyChanges();
@@ -258,7 +255,7 @@ sap.ui.define([
 	QUnit.skip("UCI enter edit - change name - cancel edit", function (assert) {
 		this.oItem.setEnableEdit(true);
 		this.oItem.setVisibleEdit(true);
-		var oCollection = new UploadCollection({
+		var oCollection = new undefined/*UploadCollection*/({
 			items: [this.oItem]
 		}).placeAt("qunit-fixture");
 		oCore.applyChanges();
@@ -285,7 +282,7 @@ sap.ui.define([
 	QUnit.skip("UCI delete item", function (assert) {
 		this.oItem.setEnableDelete(true);
 		this.oItem.setVisibleDelete(true);
-		var oCollection = new UploadCollection({
+		var oCollection = new undefined/*UploadCollection*/({
 			items: [this.oItem]
 		}).placeAt("qunit-fixture");
 		oCore.applyChanges();
@@ -308,7 +305,7 @@ sap.ui.define([
 	});
 
 	QUnit.skip("Uploading a file - progress case", function (assert) {
-		var oCollection = new UploadCollection().placeAt("qunit-fixture");
+		var oCollection = new undefined/*UploadCollection*/().placeAt("qunit-fixture");
 		oCore.applyChanges();
 		var oFileUploader = oCollection._getFileUploader();
 		oFileUploader.fireChange({
@@ -330,7 +327,7 @@ sap.ui.define([
 	});
 
 	QUnit.skip("Uploading a file - upload complete", function (assert) {
-		var oCollection = new UploadCollection({
+		var oCollection = new undefined/*UploadCollection*/({
 			items: [this.oItem]
 		}).placeAt("qunit-fixture");
 		oCore.applyChanges();
@@ -360,7 +357,7 @@ sap.ui.define([
 	});
 
 	QUnit.skip("Uploading a file - terminate upload", function (assert) {
-		var oCollection = new UploadCollection().placeAt("qunit-fixture");
+		var oCollection = new undefined/*UploadCollection*/().placeAt("qunit-fixture");
 		oCore.applyChanges();
 		var oFileUploader = oCollection._getFileUploader();
 		oFileUploader.fireChange({
@@ -380,7 +377,7 @@ sap.ui.define([
 	});
 
 	QUnit.skip("Uploading a file - terminate upload via popover", function (assert) {
-		var oCollection = new UploadCollection().placeAt("qunit-fixture");
+		var oCollection = new undefined/*UploadCollection*/().placeAt("qunit-fixture");
 		oCore.applyChanges();
 		var oFileUploader = oCollection._getFileUploader();
 		oFileUploader.fireChange({

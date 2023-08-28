@@ -1,7 +1,7 @@
-sap.ui.define(['sap/ui/core/XMLComposite'],
-	function (XMLComposite) {
+sap.ui.define([],
+	function() {
 		"use strict";
-		var MySelect3 = XMLComposite.extend("composites.MySelect3", {
+		var MySelect3 = undefined/*XMLComposite*/.extend("composites.MySelect3", {
 			metadata: {
 				aggregations: {
 					myItems: {

@@ -90,26 +90,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * @deprecated Likely unused method
-	 * @returns {this} <code>this</code> to allow method chaining
-	 * @private
-	 */
-	DataState.prototype.calculateChanges = function() {
-		for (var sProperty in this.mChangedProperties) {
-			var vChangedValue = this.mChangedProperties[sProperty].value;
-
-			if (!deepEqual(this.mProperties[sProperty], vChangedValue)) {
-				if (Array.isArray(vChangedValue)) {
-					vChangedValue = vChangedValue.slice(0);
-				}
-				this.mProperties[sProperty] = vChangedValue;
-			}
-		}
-
-		return this;
-	};
-
-	/**
 	 * Returns the current value of the property
 	 *
 	 * @param {string} sProperty - The name of the property
@@ -129,14 +109,14 @@ sap.ui.define([
 	 * @public
 	 * @since 1.98.0
 	 */
-	 DataState.prototype.getAllMessages = function () {
-		var oResultSet = new Set();
+	DataState.prototype.getAllMessages = function () {
+	   var oResultSet = new Set();
 
-		this.getMessages().forEach(oResultSet.add.bind(oResultSet));
-		this._getOldMessages().forEach(oResultSet.add.bind(oResultSet));
+	   this.getMessages().forEach(oResultSet.add.bind(oResultSet));
+	   this._getOldMessages().forEach(oResultSet.add.bind(oResultSet));
 
-		return Array.from(oResultSet);
-	};
+	   return Array.from(oResultSet);
+   };
 
 	/**
 	 * Returns the array of this data state's current messages combining the model and control
@@ -264,9 +244,9 @@ sap.ui.define([
 	 * @returns {boolean} Whether the data state is laundering
 	 * @public
 	 */
-	 DataState.prototype.isLaundering = function() {
-		return this.mChangedProperties["laundering"];
-	};
+	DataState.prototype.isLaundering = function() {
+	   return this.mChangedProperties["laundering"];
+   };
 
 	/**
 	 * Sets the laundering state of the data state.

@@ -2183,13 +2183,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * @function
-	 * @public
-	 * @deprecated since 1.75, please use {@link #setExtraContent} instead.
-	 */
-	Popup.prototype.setAutoCloseAreas = Popup.prototype.setExtraContent;
-
-	/**
 	 * Sets the animation functions to use for opening and closing the Popup. Any null value will be ignored and not change the respective animation function.
 	 * When called, the animation functions receive three parameters:
 	 * - the jQuery object wrapping the DomRef of the popup

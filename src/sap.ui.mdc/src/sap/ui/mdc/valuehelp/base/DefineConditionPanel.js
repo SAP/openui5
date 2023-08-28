@@ -197,22 +197,6 @@ sap.ui.define([
 			},
 			associations: {
 				/**
-				 * Optional <code>FieldHelp</code>.
-				 *
-				 * This is an association that allows the usage of one <code>ValueHelp</code> instance for the value fields for the <code>DefineConditionPanel</code>.
-
-				 * <b>Note:</b> The fields are single-value input, and the display is always set to <code>FieldDisplay.Value</code>. Only a <code>ValueHelp</code> with a <code>TypeAhead</code> and single-selection <code>MTable</code> can be used.
-
-				 * <b>Note:</b> For <code>Boolean</code>, <code>Date</code>, or <code>Time</code>, no <code>FieldHelp</code> should be added, but a default <code>ValueHelp</code> used instead.
-				 * @deprecated as of 1.114.0, replaced by {@link #setValueHelp valueHelp} association
-				 *
-				 */
-				fieldHelp: {
-					type: "sap.ui.mdc.ValueHelp",
-					multiple: false
-				},
-
-				/**
 				 * Optional <code>ValueHelp</code>.
 				 *
 				 * This is an association that allows the usage of one <code>ValueHelp</code> instance for the value fields for the <code>DefineConditionPanel</code>.
@@ -671,7 +655,7 @@ sap.ui.define([
 		// TODO: remove this function and replace by getValueHelp onde FieldHelp association is completetly removed.
 		_getValueHelp: function() {
 
-			return this.getValueHelp() || (this.getFieldHelp && this.getFieldHelp()); // as getFieldHelp not exist in legacy-free UI5
+			return this.getValueHelp() || (this.getFieldHelp && null); // as getFieldHelp not exist in legacy-free UI5
 
 		}
 	});

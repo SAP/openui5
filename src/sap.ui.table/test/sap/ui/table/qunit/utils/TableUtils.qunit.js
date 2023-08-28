@@ -642,63 +642,6 @@ sap.ui.define([
 		assert.strictEqual(oInfo.cell, null, "Cell not found");
 	});
 
-	/**
-	 * @deprecated As of version 1.28
-	 */
-	QUnit.test("getRowColCell - grouping", function(assert) {
-		oTable.getColumns()[2].setVisible(false);
-		oTable.setEnableGrouping(true);
-		oTable.setGroupBy(oTable.getColumns()[1]);
-		oCore.applyChanges();
-
-		var oInfo = TableUtils.getRowColCell(oTable, 1, 0, false);
-		assert.strictEqual(oInfo.row, oTable.getRows()[1], "Row 2");
-		assert.strictEqual(oInfo.column, oTable.getColumns()[0], "Column 1");
-		assert.strictEqual(oInfo.cell, oInfo.row.getCells()[0], "Cell 2,1");
-		assert.strictEqual(oInfo.cell.getText(), "A1", "Cell 2,1");
-
-		oInfo = TableUtils.getRowColCell(oTable, 1, 1, false);
-		assert.strictEqual(oInfo.row, oTable.getRows()[1], "Row 2");
-		assert.strictEqual(oInfo.column, oTable.getColumns()[3], "Column 4 (Column 2 is grouped, Column 3 is invisible)");
-		assert.strictEqual(oInfo.cell, oInfo.row.getCells()[2], "Cell 2,3");
-		assert.strictEqual(oInfo.cell.getText(), "D1", "Cell 2,3");
-
-		oInfo = TableUtils.getRowColCell(oTable, 1, 2, false);
-		assert.strictEqual(oInfo.row, oTable.getRows()[1], "Row 1");
-		assert.strictEqual(oInfo.column, oTable.getColumns()[4], "Column 5 (Column 2 is grouped, Column 3 is invisible)");
-		assert.strictEqual(oInfo.cell, oInfo.row.getCells()[3], "Cell 2,4");
-		assert.strictEqual(oInfo.cell.getText(), "E1", "Cell 2,4");
-
-		oInfo = TableUtils.getRowColCell(oTable, 1, 3, false);
-		assert.strictEqual(oInfo.row, oTable.getRows()[1], "Row 1");
-		assert.strictEqual(oInfo.column, null, "Column not found");
-		assert.strictEqual(oInfo.cell, null, "Cell not found");
-
-		oInfo = TableUtils.getRowColCell(oTable, 1, 2, true);
-		assert.strictEqual(oInfo.row, oTable.getRows()[1], "Row 1");
-		assert.strictEqual(oInfo.column, oTable.getColumns()[2], "Column 3");
-		assert.strictEqual(oInfo.cell, null, "Cell not found");
-
-		oInfo = TableUtils.getRowColCell(oTable, 1, 3, true);
-		assert.strictEqual(oInfo.row, oTable.getRows()[1], "Row 1");
-		assert.strictEqual(oInfo.column, oTable.getColumns()[3], "Column 4");
-		assert.strictEqual(oInfo.cell, oInfo.row.getCells()[2], "Cell 2,3");
-		assert.strictEqual(oInfo.cell.getText(), "D1", "Cell 2,3");
-
-		var MyColumn = Column.extend("My.Column");
-		var oMyColumn = new MyColumn({template: new TestControl({text: "Custom"})});
-		oTable.insertColumn(oMyColumn, 0);
-		//@deprecated As of version 1.118.
-		oTable.setEnableGrouping(false);
-		oCore.applyChanges();
-
-		var oInfo = TableUtils.getRowColCell(oTable, 1, 0, true);
-		assert.strictEqual(oInfo.row, oTable.getRows()[1], "Row 1");
-		assert.strictEqual(oInfo.column, oMyColumn, "Instance of custom sap.ui.table.Column subclass");
-		assert.strictEqual(oInfo.cell, oInfo.row.getCells()[0], "Cell 1,0");
-		assert.strictEqual(oInfo.cell.getText(), "Custom", "Cell 1,0");
-	});
-
 	QUnit.test("getFirstFixedBottomRowIndex", function(assert) {
 		function initTest(iFixedBottomCount, iRowCount) {
 			oTable.setFixedBottomRowCount(iFixedBottomCount);

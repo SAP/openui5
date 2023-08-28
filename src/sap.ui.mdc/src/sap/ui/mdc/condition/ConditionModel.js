@@ -374,38 +374,6 @@ sap.ui.define([
 		};
 
 		/**
-		 * creates a condition instance for the item-condition
-		 *
-		 * @param {string} sFieldPath the <code>FieldPath</code> name of the condition
-		 * @param {string} sKey the operator for the condition
-		 * @param {string} sDescription the description of the operator
-		 * @returns {sap.ui.mdc.condition.ConditionObject} the new condition object with the given fieldPath, the operator EQ and the sKey and sDescription as aValues.
-		 * @private
-		 * @ui5-restricted sap.ui.mdc
-		 * @deprecated use the sap.ui.mdc.condition.Condition.createItemCondition
-		 */
-		ConditionModel.prototype.createItemCondition = function (sFieldPath, sKey, sDescription) {
-			Log.error("ConditionModel", "createItemCondition is deprecated");
-			return Condition.createItemCondition(sKey, sDescription);
-		};
-
-		/**
-		 * creates a condition instance
-		 *
-		 * @param {string} sFieldPath the <code>FieldPath</code> name of the condition
-		 * @param {string} sOperator the operator for the condition
-		 * @param {any[]} aValues the array of values for the condition
-		 * @returns {sap.ui.mdc.condition.ConditionObject} the new condition object with the given fieldPath, operator and values.
-		 * @private
-		 * @ui5-restricted sap.ui.mdc
-		 * @deprecated use the sap.ui.mdc.condition.Condition.createCondition
-		 */
-		ConditionModel.prototype.createCondition = function (sFieldPath, sOperator, aValues) {
-			Log.error("ConditionModel", "createCondition is deprecated");
-			return Condition.createCondition(sOperator, aValues);
-		};
-
-		/**
 		 * Removes a condition for a specified <code>FieldPath</code>.
 		 *
 		 * @param {string} sFieldPath fieldPath of the condition

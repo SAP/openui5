@@ -1,8 +1,7 @@
 sap.ui.define([
-	'sap/ui/core/XMLComposite'
-], function(XMLComposite) {
+], function() {
 	"use strict";
-	var TextToggleButtonForwarded = XMLComposite.extend("composites.TextToggleButtonForwarded", {
+	var TextToggleButtonForwarded = undefined/*XMLComposite*/.extend("composites.TextToggleButtonForwarded", {
 		metadata: {
 			aggregations: {
 				textToggleButton: {
@@ -19,7 +18,7 @@ sap.ui.define([
 		}
 	});
 	TextToggleButtonForwarded.prototype.applySettings = function() {
-		XMLComposite.prototype.applySettings.apply(this, arguments);
+		undefined/*XMLComposite*/.prototype.applySettings.apply(this, arguments);
 		this.getTextToggleButton().attachTextChanged(this.onTextChanged.bind(this));
 	};
 	TextToggleButtonForwarded.prototype.onTextChanged = function() {

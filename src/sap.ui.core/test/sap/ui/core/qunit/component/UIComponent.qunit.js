@@ -7,7 +7,6 @@ sap.ui.define([
 	"sap/ui/core/mvc/View",
 	"sap/ui/qunit/utils/nextUIUpdate"
 ], function(Log, ManagedObject, Component, ComponentContainer, UIComponent, View, nextUIUpdate) {
-
 	"use strict";
 	/*global sinon, QUnit*/
 
@@ -853,17 +852,12 @@ sap.ui.define([
 						"type": "sap.ui.model.resource.ResourceModel",
 						"uri": "i18n/i18n.properties"
 					},
-					/**
-					 * @deprecated as of version 1.48
-					 */
-					"odm1": {
-						"type": "sap.ui.model.odata.ODataModel",
-						"uri": "./some/odata/service"
-					},
+
 					"odm2": {
 						"type": "sap.ui.model.odata.v2.ODataModel",
 						"uri": "./some/odata/service"
 					},
+
 					"odm4": {
 						"type": "sap.ui.model.odata.v4.ODataModel",
 						"uri": "./some/odata/service/"
@@ -896,20 +890,12 @@ sap.ui.define([
 					assert.ok(requireSpy.calledWith(["sap/ui/core/mvc/JSONView"]), "JSONView type required");
 					assert.ok(requireSpy.calledWith(["sap/ui/model/resource/ResourceModel"]), "ResourceModel required");
 					assert.ok(requireSpy.calledWith(["sap/ui/core/routing/Router"]), "Router loaded");
-					/**
-					 * @deprecated as of version 1.48
-					 */
-					assert.ok(requireSpy.calledWith(["sap/ui/model/odata/ODataModel"]), "ODataModel required");
 					assert.ok(requireSpy.calledWith(["sap/ui/model/odata/v2/ODataModel"]), "ODataModel v2 required");
 					assert.ok(requireSpy.calledWith(["sap/ui/model/odata/v4/ODataModel"]), "ODataModel v4 required");
 
 					assert.ok(sap.ui.require("sap/ui/core/mvc/JSONView"), "JSONView type loaded");
 					assert.ok(sap.ui.require("sap/ui/model/resource/ResourceModel"), "ResourceModel loaded");
 					assert.ok(sap.ui.require("sap/ui/core/routing/Router"), "Router loaded");
-					/**
-					 * @deprecated as of version 1.48
-					 */
-					assert.ok(sap.ui.require("sap/ui/model/odata/ODataModel"), "ODataModel loaded");
 					assert.ok(sap.ui.require("sap/ui/model/odata/v2/ODataModel"), "ODataModel v2 loaded");
 					assert.ok(sap.ui.require("sap/ui/model/odata/v4/ODataModel"), "ODataModel v4 loaded");
 
@@ -1166,71 +1152,6 @@ sap.ui.define([
 			assert.equal(this.oViewCreateSpy.callCount, 2, "async view factory called twice");
 		}.bind(this)).catch(function() {
 			assert.ok(false, "Modules could not be loaded and an error occured.");
-		});
-	});
-
-	/**
-	 * @deprecated Since 1.56
-	 */
-	QUnit.test("Component with async rootView creation - legacy factory", function(assert) {
-		assert.expect(1);
-
-		var oManifest = {
-			"sap.app" : {
-				"id" : "app"
-			},
-			"sap.ui5": {
-				"rootView" : {
-					"async": true,
-					"viewName" : "testdata.view.MainAsync",
-					"type" : "XML"
-				},
-				"routing" : {
-					"config": {
-						"routerClass": "sap.ui.core.routing.Router",
-						"viewType": "XML",
-						"controlId": "app"
-					},
-					"routes": [
-						{
-							"pattern": "",
-							"name": "home",
-							"target": "home"
-						}
-					],
-					"targets": {
-						"home": {
-							"viewName": "testdata.view.MainAsync",
-							"controlAggregation": "content"
-						}
-					}
-				}
-			}
-		};
-		this.setRespondedManifest(oManifest, "scenario7");
-
-		sap.ui.define("manifestModules/scenario7/Component", ["sap/ui/core/UIComponent"], function(UIComponent) {
-			return UIComponent.extend("manifestModules.scenario7.Component", {
-				metadata: {
-					manifest: "json",
-					interfaces: [
-						"sap.ui.core.IAsyncContentCreation"
-					]
-				},
-				constructor: function() {
-					UIComponent.apply(this, arguments);
-				}
-			});
-		});
-
-		return sap.ui.component({
-			name: "manifestModules.scenario7",
-			manifest: true,
-			async: true
-		}).then(function(oComponent){
-			assert.ok(false, "Don't use legacy factory in combination with async content creation");
-		}).catch(function(err) {
-			assert.equal(err.message, "Do not use deprecated factory function 'sap.ui.component' in combination with IAsyncContentCreation (manifestModules.scenario7). Use 'Component.create' instead");
 		});
 	});
 

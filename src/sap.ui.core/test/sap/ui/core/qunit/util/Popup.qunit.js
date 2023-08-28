@@ -2526,14 +2526,6 @@ sap.ui.define([
 		assert.equal(this.oPopup._aExtraContent.length, 1, "the same control is only added once as extra content");
 	});
 
-	/**
-	 * @deprecated Since 1.75
-	 */
-	QUnit.test("Legacy API setAutoCloseArea", function(assert) {
-		// just check that the old legacy method is an alias for setExtraContent
-		assert.strictEqual(this.oPopup.setAutoCloseAreas, this.oPopup.setExtraContent);
-	});
-
 	QUnit.module("Extra Popup Content Seletor", {
 		before: function(){
 			document.getElementById("focusableElementWithAttribute").setAttribute("data-sap-ui-integration-popup-content", "");
@@ -3403,61 +3395,6 @@ sap.ui.define([
 		});
 
 		oPopup.setPosition(Popup.Dock.BeginTop, Popup.Dock.BeginBottom, undefined, undefined, undefined, oWithinDomRef);
-		oPopup.open();
-
-		return pPromise;
-	});
-
-	/**
-	 * @deprecated Since 1.92 as string based rendering has been deprecated
-	 * @todo-semantic-rendering discuss whether test really can be deprecated together with string based rendering
-	 */
-	QUnit.test("Global within set with a control and check after the control is rendered", async function(assert) {
-		// need to create a custom control to create new DOM element after the control is rendered because most of the
-		// sap.m controls use the rendering api version 2 in which the DOM element is not deleted but only updated
-		var MyCustomControl = Control.extend("MyCustomControl", {
-			renderer: {
-				apiVersion: 1, // legacy-relevant: test requires string based rendering
-				render: function(oRM, oControl) {
-					oRM.openStart("div", oControl);
-					oRM.style("width", "400px");
-					oRM.style("height", "400px");
-					oRM.openEnd();
-					oRM.close("div");
-				}
-			}
-		});
-
-		var oControl = new MyCustomControl();
-		oControl.placeAt("uiarea");
-		await nextUIUpdate();
-
-		var oDomRef = document.getElementById("popup");
-		var oPopup = new Popup(oDomRef);
-		var oPositionSpy = this.spy(jQuery.fn, "position");
-
-		var pPromise = waitTillOpen(oPopup).then(function() {
-			assert.equal(oPositionSpy.callCount, 1, "function is called once");
-			var oArgument = oPositionSpy.getCall(0).args[0];
-			assert.equal(oArgument.within, oControl.getDomRef(), "Correct DOM element is forwarded to jQuery.ui.position");
-		}).then(function() {
-			var oClosedPromise = waitTillClose(oPopup);
-			oPopup.close();
-			return oClosedPromise;
-		}).then(function() {
-			oControl.rerender();
-
-			var oOpenedPromise = waitTillOpen(oPopup);
-			oPopup.open();
-			return oOpenedPromise;
-		}).then(function() {
-			assert.equal(oPositionSpy.callCount, 2, "Popup is positioned again");
-			var oArgument = oPositionSpy.getCall(1).args[0];
-			assert.equal(oArgument.within, oControl.getDomRef(), "Rerendered DOM element is forwarded to jQuery.ui.position");
-			oPopup.destroy();
-		});
-
-		oPopup.setPosition(Popup.Dock.BeginTop, Popup.Dock.BeginBottom, undefined, undefined, undefined, oControl);
 		oPopup.open();
 
 		return pPromise;

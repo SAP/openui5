@@ -47,7 +47,7 @@ sap.ui.define([
 		complex: function (iValue) {
 			return 'foo'
 				// eslint-disable-next-line no-constant-binary-expression
-				.charCodeAt(-17  + 2 * Math.floor(null || (iValue ===  2 ? 5 + 2 * iValue : 42)));
+				.charCodeAt(-17  + 2 * Math.floor(iValue ===  2 ? 5 + 2 * iValue : 42));
 		}
 	};
 

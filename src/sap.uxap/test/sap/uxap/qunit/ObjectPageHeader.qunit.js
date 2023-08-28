@@ -440,70 +440,6 @@ function (jQuery, Core, Element, IconPool, ObjectPageLayout, ObjectPageHeader, O
 
 
 
-	/**
-	 * @deprecated As of version 1.50, the <code>breadCrumbsLinks</code> aggregation has been replaced with the <code>breadcrumbs</code> aggregation
-	 */
-	QUnit.module("Breadcrumbs API", {
-		beforeEach: function (assert) {
-			var done = assert.async();
-			XMLView.create({
-				id: "UxAP-ObjectPageHeader",
-				viewName: "view.UxAP-ObjectPageHeader"
-			}).then(function (oView) {
-				this.oHeaderView = oView;
-				this.oHeaderView.placeAt("qunit-fixture");
-				Core.applyChanges();
-				this._oHeader = Core.byId("UxAP-ObjectPageHeader--header");
-				done();
-			}.bind(this));
-		},
-		afterEach: function () {
-			this.oHeaderView.destroy();
-			this._oHeader = null;
-		}
-	});
-	/**
-	 * @deprecated As of version 1.50, <code>breadCrumbsLinks</code> has been deprecated
-	 */
-	QUnit.test("Legacy breadCrumbsLinks: Trail of links in the ObjectPageHeader should dynamically update", function (assert) {
-		var iInitialLinksCount = this._oHeader.getBreadcrumbs().getLinks().length,
-			oNewLink = oFactory.getLink();
-
-		this._oHeader.getBreadcrumbs().addLink(oNewLink);
-
-		assert.strictEqual(this._oHeader.getBreadcrumbs().getLinks().length, iInitialLinksCount + 1,
-			"The link was added to the breadcrumbs");
-
-		assert.strictEqual(this._oHeader.getBreadcrumbs().getLinks()[iInitialLinksCount].sId, oNewLink.sId,
-			"The correct link was added to the breadcrumbs");
-
-		assert.strictEqual(this._oHeader.getBreadcrumbs().getLinks().indexOf(oNewLink), iInitialLinksCount);
-
-		this._oHeader.getBreadcrumbs().removeLink(oNewLink);
-
-		assert.strictEqual(this._oHeader.getBreadcrumbs().getLinks().length, iInitialLinksCount,
-			"The link was removed from the breadcrumbs");
-
-		assert.strictEqual(this._oHeader.getBreadcrumbs().getLinks().indexOf(oNewLink), -1,
-			"The link was removed from the breadcrumbs");
-
-		this._oHeader.getBreadcrumbs().removeAllLinks();
-
-		assert.ok(!this._oHeader.getBreadcrumbs().getLinks().length,
-			"There are no breadcrumb links left");
-
-		this._oHeader.getBreadcrumbs().insertLink(oNewLink, 0);
-
-		assert.strictEqual(this._oHeader.getBreadcrumbs().getLinks()[0].sId, oNewLink.sId,
-			"The link was added to in the correct position in the breadcrumb");
-
-		this._oHeader.getBreadcrumbs().destroyLinks();
-
-		assert.ok(oNewLink.bIsDestroyed, "The breadcrumbs are destroyed");
-	});
-
-
-
 	QUnit.module("API");
 
 	QUnit.test("setObjectTitle", function (assert) {
@@ -1010,10 +946,6 @@ function (jQuery, Core, Element, IconPool, ObjectPageLayout, ObjectPageHeader, O
 				this.oHeaderView = oView;
 				this.oHeaderView.placeAt("qunit-fixture");
 				this._oHeader = Core.byId("UxAP-ObjectPageHeader--header");
-				/**
-				 * @deprecated As of version 1.50, <code>breadCrumbsLinks</code> has been deprecated
-				 */
-				this._oHeader.destroyBreadCrumbsLinks();
 				this._oHeader.destroyBreadcrumbs();
 				Core.applyChanges();
 				done();
@@ -1029,58 +961,11 @@ function (jQuery, Core, Element, IconPool, ObjectPageLayout, ObjectPageHeader, O
 		assert.strictEqual(this.oHeaderView.$().find(".sapMBreadcrumbs").length, 0, "There are No instances of sap.m.Breadcrumbs rendered in ObjectPageHeader");
 	});
 
-	/**
-	 * @deprecated As of version 1.50, the <code>breadCrumbsLinks</code> aggregation has been replaced with the <code>breadcrumbs</code> aggregation
-	 */
-	QUnit.test("After inserting a link in Legacy breadCrumbsLinks aggregation, the Legacy breadCrumbsLinks aggregation should be rendered", function (assert) {
-		this._oHeader.insertBreadCrumbLink(oFactory.getLink());
-		Core.applyChanges();
-		assert.strictEqual(this.oHeaderView.$().find(".sapMBreadcrumbs").length, 1, "There is one instance of sap.m.Breadcrumbs rendered in ObjectPageHeader");
-		assert.ok(this._oHeader.getBreadCrumbsLinks()[0].$().length > 0, "Legacy breadCrumbsLinks is rendered");
-	});
-
 	QUnit.test("After setting the New breadcrumbs aggregation, the New breadcrumbs aggregation should be rendered", function (assert) {
 		this._oHeader.setBreadcrumbs(new Breadcrumbs());
 		Core.applyChanges();
 		assert.strictEqual(this.oHeaderView.$().find(".sapMBreadcrumbs").length, 1, "There is one instance of sap.m.Breadcrumbs rendered in ObjectPageHeader");
 		assert.ok(this._oHeader.getBreadcrumbs().$().length > 0, "the New breadcrumbs aggregation is rendered");
-	});
-
-	/**
-	 * @deprecated As of version 1.50, the <code>breadCrumbsLinks</code> aggregation has been replaced with the <code>breadcrumbs</code> aggregation
-	 */
-	QUnit.test("Having both New breadcrumbs and Legacy breadCrumbsLinks, the New breadcrumbs aggregation should be rendered", function (assert) {
-		this._oHeader.setBreadcrumbs(new Breadcrumbs());
-		this._oHeader.insertBreadCrumbLink(oFactory.getLink());
-		Core.applyChanges();
-		assert.strictEqual(this.oHeaderView.$().find(".sapMBreadcrumbs").length, 1, "There is one instance of sap.m.Breadcrumbs rendered in ObjectPageHeader");
-		assert.ok(this._oHeader.getBreadcrumbs().$().length > 0, "the New breadcrumbs aggregation is rendered");
-		assert.strictEqual(this._oHeader.getBreadCrumbsLinks()[0].$().length, 0, "Legacy breadCrumbsLinks is Not rendered");
-	});
-
-	/**
-	 * @deprecated As of version 1.50, the <code>breadCrumbsLinks</code> aggregation has been replaced with the <code>breadcrumbs</code> aggregation
-	 */
-	QUnit.test("Having both New breadcrumbs and Legacy breadCrumbsLinks. After destroying the New breadcrumbs, Legacy breadCrumbsLinks should be rendered", function (assert) {
-		this._oHeader.setBreadcrumbs(new Breadcrumbs());
-		this._oHeader.insertBreadCrumbLink(oFactory.getLink());
-		Core.applyChanges();
-		this._oHeader.destroyBreadcrumbs();
-		Core.applyChanges();
-		assert.strictEqual(this.oHeaderView.$().find(".sapMBreadcrumbs").length, 1, "There is one instance of sap.m.Breadcrumbs rendered in ObjectPageHeader");
-		assert.ok(this._oHeader.getBreadCrumbsLinks()[0].$().length > 0, "Legacy breadCrumbsLinks is rendered");
-	});
-
-	/**
-	 * @deprecated As of version 1.50, the <code>breadCrumbsLinks</code> aggregation has been replaced with the <code>breadcrumbs</code> aggregation
-	 */
-	QUnit.test("Having the New breadcrumbs aggregation. After adding the Legacy breadCrumbsLinks, New breadcrumbs should remain rendered", function (assert) {
-		this._oHeader.setBreadcrumbs(new Breadcrumbs());
-		Core.applyChanges();
-		this._oHeader.insertBreadCrumbLink(oFactory.getLink());
-		Core.applyChanges();
-		assert.strictEqual(this.oHeaderView.$().find(".sapMBreadcrumbs").length, 1, "There is one instance of sap.m.Breadcrumbs rendered in ObjectPageHeader");
-		assert.ok(this._oHeader.getBreadcrumbs().$().length > 0, "the New breadcrumbs aggregation should be rendered");
 	});
 
 	QUnit.module("Lifecycle", {
@@ -1146,5 +1031,4 @@ function (jQuery, Core, Element, IconPool, ObjectPageLayout, ObjectPageHeader, O
 		// Assert
 		this.assertAllButtonsAreDestroyed(assert);
 	});
-
 });

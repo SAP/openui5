@@ -395,55 +395,6 @@ sap.ui.define([
 		assert.ok(true, "No exception is thrown");
 	});
 
-	/**
-	 * @deprecated As of version 1.82
-	 */
-	 QUnit.test("Should fire tokenUpdate when mapping between List items and Tokens on Token deletion", function (assert) {
-		// Setup
-		var oModel = new JSONModel({
-				items: [{text: "Token 0"},
-					{text: "Token 1"},
-					{text: "Token 2"}
-				]
-			}),
-			oTokenizer = new Tokenizer({
-				tokens: {path: "/items", template: new Token({text: {path: "text"}})},
-				width: "200px",
-				renderMode: "Narrow"
-			})
-				.setModel(oModel)
-				.placeAt("content"),
-			oEvent = {
-				getParameter: function () {
-					return oTokenizer._getTokensList().getItems()[0];
-				}
-			};
-
-		var oTokenUpdateSpy = this.spy(oTokenizer, "fireTokenUpdate");
-
-		Core.applyChanges();
-
-		// Act
-		oModel.setData({
-			items: [
-				{text: "Token 1"},
-				{text: "Token 2"}
-			]
-		});
-
-		oTokenizer._handleNMoreIndicatorPress();
-		Core.applyChanges();
-
-		oTokenizer._handleListItemDelete(oEvent);
-		Core.applyChanges();
-
-		// Assert
-		assert.ok(oTokenUpdateSpy.called, "Token Update event should be called");
-
-		// Cleanup
-		oTokenizer.destroy();
-	});
-
 	QUnit.test("Handle mapping between List items and Tokens on Token deletion", function (assert) {
 		// Setup
 		var aItems, oItem, oToken,
@@ -686,26 +637,6 @@ sap.ui.define([
 		afterEach : function() {
 			this.tokenizer.destroy();
 		}
-	});
-
-	/**
-	 * @deprecated As of version 1.82
-	 */
-	QUnit.test("Pressing delete icon when Tokenizer is disabled should not fire tokenUpdate", function(assert) {
-		// arrange
-		var oUpdateTokensSpy,
-			oToken = new Token({text: "test"});
-
-		oUpdateTokensSpy = this.spy(this.tokenizer, "fireTokenUpdate");
-		this.tokenizer.addToken(oToken);
-		this.tokenizer.setEnabled(false);
-		Core.applyChanges();
-
-		// act
-		oToken.getAggregation("deleteIcon").firePress();
-
-		// assert
-		assert.equal(oUpdateTokensSpy.callCount, 0, "TokenUpdate was NOT fired");
 	});
 
 	QUnit.test("Pressing delete icon when Tokenizer is disabled", function(assert) {

@@ -3,7 +3,6 @@ sap.ui.define([
 	"sap/ui/core/util/MockServer",
 	"sap/ui/core/Control",
 	"sap/ui/core/Element",
-	"sap/ui/model/odata/ODataModel",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/model/odata/v2/ODataModel",
 	"sap/m/Label",
@@ -13,7 +12,6 @@ sap.ui.define([
 	MockServer,
 	Control,
 	Element,
-	ODataModel,
 	jQuery,
 	v2ODataModel,
 	Label,
@@ -3386,7 +3384,7 @@ sap.ui.define([
 		oMockServer.start();
 		assert.ok(oMockServer.isStarted(), "Mock server is started");
 
-		var oModel = new ODataModel(sUri, true);
+		var oModel = new undefined/*ODataModel*/(sUri, true);
 		// 				var oModel = new v2ODataModel(sUri, true);
 
 		oModel.setUseBatch(true);
@@ -3453,7 +3451,7 @@ sap.ui.define([
 		oMockServer.start();
 		assert.ok(oMockServer.isStarted(), "Mock server is started");
 
-		var oModel = new ODataModel(sUri, true);
+		var oModel = new undefined/*ODataModel*/(sUri, true);
 		oModel.setUseBatch(true);
 
 		var aBatchReadOperations = [];
@@ -3522,7 +3520,7 @@ sap.ui.define([
 		oMockServer.start();
 		assert.ok(oMockServer.isStarted(), "Mock server is started");
 
-		var oModel = new ODataModel(sUri, true);
+		var oModel = new undefined/*ODataModel*/(sUri, true);
 		oModel.setUseBatch(true);
 
 		var aBatchReadOperations = [];
@@ -3603,7 +3601,7 @@ sap.ui.define([
 		oMockServer.start();
 		assert.ok(oMockServer.isStarted(), "Mock server is started");
 
-		var oModel = new ODataModel(sUri, true);
+		var oModel = new undefined/*ODataModel*/(sUri, true);
 		oModel.setUseBatch(true);
 
 		var aBatchReadOperations = [];
@@ -3684,7 +3682,7 @@ sap.ui.define([
 		oMockServer.start();
 		assert.ok(oMockServer.isStarted(), "Mock server is started");
 
-		var oModel = new ODataModel(sUri, true);
+		var oModel = new undefined/*ODataModel*/(sUri, true);
 		oModel.setUseBatch(true);
 
 		var aBatchFirstChangeOperations = [];
@@ -3731,7 +3729,7 @@ sap.ui.define([
 		oMockServer.start();
 		assert.ok(oMockServer.isStarted(), "Mock server is started");
 
-		var oModel = new ODataModel(sUri, true);
+		var oModel = new undefined/*ODataModel*/(sUri, true);
 		oModel.setUseBatch(true);
 
 		var aBatchReadOperations = [];
@@ -3762,7 +3760,6 @@ sap.ui.define([
 	});
 
 	QUnit.test("$batch GET Operation with dfferent status codes", function (assert) {
-
 		var done = assert.async();
 		var sUri = "/mock/";
 		var oMockServer = new MockServer({
@@ -3820,7 +3817,6 @@ sap.ui.define([
 		oMockServer.start();
 
 		var oModel = new v2ODataModel(sUri, true);
-		oModel.setDeferredBatchGroups(["myId"]);
 
 		var fnReadResult = function (oResponse) {
 			assert.ok(oResponse.statusCode != undefined, "Status Code " + oResponse.statusCode + " is set");
@@ -3858,7 +3854,6 @@ sap.ui.define([
 	});
 
 	QUnit.test("$batch: custom headers of contained requests", function (assert) {
-
 		var done = assert.async();
 		var sUri = "/mock/";
 		var oMockServer = new MockServer({
@@ -3898,7 +3893,6 @@ sap.ui.define([
 		oMockServer.start();
 
 		var oModel = new v2ODataModel(sUri, true);
-		oModel.setDeferredBatchGroups(["myId"]);
 
 		oModel.read("/LeaveItemCollection", {
 			batchGroupId: "myId",
@@ -4577,7 +4571,6 @@ sap.ui.define([
 		oMockServer.start();
 
 		var oModel = new v2ODataModel(sUri, true);
-		oModel.setDeferredBatchGroups(["myId"]);
 
 		oModel.update("/LeaveItemCollection(employeeid='JSMITH',itemid='1',type='Vacation')", {
 			availablebalance: "40 days",
@@ -4604,7 +4597,7 @@ sap.ui.define([
 	}
 
 	function initModel(sURI, bJSON) {
-		var oModel = new ODataModel(sURI, bJSON);
+		var oModel = new undefined/*ODataModel*/(sURI, bJSON);
 		return oModel;
 	}
 

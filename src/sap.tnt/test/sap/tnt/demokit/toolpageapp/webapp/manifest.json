@@ -6,17 +6,26 @@
 		"i18n": {
 			"bundleUrl": "i18n/i18n.properties",
 			"fallbackLocale": "en",
-			"supportedLocales": ["en", "de"],
+			"supportedLocales": [
+				"en",
+				"de"
+			],
 			"terminologies": {
 				"sports": {
 					"bundleUrl": "i18n/terminologies/sports/i18n.terminologies.sports.properties",
 					"bundleUrlRelativeTo": "manifest",
-					"supportedLocales": ["en", "de"]
+					"supportedLocales": [
+						"en",
+						"de"
+					]
 				},
 				"travel": {
 					"bundleUrl": "i18n/terminologies/travel/i18n.terminologies.travel.properties",
 					"bundleUrlRelativeTo": "manifest",
-					"supportedLocales": ["en", "de"]
+					"supportedLocales": [
+						"en",
+						"de"
+					]
 				}
 			}
 		},
@@ -32,13 +41,7 @@
 			"desktop": true,
 			"tablet": true,
 			"phone": true
-		},
-		"supportedThemes": [
-			"sap_hcb",
-			"sap_bluecrystal",
-			"sap_fiori_3",
-			"sap_horizon"
-		]
+		}
 	},
 	"sap.ui5": {
 		"rootView": {
@@ -66,17 +69,26 @@
 					"bundleUrl": "i18n/i18n.properties",
 					"async": true,
 					"fallbackLocale": "en",
-					"supportedLocales": ["en", "de"],
+					"supportedLocales": [
+						"en",
+						"de"
+					],
 					"terminologies": {
 						"sports": {
 							"bundleUrl": "i18n/terminologies/sports/i18n.terminologies.sports.properties",
 							"bundleUrlRelativeTo": "manifest",
-							"supportedLocales": ["en", "de"]
+							"supportedLocales": [
+								"en",
+								"de"
+							]
 						},
 						"travel": {
 							"bundleUrl": "i18n/terminologies/travel/i18n.terminologies.travel.properties",
 							"bundleUrlRelativeTo": "manifest",
-							"supportedLocales": ["en", "de"]
+							"supportedLocales": [
+								"en",
+								"de"
+							]
 						}
 					},
 					"enhanceWith": [
@@ -84,21 +96,24 @@
 							"bundleUrl": "reuse/appvar1/i18n/i18n.properties",
 							"fallbackLocale": "en",
 							"supportedLocales": [
-								"en", "de"
+								"en",
+								"de"
 							],
 							"terminologies": {
 								"sports": {
 									"bundleUrl": "reuse/appvar1/i18n/terminologies/sports/i18n.terminologies.sports.properties",
 									"bundleUrlRelativeTo": "manifest",
 									"supportedLocales": [
-										"en", "de"
+										"en",
+										"de"
 									]
 								},
 								"travel": {
 									"bundleUrl": "reuse/appvar1/i18n/terminologies/travel/i18n.terminologies.travel.properties",
 									"bundleUrlRelativeTo": "manifest",
 									"supportedLocales": [
-										"en", "de"
+										"en",
+										"de"
 									]
 								}
 							}
@@ -116,7 +131,8 @@
 									"bundleUrl": "reuse/appvar2/i18n/terminologies/travel/i18n.terminologies.travel.properties",
 									"bundleUrlRelativeTo": "manifest",
 									"supportedLocales": [
-										"en", "de"
+										"en",
+										"de"
 									]
 								}
 							}

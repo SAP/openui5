@@ -2,10 +2,9 @@
  * ${copyright}
  */
 sap.ui.define([
-	'sap/ui/core/XMLComposite'
-], function(XMLComposite) {
+], function() {
 	"use strict";
-	return XMLComposite.extend("composites.Field", {
+	return undefined/*XMLComposite*/.extend("composites.Field", {
 		metadata: {
 			properties: {
 				text: {

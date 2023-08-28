@@ -39,11 +39,6 @@ function (
 
 	sinon.config.useFakeTimers = false;
 
-	/**
-	 * @deprecated As of version 1.54
-	 */
-	var DynamicPageTitleArea = fioriLibrary.DynamicPageTitleArea;
-
 	var oFactory = SemanticUtil.oFactory,
 		oUtil = SemanticUtil.oUtil,
 		oSemanticConfiguration = oFactory.getSemanticConfiguration(),
@@ -204,54 +199,6 @@ function (
 		// Assert
 		assert.equal(this.oSemanticPage.getToggleHeaderOnTitleClick(), true,
 			"SemanticPage toggleHeaderOnTitleClick set to true and retrieved successfully.");
-	});
-
-	/**
-	 * @deprecated as of version 1.58
-	 */
-	QUnit.test("test SemanticPage titlePrimaryArea setter and getter", function (assert) {
-		var sBeginArea = DynamicPageTitleArea.Begin,
-			sMiddleArea = DynamicPageTitleArea.Middle;
-
-		// Assert default
-		assert.strictEqual(this.oSemanticPage.getTitlePrimaryArea(), sBeginArea,
-			"SemanticPage titlePrimaryArea is sap.f.DynamicPageTitleArea.Begin by default.");
-		assert.strictEqual(this.oSemanticPage._getTitle().getPrimaryArea(), sBeginArea,
-			"DynamicPageTitle primaryArea is sap.f.DynamicPageTitleArea.Begin by default.");
-
-		// Act
-		this.oSemanticPage.setTitlePrimaryArea(sMiddleArea);
-
-		// Assert
-		assert.strictEqual(this.oSemanticPage.getTitlePrimaryArea(), sMiddleArea,
-			"SemanticPage titlePrimaryArea set to sap.f.DynamicPageTitleArea.Middle and retrieved successfully.");
-		assert.strictEqual(this.oSemanticPage._getTitle().getPrimaryArea(), sMiddleArea,
-			"DynamicPageTitle primaryArea set to sap.f.DynamicPageTitleArea.Middle and retrieved successfully.");
-
-		//Setup
-		//Create a <code>SemanticPage</code> with <code>titlePrimaryArea</code> set to
-		//<code>sap.f.DynamicPageTitleArea.Middle</code> in the constructor
-		this.oSemanticPage2 = oFactory.getSemanticPage({titlePrimaryArea : sMiddleArea});
-		oUtil.renderObject(this.oSemanticPage2);
-
-		// Assert default
-		assert.strictEqual(this.oSemanticPage2.getTitlePrimaryArea(), sMiddleArea,
-			"SemanticPage titlePrimaryArea is sap.f.DynamicPageTitleArea.Middle by default.");
-		assert.strictEqual(this.oSemanticPage2._getTitle().getPrimaryArea(), sMiddleArea,
-			"DynamicPageTitle primaryArea is sap.f.DynamicPageTitleArea.Middle by default.");
-
-		// Act
-		this.oSemanticPage2.setTitlePrimaryArea(sBeginArea);
-
-		// Assert
-		assert.strictEqual(this.oSemanticPage2.getTitlePrimaryArea(), sBeginArea,
-			"SemanticPage titlePrimaryArea set to sap.f.DynamicPageTitleArea.Begin and retrieved successfully.");
-		assert.strictEqual(this.oSemanticPage2._getTitle().getPrimaryArea(), sBeginArea,
-			"DynamicPageTitle primaryArea set to sap.f.DynamicPageTitleArea.Begin and retrieved successfully..");
-
-		//Cleanup
-		this.oSemanticPage2.destroy();
-		this.oSemanticPage2 = null;
 	});
 
 	QUnit.test("test SemanticPage titleAreaShrinkRatio setter and getter", function (assert) {

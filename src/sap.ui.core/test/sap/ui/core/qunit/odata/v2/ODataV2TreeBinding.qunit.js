@@ -799,66 +799,66 @@ sap.ui.define([
 		oBinding.getRootContexts(1, 4);
 	});
 
-[[new Sorter("FirstName", true)], new Sorter("FirstName", true)].forEach(function (vSorter, i) {
-	QUnit.test("Sorting: Initial Sorter; # " + i, function(assert) {
-		var done = assert.async();
-		createTreeBinding("/Employees", null, [], {
-				navigation: {
-					Employees: "Employees1",
-					Employees1: "Employees1"
+	[[new Sorter("FirstName", true)], new Sorter("FirstName", true)].forEach(function (vSorter, i) {
+		QUnit.test("Sorting: Initial Sorter; # " + i, function(assert) {
+			var done = assert.async();
+			createTreeBinding("/Employees", null, [], {
+					navigation: {
+						Employees: "Employees1",
+						Employees1: "Employees1"
+					},
+					displayRootNode: true
 				},
-				displayRootNode: true
-			},
-			vSorter
-		);
+				vSorter
+			);
 
-		//change handler for getRootContexts() call
-		function handler1 (oEvent) {
-			oBinding.detachChange(handler1);
+			//change handler for getRootContexts() call
+			function handler1 (oEvent) {
+				oBinding.detachChange(handler1);
 
-			// contexts should be now loaded
-			var aContexts = oBinding.getRootContexts(0, 10);
-			var oContext;
+				// contexts should be now loaded
+				var aContexts = oBinding.getRootContexts(0, 10);
+				var oContext;
 
-			assert.equal(aContexts.length, 9, "Retrieved contexts after sorting length = 9");
-			assert.equal(oBinding.getChildCount(null), 9, "Internal rootContexts length");
+				assert.equal(aContexts.length, 9, "Retrieved contexts after sorting length = 9");
+				assert.equal(oBinding.getChildCount(null), 9, "Internal rootContexts length");
 
-			oContext = aContexts[0];
-			assert.equal(oModel.getProperty("FirstName", oContext), "Steven", "TreeBinding root context[0] is correct (Steven)");
+				oContext = aContexts[0];
+				assert.equal(oModel.getProperty("FirstName", oContext), "Steven", "TreeBinding root context[0] is correct (Steven)");
 
-			oContext = aContexts[8];
-			assert.equal(oModel.getProperty("FirstName", oContext), "Andrew", "TreeBinding root context[3] is correct (Andrew)");
+				oContext = aContexts[8];
+				assert.equal(oModel.getProperty("FirstName", oContext), "Andrew", "TreeBinding root context[3] is correct (Andrew)");
 
-			// retrieve children for Andrew
-			oBinding.attachChange(handler2);
-			aContexts = oBinding.getNodeContexts(aContexts[8], 0, 5);
-		}
+				// retrieve children for Andrew
+				oBinding.attachChange(handler2);
+				aContexts = oBinding.getNodeContexts(aContexts[8], 0, 5);
+			}
 
-		//change handler for getNodeContexts() call
-		function handler2 () {
-			oBinding.detachChange(handler2);
+			//change handler for getNodeContexts() call
+			function handler2 () {
+				oBinding.detachChange(handler2);
 
-			var aRootContexts = oBinding.getRootContexts(0, 10);
-			var oAndrew = aRootContexts[8];
+				var aRootContexts = oBinding.getRootContexts(0, 10);
+				var oAndrew = aRootContexts[8];
 
-			assert.equal(oBinding.getChildCount(oAndrew), 5, "Child count of /Employees(2) is now 5");
+				assert.equal(oBinding.getChildCount(oAndrew), 5, "Child count of /Employees(2) is now 5");
 
-			var aChildContexts = oBinding.getNodeContexts(oAndrew, 0, 5);
-			var oContext;
+				var aChildContexts = oBinding.getNodeContexts(oAndrew, 0, 5);
+				var oContext;
 
-			oContext = aChildContexts[0];
-			assert.equal(oModel.getProperty("FirstName", oContext), "Steven", "/Employee(2) child context[0] is correct (Steven)");
+				oContext = aChildContexts[0];
+				assert.equal(oModel.getProperty("FirstName", oContext), "Steven", "/Employee(2) child context[0] is correct (Steven)");
 
-			oContext = aChildContexts[4];
-			assert.equal(oModel.getProperty("FirstName", oContext), "Janet", "/Employee(2) child context[4] is correct (Janet)");
+				oContext = aChildContexts[4];
+				assert.equal(oModel.getProperty("FirstName", oContext), "Janet", "/Employee(2) child context[4] is correct (Janet)");
 
-			done();
-		}
+				done();
+			}
 
-		oBinding.attachChange(handler1);
-		oBinding.getRootContexts(0, 10);
+			oBinding.attachChange(handler1);
+			oBinding.getRootContexts(0, 10);
+		});
 	});
-});
 
 	QUnit.test("Sorting: sort() call on binding", function(assert) {
 		var done = assert.async();
@@ -2405,64 +2405,6 @@ sap.ui.define([
 
 			done();
 		}
-	});
-
-	/** @deprecated As of version 1.102.0, reason OperationMode.Auto */
-	QUnit.test("OperationMode.Auto: Backend has fewer entries than the threshold.", function (assert) {
-		var done = assert.async();
-		createTreeBinding("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", [], null, {
-			rootLevel: 2,
-			operationMode: OperationMode.Auto,
-			threshold: 20000
-		});
-
-		//trigger initial count request
-		oBinding.attachChange(fnChangeHandler);
-		oBinding.getRootContexts();
-
-		// change for the count request
-		function fnChangeHandler(oEvent) {
-			oBinding.detachChange(fnChangeHandler);
-			assert.equal(oBinding.bClientOperation, true, "Binding switched to clientside operations");
-
-			//get the actual data
-			oBinding.attachChange(fnChangeHandler2);
-			oBinding.getRootContexts();
-		}
-
-		//change for the data request
-		function fnChangeHandler2(oEvent) {
-			oBinding.detachChange(fnChangeHandler2);
-			var aRootContexts = oBinding.getRootContexts();
-
-			//check if the root contexts are sorted correctly
-			assert.ok(true, "Sorted descending test:");
-			assert.equal(aRootContexts.length, 9, "Exactly 9 contexts returned");
-			assert.equal(aRootContexts[0].getProperty("HierarchyNode"), "000002", "First Root Node is 000002");
-			assert.equal(aRootContexts[4].getProperty("HierarchyNode"), "001131", "Root from the middle is 001131");
-			assert.equal(aRootContexts[8].getProperty("HierarchyNode"), "001180", "Last Root Node is 001180");
-
-			//loading the children of a node
-			var aChildContexts = oBinding.getNodeContexts(aRootContexts[4]);
-
-			assert.ok(true, "Check if sorting is still applied after expanding a node:");
-			assert.equal(aChildContexts.length, 2, "Exactly 2 contexts returned.");
-			assert.equal(aChildContexts[0].getProperty("HierarchyNode"), "001132", "aChildContexts[0] of expanded node is also sorted: 001134");
-			assert.equal(aChildContexts[1].getProperty("HierarchyNode"), "001134", "aChildContexts[1] of expanded node is also sorted: 001132");
-
-			//apply clientside sorter -> NO request anymore
-			assert.ok(true, "Sorting on the client");
-			oBinding.sort([new Sorter("HierarchyNode", true)]);
-			aRootContexts = oBinding.getRootContexts();
-			assert.equal(aRootContexts.length, 9, "Still exactly 9 contexts after sorting - No Request sent");
-			assert.equal(aRootContexts[0].getProperty("HierarchyNode"), "001180", "First Root Node is 001180");
-			assert.equal(aRootContexts[4].getProperty("HierarchyNode"), "001131", "Root from the middle is 001131");
-			assert.equal(aRootContexts[8].getProperty("HierarchyNode"), "000002", "Last Root Node is 000002");
-
-			done();
-		}
-
-		//[new Sorter("HierarchyNode", true)]
 	});
 
 	QUnit.test("Reset followed by Request - Should fire a single pair of data* events", function(assert){

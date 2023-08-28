@@ -13,7 +13,8 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/layout/SplitterLayoutData",
-	"sap/ui/core/Configuration"
+	"sap/ui/core/Configuration",
+	"sap/ui/core/Core"
 ],
 	function(
 		Control,
@@ -26,7 +27,8 @@ sap.ui.define([
 		Log,
 		jQuery,
 		SplitterLayoutData,
-		Configuration
+		Configuration,
+		Core
 	) {
 	"use strict";
 
@@ -261,7 +263,7 @@ sap.ui.define([
 		this._autoResize = true;
 
 		var that = this;
-		sap.ui.getCore().attachInit(function() {
+		Core.ready(function() {
 			that._resizeHandlerId = ResizeHandler.register(that, that._resizeCallback);
 		});
 

@@ -17,7 +17,6 @@ sap.ui.define([
 	return {
 		name: "QUnit TestSuite for sap.ui.integration",
 		defaults: {
-			skip: bSuiteUiCommonsAvailable,
 			qunit: {
 				version: "edge"
 			},

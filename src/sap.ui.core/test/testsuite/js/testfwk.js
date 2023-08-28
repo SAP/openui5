@@ -32,69 +32,39 @@ sap.ui.define([
 			"sap_fiori_3": "Quartz Light",
 			"sap_fiori_3_dark": "Quartz Dark",
 			"sap_fiori_3_hcb": "Quartz High Contrast Black",
-			"sap_fiori_3_hcw": "Quartz High Contrast White",
-			"sap_belize": "Belize",
-			"sap_belize_plus": "Belize Plus",
-			"sap_belize_hcb": "Belize High Contrast Black",
-			"sap_belize_hcw": "Belize High Contrast White",
-			"sap_bluecrystal": "Blue Crystal",
-			"sap_hcb": "High Contrast Black"
+			"sap_fiori_3_hcw": "Quartz High Contrast White"
 		},
 
 		// the themes supported by each library
 		LIBRARY_THEMES: {
-			"sap.m" : {
-				"default" : "sap_fiori_3",
-				"supports" : [
-					"sap_bluecrystal","sap_horizon","sap_fiori_3","sap_fiori_3_dark","sap_fiori_3_hcb","sap_fiori_3_hcw","sap_belize","sap_belize_plus","sap_belize_hcb","sap_belize_hcw","sap_hcb"
-				]
-			},
-			"sap.me" : {
-				"default" : "sap_bluecrystal",
-				"supports" : [
-					"sap_bluecrystal","sap_hcb"
-				]
-			},
-			"sap.ui.commons" : {
-				"default" : "sap_bluecrystal",
-				"supports" : [
-					"sap_bluecrystal","sap_fiori_3","sap_fiori_3_dark","sap_fiori_3_hcb","sap_fiori_3_hcw","sap_belize","sap_belize_plus","sap_belize_hcb","sap_belize_hcw","sap_hcb"
-				]
-			},
 			"sap.ui.composite" : {
-				"default" : "sap_bluecrystal",
+				"default" : "sap_horizon",
 				"supports" : [
-					"sap_bluecrystal","sap_fiori_3","sap_fiori_3_dark","sap_fiori_3_hcb","sap_fiori_3_hcw","sap_belize","sap_belize_plus","sap_belize_hcb","sap_belize_hcw","sap_hcb"
+					"sap_horizon","sap_fiori_3","sap_fiori_3_dark","sap_fiori_3_hcb","sap_fiori_3_hcw"
 				]
 			},
 			"sap.ui.dev" : {
-				"default" : "sap_bluecrystal",
+				"default" : "sap_horizon",
 				"supports" : [
-					"sap_bluecrystal","sap_fiori_3","sap_fiori_3_dark","sap_fiori_3_hcb","sap_fiori_3_hcw","sap_belize","sap_belize_plus","sap_belize_hcb","sap_belize_hcw","sap_hcb"
+					"sap_horizon","sap_fiori_3","sap_fiori_3_dark","sap_fiori_3_hcb","sap_fiori_3_hcw"
 				]
 			},
 			"sap.ui.richtexteditor" : {
-				"default" : "sap_bluecrystal",
+				"default" : "sap_horizon",
 				"supports" : [
-					"sap_bluecrystal","sap_fiori_3","sap_fiori_3_dark","sap_fiori_3_hcb","sap_fiori_3_hcw","sap_belize","sap_belize_plus","sap_belize_hcb","sap_belize_hcw","sap_hcb"
+					"sap_horizon","sap_fiori_3","sap_fiori_3_dark","sap_fiori_3_hcb","sap_fiori_3_hcw"
 				]
 			},
 			"sap.ui.suite" : {
-				"default" : "sap_bluecrystal",
+				"default" : "sap_horizon",
 				"supports" : [
-					"sap_bluecrystal","sap_fiori_3","sap_fiori_3_dark","sap_fiori_3_hcb","sap_fiori_3_hcw","sap_belize","sap_belize_plus","sap_belize_hcb","sap_belize_hcw","sap_hcb"
-				]
-			},
-			"sap.ui.ux3" : {
-				"default" : "sap_bluecrystal",
-				"supports" : [
-					"sap_bluecrystal","sap_fiori_3","sap_fiori_3_dark","sap_fiori_3_hcb","sap_fiori_3_hcw","sap_belize","sap_belize_plus","sap_belize_hcb","sap_belize_hcw","sap_hcb"
+					"sap_horizon","sap_fiori_3","sap_fiori_3_dark","sap_fiori_3_hcb","sap_fiori_3_hcw"
 				]
 			},
 			"all" : {
 				"default" : "sap_fiori_3",
 				"supports" : [
-					"sap_bluecrystal","sap_horizon","sap_fiori_3","sap_fiori_3_hcb","sap_fiori_3_dark","sap_fiori_3_hcw","sap_belize","sap_belize_plus","sap_belize_hcb","sap_belize_hcw","sap_hcb"
+					"sap_horizon","sap_fiori_3","sap_fiori_3_dark","sap_fiori_3_hcb","sap_fiori_3_hcw"
 				]
 			}
 		},

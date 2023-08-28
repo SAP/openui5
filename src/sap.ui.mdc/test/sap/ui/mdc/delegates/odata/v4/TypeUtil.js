@@ -9,20 +9,6 @@ sap.ui.define([
 ], function(ODataTypeUtil, BaseType, merge) {
 	"use strict";
 
-	/**
-	 * Provides mapping functionality for odata v4 data types to base types. Extend this object in your project to customize behaviour depending on model usage.
-	 * <b>Note:</b>
-	 * This utility is experimental and the API/behavior is not finalized and hence this should not be used for productive usage.
-	 * @namespace
-	 * @author SAP SE
-	 * @private
-	 * @experimental As of version 1.79
-	 * @since 1.79.0
- 	 * @deprecated since 1.115.0 - please see {@link module:sap/ui/mdc/BaseDelegate.getTypeMap}
-	 * @alias sap.ui.mdc.odata.v4.TypeUtil
-	 */
-	var ODataV4TypeUtil = Object.assign({}, ODataTypeUtil);
-
 	ODataV4TypeUtil.getBaseType = function(sType, oFormatOptions, oConstraints) {
 
 		switch (sType) {
@@ -85,5 +71,4 @@ sap.ui.define([
 	};
 
 	return ODataV4TypeUtil;
-
 });

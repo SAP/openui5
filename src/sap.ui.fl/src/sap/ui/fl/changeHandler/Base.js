@@ -18,25 +18,6 @@ sap.ui.define([
 	 */
 	var Base = /** @lends sap.ui.fl.changeHandler.Base */{
 		/**
-		 * Deprecated. Use setText on the flex object instance instead
-		 *
-		 * @param {object} oChange - Change object
-		 * @param {string} sKey - Text key
-		 * @param {string} sText - Text value
-		 * @param {string} sType - Translation text type, e.g. XBUT, XTIT, XTOL, XFLD
-		 *
-		 * @deprecated As of version 1.107
-		 * @private
-		 * @ui5-restricted
-		 */
-		setTextInChange(oChange, sKey, sText, sType) {
-			oChange.texts ||= {};
-			oChange.texts[sKey] ||= {};
-			oChange.texts[sKey].value = sText;
-			oChange.texts[sKey].type = sType;
-		},
-
-		/**
 		 * Instantiates an XML fragment inside a change.
 		 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject} oChange - Change object with instructions to be applied on the control
 		 * @param {object} mPropertyBag - Property bag

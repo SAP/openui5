@@ -1,13 +1,10 @@
 sap.ui.define([
 	"sap/m/MessageToast",
 	"sap/m/Button",
-	"sap/m/UploadCollection",
 	"sap/m/OverflowToolbar",
 	"sap/m/Title",
 	"sap/m/ToolbarSpacer",
 	"sap/m/SearchField",
-	"sap/m/UploadCollectionToolbarPlaceholder",
-	"sap/m/UploadCollectionParameter",
 	"sap/m/Page",
 	"sap/m/Bar",
 	"sap/ui/util/Mobile",
@@ -15,13 +12,10 @@ sap.ui.define([
 ], function(
 	MessageToast,
 	Button,
-	UploadCollection,
 	OverflowToolbar,
 	Title,
 	ToolbarSpacer,
 	SearchField,
-	UploadCollectionToolbarPlaceholder,
-	UploadCollectionParameter,
 	Page,
 	Bar,
 	Mobile,
@@ -54,7 +48,7 @@ sap.ui.define([
 	/* Creates an instance of UploadCollection                     */
 	/* =========================================================== */
 	function fnCreateUploadCollection() {
-		return new UploadCollection({
+		return new undefined/*UploadCollection*/({
 			maximumFilenameLength : 55,
 			maximumFileSize : 250,
 			multiple : true,
@@ -70,7 +64,7 @@ sap.ui.define([
 						width : "10rem",
 						search : fnSearch
 					}),
-					new UploadCollectionToolbarPlaceholder(),
+					new undefined/*UploadCollectionToolbarPlaceholder*/(),
 					new Button({
 						icon : "sap-icon://money-bills",
 						enabled : false,
@@ -118,7 +112,7 @@ sap.ui.define([
 	function fnBeforeUploadStarts(oEvent) {
 		sFileName = oEvent.getParameter("fileName");
 		iRequestCounter++;
-		var oHeaderParameter = new UploadCollectionParameter({
+		var oHeaderParameter = new undefined/*UploadCollectionParameter*/({
 			name : "FileNameForTesting",
 			value : sFileName
 		});

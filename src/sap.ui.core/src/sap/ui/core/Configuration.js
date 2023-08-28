@@ -461,7 +461,6 @@ sap.ui.define([
 		},
 
 		getCompatibilityVersion : getCompatibilityVersion,
-
 		getTheme : Theming.getTheme,
 
 		/**
@@ -534,7 +533,6 @@ sap.ui.define([
 		},
 
 		getSAPLogonLanguage : Localization.getSAPLogonLanguage,
-
 		getTimezone : Localization.getTimezone,
 
 		/**
@@ -583,7 +581,6 @@ sap.ui.define([
 		getCalendarWeekNumbering: Formatting.getCalendarWeekNumbering,
 
 		getRTL :Localization.getRTL,
-
 		setRTL : Localization.setRTL,
 
 		/**
@@ -738,9 +735,7 @@ sap.ui.define([
 		},
 
 		getLanguagesDeliveredWithCore : Localization.getLanguagesDeliveredWithCore,
-
 		getSupportedLanguages : Localization.getSupportedLanguages,
-
 		getAccessibility : ControlBehavior.isAccessibilityEnabled,
 
 		/**
@@ -752,18 +747,6 @@ sap.ui.define([
 		 */
 		getAutoAriaBodyRole : function () {
 			return Configuration.getValue("autoAriaBodyRole");
-		},
-
-		/**
-		 * Returns whether the animations are globally used.
-		 * @return {boolean} whether the animations are globally used
-		 * @public
-		 * @deprecated As of version 1.50.0, replaced by {@link sap.ui.core.Configuration#getAnimationMode}
-		 */
-		getAnimation : function () {
-			var sAnimationMode = Configuration.getAnimationMode();
-			// Set the animation to on or off depending on the animation mode to ensure backward compatibility.
-			return (sAnimationMode !== Configuration.AnimationMode.minimal && sAnimationMode !== Configuration.AnimationMode.none);
 		},
 
 		/**
@@ -856,20 +839,6 @@ sap.ui.define([
 		},
 
 		/**
-		 * Prefix to be used for automatically generated control IDs.
-		 * Default is a double underscore "__".
-		 *
-		 * @returns {string} the prefix to be used
-		 * @public
-		 * @deprecated since 1.119.0. Please use {@link sap.ui.base.ManagedObjectMetadata.getUIDPrefix ManagedObjectMetadata.getUIDPrefix} instead.
-		 */
-		getUIDPrefix : function() {
-			var ManagedObjectMetadata = sap.ui.require("sap/ui/base/ManagedObjectMetadata");
-			return ManagedObjectMetadata.getUIDPrefix();
-		},
-
-
-		/**
 		 * Return whether the design mode is active or not.
 		 *
 		 * @returns {boolean} whether the design mode is active or not.
@@ -913,28 +882,6 @@ sap.ui.define([
 		 */
 		getControllerCodeDeactivated : function() {
 			return Configuration.getDesignMode() && !Configuration.getSuppressDeactivationOfControllerCode();
-		},
-
-		/**
-		 * The name of the application to start or empty.
-		 *
-		 * @returns {string} name of the application
-		 * @public
-		 * @deprecated Since 1.15.1. Please use {@link module:sap/ui/core/ComponentSupport} instead. See also {@link topic:82a0fcecc3cb427c91469bc537ebdddf Declarative API for Initial Components}.
-		 */
-		getApplication : function() {
-			return Configuration.getValue("application");
-		},
-
-		/**
-		 * The name of the root component to start or empty.
-		 *
-		 * @returns {string} name of the root component
-		 * @public
-		 * @deprecated Since 1.95. Please use {@link module:sap/ui/core/ComponentSupport} instead. See also {@link topic:82a0fcecc3cb427c91469bc537ebdddf Declarative API for Initial Components}.
-		 */
-		getRootComponent : function() {
-			return Configuration.getValue("rootComponent");
 		},
 
 		/**
@@ -1134,19 +1081,6 @@ sap.ui.define([
 		},
 
 		/**
-		 * URL of the whitelist service.
-		 *
-		 * @return {string} whitelist service URL
-		 * @public
-		 * @deprecated Since 1.85.0. Use {@link sap.ui.core.Configuration#getAllowlistService} instead.
-		 * SAP strives to replace insensitive terms with inclusive language.
-		 * Since APIs cannot be renamed or immediately removed for compatibility reasons, this API has been deprecated.
-		 */
-		getWhitelistService : function() {
-			return Configuration.getAllowlistService();
-		},
-
-		/**
 		 * URL of the allowlist service.
 		 *
 		 * @return {string} allowlist service URL
@@ -1194,21 +1128,6 @@ sap.ui.define([
 		/**
 		 * Flag if statistics are requested.
 		 *
-		 * Flag set by TechnicalInfo Popup will also be checked
-		 * So its active if set by URL parameter or by TechnicalInfo property
-		 *
-		 * @returns {boolean} statistics flag
-		 * @private
-		 * @deprecated since 1.106.0. Renamed for clarity, use {@link sap.ui.core.Configuration#getStatisticsEnabled} instead
-		 * @since 1.20.0
-		 */
-		getStatistics : function() {
-			return Configuration.getStatisticsEnabled();
-		},
-
-		/**
-		 * Flag if statistics are requested.
-		 *
 		 * Flag set by TechnicalInfo Popup will also be checked.
 		 * So its active if set by URL parameter or manually via TechnicalInfo.
 		 *
@@ -1225,29 +1144,6 @@ sap.ui.define([
 			}
 			return result;
 		},
-
-		/**
-		 * Return whether native scrolling should be suppressed on touch devices.
-		 *
-		 * @returns {boolean} whether native scrolling is suppressed on touch devices
-		 * @since 1.20.0
-		 * @deprecated since 1.26.0. Always use native scrolling
-		 * @private
-		 */
-		getNoNativeScroll : function() {
-			return false;
-		},
-
-		/**
-		 * Returns the list of active terminologies defined via the Configuration.
-		 *
-		 * @returns {string[]|undefined} if no active terminologies are set, the default value <code>undefined</code> is returned.
-		 * @since 1.77.0
-		 * @public
-		 * @function
-		 * @deprecated Since 1.118. Please use {@link module:sap/base/i18n/Localization.getActiveTerminologies} instead.
-		 */
-		getActiveTerminologies : Localization.getActiveTerminologies,
 
 		/**
 		 * Returns the security token handlers of an OData V4 model.
@@ -1525,19 +1421,12 @@ sap.ui.define([
 		},
 
 		_set: Formatting._set,
-
 		getCustomUnits: Formatting.getCustomUnits,
-
 		setCustomUnits: Formatting.setCustomUnits,
-
 		addCustomUnits: Formatting.addCustomUnits,
-
 		setUnitMappings: Formatting.setUnitMappings,
-
 		addUnitMappings: Formatting.addUnitMappings,
-
 		getUnitMappings: Formatting.getUnitMappings,
-
 		getDatePattern : Formatting.getDatePattern,
 
 		/**
@@ -1609,40 +1498,9 @@ sap.ui.define([
 		setNumberSymbol : Formatting.setNumberSymbol,
 
 		getCustomCurrencies : Formatting.getCustomCurrencies,
-
 		setCustomCurrencies : Formatting.setCustomCurrencies,
-
 		addCustomCurrencies: Formatting.addCustomCurrencies,
-
-		/**
-		 * Defines the day used as the first day of the week.
-		 *
-		 * The day is set as an integer value between 0 (Sunday) and 6 (Saturday).
-		 * Calling this method with a null or undefined symbol removes a previously set value.
-		 *
-		 * If a value is defined, it will be preferred over values derived from the current locale.
-		 *
-		 * Usually in the US the week starts on Sunday while in most European countries on Monday.
-		 * There are special cases where you want to have the first day of week set independent of the
-		 * user locale.
-		 *
-		 * After changing the first day of week, the framework tries to update localization
-		 * specific parts of the UI. See the documentation of {@link sap.ui.core.Configuration#setLanguage}
-		 * for details and restrictions.
-		 *
-		 * @param {int} iValue must be an integer value between 0 and 6
-		 * @returns {this} Returns <code>this</code> to allow method chaining
-		 * @public
-		 * @deprecated Since 1.113.0. Use {@link sap.ui.core.Configuration.FormatSettings#setCalendarWeekNumbering} instead.
-		 */
-		setFirstDayOfWeek : function(iValue) {
-			check(typeof iValue == "number" && iValue >= 0 && iValue <= 6, "iValue must be an integer value between 0 and 6");
-			Formatting._set("weekData-firstDay", iValue);
-			return this;
-		},
-
 		_setDayPeriods: Formatting._setDayPeriods,
-
 		getLegacyDateFormat : Formatting.getLegacyDateFormat,
 
 		/**
@@ -1708,13 +1566,9 @@ sap.ui.define([
 		setLegacyNumberFormat : Formatting.setLegacyNumberFormat,
 
 		setLegacyDateCalendarCustomizing : Formatting.setLegacyDateCalendarCustomizing,
-
 		getLegacyDateCalendarCustomizing : Formatting.getLegacyDateCalendarCustomizing,
-
 		setTrailingCurrencyCode : Formatting.setTrailingCurrencyCode,
-
 		getTrailingCurrencyCode : Formatting.getTrailingCurrencyCode,
-
 		getCustomLocaleData : Formatting.getCustomLocaleData
 	});
 

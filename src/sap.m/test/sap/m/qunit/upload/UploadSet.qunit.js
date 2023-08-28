@@ -19,9 +19,9 @@ sap.ui.define([
 	"sap/m/library",
 	"sap/ui/model/Sorter",
 	"sap/m/IllustratedMessageType",
-	"sap/ui/core/Core"
-], function (jQuery, UploadSet, UploadSetItem, UploadSetRenderer, Uploader, Toolbar, Label, ListItemBaseRenderer,
-			 Dialog, Device, MessageBox, JSONModel, TestUtils, oCore, DragAndDrop, EventBase, Library, Sorter, IllustratedMessageType, Core) {
+	"sap/ui/core/Core",
+	"sap/ui/base/Object"
+], function(jQuery, UploadSet, UploadSetItem, UploadSetRenderer, Uploader, Toolbar, Label, ListItemBaseRenderer, Dialog, Device, MessageBox, JSONModel, TestUtils, oCore, DragAndDrop, EventBase, Library, Sorter, IllustratedMessageType, Core, BaseObject) {
 	"use strict";
 
 	// shortcut for sap.m.ListMode
@@ -1377,7 +1377,8 @@ sap.ui.define([
 		var oItem = this.oUploadSet.getItems()[0];
 		var oMarkerItem = oItem.getMarkers()[0];
 		oItem._getEditButton().firePress();
-		this.oUploadSet.rerender();
+		this.oUploadSet.invalidate();
+		oCore.applyChanges();
 		//Act
 		var oMarkerContainerItem = oMarkerItem.getDomRef().parentNode;
 		var sMarkerItemStyle = oMarkerContainerItem.getAttribute("style");
@@ -2004,7 +2005,9 @@ sap.ui.define([
 			aItems = aList.getItems();
 
 		//Act
-		this.oUploadSet.rerender();
+		this.oUploadSet.invalidate();
+
+		oCore.applyChanges();
 
 		//Assert
 		assert.ok(this.oUploadSet.getBindingInfo.calledWith("items"), "Model fetched from items binding to lookup for grouping keys");
@@ -2218,7 +2221,7 @@ sap.ui.define([
             this.oUploadSet.setCloudFilePickerEnabled(true);
 
             // assert
-            assert.equal(this.oUploadSet._getCloudFilePicker() instanceof sap.m.MenuButton, true, "Cloud File Picker Menu Button enabled with CloudFilePicker property enabled");
+            assert.equal(BaseObject.isA(this.oUploadSet._getCloudFilePicker(), "sap.m.MenuButton"), true, "Cloud File Picker Menu Button enabled with CloudFilePicker property enabled");
             assert.ok(this.oUploadSet._getCloudFilePicker().getMenu().getItems().length === 2, "Cloud File Picker Menu Button created with 2 menu items (local and cloud)");
         });
 

@@ -219,7 +219,6 @@ sap.ui.define([
 		 * @alias sap.ui.core.routing.Router
 		 */
 		var Router = EventProvider.extend("sap.ui.core.routing.Router", /** @lends sap.ui.core.routing.Router.prototype */ {
-
 			constructor : function(oRoutes, oConfig, oOwner, oTargetsConfig, oRouterHashChanger) {
 				EventProvider.apply(this);
 
@@ -726,50 +725,6 @@ sap.ui.define([
 			},
 
 			/**
-			 * Returns a cached view for a given name or creates it if it does not exist yet.
-			 *
-			 * @deprecated Since 1.28.1 use {@link #getViews} instead.
-			 * @param {string} sViewName Name of the view
-			 * @param {string} sViewType Type of the view
-			 * @param {string} sViewId Optional view id
-			 * @returns {sap.ui.core.mvc.View} The view instance
-			 * @public
-			 */
-			getView : function (sViewName, sViewType, sViewId) {
-				Log.warning("Deprecated API Router#getView called - use Router#getViews instead.", this);
-
-				var oView = this._oViews._getViewWithGlobalId({
-					viewName: sViewName,
-					type: sViewType,
-					id: sViewId
-				}, true);
-
-				this.fireViewCreated({
-					view: oView,
-					viewName: sViewName,
-					type: sViewType
-				});
-
-				return oView;
-			},
-
-			/**
-			 * Adds or overwrites a view in the view cache of the router which will be cached under the given <code>sViewName</code>
-			 * and the "undefined" key.
-			 *
-			 * @deprecated Since 1.28 use {@link #getViews} instead.
-			 * @param {string} sViewName Name of the view
-			 * @param {sap.ui.core.mvc.View} oView The view instance
-			 * @since 1.22
-			 * @public
-			 * @returns {this} Since 1.28, the <code>this</code> pointer for chaining
-			 */
-			setView : function (sViewName, oView) {
-				this._oViews.setView(sViewName, oView);
-				return this;
-			},
-
-			/**
 			 * Determines the router instance of the parent component
 			 *
 			 * @private
@@ -1106,64 +1061,6 @@ sap.ui.define([
 			 */
 			fireBeforeRouteMatched : function(oParameters) {
 				this.fireEvent("beforeRouteMatched", oParameters);
-				return this;
-			},
-
-			/**
-			 * Attaches event handler <code>fnFunction</code> to the {@link #event:viewCreated viewCreated} event of this
-			 * <code>sap.ui.core.routing.Router</code>.
-			 *
-			 * When called, the context of the event handler (its <code>this</code>) will be bound to <code>oListener</code>
-			 * if specified, otherwise it will be bound to this <code>sap.ui.core.routing.Router</code> itself.
-			 *
-			 * @param {object}
-			 *            [oData] An application-specific payload object that will be passed to the event
-			 *            handler along with the event object when firing the event
-			 * @param {function}
-			 *            fnFunction The function to be called when the event occurs
-			 * @param {object}
-			 *            [oListener] Context object to call the event handler with, defaults to this
-			 *            <code>sap.ui.core.routing.Router</code> itself
-			 *
-			 * @returns {this} Reference to <code>this</code> in order to allow method chaining
-			 * @public
-			 * @deprecated Since 1.28 use {@link #getViews} instead.
-			 */
-			attachViewCreated : function(oData, fnFunction, oListener) {
-				this.attachEvent("viewCreated", oData, fnFunction, oListener);
-				return this;
-			},
-
-			/**
-			 * Detaches event handler <code>fnFunction</code> from the {@link #event:viewCreated viewCreated} event of this
-			 * <code>sap.ui.core.routing.Router</code>.
-			 *
-			 * The passed function and listener object must match the ones used for event registration.
-			 *
-			 * @param {function}
-			 *            fnFunction The function to be called when the event occurs
-			 * @param {object}
-			 *            oListener Context object on which the given function had to be called
-			 * @returns {this} Reference to <code>this</code> in order to allow method chaining
-			 * @public
-			 * @deprecated Since 1.28 use {@link #getViews} instead.
-			 */
-			detachViewCreated : function(fnFunction, oListener) {
-				this.detachEvent("viewCreated", fnFunction, oListener);
-				return this;
-			},
-
-			/**
-			 * Fires event {@link #event:viewCreated viewCreated} to attached listeners.
-			 *
-			 * @param {object} [oParameters] Parameters to pass along with the event
-			 *
-			 * @returns {this} Reference to <code>this</code> in order to allow method chaining
-			 * @protected
-			 * @deprecated As of 1.28 use {@link #getViews} instead.
-			 */
-			fireViewCreated : function(oParameters) {
-				this.fireEvent("viewCreated", oParameters);
 				return this;
 			},
 
@@ -1580,7 +1477,6 @@ sap.ui.define([
 			metadata : {
 				publicMethods: ["initialize", "getURL", "register", "getRoute"]
 			}
-
 		});
 
 		function isHomeRouteTarget(sRouteTarget, sHomeRoute) {

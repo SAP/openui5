@@ -6,7 +6,6 @@ sap.ui.define([
 	"sap/m/library",
 	"sap/m/Dialog",
 	"sap/m/Button",
-	"sap/m/MessagePage",
 	"sap/m/OverflowToolbar",
 	"sap/m/OverflowToolbarButton",
 	"sap/m/Title",
@@ -16,7 +15,6 @@ sap.ui.define([
 	library,
 	Dialog,
 	Button,
-	MessagePage,
 	OverflowToolbar,
 	OverflowToolbarButton,
 	Title,
@@ -108,9 +106,6 @@ sap.ui.define([
 				});
 
 				oPopup.setShowHeader(true);
-				if (this.getPopupHeaderTitle()) {
-					oPopup.setTitle(this.getPopupHeaderTitle());
-				}
 				if (this.getTitle()) {
 					oPopup.setTitle(this.getTitle());
 				}
@@ -121,7 +116,7 @@ sap.ui.define([
 				sPlaceholderMessagePageFactoryFunctionName = "getPlaceholderMessagePageControl";
 
 				this._objectsRegister[sPlaceholderMessagePageFactoryFunctionName] = function () {
-					var oMessagePage = new MessagePage({
+					var oMessagePage = new undefined/*MessagePage*/({
 						showHeader: false,
 						text: that._getMessagePageErrorMessage(),
 						description: ""

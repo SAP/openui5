@@ -114,14 +114,9 @@ sap.ui.define([
 		}
 
 		oTable = new Table();
-		oTable.setTitle("Table 1");
 		oTable.setFooter("Footer");
 		oTable.setSelectionMode(tableLibrary.SelectionMode.MultiToggle);
 		oTable.setEnableColumnFreeze(true);
-		/**
-		 * @deprecated As of Version 1.117
-		 */
-		oTable.setShowColumnVisibilityMenu(true);
 		oTable.setColumnHeaderVisible(true);
 		createColumns(oTable);
 		oTable.setModel(oModel);

@@ -127,14 +127,6 @@ sap.ui.define([
 			},
 			defaultAggregation : "buttons",
 			events : {
-
-				/**
-				 * This event is fired when the cancelButton is tapped. For iPad, this event is also fired when showCancelButton is set to true, and Popover is closed by tapping outside.
-				 * @deprecated Since version 1.20.0.
-				 * This event is deprecated, use the cancelButtonPress event instead.
-				 */
-				cancelButtonTap : {deprecated: true},
-
 				/**
 				 * This event will be fired before the ActionSheet is opened.
 				 */
@@ -334,7 +326,6 @@ sap.ui.define([
 					},
 					afterClose: function() {
 						if (that.getShowCancelButton()) {
-							that.fireCancelButtonTap(); // (This event is deprecated, use the "cancelButtonPress" event instead)
 							that.fireCancelButtonPress();
 						}
 						that._onAfterClose(that._actionSelected);
@@ -457,7 +448,6 @@ sap.ui.define([
 						that._parent._oCloseTrigger = this;
 					}
 					that.close();
-					that.fireCancelButtonTap(); // (This event is deprecated, use the "cancelButtonPress" event instead)
 					that.fireCancelButtonPress();
 				}
 			}).addStyleClass("sapMActionSheetButton sapMActionSheetCancelButton sapMBtnTransparent sapMBtnInverted");

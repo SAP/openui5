@@ -60,7 +60,6 @@ sap.ui.define([
 		 * @author SAP SE
 		 */
 		var ScrollEnablement = BaseObject.extend("sap.ui.core.delegate.ScrollEnablement", /** @lends sap.ui.core.delegate.ScrollEnablement.prototype */ {
-
 			constructor : function(oControl, sScrollContentDom, oConfig) {
 
 				BaseObject.apply(this);
@@ -126,17 +125,6 @@ sap.ui.define([
 			 */
 			getVertical : function() {
 				return this._bVertical;
-			},
-
-			/**
-			 * Setter for property <code>bounce</code>.
-			 *
-			 * @param {boolean} bBounce new value for property <code>bounce</code>.
-			 * @protected
-			 * @since 1.17
-			 * @deprecated since 1.42
-			 */
-			setBounce: function(bBounce) {
 			},
 
 			/**
@@ -218,6 +206,7 @@ sap.ui.define([
 				}
 				return this;
 			},
+
 			/**
 			 * Sets the top offset of the optimal viewing region of the scrollport:
 			 * the region used as the target region for placing things in view of the user.
@@ -233,6 +222,7 @@ sap.ui.define([
 					this._iScrollPaddingTop = iValue;
 				}
 			},
+
 			/**
 			 * Scrolls to a specific position in scroll container.
 			 * @param {int} x Horizontal position of the scrollbar
@@ -443,7 +433,6 @@ sap.ui.define([
 					this._scrollTo(left, top);
 				}
 			}
-
 		});
 
 		/* =========================================================== */

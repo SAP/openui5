@@ -446,63 +446,6 @@ sap.ui.define(["sap/base/assert", "sap/base/Log"], function (assert, Log) {
 	};
 
 	/**
-	 * Sets the root level.
-	 * @param {int} iRootLevel root level
-	 * @deprecated As of version 1.76
-	 */
-	TreeBindingProxy.prototype.setRootLevel = function(iRootLevel) {
-		var oBinding = this._oControl.getBinding();
-		var sTreeBinding = this._getBindingName(oBinding);
-
-		switch (sTreeBinding) {
-			case undefined:
-				break;
-			case "sap.ui.model.odata.v4.ODataListBinding":
-				if (!this._bEnableV4) {
-					Log.error("UnsupportedOperationException: OData V4 is not supported");
-					return;
-				}
-				throw Error("Setting the root level is not supported with your current binding.");
-			default:
-				if (oBinding.setRootLevel) {
-					oBinding.setRootLevel(iRootLevel);
-				} else {
-					assert(oBinding.setRootLevel, "Setting the root level is not supported with"
-						+ " your current binding.");
-				}
-		}
-	};
-
-	/**
-	 * Sets recursive collapse.
-	 * @param {boolean} bCollapseRecursive collapseRecursive
-	 * @deprecated As of version 1.76
-	 */
-	TreeBindingProxy.prototype.setCollapseRecursive = function(bCollapseRecursive) {
-		var oBinding = this._oControl.getBinding();
-		var sTreeBinding = this._getBindingName(oBinding);
-
-		switch (sTreeBinding) {
-			case undefined:
-				break;
-			case "sap.ui.model.odata.v4.ODataListBinding":
-				if (!this._bEnableV4) {
-					Log.error("UnsupportedOperationException: OData V4 is not supported");
-					return;
-				}
-				throw Error("Setting 'collapseRecursive' is not supported with your"
-					+ " current binding.");
-			default:
-				if (oBinding.setCollapseRecursive) {
-					oBinding.setCollapseRecursive(bCollapseRecursive);
-				} else {
-					assert(oBinding.setCollapseRecursive, "Setting 'collapseRecursive' is"
-						+ " not supported with your current binding.");
-				}
-		}
-	};
-
-	/**
 	 * Retrieves the level for a given index of a node.
 	 * @param {int} iIndex Index of the node
 	 * @returns {int} level

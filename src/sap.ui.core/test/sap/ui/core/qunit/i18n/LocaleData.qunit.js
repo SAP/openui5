@@ -276,49 +276,49 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-["abbreviated", "narrow", "wide"].forEach(function (sFormatType) {
-	[true, false].forEach(function (bStandAlone) {
-	var sMethod = bStandAlone ? "getFlexibleDayPeriodsStandAlone" : "getFlexibleDayPeriods",
-		sTitle = sMethod + ": " + sFormatType;
+	["abbreviated", "narrow", "wide"].forEach(function (sFormatType) {
+		[true, false].forEach(function (bStandAlone) {
+		var sMethod = bStandAlone ? "getFlexibleDayPeriodsStandAlone" : "getFlexibleDayPeriods",
+			sTitle = sMethod + ": " + sFormatType;
 
-	QUnit.test(sTitle, function (assert) {
-		var oLocaleData = new LocaleData(new Locale("de_DE")),
-			sParseType =  bStandAlone ? "stand-alone" : "format";
+		QUnit.test(sTitle, function (assert) {
+			var oLocaleData = new LocaleData(new Locale("de_DE")),
+				sParseType =  bStandAlone ? "stand-alone" : "format";
 
-		this.mock(oLocaleData).expects("_get")
-			.withExactArgs("ca-gregorian", "flexibleDayPeriods", sParseType, sFormatType)
-			.returns("~flexibleDayPeriods");
+			this.mock(oLocaleData).expects("_get")
+				.withExactArgs("ca-gregorian", "flexibleDayPeriods", sParseType, sFormatType)
+				.returns("~flexibleDayPeriods");
 
-		assert.strictEqual(oLocaleData[sMethod](sFormatType, "Gregorian"), "~flexibleDayPeriods");
+			assert.strictEqual(oLocaleData[sMethod](sFormatType, "Gregorian"), "~flexibleDayPeriods");
+		});
+		});
 	});
-	});
-});
 
 	//*********************************************************************************************
-[
-	{sCalenderType : CalendarType.Gregorian, sCLDRCalenderType : "ca-gregorian"},
-	{sCalenderType : CalendarType.Islamic, sCLDRCalenderType : "ca-islamic"},
-	{sCalenderType : CalendarType.Japanese, sCLDRCalenderType : "ca-japanese"},
-	{sCalenderType : CalendarType.Persian, sCLDRCalenderType : "ca-persian"},
-	{sCalenderType : CalendarType.Buddhist, sCLDRCalenderType : "ca-buddhist"}
-].forEach(function (oFixture) {
-	[true, false].forEach(function (bStandAlone) {
-	var sMethod = bStandAlone ? "getFlexibleDayPeriodsStandAlone" : "getFlexibleDayPeriods",
-		sTitle = sMethod + ": " + oFixture.sCLDRCalenderType;
+	[
+		{sCalenderType : CalendarType.Gregorian, sCLDRCalenderType : "ca-gregorian"},
+		{sCalenderType : CalendarType.Islamic, sCLDRCalenderType : "ca-islamic"},
+		{sCalenderType : CalendarType.Japanese, sCLDRCalenderType : "ca-japanese"},
+		{sCalenderType : CalendarType.Persian, sCLDRCalenderType : "ca-persian"},
+		{sCalenderType : CalendarType.Buddhist, sCLDRCalenderType : "ca-buddhist"}
+	].forEach(function (oFixture) {
+		[true, false].forEach(function (bStandAlone) {
+		var sMethod = bStandAlone ? "getFlexibleDayPeriodsStandAlone" : "getFlexibleDayPeriods",
+			sTitle = sMethod + ": " + oFixture.sCLDRCalenderType;
 
-	QUnit.test(sTitle, function (assert) {
-		var oLocaleData = new LocaleData(new Locale("de_DE")),
-			sParseType =  bStandAlone ? "stand-alone" : "format";
+		QUnit.test(sTitle, function (assert) {
+			var oLocaleData = new LocaleData(new Locale("de_DE")),
+				sParseType =  bStandAlone ? "stand-alone" : "format";
 
-		this.mock(oLocaleData).expects("_get")
-			.withExactArgs(oFixture.sCLDRCalenderType, "flexibleDayPeriods", sParseType, "wide")
-			.returns("~flexibleDayPeriods");
+			this.mock(oLocaleData).expects("_get")
+				.withExactArgs(oFixture.sCLDRCalenderType, "flexibleDayPeriods", sParseType, "wide")
+				.returns("~flexibleDayPeriods");
 
-		assert.strictEqual(oLocaleData[sMethod]("wide", oFixture.sCalenderType),
-			"~flexibleDayPeriods");
+			assert.strictEqual(oLocaleData[sMethod]("wide", oFixture.sCalenderType),
+				"~flexibleDayPeriods");
+		});
+		});
 	});
-	});
-});
 
 	//*********************************************************************************************
 	QUnit.test("getFlexibleDayPeriods; integrative test", function (assert) {
@@ -359,45 +359,45 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-[
-	{iHour : 5, iMinute : 59, sResult : "night"},
-	{iHour : 6, iMinute : 0, sResult : "morning1"},
-	{iHour : 6, iMinute : 1, sResult : "morning1"},
-	{iHour : 21, iMinute : 59, sResult : "evening"},
-	{iHour : 22, iMinute : 0, sResult : "night"},
-	{iHour : 11, iMinute : 59, sResult : "morning1"},
-	{iHour : 36, iMinute : 40, sResult : "morning2"},
-	{iHour : 12, iMinute : 0, sResult : "noon"},
-	{iHour : 11, iMinute : 60, sResult : "noon"},
-	{iHour : 36, iMinute : 0, sResult : "noon"},
-	{iHour : 24, iMinute : 0, sResult : "midnight"},
-	{iHour : 23, iMinute : 60, sResult : "midnight"},
-	{iHour : 23, iMinute : 61, sResult : "night"},
-	{iHour : 23, iMinute : 59, sResult : "night"},
-	{iHour : 24, iMinute : 1, sResult : "night"},
-	{iHour : 99, iMinute : 100, sResult : "night"}
-].forEach(function (oFixture) {
-	var sTitle = "getFlexibleDayPeriodOfTime testing period edges for time " + oFixture.iHour + ":"
-		+ oFixture.iMinute;
+	[
+		{iHour : 5, iMinute : 59, sResult : "night"},
+		{iHour : 6, iMinute : 0, sResult : "morning1"},
+		{iHour : 6, iMinute : 1, sResult : "morning1"},
+		{iHour : 21, iMinute : 59, sResult : "evening"},
+		{iHour : 22, iMinute : 0, sResult : "night"},
+		{iHour : 11, iMinute : 59, sResult : "morning1"},
+		{iHour : 36, iMinute : 40, sResult : "morning2"},
+		{iHour : 12, iMinute : 0, sResult : "noon"},
+		{iHour : 11, iMinute : 60, sResult : "noon"},
+		{iHour : 36, iMinute : 0, sResult : "noon"},
+		{iHour : 24, iMinute : 0, sResult : "midnight"},
+		{iHour : 23, iMinute : 60, sResult : "midnight"},
+		{iHour : 23, iMinute : 61, sResult : "night"},
+		{iHour : 23, iMinute : 59, sResult : "night"},
+		{iHour : 24, iMinute : 1, sResult : "night"},
+		{iHour : 99, iMinute : 100, sResult : "night"}
+	].forEach(function (oFixture) {
+		var sTitle = "getFlexibleDayPeriodOfTime testing period edges for time " + oFixture.iHour + ":"
+			+ oFixture.iMinute;
 
-	QUnit.test(sTitle, function (assert) {
-		var oLocaleData = new LocaleData(new Locale("de_DE"));
+		QUnit.test(sTitle, function (assert) {
+			var oLocaleData = new LocaleData(new Locale("de_DE"));
 
-		this.mock(oLocaleData).expects("_get")
-			.withExactArgs("dayPeriodRules")
-			.returns({
-				evening : {_before : "22:00", _from : "18:00"},
-				midnight : {_at : "00:00"},
-				morning1 : {_before : "12:00", _from : "06:00"},
-				morning2 : {_before : "18:00", _from : "12:00"},
-				night : {_before : "06:00", _from : "22:00"},
-				noon : {_at : "12:00"}
-			});
+			this.mock(oLocaleData).expects("_get")
+				.withExactArgs("dayPeriodRules")
+				.returns({
+					evening : {_before : "22:00", _from : "18:00"},
+					midnight : {_at : "00:00"},
+					morning1 : {_before : "12:00", _from : "06:00"},
+					morning2 : {_before : "18:00", _from : "12:00"},
+					night : {_before : "06:00", _from : "22:00"},
+					noon : {_at : "12:00"}
+				});
 
-		assert.strictEqual(oLocaleData.getFlexibleDayPeriodOfTime(oFixture.iHour, oFixture.iMinute),
-			oFixture.sResult);
+			assert.strictEqual(oLocaleData.getFlexibleDayPeriodOfTime(oFixture.iHour, oFixture.iMinute),
+				oFixture.sResult);
+		});
 	});
-});
 
 	//*********************************************************************************************
 	QUnit.test("Unit Display Name L10N", function(assert) {
@@ -421,20 +421,20 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-[
-	{sUnit: "acceleration-meter-per-square-second", oReturn: "m/s²"},
-	{sUnit: "fooBar", oReturn: undefined}
-].forEach(function (oFixture, i) {
-	QUnit.test("getUnitFormat without legacy unit mapping " + i, function(assert) {
-		var oLocaleData = LocaleData.getInstance(new Locale("en"));
+	[
+		{sUnit: "acceleration-meter-per-square-second", oReturn: "m/s²"},
+		{sUnit: "fooBar", oReturn: undefined}
+	].forEach(function (oFixture, i) {
+		QUnit.test("getUnitFormat without legacy unit mapping " + i, function(assert) {
+			var oLocaleData = LocaleData.getInstance(new Locale("en"));
 
-		this.mock(oLocaleData).expects("_get")
-			.withExactArgs("units", "short", oFixture.sUnit)
-			.returns(oFixture.oReturn);
+			this.mock(oLocaleData).expects("_get")
+				.withExactArgs("units", "short", oFixture.sUnit)
+				.returns(oFixture.oReturn);
 
-		assert.strictEqual(oLocaleData.getUnitFormat(oFixture.sUnit), oFixture.oReturn);
+			assert.strictEqual(oLocaleData.getUnitFormat(oFixture.sUnit), oFixture.oReturn);
+		});
 	});
-});
 
 	//*********************************************************************************************
 	QUnit.test("getUnitFormat with legacy unit mapping", function(assert) {
@@ -864,181 +864,181 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-// See: https://unicode.org/reports/tr35/tr35-numbers.html#table-plural-operand-meanings
-[{
-	sNumber: "1",
-	sPluralRule: "one",
-	oOperands: {n: 1, i: 1, v: 0, w: 0, f: 0, t: 0, c: 0}
-}, {
-	sNumber: "12",
-	sPluralRule: "other",
-	oOperands: {n: 12, i: 12, v: 0, w: 0, f: 0, t: 0, c: 0}
-}, {
-	sNumber: "5000000",
-	sPluralRule: "many",
-	oOperands: {n: 5000000, i: 5000000, v: 0, w: 0, f: 0, t: 0, c: 0}
-}, {
-	sNumber: "5000000.0000",
-	sPluralRule: "other",
-	oOperands: {n: 5000000, i: 5000000, v: 4, w: 0, f: 0, t: 0, c: 0}
-}, {
-	sNumber: "5e6",
-	sPluralRule: "many",
-	oOperands: {n: 5000000, i: 5000000, v: 0, w: 0, f: 0, t: 0, c: 6}
-}, {
-	sNumber: "5.2e6",
-	sPluralRule: "many",
-	oOperands: {n: 5200000, i: 5200000, v: 0, w: 0, f: 0, t: 0, c: 6}
-}, {
-	sNumber: "5200000",
-	sPluralRule: "other",
-	oOperands: {n: 5200000, i: 5200000, v: 0, w: 0, f: 0, t: 0, c: 0}
-}, {
-	sNumber: "1.2E1",
-	sPluralRule: "other",
-	oOperands: {n: 12, i: 12, v: 0, w: 0, f: 0, t: 0, c: 1}
-}].forEach(function (oFixture, i) {
-	QUnit.test("Plural categories and operands, " + i, function (assert) {
-		var oLocaleData = LocaleData.getInstance(new Locale("es"));
+	// See: https://unicode.org/reports/tr35/tr35-numbers.html#table-plural-operand-meanings
+	[{
+		sNumber: "1",
+		sPluralRule: "one",
+		oOperands: {n: 1, i: 1, v: 0, w: 0, f: 0, t: 0, c: 0}
+	}, {
+		sNumber: "12",
+		sPluralRule: "other",
+		oOperands: {n: 12, i: 12, v: 0, w: 0, f: 0, t: 0, c: 0}
+	}, {
+		sNumber: "5000000",
+		sPluralRule: "many",
+		oOperands: {n: 5000000, i: 5000000, v: 0, w: 0, f: 0, t: 0, c: 0}
+	}, {
+		sNumber: "5000000.0000",
+		sPluralRule: "other",
+		oOperands: {n: 5000000, i: 5000000, v: 4, w: 0, f: 0, t: 0, c: 0}
+	}, {
+		sNumber: "5e6",
+		sPluralRule: "many",
+		oOperands: {n: 5000000, i: 5000000, v: 0, w: 0, f: 0, t: 0, c: 6}
+	}, {
+		sNumber: "5.2e6",
+		sPluralRule: "many",
+		oOperands: {n: 5200000, i: 5200000, v: 0, w: 0, f: 0, t: 0, c: 6}
+	}, {
+		sNumber: "5200000",
+		sPluralRule: "other",
+		oOperands: {n: 5200000, i: 5200000, v: 0, w: 0, f: 0, t: 0, c: 0}
+	}, {
+		sNumber: "1.2E1",
+		sPluralRule: "other",
+		oOperands: {n: 12, i: 12, v: 0, w: 0, f: 0, t: 0, c: 1}
+	}].forEach(function (oFixture, i) {
+		QUnit.test("Plural categories and operands, " + i, function (assert) {
+			var oLocaleData = LocaleData.getInstance(new Locale("es"));
 
-		this.mock(oLocaleData)
-			.expects("_get")
-			.withExactArgs("plurals")
-			.returns({
-				one: "n = 1",
-				many: "e = 0 and i != 0 and i % 1000000 = 0 and v = 0 or e != 0..5"
-			});
+			this.mock(oLocaleData)
+				.expects("_get")
+				.withExactArgs("plurals")
+				.returns({
+					one: "n = 1",
+					many: "e = 0 and i != 0 and i % 1000000 = 0 and v = 0 or e != 0..5"
+				});
 
-		// code under test: check plural rule
-		assert.strictEqual(oLocaleData.getPluralCategory(oFixture.sNumber), oFixture.sPluralRule);
+			// code under test: check plural rule
+			assert.strictEqual(oLocaleData.getPluralCategory(oFixture.sNumber), oFixture.sPluralRule);
 
-		// code under test: check plural operands for number
-		// note: plural test function for "one" is always called as this is the first category
-		assert.deepEqual(oLocaleData._pluralTest.one(oFixture.sNumber).oOperands, oFixture.oOperands);
+			// code under test: check plural operands for number
+			// note: plural test function for "one" is always called as this is the first category
+			assert.deepEqual(oLocaleData._pluralTest.one(oFixture.sNumber).oOperands, oFixture.oOperands);
+		});
 	});
-});
 
 	//*********************************************************************************************
-// Tests from https://unicode.org/reports/tr35/tr35-numbers.html#table-plural-operand-meanings
-// with the following changes (as the "e" operand may be redefined in the future):
-// - leave out the "e" operand, as this is a deprecated alias for "c" and code in LocaleData only uses "c"
-// - number literals containing "c" are also tested with an "e" variant as this is the scientific notation in JavaScript
-[{
-	sNumber: "1",
-	oOperands: {n: 1, i: 1, v: 0, w: 0, f: 0, t: 0, c: 0}
-}, {
-	sNumber: "1.0",
-	oOperands: {n: 1, i: 1, v: 1, w: 0, f: 0, t: 0, c: 0}
-}, {
-	sNumber: "1.00",
-	oOperands: {n: 1, i: 1, v: 2, w: 0, f: 0, t: 0, c: 0}
-}, {
-	sNumber: "1.3",
-	oOperands: {n: 1.3, i: 1, v: 1, w: 1, f: 3, t: 3, c: 0}
-}, {
-	sNumber: "1.30",
-	oOperands: {n: 1.3, i: 1, v: 2, w: 1, f: 30, t: 3, c: 0}
-}, {
-	sNumber: "1.03",
-	oOperands: {n: 1.03, i: 1, v: 2, w: 2, f: 3, t: 3, c: 0}
-}, {
-	sNumber: "1.230",
-	oOperands: {n: 1.230, i: 1, v: 3, w: 2, f: 230, t: 23, c: 0}
-}, {
-	sNumber: "1200000",
-	oOperands: {n: 1200000, i: 1200000, v: 0, w: 0, f: 0, t: 0, c: 0}
-}, {
-	sNumber: "1.2c6",
-	oOperands: {n: 1200000, i: 1200000, v: 0, w: 0, f: 0, t: 0, c: 6}
-}, {
-	sNumber: "1.2e6",
-	oOperands: {n: 1200000, i: 1200000, v: 0, w: 0, f: 0, t: 0, c: 6}
-}, {
-	sNumber: "123c6",
-	oOperands: {n: 123000000, i: 123000000, v: 0, w: 0, f: 0, t: 0, c: 6}
-}, {
-	sNumber: "123e6",
-	oOperands: {n: 123000000, i: 123000000, v: 0, w: 0, f: 0, t: 0, c: 6}
-}, {
-	sNumber: "123c5",
-	oOperands: {n: 12300000, i: 12300000, v: 0, w: 0, f: 0, t: 0, c: 5}
-}, {
-	sNumber: "123e5",
-	oOperands: {n: 12300000, i: 12300000, v: 0, w: 0, f: 0, t: 0, c: 5}
-}, {
-	sNumber: "1200.50",
-	oOperands: {n: 1200.50, i: 1200, v: 2, w: 1, f: 50, t: 5, c: 0}
-}, {
-	sNumber: "1.20050c3",
-	oOperands: {n: 1200.5, i: 1200, v: 2, w: 1, f: 50, t: 5, c: 3}
-}, {
-	sNumber: "1.20050e3",
-	oOperands: {n: 1200.5, i: 1200, v: 2, w: 1, f: 50, t: 5, c: 3}
-}].forEach(function (oFixture, i) {
-	QUnit.test("Plural operands samples from Unicode page, " + i, function (assert) {
-		var oLocaleData = LocaleData.getInstance(new Locale("es"));
+	// Tests from https://unicode.org/reports/tr35/tr35-numbers.html#table-plural-operand-meanings
+	// with the following changes (as the "e" operand may be redefined in the future):
+	// - leave out the "e" operand, as this is a deprecated alias for "c" and code in LocaleData only uses "c"
+	// - number literals containing "c" are also tested with an "e" variant as this is the scientific notation in JavaScript
+	[{
+		sNumber: "1",
+		oOperands: {n: 1, i: 1, v: 0, w: 0, f: 0, t: 0, c: 0}
+	}, {
+		sNumber: "1.0",
+		oOperands: {n: 1, i: 1, v: 1, w: 0, f: 0, t: 0, c: 0}
+	}, {
+		sNumber: "1.00",
+		oOperands: {n: 1, i: 1, v: 2, w: 0, f: 0, t: 0, c: 0}
+	}, {
+		sNumber: "1.3",
+		oOperands: {n: 1.3, i: 1, v: 1, w: 1, f: 3, t: 3, c: 0}
+	}, {
+		sNumber: "1.30",
+		oOperands: {n: 1.3, i: 1, v: 2, w: 1, f: 30, t: 3, c: 0}
+	}, {
+		sNumber: "1.03",
+		oOperands: {n: 1.03, i: 1, v: 2, w: 2, f: 3, t: 3, c: 0}
+	}, {
+		sNumber: "1.230",
+		oOperands: {n: 1.230, i: 1, v: 3, w: 2, f: 230, t: 23, c: 0}
+	}, {
+		sNumber: "1200000",
+		oOperands: {n: 1200000, i: 1200000, v: 0, w: 0, f: 0, t: 0, c: 0}
+	}, {
+		sNumber: "1.2c6",
+		oOperands: {n: 1200000, i: 1200000, v: 0, w: 0, f: 0, t: 0, c: 6}
+	}, {
+		sNumber: "1.2e6",
+		oOperands: {n: 1200000, i: 1200000, v: 0, w: 0, f: 0, t: 0, c: 6}
+	}, {
+		sNumber: "123c6",
+		oOperands: {n: 123000000, i: 123000000, v: 0, w: 0, f: 0, t: 0, c: 6}
+	}, {
+		sNumber: "123e6",
+		oOperands: {n: 123000000, i: 123000000, v: 0, w: 0, f: 0, t: 0, c: 6}
+	}, {
+		sNumber: "123c5",
+		oOperands: {n: 12300000, i: 12300000, v: 0, w: 0, f: 0, t: 0, c: 5}
+	}, {
+		sNumber: "123e5",
+		oOperands: {n: 12300000, i: 12300000, v: 0, w: 0, f: 0, t: 0, c: 5}
+	}, {
+		sNumber: "1200.50",
+		oOperands: {n: 1200.50, i: 1200, v: 2, w: 1, f: 50, t: 5, c: 0}
+	}, {
+		sNumber: "1.20050c3",
+		oOperands: {n: 1200.5, i: 1200, v: 2, w: 1, f: 50, t: 5, c: 3}
+	}, {
+		sNumber: "1.20050e3",
+		oOperands: {n: 1200.5, i: 1200, v: 2, w: 1, f: 50, t: 5, c: 3}
+	}].forEach(function (oFixture, i) {
+		QUnit.test("Plural operands samples from Unicode page, " + i, function (assert) {
+			var oLocaleData = LocaleData.getInstance(new Locale("es"));
 
-		// set plural rule function for oLocaleData object
-		oLocaleData.getPluralCategory(oFixture.sNumber);
+			// set plural rule function for oLocaleData object
+			oLocaleData.getPluralCategory(oFixture.sNumber);
 
-		// code under test: check plural operands for number
-		// note: plural test function for "one" is always called as this is the first category
-		assert.deepEqual(oLocaleData._pluralTest.one(oFixture.sNumber).oOperands, oFixture.oOperands);
+			// code under test: check plural operands for number
+			// note: plural test function for "one" is always called as this is the first category
+			assert.deepEqual(oLocaleData._pluralTest.one(oFixture.sNumber).oOperands, oFixture.oOperands);
+		});
 	});
-});
 
 	//*********************************************************************************************
 	// See: https://unicode-org.github.io/cldr-staging/charts/41/supplemental/language_plural_rules.html
 	// Interesting: "1c6" and "1000000.0" have the same numeric value but lead to another plural category
-[{
-	category: "one",
-	examples: ["0", "1", "1.5"]
-}, {
-	category: "many",
-	examples: ["1000000", "1c6", "2c6", "3c6", "4c6", "5c6", "6c6",
-		"1.0000001c6", "1.1c6", "2.0000001c6", "2.1c6", "3.0000001c6", "3.1c6"]
-}, {
-	category: "other",
-	examples: ["2", "16", "100", "1000", "10000", "100000", "1c3", "2c3", "3c3", "4c3", "5c3", "6c3",
-		"2.0", "3.5", "10.0", "100.0", "1000.0", "10000.0", "100000.0", "1000000.0", "1.0001c3", "1.1c3",
-		"2.0001c3", "2.1c3", "3.0001c3", "3.1c3"]
-}].forEach(function (oFixture) {
-	QUnit.test("getPluralCategory: 'fr' examples; category=" + oFixture.category, function (assert) {
-		var oLocaleData = LocaleData.getInstance(new Locale("fr"));
+	[{
+		category: "one",
+		examples: ["0", "1", "1.5"]
+	}, {
+		category: "many",
+		examples: ["1000000", "1c6", "2c6", "3c6", "4c6", "5c6", "6c6",
+			"1.0000001c6", "1.1c6", "2.0000001c6", "2.1c6", "3.0000001c6", "3.1c6"]
+	}, {
+		category: "other",
+		examples: ["2", "16", "100", "1000", "10000", "100000", "1c3", "2c3", "3c3", "4c3", "5c3", "6c3",
+			"2.0", "3.5", "10.0", "100.0", "1000.0", "10000.0", "100000.0", "1000000.0", "1.0001c3", "1.1c3",
+			"2.0001c3", "2.1c3", "3.0001c3", "3.1c3"]
+	}].forEach(function (oFixture) {
+		QUnit.test("getPluralCategory: 'fr' examples; category=" + oFixture.category, function (assert) {
+			var oLocaleData = LocaleData.getInstance(new Locale("fr"));
 
-		oFixture.examples.forEach(function (sNumber) {
-			assert.strictEqual(oLocaleData.getPluralCategory(sNumber), oFixture.category);
+			oFixture.examples.forEach(function (sNumber) {
+				assert.strictEqual(oLocaleData.getPluralCategory(sNumber), oFixture.category);
+			});
 		});
 	});
-});
 
 	//*********************************************************************************************
-[
-	{vValue: 1, sResult : "1"},
-	{vValue: 1e-6, sResult : "0.000001"},
-	{vValue: 1e+20, sResult : "100000000000000000000"},
-	// exponent can be "e" in lower-case or upper-case
-	{vValue: "1.23e2", sResult : "123"},
-	{vValue: "1.23E2", sResult : "123"},
-	// positive exponent, exponent < fraction length
-	{vValue: "1.0123456789012345678901e+21", sResult : "1012345678901234567890.1"},
-	// positive exponent, exponent >= fraction length
-	{vValue: "1.0123e+21", sResult : "1012300000000000000000"},
-	{vValue: "1.012345678901234567890e+21", sResult : "1012345678901234567890"},
-	// negative exponent, abs(exponent) < integer length
-	{vValue: "12345678e-7", sResult : "1.2345678"},
-	// negative exponent, abs(exponent) >= integer length
-	{vValue: "12345e-7", sResult : "0.0012345"},
-	{vValue: "12.345e-7", sResult : "0.0000012345"},
-	// values with sign
-	{vValue: "-1.0123456789012345678901e+21", sResult : "-1012345678901234567890.1"},
-	{vValue: "+1.0123456789012345678901e+21", sResult : "1012345678901234567890.1"}
-].forEach(function (oFixture, i) {
-	QUnit.test("convertToDecimal, " + i, function (assert) {
-		// code under test
-		assert.strictEqual(LocaleData.convertToDecimal(oFixture.vValue), oFixture.sResult);
+	[
+		{vValue: 1, sResult : "1"},
+		{vValue: 1e-6, sResult : "0.000001"},
+		{vValue: 1e+20, sResult : "100000000000000000000"},
+		// exponent can be "e" in lower-case or upper-case
+		{vValue: "1.23e2", sResult : "123"},
+		{vValue: "1.23E2", sResult : "123"},
+		// positive exponent, exponent < fraction length
+		{vValue: "1.0123456789012345678901e+21", sResult : "1012345678901234567890.1"},
+		// positive exponent, exponent >= fraction length
+		{vValue: "1.0123e+21", sResult : "1012300000000000000000"},
+		{vValue: "1.012345678901234567890e+21", sResult : "1012345678901234567890"},
+		// negative exponent, abs(exponent) < integer length
+		{vValue: "12345678e-7", sResult : "1.2345678"},
+		// negative exponent, abs(exponent) >= integer length
+		{vValue: "12345e-7", sResult : "0.0012345"},
+		{vValue: "12.345e-7", sResult : "0.0000012345"},
+		// values with sign
+		{vValue: "-1.0123456789012345678901e+21", sResult : "-1012345678901234567890.1"},
+		{vValue: "+1.0123456789012345678901e+21", sResult : "1012345678901234567890.1"}
+	].forEach(function (oFixture, i) {
+		QUnit.test("convertToDecimal, " + i, function (assert) {
+			// code under test
+			assert.strictEqual(LocaleData.convertToDecimal(oFixture.vValue), oFixture.sResult);
+		});
 	});
-});
 
 	//*********************************************************************************************
 	QUnit.test("getRelativePatterns: Unknown plural categories are not added to return value", function(assert) {
@@ -1061,28 +1061,6 @@ sap.ui.define([
 			{scale: "day", sign: 1, pattern: "foo {0}"},
 			{scale: "day", sign: 1, pattern: "bar {0}"}
 		]);
-	});
-	/** @deprecated As of version 1.113.0 */
-	QUnit.test("CustomLocaleData: getFirstDayOfWeek", function(assert) {
-		var oCustomLocaleData = LocaleData.getInstance(new Locale("en_US-x-sapufmt")),
-			oFormatSettings = Configuration.getFormatSettings();
-
-		// code under test - first day of week from CLDR
-		assert.strictEqual(oCustomLocaleData.getFirstDayOfWeek(), 0);
-
-		oFormatSettings.setFirstDayOfWeek(6);
-
-		// code under test - first day of week from FormatSettings
-		assert.strictEqual(oCustomLocaleData.getFirstDayOfWeek(), 6);
-
-		Configuration.setCalendarWeekNumbering(CalendarWeekNumbering.ISO_8601);
-
-		// code under test - first day of week from CalendarWeekNumbering.ISO_8601
-		assert.strictEqual(oCustomLocaleData.getFirstDayOfWeek(), 1);
-
-		// clean up configuration
-		Configuration.setCalendarWeekNumbering(CalendarWeekNumbering.Default);
-		//TODO oFormatSettings.setFirstDayOfWeek(null); - does not work currently
 	});
 
 	//*********************************************************************************************

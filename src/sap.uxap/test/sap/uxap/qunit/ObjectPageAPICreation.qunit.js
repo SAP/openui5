@@ -2275,7 +2275,8 @@ function (
 			}),
 			fnBrowserEventHandler = this.spy(),
 			fnOnDomReady = function() {
-				oObjectPage.rerender();
+				oObjectPage.invalidate();
+				Core.applyChanges();
 				var event,
 					$buttonDomRef = Core.byId("btn1").getDomRef();
 				if (typeof Event === 'function') {
@@ -2913,7 +2914,9 @@ function (
 			oTitleMouseOverSpy = this.spy(this.oObjectPage, "_attachTitleMouseOverHandlers");
 
 		// Act
-		this.oObjectPage.rerender();
+		this.oObjectPage.invalidate();
+
+		Core.applyChanges();
 
 		// Assert
 		assert.ok(oVisualIndicatorMouseoOverSpy.notCalled, "ObjectPage is not attached to MouseOut/MouseOver events of snap/expand button");
@@ -3009,7 +3012,8 @@ function (
 				oObjectPage.scrollToSection(oSecondSection.getId(), 0);
 				assert.strictEqual(oToggleHeaderSpy.callCount, 0, "Toggle header is not called");
 				oObjectPage.attachEventOnce("onAfterRenderingDOMReady", fnOnRerenderedDomReady2);
-				oObjectPage.rerender();
+				oObjectPage.invalidate();
+				Core.applyChanges();
 			},
 			fnOnRerenderedDomReady2 = function() {
 				// Assert

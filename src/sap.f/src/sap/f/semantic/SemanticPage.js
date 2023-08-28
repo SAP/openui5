@@ -33,11 +33,6 @@ sap.ui.define([
 	"use strict";
 
 	/**
-	 * @deprecated As of version 1.54
-	 */
-	var DynamicPageTitleArea = library.DynamicPageTitleArea;
-
-	/**
 	* Constructor for a new <code>SemanticPage</code>.
 	*
 	* @param {string} [sId] ID for the new control, generated automatically if no ID is given
@@ -112,7 +107,6 @@ sap.ui.define([
 		metadata: {
 			library: "sap.f",
 			properties: {
-
 				/**
 				* Determines whether the header is expanded.
 				*
@@ -156,26 +150,6 @@ sap.ui.define([
 				showFooter: {type: "boolean", group: "Behavior", defaultValue: false},
 
 				/**
-				* Determines which of the title areas (Begin, Middle) is primary.
-				*
-				* <b>Note:</b> The primary area is shrinking at a lower rate, remaining visible as long as it can.
-				*
-				* @since 1.52
-				*
-				* @deprecated as of version 1.58. Please use the <code>titleAreaShrinkRatio</code> property instead.
-				* The value of <code>titleAreaShrinkRatio</code> must be set in <code>Heading:Content:Actions</code> format
-				* where Heading, Content and Actions are numbers greater than or equal to 0. The greater value a
-				* section has the faster it shrinks when the screen size is being reduced.
-				*
-				* <code>titlePrimaryArea=Begin</code> can be achieved by setting a low number for the Heading area to
-				* <code>titleAreaShrinkRatio</code>, for example <code>1:1.6:1.6</code>.
-				*
-				* <code>titlePrimaryArea=Middle</code> can be achieved by setting a low number for the Content area to
-				* <code>titleAreaShrinkRatio</code>, for example <code>1.6:1:1.6</code>.
-				*/
-				titlePrimaryArea : {type: "sap.f.DynamicPageTitleArea", group: "Appearance", defaultValue: DynamicPageTitleArea.Begin, deprecated: true},
-
-				/**
 				* Assigns shrinking ratio to the <code>SemanticPage</code> title areas (Heading, Content, Actions).
 				* The greater value a section has the faster it shrinks when the screen size is being reduced.
 				*
@@ -205,7 +179,6 @@ sap.ui.define([
 				 * @since 1.73
 				 */
 				fitContent: {type: "boolean", group: "Behavior", defaultValue: false}
-
 			},
 			defaultAggregation : "content",
 			aggregations: {
@@ -681,15 +654,6 @@ sap.ui.define([
 	SemanticPage.prototype.setShowFooter = function (bShowFooter) {
 		this._getPage().setShowFooter(bShowFooter);
 		return this.setProperty("showFooter", bShowFooter, true);
-	};
-	/**
-	 * @deprecated As of version 1.58, <code>titlePrimaryArea</code> has been deprecated
-	 */
-	SemanticPage.prototype.setTitlePrimaryArea = function (oPrimaryArea) {
-		var oDynamicPageTitle = this._getTitle();
-
-		oDynamicPageTitle.setPrimaryArea(oPrimaryArea);
-		return this.setProperty("titlePrimaryArea", oDynamicPageTitle.getPrimaryArea(), true);
 	};
 
 	SemanticPage.prototype.setTitleAreaShrinkRatio = function (sAreaShrinkRatio) {
@@ -1349,5 +1313,4 @@ sap.ui.define([
 	};
 
 	return SemanticPage;
-
 });

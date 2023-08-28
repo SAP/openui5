@@ -2022,7 +2022,7 @@ function(
 
 			if (this.iAmPmChar1Index !== -1) {
 				this.iAfterAmPmValueIndex = this.iAmPmChar1Index + this.iAmPmValueMaxLength;
-				var iCorrectionIndexes = this.iAmPmValueMaxLength - "a".length;
+				var iCorrectionIndexes = this.iAmPmValueMaxLength - 1;
 				this.shiftIndexes(iCorrectionIndexes);
 
 				//We start from capital A. Capital letters are not used to this point, so there should be enough of them

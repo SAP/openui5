@@ -7,7 +7,6 @@ sap.ui.define([
 	'sap/ui/core/Fragment',
 	"sap/ui/qunit/utils/nextUIUpdate"
 ], function(Component, ComponentContainer, XMLTemplateProcessor, ExtensionPoint, XMLView, Fragment, nextUIUpdate) {
-
 	"use strict";
 	/*global QUnit, sinon */
 
@@ -514,28 +513,6 @@ sap.ui.define([
 			viewName: "testdata.customizing.customer.ext.DelayedEP",
 			id: "myDelayedView"
 		}).then(function (oView) {
-			assert.strictEqual(oView.getContent().length, 1, "The view content has length 1.");
-			var oPanel = oView.getContent()[0];
-			assert.strictEqual(oPanel.getContent().length, 3, "The panel content has length 3.");
-			assert.strictEqual(oPanel.getContent()[0].getId(), oView.createId("mybuttonA"), "The 'mybuttonA' button is placed at index '0'.");
-			assert.strictEqual(oPanel.getContent()[1].getId(), oView.createId("mybuttonB"), "The 'mybuttonB' button is placed at index '1'.");
-			assert.strictEqual(oPanel.getContent()[2].getId(), oView.createId("mybuttonC"), "The 'mybuttonC' button is placed at index '2'.");
-
-			oView.destroy();
-		});
-	});
-
-	/**
-	 * @deprecated As of version 1.111
-	 */
-	QUnit.test("Delayed Extension Point with generic factory (async=true)", function(assert){
-		var oView  = sap.ui.xmlview({
-			viewName: "testdata.customizing.customer.ext.DelayedEP",
-			id: "myDelayedView",
-			async: true
-		});
-
-		return oView.loaded().then(function (oView) {
 			assert.strictEqual(oView.getContent().length, 1, "The view content has length 1.");
 			var oPanel = oView.getContent()[0];
 			assert.strictEqual(oPanel.getContent().length, 3, "The panel content has length 3.");

@@ -734,7 +734,7 @@ sap.ui.define(["sap/ui/Device", "sap/base/Log"], function(Device, Log) {
 						mru = oCache._mru;
 
 						return oCache.set("password2", "mysecret").then(function() {
-							assert.ok(!true, "Set of password2 should have failed. See the test mock!!!");
+							assert.ok(false, "Set of password2 should have failed. See the test mock!!!");
 						}, function() {
 							return self.assertItemCount(1, "After failing to add item the item count doesn't change", assert);
 						});
@@ -764,7 +764,7 @@ sap.ui.define(["sap/ui/Device", "sap/base/Log"], function(Device, Log) {
 						mru = oCache._mru;
 
 						return oCache.del("password2").then(function() {
-							assert.ok(!true, "Delete of password2 should have failed. See the test mock!!!");
+							assert.ok(false, "Delete of password2 should have failed. See the test mock!!!");
 						}, function() {
 							return self.assertItemCount(2, "After failing to delete item the item count doesn't change", assert);
 						});

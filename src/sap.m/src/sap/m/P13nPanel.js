@@ -128,20 +128,6 @@ sap.ui.define([
 	});
 
 	/**
-	 * This method can be overwritten by subclass in order to return a payload for Ok action
-	 *
-	 * @returns {object} Object which describes the state after Ok has been pressed
-	 * @deprecated As of version 1.50, replaced by the event of the respective inherited
-	 * control, for example {@link sap.m.P13nColumnsPanel#event:changeColumnsItems} of
-	 * <code>P13nColumnsPanel</code> control.
-	 * @public
-	 * @since 1.26.7
-	 */
-	P13nPanel.prototype.getOkPayload = function() {
-		return {};
-	};
-
-	/**
 	 * This method can be overwritten by subclass in order to return a payload for Reset action
 	 *
 	 * @public
@@ -183,5 +169,4 @@ sap.ui.define([
 	};
 
 	return P13nPanel;
-
 });
