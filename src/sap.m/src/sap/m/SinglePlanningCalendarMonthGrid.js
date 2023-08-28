@@ -29,8 +29,7 @@ sap.ui.define([
 	"sap/ui/core/date/CalendarUtils",
 	"sap/ui/core/Configuration",
 	"sap/ui/core/date/UI5Date",
-	"sap/ui/unified/DateRange",
-	"sap/m/LinkAccessibleRole"
+	"sap/ui/unified/DateRange"
 	],
 	function (
 		Control,
@@ -58,8 +57,7 @@ sap.ui.define([
 		CalendarDateUtils,
 		Configuration,
 		UI5Date,
-		DateRange,
-		LinkAccessibleRole
+		DateRange
 	) {
 		"use strict";
 
@@ -69,6 +67,7 @@ sap.ui.define([
 		var CELL_HEADER_HEIGHT_COZY = 1.75; //rem
 		var InvisibleMessageMode = coreLibrary.InvisibleMessageMode;
 		var SinglePlanningCalendarSelectionMode = library.SinglePlanningCalendarSelectionMode;
+		var LinkAccessibleRole = library.LinkAccessibleRole;
 
 		/**
 		 * Constructor for a new <code>SinglePlanningCalendarMonthGrid</code>.
