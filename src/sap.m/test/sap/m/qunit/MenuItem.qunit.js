@@ -47,13 +47,14 @@ sap.ui.define([
 	QUnit.test("addEventDelegate", function(assert) {
 		// prepare
 		var oDelegate = { onmouseover: function() { } };
+		var oMenuItem = new MenuItem({text: "test"});
 		var oSpyAddEventDelegate = this.spy(Core.byId(this.sut._getVisualControl()), "addEventDelegate");
 
 		// act
-		this.sut.addEventDelegate(oDelegate);
+		this.sut.addEventDelegate(oDelegate, oMenuItem);
 
 		// assert
-		assert.ok(oSpyAddEventDelegate.calledWith(oDelegate), "eventDelegate is correctly passed to unified MenuItem");
+		assert.ok(oSpyAddEventDelegate.calledWith(oDelegate, oMenuItem), "eventDelegate is correctly passed to unified MenuItem");
 	});
 
 	QUnit.test("removeEventDelegate", function(assert) {
