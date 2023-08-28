@@ -107,12 +107,28 @@ sap.ui.define([
 				 * Defines whether the upload action is allowed.
 				 */
 				uploadEnabled: {type: "boolean", defaultValue: true},
+				/** Callback function to perform additional validations / configurations for the item queued for upload and to finally trigger the upload.
+				 * @callback sap.m.upload.UploadSetTable.itemValidationHandler
+				 * @param {sap.m.upload.UploadSetTable.ItemInfo} oItemInfo The info of the item queued for upload.
+				 * @returns {Promise<sap.m.upload.UploadSetTableItem>} oPromise, once resolved the UploadSetWithTable control initiates the upload.
+				 * @public
+				**/
+
 				/**
-				 * Property as function will be invoked with UploadSetTableItem queued for upload.
-				 * Expects promise to be returned to the control with function invocation, when promise resolved control will initiate the upload process.
-				 * configure this property only when additional configuration to be performed before upload of each item / manually trigger the upload process by resolving the promise returned to the control.
-				 */
-				onItemValidationSuccess: {type: "function", defaultValue: null},
+				 * @typedef {object} sap.m.upload.UploadSetTable.ItemInfo
+				 * @description Item info object sent as paramter to {@link sap.m.upload.UploadSetTable.itemValidationHandler callback}
+				 * @property {sap.m.upload.UploadSetTableItem} oItem Current item queued for upload.
+				 * @property {number} iTotalItemsForUpload Total count of items queued for upload.
+				 * @public
+				**/
+
+				/**
+				 * Defines a {@link sap.m.upload.UploadSetTable.itemValidationHandler callback function} which is invoked when each UploadSetwithTableItem is queued for upload.
+				 * This callback is invoked with {@link sap.m.upload.UploadSetTable.ItemInfo parameters} and callback is expected to return a promise to the control. Once the promise is resolved, the control initiates the upload process.
+				 * Configure this property only when any additional configuration / validations are to be performed before the upload of each item.
+				 * The upload process is triggered manually by resolving the promise returned to the control.
+				**/
+				itemValidationHandler: {type: "function", defaultValue: null},
 				/**
 				 * Show or hide carousel's arrows on preview dialog.
 				 */
@@ -710,14 +726,14 @@ sap.ui.define([
 			oItem.setFileName(oFile.name);
 
 
-			if (this.getOnItemValidationSuccess() && typeof this.getOnItemValidationSuccess() === "function" ) {
+			if (this.getItemValidationHandler() && typeof this.getItemValidationHandler() === "function" ) {
 
-				const oEvent = new Event("onItemValidation", this, {
-					item: oItem,
-					totalItemsForUpload: aFiles.length
-				});
+				const oItemInfo = {
+					oItem: oItem,
+					iTotalItemsForUpload: aFiles.length
+				};
 
-				var oPromise = this.getOnItemValidationSuccess()(oEvent);
+				var oPromise = this.getItemValidationHandler()(oItemInfo);
 				if (oPromise && oPromise instanceof Promise) {
 					oPromise
 					.then((item) => {
@@ -733,8 +749,8 @@ sap.ui.define([
 					});
 				} else {
 					oItem.destroy();
-					// if promise is not returned to the onItemValidationSuccess hook log error and destroy the item
-					Log.error("Invalid usage, missing Promise: onItemvalidationSuccess expects Promise to be returned.");
+					// if promise is not returned to the ItemValidation hook log error and destroy the item
+					Log.error("Invalid usage, missing Promise: ItemValidationHandler callback expects Promise to be returned.");
 				}
 			} else {
 				/* if no validation handler is provided control continues with normal upload else waits for the application to manually
