@@ -96,20 +96,6 @@ function(
 		});
 	}
 
-	// If a parent overlay is movable it should not be draggable by a non-movable child
-	function setOrResetFirstParentMovable(oOverlay, bSet) {
-		if (bSet) {
-			const oFirstMovableParentOverlay = OverlayUtil.getFirstMovableParentOverlay(oOverlay);
-			if (oFirstMovableParentOverlay) {
-				oOverlay._firstMovableParentOverlay = oFirstMovableParentOverlay;
-				oFirstMovableParentOverlay.setMovable(false);
-			}
-		} else if (oOverlay._firstMovableParentOverlay) {
-			oOverlay._firstMovableParentOverlay.setMovable(true);
-			delete oOverlay._firstMovableParentOverlay;
-		}
-	}
-
 	Selection.prototype.init = function(...aArgs) {
 		this._multiSelectionValidator = this._multiSelectionValidator.bind(this);
 		Plugin.prototype.init.apply(this, aArgs);
@@ -340,7 +326,7 @@ function(
 			return;
 		}
 		if (oOverlay.isSelectable()) {
-			setOrResetFirstParentMovable(oOverlay, true);
+			OverlayUtil.setFirstParentMovable(oOverlay, false);
 			if (oOverlay !== this._oHoverTarget) {
 				this._removePreviousHover();
 				this._oHoverTarget = oOverlay;
@@ -365,7 +351,7 @@ function(
 			return;
 		}
 		if (oOverlay.isSelectable()) {
-			setOrResetFirstParentMovable(oOverlay);
+			OverlayUtil.setFirstParentMovable(oOverlay, true);
 			this._removePreviousHover();
 			preventEventDefaultAndPropagation(oEvent);
 		}

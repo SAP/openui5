@@ -560,6 +560,18 @@ sap.ui.define([
 			);
 		});
 
+		QUnit.test("when setOrResetFirstParentMovable is called", function(assert) {
+			this.oSubSectionOverlay0.setMovable(true);
+			assert.ok(this.oSubSectionOverlay0.getMovable(), "the overlay is movable before the function has been called");
+			OverlayUtil.setFirstParentMovable(this.oButtonOverlay0, false);
+			assert.notOk(
+				this.oSubSectionOverlay0.getMovable(),
+				"the overlay is not movable after the function has been called with 'false'"
+			);
+			OverlayUtil.setFirstParentMovable(this.oButtonOverlay0, true);
+			assert.ok(this.oSubSectionOverlay0.getMovable(), "the overlay is movable after the function has been called with 'true'");
+		});
+
 		QUnit.test("when findAllUniqueAggregationOverlaysInContainer is called", function(assert) {
 			assert.strictEqual(OverlayUtil.findAllUniqueAggregationOverlaysInContainer(
 				this.oVBoxOverlay0, this.oVBoxOverlay0).length, 0, "then it returns no overlays"
