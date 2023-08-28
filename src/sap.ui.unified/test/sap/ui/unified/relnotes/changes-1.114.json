@@ -18,5 +18,21 @@
         ]
       }
     ]
+  },
+  "1.114.5": {
+    "date": "August 2023",
+    "notes": [
+      {
+        "id": "0b59abb3a88039d92e9342d60d9670c39650a34c",
+        "type": "FIX",
+        "text": " sap.ui.unified.FileUploader: enable drop over the browse button",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400006011772023"
+          }
+        ]
+      }
+    ]
   }
 }

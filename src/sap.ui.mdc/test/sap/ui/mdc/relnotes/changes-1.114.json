@@ -68,5 +68,21 @@
         ]
       }
     ]
+  },
+  "1.114.5": {
+    "date": "August 2023",
+    "notes": [
+      {
+        "id": "36493c890fa9082efe3e0935d35d09a1f73453c6",
+        "type": "FIX",
+        "text": " Field: Open value help only if editable",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380108529"
+          }
+        ]
+      }
+    ]
   }
 }

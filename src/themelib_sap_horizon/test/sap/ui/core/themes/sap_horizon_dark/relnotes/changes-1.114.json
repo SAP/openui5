@@ -99,5 +99,43 @@
         ]
       }
     ]
+  },
+  "1.114.5": {
+    "date": "August 2023",
+    "notes": [
+      {
+        "id": "d9eebac87fb521e3870676f95776177252c79fae",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: Seaparator adjused for text only tabs",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380085007"
+          }
+        ]
+      },
+      {
+        "id": "b9a432273690dcc49f854582128c455304a14983",
+        "type": "FIX",
+        "text": " sap.tnt.SideNavigation: Visual adjustments",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380114498"
+          }
+        ]
+      },
+      {
+        "id": "861341304b6aa75fad762c2c860f8b0c957b0120",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: Tab text no longer gets clipped in high contrast themes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380114498"
+          }
+        ]
+      }
+    ]
   }
 }
