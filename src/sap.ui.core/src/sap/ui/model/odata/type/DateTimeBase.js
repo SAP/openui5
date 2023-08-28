@@ -165,7 +165,11 @@ sap.ui.define([
 		}
 		switch (this.getPrimitiveType(sTargetType)) {
 			case "any":
+				return oValue;
 			case "object":
+				if (isDateOnly(this)) {
+					return this.getDateValue(oValue);
+				}
 				return oValue;
 			case "string":
 				if (!(oValue instanceof Date)) {
@@ -243,6 +247,9 @@ sap.ui.define([
 		}
 		switch (this.getPrimitiveType(sSourceType)) {
 			case "object":
+				if (isDateOnly(this)) {
+					return this._getModelValue(vValue);
+				}
 				return vValue;
 			case "string":
 				oResult = this.getFormat().parse(vValue);
