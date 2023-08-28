@@ -4373,7 +4373,7 @@ sap.ui.define([
 
 	Table.prototype.onRowsUpdated = function(mParameters) {
 		TableUtils.Grouping.updateGroups(this);
-		TableUtils.Menu._closeContentCellContextMenu(this);
+		TableUtils.Menu.closeContentCellContextMenu(this);
 		this._getAccExtension()._updateAriaRowIndices();
 		this._updateSelection();
 		updateNoData(this);
