@@ -4,7 +4,7 @@
 
 // Provides control sap.ui.webc.fiori.ViewSettingsDialog.
 sap.ui.define([
-	"sap/ui/webc/common/WebComponent",
+	"sap/ui/core/webc/WebComponent",
 	"./library",
 	"./thirdparty/ViewSettingsDialog"
 ], function(WebComponent, library) {
@@ -16,7 +16,7 @@ sap.ui.define([
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
-	 * @extends sap.ui.webc.common.WebComponent
+	 * @extends sap.ui.core.webc.WebComponent
 	 * @class
 	 *
 	 * <h3>Overview</h3> The <code>sap.ui.webc.fiori.ViewSettingsDialog</code> component helps the user to sort data within a list or a table. It consists of several lists like <code>Sort order</code> which is built-in and <code>Sort By</code> and <code>Filter By</code> lists, for which you must be provide items(<code>sap.ui.webc.fiori.SortItem</code> & <code>sap.ui.webc.fiori.FilterItem</code> respectively) These options can be used to create sorters for a table.

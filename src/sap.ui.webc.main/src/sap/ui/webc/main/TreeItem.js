@@ -4,7 +4,7 @@
 
 // Provides control sap.ui.webc.main.TreeItem.
 sap.ui.define([
-	"sap/ui/webc/common/WebComponent",
+	"sap/ui/core/webc/WebComponent",
 	"./library",
 	"sap/ui/core/library",
 	"./thirdparty/TreeItem"
@@ -20,7 +20,7 @@ sap.ui.define([
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
-	 * @extends sap.ui.webc.common.WebComponent
+	 * @extends sap.ui.core.webc.WebComponent
 	 * @class
 	 *
 	 * <h3>Overview</h3> The <code>sap.ui.webc.main.TreeItem</code> represents a node in a tree structure, shown as a <code>sap.ui.webc.main.List</code>. <br>
