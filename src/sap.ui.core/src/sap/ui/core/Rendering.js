@@ -137,6 +137,7 @@ sap.ui.define([
 		 * @param {boolean} [bFirst=false]
 		 *   Whether the task should become the first one, not the last one
 		 * @private
+		 * @ui5-restricted sap.ui.model.odata.v4
 		 */
 		addPrerenderingTask: function (fnPrerenderingTask, bFirst) {
 			if (bFirst) {
