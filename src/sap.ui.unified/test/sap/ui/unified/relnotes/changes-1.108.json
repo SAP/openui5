@@ -147,5 +147,32 @@
         ]
       }
     ]
+  },
+  "1.108.19": {
+    "date": "August 2023",
+    "notes": [
+      {
+        "id": "be22d3731399d70c3f4fcd9abbdf904dbc349d2f",
+        "type": "FIX",
+        "text": " sap.ui.unified.FileUploader: enable drop over the browse button",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400006011772023"
+          }
+        ]
+      },
+      {
+        "id": "0c131e769363f81668de6b4c68c0c0862f50b2b6",
+        "type": "FIX",
+        "text": " sap.ui.unified.Menu: skip invalidation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500005658702023"
+          }
+        ]
+      }
+    ]
   }
 }

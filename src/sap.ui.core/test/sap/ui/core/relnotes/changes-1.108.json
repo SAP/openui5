@@ -389,5 +389,54 @@
         ]
       }
     ]
+  },
+  "1.108.19": {
+    "date": "August 2023",
+    "notes": [
+      {
+        "id": "df1b42294bc5ab2b07fdf6338ebfe53492118c84",
+        "type": "FIX",
+        "text": " theming/ThemeManager: Avoid multiple CSS loading",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500005027552023"
+          }
+        ]
+      },
+      {
+        "id": "a0a7c1874f3566a0d6d8f627cdf2204c596754fa",
+        "type": "FIX",
+        "text": " sap.ui.core.format.DateFormat: parse dateTime timezone \"z\" for UTC",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400005085862023"
+          }
+        ]
+      },
+      {
+        "id": "aa6ad91e9365a4b64b297de49675aaf10648fc5f",
+        "type": "FIX",
+        "text": " core/Icon: use theming variable for focus outline",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380099755"
+          }
+        ]
+      },
+      {
+        "id": "7341ca6ae2c8ad4f0d35aa4dcb250975fca6c44a",
+        "type": "FIX",
+        "text": " util/Mobile: set correct viewport for iPad with \"request desktop website\"",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400005790312023"
+          }
+        ]
+      }
+    ]
   }
 }

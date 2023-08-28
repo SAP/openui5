@@ -1121,5 +1121,76 @@
         ]
       }
     ]
+  },
+  "1.108.19": {
+    "date": "August 2023",
+    "notes": [
+      {
+        "id": "0f6aa0bb94824e11e861d13ee4f74c99862261b4",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: Seaparator adjused for text only tabs",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380085007"
+          }
+        ]
+      },
+      {
+        "id": "079150fdbe5d33795dbd38c45cd6efbdc17dc6c1",
+        "type": "FIX",
+        "text": " ResponsiveTable: IllustratedMessage description's line-height adjusted",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380116586"
+          }
+        ]
+      },
+      {
+        "id": "2f0e4c5a8a183c2696031aecea6eaf21748dc2ea",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus: Wrap long text in large version of control",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370074893"
+          }
+        ]
+      },
+      {
+        "id": "752c79a7d4d07522bbe1aac112b3376158205aa3",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus Add CSS class for in-word StatusText wrapping",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
+        "id": "921b45e241863612894f70053e6f919c171cc75c",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: Added check to prevent duplicate id error if ITB is not yet destroyed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380063052"
+          }
+        ]
+      },
+      {
+        "id": "9fb690da39b8547c84fe0a7a3d49e70c68c91da6",
+        "type": "FIX",
+        "text": " m.Table: PopinChanged event corrected",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500004470602023"
+          }
+        ]
+      }
+    ]
   }
 }

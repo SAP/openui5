@@ -78,5 +78,32 @@
         ]
       }
     ]
+  },
+  "1.108.19": {
+    "date": "August 2023",
+    "notes": [
+      {
+        "id": "0f6aa0bb94824e11e861d13ee4f74c99862261b4",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: Seaparator adjused for text only tabs",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380085007"
+          }
+        ]
+      },
+      {
+        "id": "572f754f9d5821d66d796b702d880b1a0f0af155",
+        "type": "FIX",
+        "text": " sap.tnt.SideNavigation: Visual adjustments",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380114498"
+          }
+        ]
+      }
+    ]
   }
 }
