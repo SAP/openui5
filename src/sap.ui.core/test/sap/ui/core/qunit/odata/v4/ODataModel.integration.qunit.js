@@ -3342,6 +3342,67 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	// Scenario: An ODCB for a BusinessPartner w/o cache is bound to "/SalesOrderList('1')". The
+	// CompanyName is fetched late via requestProperty. Then the ODCB is bound to
+	// "/SalesOrderList('2')", and requestProperty for the CompanyName must lead to another late
+	// property request.
+	// BCP: 2380079072
+	QUnit.test("BCP: 2380079072", async function (assert) {
+		const oModel = this.createSalesOrdersModel({autoExpandSelect : true});
+		const sView = `
+<FlexBox id="form" binding="{SO_2_BP}">
+	<Text id="bp" text="{BusinessPartnerID}"/>
+</FlexBox>`;
+
+		this.expectChange("bp");
+
+		await this.createView(assert, sView, oModel);
+
+		this.expectRequest("SalesOrderList('1')?$select=SalesOrderID"
+				+ "&$expand=SO_2_BP($select=BusinessPartnerID)", {
+				SalesOrderID : "1",
+				SO_2_BP : {BusinessPartnerID : "3"}
+			})
+			.expectChange("bp", "3");
+
+		const oForm = this.oView.byId("form");
+		oForm.setBindingContext(oModel.bindContext("/SalesOrderList('1')").getBoundContext());
+
+		await this.waitForChanges(assert, "1st bind");
+
+		this.expectRequest("SalesOrderList('1')/SO_2_BP?$select=BusinessPartnerID,CompanyName",
+				{BusinessPartnerID : "3", CompanyName : "SAP"});
+
+		const oInnerBinding = this.oView.byId("form").getObjectBinding();
+		const [sCompanyName1] = await Promise.all([
+			oInnerBinding.getBoundContext().requestProperty("CompanyName"),
+			this.waitForChanges(assert, "1st requestProperty")
+		]);
+
+		assert.strictEqual(sCompanyName1, "SAP");
+
+		this.expectRequest("SalesOrderList('2')?$select=SalesOrderID"
+				+ "&$expand=SO_2_BP($select=BusinessPartnerID)", {
+				SalesOrderID : "2",
+				SO_2_BP : {BusinessPartnerID : "3"}
+			});
+
+		oForm.setBindingContext(oModel.bindContext("/SalesOrderList('2')").getBoundContext());
+
+		await this.waitForChanges(assert, "2nd bind");
+
+		this.expectRequest("SalesOrderList('2')/SO_2_BP?$select=BusinessPartnerID,CompanyName",
+				{BusinessPartnerID : "3", CompanyName : "SAP"});
+
+		const [sCompanyName2] = await Promise.all([
+			oInnerBinding.getBoundContext().requestProperty("CompanyName"),
+			this.waitForChanges(assert, "2nd requestProperty")
+		]);
+
+		assert.strictEqual(sCompanyName2, "SAP");
+	});
+
+	//*********************************************************************************************
 	// Scenario: Return value context with data in cache, multiple context bindings w/o cache below,
 	// multiple property bindings below these context bindings requesting their value late. One
 	// request for all properties must occur. (The scenario of the incident.)
