@@ -164,11 +164,20 @@ sap.ui.define('sap/ui/debug/DebugEnv', ['sap/ui/base/Interface', './ControlTree'
 			this.oControlTree.renderDelayed();
 		}
 
-		jQuery(window).unload(jQuery.proxy(function(oEvent) {
-			this.oControlTree.exit();
-			this.oPropertyList.exit();
-		}, this));
-
+		/**
+		 * The block below is not needed because it only did a cleanup
+		 * before the page was closed. This should not be necessary.
+		 * Nevertheless we leave the coding here and only deprecate it,
+		 * in order to keep the BFCache behavior stable.
+		 * Removing the 'unload' handler could potentially activate
+		 * the BFCache and cause a different behavior in browser versions
+		 * where the 'unload' handler is still supported.
+		 * Therefore we only removed the not needed cleanup coding
+		 * but still attach a noop to ensure this handler would still
+		 * invalidate the BFCache.
+		 * @deprecated As of 1.71
+		 */
+		window.addEventListener("unload", function() {});
 	};
 
 	/**
