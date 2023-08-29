@@ -1848,7 +1848,8 @@ sap.ui.define([
 			fnFetchMetadata = function () {},
 			oParentBinding = new ODataParentBinding(),
 			oBinding = new ODataParentBinding({
-				oCache : undefined,
+				mCanUseCachePromiseByChildPath : {"SOITEMS_2_SO/Note" : "do not use"},
+				oCache : null,
 				oCachePromise : SyncPromise.resolve(Promise.resolve(null)),
 				oContext : {
 					getBinding : function () { return oParentBinding; },
@@ -1950,6 +1951,7 @@ sap.ui.define([
 				getReducedPath : function () {}
 			},
 			oBinding = new ODataParentBinding({
+				oCache : {}, // not null
 				oContext : "do not use",
 				oModel : {
 					getMetaModel : function () { return oMetaModel; },

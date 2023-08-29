@@ -3216,6 +3216,74 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	// Scenario: An ODCB for a BusinessPartner w/o cache is bound to "/SalesOrderList('1')". The
+	// CompanyName is fetched late via requestProperty. Then the ODCB is bound to
+	// "/SalesOrderList('2')", and requestProperty for the CompanyName must lead to another late
+	// property request.
+	// BCP: 2380079072
+	QUnit.test("BCP: 2380079072", function (assert) {
+		var oForm,
+			oInnerBinding,
+			oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
+			sView = '\
+<FlexBox id="form" binding="{SO_2_BP}">\
+	<Text id="bp" text="{BusinessPartnerID}"/>\
+</FlexBox>',
+			that = this;
+
+		this.expectChange("bp");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oForm = that.oView.byId("form");
+
+			that.expectRequest("SalesOrderList('1')?$select=SalesOrderID"
+					+ "&$expand=SO_2_BP($select=BusinessPartnerID)", {
+					SalesOrderID : "1",
+					SO_2_BP : {BusinessPartnerID : "3"}
+				})
+				.expectChange("bp", "3");
+
+			oForm.setBindingContext(oModel.bindContext("/SalesOrderList('1')").getBoundContext());
+
+			return that.waitForChanges(assert, "1st bind");
+		}).then(function () {
+			oInnerBinding = that.oView.byId("form").getObjectBinding();
+
+			that.expectRequest("SalesOrderList('1')/SO_2_BP?$select=BusinessPartnerID,CompanyName",
+					{BusinessPartnerID : "3", CompanyName : "SAP"});
+
+			return Promise.all([
+				oInnerBinding.getBoundContext().requestProperty("CompanyName")
+					.then(function (sCompanyName1) {
+						assert.strictEqual(sCompanyName1, "SAP");
+					}),
+				that.waitForChanges(assert, "1st requestProperty")
+			]);
+		}).then(function () {
+			that.expectRequest("SalesOrderList('2')?$select=SalesOrderID"
+					+ "&$expand=SO_2_BP($select=BusinessPartnerID)", {
+					SalesOrderID : "2",
+					SO_2_BP : {BusinessPartnerID : "3"}
+				});
+
+			oForm.setBindingContext(oModel.bindContext("/SalesOrderList('2')").getBoundContext());
+
+			return that.waitForChanges(assert, "2nd bind");
+		}).then(function () {
+			that.expectRequest("SalesOrderList('2')/SO_2_BP?$select=BusinessPartnerID,CompanyName",
+					{BusinessPartnerID : "3", CompanyName : "SAP"});
+
+			return Promise.all([
+				oInnerBinding.getBoundContext().requestProperty("CompanyName")
+					.then(function (sCompanyName2) {
+						assert.strictEqual(sCompanyName2, "SAP");
+					}),
+				that.waitForChanges(assert, "2nd requestProperty")
+			]);
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: Return value context with data in cache, multiple context bindings w/o cache below,
 	// multiple property bindings below these context bindings requesting their value late. One
 	// request for all properties must occur. (The scenario of the incident.)
