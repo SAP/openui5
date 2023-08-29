@@ -126,7 +126,7 @@ sap.ui.define([
 						name: this._formatWebAppPath(sFileName),
 						url: sRef + "/" + sFileName
 					}, oZipFile));
-				});
+				}.bind(this));
 
 
 				// add generic license file
