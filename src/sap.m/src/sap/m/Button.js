@@ -40,7 +40,7 @@ sap.ui.define([
 	Log,
 	Image
 ) {
-	"use strict";
+	"use strict"; // test
 
 	// shortcut for sap.ui.core.TextDirection
 	var TextDirection = coreLibrary.TextDirection;
