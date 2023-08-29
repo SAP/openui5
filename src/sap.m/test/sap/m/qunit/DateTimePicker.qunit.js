@@ -290,11 +290,11 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("_fillDateRange works with min date when the current date is out of range", function(assert) {
+	QUnit.test("_fillDateRange works with max date when the current date is after the max date", function(assert) {
 		var oDateTimePicker = new DateTimePicker("DTPMinMax").placeAt("uiArea1"),
 			oNewMinDate = UI5Date.getInstance(2014, 0, 1),
 			oNewMaxDate = UI5Date.getInstance(2014, 11, 31),
-			oNewMinDateUTC = UI5Date.getInstance(Date.UTC(oNewMinDate.getFullYear(), oNewMinDate.getMonth(), oNewMinDate.getDate())),
+			oNewMaxDateUTC = UI5Date.getInstance(Date.UTC(oNewMaxDate.getFullYear(), oNewMaxDate.getMonth(), oNewMaxDate.getDate())),
 			oFocusedDate;
 
 		//arrange
@@ -311,7 +311,31 @@ sap.ui.define([
 		oFocusedDate = oDateTimePicker._oCalendar._getFocusedDate().toUTCJSDate();
 
 		//assert
-		assert.equal(oFocusedDate.toString(), oNewMinDateUTC.toString(), "oDateTimePicker: focused date equals min date when current date is out of the min/max range");
+		assert.equal(oFocusedDate.toString(), oNewMaxDateUTC.toString(), "oDateTimePicker: focused date equals min date when current date is out of the min/max range");
+
+		//clean
+		oDateTimePicker.destroy();
+	});
+
+	QUnit.test("_fillDateRange works with min date when the current date is before the min date", function(assert) {
+		var oDateTimePicker = new DateTimePicker("DTPMinMax").placeAt("uiArea1"),
+			oDate = UI5Date.getInstance(),
+			oDateTomorow = UI5Date.getInstance(oDate.getFullYear(), oDate.getMonth(), oDate.getDate() + 1),
+			oMinDateUTC = UI5Date.getInstance(Date.UTC(oDateTomorow.getFullYear(), oDateTomorow.getMonth(), oDateTomorow.getDate())),
+			oFocusedDate;
+
+		//arrange
+		oDateTimePicker.setMinDate(oDateTomorow);
+		oCore.applyChanges();
+
+		//act
+		oDateTimePicker.focus();
+		qutils.triggerEvent("click", "DTPMinMax-icon");
+
+		oFocusedDate = oDateTimePicker._oCalendar._getFocusedDate().toUTCJSDate();
+
+		//assert
+		assert.equal(oFocusedDate.toString(), oMinDateUTC.toString(), "oDateTimePicker: focused date equals min date when current date is out of the min/max range");
 
 		//clean
 		oDateTimePicker.destroy();
