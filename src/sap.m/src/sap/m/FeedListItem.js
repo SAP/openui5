@@ -338,7 +338,8 @@ function(
 	};
 
 	FeedListItem.prototype.onAfterRendering = function() {
-		var oFormattedText = this.getAggregation("_text");
+		var oFormattedText = this.getAggregation("_text"),
+			oDomRef = this.getDomRef();
 		if (this._checkTextIsExpandable() && !this._bTextExpanded) {
 			this._clearEmptyTagsInCollapsedText();
 		}
@@ -352,7 +353,7 @@ function(
 			}
 		});
 
-		oFormattedText && oFormattedText._sanitizeCSSPosition(this.getDomRef()); // perform CSS position sanitize
+		oDomRef && oFormattedText && oFormattedText._sanitizeCSSPosition(oDomRef.querySelector(".sapMFeedListItemText")); // perform CSS position sanitize
 	};
 
 	FeedListItem.prototype.exit = function() {
