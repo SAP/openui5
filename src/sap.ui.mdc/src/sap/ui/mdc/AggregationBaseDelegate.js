@@ -22,8 +22,7 @@ sap.ui.define(['sap/ui/mdc/BaseDelegate', 'sap/ui/core/library'], function (Base
 	 * @author SAP SE
 	 *
 	 * @namespace
-	 * @private
-	 * @ui5-restricted sap.ui.mdc
+	 * @public
 	 * @since 1.82.0
 	 * @alias module:sap/ui/mdc/AggregationBaseDelegate
 	 * @extends module:sap/ui/mdc/BaseDelegate
@@ -35,6 +34,8 @@ sap.ui.define(['sap/ui/mdc/BaseDelegate', 'sap/ui/core/library'], function (Base
 		 *
 		 * @param {sap.ui.mdc.Control} oControl Instance of an <code>sap.ui.mdc.Control</code>
 		 * @returns {Promise<object[]>} Once resolved, an array of property info objects is returned
+		 *
+		 * @public
 		 */
 		fetchProperties: function(oControl) {
 			return Promise.resolve([]);
@@ -75,6 +76,7 @@ sap.ui.define(['sap/ui/mdc/BaseDelegate', 'sap/ui/core/library'], function (Base
 		 * @param {Object} [mPropertyBag] Instance of property bag from SAPUI5 flexibility
 		 *
 		 * @returns {Promise} Promise that resolves with <code>true</code>, <code>false</code> to allow/prevent default behavior of the change
+		 *
 		 * @public
 		 */
 		removeItem: function(oControl, oItem, mPropertyBag) {
@@ -88,6 +90,8 @@ sap.ui.define(['sap/ui/mdc/BaseDelegate', 'sap/ui/core/library'], function (Base
 		 * @param {Object} oState The theoretical external state representation of an MDC control. The representation of this format is similar as processed by {@link sap.ui.mdc.p13n.StateUtil StateUtil}
 		 * @returns {Object} An object that must contain at least the <code>validation</code> attribute {@link sap.ui.core.MessageType MessageType}.
 		 * If <code>warning</code> or <code>error</code> state types have been provided, the <code>message</code> is shown in addition.
+		 *
+		 * @public
 		 */
 		validateState: function(oControl, oState) {
 
@@ -106,6 +110,7 @@ sap.ui.define(['sap/ui/mdc/BaseDelegate', 'sap/ui/core/library'], function (Base
 		 * @param {Object<sap.ui.mdc.Control>} oControl Instance of an MDC control
 		 * @param {Object} mPropertyBag Property bag from SAPUI5 flexibility
 		 *
+		 * @public
 		 */
 		onAfterXMLChangeProcessing: function(oControl, mPropertyBag) {
 			//Neccessary cleanups can be implemented here
@@ -116,6 +121,8 @@ sap.ui.define(['sap/ui/mdc/BaseDelegate', 'sap/ui/core/library'], function (Base
 		 *
 		 * @param {sap.ui.mdc.Control} oControl Instance of a MDC control
 		 * @param {map} [mValidation] Object Describing the validation result
+		 *
+		 * @public
 		 */
 		determineValidationState: function(oControl) {
             return oControl.checkValidationState ? oControl.checkValidationState() : -1;
@@ -126,6 +133,8 @@ sap.ui.define(['sap/ui/mdc/BaseDelegate', 'sap/ui/core/library'], function (Base
 		 *
 		 * @param {Object<sap.ui.mdc.Control>} oControl Instance of a MDC control
 		 * @returns {map} mValidation Describes the validation result.
+		 *
+		 * @public
 		 */
 	    visualizeValidationState: function(oControl, mValidation) {
 		}
