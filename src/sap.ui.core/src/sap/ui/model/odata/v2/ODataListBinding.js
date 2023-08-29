@@ -22,9 +22,7 @@ sap.ui.define([
 	"sap/ui/model/odata/CountMode",
 	"sap/ui/model/odata/ODataUtils",
 	"sap/ui/model/odata/OperationMode"
-], function(assert, Log, deepEqual, each, isEmptyObject,  uid, ChangeReason, Context, Filter,
-		FilterOperator, FilterProcessor, FilterType, ListBinding, Sorter, SorterProcessor,
-		CountMode, ODataUtils,  OperationMode) {
+], function(assert, Log, deepEqual, each, isEmptyObject, uid, ChangeReason, Context, Filter, FilterOperator, FilterProcessor, FilterType, ListBinding, Sorter, SorterProcessor, CountMode, ODataUtils, OperationMode) {
 	"use strict";
 
 	var sClassName = "sap.ui.model.odata.v2.ODataListBinding",
@@ -1738,15 +1736,12 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataListBinding.prototype.convertFilters = function() {
-		var ODataFilter = sap.ui.require("sap/ui/model/odata/Filter");
-		if ( ODataFilter ) {
-			this.aFilters = this.aFilters.map(function(oFilter) {
-				return oFilter instanceof ODataFilter ? oFilter.convert() : oFilter;
-			});
-			this.aApplicationFilters = this.aApplicationFilters.map(function(oFilter) {
-				return oFilter instanceof ODataFilter ? oFilter.convert() : oFilter;
-			});
-		}
+		this.aFilters = this.aFilters.map(function(oFilter) {
+			return oFilter instanceof undefined/*ODataFilter*/ ? oFilter.convert() : oFilter;
+		});
+		this.aApplicationFilters = this.aApplicationFilters.map(function(oFilter) {
+			return oFilter instanceof undefined/*ODataFilter*/ ? oFilter.convert() : oFilter;
+		});
 	};
 
 	ODataListBinding.prototype.applyFilter = function() {

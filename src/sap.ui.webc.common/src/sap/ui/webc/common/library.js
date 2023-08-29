@@ -55,7 +55,6 @@ sap.ui.define([
 		types: [
 		],
 		controls: [
-			"sap.ui.webc.common.WebComponent"
 		],
 		elements: [
 		],

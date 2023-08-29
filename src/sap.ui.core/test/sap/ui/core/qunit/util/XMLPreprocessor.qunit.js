@@ -705,7 +705,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	// Note: "X" is really nothing special
 	["true", true, 1, "X"].forEach(function (oFlag) {
-		QUnit.test("XML with template:if test='{/flag}', truthy, flag = " + oFlag,
+		QUnit.test("XML with template:if test='{/flag}', truthy, async = true, flag = " + oFlag,
 			function (assert) {
 				this.oSapUiMock.expects("require").on(sap.ui)
 					.atLeast(0) // only for the 1st run
@@ -722,6 +722,10 @@ sap.ui.define([
 			}
 		);
 	});
+
+	//*********************************************************************************************
+	// Note: "X" is really nothing special
+	["true", true, 1, "X"].forEach(function (oFlag) {});
 
 	//*********************************************************************************************
 	// Note: " " intentionally not included yet, should not matter for OData!
