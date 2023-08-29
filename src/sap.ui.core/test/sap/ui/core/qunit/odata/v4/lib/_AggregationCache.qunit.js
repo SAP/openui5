@@ -920,14 +920,6 @@ sap.ui.define([
 			.withExactArgs(sinon.match.same(oElement), "B/myDrillState")
 			.returns(sDrillState);
 		oHelperMock.expects("getKeyFilter").never();
-		if (sDrillState === "collapsed") {
-			oHelperMock.expects("getKeyFilter")
-				.withExactArgs(sinon.match.same(oElement), "/meta/path",
-					sinon.match.same(mTypeForMetaPath))
-				.returns("~filter~");
-			oHelperMock.expects("setPrivateAnnotation")
-				.withExactArgs(sinon.match.same(oElement), "filter", "~filter~");
-		}
 		oHelperMock.expects("deleteProperty")
 			.withExactArgs(sinon.match.same(oElement), "B/myDrillState");
 		oHelperMock.expects("drillDown").exactly(oGroupNode ? 0 : 1)

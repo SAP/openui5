@@ -982,6 +982,7 @@ sap.ui.define([
 	[false, true].forEach(function (bTransient) {
 	QUnit.test(`_Cache#restoreElement, path=${sPath}, transient=${bTransient}`, function (assert) {
 		const oCache = new _Cache(this.oRequestor, "TEAMS");
+		const oHelperMock = this.mock(_Helper);
 		oCache.iLimit = 234;
 		oCache.iActiveElements = 1;
 		const aElements = [];
@@ -989,13 +990,15 @@ sap.ui.define([
 
 		this.mock(oCache).expects("adjustIndexes")
 			.withExactArgs(sPath, sinon.match.same(aElements), 42, 1, "~iDeletedIndex~");
-		this.mock(_Helper).expects("getPrivateAnnotation")
+		oHelperMock.expects("getPrivateAnnotation")
 			.withExactArgs("~oElement~", "transientPredicate")
 			.returns(bTransient ? "($uid=id-1-23)" : undefined);
-		this.mock(_Helper).expects("addToCount")
+		oHelperMock.expects("addToCount")
 			.withExactArgs(sinon.match.same(oCache.mChangeListeners), sPath,
 				sinon.match.same(aElements), 1);
 		this.mock(aElements).expects("splice").withExactArgs(42, 0, "~oElement~");
+		//TODO TDD
+		oHelperMock.expects("getPrivateAnnotation").withExactArgs("~oElement~", "predicate");
 
 		// code under test
 		oCache.restoreElement(aElements, 42, "~oElement~", sPath, "~iDeletedIndex~");
@@ -10760,7 +10763,6 @@ sap.ui.define([
 		oCache.setEmpty();
 
 		assert.strictEqual(oCache.aElements.$count, 0);
-		assert.strictEqual(oCache.iLimit, 0);
 	});
 
 	//*********************************************************************************************

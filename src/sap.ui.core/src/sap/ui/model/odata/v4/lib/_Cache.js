@@ -935,7 +935,7 @@ sap.ui.define([
 			mQueryOptions,
 			sRequestPath,
 			sResourceMetaPath = _Helper.getMetaPath(sResourcePath),
-			mTypeForMetaPath = this.fetchTypes().getResult(),
+			mTypeForMetaPath = this.getTypes(),
 			aUpdateProperties,
 			that = this;
 
@@ -1079,6 +1079,7 @@ sap.ui.define([
 	 *   A promise that is resolved with a map from resource path + entity path to the type
 	 *
 	 * @private
+	 * @see #getTypes
 	 */
 	_Cache.prototype.fetchTypes = function () {
 		var aPromises, mTypeForMetaPath,
@@ -1293,6 +1294,19 @@ sap.ui.define([
 	 */
 	_Cache.prototype.getQueryOptions = function () {
 		return this.mQueryOptions;
+	};
+
+	/**
+	 * Returns the existing map from meta path to type.
+	 *
+	 * @returns {Object<object>}
+	 *   A map from resource path + entity path to the type
+	 *
+	 * @private
+	 * @see #fetchTypes
+	 */
+	_Cache.prototype.getTypes = function () {
+		return this.fetchTypes().getResult();
 	};
 
 	/**
@@ -1649,7 +1663,7 @@ sap.ui.define([
 	 * <code>$byPredicate</code>, <code>$created</code> and <code>$count</code>, and a collection
 	 * cache's limit and number of active elements (if applicable).
 	 *
-	 * @param {object[]} aElements
+	 * @param {object[]} [aElements]
 	 *   The array of elements
 	 * @param {number} [iIndex]
 	 *   The array index of the old element to be removed or <code>undefined</code> in case the
@@ -1664,7 +1678,9 @@ sap.ui.define([
 	 *
 	 * @protected
 	 */
-	_Cache.prototype.removeElement = function (aElements, iIndex, sPredicate, sPath) {
+	// eslint-disable-next-line default-param-last
+	_Cache.prototype.removeElement = function (aElements = this.aElements, iIndex, sPredicate,
+			sPath) {
 		var oElement = aElements.$byPredicate[sPredicate],
 			bDeleted = oElement["@$ui5.context.isDeleted"],
 			sTransientPredicate = _Helper.getPrivateAnnotation(oElement, "transientPredicate");
@@ -1888,10 +1904,10 @@ sap.ui.define([
 
 	/**
 	 * Restores the element in the given array at the given index, taking care of the array's
-	 * <code>$created</code> and <code>$count</code>, and a collection cache's limit and number of
-	 * active elements (if applicable).
+	 * <code>$byPredicate</code>, <code>$created</code> and <code>$count</code>, and a collection
+	 * cache's limit and number of active elements (if applicable).
 	 *
-	 * @param {object[]} aElements - The array of elements
+	 * @param {object[]} [aElements] - The array of elements
 	 * @param {number} iIndex - The index to restore at
 	 * @param {object} oElement - The element to restore
 	 * @param {string} sPath
@@ -1902,7 +1918,9 @@ sap.ui.define([
 	 *
 	 * @protected
 	 */
-	_Cache.prototype.restoreElement = function (aElements, iIndex, oElement, sPath, iDeletedIndex) {
+	// eslint-disable-next-line default-param-last
+	_Cache.prototype.restoreElement = function (aElements = this.aElements, iIndex, oElement, sPath,
+			iDeletedIndex) {
 		this.adjustIndexes(sPath, aElements, iIndex, 1, iDeletedIndex);
 		const sTransientPredicate = _Helper.getPrivateAnnotation(oElement, "transientPredicate");
 		if (sTransientPredicate) {
@@ -1915,12 +1933,16 @@ sap.ui.define([
 		}
 		_Helper.addToCount(this.mChangeListeners, sPath, aElements, 1);
 		aElements.splice(iIndex, 0, oElement);
+		const sPredicate = _Helper.getPrivateAnnotation(oElement, "predicate");
+		if (sPredicate) {
+			aElements.$byPredicate[sPredicate] = oElement;
+		}
 	};
 
 	/**
 	 * Adds or removes a usage of this cache. A cache with active usages must not be destroyed.
-	 * If a usage is removed, all change listeners are removed too. Note: shared caches have no
-	 * listeners.
+	 * If the last usage is removed, all change listeners are removed too. Note: shared caches have
+	 * no listeners except for the empty path (cf. <code>registerChangeListener("", th</code>).
 	 *
 	 * @param {boolean} bActive
 	 *   Whether a usage is added or removed
@@ -2637,8 +2659,19 @@ sap.ui.define([
 	 *
 	 * @param {number} iIndex - An index
 	 * @param {string} sPredicate - A key predicate
+	 *
+	 * @public
 	 */
 	_CollectionCache.prototype.drop = function (iIndex, sPredicate) {
+		const oElement = this.aElements[iIndex];
+		const sTransientPredicate = _Helper.getPrivateAnnotation(oElement, "transientPredicate");
+		if (oElement["@$ui5.context.isTransient"]) {
+			throw new Error("Must not drop a transient element");
+		} else if (sTransientPredicate) { // created persisted
+			this.aElements.$created -= 1;
+			this.iActiveElements -= 1;
+			delete this.aElements.$byPredicate[sTransientPredicate];
+		}
 		delete this.aElements[iIndex];
 		delete this.aElements.$byPredicate[sPredicate];
 	};
@@ -2753,8 +2786,7 @@ sap.ui.define([
 		function addKeyFilter(oElement) {
 			var sKeyFilter;
 
-			mTypeForMetaPath = mTypeForMetaPath
-				|| that.fetchTypes().getResult(); // Note: $metadata already read
+			mTypeForMetaPath = mTypeForMetaPath || that.getTypes(); // Note: $metadata already read
 			sKeyFilter = _Helper.getKeyFilter(oElement, that.sMetaPath, mTypeForMetaPath);
 			if (sKeyFilter) {
 				aKeyFilters.push(sKeyFilter);
@@ -3253,7 +3285,7 @@ sap.ui.define([
 			return undefined;
 		}
 
-		mTypes = this.fetchTypes().getResult(); // in this stage the promise is resolved
+		mTypes = this.getTypes(); // in this stage the promise is resolved
 
 		return this.oRequestor.request("GET", calculateKeptElementsQuery(), oGroupLock)
 			.then(function (oResponse) {
@@ -3395,7 +3427,7 @@ sap.ui.define([
 			mQueryOptions,
 			sResourcePath,
 			bSkip,
-			mTypeForMetaPath = this.fetchTypes().getResult(),
+			mTypeForMetaPath = this.getTypes(),
 			that = this;
 
 		this.checkSharedRequest();
@@ -3609,7 +3641,8 @@ sap.ui.define([
 	 * @protected
 	 */
 	_CollectionCache.prototype.setEmpty = function () {
-		this.iLimit = this.aElements.$count = 0;
+		//TODO what about this.iLimit; should we keep it in sync?
+		this.aElements.$count = 0;
 	};
 
 	/**

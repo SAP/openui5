@@ -766,9 +766,9 @@ sap.ui.define([
 	 * {@link sap.ui.model.odata.v4.Context} instance given as
 	 * <code>oInitialData["@$ui5.node.parent"]</code>. <code>oAggregation.expandTo</code> (see
 	 * {@link #setAggregation}) must be one, <code>bSkipRefresh</code> must be set, but both
-	 * <code>bAtEnd</code> and <code>bInactive</code> must not be set. No other creation must be
-	 * pending, and no other modification (including collapse of some ancestor node) must happen
-	 * while this creation is pending!
+	 * <code>bAtEnd</code> and <code>bInactive</code> must not be set. No other creation or
+	 * {@link sap.ui.model.odata.v4.Context#move move} must be pending, and no other modification
+	 * (including collapse of some ancestor node) must happen while this creation is pending!
 	 *
 	 * @param {Object<any>} [oInitialData={}]
 	 *   The initial data for the created entity
@@ -3057,6 +3057,47 @@ sap.ui.define([
 		}
 
 		return aContexts;
+	};
+
+	/**
+	 * Moves the given (child) node to the given parent.
+	 *
+	 * @param {sap.ui.model.odata.v4.Context} oChildContext - The (child) node to be moved
+	 * @param {sap.ui.model.odata.v4.Context} oParentContext - The new parent's context
+	 * @returns {sap.ui.base.SyncPromise}
+	 *   A promise which is resolved without a defined result when the move is finished, or
+	 *   rejected in case of an error
+	 *
+	 * @private
+	 */
+	ODataListBinding.prototype.move = function (oChildContext, oParentContext) {
+		const sChildPath = oChildContext.getCanonicalPath().slice(1);
+		const sParentPath = oParentContext.getCanonicalPath().slice(1); // before #lockGroup!
+		const oGroupLock = this.lockGroup(this.getUpdateGroupId(), true, true);
+		return this.oCache.move(oGroupLock, sChildPath, sParentPath).then(() => {
+			const iChildIndex = this.aContexts.indexOf(oChildContext);
+			const iParentIndex = this.aContexts.indexOf(oParentContext); // Note: !== iChildIndex
+			if (iChildIndex < iParentIndex) {
+				for (let i = iChildIndex + 1; i <= iParentIndex; i += 1) {
+					if (this.aContexts[i]) {
+						this.aContexts[i].iIndex -= 1;
+					}
+				}
+				this.aContexts.splice(iChildIndex, 1); // parent moves to lower index!
+				this.aContexts.splice(iParentIndex, 0, oChildContext);
+				oChildContext.iIndex = iParentIndex;
+			} else if (iChildIndex > iParentIndex + 1) {
+				for (let i = iParentIndex + 1; i < iChildIndex; i += 1) {
+					if (this.aContexts[i]) {
+						this.aContexts[i].iIndex += 1;
+					}
+				}
+				this.aContexts.splice(iChildIndex, 1); // parent unaffected!
+				this.aContexts.splice(iParentIndex + 1, 0, oChildContext);
+				oChildContext.iIndex = iParentIndex + 1;
+			} // else: iChildIndex === iParentIndex + 1 => nothing to do
+			this._fireChange({reason : ChangeReason.Change});
+		});
 	};
 
 	/**
