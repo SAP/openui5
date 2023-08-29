@@ -693,16 +693,18 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the value at the given path and removes it from the cache.
+	 * Returns the collection at the given path and removes it from the cache if it is marked as
+	 * transferable.
 	 *
-	 * @param {string} sPath - The relative path of the property
-	 * @returns {any} The value
+	 * @param {string} sPath - The relative path of the collection
+	 * @returns {object[]|undefined} The collection or <code>undefined</code>
+	 * @throws {Error} If the given path does not point to a collection.
 	 *
 	 * @private
 	 */
-	Context.prototype.getAndRemoveValue = function (sPath) {
+	Context.prototype.getAndRemoveCollection = function (sPath) {
 		return this.withCache(function (oCache, sCachePath) {
-			return oCache.getAndRemoveValue(sCachePath);
+			return oCache.getAndRemoveCollection(sCachePath);
 		}, sPath, true).getResult();
 	};
 

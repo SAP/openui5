@@ -1308,7 +1308,7 @@ sap.ui.define([
 				setPersistedCollection : function () {}
 			},
 			oContext = {
-				getAndRemoveValue : function () {},
+				getAndRemoveCollection : function () {},
 				getPath : function () { return "/TEAMS"; }
 			},
 			oData = {},
@@ -1328,7 +1328,8 @@ sap.ui.define([
 		this.mock(oCache).expects("hasSentRequest").withExactArgs().returns(oFixture.hasSent);
 		this.mock(ODataListBinding).expects("isBelowCreated").exactly(oFixture.hasSent ? 0 : 1)
 			.withExactArgs(sinon.match.same(oContext)).returns(oFixture.isBelowCreated);
-		this.mock(oContext).expects("getAndRemoveValue").exactly("elements" in oFixture ? 1 : 0)
+		this.mock(oContext).expects("getAndRemoveCollection")
+			.exactly("elements" in oFixture ? 1 : 0)
 			.withExactArgs("TEAM_2_EMPLOYEES")
 			.returns(oFixture.elements);
 		oSetCollectionMock = this.mock(oCache).expects("setPersistedCollection")

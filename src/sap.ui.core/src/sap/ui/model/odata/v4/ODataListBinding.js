@@ -1614,7 +1614,7 @@ sap.ui.define([
 
 			if (oCache) {
 				if (!oCache.hasSentRequest() && ODataListBinding.isBelowCreated(oContext)) {
-					aElements = oContext.getAndRemoveValue(that.sPath);
+					aElements = oContext.getAndRemoveCollection(that.sPath);
 					if (aElements) { // there is a collection from a finished deep create
 						// copy the created elements into the newly created cache
 						oCache.setPersistedCollection(aElements);

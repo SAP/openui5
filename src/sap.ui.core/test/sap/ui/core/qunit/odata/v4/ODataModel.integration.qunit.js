@@ -52103,6 +52103,69 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
+	// Scenario: A list of teams with an expanded list of employees. Create a team and show it in
+	// the object page. This object page has another employee table w/ own requests. Immediately
+	// (before it starts reading) create an employee in this list.
+	// BCP: 2380101762
+	QUnit.test("BCP: 2380101762", async function (assert) {
+		const oModel = this.createTeaBusiModel({autoExpandSelect : true});
+		const sView = `
+<Table id="teams" items="{/TEAMS}">
+	<Text id="teamId" text="{Team_Id}"/>
+	<List items="{path : 'TEAM_2_EMPLOYEES', templateShareable : true}">
+		<CustomListItem>
+			<Text text="{ID}"/>
+		</CustomListItem>
+	</List>
+</Table>
+<FlexBox id="objectPage">
+	<Table id="employees" items="{path : 'TEAM_2_EMPLOYEES', parameters : {$$ownRequest : true}}">
+		<Text id="employeeId" text="{ID}"/>
+	</Table>
+</FlexBox>
+`;
+		this.expectRequest("TEAMS?$select=Team_Id&$expand=TEAM_2_EMPLOYEES($select=ID)"
+				+ "&$skip=0&$top=100",
+				{value : []})
+			.expectChange("teamId", [])
+			.expectChange("employeeId", []);
+
+		await this.createView(assert, sView, oModel);
+
+		this.expectChange("teamId", ["new"])
+			.expectRequest({
+				method : "POST",
+				url : "TEAMS",
+				payload : {Team_Id : "new", TEAM_2_EMPLOYEES : []}
+			}, {Team_Id : "new", TEAM_2_EMPLOYEES : []});
+
+		const oTeamContext = this.oView.byId("teams").getBinding("items").create(
+			{Team_Id : "new", TEAM_2_EMPLOYEES : []});
+
+		await Promise.all([
+			oTeamContext,
+			this.waitForChanges(assert, "create team")
+		]);
+
+		this.expectChange("employeeId", ["E1"])
+			.expectRequest({
+				method : "POST",
+				url : "TEAMS('new')/TEAM_2_EMPLOYEES",
+				payload : {ID : "E1"}
+			}, {ID : "E1", Team_Id : "new"})
+			// the binding does not get the data from the deep create using another binding
+			.expectRequest("TEAMS('new')/TEAM_2_EMPLOYEES?$select=ID&$skip=0&$top=100",
+				{value : []});
+
+		this.oView.byId("objectPage").setBindingContext(oTeamContext);
+
+		await Promise.all([
+			this.oView.byId("employees").getBinding("items").create({ID : "E1"}, true),
+			this.waitForChanges(assert, "create employee")
+		]);
+	});
+
+	//*********************************************************************************************
 	// Scenario:
 	// (1) Binding for a part of a structural instance annotation works without binding the
 	//     property itself

@@ -1144,21 +1144,31 @@ sap.ui.define([
 	 */
 
 	/**
-	 * Returns the value at the given path and removes it from the cache.
+	 * Returns the collection at the given path and removes it from the cache if it is marked as
+	 * transferable.
 	 *
 	 * @param {string} sPath - The relative path of the property
-	 * @returns {any} The value
-	 * @throws {Error} If the cache is shared
+	 * @returns {object[]|undefined} The collection or <code>undefined</code>
+	 * @throws {Error} If the cache is shared or if the given path does not point to a collection.
 	 *
 	 * @public
 	 */
-	_Cache.prototype.getAndRemoveValue = function (sPath) {
+	_Cache.prototype.getAndRemoveCollection = function (sPath) {
 		var aSegments = sPath.split("/"),
 			sName = aSegments.pop(),
 			oParent = this.fetchValue(_GroupLock.$cached, aSegments.join("/")).getResult(),
 			vValue = oParent[sName];
 
 		this.checkSharedRequest();
+		if (vValue) {
+			if (!Array.isArray(vValue)) {
+				throw new Error(`${sPath} must point to a collection`);
+			}
+			if (!vValue.$transfer) {
+				return undefined;
+			}
+			delete vValue.$transfer;
+		}
 		delete oParent[sName];
 
 		return vValue;
