@@ -107,12 +107,23 @@ sap.ui.define([
 			this._bIgnoreNextConditionChange = false;
 		}
 	};
-	MDCTable.prototype._handleUpdateFinished = function (oEvent) {
-		this._resolvePromise("listBinding", this._oTable.getRowBinding());
 
-		if (!this._bQueryingContexts) {
-			// In every case update table selection state for eventual newly loaded contexts
-			this._setTableSelectionState();
+	MDCTable.prototype._handleUpdateFinished = function (oEvent) {
+		if (this._oTable) {
+			this._handleRowBinding();
+			if (!this._bQueryingContexts) {
+				// In every case update table selection state for eventual newly loaded contexts
+				this._setTableSelectionState();
+			}
+		}
+	};
+
+	MDCTable.prototype._handleUpdateFinishedThrottled = _throttle(MDCTable.prototype._handleUpdateFinished, 100, {leading: false});
+
+	MDCTable.prototype._handleRowBinding = function () {
+		var oRowBinding = this._oTable.getRowBinding();
+		if (oRowBinding) {
+			this._resolvePromise("listBinding", oRowBinding);
 		}
 	};
 
@@ -120,18 +131,20 @@ sap.ui.define([
 		if (oChanges.name === "table") { // outer table
 			var oTable = oChanges.child;
 			if (oChanges.mutation === "remove") {
+				this._oTable.detachEvent('_bindingChange', this._handleUpdateFinishedThrottled, this);
 				this._oTable.detachEvent('selectionChange', this._handleSelectionChange, this);
 				this._oTable = null;
 			} else {
 				this._oTable = oTable;
 				this._addPromise("listBinding");
+				this._handleRowBinding();
 				if (this._oTable.getAutoBindOnInit()) {
 					Log.warning("Usage of autobound tables may lead to unnecessary requests.");
 				} else if (this.getForceBind()) {
 					this._bRebindTable = true;
 				}
 
-				oTable.addDelegate({ onmouseover: function (oEvent) {	// Fix m.Table itemPress
+				oTable.addDelegate({ onmouseover: function (oEvent) {   // Fix m.Table itemPress
 					var oItem = Element.closestTo(oEvent.target);
 					if (oItem && oItem.isA("sap.m.ColumnListItem")) {
 						oItem.setType("Active");
@@ -139,7 +152,7 @@ sap.ui.define([
 				}});
 
 				this._oTable.initialized().then(function () {
-					this._oTable.attachEvent('_bindingChange', _throttle(this._handleUpdateFinished, 100, {leading: false}), this);
+					this._oTable.attachEvent('_bindingChange', this._handleUpdateFinishedThrottled, this);
 					this._oTable.attachEvent('selectionChange', this._handleSelectionChange, this);
 				}.bind(this));
 			}
@@ -401,3 +414,4 @@ sap.ui.define([
 
 	return MDCTable;
 });
+
