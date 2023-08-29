@@ -366,7 +366,8 @@ function(
 	};
 
 	FeedListItem.prototype.onAfterRendering = function() {
-		var oFormattedText = this.getAggregation("_text");
+		var oFormattedText = this.getAggregation("_text"),
+			oDomRef = this.getDomRef();
 		if (document.getElementById(this.getAggregation("_actionButton"))) {
 			document.getElementById(this.getAggregation("_actionButton").getId()).setAttribute("aria-haspopup", "menu");
 		}
@@ -383,7 +384,7 @@ function(
 			}
 		});
 
-		oFormattedText && oFormattedText._sanitizeCSSPosition(this.getDomRef()); // perform CSS position sanitize
+		oDomRef && oFormattedText && oFormattedText._sanitizeCSSPosition(oDomRef.querySelector(".sapMFeedListItemText")); // perform CSS position sanitize
 	};
 
 	FeedListItem.prototype.exit = function() {
