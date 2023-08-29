@@ -20,19 +20,17 @@ sap.ui.define([
 	"sap/m/library",
 	"sap/m/table/Util",
 	"sap/m/table/columnmenu/Menu",
-	'sap/m/MessageBox',
+	"sap/m/MessageBox",
+	"sap/m/plugins/PluginBase",
 	"sap/ui/core/Core",
 	"sap/ui/core/format/NumberFormat",
-	"sap/ui/core/Item",
 	"sap/ui/core/format/ListFormat",
 	"sap/ui/core/library",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/model/Sorter",
 	"sap/ui/model/base/ManagedObjectModel",
 	"sap/base/strings/capitalize",
 	"sap/base/util/deepEqual",
 	"sap/base/util/Deferred",
-	"sap/ui/core/InvisibleMessage",
 	"sap/ui/core/InvisibleText",
 	"sap/ui/mdc/p13n/subcontroller/ColumnController",
 	"sap/ui/mdc/p13n/subcontroller/SortController",
@@ -73,18 +71,16 @@ sap.ui.define([
 	MTableUtil,
 	ColumnMenu,
 	MessageBox,
+	PluginBase,
 	Core,
 	NumberFormat,
-	Item,
 	ListFormat,
 	coreLibrary,
 	KeyCodes,
-	Sorter,
 	ManagedObjectModel,
 	capitalize,
 	deepEqual,
 	Deferred,
-	InvisibleMessage,
 	InvisibleText,
 	ColumnController,
 	SortController,
@@ -3007,13 +3003,11 @@ sap.ui.define([
 		this._bV4LegacySelectionEnabled = true;
 
 		if (this._oTable && this._isOfType("Table", true)) {
-			const oV4SelectionPlugin = this._oTable.getPlugins().find(function(oPlugin) {
-				return oPlugin.isA("sap.ui.table.plugins.ODataV4Selection");
-			});
+			const oV4SelectionPlugin = PluginBase.getPlugin(this._oTable, "sap.ui.table.plugins.ODataV4Selection");
 
 			if (oV4SelectionPlugin) {
 				oV4SelectionPlugin.destroy();
-				this.getControlDelegate().initializeSelection(this);
+				return this.getControlDelegate().initializeSelection(this);
 			}
 		}
 	};

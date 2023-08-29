@@ -407,9 +407,8 @@ sap.ui.define([
 
 	QUnit.test("GridTable; Grouping and aggregation disabled", function(assert) {
 		return this.initTable().then(function(oTable) {
-			assert.notOk(oTable._oTable.getDependents().find(function(oDependent) {
-				return oDependent.isA("sap.ui.table.plugins.V4Aggregation");
-			}), "V4Aggregation plugin is not added to the inner table");
+			assert.notOk(PluginBase.getPlugin(oTable._oTable, "sap.ui.table.plugins.V4Aggregation"),
+				"V4Aggregation plugin is not added to the inner table");
 			this.assertFetchPropertyCalls(assert, 1);
 		}.bind(this));
 	});
@@ -426,8 +425,8 @@ sap.ui.define([
 				SalesAmount: {}
 			}
 		}).then(function(oTable) {
-			const oPlugin = oTable._oTable.getDependents()[0];
-			assert.ok(oPlugin.isA("sap.ui.table.plugins.V4Aggregation"), "V4Aggregation plugin is added to the inner table");
+			const oPlugin = PluginBase.getPlugin(oTable._oTable, "sap.ui.table.plugins.V4Aggregation");
+			assert.ok(oPlugin, "V4Aggregation plugin is added to the inner table");
 			assert.ok(oPlugin.isActive(), "V4Aggregation plugin is active");
 
 			const oGroupHeaderFormatter = sinon.stub(oTable.getControlDelegate(), "formatGroupHeader");
@@ -443,9 +442,8 @@ sap.ui.define([
 		return this.initTable({
 			type: TableType.ResponsiveTable
 		}).then(function(oTable) {
-			assert.notOk(oTable._oTable.getDependents().find(function(oDependent) {
-				return oDependent.isA("sap.ui.table.plugins.V4Aggregation");
-			}), "V4Aggregation plugin is not added to the inner table");
+			assert.notOk(PluginBase.getPlugin(oTable._oTable, "sap.ui.table.plugins.V4Aggregation"),
+				"V4Aggregation plugin is not added to the inner table");
 			this.assertFetchPropertyCalls(assert, 1);
 		}.bind(this));
 	});
@@ -455,9 +453,8 @@ sap.ui.define([
 			type: TableType.ResponsiveTable,
 			p13nMode: ["Group", "Aggregate"]
 		}).then(function(oTable) {
-			assert.notOk(oTable._oTable.getDependents().find(function(oDependent) {
-				return oDependent.isA("sap.ui.table.plugins.V4Aggregation");
-			}), "V4Aggregation plugin is not added to the inner table");
+			assert.notOk(PluginBase.getPlugin(oTable._oTable, "sap.ui.table.plugins.V4Aggregation"),
+				"V4Aggregation plugin is not added to the inner table");
 			this.assertFetchPropertyCalls(assert, 1);
 		}.bind(this));
 	});
@@ -508,23 +505,22 @@ sap.ui.define([
 
 	QUnit.test("Type", function(assert) {
 		const that = this;
-		const oOldPlugin = that.oTable._oTable.getDependents()[0];
+		const oOldPlugin = PluginBase.getPlugin(that.oTable._oTable, "sap.ui.table.plugins.V4Aggregation");
 
 		this.resetFetchPropertyCalls();
 		this.oTable.setType(TableType.ResponsiveTable);
 
 		return this.oTable._fullyInitialized().then(function() {
-			assert.notOk(that.oTable._oTable.getDependents().find(function(oDependent) {
-				return oDependent.isA("sap.ui.table.plugins.V4Aggregation");
-			}), "V4Aggregation plugin is not added to the inner table");
+			assert.notOk(PluginBase.getPlugin(that.oTable._oTable, "sap.ui.table.plugins.V4Aggregation"),
+				"V4Aggregation plugin is not added to the inner table");
 			that.assertFetchPropertyCalls(assert, 0);
 
 			that.resetFetchPropertyCalls();
 			that.oTable.setType(TableType.Table);
 			return that.oTable._fullyInitialized();
 		}).then(function() {
-			const oPlugin = that.oTable._oTable.getDependents()[0];
-			assert.ok(oPlugin.isA("sap.ui.table.plugins.V4Aggregation"), "V4Aggregation plugin is added to the inner table");
+			const oPlugin = PluginBase.getPlugin(that.oTable._oTable, "sap.ui.table.plugins.V4Aggregation");
+			assert.ok(oPlugin, "V4Aggregation plugin is added to the inner table");
 			assert.ok(oPlugin.isActive(), "V4Aggregation plugin is active");
 			assert.notEqual(oPlugin, oOldPlugin, "V4Aggregation plugin is not the same instance");
 			assert.ok(oOldPlugin.bIsDestroyed, "Old V4Aggregation plugin is destroyed");
@@ -539,20 +535,22 @@ sap.ui.define([
 	});
 
 	QUnit.test("GridTable; p13nMode", function(assert) {
-		const oPlugin = this.oTable._oTable.getDependents()[0];
+		const oPlugin = PluginBase.getPlugin(this.oTable._oTable, "sap.ui.table.plugins.V4Aggregation");
 
 		this.resetFetchPropertyCalls();
 		this.oTable.setP13nMode();
 
-		assert.ok(oPlugin.isA("sap.ui.table.plugins.V4Aggregation"), "V4Aggregation plugin is added to the inner table");
+		assert.ok(oPlugin, "V4Aggregation plugin is added to the inner table");
 		assert.notOk(oPlugin.isActive(), "V4Aggregation plugin is not active");
-		assert.equal(oPlugin, this.oTable._oTable.getDependents()[0], "V4Aggregation plugin is the same instance");
+		assert.equal(oPlugin, PluginBase.getPlugin(this.oTable._oTable, "sap.ui.table.plugins.V4Aggregation"),
+			"V4Aggregation plugin is the same instance");
 		this.assertFetchPropertyCalls(assert, 0);
 
 		this.oTable.setP13nMode(["Group"]);
-		assert.ok(oPlugin.isA("sap.ui.table.plugins.V4Aggregation"), "V4Aggregation plugin is added to the inner table");
+		assert.ok(oPlugin, "V4Aggregation plugin is added to the inner table");
 		assert.ok(oPlugin.isActive(), "V4Aggregation plugin is active");
-		assert.equal(oPlugin, this.oTable._oTable.getDependents()[0], "V4Aggregation plugin is the same instance");
+		assert.equal(oPlugin, PluginBase.getPlugin(this.oTable._oTable, "sap.ui.table.plugins.V4Aggregation"),
+			"V4Aggregation plugin is the same instance");
 		this.assertFetchPropertyCalls(assert, 0);
 	});
 
@@ -565,9 +563,8 @@ sap.ui.define([
 			that.resetFetchPropertyCalls();
 			that.oTable.setP13nMode(["Group"]);
 
-			assert.notOk(that.oTable._oTable.getDependents().find(function(oDependent) {
-				return oDependent.isA("sap.ui.table.plugins.V4Aggregation");
-			}), "V4Aggregation plugin is not yet added to the inner table");
+			assert.notOk(PluginBase.getPlugin(that.oTable._oTable, "sap.ui.table.plugins.V4Aggregation"),
+				"V4Aggregation plugin is not yet added to the inner table");
 
 			return new Promise(function(resolve) {
 				new ManagedObjectObserver(function() {
@@ -577,8 +574,8 @@ sap.ui.define([
 				});
 			});
 		}).then(function() {
-			const oPlugin = that.oTable._oTable.getDependents()[0];
-			assert.ok(oPlugin.isA("sap.ui.table.plugins.V4Aggregation"), "V4Aggregation plugin is added to the inner table");
+			const oPlugin = PluginBase.getPlugin(that.oTable._oTable, "sap.ui.table.plugins.V4Aggregation");
+			assert.ok(oPlugin, "V4Aggregation plugin is added to the inner table");
 			assert.ok(oPlugin.isActive(), "V4Aggregation plugin is active");
 
 			const oGroupHeaderFormatter = sinon.stub(that.oTable.getControlDelegate(), "formatGroupHeader");
@@ -668,7 +665,7 @@ sap.ui.define([
 		}));
 
 		return oTable._fullyInitialized().then(function() {
-			oPlugin = oTable._oTable.getDependents()[0];
+			oPlugin = PluginBase.getPlugin(oTable._oTable, "sap.ui.table.plugins.V4Aggregation");
 			fSetAggregationSpy = sinon.spy(oPlugin, "setAggregationInfo");
 
 			oTable.setAggregateConditions({
@@ -757,7 +754,7 @@ sap.ui.define([
 			return TableQUnitUtils.openColumnMenu(oTable, 0);
 		}).then(function() {
 			 oTable._fullyInitialized().then(function() {
-				const oPlugin = oTable._oTable.getDependents()[0];
+				const oPlugin = PluginBase.getPlugin(oTable._oTable, "sap.ui.table.plugins.V4Aggregation");
 				const fSetAggregationSpy = sinon.spy(oPlugin, "setAggregationInfo");
 				const oDelegate = oTable.getControlDelegate();
 				const fnRebind = oDelegate.rebind;
@@ -797,7 +794,7 @@ sap.ui.define([
 		}).then(function() {
 			oTable._fullyInitialized().then(function() {
 				const oDelegate = oTable.getControlDelegate();
-				const oPlugin = oTable._oTable.getDependents()[0];
+				const oPlugin = PluginBase.getPlugin(oTable._oTable, "sap.ui.table.plugins.V4Aggregation");
 				const fSetAggregationSpy = sinon.spy(oPlugin, "setAggregationInfo");
 				const fnRebind = oDelegate.rebind;
 
@@ -835,7 +832,7 @@ sap.ui.define([
 			return TableQUnitUtils.openColumnMenu(oTable, 0);
 		}).then(function() {
 			const oDelegate = oTable.getControlDelegate();
-			const oPlugin = oTable._oTable.getDependents()[0];
+			const oPlugin = PluginBase.getPlugin(oTable._oTable, "sap.ui.table.plugins.V4Aggregation");
 			const fSetAggregationSpy = sinon.spy(oPlugin, "setAggregationInfo");
 			const fnRebind = oDelegate.rebind;
 
@@ -859,7 +856,7 @@ sap.ui.define([
 
 				TableQUnitUtils.openColumnMenu(oTable, 1).then(function() {
 					const oDelegate = oTable.getControlDelegate();
-					const oPlugin = oTable._oTable.getDependents()[0];
+					const oPlugin = PluginBase.getPlugin(oTable._oTable, "sap.ui.table.plugins.V4Aggregation");
 					const fSetAggregationSpy = sinon.spy(oPlugin, "setAggregationInfo");
 					const fnRebind = oDelegate.rebind;
 
@@ -902,7 +899,7 @@ sap.ui.define([
 			return TableQUnitUtils.openColumnMenu(oTable, 0);
 		}).then(function() {
 			oDelegate = oTable.getControlDelegate();
-			oPlugin = oTable._oTable.getDependents()[0];
+			oPlugin = PluginBase.getPlugin(oTable._oTable, "sap.ui.table.plugins.V4Aggregation");
 			fSetAggregationSpy = sinon.spy(oPlugin, "setAggregationInfo");
 			fnRebind = oDelegate.rebind;
 
@@ -1306,7 +1303,7 @@ sap.ui.define([
 		const oTable = this.oTable;
 
 		return oTable._fullyInitialized().then(function() {
-			const oPlugin = oTable._oTable.getDependents()[0];
+			const oPlugin = PluginBase.getPlugin(oTable._oTable, "sap.ui.table.plugins.V4Aggregation");
 			const oSetAggregation = sinon.spy(oPlugin, "setAggregationInfo");
 
 			oTable.setAggregateConditions({
@@ -1340,7 +1337,7 @@ sap.ui.define([
 		const oTable = this.oTable;
 
 		return oTable._fullyInitialized().then(function() {
-			const oPlugin = oTable._oTable.getDependents()[0];
+			const oPlugin = PluginBase.getPlugin(oTable._oTable, "sap.ui.table.plugins.V4Aggregation");
 			const oSetAggregation = sinon.spy(oPlugin, "setAggregationInfo");
 
 			oTable.setGroupConditions({
@@ -1376,7 +1373,7 @@ sap.ui.define([
 		const oTable = this.oTable;
 
 		return oTable._fullyInitialized().then(function() {
-			const oPlugin = oTable._oTable.getDependents()[0];
+			const oPlugin = PluginBase.getPlugin(oTable._oTable, "sap.ui.table.plugins.V4Aggregation");
 			const oSetAggregation = sinon.spy(oPlugin, "setAggregationInfo");
 
 			oTable.setGroupConditions({
@@ -1424,7 +1421,7 @@ sap.ui.define([
 			};
 			return TableQUnitUtils.waitForBindingInfo(oTable);
 		}).then(function() {
-			const oPlugin = oTable._oTable.getDependents()[0];
+			const oPlugin = PluginBase.getPlugin(oTable._oTable, "sap.ui.table.plugins.V4Aggregation");
 			const oBindRowsSpy = sinon.spy(oTable._oTable, "bindRows");
 			const oSetAggregation = sinon.spy(oPlugin, "setAggregationInfo");
 			oTable.setGroupConditions({ groupLevels: [{ name: "CountryKey" }] }).rebind();
@@ -1497,7 +1494,8 @@ sap.ui.define([
                 this.oTable._rebind();
 				this.oInnerTable = this.oTable._oTable;
 				this.oRowBinding = this.oTable.getRowBinding();
-				this.oSetAggregationSpy = sinon.spy(this.oInnerTable.getDependents()[0], "setAggregationInfo");
+				this.oSetAggregationSpy = sinon.spy(PluginBase.getPlugin(this.oInnerTable, "sap.ui.table.plugins.V4Aggregation"),
+					"setAggregationInfo");
 				this.oRebindSpy = sinon.spy(this.oTable.getControlDelegate(), "rebind");
 				this.oChangeParametersSpy = sinon.spy(this.oRowBinding, "changeParameters");
 				this.oFilterSpy = sinon.spy(this.oRowBinding, "filter");
@@ -1905,24 +1903,24 @@ sap.ui.define([
 				this.oTable.attachEventOnce("_bindingChange", resolve);
 			});
 		}).then(() => {
-			assert.ok(this.oTable._oTable.getPlugins().find((oPlugin) => oPlugin.isA("sap.ui.table.plugins.ODataV4Selection")),
-				"sap.ui.table.plugins.ODataV4Selection configuration found.");
+			assert.ok(PluginBase.getPlugin(this.oTable._oTable, "sap.ui.table.plugins.ODataV4Selection"),
+				"sap.ui.table.plugins.ODataV4Selection found.");
 			return testSelection(this.oTable);
 		}).then(() => {
-			this.oTable._enableV4LegacySelection();
-			return new Promise((resolve) => { setTimeout(resolve, 50); }).then(() => {
-				assert.ok(this.oTable._oTable.getPlugins().find((oPlugin) => oPlugin.isA("sap.ui.table.plugins.MultiSelectionPlugin")),
-				"sap.ui.table.plugins.MultiSelectionPlugin configuration found.");
+			this.oTable._enableV4LegacySelection().then(() => {
+				assert.ok(PluginBase.getPlugin(this.oTable._oTable, "sap.ui.table.plugins.MultiSelectionPlugin"),
+					"sap.ui.table.plugins.MultiSelectionPlugin found.");
 				return testSelection(this.oTable);
 			});
 		}).then(() => {
-			sinon.stub(this.oTable._oTable, "getPlugins").returns([]);
+			const oSelectionPlugin = PluginBase.getPlugin(this.oTable._oTable, "sap.ui.table.plugins.SelectionPlugin");
+			this.oTable._oTable.removeDependent(oSelectionPlugin);
 			assert.throws(
 				() => this.oTable._setSelectedContexts([]),
 				new Error("Unsupported operation: TableDelegate does not support #setSelectedContexts for the given Table configuration"),
 				"_setSelectedContexts throws expected error on unsupported table configuration."
 			);
-			this.oTable._oTable.getPlugins.restore();
+			this.oTable._oTable.addDependent(oSelectionPlugin);
 		}).then(() => {
 			sinon.stub(this.oTable, "_isOfType").returns(false);
 			assert.throws(

@@ -3,19 +3,20 @@
  */
 sap.ui.define([
 	"sap/ui/mdc/TableDelegate",
-	'sap/ui/mdc/enums/TableType'
+	"sap/ui/mdc/enums/TableType",
+	"sap/m/plugins/PluginBase"
 ], function(
 	TableDelegate,
-	TableType
+	TableType,
+	PluginBase
 ) {
 	"use strict";
 	var TestTableDelegate = Object.assign({}, TableDelegate);
 	TestTableDelegate.apiVersion = 2;//CLEANUP_DELEGATE
 
 	function setSelectedGridTableConditions (oTable, aContexts) {
-		var oMultiSelectionPlugin = oTable._oTable.getPlugins().find(function(oPlugin) {
-			return oPlugin.isA("sap.ui.table.plugins.MultiSelectionPlugin");
-		});
+		var oMultiSelectionPlugin = PluginBase.getPlugin(oTable._oTable, "sap.ui.table.plugins.MultiSelectionPlugin");
+
 		if (oMultiSelectionPlugin) {
 			oMultiSelectionPlugin.clearSelection();
 			var oRowBinding = oTable.getRowBinding();
@@ -25,6 +26,7 @@ sap.ui.define([
 				return oMultiSelectionPlugin.addSelectionInterval(iContextIndex, iContextIndex);
 			});
 		}
+
 		throw Error("Unsupported operation: TableDelegate does not support #setSelectedContexts for the given GridTable configuration.");
 	}
 

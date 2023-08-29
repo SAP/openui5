@@ -56,6 +56,18 @@ sap.ui.define([
 		}
 	}
 
+	SelectionPlugin.prototype.setParent = function(oParent) {
+		var oTable = this.getTable();
+
+		PluginBase.prototype.setParent.apply(this, arguments);
+		(oParent || oTable)._initSelectionPlugin();
+	};
+
+	SelectionPlugin.prototype.exit = function() {
+		PluginBase.prototype.exit.apply(this, arguments);
+		this.getTable()?._initSelectionPlugin();
+	};
+
 	SelectionPlugin.prototype.setEnabled = function(bEnabled) {
 		this.setProperty("enabled", bEnabled, true);
 

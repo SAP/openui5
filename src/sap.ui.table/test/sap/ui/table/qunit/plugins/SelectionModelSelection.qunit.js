@@ -140,8 +140,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("Change total number of rows if activated after binding initialization", function(assert) {
-		this.oTable.insertPlugin(new (SelectionPlugin.extend("sap.ui.table.test.SelectionPlugin"))(), 0);
-		this.oTable.getPlugins()[0].destroy();
+		this.oTable.insertDependent(new (SelectionPlugin.extend("sap.ui.table.test.SelectionPlugin"))(), 0);
+		this.oTable.getDependents()[0].destroy();
 		this.oTable.setSelectionInterval(2, 6);
 		this.oSelectionChangeSpy.resetHistory();
 		this.oTable.getBinding().getModel().getData().push({});

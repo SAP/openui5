@@ -86,7 +86,7 @@ sap.ui.define([
 	}]);
 
 	TableQUnitUtils.setDefaultSettings({
-		plugins: [new MultiSelectionPlugin()],
+		dependents: [new MultiSelectionPlugin()],
 		rows: {path: "/ProductSet"},
 		columns: TableQUnitUtils.createTextColumn({text: "Name", bind: true})
 	});
@@ -109,7 +109,7 @@ sap.ui.define([
 			this.oTable = TableQUnitUtils.createTable({
 				models: new ODataModel("/MyService/")
 			});
-			this.oMultiSelectionPlugin = this.oTable.getPlugins()[0];
+			this.oMultiSelectionPlugin = this.oTable.getDependents()[0];
 			return this.oTable.qunit.whenBindingChange().then(this.oTable.qunit.whenRenderingFinished);
 		},
 		afterEach: function() {
@@ -137,7 +137,7 @@ sap.ui.define([
 			this.oTable = TableQUnitUtils.createTable({
 				models: new ODataModel("/MyServiceWithPaging/")
 			});
-			this.oMultiSelectionPlugin = this.oTable.getPlugins()[0];
+			this.oMultiSelectionPlugin = this.oTable.getDependents()[0];
 			return this.oTable.qunit.whenBindingChange().then(this.oTable.qunit.whenRenderingFinished);
 		},
 		afterEach: function() {
@@ -168,7 +168,7 @@ sap.ui.define([
 					defaultCountMode: "None"
 				})
 			});
-			this.oMultiSelectionPlugin = this.oTable.getPlugins()[0];
+			this.oMultiSelectionPlugin = this.oTable.getDependents()[0];
 			return this.oTable.qunit.whenBindingChange().then(this.oTable.qunit.whenRenderingFinished);
 		},
 		afterEach: function() {
@@ -203,7 +203,7 @@ sap.ui.define([
 					defaultCountMode: "None"
 				})
 			});
-			this.oMultiSelectionPlugin = this.oTable.getPlugins()[0];
+			this.oMultiSelectionPlugin = this.oTable.getDependents()[0];
 			return this.oTable.qunit.whenBindingChange().then(this.oTable.qunit.whenRenderingFinished);
 		},
 		afterEach: function() {
