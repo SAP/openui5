@@ -45,9 +45,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'jquery.sap.act', 'jqu
 
 			this.iIdCounter = 0;
 
-			this.fDestroyHandler = jQuery.proxy(this.destroy, this);
-
-			jQuery(window).bind("unload", this.fDestroyHandler);
+			/**
+			 * The block below is not needed because it only did a cleanup
+			 * before the page was closed. This should not be necessary.
+			 * Nevertheless we leave the coding here and only deprecate it,
+			 * in order to keep the BFCache behavior stable.
+			 * Removing the 'unload' handler could potentially activate
+			 * the BFCache and cause a different behavior in browser versions
+			 * where the 'unload' handler is still supported.
+			 * Therefore we only removed the not needed cleanup coding
+			 * but still attach a noop to ensure this handler would still
+			 * invalidate the BFCache.
+			 * @deprecated As of 1.38
+			 */
+			window.addEventListener("unload", function() {});
 
 			jQuery.sap.act.attachActivate(initListener, this);
 		}
@@ -67,21 +78,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'jquery.sap.act', 'jqu
 			sap.ui.getCore().attachIntervalTimer(this.checkSizes, this);
 		}
 	}
-
-	/**
-	 * Destroy method of the Resize Handler.
-	 * It unregisters the event handlers.
-	 *
-	 * @param {jQuery.Event} oEvent the event that initiated the destruction of the ResizeHandler
-	 * @private
-	 */
-	ResizeHandler.prototype.destroy = function(oEvent) {
-		jQuery.sap.act.detachActivate(initListener, this);
-		jQuery(window).unbind("unload", this.fDestroyHandler);
-		oCoreRef = null;
-		this.aResizeListeners = [];
-		clearListener.apply(this);
-	};
 
 	/**
 	 * Attaches listener to resize event.
