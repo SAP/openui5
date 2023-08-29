@@ -1784,6 +1784,9 @@ sap.ui.define([
 	});
 
 
+	/**
+	 * @deprecated As of 1.108
+	 */
 	QUnit.module("Window Event Handler", {
 		beforeEach: function() {
 
@@ -1796,6 +1799,9 @@ sap.ui.define([
 		}
 	});
 
+	/**
+	 * @deprecated As of 1.108
+	 */
 	QUnit.test("onWindowError", function(assert) {
 		var MyOnWindowErrorComponent = Component.extend("test.onWindowError.Component");
 
@@ -1829,6 +1835,9 @@ sap.ui.define([
 		assert.equal(this.removeEventListenerSpy.getCall(0).thisValue, window, "removeEventListener has been called on the window object");
 	});
 
+	/**
+	 * @deprecated As of 1.108
+	 */
 	QUnit.test("onWindowBeforeUnload", function(assert) {
 		var MyOnWindowBeforeUnloadComponent = Component.extend("test.onWindowBeforeUnload.Component");
 
@@ -1855,6 +1864,9 @@ sap.ui.define([
 		assert.equal(this.removeEventListenerSpy.getCall(0).thisValue, window, "removeEventListener has been called on the window object");
 	});
 
+	/**
+	 * @deprecated As of 1.108
+	 */
 	QUnit.test("onWindowUnload", function(assert) {
 		var MyOnWindowUnloadComponent = Component.extend("test.onWindowUnload.Component");
 
