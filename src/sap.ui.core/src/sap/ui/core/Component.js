@@ -776,36 +776,41 @@ sap.ui.define([
 		// init the component models
 		this.initComponentModels();
 
-		// error handler (if exists)
-		if (this.onWindowError) {
-			this._fnWindowErrorHandler = function(oEvent) {
-				var oError = oEvent.originalEvent;
-				this.onWindowError(oError.message, oError.filename, oError.lineno);
+		/**
+		 * @deprecated As of 1.117
+		 */
+		(() => {
+			// error handler (if exists)
+			if (this.onWindowError) {
+				this._fnWindowErrorHandler = function(oEvent) {
+					var oError = oEvent.originalEvent;
+					this.onWindowError(oError.message, oError.filename, oError.lineno);
 
-			}.bind(this);
-			window.addEventListener("error", this._fnWindowErrorHandler);
-		}
+				}.bind(this);
+				window.addEventListener("error", this._fnWindowErrorHandler);
+			}
 
-		// before unload handler (if exists)
-		if (this.onWindowBeforeUnload) {
-			this._fnWindowBeforeUnloadHandler = function(oEvent) {
-				var vReturnValue = this.onWindowBeforeUnload.apply(this, arguments);
-				// set returnValue for Chrome
-				if (typeof (vReturnValue) === 'string') {
-					oEvent.returnValue = vReturnValue;
-					oEvent.preventDefault();
-					return vReturnValue;
-				}
-			}.bind(this);
-			window.addEventListener("beforeunload", this._fnWindowBeforeUnloadHandler);
-		}
+			// before unload handler (if exists)
+			if (this.onWindowBeforeUnload) {
+				this._fnWindowBeforeUnloadHandler = function(oEvent) {
+					var vReturnValue = this.onWindowBeforeUnload.apply(this, arguments);
+					// set returnValue for Chrome
+					if (typeof (vReturnValue) === 'string') {
+						oEvent.returnValue = vReturnValue;
+						oEvent.preventDefault();
+						return vReturnValue;
+					}
+				}.bind(this);
+				window.addEventListener("beforeunload", this._fnWindowBeforeUnloadHandler);
+			}
 
-		// unload handler (if exists)
-		if (this.onWindowUnload) {
+			// unload handler (if exists)
+			if (this.onWindowUnload) {
 
-			this._fnWindowUnloadHandler = this.onWindowUnload.bind(this);
-			window.addEventListener("unload", this._fnWindowUnloadHandler);
-		}
+				this._fnWindowUnloadHandler = this.onWindowUnload.bind(this);
+				window.addEventListener("unload", this._fnWindowUnloadHandler);
+			}
+		})();
 
 	};
 
@@ -849,19 +854,24 @@ sap.ui.define([
 		}
 		delete this._mManifestModels;
 
-		// remove the event handlers
-		if (this._fnWindowErrorHandler) {
-			window.removeEventListener("error", this._fnWindowErrorHandler);
-			delete this._fnWindowErrorHandler;
-		}
-		if (this._fnWindowBeforeUnloadHandler) {
-			window.removeEventListener("beforeunload", this._fnWindowBeforeUnloadHandler);
-			delete this._fnWindowBeforeUnloadHandler;
-		}
-		if (this._fnWindowUnloadHandler) {
-			window.removeEventListener("unload", this._fnWindowUnloadHandler);
-			delete this._fnWindowUnloadHandler;
-		}
+		/**
+		 * @deprecated As of 1.117
+		 */
+		(() => {
+			// remove the event handlers
+			if (this._fnWindowErrorHandler) {
+				window.removeEventListener("error", this._fnWindowErrorHandler);
+				delete this._fnWindowErrorHandler;
+			}
+			if (this._fnWindowBeforeUnloadHandler) {
+				window.removeEventListener("beforeunload", this._fnWindowBeforeUnloadHandler);
+				delete this._fnWindowBeforeUnloadHandler;
+			}
+			if (this._fnWindowUnloadHandler) {
+				window.removeEventListener("unload", this._fnWindowUnloadHandler);
+				delete this._fnWindowUnloadHandler;
+			}
+		})();
 
 		// destroy event bus
 		if (this._oEventBus) {
@@ -1387,6 +1397,8 @@ sap.ui.define([
 	 * @since 1.15.1
 	 * @name sap.ui.core.Component.prototype.onWindowBeforeUnload
 	 * @function
+	 * @deprecated As of 1.117 (starting with a patch release acc. to the changelog), recommended to use the browser-native page lifecycle API,
+	 * providing events such as 'pageshow' and 'pagehide'
 	 */
 	//onWindowBeforeUnload : function() {},
 
@@ -1400,6 +1412,9 @@ sap.ui.define([
 	 * @since 1.15.1
 	 * @name sap.ui.core.Component.prototype.onWindowUnload
 	 * @function
+	 * @deprecated As of 1.117 (starting with a patch release acc. to the changelog). Newer browser versions deprecate the browser-native 'unload' event.
+	 * Therefore, the former API won't reliably work anymore. Please have a look at the
+	 * browser-native page lifecycle API, e.g. its events 'pageshow' and 'pagehide'.
 	 */
 	//onWindowUnload : function() {},
 
@@ -1415,6 +1430,8 @@ sap.ui.define([
 	 * @since 1.15.1
 	 * @name sap.ui.core.Component.prototype.onWindowError
 	 * @function
+	 * @deprecated As of 1.117 (starting with a patch release acc. to the changelog), recommended to use the browser-native API
+	 * to listen for errors: window.addEventListener("error", function() { ... })
 	 */
 	//onWindowError : null, // function(sMessage, sFile, iLine) - function not added directly as it might result in bad stack traces in older browsers
 
