@@ -605,8 +605,9 @@ sap.ui.define([
 			return JsObjectConnector.write({
 				flexObjects: [oObject]
 			})
-			.then(function() {
+			.then(function(oResponse) {
 				assert.equal(oSetItemStub.getCall(0).args[1], oObject, "the write was called with the object");
+				assert.ok(oResponse.response[0].creation, "then a creation was added to the object");
 				return removeFlexObjectsFromStorage(JsObjectConnector.storage);
 			});
 		});
@@ -620,9 +621,14 @@ sap.ui.define([
 			return SessionStorageWriteConnector.write({
 				flexObjects: [oObject]
 			})
-			.then(function() {
+			.then(function(oResponse) {
 				var sObject = JSON.stringify(oObject);
-				assert.strictEqual(SessionStorageWriteConnector.storage.getItem(sKey), sObject, "the write was called with the object as string");
+				assert.strictEqual(
+					SessionStorageWriteConnector.storage.getItem(sKey),
+					sObject,
+					"the write was called with the object as string"
+				);
+				assert.ok(oResponse.response[0].creation, "then a creation was added to the object");
 				return removeFlexObjectsFromStorage(SessionStorageWriteConnector.storage);
 			});
 		});
