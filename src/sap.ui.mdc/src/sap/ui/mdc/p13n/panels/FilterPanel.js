@@ -148,6 +148,9 @@ sap.ui.define([
 			}.bind(this)
 		});
 
+		oComboBox.setLayoutData(new GridData({
+			span: "XL4 L4 M4 S11"
+		}));
 
 		return oComboBox;
 	};
