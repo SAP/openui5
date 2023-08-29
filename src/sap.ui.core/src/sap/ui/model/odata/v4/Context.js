@@ -1151,7 +1151,7 @@ sap.ui.define([
 	 * @throws (Error)
 	 *   If the parent is missing or (a descendant of) this node.
 	 *
-	 * @experimental As of version 1.118.0
+	 * @experimental As of version 1.119.0
 	 * @public
 	 */
 	Context.prototype.move = function ({parent : oParent}) {
