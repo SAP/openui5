@@ -137,7 +137,6 @@ sap.ui.define([
 			this.oBASEditor = new BASEditor();
 			this.oBASEditor.setBaseUrl(sBaseUrl);
 			this.oBaseJson = getBaseJson("designtime/dt");
-			this.oBASEditor.setJson(this.oBaseJson);
 		},
 		afterEach: function() {
 			this.oBASEditor.destroy();
@@ -146,28 +145,39 @@ sap.ui.define([
 	}, function() {
 		QUnit.test("Correct dt after update DesigntimeMetadata", function (assert) {
 			var fnDone = assert.async();
-			return this.oBASEditor.ready().then(function () {
-				setTimeout(function () {
-					this.oBASEditor.attachEvent("configurationChange", function (oEvent) {
-						var mParameters = oEvent.getParameters();
-						assert.deepEqual(mParameters.configuration.form.items.myParameter1, {
-							"manifestpath": "/sap.card/configuration/parameters/myParameter1/value",
-							"type": "string",
-							"defaultValue": "myParameter1DefaultValue",
-							"label": "new Label"
-						}, "myParameter1 configuration correct");
-						assert.deepEqual(mParameters.configuration.form.items.myParameter2, {
-							"manifestpath": "/sap.card/configuration/parameters/myParameter2/value",
-							"type": "int",
-							"defaultValue": 6
-						}, "myParameter2 configuration correct");
-						fnDone();
-					});
-					var oConfiguration = this.oBASEditor.getConfiguration();
-					oConfiguration.form.items.myParameter1.label = "new Label";
-					this.oBASEditor.updateDesigntimeMetadata(oConfiguration);
-				}.bind(this), 1000);
+			this.oBASEditor.attachEventOnce("configurationChange", function (oEvent) {
+				var mParameters = oEvent.getParameters();
+				assert.deepEqual(mParameters.configuration.form.items.myParameter1, {
+					"manifestpath": "/sap.card/configuration/parameters/myParameter1/value",
+					"type": "string",
+					"defaultValue": "myParameter1DefaultValue"
+				}, "myParameter1 default configuration correct");
+				assert.deepEqual(mParameters.configuration.form.items.myParameter2, {
+					"manifestpath": "/sap.card/configuration/parameters/myParameter2/value",
+					"type": "int",
+					"defaultValue": 6
+				}, "myParameter2 default configuration correct");
+				this.oBASEditor.attachEventOnce("configurationChange", function (oEvent) {
+					var mParameters = oEvent.getParameters();
+					assert.deepEqual(mParameters.configuration.form.items.myParameter1, {
+						"manifestpath": "/sap.card/configuration/parameters/myParameter1/value",
+						"type": "string",
+						"defaultValue": "myParameter1DefaultValue",
+						"label": "new Label"
+					}, "myParameter1 configuration updated correct");
+					assert.deepEqual(mParameters.configuration.form.items.myParameter2, {
+						"manifestpath": "/sap.card/configuration/parameters/myParameter2/value",
+						"type": "int",
+						"defaultValue": 6
+					}, "myParameter2 default configuration correct");
+					fnDone();
+				});
+				var oConfiguration = this.oBASEditor.getConfiguration();
+				oConfiguration.form.items.myParameter1.label = "new Label";
+				this.oBASEditor.updateDesigntimeMetadata(oConfiguration);
 			}.bind(this));
+			this.oBASEditor.setJson(this.oBaseJson);
+			this.oBASEditor.placeAt("qunit-fixture");
 		});
 	});
 
