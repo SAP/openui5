@@ -482,7 +482,7 @@ sap.ui.define([
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
-					wait(500).then(function () {
+					wait().then(function () {
 						assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 						assert.equal(oLabel.getText(), "stringParameterWithValues", "Label: Has static label text");
 						assert.ok(oField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
@@ -654,7 +654,7 @@ sap.ui.define([
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
-					wait(500).then(function () {
+					wait().then(function () {
 						assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 						assert.equal(oLabel.getText(), "stringArrayParameter", "Label: Has static label text");
 						assert.ok(oField.isA("sap.ui.integration.editor.fields.StringListField"), "Field: List Field");
