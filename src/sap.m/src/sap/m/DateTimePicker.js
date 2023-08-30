@@ -1063,10 +1063,11 @@ sap.ui.define([
 				oDate = UI5Date.getInstance();
 				this._oCalendar.removeAllSelectedDates();
 			}
-			var iMaxTimeMillis = this._oMaxDate.getTime();
 
-			if (oDate.getTime() < this._oMinDate.getTime() || oDate.getTime() > iMaxTimeMillis) {
+			if (oDate.getTime() < this._oMinDate.getTime()) {
 				oDate = this._oMinDate;
+			} else if (oDate.getTime() > this._oMaxDate.getTime()) {
+				oDate = this._oMaxDate;
 			}
 			this._oOKButton.setEnabled(false);
 		}
