@@ -280,7 +280,7 @@ sap.ui.define([
 		 * @see _closeCustomContentCellContextMenu
 		 * @see _closeDefaultContentCellContextMenu
 		 */
-		_closeContentCellContextMenu: function(oTable) {
+		closeContentCellContextMenu: function(oTable) {
 			MenuUtils._closeCustomContentCellContextMenu(oTable);
 			MenuUtils._closeDefaultContentCellContextMenu(oTable);
 		},

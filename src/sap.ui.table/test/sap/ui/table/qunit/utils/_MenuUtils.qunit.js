@@ -533,11 +533,11 @@ sap.ui.define([
 			"The CustomFilter event handler has been called with the correct arguments");
 	});
 
-	QUnit.test("_closeContentCellContextMenu", function(assert) {
+	QUnit.test("closeContentCellContextMenu", function(assert) {
 		var oCloseCustomContentCellContextMenu = this.spy(TableUtils.Menu, "_closeCustomContentCellContextMenu");
 		var oCloseDefaultContentCellContextMenu = this.spy(TableUtils.Menu, "_closeDefaultContentCellContextMenu");
 
-		TableUtils.Menu._closeContentCellContextMenu(oTable);
+		TableUtils.Menu.closeContentCellContextMenu(oTable);
 		assert.ok(oCloseCustomContentCellContextMenu.calledOnceWithExactly(oTable), "_closeCustomContentCellContextMenu was called");
 		assert.ok(oCloseDefaultContentCellContextMenu.calledOnceWithExactly(oTable), "_closeDefaultContentCellContextMenu was called");
 
