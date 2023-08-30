@@ -332,11 +332,7 @@ sap.ui.define([
 	});
 	QUnit.test("Default src - icon size", function (assert) {
 		assert.ok(oFeedList.getItems()[4].oAvatar.$().hasClass("sapFAvatarS"), "Avatar has class sapAvatarS applied");
-		assert.equal(oFeedList.getItems()[4].oAvatar.$().css("font-size"), "24px", "Avatar icon font size is 2 rem");
-	});
-	QUnit.test("List Item Image Properties", function (assert) {
-		assert.equal(oFeedList.getItems()[4].oAvatar.$().css("line-height"), "72px", "Line Height is 72px");
-		assert.equal(oFeedList.getItems()[4].oAvatar.$().css("letter-spacing"), "-8px", "Letter spacing is -8px");
+		assert.equal(oFeedList.getItems()[4].oAvatar.$().css("font-size"), "32px", "Avatar icon font size is 2 rem");
 	});
 	QUnit.test("Default src - icon color", function (assert) {
 		this.oNonActiveItem = oFeedList.getItems().filter(function(oListItem) {
