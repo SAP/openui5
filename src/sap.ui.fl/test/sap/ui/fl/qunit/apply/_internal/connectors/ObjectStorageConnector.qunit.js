@@ -207,8 +207,8 @@ sap.ui.define([
 
 	function parameterizedTest(oApplyStorageConnector, oWriteStorageConnector, sStorage) {
 		QUnit.module(`loadFlexData: Given some changes in the ${sStorage}`, {
-			before() {
-				oWriteStorageConnector.write({
+			async before() {
+				await oWriteStorageConnector.write({
 					flexObjects: [
 						oTestData.change1,
 						oTestData.change2,
@@ -279,8 +279,8 @@ sap.ui.define([
 		});
 
 		QUnit.module(`loadFlexData: Given entries were present in different layers ${sStorage}`, {
-			before() {
-				oWriteStorageConnector.write({
+			async before() {
+				await oWriteStorageConnector.write({
 					flexObjects: [
 						oTestData.baseChange,
 						oTestData.vendorVariant,

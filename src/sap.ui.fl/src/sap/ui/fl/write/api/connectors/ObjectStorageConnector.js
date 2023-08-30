@@ -224,17 +224,20 @@ sap.ui.define([
 		/**
 		 * @inheritDoc
 		 */
-		write(mPropertyBag) {
-			var aPromises = mPropertyBag.flexObjects.map(function(oFlexObject, iIndex) {
-				var sKey = ObjectStorageUtils.createFlexObjectKey(oFlexObject);
-				oFlexObject = setFlexObjectCreation(oFlexObject, ++iIndex);
-				var vFlexObject = this.storage._itemsStoredAsObjects ? oFlexObject : JSON.stringify(oFlexObject);
-				return this.storage.setItem(sKey, vFlexObject);
-			}.bind(this));
-
-			return Promise.all(aPromises).then(function() {
-				// return nothing
-			});
+		async write(mPropertyBag) {
+			let iIndex = 0;
+			const aUpdatedFlexObjects = [];
+			for (const oFlexObject of mPropertyBag.flexObjects) {
+				const sKey = ObjectStorageUtils.createFlexObjectKey(oFlexObject);
+				const oUpdatedFlexObject = setFlexObjectCreation(oFlexObject, ++iIndex);
+				const vUpdatedFlexObject = this.storage._itemsStoredAsObjects ? oUpdatedFlexObject : JSON.stringify(oUpdatedFlexObject);
+				await this.storage.setItem(sKey, vUpdatedFlexObject);
+				aUpdatedFlexObjects.push(oUpdatedFlexObject);
+			}
+			// Return response structure like from the backend to update objects with creation data
+			return {
+				response: aUpdatedFlexObjects
+			};
 		},
 
 		/**
