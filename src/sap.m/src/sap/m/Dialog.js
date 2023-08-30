@@ -927,6 +927,8 @@ function(
 				return;
 			}
 
+			$dialog.css(this._calcMaxSizes());
+
 			if (!sContentHeight || sContentHeight == 'auto') {
 				// save current scroll position so that it can be restored after the resize
 				dialogContentScrollTop = $dialogContent.scrollTop();

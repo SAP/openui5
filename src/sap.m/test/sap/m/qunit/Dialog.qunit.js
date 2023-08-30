@@ -1563,6 +1563,7 @@ sap.ui.define([
 		// act
 		oDialog.open();
 
+		sap.ui.getCore().applyChanges();
 		this.clock.tick(500);
 
 		var oMockEvent = {
