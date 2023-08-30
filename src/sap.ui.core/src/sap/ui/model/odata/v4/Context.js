@@ -693,16 +693,18 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the value at the given path and removes it from the cache.
+	 * Returns the collection at the given path and removes it from the cache if it is marked as
+	 * transferable.
 	 *
-	 * @param {string} sPath - The relative path of the property
-	 * @returns {any} The value
+	 * @param {string} sPath - The relative path of the collection
+	 * @returns {object[]|undefined} The collection or <code>undefined</code>
+	 * @throws {Error} If the given path does not point to a collection.
 	 *
 	 * @private
 	 */
-	Context.prototype.getAndRemoveValue = function (sPath) {
+	Context.prototype.getAndRemoveCollection = function (sPath) {
 		return this.withCache(function (oCache, sCachePath) {
-			return oCache.getAndRemoveValue(sCachePath);
+			return oCache.getAndRemoveCollection(sCachePath);
 		}, sPath, true).getResult();
 	};
 
@@ -1132,6 +1134,31 @@ sap.ui.define([
 	 */
 	Context.prototype.isTransient = function () {
 		return this.oSyncCreatePromise && this.oSyncCreatePromise.isPending();
+	};
+
+	/**
+	 * Moves this node to the given parent (in case of a recursive hierarchy, see
+	 * {@link #setAggregation}, where <code>oAggregation.expandTo</code> must be one). No other
+	 * {@link sap.ui.model.odata.v4.ODataListBinding#create creation} or move must be pending, and
+	 * no other modification (including collapse of some ancestor node) must happen while this move
+	 * is pending!
+	 *
+	 * @param {object} oParameters - A parameter object
+	 * @param {sap.ui.model.odata.v4.Context} oParameters.parent - The new parent's context
+	 * @returns {Promise}
+	 *   A promise which is resolved without a defined result when the move is finished, or
+	 *   rejected in case of an error
+	 * @throws (Error)
+	 *   If the parent is missing or (a descendant of) this node.
+	 *
+	 * @experimental As of version 1.119.0
+	 * @public
+	 */
+	Context.prototype.move = function ({parent : oParent}) {
+		if (oParent === this) {
+			throw new Error("Unsupported parent context: " + oParent);
+		}
+		return Promise.resolve(this.oBinding.move(this, oParent));
 	};
 
 	/**

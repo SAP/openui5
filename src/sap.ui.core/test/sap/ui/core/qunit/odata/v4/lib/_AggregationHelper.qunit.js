@@ -171,7 +171,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-["descendants", "filter", "predicate"].forEach(function (sAnnotation) {
+["descendants", "predicate"].forEach(function (sAnnotation) {
 	var sTitle = "beforeOverwritePlaceholder: Unexpected structural change: " + sAnnotation;
 
 	QUnit.test(sTitle, function (assert) {

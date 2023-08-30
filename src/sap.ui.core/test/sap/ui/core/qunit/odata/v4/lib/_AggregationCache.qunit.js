@@ -376,7 +376,7 @@ sap.ui.define([
 		assert.ok(oCache instanceof _AggregationCache, "module value is c'tor function");
 		assert.ok(oCache instanceof _Cache, "_AggregationCache is a _Cache");
 		assert.strictEqual(oCache.addTransientCollection, null, "disinherit");
-		assert.strictEqual(oCache.getAndRemoveValue, null, "disinherit");
+		assert.strictEqual(oCache.getAndRemoveCollection, null, "disinherit");
 		assert.strictEqual(oCache.oRequestor, this.oRequestor);
 		assert.strictEqual(oCache.sResourcePath, sResourcePath);
 		assert.strictEqual(oCache.mQueryOptions, mQueryOptions);
@@ -920,14 +920,6 @@ sap.ui.define([
 			.withExactArgs(sinon.match.same(oElement), "B/myDrillState")
 			.returns(sDrillState);
 		oHelperMock.expects("getKeyFilter").never();
-		if (sDrillState === "collapsed") {
-			oHelperMock.expects("getKeyFilter")
-				.withExactArgs(sinon.match.same(oElement), "/meta/path",
-					sinon.match.same(mTypeForMetaPath))
-				.returns("~filter~");
-			oHelperMock.expects("setPrivateAnnotation")
-				.withExactArgs(sinon.match.same(oElement), "filter", "~filter~");
-		}
 		oHelperMock.expects("deleteProperty")
 			.withExactArgs(sinon.match.same(oElement), "B/myDrillState");
 		oHelperMock.expects("drillDown").exactly(oGroupNode ? 0 : 1)

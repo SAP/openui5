@@ -2793,6 +2793,12 @@ sap.ui.define([
 				aNestedCreatedEntities.$count = undefined; // -> setCount must fire a change event
 				aNestedCreatedEntities.$created = 0;
 				aNestedCreatedEntities.$byPredicate = {};
+				// If mSelectForMetaPath has query options, the corresponding nested ODLB will get a
+				// cache later and must transfer the data to its own cache; otherwise, the nested
+				// binding has no cache and must not lose its data (BCP: 2380101762)
+				if (mSelectForMetaPath[sSegment]) {
+					aNestedCreatedEntities.$transfer = true;
+				}
 				const sCollectionPath = sPath + "/" + sSegment;
 				_Helper.setCount(mChangeListeners, sCollectionPath, aNestedCreatedEntities,
 					aNestedCreatedEntities.length);

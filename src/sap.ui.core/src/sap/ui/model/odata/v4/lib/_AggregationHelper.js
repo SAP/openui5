@@ -156,7 +156,7 @@ sap.ui.define([
 				&& oPlaceholder["@$ui5.node.level"] !== 0) {
 				throw new Error("Wrong placeholder");
 			}
-			["descendants", "filter", "predicate"].forEach(function (sAnnotation) {
+			["descendants", "predicate"].forEach(function (sAnnotation) {
 				if (_Helper.hasPrivateAnnotation(oPlaceholder, sAnnotation)
 					&& _Helper.getPrivateAnnotation(oPlaceholder, sAnnotation)
 						!== _Helper.getPrivateAnnotation(oElement, sAnnotation)) {
