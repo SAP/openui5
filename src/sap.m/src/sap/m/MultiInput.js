@@ -1070,6 +1070,7 @@ function(
 			bNewFocusIsInSuggestionPopup = false,
 			bNewFocusIsInTokenizer = false,
 			bNewFocusIsInMultiInput = this.getDomRef() && containsOrEquals(this.getDomRef(), document.activeElement),
+			bFocusedOut = !bNewFocusIsInSuggestionPopup && oEvent.relatedControlId !== this.getId() && !bNewFocusIsInTokenizer,
 			oRelatedControlDomRef,
 			bFocusIsInSelectedItemPopup;
 
@@ -1094,11 +1095,7 @@ function(
 			return;
 		}
 
-		if (!this.isMobileDevice()							// Validation occurs if we are not on phone
-			&& !bNewFocusIsInSuggestionPopup				// AND the focus is not in the suggestion popup
-			&& oEvent.relatedControlId !== this.getId()			// AND the focus is not in the input field
-			&& !bNewFocusIsInTokenizer) {					// AND the focus is not in the tokenizer
-
+		if (bFocusedOut && ((this.isMobileDevice() && !this.getShowSuggestion()) || !this.isMobileDevice())) {
 			this._validateCurrentText(true);
 		}
 
