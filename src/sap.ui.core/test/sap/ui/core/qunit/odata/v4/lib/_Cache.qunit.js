@@ -7454,8 +7454,8 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-[false, true].forEach(function (bError) {
-	QUnit.test("CollectionCache#requestElements: error=" + bError, function (assert) {
+[false, true, undefined].forEach(function (bSuccess) { // undefined -> obsolete
+	QUnit.test("CollectionCache#requestElements: success=" + bSuccess, function (assert) {
 		var oCache = this.createCache("Employees"),
 			oCacheMock = this.mock(oCache),
 			oCheckRangeExpectation,
@@ -7465,15 +7465,15 @@ sap.ui.define([
 			iStart = 0,
 			oFetchPromise = Promise.resolve("~mTypes~"),
 			oHandleResponseExpectation,
+			oPromise,
 			oResetExpectation, // avoid "was used before it was defined"
 			oRequestPromise = Promise.resolve().then(function () {
 				oCheckRangeExpectation = oCacheMock.expects("checkRange")
-					.withExactArgs(sinon.match(function (oPromise) {
-							return oPromise === oFillExpectation.args[0][0];
-						}), iStart, iEnd);
-				if (bError) {
-					oResetExpectation = oCacheMock.expects("fill")
-						.withExactArgs(undefined, iStart, iEnd);
+					.exactly(bSuccess !== undefined ? 1 : 0)
+					.withExactArgs(sinon.match.same(oPromise), iStart, iEnd);
+				oResetExpectation = oCacheMock.expects("fill").exactly(bSuccess === false ? 1 : 0)
+					.withExactArgs(undefined, iStart, iEnd);
+				if (bSuccess === false) {
 					throw oError;
 				}
 				return "~oResult~";
@@ -7488,33 +7488,36 @@ sap.ui.define([
 				/*oPayload*/undefined, "~fnDataRequested~")
 			.returns(oRequestPromise);
 		oCacheMock.expects("fetchTypes").withExactArgs().returns(oFetchPromise);
-		oHandleResponseExpectation = oCacheMock.expects("handleResponse").exactly(bError ? 0 : 1)
+		oHandleResponseExpectation = oCacheMock.expects("handleResponse").exactly(bSuccess ? 1 : 0)
 			.withExactArgs("~oResult~", iStart, "~mTypes~")
 			.returns("~iFiltered~");
-		oCacheMock.expects("handleCount").exactly(bError ? 0 : 1)
+		oCacheMock.expects("handleCount").exactly(bSuccess ? 1 : 0)
 			.withExactArgs("~oGroupLock~", 0, iStart, iEnd, "~oResult~", "~iFiltered~");
 		oFillExpectation = oCacheMock.expects("fill")
 			.withExactArgs(sinon.match.instanceOf(SyncPromise), iStart, iEnd);
 
 		// code under test
-		oCache.requestElements(iStart, iEnd, "~oGroupLock~", 0, "~fnDataRequested~");
+		oPromise = oCache.requestElements(iStart, iEnd, "~oGroupLock~", 0, "~fnDataRequested~");
 
+		assert.deepEqual(oCache.aReadRequests, [{iStart, iEnd}]);
+		if (bSuccess === undefined) {
+			oCache.aReadRequests[0].obsolete = true;
+		}
 		assert.strictEqual(oCache.bSentRequest, true);
+		assert.strictEqual(oFillExpectation.args[0][0], oPromise);
 
-		return Promise.all([
-			oFetchPromise,
-			oRequestPromise.catch(function () {})
-		]).then(function () {
-			var oPromise = oFillExpectation.args[0][0];
-
-			return oPromise.then(function () {
-				assert.notOk(bError);
-				assert.ok(oCheckRangeExpectation.calledBefore(oHandleResponseExpectation));
-			}, function (oRequestError) {
-				assert.ok(bError);
+		return oPromise.then(function () {
+			assert.ok(bSuccess);
+			assert.ok(oCheckRangeExpectation.calledBefore(oHandleResponseExpectation));
+		}, function (oRequestError) {
+			assert.notOk(bSuccess);
+			if (bSuccess === false) {
 				assert.strictEqual(oRequestError, oError);
 				assert.ok(oCheckRangeExpectation.calledBefore(oResetExpectation));
-			});
+			} else {
+				assert.ok(oRequestError.canceled);
+				assert.strictEqual(oRequestError.message, "Request is obsolete");
+			}
 		});
 	});
 });
@@ -10697,15 +10700,26 @@ sap.ui.define([
 		oCache.mChangeListeners = mChangeListeners;
 		oCache.sContext = "~context~";
 		oCache.aElements.$count = oCache.iLimit = 3;
+		oCache.aReadRequests = [{iStart : 1, iEnd : 2}, {iStart : 3, iEnd : 4}];
 
 		oSetQueryOptionsExpectation = this.mock(oCache).expects("setQueryOptions")
 			.withExactArgs("~mQueryOptions~", true);
 		oFireChangeExpectation = this.mock(_Helper).expects("fireChange")
-			.withExactArgs({"" : "~listeners~"}, "");
+			.withExactArgs({"" : "~listeners~"}, "")
+			.callsFake(function () {
+				assert.deepEqual(oCache.aReadRequests, [
+					{iStart : 1, iEnd : 2, obsolete : true},
+					{iStart : 3, iEnd : 4, obsolete : true}
+				]);
+			});
 
 		// code under test
 		oCache.reset([], undefined, "~mQueryOptions~");
 
+		assert.deepEqual(oCache.aReadRequests, [
+			{iStart : 1, iEnd : 2, obsolete : true},
+			{iStart : 3, iEnd : 4, obsolete : true}
+		]);
 		assert.strictEqual(oCache.aElements, aElements);
 		assert.strictEqual(oCache.aElements.length, 0);
 		assert.strictEqual(oCache.aElements.$created, 0);
