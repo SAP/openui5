@@ -1735,7 +1735,7 @@ sap.ui.define([
 		if (!this.aApplicationFilters || !Array.isArray(this.aApplicationFilters)) {
 			this.aApplicationFilters = [];
 		}
-
+		/** @deprecated As of version 1.22.0, reason sap.ui.model.odata.Filter.js */
 		this.convertFilters();
 		this.oCombinedFilter = FilterProcessor.combineFilters(this.aFilters, this.aApplicationFilters);
 
@@ -1783,6 +1783,7 @@ sap.ui.define([
 	/**
 	 * Convert sap.ui.model.odata.Filter to sap.ui.model.Filter
 	 *
+	 * @deprecated As of version 1.22.0, reason sap.ui.model.odata.Filter.js
 	 * @private
 	 */
 	ODataListBinding.prototype.convertFilters = function() {
@@ -1821,6 +1822,7 @@ sap.ui.define([
 		this.addComparators(this.aSorters, true);
 		this.addComparators(this.aFilters);
 		this.addComparators(this.aApplicationFilters);
+		/** @deprecated As of version 1.22.0, reason sap.ui.model.odata.Filter.js */
 		this.convertFilters();
 		this.oCombinedFilter = FilterProcessor.combineFilters(this.aFilters, this.aApplicationFilters);
 
