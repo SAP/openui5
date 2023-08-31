@@ -965,7 +965,7 @@ sap.ui.define([
 			var mChanges = {changes: {}};
 
 			oTable._bRtlMode = null;
-			TableUtils.Menu.openContextMenu(oTable, getCell(0, 0, null, null, oTable));
+			TableUtils.Menu.openContextMenu(oTable, {target: getCell(0, 0, null, null, oTable)[0]});
 			oInvalidateSpy.resetHistory();
 
 			if (bChangeTextDirection) {
@@ -6726,26 +6726,29 @@ sap.ui.define([
 		}
 	});
 	QUnit.test("DefaultContextMenu", function(assert) {
-
 		var oCell = this.oTable.qunit.getDataCell(0, 0);
-		TableUtils.Menu.openContextMenu(this.oTable, oCell);
+
+		qutils.triggerMouseEvent(oCell, "mousedown", null, null, null, null, 2);
+		oCell.dispatchEvent(new MouseEvent("contextmenu", {bubbles: true}));
+		assert.ok(this.oTable._oCellContextMenu.isOpen(), "Context menu is open");
 		this.oTable.setFirstVisibleRow(1);
 
 		return this.oTable.qunit.whenRenderingFinished().then(() => {
-			assert.notOk(this.oTable._oCellContextMenu.isOpen(), "CellContextMenu is closed");
+			assert.notOk(this.oTable._oCellContextMenu.isOpen(), "Context menu is closed after scrolling");
 		});
 	});
 
 	QUnit.test("CustomContextMenu", function(assert) {
-
 		var oCell = this.oTable.qunit.getDataCell(0, 0);
-		this.oTable.setContextMenu(new Menu({items: new MenuItem({text: "CustomMenu"})}));
 
-		TableUtils.Menu.openContextMenu(this.oTable, oCell);
+		this.oTable.setContextMenu(new Menu({items: new MenuItem({text: "CustomMenu"})}));
+		qutils.triggerMouseEvent(oCell, "mousedown", null, null, null, null, 2);
+		oCell.dispatchEvent(new MouseEvent("contextmenu", {bubbles: true}));
+		assert.ok(this.oTable.getContextMenu().isOpen(), "Context menu is open");
 		this.oTable.setFirstVisibleRow(1);
 
 		return this.oTable.qunit.whenRenderingFinished().then(() => {
-			assert.notOk(this.oTable.getContextMenu().isOpen(), "CellContextMenu is closed");
+			assert.notOk(this.oTable.getContextMenu().isOpen(), "Context menu is closed after scrolling");
 		});
 	});
 

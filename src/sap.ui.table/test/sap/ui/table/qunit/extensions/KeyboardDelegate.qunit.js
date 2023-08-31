@@ -6216,13 +6216,15 @@ sap.ui.define([
 		];
 
 		aTestElements.forEach(function(oElem) {
+			var oContextMenuEventArgument;
+
 			oElem.trigger("focus");
 			jQuery(oElem).trigger("contextmenu");
-			assert.ok(oOpenContextMenuSpy.calledOnceWith(oTable, oElem[0]),
+			oContextMenuEventArgument = oContextMenuEventHandlerSpy.args[0][0];
+
+			assert.ok(oOpenContextMenuSpy.calledOnceWithExactly(oTable, oContextMenuEventArgument),
 				"TableUtils.Menu.openContextMenu was called with the correct arguments");
 			checkFocus(oElem, assert);
-
-			var oContextMenuEventArgument = oContextMenuEventHandlerSpy.args[0][0];
 			assert.ok(oContextMenuEventArgument.isDefaultPrevented(), "Opening of the default context menu was prevented");
 
 			oOpenContextMenuSpy.resetHistory();

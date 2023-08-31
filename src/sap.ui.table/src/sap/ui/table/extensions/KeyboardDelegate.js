@@ -1190,7 +1190,7 @@ sap.ui.define([
 
 		if (oCellInfo.isOfType(CellType.ANY)) {
 			oEvent.preventDefault(); // Prevent opening the default browser context menu.
-			TableUtils.Menu.openContextMenu(this, oEvent.target, oEvent);
+			TableUtils.Menu.openContextMenu(this, oEvent);
 		}
 	};
 
@@ -1211,7 +1211,7 @@ sap.ui.define([
 
 		if (oCellInfo.isOfType(CellType.COLUMNHEADER)) {
 			if (KeyboardDelegate._isKeyCombination(oEvent, KeyCodes.SPACE) || KeyboardDelegate._isKeyCombination(oEvent, KeyCodes.ENTER)) {
-				TableUtils.Menu.openContextMenu(this, oEvent.target);
+				TableUtils.Menu.openContextMenu(this, oEvent);
 			}
 		} else if (KeyboardDelegate._isKeyCombination(oEvent, KeyCodes.SPACE)) {
 			handleSpaceAndEnter(this, oEvent);
