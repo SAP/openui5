@@ -406,7 +406,7 @@ sap.ui.define([
 			var aPages, i;
 			if ((sAggregationName === "content") && (oChild && oChild.isA("sap.m.NavContainer"))) {
 				aPages = oChild.getPages();
-				for (i = 0 ; i < aPages.length ; i++) {
+				for (i = 0; i < aPages.length; i++) {
 					aPages[i].removeEventDelegate(that._oPageDelegate);
 				}
 				oChild.detachEvent("navigate", that._fnOnNavigate, that);
@@ -570,7 +570,7 @@ sap.ui.define([
 	 */
 	ResponsivePopover.prototype._lastIndexOfUpperCaseLetter = function(sValue){
 		var i, sChar;
-		for (i = sValue.length - 1 ; i >= 0; i--) {
+		for (i = sValue.length - 1; i >= 0; i--) {
 			sChar = sValue.charAt(i);
 			if (sChar === sChar.toUpperCase()) {
 				return i;
@@ -739,13 +739,15 @@ sap.ui.define([
 	// forward all aggregation methods to the inner instance, either the popover or the dialog.
 	["bindAggregation", "validateAggregation", "setAggregation", "getAggregation", "indexOfAggregation", "insertAggregation",
 		"addAggregation", "removeAggregation", "removeAllAggregation", "destroyAggregation", "setAssociation", "getAssociation",
-		"addAssociation", "removeAssociation", "removeAllAssociation"].forEach(function(sName){
+		"addAssociation", "removeAssociation", "removeAllAssociation, addDependent, removeDependent, removeAllDependents, destroyDependents, getDependents, indexOfDependent"].forEach(function(sName){
 			ResponsivePopover.prototype[sName] = function(){
 				var iLastUpperCase = this._lastIndexOfUpperCaseLetter(sName),
 					sMethodName, res;
 				if (typeof arguments[0] === "string") {
 					if (iLastUpperCase !== -1) {
 						sMethodName = sName.substring(0, iLastUpperCase) + this._firstLetterUpperCase(arguments[0]);
+						// in case of adding 'dependents' aggregation the call to this function is made with wrong plural argument by the Element class
+						sMethodName = sMethodName === "addDependents" ? "addDependent" : sMethodName;
 						//_oControl can be already destroyed in exit method
 						if (this._oControl && this._oControl[sMethodName]) {
 							res = this._oControl[sMethodName].apply(this._oControl, Array.prototype.slice.call(arguments, 1));

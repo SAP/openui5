@@ -400,6 +400,20 @@ sap.ui.define([
 		assert.ok(this.oResponsivePopover.getDomRef().getAttribute('aria-labelledby').indexOf(sInvTextId) !== -1, "should contain the id of the invisible label in the aria-labelledby attribute");
 	});
 
+	QUnit.test("Should proxy dependents aggregation correctly", function (assert) {
+		// Arrange
+		var oResponsivePopover = new sap.m.ResponsivePopover("popover", {
+			content: [new sap.m.Text({text: "Hello"})],
+			dependents: [new sap.m.Text("worldText", {text: "World!"})]
+		});
+
+		// Act
+		oCore.applyChanges();
+
+		// Assert
+		assert.strictEqual(oResponsivePopover.getDependents().length, 1, "Dependents aggregation is forwarded correctly");
+	});
+
 	QUnit.test("ResponsivePopover should not fall in infinite loop when invalidation comes from child control", function (assert) {
 		var oResponsivePopover = new ResponsivePopover("rpo");
 		var oButton = new Button();
