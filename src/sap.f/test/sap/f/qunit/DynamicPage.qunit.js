@@ -14,6 +14,7 @@ sap.ui.define([
 	"sap/m/Input",
 	"sap/m/Panel",
 	"sap/m/Text",
+	"sap/m/VBox",
 	"sap/m/library",
 	"sap/f/DynamicPageAccessibleLandmarkInfo",
 	"sap/ui/core/mvc/XMLView",
@@ -37,6 +38,7 @@ function (
 	Input,
 	Panel,
 	Text,
+	Vbox,
 	mLibrary,
 	DynamicPageAccessibleLandmarkInfo,
 	XMLView,
@@ -3314,6 +3316,38 @@ function (
 		iOffsetDiff = oItemDOMElement.getBoundingClientRect().top - oScrollContainer.getBoundingClientRect().top;
 
 		assert.ok(iOffsetDiff >= iStrickyAreaHight, "the element is in the visible area");
+	});
+
+	QUnit.test("Back tab navigaton", function(assert) {
+		//Arrange
+		var oVbox = new Vbox(),
+			oDynamicPage = this.oDynamicPage,
+			done = assert.async(),
+			oContent = oDynamicPage.getContent();
+
+		for (let i = 0; i < 100; i++) {
+			oVbox.addItem(new Input({id: "input_" + i}));
+		}
+		oDynamicPage.removeAggregation("content");
+		oDynamicPage.setContent(oVbox);
+
+		Core.applyChanges();
+
+		//Act
+		oDynamicPage.getContent().getItems()[99].focus();
+		setTimeout(function(){
+			oDynamicPage.getContent().getItems()[5].focus();
+			setTimeout(function(){
+
+				//Assert
+				assert.ok(oDynamicPage.getHeaderExpanded(), "Header is expanded, when scrolling to first focusable content element");
+				assert.equal(oDynamicPage.$wrapper.css("scroll-padding-top"), oDynamicPage.$wrapper.css("scroll-padding-top"),
+				"Scroll padding is equal to visual padding of scrolling wrapper");
+				//Clean up
+				oDynamicPage.setContent(oContent);
+				done();
+			});
+		});
 	});
 
 	/* --------------------------- Accessibility -------------------------------------- */
