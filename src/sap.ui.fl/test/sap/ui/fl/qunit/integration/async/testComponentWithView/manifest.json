@@ -27,8 +27,9 @@
 			"minUI5Version": "1.46",
 			"libs": {
 				"sap.m": {},
-				"sap.ui.layout": {},
-				"sap.ui.fl": {}
+				"sap.ui.core": {},
+				"sap.ui.fl": {},
+				"sap.ui.layout": {}
 			}
 		},
 		"config": {

@@ -13,7 +13,8 @@ sap.ui.define([
 	"sap/m/Page",
 	"sap/ui/core/InvisibleText",
 	"sap/ui/core/Core",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/thirdparty/jquery",
+	"sap/m/Text"
 ], function(
 	JSONModel,
 	StandardListItem,
@@ -28,7 +29,8 @@ sap.ui.define([
 	Page,
 	InvisibleText,
 	oCore,
-	jQuery
+	jQuery,
+	Text
 ) {
 	"use strict";
 
@@ -398,6 +400,20 @@ sap.ui.define([
 		// Assert
 		// The Popover or the Dialog could have some additional logic for the aria-labelledby attribute. Therefore, we only need to assure that the additional ID is added to the attribute.
 		assert.ok(this.oResponsivePopover.getDomRef().getAttribute('aria-labelledby').indexOf(sInvTextId) !== -1, "should contain the id of the invisible label in the aria-labelledby attribute");
+	});
+
+	QUnit.test("Should proxy dependents aggregation correctly", function (assert) {
+		// Arrange
+		var oResponsivePopover = new ResponsivePopover("popover", {
+			content: [new Text({text: "Hello"})],
+			dependents: [new Text("worldText", {text: "World!"})]
+		});
+
+		// Act
+		oCore.applyChanges();
+
+		// Assert
+		assert.strictEqual(oResponsivePopover.getDependents().length, 1, "Dependents aggregation is forwarded correctly");
 	});
 
 	QUnit.test("ResponsivePopover should not fall in infinite loop when invalidation comes from child control", function (assert) {

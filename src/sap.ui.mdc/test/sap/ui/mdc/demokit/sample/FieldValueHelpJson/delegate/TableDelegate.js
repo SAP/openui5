@@ -1,5 +1,5 @@
 sap.ui.define([
-	"sap/ui/mdc/TableDelegate",
+	"delegates/json/TableDelegate",
 	"mdc/sample/model/metadata/JSONPropertyInfo",
 	"sap/ui/core/Core",
 	"sap/ui/model/Filter",

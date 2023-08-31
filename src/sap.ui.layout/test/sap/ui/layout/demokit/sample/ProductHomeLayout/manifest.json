@@ -13,11 +13,11 @@
 		},
 		"dependencies": {
 			"libs": {
-				"sap.ui.core": {},
-				"sap.ui.layout": {},
-				"sap.m": {},
 				"sap.f": {},
-				"sap.ui.integration": {}
+				"sap.m": {},
+				"sap.ui.core": {},
+				"sap.ui.integration": {},
+				"sap.ui.layout": {}
 			}
 		},
 		"resources": {

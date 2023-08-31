@@ -246,7 +246,7 @@ sap.ui.define([
 
 	QUnit.module("Preserve DOM");
 
-	QUnit.test("async loading", async function(assert) {
+	QUnit.test("async loading", function(assert) {
 		var done = assert.async();
 
 		// load and place view, force rendering
@@ -255,12 +255,16 @@ sap.ui.define([
 			type: ViewType.XML,
 			async: true
 		}).placeAt('content');
-		await nextUIUpdate();
 
-		// check that placeholder DOM is not marked for preservation
-		var oElemView = oView.getDomRef();
-		assert.ok(oElemView, "DOM for view must exist");
-		assert.ok(oElemView.getAttribute("data-sap-ui-preserve") == null, "DOM must not be marked as 'to be preserved' after construction but before afterInit");
+		oView.onControllerConnected = async () => {
+			await nextUIUpdate();
+
+			// check that placeholder DOM is not marked for preservation
+			var oElemView = oView.getDomRef();
+			assert.ok(oElemView, "DOM for view must exist");
+			assert.ok(oElemView.getAttribute("data-sap-ui-preserve") == null, "DOM must not be marked as 'to be preserved' after construction but before afterInit");
+			return XMLView.prototype.onControllerConnected.apply(oView, arguments);
+		};
 
 		// wait for the async load to complete
 		oView.attachAfterInit(async function() {

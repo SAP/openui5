@@ -18,8 +18,9 @@
 		"dependencies": {
 			"libs": {
 				"sap.m": {},
-				"sap.uxap": {},
-				"sap.ui.table": {}
+				"sap.ui.core": {},
+				"sap.ui.table": {},
+				"sap.uxap": {}
 			}
 		},
 		"config": {

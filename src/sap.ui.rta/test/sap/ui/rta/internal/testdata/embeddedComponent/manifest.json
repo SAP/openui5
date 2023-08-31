@@ -42,12 +42,12 @@
 			},
 			"minUI5Version": "${project.version}",
 			"libs": {
-				"sap.ui.core": {},
 				"sap.m": {},
+				"sap.ui.comp": {},
+				"sap.ui.core": {},
 				"sap.ui.dt": {},
-				"sap.ui.rta": {},
 				"sap.ui.layout": {},
-				"sap.ui.comp": {}
+				"sap.ui.rta": {}
 			}
 		},
 		"componentUsages": {

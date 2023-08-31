@@ -604,7 +604,7 @@ sap.ui.define([
 
 		// Check if additionalContent got forwarded
 		assert.deepEqual(oPanel.getAdditionalContent(), [], "additionalContent aggregation of Panel is empty");
-		assert.deepEqual(oPanel.getAggregation("_content").getContent()[0].getItems(), [oText], "additionalContent got forwarded to internal '_content' aggregation");
+		assert.deepEqual(oPanel._getAdditionalContentArea().getItems(), [oText], "additionalContent got forwarded to internal '_content' aggregation");
 	});
 
 	QUnit.test("enablePersonalization false", function(assert) {
@@ -612,7 +612,7 @@ sap.ui.define([
 			enablePersonalization: false
 		});
 
-		assert.equal(oPanel.getAggregation("_content").getContent()[3].getItems()[0].getVisible(), false, "personalization buttons visibility set to false");
+		assert.equal(oPanel._getPersonalizationButton().getVisible(), false, "personalization buttons visibility set to false");
 	});
 
 	QUnit.test("check if seperator is visible", function (assert) {
@@ -634,7 +634,83 @@ sap.ui.define([
 		oCore.applyChanges();
 
 		// Check if seperator is visible
-		assert.ok(oPanel.getAggregation("_content").getContent()[1].getVisible(), "seperator is visible");
+		assert.ok(oPanel._getSeparator().getVisible(), "seperator is visible");
+	});
+
+	QUnit.module("ContentTitle", {
+		beforeEach: function () {
+			this.oPanel = new Panel({});
+			this.oModel = new JSONModel({
+				metadata: jQuery.extend(true, [], [])
+			});
+			this.oPanel.setModel(this.oModel, "$sapuimdcLink");
+
+			this.oPanel.placeAt("qunit-fixture");
+			oCore.applyChanges();
+		},
+		afterEach: function () {
+			this.oPanel.destroy();
+			this.oPanel = undefined;
+
+			this.oModel.destroy();
+			this.oModel = undefined;
+		}
+	});
+
+	QUnit.test("without Links, without additional content", function(assert) {
+		assert.equal(this.oPanel.getContentTitle().getId(), this.oPanel._getPersonalizationButton().getId(), "ContentTitle set to personalization button");
+	});
+
+	var fnAddItemsToPanel = function(oPanel) {
+		var oPanelItem = new PanelItem({
+			text: "PanelItem",
+			href: "#PanelItem"
+		});
+		var oPanelItem2 = new PanelItem({
+			text: "PanelItem2",
+			href: "#PanelItem2"
+		});
+		oPanel.addItem(oPanelItem);
+		oPanel.addItem(oPanelItem2);
+		var oModel = new JSONModel({
+			metadata: jQuery.extend(true, [], [ oPanelItem, oPanelItem2 ])
+		});
+		oPanel.setModel(oModel, "$sapuimdcLink");
+	};
+
+	QUnit.test("with Links, without additional content", function(assert) {
+		fnAddItemsToPanel(this.oPanel);
+
+		this.oPanel.placeAt("qunit-fixture");
+		oCore.applyChanges();
+
+		assert.equal(this.oPanel.getContentTitle().getId(), this.oPanel._getLinkControls()[0].getId(), "ContentTitle set to first link control");
+	});
+
+	QUnit.test("with Links and with additional content", function(assert) {
+		fnAddItemsToPanel(this.oPanel);
+
+		var oText = new Text({ text: "AdditionalContentText" });
+		var oText2 = new Text({ text: "Another Text" });
+		this.oPanel.addAdditionalContent(oText);
+		this.oPanel.addAdditionalContent(oText2);
+
+		this.oPanel.placeAt("qunit-fixture");
+		oCore.applyChanges();
+
+		assert.equal(this.oPanel.getContentTitle().getId(), oText.getId(), "ContentTitle set to first additional content control");
+	});
+
+	QUnit.test("without Links, with additional content", function(assert) {
+		var oText = new Text({ text: "AdditionalContentText" });
+		var oText2 = new Text({ text: "Another Text" });
+		this.oPanel.addAdditionalContent(oText);
+		this.oPanel.addAdditionalContent(oText2);
+
+		this.oPanel.placeAt("qunit-fixture");
+		oCore.applyChanges();
+
+		assert.equal(this.oPanel.getContentTitle().getId(), oText.getId(), "ContentTitle set to first additional content control");
 	});
 
 });

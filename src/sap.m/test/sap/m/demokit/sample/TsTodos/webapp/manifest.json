@@ -8,9 +8,9 @@
 		"dependencies": {
 			"minUI5Version": "1.75.0",
 			"libs": {
-				"sap.ui.core": {},
+				"sap.f": {},
 				"sap.m": {},
-				"sap.f": {}
+				"sap.ui.core": {}
 			}
 		},
 		"rootView": {

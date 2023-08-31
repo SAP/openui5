@@ -290,7 +290,7 @@ sap.ui.define([
 	MDCTable.prototype._configureTable = function () {
 		if (this._oTable) {
 			var bSingleSelect = FilterableListContent.prototype.isSingleSelect.apply(this);
-			var oTableType = this._oTable.getType();
+			var oTableType = this._oTable._getType();
 
 			// Connect filterBar
 			var oFilterBar = this._getPriorityFilterBar();

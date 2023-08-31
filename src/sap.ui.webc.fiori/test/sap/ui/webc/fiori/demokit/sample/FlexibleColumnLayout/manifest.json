@@ -13,11 +13,11 @@
 		},
 		"dependencies": {
 			"libs": {
+				"sap.f": {},
+				"sap.m": {},
 				"sap.ui.core": {},
 				"sap.ui.webc.fiori": {},
-				"sap.ui.webc.main": {},
-				"sap.m": {},
-				"sap.f": {}
+				"sap.ui.webc.main": {}
 			}
 		},
 		"config": {
