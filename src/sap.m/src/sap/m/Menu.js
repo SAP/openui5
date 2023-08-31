@@ -490,7 +490,7 @@ sap.ui.define([
 			});
 
 			oItem.aDelegates.forEach(function(oDelegateObject) {
-				oListItem.addEventDelegate(oDelegateObject.oDelegate);
+				oListItem.addEventDelegate(oDelegateObject.oDelegate, oDelegateObject.vThis);
 			});
 
 			return oListItem;
@@ -520,7 +520,7 @@ sap.ui.define([
 			}
 
 			oItem.aDelegates.forEach(function(oDelegateObject) {
-				oUfMenuItem.addEventDelegate(oDelegateObject.oDelegate);
+				oUfMenuItem.addEventDelegate(oDelegateObject.oDelegate, oDelegateObject.vThis);
 			});
 
 			return oUfMenuItem;

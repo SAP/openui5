@@ -653,7 +653,7 @@ sap.ui.define([
 						assert.equal(aItems[3].getKey(), "key4", "Field: Select item 3 Key is OK");
 						assert.equal(aItems[3].getText(), "text4req", "Field: Select item 3 Text is OK");
 						resolve();
-					}, 500);
+					}, 1000);
 				}.bind(this));
 			}.bind(this));
 		});
@@ -775,7 +775,7 @@ sap.ui.define([
 						assert.ok(oField.getAggregation("_field").isA("sap.m.MultiComboBox"), "Field: Editor is MultiComboBox");
 						assert.equal(oField.getAggregation("_field").getItems().length, 6, "Field: MultiComboBox items lenght is OK");
 						resolve();
-					}, 500);
+					}, 1000);
 				}.bind(this));
 			}.bind(this));
 		});

@@ -442,16 +442,19 @@ sap.ui.define([
 		var oMenuItem = new MenuItem({text: "text"}),
 			oBeforeDelegate = {
 				onBeforeRendering: function() {}
-			};
+			},
+			oDelegateContext = {test: "test"};
 
-		oMenuItem.addEventDelegate(oBeforeDelegate);
+		oMenuItem.addEventDelegate(oBeforeDelegate, oDelegateContext);
 
 		// Act
 		var oUnifiedItem = this.sut._createVisualMenuItemFromItem(oMenuItem);
 
 		// Assert
+		assert.deepEqual(oMenuItem.aDelegates[0].vThis, oDelegateContext, "The delegate context is supplied");
 		assert.strictEqual(oMenuItem.aDelegates.length, oUnifiedItem.aDelegates.length, "Equal number of delegates with the unified item");
 		assert.deepEqual(oMenuItem.aDelegates[0], oUnifiedItem.aDelegates[0], "The delegate is added to the unified item");
+		assert.deepEqual(oUnifiedItem.aDelegates[0].vThis, oDelegateContext, "The delegate context is supplied to the unified menu item");
 
 		// Act
 		var oListItem = this.sut._createMenuListItemFromItem(oMenuItem);
@@ -459,6 +462,7 @@ sap.ui.define([
 		// Assert
 		assert.strictEqual(oMenuItem.aDelegates.length, oListItem.aDelegates.length, "Equal number of delegates with the list item");
 		assert.deepEqual(oMenuItem.aDelegates[0], oListItem.aDelegates[0], "The delegate is added to the list item");
+		assert.deepEqual(oListItem.aDelegates[0].vThis, oDelegateContext, "The delegate context is supplied to the list item");
 
 		// Act
 		oMenuItem.removeEventDelegate(oBeforeDelegate);
