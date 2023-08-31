@@ -63,7 +63,7 @@
 				<NavigationProperty Name="EMPLOYEE_2_MANAGER"
 					Type="com.sap.gateway.default.iwbep.tea_busi.v0001.MANAGER"/>
 				<NavigationProperty Name="EMPLOYEE_2_TEAM" Type="com.sap.gateway.default.iwbep.tea_busi.v0001.TEAM"
-					Nullable="false"/>
+					Nullable="false" Partner="TEAM_2_EMPLOYEES"/>
 				<Property Name="__CT__FAKE__Message" Type="SAP__self.__CT__FAKE__Message" />
 				<Annotation Term="com.sap.vocabularies.Common.v1.Messages" Path="__CT__FAKE__Message/__FAKE__Messages" />
 			</EntityType>
@@ -104,7 +104,7 @@
 				<Property Name="MANAGER_ID" Type="Edm.String" Nullable="false" MaxLength="4"/>
 				<Property Name="BudgetCurrency" Type="Edm.String" Nullable="false" MaxLength="5"/>
 				<Property Name="Budget" Type="Edm.Decimal" Nullable="false" Precision="16" Scale="variable"/>
-				<NavigationProperty Name="TEAM_2_EMPLOYEES"
+				<NavigationProperty Name="TEAM_2_EMPLOYEES" Partner="EMPLOYEE_2_TEAM"
 					Type="Collection(com.sap.gateway.default.iwbep.tea_busi.v0001.Worker)"/>
 				<NavigationProperty Name="TEAM_2_MANAGER"
 					Type="com.sap.gateway.default.iwbep.tea_busi.v0001.MANAGER" Nullable="false"/>
