@@ -1472,7 +1472,9 @@ sap.ui.define([
 		oPC1.setGroupAppointmentsMode(GroupAppointmentsMode.Collapsed);
 		Core.applyChanges();
 	});
-
+	/**
+	 * @deprecated As of version 1.119
+	 */
 	QUnit.test("appointmentsReducedHeight", function(assert) {
 		assert.ok(!oPC1.getAppointmentsReducedHeight(), "AppointmentsReducedHeight is disabled by default");
 		var aRows = oPC1.getRows();

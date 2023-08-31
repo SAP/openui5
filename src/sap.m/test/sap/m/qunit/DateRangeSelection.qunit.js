@@ -103,8 +103,8 @@ sap.ui.define([
 		width : "250px",
 		delimiter : "-",
 		displayFormat : "dd+MM+yyyy",
-		from : dateFrom,
-		to : dateTo1,
+		dateValue : dateFrom,
+		secondDateValue : dateTo1,
 		change: handleChange
 	}).placeAt("uiArea2");
 

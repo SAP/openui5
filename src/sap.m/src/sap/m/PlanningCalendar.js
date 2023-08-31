@@ -287,9 +287,10 @@ sap.ui.define([
 				 *
 				 * <b>Note:</b> On phone devices this property is ignored, appointments are always rendered in full height
 				 * to facilitate touching.
+				 * @deprecated Since version 1.119. Please use the <code>appointmentHeight</code> with value "Automatic" property instead.
 				 * @since 1.38.0
 				 */
-				appointmentsReducedHeight : {type : "boolean", group : "Appearance", defaultValue : false},
+				appointmentsReducedHeight : {type : "boolean", group : "Appearance", defaultValue : false, deprecated: true},
 
 				/**
 				 * Determines the different possible sizes for appointments.
@@ -3647,6 +3648,9 @@ sap.ui.define([
 		oRowTimeline.setShowIntervalHeaders(this.getShowIntervalHeaders());
 		oRowTimeline.setShowEmptyIntervalHeaders(this.getShowEmptyIntervalHeaders());
 		oRowTimeline.setGroupAppointmentsMode(this.getGroupAppointmentsMode());
+		/**
+		 * @deprecated As of version 1.119
+		 */
 		oRowTimeline.setAppointmentsReducedHeight(this.getAppointmentsReducedHeight());
 		oRowTimeline.setAppointmentRoundWidth(this.getAppointmentRoundWidth());
 		oRowTimeline.setLegend(this.getLegend());
