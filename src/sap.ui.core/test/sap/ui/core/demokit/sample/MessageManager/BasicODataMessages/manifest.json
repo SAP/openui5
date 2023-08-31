@@ -12,6 +12,7 @@
 		},
 		"dependencies": {
 			"libs": {
+				"sap.ui.core": {},
 				"sap.ui.layout": {}
 			}
 		},

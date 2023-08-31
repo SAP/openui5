@@ -13,8 +13,8 @@
 		},
 		"dependencies": {
 			"libs": {
-				"sap.ui.core": {},
 				"sap.f": {},
+				"sap.ui.core": {},
 				"sap.ui.integration": {}
 			}
 		},

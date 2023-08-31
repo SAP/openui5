@@ -49,14 +49,14 @@
 		"dependencies": {
 			"minUI5Version": "1.30",
 			"libs": {
-				"sap.ui.core": {},
 				"sap.m": {},
-				"sap.tnt": {},
-				"sap.ui.layout": {},
-				"sap.uxap": {},
 				"sap.suite.ui.microchart": {
 					"lazy": true
-				}
+				},
+				"sap.tnt": {},
+				"sap.ui.core": {},
+				"sap.ui.layout": {},
+				"sap.uxap": {}
 			}
 		},
 		"models": {

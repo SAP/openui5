@@ -33,8 +33,8 @@
 		"dependencies": {
 			"minUI5Version": "${project.version}",
 			"libs": {
-				"sap.ui.core": {},
 				"sap.m": {},
+				"sap.ui.core": {},
 				"sap.ui.dt": {},
 				"sap.ui.rta": {}
 			}
