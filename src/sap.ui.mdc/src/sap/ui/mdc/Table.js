@@ -721,7 +721,7 @@ sap.ui.define([
 	/**
 	 * Create setter and getter for aggregation that are passed to ToolBar aggregation named "Between"
 	 * Several different Table aggregations are passed to the same ToolBar aggregation (Between)
-	 **/
+	 */
 	aToolBarBetweenAggregations.forEach(function(sAggregationName) {
 		var sCapAggregationName = capitalize(sAggregationName),
 			sPropertyName = "_o" + sCapAggregationName,
@@ -1016,7 +1016,6 @@ sap.ui.define([
 
 			this._oTable.destroy("KeepDom");
 			this._oTable = null;
-			this._bTableExists = false;
 		} else {
 			// reject any pending promise
 			this._onAfterTableCreated();
@@ -1567,9 +1566,8 @@ sap.ui.define([
 			}
 
 			// The table type might be switched while the necessary libs, modules are being loaded; hence the below checks
-			if (!this._bTableExists && oType.constructor === this._getType().constructor) {
+			if (!this._oTable && oType.constructor === this._getType().constructor) {
 				this._createContent();
-				this._bTableExists = true;
 			}
 		}.bind(this)).catch(function(oError) {
 			this._onAfterTableCreated();
@@ -2795,46 +2793,34 @@ sap.ui.define([
 	Table.prototype.exit = function() {
 		this._destroyDefaultType();
 
-		// Always destroy the template
-		if (this._oRowTemplate) {
-			this._oRowTemplate.destroy();
-		}
+		// Destroy elements and delete references to them.
+		[
+			"_oRowTemplate",
+			"_oToolbar", // The toolbar needs to be destroyed manually because it may not yet be a child of the inner table.
+			"_oFilterInfoBarInvisibleText",
+			"_oColumnHeaderMenu",
+			"_oManagedObjectModel"
+		].forEach((sField) => {
+			if (this[sField]) {
+				this[sField].destroy();
+			}
+			delete this[sField];
+		});
 
-		this._oRowTemplate = null;
-		this._oTable = null;
-		// Destroy toolbar if Table is not yet created, normally it is destroyed automatically due to table being destroyed!
-		if (this._oToolbar && !this._bTableExists) {
-			this._oToolbar.destroy();
-		}
-		this._oToolbar = null;
-		this._oTitle = null;
-		this._vNoData = null;
-		this._oContextMenu = null;
-		this._oNumberFormatInstance = null;
-
-		aToolBarBetweenAggregations.forEach(function(sAggregationName) {
-			var sCapAggregationName = capitalize(sAggregationName),
-				sPropertyName = "_o" + sCapAggregationName;
-			this[sPropertyName] = null;
-		}, this);
-
-		this._oTableReady = null;
-		this._oFullInitialize = null;
-		this._oPasteButton = null;
-		this._oP13nButton = null;
-
-		if (this._oFilterInfoBarInvisibleText) {
-			this._oFilterInfoBarInvisibleText.destroy();
-			this._oFilterInfoBarInvisibleText = null;
-		}
-
-		if (this._oColumnHeaderMenu) {
-			this._oColumnHeaderMenu.destroy();
-			this._oColumnHeaderMenu = null;
-		}
-
-		this._oManagedObjectModel.destroy();
-		delete this._oManagedObjectModel;
+		// Delete references to elements that are automatically destroyed due to being children of destroyed elements.
+		[
+			"_oTable",
+			"_oTitle",
+			"_vNoData",
+			"_oContextMenu",
+			"_oNumberFormatInstance",
+			"_oTableReady",
+			"_oFullInitialize",
+			"_oPasteButton",
+			"_oP13nButton"
+		].concat((() => aToolBarBetweenAggregations.map((sAggregationName) => "_o" + capitalize(sAggregationName)))()).forEach((sField) => {
+			delete this[sField];
+		});
 
 		Control.prototype.exit.apply(this, arguments);
 	};
