@@ -297,19 +297,44 @@ sap.ui.define([
 					});
 				} else if (oSettings.instrumenter === "istanbul") {
 					return requireP("sap/ui/qunit/qunit-coverage-istanbul").then(function() {
-						var _adjustFilters = function(filter) {
+						var _adjustHtmlAttrValues = function(filter) {
 							return Array.isArray(filter) ?
 								JSON.stringify(filter) : filter;
 						};
+						// Creates a list of flat arrays from a config object.
+						// For example:
+						// 	{watermarks: {branches: [10, 20], functions: [10, 20]}}
+						// becomes:
+						// 	[
+						//		[watermarks, branches, [10, 20]],
+						//		[watermarks, functions, [10, 20]],
+						// 	]
+						var _serializeConfig = function (oCoverageObj) {
+							var aRecords = [];
+							for (var [sKey, vValue] of Object.entries(oCoverageObj)) {
+								if (Object.prototype.toString.call(vValue) === "[object Object]") {
+									var aSubRecords = _serializeConfig(vValue);
+									// eslint-disable-next-line no-loop-func
+									aRecords = aRecords.concat(aSubRecords.map(function (aEntry) {
+										return [sKey].concat(aEntry);
+									}));
+								} else {
+									aRecords.push([sKey, vValue]);
+								}
+							}
+
+							return aRecords;
+						};
 						if (oConfig.coverage) {
 							var oScript = document.querySelector('script[src$="qunit/qunit-coverage-istanbul.js"]');
-							if (oScript) {
-								if (oConfig.coverage.only != null) {
-									oScript.setAttribute("data-sap-ui-cover-only", _adjustFilters(oConfig.coverage.only));
-								}
-								if (oConfig.coverage.never != null) {
-									oScript.setAttribute("data-sap-ui-cover-never", _adjustFilters(oConfig.coverage.never));
-								}
+							if (oScript && oConfig.coverage != null) {
+								var aConfig = _serializeConfig(oConfig.coverage);
+								aConfig.forEach(function(aEntry) {
+									var vValue = aEntry.pop();
+									if (vValue !== null) {
+										oScript.setAttribute("data-sap-ui-cover-" + aEntry.join("-"), _adjustHtmlAttrValues(vValue));
+									}
+								});
 							}
 						}
 					});
