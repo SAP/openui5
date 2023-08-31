@@ -2028,33 +2028,39 @@ sap.ui.define([
 			$browse.attr("type', 'button"); // The default type of button is submit that's why on click of label there are submit of the form. This way we are avoiding the submit of form.
 			// exapnd to multiple event types listening
 
-			var oEvents = {
-				click: function(oEvent) {
-					oEvent.preventDefault();
-					oEvent.stopPropagation();
-					this.FUEl.click(); // The default behaviour on click on label is to open "open file" dialog. The only way to attach click event that is transferred from the label to the button is this way. AttachPress and attachTap don't work in this case.
-				}.bind(this),
-				dragover: function(oEvent) { oEvent.preventDefault(); },
-				dragenter: function(oEvent) { oEvent.preventDefault(); },
-				drop: function(oEvent) {
-					oEvent.preventDefault();
-					var aFileList = oEvent.originalEvent.dataTransfer.files;
-					// TODO: enable directory drag and drop
-					if ((!this.getMultiple() && aFileList.length > 1)) {
-						return;
+			$browse.off("click").on("click", function(oEvent) {
+				oEvent.preventDefault();
+				oEvent.stopPropagation();
+				this.FUEl.click(); // The default behaviour on click on label is to open "open file" dialog. The only way to attach click event that is transferred from the label to the button is this way. AttachPress and attachTap don't work in this case.
+			}.bind(this));
+
+			// The event propagation needs to be stopped so composing controls, which also react on
+			// drag and drop events like the sap.m.UploadCollection or sap.m.upload.UploadSet aren't affected.
+			$browse.off("dragover").on("dragover", function(oEvent) {
+				oEvent.preventDefault();
+				oEvent.stopPropagation();
+			});
+			$browse.off("dragenter").on("dragenter", function(oEvent) {
+				oEvent.preventDefault();
+				oEvent.stopPropagation();
+			});
+			$browse.off("drop").on("drop", function(oEvent) {
+				oEvent.preventDefault();
+				oEvent.stopPropagation();
+				var aFileList = oEvent.originalEvent.dataTransfer.files;
+				// TODO: enable directory drag and drop
+				if (!this.getMultiple() && aFileList.length > 1) {
+					return;
+				}
+
+				this.oFileUpload.files = aFileList;
+				var oChangeEvent = {
+					target: {
+						files: aFileList
 					}
-
-					this.oFileUpload.files = aFileList;
-					var oChangeEvent = {
-						target: {
-							files: aFileList
-						}
-					};
-					this.handlechange(oChangeEvent);
-				}.bind(this)
-			};
-
-			$browse.off(oEvents).on(oEvents);
+				};
+				this.handlechange(oChangeEvent);
+			}.bind(this));
 		}
 	};
 
