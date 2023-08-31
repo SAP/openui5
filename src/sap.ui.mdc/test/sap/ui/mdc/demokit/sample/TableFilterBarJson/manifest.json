@@ -60,6 +60,7 @@
 			"compact": true,
 			"cozy": true
 		},
+		"handleValidation": true,
 		"models": {
 			"mountains": {
 				"type": "sap.ui.model.json.JSONModel",
