@@ -614,13 +614,7 @@ sap.ui.define([
 
 			window.addEventListener('hashchange', fnCheckURL);
 
-			oPanel.getAggregation("_content") // VerticalLayout of panel
-				.getContent()[2] // VBox which includes the links
-				.getItems()[0] // First PanelListItem of the panel
-				.getContent()[0] // HBox
-				.getItems()[1] // VBox containing link, label and a text
-				.getItems()[0] // Actuall sap.m.Link on the Panel
-				.firePress();
+			oPanel._getLinkControls()[0].firePress();
 		});
 	});
 
@@ -726,9 +720,7 @@ sap.ui.define([
 		var oNoContentText = oLinkNoContent._getNoContent().getContent()[0].getText();
 
 		oLinkNoContent.getContent().then(function(oPanel) {
-			assert.deepEqual(oPanel.getAggregation("_content").getContent()[0].getItems()[0].getContent()[0].getText(), oNoContentText, "'No content available' SimpleForm displayed on Panel");
-			// AdditionalContent is now forwarded to a VBox
-			//assert.deepEqual(oPanel.getAdditionalContent()[0].getContent()[0].getText(), oNoContentText, "'No content available' SimpleForm displayed on Panel");
+			assert.equal(oPanel._getAdditionalContentArea().getItems()[0].getContent()[0].getText(), oNoContentText, "'No content available' SimpleForm displayed on Panel");
 			done();
 		});
 	});
@@ -791,4 +783,139 @@ sap.ui.define([
 			done();
 		});
 	});
+
+	QUnit.test("createPopover - without links, without additional content", function(assert) {
+		var done = assert.async();
+
+		var oLink = new Link();
+		var oText = new Text({
+			text: "Dummy Text"
+		});
+		oText.placeAt("qunit-fixture");
+		oCore.applyChanges();
+
+		oLink.open(oText).then((oPopover) => {
+			var oPopover = oLink.getDependents().find((oDependent) => {
+				return oDependent.isA("sap.m.ResponsivePopover");
+			});
+			var oPanel = oPopover.getContent()[0];
+			assert.equal(oPopover.getDomRef().getAttribute("aria-labelledby"), oPanel._getAdditionalContentArea().getItems()[0].getId(), "Correct 'aria-labelledby' set");
+			oPopover.close();
+			done();
+		});
+	});
+
+	QUnit.test("createPopover - with links, without additional content", function(assert) {
+		var done = assert.async();
+		var sBaseUrl = window.location.href;
+
+		var oLink = new Link({
+			delegate: {
+				name: "test-resources/sap/ui/mdc/qunit/link/TestDelegate_Link",
+				payload: {
+					items: [
+						new LinkItem({
+							text: "Link1",
+							href: sBaseUrl + "#directNavigation",
+							initiallyVisible: true
+						}),
+						new LinkItem({
+							text: "Link2",
+							href: sBaseUrl + "#directNavigation",
+							initiallyVisible: true
+						})
+					]
+				}
+			}
+		});
+		var oText = new Text({
+			text: "Dummy Text"
+		});
+		oText.placeAt("qunit-fixture");
+		oCore.applyChanges();
+
+		oLink.open(oText).then((oPopover) => {
+			var oPopover = oLink.getDependents().find((oDependent) => {
+				return oDependent.isA("sap.m.ResponsivePopover");
+			});
+			var oPanel = oPopover.getContent()[0];
+			assert.equal(oPopover.getDomRef().getAttribute("aria-labelledby"), oPanel._getLinkControls()[0].getId(), "Correct 'aria-labelledby' set");
+			oPopover.close();
+			done();
+		});
+	});
+
+	QUnit.test("createPopover - with links and with additional content", function(assert) {
+		var done = assert.async();
+		var sBaseUrl = window.location.href;
+		var oAdditionalContentText = new Text({
+			text: "Additional Content Text"
+		});
+
+		var oLink = new Link({
+			delegate: {
+				name: "test-resources/sap/ui/mdc/qunit/link/TestDelegate_Link",
+				payload: {
+					items: [
+						new LinkItem({
+							text: "Link1",
+							href: sBaseUrl + "#directNavigation",
+							initiallyVisible: true
+						}),
+						new LinkItem({
+							text: "Link2",
+							href: sBaseUrl + "#directNavigation",
+							initiallyVisible: true
+						})
+					],
+					additionalContent: [ oAdditionalContentText ]
+				}
+			}
+		});
+		var oText = new Text({
+			text: "Dummy Text"
+		});
+		oText.placeAt("qunit-fixture");
+		oCore.applyChanges();
+
+		oLink.open(oText).then((oPopover) => {
+			var oPopover = oLink.getDependents().find((oDependent) => {
+				return oDependent.isA("sap.m.ResponsivePopover");
+			});
+			assert.equal(oPopover.getDomRef().getAttribute("aria-labelledby"), oAdditionalContentText.getId(), "Correct 'aria-labelledby' set");
+			oPopover.close();
+			done();
+		});
+	});
+
+	QUnit.test("createPopover - without links, with additional content", function(assert) {
+		var done = assert.async();
+		var oAdditionalContentText = new Text({
+			text: "Additional Content Text"
+		});
+
+		var oLink = new Link({
+			delegate: {
+				name: "test-resources/sap/ui/mdc/qunit/link/TestDelegate_Link",
+				payload: {
+					additionalContent: [ oAdditionalContentText ]
+				}
+			}
+		});
+		var oText = new Text({
+			text: "Dummy Text"
+		});
+		oText.placeAt("qunit-fixture");
+		oCore.applyChanges();
+
+		oLink.open(oText).then((oPopover) => {
+			var oPopover = oLink.getDependents().find((oDependent) => {
+				return oDependent.isA("sap.m.ResponsivePopover");
+			});
+			assert.equal(oPopover.getDomRef().getAttribute("aria-labelledby"), oAdditionalContentText.getId(), "Correct 'aria-labelledby' set");
+			oPopover.close();
+			done();
+		});
+	});
+
 });
