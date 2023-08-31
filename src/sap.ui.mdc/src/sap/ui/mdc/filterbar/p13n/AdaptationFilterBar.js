@@ -383,6 +383,12 @@ sap.ui.define([
 							this._mOriginalsForClone[oFilterField.getPropertyKey()] = oFilterField;
 						}
 						oFieldForDialog = oFilterField.clone();
+						if (oAdaptationControl._handleFilterItemChanges) {
+							oFieldForDialog.detachChange(oAdaptationControl._handleFilterItemChanges, oAdaptationControl);
+						}
+						if (oAdaptationControl._handleFilterItemSubmit) {
+							oFieldForDialog.detachSubmit(oAdaptationControl._handleFilterItemSubmit, oAdaptationControl);
+						}
 
 						if (oFieldForDialog.getValueState() !== ValueState.None) {
 							oFieldForDialog.setValueState(ValueState.None);
