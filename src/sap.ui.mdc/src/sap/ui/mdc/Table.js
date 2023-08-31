@@ -1036,6 +1036,12 @@ sap.ui.define([
 		return this;
 	};
 
+	/**
+	 * Retrieve the table's type
+	 * @returns {sap.ui.mdc.table.TableTypeBase} The TableType implementation in use
+	 * @private
+	 * @ui5-restricted sap.ui.mdc
+	 */
 	Table.prototype._getType = function() {
 		var vType = this.getType();
 
