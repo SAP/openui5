@@ -600,66 +600,6 @@ sap.ui.define([
 		},
 
 		/**
-		 * Checks whether the Cache Manager is switched on.
-		 * @ui5-restricted sap.ui.core
-		 * @since 1.37.0
-		 * @returns {boolean} If cache is enabled
-		 * @private
-		 */
-		isUI5CacheOn: function () {
-			return Configuration.getValue("xx-cache-use");
-		},
-
-		/**
-		 * Enables/Disables the Cache configuration.
-		 * @since 1.37.0
-		 * @param {boolean} on true to switch it on, false if to switch it off
-		 * @returns {this} The Configuration for chaining
-		 * @private
-		 * @ui5-restricted sap.ui.core
-		 */
-		setUI5CacheOn: function (on) {
-			config["xx-cache-use"] = on;
-			return this;
-		},
-
-		/**
-		 * Checks whether the Cache Manager serialization support is switched on.
-		 * @since 1.37.0
-		 * @returns {boolean} Wether cache serialization is supported or not
-		 * @private
-		 * @ui5-restricted sap.ui.core
-		 */
-		isUI5CacheSerializationSupportOn: function () {
-			return Configuration.getValue("xx-cache-serialization");
-		},
-
-		/**
-		 * Enables/Disables the Cache serialization support
-		 * @since 1.37.0
-		 * @param {boolean} on true to switch it on, false if to switch it off
-		 * @returns {this} The Configuration for chaining
-		 * @private
-		 * @ui5-restricted sap.ui.core
-		 */
-		setUI5CacheSerializationSupport: function (on) {
-			config["xx-cache-serialization"] = on;
-			return this;
-		},
-
-		/**
-		 * Returns all keys, that the CacheManager will ignore when set/get values.
-		 * @private
-		 * @ui5-restricted sap.ui.core
-		 * @since 1.37.0
-		 * @returns {string[]} array of keys that CacheManager should ignore
-		 * @see sap.ui.core.cache.LRUPersistentCache#keyMatchesExclusionStrings
-		 */
-		getUI5CacheExcludedKeys: function () {
-			return Configuration.getValue("xx-cache-excludedKeys");
-		},
-
-		/**
 		 * Sets the new calendar type to be used from now on in locale dependent functionality (for example,
 		 * formatting, translation texts, etc.).
 		 *
