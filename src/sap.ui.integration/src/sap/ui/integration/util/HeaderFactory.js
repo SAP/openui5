@@ -32,6 +32,8 @@ sap.ui.define([
 
 	var ButtonType = mLibrary.ButtonType;
 
+	var CardDisplayVariant = library.CardDisplayVariant;
+
 	var oResourceBundle = Core.getLibraryResourceBundle("sap.ui.integration");
 
 	/**
@@ -93,10 +95,8 @@ sap.ui.define([
 		oHeader.setDataProviderFactory(oCard._oDataProviderFactory);
 		oHeader._setDataConfiguration(mConfiguration.data);
 
-		oHeader.setProperty("useTileLayout", oCard.isTileDisplayVariant());
-
-		if (oCard.isTileDisplayVariant() && !mConfiguration.titleMaxLines) {
-			oHeader.setTitleMaxLines(2);
+		if (oCard.isTileDisplayVariant()) {
+			this._setTileDefaults(oHeader, mConfiguration);
 		}
 
 		var oActions = new CardActions({
@@ -130,6 +130,29 @@ sap.ui.define([
 		});
 
 		return oButton;
+	};
+
+	HeaderFactory.prototype._setTileDefaults = function (oHeader, mConfiguration) {
+		oHeader.setProperty("useTileLayout", true);
+
+		const oCard = this._oCard;
+		const bIsFlatTile = [CardDisplayVariant.TileFlat, CardDisplayVariant.TileFlatWide].indexOf(oCard.getDisplayVariant()) > -1;
+
+		if (!mConfiguration.titleMaxLines) {
+			oHeader.setTitleMaxLines(bIsFlatTile ? 1 : 2);
+		}
+
+		if (bIsFlatTile) {
+			oHeader.setIconSize("XS");
+
+			if (oHeader.isA("sap.f.cards.NumericHeader")) {
+				oHeader.setNumberSize("S");
+			}
+
+			if (!mConfiguration.subtitleMaxLines) {
+				oHeader.setSubtitleMaxLines(1);
+			}
+		}
 	};
 
 	return HeaderFactory;

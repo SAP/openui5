@@ -42,6 +42,10 @@ sap.ui.define([
 			oRm.class("sapFCardSectionClickable");
 		}
 
+		if (oHeader.getIconSrc() && oHeader.getIconVisible()) {
+			oRm.class("sapFCardHeaderHasIcon");
+		}
+
 		oRm.openEnd();
 
 		oRm.openStart("div")

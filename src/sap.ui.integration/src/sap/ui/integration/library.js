@@ -191,7 +191,17 @@ sap.ui.define([
 		 * Card renders and behaves like a tile of size 4x2.
 		 * @public
 		 */
-		TileStandardWide: "TileStandardWide"
+		TileStandardWide: "TileStandardWide",
+		/**
+		 * Card renders and behaves like a tile of size 2x1.
+		 * @public
+		 */
+		TileFlat: "TileFlat",
+		/**
+		 * Card renders and behaves like a tile of size 4x1.
+		 * @public
+		 */
+		TileFlatWide: "TileFlatWide"
 	};
 
 	/**

@@ -351,6 +351,16 @@ sap.ui.define([
 	};
 
 	/**
+	 * Gets the ids of the banner lines to be used in aria-labelledby
+	 * @returns {string} The ids of the banner lines.
+	 */
+	BaseHeader.prototype._getBannerLinesIds = function () {
+		return this.getBannerLines().map((oBannerLine) => {
+			return oBannerLine.getId();
+		}).join(" ");
+	};
+
+	/**
 	 * Returns if the control is inside a sap.f.GridContainer
 	 *
 	 * @private

@@ -26,10 +26,11 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var ValueState = coreLibrary.ValueState;
-	var AvatarShape = mLibrary.AvatarShape;
-	var AvatarColor = mLibrary.AvatarColor;
-	var AvatarImageFitType = mLibrary.AvatarImageFitType;
+	const ValueState = coreLibrary.ValueState;
+	const AvatarShape = mLibrary.AvatarShape;
+	const AvatarColor = mLibrary.AvatarColor;
+	const AvatarImageFitType = mLibrary.AvatarImageFitType;
+	const AvatarSize = mLibrary.AvatarSize;
 
 	/**
 	 * Constructor for a new <code>NumericHeader</code>.
@@ -140,6 +141,13 @@ sap.ui.define([
 				iconVisible: { type: "boolean", defaultValue: true },
 
 				/**
+				 * Defines the size of the icon.
+				 *
+				 * @experimental Since 1.119 this feature is experimental and the API may change.
+				 */
+				iconSize: { type: "sap.m.AvatarSize", defaultValue: AvatarSize.S },
+
+				/**
 				 * General unit of measurement for the header. Displayed as side information to the subtitle.
 				 */
 				unitOfMeasurement: { "type": "string", group : "Data" },
@@ -149,6 +157,11 @@ sap.ui.define([
 				 * If the value contains more than five characters, only the first five are displayed. Without rounding the number.
 				 */
 				number: { "type": "string", group : "Data" },
+
+				/**
+				 * The size of the of the main indicator. Possible values are "S" and "L".
+				 */
+				numberSize: { "type": "string", group : "Appearance", defaultValue: "L" },
 
 				/**
 				 * Whether the main numeric indicator is visible or not
@@ -290,13 +303,13 @@ sap.ui.define([
 
 		this._getUnitOfMeasurement().setText(this.getUnitOfMeasurement());
 
-		var oAvatar = this._getAvatar();
-
-		oAvatar.setDisplayShape(this.getIconDisplayShape());
-		oAvatar.setSrc(this.getIconSrc());
-		oAvatar.setInitials(this.getIconInitials());
-		oAvatar.setTooltip(this.getIconAlt());
-		oAvatar.setBackgroundColor(this.getIconBackgroundColor());
+		this._getAvatar()
+			.setDisplayShape(this.getIconDisplayShape())
+			.setSrc(this.getIconSrc())
+			.setInitials(this.getIconInitials())
+			.setTooltip(this.getIconAlt())
+			.setBackgroundColor(this.getIconBackgroundColor())
+			.setDisplaySize(this.getIconSize());
 
 		if (!this.isPropertyInitial("detailsState") && !this.isPropertyInitial("detailsMaxLines")) {
 			Log.error("Both details state and details max lines can not be used at the same time. Max lines setting will be ignored.");
@@ -314,6 +327,7 @@ sap.ui.define([
 
 		this._getNumericIndicators()
 			.setNumber(this.getNumber())
+			.setNumberSize(this.getNumberSize())
 			.setScale(this.getScale())
 			.setTrend(this.getTrend())
 			.setState(this.getState())
@@ -496,50 +510,43 @@ sap.ui.define([
 	 * @returns {string} IDs of controls
 	 */
 	NumericHeader.prototype._getAriaLabelledBy = function () {
-		var sCardTypeId = "",
-			sTitleId = "",
-			sSubtitleId = "",
-			sStatusTextId = "",
-			sUnitOfMeasureId = this._getUnitOfMeasurement().getId(),
-			sAvatarId = "",
-			sMainIndicatorId = "",
-			sSideIndicatorsIds = this._getSideIndicatorIds(),
-			sDetailsId = "",
-			sIds;
+		const aIds = [];
 
 		if (this.getParent() && this.getParent()._ariaText) {
-			sCardTypeId = this.getParent()._ariaText.getId();
+			aIds.push(this.getParent()._ariaText.getId());
 		}
 
 		if (this.getTitle()) {
-			sTitleId = this._getTitle().getId();
+			aIds.push(this._getTitle().getId());
 		}
 
 		if (this.getSubtitle()) {
-			sSubtitleId = this._getSubtitle().getId();
+			aIds.push(this._getSubtitle().getId());
 		}
 
 		if (this.getStatusText()) {
-			sStatusTextId = this.getId() + "-status";
+			aIds.push(this.getId() + "-status");
 		}
+
+		aIds.push(this._getUnitOfMeasurement().getId());
 
 		if (this.getIconSrc() || this.getIconInitials()) {
-			sAvatarId = this.getId() + "-ariaAvatarText";
-		}
-
-		if (this.getDetails()) {
-			sDetailsId = this._getDetailsId();
+			aIds.push(this.getId() + "-ariaAvatarText");
 		}
 
 		if (this.getNumber() || this.getScale()) {
-			sMainIndicatorId = this._getNumericIndicators()._getMainIndicator().getId();
+			aIds.push(this._getNumericIndicators()._getMainIndicator().getId());
 		}
 
-		sIds = sCardTypeId + " " + sTitleId + " " + sSubtitleId + " " + sStatusTextId + " " + sUnitOfMeasureId + " " + sAvatarId + " " + sMainIndicatorId + " " + sSideIndicatorsIds + " " + sDetailsId;
+		aIds.push(this._getSideIndicatorIds());
 
-		// remove whitespace from both sides
-		// and merge the consecutive spaces into one
-		return sIds.replace(/ {2,}/g, ' ').trim();
+		if (this.getDetails()) {
+			aIds.push(this._getDetailsId());
+		}
+
+		aIds.push(this._getBannerLinesIds());
+
+		return aIds.filter((sElement) => { return !!sElement; }).join(" ");
 	};
 
 	/**
