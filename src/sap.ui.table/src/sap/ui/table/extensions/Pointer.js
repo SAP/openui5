@@ -703,7 +703,7 @@ sap.ui.define([
 				var oPointerExtension = this._getPointerExtension();
 
 				if (oPointerExtension._bShowMenu) {
-					TableUtils.Menu.openContextMenu(this, oEvent.target);
+					TableUtils.Menu.openContextMenu(this, oEvent);
 					delete oPointerExtension._bShowMenu;
 				}
 			} else if (oCellInfo.isOfType(TableUtils.CELLTYPE.COLUMNROWHEADER)) {
@@ -713,7 +713,7 @@ sap.ui.define([
 				oEvent.preventDefault();
 			} else if ($Target.hasClass("sapUiTableGroupMenuButton")) {
 				// Analytical Table: Mobile group menu button in group header rows.
-				TableUtils.Menu.openContextMenu(this, oEvent.target, oEvent);
+				TableUtils.Menu.openContextMenu(this, oEvent);
 			} else if ($Target.hasClass("sapUiTableGroupIcon") || $Target.hasClass("sapUiTableTreeIcon")) {
 				// Expand/Collapse icon
 				oRow.toggleExpandedState();
@@ -744,7 +744,7 @@ sap.ui.define([
 				delete oPointerExtension._bShowDefaultMenu;
 
 			} else if (oPointerExtension._bShowMenu) {
-				var bContextMenuOpened = TableUtils.Menu.openContextMenu(this, oEvent.target, oEvent);
+				var bContextMenuOpened = TableUtils.Menu.openContextMenu(this, oEvent);
 
 				if (bContextMenuOpened) {
 					oEvent.preventDefault(); // To prevent opening the default browser context menu.
