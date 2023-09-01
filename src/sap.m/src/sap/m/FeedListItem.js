@@ -146,8 +146,8 @@ function(
 				 *
 				 * If bandwidth is the key for the application, set this value to false.
 				 *
-				 * Deprecated as of version 1.88. Image is replaced by avatar.
-				 */
+				 * @deprecated as of version 1.88. Image is replaced by {@link sap.m.Avatar }
+				*/
 				iconDensityAware: {type: "boolean", defaultValue: true},
 
 				/**
