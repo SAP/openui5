@@ -322,7 +322,7 @@ sap.ui.define([
 		} else {
 			throw DtUtil.createError(
 				"RuntimeAuthoring#addDependent",
-				DtUtil.printf("Can't add dependency with same key '{0}'", sName),
+				`Can't add dependency with same key '${sName}'`,
 				"sap.ui.rta"
 			);
 		}
@@ -1847,7 +1847,7 @@ sap.ui.define([
 					return Promise.reject(
 						DtUtil.createError(
 							"RuntimeAuthoring#startService",
-							DtUtil.printf("Can't start the service '{0}' while RTA has been failed during a startup", sName),
+							`Can't start the service '${sName}' because RTA startup failed`,
 							"sap.ui.rta"
 						)
 					);
@@ -1862,7 +1862,7 @@ sap.ui.define([
 			return Promise.reject(
 				DtUtil.createError(
 					"RuntimeAuthoring#startService",
-					DtUtil.printf("Unknown service. Can't find any registered service by name '{0}'", sName),
+					`Unknown service. Can't find any registered service by name '${sName}'`,
 					"sap.ui.rta"
 				)
 			);
@@ -1884,7 +1884,7 @@ sap.ui.define([
 					return Promise.reject(
 						DtUtil.createError(
 							"RuntimeAuthoring#startService",
-							DtUtil.printf("Unknown service status. Service name = '{0}'", sName),
+							`Unknown service status. Service name = '${sName}'`,
 							"sap.ui.rta"
 						)
 					);
@@ -1910,18 +1910,14 @@ sap.ui.define([
 							if (this.bIsDestroyed) {
 								throw DtUtil.createError(
 									"RuntimeAuthoring#startService",
-									DtUtil.printf("RuntimeAuthoring instance is destroyed while initializing the service '{0}'", sName),
+									`RuntimeAuthoring instance is destroyed while initializing the service '${sName}'`,
 									"sap.ui.rta"
 								);
 							}
 							if (!isPlainObject(oService)) {
 								throw DtUtil.createError(
 									"RuntimeAuthoring#startService",
-									DtUtil.printf(
-										"Invalid service format. "
-										+ "Service should return simple javascript object after initialization. Service name = '{0}'",
-										sName
-									),
+									`Invalid service format. Service should return simple javascript object after initialization. Service name = '${sName}'`,
 									"sap.ui.rta"
 								);
 							}
@@ -1962,7 +1958,7 @@ sap.ui.define([
 							DtUtil.propagateError(
 								vError,
 								"RuntimeAuthoring#startService",
-								DtUtil.printf("Can't load service '{0}' by its name: {1}", sName, sServiceLocation),
+								`Can't load service '${sName}' by its name: ${sServiceLocation}`,
 								"sap.ui.rta"
 							)
 						);
@@ -1975,7 +1971,7 @@ sap.ui.define([
 					DtUtil.propagateError(
 						vError,
 						"RuntimeAuthoring#startService",
-						DtUtil.printf("Error during service '{0}' initialization.", sName),
+						`Error initializing service '${sName}'`,
 						"sap.ui.rta"
 					)
 				);
@@ -2002,7 +1998,7 @@ sap.ui.define([
 		} else {
 			throw DtUtil.createError(
 				"RuntimeAuthoring#stopService",
-				DtUtil.printf("Can't destroy service: unable to find service with name '{0}'", sName),
+				`Can't destroy service: unable to find service with name '${sName}'`,
 				"sap.ui.rta"
 			);
 		}

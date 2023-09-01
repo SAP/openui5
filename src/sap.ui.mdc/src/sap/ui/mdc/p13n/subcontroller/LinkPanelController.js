@@ -6,9 +6,8 @@ sap.ui.define([
     "sap/ui/mdc/p13n/P13nBuilder",
 	"./SelectionController",
     "sap/ui/mdc/p13n/panels/LinkSelectionPanel",
-    "sap/m/MessageBox",
-    "sap/ui/mdc/enums/TableMultiSelectMode"
-], function (P13nBuilder, BaseController, SelectionPanel, MessageBox, TableMultiSelectMode) {
+    "sap/m/MessageBox"
+], function (P13nBuilder, BaseController, SelectionPanel, MessageBox) {
     "use strict";
 
     var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
@@ -45,7 +44,6 @@ sap.ui.define([
         });
         var oAdaptationData = this.mixInfoAndState(oPropertyHelper);
         oSelectionPanel.setP13nData(oAdaptationData.items);
-        oSelectionPanel.setMultiSelectMode(TableMultiSelectMode.Default);
         this._oPanel = oSelectionPanel;
         return Promise.resolve(oSelectionPanel);
     };

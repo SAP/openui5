@@ -813,7 +813,7 @@ sap.ui.define([
 		if (!bFiltersAggregationChanged) {
 			if (this._btnAdapt) {
 				var aFilterNames = this.getAssignedFilterNames();
-				this.setProperty("_filterCount", this._oRb.getText(aFilterNames.length ? "filterbar.ADAPT_NONZERO" : "filterbar.ADAPT", aFilterNames.length), false);
+				this.setProperty("_filterCount", this._oRb.getText(aFilterNames.length ? "filterbar.ADAPT_NONZERO" : "filterbar.ADAPT", [aFilterNames.length]), false);
 			}
 		}
 

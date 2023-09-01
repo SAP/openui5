@@ -10,7 +10,8 @@
 		<mdc:typeahead>
 			<vh:Popover title="Name">
 				<vhc:MTable keyPath="name" filterFields="*name*">
-					<Table id="name-vh-table" items='{path : "mountains>/mountains", length: 10}' width="30rem">
+					<Table id="name-vht-table" items='{path : "mountains>/mountains", length: 10}'
+						width="30rem">
 						<columns>
 							<Column>
 								<header>
@@ -33,16 +34,18 @@
 			<vh:Dialog title="Name">
 				<vhc:MDCTable keyPath="name">
 					<vhc:filterBar>
-						<vhfb:FilterBar id="name-vhd-fb" liveMode="true" delegate="{name: 'mdc/sample/delegate/JSONFilterBarDelegate'}">
-							<vhfb:filterItems>
-								<mdc:FilterField label="Name" conditions="{$filters>/conditions/name}" />
-							</vhfb:filterItems>
+						<vhfb:FilterBar id="name-vhd-fb" delegate="{name: 'mdc/sample/delegate/JSONFilterBarDelegate'}">
+							<vhfb:basicSearchField>
+								<mdc:FilterField delegate="{name: 'sap/ui/mdc/field/FieldBaseDelegate'}"
+									dataType="sap.ui.model.type.String"
+									placeholder= "Search Mountains"
+									conditions="{$filters>/conditions/$search}"
+									maxConditions="1"/>
+							</vhfb:basicSearchField>
 						</vhfb:FilterBar>
 					</vhc:filterBar>
 					<mdc:Table id="name-vhd-table"
-						autoBindOnInit="false"
-						width="100%"
-						height="100%"
+						type="ResponsiveTable"
 						selectionMode="Multi"
 						delegate="{
 							name: 'mdc/sample/delegate/JSONTableDelegate',
@@ -50,8 +53,7 @@
 								collectionPath: 'mountains>/mountains'
 							}
 						}"
-						filter="name-vhd-fb"
-						threshold="50">
+						filter="name-vhd-fb">
 						<mdc:columns>
 							<mdc:table.Column
 								header="Name"

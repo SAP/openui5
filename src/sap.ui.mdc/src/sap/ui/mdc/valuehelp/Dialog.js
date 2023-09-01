@@ -552,7 +552,7 @@ sap.ui.define([
 		var oGroupConfigSegment = oGroupConfig && oGroupConfig[sGroup];
 		var sTitle = oGroupConfigSegment && (iCount ? oGroupConfigSegment.label : oGroupConfigSegment.nnLabel);
 		sTitle = sTitle && formatMessage(sTitle, iCount ? iCount : "");
-		sTitle = sTitle || this._oResourceBundle.getText(iCount ? "valuehelp.SELECTFROMLIST" : "valuehelp.SELECTFROMLISTNONUMBER", iCount);
+		sTitle = sTitle || this._oResourceBundle.getText(iCount ? "valuehelp.SELECTFROMLIST" : "valuehelp.SELECTFROMLISTNONUMBER", [iCount]);
 		return sTitle;
 	};
 

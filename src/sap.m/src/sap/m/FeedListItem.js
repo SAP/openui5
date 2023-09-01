@@ -69,7 +69,6 @@ function(
 			library: "sap.m",
 			designtime: "sap/m/designtime/FeedListItem.designtime",
 			properties: {
-
 				/**
 				 * Icon to be displayed as graphical element within the FeedListItem. This can be an image or an icon from the icon font. If no icon is provided, a default person-placeholder icon is displayed.
 				 * Icon is only shown if showIcon = true.
@@ -140,15 +139,6 @@ function(
 				 * If true, icon is a link, which will fire 'iconPress' events. If false, icon is normal image
 				 */
 				iconActive: {type: "boolean", group: "Behavior", defaultValue: true},
-
-				/**
-				 * By default, this is set to true but then one or more requests are sent trying to get the density perfect version of image if this version of image doesn't exist on the server.
-				 *
-				 * If bandwidth is the key for the application, set this value to false.
-				 *
-				 * Deprecated as of version 1.88. Image is replaced by avatar.
-				 */
-				iconDensityAware: {type: "boolean", defaultValue: true},
 
 				/**
 				 * If set to "true" (default), icons will be displayed, if set to false icons are hidden

@@ -22,7 +22,6 @@ sap.ui.define([
 	Fragment
 ) {
 
-
 	"use strict";
 	/**
 	 * Static utility class to access ManagedObjects in a harmonized way with XMLNodes.
@@ -331,39 +330,65 @@ sap.ui.define([
 		/**
 		 * @inheritDoc
 		 */
-		insertAggregation: function (oParent, sName, oObject, iIndex) {
+		insertAggregation: async function (oParent, sName, oObject, iIndex) {
 			//special handling without invalidation for customData
 			if (sName === "customData") {
-				return oParent.insertAggregation(sName, oObject, iIndex, /*bSuppressInvalidate=*/true);
+				oParent.insertAggregation(sName, oObject, iIndex, /*bSuppressInvalidate=*/true);
+				return;
 			}
-			return this.findAggregation(oParent, sName)
-				.then(function (oAggregation) {
-					if (oAggregation) {
-						if (oAggregation.multiple) {
-							var iInsertIndex = iIndex || 0;
-							oParent[oAggregation._sInsertMutator](oObject, iInsertIndex);
-						} else {
-							oParent[oAggregation._sMutator](oObject);
-						}
-					}
-				});
+			const oAggregation = await this.findAggregation(oParent, sName);
+			if (oAggregation) {
+				if (oAggregation.multiple) {
+					const iInsertIndex = iIndex || 0;
+					oParent[oAggregation._sInsertMutator](oObject, iInsertIndex);
+				} else {
+					oParent[oAggregation._sMutator](oObject);
+				}
+			}
 		},
 
 		/**
 		 * @inheritDoc
 		 */
-		removeAggregation: function (oControl, sName, oObject) {
+		removeAggregation: async function (oParent, sName, oObject) {
 			//special handling without invalidation for customData
 			if (sName === "customData") {
-				oControl.removeAggregation(sName, oObject, /*bSuppressInvalidate=*/true);
-				return Promise.resolve();
+				oParent.removeAggregation(sName, oObject, /*bSuppressInvalidate=*/true);
+				return;
 			}
-			return this.findAggregation(oControl, sName)
-				.then(function (oAggregation) {
-					if (oAggregation) {
-						oControl[oAggregation._sRemoveMutator](oObject);
-					}
-				});
+			const oAggregation = await this.findAggregation(oParent, sName);
+			if (oAggregation) {
+				oParent[oAggregation._sRemoveMutator](oObject);
+			}
+		},
+
+		/**
+		 * @inheritDoc
+		 */
+		moveAggregation: async function(oSourceParent, sSourceAggregationName, oTargetParent, sTargetAggregationName, oObject, iIndex) {
+			let oSourceAggregation;
+			let oTargetAggregation;
+
+			// customData aggregations are always multiple and use the standard "removeAggregation" mutator
+			if (sSourceAggregationName === "customData") {
+				oSourceParent.removeAggregation(sSourceAggregationName, oObject, /*bSuppressInvalidate=*/true);
+			} else {
+				oSourceAggregation = await this.findAggregation(oSourceParent, sSourceAggregationName);
+			}
+			if (sTargetAggregationName === "customData") {
+				oTargetParent.insertAggregation(sTargetAggregationName, oObject, iIndex, /*bSuppressInvalidate=*/true);
+			} else {
+				oTargetAggregation = await this.findAggregation(oTargetParent, sTargetAggregationName);
+			}
+
+			if (oSourceAggregation && oTargetAggregation) {
+				oSourceParent[oSourceAggregation._sRemoveMutator](oObject);
+				if (oTargetAggregation.multiple) {
+					oTargetParent[oTargetAggregation._sInsertMutator](oObject, iIndex);
+				} else {
+					oTargetParent[oTargetAggregation._sMutator](oObject);
+				}
+			}
 		},
 
 		/**

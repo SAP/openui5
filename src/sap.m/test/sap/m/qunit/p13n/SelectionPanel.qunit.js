@@ -14,6 +14,9 @@ sap.ui.define([
 	// shortcut for sap.m.ListType
 	var ListType = mLibrary.ListType;
 
+	// shortcut for sap.m.MultiSelectMode
+	var MultiSelectMode = mLibrary.MultiSelectMode;
+
 	QUnit.module("API Tests", {
 		getTestData: function() {
 			return [
@@ -534,5 +537,17 @@ sap.ui.define([
 
 		assert.equal(oSelectionPanel.getFieldColumn(), testText, "The updated text has been set");
 
+	});
+
+	QUnit.test("Check 'multiSelectMode'", function(assert) {
+		var oPanel = this.oSelectionPanel;
+
+		assert.equal(oPanel._oListControl.getMultiSelectMode(), MultiSelectMode.ClearAll, "Correct default value for 'multiSelectMode' set in inner ListControl.");
+
+		oPanel.setMultiSelectMode(MultiSelectMode.Default);
+		assert.equal(oPanel._oListControl.getMultiSelectMode(), MultiSelectMode.Default, "Correct value forwarded to inner ListControl.");
+
+		oPanel.setMultiSelectMode(MultiSelectMode.SelectAll);
+		assert.equal(oPanel._oListControl.getMultiSelectMode(), MultiSelectMode.SelectAll, "Correct value forwarded to inner ListControl.");
 	});
 });

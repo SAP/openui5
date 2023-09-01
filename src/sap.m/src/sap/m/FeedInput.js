@@ -51,7 +51,6 @@ sap.ui.define([
 			library : "sap.m",
 			designtime: "sap/m/designtime/FeedInput.designtime",
 			properties : {
-
 				/**
 				 * Set this flag to "false" to disable both text input and post button.
 				 */
@@ -128,32 +127,13 @@ sap.ui.define([
 				showIcon : {type : "boolean", group : "Behavior", defaultValue : true},
 
 				/**
-				 * Some mobile devices support higher resolution images while others do not. Therefore, you should provide image resources for all relevant densities.
-				 * If the property is set to "true", one or more requests are sent to the server to try and get the perfect density version of an image. If an image of a certain density is not available, the image control falls back to the default image, which should be provided.
-				 *
-				 * If you do not have higher resolution images, you should set the property to "false" to avoid unnecessary round-trips.
-				 *
-				 * Please be aware that this property is relevant only for images and not for icons.
-				 *
-				 * Deprecated as of version 1.88. Image is replaced by avatar.
-				 */
-				iconDensityAware : {type : "boolean", group : "Appearance", defaultValue : true},
-
-				/**
 				 * Sets a new tooltip for Submit button. The tooltip can either be a simple string (which in most cases will be rendered as the title attribute of this element)
 				 * or an instance of sap.ui.core.TooltipBase.
 				 * If a new tooltip is set, any previously set tooltip is deactivated.
 				 * The default value is set language dependent.
 				 * @since 1.28
 				 */
-				buttonTooltip : {type : "sap.ui.core.TooltipBase", group : "Accessibility", defaultValue : "Submit"},
-
-				/**
-				 * Text for Picture which will be read by screenreader.
-				 * If a new ariaLabelForPicture is set, any previously set ariaLabelForPicture is deactivated.
-				 * Deprecated as of version 1.88. This will not have any effect in code now.
-				 */
-				ariaLabelForPicture : {type : "string", group : "Accessibility", defaultValue : null}
+				buttonTooltip : {type : "sap.ui.core.TooltipBase", group : "Accessibility", defaultValue : "Submit"}
 			},
 			aggregations : {
 				/**

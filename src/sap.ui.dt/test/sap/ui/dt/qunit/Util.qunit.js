@@ -186,16 +186,6 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.module("printf()", function() {
-		QUnit.test("basic functionality", function(assert) {
-			assert.equal(
-				Util.printf("Arg1: {0}, Arg2: {1}", "Val1", "Val2"),
-				"Arg1: Val1, Arg2: Val2",
-				"The string has been correctly assembled"
-			);
-		});
-	});
-
 	QUnit.module("isInteger()", function() {
 		QUnit.test("basic functionality", function(assert) {
 			assert.ok(Util.isInteger(0), "zero is an integer");

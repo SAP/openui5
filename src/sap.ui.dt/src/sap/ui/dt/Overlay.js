@@ -206,11 +206,7 @@ sap.ui.define([
 			if (!this.getElement()) {
 				throw Util.createError(
 					"Overlay#constructor",
-					Util.printf(
-						"Cannot create overlay without a valid element. Expected a descendant of "
-						+ "sap.ui.core.Element or sap.ui.core.Component, but {0} was given",
-						Util.getObjectType(aArgs[0].element)
-					)
+					`Cannot create overlay without a valid element. Expected a descendant of sap.ui.core.Element or sap.ui.core.Component, but ${Util.getObjectType(aArgs[0].element)} was given`
 				);
 			}
 
@@ -233,11 +229,7 @@ sap.ui.define([
 				var oError = Util.propagateError(
 					vError,
 					"Overlay#asyncInit",
-					Util.printf(
-						"Can't initialize overlay (id='{0}') properly. Original error: {1}",
-						this.getId(),
-						Util.wrapError(vError).message
-					)
+					`Error initializing overlay (id='${this.getId()}'). Original error: ${Util.wrapError(vError).message}`
 				);
 
 				this.fireInitFailed({

@@ -255,6 +255,7 @@ sap.ui.define([
 		 * @ui5-restricted sap.ui.core
 		 */
 		fireThemeApplied: function () {
+			ThemeHelper.reset();
 			// special hook for resetting theming parameters before the controls get
 			// notified (lightweight coupling to static Parameters module)
 			var ThemeParameters = sap.ui.require("sap/ui/core/theming/Parameters");

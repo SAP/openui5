@@ -36,42 +36,42 @@ sap.ui.define([
 	};
 
 	MetadataPropagationUtil._getCurrentRelevantContainerPropagation = function(mElementDtMetadataForAggregation, oElement) {
-		var mNewPropagationInfo = {};
+		const mNewPropagationInfo = {};
+		const sMetadataType = typeof mElementDtMetadataForAggregation.propagateRelevantContainer;
 		if (!mElementDtMetadataForAggregation.propagateRelevantContainer) {
+			// undefined or false
 			return mNewPropagationInfo;
-		} else if (typeof mElementDtMetadataForAggregation.propagateRelevantContainer === "function") {
+		} else if (sMetadataType === "function") {
 			mNewPropagationInfo.relevantContainerFunction = mElementDtMetadataForAggregation.propagateRelevantContainer;
 			mNewPropagationInfo.relevantContainerElement = oElement;
-		} else if (typeof mElementDtMetadataForAggregation.propagateRelevantContainer === "boolean" &&
-			mElementDtMetadataForAggregation.propagateRelevantContainer) {
+		} else if (sMetadataType === "boolean") {
 			mNewPropagationInfo.relevantContainerFunction = function() { return true; };
 			mNewPropagationInfo.relevantContainerElement = oElement;
 		} else {
-			var oError = Util.wrapError(`Wrong type: it should be either a function or a boolean value and it is:${
-				typeof mElementDtMetadataForAggregation.propagateRelevantContainer}`);
-
-			var sLocation = "sap.ui.dt.MetadataPropagationUtil#_getCurrentRelevantContainerPropagation";
+			const oError = Util.wrapError(`Wrong type: it should be either a function or a boolean value and it is:${sMetadataType}`);
+			const sLocation = "sap.ui.dt.MetadataPropagationUtil#_getCurrentRelevantContainerPropagation";
 			oError.name = `Error in ${sLocation}`;
-			oError.message = Util.printf("{0} / {1}", sLocation, oError.message);
+			oError.message = `${sLocation} / ${oError.message}`;
 			throw oError;
 		}
 		return mNewPropagationInfo;
 	};
 
 	MetadataPropagationUtil._getCurrentDesigntimePropagation = function(mElementDtMetadataForAggregation, oElement) {
-		var mNewPropagationInfo = {};
+		const mNewPropagationInfo = {};
+		const sMetadataType = typeof mElementDtMetadataForAggregation.propagateMetadata;
 		if (!mElementDtMetadataForAggregation.propagateMetadata) {
 			return mNewPropagationInfo;
-		} else if (typeof mElementDtMetadataForAggregation.propagateMetadata === "function") {
+		} else if (sMetadataType === "function") {
 			mNewPropagationInfo.relevantContainerElement = oElement;
 			mNewPropagationInfo.metadataFunction = mElementDtMetadataForAggregation.propagateMetadata;
 		} else {
-			var oError = Util.wrapError(`Wrong type: it should be a function and it is:${
-				typeof mElementDtMetadataForAggregation.propagateRelevantContainer}`);
+			const oError = Util.wrapError(`Wrong type: it should be a function and it is:${
+				sMetadataType}`);
 
-			var sLocation = "sap.ui.dt.MetadataPropagationUtil#_getCurrentDesigntimePropagation";
+			const sLocation = "sap.ui.dt.MetadataPropagationUtil#_getCurrentDesigntimePropagation";
 			oError.name = `Error in ${sLocation}`;
-			oError.message = Util.printf("{0} / {1}", sLocation, oError.message);
+			oError.message = `${sLocation} / ${oError.message}`;
 			throw oError;
 		}
 		return mNewPropagationInfo;

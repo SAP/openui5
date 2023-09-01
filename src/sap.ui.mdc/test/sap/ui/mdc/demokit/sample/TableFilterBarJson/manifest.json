@@ -36,8 +36,7 @@
 					"model/type/TypeMap.js",
 					"model/type/LengthMeter.js",
 					"model/mountains.json",
-					"manifest.json",
-					"Component.js"
+					"manifest.json"
 				]
 			}
 		},
