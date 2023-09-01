@@ -21,15 +21,13 @@
 			<f:DynamicPageHeader pinnable="true">
 				<mdc:FilterBar id="filterbar" delegate="{name: 'mdc/sample/delegate/JSONFilterBarDelegate'}"
 						p13nMode = "Item,Value">
-
 					<mdc:basicSearchField>
-						<mdc:FilterField delegate='\{"name": "sap/ui/mdc/field/FieldBaseDelegate", "payload": \{\}\}' id="field0"
+						<mdc:FilterField delegate="{name: 'sap/ui/mdc/field/FieldBaseDelegate'}"
 							dataType="sap.ui.model.type.String"
 							placeholder= "Search Mountains"
 							conditions="{$filters>/conditions/$search}"
 							maxConditions="1"/>
 					</mdc:basicSearchField>
-
 					<mdc:filterItems>
 						<mdc:FilterField
 							label="Name"
