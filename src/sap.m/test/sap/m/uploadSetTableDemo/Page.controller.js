@@ -926,15 +926,15 @@ sap.ui.define([
 			 this.openAddOrEditDialog();
 		},
 		onRenameDocument: function() {
-			var oUploadSet = this.byId("UploadSetTable"),
-			 oBidningContextObject = oUploadSet.getSelectedItems()[0].getBindingContext().getObject(),
-			 sName = oBidningContextObject.fileName;
+			var oUploadSet = this.byId("UploadSetTable");
+			// invoking public API on UploadSetTable
+			oUploadSet.renameItem(oUploadSet.getSelectedItems()[0]);
+		},
+		onDocumentRenamedSuccess: function(oEvent) {
+			// placeholder event handler to initiate a file name change that gets updated in the backend, and then the message is displayed in the application
 
-			 this.bRenameDocument = true;
-			 this.oRenameDocumentInfo = {
-				name: sName
-			 };
-			 this.openAddOrEditDialog();
+			// Toast for sucessful rename.
+			MessageToast.show("Document Renamed.", {duration: 2000});
 		},
 		addEmptyDocument: function() {
 			var oUploadSetTableInstance = this.byId("UploadSetTable");

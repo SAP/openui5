@@ -227,15 +227,14 @@ sap.ui.define([
 		showNavButton : true,
 		navButtonText : "Back",
 		navButtonPress : function(){ app.back(); },
-		footer : new Bar({
-			contentLeft : [
+		footer : new OverflowToolbar({
+			content : [
 				new Button({
 					text: "Clear list",
 					press : function() {
 						simpleList.removeAllAggregation("items");
 					}
-			})],
-			contentRight: createSelect(pullToHide, 1)
+			}), new ToolbarSpacer(), createSelect(pullToHide, 1)]
 		})
 	});
 
@@ -292,15 +291,14 @@ sap.ui.define([
 		showNavButton : true,
 		navButtonText : "Back",
 		navButtonPress : function(){ app.back(); },
-		footer : new Bar({
-			contentLeft : [
+		footer : new OverflowToolbar({
+			content : [
 				new Button({
 					text: "Clear list",
 					press : function() {
 						busyList.removeAllAggregation("items");
 					}
-			})],
-			contentRight: createSelect(pullToBusy, 2)
+			}), new ToolbarSpacer(), createSelect(pullToBusy, 2)]
 		})
 	});
 

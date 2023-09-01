@@ -1,4 +1,9 @@
 {
+	"destination.group":{
+		"type": "group",
+		"label": "My Destinations",
+		"expanded": false
+	},
 	"generalGroup": {
 		"type": "group",
 		"label": "All Data Type",

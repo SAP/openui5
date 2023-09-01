@@ -54,7 +54,8 @@
 			stop-opacity: 0.2;
 		}
 		&:focus {
-			outline: none;
+			outline: @sapUiContentFocusWidth solid @sapUiContentFocusColor;
+			border-radius: 0.375rem;
 			background-color: @sapUiShellActiveBackground;
 			color: @sapUiShellActiveTextColor;
 			&:after {

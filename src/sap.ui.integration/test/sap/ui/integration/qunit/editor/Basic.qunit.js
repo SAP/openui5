@@ -185,7 +185,6 @@ sap.ui.define([
 			}
 		}
 	}, function () {
-
 		QUnit.test("No configuration section (as json)", function (assert) {
 			this.oEditor.setJson({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample", "i18n": "../i18n/i18n.properties" }, "sap.card": { "designtime": "designtime/noconfig", "type": "List", "header": {} } } });
 			return new Promise(function (resolve, reject) {
@@ -4335,6 +4334,11 @@ sap.ui.define([
 					"sap.card": {
 						"configuration": {
 							"editor": "designtime/customDestinationGroup",
+							"parameters": {
+								"stringParameter": {
+									"value": "stringParameter Value"
+								}
+							},
 							"destinations": {
 								"dest1": {
 									"label": "dest1 label defined in manifest",
@@ -4351,15 +4355,27 @@ sap.ui.define([
 				this.oEditor.attachReady(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var aFormContent = this.oEditor.getAggregation("_formContent");
-					var oPanel = aFormContent[0].getAggregation("_field");
-					assert.ok(oPanel.isA("sap.m.Panel"), "Panel: Form content contains a Panel");
-					assert.equal(oPanel.getHeaderText(), "Destinations group label defined in DT", "Panel: Header Text");
-					assert.ok(!oPanel.getExpanded(), "Panel: not expanded");
-					var DestinationLabel1 = aFormContent[1];
-					var DestinationComboBox1 = aFormContent[2].getAggregation("_field");
+					var oGeneralPanel = aFormContent[0].getAggregation("_field");
+					assert.ok(oGeneralPanel.isA("sap.m.Panel"), "Panel: Form content contains a General Panel");
+					assert.equal(oGeneralPanel.getHeaderText(), "General Settings", "General Panel: Header Text");
+					var oLabel = aFormContent[1];
+					var oField = aFormContent[2];
+					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
+					assert.equal(oLabel.getText(), "string Parameter", "Label: Has label text");
+					assert.ok(oField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
+					assert.ok(oField.getAggregation("_field").isA("sap.m.Input"), "Field: Editable changed from admin change");
+					assert.ok(oField.getAggregation("_field").getEditable(), "Field: Editable changed from admin change");
+
+					var oDestinationPanel = aFormContent[3].getAggregation("_field");
+					assert.ok(oDestinationPanel.isA("sap.m.Panel"), "Destinations Panel: Form content contains a Panel");
+					assert.equal(oDestinationPanel.getHeaderText(), "Destinations group label defined in DT", "Destinations Panel: Header Text");
+					assert.ok(!oDestinationPanel.getExpanded(), "Destinations Panel: not expanded");
+					var DestinationLabel1 = aFormContent[4];
+					var DestinationField1 = aFormContent[5];
+					var DestinationComboBox1 = DestinationField1.getAggregation("_field");
 					assert.ok(DestinationLabel1.isA("sap.m.Label"), "Label1: Form content contains a Label");
 					assert.equal(DestinationLabel1.getText(), "dest1 label defined in DT", "Label1: Has dest1 label from destination label property defined in DT");
-					assert.ok(this.oEditor.getAggregation("_formContent")[2].isA("sap.ui.integration.editor.fields.DestinationField"), "Content of Form contains: Destination Field");
+					assert.ok(DestinationField1.isA("sap.ui.integration.editor.fields.DestinationField"), "Content of Form contains: Destination Field");
 					assert.ok(DestinationComboBox1.getBusy() === true, "Content of Form contains: Destination Field that is busy");
 					wait(1500).then(function () {
 						//should resolve the destination within 1000ms
@@ -4373,6 +4389,848 @@ sap.ui.define([
 						assert.equal(oItems[1].getKey(), "Orders", "Content of Form contains: Destination Field item 1 Key OK");
 						assert.equal(oItems[2].getKey(), "Portal", "Content of Form contains: Destination Field item 2 Key OK");
 						assert.equal(oItems[3].getKey(), "Products", "Content of Form contains: Destination Field item 3 Key OK");
+						resolve();
+					});
+				}.bind(this));
+			}.bind(this));
+		});
+	});
+
+	QUnit.module("Destination Group position start", {
+		beforeEach: function () {
+			Core.getConfiguration().setLanguage("en");
+			this.oHost = new Host("host");
+			this.oHost.getDestinations = function () {
+				return new Promise(function (resolve) {
+					wait().then(function () {
+						var items = [
+							{
+								"name": "Products"
+							},
+							{
+								"name": "Orders"
+							},
+							{
+								"name": "Portal"
+							},
+							{
+								"name": "Northwind"
+							}
+						];
+						resolve(items);
+					});
+				});
+			};
+			this.oContextHost = new ContextHost("contexthost");
+
+			this.oEditor = new Editor();
+			var oContent = document.getElementById("content");
+			if (!oContent) {
+				oContent = document.createElement("div");
+				oContent.setAttribute("id", "content");
+				document.body.appendChild(oContent);
+				document.body.style.zIndex = 1000;
+			}
+			this.oEditor.placeAt(oContent);
+		},
+		afterEach: function () {
+			this.oEditor.destroy();
+			this.oHost.destroy();
+			this.oContextHost.destroy();
+			sandbox.restore();
+			var oContent = document.getElementById("content");
+			if (oContent) {
+				oContent.innerHTML = "";
+				document.body.style.zIndex = "unset";
+			}
+		}
+	}, function () {
+		QUnit.test("In admin mode, no general group defined for parameters", function (assert) {
+			this.oEditor.setMode("admin");
+			this.oEditor.setJson({
+				baseUrl: sBaseUrl,
+				host: "host",
+				manifest: {
+					"sap.app": {
+						"id": "test.sample",
+						"i18n": "../i18n/i18n.properties"
+					},
+					"sap.card": {
+						"configuration": {
+							"editor": "designtime/DestinationGroupPositionStartWithNoGeneralGroup",
+							"parameters": {
+								"stringParameter": {
+									"value": "stringParameter Value"
+								},
+								"booleanParameter": {
+									"value": false
+								}
+							},
+							"destinations": {
+								"dest1": {
+									"label": "dest1 label defined in manifest",
+									"name": "Northwind"
+								}
+							}
+						},
+						"type": "List",
+						"header": {}
+					}
+				}
+			});
+			return new Promise(function (resolve, reject) {
+				this.oEditor.attachReady(function () {
+					assert.ok(this.oEditor.isReady(), "Editor is ready");
+					var aFormContent = this.oEditor.getAggregation("_formContent");
+					var oDestinationPanel = aFormContent[0].getAggregation("_field");
+					assert.ok(oDestinationPanel.isA("sap.m.Panel"), "Panel: Form content contains Destination Panel");
+					assert.equal(oDestinationPanel.getHeaderText(), "Destinations group label defined in DT", "Destination Panel: Header Text");
+					assert.ok(!oDestinationPanel.getExpanded(), "Panel: not expanded");
+					var DestinationLabel1 = aFormContent[1];
+					var DestinationComboBox1 = aFormContent[2].getAggregation("_field");
+					assert.ok(DestinationLabel1.isA("sap.m.Label"), "Label1: Form content contains a Label");
+					assert.equal(DestinationLabel1.getText(), "dest1 label defined in DT", "Label1: Has dest1 label from destination label property defined in DT");
+					assert.ok(this.oEditor.getAggregation("_formContent")[2].isA("sap.ui.integration.editor.fields.DestinationField"), "Content of Form contains: Destination Field");
+					assert.ok(DestinationComboBox1.getBusy() === true, "Content of Form contains: Destination Field that is busy");
+
+					var oGeneralPanel = aFormContent[3].getAggregation("_field");
+					assert.ok(oGeneralPanel.isA("sap.m.Panel"), "Panel: Form content contains General Panel");
+					assert.equal(oGeneralPanel.getHeaderText(), "General Settings", "General Panel: Header Text");
+					var oLabel1 = this.oEditor.getAggregation("_formContent")[4];
+					var oField1 = this.oEditor.getAggregation("_formContent")[5];
+					assert.ok(oLabel1.isA("sap.m.Label"), "stringParameter Label: Form content 1 contains a Label");
+					assert.equal(oLabel1.getText(), "string Parameter", "stringParameter Label: Has label text");
+					assert.ok(oField1.isA("sap.ui.integration.editor.fields.StringField"), "stringParameter Field: String Field");
+					assert.equal(oField1.getAggregation("_field").getValue(), "stringParameter Value", "stringParameter Field: String Value");
+					var oCurrentSettings = this.oEditor.getCurrentSettings();
+					assert.equal(oCurrentSettings["/sap.card/configuration/parameters/stringParameter/value"], "stringParameter Value", "stringParameter Field: manifestpath Value");
+					var oLabel2 = this.oEditor.getAggregation("_formContent")[6];
+					var oField2 = this.oEditor.getAggregation("_formContent")[7];
+					assert.ok(oLabel2.isA("sap.m.Label"), "booleanParameter Label: Form content 2 contains a Label");
+					assert.equal(oLabel2.getText(), "booleanParameter", "booleanParameter Label: Has label text");
+					assert.ok(oField2.isA("sap.ui.integration.editor.fields.BooleanField"), "booleanParameter Field: Boolean Field");
+					assert.equal(oField2.getAggregation("_field").getSelected(), false, "booleanParameter Field: Value");
+					assert.equal(oCurrentSettings["/sap.card/configuration/parameters/booleanParameter/value"], false, "booleanParameter Field: manifestpath Value");
+
+					wait(1500).then(function () {
+						//should resolve the destination within 1000ms
+						assert.ok(DestinationComboBox1.isA("sap.m.ComboBox"), "Content of Form contains: Destination Field 1 that is ComboBox");
+						assert.ok(DestinationComboBox1.getBusy() === false, "Content of Form contains: Destination Field 1 that is not busy anymore");
+						assert.equal(DestinationComboBox1.getSelectedKey(), "Northwind", "Content of Form contains: Destination Field 1 selectedItem: Key OK");
+						assert.equal(DestinationComboBox1.getSelectedItem().getText(), "Northwind", "Content of Form contains: Destination Field 1 selectedItem: Text OK");
+						var oItems = DestinationComboBox1.getItems();
+						assert.equal(oItems.length, 4, "Content of Form contains: Destination Field items lengh OK");
+						assert.equal(oItems[0].getKey(), "Northwind", "Content of Form contains: Destination Field item 0 Key OK");
+						assert.equal(oItems[1].getKey(), "Orders", "Content of Form contains: Destination Field item 1 Key OK");
+						assert.equal(oItems[2].getKey(), "Portal", "Content of Form contains: Destination Field item 2 Key OK");
+						assert.equal(oItems[3].getKey(), "Products", "Content of Form contains: Destination Field item 3 Key OK");
+						resolve();
+					});
+				}.bind(this));
+			}.bind(this));
+		});
+
+		QUnit.test("In admin mode, no general group defined for parameters 2", function (assert) {
+			this.oEditor.setMode("admin");
+			this.oEditor.setJson({
+				baseUrl: sBaseUrl,
+				host: "host",
+				manifest: {
+					"sap.app": {
+						"id": "test.sample",
+						"i18n": "../i18n/i18n.properties"
+					},
+					"sap.card": {
+						"configuration": {
+							"editor": "designtime/DestinationGroupPositionStartWithNoGeneralGroup2",
+							"parameters": {
+								"stringParameter": {
+									"value": "stringParameter Value"
+								},
+								"booleanParameter": {
+									"value": false
+								}
+							},
+							"destinations": {
+								"dest1": {
+									"label": "dest1 label defined in manifest",
+									"name": "Northwind"
+								}
+							}
+						},
+						"type": "List",
+						"header": {}
+					}
+				}
+			});
+			return new Promise(function (resolve, reject) {
+				this.oEditor.attachReady(function () {
+					assert.ok(this.oEditor.isReady(), "Editor is ready");
+					var aFormContent = this.oEditor.getAggregation("_formContent");
+					var oDestinationPanel = aFormContent[0].getAggregation("_field");
+					assert.ok(oDestinationPanel.isA("sap.m.Panel"), "Panel: Form content contains Destination Panel");
+					assert.equal(oDestinationPanel.getHeaderText(), "Destinations group label defined in DT", "Destination Panel: Header Text");
+					assert.ok(!oDestinationPanel.getExpanded(), "Panel: not expanded");
+					var DestinationLabel1 = aFormContent[1];
+					var DestinationComboBox1 = aFormContent[2].getAggregation("_field");
+					assert.ok(DestinationLabel1.isA("sap.m.Label"), "Label1: Form content contains a Label");
+					assert.equal(DestinationLabel1.getText(), "dest1 label defined in DT", "Label1: Has dest1 label from destination label property defined in DT");
+					assert.ok(this.oEditor.getAggregation("_formContent")[2].isA("sap.ui.integration.editor.fields.DestinationField"), "Content of Form contains: Destination Field");
+					assert.ok(DestinationComboBox1.getBusy() === true, "Content of Form contains: Destination Field that is busy");
+
+					var oGeneralPanel = aFormContent[3].getAggregation("_field");
+					assert.ok(oGeneralPanel.isA("sap.m.Panel"), "Panel: Form content contains General Panel");
+					assert.equal(oGeneralPanel.getHeaderText(), "General Settings", "General Panel: Header Text");
+					var oLabel1 = this.oEditor.getAggregation("_formContent")[4];
+					var oField1 = this.oEditor.getAggregation("_formContent")[5];
+					assert.ok(oLabel1.isA("sap.m.Label"), "stringParameter Label: Form content 1 contains a Label");
+					assert.equal(oLabel1.getText(), "string Parameter", "stringParameter Label: Has label text");
+					assert.ok(oField1.isA("sap.ui.integration.editor.fields.StringField"), "stringParameter Field: String Field");
+					assert.equal(oField1.getAggregation("_field").getValue(), "stringParameter Value", "stringParameter Field: String Value");
+					var oCurrentSettings = this.oEditor.getCurrentSettings();
+					assert.equal(oCurrentSettings["/sap.card/configuration/parameters/stringParameter/value"], "stringParameter Value", "stringParameter Field: manifestpath Value");
+					var oGroupPanel = aFormContent[6].getAggregation("_field");
+					assert.ok(oGroupPanel.isA("sap.m.Panel"), "Panel: Form content contains Group Panel");
+					assert.equal(oGroupPanel.getHeaderText(), "Group", "Group Panel: Header Text");
+					var oLabel2 = this.oEditor.getAggregation("_formContent")[7];
+					var oField2 = this.oEditor.getAggregation("_formContent")[8];
+					assert.ok(oLabel2.isA("sap.m.Label"), "booleanParameter Label: Form content 2 contains a Label");
+					assert.equal(oLabel2.getText(), "booleanParameter", "booleanParameter Label: Has label text");
+					assert.ok(oField2.isA("sap.ui.integration.editor.fields.BooleanField"), "booleanParameter Field: Boolean Field");
+					assert.equal(oField2.getAggregation("_field").getSelected(), false, "booleanParameter Field: Value");
+					assert.equal(oCurrentSettings["/sap.card/configuration/parameters/booleanParameter/value"], false, "booleanParameter Field: manifestpath Value");
+
+					wait(1500).then(function () {
+						//should resolve the destination within 1000ms
+						assert.ok(DestinationComboBox1.isA("sap.m.ComboBox"), "Content of Form contains: Destination Field 1 that is ComboBox");
+						assert.ok(DestinationComboBox1.getBusy() === false, "Content of Form contains: Destination Field 1 that is not busy anymore");
+						assert.equal(DestinationComboBox1.getSelectedKey(), "Northwind", "Content of Form contains: Destination Field 1 selectedItem: Key OK");
+						assert.equal(DestinationComboBox1.getSelectedItem().getText(), "Northwind", "Content of Form contains: Destination Field 1 selectedItem: Text OK");
+						var oItems = DestinationComboBox1.getItems();
+						assert.equal(oItems.length, 4, "Content of Form contains: Destination Field items lengh OK");
+						assert.equal(oItems[0].getKey(), "Northwind", "Content of Form contains: Destination Field item 0 Key OK");
+						assert.equal(oItems[1].getKey(), "Orders", "Content of Form contains: Destination Field item 1 Key OK");
+						assert.equal(oItems[2].getKey(), "Portal", "Content of Form contains: Destination Field item 2 Key OK");
+						assert.equal(oItems[3].getKey(), "Products", "Content of Form contains: Destination Field item 3 Key OK");
+						resolve();
+					});
+				}.bind(this));
+			}.bind(this));
+		});
+
+		QUnit.test("In admin mode, general group defined for parameters", function (assert) {
+			this.oEditor.setMode("admin");
+			this.oEditor.setJson({
+				baseUrl: sBaseUrl,
+				host: "host",
+				manifest: {
+					"sap.app": {
+						"id": "test.sample",
+						"i18n": "../i18n/i18n.properties"
+					},
+					"sap.card": {
+						"configuration": {
+							"editor": "designtime/DestinationGroupPositionStartWithGeneralGroup",
+							"parameters": {
+								"stringParameter": {
+									"value": "stringParameter Value"
+								},
+								"booleanParameter": {
+									"value": false
+								}
+							},
+							"destinations": {
+								"dest1": {
+									"label": "dest1 label defined in manifest",
+									"name": "Northwind"
+								}
+							}
+						},
+						"type": "List",
+						"header": {}
+					}
+				}
+			});
+			return new Promise(function (resolve, reject) {
+				this.oEditor.attachReady(function () {
+					assert.ok(this.oEditor.isReady(), "Editor is ready");
+					var aFormContent = this.oEditor.getAggregation("_formContent");
+					var oDestinationPanel = aFormContent[0].getAggregation("_field");
+					assert.ok(oDestinationPanel.isA("sap.m.Panel"), "Panel: Form content contains Destination Panel");
+					assert.equal(oDestinationPanel.getHeaderText(), "Destinations group label defined in DT", "Destination Panel: Header Text");
+					assert.ok(!oDestinationPanel.getExpanded(), "Panel: not expanded");
+					var DestinationLabel1 = aFormContent[1];
+					var DestinationComboBox1 = aFormContent[2].getAggregation("_field");
+					assert.ok(DestinationLabel1.isA("sap.m.Label"), "Label1: Form content contains a Label");
+					assert.equal(DestinationLabel1.getText(), "dest1 label defined in DT", "Label1: Has dest1 label from destination label property defined in DT");
+					assert.ok(this.oEditor.getAggregation("_formContent")[2].isA("sap.ui.integration.editor.fields.DestinationField"), "Content of Form contains: Destination Field");
+					assert.ok(DestinationComboBox1.getBusy() === true, "Content of Form contains: Destination Field that is busy");
+
+					var oGroupPanel = aFormContent[3].getAggregation("_field");
+					assert.ok(oGroupPanel.isA("sap.m.Panel"), "Panel: Form content contains Group Panel");
+					assert.equal(oGroupPanel.getHeaderText(), "Group", "Group Panel: Header Text");
+					var oLabel1 = this.oEditor.getAggregation("_formContent")[4];
+					var oField1 = this.oEditor.getAggregation("_formContent")[5];
+					assert.ok(oLabel1.isA("sap.m.Label"), "stringParameter Label: Form content 1 contains a Label");
+					assert.equal(oLabel1.getText(), "string Parameter", "stringParameter Label: Has label text");
+					assert.ok(oField1.isA("sap.ui.integration.editor.fields.StringField"), "stringParameter Field: String Field");
+					assert.equal(oField1.getAggregation("_field").getValue(), "stringParameter Value", "stringParameter Field: String Value");
+					var oCurrentSettings = this.oEditor.getCurrentSettings();
+					assert.equal(oCurrentSettings["/sap.card/configuration/parameters/stringParameter/value"], "stringParameter Value", "stringParameter Field: manifestpath Value");
+					var oLabel2 = this.oEditor.getAggregation("_formContent")[6];
+					var oField2 = this.oEditor.getAggregation("_formContent")[7];
+					assert.ok(oLabel2.isA("sap.m.Label"), "booleanParameter Label: Form content 2 contains a Label");
+					assert.equal(oLabel2.getText(), "booleanParameter", "booleanParameter Label: Has label text");
+					assert.ok(oField2.isA("sap.ui.integration.editor.fields.BooleanField"), "booleanParameter Field: Boolean Field");
+					assert.equal(oField2.getAggregation("_field").getSelected(), false, "booleanParameter Field: Value");
+					assert.equal(oCurrentSettings["/sap.card/configuration/parameters/booleanParameter/value"], false, "booleanParameter Field: manifestpath Value");
+
+					wait(1500).then(function () {
+						//should resolve the destination within 1000ms
+						assert.ok(DestinationComboBox1.isA("sap.m.ComboBox"), "Content of Form contains: Destination Field 1 that is ComboBox");
+						assert.ok(DestinationComboBox1.getBusy() === false, "Content of Form contains: Destination Field 1 that is not busy anymore");
+						assert.equal(DestinationComboBox1.getSelectedKey(), "Northwind", "Content of Form contains: Destination Field 1 selectedItem: Key OK");
+						assert.equal(DestinationComboBox1.getSelectedItem().getText(), "Northwind", "Content of Form contains: Destination Field 1 selectedItem: Text OK");
+						var oItems = DestinationComboBox1.getItems();
+						assert.equal(oItems.length, 4, "Content of Form contains: Destination Field items lengh OK");
+						assert.equal(oItems[0].getKey(), "Northwind", "Content of Form contains: Destination Field item 0 Key OK");
+						assert.equal(oItems[1].getKey(), "Orders", "Content of Form contains: Destination Field item 1 Key OK");
+						assert.equal(oItems[2].getKey(), "Portal", "Content of Form contains: Destination Field item 2 Key OK");
+						assert.equal(oItems[3].getKey(), "Products", "Content of Form contains: Destination Field item 3 Key OK");
+						resolve();
+					});
+				}.bind(this));
+			}.bind(this));
+		});
+
+		QUnit.test("In admin mode, general group defined for parameters 2", function (assert) {
+			this.oEditor.setMode("admin");
+			this.oEditor.setJson({
+				baseUrl: sBaseUrl,
+				host: "host",
+				manifest: {
+					"sap.app": {
+						"id": "test.sample",
+						"i18n": "../i18n/i18n.properties"
+					},
+					"sap.card": {
+						"configuration": {
+							"editor": "designtime/DestinationGroupPositionStartWithGeneralGroup2",
+							"parameters": {
+								"stringParameter": {
+									"value": "stringParameter Value"
+								},
+								"booleanParameter": {
+									"value": false
+								}
+							},
+							"destinations": {
+								"dest1": {
+									"label": "dest1 label defined in manifest",
+									"name": "Northwind"
+								}
+							}
+						},
+						"type": "List",
+						"header": {}
+					}
+				}
+			});
+			return new Promise(function (resolve, reject) {
+				this.oEditor.attachReady(function () {
+					assert.ok(this.oEditor.isReady(), "Editor is ready");
+					var aFormContent = this.oEditor.getAggregation("_formContent");
+					var oDestinationPanel = aFormContent[0].getAggregation("_field");
+					assert.ok(oDestinationPanel.isA("sap.m.Panel"), "Panel: Form content contains Destination Panel");
+					assert.equal(oDestinationPanel.getHeaderText(), "Destinations group label defined in DT", "Destination Panel: Header Text");
+					assert.ok(!oDestinationPanel.getExpanded(), "Panel: not expanded");
+					var DestinationLabel1 = aFormContent[1];
+					var DestinationComboBox1 = aFormContent[2].getAggregation("_field");
+					assert.ok(DestinationLabel1.isA("sap.m.Label"), "Label1: Form content contains a Label");
+					assert.equal(DestinationLabel1.getText(), "dest1 label defined in DT", "Label1: Has dest1 label from destination label property defined in DT");
+					assert.ok(this.oEditor.getAggregation("_formContent")[2].isA("sap.ui.integration.editor.fields.DestinationField"), "Content of Form contains: Destination Field");
+					assert.ok(DestinationComboBox1.getBusy() === true, "Content of Form contains: Destination Field that is busy");
+
+					var oGroupPanel = aFormContent[3].getAggregation("_field");
+					assert.ok(oGroupPanel.isA("sap.m.Panel"), "Panel: Form content contains Group Panel");
+					assert.equal(oGroupPanel.getHeaderText(), "Group", "Group Panel: Header Text");
+					var oLabel1 = this.oEditor.getAggregation("_formContent")[4];
+					var oField1 = this.oEditor.getAggregation("_formContent")[5];
+					assert.ok(oLabel1.isA("sap.m.Label"), "stringParameter Label: Form content 1 contains a Label");
+					assert.equal(oLabel1.getText(), "string Parameter", "stringParameter Label: Has label text");
+					assert.ok(oField1.isA("sap.ui.integration.editor.fields.StringField"), "stringParameter Field: String Field");
+					assert.equal(oField1.getAggregation("_field").getValue(), "stringParameter Value", "stringParameter Field: String Value");
+					var oCurrentSettings = this.oEditor.getCurrentSettings();
+					assert.equal(oCurrentSettings["/sap.card/configuration/parameters/stringParameter/value"], "stringParameter Value", "stringParameter Field: manifestpath Value");
+					var oGroupPanel2 = aFormContent[6].getAggregation("_field");
+					assert.ok(oGroupPanel2.isA("sap.m.Panel"), "Panel: Form content contains Group Panel");
+					assert.equal(oGroupPanel2.getHeaderText(), "Group 2", "Group Panel: Header Text");
+					var oLabel2 = this.oEditor.getAggregation("_formContent")[7];
+					var oField2 = this.oEditor.getAggregation("_formContent")[8];
+					assert.ok(oLabel2.isA("sap.m.Label"), "booleanParameter Label: Form content 2 contains a Label");
+					assert.equal(oLabel2.getText(), "booleanParameter", "booleanParameter Label: Has label text");
+					assert.ok(oField2.isA("sap.ui.integration.editor.fields.BooleanField"), "booleanParameter Field: Boolean Field");
+					assert.equal(oField2.getAggregation("_field").getSelected(), false, "booleanParameter Field: Value");
+					assert.equal(oCurrentSettings["/sap.card/configuration/parameters/booleanParameter/value"], false, "booleanParameter Field: manifestpath Value");
+
+					wait(1500).then(function () {
+						//should resolve the destination within 1000ms
+						assert.ok(DestinationComboBox1.isA("sap.m.ComboBox"), "Content of Form contains: Destination Field 1 that is ComboBox");
+						assert.ok(DestinationComboBox1.getBusy() === false, "Content of Form contains: Destination Field 1 that is not busy anymore");
+						assert.equal(DestinationComboBox1.getSelectedKey(), "Northwind", "Content of Form contains: Destination Field 1 selectedItem: Key OK");
+						assert.equal(DestinationComboBox1.getSelectedItem().getText(), "Northwind", "Content of Form contains: Destination Field 1 selectedItem: Text OK");
+						var oItems = DestinationComboBox1.getItems();
+						assert.equal(oItems.length, 4, "Content of Form contains: Destination Field items lengh OK");
+						assert.equal(oItems[0].getKey(), "Northwind", "Content of Form contains: Destination Field item 0 Key OK");
+						assert.equal(oItems[1].getKey(), "Orders", "Content of Form contains: Destination Field item 1 Key OK");
+						assert.equal(oItems[2].getKey(), "Portal", "Content of Form contains: Destination Field item 2 Key OK");
+						assert.equal(oItems[3].getKey(), "Products", "Content of Form contains: Destination Field item 3 Key OK");
+						resolve();
+					});
+				}.bind(this));
+			}.bind(this));
+		});
+
+		QUnit.test("In content mode, no general group defined for parameters", function (assert) {
+			this.oEditor.setMode("content");
+			this.oEditor.setJson({
+				baseUrl: sBaseUrl,
+				host: "host",
+				manifest: {
+					"sap.app": {
+						"id": "test.sample",
+						"i18n": "../i18n/i18n.properties"
+					},
+					"sap.card": {
+						"configuration": {
+							"editor": "designtime/DestinationGroupPositionStartWithNoGeneralGroup",
+							"parameters": {
+								"stringParameter": {
+									"value": "stringParameter Value"
+								},
+								"booleanParameter": {
+									"value": false
+								}
+							},
+							"destinations": {
+								"dest1": {
+									"label": "dest1 label defined in manifest",
+									"name": "Northwind"
+								}
+							}
+						},
+						"type": "List",
+						"header": {}
+					}
+				}
+			});
+			return new Promise(function (resolve, reject) {
+				this.oEditor.attachReady(function () {
+					assert.ok(this.oEditor.isReady(), "Editor is ready");
+					var aFormContent = this.oEditor.getAggregation("_formContent");
+					var oGeneralPanel = aFormContent[0].getAggregation("_field");
+					assert.ok(oGeneralPanel.isA("sap.m.Panel"), "Panel: Form content contains General Panel");
+					assert.equal(oGeneralPanel.getHeaderText(), "General Settings", "General Panel: Header Text");
+					var oLabel1 = this.oEditor.getAggregation("_formContent")[1];
+					var oField1 = this.oEditor.getAggregation("_formContent")[2];
+					assert.ok(oLabel1.isA("sap.m.Label"), "stringParameter Label: Form content 1 contains a Label");
+					assert.equal(oLabel1.getText(), "string Parameter", "stringParameter Label: Has label text");
+					assert.ok(oField1.isA("sap.ui.integration.editor.fields.StringField"), "stringParameter Field: String Field");
+					assert.equal(oField1.getAggregation("_field").getValue(), "stringParameter Value", "stringParameter Field: String Value");
+					var oCurrentSettings = this.oEditor.getCurrentSettings();
+					assert.equal(oCurrentSettings["/sap.card/configuration/parameters/stringParameter/value"], "stringParameter Value", "stringParameter Field: manifestpath Value");
+					var oLabel2 = this.oEditor.getAggregation("_formContent")[3];
+					var oField2 = this.oEditor.getAggregation("_formContent")[4];
+					assert.ok(oLabel2.isA("sap.m.Label"), "booleanParameter Label: Form content 2 contains a Label");
+					assert.equal(oLabel2.getText(), "booleanParameter", "booleanParameter Label: Has label text");
+					assert.ok(oField2.isA("sap.ui.integration.editor.fields.BooleanField"), "booleanParameter Field: Boolean Field");
+					assert.equal(oField2.getAggregation("_field").getSelected(), false, "booleanParameter Field: Value");
+					assert.equal(oCurrentSettings["/sap.card/configuration/parameters/booleanParameter/value"], false, "booleanParameter Field: manifestpath Value");
+					resolve();
+				}.bind(this));
+			}.bind(this));
+		});
+
+		QUnit.test("In content mode, no general group defined for parameters 2", function (assert) {
+			this.oEditor.setMode("content");
+			this.oEditor.setJson({
+				baseUrl: sBaseUrl,
+				host: "host",
+				manifest: {
+					"sap.app": {
+						"id": "test.sample",
+						"i18n": "../i18n/i18n.properties"
+					},
+					"sap.card": {
+						"configuration": {
+							"editor": "designtime/DestinationGroupPositionStartWithNoGeneralGroup2",
+							"parameters": {
+								"stringParameter": {
+									"value": "stringParameter Value"
+								},
+								"booleanParameter": {
+									"value": false
+								}
+							},
+							"destinations": {
+								"dest1": {
+									"label": "dest1 label defined in manifest",
+									"name": "Northwind"
+								}
+							}
+						},
+						"type": "List",
+						"header": {}
+					}
+				}
+			});
+			return new Promise(function (resolve, reject) {
+				this.oEditor.attachReady(function () {
+					assert.ok(this.oEditor.isReady(), "Editor is ready");
+					var aFormContent = this.oEditor.getAggregation("_formContent");
+					var oGeneralPanel = aFormContent[0].getAggregation("_field");
+					assert.ok(oGeneralPanel.isA("sap.m.Panel"), "Panel: Form content contains General Panel");
+					assert.equal(oGeneralPanel.getHeaderText(), "General Settings", "General Panel: Header Text");
+					var oLabel1 = this.oEditor.getAggregation("_formContent")[1];
+					var oField1 = this.oEditor.getAggregation("_formContent")[2];
+					assert.ok(oLabel1.isA("sap.m.Label"), "stringParameter Label: Form content 1 contains a Label");
+					assert.equal(oLabel1.getText(), "string Parameter", "stringParameter Label: Has label text");
+					assert.ok(oField1.isA("sap.ui.integration.editor.fields.StringField"), "stringParameter Field: String Field");
+					assert.equal(oField1.getAggregation("_field").getValue(), "stringParameter Value", "stringParameter Field: String Value");
+					var oCurrentSettings = this.oEditor.getCurrentSettings();
+					assert.equal(oCurrentSettings["/sap.card/configuration/parameters/stringParameter/value"], "stringParameter Value", "stringParameter Field: manifestpath Value");
+					var oGroupPanel = aFormContent[3].getAggregation("_field");
+					assert.ok(oGroupPanel.isA("sap.m.Panel"), "Panel: Form content contains Group Panel");
+					assert.equal(oGroupPanel.getHeaderText(), "Group", "Group Panel: Header Text");
+					var oLabel2 = this.oEditor.getAggregation("_formContent")[4];
+					var oField2 = this.oEditor.getAggregation("_formContent")[5];
+					assert.ok(oLabel2.isA("sap.m.Label"), "booleanParameter Label: Form content 2 contains a Label");
+					assert.equal(oLabel2.getText(), "booleanParameter", "booleanParameter Label: Has label text");
+					assert.ok(oField2.isA("sap.ui.integration.editor.fields.BooleanField"), "booleanParameter Field: Boolean Field");
+					assert.equal(oField2.getAggregation("_field").getSelected(), false, "booleanParameter Field: Value");
+					assert.equal(oCurrentSettings["/sap.card/configuration/parameters/booleanParameter/value"], false, "booleanParameter Field: manifestpath Value");
+					resolve();
+				}.bind(this));
+			}.bind(this));
+		});
+
+		QUnit.test("In content mode, general group defined for parameters", function (assert) {
+			this.oEditor.setMode("content");
+			this.oEditor.setJson({
+				baseUrl: sBaseUrl,
+				host: "host",
+				manifest: {
+					"sap.app": {
+						"id": "test.sample",
+						"i18n": "../i18n/i18n.properties"
+					},
+					"sap.card": {
+						"configuration": {
+							"editor": "designtime/DestinationGroupPositionStartWithGeneralGroup",
+							"parameters": {
+								"stringParameter": {
+									"value": "stringParameter Value"
+								},
+								"booleanParameter": {
+									"value": false
+								}
+							},
+							"destinations": {
+								"dest1": {
+									"label": "dest1 label defined in manifest",
+									"name": "Northwind"
+								}
+							}
+						},
+						"type": "List",
+						"header": {}
+					}
+				}
+			});
+			return new Promise(function (resolve, reject) {
+				this.oEditor.attachReady(function () {
+					assert.ok(this.oEditor.isReady(), "Editor is ready");
+					var aFormContent = this.oEditor.getAggregation("_formContent");
+					var oGroupPanel = aFormContent[0].getAggregation("_field");
+					assert.ok(oGroupPanel.isA("sap.m.Panel"), "Panel: Form content contains Group Panel");
+					assert.equal(oGroupPanel.getHeaderText(), "Group", "Group Panel: Header Text");
+					var oLabel1 = this.oEditor.getAggregation("_formContent")[1];
+					var oField1 = this.oEditor.getAggregation("_formContent")[2];
+					assert.ok(oLabel1.isA("sap.m.Label"), "stringParameter Label: Form content 1 contains a Label");
+					assert.equal(oLabel1.getText(), "string Parameter", "stringParameter Label: Has label text");
+					assert.ok(oField1.isA("sap.ui.integration.editor.fields.StringField"), "stringParameter Field: String Field");
+					assert.equal(oField1.getAggregation("_field").getValue(), "stringParameter Value", "stringParameter Field: String Value");
+					var oCurrentSettings = this.oEditor.getCurrentSettings();
+					assert.equal(oCurrentSettings["/sap.card/configuration/parameters/stringParameter/value"], "stringParameter Value", "stringParameter Field: manifestpath Value");
+					var oLabel2 = this.oEditor.getAggregation("_formContent")[3];
+					var oField2 = this.oEditor.getAggregation("_formContent")[4];
+					assert.ok(oLabel2.isA("sap.m.Label"), "booleanParameter Label: Form content 2 contains a Label");
+					assert.equal(oLabel2.getText(), "booleanParameter", "booleanParameter Label: Has label text");
+					assert.ok(oField2.isA("sap.ui.integration.editor.fields.BooleanField"), "booleanParameter Field: Boolean Field");
+					assert.equal(oField2.getAggregation("_field").getSelected(), false, "booleanParameter Field: Value");
+					assert.equal(oCurrentSettings["/sap.card/configuration/parameters/booleanParameter/value"], false, "booleanParameter Field: manifestpath Value");
+					resolve();
+				}.bind(this));
+			}.bind(this));
+		});
+
+		QUnit.test("In content mode, general group defined for parameters 2", function (assert) {
+			this.oEditor.setMode("content");
+			this.oEditor.setJson({
+				baseUrl: sBaseUrl,
+				host: "host",
+				manifest: {
+					"sap.app": {
+						"id": "test.sample",
+						"i18n": "../i18n/i18n.properties"
+					},
+					"sap.card": {
+						"configuration": {
+							"editor": "designtime/DestinationGroupPositionStartWithGeneralGroup2",
+							"parameters": {
+								"stringParameter": {
+									"value": "stringParameter Value"
+								},
+								"booleanParameter": {
+									"value": false
+								}
+							},
+							"destinations": {
+								"dest1": {
+									"label": "dest1 label defined in manifest",
+									"name": "Northwind"
+								}
+							}
+						},
+						"type": "List",
+						"header": {}
+					}
+				}
+			});
+			return new Promise(function (resolve, reject) {
+				this.oEditor.attachReady(function () {
+					assert.ok(this.oEditor.isReady(), "Editor is ready");
+					var aFormContent = this.oEditor.getAggregation("_formContent");
+					var oGroupPanel = aFormContent[0].getAggregation("_field");
+					assert.ok(oGroupPanel.isA("sap.m.Panel"), "Panel: Form content contains Group Panel");
+					assert.equal(oGroupPanel.getHeaderText(), "Group", "Group Panel: Header Text");
+					var oLabel1 = this.oEditor.getAggregation("_formContent")[1];
+					var oField1 = this.oEditor.getAggregation("_formContent")[2];
+					assert.ok(oLabel1.isA("sap.m.Label"), "stringParameter Label: Form content 1 contains a Label");
+					assert.equal(oLabel1.getText(), "string Parameter", "stringParameter Label: Has label text");
+					assert.ok(oField1.isA("sap.ui.integration.editor.fields.StringField"), "stringParameter Field: String Field");
+					assert.equal(oField1.getAggregation("_field").getValue(), "stringParameter Value", "stringParameter Field: String Value");
+					var oCurrentSettings = this.oEditor.getCurrentSettings();
+					assert.equal(oCurrentSettings["/sap.card/configuration/parameters/stringParameter/value"], "stringParameter Value", "stringParameter Field: manifestpath Value");
+					var oGroupPanel2 = aFormContent[3].getAggregation("_field");
+					assert.ok(oGroupPanel2.isA("sap.m.Panel"), "Panel: Form content contains Group Panel");
+					assert.equal(oGroupPanel2.getHeaderText(), "Group 2", "Group Panel: Header Text");
+					var oLabel2 = this.oEditor.getAggregation("_formContent")[4];
+					var oField2 = this.oEditor.getAggregation("_formContent")[5];
+					assert.ok(oLabel2.isA("sap.m.Label"), "booleanParameter Label: Form content 2 contains a Label");
+					assert.equal(oLabel2.getText(), "booleanParameter", "booleanParameter Label: Has label text");
+					assert.ok(oField2.isA("sap.ui.integration.editor.fields.BooleanField"), "booleanParameter Field: Boolean Field");
+					assert.equal(oField2.getAggregation("_field").getSelected(), false, "booleanParameter Field: Value");
+					assert.equal(oCurrentSettings["/sap.card/configuration/parameters/booleanParameter/value"], false, "booleanParameter Field: manifestpath Value");
+					resolve();
+				}.bind(this));
+			}.bind(this));
+		});
+
+		QUnit.test("In translation mode, no general group defined for parameters", function (assert) {
+			this.oEditor.setMode("translation");
+			this.oEditor.setJson({
+				baseUrl: sBaseUrl,
+				host: "host",
+				manifest: {
+					"sap.app": {
+						"id": "test.sample",
+						"i18n": "../i18n/i18n.properties"
+					},
+					"sap.card": {
+						"configuration": {
+							"editor": "designtime/DestinationGroupPositionStartWithNoGeneralGroup",
+							"parameters": {
+								"stringParameter": {
+									"value": "stringParameter Value"
+								},
+								"booleanParameter": {
+									"value": false
+								}
+							},
+							"destinations": {
+								"dest1": {
+									"label": "dest1 label defined in manifest",
+									"name": "Northwind"
+								}
+							}
+						},
+						"type": "List",
+						"header": {}
+					}
+				}
+			});
+			return new Promise(function (resolve, reject) {
+				this.oEditor.attachReady(function () {
+					assert.ok(this.oEditor.isReady(), "Editor is ready");
+					var aFormContent = this.oEditor.getAggregation("_formContent");
+					assert.equal(aFormContent.length, 2, "Editor: has 2 item");
+					var oPanel1 = aFormContent[0].getAggregation("_field");
+					assert.ok(oPanel1.isA("sap.m.Panel"), "Panel: Form content contains 1 Panel");
+					var oPanel2 = aFormContent[1].getAggregation("_field");
+					assert.ok(oPanel2.isA("sap.m.Panel"), "Panel: Form content contains 2 Panel");
+					wait(1500).then(function () {
+						resolve();
+					});
+				}.bind(this));
+			}.bind(this));
+		});
+
+		QUnit.test("In translation mode, no general group defined for parameters 2", function (assert) {
+			this.oEditor.setMode("translation");
+			this.oEditor.setJson({
+				baseUrl: sBaseUrl,
+				host: "host",
+				manifest: {
+					"sap.app": {
+						"id": "test.sample",
+						"i18n": "../i18n/i18n.properties"
+					},
+					"sap.card": {
+						"configuration": {
+							"editor": "designtime/DestinationGroupPositionStartWithNoGeneralGroup2",
+							"parameters": {
+								"stringParameter": {
+									"value": "stringParameter Value"
+								},
+								"booleanParameter": {
+									"value": false
+								}
+							},
+							"destinations": {
+								"dest1": {
+									"label": "dest1 label defined in manifest",
+									"name": "Northwind"
+								}
+							}
+						},
+						"type": "List",
+						"header": {}
+					}
+				}
+			});
+			return new Promise(function (resolve, reject) {
+				this.oEditor.attachReady(function () {
+					assert.ok(this.oEditor.isReady(), "Editor is ready");
+					var aFormContent = this.oEditor.getAggregation("_formContent");
+					assert.equal(aFormContent.length, 3, "Editor: has 3 item");
+					var oPanel1 = aFormContent[0].getAggregation("_field");
+					assert.ok(oPanel1.isA("sap.m.Panel"), "Panel: Form content contains 1 Panel");
+					var oPanel2 = aFormContent[1].getAggregation("_field");
+					assert.ok(oPanel2.isA("sap.m.Panel"), "Panel: Form content contains 2 Panel");
+					var oPanel3 = aFormContent[2].getAggregation("_field");
+					assert.ok(oPanel3.isA("sap.m.Panel"), "Panel: Form content contains 3 Panel");
+					wait(1500).then(function () {
+						resolve();
+					});
+				}.bind(this));
+			}.bind(this));
+		});
+
+		QUnit.test("In translation mode, general group defined for parameters", function (assert) {
+			this.oEditor.setMode("translation");
+			this.oEditor.setJson({
+				baseUrl: sBaseUrl,
+				host: "host",
+				manifest: {
+					"sap.app": {
+						"id": "test.sample",
+						"i18n": "../i18n/i18n.properties"
+					},
+					"sap.card": {
+						"configuration": {
+							"editor": "designtime/DestinationGroupPositionStartWithGeneralGroup",
+							"parameters": {
+								"stringParameter": {
+									"value": "stringParameter Value"
+								},
+								"booleanParameter": {
+									"value": false
+								}
+							},
+							"destinations": {
+								"dest1": {
+									"label": "dest1 label defined in manifest",
+									"name": "Northwind"
+								}
+							}
+						},
+						"type": "List",
+						"header": {}
+					}
+				}
+			});
+			return new Promise(function (resolve, reject) {
+				this.oEditor.attachReady(function () {
+					assert.ok(this.oEditor.isReady(), "Editor is ready");
+					var aFormContent = this.oEditor.getAggregation("_formContent");
+					assert.equal(aFormContent.length, 2, "Editor: has 2 item");
+					var oPanel1 = aFormContent[0].getAggregation("_field");
+					assert.ok(oPanel1.isA("sap.m.Panel"), "Panel: Form content contains 1 Panel");
+					var oPanel2 = aFormContent[1].getAggregation("_field");
+					assert.ok(oPanel2.isA("sap.m.Panel"), "Panel: Form content contains 2 Panel");
+					wait(1500).then(function () {
+						resolve();
+					});
+				}.bind(this));
+			}.bind(this));
+		});
+
+		QUnit.test("In translation mode, general group defined for parameters 2", function (assert) {
+			this.oEditor.setMode("translation");
+			this.oEditor.setJson({
+				baseUrl: sBaseUrl,
+				host: "host",
+				manifest: {
+					"sap.app": {
+						"id": "test.sample",
+						"i18n": "../i18n/i18n.properties"
+					},
+					"sap.card": {
+						"configuration": {
+							"editor": "designtime/DestinationGroupPositionStartWithGeneralGroup2",
+							"parameters": {
+								"stringParameter": {
+									"value": "stringParameter Value"
+								},
+								"booleanParameter": {
+									"value": false
+								}
+							},
+							"destinations": {
+								"dest1": {
+									"label": "dest1 label defined in manifest",
+									"name": "Northwind"
+								}
+							}
+						},
+						"type": "List",
+						"header": {}
+					}
+				}
+			});
+			return new Promise(function (resolve, reject) {
+				this.oEditor.attachReady(function () {
+					assert.ok(this.oEditor.isReady(), "Editor is ready");
+					var aFormContent = this.oEditor.getAggregation("_formContent");
+					assert.equal(aFormContent.length, 3, "Editor: has 3 item");
+					var oPanel1 = aFormContent[0].getAggregation("_field");
+					assert.ok(oPanel1.isA("sap.m.Panel"), "Panel: Form content contains 1 Panel");
+					var oPanel2 = aFormContent[1].getAggregation("_field");
+					assert.ok(oPanel2.isA("sap.m.Panel"), "Panel: Form content contains 2 Panel");
+					var oPanel3 = aFormContent[2].getAggregation("_field");
+					assert.ok(oPanel3.isA("sap.m.Panel"), "Panel: Form content contains 3 Panel");
+					wait(1500).then(function () {
 						resolve();
 					});
 				}.bind(this));
