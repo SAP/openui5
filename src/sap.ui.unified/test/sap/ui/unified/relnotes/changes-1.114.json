@@ -34,5 +34,21 @@
         ]
       }
     ]
+  },
+  "1.114.6": {
+    "date": "September 2023",
+    "notes": [
+      {
+        "id": "ee1f23b3a8409d27757e422319abc37f36372855",
+        "type": "FIX",
+        "text": " sap.ui.unified.FileUploader: register events once",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370078629"
+          }
+        ]
+      }
+    ]
   }
 }
