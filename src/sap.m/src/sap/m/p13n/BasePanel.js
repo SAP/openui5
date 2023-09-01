@@ -157,9 +157,6 @@ sap.ui.define([
 		}
 	});
 
-	// shortcut for sap.m.MultiSelectMode
-	var MultiSelectMode = library.MultiSelectMode;
-
 	//inner model name
 	BasePanel.prototype.P13N_MODEL = "$p13n";
 
@@ -201,10 +198,6 @@ sap.ui.define([
 		this._bFocusOnRearrange = true;
 
 		this._setInnerLayout();
-
-		// experimentally enable select all
-		var oParams = UriParameters.fromQuery(window.location.search);
-		this._oListControl.setMultiSelectMode(oParams.get("sap-ui-xx-p13nSelectAll") == "true" ? MultiSelectMode.SelectAll : MultiSelectMode.ClearAll);
 	};
 
 	BasePanel.prototype.onAfterRendering = function() {

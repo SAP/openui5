@@ -33,7 +33,7 @@ sap.ui.define([
 	// shortcut for sap.ui.core.ValueState
 	var ValueState = coreLibrary.ValueState;
 
-    // shortcut for sap.m.FlexJustifyContent
+	// shortcut for sap.m.FlexJustifyContent
 	var FlexJustifyContent = mLibrary.FlexJustifyContent;
 	var core = sap.ui.getCore();
 
@@ -152,9 +152,6 @@ sap.ui.define([
 
 		// list is necessary to set the template + model on
 		this._oListControl = this._createInnerListControl();
-
-		// disable 'select all'
-		this._oListControl.setMultiSelectMode("ClearAll");
 
 		this._setInnerLayout();
 		this._bindListItems();
@@ -544,12 +541,12 @@ sap.ui.define([
 			this.removeMoveButtons();
 		}
 
-        this._oHoveredItem = oHoveredItem;
+		this._oHoveredItem = oHoveredItem;
 		this._updateEnableOfMoveButtons(oHoveredItem, false);
-        this._addMoveButtons(oHoveredItem);
+		this._addMoveButtons(oHoveredItem);
 		this._setMoveButtonVisibility(true);
 
-    };
+	};
 
 	ChartItemPanel.prototype.onChangeOfItemName = function(oEvent) {
 		var sPrevName = oEvent.getSource().data().prevName;
@@ -606,17 +603,17 @@ sap.ui.define([
 		return this._getP13nModel().getProperty("/items").indexOf(oItem);
 	};
 
-    ChartItemPanel.prototype.removeMoveButtons = function() {
-        var oMoveButtonBox = this._getMoveButtonContainer();
+	ChartItemPanel.prototype.removeMoveButtons = function() {
+		var oMoveButtonBox = this._getMoveButtonContainer();
 
-        if (oMoveButtonBox){
+		if (oMoveButtonBox){
 			oMoveButtonBox.removeItem(this._getMoveBottomButton());
 			oMoveButtonBox.removeItem(this._getMoveDownButton());
 			oMoveButtonBox.removeItem(this._getMoveUpButton());
-            oMoveButtonBox.removeItem(this._getMoveTopButton());
-        }
+			oMoveButtonBox.removeItem(this._getMoveTopButton());
+		}
 
-    };
+	};
 
 	//Called on exit of panel; resets templates
 	ChartItemPanel.prototype.getP13nData = function() {
@@ -628,26 +625,26 @@ sap.ui.define([
 		return aItems;
 	};
 
-    ChartItemPanel.prototype._getMoveButtonContainer = function() {
-        if (this._oMoveUpButton &&
-            this._oMoveUpButton.getParent() &&
-            this._oMoveUpButton.getParent().isA("sap.m.FlexBox")
-        ){
-            return this._oMoveUpButton.getParent();
-        }
+	ChartItemPanel.prototype._getMoveButtonContainer = function() {
+		if (this._oMoveUpButton &&
+			this._oMoveUpButton.getParent() &&
+			this._oMoveUpButton.getParent().isA("sap.m.FlexBox")
+		){
+			return this._oMoveUpButton.getParent();
+		}
 
 		return undefined;
-    };
+	};
 
 	ChartItemPanel.prototype._addMoveButtons = function(oItem) {
-        var oTableItem = oItem;
-        if (!oTableItem){
-            return;
-        }
+		var oTableItem = oItem;
+		if (!oTableItem){
+			return;
+		}
 
-        var bIgnore = this._getP13nModel().getProperty(oTableItem.getBindingContextPath()) ? this._getP13nModel().getProperty(oTableItem.getBindingContextPath()).template : true;
+		var bIgnore = this._getP13nModel().getProperty(oTableItem.getBindingContextPath()) ? this._getP13nModel().getProperty(oTableItem.getBindingContextPath()).template : true;
 
-        if (oTableItem.getCells() && (oTableItem.getCells().length === 2 || oTableItem.getCells().length === 3) && !bIgnore){
+		if (oTableItem.getCells() && (oTableItem.getCells().length === 2 || oTableItem.getCells().length === 3) && !bIgnore){
 			if (this._bMobileMode){
 				oTableItem.getCells()[1].insertItem(this._getMoveDownButton(), 0);
 				oTableItem.getCells()[1].insertItem(this._getMoveUpButton(), 0);
@@ -658,14 +655,14 @@ sap.ui.define([
 				oTableItem.getCells()[2].insertItem(this._getMoveTopButton(), 0);
 			}
 
-        }
-    };
+		}
+	};
 
 	ChartItemPanel.prototype._moveSelectedItem = function(){
 		this._oSelectedItem = this._getMoveButtonContainer().getParent();
 
-        BasePanel.prototype._moveSelectedItem.apply(this, arguments);
-    };
+		BasePanel.prototype._moveSelectedItem.apply(this, arguments);
+	};
 
 
 	ChartItemPanel.prototype._updateAvailableRolesForItems = function() {

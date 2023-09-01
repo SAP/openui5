@@ -20,8 +20,20 @@ sap.ui.define([
     // shortcut for sap.m.ListType
     var ListType = mLibrary.ListType;
 
+    // shortcut for sap.m.MultiSelectMode
+	var MultiSelectMode = mLibrary.MultiSelectMode;
+
     var LinkSelectionPanel = SelectionPanel.extend("sap.ui.mdc.p13n.panels.LinkSelectionPanel", {
         metadata: {
+            properties: {
+                /**
+				 * Defines the multi-selection mode for the inner list control.
+				 */
+				multiSelectMode: {
+					type: "sap.m.MultiSelectMode",
+					defaultValue: MultiSelectMode.Default
+				}
+            },
 			library: "sap.ui.mdc",
             /**
              * This event is fired when a Link on the SelectionPanel is pressed.
@@ -94,10 +106,6 @@ sap.ui.define([
             oEvent.preventDefault();
             this.fireLinkPressed(oEvent);
         }
-    };
-
-    LinkSelectionPanel.prototype.setMultiSelectMode = function(sMultiSelectMode) {
-        this._oListControl.setMultiSelectMode(sMultiSelectMode);
     };
 
     LinkSelectionPanel.prototype._filterList = function(bShowSelected, sSarch) {

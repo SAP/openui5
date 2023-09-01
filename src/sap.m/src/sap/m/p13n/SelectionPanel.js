@@ -34,6 +34,9 @@ sap.ui.define([
 	// shortcut for sap.m.ListType
 	var ListType = mLibrary.ListType;
 
+	// shortcut for sap.m.MultiSelectMode
+	var MultiSelectMode = mLibrary.MultiSelectMode;
+
 	/**
 	 * Constructor for a new <code>SelectionPanel</code>.
 	 *
@@ -103,6 +106,14 @@ sap.ui.define([
 				 */
 				itemFactory: {
 					type: "function"
+				},
+
+				/**
+				 * Defines the multi-selection mode for the inner list control.
+				 */
+				multiSelectMode: {
+					type: "sap.m.MultiSelectMode",
+					defaultValue: MultiSelectMode.ClearAll
 				}
 			}
 		},
@@ -121,6 +132,12 @@ sap.ui.define([
 		this.addStyleClass("SelectionPanelHover");
 		this._displayColumns();
 		this._updateMovement(this.getEnableReorder());
+		this._oListControl.setMultiSelectMode(this.getMultiSelectMode());
+	};
+
+	SelectionPanel.prototype.setMultiSelectMode = function(sMultiSelectMode) {
+		this._oListControl.setMultiSelectMode(sMultiSelectMode);
+		return this.setProperty("multiSelectMode", sMultiSelectMode);
 	};
 
 	SelectionPanel.prototype.setItemFactory = function(fnItemFactory) {
