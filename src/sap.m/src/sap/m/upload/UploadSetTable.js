@@ -143,7 +143,11 @@ sap.ui.define([
 				 * Size limit of the file in megabytes that is allowed to be previewed
 				 * <br>If set to <code>null</code> or <code>0</code>, files of any size can be previewed.
 				 */
-				maxFileSizeforPreview: {type: "float", defaultValue: 0}
+				maxFileSizeforPreview: {type: "float", defaultValue: 0},
+				/**
+				 * Lets the user upload entire files from directories and sub directories.
+				*/
+				 directory: {type: "boolean", group: "Behavior", defaultValue: false}
             },
             aggregations: {
                 headerToolbar : {
@@ -354,12 +358,11 @@ sap.ui.define([
 				 * @param {sap.ui.core.dnd.DragSession} oControlEvent.getParameters.dragSession The UI5 <code>dragSession</code> object that exists only during drag and drop
 				 * @param {Event} oControlEvent.getParameters.browserEvent The underlying browser event
 				 * @public
-				 * @since 1.99
 				 */
 				itemDragStart: {
 				},
 				/**
-				 * This event is fired when an uploaded item is dropped on the new list position.
+				 * This event is fired when an uploaded item is dropped on the new table row position.
 				 * @event
 				 * @param {sap.ui.base.Event} oControlEvent
 				 * @param {sap.ui.base.EventProvider} oControlEvent.getSource
@@ -370,7 +373,6 @@ sap.ui.define([
 				 * @param {sap.ui.core.dnd.RelativeDropPosition} oControlEvent.getParameters.dropPosition The calculated position of the drop action relative to the <code>droppedControl</code>.
 				 * @param {Event} oControlEvent.getParameters.browserEvent The underlying browser event
 				 * @public
-				 * @since 1.99
 				 */
 				itemDrop: {
 				}
@@ -909,7 +911,6 @@ sap.ui.define([
 			drop: [this._onDropItem, this]
 		});
 		var oDropConfig = new DropInfo({
-			targetAggregation: "",
 			dropEffect:"Move",
 			dropPosition:"OnOrBetween",
 			dragEnter: [this._onDragEnterFile, this],
@@ -930,30 +931,116 @@ sap.ui.define([
 	UploadSetTable.prototype._onDragEnterFile = function (oEvent) {
 		var oDragSession = oEvent.getParameter("dragSession");
 		var oDraggedControl = oDragSession.getDragControl();
-		this._oDragIndicator = true;
 		if (oDraggedControl) {
 			oEvent.preventDefault();
 		}
 	};
 
-	// Drag and drop of files implmentation subject to change depending on the thr UX feedback for folder upload scenarios and warning message display scenarios
+	/**
+	 * Drag and drop of files implmentation subject to change depending on the thr UX feedback for folder upload scenarios and warning message display scenarios
+	 * @param {sap.ui.base.Event} oEvent Drop Event when file is dropped on the Table.
+	 * @private
+	 */
 	UploadSetTable.prototype._onDropFile = function (oEvent) {
-		this._oDragIndicator = false;
 		oEvent.preventDefault();
-		if (this.getUploadEnabled()) {
-			var aItems = oEvent.getParameter("browserEvent").dataTransfer.files;
+		if (!this.getUploadEnabled()) {
+			Log.error("Upload is not enabled, to continue uploading with drag and drop of files enable property 'UploadEnabled' ");
+			return;
+		}
+		let oItems = oEvent.getParameter("browserEvent").dataTransfer.items;
+		oItems = Array.from(oItems);
 
-			// handlding multiple property drag & drop scenarios
-			if (aItems && aItems.length && aItems.length > 1 && !this.getMultiple()) {
-				// logging the message currently will display message box with UX improvements feedback.
-				Log.warning("Multiple files upload is retsricted for this multiple property set");
-				return;
+		// Filtering out only webkitentries (files/folders system entries) by excluding non file / directory types.
+		oItems = oItems.filter(function(item){
+			return item.webkitGetAsEntry() ? true : false;
+		});
+		const aEntryTypes = oItems.map(function (oEntry) {
+			const oWebKitEntry = oEntry.webkitGetAsEntry();
+			return {
+				entryType: oWebKitEntry && oWebKitEntry.isFile ? 'File' : 'Directory'
+			};
+		});
+		// handlding multiple property drag & drop scenarios
+		if (oItems && oItems.length > 1 && !this.getMultiple() && !this.getDirectory()) {
+			// Handling drag and drop of multiple files to upload with multiple property set
+			const sMessage = this._oRb.getText("UPLOADSET_WITH_TABLE_MULTIPLE_RESTRICTED");
+			Log.warning("Multiple files upload is retsricted for this multiple property set");
+			MessageBox.error(sMessage);
+			return;
+		} else if (oItems && oItems.length > 1 && this.getMultiple() && !isFileOrFolderEntry('File', aEntryTypes)) {
+			const sMessageDropFilesOnly = this._oRb.getText("UPLOADSET_WITH_TABLE_DIRECTORY_RESTRICTED");
+			Log.warning("Multiple files upload is retsricted, drag & drop only files");
+			MessageBox.error(sMessageDropFilesOnly);
+			return;
+		}
+
+		// handling directory property drag & drop scenarios
+		if (oItems && oItems.length && !this.getDirectory() && isFileOrFolderEntry('Directory', aEntryTypes)) {
+			const sMessageDirectory = this._oRb.getText("UPLOADSET_WITH_TABLE_DIRECTORY_RESTRICTED");
+			Log.warning("Directory of files upload is retsricted for this directory property set");
+			MessageBox.error(sMessageDirectory);
+			return;
+		} else if (oItems && oItems.length && this.getDirectory() && !isFileOrFolderEntry('Directory', aEntryTypes)) {
+			const sMessageDragDropDirectory = this._oRb.getText("UPLOADSET_WITH_TABLE_DROP_DIRECTORY_ALLOWED");
+			Log.warning("Directory of files upload is retsricted, drag & drop only directories here.");
+			MessageBox.error(sMessageDragDropDirectory);
+			return;
+		}
+		if (oItems && oItems.length) {
+			this._getFilesFromDataTransferItems(oItems).then( (oFiles) => {
+				if (oFiles && oFiles.length) {
+					this._processSelectedFileObjects(oFiles);
+				}
+			});
+		}
+
+		function isFileOrFolderEntry(sType, aEntries) {
+			return aEntries.every(function (oEntry) {
+				return oEntry.entryType === sType;
+			});
+		}
+	};
+	/**
+	 * Method to extract files from dataTransfer items contianing files / directory of files.
+	 * @param {Object} dataTransferItems, DataTransfer items extracted from browserEvent for drop.
+	 * @returns {Promise} oPromise, Promise on resolved returns list of files dropped for upload.
+	 * @private
+	 */
+	UploadSetTable.prototype._getFilesFromDataTransferItems = function (dataTransferItems) {
+		const aFiles = [];
+		return new Promise((resolve, reject) => {
+			const aEntriesPromises = [];
+			for (let i = 0; i < dataTransferItems.length; i++) {
+				aEntriesPromises.push(traverseFileTreePromise(dataTransferItems[i]?.webkitGetAsEntry()));
 			}
+			Promise.all(aEntriesPromises)
+				.then( (entries) => {
+					resolve(aFiles);
+				}, (err) => {
+					reject(err);
+				});
+		});
 
-
-			if (aItems && aItems.length) {
-				this._processSelectedFileObjects(aItems);
-			}
+		function traverseFileTreePromise(item) {
+			return new Promise((resolve, reject) => {
+				if (item.isFile) {
+					item.file((oFile) => {
+						aFiles.push(oFile);
+						resolve(oFile);
+					}, (err) => {
+						reject(err);
+					});
+				} else if (item.isDirectory) {
+					const dirReader = item.createReader();
+					dirReader.readEntries(function (entries) {
+						const aEntriesPromises = [];
+						for (let i = 0; i < entries.length; i++) {
+							aEntriesPromises.push(traverseFileTreePromise(entries[i]));
+						}
+						resolve(Promise.all(aEntriesPromises));
+					});
+				}
+			});
 		}
 	};
 
