@@ -126,50 +126,28 @@ sap.ui.define([
 				oError.message
 			].join(" - ");
 			oError.name = `Error in ${sLocationFull}`;
-			oError.message = Util.printf("{0}. Original error: {1}", sMessage, sOriginalMessage || "¯\\_(ツ)_/¯");
+			oError.message = `${sMessage}. Original error: ${sOriginalMessage || "¯\\_(ツ)_/¯"}`;
 		}
 
 		return oError;
 	};
 
 	/**
-	 * Gets object type which is useful for error reporting
+	 * Gets object type which is useful for error reporting.
+	 * If it is a ManagedObject, also includes the object id.
 	 *
 	 * Usage examples:
-	 * Util.getObjectType("foo") -> 'string'
-	 * Util.getObjectType(new sap.ui.base.ManagedObject()) -> 'sap.ui.base.ManagedObject (id = "__object1")'
+	 * Util.getObjectType("foo") -> "string"
+	 * Util.getObjectType(new sap.ui.base.ManagedObject()) -> "sap.ui.base.ManagedObject (id = '__object1')"
 	 *
 	 * @param {*} vObject - Object to get type of
-	 * @returns {string}
+	 * @returns {string} Type of the given object
 	 */
 	Util.getObjectType = function(vObject) {
-		return (
-			(
-				vObject instanceof ManagedObject
-				&& Util.printf('{0} (id = "{1}")', vObject.getMetadata().getName(), vObject.getId())
-			) // e.g. -> 'sap.ui.base.ManagedObject (id = "__object1")'
-			|| typeof vObject // e.g. -> 'string'
-		);
-	};
-
-	/**
-	 * FIXME: Replace with template literals when it's available
-	 * Replaces placeholders in the string with specified values. Usage:
-	 * Util.printf('Hello, {0}! The {1} is blue!', 'world', 'sky')
-	 * => 'Hello, world! The sky is blue!'
-	 *
-	 * @param {string} sString - Template string with placeholders {0}, {1}, ...
-	 * @param {...*} var_args - Values for placeholders
-	 * @return {string} - Concatenated string
-	 */
-	Util.printf = function(...aArgs) {
-		const [sString] = aArgs;
-		aArgs = aArgs.slice(1);
-		return sString.replace(/{(\d+)}/g, function(sMatch, iIndex) {
-			return typeof aArgs[iIndex] !== "undefined"
-				? aArgs[iIndex]
-				: sMatch;
-		});
+		if (vObject instanceof ManagedObject) {
+			return `${vObject.getMetadata().getName()} (id = '${vObject.getId()}')`;
+		}
+		return typeof vObject;
 	};
 
 	/**
@@ -207,7 +185,7 @@ sap.ui.define([
 		if (typeof fnHandler !== "function") {
 			throw Util.createError(
 				"Util#wrapIntoPromise",
-				Util.printf("Invalid argument specified. Function is expected, but '{0}' is given", typeof fnHandler),
+				`Invalid argument specified. Function is expected, but '${typeof fnHandler}' is given`,
 				"sap.ui.dt"
 			);
 		}

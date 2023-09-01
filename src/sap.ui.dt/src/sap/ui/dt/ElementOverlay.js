@@ -372,12 +372,8 @@ sap.ui.define([
 			throw Util.propagateError(
 				vError,
 				"ElementOverlay#loadDesignTimeMetadata",
-				Util.printf(
-					"Can't load designtime metadata data for overlay with id='{1}', element id='{2}': {3}",
-					this.getId(),
-					this.getAssociation("element"), // Can't use this.getElement(), because the element might be destroyed already
-					Util.wrapError(vError).message
-				)
+				// Can't use this.getElement(), because the element might be destroyed already
+				`Can't load designtime metadata data for overlay with id='${this.getId()}', element id='${this.getAssociation("element")}': ${Util.wrapError(vError).message}`
 			);
 		}.bind(this));
 	};
