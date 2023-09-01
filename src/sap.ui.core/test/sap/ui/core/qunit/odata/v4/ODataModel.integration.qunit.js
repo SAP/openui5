@@ -13369,7 +13369,11 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	// Scenario: Call bound action on a context of a relative ListBinding
+	// Scenario: Call bound action on a context of a relative ListBinding.
+	//
+	// Ensure that a Return Value Context is created and the structure of the path is same like the
+	// binding parameter
+	// JIRA: CPOUI5ODATAV4-2096
 	QUnit.test("Read entity for a relative ListBinding, call bound action", function (assert) {
 		var oModel = this.createTeaBusiModel(),
 			that = this,
@@ -13395,15 +13399,24 @@ sap.ui.define([
 			that.expectRequest({
 					method : "POST",
 					url : "TEAMS('42')/TEAM_2_EMPLOYEES('2')/"
-						+ "com.sap.gateway.default.iwbep.tea_busi.v0001.AcChangeTeamOfEmployee",
+						+ "com.sap.gateway.default.iwbep.tea_busi.v0001.AcChangeTeamOfEmployee"
+						+ "?$expand=EMPLOYEE_2_TEAM($select=Team_Id)",
 					payload : {TeamID : "TEAM_02"}
-				}, {ID : "2"});
+				}, {
+					EMPLOYEE_2_TEAM : {
+						Team_Id : "TEAM_02"
+					},
+					ID : "2"
+				});
 			oAction.setParameter("TeamID", "TEAM_02");
 
 			return Promise.all([
 				// code under test
-				oAction.execute(),
-				// Note: no R.V.C. because path "/TEAMS('42')/TEAM_2_EMPLOYEES('2')" too long
+				oAction.execute().then(function (oReturnValueContext) {
+					assert.strictEqual(
+						oReturnValueContext.getPath(),
+						"/TEAMS('TEAM_02')/TEAM_2_EMPLOYEES('2')");
+				}),
 				that.waitForChanges(assert)
 			]);
 		});
@@ -25550,6 +25563,10 @@ sap.ui.define([
 	//
 	// Use relative ODLB with an initially suspended parent (JIRA: CPOUI5ODATAV4-1985 etc.)
 	// Additionally, ODLB#getDownloadUrl is tested (JIRA: CPOUI5ODATAV4-1920. BCP: 2370011296).
+	//
+	// Ensure that a Return Value Context is created and the structure of the path is same like the
+	// binding parameter
+	// JIRA: CPOUI5ODATAV4-2096
 	QUnit.test("Recursive Hierarchy: edit w/ currency", function (assert) {
 		var sAction = "com.sap.gateway.default.iwbep.tea_busi.v0001.AcChangeTeamOfEmployee",
 			oChild,
@@ -25706,45 +25723,59 @@ sap.ui.define([
 
 			that.expectRequest({
 					method : "POST",
-					url : "TEAMS('42')/TEAM_2_EMPLOYEES('0')/" + sAction,
-					payload : {TeamID : "23"}
+					url : "TEAMS('42')/TEAM_2_EMPLOYEES('0')/" + sAction
+						+ "?$expand=EMPLOYEE_2_TEAM($select=Team_Id)",
+					payload : {TeamID : "TEAM_23"}
 				}, {
+					EMPLOYEE_2_TEAM : {
+						Team_Id : "23"
+					},
 					ID : "0",
 					MANAGER_ID : null,
 					SALARY : { // "side effect"
 						BONUS_CURR : "GBP",
 						YEARLY_BONUS_AMOUNT : "23.23"
 					},
-					TEAM_ID : "TEAM_23" // "side effect"
+					TEAM_ID : "23" // "side effect"
 				})
 				.expectRequest({
 					method : "POST",
-					url : "TEAMS('42')/TEAM_2_EMPLOYEES('1')/" + sAction,
-					payload : {TeamID : "42"}
+					url : "TEAMS('42')/TEAM_2_EMPLOYEES('1')/" + sAction
+						+ "?$expand=EMPLOYEE_2_TEAM($select=Team_Id)",
+					payload : {TeamID : "TEAM_42"}
 				}, {
+					EMPLOYEE_2_TEAM : {
+						Team_Id : "42"
+					},
 					ID : "1",
 					MANAGER_ID : "0",
 					SALARY : { // "side effect"
 						BONUS_CURR : "USD",
 						YEARLY_BONUS_AMOUNT : "42.42"
 					},
-					TEAM_ID : "TEAM_42" // "side effect"
+					TEAM_ID : "42" // "side effect"
 				});
 
 			return Promise.all([
 				oModel.bindContext(sAction + "(...)", oRoot)
-					.setParameter("TeamID", "23")
+					.setParameter("TeamID", "TEAM_23")
 					.execute()
-					.then(function (_oReturnValueContext) {
-						// Note: RVC has iGeneration === 2 instead of 0
-						//TODO assert.strictEqual(oReturnValueContext.getPath(), oRoot.getPath());
+					.then(function (oReturnValueContext) {
+						assert.strictEqual(oRoot.getPath(),
+							"/TEAMS('42')/TEAM_2_EMPLOYEES('0')");
+						assert.strictEqual(oReturnValueContext.getPath(),
+							"/TEAMS('23')/TEAM_2_EMPLOYEES('0')");
 					}),
 				oModel.bindContext(sAction + "(...)", oChild)
-					.setParameter("TeamID", "42")
+					.setParameter("TeamID", "TEAM_42")
 					.execute()
-					.then(function (_oReturnValueContext) {
+					.then(function (oReturnValueContext) {
 						// Note: RVC has iGeneration === 2 instead of 0
-						//TODO assert.strictEqual(oReturnValueContext.getPath(), oChild.getPath());
+						assert.notStrictEqual(oReturnValueContext, oChild);
+						assert.strictEqual(oChild.getPath(),
+							"/TEAMS('42')/TEAM_2_EMPLOYEES('1')");
+						assert.strictEqual(oReturnValueContext.getPath(),
+							"/TEAMS('42')/TEAM_2_EMPLOYEES('1')");
 					}),
 				that.waitForChanges(assert, "action")
 			]);
@@ -25753,8 +25784,8 @@ sap.ui.define([
 				"/TEAMS('42')/TEAM_2_EMPLOYEES('0')",
 				"/TEAMS('42')/TEAM_2_EMPLOYEES('1')"
 			], [
-				[true, 1, "0", "", "23.23", "GBP", "TEAM_23"],
-				[undefined, 2, "1", "0", "42.42", "USD", "TEAM_42"]
+				[true, 1, "0", "", "23.23", "GBP", "23"],
+				[undefined, 2, "1", "0", "42.42", "USD", "42"]
 			]);
 		});
 	});
@@ -31944,17 +31975,32 @@ sap.ui.define([
 					payload : {}
 				}, {
 					ArtistID : "2",
-					IsActiveEntity : false
-				});
+					IsActiveEntity : false,
+					Messages : [{
+						message : "Some Message",
+						numericSeverity : 3,
+						target : "ArtistID",
+						transition : false
+					}]
+				})
+				.expectMessages([{
+					message : "Some Message",
+					targets : [
+						"/Artists(ArtistID='1',IsActiveEntity=true)/BestFriend/" + sAction
+							+ "(...)/ArtistID"
+					],
+					type : "Warning"
+				}]);
 
 			return Promise.all([
 				that.oView.byId("action").getObjectBinding().execute(),
 				that.waitForChanges(assert)
 			]);
-		}).then(function () {
+		}).then(function ([oReturnValueContext]) {
 			// TODO return value context not supported here
 			// assert.strictEqual(aResults[0].getPath(),
 			//     "Artists(ArtistID='2',IsActiveEntity=false)");
+			assert.strictEqual(oReturnValueContext, undefined);
 		});
 	});
 
@@ -32014,9 +32060,13 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	// Scenario: Create entity for a relative ListBinding, save the new entity and call action
-	// import for the new non-transient entity
+	// Scenario: Create entity for a relative ListBinding, save the new entity and call a bound
+	// action for the new non-transient entity
 	// JIRA: CPOUI5UISERVICESV3-1233
+	//
+	// Ensure that a Return Value Context is created and the structure of the path is same like the
+	// binding parameter
+	// JIRA: CPOUI5ODATAV4-2096
 	QUnit.test("Create relative, save and call action", function (assert) {
 		var oCreatedContext,
 			oModel = this.createTeaBusiModel(),
@@ -32059,15 +32109,24 @@ sap.ui.define([
 			that.expectRequest({
 					method : "POST",
 					url : "TEAMS('42')/TEAM_2_EMPLOYEES('7')/"
-						+ "com.sap.gateway.default.iwbep.tea_busi.v0001.AcChangeTeamOfEmployee",
-					payload : {TeamID : "TEAM_02"}
-				}, {ID : "7"});
-			oAction.setParameter("TeamID", "TEAM_02");
+						+ "com.sap.gateway.default.iwbep.tea_busi.v0001.AcChangeTeamOfEmployee"
+						+ "?$expand=EMPLOYEE_2_TEAM($select=Team_Id)",
+					payload : {TeamID : "02"}
+				}, {
+					EMPLOYEE_2_TEAM : {
+						Team_Id : "02"
+					},
+					ID : "7"
+				});
+			oAction.setParameter("TeamID", "02");
 
 			return Promise.all([
 				// code under test
-				oAction.execute(),
-				// Note: no R.V.C. because path "/TEAMS('42')/TEAM_2_EMPLOYEES('7')" too long
+				oAction.execute().then(function (oReturnValueContext) {
+					assert.strictEqual(
+						oReturnValueContext.getPath(),
+						"/TEAMS('02')/TEAM_2_EMPLOYEES('7')");
+				}),
 				that.waitForChanges(assert)
 			]);
 		});
@@ -38433,6 +38492,102 @@ sap.ui.define([
 			]);
 		});
 	});
+
+	//*********************************************************************************************
+	// Scenario: Execute a bound action, this returns a return value context although the path
+	// contains navigation properties.
+	// JIRA: CPOUI5ODATAV4-2096
+[false, true].forEach(function (bInheritExpandSelect) {
+	["TEAM_01", "TEAM_02"].forEach(function (sTeamId) {
+		["1", "2"].forEach(function (sEmployeeId) {
+				var sTitle = "CPOUI5ODATAV4-2096 - Bound Action with RVC, Team changed: "
+						+ (sTeamId === "TEAM_02") + ", EmployeeId changed: " + (sEmployeeId === "2")
+						+ ", bInheritExpandSelect: " + bInheritExpandSelect;
+
+	QUnit.test(sTitle, async function (assert) {
+		var sChangeTeamAction
+				= "com.sap.gateway.default.iwbep.tea_busi.v0001.AcChangeTeamOfEmployee",
+			oModel = this.createTeaBusiModel({autoExpandSelect : true}),
+			sRVCPath = "/TEAMS('" + sTeamId + "')/TEAM_2_EMPLOYEES('" + sEmployeeId + "')",
+			sView = '\
+<Table id="teams" items="{path : \'/TEAMS\'}">\
+	<Text id="teamId" text="{Team_Id}"/>\
+</Table>\
+<Table id="employees" items="{path : \'TEAM_2_EMPLOYEES\', parameters : {$$ownRequest : true}}">\
+	<Input id="name" value="{Name}"/>\
+	<Text id="team" text="{TEAM_ID}"/>\
+</Table>';
+
+		this.expectRequest("TEAMS?$select=Team_Id&$skip=0&$top=100", {
+				value : [{Team_Id : "TEAM_01"}, {Team_Id : "TEAM_02"}]
+			})
+			.expectChange("teamId", ["TEAM_01", "TEAM_02"])
+			.expectChange("name", [])
+			.expectChange("team", []);
+
+		await this.createView(assert, sView, oModel);
+
+		this.expectRequest("TEAMS('TEAM_01')/TEAM_2_EMPLOYEES?$select=ID,Name,TEAM_ID"
+				+ "&$skip=0&$top=100", {
+				value : [{ID : "1", Name : "Jonathan Smith", TEAM_ID : "TEAM_01"}]
+			})
+			.expectChange("name", ["Jonathan Smith"])
+			.expectChange("team", ["TEAM_01"]);
+
+		this.oView.byId("employees").setBindingContext(
+			this.oView.byId("teams").getBinding("items").getCurrentContexts()[0]);
+
+		await this.waitForChanges(assert);
+
+		const oResponse = {
+				Age : "42",
+				EMPLOYEE_2_TEAM : {
+					Team_Id : sTeamId
+				},
+				ID : sEmployeeId
+			};
+
+		if (bInheritExpandSelect) {
+			oResponse["Name"] = "Jonathan Smith";
+			oResponse["TEAM_ID"] = sTeamId;
+		}
+
+		const oEmployeesBinding = this.oView.byId("employees").getBinding("items");
+		const oEmployeeContext = oEmployeesBinding.getCurrentContexts()[0];
+		const oActionBinding = this.oModel.bindContext(sChangeTeamAction + "(...)",
+			oEmployeeContext, {
+				$select : ["Age"],
+				$$inheritExpandSelect : bInheritExpandSelect
+			});
+
+		this.expectRequest({
+				method : "POST",
+				payload : {
+					TeamID : sTeamId
+				},
+				url : "TEAMS('TEAM_01')/TEAM_2_EMPLOYEES('1')" + "/" + sChangeTeamAction
+					+ (bInheritExpandSelect
+						? "?$select=Age,ID,Name,TEAM_ID"
+						: "?$select=Age,ID")
+					+ "&$expand=EMPLOYEE_2_TEAM($select=Team_Id)"
+			}, oResponse);
+
+		if (sTeamId === "TEAM_02" && sEmployeeId === "1" && bInheritExpandSelect) {
+			this.expectChange("team", ["TEAM_02"]);
+		}
+
+		const [oReturnValueContext] = await Promise.all([
+			oActionBinding
+				.setParameter("TeamID", sTeamId)
+				.execute(),
+			this.waitForChanges(assert)
+		]);
+
+		assert.strictEqual(oReturnValueContext.getPath(), sRVCPath);
+	});
+		});
+	});
+});
 
 	//*********************************************************************************************
 	// Scenario: Delete an entity via the model. This must not stumble over bindings below a not-yet

@@ -3831,28 +3831,6 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
-[true, false].forEach(function (bAbsolute) {
-	var sTitle = "getReturnValueContextPath with "
-			+ (bAbsolute ? "absolute" : "relative") + " path";
-
-	QUnit.test(sTitle, function (assert) {
-		var sPathPrefix = bAbsolute ? "/" : "";
-
-		// code under test
-		assert.strictEqual(
-			_Helper.getReturnValueContextPath(
-				sPathPrefix + "Artists('42')/special.cases.Action(...)", "('77')"),
-			sPathPrefix + "Artists('77')");
-
-		// code under test
-		assert.strictEqual(
-			_Helper.getReturnValueContextPath(
-				sPathPrefix + "Artists/special.cases.Action(...)", "('77')"),
-			sPathPrefix + "Artists('77')");
-	});
-});
-
-	//*********************************************************************************************
 	QUnit.test("hasPathPrefix", function (assert) {
 		var oHelperMock = this.mock(_Helper);
 

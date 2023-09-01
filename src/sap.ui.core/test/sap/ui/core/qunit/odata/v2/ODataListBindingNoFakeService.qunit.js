@@ -2894,7 +2894,6 @@ sap.ui.define([
 				_removePersistedCreatedContexts : function () {},
 				addComparators : function () {},
 				abortPendingRequest : function () {},
-				convertFilters : function () {},
 				createFilterParams : function () {},
 				resetData : function () {},
 				useClientMode : function () {}
@@ -2904,7 +2903,6 @@ sap.ui.define([
 
 		this.mock(oBinding.oModel).expects("checkFilterOperation")
 			.withExactArgs(sinon.match.same(aFilters));
-		oBindingMock.expects("convertFilters").withExactArgs();
 		this.mock(FilterProcessor).expects("combineFilters")
 			.withExactArgs(sinon.match.same(aFilters), sinon.match.same(aApplicationFilters))
 			.returns("~oCombinedFilter");
@@ -2937,12 +2935,10 @@ sap.ui.define([
 				addComparators : function () {},
 				applyFilter : function () {},
 				applySort : function () {},
-				convertFilters : function () {},
 				useClientMode : function () {}
 			};
 
 		this.mock(oBinding.oModel).expects("checkFilterOperation").withExactArgs([]);
-		this.mock(oBinding).expects("convertFilters").withExactArgs();
 		this.mock(FilterProcessor).expects("combineFilters")
 			.withExactArgs([], [])
 			.returns("~oCombinedFilter");

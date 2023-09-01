@@ -169,6 +169,7 @@
 		"TEAM_2_EMPLOYEES" : {
 			"$kind" : "NavigationProperty",
 			"$isCollection" : true,
+			"$Partner" : "EMPLOYEE_2_TEAM",
 			"$Type" : "com.sap.gateway.default.iwbep.tea_busi.v0001.Worker"
 		},
 		"TEAM_2_MANAGER" : {
@@ -259,7 +260,8 @@
 		"EMPLOYEE_2_TEAM" : {
 			"$kind" : "NavigationProperty",
 			"$Type" : "com.sap.gateway.default.iwbep.tea_busi.v0001.TEAM",
-			"$Nullable" : false
+			"$Nullable" : false,
+			"$Partner" : "TEAM_2_EMPLOYEES"
 		},
 		"__CT__FAKE__Message" : {
 			"$kind" : "Property",

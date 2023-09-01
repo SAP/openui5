@@ -197,9 +197,9 @@ sap.ui.define([
 	 * @public
 	 * @since 1.98.0
 	 */
-	 ODataListBinding.prototype.attachCreateActivate = function (fnFunction, oListener) {
-		this.attachEvent("createActivate", fnFunction, oListener);
-	};
+	ODataListBinding.prototype.attachCreateActivate = function (fnFunction, oListener) {
+	   this.attachEvent("createActivate", fnFunction, oListener);
+   };
 
 	/**
 	 * Detach event handler <code>fnFunction</code> from the 'createActivate' event of this binding.
@@ -237,16 +237,16 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	 ODataListBinding.prototype._updateLastStartAndLength = function (iStartIndex, iLength,
-			iMaximumPrefetchSize, bKeepCurrent) {
-		if (bKeepCurrent) {
-			this._checkKeepCurrentSupported(iMaximumPrefetchSize);
-		} else {
-			this.iLastStartIndex = iStartIndex;
-			this.iLastLength = iLength;
-			this.iLastMaximumPrefetchSize = iMaximumPrefetchSize;
-		}
-	};
+	ODataListBinding.prototype._updateLastStartAndLength = function (iStartIndex, iLength,
+		   iMaximumPrefetchSize, bKeepCurrent) {
+	   if (bKeepCurrent) {
+		   this._checkKeepCurrentSupported(iMaximumPrefetchSize);
+	   } else {
+		   this.iLastStartIndex = iStartIndex;
+		   this.iLastLength = iLength;
+		   this.iLastMaximumPrefetchSize = iMaximumPrefetchSize;
+	   }
+   };
 
 	/**
 	 * Returns all current contexts of this list binding in no special order. Just like
@@ -1663,7 +1663,6 @@ sap.ui.define([
 	 * @public
 	 */
 	ODataListBinding.prototype.filter = function(aFilters, sFilterType, bReturnSuccess) {
-
 		var bSuccess = false;
 
 		this.bIgnoreSuspend = true;
@@ -1691,8 +1690,6 @@ sap.ui.define([
 		if (!this.aApplicationFilters || !Array.isArray(this.aApplicationFilters)) {
 			this.aApplicationFilters = [];
 		}
-
-		this.convertFilters();
 		this.oCombinedFilter = FilterProcessor.combineFilters(this.aFilters, this.aApplicationFilters);
 
 		if (!this.useClientMode()) {
@@ -1730,20 +1727,6 @@ sap.ui.define([
 		}
 	};
 
-	/**
-	 * Convert sap.ui.model.odata.Filter to sap.ui.model.Filter
-	 *
-	 * @private
-	 */
-	ODataListBinding.prototype.convertFilters = function() {
-		this.aFilters = this.aFilters.map(function(oFilter) {
-			return oFilter instanceof undefined/*ODataFilter*/ ? oFilter.convert() : oFilter;
-		});
-		this.aApplicationFilters = this.aApplicationFilters.map(function(oFilter) {
-			return oFilter instanceof undefined/*ODataFilter*/ ? oFilter.convert() : oFilter;
-		});
-	};
-
 	ODataListBinding.prototype.applyFilter = function() {
 		var that = this,
 			oContext;
@@ -1771,7 +1754,6 @@ sap.ui.define([
 		this.addComparators(this.aSorters, true);
 		this.addComparators(this.aFilters);
 		this.addComparators(this.aApplicationFilters);
-		this.convertFilters();
 		this.oCombinedFilter = FilterProcessor.combineFilters(this.aFilters, this.aApplicationFilters);
 
 		if (!this.useClientMode()) {
@@ -2118,10 +2100,10 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	 ODataListBinding.prototype._removePersistedCreatedContexts = function () {
-		return this.oModel._getCreatedContextsCache()
-			.removePersistedContexts(this.getResolvedPath(), this.sCreatedEntitiesKey);
-	};
+	ODataListBinding.prototype._removePersistedCreatedContexts = function () {
+	   return this.oModel._getCreatedContextsCache()
+		   .removePersistedContexts(this.getResolvedPath(), this.sCreatedEntitiesKey);
+   };
 
 	/**
 	 * Returns the count of active entries in the list if the list length is final, otherwise
@@ -2137,15 +2119,15 @@ sap.ui.define([
 	 * @see sap.ui.model.odata.v2.Context#isInactive
 	 * @since 1.98.0
 	 */
-	 ODataListBinding.prototype.getCount = function () {
-		if (!this.isLengthFinal()) {
-			return undefined;
-		}
+	ODataListBinding.prototype.getCount = function () {
+	   if (!this.isLengthFinal()) {
+		   return undefined;
+	   }
 
-		return this.getLength() - this._getCreatedContexts().filter(function (oContext) {
-				return oContext.isInactive();
-			}).length;
-	};
+	   return this.getLength() - this._getCreatedContexts().filter(function (oContext) {
+			   return oContext.isInactive();
+		   }).length;
+   };
 
 	/**
 	 * Returns whether this binding is relative and has a transient parent context.
@@ -2169,9 +2151,9 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	 ODataListBinding.prototype._hasTransientParentWithoutSubContexts = function () {
-		return this._hasTransientParentContext() && !this._getCreatedContexts().length;
-	};
+	ODataListBinding.prototype._hasTransientParentWithoutSubContexts = function () {
+	   return this._hasTransientParentContext() && !this._getCreatedContexts().length;
+   };
 
 	/**
 	 * Returns whether this list binding uses the expanded list data.

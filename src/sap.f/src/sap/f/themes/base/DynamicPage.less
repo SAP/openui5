@@ -75,6 +75,7 @@ html[data-sap-ui-browser^="ie"] {
 .sapFDynamicPageContentFitContainer {
 	position: relative;
 	padding: 1rem 3rem 0 3rem;
+	box-sizing: border-box;
 }
 
 .sapFDynamicPageContent > .sapFDynamicPageContentFitContainer {
@@ -98,12 +99,12 @@ html[data-sap-ui-browser^="ie"] {
 
 // adds space underneath the footer (when page in non-scrollable mode)
 .sapFDynamicPageContentFitContainerFooterVisible.sapFDynamicPageContentFitContainer {
-	max-height: ~"calc(100% - (@{_sap_f_DynamicPage_FooterHeight} + ( @{_sap_f_DynamicPage_FooterMarginBottom} * 4 ) ))";
+	max-height: ~"calc(100% - (@{_sap_f_DynamicPage_FooterHeight} + ( @{_sap_f_DynamicPage_FooterMarginBottom} * 2 ) ))";
 }
 
 .sapUiSizeCompact {
 	.sapFDynamicPageContentFitContainerFooterVisible.sapFDynamicPageContentFitContainer {
-		max-height: ~"calc(100% - (@{_sap_f_DynamicPage_FooterHeight_Compact} + ( @{_sap_f_DynamicPage_FooterMarginBottom} * 4 ) ))";
+		max-height: ~"calc(100% - (@{_sap_f_DynamicPage_FooterHeight_Compact} + ( @{_sap_f_DynamicPage_FooterMarginBottom} * 2 ) ))";
 	}
 }
 

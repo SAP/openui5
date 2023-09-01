@@ -1833,6 +1833,38 @@ sap.ui.define([
 		oMultiInput.destroy();
 	});
 
+	QUnit.test("Add tokens on mobile when there are no suggestions available", function(assert) {
+		// System under test
+		this.stub(Device, "system", {
+			desktop: false,
+			phone: true,
+			tablet: false
+		});
+
+		// Arrange
+		var oMultiInput = new MultiInput({
+			showSuggestion: false,
+			showValueHelp: false
+		}).placeAt("qunit-fixture");
+
+		oMultiInput.addValidator(function(args){
+			var text = args.text;
+			return new Token({text: text});
+		});
+		Core.applyChanges();
+
+		// Act
+		oMultiInput.setValue("test");
+		oMultiInput.onsapfocusleave({});
+		Core.applyChanges();
+
+		// Assert
+		assert.strictEqual(oMultiInput.getAggregation("tokenizer").getTokens().length, 1, "A token is created");
+
+		// Cleanup
+		oMultiInput.destroy();
+	});
+
 	QUnit.test("arrow left / top should not throw an error when there are no suggestions", function (assert) {
 		var oMI = new MultiInput({
 			showSuggestion: false
