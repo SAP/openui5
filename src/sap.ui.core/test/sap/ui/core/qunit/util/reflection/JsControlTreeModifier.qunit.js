@@ -226,6 +226,23 @@ sap.ui.define([
 			});
 		});
 
+		QUnit.test("moveAggregation in the same aggregation of the parent control", async function(assert) {
+			const oHBox = this.oXmlView.byId("hbox1");
+			const oMovedButton = this.oXmlView.byId("button1");
+			await JsControlTreeModifier.moveAggregation(oHBox, "items", oHBox, "items", oMovedButton, 2);
+			const oContentAggregation = await JsControlTreeModifier.getAggregation(oHBox, "items");
+			assert.strictEqual(oContentAggregation[2], oMovedButton);
+		});
+
+		QUnit.test("moveAggregation between different controls", async function(assert) {
+			const oSourceHBox = this.oXmlView.byId("hbox1");
+			const oTargetHBox = this.oXmlView.byId("hbox2");
+			const oMovedButton = this.oXmlView.byId("button1");
+			await JsControlTreeModifier.moveAggregation(oSourceHBox, "items", oTargetHBox, "items", oMovedButton, 1);
+			const oContentAggregation = await JsControlTreeModifier.getAggregation(oTargetHBox, "items");
+			assert.strictEqual(oContentAggregation[1], oMovedButton);
+		});
+
 		QUnit.test("createAndAddCustomData adds Custom Data properly", function(assert) {
 			var oCreateStub = sandbox.stub(JsControlTreeModifier, "createControl").resolves("foo");
 			var oSetPropertyStub = sandbox.stub(JsControlTreeModifier, "setProperty");
