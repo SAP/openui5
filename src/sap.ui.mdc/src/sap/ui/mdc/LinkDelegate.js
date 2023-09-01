@@ -33,7 +33,7 @@ sap.ui.define(['sap/ui/mdc/BaseDelegate', 'sap/ui/mdc/enums/LinkType'], function
 	 * Calculates and returns the type of link that is displayed.
 	 * @public
 	 * @param {sap.ui.mdc.Link} oLink Instance of the <code>Link</code>
-	 * @returns {Promise<sap.ui.mdc.link.LinkTypeWrapper>} Once resolved, an object containing an initial {@link sap.ui.mdc.link.LinkType} and an optional <code>Promise</code> are returned.
+	 * @returns {Promise<sap.ui.mdc.link.LinkTypeWrapper>} Once resolved, a {@link sap.ui.mdc.link.LinkTypeWrapper} containing an initial {@link sap.ui.mdc.link.LinkType} and an optional <code>Promise</code> are returned.
 	 * The optional <code>Promise</code> also returns a {@link sap.ui.mdc.link.LinkType} object.
 	 * Once the optional <code>Promise</code> has been resolved, the returned {@link sap.ui.mdc.link.LinkType} overwrites the <code>initialType</code>.
 	 */
