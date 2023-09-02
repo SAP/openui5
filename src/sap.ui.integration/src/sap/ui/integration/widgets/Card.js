@@ -2064,7 +2064,13 @@ sap.ui.define([
 	 * @returns {boolean} If the card is rendered as a tile variant
 	 */
 	Card.prototype.isTileDisplayVariant = function () {
-		return [CardDisplayVariant.TileStandard, CardDisplayVariant.TileStandardWide].indexOf(this.getDisplayVariant()) > -1;
+		const aTileVariants = [
+			CardDisplayVariant.TileStandard,
+			CardDisplayVariant.TileStandardWide,
+			CardDisplayVariant.TileFlat,
+			CardDisplayVariant.TileFlatWide
+		];
+		return aTileVariants.indexOf(this.getDisplayVariant()) > -1;
 	};
 
 	Card.prototype.createHeader = function () {

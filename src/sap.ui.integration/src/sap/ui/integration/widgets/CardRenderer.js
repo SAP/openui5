@@ -43,7 +43,7 @@ sap.ui.define([
 				oRm.class("sapFCardPreview");
 			}
 
-			oRm.class("sapUiIntCardDisplayVariant" + oCard.getDisplayVariant());
+			oRm.class("sapUiIntCard" + oCard.getDisplayVariant());
 		},
 
 		/**

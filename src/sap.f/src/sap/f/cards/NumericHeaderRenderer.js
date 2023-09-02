@@ -33,6 +33,14 @@ sap.ui.define([
 			oRm.class("sapFCardSectionClickable");
 		}
 
+		if (oNumericHeader.getIconSrc() && oNumericHeader.getIconVisible()) {
+			oRm.class("sapFCardHeaderHasIcon");
+		}
+
+		if (oNumericHeader.getNumber() && oNumericHeader.getNumberVisible()) {
+			oRm.class("sapFCardHeaderHasNumber");
+		}
+
 		oRm.openEnd();
 
 		oRm.openStart("div")
