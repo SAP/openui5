@@ -19,7 +19,7 @@ sap.ui.define([
 	"use strict";
 
 	// get resource translation bundle;
-	var oLibraryResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+	var oLibraryResourceBundle = Core.getLibraryResourceBundle("sap.m");
 
 	/**
 	 * Media types that can be previewed.

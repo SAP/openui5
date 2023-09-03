@@ -43,12 +43,10 @@ sap.ui.define([
 				downloadUrl: {type: "string", defaultValue: null},
 				/**
 				 * HTTP request method chosen for file upload.
-				 * @since 1.90
 				 */
 				httpRequestMethod: {type: "sap.m.upload.UploaderHttpRequestMethod", defaultValue: UploaderHttpRequestMethod.Post},
 				/**
 				* This property decides the type of request. If set to "true", the request gets sent as a multipart/form-data request instead of file only request.
-				* @since 1.92
 				*/
 				useMultipart: { type: "boolean", defaultValue: false }
             },
