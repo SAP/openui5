@@ -118,15 +118,6 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 					]
 				}
 			},
-			"UIManager": {
-				group: "P13n logic",
-				module: "./UIManager.qunit",
-				ui5: {
-					libs: [
-						"sap.ui.mdc"
-					]
-				}
-			},
 			"P13nBuilder": {
 				group: "P13n logic",
 				module: "./P13nBuilder.qunit",

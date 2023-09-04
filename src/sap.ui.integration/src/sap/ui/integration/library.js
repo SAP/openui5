@@ -58,9 +58,13 @@ sap.ui.define([
 			"sap.ui.integration.Host",
 			"sap.ui.integration.Extension"
 		],
-		// define the custom elements that can be used in this library
-		customElements: {
-			"card": "sap/ui/integration/customElements/CustomElementCard"
+		extensions: {
+			"sap.ui.integration": {
+				// define the custom elements that can be used in this library
+				customElements: {
+					"card": "sap/ui/integration/customElements/CustomElementCard"
+				}
+			}
 		}
 	});
 

@@ -40,6 +40,10 @@ sap.ui.define(["sap/m/Text"], function (Text) {
 			}
 		});
 
+		if (oControl._iMinWidth && oControl._iMinWidth !== oControl.MIN_WIDTH_IN_OFT) {
+			oRm.style("min-width", oControl._iMinWidth + "px");
+		}
+
 		oRm.openEnd();
 		oRm.openStart("ol");
 		oRm.openEnd();

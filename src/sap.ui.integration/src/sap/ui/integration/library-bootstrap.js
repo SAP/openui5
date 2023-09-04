@@ -25,10 +25,11 @@
 	}
 
 	function registerLibraryTags(sLibrary) {
-		var oLibrary = coreInstance.getLoadedLibraries()[sLibrary];
-		//collect the prefix and the relevant tags
-		var	aTags = Object.keys(oLibrary.customElements),
+		var oLibrary = coreInstance.getLoadedLibraries()[sLibrary],
+			mCustomElements = oLibrary.extensions["sap.ui.integration"].customElements,
+			aTags = Object.keys(mCustomElements),
 			sTags = scriptTag.getAttribute("tags");
+
 		if (sTags) {
 			aTags = sTags.split(",");
 		}
@@ -36,7 +37,7 @@
 		window.sap.ui.require(
 			aTags.map(
 				function (o, i) {
-					return oLibrary.customElements[aTags[i]];
+					return mCustomElements[aTags[i]];
 				}
 			)
 		);

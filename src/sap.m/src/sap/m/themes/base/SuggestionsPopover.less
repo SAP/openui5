@@ -47,10 +47,16 @@ div.sapMSuggestionsPopover {
 	box-shadow: @sapUiContentShadow1;
 }
 
-.sapMSuggestionsPopover.sapMPopover {
-	max-width: ~"calc(100% - 2rem)";
-	margin-left: 1rem;
-	margin-right: 1rem;
+.sapMSuggestionsPopover.sapMPopover.sapMSuggestionPopoverDefaultWidth {
+	max-width: 40rem;
+}
+
+.sapMSuggestionsPopover.sapMPopover:not(.sapMSuggestionPopoverDefaultWidth):not(.sapMSuggestionPopoverInputWidth) {
+	max-width: ~"calc(100% - 2rem)" !important;
+}
+
+.sapMSuggestionsPopover.sapMPopover .sapMPopoverCont {
+	max-width: 100% !important;
 }
 
 .sapUiSizeCompact {
