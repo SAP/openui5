@@ -1349,7 +1349,7 @@ sap.ui.define([
 		var oFilterInfoToolbar = internal(oTable).oFilterInfoBar;
 		var oRb = Core.getLibraryResourceBundle("sap.ui.mdc");
 
-		if (oFilterInfoToolbar && !oFilterInfoToolbar.bIsDestroyed) {
+		if (oFilterInfoToolbar && !oFilterInfoToolbar.isDestroyed()) {
 			oFilterInfoToolbar.destroy();
 		}
 
@@ -1399,7 +1399,7 @@ sap.ui.define([
 	function getFilterInfoBar(oTable) {
 		var oFilterInfoBar = internal(oTable).oFilterInfoBar;
 
-		if (oFilterInfoBar && (oFilterInfoBar.bIsDestroyed || oFilterInfoBar.bIsBeingDestroyed)) {
+		if (oFilterInfoBar && (oFilterInfoBar.isDestroyed() || oFilterInfoBar.isDestroyStarted())) {
 			return null;
 		}
 
@@ -1472,7 +1472,7 @@ sap.ui.define([
 	};
 
 	Table.prototype.getNoData = function() {
-		return (this._vNoData && !this._vNoData.bIsDestroyed) ? this._vNoData : null;
+		return (this._vNoData && !this._vNoData.isDestroyed?.()) ? this._vNoData : null;
 	};
 
 	Table.prototype.destroyNoData = function() {
@@ -1558,10 +1558,10 @@ sap.ui.define([
 		}
 
 		// Load the necessary modules via the corresponding TableType
-		Promise.all(aInitPromises).then(function() {
+		Promise.all(aInitPromises).then(() => {
 			// The table type might be switched while the necessary libs, modules are being loaded; hence the below checks
-			if (this.bIsDestroyed) {
-				return;
+			if (this.isDestroyed()) {
+				throw new Error("Is destroyed");
 			}
 
 			this._updateAdaptation();
@@ -1573,12 +1573,15 @@ sap.ui.define([
 
 			// The table type might be switched while the necessary libs, modules are being loaded; hence the below checks
 			if (!this._oTable && oType.constructor === this._getType().constructor) {
-				this._createContent();
+				return this._createContent();
+			} else {
+				return Promise.resolve();
 			}
-		}.bind(this)).catch(function(oError) {
+		}).catch((oError) => {
 			this._onAfterTableCreated();
+			this._onAfterFullInitialization();
 			throw oError;
-		}.bind(this));
+		});
 	};
 
 	Table.prototype._onAfterTableCreated = function(bResult) {
@@ -1603,7 +1606,11 @@ sap.ui.define([
 		this._updateExportButton();
 		this.getColumns().forEach(this._insertInnerColumn, this);
 
-		this.getControlDelegate().initializeContent(this).then(function() {
+		return this.getControlDelegate().initializeContent(this).then(() => {
+			if (this.isDestroyed()) {
+				throw new Error("Is destroyed");
+			}
+
 			this.setAggregation("_content", this._oTable);
 			this._onAfterTableCreated(true); // Resolve any pending promise if table exists
 
@@ -1611,7 +1618,11 @@ sap.ui.define([
 				this.getPropertyInfo().length === 0 ? this.finalizePropertyHelper() : this.awaitPropertyHelper(),
 				this.initialized() // Required for the CreationRow binding context handling.
 			]);
-		}.bind(this)).then(function() {
+		}).then(() => {
+			if (this.isDestroyed()) {
+				throw new Error("Is destroyed");
+			}
+
 			// Add this to the micro task execution queue to enable consumers to handle this correctly.
 			// For example to add a binding context between the initialized promise and binding the rows.
 			var oCreationRow = this.getCreationRow();
@@ -1621,23 +1632,20 @@ sap.ui.define([
 
 			if (this.getAutoBindOnInit()) {
 				var oEngine = this.getEngine();
-				oEngine.isModificationSupported(this).then(function(bModificationSupported) {
+				oEngine.isModificationSupported(this).then((bModificationSupported) => {
 					if (bModificationSupported) {
-						oEngine.waitForChanges(this).then(function() {
+						oEngine.waitForChanges(this).then(() => {
 							this.rebind();
-						}.bind(this));
+						});
 					} else {
 						this.rebind();
 					}
-				}.bind(this));
+				});
 			}
 
 			this._bFullyInitialized = true;
 			this._onAfterFullInitialization(true);
-		}.bind(this)).catch(function(oError) {
-			this._onAfterFullInitialization();
-			throw oError;
-		}.bind(this));
+		});
 	};
 
 	Table.prototype.setHeader = function(sText) {
