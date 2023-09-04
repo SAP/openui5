@@ -48388,6 +48388,54 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	// Scenario: Refresh a binding with $$sharedRequest while a read request is pending.
+	// BCP: 2370078660
+	QUnit.test("BCP: 2370078660", async function (assert) {
+		const oModel = this.createTeaBusiModel({autoExpandSelect : true, sharedRequests : true});
+		const sView = `
+<Table id="table" items="{path : '/TEAMS', suspended : true}">
+	<Text id="name" text="{Name}"/>
+</Table>`;
+
+		this.expectChange("name", []);
+
+		await this.createView(assert, sView, oModel);
+
+		let fnResolve;
+		const oResponsePromise = new Promise((resolve) => { fnResolve = resolve; });
+		this.expectRequest("TEAMS?$select=Name,Team_Id&$skip=0&$top=100", oResponsePromise);
+
+		const oBinding = this.oView.byId("table").getBinding("items");
+		oBinding.resume();
+
+		await this.waitForChanges(assert, "resume");
+
+		this.expectCanceledError(
+				"Failed to get contexts for /sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001"
+					+ "/TEAMS with start index 0 and length 100",
+				"Request is obsolete")
+			.expectCanceledError(
+				"Failed to get contexts for /sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001"
+					+ "/TEAMS with start index 0 and length 100",
+				"Request is obsolete")
+			.expectRequest("TEAMS?$select=Name,Team_Id&$skip=0&$top=100", {
+				value : [
+					{Team_Id : "1", Name : "Team #1"},
+					{Team_Id : "2", Name : "Team #2"}
+				]
+			})
+			.expectChange("name", ["Team #1", "Team #2"]);
+
+		const oRefreshPromise = oBinding.requestRefresh();
+		fnResolve(); // no need to give a result; it will be obsoleted anyway
+
+		await Promise.all([
+			oRefreshPromise,
+			this.waitForChanges(assert, "refresh while resume request is pending")
+		]);
+	});
+
+	//*********************************************************************************************
 	// Scenario: Absolute property bindings for $count
 	// 1. Refresh a simple absolute property binding for $count.
 	// 2. Request absolute side effects that affect that simple binding twice - last one wins.
