@@ -4201,6 +4201,10 @@ sap.ui.define([
 	Table.prototype._initSelectionPlugin = function() {
 		var oSelectionPlugin = this.getPlugin("sap.ui.table.plugins.SelectionPlugin");
 
+		if (this.isDestroyed() || this.isDestroyStarted()) {
+			return;
+		}
+
 		if (oSelectionPlugin) {
 			this._destroyLegacySelectionPlugin();
 

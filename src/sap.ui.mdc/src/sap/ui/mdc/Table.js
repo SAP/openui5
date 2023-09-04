@@ -2805,23 +2805,7 @@ sap.ui.define([
 	 * @private
 	 */
 	Table.prototype.exit = function() {
-		this._destroyDefaultType();
-
-		// Destroy elements and delete references to them.
-		[
-			"_oRowTemplate",
-			"_oToolbar", // The toolbar needs to be destroyed manually because it may not yet be a child of the inner table.
-			"_oFilterInfoBarInvisibleText",
-			"_oColumnHeaderMenu",
-			"_oManagedObjectModel"
-		].forEach((sField) => {
-			if (this[sField]) {
-				this[sField].destroy();
-			}
-			delete this[sField];
-		});
-
-		// Delete references to elements that are automatically destroyed due to being children of destroyed elements.
+		// Destroy destructible elements and delete references.
 		[
 			"_oTable",
 			"_oTitle",
@@ -2831,8 +2815,15 @@ sap.ui.define([
 			"_oTableReady",
 			"_oFullInitialize",
 			"_oPasteButton",
-			"_oP13nButton"
+			"_oP13nButton",
+			"_oRowTemplate",
+			"_oToolbar",
+			"_oFilterInfoBarInvisibleText",
+			"_oColumnHeaderMenu",
+			"_oManagedObjectModel",
+			"_oDefaultType"
 		].concat((() => aToolBarBetweenAggregations.map((sAggregationName) => "_o" + capitalize(sAggregationName)))()).forEach((sField) => {
+			this[sField]?.destroy?.();
 			delete this[sField];
 		});
 
