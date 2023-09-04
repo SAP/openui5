@@ -19,14 +19,15 @@
             maxFileNameLength="60"
             uploadUrl="/uploadFiles"
             multiple="true"
+            sticky="ColumnHeaders,HeaderToolbar"
+			growing="true"
+            width="auto"
             items="{path: '/items', templateShareable: false}"
             mode="MultiSelect"
             fixedLayout="false"
             selectionChange="onSelectionChange"
             uploadCompleted="onUploadCompleted"
-            noDataText="No documents available"
             sap.ui.fl:flexibility="sap/m/flexibility/EngineFlex"
-            noDataDescription="Drag and Drop files here to upload"
             inset="true"
             beforeInitiatingItemUpload="onBeforeInitiatingItemUpload"
             beforeUploadStarts="onBeforeUploadStarts"
@@ -186,9 +187,6 @@
                 </cells>
                 </UploadSetTableItem>
             </items>
-            <previewDialogAdditionalFooterButtons>
-                <m:Button text="Check-Out" press=".onCheckOutClick" />
-            </previewDialogAdditionalFooterButtons>
         </UploadSetTable>
     </m:Page>
 </m:App>

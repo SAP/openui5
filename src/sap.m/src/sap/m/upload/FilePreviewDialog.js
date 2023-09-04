@@ -19,13 +19,13 @@ sap.ui.define([
 	"use strict";
 
 	// get resource translation bundle;
-	var oLibraryResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+	const oLibraryResourceBundle = Core.getLibraryResourceBundle("sap.m");
 
 	/**
 	 * Media types that can be previewed.
 	 * @enum {string}
 	 */
-	var PreviewableMediaType = {
+	const PreviewableMediaType = {
 		Png: "image/png",
 		Bmp: "image/bmp",
 		Jpeg: "image/jpeg",
@@ -49,7 +49,7 @@ sap.ui.define([
    * @extends sap.ui.core.Element
    * @name sap.m.upload.FilePreviewDialog
    */
-	var FilePreviewDialog = Element.extend("sap.m.upload.FilePreviewDialog", {
+	const FilePreviewDialog = Element.extend("sap.m.upload.FilePreviewDialog", {
 		library: "sap.m",
 		metadata: {
 			properties: {
@@ -91,7 +91,7 @@ sap.ui.define([
 		 * Opens the {@link sap.m.upload.FilePreviewDialog}.
 	 	*/
 		open: async function () {
-			var aItems = this.getItems();
+			const aItems = this.getItems();
 			if (aItems?.length && this.getPreviewItem()) {
 				this._oCarousel = await this._createCarousel();
 				if (!this._oDialog) {
@@ -115,14 +115,14 @@ sap.ui.define([
 		_loadVkDependency: function() {
 			return new Promise(function (resolve, reject) {
 				Core.loadLibrary("sap.ui.vk", { async: true })
-					.then(function() {
-						sap.ui.require(["sap/ui/vk/Viewer", "sap/ui/vk/ContentResource"], function(viewer, contentResource) {
+					.then(() => {
+						sap.ui.require(["sap/ui/vk/Viewer", "sap/ui/vk/ContentResource"], (viewer, contentResource) => {
 							resolve({ viewer, contentResource});
-						}, function (error) {
+						}, (error) => {
 							reject(error);
 						});
 					})
-					.catch(function () {
+					.catch(() => {
 						reject("sap.ui.vk.Viewer Control not available.");
 					});
 			});
@@ -134,16 +134,16 @@ sap.ui.define([
 		 * @private
 		 */
 		_loadRichTextEditorDependency: function() {
-			return new Promise(function (resolve, reject) {
+			return new Promise((resolve, reject) => {
 				Core.loadLibrary("sap.ui.richtexteditor", { async: true })
-					.then(function() {
-						sap.ui.require(["sap/ui/richtexteditor/RichTextEditor"], function(richTextEditor) {
+					.then(() => {
+						sap.ui.require(["sap/ui/richtexteditor/RichTextEditor"], (richTextEditor) => {
 							resolve(richTextEditor);
-						}, function (error) {
+						}, (error) => {
 							reject(error);
 						});
 					})
-					.catch(function () {
+					.catch(() => {
 						reject("RichTextEditor Control not available.");
 					});
 			});
@@ -240,12 +240,12 @@ sap.ui.define([
 		_createCarousel: async function () {
 			const oPreviewItem = this.getPreviewItem();
 			const aItems = !this.getShowCarouselArrows() ? [this.getPreviewItem()] : this.getItems();
-			var sActivePageId = "";
-			var aPagePromises = aItems.map(async (oItem) => {
-				var sMediaType = oItem.getMediaType();
+			let sActivePageId = "";
+			const aPagePromises = aItems.map(async (oItem) => {
+				const sMediaType = oItem.getMediaType();
 
-				var sFileName = oItem.getFileName();
-				var oPage = this._createIllustratedMessage(sFileName);
+				const sFileName = oItem.getFileName();
+				let oPage = this._createIllustratedMessage(sFileName);
 
 				if (oItem.getPreviewable() && this.isFileSizeWithinMaxLimit(oItem)) {
 					switch (sMediaType?.toLowerCase()) {
@@ -313,10 +313,10 @@ sap.ui.define([
 				activePage: sActivePageId,
 				height: "85vh",
 				pageChanged: (oEvent) => {
-					var iIndex = aPages.findIndex(function(oPage) {
+					const iIndex = aPages.findIndex(function(oPage) {
 						return oPage.sId === oEvent.getParameter("newActivePageId");
 					});
-					var sNewDialogTitle = aItems[iIndex].getFileName();
+					const sNewDialogTitle = aItems[iIndex].getFileName();
 					this._oDialog.setTitle(sNewDialogTitle);
 				}
 			});
@@ -337,27 +337,26 @@ sap.ui.define([
 	 	* @private
 		*/
 		_createDialog: function() {
-			var that = this;
-			var oActiveItem = this._getActiveUploadSetTableItem();
-			var oDialog = new Dialog({
+			const oActiveItem = this._getActiveUploadSetTableItem();
+			const oDialog = new Dialog({
 				title: oActiveItem.getFileName(),
-				content: that._oCarousel,
+				content: this._oCarousel,
 				horizontalScrolling: false,
 				verticalScrolling: false,
 				contentWidth: "100%",
 				contentHeight: "100%",
 				buttons: [
-					that.getAdditionalFooterButtons(),
+					this.getAdditionalFooterButtons(),
 					new Button({
 						text: oLibraryResourceBundle.getText("UPLOAD_SET_TABLE_FILE_PREVIEW_DIALOG_DOWNLOAD"),
-						press: function () {
-							that._getActiveUploadSetTableItem().download(true);
+						press: () => {
+							this._getActiveUploadSetTableItem().download(true);
 						}
 					}),
 					new Button({
 						text: oLibraryResourceBundle.getText("UPLOAD_SET_TABLE_FILE_PREVIEW_DIALOG_CLOSE"),
-						press: function () {
-							that._oDialog.close();
+						press: () => {
+							this._oDialog.close();
 						}
 					})
 				]
@@ -372,9 +371,9 @@ sap.ui.define([
      	* @private
      	*/
 		_getActiveUploadSetTableItem: function () {
-			var sActivePageId = this._oCarousel.getActivePage();
-			var aPages = this._oCarousel.getPages();
-			var iIndex = aPages.findIndex(function (oPage) {
+			const sActivePageId = this._oCarousel.getActivePage();
+			const aPages = this._oCarousel.getPages();
+			const iIndex = aPages.findIndex((oPage) => {
 				return oPage.sId === sActivePageId;
 			});
 			return this.getItems()[iIndex];

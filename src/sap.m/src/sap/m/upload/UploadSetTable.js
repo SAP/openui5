@@ -29,10 +29,11 @@ sap.ui.define([
 	"sap/m/Input",
 	"sap/m/MessageBox",
 	"sap/m/Button",
-	"sap/ui/base/Event"
+	"sap/ui/base/Event",
+	"sap/ui/core/Core"
 ], function (Table, ToolbarSpacer, UploadSetTableRenderer, FileUploader,
     UploadSetToolbarPlaceholder, UploaderHttpRequestMethod, OverFlowToolbar, UploadSetTableItem, deepEqual, Log, Library, IllustratedMessageType,
-	IllustratedMessage, IllustratedMessageSize, Uploader, DragDropInfo, DropInfo, DragInfo, FilePreviewDialog, Event, Dialog, Label, Input, MessageBox, Button, EventBase) {
+	IllustratedMessage, IllustratedMessageSize, Uploader, DragDropInfo, DropInfo, DragInfo, FilePreviewDialog, Event, Dialog, Label, Input, MessageBox, Button, EventBase, Core) {
     "use strict";
 
 	/**
@@ -78,19 +79,11 @@ sap.ui.define([
 				/**
 				 * Defines custom text for the 'No data' text label.
 				 */
-				noDataText: {type: "string", defaultValue: null},
+				noDataText: {type: "string", defaultValue: "No documents available" },
 				/**
 				 * Defines custom text for the 'No data' description label.
 				 */
-				noDataDescription: {type: "string", defaultValue: null},
-				/**
-				 * Defines custom text for the drag and drop text label.
-				 */
-				dragDropText: {type: "string", defaultValue: null},
-				/**
-				 * Defines custom text for the drag and drop description label.
-				 */
-				dragDropDescription: {type: "string", defaultValue: null},
+				noDataDescription: {type: "string", defaultValue: "Drag and drop files here to upload" },
 				/**
 				 * URL where the uploaded files will be stored.
 				 */
@@ -150,6 +143,9 @@ sap.ui.define([
 				 directory: {type: "boolean", group: "Behavior", defaultValue: false}
             },
             aggregations: {
+				/**
+				 * The header area can be used as a toolbar to add extra controls for user interactions. Note: When set, this overwrites the headerText property.
+				 */
                 headerToolbar : {
                     type: "sap.m.OverflowToolbar",
                     multiple: false
@@ -176,17 +172,6 @@ sap.ui.define([
 					parameters: {
 						/**
 						 * The renamed UI element as an UploadSetTableItem.
-						 */
-						item: {type: "sap.m.upload.UploadSetTableItem"}
-					}
-				},
-				/**
-				 * This event is fired after the item is removed on click of ok button in confirmation dialog.
-				 */
-				afterItemRemoved: {
-					parameters: {
-						/**
-						 * The item removed from the set of items to be uploaded.
 						 */
 						item: {type: "sap.m.upload.UploadSetTableItem"}
 					}
@@ -277,7 +262,7 @@ sap.ui.define([
 						 * The file that fails to meet the file type restriction specified in the
 						 * <code>fileType</code> property.
 						 */
-						item: {type: "object"}
+						item: {type: "sap.m.upload.UploadSetTableItem"}
 					}
 				},
 				/**
@@ -296,7 +281,7 @@ sap.ui.define([
 						 * The file that fails to meet the file name length restriction specified in the
 						 * <code>maxFileNameLength</code> property.
 						 */
-						item: {type: "object"}
+						item: {type: "sap.m.upload.UploadSetTableItem"}
 					}
 				},
 				/**
@@ -315,7 +300,7 @@ sap.ui.define([
 						 * The file that fails to meet the file size restriction specified in the
 						 * <code>maxFileSize</code> property.
 						 */
-						item: {type: "object"}
+						item: {type: "sap.m.upload.UploadSetTableItem"}
 					}
 				},
 				/**
@@ -333,7 +318,7 @@ sap.ui.define([
 						 * The file that fails to meet the media type restriction specified in the
 						 * <code>mediaTypes</code> property.
 						 */
-						item: {type: "object"}
+						item: {type: "sap.m.upload.UploadSetTableItem"}
 					}
 				},
 				/**
@@ -392,7 +377,7 @@ sap.ui.define([
 		this._setDragDropConfig();
         this._filesTobeUploaded = [];
 		this._filePreviewDialogControl = null;
-		this._oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+		this._oRb = Core.getLibraryResourceBundle("sap.m");
     };
 
 	UploadSetTable.prototype.onBeforeRendering = function() {
@@ -495,7 +480,6 @@ sap.ui.define([
 
 	UploadSetTable.prototype.setUploadButtonInvisible = function (bUploadButtonInvisible) {
 		if (bUploadButtonInvisible !== this.getUploadButtonInvisible()) {
-			this._setFileUploaderVisibility(bUploadButtonInvisible);
 			this.setProperty("uploadButtonInvisible", bUploadButtonInvisible, true);
 		}
 		return this;
@@ -571,12 +555,12 @@ sap.ui.define([
     };
 
 	/**
-	 * Returns sap icon based on mediaType and fileName passed
+	 * Downloads the item. Only possible when the item has a valid URL specified in the <code>url</code> property of the item.
 	 * @param {UploadSetTableItem[]} aItemsToDownload The list items the selection state is to be set for
 	 * @param {boolean} bAskForLocation Whether to ask for a location where to download the file or not.
 	 * @public
 	 */
-	UploadSetTable.prototype.downloadItems = function (aItemsToDownload) {
+	UploadSetTable.prototype.downloadItems = function (aItemsToDownload, bAskForLocation) {
         if (aItemsToDownload && aItemsToDownload.length) {
 			aItemsToDownload.forEach(function(oItem){
 				// Check if items are instances of "sap.m.UploadSetTableItem"
@@ -584,7 +568,7 @@ sap.ui.define([
 				var oParent = oItem && oItem.getParent ? oItem.getParent() : null;
 				// Download files individually
 				if (isUploadSetTableItemInstance && oParent === this) {
-					this._getActiveUploader().download(oItem, [], true);
+					this._getActiveUploader().download(oItem, [], bAskForLocation);
 				} else {
 					Log.warning("Download cannot proceed without a parent association.");
 				}
@@ -853,7 +837,9 @@ sap.ui.define([
 	UploadSetTable.prototype._uploadItemIfGoodToGo = function (oItem) {
 		if (oItem.getUploadState() === UploadState.Ready && !oItem._isRestricted()) {
 			if (this.fireBeforeUploadStarts({item: oItem})) {
-				var oHeaderFields = oItem.getHeaderFields().length ? oItem.getHeaderFields() : this.getHeaderFields();
+				const aHeaderFields = this.getHeaderFields()?.length ? this.getHeaderFields() : [];
+				const aItemHeaderFields = oItem.getHeaderFields()?.length ? oItem.getHeaderFields() : [];
+				const oHeaderFields = [...aHeaderFields, ...aItemHeaderFields]; //Merging headers for request.
 				this._getActiveUploader().uploadItem(oItem, oHeaderFields);
 			}
 		}
@@ -888,19 +874,6 @@ sap.ui.define([
 
 		this.setAggregation("_noColumnsMessage", this._illustratedMessage);
 		this.setAggregation("noData", this._illustratedMessage);
-	};
-
-	UploadSetTable.prototype._setFileUploaderVisibility = function (bInvisible) {
-		if (this._oFileUploader) {
-			var buttonRef = this._oFileUploader.oBrowse && this._oFileUploader.oBrowse ? this._oFileUploader : null;
-			if (buttonRef) {
-				if (bInvisible) {
-					buttonRef.addStyleClass("sapMUSTFileUploaderVisibility");
-				} else {
-					buttonRef.removeStyleClass("sapMUSTFileUploaderVisibility");
-				}
-			}
-		}
 	};
 
 	UploadSetTable.prototype._setDragDropConfig = function () {

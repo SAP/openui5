@@ -7,8 +7,9 @@ sap.ui.define([
 	"sap/m/ColumnListItem",
 	"sap/ui/core/IconPool",
 	"sap/m/upload/UploadSetTableItemRenderer",
-	"sap/base/Log"
-], function (ColumnListItem, IconPool, UploadSetTableItemRenderer, Log) {
+	"sap/base/Log",
+	"sap/ui/core/Core"
+], function (ColumnListItem, IconPool, UploadSetTableItemRenderer, Log, Core) {
     "use strict";
 
 	/**
@@ -82,7 +83,7 @@ sap.ui.define([
 		this._bNameLengthRestricted = false;
 		this._bSizeRestricted = false;
 		this._bMediaTypeRestricted = false;
-		this._oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+		this._oRb = Core.getLibraryResourceBundle("sap.m");
     };
 
     UploadSetTableItem.prototype.onBeforeRendering = function () {
@@ -157,7 +158,6 @@ sap.ui.define([
 	 * Validates if the item is restricted, which means that it is restricted for the file type, media type, maximum file name length and maximum file size limit.
 	 *
 	 * @public
-	 * @since 1.98
 	 * @returns {boolean} <code>true</code> if item is restricted, <code>false</code> otherwise.
 	 *
 	 */
