@@ -336,6 +336,10 @@ sap.ui.define([
 		return loadModules("sap/ui/table/plugins/MultiSelectionPlugin").then(function(aModules) {
 			var MultiSelectionPlugin = aModules[0];
 
+			if (oTable.isDestroyed()) {
+				throw new Error("Is destroyed");
+			}
+
 			oTable._oTable.addPlugin(new MultiSelectionPlugin({
 				limit: "{$sap.ui.mdc.Table#type>/selectionLimit}",
 				enableNotification: true,

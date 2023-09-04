@@ -3115,7 +3115,8 @@ sap.ui.define([
 	 *   with a number property <code>$count</code> representing the element count on server-side;
 	 *   <code>$count</code> may be <code>undefined</code>, but not <code>Infinity</code>). If an
 	 *   HTTP request fails, the error from the _Requestor is returned and the requested range is
-	 *   reset to <code>undefined</code>.
+	 *   reset to <code>undefined</code>. If the request has been obsoleted by a {@link #reset}, the
+	 *   promise is rejected with an error having a property <code>canceled = true</code>.
 	 * @throws {Error} If given index or length is less than 0
 	 *
 	 * @public
@@ -3346,7 +3347,8 @@ sap.ui.define([
 	 *   The function is called when the back-end requests have been sent.
 	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise which is resolved without a defined result when the request is finished and
-	 *   rejected in case of error
+	 *   rejected in case of error; if the request has been obsoleted by a {@link #reset} the error
+	 *   has a property <code>canceled = true</code>)
 	 * @throws {Error}
 	 *   If group ID is '$cached'. The error has a property <code>$cached = true</code>
 	 *
@@ -3371,6 +3373,11 @@ sap.ui.define([
 		]).then(function (aResult) {
 			var iFiltered;
 
+			if (oReadRequest.obsolete) {
+				const oError = new Error("Request is obsolete");
+				oError.canceled = true;
+				throw oError;
+			}
 			that.checkRange(oPromise, oReadRequest.iStart, oReadRequest.iEnd);
 			if (that.aElements.$tail === oPromise) {
 				that.aElements.$tail = undefined;
@@ -3380,8 +3387,10 @@ sap.ui.define([
 			return that.handleCount(oGroupLock, iTransientElements, oReadRequest.iStart,
 				oReadRequest.iEnd, aResult[0], iFiltered);
 		}).catch(function (oError) {
-			that.checkRange(oPromise, oReadRequest.iStart, oReadRequest.iEnd);
-			that.fill(undefined, oReadRequest.iStart, oReadRequest.iEnd);
+			if (!oError.canceled) {
+				that.checkRange(oPromise, oReadRequest.iStart, oReadRequest.iEnd);
+				that.fill(undefined, oReadRequest.iStart, oReadRequest.iEnd);
+			}
 			throw oError;
 		}).finally(function () {
 			that.aReadRequests.splice(that.aReadRequests.indexOf(oReadRequest), 1);
@@ -3596,6 +3605,10 @@ sap.ui.define([
 		});
 		aKeptElementPredicates.forEach(function (sPredicate) {
 			that.aElements.$byPredicate[sPredicate] = mByPredicate[sPredicate];
+		});
+		// Beware: fireChange can trigger a read which must not be obsoleted
+		this.aReadRequests?.forEach((oReadRequest) => {
+			oReadRequest.obsolete = true;
 		});
 		if (mChangeListeners[""]) {
 			this.mChangeListeners[""] = mChangeListeners[""];

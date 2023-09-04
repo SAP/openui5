@@ -140,7 +140,11 @@ sap.ui.define([
 				/**
 				 * Lets the user upload entire files from directories and sub directories.
 				*/
-				 directory: {type: "boolean", group: "Behavior", defaultValue: false}
+				 directory: {type: "boolean", group: "Behavior", defaultValue: false},
+				/**
+				 * Determines which illustration type is displayed when the control holds no data.
+				 */
+				noDataIllustrationType: {type: "sap.m.IllustratedMessageType", group: "Appearance", defaultValue: IllustratedMessageType.UploadCollection}
             },
             aggregations: {
 				/**
@@ -865,7 +869,7 @@ sap.ui.define([
 	UploadSetTable.prototype._setIllustratedMessage = function () {
 		if (!this._illustratedMessage) {
 			this._illustratedMessage = new IllustratedMessage({
-				illustrationType: IllustratedMessageType.UploadCollection,
+				illustrationType: this.getNoDataIllustrationType(),
 				illustrationSize: IllustratedMessageSize.Spot,
 				title: this.getNoDataText() ? this.getNoDataText() : this._oRb.getText("UPLOADSET_WITH_TABLE_NO_DATA_TEXT"),
 				description: this.getNoDataDescription() ? this.getNoDataDescription() : this._oRb.getText("UPLOADSET_WITH_TABLE_NO_DATA_DESCRIPTION")
