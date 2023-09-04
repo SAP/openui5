@@ -267,6 +267,20 @@ sap.ui.define([
 		}
 	}
 
+	function getSVMControls(sReference) {
+		const mCompVariantsMap = FlexState.getCompVariantsMap(sReference);
+		const aSVMControls = [];
+		if (mCompVariantsMap) {
+			Object.values(mCompVariantsMap).forEach(function(mMap) {
+				const oSVMControl = mMap.controlId && Core.byId(mMap.controlId);
+				if (oSVMControl) {
+					aSVMControls.push(oSVMControl);
+				}
+			});
+		}
+		return aSVMControls;
+	}
+
 	/**
 	 * CompVariant state class to handle the state of the compVariants and its changes.
 	 * This class is in charge of updating the maps stored in the <code>sap.ui.fl.apply._internal.flexState.FlexState</code>.
@@ -280,10 +294,8 @@ sap.ui.define([
 	var CompVariantState = {};
 
 	CompVariantState.checkSVMControlsForDirty = function(sReference) {
-		var mCompVariantsMap = FlexState.getCompVariantsMap(sReference);
-		return Object.values(mCompVariantsMap).some(function(mMap) {
-			var oControl = mMap.controlId && Core.byId(mMap.controlId);
-			return oControl && oControl.getModified();
+		return getSVMControls(sReference).some((oSVMControl) => {
+			return oSVMControl.getModified();
 		});
 	};
 
@@ -819,7 +831,7 @@ sap.ui.define([
 	 * @returns {Promise} Promise resolving with an array of responses or rejecting with the first error
 	 * @private
 	 */
-	CompVariantState.persist = function(mPropertyBag) {
+	CompVariantState.persist = async function(mPropertyBag) {
 		function writeObjectAndAddToState(oFlexObject, oStoredResponse, sParentVersion) {
 			// new public variant should not be visible for other users
 			if (oFlexObject.getLayer() === Layer.PUBLIC) {
@@ -848,7 +860,7 @@ sap.ui.define([
 				}
 			}).then(function() {
 				// update StorageResponse
-				var oFileContent = oFlexObject.convertToFileContent();
+				const oFileContent = oFlexObject.convertToFileContent();
 				getSubSection(oStoredResponse.changes.comp, oFlexObject).push(oFileContent);
 				return oFileContent;
 			});
@@ -866,41 +878,41 @@ sap.ui.define([
 					ifVariantClearRevertData(oFlexObject);
 					return deleteObjectAndRemoveFromStorage(oFlexObject, mCompVariantsMapByPersistencyKey, oStoredResponse, sParentVersion);
 				default:
-					break;
+					return undefined;
 			}
 		}
 
-		var sReference = mPropertyBag.reference;
-		var sPersistencyKey = mPropertyBag.persistencyKey;
-		var mCompVariantsMap = FlexState.getCompVariantsMap(sReference);
-		var mCompVariantsMapByPersistencyKey = mCompVariantsMap._getOrCreate(sPersistencyKey);
+		const sReference = mPropertyBag.reference;
+		const sPersistencyKey = mPropertyBag.persistencyKey;
+		const mCompVariantsMap = FlexState.getCompVariantsMap(sReference);
+		const mCompVariantsMapByPersistencyKey = mCompVariantsMap._getOrCreate(sPersistencyKey);
 
-		return FlexState.getStorageResponse(sReference)
-		.then(function(oStoredResponse) {
-			var aFlexObjects = getAllCompVariantObjects(mCompVariantsMapByPersistencyKey).filter(needsPersistencyCall);
-			var aPromises = aFlexObjects.map(function(oFlexObject, index) {
-				if (index === 0) {
-					var sParentVersion = getPropertyFromVersionsModel("/persistedVersion", {
-						layer: oFlexObject.getLayer(),
-						reference: oFlexObject.getFlexObjectMetadata().reference
+		const oStoredResponse = await FlexState.getStorageResponse(sReference);
+		const aFlexObjects = getAllCompVariantObjects(mCompVariantsMapByPersistencyKey).filter(needsPersistencyCall);
+		const aPromises = aFlexObjects.map(function(oFlexObject, index) {
+			if (index === 0) {
+				const sParentVersion = getPropertyFromVersionsModel("/persistedVersion", {
+					layer: oFlexObject.getLayer(),
+					reference: oFlexObject.getFlexObjectMetadata().reference
+				});
+				// TODO: use condensing route to reduce backend requests
+				// need to save first entry to generate draft version in backend
+				return saveObject(oFlexObject, mCompVariantsMapByPersistencyKey, oStoredResponse, sParentVersion)
+				.then(function() {
+					const aPromises = aFlexObjects.map(function(oFlexObject, index) {
+						if (index !== 0) {
+							const sDraftVersion = sParentVersion ? Version.Number.Draft : undefined;
+							return saveObject(oFlexObject, mCompVariantsMapByPersistencyKey, oStoredResponse, sDraftVersion);
+						}
+						return undefined;
 					});
-					// TODO: use condensing route to reduce backend requests
-					// need to save first entry to generate draft version in backend
-					return saveObject(oFlexObject, mCompVariantsMapByPersistencyKey, oStoredResponse, sParentVersion)
-					.then(function() {
-						var aPromises = aFlexObjects.map(function(oFlexObject, index) {
-							if (index !== 0) {
-								var sDraftVersion = sParentVersion ? Version.Number.Draft : undefined;
-								return saveObject(oFlexObject, mCompVariantsMapByPersistencyKey, oStoredResponse, sDraftVersion);
-							}
-						});
-						return Promise.all(aPromises);
-					});
-				}
-			});
-			// TODO Consider not rejecting with first error, but wait for all promises and collect the results
-			return Promise.all(aPromises);
+					return Promise.all(aPromises);
+				});
+			}
+			return undefined;
 		});
+		// TODO Consider not rejecting with first error, but wait for all promises and collect the results
+		return Promise.all(aPromises);
 	};
 
 	/**
@@ -910,16 +922,24 @@ sap.ui.define([
 	 * @returns {Promise} Promise resolving with an array of responses or rejecting with the first error
 	 * @private
 	 */
-	CompVariantState.persistAll = function(sReference) {
-		var mCompEntities = _omit(FlexState.getCompVariantsMap(sReference), "_getOrCreate", "_initialize");
+	CompVariantState.persistAll = async function(sReference) {
+		const mCompEntities = _omit(FlexState.getCompVariantsMap(sReference), "_getOrCreate", "_initialize");
 		// Calls must be done sequentially because the backend can't do this in parallel
 		// and first call might create draft which requires other parameters for following calls
-		return Object.keys(mCompEntities).reduce(function(oPromise, sPersistencyKey) {
-			return oPromise.then(CompVariantState.persist.bind(undefined, {
+		const aResponses = [];
+		const aSVMControls = getSVMControls(sReference);
+		for (const sPersistencyKey of Object.keys(mCompEntities)) {
+			const oResponse = await CompVariantState.persist({
 				reference: sReference,
 				persistencyKey: sPersistencyKey
-			}));
-		}, Promise.resolve());
+			});
+			aResponses.push(oResponse);
+		}
+		// persistAll can be triggered from e.g. Key User Adaptation, making the controls no longer dirty
+		aSVMControls.forEach((oSVMControl) => {
+			oSVMControl.setModified(false);
+		});
+		return aResponses;
 	};
 
 	/**

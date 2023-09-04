@@ -2,6 +2,7 @@
 
 sap.ui.define([
 	"sap/ui/core/Control",
+	"sap/ui/core/Core",
 	"sap/ui/core/UIComponent",
 	"sap/ui/fl/apply/api/SmartVariantManagementApplyAPI",
 	"sap/ui/fl/apply/_internal/flexObjects/CompVariant",
@@ -24,6 +25,7 @@ sap.ui.define([
 	"test-resources/sap/ui/fl/qunit/FlQUnitUtils"
 ], function(
 	Control,
+	Core,
 	UIComponent,
 	SmartVariantManagementApplyAPI,
 	CompVariant,
@@ -301,10 +303,10 @@ sap.ui.define([
 			sandbox.restore();
 		}
 	}, function() {
-		QUnit.test("Given persist is called with public variant with favorit check", function(assert) {
-			var sPersistencyKey = "persistency.key";
+		QUnit.test("Given persist is called with public variant with favorite check", function(assert) {
+			const sPersistencyKey = "persistency.key";
 			assert.equal(CompVariantState.hasDirtyChanges(sComponentId), false, "hasDirtyChanges is false at beginning");
-			var oVariant = CompVariantState.addVariant({
+			const oVariant = CompVariantState.addVariant({
 				changeSpecificData: {
 					type: "pageVariant",
 					content: {}
@@ -322,27 +324,47 @@ sap.ui.define([
 				persistencyKey: sPersistencyKey
 			});
 			assert.equal(CompVariantState.hasDirtyChanges(sComponentId), true, "hasDirtyChanges is true after update variant");
-			var oCompVariantStateMapForPersistencyKey = FlexState.getCompVariantsMap(sComponentId)._getOrCreate(sPersistencyKey);
+			const oCompVariantStateMapForPersistencyKey = FlexState.getCompVariantsMap(sComponentId)._getOrCreate(sPersistencyKey);
 
-			var oWriteStub = sandbox.stub(Storage, "write").resolves();
-			var oUpdateStub = sandbox.stub(Storage, "update").resolves();
-			var oRemoveStub = sandbox.stub(Storage, "remove").resolves();
+			const oWriteStub = sandbox.stub(Storage, "write").resolves();
+			const oUpdateStub = sandbox.stub(Storage, "update").resolves();
+			const oRemoveStub = sandbox.stub(Storage, "remove").resolves();
 
 			return CompVariantState.persist({
 				reference: sComponentId,
 				persistencyKey: sPersistencyKey
 			})
 			.then(function() {
-				assert.equal(CompVariantState.hasDirtyChanges(sComponentId), false, "hasDirtyChanges is false after persisting all changes");
+				assert.equal(
+					CompVariantState.hasDirtyChanges(sComponentId),
+					false,
+					"hasDirtyChanges is false after persisting all changes"
+				);
 				assert.strictEqual(oWriteStub.callCount, 2, "then the write method was called 2 times,");
 				assert.strictEqual(oUpdateStub.callCount, 0, "no update was called");
 				assert.strictEqual(oRemoveStub.callCount, 0, "and no delete was called");
-				assert.strictEqual(oCompVariantStateMapForPersistencyKey.variants[0].getState(), States.LifecycleState.PERSISTED, "the variant is persisted");
-				assert.strictEqual(oCompVariantStateMapForPersistencyKey.changes[0].getState(), States.LifecycleState.PERSISTED, "the addFavorite change is persisted");
+				assert.strictEqual(
+					oCompVariantStateMapForPersistencyKey.variants[0].getState(),
+					States.LifecycleState.PERSISTED,
+					"the variant is persisted"
+				);
+				assert.strictEqual(
+					oCompVariantStateMapForPersistencyKey.changes[0].getState(),
+					States.LifecycleState.PERSISTED,
+					"the addFavorite change is persisted"
+				);
 				assert.strictEqual(oCompVariantStateMapForPersistencyKey.variants[0].getLayer(), Layer.PUBLIC, "it is a public variant");
 				assert.strictEqual(oCompVariantStateMapForPersistencyKey.variants[0].getFavorite(), false, "with favorite set to false");
-				assert.strictEqual(oCompVariantStateMapForPersistencyKey.changes[0].getLayer(), Layer.USER, "the variant has a user layer change");
-				assert.deepEqual(oCompVariantStateMapForPersistencyKey.changes[0].getContent(), {favorite: true}, "with favorit set to true");
+				assert.strictEqual(
+					oCompVariantStateMapForPersistencyKey.changes[0].getLayer(),
+					Layer.USER,
+					"the variant has a user layer change"
+				);
+				assert.deepEqual(
+					oCompVariantStateMapForPersistencyKey.changes[0].getContent(),
+					{favorite: true},
+					"with favorite set to true"
+				);
 			});
 		});
 
@@ -498,23 +520,39 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("persistAll", function(assert) {
-			var oPersistStub = sandbox.stub(CompVariantState, "persist")
+		QUnit.test("persistAll", async function(assert) {
+			let iSetModifiedFalseCalls = 0;
+			const oPersistStub = sandbox.stub(CompVariantState, "persist")
 			.callsFake(FlQUnitUtils.resolveWithDelayedCallWhichMustNotBeInParallel(assert));
 			sandbox.stub(FlexState, "getCompVariantsMap").returns({
-				persistencyKey1: {},
-				persistencyKey2: {},
-				persistencyKey3: {}
+				persistencyKey1: {
+					controlId: "SVM1"
+				},
+				persistencyKey2: {
+					controlId: "SVM2"
+				},
+				persistencyKey3: {
+					controlId: "SVM3"
+				}
 			});
-			return CompVariantState.persistAll(sComponentId).then(function() {
-				assert.strictEqual(oPersistStub.callCount, 3, "persist was called three times");
-				assert.strictEqual(oPersistStub.getCall(0).args[0].reference, sComponentId);
-				assert.strictEqual(oPersistStub.getCall(0).args[0].persistencyKey, "persistencyKey1");
-				assert.strictEqual(oPersistStub.getCall(1).args[0].reference, sComponentId);
-				assert.strictEqual(oPersistStub.getCall(1).args[0].persistencyKey, "persistencyKey2");
-				assert.strictEqual(oPersistStub.getCall(2).args[0].reference, sComponentId);
-				assert.strictEqual(oPersistStub.getCall(2).args[0].persistencyKey, "persistencyKey3");
+
+			sandbox.stub(Core, "byId").returns({
+				setModified(bSet) {
+					if (!bSet) {
+						iSetModifiedFalseCalls++;
+					}
+				}
 			});
+
+			await CompVariantState.persistAll(sComponentId);
+			assert.strictEqual(oPersistStub.callCount, 3, "persist was called three times");
+			assert.strictEqual(oPersistStub.getCall(0).args[0].reference, sComponentId);
+			assert.strictEqual(oPersistStub.getCall(0).args[0].persistencyKey, "persistencyKey1");
+			assert.strictEqual(oPersistStub.getCall(1).args[0].reference, sComponentId);
+			assert.strictEqual(oPersistStub.getCall(1).args[0].persistencyKey, "persistencyKey2");
+			assert.strictEqual(oPersistStub.getCall(2).args[0].reference, sComponentId);
+			assert.strictEqual(oPersistStub.getCall(2).args[0].persistencyKey, "persistencyKey3");
+			assert.strictEqual(iSetModifiedFalseCalls, 3, "then all SVM controls modified flags were set to false");
 		});
 	});
 
