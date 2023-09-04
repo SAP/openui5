@@ -1,0 +1,33 @@
+{
+  "1.119.0": {
+    "date": "September 2023",
+    "notes": [
+      {
+        "id": "a8e551ccec85e8cef7bceb47278de04e36b249eb",
+        "type": "FIX",
+        "text": " sap.ui.unified.FileUploader: stop drag and drop event propagation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400006011772023"
+          },
+          {
+            "type": "BCP",
+            "reference": "2370078629"
+          }
+        ]
+      },
+      {
+        "id": "9e86839d201385356c3c6a311e253460d3fbf82f",
+        "type": "FIX",
+        "text": " sap.ui.unified.FileUploader: register events once",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370078629"
+          }
+        ]
+      }
+    ]
+  }
+}

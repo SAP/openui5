@@ -1,7 +1,18 @@
 {
   "1.119.0": {
-    "date": "August 2023",
+    "date": "September 2023",
     "notes": [
+      {
+        "id": "269692e706d3fbd90f5ef7fa0d3821acd3b50eb3",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: Back tab nav fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370052810"
+          }
+        ]
+      },
       {
         "id": "aabe3489f27aeb059c98104985cb2c85e8b1ba0d",
         "type": "FEATURE",
@@ -20,6 +31,17 @@
           {
             "type": "BCP",
             "reference": "2370073881"
+          }
+        ]
+      },
+      {
+        "id": "027e5b34cb26da44f4e4818e8afd7171c36c817f",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: Content height fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380073093"
           }
         ]
       }

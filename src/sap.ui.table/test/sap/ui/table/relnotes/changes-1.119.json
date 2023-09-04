@@ -1,7 +1,18 @@
 {
   "1.119.0": {
-    "date": "August 2023",
+    "date": "September 2023",
     "notes": [
+      {
+        "id": "8f779bd4c62d85002d6c0e9da3c5aa79ad47dfda",
+        "type": "FIX",
+        "text": " sap.ui.table: Adjusted _closeContentCellContextMenu method name",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370045220"
+          }
+        ]
+      },
       {
         "id": "aabe3489f27aeb059c98104985cb2c85e8b1ba0d",
         "type": "FEATURE",

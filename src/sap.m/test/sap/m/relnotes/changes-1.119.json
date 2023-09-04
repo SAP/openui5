@@ -1,7 +1,93 @@
 {
   "1.119.0": {
-    "date": "August 2023",
+    "date": "September 2023",
     "notes": [
+      {
+        "id": "b613098c4e6c41166221802d977a7f6a39115156",
+        "type": "FIX",
+        "text": " sap.m.SuggestionPopover:  Correct margins are now applied",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380085093"
+          },
+          {
+            "type": "BCP",
+            "reference": "2380025108"
+          }
+        ]
+      },
+      {
+        "id": "1b49d53fbe0ed3bda5af63e2a0fbc19a1cff8d76",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Value is validated on focus out on mobile",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370080708"
+          }
+        ]
+      },
+      {
+        "id": "22e1f501511b8d5b2470a6aa0737f3e2843dd2ae",
+        "type": "FIX",
+        "text": " sap.m.DateTimePicker: focus out of bound dates correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380131020"
+          }
+        ]
+      },
+      {
+        "id": "5cb67cad4115bea63960824a56f5f1066780c637",
+        "type": "FIX",
+        "text": " sap.m.Menu: adjust add event delegate",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380122563"
+          }
+        ]
+      },
+      {
+        "id": "187f732ee5631f625b74edc7b7c3f594a3fd0d6d",
+        "type": "FIX",
+        "text": " sap.m.FeedListItem: fixed icon appearance",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370079966"
+          }
+        ]
+      },
+      {
+        "id": "128bfe644d923d4023ecb539e9567c0ad2f96f80",
+        "type": "FIX",
+        "text": " sap.m.ResponsivePopover: addDependent method is now forwarded correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380102197"
+          }
+        ]
+      },
+      {
+        "id": "754138a63aac12a8bd84d56f6d3fa2c2d9493a6c",
+        "type": "FIX",
+        "text": " sap.m.MenuItem: add event delegate",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380122563"
+          }
+        ]
+      },
+      {
+        "id": "0478c8ec2bae9e36f07c1002da7ffcfbb37ae14a",
+        "type": "FIX",
+        "text": " sap.m.StepInput: Align decrement icon"
+      },
       {
         "id": "aabe3489f27aeb059c98104985cb2c85e8b1ba0d",
         "type": "FEATURE",
