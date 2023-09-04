@@ -2,6 +2,7 @@
 /* CSS for control sap.m/Breadcrumbs  */
 /* Base theme                         */
 /* ================================== */
+@_sap_m_Breadcrumbs_MinWidth_OFT: 1px;
 
 .sapMBreadcrumbs {
 	white-space: nowrap;
@@ -117,7 +118,7 @@
 
 /* make Breadcrumbs shrinkable when used in OTB */
 .sapMOTB .sapMBreadcrumbs {
-	min-width: 1px; /* needed for width calculations on initial render */
+	min-width: @_sap_m_Breadcrumbs_MinWidth_OFT; /* needed for width calculations on initial render */
 	max-width: 100%;
 }
 
