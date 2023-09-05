@@ -77,10 +77,6 @@
 	}
 }
 
-.sapMRb:not(.sapMRbErr):not(.sapMRbWarn):not(.sapMRbInfo):not(.sapMRbSucc) .sapMRbHoverable:hover {
-	filter: drop-shadow(0 0 0.125rem fade(@sapNeutralColor, 72)); //drop-shadow(@sapContent_Interaction_Shadow) doesn't work; Reason: Chrome, Safari and Opera, and maybe other browsers, do not support this 4th length; shadow will not render if added.
-}
-
 .sapMRb:not(.sapMRbErr):not(.sapMRbWarn):not(.sapMRbInfo):not(.sapMRbSucc) .sapMRbHoverable:hover .sapMRbBOut {
 	stroke: @sapUiFieldHoverBorderColor;
 }
@@ -137,10 +133,6 @@
 	}
 }
 
-.sapMRbErr:not(.sapMRbDis) .sapMRbHoverable:hover {
-	filter: drop-shadow(0 0 0.125rem fade(@sapNegativeColor, 72)); // @sapContent_Negative_Shadow; same as above
-}
-
 .sapMRbWarn.sapMRbSel,
 .sapMRbWarn.sapMRbSel.sapMRbRo {
 	.sapMRbBInn {
@@ -156,10 +148,6 @@
 		fill: @sapUiFieldWarningBackground;
 		stroke-width: @sapUiFieldWarningBorderWidth;
 	}
-}
-
-.sapMRbWarn:not(.sapMRbDis) .sapMRbHoverable:hover {
-	filter: drop-shadow(0 0 0.125rem fade(@sapCriticalColor, 72)); // @sapContent_Critical_Shadow; same as above
 }
 
 .sapMRbSucc.sapMRbSel,
@@ -179,11 +167,6 @@
 	}
 }
 
-
-.sapMRbSucc:not(.sapMRbDis) .sapMRbHoverable:hover {
-	filter: drop-shadow(0 0 0.125rem fade(@sapPositiveColor, 72)); // @sapContent_Positive_Shadow; same as above
-}
-
 .sapMRbInfo.sapMRbSel,
 .sapMRbInfo.sapMRbSel.sapMRbRo {
 	.sapMRbBInn {
@@ -199,10 +182,6 @@
 		fill: @sapUiFieldInformationBackground;
 		stroke-width: @sapUiFieldInformationBorderWidth;
 	}
-}
-
-.sapMRbInfo:not(.sapMRbDis) .sapMRbHoverable:hover {
-	filter: drop-shadow(0 0 0.125rem fade(@sapInformativeColor, 72)); // @sapContent_Informative_Shadow; same as above
 }
 
 .sapMRbRo .sapMRbBOut {
