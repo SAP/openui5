@@ -118,7 +118,7 @@ sap.ui.define(["sap/ui/core/ControlBehavior", "./library", "sap/ui/Device", "sap
 
 	ListItemBaseRenderer.renderCounterContent = function(rm, oLI, iCounter) {
 		rm.openStart("div", oLI.getId() + "-counter");
-		rm.attr("aria-label", Library.getResourceBundleFor("sap.m").getText("LIST_ITEM_COUNTER", iCounter));
+		rm.attr("aria-label", Library.getResourceBundleFor("sap.m").getText("LIST_ITEM_COUNTER", [iCounter]));
 		rm.class("sapMLIBCounter");
 		rm.openEnd();
 		rm.text(iCounter);
