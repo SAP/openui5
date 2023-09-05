@@ -923,9 +923,14 @@ sap.ui.define([
 						"~bIsProperty~");
 
 					assert.strictEqual(oBinding.aChildCanUseCachePromises[0], oPromise);
-					assert.strictEqual(oBinding.mCanUseCachePromiseByChildPath.childPath, oPromise);
-					assert.deepEqual(Object.keys(oBinding.mCanUseCachePromiseByChildPath),
-						["childPath"]);
+					if (bCacheCreationPending) {
+						assert.strictEqual(oBinding.mCanUseCachePromiseByChildPath.childPath,
+							oPromise);
+						assert.deepEqual(Object.keys(oBinding.mCanUseCachePromiseByChildPath),
+							["childPath"]);
+					} else {
+						assert.deepEqual(Object.keys(oBinding.mCanUseCachePromiseByChildPath), []);
+					}
 					return Promise.all([oPromise, oBinding.oCachePromise]).then(function (aResult) {
 						assert.strictEqual(aResult[0],
 							oFixture.hasChildQueryOptions && oFixture.canMergeQueryOptions
@@ -1194,8 +1199,12 @@ sap.ui.define([
 
 		assert.strictEqual(oBinding.aChildCanUseCachePromises[0], oPromise);
 		assert.notStrictEqual(oBinding.oCachePromise, oCachePromise);
-		assert.strictEqual(oBinding.mCanUseCachePromiseByChildPath.childPath, oPromise);
-		assert.deepEqual(Object.keys(oBinding.mCanUseCachePromiseByChildPath), ["childPath"]);
+		if (oFixture.cache === null) {
+			assert.deepEqual(Object.keys(oBinding.mCanUseCachePromiseByChildPath), []);
+		} else {
+			assert.strictEqual(oBinding.mCanUseCachePromiseByChildPath.childPath, oPromise);
+			assert.deepEqual(Object.keys(oBinding.mCanUseCachePromiseByChildPath), ["childPath"]);
+		}
 		return oBinding.oCachePromise.then(function (oCache0) {
 			assert.strictEqual(oPromise.getResult(),
 				oFixture.rejected ? undefined : "/reduced/child/path");
@@ -1747,8 +1756,7 @@ sap.ui.define([
 			"~bIsProperty~");
 
 		assert.strictEqual(oBinding.aChildCanUseCachePromises[0], oPromise);
-		assert.strictEqual(oBinding.mCanUseCachePromiseByChildPath[sPath], oPromise);
-		assert.deepEqual(Object.keys(oBinding.mCanUseCachePromiseByChildPath), [sPath]);
+		assert.deepEqual(Object.keys(oBinding.mCanUseCachePromiseByChildPath), []);
 		return oPromise.then(function (sReducedPath) {
 			assert.strictEqual(sReducedPath, "/reduced/child/path");
 			assert.strictEqual(oBinding.bHasPathReductionToParent, bReduced);
@@ -1990,7 +1998,7 @@ sap.ui.define([
 			"~bIsProperty~");
 
 		assert.strictEqual(oBinding.aChildCanUseCachePromises[0], oPromise);
-		assert.strictEqual(oBinding.mCanUseCachePromiseByChildPath[sChildPath], oPromise);
+		assert.strictEqual(oBinding.mCanUseCachePromiseByChildPath[sChildPath], "do not use");
 		assert.deepEqual(Object.keys(oBinding.mCanUseCachePromiseByChildPath), [sChildPath]);
 		return oPromise.then(function (sReducedPath) {
 			assert.strictEqual(sReducedPath, "/SalesOrderList('42')/Note");
