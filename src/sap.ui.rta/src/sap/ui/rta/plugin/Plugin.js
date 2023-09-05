@@ -4,14 +4,15 @@
 
 // Provides class sap.ui.rta.plugin.Plugin.
 sap.ui.define([
+	"sap/base/util/restricted/_debounce",
 	"sap/ui/dt/Plugin",
 	"sap/ui/fl/write/api/ChangesWriteAPI",
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/dt/OverlayUtil",
 	"sap/ui/fl/changeHandler/JsControlTreeModifier",
 	"sap/ui/rta/util/hasStableId"
-],
-function(
+], function(
+	debounce,
 	Plugin,
 	ChangesWriteAPI,
 	OverlayRegistry,
@@ -123,7 +124,39 @@ function(
 		}
 	};
 
+	function debounceFunction(mDebounceFunctions, oOverlay, sName, fnOriginalFunction) {
+		// Create debounced function for the given parameters if it was not created before
+		var sOverlayId = oOverlay.getId();
+		if (!mDebounceFunctions[sOverlayId]) {
+			mDebounceFunctions[sOverlayId] = {};
+		}
+		if (!mDebounceFunctions[sOverlayId][sName]) {
+			// Debounce with approximately one frame to cover multiple synchronous calls
+			// without causing a huge delay
+			mDebounceFunctions[sOverlayId][sName] = debounce(fnOriginalFunction, 16);
+		}
+		// Execute the function
+		mDebounceFunctions[sOverlayId][sName]();
+	}
+
 	var _onElementModified = function (oEvent) {
+		// Initialize here because plugins may not extend the rta.Plugin and
+		// instead inherit the method via rta.Utils.extendWith
+		// Therefore the constructor/init might not be properly called
+		if (!this._mDebounceFunctions) {
+			// The _onElementModified callback might be triggered many times in a row, e.g.
+			// by SimpleForms which add all aggregation items one by one
+			// Since the resulting editable checks in the plugins can be expensive async functions
+			// the calls are debounced
+			this._mDebounceFunctions = {
+				// Make sure that all closure variables of the debounced function
+				// are part of the map key:
+				// [overlayId][oEvent.getParameters().name]: function
+				insertOrRemove: {},
+				addOrSet: {}
+			};
+		}
+
 		var oParams = oEvent.getParameters();
 		var aRelevantOverlays;
 		var oOverlay = oEvent.getSource();
@@ -148,18 +181,22 @@ function(
 			oParams.type === "insertAggregation"
 			|| oParams.type === "removeAggregation"
 		) {
-			aRelevantOverlays = this._getRelevantOverlays(oOverlay, oParams.name);
-			this.evaluateEditable(aRelevantOverlays, {onRegistration: false});
-		} else if (oParams.type === "addOrSetAggregation") {
-			if (this.getDesignTime().getStatus() === "synced") {
+			debounceFunction(this._mDebounceFunctions["insertOrRemove"], oOverlay, oParams.name, function() {
 				aRelevantOverlays = this._getRelevantOverlays(oOverlay, oParams.name);
 				this.evaluateEditable(aRelevantOverlays, {onRegistration: false});
-			} else {
-				this.getDesignTime().attachEventOnce("synced", function () {
+			}.bind(this));
+		} else if (oParams.type === "addOrSetAggregation") {
+			debounceFunction(this._mDebounceFunctions["addOrSet"], oOverlay, oParams.name, function() {
+				if (this.getDesignTime().getStatus() === "synced") {
 					aRelevantOverlays = this._getRelevantOverlays(oOverlay, oParams.name);
 					this.evaluateEditable(aRelevantOverlays, {onRegistration: false});
-				}, this);
-			}
+				} else {
+					this.getDesignTime().attachEventOnce("synced", function () {
+						aRelevantOverlays = this._getRelevantOverlays(oOverlay, oParams.name);
+						this.evaluateEditable(aRelevantOverlays, {onRegistration: false});
+					}, this);
+				}
+			}.bind(this));
 		}
 	};
 
