@@ -1,11 +1,11 @@
 /*global QUnit*/
 sap.ui.define([
-	"sap/m/upload/UploadSetTable",
-	"sap/m/upload/UploadSetTableItem",
-	"sap/m/upload/UploadSetTableRenderer",
+	"sap/m/upload/UploadSetwithTable",
+	"sap/m/upload/UploadSetwithTableItem",
+	"sap/m/upload/UploadSetwithTableRenderer",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/Core"
-], function (UploadSetTable, UploadSetTableItem, UploadSetTableRenderer, JSONModel, oCore) {
+], function (UploadSetwithTable, UploadSetwithTableItem, UploadSetwithTableRenderer, JSONModel, oCore) {
 	"use strict";
 
 	function getData() {
@@ -26,25 +26,25 @@ sap.ui.define([
 	}
 	QUnit.module("UploadSet Table Item general functionality", {
 		beforeEach: function () {
-			this.oUploadSetTable = new UploadSetTable("uploadSetTableItem", {
+			this.oUploadSetwithTable = new UploadSetwithTable("UploadSetwithTableItem", {
 				items: {
 					path: "/items",
-					template: new UploadSetTableItem(),
+					template: new UploadSetwithTableItem(),
 					templateShareable: false
 				}
 			}).setModel(new JSONModel(getData()));
-			this.oUploadSetTable.placeAt("qunit-fixture");
+			this.oUploadSetwithTable.placeAt("qunit-fixture");
 			oCore.applyChanges();
 		},
 		afterEach: function () {
-			this.oUploadSetTable.destroy();
-			this.oUploadSetTable = null;
+			this.oUploadSetwithTable.destroy();
+			this.oUploadSetwithTable = null;
 		}
 	});
 
 	QUnit.test("Test for UploadSet Table Item Instance Creation", function (assert) {
 		//arrange
-		assert.ok(this.oUploadSetTable, "Instance created successfully");
+		assert.ok(this.oUploadSetwithTable, "Instance created successfully");
 	});
 
 });
