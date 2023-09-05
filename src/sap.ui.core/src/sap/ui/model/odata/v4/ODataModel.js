@@ -33,12 +33,12 @@ sap.ui.define([
 	"sap/base/assert",
 	"sap/base/Log",
 	"sap/ui/base/SyncPromise",
-	"sap/ui/core/cache/CacheManager",
 	"sap/ui/core/Configuration",
 	"sap/ui/core/library",
-	"sap/ui/core/Rendering",
-	"sap/ui/core/message/Message",
 	"sap/ui/core/Messaging",
+	"sap/ui/core/Rendering",
+	"sap/ui/core/cache/CacheManager",
+	"sap/ui/core/message/Message",
 	"sap/ui/model/BindingMode",
 	"sap/ui/model/Context",
 	"sap/ui/model/Model",
@@ -46,7 +46,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/URI"
 ], function (ODataContextBinding, ODataListBinding, ODataMetaModel, ODataPropertyBinding,
 		SubmitMode, _GroupLock, _Helper, _MetadataRequestor, _Parser, _Requestor, assert, Log,
-		SyncPromise, CacheManager, Configuration, coreLibrary, Rendering, Message, Messaging,
+		SyncPromise, Configuration, coreLibrary, Messaging, Rendering, CacheManager, Message,
 		BindingMode, BaseContext, Model, OperationMode, URI) {
 	"use strict";
 

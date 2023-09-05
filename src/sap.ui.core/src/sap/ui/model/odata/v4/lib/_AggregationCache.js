@@ -12,8 +12,8 @@ sap.ui.define([
 	"./_MinMaxHelper",
 	"sap/base/Log",
 	"sap/ui/base/SyncPromise"
-], function (_AggregationHelper, _Cache, _ConcatHelper, _GroupLock, _Helper, _MinMaxHelper,
-		Log, SyncPromise) {
+], function (_AggregationHelper, _Cache, _ConcatHelper, _GroupLock, _Helper, _MinMaxHelper, Log,
+		SyncPromise) {
 	"use strict";
 
 	//*********************************************************************************************
