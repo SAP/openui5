@@ -14,6 +14,7 @@ sap.ui.define([
 	"sap/ui/core/CustomData",
 	"sap/base/Log",
 	"sap/ui/thirdparty/jquery",
+	"sap/ui/core/Configuration",
 	"sap/ui/dom/jquery/Focusable"
 ], function(
 	library,
@@ -26,7 +27,8 @@ sap.ui.define([
 	WizardRenderer,
 	CustomData,
 	Log,
-	jQuery
+	jQuery,
+	Configuration
 ) {
 		"use strict";
 
@@ -620,6 +622,10 @@ sap.ui.define([
 		 * @private
 		 */
 		Wizard.prototype.insertStep = function (oWizardStep, iIndex) {
+			if (Configuration.getDesignMode()) {
+				return this.insertAggregation("steps", oWizardStep, iIndex);
+			}
+
 			throw new Error("Dynamic step insertion is not yet supported.");
 		};
 
@@ -630,6 +636,10 @@ sap.ui.define([
 		 * @private
 		 */
 		Wizard.prototype.removeStep = function (oWizardStep) {
+			if (Configuration.getDesignMode()) {
+				return this.removeAggregation("steps", oWizardStep);
+			}
+
 			throw new Error("Dynamic step removal is not yet supported.");
 		};
 
