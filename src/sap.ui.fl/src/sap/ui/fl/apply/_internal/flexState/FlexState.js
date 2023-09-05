@@ -356,6 +356,7 @@ sap.ui.define([
 	function loadFlexData(mPropertyBag) {
 		_mInitPromises[mPropertyBag.reference] = Loader.loadFlexData(mPropertyBag)
 		.then(function(mResponse) {
+			// The following line is used by the Flex Support Tool to set breakpoints - please adjust the tool if you change it!
 			_mInstances[mPropertyBag.reference] = merge({}, {
 				unfilteredStorageResponse: mResponse,
 				preparedMaps: {},
