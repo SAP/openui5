@@ -56,7 +56,10 @@ sap.ui.define([
 		var oValueHelp = oFilterBar.getDependents().find((oD) => oD.getId().includes(sName));
 		var pFieldWithVH;
 
-		if (!oValueHelp) {
+		if (oValueHelp) {
+			oFilterField.setValueHelp(oValueHelp);
+			pFieldWithVH = Promise.resolve(oFilterField);
+		} else {
 			var sPath = "mdc.sample.view.fragment.";
 			pFieldWithVH = Fragment.load({
 				name: sPath + (sName.charAt(0).toUpperCase() + sName.slice(1)) + "ValueHelp"
@@ -65,9 +68,6 @@ sap.ui.define([
 				oFilterField.setValueHelp(oValueHelp);
 				return oFilterField;
 			});
-		} else {
-			oFilterField.setValueHelp(oValueHelp);
-			pFieldWithVH = Promise.resolve(oFilterField);
 		}
 
 		return pFieldWithVH;

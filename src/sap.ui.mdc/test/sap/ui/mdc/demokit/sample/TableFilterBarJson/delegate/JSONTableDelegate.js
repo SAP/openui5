@@ -23,38 +23,6 @@ sap.ui.define([
 		return Promise.resolve(_addColumn(oPropertyInfo, oTable));
 	};
 
-	JSONTableDelegate.removeItem = function(oTable, oColumn) {
-		oColumn.destroy();
-		return Promise.resolve(true);
-	};
-
-	JSONTableDelegate.updateBindingInfo = function(oTable, oBindingInfo) {
-		TableDelegate.updateBindingInfo.apply(this, arguments);
-		var oMetadataInfo = oTable.getPayload();
-		oBindingInfo.path = oMetadataInfo.collectionPath;
-	};
-
-	JSONTableDelegate.getFilters = function(oTable) {
-		var aSearchFilters = _createSearchFilters(Core.byId(oTable.getFilter()).getSearch());
-		return TableDelegate.getFilters.apply(this, arguments).concat(aSearchFilters);
-	};
-
-	function _createSearchFilters(sSearch) {
-		var aFilters = [];
-		if (sSearch) {
-			var aPaths = ["name", "range", "parent_mountain", "countries"];
-			aFilters = aPaths.map(function (sPath) {
-				return new Filter({
-					path: sPath,
-					operator: FilterOperator.Contains,
-					value1: sSearch
-				});
-			});
-			aFilters = [new Filter(aFilters, false)];
-		}
-		return aFilters;
-	}
-
 	function _addColumn(oPropertyInfo, oTable) {
 		var sName = oPropertyInfo.name;
 		var sId = oTable.getId() + "---col-" + sName;
@@ -72,6 +40,38 @@ sap.ui.define([
 			});
 		}
 		return oColumn;
+	}
+
+	JSONTableDelegate.removeItem = function(oTable, oColumn) {
+		oColumn.destroy();
+		return Promise.resolve(true);
+	};
+
+	JSONTableDelegate.updateBindingInfo = function(oTable, oBindingInfo) {
+		TableDelegate.updateBindingInfo.apply(this, arguments);
+		var oMetadataInfo = oTable.getPayload();
+		oBindingInfo.path = oMetadataInfo.collectionPath;
+	};
+
+	JSONTableDelegate.getFilters = function(oTable) {
+		var aSearchFilters = _createSearchFilters(Core.byId(oTable.getFilter()).getSearch());
+		return TableDelegate.getFilters(oTable).concat(aSearchFilters);
+	};
+
+	function _createSearchFilters(sSearch) {
+		var aFilters = [];
+		if (sSearch) {
+			var aPaths = ["name", "range", "parent_mountain", "countries"];
+			aFilters = aPaths.map(function (sPath) {
+				return new Filter({
+					path: sPath,
+					operator: FilterOperator.Contains,
+					value1: sSearch
+				});
+			});
+			aFilters = [new Filter(aFilters, false)];
+		}
+		return aFilters;
 	}
 
 	return JSONTableDelegate;

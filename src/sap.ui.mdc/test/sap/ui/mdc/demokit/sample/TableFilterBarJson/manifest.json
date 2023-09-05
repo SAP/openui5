@@ -40,7 +40,7 @@
 				]
 			}
 		},
-		"flexEnabled": true,
+		"flexEnabled": false,
 		"resourceRoots": {
             "mdc.sample": "./"
         },
