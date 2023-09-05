@@ -46,203 +46,88 @@ sap.ui.define([
 	// shortcut for sap.ui.core.ValueState
 	var ValueState = coreLibrary.ValueState;
 
-	createAndAppendDiv("objectHeaders");
-	createAndAppendDiv("destroy-oh");
-	createAndAppendDiv("flagAndFavorite-oh");
-	createAndAppendDiv("titleArrowOH-oh");
-
-
-
+	// Event handler
 	var domRef = null;
 	var eventHandler = function(oEvent) {
-
 		domRef = oEvent.getParameters().domRef;
 	};
 
-	var ohBasicId = "ohBasic";
 
-	var attrs1 = [ new ObjectAttribute("oa1", {
-		text : "Contract #D1234567890"
-	}), new ObjectAttribute("oa2", {
-		text : "Created by John Doe",
-		active : true
-	}) ];
-
-	var statuses1 = [ new ObjectStatus("oses1", {
-		text : "Statuses 1",
-		state : ValueState.Success
-	}), new ObjectStatus("oses2", {
-		text : "Statuses 2",
-		state : ValueState.Success
-	}), new ObjectAttribute("oattr1", {
-		text : "Should not be displayed"
-	}), new ProgressIndicator(ohBasicId + "-pi", {
-		visible : true,
-		enabled : true,
-		state : ValueState.NEUTRAL,
-		displayValue : '80%',
-		percentValue : 80,
-		showValue : true,
-		width : '100%',
-		height : '1.375rem'
-	}) ];
-
-
-	//test popover title
-	var oTitleArrowDomRef = null;
-	var oTitleArrowEventHandler = function(oEvent) {
-
-		oTitleArrowDomRef = oEvent.getParameters().domRef;
-	};
-
-	var ohBasic = new ObjectHeader(ohBasicId, {
-		intro : "On behalf of John Smith",
-		introPress : eventHandler,
-		title : "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis luctus, turpis vitae porttitor hendrerit, elit dui mollis neque, id suscipit lorem mi in sem.",
-		titlePress : eventHandler,
-		showTitleSelector : true,
-		titleSelectorPress : oTitleArrowEventHandler,
-		number : "3.624",
-		numberUnit : "EUR",
-		numberState : ValueState.Success,
-		icon : IconPool.getIconURI("attachment"),
-		iconPress : eventHandler,
-		attributes : attrs1,
-		statuses : statuses1,
-		firstStatus : new ObjectStatus("os1", {
-			text : "Ñgçy Positive Text Ñgçy",
-			state : ValueState.Success
-		}),
-		secondStatus : new ObjectStatus("os2", {
-			text : "Negative Text Ñgçy",
-			state : ValueState.Error
-		}),
-		tooltip : "Test tooltip for the header",
-		backgroundDesign : BackgroundDesign.Solid
+	QUnit.module("Rendering All Fields", {
+		beforeEach: function () {
+			this.sID = "oOHBasic";
+			this.oOH = new ObjectHeader(this.sID, {
+				intro : "On behalf of John Smith",
+				title : "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis luctus, turpis vitae porttitor hendrerit, elit dui mollis neque, id suscipit lorem mi in sem.",
+				showTitleSelector : true,
+				number : "3.624",
+				numberUnit : "EUR",
+				numberState : ValueState.Success,
+				icon : IconPool.getIconURI("attachment"),
+				tooltip : "Test tooltip for the header",
+				backgroundDesign : BackgroundDesign.Solid
+			}).placeAt("qunit-fixture");
+			oCore.applyChanges();
+		},
+		afterEach: function () {
+			this.oOH.destroy();
+		}
 	});
-	ohBasic.placeAt("objectHeaders");
-
-	var attrs2 = [ new ObjectAttribute({
-		text : "It is great to flag objects!"
-	}), new ObjectAttribute({
-		text : "It is great to markFavorite objects!"
-	}) ];
-
-	var ohFlagFavId = "flag_fav";
-	var ohFlagFav = new ObjectHeader({
-		id : ohFlagFavId,
-		intro : "Flag & Favorites",
-		title : "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis luctus, turpis vitae porttitor hendrerit, elit dui mollis neque, id suscipit lorem mi in sem.",
-		number : "3.624",
-		numberUnit : "EUR",
-		numberState : ValueState.Success,
-		icon : IconPool.getIconURI("attachment"),
-		attributes : attrs2,
-		firstStatus : new ObjectStatus({
-			text : "Ñgçy Positive Text Ñgçy",
-			state : ValueState.Success
-		}),
-		secondStatus : new ObjectStatus({
-			text : "Negative Text Ñgçy",
-			state : ValueState.Error
-		}),
-		markFavorite : true,
-		markFlagged : true,
-		showMarkers : true
-	});
-	ohFlagFav.placeAt("objectHeaders");
-
-	var ohFlagFavId2 = "flag_fav2";
-	var ohFlagFav2 = new ObjectHeader({
-		id : ohFlagFavId2,
-		intro : "Flag & Favorites",
-		title : "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis luctus, turpis vitae porttitor hendrerit, elit dui mollis neque, id suscipit lorem mi in sem.",
-		number : "3.624",
-		numberUnit : "EUR",
-		numberState : ValueState.Error,
-		icon : IconPool.getIconURI("attachment"),
-		attributes : [ new ObjectAttribute({
-			text : "It is great to flag objects!"
-		}), new ObjectAttribute({
-			text : "It is great to markFavorite objects!"
-		}) ],
-		firstStatus : new ObjectStatus({
-			text : "Ñgçy Positive Text Ñgçy",
-			state : ValueState.Success
-		}),
-		secondStatus : new ObjectStatus({
-			text : "Negative Text Ñgçy",
-			state : ValueState.Error
-		})
-	});
-	ohFlagFav2.placeAt("objectHeaders");
-
-	var ohAttributeAndFlagId2 = "ohAttributeAndFlag2";
-
-	var ohAttributeAndFlag2 = new ObjectHeader(ohAttributeAndFlagId2, {
-		title : "Object that is markFlagged with attribute",
-		number : "3.628.000",
-		numberUnit : "EUR",
-		numberState : ValueState.Error,
-		attributes : [ new ObjectAttribute(ohAttributeAndFlagId2 + "-attr1", {
-			text : "Attribute number 1"
-		}) ],
-		markFlagged : true,
-		showMarkers : true
-	});
-	ohAttributeAndFlag2.placeAt("objectHeaders");
-
-	QUnit.module("Rendering All Fields");
 
 	QUnit.test("ControlRendered", function(assert) {
 
-		assert.notEqual(ohBasic.getDomRef(), null, "ObjectHeader Basic should be rendered.");
+		assert.notEqual(this.oOH.getDomRef(), null, "ObjectHeader Basic should be rendered.");
 	});
 
 	QUnit.test("TooltipRendered", function(assert) {
-		assert.equal(ohBasic.$().children()[0].title, "Test tooltip for the header", "Tooltip should be rendered.");
+		assert.equal(this.oOH.$().children()[0].title, "Test tooltip for the header", "Tooltip should be rendered.");
 	});
 
 	QUnit.test("IntroRendered", function(assert) {
 
-		assert.notEqual(ohBasic.getDomRef("intro"), null, "Intro should be rendered.");
+		assert.notEqual(this.oOH.getDomRef("intro"), null, "Intro should be rendered.");
 	});
 
 	QUnit.test("TitleRendered", function(assert) {
 
-		assert.notEqual(ohBasic._titleText.getDomRef(), null, "Title should be rendered.");
-	});
-
-	QUnit.test("TitleArrowRendered", function(assert) {
-
-		assert.notEqual(ohBasic.getDomRef("titleArrow"), null, "Title Arrow Icon should be rendered.");
-		assert.equal(ohBasic._oTitleArrowIcon.$().css("cursor"), "pointer", "The title arrow should have pointer cursor.");
-	});
-
-	QUnit.test("Title rendered as active but it's not a link", function(assert) {
-		assert.equal(ohe.$("title").attr("href"), undefined, "Title attribute href is not a link.");
+		assert.notEqual(this.oOH._titleText.getDomRef(), null, "Title should be rendered.");
 	});
 
 	QUnit.test("NumberRendered", function(assert) {
 
-		assert.notEqual(ohBasic.getDomRef("number"), null, "Number should be rendered.");
-		assert.ok(ohBasic.$("number").hasClass("sapMObjectNumber"), "Number is sap.m.ObjectNumber");
+		assert.notEqual(this.oOH.getDomRef("number"), null, "Number should be rendered.");
+		assert.ok(this.oOH.$("number").hasClass("sapMObjectNumber"), "Number is sap.m.ObjectNumber");
 	});
 
 	QUnit.test("AttributesRendered", function(assert) {
+		// Arrange
+		var oOA1 = new ObjectAttribute("oa1", {
+				text : "Contract #D1234567890"
+			}),
+			oOA2 = new ObjectAttribute("oa2", {
+				text : "Created by John Doe",
+				active: true
+			});
 
+		// Act
+		this.oOH.addAttribute(oOA1);
+		this.oOH.addAttribute(oOA2);
+
+		oCore.applyChanges();
+
+		// Assert
 		assert.notEqual(document.getElementById("oa1"), null, "Object attribute #1 should be rendered.");
 		assert.notEqual(document.getElementById("oa2"), null, "Object attribute #2 should be rendered.");
 	});
 
 	QUnit.test("Attribute rerendered after being empty", function(assert) {
 		var oOA = new ObjectAttribute({text: "Test"});
-		var oOH = new ObjectHeader({attributes: [oOA]});
+		var oOHEmpty = new ObjectHeader({attributes: [oOA]});
 
-		oOH.placeAt("qunit-fixture");
+		oOHEmpty.placeAt("qunit-fixture");
 		oCore.applyChanges();
 
-		oOH.invalidate();
+		oOHEmpty.invalidate();
 		oOA.setText("");
 		oCore.applyChanges();
 
@@ -253,606 +138,732 @@ sap.ui.define([
 		assert.strictEqual(oOA.$("text")[0].textContent, "rerendered", "Attribute is rendered inside ObjectHeader");
 
 		// cleanup
-		oOH.destroy();
+		oOHEmpty.destroy();
 	});
 
 	QUnit.test("StatusesRendered", function(assert) {
+		// Arrange
+		var oOS1 = new ObjectStatus("os1", {
+				text : "Statuses 1",
+				state : ValueState.Success
+			}),
+			oOS2 = new ObjectStatus("os2", {
+				text : "Statuses 2",
+				state : ValueState.Success
+			}),
+			oOA =  new ObjectAttribute("oa1", {
+				text : "Should not be displayed"
+			});
 
-		assert.notEqual(document.getElementById("oses1"), null, "Object statuses #1 should be rendered.");
-		assert.notEqual(document.getElementById("oses2"), null, "Object statuses #2 should be rendered.");
-		assert.equal(document.getElementById("oattr1"), null, "Object attribute should not be rendered.");
+		// Act
+		this.oOH.addStatus(oOS1);
+		this.oOH.addStatus(oOS2);
+		this.oOH.addStatus(oOA);
+
+		oCore.applyChanges();
+
+		// Assert
+		assert.notEqual(document.getElementById("os1"), null, "Object statuses #1 should be rendered.");
+		assert.notEqual(document.getElementById("os2"), null, "Object statuses #2 should be rendered.");
+		assert.equal(document.getElementById("oa1"), null, "Object attribute should not be rendered.");
 	});
 
+	/**
+	 * @deprecated as of version 1.16, replaced by <code>statuses</code> aggregation
+	 */
 	QUnit.test("InfoRendered", function(assert) {
+		var oFirstStatus = new ObjectStatus("os1", {
+			text : "Ñgçy Positive Text Ñgçy",
+			state : ValueState.Success
+		}),
+			oSecondStatus = new ObjectStatus("os2", {
+			text : "Negative Text Ñgçy",
+			state : ValueState.Error
+		});
+
+		this.oOH.setFirstStatus(oFirstStatus);
+		this.oOH.setSecondStatus(oSecondStatus);
+		oCore.applyChanges();
 
 		assert.notEqual(document.getElementById("os1"), null, "First status should be rendered.");
 		assert.notEqual(document.getElementById("os2"), null, "Second status info should be rendered.");
 	});
 
+	/**
+	 * @deprecated as of version 1.42, replaced by <code>markers</code> aggregation.
+	 */
 	QUnit.test("FavoriteRendered", function(assert) {
+		// Assert - No Favourite Markers rentered
+		assert.equal(document.getElementById(this.sID + "-favorite"), null, "Favorite marker should not be rendered.");
 
-		assert.notEqual(document.getElementById(ohFlagFavId + "-favorite"), null, "Favorite marker should be rendered.");
-		assert.ok(jQuery("#" + ohFlagFavId + "-favorite").hasClass("sapMObjectMarker"), "Favorite is sapMObjectMarker.");
+		// Arrange - Mark Favourite
+		this.oOH.setMarkFavorite(true);
+		this.oOH.setShowMarkers(true);
 
-		assert.equal(document.getElementById(ohFlagFavId2 + "-favorite"), null, "Favorite marker should not be rendered.");
+		// Act
+		oCore.applyChanges();
+
+		// Assert - Favourite is marked
+		assert.notEqual(document.getElementById(this.sID + "-favorite"), null, "Favorite marker should be rendered.");
+		assert.ok(jQuery("#" + this.sID + "-favorite").hasClass("sapMObjectMarker"), "Favorite is sapMObjectMarker.");
 	});
 
+	/**
+	 * @deprecated as of version 1.42, replaced by <code>markers</code> aggregation.
+	 */
 	QUnit.test("FlagRendered", function(assert) {
+		// Assert - No Favourite Markers rentered
+		assert.equal(document.getElementById(this.sID  + "-flag"), null, "Flag marker should not be rendered.");
 
-		assert.notEqual(document.getElementById(ohFlagFavId + "-flag"), null, "Flag marker should be rendered.");
-		assert.ok(jQuery("#" + ohFlagFavId + "-flag").hasClass("sapMObjectMarker"), "Flag is sapMObjectMarker.");
+		// Arrange - Mark Flagged
+		this.oOH.setMarkFlagged(true);
+		this.oOH.setShowMarkers(true);
 
-		assert.equal(document.getElementById(ohFlagFavId2 + "-flag"), null, "Flag marker should not be rendered.");
+		// Act
+		oCore.applyChanges();
 
-		// test flag rendering with one attribute
-		assert.notEqual(jQuery("#" + ohAttributeAndFlagId2 + "-flag"), null, "Flag marker should be rendered.");
-		assert.ok(jQuery("#" + ohAttributeAndFlagId2 + "-flag").hasClass("sapMObjectMarker"), "Flag is sapMObjectMarker.");
+		// Assert - Favourite is marked
+		assert.notEqual(document.getElementById(this.sID  + "-flag"), null, "Flag marker should be rendered.");
+		assert.ok(jQuery("#" + this.sID  + "-flag").hasClass("sapMObjectMarker"), "Flag is sapMObjectMarker.");
+	});
 
+	/**
+	 * @deprecated as of version 1.42, replaced by <code>markers</code> aggregation.
+	 */
+	QUnit.test("FlagWithAttrubuteRendered", function(assert) {
+
+		// Assert - No Favourite Markers rentered
+		assert.equal(document.getElementById(this.sID  + "-flag"), null, "Flag marker should not be rendered.");
+
+		// Arrange - Mark Flagged and add Attribute
+		var oAttr = new ObjectAttribute("attr1", {
+			text : "Attribute number 1"
+		});
+		this.oOH.addAttribute(oAttr);
+		this.oOH.setMarkFlagged(true);
+		this.oOH.setShowMarkers(true);
+
+		// Act
+		oCore.applyChanges();
+
+		// Assert
+		assert.notEqual(jQuery("#" + this.sID  + "-flag"), null, "Flag marker should be rendered.");
+		assert.ok(jQuery("#" + this.sID  + "-flag").hasClass("sapMObjectMarker"), "Flag is sapMObjectMarker.");
 	});
 
 	QUnit.test("Flag Rendering Position", function(assert) {
+		// Arrange - Mark Flagged and add Attribute
+		var oAttr = new ObjectAttribute(this.sID + "-attr1", {
+				text : "Attribute number 1"
+			}),
+			oFlagMarker = new ObjectMarker(this.sID + "-flag", {
+				type: ObjectMarkerType.Flagged
+			});
 
-		assert.ok(Math.abs(jQuery("#" + ohAttributeAndFlagId2 + "-attr1")[0].offsetTop - jQuery("#" + ohAttributeAndFlagId2 + "-flag")[0].offsetTop) <= 2,
+		this.oOH.addAttribute(oAttr);
+		this.oOH.addMarker(oFlagMarker);
+
+		// Act
+		oCore.applyChanges();
+
+		assert.ok(Math.abs(jQuery("#" + this.sID + "-attr1")[0].offsetTop - jQuery("#" + this.sID + "-flag")[0].offsetTop) <= 2,
+		"Attribute and flag should be rendered on the same row");
+	});
+
+	/**
+	 * @deprecated as of version 1.42, replaced by <code>markers</code> aggregation.
+	 */
+	QUnit.test("Flag Rendering Position with deprecated functions", function(assert) {
+		// Arrange - Mark Flagged and add Attribute
+		var oAttr = new ObjectAttribute(this.sID + "-attr1", {
+				text : "Attribute number 1"
+			});
+
+		this.oOH.addAttribute(oAttr);
+		this.oOH.setMarkFlagged(true);
+		this.oOH.setShowMarkers(true);
+
+		// Act
+		oCore.applyChanges();
+
+		assert.ok(Math.abs(jQuery("#" + this.sID + "-attr1")[0].offsetTop - jQuery("#" + this.sID + "-flag")[0].offsetTop) <= 2,
 		"Attribute and flag should be rendered on the same row");
 	});
 
 	QUnit.test("ProgressIndicatorRendered", function(assert) {
+		// Arrange
+		var oProgIndicator = new ProgressIndicator(this.sID + "-pi", {
+			visible : true,
+			enabled : true,
+			state : ValueState.NEUTRAL,
+			displayValue : '80%',
+			percentValue : 80,
+			showValue : true,
+			width : '100%',
+			height : '1.375rem'
+		});
 
-		assert.notEqual(document.getElementById(ohBasicId + "-pi"), null, "Progress Indicator should be rendered.");
-		assert.ok(!jQuery(jQuery("#ohBasic .sapMOHStatusFixedWidth")[4]).attr("style"), "Progress Indicator only use 35% width.");
-		assert.equal(jQuery("#ohBasic .sapMOHStatusFixedWidth .sapMPI").css("float"), "right", "Progress Indicator is floating right");
+		this.oOH.addStatus(oProgIndicator);
+
+		// Act
+		oCore.applyChanges();
+
+		// Assert
+		assert.notEqual(document.getElementById(this.sID + "-pi"), null, "Progress Indicator should be rendered.");
+		assert.ok(!jQuery(jQuery("#" + this.sID + " .sapMOHStatusFixedWidth")[4]).attr("style"), "Progress Indicator only use 35% width.");
+		assert.equal(jQuery("#" + this.sID + " .sapMOHStatusFixedWidth .sapMPI").css("float"), "right", "Progress Indicator is floating right");
 	});
 
 	QUnit.test("NumberStateColorRendered", function(assert) {
 
-		assert.notEqual(ohBasic.getDomRef("number"), null, "Number should be rendered.");
-		assert.ok(ohBasic.$("number").hasClass("sapMObjectNumberStatusSuccess"), "Number color uses value state success color.");
+		assert.notEqual(this.oOH.getDomRef("number"), null, "Number should be rendered.");
+		assert.ok(this.oOH.$("number").hasClass("sapMObjectNumberStatusSuccess"), "Number color uses value state success color.");
 	});
 
 	QUnit.test("Placeholders for invisible attributes", function(assert) {
-		var done = assert.async();
-
-		var oH = new ObjectHeader({
-			title : "Invisible attribute issue",
-			attributes : [ new ObjectAttribute({
+		// Arrange
+		var oOA = new ObjectAttribute("invisibleAttr", {
 				text : "Invisible attribute",
 				visible : false
-			}) ]
-		});
-		oH.placeAt('objectHeaders');
+			});
 
-		setTimeout(function() {
+		this.oOH.addAttribute(oOA);
 
-			assert.ok(jQuery('#' + oH.getId() + ' > .sapMOHBottomRow > .sapMOHAttrRow').length === 0, "The attribute row should not be rendered");
-			oH.destroy();
-			done();
-		});
+		// Act
+		oCore.applyChanges();
+
+		// Assert
+		assert.ok(jQuery('#' + this.sID + ' > .sapMOHBottomRow > .sapMOHAttrRow').length === 0, "The attribute row should not be rendered");
 	});
 
 	QUnit.test("Placeholders for invisible status", function(assert) {
-		var done = assert.async();
-
-		var oH = new ObjectHeader({
-			title : "Invisible status issue",
-			statuses : [ new ProgressIndicator({
+		// Arrange
+		var oOS = new ProgressIndicator({
 				percentValue : 99,
 				state : ValueState.Error,
 				visible : false
-			}) ]
-		});
-		oH.placeAt('objectHeaders');
+			});
 
-		setTimeout(function() {
+		this.oOH.addStatus(oOS);
 
-			assert.ok(jQuery('#' + oH.getId() + ' > .sapMOHBottomRow > .sapMOHAttrRow > .sapMOHStatusFixedWidth').length === 0, "The status should not be rendered");
-			oH.destroy();
-			done();
-		});
+		// Act
+		oCore.applyChanges();
+
+		// Assert
+		assert.ok(jQuery('#' + this.sID + ' > .sapMOHBottomRow > .sapMOHAttrRow > .sapMOHStatusFixedWidth').length === 0, "The status should not be rendered");
+
 	});
 
 	QUnit.test("Placeholders for invisible attribute with visible status", function(assert) {
-		var done = assert.async();
-
-		var oH = new ObjectHeader({
-			title : "Reserved space for invisible attribute issue",
-			statuses : [new ObjectStatus({
+		// Arrange
+		var oOS = new ObjectStatus({
 				text : "Visible status",
 				state : ValueState.Success,
 				visible : true
-			}) ],
-			attributes : [
-				new ObjectAttribute({
-					text : "First invisible attribute",
-					visible : false
-				}),
-				new ObjectAttribute({
-					text : "First visible attribute",
-					visible : true
-				})	]
-		});
-		oH.placeAt('objectHeaders');
+			}),
+			oOA1 = new ObjectAttribute({
+				text : "First invisible attribute",
+				visible : false
+			}),
+			oOA2 = new ObjectAttribute({
+				text : "First visible attribute",
+				visible : true
+			});
 
-		setTimeout(function() {
-			assert.ok(jQuery('#' + oH.getId() + ' > .sapMOH .sapMOHBottomRow > .sapMOHAttrRow').length === 1, "Invisible attribute should not cause new row.");
-			oH.destroy();
-			done();
-		});
+		this.oOH.addStatus(oOS);
+		this.oOH.addAttribute(oOA1);
+		this.oOH.addAttribute(oOA2);
+
+		// Act
+		oCore.applyChanges();
+
+		// Assert
+		assert.ok(jQuery('#' + this.sID + ' > .sapMOH .sapMOHBottomRow > .sapMOHAttrRow').length === 1, "Invisible attribute should not cause new row.");
 	});
 
 	QUnit.test("Placeholders for invisible status with visible attribute", function(assert) {
-		var done = assert.async();
-
-		var oH = new ObjectHeader({
-			title : "Reserved space for invisible status issue",
-			statuses : [
-				new ProgressIndicator({
+		// Arrange
+		var oPI = new ProgressIndicator({
 				displayValue : '30%',
 				percentValue : 30,
 				state : ValueState.Error,
 				visible : false
-				}),
-				new ProgressIndicator({
-					displayValue : '90%',
-					percentValue : 90,
-					state : ValueState.Error,
-					visible : true
-				})],
-			attributes : [
-				new ObjectAttribute({
-					text : "Visible attribute",
-					visible : true
-				})	]
-		});
-		oH.placeAt('objectHeaders');
+			}),
+			oPI2 = new ProgressIndicator({
+				displayValue : '90%',
+				percentValue : 90,
+				state : ValueState.Error,
+				visible : true
+			}),
+			oOA = new ObjectAttribute({
+				text : "Visible attribute",
+				visible : true
+			});
 
-		setTimeout(function() {
-			assert.ok(jQuery('#' + oH.getId() + ' > .sapMOH .sapMOHBottomRow > .sapMOHAttrRow').length === 1, "Invisible status should not cause new row.");
-			oH.destroy();
-			done();
-		});
+		this.oOH.addStatus(oPI);
+		this.oOH.addStatus(oPI2);
+		this.oOH.addAttribute(oOA);
+
+		// Act
+		oCore.applyChanges();
+
+		// Assert
+		assert.ok(jQuery('#' + this.sID + ' > .sapMOH .sapMOHBottomRow > .sapMOHAttrRow').length === 1, "Invisible status should not cause new row.");
 	});
 
 	/******************************************************************/
 
-	QUnit.module("Rendering condensed Object Header");
-
-	var ohCondensedId = "ohc1";
-	var ohCondensed = new ObjectHeader(ohCondensedId, {
-		title : "Condensed Object header with attribute, number and number unit",
-		number : "3.628.000",
-		numberUnit : "EUR",
-		condensed : true,
-		backgroundDesign : BackgroundDesign.Transparent,
-		attributes : [ new ObjectAttribute({
-			text : "This is the only attribute in the object header"
-		}) ]
+	QUnit.module("Rendering condensed Object Header", {
+		beforeEach: function () {
+			this.sID = "oOHCondensed";
+			this.oOH = new ObjectHeader(this.sID, {
+				title : "Condensed Object header with attribute, number and number unit",
+				number : "3.628.000",
+				numberUnit : "EUR",
+				backgroundDesign : BackgroundDesign.Transparent,
+				condensed : true,
+				attributes : [
+					new ObjectAttribute({
+						text : "This is the only attribute in the object header"
+					})
+				]
+			}).placeAt("qunit-fixture");
+			oCore.applyChanges();
+		},
+		afterEach: function () {
+			this.oOH.destroy();
+		}
 	});
-	var ohCondensedId2 = "ohc2";
-	var ohCondensed2 = new ObjectHeader(ohCondensedId2, {
-		title : "Condensed Object header with solid background",
-		number : "3.628.000",
-		numberUnit : "EUR",
-		condensed : true,
-		attributes : [ new ObjectAttribute({
-			text : "This is the only attribute in the object header"
-		}) ]
-	});
-
-	ohCondensed.placeAt("objectHeaders");
-	ohCondensed2.placeAt("objectHeaders");
 
 	QUnit.test("Object Header has condensed style", function(assert) {
-
-		assert.equal(jQuery("#ohc1 > .sapMOHC").length, 1, "Object Header with condensed style is rendered");
+		assert.equal(jQuery("#" + this.sID + " > .sapMOHC").length, 1, "Object Header with condensed style is rendered");
 	});
 
 	QUnit.test("Object Header attribute is displayed under title", function(assert) {
 
-		assert.equal(jQuery("#ohc1 > .sapMOHC > .sapMOHAttr").length, 1, "Object Header attribute is displayed under title");
+		assert.equal(jQuery("#" + this.sID + " > .sapMOHC > .sapMOHAttr").length, 1, "Object Header attribute is displayed under title");
 	});
 
 	QUnit.test("NumberRendered", function(assert) {
 
-		assert.notEqual(document.getElementById(ohCondensedId + "-number"), null, "Number should be rendered.");
-		assert.ok(jQuery("#" + ohCondensedId + "-number").hasClass("sapMObjectNumber"), "Number is sap.m.ObjectNumber");
+		assert.notEqual(document.getElementById(this.sID + "-number"), null, "Number should be rendered.");
+		assert.ok(jQuery("#" + this.sID + "-number").hasClass("sapMObjectNumber"), "Number is sap.m.ObjectNumber");
 	});
 
 	QUnit.test("Background is transparent", function(assert) {
 
-		assert.equal(jQuery("#ohc1 > .sapMOHBgTransparent").length, 1, "Transparent background style should be set.");
+		assert.equal(jQuery("#" + this.sID + " > .sapMOHBgTransparent").length, 1, "Transparent background style should be set.");
 
 		// in some browsers css("background-color") instead of "transparent" returns "rgba(0, 0, 0, 0)"
-		var bBackgroundTransparent = (jQuery("#ohc1").css("background-color") == "transparent") || (jQuery("#ohc1").css("background-color") == "rgba(0, 0, 0, 0)");
+		var bBackgroundTransparent = (jQuery("#" + this.sID).css("background-color") == "transparent") || (jQuery("#" + this.sID).css("background-color") == "rgba(0, 0, 0, 0)");
 		assert.ok(bBackgroundTransparent, "Background color is transparent");
 	});
 
 	QUnit.test("Background is solid", function(assert) {
 
-		assert.equal(jQuery("#ohc2 > .sapMOHBgSolid").length, 1, "Solid background style should be set.");
+		this.oOH.setBackgroundDesign(BackgroundDesign.Solid);
+		oCore.applyChanges();
+
+		assert.equal(jQuery("#" + this.sID + " > .sapMOHBgSolid").length, 1, "Solid background style should be set.");
 	});
 
 	/******************************************************************/
 
-	QUnit.module("Internal API");
+	QUnit.module("Internal API", {
+		beforeEach: function() {
+			this.sID = "oOHSimple";
+			this.oOH = new ObjectHeader(this.sID, {
+				title : "Simple ObjectHeader",
+				backgroundDesign : BackgroundDesign.Transparent
+			}).placeAt("qunit-fixture");
 
-	var ohEmptyStatus1Id = "ohes1";
-	var ohEmptyStatus2Id = "ohes2";
-	var ohEmptyStatusesId = "ohess";
-	var ohEmptyAttributesId = "oheattr";
-	var ohEmptyAllId = "oheall";
-	var ohFlagAndFavoriteMarkerId = "ohefafm";
-	var ohOnlyProgressIndicatorId = "ohOnlyProgress";
-
-	var ohAttributeAndFlagId = "ohAttributeAndFlag";
-	var ohEmptyStatus1AndStatus2Id = "ohes1s2";
-
-	var ohAttributeAndFlag = new ObjectHeader(ohAttributeAndFlagId, {
-		title : "Object that is markFlagged with attribute",
-		number : "3.628.000",
-		numberUnit : "EUR",
-		attributes : [ new ObjectAttribute({
-			text : "Attribute number 1"
-		}) ],
-		markFlagged : true,
-		showMarkers : true
+			oCore.applyChanges();
+		},
+		afterEach: function() {
+			this.oOH.destroy();
+		}
 	});
-
-	var ohEmptyStatus1 = new ObjectHeader(ohEmptyStatus1Id, {
-		title : "Header with empty second status",
-		firstStatus : new ObjectStatus("ose1", {
-			text : "\n  \n  \t",
-			state : ValueState.Success
-		})
-	});
-	var ohEmptyStatus2 = new ObjectHeader(ohEmptyStatus2Id, {
-		title : "Header with empty first status",
-		secondStatus : new ObjectStatus("ose2", {
-			text : "\n  \n  \t",
-			state : ValueState.Error
-		})
-	});
-	var ohEmptyStatuses = new ObjectHeader(ohEmptyStatusesId, {
-		title : "Header with empty statuses",
-		firstStatus : new ObjectStatus("ose3", {
-			text : "\n  \n  \t",
-			state : ValueState.Success
-		}),
-		secondStatus : new ObjectStatus("ose4", {
-			text : "\n  \n  \t",
-			state : ValueState.Error
-		})
-	});
-
-	var ohEmptyAttributes = new ObjectHeader(ohEmptyAttributesId, {
-		title : "Header with empty attributes",
-
-		attributes : [ new ObjectAttribute("oae1", {
-			text : "\n  \n  \t"
-		}), new ObjectAttribute("oae2", {
-			text : "\n  \n  \t"
-		}) ]
-	});
-
-	var ohEmptyAll = new ObjectHeader(ohEmptyAllId, {
-		title : "Header with empty attributes and statuses",
-
-		attributes : [ new ObjectAttribute("oae3", {
-			text : "\n  \n  \t"
-		}), new ObjectAttribute("oae4", {
-			text : "\n  \n  \t"
-		}) ],
-
-		firstStatus : new ObjectStatus("ose5", {
-			text : "\n  \n  \t",
-			state : ValueState.Success
-		}),
-		secondStatus : new ObjectStatus("ose6", {
-			text : "\n  \n  \t",
-			state : ValueState.Error
-		})
-	});
-
-	var ohEmptyStatus1AndStatus2 = new ObjectHeader(ohEmptyStatus1AndStatus2Id, {
-		title : "Header with empty first and second status",
-		firstStatus : new ObjectStatus("ose7", {
-			text : "\n  \n  \t",
-			state : ValueState.Error
-		}),
-		secondStatus : new ObjectStatus("ose8", {
-			text : "\n  \n  \t",
-			state : ValueState.Error
-		}),
-		statuses : [ new ObjectStatus({
-			text : "Statuses 1",
-			state : ValueState.Success
-		}) ]
-	});
-
-	var ohOnlyProgressIndicator = new ObjectHeader(ohOnlyProgressIndicatorId, {
-		title : "Test dynamic marker states",
-		number : "3.628.000",
-		numberUnit : "EUR",
-		showMarkers : true,
-		statuses : [ new ProgressIndicator({
-			percentValue : 99,
-			state : ValueState.Error
-		}) ]
-	});
-	ohOnlyProgressIndicator.placeAt("flagAndFavorite-oh");
 
 	QUnit.test("Attribute and Flag API", function(assert) {
+		// Arrange
+		var oOA = new ObjectAttribute({
+				text : "A regular attribute"
+			}),
+			oFlagMarker = new ObjectMarker(this.sID + "-flag", {
+				type: ObjectMarkerType.Flagged
+			});
 
-		assert.ok(ohAttributeAndFlag._hasBottomContent(), "Object header has bottom content");
-		assert.ok(ohAttributeAndFlag._hasAttributes(), "Object header has attributes");
-		assert.ok(ohAttributeAndFlag.getMarkFlagged(), "Object header has flag marker");
+		this.oOH.addAttribute(oOA);
+		this.oOH.addMarker(oFlagMarker);
+
+		// Act
+		oCore.applyChanges();
+
+		// Assert
+		assert.ok(this.oOH._hasBottomContent(), "Object header has bottom content");
+		assert.ok(this.oOH._hasAttributes(), "Object header has attributes");
+		assert.equal(this.oOH.getMarkers()[0].getId(), this.sID + "-flag", "Object header has flag marker");
 	});
 
-	QUnit.test("TestEmptyOH", function(assert) {
+	/**
+	 * @deprecated as of version 1.42, replaced by <code>markers</code> aggregation.
+	 */
+	QUnit.test("Deprecated Flag API", function(assert) {
+		// Arrange
+		this.oOH.setMarkFlagged(true);
 
-		assert.ok(!ohEmptyStatus1._hasStatus(), "Object header has no rendered statuses");
-		assert.ok(!ohEmptyStatus2._hasStatus(), "Object header has no rendered statuses");
-		assert.ok(!ohEmptyStatuses._hasStatus(), "Object header has no rendered statuses");
+		// Act
+		oCore.applyChanges();
 
-		assert.ok(!ohEmptyAttributes._hasAttributes(), "Object header has no rendered attributes");
-
-		assert.ok(!ohEmptyAll._hasAttributes(), "Object header has no rendered attributes");
-		assert.ok(!ohEmptyAll._hasStatus(), "Object header has no rendered statuses");
-		assert.ok(!ohEmptyAll.getMarkFlagged(), "Object header has no flag marker");
-		assert.ok(!ohEmptyAll.getMarkFavorite(), "Object header has no markFavorite marker");
-		assert.ok(!ohEmptyAll._hasBottomContent(), "Object header has no bottom content");
+		// Assert
+		assert.ok(this.oOH.getMarkFlagged(), "Object header has flag marker");
 	});
 
-	QUnit.test("TestNonEmptyStatus", function(assert) {
+	QUnit.test("With empty status", function(assert) {
 
-		assert.ok(ohEmptyStatus1AndStatus2._hasStatus(), "Object header has rendered statuses");
-		assert.ok(ohOnlyProgressIndicator._hasStatus(), "Object header has rendered statuses if ProgressIndicator is only present");
+		var emptyStatus = new ObjectStatus("ose1", {
+				text : "\n  \n  \t",
+				state : ValueState.Success
+			});
+
+		this.oOH.addStatus(emptyStatus);
+
+		oCore.applyChanges();
+
+		assert.notOk(this.oOH._hasStatus(), "Object header has no rendered statuses");
+
+	});
+
+	/**
+	 *  @deprecated as of version 1.16, replaced by <code>statuses</code> aggregation.
+	 */
+	QUnit.test("With empty first & second statuses", function(assert) {
+
+		var firstStatus = new ObjectStatus("ose3", {
+				text : "\n  \n  \t",
+				state : ValueState.Success
+			}),
+			secondStatus = new ObjectStatus("ose4", {
+				text : "\n  \n  \t",
+				state : ValueState.Error
+			});
+
+		this.oOH.setFirstStatus(firstStatus);
+		this.oOH.setSecondStatus(secondStatus);
+
+		oCore.applyChanges();
+
+		assert.notOk(this.oOH._hasStatus(), "Object header has no rendered statuses");
+	});
+
+	QUnit.test("With empty attribute", function(assert) {
+
+		var emptyAttr1 = new ObjectAttribute("oae1", {
+				text : "\n  \n  \t"
+			}),
+			emptyAttr2 = new ObjectAttribute("oae2", {
+				text : "\n  \n  \t"
+			});
+
+		this.oOH.addAttribute(emptyAttr1);
+		this.oOH.addAttribute(emptyAttr2);
+
+		oCore.applyChanges();
+
+		assert.notOk(this.oOH._hasAttributes(), "Object header has no rendered attributes");
+
+	});
+
+	QUnit.test("With empty attributes and statuses", function(assert) {
+
+		var emptyAttr1 = new ObjectAttribute("oae1", {
+				text : "\n  \n  \t"
+			}),
+			emptyAttr2 = new ObjectAttribute("oae2", {
+				text : "\n  \n  \t"
+			}),
+			emptyStatus1 = new ObjectStatus("ose1", {
+				text : "\n  \n  \t",
+				state : ValueState.Success
+			}),
+			emptyStatus2 = new ObjectStatus("ose2", {
+				text : "\n  \n  \t",
+				state : ValueState.Error
+			});
+
+		this.oOH.addAttribute(emptyAttr1);
+		this.oOH.addAttribute(emptyAttr2);
+		this.oOH.addStatus(emptyStatus1);
+		this.oOH.addStatus(emptyStatus2);
+
+		oCore.applyChanges();
+
+		assert.notOk(this.oOH._hasStatus(), "Object header has no rendered statuses");
+		assert.notOk(this.oOH._hasAttributes(), "Object header has no rendered attributes");
+		assert.notOk(this.oOH._hasBottomContent(), "Object header has no bottom content");
+		/**
+		 * @deprecated as of version 1.42, replaced by <code>markers</code> aggregation.
+		 */
+		assert.notOk(this.oOH.getMarkFlagged(), "Object header has no flag marker");
+		/**
+		 * @deprecated as of version 1.42, replaced by <code>markers</code> aggregation.
+		 */
+		assert.notOk(this.oOH.getMarkFavorite(), "Object header has no markFavorite marker");
+	});
+
+	QUnit.test("With a non-empty ObjectStatus", function(assert) {
+
+		var emptyStatus = new ObjectStatus("ose8", {
+				text : "\n  \n  \t",
+				state : ValueState.Error
+			}),
+			regularStatus = new ObjectStatus({
+				text : "Statuses 1",
+				state : ValueState.Success
+			});
+
+		this.oOH.addStatus(emptyStatus);
+		this.oOH.addStatus(regularStatus);
+
+		oCore.applyChanges();
+
+		assert.ok(this.oOH._hasStatus(), "Object header has rendered statuses");
+	});
+
+	QUnit.test("With a ProgressIndicator", function(assert) {
+
+		var progressIndicator = new ProgressIndicator({
+				percentValue : 99,
+				state : ValueState.Error
+			});
+
+		this.oOH.addStatus(progressIndicator);
+
+		oCore.applyChanges();
+
+		assert.ok(this.oOH._hasStatus(), "Object header has rendered statuses if only ProgressIndicator is present");
 	});
 
 	QUnit.test("Title gets all length when no number", function(assert) {
-		// arrange
-		var oObjectHeader = new ObjectHeader({
-			title: "Full title test"
-		});
+		// Arrange
+		var $objectHeader = this.oOH.$("titlediv");
 
-		// system under test
-		oObjectHeader.placeAt("objectHeaders");
-		oCore.applyChanges();
-
-		// Assert
-		var $objectHeader = oObjectHeader.$("titlediv");
-
+		// Act
 		assert.ok($objectHeader.hasClass("sapMOHTitleDivFull"), "title occupies the whole available space");
-
-		// cleanup
-		oObjectHeader.destroy();
 	});
 
 	QUnit.test("Title gets all length when no number in Condensed OH", function(assert) {
-		// arrange
-		var oObjectHeader = new ObjectHeader({
-			title: "Full title test",
-			condensed: true
-		});
+		// Arrange
+		this.oOH.setCondensed(true);
 
-		// system under test
-		oObjectHeader.placeAt("objectHeaders");
+		// Act
+		oCore.applyChanges();
+		var $objectHeader = this.oOH.$("titlediv");
+
+		// Assert
+		assert.ok($objectHeader.hasClass("sapMOHTitleDivFull"), "title occupies the whole available space");
+	});
+
+	/**
+	 * @deprecated as of version 1.42, replaced by <code>markers</code> aggregation.
+	 */
+	QUnit.test("Flag marker set and unset", function(assert) {
+		// Assert - by default flag marker unset
+		assert.notOk(jQuery("#" + this.sID + " .sapUiIcon").length, "No markers should be rendered");
+
+		// Arrange - set to flagged
+		this.oOH.setMarkFlagged(true);
+		this.oOH.setShowMarkers(true);
+
+		// Act
 		oCore.applyChanges();
 
 		// Assert
-		var $objectHeader = oObjectHeader.$("titlediv");
+		assert.equal(jQuery("#" + this.sID + " .sapUiIcon").length, 1, "Only one marker should be rendered");
+		assert.ok(jQuery("#" + this.sID + "-flag").hasClass("sapMObjectMarker"), "Flag is sapMObjectMarker");
 
-		assert.ok($objectHeader.hasClass("sapMOHTitleDivFull"), "title occupies the whole available space");
+		// Arrange - unset flagged
+		this.oOH.setMarkFlagged(false);
+		this.oOH.setShowMarkers(false);
 
-		// cleanup
-		oObjectHeader.destroy();
+		// Act
+		oCore.applyChanges();
+
+		// Assert
+		assert.notOk(jQuery("#" + this.sID + " .sapUiIcon").length, "Flag marker is no longer renfered");
 	});
 
-	QUnit.test("FlagMarkerSet", function(assert) {
-		var ohFlagAndFavoriteMarker = new ObjectHeader(ohFlagAndFavoriteMarkerId, {
-			title : "Test dynamic marker states",
-			number : "3.628.000",
-			numberUnit : "EUR",
-			showMarkers : true
-		});
-		ohFlagAndFavoriteMarker.placeAt("flagAndFavorite-oh");
+	/**
+	 * @deprecated as of version 1.42, replaced by <code>markers</code> aggregation.
+	 */
+	QUnit.test("Favorite marker set and unset", function(assert) {
+		// Assert - by default flag marker unset
+		assert.notOk(jQuery("#" + this.sID + " .sapUiIcon").length, "No markers should be rendered");
+
+		// Arrange - set to favourite
+		this.oOH.setMarkFavorite(true);
+		this.oOH.setShowMarkers(true);
+
+		// Act
 		oCore.applyChanges();
 
-		ohFlagAndFavoriteMarker.setMarkFlagged(true);
+		// Assert
+		assert.equal(jQuery("#" + this.sID + " .sapUiIcon").length, 1, "Only one marker should be rendered");
+		assert.ok(jQuery("#" + this.sID + "-favorite").hasClass("sapMObjectMarker"), "Favorite is sapMObjectMarker");
+
+		// Arrange - unset favourite
+		this.oOH.setMarkFavorite(false);
+		this.oOH.setShowMarkers(false);
+
+		// Act
 		oCore.applyChanges();
 
-		assert.equal(jQuery("#" + ohFlagAndFavoriteMarkerId + " .sapUiIcon").length, 1, "Only one marker should be rendered");
-		assert.ok(jQuery("#" + ohFlagAndFavoriteMarkerId + "-flag").hasClass("sapMObjectMarker"), "Flag is sapMObjectMarker");
-
-		// cleanup
-		ohFlagAndFavoriteMarker.destroy();
+		// Assert
+		assert.notOk(jQuery("#" + this.sID + " .sapUiIcon").length, "Favorite marker is no longer renfered");
 	});
 
-	QUnit.test("FlagMarkerUnset", function(assert) {
-		var ohFlagAndFavoriteMarker = new ObjectHeader(ohFlagAndFavoriteMarkerId, {
-			title : "Test dynamic marker states",
-			number : "3.628.000",
-			numberUnit : "EUR",
-			showMarkers : true
+	/**
+	 * @deprecated as of version 1.42, replaced by <code>markers</code> aggregation.
+	 */
+	QUnit.test("Attribute without support marker", function(assert) {
+		// Arrange
+		var oBasicAttr = new ObjectAttribute( "basicAttr", {
+			text : "This is the only attribute in the object header"
 		});
-		ohFlagAndFavoriteMarker.placeAt("flagAndFavorite-oh");
+
+		this.oOH.setMarkFavorite(true);
+		this.oOH.setShowMarkers(false);
+		this.oOH.addAttribute(oBasicAttr);
 		oCore.applyChanges();
 
-		ohFlagAndFavoriteMarker.setMarkFlagged(false);
-		ohFlagAndFavoriteMarker.setMarkFavorite(false);
-		oCore.applyChanges();
-
-		assert.equal(jQuery("#" + ohFlagAndFavoriteMarkerId + " .sapUiIcon").length, 0, "No markers should be rendered");
-
-		// cleanup
-		ohFlagAndFavoriteMarker.destroy();
-	});
-
-	QUnit.test("FavoriteMarkerSet", function(assert) {
-		var ohFlagAndFavoriteMarker = new ObjectHeader(ohFlagAndFavoriteMarkerId, {
-			title : "Test dynamic marker states",
-			number : "3.628.000",
-			numberUnit : "EUR",
-			showMarkers : true
-		});
-		ohFlagAndFavoriteMarker.placeAt("flagAndFavorite-oh");
-		oCore.applyChanges();
-
-		ohFlagAndFavoriteMarker.setMarkFlagged(false);
-		ohFlagAndFavoriteMarker.setMarkFavorite(true);
-		oCore.applyChanges();
-
-		assert.equal(jQuery("#" + ohFlagAndFavoriteMarkerId + " .sapUiIcon").length, 1, "Only one marker should be rendered");
-		assert.ok(jQuery("#" + ohFlagAndFavoriteMarkerId + "-favorite").hasClass("sapMObjectMarker"), "Favorite is sapMObjectMarker.");
-
-		// cleanup
-		ohFlagAndFavoriteMarker.destroy();
-	});
-
-	QUnit.test("FavoriteMarkerNotSet", function(assert) {
-		var ohFlagAndFavoriteMarker = new ObjectHeader(ohFlagAndFavoriteMarkerId, {
-			title : "Test dynamic marker states",
-			number : "3.628.000",
-			numberUnit : "EUR",
-			showMarkers : true
-		});
-		ohFlagAndFavoriteMarker.placeAt("flagAndFavorite-oh");
-		oCore.applyChanges();
-
-		ohFlagAndFavoriteMarker.setMarkFlagged(false);
-		ohFlagAndFavoriteMarker.setMarkFavorite(false);
-		oCore.applyChanges();
-
-		assert.equal(jQuery("#" + ohFlagAndFavoriteMarkerId + " .sapUiIcon").length, 0, "No markers should be rendered");
-
-		// cleanup
-		ohFlagAndFavoriteMarker.destroy();
-	});
-
-	QUnit.test("AttributeWithoutSupportMarker", function(assert) {
-		var ohFlagAndFavoriteMarker = new ObjectHeader(ohFlagAndFavoriteMarkerId, {
-			title : "Test dynamic marker states",
-			number : "3.628.000",
-			numberUnit : "EUR",
-			showMarkers : true
-		});
-		ohFlagAndFavoriteMarker.placeAt("flagAndFavorite-oh");
-		oCore.applyChanges();
-
-		ohFlagAndFavoriteMarker.setShowMarkers(false);
-		ohFlagAndFavoriteMarker.addAttribute(new ObjectAttribute("ohefafm1", {
-			text : "My Test Attribute"
-		}));
-		oCore.applyChanges();
-
-		assert.equal(jQuery("#" + ohFlagAndFavoriteMarkerId + " .sapUiIcon").length, 0, "No markers should be rendered");
-		assert.notEqual(document.getElementById("ohefafm1"), null, "Attribute should be rendered.");
-
-		// cleanup
-		ohFlagAndFavoriteMarker.destroy();
+		assert.equal(jQuery("#" + this.sID + " .sapUiIcon").length, 0, "No markers should be rendered");
+		assert.notEqual(document.getElementById("basicAttr"), null, "Attribute should be rendered.");
 	});
 
 	/******************************************************************/
 
-	var oheId = "ohe";
+	QUnit.module("Events", {
+		beforeEach: function() {
+			this.sID = "oOHEvents";
+			this.oOH = new ObjectHeader(this.sID, {
+				intro : "On behalf of John Smith",
+				introActive : true,
+				introPress : eventHandler,
+				title : "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis luctus, turpis vitae porttitor hendrerit, elit dui mollis neque, id suscipit lorem mi in sem.",
+				titleActive : true,
+				titlePress : eventHandler,
+				icon : IconPool.getIconURI("attachment"),
+				iconActive : true,
+				iconPress : eventHandler
+			}).placeAt("qunit-fixture");
 
-	var ohe = new ObjectHeader(oheId, {
-		intro : "On behalf of John Smith",
-		introActive : true,
-		introPress : eventHandler,
-		title : "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis luctus, turpis vitae porttitor hendrerit, elit dui mollis neque, id suscipit lorem mi in sem.",
-		titleActive : true,
-		titlePress : eventHandler,
-		icon : IconPool.getIconURI("attachment"),
-		iconActive : true,
-		iconPress : eventHandler
+			oCore.applyChanges();
+		},
+		afterEach: function() {
+			this.oOH.destroy();
+		}
 	});
-	ohe.placeAt("objectHeaders");
-
-	QUnit.module("Events");
 
 	QUnit.test("Title is active", function(assert) {
-		// Assert
-		var $objectHeaderTitle = ohe.$("title");
+		// Arrange
+		var $objectHeaderTitle = this.oOH.$("title");
 
+		// Assert
 		assert.ok($objectHeaderTitle.hasClass("sapMOHTitleActive"), "Title div has class \"sapMOHTitleActive\".");
+	});
+
+	QUnit.test("Title rendered as active but it's not a link", function(assert) {
+		assert.equal(this.oOH.$("title").attr("href"), undefined, "Title attribute href is not a link.");
 	});
 
 	QUnit.test("TestTitleTap", function(assert) {
 
-		qutils.triggerEvent("tap", oheId + "-title");
+		qutils.triggerEvent("tap", this.sID + "-title");
 		assert.ok(domRef, "domRef is set");
-		assert.equal(domRef.id, oheId + "-title", "Title should be clickable");
+		assert.equal(domRef.id, this.sID + "-title", "Title should be clickable");
 		domRef = null;
 
-		qutils.triggerEvent("tap", oheId + "-titleText-inner");
+		qutils.triggerEvent("tap", this.sID + "-titleText-inner");
 		assert.ok(domRef, "domRef is set");
-		assert.equal(domRef.id, oheId + "-title", "When clicking inner text div event should return outer div as source");
+		assert.equal(domRef.id, this.sID + "-title", "When clicking inner text div event should return outer div as source");
 		domRef = null;
 
-		qutils.triggerEvent("tap", ohBasicId + "-title");
-		assert.ok(domRef === null, ohBasicId + " Title should not be clickable");
-		domRef = null;
+		this.oOH.setTitleActive(false);
+		qutils.triggerEvent("tap", this.sID + "-title");
+		assert.ok(domRef === null, this.sID + " Title should not be clickable");
 	});
 
 	QUnit.test("TestIntroTap", function(assert) {
 
-		qutils.triggerEvent("tap", oheId + "-intro");
+		qutils.triggerEvent("tap", this.sID + "-intro");
 		assert.ok(domRef, "domRef is set");
-		assert.equal(domRef.id, oheId + "-intro", "Intro should be clickable");
+		assert.equal(domRef.id, this.sID + "-intro", "Intro should be clickable");
 		domRef = null;
 
-		qutils.triggerEvent("tap", ohBasicId + "-intro");
-		assert.ok(domRef === null, ohBasicId + " intro should not be clickable");
+		this.oOH.setIntroActive(false);
+		qutils.triggerEvent("tap", this.sID + "-intro");
+		assert.ok(domRef === null, this.sID + " intro should not be clickable");
 		domRef = null;
 	});
 
 	QUnit.test("TestIconTap", function(assert) {
-		ohe._oImageControl.firePress();
+		this.oOH._oImageControl.firePress();
 
+		// Assert - OH with active icon should be clickable
 		assert.ok(domRef, "domRef is set");
-		assert.equal(domRef.id, oheId + "-img", "Icon should be clickable");
+		assert.equal(domRef.id, this.sID + "-img", "Icon should be clickable");
 		domRef = null;
 
-		ohBasic._oImageControl.firePress();
-		assert.ok(domRef === null, ohBasicId + " icon should not be clickable");
+		var oOHIconNotActive = new ObjectHeader("iconNotActive", {
+			icon : IconPool.getIconURI("attachment"),
+			iconPress : eventHandler
+		}).placeAt("qunit-fixture");
+
+		oCore.applyChanges();
+		oOHIconNotActive._oImageControl.firePress();
+
+		// Assert - OH with no active icon should not be clickable
+		assert.ok(domRef === null, "Icon should not be clickable");
+
+		// Cleanup
 		domRef = null;
+		oOHIconNotActive.destroy();
 	});
 
 	QUnit.test("TestIcon pressing Space when responsive=true", function(assert) {
-		//Prepare
-		var ohResponsiveIcon = new ObjectHeader("ohResponsiveIcon", {
-			title: "Some Title",
-			icon : IconPool.getIconURI("attachment"),
-			iconActive: true,
-			responsive: true,
-			iconPress: eventHandler
-		});
-		ohResponsiveIcon.placeAt('objectHeaders');
-		oCore.applyChanges();
+		// Arrange
+		this.oOH.setResponsive(true);
 
 		//Act
-		var $oImageControlRef = ohResponsiveIcon._oImageControl.$();
+		var $oImageControlRef = this.oOH._oImageControl.$();
 		$oImageControlRef.trigger("focus");
 		qutils.triggerKeydown($oImageControlRef, KeyCodes.SPACE);
 
 		//Assert
 		assert.ok(domRef, "Icon should fire 'iconPress' event when object header is responsive");
 		if (domRef) {
-			assert.equal(domRef.id, ohResponsiveIcon.getId() + "-img", "Icon should fire 'iconPress' event when object header is responsive and the event's source is the image");
+			assert.equal(domRef.id, this.sID + "-img", "Icon should fire 'iconPress' event when object header is responsive and the event's source is the image");
 		}
-		//CleanUp
-		domRef = null;
-		ohResponsiveIcon.destroy();
 	});
 
 	QUnit.test("TestTitleSelectorTap", function(assert) {
+		var oOH2 = new ObjectHeader("oOH2", {
+			title : "Im a title.",
+			showTitleSelector : true,
+			titleSelectorPress : eventHandler
+		}).placeAt("qunit-fixture");
+
+		oCore.applyChanges();
+
 		var oFakeEvent = {
-			target: ohBasic.getDomRef().querySelector(".sapUiIconTitle")
+			target: oOH2.getDomRef().querySelector(".sapUiIconTitle")
 		};
-		ohBasic.ontap(oFakeEvent);
-		assert.ok(oTitleArrowDomRef, "oTitleArrowDomRef is set to titleArrow");
-		assert.equal(oTitleArrowDomRef.id, ohBasicId + "-titleArrow", "Title Arrow should be clickable");
-		oTitleArrowDomRef = null;
+
+		oOH2.ontap(oFakeEvent);
+		assert.ok(domRef, "oTitleArrowDomRef is set to titleArrow");
+		assert.equal(domRef.id, "oOH2" + "-titleArrow", "Title Arrow should be clickable");
+
+		oOH2.destroy();
 	});
 
 	QUnit.test("TestTitleSelector pressing SPACE", function(assert) {
@@ -903,24 +914,30 @@ sap.ui.define([
 		oArrowOH.destroy();
 	});
 
+	/******************************************************************/
 
-	//***************************************************************************
-	var oTitleArrowOH = new ObjectHeader("titleArrowOH", {
-		title : "Title Arrow reset to false and should not be displayed.",
-		number : "3.624",
-		numberUnit : "EUR",
-		showTitleSelector : true,
-		titleSelectorPress : oTitleArrowEventHandler
+	QUnit.module("TitleArrow", {
+		beforeEach: function() {
+			this.sID = "titleArrowOH";
+			this.oOH = new ObjectHeader(this.sID, {
+				title : "Title Arrow reset to false and should not be displayed.",
+				number : "3.624",
+				numberUnit : "EUR",
+				showTitleSelector : true,
+				titleSelectorPress : eventHandler
+			}).placeAt("qunit-fixture");
+
+			oCore.applyChanges();
+		},
+		afterEach: function() {
+			this.oOH.destroy();
+		}
 	});
-
-	oTitleArrowOH.placeAt("titleArrowOH-oh");
-
-	QUnit.module("TitleArrow");
 
 	QUnit.test("TestTitleArrowResetToFalse", function(assert) {
 		var done = assert.async();
 
-		oTitleArrowOH.setShowTitleSelector(false);
+		this.oOH.setShowTitleSelector(false);
 
 		setTimeout(function() {
 			assert.equal(jQuery("#titleArrowOH-titleArrow").length, 0, " The titleArrowOH showTitleSelector is set to false and is not rendered.");
@@ -930,32 +947,90 @@ sap.ui.define([
 	});
 
 	/******************************************************************/
+
 	QUnit.module("OH Screen Reader support");
 
 	QUnit.test("OH has aria-labelledby", function(assert){
-		assert.ok(jQuery("#" + ohBasicId + ">.sapMOH").attr("aria-labelledby"), "OH has attribute aria-labelledby");
+		var sID = "oOHBasic",
+			oObjectHeader = new ObjectHeader(sID, {
+				title : "Test Title."
+			}).placeAt("qunit-fixture");
+
+		oCore.applyChanges();
+
+		assert.ok(jQuery("#" + sID + ">.sapMOH").attr("aria-labelledby"), "OH has attribute aria-labelledby");
+
+		oObjectHeader.destroy();
 	});
 
 	QUnit.test("OH has attribute role=region", function(assert){
-		assert.ok(jQuery("#" + ohBasicId + ">.sapMOH").attr("role"), "OH has attribute role");
-		assert.equal(jQuery("#" + ohBasicId + ">.sapMOH").attr("role"), "region", "role is region");
+		var sID = "oOHBasic",
+			oObjectHeader = new ObjectHeader(sID, {
+				title : "Test Title."
+			}).placeAt("qunit-fixture");
+
+		oCore.applyChanges();
+
+		assert.ok(jQuery("#" + sID + ">.sapMOH").attr("role"), "OH has attribute role");
+		assert.equal(jQuery("#" + sID + ">.sapMOH").attr("role"), "region", "role is region");
+
+		oObjectHeader.destroy();
 	});
 
 	QUnit.test("OH Condensed has aria-labelledby", function(assert){
-		assert.ok(jQuery("#" + ohCondensedId + ">.sapMOH").attr("aria-labelledby"), "OH condensed has attribute aria-labelledby");
+		var sID = "oOHCondensed",
+			oObjectHeader = new ObjectHeader(sID, {
+				title : "Test Title.",
+				condensed : true
+			}).placeAt("qunit-fixture");
+
+		oCore.applyChanges();
+
+		assert.ok(jQuery("#" + sID + ">.sapMOH").attr("aria-labelledby"), "OH condensed has attribute aria-labelledby");
+
+		oObjectHeader.destroy();
 	});
 
 	QUnit.test("OH Condensed has attribute role=region", function(assert){
-		assert.ok(jQuery("#" + ohCondensedId + ">.sapMOH").attr("role"), "OH condensed has attribute role");
-		assert.equal(jQuery("#" + ohCondensedId + ">.sapMOH").attr("role"), "region", "role is region");
+		var sID = "oOHCondensed",
+			oObjectHeader = new ObjectHeader(sID, {
+				title : "Test Title.",
+				condensed : true
+			}).placeAt("qunit-fixture");
+
+		oCore.applyChanges();
+
+		assert.ok(jQuery("#" + sID + ">.sapMOH").attr("role"), "OH condensed has attribute role");
+		assert.equal(jQuery("#" + sID + ">.sapMOH").attr("role"), "region", "role is region");
+
+		oObjectHeader.destroy();
 	});
 
 	QUnit.test("Active title has aria attributes", function(assert){
-		assert.equal(jQuery("#" + oheId + "-title").attr("role"), "link", "ActiveTitle has role=link");
+		var sID = "oOHBasic",
+			oObjectHeader = new ObjectHeader(sID, {
+				title : "Test Title.",
+				titleActive : true
+			}).placeAt("qunit-fixture");
+
+		oCore.applyChanges();
+		assert.equal(jQuery("#" + sID + "-title").attr("role"), "link", "OH has role=link");
+
+		oObjectHeader.destroy();
 	});
 
 	QUnit.test("Active icon has aria attributes", function(assert){
-		assert.equal(jQuery(".sapMOHIcon.sapMPointer .sapUiIcon.sapUiIconPointer").attr("role"), "button", "ActiveIcon has role=button");
+		var sID = "oOHBasic",
+			oObjectHeader = new ObjectHeader(sID, {
+				title : "Test Title.",
+				icon : IconPool.getIconURI("attachment"),
+				iconActive : true
+			}).placeAt("qunit-fixture");
+
+		oCore.applyChanges();
+		assert.equal(jQuery(".sapMOHIcon.sapMPointer .sapUiIcon.sapUiIconPointer").attr("role"), "button", "OH has role=button");
+
+		oObjectHeader.destroy();
 	});
 
 	QUnit.test("Title has level H1", function(assert){
@@ -972,7 +1047,7 @@ sap.ui.define([
 		var $sTitle = oObjectHeader.$("title");
 		assert.ok($sTitle.find( "h1" ), "Title has the default titleLevel H1");
 
-		// cleanup
+		// Cleanup
 		oObjectHeader.destroy();
 	});
 
@@ -991,7 +1066,7 @@ sap.ui.define([
 		var $sTitle = oObjectHeader.$("title");
 		assert.ok($sTitle.find( "h3" ), "Title has titleLevel H3");
 
-		// cleanup
+		// Cleanup
 		oObjectHeader.destroy();
 	});
 
@@ -1012,7 +1087,7 @@ sap.ui.define([
 		var $sTitle = oObjectHeader.$("title");
 		assert.ok($sTitle.find( "h4" ), "Title has titleLevel H4");
 
-		// cleanup
+		// Cleanup
 		oObjectHeader.destroy();
 	});
 
@@ -1031,7 +1106,7 @@ sap.ui.define([
 		var $sTitle = oObjectHeader.$("title");
 		assert.ok($sTitle.find( "h1" ), "Title has titleLevel H1");
 
-		// cleanup
+		// Cleanup
 		oObjectHeader.destroy();
 	});
 
@@ -1045,7 +1120,8 @@ sap.ui.define([
 
 		// Assert
 		assert.strictEqual(oObjectHeader._getImageControl().getDecorative(), false, "The image has property decorative set to false");
-		// cleanup
+
+		// Cleanup
 		oObjectHeader.destroy();
 	});
 
@@ -1075,7 +1151,7 @@ sap.ui.define([
 		// Assert
 		assert.ok(oImage.getDomRef().classList.contains("sapMNoImg"));
 
-		// cleanup
+		// Cleanup
 		oObjectHeader.destroy();
 	});
 
@@ -1119,32 +1195,27 @@ sap.ui.define([
 
 	/******************************************************************/
 
-	var iconOH = new ObjectHeader("iconOH", {
-		icon : IconPool.getIconURI("pdf-attachment"),
-		intro : "On behalf of John Smith",
-		title : "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis luctus, turpis vitae porttitor hendrerit, elit dui mollis neque, id suscipit lorem mi in sem.",
-		number : "3.624",
-		numberUnit : "EUR",
-		markFlagged : true,
-		markFavorite : true,
-		showMarkers : true
-	});
-
-	var imageOH = new ObjectHeader("imageOH", {
-		icon : "../images/action.png",
-		iconTooltip: "test tooltip",
-		intro : "On behalf of John Smith",
-		title : "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis luctus, turpis vitae porttitor hendrerit, elit dui mollis neque, id suscipit lorem mi in sem.",
-		number : "3.624",
-		numberUnit : "EUR"
-	});
-
-	iconOH.placeAt("destroy-oh");
-	imageOH.placeAt("destroy-oh");
-
 	QUnit.module("Exiting");
 
 	QUnit.test("TestIconExit", function(assert) {
+		var iconOH = new ObjectHeader("iconOH", {
+			icon : IconPool.getIconURI("pdf-attachment"),
+			intro : "On behalf of John Smith",
+			title : "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis luctus, turpis vitae porttitor hendrerit, elit dui mollis neque, id suscipit lorem mi in sem.",
+			number : "3.624",
+			numberUnit : "EUR",
+			markers: [
+				new ObjectMarker("iconOH-flag", {
+					type: ObjectMarkerType.Flagged
+				}),
+				new ObjectMarker("iconOH-favorite", {
+					type: ObjectMarkerType.Favorite
+				})
+			]
+		}).placeAt("qunit-fixture");
+
+		oCore.applyChanges();
+
 		var $sImg = iconOH.$("img");
 		assert.ok(!(iconOH === null), "iconOH is not null");
 		assert.ok(oCore.byId("iconOH"), "Icon is found in UI5 Core");
@@ -1152,17 +1223,28 @@ sap.ui.define([
 		assert.ok(oCore.byId("iconOH-flag"), "Flag icon is found in UI5 Core");
 		assert.ok(oCore.byId("iconOH-favorite"), "Favorite icon is found in UI5 Core");
 		iconOH.destroy();
-		assert.ok(!oCore.byId("iconOH-flag"), "Flag icon is found in UI5 Core");
-		assert.ok(!oCore.byId("iconOH-favorite"), "Favorite icon is found in UI5 Core");
+		assert.notOk(oCore.byId("iconOH-flag"), "Flag icon is not found in UI5 Core");
+		assert.notOk(oCore.byId("iconOH-favorite"), "Favorite icon is not found in UI5 Core");
 	});
 
 	QUnit.test("TestImageExit", function(assert) {
+		var imageOH = new ObjectHeader("imageOH", {
+			icon : "../images/action.png",
+			iconTooltip: "test tooltip",
+			intro : "On behalf of John Smith",
+			title : "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis luctus, turpis vitae porttitor hendrerit, elit dui mollis neque, id suscipit lorem mi in sem.",
+			number : "3.624",
+			numberUnit : "EUR"
+		}).placeAt("qunit-fixture");
+
+		oCore.applyChanges();
+
 		var $sImg = imageOH.$("img");
 		assert.ok(!(imageOH === null), "imageOH is not null");
 		assert.ok(oCore.byId("imageOH"), "Image is found in UI5 Core");
 		assert.equal($sImg.attr("title"), "test tooltip", "Image has tooltip");
 		imageOH.destroy();
-		assert.ok(!oCore.byId("imageOH"), "Image is removed from UI5 Core");
+		assert.notOk(oCore.byId("imageOH"), "Image is removed from UI5 Core");
 	});
 
 	QUnit.test("Title selector icon size", function(assert) {
@@ -1170,10 +1252,9 @@ sap.ui.define([
 		var oObjectHeader = new ObjectHeader({
 			showTitleSelector: true,
 			condensed: false
-		});
+		}).placeAt("qunit-fixture");
 
 		// system under test
-		ohFlagFav.placeAt("objectHeaders");
 		oCore.applyChanges();
 
 		// assert: default in constructor
@@ -1187,6 +1268,8 @@ sap.ui.define([
 		// cleanup
 		oObjectHeader.destroy();
 	});
+
+	/******************************************************************/
 
 	QUnit.module("AdditionalNumbers aggregations rendering");
 
@@ -1465,6 +1548,8 @@ sap.ui.define([
 		oObjectHeader.destroy();
 	});
 
+	/******************************************************************/
+
 	QUnit.module("Contrast container in Belize");
 
 	QUnit.test("Contrast container should be set when Background is not transparent", function (assert) {
@@ -1539,9 +1624,9 @@ sap.ui.define([
 			number : "3.624",
 			numberUnit : "EUR",
 			markers: [
-					new ObjectMarker({id: "draft", type: ObjectMarkerType.Draft}),
-					new ObjectMarker({id: "unsaved", type: ObjectMarkerType.Unsaved})
-					]
+				new ObjectMarker({id: "draft", type: ObjectMarkerType.Draft}),
+				new ObjectMarker({id: "unsaved", type: ObjectMarkerType.Unsaved})
+			]
 		});
 
 		// System under test
@@ -1555,12 +1640,37 @@ sap.ui.define([
 	});
 
 	QUnit.test("Test _hasMarkers function", function(assert) {
+
 		var oObjectHeader = new ObjectHeader({
 			title : "Markers agregation",
 			markers: [
-					new ObjectMarker({id: "draft", type: ObjectMarkerType.Draft}),
-					new ObjectMarker({id: "unsaved", type: ObjectMarkerType.Unsaved})
-					]
+				new ObjectMarker({id: "draft", type: ObjectMarkerType.Draft}),
+				new ObjectMarker({id: "unsaved", type: ObjectMarkerType.Unsaved})
+			]
+		});
+
+		// System under test
+		oObjectHeader.placeAt("qunit-fixture");
+		oCore.applyChanges();
+
+		assert.ok(oObjectHeader._hasMarkers(), "_hasMarker will return true for - ObjectHeader with markers aggregation and showMarkers property set to false");
+
+		oObjectHeader.removeAggregation("markers");
+		assert.ok(oObjectHeader._hasMarkers(), "_hasMarker will return false for - ObjectHeader with no markers aggregation");
+
+		oObjectHeader.destroy();
+	});
+
+	/**
+	 * @deprecated as of version 1.42, replaced by <code>markers</code> aggregation
+	 */
+	QUnit.test("Test _hasMarkers function with deprecated functions", function(assert) {
+		var oObjectHeader = new ObjectHeader({
+			title : "Markers agregation",
+			markers: [
+				new ObjectMarker({id: "draft", type: ObjectMarkerType.Draft}),
+				new ObjectMarker({id: "unsaved", type: ObjectMarkerType.Unsaved})
+			]
 		});
 
 		// System under test
@@ -1584,6 +1694,9 @@ sap.ui.define([
 
 		oObjectHeader.destroy();
 	});
+
+	/******************************************************************/
+
 	QUnit.module("Responsive Padding Enablement");
 
 	QUnit.test("_initResponsivePaddingsEnablement is called on init", function (assert) {
@@ -1598,4 +1711,5 @@ sap.ui.define([
 		//clean
 		oTestPage.destroy();
 	});
+
 });
