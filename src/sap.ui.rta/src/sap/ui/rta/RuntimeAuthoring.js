@@ -1074,55 +1074,34 @@ sap.ui.define([
 	 * Adapt the enablement of undo/redo/reset button
 	 */
 	function onStackModified() {
-		var oCommandStack = this.getCommandStack();
-		var bCanUndo = oCommandStack.canUndo();
-
-		// FIXME Missing check whether action is saveable e.g. switching a view should not trigger this
-		// bCanUndo and _bUserDiscardedDraft seem to be redundant logic,
-		// because displayedVersion would be draft already
-		if (
-			!this.getShowToolbars() ||
-			!bCanUndo ||
-			this._bUserDiscardedDraft
-		) {
-			modifyStack.call(this);
-			return;
-		}
-
 		// warn the user: the existing draft would be discarded in case the user saves
 		Utils.checkDraftOverwrite(this._oVersionsModel)
-		.then(function(bDialogShown) {
-			if (bDialogShown) {
-				this._bUserDiscardedDraft = true;
+		.then(() => {
+			if (this.getShowToolbars()) {
+				var oCommandStack = this.getCommandStack();
+				var bCanUndo = oCommandStack.canUndo();
+				var bCanRedo = oCommandStack.canRedo();
+				var bCanSave = oCommandStack.canSave();
+				var bWasSaved = oCommandStack.getSaved();
+				var bTranslationRelevantDirtyChange = this._oToolbarControlsModel.getProperty("/translation/visible") &&
+					TranslationAPI.hasTranslationRelevantDirtyChanges({layer: Layer.CUSTOMER, selector: this.getRootControlInstance()});
+
+				// TODO: move to the setter to the ChangesState
+				this._oVersionsModel.setDirtyChanges(PersistenceWriteAPI.hasDirtyChanges({selector: this.getRootControlInstance()}));
+				this._oToolbarControlsModel.setProperty("/undo/enabled", bCanUndo);
+				this._oToolbarControlsModel.setProperty("/redo/enabled", bCanRedo);
+				this._oToolbarControlsModel.setProperty("/save/enabled", bCanSave);
+				this._oToolbarControlsModel.setProperty("/restore/enabled", this.bInitialResetEnabled || bCanSave || bWasSaved);
+				this._oToolbarControlsModel.setProperty(
+					"/translation/enabled",
+					this.bPersistedDataTranslatable || bTranslationRelevantDirtyChange
+				);
 			}
-			modifyStack.call(this);
-		}.bind(this), function() {
+			this.fireUndoRedoStackModified();
+		})
+		.catch(() => {
 			this.undo();
-		}.bind(this));
-	}
-
-	function modifyStack() {
-		if (this.getShowToolbars()) {
-			var oCommandStack = this.getCommandStack();
-			var bCanUndo = oCommandStack.canUndo();
-			var bCanRedo = oCommandStack.canRedo();
-			var bCanSave = oCommandStack.canSave();
-			var bWasSaved = oCommandStack.getSaved();
-			var bTranslationRelevantDirtyChange = this._oToolbarControlsModel.getProperty("/translation/visible") &&
-				TranslationAPI.hasTranslationRelevantDirtyChanges({layer: Layer.CUSTOMER, selector: this.getRootControlInstance()});
-
-			// TODO: move to the setter to the ChangesState
-			this._oVersionsModel.setDirtyChanges(PersistenceWriteAPI.hasDirtyChanges({selector: this.getRootControlInstance()}));
-			this._oToolbarControlsModel.setProperty("/undo/enabled", bCanUndo);
-			this._oToolbarControlsModel.setProperty("/redo/enabled", bCanRedo);
-			this._oToolbarControlsModel.setProperty("/save/enabled", bCanSave);
-			this._oToolbarControlsModel.setProperty("/restore/enabled", this.bInitialResetEnabled || bCanSave || bWasSaved);
-			this._oToolbarControlsModel.setProperty(
-				"/translation/enabled",
-				this.bPersistedDataTranslatable || bTranslationRelevantDirtyChange
-			);
-		}
-		this.fireUndoRedoStackModified();
+		});
 	}
 
 	function checkToolbarAndExecuteFunction(sName, vValue) {
