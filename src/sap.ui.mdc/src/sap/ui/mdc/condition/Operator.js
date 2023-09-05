@@ -605,7 +605,7 @@ sap.ui.define([
 					if (aValues.length < i + 1 && this.valueTypes[i]) {
 						throw new Error("value " + i + " for operator " + this.name + " missing"); // no ValidateException as this error must not occur from user input
 					}
-					if (oUseType) {
+					if (oUseType && aValues.length > i) { // test only if a value is given
 						var vValue = aValues[i];
 						if (vValue === undefined || vValue === null) {
 							vValue = oUseType ? oUseType.parseValue("", "string") : ""; // for empty value use initial value of type
