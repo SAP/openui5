@@ -92,7 +92,8 @@ sap.ui.define([
 		this.oSyncCreatePromise = oCreatePromise;
 		// a promise waiting for the deletion, also used as indicator for #isDeleted
 		this.oDeletePromise = null;
-		this.bFiringCreateActivate = false; // see #doSetProperty
+		// avoids recursion when calling #doSetProperty within the createActivate event handler
+		this.bFiringCreateActivate = false;
 		this.iGeneration = iGeneration || 0;
 		this.bInactive = bInactive || undefined; // be in sync with the annotation
 		this.iIndex = iIndex;
@@ -549,8 +550,8 @@ sap.ui.define([
 							.catch(that.oModel.getReporter());
 						that.bFiringCreateActivate = true;
 						that.bInactive = oBinding.fireCreateActivate(that) ? false : 1;
-						oCache.setInactive(sEntityPath, that.bInactive);
 						that.bFiringCreateActivate = false;
+						oCache.setInactive(sEntityPath, that.bInactive);
 					}
 
 					// if request is canceled fnPatchSent and fnErrorCallback are not called and

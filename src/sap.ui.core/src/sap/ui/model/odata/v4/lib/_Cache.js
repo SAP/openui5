@@ -3659,7 +3659,8 @@ sap.ui.define([
 	};
 
 	/**
-	 * Sets the isInactive annotation at the entity with the given path, which might activate it.
+	 * Sets the "@$ui5.context.isInactive" annotation at the entity with the given path, which might
+	 * activate it.
 	 *
 	 * @param {string} sPath - The path
 	 * @param {boolean|number} bInactive
