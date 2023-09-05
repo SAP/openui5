@@ -45,7 +45,7 @@ sap.ui.define(['sap/ui/base/EventProvider', './Serializer', './delegate/HTML', '
 		var that = this;
 		// a function to understand if to skip aggregations
 		var fnSkipAggregations = function (oControl) {
-			return oControl instanceof this._oWindow.sap.ui.core.mvc.View && oControl !== that._oView;
+			return oControl?.isA?.("sap.ui.core.mvc.View") && oControl !== that._oView;
 		};
 
 		// create serializer
