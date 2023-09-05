@@ -463,8 +463,8 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.base.Event} oEvent
 	 *    The event object
-	 * @param {object} oEvent.getParameters
-	 *    Object containing all event parameters
+	 * @param {function():Object<any>} oEvent.getParameters
+	 *   Function which returns an object containing all event parameters
 	 * @param {object} [oEvent.getParameters.data]
 	 *   An empty data object if a back-end request succeeds
 	 * @param {Error} [oEvent.getParameters.error]
@@ -507,8 +507,8 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.base.Event} oEvent
 	 *    The event object
-	 * @param {object} oEvent.getParameters
-	 *    Object containing all event parameters
+	 * @param {function():Object<any>} oEvent.getParameters
+	 *   Function which returns an object containing all event parameters
 	 * @param {string} [oEvent.getParameters.path]
 	 *   The absolute path to the entity which caused the event. The path is only provided for
 	 *   additional property requests; for other requests it is <code>undefined</code>.
@@ -538,8 +538,8 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.base.Event} oEvent
 	 *    The event object
-	 * @param {object} oEvent.getParameters
-	 *    Object containing all event parameters
+	 * @param {function():Object<any>} oEvent.getParameters
+	 *   Function which returns an object containing all event parameters
 	 * @param {sap.ui.model.Context} [oEvent.getParameters.context]
 	 *   The property binding's {@link sap.ui.model.Binding#getContext context}, if available
 	 * @param {string} oEvent.getParameters.path
