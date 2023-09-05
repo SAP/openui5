@@ -967,7 +967,7 @@ sap.ui.define([
 				price2: undefined,
 				currencyCode2: undefined,
 				units2: undefined,
-				items: [{ key: "A", description: "Text A" },
+				items: [{ key: "A", description: "Text A"},
 				{ key: "A", description: "Text A" }, // to test same value
 				{ key: "B", description: "Text B" }
 				]
@@ -993,7 +993,7 @@ sap.ui.define([
 
 			oType3 = new StringType({}, { maxLength: 1 });
 			oType3._bMyType = true;
-			oAdditionalType = new StringType({}, { maxLength: 20 });
+			oAdditionalType = new StringType({parseKeepsEmptyString: true}, { maxLength: 20 });
 			oAdditionalType._bMyType = true;
 			var oBindingContext = oModel.getContext("/items/0/");
 			oField3 = new Field("F3", {
@@ -1184,6 +1184,34 @@ sap.ui.define([
 					fnDone();
 				}, 0);
 			}, 0);
+		}, 0);
+
+	});
+
+	QUnit.test("additionalValue with twoway binding", function(assert) {
+
+		oField3.bindProperty("additionalValue", { path: "description", type: oAdditionalType });
+		oCore.applyChanges();
+
+		assert.ok(oField3._oContentFactory.getAdditionalDataType()._bMyType, "Given Type is used in Field");
+
+		var fnDone = assert.async();
+		setTimeout(function() { // as conditions are updated async
+			var aConditions = oField3.getConditions();
+			var oCondition = aConditions.length === 1 && aConditions[0];
+			assert.deepEqual(oCondition.values, ["A", "Text A"], "Condition ok");
+
+			oField3.setConditions([Condition.createItemCondition("B", "Text B")]); // fake user input
+			oModel.checkUpdate(true); // otherwise following test behave strange
+			assert.equal(oModel.getData().items[0].key, "B", "Key updated in Model");
+			assert.equal(oModel.getData().items[0].description, "Text B", "Description updated in Model");
+
+			oField3.setConditions([]); // fake user clears field
+			oModel.checkUpdate(true); // otherwise following test behave strange
+			assert.equal(oModel.getData().items[0].key, "", "Key updated in Model");
+			assert.equal(oModel.getData().items[0].description, "", "Description updated in Model");
+
+			fnDone();
 		}, 0);
 
 	});
