@@ -149,6 +149,21 @@
                 <module>sap/m/plugins/DataStateIndicator</module>
                 <module>sap/m/plugins/ColumnResizer</module>
                 <module>sap/m/plugins/PasteProvider</module>
+                <module>sap/m/table/columnmenu/ActionItem</module>
+                <module>sap/m/table/columnmenu/Category</module>
+                <module>sap/m/table/columnmenu/Entry</module>
+                <module>sap/m/table/columnmenu/Item</module>
+                <module>sap/m/table/columnmenu/ItemBase</module>
+                <module>sap/m/table/columnmenu/Menu</module>
+                <module>sap/m/table/columnmenu/QuickAction</module>
+                <module>sap/m/table/columnmenu/QuickActionBase</module>
+                <module>sap/m/table/columnmenu/QuickActionItem</module>
+                <module>sap/m/table/columnmenu/QuickGroup</module>
+                <module>sap/m/table/columnmenu/QuickGroupItem</module>
+                <module>sap/m/table/columnmenu/QuickSort</module>
+                <module>sap/m/table/columnmenu/QuickSortItem</module>
+                <module>sap/m/table/columnmenu/QuickTotal</module>
+                <module>sap/m/table/columnmenu/QuickTotalItem</module>
             </modules>
         </component>
     </ownership>
