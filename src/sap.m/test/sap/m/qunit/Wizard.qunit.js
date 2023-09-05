@@ -7,8 +7,9 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/ui/base/ObjectPool",
 	"sap/m/library",
-	"sap/ui/thirdparty/jquery"
-], function(Log, Core, Wizard, WizardStep, Button, ObjectPool, library, jQuery) {
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/core/Configuration"
+], function(Log, Core, Wizard, WizardStep, Button, ObjectPool, library, jQuery, Configuration) {
 	"use strict";
 
 	// shortcut for sap.m.PageBackgroundDesign
@@ -616,6 +617,29 @@ sap.ui.define([
 		assert.ok(!$oDomRef.hasClass("sapMWizardBgStandard"), "HTML class for Standard is not set");
 		assert.ok(!$oDomRef.hasClass("sapMWizardBgTransparent"), "HTML class for Transparent is not set");
 		assert.ok($oDomRef.hasClass("sapMWizardBgList"), "HTML class for List is set");
+	});
+
+	QUnit.test("insertStep should work when designMode is true", function (assert) {
+		this.stub(Configuration, "getDesignMode").returns(true);
+		var oWizard = new Wizard();
+		var oFirstStep = new WizardStep({ title: "First" });
+		var oSecondStep = new WizardStep({ title: "Second" });
+
+		oWizard.insertStep(oFirstStep);
+		oWizard.insertStep(oSecondStep, 0);
+
+		assert.strictEqual(oWizard.getSteps().length, 2, "two steps should be in the wizard");
+		assert.strictEqual(oWizard.getSteps()[0], oSecondStep, "Second step should be inserted on 0 position");
+	});
+
+	QUnit.test("removeStep should work when designMode is true", function (assert) {
+		this.stub(Configuration, "getDesignMode").returns(true);
+		var oStep = new WizardStep({ title: "First" });
+		var oWizard = new Wizard({ steps: [oStep] });
+
+		oWizard.removeStep(oStep);
+
+		assert.strictEqual(oWizard.getSteps().length, 0, "No steps should be in the wizard");
 	});
 
 	QUnit.module("Methods");
