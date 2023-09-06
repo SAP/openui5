@@ -244,7 +244,7 @@ sap.ui.define([
 		this.getConfig("additionalColumnWidth", $Cells, $ClonedCells);
 		this._$Container.append($HiddenArea);
 		var iWidth = Math.round($HiddenArea.append($ClonedCells)[0].getBoundingClientRect().width);
-		var iDistanceX = iWidth - oSession.fCurrentColumnWidth;
+		var iDistanceX = bRTL ? oSession.fCurrentColumnWidth - iWidth : iWidth - oSession.fCurrentColumnWidth;
 		$HiddenArea.remove();
 
 		return iDistanceX;
@@ -357,6 +357,13 @@ sap.ui.define([
 			oSession.iMaxIncrease = oSession.iEmptySpace + oSession.fNextColumnWidth - this._getColumnMinWidth(oSession.oNextColumn);
 		} else {
 			oSession.iMaxIncrease = window.innerWidth;
+		}
+
+		if (bRTL) {
+			oSession.iMaxDecrease = this._getColumnMinWidth(oSession.oNextColumn) - oSession.fNextColumnWidth;
+			if (oSession.iEmptySpace != -1) {
+				oSession.iMaxIncrease = oSession.iEmptySpace + oSession.fCurrentColumnWidth - this._getColumnMinWidth(oSession.oCurrentColumn);
+			}
 		}
 	};
 
