@@ -1514,6 +1514,14 @@ sap.ui.define([
 					this.oTable._oTable = null;
 					this.oTable.destroyNoData();
 					assert.equal(this.oTable.getNoData(), null);
+
+					var oNodata = new Text("foo");
+					this.oTable.setNoData(oNodata);
+					assert.equal(this.oTable.getNoData(), oNodata);
+					this.oTable._oTable = null;
+					var oDestroyNodataSpy = sinon.spy(this.oTable._vNoData, "destroy");
+					this.oTable.destroyNoData();
+					assert.ok(oDestroyNodataSpy.calledOnce);
 					done();
 				}.bind(this));
 			}.bind(this));
@@ -4323,10 +4331,9 @@ sap.ui.define([
 			assert.equal(oContextMenu, this.oTable._oTable.getContextMenu(), "Context menu set on inner table is same on mdc table");
 			assert.equal(oContextMenu.getItems()[0].getText(), "Test B", "ContextMenu with text Test B is shown");
 			TableQUnitUtils.waitForBinding(this.oTable).then(function() {
-				this.oTable._oTable = null;
-				this.oTable.destroyContextMenu();
-				assert.equal(this.oTable.getContextMenu(), null, "Context menu is set to null on mdc table");
+				oDestroyContextmenuSpy = sinon.spy(this.oTable._oContextMenu, "destroy");
 				this.oTable.destroy();
+				assert.ok(oDestroyContextmenuSpy.callCount, 2, "ContextMenu destroyed");
 				assert.equal(this.oTable.getContextMenu(), null, "Contextmenu destroyed");
 				done();
 			}.bind(this));
