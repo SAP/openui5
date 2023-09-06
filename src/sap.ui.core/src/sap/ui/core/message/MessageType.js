@@ -13,7 +13,7 @@
 	 * @since 1.118
 	 * @alias module:sap/ui/core/message/MessageType
 	 */
-	var MessageType = {
+	const MessageType = {
 
 		/**
 		 * Message should be just an information

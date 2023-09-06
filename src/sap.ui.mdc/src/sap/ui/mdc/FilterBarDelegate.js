@@ -15,7 +15,8 @@ sap.ui.define(["sap/ui/mdc/AggregationBaseDelegate", "sap/ui/mdc/enums/FilterBar
 	 * @author SAP SE
 	 * @public
 	 * @since 1.61.0
-	 * @alias sap.ui.mdc.FilterBarDelegate
+	 * @alias module:sap.ui.mdc.FilterBarDelegate
+	 * @extends module:sap/ui/mdc/AggregationBaseDelegate
 	 */
 	var FilterBarDelegate = Object.assign({}, AggregationBaseDelegate);
 

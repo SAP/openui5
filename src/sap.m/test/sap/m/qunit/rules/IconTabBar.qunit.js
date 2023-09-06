@@ -199,7 +199,7 @@ sap.ui.define([
 		executionScopeType: "subtree",
 		executionScopeSelectors: "myPage",
 		libName: "sap.m",
-		ruleId: "iconTabFilterWithHorizontalDesingShouldHaveIcons",
+		ruleId: "iconTabFilterWithHorizontalDesignShouldHaveIcons",
 		expectedNumberOfIssues: 2
 	});
 

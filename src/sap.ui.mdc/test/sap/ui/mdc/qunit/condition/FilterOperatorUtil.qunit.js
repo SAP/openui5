@@ -336,7 +336,7 @@ sap.ui.define([
 		oDateTimeWithTimezoneType1._aCurrentValue = ["2022-02-24T12:15:30Z", "Europe/Berlin"];
 		var oDateTimeWithTimezoneType2 = new DateTimeWithTimezoneType({showTimezone: true, showDate: false, showTime: false});
 		oDateTimeWithTimezoneType2._aCurrentValue = ["2022-02-24T12:15:30Z", "Europe/Berlin"];
-		var oDateTimeOffsetType = new DateTimeOffsetType({}, {V4: true});
+		var oDateTimeOffsetType = new DateTimeOffsetType({}, {V4: true, nullable: false});
 		var sDateTimeFormatted = oDateTimeOffsetType.formatValue("2023-07-31T07:42:30Z", "string");
 		var sDateTimeParsed = oDateTimeOffsetType.parseValue(sDateTimeFormatted, "string");
 
@@ -534,6 +534,18 @@ sap.ui.define([
 						parseArgs: ["1 (X)", oIntType, FieldDisplay.ValueDescription, true, undefined, oDateTimeOffsetType, undefined],
 						exception: true,
 						valid: false,
+						type: oIntType,
+						additionalType : oDateTimeOffsetType
+					},
+					{
+						formatArgs: [Condition.createCondition("EQ", [5]), oIntType, FieldDisplay.Description, true, undefined, oDateTimeOffsetType, undefined],
+						formatValue: "5",
+						parseArgs: ["1", oIntType, FieldDisplay.Value, true, undefined, oDateTimeOffsetType, undefined],
+						parsedValue: "1",
+						condition: Condition.createCondition("EQ", [1], undefined, undefined, ConditionValidated.NotValidated),
+						isEmpty: false,
+						exception: false,
+						valid: true,
 						type: oIntType,
 						additionalType : oDateTimeOffsetType
 					}

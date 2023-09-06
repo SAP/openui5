@@ -117,7 +117,8 @@ sap.ui.define([
 	 */
 	ObjectHeaderRenderer._computeChildControlsToBeRendered = function(oOH){
 		oOH.__controlsToBeRendered = {};
-		var aChildren = oOH.getAttributes();
+		var aChildren = oOH.getAttributes(),
+			oChild;
 		for (var i = 0; i < aChildren.length; i++) {
 			oOH.__controlsToBeRendered[aChildren[i].getId()] = aChildren[i];
 		}
@@ -125,14 +126,7 @@ sap.ui.define([
 		for (var i = 0; i < aChildren.length; i++) {
 			oOH.__controlsToBeRendered[aChildren[i].getId()] = aChildren[i];
 		}
-		var oChild = null;
-		if (oChild) {
-			oOH.__controlsToBeRendered[oChild.getId()] = oChild;
-		}
-		oChild = null;
-		if (oChild) {
-			oOH.__controlsToBeRendered[oChild.getId()] = oChild;
-		}
+
 		oChild = oOH.getAggregation("_objectNumber");
 		if (oChild) {
 			oOH.__controlsToBeRendered[oChild.getId()] = oChild;

@@ -632,45 +632,6 @@ sap.ui.define([
 
 		/**
 		 * @private
-		 * @param {string} markerType the type of the marker which should be created to updated
-		 * @param {boolean} bMarked visibility of the marker
-		 * @returns {this} this pointer for chaining
-		 */
-		ObjectHeader.prototype._setOldMarkers = function (markerType, bMarked) {
-			var aAllMarkers = this.getMarkers(),
-				bHasMarker = false,
-				i,
-				oIds = {
-					Flagged : "-flag",
-					Favorite : "-favorite"
-				};
-
-			this.setProperty("mark" + markerType, bMarked, false);
-
-			bMarked = false;
-
-			for (i = 0; i < aAllMarkers.length; i++) {
-				if (aAllMarkers[i].getType() === markerType) {
-					bHasMarker = true;
-					aAllMarkers[i].setVisible(bMarked);
-
-					break;
-				}
-			}
-
-			if (!bHasMarker) {
-				this.insertAggregation("markers", new ObjectMarker({
-					id: this.getId() + oIds[markerType],
-					type: markerType,
-					visible: bMarked
-				}));
-			}
-
-			return this;
-		};
-
-		/**
-		 * @private
 		 * @returns {sap.m.ObjectMarker[]} The visible markers
 		 */
 		ObjectHeader.prototype._getVisibleMarkers = function() {
@@ -1148,7 +1109,8 @@ sap.ui.define([
 		 * @returns {boolean} IF there is status
 		 */
 		ObjectHeader.prototype._hasStatus = function() {
-			var bHasStatus = (null);
+			var bHasStatus = false;
+
 
 			if (!bHasStatus && this.getStatuses() && this.getStatuses().length > 0) {
 				var statuses = this.getStatuses();

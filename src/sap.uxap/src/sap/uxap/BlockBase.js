@@ -507,6 +507,10 @@ sap.ui.define([
 		 * @private
 		 */
 		BlockBase.prototype._afterViewInstantiated = function (oView, sMode) {
+			if (this._bIsBeingDestroyed) {
+				return;
+			}
+
 			var oController = oView.getController();
 
 			//link to the controller defined in the Block
