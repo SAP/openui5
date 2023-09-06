@@ -3579,11 +3579,11 @@ sap.ui.define([
 	/**
 	 * Returns the configuration for the additional data type.
 	 *
-	 * In {@link sap.ui.mdc.Field Field} case it is determined from the binding of the <code>additionalValue</code>
-	 * In {@link sap.ui.mdc.MultiValueField MultiValueField} case it is determined from the binding of <code>description</code> of an item
-	 * In {@link sap.ui.mdc.FilterField FilterField} case it is provided via <code>additionalDataType</code> property.
+	 * For a {@link sap.ui.mdc.Field Field}, the data type is determined from the binding of the <code>additionalValue</code>.
+	 * For a {@link sap.ui.mdc.MultiValueField MultiValueField}, the data type is determined from the binding of the <code>description</code> of an item.
+	 * For a {@link sap.ui.mdc.FilterField FilterField}, the data type is provided via the <code>additionalDataType</code> property.
 	 *
-	 * @returns {sap.ui.model.Type|object} return a type instance ot a configuration object
+	 * @returns {sap.ui.model.Type|object} Type instance of a configuration object
 	 * @protected
 	 * @since 1.118.0
 	 */
