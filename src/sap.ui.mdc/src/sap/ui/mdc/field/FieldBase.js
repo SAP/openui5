@@ -2265,9 +2265,11 @@ sap.ui.define([
 	 */
 	FieldBase.prototype.resetInvalidInput = function(bRemoveUIMessage) {
 
-		this._oInvalidInput = null;
-		if (bRemoveUIMessage) {
-			this._removeUIMessage(); // to be sure that valueState is removed, even for Unit fields
+		if (this._oInvalidInput) { // only remove valueStates set from parsing/validating, valueState set from outside should only be removed from outside
+			this._oInvalidInput = null;
+			if (bRemoveUIMessage) {
+				this._removeUIMessage(); // to be sure that valueState is removed, even for Unit fields
+			}
 		}
 
 	};
