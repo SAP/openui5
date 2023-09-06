@@ -3358,22 +3358,19 @@ sap.ui.define([
 
 		await this.createView(assert, sView, oModel);
 
-		this.expectRequest("SalesOrderList('1')?$select=SalesOrderID"
-				+ "&$expand=SO_2_BP($select=BusinessPartnerID)", {
-				SalesOrderID : "1",
-				SO_2_BP : {BusinessPartnerID : "3"}
-			})
+		this.expectRequest("SalesOrderList('1')/SO_2_BP?$select=BusinessPartnerID",
+				{BusinessPartnerID : "3"})
 			.expectChange("bp", "3");
 
 		const oForm = this.oView.byId("form");
-		oForm.setBindingContext(oModel.bindContext("/SalesOrderList('1')").getBoundContext());
+		oForm.setBindingContext(oModel.createBindingContext("/SalesOrderList('1')"));
 
 		await this.waitForChanges(assert, "1st bind");
 
 		this.expectRequest("SalesOrderList('1')/SO_2_BP?$select=BusinessPartnerID,CompanyName",
 				{BusinessPartnerID : "3", CompanyName : "SAP"});
 
-		const oInnerBinding = this.oView.byId("form").getObjectBinding();
+		const oInnerBinding = oForm.getObjectBinding();
 		const [sCompanyName1] = await Promise.all([
 			oInnerBinding.getBoundContext().requestProperty("CompanyName"),
 			this.waitForChanges(assert, "1st requestProperty")
@@ -3384,22 +3381,23 @@ sap.ui.define([
 		this.expectRequest("SalesOrderList('2')?$select=SalesOrderID"
 				+ "&$expand=SO_2_BP($select=BusinessPartnerID)", {
 				SalesOrderID : "2",
-				SO_2_BP : {BusinessPartnerID : "3"}
-			});
+				SO_2_BP : {BusinessPartnerID : "4"}
+			})
+			.expectChange("bp", "4");
 
 		oForm.setBindingContext(oModel.bindContext("/SalesOrderList('2')").getBoundContext());
 
 		await this.waitForChanges(assert, "2nd bind");
 
 		this.expectRequest("SalesOrderList('2')/SO_2_BP?$select=BusinessPartnerID,CompanyName",
-				{BusinessPartnerID : "3", CompanyName : "SAP"});
+				{BusinessPartnerID : "4", CompanyName : "TECUM"});
 
 		const [sCompanyName2] = await Promise.all([
 			oInnerBinding.getBoundContext().requestProperty("CompanyName"),
 			this.waitForChanges(assert, "2nd requestProperty")
 		]);
 
-		assert.strictEqual(sCompanyName2, "SAP");
+		assert.strictEqual(sCompanyName2, "TECUM");
 	});
 
 	//*********************************************************************************************
