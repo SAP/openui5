@@ -31,7 +31,14 @@ sap.ui.define([
 	"sap/ui/core/ListItem",
 	"sap/base/util/merge",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+    "sap/m/List", // needed for FixedList getContent
+    "sap/m/DisplayListItem", // needed for FixedList getContent
+    "sap/m/library", // needed for FixedList getContent
+    "sap/ui/model/Filter", // needed for FixedList getContent
+    "sap/ui/model/Sorter", // needed for FixedList getContent
+    "sap/ui/model/base/ManagedObjectModel", // needed for FixedList getContent
+    "sap/base/strings/whitespaceReplacer" // needed for FixedList getContent
 ], function(
 		jQuery,
 		qutils,
@@ -61,7 +68,14 @@ sap.ui.define([
 		ListItem,
 		merge,
 		KeyCodes,
-		oCore
+		oCore,
+        List,
+        DisplayListItem,
+        mLibrary,
+        Filter,
+        Sorter,
+        ManagedObjectModel,
+        whitespaceReplacer
 		) {
 	"use strict";
 
