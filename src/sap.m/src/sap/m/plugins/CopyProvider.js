@@ -3,8 +3,10 @@
  * ${copyright}
  */
 
-sap.ui.define(["./PluginBase", "sap/base/Log", "sap/ui/core/Core", "sap/base/strings/formatMessage", "sap/m/OverflowToolbarButton"], function(PluginBase, Log, Core, formatTemplate, OverflowToolbarButton) {
+sap.ui.define(["./PluginBase", "sap/base/Log", "sap/ui/core/Core", "sap/base/strings/formatMessage", "sap/m/OverflowToolbarButton", "../library"], function(PluginBase, Log, Core, formatTemplate, OverflowToolbarButton, library) {
 	"use strict";
+
+	const CopyPreference = library.plugins.CopyPreference;
 
 	/**
 	 * Constructor for a new CopyProvider plugin that can be used to copy table rows to the clipboard.
@@ -84,7 +86,20 @@ sap.ui.define(["./PluginBase", "sap/base/Log", "sap/ui/core/Core", "sap/base/str
 			 *
 			 * @since 1.114
 			 */
-			visible: { type: "boolean", defaultValue: true, invalidate: false }
+			visible: { type: "boolean", defaultValue: true, invalidate: false },
+
+			/**
+			 * This property determines the copy preference when performing a copy operation.
+			 *
+			 * If the property is set to <code>Full</code>, all selected content is copied. This includes selected rows and cells.
+			 *
+			 * If the property is set to <code>Cells</code>, cell selection takes precedence during copying. If cells are selected along
+			 * with rows, only the cell selection is copied.
+			 * If no cells are selected, the row selection is copied.
+			 *
+			 * @since 1.119
+			 */
+			copyPreference: { type: "sap.m.plugins.CopyPreference", defaultValue: CopyPreference.Cells, invalidate: false }
 		},
 		events: {
 			/**
@@ -238,21 +253,23 @@ sap.ui.define(["./PluginBase", "sap/base/Log", "sap/ui/core/Core", "sap/base/str
 		}
 
 		var aSelectionData = [];
+		var aSelectedRowContexts = [];
 		var aAllSelectedRowContexts = [];
 		var bCopySparse = this.getCopySparse();
 		var fnExludeContext = this.getExcludeContext();
-		var oCellSelectorPlugin = PluginBase.getPlugin(oControl, "sap.m.plugins.CellSelector");
+		var oCellSelectorPlugin = PluginBase.getPlugin(this.getParent(), "sap.m.plugins.CellSelector");
 		var mCellSelectionRange = oCellSelectorPlugin && oCellSelectorPlugin.getSelectionRange();
 		var aCellSelectorRowContexts = mCellSelectionRange ? oCellSelectorPlugin.getSelectedRowContexts() : [];
 		var bCellSelectorRowContextsMustBeMerged = Boolean(aCellSelectorRowContexts.length);
 		var bSelectedRowContextsMustBeSparse = bCellSelectorRowContextsMustBeMerged || bCopySparse;
-		var aSelectedRowContexts = this.getConfig("selectedContexts", oControl, bSelectedRowContextsMustBeSparse);
+
+		if (this.getCopyPreference() == CopyPreference.Full || !bCellSelectorRowContextsMustBeMerged) {
+			aSelectedRowContexts = this.getConfig("selectedContexts", oControl, bSelectedRowContextsMustBeSparse);
+			Object.assign(aAllSelectedRowContexts, aSelectedRowContexts);
+		}
 
 		if (bCellSelectorRowContextsMustBeMerged) {
-			aCellSelectorRowContexts = Array(mCellSelectionRange.from.rowIndex).concat(aCellSelectorRowContexts);
-			Object.assign(aAllSelectedRowContexts, aSelectedRowContexts, aCellSelectorRowContexts);
-		} else {
-			aAllSelectedRowContexts = aSelectedRowContexts;
+			Object.assign(aAllSelectedRowContexts, Array(mCellSelectionRange.from.rowIndex).concat(aCellSelectorRowContexts));
 		}
 
 		for (var iContextIndex = 0; iContextIndex < aAllSelectedRowContexts.length; iContextIndex++) {
@@ -267,7 +284,7 @@ sap.ui.define(["./PluginBase", "sap/base/Log", "sap/ui/core/Core", "sap/base/str
 				var aRowData = [];
 				var bContextFromSelectedRows = (oRowContext == aSelectedRowContexts[iContextIndex]);
 				aSelectableColumns.forEach(function(oColumn, iColumnIndex) {
-					if (bContextFromSelectedRows || (iColumnIndex >= mCellSelectionRange.from.colIndex && iColumnIndex <= mCellSelectionRange.to.colIndex)) {
+					if (bContextFromSelectedRows || (iColumnIndex >= mCellSelectionRange?.from.colIndex && iColumnIndex <= mCellSelectionRange?.to.colIndex)) {
 						var vCellData = fnExtractData(oRowContext, oColumn);
 						if (isCellValueCopyable(vCellData)) {
 							aRowData.push[Array.isArray(vCellData) ? "apply" : "call"](aRowData, vCellData);
