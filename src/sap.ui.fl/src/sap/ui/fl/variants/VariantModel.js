@@ -1487,6 +1487,7 @@ sap.ui.define([
 	VariantModel.prototype.destroy = function() {
 		this.oDataSelector.removeUpdateListener(this.fnUpdateListener);
 		VariantManagementState.clearRuntimeSteadyObjects(this.sFlexReference, this.oAppComponent.getId());
+		VariantManagementState.resetCurrentVariantReference(this.sFlexReference);
 		JSONModel.prototype.destroy.apply(this);
 	};
 

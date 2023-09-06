@@ -325,10 +325,15 @@ sap.ui.define([
 	};
 
 	/**
-	 * Test function to reset all current variant references.
+	 * Removes the saved current variant from the internal map for the given reference
+	 *
+	 * @param {string} sReference - Flex Reference of the app
 	 */
-	VariantManagementState.resetCurrentVariantReferences = function() {
-		mCurrentVariantReferences = {};
+	VariantManagementState.resetCurrentVariantReference = function(sReference) {
+		delete mCurrentVariantReferences[sReference];
+		oVariantManagementMapDataSelector.checkUpdate({
+			reference: sReference
+		});
 	};
 
 	/**
