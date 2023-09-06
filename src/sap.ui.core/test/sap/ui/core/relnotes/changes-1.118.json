@@ -1,7 +1,40 @@
 {
   "1.118.0": {
-    "date": "August 2023",
+    "date": "September 2023",
     "notes": [
+      {
+        "id": "777e4623773e5e1251c00939dd69e8a5bcfd0391",
+        "type": "FIX",
+        "text": " sap.ui.model.type.DateInterval#parseValue: no milliseconds at interval end",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400006908592023"
+          }
+        ]
+      },
+      {
+        "id": "47de439045ca287881e44c421d77f9b0823c18f3",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v2.ODataListBinding#_getSkipAndTop: fix calculation of \"iLimit\"",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400006921272023"
+          }
+        ]
+      },
+      {
+        "id": "63622b64cc686a27fbddcaa61b8c7c8e8213c031",
+        "type": "FIX",
+        "text": " Fix Core Qunit tests",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
       {
         "id": "cfea48d7e5044413f637a727468f0111fe29c45f",
         "type": "FEATURE",
