@@ -10,11 +10,11 @@ sap.ui.define([
 	"./_V2Requestor",
 	"sap/base/Log",
 	"sap/ui/base/SyncPromise",
-	"sap/ui/core/cache/CacheManager",
 	"sap/ui/core/Configuration",
+	"sap/ui/core/cache/CacheManager",
 	"sap/ui/thirdparty/jquery"
-], function (_Batch, _GroupLock, _Helper, asV2Requestor, Log, SyncPromise, CacheManager,
-		Configuration, jQuery) {
+], function (_Batch, _GroupLock, _Helper, asV2Requestor, Log, SyncPromise, Configuration,
+		CacheManager, jQuery) {
 	"use strict";
 
 	var mBatchHeaders = { // headers for the $batch request

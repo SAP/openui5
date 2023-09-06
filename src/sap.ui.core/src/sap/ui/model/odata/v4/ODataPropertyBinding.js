@@ -4,6 +4,7 @@
 
 //Provides class sap.ui.model.odata.v4.ODataPropertyBinding
 sap.ui.define([
+	"./Context",
 	"./ODataBinding",
 	"./lib/_Cache",
 	"./lib/_Helper",
@@ -11,9 +12,8 @@ sap.ui.define([
 	"sap/ui/base/SyncPromise",
 	"sap/ui/model/BindingMode",
 	"sap/ui/model/ChangeReason",
-	"sap/ui/model/odata/v4/Context",
 	"sap/ui/model/PropertyBinding"
-], function (asODataBinding, _Cache, _Helper, Log, SyncPromise, BindingMode, ChangeReason, Context,
+], function (Context, asODataBinding, _Cache, _Helper, Log, SyncPromise, BindingMode, ChangeReason,
 		PropertyBinding) {
 	"use strict";
 	/*eslint max-nested-callbacks: 0 */
