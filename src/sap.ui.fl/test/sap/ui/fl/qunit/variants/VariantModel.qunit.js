@@ -229,7 +229,7 @@ sap.ui.define([
 			FlexState.clearState();
 			FlexState.clearRuntimeSteadyObjects("MyComponent", "RTADemoAppMD");
 			VariantManagementState.getVariantManagementMap().clearCachedResult();
-			VariantManagementState.resetCurrentVariantReferences();
+			VariantManagementState.resetCurrentVariantReference();
 			sandbox.restore();
 			this.oModel.destroy();
 			delete this.oFlexController;
@@ -266,8 +266,10 @@ sap.ui.define([
 			assert.ok(this.oDataSelectorUpdateSpy.calledWith(this.oModel.fnUpdateListener), "the update listener was added");
 			var oRemoveSpy = sandbox.spy(VariantManagementState.getVariantManagementMap(), "removeUpdateListener");
 			var oClearSpy = sandbox.spy(VariantManagementState, "clearRuntimeSteadyObjects");
+			var oClearCurrentVariantSpy = sandbox.spy(VariantManagementState, "resetCurrentVariantReference");
 			this.oModel.destroy();
 			assert.ok(oClearSpy.calledOnce, "then fake standard variants were reset");
+			assert.ok(oClearCurrentVariantSpy.calledOnce, "then the saved current variant was reset");
 			assert.ok(oRemoveSpy.calledWith(this.oModel.fnUpdateListener), "the update listener was removed");
 		});
 

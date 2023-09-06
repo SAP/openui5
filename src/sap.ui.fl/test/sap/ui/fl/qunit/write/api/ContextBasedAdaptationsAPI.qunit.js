@@ -1813,7 +1813,6 @@ sap.ui.define([
 	QUnit.module("When ContextBasedAdaptationsAPI.canMigrate and migrate are called", {
 		before: function() {
 			this.oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.fl");
-			VariantManagementState.resetCurrentVariantReferences();
 			var oManifestObj = {
 				"sap.app": {
 					id: "com.sap.test.app"
@@ -1877,7 +1876,6 @@ sap.ui.define([
 			FlexState.clearState();
 			ChangePersistenceFactory._instanceCache = {};
 			ContextBasedAdaptationsAPI.clearInstances(this.mPropertyBag);
-			VariantManagementState.resetCurrentVariantReferences();
 			sandbox.restore();
 		}
 	}, function() {
