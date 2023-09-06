@@ -143,7 +143,18 @@ sap.ui.define([
 	 * @protected
 	 */
 	TableDelegate.getSorters = function(oTable) {
-		return oTable._getSorters();
+		var aSortedProperties = oTable._getSortedProperties();
+		var oPropertyHelper = oTable.getPropertyHelper();
+		var aSorters = [];
+
+		aSortedProperties.forEach(function(oSorter) {
+			if (oPropertyHelper.hasProperty(oSorter.name)) {
+				var sPath = oPropertyHelper.getProperty(oSorter.name).path;
+				aSorters.push(new Sorter(sPath, oSorter.descending));
+			}
+		});
+
+		return aSorters;
 	};
 
 	/**
