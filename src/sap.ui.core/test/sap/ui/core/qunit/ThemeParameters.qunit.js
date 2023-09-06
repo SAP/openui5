@@ -86,11 +86,22 @@ sap.ui.define([
 		});
 	}
 
+	/**
+	 * Test module covers the deprecated sync Parameters.get() API.
+	 * Since the Parameters.get() function is overloaded, only the sync usage is deprecated.
+	 * The asynchronous behavior is tested in a separate QUnit module below.
+	 * This test module also includes some calls to the deprecated Core facade API "loadLibrary".
+	 *
+	 * @deprecated As of version 1.119
+	 */
 	QUnit.module("Parmeters.get (sync)", {
 		before: function() {
 			// For some reasons window.performance.getResourceByType does only return the first 250?!
 			// entries therefore clear the resource timings upfront
 			window.performance.clearResourceTimings();
+
+			// test setup: load legacy.testlib (will be removed in 2.0, together with this QUnit module)
+			sap.ui.getCore().loadLibrary("sap.ui.legacy.testlib");
 		}
 	});
 
