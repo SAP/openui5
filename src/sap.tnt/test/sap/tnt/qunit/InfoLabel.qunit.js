@@ -239,6 +239,7 @@ sap.ui.define([
 		beforeEach: function () {
 			this.InfoLabel = new InfoLabel("iLabel1").placeAt("qunit-fixture");
 			this.InfoLabelNotEmpty = new InfoLabel({text: "Available"}).placeAt("qunit-fixture");
+			this.oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.tnt");
 			sap.ui.getCore().applyChanges();
 		},
 		afterEach: function () {
@@ -246,6 +247,7 @@ sap.ui.define([
 			this.InfoLabel = null;
 			this.InfoLabelNotEmpty.destroy();
 			this.InfoLabelNotEmpty = null;
+			this.oResourceBundle = null;
 		}
 	});
 
@@ -254,13 +256,13 @@ sap.ui.define([
 	});
 
 	QUnit.test("testing if the invisible text is added", function (assert) {
-		assert.strictEqual(this.InfoLabel.getDomRef().getElementsByClassName("sapUiPseudoInvisibleText")[0].textContent, "Empty info label", "InfoLabel initially should have invisible text \"Empty info labell\"");
+		assert.strictEqual(this.InfoLabel.getDomRef().getElementsByClassName("sapUiPseudoInvisibleText")[0].textContent, this.oResourceBundle.getText("INFOLABEL_EMPTY"), "InfoLabel initially should have invisible text \"Empty Info Label\"");
 
 		this.InfoLabel.setText("available");
-		assert.strictEqual(this.InfoLabel.getDomRef().getElementsByClassName("sapUiPseudoInvisibleText")[0].textContent, "Info label", "InfoLabel should have invisible text \"Info label\"");
+		assert.strictEqual(this.InfoLabel.getDomRef().getElementsByClassName("sapUiPseudoInvisibleText")[0].textContent, this.oResourceBundle.getText("INFOLABEL_DEFAULT"), "InfoLabel should have invisible text \"Info Label\"");
 
 		this.InfoLabel.setText("");
-		assert.strictEqual(this.InfoLabel.getDomRef().getElementsByClassName("sapUiPseudoInvisibleText")[0].textContent, "Empty info label", "InfoLabel should have invisible text \"Empty info label\"");
+		assert.strictEqual(this.InfoLabel.getDomRef().getElementsByClassName("sapUiPseudoInvisibleText")[0].textContent, this.oResourceBundle.getText("INFOLABEL_EMPTY"), "InfoLabel should have invisible text \"Empty Info Label\"");
 	});
 
 	QUnit.test("testing if the invisible text class is added", function (assert) {
@@ -269,6 +271,6 @@ sap.ui.define([
 	});
 
 	QUnit.test("testing initially not empty InfoLabel", function (assert) {
-		assert.strictEqual(this.InfoLabelNotEmpty.getDomRef().getElementsByClassName("sapUiPseudoInvisibleText")[0].textContent, "Info label", "InfoLabel initially should have invisible text \"Info label\"");
+		assert.strictEqual(this.InfoLabelNotEmpty.getDomRef().getElementsByClassName("sapUiPseudoInvisibleText")[0].textContent, this.oResourceBundle.getText("INFOLABEL_DEFAULT"), "InfoLabel initially should have invisible text \"Info Label\"");
 	});
 });
