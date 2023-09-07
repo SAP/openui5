@@ -3030,6 +3030,30 @@ sap.ui.define([
 			this.oPC2, "Navigating back twice");
 	});
 
+	QUnit.test("Navigaton buttons disabled when on min/max dates", function(assert) {
+		var oStartDate = this.oPC2.getStartDate();
+
+		// Arrange & Act
+		this.oPC2.setMinDate(new Date(1999, 1, 1, 0, 0, 0));
+		this.oPC2.setStartDate(new Date(1999, 1, 1, 0, 0, 0));
+		this.oPC2._dateNav.setCurrent(new Date(1999, 1, 1, 0, 0, 0));
+
+		// Assert
+		assert.equal(this.oPC2._getHeader()._oPrevBtn.getEnabled(), false, "Back Arrow Is Disabled");
+
+		// Arrange & Act
+		this.oPC2.setMaxDate(new Date(2222,22,22,22,22,22));
+		this.oPC2.setStartDate(new Date(2222,22,22,22,22,22));
+		this.oPC2._dateNav.setCurrent(new Date(2222,22,22,22,22,22));
+
+		// Assert
+		assert.equal(this.oPC2._getHeader()._oNextBtn.getEnabled(), false, "Forward Arrow Is Disabled");
+
+		// Clean
+		this.oPC2.setStartDate(oStartDate);
+		this.oPC2._dateNav.setCurrent(oStartDate);
+	});
+
 	QUnit.test("Selected date is in visible range after navigation", function(assert){
 		this.oPC2._dateNav.setCurrent(new Date(2016, 8, 2));
 		this.oPC2.setStartDate(new Date());
