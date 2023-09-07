@@ -12,7 +12,7 @@ sap.ui.define([
 	'sap/ui/core/mvc/ViewType', // provides sap.ui.core.mvc.ViewType
 	'./CalendarType' // provides sap.ui.core.CalendarType
 ],
-	function(DataType, Library, MessageType, ViewType) {
+	function(DataType, Library, MessageType, ViewType, CalendarType) {
 	"use strict";
 
 	/**
@@ -872,9 +872,9 @@ sap.ui.define([
 		Section : "Section"
 	};
 
-	// Note: the imported module sap/ui/core/CalendarType already defines the global sap.ui.core.CalendarType,
-	// this assignment here is only kept as a reminder
-	// thisLib.CalendarType = CalendarType;
+	// this assignment here is kept so that imports via the library module continue to work
+	// even when the export via globals is abandoned
+	thisLib.CalendarType = CalendarType;
 
 	/**
 	 * @classdesc A string type that represents CSS color values (CSS Color Level 3).
