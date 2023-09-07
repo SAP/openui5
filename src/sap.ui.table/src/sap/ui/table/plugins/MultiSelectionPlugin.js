@@ -142,7 +142,6 @@ sap.ui.define([
 	 */
 	MultiSelectionPlugin.prototype.onDeactivate = function(oTable) {
 		SelectionPlugin.prototype.onDeactivate.apply(this, arguments);
-		oTable.detachFirstVisibleRowChanged(this.onFirstVisibleRowChange, this);
 		oTable.setProperty("selectionMode", SelectionMode.None);
 
 		if (this.oInnerSelectionPlugin) {
