@@ -594,6 +594,10 @@ sap.ui.define([
 		 * @private
 		 */
 		Wizard.prototype.insertStep = function (oWizardStep, iIndex) {
+			if (Core.getConfiguration().getDesignMode()) {
+				return this.insertAggregation("steps", oWizardStep, iIndex);
+			}
+
 			throw new Error("Dynamic step insertion is not yet supported.");
 		};
 
@@ -604,6 +608,10 @@ sap.ui.define([
 		 * @private
 		 */
 		Wizard.prototype.removeStep = function (oWizardStep) {
+			if (Core.getConfiguration().getDesignMode()) {
+				return this.removeAggregation("steps", oWizardStep);
+			}
+
 			throw new Error("Dynamic step removal is not yet supported.");
 		};
 
