@@ -62,8 +62,7 @@ sap.ui.define([
 				oFormatOptions.showTime = false;
 				oFormatOptions.showTimezone = true;
 				var oConstraints = oType.getConstraints();
-				var sName = oType.getMetadata().getName();
-				var TypeClass = ObjectPath.get(sName);
+				var TypeClass = oType.getMetadata().getClass();
 				oContentFactory.setUnitType(new TypeClass(oFormatOptions, oConstraints));
 			} else {
 				DateContent._adjustDataTypeForDate.apply(this, arguments);

@@ -123,12 +123,15 @@ sap.ui.define([
 		 * <b>Note:</b> The module of the data type needs to be loaded before.
 		 *
 		 * @param {string} sDataType Class path as string where each name is separated by '.'
-		 * @returns {sap.ui.model.SimpleType} creates returns a dataType class
+		 * @returns {function(new: sap.ui.model.SimpleType)} Returns a dataType class
 		 * @private
 		 * @ui5-restricted sap.ui.mdc
 		 */
 		getDataTypeClass: function(sDataType) {
-			var TypeClass = ObjectPath.get(this.getDataTypeClassName(sDataType) || "");
+			var sTypeName = this.getDataTypeClassName(sDataType);
+			var TypeClass = sTypeName
+				? sap.ui.require(sTypeName.replace(/\./g, "/")) || ObjectPath.get(sTypeName)
+				: undefined;
 			if (!TypeClass) {
 				throw new Error("DataType '" + sDataType + "' cannot be determined");
 			}
@@ -277,10 +280,9 @@ sap.ui.define([
 		 * @ui5-restricted sap.ui.mdc
 		 */
 		 getUnitTypeInstance: function(oOriginalType, bShowNumber, bShowMeasure) {
-			var sName = oOriginalType.getMetadata().getName();
+			var TypeClass = oOriginalType.getMetadata().getClass();
 			var oFormatOptions = merge({}, oOriginalType.getFormatOptions()); // for Unit/Currency always set - do not manipulate original object
 			var oConstraints = isEmptyObject(oOriginalType.getConstraints()) ? undefined : merge({}, oOriginalType.getConstraints()); // do not manipulate original object
-			var TypeClass = ObjectPath.get(sName);
 
 			this._adjustUnitFormatOptions(oFormatOptions, bShowNumber, bShowMeasure);
 
