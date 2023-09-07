@@ -1129,10 +1129,10 @@ sap.ui.define([
 			this.sReference = "com.sap.app";
 		},
 		beforeEach: function() {
-			sandbox.stub(Versions, "hasVersionsModel").returns(true);
 			sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([
 				{connector: "LrepConnector", layers: ["ALL"], url: "/sap/bc/lrep"}
 			]);
+			this.oStorageLoadVersionsStub = sandbox.stub(Storage.versions, "load");
 		},
 		afterEach: function() {
 			Versions.clearInstances();
@@ -1155,7 +1155,7 @@ sap.ui.define([
 					activatedAt: "a while ago"
 				}
 			];
-			sandbox.stub(Versions, "getVersionsModel").returns(new JSONModel({
+			var oVersionsModel = new JSONModel({
 				publishVersionEnabled: false,
 				versioningEnabled: true,
 				versions: aOldVersions,
@@ -1167,7 +1167,9 @@ sap.ui.define([
 				persistedVersion: "1",
 				displayedVersion: "1",
 				draftFilenames: ["draftFilename"]
-			}));
+			});
+			sandbox.stub(Versions, "hasVersionsModel").returns(true);
+			sandbox.stub(Versions, "getVersionsModel").returns(oVersionsModel);
 			var aNewVersions = [
 				{
 					version: "1",
@@ -1176,7 +1178,7 @@ sap.ui.define([
 					activatedAt: "a while ago"
 				}
 			];
-			sandbox.stub(Storage.versions, "load").resolves(aNewVersions);
+			this.oStorageLoadVersionsStub.resolves(aNewVersions);
 
 			return Versions.updateModelFromBackend(mPropertyBag).then(function(oVersionModel) {
 				var oData = oVersionModel.getData();
@@ -1191,6 +1193,22 @@ sap.ui.define([
 				assert.equal(oData.persistedVersion, "1", "persistedVersion is correct");
 				assert.equal(oData.displayedVersion, "1", "displayedVersion is correct");
 			});
+		});
+
+		QUnit.test("Versions.updateModelFromBackend is called without versions model available", function(assert) {
+			sandbox.stub(Versions, "hasVersionsModel").returns(false);
+			Versions.updateModelFromBackend({});
+			assert.strictEqual(this.oStorageLoadVersionsStub.callCount, 0, "the update is not called");
+		});
+
+		QUnit.test("Versions.updateModelFromBackend is called with versions model available but versioning not active", function(assert) {
+			var oVersionsModel = new JSONModel({
+				versioningEnabled: false
+			});
+			sandbox.stub(Versions, "hasVersionsModel").returns(true);
+			sandbox.stub(Versions, "getVersionsModel").returns(oVersionsModel);
+			Versions.updateModelFromBackend({});
+			assert.strictEqual(this.oStorageLoadVersionsStub.callCount, 0, "the update is not called");
 		});
 	});
 
