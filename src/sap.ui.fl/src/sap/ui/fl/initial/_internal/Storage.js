@@ -6,16 +6,16 @@ sap.ui.define([
 	"sap/ui/fl/initial/_internal/StorageUtils",
 	"sap/ui/fl/initial/_internal/StorageResultMerger",
 	"sap/ui/fl/initial/_internal/storageResultDisassemble",
+	"sap/ui/fl/initial/_internal/FlexInfoSession",
 	"sap/ui/fl/write/api/Version",
-	"sap/ui/fl/Utils",
-	"sap/ui/fl/write/_internal/FlexInfoSession"
+	"sap/ui/fl/Utils"
 ], function(
 	StorageUtils,
 	StorageResultMerger,
 	storageResultDisassemble,
+	FlexInfoSession,
 	Version,
-	Utils,
-	FlexInfoSession
+	Utils
 ) {
 	"use strict";
 
