@@ -1,13 +1,5 @@
 (function () {
-	'use strict';
-
-	window.addEventListener("message", function (oEvent) {
-		if (oEvent.data.channel === "scrollTo") {
-			document.getElementById(oEvent.data.id).scrollIntoView();
-		}
-	}, false);
-
-	resolveDemokitLinks();
+	"use strict";
 
 	function resolveDemokitLinks() {
 		var aLinks = document.getElementsByTagName("a"),
@@ -18,7 +10,7 @@
 			oLink = aLinks[iInd];
 
 			if (oLink.dataset.demokitHref) {
-				oLink.href = getUrlToDemokit(oLink.dataset.demokitHref);
+				oLink.href = resolveDemokitURL(oLink.dataset.demokitHref);
 			}
 
 			if (oLink.getAttribute("target") === "_blank") {
@@ -27,7 +19,7 @@
 		}
 	}
 
-	function getUrlToDemokit(sUrl) {
+	function resolveDemokitURL(sUrl) {
 		var sCurrentUrl = window.location.href,
 			sDemokitUrl = sCurrentUrl.replace(/sap\/ui\/integration\/.*/, "../");
 
@@ -37,4 +29,7 @@
 
 		return sDemokitUrl + sUrl;
 	}
+
+	resolveDemokitLinks();
+	window.resolveDemokitURL = resolveDemokitURL;
 })();
