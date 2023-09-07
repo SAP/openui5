@@ -109,7 +109,7 @@ sap.ui.define([
 		this.spy(Log, 'error');
 
 		assert.strictEqual(new oRealCore.constructor(), sap.ui.getCore(), "consecutive calls to the constructor should return the facade");
-		sinon.assert.calledWith(Log.error, sinon.match(/Only.*must create an instance of .*Core/).and(sinon.match(/use .*sap.ui.getCore\(\)/)));
+		sinon.assert.calledWith(Log.error, sinon.match(/Only.*must create an instance of .*Core/).and(sinon.match(/use the module export directly without using 'new'/)));
 	});
 
 	QUnit.test("loadLibrary", function(assert) {
