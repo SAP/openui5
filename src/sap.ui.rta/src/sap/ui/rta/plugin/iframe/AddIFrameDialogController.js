@@ -3,6 +3,8 @@
  */
 sap.ui.define([
 	"sap/base/Log",
+	"sap/m/Popover",
+	"sap/m/Text",
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/core/library",
 	"sap/ui/rta/util/validateText",
@@ -13,6 +15,8 @@ sap.ui.define([
 	"sap/ui/rta/plugin/iframe/urlCleaner"
 ], function(
 	Log,
+	Popover,
+	Text,
 	Controller,
 	coreLibrary,
 	validateText,
@@ -29,7 +33,7 @@ sap.ui.define([
 
 	var _aTextInputFields = ["frameUrl", "title"];
 	var _aNumericInputFields = ["frameWidth", "frameHeight"];
-	var _aSelectInputFields = ["frameWidthUnit", "frameHeightUnit"];
+	var _aOtherInputFields = ["frameWidthUnit", "frameHeightUnit", "useLegacyNavigation"];
 
 	function isValidUrl(sUrl) {
 		return IFrame.isValidUrl(encodeURI(sUrl));
@@ -84,8 +88,7 @@ sap.ui.define([
 				return;
 			}
 			var oIFrame = sap.ui.getCore().byId("sapUiRtaAddIFrameDialog_PreviewFrame");
-			oIFrame.setUrl(""); // Resets the preview first
-			//enable/disable expanding the Panel
+			// enable/disable expanding the Panel
 			var oPanel = sap.ui.getCore().byId("sapUiRtaAddIFrameDialog_PreviewLinkPanel");
 			var oPanelButton = oPanel.getDependents()[0];
 			if (sURL) {
@@ -96,6 +99,10 @@ sap.ui.define([
 			}
 			try {
 				this._oJSONModel.setProperty("/previewUrl/value", sURL);
+				this._oJSONModel.setProperty(
+					"/previewUseLegacyNavigation/value",
+					this._oJSONModel.getProperty("/useLegacyNavigation/value")
+				);
 				oIFrame.setUrl(sURL);
 			} catch (oError) {
 				Log.error("Error previewing the URL: ", oError);
@@ -120,6 +127,26 @@ sap.ui.define([
 			var oFilter = new Filter("label", FilterOperator.Contains, oEvent.getParameter("newValue"));
 			var oBinding = sap.ui.getCore().byId("sapUiRtaAddIFrameDialog_ParameterTable").getBinding("items");
 			oBinding.filter([oFilter]);
+		},
+
+		onLegacyNavigationInfoPress: function(oEvent) {
+			var oButton = oEvent.getSource();
+			if (!this._oPopover) {
+				this._oPopover = new Popover(
+					oButton.getId() + "-popover",
+					{
+						showHeader: false,
+						contentWidth: "400px",
+						content: [
+							new Text({
+								text: "{/text/useLegacyNavigationInfo}"
+							}).addStyleClass("sapUiSmallMargin")
+						]
+					}
+				);
+				oButton.addDependent(this._oPopover);
+			}
+			this._oPopover.openBy(oButton);
 		},
 
 		/**
@@ -264,7 +291,7 @@ sap.ui.define([
 		_buildReturnedSettings: function() {
 			var mSettings = {};
 			var oData = this._oJSONModel.getData();
-			_aTextInputFields.concat(_aNumericInputFields, _aSelectInputFields).forEach(function(sFieldName) {
+			_aTextInputFields.concat(_aNumericInputFields, _aOtherInputFields).forEach(function(sFieldName) {
 				var sValue = oData[sFieldName].value;
 				if (sFieldName === "frameUrl") {
 					sValue = urlCleaner(sValue);

@@ -47,7 +47,8 @@ sap.ui.define([
 			url: mSettings.frameUrl,
 			width: sWidth,
 			height: sHeight,
-			title: mSettings.title
+			title: mSettings.title,
+			useLegacyNavigation: mSettings.useLegacyNavigation
 		}, oDesignTimeMetadata, sVariantManagementKey);
 	}
 

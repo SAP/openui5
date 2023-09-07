@@ -197,9 +197,12 @@
 									class="sapUiRtaAddIFrameDialogPreviewLinkTitle"
 									text="{/text/previewUrlLabel}" />
 								<ToolbarSpacer />
-								<Button id="sapUiRtaAddIFrameDialog_PreviewButton" enabled="{=${/previewUrl/value} !== ${/frameUrl/value} }"
-										text="{=${/previewUrl/value} === '' ? ${/text/showPreviewButton} : ${/text/updatePreviewButton} }" press="onShowPreview"
-										class="sapUiTinyMarginTop sapUiRtaAddIFrameDialogPreviewButton" />
+								<Button
+									id="sapUiRtaAddIFrameDialog_PreviewButton"
+									enabled="{=${/previewUrl/value} !== ${/frameUrl/value} || ${/previewUseLegacyNavigation/value} !== ${/useLegacyNavigation/value}}"
+									text="{=${/previewUrl/value} === '' ? ${/text/showPreviewButton} : ${/text/updatePreviewButton} }"
+									press="onShowPreview"
+									class="sapUiTinyMarginTop sapUiRtaAddIFrameDialogPreviewButton" />
 							</OverflowToolbar>
 						</headerToolbar>
 						<content>
@@ -229,11 +232,51 @@
 								text="{/text/previewUrlMessage}" textAlign="Center" visible="{= !${/previewUrl/value} }" />
 							<util:IFrame
 									id="sapUiRtaAddIFrameDialog_PreviewFrame"
+									height="100%"
 									title="{/text/previewFrameLabel}"
+									useLegacyNavigation="{/previewUseLegacyNavigation/value/}"
 									class="sapUiRtaAddIFrameDialogPreviewFrame"
 									visible="{= !!${/previewUrl/value} }"/>
 						</items>
 					</VBox>
+				</layout:Grid>
+				<layout:Grid
+					class="sapUiRtaAddIFrameDialogPreviewLinkGrid"
+					containerQuery="true"
+					defaultSpan="XL12 L12 M12 S12">
+					<Panel
+						expandable="true"
+						width="auto"
+						expanded="false"
+						class="sapUiResponsiveMargin sapUiRtaAddIFrameDialogPreviewLinkPanel">
+						<headerToolbar>
+							<OverflowToolbar
+									class="sapUiRtaAddIFrameDialogPreviewLinkToolbar" height="3rem" style="Clear">
+								<Title
+									class="sapUiRtaAddIFrameDialogPreviewLinkTitle"
+									text="{/text/advancedSettingsTitle}" />
+								<ToolbarSpacer />
+							</OverflowToolbar>
+						</headerToolbar>
+						<content>
+							<HBox
+								alignItems="Center"
+								class="sapUiRtaAddIFrameDialogLegacyNavigationContainer">
+								<Switch
+									id="sapUiRtaAddIFrameDialog_UseLegacyNavigationToggle"
+									customTextOn=" "
+									customTextOff=" "
+									state="{/useLegacyNavigation/value}" />
+								<Label
+									text="{/text/useLegacyNavigationLabel}" />
+								<Button
+									icon="sap-icon://hint"
+									type="Transparent"
+									press="onLegacyNavigationInfoPress"
+									ariaHasPopup="Dialog" />
+								</HBox>
+						</content>
+					</Panel>
 				</layout:Grid>
 			</layout:VerticalLayout>
 
