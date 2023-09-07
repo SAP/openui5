@@ -59,10 +59,14 @@ sap.ui.define([
 	}
 
 	function checkAndAdjustChangeStatus(oControl, oChange, mChangesMap, oFlexController, mPropertyBag) {
-		var mControl = Utils.getControlIfTemplateAffected(oChange, oControl, mPropertyBag);
+		// in case of changes in templates, the original control is not always available at this point
+		// example: rename on a control created by a change inside a template
+		var oOriginalControl = Utils.getControlIfTemplateAffected(oChange, oControl, mPropertyBag).control;
 		var oModifier = mPropertyBag.modifier;
-		var bHasAppliedCustomData = !!FlexCustomData.getAppliedCustomDataValue(mControl.control, oChange, oModifier);
-		var bIsCurrentlyAppliedOnControl = FlexCustomData.hasChangeApplyFinishedCustomData(mControl.control, oChange, oModifier);
+		var bHasAppliedCustomData = oOriginalControl
+			&& !!FlexCustomData.getAppliedCustomDataValue(oOriginalControl, oChange, oModifier);
+		var bIsCurrentlyAppliedOnControl = oOriginalControl
+			&& FlexCustomData.hasChangeApplyFinishedCustomData(oOriginalControl, oChange, oModifier);
 		var bChangeStatusAppliedFinished = oChange.isApplyProcessFinished();
 		var oAppComponent = mPropertyBag.appComponent;
 		if (bChangeStatusAppliedFinished && !bIsCurrentlyAppliedOnControl) {
@@ -78,7 +82,7 @@ sap.ui.define([
 			// scenario: viewCache
 			if (bHasAppliedCustomData) {
 				// if the change was applied, set the revert data fetched from the custom data
-				oChange.setRevertData(FlexCustomData.getParsedRevertDataFromCustomData(mControl.control, oChange, oModifier));
+				oChange.setRevertData(FlexCustomData.getParsedRevertDataFromCustomData(oOriginalControl, oChange, oModifier));
 				oChange.markSuccessful();
 			} else {
 				oChange.markFailed();
