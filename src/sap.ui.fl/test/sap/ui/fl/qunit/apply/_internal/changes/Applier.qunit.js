@@ -259,6 +259,30 @@ sap.ui.define([
 			}.bind(this));
 		});
 
+		QUnit.test("does not crash if control is in template and not available", function(assert) {
+			var oGetControlStub = sandbox.stub(ChangeUtils, "getControlIfTemplateAffected").returns({
+				bTemplateAffected: true,
+				control: undefined,
+				originalControl: this.oControl
+			});
+			var oHasCustomDataSpy = sandbox.spy(FlexCustomData, "hasChangeApplyFinishedCustomData");
+			var oGetCustomDataSpy = sandbox.spy(FlexCustomData, "getAppliedCustomDataValue");
+			var fnGetChangesMap = function() {
+				return getInitialChangesMap({
+					mChanges: {
+						someId: [new Change(getLabelChangeContent("a"))]
+					}
+				});
+			};
+			return Applier.applyAllChangesForControl(fnGetChangesMap, this.oAppComponent, this.oFlexController, this.oControl)
+
+			.then(function() {
+				assert.strictEqual(oGetControlStub.callCount, 1, "the control is evaluated");
+				assert.strictEqual(oHasCustomDataSpy.callCount, 0, "the custom data are not fetched");
+				assert.strictEqual(oGetCustomDataSpy.callCount, 0, "the custom data are not fetched");
+			});
+		});
+
 		QUnit.test("updates change status if change is not applicable (viewCache)", function(assert) {
 			var oChange = new Change(getLabelChangeContent("a"));
 			var fnGetChangesMap = function() {
