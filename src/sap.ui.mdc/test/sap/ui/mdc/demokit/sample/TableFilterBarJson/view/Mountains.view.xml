@@ -19,7 +19,15 @@
 		</f:title>
 		<f:header>
 			<f:DynamicPageHeader pinnable="true">
-				<mdc:FilterBar id="filterbar" delegate="{name: 'mdc/sample/delegate/JSONFilterBarDelegate'}"
+				<mdc:FilterBar id="filterbar" delegate="{
+							name: 'mdc/sample/delegate/JSONFilterBarDelegate',
+							payload: {
+								valueHelp: {
+									name: 'NameValueHelp',
+									range: 'RangeValueHelp'
+								}
+							}
+						}"
 						p13nMode = "Item,Value">
 					<mdc:basicSearchField>
 						<mdc:FilterField delegate="{name: 'sap/ui/mdc/field/FieldBaseDelegate'}"
