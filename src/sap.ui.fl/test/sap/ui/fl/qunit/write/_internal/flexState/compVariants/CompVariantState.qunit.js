@@ -4,22 +4,22 @@ sap.ui.define([
 	"sap/ui/core/Control",
 	"sap/ui/core/Core",
 	"sap/ui/core/UIComponent",
-	"sap/ui/fl/apply/api/SmartVariantManagementApplyAPI",
 	"sap/ui/fl/apply/_internal/flexObjects/CompVariant",
 	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
-	"sap/ui/fl/apply/_internal/flexObjects/UIChange",
 	"sap/ui/fl/apply/_internal/flexObjects/States",
+	"sap/ui/fl/apply/_internal/flexObjects/UIChange",
 	"sap/ui/fl/apply/_internal/flexState/compVariants/CompVariantMerger",
-	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/apply/_internal/flexState/compVariants/Utils",
+	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
+	"sap/ui/fl/apply/api/SmartVariantManagementApplyAPI",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/write/_internal/flexState/compVariants/CompVariantState",
 	"sap/ui/fl/write/_internal/Storage",
 	"sap/ui/fl/write/_internal/Versions",
 	"sap/ui/fl/write/api/Version",
-	"sap/ui/fl/Utils",
 	"sap/ui/fl/Layer",
+	"sap/ui/fl/Utils",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/thirdparty/sinon-4",
 	"test-resources/sap/ui/fl/qunit/FlQUnitUtils"
@@ -27,22 +27,22 @@ sap.ui.define([
 	Control,
 	Core,
 	UIComponent,
-	SmartVariantManagementApplyAPI,
 	CompVariant,
 	FlexObjectFactory,
-	UIChange,
 	States,
+	UIChange,
 	CompVariantMerger,
-	FlexState,
 	CompVariantUtils,
+	FlexState,
 	ManifestUtils,
+	SmartVariantManagementApplyAPI,
 	Settings,
 	CompVariantState,
 	Storage,
 	Versions,
 	Version,
-	Utils,
 	Layer,
+	Utils,
 	JSONModel,
 	sinon,
 	FlQUnitUtils
@@ -407,14 +407,34 @@ sap.ui.define([
 				persistencyKey: sPersistencyKey
 			})
 			.then(function() {
-				assert.equal(CompVariantState.hasDirtyChanges(sComponentId), false, "hasDirtyChanges is false after persisting all changes");
+				assert.equal(
+					CompVariantState.hasDirtyChanges(sComponentId),
+					false,
+					"hasDirtyChanges is false after persisting all changes"
+				);
 				assert.strictEqual(oWriteStub.callCount, 3, "then the write method was called 3 times,");
 				assert.strictEqual(oUpdateStub.callCount, 0, "no update was called");
 				assert.strictEqual(oRemoveStub.callCount, 0, "and no delete was called");
-				assert.strictEqual(oCompVariantStateMapForPersistencyKey.variants[0].getState(), States.LifecycleState.PERSISTED, "the variant is persisted");
-				assert.strictEqual(oCompVariantStateMapForPersistencyKey.changes[0].getState(), States.LifecycleState.PERSISTED, "the addFavorite change is persisted");
-				assert.strictEqual(oCompVariantStateMapForPersistencyKey.defaultVariants[0].getState(), States.LifecycleState.PERSISTED, "the set default variant is persisted");
-				assert.strictEqual(oCompVariantStateMapForPersistencyKey.defaultVariants[0].getNamespace(), "apps/the.app.component/changes/", "the set default variant change has namespace in the content");
+				assert.strictEqual(
+					oCompVariantStateMapForPersistencyKey.variants[0].getState(),
+					States.LifecycleState.PERSISTED,
+					"the variant is persisted"
+				);
+				assert.strictEqual(
+					oCompVariantStateMapForPersistencyKey.changes[0].getState(),
+					States.LifecycleState.PERSISTED,
+					"the addFavorite change is persisted"
+				);
+				assert.strictEqual(
+					oCompVariantStateMapForPersistencyKey.defaultVariants[0].getState(),
+					States.LifecycleState.PERSISTED,
+					"the set default variant is persisted"
+				);
+				assert.strictEqual(
+					oCompVariantStateMapForPersistencyKey.defaultVariants[0].getNamespace(),
+					"apps/the.app.component/changes/",
+					"the set default variant change has namespace in the content"
+				);
 			})
 			.then(function() {
 				oCompVariantStateMapForPersistencyKey.variants[0].setState(States.LifecycleState.DELETED);
@@ -430,9 +450,17 @@ sap.ui.define([
 				assert.strictEqual(oUpdateStub.callCount, 1, "one update was called");
 				assert.strictEqual(oRemoveStub.callCount, 2, "and two deletes were called");
 				assert.strictEqual(oCompVariantStateMapForPersistencyKey.variants.length, 0, "the variant is cleared");
-				assert.strictEqual(oCompVariantStateMapForPersistencyKey.changes[0].getState(), States.LifecycleState.PERSISTED, "the addFavorite change is persisted");
+				assert.strictEqual(
+					oCompVariantStateMapForPersistencyKey.changes[0].getState(),
+					States.LifecycleState.PERSISTED,
+					"the addFavorite change is persisted"
+				);
 				assert.strictEqual(oCompVariantStateMapForPersistencyKey.defaultVariants.length, 0, "the default variant was cleared");
-				assert.strictEqual(oCompVariantStateMapForPersistencyKey.standardVariantChange, undefined, "the standard variant was cleared");
+				assert.strictEqual(
+					oCompVariantStateMapForPersistencyKey.standardVariantChange,
+					undefined,
+					"the standard variant was cleared"
+				);
 			});
 		});
 
@@ -593,9 +621,17 @@ sap.ui.define([
 			});
 			assert.strictEqual(oChange.getContent().defaultVariantName, this.sVariantId1);
 			assert.strictEqual(oCompVariantStateMapForPersistencyKey.defaultVariants.length, 1, "the change was stored into the map");
-			assert.strictEqual(oCompVariantStateMapForPersistencyKey.defaultVariants[0], oChange, "the change is set under the persistencyKey");
+			assert.strictEqual(
+				oCompVariantStateMapForPersistencyKey.defaultVariants[0],
+				oChange,
+				"the change is set under the persistencyKey"
+			);
 			assert.strictEqual(oChange.getContent().defaultVariantName, this.sVariantId1, "the change content is correct");
-			assert.strictEqual(Object.keys(oCompVariantStateMapForPersistencyKey.byId).length, 1, "one entity for persistencyKeys is present");
+			assert.strictEqual(
+				Object.keys(oCompVariantStateMapForPersistencyKey.byId).length,
+				1,
+				"one entity for persistencyKeys is present"
+			);
 			assert.strictEqual(oChange.getLayer(), Layer.CUSTOMER, "The default layer is set to CUSTOMER");
 			assert.notOk(oChange.getAdaptationId(), "the change does not contain adaptation id");
 
@@ -606,9 +642,17 @@ sap.ui.define([
 				layer: Layer.CUSTOMER
 			});
 			assert.strictEqual(oChange.getContent().defaultVariantName, this.sVariantId2, "the change content was updated");
-			assert.strictEqual(oCompVariantStateMapForPersistencyKey.defaultVariants[0], oChange2, "the change is set under the persistencyKey");
+			assert.strictEqual(
+				oCompVariantStateMapForPersistencyKey.defaultVariants[0],
+				oChange2,
+				"the change is set under the persistencyKey"
+			);
 			assert.strictEqual(oChange, oChange2, "it is still the same change object");
-			assert.strictEqual(Object.keys(oCompVariantStateMapForPersistencyKey.byId).length, 1, "still one entity for persistencyKeys is present");
+			assert.strictEqual(
+				Object.keys(oCompVariantStateMapForPersistencyKey.byId).length,
+				1,
+				"still one entity for persistencyKeys is present"
+			);
 			assert.strictEqual(oChange.getLayer(), Layer.CUSTOMER, "The default layer is still set to CUSTOMER");
 			assert.notOk(oChange.getAdaptationId(), "the change does not contain adaptation id");
 		});
@@ -636,9 +680,16 @@ sap.ui.define([
 			});
 			assert.strictEqual(oChange.getContent().defaultVariantName, this.sVariantId1);
 			assert.strictEqual(oCompVariantStateMapForPersistencyKey.defaultVariants.length, 1, "the change was stored into the map");
-			assert.strictEqual(oCompVariantStateMapForPersistencyKey.defaultVariants[0], oChange, "the change is set under the persistencyKey");
+			assert.strictEqual(
+				oCompVariantStateMapForPersistencyKey.defaultVariants[0],
+				oChange, "the change is set under the persistencyKey"
+			);
 			assert.strictEqual(oChange.getContent().defaultVariantName, this.sVariantId1, "the change content is correct");
-			assert.strictEqual(Object.keys(oCompVariantStateMapForPersistencyKey.byId).length, 1, "one entity for persistencyKeys is present");
+			assert.strictEqual(
+				Object.keys(oCompVariantStateMapForPersistencyKey.byId).length,
+				1,
+				"one entity for persistencyKeys is present"
+			);
 			assert.strictEqual(oChange.getLayer(), Layer.CUSTOMER, "The default layer is set to CUSTOMER");
 			assert.strictEqual(oChange.getAdaptationId(), "test-AdaptationId2", "the change contains correct adaptation id");
 
@@ -652,9 +703,17 @@ sap.ui.define([
 				}
 			});
 			assert.strictEqual(oChange.getContent().defaultVariantName, this.sVariantId2, "the change content was updated");
-			assert.strictEqual(oCompVariantStateMapForPersistencyKey.defaultVariants[0], oChange2, "the change is set under the persistencyKey");
+			assert.strictEqual(
+				oCompVariantStateMapForPersistencyKey.defaultVariants[0],
+				oChange2,
+				"the change is set under the persistencyKey"
+			);
 			assert.strictEqual(oChange, oChange2, "it is still the same change object");
-			assert.strictEqual(Object.keys(oCompVariantStateMapForPersistencyKey.byId).length, 1, "still one entity for persistencyKeys is present");
+			assert.strictEqual(
+				Object.keys(oCompVariantStateMapForPersistencyKey.byId).length,
+				1,
+				"still one entity for persistencyKeys is present"
+			);
 			assert.strictEqual(oChange.getLayer(), Layer.CUSTOMER, "The default layer is still set to CUSTOMER");
 			assert.strictEqual(oChange.getAdaptationId(), "test-AdaptationId2", "the change still contains correct adaptation id");
 		});
@@ -667,7 +726,11 @@ sap.ui.define([
 				persistencyKey: this.sPersistencyKey,
 				layer: Layer.CUSTOMER
 			});
-			assert.strictEqual(Object.keys(oCompVariantStateMapForPersistencyKey.byId).length, 1, "one entity for persistencyKeys is present");
+			assert.strictEqual(
+				Object.keys(oCompVariantStateMapForPersistencyKey.byId).length,
+				1,
+				"one entity for persistencyKeys is present"
+			);
 			assert.strictEqual(oChange.getLayer(), Layer.CUSTOMER, "The default layer is set to CUSTOMER");
 
 			var oChange2 = CompVariantState.setDefault({
@@ -678,7 +741,11 @@ sap.ui.define([
 			});
 			assert.strictEqual(oCompVariantStateMapForPersistencyKey.defaultVariants[1], oChange2,
 				"the new CUSTOMER change is now the the defaultVariant");
-			assert.strictEqual(Object.keys(oCompVariantStateMapForPersistencyKey.byId).length, 2, "still one entity for persistencyKeys is present");
+			assert.strictEqual(
+				Object.keys(oCompVariantStateMapForPersistencyKey.byId).length,
+				2,
+				"still one entity for persistencyKeys is present"
+			);
 			assert.strictEqual(oChange2.getLayer(), Layer.USER, "The default layer is still set to USER");
 		});
 
@@ -717,7 +784,11 @@ sap.ui.define([
 			});
 
 			assert.strictEqual(aDefaultVariants.length, 2, "still 2 changes are present");
-			assert.strictEqual(SmartVariantManagementApplyAPI.getDefaultVariantId({}), this.sVariantId2, "the default variant ID can be determined correct");
+			assert.strictEqual(
+				SmartVariantManagementApplyAPI.getDefaultVariantId({}),
+				this.sVariantId2,
+				"the default variant ID can be determined correct"
+			);
 
 			CompVariantState.revertSetDefaultVariantId({
 				reference: sComponentId,
@@ -725,7 +796,11 @@ sap.ui.define([
 			});
 
 			assert.strictEqual(aDefaultVariants.length, 1, "1 change is remaining");
-			assert.strictEqual(SmartVariantManagementApplyAPI.getDefaultVariantId({}), this.sVariantId1, "the default variant ID can be determined correct");
+			assert.strictEqual(
+				SmartVariantManagementApplyAPI.getDefaultVariantId({}),
+				this.sVariantId1,
+				"the default variant ID can be determined correct"
+			);
 
 			CompVariantState.revertSetDefaultVariantId({
 				reference: sComponentId,
@@ -733,7 +808,11 @@ sap.ui.define([
 			});
 
 			assert.strictEqual(aDefaultVariants.length, 0, "the last change was removed");
-			assert.strictEqual(SmartVariantManagementApplyAPI.getDefaultVariantId({}), "", "the default variant ID can be determined correct");
+			assert.strictEqual(
+				SmartVariantManagementApplyAPI.getDefaultVariantId({}),
+				"",
+				"the default variant ID can be determined correct"
+			);
 		});
 
 		QUnit.test("Given setDefault is called with a already transported Change", function(assert) {
@@ -757,7 +836,11 @@ sap.ui.define([
 			});
 			assert.strictEqual(oCompVariantStateMapForPersistencyKey.defaultVariants[1], oChange2,
 				"the new CUSTOMER change is now the the defaultVariant");
-			assert.strictEqual(Object.keys(oCompVariantStateMapForPersistencyKey.byId).length, 2, "still one entity for persistencyKeys is present");
+			assert.strictEqual(
+				Object.keys(oCompVariantStateMapForPersistencyKey.byId).length,
+				2,
+				"still one entity for persistencyKeys is present"
+			);
 			assert.strictEqual(oChange2.getLayer(), Layer.CUSTOMER, "The default layer of the new Change is set to CUSTOMER");
 		});
 
@@ -769,7 +852,11 @@ sap.ui.define([
 				persistencyKey: this.sPersistencyKey,
 				layer: Layer.USER
 			});
-			assert.strictEqual(Object.keys(oCompVariantStateMapForPersistencyKey.byId).length, 1, "one entity for persistencyKeys is present");
+			assert.strictEqual(
+				Object.keys(oCompVariantStateMapForPersistencyKey.byId).length,
+				1,
+				"one entity for persistencyKeys is present"
+			);
 			assert.strictEqual(oChange.getLayer(), Layer.USER, "The default layer is set to USER");
 
 			var oChange2 = CompVariantState.setDefault({
@@ -780,7 +867,11 @@ sap.ui.define([
 			});
 			assert.strictEqual(oCompVariantStateMapForPersistencyKey.defaultVariants[1], oChange2,
 				"the new CUSTOMER change is now the the defaultVariant");
-			assert.strictEqual(Object.keys(oCompVariantStateMapForPersistencyKey.byId).length, 2, "still one entity for persistencyKeys is present");
+			assert.strictEqual(
+				Object.keys(oCompVariantStateMapForPersistencyKey.byId).length,
+				2,
+				"still one entity for persistencyKeys is present"
+			);
 			assert.strictEqual(oChange2.getLayer(), Layer.CUSTOMER, "The default layer of the new Change is set to CUSTOMER");
 		});
 	});
@@ -853,7 +944,11 @@ sap.ui.define([
 			assert.strictEqual(this.oVariant.getSupportInformation().user, "SAP", "the author is SAP");
 			assert.strictEqual(this.oVariant.getFavorite(), false, "the favorite was set to false for the variant");
 			assert.strictEqual(this.oVariant.getChanges().length, 1, "no change was written");
-			assert.strictEqual(this.oVariant.getChanges()[0].getAdaptationId(), "test-AdaptationId1", "then the correct adaptationId was set");
+			assert.strictEqual(
+				this.oVariant.getChanges()[0].getAdaptationId(),
+				"test-AdaptationId1",
+				"then the correct adaptationId was set"
+			);
 			assert.notOk(this.oVariant.getChanges()[0].getContent().visible, "then visible was set to false");
 		});
 
@@ -904,7 +999,11 @@ sap.ui.define([
 			});
 			assert.strictEqual(this.oVariant.getFavorite(), true, "then the favorite is set to true by the updated change");
 			assert.strictEqual(this.oVariant.getChanges().length, 1, "only one change was written - it gets updated");
-			assert.strictEqual(this.oVariant.getChanges()[0].getContent().variantContent, oUpdatedContent, "the variant content is set correctly");
+			assert.strictEqual(
+				this.oVariant.getChanges()[0].getContent().variantContent,
+				oUpdatedContent,
+				"the variant content is set correctly"
+			);
 		});
 
 		QUnit.test("Given updateVariant is called on a non-updatable variant and a non-updatable change", function(assert) {
@@ -1303,7 +1402,11 @@ sap.ui.define([
 				executeOnSelection: true,
 				layer: Layer.USER
 			});
-			assert.strictEqual(oVariant.getChanges()[0].getContent().executeOnSelection, true, "the original change sets executeOnSelection to true");
+			assert.strictEqual(
+				oVariant.getChanges()[0].getContent().executeOnSelection,
+				true,
+				"the original change sets executeOnSelection to true"
+			);
 			assert.strictEqual(oVariant.getChanges()[0].getContent().favorite, undefined, "the original change does not change favorite");
 			assert.strictEqual(oVariant.getFavorite(), true, "favorite is originally true");
 
@@ -1315,7 +1418,11 @@ sap.ui.define([
 				layer: Layer.USER
 			});
 			assert.strictEqual(oVariant.getChanges().length, 1, "before the revert one updated change is present");
-			assert.strictEqual(oVariant.getChanges()[0].getContent().executeOnSelection, true, "the updated change sets executeOnSelection to true");
+			assert.strictEqual(
+				oVariant.getChanges()[0].getContent().executeOnSelection,
+				true,
+				"the updated change sets executeOnSelection to true"
+			);
 			assert.strictEqual(oVariant.getChanges()[0].getContent().favorite, false, "the updated change sets favorite to false");
 			assert.strictEqual(oVariant.getFavorite(), false, "favorite is set to false");
 
@@ -1325,7 +1432,11 @@ sap.ui.define([
 				persistencyKey: this.sPersistencyKey
 			});
 
-			assert.strictEqual(oVariant.getChanges()[0].getContent().executeOnSelection, true, "the remaining change sets executeOnSelection to true");
+			assert.strictEqual(
+				oVariant.getChanges()[0].getContent().executeOnSelection,
+				true,
+				"the remaining change sets executeOnSelection to true"
+			);
 			assert.strictEqual(oVariant.getChanges()[0].getContent().favorite, undefined, "the remaining change does not change favorite");
 			assert.strictEqual(oVariant.getChanges().length, 1, "one change was written - the change update was reverted");
 			assert.strictEqual(oVariant.getFavorite(), true, "favorite goes back to true on the variant after the revert");
@@ -1429,7 +1540,11 @@ sap.ui.define([
 				assert.strictEqual(oVariant.getRevertData().length, 1, "one revert data entry is present");
 				assert.strictEqual(oVariant.getState(), States.LifecycleState.DIRTY, "the variant has the correct state");
 				assert.strictEqual(Object.keys(oVariant.getContexts()).length, 0, "the variant has the correct contexts");
-				assert.strictEqual(oVariant.getFavorite(), false, "the favorite flag was set correctly (stays the same as before the change)");
+				assert.strictEqual(
+					oVariant.getFavorite(),
+					false,
+					"the favorite flag was set correctly (stays the same as before the change)"
+				);
 				assert.strictEqual(oVariant.getExecuteOnSelection(), true, "the executeOnSelection flag was set correctly");
 				assert.deepEqual(oVariant.getContent(), {}, "the content is correct");
 
@@ -1618,7 +1733,11 @@ sap.ui.define([
 			var aRevertData = oVariant.getRevertData();
 			assert.strictEqual(aRevertData.length, 1, "revertData was stored");
 			var oLastRevertData = aRevertData[0];
-			assert.strictEqual(oLastRevertData.getType(), CompVariantState.operationType.StateUpdate, "it is stored that the state was updated ...");
+			assert.strictEqual(
+				oLastRevertData.getType(),
+				CompVariantState.operationType.StateUpdate,
+				"it is stored that the state was updated ..."
+			);
 			assert.deepEqual(oLastRevertData.getContent(), {previousState: States.LifecycleState.PERSISTED}, "... from PERSISTED");
 
 			CompVariantState.revert({
@@ -1884,7 +2003,11 @@ sap.ui.define([
 				layer: Layer.CUSTOMER
 			});
 			assert.equal(this.oVariant.getChanges().length, 1, "one change was written");
-			assert.equal(this.oVariant.getChanges()[0].getContent().executeOnSelection, true, "the change executeOnSelection is set correct");
+			assert.equal(
+				this.oVariant.getChanges()[0].getContent().executeOnSelection,
+				true,
+				"the change executeOnSelection is set correct"
+			);
 		});
 
 		QUnit.test("Given updateVariant is called in a draft version", function(assert) {
@@ -1900,7 +2023,11 @@ sap.ui.define([
 				layer: Layer.CUSTOMER
 			});
 
-			assert.equal(this.oVariant.convertToFileContent().executeOnSelection, true, "the executeOnSelection was set within the variant");
+			assert.equal(
+				this.oVariant.convertToFileContent().executeOnSelection,
+				true,
+				"the executeOnSelection was set within the variant"
+			);
 		});
 
 		QUnit.test("Given updateVariant is called twice without being a draft version", function(assert) {
@@ -1926,8 +2053,16 @@ sap.ui.define([
 			});
 			assert.equal(oApplyChangesOnVariantSpy.callCount, 2, "and apply two changes");
 			assert.equal(this.oVariant.getChanges().length, 1, "and one change was written");
-			assert.equal(this.oVariant.getChanges()[0].getContent().variantContent, oUpdatedContent, "and the variant content is set correct");
-			assert.equal(this.oVariant.getChanges()[0].getContent().executeOnSelection, true, "and the change executeOnSelection is set correct");
+			assert.equal(
+				this.oVariant.getChanges()[0].getContent().variantContent,
+				oUpdatedContent,
+				"and the variant content is set correct"
+			);
+			assert.equal(
+				this.oVariant.getChanges()[0].getContent().executeOnSelection,
+				true,
+				"and the change executeOnSelection is set correct"
+			);
 		});
 
 		QUnit.test("Given persist is called with parentVersion", function(assert) {
@@ -1984,7 +2119,11 @@ sap.ui.define([
 				assert.equal(oUpdateStub.callCount, 0, "no update was called");
 				assert.equal(oRemoveStub.callCount, 0, "and no delete was called");
 				assert.equal(oWriteStub.getCalls()[0].args[0].parentVersion, sParentVersion, "and parentVersion is set correct");
-				assert.equal(oWriteStub.getCalls()[1].args[0].parentVersion, Version.Number.Draft, "and the second request the parentVersion parmeter is draft a version");
+				assert.equal(
+					oWriteStub.getCalls()[1].args[0].parentVersion,
+					Version.Number.Draft,
+					"and the second request the parentVersion parmeter is draft a version"
+				);
 				assert.equal(oVersionsOnAllChangesSaved.callCount, 3, "and versions.onAllChangesSaved is called three time");
 			})
 			.then(function() {
@@ -2001,7 +2140,11 @@ sap.ui.define([
 				assert.equal(oRemoveStub.callCount, 1, "and one deletes were called");
 				assert.equal(oLoadVersionStub.callCount, 1, "and version.load is called");
 				assert.equal(oUpdateStub.getCalls()[0].args[0].parentVersion, sParentVersion, "and parentVersion is set correct in update");
-				assert.equal(oRemoveStub.getCalls()[0].args[0].parentVersion, Version.Number.Draft, "and parentVersion is set correct in delete");
+				assert.equal(
+					oRemoveStub.getCalls()[0].args[0].parentVersion,
+					Version.Number.Draft,
+					"and parentVersion is set correct in delete"
+				);
 				assert.equal(oVersionsOnAllChangesSaved.callCount, 4, "and versions.onAllChangesSaved is called a fourth time");
 			});
 		});
@@ -2062,8 +2205,16 @@ sap.ui.define([
 				var oVersionModel = Versions.getVersionsModel(mPropertyBag);
 				assert.equal(oVersionModel.getProperty("/draftFilenames").length, 0, "and no draft filename in version model");
 				assert.equal(oVersionModel.getProperty("/versions").length, 1, "and only one version left in version model");
-				assert.equal(oVersionModel.getProperty("/displayedVersion"), 1, "and displayedVersion is same as activeVersion in version model");
-				assert.equal(oVersionModel.getProperty("/persistedVersion"), 1, "and persistedVersion is same as activeVersion in version model");
+				assert.equal(
+					oVersionModel.getProperty("/displayedVersion"),
+					1,
+					"and displayedVersion is same as activeVersion in version model"
+				);
+				assert.equal(
+					oVersionModel.getProperty("/persistedVersion"),
+					1,
+					"and persistedVersion is same as activeVersion in version model"
+				);
 				assert.equal(oVersionsOnAllChangesSaved.callCount, 1, "and versions.onAllChangesSaved is called a one time");
 			});
 		});
