@@ -4556,19 +4556,17 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("getEntryData", function (assert) {
-		var oValue = {},
+		var oValue = {key : "value"},
 			oContext = {
 				getValue : function () {
 					return oValue;
 				}
 			};
 
-		this.mock(JSON).expects("stringify").withExactArgs(sinon.match.same(oValue))
-			.returns("~json~");
-
 		// code under test
 		// Note: not really an instance method
-		assert.strictEqual(ODataListBinding.prototype.getEntryData(oContext), "~json~");
+		assert.strictEqual(ODataListBinding.prototype.getEntryData(oContext),
+			JSON.stringify(oValue));
 	});
 
 	//*********************************************************************************************
