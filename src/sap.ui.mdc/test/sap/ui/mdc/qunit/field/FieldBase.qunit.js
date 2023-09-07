@@ -2721,7 +2721,19 @@ sap.ui.define([
 										assert.equal(oContent2.getValueState(), "Warning", "ValueState on Content2");
 										assert.equal(oContent2.getValueStateText(), "My Warning", "ValueStateText on Content2");
 
-										fnDone();
+										// updating conditions should not reset value state from outside
+										oCondition = Condition.createCondition("EQ", [[567, "USD"]], undefined, undefined, ConditionValidated.NotValidated, {payload: "X"});
+										oField.setConditions([oCondition]);
+										setTimeout(function() { // to wait to update ValueState via binding
+											assert.equal(oField.getValueState(), "Warning", "ValueState after updating condition");
+											assert.equal(oField.getValueStateText(), "My Warning", "ValueStateText on Field");
+											assert.equal(oContent1.getValueState(), "Warning", "ValueState on Content1");
+											assert.equal(oContent1.getValueStateText(), "My Warning", "ValueStateText on Content1");
+											assert.equal(oContent2.getValueState(), "Warning", "ValueState on Content2");
+											assert.equal(oContent2.getValueStateText(), "My Warning", "ValueStateText on Content2");
+
+											fnDone();
+										});
 									});
 								});
 							});

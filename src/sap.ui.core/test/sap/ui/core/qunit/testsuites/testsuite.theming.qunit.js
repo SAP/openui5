@@ -55,7 +55,6 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 			ThemeParameters: {
 				title: "sap.ui.core.theming.Parameters",
 				ui5: {
-					libs: "sap.ui.legacy.testlib",
 					theme: "sap_hcb"
 				},
 				qunit: {

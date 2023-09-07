@@ -561,8 +561,15 @@ sap.ui.define([
 		}
 
 		vValue = this.getResultForChangePromise(aConditions);
-		if (aConditions.length === 0 && !vOldAdditionalValue) {
-			vAdditionalValue = vOldAdditionalValue; // to not update old initial value
+		if (aConditions.length === 0) {
+			if (vOldAdditionalValue) {
+				var oDataType = this.getContentFactory().getAdditionalDataType();
+				if (oDataType) {
+					vAdditionalValue = oDataType.parseValue("", "string"); // we need the empty representation of the data type
+				}
+			} else {
+				vAdditionalValue = vOldAdditionalValue; // to not update old initial value
+			}
 		} else if (aConditions.length === 1 && aConditions[0].values.length > 1) {
 			vAdditionalValue = aConditions[0].values[1];
 		}

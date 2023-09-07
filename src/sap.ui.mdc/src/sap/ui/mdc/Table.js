@@ -1482,6 +1482,8 @@ sap.ui.define([
 	Table.prototype.destroyNoData = function() {
 		if (this._oTable) {
 			this._oTable.destroyNoData(true);
+		} else  if (this._vNoData) {
+			this._vNoData.destroy?.();
 		}
 
 		this._vNoData = null;
