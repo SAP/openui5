@@ -2295,14 +2295,16 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataListBinding.prototype.fireCreateActivate = function (oContext) {
-		if (this.fireEvent("createActivate", {context : oContext}, /*bAllowPreventDefault*/true)) {
-			oContext.finishActivation();
-			this._fireChange({reason : ChangeReason.Change});
-		} else {
-			oContext.cancelActivation();
-			oContext.fetchActivationStarted()
-				.then(this.fireCreateActivate.bind(this, oContext))
-				.catch(this.oModel.getReporter(sClassName));
+		if (!this.bIsBeingDestroyed) {
+			if (this.fireEvent("createActivate", {context : oContext}, /*bAllowPreventDefault*/true)) {
+				oContext.finishActivation();
+				this._fireChange({reason : ChangeReason.Change});
+			} else {
+				oContext.cancelActivation();
+				oContext.fetchActivationStarted()
+					.then(this.fireCreateActivate.bind(this, oContext))
+					.catch(this.oModel.getReporter(sClassName));
+			}
 		}
 	};
 

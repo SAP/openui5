@@ -3796,6 +3796,15 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("fireCreateActivate: do nothing if binding is destroyed", function (assert) {
+		var oBinding = {bIsBeingDestroyed: true},
+			oContext = {};
+
+		// code under test
+		ODataListBinding.prototype.fireCreateActivate.call(oBinding, oContext);
+	});
+
+	//*********************************************************************************************
 	QUnit.test("addComparators: log warning if entity type is unknown", function (assert) {
 		var oBinding = {oEntityType : undefined};
 

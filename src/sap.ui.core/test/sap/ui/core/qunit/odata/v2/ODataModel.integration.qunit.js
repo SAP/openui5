@@ -19249,6 +19249,97 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 	});
 
 	//*********************************************************************************************
+	// Scenario: A table has an inactive created entity and a 'createActivate' event handler
+	// suppresses the activation until all conditions are fulfilled. After re-binding the table the
+	// activation is still only done if all conditions are fulfilled. Destroyed bindings don't
+	// influence the activation.
+	// BCP: 2380123522
+	QUnit.test("ODataListBinding: createActivate-event works with destroyed bindings", function (assert) {
+		var oBinding, oCreatedContext, oTable,
+			oModel = createSalesOrdersModel({defaultBindingMode: BindingMode.TwoWay, refreshAfterChange: false}),
+			sView = '\
+<t:Table id="table" rows="{/BusinessPartnerSet}" visibleRowCount="2">\
+	<Input id="company" value="{CompanyName}"/>\
+</t:Table>',
+			that = this;
+
+		function onCreateActivate(oEvent) {
+			assert.strictEqual(oEvent.getParameter("context"), oCreatedContext);
+			assert.strictEqual(oCreatedContext.isInactive(), true);
+			if (oCreatedContext.getObject("").CompanyName !== "SAP") {
+				oEvent.preventDefault();
+			}
+		}
+
+		this.expectHeadRequest()
+			.expectRequest("BusinessPartnerSet?$skip=0&$top=102", {results: []})
+			.expectValue("company", ["", ""]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oTable = that.oView.byId("table");
+			oBinding = oTable.getBinding("rows");
+
+			that.expectValue("company", "Initial", 0);
+
+			// code under test: attach createActivate on initial binding; create inactive entity
+			oBinding.attachCreateActivate(onCreateActivate);
+			oCreatedContext = oBinding.create({CompanyName: "Initial"}, false, {inactive: true});
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectValue("company", "Foo", 0);
+
+			// code under test: change the value that prevents activation
+			oTable.getRows()[0].getCells()[0].setValue("Foo");
+			oModel.submitChanges();
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest("BusinessPartnerSet?$skip=0&$top=102", {results: []});
+
+			// code under test: rebind table and attach event on new binding
+			oTable.bindRows(oTable.getBindingInfo("rows"));
+			oBinding = oTable.getBinding("rows");
+			oBinding.attachCreateActivate(onCreateActivate);
+			oModel.submitChanges();
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectValue("company", "Bar", 0);
+
+			// code under test: on new binding change value that still not activate the entry
+			oTable.getRows()[0].getCells()[0].setValue("Bar");
+			oModel.submitChanges();
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest({
+					created: true,
+					data: {
+						__metadata: {type: "GWSAMPLE_BASIC.BusinessPartner"},
+						CompanyName: "SAP"
+					},
+					method: "POST",
+					requestUri: "BusinessPartnerSet"
+				}, {
+					data: {
+						__metadata: {uri: "BusinessPartnerSet('42')"},
+						BusinessPartnerID: "42",
+						CompanyName: "SAP"
+					},
+					statusCode: 201
+				})
+				.expectValue("company", "SAP", 0);
+
+			// code under test: change the value that activation is done
+			oTable.getRows()[0].getCells()[0].setValue("SAP");
+			oModel.submitChanges();
+
+			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: For a transient entity, transient sub-entities are created for its :n-navigation
 	// property. The complete deep create object is created in back-end via one POST request.
 	// As per the OData V2 spec, Example 4, 2.2.7.1.1.1 the backend does *not*
