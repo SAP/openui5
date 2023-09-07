@@ -60,39 +60,18 @@ sap.ui.define([
 		});
 
 		/**
-		 * Returns the Id of the control/element currently in focus.
-		 * @return {string} the Id of the control/element currently in focus.
-		 * @public
-		 */
-		FocusHandler.prototype.getCurrentFocusedControlId = function(){
-			var oControl;
-			try {
-				var $Act = jQuery(document.activeElement);
-				if ($Act.is(":focus")) {
-					if (!Element) {
-						Element = sap.ui.require("sap/ui/core/Element");
-					}
-					oControl = Element && Element.closestTo($Act[0]);
-				}
-			} catch (err) {
-				//escape eslint check for empty block
-			}
-			return oControl ? oControl.getId() : null;
-		};
-
-		/**
 		 * Returns the focus info of the current focused control or the control with the given id, if exists.
 		 *
 		 * @see sap.ui.core.FocusHandler#restoreFocus
-		 * @see sap.ui.core.FocusHandler#getCurrentFocusedControlId
 		 * @param {string} [sControlId] the id of the control. If not given the id of the current focused control (if exists) is used
 		 * @return {object} the focus info of the current focused control or the control with the given id, if exists.
 		 * @private
 		 */
 		FocusHandler.prototype.getControlFocusInfo = function(sControlId){
 			var oControl;
+			Element ??= sap.ui.require("sap/ui/core/Element");
 
-			sControlId = sControlId || this.getCurrentFocusedControlId();
+			sControlId = sControlId || Element?.getActiveElement()?.getId();
 
 			if (!sControlId) {
 				return null;

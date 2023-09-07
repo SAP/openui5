@@ -1858,7 +1858,7 @@ sap.ui.define([
 	 *  UI5 Element by traversing up the DOM tree
 	 * @param {boolean} [bIncludeRelated=false] Whether the <code>data-sap-ui-related</code> attribute is also accepted
 	 *  as a selector for a UI5 Element, in addition to <code>data-sap-ui</code>
-	 * @returns {sap.ui.core.Element} The UI5 Element that wraps the given DOM element. <code>undefined</code> is
+	 * @returns {sap.ui.core.Element|undefined} The UI5 Element that wraps the given DOM element. <code>undefined</code> is
 	 *  returned when no UI5 Element can be found.
 	 * @public
 	 * @since 1.106
@@ -1920,6 +1920,24 @@ sap.ui.define([
 	 * @since 1.119
 	 */
 	Element.getElementById = Element.registry.get;
+
+	/**
+	 * Returns the element currently in focus.
+	 *
+	 * @returns {sap.ui.core.Element|undefined} The currently focused element
+	 * @public
+	 * @since 1.119
+	 */
+	Element.getActiveElement = () => {
+		try {
+			var $Act = jQuery(document.activeElement);
+			if ($Act.is(":focus")) {
+				return Element.closestTo($Act[0]);
+			}
+		} catch (err) {
+			//escape eslint check for empty block
+		}
+	};
 
 	/**
 	 * Registry of all <code>sap.ui.core.Element</code>s that currently exist.
