@@ -7,6 +7,7 @@ sap.ui.define([
 	"sap/ui/rta/plugin/iframe/AddIFrameDialogController",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/core/Core",
+	"sap/ui/events/KeyCodes",
 	"sap/ui/model/json/JSONModel"
 ], function(
 	AddIFrameDialog,
@@ -15,6 +16,7 @@ sap.ui.define([
 	AddIFrameDialogController,
 	QUnitUtils,
 	oCore,
+	KeyCodes,
 	JSONModel
 ) {
 	"use strict";
@@ -299,18 +301,16 @@ sap.ui.define([
 
 		QUnit.test("When URL parameter values contain characters that need to be encoded", function(assert) {
 			this.oAddIFrameDialog.attachOpened(function() {
-				var sUrl = "https://example.com/{Product_Category}";
+				const sUrl = "https://example.com/{Product_Category}";
 				this.oAddIFrameDialog._oJSONModel.setProperty("/frameUrl/value", sUrl);
 				this.oAddIFrameDialog._oController.onShowPreview();
-				var oIFrame = oCore.byId("sapUiRtaAddIFrameDialog_PreviewFrame");
-				oIFrame._oSetUrlPromise.then(function() {
-					assert.strictEqual(
-						oIFrame.getUrl(),
-						"https://example.com/Ice%20Cream",
-						"then the preview url is encoded properly"
-					);
-					clickOnCancel();
-				});
+				const oIFrame = oCore.byId("sapUiRtaAddIFrameDialog_PreviewFrame");
+				assert.strictEqual(
+					oIFrame.getUrl(),
+					"https://example.com/Ice%20Cream",
+					"then the preview url is encoded properly"
+				);
+				clickOnCancel();
 			}, this);
 
 			return this.oAddIFrameDialog.open(mParameters);
@@ -344,13 +344,55 @@ sap.ui.define([
 				var oData = this.oAddIFrameDialog._oJSONModel.getData();
 				var bEnabled = !!oData.frameUrl.value;
 				assert.strictEqual(oCore.byId("sapUiRtaAddIFrameDialogSaveButton").getEnabled(), false, "Initial state is disabled");
-				assert.strictEqual(oCore.byId("sapUiRtaAddIFrameDialogSaveButton").getEnabled(), bEnabled, "Initial state of URL-Textarea is empty");
+				assert.strictEqual(
+					oCore.byId("sapUiRtaAddIFrameDialogSaveButton").getEnabled(),
+					bEnabled,
+					"Initial state of URL-Textarea is empty"
+				);
 				oData.frameUrl.value = "https:\\www.sap.com";
 				bEnabled = !!oData.frameUrl.value;
 				updateSaveButtonEnablement(!!oData.frameUrl.value);
-				assert.strictEqual(oCore.byId("sapUiRtaAddIFrameDialogSaveButton").getEnabled(), bEnabled, "Button is enabled wheen URL-Textarea is not empty");
+				assert.strictEqual(
+					oCore.byId("sapUiRtaAddIFrameDialogSaveButton").getEnabled(),
+					bEnabled,
+					"Button is enabled wheen URL-Textarea is not empty"
+				);
 				clickOnCancel();
 			}, this);
+			return this.oAddIFrameDialog.open();
+		});
+
+		QUnit.test("when the useLegacyNavigation switch is toggled", function(assert) {
+			this.oAddIFrameDialog.attachOpened(() => {
+				const oPreviewButton = oCore.byId("sapUiRtaAddIFrameDialog_PreviewButton");
+				assert.notOk(oPreviewButton.getEnabled(), "then the preview button is disabled by default");
+				const oSwitch = oCore.byId("sapUiRtaAddIFrameDialog_UseLegacyNavigationToggle");
+				oSwitch.focus();
+				QUnitUtils.triggerKeyup(oSwitch.getDomRef(), KeyCodes.SPACE);
+				this.oAddIFrameDialog._oController._oJSONModel.refresh();
+				oCore.applyChanges();
+				assert.ok(oPreviewButton.getEnabled(), "then the preview button is enabled after switch was toggled");
+				this.oAddIFrameDialog._oController.onShowPreview();
+				assert.notOk(oPreviewButton.getEnabled(), "then the preview button is disabled after refreshing the preview");
+				clickOnCancel();
+			});
+			return this.oAddIFrameDialog.open();
+		});
+
+		QUnit.test("when an url is entered", function(assert) {
+			this.oAddIFrameDialog.attachOpened(() => {
+				const oUrlTextArea = oCore.byId("sapUiRtaAddIFrameDialog_EditUrlTA");
+				const oPreviewButton = oCore.byId("sapUiRtaAddIFrameDialog_PreviewButton");
+				assert.notOk(oPreviewButton.getEnabled(), "then the preview button is disabled before anything is entered");
+				oUrlTextArea.setValue("someUrl");
+				QUnitUtils.triggerEvent("input", oUrlTextArea.getFocusDomRef());
+				this.oAddIFrameDialog._oController._oJSONModel.refresh();
+				oCore.applyChanges();
+				assert.ok(oPreviewButton.getEnabled(), "then the preview button is enabled after url was entered");
+				this.oAddIFrameDialog._oController.onShowPreview();
+				assert.notOk(oPreviewButton.getEnabled(), "then the preview button is disabled after refreshing the preview");
+				clickOnCancel();
+			});
 			return this.oAddIFrameDialog.open();
 		});
 

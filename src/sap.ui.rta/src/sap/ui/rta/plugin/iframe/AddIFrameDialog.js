@@ -57,10 +57,13 @@ sap.ui.define([
 		selectAdditionalTextPercentHeader: _oTextResources.getText("IFRAME_ADDIFRAME_DIALOG_SELECT_ADDITIONAL_TEXT_PERCENT_HEADER"),
 		selectAdditionalTextVh: _oTextResources.getText("IFRAME_ADDIFRAME_DIALOG_SELECT_ADDITIONAL_TEXT_VH"),
 		selectAdditionalTextPx: _oTextResources.getText("IFRAME_ADDIFRAME_DIALOG_SELECT_ADDITIONAL_TEXT_PX"),
-		selectAdditionalTextRem: _oTextResources.getText("IFRAME_ADDIFRAME_DIALOG_SELECT_ADDITIONAL_TEXT_REM")
+		selectAdditionalTextRem: _oTextResources.getText("IFRAME_ADDIFRAME_DIALOG_SELECT_ADDITIONAL_TEXT_REM"),
+		advancedSettingsTitle: _oTextResources.getText("IFRAME_ADDIFRAME_ADVANCED_SETTINGS"),
+		useLegacyNavigationLabel: _oTextResources.getText("IFRAME_ADDIFRAME_USE_LEGACY_NAVIGATION"),
+		useLegacyNavigationInfo: _oTextResources.getText("IFRAME_ADDIFRAME_USE_LEGACY_NAVIGATION_INFO")
 	};
 
-	function createJSONModel(bSetUpdateTitle, bAsContainer, sFrameWidthValue, sFrameHeightValue) {
+	function createJSONModel(bSetUpdateTitle, bAsContainer, sFrameWidthValue, sFrameHeightValue, bUseLegacyNavigation) {
 		_mText.dialogTitle = bSetUpdateTitle ? _mText.dialogUpdateTitle : _mText.dialogCreateTitle;
 
 		var sSelectAdditionalTextPercent = bAsContainer
@@ -121,7 +124,13 @@ sap.ui.define([
 			}, {
 				unit: "rem",
 				descriptionText: _mText.selectAdditionalTextRem
-			}]
+			}],
+			useLegacyNavigation: {
+				value: !!bUseLegacyNavigation
+			},
+			previewUseLegacyNavigation: {
+				value: !!bUseLegacyNavigation
+			}
 		});
 	}
 
@@ -167,22 +176,12 @@ sap.ui.define([
 	 * @private
 	 */
 	AddIFrameDialog.prototype._createDialog = function(mSettings) {
-		// set the correct title
-		var bSetUpdateTitle;
-		var bAsContainer;
-		var sFrameWidth;
-		var sFrameHeight;
-		if (mSettings) {
-			bSetUpdateTitle = !!mSettings.updateMode;
-			bAsContainer = !!mSettings.asContainer;
-			sFrameWidth = mSettings.frameWidth;
-			sFrameHeight = mSettings.frameHeight;
-		}
 		this._oJSONModel = createJSONModel(
-			bSetUpdateTitle,
-			bAsContainer,
-			sFrameWidth,
-			sFrameHeight
+			!!mSettings?.updateMode,
+			!!mSettings?.asContainer,
+			mSettings?.frameWidth,
+			mSettings?.frameHeight,
+			mSettings?.useLegacyNavigation
 		);
 		this._oController = new AddIFrameDialogController(this._oJSONModel, mSettings);
 		Fragment.load({
