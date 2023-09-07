@@ -930,7 +930,7 @@ sap.ui.define([
 			);
 		});
 
-		QUnit.test("when the variant that was set as default was removed", function(assert) {
+		QUnit.test("when the variant that was set as default was removed and there is no key user default variant", function(assert) {
 			stubFlexObjectsSelector([
 				// Default variant was set via perso change but is no longer available, e.g. because of version switch
 				FlexObjectFactory.createUIChange({
@@ -957,6 +957,70 @@ sap.ui.define([
 				VariantManagementState.getVariantManagementMap().get({ reference: sReference })[sVariantManagementReference].defaultVariant,
 				sVariantManagementReference,
 				"then the default variant falls back to the standard variant"
+			);
+		});
+
+		QUnit.test("when the variant that was set as default is set to hidden (removed by Key User) but there is a key user default variant", function(assert) {
+			stubFlexObjectsSelector([
+				// Key user creates two new variants and sets one to default
+				createVariant({
+					variantReference: sVariantManagementReference,
+					fileName: "KeyUserDefaultVariant"
+				}),
+				createVariant({
+					variantReference: sVariantManagementReference,
+					fileName: "EndUserDefaultVariant"
+				}),
+				FlexObjectFactory.createUIChange({
+					id: "setDefaultVariantChange",
+					layer: Layer.CUSTOMER,
+					changeType: "setDefault",
+					fileType: "ctrl_variant_management_change",
+					selector: {
+						id: sVariantManagementReference
+					},
+					content: {
+						defaultVariant: "KeyUserDefaultVariant"
+					}
+				}),
+				// End user sets the other variant as default
+				FlexObjectFactory.createUIChange({
+					id: "setDefaultVariantChange",
+					layer: Layer.USER,
+					changeType: "setDefault",
+					fileType: "ctrl_variant_management_change",
+					selector: {
+						id: sVariantManagementReference
+					},
+					content: {
+						defaultVariant: "EndUserDefaultVariant"
+					}
+				}),
+				// Key user removes the key user default variant
+				FlexObjectFactory.createUIChange({
+					id: "setVisibleChange",
+					layer: Layer.CUSTOMER,
+					changeType: "setVisible",
+					fileType: "ctrl_variant_change",
+					selector: {
+						id: "EndUserDefaultVariant"
+					},
+					content: {
+						visible: false
+					}
+				})
+			]);
+
+			assert.strictEqual(
+				VariantManagementState.getVariantManagementMap().get({ reference: sReference })[sVariantManagementReference].currentVariant,
+				"KeyUserDefaultVariant",
+				"then the current variant falls back to the key user default variant"
+			);
+
+			assert.strictEqual(
+				VariantManagementState.getVariantManagementMap().get({ reference: sReference })[sVariantManagementReference].defaultVariant,
+				"KeyUserDefaultVariant",
+				"then the default variant falls back to the key user default variant"
 			);
 		});
 	});

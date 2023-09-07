@@ -49,13 +49,18 @@ sap.ui.define([
 			["technicalParameters", VariantsApplyUtil.VARIANT_TECHNICAL_PARAMETER],
 			oComponentData
 		) || [];
-		var aVariantIds = aVariants.map(function(oVariant) {
-			return oVariant.getId();
+
+		// Only visible variants can be current
+		var aVariantKeys = aVariants.filter((oVariant) => {
+			return oVariant.visible;
+		})
+		.map((oVariant) => {
+			return oVariant.key;
 		});
 
 		// Check if variant is set via url parameter
-		var sDesiredSelectedVariantId = aVariantIds.find(function(sVariantId) {
-			return aVariantReferencesFromUrl.includes(sVariantId);
+		var sDesiredSelectedVariantId = aVariantKeys.find((sVariantKey) => {
+			return aVariantReferencesFromUrl.includes(sVariantKey);
 		});
 		if (sDesiredSelectedVariantId) {
 			return sDesiredSelectedVariantId;
@@ -67,45 +72,16 @@ sap.ui.define([
 		// Default is set via applyVariantManagementChange instead
 		return aCtrlVariantManagementChanges
 		.reverse()
-		.map(function(oVariantManagementChange) {
+		.map((oVariantManagementChange) => {
 			return oVariantManagementChange.getContent().defaultVariant;
 		})
-		.find(function(sDesiredDefaultVariantId) {
-			return aVariantIds.includes(sDesiredDefaultVariantId);
+		.find((sDesiredDefaultVariantKey) => {
+			return aVariantKeys.includes(sDesiredDefaultVariantKey);
 		});
 	}
 
-	function createVariantManagement(aFlexObjects, aVariants, sReference, sVMReference) {
+	function createVariantManagement(aFlexObjects, sReference, sVMReference) {
 		var sCurrentVariantReference = (mCurrentVariantReferences[sReference] || {})[sVMReference];
-		var aRelevantVariants = aVariants.filter(function(oFlexObject) {
-			return sVMReference === oFlexObject.getVariantManagementReference();
-		});
-		if (
-			!sCurrentVariantReference
-			// Current variant might be unavailable due to layer filtering
-			// or because a component with a different id but the same flex reference was initalized
-			|| !aRelevantVariants.find(function(oVariant) {
-				return oVariant.getId() === sCurrentVariantReference;
-			})
-		) {
-			// Try to determine the initial variant from setDefault changes or the url params
-			var aCtrlVariantManagementChanges = aFlexObjects.filter(function(oFlexObject) {
-				return (
-					oFlexObject.getFileType() === "ctrl_variant_management_change"
-					&& sVMReference === oFlexObject.getSelector().id
-				);
-			});
-			sCurrentVariantReference = getInitialCurrentVariant(
-				sReference,
-				aCtrlVariantManagementChanges,
-				aRelevantVariants
-			) || sVMReference;
-			ObjectPath.set(
-				[sReference, sVMReference],
-				sCurrentVariantReference,
-				mCurrentVariantReferences
-			);
-		}
 		return {
 			defaultVariant: sVMReference,
 			currentVariant: sCurrentVariantReference,
@@ -171,7 +147,7 @@ sap.ui.define([
 		};
 	}
 
-	function applyVariantChange(oVariantEntry, oVariantChange, sReference, oVariantManagementsMap) {
+	function applyVariantChange(oVariantEntry, oVariantChange) {
 		switch (oVariantChange.getChangeType()) {
 			case "setTitle":
 				oVariantEntry.title = oVariantChange.getText("title");
@@ -184,16 +160,6 @@ sap.ui.define([
 				break;
 			case "setVisible":
 				oVariantEntry.visible = oVariantChange.getContent().visible;
-
-				// Set standard variant as current variant if current variant is set to invisible
-				var sVMReference = oVariantEntry.instance.getVariantManagementReference();
-				if (
-					mCurrentVariantReferences[sReference][sVMReference] === oVariantEntry.key
-					&& !oVariantEntry.visible
-				) {
-					mCurrentVariantReferences[sReference][sVMReference] = sVMReference;
-					oVariantManagementsMap[sVMReference].currentVariant = sVMReference;
-				}
 				break;
 			case "setContexts":
 				oVariantEntry.contexts = oVariantChange.getContent().contexts;
@@ -206,53 +172,80 @@ sap.ui.define([
 	function applyVariantManagementChange(oVariantManagementEntry, oVariantManagementChange) {
 		// Currently only setDefault
 		var sDesiredDefaultVariant = oVariantManagementChange.getContent().defaultVariant;
-		// Only set default if the variant exists
-		if (oVariantManagementEntry.variants.some(function(oVariant) {
-			return oVariant.key === sDesiredDefaultVariant;
-		})) {
-			oVariantManagementEntry.defaultVariant = sDesiredDefaultVariant;
-		}
+		oVariantManagementEntry.variants.forEach((oVariant) => {
+			// Only set default if the variant exists and was not removed
+			if (
+				oVariant.key === sDesiredDefaultVariant
+				&& oVariant.visible
+			) {
+				oVariantManagementEntry.defaultVariant = sDesiredDefaultVariant;
+			}
+		});
 	}
 
 	function createVariantsMap(aFlexObjects, sReference) {
-		var aVariants = aFlexObjects.filter(function(oFlexObject) {
+		const aVariants = aFlexObjects.filter((oFlexObject) => {
 			return oFlexObject.getFileType() === "ctrl_variant";
 		});
 
-		var oVariantManagementsMap = {};
-		aVariants.forEach(function(oVariantInstance) {
+		const oVariantManagementsMap = {};
+		aVariants.forEach((oVariantInstance) => {
 			var sVMReference = oVariantInstance.getVariantManagementReference();
-			oVariantManagementsMap[sVMReference] ||= createVariantManagement(aFlexObjects, aVariants, sReference, sVMReference);
+			oVariantManagementsMap[sVMReference] ||= createVariantManagement(aFlexObjects, sReference, sVMReference);
 			oVariantManagementsMap[sVMReference].variants.push(
 				createVariantEntry(aFlexObjects, oVariantInstance)
 			);
 		});
 
 		aFlexObjects
-		.filter(function(oFlexObject) {
+		.filter((oFlexObject) => {
 			return oFlexObject.getFileType() === "ctrl_variant_change";
 		})
-		.forEach(function(oVariantChange) {
-			var oVariantEntry = findVariant(oVariantManagementsMap, oVariantChange);
+		.forEach((oVariantChange) => {
+			const oVariantEntry = findVariant(oVariantManagementsMap, oVariantChange);
 			if (oVariantEntry) {
 				applyVariantChange(oVariantEntry, oVariantChange, sReference, oVariantManagementsMap);
 			}
 		});
 
-		aFlexObjects
-		.filter(function(oFlexObject) {
+		const aCtrlVariantManagementChanges = aFlexObjects
+		.filter((oFlexObject) => {
 			return oFlexObject.getFileType() === "ctrl_variant_management_change";
-		})
-		.forEach(function(oVariantManagementChange) {
-			var oVariantManagementEntry = oVariantManagementsMap[oVariantManagementChange.getSelector().id];
+		});
+
+		aCtrlVariantManagementChanges.forEach((oVariantManagementChange) => {
+			const oVariantManagementEntry = oVariantManagementsMap[oVariantManagementChange.getSelector().id];
 			if (oVariantManagementEntry) {
 				applyVariantManagementChange(oVariantManagementEntry, oVariantManagementChange);
 			}
 		});
 
-		Object.values(oVariantManagementsMap).forEach(function(oVariantManagement) {
+		Object.keys(oVariantManagementsMap).forEach((sVMReference) => {
+			const oVariantManagement = oVariantManagementsMap[sVMReference];
+
+			// If current variant is not already set, set initial current variant
+			// Current variant might be unavailable due to layer filtering
+			// or because a component with a different id but the same flex reference was initalized
+			if (
+				!oVariantManagement.currentVariant || !oVariantManagement.variants.some((oVariant) => {
+					return oVariant.key === oVariantManagement.currentVariant;
+				})
+			) {
+				const sCurrentVariant = getInitialCurrentVariant(
+					sReference,
+					aCtrlVariantManagementChanges,
+					oVariantManagement.variants
+				) || sVMReference;
+				oVariantManagement.currentVariant = sCurrentVariant;
+				ObjectPath.set(
+					[sReference, sVMReference],
+					sCurrentVariant,
+					mCurrentVariantReferences
+				);
+			}
+
 			// Standard variant should always be at the first position, all others are sorted alphabetically
-			oVariantManagement.variants.sort(function(oVariant1, oVariant2) {
+			oVariantManagement.variants.sort((oVariant1, oVariant2) => {
 				if (oVariant1.isStandardVariant) {
 					return -1;
 				}
@@ -263,10 +256,10 @@ sap.ui.define([
 			});
 
 			// Set modified flag
-			var aCurrentVariantChanges = oVariantManagement.variants.find(function(oVariant) {
+			var aCurrentVariantChanges = oVariantManagement.variants.find((oVariant) => {
 				return oVariant.key === oVariantManagement.currentVariant;
 			}).controlChanges;
-			oVariantManagement.modified = aCurrentVariantChanges.some(function(oChange) {
+			oVariantManagement.modified = aCurrentVariantChanges.some((oChange) => {
 				return !oChange.isPersisted() && !oChange.getSavedToVariant();
 			});
 
