@@ -221,14 +221,17 @@ sap.ui.define([
 		 * @param {string} oReloadInfo.version - Version we want to switch to
 		 * @param {string} oReloadInfo.removeVersionParameter - Indicates if the version parameter should be removed
 		 * @param {string} oReloadInfo.removeDraft - Indicates if the draft parameter should be removed
+		 * @param {sap.ui.fl.Selector} oReloadInfo.selector - Root control instance
 		 * @param {string} sScenario - Current scenario. Can be 'flp' or 'standalone'
 		 *
 		 * @returns {boolean} Indicates if the parameters have changed
 		 */
 		handleUrlParameters(oReloadInfo, sScenario) {
 			var bParametersChanged = false;
+			var oFlexInfoSession = FlexInfoSession.get(oReloadInfo.selector) || {};
 			if (!oReloadInfo.ignoreMaxLayerParameter && oReloadInfo.hasHigherLayerChanges) {
 				oReloadInfo.parameters = oMutators[sScenario].remove(oReloadInfo.parameters, LayerUtils.FL_MAX_LAYER_PARAM, oReloadInfo.layer);
+				delete oFlexInfoSession.maxLayer;
 				bParametersChanged = true;
 			}
 
@@ -236,6 +239,7 @@ sap.ui.define([
 			if (oReloadInfo.versionSwitch && sCurrentVersionParameter !== oReloadInfo.version) {
 				oReloadInfo.parameters = oMutators[sScenario].remove(oReloadInfo.parameters, Version.UrlParameter, sCurrentVersionParameter);
 				oReloadInfo.parameters = oMutators[sScenario].set(oReloadInfo.parameters, Version.UrlParameter, oReloadInfo.version);
+				oFlexInfoSession.version = oReloadInfo.version;
 				bParametersChanged = true;
 			}
 
@@ -244,9 +248,10 @@ sap.ui.define([
 				|| sCurrentVersionParameter === Version.Number.Draft && oReloadInfo.removeDraft
 			) {
 				oReloadInfo.parameters = oMutators[sScenario].remove(oReloadInfo.parameters, Version.UrlParameter, sCurrentVersionParameter);
+				delete oFlexInfoSession.version;
 				bParametersChanged = true;
 			}
-
+			FlexInfoSession.set(oFlexInfoSession, oReloadInfo.selector);
 			return bParametersChanged;
 		},
 
@@ -257,21 +262,26 @@ sap.ui.define([
 		 * @param {boolean} oReloadInfo.hasHigherLayerChanges - Indicates if higher layer changes exist
 		 * @param {boolean} oReloadInfo.isDraftAvailable - Indicates if a draft is available
 		 * @param {sap.ui.fl.Layer} oReloadInfo.layer - Current layer
+		 * @param {sap.ui.fl.Selector} oReloadInfo.selector - Root control instance
 		 * @param {string} sScenario - Current scenario. Can be 'flp' or 'standalone'
 		 *
 		 * @returns {boolean} <code>true</code> to indicate that the URL has been changed
 		 */
 		handleParametersOnStart(oReloadInfo, sScenario) {
 			var bParametersChanged = false;
+			var oFlexInfoSession = FlexInfoSession.get(oReloadInfo.selector) || {};
 			if (oReloadInfo.hasHigherLayerChanges) {
 				oReloadInfo.parameters = oMutators[sScenario].set(oReloadInfo.parameters, LayerUtils.FL_MAX_LAYER_PARAM, oReloadInfo.layer);
+				oFlexInfoSession.maxLayer = oReloadInfo.layer;
 				bParametersChanged = true;
 			}
 
 			if (oReloadInfo.isDraftAvailable) {
 				oReloadInfo.parameters = oMutators[sScenario].set(oReloadInfo.parameters, Version.UrlParameter, Version.Number.Draft);
+				oFlexInfoSession.version = Version.Number.Draft;
 				bParametersChanged = true;
 			}
+			FlexInfoSession.set(oFlexInfoSession, oReloadInfo.selector);
 			return bParametersChanged;
 		},
 

@@ -5,11 +5,13 @@
 sap.ui.define([
 	"sap/base/util/UriParameters",
 	"sap/ui/thirdparty/hasher",
-	"sap/ui/fl/Layer"
+	"sap/ui/fl/Layer",
+	"sap/ui/fl/initial/_internal/FlexInfoSession"
 ], function(
 	UriParameters,
 	hasher,
-	Layer
+	Layer,
+	FlexInfoSession
 ) {
 	"use strict";
 
@@ -111,6 +113,7 @@ sap.ui.define([
 		 * @ui5-restricted sap.ui.fl.apply._internal.Connector
 		 * @param {sap.ui.core.service.Service} oURLParsingService Unified Shell URL Parsing Service
 		 * @return {string} maxLayer
+		 * @deprecated Since version 1.118
 		 */
 		getMaxLayer(oURLParsingService) {
 			var sParseMaxLayer = LayerUtils.getMaxLayerTechnicalParameter(hasher.getHash(), oURLParsingService);
@@ -133,7 +136,7 @@ sap.ui.define([
 		 * @param {string} sLayer Layer name to be evaluated
 		 * @param {sap.ui.core.service.Service} oURLParsingService Unified Shell URL Parsing Service
 		 * @returns {boolean} <code>true</code> if input layer is higher than max layer, otherwise <code>false</code>
-		 * @public
+		 * @deprecated Since version 1.118
 		 */
 		isOverMaxLayer(sLayer, oURLParsingService) {
 			return this.isOverLayer(sLayer, this.getMaxLayer(oURLParsingService));
@@ -175,11 +178,13 @@ sap.ui.define([
 		 * Determines if filtering of changes based on layer is required.
 		 *
 		 * @returns {boolean} <code>true</code> if the top layer is also the max layer, otherwise <code>false</code>
-		 * @param {sap.ui.core.service.Service} oURLParsingService Unified Shell URL Parsing Service
+		 * @param {string} sReference - Reference of the application
 		 * @public
 		 */
-		isLayerFilteringRequired(oURLParsingService) {
-			return this._sTopLayer !== this.getMaxLayer(oURLParsingService);
+		isLayerFilteringRequired(sReference) {
+			var oFlexInfoSession = FlexInfoSession.getByReference(sReference);
+			var sMaxLayer = oFlexInfoSession && oFlexInfoSession.maxLayer ? oFlexInfoSession.maxLayer : LayerUtils._sTopLayer;
+			return this._sTopLayer !== sMaxLayer;
 		},
 
 		/**
@@ -209,6 +214,7 @@ sap.ui.define([
 		 * @param {object[]} aChangeDefinitions - Array of change definitions
 		 * @param {sap.ui.core.service.Service} oURLParsingService Unified Shell URL Parsing Service
 		 * @returns {object[]} Array of filtered change definitions
+		 * @deprecated Since version 1.118
 		 */
 		filterChangeDefinitionsByMaxLayer(aChangeDefinitions, oURLParsingService) {
 			return aChangeDefinitions.filter(function(oChangeDefinition) {
@@ -240,6 +246,7 @@ sap.ui.define([
 		 * @param {string} sHash Hash value
 		 * @param {sap.ui.core.service.Service} oURLParsingService Unified Shell URL Parsing Service
 		 * @returns {string|undefined} Max layer parameter value, if available
+		 * @deprecated Since version 1.118
 		 */
 		getMaxLayerTechnicalParameter(sHash, oURLParsingService) {
 			if (oURLParsingService) {

@@ -1278,7 +1278,8 @@ sap.ui.define([
 		var sLayer = this.getLayer();
 		var oReloadInfo = {
 			layer: sLayer,
-			removeDraft: true
+			removeDraft: true,
+			selector: this.getRootControlInstance()
 		};
 		RuntimeAuthoring.enableRestart(sLayer, this.getRootControlInstance());
 		this.getCommandStack().removeAllCommands();
@@ -1415,10 +1416,11 @@ sap.ui.define([
 		}).then(function() {
 			var oReloadInfo = {
 				versionSwitch: true,
-				version: sVersion
+				version: sVersion,
+				selector: this.getRootControlInstance()
 			};
 			ReloadManager.triggerReload(oReloadInfo);
-		});
+		}.bind(this));
 	}
 
 	function onPublishVersion() {
