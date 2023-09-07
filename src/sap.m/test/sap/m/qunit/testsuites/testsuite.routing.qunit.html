@@ -13,16 +13,14 @@
 			var suite = new parent.jsUnitTestSuite();
 			var contextPath = "/" + window.location.pathname.split("/")[1];
 
-			var sUrlParameters = "?noglobals=true";
-
-			suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/routing/common/RouteMatchedHandler.qunit.html" + sUrlParameters);
-			suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/routing/common/TargetHandler.qunit.html" + sUrlParameters);
-			suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/routing/sync/RouteMatchedHandler.qunit.html" + sUrlParameters);
-			suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/routing/sync/Router.qunit.html" + sUrlParameters);
-			suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/routing/sync/Targets.qunit.html" + sUrlParameters);
-			suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/routing/async/RouteMatchedHandler.qunit.html" + sUrlParameters);
-			suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/routing/async/Router.qunit.html" + sUrlParameters);
-			suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/routing/async/Targets.qunit.html" + sUrlParameters);
+			suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/routing/common/RouteMatchedHandler.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/routing/common/TargetHandler.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/routing/sync/RouteMatchedHandler.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/routing/sync/Router.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/routing/sync/Targets.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/routing/async/RouteMatchedHandler.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/routing/async/Router.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/routing/async/Targets.qunit.html");
 			return suite;
 		}
 
