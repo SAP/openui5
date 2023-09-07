@@ -22,7 +22,7 @@ sap.ui.define([
 	 */
 	var UpdateIFrame = {};
 
-	var aUpdatableProperties = ["width", "height", "url", "_settings"];
+	var aUpdatableProperties = ["width", "height", "url", "useLegacyNavigation", "_settings"];
 
 	/**
 	 * Extract an IFrame control settings.
@@ -37,12 +37,10 @@ sap.ui.define([
 		var aPromises = [];
 		aUpdatableProperties.forEach(function (sPropertyName) {
 			var oPromise = Promise.resolve()
-				.then(oModifier.getProperty.bind(oModifier, oIFrame, sPropertyName))
-				.then(function(vValue) {
-					if (vValue !== undefined) {
-						oSettings[sPropertyName] = vValue;
-					}
-				});
+			.then(oModifier.getProperty.bind(oModifier, oIFrame, sPropertyName))
+			.then(function(vValue) {
+				oSettings[sPropertyName] = vValue;
+			});
 			aPromises.push(oPromise);
 		});
 		return Promise.all(aPromises)

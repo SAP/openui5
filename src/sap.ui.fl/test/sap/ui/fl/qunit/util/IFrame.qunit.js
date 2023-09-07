@@ -25,7 +25,7 @@ sap.ui.define([
 
 	var sTitle = "IFrame Title";
 	var sProtocol = "https";
-	var sOpenUI5Url = sProtocol + "://openu5/";
+	var sOpenUI5Url = sProtocol + "://openui5/";
 	var sDefaultSize = "500px";
 	var sUserFirstName = "John";
 	var sUserLastName = "Doe";
@@ -49,9 +49,10 @@ sap.ui.define([
 				width: sDefaultSize,
 				height: sDefaultSize,
 				url: sOpenUI5Url,
+				useLegacyNavigation: false,
 				title: sTitle
 			});
-			return this.oIFrame._oSetUrlPromise;
+			this.oIFrame.placeAt("qunit-fixture");
 		},
 		afterEach: function () {
 			this.oIFrame.destroy();
@@ -65,18 +66,74 @@ sap.ui.define([
 		});
 
 		QUnit.test("when changing a navigation parameter", function(assert) {
-			var oSetUrlSpy = sandbox.spy(this.oIFrame, "setProperty").withArgs("url");
 			var sNewUrl = sOpenUI5Url + "#someNavParameter";
+			var oReplaceLocationSpy = sandbox.spy(this.oIFrame, "_replaceIframeLocation");
 			this.oIFrame.setUrl(sNewUrl);
 			return checkUrl(assert, this.oIFrame, sNewUrl)
-				.then(function() {
-					assert.strictEqual(oSetUrlSpy.callCount, 2);
-					assert.strictEqual(
-						oSetUrlSpy.firstCall.args[1],
-						"",
-						"then the iframe is unloaded"
-					);
-				});
+			.then(function() {
+				Core.applyChanges();
+				assert.strictEqual(oReplaceLocationSpy.callCount, 2, "then the iframe location is properly replaced");
+				assert.strictEqual(
+					oReplaceLocationSpy.firstCall.args[0],
+					"about:blank",
+					"then the iframe is unloaded"
+				);
+				assert.strictEqual(
+					oReplaceLocationSpy.lastCall.args[0],
+					sNewUrl,
+					"then the proper url is loaded"
+				);
+			});
+		});
+
+		QUnit.test("when changing a navigation parameter (legacy)", function(assert) {
+			var oSetUrlSpy = sandbox.spy(this.oIFrame, "setProperty").withArgs("url");
+			var sNewUrl = sOpenUI5Url + "#someNavParameter";
+			this.oIFrame.setUseLegacyNavigation(true);
+			this.oIFrame.setUrl(sNewUrl);
+			return checkUrl(assert, this.oIFrame, sNewUrl)
+			.then(function() {
+				Core.applyChanges();
+				assert.strictEqual(oSetUrlSpy.callCount, 2);
+				assert.strictEqual(
+					oSetUrlSpy.firstCall.args[1],
+					"",
+					"then the iframe is unloaded"
+				);
+			});
+		});
+
+		QUnit.test("when useLegacyNavigation is not set (legacy changes)", function(assert) {
+			var oIFrame = new IFrame({
+				width: sDefaultSize,
+				height: sDefaultSize,
+				url: sOpenUI5Url,
+				title: sTitle
+			});
+			oIFrame.placeAt("qunit-fixture");
+			var sNewUrl = sOpenUI5Url + "someNewPath";
+			var oReplaceLocationSpy = sandbox.spy(oIFrame, "_replaceIframeLocation");
+			oIFrame.setUrl(sNewUrl);
+			return checkUrl(assert, oIFrame, sNewUrl)
+			.then(function() {
+				Core.applyChanges();
+				assert.strictEqual(
+					oReplaceLocationSpy.callCount,
+					2,
+					"then the new useLegacyNavigation approach is chosen by default and the iframe location is properly replaced"
+				);
+				assert.strictEqual(
+					oReplaceLocationSpy.lastCall.args[0],
+					sNewUrl,
+					"then the iframe is navigated to the proper url"
+				);
+				assert.strictEqual(
+					oIFrame.getDomRef().getAttribute("src"),
+					"about:blank",
+					"then the src attribute is never touched"
+				);
+				oIFrame.destroy();
+			});
 		});
 	});
 
@@ -98,6 +155,29 @@ sap.ui.define([
 		QUnit.test("IFrame should not be rendered", function (assert) {
 			var $iframe = jQuery("#qunit-fixture iframe");
 			assert.strictEqual($iframe.length, 0, "No iframe is being rendered");
+		});
+	});
+
+	QUnit.module("UseLegacyNavigation handling", {
+		afterEach: function() {
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("when creating a fresh Iframe with useLegacyNavigation set to false", function(assert) {
+			// This test ensures that props are set in the correct order, i.e. first applying the useLegacyNavigation
+			// setting and then applying the url setting which depends on it
+			var oLegacyNavigationSpy = sandbox.spy(IFrame.prototype, "_setUrlLegacy");
+			var oIFrame = new IFrame({
+				width: sDefaultSize,
+				height: sDefaultSize,
+				url: sOpenUI5Url,
+				title: sTitle,
+				useLegacyNavigation: true
+			});
+			oIFrame.placeAt("qunit-fixture");
+			Core.applyChanges();
+			assert.ok(oLegacyNavigationSpy.called, "then the legacy approach is used to set the initial url");
+			oIFrame.destroy();
 		});
 	});
 
@@ -154,7 +234,25 @@ sap.ui.define([
 		QUnit.test("URL should refresh if bound to a changing model without rewriting the iframe", function(assert) {
 			var oFocusDomRef = this.oIFrame.getFocusDomRef();
 			var sSapUI5Url = sProtocol + "://sapui5/";
+			var oReplaceLocationSpy = sandbox.spy(this.oIFrame, "_replaceIframeLocation");
+			this.oModel.setProperty("/flavor", "sapui5");
 
+			return checkUrl(assert, this.oIFrame, sSapUI5Url)
+			.then(function() {
+				Core.applyChanges();
+				assert.strictEqual(this.oIFrame.getFocusDomRef(), oFocusDomRef, "iframe DOM reference did not change");
+				assert.strictEqual(
+					oReplaceLocationSpy.lastCall.args[0],
+					sSapUI5Url,
+					"iframe src has changed to the expected one"
+				);
+			}.bind(this));
+		});
+
+		QUnit.test("URL should refresh if bound to a changing model without rewriting the iframe (legacy)", function(assert) {
+			var oFocusDomRef = this.oIFrame.getFocusDomRef();
+			var sSapUI5Url = sProtocol + "://sapui5/";
+			this.oIFrame.setUseLegacyNavigation(true);
 			this.oModel.setProperty("/flavor", "sapui5");
 
 			return checkUrl(assert, this.oIFrame, sSapUI5Url)

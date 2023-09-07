@@ -49,10 +49,13 @@ sap.ui.define([
 		editUrlLabel: _oTextResources.getText("IFRAME_ADDIFRAME_DIALOG_EDIT_URL_LABEL"),
 		parametersLabel: _oTextResources.getText("IFRAME_ADDIFRAME_DIALOG_PARAMETERS_LABEL"),
 		columnParameterLabel: _oTextResources.getText("IFRAME_ADDIFRAME_DIALOG_TABLE_PARAMETER_LABEL"),
-		columnUiValueLabel: _oTextResources.getText("IFRAME_ADDIFRAME_DIALOG_TABLE_UI_VALUE_LABEL")
+		columnUiValueLabel: _oTextResources.getText("IFRAME_ADDIFRAME_DIALOG_TABLE_UI_VALUE_LABEL"),
+		advancedSettingsTitle: _oTextResources.getText("IFRAME_ADDIFRAME_ADVANCED_SETTINGS"),
+		useLegacyNavigationLabel: _oTextResources.getText("IFRAME_ADDIFRAME_USE_LEGACY_NAVIGATION"),
+		useLegacyNavigationInfo: _oTextResources.getText("IFRAME_ADDIFRAME_USE_LEGACY_NAVIGATION_INFO")
 	};
 
-	function createJSONModel(bSetUpdateTitle) {
+	function createJSONModel(bSetUpdateTitle, bUseLegacyNavigation) {
 		if (bSetUpdateTitle) {
 			_mText.dialogTitle = _mText.dialogUpdateTitle;
 		} else {
@@ -101,7 +104,13 @@ sap.ui.define([
 				name: "px"
 			}, {
 				name: "rem"
-			}]
+			}],
+			useLegacyNavigation: {
+				value: !!bUseLegacyNavigation
+			},
+			previewUseLegacyNavigation: {
+				value: !!bUseLegacyNavigation
+			}
 		});
 	}
 
@@ -149,10 +158,12 @@ sap.ui.define([
 	AddIFrameDialog.prototype._createDialog = function(mSettings) {
 		// set the correct title
 		var bSetUpdateTitle = false;
+		var bUseLegacyNavigation = false;
 		if (mSettings) {
 			bSetUpdateTitle = mSettings.updateMode ? mSettings.updateMode : false;
+			bUseLegacyNavigation = mSettings.useLegacyNavigation;
 		}
-		this._oJSONModel = createJSONModel(bSetUpdateTitle);
+		this._oJSONModel = createJSONModel(bSetUpdateTitle, bUseLegacyNavigation);
 		this._oController = new AddIFrameDialogController(this._oJSONModel, mSettings);
 		Fragment.load({
 			name: "sap.ui.rta.plugin.iframe.AddIFrameDialog",

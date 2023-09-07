@@ -13,7 +13,8 @@ sap.ui.define([
 		index: 4,
 		url: "https://www.sap.com",
 		width: "myFancyWidth",
-		height: "myFancyHeight"
+		height: "myFancyHeight",
+		useLegacyNavigation: false
 	};
 
 	basicCommandTest({
