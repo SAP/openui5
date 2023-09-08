@@ -84,11 +84,6 @@ sap.ui.define([
 		return sap.ui.getCore();
 	}
 
-	/**
-	 * FocusHandler module reference, lazily probed via public "getCurrentFocusedControlId" API.
-	 */
-	var FocusHandler;
-
 	// Initialize SAP Passport or FESR
 	initTraces();
 
@@ -627,7 +622,6 @@ sap.ui.define([
 				"isThemeApplied",
 				"notifyContentDensityChanged",
 				//  - Control & App dev.
-				"getCurrentFocusedControlId",
 				"getEventBus",
 				"byId", "byFieldGroupId",
 				//  - Libraries
@@ -675,6 +669,7 @@ sap.ui.define([
 				"getControl", "getComponent", "getTemplate",
 				"createComponent",
 				//  - Control dev.
+				"getCurrentFocusedControlId",
 				"attachIntervalTimer", "detachIntervalTimer",
 				"getElementById",
 				//  - UIArea & Rendering
@@ -1324,13 +1319,17 @@ sap.ui.define([
 	 * Returns the Id of the control/element currently in focus.
 	 * @return {string} the Id of the control/element currently in focus.
 	 * @public
+	 * @deprecated since 1.119.
+	 * Please use {@link sap.ui.core.Element.getActiveElement Element.getActiveElement} to get
+	 * the currently focused element. You can then retrieve the ID of that element with
+	 * {@link sap.ui.core.Element#getId Element#getId}. Please be aware,
+	 * {@link sap.ui.core.Element.getActiveElement Element.getActiveElement} can return 'undefined'.
 	 */
 	Core.prototype.getCurrentFocusedControlId = function() {
 		if (!this.isInitialized()) {
 			throw new Error("Core must be initialized");
 		}
-		FocusHandler = FocusHandler || sap.ui.require("sap/ui/core/FocusHandler");
-		return FocusHandler ? FocusHandler.getCurrentFocusedControlId() : null;
+		return Element.getActiveElement()?.getId() || null;
 	};
 
 	/**
