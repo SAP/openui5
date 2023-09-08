@@ -12,6 +12,7 @@ sap.ui.define([
 	function(BaseObject, EventProvider, assert, Log) {
 	"use strict";
 
+	let oEventBus;
 
 	/**
 	 * Creates an instance of EventBus.
@@ -296,7 +297,23 @@ sap.ui.define([
 		}
 		return oChannel;
 	}
+	/**
+	 * Returns the singleton instance of the EventBus for global usage.
+	 *
+	 * @return {sap.ui.core.EventBus} the event bus
+	 * @since 1.119.0
+	 * @public
+	 */
+	EventBus.getInstance = () => {
+		if (!oEventBus) {
+			oEventBus = new EventBus();
+			// protect against destruction
+			oEventBus.destroy = () => {
+				Log.error("Global EventBus cannot be destroyed!");
+			};
+		}
+		return oEventBus;
+	};
 
 	return EventBus;
-
 });
