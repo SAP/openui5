@@ -69,6 +69,12 @@
 			"compact": true,
 			"cozy": true
 		},
+		"models": {
+			"theme": {
+				"type": "sap.ui.model.json.JSONModel",
+				"uri": "model/theme-parameters.json"
+			}
+		},
 		"config": {
 			"docuPath": "./docs/topics/",
 			"exploredURI": "./",
