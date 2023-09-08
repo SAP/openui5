@@ -1,5 +1,8 @@
 /*global QUnit*/
-
+/**
+ * @fileoverview
+ * @deprecated
+ */
 sap.ui.define([
 	"jquery.sap.global",
 	"sap/base/Log",

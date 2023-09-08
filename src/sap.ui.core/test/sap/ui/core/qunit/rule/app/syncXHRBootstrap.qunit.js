@@ -1,4 +1,8 @@
 /*global QUnit, sinon */
+/**
+ * @fileoverview
+ * @deprecated
+ */
 (function() {
 	"use strict";
 

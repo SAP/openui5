@@ -1,4 +1,8 @@
 /* global QUnit */
+/**
+ * @fileoverview
+ * @deprecated
+ */
 sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/core/Control",
