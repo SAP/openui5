@@ -2060,6 +2060,9 @@ sap.ui.define([
 	 *     <li> "$DistanceFromRootProperty" holds the path to the property which provides the raw
 	 *       value for "@$ui5.node.level" (minus one) and should be used only to interpret the
 	 *       response retrieved via {@link #getDownloadUrl}.
+	 *     <li> "$DrillStateProperty" holds the path to the property which provides the raw value
+	 *       for "@$ui5.node.isExpanded" and should be used only to interpret the response retrieved
+	 *       via {@link #getDownloadUrl}.
 	 *     <li> "$NodeProperty" holds the path to the property which provides the hierarchy node
 	 *       value. That property is always $select'ed automatically and can be accessed as usual.
 	 *   </ul>
@@ -2073,7 +2076,8 @@ sap.ui.define([
 	ODataListBinding.prototype.getAggregation = function (bVerbose) {
 		return _Helper.clone(this.mParameters.$$aggregation, function (sKey, vValue) {
 			return sKey[0] === "$"
-				&& !(bVerbose && ["$DistanceFromRootProperty", "$NodeProperty"].includes(sKey))
+				&& !(bVerbose && ["$DistanceFromRootProperty", "$DrillStateProperty",
+					"$NodeProperty"].includes(sKey))
 				? undefined
 				: vValue;
 		});

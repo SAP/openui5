@@ -561,8 +561,10 @@ sap.ui.define([
 		assert.strictEqual(fnReplacer("u$a", 42), 42);
 		assert.strictEqual(fnReplacer("$DistanceFromRootProperty", "D.F.R.P."),
 			bVerbose ? "D.F.R.P." : undefined);
+		assert.strictEqual(fnReplacer("$DrillStateProperty", "DrillState"),
+			bVerbose ? "DrillState" : undefined);
 		assert.strictEqual(fnReplacer("$NodeProperty", "NodeId"), bVerbose ? "NodeId" : undefined);
-		["$fetchMetadata", "$path", "$DrillStateProperty", "$LimitedDescendantCountProperty"]
+		["$fetchMetadata", "$path", "$LimitedDescendantCountProperty"]
 			.forEach(function (sName) {
 				assert.strictEqual(fnReplacer(sName, 42), undefined);
 			});

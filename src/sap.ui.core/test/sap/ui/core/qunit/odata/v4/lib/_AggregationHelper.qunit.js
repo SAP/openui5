@@ -1191,24 +1191,22 @@ sap.ui.define([
 			sQueryOptionsJSON = JSON.stringify(mQueryOptions);
 
 		if (bStored) {
+			oAggregation.$DrillStateProperty = "myDrillState";
 			oAggregation.$NodeProperty = "SomeNodeID";
 			oAggregation.$ParentNavigationProperty = "SomeParentNavigation";
 		}
 		if (bAllLevels) {
 			iExpectedLevels = 999;
-			aExpectedSelect = ["ID", "SomeNodeID", "DistFromRoot"];
+			aExpectedSelect = ["ID", "SomeNodeID", "DistFromRoot", "myDrillState"];
 			oExpectedAggregation = {
 				$DistanceFromRootProperty : "DistFromRoot"
 			};
 			if (bStored) {
 				oAggregation.$DistanceFromRootProperty = "DistFromRoot";
 			}
-		} else if (bStored) {
-			oAggregation.$DrillStateProperty = "myDrillState";
-			if (iExpandTo > 1) {
-				oAggregation.$DistanceFromRootProperty = "DistFromRoot";
-				oAggregation.$LimitedDescendantCountProperty = "LtdDescendant_Count";
-			}
+		} else if (bStored && iExpandTo > 1) {
+			oAggregation.$DistanceFromRootProperty = "DistFromRoot";
+			oAggregation.$LimitedDescendantCountProperty = "LtdDescendant_Count";
 		}
 		oAggregationMock.expects("$fetchMetadata").exactly(bStored ? 0 : 1)
 			.withExactArgs("/meta/@Org.OData.Aggregation.V1.RecursiveHierarchy#X")
@@ -1229,6 +1227,7 @@ sap.ui.define([
 			$fetchMetadata : oAggregation.$fetchMetadata, // remember the mock(!)
 			$metaPath : "/meta",
 			$path : "/Foo",
+			$DrillStateProperty : "myDrillState",
 			$NodeProperty : "SomeNodeID",
 			$ParentNavigationProperty : "SomeParentNavigation"
 		}, oExpectedAggregation);

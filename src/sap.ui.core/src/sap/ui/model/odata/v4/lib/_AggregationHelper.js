@@ -524,9 +524,7 @@ sap.ui.define([
 					select("LimitedDescendantCountProperty");
 				}
 			}
-			if (!bAllLevels) {
-				select("DrillStateProperty");
-			}
+			select("DrillStateProperty");
 			mQueryOptions.$apply = sApply;
 
 			return mQueryOptions;
