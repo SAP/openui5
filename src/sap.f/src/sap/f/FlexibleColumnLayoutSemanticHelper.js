@@ -269,7 +269,7 @@ sap.ui.define([
 	 *
 	 * @typedef {object} sap.f.FlexibleColumnLayoutSemanticHelper.UIState
 	 *
-	 * @property {string} [layout]
+	 * @property {sap.f.LayoutType} [layout]
 	 *  The value of the {@link sap.f.FlexibleColumnLayout#getLayout layout} property.
 	 * @property {number} [maxColumnsCount]
 	 *  The maximum number of columns that can be displayed at once based on the control width. See {@link sap.f.FlexibleColumnLayout#getMaxColumnsCount}
