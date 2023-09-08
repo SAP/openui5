@@ -94,6 +94,14 @@ sap.ui.define([
                     CAUTION_variantIndependent: true
                 };
             }
-        }
+        },
+        tool: {
+			start: function(oField) {
+                oField.getFieldInfo()?.setEnablePersonalization(false);
+			},
+			stop: function(oField) {
+				oField.getFieldInfo()?.setEnablePersonalization(true);
+			}
+		}
     };
 });

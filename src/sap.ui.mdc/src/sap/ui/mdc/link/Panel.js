@@ -45,7 +45,6 @@ sap.ui.define([
 	var Panel = Control.extend("sap.ui.mdc.link.Panel", /** @lends sap.ui.mdc.link.Panel.prototype */ {
 		metadata: {
 			library: "sap.ui.mdc",
-			designtime: "sap/ui/mdc/designtime/link/Panel.designtime",
 			defaultAggregation: "items",
 			properties: {
 				/**
