@@ -271,11 +271,14 @@ sap.ui.define([
 		};
 
 		NavigationList.prototype._overflowPress = function (event) {
-			var menu = this._createOverflowMenu();
-			menu.openBy(event.getSource(), false, Popup.Dock.EndCenter);
+			var opener = event.getSource();
+			opener.getDomRef().querySelector(".sapTntNavLIItem").classList.add("sapTntNavLIActive");
+
+			var menu = this._createOverflowMenu(opener);
+			menu.openBy(opener, false, Popup.Dock.EndCenter);
 		};
 
-		NavigationList.prototype._createOverflowMenu = function () {
+		NavigationList.prototype._createOverflowMenu = function (opener) {
 			var menu = new Menu({
 				items: this._createNavigationMenuItems(),
 				itemSelected: function (event) {
@@ -294,7 +297,10 @@ sap.ui.define([
 
 					menu.close();
 					menu.destroy();
-				}.bind(this)
+				}.bind(this),
+				closed: function () {
+					opener.getDomRef().querySelector(".sapTntNavLIItem").classList.remove("sapTntNavLIActive");
+				}
 			});
 
 			menu.addStyleClass("sapTntNavLIMenu");

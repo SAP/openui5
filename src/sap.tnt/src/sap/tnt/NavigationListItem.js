@@ -628,12 +628,13 @@ sap.ui.define(["sap/ui/thirdparty/jquery", "./library", 'sap/ui/core/Core', "sap
 
 			this._renderIcon(rm);
 
+			this._renderText(rm);
+
 			if (control.getExpanded()) {
 				var expandIconControl = this._getExpandIconControl();
 				expandIconControl.setVisible(expanderVisible);
 				expandIconControl.setSrc(this.getExpanded() ? NavigationListItem.collapseIcon : NavigationListItem.expandIcon);
 				expandIconControl.setTooltip(this._getExpandIconTooltip(!this.getExpanded()));
-				this._renderText(rm);
 				rm.icon(NavigationListItem.selectionIndicatorIcon, ["sapTntNavLISelectionIndicator"]);
 				rm.renderControl(expandIconControl);
 			}
