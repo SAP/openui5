@@ -20,6 +20,7 @@ sap.ui.define([
 	"sap/ui/mdc/valuehelp/Dialog",
 	"sap/ui/mdc/valuehelp/content/MTable",
 	"sap/ui/mdc/valuehelp/content/Conditions",
+	"sap/ui/mdc/filterbar/vh/FilterBar", // make sure inner control is loaded
 	"sap/ui/mdc/condition/ConditionModel",
 	"sap/ui/mdc/condition/Condition",
 	"sap/ui/mdc/condition/FilterOperatorUtil",
@@ -59,6 +60,7 @@ sap.ui.define([
 		VHDialog,
 		MTable,
 		VHConditions,
+		VHFilterBar,
 		ConditionModel,
 		Condition,
 		FilterOperatorUtil,
