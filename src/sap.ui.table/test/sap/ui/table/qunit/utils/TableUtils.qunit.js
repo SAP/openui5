@@ -789,7 +789,7 @@ sap.ui.define([
 
 	QUnit.test("showNotificationPopoverAtIndex", function(assert) {
 		var oAfterOpenSpy = sinon.spy();
-		var oOpenSpy;
+		var oOpenSpy, oCloseSpy;
 
 		assert.notOk(oTable._oNotificationPopover, "the notification popover is not initialized");
 
@@ -799,8 +799,10 @@ sap.ui.define([
 				"the notification message is correct");
 
 			oOpenSpy = sinon.spy(oTable._oNotificationPopover, "openBy");
+			oCloseSpy = sinon.spy(oTable._oNotificationPopover, "close");
 			oTable._oNotificationPopover.attachAfterOpen(oAfterOpenSpy);
-			oTable._oNotificationPopover.close();
+			oTable.fireFirstVisibleRowChanged({firstVisibleRow: 1});
+			assert.ok(oCloseSpy.calledOnce, "the popover closes on scroll");
 
 			return TableUtils.showNotificationPopoverAtIndex(oTable, 1, 5);
 		}).then(function() {

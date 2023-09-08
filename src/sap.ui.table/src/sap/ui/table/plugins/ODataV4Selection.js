@@ -105,7 +105,6 @@ sap.ui.define([
 
 	ODataV4Selection.prototype.onDeactivate = function(oTable) {
 		SelectionPlugin.prototype.onDeactivate.apply(this, arguments);
-		oTable.detachFirstVisibleRowChanged(this.onFirstVisibleRowChange, this);
 		oTable.setProperty("selectionMode", TableSelectionMode.None);
 		this.clearSelection();
 	};
