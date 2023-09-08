@@ -59,8 +59,7 @@ sap.ui.define(['sap/ui/model/BindingMode', 'sap/ui/model/ClientModel', 'sap/ui/m
 	};
 
 	/*
-	 * @see sap.ui.model.Model.prototype.bindProperty
-	 *
+	 * @see sap.ui.model.ClientModel#bindProperty
 	 */
 	MessageModel.prototype.bindProperty = function(sPath, oContext, mParameters) {
 		var oBinding = new MessagePropertyBinding(this, sPath, oContext, mParameters);
