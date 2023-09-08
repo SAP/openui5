@@ -8989,7 +8989,7 @@ sap.ui.define([
 			} else if (i === 1) {
 				that.oModel.resetChanges();
 			} else if (i === 2) {
-				var oHeaderContext = oCreatedContext.getBinding().getHeaderContext();
+				const oHeaderContext = oCreatedContext.getBinding().getHeaderContext();
 
 				assert.throws(function () {
 					// code under test (JIRA: CPOUI5ODATAV4-2014)
