@@ -1932,10 +1932,12 @@ sap.ui.define([
 
 		QUnit.test("Given persist is called with parentVersion", function(assert) {
 			var sParentVersion = "GUIDParentVersion";
-			sandbox.stub(Versions, "getVersionsModel").returns(new JSONModel({
+			var oVersionsModel = new JSONModel({
 				persistedVersion: sParentVersion,
-				draftFilenames: [this.oVariant.getId()]
-			}));
+				draftFilenames: [this.oVariant.getId()],
+				versioningEnabled: true
+			});
+			sandbox.stub(Versions, "getVersionsModel").returns(oVersionsModel);
 			CompVariantState.addVariant({
 				changeSpecificData: {
 					type: "pageVariant",
@@ -2006,7 +2008,7 @@ sap.ui.define([
 
 		QUnit.test("Given remove variant as last draft file name", function(assert) {
 			var sParentVersion = "GUIDParentVersion";
-			sandbox.stub(Versions, "getVersionsModel").returns(new JSONModel({
+			var oVersionsModel = new JSONModel({
 				versioningEnabled: true,
 				activeVersion: 1,
 				persistedVersion: sParentVersion,
@@ -2014,7 +2016,8 @@ sap.ui.define([
 				versions: [
 					{version: Version.Number.Draft},
 					{version: 1}]
-			}));
+			});
+			sandbox.stub(Versions, "getVersionsModel").returns(oVersionsModel);
 			var oResponse = {
 				response: [{
 					reference: sComponentId,
