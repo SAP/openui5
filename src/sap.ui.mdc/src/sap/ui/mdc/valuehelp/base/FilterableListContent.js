@@ -273,6 +273,9 @@ sap.ui.define([
 		return loadModules([
 			"sap/ui/mdc/filterbar/vh/FilterBar"
 		]).then(function(aModules) {
+			if (this.isDestroyStarted()) {
+				return null;
+			}
 			var FilterBar = aModules[0];
 			var oFilterBar = new FilterBar(this.getId() + "-FB", {
 				liveMode: false, // !oWrapper.isSuspended(), // if suspended, no live search
