@@ -2,11 +2,12 @@ sap.ui.define([
 	"sap/ui/core/Component",
 	"sap/ui/base/ManagedObject",
 	"sap/ui/core/ComponentContainer",
+	"sap/ui/core/Element",
 	"sap/ui/core/UIComponent",
 	"sap/ui/core/mvc/View",
 	"sap/base/Log",
 	"sap/ui/qunit/utils/nextUIUpdate"
-], function(Component, ManagedObject, ComponentContainer, UIComponent, View, Log, nextUIUpdate) {
+], function(Component, ManagedObject, ComponentContainer, Element, UIComponent, View, Log, nextUIUpdate) {
 
 	"use strict";
 	/*global sinon, QUnit*/
@@ -149,7 +150,7 @@ sap.ui.define([
 
 		assert.equal(oComponent.getAutoPrefixId(), false, "AutoPrefixId is false!");
 
-		var oButton = sap.ui.getCore().byId("theButton");
+		var oButton = Element.getElementById("theButton");
 		assert.ok(!!oButton, "Button was prefixed with Component id!");
 
 		oComponentContainer.destroy();
@@ -174,7 +175,7 @@ sap.ui.define([
 
 		assert.equal(oComponent.getAutoPrefixId(), true, "AutoPrefixId is true!");
 
-		var oButton = sap.ui.getCore().byId(oComponent.createId("theButton"));
+		var oButton = Element.getElementById(oComponent.createId("theButton"));
 		assert.ok(!!oButton, "Button was prefixed with Component id!");
 
 		oComponentContainer.destroy();
@@ -199,7 +200,7 @@ sap.ui.define([
 
 		assert.equal(oComponent.getAutoPrefixId(), false, "AutoPrefixId is false!");
 
-		var oButton = sap.ui.getCore().byId("theButton");
+		var oButton = Element.getElementById("theButton");
 		assert.ok(!!oButton, "Button was not prefixed with Component id!");
 
 		oComponentContainer.destroy();

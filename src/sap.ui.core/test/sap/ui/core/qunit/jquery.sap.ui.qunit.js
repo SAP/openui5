@@ -2,9 +2,10 @@
 sap.ui.define([
 	"jquery.sap.ui",
 	"sap/ui/core/Control",
+	"sap/ui/core/Element",
 	"sap/ui/core/UIArea",
 	"sap/ui/qunit/utils/nextUIUpdate"
-], function(jQuery, Control, UIArea, nextUIUpdate) {
+], function(jQuery, Control, Element, UIArea, nextUIUpdate) {
 	"use strict";
 
 	var TestControl = Control.extend("sap.jsunittest.Test", {
@@ -75,7 +76,7 @@ sap.ui.define([
 		jQuery("#uiAreaTarget").root(new TestControl("testControl"));
 		await nextUIUpdate();
 		assert.notStrictEqual(jQuery("#testControl").length, 0, "There should be something rendered");
-		assert.ok(sap.ui.getCore().byId("testControl") !== null, "Control should be available");
+		assert.ok(Element.getElementById("testControl") !== null, "Control should be available");
 		assert.ok(jQuery("#testControl").control()[0] !== null, "Control should be available");
 	});
 
@@ -96,7 +97,7 @@ sap.ui.define([
 		jQuery("#uiAreaTarget2").root(new TestControl("testControl2"));
 		await nextUIUpdate();
 
-		var oCheckCtrl = sap.ui.getCore().byId("testControl2");
+		var oCheckCtrl = Element.getElementById("testControl2");
 		var oCtrl = jQuery("#testControl2").control()[0];
 
 		assert.ok(oCheckCtrl === oCtrl, "Created control should be returned");
@@ -106,7 +107,7 @@ sap.ui.define([
 		jQuery("#uiAreaTarget3").root(new TestControl("testControl3"));
 		await nextUIUpdate();
 
-		var oCheckCtrl = sap.ui.getCore().byId("testControl3");
+		var oCheckCtrl = Element.getElementById("testControl3");
 		var oCtrl = jQuery("#testControl3 > .inner").control()[0];
 
 		assert.ok(oCheckCtrl === oCtrl, "Created control should be returned when queried for inner node");

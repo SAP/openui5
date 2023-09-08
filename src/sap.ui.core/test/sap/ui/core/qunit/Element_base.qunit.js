@@ -29,7 +29,7 @@ sap.ui.define([
 		assert.ok(Element.hasOwnProperty("registry"), "Element has static method to access registry");
 		assert.equal(Element.registry.size, 3, "Return number of registered element instances");
 		assert.deepEqual(Object.keys(Element.registry.all()).sort(), ["A", "B", "C"], "Return all registered element instances");
-		assert.ok(Element.registry.get("B") === oFooB, "Return reference of element B from registry by ID");
+		assert.ok(Element.getElementById("B") === oFooB, "Return reference of element B from registry by ID");
 
 		Element.registry.forEach(fnCallbackSpy);
 		assert.ok(fnCallbackSpy.calledThrice, "Callback was executed 3 times");

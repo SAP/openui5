@@ -453,7 +453,7 @@ sap.ui.define([
 
 		onMessageSelected : function (oEvent) {
 			var oMessage = oEvent.getParameter("item").getBindingContext("messages").getObject(),
-				oControl = Element.registry.get(oMessage.getControlId());
+				oControl = Element.getElementById(oMessage.getControlId());
 
 			if (oControl) {
 				this.getView().byId("page").scrollToElement(oControl.getDomRef(), 200, [0, -100]);

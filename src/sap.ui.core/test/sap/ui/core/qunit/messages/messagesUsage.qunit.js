@@ -9,12 +9,13 @@ sap.ui.define([
 	'sap/ui/core/library',
 	'sap/ui/core/Component',
 	'sap/ui/core/ComponentContainer',
+	"sap/ui/core/Element",
 	'sap/ui/model/json/JSONModel',
 	'sap/ui/core/UIComponent',
 	'sap/ui/qunit/utils/createAndAppendDiv',
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/test/TestUtils"
-], function(isPlainObject, Input, Model, Integer, Message, Messaging, library, Component, ComponentContainer, JSONModel, UIComponent, createAndAppendDiv, nextUIUpdate, TestUtils){
+], function(isPlainObject, Input, Model, Integer, Message, Messaging, library, Component, ComponentContainer, Element, JSONModel, UIComponent, createAndAppendDiv, nextUIUpdate, TestUtils){
 	"use strict";
 
 	// create content div
@@ -90,7 +91,7 @@ sap.ui.define([
 	QUnit.test("componentEnabled", function (assert) {
 		var done = assert.async();
 
-		var oCompZip = sap.ui.getCore().byId("zip_enabled");
+		var oCompZip = Element.getElementById("zip_enabled");
 
 		var oCoreValHandler = function (oEvent) {
 			assert.ok(false, "should never be called");
@@ -120,7 +121,7 @@ sap.ui.define([
 
 	QUnit.test("componentDisabled", function(assert) {
 		var oMessageModel = Messaging.getMessageModel();
-		var oCompZip = sap.ui.getCore().byId("zip_disabled");
+		var oCompZip = Element.getElementById("zip_disabled");
 
 		var oValHandler = function(oEvent) {
 			if (oEvent.getParameter("dataState").getMessages() && oEvent.getParameter("dataState").getMessages().length > 0) {
@@ -137,7 +138,7 @@ sap.ui.define([
 	QUnit.test("component handle validation undefined", function(assert) {
 		var oMessageModel = Messaging.getMessageModel();
 
-		var oCompZip = sap.ui.getCore().byId("zip");
+		var oCompZip = Element.getElementById("zip");
 		var oChangeHandler = function(oEvent) {
 			if (oEvent.getParameter("dataState").getMessages() && oEvent.getParameter("dataState").getMessages().length > 0) {
 				assert.ok(false,"should never be called");

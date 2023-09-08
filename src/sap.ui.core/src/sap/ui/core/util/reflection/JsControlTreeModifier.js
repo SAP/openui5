@@ -11,6 +11,7 @@ sap.ui.define([
 	"sap/base/util/ObjectPath",
 	"sap/ui/util/XMLHelper",
 	"sap/base/util/merge",
+	"sap/ui/core/Element",
 	"sap/ui/core/Fragment"
 ], function (
 	BindingParser,
@@ -19,6 +20,7 @@ sap.ui.define([
 	ObjectPath,
 	XMLHelper,
 	merge,
+	Element,
 	Fragment
 ) {
 
@@ -260,7 +262,7 @@ sap.ui.define([
 		 * @inheritDoc
 		 */
 		_byId: function (sId) {
-			return sap.ui.getCore().byId(sId);
+			return Element.getElementById(sId);
 		},
 
 		/**

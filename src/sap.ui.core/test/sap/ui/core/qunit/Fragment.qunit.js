@@ -77,7 +77,7 @@ sap.ui.define([
 			assert.equal(btn2.$().text(), DATABOUND_TEXT, "Second Button should have text from data binding");
 
 			// find controls by ID
-			var btn = Core.byId("btnInXmlFragment");
+			var btn = Element.getElementById("btnInXmlFragment");
 			assert.ok(btn, "Button should be found by ID");
 			assert.ok(btn instanceof Button, "Button should be found by ID");
 		});
@@ -156,7 +156,7 @@ sap.ui.define([
 			assert.equal(btn2.$().text(), DATABOUND_TEXT, "Second Button should have text from data binding");
 
 			// find controls by ID
-			var btn = Core.byId("btnInJsFragment");
+			var btn = Element.getElementById("btnInJsFragment");
 			assert.ok(btn, "Button should be found by ID");
 			assert.ok(btn instanceof Button, "Button should be found by ID");
 		});
@@ -390,7 +390,7 @@ sap.ui.define([
 			type: "JS",
 			controller: {
 				closeDialog: function() {
-					Element.registry.get("jsDialog").close();
+					Element.getElementById("jsDialog").close();
 				}
 			}
 		});
@@ -428,7 +428,7 @@ sap.ui.define([
 			fragmentName: "testdata.fragments.XMLFragmentDialog",
 			controller: {
 				closeDialog: function() {
-					Element.registry.get("xmlDialog").close();
+					Element.getElementById("xmlDialog").close();
 				}
 			}
 		});
@@ -516,9 +516,9 @@ sap.ui.define([
 			oView.placeAt("binding");
 			await nextUIUpdate();
 
-			var oLabel = Core.byId("unnamedView--unnamedName");
+			var oLabel = Element.getElementById("unnamedView--unnamedName");
 			assert.ok(oLabel.getText().indexOf("<Named>") == -1, "Binding of unnamed model set for 'name'");
-			oLabel = Core.byId("unnamedView--unnamedPhone");
+			oLabel = Element.getElementById("unnamedView--unnamedPhone");
 			assert.ok(oLabel.getText().indexOf("<Named>") == -1, "Binding of unnamed model set for 'phone'");
 		});
 	});
@@ -531,9 +531,9 @@ sap.ui.define([
 			oView.placeAt("binding");
 			await nextUIUpdate();
 
-			var oLabel = Core.byId("namedView--namedName");
+			var oLabel = Element.getElementById("namedView--namedName");
 			assert.ok(oLabel.getText().indexOf("<Named>") > -1, "Binding of named model set for 'name'");
-			oLabel = Core.byId("namedView--namedPhone");
+			oLabel = Element.getElementById("namedView--namedPhone");
 			assert.ok(oLabel.getText().indexOf("<Named>") > -1, "Binding of named model set for 'phone'");
 		});
 	});
@@ -849,10 +849,10 @@ sap.ui.define([
 			// In the async case if we encounter an error during XML processing, the processing is stopped (forcefully).
 			// We do not (yet) have a way to clean up any controls which have been created until the exception was raised.
 			/*
-			assert.equal(Core.byId("panel"), null);
-			assert.equal(Core.byId("button1"), null);
-			assert.equal(Core.byId("button2"), null);
-			assert.equal(Core.byId("button3"), null);
+			assert.equal(Element.getElementById("panel"), null);
+			assert.equal(Element.getElementById("button1"), null);
+			assert.equal(Element.getElementById("button2"), null);
+			assert.equal(Element.getElementById("button3"), null);
 			*/
 		});
 	});

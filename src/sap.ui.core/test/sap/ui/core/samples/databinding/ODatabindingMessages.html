@@ -8,9 +8,9 @@
 
 	<script id="sap-ui-bootstrap" src="../../../../../../resources/sap-ui-core.js" data-sap-ui-libs="sap.ui.layout,sap.m">
 	</script>
-	<script src="/testsuite/resources/sap/ui/thirdparty/sinon.js"></script>
+	<script src="/resources/sap/ui/thirdparty/sinon.js"></script>
 
-	<script src="/testsuite/test-resources/sap/ui/core/qunit/ODataMessagesFakeService.js"></script>
+	<script src="/test-resources/sap/ui/core/qunit/odata/data/ODataMessagesFakeService.js"></script>
 
 	<script>
 		sap.ui.require([
@@ -29,7 +29,7 @@
 				useBatch: false
 			};
 			var oModel = new ODataModel(sServiceURI, mModelOptions);
-			var oParser = new ODataMessageParser();
+			var oParser = new ODataMessageParser(sServiceURI);
 			oModel.setMessageParser(oParser);
 			// sap.ui.getCore().setModel(oModel);
 

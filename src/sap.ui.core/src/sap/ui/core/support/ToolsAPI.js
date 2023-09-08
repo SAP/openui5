@@ -5,6 +5,7 @@
 sap.ui.define([
 	"sap/ui/Global",
 	"sap/ui/core/Configuration",
+	"sap/ui/core/Element",
 	"sap/ui/core/ElementMetadata",
 	"sap/ui/core/Theming",
 	"sap/base/util/LoaderExtensions",
@@ -14,6 +15,7 @@ sap.ui.define([
 	function(
 		Global,
 		Configuration,
+		Element,
 		ElementMetadata,
 		Theming,
 		LoaderExtensions,
@@ -131,7 +133,7 @@ sap.ui.define([
 				var childNode = node.firstElementChild;
 				var results = resultArray;
 				var subResult = results;
-				var control = sap.ui.getCore().byId(node.id);
+				var control = Element.getElementById(node.id);
 
 				if (node.getAttribute('data-sap-ui') && control) {
 					results.push({
@@ -244,7 +246,7 @@ sap.ui.define([
 			 * @private
 			 */
 			_getProperties: function (controlId) {
-				var control = sap.ui.getCore().byId(controlId);
+				var control = Element.getElementById(controlId);
 				var properties = Object.create(null);
 
 				if (control) {
@@ -377,7 +379,7 @@ sap.ui.define([
 			 */
 			getControlBindings: function (controlId) {
 				var result = Object.create(null);
-				var control = sap.ui.getCore().byId(controlId);
+				var control = Element.getElementById(controlId);
 				var bindingContext;
 
 				if (!control) {

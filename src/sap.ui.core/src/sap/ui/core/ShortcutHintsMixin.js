@@ -93,7 +93,7 @@ sap.ui.define([
 		var oControl;
 
 		for (var sControlId in oHintRegistry.mControls) {
-			oControl = Element.registry.get(sControlId);
+			oControl = Element.getElementById(sControlId);
 
 			if (oControl) {
 				oControl._shortcutHintsMixin.hideShortcutHint();
@@ -124,7 +124,7 @@ sap.ui.define([
 		var oControl;
 
 		if (!ShortcutHintsMixin.isControlRegistered(this.sControlId)) {
-			oControl = Element.registry.get(this.sControlId);
+			oControl = Element.getElementById(this.sControlId);
 			oControl.addEventDelegate(oHintsEventDelegate, this);
 		}
 	};
@@ -137,7 +137,7 @@ sap.ui.define([
 		this._attachToEvents();
 
 		if (!ShortcutHintsMixin.isControlRegistered(this.sControlId)) {
-			var oControl = Element.registry.get(this.sControlId);
+			var oControl = Element.getElementById(this.sControlId);
 
 			oControl._originalExit = oControl.exit;
 			oControl.exit = function() {
@@ -351,7 +351,7 @@ sap.ui.define([
 	 */
 	ShortcutHintsMixin.prototype._getControlTooltips = function() {
 		var aInfos = this.getRegisteredShortcutInfos(),
-			oControl = Element.registry.get(this.sControlId);
+			oControl = Element.getElementById(this.sControlId);
 
 		return aInfos.reduce(function(mResult, oHintInfo) {
 			var sTooltip = oControl._getTitleAttribute && oControl._getTitleAttribute(oHintInfo.id);
@@ -384,7 +384,7 @@ sap.ui.define([
 			return;
 		}
 
-		oControl = Element.registry.get(this.sControlId);
+		oControl = Element.getElementById(this.sControlId);
 
 		if (!oControl.getAriaDescribedBy) {
 			return;

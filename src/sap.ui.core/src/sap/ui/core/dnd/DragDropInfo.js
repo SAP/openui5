@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(["./DragInfo", "./DropInfo", "sap/base/Log"],
-	function(DragInfo, DropInfo, Log) {
+sap.ui.define(["sap/ui/core/Element", "./DragInfo", "./DropInfo", "sap/base/Log"],
+	function(Element, DragInfo, DropInfo, Log) {
 	"use strict";
 
 	/**
@@ -89,7 +89,7 @@ sap.ui.define(["./DragInfo", "./DropInfo", "sap/base/Log"],
 	DragDropInfo.prototype.getDropTarget = function() {
 		var sTargetElement = this.getTargetElement();
 		if (sTargetElement) {
-			return sap.ui.getCore().byId(sTargetElement);
+			return Element.getElementById(sTargetElement);
 		}
 
 		return this.getParent();

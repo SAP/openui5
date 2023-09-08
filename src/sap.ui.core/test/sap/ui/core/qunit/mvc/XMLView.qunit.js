@@ -2,6 +2,7 @@
 sap.ui.define([
 	'sap/base/Log',
 	'sap/base/i18n/ResourceBundle',
+	"sap/ui/core/Element",
 	'sap/ui/core/library',
 	'sap/ui/core/mvc/Controller',
 	'sap/ui/core/mvc/View',
@@ -17,7 +18,7 @@ sap.ui.define([
 	'sap/ui/thirdparty/jquery',
 	"sap/ui/core/Configuration",
 	"sap/ui/qunit/utils/nextUIUpdate"
-], function(Log, ResourceBundle, coreLibrary, Controller, View, XMLView, RenderManager, JSONModel, ResourceModel, VerticalLayout, XMLHelper, Button, Panel, testsuite, jQuery, Configuration, nextUIUpdate) {
+], function(Log, ResourceBundle, Element, coreLibrary, Controller, View, XMLView, RenderManager, JSONModel, ResourceModel, VerticalLayout, XMLHelper, Button, Panel, testsuite, jQuery, Configuration, nextUIUpdate) {
 	"use strict";
 
 	// shortcut for sap.ui.core.mvc.ViewType
@@ -583,7 +584,7 @@ sap.ui.define([
 			await nextUIUpdate();
 
 			expectedControls.forEach(function(sId) {
-				var oControl = sap.ui.getCore().byId(sId);
+				var oControl = Element.getElementById(sId);
 				assert.ok(oControl, "control with id '" + sId + "' should exist");
 				assert.ok(oControl.getDomRef(), "control with id '" + sId + "' should have DOM");
 			});
@@ -591,7 +592,7 @@ sap.ui.define([
 			// install delegates on each control to assert later that all have been rendered
 			var count = 0;
 			expectedControls.forEach(function(sId) {
-				var oControl = sap.ui.getCore().byId(sId);
+				var oControl = Element.getElementById(sId);
 				oControl.addDelegate({
 					onBeforeRendering: function() {
 						count += 100;
@@ -609,7 +610,7 @@ sap.ui.define([
 			// Assert: everythging has been rendered again
 			assert.equal(count, 101 * expectedControls.length, "all controls should have participated in the rendering");
 			expectedControls.forEach(function(sId) {
-				var oControl = sap.ui.getCore().byId(sId);
+				var oControl = Element.getElementById(sId);
 				assert.ok(oControl, "control with id '" + sId + "' should exist");
 				assert.ok(oControl.getDomRef(), "control with id '" + sId + "' should have DOM");
 				assert.notOk(document.getElementById(RenderManager.RenderPrefixes.Dummy + sId), "there should be no more Dummy-Element for id '" + sId + "'");
@@ -618,7 +619,7 @@ sap.ui.define([
 
 			oView.destroy();
 			expectedControls.forEach(function(sId) {
-				var oControl = sap.ui.getCore().byId(sId);
+				var oControl = Element.getElementById(sId);
 				assert.notOk(oControl, "control with id '" + sId + "' should no longer exist");
 				assert.notOk(document.getElementById(sId), "there should be no more DOM with id '" + sId + "'");
 			});

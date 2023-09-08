@@ -956,7 +956,7 @@ sap.ui.define([
 
 		if (this._shouldGetFocusAfterOpen()) {
 			if (this._sInitialFocusId) {
-				oControl = Element.registry.get(this._sInitialFocusId);
+				oControl = Element.getElementById(this._sInitialFocusId);
 
 				if (oControl) {
 					oDomRefToFocus = oControl.getFocusDomRef();
@@ -1553,7 +1553,7 @@ sap.ui.define([
 		};
 
 		if (oPreviousFocus) {
-			var oFocusedControl = Element.registry.get(oPreviousFocus.sFocusId);
+			var oFocusedControl = Element.getElementById(oPreviousFocus.sFocusId);
 			if (oFocusedControl) {
 
 				// if an SAPUI5 control had been focused, just re-focus it
@@ -3291,7 +3291,7 @@ sap.ui.define([
 				// if the element is a control the focus should be called
 				// via the control
 				// especially if the control has an individual focus DOM-ref
-				var oControl = Element.registry.get(oFocusDomRef.id);
+				var oControl = Element.getElementById(oFocusDomRef.id);
 				if (oControl instanceof Control) {
 					Log.debug("Focus will be handled by " + oControl.getMetadata().getName(), "", sName);
 				} else {

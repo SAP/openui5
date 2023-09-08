@@ -2,11 +2,12 @@ sap.ui.define([
 	"sap/ui/base/Event",
 	'sap/ui/core/Component',
 	'sap/ui/core/ComponentContainer',
+	"sap/ui/core/Element",
 	'sap/ui/core/mvc/XMLView',
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/qunit/utils/nextUIUpdate",
 	'sap/ui/qunit/QUnitUtils'
-], function(Event, Component, ComponentContainer, XMLView, createAndAppendDiv, nextUIUpdate, qutils) {
+], function(Event, Component, ComponentContainer, Element, XMLView, createAndAppendDiv, nextUIUpdate, qutils) {
 
 	"use strict";
 	/*global QUnit, sinon */
@@ -30,7 +31,7 @@ sap.ui.define([
 	var oLifecycleSpy = this.oLifecycleSpy = sinon.spy();
 
 	function triggerButtonPress(sButtonId) {
-		var oButton = sap.ui.getCore().byId(sButtonId);
+		var oButton = Element.getElementById(sButtonId);
 		var oEvent = new Event(sButtonId, oButton, {});
 		oButton.firePress(oEvent);
 	}
@@ -108,7 +109,7 @@ sap.ui.define([
 	// Controller Replacement
 
 	QUnit.test("Controller Replacement", function(assert) {
-		assert.equal(sap.ui.getCore().byId("customerComponent---mainView").getController().getMetadata().getName(), "testdata.customizing.customersub.Main", "The controller has been replaced");
+		assert.equal(Element.getElementById("customerComponent---mainView").getController().getMetadata().getName(), "testdata.customizing.customersub.Main", "The controller has been replaced");
 	});
 
 	// Controller Extension
@@ -137,7 +138,7 @@ sap.ui.define([
 		assert.strictEqual(iCustomSub2ControllerCalled, 1, "Custom Controller should not have been called again");
 
 		// check members
-		var oController = sap.ui.getCore().byId("customerComponent---mainView--sub2View").getController();
+		var oController = Element.getElementById("customerComponent---mainView--sub2View").getController();
 		assert.ok(oController, "Extended Sub2 View should have a Controller");
 		assert.ok(oController.originalSAPAction, "Extended Sub2Sub controller should have an originalSAPAction method");
 		assert.ok(oController.extension.testdata.customizing.customersub.Sub2SubControllerExtension.customerAction, "Extended Sub2Sub controller should have a customerAction method");
@@ -180,7 +181,7 @@ sap.ui.define([
 	// View/Property Modifications
 
 	QUnit.test("Property Modifications", function(assert) {
-		var oControl = sap.ui.getCore().byId("customerComponent---mainView--sub3View--customizableText");
+		var oControl = Element.getElementById("customerComponent---mainView--sub3View--customizableText");
 		assert.strictEqual(oControl.getVisible(), false, "'visible' property should be customizable");
 		assert.strictEqual(oControl.getWrapping(), true, "'wrapping' property should not be customizable");
 	});
@@ -189,7 +190,7 @@ sap.ui.define([
 	// ExtensionPoint default content
 
 	QUnit.test("ExtensionPoint default content", function(assert) {
-		var oFirstItem = sap.ui.getCore().byId("__item0-customerComponent---mainView--sub2View--lb-0");
+		var oFirstItem = Element.getElementById("__item0-customerComponent---mainView--sub2View--lb-0");
 
 		assert.ok(oFirstItem, "First ListItem should exist");
 		assert.equal(oFirstItem.getText(), "(Customer's replacement ListItem)", "First ListItem should be the customized one");

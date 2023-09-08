@@ -10,6 +10,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/base/Log",
 	"sap/base/security/encodeURL",
+	"sap/ui/core/Element",
 	"sap/ui/core/Lib"
 ], function (
 	EventProvider,
@@ -18,6 +19,7 @@ sap.ui.define([
 	jQuery,
 	Log,
 	encodeURL,
+	Element,
 	Library
 ) {
 	"use strict";
@@ -819,9 +821,9 @@ sap.ui.define([
 			for (var n in mSupportInfos) {
 				var oData = mSupportInfos[n];
 				if (oData && oData.indexOf(sSupportData) === 0) {
-					var oInstance = sap.ui.getCore().byId(n);
+					var oInstance = Element.getElementById(n);
 					if (oInstance) {
-						aControls.push(sap.ui.getCore().byId(n));
+						aControls.push(Element.getElementById(n));
 					}
 				}
 			}

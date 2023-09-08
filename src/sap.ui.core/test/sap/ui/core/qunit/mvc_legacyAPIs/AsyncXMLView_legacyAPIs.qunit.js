@@ -3,6 +3,7 @@ sap.ui.define([
 	"sap/ui/base/Object",
 	"sap/ui/core/cache/CacheManager",
 	"sap/ui/core/Component",
+	"sap/ui/core/Element",
 	"sap/ui/core/mvc/View",
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/VersionInfo",
@@ -16,6 +17,7 @@ sap.ui.define([
 	BaseObject,
 	Cache,
 	Component,
+	Element,
 	View,
 	XMLView,
 	VersionInfo,
@@ -72,7 +74,7 @@ sap.ui.define([
 		var sId = "erroneous_view_1";
 
 		return sap.ui.xmlview(sId, {async:true, viewContent:sXml}).loaded().catch(function(error) {
-			assert.notOk(sap.ui.getCore().byId(sId), "Must deregister an erroneous instance");
+			assert.notOk(Element.getElementById(sId), "Must deregister an erroneous instance");
 			assert.equal(error.message, sError, "Must reject with an error");
 		});
 	});
@@ -91,7 +93,7 @@ sap.ui.define([
 		var sId = "erroneous_view_2";
 
 		return sap.ui.xmlview(sId, {async:true, viewContent:sXml}).loaded().catch(function(error) {
-			assert.notOk(sap.ui.getCore().byId(sId), "Must deregister an erroneous instance");
+			assert.notOk(Element.getElementById(sId), "Must deregister an erroneous instance");
 			assert.equal(error.message, sError, "Must reject with an error");
 		});
 	});
@@ -110,7 +112,7 @@ sap.ui.define([
 			}
 		});
 		return sap.ui.xmlview(sId, {async:true, viewContent:sXml}).loaded().catch(function(error) {
-			assert.notOk(sap.ui.getCore().byId(sId), "Must deregister an erroneous instance");
+			assert.notOk(Element.getElementById(sId), "Must deregister an erroneous instance");
 			assert.equal(error.message, "Controller error", "Must reject with an error");
 		});
 	});

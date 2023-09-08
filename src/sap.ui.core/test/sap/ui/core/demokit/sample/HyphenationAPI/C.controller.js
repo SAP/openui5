@@ -1,5 +1,5 @@
-sap.ui.require(['sap/ui/core/mvc/Controller', 'sap/ui/core/hyphenation/Hyphenation'],
-	function(Controller, HyphenationDelegate) {
+sap.ui.require(["sap/ui/core/Element", 'sap/ui/core/mvc/Controller', 'sap/ui/core/hyphenation/Hyphenation'],
+	function(Element, Controller, HyphenationDelegate) {
 	"use strict";
 
 	var CController = Controller.extend("sap.ui.core.sample.HyphenationAPI.C", {
@@ -18,7 +18,7 @@ sap.ui.require(['sap/ui/core/mvc/Controller', 'sap/ui/core/hyphenation/Hyphenati
 			var changeText  = function (id, text, lng) {
 				var hyphenatedText = hyph.hyphenate(text, lng);
 				var content = "<div style='font-size: 14px;'>" + hyphenatedText + "</div>";
-				sap.ui.getCore().byId(id).setContent(content);
+				Element.getElementById(id).setContent(content);
 			};
 
 			hyph.initialize().then(function () {

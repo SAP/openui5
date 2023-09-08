@@ -2,10 +2,11 @@
 sap.ui.define([
 	"sap/ui/test/selectors/_TableRowItem",
 	"sap/ui/test/selectors/_ControlSelectorGenerator",
+	"sap/ui/core/Element",
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/qunit/utils/nextUIUpdate"
-], function (_TableRowItem, _ControlSelectorGenerator, XMLView, JSONModel, nextUIUpdate) {
+], function (_TableRowItem, _ControlSelectorGenerator, Element, XMLView, JSONModel, nextUIUpdate) {
 	"use strict";
 
 	function getViewContent() {
@@ -55,7 +56,7 @@ sap.ui.define([
 
 	QUnit.test("Should select a control in table row", function (assert) {
 		var fnDone = assert.async();
-		var oControl = sap.ui.getCore().byId("myView--objectId-myView--myTable-0");
+		var oControl = Element.getElementById("myView--objectId-myView--myTable-0");
 		_ControlSelectorGenerator._generate({control: oControl._getTextControl(), includeAll: true})
 			.then(function (aSelectors) {
 				var mTableSelector = aSelectors[1][0];
@@ -68,7 +69,7 @@ sap.ui.define([
 
 	QUnit.test("Should find control table and row", function (assert) {
 		var oGenerator = new _TableRowItem();
-		var oControl = sap.ui.getCore().byId("myView--objectId-myView--myTable-0");
+		var oControl = Element.getElementById("myView--objectId-myView--myTable-0");
 		var oRow = oGenerator._getValidationRoot(oControl);
 		var oTable = oGenerator._getAncestor(oControl);
 		assert.ok(oGenerator._isAncestorRequired());

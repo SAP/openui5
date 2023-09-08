@@ -1,5 +1,6 @@
 /*global QUnit, sinon */
 sap.ui.define([
+	"sap/ui/core/Element",
 	"sap/ui/core/TooltipBase",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/layout/HorizontalLayout",
@@ -7,7 +8,7 @@ sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/events/KeyCodes"
-], function (TooltipBase, QUnitUtils, HorizontalLayout, Button, createAndAppendDiv, nextUIUpdate, KeyCodes) {
+], function (Element, TooltipBase, QUnitUtils, HorizontalLayout, Button, createAndAppendDiv, nextUIUpdate, KeyCodes) {
 	"use strict";
 
 	createAndAppendDiv("target");
@@ -508,7 +509,7 @@ sap.ui.define([
 
 		// needed to wait for rendering the icons
 		setTimeout(function() {
-			var oIcon = sap.ui.getCore().byId(this.oButton2.getId() + "-img");
+			var oIcon = Element.getElementById(this.oButton2.getId() + "-img");
 			var oSpyIconMoveOver = sinon.spy(oIcon, "onmouseover");
 
 			QUnitUtils.triggerMouseEvent(this.oButton2.$(), "mouseover");

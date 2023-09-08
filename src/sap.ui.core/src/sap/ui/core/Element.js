@@ -1900,8 +1900,26 @@ sap.ui.define([
 			sId = sId || oDomRef.getAttribute("id");
 		}
 
-		return Element.registry.get(sId);
+		return Element.getElementById(sId);
 	};
+
+	/**
+	 * Returns the registered element with the given ID, if any.
+	 *
+	 * The ID must be the globally unique ID of an element, the same as returned by <code>oElement.getId()</code>.
+	 *
+	 * When the element has been created from a declarative source (e.g. XMLView), that source might have used
+	 * a shorter, non-unique local ID. A search for such a local ID cannot be executed with this method.
+	 * It can only be executed on the corresponding scope (e.g. on an XMLView instance), by using the
+	 * {@link sap.ui.core.mvc.View#byId View#byId} method of that scope.
+	 *
+	 * @param {sap.ui.core.ID|null|undefined} sId ID of the element to search for
+	 * @returns {sap.ui.core.Element|undefined} Element with the given ID or <code>undefined</code>
+	 * @public
+	 * @function
+	 * @since 1.119
+	 */
+	Element.getElementById = Element.registry.get;
 
 	/**
 	 * Registry of all <code>sap.ui.core.Element</code>s that currently exist.
@@ -1946,7 +1964,7 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.core.ID} id ID of the element to retrieve
 	 * @returns {sap.ui.core.Element|undefined} Element with the given ID or <code>undefined</code>
-	 * @name sap.ui.core.Element.registry.get
+	 * @name sap.ui.core.Element.getElementById
 	 * @function
 	 * @public
 	 */
