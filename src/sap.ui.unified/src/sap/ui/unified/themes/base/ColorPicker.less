@@ -678,9 +678,11 @@ html[data-sap-ui-browser^="ie"] .sapMPopover .sapUiColorPicker-ColorPickerMatrix
 				width: 2rem;
 			}
 		}
-		.sapMSliderHandle {
-			width: 0.6875rem;
+
+		.sapMSliderInner:not(.sapMSliderInnerDisabled) .sapMSliderHandle:focus {
+			top: -0.3125rem;
 		}
+
 		.sapUiColorPicker-ColorPickerSlider {
 			margin-bottom: 0.5rem;
 		}
@@ -689,6 +691,10 @@ html[data-sap-ui-browser^="ie"] .sapMPopover .sapUiColorPicker-ColorPickerMatrix
 			padding-top: 0.5rem;
 			.sapMSliderInner {
 				height: 1.25rem;
+			}
+			.sapMSliderHandle {
+				top: -0.3125rem;
+				width: 0.6875rem;
 			}
 		}
 		&:not(.sapUiCPPhone) .sapUiCPComparisonWrapper {

@@ -23,8 +23,9 @@ sap.ui.define([
 	"sap/m/p13n/Engine",
 	"sap/ui/mdc/mixin/AdaptationMixin",
 	"sap/ui/mdc/link/PanelItem",
-	"sap/ui/core/CustomData"
-], function(Control, PanelRenderer, VerticalLayout, Log, HorizontalLayout, HBox, VBox, ImageContent, Link, Label, Text, Button, FlexItemData, JSONModel, BindingMode, ManagedObjectObserver, LinkPanelController, Engine, AdaptationMixin, PanelItem, CustomData) {
+	"sap/ui/core/CustomData",
+	"sap/ushell/library"
+], function(Control, PanelRenderer, VerticalLayout, Log, HorizontalLayout, HBox, VBox, ImageContent, Link, Label, Text, Button, FlexItemData, JSONModel, BindingMode, ManagedObjectObserver, LinkPanelController, Engine, AdaptationMixin, PanelItem, CustomData, ushellLibrary) {
 	"use strict";
 
 	/**
@@ -343,7 +344,7 @@ sap.ui.define([
 	Panel.oNavigationPromise = undefined;
 
 	Panel.navigate = function(sHref) {
-		if (sHref.indexOf("#") === 0 && sap.ushell && sap.ushell.Container && sap.ushell.Container.getServiceAsync) {
+		if (sHref.indexOf("#") === 0 && ushellLibrary && sap.ushell.Container && sap.ushell.Container.getServiceAsync) {
 			// if we are inside a FLP -> navigate with CrossApplicationNavigation
 			if (!Panel.oNavigationPromise) {
 				Panel.oNavigationPromise = sap.ushell.Container.getServiceAsync("CrossApplicationNavigation").then(function (oCrossApplicationNavigation) {

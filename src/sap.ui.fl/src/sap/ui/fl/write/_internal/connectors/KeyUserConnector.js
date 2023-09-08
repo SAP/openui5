@@ -10,7 +10,7 @@ sap.ui.define([
 	"sap/ui/fl/initial/_internal/connectors/Utils",
 	"sap/ui/fl/write/_internal/connectors/Utils",
 	"sap/base/util/restricted/_pick",
-	"sap/ui/fl/write/_internal/FlexInfoSession",
+	"sap/ui/fl/initial/_internal/FlexInfoSession",
 	"sap/ui/core/BusyIndicator",
 	"sap/base/Log",
 	"sap/m/MessageBox"

@@ -73,10 +73,7 @@ sap.ui.define([
 	) {
 		"use strict";
 
-		// when the Core module has been executed before, don't execute it again
-		if (sap.ui.getCore && sap.ui.getCore()) {
-			return sap.ui.getCore();
-		}
+		var oCore;
 
 		/**
 		 * FocusHandler module reference, lazily probed via public "getCurrentFocusedControlId" API.
@@ -180,33 +177,19 @@ sap.ui.define([
 		 * @class Core Class of the SAP UI Library.
 		 *
 		 * This class boots the Core framework and makes it available for the application
-		 * via method <code>sap.ui.getCore()</code>.
+		 * by requiring <code>sap.ui.core.Core</code>.
+		 *
+		 * The Core provides a {@link #ready ready function} to execute code after the core was booted.
 		 *
 		 * Example:
 		 * <pre>
 		 *
-		 *   var oCore = sap.ui.getCore();
-		 *
-		 * </pre>
-		 *
-		 * With methods of the Core framework you can {@link #attachInit execute code} after the framework has been initialized.
-		 * It provides access to the {@link #getConfiguration configuration} and exposes events that
-		 * an application or a control can register to (e.g. {@link #event:localizationChanged localizationChanged},
-		 * {@link #event:parseError parseError}, {@link #event:validationError validationError},
-		 * {@link #event:formatError formatError}, {@link #event:validationSuccess validationSuccess}).
-		 *
-		 * Example:
-		 * <pre>
-		 *
-		 *   oCore.attachInit(function() {
-		 *     if ( oCore.getConfiguration().getRTL() ) {
+		 *   oCore.ready(function() {
 		 *       ...
-		 *     }
 		 *   });
 		 *
-		 *   oCore.attachLocalizationChanged(function(oEvent) {
-		 *     ...
-		 *   });
+		 *   await oCore.ready();
+		 *   ...
 		 *
 		 * </pre>
 		 *
@@ -224,10 +207,11 @@ sap.ui.define([
 					METHOD = "sap.ui.core.Core";
 
 				// when a Core instance has been created before, don't create another one
-				if (sap.ui.getCore && sap.ui.getCore()) {
+				if (oCore) {
 					Log.error("Only the framework must create an instance of sap/ui/core/Core." +
-							  " To get access to its functionality, use sap.ui.getCore().");
-					return sap.ui.getCore();
+							  " To get access to its functionality, require sap/ui/core/Core," +
+							  " and use the module export directly without using 'new'.");
+					return oCore;
 				}
 
 				BaseObject.call(this);
@@ -1885,6 +1869,7 @@ sap.ui.define([
 		 * @return {Element} the static, hidden area DOM element belonging to this core instance.
 		 * @throws {Error} an Error if the document is not yet ready
 		 * @public
+		 * @deprecated since 1.119.0. Please use {@link module:sap/ui/core/StaticArea.getDomRef StaticArea.getDomRef} instead.
 		 */
 		Core.prototype.getStaticAreaRef = function() {
 			return StaticArea.getDomRef();
@@ -1896,6 +1881,7 @@ sap.ui.define([
 		 * @param {Element} oDomRef DOM element to check
 		 * @returns {boolean} Whether the given DOM element is the root of the static area
 		 * @protected
+		 * @deprecated since 1.119.0. Please use {@link module:sap/ui/core/StaticArea.contains StaticArea.contains} instead.
 		 */
 		Core.prototype.isStaticAreaRef = function(oDomRef) {
 			return StaticArea.getDomRef() === oDomRef;
@@ -2594,5 +2580,6 @@ sap.ui.define([
 		 * the core prototype. Once global names are switched off, such extension scenarios are
 		 * no longer supported.
 		 */
-		return new Core().getInterface();
+		oCore = new Core().getInterface();
+		return oCore;
 	});

@@ -385,10 +385,11 @@ sap.ui.define([
 		};
 
 		SinglePlanningCalendarMonthGrid.prototype._rangeSelection = function(oStartDate) {
-			var oCurrentDate = UI5Date.getInstance(CalendarDate.fromLocalJSDate(oStartDate));
-			var oTarget;
-			var i;
-			var _bSelectWeek = false;
+			var oCurrentDate = UI5Date.getInstance(oStartDate),
+				_bSelectWeek = false,
+				oTarget,
+				i,
+				oCurrentDateUTCTimestamp;
 
 			for (i = 0; i < 7; i++) {
 				if (!this._checkDateSelected(CalendarDate.fromLocalJSDate(oCurrentDate))) {
@@ -398,10 +399,11 @@ sap.ui.define([
 				oCurrentDate.setDate(oCurrentDate.getDate() + 1);
 			}
 
-			oCurrentDate = UI5Date.getInstance(CalendarDate.fromLocalJSDate(oStartDate));
+			oCurrentDate = UI5Date.getInstance(oStartDate);
 
 			for (i = 0; i < 7; i++) {
-				oTarget = document.querySelector('[sap-ui-date="' + oCurrentDate.getTime() + '"]');
+				oCurrentDateUTCTimestamp = Date.UTC(oCurrentDate.getFullYear(), oCurrentDate.getMonth(), oCurrentDate.getDate());
+				oTarget = document.querySelector('[sap-ui-date="' + oCurrentDateUTCTimestamp + '"]');
 				if (!(_bSelectWeek && oTarget && oTarget.classList.contains("sapMSPCMonthDaySelected"))){
 					this._toggleMarkCell(oTarget, oCurrentDate);
 				}
@@ -491,11 +493,13 @@ sap.ui.define([
 				this._toggleMarkCell(oTarget, oStartDate);
 
 			} else if (this._bCurrentWeekSelection && SinglePlanningCalendarSelectionMode.MultiSelect === this.getDateSelectionMode()){
-				this._bCurrentWeekSelection = false;
-				var iFirstDayOfWeek;
-				var oWeekConfigurationValues = CalendarDateUtils.getWeekConfigurationValues(this.getCalendarWeekNumbering(), new Locale(Configuration.getFormatSettings().getFormatLocale().toString()));
-				var iAPIFirstDayOfWeek = this.getFirstDayOfWeek();
+				var iStartDate = oStartDate.getDate(),
+					oWeekConfigurationValues = CalendarDateUtils.getWeekConfigurationValues(this.getCalendarWeekNumbering(), new Locale(Configuration.getFormatSettings().getFormatLocale().toString())),
+					iAPIFirstDayOfWeek = this.getFirstDayOfWeek(),
+					iFirstDayOfWeek,
+					iWeekStartDate;
 
+				this._bCurrentWeekSelection = false;
 				if (iAPIFirstDayOfWeek < 0 || iAPIFirstDayOfWeek > 6) {
 
 					if (oWeekConfigurationValues) {
@@ -507,7 +511,11 @@ sap.ui.define([
 				} else {
 					iFirstDayOfWeek = iAPIFirstDayOfWeek;
 				}
-				oStartDate.setDate(oStartDate.getDate() - oStartDate.getDay() + iFirstDayOfWeek);
+				iWeekStartDate = iStartDate - oStartDate.getDay() + iFirstDayOfWeek;
+				if (iWeekStartDate > iStartDate) {
+					iWeekStartDate -= 7;
+				}
+				oStartDate.setDate(iWeekStartDate);
 				oEndDate.setDate(oStartDate.getDate() + 6);
 				this._rangeSelection(oStartDate, oEndDate);
 			}

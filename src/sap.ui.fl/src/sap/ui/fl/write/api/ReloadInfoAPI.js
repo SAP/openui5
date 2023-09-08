@@ -12,7 +12,7 @@ sap.ui.define([
 	"sap/ui/fl/write/api/FeaturesAPI",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/fl/write/_internal/flexState/compVariants/CompVariantState",
-	"sap/ui/fl/write/_internal/FlexInfoSession"
+	"sap/ui/fl/initial/_internal/FlexInfoSession"
 ], function(
 	LayerUtils,
 	Layer,

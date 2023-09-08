@@ -43,7 +43,7 @@ sap.ui.define([
 				delegate: { name: "sap/ui/mdc/field/FieldBaseDelegate", payload: {} }
 			});
 
-			if (sName === "name" || sName === "range") {
+			if (oFilterBar.getPayload().valueHelp[sName]) {
 				pFilterField = _addValueHelp(oFilterBar, oFilterField, sName);
 			} else {
 				pFilterField = Promise.resolve(oFilterField);
@@ -62,7 +62,7 @@ sap.ui.define([
 		} else {
 			var sPath = "mdc.sample.view.fragment.";
 			pFieldWithVH = Fragment.load({
-				name: sPath + (sName.charAt(0).toUpperCase() + sName.slice(1)) + "ValueHelp"
+				name: sPath + oFilterBar.getPayload().valueHelp[sName]
 			}).then(function(oValueHelp) {
 				oFilterBar.addDependent(oValueHelp);
 				oFilterField.setValueHelp(oValueHelp);

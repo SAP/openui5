@@ -2,25 +2,24 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/base/assert",
-	"./Configuration",
+	"sap/base/i18n/Localization",
 	"./UIArea",
 	"sap/ui/dom/_ready"
-],
-	function(
-		assert,
-		Configuration,
-		UIArea,
-		_ready
-	) {
+], (
+	Localization,
+	UIArea,
+	_ready
+) => {
 	"use strict";
+
+	let oStaticArea;
 
 	/**
 	 * Whether the DOM is ready (document.ready)
 	 */
-	var bDomReady = false;
+	let bDomReady = false;
 
-	_ready().then(function() {
+	_ready().then(() => {
 		bDomReady = true;
 	});
 
@@ -33,39 +32,62 @@ sap.ui.define([
 	 *
 	 * All methods throw an <code>Error</code> when they are called before the document is ready.
 	 *
-	 * @private
-	 * @ui5-restricted SAPUI5 Dist
-	 * @alias module:sap/ui/core/StaticArea
 	 * @namespace
+	 * @alias module:sap/ui/core/StaticArea
+	 * @public
 	 */
-	var StaticArea = {};
+	const StaticArea = {
+		/**
+		 * The unique ID of the static area.
+		 *
+		 * @private
+		 * @ui5-restricted SAPUI5 Dist
+		 * @type {string}
+		 */
+		STATIC_UIAREA_ID: "sap-ui-static",
 
-	/**
-	 * The unique ID of the static area.
-	 *
-	 * @private
-	 * @ui5-restricted SAPUI5 Dist
-	 * @type {string}
-	 */
-	StaticArea.STATIC_UIAREA_ID = "sap-ui-static";
+		/**
+		 * Returns the <code>UIArea</code> instance for the static area. If none exists yet, one gets created.
+		 *
+		 * @returns {sap.ui.core.UIArea} The <code>UIArea</code> instance for the static area
+		 * @throws {Error} if the document is not ready yet
+		 *
+		 * @public
+		 */
+		getUIArea: () => {
+			if (!oStaticArea) {
+				oStaticArea = UIArea.registry.get(StaticArea.STATIC_UIAREA_ID) || UIArea.create(_createStaticAreaRef());
+				oStaticArea.bInitial = false;
+			}
+			return oStaticArea;
+		},
+		/**
+		 * Returns the root element of the static, hidden area.
+		 *
+		 * It can be used e.g. for hiding elements like Popup, Shadow, Blocklayer etc.
+		 * If it is not yet available, a DIV element is created and appended to the body.
+		 *
+		 * @returns {Element} the root DOM element of the static, hidden area
+		 * @throws {Error} if the document is not ready yet
+		 *
+		 * @public
+		 */
+		getDomRef: () => {
+			return StaticArea.getUIArea().getRootNode();
+		},
 
-	var oStaticArea;
-
-	/**
-	 * Returns the <code>UIArea</code> instance for the static area. If none exists yet, one gets created.
-	 *
-	 * @returns {sap.ui.core.UIArea} The <code>UIArea</code> instance for the static area
-	 * @throws {Error} if the document is not ready yet
-	 *
-	 * @private
-	 * @ui5-restricted SAPUI5 Dist
-	 */
-	StaticArea.getUIArea = function() {
-		if (!oStaticArea) {
-			oStaticArea = UIArea.registry.get(StaticArea.STATIC_UIAREA_ID) || UIArea.create(_createStaticAreaRef());
-			oStaticArea.bInitial = false;
+		/**
+		 * Checks whether the given DOM element is part of the static area.
+		 *
+		 * @param {Element} oDomRef The DOM element to check
+		 * @returns {boolean} Whether the given DOM reference is part of the static UIArea
+		 * @throws {Error} if the document is not ready yet
+		 *
+		 * @public
+		 */
+		contains: (oDomRef) => {
+			return StaticArea.getDomRef().contains(oDomRef);
 		}
-		return oStaticArea;
 	};
 
 	/*
@@ -74,11 +96,11 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	function _createStaticAreaRef() {
+	const _createStaticAreaRef = () => {
 		if (!bDomReady) {
 			throw new Error("DOM is not ready yet. Static UIArea cannot be created.");
 		}
-		var oStaticArea = document.getElementById(StaticArea.STATIC_UIAREA_ID);
+		let oStaticArea = document.getElementById(StaticArea.STATIC_UIAREA_ID);
 
 		if (!oStaticArea) {
 
@@ -91,7 +113,7 @@ sap.ui.define([
 				"height": "0",
 				"width": "0",
 				"overflow": "hidden",
-				"float":  Configuration.getRTL() ? "right" : "left"
+				"float":  Localization.getRTL() ? "right" : "left"
 			});
 
 			oFirstFocusElement.setAttribute("id", StaticArea.STATIC_UIAREA_ID + "-firstfe");
@@ -103,36 +125,6 @@ sap.ui.define([
 			document.body.insertBefore(oStaticArea, document.body.firstChild);
 		}
 		return oStaticArea;
-	}
-
-	/**
-	 * Returns the root element of the static, hidden area.
-	 *
-	 * It can be used e.g. for hiding elements like Popup, Shadow, Blocklayer etc.
-	 * If it is not yet available, a DIV element is created and appended to the body.
-	 *
-	 * @returns {Element} the root DOM element of the static, hidden area
-	 * @throws {Error} if the document is not ready yet
-	 *
-	 * @private
-	 * @ui5-restricted SAPUI5 Dist
-	 */
-	StaticArea.getDomRef = function() {
-		return StaticArea.getUIArea().getRootNode();
-	};
-
-	/**
-	 * Checks whether the given DOM element is part of the static area.
-	 *
-	 * @param {Element} oDomRef
-	 * @returns {boolean} Whether the given DOM reference is part of the static UIArea
-	 * @throws {Error} if the document is not ready yet
-	 *
-	 * @private
-	 * @ui5-restricted SAPUI5 Dist
-	 */
-	StaticArea.contains = function(oDomRef) {
-		return StaticArea.getDomRef().contains(oDomRef);
 	};
 
 	return StaticArea;

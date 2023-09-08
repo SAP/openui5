@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define([], function() {
+sap.ui.define(["sap/ushell/library"], function(ushellLibrary) {
 	"use strict";
 
 	/**
@@ -17,9 +17,9 @@ sap.ui.define([], function() {
 		getService: function(sServiceName) {
 			switch (sServiceName) {
 				case "CrossApplicationNavigation":
-					return sap.ushell && sap.ushell.Container && sap.ushell.Container.getService("CrossApplicationNavigation");
+					return ushellLibrary && sap.ushell.Container && sap.ushell.Container.getService("CrossApplicationNavigation");
 				case "URLParsing":
-					return sap.ushell && sap.ushell.Container && sap.ushell.Container.getService("URLParsing");
+					return ushellLibrary && sap.ushell.Container && sap.ushell.Container.getService("URLParsing");
 				default:
 					return null;
 			}

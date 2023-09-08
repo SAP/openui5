@@ -3,9 +3,8 @@
 sap.ui.define([
 	"sap/base/util/UriParameters",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
+	"sap/ui/fl/initial/_internal/FlexInfoSession",
 	"sap/ui/fl/write/_internal/flexState/compVariants/CompVariantState",
-	"sap/ui/fl/write/_internal/FlexInfoSession",
-	"sap/ui/fl/write/api/ContextBasedAdaptationsAPI",
 	"sap/ui/fl/write/api/FeaturesAPI",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/fl/write/api/ReloadInfoAPI",
@@ -18,9 +17,8 @@ sap.ui.define([
 ], function(
 	UriParameters,
 	ManifestUtils,
-	CompVariantState,
 	FlexInfoSession,
-	ContextBasedAdaptationsAPI,
+	CompVariantState,
 	FeaturesAPI,
 	PersistenceWriteAPI,
 	ReloadInfoAPI,
