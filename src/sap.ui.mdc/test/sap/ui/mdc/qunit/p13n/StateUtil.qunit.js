@@ -1206,9 +1206,9 @@ sap.ui.define([
 				'\t\t  xmlns:mdc="sap.ui.mdc"\n' +
 				'\t\t  >\n' +
 				'\t\t\t\t<mdc:Chart id="mdcChart" p13nMode="{=[\'Sort\',\'Item\',\'Type\']}" delegate="{\'name\': \'sap/ui/mdc/odata/v4/vizChart/ChartDelegate\',\'payload\': {}}" >\n' +
-				'\t\t\t\t\t\t<mdc:items><chart:Item id="item0" name="Name" label="Name" role="category"></chart:Item>\n' +
-				'\t\t\t\t\t\t<chart:Item id="item1" name="agSalesAmount" label="Depth" role="axis1"></chart:Item>\n' +
-				'\t\t\t\t\t\t<chart:Item id="item2" name="SalesNumber" label="Width" role="axis2"></chart:Item></mdc:items>\n' +
+				'\t\t\t\t\t\t<mdc:items><chart:Item id="item0" propertyKey="Name" label="Name" role="category"></chart:Item>\n' +
+				'\t\t\t\t\t\t<chart:Item id="item1" propertyKey="agSalesAmount" label="Depth" role="axis1"></chart:Item>\n' +
+				'\t\t\t\t\t\t<chart:Item id="item2" propertyKey="SalesNumber" label="Width" role="axis2"></chart:Item></mdc:items>\n' +
 				'\t\t\t\t</mdc:Chart>\n' +
 				'</mvc:View>';
 
