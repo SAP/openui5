@@ -83,7 +83,7 @@ sap.ui.define([
 	 *
 	 * <li>Value of <code>2</code> - A 2-column layout will be suggested for logical level 0.</li></ul>
 	 *
-	 * @param {string} oSettings.mode
+	 * @param {string} [oSettings.mode]
 	 * <b>Deprecated as of version 1.50</b>, use <code>maxColumnsCount</code> param
 	 * instead.
 	 *
