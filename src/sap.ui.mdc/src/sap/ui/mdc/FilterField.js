@@ -100,10 +100,10 @@ sap.ui.define([
 					defaultValue: ""
 				},
 				/**
-				 * The type of data for the description part of a equal-condition
+				 * The type of data for the description part of an "equal to" condition.
 				 * This type is used to parse, format, and validate the value.
 				 *
-				 * Here a data type instance can be provided or an object containing <code>name</code>, <code>formatOptions</code> and <code>constraints</code>.
+				 * Here a data type instance can be provided or an object containing <code>name</code>, <code>formatOptions</code>, and <code>constraints</code>.
 				 *
 				 * @since 1.118.0
 				 */
