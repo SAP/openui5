@@ -683,8 +683,10 @@ sap.ui.define([
 			}
 
 			if (!oUsedType) {
-				// The used type must be required from the application.
-				var TypeClass = ObjectPath.get(sType || "");
+				// The used type must be required by the application.
+				var TypeClass = sType
+						? sap.ui.require(sType.replace(/\./g, "/")) || ObjectPath.get(sType)
+						: undefined;
 				oUsedType = new TypeClass(oFormatOptions, oConstraints);
 				oUsedType._bCreatedByOperator = true; // to distinguish in Field between original type and Operator type on Operator change
 
