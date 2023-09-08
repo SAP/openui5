@@ -82,8 +82,8 @@ sap.ui.define([
 	 * Creates an instance of the RenderManager.
 	 *
 	 * Applications or controls must not call the <code>RenderManager</code> constructor on their own
-	 * but should use the {@link sap.ui.core.Core#createRenderManager sap.ui.getCore().createRenderManager()}
-	 * method to create an instance for their exclusive use.
+	 * but should rely on the re-rendering initiated by the framework lifecycle based on invalidation.
+	 * See {@link module:sap/ui/core/Element#invalidate} and {@link module:sap/ui/core/Control#invalidate}.
 	 *
 	 * @class A class that handles the rendering of controls.
 	 *
@@ -234,6 +234,7 @@ sap.ui.define([
 	 * @author SAP SE
 	 * @version ${version}
 	 * @alias sap.ui.core.RenderManager
+	 * @hideconstructor
 	 * @public
 	 */
 	function RenderManager() {
