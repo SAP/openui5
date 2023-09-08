@@ -991,9 +991,12 @@ sap.ui.define([
 			fnPreprocessor(oEvent);
 		});
 
-		// forward the control event:
-		// if the control propagation has been stopped or the default should be
-		// prevented then do not forward the control event.
+		/**
+		 * forward the control event:
+		 * if the control propagation has been stopped or the default should be
+		 * prevented then do not forward the control event.
+		 * @deprecated Since 1.119
+		 */
 		if (oCore) {
 			oCore._handleControlEvent(oEvent, sId);
 		}

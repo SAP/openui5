@@ -632,7 +632,6 @@ sap.ui.define([
 				"getMessageManager",
 				//  - Events
 				"attachEvent","detachEvent",
-				"attachControlEvent", "detachControlEvent",
 				"attachParseError", "detachParseError",
 				"attachValidationError", "detachValidationError",
 				"attachFormatError", "detachFormatError",
@@ -665,6 +664,8 @@ sap.ui.define([
 				//  - Application/Root-Component
 				"setRoot",
 				"getRootComponent", "getApplication",
+				//  - Events
+				"attachControlEvent", "detachControlEvent",
 				//  - legacy registries & factories
 				"getControl", "getComponent", "getTemplate",
 				"createComponent",
@@ -2339,6 +2340,7 @@ sap.ui.define([
 	 * @param {function} fnFunction Callback to be called for each control event
 	 * @param {object} [oListener] Optional context object to call the callback on
 	 * @public
+	 * @deprecated Since 1.119
 	 */
 	Core.prototype.attachControlEvent = function(fnFunction, oListener) {
 		_oEventProvider.attachEvent(Core.M_EVENTS.ControlEvent, fnFunction, oListener);
@@ -2352,6 +2354,7 @@ sap.ui.define([
 	 * @param {function} fnFunction Function to unregister
 	 * @param {object} [oListener] Context object on which the given function had to be called
 	 * @public
+	 * @deprecated Since 1.119
 	 */
 	Core.prototype.detachControlEvent = function(fnFunction, oListener) {
 		_oEventProvider.detachEvent(Core.M_EVENTS.ControlEvent, fnFunction, oListener);
@@ -2362,6 +2365,7 @@ sap.ui.define([
 	 *
 	 * @param {object} oParameters Parameters to pass along with the event, e.g. <code>{ browserEvent: jQuery.Event }</code>
 	 * @private
+	 * @deprecated Since 1.119
 	 */
 	Core.prototype.fireControlEvent = function(oParameters) {
 		_oEventProvider.fireEvent(Core.M_EVENTS.ControlEvent, oParameters);
@@ -2373,6 +2377,7 @@ sap.ui.define([
 	 * @param {jQuery.Event} oEvent control event
 	 * @param {string} sUIAreaId id of the UIArea that received the event
 	 * @private
+	 * @deprecated Since 1.119
 	 */
 	Core.prototype._handleControlEvent = function(/**event*/oEvent, sUIAreaId) {
 		// Create a copy of the event
