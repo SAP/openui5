@@ -52,7 +52,10 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 					}
 				}
 			},
-			ThemeParameters: {
+			/**
+			 * Note: Contains tests for sync and async APIs, combined with legacy Core#loadLibrary.
+			 */
+			"ThemeParameters_legacyAPIs": {
 				title: "sap.ui.core.theming.Parameters",
 				ui5: {
 					theme: "sap_hcb"
@@ -63,6 +66,23 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 				loader: {
 					paths: {
 						"sap/ui/legacy/testlib": "test-resources/sap/ui/core/qunit/testdata/legacy-uilib_legacyAPIs/",
+						"testlibs/themeParameters": "test-resources/sap/ui/core/qunit/testdata/libraries/themeParameters"
+					}
+				}
+			},
+			/**
+			 * Note: Only contains modern non-deprecated APIs.
+			 */
+			ThemeParameters: {
+				title: "sap.ui.core.theming.Parameters - Async Only",
+				ui5: {
+					theme: "sap_hcb"
+				},
+				qunit: {
+					reorder: false
+				},
+				loader: {
+					paths: {
 						"testlibs/themeParameters": "test-resources/sap/ui/core/qunit/testdata/libraries/themeParameters"
 					}
 				}
