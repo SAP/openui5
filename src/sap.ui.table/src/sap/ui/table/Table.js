@@ -2161,6 +2161,11 @@ sap.ui.define([
 	 */
 	Table.prototype._getRowMode = function() {
 		var vRowMode = this.getRowMode();
+
+		if (!this.isDestroyStarted() && !TableUtils.isA(vRowMode, "sap.ui.table.rowmodes.RowMode") && !this._oDefaultRowMode) {
+			this._initDefaultRowMode();
+		}
+
 		return TableUtils.isA(vRowMode, "sap.ui.table.rowmodes.RowMode") ? vRowMode : this._oDefaultRowMode;
 	};
 
