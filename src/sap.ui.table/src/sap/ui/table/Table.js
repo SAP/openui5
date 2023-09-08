@@ -2162,6 +2162,9 @@ sap.ui.define([
 	Table.prototype._getRowMode = function() {
 		var vRowMode = this.getRowMode();
 
+		/**
+		 * @deprecated As of version 1.119
+		 */
 		if (!this.isDestroyStarted() && !TableUtils.isA(vRowMode, "sap.ui.table.rowmodes.RowMode") && !this._oDefaultRowMode) {
 			this._initDefaultRowMode();
 		}

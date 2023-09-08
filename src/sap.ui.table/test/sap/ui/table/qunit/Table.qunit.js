@@ -6808,6 +6808,7 @@ sap.ui.define([
 	/**
 	 * BCP: 2370086821
 	 * If a subclass binds the rows on init, the table wants to get the computed row counts from the row mode.
+	 * @deprecated As of version 1.119
 	 */
 	QUnit.test("Create a default instance when bound on init", function(assert) {
 		var bFailure = true;
