@@ -9,8 +9,8 @@
  */
 
 // Provides class sap.ui.core.support.usage.EventBroadcaster
-sap.ui.define(['sap/base/Log', '../../Component', '../../Element', '../../routing/Router'],
-	function (Log, Component, Element, Router) {
+sap.ui.define(['sap/base/Log', '../../Component', '../../Element', '../../ElementHooks', '../../routing/Router'],
+	function (Log, Component, Element, ElementHooks, Router) {
 		"use strict";
 
 
@@ -135,7 +135,7 @@ sap.ui.define(['sap/base/Log', '../../Component', '../../Element', '../../routin
 		 * @public
 		 */
 		EventBroadcaster.enable = function () {
-			Element._interceptEvent = function (sEventId, oElement, mParameters) {
+			ElementHooks.interceptEvent = function (sEventId, oElement, mParameters) {
 				EventBroadcaster.broadcastEvent(sEventId, oElement, mParameters);
 			};
 			Router._interceptRouteMatched = function (sControlId, oRouter) {
@@ -148,8 +148,8 @@ sap.ui.define(['sap/base/Log', '../../Component', '../../Element', '../../routin
 		 * @public
 		 */
 		EventBroadcaster.disable = function () {
-			if (Element._interceptEvent) {
-				delete Element._interceptEvent;
+			if (ElementHooks.interceptEvent) {
+				delete ElementHooks.interceptEvent;
 			}
 			if (Router._interceptRouteMatched) {
 				delete Router._interceptRouteMatched;
