@@ -22,6 +22,7 @@ sap.ui.define([
 	"sap/m/CustomListItem",
 	"sap/m/ActionListItem",
 	"sap/m/Input",
+	"sap/m/Text",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/core/Control",
 	"sap/ui/core/Element",
@@ -29,7 +30,7 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/model/Sorter",
 	"sap/ui/core/date/UI5Date"
-], function(jQuery, Core, createAndAppendDiv, qutils, JSONModel, Parameters, CustomData, coreLibrary, library, Device, App, Page, Avatar, Button, Bar, List, DisplayListItem, StandardListItem, InputListItem, CustomListItem, ActionListItem, Input, KeyCodes, Control, Element, ListItemBase, Log, Sorter, UI5Date) {
+], function(jQuery, Core, createAndAppendDiv, qutils, JSONModel, Parameters, CustomData, coreLibrary, library, Device, App, Page, Avatar, Button, Bar, List, DisplayListItem, StandardListItem, InputListItem, CustomListItem, ActionListItem, Input, Text, KeyCodes, Control, Element, ListItemBase, Log, Sorter, UI5Date) {
 	"use strict";
 	createAndAppendDiv("content").style.height = "100%";
 
