@@ -658,14 +658,14 @@ sap.ui.define([
 	 *
 	 * This method expects a view-local ID of an element (the same as e.g. defined in the *.view.xml
 	 * of an XMLView). For a search with a global ID (the value returned by <code>oElement.getId()</code>)
-	 * you should rather use {@link sap.ui.core.Core#byId sap.ui.getCore().byId()}.
+	 * you should rather use {@link sap.ui.core.Element#getElementById Element.getElementById}.
 	 *
 	 * @param {string} sId View local ID of the element
 	 * @return {sap.ui.core.Element|undefined} Element by its ID or <code>undefined</code>
 	 * @public
 	 */
 	View.prototype.byId = function(sId) {
-		return Element.registry.get(this.createId(sId));
+		return Element.getElementById(this.createId(sId));
 	};
 
 	/**

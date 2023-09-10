@@ -18,13 +18,11 @@
 @_sap_tnt_SideNavigation_TriangleDisplay: block;
 
 .sapTntSideNavigation {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  min-height: 0;
-  box-sizing: border-box;
-  overflow: hidden;
-  background: @sapUiListBackground;
+	display: flex;
+	flex-direction: column;
+	flex: 1;
+	min-height: 0;
+	background: @sapUiListBackground;
 	border-right: @_sap_tnt_SideNavigation_BorderRight;
 	box-shadow: @_sap_tnt_SideNavigation_BoxShadow;
 	border-radius: @_sap_tnt_SideNavigation_BorderRadius;
@@ -43,9 +41,7 @@ html.sap-tablet:not(html.sap-combi) {
 }
 
 .sapTntSideNavigationNotExpanded {
-	.sapTntNavLIText, .sapTntNavLIExpandIcon  {
-		display: none;
-	}
+
 	.sapTntSideNavigationSeparator {
 		margin: @_sap_tnt_SideNavigation_NavigationSeparatorMarginCollapsed;
 	}
@@ -69,7 +65,6 @@ html.sap-tablet:not(html.sap-combi) {
 	flex: 1;
 	min-height: 0;
 	position: relative;
-	overflow: hidden;
 	box-sizing: border-box;
 	outline: none;
 }
@@ -90,7 +85,7 @@ html.sap-tablet:not(html.sap-combi) {
 }
 
 .sapTntSideNavigationFixed {
-  position: relative;
+	position: relative;
 }
 
 /*  Compact size

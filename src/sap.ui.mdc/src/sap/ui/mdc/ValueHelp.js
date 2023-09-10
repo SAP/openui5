@@ -766,8 +766,8 @@ sap.ui.define([
 	 * @constant
 	 * @typedef {object} sap.ui.mdc.valuehelp.base.ItemForValueConfiguration
 	 * @property {any} value Value as entered by user
-	 * @property {any} [parsedValue] Value parsed by type of key to fit the data type of the key
-	 * @property {any} [parsedDescription] Value parsed by type of description to fit the data type of the description
+	 * @property {any} [parsedValue] Value parsed by type of key to match the data type of the key
+	 * @property {any} [parsedDescription] Value parsed by type of description to match the data type of the description
 	 * @property {object} [context] Contextual information provided by condition <code>payload</code> or <code>inParameters</code>/<code>outParameters</code>. This is only filled if the description needs to be determined for an existing condition.
 	 * @property {object} [context.inParameter] In parameters of the current condition (<code>inParameters</code> are not used any longer, but it might be filled in older conditions stored in variants.)
 	 * @property {object} [context.ouParameter] Out parameters of the current condition (<code>outParameters</code> are not used any longer, but it might be filled in older conditions stored in variants.)

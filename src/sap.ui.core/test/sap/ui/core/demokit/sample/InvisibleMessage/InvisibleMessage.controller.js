@@ -1,9 +1,9 @@
 sap.ui.define([
-		'sap/ui/core/Core',
+		'sap/ui/core/Element',
 		'sap/ui/core/library',
 		'sap/ui/core/mvc/Controller',
 		'sap/ui/core/InvisibleMessage'
-	], function(Core, library, Controller, InvisibleMessage) {
+	], function(Element, library, Controller, InvisibleMessage) {
 	"use strict";
 
 	var InvisibleMessageMode = library.InvisibleMessageMode;
@@ -14,9 +14,9 @@ sap.ui.define([
 		},
 		onPress: function (evt) {
 			var sButtonId = evt.getSource().getId(),
-				oButton = Core.byId(sButtonId),
+				oButton = Element.getElementById(sButtonId),
 				oViewTextId = this.getView().getId() + "--statustext",
-				oText = Core.byId(oViewTextId),
+				oText = Element.getElementById(oViewTextId),
 				sMessage = "Button with type" + " " +  oButton.getType() + " " + "and text" +  " " + oButton.getText() + " is pressed";
 
 			this.oInvisibleMessage.announce(sMessage, InvisibleMessageMode.Assertive);

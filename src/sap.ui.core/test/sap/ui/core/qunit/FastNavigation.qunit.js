@@ -1,10 +1,11 @@
 /*global QUnit */
 sap.ui.define([
+	"sap/ui/core/EventBus",
 	"sap/ui/events/F6Navigation",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/qunit/QUnitUtils",
 	"../resources/fastnav"
-], function(F6Navigation, KeyCodes, qutils, fastnav) {
+], function(EventBus, F6Navigation, KeyCodes, qutils, fastnav) {
 	"use strict";
 
 	// Enhance the Navigation Handler to use the test scope only (not the QUnit related DOM) and the target of the event instead of the activeElement
@@ -32,7 +33,7 @@ sap.ui.define([
 
 
 
-	sap.ui.getCore().getEventBus().subscribe("fastnav", "screenready", function() {
+	EventBus.getInstance().subscribe("fastnav", "screenready", function() {
 		// exports of 'fastnav'
 		var oPopup1 = window.oPopup1;
 		var oPopup2 = window.oPopup2;

@@ -9,11 +9,12 @@ sap.ui.define([
 	"sap/m/MessagePopover",
 	"sap/m/ResponsivePopover",
 	"sap/m/TextArea",
+	"sap/ui/core/Element",
 	"sap/ui/core/Messaging",
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/util/XMLHelper"
 ], function (Button, Link, library, MessageItem, MessagePopover, ResponsivePopover, TextArea,
-		Messaging, Controller, XMLHelper) {
+		Element, Messaging, Controller, XMLHelper) {
 	"use strict";
 
 	// shortcut for sap.m.PlacementType
@@ -49,7 +50,7 @@ sap.ui.define([
 				var oBestMatch,
 					aControls = oEvent.getParameter("item").getBindingContext("messages")
 						.getObject().getControlIds().map(function (sId) {
-							return sap.ui.getCore().byId(sId);
+							return Element.getElementById(sId);
 					});
 
 				if (aControls.length) {

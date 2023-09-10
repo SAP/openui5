@@ -45,7 +45,7 @@ sap.ui.define([
 				// declarative matchers:
 				// sibling is already resolved by opa or controlfinder - here we deal only with the id
 				var oAppWindow = oMatcher._getApplicationWindow();
-				oSiblingControl = oAppWindow.sap.ui.require("sap/ui/core/Core").byId(vSibling);
+				oSiblingControl = oAppWindow.sap.ui.require("sap/ui/core/Element").getElementById(vSibling);
 			} else {
 				oSiblingControl = vSibling;
 			}

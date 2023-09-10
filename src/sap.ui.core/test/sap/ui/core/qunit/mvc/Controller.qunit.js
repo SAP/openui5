@@ -122,7 +122,7 @@ sap.ui.define([
 				aViews[0].destroy();
 				aViews[1].destroy();
 				// dangling fragment content (not prefixed and not aggregated)
-				sap.ui.getCore().byId("xmlViewInsideFragment").destroy();
+				Element.getElementById("xmlViewInsideFragment").destroy();
 			});
 		}).then(function() {
 			checkForDanglingControls(assert, aViews[0]);
@@ -359,7 +359,7 @@ sap.ui.define([
 			"</mvc:View>"
 		}).then(function(oView){
 			return pFragmentReady.then(function() {
-				assert.ok(sap.ui.getCore().byId("xmlViewInsideFragment"), "Fragment content is not prefixed by any ID.");
+				assert.ok(Element.getElementById("xmlViewInsideFragment"), "Fragment content is not prefixed by any ID.");
 				assert.notOk(oView.byId("xmlViewInsideFragment"), "Fragment content is not prefixed by the view ID.");
 				oView.destroy();
 			});
@@ -391,7 +391,7 @@ sap.ui.define([
 			"</mvc:View>"
 		}).then(function(oView){
 			return pFragmentReady.then(function() {
-				assert.ok(sap.ui.getCore().byId("myFragment--xmlViewInsideFragment"), "Fragment content is prefixed by the given ID.");
+				assert.ok(Element.getElementById("myFragment--xmlViewInsideFragment"), "Fragment content is prefixed by the given ID.");
 				assert.notOk(oView.byId("myFragment--xmlViewInsideFragment"), "Fragment content is not prefixed by the view ID.");
 				oView.destroy();
 			});

@@ -684,7 +684,7 @@ sap.ui.define([
 			}
 
 			if (oTable) {
-				oTable.detachFirstVisibleRowChanged(this.onFirstVisibleRowChange, oTable);
+				oTable.detachFirstVisibleRowChanged(this.onFirstVisibleRowChange, this);
 			}
 			oTable._oNotificationPopover.close();
 		},

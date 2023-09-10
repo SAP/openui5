@@ -3,6 +3,7 @@ sap.ui.define([
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/core/UIComponent",
 	'sap/ui/core/Component',
+	"sap/ui/core/Element",
 	"sap/m/Panel",
 	"sap/m/HBox",
 	'sap/ui/core/qunit/mvc/viewprocessing/MyGlobal',
@@ -10,7 +11,7 @@ sap.ui.define([
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/core/StashedControlSupport",
 	"sap/ui/qunit/utils/nextUIUpdate"
-], function(Controller, UIComponent, Component, Panel, HBox, MyGlobal, SyncPromise, XMLView, StashedControlSupport, nextUIUpdate) {
+], function(Controller, UIComponent, Component, Element, Panel, HBox, MyGlobal, SyncPromise, XMLView, StashedControlSupport, nextUIUpdate) {
 
 	"use strict";
 
@@ -496,7 +497,7 @@ sap.ui.define([
 					assert.strictEqual(oOwnerComponent.getId(), oComponent.getId(), "Stashed Panel should have owner component");
 				}
 
-				var oStashedPanel = sap.ui.getCore().byId(oView.createId("panel"));
+				var oStashedPanel = Element.getElementById(oView.createId("panel"));
 				oOwnerComponent = Component.getOwnerComponentFor(oStashedPanel);
 				assert.ok(oOwnerComponent, "Owner Component for StashedControl of panel can be found");
 				if (oOwnerComponent) {
@@ -533,7 +534,7 @@ sap.ui.define([
 				assert.ok(oRealPanel.isA("sap.m.Panel"), "The real panel instance is created after unstash");
 
 				// check for additional stashed control inside the now unstashed panel
-				oStashedControlForButtonInPanel = sap.ui.getCore().byId(oView.createId("stashedButton"));
+				oStashedControlForButtonInPanel = Element.getElementById(oView.createId("stashedButton"));
 				oNormalButtonInStashedParent = oView.byId("normalButtonInStashedParent");
 
 				assert.ok(oStashedControlForButtonInPanel, "Stashed button in stashed area is created");

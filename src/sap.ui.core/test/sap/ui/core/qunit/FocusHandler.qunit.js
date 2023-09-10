@@ -1,9 +1,10 @@
 /*global QUnit */
 sap.ui.define([
 	"sap/ui/core/FocusHandler",
+	"sap/ui/core/Element",
 	"sap/m/Input",
 	"sap/ui/qunit/utils/nextUIUpdate"
-], function(FocusHandler, Input, nextUIUpdate) {
+], function(FocusHandler, Element, Input, nextUIUpdate) {
 	"use strict";
 
 	// Control initialization
@@ -38,10 +39,10 @@ sap.ui.define([
 		assert.equal(FocusHandler.oLast, null, "Initial Value 'Last':");
 	});
 
-	QUnit.test("Check FocusHandler.getCurrentFocusedControlId", function(assert) {
-		assert.equal(FocusHandler.oCurrent, FocusHandler.getCurrentFocusedControlId(), "Current not available:");
+	QUnit.test("Check internal FocusHandler reference of currently focused control is correct", function(assert) {
+		assert.equal(FocusHandler.oCurrent, Element.getActiveElement()?.getId(), "Current not available:");
 		oControls["oControl1"].focus();
-		assert.equal(FocusHandler.oCurrent, FocusHandler.getCurrentFocusedControlId(), "Current available:");
+		assert.equal(FocusHandler.oCurrent, Element.getActiveElement()?.getId(), "Current available:");
 		document.getElementById("customInput").focus(); //Reset for next test
 	});
 

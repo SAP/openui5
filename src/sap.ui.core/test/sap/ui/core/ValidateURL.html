@@ -11,7 +11,7 @@
 
 		<script>
 
-			sap.ui.require(["sap/ui/core/Core"],function(Core) {
+			sap.ui.require(["sap/ui/core/Core", "sap/ui/core/Element"],function(Core, Element) {
 
 				try{
 					Core.loadLibrary("sap.ui.commons");
@@ -25,7 +25,7 @@
 				Core.ready().then(function () {
 
 					function onChange(oEvent){
-						var oInput = Core.byId("Input1");
+						var oInput = Element.getElementById("Input1");
 						var sUrl = oInput.getValue();
 						var sValid = URLListValidator.validate(sUrl);
 
@@ -47,7 +47,7 @@
 
 					function fillListBox(){
 						var aAllowlist = URLListValidator.entries();
-						var oListBox = Core.byId("ListBox1");
+						var oListBox = Element.getElementById("ListBox1");
 						oListBox.removeAllItems();
 
 						if (aAllowlist instanceof Array && aAllowlist.length > 0){
@@ -60,11 +60,11 @@
 					}
 
 					function addToAllowlist(oEvent){
-						var oProtocol = Core.byId("Protocol");
-						var oHost = Core.byId("Host");
-						var oPort = Core.byId("Port");
-						var oPath = Core.byId("Path");
-						var oListBox = Core.byId("ListBox1");
+						var oProtocol = Element.getElementById("Protocol");
+						var oHost = Element.getElementById("Host");
+						var oPort = Element.getElementById("Port");
+						var oPath = Element.getElementById("Path");
+						var oListBox = Element.getElementById("ListBox1");
 						var sNewUrl = oProtocol.getValue() +"|"+ oHost.getValue() +"|"+ oPort.getValue() +"|"+ oPath.getValue();
 						oListBox.addItem(new sap.ui.core.ListItem({text: sNewUrl}));
 						URLListValidator.add(oProtocol.getValue(), oHost.getValue(), oPort.getValue(), oPath.getValue());
@@ -76,7 +76,7 @@
 					}
 
 					function removeFromAllowlist(oEvent){
-						var oListBox = Core.byId("ListBox1");
+						var oListBox = Element.getElementById("ListBox1");
 						var iIndex = oListBox.getSelectedIndex();
 						var oItem = oListBox.getSelectedItem();
 						oListBox.removeItem(oItem);
@@ -86,7 +86,7 @@
 					}
 
 					function clearAllowlist(oEvent){
-						var oListBox = Core.byId("ListBox1");
+						var oListBox = Element.getElementById("ListBox1");
 						URLListValidator.clear();
 						oListBox.destroyItems();
 						onChange(oEvent)

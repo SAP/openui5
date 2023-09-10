@@ -20,6 +20,7 @@ sap.ui.define([
 	"sap/m/Text",
 	"sap/m/Toolbar",
 	"sap/ui/core/Core",
+	"sap/ui/core/Element",
 	"sap/ui/table/Table",
 	"sap/ui/table/Column",
 	"sap/ui/model/Filter",
@@ -31,7 +32,7 @@ sap.ui.define([
 	"require",
 	"./discovery",
 	"./filter"
-], function(App, Bar, HBox, Label, Link, Page, SearchField, SegmentedButton, SegmentedButtonItem, Text, Toolbar, Core, Table, Column, Filter, JSONModel, Log, includeStylesheet, Storage, _utils, require, discovery, makeFilterFunction) {
+], function(App, Bar, HBox, Label, Link, Page, SearchField, SegmentedButton, SegmentedButtonItem, Text, Toolbar, Core, Element, Table, Column, Filter, JSONModel, Log, includeStylesheet, Storage, _utils, require, discovery, makeFilterFunction) {
 	"use strict";
 
 	function compare(s1,s2) {
@@ -318,16 +319,16 @@ sap.ui.define([
 
 	uiCreated.then(() => {
 
-		const search = sap.ui.getCore().byId("search");
+		const search = Element.getElementById("search");
 		search.setValue( cleanURL(url.searchParams.get("testpage")) || "");
 		const entryPage = cleanURL(url.searchParams.get("root")) || _utils.getAttribute("data-sap-ui-root-testsuite") || "test-resources/qunit/testsuite.qunit.html";
 
 		if ( restoreData(entryPage) ) {
-			sap.ui.getCore().byId("app").setBusy(false);
+			Element.getElementById("app").setBusy(false);
 		}
 
 		discovery.findTests( entryPage, progress ).then( (aTests) => {
-			sap.ui.getCore().byId("app").setBusy(false);
+			Element.getElementById("app").setBusy(false);
 			oTable.setFooter("Refresh: done.");
 			const aTestPageUrls = [];
 			// filter duplicate tests and sort them
@@ -358,8 +359,8 @@ sap.ui.define([
 						id: "chart",
 						visible: false
 					});
-					sap.ui.getCore().byId("page").addContent(oTreeMapChart);
-					sap.ui.getCore().byId("view").getItems()[1].setEnabled(true);
+					Element.getElementById("page").addContent(oTreeMapChart);
+					Element.getElementById("view").getItems()[1].setEnabled(true);
 				}
 			});
 		}

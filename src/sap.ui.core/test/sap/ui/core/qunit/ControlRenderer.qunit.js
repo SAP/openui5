@@ -296,7 +296,7 @@ sap.ui.define([
 		assert.notEqual(document.getElementById("child2").style.width, "500px", "Width is not set for the 2nd child since we initially do dom-based rendering");
 		assert.notOk(document.getElementById("child2").hasAttribute("hack"), "Hack attribute is not set");
 
-		Element.registry.get("child2").setWidth('300px;" hack="true"');
+		Element.getElementById("child2").setWidth('300px;" hack="true"');
 		await nextUIUpdate();
 		assert.notEqual(document.getElementById("child2").style.width, "300px", "Width is not set for the 2nd child since patching encodes semicolon");
 		assert.notOk(document.getElementById("child2").hasAttribute("hack"), "Hack attribute is not set");

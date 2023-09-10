@@ -45,14 +45,6 @@
 }
 
 /* ==========================================================================
-   Header
-   ========================================================================== */
-
-.sapTntToolPageHeaderWrapper {
-  z-index: 2; // bring header above content wrapper to draw drop shadow over the content
-}
-
-/* ==========================================================================
    Content wrapper
    ========================================================================== */
 .sapTntToolPageContentWrapper {
@@ -71,6 +63,9 @@
 
   will-change: transform;
   margin: @_sap_tnt_ToolPage_AsideMargins;
+}
+
+.sapTntToolPageAsideCollapsed .sapTntToolPageAside {
   z-index: 2;
 }
 
@@ -105,7 +100,6 @@ html.sap-phone {
     left: 0;
     bottom: 0;
     top: 0;
-    z-index: 4;
 
     margin: @_sap_tnt_ToolPage_AsideMarginsPhone;
   }
@@ -131,13 +125,16 @@ html.sap-phone {
   flex: 1;
   min-width: 0; // fixes flex chrome issue
   overflow: hidden;
-  z-index: 3;
 
   will-change: transform;
   margin: @_sap_tnt_ToolPage_ContentMargins;
   box-shadow: @_sap_tnt_ToolPage_ContentShadow;
   border-radius: @_sap_tnt_ToolPage_ContentBorderRadius;
   background: @_sap_tnt_ToolPage_ContentBackgroundStandard;
+}
+
+.sapTntToolPageAsideCollapsed .sapTntToolPageMain {
+  z-index: 1;
 }
 
 .sapTntToolPageMain.sapTntToolPageMainBackground-Solid {

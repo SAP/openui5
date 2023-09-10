@@ -20,7 +20,7 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/m/IllustratedMessage",
 	"sap/m/Label",
-	"sap/ui/core/Configuration"
+	"sap/ui/core/ControlBehavior"
 ], function(
 	TableQUnitUtils,
 	TableUtils,
@@ -41,7 +41,7 @@ sap.ui.define([
 	oCore,
 	IllustratedMessage,
 	Label,
-	Configuration
+	ControlBehavior
 ) {
 	"use strict";
 
@@ -2125,7 +2125,7 @@ sap.ui.define([
 
 	QUnit.test("No Acc Mode", function(assert) {
 		oTable._getAccExtension()._accMode = false;
-		var oConfigStub = sinon.stub(Configuration, "getAccessibility");
+		var oConfigStub = sinon.stub(ControlBehavior, "isAccessibilityEnabled");
 		oConfigStub.returns(false);
 		oTable.findElements(true, function(oElement) {
 			oElement.invalidate();

@@ -96,7 +96,7 @@ function(StashedControlSupport, Element, Component, XMLView, Fragment, ListItem,
 		assert.ok(this.oButton.isStashed(), "Control is stashed");
 
 		this.oButton.unstash();
-		assert.strictEqual(sap.ui.getCore().byId(this.sId), this.oUnstashedButton, "StashedControl has been replaced");
+		assert.strictEqual(Element.getElementById(this.sId), this.oUnstashedButton, "StashedControl has been replaced");
 
 		assert.notOk(this.oUnstashedButton.isStashed(), "Control is not stashed anymore");
 	});
@@ -139,17 +139,17 @@ function(StashedControlSupport, Element, Component, XMLView, Fragment, ListItem,
 		this.oView.onAfterRendering = function() {
 			assert.notOk(document.getElementById("view--StashedButton"), "Stashed button is not rendered");
 
-			var oButton = sap.ui.getCore().byId("view--StashedButton");
+			var oButton = Element.getElementById("view--StashedButton");
 
 			assert.ok(oButton, "Stashed button is available by id");
 			assert.ok(oButton instanceof Button, "Stashed button is instanceof sap.m.Button");
 			assert.ok(oButton.isStashed(), "Stashed button has stashed=true");
 			assert.notOk(oButton.getVisible(), "Stashed button has visible=false");
 			assert.ok(document.getElementById("view--Button"), "Button is rendered");
-			assert.ok(sap.ui.getCore().byId("view--Button") instanceof Button, "Button is a Button");
+			assert.ok(Element.getElementById("view--Button") instanceof Button, "Button is a Button");
 
 			this.oView.onAfterRendering = function() {
-				var oUnstashedButton = sap.ui.getCore().byId("view--StashedButton");
+				var oUnstashedButton = Element.getElementById("view--StashedButton");
 				assert.ok(document.getElementById("view--StashedButton"), "Unstashed button is rendered");
 				assert.ok(oUnstashedButton instanceof Button, "Unstashed Button is still a Button");
 				assert.notOk(oUnstashedButton.isStashed(), "UnstashedButton.isStashed() != true");
@@ -166,7 +166,7 @@ function(StashedControlSupport, Element, Component, XMLView, Fragment, ListItem,
 
 	QUnit.test("getStashedControls", function(assert) {
 		assert.strictEqual(StashedControlSupport.getStashedControls().length, 1, "One stashed control existent");
-		assert.strictEqual(StashedControlSupport.getStashedControls("Panel")[0], sap.ui.getCore().byId("control11"), "One stashed controls in parent1");
+		assert.strictEqual(StashedControlSupport.getStashedControls("Panel")[0], Element.getElementById("control11"), "One stashed controls in parent1");
 	});
 
 	QUnit.test("getStashedControlIds", function(assert) {
@@ -346,16 +346,16 @@ function(StashedControlSupport, Element, Component, XMLView, Fragment, ListItem,
 			this.oView.onAfterRendering = function() {
 				assert.notOk(document.getElementById("view--StashedButton"), "Stashed button is not rendered");
 
-				var oButton = sap.ui.getCore().byId("view--StashedButton");
+				var oButton = Element.getElementById("view--StashedButton");
 
 				assert.ok(oButton, "Stashed button is available by id");
 				assert.ok(oButton instanceof Button, "Stashed button is instanceof sap.m.Button");
 				assert.ok(oButton.isStashed(), "Stashed button has stashed=true");
 				assert.ok(document.getElementById("view--Button"), "Button is rendered");
-				assert.ok(sap.ui.getCore().byId("view--Button") instanceof Button, "Button is a Button");
+				assert.ok(Element.getElementById("view--Button") instanceof Button, "Button is a Button");
 
 				this.oView.onAfterRendering = function() {
-					var oUnstashedButton = sap.ui.getCore().byId("view--StashedButton");
+					var oUnstashedButton = Element.getElementById("view--StashedButton");
 					assert.ok(document.getElementById("view--StashedButton"), "Unstashed button is rendered");
 					assert.ok(oUnstashedButton instanceof Button, "Unstashed Button is still a Button");
 					assert.notOk(oUnstashedButton.isStashed(), "UnstashedButton.isStashed() != true");
@@ -564,7 +564,7 @@ function(StashedControlSupport, Element, Component, XMLView, Fragment, ListItem,
 			aStashedControlsTotal[1].unstash();
 
 			// check final control
-			var oFinalControl = sap.ui.getCore().byId(sFinalID);
+			var oFinalControl = Element.getElementById(sFinalID);
 			assert.equal(oFinalControl.getSubSections().length, 1, "Unstashed final control instance has content.");
 			assert.equal(oFinalControl.getParent(), null, "Unstashed final control instance has no parent.");
 

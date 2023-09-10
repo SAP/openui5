@@ -204,7 +204,7 @@ sap.ui.define([
 		for ( sKey in mTextIds ) {
 			p = sKey.indexOf('|');
 			oBundle = Library.getResourceBundleFor(sKey.slice(0, p));
-			oText = Element.registry.get(mTextIds[sKey]);
+			oText = Element.getElementById(mTextIds[sKey]);
 			oText && oText.setText(oBundle.getText(sKey.slice(p + 1)));
 		}
 	});

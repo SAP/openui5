@@ -1797,7 +1797,7 @@ sap.ui.define([
 		 *  UI5 Element by traversing up the DOM tree
 		 * @param {boolean} [bIncludeRelated=false] Whether the <code>data-sap-ui-related</code> attribute is also accepted
 		 *  as a selector for a UI5 Element, in addition to <code>data-sap-ui</code>
-		 * @returns {sap.ui.core.Element} The UI5 Element that wraps the given DOM element. <code>undefined</code> is
+		 * @returns {sap.ui.core.Element|undefined} The UI5 Element that wraps the given DOM element. <code>undefined</code> is
 		 *  returned when no UI5 Element can be found.
 		 * @public
 		 * @since 1.106
@@ -1839,7 +1839,43 @@ sap.ui.define([
 				sId = sId || oDomRef.getAttribute("id");
 			}
 
-			return Element.registry.get(sId);
+			return Element.getElementById(sId);
+		};
+
+		/**
+		 * Returns the registered element with the given ID, if any.
+		 *
+		 * The ID must be the globally unique ID of an element, the same as returned by <code>oElement.getId()</code>.
+		 *
+		 * When the element has been created from a declarative source (e.g. XMLView), that source might have used
+		 * a shorter, non-unique local ID. A search for such a local ID cannot be executed with this method.
+		 * It can only be executed on the corresponding scope (e.g. on an XMLView instance), by using the
+		 * {@link sap.ui.core.mvc.View#byId View#byId} method of that scope.
+		 *
+		 * @param {sap.ui.core.ID|null|undefined} sId ID of the element to search for
+		 * @returns {sap.ui.core.Element|undefined} Element with the given ID or <code>undefined</code>
+		 * @public
+		 * @function
+		 * @since 1.119
+		 */
+		Element.getElementById = Element.registry.get;
+
+		/**
+		 * Returns the element currently in focus.
+		 *
+		 * @returns {sap.ui.core.Element|undefined} The currently focused element
+		 * @public
+		 * @since 1.119
+		 */
+		Element.getActiveElement = () => {
+			try {
+				var $Act = jQuery(document.activeElement);
+				if ($Act.is(":focus")) {
+					return Element.closestTo($Act[0]);
+				}
+			} catch (err) {
+				//escape eslint check for empty block
+			}
 		};
 
 		/**
@@ -1885,7 +1921,7 @@ sap.ui.define([
 		 *
 		 * @param {sap.ui.core.ID} id ID of the element to retrieve
 		 * @returns {sap.ui.core.Element|undefined} Element with the given ID or <code>undefined</code>
-		 * @name sap.ui.core.Element.registry.get
+		 * @name sap.ui.core.Element.getElementById
 		 * @function
 		 * @public
 		 */

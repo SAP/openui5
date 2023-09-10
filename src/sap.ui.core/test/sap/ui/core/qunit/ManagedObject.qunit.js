@@ -2774,13 +2774,13 @@ sap.ui.define([
 			assert.ok(ex.stack.indexOf("failingNamedFunction" > -1), "contained the named function in the stack");
 		}
 
-		assert.ok(!sap.ui.getCore().byId("myId"), "object was deregistered");
+		assert.ok(!Element.getElementById("myId"), "object was deregistered");
 	});
 
 	QUnit.test("Registration of components: duplicate IDs", function(assert) {
 		assert.expect(3);
 		new Element("myId");
-		assert.ok(sap.ui.getCore().byId("myId"), "object should be initially registered");
+		assert.ok(Element.getElementById("myId"), "object should be initially registered");
 
 		try {
 			new Element("myId");
@@ -2788,7 +2788,7 @@ sap.ui.define([
 			assert.equal(ex.message, "Error: adding element with duplicate id 'myId'");
 		}
 
-		assert.ok(sap.ui.getCore().byId("myId"), "object should still be registered");
+		assert.ok(Element.getElementById("myId"), "object should still be registered");
 	});
 
 	QUnit.test("Registration of components: do not call unregister if register fails", function(assert) {

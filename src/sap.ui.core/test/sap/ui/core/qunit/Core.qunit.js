@@ -594,7 +594,15 @@ sap.ui.define([
 		this.stub(privateLoaderAPI, "loadJSResourceAsync").callsFake(function() {
 			return Promise.reject(new Error());
 		});
-		this.spy(sap.ui, "require");
+		this.stub(sap.ui, "require").callsFake(function(name, callback) {
+			oCore.initLibrary({
+				name: 'testlibs.scenario11.lib1',
+				noLibraryCSS: true
+			});
+			setTimeout(function() {
+				callback({});
+			}, 0);
+		});
 
 		var loaded = oCore.loadLibrary("testlibs.scenario11.lib1", true);
 		assert.ok(loaded instanceof Promise, "loadLibrary should return a promise when called with async:true");

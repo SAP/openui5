@@ -2,6 +2,7 @@
  * ${copyright}
  */
 sap.ui.define([
+	"sap/ui/core/Element",
 	"sap/ui/core/sample/common/Helper",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
@@ -14,8 +15,8 @@ sap.ui.define([
 	"sap/ui/test/matchers/Ancestor",
 	"sap/ui/test/matchers/Interactable",
 	"sap/ui/test/matchers/Properties"
-], function (Helper, Filter, FilterOperator, ODataUtils, Opa, Opa5, TestUtils, EnterText, Press,
-		Ancestor, Interactable, Properties) {
+], function (Element, Helper, Filter, FilterOperator, ODataUtils, Opa, Opa5, TestUtils, EnterText,
+		Press, Ancestor, Interactable, Properties) {
 	"use strict";
 	var COMPANY_NAME_COLUMN_INDEX = 1,
 		GROSS_AMOUNT_COLUMN_INDEX = 2,
@@ -345,9 +346,8 @@ sap.ui.define([
 							return oSalesOrderTable.getItems().length > 0;
 						},
 						success : function () {
-							var oCore = sap.ui.getCore(),
-								sSalesOrderId = oCore.byId(sViewName).byId("SalesOrderList")
-									.getItems()[0].getCells()[0].getText();
+							var sSalesOrderId = Element.getElementById(sViewName)
+									.byId("SalesOrderList").getItems()[0].getCells()[0].getText();
 
 							Opa.getContext().firstSalesOrderId = sSalesOrderId;
 							Opa5.assert.ok(true, "First SalesOrderID: " + sSalesOrderId);
@@ -407,7 +407,7 @@ sap.ui.define([
 					if (TestUtils.isRealOData()) {
 						// remember created sales order for cleanup
 						this.waitFor({success : function () {
-							var oCreated = sap.ui.getCore().byId(sViewName).byId("SalesOrderList")
+							var oCreated = Element.getElementById(sViewName).byId("SalesOrderList")
 									.getItems()[0].getBindingContext();
 
 							oCreated.created().then(function () {
@@ -615,7 +615,7 @@ sap.ui.define([
 						controlType : "sap.m.Table",
 						id : "SalesOrderList",
 						success : function () {
-							sap.ui.getCore().byId(sViewName).getController().onSortByGrossAmount();
+							Element.getElementById(sViewName).getController().onSortByGrossAmount();
 							Opa5.assert.ok(true, "controller.onSortByGrossAmount() called");
 						},
 						viewName : sViewName
@@ -629,7 +629,8 @@ sap.ui.define([
 						controlType : "sap.m.Table",
 						id : "SalesOrderList",
 						success : function () {
-							sap.ui.getCore().byId(sViewName).getController().onSortBySalesOrderID();
+							Element.getElementById(sViewName).getController()
+								.onSortBySalesOrderID();
 							Opa5.assert.ok(true, "controller.onSortBySalesOrderID() called");
 						},
 						viewName : sViewName

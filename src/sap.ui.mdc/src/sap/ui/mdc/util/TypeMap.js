@@ -216,11 +216,14 @@ sap.ui.define([
 	 * <b>Note:</b> The module of the data type needs to be loaded before.
 	 * @final
 	 * @param {string} sDataType Class path as string where each name is separated by '.'
-	 * @returns {sap.ui.model.SimpleType} creates returns a dataType class
+	 * @returns {function(new: sap.ui.model.SimpleType)} returns a dataType class
 	 * @public
 	 */
 	TypeMap.getDataTypeClass = function(sDataType) {
-		var TypeClass = ObjectPath.get(this.getDataTypeClassName(sDataType) || "");
+		var sTypeName = this.getDataTypeClassName(sDataType);
+		var TypeClass = sTypeName
+			? sap.ui.require(sTypeName.replace(/\./g, "/")) || ObjectPath.get(sTypeName)
+			: undefined;
 		if (!TypeClass) {
 			throw new Error("DataType '" + sDataType + "' cannot be determined");
 		}

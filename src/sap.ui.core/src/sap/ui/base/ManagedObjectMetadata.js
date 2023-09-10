@@ -439,7 +439,7 @@ function(
 			this._getTarget = (function(sIdSuffix) {
 				return function() {
 					Element = Element || sap.ui.require("sap/ui/core/Element");
-					return Element && Element.registry.get(this.getId() + sIdSuffix); // "this" context is the ManagedObject instance
+					return Element && Element.getElementById(this.getId() + sIdSuffix); // "this" context is the ManagedObject instance
 				};
 			})(oForwardTo.idSuffix);
 

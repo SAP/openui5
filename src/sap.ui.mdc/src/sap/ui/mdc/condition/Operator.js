@@ -70,13 +70,14 @@ sap.ui.define([
 	 *                 A placeholder that refers to the translated tokenText can be used. <code>#tokenText#</code> refers to the <code>oConfiguration.tokenText</code> property if given.
 	 * @param {string[]|object[]} oConfiguration.valueTypes Array of type to be used. The length of the array defines the number of values that
 	 *                 need to be entered with the operator.<br>
-	 *                 If set to {@link sap.ui.mdc.enums.OperatorValueType.Self OperatorValueType.Self} the <code>Type</code> of the <code>Field</code> or <code>FilterField</code> using the <code>Operator</code> is used.<br>
+	 *                 If set to {@link sap.ui.mdc.enums.OperatorValueType.Self OperatorValueType.Self}, the <code>Type</code> of the <code>Field</code> or <code>FilterField</code> using the <code>Operator</code> is used.<br>
 	 *                 If set to {@link sap.ui.mdc.enums.OperatorValueType.SelfNoParse OperatorValueType.SelfNoParse} same as {@link sap.ui.mdc.enums.OperatorValueType.Self OperatorValueType.Self}, except that the input value parsing will not be called.<br>
-	 *                 If set to {@link sap.ui.mdc.enums.OperatorValueType.Static OperatorValueType.Static} a simple string type is used to display static text.<br>
-	 *                 If set to a name of a data type an instance of this data type will be used.<br>
-	 *                 If set to an object with structure {@link sap.ui.mdc.condition.ValueType}
-	 *                 an instance of the corresponding data type will be used. The type given via <code>name</code> must be loaded by the application.<br>
-	 *                 If set to <code>null</code> the corresponding value is interpreted as description that holds no required data. To display this value the additional <code>Type</code> of the <code>Field</code> or <code>FilterField</code> using the <code>Operator</code> is used.<br>
+	 *                 If set to {@link sap.ui.mdc.enums.OperatorValueType.Static OperatorValueType.Static}, a simple string type is used to display static text.<br>
+	 *                 If set to a name of a data type, an instance of this data type is used.<br>
+	 *                 If set to an object with structure {@link sap.ui.mdc.condition.ValueType},
+	 *                 an instance of the corresponding data type is used. The type given via <code>name</code> must be loaded by the application.<br>
+	 *                 If set to <code>null</code>, the corresponding value is interpreted as a description that holds no required data. To display this value,
+	 *                 the additional <code>Type</code> of the <code>Field</code> or <code>FilterField</code> using the <code>Operator</code> is used.<br>
 	 * @param {string[]} [oConfiguration.paramTypes] Array of type parameters regexp
 	 * @param {string} [oConfiguration.longText] String representation of the operator as a long text.<br>
 	 *                If longText is not given , it is looked up in the resource bundle of the <code>sap.ui.mdc</code> library by the key
@@ -352,9 +353,9 @@ sap.ui.define([
 	 * @param {sap.ui.model.Type} [oType] Data type
 	 * @param {sap.ui.mdc.enums.FieldDisplay} [sDisplay] Display mode
 	 * @param {boolean} [bHideOperator=false] If set, only the value output is returned without any visible operator
-	 * @param {sap.ui.model.Type[]} [aCompositeTypes] additional Types used for parts of a <code>CompositeType</code>
+	 * @param {sap.ui.model.Type[]} [aCompositeTypes] Additional types used for each part of a <code>CompositeType</code>
 	 * @param {sap.ui.model.Type} [oAdditionalType] Data type for additional value
-	 * @param {sap.ui.model.Type[]} [aAdditionalCompositeTypes] additional Types used for parts of a <code>CompositeType</code> (if oAdditionalType is a <code>CompositeType</code>)
+	 * @param {sap.ui.model.Type[]} [aAdditionalCompositeTypes] Additional types used for each part of a <code>CompositeType</code> (if <code>oAdditionalType</code> is a <code>CompositeType</code>)
 	 * @returns {string} formatted text
 	 * @throws {sap.ui.model.FormatException} if the values cannot be formatted
 	 *
@@ -402,7 +403,7 @@ sap.ui.define([
 	 *
 	 * @param {any} vValue value
 	 * @param {sap.ui.model.Type} [oType] Data type
-	 * @param {sap.ui.model.Type[]} [aCompositeTypes] additional Types used for parts of a <code>CompositeType</code>
+	 * @param {sap.ui.model.Type[]} [aCompositeTypes] Additional types used for each part of a <code>CompositeType</code>
 	 * @returns {string} formatted text
 	 * @throws {sap.ui.model.FormatException} if the values cannot be formatted
 	 *
@@ -441,9 +442,9 @@ sap.ui.define([
 	 * @param {sap.ui.model.Type} oType Data type
 	 * @param {sap.ui.mdc.enums.FieldDisplay} sDisplayFormat Display format
 	 * @param {boolean} bDefaultOperator If true, operator is used as default. In this case parsing without operator also works
-	 * @param {sap.ui.model.Type[]} [aCompositeTypes] additional Types used for parts of a <code>CompositeType</code>
+	 * @param {sap.ui.model.Type[]} [aCompositeTypes] Additional types used for each part of a <code>CompositeType</code>
 	 * @param {sap.ui.model.Type} [oAdditionalType] Data type for additional value
-	 * @param {sap.ui.model.Type[]} [aAdditionalCompositeTypes] additional Types used for parts of a <code>CompositeType</code> (if oAdditionalType is a <code>CompositeType</code>)
+	 * @param {sap.ui.model.Type[]} [aAdditionalCompositeTypes] Additional types used for each part of a <code>CompositeType</code> (if <code>oAdditionalType</code> is a <code>CompositeType</code>)
 	 * @returns {any[]} array of values
 	 * @throws {sap.ui.model.ParseException} if the text cannot be parsed
 	 *
@@ -495,7 +496,7 @@ sap.ui.define([
 	 *
 	 * @param {string} sValue Text
 	 * @param {sap.ui.model.Type} oType Data type
-	 * @param {sap.ui.model.Type[]} [aCompositeTypes] additional Types used for parts of a <code>CompositeType</code>
+	 * @param {sap.ui.model.Type[]} [aCompositeTypes] Additional types used for each part of a <code>CompositeType</code>
 	 * @returns {string} single value
 	 * @throws {sap.ui.model.ParseException} if the text cannot be parsed
 	 *
@@ -541,10 +542,10 @@ sap.ui.define([
 	 *
 	 * @param {any} aValues Values
 	 * @param {sap.ui.model.Type} oType Data type
-	 * @param {sap.ui.model.Type[]} [aCompositeTypes] additional Types used for parts of a <code>CompositeType</code>
+	 * @param {sap.ui.model.Type[]} [aCompositeTypes] Additional types used for each part of a <code>CompositeType</code>
 	 * @param {int} [iCompositePart] part of the composite type that needs to be validated against it's type
 	 * @param {sap.ui.model.Type} [oAdditionalType] Data type for additional value
-	 * @param {sap.ui.model.Type[]} [aAdditionalCompositeTypes] additional Types used for parts of a <code>CompositeType</code> (if oAdditionalType is a <code>CompositeType</code>)
+	 * @param {sap.ui.model.Type[]} [aAdditionalCompositeTypes] Additional types used for each part of a <code>CompositeType</code> (if <code>oAdditionalType</code> is a <code>CompositeType</code>)
 	 * @throws {sap.ui.model.ValidateException} if the values are invalid
 	 *
 	 * @private
@@ -649,8 +650,10 @@ sap.ui.define([
 		}
 
 		if (!oUsedType) {
-			// The used type must be required from the application.
-			var TypeClass = ObjectPath.get(sType || "");
+			// The used type must be required by the application.
+			var TypeClass = sType
+					? sap.ui.require(sType.replace(/\./g, "/")) || ObjectPath.get(sType)
+					: undefined;
 			oUsedType = new TypeClass(oFormatOptions, oConstraints);
 			oUsedType._bCreatedByOperator = true; // to distinguish in Field between original type and Operator type on Operator change
 
@@ -734,9 +737,9 @@ sap.ui.define([
 	 * @param {sap.ui.model.Type} oType Data type
 	 * @param {sap.ui.mdc.enums.FieldDisplay} sDisplayFormat Display format
 	 * @param {boolean} bDefaultOperator If true, operator is used as default. In this case parsing without operator also works
-	 * @param {sap.ui.model.Type[]} [aCompositeTypes] additional Types used for parts of a <code>CompositeType</code>
+	 * @param {sap.ui.model.Type[]} [aCompositeTypes] Additional types used for each part of a <code>CompositeType</code>
 	 * @param {sap.ui.model.Type} [oAdditionalType] Data type for additional value
-	 * @param {sap.ui.model.Type[]} [aAdditionalCompositeTypes] additional Types used for parts of a <code>CompositeType</code> (if oAdditionalType is a <code>CompositeType</code>)
+	 * @param {sap.ui.model.Type[]} [aAdditionalCompositeTypes] Additional types used for each part of a <code>CompositeType</code> (if <code>oAdditionalType</code> is a <code>CompositeType</code>)
 	 * @returns {sap.ui.mdc.condition.ConditionObject} The condition for the text
 	 * @throws {sap.ui.model.ParseException} if the text cannot be parsed
 	 *

@@ -2,9 +2,10 @@ sap.ui.define([
 	"sap/m/Column",
 	"sap/m/ColumnListItem",
 	"sap/m/Text",
+	"sap/ui/core/Element",
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/model/json/JSONModel"
-], function (Column, ColumnListItem, Text, Controller, JSONModel) {
+], function (Column, ColumnListItem, Text, Element, Controller, JSONModel) {
 	"use strict";
 	return Controller.extend("sap.ui.core.internal.samples.composite.xmlcomposite.exTableWrapperOuterBinding.Test", {
 		onInit: function () {
@@ -32,7 +33,7 @@ sap.ui.define([
 			};
 			var oModel = new JSONModel(oData);
 
-			var oTable = sap.ui.getCore().byId(this.getView().getId() + "--" + "myTable");
+			var oTable = Element.getElementById(this.getView().getId() + "--" + "myTable");
 
 			oTable.setModel(oModel);
 

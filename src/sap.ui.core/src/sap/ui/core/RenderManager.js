@@ -16,10 +16,10 @@ sap.ui.define([
 	"sap/ui/performance/Measurement",
 	"sap/base/Log",
 	"sap/base/util/extend",
+	"./ControlBehavior",
 	"./InvisibleRenderer",
 	"./Patcher",
-	"./FocusHandler",
-	"sap/ui/core/Configuration"
+	"./FocusHandler"
 ], function(
 	LabelEnablement,
 	BaseObject,
@@ -33,13 +33,15 @@ sap.ui.define([
 	Measurement,
 	Log,
 	extend,
+	ControlBehavior,
 	InvisibleRenderer,
 	Patcher,
-	FocusHandler,
-	Configuration
+	FocusHandler
 ) {
 	"use strict";
 	/*global SVGElement*/
+
+	var Element;
 
 	var aCommonMethods = ["renderControl", "cleanupControlWithoutRendering", "accessibilityState", "icon"];
 
@@ -81,8 +83,8 @@ sap.ui.define([
 	 * Creates an instance of the RenderManager.
 	 *
 	 * Applications or controls must not call the <code>RenderManager</code> constructor on their own
-	 * but should use the {@link sap.ui.core.Core#createRenderManager sap.ui.getCore().createRenderManager()}
-	 * method to create an instance for their exclusive use.
+	 * but should rely on the re-rendering initiated by the framework lifecycle based on invalidation.
+	 * See {@link module:sap/ui/core/Element#invalidate} and {@link module:sap/ui/core/Control#invalidate}.
 	 *
 	 * @class A class that handles the rendering of controls.
 	 *
@@ -233,6 +235,7 @@ sap.ui.define([
 	 * @author SAP SE
 	 * @version ${version}
 	 * @alias sap.ui.core.RenderManager
+	 * @hideconstructor
 	 * @public
 	 */
 	function RenderManager() {
@@ -1483,7 +1486,7 @@ sap.ui.define([
 	 * @public
 	 */
 	RenderManager.prototype.accessibilityState = function(oElement, mProps) {
-		if (!Configuration.getAccessibility()) {
+		if (!ControlBehavior.isAccessibilityEnabled()) {
 			return this;
 		}
 
@@ -1937,6 +1940,8 @@ sap.ui.define([
 	RenderManager.preserveContent = function(oRootNode, bPreserveRoot, bPreserveNodesWithId, oControlBeforeRerender /* private */) {
 		assert(typeof oRootNode === "object" && oRootNode.ownerDocument == document, "oRootNode must be a DOM element");
 
+		Element = Element ? Element : sap.ui.require("sap/ui/core/Element");
+
 		aPreserveContentListeners.forEach(function(oListener) {
 			oListener.fn.call(oListener.context || RenderManager, {domNode : oRootNode});
 		});
@@ -1993,7 +1998,7 @@ sap.ui.define([
 				// before the re-rendering, UIArea moves all "to-be-preserved" nodes to the preserved area
 				// except the control dom nodes which must be moved to preserved area via control rendering cycle
 				if ( oControlBeforeRerender ) {
-					var oCandidateControl = sap.ui.getCore().byId(sPreserveMarker);
+					var oCandidateControl = Element.getElementById(sPreserveMarker);
 
 					// let the rendering cycle of the control handles the preserving
 					// but only when the control stack and the dom stack are in sync

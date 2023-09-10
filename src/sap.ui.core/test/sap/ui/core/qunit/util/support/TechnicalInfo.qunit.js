@@ -9,8 +9,9 @@ sap.ui.define([
 	"sap/ui/model/resource/ResourceModel",
 	"sap/ui/core/date/Gregorian",
 	"sap/ui/model/ValidateException",
-	"sap/ui/core/Configuration"
-], function (Device, TechnicalInfo, ResourceModel, Gregorian, ValidateException, Configuration) {
+	"sap/ui/core/Configuration",
+	"sap/ui/core/Element"
+], function (Device, TechnicalInfo, ResourceModel, Gregorian, ValidateException, Configuration, Element) {
 	"use strict";
 
 	QUnit.module("Parsing and formatting");
@@ -156,10 +157,10 @@ sap.ui.define([
 
 	QUnit.test("Custom", function (assert) {
 		TechnicalInfo._setActiveLocations("custom");
-		var oRadioBtnStandard = sap.ui.getCore().byId("technicalInfoDialogAssistantPopover--standard"),
-			oRadioBtnCustom = sap.ui.getCore().byId("technicalInfoDialogAssistantPopover--custom"),
-			oCustom = sap.ui.getCore().byId("technicalInfoDialogAssistantPopover--customBootstrapURL"),
-			oStandard = sap.ui.getCore().byId("technicalInfoDialogAssistantPopover--standardBootstrapURL");
+		var oRadioBtnStandard = Element.getElementById("technicalInfoDialogAssistantPopover--standard"),
+			oRadioBtnCustom = Element.getElementById("technicalInfoDialogAssistantPopover--custom"),
+			oCustom = Element.getElementById("technicalInfoDialogAssistantPopover--customBootstrapURL"),
+			oStandard = Element.getElementById("technicalInfoDialogAssistantPopover--standardBootstrapURL");
 
 		assert.ok(oRadioBtnStandard.getSelected() === false, "The standard radio button is not selected");
 		assert.ok(oStandard.getEnabled() === false, "The select drop down is disabled");
@@ -170,10 +171,10 @@ sap.ui.define([
 
 	QUnit.test("Standard", function (assert) {
 		TechnicalInfo._setActiveLocations("standard");
-		var oRadioBtnStandard = sap.ui.getCore().byId("technicalInfoDialogAssistantPopover--standard"),
-			oRadioBtnCustom = sap.ui.getCore().byId("technicalInfoDialogAssistantPopover--custom"),
-			oCustom = sap.ui.getCore().byId("technicalInfoDialogAssistantPopover--customBootstrapURL"),
-			oStandard = sap.ui.getCore().byId("technicalInfoDialogAssistantPopover--standardBootstrapURL");
+		var oRadioBtnStandard = Element.getElementById("technicalInfoDialogAssistantPopover--standard"),
+			oRadioBtnCustom = Element.getElementById("technicalInfoDialogAssistantPopover--custom"),
+			oCustom = Element.getElementById("technicalInfoDialogAssistantPopover--customBootstrapURL"),
+			oStandard = Element.getElementById("technicalInfoDialogAssistantPopover--standardBootstrapURL");
 
 		assert.ok(oRadioBtnStandard.getSelected() === true, "The standard radio button is selected");
 		assert.ok(oStandard.getEnabled() === true, "The select drop down is enabled");

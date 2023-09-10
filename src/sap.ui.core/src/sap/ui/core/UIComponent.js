@@ -607,7 +607,7 @@ sap.ui.define([
 	 * @public
 	 */
 	UIComponent.prototype.byId = function(sId) {
-		return Element.registry.get(this.createId(sId));
+		return Element.getElementById(this.createId(sId));
 	};
 
 	/**

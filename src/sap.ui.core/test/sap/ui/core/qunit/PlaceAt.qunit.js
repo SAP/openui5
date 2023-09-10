@@ -34,7 +34,7 @@ sap.ui.define([
 				oControl.placeAt(oContainerRef);
 			}
 
-			var oCont = bIsUiArea ? UIArea.registry.get(sContainerId) : Element.registry.get(sContainerId);
+			var oCont = bIsUiArea ? UIArea.registry.get(sContainerId) : Element.getElementById(sContainerId);
 			return [oControl.getId(), oCont];
 		}
 

@@ -24,7 +24,6 @@ sap.ui.define([
 	{
 		metadata: {
 			library: "sap.ui.mdc",
-			designtime: "sap/ui/mdc/designtime/link/PanelItem.designtime",
 			properties: {
 				/**
 				 * Defines text of the item.

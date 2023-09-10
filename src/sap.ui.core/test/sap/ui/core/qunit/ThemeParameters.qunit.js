@@ -21,8 +21,6 @@ sap.ui.define([
 		}
 	});
 
-	var sPath = new URI(sap.ui.require.toUrl("testdata/core"), document.baseURI).toString();
-
 	QUnit.test("InitialCheck", function(assert) {
 		assert.ok(Parameters, "sap.ui.core.theming.Parameters must exist");
 		assert.ok(Parameters.get, "sap.ui.core.theming.Parameters.get() must exist");
@@ -50,18 +48,6 @@ sap.ui.define([
 			return unifyHexNotation(sParameter);
 		}
 		return sParameter;
-	}
-
-	function getParametersInUnifiedHexNotation(aKeys, oElement) {
-		var oParameters = Parameters.get(aKeys, oElement);
-		if (oParameters) {
-			aKeys.forEach(function(key) {
-				if (oParameters[key]) {
-					oParameters[key] = unifyHexNotation(oParameters[key]);
-				}
-			});
-		}
-		return oParameters;
 	}
 
 	function checkLibraryParametersJsonRequestForLib(sLibNumber) {
@@ -100,7 +86,7 @@ sap.ui.define([
 			name: "sapUiAsyncThemeParamForLib5"
 		}), undefined, "'undefined' should be returned for a parameter of a library that currently is not loaded");
 
-		sap.ui.getCore().initLibrary({ name: "testlibs.themeParameters.lib5" });
+		Library.init({ name: "testlibs.themeParameters.lib5" });
 
 		Parameters.get({
 			name: "sapUiAsyncThemeParamForLib5",
@@ -112,10 +98,10 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Read scoped parameters (from testlibs.themeParameters.lib6)", function(assert) {
+	QUnit.test("Read scoped parameters (from testlibs.themeParameters.lib6)", async function(assert) {
 		var oControl = new Control(), done = assert.async();
 
-		sap.ui.getCore().loadLibrary("testlibs.themeParameters.lib6");
+		await Library.load({name: "testlibs.themeParameters.lib6"});
 
 		Parameters.get({
 			name: "sapUiAsyncThemeParamWithScopeForLib6",
@@ -141,7 +127,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Read multiple given parameters (including undefined param name)", function(assert) {
+	QUnit.test("Read multiple given parameters (including undefined param name)", async function(assert) {
 		var done = assert.async();
 		var oControl = new Control();
 		var aParams = ["sapUiMultipleAsyncThemeParamWithScopeForLib7", "sapUiMultipleAsyncThemeParamWithoutScopeForLib7", "sapUiNotExistingTestParam", "sapUiBaseColor"];
@@ -151,7 +137,8 @@ sap.ui.define([
 			"sapUiBaseColor": "#000000"
 		};
 
-		sap.ui.getCore().loadLibrary("testlibs.themeParameters.lib7");
+		await Library.load({name: "testlibs.themeParameters.lib7"});
+
 		oControl.addStyleClass("sapTestScope");
 
 		assert.strictEqual(Parameters.get({
@@ -170,7 +157,7 @@ sap.ui.define([
 		}), undefined, "Parameter 'sapUiBaseColor' should already be available but value should be returned in callback.");
 	});
 
-	QUnit.test("Call Parameters.get multiple times with same callback function should only be executed once", function (assert) {
+	QUnit.test("Call Parameters.get multiple times with same callback function should only be executed once", async function (assert) {
 		assert.expect(3);
 		var done = assert.async(), callback = function (oParamResult) {
 			assert.deepEqual(oParamResult, {
@@ -180,7 +167,7 @@ sap.ui.define([
 			assert.strictEqual(checkLibraryParametersJsonRequestForLib("8").length, 0, "library-parameters.json not requested for testlibs.themeParameters.lib8");
 		};
 
-		sap.ui.getCore().loadLibrary("testlibs.themeParameters.lib8");
+		await Library.load({name: "testlibs.themeParameters.lib8"});
 
 		Parameters.get({
 			name: "sapUiThemeParam1ForLib8",
@@ -201,10 +188,10 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Read not defined parameter using callback", function(assert) {
+	QUnit.test("Read not defined parameter using callback", async function(assert) {
 		var done = assert.async();
 
-		sap.ui.getCore().loadLibrary("testlibs.themeParameters.lib9");
+		await Library.load({name: "testlibs.themeParameters.lib9"});
 
 		Parameters.get({
 			name: "sapUiNotExistingTestParam",
@@ -216,7 +203,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Read parameter first time from lib which CSS is already loaded shouldn't trigger a library-parameters.json request", function(assert) {
+	QUnit.test("Read parameter first time from lib which CSS is already loaded shouldn't trigger a library-parameters.json request", async function(assert) {
 		var done = assert.async();
 		var fnAssertApplied = function() {
 
@@ -228,7 +215,7 @@ sap.ui.define([
 			done();
 		};
 
-		sap.ui.getCore().loadLibrary("testlibs.themeParameters.lib10");
+		await Library.load({name:"testlibs.themeParameters.lib10"});
 
 		Theming.attachApplied(fnAssertApplied);
 	});
@@ -272,7 +259,7 @@ sap.ui.define([
 			done();
 		};
 
-		sap.ui.getCore().loadLibrary("testlibs.themeParameters.lib11");
+		await Library.load({name: "testlibs.themeParameters.lib11" });
 
 		Theming.attachApplied(fnAssertApplied);
 
@@ -286,7 +273,7 @@ sap.ui.define([
 	});
 
 
-	QUnit.test("After Theme Change: Using Parameters.get", function(assert) {
+	QUnit.test("After Theme Change: Using Parameters.get", async function(assert) {
 		var done = assert.async();
 		var fnContinue = function(oEvent) {
 			if (oEvent.theme === "base") {
@@ -295,30 +282,30 @@ sap.ui.define([
 			}
 		};
 
-		var fnApplied = function (oEvent) {
+		var fnApplied = async function (oEvent) {
 			if (oEvent.theme === "sap_hcb") {
 				Theming.detachApplied(fnApplied);
 
-				sap.ui.getCore().loadLibraries(["testlibs.themeParameters.lib14"]).then(function () {
-					Parameters.get({
-						name: "sapUiThemeParamForLib14",
-						callback: function (oParamResult) {
-							assert.deepEqual(oParamResult, "#dfdfdf", "Value for the given param 'sapUiThemeParamForLib14' must be defined as '#dfdfdf' for theme 'base'");
-							assert.equal(getParameterInUnifiedHexNotation("sapUiThemeParamForLib13"), "#efefef", "sapUiThemeParamForLib13 must be defined as '#efefef' for theme 'base'");
+				await Library.load({name: "testlibs.themeParameters.lib14"});
 
-							Theming.attachApplied(fnContinue);
-							Theming.setTheme("sap_hcb");
-						}
-					});
-					assert.equal(getParameterInUnifiedHexNotation("sapUiThemeParamForLib13"), "#fefefe", "sapUiThemeParamForLib13 must be defined as '#fefefe' for theme 'hcb'");
-					Theming.setTheme("base");
+				Parameters.get({
+					name: "sapUiThemeParamForLib14",
+					callback: function (oParamResult) {
+						assert.deepEqual(oParamResult, "#dfdfdf", "Value for the given param 'sapUiThemeParamForLib14' must be defined as '#dfdfdf' for theme 'base'");
+						assert.equal(getParameterInUnifiedHexNotation("sapUiThemeParamForLib13"), "#efefef", "sapUiThemeParamForLib13 must be defined as '#efefef' for theme 'base'");
+
+						Theming.attachApplied(fnContinue);
+						Theming.setTheme("sap_hcb");
+					}
 				});
+				assert.equal(getParameterInUnifiedHexNotation("sapUiThemeParamForLib13"), "#fefefe", "sapUiThemeParamForLib13 must be defined as '#fefefe' for theme 'hcb'");
+				Theming.setTheme("base");
 			}
 		};
 
-		sap.ui.getCore().loadLibraries(["testlibs.themeParameters.lib13"]).then(function () {
-			Theming.attachApplied(fnApplied);
-		});
+		await Library.load({name: "testlibs.themeParameters.lib13"});
+
+		Theming.attachApplied(fnApplied);
 	});
 
 	QUnit.test("Get parameter while CSS after Applied finished loading and before ThemeManager processed Applied event", function(assert) {

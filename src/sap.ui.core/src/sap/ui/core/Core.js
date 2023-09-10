@@ -75,11 +75,6 @@ sap.ui.define([
 
 		var oCore;
 
-		/**
-		 * FocusHandler module reference, lazily probed via public "getCurrentFocusedControlId" API.
-		 */
-		var FocusHandler;
-
 		// Initialize SAP Passport or FESR
 		initTraces();
 
@@ -579,7 +574,6 @@ sap.ui.define([
 					"isThemeApplied",
 					"notifyContentDensityChanged",
 					//  - Control & App dev.
-					"getCurrentFocusedControlId",
 					"getEventBus",
 					"byId", "byFieldGroupId",
 					//  - Libraries
@@ -590,7 +584,6 @@ sap.ui.define([
 					"getMessageManager",
 					//  - Events
 					"attachEvent","detachEvent",
-					"attachControlEvent", "detachControlEvent",
 					"attachParseError", "detachParseError",
 					"attachValidationError", "detachValidationError",
 					"attachFormatError", "detachFormatError",
@@ -623,10 +616,13 @@ sap.ui.define([
 					//  - Application/Root-Component
 					"setRoot",
 					"getRootComponent", "getApplication",
+					//  - Events
+					"attachControlEvent", "detachControlEvent",
 					//  - legacy registries & factories
 					"getControl", "getComponent", "getTemplate",
 					"createComponent",
 					//  - Control dev.
+					"getCurrentFocusedControlId",
 					"attachIntervalTimer", "detachIntervalTimer",
 					"getElementById",
 					//  - UIArea & Rendering
@@ -1154,6 +1150,7 @@ sap.ui.define([
 		 * is not recommended.
 		 *
 		 * @return {sap.ui.core.RenderManager} New instance of the RenderManager
+		 * @deprecated Since 1.119
 		 * @public
 		 */
 		Core.prototype.createRenderManager = function() {
@@ -1166,13 +1163,17 @@ sap.ui.define([
 		 * Returns the Id of the control/element currently in focus.
 		 * @return {string} the Id of the control/element currently in focus.
 		 * @public
+		 * @deprecated since 1.119.
+		 * Please use {@link sap.ui.core.Element.getActiveElement Element.getActiveElement} to get
+		 * the currently focused element. You can then retrieve the ID of that element with
+		 * {@link sap.ui.core.Element#getId Element#getId}. Please be aware,
+		 * {@link sap.ui.core.Element.getActiveElement Element.getActiveElement} can return 'undefined'.
 		 */
 		Core.prototype.getCurrentFocusedControlId = function() {
 			if (!this.isInitialized()) {
 				throw new Error("Core must be initialized");
 			}
-			FocusHandler = FocusHandler || sap.ui.require("sap/ui/core/FocusHandler");
-			return FocusHandler ? FocusHandler.getCurrentFocusedControlId() : null;
+			return Element.getActiveElement()?.getId() || null;
 		};
 
 		/**
@@ -1842,8 +1843,9 @@ sap.ui.define([
 		 * @returns {sap.ui.core.Element|undefined} Element with the given ID or <code>undefined</code>
 		 * @public
 		 * @function
+		 * @deprecated Since 1.119. Please use {@link sap.ui.core.Element.getElementById Element.getElementById} instead.
 		 */
-		Core.prototype.byId = Element.registry.get;
+		Core.prototype.byId = Element.getElementById;
 
 		/**
 		 * Returns the registered object for the given ID, if any.
@@ -1896,6 +1898,7 @@ sap.ui.define([
 		 * @param {function} fnFunction Callback to be called for each control event
 		 * @param {object} [oListener] Optional context object to call the callback on
 		 * @public
+		 * @deprecated Since 1.119
 		 */
 		Core.prototype.attachControlEvent = function(fnFunction, oListener) {
 			_oEventProvider.attachEvent(Core.M_EVENTS.ControlEvent, fnFunction, oListener);
@@ -1909,6 +1912,7 @@ sap.ui.define([
 		 * @param {function} fnFunction Function to unregister
 		 * @param {object} [oListener] Context object on which the given function had to be called
 		 * @public
+		 * @deprecated Since 1.119
 		 */
 		Core.prototype.detachControlEvent = function(fnFunction, oListener) {
 			_oEventProvider.detachEvent(Core.M_EVENTS.ControlEvent, fnFunction, oListener);
@@ -1919,27 +1923,11 @@ sap.ui.define([
 		 *
 		 * @param {object} oParameters Parameters to pass along with the event, e.g. <code>{ browserEvent: jQuery.Event }</code>
 		 * @private
+		 * @deprecated Since 1.119
 		 */
 		Core.prototype.fireControlEvent = function(oParameters) {
 			_oEventProvider.fireEvent(Core.M_EVENTS.ControlEvent, oParameters);
 		};
-
-		/**
-		 * Handles a control event and forwards it to the registered control event listeners.
-		 *
-		 * @param {jQuery.Event} oEvent control event
-		 * @param {string} sUIAreaId id of the UIArea that received the event
-		 * @private
-		 */
-		Core.prototype._handleControlEvent = function(/**event*/oEvent, sUIAreaId) {
-			// Create a copy of the event
-			var oEventClone = jQuery.Event(oEvent.type);
-			Object.assign(oEventClone, oEvent);
-			oEventClone.originalEvent = undefined;
-
-			this.fireControlEvent({"browserEvent": oEventClone, "uiArea": sUIAreaId});
-		};
-
 
 		/**
 			 * Registers a Plugin to the <code>sap.ui.core.Core</code>, which lifecycle
@@ -2172,6 +2160,8 @@ sap.ui.define([
 		 * @return {sap.ui.core.EventBus} the event bus
 		 * @since 1.8.0
 		 * @public
+		 * @deprecated since 1.119.0. Please use {@link sap.ui.core.EventBus.getInstance EventBus.getInstance} for global usage instead.
+		 * Creating an own local instance is the preferred usage.
 		 */
 		Core.prototype.getEventBus = function() {
 			if (!this.oEventBus) {
@@ -2186,7 +2176,7 @@ sap.ui.define([
 					});
 					EventBus = sap.ui.requireSync('sap/ui/core/EventBus'); // legacy-relevant: fallback for missing dependency
 				}
-				var oEventBus = this.oEventBus = new EventBus();
+				var oEventBus = this.oEventBus = EventBus.getInstance();
 				this._preserveHandler = function(event) {
 					// for compatibility reasons
 					oEventBus.publish("sap.ui", "__preserveContent", {domNode: event.domNode});

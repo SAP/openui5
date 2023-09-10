@@ -265,7 +265,7 @@ sap.ui.define([
 	Versions.hasVersionsModel = function(mPropertyBag) {
 		var sReference = mPropertyBag.reference;
 		var sLayer = mPropertyBag.layer;
-		return _mInstances[sReference] && _mInstances[sReference][sLayer];
+		return !!(_mInstances[sReference] && _mInstances[sReference][sLayer]);
 	};
 
 	Versions.clearInstances = function() {
@@ -281,7 +281,7 @@ sap.ui.define([
 	 * @returns {Promise<sap.ui.fl.Version>} Promise resolving with the updated version model for the application from the backend
 	 */
 	Versions.updateModelFromBackend = function(mPropertyBag) {
-		if (Versions.hasVersionsModel(mPropertyBag)) {
+		if (Versions.hasVersionsModel(mPropertyBag) && Versions.getVersionsModel(mPropertyBag).getProperty("/versioningEnabled")) {
 			mPropertyBag.limit = BACKEND_REQUEST_LIMIT;
 			return Storage.versions.load(mPropertyBag)
 			.then(function(aVersions) {

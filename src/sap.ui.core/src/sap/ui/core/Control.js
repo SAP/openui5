@@ -627,7 +627,7 @@ sap.ui.define([
 				// 1st try to resolve the oRef as a container control
 				var oContainer = oRef;
 				if (typeof oRef === "string") {
-					oContainer = Element.registry.get(oRef);
+					oContainer = Element.getElementById(oRef);
 				}
 
 				if (oContainer instanceof Element) {

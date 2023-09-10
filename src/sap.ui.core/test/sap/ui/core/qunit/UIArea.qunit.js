@@ -64,8 +64,8 @@ sap.ui.define([
 		UIArea.registry.get("uiArea1").removeAllContent();
 		await nextUIUpdate();
 		assert.equal(jQuery("#uiArea1").children().length, 0, "no more content");
-		assert.ok(oCore.byId("text1"), "remove must not destroy child 1");
-		assert.ok(oCore.byId("text2"), "remove must not destroy child 2");
+		assert.ok(Element.getElementById("text1"), "remove must not destroy child 1");
+		assert.ok(Element.getElementById("text2"), "remove must not destroy child 2");
 	});
 
 	/**
@@ -104,10 +104,10 @@ sap.ui.define([
 		var $originalDom = jQuery("#uiArea2").children();
 		assert.equal($originalDom.length, 1, "precondition: one span exists already in UIArea");
 		assert.equal(jQuery($originalDom.get(0)).text(), "Before", "precondition: span contains correct text");
-		assert.ok(oCore.byId("text1"), "precondition: control 1 still exists");
-		assert.ok(!oCore.byId("text1").getParent(), "precondition: control 1 not bound");
-		assert.ok(oCore.byId("text2"), "precondition: control 2 still exists");
-		assert.ok(!oCore.byId("text2").getParent(), "precondition: control 2 not bound");
+		assert.ok(Element.getElementById("text1"), "precondition: control 1 still exists");
+		assert.ok(!Element.getElementById("text1").getParent(), "precondition: control 1 not bound");
+		assert.ok(Element.getElementById("text2"), "precondition: control 2 still exists");
+		assert.ok(!Element.getElementById("text2").getParent(), "precondition: control 2 not bound");
 
 		// do some interleaved modifications: Control / DOM / Control / DOM
 		this.oText1.placeAt("uiArea2");
@@ -142,10 +142,10 @@ sap.ui.define([
 	 * then rerendering of the UIArea must not delete such preserved DOM
 	 */
 	QUnit.test("preserved DOM content", async function(assert) {
-		assert.ok(oCore.byId("text1"), "precondition: control 1 still exists");
-		assert.ok(!oCore.byId("text1").getParent(), "precondition: control 1 not bound");
-		assert.ok(oCore.byId("text2"), "precondition: control 2 still exists");
-		assert.ok(!oCore.byId("text2").getParent(), "precondition: control 2 not bound");
+		assert.ok(Element.getElementById("text1"), "precondition: control 1 still exists");
+		assert.ok(!Element.getElementById("text1").getParent(), "precondition: control 1 not bound");
+		assert.ok(Element.getElementById("text2"), "precondition: control 2 still exists");
+		assert.ok(!Element.getElementById("text2").getParent(), "precondition: control 2 not bound");
 		var $originalDom = jQuery("#uiArea1").children();
 		assert.equal($originalDom.length, 0, "precondition: UIArea1 is empty");
 

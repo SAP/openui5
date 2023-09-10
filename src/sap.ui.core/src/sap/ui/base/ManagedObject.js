@@ -1364,7 +1364,7 @@ sap.ui.define([
 	 * But there might be a component with the same ID as an element or another <code>ManagedObject</code>.
 	 *
 	 * For the same reason, there is no general lookup for <code>ManagedObject</code>s via their ID. Only for subclasses
-	 * that enforce unique IDs, there might be lookup mechanisms (e.g. {@link sap.ui.core.Core#byId sap.ui.getCore().byId()}
+	 * that enforce unique IDs, there might be lookup mechanisms (e.g. {@link sap.ui.core.Element#getElementById sap.ui.core.Element.getElementById}
 	 * for elements).
 	 *
 	 * @return {string} The objects's ID.

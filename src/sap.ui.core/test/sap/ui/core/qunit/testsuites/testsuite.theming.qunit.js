@@ -28,6 +28,7 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 					}
 				}
 			},
+
 			ThemeManager: {
 				title: "sap.ui.core.theming.ThemeManager",
 				ui5: {
@@ -52,8 +53,12 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 					}
 				}
 			},
+
+			/**
+			 * Note: Only contains modern non-deprecated APIs.
+			 */
 			ThemeParameters: {
-				title: "sap.ui.core.theming.Parameters",
+				title: "sap.ui.core.theming.Parameters - Async Only",
 				ui5: {
 					theme: "sap_hcb"
 				},
@@ -62,11 +67,11 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 				},
 				loader: {
 					paths: {
-						"sap/ui/legacy/testlib": "test-resources/sap/ui/core/qunit/testdata/legacy-uilib_legacyAPIs/",
 						"testlibs/themeParameters": "test-resources/sap/ui/core/qunit/testdata/libraries/themeParameters"
 					}
 				}
 			},
+
 			"ThemeHelper": {
 				title: "sap.ui.core.theming.ThemeHelper",
 				ui5: {
@@ -81,6 +86,7 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 					}
 				}
 			},
+
 			"Theming": {
 				title: "sap.ui.core.Theming",
 				ui5: {
@@ -93,6 +99,7 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 					reorder: false
 				}
 			},
+
 			"ThemingWoThemeManager": {
 				title: "sap.ui.core.Theming w/o sap.ui.core.theming.ThemeManager",
 				ui5: {
@@ -110,6 +117,7 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 				beforeBootstrap: "testdata/core/Theming.beforeBootstrap.qunit",
 				module: "testdata/core/Theming.qunit"
 			},
+
 			"Theming_default_and_fallback": {
 				title: "sap.ui.core.Theming - defaulting and fallbacks",
 				ui5: {
@@ -119,6 +127,7 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 					reorder: false
 				}
 			},
+
 			"Theming_default_and_fallback_wo_ThemeManager": {
 				title: "sap.ui.core.Theming - defaulting and fallbacks",
 				ui5: {
