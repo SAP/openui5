@@ -50,7 +50,7 @@
 						delegate="{
 							name: 'mdc/sample/delegate/JSONTableDelegate',
 							payload: {
-								collectionPath: 'mountains>/mountains'
+								bindingPath: 'mountains>/mountains'
 							}
 						}"
 						filter="name-vhd-fb">
