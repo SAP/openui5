@@ -2587,7 +2587,7 @@ sap.ui.define([
 	 * @return {module:sap/ui/core/Messaging}
 	 * @public
 	 * @since 1.33.0
-	 * @deprecated since 1.119. Please use {@link sap.ui.core.Messaging Messaging} instead.
+	 * @deprecated since 1.118. Please use {@link module:sap/ui/core/Messaging Messaging} instead.
 	 */
 	Core.prototype.getMessageManager = function() {
 		return Messaging;
