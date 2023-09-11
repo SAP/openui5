@@ -101,7 +101,6 @@ sap.ui.define([
 				this.oColumn1 = this.oView.byId('myTable--column1');
 				// Implement required Delgate APIs
 				this._orgFn = TableDelegate.fetchProperties;
-				TableDelegate.apiVersion = 2;//CLEANUP_DELEGATE
 				TableDelegate.fetchProperties = fetchProperties;
 				TableDelegate.addItem = function(oTable, sName, mPropertyBag) {
 					return Promise.resolve(new Column(oTable.getId() + "--" + sName, {propertyKey : sName}));

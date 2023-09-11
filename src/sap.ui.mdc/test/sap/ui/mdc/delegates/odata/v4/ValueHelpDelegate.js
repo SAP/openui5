@@ -30,7 +30,6 @@ sap.ui.define([
 	 * @alias module:delegates/odata/v4/ValueHelpDelegate
 	 */
 	var ODataV4ValueHelpDelegate = Object.assign({}, ValueHelpDelegate);
-	ODataV4ValueHelpDelegate.apiVersion = 2;//CLEANUP_DELEGATE
 
 	ODataV4ValueHelpDelegate.getTypeMap = function (oValueHelp) {
 		return ODataV4TypeMap;

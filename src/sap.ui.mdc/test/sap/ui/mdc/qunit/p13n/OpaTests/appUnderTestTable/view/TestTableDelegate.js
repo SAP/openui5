@@ -4,7 +4,6 @@ sap.ui.define([
 	"use strict";
 
 	const oCustomDelegate = Object.assign({}, TableDelegate);
-	oCustomDelegate.apiVersion = 2;//CLEANUP_DELEGATE
 
 	oCustomDelegate.fetchProperties = function(oTable) {
 		return TableDelegate.fetchProperties(oTable).then(function(aProperties) {

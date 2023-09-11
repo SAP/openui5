@@ -17,7 +17,6 @@ sap.ui.define([
 	"use strict";
 
 	var ValueHelpDelegate = Object.assign({}, ODataV4ValueHelpDelegate);
-	ValueHelpDelegate.apiVersion = 2;//CLEANUP_DELEGATE
 
 	ValueHelpDelegate.adjustSearch = function(oPayload, bTypeahead, sSearch) {
 

@@ -18,7 +18,6 @@ sap.ui.define([
     "use strict";
 
     const CondenserTableDelegate = Object.assign({}, TableDelegate);
-    CondenserTableDelegate.apiVersion = 2;//CLEANUP_DELEGATE
 
     CondenserTableDelegate.addItem = function(oTable, sPropertyName, mPropertyBag) {
         let sId;

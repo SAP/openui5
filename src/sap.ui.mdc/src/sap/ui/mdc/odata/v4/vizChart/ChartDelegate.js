@@ -567,7 +567,7 @@ sap.ui.define([
      * @private
      * @ui5-restricted sap.fe, sap.ui.mdc
      */
-    ChartDelegate.addItem = function (sPropertyName, oChart, mPropertyBag, sRole) {
+    ChartDelegate.addItem = function (oChart, sPropertyName, mPropertyBag, sRole) {
         if (oChart.getModel) {
             return Promise.resolve(this._createMDCChartItem(sPropertyName, oChart, sRole));
         }

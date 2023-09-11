@@ -44,8 +44,6 @@ sap.ui.define([
 		}
 	};
 
-	ODataFilterBarDelegate.apiVersion = 2;//CLEANUP_DELEGATE
-
 	ODataFilterBarDelegate.getTypeMap = function (oPayload) {
 		return ODataV4TypeMap;
 	};

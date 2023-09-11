@@ -10,7 +10,6 @@ sap.ui.define([
 	"use strict";
 
 	var AuthorsTableDelegate = Object.assign({}, ODataTableDelegate);
-	AuthorsTableDelegate.apiVersion = 2;//CLEANUP_DELEGATE
 
 	AuthorsTableDelegate.fetchProperties = function (oTable) {
 		var oODataProps = ODataTableDelegate.fetchProperties.apply(this, arguments);

@@ -18,7 +18,6 @@ sap.ui.define([
 	"use strict";
 
 	var FieldInOutValueHelpDelegate = Object.assign({}, BaseValueHelpDelegate);
-	FieldInOutValueHelpDelegate.apiVersion = 2;//CLEANUP_DELEGATE
 
 	FieldInOutValueHelpDelegate.getFilterConditions = function (oValueHelp, oContent, oConfig) {
 		var oPayload = oValueHelp.getPayload();

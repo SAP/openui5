@@ -16,7 +16,6 @@ sap.ui.define([
 ], function (ODataTableDelegate, BooksFBDelegate, Field, Link, FieldDisplay, FieldEditMode, OperatorName, DelegateUtil, CurrencyType, DecimalType, Int32Type, StringType, Text, DelegateCache) {
 	"use strict";
 	var BooksTableDelegate = Object.assign({}, ODataTableDelegate);
-	BooksTableDelegate.apiVersion = 2;//CLEANUP_DELEGATE
 	var getFullId = function(oControl, sVHId) {
 		var oView = oControl.getParent();
 		while (!oView.isA("sap.ui.core.mvc.View")) {
@@ -88,7 +87,6 @@ sap.ui.define([
 
 	BooksTableDelegate.getFilterDelegate = function() {
 		return {
-			apiVersion: 2,//CLEANUP_DELEGATE
 			addItem: function(oTable, sPropertyName) {
 				return BooksFBDelegate.addItem(oTable, sPropertyName)
 				.then(function(oFilterField) {

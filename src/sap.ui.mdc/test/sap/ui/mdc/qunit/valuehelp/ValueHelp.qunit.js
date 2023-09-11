@@ -769,7 +769,6 @@ sap.ui.define([
 	});
 
 	QUnit.test("RequestDelegateContent event", function(assert) {
-		ValueHelpDelegate.apiVersion = 2;//CLEANUP_DELEGATE
 		sinon.spy(ValueHelpDelegate, "retrieveContent");
 		oContainer.fireRequestDelegateContent({container: oContainer});
 

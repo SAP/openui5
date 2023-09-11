@@ -16,7 +16,6 @@ sap.ui.define([
 ], function (ODataTableDelegate, OrdersFBDelegate, Field, Link, FieldDisplay, FieldEditMode, FilterUtil, DelegateUtil, Core, Filter, FilterOperator, Int32Type, Text, DelegateCache) {
 	"use strict";
 	var OrderItemssTableDelegate = Object.assign({}, ODataTableDelegate);
-	OrderItemssTableDelegate.apiVersion = 2;//CLEANUP_DELEGATE
 
 	var getFullId = function(oControl, sVHId) {
 		var oView = oControl.getParent();

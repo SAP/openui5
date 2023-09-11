@@ -29,7 +29,6 @@ sap.ui.define([
 	 * @alias module:delegates/odata/v4/FieldBaseDelegate
 	 */
 	var ODataFieldBaseDelegate = Object.assign({}, FieldBaseDelegate);
-	ODataFieldBaseDelegate.apiVersion = 2;//CLEANUP_DELEGATE
 
 	ODataFieldBaseDelegate.getTypeMap = function (oField) {
 		return ODataV4TypeMap;

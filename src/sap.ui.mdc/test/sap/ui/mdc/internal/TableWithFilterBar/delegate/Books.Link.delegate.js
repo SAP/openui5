@@ -8,7 +8,6 @@ sap.ui.define([
     "use strict";
 
     var SampleLinkDelegate = Object.assign({}, LinkDelegate);
-	SampleLinkDelegate.apiVersion = 2;//CLEANUP_DELEGATE
 	SampleLinkDelegate.fetchLinkType = function(oLink) {
 		var oLinkItem = new LinkItem({
 			key: "L1_1",

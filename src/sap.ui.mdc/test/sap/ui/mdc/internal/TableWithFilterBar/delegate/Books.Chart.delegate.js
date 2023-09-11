@@ -16,7 +16,6 @@ sap.ui.define([
 	"use strict";
 
 	var SampleChartDelegate = Object.assign({}, ChartDelegate);
-	SampleChartDelegate.apiVersion = 2;//CLEANUP_DELEGATE
 	//Store the fetched properties during pre-processing in here
 	var aCachedProps;
 

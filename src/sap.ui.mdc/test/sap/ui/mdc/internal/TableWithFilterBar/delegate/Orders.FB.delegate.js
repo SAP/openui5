@@ -13,7 +13,6 @@ sap.ui.define([
 	"use strict";
 
 	var FilterBarOrdersSampleDelegate = Object.assign({}, FilterBarDelegate);
-	FilterBarOrdersSampleDelegate.apiVersion = 2;//CLEANUP_DELEGATE
 
 	FilterBarOrdersSampleDelegate.fetchProperties = function (oFilterBar) {
 		var oFetchPropertiesPromise = FilterBarDelegate.fetchProperties.apply(this, arguments);

@@ -20,7 +20,6 @@ sap.ui.define([
 	"use strict";
 
 	var ChartDelegate = Object.assign({}, VizChartDelegate);
-	ChartDelegate.apiVersion = 2;//CLEANUP_DELEGATE
 
 	ChartDelegate.getFilterDelegate = function() {
 		return FilterBarDelegate;

@@ -9,7 +9,6 @@ sap.ui.define([
     "use strict";
 
     var ValueHelpDelegate = Object.assign({}, MDCValueHelpDelegate);
-	ValueHelpDelegate.apiVersion = 2;//CLEANUP_DELEGATE
 
     ValueHelpDelegate.getTypeMap = function (oValueHelp) {
         return ODataTypeMap;

@@ -8,7 +8,6 @@ sap.ui.define([
 	"use strict";
 
 	const SampleLinkDelegate = Object.assign({}, FlpLinkDelegate);
-	SampleLinkDelegate.apiVersion = 2;//CLEANUP_DELEGATE
 
 	SampleLinkDelegate.fetchAdditionalContent = function (oLink) {
 		const oPayload = oLink.getPayload();

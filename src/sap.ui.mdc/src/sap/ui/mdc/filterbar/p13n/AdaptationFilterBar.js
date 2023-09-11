@@ -13,9 +13,8 @@ sap.ui.define([
 	"sap/ui/mdc/filterbar/FilterBarBaseRenderer",
 	"sap/base/util/merge",
 	"sap/ui/core/Core",
-	"sap/m/p13n/enum/PersistenceMode",
-	"sap/ui/mdc/util/mapVersions"
-], function(coreLibrary, FilterController, AdaptFiltersController, GroupContainer, FilterColumnLayout, FilterGroupLayout, TableContainer, FilterBarBase, FilterBarBaseRenderer, merge, Core, PersistenceMode, mapVersions) {
+	"sap/m/p13n/enum/PersistenceMode"
+], function(coreLibrary, FilterController, AdaptFiltersController, GroupContainer, FilterColumnLayout, FilterGroupLayout, TableContainer, FilterBarBase, FilterBarBaseRenderer, merge, Core, PersistenceMode) {
 	"use strict";
 
 	const ValueState = coreLibrary.ValueState;
@@ -356,7 +355,6 @@ sap.ui.define([
 			const oAdaptationControl = this._getAdaptationControlInstance();
 			const oDelegate = oAdaptationControl.getControlDelegate();
 			const oFilterDelegate = this._checkAdvancedParent(oAdaptationControl) ? oDelegate : oDelegate.getFilterDelegate();
-			mapVersions(oFilterDelegate);
 
 			//used to store the originals
 			this._mOriginalsForClone = {};
