@@ -14,7 +14,7 @@
          <m:HBox class="sapUiSmallMarginTop">
             <!-- <vm:VariantManagement for="UploadSetTable" id="uploadSetVariant" class="sapUiMediumMarginBegin" titleStyle="H3" /> -->
         </m:HBox>
-        <UploadSetTable
+        <UploadSetwithTable
             id="UploadSetTable"
             maxFileNameLength="60"
             uploadUrl="/uploadFiles"
@@ -124,7 +124,7 @@
             </columns>
 
             <items>
-                <UploadSetTableItem
+                <UploadSetwithTableItem
                     fileName="{fileName}"
                     mediaType="{mediaType}"
                     url="{url}"
@@ -185,9 +185,9 @@
                         />
                     </m:HBox>
                 </cells>
-                </UploadSetTableItem>
+                </UploadSetwithTableItem>
             </items>
-        </UploadSetTable>
+        </UploadSetwithTable>
     </m:Page>
 </m:App>
 </mvc:View>

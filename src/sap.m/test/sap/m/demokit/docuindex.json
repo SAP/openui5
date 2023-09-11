@@ -3521,7 +3521,7 @@
 			"description": "Shows the UploadSet with the cloudFilePicker set as enabled. Now, files can be uploaded from cloud with the integrated cloudFilePicker control."
 		},
 		{
-			"id": "sap.m.sample.UploadSetTable",
+			"id": "sap.m.sample.UploadSetwithTable",
 			"name": "Upload Set Table",
 			"description": "Shows the UploadSet with Table."
 		},

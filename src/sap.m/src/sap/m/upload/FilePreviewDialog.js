@@ -41,10 +41,15 @@ sap.ui.define([
 	};
 
 	/**
-	 * The file preview dialog.
+	 * Constructor for a new FilePreviewDialog.
 	 *
-   * @class Dialog with a carousel to preview files uploaded using the UploadSet control.
-	 * @param {sap.m.upload.UploadSetTableItem} oPreviewItem The initial active UploadSetTableItem to be previewed.
+   * @class
+   * Dialog with a carousel to preview files uploaded using the UploadSetwithTable control.
+   * This Element should only be used within the {@link sap.m.upload.UploadSetwithTable UploadSetwithTable} control as an association.
+   * @author SAP SE
+   * @param {string} [sId] id for the new control, generated automatically if no id is given.
+   * @param {object} [mSettings] Initial settings for the new control.
+   * @constructor
    * @private
    * @extends sap.ui.core.Element
    * @name sap.m.upload.FilePreviewDialog
@@ -54,31 +59,28 @@ sap.ui.define([
 		metadata: {
 			properties: {
 				/**
-				Current item being previwed in the carousel dialog.
-				*/
-				previewItem: {type: "sap.m.upload.UploadSetTableItem", defaultValue: null},
-				/**
-				 * Items set to build the preview carousel.
-				 * */
-				items: {type: "sap.m.upload.UploadSetTableItem[]", defaultValue: []},
-
-				/**
 				 * Show or hide carousel's arrows.
 				 */
 				showCarouselArrows: {type: "boolean", defaultValue: true},
 				/**
-				 * Size limit of the file in megabytes that is allowed to be previewed
-				 * <br>If set to <code>null</code> or <code>0</code>, files of any size can be previewed.
+				 * Size limit of the file in megabytes that is allowed to be previewed.
+				 * <br>If not set, files of any size can be previewed.
 				 */
-				maxFileSizeforPreview: {type: "float", defaultValue: 0}
+				maxFileSizeforPreview: {type: "float", defaultValue: null}
 			},
+			defaultAggregation: "additionalFooterButtons",
 			aggregations: {
 				/**
 				 * Custom buttons, to be displayed in the preview dialog footer.
+				 * <br>Control by default adds two buttons (download and close).
 				 */
 				additionalFooterButtons: {type: "sap.m.Button", multiple: true}
 			}
 		},
+
+		_previewItem: null,
+
+		_items: [],
 
 		init: function () {
 			this._oRichTextEditor = null;
@@ -89,16 +91,17 @@ sap.ui.define([
 
 		/**
 		 * Opens the {@link sap.m.upload.FilePreviewDialog}.
+		 * @private
 	 	*/
-		open: async function () {
-			const aItems = this.getItems();
-			if (aItems?.length && this.getPreviewItem()) {
+		_open: async function () {
+			const aItems = this._items;
+			if (aItems?.length && this._previewItem) {
 				this._oCarousel = await this._createCarousel();
 				if (!this._oDialog) {
 					this._oDialog = this._createDialog();
 				} else {
 					// Sets the title of the dialog to the currently previewed item filename.
-					this._oDialog.setTitle(this.getPreviewItem()?.getFileName() || "");
+					this._oDialog.setTitle(this._previewItem?.getFileName() || "");
 					// Removes all the existing content and set the new content on the dialog.
 					this._oDialog.removeAllContent();
 					this._oDialog.insertContent(this._oCarousel);
@@ -167,7 +170,7 @@ sap.ui.define([
 
 		/**
 		 * Creates a viewer for .vds files
-		 * @param {sap.m.upload.UploadSetTableItem} oItem The UploadSetTableItem to be previewed
+		 * @param {sap.m.upload.UploadSetwithTableItem} oItem The UploadSetwithTableItem to be previewed
 		 * @return {sap.ui.vk.Viewer} A vds viewer instance or undefined if dependency unavailable
 		 * @private
 		 */
@@ -197,7 +200,7 @@ sap.ui.define([
 
 		/**
 		 * Creates a rich text viewer
-		 * @param {sap.m.upload.UploadSetTableItem} oItem The UploadSetTableItem to be previewed
+		 * @param {sap.m.upload.UploadSetwithTableItem} oItem The UploadSetwithTableItem to be previewed
 		 * @return {sap.ui.richtexteditor.RichTextEditor} A rich text editor instance or undefined if dependency unavailable
 		 * @private
 		 */
@@ -238,8 +241,8 @@ sap.ui.define([
      	* @private
      	*/
 		_createCarousel: async function () {
-			const oPreviewItem = this.getPreviewItem();
-			const aItems = !this.getShowCarouselArrows() ? [this.getPreviewItem()] : this.getItems();
+			const oPreviewItem = this._previewItem;
+			const aItems = !this.getShowCarouselArrows() ? [this._previewItem] : this._items;
 			let sActivePageId = "";
 			const aPagePromises = aItems.map(async (oItem) => {
 				const sMediaType = oItem.getMediaType();
@@ -337,7 +340,7 @@ sap.ui.define([
 	 	* @private
 		*/
 		_createDialog: function() {
-			const oActiveItem = this._getActiveUploadSetTableItem();
+			const oActiveItem = this._getActiveUploadSetwithTableItem();
 			const oDialog = new Dialog({
 				title: oActiveItem.getFileName(),
 				content: this._oCarousel,
@@ -350,7 +353,7 @@ sap.ui.define([
 					new Button({
 						text: oLibraryResourceBundle.getText("UPLOAD_SET_TABLE_FILE_PREVIEW_DIALOG_DOWNLOAD"),
 						press: () => {
-							this._getActiveUploadSetTableItem().download(true);
+							this._getActiveUploadSetwithTableItem().download(true);
 						}
 					}),
 					new Button({
@@ -367,16 +370,16 @@ sap.ui.define([
 
 		/**
      	* Creates a {@link sap.m.Carousel} of uploaded files.
-		* @return {sap.m.upload.UploadSetTableItem} The currently active UploadSetTableItem.
+		* @return {sap.m.upload.UploadSetwithTableItem} The currently active UploadSetwithTableItem.
      	* @private
      	*/
-		_getActiveUploadSetTableItem: function () {
+		_getActiveUploadSetwithTableItem: function () {
 			const sActivePageId = this._oCarousel.getActivePage();
 			const aPages = this._oCarousel.getPages();
 			const iIndex = aPages.findIndex((oPage) => {
 				return oPage.sId === sActivePageId;
 			});
-			return this.getItems()[iIndex];
+			return this._items[iIndex];
 		},
 		isFileSizeWithinMaxLimit: function(oItem) {
 			let maxFileSize = this.getMaxFileSizeforPreview();
