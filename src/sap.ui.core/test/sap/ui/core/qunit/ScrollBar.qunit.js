@@ -129,14 +129,14 @@ sap.ui.define([
 	});
 
 
-	QUnit.test("Scroll Huge Scrollbars", function(assert) {
+	QUnit.test("Scroll Huge Scrollbars", async function(assert) {
 		assert.expect(1);
 		var done = assert.async();
 		// Support of Huge number of steps
 		this.oVSB.setSteps(1000000); //8000000px in Chrom
 		this.oVSB.setScrollPosition(300000);
-		setTimeout(async function() {
-			await nextUIUpdate();
+		await nextUIUpdate.runSync(); // await is only kept to indicate later call w/o ".runSync"
+		setTimeout(function() {
 			assert.equal(this.oVSB.getScrollPosition(), "300000", "scroll position is 300000 step");
 			done();
 		}.bind(this), 500);
