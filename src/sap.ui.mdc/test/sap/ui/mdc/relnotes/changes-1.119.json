@@ -1,0 +1,40 @@
+{
+  "1.119.0": {
+    "date": "September 2023",
+    "notes": [
+      {
+        "id": "7ef2ba357f83098147269902fae0b30b6d3560c6",
+        "type": "FIX",
+        "text": " Field: remove value state only for parse/validate error",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380124881"
+          }
+        ]
+      },
+      {
+        "id": "ccce7d0663f1aff32efb28685a2faa5b254fff04",
+        "type": "FIX",
+        "text": " Field: additionalValue wrong initialized",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380120806"
+          }
+        ]
+      },
+      {
+        "id": "fa4b4b97f776920672d5ea9056b436dbe663f094",
+        "type": "FIX",
+        "text": " Field: validate additionalValue only if set",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380127587"
+          }
+        ]
+      }
+    ]
+  }
+}

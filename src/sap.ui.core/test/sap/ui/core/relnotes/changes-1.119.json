@@ -3,6 +3,52 @@
     "date": "September 2023",
     "notes": [
       {
+        "id": "76ee62fefdc7b31c4632b435d266be649c51af93",
+        "type": "FEATURE",
+        "text": " Deprecate Core.attachControlEvent and Core.detachControlEvent"
+      },
+      {
+        "id": "6a8cacbd94705260450fb81111191aef4bbdfdc1",
+        "type": "FEATURE",
+        "text": " Introduce Element.getActiveElement API and deprecate Core.getCurrentFocusedControlId"
+      },
+      {
+        "id": "4f52766a10dd16c3d87e23ef57fd704ccb77e1ef",
+        "type": "FEATURE",
+        "text": " Introduce EventBus.getInstance singleton API and deprecate sap.ui.core.Core.getEventBus"
+      },
+      {
+        "id": "ee7a520d77f68ea00b2cedf55b1a1165486ffbdd",
+        "type": "FEATURE",
+        "text": " Introduce Element.getElementById as replacement for deprecated sap.ui.getCore().byId"
+      },
+      {
+        "id": "15939d62caa0e74e5ef326057966697d6f0bdb9a",
+        "type": "FEATURE",
+        "text": " Introduce new StaticArea API, deprecate predecessor on Core facade"
+      },
+      {
+        "id": "970757ce6902c923788b230833e931e11d2bc93f",
+        "type": "FEATURE",
+        "text": " core.Core: deprecate createRenderManager()"
+      },
+      {
+        "id": "5b2ca606c30048584dece4d5018ced24a3aff0b8",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v2.ODataListBinding#fireCreateActivate: ignore destroyed bindings",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380123522"
+          }
+        ]
+      },
+      {
+        "id": "43e032cef9b591374bb9e440a70073dfcdf09f75",
+        "type": "FIX",
+        "text": " DropInfo: correct the type of d&d related browser events"
+      },
+      {
         "id": "66c88c78abc43903c41631a75cb302d74559c3cb",
         "type": "FIX",
         "text": " sap.ui.test.Opa5: Tweaked the AutoWaitParams sample",

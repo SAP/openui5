@@ -3,6 +3,11 @@
     "date": "September 2023",
     "notes": [
       {
+        "id": "ee7a520d77f68ea00b2cedf55b1a1165486ffbdd",
+        "type": "FEATURE",
+        "text": " Introduce Element.getElementById as replacement for deprecated sap.ui.getCore().byId"
+      },
+      {
         "id": "8f779bd4c62d85002d6c0e9da3c5aa79ad47dfda",
         "type": "FIX",
         "text": " sap.ui.table: Adjusted _closeContentCellContextMenu method name",

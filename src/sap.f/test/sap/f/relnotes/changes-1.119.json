@@ -3,6 +3,28 @@
     "date": "September 2023",
     "notes": [
       {
+        "id": "3ad200bd09682a383523f837e8d5e42ea22ce2dc",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: Unstable test temp FIX",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370087973"
+          }
+        ]
+      },
+      {
+        "id": "de86ff82072e8271295519c180ed5bfc81fa6499",
+        "type": "FIX",
+        "text": " Integration Cards: Background of Actions strip set to \"Transparent\"",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370079886"
+          }
+        ]
+      },
+      {
         "id": "269692e706d3fbd90f5ef7fa0d3821acd3b50eb3",
         "type": "FIX",
         "text": " sap.f.DynamicPage: Back tab nav fixed",

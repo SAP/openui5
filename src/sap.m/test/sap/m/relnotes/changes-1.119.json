@@ -3,6 +3,39 @@
     "date": "September 2023",
     "notes": [
       {
+        "id": "123bd5563e5dcfad73c1f2f7e52467a411eb5beb",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendarMonthGrid: fixed week selection in Month view",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380110605"
+          }
+        ]
+      },
+      {
+        "id": "12258e98af7e6807a1ed2dbdc7d4cfcbb6d6434a",
+        "type": "FIX",
+        "text": " sap.m.Wizard: enable insert/remove step for designMode",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400006646292023"
+          }
+        ]
+      },
+      {
+        "id": "d9aab17bb7a774b319ee142a72dd9639b063de49",
+        "type": "FIX",
+        "text": " List: Use array for resource bundle texts",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370079378"
+          }
+        ]
+      },
+      {
         "id": "b613098c4e6c41166221802d977a7f6a39115156",
         "type": "FIX",
         "text": " sap.m.SuggestionPopover:  Correct margins are now applied",
@@ -25,6 +58,17 @@
           {
             "type": "BCP",
             "reference": "2370080708"
+          }
+        ]
+      },
+      {
+        "id": "08abd03769d5e08c35a20b38be6c3985e497549e",
+        "type": "FIX",
+        "text": " sap.m.Breadcrumbs: Fix behaviour in OverflowToolbar",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
           }
         ]
       },

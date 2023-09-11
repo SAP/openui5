@@ -3,6 +3,11 @@
     "date": "September 2023",
     "notes": [
       {
+        "id": "529ef8e12bd89d0be642eee4ade2b6105297a6a9",
+        "type": "FIX",
+        "text": " sap.m.ColorPicker: adjust alpha handle position"
+      },
+      {
         "id": "a8e551ccec85e8cef7bceb47278de04e36b249eb",
         "type": "FIX",
         "text": " sap.ui.unified.FileUploader: stop drag and drop event propagation",

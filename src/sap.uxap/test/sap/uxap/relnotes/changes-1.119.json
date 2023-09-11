@@ -3,6 +3,17 @@
     "date": "September 2023",
     "notes": [
       {
+        "id": "7a2d845f7522b91eae4c4a0d33c62d3aedceaee4",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageSubSection: Layout issue corrected",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380131154"
+          }
+        ]
+      },
+      {
         "id": "aabe3489f27aeb059c98104985cb2c85e8b1ba0d",
         "type": "FEATURE",
         "text": " Table: Add rowMode aggregation"

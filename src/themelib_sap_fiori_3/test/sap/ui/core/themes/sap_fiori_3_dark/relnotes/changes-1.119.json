@@ -3,6 +3,16 @@
     "date": "September 2023",
     "notes": [
       {
+        "id": "8c3dffe38c81e58292d3b1f42d46d7fba91d44dd",
+        "type": "FEATURE",
+        "text": " sap.tnt.SideNavigation: Collapsed mode now shows item title on hover and focus"
+      },
+      {
+        "id": "529ef8e12bd89d0be642eee4ade2b6105297a6a9",
+        "type": "FIX",
+        "text": " sap.m.ColorPicker: adjust alpha handle position"
+      },
+      {
         "id": "ab38bb2f682fd9aea1c773dcb2aed8cf2f141fcd",
         "type": "FIX",
         "text": " sap.ui.layout.Splitter: Added borders in Morning/Evening Horizon themes"

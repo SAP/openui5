@@ -3,6 +3,17 @@
     "date": "September 2023",
     "notes": [
       {
+        "id": "de86ff82072e8271295519c180ed5bfc81fa6499",
+        "type": "FIX",
+        "text": " Integration Cards: Background of Actions strip set to \"Transparent\"",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370079886"
+          }
+        ]
+      },
+      {
         "id": "aabe3489f27aeb059c98104985cb2c85e8b1ba0d",
         "type": "FEATURE",
         "text": " Table: Add rowMode aggregation"
