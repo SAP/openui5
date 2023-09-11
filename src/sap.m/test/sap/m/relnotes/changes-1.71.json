@@ -3751,5 +3751,32 @@
         ]
       }
     ]
+  },
+  "1.71.59": {
+    "date": "September 2023",
+    "notes": [
+      {
+        "id": "e1c9334b79018358d21ae39ae24a28ecb267476e",
+        "type": "FIX",
+        "text": " sap.m.Dialog: Dimensions are correctly restored when closing soft keyboard",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400004963822023"
+          }
+        ]
+      },
+      {
+        "id": "c1834f490f4527482d830d58571cc3a1419c1b38",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: Fix navigation skipping",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400005568382023"
+          }
+        ]
+      }
+    ]
   }
 }
