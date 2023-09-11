@@ -10,7 +10,8 @@ sap.ui.define([
 	"sap/ui/core/Control",
 	"sap/ui/core/delegate/ItemNavigation",
 	"sap/ui/core/theming/Parameters",
-	"sap/ui/core/library"
+	"sap/ui/core/library",
+	"sap/ui/events/KeyCodes"
 ], function(
 	library,
 	IconTabBarDragAndDropUtil,
@@ -18,7 +19,8 @@ sap.ui.define([
 	Control,
 	ItemNavigation,
 	Parameters,
-	coreLibrary
+	coreLibrary,
+	KeyCodes
 ) {
 	"use strict";
 
@@ -239,10 +241,37 @@ sap.ui.define([
 	};
 
 	/**
-	 * Handles tap event.
+	 * Handle the key down event for SPACE and ENTER.
+	 * @param {jQuery.Event} oEvent - the keyboard event.
 	 * @private
 	 */
-	IconTabBarSelectList.prototype.ontap = function (oEvent) {
+	IconTabBarSelectList.prototype.onkeydown = function(oEvent) {
+		switch (oEvent.which) {
+			case KeyCodes.ENTER:
+				this._selectItem(oEvent);
+				oEvent.preventDefault();
+				break;
+			case KeyCodes.SPACE:
+				oEvent.preventDefault(); // prevent scrolling when focused on the tab
+				break;
+		}
+	};
+
+	IconTabBarSelectList.prototype.onkeyup = function(oEvent) {
+		if (oEvent.which === KeyCodes.SPACE) {
+			this._selectItem(oEvent);
+		}
+	};
+
+	IconTabBarSelectList.prototype.ontap = function(oEvent) {
+		this._selectItem(oEvent);
+	};
+
+	/**
+	 * Handles tab selection.
+	 * @private
+	 */
+	IconTabBarSelectList.prototype._selectItem = function (oEvent) {
 		var oTappedItem = oEvent.srcControl;
 
 		if (!oTappedItem) {
@@ -259,16 +288,12 @@ sap.ui.define([
 
 		oEvent.preventDefault();
 
-		if (oTappedItem != this.getSelectedItem()) {
+		if (oTappedItem !== this.getSelectedItem()) {
 			this.fireSelectionChange({
 				selectedItem: oTappedItem
 			});
 		}
-
 	};
-
-	IconTabBarSelectList.prototype.onsapenter = IconTabBarSelectList.prototype.ontap;
-	IconTabBarSelectList.prototype.onsapspace = IconTabBarSelectList.prototype.ontap;
 
 	/**
 	 * Checks if only an icon should be rendered.
