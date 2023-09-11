@@ -20,13 +20,18 @@ sap.ui.define([], function() {
 
 	/**
 	* Retrieves the default variant ID for a variant map.
+	* Removed variants are filtered out.
 	*
 	* @param {object} mCompVariantsMap Prepared map for compVariants
 	* @returns {string} ID of the default variant
 	*/
 	Utils.getDefaultVariantId = (mCompVariantsMap) => {
 		const aDefaultVariantChanges = mCompVariantsMap.defaultVariants;
-		const oChange = aDefaultVariantChanges[aDefaultVariantChanges.length - 1];
+		const oChange = aDefaultVariantChanges.toReversed().find((oChange) => {
+			return mCompVariantsMap.variants.some((oVariant) => {
+				return oChange?.getContent().defaultVariantName === oVariant.getId();
+			});
+		});
 		return oChange?.getContent().defaultVariantName || "";
 	};
 
