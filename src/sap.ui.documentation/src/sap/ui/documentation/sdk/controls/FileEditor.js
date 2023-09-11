@@ -10,8 +10,7 @@ sap.ui.define(
 		"sap/m/Image",
 		"sap/m/MessageStrip",
 		"sap/ui/codeeditor/CodeEditor",
-		"sap/ui/core/Control",
-		"sap/base/util/restricted/_debounce"
+		"sap/ui/core/Control"
 	],
 	function(FileUtils, extend, IconTabHeader, IconTabFilter, Image, MessageStrip, CodeEditor, Control) {
 		"use strict";
@@ -126,14 +125,6 @@ sap.ui.define(
 			this._fetchContents();
 		};
 
-		FileEditor.prototype.setEditable = function(editable) {
-			editable != undefined ? this.setProperty("editable", editable) : this.setProperty("editable", true);
-		};
-
-		FileEditor.prototype.getEditable = function() {
-			return this.getProperty("editable");
-		};
-
 		FileEditor.prototype.setFiles = function(aFiles) {
 			this._getHeader().destroyItems();
 			this._bFetch = true;
@@ -239,7 +230,7 @@ sap.ui.define(
 					return oEl.key === sSelectedFileKey;
 				}),
 				oSelectedFile = this._aFiles[iSelectedFileIndex],
-				bEditable = this.getEditable();
+				bEditable = oSelectedFile.editable;
 
 			//choose code editor type dependent on file type
 			//default editor type 'javascript' applies syntax checks on editor content
@@ -309,9 +300,10 @@ sap.ui.define(
 
 		FileEditor.prototype._fetchContents = function() {
 			var aFetchPromises = this._aFiles.map(function(oFile) {
-				var sType = oFile.url.substring(oFile.url.lastIndexOf(".") + 1);
+				var sUrl = oFile.url,
+					sType = sUrl.substring(oFile.url.lastIndexOf(".") + 1);
 				oFile._type = FileEditor.mimetypes[sType] || "text/plain";
-				oFile.promise = FileUtils.fetch(oFile.url);
+				oFile.promise = FileUtils.fetch(sUrl);
 				return oFile.promise;
 			});
 
