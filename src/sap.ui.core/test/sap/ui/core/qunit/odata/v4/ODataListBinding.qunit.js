@@ -10296,6 +10296,108 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+[false, true].forEach((bCreated) => {
+	[-1, +1, 0].forEach((iDirection) => { // child is before or after parent (or right in place)
+	QUnit.test(`move: created=${bCreated}, direction=${iDirection}`, function (assert) {
+		const iParentIndex = 42;
+		let iChildIndex = iParentIndex + 1;
+		if (iDirection < 0) {
+			iChildIndex = 23;
+		} else if (iDirection > 0) {
+			iChildIndex = 64;
+		}
+		const oChildContext = {
+			iIndex : iChildIndex,
+			created : mustBeMocked,
+			getCanonicalPath : mustBeMocked,
+			setCreatedPersisted : mustBeMocked
+		};
+		this.mock(oChildContext).expects("getCanonicalPath").withExactArgs().returns("/~child~");
+		const oParentContext = {
+			iIndex : iParentIndex,
+			getCanonicalPath : mustBeMocked
+		};
+		this.mock(oParentContext).expects("getCanonicalPath").withExactArgs().returns("/~parent~");
+		const oBinding = this.bindList("/EMPLOYEES");
+		this.mock(oBinding).expects("getUpdateGroupId").withExactArgs().returns("~group~");
+		this.mock(oBinding).expects("lockGroup").withExactArgs("~group~", true, true)
+			.returns("~oGroupLock~");
+		const oCache = {
+			move : mustBeMocked
+		};
+		oBinding.oCache = oCache;
+		this.mock(oCache).expects("move").withExactArgs("~oGroupLock~", "~child~", "~parent~")
+			.returns(new SyncPromise((resolve) => {
+				setTimeout(() => {
+					for (let i = 0; i < 100; i += 1) {
+						if (i % 5) {
+							oBinding.aContexts[i] = {iIndex : i};
+						} // else: leave some gaps ;-)
+					}
+					oBinding.aContexts[iChildIndex] = oChildContext;
+					oBinding.aContexts[iParentIndex] = oParentContext;
+					this.mock(oChildContext).expects("created").withExactArgs()
+						.returns(bCreated ? {/*Promise*/} : undefined);
+					this.mock(oChildContext).expects("setCreatedPersisted")
+						.exactly(bCreated ? 0 : 1).withExactArgs();
+					this.mock(oBinding).expects("_fireChange")
+						.withExactArgs({reason : ChangeReason.Change});
+
+					resolve("n/a"); //TODO reject?
+				}, 0);
+			}));
+
+		// code under test
+		const oSyncPromise = oBinding.move(oChildContext, oParentContext);
+
+		assert.strictEqual(oSyncPromise.isPending(), true);
+
+		return oSyncPromise.then(function (vResult) {
+			const iNewParentIndex = iDirection < 0 ? iParentIndex - 1 : iParentIndex;
+			assert.strictEqual(vResult, undefined, "without a defined result");
+			assert.strictEqual(oBinding.aContexts[iNewParentIndex], oParentContext);
+			assert.strictEqual(oBinding.aContexts[iNewParentIndex + 1], oChildContext);
+			for (let i = 0; i < 100; i += 1) {
+				if (oBinding.aContexts[i]) {
+					assert.strictEqual(oBinding.aContexts[i].iIndex, i, `iIndex @ ${i}`);
+				}
+			}
+		});
+	});
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("move: fails", function (assert) {
+		const oChildContext = {
+			getCanonicalPath : mustBeMocked
+		};
+		this.mock(oChildContext).expects("getCanonicalPath").withExactArgs().returns("/~child~");
+		const oParentContext = {
+			getCanonicalPath : mustBeMocked
+		};
+		this.mock(oParentContext).expects("getCanonicalPath").withExactArgs().returns("/~parent~");
+		const oBinding = this.bindList("/EMPLOYEES");
+		this.mock(oBinding).expects("getUpdateGroupId").withExactArgs().returns("~group~");
+		this.mock(oBinding).expects("lockGroup").withExactArgs("~group~", true, true)
+			.returns("~oGroupLock~");
+		const oCache = {
+			move : mustBeMocked
+		};
+		oBinding.oCache = oCache;
+		this.mock(oCache).expects("move").withExactArgs("~oGroupLock~", "~child~", "~parent~")
+			.returns(SyncPromise.reject("~error~"));
+
+		// code under test
+		const oSyncPromise = oBinding.move(oChildContext, oParentContext);
+
+		assert.strictEqual(oSyncPromise.isRejected(), true);
+		assert.strictEqual(oSyncPromise.getResult(), "~error~");
+
+		oSyncPromise.caught(); // avoid "Uncaught (in promise)"
+	});
+
+	//*********************************************************************************************
 [false, true].forEach(function (bRefreshFails) {
 	var sTitle = "onChange: " + (bRefreshFails ? ": refresh" : "checkUpdate") + " fails";
 
