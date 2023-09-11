@@ -2544,6 +2544,9 @@ sap.ui.define([
 		oMultiInput.destroy();
 	});
 
+	/**
+	* @deprecated Since 1.119.
+	*/
 	QUnit.test("Clicking on a Token should not trigger Input.prototype._fireValueHelpRequestForValueHelpOnly", function(assert) {
 		var oSpy = this.spy(Input.prototype, "_fireValueHelpRequestForValueHelpOnly"),
 			oToken = new Token();
@@ -2565,6 +2568,9 @@ sap.ui.define([
 		oSpy.restore();
 	});
 
+	/**
+	* @deprecated Since 1.119.
+	*/
 	QUnit.test("Clicking on nMore should not trigger Input.prototype._fireValueHelpRequestForValueHelpOnly", function(assert) {
 		var oSpy = this.spy(Input.prototype, "_fireValueHelpRequestForValueHelpOnly");
 

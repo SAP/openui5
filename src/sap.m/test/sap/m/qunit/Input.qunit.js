@@ -176,7 +176,10 @@ sap.ui.define([
 		i1.setEnabled(enabled);
 		assert.equal(i1.getEnabled(), enabled, "Input is enabled");
 	});
-
+	/**
+	* @deprecated Since 1.119.
+	* @private
+	*/
 	QUnit.test("ValueHelpOnly", function(assert) {
 		assert.equal(i1.getValueHelpOnly(), false, "ValueHelpOnly Default: false");
 		var helponly = true;
@@ -634,13 +637,8 @@ sap.ui.define([
 		oCore.applyChanges();
 
 		checkSubmit("Enter pressed on field with value help", true, false, "hello");
-		oInput.setValueHelpOnly(true);
 		oCore.applyChanges();
 
-		checkSubmit("Enter pressed on field with value help only", false, false);
-		oInput.setShowValueHelp(false);
-		oInput.setValueHelpOnly(false);
-		oCore.applyChanges();
 
 
 		// Enter on Suggestions
@@ -671,6 +669,65 @@ sap.ui.define([
 			assert.ok(oInput._getSuggestionsPopover() && oInput._getSuggestionsPopover().getPopover().isOpen && !oInput._getSuggestionsPopover().getPopover().isOpen(), "Suggestion Popup should be closed");
 		}
 
+		oInput.destroy();
+	});
+
+	/**
+	* @deprecated Since 1.119.
+	*/
+	QUnit.test("Submit Event with valueHelpOnly", function(assert) {
+
+		var sEvents = "";
+		var sValue = "";
+		var oInput = new Input("hello", {
+			submit: function(oEvent){
+				sEvents += "E";
+				sValue = oEvent.getParameter("value");
+			},
+			change: function(){
+				sEvents += "C";
+			}
+		});
+		oInput.setEditable(true);
+		oInput.setShowValueHelp(true);
+		oInput.setValue("hello");
+		oInput.placeAt("content");
+
+		// change event should be fired only when the input is on focus
+		oInput.onfocusin();
+		oCore.applyChanges();
+
+		function checkSubmit(sText, bSubmitExpected, bChangeExpected, sExpectedValue) {
+			var e = "";
+			if (bChangeExpected) {
+				e += "C";
+			}
+			if (bSubmitExpected) {
+				e += "E";
+			}
+
+			sEvents = "";
+			sValue = "";
+			oCore.applyChanges();
+			qutils.triggerKeydown(oInput.getDomRef("inner"), KeyCodes.ENTER);
+			assert.equal(sEvents, e, sText + ": Correct number of events fired and order correct: " + e.length + (e.length > 0 ? "/" + e : ""));
+			if (bSubmitExpected) {
+				if (sExpectedValue) {
+					assert.equal(sValue, sExpectedValue, sText + ": Correct parameter 'value' in enter event: " + sExpectedValue);
+				} else {
+					assert.ok(!sValue, sText + ": Correct parameter 'value' in enter event: Value empty");
+				}
+			}
+		}
+
+		checkSubmit("Enter pressed on field with value help", true, false, "hello");
+		oInput.setValueHelpOnly(true);
+		oCore.applyChanges();
+
+		checkSubmit("Enter pressed on field with value help only", false, false);
+		oInput.setShowValueHelp(false);
+		oInput.setValueHelpOnly(false);
+		oCore.applyChanges();
 		oInput.destroy();
 	});
 
@@ -708,6 +765,9 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
+	/**
+	* @deprecated Since 1.119.
+	*/
 	QUnit.test("Value Help Only CSS Classes and event", function(assert) {
 		var spy = this.spy(),
 			oInputVHO = new Input( {
@@ -726,6 +786,9 @@ sap.ui.define([
 		assert.strictEqual(spy.callCount, 1, "Value Help Request has been fired and received successfully");
 	});
 
+	/**
+	* @deprecated Since 1.119.
+	*/
 	QUnit.test("Conditions for Value Help Only not valid", function(assert) {
 	// case1: showValueHelp is false
 		var spy = this.spy(),
@@ -817,6 +880,9 @@ sap.ui.define([
 		assert.strictEqual(spy3.callCount, 0, "enabled = false: Tap has been fired and no Value Help Request is submitted");
 	});
 
+	/**
+	* @deprecated Since 1.119.
+	*/
 	QUnit.test("Keyboard Handling for ValueHelpOnly", function(assert) {
 		//Event check for Enter and Space
 		var evt = jQuery.Event("sapselect"),
@@ -3194,6 +3260,9 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
+	/**
+	* @deprecated Since 1.119.
+	*/
 	QUnit.test("Property startSuggestion on Desktop (Zero, valueHelpOnly)",  function(assert) {
 		var oSystem = {
 				desktop: true,
@@ -4485,6 +4554,9 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
+	/**
+	* @deprecated Since 1.119.
+	*/
 	QUnit.test("Focus handling - Value Help Only 'tap' on Phone", function(assert) {
 		//Arrange
 		var bIsPhone = Device.system.phone;
@@ -7351,6 +7423,9 @@ sap.ui.define([
 		}
 	});
 
+	/**
+	* @deprecated Since 1.119.
+	*/
 	QUnit.test("showItems should not open the picker when valueHelpOnly is set to 'true'", function (assert) {
 		// Arrange
 		var oSpy = this.spy(this.oInput, "_openSuggestionPopup");
