@@ -16,6 +16,9 @@ sap.ui.define([
 	"sap/ui/table/utils/TableUtils",
 	"sap/ui/table/library",
 	"sap/ui/table/plugins/SelectionPlugin",
+	"sap/ui/table/rowmodes/Fixed",
+	"sap/ui/table/rowmodes/Auto",
+	"sap/ui/table/rowmodes/Type",
 	"sap/ui/core/library",
 	"sap/ui/core/Control",
 	"sap/ui/core/util/PasteHelper",
@@ -59,6 +62,9 @@ sap.ui.define([
 	TableUtils,
 	library,
 	SelectionPlugin,
+	FixedRowMode,
+	AutoRowMode,
+	RowModeType,
 	CoreLibrary,
 	Control,
 	PasteHelper,
@@ -6752,4 +6758,75 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.module("Row Modes", {
+		afterEach: function() {
+			this.oTable?.destroy();
+		},
+		createTable: function(mSettings) {
+			this.oTable?.destroy();
+			this.oTable = TableQUnitUtils.createTable(mSettings);
+		}
+	});
+
+	QUnit.test("Default", function(assert) {
+		this.createTable();
+		assert.strictEqual(this.oTable.getRowMode(), null, "value of 'rowMode' aggregation");
+		assert.ok(TableUtils.isA(this.oTable._getRowMode(), "sap.ui.table.rowmodes.Fixed"),
+			"Table#_getRowMode returns an instance of sap.ui.table.rowmodes.Fixed (default)");
+		assert.ok(Object.keys(this.oTable._getRowMode().getMetadata().getAllProperties()).every((sPropertyName) => {
+			return this.oTable.isPropertyInitial(sPropertyName);
+		}), "All properties of the default row mode instance are initial");
+	});
+
+	QUnit.test("Enum value", function(assert) {
+		Object.values(RowModeType).forEach((sRowMode) => {
+			this.createTable({rowMode: sRowMode});
+			assert.strictEqual(this.oTable.getRowMode(), sRowMode, "value of 'rowMode' aggregation");
+			assert.ok(TableUtils.isA(this.oTable._getRowMode(), "sap.ui.table.rowmodes." + sRowMode),
+				`Table#_getRowMode returns an instance of sap.ui.table.rowmodes.${sRowMode}`);
+			assert.ok(Object.keys(this.oTable._getRowMode().getMetadata().getAllProperties()).every((sPropertyName) => {
+				return this.oTable.isPropertyInitial(sPropertyName);
+			}), `All properties of the '${sRowMode}' row mode instance are initial`);
+		});
+	});
+
+	QUnit.test("Avoid creation of a default instance", function(assert) {
+		let bFailure = false;
+
+		sinon.stub(FixedRowMode.prototype, "init").callsFake(function() {
+			FixedRowMode.prototype.init.wrappedMethod.apply(this, arguments);
+			bFailure = true;
+		});
+
+		this.createTable({rowMode: RowModeType.Auto});
+		this.createTable({rowMode: new AutoRowMode()});
+		assert.ok(!bFailure, "A default row mode instance (sap.ui.table.rowmodes.Fixed) was not created");
+
+		FixedRowMode.prototype.init.restore();
+	});
+
+	/**
+	 * BCP: 2370086821
+	 * If a subclass binds the rows on init, the table wants to get the computed row counts from the row mode.
+	 * @deprecated As of version 1.119
+	 */
+	QUnit.test("Create a default instance when bound on init", function(assert) {
+		var bFailure = true;
+
+		sinon.stub(FixedRowMode.prototype, "init").callsFake(function() {
+			FixedRowMode.prototype.init.wrappedMethod.apply(this, arguments);
+			bFailure = false;
+		});
+
+		sinon.stub(Table.prototype, "init").callsFake(function() {
+			Table.prototype.init.wrappedMethod.apply(this, arguments);
+			this.setModel(TableQUnitUtils.createJSONModelWithEmptyRows(1));
+			this.bindRows("/");
+		});
+
+		this.createTable({rowMode: FixedRowMode.Auto});
+		assert.ok(!bFailure, "A default row mode instance (sap.ui.table.rowmodes.Fixed) was created");
+
+		Table.prototype.init.restore();
+	});
 });
