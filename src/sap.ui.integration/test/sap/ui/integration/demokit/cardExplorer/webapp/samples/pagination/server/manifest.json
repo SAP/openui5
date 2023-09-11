@@ -49,15 +49,7 @@
 				"src": "sap-icon://product"
 			},
 			"status": {
-				"text": {
-					"format": {
-						"translationKey": "i18n>CARD.COUNT_X_OF_Y",
-						"parts": [
-							"parameters>/visibleItems",
-							"/@odata.count"
-						]
-					}
-				}
+				"text": "{= format.text(${i18n>CARD.COUNT_X_OF_Y}, [${paginator>/skip} + ${parameters>/visibleItems}, ${/@odata.count}]) }"
 			}
 		},
 		"content": {

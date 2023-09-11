@@ -4,7 +4,6 @@
 
 sap.ui.define([
 	"../library",
-	"sap/m/library",
 	"sap/ui/base/EventProvider",
 	"sap/ui/core/Core",
 	"sap/ui/core/Control",
@@ -13,7 +12,6 @@ sap.ui.define([
 	"./PaginatorRenderer"
 ], function (
 	library,
-	mLibrary,
 	EventProvider,
 	Core,
 	Control,
@@ -84,6 +82,7 @@ sap.ui.define([
 
 	Paginator.prototype.init = function() {
 		this._listUpdateFinishedHandler = this._listUpdateFinished.bind(this);
+		this._dataChangedHandler = this._dataChanged.bind(this);
 
 		this.setAggregation("_prevIcon", new Icon({
 			src: "sap-icon://slim-arrow-left",
@@ -174,8 +173,6 @@ sap.ui.define([
 	Paginator.prototype.setCard = function(oCard) {
 		this.setProperty("card", oCard, true);
 
-		this._dataChangedHandler = this._dataChanged.bind(this);
-
 		if (oCard) {
 			oCard.attachEvent("_contentDataChange", this._dataChangedHandler);
 		}
@@ -183,37 +180,31 @@ sap.ui.define([
 	};
 
 	Paginator.prototype.sliceData = function() {
-		var oCard = this.getCard(),
-			oPaginatorModel = this.getModel("paginator"),
-			oContent,
-			oCardLoadingProvider,
-			oContentLoadingProvider,
-			iStartIndex,
-			bIsPageChanged,
-			bIsServerSide;
+		const oCard = this.getCard();
 
 		if (!oCard) {
 			return;
 		}
 
-		oContent = oCard.getCardContent();
-		oCardLoadingProvider = oCard.getAggregation("_loadingProvider");
-		oContentLoadingProvider = oContent.getAggregation("_loadingProvider");
-		iStartIndex = this.getPageNumber() * this.getPageSize();
-		bIsPageChanged =  this._iPreviousStartIndex !== undefined && this._iPreviousStartIndex !== iStartIndex;
-		bIsServerSide = this.isServerSide();
+		const oPaginatorModel = this.getModel("paginator"),
+			oContent = oCard.getCardContent(),
+			oCardLoadingProvider = oCard.getAggregation("_loadingProvider"),
+			oContentLoadingProvider = oContent.getAggregation("_loadingProvider"),
+			iStartIndex = this.getPageNumber() * this.getPageSize(),
+			bIsPageChanged =  this._iPreviousStartIndex !== undefined && this._iPreviousStartIndex !== iStartIndex,
+			bIsServerSide = this.isServerSide();
+
+		oPaginatorModel.setData({
+			skip: iStartIndex,
+			size: this.getPageSize(),
+			pageIndex: this.getPageNumber()
+		});
 
 		if (bIsPageChanged) {
 			this._prepareAnimation(iStartIndex);
 		}
 
 		if (bIsServerSide && bIsPageChanged) {
-			oPaginatorModel.setData({
-				skip: iStartIndex,
-				size: this.getPageSize(),
-				pageIndex: this.getPageNumber()
-			});
-
 			// if the paginator model doesn't have bindings,
 			// we need to call "refreshAllData" method,
 			// otherwise don't call it
