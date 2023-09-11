@@ -1137,16 +1137,19 @@ sap.ui.define([
 					files: new DataTransfer().files
 				}
 			},
-			preventDefault: function() {}
+			preventDefault: function() {},
+			stopPropagation: function() {}
 		};
 		var oHandleChangeSpy = this.spy(oFileUploader, "handlechange");
 		var oPreventDefaultSpy = this.spy(oEventParams, "preventDefault");
+		var oStopPropagationSpy = this.spy(oEventParams, "stopPropagation");
 
 		// act
 		qutils.triggerEvent("drop", oFileUploader.oBrowse.getId(), oEventParams);
 
 		// assert
 		assert.ok(oPreventDefaultSpy.calledOnce, "The default is prevented");
+		assert.ok(oStopPropagationSpy.calledOnce, "The default is prevented");
 		assert.ok(oHandleChangeSpy.calledOnce, "Change event is triggered");
 
 		// clean

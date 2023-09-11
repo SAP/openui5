@@ -2048,10 +2048,20 @@ sap.ui.define([
 				oEvent.stopPropagation();
 				this.FUEl.click(); // The default behaviour on click on label is to open "open file" dialog. The only way to attach click event that is transferred from the label to the button is this way. AttachPress and attachTap don't work in this case.
 			}.bind(this));
-			$browse.off("dragover").on("dragover", function(oEvent) { oEvent.preventDefault(); });
-			$browse.off("dragenter").on("dragenter", function(oEvent) { oEvent.preventDefault(); });
+
+			// The event propagation needs to be stopped so composing controls, which also react on
+			// drag and drop events like the sap.m.UploadCollection or sap.m.upload.UploadSet aren't affected.
+			$browse.off("dragover").on("dragover", function(oEvent) {
+				oEvent.preventDefault();
+				oEvent.stopPropagation();
+			});
+			$browse.off("dragenter").on("dragenter", function(oEvent) {
+				oEvent.preventDefault();
+				oEvent.stopPropagation();
+			});
 			$browse.off("drop").on("drop", function(oEvent) {
 				oEvent.preventDefault();
+				oEvent.stopPropagation();
 				var aFileList = oEvent.originalEvent.dataTransfer.files;
 				// TODO: enable directory drag and drop
 				if ((!this.getMultiple() && aFileList.length > 1) || this.getDirectory()) {
