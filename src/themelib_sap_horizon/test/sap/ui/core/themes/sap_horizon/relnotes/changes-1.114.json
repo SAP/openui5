@@ -137,5 +137,43 @@
         ]
       }
     ]
+  },
+  "1.114.8": {
+    "date": "September 2023",
+    "notes": [
+      {
+        "id": "a0b080a113d7278b284433f011415f8b060c4eab",
+        "type": "FIX",
+        "text": " sap.m.ColorPicker: adjust alpha handle position",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
+        "id": "66ce2e2241c24138fb926f16b819bc69b7e14245",
+        "type": "FIX",
+        "text": " sap.m.ToggleButton: Remove box shadow.",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
+        "id": "596d3348b35426b01200bafb0e53cfc7b20a4b1f",
+        "type": "FIX",
+        "text": " sap.ui.layout.Splitter: Added borders in Morning/Evening Horizon themes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      }
+    ]
   }
 }

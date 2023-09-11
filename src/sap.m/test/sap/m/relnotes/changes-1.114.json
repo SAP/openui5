@@ -472,5 +472,21 @@
         ]
       }
     ]
+  },
+  "1.114.8": {
+    "date": "September 2023",
+    "notes": [
+      {
+        "id": "60dca1f56c45fa63e950c8c38d7184440aa1774f",
+        "type": "FIX",
+        "text": " sap.m.StepInput: Align decrement icon",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      }
+    ]
   }
 }

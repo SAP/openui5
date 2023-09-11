@@ -56,5 +56,32 @@
         ]
       }
     ]
+  },
+  "1.114.8": {
+    "date": "September 2023",
+    "notes": [
+      {
+        "id": "92b7ab833b795632673f55526d365e54ea6d0ce7",
+        "type": "FIX",
+        "text": " Integration Cards: Background of Actions strip set to \"Transparent\"",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370079886"
+          }
+        ]
+      },
+      {
+        "id": "0dc28a3e334ac3f4e63ad2c44053d314dac53278",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: Back tab nav fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370052810"
+          }
+        ]
+      }
+    ]
   }
 }

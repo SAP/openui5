@@ -50,5 +50,21 @@
         ]
       }
     ]
+  },
+  "1.114.8": {
+    "date": "September 2023",
+    "notes": [
+      {
+        "id": "a0b080a113d7278b284433f011415f8b060c4eab",
+        "type": "FIX",
+        "text": " sap.m.ColorPicker: adjust alpha handle position",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      }
+    ]
   }
 }
