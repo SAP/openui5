@@ -18,9 +18,21 @@ sap.ui.define(['sap/base/Log', 'sap/base/util/UriParameters'], function(Log, Uri
 		assert.deepEqual(Array.from(oUriParams.keys()), [], "empty constructor should result in no parameters");
 	});
 
+	QUnit.test("invalid constructor parameters", function(assert) {
+		assert.throws(() => new UriParameters({ foo: "bar" }), /query parameter must be a string/ );
+	});
+
 	QUnit.test("a single parameter", function(assert) {
 		var oUriParams = new UriParameters("/service?x=1");
 		assert.deepEqual(oUriParams.getAll('x'), ['1']);
+	});
+
+	QUnit.test("has", function(assert) {
+		var oUriParams = new UriParameters("/service?x=1&y=2&y=3&z=");
+		assert.equal(oUriParams.has('x'), true, "parameter with one value");
+		assert.equal(oUriParams.has('y'), true, "parameter with multiple values");
+		assert.equal(oUriParams.has('z'), true, "parameter without value");
+		assert.equal(oUriParams.has('a'), false, "parameter not within query");
 	});
 
 	QUnit.test("wrong syntax", function(assert) {
@@ -137,6 +149,10 @@ sap.ui.define(['sap/base/Log', 'sap/base/util/UriParameters'], function(Log, Uri
 		assert.deepEqual(oUriParams.getAll('y'), ["2"]);
 	});
 
+	QUnit.test("fromQuery, invalid parameter", function(assert) {
+		assert.throws(() => UriParameters.fromQuery({ query: "?x=1" }), /query parameter must be a string/);
+	});
+
 	QUnit.test("Deprecated Access to get(...,true)", function(assert) {
 		sinon.stub(Log, "warning");
 		try {
@@ -155,7 +171,8 @@ sap.ui.define(['sap/base/Log', 'sap/base/util/UriParameters'], function(Log, Uri
 	QUnit.test("Deprecated Access to mParams", function(assert) {
 		sinon.stub(Log, "warning");
 		try {
-			var mParams = UriParameters.fromQuery("x=1&y=2").mParams;
+			var oParams = UriParameters.fromQuery("x=1&y=2");
+			var mParams = oParams.mParams;
 			assert.strictEqual(Object.getPrototypeOf(mParams), Object.prototype, "mParams should have Object.prototype as prototype");
 			assert.deepEqual(mParams, {x:["1"], y: ["2"]}, "mParams should have the expected content");
 			assert.ok(
@@ -163,6 +180,15 @@ sap.ui.define(['sap/base/Log', 'sap/base/util/UriParameters'], function(Log, Uri
 					sinon.match(/Deprecated/)
 					.and(sinon.match(/mParams must not be accessed/))),
 				"A warning should be logged");
+
+			Log.warning.resetHistory();
+
+			mParams = oParams.mParams;
+			assert.strictEqual(Object.getPrototypeOf(mParams), Object.prototype, "mParams should have Object.prototype as prototype");
+			assert.deepEqual(mParams, {x:["1"], y: ["2"]}, "mParams should have the expected content");
+
+			assert.equal(Log.warning.callCount, 0, "Warning should only be logged once");
+
 		} finally {
 			Log.warning.restore();
 		}

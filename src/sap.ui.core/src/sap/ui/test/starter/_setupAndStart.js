@@ -10,10 +10,9 @@
 /*global QUnit, sinon, */
 
 sap.ui.define([
-	"sap/base/util/UriParameters",
 	"sap/base/util/fetch",
 	"./_utils"
-], function(UriParameters, fetch, utils) {
+], function(fetch, utils) {
 	"use strict";
 
 	function makeArray(arg) {
@@ -442,7 +441,7 @@ sap.ui.define([
 
 	}
 
-	var oParams = UriParameters.fromQuery(window.location.search),
+	var oParams = new URLSearchParams(window.location.search),
 		sSuiteName = utils.getAttribute('data-sap-ui-testsuite') || oParams.get("testsuite"),
 		sTestName = utils.getAttribute('data-sap-ui-test') || oParams.get("test");
 

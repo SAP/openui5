@@ -103,8 +103,14 @@ sap.ui.define(function() {
 			"base/util/uid": {
 				title: "QUnit Page for uid"
 			},
+			/**
+			 * @deprecated as of version 1.119
+			 */
 			"base/util/UriParameters": {
-				title: "QUnit Page for UriParameters"
+				title: "QUnit Page for UriParameters",
+				coverage: {
+					only: ["sap/base/util/UriParameters"]
+				}
 			},
 			/**
 			 * @deprecated as of version 1.90
