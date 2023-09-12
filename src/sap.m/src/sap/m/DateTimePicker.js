@@ -1074,7 +1074,7 @@ sap.ui.define([
 		// convert the date to local date for the calendar and the clocks if binding is used
 		if (this._isTimezoneBinding()) {
 			sFormattedDate = this._getPickerParser().format(oDate, this._getTimezone(true));
-			oDate = this._getPickerParser().parse(sFormattedDate, TimezoneUtil.getLocalTimezone())[0];
+			oDate = this._getPickerParser().parse(sFormattedDate)[0];
 		}
 		this._oCalendar.focusDate(oDate);
 
@@ -1116,7 +1116,7 @@ sap.ui.define([
 		}
 
 		if (this._isTimezoneBinding()) {
-			sFormattedDate = this._getPickerParser().format(oDate, TimezoneUtil.getLocalTimezone());
+			sFormattedDate = this._getPickerParser().format(oDate);
 			oParts = this._getPickerParser().parse(sFormattedDate, this._getTimezone(true));
 			oDate = oParts && oParts[0];
 		}
