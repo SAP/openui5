@@ -397,6 +397,7 @@ sap.ui.define([
 			if ($ScrollContainerDomRef.length) {
 				var oScrollContainerDomRef = $ScrollContainerDomRef.get(0);
 				var mScrollContainerGeometry = DOMUtil.getGeometry(oScrollContainerDomRef);
+				this._ensureVisibility($ScrollContainerOverlayDomRef);
 				this._setSize($ScrollContainerOverlayDomRef, mScrollContainerGeometry);
 				Overlay.prototype._setPosition.call(this, $ScrollContainerOverlayDomRef, mScrollContainerGeometry, this.$());
 				this._handleOverflowScroll(mScrollContainerGeometry, $ScrollContainerOverlayDomRef, this, bForceScrollbarSync);
