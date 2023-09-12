@@ -943,6 +943,38 @@ html.sapUiMedia-Std-Tablet {
 		}
 	}
 
+	.sapUiDemokitSubHeader {
+		.sapMITBTextOnly .sapMITBHead .sapMITBItem:not(.sapUiDnDDragging):is([id*="toolsTab"]) {
+			.sapMITBFilterExpandBtnSeparator {
+				display: none;
+			}
+
+			&:focus .sapMITBText::after {
+				right: -2.25rem;
+			}
+
+			[id*="toolsTab-expandButton"] {
+				.sapMBtnInner {
+					width: 1.25rem;
+					height: 1.25rem;
+					left: 0.5rem;
+
+					.sapMBtnIcon {
+						width: 1.25rem;
+						height: 1.25rem;
+						line-height: 1.25rem;
+					}
+				}
+
+				&:hover {
+					.sapMBtnInner {
+						box-shadow: none;
+					}
+				}
+			}
+		}
+	}
+
 	.sapTntToolHeader .sapMBarChild.sapMMenuBtn .sapMBtn:focus .sapMBtnDefault.sapMFocusable::before {
 		outline: @sapContent_FocusStyle @sapContent_FocusWidth @sapContent_FocusColor;
 		border: none !important;
@@ -1006,39 +1038,6 @@ html.sap-desktop {
 		.sapUiDemoKitHeaderOTB {
 			height: 2.25rem;
 		}
-
-		.sapUiDemokitSubHeader {
-			.sapMITBTextOnly .sapMITBHead .sapMITBItem:not(.sapUiDnDDragging):is([id*="toolsTab"]) {
-				.sapMITBFilterExpandBtnSeparator {
-					display: none;
-				}
-
-				&:focus .sapMITBText::after {
-					right: -2.25rem;
-				}
-
-				[id*="toolsTab-expandButton"] {
-					.sapMBtnInner {
-						width: 1.25rem;
-						height: 1.25rem;
-						left: 0.5rem;
-
-						.sapMBtnIcon {
-							width: 1.25rem;
-							height: 1.25rem;
-							line-height: 1.25rem;
-						}
-					}
-
-					&:hover {
-						.sapMBtnInner {
-							box-shadow: none;
-						}
-					}
-				}
-			}
-		}
-
 	}
 
 	// Adjust the style of the version switch button to match the design specifiaction
@@ -1136,6 +1135,10 @@ html.sap-phone {
 	.sapUiDemokit {
 		&.sapTntToolPage {
 			padding: 0;
+		}
+
+		.sapTntToolPageAside {
+			z-index: 10;
 		}
 
 		.sapTntToolPageMain {
