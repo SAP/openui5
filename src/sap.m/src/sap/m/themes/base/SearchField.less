@@ -11,7 +11,7 @@
 @_sap_m_SearchField_ResetIcon: "\e1c7";
 @_sap_m_SearchField_SearchIcon: "\e00d";
 @_sap_m_SearchField_PlaceholderColor: @sapUiFieldPlaceholderTextColor;
-@_sap_m_SearchField_Border: 1px solid @sapUiFieldBorderColor;
+@_sap_m_SearchField_Border: @sapUiFieldBorderWidth @sapUiFieldBorderStyle @sapUiFieldBorderColor;
 @_sap_m_SearchField_FocusOffset: 1px;
 @_sap_m_SearchField_FocusBorderRadius: unset;
 @_sap_m_SearchField_PlaceholderFontStyle: italic;
@@ -39,7 +39,7 @@
 }
 
 html.sap-desktop .sapMFocus > .sapMSFF::before {
-	border: @sapUiContentFocusWidth @sapUiContentFocusStyle @sapUiContentFocusColor;
+	border: @sapUiContentFocusWidth @sapUiContentFocusStyle @sapUiFieldActiveBorderColor;
 	position: absolute;
 	content: " ";
 	top: @_sap_m_SearchField_FocusOffset;

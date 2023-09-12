@@ -32,8 +32,8 @@
 	height: ~"calc(100% - 1px)";
 
 	border-radius: @sapUiFieldBorderCornerRadius;
-	color: @sapUiButtonTextColor;
-
+	color: @sapUiFieldTextColor;
+	
 	&:first-of-type {
 		margin-left: 0.25rem;
 	}
@@ -43,16 +43,16 @@
 	}
 
 	&:hover {
-		box-shadow: @sapUiContentInteractionShadow;
-		background-color: @sapUiButtonLiteHoverBackground;
+		box-shadow: @sapUiFieldHoverShadow;
+		background-color: @sapUiFieldHoverBackground;
 	}
 
 	&:active,
 	&.sapMSFBA // Firefox specific
 	{
-		box-shadow: @sapUiContentInteractionShadow;
+		box-shadow: @sapUiFieldHoverShadow;
 		color: @sapUiButtonSelectedTextColor;
-		background-color: @sapUiButtonLiteActiveBackground;
+		background-color: @sapUiFieldHoverBackground;
 	}
 }
 
@@ -67,5 +67,9 @@
 
 	&:hover .sapMSFF {
 		box-shadow: none;
+	}
+
+	.sapMSFB:hover {
+		color: @sapUiButtonSelectedTextColor;
 	}
 }
