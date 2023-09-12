@@ -9,8 +9,9 @@ sap.ui.define([
 	"sap/ui/core/InvisibleText",
 	"sap/m/Label",
 	"sap/m/Text",
-	"sap/ui/Device"
-], function(qutils, FileUploader, FileUploaderParameter, FileUploaderHttpRequestMethod, TooltipBase, InvisibleText, Label, Text, Device) {
+	"sap/ui/Device",
+	"sap/ui/thirdparty/jquery"
+], function(qutils, FileUploader, FileUploaderParameter, FileUploaderHttpRequestMethod, TooltipBase, InvisibleText, Label, Text, Device, jQuery) {
 	"use strict";
 
 	/**
@@ -989,6 +990,28 @@ sap.ui.define([
 		oFileUploader.destroy();
 		oHandleChangeSpy.restore();
 		oPreventDefaultSpy.restore();
+	});
+
+	QUnit.test("Input type file element has the proper events registered", function(assert) {
+		// prepare
+		var oFileUploader = new FileUploader();
+		oFileUploader.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+		var oEvents = jQuery._data(oFileUploader.oBrowse.getDomRef(), "events");
+		// assert
+		assert.ok(oEvents.mouseover, "mouseover registed");
+		assert.strictEqual(oEvents.mouseover.length, 1, "mouseover registed once");
+		assert.ok(oEvents.click, "click registed");
+		assert.strictEqual(oEvents.click.length, 1, "click registed once");
+		assert.ok(oEvents.dragover, "dragover registed");
+		assert.strictEqual(oEvents.dragover.length, 1, "dragover registed once");
+		assert.ok(oEvents.dragenter, "dragenter registed");
+		assert.strictEqual(oEvents.dragenter.length, 1, "dragenter registed once");
+		assert.ok(oEvents.drop, "drop registed");
+		assert.strictEqual(oEvents.drop.length, 1, "drop registed once");
+
+		// clean
+		oFileUploader.destroy();
 	});
 
 	QUnit.module("BlindLayer", {
