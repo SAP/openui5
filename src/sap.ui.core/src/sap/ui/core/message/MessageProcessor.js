@@ -130,7 +130,7 @@ sap.ui.define(['sap/ui/base/EventProvider', "sap/base/util/uid"],
 	 *
 	 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 	 * @protected
-	 * @deprecated 1.115 Use {@link sap.ui.core.Messaging#updateMessages} instead
+	 * @deprecated As of version 1.115. Use {@link module:sap/ui/core/Messaging#updateMessages} instead
 	 */
 	MessageProcessor.prototype.fireMessageChange = function(mParameters) {
 		var Messaging =  sap.ui.require("sap/ui/core/Messaging");
