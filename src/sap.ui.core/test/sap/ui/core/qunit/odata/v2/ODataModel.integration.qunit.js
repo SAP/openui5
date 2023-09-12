@@ -1051,7 +1051,14 @@ sap.ui.define([
 				? vModel
 				: {undefined : vModel || createSalesOrdersModel()};
 			this.oModel = mNamedModels.undefined;
-			this.mock(datajs).expects("request").atLeast(0).callsFake(checkRequest);
+			const oDatajsMock = this.mock(datajs);
+			oDatajsMock.expects("request")
+				.withArgs(/*request*/sinon.match.any, /*success*/sinon.match.any, /*error*/sinon.match.any,
+					sinon.match((handler) => handler !== datajs.metadataHandler),
+					/*httpClient*/sinon.match.any, /*metadata*/sinon.match.any)
+				.atLeast(0).callsFake(checkRequest);
+			// always load $metadata resources via TestUtils fake server, they are not mocked
+			oDatajsMock.expects("request").atLeast(0).callThrough();
 			//assert.ok(true, sViewXML); // uncomment to see XML in output, in case of parse issues
 			this.assert = assert;
 
@@ -20740,4 +20747,74 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 		});
 	});
 });
+
+	//*********************************************************************************************
+	// Scenario: Skip server cache for security tokens, so that two services running on different backends behind
+	// a reverse proxy can be consumed without a failing $batch due to a token for a different system taken from server
+	// cache.
+	// JIRA:CPOUI5MODELS-1381
+	QUnit.test("Skip server cache for security tokens", function (assert) {
+		const sView = '\
+<FlexBox binding="{/SalesOrderSet(\'1\')}">\
+	<Text id="id0" text="{SalesOrderID}" />\
+</FlexBox>\
+<FlexBox id="box1">\
+	<Text id="id1" text="{model1>ContactCardID}" />\
+</FlexBox>';
+
+		function checkServiceCache(aTokens) {
+			const oServiceCache = ODataModel.mSharedData.service;
+			assert.deepEqual(
+				Object.values(oServiceCache).map((oCacheEntry) => oCacheEntry.securityToken).sort(),
+				aTokens.sort());
+		}
+
+		function clearCaches() {
+			ODataModel.mSharedData.server = {};
+			ODataModel.mSharedData.service = {};
+		}
+
+		clearCaches(); // clear static caches on ODataModel to prevent effects from previous tests
+		// create model *after* clearing the caches as the token is lost otherwise
+		const oModel0 = createSalesOrdersModel({tokenHandling : "skipServerCache"});
+		this.expectRequest({
+				deepPath : "",
+				headers : {"x-csrf-token" : "Fetch"},
+				method : "HEAD",
+				requestUri : ""
+			}, {}, {"x-csrf-token" : "token0"})
+			.expectRequest("SalesOrderSet('1')", {
+				SalesOrderID : "1"
+			})
+			.expectValue("id0", "1");
+
+		// code under test
+		return this.createView(assert, sView, oModel0).then(() => {
+			checkServiceCache(["token0"]);
+
+			this.expectRequest({
+					deepPath : "",
+					headers : {"x-csrf-token" : "Fetch"},
+					method : "HEAD",
+					requestUri : "/special/cases/"
+				}, {}, {"x-csrf-token" : "token1"})
+				.expectRequest({
+					requestUri : "I_UserContactCard('ID')"
+				}, {
+					ContactCardID : "ID"
+				})
+				.expectValue("id1", "ID");
+
+			// code under test: request data for second service *after* security token for first has been retrieved
+			const oModel1 = createSpecialCasesModel({tokenHandling : "skipServerCache"});
+			this.oView.setModel(oModel1, "model1");
+			this.oView.byId("box1").bindElement("model1>/I_UserContactCard('ID')");
+
+			assert.deepEqual(ODataModel.mSharedData.server, {}, "server cache for tokens is empty");
+
+			return this.waitForChanges(assert);
+		}).then(() => {
+			checkServiceCache(["token0", "token1"]);
+		}).finally(clearCaches);
+	});
 });
