@@ -49,8 +49,7 @@ sap.ui.define([
 
 	JSONTableDelegate.updateBindingInfo = function(oTable, oBindingInfo) {
 		TableDelegate.updateBindingInfo.apply(this, arguments);
-		var oMetadataInfo = oTable.getPayload();
-		oBindingInfo.path = oMetadataInfo.bindingPath;
+		oBindingInfo.path = oTable.getPayload().bindingPath;
 	};
 
 	JSONTableDelegate.getFilters = function(oTable) {
