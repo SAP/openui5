@@ -156,7 +156,7 @@ sap.ui.define([
 	 */
 	ODataType.prototype.checkParseEmptyValueToZero = function () {
 		if (this.oFormatOptions && this.oFormatOptions.parseEmptyValueToZero
-			&& (!this.oConstraints || this.oConstraints && this.oConstraints.nullable !== false)) {
+			&& (!this.oConstraints || this.oConstraints.nullable !== false)) {
 			Log.warning("The parseEmptyValueToZero format option is ignored as the nullable constraint"
 				+ " is not false.", null, this.getName());
 		}
