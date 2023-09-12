@@ -2,32 +2,35 @@
  * ${copyright}
  */
 
-// Provides control sap.m.upload.UploadSetTableItem.
+// Provides control sap.m.upload.UploadSetwithTableItem.
 sap.ui.define([
 	"sap/m/ColumnListItem",
 	"sap/ui/core/IconPool",
-	"sap/m/upload/UploadSetTableItemRenderer",
+	"sap/m/upload/UploadSetwithTableItemRenderer",
 	"sap/base/Log",
 	"sap/ui/core/Core"
-], function (ColumnListItem, IconPool, UploadSetTableItemRenderer, Log, Core) {
+], function (ColumnListItem, IconPool, UploadSetwithTableItemRenderer, Log, Core) {
     "use strict";
 
 	/**
-	 * Constructor for a new UploadSetTableItem.
+	 * Constructor for a new UploadSetwithTableItem.
 	 *
 	 * @param {string} [sId] ID for the new control, will be generated automatically if no ID is provided.
 	 * @param {object} [mSettings] Initial settings for the new control.
-	 * @class ColumnListItem that represents one item to be uploaded using the {@link sap.m.upload.UploadSetTable} control.
+	 * @class
+	 * <code>sap.m.UploadSetwithTableItem</code> represents one item to be uploaded using the {@link sap.m.upload.UploadSetwithTable UploadSetwithTable} control. This control can be used with the cells aggregation to create rows for the {@link sap.m.upload.UploadSetwithTable UploadSetwithTable} control. The columns aggregation of the sap.m.upload.UploadSetwithTable should match with the cells aggregation.
+	 * Note: This control should only be used within the {@link sap.m.upload.UploadSetwithTable UploadSetwithTable} control. The inherited counter property of sap.m.ListItemBase is not supported.
 	 * @extends sap.m.ColumnListItem
 	 * @author SAP SE
 	 * @constructor
 	 * @private
 	 * @experimental
 	 * @internal
-	 * @alias sap.m.upload.UploadSetTableItem
+	 * @alias sap.m.upload.UploadSetwithTableItem
 	 */
-    var UploadSetTableItem = ColumnListItem.extend("sap.m.upload.UploadSetTableItem", {
+    var UploadSetwithTableItem = ColumnListItem.extend("sap.m.upload.UploadSetwithTableItem", {
 		metadata: {
+			library: "sap.m",
 			properties: {
 				/**
 				 * Specifies the name of the uploaded file.
@@ -42,7 +45,7 @@ sap.ui.define([
 				 */
 				url: {type: "string", defaultValue: null},
 				/**
-				 * URL where the uploaded files will be stored. If empty, uploadUrl from the uploader is considered.
+				 * URL where the uploaded files are stored. If empty, uploadUrl from the uploader is considered.
 				 */
 				uploadUrl: {type: "string", defaultValue: null},
 				/**
@@ -66,15 +69,15 @@ sap.ui.define([
 			}
 		},
 
-		render: UploadSetTableItemRenderer,
-		renderer: UploadSetTableItemRenderer
+		render: UploadSetwithTableItemRenderer,
+		renderer: UploadSetwithTableItemRenderer
 	});
 
 	/* ================== */
 	/* Lifecycle handling */
 	/* ================== */
 
-    UploadSetTableItem.prototype.init = function () {
+    UploadSetwithTableItem.prototype.init = function () {
         ColumnListItem.prototype.init.apply(this, arguments);
 		this._oFileObject = null;
 		this._fFileSize = null;
@@ -86,15 +89,15 @@ sap.ui.define([
 		this._oRb = Core.getLibraryResourceBundle("sap.m");
     };
 
-    UploadSetTableItem.prototype.onBeforeRendering = function () {
+    UploadSetwithTableItem.prototype.onBeforeRendering = function () {
         ColumnListItem.prototype.onBeforeRendering.apply(this, arguments);
     };
 
-	UploadSetTableItem.prototype.onAfterRendering = function() {
+	UploadSetwithTableItem.prototype.onAfterRendering = function() {
 		ColumnListItem.prototype.onAfterRendering.call(this);
 	};
 
-	UploadSetTableItem.prototype.exit = function() {
+	UploadSetwithTableItem.prototype.exit = function() {
 		ColumnListItem.prototype.exit.call(this);
 	};
 
@@ -102,7 +105,7 @@ sap.ui.define([
 	/* Overriden API methods */
 	/* ===================== */
 
-	UploadSetTableItem.prototype.setFileName = function (sFileName) {
+	UploadSetwithTableItem.prototype.setFileName = function (sFileName) {
 		if (this.getFileName() !== sFileName) {
 			this.setProperty("fileName", sFileName, true);
 			// File name related controls available no sooner than a parent is set
@@ -126,7 +129,7 @@ sap.ui.define([
 	 * @returns {File|Blob} File object.
 	 *
 	 */
-	UploadSetTableItem.prototype.getFileObject = function () {
+	UploadSetwithTableItem.prototype.getFileObject = function () {
 		return this._oFileObject;
 	};
 
@@ -134,7 +137,7 @@ sap.ui.define([
 	 * Previews pressed file.
 	 * @public
 	 */
-	UploadSetTableItem.prototype.openPreview = function () {
+	UploadSetwithTableItem.prototype.openPreview = function () {
 		this.getParent()?._openFilePreview(this);
 	};
 
@@ -144,7 +147,7 @@ sap.ui.define([
 	 * @public
 	 * @returns {boolean} <code>true</code> if download is possible, <code>false</code> otherwise.
 	 */
-	UploadSetTableItem.prototype.download = function (bAskForLocation) {
+	UploadSetwithTableItem.prototype.download = function (bAskForLocation) {
 		var oParent = this.getParent();
 		if (!oParent) {
 			Log.warning("Download cannot proceed without a parent association.");
@@ -155,13 +158,13 @@ sap.ui.define([
 	};
 
 	/**
-	 * Validates if the item is restricted, which means that it is restricted for the file type, media type, maximum file name length and maximum file size limit.
+	 * Validates if the item is restricted, to check if it is restricted for the file type, media type, maximum file name length and maximum file size limit.
 	 *
 	 * @public
 	 * @returns {boolean} <code>true</code> if item is restricted, <code>false</code> otherwise.
 	 *
 	 */
-	UploadSetTableItem.prototype.isRestricted = function () {
+	UploadSetwithTableItem.prototype.isRestricted = function () {
 		return this._isRestricted();
 	};
 
@@ -169,7 +172,7 @@ sap.ui.define([
 	/* Private methods */
 	/* =============== */
 
-	UploadSetTableItem._getIconByMimeType = function(sMimeType, fileName) {
+	UploadSetwithTableItem._getIconByMimeType = function(sMimeType, fileName) {
 
 		var mimeTypeForImages = ["image/png", "image/tiff", "image/bmp", "image/jpeg", "image/gif"];
 
@@ -177,14 +180,14 @@ sap.ui.define([
 			if (mimeTypeForImages.indexOf(sMimeType) === -1) {
 				return IconPool.getIconForMimeType(sMimeType);
 			}
-			return UploadSetTableItem._getIconByFileType(fileName);
+			return UploadSetwithTableItem._getIconByFileType(fileName);
 		} else {
-			return UploadSetTableItem._getIconByFileType(fileName);
+			return UploadSetwithTableItem._getIconByFileType(fileName);
 		}
 	};
 
-	UploadSetTableItem._getIconByFileType = function (fileName) {
-		var sFileExtension = UploadSetTableItem._splitFileName(fileName).extension;
+	UploadSetwithTableItem._getIconByFileType = function (fileName) {
+		var sFileExtension = UploadSetwithTableItem._splitFileName(fileName).extension;
 		if (!sFileExtension) {
 			return "sap-icon://document";
 		}
@@ -194,7 +197,7 @@ sap.ui.define([
 			case "jpg" :
 			case "jpeg" :
 			case "png" :
-				return UploadSetTableItem.IMAGE_FILE_ICON;
+				return UploadSetwithTableItem.IMAGE_FILE_ICON;
 			case "csv" :
 			case "xls" :
 			case "xlsx" :
@@ -215,7 +218,7 @@ sap.ui.define([
 		}
 	};
 
-	UploadSetTableItem._splitFileName = function (sFileName, bWithDot) {
+	UploadSetwithTableItem._splitFileName = function (sFileName, bWithDot) {
 		var oResult = {};
 		var oRegex = /(?:\.([^.]+))?$/;
 		var aFileExtension = oRegex.exec(sFileName);
@@ -233,10 +236,10 @@ sap.ui.define([
 		return oResult;
 	};
 
-	UploadSetTableItem.prototype._setFileObject = function (oFileObject) {
+	UploadSetwithTableItem.prototype._setFileObject = function (oFileObject) {
 		this._oFileObject = oFileObject;
 		if (oFileObject) {
-			this._fFileSize = oFileObject.size / UploadSetTableItem.MEGABYTE;
+			this._fFileSize = oFileObject.size / UploadSetwithTableItem.MEGABYTE;
 			this.setFileSize(oFileObject.size);
 			this.setMediaType(oFileObject.type);
 		} else {
@@ -254,7 +257,7 @@ sap.ui.define([
 	 * @param {int} iMaxLength Maximum length of file name.
 	 * @private
 	 */
-	UploadSetTableItem.prototype._checkNameLengthRestriction = function (iMaxLength) {
+	UploadSetwithTableItem.prototype._checkNameLengthRestriction = function (iMaxLength) {
 		var bRestricted = (iMaxLength && !!this.getFileName() && this.getFileName().length > iMaxLength);
 		if (bRestricted !== this._bNameLengthRestricted) {
 			this._bNameLengthRestricted = bRestricted;
@@ -270,7 +273,7 @@ sap.ui.define([
 	 * @param {float} fMaxSize Maximum file size allowed in megabytes.
 	 * @private
 	 */
-	UploadSetTableItem.prototype._checkSizeRestriction = function (fMaxSize) {
+	UploadSetwithTableItem.prototype._checkSizeRestriction = function (fMaxSize) {
 		var bRestricted = (fMaxSize && this._fFileSize > fMaxSize);
 		if (bRestricted !== this._bSizeRestricted) {
 			this._bSizeRestricted = bRestricted;
@@ -286,7 +289,7 @@ sap.ui.define([
 	 * @param {string[]} aTypes List of allowed mime types.
 	 * @private
 	 */
-	UploadSetTableItem.prototype._checkMediaTypeRestriction = function (aTypes) {
+	UploadSetwithTableItem.prototype._checkMediaTypeRestriction = function (aTypes) {
 		var bRestricted = (!!aTypes && (aTypes.length > 0) && !!this.getMediaType() && aTypes.indexOf(this.getMediaType()) === -1);
 		if (bRestricted !== this._bMediaTypeRestricted) {
 			this._bMediaTypeRestricted = bRestricted;
@@ -302,8 +305,8 @@ sap.ui.define([
 	 * @param {string[]} aTypes List of allowed file types.
 	 * @private
 	 */
-	UploadSetTableItem.prototype._checkTypeRestriction = function (aTypes) {
-		var oFile = UploadSetTableItem._splitFileName(this.getFileName()),
+	UploadSetwithTableItem.prototype._checkTypeRestriction = function (aTypes) {
+		var oFile = UploadSetwithTableItem._splitFileName(this.getFileName()),
 			bRestricted =
 				(!!this.getFileName() && !!aTypes && (aTypes.length > 0)
 					&& oFile.extension && aTypes.indexOf(oFile.extension.toLowerCase()) === -1);
@@ -316,12 +319,12 @@ sap.ui.define([
 		}
 	};
 
-	UploadSetTableItem.prototype._isRestricted = function () {
+	UploadSetwithTableItem.prototype._isRestricted = function () {
 		return this._bFileTypeRestricted || this._bNameLengthRestricted || this._bSizeRestricted || this._bMediaTypeRestricted;
 	};
 
-    UploadSetTableItem.IMAGE_FILE_ICON = "sap-icon://card";
-	UploadSetTableItem.MEGABYTE = 1048576;
+    UploadSetwithTableItem.IMAGE_FILE_ICON = "sap-icon://card";
+	UploadSetwithTableItem.MEGABYTE = 1048576;
 
-    return UploadSetTableItem;
+    return UploadSetwithTableItem;
 });

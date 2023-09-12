@@ -7,26 +7,23 @@ sap.ui.define(["sap/ui/core/Renderer", "sap/m/TableRenderer", "sap/m/Table"
 	"use strict";
 
 	/**
-	 * UploadSetTable renderer.
+	 * UploadSetwithTable renderer.
 	 * @namespace
 	 */
-	var UploadSetTableRenderer = Renderer.extend(TableRenderer);
-	UploadSetTableRenderer.apiVersion = 2; // enable in-place DOM patching
+	var UploadSetwithTableRenderer = Renderer.extend(TableRenderer);
+	UploadSetwithTableRenderer.apiVersion = 2; // enable in-place DOM patching
 
 
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 	 *
 	 * @param {sap.ui.core.RenderManager} oRm the RenderManager that can be used for writing to the render output buffer.
-	 * @param {sap.m.upload.UploadSetTable} oControl an object representation of the control that should be rendered.
+	 * @param {sap.m.upload.UploadSetwithTable} oControl an object representation of the control that should be rendered.
 	 */
-	UploadSetTableRenderer.render = function (oRm, oControl) {
-		oRm.openStart("div",oControl);
-		oRm.class("sapMUST");
-		oRm.openEnd();
+	UploadSetwithTableRenderer.render = function (oRm, oControl) {
+		oControl.addStyleClass("sapMUST");
 		TableRenderer.render.apply(this,arguments);
-		oRm.close("div");
 	};
 
-	return UploadSetTableRenderer;
+	return UploadSetwithTableRenderer;
 });

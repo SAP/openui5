@@ -119,6 +119,26 @@ sap.ui.define([
 		};
 	}
 
+	function findVariantInFlexObjects(aFlexObjects, sId) {
+		return aFlexObjects.find((oFlexObject) => {
+			return oFlexObject.getId() === sId;
+		});
+	}
+
+	function getAllReferencedVariantIds(aFlexObjects, oVariant) {
+		const aVariants = [];
+		let oCurrentVariant = oVariant;
+		let oFoundVariant;
+		do {
+			oFoundVariant = findVariantInFlexObjects(aFlexObjects, oCurrentVariant.getVariantReference());
+			if (oFoundVariant) {
+				aVariants.push(oCurrentVariant);
+				oCurrentVariant = oFoundVariant;
+			}
+		} while (oFoundVariant);
+		return aVariants.map((oVariant) => oVariant.getId());
+	}
+
 	function createVariantEntry(aFlexObjects, oVariantInstance) {
 		return {
 			instance: oVariantInstance,
@@ -134,7 +154,8 @@ sap.ui.define([
 					return false;
 				}
 				var bOwnControlChange = oFlexObject.getVariantReference() === oVariantInstance.getId();
-				var bControlChangeOfReferencedVariant = oFlexObject.getVariantReference() === oVariantInstance.getVariantReference();
+				var aReferencedVariantIds = getAllReferencedVariantIds(aFlexObjects, oVariantInstance);
+				var bControlChangeOfReferencedVariant = aReferencedVariantIds.indexOf(oFlexObject.getVariantReference()) > -1;
 				var bLowerLayerChange = LayerUtils.compareAgainstCurrentLayer(oFlexObject.getLayer(), oVariantInstance.getLayer()) === -1;
 				return bOwnControlChange || bControlChangeOfReferencedVariant && bLowerLayerChange;
 			}),

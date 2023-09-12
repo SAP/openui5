@@ -213,11 +213,6 @@ sap.ui.define([
 
 				_oEventProvider = new EventProvider();
 
-				// Generate all functions from EventProvider for backward compatibility
-				["attachEvent", "detachEvent", "getEventingParent"].forEach(function (sFuncName) {
-					Core.prototype[sFuncName] = _oEventProvider[sFuncName].bind(_oEventProvider);
-				});
-
 				/**
 				 * Whether the core has been booted
 				 * @private
@@ -563,70 +558,64 @@ sap.ui.define([
 				publicMethods: [
 					// @public
 					//  - Init
-					"isInitialized","attachInit",
 					"getConfiguration",
-					"lock", "unlock","isLocked",
-					//  - UIArea & Rendering
-					"createUIArea", "getUIArea", "getUIDirty", "applyChanges", "getStaticAreaRef",
-					"createRenderManager",
-					//  - Theming
-					"applyTheme","setThemeRoot","attachThemeChanged","detachThemeChanged",
-					"isThemeApplied",
-					"notifyContentDensityChanged",
-					//  - Control & App dev.
-					"getEventBus",
-					"byId", "byFieldGroupId",
-					//  - Libraries
-					"getLoadedLibraries", "loadLibrary", "initLibrary",
-					"getLibraryResourceBundle",
-					//  - Models & Messaging
-					"setModel", "getModel", "hasModel",
-					"getMessageManager",
-					//  - Events
-					"attachEvent","detachEvent",
-					"attachParseError", "detachParseError",
-					"attachValidationError", "detachValidationError",
-					"attachFormatError", "detachFormatError",
-					"attachValidationSuccess", "detachValidationSuccess",
-					"attachLocalizationChanged", "detachLocalizationChanged",
-
-					// @protected
-					"isStaticAreaRef",
-					"fireFormatError", "fireValidationSuccess", "fireValidationError", "fireParseError",
 
 					// @private, @ui5-restricted sap.ui.core
 					//  - Init
 					"boot",
 					//  - Ready Promise
 					"ready",
-					//  - UIArea & Rendering
-					"addPrerenderingTask",
-					//  - Libraries
-					"attachLibraryChanged", "detachLibraryChanged",
-					"loadLibraries",
-					//  - Theming
-					"attachThemeScopingChanged","detachThemeScopingChanged","fireThemeScopingChanged",
-					"includeLibraryTheme",
 
 					// @deprecated
 					"isMobile",
 					//  - Init & Plugins
+					"isInitialized","attachInit",
+					"lock", "unlock","isLocked",
 					"attachInitEvent",
 					"registerPlugin","unregisterPlugin",
 					//  - Application/Root-Component
 					"setRoot",
 					"getRootComponent", "getApplication",
-					//  - Events
-					"attachControlEvent", "detachControlEvent",
 					//  - legacy registries & factories
 					"getControl", "getComponent", "getTemplate",
 					"createComponent",
 					//  - Control dev.
 					"getCurrentFocusedControlId",
+					"getEventBus",
+					"byId",
 					"attachIntervalTimer", "detachIntervalTimer",
-					"getElementById",
+					"getElementById", "byFieldGroupId",
+					//  - Libraries
+					"getLoadedLibraries", "loadLibrary", "initLibrary",
+					"getLibraryResourceBundle",
+					"attachLibraryChanged", "detachLibraryChanged",
+					"loadLibraries",
+					//  - Models & Messaging
+					"setModel", "getModel", "hasModel",
+					"getMessageManager",
+					//  - Events
+					"attachEvent","detachEvent",
+					"attachControlEvent", "detachControlEvent",
+					"attachParseError", "detachParseError",
+					"attachValidationError", "detachValidationError",
+					"attachFormatError", "detachFormatError",
+					"attachValidationSuccess", "detachValidationSuccess",
+					"attachLocalizationChanged", "detachLocalizationChanged",
+					"fireFormatError", "fireValidationSuccess", "fireValidationError", "fireParseError",
 					//  - UIArea & Rendering
-					"getRenderManager"]
+					"getStaticAreaRef",
+					"isStaticAreaRef",
+					"createRenderManager",
+					"createUIArea", "getUIArea", "getUIDirty", "applyChanges",
+					"getRenderManager",
+					"addPrerenderingTask",
+					//  - Theming
+					"applyTheme","setThemeRoot","attachThemeChanged","detachThemeChanged",
+					"isThemeApplied",
+					"notifyContentDensityChanged",
+					"attachThemeScopingChanged","detachThemeScopingChanged","fireThemeScopingChanged",
+					"includeLibraryTheme"
+				]
 			}
 
 		});
@@ -1248,6 +1237,7 @@ sap.ui.define([
 		 * @returns {sap.ui.core.LibraryInfo|Promise<sap.ui.core.LibraryInfo>} An info object for the library
 		 *  (sync) or a Promise on it (async).
 		 * @public
+		 * @deprecated Since 1.119. Please use {@link sap.ui.core.Lib.load Lib.load} instead.
 		 */
 		Core.prototype.loadLibrary = function(sLibrary, vUrl) {
 			var mLibConfig = {
@@ -1301,6 +1291,7 @@ sap.ui.define([
 		 * Productive code should not use it, except code that is delivered as part of UI5.
 		 * @private
 		 * @ui5-restricted sap.ui.core,sap.ushell
+		 * @deprecated Since 1.119. Please use {@link sap.ui.core.Lib.load Lib.load} instead.
 		 */
 		Core.prototype.loadLibraries = function(aLibraries, mOptions) {
 			mOptions = Object.assign({
@@ -1409,6 +1400,7 @@ sap.ui.define([
 		 * @param {sap.ui.core.LibraryInfo} oLibInfo Info object for the library
 		 * @return {object|undefined} As of version 1.101; returns the library namespace, based on the given library name. Returns 'undefined' if no library name is provided.
 		 * @public
+		 * @deprecated Since 1.119. Please use {@link sap.ui.core.Lib.init Lib.init} instead.
 		 */
 		Core.prototype.initLibrary = function(oLibInfo) {
 			assert(typeof oLibInfo === 'string' || typeof oLibInfo === 'object', "oLibInfo must be a string or object");
@@ -1469,6 +1461,7 @@ sap.ui.define([
 		 *
 		 * @return {Object<string,Object>} Map of library info objects keyed by the library names.
 		 * @public
+		 * @deprecated since 1.119
 		 */
 		Core.prototype.getLoadedLibraries = function() {
 			return Library.all();
@@ -1517,6 +1510,7 @@ sap.ui.define([
 		 * @returns {module:sap/base/i18n/ResourceBundle|undefined|Promise<module:sap/base/i18n/ResourceBundle|undefined>} The best matching resource bundle for the given
 		 *   parameters or <code>undefined</code>; in asynchronous case a Promise on that bundle is returned
 		 * @public
+		 * @deprecated Since 1.119. Please use {@link sap.ui.core.Lib.getResourceBundleFor Lib.getResourceBundleFor} instead.
 		 */
 		Core.prototype.getLibraryResourceBundle = function(sLibraryName, sLocale, bAsync) {
 			if (typeof sLibraryName === "boolean") {
@@ -1764,6 +1758,7 @@ sap.ui.define([
 		 *
 		 * @private
 		 * @ui5-restricted sap.ui.fl, sap.ui.support
+		 * @deprecated Since 1.119. Please use {@link sap.ui.core.Lib.attachLibraryChanged Lib.attachLibraryChanged} instead.
 		 */
 		Core.prototype.attachLibraryChanged = function(fnFunction, oListener) {
 			_oEventProvider.attachEvent(Core.M_EVENTS.LibraryChanged, fnFunction, oListener);
@@ -1777,6 +1772,7 @@ sap.ui.define([
 		 *
 		 * @private
 		 * @ui5-restricted sap.ui.fl, sap.ui.support
+		 * @deprecated Since 1.119. Please use {@link sap.ui.core.Lib.detachLibraryChanged Lib.detachLibraryChanged} instead.
 		 */
 		Core.prototype.detachLibraryChanged = function(fnFunction, oListener) {
 			_oEventProvider.detachEvent(Core.M_EVENTS.LibraryChanged, fnFunction, oListener);

@@ -1,8 +1,8 @@
 sap.ui.define([
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/model/json/JSONModel",
-	"sap/m/upload/UploadSetTable",
-	"sap/m/upload/UploadSetTableItem",
+	"sap/m/upload/UploadSetwithTable",
+	"sap/m/upload/UploadSetwithTableItem",
 	"sap/m/MessageBox",
 	"sap/ui/core/Fragment",
 	"./mockserver",
@@ -24,7 +24,7 @@ sap.ui.define([
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
 	"sap/ui/core/CustomData"
-], function(Controller, JSONModel, UploadSetTable, UploadSetTableItem, MessageBox, Fragment, MockServer, MessageToast, Dialog, Button, mobileLibrary, Text, coreLibrary, CoreItem, graphUtil, Engine, SelectionController, SortController, GroupController, MetadataHelper, Sorter, deepExtend, Filter, FilterOperator, CustomData) {
+], function(Controller, JSONModel, UploadSetwithTable, UploadSetwithTableItem, MessageBox, Fragment, MockServer, MessageToast, Dialog, Button, mobileLibrary, Text, coreLibrary, CoreItem, graphUtil, Engine, SelectionController, SortController, GroupController, MetadataHelper, Sorter, deepExtend, Filter, FilterOperator, CustomData) {
 	"use strict";
 
 	return Controller.extend("sap.m.uploadSetTableDemo.Page", {
@@ -178,7 +178,7 @@ sap.ui.define([
             this.oUploadSetTable.invalidate();
         },
 		getIconSrc: function(mediaType, thumbnailUrl) {
-			return UploadSetTable.getIconForFileType(mediaType, thumbnailUrl);
+			return UploadSetwithTable.getIconForFileType(mediaType, thumbnailUrl);
 		},
 		// Table row selection handler
 		onSelectionChange: function(oEvent) {
@@ -238,11 +238,11 @@ sap.ui.define([
 			var olistItemTobeRemoved = null;
 
 			// Traverse up the control hierarchy to find the ColumnListItem
-			while (clickedControl && !(clickedControl instanceof UploadSetTableItem)) {
+			while (clickedControl && !(clickedControl instanceof UploadSetwithTableItem)) {
 				clickedControl = clickedControl.getParent();
 			}
 
-			if (clickedControl instanceof UploadSetTableItem) {
+			if (clickedControl instanceof UploadSetwithTableItem) {
 				olistItemTobeRemoved = clickedControl;
 			}
 			this.removeItem(olistItemTobeRemoved);
@@ -663,7 +663,7 @@ sap.ui.define([
 			this.closeChangeStatusFragment();
 		},
 		getFileSizeWithUnits: function(iFileSize) {
-			return UploadSetTable.getFileSizeWithUnits(iFileSize);
+			return UploadSetwithTable.getFileSizeWithUnits(iFileSize);
 		},
 		onOverflowPress: function(oEvent) {
 			var oButton = oEvent.getSource();
@@ -671,7 +671,7 @@ sap.ui.define([
 		},
 		openPreview: function(oEvent) {
 			var clickedControl = oEvent.getSource();
-			while (clickedControl && !(clickedControl instanceof UploadSetTableItem)) {
+			while (clickedControl && !(clickedControl instanceof UploadSetwithTableItem)) {
 				clickedControl = clickedControl.getParent();
 			}
 			clickedControl.openPreview();
@@ -681,10 +681,10 @@ sap.ui.define([
 			var oListItem = null;
 
 			// Traverse up the control hierarchy to find the ColumnListItem
-			while (clickedControl && !(clickedControl instanceof UploadSetTableItem)) {
+			while (clickedControl && !(clickedControl instanceof UploadSetwithTableItem)) {
 				clickedControl = clickedControl.getParent();
 			}
-			if (clickedControl instanceof UploadSetTableItem) {
+			if (clickedControl instanceof UploadSetwithTableItem) {
 				oListItem = clickedControl;
 				Fragment.load({
 					name: "sap.m.uploadSetTableDemo.FileDetails",

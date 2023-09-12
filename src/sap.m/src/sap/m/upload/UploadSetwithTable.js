@@ -2,16 +2,16 @@
  * ${copyright}
  */
 
-// Provides control sap.m.upload.UploadSetTable.
+// Provides control sap.m.upload.UploadSetwithTable.
 sap.ui.define([
 	"sap/m/Table",
 	"sap/m/ToolbarSpacer",
-	"sap/m/upload/UploadSetTableRenderer",
+	"sap/m/upload/UploadSetwithTableRenderer",
 	"sap/ui/unified/FileUploader",
 	"sap/m/upload/UploadSetToolbarPlaceholder",
 	"sap/m/upload/UploaderHttpRequestMethod",
 	"sap/m/OverflowToolbar",
-	"sap/m/upload/UploadSetTableItem",
+	"sap/m/upload/UploadSetwithTableItem",
 	"sap/base/util/deepEqual",
 	"sap/base/Log",
 	"sap/m/library",
@@ -31,61 +31,59 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/ui/base/Event",
 	"sap/ui/core/Core"
-], function (Table, ToolbarSpacer, UploadSetTableRenderer, FileUploader,
-    UploadSetToolbarPlaceholder, UploaderHttpRequestMethod, OverFlowToolbar, UploadSetTableItem, deepEqual, Log, Library, IllustratedMessageType,
+], function (Table, ToolbarSpacer, UploadSetwithTableRenderer, FileUploader,
+    UploadSetToolbarPlaceholder, UploaderHttpRequestMethod, OverFlowToolbar, UploadSetwithTableItem, deepEqual, Log, Library, IllustratedMessageType,
 	IllustratedMessage, IllustratedMessageSize, Uploader, DragDropInfo, DropInfo, DragInfo, FilePreviewDialog, Event, Dialog, Label, Input, MessageBox, Button, EventBase, Core) {
     "use strict";
 
 	/**
-	 * Constructor for a new UploadSetTable.
+	 * Constructor for a new UploadSetwithTable.
 	 *
 	 * @param {string} [sId] id for the new control, generated automatically if no id is given.
 	 * @param {object} [mSettings] Initial settings for the new control.
-	 * @class This control allows you to upload one or more files from your devices (desktop, tablet, or phone)
-	 * and attach them to your application.<br>
+	 * @class This control allows you to upload one or more files from your device, such as desktop, tablet or phone, and attach them to your application in a tabular manner.
 	 * @extends sap.m.Table
 	 * @author SAP SE
 	 * @constructor
 	 * @private
 	 * @experimental
 	 * @internal
-	 * @alias sap.m.upload.UploadSetTable
+	 * @alias sap.m.upload.UploadSetwithTable
 	 */
-	var UploadSetTable = Table.extend("sap.m.upload.UploadSetTable", {
-		library: "sap.m",
+	var UploadSetwithTable = Table.extend("sap.m.upload.UploadSetwithTable", {
 		metadata: {
+			library: "sap.m",
 			properties: {
 				/**
-				 * Allowed file types for files to be uploaded.
+				 * File types that are allowed to be uploaded.
 				 * <br>If this property is not set, any file can be uploaded.
 				 */
 				fileTypes: {type: "string[]", defaultValue: null},
 				/**
-				 * Maximum length of names of files to be uploaded.
-				 * <br>If set to <code>null</code> or <code>0</code>, any files can be uploaded,
-				 * regardless of their names length.
+				 * Defined maximum length for a name of files that are to be uploaded.
+				 * <br>If set to <code>null</code> or <code>0</code>, any file can be uploaded regardless length of its name.
 				 */
 				maxFileNameLength: {type: "int", defaultValue: null},
 				/**
-				 * Size limit in megabytes for files to be uploaded.
+				 * Defined size limit in megabytes for files that are to be uploaded.
 				 * <br>If set to <code>null</code> or <code>0</code>, files of any size can be uploaded.
 				 */
 				maxFileSize: {type: "float", defaultValue: null},
 				/**
-				 * Allowed media types for files to be uploaded.
+				 * Media types of files that are allowed to be uploaded.
 				 * <br>If this property is not set, any file can be uploaded.
 				 */
 				mediaTypes: {type: "string[]", defaultValue: null},
 				/**
-				 * Defines custom text for the 'No data' text label.
+				 * Custom text can be defined for the 'No data' text label. Customisation of text can be done for the empty state of the control.
 				 */
 				noDataText: {type: "string", defaultValue: "No documents available" },
 				/**
-				 * Defines custom text for the 'No data' description label.
+				 * Custom text can be defined for the 'No data' text description. Customisation of text can be done for the empty state of the control.
 				 */
 				noDataDescription: {type: "string", defaultValue: "Drag and drop files here to upload" },
 				/**
-				 * URL where the uploaded files will be stored.
+				 * Url where the uploaded files are stored.
 				 */
 				uploadUrl: {type: "string", defaultValue: null},
 				/**
@@ -99,44 +97,35 @@ sap.ui.define([
 				 */
 				multiple: {type: "boolean", group: "Behavior", defaultValue: false},
 				/**
-				 * If set to true, the button used for uploading files become invisible.
+				 * If set to true, the button used for uploading files becomes invisible.
 				 */
 				uploadButtonInvisible: {type: "boolean", group: "Appearance", defaultValue: false},
 				/**
 				 * Defines whether the upload action is allowed.
 				 */
 				uploadEnabled: {type: "boolean", defaultValue: true},
-				/** Callback function to perform additional validations / configurations for the item queued for upload and to finally trigger the upload.
-				 * @callback sap.m.upload.UploadSetTable.itemValidationHandler
-				 * @param {sap.m.upload.UploadSetTable.ItemInfo} oItemInfo The info of the item queued for upload.
-				 * @returns {Promise<sap.m.upload.UploadSetTableItem>} oPromise, once resolved the UploadSetWithTable control initiates the upload.
+				/** Callback function to perform additional validations or configurations for the item queued up for upload and to finally trigger the upload.
+				 * @callback sap.m.upload.UploadSetwithTable.itemValidationHandler
+				 * @param {sap.m.upload.UploadSetwithTable.ItemInfo} oItemInfo The info of the item queued for upload.
+				 * @returns {Promise<sap.m.upload.UploadSetwithTableItem>} oPromise, once resolved the UploadSetWithTable control initiates the upload.
 				 * @public
 				**/
 
 				/**
-				 * @typedef {object} sap.m.upload.UploadSetTable.ItemInfo
-				 * @description Item info object sent as paramter to {@link sap.m.upload.UploadSetTable.itemValidationHandler callback}
-				 * @property {sap.m.upload.UploadSetTableItem} oItem Current item queued for upload.
+				 * @typedef {object} sap.m.upload.UploadSetwithTable.ItemInfo
+				 * @description Item info object sent as paramter to {@link sap.m.upload.UploadSetwithTable.itemValidationHandler itemValidationHandler callback}
+				 * @property {sap.m.upload.UploadSetwithTableItem} oItem Current item queued for upload.
 				 * @property {number} iTotalItemsForUpload Total count of items queued for upload.
 				 * @public
 				**/
 
 				/**
-				 * Defines a {@link sap.m.upload.UploadSetTable.itemValidationHandler callback function} which is invoked when each UploadSetwithTableItem is queued for upload.
-				 * This callback is invoked with {@link sap.m.upload.UploadSetTable.ItemInfo parameters} and callback is expected to return a promise to the control. Once the promise is resolved, the control initiates the upload process.
-				 * Configure this property only when any additional configuration / validations are to be performed before the upload of each item.
+				 * Defines a {@link sap.m.upload.UploadSetwithTable.itemValidationHandler callback function} that is invoked when each UploadSetwithTableItem is queued up for upload.
+				 * This callback is invoked with {@link sap.m.upload.UploadSetwithTable.ItemInfo parameters} and the callback is expected to return a promise to the control. Once the promise is resolved, the control initiates the upload process.
+				 * Configure this property only when any additional configuration or validations are to be performed before the upload of each item.
 				 * The upload process is triggered manually by resolving the promise returned to the control.
 				**/
 				itemValidationHandler: {type: "function", defaultValue: null},
-				/**
-				 * Show or hide carousel's arrows on preview dialog.
-				 */
-				showCarouselArrows: {type: "boolean", defaultValue: true},
-				/**
-				 * Size limit of the file in megabytes that is allowed to be previewed
-				 * <br>If set to <code>null</code> or <code>0</code>, files of any size can be previewed.
-				 */
-				maxFileSizeforPreview: {type: "float", defaultValue: 0},
 				/**
 				 * Lets the user upload entire files from directories and sub directories.
 				*/
@@ -163,9 +152,16 @@ sap.ui.define([
 				 */
 				headerFields: {type: "sap.ui.core.Item", multiple: true, singularName: "headerField"},
 				/**
-				 * Additional buttons for the file preview dialog footer.
+				 * Additional buttons can be added to the footer of file preview dialog
 				 */
-				previewDialogAdditionalFooterButtons: {type: "sap.m.Button", multiple: true}
+				additionalFooterButtons: {type: "sap.m.Button", multiple: true}
+			},
+			associations: {
+				/**
+				 * Dialog with a carousel to preview files uploaded.
+				 * <br>If it is not defined, the control creates and uses the instance of {@link sap.m.upload.FilePreviewDialog FilePreviewDialog}.
+				 */
+				previewDialog: {type: "sap.m.upload.FilePreviewDialog", multiple: false}
 			},
 			defaultAggregation : "items",
 			events: {
@@ -175,9 +171,9 @@ sap.ui.define([
 				itemRenamed: {
 					parameters: {
 						/**
-						 * The renamed UI element as an UploadSetTableItem.
+						 * The renamed UI element is of UploadSetwithTableItem type.
 						 */
-						item: {type: "sap.m.upload.UploadSetTableItem"}
+						item: {type: "sap.m.upload.UploadSetwithTableItem"}
 					}
 				},
 				/**
@@ -188,21 +184,22 @@ sap.ui.define([
 						/**
 						 * The file whose upload is just about to start.
 						 */
-						item: {type: "sap.m.upload.UploadSetTableItem"}
+						item: {type: "sap.m.upload.UploadSetwithTableItem"}
 					},
 					allowPreventDefault: true
 				},
 				/**
 				 * This event is fired right after the upload process is finished.
+				 * <br>Based on the backend response of the application, listeners can use the parameters to determine if the upload was successful or if it failed.
 				 */
 				uploadCompleted: {
 					parameters: {
 						/**
 						 * The file whose upload has just been completed.
 						 */
-						item: {type: "sap.m.upload.UploadSetTableItem"},
+						item: {type: "sap.m.upload.UploadSetwithTableItem"},
 						/**
-						 * Response message which comes from the server.
+						 * Response message that comes from the server.
 						*
 						* On the server side this response has to be put within the &quot;body&quot; tags of the response
 						* document of the iFrame. It can consist of a return code and an optional message. This does not
@@ -266,7 +263,7 @@ sap.ui.define([
 						 * The file that fails to meet the file type restriction specified in the
 						 * <code>fileType</code> property.
 						 */
-						item: {type: "sap.m.upload.UploadSetTableItem"}
+						item: {type: "sap.m.upload.UploadSetwithTableItem"}
 					}
 				},
 				/**
@@ -276,7 +273,6 @@ sap.ui.define([
 				 * <code>maxFileNameLength</code> property.</li>
 				 * <li>When the file name length restriction changes, and the file to be uploaded fails to meet the new
 				 * restriction.</li>
-				 * <li>Listeners can use the item parameter to remove the incomplete item that failed to meet the restriction</li>
 				 * </ul>
 				 */
 				fileNameLengthExceeded: {
@@ -285,7 +281,7 @@ sap.ui.define([
 						 * The file that fails to meet the file name length restriction specified in the
 						 * <code>maxFileNameLength</code> property.
 						 */
-						item: {type: "sap.m.upload.UploadSetTableItem"}
+						item: {type: "sap.m.upload.UploadSetwithTableItem"}
 					}
 				},
 				/**
@@ -295,7 +291,6 @@ sap.ui.define([
 				 * <code>maxFileSize</code> property.</li>
 				 * <li>When the file size restriction changes, and the file to be uploaded fails to meet the new
 				 * restriction.</li>
-				 * <li>Listeners can use the item parameter to remove the incomplete item that failed to meet the restriction</li>
 				 * </ul>
 				 */
 				fileSizeExceeded: {
@@ -304,7 +299,7 @@ sap.ui.define([
 						 * The file that fails to meet the file size restriction specified in the
 						 * <code>maxFileSize</code> property.
 						 */
-						item: {type: "sap.m.upload.UploadSetTableItem"}
+						item: {type: "sap.m.upload.UploadSetwithTableItem"}
 					}
 				},
 				/**
@@ -322,19 +317,19 @@ sap.ui.define([
 						 * The file that fails to meet the media type restriction specified in the
 						 * <code>mediaTypes</code> property.
 						 */
-						item: {type: "sap.m.upload.UploadSetTableItem"}
+						item: {type: "sap.m.upload.UploadSetwithTableItem"}
 					}
 				},
 				/**
-				 * This event is fired when a file that is selected to be uploaded and just before initiating the file upload process
-				 * Use this event to set additional info dynamically specific for each item before upload process is initiated
+				 * This event is fired just before initiating the file upload process when a file is selected to be uploaded.
+				 * Use this event to set additional info dynamically, specific for each item before upload process is initiated.
 				 */
 				beforeInitiatingItemUpload: {
 					parameters: {
 						/**
 						 * Items in ready state for upload process
 						 */
-						item: {type: "sap.m.upload.UploadSetTableItem"}
+						item: {type: "sap.m.upload.UploadSetwithTableItem"}
 					}
 				},
 				/**
@@ -343,7 +338,7 @@ sap.ui.define([
 				 * @param {sap.ui.base.Event} oControlEvent
 				 * @param {sap.ui.base.EventProvider} oControlEvent.getSource
 				 * @param {object} oControlEvent.getParameters
-				 * @param {sap.ui.core.Element} oControlEvent.getParameters.target The target element that will be dragged
+				 * @param {sap.ui.core.Element} oControlEvent.getParameters.target The target element that is dragged
 				 * @param {sap.ui.core.dnd.DragSession} oControlEvent.getParameters.dragSession The UI5 <code>dragSession</code> object that exists only during drag and drop
 				 * @param {Event} oControlEvent.getParameters.browserEvent The underlying browser event
 				 * @public
@@ -367,7 +362,7 @@ sap.ui.define([
 				}
 			}
 		},
-		renderer: UploadSetTableRenderer
+		renderer: UploadSetwithTableRenderer
 	});
 
 	var UploadState = Library.UploadState;
@@ -376,7 +371,7 @@ sap.ui.define([
 	/* Lifecycle handling */
 	/* ================== */
 
-    UploadSetTable.prototype.init = function () {
+    UploadSetwithTable.prototype.init = function () {
         Table.prototype.init.call(this);
 		this._setDragDropConfig();
         this._filesTobeUploaded = [];
@@ -384,16 +379,16 @@ sap.ui.define([
 		this._oRb = Core.getLibraryResourceBundle("sap.m");
     };
 
-	UploadSetTable.prototype.onBeforeRendering = function() {
+	UploadSetwithTable.prototype.onBeforeRendering = function() {
 		Table.prototype.onBeforeRendering.call(this);
 		this._setIllustratedMessage();
 	};
 
-	UploadSetTable.prototype.onAfterRendering = function() {
+	UploadSetwithTable.prototype.onAfterRendering = function() {
 		Table.prototype.onAfterRendering.call(this);
 	};
 
-	UploadSetTable.prototype.exit = function () {
+	UploadSetwithTable.prototype.exit = function () {
 		Table.prototype.exit.call(this);
 		if (this._oToolbar) {
 			this._oToolbar.destroy();
@@ -413,7 +408,7 @@ sap.ui.define([
 	/* Overriden API methods */
 	/* ===================== */
 
-    UploadSetTable.prototype.getHeaderToolbar = function () {
+    UploadSetwithTable.prototype.getHeaderToolbar = function () {
 		if (!this._oToolbar) {
 			this._oToolbar = this.getAggregation("headerToolbar");
 			if (!this._oToolbar) {
@@ -436,7 +431,7 @@ sap.ui.define([
 		return this._oToolbar;
 	};
 
-	UploadSetTable.prototype.setFileTypes = function (aNewTypes) {
+	UploadSetwithTable.prototype.setFileTypes = function (aNewTypes) {
 		var aTypes = aNewTypes || null;
 		if (typeof aTypes === "string") {
 			aTypes = aTypes.split(",");
@@ -451,7 +446,7 @@ sap.ui.define([
 		return this;
 	};
 
-	UploadSetTable.prototype.setMaxFileNameLength = function (iNewMax) {
+	UploadSetwithTable.prototype.setMaxFileNameLength = function (iNewMax) {
 		if (this.getMaxFileNameLength() !== iNewMax) {
 			this.setProperty("maxFileNameLength", iNewMax, true);
 			this.getDefaultFileUploader().setMaximumFilenameLength(iNewMax);
@@ -459,7 +454,7 @@ sap.ui.define([
 		return this;
 	};
 
-	UploadSetTable.prototype.setMaxFileSize = function (iNewMax) {
+	UploadSetwithTable.prototype.setMaxFileSize = function (iNewMax) {
 		if (this.getMaxFileSize() !== iNewMax) {
 			this.setProperty("maxFileSize", iNewMax, true);
 			this.getDefaultFileUploader().setMaximumFileSize(iNewMax);
@@ -467,7 +462,7 @@ sap.ui.define([
 		return this;
 	};
 
-	UploadSetTable.prototype.setMediaTypes = function (aNewTypes) {
+	UploadSetwithTable.prototype.setMediaTypes = function (aNewTypes) {
 		var aTypes = aNewTypes || null;
 		if (typeof aTypes === "string") {
 			aTypes = aTypes.split(",");
@@ -482,14 +477,14 @@ sap.ui.define([
 		return this;
 	};
 
-	UploadSetTable.prototype.setUploadButtonInvisible = function (bUploadButtonInvisible) {
+	UploadSetwithTable.prototype.setUploadButtonInvisible = function (bUploadButtonInvisible) {
 		if (bUploadButtonInvisible !== this.getUploadButtonInvisible()) {
 			this.setProperty("uploadButtonInvisible", bUploadButtonInvisible, true);
 		}
 		return this;
 	};
 
-	UploadSetTable.prototype.setMultiple = function (bMultiple) {
+	UploadSetwithTable.prototype.setMultiple = function (bMultiple) {
 		if (this.getMultiple() !== bMultiple) {
 			this.setProperty("multiple", bMultiple);
 			this.getDefaultFileUploader().setMultiple(bMultiple);
@@ -497,10 +492,29 @@ sap.ui.define([
 		return this;
 	};
 
-	UploadSetTable.prototype.setUploadEnabled = function (bEnable) {
+	UploadSetwithTable.prototype.setUploadEnabled = function (bEnable) {
 		if (bEnable !== this.getUploadEnabled()) {
 			this.getDefaultFileUploader().setEnabled(bEnable);
 			this.setProperty("uploadEnabled", bEnable, false);
+		}
+		return this;
+	};
+
+	UploadSetwithTable.prototype.setMultiple = function (bMultiple) {
+		if (this.getMultiple() !== bMultiple) {
+			this.setProperty("multiple", bMultiple);
+			this.getDefaultFileUploader().setMultiple(bMultiple);
+		}
+		return this;
+	};
+
+	UploadSetwithTable.prototype.setDirectory = function (bDirectory) {
+		if (this.getDirectory() !== bDirectory) {
+			this.setProperty("directory", bDirectory);
+			this.getDefaultFileUploader().setDirectory(bDirectory);
+			if (bDirectory) {
+				this.setProperty("multiple", false); // disable multiple files selection when directory selection is enabled.
+			}
 		}
 		return this;
 	};
@@ -510,12 +524,12 @@ sap.ui.define([
 	/* ============== */
 
 	/**
-	 * Returns an instance of the default <code>sap.ui.unified.FileUploader</code> used for adding files using
-	 * the operating system's open file dialog, so that it can be customized, for example made invisible or assigned a different icon.
+	 * Returns an instance of the default <code>sap.ui.unified.FileUploader</code> icon/button, used for adding files
+	 * from the open file dialog of the operating system. It can be customized, for example made invisible or assigned a different icon.
 	 * @return {sap.ui.unified.FileUploader} Instance of the default <code>sap.ui.unified.FileUploader</code>.
 	 * @public
 	 */
-    UploadSetTable.prototype.getDefaultFileUploader = function () {
+    UploadSetwithTable.prototype.getDefaultFileUploader = function () {
 		var sTooltip = "Upload";
 		if (!this._oFileUploader) {
 			this._oFileUploader = new FileUploader(this.getId() + "-uploader", {
@@ -527,20 +541,21 @@ sap.ui.define([
 				icon: "",
 				iconFirst: false,
 				style: "Transparent",
-				name: "uploadSetTableFileUploader",
+				name: "UploadSetwithTableFileUploader",
 				sameFilenameAllowed: true,
 				fileType: this.getFileTypes(),
 				mimeType: this.getMediaTypes(),
 				maximumFilenameLength: this.getMaxFileNameLength(),
 				maximumFileSize: this.getMaxFileSize(),
-                multiple: this.getMultiple(),
+                multiple: this.getDirectory() ? false : this.getMultiple(),
 				useMultipart: false,
 				sendXHR: true,
 				change: [this._onFileUploaderChange, this],
                 typeMissmatch: [this._fireFileTypeMismatch, this],
 				fileSizeExceed: [this._fireFileSizeExceed, this],
 				filenameLengthExceed: [this._fireFilenameLengthExceed, this],
-				visible: true
+				visible: true,
+				directory: this.getDirectory()
 			});
 		}
 
@@ -548,30 +563,30 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns sap icon based on mediaType and fileName passed
-	 * @param {string} mediaType The list items the selection state is to be set for
-	 * @param {string} fileName The new selection state
+	 * Returns sap icon based on the passed mediaType and filename
+	 * @param {string} mediaType The media type of the selected file
+	 * @param {string} fileName The name of the selected file
 	 * @public
 	 * @returns {string} sap icon.
 	 */
-	UploadSetTable.getIconForFileType = function (mediaType, fileName) {
-        return UploadSetTableItem._getIconByMimeType(mediaType, fileName);
+	UploadSetwithTable.getIconForFileType = function (mediaType, fileName) {
+        return UploadSetwithTableItem._getIconByMimeType(mediaType, fileName);
     };
 
 	/**
 	 * Downloads the item. Only possible when the item has a valid URL specified in the <code>url</code> property of the item.
-	 * @param {UploadSetTableItem[]} aItemsToDownload The list items the selection state is to be set for
-	 * @param {boolean} bAskForLocation Whether to ask for a location where to download the file or not.
+	 * @param {UploadSetwithTableItem[]} aItemsToDownload The list items the selection state is to be set for
+	 * @param {boolean} bAskForLocation If the location is to be determined as to where the file is to be downloaded.
 	 * @public
 	 */
-	UploadSetTable.prototype.downloadItems = function (aItemsToDownload, bAskForLocation) {
+	UploadSetwithTable.prototype.downloadItems = function (aItemsToDownload, bAskForLocation) {
         if (aItemsToDownload && aItemsToDownload.length) {
 			aItemsToDownload.forEach(function(oItem){
-				// Check if items are instances of "sap.m.UploadSetTableItem"
-				var isUploadSetTableItemInstance = oItem && oItem instanceof UploadSetTableItem ? true : false;
+				// Check if items are instances of "sap.m.UploadSetwithTableItem"
+				var isUploadSetwithTableItemInstance = oItem && oItem instanceof UploadSetwithTableItem ? true : false;
 				var oParent = oItem && oItem.getParent ? oItem.getParent() : null;
 				// Download files individually
-				if (isUploadSetTableItemInstance && oParent === this) {
+				if (isUploadSetwithTableItemInstance && oParent === this) {
 					this._getActiveUploader().download(oItem, [], bAskForLocation);
 				} else {
 					Log.warning("Download cannot proceed without a parent association.");
@@ -587,7 +602,7 @@ sap.ui.define([
 	 * @param {sap.m.upload.UploaderTableItem} oUploader Instance of <code>sap.m.upload.UploaderTableItem</code> to which the default request handlers are attached.
 	 * @public
 	 */
-	UploadSetTable.prototype.registerUploaderEvents = function (oUploader) {
+	UploadSetwithTable.prototype.registerUploaderEvents = function (oUploader) {
 		oUploader.attachUploadStarted(this._onUploadStarted.bind(this));
 		oUploader.attachUploadCompleted(this._onUploadCompleted.bind(this));
 	};
@@ -596,7 +611,7 @@ sap.ui.define([
 	 * Invokes native files selection handler.
 	 * @public
 	 */
-	UploadSetTable.prototype.fileSelectionHandler = function() {
+	UploadSetwithTable.prototype.fileSelectionHandler = function() {
 		var oUploaderInstance = this.getDefaultFileUploader();
 		if (oUploaderInstance && oUploaderInstance.oFileUpload && oUploaderInstance.oFileUpload.click) {
 			oUploaderInstance.oFileUpload.click();
@@ -604,12 +619,13 @@ sap.ui.define([
 	};
 
 	/**
-	 * API to determine the Unit for file size in KB/MB/GB accepts file size
+	 * API to determine the unit for file size in KB/MB/GB.
+	 * API recommended for file size formatting purpose.
 	 * @param {int} iFileSize fileSize to determine units
 	 * @public
 	 * @returns {sFileSizeWithUnit} file size in KB/MB/GB default unit is KB
 	 */
-	UploadSetTable.getFileSizeWithUnits = function(iFileSize) {
+	UploadSetwithTable.getFileSizeWithUnits = function(iFileSize) {
 		var iKilobyte = 1024;
         var iMegabyte = iKilobyte * 1024;
         var iGigabyte = iMegabyte * 1024;
@@ -626,17 +642,17 @@ sap.ui.define([
 	};
 
 	/**
-	 * API to upload File via URL
-	 * @param {string} sName file name to be set for the file to be uploaded.
+	 * API to upload file using URL
+	 * @param {string} sName file name to be set for the file that is to be uploaded.
 	 * @param {string} sUrl Url for the file.
-	 * @param {Promise} oPromise Promise when resolved, control to initate the upload process.
-	 * @returns {UploadSetTableItem} oItem, UploadSetTableItem instance created with file object.
+	 * @param {Promise} oPromise Promise when resolved, the control initiates the upload process.
+	 * @returns {UploadSetwithTableItem} oItem, UploadSetwithTableItem instance created with the file object.
 	 * @public
 	 */
-	UploadSetTable.prototype.uploadItemViaUrl = function (sName, sUrl, oPromise) {
+	UploadSetwithTable.prototype.uploadItemViaUrl = function (sName, sUrl, oPromise) {
 		var oFileObject = new File([new Blob([])], sName);
 
-		var oItem = new UploadSetTableItem({
+		var oItem = new UploadSetwithTableItem({
 			uploadState: UploadState.Ready
 		});
 		oItem._setFileObject(oFileObject);
@@ -652,13 +668,13 @@ sap.ui.define([
 
 	/**
 	 * API to upload Item without file
-	 * @param {Promise} oPromise promise when resolved, Control to initate the upload process.
-	 * @return {UploadSetTableItem} oItem, UploadSetTableItem instance created with file object.
+	 * @param {Promise} oPromise Promise when resolved, control initiates the upload process.
+	 * @return {UploadSetwithTableItem} oItem, UploadSetwithTableItem instance created with the file object.
 	 * @public
 	 */
-	UploadSetTable.prototype.uploadItemWithoutFile = function (oPromise) {
+	UploadSetwithTable.prototype.uploadItemWithoutFile = function (oPromise) {
 		var oFileObject = new File([new Blob([])], '-');
-		var oItem = new UploadSetTableItem({
+		var oItem = new UploadSetwithTableItem({
 			uploadState: UploadState.Ready
 		});
 		oItem._setFileObject(oFileObject);
@@ -673,11 +689,11 @@ sap.ui.define([
 
 	/**
 	 * API to rename the document of an item.
-	 * @param {sap.m.upload.UploadSetTableItem} oItem, target item.
+	 * @param {sap.m.upload.UploadSetwithTableItem} oItem, target item.
 	 * @public
 	 */
-	UploadSetTable.prototype.renameItem = function (oItem) {
-		if (oItem && oItem instanceof UploadSetTableItem) {
+	UploadSetwithTable.prototype.renameItem = function (oItem) {
+		if (oItem && oItem instanceof UploadSetwithTableItem) {
 			const oDialog = this._getFileRenameDialog(oItem);
 			oDialog.open();
 		}
@@ -687,12 +703,12 @@ sap.ui.define([
 	/* Private methods */
 	/* ============== */
 
-    UploadSetTable.prototype._setFileUploaderInToolbar = function(fileUploader) {
+    UploadSetwithTable.prototype._setFileUploaderInToolbar = function(fileUploader) {
         this._oToolbar.getContent()[this._iFileUploaderPH].setVisible(false);
 		this._oToolbar.insertContent(fileUploader, this._iFileUploaderPH);
 	};
 
-    UploadSetTable.prototype._getFileUploaderPlaceHolderPosition = function(toolbar) {
+    UploadSetwithTable.prototype._getFileUploaderPlaceHolderPosition = function(toolbar) {
         for (var i = 0; i < toolbar.getContent().length; i++) {
             if (toolbar.getContent()[i] instanceof UploadSetToolbarPlaceholder) {
                 return i;
@@ -701,7 +717,7 @@ sap.ui.define([
 		return -1;
 	};
 
-    UploadSetTable.prototype._onFileUploaderChange = function (oEvent) {
+    UploadSetwithTable.prototype._onFileUploaderChange = function (oEvent) {
         var oFiles = oEvent.getParameter("files");
 
 		if (oFiles && oFiles.length) {
@@ -717,7 +733,7 @@ sap.ui.define([
 		}
     };
 
-    UploadSetTable.prototype._processSelectedFileObjects = function (oFiles) {
+    UploadSetwithTable.prototype._processSelectedFileObjects = function (oFiles) {
 		var aFiles = [];
 
 		// Need to explicitly copy the file list, FileUploader deliberately resets its form completely
@@ -727,7 +743,7 @@ sap.ui.define([
 		}
 
 		aFiles.forEach((oFile) => {
-			var oItem = new UploadSetTableItem({
+			var oItem = new UploadSetwithTableItem({
 				uploadState: UploadState.Ready
 			});
 			oItem._setFileObject(oFile);
@@ -745,13 +761,13 @@ sap.ui.define([
 				if (oPromise && oPromise instanceof Promise) {
 					oPromise
 					.then((item) => {
-						if (item instanceof UploadSetTableItem) {
+						if (item instanceof UploadSetwithTableItem) {
 							this._initateItemUpload(item);
 						}
 					})
 					.catch((item) => {
 						// Reset variable to avoid update if upload rejected.
-						if (item && this._oItemToUpdate && item instanceof UploadSetTableItem && item.getId() === this._oItemToUpdate.getId()) {
+						if (item && this._oItemToUpdate && item instanceof UploadSetwithTableItem && item.getId() === this._oItemToUpdate.getId()) {
 							this._oItemToUpdate = null;
 						}
 					});
@@ -768,7 +784,7 @@ sap.ui.define([
 		});
 	};
 
-	UploadSetTable.prototype._initateItemUpload = function(oItem) {
+	UploadSetwithTable.prototype._initateItemUpload = function(oItem) {
 		this.fireBeforeInitiatingItemUpload({item: oItem});
 		if (this._oItemToUpdate) {
 			// Registering item to be update with selected file contents post successful upload.
@@ -777,7 +793,7 @@ sap.ui.define([
 		this._uploadItemIfGoodToGo(oItem);
 	};
 
-    UploadSetTable.prototype._fireFileTypeMismatch = function (oItem) {
+    UploadSetwithTable.prototype._fireFileTypeMismatch = function (oItem) {
         var aMediaTypes = this.getMediaTypes();
 		var aFileTypes = this.getFileTypes();
 
@@ -799,20 +815,20 @@ sap.ui.define([
 		}
     };
 
-    UploadSetTable.prototype._fireFilenameLengthExceed = function (oItem) {
+    UploadSetwithTable.prototype._fireFilenameLengthExceed = function (oItem) {
         this.fireFileNameLengthExceeded({item: oItem});
     };
 
-    UploadSetTable.prototype._fireFileSizeExceed = function (oItem) {
+    UploadSetwithTable.prototype._fireFileSizeExceed = function (oItem) {
         this.fireFileSizeExceeded({item: oItem});
     };
 
-	UploadSetTable.prototype._onUploadStarted = function (oEvent) {
+	UploadSetwithTable.prototype._onUploadStarted = function (oEvent) {
 		var oItem = oEvent.getParameter("item");
 		oItem.setUploadState(UploadState.Uploading);
 	};
 
-	UploadSetTable.prototype._onUploadCompleted = function (oEvent) {
+	UploadSetwithTable.prototype._onUploadCompleted = function (oEvent) {
 		var oItem = oEvent.getParameter("item"),
 			oResponseXHRParams = oEvent.getParameter("responseXHR"),
 			sResponse = null;
@@ -838,7 +854,7 @@ sap.ui.define([
 		this.fireUploadCompleted(oXhrParams);
 	};
 
-	UploadSetTable.prototype._uploadItemIfGoodToGo = function (oItem) {
+	UploadSetwithTable.prototype._uploadItemIfGoodToGo = function (oItem) {
 		if (oItem.getUploadState() === UploadState.Ready && !oItem._isRestricted()) {
 			if (this.fireBeforeUploadStarts({item: oItem})) {
 				const aHeaderFields = this.getHeaderFields()?.length ? this.getHeaderFields() : [];
@@ -849,11 +865,11 @@ sap.ui.define([
 		}
 	};
 
-	UploadSetTable.prototype._getActiveUploader = function () {
+	UploadSetwithTable.prototype._getActiveUploader = function () {
 		return this.getUploader() || this._getImplicitUploader();
 	};
 
-	UploadSetTable.prototype._getImplicitUploader = function () {
+	UploadSetwithTable.prototype._getImplicitUploader = function () {
 		if (!this._oUploader) {
 			this._oUploader = new Uploader({
 				httpRequestMethod : this.getHttpRequestMethod()
@@ -866,7 +882,7 @@ sap.ui.define([
 		return this._oUploader;
 	};
 
-	UploadSetTable.prototype._setIllustratedMessage = function () {
+	UploadSetwithTable.prototype._setIllustratedMessage = function () {
 		if (!this._illustratedMessage) {
 			this._illustratedMessage = new IllustratedMessage({
 				illustrationType: this.getNoDataIllustrationType(),
@@ -880,7 +896,7 @@ sap.ui.define([
 		this.setAggregation("noData", this._illustratedMessage);
 	};
 
-	UploadSetTable.prototype._setDragDropConfig = function () {
+	UploadSetwithTable.prototype._setDragDropConfig = function () {
 		var oDragDropConfig = new DragDropInfo({
 			sourceAggregation: "items",
 			targetAggregation: "items",
@@ -897,15 +913,15 @@ sap.ui.define([
 		this.addDragDropConfig(oDropConfig);
 	};
 
-	UploadSetTable.prototype._onDragStartItem = function (oEvent) {
+	UploadSetwithTable.prototype._onDragStartItem = function (oEvent) {
 		this.fireItemDragStart(oEvent);
 	};
 
-	UploadSetTable.prototype._onDropItem = function (oEvent) {
+	UploadSetwithTable.prototype._onDropItem = function (oEvent) {
 		this.fireItemDrop(oEvent);
 	};
 
-	UploadSetTable.prototype._onDragEnterFile = function (oEvent) {
+	UploadSetwithTable.prototype._onDragEnterFile = function (oEvent) {
 		var oDragSession = oEvent.getParameter("dragSession");
 		var oDraggedControl = oDragSession.getDragControl();
 		if (oDraggedControl) {
@@ -918,7 +934,7 @@ sap.ui.define([
 	 * @param {sap.ui.base.Event} oEvent Drop Event when file is dropped on the Table.
 	 * @private
 	 */
-	UploadSetTable.prototype._onDropFile = function (oEvent) {
+	UploadSetwithTable.prototype._onDropFile = function (oEvent) {
 		oEvent.preventDefault();
 		if (!this.getUploadEnabled()) {
 			Log.error("Upload is not enabled, to continue uploading with drag and drop of files enable property 'UploadEnabled' ");
@@ -983,7 +999,7 @@ sap.ui.define([
 	 * @returns {Promise} oPromise, Promise on resolved returns list of files dropped for upload.
 	 * @private
 	 */
-	UploadSetTable.prototype._getFilesFromDataTransferItems = function (dataTransferItems) {
+	UploadSetwithTable.prototype._getFilesFromDataTransferItems = function (dataTransferItems) {
 		const aFiles = [];
 		return new Promise((resolve, reject) => {
 			const aEntriesPromises = [];
@@ -1023,38 +1039,31 @@ sap.ui.define([
 
 	/**
 	* Opens preview of the item pressed.
-	* @param {sap.m.upload.UploadSetTableItem} oItem item to be previewed.
+	* @param {sap.m.upload.UploadSetwithTableItem} oItem item to be previewed.
 	* @private
 	*/
-	UploadSetTable.prototype._openFilePreview = function (oItem) {
-		var aitems = this.getPreviewDialogAdditionalFooterButtons();
-		if (!this._filePreviewDialogControl) {
-			this._filePreviewDialogControl = new FilePreviewDialog({
-				previewItem: oItem,
-				items: this.getItems(),
-				additionalFooterButtons: this.getPreviewDialogAdditionalFooterButtons(),
-				showCarouselArrows: this.getShowCarouselArrows(),
-				maxFileSizeforPreview: this.getMaxFileSizeforPreview()
-			});
-			this.addDependent(this._filePreviewDialogControl);
-			this._filePreviewDialogControl.open();
-		} else {
-			this._filePreviewDialogControl.setPreviewItem(oItem);
-			this._filePreviewDialogControl.setItems(this.getItems());
-			this._filePreviewDialogControl.setShowCarouselArrows(this.getShowCarouselArrows());
-			aitems.forEach((item) => this._filePreviewDialogControl.insertAddDiitionalFooterButton(item));
-			this._filePreviewDialogControl.open();
+	UploadSetwithTable.prototype._openFilePreview = function (oItem) {
+		if (!this.getPreviewDialog()) {
+			const oAssociatedPreviewDialog = new FilePreviewDialog();
+			this.setPreviewDialog(oAssociatedPreviewDialog);
+		}
+		this._filePreviewDialogControl = Core.byId(this.getPreviewDialog());
+		// var aitems = this.getAdditionalFooterButtons();
+		if (this._filePreviewDialogControl) {
+			this._filePreviewDialogControl._previewItem = oItem;
+			this._filePreviewDialogControl._items = this.getItems();
+			this._filePreviewDialogControl._open();
 		}
 	};
 
 	/**
 	* Internal API return the dialog for document rename.
-	* @param {sap.m.upload.UploadSetTableItem} oItem item to be renamed.
+	* @param {sap.m.upload.UploadSetwithTableItem} oItem item to be renamed.
 	* @private
 	* @returns {sap.m.Dialog} oDialog, created dialog instance
 	*/
-	UploadSetTable.prototype._getFileRenameDialog = function(oItem) {
-		const oSplit = UploadSetTableItem._splitFileName(oItem.getFileName());
+	UploadSetwithTable.prototype._getFileRenameDialog = function(oItem) {
+		const oSplit = UploadSetwithTableItem._splitFileName(oItem.getFileName());
 		let iMaxLength = this.getMaxFileNameLength();
 		const iFileExtensionLength = oSplit.extension ? oSplit.extension.length + 1 : 0;
 			iMaxLength = iMaxLength ? iMaxLength : 0;
@@ -1112,11 +1121,11 @@ sap.ui.define([
 	* @param {object} oEvent cancel button click event.
 	* @private
 	*/
-	UploadSetTable.prototype._handleItemRenameCancel = function(oEvent) {
+	UploadSetwithTable.prototype._handleItemRenameCancel = function(oEvent) {
 		const oDialog = oEvent.getSource().getParent();
 		const oInput = oDialog.getContent()[1];
 		const oItem = oDialog && oDialog.data ? oDialog.data().item : null;
-		const oSplit = UploadSetTableItem._splitFileName(oItem.getFileName());
+		const oSplit = UploadSetwithTableItem._splitFileName(oItem.getFileName());
 		// Check if there are changes made to the existing file name.
 		if (oItem && oInput && oSplit.name !== oInput.getValue()) {
 			MessageBox.warning(this._oRb.getText("UPLOADSET_WITH_TABLE_DOCUMENT_RENAME_DISCARD_POPUP_CHANGES_TEXT"), {
@@ -1143,7 +1152,7 @@ sap.ui.define([
 	* @param {object} oEvent confirm button click event.
 	* @private
 	*/
-	UploadSetTable.prototype._handleItemRenameConfirmation = function(oEvent) {
+	UploadSetwithTable.prototype._handleItemRenameConfirmation = function(oEvent) {
 		const oDialog = oEvent.getSource().getParent();
 		const oInput = oDialog.getContent()[1];
 		if (oInput && oInput.getValueState() === "Error") {
@@ -1152,7 +1161,7 @@ sap.ui.define([
 			return;
 		}
 		const oItem = oDialog && oDialog.data ? oDialog.data().item : null;
-		const oSplit = UploadSetTableItem._splitFileName(oItem.getFileName());
+		const oSplit = UploadSetwithTableItem._splitFileName(oItem.getFileName());
 		// update only if there is change
 		if (oItem && oSplit.name !== oInput.getValue()) {
 			if (oSplit && oSplit.extension) {
@@ -1172,7 +1181,7 @@ sap.ui.define([
 	* @param {object} oEvent Input keyevent.
 	* @private
 	*/
-	UploadSetTable.prototype._handleItemNameValidation = function(oEvent) {
+	UploadSetwithTable.prototype._handleItemNameValidation = function(oEvent) {
 		const oInput = oEvent.getSource();
 		let sValue = oInput.getValue();
 		sValue = sValue.trim();
@@ -1196,5 +1205,5 @@ sap.ui.define([
 		}
 	};
 
-    return UploadSetTable;
+    return UploadSetwithTable;
 });

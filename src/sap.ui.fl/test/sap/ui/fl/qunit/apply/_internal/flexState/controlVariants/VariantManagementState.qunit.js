@@ -383,8 +383,8 @@ sap.ui.define([
 		QUnit.test("when there are multiple variants with lower layer changes in the referenced variant", function(assert) {
 			var oUIChange = FlexObjectFactory.createUIChange({
 				id: "someUIChange",
-				layer: Layer.CUSTOMER,
-				variantReference: sStandardVariantReference
+				layer: Layer.VENDOR,
+				variantReference: "vendorVariant"
 			});
 			var oIndependentUIChange = FlexObjectFactory.createUIChange({
 				id: "someOtherUIChange",
@@ -395,16 +395,28 @@ sap.ui.define([
 				layer: Layer.USER,
 				variantReference: sStandardVariantReference
 			});
-			var oVariant = createVariant({
+			var oVendorVariant = createVariant({
 				variantReference: sVariantManagementReference,
-				fileName: "XYZ",
+				fileName: "vendorVariant",
+				layer: Layer.VENDOR
+			});
+			var oCustomerVariant = createVariant({
+				variantReference: "vendorVariant",
+				fileName: "customerVariant",
+				layer: Layer.CUSTOMER
+			});
+			var oUserVariant = createVariant({
+				variantReference: "customerVariant",
+				fileName: "userVariant",
 				layer: Layer.USER
 			});
-			stubFlexObjectsSelector([oIndependentUIChange, oUIChange, oUIChange2, oVariant]);
+			stubFlexObjectsSelector([oIndependentUIChange, oUIChange, oUIChange2, oVendorVariant, oCustomerVariant, oUserVariant]);
 			var aVariants = VariantManagementState.getVariantManagementMap()
 			.get({ reference: sReference })[sVariantManagementReference].variants;
-			assert.strictEqual(aVariants[0].controlChanges.length, 2, "there is one control change on standard");
-			assert.strictEqual(aVariants[1].controlChanges.length, 1, "the referenced control change is also in the depending variant");
+			assert.strictEqual(aVariants[0].controlChanges.length, 1, "there is one control change on standard");
+			assert.strictEqual(aVariants[1].controlChanges.length, 1, "the vendor variant has one change");
+			assert.strictEqual(aVariants[2].controlChanges.length, 1, "the customer variant has one change");
+			assert.strictEqual(aVariants[3].controlChanges.length, 1, "the user variant has one change");
 		});
 
 		QUnit.test("when variants are set to favorite = false (default and non-default)", function(assert) {

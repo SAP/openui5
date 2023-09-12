@@ -273,7 +273,7 @@ input.sapMInputBaseInner:invalid {
 
 /*read only*/
 
-.sapMInputBaseReadonly .sapMInputBaseContentWrapper {
+.sapMInputBaseReadonly:not(.sapMInputBaseDisabled) .sapMInputBaseContentWrapper {
 	border-color: @sapUiFieldReadOnlyBorderColor;
 	background:@sapField_ReadOnly_BackgroundStyle;
 	background-color: @sapUiFieldReadOnlyBackground;

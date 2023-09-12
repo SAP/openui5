@@ -6,15 +6,16 @@ sap.ui.define(["sap/ui/core/Renderer", "sap/m/ColumnListItemRenderer", "sap/m/Li
 	"use strict";
 
 	/**
-	 * UploadSetTableItem renderer.
+	 * UploadSetwithTableItem renderer.
 	 * @namespace
 	 */
-	var UploadSetTableItemRenderer = Renderer.extend(ColumnListItemRenderer);
-	UploadSetTableItemRenderer.apiVersion = 2;
+	var UploadSetwithTableItemRenderer = Renderer.extend(ColumnListItemRenderer);
+	UploadSetwithTableItemRenderer.apiVersion = 2;
 
-    UploadSetTableItemRenderer.render = function(rm, oLI) {
+    UploadSetwithTableItemRenderer.render = function(rm, oLI) {
+		oLI.addStyleClass("SapMUSTI");
 		ColumnListItemRenderer.render.apply(this, arguments);
 	};
     // enable in-place DOM patching
-	return UploadSetTableItemRenderer;
+	return UploadSetwithTableItemRenderer;
 }, /* bExport= */ true);

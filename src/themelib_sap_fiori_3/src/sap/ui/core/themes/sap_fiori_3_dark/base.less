@@ -1,11 +1,11 @@
 // /**
-// * Copyright (c) 2012-2020 SAP SE or an SAP affiliate company and Theming Base Content contributors. Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
-// * Theming Engine 1.23050.0-20230523090303+e385b420d426b24bae1dee2743785a1448185388
-// * data:{"sModified":"2023-05-25T10:12:25Z"}
+// * Copyright (c) 2012-2023 SAP SE or an SAP affiliate company and Theming Base Content contributors. Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
+// * Theming Engine 1.23061.0
+// * data:{"sModified":"2023-09-11T07:13:37Z"}
 // */
 
 
-/******************* FILE /Base/baseLib/sap_fiori_3_dark/base.less (Version 11.4.2) *******************/
+/******************* FILE /Base/baseLib/sap_fiori_3_dark/base.less (Version 11.6.8) *******************/
 
 
 // [Tags "SapInternal", "Base", "Dimension", "Protected"]
@@ -1737,10 +1737,10 @@
 // [Protected "!true"]
 @sapField_Hover_HelpBackground: @sapButton_Hover_Background;
 @sapField_Hover_Shadow: none;
-@sapField_Hover_InvalidShadow: none;
-@sapField_Hover_WarningShadow: none;
-@sapField_Hover_SuccessShadow: none;
-@sapField_Hover_InformationShadow: none;
+@sapField_Hover_InvalidShadow: @sapField_InvalidShadow;
+@sapField_Hover_WarningShadow: @sapField_WarningShadow;
+@sapField_Hover_SuccessShadow: @sapField_SuccessShadow;
+@sapField_Hover_InformationShadow: @sapField_InformationShadow;
 
 // [Tags "!Protected"]
 // [Protected "!true"]
@@ -1960,7 +1960,7 @@
 
 // [Tags "!Protected"]
 // [Protected "!true"]
-@sapList_Hover_Background: contrast(@sapList_Background, darken(@sapList_Background, 4), lighten(@sapList_Background, 3));
+@sapList_Hover_Background: contrast(@sapList_Background, darken(@sapList_Background, 4), @sapHoverColor);
 
 // [Tags "!Protected"]
 // [Protected "!true"]
@@ -2276,7 +2276,7 @@
 
 // [Tags "!Protected"]
 // [Protected "!true"]
-@sapObjectHeader_Hover_Background: contrast(@sapObjectHeader_Background, darken(@sapObjectHeader_Background, 4), lighten(@sapObjectHeader_Background, 3));
+@sapObjectHeader_Hover_Background: contrast(@sapObjectHeader_Background, darken(@sapObjectHeader_Background, 4), @sapHoverColor);
 
 // [Tags "!Protected"]
 // [Protected "!true"]

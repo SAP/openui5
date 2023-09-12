@@ -1960,6 +1960,7 @@ sap.ui.define([
 	 */
 	Table.prototype._getRowMode = function() {
 		var vRowMode = this.getRowMode();
+
 		return TableUtils.isA(vRowMode, "sap.ui.table.rowmodes.RowMode") ? vRowMode : this._oDefaultRowMode;
 	};
 

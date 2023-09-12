@@ -1893,18 +1893,19 @@ sap.ui.define([
 				]
 			},
 
-			UploadSetTable: {
-				title: "Test Page for sap.m.upload.UploadSetTable",
+			UploadSetwithTable: {
+				title: "Test Page for sap.m.upload.UploadSetwithTable",
 				coverage: {
-					only: "[sap/m/upload/UploadSetTable.js,sap/m/upload/UploadSetTableItem.js,sap/m/upload/UploadSetTableRenderer.js,sap/m/upload/UploadSetTableItemRenderer.js]"
+					only: "[sap/m/upload/UploadSetwithTable.js,sap/m/upload/UploadSetwithTableItem.js,sap/m/upload/FilePreviewDialog.js,sap/m/upload/UploadSetwithTableRenderer.js,sap/m/upload/UploadSetwithTableItemRenderer.js]"
 				},
 				ui5: {
 					language: "en",
 					libs: ["sap.m", "sap.ui.unified"] // to compensate sync loadLibrary
 				},
 				module: [
-					"./upload/UploadSetTable.qunit",
-					"./upload/UploadSetTableItem.qunit"
+					"./upload/UploadSetwithTable.qunit",
+					"./upload/UploadSetwithTableItem.qunit",
+					"./upload/FilePreviewDialog.qunit"
 				]
 			},
 
