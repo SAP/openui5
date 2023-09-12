@@ -125,7 +125,7 @@
 										key="terms_of_use"
 										icon="sap-icon://document-text"
 										text="{i18n>APP_INFORMATION_BTN_TERMS_OF_USE}"
-										visible="{= !${versionData>/isOpenUI5} }">
+										visible="{= !${versionData>/isOpenUI5} &amp;&amp; !${versionData>/isDevEnv} }">
 										<items>
 											<MenuItem key="terms_of_use" text="{i18n>APP_INFORMATION_BTN_TERMS_OF_USE}" />
 											<MenuItem key="copyright" text="{i18n>APP_INFORMATION_BTN_COPYRIGHT}" />
