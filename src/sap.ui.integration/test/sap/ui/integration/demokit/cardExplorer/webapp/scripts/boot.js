@@ -21,9 +21,10 @@ window.addEventListener("load", function () {
 
 	if (!isLandingPage) {
 		aNodes.push('<link rel="stylesheet" href="' + sRes + 'sap/ui/core/themes/sap_horizon/library.css">');
-		aNodes.push('<script src="' + sWebApp + 'scripts/topic.js"></script>');
 		aNodes.push('<link rel="stylesheet" href="' + sWebApp + 'css/topic.css">');
+		aNodes.push('<script src="' + sWebApp + 'scripts/deepNavigation.js"></script>');
 		aNodes.push('<script src="' + sWebApp + 'scripts/generateNavMenu.js"></script>');
+		aNodes.push('<script src="' + sWebApp + 'scripts/resolveDemokitURLs.js"></script>');
 	}
 
 	function afterLoad() {

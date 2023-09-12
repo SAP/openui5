@@ -12,7 +12,8 @@ sap.ui.define([
 	"../model/DesigntimeNavigationModel",
 	"../model/ExploreSettingsModel",
 	"../model/HomeModel",
-	"../model/AppSettingsModel"
+	"../model/AppSettingsModel",
+	"../model/URLFormatter"
 ], function (
 	mLibrary,
 	BaseController,
@@ -27,7 +28,8 @@ sap.ui.define([
 	DesigntimeNavigationModel,
 	ExploreSettingsModel,
 	HomeModel,
-	AppSettingsModel
+	AppSettingsModel,
+	URLFormatter
 ) {
 	"use strict";
 
@@ -39,6 +41,8 @@ sap.ui.define([
 	};
 
 	return BaseController.extend("sap.ui.demo.cardExplorer.controller.App", {
+		_appSettingsDialog: null,
+		URLFormatter: URLFormatter,
 
 		/**
 		 * Called when the app is started.
@@ -276,8 +280,6 @@ sap.ui.define([
 			this.setModel(oModel);
 		},
 
-		_appSettingsDialog: null,
-
 		handleAppSettings: function (sAction) {
 			switch (sAction) {
 				case 'open': {
@@ -313,6 +315,7 @@ sap.ui.define([
 				default: break;
 			}
 		},
+
 		onSideNavigationFixedItemPress: function (oEvent) {
 			var sTargetText = oEvent.getParameter("item").getKey(),
 				sTarget = LEGAL_LINKS[sTargetText];

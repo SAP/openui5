@@ -12,7 +12,7 @@
 				<Select width="100%" items="{appSettings>/contentDensities}" selectedKey="{appSettings>/contentDensity}">
 					<core:Item key="{appSettings>key}" text="{appSettings>text}"/>
 				</Select>
-				<Link text="Learn about content density" href="topic/e54f729da8e3405fae5e4fe8ae7784c1" target="_blank" class="sapUiTinyMarginTop"/>
+				<Link text="Learn about content density" href="{ value: '#/topic/e54f729da8e3405fae5e4fe8ae7784c1', formatter: '.URLFormatter.resolveDemokitURL' }" target="_blank" class="sapUiTinyMarginTop"/>
 				<HBox class="sapUiTinyMarginTop" alignItems="Center" justifyContent="SpaceBetween">
 					<Label text="Right-to-left mode" design="Standard" labelFor="RTLSwitch" />
 					<Switch state="{appSettings>/rtl}" />
