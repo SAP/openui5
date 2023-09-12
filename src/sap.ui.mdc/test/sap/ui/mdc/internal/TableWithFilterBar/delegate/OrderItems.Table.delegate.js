@@ -11,8 +11,9 @@ sap.ui.define([
 	"sap/ui/model/Filter",
 	'sap/ui/model/FilterOperator',
 	"sap/ui/model/odata/type/Int32",
-	"sap/m/Text"
-], function (ODataTableDelegate, OrdersFBDelegate, Field, Link, FieldDisplay, FieldEditMode, FilterUtil, DelegateUtil, Core, Filter, FilterOperator, Int32Type, Text) {
+	"sap/m/Text",
+	"delegates/util/DelegateCache"
+], function (ODataTableDelegate, OrdersFBDelegate, Field, Link, FieldDisplay, FieldEditMode, FilterUtil, DelegateUtil, Core, Filter, FilterOperator, Int32Type, Text, DelegateCache) {
 	"use strict";
 	var OrderItemssTableDelegate = Object.assign({}, ODataTableDelegate);
 	OrderItemssTableDelegate.apiVersion = 2;//CLEANUP_DELEGATE
@@ -43,6 +44,9 @@ sap.ui.define([
 				}
 			});
 
+			DelegateCache.add(oTable, {"book_ID": {display: FieldDisplay.Description, additionalValue: "{book/title}"}}, "$Columns");
+			DelegateCache.add(oTable, {"book_ID": {valueHelp: "FH-Books"}}, "$Filters");
+
 			return aProperties;
 		});
 	};
@@ -59,10 +63,6 @@ sap.ui.define([
 
 					oFilterField.setDataTypeConstraints(oConstraints);
 					oFilterField.setDataTypeFormatOptions(oFormatOptions);
-
-					if (sPropertyName === "book_ID") {
-						oFilterField.setValueHelp(getFullId(oTable, "FH-Books"));
-					}
 					return oFilterField;
 				});
 			}
@@ -71,19 +71,14 @@ sap.ui.define([
 
 	OrderItemssTableDelegate._createColumnTemplate = function (oTable, oProperty) {
 
-		var oCtrlProperties = {
+		var oCtrlProperties = DelegateCache.merge({
 			id: getFullId(oTable, "F_" + oProperty.name),
 			value: {path: oProperty.path || oProperty.name, type: oProperty.typeConfig.typeInstance},
 			editMode: FieldEditMode.Display,
 			width:"100%",
 			multipleLines: false,
 			delegate: {name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}
-		};
-
-		if (oProperty.name === "book_ID") {
-			oCtrlProperties.additionalValue = "{book/title}";
-			oCtrlProperties.display = FieldDisplay.Description;
-		}
+		}, DelegateCache.get(oTable, oProperty.name, "$Columns"));
 
 		return new Field(oCtrlProperties);
 

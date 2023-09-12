@@ -8,10 +8,11 @@
 // ---------------------------------------------------------------------------------------
 sap.ui.define([
 	"delegates/odata/v4/FilterBarDelegate",
-	'sap/ui/mdc/enums/FieldDisplay',
 	'sap/ui/core/util/reflection/JsControlTreeModifier',
-	'sap/ui/fl/Utils'
-], function(FilterBarDelegate, FieldDisplay, JsControlTreeModifier, FlUtils) {
+	'sap/ui/fl/Utils',
+	'sap/ui/mdc/enums/FieldDisplay',
+	'delegates/util/DelegateCache'
+], function(FilterBarDelegate, JsControlTreeModifier, FlUtils, FieldDisplay, DelegateCache) {
 	"use strict";
 
 	var FilterBarAuthorsSampleDelegate = Object.assign({}, FilterBarDelegate);
@@ -36,6 +37,15 @@ sap.ui.define([
 		return new Promise(function(fResolve) {
 
 			FilterBarDelegate.fetchProperties(oFilterBar).then(function(aProperties) {
+
+				const oCacheSettings = {
+					"name": { "valueHelp": "fhName" },
+					"dateOfBirth": { "valueHelp": "fhAdob", "operators": ["RENAISSANCE", "MEDIEVAL", "MODERN", "CUSTOMRANGE", "NOTINRANGE"] },
+					"cityOfOrigin_city": { "valueHelp": "IOFFVHCity", "display": FieldDisplay.ValueDescription},
+					"countryOfOrigin_code": { "valueHelp": "IOFFVHCountry", "display": FieldDisplay.ValueDescription},
+					"regionOfOrigin_code": { "valueHelp": "IOFFVHRegion", "display": FieldDisplay.ValueDescription}
+				};
+
 				aProperties.forEach(function(oProperty) {
 
 					if (oProperty.name.indexOf("/") >= 0) {
@@ -50,13 +60,12 @@ sap.ui.define([
 						oProperty.maxConditions = 1;
 					}
 
-					if (oProperty.display) {
-						delete oProperty.display;
+					if (oProperty.maxConditions === -1 ) {
+						const oCurrentSettings = DelegateCache.get(oFilterBar, oProperty.name) || oCacheSettings[oProperty.name] || {};
+						if (!oCurrentSettings.valueHelp) {
+							oCacheSettings[oProperty.name] = {...oCurrentSettings, valueHelp: "FVH_Generic_Multi"};
+						}
 					}
-					if (oProperty.valueHelp) {
-						delete oProperty.valueHelp;
-					}
-
 				});
 
 				if (!bSearchExists) {
@@ -66,6 +75,8 @@ sap.ui.define([
 						  dataType: "Edm.String"
 					});
 				}
+
+				DelegateCache.add(oFilterBar, oCacheSettings);
 
 				fResolve(aProperties);
 			});
@@ -80,44 +91,7 @@ sap.ui.define([
 			appComponent: FlUtils.getAppComponentForControl(oFilterBar)
 		};
 
-		var oModifier = mPropertyBag.modifier;
-		// var sName = oProperty.path || oProperty.name;
-		var oFilterFieldPromise = FilterBarDelegate._createFilterField.apply(this, arguments);
-		var oView = mPropertyBag.view ? mPropertyBag.view : FlUtils.getViewForControl(oFilterBar);
-
-		oFilterFieldPromise.then(function (oFilterField) {
-
-			if (oProperty.name === "ID") {
-				// oProperty.formatOptions = {groupingEnabled: false};
-			} else if (oProperty.name === "name") {
-				oModifier.setAssociation(oFilterField, "valueHelp", oView.createId("fhName"));
-				// oModifier.setProperty(oFilterField, "display", FieldDisplay.Description);
-			} else if (oProperty.name === "dateOfBirth") {
-				oModifier.setProperty(oFilterField, "operators", ["RENAISSANCE","MEDIEVAL","MODERN","CUSTOMRANGE","NOTINRANGE"]);
-				oModifier.setAssociation(oFilterField, "valueHelp", oView.createId("fhAdob"));
-				// oModifier.setProperty(oFilterField, "display", FieldDisplay.Description);
-			} else if (oProperty.name === "dateOfDeath") {
-				// oModifier.setProperty(oFilterField, "display", FieldDisplay.Description);
-			} else if (oProperty.name === "countryOfOrigin_code") {
-				oModifier.setAssociation(oFilterField, "valueHelp", oView.createId("IOFFVHCountry"));
-				oModifier.setProperty(oFilterField, "display", FieldDisplay.ValueDescription);
-			} else if (oProperty.name === "regionOfOrigin_code") {
-				oModifier.setAssociation(oFilterField, "valueHelp", oView.createId("IOFFVHRegion"));
-				oModifier.setProperty(oFilterField, "display", FieldDisplay.ValueDescription);
-			} else if (oProperty.name === "cityOfOrigin_city") {
-				oModifier.setAssociation(oFilterField, "valueHelp", oView.createId("IOFFVHCity"));
-				oModifier.setProperty(oFilterField, "display", FieldDisplay.ValueDescription);
-			}
-
-			if (oProperty.maxConditions === -1 && !oProperty.fieldHelp) {
-				oModifier.setAssociation(oFilterField, "valueHelp", oView.createId("FVH_Generic_Multi"));
-			}
-
-
-		});
-
-		return oFilterFieldPromise;
-
+		return FilterBarDelegate._createFilterField.apply(this, arguments);
 	};
 	return FilterBarAuthorsSampleDelegate;
 });

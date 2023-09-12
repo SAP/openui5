@@ -19,12 +19,30 @@ sap.ui.define([
 	'sap/ui/mdc/util/IdentifierUtil',
 	'sap/ui/core/util/reflection/JsControlTreeModifier',
 	'sap/base/Log',
-	'sap/ui/mdc/odata/v4/TypeMap'
-
-	], function (ODataMetaModelUtil, FieldDisplay, FlUtils, FilterBarDelegate, ObjectPath, merge, FilterOperatorUtil, ModelOperator, Filter, IdentifierUtil, JsControlTreeModifier, Log, ODataV4TypeMap) {
+	'sap/ui/mdc/odata/v4/TypeMap',
+	'delegates/util/DelegateCache'
+	], function (ODataMetaModelUtil, FieldDisplay, FlUtils, FilterBarDelegate, ObjectPath, merge, FilterOperatorUtil, ModelOperator, Filter, IdentifierUtil, JsControlTreeModifier, Log, ODataV4TypeMap, DelegateCache) {
 	"use strict";
 
 	var ODataFilterBarDelegate = Object.assign({}, FilterBarDelegate);
+
+	var storeTemplatingSettings = function (oControl, aProperties) {
+		let oSettings;
+		aProperties.forEach(function (oProp) {
+			["display", "fieldHelp", "valueHelp"].forEach((sKey) => {
+				if (oProp[sKey]) {
+					oSettings = oSettings || {};
+					oSettings[oProp.name] = {[sKey === "fieldHelp" ? "valueHelp" : sKey]: oProp[sKey]};
+					delete oProp[sKey];
+				}
+			});
+		});
+
+		if (oSettings) {
+			DelegateCache.add(oControl, oSettings);
+		}
+	};
+
 	ODataFilterBarDelegate.apiVersion = 2;//CLEANUP_DELEGATE
 
 	ODataFilterBarDelegate.getTypeMap = function (oPayload) {
@@ -96,8 +114,10 @@ sap.ui.define([
 						}
 				};
 
-				return mPropertyBag && !oControl.getId ? this.fetchProperties(oObj) : oControl.finalizePropertyHelper().then(function(oHeler){
-					return oHeler.getProperties();
+				return mPropertyBag && !oControl.getId ? this.fetchProperties(oObj) : oControl.finalizePropertyHelper().then(function(oHelper){
+					var aProperties = oHelper.getProperties();
+					storeTemplatingSettings(oControl, aProperties);
+					return aProperties;
 				});
 			}.bind(this));
 	};
@@ -190,7 +210,7 @@ sap.ui.define([
 		}
 
 		return Promise.resolve()
-			.then(oModifier.createControl.bind(oModifier, "sap.ui.mdc.FilterField", oAppComponent, oView, sId, {
+			.then(oModifier.createControl.bind(oModifier, "sap.ui.mdc.FilterField", oAppComponent, oView, sId, DelegateCache.merge({
 				dataType: oProperty.typeConfig.className,
 				conditions: "{$filters>/conditions/" + sName + '}',
 				propertyKey: sName,
@@ -198,7 +218,7 @@ sap.ui.define([
 				label: oProperty.label || oProperty.name,
 				maxConditions: oProperty.maxConditions,
 				delegate: {name: "delegates/odata/v4/FieldBaseDelegate", payload: {}}
-			})).then(function(oFilterField) {
+			}, DelegateCache.get(oFilterBar, oProperty.name, "$Filters")))).then(function(oFilterField) {
 				if (oProperty.fieldHelp) {
 
 					var sFieldHelp = oProperty.fieldHelp;
@@ -230,9 +250,6 @@ sap.ui.define([
 					oModifier.setProperty(oFilterField, "dataTypeFormatOptions", oProperty.formatOptions);
 				}
 
-				if (oProperty.display) {
-					oModifier.setProperty(oFilterField, "display", oProperty.display);
-				}
 				return oFilterField;
 			});
 	};
@@ -664,7 +681,6 @@ sap.ui.define([
 		});
 	};
 
-
 	/**
 	 * Fetches the relevant metadata for a given payload and returns property info array.
 	 * @param {object} oFilterBar - the instance of filter bar
@@ -685,6 +701,7 @@ sap.ui.define([
 
 				var oCachedEntitySet = ODataFilterBarDelegate._getInstanceCacheEntry(oFilterBar, "fetchedProperties");
 				if (oCachedEntitySet) {
+					storeTemplatingSettings(oFilterBar, oCachedEntitySet);
 					resolve(oCachedEntitySet);
 					return;
 				}
@@ -737,6 +754,7 @@ sap.ui.define([
 							});
 
 							ODataFilterBarDelegate._setInstanceCacheEntry(oFilterBar, "fetchedProperties", aProperties);
+							storeTemplatingSettings(oFilterBar, aProperties);
 							resolve(aProperties);
 						});
 					}

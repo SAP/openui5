@@ -16,21 +16,24 @@ sap.ui.define([
 				{
 					"name": "item1",
 					"label": "item1",
-					"typeConfig": { className: "Edm.String"}
+					"dataType": "String"
 				}, {
 					"name": "item2",
 					"label": "item2",
-					"typeConfig": { className: "Edm.String"}
+					"dataType": "String"
 				}, {
 					"name": "item3",
 					"label": "item3",
-					"typeConfig": { className: "Edm.String"},
+					"dataType": "String",
 					"required": true
 				}, {
 					"name": "$search",
-					"typeConfig": { className: "Edm.String"}
+					"label": "",
+					"dataType": "String"
 				},{
 					"name": "someHiddenProperty",
+					"label": "",
+					"dataType": "String",
 					"hiddenFilter": true
 				}
 			];
