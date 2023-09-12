@@ -1226,8 +1226,18 @@ sap.ui.define([
 							oView.addContent(oControl.clone());
 							oViewSerializer = new ViewSerializer(oView, window, "sap.m");
 						}
-						// By now just XML and HTML can be serialized
-						mViews = (sType && sType !== "XML") ? oViewSerializer.serializeToHTML() : oViewSerializer.serializeToXML();
+
+						/**
+						 * HTML only
+						 * @deprecated Since 1.119
+						 */
+						if (sType && sType !== "XML") {
+							mViews = oViewSerializer.serializeToHTML();
+						}
+						// XML
+						if (!(sType && sType !== "XML")) {
+							mViews = oViewSerializer.serializeToXML();
+						}
 					} else {
 						var oUIArea = UIArea.registry.get(oEvent.getParameter("controlID"));
 						var aContent = oUIArea.getContent();
@@ -1235,8 +1245,17 @@ sap.ui.define([
 							oView.addContent(aContent[i]);
 						}
 						oViewSerializer = new ViewSerializer(oView, window, "sap.m");
-						// By now just XML and HTML can be serialized
-						mViews = (sType && sType !== "XML") ? oViewSerializer.serializeToHTML() : oViewSerializer.serializeToXML();
+						/**
+						 * HTML only
+						 * @deprecated Since 1.119
+						 */
+						if (sType && sType !== "XML") {
+							mViews = oViewSerializer.serializeToHTML();
+						}
+						// XML
+						if (!(sType && sType !== "XML")) {
+							mViews = oViewSerializer.serializeToXML();
+						}
 						for ( var i = 0; i < aContent.length; i++) {
 							oUIArea.addContent(aContent[i]);
 						}
