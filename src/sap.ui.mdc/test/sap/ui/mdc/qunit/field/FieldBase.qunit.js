@@ -2014,7 +2014,17 @@ sap.ui.define([
 		await nextUIUpdate();
 		const aContent = oField.getAggregation("_content");
 		const oContent = aContent && aContent.length > 0 && aContent[0];
+		let oBindingInfo = oContent && oContent.getBindingInfo("tokens");
+
+		assert.equal(oBindingInfo && oBindingInfo.length, 10, "BindingInfo: Limit to create only 10 Tokens");
+		assert.equal(oBindingInfo && oBindingInfo.startIndex, -10, "BindingInfo: StartIndex set to create last 10 Tokens");
+
 		oContent.focus();
+
+		oBindingInfo = oContent && oContent.getBindingInfo("tokens");
+		assert.ok(oBindingInfo && !oBindingInfo.length, "BindingInfo: no limit to create only 10 Tokens");
+		assert.ok(oBindingInfo && !oBindingInfo.startIndex, "BindingInfo: no StartIndex set for Tokens");
+
 		jQuery(oContent.getFocusDomRef()).val("X");
 		qutils.triggerKeydown(oContent.getFocusDomRef().id, KeyCodes.ENTER, false, false, false);
 

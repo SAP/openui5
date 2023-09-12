@@ -753,7 +753,7 @@ sap.ui.define([
 					const oFilter = new Filter({ path: 'isEmpty', operator: 'NE', value1: true });
 					this._oConditionType.setFormatOptions(_getConditionFormatOptions.call(this)); // as config might be changed
 					const oTokenTemplate = new Token(this.getId() + "-Token", { text: { path: '$valueHelp>', type: this._oConditionType } });
-					this.oTokenMultiInput.bindAggregation("tokens", { path: '/conditions', model: "$valueHelp", templateShareable: false, template: oTokenTemplate, filters: oFilter });
+					this.oTokenMultiInput.bindAggregation("tokens", { path: '/conditions', model: "$valueHelp", templateShareable: false, template: oTokenTemplate, filters: oFilter, length: 50, startIndex: -50 });
 				}
 			} else if (oBindingInfo) { // remove binding if dialog is closed to prevent updated on tokens if conditions are updated. (Suspend would not be enough, as every single binding on token would need to be suspended too.)
 				this.oTokenMultiInput.unbindAggregation("tokens");

@@ -17,6 +17,7 @@ sap.ui.define([
 	"sap/ui/mdc/enums/OperatorName",
 	"sap/ui/core/Icon",
 	"sap/ui/model/json/JSONModel",
+	"sap/ui/model/json/JSONListBinding",
 	"sap/ui/model/type/String",
 	"sap/ui/Device",
 	"sap/base/strings/formatMessage",
@@ -36,6 +37,7 @@ sap.ui.define([
 	OperatorName,
 	Icon,
 	JSONModel,
+	JSONListBinding,
 	StringType,
 	Device,
 	formatMessage,
@@ -46,6 +48,14 @@ sap.ui.define([
 	"use strict";
 
 	const oResourceBundle = Library.getResourceBundleFor("sap.ui.mdc");
+
+	JSONListBinding.prototype.__getContexts = JSONListBinding.prototype._getContexts;
+	JSONListBinding.prototype._getContexts = function(iStartIndex, iLength) { // fake ManagedObjectModel functionality
+		if (iStartIndex < 0) {
+			iStartIndex = 0;
+		}
+		return this.__getContexts(iStartIndex, iLength);
+	};
 
 	let oDialog;
 	const iDialogDuration = ControlBehavior.getAnimationMode() === "none" ? 15 : 500;
@@ -318,6 +328,9 @@ sap.ui.define([
 				aItems = aPanelContent[0].getItems();
 				assert.equal(aItems.length, 2, "HBox content length");
 				const oTokenMultiInput = aItems[0];
+				const oBindingInfo = oTokenMultiInput.getBindingInfo("tokens");
+				assert.equal(oBindingInfo.length, 50, "Tokens - Bindinginfo length");
+				assert.equal(oBindingInfo.startIndex, -50, "Tokens - Bindinginfo startIndex");
 				const aTokens = oTokenMultiInput.getTokens();
 				assert.equal(aTokens.length, 1, "number of tokens");
 				assert.equal(aTokens[0].getText(), "Text", "Token text");
