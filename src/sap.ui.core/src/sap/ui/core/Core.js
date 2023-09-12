@@ -200,6 +200,17 @@ sap.ui.define([
 	 */
 
 	/**
+	 * Returns the metadata for class <code>sap.ui.core.Core</code>.
+	 *
+	 * @returns {sap.ui.base.Metadata} Metadata object describing this class
+	 * @public
+	 * @static
+	 * @name sap.ui.core.Core.getMetadata
+	 * @function
+	 * @deprecated since 1.119.0.
+	 */
+
+	/**
 	 * @class Core Class of the SAP UI Library.
 	 *
 	 * This class boots the Core framework and makes it available for the application
@@ -2090,6 +2101,7 @@ sap.ui.define([
 	 *
 	 * @private
 	 * @ui5-restricted sap.ui.fl, sap.ui.support
+	 * @deprecated since 1.119.0. Please use {@link sap.ui.core.Lib.attachLibraryChanged Lib.attachLibraryChanged} instead.
 	 */
 
 	/**
