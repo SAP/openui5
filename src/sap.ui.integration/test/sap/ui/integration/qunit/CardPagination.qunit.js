@@ -229,7 +229,8 @@ sap.ui.define([
 		beforeEach: function () {
 			this.oCard = new Card({
 				width: "400px",
-				height: "600px"
+				height: "600px",
+				baseUrl: "test-resources/sap/ui/integration/qunit/testResources/"
 			});
 			this.oCard.placeAt(DOM_RENDER_LOCATION);
 
@@ -268,20 +269,27 @@ sap.ui.define([
 			Core.applyChanges();
 
 			var oPaginator = this.oCard.getCardFooter().getPaginator(),
-				oList = this.oCard.getCardContent().getInnerList();
+				oList = this.oCard.getCardContent().getInnerList(),
+				oPaginatorModel = this.oCard.getModel("paginator");
 
 			assert.ok(oPaginator, "paginator is created");
 			assert.strictEqual(oPaginator.getPageNumber(), 0, "page number is correct");
 			assert.strictEqual(oPaginator.getPageSize(), 4, "page size is correct");
-			assert.strictEqual(oPaginator.getPageCount(), 4, "page count is correct");
-
 			assert.strictEqual(oList.getItems().length, oPaginator.getPageSize(), "list items number is correct");
+			assert.strictEqual(oPaginator.getPageCount(), 4, "page count is correct");
+			assert.strictEqual(oPaginatorModel.getProperty("/skip"), 0, "initial value of '/skip' should be correct");
+			assert.strictEqual(oPaginatorModel.getProperty("/pageIndex"), 0, "initial value of '/pageIndex' should be correct");
+			assert.strictEqual(oPaginatorModel.getProperty("/size"), 4, "initial value of '/size' should be correct");
 
+			// Act
 			oPaginator.next();
 			Core.applyChanges();
 
 			assert.strictEqual(this.oCard.getCardContent().getInnerList().getItems().length, oPaginator.getPageSize(), "list items number is correct");
 			assert.strictEqual(oList.getItems()[0].getTitle(), "Name 5", "next page is shown");
+			assert.strictEqual(oPaginatorModel.getProperty("/skip"), 4, "value of '/skip' should be correct");
+			assert.strictEqual(oPaginatorModel.getProperty("/pageIndex"), 1, "value of '/pageIndex' should be correct");
+			assert.strictEqual(oPaginatorModel.getProperty("/size"), 4, "value of '/size' should be correct");
 
 			done();
 		}.bind(this));
@@ -431,7 +439,9 @@ sap.ui.define([
 
 	QUnit.module("Server-Side Pagination", {
 		beforeEach: function () {
-			this.oCard = new Card();
+			this.oCard = new Card({
+				baseUrl: "test-resources/sap/ui/integration/qunit/testResources/"
+			});
 			this.oCard.placeAt(DOM_RENDER_LOCATION);
 
 			this.oServer = sinon.createFakeServer({
@@ -469,35 +479,40 @@ sap.ui.define([
 
 	QUnit.test("Pagination - server side", function (assert) {
 		var done = assert.async();
-		var oCard = this.oCard;
 
-		oCard.attachEventOnce("_ready", function () {
+		this.oCard.attachEventOnce("_ready", () => {
 			Core.applyChanges();
 
-			var oPaginator = oCard.getCardFooter().getPaginator(),
-				oList = oCard.getCardContent().getInnerList();
+			var oPaginator = this.oCard.getCardFooter().getPaginator(),
+				oList = this.oCard.getCardContent().getInnerList(),
+				oPaginatorModel = this.oCard.getModel("paginator");
 
 			assert.ok(oPaginator, "paginator is created");
 			assert.strictEqual(oPaginator.getPageNumber(), 0, "page number is correct");
 			assert.strictEqual(oPaginator.getPageSize(), 5, "page size is correct");
 			assert.strictEqual(oPaginator.getPageCount(), 16, "page count is correct");
-
 			assert.strictEqual(oList.getItems().length, oPaginator.getPageSize(), "list items number is correct");
+			assert.strictEqual(oPaginatorModel.getProperty("/skip"), 0, "initial value of '/skip' should be correct");
+			assert.strictEqual(oPaginatorModel.getProperty("/pageIndex"), 0, "initial value of '/pageIndex' should be correct");
+			assert.strictEqual(oPaginatorModel.getProperty("/size"), 5, "initial value of '/size' should be correct");
 
-			oCard.attachEventOnce("_contentDataChange", function () {
+			this.oCard.attachEventOnce("_contentDataChange", () => {
 				Core.applyChanges();
 
-				assert.strictEqual(oCard.getCardContent().getInnerList().getItems().length, oPaginator.getPageSize(), "list items number is correct");
+				assert.strictEqual(this.oCard.getCardContent().getInnerList().getItems().length, oPaginator.getPageSize(), "list items number is correct");
 				assert.strictEqual(oList.getItems()[0].getTitle(), "Name 5", "next page is shown");
+				assert.strictEqual(oPaginatorModel.getProperty("/skip"), 5, "value of '/skip' should be correct");
+				assert.strictEqual(oPaginatorModel.getProperty("/pageIndex"), 1, "value of '/pageIndex' should be correct");
+				assert.strictEqual(oPaginatorModel.getProperty("/size"), 5, "value of '/size' should be correct");
 
-				oCard.destroy();
 				done();
 			});
 
+			// Act
 			oPaginator.next();
 		});
 
-		oCard.setManifest(oManifestServerSide);
+		this.oCard.setManifest(oManifestServerSide);
 	});
 
 	QUnit.test("Pagination - server side without bindings", function (assert) {
@@ -622,7 +637,9 @@ sap.ui.define([
 
 	QUnit.module("Slice data", {
 		beforeEach: function () {
-			this.oCard = new Card();
+			this.oCard = new Card({
+				baseUrl: "test-resources/sap/ui/integration/qunit/testResources/"
+			});
 		},
 		afterEach: function () {
 			this.oCard.destroy();
@@ -631,7 +648,6 @@ sap.ui.define([
 	});
 
 	QUnit.test("When error message is displayed", function (assert) {
-
 		// Arrange
 		var done = assert.async();
 		this.oCard.attachEventOnce("_ready", function () {
@@ -646,14 +662,13 @@ sap.ui.define([
 
 			done();
 		}.bind(this));
+
 		// Act
 		this.oCard.setManifest(oManifestWithError);
 		this.oCard.placeAt(DOM_RENDER_LOCATION);
-		Core.applyChanges();
 	});
 
 	QUnit.test("With data", function (assert) {
-
 		// Arrange
 		var done = assert.async();
 		this.oCard.attachEventOnce("_ready", function () {
@@ -670,21 +685,18 @@ sap.ui.define([
 
 			done();
 		}.bind(this));
+
 		// Act
 		this.oCard.setManifest(oManifestClientSideWithStaticData);
 		this.oCard.placeAt(DOM_RENDER_LOCATION);
-		Core.applyChanges();
 	});
 
 	QUnit.test("No items", function (assert) {
-
 		// Arrange
 		var done = assert.async();
 		var oBaseListContentSpy = this.spy(BaseListContent.prototype, "getDataLength");
 
 		this.oCard.attachEventOnce("_ready", function () {
-
-
 			Core.applyChanges();
 
 			var oPaginator = this.oCard.getCardFooter().getPaginator();
@@ -698,6 +710,7 @@ sap.ui.define([
 
 			done();
 		}.bind(this));
+
 		// Act
 		this.oCard.setManifest({
 			"sap.app": {
@@ -732,8 +745,7 @@ sap.ui.define([
 				}
 			}
 		});
-		this.oCard.placeAt(DOM_RENDER_LOCATION);
 
-		Core.applyChanges();
+		this.oCard.placeAt(DOM_RENDER_LOCATION);
 	});
 });
