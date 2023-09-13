@@ -80,6 +80,11 @@ sap.ui.define([
 	 */
 	function module(sTitle) {
 		QUnit.module(sTitle, {
+			before : function () {
+				if (sTitle === "sap.ui.model.odata.type.DateTimeBase") {
+					this.__ignoreIsolatedCoverage__ = true;
+				}
+			},
 			beforeEach : function () {
 				this.sDefaultCalendarType = Configuration.getCalendarType();
 				this.sDefaultLanguage = Configuration.getLanguage();
