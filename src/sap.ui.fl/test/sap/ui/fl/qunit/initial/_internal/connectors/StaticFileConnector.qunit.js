@@ -61,7 +61,7 @@ sap.ui.define([
 				"test/app/changes/flexibility-bundle.json": '[changes:{"dummy":true},"compVariants":[]]'
 			});
 
-			return StaticFileConnector.loadFlexData({reference: "test.app.Component"}).then(function(oResult) {
+			return StaticFileConnector.loadFlexData({reference: "test.app"}).then(function(oResult) {
 				assert.equal(oResult.changes.length, 1, "one change was loaded");
 				var oChange = oResult.changes[0];
 				assert.equal(oChange.dummy, true, "the change dummy data is correctly loaded");

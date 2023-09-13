@@ -142,6 +142,10 @@ sap.ui.define([
 			var oFlexObjectMetadata = this.getFlexObjectMetadata();
 			var sReference = oFlexObjectMetadata.reference;
 			if (sReference) {
+				// old changes have an unnecessary '.Component' in the reference, that is not actually part of the reference
+				oFlexObjectMetadata.reference = sReference.endsWith(".Component")
+					? sReference.replace(/\.Component(?!.*\.Component)/, "")
+					: sReference;
 				oFlexObjectMetadata.namespace ||= Utils.createNamespace({ reference: sReference }, this.getFileType());
 				oFlexObjectMetadata.projectId ||= sReference;
 			}
