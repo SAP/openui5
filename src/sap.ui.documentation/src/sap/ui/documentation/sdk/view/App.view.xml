@@ -73,7 +73,7 @@
 								? [${i18n>APP_VERSION_VERSION}, ${versionData>/version}, ${i18n>APP_VERSION_IN_PROGRESS}].join(' ')
 								: '' }"
 							state="Information"
-							inverted="true"
+							inverted="false"
 							visible="{= ${appView>/bDesktopSize} &amp;&amp; !${appView>/bSearchMode} }">
 						</ObjectStatus>
 
@@ -86,7 +86,7 @@
 								? [${i18n>APP_VERSION_VERSION}, ${versionData>/version}].join(' ')
 								: '' }"
 							press="onChangeVersionButtonPress"
-							visible="{appView>/bShowVersionSwitchButton}">
+							visible="{= ${appView>/bShowVersionSwitchButton} &amp;&amp; !${appView>/bIsSnapshotVersion} }">
 						</Button>
 
 						<OverflowToolbarButton
