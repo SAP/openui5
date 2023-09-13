@@ -117,6 +117,11 @@
 										icon="sap-icon://locked"
 										text="{i18n>APP_INFORMATION_BTN_PRIVACY}" />
 									<MenuItem
+										key="license"
+										icon="sap-icon://permission"
+										text="{i18n>APP_INFORMATION_BTN_LICENSE}"
+										visible="{versionData>/isOpenUI5}" />
+									<MenuItem
 										key="terms_of_use"
 										icon="sap-icon://document-text"
 										text="{i18n>APP_INFORMATION_BTN_TERMS_OF_USE}"
@@ -133,11 +138,6 @@
 											<MenuItem key="disclaimer" text="{i18n>APP_INFORMATION_BTN_DISCLAIMER}" />
 										</items>
 									</MenuItem>
-									<MenuItem
-										key="license"
-										icon="sap-icon://permission"
-										text="{i18n>APP_INFORMATION_BTN_LICENSE}"
-										visible="{versionData>/isOpenUI5}" />
 								</Menu>
 							</menu>
 						</OverflowToolbarMenuButton>
