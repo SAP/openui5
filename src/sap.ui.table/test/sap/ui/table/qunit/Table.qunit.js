@@ -1523,6 +1523,46 @@ sap.ui.define([
 		oGetBinding.restore();
 	});
 
+	QUnit.test("#getContextByIndex", function(assert) {
+		var oFakeBinding = {
+			getContexts: sinon.stub()
+		};
+
+		sinon.stub(oTable, "getBinding").returns(undefined);
+		assert.strictEqual(oTable.getContextByIndex(0), null, "Without a binding");
+
+		oTable.getBinding.returns(oFakeBinding);
+
+		oFakeBinding.getContexts.returns([]);
+		assert.strictEqual(oTable.getContextByIndex(0), null, "With a binding that does not have a getContextByIndex method; No context found");
+		oFakeBinding.getContexts.returns(["test"]);
+		oFakeBinding.getContexts.resetHistory();
+		assert.strictEqual(oTable.getContextByIndex(0), "test", "With a binding that does not have a getContextByIndex method");
+		assert.ok(oFakeBinding.getContexts.calledOnceWithExactly(0, 1, 0, true), "Binding#getContexts called once with correct arguments");
+
+		oFakeBinding.getContextByIndex = sinon.stub();
+		oFakeBinding.getContextByIndex.returns("test2");
+		oFakeBinding.getContexts.resetHistory();
+		assert.strictEqual(oTable.getContextByIndex(1), "test", "With binding that does have a getContextByIndex method");
+		assert.ok(oFakeBinding.getContexts.calledOnceWithExactly(1, 1, 0, true), "Binding#getContexts called once with correct arguments");
+		assert.ok(oFakeBinding.getContextByIndex.notCalled, "Binding#getContextByIndex not called");
+
+		oFakeBinding.getContexts.resetHistory();
+		assert.strictEqual(oTable.getContextByIndex(1, true), "test2",
+		"With binding that does have a getContextByIndex method; bPreventLoadData=true)");
+		assert.ok(oFakeBinding.getContexts.notCalled, "Binding#getContexts not called");
+		assert.ok(oFakeBinding.getContextByIndex.calledOnceWithExactly(1), "Binding#getContextByIndex called once with correct arguments");
+
+		oFakeBinding.getContextByIndex.returns(undefined);
+		oFakeBinding.getContextByIndex.resetHistory();
+		assert.strictEqual(oTable.getContextByIndex(1, true), null,
+		"With binding that does have a getContextByIndex method; No context found; bPreventLoadData=true");
+
+		assert.strictEqual(oTable.getContextByIndex(-1), null, "Negative index");
+
+		oTable.getBinding.restore();
+	});
+
 	QUnit.module("Fixed rows and columns", {
 		beforeEach: function() {
 			createTable({
