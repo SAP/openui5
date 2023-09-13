@@ -2199,6 +2199,47 @@ sap.ui.define([
 			Core.applyChanges();
 		});
 
+		QUnit.test("Hiding close button", function (assert) {
+			// Arrange
+			var done = assert.async(),
+				oCard = this.oCard;
+
+			oCard.attachEvent("_ready", function () {
+
+				var oActionsStrip = oCard.getAggregation("_footer").getActionsStrip(),
+					aButtons = oActionsStrip._getToolbar().getContent();
+
+				aButtons[1].firePress();
+
+				var oSnackCard = oCard.getDependents()[0].getContent()[0];
+				oSnackCard.attachEventOnce("_ready", function () {
+					var oDialog = oSnackCard.getParent();
+					var fnAssertDestroyedCallback = function () {
+						done();
+					};
+
+					oDialog.attachAfterOpen(function () {
+
+						//Assert
+						assert.strictEqual(oSnackCard.getCardHeader().getToolbar().getVisible(), false, "Close Button is not visible");
+						assert.strictEqual(oSnackCard.getCardHeader().getDomRef().querySelector("sapMBtn"), null, "Close Button is not in DOM");
+
+						var oSnackCardActionStrip = oSnackCard.getAggregation("_footer").getActionsStrip(),
+							aSnackCardButtons = oSnackCardActionStrip._getToolbar().getContent();
+						// Act
+						aSnackCardButtons[1].firePress();
+						oSnackCard.destroy();
+						oDialog.attachAfterClose(fnAssertDestroyedCallback);
+					});
+				});
+			});
+
+			oCard.setManifest(oBiteManifestWithUrl);
+			oCard.placeAt(DOM_RENDER_LOCATION);
+			Core.applyChanges();
+		});
+
+
 		return Core.loadLibrary("sap.suite.ui.commons", {
 			async: true
 		}).then(function () {

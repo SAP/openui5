@@ -1503,7 +1503,7 @@ sap.ui.define([
 										key: 'manifest.json'
 									},
 									{
-										url: '/samples/actions/approve/snackManifest.json',
+										url: '/samples/actions/approve/detailsManifest.json',
 										name: 'detailsManifest.json',
 										key: 'detailsManifest.json'
 									},

@@ -67,7 +67,7 @@ sap.ui.define([
 		mConfiguration = this.createBindingInfos(mConfiguration, oCard.getBindingNamespaces());
 
 		if (bIsInDialog) {
-			oToolbar = this._createCloseButton();
+			oToolbar = this._createCloseButton(mConfiguration);
 		}
 
 		switch (mConfiguration.type) {
@@ -119,10 +119,16 @@ sap.ui.define([
 		return oHeader;
 	};
 
-	HeaderFactory.prototype._createCloseButton = function () {
+	HeaderFactory.prototype._createCloseButton = function (mConfiguration) {
+		var bVisible = true;
+		if (mConfiguration.closeButton && "visible" in mConfiguration.closeButton) {
+			bVisible = mConfiguration.closeButton.visible;
+		}
+
 		var oButton = new Button({
 			type: ButtonType.Transparent,
 			tooltip: oResourceBundle.getText("CARD_DIALOG_CLOSE_BUTTON"),
+			visible: bVisible,
 			icon: "sap-icon://decline",
 			press: function () {
 				this._oCard.hide();

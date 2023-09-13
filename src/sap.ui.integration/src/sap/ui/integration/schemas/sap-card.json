@@ -229,15 +229,7 @@
         },
         "visible": {
           "description": "[Experimental] Visibility of the footer",
-          "oneOf": [
-            {
-              "type": "boolean",
-              "default": true
-            },
-            {
-              "$ref": "#/definitions/simpleBinding"
-            }
-          ]
+          "$ref": "#/definitions/visibility"
         }
       }
     },
@@ -486,17 +478,13 @@
           "description": "Represents the status of the card",
           "$ref": "#/definitions/status"
         },
+        "closeButton": {
+          "description": "[Experimental] Represents the Close button when a card is opened by the ShowCard action.",
+          "$ref": "#/definitions/closeButton"
+        },
         "visible": {
           "description": "[Experimental] Visibility of the header",
-          "oneOf": [
-            {
-              "type": "boolean",
-              "default": true
-            },
-            {
-              "$ref": "#/definitions/simpleBinding"
-            }
-          ]
+          "$ref": "#/definitions/visibility"
         }
       }
     },
@@ -608,17 +596,13 @@
           "description": "Represents the status of the card",
           "$ref": "#/definitions/status"
         },
+        "closeButton": {
+          "description": "[Experimental] Represents the Close button when a card is opened by the ShowCard action.",
+          "$ref": "#/definitions/closeButton"
+        },
         "visible": {
           "description": "[Experimental] Visibility of the header",
-          "oneOf": [
-            {
-              "type": "boolean",
-              "default": true
-            },
-            {
-              "$ref": "#/definitions/simpleBinding"
-            }
-          ]
+          "$ref": "#/definitions/visibility"
         }
       }
     },
@@ -667,15 +651,7 @@
         },
         "visible": {
           "description": "Visibility of the main indicator",
-          "oneOf": [
-            {
-              "type": "boolean",
-              "default": true
-            },
-            {
-              "$ref": "#/definitions/simpleBinding"
-            }
-          ]
+          "$ref": "#/definitions/visibility"
         }
       }
     },
@@ -711,15 +687,7 @@
         },
         "visible": {
           "description": "Visibility of the side indicator",
-          "oneOf": [
-            {
-              "type": "boolean",
-              "default": true
-            },
-            {
-              "$ref": "#/definitions/simpleBinding"
-            }
-          ]
+          "$ref": "#/definitions/visibility"
         }
       }
     },
@@ -899,14 +867,7 @@
             },
             "visible": {
               "description": "Visibility of the item",
-              "oneOf": [
-                {
-                 "type": "boolean"
-                },
-                {
-                  "$ref": "#/definitions/simpleBinding"
-                }
-              ]
+              "$ref": "#/definitions/visibility"
             },
             "title": {
               "description": "Title of the data point. This is just a placeholder to store the title, title will not be rendered on the screen. This is needed to prevent the loss of columnn names while transforming table card to list card.",
@@ -974,15 +935,7 @@
           "properties": {
             "visible": {
               "description": "Represents the visibility state of the title",
-              "oneOf": [
-                {
-                  "type": "boolean",
-                  "default": true
-                },
-                {
-                  "$ref": "#/definitions/simpleBinding"
-                }
-              ]
+              "$ref": "#/definitions/visibility"
             },
             "text": {
               "description": "Represents a title text",
@@ -2486,14 +2439,7 @@
         },
         "visible": {
           "description": "Visibility of the icon",
-          "oneOf": [
-            {
-              "type": "boolean"
-            },
-            {
-              "$ref": "#/definitions/simpleBinding"
-            }
-          ]
+          "$ref": "#/definitions/visibility"
         }
       }
     },
@@ -2616,6 +2562,17 @@
               "type": "array"
             }
           }
+        }
+      }
+    },
+    "closeButton": {
+      "description": "[Experimental] Represents attributes of the Close button",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "visible": {
+          "description": "[Experimental] Represents the visibility of the Close button",
+          "$ref": "#/definitions/visibility"
         }
       }
     },
@@ -3171,14 +3128,7 @@
         },
         "visible": {
           "description": "Determines whether the filter is visible",
-          "oneOf": [
-            {
-              "type": "boolean"
-            },
-            {
-              "$ref": "#/definitions/simpleBinding"
-            }
-          ]
+          "$ref": "#/definitions/visibility"
         }
       }
     },
@@ -3284,14 +3234,7 @@
         },
         "visible": {
           "description": "Determines whether the filter is visible",
-          "oneOf": [
-            {
-              "type": "boolean"
-            },
-            {
-              "$ref": "#/definitions/simpleBinding"
-            }
-          ]
+          "$ref": "#/definitions/visibility"
         }
       }
     },
@@ -3328,14 +3271,7 @@
         },
         "visible": {
           "description": "Determines whether the filter is visible",
-          "oneOf": [
-            {
-              "type": "boolean"
-            },
-            {
-              "$ref": "#/definitions/simpleBinding"
-            }
-          ]
+          "$ref": "#/definitions/visibility"
         }
       }
     },
@@ -3753,14 +3689,7 @@
         },
         "visible": {
           "description": "Determines whether the item is visible",
-          "oneOf": [
-            {
-              "type": "boolean"
-            },
-            {
-              "$ref": "#/definitions/simpleBinding"
-            }
-          ]
+          "$ref": "#/definitions/visibility"
         }
       }
     },
