@@ -886,14 +886,17 @@ sap.ui.define([
 				}.bind(this));
 			},
 			afterEach() {
+				FlexInfoSession.remove();
 				sandbox.restore();
 			}
 		}, function() {
 			QUnit.test("with max layer param in the url and hasHigherLayerChanges", function(assert) {
 				this.oReloadInfo.hasHigherLayerChanges = true;
 				this.oReloadInfo.parameters = initialParameter("sap-ui-fl-max-layer", Layer.CUSTOMER, sScenario);
+				FlexInfoSession.set({maxLayer: Layer.CUSTOMER});
 				var bResult = ReloadInfoAPI.handleUrlParameters(this.oReloadInfo, sScenario);
 				assert.strictEqual(bResult, true, "parameters were changed");
+				assert.equal(FlexInfoSession.get().maxLayer, undefined, "max layer is set correct in session");
 				checkParameters({}, this.oReloadInfo.parameters, sScenario, assert);
 			});
 
@@ -901,9 +904,11 @@ sap.ui.define([
 				this.oReloadInfo.hasHigherLayerChanges = true;
 				this.oReloadInfo.ignoreMaxLayerParameter = true;
 				this.oReloadInfo.parameters = initialParameter("sap-ui-fl-max-layer", Layer.CUSTOMER, sScenario);
+				FlexInfoSession.set({maxLayer: Layer.CUSTOMER});
 				var bResult = ReloadInfoAPI.handleUrlParameters(this.oReloadInfo, sScenario);
 				assert.strictEqual(bResult, false, "no parameters were changed");
 				checkParameters({"sap-ui-fl-max-layer": [Layer.CUSTOMER]}, this.oReloadInfo.parameters, sScenario, assert);
+				assert.equal(FlexInfoSession.get().maxLayer, Layer.CUSTOMER, "max layer is set correct in session");
 			});
 
 			QUnit.test("without version in url and versionSwitch / version set", function(assert) {
@@ -912,40 +917,49 @@ sap.ui.define([
 				var bResult = ReloadInfoAPI.handleUrlParameters(this.oReloadInfo, sScenario);
 				assert.strictEqual(bResult, true, "parameters were changed");
 				checkParameters({"sap-ui-fl-version": ["1"]}, this.oReloadInfo.parameters, sScenario, assert);
+				assert.equal(FlexInfoSession.get().version, "1", "version is set correct in session");
 			});
 
 			QUnit.test("with version in url and versionSwitch / version set", function(assert) {
 				this.oReloadInfo.versionSwitch = true;
 				this.oReloadInfo.version = "1";
+				FlexInfoSession.set({version: "1"});
 				this.oReloadInfo.parameters = initialParameter("sap-ui-fl-version", "1", sScenario);
 				var bResult = ReloadInfoAPI.handleUrlParameters(this.oReloadInfo, sScenario);
 				assert.strictEqual(bResult, false, "no parameters were changed");
 				checkParameters({"sap-ui-fl-version": ["1"]}, this.oReloadInfo.parameters, sScenario, assert);
+				assert.equal(FlexInfoSession.get().version, "1", "version is set correct in session");
 			});
 
 			QUnit.test("with different version in url and versionSwitch / version set", function(assert) {
 				this.oReloadInfo.versionSwitch = true;
 				this.oReloadInfo.version = "1";
 				this.oReloadInfo.parameters = initialParameter("sap-ui-fl-version", "2", sScenario);
+				FlexInfoSession.set({version: "2"});
 				var bResult = ReloadInfoAPI.handleUrlParameters(this.oReloadInfo, sScenario);
 				assert.strictEqual(bResult, true, "parameters were changed");
 				checkParameters({"sap-ui-fl-version": ["1"]}, this.oReloadInfo.parameters, sScenario, assert);
+				assert.equal(FlexInfoSession.get().version, "1", "version is set correct in session");
 			});
 
 			QUnit.test("with version in url and removeVersionParameter", function(assert) {
 				this.oReloadInfo.removeVersionParameter = true;
 				this.oReloadInfo.parameters = initialParameter("sap-ui-fl-version", "2", sScenario);
+				FlexInfoSession.set({version: "2"});
 				var bResult = ReloadInfoAPI.handleUrlParameters(this.oReloadInfo, sScenario);
 				assert.strictEqual(bResult, true, "parameters were changed");
 				checkParameters({}, this.oReloadInfo.parameters, sScenario, assert);
+				assert.equal(FlexInfoSession.get().version, undefined, "version is set correct in session");
 			});
 
 			QUnit.test("with draft version in url and removeVersionParameter", function(assert) {
 				this.oReloadInfo.removeVersionParameter = true;
 				this.oReloadInfo.parameters = initialParameter("sap-ui-fl-version", Version.Number.Draft, sScenario);
+				FlexInfoSession.set({version: Version.Number.Draft});
 				var bResult = ReloadInfoAPI.handleUrlParameters(this.oReloadInfo, sScenario);
 				assert.strictEqual(bResult, true, "parameters were changed");
 				checkParameters({}, this.oReloadInfo.parameters, sScenario, assert);
+				assert.equal(FlexInfoSession.get().version, undefined, "version is set correct in session");
 			});
 
 			QUnit.test("without version in url and removeVersionParameter", function(assert) {
@@ -953,6 +967,7 @@ sap.ui.define([
 				var bResult = ReloadInfoAPI.handleUrlParameters(this.oReloadInfo, sScenario);
 				assert.strictEqual(bResult, false, "no parameters were changed");
 				checkParameters({}, this.oReloadInfo.parameters, sScenario, assert);
+				assert.equal(FlexInfoSession.get().version, undefined, "version is set correct in session");
 			});
 
 			QUnit.test("without version in url and removeDraft", function(assert) {
@@ -960,14 +975,23 @@ sap.ui.define([
 				var bResult = ReloadInfoAPI.handleUrlParameters(this.oReloadInfo, sScenario);
 				assert.strictEqual(bResult, false, "no parameters were changed");
 				checkParameters({}, this.oReloadInfo.parameters, sScenario, assert);
+				assert.equal(FlexInfoSession.get().version, undefined, "version is set correct in session");
 			});
 
 			QUnit.test("with draft version in url and removeDraft", function(assert) {
 				this.oReloadInfo.removeVersionParameter = true;
 				this.oReloadInfo.parameters = initialParameter("sap-ui-fl-version", Version.Number.Draft, sScenario);
+				FlexInfoSession.set({version: Version.Number.Draft});
 				var bResult = ReloadInfoAPI.handleUrlParameters(this.oReloadInfo, sScenario);
 				assert.strictEqual(bResult, true, "parameters were changed");
 				checkParameters({}, this.oReloadInfo.parameters, sScenario, assert);
+				assert.equal(FlexInfoSession.get().version, undefined, "version is set correct in session");
+			});
+
+			QUnit.test("with flex session contains with a different selector", function(assert) {
+				FlexInfoSession.setByReference({maxLayer: Layer.CUSTOMER}, "foo");
+				ReloadInfoAPI.handleUrlParameters(this.oReloadInfo, sScenario);
+				assert.deepEqual(FlexInfoSession.get(), {}, "session is empty");
 			});
 		});
 	});

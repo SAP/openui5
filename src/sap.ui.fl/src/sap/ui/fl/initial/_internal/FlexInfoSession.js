@@ -27,16 +27,24 @@ sap.ui.define([
 	};
 
 	FlexInfoSession.set = function(oInfo, oControl) {
-		var sReference = ManifestUtils.getFlexReferenceForControl(oControl);
-		FlexInfoSession.setByReference(oInfo, sReference);
+		if (oInfo) {
+			var sReference = ManifestUtils.getFlexReferenceForControl(oControl);
+			FlexInfoSession.setByReference(oInfo, sReference);
+		}
 	};
 
 	FlexInfoSession.setByReference = function(oInfo, sReference) {
-		window.sessionStorage.setItem(getSessionStorageKey(sReference), JSON.stringify(oInfo));
+		if (oInfo) {
+			window.sessionStorage.setItem(getSessionStorageKey(sReference), JSON.stringify(oInfo));
+		}
 	};
 
 	FlexInfoSession.remove = function(oControl) {
 		var sReference = ManifestUtils.getFlexReferenceForControl(oControl);
+		window.sessionStorage.removeItem(getSessionStorageKey(sReference));
+	};
+
+	FlexInfoSession.removeByReference = function(sReference) {
 		window.sessionStorage.removeItem(getSessionStorageKey(sReference));
 	};
 

@@ -20,8 +20,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/initial/_internal/FlexInfoSession",
 	"sap/ui/fl/LayerUtils",
-	"sap/ui/fl/requireAsync",
-	"sap/ui/fl/Utils"
+	"sap/ui/fl/requireAsync"
 ], function(
 	_omit,
 	each,
@@ -40,8 +39,7 @@ sap.ui.define([
 	ManifestUtils,
 	FlexInfoSession,
 	LayerUtils,
-	requireAsync,
-	Utils
+	requireAsync
 ) {
 	"use strict";
 
@@ -92,10 +90,7 @@ sap.ui.define([
 	var FlexState = {};
 
 	var _mInstances = {};
-	var _mNavigationHandlers = {};
 	var _mInitPromises = {};
-	var _oShellNavigationService;
-	var _oURLParsingService;
 	var _oChangePersistenceFactory;
 	var _mFlexObjectInfo = {
 		appDescriptorChanges: {
@@ -316,7 +311,7 @@ sap.ui.define([
 			bDataUpdated = true;
 		}
 		if (!_mInstances[sReference].storageResponse) {
-			_mInstances[sReference].storageResponse = filterByMaxLayer(_mInstances[sReference].unfilteredStorageResponse);
+			_mInstances[sReference].storageResponse = filterByMaxLayer(sReference, _mInstances[sReference].unfilteredStorageResponse);
 			// Flex objects need to be recreated
 			delete _mInstances[sReference].runtimePersistence;
 			bDataUpdated = true;
@@ -339,14 +334,17 @@ sap.ui.define([
 		}
 	}
 
-	function filterByMaxLayer(mResponse) {
+	function filterByMaxLayer(sReference, mResponse) {
 		const mFilteredReturn = merge({}, mResponse);
 		const mFlexObjects = mFilteredReturn.changes;
-		const oURLParsingService = getUShellService("URLParsing");
-		if (LayerUtils.isLayerFilteringRequired(oURLParsingService)) {
+		if (LayerUtils.isLayerFilteringRequired(sReference)) {
+			const oFlexInfoSession = FlexInfoSession.getByReference(sReference);
 			each(_mFlexObjectInfo, function(iIndex, mFlexObjectInfo) {
 				mFlexObjectInfo.pathInResponse.forEach(function(sPath) {
-					ObjectPath.set(sPath, LayerUtils.filterChangeDefinitionsByMaxLayer(ObjectPath.get(sPath, mFlexObjects), oURLParsingService), mFlexObjects);
+					const aFilterByMaxLayer = ObjectPath.get(sPath, mFlexObjects).filter(function(oChangeDefinition) {
+						return !oChangeDefinition.layer || !LayerUtils.isOverLayer(oChangeDefinition.layer, oFlexInfoSession.maxLayer);
+					});
+					ObjectPath.set(sPath, aFilterByMaxLayer, mFlexObjects);
 				});
 			});
 		}
@@ -365,7 +363,6 @@ sap.ui.define([
 				partialFlexState: mPropertyBag.partialFlexState
 			});
 
-			registerMaxLayerHandler(mPropertyBag.reference);
 			storeInfoInSession(mPropertyBag.reference, mResponse);
 
 			// no further changes to storageResponse properties allowed
@@ -389,42 +386,6 @@ sap.ui.define([
 		FlexInfoSession.setByReference(oFlexInfoSession, sReference);
 	}
 
-	function registerMaxLayerHandler(sReference) {
-		var oShellNavigationService = getUShellService("ShellNavigation");
-		if (oShellNavigationService && !_mNavigationHandlers[sReference]) {
-			_mNavigationHandlers[sReference] = handleMaxLayerChange.bind(null, sReference);
-			oShellNavigationService.registerNavigationFilter(_mNavigationHandlers[sReference]);
-		}
-	}
-
-	function deRegisterMaxLayerHandler(sReference) {
-		var oShellNavigationService = getUShellService("ShellNavigation");
-		if (oShellNavigationService) {
-			if (_mNavigationHandlers[sReference]) {
-				oShellNavigationService.unregisterNavigationFilter(_mNavigationHandlers[sReference]);
-				delete _mNavigationHandlers[sReference];
-			}
-		}
-	}
-
-	function handleMaxLayerChange(sReference, sNewHash, sOldHash) {
-		var oShellNavigationService = getUShellService("ShellNavigation");
-		if (oShellNavigationService) {
-			try {
-				var sCurrentMaxLayer = LayerUtils.getMaxLayerTechnicalParameter(sNewHash, getUShellService("URLParsing"));
-				var sPreviousMaxLayer = LayerUtils.getMaxLayerTechnicalParameter(sOldHash, getUShellService("URLParsing"));
-				if (sCurrentMaxLayer !== sPreviousMaxLayer) {
-					FlexState.rebuildFilteredResponse(sReference);
-				}
-			} catch (oError) {
-				// required to hinder any errors - can break FLP navigation
-				Log.error(oError.message);
-			}
-			return oShellNavigationService.NavigationFilterStatus.Continue;
-		}
-		return undefined;
-	}
-
 	function checkPartialFlexState(mInitProperties) {
 		var oFlexInstance = _mInstances[mInitProperties.reference];
 		if (oFlexInstance.partialFlexState === true && mInitProperties.partialFlexState !== true) {
@@ -442,30 +403,6 @@ sap.ui.define([
 			mInitProperties.reInitialize = true;
 		}
 		return mInitProperties;
-	}
-
-	function loadUShellServices() {
-		return Promise.all([
-			Utils.getUShellService("ShellNavigation"),
-			Utils.getUShellService("URLParsing")
-		])
-		.then(function(aServices) {
-			[_oShellNavigationService, _oURLParsingService] = aServices;
-		})
-		.catch(function(oError) {
-			Log.error(`Error getting service from Unified Shell: ${oError.message}`);
-		});
-	}
-
-	function getUShellService(sServiceName) {
-		if (Utils.getUshellContainer()) {
-			if (sServiceName === "ShellNavigation") {
-				return _oShellNavigationService;
-			} else if (sServiceName === "URLParsing") {
-				return _oURLParsingService;
-			}
-		}
-		return undefined;
 	}
 
 	// TODO: get rid of the following module dependencies as soon as the change state
@@ -497,7 +434,6 @@ sap.ui.define([
 	 */
 	FlexState.initialize = function(mPropertyBag) {
 		return Promise.all([
-			loadUShellServices(),
 			lazyLoadModules()
 		])
 		.then(function() {
@@ -568,9 +504,6 @@ sap.ui.define([
 	FlexState.update = function(mPropertyBag) {
 		enhancePropertyBag(mPropertyBag);
 		var sReference = mPropertyBag.reference;
-
-		deRegisterMaxLayerHandler(sReference);
-
 		var oCurrentRuntimePersistence = _mInstances[sReference].runtimePersistence;
 
 		// TODO: get rid of the following persistence operations as soon as the change state
@@ -585,7 +518,7 @@ sap.ui.define([
 		return (_mInitPromises[sReference] || Promise.resolve())
 		.then(loadFlexData.bind(this, mPropertyBag))
 		.then(function() {
-			_mInstances[sReference].storageResponse = filterByMaxLayer(_mInstances[sReference].unfilteredStorageResponse);
+			_mInstances[sReference].storageResponse = filterByMaxLayer(sReference, _mInstances[sReference].unfilteredStorageResponse);
 			var bUpdated = updateRuntimePersistence(
 				sReference,
 				_mInstances[sReference].storageResponse,
@@ -657,7 +590,6 @@ sap.ui.define([
 
 	FlexState.clearState = function(sReference) {
 		if (sReference) {
-			deRegisterMaxLayerHandler(sReference);
 			delete _mInstances[sReference];
 			delete _mInitPromises[sReference];
 			oFlexObjectsDataSelector.clearCachedResult({ reference: sReference });
@@ -670,9 +602,6 @@ sap.ui.define([
 				_oChangePersistenceFactory._instanceCache[sReference].removeDirtyChanges();
 			}
 		} else {
-			Object.keys(_mInstances).forEach(function(sReference) {
-				deRegisterMaxLayerHandler(sReference);
-			});
 			_mInstances = {};
 			_mInitPromises = {};
 			oFlexObjectsDataSelector.clearCachedResult();
@@ -737,7 +666,7 @@ sap.ui.define([
 	FlexState.rebuildFilteredResponse = function(sReference) {
 		if (_mInstances[sReference]) {
 			_mInstances[sReference].preparedMaps = {};
-			_mInstances[sReference].storageResponse = filterByMaxLayer(_mInstances[sReference].unfilteredStorageResponse);
+			_mInstances[sReference].storageResponse = filterByMaxLayer(sReference, _mInstances[sReference].unfilteredStorageResponse);
 			// Storage response has changed, recreate the flex objects
 			_mInstances[sReference].runtimePersistence = buildRuntimePersistence(
 				_mInstances[sReference].storageResponse,

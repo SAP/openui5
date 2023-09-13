@@ -2,6 +2,7 @@
 
 sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexObjects/FlexObject",
+	"sap/ui/fl/initial/_internal/FlexInfoSession",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/LayerUtils",
 	"sap/ui/fl/registry/Settings",
@@ -9,6 +10,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	FlexObject,
+	FlexInfoSession,
 	Layer,
 	LayerUtils,
 	Settings,
@@ -116,26 +118,25 @@ sap.ui.define([
 	});
 
 	QUnit.module("LayerUtils.isLayerFilteringRequired", {
-		beforeEach() {
-			this.oURLParsingService = getURLParsingService();
-		},
 		afterEach() {
+			FlexInfoSession.remove();
 			sandbox.restore();
 		}
 	}, function() {
 		QUnit.test("when maxLayer is CUSTOMER", function(assert) {
-			sandbox.stub(UriParameters.prototype, "get").withArgs("sap-ui-fl-max-layer").returns(Layer.CUSTOMER);
-
-			assert.equal(LayerUtils.isLayerFilteringRequired(this.oURLParsingService), true, "maxLayer is not equal topLayer");
+			sandbox.stub(FlexInfoSession, "getByReference").returns({maxLayer: Layer.CUSTOMER});
+			assert.equal(LayerUtils.isLayerFilteringRequired(), true, "maxLayer is not equal topLayer");
 		});
 
 		QUnit.test("when maxLayer is USER", function(assert) {
-			sandbox.stub(UriParameters.prototype, "get").withArgs("sap-ui-fl-max-layer").returns(Layer.USER);
-
-			assert.equal(LayerUtils.isLayerFilteringRequired(this.oURLParsingService), false, "maxLayer is equal topLayer");
+			sandbox.stub(FlexInfoSession, "getByReference").returns({maxLayer: Layer.USER});
+			assert.equal(LayerUtils.isLayerFilteringRequired(), false, "maxLayer is equal topLayer");
 		});
 	});
 
+	/**
+	 * @deprecated As of version 1.118
+	 */
 	QUnit.module("LayerUtils.isOverMaxLayer", {
 		beforeEach() {
 			this.oURLParsingService = getURLParsingService();
@@ -177,6 +178,9 @@ sap.ui.define([
 		});
 	});
 
+	/**
+	 * @deprecated As of version 1.118
+	 */
 	QUnit.module("LayerUtils.getMaxLayer", {
 		beforeEach() {
 			this.oURLParsingService = getURLParsingService();
@@ -241,6 +245,9 @@ sap.ui.define([
 		});
 	});
 
+	/**
+	 * @deprecated As of version 1.118
+	 */
 	QUnit.module("LayerUtils.filterChangeDefinitionsByMaxLayer", {
 		afterEach() {
 			sandbox.restore();
