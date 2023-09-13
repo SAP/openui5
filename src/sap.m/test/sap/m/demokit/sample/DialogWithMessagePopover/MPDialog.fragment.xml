@@ -107,9 +107,10 @@
 			<Toolbar>
 				<content>
 					<Button id="messagePopoverBtn"
+						visible="{= !!${message>/}.length }"
 						icon="{ path: '/', formatter: '.buttonIconFormatter' }"
 						type="{ path: '/', formatter: '.buttonTypeFormatter' }"
-						text="{path: '/', formatter: '.highestSeverityMessages' }"
+						text="{ path: '/', formatter: '.highestSeverityMessages' }"
 						press=".handleMessagePopoverPress"
 						ariaHasPopup="Dialog" />
 					<ToolbarSpacer />
