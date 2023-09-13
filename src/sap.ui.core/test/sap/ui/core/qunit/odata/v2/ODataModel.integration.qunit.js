@@ -18764,4 +18764,95 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			assert.strictEqual(oObjectPage.getObjectBinding().getBoundContext().isUpdated(), false);
 		});
 	});
+
+	//*********************************************************************************************
+	// Scenario: If the server uses server side paging and the OData model uses "Client" mode all
+	// data is requested up to the model size limit.
+	// BCP: 2380127053
+[false, true].forEach(function (bShortRead) {
+	QUnit.test("OperationMode.Client: with server side paging, short read:" + bShortRead, function (assert) {
+		var oTable,
+			iDataReceived = 0,
+			iDataRequested = 0,
+			iExpectedSize = bShortRead ? 15 : 30,
+			oModel = createSalesOrdersModel({defaultOperationMode: "Client"}),
+			sView = '\
+<t:Table id="table">\
+	<Text id="note" text="{Note}"/>\
+</t:Table>',
+			that = this;
+
+		function dataRequested() {
+			iDataRequested += 1;
+		}
+		function dataReceived(oEvent) {
+			var oEventData = oEvent.getParameter("data");
+
+			iDataReceived += 1;
+			// responses are merged
+			assert.strictEqual(oEventData.results.length, iExpectedSize);
+			oEventData.results.forEach(function (oData, i) {
+				assert.strictEqual(oData.Note, "SO" + (i + 1));
+			});
+			assert.strictEqual(oEventData.__count, "" + iExpectedSize);
+		}
+
+		oModel.setSizeLimit(30);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			function createItems(iFrom, iLength) {
+				var i,
+					aItems = [];
+
+				for (i = 0; i < iLength; i += 1) {
+					aItems.push({
+						__metadata: {uri : "SalesOrderSet('" + iFrom + "')"},
+						Note: "SO" + iFrom,
+						SalesOrderID: "" + iFrom
+					});
+					iFrom += 1;
+				}
+
+				return aItems;
+			}
+
+			that.expectHeadRequest()
+				.expectRequest("SalesOrderSet", {
+					__next: "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderSet?$skiptoken=3",
+					results: createItems(1, 3) // whitout $top server returns 3; in real maybe 100
+				})
+				.expectRequest("SalesOrderSet?$skip=3&$top=27", {
+					// if $top is given server limit is used; here 10, in real maybe 5000
+					__next: "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderSet?$top=24$skiptoken=13",
+					results: createItems(4, 10)
+				})
+				.expectRequest("SalesOrderSet?$skip=13&$top=17", {
+					// no _next link, that means server returned all requestd entries; there may be
+					// more on the server but the amount of data exceeds the model size limit
+					results: createItems(14, bShortRead ? 2 : 17)
+				});
+
+			oTable = that.oView.byId("table");
+			// code under test - client mode reads all data
+			oTable.bindRows({
+					events: {
+						dataRequested: dataRequested,
+						dataReceived: dataReceived
+					},
+					filter: [new Filter("GrossAmount", FilterOperator.GT, 500)],
+					path: "/SalesOrderSet",
+					sorter: [new Sorter("CompanyCode", true)]
+				});
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			var oBinding = oTable.getBinding("rows");
+
+			assert.strictEqual(oBinding.getLength(), iExpectedSize);
+			assert.strictEqual(oBinding.getCount(), iExpectedSize);
+			assert.strictEqual(iDataRequested, 1);
+			assert.strictEqual(iDataReceived, 1);
+		});
+	});
+});
 });
