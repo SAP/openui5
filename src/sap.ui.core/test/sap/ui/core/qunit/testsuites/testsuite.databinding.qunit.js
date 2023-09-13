@@ -56,6 +56,13 @@ sap.ui.define(function() {
 				}
 			},
 
+			ClientPropertyBinding : {
+				title: "sap.ui.model.ClientPropertyBinding - QUnit Tests",
+				module: [
+					"test-resources/sap/ui/core/qunit/model/ClientPropertyBinding.qunit"
+				]
+			},
+
 			ClientTreeBinding: {
 				title: "sap.ui.model.ClientTreeBinding - QUnit Tests",
 				module: ["test-resources/sap/ui/core/qunit/model/ClientTreeBinding.qunit"]

@@ -73,7 +73,7 @@
 								? [${i18n>APP_VERSION_VERSION}, ${versionData>/version}, ${i18n>APP_VERSION_IN_PROGRESS}].join(' ')
 								: '' }"
 							state="Information"
-							inverted="true"
+							inverted="false"
 							visible="{= ${appView>/bDesktopSize} &amp;&amp; !${appView>/bSearchMode} }">
 						</ObjectStatus>
 
@@ -86,7 +86,7 @@
 								? [${i18n>APP_VERSION_VERSION}, ${versionData>/version}].join(' ')
 								: '' }"
 							press="onChangeVersionButtonPress"
-							visible="{appView>/bShowVersionSwitchButton}">
+							visible="{= ${appView>/bShowVersionSwitchButton} &amp;&amp; !${appView>/bIsSnapshotVersion} }">
 						</Button>
 
 						<OverflowToolbarButton
@@ -117,6 +117,11 @@
 										icon="sap-icon://locked"
 										text="{i18n>APP_INFORMATION_BTN_PRIVACY}" />
 									<MenuItem
+										key="license"
+										icon="sap-icon://permission"
+										text="{i18n>APP_INFORMATION_BTN_LICENSE}"
+										visible="{versionData>/isOpenUI5}" />
+									<MenuItem
 										key="terms_of_use"
 										icon="sap-icon://document-text"
 										text="{i18n>APP_INFORMATION_BTN_TERMS_OF_USE}"
@@ -133,11 +138,6 @@
 											<MenuItem key="disclaimer" text="{i18n>APP_INFORMATION_BTN_DISCLAIMER}" />
 										</items>
 									</MenuItem>
-									<MenuItem
-										key="license"
-										icon="sap-icon://permission"
-										text="{i18n>APP_INFORMATION_BTN_LICENSE}"
-										visible="{versionData>/isOpenUI5}" />
 								</Menu>
 							</menu>
 						</OverflowToolbarMenuButton>

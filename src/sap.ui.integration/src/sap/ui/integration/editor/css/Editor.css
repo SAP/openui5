@@ -437,6 +437,12 @@
 	margin: 0 0.3rem;
 }
 
+/* Image Select */
+.sapUiIntegrationImageSelect .image {
+	max-height: 30em;
+	max-width: 20em;
+}
+
 /* Icon Select */
 .sapUiIntegrationIconSelectList li[aria-posinset] IMG.sapMSelectListItemIcon {
 	width: 1.1rem;

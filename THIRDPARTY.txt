@@ -22,21 +22,6 @@ License Text: https://github.com/SAP/openui5/blob/master/LICENSES/BSD-3-Clause.t
 Contained in: src/sap.ui.codeeditor/src/sap/ui/codeeditor/js/ace/*
 
 
-Library: sap.ui.commons:
-
-Component: jQuery UI, version: 1.10.4
-Copyright: 2014 jQuery Foundation and other contributors
-License: MIT
-License Text: https://github.com/SAP/openui5/blob/master/LICENSES/MIT.txt
-Contained in: src/sap.ui.commons/src/sap/ui/commons/themes/base/jQueryUi*
-
-Component: jquery.fix.clone
-Copyright: Spencer Tipping
-License: MIT
-License Text: https://github.com/SAP/openui5/blob/master/LICENSES/MIT.txt
-Contained in: src/sap.ui.commons/src/sap/ui/commons/Carousel.js
-
-
 Library: sap.ui.core:
 
 Component: jQuery 3, version: 3.6.0

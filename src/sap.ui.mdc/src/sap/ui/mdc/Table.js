@@ -2781,23 +2781,6 @@ sap.ui.define([
 		}
 	};
 
-	// TODO: move to a base util that can be used by most aggregations
-	Table.prototype._getSorters = function() {
-		var aSorterProperties = this.getSortConditions() ? this.getSortConditions().sorters : [];
-
-		var aSorters = [],
-			oPropertyHelper = this.getPropertyHelper();
-
-		aSorterProperties.forEach(function(oSorter) {
-			if (oPropertyHelper.hasProperty(oSorter.name)) {
-				var sPath = oPropertyHelper.getProperty(oSorter.name).path;
-				aSorters.push(new Sorter(sPath, oSorter.descending));
-			}
-		});
-
-		return aSorters;
-	};
-
 	Table.prototype._onPaste = function(mPropertyBag) {
 		if (this.getEnablePaste()) {
 			this.firePaste({

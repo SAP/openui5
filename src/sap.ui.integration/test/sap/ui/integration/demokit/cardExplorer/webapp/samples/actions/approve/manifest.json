@@ -75,7 +75,7 @@
 						{
 							"type": "ShowCard",
 							"parameters": {
-								"manifest": "./snackManifest.json"
+								"manifest": "./detailsManifest.json"
 							}
 						}
 					]

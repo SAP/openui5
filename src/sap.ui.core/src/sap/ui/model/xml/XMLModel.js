@@ -184,7 +184,7 @@ sap.ui.define([
 	};
 
 	/*
-	 * @see sap.ui.model.Model.prototype.bindProperty
+	 * @see sap.ui.model.ClientModel#bindProperty
 	 */
 	XMLModel.prototype.bindProperty = function(sPath, oContext, mParameters) {
 		var oBinding = new XMLPropertyBinding(this, sPath, oContext, mParameters);

@@ -8,7 +8,8 @@ sap.ui.define([
 	"sap/m/Text",
 	"sap/ui/core/Core",
 	"sap/ui/core/library",
-	"sap/ui/qunit/utils/createAndAppendDiv"
+	"sap/ui/qunit/utils/createAndAppendDiv",
+	"sap/ui/events/KeyCodes"
 ], function(
 	IconTabHeader,
 	IconTabFilter,
@@ -17,7 +18,8 @@ sap.ui.define([
 	Text,
 	Core,
 	coreLibrary,
-	createAndAppendDiv
+	createAndAppendDiv,
+	KeyCodes
 ) {
 	"use strict";
 
@@ -72,7 +74,10 @@ sap.ui.define([
 			_oIconTabHeader: createHeaderWithItems(1),
 			isA: function() {},
 			getSelectedItem: function() {},
-			fireSelectionChange: function() {}
+			fireSelectionChange: function() {},
+			ontap: IconTabBarSelectList.prototype.ontap,
+			onkeydown: IconTabBarSelectList.prototype.onkeydown,
+			_selectItem: IconTabBarSelectList.prototype._selectItem
 		};
 
 		var oFakeEvent = {
@@ -80,14 +85,15 @@ sap.ui.define([
 			preventDefault: function() {}
 		};
 
-		var oTapHandlerSpy = this.spy(IconTabBarSelectList.prototype, "ontap"),
+		var oTab = new IconTabFilter({ content: new Text({ text: "a" }) }),
+			_oSelectionSpy = this.spy(oSelectListStub, "_selectItem"),
 			oSelectionChangeSpy = this.spy(oSelectListStub, "fireSelectionChange");
 
 		// Act
 		IconTabBarSelectList.prototype.ontap.call(oSelectListStub, oFakeEvent);
 
 		// Assert
-		assert.strictEqual(oTapHandlerSpy.callCount, 1, "ontap handler was called");
+		assert.strictEqual(_oSelectionSpy.callCount, 1, "_selectItem was called");
 		assert.ok(oSelectionChangeSpy.notCalled, "fireSelectionChange was not called");
 
 		// Arrange
@@ -97,8 +103,30 @@ sap.ui.define([
 		IconTabBarSelectList.prototype.ontap.call(oSelectListStub, oFakeEvent);
 
 		// Assert
-		assert.strictEqual(oTapHandlerSpy.callCount, 2, "ontap handler was called");
+		assert.strictEqual(_oSelectionSpy.callCount, 2, "_selectItem was called");
 		assert.ok(oSelectionChangeSpy.notCalled, "fireSelectionChange was not called");
+
+		// Act
+		IconTabBarSelectList.prototype.onkeydown.call(oSelectListStub, {
+			which: KeyCodes.SPACE,
+			srcControl: oTab,
+			preventDefault: function() {}
+		});
+
+		// Assert
+		assert.strictEqual(_oSelectionSpy.callCount, 2, "_selectItem was called");
+		assert.ok(oSelectionChangeSpy.notCalled, "fireSelectionChange was not called");
+
+		// Act
+		IconTabBarSelectList.prototype.onkeyup.call(oSelectListStub, {
+			which: KeyCodes.SPACE,
+			srcControl: oTab,
+			preventDefault: function() {}
+		});
+
+		// Assert
+		assert.strictEqual(_oSelectionSpy.callCount, 3, "_selectItem was called");
+		assert.ok(oSelectionChangeSpy.called, "fireSelectionChange was called");
 
 		// Arrange
 		oFakeEvent.srcControl = new IconTabFilter({ enabled: false });
@@ -107,21 +135,21 @@ sap.ui.define([
 		IconTabBarSelectList.prototype.ontap.call(oSelectListStub, oFakeEvent);
 
 		// Assert
-		assert.strictEqual(oTapHandlerSpy.callCount, 3, "ontap handler was called");
-		assert.ok(oSelectionChangeSpy.notCalled, "fireSelectionChange was not called");
+		assert.strictEqual(_oSelectionSpy.callCount, 4, "_selectItem was called");
+		assert.strictEqual(oSelectionChangeSpy.callCount, 1, "fireSelectionChange was not called");
 
 		// Arrange
-		oFakeEvent.srcControl = new IconTabFilter({ content: new Text({ text: "a" }) });
+		oFakeEvent.srcControl = oTab;
 
 		// Act
 		IconTabBarSelectList.prototype.ontap.call(oSelectListStub, oFakeEvent);
 
 		// Assert
-		assert.ok(oTapHandlerSpy.callCount, 4, "ontap handler was called");
-		assert.ok(oSelectionChangeSpy.called, "fireSelectionChange was called");
+		assert.strictEqual(_oSelectionSpy.callCount, 5, "_selectItem was called");
+		assert.strictEqual(oSelectionChangeSpy.callCount, 2, "fireSelectionChange was called");
 
 		// Clean-up
-		oTapHandlerSpy.restore();
+		_oSelectionSpy.restore();
 		oSelectionChangeSpy.restore();
 		oSelectListStub._oIconTabHeader.destroy();
 	});

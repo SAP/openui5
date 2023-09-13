@@ -904,20 +904,16 @@ sap.ui.define([
 		 */
 		getSyncCallBehavior : function() {
 			var syncCallBehavior = 0; // ignore
-			var mOptions = {
+			var sNoSync = BaseConfig.get({
 				name: "sapUiXxNoSync",
 				type: BaseConfig.Type.String,
 				external: true,
 				freeze: true
-			};
-			var sNoSync = BaseConfig.get(mOptions);
+			});
 			if (sNoSync === 'warn') {
 				syncCallBehavior = 1;
-			} else {
-				mOptions.type = BaseConfig.Type.Boolean;
-				if (BaseConfig.get(mOptions)) {
-					syncCallBehavior = 2;
-				}
+			} else if (/^(true|x)$/i.test(sNoSync)) {
+				syncCallBehavior = 2;
 			}
 			return syncCallBehavior;
 		},

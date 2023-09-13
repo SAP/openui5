@@ -1232,46 +1232,6 @@ sap.ui.define([
 		}.bind(this));
 	});
 
-	QUnit.test("_getSorters should consider the 'path'", function(assert) {
-		this.oTable.addColumn(new Column({
-			template: new Text(),
-			propertyKey: "name"
-		}));
-
-		this.oTable.addColumn(new Column({
-			template: new Text(),
-			propertyKey: "age"
-		}));
-
-		TableQUnitUtils.stubPropertyInfos(this.oTable, [
-			{
-				name: "name",
-				label: "name",
-				path: "deepPath/name",
-				dataType: "String"
-			},
-			{
-				name: "age",
-				label: "age",
-				dataType: "String"
-			}
-		]);
-
-		return this.oTable._fullyInitialized().then(function() {
-			var oTable = this.oTable,
-				oSortConditions = {
-					sorters: [
-						{name: "name", descending: false}
-					]
-				};
-
-			oTable.setSortConditions(oSortConditions);
-			var aSorters = oTable._getSorters();
-			assert.strictEqual(aSorters.length, 1, "Exported sorters returned");
-			assert.strictEqual(aSorters[0].sPath, "deepPath/name", "path from the propertyInfo is set to the sorter");
-		}.bind(this));
-	});
-
 	QUnit.test("sort indicator is set correctly at the inner mobile table columns", function(assert) {
 		this.oTable.setType("ResponsiveTable");
 		this.oTable.addColumn(new Column({
