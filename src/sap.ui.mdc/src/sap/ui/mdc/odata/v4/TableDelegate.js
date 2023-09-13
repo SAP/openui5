@@ -426,20 +426,33 @@ sap.ui.define([
 			return undefined;
 		}
 
-		var oPropertyHelper = oTable.getPropertyHelper();
-		var oVisibleProperty = oTable._getVisibleProperties().find(function(oProperty) {
-			var oCurrentProperty = oPropertyHelper.getProperty(oProperty.name);
-			return oCurrentProperty.getSimpleProperties().find(function(oSimpleProperty) {
-				return oSimpleProperty.name === oGroupedProperty.name;
-			});
-		});
-
-		if (!oVisibleProperty) {
+		if (!getVisiblePropertyNames(oTable).includes(oGroupedProperty.name)) {
 			// Suppress grouping by non-visible property.
 			return undefined;
 		}
 
 		return TableDelegate.getGroupSorter.apply(this, arguments);
+	};
+
+	/**
+	 * @inheritDoc
+	 */
+	Delegate.getSorters = function(oTable) {
+		var aSorters = TableDelegate.getSorters.apply(this, arguments);
+
+		// Sorting by a property that is not in the aggregation info (sorting by a property that is not requested) causes a backend error.
+		if (isAnalyticsEnabled(oTable)) {
+			var oPropertyHelper = oTable.getPropertyHelper();
+			var aVisiblePropertyPaths = getVisiblePropertyNames(oTable).map((sPropertyName) => {
+				return oPropertyHelper.getProperty(sPropertyName).path;
+			});
+
+			aSorters = aSorters.filter((oSorter) => {
+				return aVisiblePropertyPaths.includes(oSorter.sPath);
+			});
+		}
+
+		return aSorters;
 	};
 
 	/**
@@ -617,7 +630,7 @@ sap.ui.define([
 		}
 
 		var oAggregationInfo = {
-			visible: getVisibleProperties(oTable),
+			visible: getVisiblePropertyNames(oTable),
 			groupLevels: aGroupLevels,
 			grandTotal: aAggregates,
 			subtotals: aAggregates,
@@ -628,7 +641,7 @@ sap.ui.define([
 		oPlugin.setAggregationInfo(oAggregationInfo);
 	}
 
-	function getVisibleProperties(oTable) {
+	function getVisiblePropertyNames(oTable) {
 		var oVisiblePropertiesSet = new Set();
 
 		oTable.getColumns().forEach(function(oColumn) {

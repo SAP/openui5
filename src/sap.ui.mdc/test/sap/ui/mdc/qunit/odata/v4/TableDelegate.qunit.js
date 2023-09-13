@@ -147,44 +147,6 @@ sap.ui.define([
 		return sType === "QuickAction" ? aQuickActions : aQuickActions[0];
 	}
 
-	function initTableForSelection (mSettings, fnBeforeInit) {
-		if (this.oTable) {
-			this.oTable.destroy();
-		}
-
-		this.oTable = new Table(Object.assign({
-			delegate: {
-				name: "odata.v4.TestDelegate",
-				payload: {
-					collectionPath: "/Products"
-				}
-			},
-			columns: [
-				new Column({
-					propertyKey: "Name",
-					header: new Text({
-						text: "Column A"
-					}),
-					template: new Text({
-						text: "{Name}"
-					})
-				})
-			],
-			models: new ODataModel({
-				serviceUrl: "/MyService/"
-			})
-		}, mSettings));
-
-		if (fnBeforeInit) {
-			fnBeforeInit(this.oTable);
-		}
-
-		this.oTable.placeAt("qunit-fixture");
-		Core.applyChanges();
-
-		return this.oTable.initialized();
-	}
-
 	QUnit.module("Initialization of selection", {
 		before: function() {
 			TableQUnitUtils.stubPropertyInfos(Table.prototype, [{
@@ -202,7 +164,43 @@ sap.ui.define([
 		after: function() {
 			TableQUnitUtils.restorePropertyInfos(Table.prototype);
 		},
-		initTable: initTableForSelection
+		initTable: function(mSettings, fnBeforeInit) {
+			if (this.oTable) {
+				this.oTable.destroy();
+			}
+
+			this.oTable = new Table(Object.assign({
+				delegate: {
+					name: "odata.v4.TestDelegate",
+					payload: {
+						collectionPath: "/Products"
+					}
+				},
+				columns: [
+					new Column({
+						propertyKey: "Name",
+						header: new Text({
+							text: "Column A"
+						}),
+						template: new Text({
+							text: "{Name}"
+						})
+					})
+				],
+				models: new ODataModel({
+					serviceUrl: "/MyService/"
+				})
+			}, mSettings));
+
+			if (fnBeforeInit) {
+				fnBeforeInit(this.oTable);
+			}
+
+			this.oTable.placeAt("qunit-fixture");
+			Core.applyChanges();
+
+			return this.oTable.initialized();
+		}
 	});
 
 	QUnit.test("GridTableType", function(assert) {
@@ -1569,10 +1567,10 @@ sap.ui.define([
 
 	QUnit.test("Sort", function(assert) {
 		this.oTable.setSortConditions({ sorters: [{ name: "Name", descending: false }] })._rebind();
-		assert.ok(this.oSortSpy.firstCall.calledWithExactly(this.oTable._getSorters()));
+		assert.ok(this.oSortSpy.firstCall.calledWithExactly(this.oTable.getControlDelegate().getSorters(this.oTable)));
 
 		this.oTable.setSortConditions({ sorters: [{ name: "Name", descending: true }] })._rebind();
-		assert.ok(this.oSortSpy.secondCall.calledWithExactly(this.oTable._getSorters()));
+		assert.ok(this.oSortSpy.secondCall.calledWithExactly(this.oTable.getControlDelegate().getSorters(this.oTable)));
 
 		this.oTable.setSortConditions()._rebind();
 		assert.equal(this.oSortSpy.callCount, 3);
@@ -1692,15 +1690,14 @@ sap.ui.define([
 		afterEach: function() {
 			this.destroyTable();
 		},
-		initTable: function(sTableType) {
+		initTable: function(mSettings) {
 			this.destroyTable();
-			this.oTable = new Table({
-				type: sTableType,
+			this.oTable = new Table(Object.assign({
 				autoBindOnInit: false,
 				delegate: {
 					name: "sap/ui/mdc/odata/v4/TableDelegate"
 				}
-			});
+			}, mSettings));
 			return this.oTable.initialized();
 		},
 		destroyTable: function() {
@@ -1710,9 +1707,77 @@ sap.ui.define([
 		}
 	});
 
+	// BCP: 2380131026
+	QUnit.test("updateBindingInfo - Sort invisible property if analytics is enabled", function(assert) {
+		TableQUnitUtils.stubPropertyInfos(Table.prototype, [{
+			name: "Name",
+			path: "Name_Path",
+			label: "Name_Label",
+			dataType: "String"
+		}, {
+			name: "FirstName",
+			path: "FirstName_Path",
+			label: "FirstName_Label",
+			dataType: "String"
+		}, {
+			name: "ID",
+			path: "ID_Path",
+			label: "ID_Label",
+			dataType: "String"
+		}]);
+
+		return this.initTable({
+			p13nMode: ["Sort", "Filter", "Group", "Aggregate"],
+			columns: [
+				new Column({
+					propertyKey: "Name",
+					header: new Text({
+						text: "Name_Label"
+					}),
+					template: new Text({
+						text: "{Name_Path}"
+					})
+				})
+			],
+			sortConditions: {
+				sorters: [
+					{name: "Name", descending: true},
+					{name: "FirstName", descending: true}
+				]
+			},
+			filterConditions: {
+				ID: [{
+					isEmpty: null,
+					operator: "EQ",
+					validated: "NotValidated",
+					values: ["test"]
+				}]
+			}
+		}).then(() => {
+			return this.oTable._fullyInitialized();
+		}).then(() => {
+			var aExpectedSorter = [new Sorter("Name_Path", true)];
+			var aExpectedFilter = [FilterUtil.getFilterInfo(this.oTable.getControlDelegate().getTypeMap(),
+															this.oTable.getConditions(),
+															this.oTable.getPropertyHelper().getProperties()).filters];
+			var oBindingInfo = {};
+
+			TableDelegate.updateBindingInfo(this.oTable, oBindingInfo);
+			assert.deepEqual(oBindingInfo, {parameters: {}, sorter: aExpectedSorter, filters: aExpectedFilter}, "Table");
+
+			oBindingInfo = {};
+			this.oTable.setType("ResponsiveTable");
+			aExpectedSorter.push(new Sorter("FirstName_Path", true));
+			TableDelegate.updateBindingInfo(this.oTable, oBindingInfo);
+			assert.deepEqual(oBindingInfo, {parameters: {}, sorter: aExpectedSorter, filters: aExpectedFilter}, "ResponsiveTable");
+		}).finally(() => {
+			TableQUnitUtils.restorePropertyInfos(Table.prototype);
+		});
+	});
+
 	QUnit.test("#getSupportedFeatures", function(assert) {
 		var fnTest = function(sTableType, oExpectedFeatures) {
-			var pInit = this.oTable ? this.oTable.setType(sTableType).initialized() : this.initTable(sTableType);
+			var pInit = this.oTable ? this.oTable.setType(sTableType).initialized() : this.initTable({type: sTableType});
 			return pInit.then(function(oTable) {
 				var oFeatures = oTable.getControlDelegate().getSupportedFeatures(oTable);
 				assert.deepEqual(oFeatures, oExpectedFeatures, sTableType + ": supported features are correct");
@@ -1740,7 +1805,7 @@ sap.ui.define([
 
 	QUnit.test("#expandAll", function(assert) {
 		var fnTest = function (sTableType, bExpandsAll) {
-			var pInit = this.oTable ? this.oTable.setType(sTableType).initialized() : this.initTable(sTableType);
+			var pInit = this.oTable ? this.oTable.setType(sTableType).initialized() : this.initTable({type: sTableType});
 			return pInit.then(function(oTable) {
 				sinon.stub(oTable, "getRowBinding").returns({
 					setAggregation: function(oObject) {
@@ -1773,9 +1838,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("#collapseAll", function(assert) {
-
 		var fnTest = function (sTableType, bExpandsAll) {
-			var pInit = this.oTable ? this.oTable.setType(sTableType).initialized() : this.initTable(sTableType);
+			var pInit = this.oTable ? this.oTable.setType(sTableType).initialized() : this.initTable({type: sTableType});
 			return pInit.then(function(oTable) {
 				sinon.stub(oTable, "getRowBinding").returns({
 					setAggregation: function(oObject) {
@@ -1808,56 +1872,62 @@ sap.ui.define([
 	});
 
 	QUnit.test("setSelectedContexts", function (assert) {
-
-		const initTable = () => {
-			return initTableForSelection.call(this, {
-				selectionMode: TableSelectionMode.Single,
-				type: new GridTableType()
-			}).then((oTable) => new Promise((resolve) => {
-				oTable.attachEventOnce("_bindingChange", function () {
-					resolve(oTable);
-				});
-			}));
-		};
-
 		const testSelection = (oTable) => {
-			assert.ok(!oTable.getSelectedContexts().length, "No contexts are selected");
 			const oRowBinding = oTable.getRowBinding();
-			const oNextSelectedContext = oRowBinding.getAllCurrentContexts ? oRowBinding.getAllCurrentContexts()[1] : oRowBinding.getContexts()[1];
-			assert.ok(oNextSelectedContext, "A context is available for selection");
+			const oNextSelectedContext = oRowBinding.getAllCurrentContexts()[1];
 			const aNextSelectedContexts = [oNextSelectedContext];
+
+			assert.ok(!oTable.getSelectedContexts().length, "No contexts are selected");
+			assert.ok(oNextSelectedContext, "A context is available for selection");
 			oTable._setSelectedContexts(aNextSelectedContexts);
+
 			return new Promise((resolve) => { setTimeout(resolve, 0); }).then(() => {
 				assert.ok(oTable.getSelectedContexts().indexOf(oNextSelectedContext) >= 0, "getSelectedContexts() changed successfully.");
 			});
 		};
 
-		return [
-			(oTable) => {
-				assert.ok(oTable._oTable.getPlugins().find((oPlugin) => oPlugin.isA("sap.ui.table.plugins.ODataV4Selection")), "sap.ui.table.plugins.ODataV4Selection configuration found.");
-				return testSelection(oTable);
+		return this.initTable({
+			delegate: {
+				name: "odata.v4.TestDelegate",
+				payload: {
+					collectionPath: "/Products"
+				}
 			},
-			(oTable) => {
-				oTable._enableV4LegacySelection();
-				return new Promise((resolve) => { setTimeout(resolve, 50); }).then(() => {
-					assert.ok(oTable._oTable.getPlugins().find((oPlugin) => oPlugin.isA("sap.ui.table.plugins.MultiSelectionPlugin")), "sap.ui.table.plugins.MultiSelectionPlugin configuration found.");
-					return testSelection(oTable);
-				});
-			},
-			(oTable) => {
-				sinon.stub(oTable._oTable, "getPlugins").returns([]);
-				assert.throws(() => oTable._setSelectedContexts([]), function (oError) {
-					return oError instanceof Error && oError.message === "Unsupported operation: TableDelegate does not support #setSelectedContexts for the given Table configuration";
-				}, "_setSelectedContexts throws expected error on unsupported table configuration.");
-				oTable._oTable.getPlugins.restore();
-			},
-			(oTable) => {
-				sinon.stub(oTable, "_isOfType").returns(false);
-				assert.throws(() => oTable._setSelectedContexts([]), function (oError) {
-					return oError instanceof Error && oError.message === "Unsupported operation: TableDelegate does not support #setSelectedContexts for the given TableType";
-				}, "_setSelectedContexts throws expected error on unsupported table types.");
-				oTable._isOfType.restore();
-			}
-		].reduce((oAccumulator, fnCallback) => (oAccumulator.then((oTable) => initTable().then(fnCallback))), Promise.resolve());
+			models: new ODataModel({
+				serviceUrl: "/MyService/"
+			}),
+			autoBindOnInit: true
+		}).then(() => {
+			return new Promise((resolve) => {
+				this.oTable.attachEventOnce("_bindingChange", resolve);
+			});
+		}).then(() => {
+			assert.ok(this.oTable._oTable.getPlugins().find((oPlugin) => oPlugin.isA("sap.ui.table.plugins.ODataV4Selection")),
+				"sap.ui.table.plugins.ODataV4Selection configuration found.");
+			return testSelection(this.oTable);
+		}).then(() => {
+			this.oTable._enableV4LegacySelection();
+			return new Promise((resolve) => { setTimeout(resolve, 50); }).then(() => {
+				assert.ok(this.oTable._oTable.getPlugins().find((oPlugin) => oPlugin.isA("sap.ui.table.plugins.MultiSelectionPlugin")),
+				"sap.ui.table.plugins.MultiSelectionPlugin configuration found.");
+				return testSelection(this.oTable);
+			});
+		}).then(() => {
+			sinon.stub(this.oTable._oTable, "getPlugins").returns([]);
+			assert.throws(
+				() => this.oTable._setSelectedContexts([]),
+				new Error("Unsupported operation: TableDelegate does not support #setSelectedContexts for the given Table configuration"),
+				"_setSelectedContexts throws expected error on unsupported table configuration."
+			);
+			this.oTable._oTable.getPlugins.restore();
+		}).then(() => {
+			sinon.stub(this.oTable, "_isOfType").returns(false);
+			assert.throws(
+				() => this.oTable._setSelectedContexts([]),
+				new Error("Unsupported operation: TableDelegate does not support #setSelectedContexts for the given TableType"),
+				"_setSelectedContexts throws expected error on unsupported table types."
+			);
+			this.oTable._isOfType.restore();
+		});
 	});
 });
