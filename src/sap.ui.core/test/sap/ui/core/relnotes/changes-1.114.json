@@ -191,5 +191,21 @@
         ]
       }
     ]
+  },
+  "1.114.9": {
+    "date": "September 2023",
+    "notes": [
+      {
+        "id": "6c1f91758cb4e7ae2937e0ad137ecd81363da5d2",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v2.ODataListBinding#loadData: read all data (up to model size limit) in \"Client\" mode",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380127053"
+          }
+        ]
+      }
+    ]
   }
 }

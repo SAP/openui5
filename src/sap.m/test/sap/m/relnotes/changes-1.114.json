@@ -488,5 +488,32 @@
         ]
       }
     ]
+  },
+  "1.114.9": {
+    "date": "September 2023",
+    "notes": [
+      {
+        "id": "2d53f032e1515ccd6d498c868d8f61a95c56f22e",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: Fix navigation skipping",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400005568382023"
+          }
+        ]
+      },
+      {
+        "id": "d8eb583cc55374e035dfe86a294b16895f3e43c3",
+        "type": "FIX",
+        "text": " sap.m.FeedListItem: fixed icon appearance",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370079966"
+          }
+        ]
+      }
+    ]
   }
 }
