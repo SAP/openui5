@@ -30,6 +30,7 @@ sap.ui.define(['./PropertyBinding'],
 		constructor : function(oModel, sPath, oContext, mParameters){
 			PropertyBinding.apply(this, arguments);
 			this.oValue = this._getValue();
+			this.setIgnoreMessages(mParameters && mParameters.ignoreMessages);
 		}
 
 	});
@@ -73,6 +74,21 @@ sap.ui.define(['./PropertyBinding'],
 		}
 	};
 
-	return ClientPropertyBinding;
+	/**
+	 * Returns <code>true</code>, as this binding supports the feature of not propagating model
+	 * messages to the control.
+	 *
+	 * @returns {boolean} <code>true</code>
+	 *
+	 * @public
+	 * @see sap.ui.model.Binding#getIgnoreMessages
+	 * @see sap.ui.model.Binding#setIgnoreMessages
+	 * @since 1.119.0
+	 */
+	// @override sap.ui.model.Binding#supportsIgnoreMessages
+	ClientPropertyBinding.prototype.supportsIgnoreMessages = function () {
+		return true;
+	};
 
+	return ClientPropertyBinding;
 });

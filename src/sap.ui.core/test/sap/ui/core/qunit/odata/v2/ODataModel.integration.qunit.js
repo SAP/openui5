@@ -7971,6 +7971,133 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 
 	//*********************************************************************************************
 	// Scenario: With the binding parameter <code>ignoreMessages</code> the application developer
+	// can control whether messages are displayed at the control. It works for
+	// <code>sap.ui.model.json.JSONPropertyBinding</code>s and composite bindings containing such
+	// bindings.
+	// JIRA: CPOUI5MODELS-1397
+	QUnit.test("JSONPropertyBinding and CompositeBindings: ignoreMessages", function (assert) {
+		var oJSONModel = new JSONModel({
+				data: {SalesOrderID: "1", Note: "Note"}
+			}),
+			oMessage = new Message({
+				processor: oJSONModel,
+				target: ["/data/Note"],
+				message: "Foo",
+				type: MessageType.Warning
+			}),
+			sView = '\
+<FlexBox id="objectPage" binding="{/data}">\
+	<Input id="Note0" value="{Note}" />\
+	<Input id="Note1" value="{path: \'Note\', parameters: {ignoreMessages: false}}" />\
+	<Input id="Note2" value="{path: \'Note\', parameters: {ignoreMessages: true}}" />\
+	<Input id="Composite0" value="{= ${SalesOrderID} + ${value: \' - \'} + ${Note}}" />\
+	<Input id="Composite1" value="{= ${SalesOrderID} + ${value: \' - \'} + ${\
+			path: \'Note\',\
+			parameters: {ignoreMessages: false}\
+		}}" />\
+	<Input id="Composite2" value="{= ${SalesOrderID} + ${value: \' - \'} + ${\
+			path: \'Note\',\
+			parameters: {ignoreMessages: true}\
+		}}" />\
+	<Input id="Composite3" value="{parts: [\'SalesOrderID\', {value: \'-\'}, {\
+			path: \'Note\',\
+			parameters: {ignoreMessages: false}\
+		}]}" />\
+	<Input id="Composite4" value="{parts: [\'SalesOrderID\', {value: \'-\'}, {\
+			path: \'Note\',\
+			parameters: {ignoreMessages: true}\
+		}]}" />\
+</FlexBox>';
+
+		this.expectValue("Note0", "Note")
+			.expectValue("Note1", "Note")
+			.expectValue("Note2", "Note")
+			.expectValue("Composite0", "1 - Note")
+			.expectValue("Composite1", "1 - Note")
+			.expectValue("Composite2", "1 - Note")
+			.expectValue("Composite3", "1 - Note")
+			.expectValue("Composite4", "1 - Note")
+			.expectValueState("Note0", "Warning", "Foo")
+			.expectValueState("Note1", "Warning", "Foo")
+			.expectValueState("Note2", "None", "")
+			.expectValueState("Composite0", "Warning", "Foo")
+			.expectValueState("Composite1", "Warning", "Foo")
+			.expectValueState("Composite2", "None", "")
+			.expectValueState("Composite3", "Warning", "Foo")
+			.expectValueState("Composite4", "None", "")
+			.expectMessages([oMessage]);
+
+		Messaging.addMessages([oMessage]);
+
+		// code under test
+		return this.createView(assert, sView, oJSONModel);
+	});
+
+	//*********************************************************************************************
+	// Scenario: With the binding parameter <code>ignoreMessages</code> the application developer
+	// can control whether messages are displayed at the control. It works for
+	// <code>sap.ui.model.xml.XMLPropertyBinding</code>s and composite bindings containing such
+	// bindings.
+	// JIRA: CPOUI5MODELS-1397
+	QUnit.test("XMLPropertyBinding and CompositeBindings: ignoreMessages", function (assert) {
+		var oXMLModel = new XMLModel(),
+			oMessage = new Message({
+				processor: oXMLModel,
+				target: ["/data/0/@Note"],
+				message: "Foo",
+				type: MessageType.Warning
+			}),
+			sView = '\
+<FlexBox id="objectPage" binding="{/data/0}">\
+	<Input id="Note0" value="{@Note}" />\
+	<Input id="Note1" value="{path: \'@Note\', parameters: {ignoreMessages: false}}" />\
+	<Input id="Note2" value="{path: \'@Note\', parameters: {ignoreMessages: true}}" />\
+	<Input id="Composite0" value="{= ${@SalesOrderID} + ${value: \' - \'} + ${@Note}}" />\
+	<Input id="Composite1" value="{= ${@SalesOrderID} + ${value: \' - \'} + ${\
+			path: \'@Note\',\
+			parameters: {ignoreMessages: false}\
+		}}" />\
+	<Input id="Composite2" value="{= ${@SalesOrderID} + ${value: \' - \'} + ${\
+			path: \'@Note\',\
+			parameters: {ignoreMessages: true}\
+		}}" />\
+	<Input id="Composite3" value="{parts: [\'@SalesOrderID\', {value: \'-\'}, {\
+			path: \'@Note\',\
+			parameters: {ignoreMessages: false}\
+		}]}" />\
+	<Input id="Composite4" value="{parts: [\'@SalesOrderID\', {value: \'-\'}, {\
+			path: \'@Note\',\
+			parameters: {ignoreMessages: true}\
+		}]}" />\
+</FlexBox>';
+
+		this.expectValue("Note0", "Note")
+			.expectValue("Note1", "Note")
+			.expectValue("Note2", "Note")
+			.expectValue("Composite0", "1 - Note")
+			.expectValue("Composite1", "1 - Note")
+			.expectValue("Composite2", "1 - Note")
+			.expectValue("Composite3", "1 - Note")
+			.expectValue("Composite4", "1 - Note")
+			.expectValueState("Note0", "Warning", "Foo")
+			.expectValueState("Note1", "Warning", "Foo")
+			.expectValueState("Note2", "None", "")
+			.expectValueState("Composite0", "Warning", "Foo")
+			.expectValueState("Composite1", "Warning", "Foo")
+			.expectValueState("Composite2", "None", "")
+			.expectValueState("Composite3", "Warning", "Foo")
+			.expectValueState("Composite4", "None", "")
+			.expectMessages([oMessage]);
+
+		oXMLModel.setXML('<?xml version="1.0"?><root><data SalesOrderID="1" Note="Note"/></root>');
+		Messaging.addMessages([oMessage]);
+
+		// code under test
+		return this.createView(assert, sView, oXMLModel);
+	});
+
+	//*********************************************************************************************
+	// Scenario: With the binding parameter <code>ignoreMessages</code> the application developer
 	// can control whether messages are displayed at the control. For
 	// <code>sap.ui.model.type.Currency</code> the parameter <code>ignoreMessages</code> is
 	// determined automatically based on the format option <code>showMeasure</code>. Manual setting

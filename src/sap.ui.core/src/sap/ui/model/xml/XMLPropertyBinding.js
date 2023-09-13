@@ -4,8 +4,8 @@
 /*eslint-disable max-len */
 // Provides the XML model implementation of a property binding
 sap.ui.define([
-	'sap/ui/model/ChangeReason',
-	'sap/ui/model/ClientPropertyBinding',
+	"sap/ui/model/ChangeReason",
+	"sap/ui/model/ClientPropertyBinding",
 	"sap/base/util/deepEqual"
 ],
 	function(ChangeReason, ClientPropertyBinding, deepEqual) {
@@ -57,6 +57,8 @@ sap.ui.define([
 		var oValue = this._getValue();
 		if (!deepEqual(oValue, this.oValue) || bForceupdate) {// optimize for not firing the events when unneeded
 			this.oValue = oValue;
+			this.getDataState().setValue(this.oValue);
+			this.checkDataState();
 			this._fireChange({reason: ChangeReason.Change});
 		}
 	};
