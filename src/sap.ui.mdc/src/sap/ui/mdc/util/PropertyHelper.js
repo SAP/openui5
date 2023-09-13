@@ -100,7 +100,7 @@ sap.ui.define([
 	 *     - propagateAllowance (optional, default=true)
 	 *         Whether the value of 'allowed' is propagated to all sub-attributes.
 	 */
-	var mAttributeMetadata = { // TODO: reserve reference attributes, e.g. unit -> unitProperty
+	const mAttributeMetadata = { // TODO: reserve reference attributes, e.g. unit -> unitProperty
 		// Common
 		name: { // Unique key
 			type: "string",
@@ -206,7 +206,7 @@ sap.ui.define([
 	/**
 	 * The methods listed in this map are added to every <code>PropertyInfo</code> object.
 	 */
-	var mPropertyMethods = {
+	const mPropertyMethods = {
 		/**
 		 * Checks whether the property is complex.
 		 *
@@ -260,9 +260,9 @@ sap.ui.define([
 		}
 	};
 
-	var aCommonAttributes = ["name", "label", "tooltip", "visible", "path", "dataType", "formatOptions", "constraints",
+	const aCommonAttributes = ["name", "label", "tooltip", "visible", "path", "dataType", "formatOptions", "constraints",
 							 "maxConditions", "group", "groupLabel", "caseSensitive"];
-	var _private = new WeakMap();
+	const _private = new WeakMap();
 
 	function stringifyPlainObject(oObject) {
 		return JSON.stringify(oObject, function(sKey, oValue) {
@@ -271,7 +271,7 @@ sap.ui.define([
 	}
 
 	function reportInvalidProperty(sMessage, oAdditionalInfo) {
-		var mLoadedLibraries = Core.getLoadedLibraries();
+		const mLoadedLibraries = Core.getLoadedLibraries();
 
 		// Enable strict validation if
 		// 1. it is not disabled explicitly
@@ -297,12 +297,12 @@ sap.ui.define([
 			return; // Avoid stringification overhead if logging is not required.
 		}
 
-		var sAdditionalInfo = stringifyPlainObject(oAdditionalInfo);
+		const sAdditionalInfo = stringifyPlainObject(oAdditionalInfo);
 		Log.warning("Invalid property definition: " + sMessage + (sAdditionalInfo ? "\n" + sAdditionalInfo : ""));
 	}
 
 	function throwInvalidPropertyError(sMessage, oAdditionalInfo) {
-		var sAdditionalInfo = oAdditionalInfo ? stringifyPlainObject(oAdditionalInfo) : null;
+		const sAdditionalInfo = oAdditionalInfo ? stringifyPlainObject(oAdditionalInfo) : null;
 		throw new Error("Invalid property definition: " + sMessage + (sAdditionalInfo ? "\n" + sAdditionalInfo : ""));
 	}
 
@@ -320,12 +320,12 @@ sap.ui.define([
 	}
 
 	function deepFreeze(oObject) {
-		var aKeys = Object.getOwnPropertyNames(oObject);
+		const aKeys = Object.getOwnPropertyNames(oObject);
 
 		Object.freeze(oObject);
 
-		for (var i = 0; i < aKeys.length; i++) {
-			var vValue = oObject[aKeys[i]];
+		for (let i = 0; i < aKeys.length; i++) {
+			const vValue = oObject[aKeys[i]];
 
 			if (typeof vValue === "function") {
 				Object.freeze(vValue);
@@ -348,7 +348,7 @@ sap.ui.define([
 	}
 
 	function getAttributeDataType(vAttributeType) {
-		var sType;
+		let sType;
 
 		if (typeof vAttributeType === "object") {
 			sType = "object";
@@ -360,7 +360,7 @@ sap.ui.define([
 	}
 
 	function getTypeDefault(vAttributeType) {
-		var oDataType = getAttributeDataType(vAttributeType);
+		const oDataType = getAttributeDataType(vAttributeType);
 
 		if (oDataType.isArrayType()) {
 			return oDataType.getBaseType().getDefaultValue();
@@ -378,9 +378,9 @@ sap.ui.define([
 	}
 
 	function preparePropertyDeep(oPropertyHelper, oProperty, mProperties, sPath, oPropertySection, mAttributeSection) {
-		var bTopLevel = sPath == null;
-		var aDependenciesForDefaults = [];
-		var bIsComplex = PropertyHelper.isPropertyComplex(oProperty);
+		const bTopLevel = sPath == null;
+		let aDependenciesForDefaults = [];
+		const bIsComplex = PropertyHelper.isPropertyComplex(oProperty);
 
 		if (bTopLevel) {
 			mAttributeSection = _private.get(oPropertyHelper).mAttributeMetadata;
@@ -391,10 +391,10 @@ sap.ui.define([
 			return [];
 		}
 
-		for (var sAttribute in mAttributeSection) {
-			var mAttribute = mAttributeSection[sAttribute];
-			var sAttributePath = bTopLevel ? sAttribute : sPath + "." + sAttribute;
-			var vValue = oPropertySection[sAttribute];
+		for (const sAttribute in mAttributeSection) {
+			const mAttribute = mAttributeSection[sAttribute];
+			const sAttributePath = bTopLevel ? sAttribute : sPath + "." + sAttribute;
+			const vValue = oPropertySection[sAttribute];
 
 			if (bIsComplex && !mAttribute.forComplexProperty.allowed) {
 				if ("valueIfNotAllowed" in mAttribute.forComplexProperty) {
@@ -428,9 +428,9 @@ sap.ui.define([
 	}
 
 	function preparePropertyReferences(oPropertySection, sAttribute, mProperties) {
-		var vPropertyReference = oPropertySection[sAttribute];
-		var vProperties;
-		var sPropertyName = sAttribute;
+		const vPropertyReference = oPropertySection[sAttribute];
+		let vProperties;
+		let sPropertyName = sAttribute;
 
 		if (Array.isArray(vPropertyReference)) {
 			vProperties = vPropertyReference.map(function(sName) {
@@ -449,7 +449,7 @@ sap.ui.define([
 
 	function setAttributeDefault(oPropertySection, mAttributeSection, sSection, sAttribute, aDependenciesForDefaults, vValue) {
 		if ("default" in mAttributeSection) {
-			var oDefault = mAttributeSection.default;
+			const oDefault = mAttributeSection.default;
 
 			// "ignoreIfNull" takes effect only if a default value for the attribute has been specified in its metadata.
 			if (vValue === null && oDefault.ignoreIfNull && "value" in oDefault) {
@@ -485,10 +485,10 @@ sap.ui.define([
 	}
 
 	function finalizeAttributeMetadata(mAttributeSection, sPath, mParentAttributeSection) {
-		for (var sAttribute in mAttributeSection) {
-			var mAttribute = mAttributeSection[sAttribute];
-			var sAttributePath = sPath == null ? sAttribute : sPath + "." + sAttribute;
-			var mParentForComplexProperty = mParentAttributeSection ? mParentAttributeSection.forComplexProperty : {};
+		for (const sAttribute in mAttributeSection) {
+			const mAttribute = mAttributeSection[sAttribute];
+			const sAttributePath = sPath == null ? sAttribute : sPath + "." + sAttribute;
+			const mParentForComplexProperty = mParentAttributeSection ? mParentAttributeSection.forComplexProperty : {};
 
 			mAttribute.forComplexProperty = Object.assign({
 				allowed: mParentForComplexProperty.allowed && mParentForComplexProperty.propagateAllowance,
@@ -515,8 +515,8 @@ sap.ui.define([
 			throwInvalidPropertyError("Property infos must be an array.");
 		}
 
-		var mPrivate = _private.get(oPropertyHelper);
-		var aClonedProperties = merge([], aProperties);
+		const mPrivate = _private.get(oPropertyHelper);
+		const aClonedProperties = merge([], aProperties);
 
 		oPropertyHelper.validateProperties(aClonedProperties, mPrivate.aPreviousRawProperties);
 
@@ -557,7 +557,7 @@ sap.ui.define([
 	 * @since 1.83
 	 * @alias sap.ui.mdc.util.PropertyHelper
 	 */
-	var PropertyHelper = BaseObject.extend("sap.ui.mdc.util.PropertyHelper", {
+	const PropertyHelper = BaseObject.extend("sap.ui.mdc.util.PropertyHelper", {
 		constructor: function(aProperties, oParent, mAdditionalAttributes) {
 			BaseObject.call(this);
 
@@ -571,8 +571,8 @@ sap.ui.define([
 				}
 			});
 
-			var mPrivate = {};
-			var aAdditionalAttributes = Object.keys(mAdditionalAttributes || {});
+			const mPrivate = {};
+			const aAdditionalAttributes = Object.keys(mAdditionalAttributes || {});
 
 			mPrivate.mAttributeMetadata = aCommonAttributes.concat(aAdditionalAttributes).reduce(function(mMetadata, sAttribute) {
 				mMetadata[sAttribute] = sAttribute in mAttributeMetadata ? mAttributeMetadata[sAttribute] : mAdditionalAttributes[sAttribute];
@@ -604,9 +604,9 @@ sap.ui.define([
 	 * @protected
 	 */
 	PropertyHelper.prototype.validateProperties = function(aProperties, aPreviousProperties) {
-		var oUniquePropertiesSet = new Set();
+		const oUniquePropertiesSet = new Set();
 
-		for (var i = 0; i < aProperties.length; i++) {
+		for (let i = 0; i < aProperties.length; i++) {
 			this.validateProperty(aProperties[i], aProperties, aPreviousProperties);
 			oUniquePropertiesSet.add(aProperties[i].name);
 		}
@@ -642,10 +642,10 @@ sap.ui.define([
 			}
 		}
 
-		var mPrivate = _private.get(this);
+		const mPrivate = _private.get(this);
 
 		mPrivate.aMandatoryAttributes.forEach(function(sMandatoryAttribute) {
-			var bAllowedForComplexProperty = mPrivate.mAttributeMetadata[sMandatoryAttribute].forComplexProperty.allowed;
+			const bAllowedForComplexProperty = mPrivate.mAttributeMetadata[sMandatoryAttribute].forComplexProperty.allowed;
 
 			if (oProperty[sMandatoryAttribute] == null && PropertyHelper.isPropertyComplex(oProperty) && !bAllowedForComplexProperty) {
 				// Don't throw an error if a complex property does not contain a mandatory attribute that is not allowed for complex properties.
@@ -661,17 +661,17 @@ sap.ui.define([
 	};
 
 	function validatePropertyDeep(oPropertyHelper, oProperty, aProperties, sPath, oPropertySection, mAttributeSection) {
-		var bTopLevel = sPath == null;
+		const bTopLevel = sPath == null;
 
 		if (bTopLevel) {
 			mAttributeSection = _private.get(oPropertyHelper).mAttributeMetadata;
 			oPropertySection = oProperty;
 		}
 
-		for (var sAttribute in oPropertySection) {
-			var mAttribute = mAttributeSection[sAttribute];
-			var sAttributePath = bTopLevel ? sAttribute : sPath + "." + sAttribute;
-			var vValue = oPropertySection[sAttribute];
+		for (const sAttribute in oPropertySection) {
+			const mAttribute = mAttributeSection[sAttribute];
+			const sAttributePath = bTopLevel ? sAttribute : sPath + "." + sAttribute;
+			const vValue = oPropertySection[sAttribute];
 
 			if (!mAttribute) {
 				reportInvalidProperty("Property contains invalid attribute '" + sAttributePath + "'.", oProperty);
@@ -693,8 +693,8 @@ sap.ui.define([
 	}
 
 	function validatePropertyReferences(oPropertyHelper, oProperty, aProperties, sPath, oPropertySection, mAttributeSection) {
-		var aPropertyNames = mAttributeSection.type.endsWith("[]") ? oPropertySection : [oPropertySection];
-		var oUniquePropertiesSet = new Set(aPropertyNames);
+		const aPropertyNames = mAttributeSection.type.endsWith("[]") ? oPropertySection : [oPropertySection];
+		const oUniquePropertiesSet = new Set(aPropertyNames);
 
 		if (aPropertyNames.indexOf(oProperty.name) > -1) {
 			throwInvalidPropertyError("Property references itself in the '" + sPath + "' attribute.", oProperty);
@@ -704,7 +704,7 @@ sap.ui.define([
 			throwInvalidPropertyError("Property contains duplicate names in the '" + sPath + "' attribute.", oProperty);
 		}
 
-		for (var i = 0; i < aProperties.length; i++) {
+		for (let i = 0; i < aProperties.length; i++) {
 			if (oUniquePropertiesSet.has(aProperties[i].name)) {
 				if (PropertyHelper.isPropertyComplex(aProperties[i])) {
 					throwInvalidPropertyError("Property references complex properties in the '" + sPath + "' attribute.", oProperty);
@@ -725,14 +725,14 @@ sap.ui.define([
 	 * @protected
 	 */
 	PropertyHelper.prototype.prepareProperty = function(oProperty) {
-		var mProperties = this.getPropertyMap();
-		var aDependenciesForDefaults = preparePropertyDeep(this, oProperty, mProperties);
+		const mProperties = this.getPropertyMap();
+		const aDependenciesForDefaults = preparePropertyDeep(this, oProperty, mProperties);
 
 		aDependenciesForDefaults.forEach(function(mDependency) {
-			var oPropertySection = deepFind(oProperty, mDependency.targetPath);
+			const oPropertySection = deepFind(oProperty, mDependency.targetPath);
 
 			if (oPropertySection) {
-				var vValue = deepFind(oProperty, mDependency.source);
+				let vValue = deepFind(oProperty, mDependency.source);
 
 				if (vValue == null) {
 					vValue = getTypeDefault(mDependency.targetType);
@@ -754,7 +754,7 @@ sap.ui.define([
 	 * @public
 	 */
 	PropertyHelper.prototype.getParent = function() {
-		var oPrivate = _private.get(this);
+		const oPrivate = _private.get(this);
 		return oPrivate ? oPrivate.oParent : null;
 	};
 
@@ -775,7 +775,7 @@ sap.ui.define([
 	 * @public
 	 */
 	PropertyHelper.prototype.getProperties = function() {
-		var oPrivate = _private.get(this);
+		const oPrivate = _private.get(this);
 		return oPrivate ? oPrivate.aProperties : [];
 	};
 
@@ -786,7 +786,7 @@ sap.ui.define([
 	 * @public
 	 */
 	PropertyHelper.prototype.getPropertyMap = function() {
-		var oPrivate = _private.get(this);
+		const oPrivate = _private.get(this);
 		return oPrivate ? oPrivate.mProperties : {};
 	};
 

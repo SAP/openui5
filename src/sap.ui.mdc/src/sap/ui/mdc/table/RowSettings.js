@@ -26,7 +26,7 @@ sap.ui.define([
 	 * @alias sap.ui.mdc.table.RowSettings
 	 */
 
-	var RowSettings = Element.extend("sap.ui.mdc.table.RowSettings", {
+	const RowSettings = Element.extend("sap.ui.mdc.table.RowSettings", {
 		metadata: {
 			library: "sap.ui.mdc",
 			properties: {
@@ -70,7 +70,7 @@ sap.ui.define([
 	});
 
 	RowSettings.prototype.getAllSettings = function() {
-		var mSettings = {},
+		const mSettings = {},
 			thisCloned = this.clone();	// To make sure the binding info instances are not shared between different tables
 
 		if (this.isBound("navigated")) {
@@ -95,13 +95,13 @@ sap.ui.define([
 	};
 
 	RowSettings.prototype.getAllActions = function () {
-		var mSettings = {},
+		const mSettings = {},
 			thisCloned = this.clone();
 
 		if (this.isBound("rowActions")) {
 			// Set bindingInfo for items aggregation to bindingInfo of rowActions
 			mSettings.items = thisCloned.getBindingInfo("rowActions");
-			var oTemplate = mSettings.items.template;
+			const oTemplate = mSettings.items.template;
 			// Create temporary metdata information for later processing
 			mSettings.templateInfo = {
 				type: oTemplate.isBound("type") ? oTemplate.getBindingInfo("type") : oTemplate.getType(),
@@ -116,7 +116,7 @@ sap.ui.define([
 	};
 
 	RowSettings.prototype.getRowActionCount = function () {
-		var iCount = 0;
+		let iCount = 0;
 		if (this.isBound("rowActions")) {
 			iCount = 1;
 		} else {

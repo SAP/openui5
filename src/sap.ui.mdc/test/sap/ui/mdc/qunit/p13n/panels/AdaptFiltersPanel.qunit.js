@@ -15,9 +15,9 @@ sap.ui.define([
 ], function(AdaptFiltersPanel, P13nBuilder, JSONModel, CustomListItem, Toolbar, Event, Text, List, SegmentedButtonItem, PropertyHelper, VBox, oCore) {
 	"use strict";
 
-	var aVisible = ["key1", "key2", "key3"];
+	const aVisible = ["key1", "key2", "key3"];
 
-	var aInfoData = [
+	const aInfoData = [
 		{
 			name: "key1",
 			label: "Field 1",
@@ -111,11 +111,11 @@ sap.ui.define([
 		this.oAFPanel.setP13nModel(new JSONModel(this.oP13nData));
 
 		this.oAFPanel._getSearchField().setValue("Field 5");
-		var oFakeEvent = new Event("liveSearch", this.oAFPanel._getSearchField(), {});
+		const oFakeEvent = new Event("liveSearch", this.oAFPanel._getSearchField(), {});
 
 		this.oAFPanel._filterByModeAndSearch(oFakeEvent);
 
-		var oOuterList = this.oAFPanel.getCurrentViewContent()._oListControl;
+		const oOuterList = this.oAFPanel.getCurrentViewContent()._oListControl;
 		assert.equal(oOuterList.getItems()[0].getVisible(), false, "Panel is invisible since no items are available");
 		assert.equal(oOuterList.getItems()[1].getVisible(), true, "Panel is visible since items are available");
 	});
@@ -125,11 +125,11 @@ sap.ui.define([
 		this.oAFPanel.setP13nModel(new JSONModel(this.oP13nData));
 
 		this.oAFPanel._getSearchField().setValue("Some Tooltip");
-		var oFakeEvent = new Event("liveSearch", this.oAFPanel._getSearchField(), {});
+		const oFakeEvent = new Event("liveSearch", this.oAFPanel._getSearchField(), {});
 
 		this.oAFPanel._filterByModeAndSearch(oFakeEvent);
 
-		var oOuterList = this.oAFPanel.getCurrentViewContent()._oListControl;
+		const oOuterList = this.oAFPanel.getCurrentViewContent()._oListControl;
 		assert.equal(oOuterList.getItems()[0].getVisible(), false, "Panel is invisible since no items are available");
 		assert.equal(oOuterList.getItems()[1].getVisible(), true, "Panel is visible since items are available");
 	});
@@ -139,8 +139,8 @@ sap.ui.define([
 		this.oAFPanel.setP13nModel(new JSONModel(this.oP13nData));
 
 		this.oAFPanel._sModeKey = "active";
-		var oFakeEvent = new Event("liveSearch", this.oAFPanel._getSearchField(), {});
-		var oOuterList = this.oAFPanel.getCurrentViewContent()._oListControl;
+		const oFakeEvent = new Event("liveSearch", this.oAFPanel._getSearchField(), {});
+		const oOuterList = this.oAFPanel.getCurrentViewContent()._oListControl;
 
 		//filter only via select control --> only first group has an active item
 		this.oAFPanel._filterByModeAndSearch(oFakeEvent);
@@ -165,8 +165,8 @@ sap.ui.define([
 		this.oAFPanel.setP13nModel(new JSONModel(this.oP13nData));
 
 		this.oAFPanel._sModeKey = "mandatory";
-		var oFakeEvent = new Event("liveSearch", this.oAFPanel._getSearchField(), {});
-		var oOuterList = this.oAFPanel.getCurrentViewContent()._oListControl;
+		const oFakeEvent = new Event("liveSearch", this.oAFPanel._getSearchField(), {});
+		const oOuterList = this.oAFPanel.getCurrentViewContent()._oListControl;
 
 		//filter only via select control --> only second group has a mandatory item
 		this.oAFPanel._filterByModeAndSearch(oFakeEvent);
@@ -185,8 +185,8 @@ sap.ui.define([
 		this.oAFPanel.setP13nModel(new JSONModel(this.oP13nData));
 
 		this.oAFPanel._sModeKey = "visibleactive";
-		var oFakeEvent = new Event("liveSearch", this.oAFPanel._getSearchField(), {});
-		var oOuterList = this.oAFPanel.getCurrentViewContent()._oListControl;
+		const oFakeEvent = new Event("liveSearch", this.oAFPanel._getSearchField(), {});
+		const oOuterList = this.oAFPanel.getCurrentViewContent()._oListControl;
 
 		//filter only via select control --> only first group has an active and visible item
 		this.oAFPanel._filterByModeAndSearch(oFakeEvent);
@@ -224,11 +224,11 @@ sap.ui.define([
 
 		this.oAFPanel._getSearchField().setValue("Some Tooltip");
 		this.oAFPanel._sModeKey = "visible";
-		var oFakeEvent = new Event("liveSearch", this.oAFPanel._getSearchField(), {});
+		const oFakeEvent = new Event("liveSearch", this.oAFPanel._getSearchField(), {});
 
 		this.oAFPanel._filterByModeAndSearch(oFakeEvent);
 
-		var oOuterList = this.oAFPanel.getCurrentViewContent()._oListControl;
+		const oOuterList = this.oAFPanel.getCurrentViewContent()._oListControl;
 		assert.equal(oOuterList.getItems()[0].getVisible(), false, "Panel is invisible since no items are available");
 		assert.equal(oOuterList.getItems()[1].getVisible(), false, "Panel is invisible since no items are available");
 
@@ -240,7 +240,7 @@ sap.ui.define([
 
 	QUnit.test("Check that groups are initially only displayed if necessary", function(assert){
 
-		var oP13nData = P13nBuilder.prepareAdaptationData(this.aMockInfo, this.fnEnhancer, true);
+		const oP13nData = P13nBuilder.prepareAdaptationData(this.aMockInfo, this.fnEnhancer, true);
 		this.oAFPanel.setP13nModel(new JSONModel(oP13nData));
 
 		assert.equal(this.oAFPanel.getCurrentViewContent()._oListControl.getVisibleItems().length, 2, "All groups visible");
@@ -256,7 +256,7 @@ sap.ui.define([
 
 	QUnit.test("Check additional filter implementation (visibleInDialog)", function(assert){
 
-		var oP13nData = this.oP13nData = P13nBuilder.prepareAdaptationData(this.aMockInfo, function(oItem, oProp) {
+		const oP13nData = this.oP13nData = P13nBuilder.prepareAdaptationData(this.aMockInfo, function(oItem, oProp) {
 			if (oProp.name == "key2") {
 				oItem.visibleInDialog = false;
 			} else {
@@ -267,23 +267,23 @@ sap.ui.define([
 
 		this.oAFPanel.setP13nModel(new JSONModel(oP13nData));
 
-		var aGroupPanels = this.oAFPanel.getCurrentViewContent().getPanels();
+		const aGroupPanels = this.oAFPanel.getCurrentViewContent().getPanels();
 
 		//Check in GroupView
 		assert.equal(aGroupPanels[0].getContent()[0].getVisibleItems().length, 2, "There are 3 items in the model, but one should be hidden for the user");
 
 		//Check in ListView
 		this.oAFPanel.switchView("list");
-		var aItems = this.oAFPanel.getCurrentViewContent()._oListControl.getItems();
+		const aItems = this.oAFPanel.getCurrentViewContent()._oListControl.getItems();
 		assert.equal(aItems.length, 5, "There are 6 items in the model, but one should be hidden for the user");
 
 	});
 
 	QUnit.test("Check 'itemFactory' execution for only necessary groups", function(assert){
 
-		var oP13nData = P13nBuilder.prepareAdaptationData(this.aMockInfo, this.fnEnhancer, true);
+		const oP13nData = P13nBuilder.prepareAdaptationData(this.aMockInfo, this.fnEnhancer, true);
 
-		var fnItemFactoryCallback = function(oContext) {
+		const fnItemFactoryCallback = function(oContext) {
 			return new VBox();
 		};
 
@@ -291,8 +291,8 @@ sap.ui.define([
 
 		this.oAFPanel.setP13nModel(new JSONModel(oP13nData));
 		this.oAFPanel.getCurrentViewContent()._loopGroupList(function(oItem, sKey){
-			var oProp = this.oAFPanel.getP13nModel().getProperty(oItem.getBindingContext(this.oAFPanel.P13N_MODEL).sPath);
-			var iExpectedLength = oProp.group === "G1" ? 2 : 1;
+			const oProp = this.oAFPanel.getP13nModel().getProperty(oItem.getBindingContext(this.oAFPanel.P13N_MODEL).sPath);
+			const iExpectedLength = oProp.group === "G1" ? 2 : 1;
 
 			assert.equal(oItem.getContent().length, iExpectedLength, "Only required callbacks executed");
 
@@ -303,11 +303,11 @@ sap.ui.define([
 	QUnit.test("Check 'itemFactory' execution for expanded groups", function(assert){
 
 		//6 items in 2 groups --> 6x callback excuted after expanding --> +3x for initial filtering
-		var done = assert.async(9);
+		const done = assert.async(9);
 
-		var oP13nData = P13nBuilder.prepareAdaptationData(this.aMockInfo, this.fnEnhancer, true);
+		const oP13nData = P13nBuilder.prepareAdaptationData(this.aMockInfo, this.fnEnhancer, true);
 
-		var fnItemFactoryCallback = function (oContext) {
+		const fnItemFactoryCallback = function (oContext) {
 			assert.ok(oContext, "Callback executed with binding context");
 			done(6);
 		};
@@ -322,9 +322,9 @@ sap.ui.define([
 
 	QUnit.test("Check 'itemFactory' execution for expanded groups by checking created controls", function(assert){
 
-		var oP13nData = P13nBuilder.prepareAdaptationData(this.aMockInfo, this.fnEnhancer, true);
+		const oP13nData = P13nBuilder.prepareAdaptationData(this.aMockInfo, this.fnEnhancer, true);
 
-		var fnItemFactoryCallback = function (oContext) {
+		const fnItemFactoryCallback = function (oContext) {
 
 			return new VBox();
 		};
@@ -349,15 +349,15 @@ sap.ui.define([
 		this.oAFPanel.setP13nModel(new JSONModel(this.oP13nData));
 
 		this.oAFPanel._getSearchField().setValue("Field 5");
-		var oFakeEvent = new Event("liveSearch", this.oAFPanel._getSearchField(), {});
+		const oFakeEvent = new Event("liveSearch", this.oAFPanel._getSearchField(), {});
 
 		this.oAFPanel._filterByModeAndSearch(oFakeEvent);
 
 		assert.equal(this.oAFPanel.getCurrentViewContent()._getInitializedLists().length, 1, "Filter triggerd, but group not yet initialized");
 
 		this.oAFPanel.getCurrentViewContent()._loopGroupList(function(oItem, sKey){
-			var oProp = this.oAFPanel.getP13nModel().getProperty(oItem.getBindingContext(this.oAFPanel.P13N_MODEL).sPath);
-			var iExpectedLength = oProp.group === "G1" ? 2 : 1;
+			const oProp = this.oAFPanel.getP13nModel().getProperty(oItem.getBindingContext(this.oAFPanel.P13N_MODEL).sPath);
+			const iExpectedLength = oProp.group === "G1" ? 2 : 1;
 
 			assert.equal(oItem.getContent().length, iExpectedLength, "Only required callbacks executed");
 
@@ -369,7 +369,7 @@ sap.ui.define([
 		this.oAFPanel.setP13nModel(new JSONModel(this.oP13nData));
 
 		this.oAFPanel._getSearchField().setValue("Field 5");
-		var oFakeEvent = new Event("liveSearch", this.oAFPanel._getSearchField(), {});
+		const oFakeEvent = new Event("liveSearch", this.oAFPanel._getSearchField(), {});
 
 		this.oAFPanel.setGroupExpanded("G2");
 
@@ -383,7 +383,7 @@ sap.ui.define([
 
 		this.oAFPanel.setP13nModel(new JSONModel(this.oP13nData));
 
-		var oSecondPanel = this.oAFPanel.getCurrentViewContent()._oListControl.getItems()[1].getContent()[0];
+		const oSecondPanel = this.oAFPanel.getCurrentViewContent()._oListControl.getItems()[1].getContent()[0];
 		assert.ok(!oSecondPanel.getExpanded(), "Panel is initially collapsed");
 
 		this.oAFPanel.setGroupExpanded("G2", true);
@@ -410,7 +410,7 @@ sap.ui.define([
 
 	QUnit.test("Check 'itemFactory' model propagation", function(assert){
 
-		var oSecondModel = new JSONModel({
+		const oSecondModel = new JSONModel({
 			data: [
 				{
 					key: "k1",
@@ -419,7 +419,7 @@ sap.ui.define([
 			]
 		});
 
-		var oTestFactory = new List({
+		const oTestFactory = new List({
 			items: {
 				path: "/data",
 				name: "key",
@@ -442,12 +442,12 @@ sap.ui.define([
 
 		this.oAFPanel.setP13nModel(new JSONModel(this.oP13nData));
 
-		var aGroups = this.oAFPanel.getCurrentViewContent()._oListControl.getItems();
-		var oFirstGroup = aGroups[0].getContent()[0];
-		var oFirstList = oFirstGroup.getContent()[0];
+		const aGroups = this.oAFPanel.getCurrentViewContent()._oListControl.getItems();
+		const oFirstGroup = aGroups[0].getContent()[0];
+		const oFirstList = oFirstGroup.getContent()[0];
 
 		//List created via template 'oTestFactory'
-		var oCustomList = oFirstList.getItems()[0].getContent()[1];
+		const oCustomList = oFirstList.getItems()[0].getContent()[1];
 
 		assert.equal(oCustomList.getItems().length, 1, "Custom template list has one item (oSecondModel, data)");
 		assert.deepEqual(oCustomList.getModel(), oSecondModel, "Manual model propagated");
@@ -523,7 +523,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Check 'addCustomView' search callback execution", function(assert){
-		var done = assert.async();
+		const done = assert.async();
 
 		//add a custom view
 		this.oAFPanel.addCustomView({
@@ -545,9 +545,9 @@ sap.ui.define([
 	});
 
 	QUnit.test("Check 'addCustomView' filterChange callback execution", function(assert){
-		var done = assert.async(2);
+		const done = assert.async(2);
 
-		var iCount = 0;
+		let iCount = 0;
 
 		//add a custom view
 		this.oAFPanel.addCustomView({
@@ -583,8 +583,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("Check 'addCustomView' view switch callback execution", function(assert){
-		var done = assert.async();
-		var oItem = new SegmentedButtonItem({
+		const done = assert.async();
+		const oItem = new SegmentedButtonItem({
 			key: "test",
 			icon: "sap-icon://bar-chart"
 		});
@@ -606,8 +606,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("Check 'addCustomView' searchcallback on view switch execution", function (assert) {
-		var done = assert.async();
-		var oItem = new SegmentedButtonItem({
+		const done = assert.async();
+		const oItem = new SegmentedButtonItem({
 			key: "test",
 			icon: "sap-icon://bar-chart"
 		});
@@ -655,7 +655,7 @@ sap.ui.define([
 	QUnit.test("Check 'restoreDefaults' to reset the searchfield text", function(assert){
 
 		this.oAFPanel._getSearchField().setValue("Test");
-		var oFilterSpy = sinon.spy(this.oAFPanel, "_filterByModeAndSearch");
+		const oFilterSpy = sinon.spy(this.oAFPanel, "_filterByModeAndSearch");
 
 		assert.equal(this.oAFPanel._getSearchField().getValue(), "Test", "Value 'Test' is present on the SearchField");
 

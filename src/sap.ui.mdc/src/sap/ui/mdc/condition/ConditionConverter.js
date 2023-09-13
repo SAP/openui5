@@ -29,7 +29,7 @@ sap.ui.define([
 		 * @since 1.74.0
 		 * @alias sap.ui.mdc.condition.ConditionConverter
 		 */
-		var ConditionConverter = {
+		const ConditionConverter = {
 
 			/**
 			 * Converts a condition into a unified String
@@ -49,15 +49,15 @@ sap.ui.define([
 			toString: function(oCondition, vType, oTypeUtil) {
 
 				// convert using "normalized" data type
-				var oOperator = FilterOperatorUtil.getOperator(oCondition.operator);
-				var oTypeInstance = vType.typeInstance ? vType.typeInstance : vType;
-				var aValues = _externalizeValues(oCondition.values, _getLocalType(oTypeInstance, oOperator), oOperator, oTypeUtil);
+				const oOperator = FilterOperatorUtil.getOperator(oCondition.operator);
+				const oTypeInstance = vType.typeInstance ? vType.typeInstance : vType;
+				const aValues = _externalizeValues(oCondition.values, _getLocalType(oTypeInstance, oOperator), oOperator, oTypeUtil);
 
 				// inParameter, OutParameter
 				// TODO: we need the types of the in/out parameter
-				var oInParameters;
-				var oOutParameters;
-				var oPayload;
+				let oInParameters;
+				let oOutParameters;
+				let oPayload;
 
 				if (oCondition.inParameters) {
 					oInParameters = merge({}, oCondition.inParameters);
@@ -70,7 +70,7 @@ sap.ui.define([
 					oPayload = merge({}, oCondition.payload);
 				}
 
-				var oResult = Condition.createCondition(oCondition.operator, aValues, oInParameters, oOutParameters, oCondition.validated, oPayload);
+				const oResult = Condition.createCondition(oCondition.operator, aValues, oInParameters, oOutParameters, oCondition.validated, oPayload);
 				return oResult;
 
 			},
@@ -92,15 +92,15 @@ sap.ui.define([
 			 */
 			toType: function(oCondition, vType, oTypeUtil) {
 				// convert using "normalized" data type
-				var oOperator = FilterOperatorUtil.getOperator(oCondition.operator);
-				var oTypeInstance = vType.typeInstance ? vType.typeInstance : vType;
-				var aValues = _internalizeValues(oCondition.values, _getLocalType(oTypeInstance, oOperator), oTypeUtil);
+				const oOperator = FilterOperatorUtil.getOperator(oCondition.operator);
+				const oTypeInstance = vType.typeInstance ? vType.typeInstance : vType;
+				const aValues = _internalizeValues(oCondition.values, _getLocalType(oTypeInstance, oOperator), oTypeUtil);
 
 				// inParameter, OutParameter
 				// TODO: we need the types of the in/out parameter
-				var oInParameters;
-				var oOutParameters;
-				var oPayload;
+				let oInParameters;
+				let oOutParameters;
+				let oPayload;
 
 				if (oCondition.inParameters) {
 					oInParameters = merge({}, oCondition.inParameters);
@@ -113,7 +113,7 @@ sap.ui.define([
 					oPayload = merge({}, oCondition.payload);
 				}
 
-				var oResult = Condition.createCondition(oCondition.operator, aValues, oInParameters, oOutParameters, oCondition.validated, oPayload);
+				const oResult = Condition.createCondition(oCondition.operator, aValues, oInParameters, oOutParameters, oCondition.validated, oPayload);
 
 				if (oResult.validated !== ConditionValidated.Validated && oOperator.validateInput) {
 					// let the operator check if the condition could be validated. (Use result to not change original condition.)
@@ -134,12 +134,12 @@ sap.ui.define([
 
 		function _externalizeValues (aValues, oTypeInstance, oOperator, oTypeUtil) {
 
-			var aResult = [];
+			const aResult = [];
 
-			for (var i = 0; i < aValues.length; i++) {
+			for (let i = 0; i < aValues.length; i++) {
 				if (!oOperator || (oOperator.valueTypes[i] && oOperator.valueTypes[i] !== OperatorValueType.Static)) {
 					// only add real values (no description in EQ case or static texts) (for unknown operators just copy to be compatible)
-					var vValue = aValues[i];
+					const vValue = aValues[i];
 					aResult.push(oTypeUtil.externalizeValue(vValue, oTypeInstance));
 				}
 			}
@@ -150,10 +150,10 @@ sap.ui.define([
 
 		function _internalizeValues (aValues, oTypeInstance, oTypeUtil) {
 
-			var aResult = [];
+			const aResult = [];
 
-			for (var i = 0; i < aValues.length; i++) {
-				var sValue = aValues[i];
+			for (let i = 0; i < aValues.length; i++) {
+				const sValue = aValues[i];
 				aResult.push(oTypeUtil.internalizeValue(sValue, oTypeInstance));
 			}
 

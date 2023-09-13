@@ -35,7 +35,7 @@ sap.ui.define([
 
 	/*global Set */
 
-	var TableMap = new window.WeakMap(); // To store table-related information for easy access in the delegate.
+	const TableMap = new window.WeakMap(); // To store table-related information for easy access in the delegate.
 
 	/**
 	 * Delegate for {@link sap.ui.mdc.Table} and <code>ODataV4</code>.
@@ -48,7 +48,7 @@ sap.ui.define([
 	 * @public
 	 * @since 1.85
 	 */
-	var Delegate = Object.assign({}, TableDelegate);
+	const Delegate = Object.assign({}, TableDelegate);
 
 	Delegate.getTypeMap = function (oPayload) {
 		return ODataV4TypeMap;
@@ -99,14 +99,14 @@ sap.ui.define([
 	};
 
 	function initializeGridTableSelection(oTable) {
-		var mSelectionModeMap = {
+		const mSelectionModeMap = {
 			Single: "Single",
 			SingleMaster: "Single",
 			Multi: "MultiToggle"
 		};
 
 		return loadModules("sap/ui/table/plugins/ODataV4Selection").then(function(aModules) {
-			var ODataV4SelectionPlugin = aModules[0];
+			const ODataV4SelectionPlugin = aModules[0];
 
 			if (oTable._bV4LegacySelectionEnabled) {
 				return TableDelegate.initializeSelection.call(this, oTable);
@@ -139,7 +139,7 @@ sap.ui.define([
 
 	function setSelectedGridTableConditions (oTable, aContexts) {
 
-		var oODataV4SelectionPlugin = oTable._oTable.getPlugins().find(function(oPlugin) {
+		const oODataV4SelectionPlugin = oTable._oTable.getPlugins().find(function(oPlugin) {
 			return oPlugin.isA("sap.ui.table.plugins.ODataV4Selection");
 		});
 
@@ -147,14 +147,14 @@ sap.ui.define([
 			return oODataV4SelectionPlugin.setSelectedContexts(aContexts);
 		}
 
-		var oMultiSelectionPlugin = oTable._oTable.getPlugins().find(function(oPlugin) {
+		const oMultiSelectionPlugin = oTable._oTable.getPlugins().find(function(oPlugin) {
 			return oPlugin.isA("sap.ui.table.plugins.MultiSelectionPlugin");
 		});
 
 		if (oMultiSelectionPlugin) {
 			oMultiSelectionPlugin.clearSelection();
 			return aContexts.map(function (oContext) {
-				var iContextIndex = oContext.getIndex(); // TODO: Handle undefined index?
+				const iContextIndex = oContext.getIndex(); // TODO: Handle undefined index?
 				return oMultiSelectionPlugin.addSelectionInterval(iContextIndex, iContextIndex);
 			});
 		}
@@ -186,7 +186,7 @@ sap.ui.define([
 		}
 
 		if (oTable._isOfType(TableType.Table, true)) {
-			var oODataV4SelectionPlugin = oTable._oTable.getPlugins().find(function(oPlugin) {
+			const oODataV4SelectionPlugin = oTable._oTable.getPlugins().find(function(oPlugin) {
 				return oPlugin.isA("sap.ui.table.plugins.ODataV4Selection");
 			});
 
@@ -197,10 +197,10 @@ sap.ui.define([
 	};
 
 	Delegate.validateState = function(oTable, oState, sKey) {
-		var oBaseStates = TableDelegate.validateState.apply(this, arguments);
-		var oValidation;
+		const oBaseStates = TableDelegate.validateState.apply(this, arguments);
+		let oValidation;
 
-		var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
+		const oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
 
 		if (sKey == "Sort" && oState.sorters) {
 			if (isAnalyticsEnabled(oTable) && !checkForValidity(oTable, oState.items, oState.sorters)) {
@@ -211,11 +211,11 @@ sap.ui.define([
 			}
 		} else if (sKey == "Group") {
 			if (oState.aggregations) {
-				var aAggregateProperties = Object.keys(oState.aggregations);
-				var aAggregateGroupableProperties = [];
-				var oListFormat = ListFormat.getInstance();
+				const aAggregateProperties = Object.keys(oState.aggregations);
+				const aAggregateGroupableProperties = [];
+				const oListFormat = ListFormat.getInstance();
 				aAggregateProperties.forEach(function(sProperty) {
-					var oProperty = oTable.getPropertyHelper().getProperty(sProperty);
+					const oProperty = oTable.getPropertyHelper().getProperty(sProperty);
 					if (oProperty && oProperty.groupable) {
 						aAggregateGroupableProperties.push(sProperty);
 					}
@@ -236,8 +236,8 @@ sap.ui.define([
 				}
 			}
 		} else if (sKey == "Column") {
-			var sMessage;
-			var aAggregateProperties = oState.aggregations && Object.keys(oState.aggregations);
+			let sMessage;
+			const aAggregateProperties = oState.aggregations && Object.keys(oState.aggregations);
 
 			if (!checkForValidity(oTable, oState.items, aAggregateProperties)) {
 				sMessage = oResourceBundle.getText("table.PERSONALIZATION_DIALOG_TOTAL_RESTRICTION");
@@ -297,8 +297,8 @@ sap.ui.define([
 		}
 
 		// suspend and resume have to be called on the root binding
-		var oRootBinding = oBinding.getRootBinding();
-		var bHasRootBindingAndWasNotSuspended = oRootBinding && !oRootBinding.isSuspended();
+		const oRootBinding = oBinding.getRootBinding();
+		let bHasRootBindingAndWasNotSuspended = oRootBinding && !oRootBinding.isSuspended();
 
 		try {
 			if (bHasRootBindingAndWasNotSuspended) {
@@ -330,7 +330,7 @@ sap.ui.define([
 		// The information that there is a sort or filter change is lost, hence the GridTable does not clear the selection. The changes could
 		// affect the indices and make the current selection invalid. Therefore, the delegate has to clear the selection here.
 		if (oTable._bV4LegacySelectionEnabled && oTable._isOfType(TableType.Table)) {
-			var oInnerPlugin = oTable._oTable && oTable._oTable.getPlugins()[0] ? oTable._oTable.getPlugins()[0].oInnerSelectionPlugin : null;
+			const oInnerPlugin = oTable._oTable && oTable._oTable.getPlugins()[0] ? oTable._oTable.getPlugins()[0].oInnerSelectionPlugin : null;
 
 			if (oInnerPlugin) {
 				oInnerPlugin._bInternalTrigger = true;
@@ -353,16 +353,16 @@ sap.ui.define([
 	};
 
 	Delegate.addColumnMenuItems = function(oTable, oMDCColumn) {
-		var oPropertyHelper = oTable.getPropertyHelper();
-		var oProperty = oPropertyHelper.getProperty(oMDCColumn.getPropertyKey());
-		var aItems = [];
+		const oPropertyHelper = oTable.getPropertyHelper();
+		const oProperty = oPropertyHelper.getProperty(oMDCColumn.getPropertyKey());
+		const aItems = [];
 
 		if (!oProperty) {
 			return [];
 		}
 
 		if (oTable.isGroupingEnabled()) {
-			var aGroupableProperties = oProperty.getGroupableProperties();
+			const aGroupableProperties = oProperty.getGroupableProperties();
 
 			if (aGroupableProperties.length > 0) {
 				aItems.push(createGroupPopoverItem(aGroupableProperties, oMDCColumn));
@@ -370,7 +370,7 @@ sap.ui.define([
 		}
 
 		if (oTable.isAggregationEnabled()) {
-			var aPropertiesThatCanBeTotaled = oProperty.getAggregatableProperties().filter(function(oProperty) {
+			const aPropertiesThatCanBeTotaled = oProperty.getAggregatableProperties().filter(function(oProperty) {
 				return oProperty.extension.customAggregate != null;
 			});
 
@@ -379,11 +379,11 @@ sap.ui.define([
 			}
 		}
 
-		var oPopover = oTable._oPopover;
+		const oPopover = oTable._oPopover;
 		if (oPopover) {
 			oPopover.getItems().forEach(function(oItem, iIndex, aItems) {
-				var sLabel = oItem.getLabel();
-				var oResourceBundle = Core.getLibraryResourceBundle("sap.ui.mdc");
+				const sLabel = oItem.getLabel();
+				const oResourceBundle = Core.getLibraryResourceBundle("sap.ui.mdc");
 
 				if (sLabel === oResourceBundle.getText("table.SETTINGS_GROUP") || sLabel === oResourceBundle.getText("table.SETTINGS_TOTALS")) {
 					aItems[iIndex].destroy();
@@ -402,7 +402,7 @@ sap.ui.define([
 	 * @inheritDoc
 	 */
 	Delegate.getSupportedP13nModes = function(oTable) {
-		var aSupportedModes = TableDelegate.getSupportedP13nModes.apply(this, arguments);
+		const aSupportedModes = TableDelegate.getSupportedP13nModes.apply(this, arguments);
 
 		if (oTable._isOfType(TableType.Table)) {
 			if (!aSupportedModes.includes(TableP13nMode.Group)) {
@@ -420,7 +420,7 @@ sap.ui.define([
 	 * @inheritDoc
 	 */
 	Delegate.getGroupSorter = function(oTable) {
-		var oGroupedProperty = oTable._getGroupedProperties()[0];
+		const oGroupedProperty = oTable._getGroupedProperties()[0];
 
 		if (!oGroupedProperty || !oTable._isOfType(TableType.ResponsiveTable)) {
 			return undefined;
@@ -438,12 +438,12 @@ sap.ui.define([
 	 * @inheritDoc
 	 */
 	Delegate.getSorters = function(oTable) {
-		var aSorters = TableDelegate.getSorters.apply(this, arguments);
+		let aSorters = TableDelegate.getSorters.apply(this, arguments);
 
 		// Sorting by a property that is not in the aggregation info (sorting by a property that is not requested) causes a backend error.
 		if (isAnalyticsEnabled(oTable)) {
-			var oPropertyHelper = oTable.getPropertyHelper();
-			var aVisiblePropertyPaths = getVisiblePropertyNames(oTable).map((sPropertyName) => {
+			const oPropertyHelper = oTable.getPropertyHelper();
+			const aVisiblePropertyPaths = getVisiblePropertyNames(oTable).map((sPropertyName) => {
 				return oPropertyHelper.getProperty(sPropertyName).path;
 			});
 
@@ -459,8 +459,8 @@ sap.ui.define([
 	 * @inheritDoc
 	 */
 	Delegate.getSupportedFeatures = function(oTable) {
-		var oSupportedFeatures = TableDelegate.getSupportedFeatures.apply(this, arguments);
-		var bIsTreeTable = oTable._isOfType(TableType.TreeTable);
+		const oSupportedFeatures = TableDelegate.getSupportedFeatures.apply(this, arguments);
+		const bIsTreeTable = oTable._isOfType(TableType.TreeTable);
 
 		return Object.assign(oSupportedFeatures, {
 			expandAll: bIsTreeTable,
@@ -476,7 +476,7 @@ sap.ui.define([
 			return;
 		}
 
-		var oRowBinding = oTable.getRowBinding();
+		const oRowBinding = oTable.getRowBinding();
 		if (oRowBinding) {
 			oRowBinding.setAggregation(Object.assign(oRowBinding.getAggregation(), {expandTo: 999}));
 		}
@@ -490,14 +490,14 @@ sap.ui.define([
 			return;
 		}
 
-		var oRowBinding = oTable.getRowBinding();
+		const oRowBinding = oTable.getRowBinding();
 		if (oRowBinding) {
 			oRowBinding.setAggregation(Object.assign(oRowBinding.getAggregation(), {expandTo: 1}));
 		}
 	};
 
 	function createGroupPopoverItem(aGroupProperties, oMDCColumn) {
-		var aGroupChildren = aGroupProperties.map(function(oGroupProperty) {
+		const aGroupChildren = aGroupProperties.map(function(oGroupProperty) {
 			return new Item({
 				text: oGroupProperty.label,
 				key: oGroupProperty.name
@@ -518,7 +518,7 @@ sap.ui.define([
 	}
 
 	function createAggregatePopoverItem(aAggregateProperties, oMDCColumn) {
-		var aAggregateChildren = aAggregateProperties.map(function(oAggregateProperty) {
+		const aAggregateChildren = aAggregateProperties.map(function(oAggregateProperty) {
 			return new Item({
 				text: oAggregateProperty.label,
 				key: oAggregateProperty.name
@@ -539,23 +539,24 @@ sap.ui.define([
 	}
 
 	function checkForPreviousAnalytics(oEvent, oData) {
-		var sName = oData.sName,
+		const sName = oData.sName,
 			oTable = oData.oMDCColumn.getParent(),
 			aGroupLevels = oTable.getCurrentState().groupLevels || [],
 			oAggregate = oTable.getCurrentState().aggregations || {},
 			aAggregate = Object.keys(oAggregate),
-			bForcedAnalytics = false,
 			sPath = oEvent.getParameter("property"),
 			aAnalytics = sName === "Aggregate" ? aGroupLevels : aAggregate,
 			bForce = aAnalytics.filter(function(mItem) {
 				return sName === "Aggregate" ? mItem.name === sPath : mItem === sPath;
 			}).length > 0;
 
+		let bForcedAnalytics = false;
+
 		if (bForce) {
-			var oResourceBundle = Core.getLibraryResourceBundle("sap.ui.mdc");
-			var sTitle;
-			var sMessage;
-			var sActionText;
+			const oResourceBundle = Core.getLibraryResourceBundle("sap.ui.mdc");
+			let sTitle;
+			let sMessage;
+			let sActionText;
 
 			if (sName === "Aggregate") {
 				sTitle = oResourceBundle.getText("table.SETTINGS_WARNING_TITLE_TOTALS");
@@ -613,23 +614,23 @@ sap.ui.define([
 	 * @param {sap.ui.base.ManagedObject.AggregationBindingInfo} [oBindingInfo] The binding info object to be used to bind the table to the model
 	 */
 	function setAggregation(oTable, oBindingInfo) {
-		var oPlugin = TableMap.get(oTable).plugin;
+		const oPlugin = TableMap.get(oTable).plugin;
 
 		if (!oPlugin || oPlugin.isDestroyed()) {
 			return;
 		}
 
-		var aGroupLevels = oTable._getGroupedProperties().map(function(mGroupLevel) {
+		const aGroupLevels = oTable._getGroupedProperties().map(function(mGroupLevel) {
 			return mGroupLevel.name;
 		});
-		var aAggregates = Object.keys(oTable._getAggregatedProperties());
-		var sSearch = oBindingInfo ? oBindingInfo.parameters["$search"] : undefined;
+		const aAggregates = Object.keys(oTable._getAggregatedProperties());
+		const sSearch = oBindingInfo ? oBindingInfo.parameters["$search"] : undefined;
 
 		if (sSearch) {
 			delete oBindingInfo.parameters["$search"];
 		}
 
-		var oAggregationInfo = {
+		const oAggregationInfo = {
 			visible: getVisiblePropertyNames(oTable),
 			groupLevels: aGroupLevels,
 			grandTotal: aAggregates,
@@ -642,10 +643,10 @@ sap.ui.define([
 	}
 
 	function getVisiblePropertyNames(oTable) {
-		var oVisiblePropertiesSet = new Set();
+		const oVisiblePropertiesSet = new Set();
 
 		oTable.getColumns().forEach(function(oColumn) {
-			var oProperty = oTable.getPropertyHelper().getProperty(oColumn.getPropertyKey());
+			const oProperty = oTable.getPropertyHelper().getProperty(oColumn.getPropertyKey());
 
 			if (!oProperty) {
 				return;
@@ -660,12 +661,12 @@ sap.ui.define([
 	}
 
 	function getColumnState(oTable, aAggregatedPropertyNames) {
-		var mColumnState = {};
+		const mColumnState = {};
 
 		oTable.getColumns().forEach(function(oColumn) {
-			var sInnerColumnId = oColumn.getId() + "-innerColumn";
-			var aAggregatedProperties = getAggregatedColumnProperties(oTable, oColumn, aAggregatedPropertyNames);
-			var bColumnIsAggregated = aAggregatedProperties.length > 0;
+			let sInnerColumnId = oColumn.getId() + "-innerColumn";
+			const aAggregatedProperties = getAggregatedColumnProperties(oTable, oColumn, aAggregatedPropertyNames);
+			const bColumnIsAggregated = aAggregatedProperties.length > 0;
 
 			if (sInnerColumnId in mColumnState) {
 				// If there already is a state for this column, it is a unit column that inherited the state from the amount column.
@@ -702,7 +703,7 @@ sap.ui.define([
 
 	// TODO: Move this to TablePropertyHelper (or even base PropertyHelper - another variant of getSimpleProperties?)
 	function getColumnProperties(oTable, oColumn) {
-		var oProperty = oTable.getPropertyHelper().getProperty(oColumn.getPropertyKey());
+		const oProperty = oTable.getPropertyHelper().getProperty(oColumn.getPropertyKey());
 
 		if (!oProperty) {
 			return [];
@@ -718,7 +719,7 @@ sap.ui.define([
 	}
 
 	function findUnitColumns(oTable, aProperties) {
-		var aUnitProperties = [];
+		const aUnitProperties = [];
 
 		aProperties.forEach(function(oProperty) {
 			if (oProperty.unitProperty) {
@@ -734,7 +735,7 @@ sap.ui.define([
 	}
 
 	function checkForValidity(oControl, aItems, aStates) {
-		var aProperties = [];
+		const aProperties = [];
 
 		if (aItems) {
 			aItems.forEach(function(oItem) {
@@ -744,7 +745,7 @@ sap.ui.define([
 			});
 		}
 
-		var bOnlyVisibleColumns = aStates ? aStates.every(function(oState) {
+		const bOnlyVisibleColumns = aStates ? aStates.every(function(oState) {
 			return aProperties.find(function(sPropertyName) {
 				return oState.name ? oState.name === sPropertyName : oState === sPropertyName;
 			});
@@ -762,7 +763,7 @@ sap.ui.define([
 	 * @private
 	 */
 	function mergeValidation(oBaseState, oValidationState) {
-		var oSeverity = {Error: 1, Warning: 2, Information: 3, None: 4};
+		const oSeverity = {Error: 1, Warning: 2, Information: 3, None: 4};
 
 		if (!oValidationState || oSeverity[oValidationState.validation] - oSeverity[oBaseState.validation] > 0) {
 			return oBaseState;
@@ -798,8 +799,8 @@ sap.ui.define([
 	}
 
 	function enableGridTablePlugin(oTable) {
-		var mTableMap = TableMap.get(oTable);
-		var oPlugin = mTableMap.plugin;
+		const mTableMap = TableMap.get(oTable);
+		let oPlugin = mTableMap.plugin;
 
 		if (oPlugin && !oPlugin.isDestroyed()) {
 			oPlugin.activate();
@@ -811,8 +812,8 @@ sap.ui.define([
 			oTable.awaitPropertyHelper(),
 			loadModules("sap/ui/table/plugins/V4Aggregation")
 		]).then(function(aResult) {
-			var V4AggregationPlugin = aResult[1][0];
-			var oDelegate = oTable.getControlDelegate();
+			const V4AggregationPlugin = aResult[1][0];
+			const oDelegate = oTable.getControlDelegate();
 
 			oPlugin = new V4AggregationPlugin({
 				groupHeaderFormatter: function(oContext, sProperty) {
@@ -829,7 +830,7 @@ sap.ui.define([
 	}
 
 	function disableGridTablePlugin(oTable) {
-		var mTableMap = TableMap.get(oTable);
+		const mTableMap = TableMap.get(oTable);
 
 		if (mTableMap.plugin) {
 			mTableMap.plugin.deactivate();
@@ -839,7 +840,7 @@ sap.ui.define([
 	}
 
 	function setUpTableObserver(oTable) {
-		var mTableMap = TableMap.get(oTable);
+		const mTableMap = TableMap.get(oTable);
 
 		if (!mTableMap.observer) {
 			mTableMap.observer = new ManagedObjectObserver(function(oChange) {

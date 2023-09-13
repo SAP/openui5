@@ -36,13 +36,13 @@ sap.ui.define([
 			FakeFlpConnector.disableFakeConnector();
 		},
 		startMockServer: function() {
-			var sMockServerUrl = "/odata/";
+			const sMockServerUrl = "/odata/";
 
 			this.oMockServer = new MockServer({
 				rootUri: sMockServerUrl
 			});
 
-			var sPath = sap.ui.require.toUrl("appUnderTest/localService");
+			const sPath = sap.ui.require.toUrl("appUnderTest/localService");
 
 			// load local mock data
 			this.oMockServer.simulate(sPath + "/metadata.xml", {

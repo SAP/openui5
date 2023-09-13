@@ -15,7 +15,7 @@ sap.ui.define(function() {
 	 * @ui5-restricted sap.fe
 	 * @deprecated since 1.115.0 - please see {@link sap.ui.mdc.enums.OperatorOverwrite}
 	 */
-	var OperatorOverwrite = {
+	const OperatorOverwrite = {
 		/**
 		 * Overwrite the <code>getModelFilter</code> function of the operator.
 		 * @public

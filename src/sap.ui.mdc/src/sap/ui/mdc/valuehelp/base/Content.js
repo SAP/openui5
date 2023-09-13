@@ -39,7 +39,7 @@ sap.ui.define([
 	 * @since 1.95.0
 	 * @alias sap.ui.mdc.valuehelp.base.Content
 	 */
-	var Content = Element.extend("sap.ui.mdc.valuehelp.base.Content", /** @lends sap.ui.mdc.valuehelp.base.Content.prototype */
+	const Content = Element.extend("sap.ui.mdc.valuehelp.base.Content", /** @lends sap.ui.mdc.valuehelp.base.Content.prototype */
 	{
 		metadata: {
 			library: "sap.ui.mdc",
@@ -341,7 +341,7 @@ sap.ui.define([
 	 * @private
 	 */
 	Content.prototype.getScrollDelegate = function() {
-		var oContainer = this.getParent();
+		const oContainer = this.getParent();
 		return oContainer && oContainer.getScrollDelegate();
 	};
 
@@ -371,8 +371,8 @@ sap.ui.define([
 	 */
 	Content.prototype.handleFilterValueUpdate = function(oChanges) {
 		if (this.isContainerOpen() && this.isTypeahead()) {
-			var oDelegate = this.getValueHelpDelegate();
-			var oValueHelp = this.getValueHelpInstance();
+			const oDelegate = this.getValueHelpDelegate();
+			const oValueHelp = this.getValueHelpInstance();
 
 			// Everytime the filterValue changes, we consult the delegate again to decide if the typeahead should still be shown or hidden via a cancel event
 			// Please also see the default implementation of sap.ui.mdc.ValueHelpDelegate.showTypeahead
@@ -404,9 +404,9 @@ sap.ui.define([
 	 */
 	Content.prototype.createCondition = function(vValue, sDescription, oPayload) {
 
-		var oOperator = _getOperator.call(this);
+		const oOperator = _getOperator.call(this);
 
-		var aValues = [vValue];
+		const aValues = [vValue];
 		if (oOperator.valueTypes.length > 1 && oOperator.valueTypes[1] !== OperatorValueType.Static && sDescription !== null && sDescription !== undefined) {
 			// description is supported
 			aValues.push(sDescription);
@@ -445,7 +445,7 @@ sap.ui.define([
 
 	Content.prototype.getUIArea = function() {
 		// Table, List or other content might be rerendered. In this case the corresponding UIArea is the one of the Popover or Dialog, not the one of the parents.
-		var oContainer = this.getParent();
+		const oContainer = this.getParent();
 		if (oContainer && oContainer.getUIAreaForContent) {
 			return oContainer.getUIAreaForContent();
 		}
@@ -462,7 +462,7 @@ sap.ui.define([
 	 * @protected
 	 */
 	Content.prototype.isTypeahead = function () {
-		var oContainer = this.getParent();
+		const oContainer = this.getParent();
 		return oContainer && oContainer.isTypeahead();
 	};
 
@@ -490,7 +490,7 @@ sap.ui.define([
 	 * @protected
 	 */
 	Content.prototype.provideScrolling = function () {
-		var oContainer = this.getParent();
+		const oContainer = this.getParent();
 		return !oContainer || !oContainer.providesScrolling();
 	};
 
@@ -500,7 +500,7 @@ sap.ui.define([
 	 * @protected
 	 */
 	Content.prototype.isContainerOpen = function () {
-		var oContainer = this.getParent();
+		const oContainer = this.getParent();
 		return oContainer && oContainer.isOpen();
 	};
 
@@ -510,7 +510,7 @@ sap.ui.define([
 	 * @protected
 	 */
 	Content.prototype.isContainerOpening = function () {
-		var oContainer = this.getParent();
+		const oContainer = this.getParent();
 		return oContainer && oContainer.isOpening();
 	};
 
@@ -521,7 +521,7 @@ sap.ui.define([
 	 * @protected
 	 */
 	Content.prototype.getValueHelpDelegate = function () {
-		var oContainer = this.getParent();
+		const oContainer = this.getParent();
 		return oContainer && oContainer.getValueHelpDelegate();
 	};
 
@@ -531,7 +531,7 @@ sap.ui.define([
 	 * @protected
 	 */
 	Content.prototype.getValueHelpInstance = function () {
-		var oContainer = this.getParent();
+		const oContainer = this.getParent();
 		return oContainer && oContainer.getValueHelp && oContainer.getValueHelp();
 	};
 
@@ -542,7 +542,7 @@ sap.ui.define([
 	 * @protected
 	 */
 	Content.prototype.awaitValueHelpDelegate = function () {
-		var oContainer = this.getParent();
+		const oContainer = this.getParent();
 		return oContainer && oContainer.awaitValueHelpDelegate();
 	};
 
@@ -552,7 +552,7 @@ sap.ui.define([
 	 * @protected
 	 */
 	Content.prototype.isValueHelpDelegateInitialized = function () {
-		var oContainer = this.getParent();
+		const oContainer = this.getParent();
 		return oContainer && oContainer.isValueHelpDelegateInitialized();
 	};
 
@@ -562,7 +562,7 @@ sap.ui.define([
 	 * @protected
 	 */
 	Content.prototype.getControl = function () {
-		var oContainer = this.getParent();
+		const oContainer = this.getParent();
 		return oContainer && oContainer.getControl();
 	};
 
@@ -745,7 +745,7 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.mdc.valuehelp.base.Container
 	 */
 	Content.prototype.getFormattedTitle = function(iCount) {
-		var sTitle = this.getTitle();
+		let sTitle = this.getTitle();
 		if (sTitle) {
 			sTitle = formatMessage(sTitle, iCount ? iCount : "");
 		}
@@ -778,7 +778,7 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.mdc.valuehelp.base.Container
 	 */
 	Content.prototype.getFormattedTokenizerTitle = function(iCount) {
-		var sTitle = this.getTokenizerTitle();
+		let sTitle = this.getTokenizerTitle();
 		if (sTitle) {
 			sTitle = formatMessage(sTitle, iCount ? iCount : "");
 		}
@@ -792,7 +792,7 @@ sap.ui.define([
 	 */
 	Content.prototype.getMaxConditions = function() {
 
-		var oConfig = this.getConfig();
+		const oConfig = this.getConfig();
 		return oConfig && oConfig.maxConditions;
 
 	};

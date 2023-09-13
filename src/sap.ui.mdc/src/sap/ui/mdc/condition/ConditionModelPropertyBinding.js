@@ -41,7 +41,7 @@ sap.ui.define([
 	 * @experimental As of version 1.60
 	 * @since 1.60.0
 	 */
-	var ConditionModelPropertyBinding = JSONPropertyBinding.extend("sap.ui.mdc.condition.ConditionModelPropertyBinding", {
+	const ConditionModelPropertyBinding = JSONPropertyBinding.extend("sap.ui.mdc.condition.ConditionModelPropertyBinding", {
 
 		constructor : function(oModel, sPath, oContext, mParameters){
 			JSONPropertyBinding.apply(this, arguments);
@@ -72,7 +72,7 @@ sap.ui.define([
 			return;
 		}
 
-		var oValue = this._getValue();
+		const oValue = this._getValue();
 		if (!deepEqual(oValue, this.oValue) || bForceupdate) {// optimize for not firing the events when unneeded
 			this.oValue = _copyValue.call(this, oValue);
 			this.getDataState().setValue(this.oValue);
@@ -83,7 +83,7 @@ sap.ui.define([
 
 	function _copyValue(oValue) {
 
-		var oCopy;
+		let oCopy;
 		if (!oValue) {
 			oCopy = oValue; // as null is an object
 		} else if (Array.isArray(oValue)) {

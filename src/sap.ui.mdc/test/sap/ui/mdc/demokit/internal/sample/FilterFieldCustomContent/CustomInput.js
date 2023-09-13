@@ -18,11 +18,11 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var ValueState = coreLibrary.ValueState;
-	var TextDirection = coreLibrary.TextDirection;
-	var TextAlign = coreLibrary.TextAlign;
+	const ValueState = coreLibrary.ValueState;
+	const TextDirection = coreLibrary.TextDirection;
+	const TextAlign = coreLibrary.TextAlign;
 
-	var CustomInput = Control.extend("sap.ui.mdc.sample.FieldCustomContent.CustomInput", {
+	const CustomInput = Control.extend("sap.ui.mdc.sample.FieldCustomContent.CustomInput", {
 		metadata: {
 			interfaces: ["sap.ui.core.IFormContent"],
 			library: "sap.ui.mdc",
@@ -150,8 +150,8 @@ sap.ui.define([
 			apiVersion: 2,
 			render: function(oRm, oControl) {
 
-				var oInput = oControl.getAggregation("_input");
-				var oButton = oControl.getAggregation("_button");
+				const oInput = oControl.getAggregation("_input");
+				const oButton = oControl.getAggregation("_button");
 				oRm.openStart("div", oControl);
 				oRm.style("width", "100%");
 				oRm.openEnd();
@@ -173,7 +173,7 @@ sap.ui.define([
 
 		this._oManagedObjectModel = new ManagedObjectModel(this);
 
-		var oInput = new Input(this.getId() + "-I", {
+		const oInput = new Input(this.getId() + "-I", {
 			value: {path: "$this>/value"},
 			placeholder: {path: "$this>/placeholder"},
 			textAlign: {path: "$this>/textAlign"},
@@ -195,7 +195,7 @@ sap.ui.define([
 		oInput.setModel(this._oManagedObjectModel, "$this");
 		this.setAggregation("_input", oInput);
 
-		var oButton = new Button(this.getId() + "-B", {
+		const oButton = new Button(this.getId() + "-B", {
 			icon: {path: "$this>/valueHelpIconSrc"},
 			enabled: {parts: [{path: "$this>/enabled"}, {path: "$this>/editable"}], formatter: _determineButtonEnabled},
 			width: "20%",
@@ -218,42 +218,42 @@ sap.ui.define([
 
 	CustomInput.prototype.getDOMValue = function() {
 
-		var oInput = this.getAggregation("_input");
+		const oInput = this.getAggregation("_input");
 		return oInput.getDOMValue();
 
 	};
 
 	CustomInput.prototype.setDOMValue = function(sValue) {
 
-		var oInput = this.getAggregation("_input");
+		const oInput = this.getAggregation("_input");
 		return oInput.setDOMValue(sValue);
 
 	};
 
 	CustomInput.prototype.getFocusDomRef = function() {
 
-		var oInput = this.getAggregation("_input");
+		const oInput = this.getAggregation("_input");
 		return oInput.getFocusDomRef();
 
 	};
 
 	CustomInput.prototype.getIdForLabel = function() {
 
-		var oInput = this.getAggregation("_input");
+		const oInput = this.getAggregation("_input");
 		return oInput.getIdForLabel();
 
 	};
 
 	CustomInput.prototype.getAccessibilityInfo = function() {
 
-		var oInput = this.getAggregation("_input");
+		const oInput = this.getAggregation("_input");
 		return oInput.getAccessibilityInfo();
 
 	};
 
 	CustomInput.prototype._doSelect = function(iStart, iEnd) {
 
-		var oInput = this.getAggregation("_input");
+		const oInput = this.getAggregation("_input");
 		return oInput._doSelect(iStart, iEnd);
 
 	};

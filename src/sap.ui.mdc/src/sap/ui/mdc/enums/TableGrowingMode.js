@@ -14,7 +14,7 @@ sap.ui.define(function() {
      * @since 1.115
      * @public
      */
-    var TableGrowingMode = {
+    const TableGrowingMode = {
         /**
          * Growing does not take place (<code>growing</code> is not set in the responsive table)
          *

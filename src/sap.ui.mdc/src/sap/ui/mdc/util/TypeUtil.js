@@ -13,8 +13,8 @@ sap.ui.define([
 	"use strict";
 
 	// var sDateTimePattern = "yyyy-MM-ddTHH:mm:ssZ"; // milliseconds missing
-	var sDatePattern = "yyyy-MM-dd";
-	var sTimePattern = "HH:mm:ss";
+	const sDatePattern = "yyyy-MM-dd";
+	const sTimePattern = "HH:mm:ss";
 
 	/**
 	 * Provides mapping functionality for model dependent data types to base types. Extend this object in your project to customize behaviour depending on model usage.
@@ -29,7 +29,7 @@ sap.ui.define([
 	 * @deprecated since 1.115.0 - please see {@link module:sap/ui/mdc/BaseDelegate.getTypeMap}
 	 * @alias sap.ui.mdc.util.TypeUtil
 	 */
-	var TypeUtil = {
+	const TypeUtil = {
 
 		/**
 		* Maps type names to real type names
@@ -41,7 +41,7 @@ sap.ui.define([
 		*/
 		getDataTypeClassName: function(sType) {
 
-			var mTypes = {
+			const mTypes = {
 				"Boolean": "sap.ui.model.type.Boolean",
 				"Currency": "sap.ui.model.type.Currency",
 				"Date": "sap.ui.model.type.Date",
@@ -128,8 +128,8 @@ sap.ui.define([
 		 * @ui5-restricted sap.ui.mdc
 		 */
 		getDataTypeClass: function(sDataType) {
-			var sTypeName = this.getDataTypeClassName(sDataType);
-			var TypeClass = sTypeName
+			const sTypeName = this.getDataTypeClassName(sDataType);
+			const TypeClass = sTypeName
 				? sap.ui.require(sTypeName.replace(/\./g, "/")) || ObjectPath.get(sTypeName)
 				: undefined;
 			if (!TypeClass) {
@@ -150,7 +150,7 @@ sap.ui.define([
 		 * @ui5-restricted sap.ui.mdc
 		 */
 		getDataTypeInstance: function(sDataType, oFormatOptions, oConstraints) {
-			var TypeClass = this.getDataTypeClass(sDataType);
+			const TypeClass = this.getDataTypeClass(sDataType);
 			return new TypeClass(oFormatOptions, oConstraints);
 		},
 
@@ -166,7 +166,7 @@ sap.ui.define([
 		 */
 		getTypeConfig: function (vType, oFormatOptions, oConstraints) {
 
-			var oType = this._normalizeType(vType, oFormatOptions, oConstraints);
+			const oType = this._normalizeType(vType, oFormatOptions, oConstraints);
 
 			return {
 				className: oType.getMetadata().getName(),
@@ -192,8 +192,8 @@ sap.ui.define([
 		 * @since 1.103.0
 		 */
 		internalizeValue: function (sValue, vType, oFormatOptions, oConstraints) {
-			var oTypeInstance = this._normalizeType(vType, oFormatOptions, oConstraints);
-			var sBaseType = this.getBaseTypeForType(oTypeInstance);
+			const oTypeInstance = this._normalizeType(vType, oFormatOptions, oConstraints);
+			const sBaseType = this.getBaseTypeForType(oTypeInstance);
 			switch (sBaseType) {
 				case BaseType.DateTime:
 					return DateUtil.ISOToType(sValue, oTypeInstance, sBaseType);
@@ -236,8 +236,8 @@ sap.ui.define([
 		 * @since 1.103.0
 		 */
 		externalizeValue: function (vValue, vType, oFormatOptions, oConstraints) {
-			var oTypeInstance = this._normalizeType(vType, oFormatOptions, oConstraints);
-			var sBaseType = this.getBaseTypeForType(oTypeInstance);
+			const oTypeInstance = this._normalizeType(vType, oFormatOptions, oConstraints);
+			const sBaseType = this.getBaseTypeForType(oTypeInstance);
 			switch (sBaseType) {
 				case BaseType.DateTime:
 					return DateUtil.typeToISO(vValue, oTypeInstance, sBaseType);
@@ -280,9 +280,9 @@ sap.ui.define([
 		 * @ui5-restricted sap.ui.mdc
 		 */
 		 getUnitTypeInstance: function(oOriginalType, bShowNumber, bShowMeasure) {
-			var TypeClass = oOriginalType.getMetadata().getClass();
-			var oFormatOptions = merge({}, oOriginalType.getFormatOptions()); // for Unit/Currency always set - do not manipulate original object
-			var oConstraints = isEmptyObject(oOriginalType.getConstraints()) ? undefined : merge({}, oOriginalType.getConstraints()); // do not manipulate original object
+			const TypeClass = oOriginalType.getMetadata().getClass();
+			const oFormatOptions = merge({}, oOriginalType.getFormatOptions()); // for Unit/Currency always set - do not manipulate original object
+			const oConstraints = isEmptyObject(oOriginalType.getConstraints()) ? undefined : merge({}, oOriginalType.getConstraints()); // do not manipulate original object
 
 			this._adjustUnitFormatOptions(oFormatOptions, bShowNumber, bShowMeasure);
 

@@ -10,7 +10,7 @@ sap.ui.define([
 	* used with a custom control implementation. Control specific tests can be found
 	* in TableFlex, ChartFlex & FilterBarFlex
 	*/
-	var TestClass = MDCControl.extend("sap.ui.mdc.FlexTestControl", {
+	const TestClass = MDCControl.extend("sap.ui.mdc.FlexTestControl", {
 		metadata: {
 			defaultAggregation: "items",
 			interfaces: [
@@ -48,7 +48,7 @@ sap.ui.define([
 				}
 			});
 
-			var sTestView = '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m" xmlns="sap.ui.mdc"></mvc:View>';
+			const sTestView = '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m" xmlns="sap.ui.mdc"></mvc:View>';
 
 			//as the ItembaseFlex is expectign a delegate to handle the add/remove logic, a custom needs to be implemented for this test
 			sinon.stub(AggregationBaseDelegate, "addItem").returns(
@@ -93,10 +93,10 @@ sap.ui.define([
 
 	QUnit.test("Check _applyAdd --> item should be added", function(assert){
 
-		var done = assert.async();
+		const done = assert.async();
 
 		//Note: better use ChangesWriteAPI.create, but we can not register change handlers programatically
-		var oChange = {
+		const oChange = {
 			getChangeType: function() {
 				return "add";
 			},
@@ -123,10 +123,10 @@ sap.ui.define([
 
 	QUnit.test("Check _applyAdd (but the item is already present in the control tree) --> item should not be added", function(assert){
 
-		var done = assert.async();
+		const done = assert.async();
 
 		//Note: better use ChangesWriteAPI.create, but we can not register change handlers programatically
-		var oChange = {
+		const oChange = {
 			getChangeType: function() {
 				return "add";
 			},
@@ -152,10 +152,10 @@ sap.ui.define([
 
 	QUnit.test("Check _applyRemove --> item should be removed", function(assert){
 
-		var done = assert.async();
+		const done = assert.async();
 
 		//Note: better use ChangesWriteAPI.create, but we can not register change handlers programatically
-		var oChange = {
+		const oChange = {
 			getChangeType: function() {
 				return "remove";
 			},
@@ -182,10 +182,10 @@ sap.ui.define([
 
 	QUnit.test("Check _applyRemove (but the item has already been removed from the control tree) --> item should be removed", function(assert){
 
-		var done = assert.async();
+		const done = assert.async();
 
 		//Note: better use ChangesWriteAPI.create, but we can not register change handlers programatically
-		var oChange = {
+		const oChange = {
 			getChangeType: function() {
 				return "remove";
 			},
@@ -197,7 +197,7 @@ sap.ui.define([
 			setRevertData: function() {}
 		};
 
-		var oItem = this.oFlexTestControl.removeItem(this.oFlexTestControl.getItems()[0]);
+		const oItem = this.oFlexTestControl.removeItem(this.oFlexTestControl.getItems()[0]);
 
 		this.fApplyRemove(oChange, this.oFlexTestControl, {
 			modifier: JsControlTreeModifier,
@@ -215,10 +215,10 @@ sap.ui.define([
 
 	QUnit.test("Check _applyMove --> item should be moved", function(assert){
 
-		var done = assert.async();
+		const done = assert.async();
 
 		//Note: better use ChangesWriteAPI.create, but we can not register change handlers programatically
-		var oChange = {
+		const oChange = {
 			getChangeType: function() {
 				return "move";
 			},
@@ -245,10 +245,10 @@ sap.ui.define([
 	});
 
 	QUnit.test("Check duplicate add appliance --> react gracefully on second add", function(assert) {
-		var done = assert.async();
+		const done = assert.async();
 
 		//Note: better use ChangesWriteAPI.create, but we can not register change handlers programatically
-		var oChange = {
+		const oChange = {
 			getChangeType: function() {
 				return "add";
 			},
@@ -284,10 +284,10 @@ sap.ui.define([
 
 	QUnit.test("Check duplicate remove appliance --> the second appliance should be skipped", function(assert){
 
-		var done = assert.async();
+		const done = assert.async();
 
 		//Note: better use ChangesWriteAPI.create, but we can not register change handlers programatically
-		var oChange = {
+		const oChange = {
 			getChangeType: function() {
 				return "remove";
 			},
@@ -326,9 +326,9 @@ sap.ui.define([
 
 	QUnit.test("Check _applyMove on removed item --> do nothing and reject to prevent reverts", function(assert){
 
-		var done = assert.async();
+		const done = assert.async();
 
-		var oRemoveChange = {
+		const oRemoveChange = {
 			getChangeType: function() {
 				return "move";
 			},
@@ -340,7 +340,7 @@ sap.ui.define([
 			setRevertData: function() {}
 		};
 
-		var oMoveChange = {
+		const oMoveChange = {
 			getChangeType: function() {
 				return "move";
 			},

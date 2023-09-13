@@ -59,7 +59,7 @@ sap.ui.define([
 		 * @private
 		 */
 		iShouldSeeTheSelectAllCheckBox: function(oControl) {
-			var sTableId = typeof oControl === "string" ? oControl : oControl.getId();
+			const sTableId = typeof oControl === "string" ? oControl : oControl.getId();
 
 			return waitForTable.call(this, oControl, {
 				success: function(oTable) {
@@ -73,7 +73,7 @@ sap.ui.define([
 							errorMessage: "Did not find the 'Select all' checkbox"
 						});
 					} else {
-						var $checkBox = Opa5.getJQuery()("#" + sTableId + "-innerTable-selall");
+						const $checkBox = Opa5.getJQuery()("#" + sTableId + "-innerTable-selall");
 
 						return this.waitFor({
 							check: function() {
@@ -102,7 +102,7 @@ sap.ui.define([
 		 * @private
 		 */
 		iShouldSeeTheDeselectAllIcon: function(oControl) {
-			var sTableId = typeof oControl === "string" ? oControl : oControl.getId();
+			const sTableId = typeof oControl === "string" ? oControl : oControl.getId();
 
 			return waitForTable.call(this, oControl, {
 				success: function(oTable) {
@@ -116,7 +116,7 @@ sap.ui.define([
 							errorMessage: "Did not find the 'Deselect all' icon"
 						});
 					} else {
-						var $checkBox = Opa5.getJQuery()("#" + sTableId + "-innerTable-selall");
+						const $checkBox = Opa5.getJQuery()("#" + sTableId + "-innerTable-selall");
 
 						return this.waitFor({
 							check: function() {
@@ -144,7 +144,7 @@ sap.ui.define([
 		 * @private
 		 */
 		iShouldSeeTheHeaderText: function(oControl, sHeaderText) {
-			var sTableId = typeof oControl === "string" ? oControl : oControl.getId();
+			const sTableId = typeof oControl === "string" ? oControl : oControl.getId();
 
 			return waitForTable.call(this, oControl, {
 				success: function(oTable) {
@@ -175,7 +175,7 @@ sap.ui.define([
 		 * @private
 		 */
 		iShouldSeeTheCount: function(oControl) {
-			var sTableId = typeof oControl === "string" ? oControl : oControl.getId();
+			const sTableId = typeof oControl === "string" ? oControl : oControl.getId();
 
 			return waitForTable.call(this, oControl, {
 				success: function(oTable) {
@@ -186,7 +186,7 @@ sap.ui.define([
 							return oTable.getHeaderVisible() && oTable.getShowRowCount();
 						},
 						success: function(oTitle) {
-							var aMatches = oTitle.getText().match(/.*\([0-9]*\)/);
+							const aMatches = oTitle.getText().match(/.*\([0-9]*\)/);
 							Opa5.assert.ok(aMatches.length === 1, "Table title contains item count");
 						},
 						errorMessage: "No table item count found"
@@ -205,7 +205,7 @@ sap.ui.define([
 		 * @private
 		 */
 		iShouldSeeTheVariantManagement: function(oControl) {
-			var sTableId = typeof oControl === "string" ? oControl : oControl.getId();
+			const sTableId = typeof oControl === "string" ? oControl : oControl.getId();
 
 			return this.waitFor({
 				id: sTableId + "-vm",
@@ -229,7 +229,7 @@ sap.ui.define([
 		 * @private
 		 */
 		iShouldSeeTheShowHideDetailsButton: function(oControl, sKey, bValue) {
-			var sTableId = typeof oControl === "string" ? oControl : oControl.getId();
+			const sTableId = typeof oControl === "string" ? oControl : oControl.getId();
 
 			return this.waitFor({
 				id: sTableId + "-showHideDetails",
@@ -258,7 +258,7 @@ sap.ui.define([
 		 * @private
 		 */
 		iShouldSeeThePasteButton: function(oControl) {
-			var sTableId = typeof oControl === "string" ? oControl : oControl.getId();
+			const sTableId = typeof oControl === "string" ? oControl : oControl.getId();
 
 			return this.waitFor({
 				id: sTableId + "-paste",
@@ -281,7 +281,7 @@ sap.ui.define([
 		 * @private
 		 */
 		iShouldSeeTheP13nButton: function(oControl, bShowP13n) {
-			var sTableId = typeof oControl === "string" ? oControl : oControl.getId();
+			const sTableId = typeof oControl === "string" ? oControl : oControl.getId();
 
 			this.waitFor({
 				id: sTableId + "-settings",
@@ -304,7 +304,7 @@ sap.ui.define([
 		 * @private
 		 */
 		iShouldSeeTheExportMenuButton: function(oControl) {
-			var sTableId = typeof oControl === "string" ? oControl : oControl.getId();
+			const sTableId = typeof oControl === "string" ? oControl : oControl.getId();
 
 			return this.waitFor({
 				id: sTableId + "-export",
@@ -329,7 +329,7 @@ sap.ui.define([
 		iShouldSeePopins: function(oControl, bHasPopins) {
 			return waitForTable.call(this, oControl, {
 				success: function(oTable) {
-					var oInnerTale = oTable._oTable;
+					const oInnerTale = oTable._oTable;
 
 					if (bHasPopins) {
 						Opa5.assert.ok(oInnerTale._getVisiblePopin().length, "Table has visible pop-ins");
@@ -354,7 +354,7 @@ sap.ui.define([
 		iShouldSeeAllVisibleRowsSelected: function(oControl, bSelectAll) {
 			return waitForTable.call(this, oControl, {
 				success: function(oTable) {
-					var oInnerTable = oTable._oTable;
+					const oInnerTable = oTable._oTable;
 
 					if (oTable._isOfType(TableType.ResponsiveTable)) {
 						if (bSelectAll) {
@@ -391,17 +391,17 @@ sap.ui.define([
 		iShouldSeeSomeRowsSelected: function(oControl, iStartIndex, iEndIndex) {
 			return waitForTable.call(this, oControl, {
 				success: function(oTable) {
-					var iIndex = iStartIndex;
-					var oInnerTable = oTable._oTable;
+					let iIndex = iStartIndex;
+					const oInnerTable = oTable._oTable;
 
 					if (oTable._isOfType(TableType.ResponsiveTable)) {
-						var oItem;
+						let oItem;
 						for (iIndex; iIndex <= iEndIndex; iIndex++) {
 							oItem = oInnerTable.getItems()[iIndex];
 							Opa5.assert.ok(oItem.getSelected() && Opa5.getJQuery()('#' + oItem.getId()).hasClass('sapMLIBSelected'), "Row at index " + iIndex + " is selected");
 						}
 					} else {
-						var oRow;
+						let oRow;
 						for (iIndex; iIndex <= iEndIndex; iIndex++) {
 							oRow = oInnerTable.getRows()[iIndex];
 							Opa5.assert.ok(Opa5.getJQuery()('#' + oRow.getId()).hasClass('sapUiTableRowSel'), "Row at index " + iIndex + " is selected");
@@ -465,8 +465,8 @@ sap.ui.define([
 				autoWait: false,
 				controlType: "sap.m.Dialog",
 				success: function(aDialogs) {
-					var oDialog = aDialogs[0];
-					var oResourceBundle = Core.getLibraryResourceBundle("sap.ui.export");
+					const oDialog = aDialogs[0];
+					const oResourceBundle = Core.getLibraryResourceBundle("sap.ui.export");
 					return this.waitFor({
 						autoWait: false,
 						controlType: "sap.m.Title",
@@ -560,7 +560,7 @@ sap.ui.define([
 					this.iWaitForPromise(new Promise(function(resolve) {
 						setTimeout(resolve, 300);
 					})).then(function() {
-						var oContext = Opa5.getContext();
+						const oContext = Opa5.getContext();
 						Opa5.assert.notOk(oContext.columnMenu.isOpen(), "The column menu is closed");
 						delete oContext.columnMenu;
 					});
@@ -807,9 +807,9 @@ sap.ui.define([
 		 * @param {Boolean} bDescending Sorting direction is descending
 		 */
 		iShouldSeeColumnSorted: function(oControl, vColumn, bDescending) {
-			var aSortConditions = oControl.getSortConditions().sorters;
+			const aSortConditions = oControl.getSortConditions().sorters;
 
-			for (var i = 0; i < aSortConditions.length; i++) {
+			for (let i = 0; i < aSortConditions.length; i++) {
 				if (typeof vColumn === 'object' && aSortConditions[i].name === vColumn.getHeader() && aSortConditions[i].descending === bDescending) {
 					Opa5.assert.equal(aSortConditions[i].name, vColumn.getHeader(), "Column " + vColumn + " has sorting condition");
 					Opa5.assert.equal(aSortConditions[i].descending, bDescending, "Column " + vColumn + " is sorted " + ((bDescending) ? "descending" : "ascending"));
@@ -865,10 +865,10 @@ sap.ui.define([
 							ancestor: oColumnMenu
 						}],
 						success: function(aSegmentedButton) {
-							var sButton = aSegmentedButton[0].getSelectedItem();
-							var aButtons = aSegmentedButton[0].getItems();
+							const sButton = aSegmentedButton[0].getSelectedItem();
+							const aButtons = aSegmentedButton[0].getItems();
 
-							for (var i = 0; i < aButtons.length; i++) {
+							for (let i = 0; i < aButtons.length; i++) {
 								if (aButtons[i].getId() === sButton) {
 									Opa5.assert.equal(aButtons[i].getProperty("key"), ((bDescending) ? "desc" : "asc"), ((bDescending) ? "Descending" : "Ascending") + " is selected");
 								}
@@ -888,7 +888,7 @@ sap.ui.define([
 		 * @returns {Promise} OPA waitFor
 		 */
 		iShouldSeeInfoFilterBarWithFilters: function(vControl, aFilteredColumns) {
-			var sTableId = typeof vControl === "string" ? vControl : vControl.getId();
+			const sTableId = typeof vControl === "string" ? vControl : vControl.getId();
 
 			return this.waitFor({
 				id: sTableId + "-filterInfoBar",
@@ -908,7 +908,7 @@ sap.ui.define([
 		 * @returns {Promise} OPA waitFor
 		 */
 		iShouldNotSeeInfoFilterBar: function(vControl) {
-			var sTableId = typeof vControl === "string" ? vControl : vControl.getId();
+			const sTableId = typeof vControl === "string" ? vControl : vControl.getId();
 
 			return this.waitFor({
 				id: sTableId + "-filterInfoBar",
@@ -952,7 +952,7 @@ sap.ui.define([
 						}],
 						success: function(aFilterFields) {
 							Opa5.assert.equal(aFilterFields.length, 1, "Only 1 field rendered");
-							var bContainsValue = aFilterFields[0].getConditions().some(function(oCondition) {
+							const bContainsValue = aFilterFields[0].getConditions().some(function(oCondition) {
 								return oCondition.values.indexOf(sValue) > -1;
 							});
 							Opa5.assert.ok(bContainsValue, "Value is contained in filter field");
@@ -969,7 +969,7 @@ sap.ui.define([
 		 * @returns {Promsie} OPA waitFor
 		 */
 		iShouldSeeFocusOnControl: function(vControl) {
-			var sControlId = typeof vControl === "string" ? vControl : vControl.getId();
+			const sControlId = typeof vControl === "string" ? vControl : vControl.getId();
 
 			return this.waitFor({
 				id: sControlId,

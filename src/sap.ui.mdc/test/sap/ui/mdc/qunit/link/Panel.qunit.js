@@ -19,7 +19,7 @@ sap.ui.define([
 	"use strict";
 
 	// shortcut for sap.ui.layout.form.SimpleFormLayout
-	var SimpleFormLayout = layoutLibrary.form.SimpleFormLayout;
+	const SimpleFormLayout = layoutLibrary.form.SimpleFormLayout;
 
 	QUnit.module("sap.ui.mdc.link.Panel: API", {
 		beforeEach: function() {
@@ -46,8 +46,8 @@ sap.ui.define([
 		}
 	});
 	function fnHasVisibleText(assert, oPanel, sText, bVisible) {
-		var aElements = oPanel.$().find("span:visible");
-		var bFound = false;
+		const aElements = oPanel.$().find("span:visible");
+		let bFound = false;
 		aElements.each(function(iIndex) {
 			if (aElements[iIndex].textContent === sText) {
 				bFound = true;
@@ -56,8 +56,8 @@ sap.ui.define([
 		assert.equal(bFound, bVisible);
 	}
 	function fnHasVisibleLink(assert, oPanel, sText, bVisible) {
-		var aElements = oPanel.$().find("a:visible");
-		var bFound = false;
+		const aElements = oPanel.$().find("a:visible");
+		let bFound = false;
 		aElements.each(function(iIndex) {
 			if (aElements[iIndex].text === sText) {
 				bFound = true;
@@ -66,8 +66,8 @@ sap.ui.define([
 		assert.equal(bFound, bVisible);
 	}
 	function fnHasVisibleIcons(assert, oPanel, iCountVisibleIcons) {
-		var aElements = oPanel.$().find("span:visible");
-		var iCount = 0;
+		const aElements = oPanel.$().find("span:visible");
+		let iCount = 0;
 		aElements.each(function(iIndex) {
 			if (aElements[iIndex].style.cssText.indexOf("SAP-icons") > -1) {
 				iCount++;
@@ -314,7 +314,7 @@ sap.ui.define([
 		fnHasVisibleIcons(assert, this.oPanel, 2);
 	});
 
-	var fnLinkSelectionPanelGetLink = function(oLinkSelectionPanel, iIndex) {
+	const fnLinkSelectionPanelGetLink = function(oLinkSelectionPanel, iIndex) {
 		return oLinkSelectionPanel.getAggregation("_content").getItems()[0].getItems()[iIndex].getCells()[0].getItems()[0].getItems()[0];
 	};
 
@@ -348,7 +348,7 @@ sap.ui.define([
 		assert.equal(this.oPanel.getDependents().length, 0);
 
 		// act
-		var done = assert.async();
+		const done = assert.async();
 		oCore.loadLibrary('sap.ui.fl', {
 			async: true
 		}).then(function() {
@@ -375,9 +375,9 @@ sap.ui.define([
 	});
 
 	QUnit.test("check internalHref", function(assert) {
-		var sBaseUrl = window.location.href;
-		var done = assert.async();
-		var oLink = new Link({
+		const sBaseUrl = window.location.href;
+		const done = assert.async();
+		const oLink = new Link({
 			delegate: {
 				name: "test-resources/sap/ui/mdc/qunit/link/TestDelegate_Link",
 				payload: {
@@ -420,9 +420,9 @@ sap.ui.define([
 	});
 
 	QUnit.test("check navigation without internalHref", function(assert) {
-		var sBaseUrl = window.location.href;
-		var done = assert.async();
-		var oLink = new Link({
+		const sBaseUrl = window.location.href;
+		const done = assert.async();
+		const oLink = new Link({
 			delegate: {
 				name: "test-resources/sap/ui/mdc/qunit/link/TestDelegate_Link",
 				payload: {
@@ -463,10 +463,10 @@ sap.ui.define([
 		}.bind(this));
 	});
 
-	var fnCheckLinkSelectionPanelNavigation = function(assert, oEventSettings) {
-		var sBaseUrl = window.location.href;
-		var done = assert.async();
-		var oLink = new Link({
+	const fnCheckLinkSelectionPanelNavigation = function(assert, oEventSettings) {
+		const sBaseUrl = window.location.href;
+		const done = assert.async();
+		const oLink = new Link({
 			delegate: {
 				name: "test-resources/sap/ui/mdc/qunit/link/TestDelegate_Link",
 				payload: {
@@ -514,7 +514,7 @@ sap.ui.define([
 	QUnit.module("basic methods");
 
 	QUnit.test("navigate without FLP", function(assert) {
-		var sBaseUrl = window.location.href;
+		const sBaseUrl = window.location.href;
 
 		Panel.navigate(sBaseUrl + "#navigate");
 		assert.equal(window.location.href, sBaseUrl + "#navigate", "Navigation happened");
@@ -530,8 +530,8 @@ sap.ui.define([
 		}
 	});
 
-	var fnCheckPreventedNavigation = function(assert, oPanel, oEvent) {
-		var oPanelNavigateSpy = sinon.spy(Panel, "navigate");
+	const fnCheckPreventedNavigation = function(assert, oPanel, oEvent) {
+		const oPanelNavigateSpy = sinon.spy(Panel, "navigate");
 
 		assert.ok(oPanelNavigateSpy.notCalled, "Panel 'navigate' function not called before onPressLink");
 		oPanel.onPressLink(oEvent);
@@ -541,20 +541,20 @@ sap.ui.define([
 	};
 
 	QUnit.test("without beforeNavigationCallback", function(assert) {
-		var oPanel = new Panel({});
-		var oEvent = new Event("eventId", this.oMLink, {});
+		const oPanel = new Panel({});
+		const oEvent = new Event("eventId", this.oMLink, {});
 
 		fnCheckPreventedNavigation(assert, oPanel, oEvent);
 	});
 
 	QUnit.test("with target='_blank'", function(assert) {
-		var oPanel = new Panel({
+		const oPanel = new Panel({
 			beforeNavigationCallback: function() {
 				return Promise.resolve(true);
 			}
 		});
 		this.oMLink.setTarget("_blank");
-		var oEvent = new Event("eventId", this.oMLink, {});
+		const oEvent = new Event("eventId", this.oMLink, {});
 
 		fnCheckPreventedNavigation(assert, oPanel, oEvent);
 	});
@@ -565,28 +565,28 @@ sap.ui.define([
 		{ctrlKey: true, metaKey: true}
 	].forEach(function(oEventSettings) {
 		QUnit.test("ctrlKey" + (!oEventSettings.ctrlKey ? " not" : "") + " pressed and metaKey " + (!oEventSettings.metaKey ? " not" : "") + " pressed", function(assert) {
-			var oPanel = new Panel({
+			const oPanel = new Panel({
 				beforeNavigationCallback: function() {
 					return Promise.resolve(true);
 				}
 			});
-			var oEvent = new Event("eventId", this.oMLink, oEventSettings);
+			const oEvent = new Event("eventId", this.oMLink, oEventSettings);
 
 			fnCheckPreventedNavigation(assert, oPanel, oEvent);
 		});
 	});
 
 	QUnit.test("straight forward", function(assert) {
-		var done = assert.async();
-		var sBaseUrl = window.location.href;
-		var oPanel = new Panel({
+		const done = assert.async();
+		const sBaseUrl = window.location.href;
+		const oPanel = new Panel({
 			beforeNavigationCallback: function() {
 				return Promise.resolve(true);
 			}
 		});
 		this.oMLink.setHref(sBaseUrl + "#onNavigate");
-		var oEvent = new Event("eventId", this.oMLink, {});
-		var oPanelNavigateSpy = sinon.spy(Panel, "navigate");
+		const oEvent = new Event("eventId", this.oMLink, {});
+		const oPanelNavigateSpy = sinon.spy(Panel, "navigate");
 
 		assert.ok(oPanelNavigateSpy.notCalled, "Panel 'navigate' function not called before onPressLink");
 		oPanel.onPressLink(oEvent);
@@ -603,8 +603,8 @@ sap.ui.define([
 	QUnit.module("applySettings");
 
 	QUnit.test("with additionalContent", function(assert) {
-		var oText = new Text({ text: "Text" });
-		var oPanel = new Panel({
+		const oText = new Text({ text: "Text" });
+		const oPanel = new Panel({
 			additionalContent: [ oText ]
 		});
 
@@ -614,7 +614,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("enablePersonalization false", function(assert) {
-		var oPanel = new Panel({
+		const oPanel = new Panel({
 			enablePersonalization: false
 		});
 
@@ -622,12 +622,12 @@ sap.ui.define([
 	});
 
 	QUnit.test("check if seperator is visible", function (assert) {
-		var oPanelItem = new PanelItem({
+		const oPanelItem = new PanelItem({
 			text: "PanelItem",
 			href: "#PanelItem"
 		});
-		var oText = new Text({ text: "AdditionalContentText" });
-		var oPanel = new Panel({
+		const oText = new Text({ text: "AdditionalContentText" });
+		const oPanel = new Panel({
 			items: [ oPanelItem ],
 			additionalContent: [ oText ]
 		});
@@ -667,18 +667,18 @@ sap.ui.define([
 		assert.equal(this.oPanel.getContentTitle().getId(), this.oPanel._getPersonalizationButton().getId(), "ContentTitle set to personalization button");
 	});
 
-	var fnAddItemsToPanel = function(oPanel) {
-		var oPanelItem = new PanelItem({
+	const fnAddItemsToPanel = function(oPanel) {
+		const oPanelItem = new PanelItem({
 			text: "PanelItem",
 			href: "#PanelItem"
 		});
-		var oPanelItem2 = new PanelItem({
+		const oPanelItem2 = new PanelItem({
 			text: "PanelItem2",
 			href: "#PanelItem2"
 		});
 		oPanel.addItem(oPanelItem);
 		oPanel.addItem(oPanelItem2);
-		var oModel = new JSONModel({
+		const oModel = new JSONModel({
 			metadata: jQuery.extend(true, [], [ oPanelItem, oPanelItem2 ])
 		});
 		oPanel.setModel(oModel, "$sapuimdcLink");
@@ -696,8 +696,8 @@ sap.ui.define([
 	QUnit.test("with Links and with additional content", function(assert) {
 		fnAddItemsToPanel(this.oPanel);
 
-		var oText = new Text({ text: "AdditionalContentText" });
-		var oText2 = new Text({ text: "Another Text" });
+		const oText = new Text({ text: "AdditionalContentText" });
+		const oText2 = new Text({ text: "Another Text" });
 		this.oPanel.addAdditionalContent(oText);
 		this.oPanel.addAdditionalContent(oText2);
 
@@ -708,8 +708,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("without Links, with additional content", function(assert) {
-		var oText = new Text({ text: "AdditionalContentText" });
-		var oText2 = new Text({ text: "Another Text" });
+		const oText = new Text({ text: "AdditionalContentText" });
+		const oText2 = new Text({ text: "Another Text" });
 		this.oPanel.addAdditionalContent(oText);
 		this.oPanel.addAdditionalContent(oText2);
 

@@ -4,7 +4,7 @@ sap.ui.define([
 ], function(createAppEnvironment, GroupFlex, ChangesWriteAPI, JsControlTreeModifier, oCore) {
 	"use strict";
 
-	var fCreateaddGroupDefinition = function(){
+	const fCreateaddGroupDefinition = function(){
 		return {
 			"changeType": "addGroup",
 			"selector": {
@@ -17,7 +17,7 @@ sap.ui.define([
 		};
 	};
 
-	var fCreateremoveGroupDefintion = function(){
+	const fCreateremoveGroupDefintion = function(){
 		return {
 			"changeType": "removeGroup",
 			"selector": {
@@ -33,7 +33,7 @@ sap.ui.define([
 	QUnit.module("change handlers", {
 		beforeEach: function() {
 
-			var sTableView = '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m" xmlns="sap.ui.mdc" xmlns:mdcTable="sap.ui.mdc.table"><Table id="myTable"></Table></mvc:View>';
+			const sTableView = '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m" xmlns="sap.ui.mdc" xmlns:mdcTable="sap.ui.mdc.table"><Table id="myTable"></Table></mvc:View>';
 
 			return createAppEnvironment(sTableView, "Table").then(function(mCreatedApp){
 				this.oView = mCreatedApp.view;
@@ -58,8 +58,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("addGroup", function(assert) {
-		var done = assert.async();
-		var oContent = fCreateaddGroupDefinition();
+		const done = assert.async();
+		const oContent = fCreateaddGroupDefinition();
 
 		return ChangesWriteAPI.create({
 			changeSpecificData: oContent,
@@ -72,8 +72,8 @@ sap.ui.define([
 				view: this.oView
 			}).then(function(){
 
-				var ogroupConditions = this.oTable.getGroupConditions();
-				var aGroupings = ogroupConditions.groupLevels;
+				const ogroupConditions = this.oTable.getGroupConditions();
+				const aGroupings = ogroupConditions.groupLevels;
 
 				assert.equal(aGroupings.length, 1, "one grouping has been created");
 				assert.equal(aGroupings[0].name, "Category", "correct grouping has been created");
@@ -84,8 +84,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("removeGroup", function(assert) {
-		var done = assert.async();
-		var oAddContent = fCreateaddGroupDefinition();
+		const done = assert.async();
+		const oAddContent = fCreateaddGroupDefinition();
 
 		//create addGroup
 		return ChangesWriteAPI.create({
@@ -99,14 +99,14 @@ sap.ui.define([
 				view: this.oView
 			}).then(function(){
 
-				var ogroupConditions = this.oTable.getGroupConditions();
-				var aGroupings = ogroupConditions.groupLevels;
+				let ogroupConditions = this.oTable.getGroupConditions();
+				const aGroupings = ogroupConditions.groupLevels;
 
 				assert.equal(aGroupings.length, 1, "one grouping has been created");
 				assert.equal(aGroupings[0].name, "Category", "correct grouping has been created");
 
 				//create removeGroup
-				var oRemoveContent = fCreateremoveGroupDefintion();
+				const oRemoveContent = fCreateremoveGroupDefintion();
 				return ChangesWriteAPI.create({
 					changeSpecificData: oRemoveContent,
 					selector: this.oTable
@@ -130,8 +130,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("removeGroup (for a grouping that does not exist) with a different existing grouping", function(assert) {
-		var done = assert.async();
-		var oAddContent = fCreateaddGroupDefinition();
+		const done = assert.async();
+		const oAddContent = fCreateaddGroupDefinition();
 
 		//create addGroup
 		return ChangesWriteAPI.create({
@@ -145,14 +145,14 @@ sap.ui.define([
 				view: this.oView
 			}).then(function(){
 
-				var ogroupConditions = this.oTable.getGroupConditions();
-				var aGroupings = ogroupConditions.groupLevels;
+				let ogroupConditions = this.oTable.getGroupConditions();
+				const aGroupings = ogroupConditions.groupLevels;
 
 				assert.equal(aGroupings.length, 1, "one grouping has been created");
 				assert.equal(aGroupings[0].name, "Category", "correct grouping has been created");
 
 				//create removeGroup
-				var oRemoveContent = {
+				const oRemoveContent = {
 					changeType: "removeGroup",
 					selector: {
 						id: "comp---view--myTable"
@@ -185,7 +185,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("apply and revert 'removeGroup' with exisiting groupConditions", function(assert) {
-		var done = assert.async();
+		const done = assert.async();
 
 		this.oTable.setGroupConditions({
 			groupLevels: [
@@ -195,10 +195,10 @@ sap.ui.define([
 			]
 		});
 
-		var oInitialgroupConditions = this.oTable.getGroupConditions();
+		const oInitialgroupConditions = this.oTable.getGroupConditions();
 
 		//create removeGroup
-		var oRemoveContent = fCreateremoveGroupDefintion();
+		const oRemoveContent = fCreateremoveGroupDefintion();
 		return ChangesWriteAPI.create({
 			changeSpecificData: oRemoveContent,
 			selector: this.oTable
@@ -212,7 +212,7 @@ sap.ui.define([
 			}).then(function(){
 
 				//existing group condition removed
-				var ogroupConditions = this.oTable.getGroupConditions();
+				const ogroupConditions = this.oTable.getGroupConditions();
 				assert.equal(ogroupConditions.groupLevels.length, 0, "no groupLevels - group has been removed");
 
 				//revert 'removeGroup'
@@ -223,7 +223,7 @@ sap.ui.define([
 				}).then(function(){
 
 					//groupConditions should be similar to the initial state
-					var oCurrentgroupConditions = this.oTable.getGroupConditions();
+					const oCurrentgroupConditions = this.oTable.getGroupConditions();
 					assert.deepEqual(oCurrentgroupConditions, oInitialgroupConditions, "grouping has been reverted and is available again");
 
 				}.bind(this));
@@ -234,10 +234,10 @@ sap.ui.define([
 	});
 
 	QUnit.test("apply and revert 'addGroup'", function(assert) {
-		var done = assert.async();
+		const done = assert.async();
 
 		//create removeGroup
-		var oRemoveContent = fCreateaddGroupDefinition();
+		const oRemoveContent = fCreateaddGroupDefinition();
 		return ChangesWriteAPI.create({
 			changeSpecificData: oRemoveContent,
 			selector: this.oTable
@@ -251,7 +251,7 @@ sap.ui.define([
 			}).then(function(){
 
 				//existing group condition removed
-				var ogroupConditions = this.oTable.getGroupConditions();
+				const ogroupConditions = this.oTable.getGroupConditions();
 				assert.equal(ogroupConditions.groupLevels.length, 1, "grouping added");
 
 				//revert 'removeGroup'
@@ -262,7 +262,7 @@ sap.ui.define([
 				}).then(function(){
 
 					//'addGroup' reverted --> no groupLevels
-					var ogroupConditions = this.oTable.getGroupConditions();
+					const ogroupConditions = this.oTable.getGroupConditions();
 					assert.equal(ogroupConditions.groupLevels.length, 0, "no grouping available - addGroup successfully reverted");
 
 				}.bind(this));

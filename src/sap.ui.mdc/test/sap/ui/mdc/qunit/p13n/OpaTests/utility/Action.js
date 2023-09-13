@@ -46,7 +46,7 @@ sap.ui.define([
 	 * @private
 	 * @alias sap.ui.mdc.qunit.p13n.test.Action
 	 */
-	var Action = Opa5.extend("sap.ui.mdc.qunit.p13n.test.Action", {
+	const Action = Opa5.extend("sap.ui.mdc.qunit.p13n.test.Action", {
 
 		iLookAtTheScreen: function () {
 			return this;
@@ -111,7 +111,7 @@ sap.ui.define([
 		},
 
 		iTogglePanelInDialog: function(sGroupName) {
-			var fiToggleFilterPanel = function(sGroupName, bModal) {
+			const fiToggleFilterPanel = function(sGroupName, bModal) {
 				return waitForPanelInP13n.call(this, {
 					groupName: sGroupName,
 					modal: !!bModal,
@@ -172,13 +172,13 @@ sap.ui.define([
 		},
 
 		waitForP13nItem: function(oSettings){
-			var bModal = oSettings.hasOwnProperty("modal") ? oSettings.modal : true;
-			var sItemNameSpace = oSettings.itemNameSpace || "sap.m.ColumnListItem";
-			var sPopoverTitle = oSettings.title;
-			var sColumnName = oSettings.columnName;
-			var fSuccess = oSettings.success;
+			const bModal = oSettings.hasOwnProperty("modal") ? oSettings.modal : true;
+			const sItemNameSpace = oSettings.itemNameSpace || "sap.m.ColumnListItem";
+			const sPopoverTitle = oSettings.title;
+			const sColumnName = oSettings.columnName;
+			const fSuccess = oSettings.success;
 
-			var aMatchers = [];
+			const aMatchers = [];
 
 			if (sPopoverTitle){
 				aMatchers.push(new PropertyStrictEquals({
@@ -214,14 +214,14 @@ sap.ui.define([
 		},
 
 		waitForP13nChartItemTemplateBox: function(oSettings){
-			var bModal = oSettings.hasOwnProperty("modal") ? oSettings.modal : true;
-			var sPopoverTitle = oSettings.title;
-			var sKind = oSettings.kind;
-			var fSuccess = oSettings.success;
+			const bModal = oSettings.hasOwnProperty("modal") ? oSettings.modal : true;
+			const sPopoverTitle = oSettings.title;
+			const sKind = oSettings.kind;
+			const fSuccess = oSettings.success;
 
-			var MDCRb = oCore.getLibraryResourceBundle("sap.ui.mdc");
-			var sPlaceholderName = MDCRb.getText('chart.PERSONALIZATION_DIALOG_TEMPLATE_PLACEHOLDER');
-			var aMatchers = [];
+			const MDCRb = oCore.getLibraryResourceBundle("sap.ui.mdc");
+			const sPlaceholderName = MDCRb.getText('chart.PERSONALIZATION_DIALOG_TEMPLATE_PLACEHOLDER');
+			const aMatchers = [];
 
 			if (sPopoverTitle){
 				aMatchers.push(new PropertyStrictEquals({
@@ -260,7 +260,7 @@ sap.ui.define([
 				matchers: new Ancestor(oComboBox),
 				success: function(aPopovers) {
 					Opa5.assert.ok(aPopovers.length === 1, "ComboBox popover found");
-					var oPopover = aPopovers[0];
+					const oPopover = aPopovers[0];
 					this.waitFor({
 						controlType: "sap.m.StandardListItem",
 						matchers: [
@@ -288,7 +288,7 @@ sap.ui.define([
 				columnName: sFilterName,
 				modal: typeof bLive == "boolean" ? !bLive : true,
 				success: function(aItems) {
-					var oFilterField = aItems.length > 1 ? aItems[1].getContent()[1].getItems()[0] : aItems[0].getCells()[1];
+					const oFilterField = aItems.length > 1 ? aItems[1].getContent()[1].getItems()[0] : aItems[0].getCells()[1];
 					Opa5.assert.ok(oFilterField,"FilterField found");
 					setTimeout(function(){
 						new EnterText({
@@ -387,12 +387,12 @@ sap.ui.define([
 				modal: typeof bModal === "boolean" ? bModal : true,
 				itemNameSpace: bFilter ? "sap.m.CustomListItem" : undefined,
 				success: function(aColumnListItems) {
-					var oColumnListItem = aColumnListItems[aColumnListItems.length - 1];
-					var oCheckBox = oColumnListItem.getMultiSelectControl();
+					const oColumnListItem = aColumnListItems[aColumnListItems.length - 1];
+					const oCheckBox = oColumnListItem.getMultiSelectControl();
 					new Press().executeOn(oCheckBox);
 					//optional array update
 					if (aP13nItems){
-						var iIndex = oColumnListItem.getParent().getItems().indexOf(oColumnListItem);
+						const iIndex = oColumnListItem.getParent().getItems().indexOf(oColumnListItem);
 						aP13nItems[iIndex].selected = oCheckBox.getSelected();
 					}
 				}
@@ -471,8 +471,8 @@ sap.ui.define([
 			});
 		},
 		iClickOnColumn: function(sName, bResponsiveTable){
-			var sColumnNameSpace = bResponsiveTable ? "sap.m.Column" : "sap.ui.table.Column";
-			var sTableNameSpace = bResponsiveTable ? "sap.m.Table" : "sap.ui.table.Table";
+			const sColumnNameSpace = bResponsiveTable ? "sap.m.Column" : "sap.ui.table.Column";
+			const sTableNameSpace = bResponsiveTable ? "sap.m.Table" : "sap.ui.table.Table";
 			return this.waitFor({
 				searchOpenDialogs: false,
 				controlType: sTableNameSpace,

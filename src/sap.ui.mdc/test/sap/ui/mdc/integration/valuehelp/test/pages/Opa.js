@@ -19,7 +19,7 @@ sap.ui.define([
 	FilterFieldAssertions) {
 	"use strict";
 
-	var _createMethods = function (aSources) {
+	const _createMethods = function (aSources) {
 		return aSources.reduce(function (oAcc, oSource) {
 			Object.keys(oSource).forEach(function (sKey) {
 

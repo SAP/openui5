@@ -42,7 +42,7 @@ sap.ui.define([
 	 * @public
  	 * @experimental As of version 1.61
 	 */
-	var Control = CoreControl.extend("sap.ui.mdc.Control", /** @lends sap.ui.mdc.Control.prototype */ {
+	const Control = CoreControl.extend("sap.ui.mdc.Control", /** @lends sap.ui.mdc.Control.prototype */ {
 		metadata: {
 			library: "sap.ui.mdc",
 			properties: {

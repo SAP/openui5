@@ -11,10 +11,10 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var ValueHelpDelegate = Object.assign({}, BaseValueHelpDelegate);
+	const ValueHelpDelegate = Object.assign({}, BaseValueHelpDelegate);
 
 	ValueHelpDelegate.getFilterConditions = function (oPayload, oContent, oConfig) {
-		var oConditions = BaseValueHelpDelegate.getFilterConditions(oPayload, oContent, oConfig);
+		const oConditions = BaseValueHelpDelegate.getFilterConditions(oPayload, oContent, oConfig);
 
 		if (oContent.getId() === "FB0-FH-D-Popover-MTable") {
 			oConditions['distributionChannel'] = sap.ui.getCore().byId('FB0-DC').getConditions();
@@ -34,15 +34,15 @@ sap.ui.define([
 	// Exemplatory implementation of a condition merge strategy (shared condition between multiple collectiveSearch lists)
 	ValueHelpDelegate.modifySelectionBehaviour = function (oValueHelp, oContent, oChange) {
 
-		var oChangeCondition = oChange.conditions[0];
-		var oCurrentConditions = oContent.getConditions();
+		const oChangeCondition = oChange.conditions[0];
+		const oCurrentConditions = oContent.getConditions();
 
 		// Replace typeahead condition with existing one - we do not want duplicates in this scenario
 		if (oContent.isTypeahead() && oChange.type === "Set") {
 			return {
 				type: "Set",
 				conditions: oChange.conditions.map(function (oCondition) {
-					var oExisting = oCurrentConditions.find(function (oCurrentCondition) {
+					const oExisting = oCurrentConditions.find(function (oCurrentCondition) {
 						return oCurrentCondition.values[0] === oCondition.values[0];
 					});
 
@@ -51,7 +51,7 @@ sap.ui.define([
 			};
 		}
 
-		var oExistingCondition = oCurrentConditions.find(function (oCondition) {
+		const oExistingCondition = oCurrentConditions.find(function (oCondition) {
 			return oCondition.values[0] === oChangeCondition.values[0];
 		});
 

@@ -32,7 +32,7 @@ sap.ui.define([
 	 * @alias module:sap/ui/mdc/odata/v4/ValueHelpDelegate
 	 * @deprecated This module should not be used and will be removed in future versions!
 	 */
-	var ODataV4ValueHelpDelegate = Object.assign({}, ValueHelpDelegate);
+	const ODataV4ValueHelpDelegate = Object.assign({}, ValueHelpDelegate);
 
 	ODataV4ValueHelpDelegate.getTypeMap = function (oPayload) {
 		return ODataV4TypeMap;
@@ -46,8 +46,8 @@ sap.ui.define([
 		ValueHelpDelegate.updateBindingInfo(oPayload, oContent, oBindingInfo);
 
 		if (oContent.getFilterFields() === "$search"){
-			var oFilterBar = oContent._getPriorityFilterBar();
-			var sSearch = oContent.isTypeahead() ? oContent._getPriorityFilterValue() : oFilterBar && oFilterBar.getSearch();
+			const oFilterBar = oContent._getPriorityFilterBar();
+			let sSearch = oContent.isTypeahead() ? oContent._getPriorityFilterValue() : oFilterBar && oFilterBar.getSearch();
 			if (this.adjustSearch) {
 				sSearch = this.adjustSearch(oPayload, oContent.isTypeahead(), sSearch);
 			}
@@ -56,7 +56,7 @@ sap.ui.define([
 	};
 
 	ODataV4ValueHelpDelegate.updateBinding = function(oPayload, oListBinding, oBindingInfo) {
-		var oRootBinding = oListBinding.getRootBinding() || oListBinding;
+		const oRootBinding = oListBinding.getRootBinding() || oListBinding;
 		if (!oRootBinding.isSuspended()) {
 			oRootBinding.suspend();
 		}

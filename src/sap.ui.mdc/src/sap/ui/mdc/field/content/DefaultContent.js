@@ -10,8 +10,8 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var EmptyIndicatorMode = mLibrary.EmptyIndicatorMode;
-	var TokenizerRenderMode = mLibrary.TokenizerRenderMode;
+	const EmptyIndicatorMode = mLibrary.EmptyIndicatorMode;
+	const TokenizerRenderMode = mLibrary.TokenizerRenderMode;
 
 	/**
 	 * Object-based definition of the default content type that is used in the {@link sap.ui.mdc.field.content.ContentFactory}.
@@ -25,7 +25,7 @@ sap.ui.define([
 	 * @since 1.87
 	 * @alias sap.ui.mdc.field.content.DefaultContent
 	 */
-	var DefaultContent = {
+	const DefaultContent = {
 		getDisplay: function() {
 			return ["sap/m/Text"];
 		},
@@ -63,7 +63,7 @@ sap.ui.define([
 		 * @returns {string[]} aControlNames Names of the determined controls
 		 */
 		getControlNames: function(sContentMode, sOperator) {
-			var aControlNames;
+			let aControlNames;
 			switch (sContentMode) {
 				case ContentMode.Display:
 					aControlNames = this.getDisplay();
@@ -150,9 +150,9 @@ sap.ui.define([
 		 * @returns {sap.ui.core.Control[]} Array containing the created controls
 		 */
 		createEdit: function(oContentFactory, aControlClasses, sId) {
-			var Input = aControlClasses[0];
-			var oConditionsType = oContentFactory.getConditionsType();
-			var oInput = new Input(sId, {
+			const Input = aControlClasses[0];
+			const oConditionsType = oContentFactory.getConditionsType();
+			const oInput = new Input(sId, {
 				value: { path: "$field>/conditions", type: oConditionsType },
 				placeholder: "{$field>/placeholder}",
 				textAlign: "{$field>/textAlign}",
@@ -187,18 +187,18 @@ sap.ui.define([
 		 * @returns {sap.ui.core.Control[]} Array containing the created controls
 		 */
 		createEditMultiValue: function(oContentFactory, aControlClasses, sId) {
-			var Input = aControlClasses[0];
-			var Token = aControlClasses[1];
-			var oConditionType = oContentFactory.getConditionType();
-			var oConditionsType = oContentFactory.getConditionsType();
-			var oToken = new Token(sId + "-token", {
+			const Input = aControlClasses[0];
+			const Token = aControlClasses[1];
+			const oConditionType = oContentFactory.getConditionType();
+			const oConditionsType = oContentFactory.getConditionsType();
+			const oToken = new Token(sId + "-token", {
 				text: {
 					path: '$field>',
 					type: oConditionType
 				}
 			});
 
-			var oMultiInput = new Input(sId, {
+			const oMultiInput = new Input(sId, {
 				value: { path: "$field>/conditions", type: oConditionsType }, // only for parsing
 				placeholder: "{$field>/placeholder}",
 				textAlign: "{$field>/textAlign}",
@@ -237,9 +237,9 @@ sap.ui.define([
 		 * @returns {sap.ui.core.Control[]} Array containing the created controls
 		 */
 		createEditMultiLine: function(oContentFactory, aControlClasses, sId) {
-			var TextArea = aControlClasses[0];
-			var oConditionsType = oContentFactory.getConditionsType();
-			var oTextArea = new TextArea(sId, {
+			const TextArea = aControlClasses[0];
+			const oConditionsType = oContentFactory.getConditionsType();
+			const oTextArea = new TextArea(sId, {
 				value: { path: "$field>/conditions", type: oConditionsType },
 				placeholder: "{$field>/placeholder}",
 				textAlign: "{$field>/textAlign}",
@@ -270,9 +270,9 @@ sap.ui.define([
 		 * @returns {sap.ui.core.Control[]} Array containing the created controls
 		 */
 		createDisplay: function(oContentFactory, aControlClasses, sId) {
-			var Text = aControlClasses[0];
-			var oConditionsType = oContentFactory.getConditionsType();
-			var oText = new Text(sId, {
+			const Text = aControlClasses[0];
+			const oConditionsType = oContentFactory.getConditionsType();
+			const oText = new Text(sId, {
 				text: { path: "$field>/conditions", type: oConditionsType },
 				textAlign: "{$field>/textAlign}",
 				textDirection: "{$field>/textDirection}",
@@ -294,9 +294,9 @@ sap.ui.define([
 		 * @since 1.91
 		 */
 		createDisplayMultiLine: function(oContentFactory, aControlClasses, sId) {
-			var ExpandableText = aControlClasses[0];
-			var oConditionsType = oContentFactory.getConditionsType();
-			var oExpandableText = new ExpandableText(sId, {
+			const ExpandableText = aControlClasses[0];
+			const oConditionsType = oContentFactory.getConditionsType();
+			const oExpandableText = new ExpandableText(sId, {
 				text: { path: "$field>/conditions", type: oConditionsType },
 				textAlign: "{$field>/textAlign}",
 				textDirection: "{$field>/textDirection}",
@@ -316,17 +316,17 @@ sap.ui.define([
 		 * @since 1.96
 		 */
 		createDisplayMultiValue: function(oContentFactory, aControlClasses, sId) {
-			var Tokenizer = aControlClasses[0];
-			var Token = aControlClasses[1];
-			var oConditionType = oContentFactory.getConditionType();
-			var oToken = new Token(sId + "-token", {
+			const Tokenizer = aControlClasses[0];
+			const Token = aControlClasses[1];
+			const oConditionType = oContentFactory.getConditionType();
+			const oToken = new Token(sId + "-token", {
 				text: {
 					path: '$field>',
 					type: oConditionType
 				}
 			});
 
-			var oTokenizer = new Tokenizer(sId, {
+			const oTokenizer = new Tokenizer(sId, {
 				editable: false,
 				// textAlign: "{$field>/textAlign}",
 				emptyIndicatorMode: EmptyIndicatorMode.Auto,

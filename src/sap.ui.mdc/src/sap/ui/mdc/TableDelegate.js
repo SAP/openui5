@@ -37,7 +37,7 @@ sap.ui.define([
 	 * @since 1.60
 	 * @public
 	 */
-	var TableDelegate = Object.assign({}, AggregationBaseDelegate);
+	const TableDelegate = Object.assign({}, AggregationBaseDelegate);
 
 	/**
 	 * Provides a hook to update the binding info object that is used to bind the table to the model.
@@ -56,13 +56,13 @@ sap.ui.define([
 			oBindingInfo.filters = this.getFilters(oTable);
 		}
 
-		var oGroupSorter = this.getGroupSorter(oTable);
+		const oGroupSorter = this.getGroupSorter(oTable);
 		if (oGroupSorter) {
 			oBindingInfo.sorter.push(oGroupSorter);
 		}
 
 
-		var aSorters = this.getSorters(oTable);
+		const aSorters = this.getSorters(oTable);
 		oBindingInfo.sorter = oBindingInfo.sorter.concat(
 			oBindingInfo.sorter.length === 1
 				? aSorters.filter(function(oSorter) {
@@ -82,21 +82,21 @@ sap.ui.define([
 	 * @protected
 	 */
 	TableDelegate.getFilters = function(oTable) {
-		var bTableFilterEnabled = oTable.isFilteringEnabled();
-		var aTableFilters = [], aFilterBarFilters = [];
+		const bTableFilterEnabled = oTable.isFilteringEnabled();
+		let aTableFilters = [], aFilterBarFilters = [];
 
 		if (bTableFilterEnabled) {
-			var mTableConditions = oTable.getConditions() || {};
-			var aTableProperties = oTable.getPropertyHelper().getProperties();
-			var oTableFilters = FilterUtil.getFilterInfo(oTable, mTableConditions, aTableProperties).filters;
+			const mTableConditions = oTable.getConditions() || {};
+			const aTableProperties = oTable.getPropertyHelper().getProperties();
+			const oTableFilters = FilterUtil.getFilterInfo(oTable, mTableConditions, aTableProperties).filters;
 			aTableFilters = oTableFilters ? [oTableFilters] : [];
 		}
 
-		var oFilterBar = Core.byId(oTable.getFilter());
+		const oFilterBar = Core.byId(oTable.getFilter());
 		if (oFilterBar) {
-			var mFilterBarConditions = oFilterBar.getConditions() || {};
-			var aFilterBarProperties = oTable.getPropertyHelper().getProperties();
-			var oFilterBarFilters = FilterUtil.getFilterInfo(oTable, mFilterBarConditions, aFilterBarProperties).filters;
+			const mFilterBarConditions = oFilterBar.getConditions() || {};
+			const aFilterBarProperties = oTable.getPropertyHelper().getProperties();
+			const oFilterBarFilters = FilterUtil.getFilterInfo(oTable, mFilterBarConditions, aFilterBarProperties).filters;
 			aFilterBarFilters = oFilterBarFilters ? [oFilterBarFilters] : [];
 		}
 
@@ -111,17 +111,17 @@ sap.ui.define([
 	 * @protected
 	 */
 	TableDelegate.getGroupSorter = function(oTable) {
-		var oGroupedProperty = oTable._getGroupedProperties()[0];
+		const oGroupedProperty = oTable._getGroupedProperties()[0];
 
 		if (!oGroupedProperty || !oTable._isOfType(TableType.ResponsiveTable)) {
 			return undefined;
 		}
 
-		var oSortedProperty = oTable._getSortedProperties().find(function(oProperty) {
+		const oSortedProperty = oTable._getSortedProperties().find(function(oProperty) {
 			return oProperty.name === oGroupedProperty.name;
 		});
-		var sPath = oTable.getPropertyHelper().getProperty(oGroupedProperty.name).path;
-		var bDescending = oSortedProperty ? oSortedProperty.descending : false;
+		const sPath = oTable.getPropertyHelper().getProperty(oGroupedProperty.name).path;
+		const bDescending = oSortedProperty ? oSortedProperty.descending : false;
 
 		if (!oTable._mFormatGroupHeaderInfo || oTable._mFormatGroupHeaderInfo.propertyName !== oGroupedProperty.name) {
 			oTable._mFormatGroupHeaderInfo = {
@@ -143,13 +143,13 @@ sap.ui.define([
 	 * @protected
 	 */
 	TableDelegate.getSorters = function(oTable) {
-		var aSortedProperties = oTable._getSortedProperties();
-		var oPropertyHelper = oTable.getPropertyHelper();
-		var aSorters = [];
+		const aSortedProperties = oTable._getSortedProperties();
+		const oPropertyHelper = oTable.getPropertyHelper();
+		const aSorters = [];
 
 		aSortedProperties.forEach(function(oSorter) {
 			if (oPropertyHelper.hasProperty(oSorter.name)) {
-				var sPath = oPropertyHelper.getProperty(oSorter.name).path;
+				const sPath = oPropertyHelper.getProperty(oSorter.name).path;
 				aSorters.push(new Sorter(sPath, oSorter.descending));
 			}
 		});
@@ -184,11 +184,11 @@ sap.ui.define([
 	 * @protected
 	 */
 	TableDelegate.formatGroupHeader = function(oTable, oContext, sProperty) {
-		var oProperty = oTable.getPropertyHelper().getProperty(sProperty);
-		var oTextProperty = oProperty.textProperty;
-		var oResourceBundle = Core.getLibraryResourceBundle("sap.ui.mdc");
-		var sResourceKey = "table.ROW_GROUP_TITLE";
-		var aValues = [oProperty.label, oContext.getProperty(oProperty.path, true)];
+		const oProperty = oTable.getPropertyHelper().getProperty(sProperty);
+		const oTextProperty = oProperty.textProperty;
+		const oResourceBundle = Core.getLibraryResourceBundle("sap.ui.mdc");
+		let sResourceKey = "table.ROW_GROUP_TITLE";
+		const aValues = [oProperty.label, oContext.getProperty(oProperty.path, true)];
 
 		if (oTextProperty) {
 			sResourceKey = "table.ROW_GROUP_TITLE_FULL";
@@ -200,7 +200,7 @@ sap.ui.define([
 
 	TableDelegate.validateState = function(oTable, oState, sKey) {
 		if (sKey == "Filter" && oTable._oMessageFilter) {
-			var oResourceBundle = Core.getLibraryResourceBundle("sap.ui.mdc");
+			const oResourceBundle = Core.getLibraryResourceBundle("sap.ui.mdc");
 			return {
 				validation: coreLibrary.MessageType.Information,
 				message: oResourceBundle.getText("table.PERSONALIZATION_DIALOG_FILTER_MESSAGESTRIP")
@@ -338,14 +338,14 @@ sap.ui.define([
 	};
 
 	function initializeGridTableSelection(oTable) {
-		var mSelectionModeMap = {
+		const mSelectionModeMap = {
 			Single: "Single",
 			SingleMaster: "Single",
 			Multi: "MultiToggle"
 		};
 
 		return loadModules("sap/ui/table/plugins/MultiSelectionPlugin").then(function(aModules) {
-			var MultiSelectionPlugin = aModules[0];
+			const MultiSelectionPlugin = aModules[0];
 
 			if (oTable.isDestroyed()) {
 				throw new Error("Is destroyed");
@@ -378,12 +378,12 @@ sap.ui.define([
 	}
 
 	function initializeResponsiveTableSelection(oTable) {
-		var mSelectionModeMap = {
+		const mSelectionModeMap = {
 			Single: "SingleSelectLeft",
 			SingleMaster: "SingleSelectMaster",
 			Multi: "MultiSelect"
 		};
-		var mMultiSelectModeMap = {
+		const mMultiSelectModeMap = {
 			Default: "SelectAll",
 			ClearAll: "ClearAll"
 		};
@@ -424,8 +424,8 @@ sap.ui.define([
 		}
 
 		if (oTable._isOfType(TableType.Table, true)) {
-			var oGridTable = oTable._oTable;
-			var oMultiSelectionPlugin = oGridTable.getPlugins().find(function(oPlugin) {
+			const oGridTable = oTable._oTable;
+			const oMultiSelectionPlugin = oGridTable.getPlugins().find(function(oPlugin) {
 				return oPlugin.isA("sap.ui.table.plugins.MultiSelectionPlugin");
 			});
 
@@ -446,13 +446,13 @@ sap.ui.define([
 	};
 
 	function setSelectedResponsiveTableConditions (oTable, aContexts) {
-		var aContextPaths = aContexts.map(function (oContext) {
+		const aContextPaths = aContexts.map(function (oContext) {
 			return oContext.getPath();
 		});
 		oTable._oTable.removeSelections(true);
 		oTable._oTable.setSelectedContextPaths(aContextPaths);
 		oTable._oTable.getItems().forEach(function (oItem) {
-			var sPath = oItem.getBindingContextPath();
+			const sPath = oItem.getBindingContextPath();
 			if (sPath && aContextPaths.indexOf(sPath) > -1) {
 				oItem.setSelected(true);
 			}
@@ -487,7 +487,7 @@ sap.ui.define([
 		}
 
 		if (oTable._isOfType(TableType.Table, true)) {
-			var oSelectionPlugin = oTable._oTable.getPlugins().find(function(oPlugin) {
+			const oSelectionPlugin = oTable._oTable.getPlugins().find(function(oPlugin) {
 				return oPlugin.isA("sap.ui.table.plugins.SelectionPlugin");
 			});
 
@@ -524,7 +524,7 @@ sap.ui.define([
 	 * @private
 	 */
 	TableDelegate.getSupportedP13nModes = function(oTable) {
-		var aSupportedModes = [TableP13nMode.Column, TableP13nMode.Sort, TableP13nMode.Filter];
+		const aSupportedModes = [TableP13nMode.Column, TableP13nMode.Sort, TableP13nMode.Filter];
 
 		if (oTable._isOfType(TableType.ResponsiveTable)) {
 			aSupportedModes.push(TableP13nMode.Group);

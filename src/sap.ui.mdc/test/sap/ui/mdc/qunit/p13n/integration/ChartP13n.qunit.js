@@ -3,12 +3,12 @@ sap.ui.define([
 	"sap/m/p13n/Engine", "../../QUnitUtils", "sap/ui/mdc/Chart", "sap/m/Button", "sap/ui/mdc/chart/DimensionItem", "sap/ui/mdc/chart/MeasureItem", "sap/ui/core/Core"
 ], function (Engine, MDCQUnitUtils, Chart, Button, Dimension, Measure, oCore) {
 	"use strict";
-	var oResourceBundle = oCore.getLibraryResourceBundle("sap.ui.mdc");
+	const oResourceBundle = oCore.getLibraryResourceBundle("sap.ui.mdc");
 
 	QUnit.module("Controller API tests showUI Chart", {
 		beforeEach: function () {
 			//mock delegate data
-			var aPropertyInfos = [
+			const aPropertyInfos = [
 				{
 					"name": "item1",
 					"label": "Item 1"
@@ -60,7 +60,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("use ChartItemPanel", function (assert) {
-		var done = assert.async();
+		const done = assert.async();
 		Engine.getInstance().uimanager.show(this.oChart, "Item", new Button()).then(function(oP13nControl){
 
 			//check container
@@ -70,10 +70,10 @@ sap.ui.define([
 			assert.ok(Engine.getInstance().hasActiveP13n(this.oChart),"dialog is open");
 
 			//check inner panel
-			var oInnerTable = oP13nControl.getContent()[0]._oListControl;
+			const oInnerTable = oP13nControl.getContent()[0]._oListControl;
 			assert.ok(oP13nControl.getContent()[0].isA("sap.ui.mdc.p13n.panels.ChartItemPanel"), "Correct panel created");
 			assert.ok(oInnerTable, "Inner Table has been created");
-			var oPropertyHelper = Engine.getInstance()._getRegistryEntry(this.oChart).helper;
+			const oPropertyHelper = Engine.getInstance()._getRegistryEntry(this.oChart).helper;
 			assert.equal(oInnerTable.getItems().length, oPropertyHelper.getProperties().length, "correct amount of items has been set");
 			assert.equal(oInnerTable.getItems()[0].getCells()[2].getSelectedKey(), "category", "Correct role selected");
 			done();
@@ -81,9 +81,9 @@ sap.ui.define([
 	});
 
 	QUnit.test("use 'createChanges' to create changes for a different role", function(assert){
-		var done = assert.async();
+		const done = assert.async();
 
-		var aP13nData = [
+		const aP13nData = [
 			{name:"item1", role: "series"}
 		];
 
@@ -103,13 +103,13 @@ sap.ui.define([
 	});
 
 	QUnit.test("use ChartItemPanel - getCurrentState returns different 'role'", function (assert) {
-		var done = assert.async();
+		const done = assert.async();
 
 		this.oChart.getItems()[0].setRole("series");
 
 		Engine.getInstance().uimanager.show(this.oChart, "Item").then(function(oP13nControl){
 
-			var oInnerTable = oP13nControl.getContent()[0]._oListControl;
+			const oInnerTable = oP13nControl.getContent()[0]._oListControl;
 			assert.equal(oInnerTable.getItems()[0].getCells()[2].getSelectedKey(), "series", "Correct role selected");
 
 			done();
@@ -117,8 +117,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("check sorting in Chart", function (assert) {
-		var done = assert.async();
-		var oBtn = new Button();
+		const done = assert.async();
+		const oBtn = new Button();
 
 		this.oChart.setSortConditions({
 			sorters: [
@@ -134,7 +134,7 @@ sap.ui.define([
 			assert.equal(oP13nControl.getTitle(), "Sort", "Correct title has been set");
 
 			//check inner panel
-			var oInnerTable = oP13nControl.getContent()[0]._oListControl;
+			const oInnerTable = oP13nControl.getContent()[0]._oListControl;
 			assert.ok(oP13nControl.getContent()[0].isA("sap.ui.mdc.p13n.panels.SortPanel"), "Correct panel created");
 			assert.ok(oInnerTable, "Inner Table has been created");
 			assert.equal(oInnerTable.getItems()[0].getSelected(), true, "Correct sorter in the dialog");

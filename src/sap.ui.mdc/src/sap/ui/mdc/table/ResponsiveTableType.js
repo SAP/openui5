@@ -27,7 +27,7 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var InnerTable, InnerColumn, InnerRow;
+	let InnerTable, InnerColumn, InnerRow;
 	/**
 	 * Constructor for a new <code>ResponsiveTableType</code>.
 	 *
@@ -41,7 +41,7 @@ sap.ui.define([
 	 * @alias sap.ui.mdc.table.ResponsiveTableType
 	 */
 
-	var ResponsiveTableType = TableTypeBase.extend("sap.ui.mdc.table.ResponsiveTableType", {
+	const ResponsiveTableType = TableTypeBase.extend("sap.ui.mdc.table.ResponsiveTableType", {
 		metadata: {
 			library: "sap.ui.mdc",
 			properties: {
@@ -102,7 +102,7 @@ sap.ui.define([
 	};
 
 	ResponsiveTableType.prototype.updateTableByProperty = function(sProperty, vValue) {
-		var oResponsiveTable = this.getInnerTable();
+		const oResponsiveTable = this.getInnerTable();
 
 		if (!oResponsiveTable) {
 			return;
@@ -153,7 +153,7 @@ sap.ui.define([
 	};
 
 	ResponsiveTableType.prototype.createTable = function(sId) {
-		var oTable = this.getTable();
+		const oTable = this.getTable();
 
 		if (!oTable || !InnerTable) {
 			return null;
@@ -163,7 +163,7 @@ sap.ui.define([
 	};
 
 	ResponsiveTableType.prototype.getTableSettings = function() {
-		var oTable = this.getTable();
+		const oTable = this.getTable();
 
 		return Object.assign({}, TableTypeBase.prototype.getTableSettings.apply(this, arguments), {
 			autoPopinMode: true,
@@ -194,7 +194,7 @@ sap.ui.define([
 	};
 
 	ResponsiveTableType.prototype.updateRowSettings = function() {
-		var oTable = this.getTable();
+		const oTable = this.getTable();
 
 		if (!oTable || !oTable._oRowTemplate) {
 			return;
@@ -210,9 +210,9 @@ sap.ui.define([
 	};
 
 	ResponsiveTableType.prototype.updateRowActions = function() {
-		var oTable = this.getTable();
-		var oRowActionsInfo = this.getRowActionsConfig();
-		var sType = oTable.hasListeners("rowPress") ? "Active" : "Inactive";
+		const oTable = this.getTable();
+		const oRowActionsInfo = this.getRowActionsConfig();
+		const sType = oTable.hasListeners("rowPress") ? "Active" : "Inactive";
 
 		oTable._oRowTemplate.unbindProperty("type");
 
@@ -221,24 +221,23 @@ sap.ui.define([
 			return;
 		}
 
-		var vRowType, bVisibleBound, fnVisibleFormatter;
+		let vRowType, bVisibleBound, fnVisibleFormatter;
 		// If templateInfo is given, the rowActions are bound
 		if ("templateInfo" in oRowActionsInfo) {
-			var oTemplateInfo = oRowActionsInfo.templateInfo;
+			const oTemplateInfo = oRowActionsInfo.templateInfo;
 
 			fnVisibleFormatter = oTemplateInfo.visible.formatter;
 			// If visible property is of type object, we know for certain the property is bound (see RowSettings.getAllActions)
 			bVisibleBound = typeof oTemplateInfo.visible == "object";
 			vRowType = oTemplateInfo.visible;
 		} else if (oRowActionsInfo && oRowActionsInfo.items) {
-			var _oRowActionItem;
 			if (oRowActionsInfo.items.length == 0) {
 				oTable._oRowTemplate.setType(sType);
 				return;
 			}
 
 			// Check if rowActions are of type Navigation. ResponsiveTable currently only supports RowActionItem<Navigation>
-			_oRowActionItem = oRowActionsInfo.items.find(function(oRowAction) {
+			const _oRowActionItem = oRowActionsInfo.items.find(function(oRowAction) {
 				return oRowAction.getType() == "Navigation";
 			});
 			if (!_oRowActionItem && oRowActionsInfo.items.length > 0) {
@@ -258,7 +257,7 @@ sap.ui.define([
 		// If a custom formatter exists, apply it before converting it to row type, otherwise just convert
 		if (fnVisibleFormatter) {
 			vRowType.formatter = function(sValue) {
-				var bVisible = fnVisibleFormatter(sValue);
+				const bVisible = fnVisibleFormatter(sValue);
 				return bVisible ? TableRowAction.Navigation : sType;
 			};
 		} else {
@@ -274,14 +273,14 @@ sap.ui.define([
 	};
 
 	ResponsiveTableType.prototype.enableColumnResize = function() {
-		var oTable = this.getTable();
-		var oResponsiveTable = this.getInnerTable();
+		const oTable = this.getTable();
+		const oResponsiveTable = this.getInnerTable();
 
 		if (!oTable || !oResponsiveTable) {
 			return;
 		}
 
-		var oColumnResizer = ColumnResizer.getPlugin(oResponsiveTable);
+		let oColumnResizer = ColumnResizer.getPlugin(oResponsiveTable);
 
 		oResponsiveTable.setFixedLayout("Strict");
 
@@ -297,14 +296,14 @@ sap.ui.define([
 	};
 
 	ResponsiveTableType.prototype.disableColumnResize = function() {
-		var oTable = this.getTable();
-		var oResponsiveTable = this.getInnerTable();
+		const oTable = this.getTable();
+		const oResponsiveTable = this.getInnerTable();
 
 		if (!oTable || !oResponsiveTable) {
 			return;
 		}
 
-		var oColumnResizer = ColumnResizer.getPlugin(oResponsiveTable);
+		const oColumnResizer = ColumnResizer.getPlugin(oResponsiveTable);
 
 		if (oColumnResizer) {
 			oColumnResizer.setEnabled(false);
@@ -313,12 +312,12 @@ sap.ui.define([
 	};
 
 	ResponsiveTableType.prototype._onColumnResize = function(oEvent) {
-		var oTable = this.getTable();
-		var oResponsiveTable = this.getInnerTable();
-		var oResponsiveTableColumn = oEvent.getParameter("column");
-		var sWidth = oEvent.getParameter("width");
-		var iIndex = oResponsiveTable.indexOfColumn(oResponsiveTableColumn);
-		var oColumn = oTable.getColumns()[iIndex];
+		const oTable = this.getTable();
+		const oResponsiveTable = this.getInnerTable();
+		const oResponsiveTableColumn = oEvent.getParameter("column");
+		const sWidth = oEvent.getParameter("width");
+		const iIndex = oResponsiveTable.indexOfColumn(oResponsiveTableColumn);
+		const oColumn = oTable.getColumns()[iIndex];
 
 		this.callHook("ColumnResize", oTable, {
 			column: oColumn,
@@ -327,7 +326,7 @@ sap.ui.define([
 	};
 
 	ResponsiveTableType.prototype.createColumnResizeMenuItem = function(oColumn, oColumnMenu) {
-		var oColumnResizer = ColumnResizer.getPlugin(this.getInnerTable());
+		const oColumnResizer = ColumnResizer.getPlugin(this.getInnerTable());
 
 		if (!oColumnResizer) {
 			return;
@@ -354,7 +353,7 @@ sap.ui.define([
 			return;
 		}
 
-		var oResponsiveTable = this.getInnerTable();
+		const oResponsiveTable = this.getInnerTable();
 		this.bHideDetails = bValue;
 
 		if (this.bHideDetails) {
@@ -368,8 +367,8 @@ sap.ui.define([
 
 	ResponsiveTableType.prototype._getShowDetailsButton = function() {
 		if (!this._oShowDetailsButton) {
-			var oRb = Core.getLibraryResourceBundle("sap.ui.mdc");
-			var sId = this.getTable().getId();
+			const oRb = Core.getLibraryResourceBundle("sap.ui.mdc");
+			const sId = this.getTable().getId();
 			this.bHideDetails = true;
 			this._oShowDetailsButton = new SegmentedButton(sId + "-showHideDetails", {
 				visible: false,
@@ -404,9 +403,9 @@ sap.ui.define([
 	};
 
 	ResponsiveTableType.prototype.getContextMenuParameters = function(oEvent) {
-		var oListItem = oEvent.getParameter("listItem");
-		var oInnerColumn = oEvent.getParameter("column");
-		var oMDCColumn = Core.byId(oInnerColumn.getId().replace(/\-innerColumn$/, ""));
+		const oListItem = oEvent.getParameter("listItem");
+		const oInnerColumn = oEvent.getParameter("column");
+		const oMDCColumn = Core.byId(oInnerColumn.getId().replace(/\-innerColumn$/, ""));
 
 		return {
 			bindingContext: oListItem.getBindingContext(this.getInnerTable().getBindingInfo("items").model),
@@ -421,7 +420,7 @@ sap.ui.define([
 	 * @private
 	 */
 	ResponsiveTableType.prototype._getImportanceToHide = function() {
-		var aDetailsButtonSetting = this.getDetailsButtonSetting() || [];
+		const aDetailsButtonSetting = this.getDetailsButtonSetting() || [];
 
 		if (aDetailsButtonSetting.length) {
 			return aDetailsButtonSetting;
@@ -437,9 +436,9 @@ sap.ui.define([
 	 * @private
 	 */
 	ResponsiveTableType.prototype._onPopinChanged = function(oEvent) {
-		var bHasPopin = oEvent.getParameter("hasPopin");
-		var aHiddenInPopin = oEvent.getParameter("hiddenInPopin");
-		var aVisibleItemsLength = oEvent.getSource().getVisibleItems().length;
+		const bHasPopin = oEvent.getParameter("hasPopin");
+		const aHiddenInPopin = oEvent.getParameter("hiddenInPopin");
+		const aVisibleItemsLength = oEvent.getSource().getVisibleItems().length;
 
 		if (aVisibleItemsLength && (aHiddenInPopin.length || (bHasPopin && !this.bHideDetails))) {
 			this._oShowDetailsButton.setVisible(true);
@@ -449,18 +448,18 @@ sap.ui.define([
 	};
 
 	ResponsiveTableType.prototype._onRowActionPress = function(oEvent) {
-		var oTable = this.getTable();
-		var oInnerRow = oEvent.getParameter("listItem");
+		const oTable = this.getTable();
+		const oInnerRow = oEvent.getParameter("listItem");
 
 		if (oInnerRow.getType() !== "Navigation") {
 			return;
 		}
 
-		var oRowSettings = oTable.getRowSettings();
-		var oRowActionsInfo = oRowSettings.getAllActions();
+		const oRowSettings = oTable.getRowSettings();
+		const oRowActionsInfo = oRowSettings.getAllActions();
 
 		if (oRowSettings.isBound("rowActions")) {
-			var sActionModel = oRowActionsInfo.items.model;
+			const sActionModel = oRowActionsInfo.items.model;
 			if (!this._oRowActionItem) {
 				this._oRowActionItem = oRowActionsInfo.items.template.clone();
 			}
@@ -480,7 +479,7 @@ sap.ui.define([
 	};
 
 	ResponsiveTableType.prototype.removeToolbar = function() {
-		var oResponsiveTable = this.getInnerTable();
+		const oResponsiveTable = this.getInnerTable();
 
 		if (oResponsiveTable) {
 			oResponsiveTable.setHeaderToolbar();
@@ -488,7 +487,7 @@ sap.ui.define([
 	};
 
 	ResponsiveTableType.prototype.scrollToIndex = function(iIndex) {
-		var oResponsiveTable = this.getInnerTable();
+		const oResponsiveTable = this.getInnerTable();
 
 		if (oResponsiveTable) {
 			return oResponsiveTable.scrollToIndex(iIndex);
@@ -498,12 +497,12 @@ sap.ui.define([
 	};
 
 	ResponsiveTableType.prototype.getRowBinding = function() {
-		var oResponsiveTable = this.getInnerTable();
+		const oResponsiveTable = this.getInnerTable();
 		return oResponsiveTable ? oResponsiveTable.getBinding("items") : undefined;
 	};
 
 	ResponsiveTableType.prototype.bindRows = function(oBindingInfo) {
-		var oResponsiveTable = this.getInnerTable();
+		const oResponsiveTable = this.getInnerTable();
 
 		if (oResponsiveTable) {
 			oResponsiveTable.bindItems(oBindingInfo);
@@ -511,7 +510,7 @@ sap.ui.define([
 	};
 
 	ResponsiveTableType.prototype.isTableBound = function() {
-		var oResponsiveTable = this.getInnerTable();
+		const oResponsiveTable = this.getInnerTable();
 
 		if (oResponsiveTable) {
 			return oResponsiveTable.isBound("items");
@@ -521,7 +520,7 @@ sap.ui.define([
 	};
 
 	ResponsiveTableType.prototype.insertFilterInfoBar = function(oFilterInfoBar, sAriaLabelId) {
-		var oResponsiveTable = this.getInnerTable();
+		const oResponsiveTable = this.getInnerTable();
 
 		if (oResponsiveTable) {
 			oResponsiveTable.setInfoToolbar(oFilterInfoBar);
@@ -543,8 +542,8 @@ sap.ui.define([
 	 * @private
 	 */
 	ResponsiveTableType.prototype._onColumnInsert = function(oColumn) {
-		var oTable = this.getTable();
-		var oResponsiveTable = this.getInnerTable();
+		const oTable = this.getTable();
+		const oResponsiveTable = this.getInnerTable();
 
 		if (PersonalizationUtils.isUserPersonalizationActive(oTable)
 		&& oResponsiveTable.getHiddenInPopin().includes(oColumn.getInnerColumn().getImportance())

@@ -7,7 +7,7 @@ sap.ui.define([
 ], function(Engine, ItemBaseFlex) {
 	"use strict";
 
-	var ColumnFlex = Object.assign({}, ItemBaseFlex);
+	const ColumnFlex = Object.assign({}, ItemBaseFlex);
 
 	ColumnFlex.findItem = function(oModifier, aColumns, sName) {
 		return aColumns.reduce(function(oPreviousPromise, oColumn) {

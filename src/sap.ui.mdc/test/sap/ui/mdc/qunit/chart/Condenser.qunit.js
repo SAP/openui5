@@ -8,10 +8,10 @@ sap.ui.define([
 
 	function buildXML() {
 
-		var sPropertyInfo = '';
-		var sDelegate = '\\{"name": "delegates/odata/v4/vizChart/ChartDelegate", "payload": \\{"collectionName": "Books"\\}\\}';
+		const sPropertyInfo = '';
+		const sDelegate = '\\{"name": "delegates/odata/v4/vizChart/ChartDelegate", "payload": \\{"collectionName": "Books"\\}\\}';
 
-		var b = '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:mdc="sap.ui.mdc">' +
+		const b = '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:mdc="sap.ui.mdc">' +
 		'<mdc:Chart id="myChart" p13nMode="Item,Sort,Type" chartType="column" delegate=\'' +  sDelegate + '\' propertyInfo=\'' + sPropertyInfo + '\'>' +
 		'</mdc:Chart>' +
 		'</mvc:View>';
@@ -20,14 +20,14 @@ sap.ui.define([
 	}
 
 	function fnConfirm(oUiComponent, oViewAfterAction, assert) {
-		var oChart = oViewAfterAction.byId("myChart");
+		const oChart = oViewAfterAction.byId("myChart");
 		assert.ok(oChart);
 	}
 
 	// --------------------------------
 
 	function fnOnAfterAction(oUiComponent, oViewAfterAction, assert) {
-		var oChart = oViewAfterAction.byId("myChart");
+		const oChart = oViewAfterAction.byId("myChart");
 		assert.ok(oChart);
 		if (oChart.getMetadata) {
 			assert.deepEqual(oChart.getChartType(), "bar", "expected inner conditions found");
@@ -69,13 +69,13 @@ sap.ui.define([
 	// ---------------------------------------------------------------------
 
     function fnConfirmInitialSortingState(oUiComponent, oViewAfterAction, assert) {
-        var oTable = oViewAfterAction.byId("myChart");
+        const oTable = oViewAfterAction.byId("myChart");
         assert.ok(oTable, "then the mdc.Table exists");
     }
 
     function fnConfirmSortingGotAdded(sName, iIndex, bDescending) {
         return function(oUiComponent, oViewAfterAction, assert) {
-            var oTable = oViewAfterAction.byId("myChart");
+            const oTable = oViewAfterAction.byId("myChart");
             assert.ok(oTable, "then the mdc.Table exists");
         };
     }

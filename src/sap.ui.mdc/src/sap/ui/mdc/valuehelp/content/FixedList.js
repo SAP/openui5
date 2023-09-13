@@ -33,7 +33,7 @@ sap.ui.define([
 	 * @since 1.95.0
 	 * @alias sap.ui.mdc.valuehelp.content.FixedList
 	 */
-	var FixedList = ListContent.extend("sap.ui.mdc.valuehelp.content.FixedList", /** @lends sap.ui.mdc.valuehelp.content.FixedList.prototype */
+	const FixedList = ListContent.extend("sap.ui.mdc.valuehelp.content.FixedList", /** @lends sap.ui.mdc.valuehelp.content.FixedList.prototype */
 	{
 		metadata: {
 			library: "sap.ui.mdc",
@@ -120,32 +120,32 @@ sap.ui.define([
 				"sap/ui/model/base/ManagedObjectModel",
 				"sap/base/strings/whitespaceReplacer"
 			]).then(function (aModules) {
-					var List = aModules[0];
-					var DisplayListItem = aModules[1];
-					var mLibrary = aModules[2];
-					var Filter = aModules[3];
-					var Sorter = aModules[4];
-					var ManagedObjectModel = aModules[5];
-					var whitespaceReplacer = aModules[6];
+					const List = aModules[0];
+					const DisplayListItem = aModules[1];
+					const mLibrary = aModules[2];
+					const Filter = aModules[3];
+					const Sorter = aModules[4];
+					const ManagedObjectModel = aModules[5];
+					const whitespaceReplacer = aModules[6];
 
 					this._oManagedObjectModel = new ManagedObjectModel(this);
 
-					var oItemTemplate = new DisplayListItem(this.getId() + "-item", {
+					const oItemTemplate = new DisplayListItem(this.getId() + "-item", {
 						type: mLibrary.ListType.Active,
 						label: {path: "$help>text", formatter: whitespaceReplacer},
 						value: {path: "$help>additionalText", formatter: whitespaceReplacer},
 						valueTextDirection: "{$help>textDirection}"
 					}).addStyleClass("sapMComboBoxNonInteractiveItem"); // to add focus outline to selected items
 
-					var oFilter = new Filter({path: "text", test: _suggestFilter.bind(this), caseSensitive: true}); // caseSensitive at it is checked in filter-function
+					const oFilter = new Filter({path: "text", test: _suggestFilter.bind(this), caseSensitive: true}); // caseSensitive at it is checked in filter-function
 
 					// add sorter only if supported
-					var oSorter;
+					let oSorter;
 					if (this.getGroupable()) {
 						oSorter = new Sorter("groupKey", false, _suggestGrouping.bind(this));
 					}
 
-					var oList = new List(this.getId() + "-List", {
+					const oList = new List(this.getId() + "-List", {
 						width: "100%",
 						showNoData: false,
 						mode: mLibrary.ListMode.SingleSelectMaster,
@@ -173,13 +173,13 @@ sap.ui.define([
 
 	function _handleItemPress(oEvent) {
 
-		var oItem = oEvent.getParameter("listItem");
-		var bSelected = oItem.getSelected();
+		const oItem = oEvent.getParameter("listItem");
+		const bSelected = oItem.getSelected();
 
 		if (bSelected) {
-			var oOriginalItem = _getOriginalItem.call(this, oItem);
-			var vKey = _getKey.call(this, oOriginalItem);
-			var vDescription = _getText.call(this, oOriginalItem);
+			const oOriginalItem = _getOriginalItem.call(this, oItem);
+			const vKey = _getKey.call(this, oOriginalItem);
+			const vDescription = _getText.call(this, oOriginalItem);
 //			this.fireRemoveConditions({conditions: this.getConditions()});
 			_setConditions.call(this, vKey, vDescription);
 //			this.fireAddConditions({conditions: this.getConditions()});
@@ -191,7 +191,7 @@ sap.ui.define([
 
 	function _setConditions(vKey, sValue) {
 
-		var oCondition = this.createCondition(vKey, sValue);
+		const oCondition = this.createCondition(vKey, sValue);
 		this.setProperty("conditions", [oCondition], true);
 
 		return oCondition;
@@ -200,7 +200,7 @@ sap.ui.define([
 
 	function _suggestFilter(sText) {
 
-		var bFilterList = this.getFilterList();
+		const bFilterList = this.getFilterList();
 
 		return !bFilterList || _filterText.call(this, sText, this.getFilterValue());
 
@@ -218,8 +218,8 @@ sap.ui.define([
 			this.setProperty("conditions", [], true);
 			this._iNavigateIndex = -1;
 		}
-		var oList = _getList.call(this);
-		var oListBinding = this.getListBinding();
+		const oList = _getList.call(this);
+		const oListBinding = this.getListBinding();
 
 		if (oList) {
 			oListBinding.update();
@@ -232,37 +232,37 @@ sap.ui.define([
 
 	function _suggestGrouping(oContext) {
 
-		var vKey = oContext.getProperty('groupKey');
-		var sText = oContext.getProperty('groupText');
+		const vKey = oContext.getProperty('groupKey');
+		const sText = oContext.getProperty('groupText');
 		return {key: vKey, text: sText};
 
 	}
 
 	function _updateSelection() {
 
-		var oList = _getList.call(this);
+		const oList = _getList.call(this);
 		if (oList) {
-			var aConditions = this.getConditions();
-			var vSelectedKey;
-			var sFilterValue = this.getFilterValue();
-			var bUseFirstMatch = this.getUseFirstMatch();
-			var bFistFilterItemSelected = false;
+			const aConditions = this.getConditions();
+			let vSelectedKey;
+			const sFilterValue = this.getFilterValue();
+			const bUseFirstMatch = this.getUseFirstMatch();
+			let bFistFilterItemSelected = false;
 //			var oOperator = this._getOperator();
 
 			if (aConditions.length > 0 && (aConditions[0].validated === ConditionValidated.Validated || aConditions[0].operator === "EQ"/*oOperator.name*/)) {
 				vSelectedKey = aConditions[0].values[0];
 			}
 
-			var aItems = oList.getItems();
-			for (var i = 0; i < aItems.length; i++) {
-				var oItem = aItems[i];
+			const aItems = oList.getItems();
+			for (let i = 0; i < aItems.length; i++) {
+				const oItem = aItems[i];
 				if (i === this._iNavigateIndex) {
 					oItem.addStyleClass("sapMLIBFocused").addStyleClass("sapMListFocus");
 				} else {
 					oItem.removeStyleClass("sapMLIBFocused").removeStyleClass("sapMListFocus");
 				}
 				if (oItem.isA("sap.m.DisplayListItem")) { // not for group headers
-					var oOriginalItem = _getOriginalItem.call(this, oItem);
+					const oOriginalItem = _getOriginalItem.call(this, oItem);
 					if (aConditions.length > 0 && _getKey.call(this, oOriginalItem) === vSelectedKey) {
 						// conditions given -> use them to show selected items
 						oItem.setSelected(true);
@@ -281,7 +281,7 @@ sap.ui.define([
 	// returns FixedList item for inner list item
 	function _getOriginalItem(oItem) {
 
-		var sPath = oItem.getBindingContextPath();
+		const sPath = oItem.getBindingContextPath();
 		return this._oManagedObjectModel.getProperty(sPath);
 
 	}
@@ -290,7 +290,7 @@ sap.ui.define([
 
 		// as key could have internally another type - use initial value of binding
 		// TODO: better logic?
-		var oBinding = oItem.getBinding("key");
+		const oBinding = oItem.getBinding("key");
 		if (oBinding) {
 			return oBinding.getInternalValue();
 		} else {
@@ -303,7 +303,7 @@ sap.ui.define([
 
 		// as text could have internally another type - use initial value of binding
 		// TODO: better logic?
-		var oBinding = oItem.getBinding("text");
+		const oBinding = oItem.getBinding("text");
 		if (oBinding) {
 			return oBinding.getInternalValue();
 		} else {
@@ -321,11 +321,11 @@ sap.ui.define([
 				return null; // no check for empty description
 			}
 
-			var aItems = this.getItems();
-			var oItem;
-			var i = 0;
-			var vKey;
-			var vText;
+			const aItems = this.getItems();
+			let oItem;
+			let i = 0;
+			let vKey;
+			let vText;
 
 			for (i = 0; i < aItems.length; i++) {
 				oItem = aItems[i];
@@ -344,7 +344,7 @@ sap.ui.define([
 			if (this.getUseFirstMatch()) {
 				for (i = 0; i < aItems.length; i++) {
 					oItem = aItems[i];
-					var sText = oConfig.checkDescription ? oItem.getText() : oItem.getKey(); // don't use oConfig.parsedValue as entered value non't neet to be a valid (complete) key
+					const sText = oConfig.checkDescription ? oItem.getText() : oItem.getKey(); // don't use oConfig.parsedValue as entered value non't neet to be a valid (complete) key
 					if (_filterText.call(this, sText, oConfig.value)) {
 						vKey = _getKey.call(this, oItem);
 						vText = _getText.call(this, oItem);
@@ -353,8 +353,8 @@ sap.ui.define([
 				}
 			}
 
-			var sError = this._oResourceBundle.getText("valuehelp.VALUE_NOT_EXIST", [oConfig.value]);
-			var Exception = oConfig.exception || ParseException;
+			const sError = this._oResourceBundle.getText("valuehelp.VALUE_NOT_EXIST", [oConfig.value]);
+			const Exception = oConfig.exception || ParseException;
 			throw new Exception(sError);
 
 		}.bind(this));
@@ -380,7 +380,7 @@ sap.ui.define([
 
 	FixedList.prototype.removeFocus = function() {
 
-		var oList = _getList.call(this);
+		const oList = _getList.call(this);
 		if (oList) {
 			oList.removeStyleClass("sapMListFocus");
 		}
@@ -389,7 +389,7 @@ sap.ui.define([
 
 	FixedList.prototype.navigate = function(iStep) {
 
-		var oList = _getList.call(this);
+		const oList = _getList.call(this);
 
 		if (!oList) {
 			return; // TODO: should not happen? Create List?
@@ -397,18 +397,18 @@ sap.ui.define([
 
 		oList.addStyleClass("sapMListFocus"); // to show focus outline on navigated item
 
-		var aItems = oList.getItems();
-		var iItems = aItems.length;
-		var oSelectedItem = this._iNavigateIndex >= 0 ? aItems[this._iNavigateIndex] : oList.getSelectedItem();
-		var iSelectedIndex = 0;
-		var bFilterList = this.getFilterList();
-		var sFilterValue = this.getFilterValue();
-		var bLeaveFocus = false;
-		var bIsOpen = this.getParent().isOpen();
+		const aItems = oList.getItems();
+		const iItems = aItems.length;
+		const oSelectedItem = this._iNavigateIndex >= 0 ? aItems[this._iNavigateIndex] : oList.getSelectedItem();
+		let iSelectedIndex = 0;
+		const bFilterList = this.getFilterList();
+		const sFilterValue = this.getFilterValue();
+		let bLeaveFocus = false;
+		const bIsOpen = this.getParent().isOpen();
 
 		if (!bFilterList && !oSelectedItem) {
 			// try to find item that matches Filter
-			var i = 0;
+			let i = 0;
 			if (iStep >= 0) {
 				for (i = 0; i < aItems.length; i++) {
 					if (!aItems[i].isA("sap.m.GroupHeaderListItem") && _filterText.call(this, aItems[i].getLabel(), sFilterValue)) {
@@ -440,7 +440,7 @@ sap.ui.define([
 			iSelectedIndex = 0;
 		}
 
-		var bSearchForNext;
+		let bSearchForNext;
 		if (iSelectedIndex < 0) {
 			iSelectedIndex = 0;
 			bSearchForNext = true;
@@ -452,7 +452,7 @@ sap.ui.define([
 			bSearchForNext = iStep >= 0;
 		}
 
-		var fSkipGroupHeader = function() {
+		const fSkipGroupHeader = function() {
 			while (aItems[iSelectedIndex] && aItems[iSelectedIndex].isA("sap.m.GroupHeaderListItem")) { // ignore group headers
 				if (bSearchForNext) {
 					iSelectedIndex++;
@@ -473,11 +473,11 @@ sap.ui.define([
 			}
 		}
 
-		var oItem = aItems[iSelectedIndex];
+		const oItem = aItems[iSelectedIndex];
 		if (oItem) {
-			var bUseFirstMatch = this.getUseFirstMatch(); // if item for first match is selected, navigate to it needs to fire the event
+			const bUseFirstMatch = this.getUseFirstMatch(); // if item for first match is selected, navigate to it needs to fire the event
 			if (oItem !== oSelectedItem || (bUseFirstMatch && !bLeaveFocus)) {
-				var oOriginalItem, vKey, vDescription;
+				let oOriginalItem, vKey, vDescription;
 
 				this._iNavigateIndex = iSelectedIndex;
 
@@ -496,7 +496,7 @@ sap.ui.define([
 					oOriginalItem = _getOriginalItem.call(this, oItem);
 					vKey = _getKey.call(this, oOriginalItem);
 					vDescription = _getText.call(this, oOriginalItem);
-					var oCondition = _setConditions.call(this, vKey, vDescription);
+					const oCondition = _setConditions.call(this, vKey, vDescription);
 					this.fireNavigated({condition: oCondition, itemId: oItem.getId(), leaveFocus: false});
 				}
 			} else if (bLeaveFocus) {
@@ -511,15 +511,15 @@ sap.ui.define([
 		ListContent.prototype.onShow.apply(this, arguments);
 
 		// scroll to selected item
-		var oList = _getList.call(this);
+		const oList = _getList.call(this);
 
 		if (!oList) {
 			return; // TODO: should not happen? Create List?
 		}
 
-		var oSelectedItem = oList.getSelectedItem();
+		const oSelectedItem = oList.getSelectedItem();
 		if (oSelectedItem) {
-			var iSelectedIndex = oList.indexOfItem(oSelectedItem);
+			const iSelectedIndex = oList.indexOfItem(oSelectedItem);
 			oList.scrollToIndex(iSelectedIndex);
 		}
 
@@ -590,7 +590,7 @@ sap.ui.define([
 	};
 
 	FixedList.prototype.getListBinding = function () {
-		var oList = _getList.call(this);
+		const oList = _getList.call(this);
 		return oList && oList.getBinding("items");
 	};
 

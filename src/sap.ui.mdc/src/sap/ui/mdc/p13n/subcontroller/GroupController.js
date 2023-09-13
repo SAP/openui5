@@ -6,7 +6,7 @@ sap.ui.define([
 ], function (BaseController, P13nBuilder, GroupPanel) {
     "use strict";
 
-    var GroupController = BaseController.extend("sap.ui.mdc.p13n.subcontroller.GroupController");
+    const GroupController = BaseController.extend("sap.ui.mdc.p13n.subcontroller.GroupController");
 
     GroupController.prototype.getStateKey = function () {
         return "groupLevels";
@@ -24,9 +24,9 @@ sap.ui.define([
     };
 
     GroupController.prototype.initAdaptationUI = function(oPropertyHelper){
-        var oGroupPanel = new GroupPanel();
-        var oAdaptationData = this.mixInfoAndState(oPropertyHelper);
-		var oAdaptationControl = this.getAdaptationControl();
+        const oGroupPanel = new GroupPanel();
+        const oAdaptationData = this.mixInfoAndState(oPropertyHelper);
+		const oAdaptationControl = this.getAdaptationControl();
 
 		if (oAdaptationControl.isA("sap.ui.mdc.Table") && oAdaptationControl._isOfType("ResponsiveTable")) {
 			oGroupPanel.setQueryLimit(1);
@@ -39,7 +39,7 @@ sap.ui.define([
     };
 
     GroupController.prototype.model2State = function() {
-        var aItems = [];
+        const aItems = [];
         this._oPanel.getP13nData(true).forEach(function(oItem){
             if (oItem.grouped){
                 aItems.push({
@@ -64,13 +64,13 @@ sap.ui.define([
 
     GroupController.prototype.mixInfoAndState = function(oPropertyHelper) {
 
-        var aItemState = this.getCurrentState();
-        var mItemState = P13nBuilder.arrayToMap(aItemState);
-        var oController = this.getAdaptationControl();
-        var oAggregations = oController.getAggregateConditions ? oController.getAggregateConditions() || {} : {};
+        const aItemState = this.getCurrentState();
+        const mItemState = P13nBuilder.arrayToMap(aItemState);
+        const oController = this.getAdaptationControl();
+        const oAggregations = oController.getAggregateConditions ? oController.getAggregateConditions() || {} : {};
 
-        var oP13nData = this.prepareAdaptationData(oPropertyHelper, function(mItem, oProperty){
-            var oExisting = mItemState[oProperty.name];
+        const oP13nData = this.prepareAdaptationData(oPropertyHelper, function(mItem, oProperty){
+            const oExisting = mItemState[oProperty.name];
             mItem.grouped = !!oExisting;
             mItem.position =  oExisting ? oExisting.position : -1;
             return !(oProperty.groupable === false || oAggregations[oProperty.name]);

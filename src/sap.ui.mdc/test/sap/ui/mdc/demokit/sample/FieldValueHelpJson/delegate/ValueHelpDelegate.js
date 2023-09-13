@@ -5,19 +5,19 @@ sap.ui.define([
 	ValueHelpDelegate,StateUtil) {
 	"use strict";
 
-	var JSONValueHelpDelegate = Object.assign({}, ValueHelpDelegate);
+	const JSONValueHelpDelegate = Object.assign({}, ValueHelpDelegate);
 
 	// called when ValueHelp for one of the three FilterFields is called
 	JSONValueHelpDelegate.getFilterConditions = function (oValueHelp, oContent, oConfig) {
 
-		var oConditions = ValueHelpDelegate.getFilterConditions(oValueHelp, oContent, oConfig);
-		var oFilterBar = oValueHelp.getParent().getParent();
+		const oConditions = ValueHelpDelegate.getFilterConditions(oValueHelp, oContent, oConfig);
+		const oFilterBar = oValueHelp.getParent().getParent();
 
 		return StateUtil.retrieveExternalState(oFilterBar).then(function (oState) {
 
-			var oFilter = oState.filter;
+			const oFilter = oState.filter;
 
-			var oFilterConditions = oValueHelp.getPayload().filterConditions;
+			const oFilterConditions = oValueHelp.getPayload().filterConditions;
 
 			oFilterConditions.forEach((filterCondition) => {
 				oConditions[filterCondition.condition] = oFilter[filterCondition.filter];

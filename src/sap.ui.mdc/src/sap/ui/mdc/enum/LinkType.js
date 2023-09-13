@@ -15,7 +15,7 @@ sap.ui.define(function() {
 	 * @ui5-restricted sap.fe
 	 * @deprecated since 1.115.0 - please see {@link sap.ui.mdc.enums.LinkType}
 	 */
-	var LinkType = {
+	const LinkType = {
 		/**
 		 * {@link sap.ui.mdc.Link} is rendered as a {@link sap.m.Text}
 		 * @public

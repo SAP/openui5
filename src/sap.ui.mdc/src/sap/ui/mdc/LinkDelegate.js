@@ -14,7 +14,7 @@ sap.ui.define(['sap/ui/mdc/BaseDelegate', 'sap/ui/mdc/enums/LinkType'], function
 	 * @since 1.74
 	 * @public
 	 */
-	var LinkDelegate = Object.assign({}, BaseDelegate);
+	const LinkDelegate = Object.assign({}, BaseDelegate);
 
 	/**
 	 * Retrieves and returns the relevant {@link sap.ui.mdc.link.LinkItem} for the <code>Link</code> control.

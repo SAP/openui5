@@ -259,7 +259,7 @@ sap.ui.define([
 		}
 	});
 
-	var ListReport = {
+	const ListReport = {
 		books: {
 			"The Yellow Wallpaper": [
 			  "The Yellow Wallpaper",

@@ -47,7 +47,7 @@ sap.ui.define([
 
 	QUnit.test("getBaseTypeForType", function(assert) {
 
-		var aTypeList = [
+		const aTypeList = [
 			[new ODataDateTime(), BaseType.DateTime],
 			[new ODataDateTime({},{displayFormat: "Date"}), BaseType.Date],
 			[new ODataDateTimeOffset(), BaseType.DateTime],
@@ -56,22 +56,22 @@ sap.ui.define([
 		];
 
 		aTypeList.forEach(function (aEntry) {
-			var oType = aEntry[0];
-			var oExpected = aEntry[1];
+			const oType = aEntry[0];
+			const oExpected = aEntry[1];
 			assert.equal(TypeUtil.getBaseTypeForType(oType), oExpected, "expected baseType returned for type " + oType.getName() + ": " + oExpected);
 		});
 
-		var aNumerics = [ODataByte, ODataSByte, ODataDecimal, ODataInt16, ODataInt32, ODataInt64, ODataSingle, ODataDouble];
+		const aNumerics = [ODataByte, ODataSByte, ODataDecimal, ODataInt16, ODataInt32, ODataInt64, ODataSingle, ODataDouble];
 
 		aNumerics.forEach(function (NumericType) {
-			var oType = new NumericType();
+			const oType = new NumericType();
 			assert.equal(TypeUtil.getBaseTypeForType(oType), BaseType.Numeric, "expected baseType returned for type " + oType.getName() + ": " + BaseType.Numeric);
 		});
 	});
 
 	QUnit.test("getDataTypeClass", function(assert) {
 
-		var mEdmTypes = {
+		const mEdmTypes = {
 			"Edm.Boolean": "sap.ui.model.odata.type.Boolean",
 			"Edm.Byte": "sap.ui.model.odata.type.Byte",
 			"Edm.DateTime": "sap.ui.model.odata.type.DateTime",
@@ -90,7 +90,7 @@ sap.ui.define([
 		};
 
 		Object.keys(mEdmTypes).forEach(function (sKey) {
-			var oExpected = mEdmTypes[sKey];
+			const oExpected = mEdmTypes[sKey];
 			assert.equal(TypeUtil.getDataTypeClassName(sKey), oExpected, "expected odata type returned for edm type " + sKey + ": " + oExpected);
 		});
 
@@ -104,7 +104,7 @@ sap.ui.define([
 
 	QUnit.test("getTypeConfig with constraints", function (assert) {
 
-		var oTypeConfig = TypeUtil.getTypeConfig("sap.ui.model.odata.type.DateTime", undefined, undefined);
+		let oTypeConfig = TypeUtil.getTypeConfig("sap.ui.model.odata.type.DateTime", undefined, undefined);
 		assert.equal(oTypeConfig.baseType, BaseType.DateTime , "expected basetype returned");
 
 		oTypeConfig = TypeUtil.getTypeConfig("sap.ui.model.odata.type.DateTime", undefined, {displayFormat: "Date"});
@@ -112,7 +112,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("internalizeValue", function (assert) {
-		var oTypedValue = TypeUtil.internalizeValue(50, new ODataInt64()); //
+		let oTypedValue = TypeUtil.internalizeValue(50, new ODataInt64()); //
 		assert.equal(oTypedValue, '50', "expected value returned");
 
 		oTypedValue = TypeUtil.internalizeValue('50', new ODataInt64());
@@ -126,7 +126,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("externalizeValue", function (assert) {
-		var oStringifiedValue = TypeUtil.externalizeValue(50, new ODataInt64());
+		let oStringifiedValue = TypeUtil.externalizeValue(50, new ODataInt64());
 		assert.equal(oStringifiedValue, "50", "stringified value returned");
 
 		oStringifiedValue = TypeUtil.externalizeValue('50', new ODataInt64());

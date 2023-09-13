@@ -16,7 +16,7 @@ sap.ui.define(function() {
 	 * @since 1.115
 	 * @alias sap.ui.mdc.enums.ReasonMode
 	 */
-	var ReasonMode = {
+	const ReasonMode = {
 		/**
 		 * The applied variant is marked as Apply Automatically.
 		 * @private

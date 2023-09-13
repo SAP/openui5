@@ -30,7 +30,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Shorthand type='GridTable'", function(assert) {
-		var oTable = new Table({type: TableType.Table});
+		const oTable = new Table({type: TableType.Table});
 
 		return oTable.initialized().then(function() {
 			assert.ok(oTable._getType().isA("sap.ui.mdc.table.GridTableType"), "Default type instance is a sap.ui.mdc.table.GridTableType");
@@ -41,7 +41,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("GridTable - HideStandardTooltips", function(assert) {
-		var oTable = new Table({type: TableType.Table});
+		const oTable = new Table({type: TableType.Table});
 
 		return oTable.initialized().then(function() {
 			assert.ok(oTable._oTable._getHideStandardTooltips(), "HideStandardTooltips option set in inner GridTable");
@@ -72,7 +72,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Fix column count", function(assert) {
-		var oTable = this.createTable({
+		const oTable = this.createTable({
 			type: new GridTableType({fixedColumnCount: 1})
 		});
 

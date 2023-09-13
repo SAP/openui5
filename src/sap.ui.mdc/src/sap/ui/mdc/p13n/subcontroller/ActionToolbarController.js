@@ -10,29 +10,29 @@ sap.ui.define([
 ], function (BaseController, ActionToolbarPanel, Column, P13nBuilder) {
     "use strict";
 
-    var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
-    var ActionToolbarController = BaseController.extend("saps.ui.mdc.p13n.subcontroller.ActionToolbarController");
+    const oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
+    const ActionToolbarController = BaseController.extend("saps.ui.mdc.p13n.subcontroller.ActionToolbarController");
 
 
     ActionToolbarController.prototype.initAdaptationUI = function(oPropertyHelper){
 
-        var oSelectionPanel = new ActionToolbarPanel({
+        const oSelectionPanel = new ActionToolbarPanel({
             title: oResourceBundle.getText("actiontoolbar.RTA_TITLE"),
             showHeader: true
         });
         //oSelectionPanel.setEnableReorder(false);
         oSelectionPanel.setFieldColumn(oResourceBundle.getText("actiontoolbar.RTA_COLUMN_HEADER"));
 
-        var oAdaptationData = this.mixInfoAndState(oPropertyHelper);
+        const oAdaptationData = this.mixInfoAndState(oPropertyHelper);
         oSelectionPanel.setP13nData(oAdaptationData.items);
         this._oPanel = oSelectionPanel;
         return Promise.resolve(oSelectionPanel);
     };
 
     ActionToolbarController.prototype.getDelta = function(mPropertyBag) {
-        var aChanges = BaseController.prototype.getDelta.apply(this, arguments);
+        const aChanges = BaseController.prototype.getDelta.apply(this, arguments);
         aChanges.forEach(function(oChange){
-            var sChangeType = oChange.changeSpecificData.changeType;
+            const sChangeType = oChange.changeSpecificData.changeType;
             if (sChangeType === "hideControl" || sChangeType === "unhideControl") {
                 oChange.selectorElement = sap.ui.getCore().byId(oChange.changeSpecificData.content.name);
                 delete oChange.changeSpecificData.content;
@@ -47,11 +47,11 @@ sap.ui.define([
      * @param {sap.ui.mdc.util.PropertyHelper} oPropertyHelper The propertyhelper that should be utilized for property determination.
      */
      ActionToolbarController.prototype.mixInfoAndState = function(oPropertyHelper) {
-        var aItemState = this.getCurrentState();
-        var mItemState = this.arrayToMap(aItemState);
+        const aItemState = this.getCurrentState();
+        const mItemState = this.arrayToMap(aItemState);
 
-        var oP13nData = this.prepareAdaptationData(oPropertyHelper, function(mItem, oProperty){
-            var oExisting = mItemState[oProperty.name];
+        const oP13nData = this.prepareAdaptationData(oPropertyHelper, function(mItem, oProperty){
+            const oExisting = mItemState[oProperty.name];
             mItem.visible = !!oExisting;
             mItem.position = oExisting ? oExisting.position : -1;
             mItem.alignment = oProperty.alignment;

@@ -73,14 +73,14 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var oField;
-	var sId;
-	var aChangeItems;
-	var bValid;
-	var iCount = 0;
-	var oPromise;
+	let oField;
+	let sId;
+	let aChangeItems;
+	let bValid;
+	let iCount = 0;
+	let oPromise;
 
-	var _myChangeHandler = function(oEvent) {
+	const _myChangeHandler = function(oEvent) {
 		iCount++;
 		sId = oEvent.oSource.getId();
 		aChangeItems = oEvent.getParameter("items");
@@ -117,7 +117,7 @@ sap.ui.define([
 //
 //	};
 
-	var _cleanupEvents = function() {
+	const _cleanupEvents = function() {
 		iCount = 0;
 		sId = null;
 		aChangeItems = null;
@@ -145,8 +145,8 @@ sap.ui.define([
 		oField.placeAt("content");
 		oCore.applyChanges();
 
-		var aContent = oField.getAggregation("_content");
-		var oContent = aContent && aContent.length > 0 && aContent[0];
+		const aContent = oField.getAggregation("_content");
+		const oContent = aContent && aContent.length > 0 && aContent[0];
 		assert.ok(oContent, "default content exist");
 		assert.equal(oContent && oContent.getMetadata().getName(), "sap.ui.mdc.field.FieldMultiInput", "sap.ui.mdc.field.FieldMultiInput is default");
 		assert.notOk(oContent && oContent.getShowValueHelp(), "no valueHelp");
@@ -159,8 +159,8 @@ sap.ui.define([
 		oField.placeAt("content");
 		oCore.applyChanges();
 
-		var aContent = oField.getAggregation("_content");
-		var oContent = aContent && aContent.length > 0 && aContent[0];
+		let aContent = oField.getAggregation("_content");
+		let oContent = aContent && aContent.length > 0 && aContent[0];
 		assert.ok(oContent, "content exist");
 		assert.equal(oContent.getMetadata().getName(), "sap.ui.mdc.field.TokenizerDisplay", "sap.ui.mdc.field.TokenizerDisplay is used");
 
@@ -176,23 +176,23 @@ sap.ui.define([
 
 	QUnit.test("internal control creation", function(assert) {
 
-		var fnDone = assert.async();
+		const fnDone = assert.async();
 		setTimeout(function() { // async control creation in applySettings
-			var aContent = oField.getAggregation("_content");
-			var oContent = aContent && aContent.length > 0 && aContent[0];
+			const aContent = oField.getAggregation("_content");
+			const oContent = aContent && aContent.length > 0 && aContent[0];
 			assert.notOk(oContent, "no content exist before rendering"); // as no data type can be determined
 			fnDone();
 		}, 0);
 
 	});
 
-	var oFieldEdit, oFieldDisplay;
-	var oModel;
-	var oType;
-	var oDescriptionType;
-	var oItemTemplate;
+	let oFieldEdit, oFieldDisplay;
+	let oModel;
+	let oType;
+	let oDescriptionType;
+	let oItemTemplate;
 
-	var _initModel = function() {
+	const _initModel = function() {
 		oModel = new JSONModel({
 			items: [{ key: 1, description: "Text 1" },
 					{ key: 2, description: "Text 2" },
@@ -211,7 +211,7 @@ sap.ui.define([
 		});
 	};
 
-	var _cleanupModel = function() {
+	const _cleanupModel = function() {
 		oModel.destroy();
 		oItemTemplate.destroy();
 		oType.destroy();
@@ -250,7 +250,7 @@ sap.ui.define([
 
 	QUnit.test("used data type", function(assert) {
 
-		var oType = oFieldEdit._oContentFactory.getDataType();
+		let oType = oFieldEdit._oContentFactory.getDataType();
 		assert.ok(oType.isA("sap.ui.model.type.Integer"), "used data type for Field");
 		assert.ok(oType._bMyType, "Given Type is used in Field");
 
@@ -262,18 +262,18 @@ sap.ui.define([
 
 	QUnit.test("conditions & Tokens", function(assert) {
 
-		var fnDone = assert.async();
+		const fnDone = assert.async();
 		setTimeout(function() { // async set of condition
-			var aConditions = oFieldEdit.getConditions();
+			const aConditions = oFieldEdit.getConditions();
 			assert.ok(aConditions.length, 3, "Conditions created");
 			assert.equal(aConditions[0].operator, "EQ", "Condition0 operator");
 			assert.equal(aConditions[0].values[0], 1, "Condition0 value0");
 			assert.equal(aConditions[0].values[1], "Text 1", "Condition0 value1");
 			assert.equal(aConditions[0].validated, ConditionValidated.Validated, "Condition0 validated");
 
-			var aContent = oFieldEdit.getAggregation("_content");
-			var oContent = aContent && aContent.length > 0 && aContent[0];
-			var aTokens = oContent.getTokens();
+			let aContent = oFieldEdit.getAggregation("_content");
+			let oContent = aContent && aContent.length > 0 && aContent[0];
+			let aTokens = oContent.getTokens();
 			assert.ok(aTokens.length, 3, "Tokens created");
 			assert.equal(aTokens[0].getText(), "Text 1", "Token0 text");
 
@@ -294,16 +294,16 @@ sap.ui.define([
 		beforeEach: function() {
 			_initModel();
 			sinon.stub(MultiValueFieldDelegate, "updateItems").callsFake(function(oPayload, aConditions, oMultiValueField) {
-				var aItems = [];
-				for (var i = 0; i < aConditions.length; i++) {
-					var oCondition = aConditions[i];
-					var oItem = {key: oCondition.values[0], description: oCondition.values[1]};
+				const aItems = [];
+				for (let i = 0; i < aConditions.length; i++) {
+					const oCondition = aConditions[i];
+					const oItem = {key: oCondition.values[0], description: oCondition.values[1]};
 					aItems.push(oItem);
 				}
 				oModel.setProperty("/items", aItems);
 				oModel.checkUpdate(true, false);
 			});
-			var oValueHelp = new ValueHelp("F1-H");
+			const oValueHelp = new ValueHelp("F1-H");
 			oField = new MultiValueField("F1", {
 				editMode: FieldEditMode.Editable,
 				display: FieldDisplay.Description,
@@ -328,10 +328,10 @@ sap.ui.define([
 
 	QUnit.test("update via ValueHelp", function(assert) {
 
-		var fnDone = assert.async();
+		const fnDone = assert.async();
 		setTimeout(function() { // async set of condition
-			var oValueHelp = oCore.byId(oField.getValueHelp());
-			var oCondition = Condition.createItemCondition(4, "Text 4");
+			const oValueHelp = oCore.byId(oField.getValueHelp());
+			const oCondition = Condition.createItemCondition(4, "Text 4");
 			oValueHelp.fireSelect({ conditions: [oCondition], add: false, close: true });
 
 			setTimeout(function() { // async model update
@@ -352,7 +352,7 @@ sap.ui.define([
 					assert.equal(vResult[0].getKey(), 4, "Result: item key");
 					assert.equal(vResult[0].getDescription(), "Text 4", "Result: item key");
 
-					var aItems = oField.getItems();
+					const aItems = oField.getItems();
 					assert.equal(aItems.length, 1, "Field: items");
 					assert.equal(aItems[0].getKey(), 4, "Field: item key");
 					assert.equal(aItems[0].getDescription(), "Text 4", "Field: item key");
@@ -366,14 +366,14 @@ sap.ui.define([
 
 	QUnit.test("internal control creation", function(assert) {
 
-		var oField = new MultiValueField("F3", {
+		let oField = new MultiValueField("F3", {
 			items: {path: "/items", template: oItemTemplate}
 		});
 
-		var fnDone = assert.async();
+		const fnDone = assert.async();
 		setTimeout(function() { // async control creation in applySettings
-			var aContent = oField.getAggregation("_content");
-			var oContent = aContent && aContent.length > 0 && aContent[0];
+			let aContent = oField.getAggregation("_content");
+			let oContent = aContent && aContent.length > 0 && aContent[0];
 			assert.notOk(oContent, "no content exist before rendering"); // as edit mode is not explicit defined
 
 			oField.setEditMode(FieldEditMode.Display);

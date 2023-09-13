@@ -12,11 +12,11 @@ function(
 ) {
     "use strict";
 
-	var TestTypeMap;
-	var _mMap;
-	var DerivedTestTypeMap;
+	let TestTypeMap;
+	let _mMap;
+	let DerivedTestTypeMap;
 
-	var fnOptions = function () {};
+	const fnOptions = function () {};
 
 	QUnit.module("", { beforeEach: function () {
 		TestTypeMap = Object.assign({}, TypeMap);
@@ -25,7 +25,7 @@ function(
 	}});
 
 	QUnit.test("_getMap", function(assert) {
-		var _mMap = TestTypeMap._getMap();
+		const _mMap = TestTypeMap._getMap();
 		assert.ok(_mMap instanceof Map, "returns a Map");
 		assert.equal(_mMap, TestTypeMap._getMap(), "returns same Map on repeated call.");
 		assert.notEqual(_mMap, DerivedTestTypeMap._getMap(), "returns different Maps for derived TypeMaps.");
@@ -57,13 +57,13 @@ function(
 	}});
 
 	QUnit.test("_get", function(assert) {
-		var aResult = TestTypeMap._get("this.is.my.TypeClass");
+		const aResult = TestTypeMap._get("this.is.my.TypeClass");
 		assert.ok(aResult, "_get returns an entry");
 		assert.equal(aResult[0], "this.is.my.TypeClass", "_get returns expected value identifier");
 		assert.equal(aResult[1][0], BaseType.String, "_get returns expected BaseType");
 		assert.equal(aResult[1][1], fnOptions, "_get returns expected Options method");
 
-		var aAliasResult = TestTypeMap._get("MyTypeClass");
+		const aAliasResult = TestTypeMap._get("MyTypeClass");
 		assert.equal(aResult[0], aAliasResult[0], "_get returns expected value identifier");
 		assert.equal(aResult[1], aAliasResult[1], "_get returns expected value");
 	});
@@ -106,7 +106,7 @@ function(
 	QUnit.test("import", function(assert) {
 		sinon.spy(TestTypeMap, "export");
 
-		var _mDerivedMap = DerivedTestTypeMap._getMap();
+		const _mDerivedMap = DerivedTestTypeMap._getMap();
 
 		assert.notOk(Array.from(_mDerivedMap).length, "Derived TypeMap does not contain data.");
 
@@ -151,13 +151,13 @@ function(
 	}});
 
 	QUnit.test("initializeTypeFromValue", function(assert) {
-		var oType = new StringType();
+		const oType = new StringType();
 		assert.deepEqual(TestTypeMap.initializeTypeFromValue(oType, "Test"), {}, "empty object returned");
 		oType.destroy();
 	});
 
 	QUnit.test("initializeInternalType", function(assert) {
-		var oType = new StringType();
+		const oType = new StringType();
 		assert.deepEqual(TestTypeMap.initializeInternalType(oType, {}), undefined, "nothing returned");
 		oType.destroy();
 	});

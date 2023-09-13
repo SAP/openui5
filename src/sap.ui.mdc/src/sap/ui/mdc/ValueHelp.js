@@ -70,7 +70,7 @@ sap.ui.define([
 	 * @alias sap.ui.mdc.ValueHelp
 	 * @experimental As of version 1.95.0
 	 */
-	var ValueHelp = Element.extend("sap.ui.mdc.ValueHelp", /** @lends sap.ui.mdc.ValueHelp.prototype */
+	const ValueHelp = Element.extend("sap.ui.mdc.ValueHelp", /** @lends sap.ui.mdc.ValueHelp.prototype */
 	{
 		metadata: {
 			library: "sap.ui.mdc",
@@ -326,8 +326,8 @@ sap.ui.define([
 			this.setFilterValue("");
 			this.setConditions([]);
 
-			var oTypeahead = this.getTypeahead();
-			var oDialog = this.getDialog();
+			const oTypeahead = this.getTypeahead();
+			const oDialog = this.getDialog();
 			if (oTypeahead) {
 				oTypeahead.onConnectionChange();
 			}
@@ -352,8 +352,8 @@ sap.ui.define([
 
 	ValueHelp.prototype.getDomRef = function() {
 
-		var oTypeahead = this.getTypeahead();
-		var oDialog = this.getDialog();
+		const oTypeahead = this.getTypeahead();
+		const oDialog = this.getDialog();
 
 		// check for opening too as focus move sometimes to valuehelp before handleOpened finished
 		if (oTypeahead && (oTypeahead.isOpen() || oTypeahead.isOpening())) {
@@ -389,21 +389,18 @@ sap.ui.define([
 	 */
 	ValueHelp.prototype.getAriaAttributes = function(iMaxConditions) {
 
-		var oTypeahead = this.getTypeahead();
-		var oDialog = this.getDialog();
+		const oTypeahead = this.getTypeahead();
+		let oDialog = this.getDialog();
 
 		if (!oDialog && oTypeahead && oTypeahead.getUseAsValueHelp()) {
 			oDialog = oTypeahead;
 		}
 
-		var bTypeaheadOpen = oTypeahead && oTypeahead.isOpen();
-		var bDialogOpen = oDialog && oDialog.isOpen();
-		var oTypeaheadAttributes = oTypeahead && oTypeahead.getAriaAttributes(iMaxConditions);
-		var oDialogAttributes = oDialog && oDialog.getAriaAttributes(iMaxConditions);
-		var sContentId; // use from currently open context (only needed if open)
-		var sHasPopup; // use from Typeahead. If no Typeahead use from Dialog
-		var sRole; // TODO: check Input for only typeahead case
-		var sRoleDescription;
+		const bTypeaheadOpen = oTypeahead && oTypeahead.isOpen();
+		const bDialogOpen = oDialog && oDialog.isOpen();
+		const oTypeaheadAttributes = oTypeahead && oTypeahead.getAriaAttributes(iMaxConditions);
+		const oDialogAttributes = oDialog && oDialog.getAriaAttributes(iMaxConditions);
+		let sContentId; // use from currently open context (only needed if open)
 
 		if (bTypeaheadOpen) {
 			sContentId = oTypeaheadAttributes.contentId;
@@ -411,9 +408,9 @@ sap.ui.define([
 			sContentId = oDialogAttributes.contentId;
 		}
 
-		sHasPopup = (oTypeahead && oTypeaheadAttributes.ariaHasPopup) || (oDialog && oDialogAttributes.ariaHasPopup);
-		sRole = (oTypeahead && oTypeaheadAttributes.role) || (oDialog && oDialogAttributes.role);
-		sRoleDescription = (oTypeahead && oTypeaheadAttributes.roleDescription) || (oDialog && oDialogAttributes.roleDescription);
+		const sHasPopup = (oTypeahead && oTypeaheadAttributes.ariaHasPopup) || (oDialog && oDialogAttributes.ariaHasPopup);// use from Typeahead. If no Typeahead use from Dialog
+		const sRole = (oTypeahead && oTypeaheadAttributes.role) || (oDialog && oDialogAttributes.role);// TODO: check Input for only typeahead case
+		const sRoleDescription = (oTypeahead && oTypeaheadAttributes.roleDescription) || (oDialog && oDialogAttributes.roleDescription);
 
 		return {
 			contentId: sContentId,
@@ -427,24 +424,24 @@ sap.ui.define([
 
 	// retrieve delegate based content modifications
 	ValueHelp.prototype._retrieveDelegateContent = function(oContainer, sContentId) {
-		var oPromise;
+		let oPromise;
 		if (!sContentId) {
-			var oSelectedContent = oContainer.getSelectedContent();	// use currently active content id if no other is given
+			const oSelectedContent = oContainer.getSelectedContent();	// use currently active content id if no other is given
 			sContentId = oSelectedContent && oSelectedContent.getId();
 		}
 
 		oPromise = this._retrievePromise("delegateContent");
-		var bIsOpen = this.isOpen();
+		const bIsOpen = this.isOpen();
 
 
 		if (!oPromise || (oPromise && bIsOpen) || (oPromise && oPromise.aggregation !== oContainer.sParentAggregationName)) { // Create promises or stack running promises if VH is open or if the previous promise was meant for another container
-			var fnFetchContent = function () {
+			const fnFetchContent = function () {
 				return this._getControlDelegatePromise().then(function (oDelegateModule) {
 					return oDelegateModule.retrieveContent(this, oContainer, sContentId);
 				}.bind(this));
 			}.bind(this);
 
-			var bChainPromises = oPromise && oPromise.isPending(); // ignore existing promise in case of non-happy result, maybe use .finally instead?
+			const bChainPromises = oPromise && oPromise.isPending(); // ignore existing promise in case of non-happy result, maybe use .finally instead?
 			oPromise = this._addPromise("delegateContent", bChainPromises ? oPromise.getInternalPromise().then(fnFetchContent) : fnFetchContent);
 			oPromise.aggregation = oContainer.sParentAggregationName;
 		}
@@ -469,9 +466,9 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.mdc.field.FieldBase
 	 */
 	ValueHelp.prototype.open = function(bTypeahead) {
-		var oContainer = bTypeahead ? this.getTypeahead() : _getValueHelpContainer.call(this);
+		const oContainer = bTypeahead ? this.getTypeahead() : _getValueHelpContainer.call(this);
 
-		var oOtherContainer = bTypeahead ? this.getDialog() : this.getTypeahead();
+		const oOtherContainer = bTypeahead ? this.getDialog() : this.getTypeahead();
 		if (oOtherContainer && oContainer !== oOtherContainer && (oOtherContainer.isOpen() || oOtherContainer.isOpening())) {
 			oOtherContainer.close(); 	// TODO: Check container to be fully closed via promise
 		}
@@ -483,7 +480,7 @@ sap.ui.define([
 	};
 
 	function _handleRequestDelegateContent(oEvent) {
-		var oContainer = oEvent.getSource();
+		const oContainer = oEvent.getSource();
 		this._retrieveDelegateContent(oContainer, oEvent.getParameter("contentId"));
 	}
 
@@ -501,8 +498,8 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.mdc.field.FieldBase
 	 */
 	ValueHelp.prototype.close = function() {
-		var oTypeahead = this.getTypeahead();
-		var oDialog = this.getDialog();
+		const oTypeahead = this.getTypeahead();
+		const oDialog = this.getDialog();
 
 		if (oTypeahead && oTypeahead.isOpen()) {
 			oTypeahead.close();
@@ -525,15 +522,15 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.mdc.field.FieldBase
 	 */
 	ValueHelp.prototype.toggleOpen = function(bTypeahead) {
-		var oTypeahead = this.getTypeahead();
-		var oDialog = this.getDialog();
+		const oTypeahead = this.getTypeahead();
+		let oDialog = this.getDialog();
 
 		if (!bTypeahead && !oDialog && oTypeahead && oTypeahead.getUseAsValueHelp()) {
 			oDialog = oTypeahead;
 		}
 
-		var bTypeaheadOpen = oTypeahead && oTypeahead.isOpen();
-		var bDialogOpen = oDialog && oDialog.isOpen();
+		const bTypeaheadOpen = oTypeahead && oTypeahead.isOpen();
+		const bDialogOpen = oDialog && oDialog.isOpen();
 
 		if ((bTypeahead && bTypeaheadOpen) || (!bTypeahead && bDialogOpen)) {
 			this.close();
@@ -554,8 +551,8 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.mdc.field.FieldBase
 	 */
 	ValueHelp.prototype.isOpen = function() {
-		var oTypeahead = this.getTypeahead();
-		var oDialog = this.getDialog();
+		const oTypeahead = this.getTypeahead();
+		const oDialog = this.getDialog();
 		return !!((oTypeahead && (oTypeahead.isOpen() || oTypeahead.isOpening())) || (oDialog && (oDialog.isOpen() || oDialog.isOpening())));
 	};
 
@@ -569,8 +566,8 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.mdc.field.FieldBase
 	 */
 	ValueHelp.prototype.skipOpening = function() { // ? Use close based logic instead?
-		var oTypeahead = this.getTypeahead();
-		var oDialog = this.getDialog();
+		const oTypeahead = this.getTypeahead();
+		const oDialog = this.getDialog();
 
 		if (oTypeahead && oTypeahead.isOpening()) {
 			oTypeahead.close();
@@ -613,7 +610,7 @@ sap.ui.define([
 	 */
 	ValueHelp.prototype.isTypeaheadSupported = function() { // always return promise ?
 
-		var oTypeahead = this.getTypeahead();
+		const oTypeahead = this.getTypeahead();
 		if (oTypeahead) {
 			return this._retrieveDelegateContent(oTypeahead).then(function () {
 				return !!oTypeahead && oTypeahead.isTypeaheadSupported(); // as might depend on binding in content
@@ -638,7 +635,7 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.mdc.field.FieldBase
 	 */
 	ValueHelp.prototype.shouldOpenOnFocus = function () {
-		var oContainer = _getValueHelpContainer.call(this, true);
+		const oContainer = _getValueHelpContainer.call(this, true);
 		return oContainer && oContainer.shouldOpenOnFocus();
 	};
 
@@ -656,7 +653,7 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.mdc.field.FieldBase
 	 */
 	ValueHelp.prototype.shouldOpenOnClick = function () {
-		var oContainer = _getValueHelpContainer.call(this, true);
+		const oContainer = _getValueHelpContainer.call(this, true);
 		return oContainer && oContainer.shouldOpenOnClick();
 	};
 
@@ -670,7 +667,7 @@ sap.ui.define([
 	 */
 	ValueHelp.prototype.isFocusInHelp = function() { // find more elegant way?
 
-		var oDialog = _getValueHelpContainer.call(this);
+		const oDialog = _getValueHelpContainer.call(this);
 		return oDialog && oDialog.isFocusInHelp();
 
 	};
@@ -682,7 +679,7 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.mdc.field.FieldBase
 	 */
 	ValueHelp.prototype.removeFocus = function() {
-		var oTypeahead = this.getTypeahead();
+		const oTypeahead = this.getTypeahead();
 		if (oTypeahead) {
 			// could be done sync. as it only occurs if open
 			oTypeahead.removeFocus();
@@ -701,9 +698,9 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.mdc.field.FieldBase
 	 */
 	ValueHelp.prototype.navigate = function(iStep) { // pass through to container
-		var oTypeahead = this.getTypeahead();
+		const oTypeahead = this.getTypeahead();
 		if (oTypeahead) {
-			var _fnOnNavigatable = function () {
+			const _fnOnNavigatable = function () {
 				if (oTypeahead.shouldOpenOnNavigate() && !oTypeahead.isOpening() && !oTypeahead.isOpen()) {
 					return oTypeahead.open(true).then(function() {
 						oTypeahead.navigate(iStep);
@@ -711,8 +708,8 @@ sap.ui.define([
 				}
 				return oTypeahead.navigate(iStep);
 			};
-			var oNavigatePromise = this._retrievePromise("navigate");
-			var oExistingPromise = oNavigatePromise && !oNavigatePromise.isSettled() && oNavigatePromise.getInternalPromise();
+			const oNavigatePromise = this._retrievePromise("navigate");
+			const oExistingPromise = oNavigatePromise && !oNavigatePromise.isSettled() && oNavigatePromise.getInternalPromise();
 			this._addPromise("navigate", oExistingPromise ? oExistingPromise.then(_fnOnNavigatable) : this._retrieveDelegateContent(oTypeahead).then(_fnOnNavigatable));
 		}
 	};
@@ -732,10 +729,10 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.mdc.field.FieldBase
 	 */
 	ValueHelp.prototype.isNavigationEnabled = function(iStep) {
-		var oTypeahead = this.getTypeahead();
+		const oTypeahead = this.getTypeahead();
 		if (oTypeahead) {
-			var oDialog = this.getDialog();
-			var bIsOpen = oTypeahead.isOpen();
+			const oDialog = this.getDialog();
+			const bIsOpen = oTypeahead.isOpen();
 
 			if (bIsOpen || !oDialog) {
 				return oTypeahead.isNavigationEnabled(iStep); // if Typeahead open or typeahead is used as value help, keyboard navigation could be used
@@ -783,11 +780,11 @@ sap.ui.define([
 	 */
 	ValueHelp.prototype.getItemForValue = function(oConfig) {
 		// TODO: Discuss how we handle binding / typeahead changes ??
-		var oTypeahead = this.getTypeahead();
+		const oTypeahead = this.getTypeahead();
 		if (oTypeahead) {
 			return this._retrieveDelegateContent(oTypeahead).then(function() {
 				oConfig.caseSensitive = oConfig.hasOwnProperty("caseSensitive") ? oConfig.caseSensitive : false; // If supported, search case insensitive
-				var pGetItemPromise = oTypeahead.getItemForValue(oConfig);
+				const pGetItemPromise = oTypeahead.getItemForValue(oConfig);
 				return pGetItemPromise;
 			});
 		} else {
@@ -806,7 +803,7 @@ sap.ui.define([
 	 */
 	ValueHelp.prototype.isValidationSupported = function() { // isUsableForValidation also necessary?
 
-		var oTypeahead = this.getTypeahead();
+		const oTypeahead = this.getTypeahead();
 
 		return oTypeahead && oTypeahead.isValidationSupported();
 
@@ -845,8 +842,8 @@ sap.ui.define([
 	 */
 	ValueHelp.prototype.getIcon = function() {
 
-		var oTypeahead = this.getTypeahead();
-		var oDialog = this.getDialog();
+		const oTypeahead = this.getTypeahead();
+		const oDialog = this.getDialog();
 
 		if (oDialog) {
 			return oDialog.getValueHelpIcon();
@@ -857,7 +854,7 @@ sap.ui.define([
 	};
 
 	ValueHelp.prototype.getMaxConditions = function() { // ?
-		var oConfig = this.getProperty("_config");
+		const oConfig = this.getProperty("_config");
 		return (oConfig && oConfig.maxConditions) || -1;
 	};
 
@@ -878,8 +875,8 @@ sap.ui.define([
 	 */
 	ValueHelp.prototype.valueHelpEnabled = function() {
 
-		var oTypeahead = this.getTypeahead();
-		var oDialog = this.getDialog();
+		const oTypeahead = this.getTypeahead();
+		const oDialog = this.getDialog();
 
 		if (oDialog) {
 			return true;
@@ -890,7 +887,7 @@ sap.ui.define([
 	};
 
 	function _onConditionPropagation(sReason, oConfig) {
-		var oDelegate = this.bDelegateInitialized && this.getControlDelegate();
+		const oDelegate = this.bDelegateInitialized && this.getControlDelegate();
 		if (oDelegate) {
 			oDelegate.onConditionPropagation(this, sReason, oConfig || this.getProperty("_config"));
 		}
@@ -898,18 +895,18 @@ sap.ui.define([
 
 	function _handleNavigated(oEvent) {
 
-		var oCondition = oEvent.getParameter("condition");
+		const oCondition = oEvent.getParameter("condition");
 		this.fireNavigated({condition: oCondition, itemId: oEvent.getParameter("itemId"), leaveFocus: oEvent.getParameter("leaveFocus")});
 	}
 
 	function _handleSelect(oEvent) {
 
 
-		var sType = oEvent.getParameter("type");
-		var aEventConditions = oEvent.getParameter("conditions") || [];
-		var aNextConditions;
+		const sType = oEvent.getParameter("type");
+		const aEventConditions = oEvent.getParameter("conditions") || [];
+		let aNextConditions;
 
-		var bSingleSelect = this.getMaxConditions() === 1;
+		const bSingleSelect = this.getMaxConditions() === 1;
 
 		if (bSingleSelect) {
 			aNextConditions = sType === ValueHelpSelectionType.Remove ? [] : aEventConditions.slice(0,1);
@@ -925,7 +922,7 @@ sap.ui.define([
 				aNextConditions = aEventConditions.slice(0,1);
 			} else {
 				aNextConditions = this.getConditions();
-				for (var i = 0; i < aEventConditions.length; i++) {
+				for (let i = 0; i < aEventConditions.length; i++) {
 					aNextConditions.push(aEventConditions[i]);
 				}
 			}
@@ -936,8 +933,8 @@ sap.ui.define([
 				aNextConditions = [];
 			} else {
 				aNextConditions = this.getConditions();
-				for (var j = 0; j < aEventConditions.length; j++) {
-					var iIndex = FilterOperatorUtil.indexOfCondition(aEventConditions[j], aNextConditions);
+				for (let j = 0; j < aEventConditions.length; j++) {
+					const iIndex = FilterOperatorUtil.indexOfCondition(aEventConditions[j], aNextConditions);
 					if (iIndex >= 0) {
 						aNextConditions.splice(iIndex, 1);
 					}
@@ -952,11 +949,11 @@ sap.ui.define([
 
 	function _handleConfirm(oEvent) {
 		if (this.getProperty("_valid")) { // only confirm if valid
-			var bSingleSelect = this.getMaxConditions() === 1;
-			var bCloseParam = oEvent.getParameter("close");
-			var bCloseAfterConfirm = typeof bCloseParam !== 'undefined' ? bCloseParam : bSingleSelect;
-			var aConditions = this.getConditions();
-			var bAdd = !bSingleSelect && !oEvent.getSource().isMultiSelect();
+			const bSingleSelect = this.getMaxConditions() === 1;
+			const bCloseParam = oEvent.getParameter("close");
+			const bCloseAfterConfirm = typeof bCloseParam !== 'undefined' ? bCloseParam : bSingleSelect;
+			let aConditions = this.getConditions();
+			const bAdd = !bSingleSelect && !oEvent.getSource().isMultiSelect();
 			if (bCloseAfterConfirm) {
 				this.close();
 			}
@@ -988,10 +985,10 @@ sap.ui.define([
 
 	function _observeChanges(oChanges) {
 		if (["typeahead", "dialog"].indexOf(oChanges.name) !== -1) {
-			var oContainer = oChanges.child;
+			const oContainer = oChanges.child;
 
-			var bAdded = oChanges.mutation === "insert";
-			var fnEvent = bAdded ? oContainer.attachEvent.bind(oContainer) : oContainer.detachEvent.bind(oContainer);
+			const bAdded = oChanges.mutation === "insert";
+			const fnEvent = bAdded ? oContainer.attachEvent.bind(oContainer) : oContainer.detachEvent.bind(oContainer);
 
 			fnEvent("select", _handleSelect, this);
 			fnEvent("requestDelegateContent", _handleRequestDelegateContent, this);
@@ -1019,15 +1016,15 @@ sap.ui.define([
 
 	function _updateBindingContext() {
 
-		var oBindingContext = this._oControl ? this._oControl.getBindingContext() : null; // if not connected use no BindingContext
+		const oBindingContext = this._oControl ? this._oControl.getBindingContext() : null; // if not connected use no BindingContext
 		this.setBindingContext(oBindingContext);
 	}
 
 	function _getValueHelpContainer(bPreferTypeahead) {
 
-		var oTypeahead = this.getTypeahead();
-		var bUseAsValueHelp = !!oTypeahead && oTypeahead.getUseAsValueHelp();
-		var oDialog = this.getDialog();
+		const oTypeahead = this.getTypeahead();
+		const bUseAsValueHelp = !!oTypeahead && oTypeahead.getUseAsValueHelp();
+		const oDialog = this.getDialog();
 
 		if (bPreferTypeahead) {
 			return (bUseAsValueHelp || oDialog) && oTypeahead || oDialog;
@@ -1039,7 +1036,7 @@ sap.ui.define([
 	// overwrite standard logic of Element to use FieldGroups of connected Field for all content (children aggregations)
 	ValueHelp.prototype._getFieldGroupIds = function() {
 
-		var oControl = this.getControl();
+		const oControl = this.getControl();
 
 		if (oControl) {
 			return oControl.getFieldGroupIds();

@@ -15,7 +15,7 @@ sap.ui.define([
 	  "countries": "Nepal, China"
 	} */
 
-	var aPropertyInfos = [{
+	const aPropertyInfos = [{
         name : "buildingId",
         path : "id",
         label : "Id",

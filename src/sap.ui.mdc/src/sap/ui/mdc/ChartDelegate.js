@@ -18,7 +18,7 @@ sap.ui.define([
 	 * @public
 	 *
 	 */
-	var ChartDelegate = Object.assign({}, AggregationBaseDelegate);
+	const ChartDelegate = Object.assign({}, AggregationBaseDelegate);
 
 	/**
 	 * Notifies the inner chart to zoom in.

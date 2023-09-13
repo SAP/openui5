@@ -2,7 +2,7 @@ sap.ui.define(['../util/EnvHelper', "sap/base/util/merge"], function(EnvHelper, 
 
 	"use strict";
 
-	var mConfig = {
+	const mConfig = {
 		name: "Library 'sap.ui.mdc' - Testsuite Field",	/* Just for a nice title on the pages */
 		defaults: {
 			group: "Field",

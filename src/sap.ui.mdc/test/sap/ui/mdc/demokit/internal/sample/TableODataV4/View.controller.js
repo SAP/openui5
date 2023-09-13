@@ -25,7 +25,7 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var sLocalStorageKey = "TableODataV4.settings";
+	const sLocalStorageKey = "TableODataV4.settings";
 
 	function isLocalhost() {
 		return window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
@@ -34,7 +34,7 @@ sap.ui.define([
 	return Controller.extend("sap.ui.mdc.sample.TableODataV4.View", {
 		onInit: function() {
 			if (isLocalhost()) {
-				var mSettings = JSON.parse(window.localStorage.getItem(sLocalStorageKey));
+				const mSettings = JSON.parse(window.localStorage.getItem(sLocalStorageKey));
 
 				if (mSettings) {
 					this.byId("serviceUrl").setValue(mSettings.serviceUrl);
@@ -45,10 +45,10 @@ sap.ui.define([
 		},
 
 		onRefresh: function() {
-			var sServiceUrl = this.byId("serviceUrl").getValue().trim();
-			var sCollectionName = this.byId("collectionName").getValue().trim();
-			var sInitiallyVisibleProperties = this.byId("initiallyVisibleProperties").getValue().trim();
-			var oVBox = this.byId("content");
+			const sServiceUrl = this.byId("serviceUrl").getValue().trim();
+			const sCollectionName = this.byId("collectionName").getValue().trim();
+			const sInitiallyVisibleProperties = this.byId("initiallyVisibleProperties").getValue().trim();
+			const oVBox = this.byId("content");
 
 			if (!sServiceUrl || !sCollectionName) {
 				MessageBox.error("Please provide the required service URL and collection name");
@@ -65,12 +65,12 @@ sap.ui.define([
 				}));
 			}
 
-			var sProxyServiceUrl = "./proxy/" + sServiceUrl.replace("://", "/");
-			var aInitiallyVisibleProperties = sInitiallyVisibleProperties.split(",").map(function(sProperty) {
+			const sProxyServiceUrl = "./proxy/" + sServiceUrl.replace("://", "/");
+			const aInitiallyVisibleProperties = sInitiallyVisibleProperties.split(",").map(function(sProperty) {
 				return sProperty.trim();
 			}).filter(Boolean);
-			var sUsername = this.byId("username").getValue();
-			var sPassword = this.byId("password").getValue();
+			const sUsername = this.byId("username").getValue();
+			const sPassword = this.byId("password").getValue();
 
 			oVBox.setModel(new ODataModel({
 				serviceUrl: sProxyServiceUrl,
@@ -78,8 +78,8 @@ sap.ui.define([
 			}));
 
 			if (sUsername && sPassword) {
-				var sEncodedCredentials = btoa(sUsername + ":" + sPassword);
-				var that = this;
+				const sEncodedCredentials = btoa(sUsername + ":" + sPassword);
+				const that = this;
 
 				jQuery.ajax({
 					url: sProxyServiceUrl + sCollectionName,
@@ -115,7 +115,7 @@ sap.ui.define([
 		},
 
 		createTable: function(sProxyServiceUrl, sCollectionName, aInitiallyVisibleProperties) {
-			var oTable = new Table("mdcTable", {
+			const oTable = new Table("mdcTable", {
 				header: "Table with analytical capabilities",
 				enableExport: true,
 				selectionMode: "Multi",
@@ -132,8 +132,8 @@ sap.ui.define([
 
 			oTable.awaitPropertyHelper().then(function(oPropertyHelper) {
 				aInitiallyVisibleProperties.forEach(function(sPropertyName) {
-					var oProperty = oPropertyHelper.getProperty(sPropertyName);
-					var oUnitProperty = oProperty.unitProperty;
+					const oProperty = oPropertyHelper.getProperty(sPropertyName);
+					const oUnitProperty = oProperty.unitProperty;
 					if (!oProperty.isComplex() && oProperty && oUnitProperty) {
 						this.createColumnWithUnitTemplate(oTable, oProperty, oUnitProperty);
 					} else if (!oProperty.isComplex() && oProperty && !oUnitProperty) {
@@ -150,7 +150,7 @@ sap.ui.define([
 		},
 
 		createColumnWithUnitTemplate: function(oTable, oProperty, oUnitProperty) {
-			var oColumn = new Column({
+			const oColumn = new Column({
 				id: "id" + oProperty.name,
 				propertyKey: oProperty.name,
 				header: oProperty.label,
@@ -173,7 +173,7 @@ sap.ui.define([
 		},
 
 		createSimpleColumn: function(oTable, oProperty) {
-			var oColumn = new Column({
+			const oColumn = new Column({
 				id: "id" + oProperty.name,
 				propertyKey: oProperty.name,
 				header: oProperty.label,
@@ -188,13 +188,13 @@ sap.ui.define([
 		},
 
 		createComplexColumn: function(oTable, oProperty) {
-			var aProperties = oProperty.getSimpleProperties();
-			var oHBox = new HBox({
+			const aProperties = oProperty.getSimpleProperties();
+			const oHBox = new HBox({
 				renderType: "Bare"
 			});
 
 			aProperties.forEach(function(oProperty) {
-				var oText = new Text({
+				const oText = new Text({
 					text: {
 						path: oProperty.path,
 						formatter: function(sValue) {
@@ -205,7 +205,7 @@ sap.ui.define([
 				oHBox.addItem(oText);
 			});
 
-			var oColumn = new Column({
+			const oColumn = new Column({
 				header: oProperty.label,
 				propertyKey: oProperty.name,
 				template: oHBox

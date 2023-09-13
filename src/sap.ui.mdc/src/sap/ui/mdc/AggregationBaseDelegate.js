@@ -27,7 +27,7 @@ sap.ui.define(['sap/ui/mdc/BaseDelegate', 'sap/ui/core/library'], function (Base
 	 * @alias module:sap/ui/mdc/AggregationBaseDelegate
 	 * @extends module:sap/ui/mdc/BaseDelegate
 	 */
-	var AggregationBaseDelegate = Object.assign({}, BaseDelegate);
+	const AggregationBaseDelegate = Object.assign({}, BaseDelegate);
 
 	/**
 	 * Retrieves the relevant metadata for a given payload and returns the property info array.
@@ -95,7 +95,7 @@ sap.ui.define(['sap/ui/mdc/BaseDelegate', 'sap/ui/core/library'], function (Base
 	 */
 	AggregationBaseDelegate.validateState = function(oControl, oState) {
 
-		var sValidation = coreLibrary.MessageType.None;
+		const sValidation = coreLibrary.MessageType.None;
 
 		return {
 			validation: sValidation,

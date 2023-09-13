@@ -14,7 +14,7 @@ sap.ui.define(function() {
      * @since 1.115
      * @public
      */
-    var TableSelectionMode = {
+    const TableSelectionMode = {
         /**
          * No rows/items can be selected (default).
          * @public

@@ -29,10 +29,10 @@ sap.ui.define([
 	) {
 	"use strict";
 
-	var oFixedList;
-	var bIsOpen = true;
+	let oFixedList;
+	let bIsOpen = true;
 
-	var oContainer = { //to fake Container
+	const oContainer = { //to fake Container
 		getScrollDelegate: function() {
 			return null;
 		},
@@ -52,7 +52,7 @@ sap.ui.define([
 		getValueHelpDelegate: function () {}
 	};
 
-	var _teardown = function() {
+	const _teardown = function() {
 		oFixedList.destroy();
 		oFixedList = null;
 		bIsOpen = true;
@@ -60,7 +60,7 @@ sap.ui.define([
 
 	QUnit.module("basic features", {
 		beforeEach: function() {
-			var aConditions = [Condition.createItemCondition("I2", "My Item 2")];
+			const aConditions = [Condition.createItemCondition("I2", "My Item 2")];
 			oFixedList = new FixedList("FL1", {
 				items: [
 					new FixedListItem("I1", {key: "I1", text: "Item 1", additionalText: "My Item 1", groupKey: "G1", groupText: "Group 1"}),
@@ -81,23 +81,23 @@ sap.ui.define([
 
 	QUnit.test("getContent", function(assert) {
 
-		var iSelect = 0;
-		var aConditions;
-		var sType;
+		let iSelect = 0;
+		let aConditions;
+		let sType;
 		oFixedList.attachEvent("select", function(oEvent) {
 			iSelect++;
 			aConditions = oEvent.getParameter("conditions");
 			sType = oEvent.getParameter("type");
 		});
-		var iConfirm = 0;
+		let iConfirm = 0;
 		oFixedList.attachEvent("confirm", function(oEvent) {
 			iConfirm++;
 		});
 
-		var oContent = oFixedList.getContent();
+		const oContent = oFixedList.getContent();
 
 		if (oContent) {
-			var fnDone = assert.async();
+			const fnDone = assert.async();
 			oContent.then(function(oContent) {
 				oFixedList.onShow(); // to update selection and scroll
 				assert.ok(oContent, "Content returned");
@@ -111,7 +111,7 @@ sap.ui.define([
 				assert.ok(oContent.hasStyleClass("sapMComboBoxList"), "List has style class sapMComboBoxList");
 				assert.equal(oContent.getAriaRole(), "listbox", "List aria role");
 				assert.equal(oContent.getItems().length, 3, "Number of items");
-				var oItem = oContent.getItems()[0];
+				let oItem = oContent.getItems()[0];
 				assert.ok(oItem.isA("sap.m.DisplayListItem"), "Item0 is DisplayListItem");
 				assert.equal(oItem.getType(), mLibrary.ListType.Active, "Item0 type");
 				assert.equal(oItem.getValueTextDirection(), coreLibrary.TextDirection.Inherit, "Item0 valueTextDirection");
@@ -136,7 +136,7 @@ sap.ui.define([
 				assert.notOk(oItem.getSelected(), "Item2 not selected");
 				assert.ok(oItem.hasStyleClass("sapMComboBoxNonInteractiveItem"), "Item2 has style class sapMComboBoxNonInteractiveItem");
 
-				var aNewConditions = [
+				const aNewConditions = [
 					Condition.createItemCondition("I3", "item 3")
 				];
 				oItem.setSelected(true);
@@ -160,16 +160,16 @@ sap.ui.define([
 
 		oFixedList.setGroupable(true);
 
-		var oContent = oFixedList.getContent();
+		const oContent = oFixedList.getContent();
 
 		if (oContent) {
-			var fnDone = assert.async();
+			const fnDone = assert.async();
 			oContent.then(function(oContent) {
 				oFixedList.onShow(); // to update selection and scroll
 				assert.ok(oContent, "Content returned");
 				assert.ok(oContent.isA("sap.m.List"), "Content is sap.m.List");
 				assert.equal(oContent.getItems().length, 5, "Number of items");
-				var oItem = oContent.getItems()[0];
+				let oItem = oContent.getItems()[0];
 				assert.ok(oItem.isA("sap.m.GroupHeaderListItem"), "Item0 is GroupHeaderListItem");
 				assert.equal(oItem.getType(), mLibrary.ListType.Inactive, "Item0 type");
 				assert.equal(oItem.getTitle(), "Group 1", "Item0 title");
@@ -214,14 +214,14 @@ sap.ui.define([
 	QUnit.test("Filtering", function(assert) {
 
 		oFixedList.setFilterValue("i");
-		var oContent = oFixedList.getContent();
+		const oContent = oFixedList.getContent();
 
 		if (oContent) {
-			var fnDone = assert.async();
+			const fnDone = assert.async();
 			oContent.then(function(oContent) {
 				oFixedList.onShow(); // to update selection and scroll
 				assert.equal(oContent.getItems().length, 2, "Number of items");
-				var oItem = oContent.getItems()[0];
+				let oItem = oContent.getItems()[0];
 				assert.equal(oItem.getLabel(), "Item 1", "Item0 label");
 				assert.equal(oItem.getValue(), "My Item 1", "Item0 value");
 				oItem = oContent.getItems()[1];
@@ -249,14 +249,14 @@ sap.ui.define([
 		oFixedList.setConditions([]);
 		oFixedList.setUseFirstMatch(true);
 		oFixedList.setFilterList(false);
-		var oContent = oFixedList.getContent();
+		const oContent = oFixedList.getContent();
 
 		if (oContent) {
-			var fnDone = assert.async();
+			const fnDone = assert.async();
 			oContent.then(function(oContent) {
 				oFixedList.onShow(); // to update selection and scroll
 				assert.equal(oContent.getItems().length, 3, "Number of items");
-				var oItem = oContent.getItems()[0];
+				let oItem = oContent.getItems()[0];
 				assert.equal(oItem.getLabel(), "Item 1", "Item0 label");
 				assert.equal(oItem.getValue(), "My Item 1", "Item0 value");
 				assert.ok(oItem.getSelected(), "Item0 selected");
@@ -280,7 +280,7 @@ sap.ui.define([
 
 	QUnit.test("getItemForValue - match", function(assert) {
 
-		var oConfig = {
+		const oConfig = {
 			parsedValue: "I2",
 			parsedDescription: "I2",
 			value: "I2",
@@ -292,11 +292,11 @@ sap.ui.define([
 			exception: ParseException
 		};
 
-		var oPromise = oFixedList.getItemForValue(oConfig);
+		const oPromise = oFixedList.getItemForValue(oConfig);
 		assert.ok(oPromise instanceof Promise, "getItemForValue returns promise");
 
 		if (oPromise) {
-			var fnDone = assert.async();
+			const fnDone = assert.async();
 			oPromise.then(function(oItem) {
 				assert.ok(true, "Promise Then must be called");
 				assert.deepEqual(oItem, {key: "I2", description: "My Item   2"}, "Item returned");
@@ -311,7 +311,7 @@ sap.ui.define([
 
 	QUnit.test("getItemForValue - match for description", function(assert) {
 
-		var oConfig = {
+		const oConfig = {
 			parsedValue: undefined,
 			parsedDescription: "item 3",
 			value: "ITEM 3",
@@ -323,11 +323,11 @@ sap.ui.define([
 			exception: ParseException
 		};
 
-		var oPromise = oFixedList.getItemForValue(oConfig);
+		const oPromise = oFixedList.getItemForValue(oConfig);
 		assert.ok(oPromise instanceof Promise, "getItemForValue returns promise");
 
 		if (oPromise) {
-			var fnDone = assert.async();
+			const fnDone = assert.async();
 			oPromise.then(function(oItem) {
 				assert.ok(true, "Promise Then must be called");
 				assert.deepEqual(oItem, {key: "I3", description: "item 3"}, "Item returned");
@@ -342,7 +342,7 @@ sap.ui.define([
 
 	QUnit.test("getItemForValue - no value for key", function(assert) {
 
-		var oConfig = {
+		const oConfig = {
 			parsedValue: undefined,
 			parsedDescription: undefined,
 			value: undefined,
@@ -354,11 +354,11 @@ sap.ui.define([
 			exception: ParseException
 		};
 
-		var oPromise = oFixedList.getItemForValue(oConfig);
+		const oPromise = oFixedList.getItemForValue(oConfig);
 		assert.ok(oPromise instanceof Promise, "getItemForValue returns promise");
 
 		if (oPromise) {
-			var fnDone = assert.async();
+			const fnDone = assert.async();
 			oPromise.then(function(oItem) {
 				assert.ok(true, "Promise Then must be called");
 				assert.deepEqual(oItem, null, "no Item returned");
@@ -373,7 +373,7 @@ sap.ui.define([
 
 	QUnit.test("getItemForValue - empty value for key", function(assert) {
 
-		var oConfig = {
+		const oConfig = {
 			parsedValue: "",
 			parsedDescription: undefined,
 			value: "",
@@ -385,11 +385,11 @@ sap.ui.define([
 			exception: ParseException
 		};
 
-		var oPromise = oFixedList.getItemForValue(oConfig);
+		const oPromise = oFixedList.getItemForValue(oConfig);
 		assert.ok(oPromise instanceof Promise, "getItemForValue returns promise");
 
 		if (oPromise) {
-			var fnDone = assert.async();
+			const fnDone = assert.async();
 			oPromise.then(function(oItem) {
 				assert.ok(true, "Promise Then must be called");
 				assert.deepEqual(oItem, null, "no Item returned");
@@ -404,7 +404,7 @@ sap.ui.define([
 
 	QUnit.test("getItemForValue - empty value for description", function(assert) {
 
-		var oConfig = {
+		const oConfig = {
 			parsedValue: "",
 			parsedDescription: "",
 			value: "",
@@ -416,11 +416,11 @@ sap.ui.define([
 			exception: ParseException
 		};
 
-		var oPromise = oFixedList.getItemForValue(oConfig);
+		const oPromise = oFixedList.getItemForValue(oConfig);
 		assert.ok(oPromise instanceof Promise, "getItemForValue returns promise");
 
 		if (oPromise) {
-			var fnDone = assert.async();
+			const fnDone = assert.async();
 			oPromise.then(function(oItem) {
 				assert.ok(true, "Promise Then must be called");
 				assert.deepEqual(oItem, null, "no Item returned");
@@ -435,7 +435,7 @@ sap.ui.define([
 
 	QUnit.test("getItemForValue - useFirstMatch for key", function(assert) {
 
-		var oConfig = {
+		const oConfig = {
 			parsedValue: undefined,
 			parsedDescription: undefined,
 			value: "I",
@@ -448,11 +448,11 @@ sap.ui.define([
 		};
 		oFixedList.setUseFirstMatch(true);
 
-		var oPromise = oFixedList.getItemForValue(oConfig);
+		const oPromise = oFixedList.getItemForValue(oConfig);
 		assert.ok(oPromise instanceof Promise, "getItemForValue returns promise");
 
 		if (oPromise) {
-			var fnDone = assert.async();
+			const fnDone = assert.async();
 			oPromise.then(function(oItem) {
 				assert.ok(true, "Promise Then must be called");
 				assert.deepEqual(oItem, {key: "I1", description: "Item 1"}, "Item returned");
@@ -467,7 +467,7 @@ sap.ui.define([
 
 	QUnit.test("getItemForValue - useFirstMatch for description", function(assert) {
 
-		var oConfig = {
+		const oConfig = {
 			parsedValue: undefined,
 			parsedDescription: "I",
 			value: "I",
@@ -480,11 +480,11 @@ sap.ui.define([
 		};
 		oFixedList.setUseFirstMatch(true);
 
-		var oPromise = oFixedList.getItemForValue(oConfig);
+		const oPromise = oFixedList.getItemForValue(oConfig);
 		assert.ok(oPromise instanceof Promise, "getItemForValue returns promise");
 
 		if (oPromise) {
-			var fnDone = assert.async();
+			const fnDone = assert.async();
 			oPromise.then(function(oItem) {
 				assert.ok(true, "Promise Then must be called");
 				assert.deepEqual(oItem, {key: "I1", description: "Item 1"}, "Item returned");
@@ -499,7 +499,7 @@ sap.ui.define([
 
 	QUnit.test("getItemForValue - not found", function(assert) {
 
-		var oConfig = {
+		const oConfig = {
 			parsedValue: "I",
 			parsedDescription: undefined,
 			value: "I",
@@ -512,11 +512,11 @@ sap.ui.define([
 		};
 		oFixedList.setUseFirstMatch(false);
 
-		var oPromise = oFixedList.getItemForValue(oConfig);
+		const oPromise = oFixedList.getItemForValue(oConfig);
 		assert.ok(oPromise instanceof Promise, "getItemForValue returns promise");
 
 		if (oPromise) {
-			var fnDone = assert.async();
+			const fnDone = assert.async();
 			oPromise.then(function(oItem) {
 				assert.notOk(true, "Promise Then must not be called");
 				fnDone();
@@ -536,18 +536,18 @@ sap.ui.define([
 
 	});
 
-	var iNavigate = 0;
-	var oNavigateCondition;
-	var sNavigateItemId;
-	var bNavigateLeaveFocus;
+	let iNavigate = 0;
+	let oNavigateCondition;
+	let sNavigateItemId;
+	let bNavigateLeaveFocus;
 
 	function _checkNavigatedItem(assert, oContent, iNavigatedIndex, iSelectedIndex, oCondition, bLeaveFocus) {
 
-		var aItems = oContent.getItems();
+		const aItems = oContent.getItems();
 		assert.ok(oContent.hasStyleClass("sapMListFocus"), "List has style class sapMListFocus");
 
-		for (var i = 0; i < aItems.length; i++) {
-			var oItem = aItems[i];
+		for (let i = 0; i < aItems.length; i++) {
+			const oItem = aItems[i];
 			if (i === iSelectedIndex) {
 				assert.ok(oItem.hasStyleClass("sapMLIBFocused"), "Item" + i + " is focused");
 				if (!oItem.isA("sap.m.GroupHeaderListItem")) {
@@ -593,10 +593,10 @@ sap.ui.define([
 		});
 
 		oFixedList.setConditions([]);
-		var oContent = oFixedList.getContent(); // as content needs to be crated before navigation is possible
+		const oContent = oFixedList.getContent(); // as content needs to be crated before navigation is possible
 
 		if (oContent) {
-			var fnDone = assert.async();
+			const fnDone = assert.async();
 			oContent.then(function(oContent) {
 				// oFixedList.onShow(); // to update selection and scroll
 				oFixedList.navigate(1);
@@ -646,10 +646,10 @@ sap.ui.define([
 		oFixedList.setFilterList(false);
 		oFixedList.setFilterValue("M");
 		bIsOpen = false;
-		var oContent = oFixedList.getContent(); // as content needs to be crated before navigation is possible
+		const oContent = oFixedList.getContent(); // as content needs to be crated before navigation is possible
 
 		if (oContent) {
-			var fnDone = assert.async();
+			const fnDone = assert.async();
 			oContent.then(function(oContent) {
 				oFixedList.navigate(1);
 				_checkNavigatedItem(assert, oContent, 4, 4, Condition.createItemCondition("I2", "My Item   2"), false);
@@ -705,10 +705,10 @@ sap.ui.define([
 		oFixedList.setFilterList(false);
 		oFixedList.setFilterValue("M");
 		bIsOpen = true;
-		var oContent = oFixedList.getContent(); // as content needs to be crated before navigation is possible
+		const oContent = oFixedList.getContent(); // as content needs to be crated before navigation is possible
 
 		if (oContent) {
-			var fnDone = assert.async();
+			const fnDone = assert.async();
 			oContent.then(function(oContent) {
 				oFixedList.navigate(1);
 				_checkNavigatedItem(assert, oContent, 4, 4, Condition.createItemCondition("I2", "My Item   2"), false);
@@ -761,12 +761,12 @@ sap.ui.define([
 
 	QUnit.test("getAriaAttributes", function(assert) {
 
-		var oCheckAttributes = {
+		const oCheckAttributes = {
 			contentId: "FL1-List",
 			ariaHasPopup: "listbox",
 			roleDescription: null
 		};
-		var oAttributes = oFixedList.getAriaAttributes();
+		const oAttributes = oFixedList.getAriaAttributes();
 		assert.ok(oAttributes, "Aria attributes returned");
 		assert.deepEqual(oAttributes, oCheckAttributes, "returned attributes");
 
@@ -796,7 +796,7 @@ sap.ui.define([
 
 		assert.ok(oFixedList.shouldOpenOnNavigate(), "should open if maxConditions != 1");
 
-		var oConfig = oFixedList.getConfig();
+		const oConfig = oFixedList.getConfig();
 		oConfig.maxConditions = 1;
 		oFixedList.setConfig(oConfig);
 		assert.notOk(oFixedList.shouldOpenOnNavigate(), "should not open if maxConditions == 1");
@@ -811,7 +811,7 @@ sap.ui.define([
 
 	QUnit.test("isSearchSupported", function(assert) {
 
-		var bSupported = oFixedList.isSearchSupported();
+		const bSupported = oFixedList.isSearchSupported();
 		assert.ok(bSupported, "Search is supported");
 
 	});

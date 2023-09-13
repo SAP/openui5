@@ -16,11 +16,11 @@ sap.ui.define([
 	) {
 	"use strict";
 
-	var oFieldInfoBase;
-	var oField;
-	var iDataUpdate = 0;
+	let oFieldInfoBase;
+	let oField;
+	let iDataUpdate = 0;
 
-	var _myDataUpdateHandler = function(oEvent) {
+	const _myDataUpdateHandler = function(oEvent) {
 		iDataUpdate++;
 	};
 
@@ -49,9 +49,9 @@ sap.ui.define([
 		}
 	});
 
-	var _checkException = function(assert, fnFunction, sName) {
+	const _checkException = function(assert, fnFunction, sName) {
 
-		var oException;
+		let oException;
 
 		try {
 			fnFunction.call(oFieldInfoBase);
@@ -75,16 +75,16 @@ sap.ui.define([
 
 		assert.equal(oFieldInfoBase.getSourceControl(), oField, "getSourceControl");
 
-		var oContent = new Icon("I2", {
+		const oContent = new Icon("I2", {
 			src: "sap-icon://sap-ui5"
 		});
 		sinon.stub(oFieldInfoBase, "getContent").returns(Promise.resolve(oContent));
 
-		var fnDone = assert.async();
+		const fnDone = assert.async();
 		oFieldInfoBase.createPopover().then(function(oPopover) {
 			assert.ok(!!oPopover, "Popover created");
 			assert.notOk(!oPopover || oPopover.isOpen(), "Popover not open");
-			var aPopoverContent = oPopover ? oPopover.getContent() : null;
+			const aPopoverContent = oPopover ? oPopover.getContent() : null;
 			assert.equal(aPopoverContent.length, 1, "Popover has content");
 			assert.equal(aPopoverContent[0], oContent, "Popover content");
 			oContent.destroy();
@@ -95,19 +95,19 @@ sap.ui.define([
 
 	QUnit.test("open", function(assert) {
 
-		var oContent = new Icon("I2", {
+		const oContent = new Icon("I2", {
 			src: "sap-icon://sap-ui5"
 		});
 		sinon.stub(oFieldInfoBase, "getContent").returns(Promise.resolve(oContent));
 		sinon.stub(oFieldInfoBase, "isTriggerable").returns(Promise.resolve(true));
 
-		var oPromise = oFieldInfoBase.open();
+		const oPromise = oFieldInfoBase.open();
 		oCore.applyChanges();
 		assert.ok(oPromise instanceof Promise, "open returns promise");
 
-		var fnDone = assert.async();
+		const fnDone = assert.async();
 		oPromise.then(function() {
-			var oPopover = oFieldInfoBase.getDependents().find(function(oDependent) {
+			const oPopover = oFieldInfoBase.getDependents().find(function(oDependent) {
 				return oDependent.isA("sap.m.ResponsivePopover");
 			});
 			assert.ok(!!oPopover);
@@ -127,13 +127,13 @@ sap.ui.define([
 
 		oField.removeDependent(oFieldInfoBase);
 
-		var oContent = new Icon("I2", {
+		const oContent = new Icon("I2", {
 			src: "sap-icon://sap-ui5"
 		});
 		sinon.stub(oFieldInfoBase, "getContent").returns(Promise.resolve(oContent));
 		sinon.stub(oFieldInfoBase, "isTriggerable").returns(Promise.resolve(true));
 
-		var bExceptionRaised = false;
+		let bExceptionRaised = false;
 		try {
 			oFieldInfoBase.open();
 		} catch (e) {
@@ -168,12 +168,12 @@ sap.ui.define([
 
 	QUnit.test("without content", function(assert) {
 
-		var fnDone = assert.async();
+		const fnDone = assert.async();
 		oFieldInfoBase.isTriggerable().then(function(bTriggerable) {
 			assert.notOk(bTriggerable, "isTriggerable");
 			fnDone();
 		});
-		var fnDone2 = assert.async();
+		const fnDone2 = assert.async();
 		oFieldInfoBase.getTriggerHref().then(function(sHref) {
 			assert.notOk(sHref, "getTriggerHref");
 			fnDone2();
@@ -181,9 +181,9 @@ sap.ui.define([
 
 		oCore.applyChanges();
 
-		var fnDone3 = assert.async();
+		const fnDone3 = assert.async();
 		oFieldInfoBase.open().then(function() {
-			var oPopover = oFieldInfoBase.getDependents().find(function(oDependent) {
+			const oPopover = oFieldInfoBase.getDependents().find(function(oDependent) {
 				return oDependent.isA("sap.m.ResponsivePopover");
 			});
 			assert.ok(!!oPopover);
@@ -193,27 +193,27 @@ sap.ui.define([
 	});
 
 	QUnit.test("with content", function(assert) {
-		var oContent = new Icon("I2", {
+		const oContent = new Icon("I2", {
 			src: "sap-icon://sap-ui5"
 		});
 		oFieldInfoBase.setContent(oContent);
 
 		assert.equal(iDataUpdate, 1, "dataUpdate fired");
-		var fnDone = assert.async();
+		const fnDone = assert.async();
 		oFieldInfoBase.isTriggerable().then(function(bTriggerable) {
 			assert.ok(bTriggerable, "isTriggerable");
 			fnDone();
 		});
-		var fnDone2 = assert.async();
+		const fnDone2 = assert.async();
 		oFieldInfoBase.getTriggerHref().then(function(sHref) {
 			assert.notOk(sHref, "getTriggerHref");
 			fnDone2();
 		});
 		oCore.applyChanges();
 
-		var fnDone3 = assert.async();
+		const fnDone3 = assert.async();
 		oFieldInfoBase.open().then(function() {
-			var oPopover = oFieldInfoBase.getDependents().find(function(oDependent) {
+			const oPopover = oFieldInfoBase.getDependents().find(function(oDependent) {
 				return oDependent.isA("sap.m.ResponsivePopover");
 			});
 			assert.ok(!!oPopover);

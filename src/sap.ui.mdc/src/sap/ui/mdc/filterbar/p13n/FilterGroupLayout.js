@@ -19,7 +19,7 @@ sap.ui.define(['sap/ui/core/Control'
 	 * @since 1.82.0
 	 * @alias sap.ui.mdc.filterbar.p13n.FilterGroupLayout
 	 */
-	var FilterGroupLayout = Control.extend("sap.ui.mdc.filterbar.p13n.FilterGroupLayout", {
+	const FilterGroupLayout = Control.extend("sap.ui.mdc.filterbar.p13n.FilterGroupLayout", {
 		renderer: {
 			apiVersion: 2,
 			render: function(oRm, oControl) {
@@ -51,7 +51,7 @@ sap.ui.define(['sap/ui/core/Control'
 	};
 
 	FilterGroupLayout.prototype.getItems = function () {
-		var aContent = [];
+		const aContent = [];
 		aContent.push(this._oFilterField);
 		return aContent;
 	};

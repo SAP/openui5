@@ -108,13 +108,13 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var ToolbarDesign = MLibrary.ToolbarDesign;
-	var ToolbarStyle = MLibrary.ToolbarStyle;
-	var IllustratedMessageType = MLibrary.IllustratedMessageType;
-	var TitleLevel = coreLibrary.TitleLevel;
-	var SortOrder = coreLibrary.SortOrder;
-	var internalMap = new window.WeakMap();
-	var internal = function(oTable) {
+	const ToolbarDesign = MLibrary.ToolbarDesign;
+	const ToolbarStyle = MLibrary.ToolbarStyle;
+	const IllustratedMessageType = MLibrary.IllustratedMessageType;
+	const TitleLevel = coreLibrary.TitleLevel;
+	const SortOrder = coreLibrary.SortOrder;
+	const internalMap = new window.WeakMap();
+	const internal = function(oTable) {
 		if (!internalMap.has(oTable)) {
 			internalMap.set(oTable, {
 				oFilterInfoBar: null
@@ -122,7 +122,7 @@ sap.ui.define([
 		}
 		return internalMap.get(oTable);
 	};
-	var mTypeMap = {
+	const mTypeMap = {
 		"Table": GridTableType,
 		"TreeTable": TreeTableType,
 		"ResponsiveTable": ResponsiveTableType,
@@ -147,7 +147,7 @@ sap.ui.define([
 	 * @public
    	 * @experimental As of version 1.58.0
 	 */
-	var Table = Control.extend("sap.ui.mdc.Table", {
+	const Table = Control.extend("sap.ui.mdc.Table", {
 		metadata: {
 			library: "sap.ui.mdc",
 			designtime: "sap/ui/mdc/designtime/table/Table.designtime",
@@ -711,7 +711,7 @@ sap.ui.define([
 		}
 	});
 
-	var aToolBarBetweenAggregations = ["variant", "quickFilter"];
+	const aToolBarBetweenAggregations = ["variant", "quickFilter"];
 
 	/**
 	 * @borrows sap.ui.mdc.mixin.FilterIntegrationMixin.rebind as #rebind
@@ -723,7 +723,7 @@ sap.ui.define([
 	 * Several different Table aggregations are passed to the same ToolBar aggregation (Between)
 	 */
 	aToolBarBetweenAggregations.forEach(function(sAggregationName) {
-		var sCapAggregationName = capitalize(sAggregationName),
+		const sCapAggregationName = capitalize(sAggregationName),
 			sPropertyName = "_o" + sCapAggregationName,
 			sGetter = "get" + sCapAggregationName,
 			sSetter = "set" + sCapAggregationName,
@@ -733,7 +733,7 @@ sap.ui.define([
 		};
 
 		Table.prototype[sDestroyer] = function() {
-			var oControl = this[sPropertyName];
+			const oControl = this[sPropertyName];
 			this[sSetter]();
 			if (oControl) {
 				oControl.destroy();
@@ -743,7 +743,7 @@ sap.ui.define([
 
 		Table.prototype[sSetter] = function(oControl) {
 			this.validateAggregation(sAggregationName, oControl, false);
-			var oToolBar = this._createToolbar(),
+			const oToolBar = this._createToolbar(),
 				bNewValue = oControl !== this[sPropertyName];
 			if (!oControl || bNewValue) {
 				oToolBar.removeBetween((this[sGetter]()));
@@ -785,7 +785,7 @@ sap.ui.define([
 		// (incorrect) default type instance can be avoided.
 		// The delegate must be part of the early settings, because it can only be applied once (see sap.ui.mdc.mixin.DelegateMixin).
 		if (mSettings && "type" in mSettings) {
-			var mEarlySettings = {type: mSettings.type};
+			const mEarlySettings = {type: mSettings.type};
 
 			if ("delegate" in mSettings) {
 				mEarlySettings.delegate = mSettings.delegate;
@@ -902,7 +902,7 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.mdc
 	 */
 	Table.prototype._isOfType = function(sType, bIncludeSubTypes) {
-		var oType = this._getType();
+		const oType = this._getType();
 
 		if (bIncludeSubTypes) {
 			return oType.isA(mTypeMap[sType].getMetadata().getName());
@@ -933,7 +933,7 @@ sap.ui.define([
 	};
 
 	Table.prototype._onBeforeOpenContextMenu = function(oEvent) {
-		var oEventParameters = this._getType().getContextMenuParameters(oEvent);
+		const oEventParameters = this._getType().getContextMenuParameters(oEvent);
 		this.fireBeforeOpenContextMenu(oEventParameters);
 	};
 
@@ -1005,12 +1005,12 @@ sap.ui.define([
 
 		if (this._oTable) {
 			// store and remove the noData otherwise it gets destroyed
-			var vNoData = this.getNoData();
+			const vNoData = this.getNoData();
 			this.setNoData();
 			this._vNoData = vNoData;
 
 			// store and remove the contextMenu otherwise it gets destroyed
-			var oContextMenu = this.getContextMenu();
+			const oContextMenu = this.getContextMenu();
 			this.setContextMenu();
 			this._oContextMenu = oContextMenu;
 
@@ -1043,7 +1043,7 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.mdc
 	 */
 	Table.prototype._getType = function() {
-		var vType = this.getType();
+		const vType = this.getType();
 
 		if (!this._oDefaultType && (typeof vType === "string" || vType === null)) {
 			this._oDefaultType = new mTypeMap[vType]();
@@ -1130,7 +1130,7 @@ sap.ui.define([
 	};
 
 	Table.prototype.setEnableColumnResize = function(bEnableColumnResize) {
-		var bOldEnableColumnResize = this.getEnableColumnResize();
+		const bOldEnableColumnResize = this.getEnableColumnResize();
 		this.setProperty("enableColumnResize", bEnableColumnResize, true);
 
 		if (this.getEnableColumnResize() !== bOldEnableColumnResize) {
@@ -1141,8 +1141,8 @@ sap.ui.define([
 		return this;
 	};
 
-	var fCheckIfRebindIsRequired = function(aAffectedP13nControllers) {
-		var bRebindRequired = false;
+	const fCheckIfRebindIsRequired = function(aAffectedP13nControllers) {
+		let bRebindRequired = false;
 		if (
 			aAffectedP13nControllers && (
 				aAffectedP13nControllers.indexOf("Sort") > -1 ||
@@ -1176,11 +1176,11 @@ sap.ui.define([
 	};
 
 	Table.prototype.setP13nMode = function(aMode) {
-		var aOldP13nMode = this.getP13nMode();
+		const aOldP13nMode = this.getP13nMode();
 
-		var aSortedKeys = [];
+		let aSortedKeys = [];
 		if (aMode && aMode.length > 1){
-			var mKeys = aMode.reduce(function(mMap, sKey, iIndex){
+			const mKeys = aMode.reduce(function(mMap, sKey, iIndex){
 				mMap[sKey] = true;
 				return mMap;
 			}, {});
@@ -1217,16 +1217,16 @@ sap.ui.define([
 	};
 
 	Table.prototype._updateAdaptation = function() {
-		var oRegisterConfig = {
+		const oRegisterConfig = {
 			controller: {}
 		};
 
-		var aStableKeys = [];
+		const aStableKeys = [];
 		if (this.getColumns().length > 0 && this._isOfType(TableType.TreeTable)) {
 			aStableKeys.push(this.getColumns()[0].getPropertyKey());
 		}
 
-		var mRegistryOptions = {
+		const mRegistryOptions = {
 			Column: new ColumnController({control: this, stableKeys: aStableKeys}),
 			Sort: new SortController({control: this}),
 			Group: new GroupController({control: this}),
@@ -1250,7 +1250,7 @@ sap.ui.define([
 		oTable._updateP13nButton();
 
 		if (oTable._oTable) {
-			var oDnDColumns = oTable._oTable.getDragDropConfig()[0];
+			const oDnDColumns = oTable._oTable.getDragDropConfig()[0];
 			if (oDnDColumns) {
 				oDnDColumns.setEnabled(oTable.getActiveP13nModes().indexOf("Column") > -1);
 			}
@@ -1266,7 +1266,7 @@ sap.ui.define([
 	Table.prototype.setFilterConditions = function(mConditions) {
 		this.setProperty("filterConditions", mConditions, true);
 
-		var oP13nFilter = this.getInbuiltFilter();
+		const oP13nFilter = this.getInbuiltFilter();
 		if (oP13nFilter) {
 			oP13nFilter.setFilterConditions(mConditions);
 		}
@@ -1277,16 +1277,16 @@ sap.ui.define([
 	};
 
 	function updateFilterInfoBar(oTable) {
-		var oFilterInfoBar = getFilterInfoBar(oTable);
-		var oFilterInfoBarText = getFilterInfoBarText(oTable);
-		var aFilteredProperties = getInternallyFilteredProperties(oTable);
+		const oFilterInfoBar = getFilterInfoBar(oTable);
+		const oFilterInfoBarText = getFilterInfoBarText(oTable);
+		const aFilteredProperties = getInternallyFilteredProperties(oTable);
 
 		if (!oFilterInfoBar) {
 			return;
 		}
 
 		if (aFilteredProperties.length === 0) {
-			var oFilterInfoBarDomRef = oFilterInfoBar.getDomRef();
+			const oFilterInfoBarDomRef = oFilterInfoBar.getDomRef();
 
 			if (oFilterInfoBarDomRef && oFilterInfoBarDomRef.contains(document.activeElement)) {
 				oTable.focus();
@@ -1299,14 +1299,14 @@ sap.ui.define([
 		}
 
 		oTable._fullyInitialized().then(function() {
-			var oPropertyHelper = oTable.getPropertyHelper();
-			var aPropertyLabels = aFilteredProperties.map(function(sPropertyName) {
+			const oPropertyHelper = oTable.getPropertyHelper();
+			const aPropertyLabels = aFilteredProperties.map(function(sPropertyName) {
 				return oPropertyHelper.hasProperty(sPropertyName) ? oPropertyHelper.getProperty(sPropertyName).label : "";
 			});
-			var oResourceBundle = Core.getLibraryResourceBundle("sap.ui.mdc");
-			var oListFormat = ListFormat.getInstance();
+			const oResourceBundle = Core.getLibraryResourceBundle("sap.ui.mdc");
+			const oListFormat = ListFormat.getInstance();
 
-			var sFilterText;
+			let sFilterText;
 			if (aPropertyLabels.length > 1) {
 				sFilterText = oResourceBundle.getText("table.MULTIPLE_FILTERS_ACTIVE", [aPropertyLabels.length, oListFormat.format(aPropertyLabels)]);
 			} else {
@@ -1327,8 +1327,8 @@ sap.ui.define([
 			return;
 		}
 
-		var oFilterInfoBar = getFilterInfoBar(oTable);
-		var oInvisibleText = getFilterInfoBarInvisibleText(oTable);
+		let oFilterInfoBar = getFilterInfoBar(oTable);
+		const oInvisibleText = getFilterInfoBarInvisibleText(oTable);
 
 		if (!oFilterInfoBar) {
 			oFilterInfoBar = createFilterInfoBar(oTable);
@@ -1345,9 +1345,9 @@ sap.ui.define([
 	}
 
 	function createFilterInfoBar(oTable) {
-		var sToolbarId = oTable.getId() + "-filterInfoBar";
-		var oFilterInfoToolbar = internal(oTable).oFilterInfoBar;
-		var oRb = Core.getLibraryResourceBundle("sap.ui.mdc");
+		const sToolbarId = oTable.getId() + "-filterInfoBar";
+		let oFilterInfoToolbar = internal(oTable).oFilterInfoBar;
+		const oRb = Core.getLibraryResourceBundle("sap.ui.mdc");
 
 		if (oFilterInfoToolbar && !oFilterInfoToolbar.isDestroyed()) {
 			oFilterInfoToolbar.destroy();
@@ -1397,7 +1397,7 @@ sap.ui.define([
 	}
 
 	function getFilterInfoBar(oTable) {
-		var oFilterInfoBar = internal(oTable).oFilterInfoBar;
+		const oFilterInfoBar = internal(oTable).oFilterInfoBar;
 
 		if (oFilterInfoBar && (oFilterInfoBar.isDestroyed() || oFilterInfoBar.isDestroyStarted())) {
 			return null;
@@ -1407,7 +1407,7 @@ sap.ui.define([
 	}
 
 	function getFilterInfoBarText(oTable) {
-		var oFilterInfoBar = getFilterInfoBar(oTable);
+		const oFilterInfoBar = getFilterInfoBar(oTable);
 		return oFilterInfoBar ? oFilterInfoBar.getContent()[0] : null;
 	}
 
@@ -1456,7 +1456,7 @@ sap.ui.define([
 			this._sLastNoDataTitle = "";
 			vNoData.setEnableVerticalResponsiveness(!this._isOfType(TableType.ResponsiveTable));
 
-			var oNoColumnsMessage = this._oTable.getAggregation("_noColumnsMessage");
+			let oNoColumnsMessage = this._oTable.getAggregation("_noColumnsMessage");
 			if (!oNoColumnsMessage) {
 				oNoColumnsMessage = MTableUtil.getNoColumnsIllustratedMessage(function() {
 					PersonalizationUtils.openSettingsDialog(this);
@@ -1487,7 +1487,7 @@ sap.ui.define([
 	};
 
 	Table.prototype._updateInnerTableNoData = function() {
-		var vNoData = this.getNoData();
+		const vNoData = this.getNoData();
 		if (!vNoData || typeof vNoData == "string") {
 			return this._updateInnerTableNoDataText();
 		}
@@ -1496,7 +1496,7 @@ sap.ui.define([
 			return;
 		}
 
-		var oRb = Core.getLibraryResourceBundle("sap.ui.mdc");
+		const oRb = Core.getLibraryResourceBundle("sap.ui.mdc");
 		if (!this.isTableBound()) {
 			vNoData.setDescription(" ");
 			if (this.getFilter()) {
@@ -1524,12 +1524,12 @@ sap.ui.define([
 	};
 
 	Table.prototype._getNoDataText = function() {
-		var vNoData = this.getNoData();
+		const vNoData = this.getNoData();
 		if (vNoData && typeof vNoData == "string") {
 			return vNoData;
 		}
 
-		var oRb = Core.getLibraryResourceBundle("sap.ui.mdc");
+		const oRb = Core.getLibraryResourceBundle("sap.ui.mdc");
 		if (!this.isTableBound()) {
 			return oRb.getText(this.getFilter() ? "table.NO_DATA_WITH_FILTERBAR" : "table.NO_DATA");
 		}
@@ -1549,8 +1549,8 @@ sap.ui.define([
 	};
 
 	Table.prototype._initializeContent = function() {
-		var oType = this._getType();
-		var aInitPromises = [
+		const oType = this._getType();
+		const aInitPromises = [
 			this.awaitControlDelegate(),
 			oType.loadModules()
 		];
@@ -1568,7 +1568,7 @@ sap.ui.define([
 
 			this._updateAdaptation();
 
-			var oDelegate = this.getControlDelegate();
+			const oDelegate = this.getControlDelegate();
 			if (oDelegate.preInit) { // not used in the table, but is overridden in FE
 				oDelegate.preInit(this);
 			}
@@ -1627,13 +1627,13 @@ sap.ui.define([
 
 			// Add this to the micro task execution queue to enable consumers to handle this correctly.
 			// For example to add a binding context between the initialized promise and binding the rows.
-			var oCreationRow = this.getCreationRow();
+			const oCreationRow = this.getCreationRow();
 			if (oCreationRow) {
 				oCreationRow.update();
 			}
 
 			if (this.getAutoBindOnInit()) {
-				var oEngine = this.getEngine();
+				const oEngine = this.getEngine();
 				oEngine.isModificationSupported(this).then((bModificationSupported) => {
 					if (bModificationSupported) {
 						oEngine.waitForChanges(this).then(() => {
@@ -1758,7 +1758,8 @@ sap.ui.define([
 	};
 
 	Table.prototype._getVisibleProperties = function() {
-		var aProperties = [], sPropertyKey;
+		const aProperties = [];
+		let sPropertyKey;
 
 		this.getColumns().forEach(function(oMDCColumn, iIndex) {
 			sPropertyKey = oMDCColumn && oMDCColumn.getPropertyKey();
@@ -1816,7 +1817,7 @@ sap.ui.define([
 	 * @returns {string[]} The keys of the filtered properties.
 	 */
 	function getExternallyFilteredProperties(oTable) {
-		var oFilter = Core.byId(oTable.getFilter());
+		const oFilter = Core.byId(oTable.getFilter());
 		return oFilter ? getFilteredProperties(oFilter.getConditions()) : [];
 	}
 
@@ -1828,7 +1829,7 @@ sap.ui.define([
 	 * @return {boolean} Whether the table is filtered (internally or externally).
 	 */
 	function isFiltered(oTable) {
-		var oFilter = Core.byId(oTable.getFilter());
+		const oFilter = Core.byId(oTable.getFilter());
 		return getInternallyFilteredProperties(oTable).length > 0
 			   || getExternallyFilteredProperties(oTable).length > 0
 			   || oFilter && oFilter.getSearch() !== "";
@@ -1848,8 +1849,8 @@ sap.ui.define([
 	 * @returns {Object} Current state of the table
 	 */
 	Table.prototype.getCurrentState = function() {
-		var oState = {};
-		var aP13nMode = this.getActiveP13nModes();
+		const oState = {};
+		const aP13nMode = this.getActiveP13nModes();
 
 		if (aP13nMode.indexOf("Column") > -1) {
 			oState.items = this._getVisibleProperties();
@@ -1919,7 +1920,7 @@ sap.ui.define([
 	};
 
 	Table.prototype.getSupportedP13nModes = function() {
-		var aSupportedP13nModes = getIntersection(Object.keys(TableP13nMode), this._getType().getSupportedP13nModes());
+		let aSupportedP13nModes = getIntersection(Object.keys(TableP13nMode), this._getType().getSupportedP13nModes());
 
 		if (this.isControlDelegateInitialized()) {
 			aSupportedP13nModes = getIntersection(aSupportedP13nModes, this.getControlDelegate().getSupportedP13nModes(this));
@@ -1950,16 +1951,16 @@ sap.ui.define([
 
 	Table.prototype._updateP13nButton = function() {
 		if (this._oP13nButton) {
-			var aP13nMode = this.getActiveP13nModes();
+			const aP13nMode = this.getActiveP13nModes();
 
 			// Note: 'Aggregate' does not have a p13n UI, if only 'Aggregate' is enabled no settings icon is necessary
-			var bAggregateP13nOnly = aP13nMode.length === 1 && aP13nMode[0] === "Aggregate";
+			const bAggregateP13nOnly = aP13nMode.length === 1 && aP13nMode[0] === "Aggregate";
 			this._oP13nButton.setVisible(aP13nMode.length > 0 && !bAggregateP13nOnly && !this._bHideP13nButton);
 		}
 	};
 
 	Table.prototype._getCopyButton = function() {
-		var oCopyProvider = this.getCopyProvider();
+		const oCopyProvider = this.getCopyProvider();
 		if (oCopyProvider) {
 			return oCopyProvider.getCopyButton({id: this.getId() + "-copy"});
 		}
@@ -1981,7 +1982,7 @@ sap.ui.define([
 	};
 
 	Table.prototype._updateExportButton = function() {
-		var bNeedExportButton = this._oToolbar != null && this._isExportEnabled();
+		const bNeedExportButton = this._oToolbar != null && this._isExportEnabled();
 
 		if (bNeedExportButton && !this._oExportButton) {
 			this._oExportButton = this._createExportButton();
@@ -2028,16 +2029,16 @@ sap.ui.define([
 	 * @private
 	 */
 	Table.prototype._createExportColumnConfiguration = function() {
-		var aColumns = this.getColumns();
+		const aColumns = this.getColumns();
 
 		return this._fullyInitialized().then(function() {
 			return this.finalizePropertyHelper();
 		}.bind(this)).then(function() {
-			var oPropertyHelper = this.getPropertyHelper();
-			var aSheetColumns = [];
+			const oPropertyHelper = this.getPropertyHelper();
+			let aSheetColumns = [];
 
 			aColumns.forEach(function(oColumn) {
-				var aColumnExportSettings = oPropertyHelper.getColumnExportSettings(oColumn);
+				const aColumnExportSettings = oPropertyHelper.getColumnExportSettings(oColumn);
 				aSheetColumns = aSheetColumns.concat(aColumnExportSettings);
 			}, this);
 			return aSheetColumns;
@@ -2055,7 +2056,7 @@ sap.ui.define([
 	 * @private
 	 */
 	Table.prototype._updateCollapseAllButton = function() {
-		var bNeedCollapseAllButton = this._oToolbar != null && this._isCollapseAllEnabled();
+		const bNeedCollapseAllButton = this._oToolbar != null && this._isCollapseAllEnabled();
 
 		if (bNeedCollapseAllButton && !this._oCollapseAllButton) {
 			this._oCollapseAllButton = TableSettings.createExpandCollapseAllButton(this.getId(), [
@@ -2088,7 +2089,7 @@ sap.ui.define([
 	 * @private
 	 */
 	Table.prototype._updateExpandAllButton = function() {
-		var bNeedExpandAllButton = this._oToolbar != null && this._isExpandAllEnabled();
+		const bNeedExpandAllButton = this._oToolbar != null && this._isExpandAllEnabled();
 
 		if (bNeedExpandAllButton && !this._oExpandAllButton) {
 			this._oExpandAllButton = TableSettings.createExpandCollapseAllButton(this.getId(), [
@@ -2117,8 +2118,8 @@ sap.ui.define([
 	 * @private
 	 */
 	Table.prototype._getColumnLabel = function(sPath) {
-		var oPropertyHelper = this.getPropertyHelper();
-		var mPropertyInfo = oPropertyHelper.getProperty(sPath);
+		const oPropertyHelper = this.getPropertyHelper();
+		const mPropertyInfo = oPropertyHelper.getProperty(sPath);
 		return mPropertyInfo && mPropertyInfo.label;
 	};
 
@@ -2130,9 +2131,8 @@ sap.ui.define([
 	 * @private
 	 */
 	Table.prototype._onExport = function(bExportAs) {
-		var that = this;
+		const that = this;
 		return this._createExportColumnConfiguration().then(function(aSheetColumns) {
-			var sExportFunctionName, fnGetColumnLabel, mExportSettings, oRowBinding;
 
 			// If no columns exist, show message and return without exporting
 			if (!aSheetColumns || !aSheetColumns.length) {
@@ -2144,10 +2144,10 @@ sap.ui.define([
 				return;
 			}
 
-			oRowBinding = that.getRowBinding();
-			fnGetColumnLabel = that._getColumnLabel.bind(that);
-			sExportFunctionName = bExportAs ? "exportAs" : "export";
-			mExportSettings = {
+			const oRowBinding = that.getRowBinding();
+			const fnGetColumnLabel = that._getColumnLabel.bind(that);
+			const sExportFunctionName = bExportAs ? "exportAs" : "export";
+			const mExportSettings = {
 				workbook: {
 					columns: aSheetColumns,
 					context: {
@@ -2173,7 +2173,7 @@ sap.ui.define([
 	 * @private
 	 */
 	Table.prototype._getExportHandler = function() {
-		var that = this;
+		const that = this;
 
 		if (this._oExportHandler) {
 			return Promise.resolve(this._oExportHandler);
@@ -2184,7 +2184,7 @@ sap.ui.define([
 				that._loadExportLibrary(),
 				that.getControlDelegate().fetchExportCapabilities(that)
 			]).then(function(aResult) {
-				var oExportCapabilities = aResult[1];
+				const oExportCapabilities = aResult[1];
 
 				sap.ui.require(["sap/ui/export/ExportHandler"], function(ExportHandler) {
 					that._oExportHandler = new ExportHandler(oExportCapabilities);
@@ -2212,11 +2212,11 @@ sap.ui.define([
 	 * @private
 	 */
 	Table.prototype._onBeforeExport = function(oEvent) {
-		var aFilters = oEvent.getParameter("filterSettings");
-		var oHelper = this.getPropertyHelper();
+		const aFilters = oEvent.getParameter("filterSettings");
+		const oHelper = this.getPropertyHelper();
 
 		aFilters.forEach(function(oFilter) {
-			var oProperty = oHelper.getProperties().find(function(oPropertyInfo) {
+			const oProperty = oHelper.getProperties().find(function(oPropertyInfo) {
 				return oPropertyInfo.path === oFilter.getProperty();
 			});
 
@@ -2280,7 +2280,7 @@ sap.ui.define([
 	};
 
 	Table.prototype._createTable = function() {
-		var oType = this._getType();
+		const oType = this._getType();
 
 		this._oTable = oType.createTable(this.getId() + "-innerTable");
 		this._oRowTemplate = oType.createRowTemplate(this.getId() + "-innerTableRow");
@@ -2317,8 +2317,8 @@ sap.ui.define([
 	};
 
 	Table.prototype._createColumnMenuContent = function(oEvent) {
-		var oInnerColumn = oEvent.getParameter("openBy");
-		var oColumn = this.getColumns()[oInnerColumn.getParent().indexOfColumn(oInnerColumn)];
+		const oInnerColumn = oEvent.getParameter("openBy");
+		const oColumn = this.getColumns()[oInnerColumn.getParent().indexOfColumn(oInnerColumn)];
 
 		oEvent.preventDefault();
 
@@ -2346,7 +2346,7 @@ sap.ui.define([
 	 * @private
 	 */
 	Table.prototype._updateColumnResize = function() {
-		var oType = this._getType();
+		const oType = this._getType();
 
 		if (this.getEnableColumnResize()) {
 			oType.enableColumnResize();
@@ -2363,7 +2363,7 @@ sap.ui.define([
 	};
 
 	Table.prototype._onCustomSort = function(oEvent, sSortOrder) {
-		var sSortProperty = oEvent.getParameter("property");
+		const sSortProperty = oEvent.getParameter("property");
 
 		this.getCurrentState().sorters.forEach(function(oProp) {
 			if (oProp.name === sSortProperty) {
@@ -2419,7 +2419,7 @@ sap.ui.define([
 			return;
 		}
 
-		var oInnerColumn = oColumn.getInnerColumn();
+		const oInnerColumn = oColumn.getInnerColumn();
 
 		this._setMobileColumnTemplate(oColumn, iIndex);
 		this._bForceRebind = true;
@@ -2446,7 +2446,7 @@ sap.ui.define([
 		delete oColumn._bIsBeingMoved;
 
 		if (this._oTable) {
-			var oInnerColumn = oColumn.getInnerColumn();
+			const oInnerColumn = oColumn.getInnerColumn();
 
 			// move column in inner table
 			this._oTable.removeColumn(oInnerColumn);
@@ -2479,7 +2479,7 @@ sap.ui.define([
 			return;
 		}
 
-		var oCellTemplate = oColumn.getTemplateClone();
+		const oCellTemplate = oColumn.getTemplateClone();
 
 		if (iIndex >= 0) {
 			this._oRowTemplate.insertCell(oCellTemplate, iIndex);
@@ -2502,7 +2502,7 @@ sap.ui.define([
 			return;
 		}
 
-		var oCellTemplate, iCellIndex;
+		let oCellTemplate, iCellIndex;
 		// TODO: Check if this can be moved inside the m.Table.
 
 		// Remove cell template when column is hidden
@@ -2525,7 +2525,7 @@ sap.ui.define([
 	};
 
 	function removeMobileItemCell(oItem, iRemoveIndex, iInsertIndex) {
-		var oCell = oItem.removeCell(iRemoveIndex);
+		const oCell = oItem.removeCell(iRemoveIndex);
 		if (oCell) {
 			// -1 index destroys the inner content
 			if (iInsertIndex > -1) {
@@ -2595,7 +2595,7 @@ sap.ui.define([
 			return;
 		}
 
-		var oBindingInfo = {};
+		const oBindingInfo = {};
 
 		this.getControlDelegate().updateBindingInfo(this, oBindingInfo);
 
@@ -2669,7 +2669,7 @@ sap.ui.define([
 	};
 
 	Table.prototype._updateHeaderText = function() {
-		var sHeader, iRowCount;
+		let sHeader, iRowCount;
 
 		if (!this._oNumberFormatInstance) {
 			this._oNumberFormatInstance = NumberFormat.getFloatInstance();
@@ -2680,7 +2680,7 @@ sap.ui.define([
 			if (this.getShowRowCount()) {
 				iRowCount = this.getRowBinding() ? this.getRowBinding().getCount() : 0;
 				if (iRowCount > 0) {
-					var sValue = this._oNumberFormatInstance.format(iRowCount);
+					const sValue = this._oNumberFormatInstance.format(iRowCount);
 					sHeader += " (" + sValue + ")";
 				}
 			}
@@ -2696,18 +2696,18 @@ sap.ui.define([
 	};
 
 	Table.prototype._updateColumnsBeforeBinding = function() {
-		var aColumns = this.getColumns();
-		var oPropertyHelper = this.getPropertyHelper();
+		const aColumns = this.getColumns();
+		const oPropertyHelper = this.getPropertyHelper();
 
 		aColumns.forEach(function(oColumn) {
-			var oProperty = oPropertyHelper.getProperty(oColumn.getPropertyKey());
-			var aSortableProperties = oProperty ? oProperty.getSortableProperties().map(function(oProperty) {
+			const oProperty = oPropertyHelper.getProperty(oColumn.getPropertyKey());
+			const aSortableProperties = oProperty ? oProperty.getSortableProperties().map(function(oProperty) {
 				return oProperty.name;
 			}) : [];
-			var oSortCondition = this._getSortedProperties().find(function(oSortCondition) {
+			const oSortCondition = this._getSortedProperties().find(function(oSortCondition) {
 				return aSortableProperties.includes(oSortCondition.name);
 			});
-			var sSortOrder = SortOrder.None;
+			let sSortOrder = SortOrder.None;
 
 			if (oSortCondition) {
 				sSortOrder = oSortCondition.descending ? SortOrder.Descending : SortOrder.Ascending;
@@ -2754,7 +2754,7 @@ sap.ui.define([
 			oBindingInfo.events[sEventName] = fHandler;
 		} else {
 			// Wrap the event handler of the other party to add our handler.
-			var fOriginalHandler = oBindingInfo.events[sEventName];
+			const fOriginalHandler = oBindingInfo.events[sEventName];
 			oBindingInfo.events[sEventName] = function() {
 				fHandler.apply(this, arguments);
 				fOriginalHandler.apply(this, arguments);
@@ -2830,7 +2830,7 @@ sap.ui.define([
 	 */
 	Table.prototype.onThemeChanged = function () {
 		if (this._oExportButton) {
-			var sButtonType = MLibrary.ButtonType[ThemeParameters.get({name: "_sap_ui_mdc_Table_ExportButtonType"})];
+			const sButtonType = MLibrary.ButtonType[ThemeParameters.get({name: "_sap_ui_mdc_Table_ExportButtonType"})];
 			this._oExportButton.setType(sButtonType);
 		}
 	};
@@ -2840,7 +2840,7 @@ sap.ui.define([
 		this._bV4LegacySelectionEnabled = true;
 
 		if (this._oTable && this._isOfType("Table", true)) {
-			var oV4SelectionPlugin = this._oTable.getPlugins().find(function(oPlugin) {
+			const oV4SelectionPlugin = this._oTable.getPlugins().find(function(oPlugin) {
 				return oPlugin.isA("sap.ui.table.plugins.ODataV4Selection");
 			});
 
@@ -2870,8 +2870,8 @@ sap.ui.define([
 	*/
 	Table.prototype._setInternalProperty = function (sProperty, vValue) {
 		if (this._oTable) {
-			var oPropertyMetaData = this._oTable.getMetadata().getProperty(sProperty);
-			var sMutator = oPropertyMetaData && oPropertyMetaData._sMutator;
+			const oPropertyMetaData = this._oTable.getMetadata().getProperty(sProperty);
+			const sMutator = oPropertyMetaData && oPropertyMetaData._sMutator;
 			if (sMutator) {
 				this._oTable[sMutator](vValue);
 			}

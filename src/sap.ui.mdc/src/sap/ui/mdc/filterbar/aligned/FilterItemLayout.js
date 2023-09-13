@@ -17,7 +17,7 @@ sap.ui.define(['sap/ui/layout/VerticalLayout', 'sap/ui/layout/VerticalLayoutRend
 	 * @since 1.61.0
 	 * @alias sap.ui.mdc.filterbar.aligned.FilterItemLayout
 	 */
-	var FilterItemLayout = VerticalLayout.extend("sap.ui.mdc.filterbar.aligned.FilterItemLayout", /** @lends sap.ui.mdc.filterbar.aligned.FilterItemLayout.prototype */ {
+	const FilterItemLayout = VerticalLayout.extend("sap.ui.mdc.filterbar.aligned.FilterItemLayout", /** @lends sap.ui.mdc.filterbar.aligned.FilterItemLayout.prototype */ {
 		metadata: {
 			library: "sap.ui.mdc"
 		},
@@ -54,7 +54,7 @@ sap.ui.define(['sap/ui/layout/VerticalLayout', 'sap/ui/layout/VerticalLayoutRend
 	};
 
 	FilterItemLayout.prototype.getContent = function () {
-		var aContent = [];
+		const aContent = [];
 		aContent.push(this._oLabel);
 		aContent.push(this._oFilterField);
 

@@ -6,7 +6,7 @@ sap.ui.define([
 ], function(FilterController, AdaptFiltersController, FilterContainer, FilterItemLayout, FilterBarBase, FilterBarBaseRenderer, mLibrary, Button, merge, Log, CoreLibrary, FilterBarP13nMode) {
 	"use strict";
 
-	var HasPopup = CoreLibrary.aria.HasPopup;
+	const HasPopup = CoreLibrary.aria.HasPopup;
 
 	/**
 	 * Constructor for a new FilterBar.
@@ -26,7 +26,7 @@ sap.ui.define([
 	 * @alias sap.ui.mdc.FilterBar
    	 * @experimental As of version 1.61.0
 	 */
-	var FilterBar = FilterBarBase.extend("sap.ui.mdc.FilterBar", {
+	const FilterBar = FilterBarBase.extend("sap.ui.mdc.FilterBar", {
 		metadata: {
 			designtime: "sap/ui/mdc/designtime/filterbar/FilterBar.designtime",
 			properties: {
@@ -70,7 +70,7 @@ sap.ui.define([
 		renderer: FilterBarBaseRenderer
 	});
 
-	var ButtonType = mLibrary.ButtonType;
+	const ButtonType = mLibrary.ButtonType;
 
 	FilterBar.prototype._createInnerLayout = function() {
 		this._cLayoutItem = FilterItemLayout;
@@ -84,12 +84,12 @@ sap.ui.define([
 	FilterBar.prototype.setP13nMode = function(aMode) {
 		this.setProperty("p13nMode", aMode || [], false);
 
-		var oRegisterConfig = {
+		const oRegisterConfig = {
 			helper: this.getPropertyHelper(),
 			controller: {}
 		};
 
-		var bItemAssigned = false;
+		let bItemAssigned = false;
 		aMode && aMode.forEach(function(sMode) {
 			if (sMode == "Item") {
 				bItemAssigned = true;
@@ -202,7 +202,7 @@ sap.ui.define([
 	};
 
 	FilterBar.prototype.retrieveInbuiltFilter = function() {
-		var oInbuiltFilterPromise = FilterBarBase.prototype.retrieveInbuiltFilter.apply(this, arguments);
+		const oInbuiltFilterPromise = FilterBarBase.prototype.retrieveInbuiltFilter.apply(this, arguments);
 		return oInbuiltFilterPromise.then(function(oInnerFB){
 			return oInnerFB;
 		});
@@ -231,7 +231,7 @@ sap.ui.define([
 	 * @returns {sap.ui.mdc.State} Object containing the current status of the <code>FilterBar</code>
 	 */
 	FilterBar.prototype.getCurrentState = function() {
-		var oState = FilterBarBase.prototype.getCurrentState.apply(this, arguments);
+		const oState = FilterBarBase.prototype.getCurrentState.apply(this, arguments);
 		if (!this.getProperty("_p13nModeItem")) {
 			delete oState.items;
 		}

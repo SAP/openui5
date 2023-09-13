@@ -24,7 +24,7 @@ sap.ui.define([
 	 * @extends module:sap/ui/mdc/BaseDelegate
 	 * @alias module:sap/ui/mdc/field/FieldBaseDelegate
 	 */
-	var FieldBaseDelegate = Object.assign({}, BaseDelegate);
+	const FieldBaseDelegate = Object.assign({}, BaseDelegate);
 
 	FieldBaseDelegate.getTypeMap = function () {
 		return DefaultTypeMap;
@@ -60,7 +60,7 @@ sap.ui.define([
 	 * @since 1.107.0
 	 */
 	FieldBaseDelegate.createCondition = function (oField, oControl, aValues, oCurrentCondition) {
-		var oNextCondition = Condition.createItemCondition(aValues[0], aValues[1], undefined, undefined, this.createConditionPayload(oField, oControl, aValues));
+		const oNextCondition = Condition.createItemCondition(aValues[0], aValues[1], undefined, undefined, this.createConditionPayload(oField, oControl, aValues));
 		oNextCondition.validated = ConditionValidated.Validated;
 		return oNextCondition;
 	};
@@ -159,7 +159,7 @@ sap.ui.define([
 	 * @public
 	 */
 	FieldBaseDelegate.getDescription = function(oField, oValueHelp, vKey, oInParameters, oOutParameters, oBindingContext, oConditionModel, sConditionModelName, oConditionPayload, oControl, oType) {
-		var oConfig = {
+		const oConfig = {
 			value: vKey,
 			parsedValue: vKey,
 			parsedDescription: undefined,

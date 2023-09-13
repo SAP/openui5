@@ -37,7 +37,7 @@ function(
 	 * @since 1.74.0
 	 * @author SAP SE
 	 */
-	var RangeOperator = Operator.extend("sap.ui.mdc.condition.RangeOperator", /** @lends sap.ui.mdc.condition.RangeOperator.prototype */ {
+	const RangeOperator = Operator.extend("sap.ui.mdc.condition.RangeOperator", /** @lends sap.ui.mdc.condition.RangeOperator.prototype */ {
 		constructor: function(oConfiguration) {
 			oConfiguration.filterOperator = "RANGE"; // No default operator for the filter exist
 			oConfiguration.tokenParse = oConfiguration.tokenParse || "^#tokenText#$";
@@ -84,12 +84,12 @@ function(
 	});
 
 	RangeOperator.prototype.getModelFilter = function(oCondition, sFieldPath, oType, bCaseSensitive, sBaseType) {
-		var aRange = this._getRange(oCondition.values, oType, sBaseType);
+		const aRange = this._getRange(oCondition.values, oType, sBaseType);
 		return new Filter({ path: sFieldPath, operator: "BT", value1: aRange[0], value2: aRange[1] });
 	};
 
 	RangeOperator.prototype._getRange = function(aValues, oType, sBaseType) {
-		var aRange; // contains UniversalDates in local time
+		let aRange; // contains UniversalDates in local time
 		if (aValues) {
 			if (aValues.length === 2) {
 				aRange = this.calcRange(aValues[0], aValues[1]);
@@ -100,7 +100,7 @@ function(
 			aRange = this.calcRange();
 		}
 
-		for (var i = 0; i < 2; i++) {
+		for (let i = 0; i < 2; i++) {
 			//the calcRange result must be converted from local time into the correct type format.
 			aRange[i] = DateUtil.dateToType(aRange[i].getJSDate(), oType, sBaseType);
 		}
@@ -118,7 +118,7 @@ function(
 	 * @ui5-restricted sap.ui.mdc.valuehelp.base.DefineConditionPanel
 	 */
 	RangeOperator.prototype.getStaticText = function(oType) {
-		var aRange = this._getRange(null, oType);
+		const aRange = this._getRange(null, oType);
 		return this.formatRange(aRange, oType);
 	};
 

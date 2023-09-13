@@ -99,13 +99,13 @@ sap.ui.define([
 				}
 			});
 
-			var sMockServerUrl = "/odata/";
+			const sMockServerUrl = "/odata/";
 
-			var oMockServer = new MockServer({
+			const oMockServer = new MockServer({
 				rootUri: sMockServerUrl
 			});
 
-			var sPath = sap.ui.require.toUrl("appUnderTestAdditionalContent/localService");
+			const sPath = sap.ui.require.toUrl("appUnderTestAdditionalContent/localService");
 
 			// load local mock data
 			oMockServer.simulate(sPath + "/metadata.xml", {

@@ -22,7 +22,7 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var CustomButtons = Control.extend("sap.ui.mdc.sample.FieldCustomContent.CustomButtons", {
+	const CustomButtons = Control.extend("sap.ui.mdc.sample.FieldCustomContent.CustomButtons", {
 		metadata: {
 			interfaces: ["sap.ui.core.IFormContent"],
 			library: "sap.ui.mdc",
@@ -67,12 +67,12 @@ sap.ui.define([
 			apiVersion: 2,
 			render: function(oRm, oControl) {
 
-				var aButtons = oControl.getAggregation("_buttons", []);
+				const aButtons = oControl.getAggregation("_buttons", []);
 				oRm.openStart("div", oControl);
 				oRm.style("width", "100%");
 				oRm.openEnd();
 
-				for (var i = 0; i < aButtons.length; i++) {
+				for (let i = 0; i < aButtons.length; i++) {
 					oRm.renderControl(aButtons[i]);
 				}
 
@@ -81,7 +81,7 @@ sap.ui.define([
 		}
 	});
 
-	var iCount = 5;
+	const iCount = 5;
 
 	// apply the message mixin so all message on the input will get the associated label-texts injected
 	MessageMixin.call(CustomButtons.prototype);
@@ -97,8 +97,8 @@ sap.ui.define([
 		});
 
 
-		for (var i = 0; i < iCount; i++) {
-			var oButton = new ToggleButton(this.getId() + "-B" + i, {
+		for (let i = 0; i < iCount; i++) {
+			const oButton = new ToggleButton(this.getId() + "-B" + i, {
 				text: i,
 				enabled: {path: "$this>/enabled"},
 				width: (100 / iCount) + "%",
@@ -126,15 +126,15 @@ sap.ui.define([
 	CustomButtons.prototype._observeChanges = function(oChanges) {
 
 		if (oChanges.name === "conditions") {
-			var aButtons = this.getAggregation("_buttons");
-			var aConditions = oChanges.current;
-			var i = 0;
+			const aButtons = this.getAggregation("_buttons");
+			const aConditions = oChanges.current;
+			let i = 0;
 
 			for (i = 0; i < aButtons.length; i++) {
 				aButtons[i].setPressed(false);
 			}
 			for (i = 0; i < aConditions.length; i++) {
-				var iValue = aConditions[i].values[0];
+				const iValue = aConditions[i].values[0];
 				if (iValue < iCount && aButtons[iValue]) {
 					aButtons[iValue].setPressed(true);
 				}
@@ -145,22 +145,22 @@ sap.ui.define([
 
 	CustomButtons.prototype.getFocusDomRef = function() {
 
-		var aButtons = this.getAggregation("_buttons");
+		const aButtons = this.getAggregation("_buttons");
 		return aButtons[0].getFocusDomRef();
 
 	};
 
 	CustomButtons.prototype.getIdForLabel = function() {
 
-		var aButtons = this.getAggregation("_buttons");
+		const aButtons = this.getAggregation("_buttons");
 		return aButtons[0].getIdForLabel();
 
 	};
 
 	CustomButtons.prototype.getAccessibilityInfo = function() {
 
-		var sText = "";
-		for (var i = 0; i < iCount; i++) {
+		let sText = "";
+		for (let i = 0; i < iCount; i++) {
 			sText = sText + i + " ";
 		}
 
@@ -170,13 +170,13 @@ sap.ui.define([
 
 	function _handlePress(oEvent) {
 
-		var oButton = oEvent.getSource();
-		var bPressed = oEvent.getParameter("pressed");
-		var aConditions = this.getConditions();
-		var iIndex = this.indexOfAggregation("_buttons", oButton);
-		var bFound = false;
+		const oButton = oEvent.getSource();
+		const bPressed = oEvent.getParameter("pressed");
+		const aConditions = this.getConditions();
+		const iIndex = this.indexOfAggregation("_buttons", oButton);
+		let bFound = false;
 
-		for (var i = 0; i < aConditions.length; i++) {
+		for (let i = 0; i < aConditions.length; i++) {
 			if (aConditions[i].values[0] === iIndex) {
 				bFound = true;
 				if (!bPressed) {
@@ -187,7 +187,7 @@ sap.ui.define([
 		}
 
 		if (bPressed && !bFound) {
-			var oCondition = Condition.createCondition("EQ", [iIndex], undefined, undefined, ConditionValidated.NotValidated);
+			const oCondition = Condition.createCondition("EQ", [iIndex], undefined, undefined, ConditionValidated.NotValidated);
 			aConditions.push(oCondition);
 		}
 		FilterOperatorUtil.checkConditionsEmpty(aConditions);

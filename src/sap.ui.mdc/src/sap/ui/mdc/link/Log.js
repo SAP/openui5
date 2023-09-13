@@ -21,7 +21,7 @@ sap.ui.define([
 	 * @since 1.58.0
 	 * @alias sap.ui.mdc.link.Log
 	 */
-	var Log = BaseObject.extend("sap.ui.mdc.link.Log", /** @lends sap.ui.mdc.link.Log.prototype */
+	const Log = BaseObject.extend("sap.ui.mdc.link.Log", /** @lends sap.ui.mdc.link.Log.prototype */
 	{
 		// Structure of log object:
 		// {
@@ -76,8 +76,8 @@ sap.ui.define([
 		}.bind(this));
 	};
 	Log.prototype.addContextObject = function(sSemanticObject, oContextObject) {
-		for ( var sAttributeName in oContextObject) {
-			var oAttribute = this.createAttributeStructure();
+		for ( const sAttributeName in oContextObject) {
+			const oAttribute = this.createAttributeStructure();
 			this.addSemanticObjectAttribute(sSemanticObject, sAttributeName, oAttribute);
 			oAttribute.transformations.push({
 				value: oContextObject[sAttributeName],
@@ -128,11 +128,11 @@ sap.ui.define([
 		return this;
 	};
 	Log.prototype.getFormattedText = function() {
-		var fnGetReadableValue = function(oValue) {
+		const fnGetReadableValue = function(oValue) {
 			return (typeof oValue === "string") ? "'" + oValue + "'" : oValue;
 		};
-		var fnResolveTransformations = function(aTransformations, sAttributeName) {
-			var oResult = {
+		const fnResolveTransformations = function(aTransformations, sAttributeName) {
+			const oResult = {
 				value: "\u2022\u0020" + sAttributeName + " : ",
 				description: ""
 			};
@@ -145,18 +145,18 @@ sap.ui.define([
 			});
 			return oResult;
 		};
-		var fnResolveIntents = function(aIntents) {
-			var sIntents = "";
+		const fnResolveIntents = function(aIntents) {
+			let sIntents = "";
 			aIntents.forEach(function(oIntent) {
 				sIntents += "\u2022\u0020'" + oIntent.text + "' : " + oIntent.intent + "\n";
 			});
 			return sIntents;
 		};
-		var fnSortByText = function(aArray) {
+		const fnSortByText = function(aArray) {
 			try {
-				var sLanguage = Configuration.getLocale().toString();
+				const sLanguage = Configuration.getLocale().toString();
 				if (typeof window.Intl !== 'undefined') {
-					var oCollator = window.Intl.Collator(sLanguage, {
+					const oCollator = window.Intl.Collator(sLanguage, {
 						numeric: true
 					});
 					aArray.sort(function(a, b) {
@@ -174,19 +174,19 @@ sap.ui.define([
 			}
 		};
 
-		var sText = "";
+		let sText = "";
 
-		for ( var sSemanticObject in this._oLog.semanticObjects) {
+		for ( const sSemanticObject in this._oLog.semanticObjects) {
 			sText = sText + "\n\u2b24" + " " + sSemanticObject + "\n";
 			if (isEmptyObject(this._oLog.semanticObjects[sSemanticObject].attributes)) {
 				sText += "\u2026\u2026 \u0020\ud83d\udd34 No semantic attributes available for semantic object " + sSemanticObject + ". Please be aware " + "that without semantic attributes no URL parameters can be created.\n";
 			} else {
-				var aSemanticAttributes = Object.keys(this._oLog.semanticObjects[sSemanticObject].attributes);
+				const aSemanticAttributes = Object.keys(this._oLog.semanticObjects[sSemanticObject].attributes);
 				fnSortByText(aSemanticAttributes);
 
-				for (var i = 0; i < aSemanticAttributes.length; i++) {
-					var sAttributeName = aSemanticAttributes[i];
-					var oTexts = fnResolveTransformations(this._oLog.semanticObjects[sSemanticObject].attributes[sAttributeName].transformations, sAttributeName);
+				for (let i = 0; i < aSemanticAttributes.length; i++) {
+					const sAttributeName = aSemanticAttributes[i];
+					const oTexts = fnResolveTransformations(this._oLog.semanticObjects[sSemanticObject].attributes[sAttributeName].transformations, sAttributeName);
 					sText += oTexts.value + "\n";
 					sText += oTexts.description;
 				}

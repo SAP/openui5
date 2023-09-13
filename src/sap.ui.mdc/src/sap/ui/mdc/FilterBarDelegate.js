@@ -18,7 +18,7 @@ sap.ui.define(["sap/ui/mdc/AggregationBaseDelegate", "sap/ui/mdc/enums/FilterBar
 	 * @alias module:sap.ui.mdc.FilterBarDelegate
 	 * @extends module:sap/ui/mdc/AggregationBaseDelegate
 	 */
-	var FilterBarDelegate = Object.assign({}, AggregationBaseDelegate);
+	const FilterBarDelegate = Object.assign({}, AggregationBaseDelegate);
 
 	/**
 	 * Creates an instance of a filter field control.
@@ -134,7 +134,7 @@ sap.ui.define(["sap/ui/mdc/AggregationBaseDelegate", "sap/ui/mdc/enums/FilterBar
 	 * @param {sap.ui.mdc.enums.FilterBarValidationStatus} mValidation.status Status of the validation as returned via {@link sap.ui.mdc.filterbar.FilterBarBase#checkValidationState checkValidationState}
 	 */
     FilterBarDelegate.visualizeValidationState = function(oFilterBar, mValidation) {
-		 var sErrorMessage;
+		 let sErrorMessage;
 
 		 if (mValidation.status === FilterBarValidationStatus.NoError) {
 			 return;

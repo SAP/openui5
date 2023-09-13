@@ -7,8 +7,8 @@ sap.ui.define([
 ], function (BaseController, SelectionPanel) {
     "use strict";
 
-    var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
-    var ColumnController = BaseController.extend("sap.ui.mdc.p13n.subcontroller.ColumnController");
+    const oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
+    const ColumnController = BaseController.extend("sap.ui.mdc.p13n.subcontroller.ColumnController");
 
     ColumnController.prototype.getUISettings = function() {
         return {
@@ -18,7 +18,7 @@ sap.ui.define([
     };
 
     ColumnController.prototype.model2State = function() {
-        var aItems = [];
+        const aItems = [];
         this._oPanel.getP13nData(true).forEach(function(oItem){
             if (oItem.visible){
                 aItems.push({
@@ -30,7 +30,7 @@ sap.ui.define([
     };
 
     ColumnController.prototype.createUI = function(oAdaptationData) {
-        var oSelectionPanel = new SelectionPanel({
+        const oSelectionPanel = new SelectionPanel({
             showHeader: true,
             enableCount: true,
             title: oResourceBundle.getText("fieldsui.COLUMNS"),

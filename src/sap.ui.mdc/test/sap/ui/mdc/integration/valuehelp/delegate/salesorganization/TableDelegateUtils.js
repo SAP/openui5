@@ -15,7 +15,7 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var TableDelegateUtils = {};
+	const TableDelegateUtils = {};
 
 	/**
 	 * Creates the column for the specified property and table.
@@ -37,14 +37,14 @@ sap.ui.define([
 		}
 
 		return oTable.awaitPropertyHelper().then(function(oPropertyHelper) {
-			var oProperty = oPropertyHelper.getProperty(sPropertyName);
+			const oProperty = oPropertyHelper.getProperty(sPropertyName);
 
 			if (!oProperty) {
 				return null;
 			}
 
-			var oTemplate = fnCreateTemplate ? fnCreateTemplate(oTable, oProperty) : null;
-			var oColumnInfo = {
+			const oTemplate = fnCreateTemplate ? fnCreateTemplate(oTable, oProperty) : null;
+			const oColumnInfo = {
 				header: oProperty.label,
 				template: oTemplate || this.createColumnTemplate(oTable, oProperty),
 				propertyKey: sPropertyName

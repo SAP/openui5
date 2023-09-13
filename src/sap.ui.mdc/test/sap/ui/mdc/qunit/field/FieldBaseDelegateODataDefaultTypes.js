@@ -9,7 +9,7 @@ sap.ui.define([
 	) {
 	"use strict";
 
-	var FieldBaseDelegateODataDefaultTypes = {
+	const FieldBaseDelegateODataDefaultTypes = {
 		enable: function () {
 			if (!FieldBaseDelegate.getTypeMap.isSinonProxy) {
 				sinon.stub(FieldBaseDelegate, "getTypeMap").returns(ODataTypeMap);

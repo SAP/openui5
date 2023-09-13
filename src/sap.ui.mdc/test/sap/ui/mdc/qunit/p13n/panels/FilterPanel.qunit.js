@@ -7,7 +7,7 @@ sap.ui.define([
 ], function (FilterPanel, oCore, VBox, Input) {
 	"use strict";
 
-    var getTestData = function() {
+    const getTestData = function() {
         return [
             {
                 active: false,
@@ -50,31 +50,31 @@ sap.ui.define([
 	});
 
     QUnit.test("Check #setP13nData without active fields", function(assert){
-        var aTestData = getTestData();
+        const aTestData = getTestData();
         this.oFilterPanel.setP13nData(aTestData);
 
         assert.equal(this.oFilterPanel.getP13nData(true).length, 0, "There are no active items present in the panel");
     });
 
     QUnit.test("Check #setP13nData without active fields", function(assert){
-        var aTestData = getTestData();
+        const aTestData = getTestData();
         aTestData[1].active = true;//set key2 to active
         this.oFilterPanel.setP13nData(aTestData);
 
         assert.equal(this.oFilterPanel.getP13nData(true).length, 1, "There is one item present in the panel");
 
-        var aRows = this.oFilterPanel._oListControl.getItems();
-        var oInputKey2 = this.oFilterPanel._getFactoryControlForRow(aRows[0]);
+        const aRows = this.oFilterPanel._oListControl.getItems();
+        const oInputKey2 = this.oFilterPanel._getFactoryControlForRow(aRows[0]);
         assert.equal(oInputKey2.getId(), "key2", "The factory control has been created");
         oInputKey2.destroy();
     });
 
     QUnit.test("Check #setP13nData to reset an active field", function(assert){
-        var aTestData = getTestData();
+        let aTestData = getTestData();
         aTestData[1].active = true;//set key2 to active
         this.oFilterPanel.setP13nData(aTestData);
-        var aRows = this.oFilterPanel._oListControl.getItems();
-        var oInputKey2 = this.oFilterPanel._getFactoryControlForRow(aRows[0]);
+        let aRows = this.oFilterPanel._oListControl.getItems();
+        const oInputKey2 = this.oFilterPanel._getFactoryControlForRow(aRows[0]);
         assert.equal(oInputKey2.getId(), "key2", "The factory control has been created");
 
         aTestData = getTestData(); //All fields inactive again
@@ -88,11 +88,11 @@ sap.ui.define([
     });
 
     QUnit.test("Check that #_selectKey creates a new factory control", function(assert){
-        var aTestData = getTestData();
+        const aTestData = getTestData();
         this.oFilterPanel.setP13nData(aTestData);
-        var aRows = this.oFilterPanel._oListControl.getItems();
+        let aRows = this.oFilterPanel._oListControl.getItems();
 
-        var oComboBox = aRows[0].getContent()[0].getContent()[0];
+        const oComboBox = aRows[0].getContent()[0].getContent()[0];
         oComboBox.setSelectedKey("key2");
         oComboBox.fireSelectionChange({
             source: oComboBox
@@ -107,11 +107,11 @@ sap.ui.define([
     });
 
     QUnit.test("Check value state handling by entering invalid values", function(assert){
-        var aTestData = getTestData();
+        const aTestData = getTestData();
         this.oFilterPanel.setP13nData(aTestData);
-        var aRows = this.oFilterPanel._oListControl.getItems();
+        let aRows = this.oFilterPanel._oListControl.getItems();
 
-        var oComboBox = aRows[0].getContent()[0].getContent()[0];
+        let oComboBox = aRows[0].getContent()[0].getContent()[0];
 
         //Enter some invalid value --> Error
         oComboBox.fireChange({
@@ -131,24 +131,24 @@ sap.ui.define([
     });
 
     QUnit.test("Check labelFor reference on label (W/O getIdForLabel)", function(assert){
-        var aTestData = getTestData();
+        const aTestData = getTestData();
         this.oFilterPanel.setP13nData(aTestData);
 
-        var sKey = "key2";
+        const sKey = "key2";
 
-        var oFieldBox = this.oFilterPanel._createRowContainer("Field 2", sKey);
-        var oFilterItem = this.oFilterPanel._createFactoryControl({name: sKey});
+        const oFieldBox = this.oFilterPanel._createRowContainer("Field 2", sKey);
+        const oFilterItem = this.oFilterPanel._createFactoryControl({name: sKey});
         this.oFilterPanel._setLabelForOnBox(oFilterItem, oFieldBox);
 
         assert.ok(oFieldBox.getItems()[0].getLabelFor(), "Set 'labelFor' reference on label control");
     });
 
     QUnit.test("Check labelFor reference on label (WITH getIdForLabel)", function(assert){
-        var aTestData = getTestData();
+        const aTestData = getTestData();
         this.oFilterPanel.setP13nData(aTestData);
 
         this.oFilterPanel.setItemFactory(function(sKey){
-            var oContainer = new VBox({
+            const oContainer = new VBox({
                 items: [
                     new Input("testAccInput", {})
                 ]
@@ -161,12 +161,12 @@ sap.ui.define([
             return oContainer;
         });
 
-        var sKey = "key2";
+        const sKey = "key2";
 
-        var oFieldBox = this.oFilterPanel._createRowContainer("Field 2", sKey);
-        var oFilterItem = this.oFilterPanel._createFactoryControl({name: sKey});
+        const oFieldBox = this.oFilterPanel._createRowContainer("Field 2", sKey);
+        const oFilterItem = this.oFilterPanel._createFactoryControl({name: sKey});
         this.oFilterPanel._setLabelForOnBox(oFilterItem, oFieldBox);
-        var sLabelFor = sap.ui.getCore().byId(oFieldBox.getItems()[0].getLabelFor()).getIdForLabel();
+        const sLabelFor = sap.ui.getCore().byId(oFieldBox.getItems()[0].getLabelFor()).getIdForLabel();
         assert.equal(sLabelFor, "testAccInput", "Correct 'labelFor' reference on label control");
     });
 });

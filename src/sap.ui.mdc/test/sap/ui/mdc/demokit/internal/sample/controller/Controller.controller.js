@@ -17,8 +17,8 @@ sap.ui.define([
 
 		onInit: function() {
 			StateUtil.attachStateChange(this._onStateChange.bind(this));
-			var oTable = this.byId("mdcTable");
-			var oTempModel = new JSONModel({
+			const oTable = this.byId("mdcTable");
+			const oTempModel = new JSONModel({
 				data: [
 					{name: "Navigation", type: TableRowAction.Navigation},
 					{name: "Test", type: "Navigation"}
@@ -35,7 +35,7 @@ sap.ui.define([
 		},
 
 		onBeforeExport: function (oEvt) {
-			var mExcelSettings = oEvt.getParameter("exportSettings");
+			const mExcelSettings = oEvt.getParameter("exportSettings");
 
 			// Disable Worker as Mockserver is used in Demokit sample --> Do not use this for real applications!
 			// Disable useBatch as the Mockserver doesn't support it
@@ -82,14 +82,14 @@ sap.ui.define([
 		},
 
 		onSelectionModeChange: function(oEvent) {
-			var oTable = this.byId("mdcTable");
-			var sKey = oEvent.getParameter("selectedItem").getKey();
+			const oTable = this.byId("mdcTable");
+			const sKey = oEvent.getParameter("selectedItem").getKey();
 
 			oTable.setSelectionMode(sKey);
 		},
 
 		formatHighlight: function(sPrice) {
-			var price = sPrice.replace(",", "");
+			const price = sPrice.replace(",", "");
 
 			if (price < 200) {
 				return "None";
@@ -105,8 +105,8 @@ sap.ui.define([
 		},
 
 		onToggleHighlight: function(oEvent) {
-			var oTable = this.byId('mdcTable');
-			var oSettings = oTable.getRowSettings();
+			const oTable = this.byId('mdcTable');
+			let oSettings = oTable.getRowSettings();
 			if (!oSettings) {
 				oSettings = new RowSettings();
 			}
@@ -130,9 +130,9 @@ sap.ui.define([
 
 		// only Grid Table
 		onToggleNavigation: function(oEvent) {
-			var oTable = this.byId('mdcTable');
+			const oTable = this.byId('mdcTable');
 
-			var oSettings = oTable.getRowSettings();
+			let oSettings = oTable.getRowSettings();
 			if (!oSettings) {
 				oSettings = new RowSettings();
 			}
@@ -155,16 +155,16 @@ sap.ui.define([
 
 		// only Grid Table
 		onToggleBoundNavigation: function(oEvent) {
-			var oTable = this.byId('mdcTable');
+			const oTable = this.byId('mdcTable');
 
-			var oSettings = oTable.getRowSettings();
+			let oSettings = oTable.getRowSettings();
 			if (!oSettings) {
 				oSettings = new RowSettings();
 			}
 
 			if (oEvent.getSource().getSelected()) {
 				//oTable.setRowAction(['Navigation']);
-				var oRowActionTemplate = new RowActionItem({
+				const oRowActionTemplate = new RowActionItem({
 					type: "{path: 'actions>type'}",
 					text: "{path: 'actions>name'}"
 				});
@@ -189,16 +189,16 @@ sap.ui.define([
 		},
 
 		onToggleResponsiveBoundNavigation: function(oEvent) {
-			var oTable = this.byId('mdcTable');
+			const oTable = this.byId('mdcTable');
 
-			var oSettings = oTable.getRowSettings();
+			let oSettings = oTable.getRowSettings();
 			if (!oSettings) {
 				oSettings = new RowSettings();
 			}
 
 			if (oEvent.getSource().getSelected()) {
 				//oTable.setRowAction(['Navigation']);
-				var oRowActionTemplate = new RowActionItem({
+				const oRowActionTemplate = new RowActionItem({
 					type: "{path: 'actionsResp>/type'}",
 					text: "{path: 'actionsResp>/name'}"
 				});
@@ -223,8 +223,8 @@ sap.ui.define([
 		},
 
 		onToggleNavIndicator: function(oEvent) {
-			var oTable = this.byId('mdcTable');
-			var oSettings = oTable.getRowSettings();
+			const oTable = this.byId('mdcTable');
+			let oSettings = oTable.getRowSettings();
 			if (!oSettings) {
 				oSettings = new RowSettings();
 			}
@@ -242,7 +242,7 @@ sap.ui.define([
 		},
 
 		onToggleP13n: function(oEvent) {
-			var oTable = this.byId('mdcTable');
+			const oTable = this.byId('mdcTable');
 			if (oEvent.getSource().getSelected()) {
 				oTable.setP13nMode(['Column','Sort']);
 			} else {
@@ -251,22 +251,22 @@ sap.ui.define([
 		},
 
 		onToggleBusyState: function(oEvent) {
-			var oTable = this.byId('mdcTable');
+			const oTable = this.byId('mdcTable');
 			oTable.setBusy(oEvent.getSource().getSelected());
 		},
 
 		onToggleQuickFilter: function(oEvent) {
-			var oQuickFilter = this.byId('quickFilter');
+			const oQuickFilter = this.byId('quickFilter');
 			oQuickFilter.setVisible(oEvent.getSource().getSelected());
 		},
 
 		// only responsive table
 		onToggleShowDetails: function(oEvent) {
-			var oTable = this.byId('mdcTable');
-			var vType = oTable.getType();
-			var bSelected = oEvent.getParameters().selected;
-			var oFEButtonSetting = oCore.byId("fe-detailsButtonSetting");
-			var oMCBButtonSetting = oCore.byId("mcb-detailsButtonSetting");
+			const oTable = this.byId('mdcTable');
+			const vType = oTable.getType();
+			const bSelected = oEvent.getParameters().selected;
+			const oFEButtonSetting = oCore.byId("fe-detailsButtonSetting");
+			const oMCBButtonSetting = oCore.byId("mcb-detailsButtonSetting");
 
 			if (vType === "ResponsiveTable") {
 				oTable.setType(new ResponsiveTableType({
@@ -290,9 +290,9 @@ sap.ui.define([
 		},
 
 		onButtonSettingSelectionFinish: function(oEvent){
-			var aItems = [];
-			var oTable = this.byId('mdcTable');
-			var vType = oTable.getType();
+			const aItems = [];
+			const oTable = this.byId('mdcTable');
+			const vType = oTable.getType();
 
 			oEvent.getParameter("selectedItems").forEach(function(oItem) {
 				aItems.push(oItem.getKey());
@@ -302,8 +302,8 @@ sap.ui.define([
 
 		// only responsive table
 		onGrowingModeChange: function(oEvent) {
-			var oTable = this.byId("mdcTable");
-			var sKey = oEvent.getParameter("selectedItem").getKey();
+			const oTable = this.byId("mdcTable");
+			const sKey = oEvent.getParameter("selectedItem").getKey();
 
 			oTable.setType(new ResponsiveTableType({
 				growingMode: sKey
@@ -312,15 +312,15 @@ sap.ui.define([
 
 		// only grid table
 		onToggleCreationRow: function(oEvent) {
-			var oTable = this.byId('mdcTable');
+			const oTable = this.byId('mdcTable');
 			oTable.getCreationRow().setVisible(oEvent.getSource().getSelected());
 		},
 
 		onRetrieveTableState: function(oEvent) {
-			var oTable = this.byId("mdcTable");
+			const oTable = this.byId("mdcTable");
 			if (oTable) {
 				StateUtil.retrieveExternalState(oTable).then(function(oState) {
-					var oOutput = this.getView().byId("CEretrieveTableState");
+					const oOutput = this.getView().byId("CEretrieveTableState");
 					if (oOutput) {
 						oOutput.setValue(JSON.stringify(oState, null, "  "));
 					}
@@ -329,8 +329,9 @@ sap.ui.define([
 		},
 
 		onApplyTableState: function(oEvt) {
-			var oTable = this.byId("mdcTable");
-			var oInput = this.byId("CEapplyTableState"), oInputJSON;
+			const oTable = this.byId("mdcTable");
+			const oInput = this.byId("CEapplyTableState");
+			let oInputJSON;
 			if (oInput) {
 				oInputJSON = JSON.parse(oInput.getValue());
 			}
@@ -342,11 +343,11 @@ sap.ui.define([
 		},
 
 		onCopyPressed: function() {
-			var oSrc = this.byId("CEretrieveTableState");
+			const oSrc = this.byId("CEretrieveTableState");
 			if (oSrc) {
 				oSrc.getValue();
 
-				var oTrg = this.byId("CEapplyTableState");
+				const oTrg = this.byId("CEapplyTableState");
 				if (oTrg) {
 					oTrg.setValue(oSrc.getValue());
 				}
@@ -354,16 +355,16 @@ sap.ui.define([
 		},
 
 		onPaste: function(oEvent) {
-			var strData = oEvent.getParameter("data").map(function(row) {return row.join(", ");}).join("\n");
+			const strData = oEvent.getParameter("data").map(function(row) {return row.join(", ");}).join("\n");
 			MessageBox.information("Paste data:\n" + strData);
 		},
 
 		_onStateChange: function(oEvent) {
-			var oMdcControl = oEvent.getParameter("control");
+			const oMdcControl = oEvent.getParameter("control");
 			MessageToast.show("stateChange event fired for " + oMdcControl.getMetadata().getName() + " - " + oMdcControl.getId());
 
 			StateUtil.retrieveExternalState(oMdcControl).then(function(oState) {
-				var oOutput = this.getView().byId("CEretrieveTableState");
+				const oOutput = this.getView().byId("CEretrieveTableState");
 				if (oOutput) {
 					oOutput.setValue(JSON.stringify(oState, null, "  "));
 				}
@@ -371,7 +372,7 @@ sap.ui.define([
 		},
 
 		applyTableStateConfig: function() {
-			var oTable = this.byId("mdcTable");
+			const oTable = this.byId("mdcTable");
 
 			if (oTable) {
 				StateUtil.retrieveExternalState(oTable).then(function(oState) {

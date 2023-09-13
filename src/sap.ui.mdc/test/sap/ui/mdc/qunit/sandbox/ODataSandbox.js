@@ -8,7 +8,7 @@ sap.ui.define(
 	function (ODataModel, OperationMode, TestUtils, sinon) {
 		"use strict";
 		/* CONSTANTS */
-		var sSourceBase = "sap/ui/mdc/demokit/apps/table",
+		const sSourceBase = "sap/ui/mdc/demokit/apps/table",
 			oMetaModelConfig = {
 				mFixture: {
 					"Product": { source: "ProductList.json" },
@@ -23,7 +23,7 @@ sap.ui.define(
 		}
 
 		function createModelWithSandbox(oConfig) {
-			var oSandbox = sinon.sandbox.create(),
+			const oSandbox = sinon.sandbox.create(),
 				oModel = createModel(oSandbox, oConfig),
 				fnOrgDestroy = oModel.destroy.bind(oModel);
 			oModel.destroy = function() {

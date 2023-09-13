@@ -22,7 +22,7 @@ sap.ui.define([
 		}
 	}
 
-	var oModel = new JSONModel({
+	const oModel = new JSONModel({
 		items: [
 			{
 				description: "item 1",
@@ -69,7 +69,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("GridTable without settings in XML", function(assert) {
-		var that = this;
+		const that = this;
 
 		return createView("GridTableType").then(function(oView) {
 			that.oView = oView;
@@ -86,13 +86,13 @@ sap.ui.define([
 					assert.equal(that.oTable._oTable.getRows()[0].getAggregation("_settings"), null, "No inner row settings defined");
 
 					// Set fixed bound values for settings
-					var oTableRowSettings = new RowSettings();
+					let oTableRowSettings = new RowSettings();
 					oTableRowSettings.setNavigated(true);
 					oTableRowSettings.setHighlight("Error");
 					that.oTable.setRowSettings(oTableRowSettings);
 					Core.applyChanges();
 
-					var oSettings = that.oTable._oTable.getRows()[0].getAggregation("_settings");
+					let oSettings = that.oTable._oTable.getRows()[0].getAggregation("_settings");
 					assert.equal(oSettings.getNavigated(), true, "Fixed value for navigated");
 					assert.equal(oSettings.getHighlight(), "Error", "Fixed value for highlight");
 
@@ -118,7 +118,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("GridTable with settings in XML", function(assert) {
-		var that = this;
+		const that = this;
 
 		return createView("GridTableType", "navigated='true' highlight='Warning'").then(function(oView) {
 			that.oView = oView;
@@ -132,13 +132,13 @@ sap.ui.define([
 					assert.equal(that.oTable._oTable.getBinding("rows").getLength(), 2, "The table contains 2 rows");
 					assert.ok(that.oTable.getRowSettings() != null, "Row settings defined");
 
-					var oSettings = that.oTable._oTable.getRows()[0].getAggregation("_settings");
+					let oSettings = that.oTable._oTable.getRows()[0].getAggregation("_settings");
 					assert.equal(oSettings.getNavigated(), true, "Navigated is true from XML view");
 					assert.equal(oSettings.getHighlight(), "Warning", "Highlight is Warning from XML view");
 					assert.equal(oSettings.getHighlightText(), "", "No highlight text by default");
 
 					// Set calculated values for settings
-					var oTableRowSettings = new RowSettings();
+					const oTableRowSettings = new RowSettings();
 					oTableRowSettings.bindProperty("navigated", {path: 'description', type : 'sap.ui.model.type.Boolean', formatter: formatNavigated});
 					oTableRowSettings.bindProperty("highlight", {path: 'description', formatter: formatHighlight});
 					that.oTable.setRowSettings(oTableRowSettings);
@@ -159,9 +159,9 @@ sap.ui.define([
 	});
 
 	QUnit.test("GridTable with row actions in settings", function(assert) {
-		var iCalled = 0;
-		var that = this;
-		var oTest = {
+		let iCalled = 0;
+		const that = this;
+		const oTest = {
 			getBindingContext: function () {}
 		};
 
@@ -178,7 +178,7 @@ sap.ui.define([
 			return that.oTable.initialized();
 		}).then(function() {
 			// One RowActionItem
-			var oRowSettings = new RowSettings({
+			let oRowSettings = new RowSettings({
 				rowActions: [new RowActionItem({type: "Navigation"})]
 			});
 			oRowSettings.getRowActions()[0].attachEvent("press", testOnFirePress, this);
@@ -186,7 +186,7 @@ sap.ui.define([
 			Core.applyChanges();
 
 			assert.equal(that.oTable.getRowSettings().getRowActions().length, 1, "The row settings contain 1 row action");
-			var oRowActionItems = that.oTable._oTable.getRowActionTemplate().getItems();
+			let oRowActionItems = that.oTable._oTable.getRowActionTemplate().getItems();
 			assert.equal(oRowActionItems.length, 1, "The table has row action template with one row action item");
 			assert.equal(oRowActionItems[0].getType(), TableRowAction.Navigation, "Row action item is of type navigation");
 			oRowActionItems[0].firePress({item: oRowActionItems[0], row: oTest});
@@ -253,7 +253,7 @@ sap.ui.define([
 			iCalled = 0;
 
 			// Bound RowActionItems
-			var oRowActionTemplate = new RowActionItem({
+			const oRowActionTemplate = new RowActionItem({
 				type: "{path: 'type'}",
 				text: "{path: 'description'}"
 			});
@@ -293,7 +293,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("ResponsiveTable without settings", function(assert) {
-		var that = this;
+		const that = this;
 
 		return createView("ResponsiveTableType").then(function(oView) {
 			that.oView = oView;
@@ -305,13 +305,13 @@ sap.ui.define([
 			assert.equal(that.oTable._oTable.getItems().length, 2, "The table contains 2 rows");
 			assert.equal(that.oTable.getRowSettings(), null, "No row settings defined");
 
-			var oItem = that.oTable._oTable.getItems()[0];
+			let oItem = that.oTable._oTable.getItems()[0];
 			assert.equal(oItem.getNavigated(), false, "Navigated is false by default");
 			assert.equal(oItem.getHighlight(), "None", "No highlight by default");
 			assert.equal(oItem.getHighlightText(), "", "No highlight text by default");
 
 			// Set fixed bound values for settings
-			var oTableRowSettings = new RowSettings();
+			let oTableRowSettings = new RowSettings();
 			oTableRowSettings.setNavigated(true);
 			oTableRowSettings.setHighlight("Error");
 			that.oTable.setRowSettings(oTableRowSettings);
@@ -339,7 +339,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("ResponsiveTable with settings in XML", function(assert) {
-		var that = this;
+		const that = this;
 
 		return createView("ResponsiveTableType", "navigated='true' highlight='Warning'").then(function(oView) {
 			that.oView = oView;
@@ -351,13 +351,13 @@ sap.ui.define([
 			assert.equal(that.oTable._oTable.getItems().length, 2, "The table contains 2 rows");
 			assert.ok(that.oTable.getRowSettings() != null, "Row settings defined");
 
-			var oItem = that.oTable._oTable.getItems()[0];
+			let oItem = that.oTable._oTable.getItems()[0];
 			assert.equal(oItem.getNavigated(), true, "Navigated is true from XML view");
 			assert.equal(oItem.getHighlight(), "Warning", "Highlight is Warning from XML view");
 			assert.equal(oItem.getHighlightText(), "", "No highlight text by default");
 
 			 // Set calculated values for settings
-			var oTableRowSettings = new RowSettings();
+			const oTableRowSettings = new RowSettings();
 			oTableRowSettings.bindProperty("navigated", {path: 'description', type : 'sap.ui.model.type.Boolean', formatter: formatNavigated});
 			oTableRowSettings.bindProperty("highlight", {path: 'description', formatter: formatHighlight});
 			that.oTable.setRowSettings(oTableRowSettings);
@@ -374,9 +374,9 @@ sap.ui.define([
 	});
 
 	QUnit.test("ResponsiveTable with row actions in settings", function(assert) {
-		var iCalled = 0;
-		var that = this;
-		var oFireRowPressSpy;
+		let iCalled = 0;
+		const that = this;
+		let oFireRowPressSpy;
 
 		function testOnFirePress(oEvent) {
 			iCalled++;
@@ -389,10 +389,10 @@ sap.ui.define([
 
 			return that.oTable.initialized();
 		}).then(function() {
-			var oRowSettings = new RowSettings({
+			let oRowSettings = new RowSettings({
 				rowActions: [new RowActionItem({type: "Navigation"})]
 			});
-			var oItems;
+			let oItems;
 
 			oRowSettings.getRowActions()[0].attachEvent("press", testOnFirePress);
 			that.oTable.setRowSettings(oRowSettings);
@@ -416,7 +416,7 @@ sap.ui.define([
 			assert.equal(oItems[1].getType(), "Inactive", "The second table row is of type navigation");
 
 			// Bound RowActionItems
-			var oRowActionTemplate = new RowActionItem({
+			const oRowActionTemplate = new RowActionItem({
 				type: "{path: 'type'}",
 				text: "{path: 'description'}"
 			});

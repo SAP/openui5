@@ -33,7 +33,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Shorthand type='TreeTable'", function(assert) {
-		var oTable = new Table({type: TableType.TreeTable});
+		const oTable = new Table({type: TableType.TreeTable});
 
 		return oTable.initialized().then(function() {
 			assert.ok(oTable._getType().isA("sap.ui.mdc.table.TreeTableType"), "Default type instance is a sap.ui.mdc.table.TreeTableType");
@@ -44,8 +44,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("Differences in settings applied by base class sap.ui.mdc.table.GridTableType", function(assert) {
-		var oTable = this.createTable();
-		var oTreeTable;
+		const oTable = this.createTable();
+		let oTreeTable;
 
 		return oTable.initialized().then(function() {
 			oTreeTable = oTable._oTable;
@@ -79,7 +79,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("getSupportedP13nModes", function(assert) {
-		var oTable = this.createTable();
+		const oTable = this.createTable();
 
 		assert.deepEqual(oTable.getType().getSupportedP13nModes(), [
 			TableP13nMode.Column,
@@ -91,7 +91,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Fix column count", function(assert) {
-		var oTable = this.createTable({
+		const oTable = this.createTable({
 			type: new TreeTableType({fixedColumnCount: 1})
 		});
 

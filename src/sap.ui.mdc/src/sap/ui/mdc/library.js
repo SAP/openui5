@@ -24,7 +24,7 @@
 	 * @public
 	 * @experimental As of version 1.54
 	 */
-	 var thisLib = sap.ui.getCore().initLibrary({
+	 const thisLib = sap.ui.getCore().initLibrary({
 		version: "${version}",
 		name: "sap.ui.mdc",
 		dependencies: ["sap.ui.core", "sap.m"],

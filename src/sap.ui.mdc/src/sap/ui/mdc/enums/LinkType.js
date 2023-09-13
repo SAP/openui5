@@ -13,7 +13,7 @@ sap.ui.define(function() {
 	 * @since 1.115
 	 * @alias sap.ui.mdc.enums.LinkType
 	 */
-	var LinkType = {
+	const LinkType = {
 		/**
 		 * {@link sap.ui.mdc.Link} is rendered as a {@link sap.m.Text}
 		 * @public

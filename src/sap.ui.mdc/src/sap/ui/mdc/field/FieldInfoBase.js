@@ -16,7 +16,7 @@ sap.ui.define([
 	"use strict";
 
 	// shortcut for sap.m.PlacementType
-	var PlacementType = mobileLibrary.PlacementType;
+	const PlacementType = mobileLibrary.PlacementType;
 
 	/**
 	 * Constructor for a new <code>FieldInfoBase</code>.
@@ -33,7 +33,7 @@ sap.ui.define([
 	 * @public
 	 * @alias sap.ui.mdc.field.FieldInfoBase
 	 */
-	var FieldInfoBase = Element.extend("sap.ui.mdc.field.FieldInfoBase", /** @lends sap.ui.mdc.field.FieldInfoBase.prototype */
+	const FieldInfoBase = Element.extend("sap.ui.mdc.field.FieldInfoBase", /** @lends sap.ui.mdc.field.FieldInfoBase.prototype */
 	{
 		metadata: {
 			library: "sap.ui.mdc",
@@ -94,7 +94,7 @@ sap.ui.define([
 			throw new Error("sap.ui.mdc.field.FieldInfoBase: popover can not be open because the control is undefined");
 		}
 		// Avoid creation of a new popover instance if the same triggerable control is triggered again.
-		var oPopover = this.getDependents().find(function(oDependent) {
+		const oPopover = this.getDependents().find(function(oDependent) {
 			return oDependent.isA("sap.m.ResponsivePopover");
 		});
 		if (oPopover && oPopover.isOpen()) {
@@ -153,7 +153,7 @@ sap.ui.define([
 	 * @private
 	 */
 	FieldInfoBase.prototype.createPopover = function() {
-		var oPopover;
+		let oPopover;
 
 		return this.getContent(function () {
 			return oPopover;

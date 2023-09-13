@@ -14,7 +14,7 @@ sap.ui.define(function() {
      * @since 1.115
      * @public
      */
-    var TableType = {
+    const TableType = {
         /**
          * Grid table ({@link sap.ui.table.Table} control) is used (default)
          *

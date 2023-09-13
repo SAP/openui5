@@ -11,9 +11,9 @@ sap.ui.define([
 ], function(DefaultContent, coreLibrary, Filter, isEmptyObject, merge, FieldEditMode) {
 	"use strict";
 
-	var ValueState = coreLibrary.ValueState;
+	const ValueState = coreLibrary.ValueState;
 
-	var _getUnitTypeInstance = function (oTypeUtil, oType, oFormatOptions, oConstraints, bShowNumber, bShowMeasure) {
+	const _getUnitTypeInstance = function (oTypeUtil, oType, oFormatOptions, oConstraints, bShowNumber, bShowMeasure) {
 		return oTypeUtil.getUnitTypeInstance ? oTypeUtil.getUnitTypeInstance(oType, bShowNumber, bShowMeasure) : oTypeUtil.getDataTypeInstance(oType.getMetadata().getName(), oFormatOptions, oConstraints, {showNumber: bShowNumber, showMeasure: bShowMeasure});
 	};
 
@@ -29,7 +29,7 @@ sap.ui.define([
 	 * @alias sap.ui.mdc.field.content.UnitContent
 	 * @extends sap.ui.mdc.field.content.DefaultContent
 	 */
-	var UnitContent = Object.assign({}, DefaultContent, {
+	const UnitContent = Object.assign({}, DefaultContent, {
 		getEdit: function() {
 			return ["sap/ui/mdc/field/FieldInput", "sap/ui/core/InvisibleText"];
 		},
@@ -44,14 +44,14 @@ sap.ui.define([
 		},
 		createEdit: function(oContentFactory, aControlClasses, sId) {
 			oContentFactory.setIsMeasure(true); // FieldHelp only on unit field
-			var Input = aControlClasses[0];
-			var InvisibleText = aControlClasses[1];
-			var oConditionsType = oContentFactory.getConditionsType();
+			const Input = aControlClasses[0];
+			const InvisibleText = aControlClasses[1];
+			const oConditionsType = oContentFactory.getConditionsType();
 			this._adjustDataTypeForUnit(oContentFactory);
 
-			var sInvisibleTextId = InvisibleText.getStaticId("sap.ui.mdc", "field.NUMBER");
-			var aControls = [];
-			var oInput1 = new Input(sId, {
+			const sInvisibleTextId = InvisibleText.getStaticId("sap.ui.mdc", "field.NUMBER");
+			let aControls = [];
+			const oInput1 = new Input(sId, {
 				value: { path: "$field>/conditions", type: oConditionsType },
 				placeholder: "{$field>/placeholder}",
 				textAlign: "{$field>/textAlign}",
@@ -80,23 +80,23 @@ sap.ui.define([
 		},
 		createEditMultiValue: function(oContentFactory, aControlClasses, sId) {
 			oContentFactory.setIsMeasure(true); // FieldHelp only on unit field
-			var MultiInput = aControlClasses[0];
-			var Token = aControlClasses[2]; // is loaded by MultiInput
-			var Input = aControlClasses[1];
-			var InvisibleText = aControlClasses[3];
-			var oConditionType = oContentFactory.getConditionType();
-			var oConditionsType = oContentFactory.getConditionsType();
+			const MultiInput = aControlClasses[0];
+			const Token = aControlClasses[2]; // is loaded by MultiInput
+			const Input = aControlClasses[1];
+			const InvisibleText = aControlClasses[3];
+			const oConditionType = oContentFactory.getConditionType();
+			const oConditionsType = oContentFactory.getConditionsType();
 			this._adjustDataTypeForUnit(oContentFactory);
 
-			var aControls = [];
-			var oToken = new Token(sId + "-token", {
+			let aControls = [];
+			const oToken = new Token(sId + "-token", {
 				text: {
 					path: '$field>',
 					type: oConditionType
 				}
 			});
 
-			var oFilter = new Filter({
+			const oFilter = new Filter({
 				path: "values",
 				test: function(aValues) {
 					// do not show tokens for units without measure
@@ -108,8 +108,8 @@ sap.ui.define([
 				}
 			});
 
-			var sInvisibleTextId = InvisibleText.getStaticId("sap.ui.mdc", "field.NUMBER");
-			var oMultiInput = new MultiInput(sId, {
+			const sInvisibleTextId = InvisibleText.getStaticId("sap.ui.mdc", "field.NUMBER");
+			const oMultiInput = new MultiInput(sId, {
 				value: { path: "$field>/conditions", type: oConditionsType }, // only for parsing
 				placeholder: "{$field>/placeholder}",
 				textAlign: "{$field>/textAlign}",
@@ -141,23 +141,23 @@ sap.ui.define([
 			throw new Error("sap.ui.mdc.field.content.UnitContent - createEditMultiLine not defined!");
 		},
 		_addUnitControl: function(oContentFactory, aControls, sId, Input, InvisibleText) {
-			var oUnitConditionsType = oContentFactory.getUnitConditionsType();
+			const oUnitConditionsType = oContentFactory.getUnitConditionsType();
 
 			if (oContentFactory.getField().getEditMode() === FieldEditMode.EditableDisplay) {
 				aControls[0].bindProperty("description", { path: "$field>/conditions", type: oUnitConditionsType });
 				aControls[0].setWidth("100%");
 				aControls[0].setFieldWidth("70%");
 			} else {
-				var sInvisibleTextId;
-				var oType = oContentFactory.getUnitOriginalType();
-				var sName = oType && oType.getMetadata().getName();
+				let sInvisibleTextId;
+				const oType = oContentFactory.getUnitOriginalType();
+				const sName = oType && oType.getMetadata().getName();
 				if (sName && sName.indexOf("Currency") >= 0) { // TODO: better solution
 					sInvisibleTextId = InvisibleText.getStaticId("sap.ui.mdc", "field.CURRENCY");
 				} else {
 					sInvisibleTextId = InvisibleText.getStaticId("sap.ui.mdc", "field.UNIT");
 				}
 
-				var oInput = new Input(sId + "-unit", {
+				const oInput = new Input(sId + "-unit", {
 					value: { path: "$field>/conditions", type: oUnitConditionsType },
 					placeholder: "{$field>/placeholder}",
 					textAlign: "{$field>/textAlign}",
@@ -188,21 +188,21 @@ sap.ui.define([
 			return aControls;
 		},
 		_adjustDataTypeForUnit: function(oContentFactory) {
-			var oField = oContentFactory.getField();
-			var TypeMap = oField.getTypeMap();
-			var oType = oContentFactory.retrieveDataType();
-			var oFormatOptions = oType.getFormatOptions();
-			var oConstraints = oType.getConstraints();
-			var bShowMeasure = !oFormatOptions || !oFormatOptions.hasOwnProperty("showMeasure") || oFormatOptions.showMeasure;
-			var bShowNumber = !oFormatOptions || !oFormatOptions.hasOwnProperty("showNumber") || oFormatOptions.showNumber;
+			const oField = oContentFactory.getField();
+			const TypeMap = oField.getTypeMap();
+			const oType = oContentFactory.retrieveDataType();
+			const oFormatOptions = oType.getFormatOptions();
+			const oConstraints = oType.getConstraints();
+			const bShowMeasure = !oFormatOptions || !oFormatOptions.hasOwnProperty("showMeasure") || oFormatOptions.showMeasure;
+			const bShowNumber = !oFormatOptions || !oFormatOptions.hasOwnProperty("showNumber") || oFormatOptions.showNumber;
 
 			// if measure and number needs to be shown -> create new type
 			if (bShowMeasure && bShowNumber) {
-				var oClonedFormatOptions = merge({},oFormatOptions);
-				var oClonedConstraints = isEmptyObject(oConstraints) ? undefined : merge({}, oConstraints);
+				const oClonedFormatOptions = merge({},oFormatOptions);
+				const oClonedConstraints = isEmptyObject(oConstraints) ? undefined : merge({}, oConstraints);
 
 				// Type for number
-				var oNewType = _getUnitTypeInstance(TypeMap, oType, oClonedFormatOptions, oClonedConstraints, true, false);
+				let oNewType = _getUnitTypeInstance(TypeMap, oType, oClonedFormatOptions, oClonedConstraints, true, false);
 				oContentFactory.setUnitOriginalType(oContentFactory.getDataType());
 				TypeMap.initializeInternalType(oNewType, oContentFactory.getFieldTypeInitialization());
 				oContentFactory.setDataType(oNewType);
@@ -219,7 +219,7 @@ sap.ui.define([
 	// called with contentent control as context
 	function _setValueStateForControl(sValueState) {
 
-		var oField = this.getParent();
+		const oField = this.getParent();
 
 		if (!oField || !oField.isInvalidInput() || oField._isInvalidInputForContent(this)) {
 			// if there is no invalid input at all valueState seems to be set from outside -> just take it
@@ -233,14 +233,14 @@ sap.ui.define([
 
 	function _setValueStateTextForControl(sValueStateText) {
 
-		var oField = this.getParent();
+		const oField = this.getParent();
 
 		if (!oField || !oField.isInvalidInput()) {
 			// if there is no invalid input at all valueState seems to be set from outside -> just take it
 			return sValueStateText;
 		} else if (oField._isInvalidInputForContent(this)) {
 			// if there is invalid input on current control -> take error of this exception (as we can only have one ValueStateText)
-			var oException = oField._getInvalidInputException(this);
+			const oException = oField._getInvalidInputException(this);
 			return oException.message;
 		} else {
 			return "";
@@ -250,14 +250,14 @@ sap.ui.define([
 
 	function _setFieldGroupIds(aFieldGroupIds) { // gets FieldGroupIds from Field
 
-		var oField = this.getParent();
+		const oField = this.getParent();
 
 		if (oField) {
 			aFieldGroupIds.push(oField.getId()); // use Field Id as FieldGroup of Field
 		} else {
 			// parent not already assigned, determine ID from own ID
-			var sId = this.getId();
-			var iIndex = sId.lastIndexOf("-inner");
+			let sId = this.getId();
+			const iIndex = sId.lastIndexOf("-inner");
 			sId = sId.slice(0, iIndex);
 			aFieldGroupIds.push(sId); // use Field Id as FieldGroup of Field
 		}

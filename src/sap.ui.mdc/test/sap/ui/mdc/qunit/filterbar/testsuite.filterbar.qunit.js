@@ -5,7 +5,7 @@ sap.ui.define([
 ){
 	"use strict";
 
-	var oUnitTest =  {
+	const oUnitTest =  {
 		name: "Package 'sap.ui.mdc.filterbar'",
 		defaults: {
 			group: "FilterBar",

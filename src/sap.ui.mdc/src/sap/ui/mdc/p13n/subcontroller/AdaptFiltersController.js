@@ -7,7 +7,7 @@ sap.ui.define([
 ], function (BaseController, P13nBuilder, merge) {
     "use strict";
 
-    var AdaptFiltersController = BaseController.extend("sap.ui.mdc.p13n.subcontroller.AdaptFiltersController", {
+    const AdaptFiltersController = BaseController.extend("sap.ui.mdc.p13n.subcontroller.AdaptFiltersController", {
         constructor: function() {
 			BaseController.apply(this, arguments);
 			this._bResetEnabled = true;
@@ -19,7 +19,7 @@ sap.ui.define([
             verticalScrolling: false,
             title: sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc").getText("filterbar.ADAPT_TITLE"),
             afterClose: function(oEvt) {
-                var oDialog = oEvt.getSource();
+                const oDialog = oEvt.getSource();
                 if (oDialog) {
                     oDialog.getContent()[0].executeRemoves();
                     oDialog.removeAllContent();
@@ -30,8 +30,8 @@ sap.ui.define([
     };
 
     AdaptFiltersController.prototype.getBeforeApply = function() {
-        var oAdaptationFilterBar = this.getAdaptationControl().getInbuiltFilter();
-        var pConditionPromise = oAdaptationFilterBar ? oAdaptationFilterBar.createConditionChanges() : Promise.resolve([]);
+        const oAdaptationFilterBar = this.getAdaptationControl().getInbuiltFilter();
+        const pConditionPromise = oAdaptationFilterBar ? oAdaptationFilterBar.createConditionChanges() : Promise.resolve([]);
         return pConditionPromise;
     };
 
@@ -50,7 +50,7 @@ sap.ui.define([
     AdaptFiltersController.prototype.initAdaptationUI = function (oPropertyHelper) {
 
         return this.getAdaptationControl().retrieveInbuiltFilter().then(function(oAdaptationFilterBar){
-            var oAdaptationData = this.mixInfoAndState(oPropertyHelper);
+            const oAdaptationData = this.mixInfoAndState(oPropertyHelper);
 
             oAdaptationFilterBar.getTitle = function() {
                 return sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc").getText("filterbar.ADAPT_TITLE");
@@ -72,7 +72,7 @@ sap.ui.define([
 
     AdaptFiltersController.prototype.update = function(oPropertyHelper) {
         if (this._oPanel) {
-            var oAdaptationData = this.mixInfoAndState(oPropertyHelper);
+            const oAdaptationData = this.mixInfoAndState(oPropertyHelper);
             this._oPanel.setP13nData(oAdaptationData);
             this.getAdaptationControl().getInbuiltFilter().createFilterFields();
         }
@@ -80,15 +80,15 @@ sap.ui.define([
 
     AdaptFiltersController.prototype.mixInfoAndState = function(oPropertyHelper) {
 
-        var mExistingFilters = this.getAdaptationControl().getCurrentState().filter || {};
+        const mExistingFilters = this.getAdaptationControl().getCurrentState().filter || {};
 
-        var aItemState = this.getCurrentState();
-        var mExistingProperties = P13nBuilder.arrayToMap(aItemState);
+        const aItemState = this.getCurrentState();
+        const mExistingProperties = P13nBuilder.arrayToMap(aItemState);
 
-        var oP13nData = this.prepareAdaptationData(oPropertyHelper, function(oItem, oProperty){
+        const oP13nData = this.prepareAdaptationData(oPropertyHelper, function(oItem, oProperty){
 
-            var oExistingProperty = mExistingProperties[oProperty.name];
-            var aExistingFilters = mExistingFilters[oProperty.name];
+            const oExistingProperty = mExistingProperties[oProperty.name];
+            const aExistingFilters = mExistingFilters[oProperty.name];
             oItem.visible = oExistingProperty ? true : false;
             oItem.visibleInDialog = true;
             oItem.position = oExistingProperty ? oExistingProperty.position : -1;

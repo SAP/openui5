@@ -18,19 +18,19 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var QUnitUtils = Object.assign({}, MDCQUnitUtils);
+	const QUnitUtils = Object.assign({}, MDCQUnitUtils);
 
 	function getRowsAggregationName(oTable) {
 		return oTable._isOfType(TableType.Table, true) ? "rows" : "items";
 	}
 
 	QUnitUtils.stubPropertyInfos = function(oTarget, aPropertyInfos, oTypeMap) {
-		var fnOriginalGetControlDelegate = oTarget.getControlDelegate;
-		var fnOriginalAwaitControlDelegate = oTarget.awaitControlDelegate;
-		var oDelegate;
-		var fnOriginalFetchProperties;
-		var fnOriginalGetTypeMap;
-		var bPropertyHelperExists;
+		const fnOriginalGetControlDelegate = oTarget.getControlDelegate;
+		const fnOriginalAwaitControlDelegate = oTarget.awaitControlDelegate;
+		let oDelegate;
+		let fnOriginalFetchProperties;
+		let fnOriginalGetTypeMap;
+		let bPropertyHelperExists;
 
 		if (typeof fnOriginalGetControlDelegate !== "function") {
 			throw new Error("The target cannot be stubbed. " + oTarget);
@@ -101,12 +101,12 @@ sap.ui.define([
 	};
 
 	QUnitUtils.waitForBindingInfo = function(oTable) {
-		var sRowsAggregationName = getRowsAggregationName(oTable);
-		var oObserver;
+		const sRowsAggregationName = getRowsAggregationName(oTable);
+		let oObserver;
 
 		return oTable.initialized().then(function() {
 			return new Promise(function(resolve) {
-				var oInnerTable = oTable._oTable;
+				const oInnerTable = oTable._oTable;
 
 				if (oInnerTable.getBindingInfo(sRowsAggregationName)) {
 					resolve();
@@ -129,12 +129,12 @@ sap.ui.define([
 	};
 
 	QUnitUtils.waitForBinding = function(oTable) {
-		var sRowsAggregationName = getRowsAggregationName(oTable);
-		var oObserver;
+		const sRowsAggregationName = getRowsAggregationName(oTable);
+		let oObserver;
 
 		return oTable.initialized().then(function() {
 			return new Promise(function(resolve) {
-				var oInnerTable = oTable._oTable;
+				const oInnerTable = oTable._oTable;
 
 				if (oInnerTable.getBinding(sRowsAggregationName)) {
 					resolve();
@@ -159,7 +159,7 @@ sap.ui.define([
 	QUnitUtils.waitForBindingUpdate = function(oTable) {
 		return oTable.awaitControlDelegate().then(function(oDelegate) {
 			return new Promise(function(resolve) {
-				var fnOriginalUpdateBinding = oDelegate.updateBinding;
+				const fnOriginalUpdateBinding = oDelegate.updateBinding;
 				oDelegate.updateBinding = function() {
 					fnOriginalUpdateBinding.apply(this, arguments);
 					oDelegate.updateBinding = fnOriginalUpdateBinding;
@@ -171,10 +171,10 @@ sap.ui.define([
 
 	QUnitUtils.openColumnMenu = function(oTable, iColumnIndex) {
 		return oTable.initialized().then(function() {
-			var oColumn = oTable._oTable.getColumns()[iColumnIndex];
-			var oColumnDomRef = oColumn.getDomRef();
-			var oMenu = Core.byId(oColumn.getHeaderMenu());
-			var fnOpenBy = oMenu.openBy;
+			const oColumn = oTable._oTable.getColumns()[iColumnIndex];
+			const oColumnDomRef = oColumn.getDomRef();
+			const oMenu = Core.byId(oColumn.getHeaderMenu());
+			const fnOpenBy = oMenu.openBy;
 
 			return new Promise(function(resolve) {
 				oMenu.openBy = function(oAnchor, bSuppressEvent) {
@@ -209,12 +209,12 @@ sap.ui.define([
 	};
 
 	QUnitUtils.waitForSettingsDialog = function(oTable) {
-		var oObserver;
+		let oObserver;
 
 		return new Promise(function(resolve) {
 			oObserver = new ManagedObjectObserver(function(oChange) {
 				if (oChange.mutation === "insert" && oChange.child.isA("sap.m.p13n.Popup")) {
-					var fnOriginalOpen = oChange.child.open;
+					const fnOriginalOpen = oChange.child.open;
 					oChange.child.open = function() {
 						fnOriginalOpen.apply(this, arguments);
 						resolve(oChange.child._oPopup);
@@ -231,7 +231,7 @@ sap.ui.define([
 	};
 
 	QUnitUtils.closeSettingsDialog = function(oTable) {
-		var oP13nPopup = oTable.getDependents().find(function(oDepentent) {
+		const oP13nPopup = oTable.getDependents().find(function(oDepentent) {
 			return oDepentent.isA("sap.m.p13n.Popup");
 		});
 

@@ -15,7 +15,7 @@ sap.ui.define([
 	 * @since 1.87.0
 	 * @alias sap.ui.mdc.p13n.modification.TestModificationHandler
 	 */
-	var TestModificationHandler = ModificationHandler.extend("sap.ui.mdc.p13n.modification.TestModificationHandler");
+	const TestModificationHandler = ModificationHandler.extend("sap.ui.mdc.p13n.modification.TestModificationHandler");
 
     TestModificationHandler.getInstance = function() {
         return new TestModificationHandler();

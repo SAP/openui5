@@ -27,7 +27,7 @@ sap.ui.define([
 	 * @since 1.95.0
 	 * @alias sap.ui.mdc.valuehelp.base.ListContent
 	 */
-	var ListContent = Content.extend("sap.ui.mdc.valuehelp.base.ListContent", /** @lends sap.ui.mdc.valuehelp.base.ListContent.prototype */
+	const ListContent = Content.extend("sap.ui.mdc.valuehelp.base.ListContent", /** @lends sap.ui.mdc.valuehelp.base.ListContent.prototype */
 	{
 		metadata: {
 			library: "sap.ui.mdc",
@@ -91,10 +91,10 @@ sap.ui.define([
 	};
 
 	ListContent.prototype.getCount = function (aConditions) {
-		var iCount = 0;
+		let iCount = 0;
 
-		for (var i = 0; i < aConditions.length; i++) {
-			var oCondition = aConditions[i];
+		for (let i = 0; i < aConditions.length; i++) {
+			const oCondition = aConditions[i];
 			if (oCondition.isEmpty !== true && oCondition.validated === ConditionValidated.Validated) {
 				iCount++;
 			}

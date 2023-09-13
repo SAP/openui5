@@ -16,7 +16,7 @@ sap.ui.define([
 	 * @since 1.80.0
 	 * @alias sap.ui.mdc.filterbar.aligned.FilterContainer
 	 */
-	var FilterContainer = IFilterContainer.extend("sap.ui.mdc.filterbar.aligned.FilterContainer");
+	const FilterContainer = IFilterContainer.extend("sap.ui.mdc.filterbar.aligned.FilterContainer");
 
 	FilterContainer.prototype.init = function() {
 		IFilterContainer.prototype.init.apply(this, arguments);

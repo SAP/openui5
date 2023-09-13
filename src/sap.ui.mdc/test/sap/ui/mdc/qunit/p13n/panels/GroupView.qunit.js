@@ -8,9 +8,9 @@ sap.ui.define([
 ], function(GroupView, P13nBuilder, VBox, Input, oCore) {
 	"use strict";
 
-	var aVisible = ["key1", "key2", "key3"];
+	const aVisible = ["key1", "key2", "key3"];
 
-	var aInfoData = [
+	const aInfoData = [
 		{
 			name: "key1",
 			label: "Field 1",
@@ -53,7 +53,7 @@ sap.ui.define([
 				return new VBox();
 			});
 
-			var fnEnhancer = function(mItem, oProperty) {
+			const fnEnhancer = function(mItem, oProperty) {
 				if (oProperty.name == "key2") {
 					mItem.active = true;
 				}
@@ -79,20 +79,20 @@ sap.ui.define([
 		assert.ok(this.oGroupView.getModel(this.oGroupView.P13N_MODEL).isA("sap.ui.model.json.JSONModel"), "Model has been set");
 	});
 
-	var fnCheckListCreation = function(assert) {
+	const fnCheckListCreation = function(assert) {
 		this.oGroupView.setP13nData(this.oP13nData.itemsGrouped);
 
-		var oOuterList = this.oGroupView._oListControl;
+		const oOuterList = this.oGroupView._oListControl;
 		assert.ok(oOuterList.isA("sap.m.ListBase"), "Inner control is a list");
 		assert.ok(oOuterList.isA("sap.m.ListBase"), "Inner control is a list");
 
 		assert.equal(oOuterList.getItems().length, 2, "2 Groups created");
 
-		var oFirstInnerList = oOuterList.getItems()[0].getContent()[0].getContent()[0];
+		const oFirstInnerList = oOuterList.getItems()[0].getContent()[0].getContent()[0];
 		assert.equal(oFirstInnerList.getItems().length, 3, "First inner list contains 3 items");
 		assert.ok(oFirstInnerList.getItems()[0].isA("sap.m.CustomListItem"), "Item matches provided factory function");
 
-		var oSecondInnerList = oOuterList.getItems()[1].getContent()[0].getContent()[0];
+		const oSecondInnerList = oOuterList.getItems()[1].getContent()[0].getContent()[0];
 		assert.equal(oSecondInnerList.getItems().length, 3, "Second inner list contains 3 items");
 		assert.ok(oSecondInnerList.getItems()[0].isA("sap.m.CustomListItem"), "Item matches provided factory function");
 	};
@@ -104,7 +104,7 @@ sap.ui.define([
 	QUnit.test("Check column toggle", function(assert){
 		this.oGroupView.setP13nData(this.oP13nData.itemsGrouped);
 
-		var oOuterList = this.oGroupView._oListControl;
+		const oOuterList = this.oGroupView._oListControl;
 
 		assert.equal(oOuterList.getInfoToolbar().getContent().length, 1, "Only one column");
 
@@ -137,7 +137,7 @@ sap.ui.define([
 	QUnit.test("Check 'labelFor' association on fields", function(assert){
 		this.oGroupView.setP13nData(this.oP13nData.itemsGrouped);
 
-		var aPanels = this.oGroupView.getPanels();
+		const aPanels = this.oGroupView.getPanels();
 
 		//Due to lazy loading only the first panel is initialized (assocation can only be provided for loaded fields)
 		aPanels[0].getContent()[0].getItems().forEach(function(oInnerItem){
@@ -149,7 +149,7 @@ sap.ui.define([
 	QUnit.test("Check labelFor reference on label (WITH acc children)", function(assert){
         this.oGroupView.setItemFactory(function(oContext){
 
-            var oContainer = new VBox({
+            const oContainer = new VBox({
                 items: [
                     new Input("testAccInput" + oContext.getProperty("name"), {})
                 ]
@@ -164,10 +164,10 @@ sap.ui.define([
 
 		this.oGroupView.setP13nData(this.oP13nData.itemsGrouped);
 		this.oGroupView.showFactory(true);
-		var aPanels = this.oGroupView.getPanels();
+		const aPanels = this.oGroupView.getPanels();
 		aPanels[0].getContent()[0].getItems().forEach(function(oInnerItem, iIndex){
-			var sKey = "key" + (iIndex + 1);
-			var sLabelFor = sap.ui.getCore().byId(oInnerItem.getContent()[0].getItems()[0].getLabelFor()).getIdForLabel();
+			const sKey = "key" + (iIndex + 1);
+			const sLabelFor = sap.ui.getCore().byId(oInnerItem.getContent()[0].getItems()[0].getLabelFor()).getIdForLabel();
 			assert.equal(sLabelFor, "testAccInput" + sKey, "Label for assocation points to children element");
 		});
     });

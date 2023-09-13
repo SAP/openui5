@@ -15,7 +15,7 @@ sap.ui.define([
 	  "countries": "Nepal, China"
 	} */
 
-	var aPropertyInfos = [{
+	const aPropertyInfos = [{
 		name: "rank",
 		label: "Rank",
 		visible: true,

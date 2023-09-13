@@ -7,13 +7,13 @@ sap.ui.define([
 ], function (FlpLinkDelegate, ContactDetails) {
 	"use strict";
 
-	var SampleLinkDelegate = Object.assign({}, FlpLinkDelegate);
+	const SampleLinkDelegate = Object.assign({}, FlpLinkDelegate);
 	SampleLinkDelegate.apiVersion = 2;//CLEANUP_DELEGATE
 
 	SampleLinkDelegate.fetchAdditionalContent = function (oLink) {
-		var oPayload = oLink.getPayload();
+		const oPayload = oLink.getPayload();
 		if (oPayload.loadAdditionalContent) {
-			var aAdditionalContent = [
+			const aAdditionalContent = [
 				new ContactDetails()
 			];
 			if (oPayload && oPayload.addAdditionalContent) {
@@ -25,7 +25,7 @@ sap.ui.define([
 	};
 
 	SampleLinkDelegate.fetchLinkItems = function(oLink) {
-		var oPayload = oLink.getPayload();
+		const oPayload = oLink.getPayload();
 		if (oPayload.items) {
 			return Promise.resolve(oPayload.items);
 		}
@@ -33,7 +33,7 @@ sap.ui.define([
 	};
 
 	SampleLinkDelegate.fetchLinkType = function(oLink) {
-		var oPayload = oLink.getPayload();
+		const oPayload = oLink.getPayload();
 		if (oPayload.linkType) {
 			return Promise.resolve(oPayload.linkType);
 		}

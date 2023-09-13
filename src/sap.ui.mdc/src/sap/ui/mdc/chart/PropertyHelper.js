@@ -31,7 +31,7 @@ sap.ui.define([
 	 * @since 1.83
 	 * @alias sap.ui.mdc.chart.PropertyHelper
 	 */
-    var PropertyHelper = PropertyHelperBase.extend("sap.ui.mdc.chart.PropertyHelper", {
+    const PropertyHelper = PropertyHelperBase.extend("sap.ui.mdc.chart.PropertyHelper", {
 		constructor: function(aProperties, oParent) {
 			PropertyHelperBase.call(this, aProperties, oParent, {
 				filterable: true,
@@ -83,8 +83,8 @@ sap.ui.define([
 		}
 
 		if (!oProperty.typeConfig && oProperty.dataType){
-			var oFormatOptions = oProperty.formatOptions ? oProperty.formatOptions : null;
-			var oConstraints = oProperty.constraints ? oProperty.constraints : {};
+			const oFormatOptions = oProperty.formatOptions ? oProperty.formatOptions : null;
+			const oConstraints = oProperty.constraints ? oProperty.constraints : {};
 
 			oProperty.typeConfig = this.getParent().getTypeMap().getTypeConfig(oProperty.dataType, oFormatOptions, oConstraints);
 		}
@@ -105,8 +105,8 @@ sap.ui.define([
 	 * @param {string} sType the type for which the layout options are requested
 	 */
 	PropertyHelper.prototype._getLayoutOptionsForType = function(sType){
-		var MDCRb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
-		var oAvailableRoles = {
+		const MDCRb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
+		const oAvailableRoles = {
 			groupable: [
 				{
 					key: ChartItemRoleType.category,

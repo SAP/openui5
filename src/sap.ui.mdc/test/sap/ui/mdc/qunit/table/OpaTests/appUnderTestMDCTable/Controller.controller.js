@@ -11,7 +11,7 @@ sap.ui.define([
 		},
 
 		onBeforeExport: function(oEvt) {
-			var mExcelSettings = oEvt.getParameter("exportSettings");
+			const mExcelSettings = oEvt.getParameter("exportSettings");
 
 			// Disable Worker as Mockserver is used
 			mExcelSettings.worker = false;

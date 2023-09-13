@@ -31,14 +31,14 @@ sap.ui.define([
 	) {
 	"use strict";
 
-	var oPopover;
-	var iPopoverDuration = 355;
+	let oPopover;
+	const iPopoverDuration = 355;
 
-	var _fPressHandler = function(oEvent) {}; // just dummy handler to make Icon focusable
-	var oField;
-	var oContentField;
-	var oContent;
-	var oValueHelp = { //to fake ValueHelp
+	const _fPressHandler = function(oEvent) {}; // just dummy handler to make Icon focusable
+	let oField;
+	let oContentField;
+	let oContent;
+	const oValueHelp = { //to fake ValueHelp
 		getControl: function() {
 			return oField;
 		},
@@ -65,14 +65,14 @@ sap.ui.define([
 		},
 		bDelegateInitialized: true
 	};
-	var oValueHelpConfig;
-	var oModel; // to fake ManagedObjectModel of ValueHelp
+	let oValueHelpConfig;
+	let oModel; // to fake ManagedObjectModel of ValueHelp
 
 	/* use dummy control to simulate Field */
 
 //	var oClock;
 
-	var _teardown = function() {
+	const _teardown = function() {
 //		if (oClock) {
 //			oClock.restore();
 //			oClock = undefined;
@@ -121,11 +121,11 @@ sap.ui.define([
 
 		oPopover.setTitle("Test");
 
-		var oContainer = oPopover.getContainerControl();
+		const oContainer = oPopover.getContainerControl();
 //		assert.ok(oContainer instanceof Promise, "Promise returned");
 
 		if (oContainer) {
-			var fnDone = assert.async();
+			const fnDone = assert.async();
 			oContainer.then(function(oContainer) {
 				assert.ok(oContainer, "Container returned");
 				assert.ok(oContainer.isA("sap.m.Popover"), "Container is sap.m.Popover");
@@ -151,7 +151,7 @@ sap.ui.define([
 
 	QUnit.test("providesScrolling", function(assert) {
 
-		var bScrolling = oPopover.providesScrolling();
+		const bScrolling = oPopover.providesScrolling();
 		assert.ok(bScrolling, "provides scrolling");
 
 	});
@@ -195,11 +195,11 @@ sap.ui.define([
 			};
 		};
 		oPopover.setTitle("Test");
-		var oContainer = oPopover.getContainerControl();
+		const oContainer = oPopover.getContainerControl();
 //		assert.ok(oContainer instanceof Promise, "Promise returned");
 
 		if (oContainer) {
-			var fnDone = assert.async();
+			const fnDone = assert.async();
 			oContainer.then(function(oContainer) {
 				assert.ok(oContainer, "Container returned");
 				assert.ok(oContainer.isA("sap.m.Popover"), "Container is sap.m.Popover");
@@ -223,11 +223,11 @@ sap.ui.define([
 
 	QUnit.test("open / close", function(assert) {
 
-		var iOpened = 0;
+		let iOpened = 0;
 		oPopover.attachEvent("opened", function(oEvent) {
 			iOpened++;
 		});
-		var iClosed = 0;
+		let iClosed = 0;
 		oPopover.attachEvent("closed", function(oEvent) {
 			iClosed++;
 		});
@@ -239,15 +239,15 @@ sap.ui.define([
 			return 100;
 		};
 
-		var oPromise = oPopover.open(Promise.resolve());
+		const oPromise = oPopover.open(Promise.resolve());
 		assert.ok(oPromise instanceof Promise, "open returns promise");
 
 		if (oPromise) {
-			var fnDone = assert.async();
+			const fnDone = assert.async();
 			oPromise.then(function() {
 				setTimeout(function() { // wait until open
 					assert.equal(iOpened, 1, "Opened event fired once");
-					var oContainer = oPopover.getAggregation("_container");
+					const oContainer = oPopover.getAggregation("_container");
 					assert.ok(oPopover._openContainerByTarget.called, "_openContainerByTarget was called.");
 					assert.ok(oContainer.isA("sap.m.Popover"), "Container is sap.m.Popover");
 					assert.ok(oContainer.isOpen(), "sap.m.Popover is open");
@@ -284,26 +284,26 @@ sap.ui.define([
 	QUnit.test("open with footer toolbar", function(assert) {
 
 		sinon.stub(oContent, "isFocusInHelp").returns(true); // test if initial focus is not set to field
-		var oToolbar = new Toolbar("TB1");
+		const oToolbar = new Toolbar("TB1");
 		sinon.stub(oContent, "getContainerConfig").returns({
 			'sap.ui.mdc.valuehelp.Popover': {
 				getFooter : function () { return oToolbar; }
 			}
 		});
 
-		var iOpened = 0;
+		let iOpened = 0;
 		oPopover.attachEvent("opened", function(oEvent) {
 			iOpened++;
 		});
-		var oPromise = oPopover.open(Promise.resolve());
+		const oPromise = oPopover.open(Promise.resolve());
 		assert.ok(oPromise instanceof Promise, "open returns promise");
 
 		if (oPromise) {
-			var fnDone = assert.async();
+			const fnDone = assert.async();
 			oPromise.then(function() {
 				setTimeout(function() { // wait until open
 					assert.equal(iOpened, 1, "Opened event fired once");
-					var oContainer = oPopover.getAggregation("_container");
+					const oContainer = oPopover.getAggregation("_container");
 					assert.ok(oContainer.isA("sap.m.Popover"), "Container is sap.m.Popover");
 					assert.ok(oContainer.isOpen(), "sap.m.Popover is open");
 					assert.notOk(oContainer.getInitialFocus(), "initialFocus not set");
@@ -326,30 +326,30 @@ sap.ui.define([
 
 	QUnit.test("open with footer content", function(assert) {
 
-		var oIcon = new Icon("Icon1", {src:"sap-icon://sap-ui5", decorative: false, press: _fPressHandler});
+		const oIcon = new Icon("Icon1", {src:"sap-icon://sap-ui5", decorative: false, press: _fPressHandler});
 		sinon.stub(oContent, "getContainerConfig").returns({
 			'sap.ui.mdc.valuehelp.Popover': {
 				getFooter : function () { return oIcon; }
 			}
 		});
 
-		var iOpened = 0;
+		let iOpened = 0;
 		oPopover.attachEvent("opened", function(oEvent) {
 			iOpened++;
 		});
-		var oPromise = oPopover.open(Promise.resolve());
+		const oPromise = oPopover.open(Promise.resolve());
 		assert.ok(oPromise instanceof Promise, "open returns promise");
 
 		if (oPromise) {
-			var fnDone = assert.async();
+			const fnDone = assert.async();
 			oPromise.then(function() {
 				setTimeout(function() { // wait until open
 					assert.equal(iOpened, 1, "Opened event fired once");
-					var oContainer = oPopover.getAggregation("_container");
+					const oContainer = oPopover.getAggregation("_container");
 					assert.ok(oContainer.isA("sap.m.Popover"), "Container is sap.m.Popover");
 					assert.ok(oContainer.isOpen(), "sap.m.Popover is open");
 					assert.equal(oContainer._getAllContent()[0], oContentField, "Content of sap.m.Popover");
-					var oFooter = oContainer.getFooter();
+					const oFooter = oContainer.getFooter();
 					assert.ok(oFooter, "footer exists");
 					assert.ok(oFooter.isA("sap.m.Toolbar"), "Footer is sap.m.Toolbar");
 					assert.equal(oFooter.getContent().length, 2, "Toolbar content length");
@@ -372,7 +372,7 @@ sap.ui.define([
 
 	QUnit.test("Consider canceled opening promise with async showTypeahead", function(assert) {
 
-		var oIcon = new Icon("Icon1", {src:"sap-icon://sap-ui5", decorative: false, press: _fPressHandler});
+		const oIcon = new Icon("Icon1", {src:"sap-icon://sap-ui5", decorative: false, press: _fPressHandler});
 		sinon.stub(oContent, "getContainerConfig").returns({
 			'sap.ui.mdc.valuehelp.Popover': {
 				getFooter : function () { return oIcon; }
@@ -387,8 +387,8 @@ sap.ui.define([
 				resolve(true);
 			});
 		});
-		var oPromise = oPopover.open(Promise.resolve(), true);
-		var fnDone = assert.async();
+		const oPromise = oPopover.open(Promise.resolve(), true);
+		const fnDone = assert.async();
 		assert.ok(oPromise instanceof Promise, "open returns promise");
 		setTimeout(function() { // wait until open
 			assert.notOk(oPopover._openContainerByTarget.called, "Popover will not be opened as promise was cancelled during showTypeahead");
@@ -411,11 +411,11 @@ sap.ui.define([
 
 		sinon.spy(oContent, "navigate");
 
-		var oPromise = oPopover.navigate(1);
+		const oPromise = oPopover.navigate(1);
 		assert.ok(oPromise instanceof Promise, "navigate returns promise");
 
 		if (oPromise) {
-			var fnDone = assert.async();
+			const fnDone = assert.async();
 			oPromise.then(function() {
 				assert.ok(oContent.navigate.calledOnce, "navigate on Content called");
 				assert.ok(oContent.navigate.calledWith(1), "navigate  on Content called with 1");
@@ -432,7 +432,7 @@ sap.ui.define([
 
 		sinon.spy(oContent, "getItemForValue");
 
-		var oConfig = {test: "x"};
+		const oConfig = {test: "x"};
 
 		oPopover.getItemForValue(oConfig);
 		assert.ok(oContent.getItemForValue.called, "getItemForValue of Content called");
@@ -450,7 +450,7 @@ sap.ui.define([
 
 	QUnit.test("isTypeaheadSupported", function(assert) {
 
-		var bSupported = oPopover.isTypeaheadSupported();
+		let bSupported = oPopover.isTypeaheadSupported();
 		assert.notOk(bSupported, "not supported if content not supports search");
 
 		sinon.stub(oContent, "isSearchSupported").returns(true);
@@ -487,13 +487,13 @@ sap.ui.define([
 			roleDescription: "X"
 		});
 
-		var oCheckAttributes = {
+		const oCheckAttributes = {
 			contentId: "X",
 			ariaHasPopup: "dialog",
 			role: null,
 			roleDescription: "X"
 		};
-		var oAttributes = oPopover.getAriaAttributes();
+		let oAttributes = oPopover.getAriaAttributes();
 		assert.ok(oAttributes, "Aria attributes returned");
 		assert.deepEqual(oAttributes, oCheckAttributes, "returned attributes");
 
@@ -580,16 +580,16 @@ sap.ui.define([
 	QUnit.test("confirmed event", function(assert) {
 
 		sinon.stub(oPopover, "isSingleSelect").returns(true);
-		var iConfirm = 0;
-		var bClose = false;
+		let iConfirm = 0;
+		let bClose = false;
 		oPopover.attachEvent("confirm", function(oEvent) {
 			iConfirm++;
 			bClose = oEvent.getParameter("close");
 		});
 
-		var oPromise = oPopover.open(Promise.resolve());
+		const oPromise = oPopover.open(Promise.resolve());
 		if (oPromise) {
-			var fnDone = assert.async();
+			const fnDone = assert.async();
 			oPromise.then(function() {
 				setTimeout(function() { // wait until open
 					oContent.fireConfirm();
@@ -635,19 +635,19 @@ sap.ui.define([
 
 	QUnit.test("open without ValueState", function(assert) {
 
-		var iOpened = 0;
+		let iOpened = 0;
 		oPopover.attachEvent("opened", function(oEvent) {
 			iOpened++;
 		});
-		var oPromise = oPopover.open(Promise.resolve());
+		const oPromise = oPopover.open(Promise.resolve());
 		assert.ok(oPromise instanceof Promise, "open returns promise");
 
 		if (oPromise) {
-			var fnDone = assert.async();
+			const fnDone = assert.async();
 			oPromise.then(function() {
 				setTimeout(function() { // wait until open
 					assert.equal(iOpened, 1, "Opened event fired once");
-					var oContainer = oPopover.getAggregation("_container");
+					const oContainer = oPopover.getAggregation("_container");
 					assert.ok(oContainer.isA("sap.m.Popover"), "Container is sap.m.Popover");
 					assert.ok(oContainer.isOpen(), "sap.m.Popover is open");
 					assert.ok(oContainer.getCustomHeader().isA("sap.m.ValueStateHeader"), "custom header content is sap.m.ValueStateHeader");
@@ -671,19 +671,19 @@ sap.ui.define([
 		oField.setValueState("Error");
 		oField.setValueStateText("My Error message");
 
-		var iOpened = 0;
+		let iOpened = 0;
 		oPopover.attachEvent("opened", function(oEvent) {
 			iOpened++;
 		});
-		var oPromise = oPopover.open(Promise.resolve());
+		const oPromise = oPopover.open(Promise.resolve());
 		assert.ok(oPromise instanceof Promise, "open returns promise");
 
 		if (oPromise) {
-			var fnDone = assert.async();
+			const fnDone = assert.async();
 			oPromise.then(function() {
 				setTimeout(function() { // wait until open
 					assert.equal(iOpened, 1, "Opened event fired once");
-					var oContainer = oPopover.getAggregation("_container");
+					const oContainer = oPopover.getAggregation("_container");
 					assert.ok(oContainer.isA("sap.m.Popover"), "Container is sap.m.Popover");
 					assert.ok(oContainer.isOpen(), "sap.m.Popover is open");
 					assert.ok(oContainer.getCustomHeader().isA("sap.m.ValueStateHeader"), "custom header content is sap.m.ValueStateHeader");

@@ -16,7 +16,7 @@ sap.ui.define(function() {
 	 * @since 1.115
 	 * @alias sap.ui.mdc.enums.ValueHelpSelectionType
 	 */
-	var ValueHelpSelectionType = {
+	const ValueHelpSelectionType = {
 		/**
 		 * The given conditions are set and replace the existing ones.
 		 * @private

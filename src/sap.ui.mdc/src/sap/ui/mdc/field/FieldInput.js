@@ -29,7 +29,7 @@ sap.ui.define([
 	 * @since 1.81.0
 	 * @alias sap.ui.mdc.field.FieldInput
 	 */
-	var FieldInput = Input.extend("sap.ui.mdc.field.FieldInput", /** @lends sap.ui.mdc.field.FieldInput.prototype */
+	const FieldInput = Input.extend("sap.ui.mdc.field.FieldInput", /** @lends sap.ui.mdc.field.FieldInput.prototype */
 	{
 		metadata: {
 			library: "sap.ui.mdc",

@@ -59,7 +59,7 @@ sap.ui.define([
 	 * @public
    	 * @experimental As of version 1.48.0
 	 */
-	var FilterField = FieldBase.extend("sap.ui.mdc.FilterField", /* @lends sap.ui.mdc.FilterField.prototype */ {
+	const FilterField = FieldBase.extend("sap.ui.mdc.FilterField", /* @lends sap.ui.mdc.FilterField.prototype */ {
 		metadata: {
 			library: "sap.ui.mdc",
 			designtime: "sap/ui/mdc/designtime/field/FilterField.designtime",
@@ -176,7 +176,7 @@ sap.ui.define([
 
 	// TODO: remove fallback if propertyKey is used by stakeholders
 	FilterField.prototype.getPropertyKey = function() {
-		var sPropertyKey = this.getProperty("propertyKey");
+		let sPropertyKey = this.getProperty("propertyKey");
 		if (!sPropertyKey) {
 			sPropertyKey = this.getFieldPath();
 		}
@@ -221,7 +221,7 @@ sap.ui.define([
 
 	FilterField.prototype.fireChangeEvent = function(aConditions, bValid, vWrongValue, oPromise) {
 
-		var vValue;
+		let vValue;
 
 		if (aConditions) { // even if empty and error is returned, only in async case it is really empty
 			if (bValid) {
@@ -241,7 +241,7 @@ sap.ui.define([
 
 	FilterField.prototype.getSupportedOperators = function() {
 
-		var aOperators = this.getOperators();
+		let aOperators = this.getOperators();
 
 		if (aOperators.length === 0) {
 			// use default operators
@@ -255,7 +255,7 @@ sap.ui.define([
 	};
 
 	FilterField.prototype.setOperators = function(aOperators) {
-		var aOperatorNames = [];
+		const aOperatorNames = [];
 
 		if (!Array.isArray(aOperators)) {
 			// aOperators can be a comma separated string of operators.
@@ -287,9 +287,9 @@ sap.ui.define([
 	 * @public
 	 */
 	FilterField.prototype.addOperator = function(vOperator) {
-		var aOperators = this.getSupportedOperators();
+		const aOperators = this.getSupportedOperators();
 
-		var sOpName = vOperator;
+		let sOpName = vOperator;
 		if (typeof vOperator !== "string") {
 			sOpName = vOperator.name;
 		}
@@ -333,8 +333,8 @@ sap.ui.define([
 	 * @public
 	 */
 	FilterField.prototype.removeOperator = function(vOperator) {
-		var aOperators = this.getSupportedOperators();
-		var sOpName = vOperator;
+		const aOperators = this.getSupportedOperators();
+		let sOpName = vOperator;
 		if (typeof vOperator !== "string") {
 			sOpName = vOperator.name;
 		}
@@ -378,7 +378,7 @@ sap.ui.define([
 
 
 	FilterField.prototype.setDefaultOperator = function(oOperator) {
-		var sName = oOperator;
+		let sName = oOperator;
 		if (oOperator && typeof oOperator !== "string") {
 			sName = oOperator.name;
 		}
@@ -395,10 +395,10 @@ sap.ui.define([
 			// MultipleLines is also not used for FilterFields in the moment.
 			// MaxConditions should also be set on applySettings
 
-			var sId = this._getValueHelp();
-			var oValueHelp = sap.ui.getCore().byId(sId);
-			var oBindingInfo = this.getBindingInfo("conditions");
-			var oBinding = this.getBinding("conditions");
+			const sId = this._getValueHelp();
+			const oValueHelp = sap.ui.getCore().byId(sId);
+			const oBindingInfo = this.getBindingInfo("conditions");
+			const oBinding = this.getBinding("conditions");
 			if (this.getDisplay() !== FieldDisplay.Value && sId && (!oValueHelp || (oBindingInfo && !oBinding))) {
 				// ValueHelp might need ConditionModel to determine value of InParameters to get the description.
 				// So if ValueHelp not exists right now or binding to ConditionModel not already created, wait.
@@ -427,8 +427,8 @@ sap.ui.define([
 		if (this.isPropertyInitial("propertyKey")) {
 			return FieldBase.prototype.isSearchField.apply(this, arguments); // fallback to old logic based on binding path
 		} else {
-			var sPropertyKey = this.getPropertyKey();
-			var regexp = new RegExp("^\\*(.*)\\*|\\$search$");
+			const sPropertyKey = this.getPropertyKey();
+			const regexp = new RegExp("^\\*(.*)\\*|\\$search$");
 			return regexp.test(sPropertyKey) && this.getMaxConditions() === 1;
 		}
 

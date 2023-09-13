@@ -24,7 +24,7 @@ sap.ui.define([
 	 * @public
 	 * @alias sap.ui.mdc.field.MultiValueFieldItem
 	 */
-	var MultiValueFieldItem = Element.extend("sap.ui.mdc.field.MultiValueFieldItem", /** @lends sap.ui.mdc.field.MultiValueFieldItem.prototype */
+	const MultiValueFieldItem = Element.extend("sap.ui.mdc.field.MultiValueFieldItem", /** @lends sap.ui.mdc.field.MultiValueFieldItem.prototype */
 	{
 		metadata: {
 			library: "sap.ui.mdc",

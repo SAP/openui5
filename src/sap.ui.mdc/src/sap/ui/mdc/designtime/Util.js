@@ -16,8 +16,8 @@ sap.ui.define([], function () {
 
     // Returns the designTime metadata for the control. By default all the properties/aggregations which are not part of the allowed list array will be ignored from RTA/DTA
     function enhanceDesignTimeMetadata(aAllowed, sKey, oDesignTime) {
-        var bAllowed = aAllowed.includes(sKey);
-        var oObject = bAllowed && oDesignTime[sKey] || {};
+        const bAllowed = aAllowed.includes(sKey);
+        const oObject = bAllowed && oDesignTime[sKey] || {};
         if (!Object.keys(oObject).length) {
             oObject[sKey] = {
                 ignore: !bAllowed
@@ -34,11 +34,12 @@ sap.ui.define([], function () {
             oDesignTime.properties = oDesignTime.properties ? oDesignTime.properties : {};
             oDesignTime.aggregations = oDesignTime.aggregations ? oDesignTime.aggregations : {};
 
-            var oControlMetadata = ControlClass.getMetadata(),
-                // array containing all allowed control properties. Update the aAllowedProperties to enable a property for DTA
-                aAllowedProperties = aAllowedProperties ? aAllowedProperties : [],
-                // array containing all allowed control aggregations. Update the aAllowedAggregations to enable an aggregation for DTA
-                aAllowedAggregations = aAllowedAggregations ? aAllowedAggregations : [],
+            // array containing all allowed control properties. Update the aAllowedProperties to enable a property for DTA
+            aAllowedProperties = aAllowedProperties ? aAllowedProperties : [];
+            // array containing all allowed control aggregations. Update the aAllowedAggregations to enable an aggregation for DTA
+            aAllowedAggregations = aAllowedAggregations ? aAllowedAggregations : [];
+
+            const oControlMetadata = ControlClass.getMetadata(),
                 // array containing all control properties
                 aAllProperties = Object.keys(oControlMetadata.getAllProperties()).concat(Object.keys(oControlMetadata.getAllPrivateProperties())),
                 // array containing all control aggregations

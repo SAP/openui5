@@ -15,11 +15,11 @@ sap.ui.define([
 		init : function(){
 			// call the init function of the parent
 			UIComponent.prototype.init.apply(this, arguments);
-			var oMockServer = new MockServer();
+			const oMockServer = new MockServer();
 			oMockServer.init();
 
-			var sODataServiceUrl = "/sap/opu/odata4/IWBEP/V4_SAMPLE/default/IWBEP/V4_GW_SAMPLE_BASIC/0001/"; // set model on component
-			var oModel = new ODataModel({
+			const sODataServiceUrl = "/sap/opu/odata4/IWBEP/V4_SAMPLE/default/IWBEP/V4_GW_SAMPLE_BASIC/0001/"; // set model on component
+			const oModel = new ODataModel({
 				serviceUrl: sODataServiceUrl,
 				groupId: "$direct",
 				autoExpandSelect: true,

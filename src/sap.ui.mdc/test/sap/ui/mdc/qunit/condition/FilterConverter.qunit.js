@@ -12,7 +12,7 @@ sap.ui.define([
 		], function(ConditionModel, Condition, FilterConverter) {
 	"use strict";
 
-	var oCM;
+	let oCM;
 
 	//*********************************************************************************************
 	QUnit.module("sap.ui.mdc.condition.FilterConverter", {
@@ -30,9 +30,9 @@ sap.ui.define([
 
 
 	QUnit.test("FilterConverter.createFilters: testing the basic format of filter the and and or structor", function(assert) {
-		var oFilter = FilterConverter.createFilters( oCM.getAllConditions(), {});
+		let oFilter = FilterConverter.createFilters( oCM.getAllConditions(), {});
 		assert.strictEqual(oFilter, null, "filter is null");
-		var result = FilterConverter.prettyPrintFilters(oFilter);
+		let result = FilterConverter.prettyPrintFilters(oFilter);
 		assert.strictEqual(result, "no filters set", "result should be an empty filter");
 
 		oCM.addCondition("fieldPath1/foo", Condition.createCondition("EQ", ["foo"]));
@@ -51,9 +51,9 @@ sap.ui.define([
 		oCM.addCondition("fieldPath1/foo", Condition.createCondition("BT", ["A", "Z"]));
 		oCM.addCondition("fieldPath1/foo", Condition.createCondition("NE", ["X"]));
 
-		var oFilter = FilterConverter.createFilters( oCM.getAllConditions(), {});
+		const oFilter = FilterConverter.createFilters( oCM.getAllConditions(), {});
 
-		var result = FilterConverter.prettyPrintFilters(oFilter);
+		const result = FilterConverter.prettyPrintFilters(oFilter);
 		assert.strictEqual(oFilter.aFilters.length, 2, "2 filters must be returned on top level");
 		assert.ok(oFilter.bAnd, "exclude filters must be connected via AND");
 		assert.strictEqual(result, "(fieldPath1/foo BT 'A'...'Z' and fieldPath1/foo NE 'X')", "result filter has the expected format");
@@ -66,9 +66,9 @@ sap.ui.define([
 		oCM.addCondition("fieldPath1/foo", Condition.createCondition("NE", ["X"]));
 		oCM.addCondition("fieldPath1/foo", Condition.createCondition("NE", ["Y"]));
 
-		var oFilter = FilterConverter.createFilters( oCM.getAllConditions(), {});
+		const oFilter = FilterConverter.createFilters( oCM.getAllConditions(), {});
 
-		var result = FilterConverter.prettyPrintFilters(oFilter);
+		const result = FilterConverter.prettyPrintFilters(oFilter);
 		assert.strictEqual(oFilter.aFilters.length, 3, "3 filters must be returned on top level (multiple NE filters)");
 		assert.strictEqual(result, "(fieldPath1/foo BT 'A'...'Z' and fieldPath1/foo NE 'X' and fieldPath1/foo NE 'Y')", "result filter has the expected format");
 
@@ -81,9 +81,9 @@ sap.ui.define([
 		oCM.addCondition("fieldPath1/foo", Condition.createCondition("NE", ["X"]));
 		oCM.addCondition("fieldPath1/foo", Condition.createCondition("NE", ["Y"]));
 
-		var oFilter = FilterConverter.createFilters( oCM.getAllConditions(), {});
+		const oFilter = FilterConverter.createFilters( oCM.getAllConditions(), {});
 
-		var result = FilterConverter.prettyPrintFilters(oFilter);
+		const result = FilterConverter.prettyPrintFilters(oFilter);
 		assert.ok(oFilter.bAnd, "exclude filters must be connected via AND");
 		assert.notOk(oFilter.aFilters[0].bAnd, "multiple non-exclude filters on same path are unaffected by AND grouping");
 		assert.strictEqual(result, "((fieldPath1/foo EQ 'FOO' or fieldPath1/foo EQ 'BAR') and fieldPath1/foo NE 'X' and fieldPath1/foo NE 'Y')", "result filter has the expected format");
@@ -98,9 +98,9 @@ sap.ui.define([
 		oCM.addCondition("fieldPath2/bar", Condition.createCondition("EQ", ["FOO"]));
 		oCM.addCondition("fieldPath2/bar", Condition.createCondition("EQ", ["BAR"]));
 
-		var oFilter = FilterConverter.createFilters( oCM.getAllConditions(), {});
+		const oFilter = FilterConverter.createFilters( oCM.getAllConditions(), {});
 
-		var result = FilterConverter.prettyPrintFilters(oFilter);
+		const result = FilterConverter.prettyPrintFilters(oFilter);
 		assert.strictEqual(oFilter.aFilters.length, 2, "2 filters must be returned on top level");
 		assert.strictEqual(oFilter.aFilters[0].aFilters.length, 3, "3 filters must be returned at nested level");
 		assert.ok(oFilter.aFilters[0].bAnd, "exclude filters must be connected via AND");
@@ -113,9 +113,9 @@ sap.ui.define([
 		oCM.addCondition("fieldPath1/foo", Condition.createCondition("EQ", ["FOO"]));
 		oCM.addCondition("$search", Condition.createCondition("EQ", ["search"]));
 
-		var oFilter = FilterConverter.createFilters( oCM.getAllConditions(), {});
+		const oFilter = FilterConverter.createFilters( oCM.getAllConditions(), {});
 
-		var result = FilterConverter.prettyPrintFilters(oFilter);
+		const result = FilterConverter.prettyPrintFilters(oFilter);
 		assert.strictEqual(result, "fieldPath1/foo EQ 'FOO'", "result filter has the expected format and $search is ignored");
 
 	});
@@ -124,9 +124,9 @@ sap.ui.define([
 	QUnit.test("FilterConverter.createFilters: testing conditions with multiple parts", function(assert) {
 		oCM.addCondition("*fieldPath1,fieldPath2*", Condition.createCondition("EQ", ["FOO"]));
 
-		var oFilter = FilterConverter.createFilters( oCM.getAllConditions(), {});
+		const oFilter = FilterConverter.createFilters( oCM.getAllConditions(), {});
 
-		var result = FilterConverter.prettyPrintFilters(oFilter);
+		const result = FilterConverter.prettyPrintFilters(oFilter);
 		assert.strictEqual(result, "(fieldPath1 EQ 'FOO' or fieldPath2 EQ 'FOO')", "result filter has the expected format");
 
 	});
@@ -138,13 +138,13 @@ sap.ui.define([
 		oCM.addCondition("fieldPath1*/foo", Condition.createCondition("NE", ["bar"]));
 		oCM.addCondition("fieldPath2/foo", Condition.createCondition("EQ", ["bar"]));
 
-		var oFilter = FilterConverter.createFilters( oCM.getAllConditions(), {});
-		var filter = oFilter.aFilters[0];
+		const oFilter = FilterConverter.createFilters( oCM.getAllConditions(), {});
+		let filter = oFilter.aFilters[0];
 		if (filter.sPath !== "fieldPath1") {
 			filter = filter.aFilters[1]; // as order could be different
 		}
 
-		var result = FilterConverter.prettyPrintFilters(oFilter);
+		const result = FilterConverter.prettyPrintFilters(oFilter);
 		assert.strictEqual(oFilter.aFilters.length, 2, "two filters must be returned on top level");
 		assert.strictEqual(filter.sOperator, "Any", "Filter with Any operator exist");
 		assert.strictEqual(result, "(fieldPath1 Any ((L1/foo EQ 'foo' or L1/foo BT '1'...'100') and L1/foo NE 'bar') and fieldPath2/foo EQ 'bar')", "result contains the expected Any filter");
@@ -170,9 +170,9 @@ sap.ui.define([
 		oCM.addCondition("fieldPath2*/bar", Condition.createCondition("EQ", ["bar1"]));
 		oCM.addCondition("fieldPath2*/bar", Condition.createCondition("EQ", ["bar2"]));
 
-		var oFilter = FilterConverter.createFilters( oCM.getAllConditions(), {});
+		const oFilter = FilterConverter.createFilters( oCM.getAllConditions(), {});
 
-		var result = FilterConverter.prettyPrintFilters(oFilter);
+		const result = FilterConverter.prettyPrintFilters(oFilter);
 		assert.strictEqual(oFilter.aFilters.length, 2, "two filters must be returned on top level");
 		assert.strictEqual(result, "(fieldPath1 Any (L1/foo EQ 'foo1' or L1/foo EQ 'foo2') and fieldPath2 Any (L1/bar EQ 'bar1' or L1/bar EQ 'bar2'))", "result contains the expected Any filter");
 
@@ -185,9 +185,9 @@ sap.ui.define([
 		oCM.addCondition("fieldPath2+/bar", Condition.createCondition("EQ", ["bar1"]));
 		oCM.addCondition("fieldPath2+/bar", Condition.createCondition("EQ", ["bar2"]));
 
-		var oFilter = FilterConverter.createFilters( oCM.getAllConditions(), {});
+		const oFilter = FilterConverter.createFilters( oCM.getAllConditions(), {});
 
-		var result = FilterConverter.prettyPrintFilters(oFilter);
+		const result = FilterConverter.prettyPrintFilters(oFilter);
 		assert.strictEqual(oFilter.aFilters.length, 2, "two filters must be returned on top level");
 		assert.strictEqual(result, "(fieldPath1 All (L1/foo EQ 'foo1' or L1/foo EQ 'foo2') and fieldPath2 All (L1/bar EQ 'bar1' or L1/bar EQ 'bar2'))", "result contains the expected Any filter");
 
@@ -198,13 +198,13 @@ sap.ui.define([
 		oCM.addCondition("fieldPath2", Condition.createCondition("EQ", ["Foo2"]));
 		oCM.addCondition("fieldPath3", Condition.createCondition("EQ", ["Foo3"]));
 
-		var oFilter = FilterConverter.createFilters( oCM.getAllConditions(), {
+		const oFilter = FilterConverter.createFilters( oCM.getAllConditions(), {
 			"fieldPath1" : {type: null, caseSensitive: false},	// the first property should be handled caseInsensitive
 			"fieldPath2" : {type: null, caseSensitive: true},
 			"fieldPath3" : {type: null}
 		});
 
-		var result = FilterConverter.prettyPrintFilters(oFilter);
+		const result = FilterConverter.prettyPrintFilters(oFilter);
 		assert.strictEqual(oFilter.aFilters.length, 3, "three filters must be returned on top level");
 		assert.ok(oFilter.aFilters[0].bCaseSensitive === false, "first Filter should have caseSensitive false");
 		assert.ok(oFilter.aFilters[1].bCaseSensitive === undefined, "second Filter should have caseSensitive undefined/true");

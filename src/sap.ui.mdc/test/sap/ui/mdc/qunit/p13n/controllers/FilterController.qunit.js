@@ -15,7 +15,7 @@ sap.ui.define([
 
     QUnit.test("Check 'getConditionOperatorSanity' (valid)", function(assert){
 
-        var oValidOperator = {
+        const oValidOperator = {
             String: [
                 {
                     operator: "Contains",
@@ -32,7 +32,7 @@ sap.ui.define([
 
     QUnit.test("Check 'getConditionOperatorSanity' (invalid)", function(assert){
 
-        var oInValidOperator = {
+        const oInValidOperator = {
             String: [
                 {
                     operator: "INVALIDFANTASYOPERATOR",

@@ -29,22 +29,20 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var ValueHelpDelegate = Object.assign({}, ODataV4ValueHelpDelegate);
+	const ValueHelpDelegate = Object.assign({}, ODataV4ValueHelpDelegate);
 	ValueHelpDelegate.apiVersion = 2;//CLEANUPD_DELEGATE
 
 //	var counter = 0;
 
 	ValueHelpDelegate.retrieveContent = function (oValueHelp, oContainer) {
-		var oValueHelp = oContainer && oContainer.getParent();
+		const oParams = UriParameters.fromQuery(location.search);
+		const oParamSuspended = oParams.get("suspended");
+		const bSuspended = oParamSuspended ? oParamSuspended === "true" : false;
 
-		var oParams = UriParameters.fromQuery(location.search);
-		var oParamSuspended = oParams.get("suspended");
-		var bSuspended = oParamSuspended ? oParamSuspended === "true" : false;
+		const aCurrentContent = oContainer && oContainer.getContent();
+		let oCurrentContent = aCurrentContent && aCurrentContent[0];
 
-		var aCurrentContent = oContainer && oContainer.getContent();
-		var oCurrentContent = aCurrentContent && aCurrentContent[0];
-
-		var bMultiSelect = oValueHelp.getMaxConditions() === -1;
+		const bMultiSelect = oValueHelp.getMaxConditions() === -1;
 
 		if (oContainer.isA("sap.ui.mdc.valuehelp.Popover")) {
 
@@ -89,7 +87,7 @@ sap.ui.define([
 				oContainer.addContent(oCurrentContent);
 
 				if (bMultiSelect) {
-					var oAdditionalContent = new Conditions({
+					const oAdditionalContent = new Conditions({
 						title:"Define Conditions",
 						shortTitle:"Conditions",
 						label:"Label of Field"
@@ -98,21 +96,21 @@ sap.ui.define([
 				}
 			}
 
-			var sCollectiveSearchKey = oCurrentContent.getCollectiveSearchKey();
+			const sCollectiveSearchKey = oCurrentContent.getCollectiveSearchKey();
 
-			var oCurrentTable = oCurrentContent.getTable();
+			const oCurrentTable = oCurrentContent.getTable();
 			if (oCurrentTable) {
 				oCurrentTable.destroy();
 			}
 
-			var oCurrentFB = oCurrentContent.getFilterBar();
+			const oCurrentFB = oCurrentContent.getFilterBar();
 
 			if (oCurrentFB) {
 				oCurrentContent.setFilterBar();
 				oCurrentFB.destroy();
 			}
 
-			var oCollectiveSearchContent;
+			let oCollectiveSearchContent;
 
 			switch (sCollectiveSearchKey) {
 				case "template1":

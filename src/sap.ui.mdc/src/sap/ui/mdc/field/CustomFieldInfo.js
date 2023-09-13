@@ -22,7 +22,7 @@ sap.ui.define([
 	 * @since 1.54.0
 	 * @alias sap.ui.mdc.field.CustomFieldInfo
 	 */
-	var CustomFieldInfo = FieldInfoBase.extend("sap.ui.mdc.field.CustomFieldInfo", /** @lends sap.ui.mdc.field.CustomFieldInfo.prototype */
+	const CustomFieldInfo = FieldInfoBase.extend("sap.ui.mdc.field.CustomFieldInfo", /** @lends sap.ui.mdc.field.CustomFieldInfo.prototype */
 	{
 		metadata: {
 			library: "sap.ui.mdc",
@@ -96,7 +96,7 @@ sap.ui.define([
 					apiVersion: 2,
 					render: function(oRm, oBox) {
 
-						var oContent = oBox._oInfo.getAggregation("content");
+						const oContent = oBox._oInfo.getAggregation("content");
 
 						oRm.openStart("div", oBox);
 						oRm.openEnd();

@@ -15,7 +15,7 @@ sap.ui.define([
 	"use strict";
 
 	// shortcut for sap.m.OverflowToolbarPriority
-	var OverflowToolbarPriority = mobileLibrary.OverflowToolbarPriority;
+	const OverflowToolbarPriority = mobileLibrary.OverflowToolbarPriority;
 
 	/**
 	 * Constructor for a new ActionToolbar.<br>
@@ -36,7 +36,7 @@ sap.ui.define([
 	 * @alias sap.ui.mdc.ActionToolbar
 	 */
 
-	var ActionToolbar = OverflowToolbar.extend("sap.ui.mdc.ActionToolbar", {
+	const ActionToolbar = OverflowToolbar.extend("sap.ui.mdc.ActionToolbar", {
 		metadata: {
 			library: "sap.ui.mdc",
 			designtime: "sap/ui/mdc/designtime/actiontoolbar/ActionToolbar.designtime",
@@ -88,15 +88,15 @@ sap.ui.define([
 		renderer: OverflowToolbarRenderer
 	});
 
-	var aAggregations = [
+	const aAggregations = [
 		"begin",
 		"between",
 		"actions",
 		"end"
 	];
 
-	var fnGetOverflowToolbarConfig = function() {
-		var oConfig = {
+	const fnGetOverflowToolbarConfig = function() {
+		const oConfig = {
 			canOverflow: true,
 			getCustomImportance: function() {
 				return OverflowToolbarPriority.NeverOverflow;
@@ -156,7 +156,7 @@ sap.ui.define([
 			throw new Error("Mutator functions of the content aggregation of the ActionToolbar '" + this.getId() + "' must not be used.");
 		}
 
-		var aArguments = arguments;
+		const aArguments = arguments;
 		if (aAggregations.includes(sAggregationName)) {
 			this._registerControlListener(oControl);
 			this._resetAndInvalidateToolbar(false);
@@ -167,7 +167,7 @@ sap.ui.define([
 
 			this._informNewFlexibleContentAdded(oControl);
 
-			var vContent = this._callToolbarMethod("addAggregation", aArguments);
+			const vContent = this._callToolbarMethod("addAggregation", aArguments);
 			this._updateSeparators();
 
 			return vContent;
@@ -182,8 +182,8 @@ sap.ui.define([
 		}
 
 		if (aAggregations.includes(sAggregationName)) {
-			var aContentToDelete = this.removeAllAggregation(sAggregationName);
-			for (var i = 0; i < aContentToDelete.length; i++) {
+			const aContentToDelete = this.removeAllAggregation(sAggregationName);
+			for (let i = 0; i < aContentToDelete.length; i++) {
 				aContentToDelete[i].destroy();
 			}
 			this._updateSeparators();
@@ -209,7 +209,7 @@ sap.ui.define([
 
 			this._informNewFlexibleContentAdded(oControl);
 
-			var vContent = this._callToolbarMethod("insertAggregation", arguments);
+			const vContent = this._callToolbarMethod("insertAggregation", arguments);
 			this._updateSeparators();
 
 			return vContent;
@@ -232,7 +232,7 @@ sap.ui.define([
 		}
 
 		if (aAggregations.includes(sAggregationName)) {
-			var vContent = this._callToolbarMethod("removeAggregation", arguments);
+			const vContent = this._callToolbarMethod("removeAggregation", arguments);
 			if (vContent) {
 				this._getPopover().removeAssociatedContent(vContent.getId());
 			}
@@ -270,7 +270,7 @@ sap.ui.define([
 
 	ActionToolbar.prototype.getActionsWithLayoutInformation = function(oLayoutInformation) {
 		return this.getActions().filter(function(oActionToolbarAction) {
-			var oActionLayoutInformation = oActionToolbarAction.getLayoutInformation();
+			const oActionLayoutInformation = oActionToolbarAction.getLayoutInformation();
 			return oActionLayoutInformation.aggregationName === oLayoutInformation.aggregationName && oActionLayoutInformation.alignment === oLayoutInformation.alignment;
 		});
 	};
@@ -293,32 +293,32 @@ sap.ui.define([
 	};
 
 	ActionToolbar.prototype._hasVisible = function(aArray) {
-		var aPopoverContent = this.getAggregation("_popover") ? this.getAggregation("_popover")._getAllContent() : [];
+		const aPopoverContent = this.getAggregation("_popover") ? this.getAggregation("_popover")._getAllContent() : [];
 
-		var aVisibleContent = aArray.filter(function (oControl) {
+		const aVisibleContent = aArray.filter(function (oControl) {
 			return aPopoverContent.indexOf(oControl) === -1;
 		});
 		return aVisibleContent.some(function(oControl) {
 			// visible="true" and does not have "0px" width
-			var bHasWidth = oControl.getWidth ? oControl.getWidth() !== "0px" : true;
+			const bHasWidth = oControl.getWidth ? oControl.getWidth() !== "0px" : true;
 			return oControl.getVisible() && bHasWidth;
 		});
 	};
 
 	ActionToolbar.prototype._updateSeparators = function() {
-		var bHasEnd = this._hasVisible(this.getEnd());
+		const bHasEnd = this._hasVisible(this.getEnd());
 
 		if (this._oBeginSeparator) {
-			var bHasBegin = this._hasVisible(this.getBegin());
-			var bHasBetween = this._hasVisible(this.getBetween());
+			const bHasBegin = this._hasVisible(this.getBegin());
+			const bHasBetween = this._hasVisible(this.getBetween());
 			this._oBeginSeparator.setVisible(bHasBegin && bHasBetween);
 		}
 		if (this._oEndActionsBeginSeparator) {
-			var bHasEndActionsBegin = this._hasVisible(this.getEndActionsBegin());
+			const bHasEndActionsBegin = this._hasVisible(this.getEndActionsBegin());
 			this._oEndActionsBeginSeparator.setVisible(bHasEnd && bHasEndActionsBegin);
 		}
 		if (this._oEndActionsEndSeparator) {
-			var bHasEndActionsEnd = this._hasVisible(this.getEndActionsEnd());
+			const bHasEndActionsEnd = this._hasVisible(this.getEndActionsEnd());
 			this._oEndActionsEndSeparator.setVisible(bHasEnd && bHasEndActionsEnd);
 		}
 	};
@@ -332,7 +332,7 @@ sap.ui.define([
 
 	// Overwrite content aggregation functions
 	ActionToolbar.prototype.getContent = function() {
-		var aContent = this.getBegin();
+		let aContent = this.getBegin();
 		aContent.push(this._oBeginSeparator);
 		aContent = aContent.concat(this.getBetween());
 		aContent.push(this._oSpacer);
@@ -346,7 +346,8 @@ sap.ui.define([
 	};
 
 	ActionToolbar.prototype.getCurrentState = function() {
-		var aActions = [], sId;
+		const aActions = [];
+		let sId;
 
 		this.getActions().forEach(function(oAction, iIndex) {
 			sId = oAction && oAction.getId();
@@ -367,7 +368,7 @@ sap.ui.define([
 		return Promise.resolve({
 			getProperties: function() {
 
-				var aItems = [];
+				const aItems = [];
 				this.getActions().forEach(function(oAction){
 					aItems.push({
 						name: oAction.getId(),

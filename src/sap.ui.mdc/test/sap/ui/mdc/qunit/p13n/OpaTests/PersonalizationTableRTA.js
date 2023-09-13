@@ -24,7 +24,7 @@ sap.ui.define([
 		autoWait: true
 	});
 
-	var aTableItems = [
+	const aTableItems = [
 		{p13nItem: "Name", selected: true},
 		{p13nItem: "Founding Year", selected: true},
 		{p13nItem: "Changed By", selected: true},
@@ -39,7 +39,7 @@ sap.ui.define([
 		{p13nItem: "regionOfOrigin_code", selected: false}
 	];
 
-	var sTableID = "FlexTestComponent---IDViewTableOpaTest--FlexTestApp";
+	const sTableID = "FlexTestComponent---IDViewTableOpaTest--FlexTestApp";
 
 	// ----------------------------------------------------------------
 	// initialize application
@@ -295,7 +295,7 @@ sap.ui.define([
 	// ----------------------------------------------------------------
 	opaTest("Reopen the dialog to see if it the items have been rearranged", function (Give, When, Then) {
 
-		var aTableItems = [
+		const aTableItems = [
 			{p13nItem: "regionOfOrigin_code", selected: true},
 			{p13nItem: "Breakout Year", selected: true},
 			{p13nItem: "Country", selected: true},

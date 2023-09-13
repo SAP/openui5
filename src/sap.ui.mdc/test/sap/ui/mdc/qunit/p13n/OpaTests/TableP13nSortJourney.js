@@ -17,7 +17,7 @@ sap.ui.define([
 		autoWait: true
 	});
 
-	var aSortItems = [
+	const aSortItems = [
 		{p13nItem: "artistUUID", descending: false},
 		{p13nItem: "Breakout Year", descending: false},
 		{p13nItem: "Changed By", descending: false},

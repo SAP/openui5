@@ -172,7 +172,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Simple property", function(assert) {
-		var oPropertyHelper = new PropertyHelper([{
+		const oPropertyHelper = new PropertyHelper([{
 			name: "prop",
 			label: "Property",
 			dataType: "String"
@@ -183,7 +183,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Complex property", function(assert) {
-		var oPropertyHelper = new PropertyHelper([{
+		const oPropertyHelper = new PropertyHelper([{
 			name: "prop",
 			label: "Property",
 			dataType: "String"
@@ -550,8 +550,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("getGroupableProperties", function(assert) {
-		var oSimpleProperty = this.oPropertyHelper.getProperty("prop");
-		var oComplexProperty = this.oPropertyHelper.getProperty("complexProp");
+		const oSimpleProperty = this.oPropertyHelper.getProperty("prop");
+		const oComplexProperty = this.oPropertyHelper.getProperty("complexProp");
 
 		oSimpleProperty.getGroupableProperties().push("s"); // Returned array must not be influenced by changes to previously returned arrays.
 		assert.deepEqual(oSimpleProperty.getGroupableProperties(), [oSimpleProperty], "Groupable simple property");
@@ -581,7 +581,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Set 'extension' attribute", function(assert) {
-		var oPropertyHelper = new PropertyHelper([{
+		const oPropertyHelper = new PropertyHelper([{
 			name: "foo",
 			label: "bar",
 			dataType: "String",
@@ -600,7 +600,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("'extension' attribute has default value", function(assert) {
-		var oPropertyHelper = new PropertyHelper([{
+		const oPropertyHelper = new PropertyHelper([{
 			name: "foo",
 			label: "bar",
 			dataType: "String"
@@ -627,7 +627,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Complex property", function(assert) {
-		var oPropertyHelper = new PropertyHelper([{
+		const oPropertyHelper = new PropertyHelper([{
 			name: "foo",
 			label: "bar",
 			dataType: "String"
@@ -703,7 +703,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("typeConfig", function(assert) {
-		var oSimpleProperty = this.oPropertyHelper.getProperty("prop");
+		const oSimpleProperty = this.oPropertyHelper.getProperty("prop");
 
 		assert.strictEqual(oSimpleProperty.typeConfig, "MyFakeTypeConfig", "Reading 'typeConfig' is possible");
 		assert.ok(this.oGetTypeConfigStub.calledOnceWithExactly(oSimpleProperty.dataType, oSimpleProperty.formatOptions, oSimpleProperty.constraints),

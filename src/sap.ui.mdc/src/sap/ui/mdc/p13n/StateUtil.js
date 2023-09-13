@@ -18,7 +18,7 @@ sap.ui.define([
 	 * @since 1.77.0
 	 * @alias sap.ui.mdc.p13n.StateUtil
 	 */
-	var StateUtil = {
+	const StateUtil = {
 
 
 		/**
@@ -101,7 +101,7 @@ sap.ui.define([
 		* @returns {Promise} <code>Promise</code> that resolves after all changes have been applied
 		*/
 		applyExternalState: function(oControl, oState){
-			var oInternalState = Engine.getInstance().internalizeKeys(oControl, oState);
+			const oInternalState = Engine.getInstance().internalizeKeys(oControl, oState);
 			return Engine.getInstance().applyState(oControl, oInternalState, false);
 		},
 
@@ -133,7 +133,7 @@ sap.ui.define([
 		 * @returns {Promise} <code>Promise</code> that resolves after the state has been reset
 		 */
 		resetState: function(oControl) {
-			var aInternalKeys = Engine.getInstance().getRegisteredControllers(oControl);
+			const aInternalKeys = Engine.getInstance().getRegisteredControllers(oControl);
 			return Engine.getInstance().reset(oControl, aInternalKeys);
 		},
 

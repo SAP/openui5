@@ -39,8 +39,8 @@ sap.ui.define([
 	) {
 	"use strict";
 
-	var sTargetTypeRaw = "sap.ui.mdc.raw";
-	var sTargetTypeRawComposite = "sap.ui.mdc.raw:";
+	const sTargetTypeRaw = "sap.ui.mdc.raw";
+	const sTargetTypeRawComposite = "sap.ui.mdc.raw:";
 
 	/**
 	 * Constructor for a Condition type.
@@ -83,7 +83,7 @@ sap.ui.define([
 	 * @param {object} [oConstraints] Value constraints
 	 * @alias sap.ui.mdc.field.ConditionType
 	 */
-	var ConditionType = SimpleType.extend("sap.ui.mdc.field.ConditionType", /** @lends sap.ui.mdc.field.ConditionType.prototype */ {
+	const ConditionType = SimpleType.extend("sap.ui.mdc.field.ConditionType", /** @lends sap.ui.mdc.field.ConditionType.prototype */ {
 
 		constructor : function (oFormatOptions, oConstraints) {
 			SimpleType.apply(this, arguments);
@@ -141,30 +141,32 @@ sap.ui.define([
 			sTargetType = "string";
 		}
 
-		var oType = _getValueType.call(this);
-		var oAdditionalType = _getAdditionalValueType.call(this);
-		var bIsUnit = _isUnit(oType);
-		var bPreventGetDescription = this.oFormatOptions.preventGetDescription;
+		let oType = _getValueType.call(this);
+		const oAdditionalType = _getAdditionalValueType.call(this);
+		const bIsUnit = _isUnit(oType);
+		const bPreventGetDescription = this.oFormatOptions.preventGetDescription;
 
 		_attachCurrentValueAtType.call(this, oCondition, oType); // use original condition
+
+		let sDisplay, aOperators, oEQOperator, iCallCount, iIndex;
 
 		switch (this.getPrimitiveType(sTargetType)) {
 			case "string":
 			case "any":
-				var sDisplay = _getDisplay.call(this);
-				var aOperators = _getOperators.call(this);
-				var oEQOperator = FilterOperatorUtil.getEQOperator(aOperators);
+				sDisplay = _getDisplay.call(this);
+				aOperators = _getOperators.call(this);
+				oEQOperator = FilterOperatorUtil.getEQOperator(aOperators);
 				if (!this.oFormatOptions.maxConditions || this.oFormatOptions.maxConditions === 1) { // as Tokens in FilterField using the same ConditionType, do not use the last value
 					this._oCalls.active++;
 					this._oCalls.last++;
 				}
-				var iCallCount = this._oCalls.last;
+				iCallCount = this._oCalls.last;
 
 				if (!bPreventGetDescription && sDisplay !== FieldDisplay.Value && oCondition.validated === ConditionValidated.Validated &&
 						(bIsUnit || (oCondition.operator === oEQOperator.name && !oCondition.values[1]))) {
 					// handle sync case and async case similar
-					var oBindingContext = this.oFormatOptions.bindingContext;
-					var vKey = bIsUnit ? oCondition.values[0][1] : oCondition.values[0];
+					const oBindingContext = this.oFormatOptions.bindingContext;
+					const vKey = bIsUnit ? oCondition.values[0][1] : oCondition.values[0];
 
 					return SyncPromise.resolve().then(function() {
 						return _getDescription.call(this, vKey, oCondition, oType, oAdditionalType, oBindingContext);
@@ -190,7 +192,7 @@ sap.ui.define([
 						}
 						return _returnResult.call(this, oCondition, undefined, iCallCount, true, oType, oAdditionalType);
 					}.bind(this)).catch(function(oException) {
-						var oMyException;
+						let oMyException;
 						if (!(oException instanceof FormatException) || !_isInvalidInputAllowed.call(this)) {
 							// if "invalid" input is allowed don't fire an exception
 							oMyException = oException;
@@ -202,7 +204,7 @@ sap.ui.define([
 
 				return _returnResult.call(this, oCondition, undefined, iCallCount, true, oType, oAdditionalType);
 			default:
-				var iIndex = _getIndexOfRawValue(sTargetType);
+				iIndex = _getIndexOfRawValue(sTargetType);
 				if (iIndex >= 0) {
 					if (_isCompositeType.call(this, oType)) {
 						//used for compositeTypes if just one value needs to be transfered without any formatting (e.g. for Timezone)
@@ -222,8 +224,8 @@ sap.ui.define([
 
 	function _formatToString(oCondition, oType, oAdditionalType) {
 
-		var sDisplay = _getDisplay.call(this);
-		var bIsUnit = _isUnit(oType);
+		const sDisplay = _getDisplay.call(this);
+		const bIsUnit = _isUnit(oType);
 
 		if (bIsUnit && oCondition.values.length > 1 && oCondition.values[0][1] === oCondition.values[1][1]) { // in Between case format only one unit
 			oCondition = merge({}, oCondition); // don't use same object
@@ -231,17 +233,17 @@ sap.ui.define([
 			oCondition.values.splice(1);
 		}
 
-		var bHideOperator = (this.oFormatOptions.hideOperator && oCondition.values.length === 1) || bIsUnit;
-		var oOperator = FilterOperatorUtil.getOperator(oCondition.operator);
-		var aCompositeTypes = _getCompositeTypes.call(this);
-		var aAdditionalCompositeTypes = _getAdditionalCompositeTypes.call(this);
+		const bHideOperator = (this.oFormatOptions.hideOperator && oCondition.values.length === 1) || bIsUnit;
+		const oOperator = FilterOperatorUtil.getOperator(oCondition.operator);
+		const aCompositeTypes = _getCompositeTypes.call(this);
+		const aAdditionalCompositeTypes = _getAdditionalCompositeTypes.call(this);
 
 		if (!oOperator) {
 			throw new FormatException("No valid condition provided, Operator wrong.");
 		}
 
-		var sResult = oOperator.format(oCondition, oType, sDisplay, bHideOperator, aCompositeTypes, oAdditionalType, aAdditionalCompositeTypes);
-		var bConvertWhitespaces = this.oFormatOptions.convertWhitespaces;
+		let sResult = oOperator.format(oCondition, oType, sDisplay, bHideOperator, aCompositeTypes, oAdditionalType, aAdditionalCompositeTypes);
+		const bConvertWhitespaces = this.oFormatOptions.convertWhitespaces;
 
 		if (bConvertWhitespaces && (_getBaseType.call(this, oType) === BaseType.String || sDisplay !== FieldDisplay.Value)) {
 			// convert only string types to prevent unwanted side effects
@@ -275,7 +277,7 @@ sap.ui.define([
 		}
 
 		// finalize condition. If Exception occurs here just throw it
-		var vResult;
+		let vResult;
 		if (bFormat) {
 			vResult = _formatToString.call(this, oCondition, oType, oAdditionalType);
 		} else {
@@ -310,7 +312,7 @@ sap.ui.define([
 	 */
 	ConditionType.prototype.parseValue = function(vValue, sSourceType) {
 
-		var bInputValidationEnabled = _isInputValidationEnabled.call(this);
+		const bInputValidationEnabled = _isInputValidationEnabled.call(this);
 		if (!sSourceType) {
 			sSourceType = "string";
 		} else if (sSourceType === "any" && typeof vValue === "string") {
@@ -353,21 +355,21 @@ sap.ui.define([
 			return null;
 		}
 
-		var oNavigateCondition = this.oFormatOptions.navigateCondition;
+		const oNavigateCondition = this.oFormatOptions.navigateCondition;
 		if (oNavigateCondition) {
 			// condition already known from navigation. Just check if it is really the same as the input.
-			var vOutput = this.formatValue(oNavigateCondition, sSourceType);
+			const vOutput = this.formatValue(oNavigateCondition, sSourceType);
 			if (vOutput === vValue) {
 				return merge({}, oNavigateCondition); // use copy
 			}
 		}
 
-		var sDisplay = _getDisplay.call(this);
-		var oType = _getValueType.call(this);
-		var oOriginalType = _getOriginalType.call(this);
-		var aOperators = _getOperators.call(this);
-		var bIsUnit = _isUnit(oType);
-		var sDefaultOperator;
+		const sDisplay = _getDisplay.call(this);
+		const oType = _getValueType.call(this);
+		const oOriginalType = _getOriginalType.call(this);
+		const aOperators = _getOperators.call(this);
+		const bIsUnit = _isUnit(oType);
+		let sDefaultOperator;
 
 		if (vValue === null || vValue === undefined || (vValue === "" && !bInputValidationEnabled)) { // check if "" is a key in ValueHelp
 			if (!_isCompositeType.call(this, oType)) {
@@ -377,18 +379,20 @@ sap.ui.define([
 
 		_initCurrentValueAtType.call(this, oType);
 
+		let oOperator, bCheckForDefault, bUseDefaultOperator;
+
 		switch (this.getPrimitiveType(sSourceType)) {
 			case "string":
-				var oOperator;
-				var bCheckForDefault = false;
-				var bUseDefaultOperator = false;
+				oOperator;
+				bCheckForDefault = false;
+				bUseDefaultOperator = false;
 
 				if (aOperators.length === 1) {
 					// only one operator supported -> use it
 					oOperator = FilterOperatorUtil.getOperator(aOperators[0]);
 					bUseDefaultOperator = true;
 				} else {
-					var aMatchingOperators = FilterOperatorUtil.getMatchingOperators(aOperators, vValue);
+					const aMatchingOperators = FilterOperatorUtil.getMatchingOperators(aOperators, vValue);
 
 					if (aMatchingOperators.length === 0) {
 						// use default operator if nothing found
@@ -396,7 +400,7 @@ sap.ui.define([
 
 						if (bInputValidationEnabled && !_isCompositeType.call(this, oType)) {
 							// try first to use EQ and find it in ValueHelp. If not found try later with default operator
-							var oEQOperator = FilterOperatorUtil.getEQOperator(aOperators);
+							const oEQOperator = FilterOperatorUtil.getEQOperator(aOperators);
 							if (aOperators.indexOf(oEQOperator.name) >= 0) { // as EQ is returned if not in List
 								bCheckForDefault = !!oOperator && oOperator.name !== oEQOperator.name; // only if default operator exists and is different
 								oOperator = oEQOperator;
@@ -406,7 +410,7 @@ sap.ui.define([
 						bUseDefaultOperator = true;
 					} else {
 						//in case of multiple matches we use the first operators without ValueType (if exist) / at the moment we have two matching operators for "<empty>"" --> LT and EMPTY
-						var aOperatorsWithoutValueType = aMatchingOperators.filter(function(oOperator){ return oOperator.valueTypes.length === 0; });
+						const aOperatorsWithoutValueType = aMatchingOperators.filter(function(oOperator){ return oOperator.valueTypes.length === 0; });
 						if (aOperatorsWithoutValueType.length >= 1) {
 							oOperator = aOperatorsWithoutValueType[0];
 						} else {
@@ -419,14 +423,14 @@ sap.ui.define([
 					if (bIsUnit && oOperator !== FilterOperatorUtil.getEQOperator(aOperators)) {
 						throw new ParseException("unsupported operator");
 					}
-					var oCondition;
-					var bCompositeType = _isCompositeType.call(this, oType);
-					var aCompositeTypes = _getCompositeTypes.call(this);
-					var oAdditionalType = _getAdditionalValueType.call(this);
-					var aAdditionalCompositeTypes = _getAdditionalCompositeTypes.call(this);
+					let oCondition;
+					const bCompositeType = _isCompositeType.call(this, oType);
+					const aCompositeTypes = _getCompositeTypes.call(this);
+					const oAdditionalType = _getAdditionalValueType.call(this);
+					const aAdditionalCompositeTypes = _getAdditionalCompositeTypes.call(this);
 					this._oCalls.active++;
 					this._oCalls.last++;
-					var iCallCount = this._oCalls.last;
+					const iCallCount = this._oCalls.last;
 
 					if ((!bCompositeType || bIsUnit) && oOperator.validateInput && bInputValidationEnabled) {
 						// use ValueHelp to determine condition (for unit part also if composite type used)
@@ -446,7 +450,7 @@ sap.ui.define([
 								oCondition = oOperator.getCondition(vValue, oType, sDisplay, bUseDefaultOperator, aCompositeTypes, oAdditionalType, aAdditionalCompositeTypes);
 							}
 						} catch (oException) {
-							var oMyException = oException;
+							let oMyException = oException;
 							if (oMyException instanceof ParseException && oOriginalType && !bCompositeType) {
 								// As internal yyyy-MM-dd is used as pattern for dates (times similar) the
 								// parse exception might contain this as pattern. The user should see the pattern thats shown
@@ -483,11 +487,11 @@ sap.ui.define([
 						}
 					}
 					if (sDefaultOperator) {
-						var iIndex = _getIndexOfRawValue(sSourceType);
+						const iIndex = _getIndexOfRawValue(sSourceType);
 						if (iIndex >= 0) {
 							if (_isCompositeType.call(this, oType)) {
 								//used for compositeTypes if just one value needs to be transfered without any parsing (Timezone)
-								var aValue = merge([], oType._aCurrentValue);
+								const aValue = merge([], oType._aCurrentValue);
 								aValue[iIndex] = vValue;
 								return Condition.createCondition(sDefaultOperator, [aValue], undefined, undefined, ConditionValidated.NotValidated);
 							}
@@ -505,21 +509,21 @@ sap.ui.define([
 
 	function _finishParseFromString(oCondition, oType) {
 
-		var bIsUnit = _isUnit(oType);
-		var bCompositeType = _isCompositeType.call(this, oType);
+		const bIsUnit = _isUnit(oType);
+		const bCompositeType = _isCompositeType.call(this, oType);
 
 		if (oCondition && !bIsUnit && bCompositeType) {
-			var oOriginalType = _getOriginalType.call(this) || oType; // use original type for determination if unit as valueType might mapped different (if no original type, valueType is original)
-			var sName = oOriginalType.getMetadata().getName();
-			var oFormatOptions = oOriginalType.getFormatOptions();
-			var oConstraints = oOriginalType.getConstraints();
-			var oDelegate = this.oFormatOptions.delegate;
-			var oField = this.oFormatOptions.control;
-			var sBaseType = oDelegate && oDelegate.getTypeMap(oField).getBaseType(sName, oFormatOptions, oConstraints); // don't use _getBaseType to get "real" unit type
+			const oOriginalType = _getOriginalType.call(this) || oType; // use original type for determination if unit as valueType might mapped different (if no original type, valueType is original)
+			const sName = oOriginalType.getMetadata().getName();
+			const oFormatOptions = oOriginalType.getFormatOptions();
+			const oConstraints = oOriginalType.getConstraints();
+			const oDelegate = this.oFormatOptions.delegate;
+			const oField = this.oFormatOptions.control;
+			const sBaseType = oDelegate && oDelegate.getTypeMap(oField).getBaseType(sName, oFormatOptions, oConstraints); // don't use _getBaseType to get "real" unit type
 			if ((sBaseType === BaseType.Unit || sBaseType === BaseType.DateTime) &&
 					!oCondition.values[0][1] && oType._aCurrentValue) {
 				// TODO: if no unit provided use last one
-				var sUnit = oType._aCurrentValue[1] === undefined ? null : oType._aCurrentValue[1]; // undefined in CompositeType means "not changed" -> if no current unit it needs to be null
+				const sUnit = oType._aCurrentValue[1] === undefined ? null : oType._aCurrentValue[1]; // undefined in CompositeType means "not changed" -> if no current unit it needs to be null
 				oCondition.values[0][1] = sUnit;
 				if (oCondition.operator === "BT") {
 					oCondition.values[1][1] = sUnit;
@@ -535,15 +539,14 @@ sap.ui.define([
 
 	function _parseDetermineKeyAndDescription(oOperator, vValue, oType, oAdditionalType, bUseDefaultOperator, bCheckForDefault, aOperators, sDisplay, bFirstCheck) {
 
-		var vKey;
-		var vDescription;
-		var bCheckKey = true;
-		var bCheckDescription = false;
-		var vCheckValue;
-		var vCheckParsedValue;
-		var vCheckParsedDescription;
-		var oBindingContext = this.oFormatOptions.bindingContext;
-		var aValues;
+		let vKey;
+		let vDescription;
+		let bCheckKey = true;
+		let bCheckDescription = false;
+		let vCheckValue;
+		let vCheckParsedDescription;
+		const oBindingContext = this.oFormatOptions.bindingContext;
+		let aValues;
 
 		if (vValue === "") {
 			// check for empty key
@@ -559,7 +562,7 @@ sap.ui.define([
 		}
 
 		// handle sync case and async case similar
-		var fnError = function(oException) {
+		const fnError = function(oException) {
 			if (oException && !(oException instanceof ParseException) && !(oException instanceof FormatException)) { // FormatException could also occur
 				// unknown error -> just raise it
 				throw oException;
@@ -589,9 +592,9 @@ sap.ui.define([
 			throw new ParseException(oException.message); // to have ParseException
 		};
 
-		var fnSuccess = function(oResult) {
+		const fnSuccess = function(oResult) {
 			if (oResult) {
-				var aValues = [oResult.key];
+				const aValues = [oResult.key];
 				if (oOperator.valueTypes.length > 1 && oOperator.valueTypes[1] !== OperatorValueType.Static) {
 					// description is supported
 					aValues.push(oResult.description);
@@ -606,11 +609,11 @@ sap.ui.define([
 			}
 		};
 
-		var iCallCount = this._oCalls.last;
+		const iCallCount = this._oCalls.last;
 
-		var fnGetResult = function(vResult, fnCheck) {
-			var oCondition;
-			var oMyException;
+		const fnGetResult = function(vResult, fnCheck) {
+			let oCondition;
+			let oMyException;
 			try {
 				oCondition = fnCheck.call(this, vResult);
 				if (_isUnit(oType)) {
@@ -619,8 +622,8 @@ sap.ui.define([
 						if (oCondition.operator !== "EQ") {
 							throw new ParseException("unsupported operator");
 						}
-						var vNumber = oType._aCurrentValue && oType._aCurrentValue[0] !== undefined ? oType._aCurrentValue[0] : null; // undefined not valid for formatting, needs to be null
-						var sUnit = oCondition.values[0]; // use key of unit
+						const vNumber = oType._aCurrentValue && oType._aCurrentValue[0] !== undefined ? oType._aCurrentValue[0] : null; // undefined not valid for formatting, needs to be null
+						const sUnit = oCondition.values[0]; // use key of unit
 						oCondition.values = [[vNumber, sUnit]];
 					} else if (vValue === "") {
 						// create a condition if no unit is entered (use type to parse)
@@ -633,8 +636,8 @@ sap.ui.define([
 			return _returnResult.call(this, oCondition, oMyException, iCallCount, false, oType);
 		};
 
-		var fnCheckForType = function(oType, vCheckValue, bOtherCheck) {
-			var vParsedValue;
+		const fnCheckForType = function(oType, vCheckValue, bOtherCheck) {
+			let vParsedValue;
 			try {
 				if (_isUnit(oType)) {
 					vParsedValue = oType.parseValue(vCheckValue, "string", oType._aCurrentValue);
@@ -655,7 +658,7 @@ sap.ui.define([
 		};
 
 		// check if is valid for key-type (if a key is determined use it, otherwise use checkValue)
-		vCheckParsedValue = fnCheckForType(oType, vKey || vCheckValue, bCheckDescription);
+		const vCheckParsedValue = fnCheckForType(oType, vKey || vCheckValue, bCheckDescription);
 		bCheckKey = vCheckParsedValue !== undefined; // no check if cannot be parsed
 		// check if is valid for description-type (if a description is determined use it, otherwise use checkValue)
 		if (bCheckDescription) {
@@ -675,8 +678,8 @@ sap.ui.define([
 
 	function _parseUseDefaultOperator(oType, aOperators, vValue, sDisplay) {
 
-		var oOperator = _getDefaultOperator.call(this, aOperators, oType);
-		var oCondition;
+		const oOperator = _getDefaultOperator.call(this, aOperators, oType);
+		let oCondition;
 
 		if (oOperator && aOperators.indexOf(oOperator.name) >= 0) {
 			oCondition = oOperator.getCondition(vValue, oType, FieldDisplay.Value, true); // use Value as displayFormat if nothing found in ValueHelp
@@ -691,7 +694,7 @@ sap.ui.define([
 
 		// Field accepts values that are not found -> must be checked by caller
 		// if user input fits to the type, let the caller validate it
-		var oOperator;
+		let oOperator;
 		if (_isUnit(oType)) {
 			// in unit case just use EQ operator
 			oOperator = FilterOperatorUtil.getEQOperator("EQ");
@@ -710,7 +713,7 @@ sap.ui.define([
 			throw new ParseException("Cannot parse value " + vValue); // use original value in message
 		}
 
-		var oCondition = oOperator.getCondition(vValue, oType, FieldDisplay.Value, true); // use display format Value as entered string should used as it is
+		const oCondition = oOperator.getCondition(vValue, oType, FieldDisplay.Value, true); // use display format Value as entered string should used as it is
 
 		if (oCondition) {
 			oCondition.validated = ConditionValidated.NotValidated;
@@ -739,15 +742,15 @@ sap.ui.define([
 	 */
 	ConditionType.prototype.validateValue = function(oCondition) {
 
-		var oType = _getValueType.call(this);
-		var oOriginalType = _getOriginalType.call(this);
-		var aOperators = _getOperators.call(this);
-		var bIsUnit = _isUnit(oType);
-		var bCompositeType = _isCompositeType.call(this, oType);
-		var aCompositeTypes = _getCompositeTypes.call(this);
-		var iCompositePart = 0;
-		var oAdditionalType = _getAdditionalValueType.call(this);
-		var aAdditionalCompositeTypes = _getAdditionalCompositeTypes.call(this);
+		const oType = _getValueType.call(this);
+		const oOriginalType = _getOriginalType.call(this);
+		const aOperators = _getOperators.call(this);
+		const bIsUnit = _isUnit(oType);
+		const bCompositeType = _isCompositeType.call(this, oType);
+		const aCompositeTypes = _getCompositeTypes.call(this);
+		let iCompositePart = 0;
+		const oAdditionalType = _getAdditionalValueType.call(this);
+		const aAdditionalCompositeTypes = _getAdditionalCompositeTypes.call(this);
 
 		if (oCondition === undefined || this._bDestroyed) { // if destroyed do nothing
 			return null;
@@ -755,7 +758,7 @@ sap.ui.define([
 			// check if type allows to be null
 			if (FilterOperatorUtil.onlyEQ(aOperators)) {
 				// TODO: also for FilterField case?
-				var vCheckValue = null;
+				let vCheckValue = null;
 				try {
 					if (oType.hasOwnProperty("_sParsedEmptyString") && oType._sParsedEmptyString !== null) { //TODO: find solution for all types
 						// empty string is parsed as empty string or "0", so validate for this
@@ -795,7 +798,7 @@ sap.ui.define([
 			throw new ConditionValidateException(this._oResourceBundle.getText("field.VALUE_NOT_VALID"), undefined, typeof oCondition === "object" ? merge({}, oCondition) : oCondition);
 		}
 
-		var oOperator = FilterOperatorUtil.getOperator(oCondition.operator);
+		let oOperator = FilterOperatorUtil.getOperator(oCondition.operator);
 
 		if (bIsUnit) {
 			oOperator = FilterOperatorUtil.getEQOperator(); // as only EQ is allowed for unit
@@ -831,7 +834,7 @@ sap.ui.define([
 
 	function _getDisplay() {
 
-		var sDisplay = this.oFormatOptions.display;
+		let sDisplay = this.oFormatOptions.display;
 		if (!sDisplay) {
 			sDisplay = FieldDisplay.Value;
 		}
@@ -842,7 +845,7 @@ sap.ui.define([
 
 	function _getValueType() {
 
-		var oType = this.oFormatOptions.valueType;
+		let oType = this.oFormatOptions.valueType;
 		if (!oType) {
 			// no type provided -> use string type as default
 			oType = _getDefaultType.call(this);
@@ -854,7 +857,7 @@ sap.ui.define([
 
 	function _getAdditionalValueType() {
 
-		var oType = this.oFormatOptions.additionalValueType;
+		let oType = this.oFormatOptions.additionalValueType;
 		if (!oType) {
 			// no type provided -> use string type as default
 			oType = _getDefaultType.call(this);
@@ -888,7 +891,7 @@ sap.ui.define([
 
 	function _getOperators() {
 
-		var aOperators = this.oFormatOptions.operators;
+		let aOperators = this.oFormatOptions.operators;
 		if (!aOperators || aOperators.length === 0) {
 			aOperators = FilterOperatorUtil.getOperatorsForType(BaseType.String); // TODO: check for type
 		}
@@ -899,9 +902,9 @@ sap.ui.define([
 
 	function _getValueHelp() {
 
-		var sID = this.oFormatOptions.valueHelpID;
+		const sID = this.oFormatOptions.valueHelpID;
 		if (sID) {
-			var oValueHelp = sap.ui.getCore().byId(sID);
+			const oValueHelp = sap.ui.getCore().byId(sID);
 			if (oValueHelp && oValueHelp.isValidationSupported()) {
 				return oValueHelp;
 			}
@@ -932,12 +935,12 @@ sap.ui.define([
 	function _isUnit(oType) {
 
 		if (_isCompositeType(oType)) {
-			var oFormatOptions = oType.getFormatOptions();
-			var bShowMeasure = !oFormatOptions || !oFormatOptions.hasOwnProperty("showMeasure") || oFormatOptions.showMeasure;
-			var bShowNumber = !oFormatOptions || !oFormatOptions.hasOwnProperty("showNumber") || oFormatOptions.showNumber;
-			var bShowTimezone = !oFormatOptions || !oFormatOptions.hasOwnProperty("showTimezone") || oFormatOptions.showTimezone; // handle timezone as unit
-			var bShowDate = !oFormatOptions || !oFormatOptions.hasOwnProperty("showDate") || oFormatOptions.showDate;
-			var bShowTime = !oFormatOptions || !oFormatOptions.hasOwnProperty("showTime") || oFormatOptions.showTime;
+			const oFormatOptions = oType.getFormatOptions();
+			const bShowMeasure = !oFormatOptions || !oFormatOptions.hasOwnProperty("showMeasure") || oFormatOptions.showMeasure;
+			const bShowNumber = !oFormatOptions || !oFormatOptions.hasOwnProperty("showNumber") || oFormatOptions.showNumber;
+			const bShowTimezone = !oFormatOptions || !oFormatOptions.hasOwnProperty("showTimezone") || oFormatOptions.showTimezone; // handle timezone as unit
+			const bShowDate = !oFormatOptions || !oFormatOptions.hasOwnProperty("showDate") || oFormatOptions.showDate;
+			const bShowTime = !oFormatOptions || !oFormatOptions.hasOwnProperty("showTime") || oFormatOptions.showTime;
 			if ((bShowMeasure && !bShowNumber) || (bShowTimezone && !bShowDate && !bShowTime)) {
 				return true;
 			}
@@ -952,12 +955,12 @@ sap.ui.define([
 		if (_isCompositeType.call(this, oType) && oCondition && oCondition.values[0]) {
 			oType._aCurrentValue = merge([], oCondition.values[0]); // use copy to prevent changes on original arry change aCurrentValue too
 
-			var oAdditionalType = _getAdditionalType.call(this);
+			const oAdditionalType = _getAdditionalType.call(this);
 			if (_isCompositeType.call(this, oAdditionalType)) { // store in corresponding unit or measure type too
 				oAdditionalType._aCurrentValue = merge([], oCondition.values[0]);
 			}
 
-			var oOriginalType = _getOriginalType.call(this);
+			const oOriginalType = _getOriginalType.call(this);
 			if (_isCompositeType.call(this, oOriginalType)) { // store in original type too (Currently not used in Unit/Currency type, but basically in CompositeType for parsing)
 				oOriginalType._aCurrentValue = merge([], oCondition.values[0]);
 			}
@@ -968,7 +971,7 @@ sap.ui.define([
 	function _initCurrentValueAtType(oType) {
 
 		if (_isCompositeType.call(this, oType)) {
-			var oAdditionalType = _getAdditionalType.call(this);
+			const oAdditionalType = _getAdditionalType.call(this);
 			if (_isCompositeType.call(this, oAdditionalType)) {
 				if (!oAdditionalType._aCurrentValue) {
 					oAdditionalType._aCurrentValue = [];
@@ -1010,12 +1013,12 @@ sap.ui.define([
 
 	function _getBaseType(oType) {
 
-		var sType = oType.getMetadata().getName();
-		var oFormatOptions = oType.getFormatOptions();
-		var oConstraints = oType.getConstraints();
-		var oDelegate = this.oFormatOptions.delegate;
-		var oField = this.oFormatOptions.control;
-		var sBaseType = oDelegate ? oDelegate.getTypeMap(oField).getBaseType(sType, oFormatOptions, oConstraints) : BaseType.String;
+		const sType = oType.getMetadata().getName();
+		const oFormatOptions = oType.getFormatOptions();
+		const oConstraints = oType.getConstraints();
+		const oDelegate = this.oFormatOptions.delegate;
+		const oField = this.oFormatOptions.control;
+		let sBaseType = oDelegate ? oDelegate.getTypeMap(oField).getBaseType(sType, oFormatOptions, oConstraints) : BaseType.String;
 
 		if (sBaseType === BaseType.Unit) {
 			sBaseType = BaseType.Numeric;
@@ -1027,8 +1030,8 @@ sap.ui.define([
 
 	function _isInputValidationEnabled() {
 
-		var oValueHelp = _getValueHelp.call(this);
-		var oDelegate = this.oFormatOptions.delegate;
+		const oValueHelp = _getValueHelp.call(this);
+		const oDelegate = this.oFormatOptions.delegate;
 
 		if (oDelegate) {
 			return oDelegate.isInputValidationEnabled(this.oFormatOptions.control, oValueHelp);
@@ -1040,8 +1043,8 @@ sap.ui.define([
 
 	function _isInvalidInputAllowed() {
 
-		var oValueHelp = _getValueHelp.call(this);
-		var oDelegate = this.oFormatOptions.delegate;
+		const oValueHelp = _getValueHelp.call(this);
+		const oDelegate = this.oFormatOptions.delegate;
 
 		if (oDelegate) {
 			return oDelegate.isInvalidInputAllowed(this, oValueHelp);
@@ -1055,10 +1058,10 @@ sap.ui.define([
 
 	function _getItemForValue(vValue, vParsedValue, vParsedDescription, oType, oAdditionalType, oBindingContext, bCheckKey, bCheckDescription) {
 
-		var oValueHelp = _getValueHelp.call(this);
-		var oDelegate = this.oFormatOptions.delegate;
-		var oControl = this.oFormatOptions.control;
-		var oConfig = {
+		const oValueHelp = _getValueHelp.call(this);
+		const oDelegate = this.oFormatOptions.delegate;
+		const oControl = this.oFormatOptions.control;
+		const oConfig = {
 				value: vValue,
 				parsedValue: vParsedValue,
 				parsedDescription: vParsedDescription,
@@ -1080,13 +1083,13 @@ sap.ui.define([
 
 	function _getDescription(vKey, oCondition, oType, oAdditionalType, oBindingContext) {
 
-		var oValueHelp = _getValueHelp.call(this);
-		var oDelegate = this.oFormatOptions.delegate;
-		var oControl = this.oFormatOptions.control;
+		const oValueHelp = _getValueHelp.call(this);
+		const oDelegate = this.oFormatOptions.delegate;
+		const oControl = this.oFormatOptions.control;
 		if (oDelegate) {
 			return oDelegate.getDescription(oControl, oValueHelp, vKey, oCondition.inParameters, oCondition.outParameters, oBindingContext, undefined, undefined, oCondition.payload, oControl, oType);
 		} else if (oValueHelp) {
-			var oConfig = {
+			const oConfig = {
 				value: vKey,
 				parsedValue: vKey,
 				parsedDescription: undefined,
@@ -1106,8 +1109,8 @@ sap.ui.define([
 
 	function _getDefaultOperator(aOperators, oType) {
 
-		var sDefaultOperatorName = this.oFormatOptions.defaultOperatorName;
-		var oOperator;
+		const sDefaultOperatorName = this.oFormatOptions.defaultOperatorName;
+		let oOperator;
 		if (sDefaultOperatorName) {
 			oOperator = FilterOperatorUtil.getOperator(sDefaultOperatorName);
 		} else {
@@ -1116,7 +1119,7 @@ sap.ui.define([
 
 		if (oOperator && aOperators.indexOf(oOperator.name) < 0) {
 			// default operator not valid -> cannot use -> use first include-operator
-			for (var i = 0; i < aOperators.length; i++) {
+			for (let i = 0; i < aOperators.length; i++) {
 				oOperator = FilterOperatorUtil.getOperator(aOperators[i]);
 				if (oOperator.exclude || !oOperator.hasRequiredValues()) {
 					oOperator = undefined;
@@ -1132,7 +1135,7 @@ sap.ui.define([
 
 	function _getIndexOfRawValue(sType) {
 
-		var iIndex = -1;
+		let iIndex = -1;
 		if (sType.startsWith(sTargetTypeRawComposite)) {
 			iIndex = parseInt(sType[sTargetTypeRawComposite.length]);
 		}

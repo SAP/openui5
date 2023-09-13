@@ -21,7 +21,7 @@ sap.ui.define([
 	 * @since 1.93.0
 	 * @alias sap.ui.mdc.field.MultiValueFieldDelegate
 	 */
-	var MultiValueFieldDelegate = Object.assign({}, FieldBaseDelegate);
+	const MultiValueFieldDelegate = Object.assign({}, FieldBaseDelegate);
 
 	/**
 	 * Implements the model-specific logic to update items after conditions have been updated.

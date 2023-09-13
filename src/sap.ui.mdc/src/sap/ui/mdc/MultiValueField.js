@@ -46,7 +46,7 @@ sap.ui.define([
 	 * @public
    	 * @experimental As of version 1.93.0
 	 */
-	var Field = FieldBase.extend("sap.ui.mdc.MultiValueField", /* @lends sap.ui.mdc.MultiValueField.prototype */ {
+	const Field = FieldBase.extend("sap.ui.mdc.MultiValueField", /* @lends sap.ui.mdc.MultiValueField.prototype */ {
 		metadata: {
 			library: "sap.ui.mdc",
 			designtime: "sap/ui/mdc/designtime/field/MultiValueField.designtime",
@@ -153,9 +153,9 @@ sap.ui.define([
 
 		// use type from item template key
 		if (oBindingInfo.template) {
-			var oDataType;
+			let oDataType;
 			if (oBindingInfo.template.mBindingInfos.key) {
-				var oKeyBindingInfo = oBindingInfo.template.mBindingInfos.key;
+				const oKeyBindingInfo = oBindingInfo.template.mBindingInfos.key;
 				oDataType = this.getContentFactory().getDataType();
 				if (oKeyBindingInfo.type && (!oDataType || oDataType.getMetadata().getName() !== oKeyBindingInfo.type.getMetadata().getName())) {
 					this._oContentFactory.setDataType(oKeyBindingInfo.type);
@@ -163,7 +163,7 @@ sap.ui.define([
 				}
 			}
 			if (oBindingInfo.template.mBindingInfos.description) {
-				var oDescriptionBindingInfo = oBindingInfo.template.mBindingInfos.description;
+				const oDescriptionBindingInfo = oBindingInfo.template.mBindingInfos.description;
 				oDataType = this.getContentFactory().getAdditionalDataType();
 				if (oDescriptionBindingInfo.type && (!oDataType || oDataType.getMetadata().getName() !== oDescriptionBindingInfo.type.getMetadata().getName())) {
 					this._oContentFactory.setAdditionalDataType(oDescriptionBindingInfo.type);
@@ -179,7 +179,7 @@ sap.ui.define([
 		FieldBase.prototype.handleModelContextChange.apply(this, arguments);
 
 		if (!this._oDataType) {
-			var oBindingInfo = this.getBinding("items");
+			const oBindingInfo = this.getBinding("items");
 			if (oBindingInfo) {
 				_getDataType.call(this, oBindingInfo);
 			}
@@ -192,7 +192,7 @@ sap.ui.define([
 
 		FieldBase.prototype.initDataType.apply(this, arguments);
 
-		var oBindingInfo = this.getBindingInfo("items");
+		const oBindingInfo = this.getBindingInfo("items");
 		if (oBindingInfo) {
 			_getDataType.call(this, oBindingInfo);
 		}
@@ -301,12 +301,12 @@ sap.ui.define([
 
 	function _updateCondition() {
 
-		var aItems = this.getItems();
-		var aConditions = [];
+		const aItems = this.getItems();
+		const aConditions = [];
 
-		for (var i = 0; i < aItems.length; i++) {
-			var oItem = aItems[i];
-			var oCondition = Condition.createItemCondition(_getInternalValue(oItem, "key"), _getInternalValue(oItem, "description"));
+		for (let i = 0; i < aItems.length; i++) {
+			const oItem = aItems[i];
+			const oCondition = Condition.createItemCondition(_getInternalValue(oItem, "key"), _getInternalValue(oItem, "description"));
 			oCondition.validated = ConditionValidated.Validated; // see every value set from outside as validated (to determine description, if needed)
 			aConditions.push(oCondition);
 		}
@@ -321,7 +321,7 @@ sap.ui.define([
 
 		// as keyor description could have internally another type - use initial value of binding
 		// TODO: better logic?
-		var oBinding = oItem.getBinding(sProperty);
+		const oBinding = oItem.getBinding(sProperty);
 		if (oBinding) {
 			return oBinding.getInternalValue();
 		} else {

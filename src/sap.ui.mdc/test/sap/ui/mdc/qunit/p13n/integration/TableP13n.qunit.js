@@ -3,11 +3,11 @@ sap.ui.define([
 	"sap/m/p13n/Engine", "../../QUnitUtils", "sap/ui/mdc/Table", "sap/ui/mdc/TableDelegate", "sap/m/Button", "sap/ui/mdc/table/Column", "sap/ui/mdc/FilterField", "sap/m/p13n/modification/FlexModificationHandler", "test-resources/sap/m/qunit/p13n/TestModificationHandler", "sap/ui/core/Core"
 ], function (Engine, MDCQUnitUtils, Table, TableDelegate, Button, Column, FilterField, FlexModificationHandler, TestModificationHandler, oCore) {
 	"use strict";
-	var oResourceBundle = oCore.getLibraryResourceBundle("sap.ui.mdc");
+	const oResourceBundle = oCore.getLibraryResourceBundle("sap.ui.mdc");
 
 	QUnit.module("Engine API tests showUI Table", {
 		beforeEach: function () {
-				var aPropertyInfos = [
+				const aPropertyInfos = [
 				{
 					"name": "col1",
 					"path": "nav/col1",
@@ -75,8 +75,8 @@ sap.ui.define([
 
 
 	QUnit.test("liveMode false", function (assert) {
-		var done = assert.async();
-		var oBtn = new Button();
+		const done = assert.async();
+		const oBtn = new Button();
 
 		Engine.getInstance().uimanager.show(this.oTable, "Column", oBtn).then(function(oP13nControl){
 
@@ -87,18 +87,18 @@ sap.ui.define([
 			assert.ok(Engine.getInstance().hasActiveP13n(this.oTable),"dialog is open");
 
 			//check inner panel
-			var oInnerTable = oP13nControl.getContent()[0]._oListControl;
+			const oInnerTable = oP13nControl.getContent()[0]._oListControl;
 			assert.ok(oP13nControl.getContent()[0].isA("sap.m.p13n.SelectionPanel"), "Correct panel created");
 			assert.ok(oInnerTable, "Inner Table has been created");
-			var oPropertyHelper = Engine.getInstance()._getRegistryEntry(this.oTable).helper;
+			const oPropertyHelper = Engine.getInstance()._getRegistryEntry(this.oTable).helper;
 			assert.equal(oInnerTable.getItems().length, oPropertyHelper.getProperties().length, "correct amount of items has been set");
 			done();
 		}.bind(this));
 	});
 
 	QUnit.test("open multiple keys to use Wrapper approach", function (assert) {
-		var done = assert.async();
-		var oBtn = new Button();
+		const done = assert.async();
+		const oBtn = new Button();
 		Engine.getInstance().uimanager.show(this.oTable, ["Column", "Sort"], oBtn).then(function(oP13nControl){
 
 			//check container
@@ -108,7 +108,7 @@ sap.ui.define([
 			assert.ok(Engine.getInstance().hasActiveP13n(this.oTable),"dialog is open");
 
 			//check inner control (should be a wrapper)
-			var oWrapper = oP13nControl.getContent()[0];
+			const oWrapper = oP13nControl.getContent()[0];
 			assert.ok(oWrapper.isA("sap.m.p13n.Container"), "Wrapper created");
 			assert.ok(oWrapper.getView("Column").getContent().isA("sap.m.p13n.SelectionPanel"), "Correct panel created");
 			assert.ok(oWrapper.getView("Sort").getContent().isA("sap.m.p13n.SortPanel"), "Correct panel created");
@@ -117,8 +117,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("open filter dialog", function (assert) {
-		var done = assert.async();
-		var oBtn = new Button();
+		const done = assert.async();
+		const oBtn = new Button();
 
 		this.oTable.initialized().then(function(){
 			this.oTable.retrieveInbuiltFilter().then(function(oP13nFilter){
@@ -145,13 +145,13 @@ sap.ui.define([
 	});
 
 	QUnit.test("open filter dialog - do not maintain 'filterable'", function (assert) {
-		var done = assert.async();
-		var oBtn = new Button();
+		const done = assert.async();
+		const oBtn = new Button();
 
 		this.oTable.initialized().then(function(){
 			this.oTable.retrieveInbuiltFilter().then(function(oP13nFilter){
 				Engine.getInstance().uimanager.show(this.oTable, "Filter", oBtn).then(function(oP13nControl){
-						var aFilterItems = oP13nControl.getContent()[0].getFilterItems();
+						const aFilterItems = oP13nControl.getContent()[0].getFilterItems();
 
 						//always display in Filter dialog by default
 						assert.equal(aFilterItems.length, 1, "correct amount of items has been set");
@@ -162,7 +162,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("handleP13n callback execution",function(assert){
-		var done = assert.async();
+		const done = assert.async();
 
 		this.oTable.initialized().then(function(){
 			//first we need to open the settings dialog to ensure that all models have been prepared
@@ -171,21 +171,21 @@ sap.ui.define([
 				//trigger event handler manually --> usually triggered by user interaction
 				//user interaction manipulates the inner model of the panel,
 				//to mock user interaction we directly act the change on the p13n panel model
-				var oColumnController = Engine.getInstance().getController(this.oTable, "Column");
-				var aItems = oColumnController.getP13nData();
+				const oColumnController = Engine.getInstance().getController(this.oTable, "Column");
+				const aItems = oColumnController.getP13nData();
 				aItems.pop();
 				sinon.stub(oColumnController, "getP13nData").returns(aItems);
 
-				var oModificationHandler = TestModificationHandler.getInstance();
+				const oModificationHandler = TestModificationHandler.getInstance();
 				oModificationHandler.processChanges = function(aChanges){
 					assert.ok(aChanges,"event has been executed");
 					assert.equal(aChanges.length, 1, "correct amounf oc changes has been created");
 
 					//check that only required information is present in the change content
-					var oChangeContent = aChanges[0].changeSpecificData.content;
+					const oChangeContent = aChanges[0].changeSpecificData.content;
 					assert.ok(oChangeContent.name);
 					assert.ok(!oChangeContent.hasOwnProperty("descending"));
-					var oPropertyHelper = Engine.getInstance()._getRegistryEntry(this.oTable).helper;
+					const oPropertyHelper = Engine.getInstance()._getRegistryEntry(this.oTable).helper;
 					assert.equal(oChangeContent.name, oPropertyHelper.getProperties()[1].name,
 						"The stored key should be equal to the 'name' in property info (NOT PATH!)");
 					Engine.getInstance()._setModificationHandler(this.oTable, FlexModificationHandler.getInstance());
@@ -202,8 +202,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("check with 'Sort'", function (assert) {
-		var done = assert.async();
-		var oBtn = new Button();
+		const done = assert.async();
+		const oBtn = new Button();
 
 		this.oTable.initialized().then(function(){
 			Engine.getInstance().uimanager.show(this.oTable, "Sort", oBtn).then(function(oP13nControl){
@@ -213,10 +213,10 @@ sap.ui.define([
 				assert.ok(Engine.getInstance().hasActiveP13n(this.oTable),"dialog is open");
 
 				//check inner panel
-				var oInnerTable = oP13nControl.getContent()[0]._oListControl;
+				const oInnerTable = oP13nControl.getContent()[0]._oListControl;
 				assert.ok(oP13nControl.getContent()[0].isA("sap.m.p13n.SortPanel"), "Correct panel created");
 				assert.ok(oInnerTable, "Inner Table has been created");
-				var oPropertyHelper = Engine.getInstance()._getRegistryEntry(this.oTable).helper;
+				const oPropertyHelper = Engine.getInstance()._getRegistryEntry(this.oTable).helper;
 
 				assert.equal(oP13nControl.getContent()[0]._getAvailableItems().length, oPropertyHelper.getProperties().length, "correct amount of items has been set");
 				done();
@@ -225,11 +225,11 @@ sap.ui.define([
 	});
 
 	QUnit.test("check with 'Sort' +  non sortable properties", function (assert) {
-		var done = assert.async();
-		var oBtn = new Button();
+		const done = assert.async();
+		const oBtn = new Button();
 		this.destroyTestObjects();
 
-		var aPropertyInfos = [
+		const aPropertyInfos = [
 			{
 				"name": "col1",
 				"path": "nav/col1",
@@ -257,12 +257,12 @@ sap.ui.define([
 				assert.ok(Engine.getInstance().hasActiveP13n(this.oTable),"dialog is open");
 
 				//check inner panel
-				var oInnerTable = oP13nControl.getContent()[0]._oListControl;
+				const oInnerTable = oP13nControl.getContent()[0]._oListControl;
 				assert.ok(oP13nControl.getContent()[0].isA("sap.m.p13n.SortPanel"), "Correct panel created");
 				assert.ok(oInnerTable, "Inner Table has been created");
 
 				//-1 non sortable property
-				var oPropertyHelper = Engine.getInstance()._getRegistryEntry(this.oTable).helper;
+				const oPropertyHelper = Engine.getInstance()._getRegistryEntry(this.oTable).helper;
 				assert.equal(oInnerTable.getItems().length, oPropertyHelper.getProperties().length - 1, "correct amount of items has been set");
 				done();
 			}.bind(this));
@@ -270,11 +270,11 @@ sap.ui.define([
 	});
 
 	QUnit.test("check with 'Columns' +  non visible properties", function (assert) {
-		var done = assert.async();
-		var oBtn = new Button();
+		const done = assert.async();
+		const oBtn = new Button();
 		this.destroyTestObjects();
 
-		var aPropertyInfos = [
+		const aPropertyInfos = [
 			{
 				"name": "col1",
 				"path": "nav/col1",
@@ -304,12 +304,12 @@ sap.ui.define([
 				assert.ok(Engine.getInstance().hasActiveP13n(this.oTable),"dialog is open");
 
 				//check inner panel
-				var oInnerTable = oP13nControl.getContent()[0]._oListControl;
+				const oInnerTable = oP13nControl.getContent()[0]._oListControl;
 				assert.ok(oP13nControl.getContent()[0].isA("sap.m.p13n.SelectionPanel"), "Correct panel created");
 				assert.ok(oInnerTable, "Inner Table has been created");
 
 				//-1 non visible property
-				var oPropertyHelper = Engine.getInstance()._getRegistryEntry(this.oTable).helper;
+				const oPropertyHelper = Engine.getInstance()._getRegistryEntry(this.oTable).helper;
 				assert.equal(oInnerTable.getItems().length, oPropertyHelper.getProperties().length - 1, "correct amount of items has been set");
 				done();
 			}.bind(this));
@@ -317,10 +317,10 @@ sap.ui.define([
 	});
 
 	QUnit.test("use 'createChanges' to create changes without UI panel (sort)", function (assert) {
-		var done = assert.async();
+		const done = assert.async();
 		this.destroyTestObjects();
 
-		var aPropertyInfos = [
+		const aPropertyInfos = [
 			{
 				"name": "col1",
 				"path": "nav/col1",
@@ -340,7 +340,7 @@ sap.ui.define([
 
 		this.createTestObjects(aPropertyInfos);
 
-		var aP13nData = [
+		const aP13nData = [
 			{name:"col2", descending: true}
 		];
 
@@ -367,9 +367,9 @@ sap.ui.define([
 	});
 
 	QUnit.test("use 'createChanges' to create changes without UI panel (create new columns)", function(assert){
-		var done = assert.async();
+		const done = assert.async();
 
-		var aP13nData = [
+		const aP13nData = [
 			{name:"col3", position: 2},
 			{name:"col4", position: 3}
 		];
@@ -396,9 +396,9 @@ sap.ui.define([
 	});
 
 	QUnit.test("use 'createChanges' to create changes without UI panel (remove non present column from calculation)", function(assert){
-		var done = assert.async();
+		const done = assert.async();
 
-		var aP13nData = [
+		const aP13nData = [
 			{name:"col3", position: 2},
 			{name:"col4", visible: false}// column is not present, so no change should be created
 		];
@@ -419,9 +419,9 @@ sap.ui.define([
 	});
 
 	QUnit.test("use 'createChanges' to create changes without UI panel (remove existing column)", function(assert){
-		var done = assert.async();
+		const done = assert.async();
 
-		var aP13nData = [
+		const aP13nData = [
 			{name:"col1", visible: false}
 		];
 
@@ -444,9 +444,9 @@ sap.ui.define([
 	});
 
 	QUnit.test("use 'createChanges' to create changes without UI panel (move existing column)", function(assert){
-		var done = assert.async();
+		const done = assert.async();
 
-		var aP13nData = [
+		const aP13nData = [
 			{name:"col1", position: 1}//position changed
 		];
 

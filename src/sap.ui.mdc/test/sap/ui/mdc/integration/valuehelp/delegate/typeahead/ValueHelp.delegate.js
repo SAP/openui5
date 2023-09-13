@@ -9,11 +9,11 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var ValueHelpDelegate = Object.assign({}, BaseValueHelpDelegate);
+	const ValueHelpDelegate = Object.assign({}, BaseValueHelpDelegate);
 
 	ValueHelpDelegate.showTypeahead = function (oPayload, oContent, oConfig) {
-		var sShowTypeahead = oContent.getModel("settings").getData().showTypeahead;
-		var fnShowTypeahead;
+		const sShowTypeahead = oContent.getModel("settings").getData().showTypeahead;
+		let fnShowTypeahead;
 
 		// eslint-disable-next-line no-eval
 		eval("fnShowTypeahead = " + sShowTypeahead);

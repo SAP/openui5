@@ -20,7 +20,7 @@ sap.ui.define([
 	 * @since 1.54.0
 	 * @alias sap.ui.mdc.link.PanelItem
 	 */
-	var PanelItem = Element.extend("sap.ui.mdc.link.PanelItem", /** @lends sap.ui.mdc.link.PanelItem.prototype */
+	const PanelItem = Element.extend("sap.ui.mdc.link.PanelItem", /** @lends sap.ui.mdc.link.PanelItem.prototype */
 	{
 		metadata: {
 			library: "sap.ui.mdc",

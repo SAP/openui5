@@ -6,7 +6,7 @@ sap.ui.define([
 
     return Integer.extend("mdc.sample.model.type.LengthMeter", {
         formatValue: function(iHeight) {
-            var oUnitFormat = NumberFormat.getUnitInstance();
+            const oUnitFormat = NumberFormat.getUnitInstance();
             return oUnitFormat.format(iHeight, "length-meter");
         }
     });

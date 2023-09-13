@@ -8,14 +8,14 @@ sap.ui.define([
 	], function (Engine, Chart, Util) {
 	"use strict";
 
-	var oDesignTime = {
+	const oDesignTime = {
 		actions: {
 			settings: function () {
 				//RTA expects the settings to be returned as function
 				return {
 					handler: function (oControl, mPropertyBag) {
-						var aP13nMode = oControl.getP13nMode();
-                        var iIdx = aP13nMode.indexOf("Type");
+						const aP13nMode = oControl.getP13nMode();
+                        const iIdx = aP13nMode.indexOf("Type");
 						if (iIdx > -1) {
 							aP13nMode.splice(iIdx, 1);
 						}
@@ -40,7 +40,7 @@ sap.ui.define([
 		}
 	};
 
-	var aAllowedAggregations = [ "_toolbar" ],
+	const aAllowedAggregations = [ "_toolbar" ],
 		aAllowedProperties = [ "headerLevel", "headerVisible" ];
 
 	return Util.getDesignTime(Chart, aAllowedProperties, aAllowedAggregations, oDesignTime);

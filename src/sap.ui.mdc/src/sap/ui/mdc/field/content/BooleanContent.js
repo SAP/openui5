@@ -18,7 +18,7 @@ sap.ui.define([
 	 * @alias sap.ui.mdc.field.content.BooleanContent
 	 * @extends sap.ui.mdc.field.content.DefaultContent
 	 */
-	var BooleanContent = Object.assign({}, DefaultContent, {
+	const BooleanContent = Object.assign({}, DefaultContent, {
 		getDisplayMultiValue: function() {
 			return [null];
 		},
