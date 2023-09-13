@@ -146,30 +146,30 @@ sap.ui.define([
 	 * @deprecated Since version 1.38.0.
 	 */
 	QUnit.test("setIndicator function", function (assert) {
-		var fnAssert = function (sExpectedIcon, sExpectedIndicator) {
-			assert.strictEqual(this.oNumericContent._oIndicatorIcon.getSrc(), sExpectedIcon, "Indicator icon src should be correct.");
-			assert.strictEqual(this.oNumericContent._oIndicatorIcon.getSize(), "0.875rem", "Indicator icon size should be correct.");
-			assert.ok(this.oNumericContent._oIndicatorIcon.hasStyleClass("sapMNCIndIcon"), "Indicator icon size should have correct style class.");
-			assert.strictEqual(this.oNumericContent.getIndicator(), sExpectedIndicator, "Indicator property should be set correctly.");
-		}.bind(this);
-
-		// Act
-		this.oNumericContent.setIndicator(DeviationIndicator.Down);
-		// Assert
-		fnAssert("sap-icon://down", DeviationIndicator.Down);
-		// Act
-		this.oNumericContent.setIndicator(DeviationIndicator.None);
-		// Assert
-		fnAssert("sap-icon://none", DeviationIndicator.None);
-		// Act
-		this.oNumericContent.setIndicator(DeviationIndicator.Up);
-		// Assert
-		fnAssert("sap-icon://up", DeviationIndicator.Up);
-		// Act
-		this.oNumericContent.setIndicator();
-		// Assert
-		fnAssert("sap-icon://none", DeviationIndicator.None);
-	});
+        var fnAssert = function (sExpectedIcon, sExpectedIndicator) {
+            if (sExpectedIndicator !== "None") {
+            assert.strictEqual(this.oNumericContent._oIndicatorIcon.getSrc(), sExpectedIcon, "Indicator icon src should be correct.");
+            }
+            assert.strictEqual(this.oNumericContent._oIndicatorIcon.getSize(), "0.875rem", "Indicator icon size should be correct.");
+            assert.ok(this.oNumericContent._oIndicatorIcon.hasStyleClass("sapMNCIndIcon"), "Indicator icon size should have correct style class.");
+            assert.strictEqual(this.oNumericContent.getIndicator(), sExpectedIndicator, "Indicator property should be set correctly.");
+            if (sExpectedIndicator === DeviationIndicator.None) {
+            assert.strictEqual(this.oNumericContent._oIndicatorIcon.src === undefined, true, "No object for None deviation");
+			}
+        }.bind(this);
+        //Act
+        this.oNumericContent.setIndicator(DeviationIndicator.None);
+        // Assert
+        fnAssert("sap-icon://none", DeviationIndicator.None);
+        // Act
+        this.oNumericContent.setIndicator(DeviationIndicator.Down);
+        // Assert
+        fnAssert("sap-icon://down", DeviationIndicator.Down);
+        // Act
+        this.oNumericContent.setIndicator(DeviationIndicator.Up);
+        // Assert
+        fnAssert("sap-icon://up", DeviationIndicator.Up);
+    });
 
 	QUnit.module("Rendering test - sap.m.NumericContent inside sap.m.Table");
 
