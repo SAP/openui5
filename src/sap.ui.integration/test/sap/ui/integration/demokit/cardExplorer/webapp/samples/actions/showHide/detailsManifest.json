@@ -36,18 +36,12 @@
 			"parameters": {
 				"orderId": {
 					"value": ""
-				},
-				"closeButtonVisible": {
-					"value": false
 				}
 			}
 		},
 		"header": {
 			"icon": {
 				"src": "sap-icon://sap-ui5"
-			},
-			"closeButton": {
-				"visible": "{parameters>/closeButtonVisible/value}"
 			},
 			"data": {
 				"path": "orderData>/"
