@@ -1734,6 +1734,7 @@ function(
 	 *
 	 * @protected
 	 * @param {HTMLElement} oTarget The target of the event.
+	 * @deprecated As of version 1.119 the property valueHelpOnly should not be used anymore
 	 * @returns {boolean} Boolean indicating if the target is a valid opener.
 	 */
 	MultiInput.prototype.isValueHelpOnlyOpener = function (oTarget) {
