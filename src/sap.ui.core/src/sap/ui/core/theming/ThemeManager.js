@@ -146,17 +146,18 @@ sap.ui.define([
 
 			// include the stylesheet for the library (except for "classic" and "legacy" lib)
 			if ((sLibName != "sap.ui.legacy") && (sLibName != "sap.ui.classic")) {
-				var oGetCssVariablesParam = {
+				var sCssVariablesParam = BaseConfig.get({
 					name: "sapUiXxCssVariables",
-					type: BaseConfig.Type.Boolean
-				};
+					type: BaseConfig.Type.String,
+					external: true
+				});
 
 				// no variant?
 				if (!sVariant) {
 					sVariant = "";
 				}
 				// determine CSS Variables / RTL
-				var sCssVars = BaseConfig.get(oGetCssVariablesParam) ? "_skeleton" : "";
+				var sCssVars = /^(true|x)$/i.test(sCssVariablesParam) ? "_skeleton" : "";
 				var sRtl = (Localization.getRTL() ? "-RTL" : "");
 
 				// create the library file name
@@ -171,7 +172,7 @@ sap.ui.define([
 
 				var sLinkId = "sap-ui-theme-" + sLibId;
 				var sSkeletonLinkId = "sap-ui-themeskeleton-" + sLibId;
-				var bCssVariables = /^(true|x|additional)$/i.test(BaseConfig.get(oGetCssVariablesParam));
+				var bCssVariables = /^(true|x|additional)$/i.test(sCssVariablesParam);
 				if (!document.querySelector("LINK[id='" + sLinkId + "']") || (bCssVariables && !document.querySelector("LINK[id='" + sSkeletonLinkId + "']"))) {
 					var sCssBasePath = new URL(ThemeManager._getThemePath(sLibName, Theming.getTheme()), document.baseURI).toString();
 					// Create a link tag and set the URL as href in order to ensure AppCacheBuster handling.
@@ -191,7 +192,6 @@ sap.ui.define([
 					fnAddFoucmarker(sLinkId);
 
 					// include the css variables
-					oGetCssVariablesParam.type = BaseConfig.Type.String;
 					if (bCssVariables) {
 						Log.info("Including " + sCssVariablesPathAndName + " -  sap.ui.core.theming.ThemeManager.includeLibraryTheme()");
 						includeStylesheet(sCssVariablesPathAndName, sLinkId);
