@@ -411,17 +411,19 @@ sap.ui.define([
 	};
 
 	NumericContent.prototype.setIndicator = function (sDeviationIndicator) {
-		var sSrc = "sap-icon://" + (sDeviationIndicator ? sDeviationIndicator.toLowerCase() : "none");
-		if (this._oIndicatorIcon) {
-			this._oIndicatorIcon.setSrc(sSrc);
-		} else {
-			this._oIndicatorIcon = IconPool.createControlByURI({
-				id: this.getId() + "-icon-indicator",
-				size: "0.875rem",
-				src: sSrc
-			}, Image);
-			this._oIndicatorIcon.addStyleClass("sapMNCIndIcon");
-		}
+        if (sDeviationIndicator !== DeviationIndicator.None && sDeviationIndicator) {
+        var sSrc = "sap-icon://" + sDeviationIndicator.toLowerCase();
+        if (this._oIndicatorIcon) {
+            this._oIndicatorIcon.setSrc(sSrc);
+        } else {
+            this._oIndicatorIcon = IconPool.createControlByURI({
+                id: this.getId() + "-icon-indicator",
+                size: "0.875rem",
+                src: sSrc
+            }, Image);
+            this._oIndicatorIcon.addStyleClass("sapMNCIndIcon");
+        }
+	}
 		return this.setProperty("indicator", sDeviationIndicator);
 	};
 
