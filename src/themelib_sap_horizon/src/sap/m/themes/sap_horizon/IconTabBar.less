@@ -7,9 +7,9 @@
 // Variables overriding
 // ==========================================================================
 
-@_sap_m_IconTabBar_TextColor: @sapTextColor;
+@_sap_m_IconTabBar_TextColor: @sapUiBaseText;
 @_sap_m_IconTabBar_TextShadow: none;
-@_sap_m_IconTabBar_Separator_Font_Size:@sapFontLargeSize;
+@_sap_m_IconTabBar_Separator_Font_Size: @sapMFontLargeSize;
 @_sap_m_IconTabBar_More_Button_Focus_Offset: -0.3125rem;
 @_sap_m_IconTabBar_Arrow_SubItem_Left_Padding: 0.5rem;
 
@@ -147,13 +147,13 @@
 @_sap_m_IconTab_Bar_Separator_Line: @sapUiGroupTitleBorderColor;
 
 // =========== Overflow ===========
-@_sap_m_IconTabBar_Overflow_TextColor: @sapTextColor;
-@_sap_m_IconTabBar_Overflow_Icon_Color: @sapTextColor;
+@_sap_m_IconTabBar_Overflow_TextColor: @sapUiBaseText;
+@_sap_m_IconTabBar_Overflow_Icon_Color: @sapUiBaseText;
 @_sap_m_IconTabBar_Overflow_BorderColorHover: @sapUiButtonHoverBorderColor;
 @_sap_m_IconTabBar_Overflow_BackgroundColorHover: @sapUiButtonHoverBackground;
 @_sap_m_IconTabBar_Overflow_BoxShadowHover: none;
-@_sap_m_IconTabBar_Overflow_TextColorHover: @sapTextColor;
-@_sap_m_IconTabBar_Overflow_Icon_ColorHover: @sapTextColor;
+@_sap_m_IconTabBar_Overflow_TextColorHover: @sapUiBaseText;
+@_sap_m_IconTabBar_Overflow_Icon_ColorHover: @sapUiBaseText;
 
 @_sap_m_IconTabBar_Overflow_BackgroundColorPressed: @sapUiButtonActiveBackground;
 @_sap_m_IconTabBar_Overflow_BorderColorPressed: @sapUiButtonActiveBorderColor;
@@ -194,15 +194,15 @@
 	}
 	.sapMITBDisabled {
 		.sapMITHTextContent {
-			color: @sapTextColor;
-			font-family: @sapFontBoldFamily;
-			font-size: @sapFontSize;
+			color: @sapUiBaseText;
+			font-family: @sapUiFontBoldFamily;
+			font-size: @sapMFontMediumSize;
 	 	}
 	}
 
 	.sapMITBSelected {
 		.sapMITBContentArrow::after {
-			background: @sapContent_Selected_ForegroundColor;
+			background: @sapUiContentSelectedForegroundColor;
 		}
 	}
 
@@ -223,9 +223,9 @@
 	.sapMITHStartOverflow,
 	.sapMITHEndOverflow {
 		.sapMITBItem {
-			color: @sapButton_TextColor;
-			background: @sapButton_Background;
-			border: 1px solid @sapButton_BorderColor;
+			color: @sapUiButtonTextColor;
+			background: @sapUiButtonBackground;
+			border: 1px solid @sapUiButtonBorderColor;
 
 			.sapMITHShowSubItemsIcon {
 				color: @sapUiBaseText;
@@ -236,7 +236,7 @@
 	.sapMITHEndOverflow,
 	.sapMITHStartOverflow {
 		.sapMITBItem:hover {
-			background: @sapButton_Hover_Background;
+			background: @sapUiButtonHoverBackground;
 			border: 1px solid @_sap_m_IconTabBar_Overflow_BorderColorHover;
 		}
 	}
@@ -381,10 +381,10 @@
 
 	.sapMITBFilterDefault.sapMITBSelected {
 		.sapMITBText {
-			color: @sapContent_Selected_ForegroundColor;
+			color: @sapUiContentSelectedForegroundColor;
 		}
 		.sapMITBFilterExpandBtnSeparator {
-			border-color: @sapContent_Selected_ForegroundColor;
+			border-color: @sapUiContentSelectedForegroundColor;
 		}
 		.sapMBtnIcon {
 			color: @_sap_m_IconTabBar_SelectedTextColor !important;
@@ -693,13 +693,13 @@
 	}
 
   .sapMITBCount {
-	  font-family: @sapFontBoldFamily;
-	  font-size: @sapFontHeader3Size;
+	  font-family: @sapUiFontBoldFamily;
+	  font-size: @sapMFontHeader3Size;
   }
 
   .sapMITBText {
-	  font-family: @sapFontFamily;
-	  font-size: @sapFontSmallSize;
+	  font-family: @sapUiFontFamily;
+	  font-size: @sapMFontSmallSize;
   }
 }
 
@@ -725,9 +725,9 @@ html.sap-desktop {
 	}
 
 	.sapMITBFilter .sapMITBCount {
-		color: @sapContent_LabelColor;
-	  	font-family: @sapFontFamily;
-	  	font-size: @sapFontSize;
+		color: @sapUiContentLabelColor;
+	  	font-family: @sapUiFontFamily;
+	  	font-size: @sapMFontMediumSize;
 	}
 
 	.sapMITH.sapUiSizeCompact {
@@ -811,16 +811,16 @@ html.sap-desktop {
   .sapMITHStartOverflow,
   .sapMITHEndOverflow {
 	.sapMITBItem {
-	  border: 1px solid @sapButton_BorderColor;
-	  color: @sapShell_Navigation_TextColor;
+	  border: 1px solid @sapUiButtonBorderColor;
+	  color: @sapUiShellNavigationTextColor;
 	  background-color: @sapUiShellInteractiveBackground;
 
 	  .sapMITHShowSubItemsIcon {
-		color: @sapShell_Navigation_TextColor;
+		color: @sapUiShellNavigationTextColor;
 	  }
 
 	  &:hover {
-		box-shadow: @sapContent_Interaction_Shadow;
+		box-shadow: @sapUiContentInteractionShadow;
 	  }
 	}
   }
@@ -860,7 +860,7 @@ html.sap-desktop {
 	.sapMITHStartOverflow .sapMITBItem:not(.sapUiDnDDragging):focus,
 	.sapMITHEndOverflow .sapMITBItem:not(.sapUiDndDragging):focus {
 	  &::after {
-		border-color: @sapContent_FocusColor !important;
+		border-color: @sapUiContentFocusColor !important;
 	  }
 	}
   }
