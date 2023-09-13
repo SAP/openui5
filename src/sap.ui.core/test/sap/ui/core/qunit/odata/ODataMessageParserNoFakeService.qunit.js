@@ -1744,20 +1744,21 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("_parseBodyJSON: plain text", function (assert) {
-		var oError = new Error("~error"),
+		var oJSONSpy = sinon.spy(JSON, "parse"),
 			oMessageParser = new ODataMessageParser("/foo"),
 			oResponse = {body : "~foo"},
 			mRequestInfo = {
 				response : oResponse
 			};
 
-		this.mock(JSON).expects("parse").withExactArgs("~foo").throws(oError);
 		this.mock(oMessageParser).expects("_createGenericError").never();
 
 		// code under test
 		assert.throws(function () {
 			oMessageParser._parseBodyJSON(oResponse, mRequestInfo);
-		}, oError);
+		}, SyntaxError);
+
+		assert.ok(oJSONSpy.calledWith("~foo"));
 	});
 
 	//*********************************************************************************************
@@ -2292,6 +2293,7 @@ sap.ui.define([
 				targets : "~targets1",
 				type : "~type1"
 			}],
+			oJSONSpy = sinon.spy(JSON, "stringify"),
 			oMessageParser = new ODataMessageParser("/foo"),
 			oMessage0 = {
 				getCode : function () {},
@@ -2319,14 +2321,16 @@ sap.ui.define([
 		this.mock(oMessage1).expects("getPersistent").withExactArgs().returns("~persistent1");
 		this.mock(oMessage1).expects("getTargets").withExactArgs().returns("~targets1");
 		this.mock(oMessage1).expects("getType").withExactArgs().returns("~type1");
-		this.mock(JSON).expects("stringify")
-			.withExactArgs(aExpectedMessageLogDetails)
-			.returns("~details");
 		this.oLogMock.expects("error")
-			.withExactArgs("Request failed with status code ~statusCode: ~method ~uri", "~details",
+			.withExactArgs("Request failed with status code ~statusCode: ~method ~uri",
+				'[{"code":"~code0","message":"~message0","persistent":"~persistent0",'
+				+ '"targets":"~targets0","type":"~type0"},{"code":"~code1","message":"~message1",'
+				+ '"persistent":"~persistent1","targets":"~targets1","type":"~type1"}]',
 				sClassName);
 
 		// code under test
 		oMessageParser._logErrorMessages([oMessage0, oMessage1], oRequest, "~statusCode");
+
+		assert.ok(oJSONSpy.calledWith(aExpectedMessageLogDetails));
 	});
 });

@@ -38,11 +38,13 @@ sap.ui.define([
 	TableQUnitUtils.stubPropertyInfos(Table.prototype, [{
 		name: "colA",
 		label: "Column A",
-		path: "a"
+		path: "a",
+		dataType: "String"
 	}, {
 		name: "colB",
 		label: "Column B",
-		path: "b"
+		path: "b",
+		dataType: "String"
 	}]);
 
 	QUnit.module("Utils", {

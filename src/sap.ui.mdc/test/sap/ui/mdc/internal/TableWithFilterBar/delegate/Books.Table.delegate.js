@@ -10,8 +10,9 @@ sap.ui.define([
 	"sap/ui/model/odata/type/Decimal",
 	"sap/ui/model/odata/type/Int32",
 	"sap/ui/model/odata/type/String",
-	"sap/m/Text"
-], function (ODataTableDelegate, BooksFBDelegate, Field, Link, FieldDisplay, FieldEditMode, DelegateUtil, CurrencyType, DecimalType, Int32Type, StringType, Text) {
+	"sap/m/Text",
+	'delegates/util/DelegateCache'
+], function (ODataTableDelegate, BooksFBDelegate, Field, Link, FieldDisplay, FieldEditMode, DelegateUtil, CurrencyType, DecimalType, Int32Type, StringType, Text, DelegateCache) {
 	"use strict";
 	var BooksTableDelegate = Object.assign({}, ODataTableDelegate);
 	BooksTableDelegate.apiVersion = 2;//CLEANUP_DELEGATE
@@ -25,6 +26,7 @@ sap.ui.define([
 
 	BooksTableDelegate.fetchProperties = function (oTable) {
 		var oODataProps = ODataTableDelegate.fetchProperties.apply(this, arguments);
+
 		return oODataProps.then(function (aProperties) {
 
 			// Provide the label for the properties which are the same on the xml view. so that the column header and p13n dialog has the same names.
@@ -54,6 +56,31 @@ sap.ui.define([
 
 			});
 
+			DelegateCache.add(oTable, {
+				"author_ID": {valueHelp: "FH1", display: FieldDisplay.Description},
+				"title": {valueHelp: "FH4"},
+				"published": {valueHelp: "FHPublished", operators: ["EQ", "GT", "LT", "BT", "MEDIEVAL", "RENAISSANCE", "MODERN", "LASTYEAR"]},
+				"language_code": {dataTypeConstraints: {nullable: false, maxLength: 3}, valueHelp: "FHLanguage", maxConditions: 1, display: FieldDisplay.Description},
+				"stock": {maxConditions: 1, operators: ["BT"]},
+				"classification_code": {valueHelp: "FHClassification", display: FieldDisplay.Description},
+				"genre_code": {valueHelp: "FHGenre", display: FieldDisplay.Description},
+				"subgenre_code": {valueHelp: "FHSubGenre", display: FieldDisplay.Description},
+				"detailgenre_code": {valueHelp: "FHDetailGenre", display: FieldDisplay.Description},
+				"currency_code": {valueHelp: "FH-Currency", display: FieldDisplay.Value, maxConditions: 1, operators: ["EQ"]},
+				"createdAt": {maxConditions: 1, operators: ["MYDATE", "MYDATERANGE", "EQ", "GE", "LE", "BT", "LT", "TODAY", "YESTERDAY", "TOMORROW", "LASTDAYS", "MYNEXTDAYS", "THISWEEK", "THISMONTH", "THISQUARTER", "THISYEAR", "NEXTHOURS", "NEXTMINUTES", "LASTHOURS"]}
+			}, "$Filters");
+
+			DelegateCache.add(oTable, {
+				"descr": {multipleLines: true},
+				"author_ID": {multipleLines: true, display: FieldDisplay.DescriptionValue, additionalValue: "{author/name}"},
+				"classification_code": {display: FieldDisplay.Description, additionalValue: "{classification/title}"},
+				"detailgenre_code": {display: FieldDisplay.Description, additionalValue: "{detailgenre/title}"},
+				"language_code": {display: FieldDisplay.Description, additionalValue: "{language/name}", valueHelp: "FHLanguage"},
+				"genre_code": {display: FieldDisplay.Description, valueHelp: "FHGenreSingle"},
+				"subgenre_code": {display: FieldDisplay.Description, valueHelp: "FHSubGenreSingle"},
+				"title": {multipleLines: true}
+			}, "$Columns");
+
 			return aProperties;
 		});
 	};
@@ -69,47 +96,6 @@ sap.ui.define([
 
 					var oConstraints = oProp.typeConfig.typeInstance.getConstraints();
 					var oFormatOptions = oProp.typeConfig.typeInstance.getFormatOptions();
-
-					if (sPropertyName === "ID") {
-						oFormatOptions = {groupingEnabled: false};
-					} else if (sPropertyName === "author_ID") {
-						oFormatOptions = {groupingEnabled: false};
-						oFilterField.setValueHelp(getFullId(oTable, "FH1"));
-						oFilterField.setDisplay(FieldDisplay.Description);
-					} else if (sPropertyName === "title") {
-						oFilterField.setValueHelp(getFullId(oTable, "FH4"));
-					} else if (sPropertyName === "published") {
-						oFilterField.setValueHelp(getFullId(oTable, "FHPublished"));
-						oFilterField.setOperators(["EQ", "GT", "LT", "BT", "MEDIEVAL", "RENAISSANCE", "MODERN", "LASTYEAR"]);
-					} else if (sPropertyName === "language_code") {
-						oFilterField.setValueHelp(getFullId(oTable, "FHLanguage"));
-						oFilterField.setMaxConditions(1);
-						oConstraints = {nullable: false, maxLength: 3}; // to test not nullable
-						oFilterField.setDisplay(FieldDisplay.Description);
-					} else if (sPropertyName === "stock") {
-						oFilterField.setMaxConditions(1);
-						oFilterField.setOperators(["BT"]);
-					} else if (sPropertyName === "classification_code") {
-						oFilterField.setValueHelp(getFullId(oTable, "FHClassification"));
-						oFilterField.setDisplay(FieldDisplay.Description);
-					} else if (sPropertyName === "genre_code") {
-						oFilterField.setValueHelp(getFullId(oTable, "FHGenre"));
-						oFilterField.setDisplay(FieldDisplay.Description);
-					} else if (sPropertyName === "subgenre_code") {
-						oFilterField.setValueHelp(getFullId(oTable, "FHSubGenre"));
-						oFilterField.setDisplay(FieldDisplay.Description);
-					} else if (sPropertyName === "detailgenre_code") {
-						oFilterField.setValueHelp(getFullId(oTable, "FHDetailGenre"));
-						oFilterField.setDisplay(FieldDisplay.Description);
-					} else if (sPropertyName === "currency_code") {
-						oFilterField.setValueHelp(getFullId(oTable, "FH-Currency"));
-						oFilterField.setDisplay(FieldDisplay.Value);
-						oFilterField.setMaxConditions(1);
-						oFilterField.setOperators(["EQ"]);
-					} else if (sPropertyName === "createdAt") {
-						oFilterField.setMaxConditions(1); // to use DynamicDateRange
-						oFilterField.setOperators(["MYDATE", "MYDATERANGE", "EQ", "GE", "LE", "BT", "LT", "TODAY", "YESTERDAY", "TOMORROW", "LASTDAYS", "MYNEXTDAYS", "THISWEEK", "THISMONTH", "THISQUARTER", "THISYEAR", "NEXTHOURS", "NEXTMINUTES", "LASTHOURS"]);
-					}
 
 					oFilterField.setDataTypeConstraints(oConstraints);
 					oFilterField.setDataTypeFormatOptions(oFormatOptions);
@@ -129,14 +115,14 @@ sap.ui.define([
 			});
 		}
 
-		var oCtrlProperties = {
+		var oCtrlProperties = DelegateCache.merge({
 			id: getFullId(oTable, "F_" + oProperty.name),
 			value: {path: oProperty.path || oProperty.name, type: oProperty.typeConfig.typeInstance},
 			editMode: FieldEditMode.Display,
 			width:"100%",
 			multipleLines: false, // set always to have property not initial
 			delegate: {name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}
-		};
+		}, DelegateCache.get(oTable, oProperty.name, "$Columns"));
 
 		if (oProperty.name === "price") {
 			oCtrlProperties.value = {
@@ -148,20 +134,7 @@ sap.ui.define([
 				type: new CurrencyType(),
 				mode:'TwoWay'
 			};
-		} else if (oProperty.name === "descr") {
-			oCtrlProperties.multipleLines = true;
-		} else if (oProperty.name === "language_code") {
-			oCtrlProperties.additionalValue = "{language/name}";
-			oCtrlProperties.display = FieldDisplay.Description;
-			oCtrlProperties.fieldHelp = getFullId(oTable, "FHLanguage");
-		} else if (oProperty.name === "genre_code") {
-			oCtrlProperties.display = FieldDisplay.Description;
-			oCtrlProperties.fieldHelp = getFullId(oTable, "FHGenreSingle");
-		} else if (oProperty.name === "subgenre_code") {
-			oCtrlProperties.display = FieldDisplay.Description;
-			oCtrlProperties.fieldHelp = getFullId(oTable, "FHSubGenreSingle");
-		} else if (oProperty.name === "title") {
-			oCtrlProperties.multipleLines = true;
+		}  else if (oProperty.name === "title") {
 			oCtrlProperties.fieldInfo = new Link({
 					sourceControl:"tFieldLinkTitle",
 					delegate: {
@@ -173,18 +146,9 @@ sap.ui.define([
 					}
 				});
 		} else if (oProperty.name === "author_ID") {
-			oCtrlProperties.additionalValue = "{author/name}";
-			oCtrlProperties.display = FieldDisplay.DescriptionValue;
-			oCtrlProperties.multipleLines = true;
 			oCtrlProperties.fieldInfo = new Link({
 					delegate: { name: "sap/ui/v4demo/delegate/Books.Link.delegate" }
 				});
-		} else if (oProperty.name === "classification_code") {
-			oCtrlProperties.additionalValue = "{classification/title}";
-			oCtrlProperties.display = FieldDisplay.Description;
-		} else if (oProperty.name === "detailgenre_code") {
-			oCtrlProperties.additionalValue = "{detailgenre/title}";
-			oCtrlProperties.display = FieldDisplay.Description;
 		}
 
 		return new Field(oCtrlProperties);

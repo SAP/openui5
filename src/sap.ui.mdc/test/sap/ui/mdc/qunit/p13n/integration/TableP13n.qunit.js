@@ -12,6 +12,7 @@ sap.ui.define([
 					"name": "col1",
 					"path": "nav/col1",
 					"label": "col1",
+					"dataType": "String",
 					"sortable": true,
 					"filterable": true,
 					"visible": true
@@ -19,6 +20,7 @@ sap.ui.define([
 					"name": "col2",
 					"path": "nav/col2",
 					"label": "col2",
+					"dataType": "String",
 					"sortable": true,
 					"filterable": false,
 					"visible": true
@@ -232,12 +234,14 @@ sap.ui.define([
 				"name": "col1",
 				"path": "nav/col1",
 				"label": "col1",
+				"dataType": "String",
 				"sortable": false,
 				"filterable": true
 			}, {
 				"name": "col2",
 				"path": "nav/col2",
 				"label": "col2",
+				"dataType": "String",
 				"sortable": true,
 				"filterable": false
 			}
@@ -275,6 +279,7 @@ sap.ui.define([
 				"name": "col1",
 				"path": "nav/col1",
 				"label": "col1",
+				"dataType": "String",
 				"sortable": false,
 				"filterable": true,
 				"visible": true
@@ -282,6 +287,7 @@ sap.ui.define([
 				"name": "col2",
 				"path": "nav/col2",
 				"label": "col2",
+				"dataType": "String",
 				"sortable": true,
 				"filterable": false,
 				"visible": false //Don't show this column in the UI at all
@@ -319,12 +325,14 @@ sap.ui.define([
 				"name": "col1",
 				"path": "nav/col1",
 				"label": "col1",
+				"dataType": "String",
 				"sortable": false,
 				"filterable": true
 			}, {
 				"name": "col2",
 				"path": "nav/col2",
 				"label": "col2",
+				"dataType": "String",
 				"sortable": true,
 				"filterable": false
 			}

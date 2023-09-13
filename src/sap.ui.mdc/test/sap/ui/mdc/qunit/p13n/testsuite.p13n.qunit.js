@@ -1,8 +1,6 @@
 sap.ui.define(["sap/ui/Device"], function (Device) {
 	"use strict";
 
-	window['sap-ui-mdc-config'] = {disableStrictPropertyInfoValidation: true};
-
 	return {
 		name: "P13n related tests", /* Just for a nice title on the pages */
 		defaults: {
@@ -38,10 +36,7 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 			},
 			page: "test-resources/sap/ui/mdc/qunit/teststarter.qunit.html?testsuite={suite}&test={name}",
 			autostart: true,
-			module: "./{name}.qunit",
-			uriParams: {
-				"sap-ui-xx-disableStrictPropertyValidation": true
-			}
+			module: "./{name}.qunit"
 			// Whether to call QUnit.start() when the test setup is done
 		},
 		tests: {

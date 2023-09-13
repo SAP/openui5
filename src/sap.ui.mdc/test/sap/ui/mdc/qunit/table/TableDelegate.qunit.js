@@ -99,7 +99,8 @@ sap.ui.define([
 			TableQUnitUtils.stubPropertyInfos(Table.prototype, [{
 				name: "Name",
 				path: "Name_Path",
-				label: "Name_Label"
+				label: "Name_Label",
+				dataType: "String"
 			}]);
 		},
 		afterEach: function() {

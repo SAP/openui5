@@ -24,7 +24,8 @@ sap.ui.define([
 	"sap/ui/model/odata/type/Date",
 	"sap/ui/model/odata/type/TimeOfDay",
 	"sap/ui/model/odata/type/DateTimeOffset",
-	"sap/ui/model/odata/type/Guid"
+	"sap/ui/model/odata/type/Guid",
+	"sap/ui/mdc/odata/TypeMap"
 ], function (
 	Engine,
 	createAppEnvironment,
@@ -50,7 +51,8 @@ sap.ui.define([
 	DateType,
 	TimeOfDayType,
 	DateTimeOffsetType,
-	GuidType
+	GuidType,
+	TypeMap
 ) {
 	"use strict";
 
@@ -67,19 +69,19 @@ sap.ui.define([
 
 	function fetchProperties() {
 		var mProperties = {
-			String: {label: "String",name:"String",type:"Edm.String",filterable: true, groupable: true},
-			Boolean: {label: "Boolean",name:"Boolean",type:"Edm.Boolean",filterable: true},
-			Int16: {label: "Int16",name:"Int16",type:"Edm.Int16",filterable: true},
-			Int32: {label: "Int32",name:"Int32",type:"Edm.Int32",filterable: true},
-			Int64: {label: "Int64",name:"Int64",type:"Edm.Int64",filterable: true},
-			SByte: {label: "SByte",name:"SByte",type:"Edm.SByte",filterable: true},
-			Decimal: {label: "Decimal",name:"Decimal",type:"Edm.Decimal",filterable: true},
-			Single: {label: "Single",name:"Single",type:"Edm.String",filterable: true},
-			Double: {label: "Double",name:"Double",type:"Edm.Double",filterable: true},
-			Date: {label: "Date",name:"Date",type:"Edm.Date",filterable: true},
-			TimeOfDay: {label: "TimeOfDay",name:"TimeOfDay",type:"Edm.TimeOfDay",filterable: true},
-			DateTimeOffset: {label: "DateTimeOffset",name:"DateTimeOffset",type:"Edm.DateTimeOffset",filterable: true},
-			Guid: {label: "Guid",name:"Guid",type:"Edm.Guid",filterable: true}
+			String: {label: "String",name:"String",dataType:"Edm.String", groupable: true},
+			Boolean: {label: "Boolean",name:"Boolean",dataType:"Edm.Boolean"},
+			Int16: {label: "Int16",name:"Int16",dataType:"Edm.Int16"},
+			Int32: {label: "Int32",name:"Int32",dataType:"Edm.Int32"},
+			Int64: {label: "Int64",name:"Int64",dataType:"Edm.Int64"},
+			SByte: {label: "SByte",name:"SByte",dataType:"Edm.SByte"},
+			Decimal: {label: "Decimal",name:"Decimal",dataType:"Edm.Decimal"},
+			Single: {label: "Single",name:"Single",dataType:"Edm.String"},
+			Double: {label: "Double",name:"Double",dataType:"Edm.Double"},
+			Date: {label: "Date",name:"Date",dataType:"Edm.Date"},
+			TimeOfDay: {label: "TimeOfDay",name:"TimeOfDay",dataType:"Edm.TimeOfDay"},
+			DateTimeOffset: {label: "DateTimeOffset",name:"DateTimeOffset",dataType:"Edm.DateTimeOffset"},
+			Guid: {label: "Guid",name:"Guid",dataType:"Edm.Guid"}
 		};
 
 		var aProperties = [];
@@ -87,11 +89,15 @@ sap.ui.define([
 			aProperties.push({
 				name: mProperties[sProperty].name,
 				label: mProperties[sProperty].label,
-				typeConfig: ODataV4TypeMap.getTypeConfig(mProperties[sProperty].type),
-				filterable: mProperties[sProperty].filterable
+				dataType: mProperties[sProperty].dataType
+				//filterable: mProperties[sProperty].filterable
 			});
 		}
 		return Promise.resolve(aProperties);
+	}
+
+	function getTypeMap() {
+		return TypeMap;
 	}
 
 	QUnit.module("API tests for FilterBar", {
@@ -102,6 +108,7 @@ sap.ui.define([
 			FilterBarDelegate.fetchProperties = fetchProperties;
 			FilterBarDelegate.addItem = createFilterItem;
 			FilterBarDelegate.apiVersion = 2;//CLEANUP_DELEGATE
+			FilterBarDelegate.getTypeMap = getTypeMap;
 			return createAppEnvironment(sFilterBarView, "FilterBar").then(function(mCreatedApp){
 				this.oView = mCreatedApp.view;
 				this.oUiComponentContainer = mCreatedApp.container;
@@ -753,6 +760,7 @@ sap.ui.define([
 			return createAppEnvironment(sTableView, "Table").then(function(mCreatedApp){
 				TableDelegate.fetchProperties = fetchProperties;
 				TableDelegate.apiVersion = 2;//CLEANUP_DELEGATE
+				TableDelegate.getTypeMap = getTypeMap;
 				TableDelegate.addItem = function(oControl, sPropertyName) {
 					return Promise.resolve(new Column({propertyKey: sPropertyName}));
 				};
@@ -1035,6 +1043,7 @@ sap.ui.define([
 
 			return createAppEnvironment(sTableView, "V4AnalyticsTable").then(function(mCreatedApp){
 				TableDelegate.fetchProperties = fetchProperties;
+				TableDelegate.getTypeMap = getTypeMap;
 				TableDelegate.addItem = function(oControl, sPropertyName) {
 					return Promise.resolve(new Column({propertyKey: sPropertyName}));
 				};
@@ -1132,8 +1141,7 @@ sap.ui.define([
         var aMetadata = [
             {
                 name: "CategoryName",
-                type: "string",
-                required: true,
+                dataType: "String",
                 label: "Category",
                 groupable: true,
                 kind: "Groupable"
@@ -1141,47 +1149,41 @@ sap.ui.define([
             {
                 name: "SalesNumber",
                 propertyPath: "SalesNumber",
-                type: "Edm.Int32",
-                required: true,
+                dataType: "Edm.Int32",
                 aggregatable: true,
                 label: "Sales Number",
                 kind: "Aggregatable"
             }, {
                 name: "agSalesAmount",
                 propertyPath: "SalesAmount",
-                type: "string",
-                required: true,
+                dataType: "String",
                 label: "Sales Amount",
                 kind: "Aggregatable",
-                aggregatable: true,
-                defaultAggregation: "sum",
-                supportedAggregations: ["sum", "min", "max", "average"]
+                aggregatable: true
+                //defaultAggregation: "sum",
+                //supportedAggregations: ["sum", "min", "max", "average"]
             }, {
                 name: "Name",
                 propertyPath: "Name",
-                type: "string",
-                required: true,
+                dataType: "String",
                 label: "Name",
                 groupable: true,
                 kind: "Groupable"
             }, {
                 name: "Industry",
-                type: "string",
-                required: true,
+                dataType: "String",
                 label: "Industry",
                 groupable: true,
                 kind: "Groupable"
             }, {
                 name: "Country",
-                type: "string",
-                required: true,
+                dataType: "String",
                 label: "Country",
                 groupable: true,
                 kind: "Groupable"
             }, {
                 name: "SomePropertyName",
-                type: "string",
-                required: true,
+                dataType: "String",
                 label: "SomeProperty",
                 groupable: true,
                 kind: "Groupable"
@@ -1458,7 +1460,7 @@ sap.ui.define([
 			};
 			return createAppEnvironment(sTableView, "StateDiff").then(function(mCreatedApp){
 				TableDelegate.fetchProperties = fetchProperties;
-
+				TableDelegate.getTypeMap = getTypeMap;
 				TableDelegate.addItem = function(oControl, sPropertyName) {
 					return Promise.resolve(new Column({propertyKey: sPropertyName}));
 				};

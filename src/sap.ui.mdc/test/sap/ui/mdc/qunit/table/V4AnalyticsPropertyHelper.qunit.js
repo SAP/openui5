@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-/* global QUnit, sinon */
+/* global QUnit */
 
 sap.ui.define([
 	"sap/ui/mdc/table/V4AnalyticsPropertyHelper",
@@ -10,14 +10,7 @@ sap.ui.define([
 ], function(PropertyHelper, Log) {
 	"use strict";
 
-	QUnit.module("Validation", {
-		beforeEach: function() {
-			this.logWarning = sinon.spy(Log, "warning");
-		},
-		afterEach: function() {
-			this.logWarning.restore();
-		}
-	});
+	QUnit.module("Validation");
 
 	QUnit.test("groupable=true and technicallyGroupable=false", function(assert) {
 		assert.throws(function() {
@@ -48,65 +41,77 @@ sap.ui.define([
 	});
 
 	QUnit.test("Complex property with attribute 'aggregatable'", function(assert) {
-		new PropertyHelper([{
-			name: "prop",
-			label: "Property",
-			dataType: "String"
-		}, {
-			name: "complexProp",
-			label: "ComplexProperty",
-			propertyInfos: ["prop"],
-			aggregatable: true
-		}]).destroy();
-		assert.equal(this.logWarning.callCount, 1, "Warning logged");
+		assert.throws(function () {
+            new PropertyHelper([{
+				name: "prop",
+				label: "Property",
+				dataType: "String"
+			}, {
+				name: "complexProp",
+				label: "ComplexProperty",
+				propertyInfos: ["prop"],
+				aggregatable: true
+			}]).destroy();
+        }, function(oError) {
+            return oError instanceof Error;
+        },  "Error thrown");
 	});
 
 	QUnit.test("Complex property with attribute 'extension.technicallyGroupable'", function(assert) {
-		new PropertyHelper([{
-			name: "prop",
-			label: "Property",
-			dataType: "String"
-		}, {
-			name: "complexProp",
-			label: "ComplexProperty",
-			propertyInfos: ["prop"],
-			extension: {
-				technicallyGroupable: false
-			}
-		}]).destroy();
-		assert.equal(this.logWarning.callCount, 1, "Warning logged");
+		assert.throws(function () {
+            new PropertyHelper([{
+				name: "prop",
+				label: "Property",
+				dataType: "String"
+			}, {
+				name: "complexProp",
+				label: "ComplexProperty",
+				propertyInfos: ["prop"],
+				extension: {
+					technicallyGroupable: false
+				}
+			}]).destroy();
+        }, function(oError) {
+            return oError instanceof Error;
+        },  "Error thrown");
 	});
 
 	QUnit.test("Complex property with attribute 'extension.technicallyAggregatable'", function(assert) {
-		new PropertyHelper([{
-			name: "prop",
-			label: "Property",
-			dataType: "String"
-		}, {
-			name: "complexProp",
-			label: "ComplexProperty",
-			propertyInfos: ["prop"],
-			extension: {
-				technicallyAggregatable: false
-			}
-		}]).destroy();
-		assert.equal(this.logWarning.callCount, 1, "Warning logged");
+		assert.throws(function () {
+            new PropertyHelper([{
+				name: "prop",
+				label: "Property",
+				dataType: "String"
+			}, {
+				name: "complexProp",
+				label: "ComplexProperty",
+				propertyInfos: ["prop"],
+				extension: {
+					technicallyAggregatable: false
+				}
+			}]).destroy();
+        }, function(oError) {
+            return oError instanceof Error;
+        },  "Error thrown");
 	});
 
 	QUnit.test("Complex property with attribute 'extension.customAggregate'", function(assert) {
-		new PropertyHelper([{
-			name: "prop",
-			label: "Property",
-			dataType: "String"
-		}, {
-			name: "complexProp",
-			label: "ComplexProperty",
-			propertyInfos: ["prop"],
-			extension: {
-				customAggregate: {}
-			}
-		}]).destroy();
-		assert.equal(this.logWarning.callCount, 1, "Warning logged");
+		assert.throws(function () {
+            new PropertyHelper([{
+				name: "prop",
+				label: "Property",
+				dataType: "String"
+			}, {
+				name: "complexProp",
+				label: "ComplexProperty",
+				propertyInfos: ["prop"],
+				extension: {
+					customAggregate: {}
+				}
+			}]).destroy();
+        }, function(oError) {
+            return oError instanceof Error;
+        },  "Error thrown");
 	});
 
 	QUnit.module("Defaults", {
@@ -229,7 +234,8 @@ sap.ui.define([
 	QUnit.test("Complex property", function(assert) {
 		var oPropertyHelper = new PropertyHelper([{
 			name: "prop",
-			label: "Property"
+			label: "Property",
+			dataType: "String"
 		}, {
 			name: "complexProp",
 			label: "Complex Property",
@@ -260,12 +266,14 @@ sap.ui.define([
 			}, {
 				name: "propB",
 				label: "Property B",
+				dataType: "String",
 				extension: {
 					technicallyAggregatable: true
 				}
 			}, {
 				name: "propC",
 				label: "Property C",
+				dataType: "String",
 				aggregatable: true,
 				extension: {
 					technicallyGroupable: true,
@@ -285,7 +293,8 @@ sap.ui.define([
 				propertyInfos: ["propA", "propB", "propC"]
 			}, {
 				name: "unit",
-				label: "Unit"
+				label: "Unit",
+				dataType: "String"
 			}]);
 			this.aProperties = this.oPropertyHelper.getProperties();
 		},

@@ -2,25 +2,26 @@
  * ${copyright}
  */
 sap.ui.define([
-    "delegates/odata/v4/vizChart/ChartDelegate",
-    "delegates/odata/v4/ODataMetaModelUtil",
-    "./Books.FB.delegate",
+	"delegates/odata/v4/vizChart/ChartDelegate",
+	"delegates/odata/v4/ODataMetaModelUtil",
+	"./Books.FB.delegate",
 	"./GridTable.delegate",
-    "sap/ui/mdc/enums/FieldDisplay",
-    "sap/base/Log",
+	"sap/ui/mdc/enums/FieldDisplay",
+	"sap/base/Log",
 	"sap/ui/core/Core",
-	"sap/ui/mdc/enums/ChartItemRoleType"
-], function(ChartDelegate, ODataMetaModelUtil, BooksFBDelegate, GridTableDelegate, FieldDisplay, Log, Core, ChartItemRoleType) {
-    "use strict";
+	"sap/ui/mdc/enums/ChartItemRoleType",
+	"delegates/util/DelegateCache"
+], function(ChartDelegate, ODataMetaModelUtil, BooksFBDelegate, GridTableDelegate, FieldDisplay, Log, Core, ChartItemRoleType, DelegateCache) {
+	"use strict";
 
-    var SampleChartDelegate = Object.assign({}, ChartDelegate);
+	var SampleChartDelegate = Object.assign({}, ChartDelegate);
 	SampleChartDelegate.apiVersion = 2;//CLEANUP_DELEGATE
-    //Store the fetched properties during pre-processing in here
-    var aCachedProps;
+	//Store the fetched properties during pre-processing in here
+	var aCachedProps;
 
-    SampleChartDelegate.addItem = function(oMDCChart, sPropertyKey, mPropertyBag, sRole){
-        //Pre-Processing -> Cache the needed propertyInfos
-        if (mPropertyBag.modifier.targets === "xmlTree") {
+	SampleChartDelegate.addItem = function(oMDCChart, sPropertyKey, mPropertyBag, sRole){
+		//Pre-Processing -> Cache the needed propertyInfos
+		if (mPropertyBag.modifier.targets === "xmlTree") {
 			return this.checkPropertyInfo(sPropertyKey, oMDCChart, mPropertyBag).then(function(){
 
 					return this.fetchProperties(oMDCChart, mPropertyBag).then(function(aFetchedProps){
@@ -35,10 +36,10 @@ sap.ui.define([
 
 		}
 
-        return ChartDelegate.addItem.call(this, oMDCChart, sPropertyKey, mPropertyBag, sRole);
-    };
+		return ChartDelegate.addItem.call(this, oMDCChart, sPropertyKey, mPropertyBag, sRole);
+	};
 
-    var fnGetFetchedPropertiesObject = function() {
+	var fnGetFetchedPropertiesObject = function() {
 		return aCachedProps;
 	};
 	var fnSetFetchedPropertiesObject = function(aProperties) {
@@ -76,23 +77,23 @@ sap.ui.define([
 
 				return oModifier.createControl("sap.ui.mdc.chart.Item", mPropertyBag.appComponent, mPropertyBag.view, sId + "--GroupableItem--" + sPropertyName,{
 					name: oPropertyInfo.name,
-                    label: oPropertyInfo.label,
-                    type: "groupable",
-                    role: sRole ? sRole : "category"
+					label: oPropertyInfo.label,
+					type: "groupable",
+					role: sRole ? sRole : "category"
 				});
-            }
+			}
 
-            if (oPropertyInfo.aggregatable) {
+			if (oPropertyInfo.aggregatable) {
 
 				return oModifier.createControl("sap.ui.mdc.chart.Item", mPropertyBag.appComponent, mPropertyBag.view, sId + "--AggregatableItem--" + sPropertyName,{
 					name: oPropertyInfo.name,
-                    label: oPropertyInfo.label,
-                    type: "aggregatable",
-                    role: sRole ? sRole : "axis1"
+					label: oPropertyInfo.label,
+					type: "aggregatable",
+					role: sRole ? sRole : "axis1"
 				});
-            }
+			}
 
-            return null;
+			return null;
 		});
 
 	};
@@ -111,19 +112,19 @@ sap.ui.define([
 				if (aFetchedProperties) {
 					fnAddPropertyInfoEntry(oControl, sPropertyName, aPropertyInfo, aFetchedProperties, oModifier);
 				} else {
-                    return this.fetchProperties(oControl, mPropertyBag)
-                    .then(function(aProperties) {
-                        fnSetFetchedPropertiesObject(aProperties);
-                        fnAddPropertyInfoEntry(oControl, sPropertyName, aPropertyInfo, aProperties, oModifier);
-                    });
+					return this.fetchProperties(oControl, mPropertyBag)
+					.then(function(aProperties) {
+						fnSetFetchedPropertiesObject(aProperties);
+						fnAddPropertyInfoEntry(oControl, sPropertyName, aPropertyInfo, aProperties, oModifier);
+					});
 				}
 			}
 		}.bind(this));
 	};
 
 	/**
-     * Override for pre-processing case
-     */
+	 * Override for pre-processing case
+	 */
 	SampleChartDelegate.fetchProperties = function (oMDCChart, mPropertyBag) {
 
 		//Custom handling for fetchProperties during pre-processing
@@ -135,150 +136,103 @@ sap.ui.define([
 						var sModelName =  oDelegate.payload.modelName === null ? undefined : oDelegate.payload.model;
 						var oModel = mPropertyBag.appComponent.getModel(sModelName);
 
-						return this._createPropertyInfos(oDelegate.payload, oModel);
+						return this._createPropertyInfos(oMDCChart, oModel);
 					}.bind(this));
 		}
 
 		return ChartDelegate.fetchProperties.call(this, oMDCChart);
 	};
 
-    SampleChartDelegate._createPropertyInfos = function (oDelegatePayload, oModel) {
-        //var oMetadataInfo = oMDCChart.getDelegate().payload;
-        var aProperties = [];
-        var sEntitySetPath = "/" + oDelegatePayload.collectionName;
-        var oMetaModel = oModel.getMetaModel();
+	SampleChartDelegate._createPropertyInfos = function (oMDCChart, oModel) {
+		var oDelegatePayload = oMDCChart.getDelegate().payload;
+		var aProperties = [];
+		var sEntitySetPath = "/" + oDelegatePayload.collectionName;
+		var oMetaModel = oModel.getMetaModel();
 
-        return Promise.all([
-            oMetaModel.requestObject(sEntitySetPath + "/"), oMetaModel.requestObject(sEntitySetPath + "@")
-        ]).then(function (aResults) {
-            var oEntityType = aResults[0], mEntitySetAnnotations = aResults[1];
-            var oSortRestrictions = mEntitySetAnnotations["@Org.OData.Capabilities.V1.SortRestrictions"] || {};
-            var oSortRestrictionsInfo = ODataMetaModelUtil.getSortRestrictionsInfo(oSortRestrictions);
-            var oFilterRestrictions = mEntitySetAnnotations["@Org.OData.Capabilities.V1.FilterRestrictions"];
-            var oFilterRestrictionsInfo = ODataMetaModelUtil.getFilterRestrictionsInfo(oFilterRestrictions);
+		return Promise.all([
+			oMetaModel.requestObject(sEntitySetPath + "/"), oMetaModel.requestObject(sEntitySetPath + "@")
+		]).then(function (aResults) {
+			var oEntityType = aResults[0], mEntitySetAnnotations = aResults[1];
+			var oSortRestrictions = mEntitySetAnnotations["@Org.OData.Capabilities.V1.SortRestrictions"] || {};
+			var oSortRestrictionsInfo = ODataMetaModelUtil.getSortRestrictionsInfo(oSortRestrictions);
+			var oFilterRestrictions = mEntitySetAnnotations["@Org.OData.Capabilities.V1.FilterRestrictions"];
+			var oFilterRestrictionsInfo = ODataMetaModelUtil.getFilterRestrictionsInfo(oFilterRestrictions);
 
-            for (var sKey in oEntityType) {
-                var oObj = oEntityType[sKey];
+			for (var sKey in oEntityType) {
+				var oObj = oEntityType[sKey];
 
-                if (oObj && oObj.$kind === "Property") {
-                    // ignore (as for now) all complex properties
-                    // not clear if they might be nesting (complex in complex)
-                    // not clear how they are represented in non-filterable annotation
-                    // etc.
-                    if (oObj.$isCollection) {
-                        //Log.warning("Complex property with type " + oObj.$Type + " has been ignored");
-                        continue;
-                    }
-
-                    var oPropertyAnnotations = oMetaModel.getObject(sEntitySetPath + "/" + sKey + "@");
-
-                    //TODO: Check what we want to do with properties neither aggregatable nor groupable
-                    //Right now: skip them, since we can't create a chart from it
-                    if (!oPropertyAnnotations["@Org.OData.Aggregation.V1.Aggregatable"] && !oPropertyAnnotations["@Org.OData.Aggregation.V1.Groupable"]) {
-                        continue;
-                    }
-
-                    if (oPropertyAnnotations["@Org.OData.Aggregation.V1.Aggregatable"]){
-                        aProperties = aProperties.concat(this._createPropertyInfosForAggregatable(sKey, oPropertyAnnotations, oObj, oFilterRestrictionsInfo, oSortRestrictionsInfo));
-                    }
-
-                    if (oPropertyAnnotations["@Org.OData.Aggregation.V1.Groupable"]) {
-
-                        var sTextProperty = oPropertyAnnotations["@com.sap.vocabularies.Common.v1.Text"] ? oPropertyAnnotations["@com.sap.vocabularies.Common.v1.Text"].$Path  : null;
-
-                        if (sTextProperty && sTextProperty.indexOf("/") > -1) {
-                            sTextProperty = null; //Expand is not supported
-                        }
-
-                        aProperties.push({
-                            name: sKey,
-                            propertyPath: sKey,
-                            label: oPropertyAnnotations["@com.sap.vocabularies.Common.v1.Label"] || sKey,
-                            sortable: oSortRestrictionsInfo[sKey] ? oSortRestrictionsInfo[sKey].sortable : true,
-                            filterable: oFilterRestrictionsInfo[sKey] ? oFilterRestrictionsInfo[sKey].filterable : true,
-                            groupable: true,
-                            aggregatable: false,
-                            maxConditions: ODataMetaModelUtil.isMultiValueFilterExpression(oFilterRestrictionsInfo.propertyInfo[sKey]) ? -1 : 1,
-                            //sortKey: sKey,
-                            dataType: oObj.$Type,
-                            role: ChartItemRoleType.category, //standard, normally this should be interpreted from UI.Chart annotation
-                            textProperty:  sTextProperty
-                        });
-                    }
-                }
-            }
-            return aProperties;
-        }.bind(this));
-
-    };
-
-    var getFullId = function(oControl, sVHId) {
-		var oView = oControl.getParent();
-		while (!oView.isA("sap.ui.core.mvc.View")) {
-			oView = oView.getParent();
-		}
-		return oView.getId() + "--" + sVHId;
-	};
-
-    SampleChartDelegate.getFilterDelegate = function() {
-		return {
-			apiVersion: 2,//CLEANUP_DELEGATE
-			addItem: function(oTable, sPropertyName) {
-				return BooksFBDelegate.addItem(oTable, sPropertyName)
-				.then(function(oFilterField) {
-
-					var oProp = oTable.getPropertyHelper().getProperty(sPropertyName);
-
-					var oConstraints = oProp.typeConfig.typeInstance.getConstraints();
-					var oFormatOptions = oProp.typeConfig.typeInstance.getFormatOptions();
-
-					if (sPropertyName === "ID") {
-						oFormatOptions = {groupingEnabled: false};
-					} else if (sPropertyName === "author_ID") {
-						oFormatOptions = {groupingEnabled: false};
-						oFilterField.setValueHelp(getFullId(oTable, "FH1"));
-						oFilterField.setDisplay(FieldDisplay.Description);
-					} else if (sPropertyName === "title") {
-						oFilterField.setValueHelp(getFullId(oTable, "FH4"));
-					} else if (sPropertyName === "published") {
-						oFilterField.setValueHelp(getFullId(oTable, "FHPublished"));
-						oFilterField.setOperators(["EQ", "GT", "LT", "BT", "MEDIEVAL", "RENAISSANCE", "MODERN", "LASTYEAR"]);
-					} else if (sPropertyName === "language_code") {
-						oFilterField.setValueHelp(getFullId(oTable, "FHLanguage"));
-						oFilterField.setMaxConditions(1);
-						oConstraints = {nullable: false, maxLength: 3}; // to test not nullable
-						oFilterField.setDisplay(FieldDisplay.Description);
-					} else if (sPropertyName === "stock") {
-						oFilterField.setMaxConditions(1);
-						oFilterField.setOperators(["BT"]);
-					} else if (sPropertyName === "classification_code") {
-						oFilterField.setValueHelp(getFullId(oTable, "FHClassification"));
-						oFilterField.setDisplay(FieldDisplay.Description);
-					} else if (sPropertyName === "genre_code") {
-						oFilterField.setValueHelp(getFullId(oTable, "FHGenre"));
-						oFilterField.setDisplay(FieldDisplay.Description);
-					} else if (sPropertyName === "subgenre_code") {
-						oFilterField.setValueHelp(getFullId(oTable, "FHSubGenre"));
-						oFilterField.setDisplay(FieldDisplay.Description);
-					} else if (sPropertyName === "detailgenre_code") {
-						oFilterField.setValueHelp(getFullId(oTable, "FHDetailGenre"));
-						oFilterField.setDisplay(FieldDisplay.Description);
-					} else if (sPropertyName === "currency_code") {
-						oFilterField.setValueHelp(getFullId(oTable, "FH-Currency"));
-						oFilterField.setDisplay(FieldDisplay.Value);
-						oFilterField.setMaxConditions(1);
-						oFilterField.setOperators(["EQ"]);
-					} else if (sPropertyName === "createdAt") {
-						oFilterField.setMaxConditions(1); // to use DynamicDateRange
-						oFilterField.setOperators(["MYDATE", "MYDATERANGE", "EQ", "GE", "LE", "BT", "LT", "TODAY", "YESTERDAY", "TOMORROW", "LASTDAYS", "MYNEXTDAYS", "THISWEEK", "THISMONTH", "THISQUARTER", "THISYEAR", "NEXTHOURS", "NEXTMINUTES", "LASTHOURS"]);
+				if (oObj && oObj.$kind === "Property") {
+					// ignore (as for now) all complex properties
+					// not clear if they might be nesting (complex in complex)
+					// not clear how they are represented in non-filterable annotation
+					// etc.
+					if (oObj.$isCollection) {
+						//Log.warning("Complex property with type " + oObj.$Type + " has been ignored");
+						continue;
 					}
 
-					oFilterField.setDataTypeConstraints(oConstraints);
-					oFilterField.setDataTypeFormatOptions(oFormatOptions);
+					var oPropertyAnnotations = oMetaModel.getObject(sEntitySetPath + "/" + sKey + "@");
 
-					return oFilterField;
-				});
-			},
+					//TODO: Check what we want to do with properties neither aggregatable nor groupable
+					//Right now: skip them, since we can't create a chart from it
+					if (!oPropertyAnnotations["@Org.OData.Aggregation.V1.Aggregatable"] && !oPropertyAnnotations["@Org.OData.Aggregation.V1.Groupable"]) {
+						continue;
+					}
+
+					if (oPropertyAnnotations["@Org.OData.Aggregation.V1.Aggregatable"]){
+						aProperties = aProperties.concat(this._createPropertyInfosForAggregatable(sKey, oPropertyAnnotations, oObj, oFilterRestrictionsInfo, oSortRestrictionsInfo));
+					}
+
+					if (oPropertyAnnotations["@Org.OData.Aggregation.V1.Groupable"]) {
+
+						var sTextProperty = oPropertyAnnotations["@com.sap.vocabularies.Common.v1.Text"] ? oPropertyAnnotations["@com.sap.vocabularies.Common.v1.Text"].$Path  : null;
+
+						if (sTextProperty && sTextProperty.indexOf("/") > -1) {
+							sTextProperty = null; //Expand is not supported
+						}
+
+						aProperties.push({
+							name: sKey,
+							propertyPath: sKey,
+							label: oPropertyAnnotations["@com.sap.vocabularies.Common.v1.Label"] || sKey,
+							sortable: oSortRestrictionsInfo[sKey] ? oSortRestrictionsInfo[sKey].sortable : true,
+							filterable: oFilterRestrictionsInfo[sKey] ? oFilterRestrictionsInfo[sKey].filterable : true,
+							groupable: true,
+							aggregatable: false,
+							maxConditions: ODataMetaModelUtil.isMultiValueFilterExpression(oFilterRestrictionsInfo.propertyInfo[sKey]) ? -1 : 1,
+							dataType: oObj.$Type,
+							role: ChartItemRoleType.category, //standard, normally this should be interpreted from UI.Chart annotation
+							textProperty:  sTextProperty
+						});
+
+					}
+				}
+			}
+
+			DelegateCache.add(oMDCChart, {
+				"ID": {dataTypeFormatOptions: {groupingEnabled: false}},
+				"author_ID": {dataTypeFormatOptions: {groupingEnabled: false}, valueHelp: "FH1", display: FieldDisplay.Description},
+				"title": {valueHelp: "FH4"},
+				"published": {valueHelp: "FHPublished", operators: ["EQ", "GT", "LT", "BT", "MEDIEVAL", "RENAISSANCE", "MODERN", "LASTYEAR"]},
+				"language_code": {dataTypeConstraints: {nullable: false, maxLength: 3}, valueHelp: "FHLanguage", maxConditions: 1, display: FieldDisplay.Description},
+				"stock": {maxConditions: 1, operators: ["BT"]},
+				"classification_code": {valueHelp: "FHClassification", display: FieldDisplay.Description},
+				"genre_code": {valueHelp: "FHGenre", display: FieldDisplay.Description},
+				"subgenre_code": {valueHelp: "FHSubGenre", display: FieldDisplay.Description},
+				"detailgenre_code": {valueHelp: "FHDetailGenre", display: FieldDisplay.Description},
+				"currency_code": {valueHelp: "FH-Currency", display: FieldDisplay.Value, maxConditions: 1, operators: ["EQ"]},
+				"createdAt": {maxConditions: 1, operators: ["MYDATE", "MYDATERANGE", "EQ", "GE", "LE", "BT", "LT", "TODAY", "YESTERDAY", "TOMORROW", "LASTDAYS", "MYNEXTDAYS", "THISWEEK", "THISMONTH", "THISQUARTER", "THISYEAR", "NEXTHOURS", "NEXTMINUTES", "LASTHOURS"]}
+			}, "$Filters");
+
+			return aProperties;
+		}.bind(this));
+
+	};
+
+	SampleChartDelegate.getFilterDelegate = function() {
+		return {
+			apiVersion: 2,//CLEANUP_DELEGATE
+			addItem: BooksFBDelegate.addItem.bind(BooksFBDelegate),
 			addCondition: function(sPropertyName, oChart, mPropertyBag) {
 				return BooksFBDelegate.addCondition(sPropertyName, oChart, mPropertyBag);
 			},
@@ -303,5 +257,5 @@ sap.ui.define([
 
 	};
 
-    return SampleChartDelegate;
+	return SampleChartDelegate;
 }, /* bExport= */ true);

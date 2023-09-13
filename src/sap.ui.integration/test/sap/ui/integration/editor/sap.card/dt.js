@@ -514,7 +514,10 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 									}
 								}).then(function (oData){
 									if (oData === false && value === true) {
-										context["control"].setState(false);
+										//to hide the whole parameter :
+										config.visible = false;
+										//just change the Switch :
+										//context["control"].setState(false);
 										return false;
 									}
 									return true;
@@ -538,6 +541,9 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 									}
 								}).then(function (oData){
 									if (oData === false && value === true) {
+										//to hide the whole parameter :
+										//config.visible = false;
+										//just change the checkbox :
 										context["control"].setSelected(false);
 										return false;
 									}

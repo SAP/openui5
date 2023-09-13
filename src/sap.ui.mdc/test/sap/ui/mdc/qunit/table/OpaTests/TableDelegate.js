@@ -22,6 +22,7 @@ sap.ui.define([
 			var oNoDataCol1 = {
 				name: "NoDataCol1",
 				label: "NoDataColumn1",
+				dataType: "String",
 				sortable: false,
 				filterable: false
 			};
@@ -29,6 +30,7 @@ sap.ui.define([
 			var oNoDataCol2 = {
 				name: "NoDataCol2",
 				label: "NoDataColumn2",
+				dataType: "String",
 				sortable: false,
 				filterable: false,
 				exportSettings: {

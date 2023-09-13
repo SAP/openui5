@@ -24,18 +24,13 @@ sap.ui.define([
 				};
 			}
 		},
+		domRef: (oTable) => {
+			return oTable._oTable?.getDomRef() || oTable.getDomRef();
+		},
 		properties: {},
 		aggregations: {
 			_content: {
 				propagateMetadata: function(oElement) {
-
-					if (oElement.isA("sap.m.Table") || oElement.isA("sap.ui.table.Table")) {
-						return {
-							domRef: function(oTable) {
-								return oTable.getDomRef();
-							}
-						};
-					}
 
 					if (oElement.isA("sap.ui.fl.variants.VariantManagement") ||
 						oElement.isA("sap.ui.mdc.ActionToolbar") ||

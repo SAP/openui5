@@ -27,17 +27,11 @@ sap.ui.define([
        return Promise.resolve(["salesOrganization", "distributionChannel", "division"].map(function (sProp) {
 			return {
 				caseSensitive: false,
-				filterable: true,
-				groupable: false,
-				key: sProp === "key",
 				label: sProp,
 				maxConditions: -1,
 				name: sProp,
 				path: sProp,
-				sortable: true,
-				text: undefined,
-				dataType: "String",
-				unit: undefined
+				dataType: "String"
 			};
 		}));
 	};

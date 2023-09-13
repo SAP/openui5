@@ -2,7 +2,6 @@
  * ${copyright}
  */
 
-// Provides sap.ui.core.Messaging
 sap.ui.define([
 	"sap/base/Log",
 	"sap/base/util/deepEqual",
@@ -29,7 +28,7 @@ sap.ui.define([
 	var mAllMessages = {};
 	var oControlMessageProcessor;
 
-		/**
+	/**
 	 * Messaging provides a central place for managing <code>sap.ui.core.message.Messages</code>.
 	 *
 	 * @namespace

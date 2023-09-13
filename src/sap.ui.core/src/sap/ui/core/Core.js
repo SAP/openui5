@@ -1725,32 +1725,6 @@ sap.ui.define([
 		};
 
 		/**
-		 * Fired when the set of controls, elements etc. for a library has changed
-		 * or when the set of libraries has changed.
-		 *
-		 * Note: while the parameters of this event could already describe <i>any</i> type of change,
-		 * the set of reported changes is currently restricted to the addition of libraries,
-		 * controls and elements. Future implementations might extend the set of reported
-		 * changes. Therefore applications should already check the operation and stereotype
-		 * parameters.
-		 *
-		 * @name sap.ui.core.Core#libraryChanged
-		 * @event
-		 * @param {sap.ui.base.Event} oEvent
-		 * @param {sap.ui.base.EventProvider} oEvent.getSource
-		 * @param {object} oEvent.getParameters
-		 * @param {string} oEvent.getParameters.name name of the newly added entity
-		 * @param {string} [oEvent.getParameters.stereotype] stereotype of the newly added entity type ("control", "element")
-		 * @param {string} [oEvent.getParameters.operation] type of operation ("add")
-		 * @param {sap.ui.base.Metadata|object} [oEvent.getParameters.metadata] metadata for the added entity type.
-		 *         Either an instance of sap.ui.core.ElementMetadata if it is a Control or Element, or a library info object
-		 *         if it is a library. Note that the API of all metadata objects is not public yet and might change.
-		 *
-		 * @private
-		 * @ui5-restricted sap.ui.fl, sap.ui.support
-		 */
-
-		/**
 		 * Register a listener for the {@link sap.ui.core.Core#event:libraryChanged} event.
 		 *
 		 * @param {function} fnFunction Callback to be called when the <code>libraryChanged</code> event is fired
@@ -2100,7 +2074,7 @@ sap.ui.define([
 		 * @return {module:sap/ui/core/Messaging}
 		 * @public
 		 * @since 1.33.0
-		 * @deprecated since 1.119. Please use {@link sap.ui.core.Messaging Messaging} instead.
+		 * @deprecated since 1.118. Please use {@link module:sap/ui/core/Messaging Messaging} instead.
 		 */
 		Core.prototype.getMessageManager = function() {
 			return Messaging;

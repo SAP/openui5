@@ -1871,7 +1871,7 @@ sap.ui.define([
 			color: "Marker",
 			size: "12px",
 			useIconTooltip: false,
-			visible: oConfig.visible,
+			visible: typeof oConfig.visible === "boolean" ? "{currentSettings>visible}" : oConfig.visible,
 			objectBindings: {
 				currentSettings: {
 					path: "currentSettings>" + oConfig._settingspath
@@ -1902,7 +1902,7 @@ sap.ui.define([
 		var oMsgIcon = new Icon(this.getId() + "_" + sParameterKey + "_message_icon", {
 			src: "sap-icon://message-information",
 			size: "12px",
-			visible: oConfig.visible,
+			visible: typeof oConfig.visible === "boolean" ? "{currentSettings>visible}" : oConfig.visible,
 			useIconTooltip: false,
 			objectBindings: {
 				currentSettings: {
@@ -1938,7 +1938,7 @@ sap.ui.define([
 			//mark only fields that are required and editable,
 			//otherwise this is confusing because user will not be able to correct it
 			required: oConfig.required && oConfig.editable || false,
-			visible: oConfig.visible,
+			visible: typeof oConfig.visible === "boolean" ? "{currentSettings>visible}" : oConfig.visible,
 			objectBindings: {
 				currentSettings: {
 					path: "currentSettings>" + oConfig._settingspath
@@ -1971,7 +1971,7 @@ sap.ui.define([
 			press: function (oEvent) {
 				this._openSettingsDialog(200, oEvent.oSource, oField);
 			}.bind(this),
-			visible: oConfig.visible,
+			visible: typeof oConfig.visible === "boolean" ? "{currentSettings>visible}" : oConfig.visible,
 			objectBindings: {
 				currentSettings: {
 					path: "currentSettings>" + oConfig._settingspath
@@ -2050,7 +2050,7 @@ sap.ui.define([
 					path: "destinations>/"
 				}
 			},
-			visible: oConfig.visible
+			visible: typeof oConfig.visible === "boolean" ? "{currentSettings>visible}" : oConfig.visible
 		});
 		oField.setAssociation("_editor", this);
 

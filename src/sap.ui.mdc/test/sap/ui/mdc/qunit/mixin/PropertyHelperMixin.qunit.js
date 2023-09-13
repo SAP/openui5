@@ -17,9 +17,6 @@ sap.ui.define([
 ) {
     "use strict";
 
-	//karma testing seems tnot to know window.top   ....
-	window['sap-ui-mdc-config'] = {disableStrictPropertyInfoValidation: true};
-
     var TestClass;
     var oSomeInstance;
 	var oFlexPromiseStub;
@@ -287,12 +284,12 @@ sap.ui.define([
 
 		fnCreateTestClass(true);
 
-		var oSomeInstance = fnCreateInstance({propertyInfo: [{name: "a"}]});
+		var oSomeInstance = fnCreateInstance({propertyInfo: [{name: "a", label: "a", dataType: "String"}]});
 		sinon.stub(AggregationBaseDelegate, "fetchProperties").returns(
 			Promise.resolve([
-				{name : "a"},
-				{name : "b"},
-				{name : "c"}
+				{name : "a", label: "a", dataType: "String"},
+				{name : "b", label: "b", dataType: "String"},
+				{name : "c", label: "b", dataType: "String"}
 			])
 		);
 
@@ -305,7 +302,7 @@ sap.ui.define([
             assert.ok(aProperties[0].name === "a", "properties contain expected fields");
             assert.notOk(oSomeInstance.isPropertyHelperFinal(), "property helper is not yet marked as final");
 
-			oSomeInstance.setPropertyInfo([{name : "a"}, {name : "b"}]);
+			oSomeInstance.setPropertyInfo([{name : "a", label: "a", dataType: "String"}, {name : "b", label: "b", dataType: "String"}]);
 
 			assert.notOk(oSomeInstance.isPropertyHelperFinal(), "property helper is not yet marked as final");
 
@@ -330,13 +327,13 @@ sap.ui.define([
 
 	QUnit.test("Automatic PropertyHelper initialization and updates", function(assert) {
 		fnCreateTestClass(true);
-		var aInitialProperties = [{name: "A"}];
-		var aUpdatedProperties = [{name: "B"}, {name: "C"}];
-		var aIgnoredProperties = [{name: "X"}, {name: "Y"}];
+		var aInitialProperties = [{name: "A", label: "A", dataType: "String"}];
+		var aUpdatedProperties = [{name: "B", label: "B", dataType: "String"}, {name: "C", label: "C", dataType: "String"}];
+		var aIgnoredProperties = [{name: "X", label: "X", dataType: "String"}, {name: "Y", label: "Y", dataType: "String"}];
 		var aFinalProperties = [
-			{name : "D"},
-			{name : "E"},
-			{name : "F"}
+			{name : "D", label: "D", dataType: "String"},
+			{name : "E", label: "E", dataType: "String"},
+			{name : "F", label: "F", dataType: "String"}
 		];
 
 		sinon.stub(AggregationBaseDelegate, "fetchProperties").returns(

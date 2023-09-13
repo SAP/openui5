@@ -1594,8 +1594,6 @@ sap.ui.define([
 	 *
 	 * @name sap.ui.core.Lib#libraryChanged
 	 * @event
-	 * @private
-	 * @ui5-restricted sap.ui.core, sap.ui.fl, sap.ui.support
 	 * @param {sap.ui.base.Event} oEvent
 	 * @param {sap.ui.base.EventProvider} oEvent.getSource
 	 * @param {object} oEvent.getParameters
@@ -1607,7 +1605,7 @@ sap.ui.define([
 	 *         if it is a library. Note that the API of all metadata objects is not public yet and might change.
 	 *
 	 * @private
-	 * @ui5-restricted sap.ui.fl, sap.ui.support
+	 * @ui5-restricted sap.ui.core, sap.ui.fl, sap.ui.support
 	 */
 
 	/**

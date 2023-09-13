@@ -35,14 +35,20 @@ sap.ui.define([
 	var aPropertyInfo = [
 		{
 			name: "column0",
-			typeConfig: DefaultTypeMap.getTypeConfig("sap.ui.model.type.String")
+			label: "column0",
+			dataType: "String"
 		}, {
 			name: "column1",
-			typeConfig: DefaultTypeMap.getTypeConfig("sap.ui.model.type.String")
+			label: "column1",
+			dataType: "String"
 		}, {
-			name: "column2"
+			name: "column2",
+			label: "column2",
+			dataType: "String"
 		}, {
-			name: "SomePropertyName"
+			name: "SomePropertyName",
+			label: "SomePropertyName",
+			dataType: "String"
 		}
 	];
 
