@@ -1,12 +1,12 @@
 /*global QUnit */
-sap.ui.define([
+QUnit.config.autostart = false;
+
+sap.ui.require([
 	"sap/ui/core/Core",
 	"sap/ui/core/Configuration",
 	"sap/ui/core/Theming"
 ], function(Core, Configuration, Theming) {
 	"use strict";
-
-	QUnit.config.autostart = false;
 
 	Core.ready().then(function() {
 
@@ -30,8 +30,8 @@ sap.ui.define([
 			// libs must have been converted and prepended to modules
 			assert.deepEqual(Configuration.getValue("modules"), [ "sap.m.library", "sap.m.Button" ], "modules and libraries");
 
-			// init function must have been called
-			assert.strictEqual(window["I was here"], "u.g.a.d.m.k.", "onInit hook has not been called");
+			// init module must have been loaded
+			assert.ok(sap.ui.require("sap/ui/core/ComponentSupport"), "onInit module should be required");
 
 			assert.ok(sap.ui.require("sap/m/Button"), "configured module has been loaded");
 		});

@@ -1,15 +1,16 @@
 sap.ui.define([
 	"sap/ui/core/Control",
 	"sap/ui/core/Element",
+	"sap/ui/core/EnabledPropagator",
+	"sap/ui/core/IconPool", // to avoid sync loading within RenderManager#icon
+	"sap/ui/core/InvisibleText",
 	"sap/ui/core/Renderer",
 	"sap/ui/core/RenderManager",
-	"sap/ui/core/InvisibleText",
-	"sap/ui/core/EnabledPropagator",
 	"sap/ui/core/dnd/DragInfo",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/model/json/JSONModel"
-], function(Control, Element, Renderer, RenderManager, InvisibleText, EnabledPropagator, DragInfo, createAndAppendDiv, nextUIUpdate, JSONModel) {
+], function(Control, Element, EnabledPropagator, _IconPool, InvisibleText, Renderer, RenderManager, DragInfo, createAndAppendDiv, nextUIUpdate, JSONModel) {
 
 	"use strict";
 	/*global QUnit,sinon*/
