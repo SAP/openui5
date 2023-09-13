@@ -13,6 +13,10 @@
 @_sapMTextAreaValueStateInformationPadding_Compact: 0.0625rem 0.375rem;
 @_sapMTextAreaValueStateErrorWarningPadding: 0.375rem 0.5rem;
 @_sapMTextAreaValueStateErrorWarningPadding_Compact: 0.0625rem 0.375rem;
+@_sapMTextAreaContentWrapperPadding: 0;
+@_sapMTextAreaContentWrapperValueStateSuccessPadding: 0;
+@_sapMTextAreaContentWrapperValueStateInformationPadding: 0;
+@_sapMTextAreaContentWrapperValueStateErrorWarningPadding: 0;
 
 /* uses sapMInputBase styles */
 
@@ -29,6 +33,7 @@
 	width: 100%;
 	line-height: 0;
 	display: block;
+	padding: @_sapMTextAreaContentWrapperPadding;
 }
 
 .sapMTextArea .sapMTextAreaInner {
@@ -94,16 +99,22 @@
 	}
 	.sapMInputBaseContentWrapperState.sapMInputBaseContentWrapperError,
 	.sapMInputBaseContentWrapperState.sapMInputBaseContentWrapperWarning {
+		padding: @_sapMTextAreaContentWrapperValueStateErrorWarningPadding;
+
 		.sapMTextAreaInner, .sapMTextAreaMirror {
 			padding: @_sapMTextAreaValueStateErrorWarningPadding;
 		}
 	}
 	.sapMInputBaseContentWrapperState.sapMInputBaseContentWrapperSuccess {
+		padding: @_sapMTextAreaContentWrapperValueStateSuccessPadding;
+
 		.sapMTextAreaInner, .sapMTextAreaMirror {
 			padding: @_sapMTextAreaValueStateSuccessPadding;
 		}
 	}
 	.sapMInputBaseContentWrapperState.sapMInputBaseContentWrapperInformation {
+		padding: @_sapMTextAreaContentWrapperValueStateInformationPadding;
+
 		.sapMTextAreaInner, .sapMTextAreaMirror {
 			padding: @_sapMTextAreaValueStateInformationPadding;
 		}
@@ -177,32 +188,5 @@ html.sap-tablet, html.sap-phone {
 	&[data-sap-ui-os*="iOS"] .sapMInputBase.sapMTextArea .sapMTextAreaMirror {
 		padding-left: 15px;
 		padding-right: 15px;
-	}
-}
-
-html.sap-desktop:not(.sapUiNativeScrollbars) .sapMTextArea .sapMInputBaseContentWrapper:not(.sapMInputBaseReadonlyWrapper) ::-webkit-scrollbar {
-	background: @sapUiFieldBackgroundStyle;
-	background-color: @sapUiScrollBarTrackColor;
-}
-
-html.sap-desktop:not(.sapUiNativeScrollbars) .sapMTextArea {
-	.sapMInputBaseContentWrapperWarning ::-webkit-scrollbar {
-		background: @sapUiFieldWarningBackgroundStyle;
-		background-color: @sapUiScrollBarTrackColor;
-	}
-
-	.sapMInputBaseContentWrapperError ::-webkit-scrollbar {
-		background: @sapUiFieldInvalidBackgroundStyle;
-		background-color: @sapUiScrollBarTrackColor;
-	}
-
-	.sapMInputBaseContentWrapperInformation ::-webkit-scrollbar {
-		background: @sapUiFieldInformationBackgroundStyle;
-		background-color: @sapUiScrollBarTrackColor;
-	}
-
-	.sapMInputBaseContentWrapperSuccess ::-webkit-scrollbar {
-		background: @sapUiFieldSuccessBackgroundStyle;
-		background-color: @sapUiScrollBarTrackColor;
 	}
 }
