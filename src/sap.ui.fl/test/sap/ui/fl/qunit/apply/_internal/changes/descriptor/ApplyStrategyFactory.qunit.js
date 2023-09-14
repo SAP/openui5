@@ -27,6 +27,80 @@ sap.ui.define([
 				assert.notOk(Registry.appdescr_app_changeDataSource, "runtime registry does not contain build merger");
 			});
 		});
+
+		QUnit.test("when resolving a manifest with valid change texts", (assert) => {
+			const oRuntimeStrategy = ApplyStrategyFactory.getRuntimeStrategy();
+			const oSampleManifest = {
+				someEntry: {
+					someNestedEntry: {
+						a: "someText",
+						b: "{{someTranslationKey}} {{someOtherTranslationKey}} {{someTranslationKey}}"
+					},
+					c: "{{someOtherTranslationKey}}"
+				},
+				d: ["{{someTranslationKey}}"]
+			};
+			const oChangeTexts = {
+				someTranslationKey: {
+					type: "XTIT",
+					value: {
+						"": "foo"
+					}
+				},
+				someOtherTranslationKey: {
+					type: "XTIT",
+					value: {
+						"": "bar"
+					}
+				}
+			};
+
+			assert.deepEqual(
+				oRuntimeStrategy.processTexts(oSampleManifest, oChangeTexts),
+				{
+					someEntry: {
+						someNestedEntry: {
+							a: "someText",
+							b: "foo bar foo"
+						},
+						c: "bar"
+					},
+					d: ["foo"]
+				},
+				"then all manifest entries are replaced with the localized values"
+			);
+		});
+
+		QUnit.test("when resolving a manifest with invalid change texts", (assert) => {
+			const oRuntimeStrategy = ApplyStrategyFactory.getRuntimeStrategy();
+			const oSampleManifest = {
+				a: "{{someValidKey}}",
+				b: "{{someInvalidKey}}"
+			};
+			const oChangeTexts = {
+				someValidKey: {
+					type: "XTIT",
+					value: {
+						"": "foo"
+					}
+				},
+				someInvalidKey: {
+					type: "XTIT",
+					value: {
+						EN: "bar"
+					}
+				}
+			};
+
+			assert.deepEqual(
+				oRuntimeStrategy.processTexts(oSampleManifest, oChangeTexts),
+				{
+					a: "foo",
+					b: "{{someInvalidKey}}"
+				},
+				"then only valid manifest entries are replaced with the localized values"
+			);
+		});
 	});
 
 	QUnit.done(function() {
