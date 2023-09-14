@@ -558,7 +558,7 @@ sap.ui.define([
 		sut.destroy();
 	});
 
-	QUnit.test("MultiSelect - selectAll checkbox enabled behavior", function(assert) {
+	QUnit.test("MultiSelect - selectAll checkbox enabled/selected behavior", function(assert) {
 		var sut = createSUT(true, true, "MultiSelect"),
 			clock = sinon.useFakeTimers();
 		sut.placeAt("qunit-fixture");
@@ -566,13 +566,18 @@ sap.ui.define([
 
 		assert.ok(sut._selectAllCheckBox.getEnabled(), "SelectAll checkbox is enabled since there are visible items");
 
+		sut.selectAll();
+		assert.ok(sut._selectAllCheckBox.getSelected(), "SelectAll checkbox is selected");
+
 		sut.getBinding("items").filter(new Filter("color", "EQ", "foo"));
 		clock.tick(1);
 		assert.ok(sut._selectAllCheckBox.getEnabled(), "SelectAll checkbox is enabled");
+		assert.notOk(sut._selectAllCheckBox.getSelected(), "SelectAll checkbox is deselected");
 
 		sut.getBinding("items").filter();
 		clock.tick(1);
 		assert.ok(sut._selectAllCheckBox.getEnabled(), "SelectAll checkbox is enabled");
+		assert.ok(sut._selectAllCheckBox.getSelected(), "SelectAll checkbox is selected again");
 
 		sut._selectAllCheckBox.setEnabled(false);
 		Core.applyChanges();
