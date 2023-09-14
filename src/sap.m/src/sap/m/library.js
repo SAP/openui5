@@ -5957,7 +5957,7 @@ sap.ui.define([
 				oOldToolbar.setDesign(oOldToolbar.getDesign(), true);
 			}
 			if (oToolbar && oToolbar.setDesign) {
-				oToolbar.setDesign(sap.m.ToolbarDesign.Transparent, true);
+				oToolbar.setDesign(thisLib.ToolbarDesign.Transparent, true);
 			}
 			return oToolbar;
 		},
