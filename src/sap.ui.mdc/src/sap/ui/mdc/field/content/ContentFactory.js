@@ -181,11 +181,11 @@ sap.ui.define([
 			sContentMode = ContentMode.EditMultiValue;
 		} else if (bMultipleLines) {
 			sContentMode = ContentMode.EditMultiLine;
+		} else if (this.getField()._getValueHelp()) { // if ValueHelp assigned use control supporting help
+			sContentMode = ContentMode.EditForHelp;
 		} else if (aOperators.length === 1 && oContentType.getEditOperator() && oContentType.getEditOperator()[aOperators[0]]) {
 			this._sOperator = aOperators[0];
 			sContentMode = ContentMode.EditOperator;
-		} else if (this.getField()._getValueHelp()) { // if ValueHelp assigned use control supporting help
-			sContentMode = ContentMode.EditForHelp;
 		}
 		return sContentMode;
 	};
