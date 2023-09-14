@@ -121,6 +121,7 @@ html.sap-desktop .sapUxAPHierarchicalSelect {
 			&::after {
 				content: "";
 				position: absolute;
+				width: 100%;
 				bottom: 0;
 				height: 0;
 				left: -@sapUiFiori3HSUnderlineOffsetAndHeight;
@@ -128,11 +129,11 @@ html.sap-desktop .sapUxAPHierarchicalSelect {
 				padding: (@sapUiFiori3HSUnderlineOffsetAndHeight / 2) @sapUiFiori3HSUnderlineOffsetAndHeight;
 				border-top-left-radius: @sapUiFiori3HSUnderlineTopRadius;
 				border-top-right-radius: @sapUiFiori3HSUnderlineTopRadius;
-				background-color: @sapUiActive;
+				background-color: @sapUiContentSelectedForegroundColor;
 			}
 
 			& .sapMSelectListItemText {
-				color: @sapUiSelected;
+				color: @sapUiContentSelectedForegroundColor;
 			}
 		}
 	}
