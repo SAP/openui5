@@ -1064,7 +1064,7 @@ sap.ui.define([
 		var oTextResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
 		Log.error("Failed to transfer changes", sErrorMessage);
 		var sMsg = `${oTextResources.getText("MSG_LREP_TRANSFER_ERROR")}
-			${oTextResources.getText("MSG_ERROR_REASON", sErrorMessage)}`;
+			${oTextResources.getText("MSG_ERROR_REASON", [sErrorMessage])}`;
 		MessageBox.error(sMsg, {
 			styleClass: Utils.getRtaStyleClassName()
 		});

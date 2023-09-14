@@ -455,7 +455,7 @@ sap.ui.define([
 			if (sTitle === "") {
 				return this.getTextResources().getText("TXT_DEFAULT_APP");
 			}
-			return this.getTextResources().getText("BTN_ADAPTING_FOR", sTitle);
+			return this.getTextResources().getText("BTN_ADAPTING_FOR", [sTitle]);
 		}
 		return this.getTextResources().getText("BTN_ADAPTING_FOR_ALL_USERS");
 	}

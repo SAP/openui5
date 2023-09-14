@@ -530,7 +530,7 @@ sap.ui.define([
 			var aElementOverlays = [{}];
 			var aSelectedOverlays = ["DummySelectedOverlay"];
 			var oTextResources = oCore.getLibraryResourceBundle("sap.ui.rta");
-			var sExpectedContextMenuText = oTextResources.getText("CTX_ADD_ELEMENTS", oTextResources.getText("MULTIPLE_CONTROL_NAME"));
+			var sExpectedContextMenuText = oTextResources.getText("CTX_ADD_ELEMENTS", [oTextResources.getText("MULTIPLE_CONTROL_NAME")]);
 
 			// "getAllElements" returns no elements
 			sandbox.stub(this.oPlugin, "getAllElements").returns([]);
