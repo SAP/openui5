@@ -238,11 +238,16 @@ sap.ui.define([
 			value : {result : "expression", value : "foo(${path})"},
 			binding : "{=foo(${path})}",
 			expression : "foo(${path})"
+		}, {
+			value : {result : "binding", value : "path"},
+			binding : "{path}",
+			expression : "%{path}",
+			raw : true
 		}].forEach(function (oFixture) {
-			assert.strictEqual(Basics.resultToString(oFixture.value, false), oFixture.binding,
-				oFixture.binding);
-			assert.strictEqual(Basics.resultToString(oFixture.value, true), oFixture.expression,
-				oFixture.expression);
+			assert.strictEqual(Basics.resultToString(oFixture.value, false, undefined, oFixture.raw),
+				oFixture.binding, oFixture.binding);
+			assert.strictEqual(Basics.resultToString(oFixture.value, true, undefined, oFixture.raw),
+				oFixture.expression, oFixture.expression);
 		});
 
 		assert.strictEqual(
@@ -252,6 +257,7 @@ sap.ui.define([
 			Basics.resultToString({result : "composite", value : "{FirstName} {LastName}"}, true);
 		}, /Trying to embed a composite binding into an expression binding/,
 			"composite to expression");
+		assert.strictEqual(Basics.resultToString({result : "not_supported"}), undefined, "not_supported");
 	});
 
 	//*********************************************************************************************
