@@ -561,7 +561,7 @@ sap.ui.define([
 		}
 
 		vValue = this.getResultForChangePromise(aConditions);
-		if (aConditions.length === 0) {
+		if (aConditions.length === 0 || aConditions[0].values.length === 1) {
 			if (vOldAdditionalValue) {
 				var oDataType = this.getContentFactory().getAdditionalDataType();
 				if (oDataType) {
