@@ -2631,6 +2631,15 @@ sap.ui.define([
 		if (bAddAdditionalSelects && this.aAdditionalSelects.length > 0) {
 			sSelect = (sSelect ? sSelect.split(",") : [])
 				.concat(this.aAdditionalSelects).join(",");
+			const oAdditionalProperties = {};
+			this.aAdditionalSelects.forEach((sAdditionalSelect) => {
+				oAdditionalProperties[sAdditionalSelect] = true;
+			});
+			const sAdditionalOrderBy = oAnalyticalQueryRequest.getSortExpression()
+				.getURIOrderByOptionValue(oAdditionalProperties);
+			if (sAdditionalOrderBy) {
+				sOrderBy = sOrderBy ? sOrderBy + "," + sAdditionalOrderBy : sAdditionalOrderBy;
+			}
 		}
 
 		if (this.mParameters && this.mParameters["filter"]) {
