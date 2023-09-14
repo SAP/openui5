@@ -235,6 +235,9 @@ sap.ui.define([
 
 		},
 		createEditForHelp: function(oContentFactory, aControlClasses, sId) {
+			if (oContentFactory.getDataType() && oContentFactory.getDataType().isA("sap.ui.model.CompositeType")) {
+				oContentFactory.setIsMeasure(true); // handle DateTimeWithTimezone like Unit
+			}
 			return DefaultContent.createEdit.apply(this, arguments);
 		},
 
