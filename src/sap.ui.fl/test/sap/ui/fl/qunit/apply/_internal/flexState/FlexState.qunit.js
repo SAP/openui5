@@ -245,7 +245,6 @@ sap.ui.define([
 			this.oCallPrepareFunctionStub = sandbox.stub(FlexState, "callPrepareFunction").callsFake(mockPrepareFunctions);
 			this.oAppComponent = new UIComponent(sComponentId);
 			this.oIsLayerFilteringRequiredStub = sandbox.stub(LayerUtils, "isLayerFilteringRequired").returns(false);
-			this.oFilterStub = sandbox.spy(LayerUtils, "filterChangeDefinitionsByMaxLayer");
 			this.oGetFlexInfoSessionStub = sandbox.stub(FlexInfoSession, "getByReference");
 			this.sFlexReference = "flexReference";
 		},
