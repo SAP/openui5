@@ -64,7 +64,7 @@ sap.ui.define(['sap/ui/core/InvisibleText', 'sap/ui/core/Renderer', './InputBase
 
 		if ((!oControl.getEnabled() && oControl.getType() == "Password")
 			|| (oControl.getShowSuggestion() && oControl.isMobileDevice())
-			|| (oControl.getValueHelpOnly() && oControl.getEnabled() && oControl.getEditable() && oControl.getShowValueHelp())) {
+			|| (false)) {
 			// required for JAWS reader on password fields on desktop and in other cases:
 			oRm.attr("readonly", "readonly");
 		}
@@ -152,9 +152,6 @@ sap.ui.define(['sap/ui/core/InvisibleText', 'sap/ui/core/Renderer', './InputBase
 
 		if (oControl.getShowValueHelp() && oControl.getEnabled() && oControl.getEditable()) {
 			append(InvisibleText.getStaticId("sap.m", "INPUT_VALUEHELP"));
-			if (oControl.getValueHelpOnly()) {
-				append(InvisibleText.getStaticId("sap.m", "INPUT_DISABLED"));
-			}
 		}
 
 		return sAriaDescribedBy;

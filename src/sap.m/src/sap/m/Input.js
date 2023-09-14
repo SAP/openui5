@@ -213,13 +213,6 @@ function(
 				showSuggestion : {type : "boolean", group : "Behavior", defaultValue : false},
 
 				/**
-				 * If set to true, direct text input is disabled and the control will trigger the event "valueHelpRequest" for all user interactions. The properties "showValueHelp", "editable", and "enabled" must be set to true, otherwise the property will have no effect.
-				 * In this scenario, the <code>showItems</code> API will not work.
-				 * @since 1.21.0
-				 */
-				valueHelpOnly : {type : "boolean", group : "Behavior", defaultValue : false},
-
-				/**
 				 * Defines whether to filter the provided suggestions before showing them to the user.
 				 */
 				filterSuggests : {type : "boolean", group : "Behavior", defaultValue : true},
@@ -1127,25 +1120,22 @@ function(
 				decorative: false,
 				noTabStop: true,
 				press: function (oEvent) {
-					// if the property valueHelpOnly is set to true, the event is triggered in the ontap function
-					if (!that.getValueHelpOnly()) {
-						var oParent = this.getParent(),
-							$input;
+					var oParent = this.getParent(),
+						$input;
 
-						if (Device.support.touch) {
-							// prevent opening the soft keyboard
-							$input = oParent.$('inner');
-							$input.attr('readonly', 'readonly');
-							oParent.focus();
-							$input.removeAttr('readonly');
-						} else {
-							oParent.focus();
-						}
-
-						that.bValueHelpRequested = true;
-
-						that._fireValueHelpRequest(false);
+					if (Device.support.touch) {
+						// prevent opening the soft keyboard
+						$input = oParent.$('inner');
+						$input.attr('readonly', 'readonly');
+						oParent.focus();
+						$input.removeAttr('readonly');
+					} else {
+						oParent.focus();
 					}
+
+					that.bValueHelpRequested = true;
+
+					that._fireValueHelpRequest(false);
 				}
 			});
 		} else if (this._oValueHelpIcon.getSrc() !== sIconSrc) {
@@ -1218,21 +1208,6 @@ function(
 	};
 
 	/**
-	 * Fire valueHelpRequest event if conditions for ValueHelpOnly property are met.
-	 *
-	 * @private
-	 */
-	Input.prototype._fireValueHelpRequestForValueHelpOnly = function() {
-		// if all the named properties are set to true, the control triggers "valueHelpRequest" for all user interactions
-		if (this.getEnabled() && this.getEditable() && this.getShowValueHelp() && this.getValueHelpOnly()) {
-			if (Device.system.phone) {
-				this.focus();
-			}
-			this._fireValueHelpRequest(false);
-		}
-	};
-
-	/**
 	 * Fire valueHelpRequest event on tap.
 	 *
 	 * @public
@@ -1240,10 +1215,6 @@ function(
 	 */
 	Input.prototype.ontap = function(oEvent) {
 		InputBase.prototype.ontap.call(this, oEvent);
-
-		if (this.isValueHelpOnlyOpener(oEvent.target)) {
-			this._fireValueHelpRequestForValueHelpOnly();
-		}
 
 		if (this.shouldSuggetionsPopoverOpenOnMobile(oEvent)) {
 				this._openSuggestionsPopover();
@@ -1460,7 +1431,7 @@ function(
 
 		!bFocusInPopup && InputBase.prototype.onsapenter.apply(this, arguments);
 
-		if (this.getEnabled() && this.getEditable() && !(this.getValueHelpOnly() && this.getShowValueHelp())) {
+		if (this.getEnabled() && this.getEditable() && true) {
 			this.fireSubmit({value: this.getValue()});
 		}
 
@@ -1648,11 +1619,11 @@ function(
 		}
 	};
 
-		/**
-	 * Cancels any pending suggestions.
-	 *
-	 * @public
-	 */
+	/**
+ * Cancels any pending suggestions.
+ *
+ * @public
+ */
 	Input.prototype.cancelPendingSuggest = function() {
 		if (this._iSuggestDelay) {
 			clearTimeout(this._iSuggestDelay);
@@ -1978,7 +1949,7 @@ function(
 		oFilterResults = this._getFilteredSuggestionItems(sTypedChars);
 		iSuggestionsLength = oFilterResults.items.length;
 
-		if (iSuggestionsLength > 0 && !this.getValueHelpOnly()) {
+		if (iSuggestionsLength > 0 && true) {
 			this._openSuggestionPopup(this.getValue().length >= this.getStartSuggestion());
 		} else {
 			this._hideSuggestionPopup();
@@ -2313,16 +2284,6 @@ function(
 	};
 
 	Input.prototype.onsaphide = Input.prototype.onsapshow;
-
-	/**
-	 * Event handler for input select.
-	 *
-	 * @private
-	 * @param {jQuery.Event} oEvent Keyboard event.
-	 */
-	Input.prototype.onsapselect = function(oEvent) {
-		this._fireValueHelpRequestForValueHelpOnly();
-	};
 
 	/**
 	 * Event handler for the onFocusOut event.
@@ -3127,7 +3088,7 @@ function(
 			fnFilterStore = this._getFilterFunction();
 
 		// in case of a non-editable or disabled, the popup cannot be opened
-		if (!this.getEnabled() || !this.getEditable() || this.getValueHelpOnly()) {
+		if (!this.getEnabled() || !this.getEditable() || false) {
 			return;
 		}
 
@@ -3234,18 +3195,6 @@ function(
 		}
 
 		return this;
-	};
-
-	/**
-	 * Gets the supported openers for the valueHelpOnly.
-	 * In the context of the Input, all targets are valid.
-	 *
-	 * @protected
-	 * @param {HTMLElement|undefined} oTarget The target of the event.
-	 * @returns {boolean} Boolean indicating if the target is a valid opener.
-	 */
-	Input.prototype.isValueHelpOnlyOpener = function (oTarget) {
-		return true;
 	};
 
 	/* =========================================================== */
@@ -3466,5 +3415,4 @@ function(
 
 
 	return Input;
-
 });

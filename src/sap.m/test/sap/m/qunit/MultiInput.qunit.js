@@ -2520,53 +2520,6 @@ sap.ui.define([
 		oMultiInput.destroy();
 	});
 
-	QUnit.test("Clicking on a Token should not trigger Input.prototype._fireValueHelpRequestForValueHelpOnly", function(assert) {
-		var oSpy = this.spy(Input.prototype, "_fireValueHelpRequestForValueHelpOnly"),
-			oToken = new Token();
-
-		this.multiInput1.addToken(oToken);
-
-		this.multiInput1.attachTokenUpdate(function(oEvent){
-			oEvent.preventDefault();
-		});
-
-		Core.applyChanges();
-
-		qutils.triggerEvent("tap", this.multiInput1.getTokens()[0].getDomRef());
-
-		// assert
-		assert.notOk(oSpy.called, "Input's _fireValueHelpRequestForValueHelpOnly method is not called");
-
-		// clean up
-		oSpy.restore();
-	});
-
-	QUnit.test("Clicking on nMore should not trigger Input.prototype._fireValueHelpRequestForValueHelpOnly", function(assert) {
-		var oSpy = this.spy(Input.prototype, "_fireValueHelpRequestForValueHelpOnly");
-
-		this.multiInput1.setWidth("200px");
-		this.multiInput1.setTokens([
-			new Token({text: "XXXX"}),
-			new Token({text: "XXXX"}),
-			new Token({text: "XXXX"}),
-			new Token({text: "XXXX"})
-		]);
-
-		this.multiInput1.attachTokenUpdate(function(oEvent){
-			oEvent.preventDefault();
-		});
-
-		Core.applyChanges();
-
-		this.multiInput1.getAggregation("tokenizer")._handleNMoreIndicatorPress();
-
-		// assert
-		assert.notOk(oSpy.called, "Input's _fireValueHelpRequestForValueHelpOnly method is not called");
-
-		// clean up
-		oSpy.restore();
-	});
-
 	QUnit.module("Accessibility", {
 		beforeEach : function() {
 			this.multiInput1 = new MultiInput({

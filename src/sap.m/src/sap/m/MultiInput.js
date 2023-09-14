@@ -793,10 +793,6 @@ function(
 		var sOriginalText, i,aSeparatedText,
 			aAddedTokens = [];
 
-		if (this.getValueHelpOnly()) { // BCP: 1670448929
-			return;
-		}
-
 		// for the purpose to copy from column in excel and paste in MultiInput/MultiComboBox
 		sOriginalText = oEvent.originalEvent.clipboardData.getData('text/plain');
 
@@ -844,7 +840,6 @@ function(
 				}
 			}
 		}.bind(this), 0);
-
 	};
 
 	/**
@@ -1624,17 +1619,6 @@ function(
 		iSummedIconsWidth = this._calculateIconsSpace();
 		iTokenizerWidth = oTokenizer.getDomRef().scrollWidth;
 		oFocusDomRef.style.width = 'calc(100% - ' + Math.floor(iSummedIconsWidth + iTokenizerWidth) + "px";
-	};
-
-	/**
-	 * Gets the supported openers for the valueHelpOnly.
-	 *
-	 * @protected
-	 * @param {HTMLElement} oTarget The target of the event.
-	 * @returns {boolean} Boolean indicating if the target is a valid opener.
-	 */
-	MultiInput.prototype.isValueHelpOnlyOpener = function (oTarget) {
-		return [this._$input[0], this._getValueHelpIcon().getDomRef()].indexOf(oTarget) > -1;
 	};
 
 	/**

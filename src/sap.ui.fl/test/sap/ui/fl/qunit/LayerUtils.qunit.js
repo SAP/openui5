@@ -2,6 +2,7 @@
 
 sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexObjects/FlexObject",
+	"sap/ui/fl/initial/_internal/FlexInfoSession",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/LayerUtils",
 	"sap/ui/fl/registry/Settings",
@@ -9,6 +10,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	FlexObject,
+	FlexInfoSession,
 	Layer,
 	LayerUtils,
 	Settings,
@@ -116,50 +118,19 @@ sap.ui.define([
 	});
 
 	QUnit.module("LayerUtils.isLayerFilteringRequired", {
-		beforeEach() {
-			this.oURLParsingService = getURLParsingService();
-		},
 		afterEach() {
+			FlexInfoSession.remove();
 			sandbox.restore();
 		}
 	}, function() {
 		QUnit.test("when maxLayer is CUSTOMER", function(assert) {
-			sandbox.stub(UriParameters.prototype, "get").withArgs("sap-ui-fl-max-layer").returns(Layer.CUSTOMER);
-
-			assert.equal(LayerUtils.isLayerFilteringRequired(this.oURLParsingService), true, "maxLayer is not equal topLayer");
+			sandbox.stub(FlexInfoSession, "getByReference").returns({maxLayer: Layer.CUSTOMER});
+			assert.equal(LayerUtils.isLayerFilteringRequired(), true, "maxLayer is not equal topLayer");
 		});
 
 		QUnit.test("when maxLayer is USER", function(assert) {
-			sandbox.stub(UriParameters.prototype, "get").withArgs("sap-ui-fl-max-layer").returns(Layer.USER);
-
-			assert.equal(LayerUtils.isLayerFilteringRequired(this.oURLParsingService), false, "maxLayer is equal topLayer");
-		});
-	});
-
-	QUnit.module("LayerUtils.isOverMaxLayer", {
-		beforeEach() {
-			this.oURLParsingService = getURLParsingService();
-		},
-		afterEach() {
-			sandbox.restore();
-		}
-	}, function() {
-		QUnit.test("compare maxLayer: CUSTOMER with layer BASE", function(assert) {
-			sandbox.stub(UriParameters.prototype, "get").withArgs("sap-ui-fl-max-layer").returns(Layer.CUSTOMER);
-
-			assert.equal(LayerUtils.isOverMaxLayer(Layer.BASE, this.oURLParsingService), false, "false");
-		});
-
-		QUnit.test("compare maxLayer: CUSTOMER with layer CUSTOMER", function(assert) {
-			sandbox.stub(UriParameters.prototype, "get").withArgs("sap-ui-fl-max-layer").returns(Layer.CUSTOMER);
-
-			assert.equal(LayerUtils.isOverMaxLayer(Layer.CUSTOMER, this.oURLParsingService), false, "false");
-		});
-
-		QUnit.test("compare maxLayer: CUSTOMER with layer USER", function(assert) {
-			sandbox.stub(UriParameters.prototype, "get").withArgs("sap-ui-fl-max-layer").returns(Layer.CUSTOMER);
-
-			assert.equal(LayerUtils.isOverMaxLayer(Layer.USER, this.oURLParsingService), true, "true");
+			sandbox.stub(FlexInfoSession, "getByReference").returns({maxLayer: Layer.USER});
+			assert.equal(LayerUtils.isLayerFilteringRequired(), false, "maxLayer is equal topLayer");
 		});
 	});
 
@@ -174,34 +145,6 @@ sap.ui.define([
 
 		QUnit.test("compare CUSTOMER with layer USER", function(assert) {
 			assert.equal(LayerUtils.isOverLayer(Layer.USER, Layer.CUSTOMER), true, "true");
-		});
-	});
-
-	QUnit.module("LayerUtils.getMaxLayer", {
-		beforeEach() {
-			this.oURLParsingService = getURLParsingService();
-		},
-		afterEach() {
-			sandbox.restore();
-		}
-	}, function() {
-		QUnit.test("sap-ui-fl-max-layer is not available", function(assert) {
-			assert.equal(LayerUtils.getMaxLayer(this.oURLParsingService), Layer.USER, "return topLayer");
-		});
-
-		QUnit.test("sap-ui-fl-max-layer is set as url parameter", function(assert) {
-			sandbox.stub(UriParameters.prototype, "get").withArgs("sap-ui-fl-max-layer").returns(Layer.VENDOR);
-			assert.equal(LayerUtils.getMaxLayer(this.oURLParsingService), Layer.VENDOR, "get UriParamter");
-		});
-
-		QUnit.test("sap-ui-fl-max-layer is set as hash parameter", function(assert) {
-			this.oURLParsingService = getURLParsingService({
-				params: {
-					"sap-ui-fl-max-layer": [Layer.CUSTOMER]
-				}
-			});
-			sandbox.stub(UriParameters.prototype, "get").withArgs("sap-ui-fl-max-layer").returns(Layer.VENDOR);
-			assert.equal(LayerUtils.getMaxLayer(this.oURLParsingService), Layer.CUSTOMER, "get UriParamter");
 		});
 	});
 
@@ -238,45 +181,6 @@ sap.ui.define([
 		QUnit.test("with current layer USER", function(assert) {
 			sandbox.stub(LayerUtils, "getCurrentLayer").returns(Layer.USER);
 			assert.equal(LayerUtils.doesCurrentLayerRequirePackage(), false, "return false");
-		});
-	});
-
-	QUnit.module("LayerUtils.filterChangeDefinitionsByMaxLayer", {
-		afterEach() {
-			sandbox.restore();
-		}
-	}, function() {
-		QUnit.test("with max layer = ", function(assert) {
-			var oDummyURLParsingService = "DummyURLParsingService";
-			var aChangeDefinitions = [
-				{fileName: "user1", layer: Layer.USER},
-				{fileName: "customer1", layer: Layer.CUSTOMER},
-				{fileName: "customer_base1", layer: Layer.CUSTOMER_BASE},
-				{fileName: "vendor1", layer: Layer.VENDOR},
-				{fileName: "user2", layer: Layer.USER}
-			];
-			var oMaxLayerStub = sandbox.stub(LayerUtils, "getMaxLayer").returns(Layer.USER);
-			var aFilteredChanges = LayerUtils.filterChangeDefinitionsByMaxLayer(aChangeDefinitions, oDummyURLParsingService);
-			assert.equal(aFilteredChanges.length, 5, "USER: all 5 changes are returned");
-			assert.ok(oMaxLayerStub.withArgs(oDummyURLParsingService), "then getMaxLayer was called with the URLParsingService");
-
-			oMaxLayerStub.returns(Layer.CUSTOMER);
-			aFilteredChanges = LayerUtils.filterChangeDefinitionsByMaxLayer(aChangeDefinitions);
-			assert.equal(aFilteredChanges.length, 3, "CUSTOMER: 3 changes are returned");
-			assert.equal(aFilteredChanges[0].fileName, "customer1");
-			assert.equal(aFilteredChanges[1].fileName, "customer_base1");
-			assert.equal(aFilteredChanges[2].fileName, "vendor1");
-
-			oMaxLayerStub.returns(Layer.CUSTOMER_BASE);
-			aFilteredChanges = LayerUtils.filterChangeDefinitionsByMaxLayer(aChangeDefinitions);
-			assert.equal(aFilteredChanges.length, 2, "CUSTOMER_BASE: 2 changes are returned");
-			assert.equal(aFilteredChanges[0].fileName, "customer_base1");
-			assert.equal(aFilteredChanges[1].fileName, "vendor1");
-
-			oMaxLayerStub.returns(Layer.VENDOR);
-			aFilteredChanges = LayerUtils.filterChangeDefinitionsByMaxLayer(aChangeDefinitions);
-			assert.equal(aFilteredChanges.length, 1, "VENDOR: 1 change is returned");
-			assert.equal(aFilteredChanges[0].fileName, "vendor1");
 		});
 	});
 

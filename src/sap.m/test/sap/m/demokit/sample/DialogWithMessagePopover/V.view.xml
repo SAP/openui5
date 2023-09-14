@@ -1,20 +1,13 @@
 <mvc:View
 	controllerName="sap.m.sample.DialogWithMessagePopover.C"
 	height="100%"
-	xmlns:f="sap.ui.layout.form"
-	xmlns:l="sap.ui.layout"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
 	<Page id="messageHandlingPage" showHeader="false">
-		<content>
-			<Button
-				text="Open Dialog With Message Popover"
-				press=".onOpenPopoverDialog"
-				class="sapUiMediumMargin"
-				ariaHasPopup="Dialog" />
-		</content>
-		<footer>
-			<OverflowToolbar></OverflowToolbar>
-		</footer>
+		<Button
+			text="Open Dialog With Message Popover"
+			press=".onOpenPopoverDialog"
+			class="sapUiMediumMargin"
+			ariaHasPopup="Dialog" />
 	</Page>
 </mvc:View>
