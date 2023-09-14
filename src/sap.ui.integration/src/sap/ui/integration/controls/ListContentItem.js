@@ -12,7 +12,8 @@ sap.ui.define([
 	"sap/m/AvatarSize",
 	"sap/m/ListItemBase",
 	"sap/ui/core/Core",
-	"sap/ui/core/library"
+	"sap/ui/core/library",
+	"sap/ui/integration/util/BindingResolver"
 ], function (
 	library,
 	ListContentItemRenderer,
@@ -23,7 +24,8 @@ sap.ui.define([
 	AvatarSize,
 	ListItemBase,
 	Core,
-	coreLibrary
+	coreLibrary,
+	BindingResolver
 ) {
 	"use strict";
 
@@ -161,22 +163,29 @@ sap.ui.define([
 		renderer: ListContentItemRenderer
 	});
 
-	ListContentItem.getLinesCount = function (oConfiguration) {
-		var iLines = 1; // at least 1 line for the mandatory title
+	ListContentItem.getLinesCount = function (oConfiguration, oContent) {
+		let iLines = 1; // at least 1 line for the mandatory title
+		const oResolvedConfig = BindingResolver.resolveValue(oConfiguration, oContent);
 
-		if (oConfiguration.description) {
+		const bDescriptionVisible = oResolvedConfig.description?.hasOwnProperty("visible") ? oResolvedConfig.description?.visible : true;
+		if (oResolvedConfig.description && bDescriptionVisible) {
 			iLines += 1;
 		}
 
-		if (oConfiguration.attributes) {
-			if (oConfiguration.attributesLayoutType === AttributesLayoutType.OneColumn) {
-				iLines = oConfiguration.attributes.length;
+		if (oResolvedConfig.attributes) {
+			const aVisibleAttributes = oResolvedConfig.attributes.filter(function (oAttribute) {
+				return oAttribute.hasOwnProperty("visible") ? oAttribute.visible : true;
+			});
+
+			if (oResolvedConfig.attributesLayoutType === AttributesLayoutType.OneColumn) {
+				iLines = aVisibleAttributes.length;
 			} else {
-				iLines += Math.ceil(oConfiguration.attributes.length / 2);
+				iLines += Math.ceil(aVisibleAttributes.length / 2);
 			}
 		}
 
-		if (oConfiguration.chart) {
+		const bChartVisible = oResolvedConfig.chart?.hasOwnProperty("visible") ? oResolvedConfig.chart?.visible : true;
+		if (oResolvedConfig.chart && bChartVisible) {
 			iLines += 1;
 		}
 
