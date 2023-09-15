@@ -191,6 +191,7 @@ sap.ui.define([
 			"sap.m.IBar",
 			"sap.m.IBadge",
 			"sap.m.IBreadcrumbs",
+			"sap.m.ITableItem",
 			"sap.m.p13n.IContent",
 			"sap.m.IconTab",
 			"sap.m.IScale",
@@ -2092,6 +2093,16 @@ sap.ui.define([
 	 *
 	 * @since 1.52
 	 * @name sap.m.IBreadcrumbs
+	 * @interface
+	 * @public
+	 */
+
+	/**
+	 *
+	 * Common interface for sap.m.ColumnListItem and sap.m.GroupHeaderListItem
+	 *
+	 * @since 1.119
+	 * @name sap.m.ITableItem
 	 * @interface
 	 * @public
 	 */

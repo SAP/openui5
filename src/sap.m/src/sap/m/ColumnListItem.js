@@ -38,6 +38,7 @@ sap.ui.define([
 	 * The inherited <code>counter</code> property of <code>sap.m.ListItemBase</code> is not supported.
 	 *
 	 * @extends sap.m.ListItemBase
+	 * @implements sap.m.ITableItem
 	 *
 	 * @author SAP SE
 	 * @version ${version}
@@ -49,7 +50,9 @@ sap.ui.define([
 	 */
 	var ColumnListItem = ListItemBase.extend("sap.m.ColumnListItem", /** @lends sap.m.ColumnListItem.prototype */ {
 		metadata : {
-
+			interfaces : [
+				"sap.m.ITableItem"
+			],
 			library : "sap.m",
 			properties : {
 
