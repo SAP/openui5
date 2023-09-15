@@ -2694,7 +2694,7 @@
         },
         "parameters": {
           "description": "Represents the request parameters. If it is a POST request the parameters will be put as key/value pairs into the body of the request",
-          "$ref": "#/definitions/parameters"
+          "type": "object"
         },
         "headers": {
           "description": "Represents HTTP headers",
@@ -2898,22 +2898,14 @@
           "$ref": "#/definitions/service"
         },
         "url": {
-          "description": "Represents the URL that will be used as navigation target if no service is provided",
+          "description": "[Deprecated] Represents the URL that will be used as navigation target if no service is provided",
           "type": "string"
         },
         "parameters": {
-          "description": "Parameters passed to the navigation action handler",
-          "oneOf": [
-            {
-              "$ref": "#/definitions/parameters"
-            },
-            {
-              "$ref": "#/definitions/ibnActionParameters"
-            }
-          ]
+          "description": "Parameters passed to the navigation action handler"
         },
         "target": {
-          "description": "Specifies where to open the 'url', if it is provided",
+          "description": "[Deprecated] Specifies where to open the 'url', if it is provided",
           "type": "string",
           "oneOf": [
             {
@@ -2924,45 +2916,208 @@
             }
           ]
         }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "Custom"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "parameters": {
+                "$ref": "#/definitions/customActionParameters"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "Navigation"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "parameters": {
+                "oneOf": [
+                  {
+                    "$ref": "#/definitions/navigationActionParameters"
+                  },
+                  {
+                    "$ref": "#/definitions/navigationActionIBParameters"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "Submit"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "parameters": {
+                  "$ref": "#/definitions/submitActionParameters"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "ShowCard"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "parameters": {
+                "$ref": "#/definitions/showCardActionParameters"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "HideCard"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "parameters": {
+                "$ref": "#/definitions/hideCardActionParameters"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "navigationActionParameters": {
+      "description": "Parameters for Navigation action",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "url"
+      ],
+      "properties": {
+        "url": {
+          "type": "string"
+        },
+        "target": {
+          "type": "string"
+        }
       }
     },
-    "parameters": {
-      "description": "Represents parameters that are passed in the actions",
-      "type": "object",
-      "additionalProperties": true
-    },
-    "ibnActionParameters": {
-      "description": "Parameters for an intent based navigation",
+    "navigationActionIBParameters": {
+      "description": "Parameters for Intent-Based Navigation action",
       "type": "object",
       "additionalProperties": false,
       "required": [
         "ibnTarget"
       ],
-      "ibnTarget": {
-        "description": "An application identifier consisting of semanticObject and action",
-        "$ref": "#/definitions/ibnTarget"
-      },
-      "ibnParam": {
-        "description": "Key/value pairs for parameters of the target application",
-        "$ref": "#/definitions/parameters"
-      },
-      "ibnAppSpecificRoute": {
-        "description": "An application specific route that is passed to the target application",
-        "type": "string"
+      "properties": {
+        "ibnTarget": {
+          "description": "An application identifier consisting of semanticObject and action",
+          "$ref": "#/definitions/ibnTarget"
+        },
+        "ibnParams": {
+          "description": "Key/value pairs for parameters of the target application",
+          "type": "object"
+        },
+        "ibnAppSpecificRoute": {
+          "description": "An application specific route that is passed to the target application",
+          "type": "string"
+        }
       }
+    },
+    "submitActionParameters": {
+      "description": "Parameters for Submit action",
+      "type": "object",
+      "additionalProperties": false
+    },
+    "showCardActionParameters": {
+      "description": "Parameters for ShowCard action",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "manifest"
+      ],
+      "properties": {
+        "manifest": {
+          "description": "An application identifier consisting of semanticObject and action",
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "object"
+            }
+          ]
+        },
+        "parameters": {
+          "type": "object"
+        },
+        "data": {
+          "type": "object"
+        },
+        "width": {
+          "type": "string"
+        },
+        "baseUrl": {
+          "type": "string"
+        },
+        "resizable": {
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "#/definitions/simpleBinding"
+            }
+          ]
+        }
+      }
+    },
+    "customActionParameters": {
+      "description": "Parameters for Custom action",
+      "type": "object",
+      "additionalProperties": true
+    },
+    "hideCardActionParameters": {
+      "description": "Parameters for HideCard action",
+      "type": "object",
+      "additionalProperties": false
     },
     "ibnTarget": {
       "description": "The application identifier consisting of semanticObject and action or ",
       "type": "object",
       "additionalProperties": false,
       "required": [
-        "semanticObject", "action"
+        "semanticObject",
+        "action"
       ],
-      "semanticObject": {
-        "type": "string"
-      },
-      "action": {
-        "type": "string"
+      "properties": {
+        "semanticObject": {
+          "type": "string"
+        },
+        "action": {
+          "type": "string"
+        }
       }
     },
     "state": {
@@ -3006,7 +3161,7 @@
               "type": "string"
             },
             "parameters": {
-              "$ref": "#/definitions/parameters"
+              "type": "object"
             }
           }
         }

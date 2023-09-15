@@ -1,4 +1,7 @@
 {
+	"sap.app": {
+		"id": "test.snackCard"
+	},
 	"sap.card": {
 		"type": "Object",
 		"configuration": {

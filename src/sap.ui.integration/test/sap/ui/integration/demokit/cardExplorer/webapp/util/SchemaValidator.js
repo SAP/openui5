@@ -114,21 +114,28 @@ sap.ui.define([
 	 *                    Also throws, if there is a problem with initialization of the validator.
 	 * @public
 	 */
-	SchemaValidator.validate = function (oManifest) {
-		return SchemaValidator._initValidate()
-			.catch(function (oError) {
-				Log.error("Could not initialize Validator. Schema validation skipped! " + oError);
-				throw "Could not initialize Validator. Schema validation skipped!";
-			})
-			.then(function (fnValidate) {
-				var oResult = fnValidate(oManifest);
+	SchemaValidator.validate = async (oManifest) => {
+		let fnValidate, oResult;
 
-				if (!oResult.valid) {
-					throw oResult.errors;
-				} else {
-					return "Validation Successful";
-				}
-			});
+		try {
+			fnValidate = await SchemaValidator._initValidate();
+		} catch (oError) {
+			Log.error("Could not initialize Validator. Schema validation skipped! " + oError);
+			throw "Could not initialize Validator. Schema validation skipped!";
+		}
+
+		try {
+			oResult = fnValidate(oManifest);
+		} catch (oError) {
+			Log.error("Could not execute validation! " + oError);
+			throw "Could not execute validation!";
+		}
+
+		if (!oResult.valid) {
+			throw oResult.errors;
+		}
+
+		return "Validation successful";
 	};
 
 	return SchemaValidator;
