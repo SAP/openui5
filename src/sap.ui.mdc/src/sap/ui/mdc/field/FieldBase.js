@@ -16,13 +16,12 @@ sap.ui.define([
 	'sap/ui/mdc/enums/BaseType',
 	'sap/ui/mdc/field/content/ContentFactory',
 	'sap/ui/mdc/Control',
-	"sap/ui/mdc/util/loadModules",
+	'sap/ui/mdc/util/loadModules',
 	'sap/ui/core/library',
 	'sap/ui/core/LabelEnablement',
 	'sap/ui/core/message/MessageMixin',
 	'sap/base/util/deepEqual',
 	'sap/base/util/merge',
-	'sap/base/Log',
 	'sap/ui/dom/containsOrEquals',
 	'sap/ui/model/BindingMode',
 	'sap/ui/model/FormatException',
@@ -30,9 +29,7 @@ sap.ui.define([
 	'sap/ui/model/ValidateException',
 	'sap/ui/model/base/ManagedObjectModel',
 	'sap/ui/base/ManagedObjectObserver',
-	'sap/ui/base/SyncPromise',
-	'sap/base/util/restricted/_debounce',
-	'sap/ui/events/KeyCodes'
+	'sap/base/util/restricted/_debounce'
 ], function(
 	Device,
 	FieldEditMode,
@@ -54,7 +51,6 @@ sap.ui.define([
 	MessageMixin,
 	deepEqual,
 	merge,
-	Log,
 	containsOrEquals,
 	BindingMode,
 	FormatException,
@@ -62,9 +58,7 @@ sap.ui.define([
 	ValidateException,
 	ManagedObjectModel,
 	ManagedObjectObserver,
-	SyncPromise,
-	debounce,
-	KeyCodes
+	debounce
 ) {
 	"use strict";
 

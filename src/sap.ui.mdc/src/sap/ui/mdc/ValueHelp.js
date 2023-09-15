@@ -7,32 +7,18 @@ sap.ui.define([
 	'sap/ui/mdc/mixin/PromiseMixin',
 	'sap/ui/mdc/condition/Condition',
 	'sap/ui/mdc/condition/FilterOperatorUtil',
-	'sap/ui/mdc/condition/FilterConverter',
 	'sap/ui/mdc/enums/ValueHelpSelectionType',
-	'sap/ui/mdc/enums/ConditionValidated',
-	'sap/ui/model/Context',
-	'sap/ui/model/FormatException',
-	'sap/ui/model/ParseException',
 	'sap/ui/model/base/ManagedObjectModel',
 	'sap/ui/base/ManagedObjectObserver',
-	'sap/base/util/merge',
-	'sap/base/util/deepEqual',
 	'sap/ui/mdc/enums/ValueHelpPropagationReason'
 ], function(
 	Element,
 	PromiseMixin,
 	Condition,
 	FilterOperatorUtil,
-	FilterConverter,
 	ValueHelpSelectionType,
-	ConditionValidated,
-	Context,
-	FormatException,
-	ParseException,
 	ManagedObjectModel,
 	ManagedObjectObserver,
-	merge,
-	deepEqual,
 	ValueHelpPropagationReason
 ) {
 	"use strict";
