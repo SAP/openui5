@@ -447,6 +447,28 @@ sap.ui.define([
 		assert.strictEqual(hasAttribute("tabindex", this.oNumericContent), false, "Attribute has been removed successfully");
 		assert.strictEqual(this.oNumericContent.$().hasClass("sapMPointer"), false, "Class has been removed successfully");
 	});
+	QUnit.module("Negative values", {
+		beforeEach: function () {
+			this.oNumericContent = new NumericContent("numeric-cnt", {
+				indicator: DeviationIndicator.Up,
+				value: "−859,65 t.",
+				truncateValueTo: 7,
+				formatterValue: true,
+				animateTextChange: false,
+				icon:  "sap-icon://line-charts"
+			}).placeAt("qunit-fixture");
+			oCore.applyChanges();
+		},
+		afterEach: function () {
+			this.oNumericContent.destroy();
+			this.oNumericContent = null;
+		}
+	});
+
+	QUnit.test("Negative values in Finnish displayed Properly in formatter mode", function (assert){
+		assert.strictEqual(this.oNumericContent.getDomRef("value-inner").textContent, "−859,65", "Value is correct");
+		assert.strictEqual(this.oNumericContent.getDomRef("scale").textContent, "t", "Scale is correct");
+	});
 
 	QUnit.module("Adaptive font size", {
 		beforeEach: function () {
