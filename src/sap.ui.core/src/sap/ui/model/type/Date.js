@@ -220,7 +220,6 @@ sap.ui.define([
 	 * @returns {string|undefined}
 	 *   The language-dependent placeholder text or <code>undefined</code> if the type does not offer a placeholder
 	 *
-	 * @experimental As of version 1.114.0
 	 * @public
 	 */
 	Date1.prototype.getPlaceholderText = function () {
