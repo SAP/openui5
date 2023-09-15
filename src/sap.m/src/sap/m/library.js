@@ -5943,23 +5943,6 @@ sap.ui.define([
 		return oInputODataSuggestProvider;
 	}());
 
-	//implement FileUploader helper factory with m controls
-	ObjectPath.set("sap.ui.unified.FileUploaderHelper", {
-		createTextField: function(sId){
-			var oTextField = new sap.m.Input(sId);
-			return oTextField;
-		},
-		setTextFieldContent: function(oTextField, sWidth){
-			oTextField.setWidth(sWidth);
-		},
-		createButton: function(sId){
-			var oButton = new sap.m.Button(sId);
-			return oButton;
-		},
-		addFormClass: function(){ return "sapUiFUM"; },
-		bFinal: true
-	});
-
 	// implements ColorPicker helper factory with common controls
 	ObjectPath.set("sap.ui.unified.ColorPickerHelper", {
 		isResponsive: function () {

@@ -19,6 +19,7 @@ sap.ui.define([
 	'sap/base/security/encodeXML',
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Configuration",
+	"./FileUploaderHelper",
 	// jQuery Plugin "addAriaDescribedBy"
 	'sap/ui/dom/jquery/Aria'
 ], function(
@@ -34,7 +35,8 @@ sap.ui.define([
 	Log,
 	encodeXML,
 	jQuery,
-	Configuration
+	Configuration,
+	FileUploaderHelper
 ) {
 
 
@@ -598,15 +600,16 @@ sap.ui.define([
 	 */
 	FileUploader.prototype.init = function(){
 		var that = this;
+		this.oFileUploaderHelper = FileUploaderHelper.getHelper();
 		// load the respective UI-Elements from the FileUploaderHelper
-		this.oFilePath = library.FileUploaderHelper.createTextField(this.getId() + "-fu_input").addEventDelegate({
+		this.oFilePath = this.oFileUploaderHelper.createTextField(this.getId() + "-fu_input").addEventDelegate({
 			onAfterRendering: function () {
 				if (that.getWidth()) {
 					that._resizeDomElements();
 				}
 			}
 		});
-		this.oBrowse = library.FileUploaderHelper.createButton(this.getId() + "-fu_button");
+		this.oBrowse = this.oFileUploaderHelper.createButton(this.getId() + "-fu_button");
 		this.oFilePath.setParent(this);
 		this.oBrowse.setParent(this);
 

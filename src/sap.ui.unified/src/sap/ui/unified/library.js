@@ -617,17 +617,6 @@ sap.ui.define([
 		};
 	}
 
-	//factory for the FileUploader to create TextField and Button to be overwritten by commons and mobile library
-	if (!thisLib.FileUploaderHelper) {
-		thisLib.FileUploaderHelper = {
-			createTextField: function(sId){ throw new Error("no TextField control available!"); }, /* must return a TextField control */
-			setTextFieldContent: function(oTextField, sWidth){ throw new Error("no TextField control available!"); },
-			createButton: function(sId){ throw new Error("no Button control available!"); }, /* must return a Button control */
-			addFormClass: function(){ return null; },
-			bFinal: false /* if true, the helper must not be overwritten by an other library */
-		};
-	}
-
 	thisLib.calendar = thisLib.calendar || {};
 
 	return thisLib;
