@@ -540,15 +540,11 @@ sap.ui.define([
 	 * @see #collapse
 	 */
 	_AggregationCache.prototype.expand = function (oGroupLock, vGroupNodeOrPath, fnDataRequested) {
-		var oCache,
-			iCount,
-			aElements = this.aElements,
+		var iCount,
 			oGroupNode = typeof vGroupNodeOrPath === "string"
 				? this.getValue(vGroupNodeOrPath)
 				: vGroupNodeOrPath,
-			iIndex,
 			aSpliced = _Helper.getPrivateAnnotation(oGroupNode, "spliced"),
-			bStale,
 			that = this;
 
 		if (vGroupNodeOrPath !== oGroupNode) {
@@ -559,20 +555,20 @@ sap.ui.define([
 
 		if (aSpliced) {
 			_Helper.deletePrivateAnnotation(oGroupNode, "spliced");
-			bStale = aSpliced.$stale;
-
-			iIndex = aElements.indexOf(oGroupNode) + 1;
+			const aOldElements = this.aElements;
+			const iIndex = aOldElements.indexOf(oGroupNode) + 1;
 			// insert aSpliced at iIndex
-			this.aElements = aElements.concat(aSpliced, aElements.splice(iIndex));
-			this.aElements.$byPredicate = aElements.$byPredicate;
-
+			this.aElements = aOldElements.concat(aSpliced, aOldElements.splice(iIndex));
+			this.aElements.$byPredicate = aOldElements.$byPredicate;
 			iCount = aSpliced.length;
-			this.aElements.$count = aElements.$count + iCount;
+			this.aElements.$count = aOldElements.$count + iCount;
+			const iDiff = oGroupNode["@$ui5.node.level"] + 1 - aSpliced[0]["@$ui5.node.level"];
 			aSpliced.forEach(function (oElement) {
 				var sPredicate = _Helper.getPrivateAnnotation(oElement, "predicate");
 
+				oElement["@$ui5.node.level"] += iDiff;
 				if (!_Helper.hasPrivateAnnotation(oElement, "placeholder")) {
-					if (bStale) {
+					if (aSpliced.$stale) {
 						that.turnIntoPlaceholder(oElement, sPredicate);
 					} else {
 						that.aElements.$byPredicate[sPredicate] = oElement;
@@ -586,7 +582,7 @@ sap.ui.define([
 			return SyncPromise.resolve(iCount);
 		}
 
-		oCache = _Helper.getPrivateAnnotation(oGroupNode, "cache");
+		let oCache = _Helper.getPrivateAnnotation(oGroupNode, "cache");
 		if (!oCache) {
 			oCache = this.createGroupLevelCache(oGroupNode);
 			_Helper.setPrivateAnnotation(oGroupNode, "cache", oCache);

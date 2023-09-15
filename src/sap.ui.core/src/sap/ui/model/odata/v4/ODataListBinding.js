@@ -663,13 +663,15 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.model.odata.v4.Context} oContext
 	 *   The context corresponding to the group node
+	 * @param {boolean} [bSilent]
+	 *   Whether no ("change") events should be fired
 	 * @throws {Error}
 	 *   If the binding's root binding is suspended
 	 *
 	 * @private
 	 * @see #expand
 	 */
-	ODataListBinding.prototype.collapse = function (oContext) {
+	ODataListBinding.prototype.collapse = function (oContext, bSilent) {
 		var aContexts = this.aContexts,
 			iCount = this.oCache.collapse(
 				_Helper.getRelativePath(oContext.getPath(), this.oHeaderContext.getPath())),
@@ -687,7 +689,9 @@ sap.ui.define([
 				}
 			}
 			this.iMaxLength -= iCount;
-			this._fireChange({reason : ChangeReason.Change});
+			if (!bSilent) {
+				this._fireChange({reason : ChangeReason.Change});
+			}
 		} // else: collapse before expand has finished
 	};
 
@@ -3093,6 +3097,11 @@ sap.ui.define([
 			}
 		};
 
+		const bExpanded = oChildContext.isExpanded();
+		if (bExpanded) {
+			this.collapse(oChildContext, /*bSilent*/true);
+		}
+
 		const sChildPath = oChildContext.getCanonicalPath().slice(1);
 		const sParentPath = oParentContext.getCanonicalPath().slice(1); // before #lockGroup!
 		const oGroupLock = this.lockGroup(this.getUpdateGroupId(), true, true);
@@ -3112,7 +3121,11 @@ sap.ui.define([
 			if (!oChildContext.created()) {
 				oChildContext.setCreatedPersisted();
 			}
-			this._fireChange({reason : ChangeReason.Change});
+			if (bExpanded) {
+				this.expand(oChildContext); // guaranteed to by sync! incl. _fireChange
+			} else {
+				this._fireChange({reason : ChangeReason.Change});
+			}
 		});
 	};
 
