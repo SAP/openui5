@@ -292,12 +292,15 @@
 	.sapTntNavLIItem:not(.sapTntNavLIItemDisabled):not(.sapTntNavLIActive):hover,
 	&.sapTntNavLI li:focus .sapTntNavLIItem,
 	.sapTntNavLIItem:not(.sapTntNavLIItemDisabled):not(.sapTntNavLIActive):focus {
-		position: @_sap_tnt_NavigationList_Collapsed_HoverOrFocusItemPosition;
-		padding: @_sap_tnt_NavigationList_Collapsed_HoverOrFocusItemPadding;
-		z-index: @_sap_tnt_NavigationList_Collapsed_HoverOrFocusItemZIndex;
 
-		.sapTntNavLIText {
-			display: @_sap_tnt_NavigationList_Collapsed_HoverOrFocusTextDisplay;
+		&:not(.sapTntNavLIItemNoHoverEffect) {
+			position: @_sap_tnt_NavigationList_Collapsed_HoverOrFocusItemPosition;
+			padding: @_sap_tnt_NavigationList_Collapsed_HoverOrFocusItemPadding;
+			z-index: @_sap_tnt_NavigationList_Collapsed_HoverOrFocusItemZIndex;
+
+			.sapTntNavLIText {
+				display: @_sap_tnt_NavigationList_Collapsed_HoverOrFocusTextDisplay;
+			}
 		}
 	}
 
