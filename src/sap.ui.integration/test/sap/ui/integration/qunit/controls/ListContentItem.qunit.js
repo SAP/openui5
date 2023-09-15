@@ -3,12 +3,14 @@
 sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/core/library",
+	"sap/ui/integration/cards/ListContent",
 	"sap/ui/integration/controls/ListContentItem",
 	"sap/ui/integration/controls/Microchart",
 	"sap/m/ObjectStatus"
 ], function (
 	Core,
 	coreLibrary,
+	ListContent,
 	ListContentItem,
 	Microchart,
 	ObjectStatus
@@ -119,6 +121,67 @@ sap.ui.define([
 
 		// clean up
 		oLCI.destroy();
+	});
+
+	QUnit.test("Lines count for renderer", function (assert) {
+		// arrange
+		const oContent = new ListContent();
+
+		const oSample1 = {
+			title: "This is title",
+			description: {
+				value: "This is description"
+			},
+			attributes: [
+				{
+					value: "test 1"
+				},
+				{
+					value: "test 2"
+				},
+				{
+					value: "test 3"
+				},
+				{
+					value: "test 4"
+				}
+			],
+			chart: {
+
+			}
+		};
+
+		const oSample2 = {
+			title: "This is title",
+			description: {
+				value: "This is description",
+				visible: "{= !!${binding}}"
+			},
+			attributes: [
+				{
+					value: "test 1",
+					visible: true
+				},
+				{
+					value: "test 2",
+					visible: false
+				},
+				{
+					value: "test 3"
+				},
+				{
+					value: "test 4",
+					visible: "{= !!${binding}}"
+				}
+			],
+			chart: {
+				visible: "{= !!${binding}}"
+			}
+		};
+
+		// assert
+		assert.strictEqual(ListContentItem.getLinesCount(oSample1, oContent), 5, "Lines count for sample 1 are as expected.");
+		assert.strictEqual(ListContentItem.getLinesCount(oSample2, oContent), 2, "Lines count for sample 2 are as expected.");
 	});
 
 	QUnit.module("Accessibility", {

@@ -62,7 +62,7 @@ sap.ui.define([
 			oTemplate = oConfiguration.item,
 			fItemHeight = bIsCompact ? 2 : 2.75, // single line item height in "rem",
 			fVerticalPadding = 0,
-			iLines = ListContentItem.getLinesCount(oTemplate);
+			iLines = ListContentItem.getLinesCount(oTemplate, oContent);
 
 		if (iLines === 2) {
 			fItemHeight = 5;

@@ -325,7 +325,7 @@ sap.ui.define([
 			mSettings.iconInitials = mItem.icon.initials || mItem.icon.text;
 			mSettings.iconVisible = mItem.icon.visible;
 
-			if (ListContentItem.getLinesCount(mItem) === 1) {
+			if (ListContentItem.getLinesCount(mItem, this) === 1) {
 				mSettings.iconSize = AvatarSize.XS;
 			} else {
 				mSettings.iconSize = AvatarSize.S;
