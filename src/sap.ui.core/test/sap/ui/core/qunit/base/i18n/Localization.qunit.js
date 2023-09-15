@@ -193,7 +193,7 @@ sap.ui.define([
 			assert.strictEqual(Localization.getLanguage(), sExpectedLanguage || sExpectedLanguageTag, "Should return expected LanguageTag '" + sExpectedLanguage || sExpectedLanguageTag + "'");
 			assert.strictEqual(Localization.getSAPLogonLanguage(), sExpectedSAPLogonLanguage || sExpectedLanguageTag.toUpperCase(), "Should return expected SAPLogonLanguage '" + sExpectedSAPLogonLanguage || sExpectedLanguageTag.toUpperCase() + "'");
 			assert.strictEqual(Localization.getRTL(), bExpectedRtl, "Should return expected rtl '" + bExpectedRtl + "'");
-			assert.strictEqual(oEvent.language, sExpectedLanguageTag, "Change event should contain the correct language'" + sExpectedLanguageTag + "'");
+			assert.strictEqual(oEvent.language, sExpectedLanguageTag, "Change event should contain the correct language '" + sExpectedLanguageTag + "'");
 			if (bExpectedRtl !== bOldRtl) {
 				assert.strictEqual(oEvent.rtl, bExpectedRtl, "Change event should contain the correct rtl '" + sExpectedLanguageTag + "'");
 				bOldRtl = oEvent.rtl;
@@ -219,9 +219,10 @@ sap.ui.define([
 		// Setting same language again shouldn't trigger a change event
 		Localization.setLanguage(sExpectedLanguageTag);
 
-		sExpectedLanguageTag = "us";
+		sExpectedLanguageTag = "en";
+		sExpectedSAPLogonLanguage = "US";
 		bExpectedRtl = false;
-		Localization.setLanguage("en", sExpectedLanguageTag);
+		Localization.setLanguage(sExpectedLanguageTag, sExpectedSAPLogonLanguage);
 
 		assert.throws(function() {
 			Localization.setLanguage("invalidLanguage");

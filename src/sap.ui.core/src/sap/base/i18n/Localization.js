@@ -20,6 +20,7 @@ sap.ui.define([
 	"use strict";
 	var mChanges;
 	var oWritableConfig = BaseConfig.getWritableInstance();
+	let sLanguageSetByApi;
 	var bLanguageWarningLogged = false;
 
 	/**
@@ -281,6 +282,9 @@ sap.ui.define([
 			var oLanguageTag,
 				sDerivedLanguage;
 
+			if (sLanguageSetByApi) {
+				return sLanguageSetByApi;
+			}
 			var sLanguage = oWritableConfig.get({
 				name: "sapUiLanguage",
 				type: BaseConfig.Type.String,
@@ -412,7 +416,7 @@ sap.ui.define([
 					external: true
 				})) {
 				oWritableConfig.set("sapLanguage", sSAPLogonLanguage);
-				oWritableConfig.set("sapUiLanguage", sLanguage);
+				sLanguageSetByApi = sLanguage;
 				mChanges = {};
 				mChanges.language = Localization.getLanguageTag().toString();
 				var bRtl = Localization.getRTL();

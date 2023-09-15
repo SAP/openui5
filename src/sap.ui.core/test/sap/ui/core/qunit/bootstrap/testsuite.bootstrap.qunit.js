@@ -367,6 +367,12 @@ sap.ui.define(function() {
 					reorder: false
 				}
 			},
+			"Configuration_language_via_URL": {
+				group: "Configuration",
+				qunit: {
+					reorder: false
+				}
+			},
 			"PreloadCfg-optimized-ui5loader-async": {
 				group: "Configuration",
 				loader: {
