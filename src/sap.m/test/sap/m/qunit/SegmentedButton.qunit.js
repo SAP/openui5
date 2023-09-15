@@ -1031,7 +1031,10 @@ sap.ui.define([
 		oSegmentedButton.destroy();
 	});
 
-	//1780019055
+	/**
+	 * BCP: 1780019055
+	 * @deprecated as of version 1.52, replaced by <code>selectionChange</code> event
+	 */
 	QUnit.test("Select event in overflowed mode", function(assert) {
 		//arrange
 		var fnCallback = sinon.spy(),
@@ -1506,8 +1509,8 @@ sap.ui.define([
 		oSegmentedButton.destroy();
 	});
 
-	// BCP: 1880235141
 	/**
+	 * BCP: 1880235141
 	 * @deprecated Since version 1.28.
 	 */
 	QUnit.test("remove button returns the removed button", function (assert) {
@@ -1566,8 +1569,8 @@ sap.ui.define([
 		oSegmentedButton.destroy();
 	});
 
-	// BCP: 1880235141
 	/**
+	 * BCP: 1880235141
 	 * @deprecated Since version 1.28.
 	 */
 	QUnit.test("remove all buttons returns the removed buttons", function (assert) {
@@ -2316,8 +2319,8 @@ sap.ui.define([
 		var oSB = new SegmentedButton(),
 			oExpected = {
 				canOverflow: true,
-				listenForEvents: ["select"],
-				autoCloseEvents: ["select"], // BCP: 1970012411 In overflow - selection should close the popover.
+				listenForEvents: ["selectionChange"],
+				autoCloseEvents: ["selectionChange"], // BCP: 1970012411 In overflow - selection should close the popover.
 				propsUnrelatedToSize: ["enabled", "selectedKey"],
 				invalidationEvents: ["_containerWidthChanged"],
 				onBeforeEnterOverflow: oSB._onBeforeEnterOverflow,
@@ -2664,6 +2667,9 @@ sap.ui.define([
 		keyCode : KeyCodes.SPACE
 	});
 
+	/**
+	 * @deprecated Since version 1.28.
+	 */
 	function testNavigationSegmentedButton4Items(options) {
 		//Arrange
 		var sAddIconURI = IconPool.getIconURI("add");
