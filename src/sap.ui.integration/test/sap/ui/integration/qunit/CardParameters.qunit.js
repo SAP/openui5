@@ -534,4 +534,48 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.module("Card Dynamic Parameters", {
+		beforeEach: function () {
+			this.oCard = new Card({
+				width: "400px",
+				height: "600px",
+				baseUrl: "test-resources/sap/ui/integration/qunit/testResources/"
+			});
+			this.oCard.placeAt(DOM_RENDER_LOCATION);
+		},
+		afterEach: function () {
+			this.oCard.destroy();
+		}
+	});
+
+	QUnit.test("'parameters>/visibleItems' when there is no data", function (assert) {
+		const done = assert.async();
+
+		this.oCard.attachEvent("_ready", () => {
+			assert.strictEqual(this.oCard.getModel("parameters").getProperty("/visibleItems"), 0, "Property value should be 0");
+			done();
+		});
+
+		// Act
+		this.oCard.setManifest({
+			"sap.app": {
+				"id": "test.card.dataHandling.card8"
+			},
+			"sap.card": {
+				"type": "List",
+				"data": {
+					"json": {}
+				},
+				"header": {
+					"title": "Some title"
+				},
+				"content": {
+					"item": {
+						"title": " "
+					}
+				}
+			}
+		});
+	});
+
 });
