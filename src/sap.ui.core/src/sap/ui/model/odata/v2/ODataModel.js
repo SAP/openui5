@@ -179,8 +179,11 @@ sap.ui.define([
 	 * @param {Object<string,string>} [mParameters.serviceUrlParams]
 	 *   Map of URL parameters (name/value pairs) - these parameters will be attached to all
 	 *   requests, except for the <code>$metadata</code> request
-	 * @param {boolean} [mParameters.tokenHandling=true]
-	 *   Enable/disable security token handling
+	 * @param {boolean|"skipServerCache"} [mParameters.tokenHandling=true]
+	 *   Enable/disable security token handling. If the "skipServerCache" string value is provided, the security token
+	 *   is not cached with the server as key in order to avoid failing $batch requests when accessing services running
+	 *   on different back-end systems behind a reverse proxy (since 1.119).<br>
+	 *   Use this option only if the system landscape is known.
 	 * @param {boolean} [mParameters.tokenHandlingForGet=false]
 	 *   Send security token for GET requests in case read access logging is activated for the OData
 	 *   Service in the backend.
@@ -225,7 +228,7 @@ sap.ui.define([
 			var sUser,
 				sPassword,
 				mHeaders,
-				bTokenHandling,
+				vTokenHandling,
 				bWithCredentials,
 				sMaxDataServiceVersion,
 				bUseBatch,
@@ -270,7 +273,7 @@ sap.ui.define([
 				sUser = mParameters.user;
 				sPassword = mParameters.password;
 				mHeaders = mParameters.headers;
-				bTokenHandling = mParameters.tokenHandling;
+				vTokenHandling = mParameters.tokenHandling;
 				bWithCredentials = mParameters.withCredentials;
 				sMaxDataServiceVersion = mParameters.maxDataServiceVersion;
 				bUseBatch = mParameters.useBatch;
@@ -332,7 +335,7 @@ sap.ui.define([
 			this.mLaunderingState = {};
 			this.sDefaultUpdateMethod = sDefaultUpdateMethod || UpdateMethod.Merge;
 
-			this.bTokenHandling = bTokenHandling !== false;
+			this.bTokenHandling = vTokenHandling !== false;
 			this.bWithCredentials = bWithCredentials === true;
 			this.bUseBatch = bUseBatch !== false;
 			this.bRefreshAfterChange = bRefreshAfterChange !== false;
@@ -412,11 +415,11 @@ sap.ui.define([
 				this.oHeaders["sap-contextid-accept"] = "header";
 				this.mCustomHeaders["sap-contextid-accept"] = "header";
 			}
-			// Get/create shared data containers
-			var sServerUrl = this._getServerUrl();
 			//use warmup url if provided
 			this.sMetadataUrl = this.sWarmupUrl || this._createMetadataUrl("/$metadata");
-			this.oSharedServerData = ODataModel._getSharedData("server", sServerUrl);
+			this.oSharedServerData = vTokenHandling === "skipServerCache"
+				? undefined // server cache for security tokens is not used
+				: ODataModel._getSharedData("server", this._getServerUrl());
 			this.oSharedServiceData = ODataModel._getSharedData("service", this.sServiceUrl);
 			this.oSharedMetaData = ODataModel._getSharedData("meta", this.sMetadataUrl);
 
@@ -492,7 +495,7 @@ sap.ui.define([
 			if (this.bTokenHandling) {
 				if (this.oSharedServiceData.securityToken) {
 					this.oHeaders["x-csrf-token"] = this.oSharedServiceData.securityToken;
-				} else if (this.oSharedServerData.securityToken) {
+				} else if (this.oSharedServerData && this.oSharedServerData.securityToken) {
 					this.oSharedServiceData.securityToken = this.oSharedServerData.securityToken;
 					this.oHeaders["x-csrf-token"] = this.oSharedServiceData.securityToken;
 				}
@@ -3343,7 +3346,9 @@ sap.ui.define([
 				sToken = that._getHeader("x-csrf-token", oResponse.headers);
 				that._setSessionContextIdHeader(that._getHeader("sap-contextid", oResponse.headers));
 				if (sToken) {
-					that.oSharedServerData.securityToken = sToken;
+					if (that.oSharedServerData) {
+						that.oSharedServerData.securityToken = sToken;
+					}
 					that.oSharedServiceData.securityToken = sToken;
 					that.pSecurityToken = Promise.resolve(sToken);
 					// For compatibility with applications, that are using getHeaders() to retrieve the current
