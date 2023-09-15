@@ -245,7 +245,7 @@ sap.ui.define([
 					this._toBeExecuted--;
 					var oRtaResourceBundle = Core.getLibraryResourceBundle("sap.ui.rta");
 					showMessageBox(
-						oRtaResourceBundle.getText("MSG_GENERIC_ERROR_MESSAGE", oError.message),
+						oRtaResourceBundle.getText("MSG_GENERIC_ERROR_MESSAGE", [oError.message]),
 						{title: oRtaResourceBundle.getText("HEADER_ERROR")},
 						"error"
 					);

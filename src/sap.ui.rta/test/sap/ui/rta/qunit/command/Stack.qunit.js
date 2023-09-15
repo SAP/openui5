@@ -109,7 +109,7 @@ sap.ui.define([
 			var fnDone = assert.async();
 			var oRtaResourceBundle = Core.getLibraryResourceBundle("sap.ui.rta");
 			sandbox.stub(MessageBox, "error").callsFake(function(sMessage, mOptions) {
-				assert.strictEqual(sMessage, oRtaResourceBundle.getText("MSG_GENERIC_ERROR_MESSAGE", "My Error"), "then the message text is correct");
+				assert.strictEqual(sMessage, oRtaResourceBundle.getText("MSG_GENERIC_ERROR_MESSAGE", ["My Error"]), "then the message text is correct");
 				assert.deepEqual(mOptions, {title: oRtaResourceBundle.getText("HEADER_ERROR")}, "then the message title is correct");
 				fnDone();
 			});

@@ -23,8 +23,8 @@ sap.ui.define([
 	 */
 	SplitVisualization.getDescription = function(mPayload, sLabel) {
 		var oRtaResourceBundle = Core.getLibraryResourceBundle("sap.ui.rta");
-		var sDescriptionText = oRtaResourceBundle.getText("TXT_CHANGEVISUALIZATION_CHANGE_SPLIT", ChangeVisualizationUtils.shortenString(sLabel));
-		var sDescriptionTooltip = oRtaResourceBundle.getText("TXT_CHANGEVISUALIZATION_CHANGE_SPLIT", sLabel);
+		var sDescriptionText = oRtaResourceBundle.getText("TXT_CHANGEVISUALIZATION_CHANGE_SPLIT", [ChangeVisualizationUtils.shortenString(sLabel)]);
+		var sDescriptionTooltip = oRtaResourceBundle.getText("TXT_CHANGEVISUALIZATION_CHANGE_SPLIT", [sLabel]);
 		var sButtonText = oRtaResourceBundle.getText("BTN_CHANGEVISUALIZATION_SHOW_DEPENDENT_CONTAINER_SPLIT");
 		return { descriptionText: sDescriptionText, descriptionTooltip: sDescriptionTooltip, buttonText: sButtonText};
 	};
