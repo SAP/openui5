@@ -229,7 +229,9 @@ sap.ui.define([
 				return oModifier.attachEvent(
 					oMenu,
 					"itemSelected",
-					"sap.m.changeHandler.CombineButtons.pressHandler"
+					"sap.m.changeHandler.CombineButtons.pressHandler",
+					null,
+					CombineButtons.pressHandler
 				);
 			})
 			.then(function(){

@@ -152,7 +152,8 @@ sap.ui.define([
 									selector: oModifier.getSelector(oMenuItem, oAppComponent),
 									appComponentId: oAppComponent.getId(),
 									menu: oMenu
-								}
+								},
+								SplitMenuButton.pressHandler
 							);
 						})
 						.then(function(){

@@ -927,26 +927,30 @@ sap.ui.define([
 
 		/**
 		 * Attaches event on the specified <code>ManagedObject</code>.
+		 * To not rely on globals the function has to be passed in addition to the path.
 		 *
 		 * @param {sap.ui.base.ManagedObject|Element} vControl - Control representation
 		 * @param {string} sEventName - Event name
 		 * @param {string} sFunctionPath - Absolute path to a function
 		 * @param {object} vData - Predefined values for event handler function
-		 * @returns {Promise} resolves when async processing is done
+		 * @param {function} fnCallback - Callback function that is located at the function path
+		 * @returns {Promise} Resolves when async processing is done
 		 * @public
 		 */
-		attachEvent: function(vControl, sEventName, sFunctionPath, vData) {},
+		attachEvent: function(vControl, sEventName, sFunctionPath, vData, fnCallback) {},
 
 		/**
 		 * Detaches event from the specified ManagedObject.
+		 * To not rely on globals the function has to be passed in addition to the path.
 		 *
 		 * @param {sap.ui.base.ManagedObject|Element} vControl - Control representation
 		 * @param {string} sEventName - Event name
 		 * @param {string} sFunctionPath - Absolute path to a function
-		 * @returns {Promise} resolves when async processing is done
+		 * @param {function} fnCallback - Callback function that is located at the function path
+		 * @returns {Promise} Resolves when async processing is done
 		 * @public
 		 */
-		detachEvent: function(vControl, sEventName, sFunctionPath) {},
+		detachEvent: function(vControl, sEventName, sFunctionPath, fnCallback) {},
 
 		/**
 		 * Returns an object containing parent control, aggregation name and index for controls to be added of the given extension point.
