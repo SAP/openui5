@@ -331,8 +331,7 @@
 }
 
 .sapTntNavLISelectionIndicator {
-	display: @_sap_tnt_NavigationList_SelectionIndicatorDisplay;
-	opacity: 0;
+	display: none;
 	font-size: 0.5rem;
 	color: @sapUiListSelectionBorderColor;
 }
@@ -344,7 +343,7 @@
 	background-color: @sapUiListSelectionBackgroundColor;
 
 	.sapTntNavLISelectionIndicator {
-		opacity: 1;
+		display: @_sap_tnt_NavigationList_SelectionIndicatorDisplay;
 	}
 }
 

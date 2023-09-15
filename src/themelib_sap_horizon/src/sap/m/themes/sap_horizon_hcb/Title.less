@@ -3,10 +3,23 @@
 /* Horizon High Contrast Black theme   */
 /* =================================== */
 
-.sapFFCL .sapFDynamicPage-Std-Desktop-XL .sapFDynamicPageTitleMain .sapFDynamicPageTitleMainInner .sapFDynamicPageTitleMainHeading .sapFDynamicPageTitleMainHeadingInner .sapMTitle:not(.sapUICompVarMngmtTitle),
-.sapFFCL .sapFDynamicPage-Std-Desktop .sapFDynamicPageTitleMain .sapFDynamicPageTitleMainInner .sapFDynamicPageTitleMainHeading .sapFDynamicPageTitleMainHeadingInner .sapMTitle:not(.sapUICompVarMngmtTitle),
-.sapFFCL .sapFDynamicPage-Std-Tablet .sapFDynamicPageTitleMain .sapFDynamicPageTitleMainInner .sapFDynamicPageTitleMainHeading .sapFDynamicPageTitleMainHeadingInner .sapMTitle:not(.sapUICompVarMngmtTitle),
-.sapFFCL .sapFDynamicPage-Std-Phone .sapFDynamicPageTitleMain .sapFDynamicPageTitleMainInner .sapFDynamicPageTitleMainHeading .sapFDynamicPageTitleMainHeadingInner .sapMTitle:not(.sapUICompVarMngmtTitle) {
-	font-size: @sapObjectHeader_Title_SnappedFontSize;
-	font-family: @sapFontBlackFamily;
+.sapFFCL {
+
+	.sapFDynamicPage-Std-Desktop-XL,
+	.sapFDynamicPage-Std-Desktop,
+	.sapFDynamicPage-Std-Tablet,
+	.sapFDynamicPage-Std-Phone {
+		.sapFDynamicPageTitleMain {
+			.sapFDynamicPageTitleMainInner {
+				.sapFDynamicPageTitleMainHeading {
+					.sapFDynamicPageTitleMainHeadingInner {
+						.sapMTitle:not(.sapUICompVarMngmtTitle) {
+							font-size: @sapObjectHeader_Title_SnappedFontSize;
+							font-family: @sapObjectHeader_Title_FontFamily;
+						}
+					}
+				}
+			}
+		}
+	}
 }

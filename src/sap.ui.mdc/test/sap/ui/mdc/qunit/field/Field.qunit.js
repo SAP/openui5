@@ -8,6 +8,7 @@ sap.ui.define([
 	"sap/ui/mdc/library",
 	"sap/ui/mdc/Field",
 	"sap/ui/mdc/condition/Condition",
+	"sap/ui/mdc/enums/ConditionValidated",
 	"sap/ui/mdc/enums/FieldEditMode",
 	"sap/ui/mdc/enums/FieldDisplay",
 	"sap/ui/mdc/field/ConditionsType",
@@ -44,6 +45,7 @@ sap.ui.define([
 	library,
 	Field,
 	Condition,
+	ConditionValidated,
 	FieldEditMode,
 	FieldDisplay,
 	ConditionsType,
@@ -1199,6 +1201,13 @@ sap.ui.define([
 			oField3.setConditions([]); // fake user clears field
 			oModel.checkUpdate(true); // otherwise following test behave strange
 			assert.equal(oModel.getData().items[0].key, "", "Key updated in Model");
+			assert.equal(oModel.getData().items[0].description, "", "Description updated in Model");
+
+			oField3.setConditions([Condition.createItemCondition("B", "Text B")]); // fake user input
+			oModel.checkUpdate(true); // otherwise following test behave strange
+			oField3.setConditions([Condition.createCondition("EQ", ["E"], undefined, undefined, ConditionValidated.NotValidated)]); // fake invalid input from valuehelp with validateInput=false
+			oModel.checkUpdate(true); // otherwise following test behave strange
+			assert.equal(oModel.getData().items[0].key, "E", "Key updated in Model");
 			assert.equal(oModel.getData().items[0].description, "", "Description updated in Model");
 
 			fnDone();

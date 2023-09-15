@@ -1355,6 +1355,17 @@ sap.ui.define([
 				assert.ok(oContent.getShowValueHelp(), "valueHelp used");
 				assert.equal(oFieldEditMulti2._sDefaultFieldHelp, "Field-DefineConditions-Help", "Default Field help set");
 
+				// Input with given help
+				oFieldEditSingle.setValueHelp("Test");
+				oFieldEditSingle.setProperty("_fieldHelpEnabled", true, true); // fake existing ValueHelp
+				oCore.applyChanges();
+				aContent = oFieldEditSingle.getAggregation("_content");
+				oContent = aContent && aContent.length > 0 && aContent[0];
+				assert.ok(oContent instanceof FieldInput, "Input rendered");
+				assert.equal(oContent.getValue(), "September 19, 29 Heisei", "Value set on Input control");
+				assert.ok(oContent.getShowValueHelp(), "valueHelp used");
+				assert.notOk(oFieldEditSingle._sDefaultFieldHelp, "no Default Field help set");
+
 				oFieldEditSingle2.destroy();
 				oFieldEditSingle3.destroy();
 				oFieldEditSingle4.destroy();

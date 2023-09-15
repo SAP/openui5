@@ -5,6 +5,7 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/core/Element",
 	"sap/ui/core/library",
+	"sap/ui/core/theming/Parameters",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/thirdparty/jquery",
@@ -20,6 +21,7 @@ sap.ui.define([
 	Core,
 	Element,
 	coreLibrary,
+	Parameters,
 	QUnitUtils,
 	KeyCodes,
 	jQuery,
@@ -347,6 +349,48 @@ sap.ui.define([
 
 		// Clean up
 		oNL.destroy();
+	});
+
+	QUnit.test("Selection Indicator", function (assert) {
+		var deferred = new jQuery.Deferred();
+		var sExpectedDisplay = Parameters.get({
+			name: [ "_sap_tnt_NavigationList_SelectionIndicatorDisplay"],
+			callback: function (_sExpectedDisplay) {
+				sExpectedDisplay = _sExpectedDisplay;
+				deferred.resolve();
+			}
+		});
+
+		if (sExpectedDisplay !== undefined) {
+			deferred.resolve();
+		}
+
+		return deferred.then(function () {
+			// Arrange
+			var oItem = new NavigationListItem({
+					text: "item"
+				}),
+				oNL = new NavigationList({
+					items: [
+						oItem
+					]
+				});
+			oNL.placeAt("qunit-fixture");
+			Core.applyChanges();
+
+			// Assert
+			assert.strictEqual(getComputedStyle(oItem.getDomRef().querySelector(".sapTntNavLISelectionIndicator")).display, "none", "Selection indicator shouldn't be displayed on non-selected item");
+
+			// Act
+			oItem.$().trigger("tap");
+			Core.applyChanges();
+
+			// Assert
+			assert.strictEqual(getComputedStyle(oItem.getDomRef().querySelector(".sapTntNavLISelectionIndicator")).display, sExpectedDisplay, "Selection indicator should be displayed on selected item based on the theme");
+
+			// Clean up
+			oNL.destroy();
+		});
 	});
 
 	QUnit.module("Lifecycle");

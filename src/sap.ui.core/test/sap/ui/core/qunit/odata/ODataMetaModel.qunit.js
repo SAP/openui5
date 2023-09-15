@@ -4018,6 +4018,23 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("requestCurrencyCodes: no CurrencyCodes annotation", function (assert) {
+		const oDataModel = new ODataModel("/fake/emptySchema", {});
+		const oMetaModel = oDataModel.getMetaModel();
+		this.mock(oMetaModel).expects("fetchCodeList").withExactArgs("CurrencyCodes")
+			.returns(SyncPromise.resolve(null));
+		this.mock(_Helper).expects("merge").never();
+
+		// code under test
+		const oCurrencyCodesPromise = oMetaModel.requestCurrencyCodes();
+
+		assert.ok(oCurrencyCodesPromise instanceof Promise);
+		return oCurrencyCodesPromise.then(function (oCodeList) {
+			assert.strictEqual(oCodeList, null);
+		});
+	});
+
+	//*********************************************************************************************
 	QUnit.test("requestUnitsOfMeasure", function (assert) {
 		var oDataModel = new ODataModel("/fake/emptySchema", {}),
 			oMetaModel = oDataModel.getMetaModel(),
@@ -4036,6 +4053,24 @@ sap.ui.define([
 		assert.ok(oUnitsOfMeasurePromise instanceof Promise);
 		return oUnitsOfMeasurePromise.then(function (oCodeList) {
 			assert.strictEqual(oCodeList, "~codeListCopy");
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("requestUnitsOfMeasure: no UnitOfMeasure annotation", function (assert) {
+		const oDataModel = new ODataModel("/fake/emptySchema", {});
+		const oMetaModel = oDataModel.getMetaModel();
+
+		this.mock(oMetaModel).expects("fetchCodeList").withExactArgs("UnitsOfMeasure")
+			.returns(SyncPromise.resolve(null));
+		this.mock(_Helper).expects("merge").never();
+
+		// code under test
+		const oUnitsOfMeasurePromise = oMetaModel.requestUnitsOfMeasure();
+
+		assert.ok(oUnitsOfMeasurePromise instanceof Promise);
+		return oUnitsOfMeasurePromise.then(function (oCodeList) {
+			assert.strictEqual(oCodeList, null);
 		});
 	});
 

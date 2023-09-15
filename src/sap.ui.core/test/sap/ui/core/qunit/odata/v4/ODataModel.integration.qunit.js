@@ -24762,6 +24762,10 @@ sap.ui.define([
 	// The whole tree is expanded to two levels (JIRA: CPOUI5ODATAV4-2095).
 	// Selection keeps a context implicitly alive (JIRA: CPOUI5ODATAV4-2053).
 	// Ensure that unchanged $$aggregation is ignored (BCP: 2370045709).
+	//
+	// Retrieve "DrillState" property path via verbose ODLB#getAggregation & include it in the
+	// downloadUrl
+	// JIRA: CPOUI5ODATAV4-2275
 [false, true].forEach(function (bKeepAlive) {
 	var sTitle = "Recursive Hierarchy: root is leaf; bKeepAlive=" + bKeepAlive;
 
@@ -24770,7 +24774,7 @@ sap.ui.define([
 				= "/special/cases/Artists?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels("
 				+ "HierarchyNodes=$root/Artists,HierarchyQualifier='OrgChart'"
 				+ ",NodeProperty='_/NodeID',Levels=999)"
-				+ "&$select=ArtistID,IsActiveEntity,_/DistanceFromRoot,_/NodeID"
+				+ "&$select=ArtistID,IsActiveEntity,_/DistanceFromRoot,_/DrillState,_/NodeID"
 				+ "&$expand=BestFriend($select=ArtistID,IsActiveEntity,Name)",
 			oHeaderContext,
 			oKeptAliveNode,
@@ -24840,11 +24844,12 @@ sap.ui.define([
 			assert.deepEqual(oListBinding.getAggregation(/*bVerbose*/true), {
 				hierarchyQualifier : "OrgChart",
 				$DistanceFromRootProperty : "_/DistanceFromRoot",
+				$DrillStateProperty : "_/DrillState",
 				$NodeProperty : "_/NodeID"
-			}, "JIRA: CPOUI5ODATAV4-1961");
+			}, "JIRA: CPOUI5ODATAV4-1961, CPOUI5ODATAV4-2275");
 			// code under test
 			assert.strictEqual(oListBinding.getDownloadUrl(), sExpectedDownloadUrl,
-				"JIRA: CPOUI5ODATAV4-1920");
+				"JIRA: CPOUI5ODATAV4-1920, CPOUI5ODATAV4-2275");
 
 			checkTable("root is leaf", assert, oTable, [
 				"/Artists(ArtistID='0',IsActiveEntity=true)"
@@ -24906,7 +24911,8 @@ sap.ui.define([
 			]);
 		}).then(function (aResults) {
 			assert.strictEqual(aResults[0], "60");
-			assert.strictEqual(aResults[1], sExpectedDownloadUrl, "JIRA: CPOUI5ODATAV4-1920");
+			assert.strictEqual(aResults[1], sExpectedDownloadUrl,
+				"JIRA: CPOUI5ODATAV4-1920, CPOUI5ODATAV4-2275");
 
 			that.expectRequest("Artists"
 						+ "?$select=ArtistID,IsActiveEntity,Messages,_/NodeID,defaultChannel"
@@ -25639,9 +25645,9 @@ sap.ui.define([
 				+ "?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels("
 					+ "HierarchyNodes=$root/TEAMS('42')/TEAM_2_EMPLOYEES"
 					+ ",HierarchyQualifier='OrgChart',NodeProperty='ID',Levels=999)"
-				+ "&$select=DistanceFromRoot,ID,MANAGER_ID,SALARY/BONUS_CURR"
+				+ "&$select=DistanceFromRoot,DrillState,ID,MANAGER_ID,SALARY/BONUS_CURR"
 					+ ",SALARY/YEARLY_BONUS_AMOUNT,TEAM_ID",
-				"JIRA: CPOUI5ODATAV4-1920");
+				"JIRA: CPOUI5ODATAV4-1920, CPOUI5ODATAV4-2275");
 
 			that.expectRequest("TEAMS('42')/TEAM_2_EMPLOYEES"
 					+ "?$apply=descendants($root/TEAMS('42')/TEAM_2_EMPLOYEES,OrgChart,ID"
@@ -25909,8 +25915,8 @@ sap.ui.define([
 				+ "?$apply=orderby(AGE%20desc)"
 				+ "/com.sap.vocabularies.Hierarchy.v1.TopLevels(HierarchyNodes=$root/EMPLOYEES"
 					+ ",HierarchyQualifier='OrgChart',NodeProperty='ID',Levels=999)"
-				+ "&$select=AGE,DistanceFromRoot,ID,MANAGER_ID,Name",
-				"JIRA: CPOUI5ODATAV4-1920");
+				+ "&$select=AGE,DistanceFromRoot,DrillState,ID,MANAGER_ID,Name",
+				"JIRA: CPOUI5ODATAV4-1920, CPOUI5ODATAV4-2275");
 
 			that.expectChange("count", "24");
 
@@ -26387,8 +26393,8 @@ sap.ui.define([
 				+ "/orderby(AGE%20desc)"
 				+ "/com.sap.vocabularies.Hierarchy.v1.TopLevels(HierarchyNodes=$root/EMPLOYEES"
 					+ ",HierarchyQualifier='OrgChart',NodeProperty='ID',Levels=999)"
-				+ "&$select=DistanceFromRoot,ID",
-				"JIRA: CPOUI5ODATAV4-1920");
+				+ "&$select=DistanceFromRoot,DrillState,ID",
+				"JIRA: CPOUI5ODATAV4-1920, CPOUI5ODATAV4-2275");
 
 			that.expectChange("count", "2");
 
