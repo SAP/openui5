@@ -317,7 +317,6 @@ sap.ui.define([
 			sandbox.stub(Utils, "getAppComponentForControl").returns(this.oAppComponent);
 			sandbox.stub(FeaturesAPI, "isPublishAvailable").returns(true);
 			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns("com.sap.app");
-			sandbox.stub(FlexState, "clearAndInitialize").resolves([]);
 
 			return Versions.initialize(mPropertyBag)
 			.then(function(oModel) {
