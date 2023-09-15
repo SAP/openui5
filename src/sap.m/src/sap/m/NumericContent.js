@@ -459,8 +459,8 @@ sap.ui.define([
 		var sTrimmedValue = sValue.replace(String.fromCharCode(8206), "").replace(String.fromCharCode(8207), "");
 
 		// extract value and scale information from string using regex.
-		var aValueMatches = sTrimmedValue.match(/([+-., \d]*)/g) || [];
-		var aScaleMatches = sTrimmedValue.match(/[^+-., \d]/g) || [];
+		var aValueMatches = sTrimmedValue.match(/([+-.−, \d]*)/g) || [];
+		var aScaleMatches = sTrimmedValue.match(/[^+-.−, \d]/g) || [];
 
 		return {
 			value: aValueMatches.reduce(function (acc, curVal){
