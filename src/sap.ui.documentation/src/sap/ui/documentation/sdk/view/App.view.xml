@@ -86,7 +86,7 @@
 								? [${i18n>APP_VERSION_VERSION}, ${versionData>/version}].join(' ')
 								: '' }"
 							press="onChangeVersionButtonPress"
-							visible="{= ${appView>/bShowVersionSwitchButton} &amp;&amp; !${versionData>/bIsSnapshotVersion} }">
+							visible="{= ${appView>/bShowVersionSwitchButton} &amp;&amp; !${versionData>/isSnapshotVersion} }">
 						</Button>
 
 						<OverflowToolbarButton
