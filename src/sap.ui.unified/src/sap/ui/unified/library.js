@@ -602,21 +602,6 @@ sap.ui.define([
 
 	thisLib._iNumberOfOpenedShellOverlays = 0;
 
-	// Default implementation of ColorPickerHelper - to be overwritten by commons or mobile library
-	if (!thisLib.ColorPickerHelper) {
-		thisLib.ColorPickerHelper = {
-			isResponsive: function () { return false; },
-			factory: {
-				createLabel:  function () { throw new Error("no Label control available"); },
-				createInput:  function () { throw new Error("no Input control available"); },
-				createSlider: function () { throw new Error("no Slider control available"); },
-				createRadioButtonGroup: function () { throw new Error("no RadioButtonGroup control available"); },
-				createRadioButtonItem: function () { throw new Error("no RadioButtonItem control available"); }
-			},
-			bFinal: false
-		};
-	}
-
 	thisLib.calendar = thisLib.calendar || {};
 
 	return thisLib;

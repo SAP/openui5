@@ -1210,41 +1210,6 @@ sap.ui.define(['sap/ui/base/DataType', 'sap/base/util/ObjectPath',
 		"horizontal" : sap.ui.core.Orientation.Horizontal
 	};
 
-	// implements ColorPicker helper factory with common controls
-	if (!sap.ui.unified.ColorPickerHelper || !sap.ui.unified.ColorPickerHelper.bFinal) {
-		sap.ui.unified.ColorPickerHelper = {
-			isResponsive: function () {
-				return false;
-			},
-			factory: {
-				createLabel: function (mConfig) {
-					return new sap.ui.commons.Label(mConfig);
-				},
-				createInput: function (sId, mConfig) {
-					return new sap.ui.commons.TextField(sId, mConfig);
-				},
-				createSlider: function (sId, mConfig) {
-					if (mConfig && mConfig.step) {
-						mConfig.smallStepWidth = mConfig.step;
-						delete mConfig.step;
-					}
-					return new sap.ui.commons.Slider(sId, mConfig);
-				},
-				createRadioButtonGroup: function (mConfig) {
-					if (mConfig && mConfig.buttons) {
-						mConfig.items = mConfig.buttons;
-						delete mConfig.buttons;
-					}
-					return new sap.ui.commons.RadioButtonGroup(mConfig);
-				},
-				createRadioButtonItem: function (mConfig) {
-					return new sap.ui.core.Item(mConfig);
-				}
-			},
-			bFinal: false /* to allow mobile to overwrite  */
-		};
-	}
-
 	//implement table helper factory with m controls
 	//possible is set before layout lib is loaded.
 	var oTableHelper = ObjectPath.get("sap.ui.table.TableHelper");

@@ -5943,34 +5943,6 @@ sap.ui.define([
 		return oInputODataSuggestProvider;
 	}());
 
-	// implements ColorPicker helper factory with common controls
-	ObjectPath.set("sap.ui.unified.ColorPickerHelper", {
-		isResponsive: function () {
-			return true;
-		},
-		factory: {
-			createLabel: function (mConfig) {
-				return new sap.m.Label(mConfig);
-			},
-			createInput: function (sId, mConfig) {
-				return new sap.m.InputBase(sId, mConfig);
-			},
-			createSlider: function (sId, mConfig) {
-				return new sap.m.Slider(sId, mConfig);
-			},
-			createRadioButtonGroup: function (mConfig) {
-				return new sap.m.RadioButtonGroup(mConfig);
-			},
-			createRadioButtonItem: function (mConfig) {
-				return new sap.m.RadioButton(mConfig);
-			},
-			createButton: function (sId, mConfig) {
-				return new sap.m.Button(sId, mConfig);
-			}
-		},
-		bFinal: true
-	});
-
 	//implement table helper factory with m controls
 	//possible is set before layout lib is loaded.
 	/**
