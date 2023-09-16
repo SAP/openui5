@@ -1473,23 +1473,6 @@ sap.ui.define([
 		Core.applyChanges();
 	});
 
-	QUnit.test("appointmentsReducedHeight", function(assert) {
-		assert.ok(!oPC1.getAppointmentsReducedHeight(), "AppointmentsReducedHeight is disabled by default");
-		var aRows = oPC1.getRows();
-		for (var i = 0; i < aRows.length; i++) {
-			assert.ok(!_getRowTimeline(aRows[i]).getAppointmentsReducedHeight(), "Row " + i + ": AppointmentsReducedHeight not set");
-		}
-
-		oPC1.setAppointmentsReducedHeight(true);
-		Core.applyChanges();
-		for (var i = 0; i < aRows.length; i++) {
-			assert.ok(_getRowTimeline(aRows[i]).getAppointmentsReducedHeight(), "Row " + i + ": AppointmentsReducedHeight set");
-		}
-
-		oPC1.setAppointmentsReducedHeight(false);
-		Core.applyChanges();
-	});
-
 	QUnit.test("appointmentsVisualization", function(assert) {
 		assert.equal(oPC1.getAppointmentsVisualization(), CalendarAppointmentVisualization.Standard, "AppointmentVisualization default set");
 		var aRows = oPC1.getRows();
@@ -4380,5 +4363,4 @@ sap.ui.define([
 		assert.strictEqual(sSecondaryButtonText, "17 Jumada I 1442 AH - 30 Jumada I 1442 AH", "button shuld have additional text '17 Jumada I 1442 AH - 30 Jumada I 1442 AH'");
 
 	});
-
 });

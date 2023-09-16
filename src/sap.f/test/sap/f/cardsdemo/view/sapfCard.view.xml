@@ -26,7 +26,7 @@
 					iconSrc="sap-icon://accept" />
 			</f:header>
 			<f:content>
-				<List items="{listItems>/ProductCollection}" headerText="Products">
+				<List items="{listItems>/ProductCollection}" headerText="Products" class="sapUiSmallMarginBottom">
 					<StandardListItem
 						title="{listItems>Name}"
 						description="{listItems>ProductId}"
@@ -49,7 +49,7 @@
 					iconSrc="sap-icon://activity-items" />
 			</f:header>
 			<f:content>
-				<Table items="{tableData>/Names}">
+				<Table items="{tableData>/Names}" class="sapUiSmallMarginBottom">
 					<columns>
 						<Column>
 							<Text text="First Name" />

@@ -211,7 +211,6 @@ sap.ui.define([
 		metadata : {
 			library : "sap.m",
 			properties : {
-
 				/**
 				 * Determines the start date of the row, as a UI5Date or JavaScript Date object. The current date is used as default.
 				 */
@@ -281,15 +280,6 @@ sap.ui.define([
 				 * @since 1.48.0
 				 */
 				groupAppointmentsMode : {type : "sap.ui.unified.GroupAppointmentsMode", group : "Appearance", defaultValue : GroupAppointmentsMode.Collapsed},
-
-				/**
-				 * Determines whether the appointments that have only title without text are rendered with smaller height.
-				 *
-				 * <b>Note:</b> On phone devices this property is ignored, appointments are always rendered in full height
-				 * to facilitate touching.
-				 * @since 1.38.0
-				 */
-				appointmentsReducedHeight : {type : "boolean", group : "Appearance", defaultValue : false},
 
 				/**
 				 * Determines the different possible sizes for appointments.
@@ -426,7 +416,6 @@ sap.ui.define([
 				 * Defines the shape of the <code>Avatar</code>.
 				 */
 				iconShape: {type: "sap.m.AvatarShape", group: "Appearance", defaultValue: AvatarShape.Circle}
-
 			},
 			aggregations : {
 
@@ -1405,9 +1394,9 @@ sap.ui.define([
 		});
 	};
 
-	 PlanningCalendar.prototype._handleTitleTextChange = function (oChanges) {
-		this._getHeader().setTitle(oChanges.current);
-	};
+	PlanningCalendar.prototype._handleTitleTextChange = function (oChanges) {
+	   this._getHeader().setTitle(oChanges.current);
+   };
 
 	/**
 	 * Disconnects and destroys the ManagedObjectObserver observing title's text.
@@ -1514,30 +1503,30 @@ sap.ui.define([
 	 * @returns {this} <code>this</code> to allow method chaining
 	 * @public
 	 */
-	 PlanningCalendar.prototype.setPrimaryCalendarType = function(sPrimaryCalendarType) {
-		this.setProperty("primaryCalendarType", sPrimaryCalendarType);
+	PlanningCalendar.prototype.setPrimaryCalendarType = function(sPrimaryCalendarType) {
+	   this.setProperty("primaryCalendarType", sPrimaryCalendarType);
 
-		if (this._getHeader()) {
-			this._getHeader().setProperty("_primaryCalendarType", sPrimaryCalendarType);
-		}
-		if (this._oTimesRow) {
-			this._oTimesRow.setProperty("primaryCalendarType", sPrimaryCalendarType);
-		}
-		if (this._oDatesRow) {
-			this._oDatesRow.setPrimaryCalendarType(sPrimaryCalendarType);
-		}
-		if (this._oMonthsRow) {
-			this._oMonthsRow.setProperty("primaryCalendarType", sPrimaryCalendarType);
-		}
-		if (this._oWeeksRow) {
-			this._oWeeksRow.setPrimaryCalendarType(sPrimaryCalendarType);
-		}
-		if (this._oOneMonthsRow) {
-			this._oOneMonthsRow.setPrimaryCalendarType(sPrimaryCalendarType);
-		}
+	   if (this._getHeader()) {
+		   this._getHeader().setProperty("_primaryCalendarType", sPrimaryCalendarType);
+	   }
+	   if (this._oTimesRow) {
+		   this._oTimesRow.setProperty("primaryCalendarType", sPrimaryCalendarType);
+	   }
+	   if (this._oDatesRow) {
+		   this._oDatesRow.setPrimaryCalendarType(sPrimaryCalendarType);
+	   }
+	   if (this._oMonthsRow) {
+		   this._oMonthsRow.setProperty("primaryCalendarType", sPrimaryCalendarType);
+	   }
+	   if (this._oWeeksRow) {
+		   this._oWeeksRow.setPrimaryCalendarType(sPrimaryCalendarType);
+	   }
+	   if (this._oOneMonthsRow) {
+		   this._oOneMonthsRow.setPrimaryCalendarType(sPrimaryCalendarType);
+	   }
 
-		return this;
-	};
+	   return this;
+   };
 
 	PlanningCalendar.prototype._getSecondaryCalendarType = function() {
 		var sSecondaryCalendarType = this.getSecondaryCalendarType();
@@ -2325,20 +2314,6 @@ sap.ui.define([
 		}
 
 		return this;
-	};
-
-	PlanningCalendar.prototype.setAppointmentsReducedHeight = function(bAppointmentsReducedHeight){
-
-		this.setProperty("appointmentsReducedHeight", bAppointmentsReducedHeight, true);
-
-		var aRows = this.getRows();
-		for (var i = 0; i < aRows.length; i++) {
-			var oRow = aRows[i];
-			getRowTimeline(oRow).setAppointmentsReducedHeight(bAppointmentsReducedHeight);
-		}
-
-		return this;
-
 	};
 
 	PlanningCalendar.prototype.setAppointmentHeight = function(sAppointmentHeight) {
@@ -3647,7 +3622,6 @@ sap.ui.define([
 		oRowTimeline.setShowIntervalHeaders(this.getShowIntervalHeaders());
 		oRowTimeline.setShowEmptyIntervalHeaders(this.getShowEmptyIntervalHeaders());
 		oRowTimeline.setGroupAppointmentsMode(this.getGroupAppointmentsMode());
-		oRowTimeline.setAppointmentsReducedHeight(this.getAppointmentsReducedHeight());
 		oRowTimeline.setAppointmentRoundWidth(this.getAppointmentRoundWidth());
 		oRowTimeline.setLegend(this.getLegend());
 		oRowTimeline.setAppointmentsVisualization(this.getAppointmentsVisualization());

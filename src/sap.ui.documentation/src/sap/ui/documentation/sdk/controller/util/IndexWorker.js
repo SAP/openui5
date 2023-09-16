@@ -554,7 +554,7 @@
 				oDoc.modifiedStr = oDoc.modified + "";
 				var sModified = oDoc.modifiedStr.substring(0,4) + "/" + oDoc.modifiedStr.substring(4,6) + "/" + oDoc.modifiedStr.substring(6,8) + ", " + oDoc.modifiedStr.substring(8,10) + ":" + oDoc.modifiedStr.substring(10),
 					sTitle = oDoc.title,
-					sSummary = oDoc.summary,
+					sSummary = oDoc.summary ? oDoc.summary.trim() : "",
 					sNavURL = oDoc.path,
 					bShouldAddToSearchResults = false,
 					sCategory,

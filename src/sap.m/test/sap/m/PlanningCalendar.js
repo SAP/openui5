@@ -575,7 +575,6 @@ sap.ui.define([
 		press: function (oEvent) {
 			var oPC = sap.ui.getCore().byId("PC1");
 			var bPressed = oEvent.getParameter("pressed");
-			oPC.setAppointmentsReducedHeight(bPressed);
 		}
 	});
 

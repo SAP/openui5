@@ -557,6 +557,18 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("removeSubContext: non matching single entry", function (assert) {
+		var oContext = new Context("~oModel", "~sPath");
+
+		oContext.mSubContexts = {foo: "~subContext0"};
+
+		// code under test
+		oContext.removeSubContext("~subContext1");
+
+		assert.deepEqual(oContext.mSubContexts, {foo: "~subContext0"});
+	});
+
+	//*********************************************************************************************
 	QUnit.test("removeFromTransientParent", function (assert) {
 		var oParent = new Context("~oModel", "~sParentPath"),
 			oContext = new Context("~oModel", "~sPath", undefined, undefined, undefined, oParent);

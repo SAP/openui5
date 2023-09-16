@@ -31,7 +31,7 @@ sap.ui.define(['sap/m/PlanningCalendarLegend', 'sap/ui/unified/CalendarLegendIte
 		var PlanningCalendarInCardLegend = PlanningCalendarLegend.extend("sap.f.PlanningCalendarInCardLegend", /** @lends sap.f.PlanningCalendarInCardLegend.prototype */ {
 			metadata : {
 
-				library : "sap.m",
+				library : "sap.f",
 				properties: {
 					/**
 					 * Defines the number of visible calendar and appointment items.
