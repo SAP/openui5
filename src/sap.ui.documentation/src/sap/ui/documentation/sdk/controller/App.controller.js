@@ -1724,7 +1724,7 @@ sap.ui.define([
 		_headerItemSelectHandler: function (sKey) {
 			var items = [
 				{ key: "fioriTools", 	url: "https://help.sap.com/viewer/product/SAP_FIORI_tools/Latest/en-US" },
-				{ key: "iconExplorer", 	url: "test-resources/sap/m/demokit/iconexplorer/webapp/index.html" },
+				{ key: "iconExplorer", 	url: "test-resources/sap/m/demokit/iconExplorer/webapp/index.html" },
 				{ key: "ui5Inspector", 	url: "https://sap.github.io/ui5-inspector/" },
 				{ key: "ui5Tooling", 	url: "https://sap.github.io/ui5-tooling/stable/" }
 			];
