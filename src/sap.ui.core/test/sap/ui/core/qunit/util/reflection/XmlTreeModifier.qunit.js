@@ -1162,7 +1162,7 @@ sap.ui.define([
 		}
 	}, function () {
 		QUnit.test("attachEvent() — basic case", function (assert) {
-			return XmlTreeModifier.attachEvent(this.oButton, "press", "$sap__qunit_presshandler1")
+			return XmlTreeModifier.attachEvent(this.oButton, "press", "$sap__qunit_presshandler1", null, window.$sap__qunit_presshandler1)
 				.then(function () {
 					return this.createView(this.oXmlView).then(function(oView) {
 						this.oView = oView;
@@ -1175,7 +1175,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("attachEvent() — basic case with parameters", function (assert) {
-			return XmlTreeModifier.attachEvent(this.oButton, "press", "$sap__qunit_presshandler1", ["param0", "param1", { foo: "bar" }])
+			return XmlTreeModifier.attachEvent(this.oButton, "press", "$sap__qunit_presshandler1", ["param0", "param1", { foo: "bar" }], window.$sap__qunit_presshandler1)
 				.then(function () {
 					return this.createView(this.oXmlView).then(function(oView) {
 						this.oView = oView;
@@ -1188,8 +1188,8 @@ sap.ui.define([
 		});
 
 		QUnit.test("attachEvent() — two different event handlers with different set of parameters for the same event name", function (assert) {
-			return XmlTreeModifier.attachEvent(this.oButton, "press", "$sap__qunit_presshandler1", ["param0", "param1"])
-				.then(XmlTreeModifier.attachEvent.bind(XmlTreeModifier, this.oButton, "press", "$sap__qunit_presshandler2", ["param2", "param3"]))
+			return XmlTreeModifier.attachEvent(this.oButton, "press", "$sap__qunit_presshandler1", ["param0", "param1"], window.$sap__qunit_presshandler1)
+				.then(XmlTreeModifier.attachEvent.bind(XmlTreeModifier, this.oButton, "press", "$sap__qunit_presshandler2", ["param2", "param3"], window.$sap__qunit_presshandler2))
 				.then(function () {
 					return this.createView(this.oXmlView).then(function(oView) {
 						this.oView = oView;
@@ -1206,13 +1206,13 @@ sap.ui.define([
 		QUnit.test("attachEvent() — attempt to attach non-existent function", function (assert) {
 			return XmlTreeModifier.attachEvent(this.oButton, "press", "$sap__qunit_non_existent_handler")
 				.catch(function (vError) {
-					assert.ok(vError.message.indexOf("function is not found") > -1);
+					assert.ok(vError.message.indexOf("fnCallback parameter missing or not a function") > -1);
 				});
 		});
 
 		QUnit.test("attachEvent() — two equal event handlers with a different set of parameters", function (assert) {
-			return XmlTreeModifier.attachEvent(this.oButton, "press", "$sap__qunit_presshandler1", ["param0", "param1"])
-				.then(XmlTreeModifier.attachEvent.bind(XmlTreeModifier, this.oButton, "press", "$sap__qunit_presshandler1", ["param2", "param3"]))
+			return XmlTreeModifier.attachEvent(this.oButton, "press", "$sap__qunit_presshandler1", ["param0", "param1"], window.$sap__qunit_presshandler1)
+				.then(XmlTreeModifier.attachEvent.bind(XmlTreeModifier, this.oButton, "press", "$sap__qunit_presshandler1", ["param2", "param3"], window.$sap__qunit_presshandler1))
 				.then(function () {
 					return this.createView(this.oXmlView).then(function(oView) {
 						this.oView = oView;
@@ -1226,8 +1226,8 @@ sap.ui.define([
 
 		QUnit.test("detachEvent() — basic case", function (assert) {
 			assert.notOk(this.oButton.hasAttribute("press"));
-			return XmlTreeModifier.attachEvent(this.oButton, "press", "$sap__qunit_presshandler1")
-				.then(XmlTreeModifier.detachEvent.bind(XmlTreeModifier, this.oButton, "press", "$sap__qunit_presshandler1"))
+			return XmlTreeModifier.attachEvent(this.oButton, "press", "$sap__qunit_presshandler1", null, window.$sap__qunit_presshandler1)
+				.then(XmlTreeModifier.detachEvent.bind(XmlTreeModifier, this.oButton, "press", "$sap__qunit_presshandler1", window.$sap__qunit_presshandler1))
 				.then(function () {
 					assert.notOk(this.oButton.hasAttribute("press"));
 					return this.createView(this.oXmlView).then(function(oView) {
@@ -1240,8 +1240,8 @@ sap.ui.define([
 
 		QUnit.test("detachEvent() — basic case", function (assert) {
 			assert.notOk(this.oButton.hasAttribute("press"));
-			return XmlTreeModifier.attachEvent(this.oButton, "press", "$sap__qunit_presshandler1")
-				.then(XmlTreeModifier.detachEvent.bind(XmlTreeModifier, this.oButton, "press", "$sap__qunit_presshandler1"))
+			return XmlTreeModifier.attachEvent(this.oButton, "press", "$sap__qunit_presshandler1", null, window.$sap__qunit_presshandler1)
+				.then(XmlTreeModifier.detachEvent.bind(XmlTreeModifier, this.oButton, "press", "$sap__qunit_presshandler1", window.$sap__qunit_presshandler1))
 				.then(function () {
 					assert.notOk(this.oButton.hasAttribute("press"));
 					return this.createView(this.oXmlView).then(function (oView) {
@@ -1253,10 +1253,10 @@ sap.ui.define([
 		});
 
 		QUnit.test("detachEvent() — three event handlers, two of them are with a different set of parameters", function (assert) {
-			return XmlTreeModifier.attachEvent(this.oButton, "press", "$sap__qunit_presshandler1")
-				.then(XmlTreeModifier.attachEvent.bind(XmlTreeModifier, this.oButton, "press", "$sap__qunit_presshandler2", ["param0", "param1"]))
-				.then(XmlTreeModifier.attachEvent.bind(XmlTreeModifier, this.oButton, "press", "$sap__qunit_presshandler2", ["param2", "param3"]))
-				.then(XmlTreeModifier.detachEvent.bind(XmlTreeModifier, this.oButton, "press", "$sap__qunit_presshandler2"))
+			return XmlTreeModifier.attachEvent(this.oButton, "press", "$sap__qunit_presshandler1", null, window.$sap__qunit_presshandler1)
+				.then(XmlTreeModifier.attachEvent.bind(XmlTreeModifier, this.oButton, "press", "$sap__qunit_presshandler2", ["param0", "param1"], window.$sap__qunit_presshandler2))
+				.then(XmlTreeModifier.attachEvent.bind(XmlTreeModifier, this.oButton, "press", "$sap__qunit_presshandler2", ["param2", "param3"], window.$sap__qunit_presshandler2))
+				.then(XmlTreeModifier.detachEvent.bind(XmlTreeModifier, this.oButton, "press", "$sap__qunit_presshandler2", window.$sap__qunit_presshandler2))
 				.then(function () {
 					return this.createView(this.oXmlView).then(function (oView) {
 						this.oView = oView;
@@ -1272,7 +1272,7 @@ sap.ui.define([
 		QUnit.test("detachEvent() — attempt to detach non-existent function", function (assert) {
 			return XmlTreeModifier.detachEvent(this.oButton, "press", "$sap__qunit_non_existent_handler")
 				.catch(function (vError) {
-					assert.ok(vError.message.indexOf("function is not found") > -1);
+					assert.ok(vError.message.indexOf("fnCallback parameter missing or not a function") > -1);
 				});
 		});
 	});

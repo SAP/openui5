@@ -835,9 +835,9 @@ sap.ui.define([
 		/**
 		 * @inheritDoc
 		 */
-		attachEvent: function(oNode, sEventName, sFunctionPath, vData) {
-			if (typeof ObjectPath.get(sFunctionPath) !== "function") {
-				return Promise.reject(new Error("Can't attach event because the event handler function is not found or not a function."));
+		attachEvent: function(oNode, sEventName, sFunctionPath, vData, fnCallback) {
+			if (typeof fnCallback !== "function") {
+				return Promise.reject(new Error("Can't attach event: fnCallback parameter missing or not a function"));
 			}
 			return XmlTreeModifier.getProperty(oNode, sEventName)
 				.then(function (sValue) {
@@ -863,9 +863,9 @@ sap.ui.define([
 		/**
 		 * @inheritDoc
 		 */
-		detachEvent: function(oNode, sEventName, sFunctionPath) {
-			if (typeof ObjectPath.get(sFunctionPath) !== "function") {
-				return Promise.reject(new Error("Can't attach event because the event handler function is not found or not a function."));
+		detachEvent: function(oNode, sEventName, sFunctionPath, fnCallback) {
+			if (typeof fnCallback !== "function") {
+				return Promise.reject(new Error("Can't detach event: fnCallback parameter missing or not a function"));
 			}
 			return XmlTreeModifier.getProperty(oNode, sEventName)
 				.then(function (sValue) {

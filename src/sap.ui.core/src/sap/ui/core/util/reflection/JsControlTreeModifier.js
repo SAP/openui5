@@ -557,11 +557,10 @@ sap.ui.define([
 		/**
 		 * @inheritDoc
 		 */
-		attachEvent: function (oObject, sEventName, sFunctionPath, vData) {
+		attachEvent: function (oObject, sEventName, sFunctionPath, vData, fnCallback) {
 			return new Promise(function (fnResolve, fnReject) {
-				var fnCallback = ObjectPath.get(sFunctionPath);
 				if (typeof fnCallback !== "function") {
-					fnReject(new Error("Can't attach event because the event handler function is not found or not a function."));
+					fnReject(new Error("Can't attach event: fnCallback parameter missing or not a function"));
 				}
 				fnResolve(oObject.attachEvent(sEventName, vData, fnCallback));
 			});
@@ -570,11 +569,10 @@ sap.ui.define([
 		/**
 		 * @inheritDoc
 		 */
-		detachEvent: function (oObject, sEventName, sFunctionPath) {
+		detachEvent: function (oObject, sEventName, sFunctionPath, fnCallback) {
 			return new Promise(function (fnResolve, fnReject) {
-				var fnCallback = ObjectPath.get(sFunctionPath);
 				if (typeof fnCallback !== "function") {
-					fnReject(new Error("Can't attach event because the event handler function is not found or not a function."));
+					fnReject(new Error("Can't detach event: fnCallback parameter missing or not a function"));
 				}
 				// EventProvider.detachEvent doesn't accept vData parameter, therefore it might lead
 				// to a situation when an incorrect event listener is detached.
