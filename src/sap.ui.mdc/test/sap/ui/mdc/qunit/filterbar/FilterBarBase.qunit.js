@@ -799,4 +799,43 @@ sap.ui.define([
 
     });
 
+    QUnit.test("Check that '#_setXConditions' will only attach the even once", function(assert){
+
+        var done = assert.async();
+
+        var pFilterAppliance1 = this.oFilterBarBase._setXConditions({
+            "key1": [
+                {
+				  "isEmpty": false,
+                  "operator": "EQ",
+                  "values": [
+                    "SomeTestValue"
+                  ],
+                  "validated": "Validated"
+                }
+              ]
+        });
+
+        var pFilterAppliance2 = this.oFilterBarBase._setXConditions({
+            "key2": [
+                {
+				  "isEmpty": false,
+                  "operator": "EQ",
+                  "values": [
+                    "SomeTestValue"
+                  ],
+                  "validated": "Validated"
+                }
+              ]
+        });
+
+        Promise.all([pFilterAppliance1, pFilterAppliance2])
+        .then(function(){
+
+            assert.equal(this.oFilterBarBase._oConditionModel.mEventRegistry.propertyChange.length, 1, "Only one listener");
+            done();
+        }.bind(this));
+
+    });
+
 });

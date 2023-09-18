@@ -21,7 +21,8 @@ sap.ui.define([
 	"sap/m/library",
 	"sap/m/Button",
 	'sap/m/MessageBox',
-	"./FilterBarBaseRenderer"
+	"./FilterBarBaseRenderer",
+	"sap/ui/base/EventProvider"
 ],
 	function(
 		FilterController,
@@ -43,7 +44,8 @@ sap.ui.define([
 		mLibrary,
 		Button,
 		MessageBox,
-		FilterBarBaseRenderer
+		FilterBarBaseRenderer,
+		EventProvider
 	) {
 	"use strict";
 
@@ -1442,7 +1444,9 @@ sap.ui.define([
 							}
 						});
 					});
-					oConditionModel.attachPropertyChange(this._handleConditionModelPropertyChange, this);
+					if (!EventProvider.hasListener(this._oConditionModel, "propertyChange", this._handleConditionModelPropertyChange, this)) {
+						oConditionModel.attachPropertyChange(this._handleConditionModelPropertyChange, this);
+					}
 				}.bind(this));
 			}.bind(this));
 
