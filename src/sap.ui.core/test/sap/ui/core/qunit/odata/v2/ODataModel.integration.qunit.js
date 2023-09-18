@@ -347,7 +347,7 @@ sap.ui.define([
 
 		oDocument = XMLHelper.parse(
 			'<mvc:View xmlns="sap.m" xmlns:f="sap.f" xmlns:mvc="sap.ui.core.mvc" \
-				xmlns:t="sap.ui.table">'
+				xmlns:t="sap.ui.table" xmlns:trm="sap.ui.table.rowmodes">'
 			+ sViewXML
 			+ '</mvc:View>',
 			"application/xml"
@@ -367,16 +367,27 @@ sap.ui.define([
 	 */
 	function xmlConvertGridTables(oDocument) {
 		function convertElements(aElements) {
-			var oChildNode, aChildNodes, oColumn, oElement, i, j, oTemplate;
+			var oChildNode, aChildNodes, oColumn, oElement, i, j, oTemplate,
+				oRowMode, oFixedRowMode;
 
 			for (i = aElements.length - 1; i >= 0; i -= 1) {
 				oElement = aElements[i];
+
+				if (oElement.hasAttribute("visibleRowCount")) {
+					oRowMode = document.createElementNS("sap.ui.table", "rowMode");
+					oElement.appendChild(oRowMode);
+					oFixedRowMode = document.createElementNS("sap.ui.table.rowmodes", "Fixed");
+					oFixedRowMode.setAttribute("rowCount", oElement.getAttribute("visibleRowCount"));
+					oRowMode.appendChild(oFixedRowMode);
+					oElement.removeAttribute("visibleRowCount");
+				}
 
 				aChildNodes = oElement.childNodes;
 				for (j = aChildNodes.length - 1; j >= 0; j -= 1) {
 					oChildNode = aChildNodes[j];
 					if (oChildNode.nodeType === Node.ELEMENT_NODE
-							&& oChildNode.localName !== "Column") {
+							&& oChildNode.localName !== "Column"
+							&& oChildNode.localName !== "rowMode") {
 						oColumn = document.createElementNS("sap.ui.table", "Column");
 						oElement.insertBefore(oColumn, oChildNode);
 						oElement.removeChild(oChildNode);
@@ -527,7 +538,7 @@ sap.ui.define([
 			// {string} sText with the expected text
 			this.aValueStates = [];
 
-			// If the "VisibleRowCountMode" of the sap.ui.table.* is "Auto", the table uses the
+			// If the "rowMode" of the sap.ui.table.* is "Auto", the table uses the
 			// screen height (Device.resize.height) to compute the amount of contexts it requests
 			// initially. Make sure that this is stable across devices.
 			this._oSandbox.stub(Device.resize, "height").value(1000);
@@ -10250,8 +10261,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 	<t:TreeTable id="table"\
 			rows="{path : \'to_AllwncReqToFe\', parameters : \
 				{countMode : \'Inline\', groupId : \'myGroup\', usePreliminaryContext : true}}"\
-			visibleRowCount="1"\
-			visibleRowCountMode="Fixed">\
+			visibleRowCount="1">\
 		<Text id="orgID" text="{ForceElementOrgID}" />\
 	</t:TreeTable>\
 </FlexBox>';
@@ -10320,8 +10330,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			path : \'/C_RSHMaintSchedSmltdOrdAndOp\'\
 		}"\
 		threshold="0"\
-		visibleRowCount="1"\
-		visibleRowCountMode="Fixed">\
+		visibleRowCount="1">\
 	<Text id="maintenanceOrder" text="{MaintenanceOrder}" />\
 </t:TreeTable>',
 			that = this;
@@ -10424,8 +10433,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				},\
 				path : \'to_C_RSHMaintSchedSmltdOrdAndOp\'\
 			}"\
-			visibleRowCount="1"\
-			visibleRowCountMode="Fixed">\
+			visibleRowCount="1">\
 		<Text id="maintenanceOrder" text="{MaintenanceOrder}" />\
 	</t:TreeTable>\
 </FlexBox>',
@@ -10817,8 +10825,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			path : \'/C_RSHMaintSchedSmltdOrdAndOp\'\
 		}"\
 		threshold="0"\
-		visibleRowCount="2"\
-		visibleRowCountMode="Fixed">\
+		visibleRowCount="2">\
 	<Text id="maintenanceOrder" text="{MaintenanceOrder}" />\
 </t:TreeTable>',
 			that = this;
@@ -10933,8 +10940,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			},\
 			path : \'/C_RSHMaintSchedSmltdOrdAndOp\'\
 		}"\
-		visibleRowCount="2"\
-		visibleRowCountMode="Fixed">\
+		visibleRowCount="2">\
 	<Text text="{MaintenanceOrder}" />\
 </t:TreeTable>';
 
@@ -17978,8 +17984,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			},\
 			path : \'/ErhaOrder(\\\'1\\\')/to_Item\'\
 		}"\
-		visibleRowCount="3"\
-		visibleRowCountMode="Fixed">\
+		visibleRowCount="3">\
 	<Text id="itemName" text="{ErhaOrderItemName}" />\
 </t:TreeTable>',
 			that = this;
@@ -18129,8 +18134,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			},\
 			path : \'/ErhaOrder(\\\'1\\\')/to_Item\'\
 		}"\
-		visibleRowCount="3"\
-		visibleRowCountMode="Fixed">\
+		visibleRowCount="3">\
 	<Text id="itemName" text="{ErhaOrderItemName}" />\
 </t:TreeTable>',
 			that = this;
@@ -18292,8 +18296,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			},\
 			path : \'/ErhaOrder(\\\'1\\\')/to_Item\'\
 		}"\
-		visibleRowCount="3"\
-		visibleRowCountMode="Fixed">\
+		visibleRowCount="3">\
 	<Text id="itemName" text="{ErhaOrderItemName}" />\
 </t:TreeTable>',
 			that = this;
@@ -18448,8 +18451,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			},\
 			path : \'/ErhaOrder(\\\'1\\\')/to_Item\'\
 		}"\
-		visibleRowCount="3"\
-		visibleRowCountMode="Fixed">\
+		visibleRowCount="3">\
 	<Text id="itemName" text="{ErhaOrderItemName}" />\
 </t:TreeTable>',
 			that = this;
@@ -18611,8 +18613,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			},\
 			path : \'/ErhaOrder(\\\'1\\\')/to_Item\'\
 		}"\
-		visibleRowCount="3"\
-		visibleRowCountMode="Fixed">\
+		visibleRowCount="3">\
 	<Text id="itemName" text="{ErhaOrderItemName}" />\
 </t:TreeTable>',
 			that = this;
@@ -18876,8 +18877,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			},\
 			path : \'/ErhaOrder(\\\'1\\\')/to_Item\'\
 		}"\
-		visibleRowCount="4"\
-		visibleRowCountMode="Fixed">\
+		visibleRowCount="4">\
 	<Text id="itemName" text="{ErhaOrderItemName}" />\
 </t:TreeTable>',
 			that = this;
@@ -19041,8 +19041,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			},\
 			path : \'/ErhaOrder(\\\'1\\\')/to_Item\'\
 		}"\
-		visibleRowCount="3"\
-		visibleRowCountMode="Fixed">\
+		visibleRowCount="3">\
 	<Text id="itemName" text="{ErhaOrderItemName}" />\
 </t:TreeTable>',
 			that = this;
@@ -19176,8 +19175,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			},\
 			path : \'/ErhaOrder(\\\'1\\\')/to_Item\'\
 		}"\
-		visibleRowCount="2"\
-		visibleRowCountMode="Fixed">\
+		visibleRowCount="2">\
 	<Text id="itemName" text="{ErhaOrderItemName}" />\
 </t:TreeTable>',
 			that = this;
@@ -20453,8 +20451,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				{path : \'CreatedByUser\', operator : \'EQ\', value1 : \'user1\'}\
 			]\
 		}"\
-		visibleRowCount="4"\
-		visibleRowCountMode="Fixed">\
+		visibleRowCount="4">\
 	<Text id="itemName" text="{ErhaOrderItemName}" />\
 </t:TreeTable>',
 			that = this;

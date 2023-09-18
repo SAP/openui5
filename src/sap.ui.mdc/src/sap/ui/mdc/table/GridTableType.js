@@ -115,9 +115,7 @@ sap.ui.define([
 
 			if (!oRowMode) {
 				var RowMode = vValue === TableRowCountMode.Fixed ? InnerFixedRowMode : InnerAutoRowMode;
-				oGridTable.setRowMode(new RowMode({
-					hideEmptyRows: bHideEmptyRows
-				}));
+				oGridTable.setRowMode(new RowMode().setHideEmptyRows(bHideEmptyRows));
 			}
 
 			this._updateTableRowCount();

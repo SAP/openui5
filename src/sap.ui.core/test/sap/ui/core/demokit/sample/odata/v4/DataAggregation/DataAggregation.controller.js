@@ -67,9 +67,9 @@ sap.ui.define([
 			};
 			if (sGrandTotalAtBottomOnly) {
 				if (sGrandTotalAtBottomOnly === "true") {
-					oTable.setFixedRowCount(0);
+					oTable.getRowMode().setFixedTopRowCount(0);
 				}
-				oTable.setFixedBottomRowCount(1);
+				oTable.getRowMode().setFixedBottomRowCount(1);
 				this._oAggregation.grandTotalAtBottomOnly = sGrandTotalAtBottomOnly === "true";
 			}
 			if (sLeafCount) {

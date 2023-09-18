@@ -14,7 +14,6 @@
 				id="table"
 				selectionMode="MultiToggle"
 				rows="{/ProductCollection}"
-				visibleRowCount="7"
 				showColumnVisibilityMenu="{ui>/showVisibilityMenuEntry}"
 				enableColumnFreeze="{ui>/showFreezeMenuEntry}"
 				enableCellFilter="{ui>/enableCellFilter}"

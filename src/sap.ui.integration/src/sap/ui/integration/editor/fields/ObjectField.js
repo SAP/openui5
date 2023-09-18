@@ -16,6 +16,7 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/table/Table",
 	"sap/ui/table/Column",
+	"sap/ui/table/rowmodes/Fixed",
 	"sap/m/Label",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
@@ -48,6 +49,7 @@ sap.ui.define([
 	JSONModel,
 	Table,
 	Column,
+	FixedRowMode,
 	Label,
 	Filter,
 	FilterOperator,
@@ -188,7 +190,9 @@ sap.ui.define([
 		var oVisualization = {
 			type: Table,
 			settings: {
-				visibleRowCount: 5,
+				rowMode: new FixedRowMode({
+					rowCount: 5
+				}),
 				busy: "{currentSettings>_loading}",
 				busyIndicatorDelay: 200,
 				columns: columns,

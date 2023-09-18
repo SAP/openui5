@@ -3,7 +3,7 @@ sap.ui.define([
 ], function(UIComponent) {
 	"use strict";
 
-	return UIComponent.extend("sap.ui.table.sample.Resizing.Component", {
+	return UIComponent.extend("sap.ui.table.sample.ColumnResizing.Component", {
 		metadata: {
 			manifest: "json"
 		}

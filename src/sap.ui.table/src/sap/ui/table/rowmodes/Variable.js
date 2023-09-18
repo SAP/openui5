@@ -18,7 +18,7 @@ sap.ui.define([
 	 *
 	 * @class
 	 * // TODO: Class description
-	 * @extends module:sap/ui/table/rowmodes/RowMode
+	 * @extends sap.ui.table.rowmodes.RowMode
 	 *
 	 * @author SAP SE
 	 * @version ${version}
@@ -26,24 +26,13 @@ sap.ui.define([
 	 * @constructor
 	 * @private
 	 * @experimental
-	 * @alias module:sap/ui/table/rowmodes/Variable
+	 * @alias sap.ui.table.rowmodes.Variable
 	 */
 	var VariableRowMode = RowMode.extend("sap.ui.table.rowmodes.Variable", {
 		metadata: {
 			library: "sap.ui.table",
 			properties: {
 				tableHeight: {type: "sap.ui.core.CSSSize", defaultValue: "100%", group: "Dimension"}
-			}
-		},
-		constructor: function(sId) {
-			Object.defineProperty(this, "bLegacy", {
-				value: typeof sId === "boolean" ? sId : false
-			});
-
-			if (this.bLegacy) {
-				RowMode.call(this);
-			} else {
-				RowMode.apply(this, arguments);
 			}
 		}
 	});

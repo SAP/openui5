@@ -3,10 +3,12 @@
 sap.ui.define([
 	"sap/ui/table/qunit/TableQUnitUtils.ODataV2",
 	"sap/ui/table/Row",
+	"sap/ui/table/rowmodes/Fixed",
 	"sap/ui/table/utils/TableUtils"
 ], function(
 	TableQUnitUtils,
 	Row,
+	FixedRowMode,
 	TableUtils
 ) {
 	"use strict";
@@ -18,7 +20,9 @@ sap.ui.define([
 				columns: [
 					TableQUnitUtils.createTextColumn()
 				],
-				visibleRowCount: 12
+				rowMode: new FixedRowMode({
+					rowCount: 12
+				})
 			});
 			this.iCurrentState = 0;
 

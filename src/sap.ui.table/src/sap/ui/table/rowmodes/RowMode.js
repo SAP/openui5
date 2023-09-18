@@ -28,8 +28,9 @@ sap.ui.define([
 	 * Note: Do not create subclasses.
 	 * @extends sap.ui.core.Element
 	 * @constructor
-	 * @alias module:sap/ui/table/rowmodes/RowMode
-	 * @private
+	 * @alias sap.ui.table.rowmodes.RowMode
+	 * @since 1.119
+	 * @public
 	 *
 	 * @author SAP SE
 	 * @version ${version}

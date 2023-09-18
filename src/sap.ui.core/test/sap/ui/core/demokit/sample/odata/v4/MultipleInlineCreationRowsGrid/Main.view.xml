@@ -3,6 +3,7 @@
 	xmlns:f="sap.f"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns:t="sap.ui.table"
+	xmlns:trm="sap.ui.table.rowmodes"
 	xmlns="sap.m"
 	class="sapUiSizeCompact"
 	controllerName="sap.ui.core.sample.odata.v4.MultipleInlineCreationRowsGrid.Main"
@@ -121,8 +122,7 @@
 								path : '_Parts',
 								parameters : {$count : true, $$ownRequest : true}
 							}"
-							selectionMode="None"
-							visibleRowCount="20">
+							selectionMode="None">
 							<t:extension>
 								<Toolbar design="Transparent" class="sapMTBHeader-CTX">
 									<Title id="partsTitle" level="H2"
@@ -131,6 +131,9 @@
 											press="onResetChangesForParts"	tooltip="Reset Parts"/>
 								</Toolbar>
 							</t:extension>
+							<t:rowMode>
+								<trm:Fixed rowCount="20"/>
+							</t:rowMode>
 							<t:columns>
 								<t:Column width="4em" hAlign="Center">
 									<Label text="State"/>
