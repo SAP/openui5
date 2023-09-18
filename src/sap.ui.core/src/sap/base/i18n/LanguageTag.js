@@ -27,25 +27,18 @@ sap.ui.define([
 
 	/**
 	 * Creates an LanguageTag instance.
+	 * LanguageTag represents a BCP-47 language tag, consisting of a language, script, region, variants, extensions and private use section.
 	 *
-	 * @class LanguageTag represents a BCP-47 language tag, consisting of a language, script, region, variants, extensions and private use section.
+	 * @class
 	 *
 	 * @param {string} sLanguageTag the language tag identifier, in format en-US or en_US.
 	 *
 	 * @author SAP SE
 	 * @version ${version}
-	 * @private
-	 * @ui5-restricted sap.ui.core sap/base/i18n
+	 * @public
 	 * @alias module:sap/base/i18n/LanguageTag
 	 */
-	var LanguageTag = function(sLanguageTag) {
-		var aResult = rLanguageTag.exec(sLanguageTag.replace(/_/g, "-"));
-		// If the given language tag string cannot be parsed by the regular expression above,
-		// we should at least tell the developer why the Core fails to load.
-		if (aResult === null ) {
-			throw new TypeError("The given language tag'" + sLanguageTag + "' does not adhere to BCP-47.");
-		}
-
+	class LanguageTag {
 		/**
 		 * Get the language.
 		 *
@@ -53,10 +46,9 @@ sap.ui.define([
 		 * (Lower case is enforced as recommended by BCP47/ISO639).
 		 *
 		 * @type {string}
-		 * @private
-		 * @ui5-restricted sap.ui.core
+		 * @public
 		 */
-		this.language = aResult[1] || null;
+		language;
 
 		/**
 		 * Get the script or <code>null</code> if none was specified.
@@ -66,10 +58,9 @@ sap.ui.define([
 		 * recommended by BCP47/ISO15924)
 		 *
 		 * @type {string|null}
-		 * @private
-		 * @ui5-restricted sap.ui.core
+		 * @public
 		 */
-		this.script = aResult[2] || null;
+		script;
 
 		/**
 		 * Get the region or <code>null</code> if none was specified.
@@ -78,10 +69,9 @@ sap.ui.define([
 		 * (Upper case is enforced as recommended by BCP47/ISO3166-1).
 		 *
 		 * @type {string}
-		 * @private
-		 * @ui5-restricted sap.ui.core
+		 * @public
 		 */
-		this.region = aResult[3] || null;
+		region;
 
 		/**
 		 * Get the variants as a single string or <code>null</code>.
@@ -89,10 +79,9 @@ sap.ui.define([
 		 * Multiple variants are separated by a dash '-'.
 		 *
 		 * @type {string|null}
-		 * @private
-		 * @ui5-restricted sap.ui.core
+		 * @public
 		 */
-		this.variant = (aResult[4] && aResult[4].slice(1)) || null; // remove leading dash from capturing group
+		variant;
 
 		/**
 		 * Get the variants as an array of individual variants.
@@ -101,10 +90,9 @@ sap.ui.define([
 		 * If there is no variant section in the language tag, an empty array is returned.
 		 *
 		 * @type {string[]}
-		 * @private
-		 * @ui5-restricted sap.ui.core
+		 * @public
 		 */
-		this.variantSubtags = this.variant ? this.variant.split('-') : [];
+		variantSubtags;
 
 		/**
 		 * Get the extension as a single string or <code>null</code>.
@@ -114,10 +102,9 @@ sap.ui.define([
 		 * again with a dash.
 		 *
 		 * @type {string|null}
-		 * @private
-		 * @ui5-restricted sap.ui.core
+		 * @public
 		 */
-		this.extension = (aResult[5] && aResult[5].slice(1)) || null; // remove leading dash from capturing group
+		extension;
 
 		/**
 		 * Get the extensions as an array of tokens.
@@ -126,19 +113,16 @@ sap.ui.define([
 		 * If there is no extensions section in the language tag, an empty array is returned.
 		 *
 		 * @type {string[]}
-		 * @private
-		 * @ui5-restricted sap.ui.core
+		 * @public
 		 */
-		this.extensionSubtags = this.variant ? this.variant.split('-') : [];
+		extensionSubtags;
 
 		/**
 		 * Get the private use section or <code>null</code>.
 		 *
 		 * @type {string}
-		 * @private
-		 * @ui5-restricted sap.ui.core
 		 */
-		this.privateUse = aResult[6] || null;
+		privateUse;
 
 		/**
 		 * Get the private use section as an array of tokens.
@@ -147,40 +131,54 @@ sap.ui.define([
 		 * If there is no private use section in the language tag, an empty array is returned.
 		 *
 		 * @type {string[]}
-		 * @private
-		 * @ui5-restricted sap.ui.core
 		 */
-		this.privateUseSubtags = this.privateUse ? this.privateUse.slice(2).split('-') : [];
-		// convert subtags according to the BCP47 recommendations
-		// - language: all lower case
-		// - script: lower case with the first letter capitalized
-		// - region: all upper case
-		if ( this.language ) {
-			this.language = this.language.toLowerCase();
-		}
-		if ( this.script ) {
-			this.script = this.script.toLowerCase().replace(/^[a-z]/, function($) {
-				return $.toUpperCase();
-			});
-		}
-		if ( this.region ) {
-			this.region = this.region.toUpperCase();
-		}
-		Object.freeze(this);
-	};
+		privateUseSubtags;
 
-	LanguageTag.prototype.toString = function() {
-		return join(
-			this.language,
-			this.script,
-			this.region,
-			this.variant,
-			this.extension,
-			this.privateUse);
-	};
-
-	function join() {
-		return Array.prototype.filter.call(arguments, Boolean).join("-");
+		constructor(sLanguageTag) {
+			var aResult = rLanguageTag.exec(sLanguageTag.replace(/_/g, "-"));
+			// If the given language tag string cannot be parsed by the regular expression above,
+			// we should at least tell the developer why the Core fails to load.
+			if (aResult === null ) {
+				throw new TypeError("The given language tag'" + sLanguageTag + "' does not adhere to BCP-47.");
+			}
+			this.language = aResult[1] || null;
+			this.script = aResult[2] || null;
+			this.region = aResult[3] || null;
+			this.variant = (aResult[4] && aResult[4].slice(1)) || null; // remove leading dash from capturing group
+			this.variantSubtags = this.variant ? this.variant.split('-') : [];
+			this.extension = (aResult[5] && aResult[5].slice(1)) || null; // remove leading dash from capturing group
+			this.extensionSubtags = this.variant ? this.variant.split('-') : [];
+			this.privateUse = aResult[6] || null;
+			this.privateUseSubtags = this.privateUse ? this.privateUse.slice(2).split('-') : [];
+			// convert subtags according to the BCP47 recommendations
+			// - language: all lower case
+			// - script: lower case with the first letter capitalized
+			// - region: all upper case
+			if ( this.language ) {
+				this.language = this.language.toLowerCase();
+			}
+			if ( this.script ) {
+				this.script = this.script.toLowerCase().replace(/^[a-z]/, function($) {
+					return $.toUpperCase();
+				});
+			}
+			if ( this.region ) {
+				this.region = this.region.toUpperCase();
+			}
+			Object.freeze(this);
+		}
+		toString() {
+			return this.#join(
+				this.language,
+				this.script,
+				this.region,
+				this.variant,
+				this.extension,
+				this.privateUse);
+		}
+		#join() {
+			return Array.prototype.filter.call(arguments, Boolean).join("-");
+		}
 	}
 
 	return LanguageTag;
