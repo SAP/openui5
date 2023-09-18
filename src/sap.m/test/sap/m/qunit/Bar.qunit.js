@@ -176,7 +176,7 @@ sap.ui.define([
 	});
 
 	/**
-	 * @deprecated since version 1.16
+	 * @deprecated since version 1.16, replaced by <code>contentMiddle</code> aggregation.
 	 */
 	QUnit.test("Deprecated property 'enableFlexBox': should add and remove the flex box", function(assert) {
 
@@ -200,6 +200,9 @@ sap.ui.define([
 		bar.destroy();
 	});
 
+	/**
+	 * @deprecated since version 1.18.6.
+	 */
 	QUnit.test("Should set the translucent class if on a touch device", function(assert) {
 		var //System under Test
 			sut = new Bar({
@@ -622,6 +625,9 @@ sap.ui.define([
 		jQuery("#qunit-fixture").width("");
 	});
 
+	/**
+	 * @deprecated since version 1.16, replaced by <code>contentMiddle</code> aggregation.
+	 */
 	QUnit.test("Should push the mid to the center of the remaining space, if the right content overlaps it", function(assert) {
 		var bRtl = oCore.getConfiguration().getRTL(),
 			sLeftOrRight = bRtl ? "right" : "left";
@@ -707,6 +713,9 @@ sap.ui.define([
 		jQuery("#qunit-fixture").width("");
 	});
 
+	/**
+	 * @deprecated since version 1.16, replaced by <code>contentMiddle</code> aggregation.
+	 */
 	testAlsoForRTL("Should make the mid content smaller, if there is a left and right content", function(assert) {
 		//Arrange + System under Test + Act
 		//left | right | mid
