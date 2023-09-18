@@ -162,30 +162,22 @@ sap.ui.define([
 			this.oHBox.destroy();
 		}
 	}, function() {
-		QUnit.test("When applying the change on a js control tree", function(assert) {
-			return this.oChangeHandler.applyChange(this.oChange, this.oHBox, this.mPropertyBag)
-			.then(function() {
-				assert.strictEqual(this.oHBox.getItems().length, 2, "after the change there are 2 items in the horizontal box");
-				var oCreatedControl = this.oHBox.getItems()[1];
-				assert.ok(oCreatedControl.getId().match(/test$/), "the created IFrame ends with the expected baseId");
-				return oCreatedControl._oSetUrlPromise.then(function() {
-					assert.strictEqual(oCreatedControl.getUrl(), sUrl, "the created IFrame has the correct URL");
-				});
-			}.bind(this));
+		QUnit.test("When applying the change on a js control tree", async function(assert) {
+			await this.oChangeHandler.applyChange(this.oChange, this.oHBox, this.mPropertyBag);
+			assert.strictEqual(this.oHBox.getItems().length, 2, "after the change there are 2 items in the horizontal box");
+			const oCreatedControl = this.oHBox.getItems()[1];
+			assert.ok(oCreatedControl.getId().match(/test$/), "the created IFrame ends with the expected baseId");
+			assert.strictEqual(oCreatedControl.getUrl(), sUrl, "the created IFrame has the correct URL");
 		});
 
-		QUnit.test("When applying the change on a js control tree (index = 0)", function(assert) {
+		QUnit.test("When applying the change on a js control tree (index = 0)", async function(assert) {
 			this.mChangeSpecificContent.index = 0;
 			this.oChangeHandler.completeChangeContent(this.oChange, this.mSpecificChangeData, this.mPropertyBag);
-			return this.oChangeHandler.applyChange(this.oChange, this.oHBox, this.mPropertyBag)
-			.then(function() {
-				assert.strictEqual(this.oHBox.getItems().length, 2, "after the change there are 2 items in the horizontal box");
-				var oCreatedControl = this.oHBox.getItems()[0];
-				assert.ok(oCreatedControl.getId().match(/test$/), "the created IFrame ends with the expected baseId");
-				return oCreatedControl._oSetUrlPromise.then(function() {
-					assert.strictEqual(oCreatedControl.getUrl(), sUrl, "the created IFrame has the correct URL");
-				});
-			}.bind(this));
+			await this.oChangeHandler.applyChange(this.oChange, this.oHBox, this.mPropertyBag);
+			assert.strictEqual(this.oHBox.getItems().length, 2, "after the change there are 2 items in the horizontal box");
+			const oCreatedControl = this.oHBox.getItems()[0];
+			assert.ok(oCreatedControl.getId().match(/test$/), "the created IFrame ends with the expected baseId");
+			assert.strictEqual(oCreatedControl.getUrl(), sUrl, "the created IFrame has the correct URL");
 		});
 
 		QUnit.test("When applying the change on a js control tree with an invalid targetAggregation", function(assert) {
