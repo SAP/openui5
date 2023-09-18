@@ -36,8 +36,8 @@
 	}
 
 	&:hover {
-		box-shadow: @sapUiContentInteractionShadow;
-		background-color: @sapUiButtonLiteHoverBackground;
+		box-shadow: @sapUiFieldHoverShadow;
+		background-color: @sapUiButtonHoverBackground;
 		border-left: 1px solid @sapUiButtonHoverBorderColor; // contrast themes specific
 		border-right: 1px solid transparent;
 	}
@@ -49,9 +49,9 @@
 	&:active,
 	&.sapMSFBA // Firefox specific
 	{
-		box-shadow: @sapUiContentInteractionShadow;
+		box-shadow: @sapUiFieldHoverShadow;
 		color: @sapUiButtonSelectedTextColor;
-		background-color: @sapUiButtonLiteActiveBackground;
+		background-color: @sapUiButtonHoverBackground;
 	}
 }
 
