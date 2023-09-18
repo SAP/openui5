@@ -66,6 +66,8 @@
                 "sap/ui/webc/main/SegmentedButton",
                 "sap/ui/webc/main/SegmentedButtonItem",
                 "sap/ui/webc/main/Select",
+                "sap/ui/webc/main/SelectMenu",
+                "sap/ui/webc/main/SelectMenuOption",
                 "sap/ui/webc/main/Slider",
                 "sap/ui/webc/main/SplitButton",
                 "sap/ui/webc/main/StepInput",
@@ -83,11 +85,17 @@
                 "sap/ui/webc/main/Title",
                 "sap/ui/webc/main/Toast",
                 "sap/ui/webc/main/ToggleButton",
+                "sap/ui/webc/main/Toolbar",
+                "sap/ui/webc/main/ToolbarButton",
+                "sap/ui/webc/main/ToolbarSelect",
+                "sap/ui/webc/main/ToolbarSeparator",
+                "sap/ui/webc/main/ToolbarSelectOption",
+                "sap/ui/webc/main/ToolbarSpacer",
                 "sap/ui/webc/main/Tree",
                 "sap/ui/webc/main/TreeItem",
                 "sap/ui/webc/main/TreeItemCustom"
             ], function(
-                Avatar, Button, AvatarGroup, Badge, Icon, Breadcrumbs, BreadcrumbsItem, BusyIndicator, Calendar, CalendarDate, Card, CardHeader, Carousel, CheckBox, ColorPalette, ColorPaletteItem, ColorPalettePopover, ColorPicker, ComboBox, ComboBoxGroupItem, ComboBoxItem, CustomListItem, DatePicker, DateRangePicker, DateTimePicker, Dialog, FileUploader, GroupHeaderListItem, Input, SuggestionGroupItem, SuggestionItem, Label, Link, List, StandardListItem, Menu, MenuItem, MessageStrip, MultiComboBox, MultiComboBoxGroupItem, MultiComboBoxItem, MultiInput, Token, Option, Panel, Popover, ProgressIndicator, RadioButton, RangeSlider, RatingIndicator, ResponsivePopover, SegmentedButton, SegmentedButtonItem, Select, Slider, SplitButton, StepInput, Switch, Tab, TabSeparator, TabContainer, Table, TableColumn, TableGroupRow, TableRow, TableCell, TextArea, TimePicker, Title, Toast, ToggleButton, Tree, TreeItem, TreeItemCustom
+                Avatar, Button, AvatarGroup, Badge, Icon, Breadcrumbs, BreadcrumbsItem, BusyIndicator, Calendar, CalendarDate, Card, CardHeader, Carousel, CheckBox, ColorPalette, ColorPaletteItem, ColorPalettePopover, ColorPicker, ComboBox, ComboBoxGroupItem, ComboBoxItem, CustomListItem, DatePicker, DateRangePicker, DateTimePicker, Dialog, FileUploader, GroupHeaderListItem, Input, SuggestionGroupItem, SuggestionItem, Label, Link, List, StandardListItem, Menu, MenuItem, MessageStrip, MultiComboBox, MultiComboBoxGroupItem, MultiComboBoxItem, MultiInput, Token, Option, Panel, Popover, ProgressIndicator, RadioButton, RangeSlider, RatingIndicator, ResponsivePopover, SegmentedButton, SegmentedButtonItem, Select, SelectMenu, SelectMenuOption, Slider, SplitButton, StepInput, Switch, Tab, TabSeparator, TabContainer, Table, TableColumn, TableGroupRow, TableRow, TableCell, TextArea, TimePicker, Title, Toast, ToggleButton, Toolbar, ToolbarButton, ToolbarSelect, ToolbarSeparator, ToolbarSelectOption, ToolbarSpacer, Tree, TreeItem, TreeItemCustom
             ) {
 
                 var oAvatar = new Avatar({
@@ -655,26 +663,14 @@
 
 
                 var oColorPalettePopover0Button = new Button({
-                    text: "openPopover",
-                    click: function(oEvent) {
-                        console.log("Calling openPopover...");
-                        var result = oColorPalettePopover.openPopover();
-                        console.log("... openPopover returned: ", result);
-                    }
-                });
-                oColorPalettePopover0Button.placeAt("methodsColorPalettePopover");
-
-
-
-                var oColorPalettePopover1Button = new Button({
                     text: "showAt",
                     click: function(oEvent) {
                         console.log("Calling showAt...");
-                        var result = oColorPalettePopover.showAt(oColorPalettePopover1Button);
+                        var result = oColorPalettePopover.showAt(oColorPalettePopover0Button);
                         console.log("... showAt returned: ", result);
                     }
                 });
-                oColorPalettePopover1Button.placeAt("methodsColorPalettePopover");
+                oColorPalettePopover0Button.placeAt("methodsColorPalettePopover");
 
                 var oColorPalettePopover = new ColorPalettePopover({
                     defaultColor: "blue",
@@ -2680,18 +2676,6 @@
 
 
                 var oSegmentedButton0Button = new Button({
-                    text: "getSelectedItem",
-                    click: function(oEvent) {
-                        console.log("Calling getSelectedItem...");
-                        var result = oSegmentedButton.getSelectedItem();
-                        console.log("... getSelectedItem returned: ", result);
-                    }
-                });
-                oSegmentedButton0Button.placeAt("methodsSegmentedButton");
-
-
-
-                var oSegmentedButton1Button = new Button({
                     text: "getSelectedItems",
                     click: function(oEvent) {
                         console.log("Calling getSelectedItems...");
@@ -2699,7 +2683,7 @@
                         console.log("... getSelectedItems returned: ", result);
                     }
                 });
-                oSegmentedButton1Button.placeAt("methodsSegmentedButton");
+                oSegmentedButton0Button.placeAt("methodsSegmentedButton");
 
                 var oSegmentedButton = new SegmentedButton({
                     items: [
@@ -2755,6 +2739,29 @@
                 var oSelect = new Select({
                     valueState: "Warning",
                     valueStateMessage: "Value State Message",
+                    label: [
+                        new Button({
+                            icon: "employee",
+                            text: "Some text...",
+                            click: function(oEvent) {
+                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                            }
+                        }),
+                        new Button({
+                            icon: "employee",
+                            text: "Some text...",
+                            click: function(oEvent) {
+                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                            }
+                        }),
+                        new Button({
+                            icon: "employee",
+                            text: "Some text...",
+                            click: function(oEvent) {
+                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                            }
+                        })
+                    ],
                     options: [
                         new Option({
                             additionalText: "Some text...",
@@ -2781,11 +2788,132 @@
                     close: function(oEvent) {
                         console.log("Event close fired for Select with parameters: ", oEvent.getParameters());
                     },
+                    liveChange: function(oEvent) {
+                        console.log("Event liveChange fired for Select with parameters: ", oEvent.getParameters());
+                    },
                     open: function(oEvent) {
                         console.log("Event open fired for Select with parameters: ", oEvent.getParameters());
                     }
                 });
                 oSelect.placeAt("testSelect");
+
+
+                var oSelectMenu = new SelectMenu({
+                    content: [
+                        new SelectMenuOption({
+                            displayText: "Some text...",
+                            value: "Control value",
+                            content: [
+                                new Button({
+                                    icon: "employee",
+                                    text: "Some text...",
+                                    click: function(oEvent) {
+                                        console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                                    }
+                                }),
+                                new Button({
+                                    icon: "employee",
+                                    text: "Some text...",
+                                    click: function(oEvent) {
+                                        console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                                    }
+                                }),
+                                new Button({
+                                    icon: "employee",
+                                    text: "Some text...",
+                                    click: function(oEvent) {
+                                        console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                                    }
+                                })
+                            ]
+                        }),
+                        new SelectMenuOption({
+                            displayText: "Some text...",
+                            value: "Control value",
+                            content: [
+                                new Button({
+                                    icon: "employee",
+                                    text: "Some text...",
+                                    click: function(oEvent) {
+                                        console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                                    }
+                                }),
+                                new Button({
+                                    icon: "employee",
+                                    text: "Some text...",
+                                    click: function(oEvent) {
+                                        console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                                    }
+                                }),
+                                new Button({
+                                    icon: "employee",
+                                    text: "Some text...",
+                                    click: function(oEvent) {
+                                        console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                                    }
+                                })
+                            ]
+                        }),
+                        new SelectMenuOption({
+                            displayText: "Some text...",
+                            value: "Control value",
+                            content: [
+                                new Button({
+                                    icon: "employee",
+                                    text: "Some text...",
+                                    click: function(oEvent) {
+                                        console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                                    }
+                                }),
+                                new Button({
+                                    icon: "employee",
+                                    text: "Some text...",
+                                    click: function(oEvent) {
+                                        console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                                    }
+                                }),
+                                new Button({
+                                    icon: "employee",
+                                    text: "Some text...",
+                                    click: function(oEvent) {
+                                        console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                                    }
+                                })
+                            ]
+                        })
+                    ]
+                });
+                oSelectMenu.placeAt("testSelectMenu");
+
+
+                var oSelectMenuOption = new SelectMenuOption({
+                    displayText: "Some text...",
+                    value: "Control value",
+                    content: [
+                        new Button({
+                            icon: "employee",
+                            text: "Some text...",
+                            click: function(oEvent) {
+                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                            }
+                        }),
+                        new Button({
+                            icon: "employee",
+                            text: "Some text...",
+                            click: function(oEvent) {
+                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                            }
+                        }),
+                        new Button({
+                            icon: "employee",
+                            text: "Some text...",
+                            click: function(oEvent) {
+                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                            }
+                        })
+                    ]
+                });
+                oSelectMenuOption.placeAt("testSelectMenuOption");
 
 
                 var oSlider = new Slider({
@@ -3957,6 +4085,118 @@
                     }
                 });
                 oToken.placeAt("testToken");
+
+
+                var oToolbar = new Toolbar({
+                    items: [
+                        new ToolbarButton({
+                            icon: "employee",
+                            text: "Some text...",
+                            click: function(oEvent) {
+                                console.log("Event click fired for ToolbarButton with parameters: ", oEvent.getParameters());
+                            }
+                        }),
+                        new ToolbarSelect({
+                            valueState: "Warning",
+                            options: [
+                                new Option({
+                                    additionalText: "Some text...",
+                                    icon: "employee",
+                                    text: "Some text...",
+                                    value: "Control value"
+                                }),
+                                new Option({
+                                    additionalText: "Some text...",
+                                    icon: "employee",
+                                    text: "Some text...",
+                                    value: "Control value"
+                                }),
+                                new Option({
+                                    additionalText: "Some text...",
+                                    icon: "employee",
+                                    text: "Some text...",
+                                    value: "Control value"
+                                })
+                            ],
+                            change: function(oEvent) {
+                                console.log("Event change fired for ToolbarSelect with parameters: ", oEvent.getParameters());
+                            },
+                            close: function(oEvent) {
+                                console.log("Event close fired for ToolbarSelect with parameters: ", oEvent.getParameters());
+                            },
+                            open: function(oEvent) {
+                                console.log("Event open fired for ToolbarSelect with parameters: ", oEvent.getParameters());
+                            }
+                        }),
+                        new ToolbarSeparator({
+
+                        })
+                    ]
+                });
+                oToolbar.placeAt("testToolbar");
+
+
+                var oToolbarButton = new ToolbarButton({
+                    icon: "employee",
+                    text: "Some text...",
+                    click: function(oEvent) {
+                        console.log("Event click fired for ToolbarButton with parameters: ", oEvent.getParameters());
+                    }
+                });
+                oToolbarButton.placeAt("testToolbarButton");
+
+
+                var oToolbarSelect = new ToolbarSelect({
+                    valueState: "Warning",
+                    options: [
+                        new Option({
+                            additionalText: "Some text...",
+                            icon: "employee",
+                            text: "Some text...",
+                            value: "Control value"
+                        }),
+                        new Option({
+                            additionalText: "Some text...",
+                            icon: "employee",
+                            text: "Some text...",
+                            value: "Control value"
+                        }),
+                        new Option({
+                            additionalText: "Some text...",
+                            icon: "employee",
+                            text: "Some text...",
+                            value: "Control value"
+                        })
+                    ],
+                    change: function(oEvent) {
+                        console.log("Event change fired for ToolbarSelect with parameters: ", oEvent.getParameters());
+                    },
+                    close: function(oEvent) {
+                        console.log("Event close fired for ToolbarSelect with parameters: ", oEvent.getParameters());
+                    },
+                    open: function(oEvent) {
+                        console.log("Event open fired for ToolbarSelect with parameters: ", oEvent.getParameters());
+                    }
+                });
+                oToolbarSelect.placeAt("testToolbarSelect");
+
+
+                var oToolbarSelectOption = new ToolbarSelectOption({
+                    text: "Some text..."
+                });
+                oToolbarSelectOption.placeAt("testToolbarSelectOption");
+
+
+                var oToolbarSeparator = new ToolbarSeparator({
+
+                });
+                oToolbarSeparator.placeAt("testToolbarSeparator");
+
+
+                var oToolbarSpacer = new ToolbarSpacer({
+
+                });
+                oToolbarSpacer.placeAt("testToolbarSpacer");
 
 
                 var oTree0Button = new Button({
@@ -5864,145 +6104,193 @@
     <br><br>
 
 
-    <h1>50. Slider</h1>
+    <h1>50. SelectMenu</h1>
+    <div id="methodsSelectMenu"></div>
+    <div id="testSelectMenu"></div>
+    <br><br>
+
+
+    <h1>51. SelectMenuOption</h1>
+    <div id="methodsSelectMenuOption"></div>
+    <div id="testSelectMenuOption"></div>
+    <br><br>
+
+
+    <h1>52. Slider</h1>
     <div id="methodsSlider"></div>
     <div id="testSlider"></div>
     <br><br>
 
 
-    <h1>51. SplitButton</h1>
+    <h1>53. SplitButton</h1>
     <div id="methodsSplitButton"></div>
     <div id="testSplitButton"></div>
     <br><br>
 
 
-    <h1>52. StandardListItem</h1>
+    <h1>54. StandardListItem</h1>
     <div id="methodsStandardListItem"></div>
     <div id="testStandardListItem"></div>
     <br><br>
 
 
-    <h1>53. StepInput</h1>
+    <h1>55. StepInput</h1>
     <div id="methodsStepInput"></div>
     <div id="testStepInput"></div>
     <br><br>
 
 
-    <h1>54. SuggestionGroupItem</h1>
+    <h1>56. SuggestionGroupItem</h1>
     <div id="methodsSuggestionGroupItem"></div>
     <div id="testSuggestionGroupItem"></div>
     <br><br>
 
 
-    <h1>55. SuggestionItem</h1>
+    <h1>57. SuggestionItem</h1>
     <div id="methodsSuggestionItem"></div>
     <div id="testSuggestionItem"></div>
     <br><br>
 
 
-    <h1>56. Switch</h1>
+    <h1>58. Switch</h1>
     <div id="methodsSwitch"></div>
     <div id="testSwitch"></div>
     <br><br>
 
 
-    <h1>57. Tab</h1>
+    <h1>59. Tab</h1>
     <div id="methodsTab"></div>
     <div id="testTab"></div>
     <br><br>
 
 
-    <h1>58. TabContainer</h1>
+    <h1>60. TabContainer</h1>
     <div id="methodsTabContainer"></div>
     <div id="testTabContainer"></div>
     <br><br>
 
 
-    <h1>59. Table</h1>
+    <h1>61. Table</h1>
     <div id="methodsTable"></div>
     <div id="testTable"></div>
     <br><br>
 
 
-    <h1>60. TableCell</h1>
+    <h1>62. TableCell</h1>
     <div id="methodsTableCell"></div>
     <div id="testTableCell"></div>
     <br><br>
 
 
-    <h1>61. TableColumn</h1>
+    <h1>63. TableColumn</h1>
     <div id="methodsTableColumn"></div>
     <div id="testTableColumn"></div>
     <br><br>
 
 
-    <h1>62. TableGroupRow</h1>
+    <h1>64. TableGroupRow</h1>
     <div id="methodsTableGroupRow"></div>
     <div id="testTableGroupRow"></div>
     <br><br>
 
 
-    <h1>63. TableRow</h1>
+    <h1>65. TableRow</h1>
     <div id="methodsTableRow"></div>
     <div id="testTableRow"></div>
     <br><br>
 
 
-    <h1>64. TabSeparator</h1>
+    <h1>66. TabSeparator</h1>
     <div id="methodsTabSeparator"></div>
     <div id="testTabSeparator"></div>
     <br><br>
 
 
-    <h1>65. TextArea</h1>
+    <h1>67. TextArea</h1>
     <div id="methodsTextArea"></div>
     <div id="testTextArea"></div>
     <br><br>
 
 
-    <h1>66. TimePicker</h1>
+    <h1>68. TimePicker</h1>
     <div id="methodsTimePicker"></div>
     <div id="testTimePicker"></div>
     <br><br>
 
 
-    <h1>67. Title</h1>
+    <h1>69. Title</h1>
     <div id="methodsTitle"></div>
     <div id="testTitle"></div>
     <br><br>
 
 
-    <h1>68. Toast</h1>
+    <h1>70. Toast</h1>
     <div id="methodsToast"></div>
     <div id="testToast"></div>
     <br><br>
 
 
-    <h1>69. ToggleButton</h1>
+    <h1>71. ToggleButton</h1>
     <div id="methodsToggleButton"></div>
     <div id="testToggleButton"></div>
     <br><br>
 
 
-    <h1>70. Token</h1>
+    <h1>72. Token</h1>
     <div id="methodsToken"></div>
     <div id="testToken"></div>
     <br><br>
 
 
-    <h1>71. Tree</h1>
+    <h1>73. Toolbar</h1>
+    <div id="methodsToolbar"></div>
+    <div id="testToolbar"></div>
+    <br><br>
+
+
+    <h1>74. ToolbarButton</h1>
+    <div id="methodsToolbarButton"></div>
+    <div id="testToolbarButton"></div>
+    <br><br>
+
+
+    <h1>75. ToolbarSelect</h1>
+    <div id="methodsToolbarSelect"></div>
+    <div id="testToolbarSelect"></div>
+    <br><br>
+
+
+    <h1>76. ToolbarSelectOption</h1>
+    <div id="methodsToolbarSelectOption"></div>
+    <div id="testToolbarSelectOption"></div>
+    <br><br>
+
+
+    <h1>77. ToolbarSeparator</h1>
+    <div id="methodsToolbarSeparator"></div>
+    <div id="testToolbarSeparator"></div>
+    <br><br>
+
+
+    <h1>78. ToolbarSpacer</h1>
+    <div id="methodsToolbarSpacer"></div>
+    <div id="testToolbarSpacer"></div>
+    <br><br>
+
+
+    <h1>79. Tree</h1>
     <div id="methodsTree"></div>
     <div id="testTree"></div>
     <br><br>
 
 
-    <h1>72. TreeItem</h1>
+    <h1>80. TreeItem</h1>
     <div id="methodsTreeItem"></div>
     <div id="testTreeItem"></div>
     <br><br>
 
 
-    <h1>73. TreeItemCustom</h1>
+    <h1>81. TreeItemCustom</h1>
     <div id="methodsTreeItemCustom"></div>
     <div id="testTreeItemCustom"></div>
     <br><br>

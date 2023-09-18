@@ -31,6 +31,11 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
     return c > 3 && r && Object.defineProperty(target, key, r), r;
   };
   var ShellBar_1;
+
+  // Templates
+
+  // Styles
+
   const HANDLE_RESIZE_DEBOUNCE_RATE = 200; // ms
   /**
    * @class
@@ -229,7 +234,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
     _handleBarBreakpoints() {
       const width = this.getBoundingClientRect().width;
       const breakpoints = ShellBar_1.FIORI_3_BREAKPOINTS;
-      const size = breakpoints.find(bp1 => width < bp1) || ShellBar_1.FIORI_3_BREAKPOINTS[ShellBar_1.FIORI_3_BREAKPOINTS.length - 1];
+      const size = breakpoints.find(bp1 => width <= bp1) || ShellBar_1.FIORI_3_BREAKPOINTS[ShellBar_1.FIORI_3_BREAKPOINTS.length - 1];
       const mappedSize = ShellBar_1.FIORI_3_BREAKPOINTS_MAP[size];
       if (this.breakpointSize !== mappedSize) {
         this.breakpointSize = mappedSize;
@@ -446,7 +451,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       let domOrder = -1;
       const items = [{
         icon: "search",
-        text: "Search",
+        text: this._searchText,
         classes: `${this.searchField.length ? "" : "ui5-shellbar-invisible-button"} ui5-shellbar-search-button ui5-shellbar-button`,
         priority: 4,
         domOrder: this.searchField.length ? ++domOrder : -1,
@@ -478,7 +483,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         };
       }), {
         icon: "bell",
-        text: "Notifications",
+        text: this._notificationsText,
         classes: `${this.showNotifications ? "" : "ui5-shellbar-invisible-button"} ui5-shellbar-bell-button ui5-shellbar-button`,
         priority: 3,
         styles: {
@@ -515,7 +520,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         press: this._handleProfilePress.bind(this)
       }, {
         icon: "grid",
-        text: "Product Switch",
+        text: this._productsText,
         classes: `${this.showProductSwitch ? "" : "ui5-shellbar-invisible-button"} ui5-shellbar-button ui5-shellbar-button-product-switch`,
         priority: 2,
         styles: {

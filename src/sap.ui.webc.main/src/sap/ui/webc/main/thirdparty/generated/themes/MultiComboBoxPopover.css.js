@@ -13,7 +13,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/T
   const styleData = {
     packageName: "@ui5/webcomponents",
     fileName: "themes/MultiComboBoxPopover.css",
-    content: ".ui5-suggestions-popover .ui5-multi-combobox-all-items-list {\n\t--_ui5_checkbox_width_height: var(--_ui5_list_item_dropdown_base_height);\n}"
+    content: ".ui5-suggestions-popover .ui5-multi-combobox-all-items-list{--_ui5-v1-18-0_checkbox_width_height:var(--_ui5-v1-18-0_list_item_dropdown_base_height)}"
   };
   var _default = styleData;
   _exports.default = _default;

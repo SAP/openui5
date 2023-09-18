@@ -6,7 +6,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
   });
   _exports.pathData = _exports.ltr = _exports.default = _exports.accData = void 0;
   const name = "text-color";
-  const pathData = "M471.5 459q12 0 19.5 7t7.5 20q0 12-7.5 19t-19.5 7h-430q-27 0-27-26 0-27 27-27h430zm-360-84q-11-4-15.5-14t1.5-21l135-322q5-17 24-17 8 0 15 4.5t9 12.5l134 322q5 11 1 21t-14 14q-10 5-20.5 1t-14.5-14l-27-65h-167l-27 65q-4 10-14 14.5t-20-1.5zm86-132h121l-62-145z";
+  const pathData = "M122 384q-11 0-18.5-7.5T96 358q0-4 2-10L233 47q7-15 23-15t23 15l135 301q2 6 2 10 0 11-7.5 18.5T390 384q-16 0-23-15l-27-62H173l-28 62q-7 15-23 15zm73-128h122l-61-136zm227 173q11 0 18.5 7t7.5 18-7.5 18.5T422 480H90q-11 0-18.5-7.5T64 454t7.5-18 18.5-7h332z";
   _exports.pathData = pathData;
   const ltr = true;
   _exports.ltr = ltr;

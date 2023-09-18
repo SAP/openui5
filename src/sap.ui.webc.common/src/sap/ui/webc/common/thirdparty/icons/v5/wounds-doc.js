@@ -6,7 +6,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
   });
   _exports.pathData = _exports.ltr = _exports.default = _exports.accData = void 0;
   const name = "wounds-doc";
-  const pathData = "M358.5 242q56 22 90.5 71.5T483.5 427v57q0 28-29 28h-397q-28 0-28-28v-57q0-64 34.5-113.5t90.5-71.5q-40-38-40-99 0-30 11-56t30-45 45-30 56-11T312 12t45 30 30.5 45 11 56q0 61-40 99zm-165-159q-22 27-22 60 0 36 24.5 60.5t60.5 24.5 60.5-24.5 24.5-60.5v-3h-9zm-110 372h73l145-167q-4-2-8-2.5t-9-.5h-57q-30 0-55.5 11t-45 30-30.5 45-11 56zm343-28q0-36-15.5-65t-41.5-49v142h57v-28z";
+  const pathData = "M342 223q48 23 77 67.5t29 99.5v96q0 11-7.5 18.5T422 512H90q-11 0-18.5-7.5T64 486v-96q0-55 29-99.5t77-67.5l-5-5q-37-37-37-90 0-27 10-50t27.5-40.5 41-27.5T256 0t49.5 10.5 41 28T374 79t10 49q0 27-11 52t-31 43zM306 70q-22-19-50-19h-3zM193 85q-14 19-14 43 0 32 22.5 54.5T256 205q30 0 52.5-21t24.5-51zm-78 376h44l145-198q-18-7-42-7h-12q-28 0-52.5 10.5t-43 28.5-29 42.5T115 390v71zm282-71q0-29-12-55t-33-45v171h45v-71z";
   _exports.pathData = pathData;
   const ltr = false;
   _exports.ltr = ltr;

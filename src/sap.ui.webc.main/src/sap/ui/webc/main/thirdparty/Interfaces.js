@@ -4,7 +4,7 @@ sap.ui.define(["exports"], function (_exports) {
   Object.defineProperty(_exports, "__esModule", {
     value: true
   });
-  _exports.ITreeItem = _exports.IToken = _exports.ITableRow = _exports.ITableColumn = _exports.ITableCell = _exports.ITab = _exports.ISelectOption = _exports.ISegmentedButtonItem = _exports.IMultiComboBoxItem = _exports.IMenuItem = _exports.IListItem = _exports.IInputSuggestionItem = _exports.IInput = _exports.IIcon = _exports.IComboBoxItem = _exports.IColorPaletteItem = _exports.ICardHeader = _exports.ICalendarDate = _exports.IButton = _exports.IBreadcrumbsItem = _exports.IAvatar = void 0;
+  _exports.ITreeItem = _exports.IToolbarSelectOption = _exports.IToolbarItem = _exports.IToken = _exports.ITableRow = _exports.ITableColumn = _exports.ITableCell = _exports.ITab = _exports.ISelectOption = _exports.ISelectMenuOption = _exports.ISegmentedButtonItem = _exports.IMultiComboBoxItem = _exports.IMenuItem = _exports.IListItem = _exports.IInputSuggestionItem = _exports.IInput = _exports.IIcon = _exports.IComboBoxItem = _exports.IColorPaletteItem = _exports.ICardHeader = _exports.ICalendarDate = _exports.IButton = _exports.IBreadcrumbsItem = _exports.IAvatar = void 0;
   /**
    * Interface for components that represent an avatar and may be slotted in numerous higher-order components such as <code>ui5-avatar-group</code>
    *
@@ -140,13 +140,22 @@ sap.ui.define(["exports"], function (_exports) {
   _exports.ISegmentedButtonItem = ISegmentedButtonItem;
   const ISelectOption = "sap.ui.webc.main.ISelectOption";
   /**
+   * Interface for components that may be slotted inside <code>ui5-select-menu</code> as options
+   *
+   * @name sap.ui.webc.main.ISelectMenuOption
+   * @interface
+   * @public
+   */
+  _exports.ISelectOption = ISelectOption;
+  const ISelectMenuOption = "sap.ui.webc.main.ISelectMenuOption";
+  /**
    * Interface for components that may be slotted inside <code>ui5-tabcontainer</code>
    *
    * @name sap.ui.webc.main.ITab
    * @interface
    * @public
    */
-  _exports.ISelectOption = ISelectOption;
+  _exports.ISelectMenuOption = ISelectMenuOption;
   const ITab = "sap.ui.webc.main.ITab";
   /**
    * Interface for components that may be slotted inside a <code>ui5-table</code> as rows
@@ -193,5 +202,23 @@ sap.ui.define(["exports"], function (_exports) {
    */
   _exports.IToken = IToken;
   const ITreeItem = "sap.ui.webc.main.ITreeItem";
+  /**
+   * Interface for toolbar items for the purpose of <code>ui5-toolbar</code>
+   *
+   * @name sap.ui.webc.main.IToolbarItem
+   * @interface
+   * @public
+   */
   _exports.ITreeItem = ITreeItem;
+  const IToolbarItem = "sap.ui.webc.main.IToolbarItem";
+  /**
+   * Interface for toolbar select items for the purpose of <code>ui5-toolbar-select</code>
+   *
+   * @name sap.ui.webc.main.IToolbarSelectOption
+   * @interface
+   * @public
+   */
+  _exports.IToolbarItem = IToolbarItem;
+  const IToolbarSelectOption = "sap.ui.webc.main.IToolbarSelectOption";
+  _exports.IToolbarSelectOption = IToolbarSelectOption;
 });

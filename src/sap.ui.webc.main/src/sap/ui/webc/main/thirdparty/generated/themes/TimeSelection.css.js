@@ -13,7 +13,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/T
   const styleData = {
     packageName: "@ui5/webcomponents",
     fileName: "themes/TimeSelection.css",
-    content: ":host(:not([hidden])) {\n    display: inline-block;\n    min-width: 18rem;\n}\n\n.ui5-time-selection-root {\n    width: 100%;\n    height: 100%;\n\tdisplay: flex;\n\tjustify-content: center;\n\talign-items: stretch;\n\tdirection: ltr;\n\tbox-sizing: border-box;\n}\n\n.ui5-time-selection-root.ui5-phone{\n\theight: 90vh;\n}\n\n:host(.ui5-dt-time.ui5-dt-cal--hidden) .ui5-time-selection-root.ui5-phone {\n\theight: 80vh;\n}\n\n[ui5-wheelslider] {\n\tpadding-left: 0.25rem;\n\tpadding-right: 0.25rem;\n}\n"
+    content: ":host(:not([hidden])){display:inline-block;min-width:18rem}.ui5-time-selection-root{align-items:stretch;box-sizing:border-box;direction:ltr;display:flex;height:100%;justify-content:center;width:100%}.ui5-time-selection-root.ui5-phone{height:90vh}:host(.ui5-dt-time.ui5-dt-cal--hidden) .ui5-time-selection-root.ui5-phone{height:80vh}[ui5-wheelslider]{padding-left:.25rem;padding-right:.25rem}"
   };
   var _default = styleData;
   _exports.default = _default;

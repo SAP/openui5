@@ -56,6 +56,22 @@ sap.ui.define([
 			properties: {
 
 				/**
+				 * An object of strings that defines several additional accessibility attribute values for customization depending on the use case.
+				 *
+				 * It supports the following fields:
+				 *
+				 *
+				 * <ul>
+				 *     <li><code>ariaSetsize</code>: Defines the number of items in the current set of listitems or treeitems when not all items in the set are present in the DOM. The value of each <code>aria-setsize</code> is an integer reflecting number of items in the complete set. <b>Note: </b> If the size of the entire set is unknown, set <code>aria-setsize="-1"</code>. </li>
+				 *     <li><code>ariaPosinset</code>: Defines an element's number or position in the current set of listitems or treeitems when not all items are present in the DOM. The value of each <code>aria-posinset</code> is an integer greater than or equal to 1, and less than or equal to the size of the set when that size is known. </li>
+				 * </ul>
+				 */
+				accessibilityAttributes: {
+					type: "object",
+					defaultValue: {}
+				},
+
+				/**
 				 * Defines the accessible name of the component.
 				 */
 				accessibleName: {

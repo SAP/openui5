@@ -1,12 +1,22 @@
 /**
-* Copyright (c) 2012-2020 SAP SE or an SAP affiliate company and Theming Base Content contributors. Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
+* Copyright (c) 2012-2023 SAP SE or an SAP affiliate company and Theming Base Content contributors. Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
 *
-* Theming Engine 1.23050.0-20230523090303+e385b420d426b24bae1dee2743785a1448185388
-* data:{"Path": "Base.baseLib.sap_belize_hcw.css_variables", "PathPattern": "/%frameworkId%/%libId%/%themeId%/%fileId%.css", "Extends": ["sap_belize_hcb","sap_belize","sap_base_fiori","baseTheme"], "Tags": ["Fiori_2","Fiori_3","HighContrast"], "FallbackThemeId": "sap_belize", "Engine": {"Name": "theming-engine", "Version": "1.23050.0-20230523090303+e385b420d426b24bae1dee2743785a1448185388"}, "Version": { "Build": "11.4.2.20230525101226", "Source": "11.4.2"}}
+* Theming Engine 1.23061.0
+* data:{"Path": "Base.baseLib.sap_belize_hcw.css_variables", "PathPattern": "/%frameworkId%/%libId%/%themeId%/%fileId%.css", "Extends": ["sap_belize_hcb","sap_belize","sap_base_fiori","baseTheme"], "Tags": ["Fiori_2","Fiori_3","HighContrast"], "FallbackThemeId": "sap_belize", "Engine": {"Name": "theming-engine", "Version": "1.23061.0"}, "Version": { "Build": "11.6.8.20230911071338", "Source": "11.6.8"}}
 */
 
-.sapThemeMetaData-Base-baseLib{background-image: url('data:text/plain;utf-8,{"Path": "Base.baseLib.sap_belize_hcw.css_variables", "PathPattern": "/%frameworkId%/%libId%/%themeId%/%fileId%.css", "Extends": ["sap_belize_hcb","sap_belize","sap_base_fiori","baseTheme"], "Tags": ["Fiori_2","Fiori_3","HighContrast"], "FallbackThemeId": "sap_belize", "Engine": {"Name": "theming-engine", "Version": "1.23050.0-20230523090303+e385b420d426b24bae1dee2743785a1448185388"}, "Version": { "Build": "11.4.2.20230525101226", "Source": "11.4.2"}}');}
-:root{--sapThemeMetaData-Base-baseLib:{"Path": "Base.baseLib.sap_belize_hcw.css_variables", "PathPattern": "/%frameworkId%/%libId%/%themeId%/%fileId%.css", "Extends": ["sap_belize_hcb","sap_belize","sap_base_fiori","baseTheme"], "Tags": ["Fiori_2","Fiori_3","HighContrast"], "FallbackThemeId": "sap_belize", "Engine": {"Name": "theming-engine", "Version": "1.23050.0-20230523090303+e385b420d426b24bae1dee2743785a1448185388"}, "Version": { "Build": "11.4.2.20230525101226", "Source": "11.4.2"}};}
+.sapThemeMetaData-Base-baseLib{background-image: url('data:text/plain;utf-8,{"Path": "Base.baseLib.sap_belize_hcw.css_variables", "PathPattern": "/%frameworkId%/%libId%/%themeId%/%fileId%.css", "Extends": ["sap_belize_hcb","sap_belize","sap_base_fiori","baseTheme"], "Tags": ["Fiori_2","Fiori_3","HighContrast"], "FallbackThemeId": "sap_belize", "Engine": {"Name": "theming-engine", "Version": "1.23061.0"}, "Version": { "Build": "11.6.8.20230911071338", "Source": "11.6.8"}}');}
+:root{--sapThemeMetaData-Base-baseLib:{"Path": "Base.baseLib.sap_belize_hcw.css_variables", "PathPattern": "/%frameworkId%/%libId%/%themeId%/%fileId%.css", "Extends": ["sap_belize_hcb","sap_belize","sap_base_fiori","baseTheme"], "Tags": ["Fiori_2","Fiori_3","HighContrast"], "FallbackThemeId": "sap_belize", "Engine": {"Name": "theming-engine", "Version": "1.23061.0"}, "Version": { "Build": "11.6.8.20230911071338", "Source": "11.6.8"}};}
+
+/**
+* Base.baseLib.baseTheme.base (Version 11.6.8)
+*/
+
+
+/**
+* Base.baseLib.baseTheme.css_variables (Version 11.6.8)
+*/
+
 :root {
   --sapBrandColor: #ec8b46;
   --sapHighlightColor: #ec8b46;
@@ -924,3 +934,43 @@
 .background-image--sapShell_BackgroundImage {
   background-image: var(--sapShell_BackgroundImage);
 }
+
+/**
+* Base.baseLib.sap_base_fiori.base (Version 11.6.8)
+*/
+
+
+/**
+* Base.baseLib.sap_base_fiori.css_variables (Version 11.6.8)
+*/
+
+
+/**
+* Base.baseLib.sap_belize.base (Version 11.6.8)
+*/
+
+
+/**
+* Base.baseLib.sap_belize.css_variables (Version 11.6.8)
+*/
+
+
+/**
+* Base.baseLib.sap_belize_hcb.base (Version 11.6.8)
+*/
+
+
+/**
+* Base.baseLib.sap_belize_hcb.css_variables (Version 11.6.8)
+*/
+
+
+/**
+* Base.baseLib.sap_belize_hcw.base (Version 11.6.8)
+*/
+
+
+/**
+* Base.baseLib.sap_belize_hcw.css_variables (Version 11.6.8)
+*/
+

@@ -13,7 +13,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/T
   const styleData = {
     packageName: "@ui5/webcomponents-fiori",
     fileName: "themes/ShellBarPopover.css",
-    content: ".ui5-shellbar-menu-popover::part(content),\n.ui5-shellbar-overflow-popover::part(content) {\n\tpadding: 0;\n}\n\n.ui5-shellbar-overflow-popover [ui5-li]::part(icon) {\n\tcolor: var(--sapList_TextColor);\n}\n"
+    content: ".ui5-shellbar-menu-popover::part(content),.ui5-shellbar-overflow-popover::part(content){padding:0}.ui5-shellbar-overflow-popover [ui5-li]::part(icon){color:var(--sapList_TextColor)}"
   };
   var _default = styleData;
   _exports.default = _default;

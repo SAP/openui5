@@ -13,7 +13,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/T
   const styleData = {
     packageName: "@ui5/webcomponents",
     fileName: "themes/TapHighlightColor.css",
-    content: ":host {\n\t-webkit-tap-highlight-color: rgba(0,0,0,0);\n}"
+    content: ":host{-webkit-tap-highlight-color:rgba(0,0,0,0)}"
   };
   var _default = styleData;
   _exports.default = _default;

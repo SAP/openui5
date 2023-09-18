@@ -6,7 +6,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
   });
   _exports.pathData = _exports.ltr = _exports.default = _exports.accData = void 0;
   const name = "megamenu";
-  const pathData = "M343.5 184q28 0 39 26 3 9 3 18 0 18-12 29l-86 87q-15 13-30 13-17 0-30-13l-87-87q-13-13-13-29 0-8 5-20 13-24 38-24h173z";
+  const pathData = "M256 352q-13 0-21-11L133 201q-5-8-5-15 0-11 7.5-18.5T154 160h204q11 0 18.5 7.5T384 186q0 7-5 15L277 341q-8 11-21 11z";
   _exports.pathData = pathData;
   const ltr = false;
   _exports.ltr = ltr;

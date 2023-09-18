@@ -6,7 +6,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
   });
   _exports.pathData = _exports.ltr = _exports.default = _exports.accData = void 0;
   const name = "puzzle";
-  const pathData = "M461.5 96q20 0 35 15t15 35v206q0 21-15 36t-35 15h-66q0-11-7-18.5t-18-7.5-18 7.5-7 18.5h-64q-13 0-25-7-6 3-12 5t-14 2h-51v13q0 16-11 27t-27 11-27.5-11-11.5-27v-13h-51q-21 0-36-15t-15-36v-64h13q16 0 27-11t11-28q0-16-11-27t-27-11H.5v-64q0-21 15-36t36-15h51v13q0 16 11 27t28 11q16 0 27-11t11-27V96h51q8 0 14 2t12 5q12-7 25-7h51V83q0-16 11-27t27-11T398 56t11.5 27v13h52zm-1 256V146l-179 1v64h13q16 0 27.5 11t11.5 27q0 17-11.5 28t-27.5 11h-12v64h31q21-26 58-26t56 26h33z";
+  const pathData = "M454 96q24 0 41 17t17 41v204q0 24-17 41t-41 17h-70v-49q0-6-4.5-10.5T368 352q-6 0-11 4.5t-5 10.5v49H192v16q0 20-14 34t-34 14-34-14-14-34v-16H58q-24 0-41-17T0 358v-70h33q14 0 23.5-9.5T66 255q0-13-9.5-22.5T33 223H0v-69q0-24 17-41t41-17h55v32q0 14 9 23t23 9q13 0 22.5-9t9.5-23V96h143V80q0-20 14-34t34-14 34 14 14 34v16h38zm7 58q0-7-7-7H282v45h22q20 0 34 14t14 34-14 34-34 14h-22v77h21q1-27 20.5-45.5T370 301t46 18.5 20 45.5h18q7 0 7-7V154z";
   _exports.pathData = pathData;
   const ltr = false;
   _exports.ltr = ltr;

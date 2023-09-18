@@ -85,17 +85,6 @@ sap.ui.define([
 
 				/**
 				 * Defines the size of the component.
-				 *
-				 * <br>
-				 * <br>
-				 * <b>Note:</b>
-				 *
-				 *
-				 * <ul>
-				 *     <li><code>Small</code></li>
-				 *     <li><code>Medium</code></li>
-				 *     <li><code>Large</code></li>
-				 * </ul>
 				 */
 				size: {
 					type: "sap.ui.webc.main.BusyIndicatorSize",

@@ -33,6 +33,11 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
     return c > 3 && r && Object.defineProperty(target, key, r), r;
   };
   var Tab_1;
+
+  // Templates
+
+  // Styles
+
   const DESIGN_DESCRIPTIONS = {
     [_SemanticColor.default.Positive]: _i18nDefaults.TAB_ARIA_DESIGN_POSITIVE,
     [_SemanticColor.default.Negative]: _i18nDefaults.TAB_ARIA_DESIGN_NEGATIVE,
@@ -85,6 +90,9 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
     }
     get isSingleClickArea() {
       return this.subTabs.length > 0 && this._isTopLevelTab && !this._hasOwnContent;
+    }
+    get isTwoClickArea() {
+      return this.subTabs.length > 0 && this._isTopLevelTab && this._hasOwnContent;
     }
     get isOnSelectedTabPath() {
       return this._realTab === this || this.tabs.some(subTab => subTab.isOnSelectedTabPath);
@@ -187,6 +195,9 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       }
       if (this.isSingleClickArea) {
         classes.push(`ui5-tab-strip-item--singleClickArea`);
+      }
+      if (this.isTwoClickArea) {
+        classes.push(`ui5-tab-strip-item--twoClickArea`);
       }
       return {
         itemClasses: classes.join(" "),

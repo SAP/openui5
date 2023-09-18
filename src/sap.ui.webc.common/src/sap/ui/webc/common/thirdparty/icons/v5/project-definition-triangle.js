@@ -6,7 +6,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
   });
   _exports.pathData = _exports.ltr = _exports.default = _exports.accData = void 0;
   const name = "project-definition-triangle";
-  const pathData = "M403 512H109q-22 0-41.5-8.5t-34-23-23-33.5T2 406q0-25 13-51L163 82q14-26 38.5-41T256 26t55 15 39 41l147 273q13 25 13 52 0 22-8.5 41t-23 33.5-34 22.5-41.5 8zM256 77q-15 0-28 7.5T208 106L60 380q-6 12-6 26-1 23 15.5 39t39.5 16h294q23 0 39.5-16.5T459 406q0-12-7-26L305 106q-16-29-49-29z";
+  const pathData = "M473 387q7 14 7 29 0 26-18 45t-46 19H96q-28 0-46-19t-18-45q0-15 7-29L198 67q9-17 24.5-26t32.5-9 33 9 25 26zm-57 42q13 0 13-13 0-2-2-6L267 90q-2-5-5.5-6t-6.5-1q-7 0-11 7L85 410q-2 4-2 6 0 13 13 13h320z";
   _exports.pathData = pathData;
   const ltr = false;
   _exports.ltr = ltr;

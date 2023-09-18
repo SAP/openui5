@@ -29,6 +29,9 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/decorators/customE
     return c > 3 && r && Object.defineProperty(target, key, r), r;
   };
   var Popup_1;
+
+  // Styles
+
   const createBlockingStyle = () => {
     if (!(0, _ManagedStyles.hasStyle)("data-ui5-popup-scroll-blocker")) {
       (0, _ManagedStyles.createStyle)(_PopupGlobal.default, "data-ui5-popup-scroll-blocker");
@@ -172,9 +175,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/decorators/customE
     async forwardToFirst() {
       const firstFocusable = await (0, _FocusableElements.getFirstFocusableElement)(this);
       if (firstFocusable) {
-        firstFocusable.focus({
-          focusVisible: true
-        });
+        firstFocusable.focus();
       } else {
         this._root.focus();
       }
@@ -186,9 +187,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/decorators/customE
     async forwardToLast() {
       const lastFocusable = await (0, _FocusableElements.getLastFocusableElement)(this);
       if (lastFocusable) {
-        lastFocusable.focus({
-          focusVisible: true
-        });
+        lastFocusable.focus();
       } else {
         this._root.focus();
       }
@@ -219,9 +218,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/decorators/customE
         if (element === this._root) {
           element.tabIndex = -1;
         }
-        element.focus({
-          focusVisible: true
-        });
+        element.focus();
       }
     }
     /**
@@ -319,9 +316,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/decorators/customE
       if (!this._focusedElementBeforeOpen) {
         return;
       }
-      this._focusedElementBeforeOpen.focus({
-        focusVisible: true
-      });
+      this._focusedElementBeforeOpen.focus();
       this._focusedElementBeforeOpen = null;
     }
     /**

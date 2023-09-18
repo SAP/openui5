@@ -6,7 +6,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
   });
   _exports.pathData = _exports.ltr = _exports.default = _exports.accData = void 0;
   const name = "bar-chart";
-  const pathData = "M330 219q17 0 27 10t10 27v219q0 17-10 27t-27 10-27-10-10-27V256q0-17 10-27t27-10zM476 0q17 0 27 10t10 26v439q0 17-10 27t-27 10-26.5-10-9.5-27V36q0-16 9.5-26T476 0zM184 110q17 0 26.5 9.5T220 146v329q0 17-9.5 27T184 512t-27-10-10-27V146q0-17 10-26.5t27-9.5zM37 329q17 0 27 10t10 27v109q0 17-10 27t-27 10-26.5-10T1 475V366q0-17 9.5-27T37 329z";
+  const pathData = "M454 32q11 0 18.5 7.5T480 58v396q0 11-7.5 18.5T454 480h-12q-11 0-18.5-7.5T416 454V58q0-11 7.5-18.5T442 32h12zM198 160q11 0 18.5 7.5T224 186v268q0 11-7.5 18.5T198 480h-12q-11 0-18.5-7.5T160 454V186q0-11 7.5-18.5T186 160h12zm128 64q11 0 18.5 7.5T352 250v204q0 11-7.5 18.5T326 480h-12q-11 0-18.5-7.5T288 454V250q0-11 7.5-18.5T314 224h12zM70 352q11 0 18.5 7.5T96 378v76q0 11-7.5 18.5T70 480H58q-11 0-18.5-7.5T32 454v-76q0-11 7.5-18.5T58 352h12z";
   _exports.pathData = pathData;
   const ltr = false;
   _exports.ltr = ltr;

@@ -73,6 +73,17 @@ sap.ui.define(["exports"], function (_exports) {
       }
       this.updateSelectionInGroup(nextItemToSelect, groupName);
     }
+    static updateFormValidity(groupName) {
+      const group = this.getGroup(groupName);
+      if (!group) {
+        return;
+      }
+      group.forEach(r => r._resetFormValidity());
+      const groupRequiresValue = group.some(r => r.required) && group.every(r => !r.checked);
+      if (groupRequiresValue) {
+        group[0]._invalidateForm();
+      }
+    }
     static updateTabOrder(groupName) {
       const group = this.getGroup(groupName);
       if (!group) {
@@ -122,9 +133,7 @@ sap.ui.define(["exports"], function (_exports) {
     }
     static _selectRadio(radioBtn) {
       if (radioBtn) {
-        radioBtn.focus({
-          focusVisible: true
-        });
+        radioBtn.focus();
         radioBtn.checked = true;
         radioBtn._checked = true;
         radioBtn.fireEvent("change");
@@ -176,6 +185,7 @@ sap.ui.define(["exports"], function (_exports) {
         this.checkedRadios.set(groupName, null);
       }
       this.updateTabOrder(groupName);
+      this.updateFormValidity(groupName);
     }
     static get groups() {
       if (!this._groups) {

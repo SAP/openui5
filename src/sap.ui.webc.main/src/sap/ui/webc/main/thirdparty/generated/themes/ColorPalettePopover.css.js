@@ -13,7 +13,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/T
   const styleData = {
     packageName: "@ui5/webcomponents",
     fileName: "themes/ColorPalettePopover.css",
-    content: ".ui5-cp-header {\n\twidth: 100%;\n\theight: var(--_ui5_color-palette-button-height);\n\tdisplay: flex;\n\talign-items: center;\n}\n\n.ui5-cp-footer {\n\twidth: 100%;\n\tdisplay: flex;\n\tjustify-content: flex-end;\n\tmargin: 0.1875rem 0;\n}\n\n[ui5-responsive-popover]::part(content) {\n\tpadding: 0;\n}\n\n.ui5-cp-item-container {\n\tpadding: 0.3125rem 0.6875rem;\n}"
+    content: ".ui5-cp-header{align-items:center;display:flex;height:var(--_ui5-v1-18-0_color-palette-button-height);width:100%}.ui5-cp-footer{display:flex;justify-content:flex-end;margin:.1875rem 0;width:100%}[ui5-responsive-popover]::part(content){padding:0}.ui5-cp-item-container{padding:.3125rem .6875rem}"
   };
   var _default = styleData;
   _exports.default = _default;

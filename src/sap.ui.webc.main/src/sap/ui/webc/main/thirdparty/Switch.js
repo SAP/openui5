@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/ui/webc/common/thirdparty/base/decorators/customElement", "sap/ui/webc/common/thirdparty/base/decorators/property", "sap/ui/webc/common/thirdparty/base/decorators/event", "sap/ui/webc/common/thirdparty/base/renderer/LitRenderer", "sap/ui/webc/common/thirdparty/base/Keys", "sap/ui/webc/common/thirdparty/base/Device", "sap/ui/webc/common/thirdparty/base/i18nBundle", "sap/ui/webc/common/thirdparty/base/util/AriaLabelHelper", "sap/ui/webc/common/thirdparty/icons/accept", "sap/ui/webc/common/thirdparty/icons/decline", "sap/ui/webc/common/thirdparty/icons/less", "./Icon", "./types/SwitchDesign", "./generated/templates/SwitchTemplate.lit", "./generated/themes/Switch.css"], function (_exports, _UI5Element, _customElement, _property, _event, _LitRenderer, _Keys, _Device, _i18nBundle, _AriaLabelHelper, _accept, _decline, _less, _Icon, _SwitchDesign, _SwitchTemplate, _Switch) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/ui/webc/common/thirdparty/base/decorators/customElement", "sap/ui/webc/common/thirdparty/base/decorators/property", "sap/ui/webc/common/thirdparty/base/decorators/event", "sap/ui/webc/common/thirdparty/base/decorators/slot", "sap/ui/webc/common/thirdparty/base/renderer/LitRenderer", "sap/ui/webc/common/thirdparty/base/Keys", "sap/ui/webc/common/thirdparty/base/Device", "sap/ui/webc/common/thirdparty/base/i18nBundle", "sap/ui/webc/common/thirdparty/base/util/AriaLabelHelper", "sap/ui/webc/common/thirdparty/icons/accept", "sap/ui/webc/common/thirdparty/icons/decline", "sap/ui/webc/common/thirdparty/icons/less", "sap/ui/webc/common/thirdparty/base/FeaturesRegistry", "./Icon", "./types/SwitchDesign", "./generated/templates/SwitchTemplate.lit", "./generated/themes/Switch.css"], function (_exports, _UI5Element, _customElement, _property, _event, _slot, _LitRenderer, _Keys, _Device, _i18nBundle, _AriaLabelHelper, _accept, _decline, _less, _FeaturesRegistry, _Icon, _SwitchDesign, _SwitchTemplate, _Switch) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -9,6 +9,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
   _customElement = _interopRequireDefault(_customElement);
   _property = _interopRequireDefault(_property);
   _event = _interopRequireDefault(_event);
+  _slot = _interopRequireDefault(_slot);
   _LitRenderer = _interopRequireDefault(_LitRenderer);
   _Icon = _interopRequireDefault(_Icon);
   _SwitchDesign = _interopRequireDefault(_SwitchDesign);
@@ -23,6 +24,11 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
     return c > 3 && r && Object.defineProperty(target, key, r), r;
   };
   var Switch_1;
+
+  // Template
+
+  // Styles
+
   /**
    * @class
    *
@@ -64,6 +70,23 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
    * @since 0.8.0
    */
   let Switch = Switch_1 = class Switch extends _UI5Element.default {
+    onBeforeRendering() {
+      this._enableFormSupport();
+    }
+    _enableFormSupport() {
+      const formSupport = (0, _FeaturesRegistry.getFeature)("FormSupport");
+      if (formSupport) {
+        formSupport.syncNativeHiddenInput(this, (element, nativeInput) => {
+          const switchComponent = element;
+          nativeInput.checked = !!switchComponent.checked;
+          nativeInput.disabled = !!switchComponent.disabled;
+          nativeInput.value = switchComponent.checked ? "on" : "";
+        });
+      } else if (this.name) {
+        console.warn(`In order for the "name" property to have effect, you should also: import "@ui5/webcomponents/dist/features/InputElementsFormSupport.js";`); // eslint-disable-line
+      }
+    }
+
     get sapNextIcon() {
       return this.checked ? "accept" : "less";
     }
@@ -88,8 +111,8 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         this.checked = !this.checked;
         const changePrevented = !this.fireEvent("change", null, true);
         // Angular two way data binding;
-        const valueChagnePrevented = !this.fireEvent("value-changed", null, true);
-        if (changePrevented || valueChagnePrevented) {
+        const valueChangePrevented = !this.fireEvent("value-changed", null, true);
+        if (changePrevented || valueChangePrevented) {
           this.checked = !this.checked;
         }
       }
@@ -157,6 +180,11 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
     defaultValue: ""
   })], Switch.prototype, "accessibleNameRef", void 0);
   __decorate([(0, _property.default)()], Switch.prototype, "tooltip", void 0);
+  __decorate([(0, _property.default)({
+    type: Boolean
+  })], Switch.prototype, "required", void 0);
+  __decorate([(0, _property.default)()], Switch.prototype, "name", void 0);
+  __decorate([(0, _slot.default)()], Switch.prototype, "formSupport", void 0);
   Switch = Switch_1 = __decorate([(0, _customElement.default)({
     tag: "ui5-switch",
     languageAware: true,

@@ -6,7 +6,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
   });
   _exports.pathData = _exports.ltr = _exports.default = _exports.accData = void 0;
   const name = "drill-down";
-  const pathData = "M106 55q-9-10-9-22.5t9-22.5q10-9 22.5-9t22.5 9l105 106L362 10q10-9 22.5-9t22.5 9q9 10 9 22.5T407 55L279 183q-10 10-22.5 10T234 183zm256 115q10-10 22.5-10t22.5 10q9 10 9 22.5t-9 22.5L279 342q-10 10-22.5 10T234 342L106 215q-9-10-9-22.5t9-22.5q10-10 22.5-10t22.5 10l105 105zm0 160q10-10 22.5-10t22.5 10q9 9 9 22t-9 22L279 502q-10 10-22.5 10T234 502L106 374q-9-9-9-22t9-22q10-10 22.5-10t22.5 10l105 105z";
+  const pathData = "M256 192q-11 0-19-8L135 75q-7-7-7-17 0-11 7.5-18.5T154 32q10 0 18 8l84 89 84-89q8-8 18-8 11 0 18.5 7.5T384 58q0 10-7 17L275 184q-8 8-19 8zm0 144q-11 0-19-8L135 219q-7-7-7-17 0-11 7.5-18.5T154 176q10 0 18 8l84 89 84-89q8-8 18-8 11 0 18.5 7.5T384 202q0 10-7 17L275 328q-8 8-19 8zm0 144q-11 0-19-8L135 363q-7-7-7-17 0-11 7.5-18.5T154 320q10 0 18 8l84 89 84-89q8-8 18-8 11 0 18.5 7.5T384 346q0 10-7 17L275 472q-8 8-19 8z";
   _exports.pathData = pathData;
   const ltr = false;
   _exports.ltr = ltr;

@@ -8,8 +8,8 @@ sap.ui.define([
 	"./library",
 	"sap/ui/core/EnabledPropagator",
 	"sap/ui/core/library",
-	"./thirdparty/FileUploader",
-	"./thirdparty/features/InputElementsFormSupport"
+	"./thirdparty/features/InputElementsFormSupport",
+	"./thirdparty/FileUploader"
 ], function(WebComponent, library, EnabledPropagator, coreLibrary) {
 	"use strict";
 
@@ -118,16 +118,7 @@ sap.ui.define([
 				},
 
 				/**
-				 * Defines the value state of the component. <br>
-				 * <br>
-				 * Available options are:
-				 * <ul>
-				 *     <li><code>None</code></li>
-				 *     <li><code>Error</code></li>
-				 *     <li><code>Warning</code></li>
-				 *     <li><code>Success</code></li>
-				 *     <li><code>Information</code></li>
-				 * </ul>
+				 * Defines the value state of the component.
 				 */
 				valueState: {
 					type: "sap.ui.core.ValueState",
@@ -163,7 +154,9 @@ sap.ui.define([
 			aggregations: {
 
 				/**
-				 * By default the component contains a single input field. With this slot you can pass any content that you wish to add. See the samples for more information.
+				 * By default the component contains a single input field. With this slot you can pass any content that you wish to add. See the samples for more information. <br>
+				 * <b>Note:</b> If no content is provided in this slot, the component will only consist of an input field and will not be interactable using the keyboard.<br>
+				 * Also it is not recommended to use any non-interactable components, as it may lead to poor accessibility experience.
 				 */
 				content: {
 					type: "sap.ui.core.Control",

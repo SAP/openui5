@@ -28,6 +28,14 @@ sap.ui.define([
 	 *
 	 * <b>Note:</b> <code>sap.ui.webc.fiori.Page</code> occipues the whole available space of its parent. In order to achieve the intended design you have to make sure that there is enough space for the <code>sap.ui.webc.fiori.Page</code> to be rendered. <b>Note:</b> In order for the <code>sap.ui.webc.fiori.Page</code> to be displayed, the parent element should have fixed height.
 	 *
+	 * <h3>CSS Shadow Parts</h3>
+	 *
+	 * {@link https://developer.mozilla.org/en-US/docs/Web/CSS/::part CSS Shadow Parts} allow developers to style elements inside the Shadow DOM. <br>
+	 * The <code>sap.ui.webc.fiori.Page</code> exposes the following CSS Shadow Parts:
+	 * <ul>
+	 *     <li>content - Used to style the content section of the component</li>
+	 * </ul>
+	 *
 	 * @author SAP SE
 	 * @version ${version}
 	 *
@@ -48,11 +56,6 @@ sap.ui.define([
 				 * <br>
 				 * <b>Note:</b> When a ui5-list is placed inside the page, we recommend using “List” to ensure better color contrast. <br>
 				 * <br>
-				 * Available options are:
-				 * <ul>
-				 *     <li><code>Solid</code></li> (default) <li><code>Transparent</code></li>
-				 *     <li><code>List</code></li>
-				 * </ul>
 				 */
 				backgroundDesign: {
 					type: "sap.ui.webc.fiori.PageBackgroundDesign",

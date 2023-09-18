@@ -89,11 +89,8 @@ sap.ui.define([
 				},
 
 				/**
-				 * Defines how the text of a component will be displayed when there is not enough space. Available options are:
-				 * <ul>
-				 *     <li><code>None</code> - The text will be truncated with an ellipsis.</li>
-				 *     <li><code>Normal</code> - The text will wrap. The words will not be broken based on hyphenation.</li>
-				 * </ul>
+				 * Defines how the text of a component will be displayed when there is not enough space. <br>
+				 * <b>Note:</b> for option "Normal" the text will wrap and the words will not be broken based on hyphenation.
 				 */
 				wrappingType: {
 					type: "sap.ui.webc.main.WrappingType",

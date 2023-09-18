@@ -6,7 +6,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
   });
   _exports.pathData = _exports.ltr = _exports.default = _exports.accData = void 0;
   const name = "paint-bucket";
-  const pathData = "M25 273q-8-8-8-18t8-18l135-135-58-59q-8-8-8-18t8-18q7-7 18-7 10 0 17 7l230 230q8 7 8 18t-8 18L214 426q-8 8-18 8t-18-8zm54-31h235L196 125zm354 270q-26 0-44.5-18.5T370 449q0-17 12-42t26-47q9-14 25-14t25 14q38 67 38 89 0 26-18.5 44.5T433 512z";
+  const pathData = "M377 238q7 9 7 18t-7 18L210 440q-8 8-18 8t-18-8L8 274q-8-8-8-18t8-18L156 90l-46-46q-8-8-8-18 0-11 7.5-18.5T128 0t18 7zm-55 18L192 126 62 256h260zm126 96q12 0 23.5 11.5T492 391t14.5 33.5T512 453q0 21-19 40t-45 19-45-19-19-40q0-11 5.5-28.5T404 391t20.5-27.5T448 352z";
   _exports.pathData = pathData;
   const ltr = false;
   _exports.ltr = ltr;

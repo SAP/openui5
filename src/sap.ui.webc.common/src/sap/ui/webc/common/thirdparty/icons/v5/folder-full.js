@@ -6,7 +6,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
   });
   _exports.pathData = _exports.ltr = _exports.default = _exports.accData = void 0;
   const name = "folder-full";
-  const pathData = "M435.5 71q32 0 54 22t22 55v255q0 33-22 55t-54 22h-358q-33 0-55-22t-22-55V97q0-33 22-55t55-22h128q8 0 18 8l43 43h169z";
+  const pathData = "M422 480H90q-38 0-64-26T0 390V122q0-38 26-64t64-26h115q9 0 18 7l44 44h155q38 0 64 26t26 63v218q0 38-26 64t-64 26z";
   _exports.pathData = pathData;
   const ltr = false;
   _exports.ltr = ltr;

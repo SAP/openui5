@@ -23,6 +23,9 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
     return c > 3 && r && Object.defineProperty(target, key, r), r;
   };
   var CardHeader_1;
+
+  // Styles
+
   /**
    * @class
    * <h3 class="comment-api-title">Overview</h3>

@@ -6,7 +6,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
   });
   _exports.pathData = _exports.ltr = _exports.default = _exports.accData = void 0;
   const name = "person-placeholder";
-  const pathData = "M358 242q56 21 90.5 70.5T483 426v57q0 13-7.5 21t-20.5 8H57q-13 0-20.5-8T29 483v-57q0-64 34.5-113.5T154 242q-40-40-40-99 0-30 11-56t30.5-45 45-30T256 1t56 11 45 30 30 45 11 56q0 59-40 99zM256 57q-36 0-60.5 24.5T171 143q0 36 24.5 60.5T256 228t60.5-24.5T341 143q0-37-24.5-61.5T256 57zm170 369q0-30-11-55.5t-30-45-44.5-30.5-55.5-11h-57q-30 0-56 11t-45 30.5-30 45T86 426v29h340v-29z";
+  const pathData = "M342 255q48 23 77 67.5t29 99.5v32q0 11-7.5 18.5T422 480H90q-11 0-18.5-7.5T64 454v-32q0-56 29-100t77-67q-20-18-31-42.5T128 160q0-27 10-50t27.5-40.5 41-27.5T256 32t49.5 10.5 41 28T374 111t10 49q0 27-11 52t-31 43zM256 83q-32 0-54.5 22.5T179 160t22.5 54.5T256 237t54.5-22.5T333 160t-22.5-54.5T256 83zm141 339q0-28-10.5-52.5t-29-42.5-43-28.5T262 288h-12q-28 0-52.5 10.5t-43 28.5-29 42.5T115 422v7h282v-7z";
   _exports.pathData = pathData;
   const ltr = false;
   _exports.ltr = ltr;

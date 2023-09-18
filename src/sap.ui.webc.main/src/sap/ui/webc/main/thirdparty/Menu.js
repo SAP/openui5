@@ -30,6 +30,11 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
     return c > 3 && r && Object.defineProperty(target, key, r), r;
   };
   var Menu_1;
+
+  // Styles
+
+  const MENU_OPEN_DELAY = 300;
+  const MENU_CLOSE_DELAY = 400;
   /**
    * @class
    *
@@ -114,7 +119,8 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         const menuItem = item.item;
         if (subMenu && subMenu.busy) {
           subMenu.innerHTML = "";
-          this._cloneItems(menuItem, subMenu);
+          const fragment = this._clonedItemsFragment(menuItem);
+          subMenu.appendChild(fragment);
         }
         if (subMenu) {
           subMenu.busy = item.item.busy;
@@ -207,15 +213,18 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       subMenu._parentMenuItem = item;
       subMenu.busy = item.busy;
       subMenu.busyDelay = item.busyDelay;
-      this._cloneItems(item, subMenu);
+      const fragment = this._clonedItemsFragment(item);
+      subMenu.appendChild(fragment);
       this.staticAreaItem.shadowRoot.querySelector(".ui5-menu-submenus").appendChild(subMenu);
       item._subMenu = subMenu;
     }
-    _cloneItems(item, menu) {
+    _clonedItemsFragment(item) {
+      const fragment = document.createDocumentFragment();
       for (let i = 0; i < item.items.length; ++i) {
         const clonedItem = item.items[i].cloneNode(true);
-        menu.appendChild(clonedItem);
+        fragment.appendChild(clonedItem);
       }
+      return fragment;
     }
     _openItemSubMenu(item, opener, actionId) {
       const mainMenu = this._findMainMenu(item);
@@ -268,6 +277,27 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       this._parentMenuItem = item;
       this._parentItemsStack.push(item);
     }
+    _startOpenTimeout(item, opener, hoverId) {
+      // If theres already a timeout, clears it
+      this._clearTimeout();
+      // Sets the new timeout
+      this._timeout = setTimeout(() => {
+        this._prepareSubMenuDesktopTablet(item, opener, hoverId);
+      }, MENU_OPEN_DELAY);
+    }
+    _startCloseTimeout(item) {
+      // If theres already a timeout, clears it
+      this._clearTimeout();
+      // Sets the new timeout
+      this._timeout = setTimeout(() => {
+        this._closeItemSubMenu(item);
+      }, MENU_CLOSE_DELAY);
+    }
+    _clearTimeout() {
+      if (this._timeout) {
+        clearTimeout(this._timeout);
+      }
+    }
     _itemMouseOver(e) {
       if ((0, _Device.isDesktop)()) {
         // respect mouseover only on desktop
@@ -275,7 +305,10 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         const item = opener.associatedItem;
         const hoverId = opener.getAttribute("id");
         opener.focus();
-        this._prepareSubMenuDesktopTablet(item, opener, hoverId);
+        // If there is a pending close operation, cancel it
+        this._clearTimeout();
+        // Opens submenu with 300ms delay
+        this._startOpenTimeout(item, opener, hoverId);
       }
     }
     _busyMouseOver() {
@@ -285,13 +318,15 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
     }
     _itemMouseOut(e) {
       if ((0, _Device.isDesktop)()) {
-        // respect mouseover only on desktop
         const opener = e.target;
         const item = opener.associatedItem;
+        // If there is a pending open operation, cancel it
+        this._clearTimeout();
+        // Close submenu with 400ms delay
         if (item && item.hasSubmenu && item._subMenu) {
           // try to close the sub-menu
           item._preventSubMenuClose = false;
-          this._closeItemSubMenu(item);
+          this._startCloseTimeout(item);
         }
       }
     }
@@ -322,15 +357,30 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
             this._parentMenuItem = undefined;
           }
           // fire event if the click is on top-level menu item
-          this.fireEvent("item-click", {
+          const prevented = !this.fireEvent("item-click", {
             "item": item,
             "text": item.text
-          });
-          this._popover.close();
+          }, true, false);
+          if (!prevented) {
+            this._popover.close();
+          }
         } else {
-          // find top-level menu and redirect event to it
           const mainMenu = this._findMainMenu(item);
-          mainMenu._itemClick(e);
+          const prevented = !mainMenu.fireEvent("item-click", {
+            "item": item,
+            "text": item.text
+          }, true, false);
+          if (!prevented) {
+            let openerMenuItem = item;
+            let parentMenu = openerMenuItem.parentElement;
+            do {
+              openerMenuItem._preventSubMenuClose = false;
+              this._closeItemSubMenu(openerMenuItem);
+              parentMenu = openerMenuItem.parentElement;
+              openerMenuItem = parentMenu._parentMenuItem;
+            } while (parentMenu._parentMenuItem);
+            mainMenu._popover.close();
+          }
         }
       } else if ((0, _Device.isPhone)()) {
         // prepares and opens sub-menu on phone
@@ -343,8 +393,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
     _findMainMenu(item) {
       let parentMenu = item.parentElement;
       while (parentMenu._parentMenuItem) {
-        parentMenu._parentMenuItem._preventSubMenuClose = false;
-        this._closeItemSubMenu(parentMenu._parentMenuItem);
         parentMenu = parentMenu._parentMenuItem.parentElement;
       }
       return parentMenu;
@@ -433,8 +481,10 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
   })
   /**
    * Fired when an item is being clicked.
+   * <b>Note:</b> Since 1.17.0 the event is preventable, allowing the menu to remain open after an item is pressed.
    *
    * @event sap.ui.webc.main.Menu#item-click
+   * @allowPreventDefault
    * @param { HTMLElement } item The currently clicked menu item.
    * @param { string } text The text of the currently clicked menu item.
    * @public

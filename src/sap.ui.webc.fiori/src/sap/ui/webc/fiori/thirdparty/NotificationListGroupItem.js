@@ -27,6 +27,15 @@ sap.ui.define(["exports", "sap/ui/webc/main/thirdparty/types/Priority", "sap/ui/
     return c > 3 && r && Object.defineProperty(target, key, r), r;
   };
   var NotificationListGroupItem_1;
+
+  // Icons
+
+  // Texts
+
+  // Templates
+
+  // Styles
+
   /**
    * @class
    *

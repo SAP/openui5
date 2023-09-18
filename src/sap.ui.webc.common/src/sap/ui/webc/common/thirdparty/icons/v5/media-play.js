@@ -6,7 +6,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
   });
   _exports.pathData = _exports.ltr = _exports.default = _exports.accData = void 0;
   const name = "media-play";
-  const pathData = "M121.5 480q-6 0-11-3-14-8-14-23V57q0-15 14-23 13-6 26 2l269 199q11 6 11 21 0 13-11 21l-269 198q-8 5-15 5zm25-372v296l202-148z";
+  const pathData = "M122 480q-11 0-18.5-7.5T96 454V58q0-11 7.5-18.5T122 32q7 0 15 5l269 198q10 8 10 21t-10 21L137 475q-8 5-15 5zm25-372v296l200-148z";
   _exports.pathData = pathData;
   const ltr = true;
   _exports.ltr = ltr;

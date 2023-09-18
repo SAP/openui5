@@ -29,6 +29,15 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Keys", "sap/ui/web
     return c > 3 && r && Object.defineProperty(target, key, r), r;
   };
   var NotificationListItem_1;
+
+  // Icons
+
+  // Texts
+
+  // Templates
+
+  // Styles
+
   /**
    * @class
    *

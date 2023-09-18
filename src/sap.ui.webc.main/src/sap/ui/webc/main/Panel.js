@@ -142,6 +142,14 @@ sap.ui.define([
 				},
 
 				/**
+				 * Indicates whether the Panel header is sticky or not. If stickyHeader is set to true, then whenever you scroll the content or the application, the header of the panel will be always visible and a solid color will be used for its design.
+				 */
+				stickyHeader: {
+					type: "boolean",
+					defaultValue: false
+				},
+
+				/**
 				 * Defines the width of the control
 				 */
 				width: {

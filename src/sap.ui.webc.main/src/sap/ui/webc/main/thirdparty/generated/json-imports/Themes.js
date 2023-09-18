@@ -21,12 +21,18 @@ sap.ui.define(['require', "sap/ui/webc/common/thirdparty/base/asset-registries/T
         return (await Promise.resolve().then(() => new Promise(resolve => require(["../assets/themes/sap_horizon/parameters-bundle.css.json"], resolve)))).default;
       case "sap_horizon_dark":
         return (await Promise.resolve().then(() => new Promise(resolve => require(["../assets/themes/sap_horizon_dark/parameters-bundle.css.json"], resolve)))).default;
+      case "sap_horizon_dark_exp":
+        return (await Promise.resolve().then(() => new Promise(resolve => require(["../assets/themes/sap_horizon_dark_exp/parameters-bundle.css.json"], resolve)))).default;
       case "sap_horizon_exp":
         return (await Promise.resolve().then(() => new Promise(resolve => require(["../assets/themes/sap_horizon_exp/parameters-bundle.css.json"], resolve)))).default;
       case "sap_horizon_hcb":
         return (await Promise.resolve().then(() => new Promise(resolve => require(["../assets/themes/sap_horizon_hcb/parameters-bundle.css.json"], resolve)))).default;
+      case "sap_horizon_hcb_exp":
+        return (await Promise.resolve().then(() => new Promise(resolve => require(["../assets/themes/sap_horizon_hcb_exp/parameters-bundle.css.json"], resolve)))).default;
       case "sap_horizon_hcw":
         return (await Promise.resolve().then(() => new Promise(resolve => require(["../assets/themes/sap_horizon_hcw/parameters-bundle.css.json"], resolve)))).default;
+      case "sap_horizon_hcw_exp":
+        return (await Promise.resolve().then(() => new Promise(resolve => require(["../assets/themes/sap_horizon_hcw_exp/parameters-bundle.css.json"], resolve)))).default;
       default:
         throw "unknown theme";
     }
@@ -38,5 +44,5 @@ sap.ui.define(['require', "sap/ui/webc/common/thirdparty/base/asset-registries/T
     }
     return data;
   };
-  ["sap_belize", "sap_belize_hcb", "sap_belize_hcw", "sap_fiori_3", "sap_fiori_3_dark", "sap_fiori_3_hcb", "sap_fiori_3_hcw", "sap_horizon", "sap_horizon_dark", "sap_horizon_exp", "sap_horizon_hcb", "sap_horizon_hcw"].forEach(themeName => (0, _Themes.registerThemePropertiesLoader)("@ui5/webcomponents", themeName, loadAndCheck));
+  ["sap_belize", "sap_belize_hcb", "sap_belize_hcw", "sap_fiori_3", "sap_fiori_3_dark", "sap_fiori_3_hcb", "sap_fiori_3_hcw", "sap_horizon", "sap_horizon_dark", "sap_horizon_dark_exp", "sap_horizon_exp", "sap_horizon_hcb", "sap_horizon_hcb_exp", "sap_horizon_hcw", "sap_horizon_hcw_exp"].forEach(themeName => (0, _Themes.registerThemePropertiesLoader)("@ui5/webcomponents", themeName, loadAndCheck));
 });

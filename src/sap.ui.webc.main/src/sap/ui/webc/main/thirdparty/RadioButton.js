@@ -26,6 +26,13 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Device", "sap/ui/w
     return c > 3 && r && Object.defineProperty(target, key, r), r;
   };
   var RadioButton_1;
+
+  // Template
+
+  // i18n
+
+  // Styles
+
   let isGlobalHandlerAttached = false;
   let activeRadio;
   /**
@@ -62,8 +69,12 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Device", "sap/ui/w
    * @public
    */
   let RadioButton = RadioButton_1 = class RadioButton extends _UI5Element.default {
+    static get formAssociated() {
+      return true;
+    }
     constructor() {
       super();
+      this._internals = this.attachInternals();
       this._deactivate = () => {
         if (activeRadio) {
           activeRadio.active = false;
@@ -113,16 +124,23 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Device", "sap/ui/w
     _enableFormSupport() {
       const formSupport = (0, _FeaturesRegistry.getFeature)("FormSupport");
       if (formSupport) {
-        formSupport.syncNativeHiddenInput(this, (element, nativeInput) => {
-          nativeInput.value = element.value;
-          nativeInput.type = "radio";
-          nativeInput.checked = element.checked;
-        });
+        this._setFormValue();
       } else if (this.value) {
         console.warn(`In order for the "value" property to have effect, you should also: import "@ui5/webcomponents/dist/features/InputElementsFormSupport.js";`); // eslint-disable-line
       }
     }
 
+    _setFormValue() {
+      this._internals.setFormValue(this.checked ? this.value : null);
+    }
+    _resetFormValidity() {
+      this._internals.setValidity({});
+    }
+    _invalidateForm() {
+      this._internals.setValidity({
+        valueMissing: true
+      }, this.radioButtonGroupRequiredText, this.shadowRoot.firstElementChild);
+    }
     _onclick() {
       return this.toggle();
     }
@@ -223,6 +241,9 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Device", "sap/ui/w
         default:
           return "";
       }
+    }
+    get radioButtonGroupRequiredText() {
+      return RadioButton_1.i18nBundle.getText(_i18nDefaults.RADIO_BUTTON_GROUP_REQUIRED);
     }
     get effectiveTabIndex() {
       const tabindex = this.getAttribute("tabindex");

@@ -14,6 +14,7 @@ sap.ui.define([
 
 	var TextDirection = coreLibrary.TextDirection;
 	var ButtonDesign = library.ButtonDesign;
+	var ButtonType = library.ButtonType;
 
 	/**
 	 * Constructor for a new <code>Button</code>.
@@ -104,20 +105,6 @@ sap.ui.define([
 
 				/**
 				 * Defines the component design.
-				 *
-				 * <br>
-				 * <br>
-				 * <b>The available values are:</b>
-				 *
-				 *
-				 * <ul>
-				 *     <li><code>Default</code></li>
-				 *     <li><code>Emphasized</code></li>
-				 *     <li><code>Positive</code></li>
-				 *     <li><code>Negative</code></li>
-				 *     <li><code>Transparent</code></li>
-				 *     <li><code>Attention</code></li>
-				 * </ul>
 				 */
 				design: {
 					type: "sap.ui.webc.main.ButtonDesign",
@@ -158,14 +145,6 @@ sap.ui.define([
 				},
 
 				/**
-				 *
-				 */
-				submits: {
-					type: "boolean",
-					defaultValue: false
-				},
-
-				/**
 				 * Defines the content of the control
 				 */
 				text: {
@@ -185,6 +164,14 @@ sap.ui.define([
 						to: "dir",
 						formatter: "_mapTextDirection"
 					}
+				},
+
+				/**
+				 * Defines whether the button has special form-related functionality.
+				 */
+				type: {
+					type: "sap.ui.webc.main.ButtonType",
+					defaultValue: ButtonType.Button
 				},
 
 				/**

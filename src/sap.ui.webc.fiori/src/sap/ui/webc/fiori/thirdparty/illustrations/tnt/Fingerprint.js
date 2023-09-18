@@ -28,10 +28,12 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
   const name = "Fingerprint";
   const set = "tnt";
+  const collection = "V4";
   (0, _Illustrations.registerIllustration)(name, {
     dialogSvg: _tntDialogFingerprint.default,
     sceneSvg: _tntSceneFingerprint.default,
     spotSvg: _tntSpotFingerprint.default,
-    set
+    set,
+    collection
   });
 });

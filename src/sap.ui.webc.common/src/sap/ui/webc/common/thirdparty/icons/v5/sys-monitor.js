@@ -6,7 +6,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
   });
   _exports.pathData = _exports.ltr = _exports.default = _exports.accData = void 0;
   const name = "sys-monitor";
-  const pathData = "M435.5 1q32 0 54 22t22 55v255q0 32-22 54.5t-54 22.5h-103v51h51q26 0 26 25 0 26-26 26h-255q-11 0-18.5-7t-7.5-19q0-11 7.5-18t18.5-7h51v-51h-102q-33 0-55-22.5T.5 333V78q0-33 22-55t55-22h358zm-154 409h-51v51h51v-51zm179-332q0-26-25-26h-358q-11 0-18.5 7t-7.5 19v255q0 11 7.5 18.5t18.5 7.5h358q11 0 18-7.5t7-18.5V78z";
+  const pathData = "M422 0q38 0 64 26t26 64v204q0 38-26 64t-64 26H320v77h70q11 0 18.5 7t7.5 18-7.5 18.5T390 512H121q-11 0-18-7.5T96 486t7-18 18-7h71v-77H90q-38 0-64-26T0 294V90q0-38 26-64T90 0h332zm39 90q0-17-11-28t-28-11H90q-17 0-28 11T51 90v204q0 17 11 28t28 11h332q17 0 28-11t11-28V90zM269 384h-26v77h26v-77z";
   _exports.pathData = pathData;
   const ltr = false;
   _exports.ltr = ltr;

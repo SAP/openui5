@@ -25,6 +25,19 @@ sap.ui.define([
 	 *
 	 * The component accepts arbitrary HTML content to allow full customization.
 	 *
+	 * <h3>CSS Shadow Parts</h3>
+	 *
+	 * {@link https://developer.mozilla.org/en-US/docs/Web/CSS/::part CSS Shadow Parts} allow developers to style elements inside the Shadow DOM. <br>
+	 * The <code>sap.ui.webc.main.CustomListItem</code> exposes the following CSS Shadow Parts:
+	 * <ul>
+	 *     <li>native-li - Used to style the main li tag of the list item</li>
+	 *     <li>content - Used to style the content area of the list item</li>
+	 *     <li>detail-button - Used to style the button rendered when the list item is of type detail</li>
+	 *     <li>delete-button - Used to style the button rendered when the list item is in delete mode</li>
+	 *     <li>radio - Used to style the radio button rendered when the list item is in single selection mode</li>
+	 *     <li>checkbox - Used to style the checkbox rendered when the list item is in multiple selection mode</li>
+	 * </ul>
+	 *
 	 * @author SAP SE
 	 * @version ${version}
 	 *
@@ -43,6 +56,22 @@ sap.ui.define([
 				"sap.ui.webc.main.IListItem"
 			],
 			properties: {
+
+				/**
+				 * An object of strings that defines several additional accessibility attribute values for customization depending on the use case.
+				 *
+				 * It supports the following fields:
+				 *
+				 *
+				 * <ul>
+				 *     <li><code>ariaSetsize</code>: Defines the number of items in the current set of listitems or treeitems when not all items in the set are present in the DOM. The value of each <code>aria-setsize</code> is an integer reflecting number of items in the complete set. <b>Note: </b> If the size of the entire set is unknown, set <code>aria-setsize="-1"</code>. </li>
+				 *     <li><code>ariaPosinset</code>: Defines an element's number or position in the current set of listitems or treeitems when not all items are present in the DOM. The value of each <code>aria-posinset</code> is an integer greater than or equal to 1, and less than or equal to the size of the set when that size is known. </li>
+				 * </ul>
+				 */
+				accessibilityAttributes: {
+					type: "object",
+					defaultValue: {}
+				},
 
 				/**
 				 * Defines the text alternative of the component. Note: If not provided a default text alternative will be set, if present.

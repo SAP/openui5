@@ -27,6 +27,11 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/decorators/customE
     return c > 3 && r && Object.defineProperty(target, key, r), r;
   };
   var ListItem_1;
+
+  // Styles
+
+  // Icons
+
   /**
    * @class
    * A class to serve as a base
@@ -251,7 +256,9 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/decorators/customE
         ariaLabel: ListItem_1.i18nBundle.getText(_i18nDefaults.ARIA_LABEL_LIST_ITEM_CHECKBOX),
         ariaLabelRadioButton: ListItem_1.i18nBundle.getText(_i18nDefaults.ARIA_LABEL_LIST_ITEM_RADIO_BUTTON),
         ariaSelectedText: this.ariaSelectedText,
-        ariaHaspopup: this.ariaHaspopup || undefined
+        ariaHaspopup: this.ariaHaspopup || undefined,
+        setsize: this.accessibilityAttributes.ariaSetsize,
+        posinset: this.accessibilityAttributes.ariaPosinset
       };
     }
     get hasConfigurableMode() {
@@ -265,6 +272,9 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/decorators/customE
     type: _ListItemType.default,
     defaultValue: _ListItemType.default.Active
   })], ListItem.prototype, "type", void 0);
+  __decorate([(0, _property.default)({
+    type: Object
+  })], ListItem.prototype, "accessibilityAttributes", void 0);
   __decorate([(0, _property.default)({
     type: Boolean
   })], ListItem.prototype, "navigated", void 0);

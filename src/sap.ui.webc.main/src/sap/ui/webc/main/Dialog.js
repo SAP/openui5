@@ -39,7 +39,8 @@ sap.ui.define([
 	 *     <li>header - Used to style the header of the component</li>
 	 *     <li>content - Used to style the content of the component</li>
 	 *     <li>footer - Used to style the footer of the component</li>
-	 * </ul>
+	 * </ul> <b>Note:</b> When a <code>ui5-bar</code> is used in the header or in the footer, you should remove the default dialog's paddings. <br>
+	 * For more information see the sample "Bar in Header/Footer".
 	 *
 	 *
 	 *
@@ -71,12 +72,7 @@ sap.ui.define([
 				},
 
 				/**
-				 * Allows setting a custom role. Available options are:
-				 * <ul>
-				 *     <li><code>Dialog</code></li>
-				 *     <li><code>None</code></li>
-				 *     <li><code>AlertDialog</code></li>
-				 * </ul>
+				 * Allows setting a custom role.
 				 */
 				accessibleRole: {
 					type: "sap.ui.webc.main.PopupAccessibleRole",
@@ -142,9 +138,6 @@ sap.ui.define([
 
 				/**
 				 * Defines the state of the <code>Dialog</code>. <br>
-				 * <br>
-				 * Available options are: <code>"None"</code> (by default), <code>"Success"</code>, <code>"Warning"</code>, <code>"Information"</code> and <code>"Error"</code>. <br>
-				 * <br>
 				 * <b>Note:</b> If <code>"Error"</code> and <code>"Warning"</code> state is set, it will change the accessibility role to "alertdialog", if the accessibleRole property is set to <code>"Dialog"</code>.
 				 */
 				state: {
@@ -182,7 +175,9 @@ sap.ui.define([
 				},
 
 				/**
-				 * Defines the footer HTML Element.
+				 * Defines the footer HTML Element. <br>
+				 * <br>
+				 * <b>Note:</b> When a <code>ui5-bar</code> is used in the footer, you should remove the default dialog's paddings.
 				 */
 				footer: {
 					type: "sap.ui.core.Control",
@@ -192,6 +187,8 @@ sap.ui.define([
 
 				/**
 				 * Defines the header HTML Element. <br>
+				 * <br>
+				 * <b>Note:</b> When a <code>ui5-bar</code> is used in the header, you should remove the default dialog's paddings. <br>
 				 * <br>
 				 * <b>Note:</b> If <code>header</code> slot is provided, the labelling of the dialog is a responsibility of the application developer. <code>accessibleName</code> should be used.
 				 */

@@ -6,7 +6,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
   });
   _exports.pathData = _exports.ltr = _exports.default = _exports.accData = void 0;
   const name = "number-sign";
-  const pathData = "M480.5 323q14 0 21 9t7 23-8.5 23-23.5 9h-117l-13 98q-2 12-12.5 20t-22.5 6q-11-3-19-13t-6-22l13-89h-130l-13 98q-2 12-12.5 20t-22.5 6q-12-3-20-13t-5-22l12-89h-76q-14 0-23-9t-9-23 9-23 23-9h86l19-127h-105q-14 0-23-8.5T.5 165t9-23 23-9h111l16-102q2-12 12.5-19.5T194.5 6t20 12.5 5 22.5l-12 92h130l16-102q2-12 12.5-19.5T388.5 6q11 2 19 12.5t6 22.5l-13 92h80q14 0 22.5 9t8.5 23q0 31-31 31h-89l-19 127h108zm-169 0l19-127h-130l-19 127h130z";
+  const pathData = "M486 333q11 0 18.5 7t7.5 18-7.5 18.5T486 384H365l-15 106q-2 10-9 16t-16 6q-13 0-19.5-9t-6.5-20l14-99H162l-15 106q-2 10-9 16t-16 6q-13 0-19.5-9T96 483l14-99H26q-11 0-18.5-7.5T0 358t7.5-18 18.5-7h92l22-154H26q-11 0-18.5-7T0 154t7.5-18.5T26 128h121l15-106q2-10 9-16t16-6q13 0 19.5 9t6.5 20l-14 99h151l15-106q2-10 9-16t16-6q13 0 19.5 9t6.5 20l-14 99h84q11 0 18.5 7.5T512 154t-7.5 18-18.5 7h-92l-22 154h114zm-165 0l22-154H191l-22 154h152z";
   _exports.pathData = pathData;
   const ltr = false;
   _exports.ltr = ltr;

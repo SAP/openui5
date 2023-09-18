@@ -11,7 +11,7 @@ sap.ui.define(["exports", "./ManagedStyles", "./FeaturesRegistry", "./generated/
   const insertFontFace = () => {
     const openUI5Support = (0, _FeaturesRegistry.getFeature)("OpenUI5Support");
     // Only set the main font if there is no OpenUI5 support, or there is, but OpenUI5 is not loaded
-    if (!openUI5Support || !openUI5Support.isLoaded()) {
+    if (!openUI5Support || !openUI5Support.isOpenUI5Detected()) {
       insertMainFontFace();
     }
     // Always set the override font - OpenUI5 in CSS Vars mode does not set it, unlike the main font

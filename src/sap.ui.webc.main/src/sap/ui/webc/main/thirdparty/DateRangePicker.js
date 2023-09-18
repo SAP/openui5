@@ -22,6 +22,9 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/decorators/customE
     return c > 3 && r && Object.defineProperty(target, key, r), r;
   };
   var DateRangePicker_1;
+
+  // Styles
+
   /**
    * @class
    *
@@ -218,17 +221,17 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/decorators/customE
     /**
      * @override
      */
-    async _modifyDateValue(amount, unit) {
+    async _modifyDateValue(amount, unit, preserveDate) {
       if (!this._endDateTimestamp) {
         // If empty or only one date -> treat as datepicker entirely
-        return super._modifyDateValue(amount, unit);
+        return super._modifyDateValue(amount, unit, preserveDate);
       }
       const input = this._getInput();
       let caretPos = input.getCaretPosition(); // caret position is always number for input of type text;
       let newValue;
       if (caretPos <= this.value.indexOf(this._effectiveDelimiter)) {
         // The user is focusing the first date -> change it and keep the second date
-        const startDateModified = (0, _modifyDateBy.default)(_CalendarDate.default.fromTimestamp(this._startDateTimestamp * 1000), amount, unit, this._minDate, this._maxDate);
+        const startDateModified = (0, _modifyDateBy.default)(_CalendarDate.default.fromTimestamp(this._startDateTimestamp * 1000), amount, unit, preserveDate, this._minDate, this._maxDate);
         const newStartDateTimestamp = startDateModified.valueOf() / 1000;
         if (newStartDateTimestamp > this._endDateTimestamp) {
           // dates flipped -> move the caret to the same position but on the last date
@@ -236,7 +239,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/decorators/customE
         }
         newValue = this._buildValue(newStartDateTimestamp, this._endDateTimestamp); // the value will be normalized so we don't try to order them here
       } else {
-        const endDateModified = (0, _modifyDateBy.default)(_CalendarDate.default.fromTimestamp(this._endDateTimestamp * 1000), amount, unit, this._minDate, this._maxDate);
+        const endDateModified = (0, _modifyDateBy.default)(_CalendarDate.default.fromTimestamp(this._endDateTimestamp * 1000), amount, unit, preserveDate, this._minDate, this._maxDate);
         const newEndDateTimestamp = endDateModified.valueOf() / 1000;
         newValue = this._buildValue(this._startDateTimestamp, newEndDateTimestamp); // the value will be normalized so we don't try to order them here
         if (newEndDateTimestamp < this._startDateTimestamp) {

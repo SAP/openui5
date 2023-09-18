@@ -33,6 +33,11 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/decorators/propert
     return c > 3 && r && Object.defineProperty(target, key, r), r;
   };
   var ViewSettingsDialog_1;
+
+  // Template
+
+  // Styles
+
   /**
    * @class
    * <h3 class="comment-api-title">Overview</h3>
@@ -414,12 +419,21 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/decorators/propert
     }
     /**
      * Sets a JavaScript object, as settings to the <code>ui5-view-settings-dialog</code>.
-     * This method can be used after the dialog is initially open, as the dialog need to set its initial settings.
-     * The <code>ui5-view-settings-dialog</code> throws an event called "before-open", this can be used as trigger point.
-     * The object should have the following format:
-     * <code>
-     *  {sortOrder: "Ascending", sortBy: "Name", filters: [{"Filter 1": ["Some filter 1", "Some filter 2"]}, {"Filter 2": ["Some filter 4"]}]}
-     * </code>
+     * This method can be used after the dialog is initially open, as the dialog needs
+     * to set its initial settings.<br>
+     * The <code>ui5-view-settings-dialog</code> throws an event called "before-open",
+     * which can be used as a trigger point.<br>
+     * The object should have the following format:<br>
+     * <pre>
+     * {
+     *	sortOrder: "Ascending",
+     *	sortBy: "Name",
+     *	filters: [
+     *		{"Filter 1": ["Some filter 1", "Some filter 2"]},
+     *		{"Filter 2": ["Some filter 4"]},
+     *	]
+     * }
+     * </pre>
      * @param {Object} settings - predefined settings.
      * @param {string} settings.sortOrder - sort order
      * @param {string} settings.sortBy - sort by

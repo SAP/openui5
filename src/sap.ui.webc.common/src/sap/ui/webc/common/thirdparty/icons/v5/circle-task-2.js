@@ -6,7 +6,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
   });
   _exports.pathData = _exports.ltr = _exports.default = _exports.accData = void 0;
   const name = "circle-task-2";
-  const pathData = "M256 1q53 0 99.5 20T437 76t55 81 20 99-20 99.5-55 81.5-81.5 55-99.5 20q-52 0-98.5-20T76 437t-55-81.5T1 256t20-99 55-81 81.5-55T256 1z";
+  const pathData = "M256 0q53 0 100 20t81.5 54.5T492 156t20 100-20 100-54.5 81.5T356 492t-100 20-100-20-81.5-54.5T20 356 0 256t20-100 54.5-81.5T156 20 256 0z";
   _exports.pathData = pathData;
   const ltr = false;
   _exports.ltr = ltr;

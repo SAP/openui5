@@ -13,7 +13,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/T
   const styleData = {
     packageName: "@ui5/webcomponents-fiori",
     fileName: "themes/SideNavigationPopover.css",
-    content: ".ui5-hidden-text {\n\tposition: absolute;\n\tclip: rect(1px,1px,1px,1px);\n\tuser-select: none;\n\tleft: -1000px; /* ensure the invisible texts are never part of the viewport */\n\ttop: -1000px;\n\tpointer-events: none;\n\tfont-size: 0;\n}\n\n.ui5-side-navigation-popover::part(content) {\n\tpadding: 0;\n}\n\n.ui5-hidden-text {\n\tposition: absolute;\n\tclip: rect(1px,1px,1px,1px);\n\tuser-select: none;\n\tleft: -1000px; /* ensure the invisible texts are never part of the viewport */\n\ttop: -1000px;\n\tpointer-events: none;\n\tfont-size: 0;\n}\n\n.ui5-side-navigation-in-popover {\n    --_ui5-tree-toggle-box-width: 1rem;\n    --_ui5-tree-indent-step: 0;\n\twidth: auto;\n}\n"
+    content: ".ui5-side-navigation-popover{--_ui5-v1-18-0_popover_box_shadow:var(--_ui5-v1-18-0_side_navigation_popover_box_shadow)}.ui5-side-navigation-popover::part(content){padding:0}.ui5-hidden-text{clip:rect(1px,1px,1px,1px);font-size:0;left:-1000px;pointer-events:none;position:absolute;top:-1000px;user-select:none}.ui5-side-navigation-in-popover{--_ui5-v1-18-0-tree-toggle-box-width:1rem;--_ui5-v1-18-0-tree-indent-step:0;width:auto}"
   };
   var _default = styleData;
   _exports.default = _default;

@@ -38,6 +38,11 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/decorators/customE
     return c > 3 && r && Object.defineProperty(target, key, r), r;
   };
   var DatePicker_1;
+
+  // default calendar for bundling
+
+  // Styles
+
   /**
    * @class
    *
@@ -235,13 +240,14 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/decorators/customE
      *
      * @param { number } amount
      * @param { string } unit
+     * @param { boolean } preserveDate whether to preserve the day of the month (f.e. 15th of March + 1 month = 15th of April)
      * @protected
      */
-    _modifyDateValue(amount, unit) {
+    _modifyDateValue(amount, unit, preserveDate) {
       if (!this.dateValue) {
         return;
       }
-      const modifiedDate = (0, _modifyDateBy.default)(_CalendarDate.default.fromLocalJSDate(this.dateValue), amount, unit, this._minDate, this._maxDate);
+      const modifiedDate = (0, _modifyDateBy.default)(_CalendarDate.default.fromLocalJSDate(this.dateValue), amount, unit, preserveDate, this._minDate, this._maxDate);
       const newValue = this.formatValue(modifiedDate.toUTCJSDate());
       this._updateValueAndFireEvents(newValue, true, ["change", "value-changed"]);
     }
@@ -269,20 +275,22 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/decorators/customE
         }
       });
       if (!executeEvent && updateValue) {
+        if (this.value !== previousValue && this.value !== this._getInput().value) {
+          return; // If the value was changed in the change event, do not revert it
+        }
+
         this._getInput().value = previousValue;
         this.value = previousValue;
-        this._updateValueState(); // Change the value state to Error/None, but only if needed
       }
     }
-
     _updateValueState() {
       const isValid = this._checkValueValidity(this.value);
-      if (!isValid) {
+      if (isValid && this.valueState === _ValueState.default.Error) {
         // If not valid - always set Error regardless of the current value state
-        this.valueState = _ValueState.default.Error;
-      } else if (isValid && this.valueState === _ValueState.default.Error) {
-        // However if valid, change only Error (but not the others) to None
         this.valueState = _ValueState.default.None;
+      } else if (!isValid) {
+        // However if valid, change only Error (but not the others) to None
+        this.valueState = _ValueState.default.Error;
       }
     }
     _toggleAndFocusInput() {

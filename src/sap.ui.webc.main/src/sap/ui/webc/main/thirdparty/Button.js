@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/ui/webc/common/thirdparty/base/decorators/customElement", "sap/ui/webc/common/thirdparty/base/decorators/property", "sap/ui/webc/common/thirdparty/base/decorators/event", "sap/ui/webc/common/thirdparty/base/decorators/slot", "sap/ui/webc/common/thirdparty/base/renderer/LitRenderer", "sap/ui/webc/common/thirdparty/base/Keys", "sap/ui/webc/common/thirdparty/base/util/AriaLabelHelper", "sap/ui/webc/common/thirdparty/base/FeaturesRegistry", "sap/ui/webc/common/thirdparty/base/i18nBundle", "sap/ui/webc/common/thirdparty/base/MarkedEvents", "sap/ui/webc/common/thirdparty/base/asset-registries/Icons", "sap/ui/webc/common/thirdparty/base/Device", "sap/ui/webc/common/thirdparty/base/util/willShowContent", "./types/ButtonDesign", "./generated/templates/ButtonTemplate.lit", "./Icon", "./generated/i18n/i18n-defaults", "./generated/themes/Button.css"], function (_exports, _UI5Element, _customElement, _property, _event, _slot, _LitRenderer, _Keys, _AriaLabelHelper, _FeaturesRegistry, _i18nBundle, _MarkedEvents, _Icons, _Device, _willShowContent, _ButtonDesign, _ButtonTemplate, _Icon, _i18nDefaults, _Button) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/ui/webc/common/thirdparty/base/decorators/customElement", "sap/ui/webc/common/thirdparty/base/decorators/property", "sap/ui/webc/common/thirdparty/base/decorators/event", "sap/ui/webc/common/thirdparty/base/decorators/slot", "sap/ui/webc/common/thirdparty/base/renderer/LitRenderer", "sap/ui/webc/common/thirdparty/base/Keys", "sap/ui/webc/common/thirdparty/base/util/AriaLabelHelper", "sap/ui/webc/common/thirdparty/base/FeaturesRegistry", "sap/ui/webc/common/thirdparty/base/i18nBundle", "sap/ui/webc/common/thirdparty/base/MarkedEvents", "sap/ui/webc/common/thirdparty/base/asset-registries/Icons", "sap/ui/webc/common/thirdparty/base/Device", "sap/ui/webc/common/thirdparty/base/util/willShowContent", "./types/ButtonDesign", "./types/ButtonType", "./generated/templates/ButtonTemplate.lit", "./Icon", "./generated/i18n/i18n-defaults", "./generated/themes/Button.css"], function (_exports, _UI5Element, _customElement, _property, _event, _slot, _LitRenderer, _Keys, _AriaLabelHelper, _FeaturesRegistry, _i18nBundle, _MarkedEvents, _Icons, _Device, _willShowContent, _ButtonDesign, _ButtonType, _ButtonTemplate, _Icon, _i18nDefaults, _Button) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -13,6 +13,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
   _LitRenderer = _interopRequireDefault(_LitRenderer);
   _willShowContent = _interopRequireDefault(_willShowContent);
   _ButtonDesign = _interopRequireDefault(_ButtonDesign);
+  _ButtonType = _interopRequireDefault(_ButtonType);
   _ButtonTemplate = _interopRequireDefault(_ButtonTemplate);
   _Icon = _interopRequireDefault(_Icon);
   _Button = _interopRequireDefault(_Button);
@@ -25,6 +26,9 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
     return c > 3 && r && Object.defineProperty(target, key, r), r;
   };
   var Button_1;
+
+  // Styles
+
   let isGlobalHandlerAttached = false;
   let activeButton = null;
   /**
@@ -100,6 +104,10 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
     }
     async onBeforeRendering() {
       const formSupport = (0, _FeaturesRegistry.getFeature)("FormSupport");
+      if (this.type !== _ButtonType.default.Button && !formSupport) {
+        console.warn(`In order for the "type" property to have effect, you should also: import "@ui5/webcomponents/dist/features/InputElementsFormSupport.js";`); // eslint-disable-line
+      }
+
       if (this.submits && !formSupport) {
         console.warn(`In order for the "submits" property to have effect, you should also: import "@ui5/webcomponents/dist/features/InputElementsFormSupport.js";`); // eslint-disable-line
       }
@@ -114,8 +122,11 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       }
       (0, _MarkedEvents.markEvent)(e, "button");
       const formSupport = (0, _FeaturesRegistry.getFeature)("FormSupport");
-      if (formSupport && this.submits) {
+      if (formSupport && this._isSubmit) {
         formSupport.triggerFormSubmit(this);
+      }
+      if (formSupport && this._isReset) {
+        formSupport.triggerFormReset(this);
       }
       if ((0, _Device.isSafari)()) {
         this.getDomRef()?.focus();
@@ -130,7 +141,11 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       activeButton = this; // eslint-disable-line
     }
 
-    _ontouchend() {
+    _ontouchend(e) {
+      if (this.disabled) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
       this.active = false;
       if (activeButton) {
         activeButton.active = false;
@@ -203,6 +218,12 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
     get ariaLabelText() {
       return (0, _AriaLabelHelper.getEffectiveAriaLabelText)(this);
     }
+    get _isSubmit() {
+      return this.type === _ButtonType.default.Submit || this.submits;
+    }
+    get _isReset() {
+      return this.type === _ButtonType.default.Reset;
+    }
     static async onDefine() {
       Button_1.i18nBundle = await (0, _i18nBundle.getI18nBundle)("@ui5/webcomponents");
     }
@@ -231,6 +252,10 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
   __decorate([(0, _property.default)({
     type: Object
   })], Button.prototype, "accessibilityAttributes", void 0);
+  __decorate([(0, _property.default)({
+    type: _ButtonType.default,
+    defaultValue: _ButtonType.default.Button
+  })], Button.prototype, "type", void 0);
   __decorate([(0, _property.default)({
     type: Boolean
   })], Button.prototype, "active", void 0);

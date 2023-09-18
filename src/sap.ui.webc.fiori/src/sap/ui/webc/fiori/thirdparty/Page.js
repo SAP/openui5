@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/ui/webc/common/thirdparty/base/decorators/customElement", "sap/ui/webc/common/thirdparty/base/decorators/property", "sap/ui/webc/common/thirdparty/base/decorators/slot", "sap/ui/webc/common/thirdparty/base/renderer/LitRenderer", "sap/ui/webc/common/thirdparty/base/delegate/ResizeHandler", "sap/ui/webc/common/thirdparty/base/MediaRange", "./types/PageBackgroundDesign", "./generated/templates/PageTemplate.lit", "./generated/themes/Page.css"], function (_exports, _UI5Element, _customElement, _property, _slot, _LitRenderer, _ResizeHandler, _MediaRange, _PageBackgroundDesign, _PageTemplate, _Page) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/ui/webc/common/thirdparty/base/decorators/customElement", "sap/ui/webc/common/thirdparty/base/decorators/property", "sap/ui/webc/common/thirdparty/base/decorators/slot", "sap/ui/webc/common/thirdparty/base/renderer/LitRenderer", "sap/ui/webc/common/thirdparty/base/delegate/ResizeHandler", "sap/ui/webc/common/thirdparty/base/MediaRange", "sap/ui/webc/main/thirdparty/generated/themes/BrowserScrollbar.css", "./types/PageBackgroundDesign", "./generated/templates/PageTemplate.lit", "./generated/themes/Page.css"], function (_exports, _UI5Element, _customElement, _property, _slot, _LitRenderer, _ResizeHandler, _MediaRange, _BrowserScrollbar, _PageBackgroundDesign, _PageTemplate, _Page) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -12,6 +12,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
   _LitRenderer = _interopRequireDefault(_LitRenderer);
   _ResizeHandler = _interopRequireDefault(_ResizeHandler);
   _MediaRange = _interopRequireDefault(_MediaRange);
+  _BrowserScrollbar = _interopRequireDefault(_BrowserScrollbar);
   _PageBackgroundDesign = _interopRequireDefault(_PageBackgroundDesign);
   _PageTemplate = _interopRequireDefault(_PageTemplate);
   _Page = _interopRequireDefault(_Page);
@@ -23,6 +24,11 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
   };
+
+  // Template
+
+  // Styles
+
   /**
    * @class
    *
@@ -44,6 +50,14 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
    * that there is enough space for the <code>ui5-page</code> to be rendered.
    * <b>Note:</b> In order for the <code>ui5-page</code> to be displayed, the parent element should have fixed height.
    *
+   * <h3>CSS Shadow Parts</h3>
+   *
+   * <ui5-link target="_blank" href="https://developer.mozilla.org/en-US/docs/Web/CSS/::part">CSS Shadow Parts</ui5-link> allow developers to style elements inside the Shadow DOM.
+   * <br>
+   * The <code>ui5-page</code> exposes the following CSS Shadow Parts:
+   * <ul>
+   * <li>content - Used to style the content section of the component</li>
+   * </ul>
    *
    * <h3>ES6 Module Import</h3>
    *
@@ -115,7 +129,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
     tag: "ui5-page",
     languageAware: true,
     renderer: _LitRenderer.default,
-    styles: _Page.default,
+    styles: [_BrowserScrollbar.default, _Page.default],
     template: _PageTemplate.default
   })], Page);
   Page.define();

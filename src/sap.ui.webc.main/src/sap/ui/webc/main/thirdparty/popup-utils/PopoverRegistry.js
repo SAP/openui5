@@ -30,10 +30,10 @@ sap.ui.define([
         clearInterval(updateInterval);
     };
     const attachGlobalScrollHandler = () => {
-        document.body.addEventListener('scroll', repositionPopovers, { capture: true });
+        document.addEventListener('scroll', repositionPopovers, { capture: true });
     };
     const detachGlobalScrollHandler = () => {
-        document.body.removeEventListener('scroll', repositionPopovers, { capture: true });
+        document.removeEventListener('scroll', repositionPopovers, { capture: true });
     };
     const attachScrollHandler = popover => {
         popover && popover.shadowRoot.addEventListener('scroll', repositionPopovers, { capture: true });

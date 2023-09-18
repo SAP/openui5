@@ -13,7 +13,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/T
   const styleData = {
     packageName: "@ui5/webcomponents",
     fileName: "themes/DateRangePicker.css",
-    content: ":host(:not([hidden])) {\n\tdisplay: inline-block;\n}\n\n:host {\n\tmin-width: 15rem;\n\tcolor: var(--sapField_TextColor);\n\tbackground-color: var(--sapField_Background);\n}\n\n:host .ui5-date-picker-input {\n\twidth: 100%;\n\tmin-width:inherit;\n\tcolor: inherit;\n\tbackground-color: inherit;\n}"
+    content: ":host(:not([hidden])){display:inline-block}:host{background-color:var(--sapField_Background);color:var(--sapField_TextColor);min-width:15rem}:host .ui5-date-picker-input{background-color:inherit;color:inherit;min-width:inherit;width:100%}"
   };
   var _default = styleData;
   _exports.default = _default;

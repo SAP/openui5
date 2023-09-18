@@ -6,7 +6,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
   });
   _exports.pathData = _exports.ltr = _exports.default = _exports.accData = void 0;
   const name = "rhombus-milestone-2";
-  const pathData = "M486.5 197q25 25 25 59 0 33-25 58l-172 172q-25 25-59 25-33 0-58-25l-172-172q-25-25-25-60 0-32 25-57l172-172q25-25 60-25 32 0 57 25z";
+  const pathData = "M495 215q17 17 17 41 0 22-17 41L297 495q-17 17-41 17t-41-17L17 297Q0 278 0 256q0-24 17-41L215 17q17-17 41-17t41 17z";
   _exports.pathData = pathData;
   const ltr = false;
   _exports.ltr = ltr;

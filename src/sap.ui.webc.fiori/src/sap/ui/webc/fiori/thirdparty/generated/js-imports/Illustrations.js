@@ -1,8 +1,14 @@
-sap.ui.define(["sap/ui/webc/common/thirdparty/base/asset-registries/Illustrations"], function (_Illustrations) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/Illustrations"], function (_exports, _Illustrations) {
   "use strict";
 
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  _exports.loadIllustration = void 0;
   const loadIllustration = async illustrationName => {
-    switch (illustrationName) {
+    const collectionAndPrefix = "V4/";
+    const cleanIllustrationName = illustrationName.startsWith(collectionAndPrefix) ? illustrationName.replace(collectionAndPrefix, "") : illustrationName;
+    switch (cleanIllustrationName) {
       case "AddColumn":
         return (await Promise.resolve().then(() => require("../../illustrations/AddColumn"))).default;
       case "AddDimensions":
@@ -119,84 +125,14 @@ sap.ui.define(["sap/ui/webc/common/thirdparty/base/asset-registries/Illustration
         return (await Promise.resolve().then(() => require("../../illustrations/UploadCollection"))).default;
       case "UploadToCloud":
         return (await Promise.resolve().then(() => require("../../illustrations/UploadToCloud"))).default;
-      case "TntChartArea":
-        return (await Promise.resolve().then(() => require("../../illustrations/tnt/ChartArea"))).default;
-      case "TntChartArea2":
-        return (await Promise.resolve().then(() => require("../../illustrations/tnt/ChartArea2"))).default;
-      case "TntChartBPMNFlow":
-        return (await Promise.resolve().then(() => require("../../illustrations/tnt/ChartBPMNFlow"))).default;
-      case "TntChartBar":
-        return (await Promise.resolve().then(() => require("../../illustrations/tnt/ChartBar"))).default;
-      case "TntChartBullet":
-        return (await Promise.resolve().then(() => require("../../illustrations/tnt/ChartBullet"))).default;
-      case "TntChartDoughnut":
-        return (await Promise.resolve().then(() => require("../../illustrations/tnt/ChartDoughnut"))).default;
-      case "TntChartFlow":
-        return (await Promise.resolve().then(() => require("../../illustrations/tnt/ChartFlow"))).default;
-      case "TntChartGantt":
-        return (await Promise.resolve().then(() => require("../../illustrations/tnt/ChartGantt"))).default;
-      case "TntChartOrg":
-        return (await Promise.resolve().then(() => require("../../illustrations/tnt/ChartOrg"))).default;
-      case "TntChartPie":
-        return (await Promise.resolve().then(() => require("../../illustrations/tnt/ChartPie"))).default;
-      case "TntCodePlaceholder":
-        return (await Promise.resolve().then(() => require("../../illustrations/tnt/CodePlaceholder"))).default;
-      case "TntCompany":
-        return (await Promise.resolve().then(() => require("../../illustrations/tnt/Company"))).default;
-      case "TntComponents":
-        return (await Promise.resolve().then(() => require("../../illustrations/tnt/Components"))).default;
-      case "TntExternalLink":
-        return (await Promise.resolve().then(() => require("../../illustrations/tnt/ExternalLink"))).default;
-      case "TntFaceID":
-        return (await Promise.resolve().then(() => require("../../illustrations/tnt/FaceID"))).default;
-      case "TntFingerprint":
-        return (await Promise.resolve().then(() => require("../../illustrations/tnt/Fingerprint"))).default;
-      case "TntLock":
-        return (await Promise.resolve().then(() => require("../../illustrations/tnt/Lock"))).default;
-      case "TntMission":
-        return (await Promise.resolve().then(() => require("../../illustrations/tnt/Mission"))).default;
-      case "TntNoApplications":
-        return (await Promise.resolve().then(() => require("../../illustrations/tnt/NoApplications"))).default;
-      case "TntNoFlows":
-        return (await Promise.resolve().then(() => require("../../illustrations/tnt/NoFlows"))).default;
-      case "TntNoUsers":
-        return (await Promise.resolve().then(() => require("../../illustrations/tnt/NoUsers"))).default;
-      case "TntRadar":
-        return (await Promise.resolve().then(() => require("../../illustrations/tnt/Radar"))).default;
-      case "TntSecrets":
-        return (await Promise.resolve().then(() => require("../../illustrations/tnt/Secrets"))).default;
-      case "TntServices":
-        return (await Promise.resolve().then(() => require("../../illustrations/tnt/Services"))).default;
-      case "TntSessionExpired":
-        return (await Promise.resolve().then(() => require("../../illustrations/tnt/SessionExpired"))).default;
-      case "TntSessionExpiring":
-        return (await Promise.resolve().then(() => require("../../illustrations/tnt/SessionExpiring"))).default;
-      case "TntSuccess":
-        return (await Promise.resolve().then(() => require("../../illustrations/tnt/Success"))).default;
-      case "TntSuccessfulAuth":
-        return (await Promise.resolve().then(() => require("../../illustrations/tnt/SuccessfulAuth"))).default;
-      case "TntSystems":
-        return (await Promise.resolve().then(() => require("../../illustrations/tnt/Systems"))).default;
-      case "TntTeams":
-        return (await Promise.resolve().then(() => require("../../illustrations/tnt/Teams"))).default;
-      case "TntTools":
-        return (await Promise.resolve().then(() => require("../../illustrations/tnt/Tools"))).default;
-      case "TntUnableToLoad":
-        return (await Promise.resolve().then(() => require("../../illustrations/tnt/UnableToLoad"))).default;
-      case "TntUnlock":
-        return (await Promise.resolve().then(() => require("../../illustrations/tnt/Unlock"))).default;
-      case "TntUnsuccessfulAuth":
-        return (await Promise.resolve().then(() => require("../../illustrations/tnt/UnsuccessfulAuth"))).default;
-      case "TntUser2":
-        return (await Promise.resolve().then(() => require("../../illustrations/tnt/User2"))).default;
       default:
         throw new Error("[Illustrations] Illustration not found: " + illustrationName);
     }
   };
+  _exports.loadIllustration = loadIllustration;
   const loadAndCheck = async illustrationName => {
     const data = await loadIllustration(illustrationName);
     return data;
   };
-  ["AddColumn", "AddDimensions", "AddPeople", "BalloonSky", "BeforeSearch", "Connection", "EmptyCalendar", "EmptyList", "EmptyPlanningCalendar", "ErrorScreen", "FilterTable", "GroupTable", "NoActivities", "NoColumnsSet", "NoData", "NoDimensionsSet", "NoEntries", "NoFilterResults", "NoMail", "NoMail_v1", "NoNotifications", "NoSavedItems", "NoSavedItems_v1", "NoSearchResults", "NoTasks", "NoTasks_v1", "PageNotFound", "ReloadScreen", "ResizeColumn", "SearchEarth", "SearchFolder", "SimpleBalloon", "SimpleBell", "SimpleCalendar", "SimpleCheckMark", "SimpleConnection", "SimpleEmptyDoc", "SimpleEmptyList", "SimpleError", "SimpleMagnifier", "SimpleMail", "SimpleNoSavedItems", "SimpleNotFoundMagnifier", "SimpleReload", "SimpleTask", "SleepingBell", "SortColumn", "SuccessBalloon", "SuccessCheckMark", "SuccessHighFive", "SuccessScreen", "Survey", "Tent", "UnableToLoad", "UnableToLoadImage", "UnableToUpload", "UploadCollection", "UploadToCloud"].forEach(illustrationName => (0, _Illustrations.registerIllustrationLoader)(illustrationName, loadAndCheck));
-  ["TntChartArea", "TntChartArea2", "TntChartBPMNFlow", "TntChartBar", "TntChartBullet", "TntChartDoughnut", "TntChartFlow", "TntChartGantt", "TntChartOrg", "TntChartPie", "TntCodePlaceholder", "TntCompany", "TntComponents", "TntExternalLink", "TntFaceID", "TntFingerprint", "TntLock", "TntMission", "TntNoApplications", "TntNoFlows", "TntNoUsers", "TntRadar", "TntSecrets", "TntServices", "TntSessionExpired", "TntSessionExpiring", "TntSuccess", "TntSuccessfulAuth", "TntSystems", "TntTeams", "TntTools", "TntUnableToLoad", "TntUnlock", "TntUnsuccessfulAuth", "TntUser2"].forEach(illustrationName => (0, _Illustrations.registerIllustrationLoader)(illustrationName, loadAndCheck));
+  ["AddColumn", "AddDimensions", "AddPeople", "BalloonSky", "BeforeSearch", "Connection", "EmptyCalendar", "EmptyList", "EmptyPlanningCalendar", "ErrorScreen", "FilterTable", "GroupTable", "NoActivities", "NoColumnsSet", "NoData", "NoDimensionsSet", "NoEntries", "NoFilterResults", "NoMail", "NoMail_v1", "NoNotifications", "NoSavedItems", "NoSavedItems_v1", "NoSearchResults", "NoTasks", "NoTasks_v1", "PageNotFound", "ReloadScreen", "ResizeColumn", "SearchEarth", "SearchFolder", "SimpleBalloon", "SimpleBell", "SimpleCalendar", "SimpleCheckMark", "SimpleConnection", "SimpleEmptyDoc", "SimpleEmptyList", "SimpleError", "SimpleMagnifier", "SimpleMail", "SimpleNoSavedItems", "SimpleNotFoundMagnifier", "SimpleReload", "SimpleTask", "SleepingBell", "SortColumn", "SuccessBalloon", "SuccessCheckMark", "SuccessHighFive", "SuccessScreen", "Survey", "Tent", "UnableToLoad", "UnableToLoadImage", "UnableToUpload", "UploadCollection", "UploadToCloud"].forEach(illustrationName => (0, _Illustrations.registerIllustrationLoader)(`V4/${illustrationName}`, loadAndCheck));
 });

@@ -6,7 +6,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
   });
   _exports.pathData = _exports.ltr = _exports.default = _exports.accData = void 0;
   const name = "switch-views";
-  const pathData = "M409.5 78q32 0 54.5 22t22.5 55v204q0 32-22.5 54.5T409.5 436q0 32-22 54t-55 22h-153q-32 0-54.5-22t-22.5-54v-77q-32 0-54-22t-22-55V78q0-32 22-54.5t54-22.5h154q32 0 54 22.5t22 54.5h77zm-332 204q0 26 25 26v-77q0-32 22.5-54t54.5-22q0-33 22-55t55-22h25q0-11-7-18.5t-18-7.5h-154q-11 0-18 7.5t-7 18.5v204zm281-51q0-25-26-25h-153q-11 0-18.5 7t-7.5 18v205q0 11 7.5 18t18.5 7h153q26 0 26-25V231zm77-76q0-12-7.5-19t-18.5-7h-153q-26 0-26 26h102q33 0 55 22t22 54v154q11 0 18.5-7.5t7.5-18.5V155z";
+  const pathData = "M422 64q24 0 41 17t17 41v236q0 24-17 41t-41 17h-6v38q0 24-17 41t-41 17H186q-24 0-41-17t-17-41V352H90q-24 0-41-17t-17-41V58q0-24 17-41T90 0h172q24 0 41 17t17 41v6h102zM128 301v-83q0-24 17-41t41-17h6v-38q0-24 17-41t41-17h19v-6q0-7-7-7H90q-7 0-7 7v236q0 7 7 7h38zm301-179q0-7-7-7H250q-7 0-7 7v38h115q24 0 41 17t17 41v147h6q7 0 7-7V122zm-64 96q0-7-7-7H186q-7 0-7 7v236q0 7 7 7h172q7 0 7-7V218z";
   _exports.pathData = pathData;
   const ltr = false;
   _exports.ltr = ltr;
