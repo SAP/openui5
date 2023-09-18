@@ -3,6 +3,17 @@
     "date": "September 2023",
     "notes": [
       {
+        "id": "e3995a44c7ff0868c87055783fe388e22b44850c",
+        "type": "FIX",
+        "text": " Demokit: Formatting of search results corrected",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380125459"
+          }
+        ]
+      },
+      {
         "id": "528da8c0906ae94032119d3a0de38b238c3d8f52",
         "type": "FIX",
         "text": " sap.ui.documentation: Restore 'additionalDownloadFiles' functionality for samples"

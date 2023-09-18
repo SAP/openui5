@@ -3,6 +3,39 @@
     "date": "September 2023",
     "notes": [
       {
+        "id": "a47b036c9f81dff4f5532c33ddcfed3103715ee1",
+        "type": "FIX",
+        "text": " Field: error message after invalid input",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380128680"
+          }
+        ]
+      },
+      {
+        "id": "ca03e24a06e3fd3b8891044c3117511107a37bb6",
+        "type": "FIX",
+        "text": " Field: DatePicker rendered even if ValueHelp set",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380126254"
+          }
+        ]
+      },
+      {
+        "id": "5bbb8befe41c24d48bc68d0317eccddd61167d27",
+        "type": "FIX",
+        "text": " MDCTable: Sort invisible property with ODataV4",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380131026"
+          }
+        ]
+      },
+      {
         "id": "7ef2ba357f83098147269902fae0b30b6d3560c6",
         "type": "FIX",
         "text": " Field: remove value state only for parse/validate error",

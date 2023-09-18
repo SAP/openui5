@@ -3,6 +3,21 @@
     "date": "September 2023",
     "notes": [
       {
+        "id": "f96cf1b4c4c40c5060052bea397dc34cef26e7ea",
+        "type": "FIX",
+        "text": " Integration Cards: Avoid 'parameters>/visibleItems' being undefined"
+      },
+      {
+        "id": "3371a30649a55f7b8a9bbbaa673d38aa51f64706",
+        "type": "FEATURE",
+        "text": " Integration Cards: Enable binding to paginator model for client-side pagination"
+      },
+      {
+        "id": "e41694ccbbd58f582b06e316602e84c3a05ed749",
+        "type": "FEATURE",
+        "text": " Integration cards: Close button visibility from ShowCard action can be configured"
+      },
+      {
         "id": "de86ff82072e8271295519c180ed5bfc81fa6499",
         "type": "FIX",
         "text": " Integration Cards: Background of Actions strip set to \"Transparent\"",

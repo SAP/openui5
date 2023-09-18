@@ -3,6 +3,54 @@
     "date": "September 2023",
     "notes": [
       {
+        "id": "8e8f41f1990ec8aac1eb127b3cfdc15957af3b4b",
+        "type": "FIX",
+        "text": " sap.uxap.HierarchicalSelect: Adjust the width of label indicator",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370083307"
+          }
+        ]
+      },
+      {
+        "id": "e5d6c480c789b8545e58795bdec761e0351e9071",
+        "type": "FIX",
+        "text": " sap.m.InputBase: Focus border color changed"
+      },
+      {
+        "id": "c21892eff9225b82737e5c465e28d541da1471f4",
+        "type": "FIX",
+        "text": " sap.m.MessageStrip: Close button hover background fixed"
+      },
+      {
+        "id": "c38c1c07bba951862c23649cc7ad6070f369a252",
+        "type": "FIX",
+        "text": " sap.f.DynamicPageTitle: Update horizon theme parameters",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380126807"
+          }
+        ]
+      },
+      {
+        "id": "3285d030c137c537bbafe8463cfdba2d2b2b0e76",
+        "type": "FIX",
+        "text": " sap.tnt.NavigationListItem: Avoid unnecessary truncation in SAP Horizon themes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370091609"
+          }
+        ]
+      },
+      {
+        "id": "d50cb4000069cbc556cb5c1ab6c6c31dd79bdf88",
+        "type": "FIX",
+        "text": " sap.m.Page: Floating footer styles adjustments"
+      },
+      {
         "id": "8c3dffe38c81e58292d3b1f42d46d7fba91d44dd",
         "type": "FEATURE",
         "text": " sap.tnt.SideNavigation: Collapsed mode now shows item title on hover and focus"

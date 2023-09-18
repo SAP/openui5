@@ -3,6 +3,42 @@
     "date": "September 2023",
     "notes": [
       {
+        "id": "95f833567bb6ed3264e2d91ef56de770d7779312",
+        "type": "FEATURE",
+        "text": " sap.ui.model.odata.v2.ODataModel: Allow to switch off server cache for security tokens"
+      },
+      {
+        "id": "3a944315b3848f932804d925370554b979bc3c99",
+        "type": "FIX",
+        "text": " Configuration: xx-noSync parameter truthy check"
+      },
+      {
+        "id": "b3124aac4b25851d72ddae1af442f24396d86dc2",
+        "type": "FIX",
+        "text": " ThemeManager: retrieval of xx-cssVariables parameter"
+      },
+      {
+        "id": "5cbe553bba88d8a667aaeba0ce1a1e6a7747807f",
+        "type": "FEATURE",
+        "text": " Core: deprecate sap.ui.core.Core#libraryChanged event and sap.ui.core.Core.getMetadata API"
+      },
+      {
+        "id": "ecbab92909f5f375563064b5337b65b1e6401e64",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v2.ODataListBinding#loadData: read all data (up to model size limit) in \"Client\" mode",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380127053"
+          }
+        ]
+      },
+      {
+        "id": "715516f2990a5632d2869e7833c0569178d6b922",
+        "type": "FEATURE",
+        "text": " Deprecate Core APIs: loadLibrary, initLibrary, getLoadedLibraries, getLibraryResourceBundle"
+      },
+      {
         "id": "76ee62fefdc7b31c4632b435d266be649c51af93",
         "type": "FEATURE",
         "text": " Deprecate Core.attachControlEvent and Core.detachControlEvent"

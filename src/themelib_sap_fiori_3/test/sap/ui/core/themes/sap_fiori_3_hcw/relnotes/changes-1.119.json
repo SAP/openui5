@@ -3,6 +3,22 @@
     "date": "September 2023",
     "notes": [
       {
+        "id": "8e8f41f1990ec8aac1eb127b3cfdc15957af3b4b",
+        "type": "FIX",
+        "text": " sap.uxap.HierarchicalSelect: Adjust the width of label indicator",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370083307"
+          }
+        ]
+      },
+      {
+        "id": "d50cb4000069cbc556cb5c1ab6c6c31dd79bdf88",
+        "type": "FIX",
+        "text": " sap.m.Page: Floating footer styles adjustments"
+      },
+      {
         "id": "8c3dffe38c81e58292d3b1f42d46d7fba91d44dd",
         "type": "FEATURE",
         "text": " sap.tnt.SideNavigation: Collapsed mode now shows item title on hover and focus"

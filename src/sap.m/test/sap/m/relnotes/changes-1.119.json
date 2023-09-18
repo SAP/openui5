@@ -3,6 +3,55 @@
     "date": "September 2023",
     "notes": [
       {
+        "id": "1e01bd9005f45c5718ba763e39dbd418ea384f20",
+        "type": "FIX",
+        "text": " sap.m.Avatar: Delete active state for now",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380118028"
+          }
+        ]
+      },
+      {
+        "id": "e5eb7c5d143d6ec36285f59ec9fe677bbc2d746d",
+        "type": "FIX",
+        "text": " sap.m.Table: Update select-all checkbox after binding operations",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370079718"
+          }
+        ]
+      },
+      {
+        "id": "1b8958e6e35ca2bf8ccd152753ec709a8d480c55",
+        "type": "FIX",
+        "text": " sap.m.InputBase: Value state box-shadow adjusted"
+      },
+      {
+        "id": "0614ee321ff7a8d874f00f6fde411af1d38b9877",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: selecting a sub tab via space key now works correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380127193"
+          }
+        ]
+      },
+      {
+        "id": "af1dde4c2d491feb07b9d56ff058ca101ae2f508",
+        "type": "FIX",
+        "text": " sap.m.ComboBox/MultiComboBox: Correct max-width applied",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370089974"
+          }
+        ]
+      },
+      {
         "id": "123bd5563e5dcfad73c1f2f7e52467a411eb5beb",
         "type": "FIX",
         "text": " sap.m.SinglePlanningCalendarMonthGrid: fixed week selection in Month view",
@@ -32,6 +81,17 @@
           {
             "type": "BCP",
             "reference": "2370079378"
+          }
+        ]
+      },
+      {
+        "id": "aee7dfd2788acdae4288bdfeb159a1c5a8ed10e8",
+        "type": "FIX",
+        "text": " sap.m.InputBase: Readonly styles adjustments",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380127573"
           }
         ]
       },
