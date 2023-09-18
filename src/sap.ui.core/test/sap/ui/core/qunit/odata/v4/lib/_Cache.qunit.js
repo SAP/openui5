@@ -932,7 +932,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("_Cache#removeElement for a created kept-alive context inside", function (assert) {
 		var oCache = new _Cache(this.oRequestor, "EMPLOYEES"),
-			aCacheData = [{
+			aElements = [{
 				"@$ui5._" : {predicate : "('2')"},
 				"@odata.etag" : "before"
 			}, {
@@ -941,55 +941,63 @@ sap.ui.define([
 			}, {
 				"@odata.etag" : "after"
 			}],
-			oElement = aCacheData[1],
+			oElement = aElements[1],
 			iIndex;
 
-		aCacheData.$byPredicate = {
+		aElements.$byPredicate = {
 			"($uid=id-1-23)" : oElement,
 			"('1')" : oElement,
-			"('2')" : aCacheData[0]
+			"('2')" : aElements[0]
 		};
-		aCacheData.$count = 42;
-		aCacheData.$created = 23;
+		aElements.$count = 42;
+		aElements.$created = 23;
 		oCache.iActiveElements = 19;
+		oCache.aElements = aElements;
 		oCache.iLimit = 42;
 		this.mock(_Cache).expects("getElementIndex")
-			.withExactArgs(sinon.match.same(aCacheData), "('1')", 2).returns(1);
+			.withExactArgs(sinon.match.same(aElements), "('1')", 2).returns(1);
 		this.mock(_Helper).expects("addToCount")
 			.withExactArgs(sinon.match.same(oCache.mChangeListeners), "",
-				sinon.match.same(aCacheData), -1);
+				sinon.match.same(aElements), -1);
 		this.mock(oCache).expects("adjustIndexes")
-			.withExactArgs("", sinon.match.same(aCacheData), 1, -1);
+			.withExactArgs("", sinon.match.same(aElements), 1, -1);
 
 		// code under test
-		iIndex = oCache.removeElement(aCacheData, 2, "('1')", "");
+		iIndex = oCache.removeElement(undefined, 2, "('1')", "");
 
 		assert.strictEqual(iIndex, 1);
-		assert.strictEqual(aCacheData.$created, 22);
+		assert.strictEqual(aElements.$created, 22);
 		assert.strictEqual(oCache.iActiveElements, 18);
 		assert.strictEqual(oCache.iLimit, 42);
-		assert.deepEqual(aCacheData, [{
+		assert.deepEqual(aElements, [{
 			"@$ui5._" : {predicate : "('2')"},
 			"@odata.etag" : "before"
 		}, {
 			"@odata.etag" : "after"
 		}]);
-		assert.deepEqual(aCacheData.$byPredicate, {"('2')" : aCacheData[0]});
+		assert.deepEqual(aElements.$byPredicate, {"('2')" : aElements[0]});
 	});
 
 	//*********************************************************************************************
 ["", "~path~"].forEach(function (sPath) {
 	[false, true].forEach(function (bTransient) {
-	QUnit.test(`_Cache#restoreElement, path=${sPath}, transient=${bTransient}`, function (assert) {
+		[false, true].forEach(function (bDefault) {
+			const sTitle = `_Cache#restoreElement, path=${sPath}, transient=${bTransient},
+ default=${bDefault}`;
+
+	QUnit.test(sTitle, function (assert) {
 		const oCache = new _Cache(this.oRequestor, "TEAMS");
-		const oHelperMock = this.mock(_Helper);
 		oCache.iLimit = 234;
 		oCache.iActiveElements = 1;
 		const aElements = [];
+		aElements.$byPredicate = {};
 		aElements.$created = 2;
-
+		if (bDefault) {
+			oCache.aElements = aElements;
+		}
 		this.mock(oCache).expects("adjustIndexes")
 			.withExactArgs(sPath, sinon.match.same(aElements), 42, 1, "~iDeletedIndex~");
+		const oHelperMock = this.mock(_Helper);
 		oHelperMock.expects("getPrivateAnnotation")
 			.withExactArgs("~oElement~", "transientPredicate")
 			.returns(bTransient ? "($uid=id-1-23)" : undefined);
@@ -997,16 +1005,19 @@ sap.ui.define([
 			.withExactArgs(sinon.match.same(oCache.mChangeListeners), sPath,
 				sinon.match.same(aElements), 1);
 		this.mock(aElements).expects("splice").withExactArgs(42, 0, "~oElement~");
-		//TODO TDD
-		oHelperMock.expects("getPrivateAnnotation").withExactArgs("~oElement~", "predicate");
+		oHelperMock.expects("getPrivateAnnotation").withExactArgs("~oElement~", "predicate")
+			.returns("~predicate~");
 
 		// code under test
-		oCache.restoreElement(aElements, 42, "~oElement~", sPath, "~iDeletedIndex~");
+		oCache.restoreElement(bDefault ? undefined : aElements, 42, "~oElement~", sPath,
+			"~iDeletedIndex~");
 
 		assert.strictEqual(oCache.iLimit, bTransient || sPath ? 234 : 235);
 		assert.strictEqual(aElements.$created, bTransient ? 3 : 2);
 		assert.strictEqual(oCache.iActiveElements, bTransient && !sPath ? 2 : 1);
+		assert.deepEqual(aElements.$byPredicate, {"~predicate~" : "~oElement~"});
 	});
+		});
 	});
 });
 
@@ -10780,6 +10791,7 @@ sap.ui.define([
 		oCache.setEmpty();
 
 		assert.strictEqual(oCache.aElements.$count, 0);
+		assert.strictEqual(oCache.iLimit, 0);
 	});
 
 	//*********************************************************************************************
@@ -12550,15 +12562,23 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("CollectionCache#drop", function (assert) {
-		var oCache = this.createCache("Employees");
-
+[undefined, "($uid=id-1-23)"].forEach((sTransientPredicate) => {
+	QUnit.test(`CollectionCache#drop, ${sTransientPredicate}`, function (assert) {
+		const oCache = this.createCache("Employees");
 		oCache.aElements[23] = "~b~";
 		oCache.aElements.$byPredicate = {
 			"('a')" : "~a~",
 			"('b')" : "~b~",
 			"('c')" : "~c~"
 		};
+		oCache.aElements.$created = 7;
+		oCache.iActiveElements = 5;
+		oCache.iLimit = 42;
+		if (sTransientPredicate) {
+			oCache.aElements.$byPredicate[sTransientPredicate] = "~b~";
+		}
+		this.mock(_Helper).expects("getPrivateAnnotation")
+			.withExactArgs("~b~", "transientPredicate").returns(sTransientPredicate);
 
 		// code under test
 		oCache.drop(23, "('b')");
@@ -12569,6 +12589,22 @@ sap.ui.define([
 			"('a')" : "~a~",
 			"('c')" : "~c~"
 		});
+		assert.strictEqual(oCache.aElements.$created, sTransientPredicate ? 6 : 7);
+		assert.strictEqual(oCache.iActiveElements, sTransientPredicate ? 4 : 5);
+		assert.strictEqual(oCache.iLimit, sTransientPredicate ? 43 : 42);
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("CollectionCache#drop: Must not drop a transient element", function (assert) {
+		const oCache = this.createCache("Employees");
+		oCache.aElements[23] = {"@$ui5.context.isTransient" : true};
+		this.mock(_Helper).expects("getPrivateAnnotation").never();
+
+		assert.throws(function () {
+			// code under test
+			oCache.drop(23, "n/a");
+		}, new Error("Must not drop a transient element"));
 	});
 
 	//*********************************************************************************************

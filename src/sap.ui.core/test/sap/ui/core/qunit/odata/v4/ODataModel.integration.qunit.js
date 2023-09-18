@@ -91,6 +91,24 @@ sap.ui.define([
 	function checkAggregationCache(sTitle, assert, oListBinding) {
 		const aParentByLevel = [];
 
+		function checkCache(oCache) {
+			for (let i = 0, n = oCache.aElements.$created; i < n; i += 1) {
+				const oElement = oCache.aElements[i];
+				if (oElement) {
+					strictEqual("@$ui5.context.isTransient" in oElement, true, `created: ${i}`);
+				}
+			}
+			for (let i = oCache.aElements.$created, n = oCache.aElements.length; i < n; i += 1) {
+				const oElement = oCache.aElements[i];
+				if (oElement) {
+					strictEqual("@$ui5.context.isTransient" in oElement, false,
+						`not created: ${i}`);
+				}
+			}
+			strictEqual(oCache.aElements.$count === oCache.iLimit + oCache.iActiveElements, true,
+				`${oCache.aElements.$count} === ${oCache.iLimit} + ${oCache.iActiveElements}`);
+		}
+
 		function isKeepAlive(sPredicate) {
 			return oListBinding.getAllCurrentContexts()
 				.filter((oContext) => oContext.isEffectivelyKeptAlive())
@@ -136,7 +154,11 @@ sap.ui.define([
 					checkByPredicate("transientPredicate");
 				}
 
-				aParentByLevel[iLevel + 1] ??= _Helper.getPrivateAnnotation(oElement, "cache");
+				const oCache = _Helper.getPrivateAnnotation(oElement, "cache");
+				if (oCache) {
+					checkCache(oCache);
+					aParentByLevel[iLevel + 1] = oCache;
+				}
 
 				const aSpliced = _Helper.getPrivateAnnotation(oElement, "spliced");
 				if (aSpliced) {
@@ -158,6 +180,7 @@ sap.ui.define([
 			// Note: level 0 or 1 is used for initial placeholders of 1st level cache!
 			aParentByLevel[i] = oListBinding.oCache.oFirstLevel;
 		}
+		checkCache(oListBinding.oCache.oFirstLevel);
 		visitElements(aElements);
 	}
 
@@ -28367,11 +28390,11 @@ sap.ui.define([
 	//
 	// Move "Gamma" so that "Beta" becomes its parent, then move it back again. Collapse the root,
 	// request a side effect for all rows, and expand the root again. Start a move, but cancel it.
-	// Move "Beta" so that "Gamma" becomes its parent (no changes in ODLB, just in cache!). Observe
-	// property change events for "@odata.etag".
+	// Move "Beta" so that "Gamma" becomes its parent (no change to context's index, but a persisted
+	// node (again) becomes "created persisted"). Observe property change events for "@odata.etag".
 	// JIRA: CPOUI5ODATAV4-2226
 	QUnit.test("Recursive Hierarchy: create new children", function (assert) {
-		var oBeta, oGamma, oListBinding, fnRespond, oRoot, oTable;
+		var oBeta, oBetaCreated, oGamma, oGammaCreated, oListBinding, fnRespond, oRoot, oTable;
 
 		const oModel = this.createSpecialCasesModel({autoExpandSelect : true});
 		const sFriend = "/Artists(ArtistID='99',IsActiveEntity=false)/_Friend";
@@ -28382,6 +28405,7 @@ sap.ui.define([
 				hierarchyQualifier : 'OrgChart'
 			}
 		}}" threshold="0" visibleRowCount="3">
+	<Text text="{= %{@$ui5.context.isTransient} }"/>
 	<Text text="{= %{@$ui5.node.isExpanded} }"/>
 	<Text text="{= %{@$ui5.node.level} }"/>
 	<Text id="etag" text="{= %{@odata.etag} }"/>
@@ -28419,9 +28443,9 @@ sap.ui.define([
 			checkTable("root is leaf", assert, oTable, [
 				sFriend + "(ArtistID='0',IsActiveEntity=false)"
 			], [
-				[undefined, 1, "etag0.0", "Alpha"],
-				["", "", "", ""],
-				["", "", "", ""]
+				[undefined, undefined, 1, "etag0.0", "Alpha"],
+				["", "", "", "", ""],
+				["", "", "", "", ""]
 			]);
 			assert.strictEqual(oRoot.getIndex(), 0);
 
@@ -28460,6 +28484,7 @@ sap.ui.define([
 				"@$ui5.node.parent" : oRoot,
 				Name : "Beta"
 			}, /*bSkipRefresh*/true);
+			oBetaCreated = oBeta.created();
 
 			return Promise.all([
 				checkCanceled(assert, oLostChild.created()),
@@ -28470,9 +28495,9 @@ sap.ui.define([
 				sFriend + "(ArtistID='0',IsActiveEntity=false)",
 				sFriend + "($uid=...)"
 			], [
-				[true, 1, "etag0.0", "Alpha"],
-				[undefined, 2, "", "Beta"],
-				["", "", "", ""]
+				[undefined, true, 1, "etag0.0", "Alpha"],
+				[true, undefined, 2, "", "Beta"],
+				["", "", "", "", ""]
 			]);
 			assert.strictEqual(oBeta.getIndex(), 1);
 
@@ -28482,7 +28507,7 @@ sap.ui.define([
 			fnRespond();
 
 			return Promise.all([
-				oBeta.created(),
+				oBetaCreated,
 				that.waitForChanges(assert, "respond")
 			]);
 		}).then(function () {
@@ -28490,9 +28515,9 @@ sap.ui.define([
 				sFriend + "(ArtistID='0',IsActiveEntity=false)",
 				sFriend + "(ArtistID='1',IsActiveEntity=false)"
 			], [
-				[true, 1, "etag0.0", "Alpha"],
-				[undefined, 2, "etag1.0", "Beta: β"],
-				["", "", "", ""]
+				[undefined, true, 1, "etag0.0", "Alpha"],
+				[false, undefined, 2, "etag1.0", "Beta: β"],
+				["", "", "", "", ""]
 			]);
 			assert.strictEqual(oBeta.getIndex(), 1);
 			assert.deepEqual(oBeta.getObject(), {
@@ -28503,6 +28528,8 @@ sap.ui.define([
 				IsActiveEntity : false,
 				Name : "Beta: β"
 			});
+			assert.strictEqual(oBeta.isTransient(), false, "created persisted");
+			assert.strictEqual(oBeta.created(), oBetaCreated);
 
 			// code under test (JIRA: CPOUI5ODATAV4-2272)
 			const oLostChild = oListBinding.create({
@@ -28534,12 +28561,13 @@ sap.ui.define([
 				"@$ui5.node.parent" : oRoot,
 				Name : "Gamma"
 			}, /*bSkipRefresh*/true);
+			oGammaCreated = oGamma.created();
 
 			assert.strictEqual(oGamma.getIndex(), 1);
 
 			return Promise.all([
 				checkCanceled(assert, oLostChild.created()),
-				oGamma.created(),
+				oGammaCreated,
 				that.waitForChanges(assert, "create 2nd child")
 			]);
 		}).then(function () {
@@ -28548,19 +28576,12 @@ sap.ui.define([
 				sFriend + "(ArtistID='2',IsActiveEntity=false)",
 				sFriend + "(ArtistID='1',IsActiveEntity=false)"
 			], [
-				[true, 1, "etag0.0", "Alpha"],
-				[undefined, 2, "etag2.0", "Gamma: γ"],
-				[undefined, 2, "etag1.0", "Beta: β"]
+				[undefined, true, 1, "etag0.0", "Alpha"],
+				[false, undefined, 2, "etag2.0", "Gamma: γ"],
+				[false, undefined, 2, "etag1.0", "Beta: β"]
 			]);
-
-			assert.throws(function () {
-				// code under test
-				oGamma.move({parent : null});
-			}); // TypeError("Cannot read properties of null (reading 'getCanonicalPath')")
-			assert.throws(function () {
-				// code under test
-				oGamma.move({parent : oGamma});
-			}, new Error("Unsupported parent context: " + oGamma));
+			assert.strictEqual(oGamma.isTransient(), false, "created persisted");
+			assert.strictEqual(oGamma.created(), oGammaCreated);
 
 			that.expectRequest({
 					headers : {
@@ -28588,9 +28609,9 @@ sap.ui.define([
 				sFriend + "(ArtistID='1',IsActiveEntity=false)",
 				sFriend + "(ArtistID='2',IsActiveEntity=false)"
 			], [
-				[true, 1, "etag0.0", "Alpha"],
-				[true, 2, "etag1.0", "Beta: β"],
-				[undefined, 3, "etag2.1", "Gamma: γ"]
+				[undefined, true, 1, "etag0.0", "Alpha"],
+				[false, true, 2, "etag1.0", "Beta: β"],
+				[false, undefined, 3, "etag2.1", "Gamma: γ"]
 			]);
 
 			assert.strictEqual(oBeta.getIndex(), 1);
@@ -28603,16 +28624,20 @@ sap.ui.define([
 				IsActiveEntity : false,
 				Name : "Beta: β"
 			});
+			assert.strictEqual(oBeta.isTransient(), false, "created persisted");
+			assert.strictEqual(oBeta.created(), oBetaCreated);
 
 			assert.strictEqual(oGamma.getIndex(), 2);
 			assert.deepEqual(oGamma.getObject(), {
-				// "@$ui5.context.isTransient" deleted by #move
+				"@$ui5.context.isTransient" : false,
 				"@$ui5.node.level" : 3,
 				"@odata.etag" : "etag2.1", // updated
 				ArtistID : "2",
 				IsActiveEntity : false,
 				Name : "Gamma: γ"
 			});
+			assert.strictEqual(oGamma.isTransient(), false, "created persisted");
+			assert.strictEqual(oGamma.created(), oGammaCreated, "unchanged");
 
 			//TODO assert.throws(function () {
 			// // code under test
@@ -28645,19 +28670,22 @@ sap.ui.define([
 				sFriend + "(ArtistID='2',IsActiveEntity=false)",
 				sFriend + "(ArtistID='1',IsActiveEntity=false)"
 			], [
-				[true, 1, "etag0.0", "Alpha"],
-				[undefined, 2, "etag2.2", "Gamma: γ"],
-				[undefined, 2, "etag1.0", "Beta: β"]
+				[undefined, true, 1, "etag0.0", "Alpha"],
+				[false, undefined, 2, "etag2.2", "Gamma: γ"], // moved *before* all created rows
+				[false, undefined, 2, "etag1.0", "Beta: β"]
 			]);
 
 			assert.strictEqual(oGamma.getIndex(), 1);
 			assert.deepEqual(oGamma.getObject(), {
+				"@$ui5.context.isTransient" : false,
 				"@$ui5.node.level" : 2,
 				"@odata.etag" : "etag2.2", // updated
 				ArtistID : "2",
 				IsActiveEntity : false,
 				Name : "Gamma: γ"
 			});
+			assert.strictEqual(oGamma.isTransient(), false, "created persisted");
+			assert.strictEqual(oGamma.created(), oGammaCreated, "unchanged");
 
 			assert.strictEqual(oBeta.getIndex(), 2);
 			assert.deepEqual(oBeta.getObject(), {
@@ -28668,6 +28696,8 @@ sap.ui.define([
 				IsActiveEntity : false,
 				Name : "Beta: β"
 			});
+			assert.strictEqual(oBeta.isTransient(), false, "created persisted");
+			assert.strictEqual(oBeta.created(), oBetaCreated);
 
 			// code under test
 			oRoot.collapse();
@@ -28677,9 +28707,9 @@ sap.ui.define([
 			checkTable("after collapse", assert, oTable, [
 				sFriend + "(ArtistID='0',IsActiveEntity=false)"
 			], [
-				[false, 1, "etag0.0", "Alpha"],
-				["", "", "", ""],
-				["", "", "", ""]
+				[undefined, false, 1, "etag0.0", "Alpha"],
+				["", "", "", "", ""],
+				["", "", "", "", ""]
 			]);
 
 			that.expectRequest(sFriend.slice(1) + "?$select=ArtistID,IsActiveEntity,Name,_/NodeID"
@@ -28740,9 +28770,9 @@ sap.ui.define([
 				sFriend + "(ArtistID='2',IsActiveEntity=false)",
 				sFriend + "(ArtistID='1',IsActiveEntity=false)"
 			], [
-				[true, 1, "etag0.1", "Alpha #1"],
-				[undefined, 2, "etag2.3", "Gamma #1"],
-				[undefined, 2, "etag1.3", "Beta #1"]
+				[undefined, true, 1, "etag0.1", "Alpha #1"],
+				[undefined, undefined, 2, "etag2.3", "Gamma #1"],
+				[undefined, undefined, 2, "etag1.3", "Beta #1"]
 			]);
 			[, oGamma, oBeta] = oListBinding.getCurrentContexts();
 
@@ -28757,9 +28787,12 @@ sap.ui.define([
 					NodeID : "2,false"
 				}
 			});
+			assert.strictEqual(oGamma.isTransient(), undefined, "persisted");
+			assert.strictEqual(oGamma.created(), undefined);
 
 			assert.strictEqual(oBeta.getIndex(), 2);
 			assert.deepEqual(oBeta.getObject(), {
+				// "@$ui5.context.isTransient" deleted by #requestSideEffects/#expand
 				"@$ui5.node.level" : 2,
 				"@odata.etag" : "etag1.3",
 				ArtistID : "1",
@@ -28769,6 +28802,8 @@ sap.ui.define([
 					NodeID : "1,false"
 				}
 			});
+			assert.strictEqual(oBeta.isTransient(), undefined, "persisted");
+			assert.strictEqual(oBeta.created(), undefined);
 
 			return Promise.all([
 				// code under test
@@ -28791,9 +28826,55 @@ sap.ui.define([
 
 			return Promise.all([
 				// code under test
-				oBeta.move({parent : oGamma}),
+				oBeta.move({parent : oGamma}), // Note: child's index does not change!
 				that.waitForChanges(assert, "new parent already right before child")
 			]);
+		}).then(function () {
+			checkTable("after 'new parent already right before child'", assert, oTable, [
+				sFriend + "(ArtistID='0',IsActiveEntity=false)",
+				sFriend + "(ArtistID='2',IsActiveEntity=false)",
+				sFriend + "(ArtistID='1',IsActiveEntity=false)"
+			], [
+				[undefined, true, 1, "etag0.1", "Alpha #1"],
+				[undefined, true, 2, "etag2.3", "Gamma #1"],
+				[false, undefined, 3, "etag1.4", "Beta #1"]
+			]);
+			const aCurrentContexts = oListBinding.getCurrentContexts();
+			assert.strictEqual(oRoot, aCurrentContexts[0]);
+			assert.strictEqual(oGamma, aCurrentContexts[1]);
+			assert.strictEqual(oBeta, aCurrentContexts[2], "same instance");
+
+			assert.strictEqual(oGamma.getIndex(), 1);
+			assert.deepEqual(oGamma.getObject(), {
+				"@$ui5.node.isExpanded" : true,
+				"@$ui5.node.level" : 2,
+				"@odata.etag" : "etag2.3",
+				ArtistID : "2",
+				IsActiveEntity : false,
+				Name : "Gamma #1",
+				_ : {
+					NodeID : "2,false"
+				}
+			});
+			assert.strictEqual(oGamma.isTransient(), undefined, "persisted");
+			assert.strictEqual(oGamma.created(), undefined);
+
+			assert.strictEqual(oBeta.getIndex(), 2); // unchanged by #move
+			assert.deepEqual(oBeta.getObject(), {
+				"@$ui5.context.isTransient" : false, // "moved"
+				"@$ui5.node.level" : 3,
+				"@odata.etag" : "etag1.4",
+				ArtistID : "1",
+				IsActiveEntity : false,
+				Name : "Beta #1",
+				_ : {
+					NodeID : "1,false"
+				}
+			});
+			assert.strictEqual(oBeta.isTransient(), false, "created persisted");
+			assert.ok(oBeta.created() instanceof Promise);
+
+			return oBeta.created(); // to prove that it's not rejected
 		});
 	});
 

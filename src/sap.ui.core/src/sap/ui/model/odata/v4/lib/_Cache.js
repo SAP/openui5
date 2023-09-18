@@ -1664,7 +1664,7 @@ sap.ui.define([
 	 * cache's limit and number of active elements (if applicable).
 	 *
 	 * @param {object[]} [aElements]
-	 *   The array of elements
+	 *   The array of elements, defaults to a collection cache's own elements
 	 * @param {number} [iIndex]
 	 *   The array index of the old element to be removed or <code>undefined</code> in case the
 	 *   element is a kept-alive element without an index
@@ -1933,10 +1933,7 @@ sap.ui.define([
 		}
 		_Helper.addToCount(this.mChangeListeners, sPath, aElements, 1);
 		aElements.splice(iIndex, 0, oElement);
-		const sPredicate = _Helper.getPrivateAnnotation(oElement, "predicate");
-		if (sPredicate) {
-			aElements.$byPredicate[sPredicate] = oElement;
-		}
+		aElements.$byPredicate[_Helper.getPrivateAnnotation(oElement, "predicate")] = oElement;
 	};
 
 	/**
@@ -2655,25 +2652,31 @@ sap.ui.define([
 	};
 
 	/**
-	 * Drops the element with the given index and predicate from this cache's collection.
+	 * Drops the element with the given index and predicate from this cache's collection, so that it
+	 * will be read again from the server later on. Created persisted elements loose their special
+	 * treatment!
 	 *
 	 * @param {number} iIndex - An index
 	 * @param {string} sPredicate - A key predicate
+	 * @throws {Error} When the element with the given index is still transient
 	 *
 	 * @public
 	 */
 	_CollectionCache.prototype.drop = function (iIndex, sPredicate) {
 		const oElement = this.aElements[iIndex];
-		const sTransientPredicate = _Helper.getPrivateAnnotation(oElement, "transientPredicate");
 		if (oElement["@$ui5.context.isTransient"]) {
 			throw new Error("Must not drop a transient element");
-		} else if (sTransientPredicate) { // created persisted
-			this.aElements.$created -= 1;
-			this.iActiveElements -= 1;
-			delete this.aElements.$byPredicate[sTransientPredicate];
 		}
 		delete this.aElements[iIndex];
 		delete this.aElements.$byPredicate[sPredicate];
+
+		const sTransientPredicate = _Helper.getPrivateAnnotation(oElement, "transientPredicate");
+		if (sTransientPredicate) { // createdPersisted => persisted
+			this.aElements.$created -= 1;
+			this.iActiveElements -= 1;
+			this.iLimit += 1;
+			delete this.aElements.$byPredicate[sTransientPredicate];
+		}
 	};
 
 	/**
@@ -3654,8 +3657,7 @@ sap.ui.define([
 	 * @protected
 	 */
 	_CollectionCache.prototype.setEmpty = function () {
-		//TODO what about this.iLimit; should we keep it in sync?
-		this.aElements.$count = 0;
+		this.iLimit = this.aElements.$count = 0;
 	};
 
 	/**

@@ -1140,13 +1140,16 @@ sap.ui.define([
 	/**
 	 * Moves this node to the given parent (in case of a recursive hierarchy, see
 	 * {@link #setAggregation}, where <code>oAggregation.expandTo</code> must be one). No other
-	 * {@link sap.ui.model.odata.v4.ODataListBinding#create creation} or move must be pending, and
-	 * no other modification (including collapse of some ancestor node) must happen while this move
-	 * is pending!
+	 * {@link sap.ui.model.odata.v4.ODataListBinding#create creation}, {@link #delete deletion}, or
+	 * move must be pending, and no other modification (including collapse of some ancestor node)
+	 * must happen while this move is pending!
+	 *
+	 * This context's {@link #getIndex index} may change and it becomes "created persisted", with
+	 * {@link #isTransient} returning <code>false</code> etc.
 	 *
 	 * @param {object} oParameters - A parameter object
 	 * @param {sap.ui.model.odata.v4.Context} oParameters.parent - The new parent's context
-	 * @returns {Promise}
+	 * @returns {Promise<void>}
 	 *   A promise which is resolved without a defined result when the move is finished, or
 	 *   rejected in case of an error
 	 * @throws (Error)
@@ -1156,9 +1159,10 @@ sap.ui.define([
 	 * @public
 	 */
 	Context.prototype.move = function ({parent : oParent}) {
-		if (oParent === this) {
+		if (!oParent || oParent === this) {
 			throw new Error("Unsupported parent context: " + oParent);
 		}
+
 		return Promise.resolve(this.oBinding.move(this, oParent));
 	};
 
@@ -1788,11 +1792,28 @@ sap.ui.define([
 	};
 
 	/**
+	 * Sets this context's state from "persisted" to "created persisted".
+	 *
+	 * Note: this is a private and internal API. Do not call this!
+	 *
+	 * @throws {Error} If this context is already "created"
+	 *
+	 * @private
+	 */
+	Context.prototype.setCreatedPersisted = function () {
+		if (this.oCreatedPromise) {
+			throw new Error("Already 'created', currently transient: " + this.isTransient());
+		}
+		this.oCreatedPromise = Promise.resolve();
+		this.oSyncCreatePromise = SyncPromise.resolve();
+	};
+
+	/**
 	 * Sets the inactive flag to <code>true</code>
 	 *
 	 * Note: this is a private and internal API. Do not call this!
 	 *
-	 * @throws {Error} - If this context is not inactive
+	 * @throws {Error} If this context is not inactive
 	 *
 	 * @private
 	 * @see #isInactive

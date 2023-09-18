@@ -3072,38 +3072,46 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.model.odata.v4.Context} oChildContext - The (child) node to be moved
 	 * @param {sap.ui.model.odata.v4.Context} oParentContext - The new parent's context
-	 * @returns {sap.ui.base.SyncPromise}
+	 * @returns {sap.ui.base.SyncPromise<void>}
 	 *   A promise which is resolved without a defined result when the move is finished, or
 	 *   rejected in case of an error
 	 *
 	 * @private
 	 */
 	ODataListBinding.prototype.move = function (oChildContext, oParentContext) {
+		/*
+		 * Sets the <code>iIndex</code> of every context instance inside the given range.
+		 *
+		 * @param {number} iFrom - Start index
+		 * @param {number} iToInclusive - Inclusive end index
+		 */
+		const setIndices = (iFrom, iToInclusive) => {
+			for (let i = iFrom; i <= iToInclusive; i += 1) {
+				if (this.aContexts[i]) {
+					this.aContexts[i].iIndex = i;
+				}
+			}
+		};
+
 		const sChildPath = oChildContext.getCanonicalPath().slice(1);
 		const sParentPath = oParentContext.getCanonicalPath().slice(1); // before #lockGroup!
 		const oGroupLock = this.lockGroup(this.getUpdateGroupId(), true, true);
+
 		return this.oCache.move(oGroupLock, sChildPath, sParentPath).then(() => {
 			const iChildIndex = this.aContexts.indexOf(oChildContext);
 			const iParentIndex = this.aContexts.indexOf(oParentContext); // Note: !== iChildIndex
 			if (iChildIndex < iParentIndex) {
-				for (let i = iChildIndex + 1; i <= iParentIndex; i += 1) {
-					if (this.aContexts[i]) {
-						this.aContexts[i].iIndex -= 1;
-					}
-				}
+				this.aContexts.splice(iParentIndex + 1, 0, oChildContext);
 				this.aContexts.splice(iChildIndex, 1); // parent moves to lower index!
-				this.aContexts.splice(iParentIndex, 0, oChildContext);
-				oChildContext.iIndex = iParentIndex;
+				setIndices(iChildIndex, iParentIndex);
 			} else if (iChildIndex > iParentIndex + 1) {
-				for (let i = iParentIndex + 1; i < iChildIndex; i += 1) {
-					if (this.aContexts[i]) {
-						this.aContexts[i].iIndex += 1;
-					}
-				}
 				this.aContexts.splice(iChildIndex, 1); // parent unaffected!
 				this.aContexts.splice(iParentIndex + 1, 0, oChildContext);
-				oChildContext.iIndex = iParentIndex + 1;
+				setIndices(iParentIndex + 1, iChildIndex);
 			} // else: iChildIndex === iParentIndex + 1 => nothing to do
+			if (!oChildContext.created()) {
+				oChildContext.setCreatedPersisted();
+			}
 			this._fireChange({reason : ChangeReason.Change});
 		});
 	};
