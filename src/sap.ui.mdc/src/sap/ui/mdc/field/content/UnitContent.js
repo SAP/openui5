@@ -7,9 +7,8 @@ sap.ui.define([
 	"sap/ui/model/Filter",
 	"sap/base/util/isEmptyObject",
 	"sap/base/util/merge",
-	"sap/base/util/ObjectPath",
 	"sap/ui/mdc/enums/FieldEditMode"
-], function(DefaultContent, coreLibrary, Filter, isEmptyObject, merge, ObjectPath, FieldEditMode) {
+], function(DefaultContent, coreLibrary, Filter, isEmptyObject, merge, FieldEditMode) {
 	"use strict";
 
 	var ValueState = coreLibrary.ValueState;

@@ -3,8 +3,8 @@
  */
 
 sap.ui.define([
-	'sap/ui/mdc/field/FieldInfoBase', 'sap/ui/core/Control', 'sap/ui/core/InvisibleText', 'sap/ui/base/ManagedObjectObserver'
-], function(FieldInfoBase, Control, InvisibleText, ManagedObjectObserver) {
+	'sap/ui/mdc/field/FieldInfoBase', 'sap/ui/core/Control', 'sap/ui/base/ManagedObjectObserver'
+], function(FieldInfoBase, Control, ManagedObjectObserver) {
 	"use strict";
 
 	/**

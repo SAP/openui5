@@ -5,13 +5,11 @@
 sap.ui.define([
 	'sap/ui/mdc/valuehelp/base/Container',
 	'sap/ui/mdc/util/loadModules',
-	"sap/ui/dom/units/Rem",
-	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/library"
+	'sap/ui/thirdparty/jquery',
+	'sap/ui/core/library'
 ], function(
 	Container,
 	loadModules,
-	Rem,
 	jQuery,
 	coreLibrary
 ) {
