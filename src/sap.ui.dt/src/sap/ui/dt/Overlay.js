@@ -576,6 +576,7 @@ sap.ui.define([
 		var oGeometryChangedPromise = Promise.resolve();
 		if (this.isVisible()) {
 			if (oGeometry && oGeometry.visible) {
+				this._ensureVisibility(this.$());
 				this._setSize(this.$(), oGeometry);
 				var $RenderingParent = this._getRenderingParent();
 
@@ -662,15 +663,21 @@ sap.ui.define([
 	};
 
 	/**
+	 * Ensures that the DOM element is visible
+	 * @param {jQuery} $Target - DOM element which we will ensure visibility
+	 * @protected
+	 */
+	Overlay.prototype._ensureVisibility = function($Target) {
+		$Target.css("display", "block");
+	};
+
+	/**
 	 * Sets size to specified DOM Element
 	 * @param {jQuery} $Target - DOM element which will receive new size
 	 * @param {object} oGeometry - Geometry object to get new dimensions from
 	 * @protected
 	 */
 	Overlay.prototype._setSize = function($Target, oGeometry) {
-		// ensure visibility
-		$Target.css("display", "block"); // FIXME: this method should not be responsible for visibility
-
 		var mSize = oGeometry.size;
 
 		// ASSIGN SIZE
@@ -769,10 +776,10 @@ sap.ui.define([
 	 * @private
 	 */
 	Overlay.prototype._deleteDummyContainer = function($TargetDomRef, oTargetOverlay, oOriginalDomRef) {
-		var $DummyScrollContainer = $TargetDomRef.find(">.sapUiDtDummyScrollContainer");
-		if ($DummyScrollContainer.length) {
+		if (this._oDummyScrollContainer.length) {
 			var oScrollbarSynchronizer = this._oScrollbarSynchronizers.get($TargetDomRef.get(0));
-			$DummyScrollContainer.remove();
+			this._oDummyScrollContainer.remove();
+			this._oDummyScrollContainer = jQuery();
 			// Ensure that the element positions are synced before destroying
 			oScrollbarSynchronizer.attachEventOnce("synced", function() {
 				oScrollbarSynchronizer.destroy();
@@ -808,17 +815,16 @@ sap.ui.define([
 
 		var iScrollHeight = oOriginalDomRef.scrollHeight;
 		var iScrollWidth = oOriginalDomRef.scrollWidth;
+		this._oDummyScrollContainer = $TargetDomRef.find("> .sapUiDtDummyScrollContainer");
 
 		// Math.ceil is needed because iScrollHeight is an integer value, mSize not. To compare we should have an integer value for mSize too.
 		// example: iScrollHeight = 24px, mSize.height = 23.98375. Both should be the same.
 		if (iScrollHeight > Math.ceil(mSize.height) || iScrollWidth > Math.ceil(mSize.width)) {
-			// TODO: save ref to DummyScrollContainer somewhere to avoid "find" selector
-			var oDummyScrollContainer = $TargetDomRef.find("> .sapUiDtDummyScrollContainer");
 			var oScrollbarSynchronizer;
-			if (!oDummyScrollContainer.length) {
-				oDummyScrollContainer = jQuery("<div class='sapUiDtDummyScrollContainer'></div>");
-				oDummyScrollContainer.height(iScrollHeight);
-				oDummyScrollContainer.width(iScrollWidth);
+			if (!this._oDummyScrollContainer.length) {
+				this._oDummyScrollContainer = jQuery("<div class='sapUiDtDummyScrollContainer'></div>");
+				this._oDummyScrollContainer.height(iScrollHeight);
+				this._oDummyScrollContainer.width(iScrollWidth);
 
 				if (
 					oTargetOverlay
@@ -837,14 +843,14 @@ sap.ui.define([
 					oTargetOverlay.addStyleClass("sapUiDtOverlayWithScrollBar");
 					oTargetOverlay.addStyleClass("sapUiDtOverlayWithScrollBarHorizontal");
 				}
-				$TargetDomRef.append(oDummyScrollContainer);
+				$TargetDomRef.append(this._oDummyScrollContainer);
 				oScrollbarSynchronizer = new ScrollbarSynchronizer({
 					synced: this.fireScrollSynced.bind(this)
 				});
 				oScrollbarSynchronizer.addTarget(oOriginalDomRef, $TargetDomRef.get(0));
 				this._oScrollbarSynchronizers.set($TargetDomRef.get(0), oScrollbarSynchronizer);
 			} else {
-				oDummyScrollContainer.css({
+				this._oDummyScrollContainer.css({
 					height: iScrollHeight,
 					width: iScrollWidth
 				});
