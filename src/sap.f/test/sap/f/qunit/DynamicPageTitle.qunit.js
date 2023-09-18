@@ -580,6 +580,75 @@ function (
 		oDynamicPage.destroy();
 	});
 
+	QUnit.module("DynamicPageTitle - focus of snapped/expanded content", {
+		before: function() {
+			var oStyleTag = document.createElement("style");
+			oStyleTag.innerText = ".active { visibility: visible; }";
+			document.head.appendChild(oStyleTag);
+			this.styleTag = oStyleTag;
+
+		},
+		after: function() {
+			this.styleTag.remove();
+			this.styleTag = null;
+		}
+	});
+
+	QUnit.test("Prevents focus on hidden snappedContent", function (assert) {
+		// Arrange
+		var oDynamicPage = oFactory.getDynamicPage(),
+			oDynamicPageTitle = oDynamicPage.getTitle(),
+			oBtn = new sap.m.Button({
+				text: "snapped content"
+			});
+
+		oDynamicPageTitle.addSnappedContent(oBtn);
+
+		oUtil.renderObject(oDynamicPage);
+		Core.applyChanges();
+
+		var oActiveElement = document.activeElement,
+			oBtnElement = oBtn.getDomRef();
+
+		// Act
+		oBtnElement.classList.add("active");
+		oBtnElement.focus();
+
+		// Assert
+		assert.strictEqual(document.activeElement, oActiveElement, "focus is unchanged");
+
+		// Clean up
+		oDynamicPage.destroy();
+	});
+
+	QUnit.test("Prevents focus on hidden expandedContent", function (assert) {
+		// Arrange
+		var oDynamicPage = oFactory.getDynamicPage(),
+			oDynamicPageTitle = oDynamicPage.getTitle(),
+			oBtn = new sap.m.Button({
+				text: "expanded content"
+			});
+
+		oDynamicPage.setHeaderExpanded(false);
+		oDynamicPageTitle.addExpandedContent(oBtn);
+
+		oUtil.renderObject(oDynamicPage);
+		Core.applyChanges();
+
+		var oActiveElement = document.activeElement,
+			oBtnElement = oBtn.getDomRef();
+
+		// Act
+		oBtnElement.classList.add("active");
+		oBtnElement.focus();
+
+		// Assert
+		assert.strictEqual(document.activeElement, oActiveElement, "focus is unchanged");
+
+		// Clean up
+		oDynamicPage.destroy();
+	});
+
 	QUnit.module("DynamicPage - Rendering - Title heading, snappedHeading and expandedHeading");
 
 	QUnit.test("Focus span rendered correctly with and without header", function (assert) {

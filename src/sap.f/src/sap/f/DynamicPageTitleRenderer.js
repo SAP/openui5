@@ -234,6 +234,7 @@ sap.ui.define([
 
 	DynamicPageTitleRenderer._renderExpandContent = function (oRm, oDynamicPageTitleState) {
 		oRm.openStart("div", oDynamicPageTitleState.id + "-expand-wrapper");
+		oRm.class("sapFDynamicPageTitleExpanded");
 		oRm.openEnd();
 		oDynamicPageTitleState.expandedContent.forEach(oRm.renderControl, oRm);
 		oRm.close("div");
