@@ -907,30 +907,41 @@ sap.ui.define([
 	 *   <code>bIgnoreETag</code> is used for an operation other than a bound action. It is also
 	 *   rejected if <code>fnOnStrictHandlingFailed</code> is supplied and
 	 *   <ul>
-	 *    <li> is used for an operation other than an action,
-	 *    <li> another request that applies the preference "handling=strict" exists in a different
-	 *      change set of the same $batch request,
-	 *    <li> it does not return a <code>Promise</code>,
-	 *    <li> returns a <code>Promise</code> that resolves with <code>false</code>. In this case
-	 *      <code>oError.canceled === true</code>.
+	 *     <li> is used for an operation other than an action,
+	 *     <li> another request that applies the preference "handling=strict" exists in a different
+	 *       change set of the same $batch request,
+	 *     <li> it does not return a <code>Promise</code>,
+	 *     <li> returns a <code>Promise</code> that resolves with <code>false</code>. In this case
+	 *       <code>oError.canceled === true</code>.
 	 *   </ul>
 	 *   It is also rejected if <code>bReplaceWithRVC</code> is supplied, and there is no return
 	 *   value context at all or the existing context as described above is currently part of the
 	 *   list's collection (that is, has an index).
 	 *   <br>
 	 *   A return value context is an {@link sap.ui.model.odata.v4.Context} which represents a bound
-	 *   operation response. It is created only if the operation is bound and has a single entity
-	 *   return value from the same entity set as the operation's binding parameter and has a
-	 *   parent context which is an {@link sap.ui.model.odata.v4.Context} and points to an entity
-	 *   from an entity set. It is destroyed the next time this operation binding is executed again!
-	 *   <br>
-	 *   @experimental as of version 1.119.0  the binding (parameter's) path can contain one
-	 *   navigation property.
+	 *   operation response. It is created only if the operation is bound and these conditions
+	 *   apply:
+	 *   <ul>
+	 *     <li> The operation has a single entity return value from the same entity set as the
+	 *       operation's binding parameter.
+	 *     <li> It has a parent context which is an {@link sap.ui.model.odata.v4.Context} and points
+	 *       to (an entity from) an entity set. The path of the parent context must not contain a
+	 *       navigation property (but see last paragraph).
+	 *   </ul>
+	 *   <b>Note:</b> A return value context is destroyed the next time the operation binding is
+	 *   executed again.
 	 *   <br>
 	 *   If a return value context is created, it must be used instead of
 	 *   <code>this.getBoundContext()</code>. All bound messages will be related to the return value
 	 *   context only. Such a message can only be connected to a corresponding control if the
 	 *   control's property bindings use the return value context as binding context.
+	 *   <br>
+	 *   A return value context may also be provided if the parent context's path contains a maximum
+	 *   of one navigation property. In addition to the existing preconditions for a return value
+	 *   context, the metadata has to specify a partner attribute for the navigation property and
+	 *   the partner relationship has to be bi-directional. Also the navigation property binding has
+	 *   to be available in the entity set of the first segment in the parent context's path
+	 *   (@experimental as of version 1.119.0).
 	 * @throws {Error} If
 	 *   <ul>
 	 *     <li> the binding's root binding is suspended,
@@ -1361,7 +1372,8 @@ sap.ui.define([
 	 * 3. EntitySetPath of operation is the binding parameter.
 	 * 4. Operation binding has
 	 *    (a) a V4 parent context which
-	 *    (b) points to an entity from an entity set w/ a maximum of one navigation property.
+	 *    (b) points to an entity from an entity set or the entity set itself w/ a maximum of one
+	 *        navigation property.
 	 *
 	 * BEWARE: It is the caller's duty to check 1. through 4.(a) via
 	 * {@link #isReturnValueLikeBindingParameter}!
