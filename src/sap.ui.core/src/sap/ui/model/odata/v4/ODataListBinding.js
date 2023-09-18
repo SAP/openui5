@@ -143,7 +143,7 @@ sap.ui.define([
 		// #destroyPreviousContexts after the next call to #createContexts.
 		// A kept-alive context may be parked here for a longer time, with undefined index.
 		this.mPreviousContextsByPath = {};
-		this.aPreviousData = [];
+		this.aPreviousData = null; // no previous data for E.C.D. known yet
 		this.bRefreshKeptElements = false; // refresh kept elements when resuming?
 		this.sResumeAction = undefined; // a special resume action for $$sharedRequest
 		this.bSharedRequest = "$$sharedRequest" in mParameters
@@ -279,7 +279,7 @@ sap.ui.define([
 		 * @param {string} sNewPath - The path with the transient predicate replaced
 		 */
 		function adjustPreviousData(sOldPath, sNewPath) {
-			var iIndex = that.aPreviousData.indexOf(sOldPath);
+			var iIndex = that.aPreviousData?.indexOf(sOldPath);
 
 			if (iIndex >= 0) {
 				that.aPreviousData[iIndex] = sNewPath;
@@ -2254,7 +2254,7 @@ sap.ui.define([
 		}
 
 		if (!this.isResolved()) { // unresolved relative binding
-			this.aPreviousData = []; // compute diff from scratch when binding is resolved again
+			this.aPreviousData = null; // compute diff from scratch when binding is resolved again
 			return [];
 		}
 
@@ -2322,7 +2322,7 @@ sap.ui.define([
 					};
 				}
 				if (bFireChange) {
-					if (bChanged || (that.oDiff && that.oDiff.aDiff.length)) {
+					if (bChanged || (that.oDiff && that.oDiff.aDiff?.length)) {
 						that._fireChange({reason : sChangeReason});
 					} else { // we cannot keep a diff if we do not tell the control to fetch it!
 						that.oDiff = undefined;
@@ -2496,7 +2496,7 @@ sap.ui.define([
 	 *   The length of the range requested in getContexts
 	 * @returns {object}
 	 *   The array of differences which is the comparison of current versus previous data as given
-	 *   by {@link #getContextData}.
+	 *   by {@link #getContextData}, or <code>null</code> in case no previous data is known.
 	 *
 	 * @private
 	 */
@@ -2508,7 +2508,7 @@ sap.ui.define([
 			return that.getContextData(oContext);
 		});
 
-		return this.diffData(aPreviousData, this.aPreviousData);
+		return aPreviousData ? this.diffData(aPreviousData, this.aPreviousData) : null;
 	};
 
 	/**

@@ -339,7 +339,7 @@ sap.ui.define([
 		assert.deepEqual(oBinding.getHeaderContext(), oHeaderContext);
 		assert.strictEqual(oBinding.sOperationMode, OperationMode.Server);
 		assert.deepEqual(oBinding.mPreviousContextsByPath, {});
-		assert.deepEqual(oBinding.aPreviousData, []);
+		assert.deepEqual(oBinding.aPreviousData, null);
 		assert.strictEqual(oBinding.bRefreshKeptElements, false);
 		assert.strictEqual(oBinding.bSharedRequest, "sharedRequest");
 		assert.strictEqual(oBinding.aSorters, aSorters);
@@ -1205,7 +1205,7 @@ sap.ui.define([
 		assert.strictEqual(oBinding.sChangeReason, undefined);
 		assert.deepEqual(oBinding.oDiff, undefined);
 		assert.deepEqual(oBinding.mPreviousContextsByPath, {});
-		assert.deepEqual(oBinding.aPreviousData, []);
+		assert.deepEqual(oBinding.aPreviousData, null);
 
 		oCacheMock.expects("create")
 			.withExactArgs(sinon.match.same(this.oModel.oRequestor), "EMPLOYEES",
@@ -1226,7 +1226,7 @@ sap.ui.define([
 		assert.strictEqual(oBinding.sChangeReason, undefined);
 		assert.deepEqual(oBinding.oDiff, undefined);
 		assert.deepEqual(oBinding.mPreviousContextsByPath, {});
-		assert.deepEqual(oBinding.aPreviousData, []);
+		assert.deepEqual(oBinding.aPreviousData, null);
 
 		// code under test
 		oBinding = this.bindList("EMPLOYEE_2_TEAM", undefined, undefined, undefined, mParameters);
@@ -1761,7 +1761,7 @@ sap.ui.define([
 		aContexts = oBinding.getContexts();
 
 		assert.deepEqual(aContexts, []);
-		assert.deepEqual(oBinding.aPreviousData, []);
+		assert.deepEqual(oBinding.aPreviousData, null);
 	});
 
 	//*********************************************************************************************
@@ -2120,7 +2120,8 @@ sap.ui.define([
 [
 	{bChanged : true, aDiff : [{}]},
 	{bChanged : false, aDiff : [{}]},
-	{bChanged : false, aDiff : []}
+	{bChanged : false, aDiff : []},
+	{bChanged : false, aDiff : null}
 ].forEach(function (oFixture) {
 	QUnit.test("getContexts: E.C.D, no diff yet, " + JSON.stringify(oFixture), function (assert) {
 		var oBinding = this.bindList("TEAM_2_EMPLOYEES",
@@ -2143,7 +2144,7 @@ sap.ui.define([
 			.withExactArgs(0, 10, 0, undefined, true, sinon.match.func)
 			.returns(oFetchContextsPromise);
 		this.mock(oBinding).expects("_fireChange")
-			.exactly(oFixture.bChanged || oFixture.aDiff.length ? 1 : 0)
+			.exactly(oFixture.bChanged || oFixture.aDiff?.length ? 1 : 0)
 			.withExactArgs({reason : sChangeReason});
 
 		// code under test
@@ -2152,7 +2153,7 @@ sap.ui.define([
 		assert.strictEqual(aContexts.dataRequested, true);
 
 		return oFetchContextsPromise.then(function () {
-			if (oFixture.bChanged || oFixture.aDiff.length) {
+			if (oFixture.bChanged || oFixture.aDiff?.length) {
 				assert.deepEqual(oBinding.oDiff, {
 					aDiff : oFixture.aDiff,
 					iLength : 10
@@ -5851,7 +5852,8 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("getDiff", function (assert) {
+[false, true].forEach((bHasPreviousData) => {
+	QUnit.test(`getDiff: w/ previous data = ${bHasPreviousData}`, function (assert) {
 		var oBinding = this.bindList("EMPLOYEE_2_EQUIPMENTS",
 				Context.create(this.oModel, oParentBinding, "/EMPLOYEES/0")),
 			oBindingMock = this.mock(oBinding),
@@ -5859,22 +5861,23 @@ sap.ui.define([
 			aDiff = [],
 			aPreviousData = [];
 
-		oBinding.aPreviousData = aPreviousData;
+		oBinding.aPreviousData = bHasPreviousData ? aPreviousData : null;
 		oBindingMock.expects("getContextsInViewOrder")
 			.withExactArgs(0, 50).returns(aContexts);
 		oBindingMock.expects("getContextData").withExactArgs(sinon.match.same(aContexts[0]))
 			.returns("~data~0");
 		oBindingMock.expects("getContextData").withExactArgs(sinon.match.same(aContexts[1]))
 			.returns("~data~1");
-		oBindingMock.expects("diffData")
+		oBindingMock.expects("diffData").exactly(bHasPreviousData ? 1 : 0)
 			.withExactArgs(sinon.match.same(aPreviousData), ["~data~0", "~data~1"])
 			.returns(aDiff);
 
 		// code under test
-		assert.strictEqual(oBinding.getDiff(50), aDiff);
+		assert.strictEqual(oBinding.getDiff(50), bHasPreviousData ? aDiff : null);
 
 		assert.deepEqual(oBinding.aPreviousData, ["~data~0", "~data~1"]);
 	});
+});
 
 	//*********************************************************************************************
 	[
