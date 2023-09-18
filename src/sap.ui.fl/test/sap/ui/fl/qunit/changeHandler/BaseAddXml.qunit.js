@@ -66,7 +66,7 @@ sap.ui.define([
 			});
 
 			var oChangeJson = {
-				reference: "sap.ui.fl.qunit.changeHander.BaseAddXml.Component",
+				reference: "sap.ui.fl.qunit.changeHander.BaseAddXml",
 				selector: {
 					id: this.oHBox.getId(),
 					type: "sap.m.HBox"

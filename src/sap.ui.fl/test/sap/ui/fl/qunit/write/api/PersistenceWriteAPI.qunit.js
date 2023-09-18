@@ -96,7 +96,7 @@ sap.ui.define([
 				fileName: "id_1445501120486_26",
 				fileType: "change",
 				changeType: "hideControl",
-				reference: "reference.app.Component",
+				reference: "reference.app",
 				packageName: "$TMP",
 				content: {},
 				selector: {
@@ -104,7 +104,7 @@ sap.ui.define([
 				},
 				layer: Layer.CUSTOMER,
 				texts: {},
-				namespace: "reference.app.Component",
+				namespace: "reference.app",
 				creation: "2018-10-16T08:00:02",
 				originalLanguage: "EN",
 				conditions: {},

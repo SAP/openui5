@@ -183,7 +183,8 @@ sap.ui.define([
 		});
 	}
 
-	function createVariantsMap(aFlexObjects, sReference) {
+	function createVariantsMap(aFlexObjects) {
+		const sReference = aFlexObjects[0]?.getFlexObjectMetadata().reference;
 		const aVariants = aFlexObjects.filter((oFlexObject) => {
 			return oFlexObject.getFileType() === "ctrl_variant";
 		});
@@ -295,7 +296,6 @@ sap.ui.define([
 
 	var oVariantManagementMapDataSelector = new DataSelector({
 		id: "variantManagementMap",
-		parameterKey: "reference",
 		parentDataSelector: FlexState.getFlexObjectsDataSelector(),
 		executeFunction: createVariantsMap
 	});

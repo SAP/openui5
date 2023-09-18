@@ -27,7 +27,7 @@ sap.ui.define([
 	var oFileContent = {
 		fileName: "foo",
 		fileType: "change",
-		reference: "sap.ui.demoapps.rta.fiorielements.Component",
+		reference: "sap.ui.demoapps.rta.fiorielements",
 		content: {
 			originalControlType: "sap.m.Label"
 		},

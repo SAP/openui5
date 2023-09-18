@@ -317,7 +317,7 @@ sap.ui.define([
 			var sCacheKey = "abc";
 			var oPreview = {
 				maxLayer: "PARTNER",
-				reference: "SeleniumListReportAdaptation.Component"
+				reference: "SeleniumListReportAdaptation"
 			};
 			var mPropertyBag = {
 				manifest: this.oManifest,
