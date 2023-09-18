@@ -463,10 +463,10 @@ sap.ui.define([
 			return;
 		}
 		this.firePress({/* no parameters */});
-		if (this.hasListeners("press")) {
-			this.isPressed = !this.isPressed;
-			this.toggleStyleClass("sapMAvatarPressed", this._isPressed);
-		}
+		// if (this.hasListeners("press")) {
+		// 	this.isPressed = !this.isPressed;
+		// 	this.toggleStyleClass("sapMAvatarPressed", this._isPressed);
+		// }
 	};
 
 	/**
