@@ -5281,6 +5281,44 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("Select in currency stand-alone", function(assert) {
+
+		oField.setDataTypeFormatOptions({showNumber: false, showMeasure: true});
+		oCore.applyChanges();
+
+		var oIntType = new IntegerType();
+		var oStringType = new StringType();
+		oField._oContentFactory.setCompositeTypes([oIntType, oStringType]); // fake composite types
+
+		var oFieldHelp = oCore.byId(oField.getValueHelp());
+		sinon.spy(oFieldHelp, "connect");
+
+		var aContent = oField.getAggregation("_content");
+		var oContent1 = aContent && aContent.length > 0 && aContent[0];
+		assert.equal(aContent.length, 1, "Only one content control");
+		assert.ok(oContent1.getShowValueHelp(), "Currency Input has value help");
+		var oSuggestControl = oField.getControlForSuggestion();
+		assert.equal(oSuggestControl && oSuggestControl.getId(), oContent1 && oContent1.getId(), "Currency control is used for suggestion");
+
+		oContent1.focus(); // as ValueHelp is connected with focus
+		assert.ok(oFieldHelp.connect.calledOnce, "FieldHelp connected");
+		assert.equal(oFieldHelp.connect.args[0][0], oField, "FieldHelp connected to Field");
+		assert.equal(oFieldHelp.connect.args[0][1].dataType, oStringType, "Type of currency part used for FieldHelp");
+		// simulate select event to see if field is updated
+		var oCondition = Condition.createCondition("EQ", ["EUR", "EUR"], undefined, undefined, ConditionValidated.Validated, {payloadTest: "Z"});
+		oFieldHelp.fireSelect({ conditions: [oCondition] });
+		assert.equal(iCount, 1, "Change Event fired");
+		var aConditions = oField.getConditions();
+		assert.equal(aConditions.length, 1, "one condition in Codition model");
+		assert.equal(aConditions[0].values[0][0], 123.45, "condition value0");
+		assert.equal(aConditions[0].values[0][1], "EUR", "condition value1");
+		assert.equal(aConditions[0].operator, "EQ", "condition operator");
+		assert.ok(aConditions[0].hasOwnProperty("payload"), "Condition has payload");
+		assert.equal(aConditions[0].payload.payloadTest, "Z", "payload value");
+		assert.equal(oContent1.getDOMValue(), "EUR", "value in inner control");
+
+	});
+
 	QUnit.test("Enter currency with async parsing", function(assert) {
 
 		var oIcon = new Icon("I1", { src: "sap-icon://sap-ui5", decorative: false, press: function(oEvent) {} }).placeAt("content");
