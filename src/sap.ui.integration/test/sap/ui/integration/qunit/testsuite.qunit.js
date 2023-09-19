@@ -209,6 +209,7 @@ sap.ui.define([
 			"cards/actions/CardActions": {
 				module: [
 					"./cards/actions/CardActions.qunit",
+					"./cards/actions/ShowHideCardActions.qunit",
 					"./cards/actions/SubmitAction.qunit"
 				],
 				coverage: {
