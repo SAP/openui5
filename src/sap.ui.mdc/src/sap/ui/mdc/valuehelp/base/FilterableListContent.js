@@ -439,7 +439,7 @@ sap.ui.define([
 	FilterableListContent.prototype.getFormattedTitle = function(iCount) {
 		let sTitle = ListContent.prototype.getFormattedTitle.apply(this, arguments);
 		if (!sTitle) {
-			sTitle = this._oResourceBundle.getText(iCount ? "valuehelp.SELECTFROMLIST" : "valuehelp.SELECTFROMLISTNONUMBER", iCount);
+			sTitle = this._oResourceBundle.getText(iCount ? "valuehelp.SELECTFROMLIST" : "valuehelp.SELECTFROMLISTNONUMBER", [iCount]);
 		}
 		return sTitle;
 	};
@@ -468,7 +468,7 @@ sap.ui.define([
 	FilterableListContent.prototype.getFormattedTokenizerTitle = function(iCount) {
 		let sTokenizerTitle = this.getTokenizerTitle();
 		if (!sTokenizerTitle) {
-			sTokenizerTitle = this._oResourceBundle.getText("valuehelp.SELECTFROMLIST.TokenizerTitle" + (iCount === 0 ? "NoCount" : ""), iCount);
+			sTokenizerTitle = this._oResourceBundle.getText("valuehelp.SELECTFROMLIST.TokenizerTitle" + (iCount === 0 ? "NoCount" : ""), [iCount]);
 		}
 		return sTokenizerTitle;
 	};
