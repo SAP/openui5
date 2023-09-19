@@ -1282,42 +1282,6 @@
 	 */
 
 	/**
-	 *
-	 * @typedef {object} sap.ui.mdc.filterbar.PropertyInfo
-	 * @property {string} path
-	 *   The identifier of the property
-	 * @property {string} [name]
-	 *   The alternative identifier of the property. Either path or name can be used, preferably is on path
-	 * @property {string} label
-	 *   The label of the identifier
-	 * @property {string} [tooltip]
-	 *   The tooltip of the identifier
-	 * @property {string} dataType
-	 *   The data type of the property
-	 * @property {object} [constraints]
-	 *   Defines constraints for the data type of the property
-	 * @property {object} [formatOptions]
-	 *   Defines format options for the data type of the property
-	 * @property {string} [group]
-	 *   The group identifier to which the property belongs
-	 * @property {string} [groupLabel]
-	 *   The group name of the group identifier
-	 * @property {boolean} [caseSensitive = false]
-	 *   Defines that the filter value is treated as case-sensitive if set to <code>true</code>
-	 * @property {sap.ui.mdc.enums.FieldDisplay} [display]
-	 *   Describes how the value will be presented to the user
-	 * @property {boolean} [hiddenFilter = false]
-	 *   Defines if the filter is visible in the filter bar
-	 * @property {boolean} [required = false]
-	 *   Defines if the filter is mandatory
-	 * @property {int} [maxConditions]
-	 *   Defines if the filter supports multiple values <code>-1</code> or single values <code>1</code>
-	 *
-	 * @public
-	 * @since 1.112.0
-	 */
-
-	/**
 	 * @namespace
 	 * @name sap.ui.mdc.chart
 	 * @public
