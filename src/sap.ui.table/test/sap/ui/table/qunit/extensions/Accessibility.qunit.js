@@ -1654,7 +1654,7 @@ sap.ui.define([
 			"1st Column header cell: colnumberofcols");
 
 		sinon.stub(oTable, "_getTotalRowCount").returns(1);
-		oTable.setVisibleRowCount(1);
+		oTable.getRowMode().setRowCount(1);
 		oTable._bVariableRowHeightEnabled = true;
 		oCore.applyChanges();
 
@@ -1868,7 +1868,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Highlight texts", function(assert) {
-		oTable.setVisibleRowCount(1);
+		oTable.getRowMode().setRowCount(1);
 		oCore.applyChanges();
 
 		var aVisibleHighlights = [

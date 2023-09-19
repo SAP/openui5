@@ -771,7 +771,7 @@ sap.ui.define([
 					fileName: "idRename0",
 					layer: Layer.CUSTOMER,
 					changeType: "renameField",
-					reference: "sap.ui.rta.test.Component",
+					reference: "sap.ui.rta.test",
 					selector: {
 						id: "idMain1--Victim",
 						idIsLocal: true
@@ -781,7 +781,7 @@ sap.ui.define([
 					fileName: "idRename1",
 					layer: Layer.CUSTOMER,
 					changeType: "renameField",
-					reference: "sap.ui.rta.test.Component",
+					reference: "sap.ui.rta.test",
 					selector: {
 						id: "idMain1--Victim",
 						idIsLocal: true

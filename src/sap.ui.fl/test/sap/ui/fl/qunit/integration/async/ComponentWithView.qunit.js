@@ -46,7 +46,7 @@ sap.ui.define([
 						fileName: "id_1504610195273_78_addSimpleFormGroup",
 						fileType: "change",
 						changeType: "addSimpleFormGroup",
-						reference: "sap.ui.fl.qunit.integration.async.testComponentWithView.Component",
+						reference: "sap.ui.fl.qunit.integration.async.testComponentWithView",
 						packageName: "$TMP",
 						content: {
 							group: {

@@ -257,8 +257,7 @@ function(
 	 * @returns {boolean} If the sap.m.ObjectListItem has bottom content
 	 */
 	ObjectListItem.prototype._hasBottomContent = function() {
-
-		return this._hasAttributes() || this._hasStatus() || false || false || this._getVisibleMarkers().length > 0;
+		return (this._hasAttributes() || this._hasStatus() || this._getVisibleMarkers().length > 0);
 	};
 
 	/**
@@ -521,46 +520,6 @@ function(
 
 		return this;
 	};
-
-	/**
-	 * @private
-	 * @param {string} markerType the type of the marker which should be created to updated
-	 * @param {boolean} bMarked the new value
-	 * @returns {this} this pointer for chaining
-	 */
-	ObjectListItem.prototype._setOldMarkers = function (markerType, bMarked) {
-		var aAllMarkers = this.getMarkers();
-		var bHasMarker = false;
-		var oIds = {
-			Flagged : "-flag",
-			Favorite : "-favorite",
-			Locked : "-lock"
-		};
-
-		this.setProperty("mark" + markerType, bMarked, false);
-
-		bMarked = false;
-
-		for (var i = 0; i < aAllMarkers.length; i++) {
-			if (aAllMarkers[i].getType() === markerType) {
-				bHasMarker = true;
-				aAllMarkers[i].setVisible(bMarked);
-
-				break;
-			}
-		}
-
-		if (!bHasMarker) {
-			this.insertAggregation("markers", new ObjectMarker({
-				id: this.getId() + oIds[markerType],
-				type: markerType,
-				visible: bMarked
-			}));
-		}
-
-		return this;
-	};
-
 
 	/**
 	 * @private

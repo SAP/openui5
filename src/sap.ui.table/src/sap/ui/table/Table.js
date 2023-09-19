@@ -111,23 +111,6 @@ sap.ui.define([
 			width: {type: "sap.ui.core.CSSSize", group: "Dimension", defaultValue: 'auto'},
 
 			/**
-			 * Row height in pixel.
-			 *
-			 * In the table's header, it defines the minimum height of the row, but it cannot be less than the default height based on the
-			 * content density configuration. The actual height can increase based on the content.
-			 *
-			 * In the table's body, it defines the height of the row content. The actual row height is also influenced by other factors, such as
-			 * the border width. If the <code>visibleRowCountMode</code> property is set to {@link sap.ui.table.VisibleRowCountMode Fixed} or
-			 * {@link sap.ui.table.VisibleRowCountMode Interactive}, the value defines the minimum height, and the actual height can
-			 * increase based on the content. If the mode is {@link sap.ui.table.VisibleRowCountMode Auto}, the value defines the actual
-			 * height, and any content that doesn't fit is cut off.
-			 *
-			 * If no value is set (includes 0), a default height is applied based on the content density configuration. In any
-			 * <code>visibleRowCountMode</code>, the actual height can increase based on the content.
-			 */
-			rowHeight: {type: "int", group: "Appearance", defaultValue: null},
-
-			/**
 			 * Header row height in pixel. If a value greater than 0 is set, it overrides the height defined in the <code>rowHeight</code> property
 			 * for the rows in the table's header. The value defines the minimum height, but it cannot be less than the default height based on the
 			 * content density configuration. The actual height can increase based on the content.
@@ -144,11 +127,6 @@ sap.ui.define([
 			 * a 100% accessibility of the table can't be guaranteed any more.
 			 */
 			columnHeaderVisible: {type: "boolean", group: "Appearance", defaultValue: true},
-
-			/**
-			 * Number of visible rows of the table.
-			 */
-			visibleRowCount: {type: "int", group: "Appearance", defaultValue: 10},
 
 			/**
 			 * First visible row.
@@ -195,34 +173,6 @@ sap.ui.define([
 			showNoData: {type: "boolean", group: "Appearance", defaultValue: true},
 
 			/**
-			 * Defines how the table handles the visible rows in the table.
-			 *
-			 * In the <code>"Fixed"</code> mode, the table always has as many rows as defined in the <code>visibleRowCount</code> property.
-			 *
-			 * In the <code>"Auto"</code> mode, the <code>visibleRowCount</code> property is changed by the table automatically. It will then
-			 * adjust its row count to the space it is allowed to cover (limited by the surrounding container), but it cannot have less than
-			 * defined in the <code>minAutoRowCount</code> property. The <code>visibleRowCount</code> property cannot be set manually.
-			 * <h3>Restrictions</h3>
-			 * <ul>
-			 *   <li>All rows need to have the same height.</li>
-			 *   <li>The table must be rendered without siblings in its parent DOM element. The only exception is if the parent element is a CSS flex
-			 *       container, and the table is a CSS flex item allowed to grow and shrink.</li>
-			 * </ul>
-			 *
-			 * In the <code>"Interactive"</code> mode, the table has as many rows as defined in the <code>visibleRowCount</code> property after
-			 * rendering. The user can change the <code>visibleRowCount</code> by dragging a resizer.
-			 *
-			 * @since 1.9.2
-			 */
-			visibleRowCountMode: {type: "sap.ui.table.VisibleRowCountMode", group: "Appearance", defaultValue: VisibleRowCountMode.Fixed},
-
-			/**
-			 * This property is used to set the minimum count of visible rows when the property visibleRowCountMode is set to Auto or Interactive.
-			 * For any other visibleRowCountMode, it is ignored.
-			 */
-			minAutoRowCount: {type: "int", group: "Appearance", defaultValue: 5},
-
-			/**
 			 * Number of columns that are fixed on the left. Only columns which are not fixed can be scrolled horizontally.
 			 *
 			 * <b>Note</b>
@@ -233,18 +183,6 @@ sap.ui.define([
 			 * </ul>
 			 */
 			fixedColumnCount: {type: "int", group: "Appearance", defaultValue: 0},
-
-			/**
-			 * Number of rows that are fix on the top. When you use a vertical scrollbar, only the rows which are not fixed, will scroll.
-			 */
-			fixedRowCount: {type: "int", group: "Appearance", defaultValue: 0},
-
-			/**
-			 * Number of rows that are fix on the bottom. When you use a vertical scrollbar, only the rows which are not fixed, will scroll.
-			 *
-			 * @since 1.18.7
-			 */
-			fixedBottomRowCount: {type: "int", group: "Appearance", defaultValue: 0},
 
 			/**
 			 * Flag whether to show or hide the column menu item to freeze or unfreeze a column.
@@ -356,12 +294,13 @@ sap.ui.define([
 
 			/**
 			 * Defines how the table handles the rows.
+			 *
+			 * @since 1.119
 			 */
 			rowMode: {
-				type: "sap.ui.core.Element", // TODO: The type should be sap.ui.table.rowmodes.RowMode, but then the build fails because RowMode is a private class.
+				type: "sap.ui.table.rowmodes.RowMode",
 				multiple: false,
-				altTypes: ["sap.ui.table.rowmodes.Type"],
-				visibility: "hidden"
+				altTypes: ["sap.ui.table.rowmodes.Type"]
 			},
 
 			/**
@@ -867,12 +806,12 @@ sap.ui.define([
 	 * @inheritDoc
 	 */
 	Table.prototype.applySettings = function(mSettings, oScope) {
-		// The threshold must be set before the OData binding for the "rows" aggregation is initialized. If the metadata is already loaded, a
-		// getContexts call may be triggered immediately with the default threshold (100) instead of the one in the settings.
+		// The threshold and firstVisibleRow must be set before the OData binding for the "rows" aggregation is initialized. If the metadata is
+		// already loaded, a getContexts call may be triggered immediately with the default values instead of the one in the settings.
 		// Some settings might rely on the existence of a row mode or plugin. If row modes and plugins are in the settings and applied before
 		// other settings, initialization of default row modes and legacy selection plugins can be avoided.
 		if (mSettings) {
-			var aEarlySettings = ["threshold", "rowMode", "plugins"];
+			var aEarlySettings = ["threshold", "firstVisibleRow", "rowMode", "plugins"];
 			var mEarlySettings = {};
 
 			for (var i = 0; i < aEarlySettings.length; i++) {
@@ -1937,19 +1876,21 @@ sap.ui.define([
 	 */
 	Table.prototype._onBindingChange = function(oEvent) {};
 
-	/*
-	 * @see JSDoc generated by SAPUI5 control API generator
-	 */
-	Table.prototype.setRowMode = function(oRowMode) {
+	Table.prototype.setRowMode = function(vRowMode) {
 		this._destroyDefaultRowMode();
-		this.setAggregation("rowMode", oRowMode);
+		this.setAggregation("rowMode", vRowMode);
 		this._initDefaultRowMode();
 		return this;
 	};
 
-	// this method can be removed when the aggregation is made public
-	Table.prototype.getRowMode = function() {
-		return this.getAggregation("rowMode");
+	Table.prototype.destroyRowMode = function() {
+		this.destroyAggregation("rowMode");
+
+		if (!this._oDefaultRowMode) {
+			this._initDefaultRowMode();
+		}
+
+		return this;
 	};
 
 	/**
@@ -1975,25 +1916,6 @@ sap.ui.define([
 
 		// If row mode is an instance, a default is not needed.
 		if (sRowMode === undefined || this._oDefaultRowMode) {
-			return;
-		}
-
-		if (vRowMode === null) {
-			switch (this.getVisibleRowCountMode()) {
-				case RowModeType.Fixed:
-					this._oDefaultRowMode = new FixedRowMode(true);
-					break;
-				case RowModeType.Interactive:
-					this._oDefaultRowMode = new InteractiveRowMode(true);
-					break;
-				case RowModeType.Auto:
-					this._oDefaultRowMode = new AutoRowMode(true);
-					break;
-				default:
-					throw new Error("Default row mode could not be created");
-			}
-
-			this.addAggregation("_hiddenDependents", this._oDefaultRowMode);
 			return;
 		}
 
@@ -2041,77 +1963,6 @@ sap.ui.define([
 		}
 
 		return mRowCounts;
-	};
-
-	/*
-	 * @see JSDoc generated by SAPUI5 control API generator
-	 */
-	Table.prototype.setVisibleRowCountMode = function(sVisibleRowCountMode) {
-		if (this.getRowMode()) {
-			Log.warning("If the \"rowMode\" aggregation is set, setting the \"visibleRowCountMode\" has no effect");
-			return this.setProperty("visibleRowCountMode", sVisibleRowCountMode, true);
-		}
-
-		var sOldVisibleRowCountMode = this.getVisibleRowCountMode();
-		this.setProperty("visibleRowCountMode", sVisibleRowCountMode);
-		var sNewVisibleRowCountMode = this.getVisibleRowCountMode();
-
-		if (sNewVisibleRowCountMode !== sOldVisibleRowCountMode) {
-			this._destroyDefaultRowMode();
-			this._initDefaultRowMode();
-		}
-
-		return this;
-	};
-
-	/*
-	 * @see JSDoc generated by SAPUI5 control API generator
-	 */
-	Table.prototype.setVisibleRowCount = function(iVisibleRowCount) {
-		var sVisibleRowCountMode = this.getVisibleRowCountMode();
-		if (sVisibleRowCountMode == VisibleRowCountMode.Auto) {
-			Log.error("VisibleRowCount will be ignored since VisibleRowCountMode is set to Auto", this);
-			return this;
-		}
-
-		if (iVisibleRowCount != null && !isFinite(iVisibleRowCount)) {
-			return this;
-		}
-
-		var iFixedRowsCount = this.getFixedRowCount() + this.getFixedBottomRowCount();
-		if (iVisibleRowCount <= iFixedRowsCount && iFixedRowsCount > 0) {
-			Log.error("Table: " + this.getId() + " visibleRowCount('" + iVisibleRowCount + "') must be bigger than number of"
-					  + " fixed rows('" + (this.getFixedRowCount() + this.getFixedBottomRowCount()) + "')", this);
-			return this;
-		}
-
-		if (this.getRowMode()) {
-			Log.warning("If the \"rowMode\" aggregation is set, setting the \"visibleRowCount\" has no effect");
-			return this.setProperty("visibleRowCount", iVisibleRowCount, true);
-		}
-
-		iVisibleRowCount = this.validateProperty("visibleRowCount", iVisibleRowCount);
-		this.setProperty("visibleRowCount", iVisibleRowCount);
-
-		TableUtils.dynamicCall(this._getSyncExtension, function(oSyncExtension) {
-			oSyncExtension.syncRowCount(iVisibleRowCount);
-		});
-
-		return this;
-	};
-
-	Table.prototype.setMinAutoRowCount = function(iMinAutoRowCount) {
-		if (parseInt(iMinAutoRowCount) < 1) {
-			Log.error("The minAutoRowCount property must be greater than 0. The value has been set to 1.", this);
-			iMinAutoRowCount = 1;
-		}
-
-		if (this.getRowMode()) {
-			Log.warning("If the \"rowMode\" aggregation is set, setting the \"minAutoRowCount\" has no effect");
-			return this.setProperty("minAutoRowCount", iMinAutoRowCount, true);
-		}
-
-		return this.setProperty("minAutoRowCount", iMinAutoRowCount);
 	};
 
 	/**
@@ -3311,52 +3162,6 @@ sap.ui.define([
 		this._collectTableSizes(); // Avoid double rendering if the fixed column count needs to be adjusted.
 
 		return this;
-	};
-
-	/*
-	 * @see JSDoc generated by SAPUI5 control API generator
-	 */
-	Table.prototype.setFixedRowCount = function(iFixedRowCount) {
-		if (!(parseInt(iFixedRowCount) >= 0)) {
-			Log.error("Number of fixed rows must be greater or equal 0", this);
-			return this;
-		}
-
-		if ((iFixedRowCount + this.getFixedBottomRowCount()) >= this.getVisibleRowCount()) {
-			Log.error("Table '" + this.getId() + "' fixed rows('" + (iFixedRowCount + this.getFixedBottomRowCount()) + "') must be smaller than"
-					  + " numberOfVisibleRows('" + this.getVisibleRowCount() + "')", this);
-			return this;
-		}
-
-		if (this.getRowMode()) {
-			Log.warning("If the \"rowMode\" aggregation is set, setting the \"fixedRowCount\" has no effect");
-			return this.setProperty("fixedRowCount", iFixedRowCount, true);
-		}
-
-		return this.setProperty("fixedRowCount", iFixedRowCount);
-	};
-
-	/*
-	 * @see JSDoc generated by SAPUI5 control API generator
-	 */
-	Table.prototype.setFixedBottomRowCount = function(iFixedRowCount) {
-		if (!(parseInt(iFixedRowCount) >= 0)) {
-			Log.error("Number of fixed bottom rows must be greater or equal 0", this);
-			return this;
-		}
-
-		if ((iFixedRowCount + this.getFixedRowCount()) >= this.getVisibleRowCount()) {
-			Log.error("Table '" + this.getId() + "' fixed rows('" + (iFixedRowCount + this.getFixedRowCount()) + "') must be smaller than"
-					  + " numberOfVisibleRows('" + this.getVisibleRowCount() + "')", this);
-			return this;
-		}
-
-		if (this.getRowMode()) {
-			Log.warning("If the \"rowMode\" aggregation is set, setting the \"iFixedBottomRowCount\" has no effect");
-			return this.setProperty("fixedBottomRowCount", iFixedRowCount, true);
-		}
-
-		return this.setProperty("fixedBottomRowCount", iFixedRowCount);
 	};
 
 	/**

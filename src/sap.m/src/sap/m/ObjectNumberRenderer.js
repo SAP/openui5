@@ -116,7 +116,8 @@ sap.ui.define([
 	 * @private
 	 */
 	ObjectNumberRenderer.renderText = function(oRm, oON) {
-		var sUnit = oON.getUnit() || "";
+		var sUnit = oON.getUnit();
+
 		oRm.openStart("span", oON.getId() + "-number");
 		oRm.class("sapMObjectNumberText");
 		oRm.openEnd();
@@ -133,7 +134,7 @@ sap.ui.define([
 	 * @private
 	 */
 	ObjectNumberRenderer.renderUnit = function(oRm, oON) {
-		var sUnit = oON.getUnit() || "";
+		var sUnit = oON.getUnit();
 
 		if (sUnit !== "") {
 			oRm.openStart("span", oON.getId() + "-unit");

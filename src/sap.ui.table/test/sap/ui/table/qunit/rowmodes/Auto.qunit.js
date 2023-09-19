@@ -2,315 +2,48 @@
 
 sap.ui.define([
 	"sap/ui/table/qunit/TableQUnitUtils",
+	"sap/ui/table/qunit/rowmodes/sets/FixedRowHeight",
+	"sap/ui/table/qunit/rowmodes/sets/RowCountConstraints",
+	"sap/ui/table/qunit/rowmodes/sets/RowsUpdated",
 	"sap/ui/table/rowmodes/Auto",
 	"sap/ui/table/Table",
 	"sap/ui/table/Column",
 	"sap/ui/table/RowAction",
 	"sap/ui/table/CreationRow",
-	"sap/ui/table/plugins/PluginBase",
 	"sap/ui/table/utils/TableUtils",
-	"sap/ui/table/library",
+	"sap/ui/core/Core",
 	"sap/ui/Device"
 ], function(
-	TableQUnitUtils, AutoRowMode, Table, Column, RowAction, CreationRow, PluginBase, TableUtils, library, Device
+	TableQUnitUtils,
+	FixedRowHeightTest,
+	RowCountConstraintsTest,
+	RowsUpdatedTest,
+	AutoRowMode,
+	Table,
+	Column,
+	RowAction,
+	CreationRow,
+	TableUtils,
+	Core,
+	Device
 ) {
 	"use strict";
 
-	var VisibleRowCountMode = library.VisibleRowCountMode;
 	var HeightTestControl = TableQUnitUtils.HeightTestControl;
-	var aDensities = ["sapUiSizeCozy", "sapUiSizeCompact", "sapUiSizeCondensed", undefined];
+
+	TableQUnitUtils.setDefaultSettings({
+		rowMode: {Type: "sap.ui.table.rowmodes.Auto"},
+		rows: {path: "/"}
+	});
 
 	function waitForResizeHandler() {
 		// Give the table time to react. Default interval of IntervalTrigger singleton that is used by the ResizeHandler is 200ms.
 		return TableQUnitUtils.wait(250);
 	}
 
-	QUnit.module("Legacy support", {
-		beforeEach: function() {
-			this.oTable = TableQUnitUtils.createTable({
-				visibleRowCountMode: VisibleRowCountMode.Auto,
-				rows: {path: "/"},
-				models: TableQUnitUtils.createJSONModelWithEmptyRows(1)
-			});
-		},
-		afterEach: function() {
-			this.oTable.destroy();
-		}
-	});
-
-	QUnit.test("Instance", function(assert) {
-		assert.ok(TableUtils.isA(this.oTable._getRowMode(), "sap.ui.table.rowmodes.Auto"),
-			"The table creates an instance of sap.ui.table.rowmodes.Auto");
-	});
-
-	QUnit.test("Property getters", function(assert) {
-		var oTable = TableQUnitUtils.createTable({
-			visibleRowCountMode: VisibleRowCountMode.Auto,
-			fixedRowCount: 1,
-			fixedBottomRowCount: 2,
-			minAutoRowCount: 8,
-			rowHeight: 9
-		});
-		var oMode = oTable._getRowMode();
-
-		oTable.setProperty("visibleRowCount", 5);
-
-		assert.strictEqual(oMode.getFixedTopRowCount(), 1, "The fixed row count is taken from the table");
-		assert.strictEqual(oMode.getFixedBottomRowCount(), 2, "The fixed bottom row count is taken from the table");
-		assert.strictEqual(oMode.getMinRowCount(), 8, "The minimum row count is taken from the table");
-		assert.strictEqual(oMode.getRowContentHeight(), 9, "The row content height is taken from the table");
-
-		oMode.setFixedTopRowCount(10);
-		oMode.setFixedBottomRowCount(10);
-		oMode.setMinRowCount(10);
-		oMode.setRowContentHeight(10);
-
-		assert.strictEqual(oMode.getFixedTopRowCount(), 1,
-			"After setting the property on the mode, the fixed row count is still taken from the table");
-		assert.strictEqual(oMode.getFixedBottomRowCount(), 2,
-			"After setting the property on the mode, the fixed bottom row count is still taken from the table");
-		assert.strictEqual(oMode.getMinRowCount(), 8,
-			"After setting the property on the mode, the minimum row count is still taken from the table");
-		assert.strictEqual(oMode.getRowContentHeight(), 9,
-			"After setting the property on the mode, the row content height is still taken from the table");
-
-		oTable.setProperty("visibleRowCount", 10);
-		oTable.setFixedRowCount(2);
-		oTable.setFixedBottomRowCount(3);
-		oTable.setMinAutoRowCount(13);
-		oTable.setRowHeight(14);
-
-		assert.strictEqual(oMode.getFixedTopRowCount(), 2,
-			"After setting the property on the table, the new fixed row count is taken from the table");
-		assert.strictEqual(oMode.getFixedBottomRowCount(), 3,
-			"After setting the property on the table, the new fixed bottom row count is taken from the table");
-		assert.strictEqual(oMode.getMinRowCount(), 13,
-			"After setting the property on the table, the new minimum row count is taken from the table");
-		assert.strictEqual(oMode.getRowContentHeight(), 14,
-			"After setting the property on the table, the new row content height is taken from the table");
-
-		oTable.destroy();
-	});
-
-	QUnit.test("After rendering", function(assert) {
-		return this.oTable.qunit.whenRenderingFinished().then(function() {
-			assert.equal(this.oTable.getRows().length, 19, "Row count");
-			assert.equal(this.oTable.getVisibleRowCount(), 19, "'visibleRowCount' property value");
-		}.bind(this));
-	});
-
-	QUnit.test("Row height", function(assert) {
-		var oTable = this.oTable;
-		var sequence = Promise.resolve();
-
-		oTable.addColumn(new Column({template: new HeightTestControl()}));
-		oTable.addColumn(new Column({template: new HeightTestControl()}));
-		oTable.setFixedColumnCount(1);
-		oTable.setRowActionCount(1);
-		oTable.setRowActionTemplate(new RowAction());
-
-		function test(mTestSettings) {
-			sequence = sequence.then(function() {
-				oTable.setRowHeight(mTestSettings.rowHeight || 0);
-				oTable.getColumns()[1].setTemplate(new HeightTestControl({height: (mTestSettings.templateHeight || 1) + "px"}));
-				TableQUnitUtils.setDensity(oTable, mTestSettings.density);
-
-				return oTable.qunit.whenRenderingFinished();
-			}).then(function() {
-				TableQUnitUtils.assertRowHeights(assert, oTable, mTestSettings);
-			});
-		}
-
-		aDensities.forEach(function(sDensity) {
-			test({
-				title: "Default height",
-				density: sDensity,
-				expectedHeight: TableUtils.DefaultRowHeight[sDensity]
-			});
-		});
-
-		aDensities.forEach(function(sDensity) {
-			test({
-				title: "Default height; With large content",
-				density: sDensity,
-				templateHeight: TableUtils.DefaultRowHeight[sDensity] * 2,
-				expectedHeight: TableUtils.DefaultRowHeight[sDensity] * 2 + 1
-			});
-		});
-
-		aDensities.forEach(function(sDensity) {
-			test({
-				title: "Application-defined height; Less than default",
-				density: sDensity,
-				rowHeight: 20,
-				expectedHeight: 21
-			});
-		});
-
-		aDensities.forEach(function(sDensity) {
-			test({
-				title: "Application-defined height; Less than default; With large content",
-				density: sDensity,
-				rowHeight: 20,
-				templateHeight: 100,
-				expectedHeight: 21
-			});
-		});
-
-		aDensities.forEach(function(sDensity) {
-			test({
-				title: "Application-defined height; Greater than default",
-				density: sDensity,
-				rowHeight: 100,
-				expectedHeight: 101
-			});
-		});
-
-		aDensities.forEach(function(sDensity) {
-			test({
-				title: "Application-defined height; Greater than default; With large content",
-				density: sDensity,
-				rowHeight: 100,
-				templateHeight: 120,
-				expectedHeight: 101
-			});
-		});
-
-		return sequence.then(function() {
-			TableQUnitUtils.setDensity(oTable, "sapUiSizeCozy");
-		});
-	});
-
-	QUnit.module("Row height", {
-		beforeEach: function() {
-			this.oTable = TableQUnitUtils.createTable({
-				rowMode: new AutoRowMode(),
-				columns: [
-					new Column({template: new HeightTestControl({height: "1px"})}),
-					new Column({template: new HeightTestControl({height: "1px"})})
-				],
-				fixedColumnCount: 1,
-				rowActionCount: 1,
-				rowActionTemplate: new RowAction(),
-				rows: {path: "/"},
-				models: TableQUnitUtils.createJSONModelWithEmptyRows(1)
-			});
-		},
-		afterEach: function() {
-			TableQUnitUtils.setDensity(this.oTable, "sapUiSizeCozy");
-			this.oTable.destroy();
-		}
-	});
-
-	QUnit.test("Content", function(assert) {
-		var oTable = this.oTable;
-		var pSequence = Promise.resolve();
-
-		function test(mTestSettings) {
-			pSequence = pSequence.then(function() {
-				oTable.getRowMode().setRowContentHeight(mTestSettings.rowContentHeight || 0);
-				oTable.getColumns()[1].setTemplate(new HeightTestControl({height: (mTestSettings.templateHeight || 1) + "px"}));
-				TableQUnitUtils.setDensity(oTable, mTestSettings.density);
-
-				return oTable.qunit.whenRenderingFinished();
-
-			}).then(function() {
-				TableQUnitUtils.assertRowHeights(assert, oTable, mTestSettings);
-			});
-		}
-
-		aDensities.forEach(function(sDensity) {
-			test({
-				title: "Default height",
-				density: sDensity,
-				expectedHeight: TableUtils.DefaultRowHeight[sDensity]
-			});
-		});
-
-		aDensities.forEach(function(sDensity) {
-			test({
-				title: "Default height; With large content",
-				density: sDensity,
-				templateHeight: TableUtils.DefaultRowHeight[sDensity] * 2,
-				expectedHeight: TableUtils.DefaultRowHeight[sDensity]
-			});
-		});
-
-		aDensities.forEach(function(sDensity) {
-			test({
-				title: "Application-defined height; Less than default",
-				density: sDensity,
-				rowContentHeight: 20,
-				expectedHeight: 21
-			});
-		});
-
-		aDensities.forEach(function(sDensity) {
-			test({
-				title: "Application-defined height; Less than default; With large content",
-				density: sDensity,
-				rowContentHeight: 20,
-				templateHeight: 100,
-				expectedHeight: 21
-			});
-		});
-
-		aDensities.forEach(function(sDensity) {
-			test({
-				title: "Application-defined height; Greater than default",
-				density: sDensity,
-				rowContentHeight: 100,
-				expectedHeight: 101
-			});
-		});
-
-		aDensities.forEach(function(sDensity) {
-			test({
-				title: "Application-defined height; Greater than default; With large content",
-				density: sDensity,
-				rowContentHeight: 100,
-				templateHeight: 120,
-				expectedHeight: 101
-			});
-		});
-
-		return pSequence;
-	});
-
-	QUnit.test("Header", function(assert) {
-		var oTable = this.oTable;
-		var pSequence = Promise.resolve();
-
-		function test(mTestSettings) {
-			pSequence = pSequence.then(function() {
-				oTable.setColumnHeaderHeight(mTestSettings.columnHeaderHeight || 0);
-				oTable.getRowMode().setRowContentHeight(mTestSettings.rowContentHeight || 0);
-				oTable.getColumns()[1].setLabel(new HeightTestControl({height: (mTestSettings.labelHeight || 1) + "px"}));
-				TableQUnitUtils.setDensity(oTable, mTestSettings.density);
-
-				return oTable.qunit.whenRenderingFinished();
-
-			}).then(function() {
-				TableQUnitUtils.assertColumnHeaderHeights(assert, oTable, mTestSettings);
-			});
-		}
-
-		aDensities.forEach(function(sDensity) {
-			test({
-				title: "Row content height should not apply to header rows",
-				density: sDensity,
-				rowContentHeight: 55,
-				expectedHeight: TableUtils.DefaultRowHeight[sDensity === "sapUiSizeCondensed" ? "sapUiSizeCompact" : sDensity]
-			});
-		});
-
-		return pSequence;
-	});
-
 	QUnit.module("Automatic row count adjustment", {
 		beforeEach: function() {
 			this.oTable = TableQUnitUtils.createTable({
-				rowMode: new AutoRowMode(),
 				extension: [
 					new HeightTestControl({height: "100px"})
 				],
@@ -318,7 +51,6 @@ sap.ui.define([
 				columns: [
 					TableQUnitUtils.createTextColumn()
 				],
-				rows: {path: "/"},
 				models: TableQUnitUtils.createJSONModelWithEmptyRows(1),
 				creationRow: new CreationRow()
 			});
@@ -390,7 +122,6 @@ sap.ui.define([
 					new Column({template: new HeightTestControl({height: "1px"})}),
 					new Column({template: new HeightTestControl({height: "1px"})})
 				],
-				rows: {path: "/"},
 				models: TableQUnitUtils.createJSONModelWithEmptyRows(1)
 			});
 		},
@@ -404,9 +135,7 @@ sap.ui.define([
 		var oEnableNoDataSpy = sinon.spy(AutoRowMode.prototype, "enableNoData");
 		var oTableInvalidateSpy = sinon.spy(this.oTable, "invalidate");
 
-		this.oTable.setAggregation("rowMode", new AutoRowMode({
-			hideEmptyRows: false
-		}));
+		this.oTable.setAggregation("rowMode", new AutoRowMode().setHideEmptyRows(false));
 
 		assert.ok(oDisableNoDataSpy.notCalled, "#disableNoData was not called");
 		assert.ok(oEnableNoDataSpy.calledOnce, "#enableNoData was called once");
@@ -423,9 +152,7 @@ sap.ui.define([
 		var oEnableNoDataSpy = sinon.spy(AutoRowMode.prototype, "enableNoData");
 		var oTableInvalidateSpy = sinon.spy(this.oTable, "invalidate");
 
-		this.oTable.setAggregation("rowMode", new AutoRowMode({
-			hideEmptyRows: true
-		}));
+		this.oTable.setAggregation("rowMode", new AutoRowMode().setHideEmptyRows(true));
 
 		assert.ok(oDisableNoDataSpy.calledOnce, "#disableNoData was called once");
 		assert.ok(oEnableNoDataSpy.notCalled, "#enableNoData was not called");
@@ -472,8 +199,6 @@ sap.ui.define([
 		},
 		createTable: function(bVariableRowHeightEnabled) {
 			this.oTable = TableQUnitUtils.createTable({
-				rowMode: new AutoRowMode(),
-				rows: {path: "/"},
 				models: TableQUnitUtils.createJSONModelWithEmptyRows(100),
 				_bVariableRowHeightEnabled: bVariableRowHeightEnabled
 			});
@@ -558,38 +283,9 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.module("Row count constraints", {
-		before: function() {
-			this.TestPlugin = PluginBase.extend("sap.ui.table.plugins.test.Plugin");
-		},
-		beforeEach: function() {
-			this.oPlugin = new this.TestPlugin();
-			this.oRowMode = new AutoRowMode({
-				minRowCount: 10,
-				maxRowCount: 10
-			});
-			this.oTable = TableQUnitUtils.createTable({
-				dependents: [this.oPlugin],
-				rowMode: this.oRowMode,
-				rows: {path: "/"},
-				models: TableQUnitUtils.createJSONModelWithEmptyRows(100),
-				columns: [TableQUnitUtils.createTextColumn()]
-			});
-		},
-		afterEach: function() {
-			this.oTable.destroy();
-		}
-	});
+	FixedRowHeightTest.registerTo(QUnit);
 
-	QUnit.test("Force fixed rows", function(assert) {
-		this.oPlugin.setRowCountConstraints({fixedTop: true, fixedBottom: true});
-
-		return this.oTable.qunit.whenRenderingFinished().then(function() {
-			TableQUnitUtils.assertRenderedRows(assert, this.oTable, 1, 8, 1);
-		}.bind(this));
-	});
-
-	QUnit.test("Force fixed rows if row count too low", function(assert) {
+	RowCountConstraintsTest.test("Force fixed rows if row count too low", function(assert) {
 		this.oRowMode.setMaxRowCount(1);
 		this.oPlugin.setRowCountConstraints({fixedTop: true, fixedBottom: true});
 
@@ -598,27 +294,181 @@ sap.ui.define([
 		}.bind(this));
 	});
 
-	QUnit.test("Disable fixed rows", function(assert) {
-		this.oRowMode.setFixedTopRowCount(2);
-		this.oRowMode.setFixedBottomRowCount(2);
-		this.oPlugin.setRowCountConstraints({fixedTop: false, fixedBottom: false});
-
-		return this.oTable.qunit.whenRenderingFinished().then(function() {
-			TableQUnitUtils.assertRenderedRows(assert, this.oTable, 0, 10, 0);
-		}.bind(this));
+	RowCountConstraintsTest.registerTo(QUnit, function(assert, fnOriginalTest) {
+		this.oTable.getRowMode().setMinRowCount(10).setMaxRowCount(10);
+		return fnOriginalTest();
 	});
 
-	QUnit.test("Change constraints", function(assert) {
-		var that = this;
+	RowsUpdatedTest.test("Resize", function(assert) {
+		this.createTable();
+		return this.oTable.qunit.whenRenderingFinished().then(() => {
+			this.resetRowsUpdatedSpy();
+		}).then(this.oTable.qunit.$resize({height: "500px"})).then(() => {
+			return this.checkRowsUpdated(assert, [
+				TableUtils.RowsUpdateReason.Resize
+			]);
+		}).finally(this.oTable.qunit.resetSize);
+	});
 
-		this.oRowMode.setFixedTopRowCount(2);
-		this.oRowMode.setFixedBottomRowCount(2);
-		this.oPlugin.setRowCountConstraints({fixedTop: false, fixedBottom: false});
-
-		return this.oTable.qunit.whenRenderingFinished().then(function() {
-			that.oPlugin.setRowCountConstraints({fixedTop: false});
-		}).then(this.oTable.qunit.whenRenderingFinished).then(function() {
-			TableQUnitUtils.assertRenderedRows(assert, that.oTable, 0, 8, 2);
+	RowsUpdatedTest.test("Animation", function(assert) {
+		this.createTable();
+		return this.oTable.qunit.whenRenderingFinished().then(() => {
+			this.resetRowsUpdatedSpy();
+			this.oTable.getRowMode().setProperty("rowContentHeight", 30, true); // Simulate that the row count changes after animation.
+			document.body.dispatchEvent(new Event("transitionend"));
+		}).then(TableQUnitUtils.wait).then(() => {
+			return this.checkRowsUpdated(assert, [
+				TableUtils.RowsUpdateReason.Animation
+			]);
 		});
 	});
+
+	RowsUpdatedTest.test("Render when theme not applied", function(assert) {
+		var oIsThemeApplied = sinon.stub(Core, "isThemeApplied").returns(false);
+		this.createTable();
+		return this.checkRowsUpdated(assert, []).then(() => {
+			this.resetRowsUpdatedSpy();
+			this.oTable.invalidate();
+			Core.applyChanges();
+			return this.checkRowsUpdated(assert, []);
+		}).then(() => {
+			this.resetRowsUpdatedSpy();
+			oIsThemeApplied.returns(true);
+			this.oTable.onThemeChanged();
+			return this.checkRowsUpdated(assert, [
+				TableUtils.RowsUpdateReason.Render
+			]);
+		}).finally(() => {
+			oIsThemeApplied.restore();
+		});
+	});
+
+	RowsUpdatedTest.registerTo(QUnit, function(assert, fnOriginalTest) {
+		switch (QUnit.config.current.testName) {
+			case "Initial rendering without binding":
+			case "Initial rendering without binding in invisible container":
+			case "Initial rendering with binding":
+				return testWithStableRowCount(fnOriginalTest);
+			case "Initial rendering with binding in invisible container":
+				return RowsUpdatedTestInvisibleInitialRendering.apply(this, arguments);
+			case "Re-render without binding":
+				return RowsUpdatedTestRerenderWithoutBinding.apply(this, arguments);
+			case "Re-render without binding in invisible container":
+				return RowsUpdatedTestInvisibleRerenderWithoutBinding.apply(this, arguments);
+			case "Re-render with binding":
+				return RowsUpdatedTestRerenderWithBinding.apply(this, arguments);
+			case "Re-render with binding in invisible container":
+				return RowsUpdatedTestInvisibleRerenderWithBinding.apply(this, arguments);
+			default:
+				return fnOriginalTest();
+		}
+	});
+
+	// To add a test case where the table does not need to adjust the row count to the avialable space after rendering.
+	function testWithStableRowCount(fnTest) {
+		return fnTest().then(() => {
+			var oRowMode = TableQUnitUtils.getDefaultSettings().rowMode;
+
+			oRowMode.minRowCount = 10;
+			oRowMode.maxRowCount = 10;
+
+			return fnTest().then(() => {
+				delete oRowMode.minRowCount;
+				delete oRowMode.maxRowCount;
+			});
+		});
+	}
+
+	function RowsUpdatedTestInvisibleInitialRendering(assert, fnOriginalTest) {
+		return testWithStableRowCount(() => {
+			return TableQUnitUtils.hideTestContainer().then(() => {
+				this.createTable();
+				return this.checkRowsUpdated(assert, []);
+			}).then(() => {
+				this.resetRowsUpdatedSpy();
+				return TableQUnitUtils.showTestContainer();
+			}).then(() => {
+				return this.checkRowsUpdated(assert, [
+					TableUtils.RowsUpdateReason.Render
+				]);
+			});
+		});
+	}
+
+	function RowsUpdatedTestRerenderWithoutBinding(assert, fnOriginalTest) {
+		return fnOriginalTest().then(() => {
+			this.resetRowsUpdatedSpy();
+			this.oTable.getRowMode().setRowContentHeight(this.oTable._getDefaultRowHeight() + 20); // The table will show less rows.
+			Core.applyChanges();
+			return this.checkRowsUpdated(assert, []);
+		});
+	}
+
+	function RowsUpdatedTestInvisibleRerenderWithoutBinding(assert, fnOriginalTest) {
+		return fnOriginalTest().then(() => {
+			this.resetRowsUpdatedSpy();
+			return TableQUnitUtils.hideTestContainer();
+		}).then(() => {
+			this.oTable.getRowMode().setRowContentHeight(this.oTable._getDefaultRowHeight() + 20); // The table will show less rows.
+			Core.applyChanges();
+			return this.checkRowsUpdated(assert, []);
+		}).then(() => {
+			this.resetRowsUpdatedSpy();
+			return TableQUnitUtils.showTestContainer();
+		}).then(() => {
+			return this.checkRowsUpdated(assert, []);
+		});
+	}
+
+	function RowsUpdatedTestRerenderWithBinding(assert, fnOriginalTest) {
+		return fnOriginalTest().then(() => {
+			this.resetRowsUpdatedSpy();
+			this.oTable.getRowMode().setRowContentHeight(this.oTable._getDefaultRowHeight() + 20); // The table will show less rows.
+			Core.applyChanges();
+			return this.checkRowsUpdated(assert, [
+				TableUtils.RowsUpdateReason.Render
+			]);
+		});
+	}
+
+	function RowsUpdatedTestInvisibleRerenderWithBinding(assert, fnOriginalTest) {
+		this.createTable();
+		return this.oTable.qunit.whenRenderingFinished().then(() => {
+			this.resetRowsUpdatedSpy();
+			return TableQUnitUtils.hideTestContainer();
+		}).then(() => {
+			this.oTable.invalidate();
+			Core.applyChanges();
+			return this.checkRowsUpdated(assert, []);
+		}).then(() => {
+			this.resetRowsUpdatedSpy();
+			return TableQUnitUtils.showTestContainer();
+		}).then(() => {
+			return new Promise((resolve) => {
+				this.oTable.attachEventOnce("_rowsUpdated", resolve);
+			});
+		}).then(() => {
+			return this.checkRowsUpdated(assert, [
+				TableUtils.RowsUpdateReason.Render
+			]);
+		}).then(() => {
+			this.resetRowsUpdatedSpy();
+			return TableQUnitUtils.hideTestContainer();
+		}).then(() => {
+			this.oTable.getRowMode().setRowContentHeight(this.oTable._getDefaultRowHeight() + 20); // The table will show less rows.
+			Core.applyChanges();
+			return this.checkRowsUpdated(assert, []);
+		}).then(() => {
+			this.resetRowsUpdatedSpy();
+			return TableQUnitUtils.showTestContainer();
+		}).then(() => {
+			return new Promise((resolve) => {
+				this.oTable.attachEventOnce("_rowsUpdated", resolve);
+			});
+		}).then(() => {
+			return this.checkRowsUpdated(assert, [
+				TableUtils.RowsUpdateReason.Render
+			]);
+		});
+	}
 });

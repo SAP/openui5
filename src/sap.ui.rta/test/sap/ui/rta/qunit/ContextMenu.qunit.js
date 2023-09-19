@@ -115,7 +115,9 @@ sap.ui.define([
 			this.oContextMenu.attachEventOnce("openedContextMenu", function() {
 				assert.ok(true, "the contextMenu is open");
 			});
-			return RtaQunitUtils.openContextMenuWithKeyboard.call(this, oGroupElementOverlay).then(function() {
+			return DtUtil.waitForSynced(this.oRta._oDesignTime)()
+			.then(RtaQunitUtils.openContextMenuWithKeyboard.bind(this, oGroupElementOverlay))
+			.then(function() {
 				var sText = "";
 				this.oContextMenuControl.getItems().forEach(function(oItem) {
 					sText = `${sText} - ${oItem.getKey()}`;
@@ -123,8 +125,10 @@ sap.ui.define([
 				if (this.oContextMenuControl.getItems().length === 5) {
 					assert.equal(this.oContextMenuControl.getItems().length, 5, "5 Menu Items are available");
 					assert.equal(this.oContextMenuControl.getItems()[0].getKey(), "CTX_RENAME", "we can rename a label");
-					assert.equal(this.oContextMenuControl.getItems()[1].getKey(), "CTX_ADD_ELEMENTS_AS_SIBLING", "add field entry is visible");
-					assert.equal(this.oContextMenuControl.getItems()[1].getEnabled(), true, "add field entry is enabled, because there are fields available");
+					assert.equal(this.oContextMenuControl.getItems()[1].getKey(), "CTX_ADD_ELEMENTS_AS_SIBLING",
+						"add field entry is visible");
+					assert.equal(this.oContextMenuControl.getItems()[1].getEnabled(), true,
+						"add field entry is enabled, because there are fields available");
 					assert.equal(this.oContextMenuControl.getItems()[2].getKey(), "CTX_REMOVE", "we can remove field");
 					assert.equal(this.oContextMenuControl.getItems()[3].getKey(), "CTX_CUT", "we can cut field");
 					assert.equal(this.oContextMenuControl.getItems()[4].getKey(), "CTX_PASTE", "we can paste field");
@@ -151,13 +155,40 @@ sap.ui.define([
 					sText = `${sText} - ${oItem.getKey()}`;
 				});
 				if (this.oContextMenuControl.getItems().length === 5) {
-					assert.equal(this.oContextMenuControl.getItems().length, 5, "5 Menu items are available");
-					assert.equal(this.oContextMenuControl.getItems()[0].getKey(), "CTX_RENAME", "we can rename a label");
-					assert.equal(this.oContextMenuControl.getItems()[1].getKey(), "CTX_ADD_ELEMENTS_AS_SIBLING", "add field entry is visible");
-					assert.equal(this.oContextMenuControl.getItems()[1].getEnabled(), false, "add field entry is disabled, because there are no fields available");
-					assert.equal(this.oContextMenuControl.getItems()[2].getKey(), "CTX_REMOVE", "we can remove field");
-					assert.equal(this.oContextMenuControl.getItems()[3].getKey(), "CTX_CUT", "we can cut field");
-					assert.equal(this.oContextMenuControl.getItems()[4].getKey(), "CTX_PASTE", "we can paste field");
+					assert.equal(
+						this.oContextMenuControl.getItems().length,
+						5,
+						"5 Menu items are available"
+					);
+					assert.equal(
+						this.oContextMenuControl.getItems()[0].getKey(),
+						"CTX_RENAME",
+						"we can rename a label"
+					);
+					assert.equal(
+						this.oContextMenuControl.getItems()[1].getKey(),
+						"CTX_ADD_ELEMENTS_AS_SIBLING",
+						"add field entry is visible"
+					);
+					assert.notOk(
+						this.oContextMenuControl.getItems()[1].getEnabled(),
+						"add field entry is disabled, because there are no fields available"
+					);
+					assert.equal(
+						this.oContextMenuControl.getItems()[2].getKey(),
+						"CTX_REMOVE",
+						"we can remove field"
+					);
+					assert.equal(
+						this.oContextMenuControl.getItems()[3].getKey(),
+						"CTX_CUT",
+						"we can cut field"
+					);
+					assert.equal(
+						this.oContextMenuControl.getItems()[4].getKey(),
+						"CTX_PASTE",
+						"we can paste field"
+					);
 				} else {
 					assert.ok(false, sText);
 				}
@@ -176,7 +207,11 @@ sap.ui.define([
 			sandbox.stub(oAdditionalElementsPlugin, "getAllElements").resolves([]);
 			return RtaQunitUtils.openContextMenuWithKeyboard.call(this, oGroupElementOverlay).then(function() {
 				assert.equal(this.oContextMenuControl.getItems()[1].getKey(), "CTX_ADD_ELEMENTS_AS_SIBLING", "add field entry is visible");
-				assert.equal(this.oContextMenuControl.getItems()[1].getEnabled(), false, "add field entry is disabled, because there are no available fields");
+				assert.equal(
+					this.oContextMenuControl.getItems()[1].getEnabled(),
+					false,
+					"add field entry is disabled, because there are no available fields"
+				);
 				sandbox.restore();
 			}.bind(this));
 		});
@@ -197,7 +232,8 @@ sap.ui.define([
 			sandbox.stub(oAdditionalElementsPlugin, "_combineAnalyzerResults").resolves([]);
 			return RtaQunitUtils.openContextMenuWithKeyboard.call(this, oGroupElementOverlay).then(function() {
 				assert.equal(this.oContextMenuControl.getItems()[1].getKey(), "CTX_ADD_ELEMENTS_AS_SIBLING", "add field entry is visible");
-				assert.equal(this.oContextMenuControl.getItems()[1].getEnabled(), true, "add field entry is enabled, because custom fields creation is available");
+				assert.equal(this.oContextMenuControl.getItems()[1].getEnabled(), true,
+					"add field entry is enabled, because custom fields creation is available");
 				sandbox.restore();
 			}.bind(this));
 		});
@@ -216,7 +252,8 @@ sap.ui.define([
 				if (this.oContextMenuControl.getItems().length === 6) {
 					assert.equal(this.oContextMenuControl.getItems().length, 6, "6 Menu Items are available");
 					assert.equal(this.oContextMenuControl.getItems()[0].getKey(), "CTX_RENAME", "we can rename a group");
-					assert.equal(this.oContextMenuControl.getItems()[1].getKey(), "CTX_ADD_ELEMENTS_AS_CHILD", "add field entry is visible");
+					assert.equal(this.oContextMenuControl.getItems()[1].getKey(), "CTX_ADD_ELEMENTS_AS_CHILD",
+						"add field entry is visible");
 					assert.equal(this.oContextMenuControl.getItems()[2].getKey(), "CTX_CREATE_SIBLING_CONTAINER", "we can create group");
 					assert.equal(this.oContextMenuControl.getItems()[3].getKey(), "CTX_REMOVE", "we can remove group");
 					assert.equal(this.oContextMenuControl.getItems()[4].getKey(), "CTX_CUT", "we can cut group");
@@ -255,7 +292,8 @@ sap.ui.define([
 				if (this.oContextMenuControl.getItems().length === 6) {
 					assert.equal(this.oContextMenuControl.getItems().length, 6, "6 Menu Items are available");
 					assert.equal(this.oContextMenuControl.getItems()[0].getKey(), "CTX_RENAME", "we can rename a label");
-					assert.equal(this.oContextMenuControl.getItems()[1].getKey(), "CTX_ADD_ELEMENTS_AS_SIBLING", "add field entry is visible");
+					assert.equal(this.oContextMenuControl.getItems()[1].getKey(), "CTX_ADD_ELEMENTS_AS_SIBLING",
+						"add field entry is visible");
 					assert.equal(this.oContextMenuControl.getItems()[2].getKey(), "CTX_REMOVE", "we can remove field");
 					assert.equal(this.oContextMenuControl.getItems()[3].getKey(), "CTX_CUT", "we can cut groups");
 					assert.equal(this.oContextMenuControl.getItems()[4].getKey(), "CTX_PASTE", "we can paste groups");
@@ -283,7 +321,8 @@ sap.ui.define([
 				if (this.oContextMenuControl.getItems().length === 6) {
 					assert.equal(this.oContextMenuControl.getItems().length, 6, "6 Menu Items are available");
 					assert.equal(this.oContextMenuControl.getItems()[0].getKey(), "CTX_RENAME", "we can rename a label");
-					assert.equal(this.oContextMenuControl.getItems()[1].getKey(), "CTX_ADD_ELEMENTS_AS_SIBLING", "add field entry is visible");
+					assert.equal(this.oContextMenuControl.getItems()[1].getKey(), "CTX_ADD_ELEMENTS_AS_SIBLING",
+						"add field entry is visible");
 					assert.equal(this.oContextMenuControl.getItems()[2].getKey(), "CTX_REMOVE", "we can remove field");
 					assert.equal(this.oContextMenuControl.getItems()[3].getKey(), "CTX_CUT", "we can cut groups");
 					assert.equal(this.oContextMenuControl.getItems()[4].getKey(), "CTX_PASTE", "we can paste groups");
@@ -310,7 +349,8 @@ sap.ui.define([
 				if (this.oContextMenuControl.getItems().length === 6) {
 					assert.equal(this.oContextMenuControl.getItems().length, 6, "6 Menu Items are available");
 					assert.equal(this.oContextMenuControl.getItems()[0].getKey(), "CTX_RENAME", "we can rename a label");
-					assert.equal(this.oContextMenuControl.getItems()[1].getKey(), "CTX_ADD_ELEMENTS_AS_SIBLING", "add field entry is visible");
+					assert.equal(this.oContextMenuControl.getItems()[1].getKey(), "CTX_ADD_ELEMENTS_AS_SIBLING",
+						"add field entry is visible");
 					assert.equal(this.oContextMenuControl.getItems()[2].getKey(), "CTX_REMOVE", "we can remove field");
 					assert.equal(this.oContextMenuControl.getItems()[3].getKey(), "CTX_CUT", "we can cut groups");
 					assert.equal(this.oContextMenuControl.getItems()[4].getKey(), "CTX_PASTE", "we can paste groups");
@@ -336,7 +376,8 @@ sap.ui.define([
 				if (this.oContextMenuControl.getItems().length === 6) {
 					assert.equal(this.oContextMenuControl.getItems().length, 6, "6 Menu Items are available");
 					assert.equal(this.oContextMenuControl.getItems()[0].getKey(), "CTX_RENAME", "we can rename a label");
-					assert.equal(this.oContextMenuControl.getItems()[1].getKey(), "CTX_ADD_ELEMENTS_AS_SIBLING", "add field entry is visible");
+					assert.equal(this.oContextMenuControl.getItems()[1].getKey(), "CTX_ADD_ELEMENTS_AS_SIBLING",
+						"add field entry is visible");
 					assert.equal(this.oContextMenuControl.getItems()[2].getKey(), "CTX_REMOVE", "we can remove field");
 					assert.equal(this.oContextMenuControl.getItems()[3].getKey(), "CTX_CUT", "we can cut groups");
 					assert.equal(this.oContextMenuControl.getItems()[4].getKey(), "CTX_PASTE", "we can paste groups");
@@ -397,7 +438,11 @@ sap.ui.define([
 				assert.ok(true, "the contextMenu is open");
 			});
 			return RtaQunitUtils.openContextMenuWithKeyboard.call(this, oGroupOverlay).then(function() {
-				assert.equal(this.oContextMenuControl.getItems()[this.oContextMenuControl.getItems().length - 1].getKey(), "CTX_SETTINGS", "Settings is available");
+				assert.equal(
+					this.oContextMenuControl.getItems()[this.oContextMenuControl.getItems().length - 1].getKey(),
+					"CTX_SETTINGS",
+					"Settings is available"
+				);
 			}.bind(this));
 		});
 
@@ -437,7 +482,8 @@ sap.ui.define([
 				if (this.oContextMenuControl.getItems().length === 5) {
 					assert.equal(this.oContextMenuControl.getItems().length, 5, "5 Menu Items are available");
 					assert.equal(this.oContextMenuControl.getItems()[0].getKey(), "CTX_RENAME", "rename label is available");
-					assert.equal(this.oContextMenuControl.getItems()[1].getKey(), "CTX_ADD_ELEMENTS_AS_SIBLING", "add field entry is visible");
+					assert.equal(this.oContextMenuControl.getItems()[1].getKey(), "CTX_ADD_ELEMENTS_AS_SIBLING",
+						"add field entry is visible");
 					assert.equal(this.oContextMenuControl.getItems()[2].getKey(), "CTX_REMOVE", "remove field is available");
 					assert.equal(this.oContextMenuControl.getItems()[3].getKey(), "CTX_CUT", "cut field is available");
 					assert.equal(this.oContextMenuControl.getItems()[4].getKey(), "CTX_PASTE", "paste field is available");
@@ -466,7 +512,8 @@ sap.ui.define([
 
 			function fnExecuteChecks() {
 				assert.ok(bFirstCallIgnored, "the context menu only opens when ENTER is pressed again after the rename is completed");
-				assert.notOk(oFormElementOverlay.getIgnoreEnterKeyUpOnce(), "the 'ignoreEnterKeyUpOnce' property on the Overlay was set to false by the first call");
+				assert.notOk(oFormElementOverlay.getIgnoreEnterKeyUpOnce(),
+					"the 'ignoreEnterKeyUpOnce' property on the Overlay was set to false by the first call");
 				fnDone();
 			}
 
@@ -510,8 +557,10 @@ sap.ui.define([
 					assert.equal(this.oContextMenuControl.getItems().length, 5, "5 Menu Items are available");
 					assert.equal(this.oContextMenuControl.getItems()[0].getKey(), "CTX_RENAME", "rename title is available");
 					assert.equal(this.oContextMenuControl.getItems()[0].getEnabled(), true, "and rename title is enabled");
-					assert.equal(this.oContextMenuControl.getItems()[1].getKey(), "CTX_ADD_ELEMENTS_AS_CHILD", "add field entry is visible");
-					assert.equal(this.oContextMenuControl.getItems()[2].getKey(), "CTX_CREATE_SIBLING_CONTAINER", "create group is available");
+					assert.equal(this.oContextMenuControl.getItems()[1].getKey(), "CTX_ADD_ELEMENTS_AS_CHILD",
+						"add field entry is visible");
+					assert.equal(this.oContextMenuControl.getItems()[2].getKey(), "CTX_CREATE_SIBLING_CONTAINER",
+						"create group is available");
 					assert.equal(this.oContextMenuControl.getItems()[3].getKey(), "CTX_REMOVE", "remove group is available");
 					assert.equal(this.oContextMenuControl.getItems()[4].getKey(), "CTX_PASTE", "paste field is available");
 				} else {
@@ -532,7 +581,8 @@ sap.ui.define([
 
 				RtaQunitUtils.openContextMenuWithKeyboard.call(this, oGroupElementOverlay);
 				return RtaQunitUtils.openContextMenuWithKeyboard.call(this, oGroupElementOverlay).then(function() {
-					assert.equal(this.oContextMenuControl.getItems().length, iExpectedMenuItemsCount, "the second open is ignored and the five menu items are only added once");
+					assert.equal(this.oContextMenuControl.getItems().length, iExpectedMenuItemsCount,
+						"the second open is ignored and the five menu items are only added once");
 				}.bind(this));
 			}.bind(this));
 		});
@@ -553,7 +603,8 @@ sap.ui.define([
 				oGroupElementOverlay.focus();
 				oGroupElementOverlay.setSelected(true);
 				return RtaQunitUtils.openContextMenuWithKeyboard.call(this, oGroupElementOverlay).then(function() {
-					assert.equal(this.oContextMenuControl.getItems().length, iExpectedMenuItemsCount, "the first open is canceled and the five menu items are only added once");
+					assert.equal(this.oContextMenuControl.getItems().length, iExpectedMenuItemsCount,
+						"the first open is canceled and the five menu items are only added once");
 				}.bind(this));
 			}.bind(this));
 		});
@@ -864,9 +915,11 @@ sap.ui.define([
 				assert.ok(oOverlay.isEditable(), "then the overlay is editable");
 				if (oContextMenuControl.getItems().length === 2) {
 					assert.equal(oContextMenuControl.getItems().length, 2, " and 2 Menu Items are available");
-					assert.equal(oContextMenuControl.getItems()[0].getKey(), "CTX_CREATE_CHILD_IFRAME_SECTIONS", "add iframe to section is available");
+					assert.equal(oContextMenuControl.getItems()[0].getKey(), "CTX_CREATE_CHILD_IFRAME_SECTIONS",
+						"add iframe to section is available");
 					assert.equal(oContextMenuControl.getItems()[0].getEnabled(), true, "add iframe to section is enabled");
-					assert.equal(oContextMenuControl.getItems()[1].getKey(), "CTX_CREATE_CHILD_IFRAME_HEADERCONTENT", "add iframe to header is available");
+					assert.equal(oContextMenuControl.getItems()[1].getKey(), "CTX_CREATE_CHILD_IFRAME_HEADERCONTENT",
+						"add iframe to header is available");
 					assert.equal(oContextMenuControl.getItems()[1].getEnabled(), true, "add iframe to header is enabled");
 				} else {
 					assert.ok(false, "but shows the wrong number of menu items");

@@ -450,6 +450,55 @@
 		padding: 0.5rem;
 	}
 
+	// parent menu
+	&:not(.sapUiSubmenu) .sapUiMnuLst .sapUiMnuItm  {
+		font-weight: @_sap_tnt_NavigationList_GroupTextWeight;
+
+		.sapUiMnuItmIco {
+			position: relative !important;
+			width: auto;
+			padding-inline: 0 0.5rem;
+
+			.sapUiIcon {
+				color: @_sap_tnt_NavigationList_IconColor;
+				display: block;
+				width: 1rem;
+				height: 1rem;
+			}
+		}
+
+		.sapUiMnuItmSbMnu {
+			position: relative;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			width: 0.75rem;
+			height: 100%;
+			padding-inline-start: 0.5rem;
+
+			.sapUiIconMirrorInRTL::after {
+				content: "\e1ed";
+				font-size: 0.75rem;
+				color: @_sap_tnt_NavigationList_IconColor;
+			}
+		}
+
+		.sapUiMnuItmR {
+			display: none;
+		}
+
+		&.sapUiMnuItmSubMnuOpen,
+		&.sapUiMnuItmSubMnuOpen.sapUiMnuItmHov {
+			&::before {
+				position: absolute;
+				content: "";
+				inset: 0;
+				border: @_sap_tnt_NavigationList_SelectedBorderStyleColor;
+				border-width: @_sap_tnt_NavigationList_SelectedBorderWidth;
+			}
+		}
+	}
+
 	.sapUiMnuLst {
 		li.sapUiMnuItm {
 			display: flex;
@@ -483,55 +532,6 @@
 				margin-bottom: 0.1875rem;
 				border: @_sap_tnt_NavigationList_ItemBorderStyleColor;
 				border-width: @_sap_tnt_NavigationList_ItemBorderWidth;
-			}
-		}
-
-		// parent menu
-		&:not(.sapUiMnuNoSbMnu) .sapUiMnuItm {
-			font-weight: @_sap_tnt_NavigationList_GroupTextWeight;
-
-			.sapUiMnuItmIco {
-				position: relative;
-				width: auto;
-				padding-inline: 0 0.5rem;
-
-				.sapUiIcon {
-					color: @_sap_tnt_NavigationList_IconColor;
-					display: block;
-					width: 1rem;
-					height: 1rem;
-				}
-			}
-
-			.sapUiMnuItmSbMnu {
-				position: relative;
-				display: flex;
-				align-items: center;
-				justify-content: center;
-				width: 0.75rem;
-				height: 100%;
-				padding-inline-start: 0.5rem;
-
-				.sapUiIconMirrorInRTL::after {
-					content: "\e1ed";
-					font-size: 0.75rem;
-					color: @_sap_tnt_NavigationList_IconColor;
-				}
-			}
-
-			.sapUiMnuItmR {
-				display: none;
-			}
-
-			&.sapUiMnuItmSubMnuOpen,
-			&.sapUiMnuItmSubMnuOpen.sapUiMnuItmHov {
-				&::before {
-					position: absolute;
-					content: "";
-					inset: 0;
-					border: @_sap_tnt_NavigationList_SelectedBorderStyleColor;
-					border-width: @_sap_tnt_NavigationList_SelectedBorderWidth;
-				}
 			}
 		}
 	}

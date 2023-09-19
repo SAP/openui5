@@ -32,14 +32,13 @@ sap.ui.define([
 	createAndAppendDiv("content");
 
 
-
-	QUnit.test("ShouldRenderObjectNumber", function(assert) {
-		//SUT
+	QUnit.test("Should render ObjectNumber with unit", function(assert) {
+		//Arrange
 		var sNumber = "5",
-			sNumberUnit = "Euro",
+			sUnit = "Euro",
 			sut = new ObjectNumber("on1", {
 				number: sNumber,
-				numberUnit : sNumberUnit
+				unit: sUnit
 			});
 
 		//Act
@@ -47,8 +46,8 @@ sap.ui.define([
 		Core.applyChanges();
 
 		//Assert
-		assert.equal(jQuery(".sapMObjectNumberText:contains(" + sNumber + ")").length,1,"Number should be there");
-		assert.equal(jQuery(".sapMObjectNumberUnit:contains(" + sNumberUnit + ")").length,1,"Number unit should be there");
+		assert.equal(jQuery(".sapMObjectNumberText:contains(" + sNumber + ")").length,1,"Number should be rendered");
+		assert.equal(jQuery(".sapMObjectNumberUnit:contains(" + sUnit + ")").length,1,"Unit should be redndered");
 
 		var $ontxt = jQuery("#on1").find(".sapMObjectNumberText");
 		var sFontWeight = $ontxt.css("font-weight");
@@ -58,29 +57,8 @@ sap.ui.define([
 		sut.destroy();
 	});
 
-	QUnit.test("ShouldRenderUnit", function(assert) {
-		//SUT
-		var sUnit = "Dollar";
-		var sut = new ObjectNumber("unit", {
-		number: "10",
-		unit : sUnit,
-		numberUnit: "Euro"
-		});
-
-		//Act
-		sut.placeAt("content");
-		Core.applyChanges();
-
-		//Assert
-		assert.equal(jQuery(".sapMObjectNumberUnit:contains(" + sUnit + ")").length,1,"unit should be used instead of numberUnit");
-
-		//Cleanup
-		sut.destroy();
-	});
-
 	QUnit.test("Should not render unit element when Unit is empty", function(assert) {
-
-		// System under test
+		// Arrange
 		var oObjectNumber = new ObjectNumber("onUnit", {
 			number: 256
 		});
@@ -102,13 +80,12 @@ sap.ui.define([
 	});
 
 	QUnit.test("Non-emphasized ObjectNumber", function(assert) {
-		//SUT
-
+		//Arrange
 		var sNumber = "5",
-			sNumberUnit = "Euro",
+			sUnit = "Euro",
 			sut = new ObjectNumber("on2", {
 				number: sNumber,
-				numberUnit : sNumberUnit,
+				unit: sUnit,
 				emphasized: false
 			});
 
@@ -129,13 +106,12 @@ sap.ui.define([
 	});
 
 	QUnit.test("ValueState of ObjectNumber", function(assert) {
-		//SUT
-
+		//Arrange
 		var sNumber = "5",
-			sNumberUnit = "Euro",
+			sUnit = "Euro",
 			sut = new ObjectNumber("on3", {
 				number: sNumber,
-				numberUnit : sNumberUnit
+				unit: sUnit
 			});
 
 		//Act
@@ -143,7 +119,6 @@ sap.ui.define([
 		Core.applyChanges();
 
 		//Assert
-		//Check value
 		var $ontxt = jQuery("#on3");
 		assert.ok($ontxt.hasClass("sapMObjectNumberStatusNone"), "Object Number should be assigned css class 'sapMObjectNumberStatusNone'" );
 
@@ -167,13 +142,12 @@ sap.ui.define([
 			}
 		}
 
-
 		//Cleanup
 		sut.destroy();
 	});
 
 	QUnit.test("RTL ObjectNumber", function(assert) {
-		//SUT
+		//Arrange
 		var on4 = new ObjectNumber("on4", {
 			number: "1.50",
 			unit: "Euro",

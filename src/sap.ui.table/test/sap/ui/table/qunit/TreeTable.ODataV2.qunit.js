@@ -4,12 +4,23 @@ sap.ui.define([
 	"sap/ui/table/qunit/TableQUnitUtils",
 	"sap/ui/table/TreeTable",
 	"sap/ui/table/Column",
+	"sap/ui/table/rowmodes/Fixed",
 	"sap/ui/model/odata/v2/ODataModel",
 	"sap/ui/model/Filter",
 	"sap/ui/core/util/MockServer",
 	"sap/ui/core/Core",
 	"sap/ui/thirdparty/jquery"
-], function(TableQUnitUtils, TreeTable, Column, ODataModel, Filter, MockServer, Core, jQuery) {
+], function(
+	TableQUnitUtils,
+	TreeTable,
+	Column,
+	FixedRowMode,
+	ODataModel,
+	Filter,
+	MockServer,
+	Core,
+	jQuery
+) {
 	"use strict";
 
 	//MockServer for use with annotated tree
@@ -319,7 +330,7 @@ sap.ui.define([
 
 	QUnit.test("Number Of Expanded Levels", function(assert) {
 		var done = assert.async();
-		this.oTable = createTable.call(this, {visibleRowCount: 15});
+		this.oTable = createTable.call(this, {rowMode: new FixedRowMode({rowCount: 15})});
 
 		var oBinding;
 
@@ -409,7 +420,7 @@ sap.ui.define([
 
 	QUnit.test("Selection", function(assert) {
 		var done = assert.async();
-		this.oTable = createTable.call(this, {visibleRowCount: 15});
+		this.oTable = createTable.call(this, {rowMode: new FixedRowMode({rowCount: 15})});
 		var oBinding;
 
 		var fnHandler0 = function() {
@@ -551,9 +562,9 @@ sap.ui.define([
 
 			var i = 1;
 			var fnVisibleRowHandler = function() {
-				// section length is visibleRowCount, make sure to scroll to all the sections/nodes
+				// section length is the row count, make sure to scroll to all the sections/nodes
 				if (i < this.oTable._getMaxFirstVisibleRowIndex()) {
-					i += this.oTable.getVisibleRowCount();
+					i += this.oTable._getRowCounts().count;
 					this.oTable.setFirstVisibleRow(i);
 				} else {
 					this.oTable.detachRowsUpdated(fnVisibleRowHandler);

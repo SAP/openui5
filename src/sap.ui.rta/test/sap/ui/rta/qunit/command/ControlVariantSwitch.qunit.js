@@ -87,13 +87,13 @@ sap.ui.define([
 			var aDirtyChanges = [
 				RtaQunitUtils.createUIChange({
 					fileName: "change1",
-					reference: "Dummy.Component",
+					reference: "Dummy",
 					variantReference: "oldVariantReference",
 					fileType: "change"
 				}),
 				RtaQunitUtils.createUIChange({
 					fileName: "change2",
-					reference: "Dummy.Component",
+					reference: "Dummy",
 					variantReference: "oldVariantReference",
 					fileType: "ctrl_variant_management_change"
 				})

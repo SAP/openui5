@@ -211,7 +211,7 @@ sap.ui.define([
 
 		return Promise.resolve()
 			.then(oModifier.createControl.bind(oModifier, "sap.ui.mdc.FilterField", oAppComponent, oView, sId, DelegateCache.merge({
-				dataType: oProperty.typeConfig.className,
+				dataType: oProperty.dataType,
 				conditions: "{$filters>/conditions/" + sName + '}',
 				propertyKey: sName,
 				required: oProperty.required,
@@ -293,7 +293,7 @@ sap.ui.define([
 			if (nIdx >= 0) {
 				aPropertyInfo.push({
 					name: sPropertyName,
-					dataType: aFetchedProperties[nIdx].typeConfig.className,
+					dataType: aFetchedProperties[nIdx].dataType,
 					maxConditions: aFetchedProperties[nIdx].maxConditions,
 					constraints: aFetchedProperties[nIdx].constraints,
 					formatOption: aFetchedProperties[nIdx].formatOptions,

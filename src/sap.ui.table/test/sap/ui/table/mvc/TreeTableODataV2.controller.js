@@ -10,7 +10,6 @@ sap.ui.define([
 	"sap/m/MessagePopover",
 	"sap/m/MessageItem",
 	"sap/ui/core/Core",
-    "sap/ui/table/library",
     "sap/ui/core/util/MockServer",
     "sap/ui/model/Filter",
     "sap/ui/table/TreeTable",
@@ -23,11 +22,8 @@ sap.ui.define([
     "sap/ui/core/syncStyleClass",
 	"sap/ui/core/Fragment"
 ], function(Controller, MessageToast, JSONModel, Dialog, Text, Label, TextArea, Button, MessagePopover, MessageItem, oCore,
-			tableLibrary, MockServer, Filter, TreeTable, Column, ODataModel, HTML, Measurement, uid, encodeXML, syncStyleClass, Fragment) {
+			MockServer, Filter, TreeTable, Column, ODataModel, HTML, Measurement, uid, encodeXML, syncStyleClass, Fragment) {
 	"use strict";
-
-	// shortcut for sap.ui.table.VisibleRowCountMode
-	var VisibleRowCountMode = tableLibrary.VisibleRowCountMode;
 
 	var oTable;
 
@@ -76,8 +72,6 @@ sap.ui.define([
 				hierarchyDrillStateFor: "DRILLDOWN_STATE",
 				hierarchyDescendantCountFor: "",
 				hierarchyExternalKeyFor: "",
-				visibleRowCount: 20,
-				visibleRowCountMode: VisibleRowCountMode.Fixed,
 				overall: 0,
 				onBeforeRendering: 0,
 				rendering: 0,
@@ -94,7 +88,6 @@ sap.ui.define([
 
 			this.aRenderResults = [];
 			this.aFunctionResults = [];
-			this.aVisibleRow = [];
 		},
 
 		/**
@@ -176,17 +169,6 @@ sap.ui.define([
 			var sHierarchyDrillStateFor = oView.byId("hierarchyDrillStateFor").getValue();
 			var sHierarchyDescendantCountFor = oView.byId("hierarchyDescendantCountFor").getValue();
 
-			// table propertis
-			var iVisibleRowCount = oViewModel.getProperty("/visibleRowCount");
-			var sVisibleRowCountMode = oViewModel.getProperty("/visibleRowCountMode");
-
-			var oVisibleRow = {
-					VisibleRowCount: iVisibleRowCount,
-					VisibleRowCountMode: sVisibleRowCountMode
-				};
-
-			this.aVisibleRow.push(oVisibleRow);
-
 			var bRestoreTreeStateAfterChange = oView.byId("restoreTreeStateAfterChange").getSelected();
 
 			/**
@@ -206,8 +188,7 @@ sap.ui.define([
 
 			oTable = oView.byId("tableOData") || new TreeTable({
 				rootLevel: iRootLevel,
-				threshold: iTableThreshold,
-				visibleRowCount: iVisibleRowCount
+				threshold: iTableThreshold
 			});
 
 			this.attachPerformanceTools(oTable);
@@ -762,12 +743,10 @@ sap.ui.define([
 			syncColumnHeadersSum = 0,
 			iRun = this.aRenderResults.length;
 
-			var sCSV = "Run;VisibleRowCount;VisibleRowCountMode;Overall;Before Rendering;Rendering;After Rendering;Table Create;Factor of After Rendering in Rendering;Table._createRows;Table._updateTableContent;Table._syncColumnHeaders;Table._updateRowHeader\n";
+			var sCSV = "Run;Overall;Before Rendering;Rendering;After Rendering;Table Create;Factor of After Rendering in Rendering;Table._createRows;Table._updateTableContent;Table._syncColumnHeaders;Table._updateRowHeader\n";
 
 			for (var i = 0; i < iRun; i++) {
 				sCSV += (i + 1) + ";"
-						+ this.aVisibleRow[i].VisibleRowCount + ";"
-						+ this.aVisibleRow[i].VisibleRowCountMode + ";"
 						+ this.aRenderResults[i].overall + ";"
 						+ this.aRenderResults[i].onBeforeRendering + ";"
 						+ this.aRenderResults[i].rendering + ";"

@@ -175,26 +175,6 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("Should set the translucent class if on a touch device", function(assert) {
-		var //System under Test
-			sut = new Bar({
-				translucent : true
-			});
-
-		//Arrange
-		this.stub(Device.support, "touch").value(true);
-
-		//Act
-		sut.placeAt("qunit-fixture");
-		oCore.applyChanges();
-
-		//Assert
-		assert.strictEqual(sut.$().filter(".sapMBarTranslucent").length,1,"translucent class got set");
-
-		//Cleanup
-		sut.destroy();
-	});
-
 	QUnit.test("Should not register resize handlers if the bar is invisible", function(assert) {
 		var //System under Test
 				oBar = new Bar({
@@ -597,46 +577,6 @@ sap.ui.define([
 		jQuery("#qunit-fixture").width("");
 	});
 
-	QUnit.test("Should push the mid to the center of the remaining space, if the right content overlaps it", function(assert) {
-		var bRtl = oCore.getConfiguration().getRTL(),
-			sLeftOrRight = bRtl ? "right" : "left";
-
-		//Arrange + System under Test + Act
-		//left | right | mid
-		var sut = createAndPlaceSUT(undefined, 225, 100);
-
-		//Act
-		jQuery("#qunit-fixture").width("500px");
-		sut.placeAt("qunit-fixture");
-		oCore.applyChanges();
-
-		//Assert
-		var oBarInternals = getJqueryObjectsForBar(sut);
-
-		assert.strictEqual(oBarInternals.$left.outerWidth(), 0, "left outerWidth is correct");
-
-		assert.strictEqual(oBarInternals.$mid.outerWidth(), 500 - 225 - iStartEndPadding, "mid outerWidth is the remaining space");
-		assert.strictEqual(parseInt(oBarInternals.$mid.css(sLeftOrRight)), iStartEndPadding * 0 , "mid was positioned at the " + sLeftOrRight + " edge");
-
-		assert.strictEqual(oBarInternals.$right.outerWidth(), 225 + iStartEndPadding, "right outerWidth is correct");
-
-		oCore.applyChanges();
-
-		//Assert
-		oBarInternals = getJqueryObjectsForBar(sut);
-
-		assert.strictEqual(oBarInternals.$left.outerWidth(), 0 + iStartEndPadding, "left outerWidth is correct (flexbox)");
-
-		assert.strictEqual(oBarInternals.$mid.outerWidth(), 500 - 225 - iStartEndPadding * 2, "mid outerWidth is the remaining space (flexbox)");
-		assert.strictEqual(parseInt(oBarInternals.$mid.css(sLeftOrRight)), iStartEndPadding, "mid was positioned at the " + sLeftOrRight + " edge (flexbox)");
-
-		assert.strictEqual(oBarInternals.$right.outerWidth(), 225 + iStartEndPadding, "right outerWidth is correct (flexbox)");
-
-		//Cleanup
-		sut.destroy();
-		jQuery("#qunit-fixture").width("");
-	});
-
 	testAlsoForRTL("Should hide left and mid content, if the right content is bigger than the bar", function(assert) {
 		//Arrange + System under Test + Act
 		//left | right | mid
@@ -674,41 +614,6 @@ sap.ui.define([
 		assert.strictEqual(oBarInternals.$mid.outerWidth(), 0 + iStartEndPadding * 2, "mid outerWidth is correct");
 
 		assert.strictEqual(oBarInternals.$right.outerWidth(), 0, "right outerWidth is correct");
-
-		//Cleanup
-		sut.destroy();
-		jQuery("#qunit-fixture").width("");
-	});
-
-	testAlsoForRTL("Should make the mid content smaller, if there is a left and right content", function(assert) {
-		//Arrange + System under Test + Act
-		//left | right | mid
-		var sut = createAndPlaceSUT(100, 100, 500);
-
-		//Act
-		jQuery("#qunit-fixture").width("500px");
-		sut.placeAt("qunit-fixture");
-		oCore.applyChanges();
-
-		//Assert
-		var oBarInternals = getJqueryObjectsForBar(sut);
-
-		assert.strictEqual(oBarInternals.$left.outerWidth(), 100 + iStartEndPadding, "left outerWidth is correct");
-
-		assert.strictEqual(oBarInternals.$mid.outerWidth(), 300 -  iStartEndPadding * 2, "mid outerWidth is correct");
-
-		assert.strictEqual(oBarInternals.$right.outerWidth(), 100 + iStartEndPadding, "right outerWidth is correct");
-
-		oCore.applyChanges();
-
-		//Assert
-		oBarInternals = getJqueryObjectsForBar(sut);
-
-		assert.strictEqual(oBarInternals.$left.outerWidth(), 100 + iStartEndPadding, "left outerWidth is correct (flexbox)");
-
-		assert.strictEqual(oBarInternals.$mid.outerWidth(), 300 -  iStartEndPadding * 2, "mid outerWidth is correct (flexbox)");
-
-		assert.strictEqual(oBarInternals.$right.outerWidth(), 100 + iStartEndPadding, "right outerWidth is correct (flexbox)");
 
 		//Cleanup
 		sut.destroy();

@@ -5,9 +5,8 @@ sap.ui.define([
 	"sap/ui/mdc/field/content/DefaultContent",
 	"sap/ui/mdc/field/content/DateContent",
 	"sap/ui/mdc/util/DateUtil",
-	"sap/base/util/merge",
-	"sap/base/util/ObjectPath"
-], function(DefaultContent, DateContent, DateUtil, merge, ObjectPath) {
+	"sap/base/util/merge"
+], function(DefaultContent, DateContent, DateUtil, merge) {
 	"use strict";
 
 	/**

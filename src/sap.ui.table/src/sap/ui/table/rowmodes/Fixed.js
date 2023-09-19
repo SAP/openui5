@@ -18,10 +18,11 @@ sap.ui.define([
 	 *
 	 * @class
 	 * A fixed number of rows is displayed in the table.
-	 * @extends module:sap/ui/table/rowmodes/RowMode
+	 * @extends sap.ui.table.rowmodes.RowMode
 	 * @constructor
-	 * @alias module:sap/ui/table/rowmodes/Fixed
-	 * @private
+	 * @alias sap.ui.table.rowmodes.Fixed
+	 * @since 1.119
+	 * @public
 	 *
 	 * @author SAP SE
 	 * @version ${version}
@@ -53,16 +54,14 @@ sap.ui.define([
 				rowContentHeight: {type: "int", defaultValue: 0, group: "Appearance"},
 				/**
 				 * Whether to hide empty rows.
-				 * TODO: make hidden before making the class public
+				 *
+				 * @private
+				 * @ui5-restricted sap.ui.mdc.Table
 				 */
-				hideEmptyRows: {type: "boolean", defaultValue: false, group: "Appearance"}
+				hideEmptyRows: {type: "boolean", defaultValue: false, group: "Appearance", visibility: "hidden"}
 			}
 		},
 		constructor: function(sId) {
-			Object.defineProperty(this, "bLegacy", {
-				value: typeof sId === "boolean" ? sId : false
-			});
-
 			RowMode.apply(this, arguments);
 		}
 	});
@@ -90,38 +89,18 @@ sap.ui.define([
 	};
 
 	FixedRowMode.prototype.getRowCount = function() {
-		if (this.bLegacy) {
-			var oTable = this.getTable();
-			return oTable ? oTable.getVisibleRowCount() : 0;
-		}
-
 		return this.getProperty("rowCount");
 	};
 
 	FixedRowMode.prototype.getFixedTopRowCount = function() {
-		if (this.bLegacy) {
-			var oTable = this.getTable();
-			return oTable ? oTable.getFixedRowCount() : 0;
-		}
-
 		return this.getProperty("fixedTopRowCount");
 	};
 
 	FixedRowMode.prototype.getFixedBottomRowCount = function() {
-		if (this.bLegacy) {
-			var oTable = this.getTable();
-			return oTable ? oTable.getFixedBottomRowCount() : 0;
-		}
-
 		return this.getProperty("fixedBottomRowCount");
 	};
 
 	FixedRowMode.prototype.getRowContentHeight = function() {
-		if (this.bLegacy) {
-			var oTable = this.getTable();
-			return oTable ? oTable.getRowHeight() : 0;
-		}
-
 		return this.getProperty("rowContentHeight");
 	};
 
@@ -135,6 +114,10 @@ sap.ui.define([
 		}
 
 		return this;
+	};
+
+	FixedRowMode.prototype.getHideEmptyRows = function() {
+		return this.getProperty("hideEmptyRows");
 	};
 
 	FixedRowMode.prototype.getMinRequestLength = function() {
@@ -186,11 +169,7 @@ sap.ui.define([
 	FixedRowMode.prototype.getRowContainerStyles = function() {
 		var sHeight = this.getComputedRowCounts().count * this.getBaseRowHeightOfTable() + "px";
 
-		if (this.bLegacy && !TableUtils.isVariableRowHeightEnabled(this.getTable())) {
-			return {minHeight: sHeight};
-		} else {
-			return {height: sHeight};
-		}
+		return {height: sHeight};
 	};
 
 	FixedRowMode.prototype.renderRowStyles = function(oRM) {
@@ -203,10 +182,6 @@ sap.ui.define([
 
 	FixedRowMode.prototype.renderCellContentStyles = function(oRM) {
 		var iRowContentHeight = this.getRowContentHeight();
-
-		if (this.bLegacy) {
-			return;
-		}
 
 		if (iRowContentHeight <= 0) {
 			iRowContentHeight = this.getDefaultRowContentHeightOfTable();

@@ -564,7 +564,7 @@ sap.ui.define([
 
 	/**
 	 * Function is called when tap occurs on button.
-	 * @param {jQuery.Event} oEvent - the touch event.
+	 * @param {jQuery.Event} oEvent - the touch event
 	 * @private
 	 */
 	Button.prototype.ontap = function(oEvent, bFromTouchEnd) {

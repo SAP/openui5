@@ -4,9 +4,17 @@ sap.ui.define([
 	"sap/ui/table/qunit/TableQUnitUtils",
 	"sap/ui/table/Row",
 	"sap/ui/table/Column",
+	"sap/ui/table/rowmodes/Fixed",
 	"sap/ui/table/utils/TableUtils",
 	"sap/ui/core/Core"
-], function(TableQUnitUtils, Row, Column, TableUtils, oCore) {
+], function(
+	TableQUnitUtils,
+	Row,
+	Column,
+	FixedRowMode,
+	TableUtils,
+	oCore
+) {
 	"use strict";
 
 	var initRowActions = window.initRowActions;
@@ -15,7 +23,9 @@ sap.ui.define([
 	QUnit.module("Cells", {
 		beforeEach: function() {
 			this.oTable = TableQUnitUtils.createTable({
-				visibleRowCount: 1,
+				rowMode: new FixedRowMode({
+					rowCount: 1
+				}),
 				rows: {path: "/"},
 				models: TableQUnitUtils.createJSONModelWithEmptyRows(1),
 				columns: [
@@ -113,7 +123,9 @@ sap.ui.define([
 	QUnit.module("Functions", {
 		beforeEach: function() {
 			this.oTable = TableQUnitUtils.createTable({
-				visibleRowCount: 1,
+				rowMode: new FixedRowMode({
+					rowCount: 1
+				}),
 				fixedColumnCount: 1,
 				rows: {path: "/"},
 				models: TableQUnitUtils.createJSONModelWithEmptyRows(1),

@@ -52,6 +52,11 @@ sap.ui.define([
 					type: "string",
 					group: "content"
 				},
+				useLegacyNavigation: {
+					type: "boolean",
+					defaultValue: false,
+					group: "content"
+				},
 				changeType: {
 					type: "string",
 					defaultValue: "addIFrame"

@@ -150,13 +150,6 @@ sap.ui.define([
 	Bar.prototype.exit = function() {
 		this._removeAllListeners();
 
-		if (this._oflexBox) {
-
-			this._oflexBox.destroy();
-			this._oflexBox = null;
-
-		}
-
 		this._$MidBarPlaceHolder = null;
 		this._$RightBar = null;
 		this._$LeftBar = null;
@@ -205,7 +198,7 @@ sap.ui.define([
 		this._removeAllListeners();
 
 		var bContentLeft = !!this.getContentLeft().length,
-			bContentMiddle = !!this.getContentMiddle().length || (this._oflexBox && !!this._oflexBox.getItems().length),
+			bContentMiddle = !!this.getContentMiddle().length,
 			bContentRight = !!this.getContentRight().length;
 
 		//Invisible bars also do not need resize listeners
@@ -324,7 +317,6 @@ sap.ui.define([
 	Bar.prototype._getMidBarCss = function(iRightBarWidth, iBarWidth, iLeftBarWidth) {
 		var iMidBarPlaceholderWidth = this._$MidBarPlaceHolder.outerWidth(true),
 			bRtl = Configuration.getRTL(),
-			sLeftOrRight = bRtl ? "right" : "left",
 			oMidBarCss = { visibility : "" };
 
 		var iSpaceBetweenLeftAndRight = iBarWidth - iLeftBarWidth - iRightBarWidth,

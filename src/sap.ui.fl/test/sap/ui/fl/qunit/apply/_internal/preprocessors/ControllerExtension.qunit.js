@@ -38,7 +38,7 @@ sap.ui.define([
 	function createCodeExtChangeContent(oInput) {
 		return Object.assign({
 			fileName: "id_1436877480596_108",
-			namespace: "ui.s2p.mm.purchorder.approve.Component",
+			namespace: "ui.s2p.mm.purchorder.approve",
 			fileType: "change",
 			layer: Layer.CUSTOMER,
 			creation: "20150720131919",

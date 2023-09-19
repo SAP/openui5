@@ -227,7 +227,7 @@ sap.ui.define([
 	QUnit.module("Rendering", {
 		beforeEach: function() {
 			createTables();
-			oTreeTable.setVisibleRowCount(12);
+			oTreeTable.getRowMode().setRowCount(12);
 			oCore.applyChanges();
 		},
 		afterEach: function() {

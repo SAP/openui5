@@ -349,6 +349,9 @@ sap.ui.define([
 		 * @since 1.96
 		 */
 		createEditForHelp: function(oContentFactory, aControlClasses, sId) {
+			if (oContentFactory.getDataType() && oContentFactory.getDataType().isA("sap.ui.model.CompositeType")) {
+				oContentFactory.setIsMeasure(true); // handle only Number or Unit (in single Field)
+			}
 			return this.createEdit(oContentFactory, aControlClasses, sId); // In normal cases there is no difference between EditForHelp and Edit.
 		}
 	};

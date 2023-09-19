@@ -862,8 +862,17 @@ html.sapUiMedia-Std-Tablet {
 			padding: 0 0.75rem;
 		}
 
+		.sapUiDemokitMainHeaderGrid {
+			align-items: center;
+		}
+
 		.sapUiDemoKitHeaderOTB {
 			justify-content: end;
+		}
+
+		&.sapTntToolHeader .sapMBarChild.sapMMenuBtn .sapMBtn:focus .sapMBtnDefault.sapMFocusable::before {
+			outline: @sapContent_FocusStyle @sapContent_FocusWidth @sapContent_FocusColor;
+			border: none !important;
 		}
 
 		// Apply more polished box-shadow effect
@@ -975,11 +984,6 @@ html.sapUiMedia-Std-Tablet {
 			}
 		}
 	}
-
-	.sapTntToolHeader .sapMBarChild.sapMMenuBtn .sapMBtn:focus .sapMBtnDefault.sapMFocusable::before {
-		outline: @sapContent_FocusStyle @sapContent_FocusWidth @sapContent_FocusColor;
-		border: none !important;
-	}
 }
 
 // Align the icons of the menu buttons in overflow popover
@@ -1021,7 +1025,7 @@ html.sapUiMedia-Std-Tablet {
 	}
 }
 
-.sapUiSizeCompact  .sapUiDemokit {
+.sapUiSizeCompact  .sapUiDemokit .sapUiDemokitMainHeader {
 	.sapMBtn.newsButton .sapMBadgeTopRight.sapMBadge.sapMBtnIconFirst:not(.sapMBtnText) {
 		padding: 0;
 	}
@@ -1035,7 +1039,9 @@ html.sap-desktop {
 				padding-left: 0;
 			}
 		}
+	}
 
+	&:not(html.sap-combi) .sapUiDemokit.sapTntToolPage {
 		.sapUiDemoKitHeaderOTB {
 			height: 2.25rem;
 		}
@@ -1096,38 +1102,40 @@ html.sap-tablet {
 			border-radius: 0;
 		}
 
-		.sapMIBar .sapMMenuBtn {
-			.sapMBtn:not(.sapMSBArrow) .sapMBtnInner {
-				height: 2.5rem;
-				width: 2.5rem;
-				top: -0.125rem;
+		.sapUiDemokitMainHeader {
+			.sapMIBar .sapMMenuBtn {
+				.sapMBtn:not(.sapMSBArrow) .sapMBtnInner {
+					height: 2.5rem;
+					width: 2.5rem;
+					top: -0.125rem;
 
-				.sapUiIcon {
-					margin-left: 0.125rem;
+					.sapUiIcon {
+						margin-left: 0.125rem;
+					}
 				}
 			}
-		}
 
-		// Align the menu button with the side menu button
-		.sapUiDocumentationMasterToggleButton {
-			margin-left: 1rem;
-		}
-
-		// Adjust the style of the version switch button to match the design specifiaction
-		.sapUiDemoKitHeaderActionsVersionSwitch .sapMBtnInner {
-			padding: 0;
-
-			&:after {
-				content: none;
+			// Align the menu button with the side menu button
+			.sapUiDocumentationMasterToggleButton {
+				margin-left: 1rem;
 			}
 
-			.sapMBtnIcon {
+			// Adjust the style of the version switch button to match the design specifiaction
+			.sapUiDemoKitHeaderActionsVersionSwitch .sapMBtnInner {
 				padding: 0;
-			}
-		}
 
-		.sapUiDemoKitHeaderActionsVersionSwitchTextContent {
-			display: none;
+				&:after {
+					content: none;
+				}
+
+				.sapMBtnIcon {
+					padding: 0;
+				}
+			}
+
+			.sapUiDemoKitHeaderActionsVersionSwitchTextContent {
+				display: none;
+			}
 		}
 	}
 }
@@ -1147,20 +1155,18 @@ html.sap-phone {
 			border-radius: 0;
 		}
 
-		.sapMIBar .sapMMenuBtn {
-			.sapMBtn:not(.sapMSBArrow) .sapMBtnInner {
-				height: 2.5rem;
-				width: 2.5rem;
-				top: -0.125rem;
+		.sapUiDemokitMainHeader {
+			.sapMIBar .sapMMenuBtn {
+				.sapMBtn:not(.sapMSBArrow) .sapMBtnInner {
+					height: 2.5rem;
+					width: 2.5rem;
+					top: -0.125rem;
 
-				.sapUiIcon {
-					margin-left: 0.125rem;
+					.sapUiIcon {
+						margin-left: 0.125rem;
+					}
 				}
 			}
-		}
-
-		.sapUiDemokitMainHeaderGrid {
-			align-items: center;
 		}
 	}
 

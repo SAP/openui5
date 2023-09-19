@@ -16,13 +16,12 @@ sap.ui.define([
 	'sap/ui/mdc/enums/BaseType',
 	'sap/ui/mdc/field/content/ContentFactory',
 	'sap/ui/mdc/Control',
-	"sap/ui/mdc/util/loadModules",
+	'sap/ui/mdc/util/loadModules',
 	'sap/ui/core/library',
 	'sap/ui/core/LabelEnablement',
 	'sap/ui/core/message/MessageMixin',
 	'sap/base/util/deepEqual',
 	'sap/base/util/merge',
-	'sap/base/Log',
 	'sap/ui/dom/containsOrEquals',
 	'sap/ui/model/BindingMode',
 	'sap/ui/model/FormatException',
@@ -30,9 +29,7 @@ sap.ui.define([
 	'sap/ui/model/ValidateException',
 	'sap/ui/model/base/ManagedObjectModel',
 	'sap/ui/base/ManagedObjectObserver',
-	'sap/ui/base/SyncPromise',
-	'sap/base/util/restricted/_debounce',
-	'sap/ui/events/KeyCodes'
+	'sap/base/util/restricted/_debounce'
 ], function(
 	Device,
 	FieldEditMode,
@@ -54,7 +51,6 @@ sap.ui.define([
 	MessageMixin,
 	deepEqual,
 	merge,
-	Log,
 	containsOrEquals,
 	BindingMode,
 	FormatException,
@@ -62,9 +58,7 @@ sap.ui.define([
 	ValidateException,
 	ManagedObjectModel,
 	ManagedObjectObserver,
-	SyncPromise,
-	debounce,
-	KeyCodes
+	debounce
 ) {
 	"use strict";
 
@@ -1406,7 +1400,7 @@ sap.ui.define([
 
 		var aContent = this.getCurrentContent();
 		if (aContent.length > 0) {
-			if (this.getContentFactory().isMeasure()) {
+			if (this.getContentFactory().isMeasure() && aContent.length > 1) { // if two parts, ValueHelp is assigned to second control
 				return aContent[1];
 			} else {
 				return aContent[0];
@@ -1476,11 +1470,11 @@ sap.ui.define([
 				this._oResourceBundleM = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 			}
 			return this._oResourceBundleM.getText("EMPTY_INDICATOR"); // TODO: clarify accessibility support for semantic conected fields
-		} else if (this.getContentFactory().isMeasure() && this.getContentFactory().getUnitOriginalType()) {
+		} else if (this.getContentFactory().isMeasure() && this.getContentFactory().getUnitOriginalType(true)) {
 			// in unit case use original data type for formatting (as internal type hides unit)
 			var aValue = aConditions.length > 0 ? aConditions[0].values[0] : [0, null]; // TODO: support multiple conditions or other operator than EQ?
 			return this.getContentFactory().getUnitOriginalType().formatValue(aValue, "string");
-		} else if (this.getContentFactory().getDateOriginalType()) {
+		} else if (this.getContentFactory().getDateOriginalType(true)) {
 			// in date case use original data type for formatting (as internal type formats to ISO format)
 			var vValue = aConditions.length > 0 ? aConditions[0].values[0] : null; // TODO: support multiple conditions or other operator than EQ?
 			return this.getContentFactory().getDateOriginalType().formatValue(vValue, "string");
@@ -2833,7 +2827,7 @@ sap.ui.define([
 				// the focus is still in the Field. The update of the inner control is done via ManagedObjectModel binding.
 				// The inner Input is configured to prefer user input in this case.
 				// so we need to set the DOM value here. Otherwise it is not updated or, if empty, selected.
-				if (this.getContentFactory().isMeasure() && this.getContentFactory().getUnitConditionsType()) {
+				if (this.getContentFactory().isMeasure() && this.getContentFactory().getUnitConditionsType(true)) {
 					sDOMValue = this.getContentFactory().getUnitConditionsType().formatValue(aConditions);
 				} else if (this.getContentFactory().getConditionType(true)) {
 					sDOMValue = this.getContentFactory().getConditionType().formatValue(aConditions[0]);
@@ -2961,7 +2955,7 @@ sap.ui.define([
 
 		if (oContent && oContent.setDOMValue) {
 			if (!sDOMValue) {
-				if (this.getContentFactory().isMeasure() && this.getContentFactory().getUnitConditionsType() && this._oNavigateCondition) {
+				if (this.getContentFactory().isMeasure() && this.getContentFactory().getUnitConditionsType(true) && this._oNavigateCondition) {
 					sDOMValue = this.getContentFactory().getUnitConditionsType().formatValue([this._oNavigateCondition]);
 				} else if (this.getContentFactory().getConditionType(true) && this._oNavigateCondition) {
 					sDOMValue = this.getContentFactory().getConditionType().formatValue(this._oNavigateCondition);

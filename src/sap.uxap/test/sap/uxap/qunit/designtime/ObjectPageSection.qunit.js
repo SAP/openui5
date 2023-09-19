@@ -270,9 +270,16 @@ sap.ui.define([
 
 	// Update IFrame
 	function fnConfirmIFrameWasUpdated(oAppComponent, oViewAfterAction, assert) {
-		assert.strictEqual( oViewAfterAction.byId("iFrameSection-iframe").get_settings().url,
+		const oIFrame = oViewAfterAction.byId("iFrameSection-iframe");
+		assert.strictEqual(
+			oIFrame.get_settings().url,
 			"someNewUrl",
-			"then the iFrame is updated" );
+			"then the iframe url is updated"
+		);
+		assert.ok(
+			oIFrame.getUseLegacyNavigation(),
+			"then the legacy navigation flag is properly updated"
+		);
 	}
 
 	// Use elementActionTest to check if a new iFrame as Object Page Section is updated properly
@@ -307,7 +314,8 @@ sap.ui.define([
 					content: {
 						height: "100%",
 						url: "someNewUrl",
-						width: "100%"
+						width: "100%",
+						useLegacyNavigation: true
 					}
 				};
 			}

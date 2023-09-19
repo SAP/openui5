@@ -236,7 +236,7 @@ sap.ui.define([
 			oOpenDefaultContentCellContextMenu.resetHistory();
 		}
 
-		oTable.setVisibleRowCount(iNumberOfRows + 1);
+		oTable.getRowMode().setRowCount(iNumberOfRows + 1);
 		oCore.applyChanges();
 		oCell = getCell(iNumberOfRows, 0)[0];
 		oFakeEventObject = createFakeEventObject(oCell);

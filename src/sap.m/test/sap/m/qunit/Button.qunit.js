@@ -408,27 +408,6 @@ sap.ui.define([
 		oButton.destroy();
 	});
 
-
-	QUnit.test("Tap event should not be fired when the button is set to invisible", function(assert) {
-		// Arrange
-		var oRenderSpy,
-			oConstructor = { visible : false };
-
-		// System under Test
-		var oButton = new Button(oConstructor).placeAt("qunit-fixture");
-
-		oRenderSpy = this.spy(oButton, "fireTap");
-
-		// Act
-		oButton.ontap({ setMarked:  this.stub() });
-
-		// Assert
-		assert.strictEqual(oRenderSpy.callCount, 0, "Tap event not fired");
-
-		// Cleanup
-		oButton.destroy();
-	});
-
 	QUnit.test("For safari the button should gain explicitly focus on touch start", function(assert) {
 		// Arrange
 		// stub the browser to be only safari
@@ -1016,66 +995,6 @@ sap.ui.define([
 		afterEach : function() {
 			b15 = null;
 		}
-	});
-
-		// this test is needed only on non-IE browsers
-
-	QUnit.test("Trigger TAP event in some cases missed by the core (for non-IE browsers only)", function(assert) {
-		var spy = this.spy(b15, "ontap");
-
-		// events needed
-		var oEventDown = new Event("mousedown", {bubbles: true, cancelable: true});
-		var oEventUp = new Event("mouseup", {bubbles: true, cancelable: true});
-
-		var oBdiContent = document.getElementById("b15-BDI-content");
-		var oContent = document.getElementById("b15-content");
-		var oInner = document.getElementById("b15-inner");
-		var oImg = document.getElementById("b15-img");
-
-		// cases where we don't get tap, check if artificial tap is working
-
-		if (oBdiContent) {
-			// do the following 4 test only if <BDI> tag exists (in Edge it is missing)
-			oBdiContent.dispatchEvent(oEventDown);
-			oContent.dispatchEvent(oEventUp);
-			assert.equal(spy.callCount, 1, "TAP on a button works from b15-BDI-content to b15-content");
-			spy.resetHistory();
-
-			oBdiContent.dispatchEvent(oEventDown);
-			oInner.dispatchEvent(oEventUp);
-			assert.equal(spy.callCount, 1, "TAP on a button works from b15-BDI-content to b15-inner");
-			spy.resetHistory();
-
-			oBdiContent.dispatchEvent(oEventDown);
-			oImg.dispatchEvent(oEventUp);
-			assert.equal(spy.callCount, 1, "TAP on a button works from b15-BDI-content to b15-img");
-			spy.resetHistory();
-
-			oImg.dispatchEvent(oEventDown);
-			oBdiContent.dispatchEvent(oEventUp);
-			assert.equal(spy.callCount, 1, "TAP on a button works from b15-img to b15-BDI-content");
-			spy.resetHistory();
-		}
-
-		oContent.dispatchEvent(oEventDown);
-		oInner.dispatchEvent(oEventUp);
-		assert.equal(spy.callCount, 1, "TAP on a button works from b15-content to b15-inner");
-		spy.resetHistory();
-
-		oContent.dispatchEvent(oEventDown);
-		oImg.dispatchEvent(oEventUp);
-		assert.equal(spy.callCount, 1, "TAP on a button works from b15-content to b15-img");
-		spy.resetHistory();
-
-		oImg.dispatchEvent(oEventDown);
-		oContent.dispatchEvent(oEventUp);
-		assert.equal(spy.callCount, 1, "TAP on a button works from b15-img to b15-content");
-		spy.resetHistory();
-
-		oImg.dispatchEvent(oEventDown);
-		oInner.dispatchEvent(oEventUp);
-		assert.equal(spy.callCount, 1, "TAP on a button works from b15-img to b15-inner");
-
 	});
 
 	QUnit.module("Determining ACC type", {

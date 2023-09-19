@@ -89,13 +89,13 @@ sap.ui.define([
 				new FlVariant("foo", {flexObjectMetadata: {reference: "myReference"}}),
 				RtaQunitUtils.createUIChange({
 					fileName: "change1",
-					reference: "Dummy.Component",
+					reference: "Dummy",
 					variantReference: "variantMgmtId1",
 					fileType: "change"
 				}),
 				RtaQunitUtils.createUIChange({
 					fileName: "change2",
-					reference: "Dummy.Component",
+					reference: "Dummy",
 					variantReference: "variantMgmtId1",
 					fileType: "ctrl_variant_management_change"
 				})
@@ -104,7 +104,7 @@ sap.ui.define([
 			sandbox.stub(this.oModel, "getVariant").returns({
 				controlChanges: [RtaQunitUtils.createUIChange({
 					fileName: "change0",
-					reference: "Dummy.Component",
+					reference: "Dummy",
 					variantReference: "variantMgmtId1",
 					fileType: "change"
 				})]

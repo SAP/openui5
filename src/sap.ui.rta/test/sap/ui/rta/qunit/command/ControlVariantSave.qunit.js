@@ -64,7 +64,7 @@ sap.ui.define([
 					selector: {
 						id: "abc123"
 					},
-					reference: "Dummy.Component",
+					reference: "Dummy",
 					variantReference: "variantMgmtId1"
 				});
 				this.oChange2 = RtaQunitUtils.createUIChange({
@@ -74,7 +74,7 @@ sap.ui.define([
 					selector: {
 						id: "abc123"
 					},
-					reference: "Dummy.Component",
+					reference: "Dummy",
 					variantReference: "variantMgmtId1"
 				});
 
@@ -89,7 +89,7 @@ sap.ui.define([
 						support: {
 							user: "Me"
 						},
-						reference: "Dummy.Component"
+						reference: "Dummy"
 					},
 					controlChanges: [this.oChange1, this.oChange2]
 				};

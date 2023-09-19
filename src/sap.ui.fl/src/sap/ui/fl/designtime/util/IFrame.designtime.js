@@ -35,6 +35,7 @@ sap.ui.define([
 				frameHeight: oInitialSettings.height,
 				title: oInitialSettings.title,
 				asContainer: !!oInitialSettings.title,
+				useLegacyNavigation: oInitialSettings.useLegacyNavigation,
 				updateMode: true
 			};
 			return oAddIFrameDialog.open(mDialogSettings);
@@ -62,6 +63,10 @@ sap.ui.define([
 			if (mSettings.frameUrl !== oInitialSettings.url) {
 				bContentChanged = true;
 				oNewContent.url = mSettings.frameUrl;
+			}
+			if (mSettings.useLegacyNavigation !== !!oInitialSettings.useLegacyNavigation) {
+				bContentChanged = true;
+				oNewContent.useLegacyNavigation = mSettings.useLegacyNavigation;
 			}
 
 			if (bContentChanged) {

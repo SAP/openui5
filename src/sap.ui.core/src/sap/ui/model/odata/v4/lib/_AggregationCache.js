@@ -845,7 +845,7 @@ sap.ui.define([
 	 *   The (child) node's path relative to the cache
 	 * @param {string} sParentPath
 	 *   The parent node's path relative to the cache
-	 * @returns {sap.ui.base.SyncPromise}
+	 * @returns {sap.ui.base.SyncPromise<void>}
 	 *   A promise which is resolved without a defined result when the move is finished, or
 	 *   rejected in case of an error
 	 *
@@ -854,11 +854,6 @@ sap.ui.define([
 	_AggregationCache.prototype.move = function (oGroupLock, sChildPath, sParentPath) {
 		const sChildPredicate = sChildPath.slice(sChildPath.indexOf("("));
 		const oChildNode = this.aElements.$byPredicate[sChildPredicate];
-		const sParentPredicate = sParentPath.slice(sParentPath.indexOf("("));
-		const oParentNode = this.aElements.$byPredicate[sParentPredicate];
-		//TODO? if (oParentNode["@$ui5.node.isExpanded"] === false) {
-		//  throw new Error("Unsupported collapsed parent: " + sParentPath);
-		// }
 
 		return this.oRequestor.request("PATCH", sChildPath, oGroupLock, {
 					"If-Match" : oChildNode,
@@ -866,6 +861,10 @@ sap.ui.define([
 				}, {[this.oAggregation.$ParentNavigationProperty + "@odata.bind"] : sParentPath},
 				/*fnSubmit*/null, function fnCancel() { /*nothing to do*/ })
 			.then((oPatchResult) => {
+				// update the cache with the PATCH response (Note: "@odata.etag" is optional!)
+				_Helper.updateExisting(this.mChangeListeners, sChildPredicate, oChildNode,
+					{"@odata.etag" : oPatchResult["@odata.etag"]});
+
 				const iOldIndex = this.aElements.indexOf(oChildNode);
 				this.shiftIndex(iOldIndex, -1);
 				this.aElements.splice(iOldIndex, 1);
@@ -874,13 +873,6 @@ sap.ui.define([
 				const oOldParentCache = _Helper.getPrivateAnnotation(oChildNode, "parent");
 				oOldParentCache.removeElement(undefined,
 					_Helper.getPrivateAnnotation(oChildNode, "index"), sChildPredicate, "");
-				// once oChildNode has moved, it should not look 'created' anymore
-				//TODO ...or should every moved node appear 'created' at its new position?
-				delete this.aElements.$byPredicate
-					[_Helper.getPrivateAnnotation(oChildNode, "transientPredicate")];
-				_Helper.deletePrivateAnnotation(oChildNode, "transientPredicate");
-				delete oChildNode["@$ui5.context.isTransient"];
-
 				if (oOldParentCache.getValue("$count") === 0) { // last child has gone
 					const oOldParent = this.aElements[iOldIndex - 1];
 					_Helper.updateAll(this.mChangeListeners,
@@ -892,10 +884,22 @@ sap.ui.define([
 					oOldParentCache.setActive(false);
 				}
 
+				// once oChildNode has moved, it should look 'created' because of its new position
+				if (!_Helper.hasPrivateAnnotation(oChildNode, "transientPredicate")) {
+					const sTransientPredicate = "($uid=" + _Helper.uid() + ")";
+					_Helper.setPrivateAnnotation(oChildNode, "transientPredicate",
+						sTransientPredicate);
+					this.aElements.$byPredicate[sTransientPredicate] = oChildNode;
+					_Helper.updateAll(this.mChangeListeners, sChildPredicate, oChildNode,
+						{"@$ui5.context.isTransient" : false});
+				}
+
+				const sParentPredicate = sParentPath.slice(sParentPath.indexOf("("));
+				const oParentNode = this.aElements.$byPredicate[sParentPredicate];
 				let oCache = _Helper.getPrivateAnnotation(oParentNode, "cache");
 				if (!oCache) {
 					oCache = this.createGroupLevelCache(oParentNode);
-					oCache.aElements.$count = 0; //TODO don't talk to strangers?!
+					oCache.setEmpty();
 					_Helper.setPrivateAnnotation(oParentNode, "cache", oCache);
 					_Helper.updateAll(this.mChangeListeners, sParentPredicate, oParentNode,
 						{"@$ui5.node.isExpanded" : true}); // not a leaf anymore
@@ -904,12 +908,8 @@ sap.ui.define([
 				_Helper.setPrivateAnnotation(oChildNode, "index", 0);
 				_Helper.setPrivateAnnotation(oChildNode, "parent", oCache);
 
-				oChildNode["@$ui5.node.level"] = oParentNode["@$ui5.node.level"] + 1;
-				// update the cache with the PATCH response
-				_Helper.updateExisting(this.mChangeListeners, sChildPredicate, oChildNode,
-					{"@odata.etag" : oPatchResult["@odata.etag"]});
-				//TODO recursively deal with descendants! (move, adjust "@$ui5.node.level"!)
-
+				_Helper.updateAll(this.mChangeListeners, sChildPredicate, oChildNode,
+					{"@$ui5.node.level" : oParentNode["@$ui5.node.level"] + 1});
 				const iNewIndex = this.aElements.indexOf(oParentNode) + 1;
 				this.aElements.splice(iNewIndex, 0, oChildNode);
 				this.shiftIndex(iNewIndex, +1); // relies on "parent" & "@$ui5.node.level"!
@@ -1356,7 +1356,8 @@ sap.ui.define([
 	/**
 	 * Turns the given element, which has the given predicate, into a placeholder which keeps all
 	 * private annotations plus the hierarchy node value. The original element is removed from its
-	 * corresponding cache and must not be used any longer.
+	 * corresponding cache and must not be used any longer. Created persisted elements loose their
+	 * special treatment!
 	 *
 	 * @param {object} oElement - An element
 	 * @param {string} sPredicate - Its predicate
@@ -1371,7 +1372,6 @@ sap.ui.define([
 		_Helper.setPrivateAnnotation(oElement, "placeholder", 1); // not an initial placeholder
 		_AggregationHelper.markSplicedStale(oElement);
 		delete this.aElements.$byPredicate[sPredicate];
-		//TODO what about transientPredicate?
 		// drop original element from its cache's collection
 		_Helper.getPrivateAnnotation(oElement, "parent")
 			.drop(_Helper.getPrivateAnnotation(oElement, "index"), sPredicate);

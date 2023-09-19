@@ -4,12 +4,9 @@
 
 sap.ui.define([
 	'sap/ui/mdc/valuehelp/base/FilterableListContent',
-	'sap/ui/mdc/condition/Condition',
 	'sap/ui/mdc/condition/FilterConverter',
-	'sap/ui/mdc/enums/ConditionValidated',
 	'sap/ui/mdc/util/loadModules',
 	'sap/m/library',
-	'sap/ui/model/FilterType',
 	'sap/ui/model/Filter',
 	'sap/ui/model/FilterOperator',
 	'sap/ui/model/FilterProcessor',
@@ -21,12 +18,9 @@ sap.ui.define([
 	'sap/ui/core/Element'
 ], function(
 	FilterableListContent,
-	Condition,
 	FilterConverter,
-	ConditionValidated,
 	loadModules,
 	library,
-	FilterType,
 	Filter,
 	FilterOperator,
 	FilterProcessor,

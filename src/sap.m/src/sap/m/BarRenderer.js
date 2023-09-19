@@ -80,15 +80,20 @@ sap.ui.define(['./BarInPageEnabler', 'sap/ui/Device', "sap/base/Log", 'sap/m/HBo
 		oRM.openStart("div", oControl.getId() + "-BarMiddle");
 		oRM.class("sapMBarMiddle");
 		oRM.openEnd();
-		oRM.openStart("div", oControl.getId() + "-BarPH");
-		oRM.class("sapMBarPH");
-		oRM.class("sapMBarContainer");
-		writeWidthIfContentOccupiesWholeArea("middle", oRM, oControl);
-		oRM.openEnd();
 
-		this.renderAllControls(oControl.getContentMiddle(), oRM, oControl);
+		var bFlexBox = false;
 
-		oRM.close("div");
+		if (!bFlexBox) {
+			oRM.openStart("div", oControl.getId() + "-BarPH");
+			oRM.class("sapMBarPH");
+			oRM.class("sapMBarContainer");
+			writeWidthIfContentOccupiesWholeArea("middle", oRM, oControl);
+			oRM.openEnd();
+
+			this.renderAllControls(oControl.getContentMiddle(), oRM, oControl);
+
+			oRM.close("div");
+		}
 		oRM.close("div");
 
 		//right content area

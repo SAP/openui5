@@ -9,7 +9,7 @@ sap.ui.define([
 		return {
 			fileName: "foo",
 			fileType: "change",
-			reference: "sap.ui.demoapps.rta.fiorielements.Component",
+			reference: "sap.ui.demoapps.rta.fiorielements",
 			packageName: "$TMP",
 			content: {
 				originalControlType: "sap.m.Label"
