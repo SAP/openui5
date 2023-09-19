@@ -13,6 +13,8 @@ sap.ui.define([
 	"sap/ui/core/ComponentContainer",
 	"sap/ui/mdc/TableDelegate",
 	"sap/ui/mdc/table/Column",
+	"sap/ui/mdc/enums/ConditionValidated",
+	"sap/ui/mdc/enums/OperatorName",
 	"sap/ui/core/Core"
 ], function(
 	createAppEnvironment,
@@ -28,6 +30,8 @@ sap.ui.define([
 	ComponentContainer,
 	TableDelegate,
 	Column,
+	ConditionValidated,
+	OperatorName,
 	oCore
 ) {
 	'use strict';
@@ -195,20 +199,20 @@ sap.ui.define([
 		const mNewConditions = {
 			column0: [
 				{
-					operator: "EQ",
+					operator: OperatorName.EQ,
 					values: [
 						"Test"
 					],
-					validated: "NotValidated"
+					validated: ConditionValidated.NotValidated
 				}
 			],
 			column1: [
 				{
-					operator: "EQ",
+					operator: OperatorName.EQ,
 					values: [
 						"ABC"
 					],
-					validated: "NotValidated"
+					validated: ConditionValidated.NotValidated
 				}
 			]
 		};

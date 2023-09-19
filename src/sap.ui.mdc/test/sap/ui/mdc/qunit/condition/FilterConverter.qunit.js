@@ -8,8 +8,9 @@
 sap.ui.define([
 		"sap/ui/mdc/condition/ConditionModel",
 		"sap/ui/mdc/condition/Condition",
-		"sap/ui/mdc/condition/FilterConverter"
-		], function(ConditionModel, Condition, FilterConverter) {
+		"sap/ui/mdc/condition/FilterConverter",
+		"sap/ui/mdc/enums/OperatorName"
+		], function(ConditionModel, Condition, FilterConverter, OperatorName) {
 	"use strict";
 
 	let oCM;
@@ -35,9 +36,9 @@ sap.ui.define([
 		let result = FilterConverter.prettyPrintFilters(oFilter);
 		assert.strictEqual(result, "no filters set", "result should be an empty filter");
 
-		oCM.addCondition("fieldPath1/foo", Condition.createCondition("EQ", ["foo"]));
-		oCM.addCondition("fieldPath1/foo", Condition.createCondition("BT", [1, 100]));
-		oCM.addCondition("fieldPath2/bar", Condition.createCondition("EQ", ["bar"]));
+		oCM.addCondition("fieldPath1/foo", Condition.createCondition(OperatorName.EQ, ["foo"]));
+		oCM.addCondition("fieldPath1/foo", Condition.createCondition(OperatorName.BT, [1, 100]));
+		oCM.addCondition("fieldPath2/bar", Condition.createCondition(OperatorName.EQ, ["bar"]));
 
 		oFilter = FilterConverter.createFilters( oCM.getAllConditions(), {});
 
@@ -48,8 +49,8 @@ sap.ui.define([
 
 
 	QUnit.test("FilterConverter.createFilters: testing a single include and a single exclude for one FieldPath", function(assert) {
-		oCM.addCondition("fieldPath1/foo", Condition.createCondition("BT", ["A", "Z"]));
-		oCM.addCondition("fieldPath1/foo", Condition.createCondition("NE", ["X"]));
+		oCM.addCondition("fieldPath1/foo", Condition.createCondition(OperatorName.BT, ["A", "Z"]));
+		oCM.addCondition("fieldPath1/foo", Condition.createCondition(OperatorName.NE, ["X"]));
 
 		const oFilter = FilterConverter.createFilters( oCM.getAllConditions(), {});
 
@@ -62,9 +63,9 @@ sap.ui.define([
 
 
 	QUnit.test("FilterConverter.createFilters: testing multiple include for one FieldPath", function(assert) {
-		oCM.addCondition("fieldPath1/foo", Condition.createCondition("BT", ["A", "Z"]));
-		oCM.addCondition("fieldPath1/foo", Condition.createCondition("NE", ["X"]));
-		oCM.addCondition("fieldPath1/foo", Condition.createCondition("NE", ["Y"]));
+		oCM.addCondition("fieldPath1/foo", Condition.createCondition(OperatorName.BT, ["A", "Z"]));
+		oCM.addCondition("fieldPath1/foo", Condition.createCondition(OperatorName.NE, ["X"]));
+		oCM.addCondition("fieldPath1/foo", Condition.createCondition(OperatorName.NE, ["Y"]));
 
 		const oFilter = FilterConverter.createFilters( oCM.getAllConditions(), {});
 
@@ -76,10 +77,10 @@ sap.ui.define([
 
 
 	QUnit.test("FilterConverter.createFilters: testing multiple include and exclude conditions", function(assert) {
-		oCM.addCondition("fieldPath1/foo", Condition.createCondition("EQ", ["FOO"]));
-		oCM.addCondition("fieldPath1/foo", Condition.createCondition("EQ", ["BAR"]));
-		oCM.addCondition("fieldPath1/foo", Condition.createCondition("NE", ["X"]));
-		oCM.addCondition("fieldPath1/foo", Condition.createCondition("NE", ["Y"]));
+		oCM.addCondition("fieldPath1/foo", Condition.createCondition(OperatorName.EQ, ["FOO"]));
+		oCM.addCondition("fieldPath1/foo", Condition.createCondition(OperatorName.EQ, ["BAR"]));
+		oCM.addCondition("fieldPath1/foo", Condition.createCondition(OperatorName.NE, ["X"]));
+		oCM.addCondition("fieldPath1/foo", Condition.createCondition(OperatorName.NE, ["Y"]));
 
 		const oFilter = FilterConverter.createFilters( oCM.getAllConditions(), {});
 
@@ -92,11 +93,11 @@ sap.ui.define([
 
 
 	QUnit.test("FilterConverter.createFilters: testing multiple include and exclude conditions for different fieldPath", function(assert) {
-		oCM.addCondition("fieldPath1/foo", Condition.createCondition("BT", ["A", "Z"]));
-		oCM.addCondition("fieldPath1/foo", Condition.createCondition("NE", ["X"]));
-		oCM.addCondition("fieldPath1/foo", Condition.createCondition("NE", ["Y"]));
-		oCM.addCondition("fieldPath2/bar", Condition.createCondition("EQ", ["FOO"]));
-		oCM.addCondition("fieldPath2/bar", Condition.createCondition("EQ", ["BAR"]));
+		oCM.addCondition("fieldPath1/foo", Condition.createCondition(OperatorName.BT, ["A", "Z"]));
+		oCM.addCondition("fieldPath1/foo", Condition.createCondition(OperatorName.NE, ["X"]));
+		oCM.addCondition("fieldPath1/foo", Condition.createCondition(OperatorName.NE, ["Y"]));
+		oCM.addCondition("fieldPath2/bar", Condition.createCondition(OperatorName.EQ, ["FOO"]));
+		oCM.addCondition("fieldPath2/bar", Condition.createCondition(OperatorName.EQ, ["BAR"]));
 
 		const oFilter = FilterConverter.createFilters( oCM.getAllConditions(), {});
 
@@ -110,8 +111,8 @@ sap.ui.define([
 
 
 	QUnit.test("FilterConverter.createFilters: testing basic Search conditions", function(assert) {
-		oCM.addCondition("fieldPath1/foo", Condition.createCondition("EQ", ["FOO"]));
-		oCM.addCondition("$search", Condition.createCondition("EQ", ["search"]));
+		oCM.addCondition("fieldPath1/foo", Condition.createCondition(OperatorName.EQ, ["FOO"]));
+		oCM.addCondition("$search", Condition.createCondition(OperatorName.EQ, ["search"]));
 
 		const oFilter = FilterConverter.createFilters( oCM.getAllConditions(), {});
 
@@ -122,7 +123,7 @@ sap.ui.define([
 
 
 	QUnit.test("FilterConverter.createFilters: testing conditions with multiple parts", function(assert) {
-		oCM.addCondition("*fieldPath1,fieldPath2*", Condition.createCondition("EQ", ["FOO"]));
+		oCM.addCondition("*fieldPath1,fieldPath2*", Condition.createCondition(OperatorName.EQ, ["FOO"]));
 
 		const oFilter = FilterConverter.createFilters( oCM.getAllConditions(), {});
 
@@ -133,10 +134,10 @@ sap.ui.define([
 
 
 	QUnit.test("FilterConverter.createFilters: testing include and exclude Any support together with a normal fieldPath", function(assert) {
-		oCM.addCondition("fieldPath1*/foo", Condition.createCondition("EQ", ["foo"]));
-		oCM.addCondition("fieldPath1*/foo", Condition.createCondition("BT", [1, 100]));
-		oCM.addCondition("fieldPath1*/foo", Condition.createCondition("NE", ["bar"]));
-		oCM.addCondition("fieldPath2/foo", Condition.createCondition("EQ", ["bar"]));
+		oCM.addCondition("fieldPath1*/foo", Condition.createCondition(OperatorName.EQ, ["foo"]));
+		oCM.addCondition("fieldPath1*/foo", Condition.createCondition(OperatorName.BT, [1, 100]));
+		oCM.addCondition("fieldPath1*/foo", Condition.createCondition(OperatorName.NE, ["bar"]));
+		oCM.addCondition("fieldPath2/foo", Condition.createCondition(OperatorName.EQ, ["bar"]));
 
 		const oFilter = FilterConverter.createFilters( oCM.getAllConditions(), {});
 		let filter = oFilter.aFilters[0];
@@ -153,7 +154,7 @@ sap.ui.define([
 
 
 	QUnit.test("FilterConverter.createFilters: testing wrong any condition fieldPath", function(assert) {
-		oCM.addCondition("fieldPath1*/foo*/bar", Condition.createCondition("EQ", ["bar"]));
+		oCM.addCondition("fieldPath1*/foo*/bar", Condition.createCondition(OperatorName.EQ, ["bar"]));
 		try {
 			FilterConverter.createFilters( oCM.getAllConditions(), {});
 			assert.ok(false, "exception not raised");
@@ -165,10 +166,10 @@ sap.ui.define([
 
 
 	QUnit.test("FilterConverter.createFilters: testing include and exclude operations for Any conditions", function(assert) {
-		oCM.addCondition("fieldPath1*/foo", Condition.createCondition("EQ", ["foo1"]));
-		oCM.addCondition("fieldPath1*/foo", Condition.createCondition("EQ", ["foo2"]));
-		oCM.addCondition("fieldPath2*/bar", Condition.createCondition("EQ", ["bar1"]));
-		oCM.addCondition("fieldPath2*/bar", Condition.createCondition("EQ", ["bar2"]));
+		oCM.addCondition("fieldPath1*/foo", Condition.createCondition(OperatorName.EQ, ["foo1"]));
+		oCM.addCondition("fieldPath1*/foo", Condition.createCondition(OperatorName.EQ, ["foo2"]));
+		oCM.addCondition("fieldPath2*/bar", Condition.createCondition(OperatorName.EQ, ["bar1"]));
+		oCM.addCondition("fieldPath2*/bar", Condition.createCondition(OperatorName.EQ, ["bar2"]));
 
 		const oFilter = FilterConverter.createFilters( oCM.getAllConditions(), {});
 
@@ -180,10 +181,10 @@ sap.ui.define([
 
 
 	QUnit.test("FilterConverter.createFilters: testing include and exclude operations for All conditions", function(assert) {
-		oCM.addCondition("fieldPath1+/foo", Condition.createCondition("EQ", ["foo1"]));
-		oCM.addCondition("fieldPath1+/foo", Condition.createCondition("EQ", ["foo2"]));
-		oCM.addCondition("fieldPath2+/bar", Condition.createCondition("EQ", ["bar1"]));
-		oCM.addCondition("fieldPath2+/bar", Condition.createCondition("EQ", ["bar2"]));
+		oCM.addCondition("fieldPath1+/foo", Condition.createCondition(OperatorName.EQ, ["foo1"]));
+		oCM.addCondition("fieldPath1+/foo", Condition.createCondition(OperatorName.EQ, ["foo2"]));
+		oCM.addCondition("fieldPath2+/bar", Condition.createCondition(OperatorName.EQ, ["bar1"]));
+		oCM.addCondition("fieldPath2+/bar", Condition.createCondition(OperatorName.EQ, ["bar2"]));
 
 		const oFilter = FilterConverter.createFilters( oCM.getAllConditions(), {});
 
@@ -194,9 +195,9 @@ sap.ui.define([
 	});
 
 	QUnit.test("FilterConverter.createFilters: testing caseSensitive types", function(assert) {
-		oCM.addCondition("fieldPath1", Condition.createCondition("EQ", ["Foo1"]));
-		oCM.addCondition("fieldPath2", Condition.createCondition("EQ", ["Foo2"]));
-		oCM.addCondition("fieldPath3", Condition.createCondition("EQ", ["Foo3"]));
+		oCM.addCondition("fieldPath1", Condition.createCondition(OperatorName.EQ, ["Foo1"]));
+		oCM.addCondition("fieldPath2", Condition.createCondition(OperatorName.EQ, ["Foo2"]));
+		oCM.addCondition("fieldPath3", Condition.createCondition(OperatorName.EQ, ["Foo3"]));
 
 		const oFilter = FilterConverter.createFilters( oCM.getAllConditions(), {
 			"fieldPath1" : {type: null, caseSensitive: false},	// the first property should be handled caseInsensitive

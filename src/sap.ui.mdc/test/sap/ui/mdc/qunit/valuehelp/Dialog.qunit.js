@@ -12,6 +12,7 @@ sap.ui.define([
 	"sap/ui/mdc/condition/Condition",
 	"sap/ui/mdc/enums/ValueHelpSelectionType",
 	"sap/ui/mdc/enums/FieldDisplay",
+	"sap/ui/mdc/enums/OperatorName",
 	"sap/ui/core/Icon",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/type/String",
@@ -28,6 +29,7 @@ sap.ui.define([
 		Condition,
 		ValueHelpSelectionType,
 		FieldDisplay,
+		OperatorName,
 		Icon,
 		JSONModel,
 		StringType,
@@ -247,7 +249,7 @@ sap.ui.define([
 				maxConditions: -1,
 				dataType: oType,
 				additionalDataType: oAdditionalType,
-				operators: ["EQ", "BT"],
+				operators: [OperatorName.EQ, OperatorName.BT],
 				display: FieldDisplay.Description
 			};
 			oModel = new JSONModel({
@@ -319,7 +321,7 @@ sap.ui.define([
 					maxConditions: -1, // as for tokens there should not be a limit on type side
 					valueType: oType,
 					additionalValueType: oAdditionalType,
-					operators: ["EQ", "BT"],
+					operators: [OperatorName.EQ, OperatorName.BT],
 					display: FieldDisplay.Description,
 					valueHelpID: "VH",
 					control: oField,
@@ -416,7 +418,7 @@ sap.ui.define([
 					maxConditions: -1, // as for tokens there should not be a limit on type side
 					valueType: oType,
 					additionalValueType: oAdditionalType,
-					operators: ["EQ", "BT"],
+					operators: [OperatorName.EQ, OperatorName.BT],
 					display: FieldDisplay.Description,
 					valueHelpID: "VH",
 					control: oField,
@@ -537,7 +539,7 @@ sap.ui.define([
 						maxConditions: -1, // as for tokens there should not be a limit on type side
 						valueType: oType,
 						additionalValueType: oAdditionalType,
-						operators: ["EQ", "BT"],
+						operators: [OperatorName.EQ, OperatorName.BT],
 						display: FieldDisplay.Description,
 						valueHelpID: "VH",
 						control: oField,
@@ -568,7 +570,7 @@ sap.ui.define([
 						oType.destroy();
 						oType = new StringType(undefined, {maxLength: 10});
 						oValueHelpConfig.dataType = oType;
-						oValueHelpConfig.operators = ["EQ", "BT", "GT", "LT"];
+						oValueHelpConfig.operators = [OperatorName.EQ, OperatorName.BT, OperatorName.GT, OperatorName.LT];
 						oValueHelpConfig.display = FieldDisplay.ValueDescription;
 						const oPromise = oDialog.open(Promise.resolve());
 						assert.ok(oPromise instanceof Promise, "open returns promise");
@@ -586,7 +588,7 @@ sap.ui.define([
 										maxConditions: -1, // as for tokens there should not be a limit on type side
 										valueType: oType,
 										additionalValueType: oAdditionalType,
-										operators: ["EQ", "BT", "GT", "LT"],
+										operators: [OperatorName.EQ, OperatorName.BT, OperatorName.GT, OperatorName.LT],
 										display: FieldDisplay.ValueDescription,
 										valueHelpID: "VH",
 										control: oField,

@@ -12,6 +12,7 @@ sap.ui.define([
 	"sap/ui/mdc/enums/FieldEditMode",
 	"sap/ui/mdc/enums/FieldDisplay",
 	"sap/ui/mdc/enums/ConditionValidated",
+	"sap/ui/mdc/enums/OperatorName",
 	"sap/ui/mdc/field/ConditionsType",
 	"sap/ui/mdc/field/FieldMultiInput", // async. loading of content control tested in FieldBase test
 	"sap/ui/mdc/field/MultiValueFieldDelegate", // make sure delegate is loaded (test delegate loading in FieldBase test)
@@ -46,6 +47,7 @@ sap.ui.define([
 	FieldEditMode,
 	FieldDisplay,
 	ConditionValidated,
+	OperatorName,
 	ConditionsType,
 	FieldMultiInput,
 	MultiValueFieldDelegate,
@@ -266,7 +268,7 @@ sap.ui.define([
 		setTimeout(function() { // async set of condition
 			const aConditions = oFieldEdit.getConditions();
 			assert.ok(aConditions.length, 3, "Conditions created");
-			assert.equal(aConditions[0].operator, "EQ", "Condition0 operator");
+			assert.equal(aConditions[0].operator, OperatorName.EQ, "Condition0 operator");
 			assert.equal(aConditions[0].values[0], 1, "Condition0 value0");
 			assert.equal(aConditions[0].values[1], "Text 1", "Condition0 value1");
 			assert.equal(aConditions[0].validated, ConditionValidated.Validated, "Condition0 validated");

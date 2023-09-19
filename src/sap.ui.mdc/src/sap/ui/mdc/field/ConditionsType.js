@@ -8,6 +8,7 @@ sap.ui.define([
 	'sap/ui/mdc/condition/ConditionValidateException',
 	'sap/ui/mdc/condition/FilterOperatorUtil',
 	'sap/ui/mdc/field/splitValue',
+	'sap/ui/mdc/enums/OperatorName',
 	'sap/ui/model/SimpleType',
 	'sap/ui/model/FormatException',
 	'sap/ui/model/ParseException',
@@ -20,6 +21,7 @@ sap.ui.define([
 		ConditionValidateException,
 		FilterOperatorUtil,
 		splitValue,
+		OperatorName,
 		SimpleType,
 		FormatException,
 		ParseException,
@@ -276,7 +278,7 @@ sap.ui.define([
 	 ConditionsType.prototype._parseValueToIndex = function(vValue, sSourceType, iIndex) {
 
 		const aOperators = this.oFormatOptions.operators || [];
-		const bBetweenSupported = aOperators.indexOf("BT") >= 0 || aOperators.length === 0;
+		const bBetweenSupported = aOperators.indexOf(OperatorName.BT) >= 0 || aOperators.length === 0;
 		const aSeparatedText = splitValue(vValue, !bBetweenSupported);
 
 		if (aSeparatedText.length > 1 || (bBetweenSupported && aSeparatedText.length === 1 && typeof aSeparatedText[0] === "string" && aSeparatedText[0].search(/\t/) >= 0)) {
@@ -303,8 +305,8 @@ sap.ui.define([
 	function _parseMultipleValues(aValues, sSourceType, iIndex) {
 
 		const aOperators = this.oFormatOptions.operators || [];
-		const bBetweenSupported = aOperators.indexOf("BT") >= 0 || aOperators.length === 0;
-		const oBTOperator = bBetweenSupported && FilterOperatorUtil.getOperator("BT");
+		const bBetweenSupported = aOperators.indexOf(OperatorName.BT) >= 0 || aOperators.length === 0;
+		const oBTOperator = bBetweenSupported && FilterOperatorUtil.getOperator(OperatorName.BT);
 		const fnParse = function(vValue, sSourceType) {
 			return SyncPromise.resolve().then(function() {
 				// if multiple values are pasted deactivate input validation and determination of description for performance reasons.
@@ -413,7 +415,7 @@ sap.ui.define([
 					aConditions[i].values[0][0] = oCondition.values[0][0];
 				}
 				aConditions[i].values[0].splice(2); // do not have the unit table after parsing
-				if (aConditions[i].operator === "BT") {
+				if (aConditions[i].operator === OperatorName.BT) {
 					aConditions[i].values[1][1] = sUnit;
 					if (sUnit === undefined) {
 						// for empty unit use updated number (0)

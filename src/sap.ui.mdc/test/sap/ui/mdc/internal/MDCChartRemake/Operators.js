@@ -1,8 +1,9 @@
 sap.ui.define([
 	"sap/ui/mdc/condition/FilterOperatorUtil",
 	"sap/ui/mdc/condition/Operator",
-	"sap/ui/model/Filter"
-], function (FilterOperatorUtil, Operator, Filter) {
+	"sap/ui/model/Filter",
+	"sap/ui/model/FilterOperator"
+], function (FilterOperatorUtil, Operator, Filter, FilterOperator) {
 	"use strict";
 
 
@@ -21,7 +22,7 @@ sap.ui.define([
 		tokenFormat: "#tokenText#",
 		valueTypes: [],
 		getModelFilter: function (oCondition, sFieldPath) {
-			return new Filter({ path: sFieldPath, operator: "BT", value1: "0500-01-01", value2: "1500-01-01" });
+			return new Filter({ path: sFieldPath, operator: FilterOperator.BT, value1: "0500-01-01", value2: "1500-01-01" });
 		}
 	});
 
@@ -33,7 +34,7 @@ sap.ui.define([
 		tokenFormat: "#tokenText#",
 		valueTypes: [],
 		getModelFilter: function (oCondition, sFieldPath) {
-			return new Filter({ path: sFieldPath, operator: "BT", value1: "1500-01-01", value2: "1600-01-01" });
+			return new Filter({ path: sFieldPath, operator: FilterOperator.BT, value1: "1500-01-01", value2: "1600-01-01" });
 		}
 	});
 
@@ -45,7 +46,7 @@ sap.ui.define([
 		tokenFormat: "#tokenText#",
 		valueTypes: [],
 		getModelFilter: function (oCondition, sFieldPath) {
-			return new Filter({ path: sFieldPath, operator: "BT", value1: "1600-01-01", value2: getCustomYearFormat(new Date()) });
+			return new Filter({ path: sFieldPath, operator: FilterOperator.BT, value1: "1600-01-01", value2: getCustomYearFormat(new Date()) });
 		}
 	});
 
@@ -57,7 +58,7 @@ sap.ui.define([
 		valueTypes: [],
 		getModelFilter: function (oCondition, sFieldPath) {
 			var currentDate = new Date();
-			return new Filter({ path: sFieldPath, operator: "BT", value1: getCustomYearFormat(new Date(currentDate.getFullYear() - 1, currentDate.getMonth(), currentDate.getDate())), value2: getCustomYearFormat(new Date(new Date().getFullYear(), currentDate.getMonth(), currentDate.getDate())) });
+			return new Filter({ path: sFieldPath, operator: FilterOperator.BT, value1: getCustomYearFormat(new Date(currentDate.getFullYear() - 1, currentDate.getMonth(), currentDate.getDate())), value2: getCustomYearFormat(new Date(new Date().getFullYear(), currentDate.getMonth(), currentDate.getDate())) });
 
 		}
 	});
@@ -70,7 +71,7 @@ sap.ui.define([
 		tokenFormat: "#tokenText#",
 		valueTypes: ["sap.ui.model.odata.type.Date", "sap.ui.model.odata.type.Date"],
 		getModelFilter: function (oCondition, sFieldPath) {
-			return new Filter({ path: sFieldPath, operator: "BT", value1: oCondition.values[0], value2: oCondition.values[1] });
+			return new Filter({ path: sFieldPath, operator: FilterOperator.BT, value1: oCondition.values[0], value2: oCondition.values[1] });
 		}
 	});
 
@@ -83,7 +84,7 @@ sap.ui.define([
 		valueTypes: ["sap.ui.model.odata.type.Date", "sap.ui.model.odata.type.Date"],
 		exclude: true,
 		getModelFilter: function (oCondition, sFieldPath) {
-			return new Filter({ path: sFieldPath, operator: "BT", value1: oCondition.values[0], value2: oCondition.values[1] });
+			return new Filter({ path: sFieldPath, operator: FilterOperator.BT, value1: oCondition.values[0], value2: oCondition.values[1] });
 		}
 	});
 
@@ -127,7 +128,7 @@ sap.ui.define([
 				"United Kingdom": "GB",
 				"Vatican City": "VA"
 			}).map(function (code) {
-				return new Filter({ path: sFieldPath, operator: "EQ", value1: code });
+				return new Filter({ path: sFieldPath, operator: FilterOperator.EQ, value1: code });
 			});
 
 			return new Filter({ filters: aFilters, and: false });

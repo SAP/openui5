@@ -1,8 +1,10 @@
 /* global */
 sap.ui.define([
 	"sap/ui/model/type/String",
-    "sap/ui/rta/enablement/elementActionTest"
-], function(StringType, elementActionTest) {
+    "sap/ui/rta/enablement/elementActionTest",
+	"sap/ui/mdc/enums/ConditionValidated",
+	"sap/ui/mdc/enums/OperatorName"
+], function(StringType, elementActionTest, ConditionValidated, OperatorName) {
     'use strict';
 
 
@@ -50,9 +52,9 @@ sap.ui.define([
 					content: {
 						name: "prop2",
 						condition: {
-							operator: "EQ",
+							operator: OperatorName.EQ,
 							values: ['102'],
-							validated: "Validated",
+							validated: ConditionValidated.Validated,
 							payload: {}
 						}
 					}
@@ -68,9 +70,9 @@ sap.ui.define([
 					content: {
 						name: "prop2",
 						condition: {
-							operator: "EQ",
+							operator: OperatorName.EQ,
 							values: ['102'],
-							validated: "Validated",
+							validated: ConditionValidated.Validated,
 							payload: {}
 						}
 					}
@@ -90,7 +92,7 @@ sap.ui.define([
 		assert.ok(oFB);
 
 		if (oFB.getMetadata) {
-			assert.deepEqual(oFB.getInternalConditions(), {prop2: [{operator: "EQ", isEmpty: false, validated: "Validated", values: ["102"]}]}, "expected inner conditions found");
+			assert.deepEqual(oFB.getInternalConditions(), {prop2: [{operator: OperatorName.EQ, isEmpty: false, validated: ConditionValidated.Validated, values: ["102"]}]}, "expected inner conditions found");
 		}
 	}
 
@@ -107,9 +109,9 @@ sap.ui.define([
 					content: {
 						name: "prop2",
 						condition: {
-							operator: "EQ",
+							operator: OperatorName.EQ,
 							values: ['102'],
-							validated: "Validated"
+							validated: ConditionValidated.Validated
 						}
 					}
 				};
@@ -124,9 +126,9 @@ sap.ui.define([
 					content: {
 						name: "prop2",
 						condition: {
-							operator: "EQ",
+							operator: OperatorName.EQ,
 							values: ['101'],
-							validated: "Validated"
+							validated: ConditionValidated.Validated
 						}
 					}
 				};
@@ -146,7 +148,7 @@ sap.ui.define([
 		assert.ok(oFB);
 
 		if (oFB.getMetadata) {
-			assert.deepEqual(oFB.getInternalConditions(), {prop3: [{operator: "EQ", isEmpty: false, validated: "Validated", values: ["101"]}, {operator: "EQ", isEmpty: false, validated: "Validated", values: ["103"]}]}, "expected inner conditions found");
+			assert.deepEqual(oFB.getInternalConditions(), {prop3: [{operator: OperatorName.EQ, isEmpty: false, validated: ConditionValidated.Validated, values: ["101"]}, {operator: OperatorName.EQ, isEmpty: false, validated: ConditionValidated.Validated, values: ["103"]}]}, "expected inner conditions found");
 		}
 	}
 
@@ -163,9 +165,9 @@ sap.ui.define([
 					content: {
 						name: "prop3",
 						condition: {
-							operator: "EQ",
+							operator: OperatorName.EQ,
 							values: ['102'],
-							validated: "Validated"
+							validated: ConditionValidated.Validated
 						}
 					}
 				};
@@ -180,9 +182,9 @@ sap.ui.define([
 					content: {
 						name: "prop3",
 						condition: {
-							operator: "EQ",
+							operator: OperatorName.EQ,
 							values: ['101'],
-							validated: "Validated"
+							validated: ConditionValidated.Validated
 						}
 					}
 				};
@@ -196,9 +198,9 @@ sap.ui.define([
 					content: {
 						name: "prop3",
 						condition: {
-							operator: "EQ",
+							operator: OperatorName.EQ,
 							values: ['102'],
-							validated: "Validated"
+							validated: ConditionValidated.Validated
 						}
 					}
 				};
@@ -212,9 +214,9 @@ sap.ui.define([
 					content: {
 						name: "prop3",
 						condition: {
-							operator: "EQ",
+							operator: OperatorName.EQ,
 							values: ['103'],
-							validated: "Validated"
+							validated: ConditionValidated.Validated
 						}
 					}
 				};

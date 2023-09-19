@@ -11,6 +11,7 @@ sap.ui.define([
 	"sap/m/DynamicDateRange",
 	"sap/ui/mdc/condition/OperatorDynamicDateOption",
 	"sap/ui/mdc/field/DynamicDateRangeConditionsType",
+	"sap/ui/mdc/enums/OperatorName",
 	"sap/m/DynamicDateFormat",
 	"sap/m/library",
 	"sap/ui/model/type/DateTime",
@@ -27,6 +28,7 @@ sap.ui.define([
 	DynamicDateRange,
 	OperatorDynamicDateOption,
 	DynamicDateRangeConditionsType,
+	OperatorName,
 	DynamicDateFormat,
 	mobileLibrary,
 	DateTimeType,
@@ -75,8 +77,8 @@ sap.ui.define([
 
 	QUnit.test("getEditOperator", function(assert) {
 		const oEditOperator = DateTimeContent.getEditOperator();
-		assert.equal(oEditOperator["EQ"].name, "sap/m/DateTimePicker", "Correct editOperator 'EQ' name returned.");
-		assert.equal(oEditOperator["EQ"].create, DateTimeContent._createDatePickerControl, "Correct editOperator 'EQ' create function returned.");
+		assert.equal(oEditOperator[OperatorName.EQ].name, "sap/m/DateTimePicker", "Correct editOperator 'EQ' name returned.");
+		assert.equal(oEditOperator[OperatorName.EQ].create, DateTimeContent._createDatePickerControl, "Correct editOperator 'EQ' create function returned.");
 	});
 
 	QUnit.test("getUseDefaultEnterHandler", function(assert) {
@@ -101,7 +103,7 @@ sap.ui.define([
 		assert.deepEqual(DateTimeContent.getControlNames("EditMultiValue"), ["sap/ui/mdc/field/FieldMultiInput", "sap/m/Token"], "Correct controls returned for ContentMode 'EditMultiValue'");
 		assert.deepEqual(DateTimeContent.getControlNames("EditMultiLine"), [null], "Correct controls returned for ContentMode 'EditMultiLine'");
 		assert.deepEqual(DateTimeContent.getControlNames("EditOperator"), [null], "Correct controls returned for ContentMode 'EditOperator'");
-		assert.deepEqual(DateTimeContent.getControlNames("EditOperator", "EQ"), ["sap/m/DateTimePicker"], "Correct controls returned for ContentMode 'EditOperator' and 'EQ'");
+		assert.deepEqual(DateTimeContent.getControlNames("EditOperator", OperatorName.EQ), ["sap/m/DateTimePicker"], "Correct controls returned for ContentMode 'EditOperator' and 'EQ'");
 	});
 
 	QUnit.module("Content creation", {
@@ -164,7 +166,7 @@ sap.ui.define([
 				},
 				"createEditMultiLine throws an error.");
 
-			const aCreatedEditOperatorEQControls = DateTimeContent.create(oContentFactory, "EditOperator", "EQ", [DateTimePicker], "EditOperatorEQ-create");
+			const aCreatedEditOperatorEQControls = DateTimeContent.create(oContentFactory, "EditOperator", OperatorName.EQ, [DateTimePicker], "EditOperatorEQ-create");
 
 			fnSpyCalledOnce(fnCreateDisplayFunction, "Display", assert);
 			fnSpyCalledOnce(fnCreateEditFunction, "Edit", assert);

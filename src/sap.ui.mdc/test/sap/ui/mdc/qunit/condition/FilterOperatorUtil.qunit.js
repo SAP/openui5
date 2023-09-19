@@ -14,7 +14,9 @@ sap.ui.define([
 	"sap/ui/mdc/enums/ConditionValidated",
 	"sap/ui/mdc/enums/FieldDisplay",
 	"sap/ui/mdc/enums/OperatorValueType",
+	"sap/ui/mdc/enums/OperatorName",
 	"sap/ui/model/Filter",
+	"sap/ui/model/FilterOperator",
 	"sap/ui/model/type/Integer",
 	"sap/ui/model/odata/type/String",
 	"sap/ui/model/odata/type/Date",
@@ -34,7 +36,9 @@ sap.ui.define([
 	ConditionValidated,
 	FieldDisplay,
 	OperatorValueType,
+	OperatorName,
 	Filter,
+	FilterOperator,
 	IntegerType,
 	StringType,
 	DateType,
@@ -59,7 +63,7 @@ sap.ui.define([
 	QUnit.test("createOperator", function(assert) {
 
 		const _getModelFilter = function(oCondition, sFieldPath, oType, bCaseSensitive, sBaseType) {
-			return new Filter({ path: sFieldPath, operator: "EQ", value1: new Date().getFullYear() });
+			return new Filter({ path: sFieldPath, operator: FilterOperator.EQ, value1: new Date().getFullYear() });
 		};
 		let oOperator = new Operator({
 			name: "THISYEAR",
@@ -93,7 +97,7 @@ sap.ui.define([
 	QUnit.test("createRangeOperator", function(assert) {
 
 		const _getModelFilter = function(oCondition, sFieldPath, oType, bCaseSensitive, sBaseType) {
-			return new Filter({ path: sFieldPath, operator: "EQ", value1: new Date().getFullYear() });
+			return new Filter({ path: sFieldPath, operator: FilterOperator.EQ, value1: new Date().getFullYear() });
 		};
 
 		const oOperator = new RangeOperator({
@@ -161,9 +165,9 @@ sap.ui.define([
 
 	QUnit.test("getOperator", function(assert) {
 
-		const oOperator = FilterOperatorUtil.getOperator("EQ");
+		const oOperator = FilterOperatorUtil.getOperator(OperatorName.EQ);
 		assert.ok(oOperator, "Operator returned");
-		assert.equal(oOperator.name, "EQ", "EQ operator returned");
+		assert.equal(oOperator.name, OperatorName.EQ, "EQ operator returned");
 
 	});
 
@@ -171,7 +175,7 @@ sap.ui.define([
 
 		const oMyOperator = new Operator({
 			name: "MyEqual",
-			filterOperator: "EQ",
+			filterOperator: FilterOperator.EQ,
 			tokenParse: "^=([^=].*)$",
 			tokenFormat: "={0}",
 			valueTypes: [OperatorValueType.Self],
@@ -180,13 +184,13 @@ sap.ui.define([
 		FilterOperatorUtil.addOperator(oMyOperator);
 
 		let oOperator = FilterOperatorUtil.getEQOperator();
-		assert.equal(oOperator && oOperator.name, "EQ", "EQ operator returned");
+		assert.equal(oOperator && oOperator.name, OperatorName.EQ, "EQ operator returned");
 
-		oOperator = FilterOperatorUtil.getEQOperator(["GT", oMyOperator.name, "LT"]);
+		oOperator = FilterOperatorUtil.getEQOperator([OperatorName.GT, oMyOperator.name, OperatorName.LT]);
 		assert.equal(oOperator && oOperator.name, oMyOperator.name, "custom operator returned");
 
-		oOperator = FilterOperatorUtil.getEQOperator(["GT", "LT"]);
-		assert.equal(oOperator && oOperator.name, "EQ", "EQ operator returned");
+		oOperator = FilterOperatorUtil.getEQOperator([OperatorName.GT, OperatorName.LT]);
+		assert.equal(oOperator && oOperator.name, OperatorName.EQ, "EQ operator returned");
 
 		delete FilterOperatorUtil._mOperators[oMyOperator.name]; // TODO API to remove operator
 
@@ -196,21 +200,21 @@ sap.ui.define([
 
 		let oOperator = FilterOperatorUtil.getOperatorForDynamicDateOption("FROM", BaseType.Date);
 		assert.ok(oOperator, "Operator returned");
-		assert.equal(oOperator.name, "GE", "GE operator returned");
+		assert.equal(oOperator.name, OperatorName.GE, "GE operator returned");
 
 		oOperator = FilterOperatorUtil.getOperatorForDynamicDateOption("Date-EQ", BaseType.Date);
 		assert.ok(oOperator, "Operator returned");
-		assert.equal(oOperator.name, "EQ", "EQ operator returned");
+		assert.equal(oOperator.name, OperatorName.EQ, "EQ operator returned");
 
 	});
 
 	QUnit.test("getDynamicDateOptionForOperator", function(assert) {
 
-		let oOperator = FilterOperatorUtil.getOperator("TODAY");
+		let oOperator = FilterOperatorUtil.getOperator(OperatorName.TODAY);
 		let sOption = FilterOperatorUtil.getDynamicDateOptionForOperator(oOperator, mLibrary.StandardDynamicDateRangeKeys, BaseType.Date);
 		assert.equal(sOption, "TODAY", "TODAY option returned");
 
-		oOperator = FilterOperatorUtil.getOperator("GE");
+		oOperator = FilterOperatorUtil.getOperator(OperatorName.GE);
 		sOption = FilterOperatorUtil.getDynamicDateOptionForOperator(oOperator, mLibrary.StandardDynamicDateRangeKeys, BaseType.Date);
 		assert.equal(sOption, "FROM", "FROM option returned");
 
@@ -218,7 +222,7 @@ sap.ui.define([
 
 	QUnit.test("getCustomDynamicDateOptionForOperator", function(assert) {
 
-		const oOperator = FilterOperatorUtil.getOperator("LT");
+		const oOperator = FilterOperatorUtil.getOperator(OperatorName.LT);
 		const sOption = FilterOperatorUtil.getCustomDynamicDateOptionForOperator(oOperator, BaseType.Date);
 		assert.equal(sOption, "Date-LT", "custom option returned");
 
@@ -259,7 +263,7 @@ sap.ui.define([
 						assert.ok(oTest.exception, "Exception fired in parsing");
 					}
 
-					// EQ-Operator.getCondition("=Test") --> {operator: "EQ", values: ["Test"]]}
+					// EQ-Operator.getCondition("=Test") --> {operator: OperatorName.EQ, values: ["Test"]]}
 					let oCondition;
 					try {
 						oCondition = oOperator.getCondition.apply(oOperator, oTest.parseArgs || [sFormattedText, oTest.type]);
@@ -320,7 +324,7 @@ sap.ui.define([
 			longText: "Hello World",
 			tokenText: "Hello",
 			getModelFilter: function(oCondition, sFieldPath, aOperators) {
-				return new Filter({ path: sFieldPath, operator: "EQ", value1: "Hello World" });
+				return new Filter({ path: sFieldPath, operator: FilterOperator.EQ, value1: "Hello World" });
 			}
 		}));
 
@@ -341,12 +345,12 @@ sap.ui.define([
 		const sDateTimeParsed = oDateTimeOffsetType.parseValue(sDateTimeFormatted, "string");
 
 		const aFormatTest = {
-				"EQ": [{
+				[OperatorName.EQ]: [{
 						formatArgs: [Condition.createItemCondition("Test", "desc")],
 						formatValue: "desc (Test)",
 						parseArgs: ["=Test"],
 						parsedValue: "Test",
-						condition: Condition.createCondition("EQ", [undefined, "Test"], undefined, undefined, ConditionValidated.NotValidated),
+						condition: Condition.createCondition(OperatorName.EQ, [undefined, "Test"], undefined, undefined, ConditionValidated.NotValidated),
 						isEmpty: false,
 						valid: true,
 						isSingleValue: true
@@ -356,37 +360,37 @@ sap.ui.define([
 						formatValue: "Test",
 						parseArgs: ["=Test", undefined, FieldDisplay.Value],
 						parsedValue: "Test",
-						condition: Condition.createCondition("EQ", ["Test"], undefined, undefined, ConditionValidated.NotValidated),
+						condition: Condition.createCondition(OperatorName.EQ, ["Test"], undefined, undefined, ConditionValidated.NotValidated),
 						isEmpty: false,
 						valid: true,
-						filter: {path: "test", operator: "EQ", value1: "Test"}
+						filter: {path: "test", operator: FilterOperator.EQ, value1: "Test"}
 					},
 					{
-						formatArgs: [Condition.createCondition("EQ", ["Test"]), undefined, undefined],
+						formatArgs: [Condition.createCondition(OperatorName.EQ, ["Test"]), undefined, undefined],
 						formatValue: "=Test",
 						parseArgs: ["Test", undefined, FieldDisplay.Value, true],
 						parsedValue: "Test",
-						condition: Condition.createCondition("EQ", ["Test"], undefined, undefined, ConditionValidated.NotValidated),
+						condition: Condition.createCondition(OperatorName.EQ, ["Test"], undefined, undefined, ConditionValidated.NotValidated),
 						isEmpty: false,
 						valid: true,
-						filter: {path: "test", operator: "EQ", value1: "Test"}
+						filter: {path: "test", operator: FilterOperator.EQ, value1: "Test"}
 					},
 					{
 						formatArgs: [Condition.createItemCondition("Test"), undefined, FieldDisplay.Value],
 						formatValue: "=Test",
 						parseArgs: ["Test", undefined, FieldDisplay.Value, true],
 						parsedValue: "Test",
-						condition: Condition.createCondition("EQ", ["Test"], undefined, undefined, ConditionValidated.NotValidated),
+						condition: Condition.createCondition(OperatorName.EQ, ["Test"], undefined, undefined, ConditionValidated.NotValidated),
 						isEmpty: false,
 						valid: true,
-						filter: {path: "test", operator: "EQ", value1: "Test"}
+						filter: {path: "test", operator: FilterOperator.EQ, value1: "Test"}
 					},
 					{
 						formatArgs: [Condition.createItemCondition("Test", "desc"), undefined, FieldDisplay.Description],
 						formatValue: "desc",
 						parseArgs: ["=desc", undefined, FieldDisplay.Description],
 						parsedValue: "desc",
-						condition: Condition.createCondition("EQ", [undefined, "desc"], undefined, undefined, ConditionValidated.NotValidated),
+						condition: Condition.createCondition(OperatorName.EQ, [undefined, "desc"], undefined, undefined, ConditionValidated.NotValidated),
 						isEmpty: false,
 						valid: true
 					},
@@ -395,7 +399,7 @@ sap.ui.define([
 						formatValue: "Test (desc)",
 						parseArgs: ["=Test", undefined, FieldDisplay.ValueDescription],
 						parsedValue: "Test",
-						condition: Condition.createCondition("EQ", ["Test", undefined], undefined, undefined, ConditionValidated.NotValidated),
+						condition: Condition.createCondition(OperatorName.EQ, ["Test", undefined], undefined, undefined, ConditionValidated.NotValidated),
 						isEmpty: false,
 						valid: true
 					},
@@ -404,7 +408,7 @@ sap.ui.define([
 						formatValue: "5 (desc)",
 						parseArgs: ["=5", oIntType, FieldDisplay.ValueDescription],
 						parsedValue: "5",
-						condition: Condition.createCondition("EQ", [5, undefined], undefined, undefined, ConditionValidated.NotValidated),
+						condition: Condition.createCondition(OperatorName.EQ, [5, undefined], undefined, undefined, ConditionValidated.NotValidated),
 						isEmpty: false,
 						valid: false,
 						type: oIntType
@@ -414,7 +418,7 @@ sap.ui.define([
 						formatValue: "desc (5)",
 						parseArgs: ["=desc (5)", oIntType, FieldDisplay.DescriptionValue],
 						parsedValue: "5desc",
-						condition: Condition.createCondition("EQ", [5, "desc"], undefined, undefined, ConditionValidated.Validated),
+						condition: Condition.createCondition(OperatorName.EQ, [5, "desc"], undefined, undefined, ConditionValidated.Validated),
 						isEmpty: false,
 						valid: false,
 						type: oIntType
@@ -424,7 +428,7 @@ sap.ui.define([
 						formatValue: "1 (desc)",
 						parseArgs: ["=A", oIntType, FieldDisplay.ValueDescription],
 						parsedValue: "",
-						condition: Condition.createCondition("EQ", [undefined, undefined], undefined, undefined, ConditionValidated.NotValidated),
+						condition: Condition.createCondition(OperatorName.EQ, [undefined, undefined], undefined, undefined, ConditionValidated.NotValidated),
 						exception: true,
 						isEmpty: true,
 						valid: false,
@@ -435,7 +439,7 @@ sap.ui.define([
 						formatValue: "Test (desc)",
 						parseArgs: ["=Test (desc)", undefined, FieldDisplay.ValueDescription],
 						parsedValue: "Testdesc",
-						condition: Condition.createCondition("EQ", ["Test", "desc"], undefined, undefined, ConditionValidated.Validated),
+						condition: Condition.createCondition(OperatorName.EQ, ["Test", "desc"], undefined, undefined, ConditionValidated.Validated),
 						isEmpty: false,
 						valid: true
 					},
@@ -449,46 +453,46 @@ sap.ui.define([
 						valid: true
 					},
 					{
-						formatArgs: [Condition.createCondition("EQ", ["Test", undefined], undefined, undefined, ConditionValidated.Validated), undefined, FieldDisplay.ValueDescription],
+						formatArgs: [Condition.createCondition(OperatorName.EQ, ["Test", undefined], undefined, undefined, ConditionValidated.Validated), undefined, FieldDisplay.ValueDescription],
 						formatValue: "Test",
 						parseArgs: ["=Test", undefined, FieldDisplay.ValueDescription],
 						parsedValue: "Test",
-						condition: Condition.createCondition("EQ", ["Test", undefined], undefined, undefined, ConditionValidated.NotValidated),
+						condition: Condition.createCondition(OperatorName.EQ, ["Test", undefined], undefined, undefined, ConditionValidated.NotValidated),
 						isEmpty: false,
 						valid: true
 					},
 					{
-						formatArgs: [Condition.createCondition("EQ", ["Test"]), undefined, undefined, true],
+						formatArgs: [Condition.createCondition(OperatorName.EQ, ["Test"]), undefined, undefined, true],
 						formatValue: "Test",
 						parseArgs: ["=Test"],
 						parsedValue: "Test",
-						condition: Condition.createCondition("EQ", [undefined, "Test"], undefined, undefined, ConditionValidated.NotValidated),
+						condition: Condition.createCondition(OperatorName.EQ, [undefined, "Test"], undefined, undefined, ConditionValidated.NotValidated),
 						isEmpty: false,
 						valid: true,
 						isSingleValue: true
 					},
 					{
-						formatArgs: [Condition.createCondition("EQ", ["="])],
+						formatArgs: [Condition.createCondition(OperatorName.EQ, ["="])],
 						formatValue: "==",
 						parsedValue: undefined,
 						isEmpty: true,
 						valid: true
 					},
 					{
-						formatArgs: [Condition.createCondition("EQ", ["a", "b"])],
+						formatArgs: [Condition.createCondition(OperatorName.EQ, ["a", "b"])],
 						formatValue: "b (a)",
 						parseArgs: ["b (a)", undefined, undefined, true],
 						parsedValue: "ab",
-						condition: Condition.createCondition("EQ", ["a", "b"], undefined, undefined, ConditionValidated.Validated),
+						condition: Condition.createCondition(OperatorName.EQ, ["a", "b"], undefined, undefined, ConditionValidated.Validated),
 						isEmpty: false,
 						valid: true
 					},
 					{ // DateTime with Timezone
-						formatArgs: [Condition.createCondition("EQ", [["2022-02-24T12:15:30Z", "Europe/Berlin"]]), oDateTimeWithTimezoneType1, FieldDisplay.Value, true, [oDateTimeOffsetType, oStringType]],
+						formatArgs: [Condition.createCondition(OperatorName.EQ, [["2022-02-24T12:15:30Z", "Europe/Berlin"]]), oDateTimeWithTimezoneType1, FieldDisplay.Value, true, [oDateTimeOffsetType, oStringType]],
 						formatValue: "2022-02-24T13:15:30",
 						parseArgs: ["2022-02-24T14:15:30", oDateTimeWithTimezoneType1, FieldDisplay.Value, true, [oDateTimeOffsetType, oStringType]],
 						parsedValue: "2022-02-24T14:15:30+01:00,Europe/Berlin",
-						condition: Condition.createCondition("EQ", [["2022-02-24T14:15:30+01:00", "Europe/Berlin"]], undefined, undefined, ConditionValidated.NotValidated),
+						condition: Condition.createCondition(OperatorName.EQ, [["2022-02-24T14:15:30+01:00", "Europe/Berlin"]], undefined, undefined, ConditionValidated.NotValidated),
 						isEmpty: false,
 						valid: false, // as String (for timezone) allows only 5 characters -> test for usage of this type
 						type: oDateTimeWithTimezoneType1,
@@ -496,11 +500,11 @@ sap.ui.define([
 						compositePart: 0
 					},
 					{
-						formatArgs: [Condition.createCondition("EQ", [["2022-02-24T12:15:30Z", "Europe/Berlin"]]), oDateTimeWithTimezoneType2, FieldDisplay.Value, true, [oDateTimeOffsetType, oStringType]],
+						formatArgs: [Condition.createCondition(OperatorName.EQ, [["2022-02-24T12:15:30Z", "Europe/Berlin"]]), oDateTimeWithTimezoneType2, FieldDisplay.Value, true, [oDateTimeOffsetType, oStringType]],
 						formatValue: "Europe, Berlin",
 						parseArgs: ["America/New_York", oDateTimeWithTimezoneType2, FieldDisplay.Value, true, [oDateTimeOffsetType, oStringType]],
 						parsedValue: "2022-02-24T12:15:30Z,America/New_York",
-						condition: Condition.createCondition("EQ", [["2022-02-24T12:15:30Z", "America/New_York"]], undefined, undefined, ConditionValidated.NotValidated),
+						condition: Condition.createCondition(OperatorName.EQ, [["2022-02-24T12:15:30Z", "America/New_York"]], undefined, undefined, ConditionValidated.NotValidated),
 						isEmpty: false,
 						valid: false, // as String (for timezone) allows only 5 characters -> test for usage of this type
 						type: oDateTimeWithTimezoneType2,
@@ -508,11 +512,11 @@ sap.ui.define([
 						compositePart: 1
 					},
 					{
-						formatArgs: [Condition.createCondition("EQ", ["@@$$"]), undefined, FieldDisplay.Value, false],
+						formatArgs: [Condition.createCondition(OperatorName.EQ, ["@@$$"]), undefined, FieldDisplay.Value, false],
 						formatValue: "=@@$$",
 						parseArgs: ["=@@$$", undefined, FieldDisplay.Value],
 						parsedValue: "@@$$",
-						condition: Condition.createCondition("EQ", ["@@$$"], undefined, undefined, ConditionValidated.NotValidated),
+						condition: Condition.createCondition(OperatorName.EQ, ["@@$$"], undefined, undefined, ConditionValidated.NotValidated),
 						isEmpty: false,
 						valid: true,
 						isSingleValue: true
@@ -522,7 +526,7 @@ sap.ui.define([
 						formatValue: "5 (" + sDateTimeFormatted + ")",
 						parseArgs: ["5 (" + sDateTimeFormatted + ")", oIntType, FieldDisplay.ValueDescription, true, undefined, oDateTimeOffsetType, undefined],
 						parsedValue: "5" + sDateTimeParsed,
-						condition: Condition.createCondition("EQ", [5, sDateTimeParsed], undefined, undefined, ConditionValidated.Validated),
+						condition: Condition.createCondition(OperatorName.EQ, [5, sDateTimeParsed], undefined, undefined, ConditionValidated.Validated),
 						isEmpty: false,
 						valid: false,
 						type: oIntType,
@@ -538,11 +542,11 @@ sap.ui.define([
 						additionalType : oDateTimeOffsetType
 					},
 					{
-						formatArgs: [Condition.createCondition("EQ", [5]), oIntType, FieldDisplay.Description, true, undefined, oDateTimeOffsetType, undefined],
+						formatArgs: [Condition.createCondition(OperatorName.EQ, [5]), oIntType, FieldDisplay.Description, true, undefined, oDateTimeOffsetType, undefined],
 						formatValue: "5",
 						parseArgs: ["1", oIntType, FieldDisplay.Value, true, undefined, oDateTimeOffsetType, undefined],
 						parsedValue: "1",
-						condition: Condition.createCondition("EQ", [1], undefined, undefined, ConditionValidated.NotValidated),
+						condition: Condition.createCondition(OperatorName.EQ, [1], undefined, undefined, ConditionValidated.NotValidated),
 						isEmpty: false,
 						exception: false,
 						valid: true,
@@ -550,92 +554,92 @@ sap.ui.define([
 						additionalType : oDateTimeOffsetType
 					}
 				],
-				"NE": [{
-						formatArgs: [Condition.createCondition("NE", ["Test"])],
+				[OperatorName.NE]: [{
+						formatArgs: [Condition.createCondition(OperatorName.NE, ["Test"])],
 						formatValue: "!(=Test)",
 						parseArgs: ["!=Test"],
 						parsedValue: "Test",
-						condition: Condition.createCondition("NE", ["Test"], undefined, undefined, ConditionValidated.NotValidated),
+						condition: Condition.createCondition(OperatorName.NE, ["Test"], undefined, undefined, ConditionValidated.NotValidated),
 						isEmpty: false,
 						valid: true,
 						isSingleValue: true
 					},
 					{
-						formatArgs: [Condition.createCondition("NE", ["="])],
+						formatArgs: [Condition.createCondition(OperatorName.NE, ["="])],
 						formatValue: "!(==)",
 						parsedValue: undefined,
 						isEmpty: true,
 						valid: true
 					},
 					{
-						formatArgs: [Condition.createCondition("NE", ["a", "b"])],
+						formatArgs: [Condition.createCondition(OperatorName.NE, ["a", "b"])],
 						formatValue: "!(=a)",
 						parseArgs: ["!=a"],
 						parsedValue: "a",
-						condition: Condition.createCondition("NE", ["a"], undefined, undefined, ConditionValidated.NotValidated),
+						condition: Condition.createCondition(OperatorName.NE, ["a"], undefined, undefined, ConditionValidated.NotValidated),
 						isEmpty: false,
 						valid: true
 					},
 					{
-						formatArgs: [Condition.createCondition("NE", ["Test"]), undefined, undefined, true],
+						formatArgs: [Condition.createCondition(OperatorName.NE, ["Test"]), undefined, undefined, true],
 						formatValue: "Test",
 						parseArgs: ["Test", undefined, undefined, true],
 						parsedValue: "Test",
-						condition: Condition.createCondition("NE", ["Test"], undefined, undefined, ConditionValidated.NotValidated),
+						condition: Condition.createCondition(OperatorName.NE, ["Test"], undefined, undefined, ConditionValidated.NotValidated),
 						isEmpty: false,
 						valid: true,
 						isSingleValue: true
 					}
 				],
-				"LT": [{
-						formatArgs: [Condition.createCondition("LT", ["Test"])],
+				[OperatorName.LT]: [{
+						formatArgs: [Condition.createCondition(OperatorName.LT, ["Test"])],
 						formatValue: "<Test",
 						parsedValue: "Test",
-						condition: Condition.createCondition("LT", ["Test"], undefined, undefined, ConditionValidated.NotValidated),
+						condition: Condition.createCondition(OperatorName.LT, ["Test"], undefined, undefined, ConditionValidated.NotValidated),
 						isEmpty: false,
 						valid: true,
-						filter: {path: "test", operator: "LT", value1: "Test"},
+						filter: {path: "test", operator: FilterOperator.LT, value1: "Test"},
 						isSingleValue: true
 					},
 					{
-						formatArgs: [Condition.createCondition("LT", ["<"])],
+						formatArgs: [Condition.createCondition(OperatorName.LT, ["<"])],
 						formatValue: "<<",
 						parsedValue: "<",
 						isEmpty: false,
 						valid: true
 					},
 					{
-						formatArgs: [Condition.createCondition("LT", ["a", "b"])],
+						formatArgs: [Condition.createCondition(OperatorName.LT, ["a", "b"])],
 						formatValue: "<a",
 						parsedValue: "a",
-						condition: Condition.createCondition("LT", ["a"], undefined, undefined, ConditionValidated.NotValidated),
+						condition: Condition.createCondition(OperatorName.LT, ["a"], undefined, undefined, ConditionValidated.NotValidated),
 						isEmpty: false,
 						valid: true
 					},
 					{
-						formatArgs: [Condition.createCondition("LT", ["Test"]), undefined, undefined, true],
+						formatArgs: [Condition.createCondition(OperatorName.LT, ["Test"]), undefined, undefined, true],
 						formatValue: "Test",
 						parseArgs: ["Test", undefined, undefined, true],
 						parsedValue: "Test",
-						condition: Condition.createCondition("LT", ["Test"], undefined, undefined, ConditionValidated.NotValidated),
+						condition: Condition.createCondition(OperatorName.LT, ["Test"], undefined, undefined, ConditionValidated.NotValidated),
 						isEmpty: false,
 						valid: true,
 						isSingleValue: true
 					}
 				],
-				"NOTLT": [{
-						formatArgs: [Condition.createCondition("NOTLT", ["Test"])],
+				[OperatorName.NOTLT]: [{
+						formatArgs: [Condition.createCondition(OperatorName.NOTLT, ["Test"])],
 						formatValue: "!(<Test)",
 						parseArgs: ["!<Test"],
 						parsedValue: "Test",
-						condition: Condition.createCondition("NOTLT", ["Test"], undefined, undefined, ConditionValidated.NotValidated),
+						condition: Condition.createCondition(OperatorName.NOTLT, ["Test"], undefined, undefined, ConditionValidated.NotValidated),
 						isEmpty: false,
 						valid: true,
-						filter: {path: "test", operator: "GE", value1: "Test"},
+						filter: {path: "test", operator: FilterOperator.GE, value1: "Test"},
 						isSingleValue: true
 					},
 					{
-						formatArgs: [Condition.createCondition("NOTLT", ["<"])],
+						formatArgs: [Condition.createCondition(OperatorName.NOTLT, ["<"])],
 						formatValue: "!(<<)",
 						parseArgs: ["!<<"],
 						parsedValue: "<",
@@ -643,73 +647,73 @@ sap.ui.define([
 						valid: true
 					},
 					{
-						formatArgs: [Condition.createCondition("NOTLT", ["a", "b"])],
+						formatArgs: [Condition.createCondition(OperatorName.NOTLT, ["a", "b"])],
 						formatValue: "!(<a)",
 						parseArgs: ["!<a"],
 						parsedValue: "a",
-						condition: Condition.createCondition("NOTLT", ["a"], undefined, undefined, ConditionValidated.NotValidated),
+						condition: Condition.createCondition(OperatorName.NOTLT, ["a"], undefined, undefined, ConditionValidated.NotValidated),
 						isEmpty: false,
 						valid: true
 					},
 					{
-						formatArgs: [Condition.createCondition("NOTLT", ["Test"]), undefined, undefined, true],
+						formatArgs: [Condition.createCondition(OperatorName.NOTLT, ["Test"]), undefined, undefined, true],
 						formatValue: "Test",
 						parseArgs: ["Test", undefined, undefined, true],
 						parsedValue: "Test",
-						condition: Condition.createCondition("NOTLT", ["Test"], undefined, undefined, ConditionValidated.NotValidated),
+						condition: Condition.createCondition(OperatorName.NOTLT, ["Test"], undefined, undefined, ConditionValidated.NotValidated),
 						isEmpty: false,
 						valid: true,
 						isSingleValue: true
 					}
 				],
-				"GT": [{
-						formatArgs: [Condition.createCondition("GT", ["Test"])],
+				[OperatorName.GT]: [{
+						formatArgs: [Condition.createCondition(OperatorName.GT, ["Test"])],
 						formatValue: ">Test",
 						parsedValue: "Test",
-						condition: Condition.createCondition("GT", ["Test"], undefined, undefined, ConditionValidated.NotValidated),
+						condition: Condition.createCondition(OperatorName.GT, ["Test"], undefined, undefined, ConditionValidated.NotValidated),
 						isEmpty: false,
 						valid: true,
 						isSingleValue: true
 					},
 					{
-						formatArgs: [Condition.createCondition("GT", [">"])],
+						formatArgs: [Condition.createCondition(OperatorName.GT, [">"])],
 						formatValue: ">>",
 						parsedValue: ">",
 						isEmpty: false,
 						valid: true
 					},
 					{
-						formatArgs: [Condition.createCondition("GT", ["a", "b"])],
+						formatArgs: [Condition.createCondition(OperatorName.GT, ["a", "b"])],
 						formatValue: ">a",
 						parsedValue: "a",
-						condition: Condition.createCondition("GT", ["a"], undefined, undefined, ConditionValidated.NotValidated),
+						condition: Condition.createCondition(OperatorName.GT, ["a"], undefined, undefined, ConditionValidated.NotValidated),
 						isEmpty: false,
 						valid: true
 					},
 					{
-						formatArgs: [Condition.createCondition("GT", ["Test"]), undefined, undefined, true],
+						formatArgs: [Condition.createCondition(OperatorName.GT, ["Test"]), undefined, undefined, true],
 						formatValue: "Test",
 						parseArgs: ["Test", undefined, undefined, true],
 						parsedValue: "Test",
-						condition: Condition.createCondition("GT", ["Test"], undefined, undefined, ConditionValidated.NotValidated),
+						condition: Condition.createCondition(OperatorName.GT, ["Test"], undefined, undefined, ConditionValidated.NotValidated),
 						isEmpty: false,
 						valid: true,
 						isSingleValue: true
 					}
 				],
-				"NOTGT": [{
-						formatArgs: [Condition.createCondition("NOTGT", ["Test"])],
+				[OperatorName.NOTGT]: [{
+						formatArgs: [Condition.createCondition(OperatorName.NOTGT, ["Test"])],
 						formatValue: "!(>Test)",
 						parseArgs: ["!>Test"],
 						parsedValue: "Test",
-						condition: Condition.createCondition("NOTGT", ["Test"], undefined, undefined, ConditionValidated.NotValidated),
+						condition: Condition.createCondition(OperatorName.NOTGT, ["Test"], undefined, undefined, ConditionValidated.NotValidated),
 						isEmpty: false,
 						valid: true,
-						filter: {path: "test", operator: "LE", value1: "Test"},
+						filter: {path: "test", operator: FilterOperator.LE, value1: "Test"},
 						isSingleValue: true
 					},
 					{
-						formatArgs: [Condition.createCondition("NOTGT", [">"])],
+						formatArgs: [Condition.createCondition(OperatorName.NOTGT, [">"])],
 						formatValue: "!(>>)",
 						parseArgs: ["!>>"],
 						parsedValue: ">",
@@ -717,72 +721,72 @@ sap.ui.define([
 						valid: true
 					},
 					{
-						formatArgs: [Condition.createCondition("NOTGT", ["a", "b"])],
+						formatArgs: [Condition.createCondition(OperatorName.NOTGT, ["a", "b"])],
 						formatValue: "!(>a)",
 						parseArgs: ["!>a"],
 						parsedValue: "a",
-						condition: Condition.createCondition("NOTGT", ["a"], undefined, undefined, ConditionValidated.NotValidated),
+						condition: Condition.createCondition(OperatorName.NOTGT, ["a"], undefined, undefined, ConditionValidated.NotValidated),
 						isEmpty: false,
 						valid: true
 					},
 					{
-						formatArgs: [Condition.createCondition("NOTGT", ["Test"]), undefined, undefined, true],
+						formatArgs: [Condition.createCondition(OperatorName.NOTGT, ["Test"]), undefined, undefined, true],
 						formatValue: "Test",
 						parseArgs: ["Test", undefined, undefined, true],
 						parsedValue: "Test",
-						condition: Condition.createCondition("NOTGT", ["Test"], undefined, undefined, ConditionValidated.NotValidated),
+						condition: Condition.createCondition(OperatorName.NOTGT, ["Test"], undefined, undefined, ConditionValidated.NotValidated),
 						isEmpty: false,
 						valid: true,
 						isSingleValue: true
 					}
 				],
-				"LE": [{
-						formatArgs: [Condition.createCondition("LE", ["Test"])],
+				[OperatorName.LE]: [{
+						formatArgs: [Condition.createCondition(OperatorName.LE, ["Test"])],
 						formatValue: "<=Test",
 						parsedValue: "Test",
-						condition: Condition.createCondition("LE", ["Test"], undefined, undefined, ConditionValidated.NotValidated),
+						condition: Condition.createCondition(OperatorName.LE, ["Test"], undefined, undefined, ConditionValidated.NotValidated),
 						isEmpty: false,
 						valid: true,
 						isSingleValue: true
 					},
 					{
-						formatArgs: [Condition.createCondition("LE", ["<="])],
+						formatArgs: [Condition.createCondition(OperatorName.LE, ["<="])],
 						formatValue: "<=<=",
 						parsedValue: "<=",
 						isEmpty: false,
 						valid: true
 					},
 					{
-						formatArgs: [Condition.createCondition("LE", ["a", "b"])],
+						formatArgs: [Condition.createCondition(OperatorName.LE, ["a", "b"])],
 						formatValue: "<=a",
 						parsedValue: "a",
-						condition: Condition.createCondition("LE", ["a"], undefined, undefined, ConditionValidated.NotValidated),
+						condition: Condition.createCondition(OperatorName.LE, ["a"], undefined, undefined, ConditionValidated.NotValidated),
 						isEmpty: false,
 						valid: true
 					},
 					{
-						formatArgs: [Condition.createCondition("LE", ["Test"]), undefined, undefined, true],
+						formatArgs: [Condition.createCondition(OperatorName.LE, ["Test"]), undefined, undefined, true],
 						formatValue: "Test",
 						parseArgs: ["Test", undefined, undefined, true],
 						parsedValue: "Test",
-						condition: Condition.createCondition("LE", ["Test"], undefined, undefined, ConditionValidated.NotValidated),
+						condition: Condition.createCondition(OperatorName.LE, ["Test"], undefined, undefined, ConditionValidated.NotValidated),
 						isEmpty: false,
 						valid: true,
 						isSingleValue: true
 					}
 				],
-				"NOTLE": [{
-						formatArgs: [Condition.createCondition("NOTLE", ["Test"])],
+				[OperatorName.NOTLE]: [{
+						formatArgs: [Condition.createCondition(OperatorName.NOTLE, ["Test"])],
 						formatValue: "!(<=Test)",
 						parseArgs: ["!<=Test"],
 						parsedValue: "Test",
-						condition: Condition.createCondition("NOTLE", ["Test"], undefined, undefined, ConditionValidated.NotValidated),
+						condition: Condition.createCondition(OperatorName.NOTLE, ["Test"], undefined, undefined, ConditionValidated.NotValidated),
 						isEmpty: false,
 						valid: true,
 						isSingleValue: true
 					},
 					{
-						formatArgs: [Condition.createCondition("NOTLE", ["<="])],
+						formatArgs: [Condition.createCondition(OperatorName.NOTLE, ["<="])],
 						formatValue: "!(<=<=)",
 						parseArgs: ["!<=<="],
 						parsedValue: "<=",
@@ -790,72 +794,72 @@ sap.ui.define([
 						valid: true
 					},
 					{
-						formatArgs: [Condition.createCondition("NOTLE", ["a", "b"])],
+						formatArgs: [Condition.createCondition(OperatorName.NOTLE, ["a", "b"])],
 						formatValue: "!(<=a)",
 						parseArgs: ["!<=a"],
 						parsedValue: "a",
-						condition: Condition.createCondition("NOTLE", ["a"], undefined, undefined, ConditionValidated.NotValidated),
+						condition: Condition.createCondition(OperatorName.NOTLE, ["a"], undefined, undefined, ConditionValidated.NotValidated),
 						isEmpty: false,
 						valid: true
 					},
 					{
-						formatArgs: [Condition.createCondition("NOTLE", ["Test"]), undefined, undefined, true],
+						formatArgs: [Condition.createCondition(OperatorName.NOTLE, ["Test"]), undefined, undefined, true],
 						formatValue: "Test",
 						parseArgs: ["Test", undefined, undefined, true],
 						parsedValue: "Test",
-						condition: Condition.createCondition("NOTLE", ["Test"], undefined, undefined, ConditionValidated.NotValidated),
+						condition: Condition.createCondition(OperatorName.NOTLE, ["Test"], undefined, undefined, ConditionValidated.NotValidated),
 						isEmpty: false,
 						valid: true,
 						isSingleValue: true
 					}
 				],
-				"GE": [{
-						formatArgs: [Condition.createCondition("GE", ["Test"])],
+				[OperatorName.GE]: [{
+						formatArgs: [Condition.createCondition(OperatorName.GE, ["Test"])],
 						formatValue: ">=Test",
 						parsedValue: "Test",
-						condition: Condition.createCondition("GE", ["Test"], undefined, undefined, ConditionValidated.NotValidated),
+						condition: Condition.createCondition(OperatorName.GE, ["Test"], undefined, undefined, ConditionValidated.NotValidated),
 						isEmpty: false,
 						valid: true,
 						isSingleValue: true
 					},
 					{
-						formatArgs: [Condition.createCondition("GE", [">="])],
+						formatArgs: [Condition.createCondition(OperatorName.GE, [">="])],
 						formatValue: ">=>=",
 						parsedValue: ">=",
 						isEmpty: false,
 						valid: true
 					},
 					{
-						formatArgs: [Condition.createCondition("GE", ["a", "b"])],
+						formatArgs: [Condition.createCondition(OperatorName.GE, ["a", "b"])],
 						formatValue: ">=a",
 						parsedValue: "a",
-						condition: Condition.createCondition("GE", ["a"], undefined, undefined, ConditionValidated.NotValidated),
+						condition: Condition.createCondition(OperatorName.GE, ["a"], undefined, undefined, ConditionValidated.NotValidated),
 						isEmpty: false,
 						valid: true
 					},
 					{
-						formatArgs: [Condition.createCondition("GE", ["Test"]), undefined, undefined, true],
+						formatArgs: [Condition.createCondition(OperatorName.GE, ["Test"]), undefined, undefined, true],
 						formatValue: "Test",
 						parseArgs: ["Test", undefined, undefined, true],
 						parsedValue: "Test",
-						condition: Condition.createCondition("GE", ["Test"], undefined, undefined, ConditionValidated.NotValidated),
+						condition: Condition.createCondition(OperatorName.GE, ["Test"], undefined, undefined, ConditionValidated.NotValidated),
 						isEmpty: false,
 						valid: true,
 						isSingleValue: true
 					}
 				],
-				"NOTGE": [{
-						formatArgs: [Condition.createCondition("NOTGE", ["Test"])],
+				[OperatorName.NOTGE]: [{
+						formatArgs: [Condition.createCondition(OperatorName.NOTGE, ["Test"])],
 						formatValue: "!(>=Test)",
 						parseArgs: ["!>=Test"],
 						parsedValue: "Test",
-						condition: Condition.createCondition("NOTGE", ["Test"], undefined, undefined, ConditionValidated.NotValidated),
+						condition: Condition.createCondition(OperatorName.NOTGE, ["Test"], undefined, undefined, ConditionValidated.NotValidated),
 						isEmpty: false,
 						valid: true,
 						isSingleValue: true
 					},
 					{
-						formatArgs: [Condition.createCondition("NOTGE", [">="])],
+						formatArgs: [Condition.createCondition(OperatorName.NOTGE, [">="])],
 						formatValue: "!(>=>=)",
 						parseArgs: ["!>=>="],
 						parsedValue: ">=",
@@ -863,37 +867,37 @@ sap.ui.define([
 						valid: true
 					},
 					{
-						formatArgs: [Condition.createCondition("NOTGE", ["a", "b"])],
+						formatArgs: [Condition.createCondition(OperatorName.NOTGE, ["a", "b"])],
 						formatValue: "!(>=a)",
 						parseArgs: ["!>=a"],
 						parsedValue: "a",
-						condition: Condition.createCondition("NOTGE", ["a"], undefined, undefined, ConditionValidated.NotValidated),
+						condition: Condition.createCondition(OperatorName.NOTGE, ["a"], undefined, undefined, ConditionValidated.NotValidated),
 						isEmpty: false,
 						valid: true
 					},
 					{
-						formatArgs: [Condition.createCondition("NOTGE", ["Test"]), undefined, undefined, true],
+						formatArgs: [Condition.createCondition(OperatorName.NOTGE, ["Test"]), undefined, undefined, true],
 						formatValue: "Test",
 						parseArgs: ["Test", undefined, undefined, true],
 						parsedValue: "Test",
-						condition: Condition.createCondition("NOTGE", ["Test"], undefined, undefined, ConditionValidated.NotValidated),
+						condition: Condition.createCondition(OperatorName.NOTGE, ["Test"], undefined, undefined, ConditionValidated.NotValidated),
 						isEmpty: false,
 						valid: true,
 						isSingleValue: true
 					}
 				],
-				"StartsWith": [{
-						formatArgs: [Condition.createCondition("StartsWith", ["Test"]), oStringType, FieldDisplay.Description],
+				[OperatorName.StartsWith]: [{
+						formatArgs: [Condition.createCondition(OperatorName.StartsWith, ["Test"]), oStringType, FieldDisplay.Description],
 						formatValue: "Test*",
 						parsedValue: "Test",
-						condition: Condition.createCondition("StartsWith", ["Test"], undefined, undefined, ConditionValidated.NotValidated),
+						condition: Condition.createCondition(OperatorName.StartsWith, ["Test"], undefined, undefined, ConditionValidated.NotValidated),
 						isEmpty: false,
 						valid: true,
 						isSingleValue: true,
 						type: oStringType
 					},
 					{
-						formatArgs: [Condition.createCondition("StartsWith", ["*"]), oStringType, FieldDisplay.Description],
+						formatArgs: [Condition.createCondition(OperatorName.StartsWith, ["*"]), oStringType, FieldDisplay.Description],
 						formatValue: "**",
 						parsedValue: undefined,
 						isEmpty: true,
@@ -901,39 +905,39 @@ sap.ui.define([
 						type: oStringType
 					},
 					{
-						formatArgs: [Condition.createCondition("StartsWith", ["a", "b"]), oStringType, FieldDisplay.Description],
+						formatArgs: [Condition.createCondition(OperatorName.StartsWith, ["a", "b"]), oStringType, FieldDisplay.Description],
 						formatValue: "a*",
 						parsedValue: "a",
-						condition: Condition.createCondition("StartsWith", ["a"], undefined, undefined, ConditionValidated.NotValidated),
+						condition: Condition.createCondition(OperatorName.StartsWith, ["a"], undefined, undefined, ConditionValidated.NotValidated),
 						isEmpty: false,
 						valid: true,
 						type: oStringType
 					},
 					{
-						formatArgs: [Condition.createCondition("StartsWith", ["Test"]), oStringType, FieldDisplay.Description, true],
+						formatArgs: [Condition.createCondition(OperatorName.StartsWith, ["Test"]), oStringType, FieldDisplay.Description, true],
 						formatValue: "Test",
 						parseArgs: ["Test", oStringType, FieldDisplay.Description, true],
 						parsedValue: "Test",
-						condition: Condition.createCondition("StartsWith", ["Test"], undefined, undefined, ConditionValidated.NotValidated),
+						condition: Condition.createCondition(OperatorName.StartsWith, ["Test"], undefined, undefined, ConditionValidated.NotValidated),
 						isEmpty: false,
 						valid: true,
 						isSingleValue: true,
 						type: oStringType
 					}
 				],
-				"NotStartsWith": [{
-						formatArgs: [Condition.createCondition("NotStartsWith", ["Test"]), oStringType, FieldDisplay.Description],
+				[OperatorName.NotStartsWith]: [{
+						formatArgs: [Condition.createCondition(OperatorName.NotStartsWith, ["Test"]), oStringType, FieldDisplay.Description],
 						formatValue: "!(Test*)",
 						parseArgs: ["!Test*", oStringType, FieldDisplay.Description],
 						parsedValue: "Test",
-						condition: Condition.createCondition("NotStartsWith", ["Test"], undefined, undefined, ConditionValidated.NotValidated),
+						condition: Condition.createCondition(OperatorName.NotStartsWith, ["Test"], undefined, undefined, ConditionValidated.NotValidated),
 						isEmpty: false,
 						valid: true,
 						isSingleValue: true,
 						type: oStringType
 					},
 					{
-						formatArgs: [Condition.createCondition("NotStartsWith", ["*"]), oStringType, FieldDisplay.Description],
+						formatArgs: [Condition.createCondition(OperatorName.NotStartsWith, ["*"]), oStringType, FieldDisplay.Description],
 						formatValue: "!(**)",
 						parsedValue: undefined,
 						isEmpty: true,
@@ -941,173 +945,173 @@ sap.ui.define([
 						type: oStringType
 					},
 					{
-						formatArgs: [Condition.createCondition("NotStartsWith", ["a", "b"]), oStringType, FieldDisplay.Description],
+						formatArgs: [Condition.createCondition(OperatorName.NotStartsWith, ["a", "b"]), oStringType, FieldDisplay.Description],
 						formatValue: "!(a*)",
 						parseArgs: ["!a*", oStringType, FieldDisplay.Description],
 						parsedValue: "a",
-						condition: Condition.createCondition("NotStartsWith", ["a"], undefined, undefined, ConditionValidated.NotValidated),
+						condition: Condition.createCondition(OperatorName.NotStartsWith, ["a"], undefined, undefined, ConditionValidated.NotValidated),
 						isEmpty: false,
 						valid: true,
 						type: oStringType
 					},
 					{
-						formatArgs: [Condition.createCondition("NotStartsWith", ["Test"]), oStringType, FieldDisplay.Description, true],
+						formatArgs: [Condition.createCondition(OperatorName.NotStartsWith, ["Test"]), oStringType, FieldDisplay.Description, true],
 						formatValue: "Test",
 						parseArgs: ["Test", oStringType, FieldDisplay.Description, true],
 						parsedValue: "Test",
-						condition: Condition.createCondition("NotStartsWith", ["Test"], undefined, undefined, ConditionValidated.NotValidated),
+						condition: Condition.createCondition(OperatorName.NotStartsWith, ["Test"], undefined, undefined, ConditionValidated.NotValidated),
 						isEmpty: false,
 						valid: true,
 						isSingleValue: true,
 						type: oStringType
 					}
 				],
-				"EndsWith": [{
-						formatArgs: [Condition.createCondition("EndsWith", ["Test"]), oStringType, FieldDisplay.Description],
+				[OperatorName.EndsWith]: [{
+						formatArgs: [Condition.createCondition(OperatorName.EndsWith, ["Test"]), oStringType, FieldDisplay.Description],
 						formatValue: "*Test",
 						parsedValue: "Test",
-						condition: Condition.createCondition("EndsWith", ["Test"], undefined, undefined, ConditionValidated.NotValidated),
+						condition: Condition.createCondition(OperatorName.EndsWith, ["Test"], undefined, undefined, ConditionValidated.NotValidated),
 						isEmpty: false,
 						valid: true,
 						isSingleValue: true,
 						type: oStringType
 					},
 					{
-						formatArgs: [Condition.createCondition("EndsWith", ["a", "b"]), oStringType, FieldDisplay.Description],
+						formatArgs: [Condition.createCondition(OperatorName.EndsWith, ["a", "b"]), oStringType, FieldDisplay.Description],
 						formatValue: "*a",
 						parsedValue: "a",
-						condition: Condition.createCondition("EndsWith", ["a"], undefined, undefined, ConditionValidated.NotValidated),
+						condition: Condition.createCondition(OperatorName.EndsWith, ["a"], undefined, undefined, ConditionValidated.NotValidated),
 						isEmpty: false,
 						valid: true,
 						type: oStringType
 					},
 					{
-						formatArgs: [Condition.createCondition("EndsWith", ["Test"]), oStringType, FieldDisplay.Description, true],
+						formatArgs: [Condition.createCondition(OperatorName.EndsWith, ["Test"]), oStringType, FieldDisplay.Description, true],
 						formatValue: "Test",
 						parseArgs: ["Test", oStringType, FieldDisplay.Description, true],
 						parsedValue: "Test",
-						condition: Condition.createCondition("EndsWith", ["Test"], undefined, undefined, ConditionValidated.NotValidated),
+						condition: Condition.createCondition(OperatorName.EndsWith, ["Test"], undefined, undefined, ConditionValidated.NotValidated),
 						isEmpty: false,
 						valid: true,
 						isSingleValue: true,
 						type: oStringType
 					}
 				],
-				"NotEndsWith": [{
-						formatArgs: [Condition.createCondition("NotEndsWith", ["Test"]), oStringType, FieldDisplay.Description],
+				[OperatorName.NotEndsWith]: [{
+						formatArgs: [Condition.createCondition(OperatorName.NotEndsWith, ["Test"]), oStringType, FieldDisplay.Description],
 						formatValue: "!(*Test)",
 						parseArgs: ["!*Test", oStringType, FieldDisplay.Description],
 						parsedValue: "Test",
-						condition: Condition.createCondition("NotEndsWith", ["Test"], undefined, undefined, ConditionValidated.NotValidated),
+						condition: Condition.createCondition(OperatorName.NotEndsWith, ["Test"], undefined, undefined, ConditionValidated.NotValidated),
 						isEmpty: false,
 						valid: true,
 						isSingleValue: true,
 						type: oStringType
 					},
 					{
-						formatArgs: [Condition.createCondition("NotEndsWith", ["a", "b"]), oStringType, FieldDisplay.Description],
+						formatArgs: [Condition.createCondition(OperatorName.NotEndsWith, ["a", "b"]), oStringType, FieldDisplay.Description],
 						formatValue: "!(*a)",
 						parseArgs: ["!*a", oStringType, FieldDisplay.Description],
 						parsedValue: "a",
-						condition: Condition.createCondition("NotEndsWith", ["a"], undefined, undefined, ConditionValidated.NotValidated),
+						condition: Condition.createCondition(OperatorName.NotEndsWith, ["a"], undefined, undefined, ConditionValidated.NotValidated),
 						isEmpty: false,
 						valid: true,
 						type: oStringType
 					},
 					{
-						formatArgs: [Condition.createCondition("NotEndsWith", ["Test"]), oStringType, FieldDisplay.Description, true],
+						formatArgs: [Condition.createCondition(OperatorName.NotEndsWith, ["Test"]), oStringType, FieldDisplay.Description, true],
 						formatValue: "Test",
 						parseArgs: ["Test", oStringType, FieldDisplay.Description, true],
 						parsedValue: "Test",
-						condition: Condition.createCondition("NotEndsWith", ["Test"], undefined, undefined, ConditionValidated.NotValidated),
+						condition: Condition.createCondition(OperatorName.NotEndsWith, ["Test"], undefined, undefined, ConditionValidated.NotValidated),
 						isEmpty: false,
 						valid: true,
 						isSingleValue: true,
 						type: oStringType
 					}
 				],
-				"BT": [{
-						formatArgs: [Condition.createCondition("BT", ["Test1", "Test2"])],
+				[OperatorName.BT]: [{
+						formatArgs: [Condition.createCondition(OperatorName.BT, ["Test1", "Test2"])],
 						formatValue: "Test1...Test2",
 						parsedValue: "Test1Test2",
-						condition: Condition.createCondition("BT", ["Test1", "Test2"], undefined, undefined, ConditionValidated.NotValidated),
+						condition: Condition.createCondition(OperatorName.BT, ["Test1", "Test2"], undefined, undefined, ConditionValidated.NotValidated),
 						isEmpty: false,
 						valid: true,
-						filter: {path: "test", operator: "BT", value1: "Test1", value2: "Test2"},
+						filter: {path: "test", operator: FilterOperator.BT, value1: "Test1", value2: "Test2"},
 						isSingleValue: false
 					},
 					{
-						formatArgs: [Condition.createCondition("BT", ["a", "b"])],
+						formatArgs: [Condition.createCondition(OperatorName.BT, ["a", "b"])],
 						formatValue: "a...b",
 						parsedValue: "ab",
-						condition: Condition.createCondition("BT", ["a", "b"], undefined, undefined, ConditionValidated.NotValidated),
+						condition: Condition.createCondition(OperatorName.BT, ["a", "b"], undefined, undefined, ConditionValidated.NotValidated),
 						isEmpty: false,
 						valid: true
 					},
 					{
-						formatArgs: [Condition.createCondition("BT", ["a", "a"])],
+						formatArgs: [Condition.createCondition(OperatorName.BT, ["a", "a"])],
 						formatValue: "a...a",
 						parsedValue: "aa",
-						condition: Condition.createCondition("BT", ["a", "a"], undefined, undefined, ConditionValidated.NotValidated),
+						condition: Condition.createCondition(OperatorName.BT, ["a", "a"], undefined, undefined, ConditionValidated.NotValidated),
 						isEmpty: false,
 						valid: false
 					},
 					{
-						formatArgs: [Condition.createCondition("BT", [null, "b"])],
+						formatArgs: [Condition.createCondition(OperatorName.BT, [null, "b"])],
 						formatValue: "...b",
 						parsedValue: undefined, //TODO: parse what can be formatted
 						isEmpty: true,
 						valid: true
 					},
 					{
-						formatArgs: [Condition.createCondition("BT", ["a"])],
+						formatArgs: [Condition.createCondition(OperatorName.BT, ["a"])],
 						formatValue: "a...",
 						parsedValue: undefined, //TODO: parse what can be formatted
 						isEmpty: true,
 						valid: false
 					},
 					{
-						formatArgs: [Condition.createCondition("BT", ["Test1", "Test2"]), undefined, undefined, true],
+						formatArgs: [Condition.createCondition(OperatorName.BT, ["Test1", "Test2"]), undefined, undefined, true],
 						formatValue: "Test1...Test2",
 						parseArgs: ["Test1...Test2", undefined, undefined, true],
 						parsedValue: "Test1Test2",
-						condition: Condition.createCondition("BT", ["Test1", "Test2"], undefined, undefined, ConditionValidated.NotValidated),
+						condition: Condition.createCondition(OperatorName.BT, ["Test1", "Test2"], undefined, undefined, ConditionValidated.NotValidated),
 						isEmpty: false,
 						valid: true,
 						isSingleValue: false
 					}
 				],
-				"NOTBT": [{
-						formatArgs: [Condition.createCondition("NOTBT", ["Test1", "Test2"])],
+				[OperatorName.NOTBT]: [{
+						formatArgs: [Condition.createCondition(OperatorName.NOTBT, ["Test1", "Test2"])],
 						formatValue: "!(Test1...Test2)",
 						parseArgs: ["!Test1...Test2"],
 						parsedValue: "Test1Test2",
-						condition: Condition.createCondition("NOTBT", ["Test1", "Test2"], undefined, undefined, ConditionValidated.NotValidated),
+						condition: Condition.createCondition(OperatorName.NOTBT, ["Test1", "Test2"], undefined, undefined, ConditionValidated.NotValidated),
 						isEmpty: false,
 						valid: true,
-						filter: {path: "test", operator: "NB", value1: "Test1", value2: "Test2"},
+						filter: {path: "test", operator: FilterOperator.NB, value1: "Test1", value2: "Test2"},
 						isSingleValue: false
 					},
 					{
-						formatArgs: [Condition.createCondition("NOTBT", ["a", "b"])],
+						formatArgs: [Condition.createCondition(OperatorName.NOTBT, ["a", "b"])],
 						formatValue: "!(a...b)",
 						parseArgs: ["!a...b"],
 						parsedValue: "ab",
-						condition: Condition.createCondition("NOTBT", ["a", "b"], undefined, undefined, ConditionValidated.NotValidated),
+						condition: Condition.createCondition(OperatorName.NOTBT, ["a", "b"], undefined, undefined, ConditionValidated.NotValidated),
 						isEmpty: false,
 						valid: true
 					},
 					{
-						formatArgs: [Condition.createCondition("NOTBT", ["a", "a"])],
+						formatArgs: [Condition.createCondition(OperatorName.NOTBT, ["a", "a"])],
 						formatValue: "!(a...a)",
 						parseArgs: ["!a...a"],
 						parsedValue: "aa",
-						condition: Condition.createCondition("NOTBT", ["a", "a"], undefined, undefined, ConditionValidated.NotValidated),
+						condition: Condition.createCondition(OperatorName.NOTBT, ["a", "a"], undefined, undefined, ConditionValidated.NotValidated),
 						isEmpty: false,
 						valid: false
 					},
 					{
-						formatArgs: [Condition.createCondition("NOTBT", [null, "b"])],
+						formatArgs: [Condition.createCondition(OperatorName.NOTBT, [null, "b"])],
 						formatValue: "!(...b)",
 						parseArgs: ["!...b"],
 						parsedValue: undefined, //TODO: parse what can be formatted
@@ -1115,7 +1119,7 @@ sap.ui.define([
 						valid: true
 					},
 					{
-						formatArgs: [Condition.createCondition("NOTBT", ["a"])],
+						formatArgs: [Condition.createCondition(OperatorName.NOTBT, ["a"])],
 						formatValue: "!(a...)",
 						parseArgs: ["!a..."],
 						parsedValue: undefined, //TODO: parse what can be formatted
@@ -1123,131 +1127,131 @@ sap.ui.define([
 						valid: false
 					},
 					{
-						formatArgs: [Condition.createCondition("NOTBT", ["Test1", "Test2"]), undefined, undefined, true],
+						formatArgs: [Condition.createCondition(OperatorName.NOTBT, ["Test1", "Test2"]), undefined, undefined, true],
 						formatValue: "!(Test1...Test2)",
 						parseArgs: ["!Test1...Test2", undefined, undefined, true],
 						parsedValue: "Test1Test2",
-						condition: Condition.createCondition("NOTBT", ["Test1", "Test2"], undefined, undefined, ConditionValidated.NotValidated),
+						condition: Condition.createCondition(OperatorName.NOTBT, ["Test1", "Test2"], undefined, undefined, ConditionValidated.NotValidated),
 						isEmpty: false,
 						valid: true,
 						isSingleValue: false
 					}
 				],
-				"Contains": [{
-						formatArgs: [Condition.createCondition("Contains", ["Test"]), oStringType, FieldDisplay.Description],
+				[OperatorName.Contains]: [{
+						formatArgs: [Condition.createCondition(OperatorName.Contains, ["Test"]), oStringType, FieldDisplay.Description],
 						formatValue: "*Test*",
 						parsedValue: "Test",
-						condition: Condition.createCondition("Contains", ["Test"], undefined, undefined, ConditionValidated.NotValidated),
+						condition: Condition.createCondition(OperatorName.Contains, ["Test"], undefined, undefined, ConditionValidated.NotValidated),
 						isEmpty: false,
 						valid: true,
-						filter:  {path: "test", operator: "Contains", value1: "Test"},
+						filter:  {path: "test", operator: FilterOperator.Contains, value1: "Test"},
 						isSingleValue: true,
 						type: oStringType
 					},
 					{
-						formatArgs: [Condition.createCondition("Contains", ["a", "b"]), oStringType, FieldDisplay.Description],
+						formatArgs: [Condition.createCondition(OperatorName.Contains, ["a", "b"]), oStringType, FieldDisplay.Description],
 						formatValue: "*a*",
 						parsedValue: "a",
-						condition: Condition.createCondition("Contains", ["a"], undefined, undefined, ConditionValidated.NotValidated),
+						condition: Condition.createCondition(OperatorName.Contains, ["a"], undefined, undefined, ConditionValidated.NotValidated),
 						isEmpty: false,
 						valid: true,
 						type: oStringType
 					},
 					{
-						formatArgs: [Condition.createCondition("Contains", ["01"]), oNUMCType, FieldDisplay.Description],
+						formatArgs: [Condition.createCondition(OperatorName.Contains, ["01"]), oNUMCType, FieldDisplay.Description],
 						formatValue: "*01*",
 						parseArgs: ["*1*", oNUMCType, FieldDisplay.Description],
 						parsedValue: "1",
-						condition: Condition.createCondition("Contains", ["1"], undefined, undefined, ConditionValidated.NotValidated),
+						condition: Condition.createCondition(OperatorName.Contains, ["1"], undefined, undefined, ConditionValidated.NotValidated),
 						exception: false,
 						isEmpty: false,
 						valid: true,
 						type: oNUMCType
 					},
 					{
-						formatArgs: [Condition.createCondition("Contains", ["1"]), oNUMCType, FieldDisplay.Description],
+						formatArgs: [Condition.createCondition(OperatorName.Contains, ["1"]), oNUMCType, FieldDisplay.Description],
 						formatValue: "*1*",
 						parseArgs: ["*A*", oNUMCType, FieldDisplay.Description],
 						parsedValue: "A",
-						condition: Condition.createCondition("Contains", ["A"], undefined, undefined, ConditionValidated.NotValidated),
+						condition: Condition.createCondition(OperatorName.Contains, ["A"], undefined, undefined, ConditionValidated.NotValidated),
 						exception: true,
 						isEmpty: false,
 						valid: false,
 						type: oNUMCType
 					},
 					{
-						formatArgs: [Condition.createCondition("Contains", ["Test"]), oStringType, FieldDisplay.Description, true],
+						formatArgs: [Condition.createCondition(OperatorName.Contains, ["Test"]), oStringType, FieldDisplay.Description, true],
 						formatValue: "Test",
 						parseArgs: ["Test", oStringType, FieldDisplay.Description, true],
 						parsedValue: "Test",
-						condition: Condition.createCondition("Contains", ["Test"], undefined, undefined, ConditionValidated.NotValidated),
+						condition: Condition.createCondition(OperatorName.Contains, ["Test"], undefined, undefined, ConditionValidated.NotValidated),
 						isEmpty: false,
 						valid: true,
 						isSingleValue: true,
 						type: oStringType
 					},
 					{
-						formatArgs: [Condition.createCondition("Contains", ["@@$$"]), oStringType, FieldDisplay.Value, false],
+						formatArgs: [Condition.createCondition(OperatorName.Contains, ["@@$$"]), oStringType, FieldDisplay.Value, false],
 						formatValue: "*@@$$*",
 						parseArgs: ["*@@$$*", oStringType, FieldDisplay.Value],
 						parsedValue: "@@$$",
-						condition: Condition.createCondition("Contains", ["@@$$"], undefined, undefined, ConditionValidated.NotValidated),
+						condition: Condition.createCondition(OperatorName.Contains, ["@@$$"], undefined, undefined, ConditionValidated.NotValidated),
 						isEmpty: false,
 						valid: true,
 						isSingleValue: true,
 						type: oStringType
 					}
 				],
-				"NotContains": [{
-						formatArgs: [Condition.createCondition("NotContains", ["Test"]), oStringType, FieldDisplay.Description],
+				[OperatorName.NotContains]: [{
+						formatArgs: [Condition.createCondition(OperatorName.NotContains, ["Test"]), oStringType, FieldDisplay.Description],
 						formatValue: "!(*Test*)",
 						parseArgs: ["!*Test*", oStringType, FieldDisplay.Description],
 						parsedValue: "Test",
-						condition: Condition.createCondition("NotContains", ["Test"], undefined, undefined, ConditionValidated.NotValidated),
+						condition: Condition.createCondition(OperatorName.NotContains, ["Test"], undefined, undefined, ConditionValidated.NotValidated),
 						isEmpty: false,
 						valid: true,
-						filter:  {path: "test", operator: "NotContains", value1: "Test"},
+						filter:  {path: "test", operator: FilterOperator.NotContains, value1: "Test"},
 						isSingleValue: true,
 						type: oStringType
 					},
 					{
-						formatArgs: [Condition.createCondition("NotContains", ["a", "b"]), oStringType, FieldDisplay.Description],
+						formatArgs: [Condition.createCondition(OperatorName.NotContains, ["a", "b"]), oStringType, FieldDisplay.Description],
 						formatValue: "!(*a*)",
 						parseArgs: ["!*a*", oStringType, FieldDisplay.Description],
 						parsedValue: "a",
-						condition: Condition.createCondition("NotContains", ["a"], undefined, undefined, ConditionValidated.NotValidated),
+						condition: Condition.createCondition(OperatorName.NotContains, ["a"], undefined, undefined, ConditionValidated.NotValidated),
 						isEmpty: false,
 						valid: true,
 						type: oStringType
 					},
 					{
-						formatArgs: [Condition.createCondition("NotContains", ["Test"]), oStringType, FieldDisplay.Description, true],
+						formatArgs: [Condition.createCondition(OperatorName.NotContains, ["Test"]), oStringType, FieldDisplay.Description, true],
 						formatValue: "Test",
 						parseArgs: ["Test", oStringType, FieldDisplay.Description, true],
 						parsedValue: "Test",
-						condition: Condition.createCondition("NotContains", ["Test"], undefined, undefined, ConditionValidated.NotValidated),
+						condition: Condition.createCondition(OperatorName.NotContains, ["Test"], undefined, undefined, ConditionValidated.NotValidated),
 						isEmpty: false,
 						valid: true,
 						isSingleValue: true,
 						type: oStringType
 					}
 				],
-				"Empty": [{
-						formatArgs: [Condition.createCondition("Empty", [])],
+				[OperatorName.Empty]: [{
+						formatArgs: [Condition.createCondition(OperatorName.Empty, [])],
 						formatValue: "<empty>",
 						parsedValue: "", // empty array (which is the current return value), joined with space. Better check whether it matches  TODO
-						condition: Condition.createCondition("Empty", [], undefined, undefined, ConditionValidated.NotValidated),
+						condition: Condition.createCondition(OperatorName.Empty, [], undefined, undefined, ConditionValidated.NotValidated),
 						isEmpty: false,
 						valid: true,
-						filter: {path: "test", operator: "EQ", value1: ""},
+						filter: {path: "test", operator: FilterOperator.EQ, value1: ""},
 						isSingleValue: true,
 						oType: new StringType({}, {nullable: false})
 					},
 					{
-						formatArgs: [Condition.createCondition("Empty", [])],
+						formatArgs: [Condition.createCondition(OperatorName.Empty, [])],
 						formatValue: "<empty>",
 						parsedValue: "", // empty array (which is the current return value), joined with space. Better check whether it matches  TODO
-						condition: Condition.createCondition("Empty", [], undefined, undefined, ConditionValidated.NotValidated),
+						condition: Condition.createCondition(OperatorName.Empty, [], undefined, undefined, ConditionValidated.NotValidated),
 						isEmpty: false,
 						valid: true,
 						filter: {path: undefined, operator: undefined, value1: undefined, value2: undefined},
@@ -1255,34 +1259,34 @@ sap.ui.define([
 						oType: new StringType({}, {nullable: true})
 					},
 					{
-						formatArgs: [Condition.createCondition("Empty", []), undefined, undefined, true],
+						formatArgs: [Condition.createCondition(OperatorName.Empty, []), undefined, undefined, true],
 						formatValue: "<empty>", // TODO: right result without operator?
 						parseArgs: ["<empty>", undefined, undefined, true],
 						parsedValue: "", // empty array (which is the current return value), joined with space. Better check whether it matches  TODO
-						condition: Condition.createCondition("Empty", [], undefined, undefined, ConditionValidated.NotValidated),
+						condition: Condition.createCondition(OperatorName.Empty, [], undefined, undefined, ConditionValidated.NotValidated),
 						isEmpty: false,
 						valid: true,
 						isSingleValue: true,
 						oType: new StringType({}, {nullable: false})
 					}
 				],
-				"NotEmpty": [{
-						formatArgs: [Condition.createCondition("NotEmpty", [])],
+				[OperatorName.NotEmpty]: [{
+						formatArgs: [Condition.createCondition(OperatorName.NotEmpty, [])],
 						formatValue: "!(<empty>)", // TODO: right text?
 						parseArgs: ["!<empty>"],
 						parsedValue: "", // empty array (which is the current return value), joined with space. Better check whether it matches  TODO
-						condition: Condition.createCondition("NotEmpty", [], undefined, undefined, ConditionValidated.NotValidated),
+						condition: Condition.createCondition(OperatorName.NotEmpty, [], undefined, undefined, ConditionValidated.NotValidated),
 						isEmpty: false,
 						valid: true,
-						filter: {path: "test", operator: "NE", value1: ""},
+						filter: {path: "test", operator: FilterOperator.NE, value1: ""},
 						isSingleValue: true
 					},
 					{
-						formatArgs: [Condition.createCondition("NotEmpty", [])],
+						formatArgs: [Condition.createCondition(OperatorName.NotEmpty, [])],
 						formatValue: "!(<empty>)",
 						parseArgs: ["!<empty>"],
 						parsedValue: "", // empty array (which is the current return value), joined with space. Better check whether it matches  TODO
-						condition: Condition.createCondition("NotEmpty", [], undefined, undefined, ConditionValidated.NotValidated),
+						condition: Condition.createCondition(OperatorName.NotEmpty, [], undefined, undefined, ConditionValidated.NotValidated),
 						isEmpty: false,
 						valid: true,
 						filter: {path: undefined, operator: undefined, value1: undefined, value2: undefined},
@@ -1290,11 +1294,11 @@ sap.ui.define([
 						oType: new StringType({}, {nullable: true})
 					},
 					{
-						formatArgs: [Condition.createCondition("NotEmpty", []), undefined, undefined, true],
+						formatArgs: [Condition.createCondition(OperatorName.NotEmpty, []), undefined, undefined, true],
 						formatValue: "!(<empty>)", // TODO: right result without operator?
 						parseArgs: ["!<empty>", undefined, undefined, true],
 						parsedValue: "", // empty array (which is the current return value), joined with space. Better check whether it matches  TODO
-						condition: Condition.createCondition("NotEmpty", [], undefined, undefined, ConditionValidated.NotValidated),
+						condition: Condition.createCondition(OperatorName.NotEmpty, [], undefined, undefined, ConditionValidated.NotValidated),
 						isEmpty: false,
 						valid: true,
 						isSingleValue: true,
@@ -1308,7 +1312,7 @@ sap.ui.define([
 					isEmpty: false,
 					valid: true,
 					custom: true,
-					filter: {path: "test", operator: "EQ", value1: "Hello World"},
+					filter: {path: "test", operator: FilterOperator.EQ, value1: "Hello World"},
 					isSingleValue: true
 				}
 				]
@@ -1356,46 +1360,46 @@ sap.ui.define([
 		const sLastDaysStart = oDateType.parseValue(sYear + sMonth + sDate, "string"); // LastDays start
 
 		const aFormatTest = {
-			"YESTERDAY": [{
-				formatArgs: [Condition.createCondition("YESTERDAY", [undefined])],
+			[OperatorName.YESTERDAY]: [{
+				formatArgs: [Condition.createCondition(OperatorName.YESTERDAY, [undefined])],
 				formatValue: "Yesterday",
 				//parseArgs: ["Yesterday"],
 				parsedValue: "",
-				condition: Condition.createCondition("YESTERDAY", [], undefined, undefined, ConditionValidated.NotValidated),
+				condition: Condition.createCondition(OperatorName.YESTERDAY, [], undefined, undefined, ConditionValidated.NotValidated),
 				isEmpty: false,
 				valid: true,
 				isSingleValue: true
 			}],
-			"TODAY": [{
-				formatArgs: [Condition.createCondition("TODAY", [undefined])],
+			[OperatorName.TODAY]: [{
+				formatArgs: [Condition.createCondition(OperatorName.TODAY, [undefined])],
 				formatValue: "Today",
 				//parseArgs: ["Today"],
 				parsedValue: "",
-				condition: Condition.createCondition("TODAY", [], undefined, undefined, ConditionValidated.NotValidated),
+				condition: Condition.createCondition(OperatorName.TODAY, [], undefined, undefined, ConditionValidated.NotValidated),
 				isEmpty: false,
 				valid: true,
 				isSingleValue: true,
 				oType: oDateTimeOffsetType,
 				baseType: BaseType.DateTime,
-				filter: {path: "test", operator: "BT", value1 : sTodayStart, value2: sTodayEnd}
+				filter: {path: "test", operator: FilterOperator.BT, value1 : sTodayStart, value2: sTodayEnd}
 			}],
-			"TOMORROW": [{
-				formatArgs: [Condition.createCondition("TOMORROW", [undefined])],
+			[OperatorName.TOMORROW]: [{
+				formatArgs: [Condition.createCondition(OperatorName.TOMORROW, [undefined])],
 				formatValue: "Tomorrow",
 				//parseArgs: ["Tomorrow"],
 				parsedValue: "",
-				condition: Condition.createCondition("TOMORROW", [], undefined, undefined, ConditionValidated.NotValidated),
+				condition: Condition.createCondition(OperatorName.TOMORROW, [], undefined, undefined, ConditionValidated.NotValidated),
 				isEmpty: false,
 				valid: true,
 				isSingleValue: true,
 				tokenText: "Tomorrow"
 			}],
-			"LASTDAYS": [{
-				formatArgs: [Condition.createCondition("LASTDAYS", [4])],
+			[OperatorName.LASTDAYS]: [{
+				formatArgs: [Condition.createCondition(OperatorName.LASTDAYS, [4])],
 				formatValue: "Last 4 days",
 				//parseArgs: ["Last 4 days"],
 				parsedValue: "4",
-				condition: Condition.createCondition("LASTDAYS", [4], undefined, undefined, ConditionValidated.NotValidated),
+				condition: Condition.createCondition(OperatorName.LASTDAYS, [4], undefined, undefined, ConditionValidated.NotValidated),
 				isEmpty: false,
 				valid: true,
 				isSingleValue: true,
@@ -1403,104 +1407,104 @@ sap.ui.define([
 				tokenText: "Last {0} days",
 				oType: oDateType,
 				baseType: BaseType.Date,
-				filter: {path: "test", operator: "BT", value1 : sLastDaysStart, value2: sLastDaysEnd}
+				filter: {path: "test", operator: FilterOperator.BT, value1 : sLastDaysStart, value2: sLastDaysEnd}
 			},
 			{
-				formatArgs: [Condition.createCondition("LASTDAYS", [4]), undefined, undefined, true],
+				formatArgs: [Condition.createCondition(OperatorName.LASTDAYS, [4]), undefined, undefined, true],
 				formatValue: "4",
 				parseArgs: ["4", undefined, undefined, true],
 				parsedValue: "4",
-				condition: Condition.createCondition("LASTDAYS", [4], undefined, undefined, ConditionValidated.NotValidated),
+				condition: Condition.createCondition(OperatorName.LASTDAYS, [4], undefined, undefined, ConditionValidated.NotValidated),
 				isEmpty: false,
 				valid: true,
 				isSingleValue: true
 			}],
-			"FIRSTDAYWEEK": [{
-				formatArgs: [Condition.createCondition("FIRSTDAYWEEK", [undefined])],
+			[OperatorName.FIRSTDAYWEEK]: [{
+				formatArgs: [Condition.createCondition(OperatorName.FIRSTDAYWEEK, [undefined])],
 				formatValue: "First Date in This Week",
 				parseArgs: ["First Date in This Week"],
 				parsedValue: "",
-				condition: Condition.createCondition("FIRSTDAYWEEK", [], undefined, undefined, ConditionValidated.NotValidated),
+				condition: Condition.createCondition(OperatorName.FIRSTDAYWEEK, [], undefined, undefined, ConditionValidated.NotValidated),
 				isEmpty: false,
 				valid: true,
 				isSingleValue: true
 			}],
-			"LASTTDAYWEEK": [{
-				formatArgs: [Condition.createCondition("LASTTDAYWEEK", [undefined])],
+			[OperatorName.LASTTDAYWEEK]: [{
+				formatArgs: [Condition.createCondition(OperatorName.LASTTDAYWEEK, [undefined])],
 				formatValue: "Last Date in This Week",
 				parseArgs: ["Last Date in This Week"],
 				parsedValue: "",
-				condition: Condition.createCondition("LASTTDAYWEEK", [], undefined, undefined, ConditionValidated.NotValidated),
+				condition: Condition.createCondition(OperatorName.LASTTDAYWEEK, [], undefined, undefined, ConditionValidated.NotValidated),
 				isEmpty: false,
 				valid: true,
 				isSingleValue: true
 			}],
-			"FIRSTDAYMONTH": [{
-				formatArgs: [Condition.createCondition("FIRSTDAYMONTH", [undefined])],
+			[OperatorName.FIRSTDAYMONTH]: [{
+				formatArgs: [Condition.createCondition(OperatorName.FIRSTDAYMONTH, [undefined])],
 				formatValue: "First Date in This Month",
 				parseArgs: ["First Date in This Month"],
 				parsedValue: "",
-				condition: Condition.createCondition("FIRSTDAYMONTH", [], undefined, undefined, ConditionValidated.NotValidated),
+				condition: Condition.createCondition(OperatorName.FIRSTDAYMONTH, [], undefined, undefined, ConditionValidated.NotValidated),
 				isEmpty: false,
 				valid: true,
 				isSingleValue: true
 			}],
-			"LASTTDAYMONTH": [{
-				formatArgs: [Condition.createCondition("LASTTDAYMONTH", [undefined])],
+			[OperatorName.LASTTDAYMONTH]: [{
+				formatArgs: [Condition.createCondition(OperatorName.LASTTDAYMONTH, [undefined])],
 				formatValue: "Last Date in This Month",
 				parseArgs: ["Last Date in This Month"],
 				parsedValue: "",
-				condition: Condition.createCondition("LASTTDAYMONTH", [], undefined, undefined, ConditionValidated.NotValidated),
+				condition: Condition.createCondition(OperatorName.LASTTDAYMONTH, [], undefined, undefined, ConditionValidated.NotValidated),
 				isEmpty: false,
 				valid: true,
 				isSingleValue: true
 			}],
-			"FIRSTDAYQUARTER": [{
-				formatArgs: [Condition.createCondition("FIRSTDAYQUARTER", [undefined])],
+			[OperatorName.FIRSTDAYQUARTER]: [{
+				formatArgs: [Condition.createCondition(OperatorName.FIRSTDAYQUARTER, [undefined])],
 				formatValue: "First Date in This Quarter",
 				parseArgs: ["First Date in This Quarter"],
 				parsedValue: "",
-				condition: Condition.createCondition("FIRSTDAYQUARTER", [], undefined, undefined, ConditionValidated.NotValidated),
+				condition: Condition.createCondition(OperatorName.FIRSTDAYQUARTER, [], undefined, undefined, ConditionValidated.NotValidated),
 				isEmpty: false,
 				valid: true,
 				isSingleValue: true
 			}],
-			"LASTTDAYQUARTER": [{
-				formatArgs: [Condition.createCondition("LASTTDAYQUARTER", [undefined])],
+			[OperatorName.LASTTDAYQUARTER]: [{
+				formatArgs: [Condition.createCondition(OperatorName.LASTTDAYQUARTER, [undefined])],
 				formatValue: "Last Date in This Quarter",
 				parseArgs: ["Last Date in This Quarter"],
 				parsedValue: "",
-				condition: Condition.createCondition("LASTTDAYQUARTER", [], undefined, undefined, ConditionValidated.NotValidated),
+				condition: Condition.createCondition(OperatorName.LASTTDAYQUARTER, [], undefined, undefined, ConditionValidated.NotValidated),
 				isEmpty: false,
 				valid: true,
 				isSingleValue: true
 			}],
-			"FIRSTDAYYEAR": [{
-				formatArgs: [Condition.createCondition("FIRSTDAYYEAR", [undefined])],
+			[OperatorName.FIRSTDAYYEAR]: [{
+				formatArgs: [Condition.createCondition(OperatorName.FIRSTDAYYEAR, [undefined])],
 				formatValue: "First Date in This Year",
 				parseArgs: ["First Date in This Year"],
 				parsedValue: "",
-				condition: Condition.createCondition("FIRSTDAYYEAR", [], undefined, undefined, ConditionValidated.NotValidated),
+				condition: Condition.createCondition(OperatorName.FIRSTDAYYEAR, [], undefined, undefined, ConditionValidated.NotValidated),
 				isEmpty: false,
 				valid: true,
 				isSingleValue: true
 			}],
-			"LASTTDAYYEAR": [{
-				formatArgs: [Condition.createCondition("LASTTDAYYEAR", [undefined])],
+			[OperatorName.LASTTDAYYEAR]: [{
+				formatArgs: [Condition.createCondition(OperatorName.LASTTDAYYEAR, [undefined])],
 				formatValue: "Last Date in This Year",
 				parseArgs: ["Last Date in This Year"],
 				parsedValue: "",
-				condition: Condition.createCondition("LASTTDAYYEAR", [], undefined, undefined, ConditionValidated.NotValidated),
+				condition: Condition.createCondition(OperatorName.LASTTDAYYEAR, [], undefined, undefined, ConditionValidated.NotValidated),
 				isEmpty: false,
 				valid: true,
 				isSingleValue: true
 			}],
-			"TODAYFROMTO": [{
-				formatArgs: [Condition.createCondition("TODAYFROMTO", [4, 6])],
+			[OperatorName.TODAYFROMTO]: [{
+				formatArgs: [Condition.createCondition(OperatorName.TODAYFROMTO, [4, 6])],
 				formatValue: "Today -4 / +6 days",
 				//parseArgs: ["Last 4 days"],
 				parsedValue: "46",
-				condition: Condition.createCondition("TODAYFROMTO", [4, 6], undefined, undefined, ConditionValidated.NotValidated),
+				condition: Condition.createCondition(OperatorName.TODAYFROMTO, [4, 6], undefined, undefined, ConditionValidated.NotValidated),
 				isEmpty: false,
 				valid: true,
 				isSingleValue: false,
@@ -1508,21 +1512,21 @@ sap.ui.define([
 				tokenText: "Today -{0} / +{1} days"
 			},
 			{
-				formatArgs: [Condition.createCondition("TODAYFROMTO", [4, 6]), undefined, undefined, true],
+				formatArgs: [Condition.createCondition(OperatorName.TODAYFROMTO, [4, 6]), undefined, undefined, true],
 				formatValue: "Today -4 / +6 days",
 				parseArgs: ["Today -4 / +6 days", undefined, undefined, true],
 				parsedValue: "46",
-				condition: Condition.createCondition("TODAYFROMTO", [4, 6], undefined, undefined, ConditionValidated.NotValidated),
+				condition: Condition.createCondition(OperatorName.TODAYFROMTO, [4, 6], undefined, undefined, ConditionValidated.NotValidated),
 				isEmpty: false,
 				valid: true,
 				isSingleValue: false
 			}],
-			"NEXTDAYS": [{
-				formatArgs: [Condition.createCondition("NEXTDAYS", [3])],
+			[OperatorName.NEXTDAYS]: [{
+				formatArgs: [Condition.createCondition(OperatorName.NEXTDAYS, [3])],
 				formatValue: "Next 3 days",
 				//parseArgs: ["Next 3 days"],
 				parsedValue: "3",
-				condition: Condition.createCondition("NEXTDAYS", [3], undefined, undefined, ConditionValidated.NotValidated),
+				condition: Condition.createCondition(OperatorName.NEXTDAYS, [3], undefined, undefined, ConditionValidated.NotValidated),
 				isEmpty: false,
 				valid: true,
 				isSingleValue: true,
@@ -1530,91 +1534,91 @@ sap.ui.define([
 				tokenText: "Next {0} days"
 			},
 			{
-				formatArgs: [Condition.createCondition("NEXTDAYS", [3]), undefined, undefined, true],
+				formatArgs: [Condition.createCondition(OperatorName.NEXTDAYS, [3]), undefined, undefined, true],
 				formatValue: "3",
 				parseArgs: ["3", undefined, undefined, true],
 				parsedValue: "3",
-				condition: Condition.createCondition("NEXTDAYS", [3], undefined, undefined, ConditionValidated.NotValidated),
+				condition: Condition.createCondition(OperatorName.NEXTDAYS, [3], undefined, undefined, ConditionValidated.NotValidated),
 				isEmpty: false,
 				valid: true,
 				isSingleValue: true
 			}],
-			"NEXTHOURS": [{
-				formatArgs: [Condition.createCondition("NEXTHOURS", [2])],
+			[OperatorName.NEXTHOURS]: [{
+				formatArgs: [Condition.createCondition(OperatorName.NEXTHOURS, [2])],
 				formatValue: "Next 2 hours",
 				parsedValue: "2",
-				condition: Condition.createCondition("NEXTHOURS", [2], undefined, undefined, ConditionValidated.NotValidated),
+				condition: Condition.createCondition(OperatorName.NEXTHOURS, [2], undefined, undefined, ConditionValidated.NotValidated),
 				isEmpty: false,
 				valid: true,
 				isSingleValue: true,
 				longText: "Next X hours",
 				tokenText: "Next {0} hours"
 			}],
-			"LASTHOURS": [{
-				formatArgs: [Condition.createCondition("LASTHOURS", [2])],
+			[OperatorName.LASTHOURS]: [{
+				formatArgs: [Condition.createCondition(OperatorName.LASTHOURS, [2])],
 				formatValue: "Last 2 hours",
 				parsedValue: "2",
-				condition: Condition.createCondition("LASTHOURS", [2], undefined, undefined, ConditionValidated.NotValidated),
+				condition: Condition.createCondition(OperatorName.LASTHOURS, [2], undefined, undefined, ConditionValidated.NotValidated),
 				isEmpty: false,
 				valid: true,
 				isSingleValue: true,
 				longText: "Last X hours",
 				tokenText: "Last {0} hours"
 			}],
-			"NEXTMINUTES": [{
-				formatArgs: [Condition.createCondition("NEXTMINUTES", [2])],
+			[OperatorName.NEXTMINUTES]: [{
+				formatArgs: [Condition.createCondition(OperatorName.NEXTMINUTES, [2])],
 				formatValue: "Next 2 minutes",
 				parsedValue: "2",
-				condition: Condition.createCondition("NEXTMINUTES", [2], undefined, undefined, ConditionValidated.NotValidated),
+				condition: Condition.createCondition(OperatorName.NEXTMINUTES, [2], undefined, undefined, ConditionValidated.NotValidated),
 				isEmpty: false,
 				valid: true,
 				isSingleValue: true,
 				longText: "Next X minutes",
 				tokenText: "Next {0} minutes"
 			}],
-			"LASTMINUTES": [{
-				formatArgs: [Condition.createCondition("LASTMINUTES", [2])],
+			[OperatorName.LASTMINUTES]: [{
+				formatArgs: [Condition.createCondition(OperatorName.LASTMINUTES, [2])],
 				formatValue: "Last 2 minutes",
 				parsedValue: "2",
-				condition: Condition.createCondition("LASTMINUTES", [2], undefined, undefined, ConditionValidated.NotValidated),
+				condition: Condition.createCondition(OperatorName.LASTMINUTES, [2], undefined, undefined, ConditionValidated.NotValidated),
 				isEmpty: false,
 				valid: true,
 				isSingleValue: true,
 				longText: "Last X minutes",
 				tokenText: "Last {0} minutes"
 			}],
-			"LASTWEEK": [{
-				formatArgs: [Condition.createCondition("LASTWEEK", [undefined])],
+			[OperatorName.LASTWEEK]: [{
+				formatArgs: [Condition.createCondition(OperatorName.LASTWEEK, [undefined])],
 				formatValue: "Last week",
 				parsedValue: "",
-				condition: Condition.createCondition("LASTWEEK", [], undefined, undefined, ConditionValidated.NotValidated),
+				condition: Condition.createCondition(OperatorName.LASTWEEK, [], undefined, undefined, ConditionValidated.NotValidated),
 				isEmpty: false,
 				valid: true,
 				isSingleValue: true
 			}],
-			"THISWEEK": [{
-				formatArgs: [Condition.createCondition("THISWEEK", [undefined])],
+			[OperatorName.THISWEEK]: [{
+				formatArgs: [Condition.createCondition(OperatorName.THISWEEK, [undefined])],
 				formatValue: "This week",
 				parsedValue: "",
-				condition: Condition.createCondition("THISWEEK", [], undefined, undefined, ConditionValidated.NotValidated),
+				condition: Condition.createCondition(OperatorName.THISWEEK, [], undefined, undefined, ConditionValidated.NotValidated),
 				isEmpty: false,
 				valid: true,
 				isSingleValue: true
 			}],
-			"NEXTWEEK": [{
-				formatArgs: [Condition.createCondition("NEXTWEEK", [undefined])],
+			[OperatorName.NEXTWEEK]: [{
+				formatArgs: [Condition.createCondition(OperatorName.NEXTWEEK, [undefined])],
 				formatValue: "Next week",
 				parsedValue: "",
-				condition: Condition.createCondition("NEXTWEEK", [], undefined, undefined, ConditionValidated.NotValidated),
+				condition: Condition.createCondition(OperatorName.NEXTWEEK, [], undefined, undefined, ConditionValidated.NotValidated),
 				isEmpty: false,
 				valid: true,
 				isSingleValue: true
 			}],
-			"LASTWEEKS": [{
-				formatArgs: [Condition.createCondition("LASTWEEKS", [2])],
+			[OperatorName.LASTWEEKS]: [{
+				formatArgs: [Condition.createCondition(OperatorName.LASTWEEKS, [2])],
 				formatValue: "Last 2 weeks",
 				parsedValue: "2",
-				condition: Condition.createCondition("LASTWEEKS", [2], undefined, undefined, ConditionValidated.NotValidated),
+				condition: Condition.createCondition(OperatorName.LASTWEEKS, [2], undefined, undefined, ConditionValidated.NotValidated),
 				isEmpty: false,
 				valid: true,
 				isSingleValue: true,
@@ -1622,20 +1626,20 @@ sap.ui.define([
 				tokenText: "Last {0} weeks"
 			},
 			{
-				formatArgs: [Condition.createCondition("LASTWEEKS", [2]), undefined, undefined, true],
+				formatArgs: [Condition.createCondition(OperatorName.LASTWEEKS, [2]), undefined, undefined, true],
 				formatValue: "2",
 				parseArgs: ["2", undefined, undefined, true],
 				parsedValue: "2",
-				condition: Condition.createCondition("LASTWEEKS", [2], undefined, undefined, ConditionValidated.NotValidated),
+				condition: Condition.createCondition(OperatorName.LASTWEEKS, [2], undefined, undefined, ConditionValidated.NotValidated),
 				isEmpty: false,
 				valid: true,
 				isSingleValue: true
 			}],
-			"NEXTWEEKS": [{
-				formatArgs: [Condition.createCondition("NEXTWEEKS", [13])],
+			[OperatorName.NEXTWEEKS]: [{
+				formatArgs: [Condition.createCondition(OperatorName.NEXTWEEKS, [13])],
 				formatValue: "Next 13 weeks",
 				parsedValue: "13",
-				condition: Condition.createCondition("NEXTWEEKS", [13], undefined, undefined, ConditionValidated.NotValidated),
+				condition: Condition.createCondition(OperatorName.NEXTWEEKS, [13], undefined, undefined, ConditionValidated.NotValidated),
 				isEmpty: false,
 				valid: true,
 				isSingleValue: true,
@@ -1643,48 +1647,48 @@ sap.ui.define([
 				tokenText: "Next {0} weeks"
 			},
 			{
-				formatArgs: [Condition.createCondition("NEXTWEEKS", [2]), undefined, undefined, true],
+				formatArgs: [Condition.createCondition(OperatorName.NEXTWEEKS, [2]), undefined, undefined, true],
 				formatValue: "2",
 				parseArgs: ["2", undefined, undefined, true],
 				parsedValue: "2",
-				condition: Condition.createCondition("NEXTWEEKS", [2], undefined, undefined, ConditionValidated.NotValidated),
+				condition: Condition.createCondition(OperatorName.NEXTWEEKS, [2], undefined, undefined, ConditionValidated.NotValidated),
 				isEmpty: false,
 				valid: true,
 				isSingleValue: true
 			}],
 
-			"LASTMONTH": [{
-				formatArgs: [Condition.createCondition("LASTMONTH", [undefined])],
+			[OperatorName.LASTMONTH]: [{
+				formatArgs: [Condition.createCondition(OperatorName.LASTMONTH, [undefined])],
 				formatValue: "Last month",
 				parsedValue: "",
-				condition: Condition.createCondition("LASTMONTH", [], undefined, undefined, ConditionValidated.NotValidated),
+				condition: Condition.createCondition(OperatorName.LASTMONTH, [], undefined, undefined, ConditionValidated.NotValidated),
 				isEmpty: false,
 				valid: true,
 				isSingleValue: true
 			}],
-			"THISMONTH": [{
-				formatArgs: [Condition.createCondition("THISMONTH", [undefined])],
+			[OperatorName.THISMONTH]: [{
+				formatArgs: [Condition.createCondition(OperatorName.THISMONTH, [undefined])],
 				formatValue: "This month",
 				parsedValue: "",
-				condition: Condition.createCondition("THISMONTH", [], undefined, undefined, ConditionValidated.NotValidated),
+				condition: Condition.createCondition(OperatorName.THISMONTH, [], undefined, undefined, ConditionValidated.NotValidated),
 				isEmpty: false,
 				valid: true,
 				isSingleValue: true
 			}],
-			"NEXTMONTH": [{
-				formatArgs: [Condition.createCondition("NEXTMONTH", [undefined])],
+			[OperatorName.NEXTMONTH]: [{
+				formatArgs: [Condition.createCondition(OperatorName.NEXTMONTH, [undefined])],
 				formatValue: "Next month",
 				parsedValue: "",
-				condition: Condition.createCondition("NEXTMONTH", [], undefined, undefined, ConditionValidated.NotValidated),
+				condition: Condition.createCondition(OperatorName.NEXTMONTH, [], undefined, undefined, ConditionValidated.NotValidated),
 				isEmpty: false,
 				valid: true,
 				isSingleValue: true
 			}],
-			"LASTMONTHS": [{
-				formatArgs: [Condition.createCondition("LASTMONTHS", [2])],
+			[OperatorName.LASTMONTHS]: [{
+				formatArgs: [Condition.createCondition(OperatorName.LASTMONTHS, [2])],
 				formatValue: "Last 2 months",
 				parsedValue: "2",
-				condition: Condition.createCondition("LASTMONTHS", [2], undefined, undefined, ConditionValidated.NotValidated),
+				condition: Condition.createCondition(OperatorName.LASTMONTHS, [2], undefined, undefined, ConditionValidated.NotValidated),
 				isEmpty: false,
 				valid: true,
 				isSingleValue: true,
@@ -1692,20 +1696,20 @@ sap.ui.define([
 				tokenText: "Last {0} months"
 			},
 			{
-				formatArgs: [Condition.createCondition("LASMONTHS", [2]), undefined, undefined, true],
+				formatArgs: [Condition.createCondition(OperatorName.LASMONTHS, [2]), undefined, undefined, true],
 				formatValue: "2",
 				parseArgs: ["2", undefined, undefined, true],
 				parsedValue: "2",
-				condition: Condition.createCondition("LASTMONTHS", [2], undefined, undefined, ConditionValidated.NotValidated),
+				condition: Condition.createCondition(OperatorName.LASTMONTHS, [2], undefined, undefined, ConditionValidated.NotValidated),
 				isEmpty: false,
 				valid: true,
 				isSingleValue: true
 			}],
-			"NEXTMONTHS": [{
-				formatArgs: [Condition.createCondition("NEXTMONTHS", [13])],
+			[OperatorName.NEXTMONTHS]: [{
+				formatArgs: [Condition.createCondition(OperatorName.NEXTMONTHS, [13])],
 				formatValue: "Next 13 months",
 				parsedValue: "13",
-				condition: Condition.createCondition("NEXTMONTHS", [13], undefined, undefined, ConditionValidated.NotValidated),
+				condition: Condition.createCondition(OperatorName.NEXTMONTHS, [13], undefined, undefined, ConditionValidated.NotValidated),
 				isEmpty: false,
 				valid: true,
 				isSingleValue: true,
@@ -1713,20 +1717,20 @@ sap.ui.define([
 				tokenText: "Next {0} months"
 			},
 			{
-				formatArgs: [Condition.createCondition("NEXTMONTHS", [2]), undefined, undefined, true],
+				formatArgs: [Condition.createCondition(OperatorName.NEXTMONTHS, [2]), undefined, undefined, true],
 				formatValue: "2",
 				parseArgs: ["2", undefined, undefined, true],
 				parsedValue: "2",
-				condition: Condition.createCondition("NEXTMONTHS", [2], undefined, undefined, ConditionValidated.NotValidated),
+				condition: Condition.createCondition(OperatorName.NEXTMONTHS, [2], undefined, undefined, ConditionValidated.NotValidated),
 				isEmpty: false,
 				valid: true,
 				isSingleValue: true
 			}],
-			"SPECIFICMONTH": [{
-				formatArgs: [Condition.createCondition("SPECIFICMONTH", [4])],
+			[OperatorName.SPECIFICMONTH]: [{
+				formatArgs: [Condition.createCondition(OperatorName.SPECIFICMONTH, [4])],
 				formatValue: "Month (May)",
 				parsedValue: "4",
-				condition: Condition.createCondition("SPECIFICMONTH", [4], undefined, undefined, ConditionValidated.NotValidated),
+				condition: Condition.createCondition(OperatorName.SPECIFICMONTH, [4], undefined, undefined, ConditionValidated.NotValidated),
 				isEmpty: false,
 				valid: true,
 				isSingleValue: true,
@@ -1734,58 +1738,58 @@ sap.ui.define([
 				tokenText: "Month ({0})"
 			},
 			{
-				formatArgs: [Condition.createCondition("SPECIFICMONTH", [4]), undefined, undefined, true],
+				formatArgs: [Condition.createCondition(OperatorName.SPECIFICMONTH, [4]), undefined, undefined, true],
 				formatValue: "May",
 				parseArgs: ["May", undefined, undefined, true],
 				parsedValue: "4",
-				condition: Condition.createCondition("SPECIFICMONTH", [4], undefined, undefined, ConditionValidated.NotValidated),
+				condition: Condition.createCondition(OperatorName.SPECIFICMONTH, [4], undefined, undefined, ConditionValidated.NotValidated),
 				isEmpty: false,
 				valid: true,
 				isSingleValue: true
 			}],
-			"SPECIFICMONTHINYEAR": [{
-				formatArgs: [Condition.createCondition("SPECIFICMONTHINYEAR", [4, 2000])],
+			[OperatorName.SPECIFICMONTHINYEAR]: [{
+				formatArgs: [Condition.createCondition(OperatorName.SPECIFICMONTHINYEAR, [4, 2000])],
 				formatValue: "Month in Year (May,2000)",
 				parsedValue: "42000",
-				condition: Condition.createCondition("SPECIFICMONTHINYEAR", [4, 2000], undefined, undefined, ConditionValidated.NotValidated),
+				condition: Condition.createCondition(OperatorName.SPECIFICMONTHINYEAR, [4, 2000], undefined, undefined, ConditionValidated.NotValidated),
 				isEmpty: false,
 				valid: true,
 				isSingleValue: false,
 				longText: "Month in Year",
 				tokenText: "Month in Year ({0},{1})"
 			}],
-			"LASTQUARTER": [{
-				formatArgs: [Condition.createCondition("LASTQUARTER", [undefined])],
+			[OperatorName.LASTQUARTER]: [{
+				formatArgs: [Condition.createCondition(OperatorName.LASTQUARTER, [undefined])],
 				formatValue: "Last quarter",
 				parsedValue: "",
-				condition: Condition.createCondition("LASTQUARTER", [], undefined, undefined, ConditionValidated.NotValidated),
+				condition: Condition.createCondition(OperatorName.LASTQUARTER, [], undefined, undefined, ConditionValidated.NotValidated),
 				isEmpty: false,
 				valid: true,
 				isSingleValue: true
 			}],
-			"THISQUARTER": [{
-				formatArgs: [Condition.createCondition("THISQUARTER", [undefined])],
+			[OperatorName.THISQUARTER]: [{
+				formatArgs: [Condition.createCondition(OperatorName.THISQUARTER, [undefined])],
 				formatValue: "This quarter",
 				parsedValue: "",
-				condition: Condition.createCondition("THISQUARTER", [], undefined, undefined, ConditionValidated.NotValidated),
+				condition: Condition.createCondition(OperatorName.THISQUARTER, [], undefined, undefined, ConditionValidated.NotValidated),
 				isEmpty: false,
 				valid: true,
 				isSingleValue: true
 			}],
-			"NEXTQUARTER": [{
-				formatArgs: [Condition.createCondition("NEXTQUARTER", [undefined])],
+			[OperatorName.NEXTQUARTER]: [{
+				formatArgs: [Condition.createCondition(OperatorName.NEXTQUARTER, [undefined])],
 				formatValue: "Next quarter",
 				parsedValue: "",
-				condition: Condition.createCondition("NEXTQUARTER", [], undefined, undefined, ConditionValidated.NotValidated),
+				condition: Condition.createCondition(OperatorName.NEXTQUARTER, [], undefined, undefined, ConditionValidated.NotValidated),
 				isEmpty: false,
 				valid: true,
 				isSingleValue: true
 			}],
-			"LASTQUARTERS": [{
-				formatArgs: [Condition.createCondition("LASTQUARTERS", [2])],
+			[OperatorName.LASTQUARTERS]: [{
+				formatArgs: [Condition.createCondition(OperatorName.LASTQUARTERS, [2])],
 				formatValue: "Last 2 quarters",
 				parsedValue: "2",
-				condition: Condition.createCondition("LASTQUARTERS", [2], undefined, undefined, ConditionValidated.NotValidated),
+				condition: Condition.createCondition(OperatorName.LASTQUARTERS, [2], undefined, undefined, ConditionValidated.NotValidated),
 				isEmpty: false,
 				valid: true,
 				isSingleValue: true,
@@ -1793,20 +1797,20 @@ sap.ui.define([
 				tokenText: "Last {0} quarters"
 			},
 			{
-				formatArgs: [Condition.createCondition("LASTQUARTERS", [2]), undefined, undefined, true],
+				formatArgs: [Condition.createCondition(OperatorName.LASTQUARTERS, [2]), undefined, undefined, true],
 				formatValue: "2",
 				parseArgs: ["2", undefined, undefined, true],
 				parsedValue: "2",
-				condition: Condition.createCondition("LASTQUARTERS", [2], undefined, undefined, ConditionValidated.NotValidated),
+				condition: Condition.createCondition(OperatorName.LASTQUARTERS, [2], undefined, undefined, ConditionValidated.NotValidated),
 				isEmpty: false,
 				valid: true,
 				isSingleValue: true
 			}],
-			"NEXTQUARTERS": [{
-				formatArgs: [Condition.createCondition("NEXTQUARTERS", [13])],
+			[OperatorName.NEXTQUARTERS]: [{
+				formatArgs: [Condition.createCondition(OperatorName.NEXTQUARTERS, [13])],
 				formatValue: "Next 13 quarters",
 				parsedValue: "13",
-				condition: Condition.createCondition("NEXTQUARTERS", [13], undefined, undefined, ConditionValidated.NotValidated),
+				condition: Condition.createCondition(OperatorName.NEXTQUARTERS, [13], undefined, undefined, ConditionValidated.NotValidated),
 				isEmpty: false,
 				valid: true,
 				isSingleValue: true,
@@ -1814,48 +1818,48 @@ sap.ui.define([
 				tokenText: "Next {0} quarters"
 			},
 			{
-				formatArgs: [Condition.createCondition("NEXTQUARTERS", [2]), undefined, undefined, true],
+				formatArgs: [Condition.createCondition(OperatorName.NEXTQUARTERS, [2]), undefined, undefined, true],
 				formatValue: "2",
 				parseArgs: ["2", undefined, undefined, true],
 				parsedValue: "2",
-				condition: Condition.createCondition("NEXTQUARTERS", [2], undefined, undefined, ConditionValidated.NotValidated),
+				condition: Condition.createCondition(OperatorName.NEXTQUARTERS, [2], undefined, undefined, ConditionValidated.NotValidated),
 				isEmpty: false,
 				valid: true,
 				isSingleValue: true
 			}],
 
-			"LASTYEAR": [{
-				formatArgs: [Condition.createCondition("LASTYEAR", [undefined])],
+			[OperatorName.LASTYEAR]: [{
+				formatArgs: [Condition.createCondition(OperatorName.LASTYEAR, [undefined])],
 				formatValue: "Last year",
 				parsedValue: "",
-				condition: Condition.createCondition("LASTYEAR", [], undefined, undefined, ConditionValidated.NotValidated),
+				condition: Condition.createCondition(OperatorName.LASTYEAR, [], undefined, undefined, ConditionValidated.NotValidated),
 				isEmpty: false,
 				valid: true,
 				isSingleValue: true
 			}],
-			"THISYEAR": [{
-				formatArgs: [Condition.createCondition("THISYEAR", [undefined])],
+			[OperatorName.THISYEAR]: [{
+				formatArgs: [Condition.createCondition(OperatorName.THISYEAR, [undefined])],
 				formatValue: "This year",
 				parsedValue: "",
-				condition: Condition.createCondition("THISYEAR", [], undefined, undefined, ConditionValidated.NotValidated),
+				condition: Condition.createCondition(OperatorName.THISYEAR, [], undefined, undefined, ConditionValidated.NotValidated),
 				isEmpty: false,
 				valid: true,
 				isSingleValue: true
 			}],
-			"NEXTYEAR": [{
-				formatArgs: [Condition.createCondition("NEXTYEAR", [undefined])],
+			[OperatorName.NEXTYEAR]: [{
+				formatArgs: [Condition.createCondition(OperatorName.NEXTYEAR, [undefined])],
 				formatValue: "Next year",
 				parsedValue: "",
-				condition: Condition.createCondition("NEXTYEAR", [], undefined, undefined, ConditionValidated.NotValidated),
+				condition: Condition.createCondition(OperatorName.NEXTYEAR, [], undefined, undefined, ConditionValidated.NotValidated),
 				isEmpty: false,
 				valid: true,
 				isSingleValue: true
 			}],
-			"LASTYEARS": [{
-				formatArgs: [Condition.createCondition("LASTYEARS", [2])],
+			[OperatorName.LASTYEARS]: [{
+				formatArgs: [Condition.createCondition(OperatorName.LASTYEARS, [2])],
 				formatValue: "Last 2 years",
 				parsedValue: "2",
-				condition: Condition.createCondition("LASTYEARS", [2], undefined, undefined, ConditionValidated.NotValidated),
+				condition: Condition.createCondition(OperatorName.LASTYEARS, [2], undefined, undefined, ConditionValidated.NotValidated),
 				isEmpty: false,
 				valid: true,
 				isSingleValue: true,
@@ -1863,20 +1867,20 @@ sap.ui.define([
 				tokenText: "Last {0} years"
 			},
 			{
-				formatArgs: [Condition.createCondition("LASTYEARS", [2]), undefined, undefined, true],
+				formatArgs: [Condition.createCondition(OperatorName.LASTYEARS, [2]), undefined, undefined, true],
 				formatValue: "2",
 				parseArgs: ["2", undefined, undefined, true],
 				parsedValue: "2",
-				condition: Condition.createCondition("LASTYEARS", [2], undefined, undefined, ConditionValidated.NotValidated),
+				condition: Condition.createCondition(OperatorName.LASTYEARS, [2], undefined, undefined, ConditionValidated.NotValidated),
 				isEmpty: false,
 				valid: true,
 				isSingleValue: true
 			}],
-			"NEXTYEARS": [{
-				formatArgs: [Condition.createCondition("NEXTYEARS", [13])],
+			[OperatorName.NEXTYEARS]: [{
+				formatArgs: [Condition.createCondition(OperatorName.NEXTYEARS, [13])],
 				formatValue: "Next 13 years",
 				parsedValue: "13",
-				condition: Condition.createCondition("NEXTYEARS", [13], undefined, undefined, ConditionValidated.NotValidated),
+				condition: Condition.createCondition(OperatorName.NEXTYEARS, [13], undefined, undefined, ConditionValidated.NotValidated),
 				isEmpty: false,
 				valid: true,
 				isSingleValue: true,
@@ -1884,39 +1888,39 @@ sap.ui.define([
 				tokenText: "Next {0} years"
 			},
 			{
-				formatArgs: [Condition.createCondition("NEXTYEARS", [2]), undefined, undefined, true],
+				formatArgs: [Condition.createCondition(OperatorName.NEXTYEARS, [2]), undefined, undefined, true],
 				formatValue: "2",
 				parseArgs: ["2", undefined, undefined, true],
 				parsedValue: "2",
-				condition: Condition.createCondition("NEXTYEARS", [2], undefined, undefined, ConditionValidated.NotValidated),
+				condition: Condition.createCondition(OperatorName.NEXTYEARS, [2], undefined, undefined, ConditionValidated.NotValidated),
 				isEmpty: false,
 				valid: true,
 				isSingleValue: true
 			}],
 
-			"QUARTER1": [{
-				formatArgs: [Condition.createCondition("QUARTER1", [undefined])],
+			[OperatorName.QUARTER1]: [{
+				formatArgs: [Condition.createCondition(OperatorName.QUARTER1, [undefined])],
 				formatValue: "First quarter",
 				parsedValue: "",
-				condition: Condition.createCondition("QUARTER1", [], undefined, undefined, ConditionValidated.NotValidated),
+				condition: Condition.createCondition(OperatorName.QUARTER1, [], undefined, undefined, ConditionValidated.NotValidated),
 				isEmpty: false,
 				valid: true,
 				isSingleValue: true
 			}],
-			"QUARTER2": [{
-				formatArgs: [Condition.createCondition("QUARTER2", [undefined])],
+			[OperatorName.QUARTER2]: [{
+				formatArgs: [Condition.createCondition(OperatorName.QUARTER2, [undefined])],
 				formatValue: "Second quarter",
 				parsedValue: "",
-				condition: Condition.createCondition("QUARTER2", [], undefined, undefined, ConditionValidated.NotValidated),
+				condition: Condition.createCondition(OperatorName.QUARTER2, [], undefined, undefined, ConditionValidated.NotValidated),
 				isEmpty: false,
 				valid: true,
 				isSingleValue: true
 			}],
-			"QUARTER3": [{
-				formatArgs: [Condition.createCondition("QUARTER3", [undefined])],
+			[OperatorName.QUARTER3]: [{
+				formatArgs: [Condition.createCondition(OperatorName.QUARTER3, [undefined])],
 				formatValue: "Third quarter",
 				parsedValue: "",
-				condition: Condition.createCondition("QUARTER3", [], undefined, undefined, ConditionValidated.NotValidated),
+				condition: Condition.createCondition(OperatorName.QUARTER3, [], undefined, undefined, ConditionValidated.NotValidated),
 				isEmpty: false,
 				valid: true,
 				isSingleValue: true
@@ -1930,31 +1934,31 @@ sap.ui.define([
 				valid: true,
 				isSingleValue: true
 			}],
-			"QUARTER4": [{
-				formatArgs: [Condition.createCondition("QUARTER4", [undefined])],
+			[OperatorName.QUARTER4]: [{
+				formatArgs: [Condition.createCondition(OperatorName.QUARTER4, [undefined])],
 				formatValue: "Forth quarter",
 				parsedValue: "",
-				condition: Condition.createCondition("QUARTER4", [], undefined, undefined, ConditionValidated.NotValidated),
+				condition: Condition.createCondition(OperatorName.QUARTER4, [], undefined, undefined, ConditionValidated.NotValidated),
 				isEmpty: false,
 				valid: true,
 				isSingleValue: true
 			}],
 
-			"YEARTODATE": [{
-				formatArgs: [Condition.createCondition("YEARTODATE", [undefined])],
+			[OperatorName.YEARTODATE]: [{
+				formatArgs: [Condition.createCondition(OperatorName.YEARTODATE, [undefined])],
 				formatValue: "Year to date",
 				parsedValue: "",
-				condition: Condition.createCondition("YEARTODATE", [], undefined, undefined, ConditionValidated.NotValidated),
+				condition: Condition.createCondition(OperatorName.YEARTODATE, [], undefined, undefined, ConditionValidated.NotValidated),
 				isEmpty: false,
 				valid: true,
 				isSingleValue: true
 			}],
 
-			"DATETOYEAR": [{
-				formatArgs: [Condition.createCondition("DATETOYEAR", [undefined])],
+			[OperatorName.DATETOYEAR]: [{
+				formatArgs: [Condition.createCondition(OperatorName.DATETOYEAR, [undefined])],
 				formatValue: "Date to year",
 				parsedValue: "",
-				condition: Condition.createCondition("DATETOYEAR", [], undefined, undefined, ConditionValidated.NotValidated),
+				condition: Condition.createCondition(OperatorName.DATETOYEAR, [], undefined, undefined, ConditionValidated.NotValidated),
 				isEmpty: false,
 				valid: true,
 				isSingleValue: true
@@ -1973,17 +1977,17 @@ sap.ui.define([
 		assert.strictEqual(aOperators.length, 0, "invalid operators should not result in anything");
 
 		aOperators = FilterOperatorUtil.getMatchingOperators(aAllOperators, "=true");
-		let oExpected = FilterOperatorUtil.getOperator("EQ", aAllOperators);
+		let oExpected = FilterOperatorUtil.getOperator(OperatorName.EQ, aAllOperators);
 		assert.strictEqual(aOperators.length, 1, "there should be one matching operator");
 		assert.deepEqual(aOperators[0], oExpected, "'=true' should match the EQ operator");
 
 		aOperators = FilterOperatorUtil.getMatchingOperators(aAllOperators, "=5");
-		oExpected = FilterOperatorUtil.getOperator("EQ", aAllOperators);
+		oExpected = FilterOperatorUtil.getOperator(OperatorName.EQ, aAllOperators);
 		assert.strictEqual(aOperators.length, 1, "there should be one matching operator");
 		assert.deepEqual(aOperators[0], oExpected, "'=5' should match the EQ operator");
 
 		aOperators = FilterOperatorUtil.getMatchingOperators(aAllOperators, "*middle*");
-		oExpected = FilterOperatorUtil.getOperator("Contains", aAllOperators);
+		oExpected = FilterOperatorUtil.getOperator(OperatorName.Contains, aAllOperators);
 		assert.strictEqual(aOperators.length, 1, "there should be one matching operator");
 		assert.deepEqual(aOperators[0], oExpected, "'*middle*' should match the Contains operator");
 
@@ -1992,20 +1996,20 @@ sap.ui.define([
 	QUnit.test("getDefaultOperatorForType", function(assert) {
 
 		let oOperator = FilterOperatorUtil.getDefaultOperator(BaseType.String);
-		assert.strictEqual(oOperator.name, "EQ", "EQ should be default operator for string type");
+		assert.strictEqual(oOperator.name, OperatorName.EQ, "EQ should be default operator for string type");
 
 		oOperator = FilterOperatorUtil.getDefaultOperator(BaseType.DateTime);
-		assert.strictEqual(oOperator.name, "EQ", "EQ should be default operator for sap.ui.model.odata.type.TimeOfDay type");
+		assert.strictEqual(oOperator.name, OperatorName.EQ, "EQ should be default operator for sap.ui.model.odata.type.TimeOfDay type");
 
 	});
 
 	QUnit.test("checkConditionsEmpty", function(assert) {
 
 		const aConditions = [
-						   Condition.createCondition("EQ", ["X"]),
-						   Condition.createCondition("EQ", []),
-						   Condition.createCondition("BT", ["X", "Y"]),
-						   Condition.createCondition("BT", [])
+						   Condition.createCondition(OperatorName.EQ, ["X"]),
+						   Condition.createCondition(OperatorName.EQ, []),
+						   Condition.createCondition(OperatorName.BT, ["X", "Y"]),
+						   Condition.createCondition(OperatorName.BT, [])
 						   ];
 
 		FilterOperatorUtil.checkConditionsEmpty(aConditions);
@@ -2017,7 +2021,7 @@ sap.ui.define([
 		assert.ok(aConditions[3].isEmpty, "Condition 3 is empty");
 
 		//test single Condition
-		const oCondition = Condition.createCondition("EQ", []);
+		const oCondition = Condition.createCondition(OperatorName.EQ, []);
 		FilterOperatorUtil.checkConditionsEmpty(oCondition);
 
 		assert.ok(oCondition.isEmpty, "Condition 1 is empty");
@@ -2027,16 +2031,16 @@ sap.ui.define([
 	QUnit.test("updateConditionsValues", function(assert) {
 
 		const aConditions = [
-						   Condition.createCondition("EQ", ["X"]),
-						   Condition.createCondition("EQ", []),
-						   Condition.createCondition("EQ", ["X", undefined]),
-						   Condition.createCondition("EQ", ["X", "Y"]),
-						   Condition.createCondition("EQ", ["X", "Y"], undefined, undefined, ConditionValidated.Validated), // validated
-						   Condition.createCondition("EQ", ["X", undefined], undefined, undefined, ConditionValidated.Validated), // validated
-						   Condition.createCondition("BT", ["X", "Y"]),
-						   Condition.createCondition("BT", []),
-						   Condition.createCondition("BT", ["X"]),
-						   Condition.createCondition("TODAY", [null])
+						   Condition.createCondition(OperatorName.EQ, ["X"]),
+						   Condition.createCondition(OperatorName.EQ, []),
+						   Condition.createCondition(OperatorName.EQ, ["X", undefined]),
+						   Condition.createCondition(OperatorName.EQ, ["X", "Y"]),
+						   Condition.createCondition(OperatorName.EQ, ["X", "Y"], undefined, undefined, ConditionValidated.Validated), // validated
+						   Condition.createCondition(OperatorName.EQ, ["X", undefined], undefined, undefined, ConditionValidated.Validated), // validated
+						   Condition.createCondition(OperatorName.BT, ["X", "Y"]),
+						   Condition.createCondition(OperatorName.BT, []),
+						   Condition.createCondition(OperatorName.BT, ["X"]),
+						   Condition.createCondition(OperatorName.TODAY, [null])
 						   ];
 
 		FilterOperatorUtil.updateConditionsValues(aConditions);
@@ -2054,7 +2058,7 @@ sap.ui.define([
 		assert.equal(aConditions[9].values.length, 0, "Condition 9 values length");
 
 		//test single Condition
-		const oCondition = Condition.createCondition("EQ", ["X", undefined]);
+		const oCondition = Condition.createCondition(OperatorName.EQ, ["X", undefined]);
 		FilterOperatorUtil.updateConditionsValues(oCondition);
 
 		assert.equal(oCondition.values.length, 1, "Condition values length");
@@ -2064,65 +2068,65 @@ sap.ui.define([
 	QUnit.test("indexOfCondition", function(assert) {
 
 		const aConditions = [
-						   Condition.createCondition("EQ", ["X", "Y"], undefined, undefined, ConditionValidated.Validated),
-						   Condition.createCondition("EQ", ["Y"], undefined, undefined, ConditionValidated.NotValidated),
-						   Condition.createCondition("EQ", ["Z"]),
-						   Condition.createCondition("BT", ["X", "Y"]),
-						   Condition.createCondition("TODAY", [null])
+						   Condition.createCondition(OperatorName.EQ, ["X", "Y"], undefined, undefined, ConditionValidated.Validated),
+						   Condition.createCondition(OperatorName.EQ, ["Y"], undefined, undefined, ConditionValidated.NotValidated),
+						   Condition.createCondition(OperatorName.EQ, ["Z"]),
+						   Condition.createCondition(OperatorName.BT, ["X", "Y"]),
+						   Condition.createCondition(OperatorName.TODAY, [null])
 						   ];
 
 		// same validated condition
-		let oCondition = Condition.createCondition("EQ", ["X", "Z"], undefined, undefined, ConditionValidated.Validated);
+		let oCondition = Condition.createCondition(OperatorName.EQ, ["X", "Z"], undefined, undefined, ConditionValidated.Validated);
 		let iIndex = FilterOperatorUtil.indexOfCondition(oCondition, aConditions);
 		assert.equal(iIndex, 0, "same validated condition: Index of Condition");
 
 		// same key, but not validated
-		oCondition = Condition.createCondition("EQ", ["X"], undefined, undefined, ConditionValidated.NotValidated);
+		oCondition = Condition.createCondition(OperatorName.EQ, ["X"], undefined, undefined, ConditionValidated.NotValidated);
 		iIndex = FilterOperatorUtil.indexOfCondition(oCondition, aConditions);
 		assert.equal(iIndex, -1, "same key, but not validated: Index of Condition");
 
 		// same key, but not known if validated
-		oCondition = Condition.createCondition("EQ", ["X"]);
+		oCondition = Condition.createCondition(OperatorName.EQ, ["X"]);
 		iIndex = FilterOperatorUtil.indexOfCondition(oCondition, aConditions);
 		assert.equal(iIndex, 0, "same key, but not known if validated: Index of Condition");
 
 		// same not-validated condition
-		oCondition = Condition.createCondition("EQ", ["Y"], undefined, undefined, ConditionValidated.NotValidated);
+		oCondition = Condition.createCondition(OperatorName.EQ, ["Y"], undefined, undefined, ConditionValidated.NotValidated);
 		iIndex = FilterOperatorUtil.indexOfCondition(oCondition, aConditions);
 		assert.equal(iIndex, 1, "same not-validated condition: Index of Condition");
 
 		// same key but validated
-		oCondition = Condition.createCondition("EQ", ["Y"], undefined, undefined, ConditionValidated.Validated);
+		oCondition = Condition.createCondition(OperatorName.EQ, ["Y"], undefined, undefined, ConditionValidated.Validated);
 		iIndex = FilterOperatorUtil.indexOfCondition(oCondition, aConditions);
 		assert.equal(iIndex, -1, "same key but validated: Index of Condition");
 
 		// same key, but not known if validated
-		oCondition = Condition.createCondition("EQ", ["Y"]);
+		oCondition = Condition.createCondition(OperatorName.EQ, ["Y"]);
 		iIndex = FilterOperatorUtil.indexOfCondition(oCondition, aConditions);
 		assert.equal(iIndex, 1, "same key, but not known if validated: Index of Condition");
 
 		// not existing condition
-		oCondition = Condition.createCondition("EQ", ["A"]);
+		oCondition = Condition.createCondition(OperatorName.EQ, ["A"]);
 		iIndex = FilterOperatorUtil.indexOfCondition(oCondition, aConditions);
 		assert.equal(iIndex, -1, "not existing condition: Index of Condition");
 
 		// existing between condition
-		oCondition = Condition.createCondition("BT", ["X", "Y"]);
+		oCondition = Condition.createCondition(OperatorName.BT, ["X", "Y"]);
 		iIndex = FilterOperatorUtil.indexOfCondition(oCondition, aConditions);
 		assert.equal(iIndex, 3, "existing between condition: Index of Condition");
 
 		// not existing between condition
-		oCondition = Condition.createCondition("BT", ["X", "Z"]);
+		oCondition = Condition.createCondition(OperatorName.BT, ["X", "Z"]);
 		iIndex = FilterOperatorUtil.indexOfCondition(oCondition, aConditions);
 		assert.equal(iIndex, -1, "not existing between condition: Index of Condition");
 
 		// existing static condition
-		oCondition = Condition.createCondition("TODAY", [null]);
+		oCondition = Condition.createCondition(OperatorName.TODAY, [null]);
 		iIndex = FilterOperatorUtil.indexOfCondition(oCondition, aConditions);
 		assert.equal(iIndex, 4, "existing static condition: Index of Condition");
 
 		// existing static condition without value
-		oCondition = Condition.createCondition("TODAY", []);
+		oCondition = Condition.createCondition(OperatorName.TODAY, []);
 		iIndex = FilterOperatorUtil.indexOfCondition(oCondition, aConditions);
 		assert.equal(iIndex, 4, "existing static condition without value: Index of Condition");
 
@@ -2140,12 +2144,12 @@ sap.ui.define([
 		bEqual = FilterOperatorUtil.compareConditionsArray(aConditions1, aConditions2);
 		assert.notOk(bEqual, "2 arrays with different length are not equal");
 
-		aConditions2.push(Condition.createCondition("EQ", ["X"], undefined, undefined, ConditionValidated.Validated));
+		aConditions2.push(Condition.createCondition(OperatorName.EQ, ["X"], undefined, undefined, ConditionValidated.Validated));
 		bEqual = FilterOperatorUtil.compareConditionsArray(aConditions1, aConditions2);
 		assert.ok(bEqual, "2 arrays with same length but different description are equal"); // description don't matter for compare
 
-		aConditions1.push(Condition.createCondition("BT", ["X", "Y"]));
-		aConditions2.push(Condition.createCondition("BT", ["X", "Z"]));
+		aConditions1.push(Condition.createCondition(OperatorName.BT, ["X", "Y"]));
+		aConditions2.push(Condition.createCondition(OperatorName.BT, ["X", "Z"]));
 		bEqual = FilterOperatorUtil.compareConditionsArray(aConditions1, aConditions2);
 		assert.notOk(bEqual, "2 arrays with different conditions are not equal");
 
@@ -2181,13 +2185,13 @@ sap.ui.define([
 		bEqual = FilterOperatorUtil.compareConditionsArray(aConditions1, aConditions2);
 		assert.notOk(bEqual, "2 Conditions, with different payload are not equal");
 
-		aConditions1 = [Condition.createCondition("BT", ["X", "Y", undefined])];
-		aConditions2 = [Condition.createCondition("BT", ["X", "Y", null])];
+		aConditions1 = [Condition.createCondition(OperatorName.BT, ["X", "Y", undefined])];
+		aConditions2 = [Condition.createCondition(OperatorName.BT, ["X", "Y", null])];
 		bEqual = FilterOperatorUtil.compareConditionsArray(aConditions1, aConditions2);
 		assert.notOk(bEqual, "Comparison discerns null from undefined");
 
-		aConditions1 = [Condition.createCondition("BT", ["X", "Y"], undefined, undefined, {in1: "X", out1: undefined})];
-		aConditions2 = [Condition.createCondition("BT", ["X", "Y"], undefined, undefined, {in1: "X", out1: null})];
+		aConditions1 = [Condition.createCondition(OperatorName.BT, ["X", "Y"], undefined, undefined, {in1: "X", out1: undefined})];
+		aConditions2 = [Condition.createCondition(OperatorName.BT, ["X", "Y"], undefined, undefined, {in1: "X", out1: null})];
 		bEqual = FilterOperatorUtil.compareConditionsArray(aConditions1, aConditions2);
 		assert.notOk(bEqual, "Comparison discerns nested null from undefined");
 
@@ -2195,27 +2199,27 @@ sap.ui.define([
 
 	QUnit.test("checkConditionValidated", function(assert) {
 
-		let oCondition = Condition.createCondition("EQ", ["X"]);
+		let oCondition = Condition.createCondition(OperatorName.EQ, ["X"]);
 		FilterOperatorUtil.checkConditionValidated(oCondition);
 		assert.equal(oCondition.validated, ConditionValidated.NotValidated, "Condition not validated");
 
-		oCondition = Condition.createCondition("EQ", ["X"], undefined, undefined, ConditionValidated.Validated);
+		oCondition = Condition.createCondition(OperatorName.EQ, ["X"], undefined, undefined, ConditionValidated.Validated);
 		FilterOperatorUtil.checkConditionValidated(oCondition);
 		assert.equal(oCondition.validated, ConditionValidated.Validated, "Condition validated");
 
-		oCondition = Condition.createCondition("EQ", ["X", undefined]);
+		oCondition = Condition.createCondition(OperatorName.EQ, ["X", undefined]);
 		FilterOperatorUtil.checkConditionValidated(oCondition);
 		assert.equal(oCondition.validated, ConditionValidated.NotValidated, "Condition not validated");
 
-		oCondition = Condition.createCondition("EQ", ["X", null]);
+		oCondition = Condition.createCondition(OperatorName.EQ, ["X", null]);
 		FilterOperatorUtil.checkConditionValidated(oCondition);
 		assert.equal(oCondition.validated, ConditionValidated.NotValidated, "Condition not validated");
 
-		oCondition = Condition.createCondition("EQ", ["X", "Y"]);
+		oCondition = Condition.createCondition(OperatorName.EQ, ["X", "Y"]);
 		FilterOperatorUtil.checkConditionValidated(oCondition);
 		assert.equal(oCondition.validated, ConditionValidated.Validated, "Condition validated");
 
-		oCondition = Condition.createCondition("BT", ["X", "Y"]);
+		oCondition = Condition.createCondition(OperatorName.BT, ["X", "Y"]);
 		FilterOperatorUtil.checkConditionValidated(oCondition);
 		assert.equal(oCondition.validated, ConditionValidated.NotValidated, "Condition not validated");
 
@@ -2285,7 +2289,7 @@ sap.ui.define([
 
 		const oMyEQ = new Operator({
 			name: "MYEQ",
-			filterOperator: "EQ",
+			filterOperator: FilterOperator.EQ,
 			tokenParse: "^=([^=].*)$",
 			tokenFormat: "={0}",
 			valueTypes: [OperatorValueType.Self],
@@ -2294,7 +2298,7 @@ sap.ui.define([
 
 		const oLowerThan = new Operator({
 			name: "MYLT",
-			filterOperator: "LT",
+			filterOperator: FilterOperator.LT,
 			tokenParse: "^<([^=].*)$",
 			tokenFormat: "<{0}",
 			valueTypes: [OperatorValueType.Self]
@@ -2329,7 +2333,7 @@ sap.ui.define([
 
 		const oMyOperator = new Operator({
 			name: "MyEqual",
-			filterOperator: "EQ",
+			filterOperator: FilterOperator.EQ,
 			tokenParse: "^=([^=].*)$",
 			tokenFormat: "={0}",
 			valueTypes: [OperatorValueType.Self],
@@ -2337,7 +2341,7 @@ sap.ui.define([
 		});
 		const oMyOperator2 = new Operator({
 			name: "MyEqual2",
-			filterOperator: "EQ",
+			filterOperator: FilterOperator.EQ,
 			tokenParse: "^=([^=].*)$",
 			tokenFormat: "={0}",
 			valueTypes: [OperatorValueType.Self],
@@ -2375,7 +2379,7 @@ sap.ui.define([
 
 	QUnit.test("testing overwrite", function(assert) {
 
-		let oOperator = FilterOperatorUtil.getOperator("Empty");
+		let oOperator = FilterOperatorUtil.getOperator(OperatorName.Empty);
 		assert.ok(oOperator, "Operator exist");
 		assert.ok(oOperator.getLongText("String") === "empty", "Operator getLongText returns default text");
 
@@ -2391,7 +2395,7 @@ sap.ui.define([
 		assert.ok(oOperator.getLongText("String") === "foo", "Operator getLongText returns expected text");
 		assert.ok(oOperator.getLongText("others") === "bar", "Operator getLongText returns expected text");
 
-		oOperator = FilterOperatorUtil.getOperator("TODAY");
+		oOperator = FilterOperatorUtil.getOperator(OperatorName.TODAY);
 		assert.ok(oOperator, "Operator exist");
 
 		const fCallbackGetModelFilter = function(oCondition, sFieldPath, oType, bCaseSensitive, sBaseType) {

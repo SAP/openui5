@@ -12,6 +12,8 @@ sap.ui.define([
 	"sap/ui/mdc/enums/ConditionValidated",
 	"sap/ui/mdc/enums/FieldDisplay",
 	"sap/ui/mdc/enums/OperatorValueType",
+	"sap/ui/mdc/enums/OperatorName",
+	"sap/ui/model/FilterOperator",
 	"sap/ui/model/type/Integer",
 	"sap/ui/model/type/Currency",
 	"sap/ui/model/type/Date",
@@ -33,6 +35,8 @@ sap.ui.define([
 		ConditionValidated,
 		FieldDisplay,
 		OperatorValueType,
+		OperatorName,
+		FilterOperator,
 		IntegerType,
 		CurrencyType,
 		DateType,
@@ -68,7 +72,7 @@ sap.ui.define([
 
 	QUnit.test("Formatting: EQ - simple String", function(assert) {
 
-		let oCondition = Condition.createCondition("EQ", ["Test"]);
+		let oCondition = Condition.createCondition(OperatorName.EQ, ["Test"]);
 		let sResult = oConditionType.formatValue(oCondition);
 		assert.equal(sResult, "=Test", "Result of formatting");
 
@@ -76,7 +80,7 @@ sap.ui.define([
 		sResult = oConditionType.formatValue(oCondition);
 		assert.equal(sResult, "Test", "Result of formatting");
 
-		oCondition = Condition.createCondition("EQ", ["1"]);
+		oCondition = Condition.createCondition(OperatorName.EQ, ["1"]);
 		sResult = oConditionType.formatValue(oCondition, "int");
 		assert.equal(sResult, 1, "Result of formatting");
 
@@ -85,7 +89,7 @@ sap.ui.define([
 	QUnit.test("Formatting: EQ - key/Description", function(assert) {
 
 		oConditionType.oFormatOptions.display = FieldDisplay.Description; // fake setting directly
-		oConditionType.oFormatOptions.operators = ["EQ"]; // fake setting directly
+		oConditionType.oFormatOptions.operators = [OperatorName.EQ]; // fake setting directly
 		const oCondition = Condition.createItemCondition("A", "Test");
 		const sResult = oConditionType.formatValue(oCondition);
 		assert.equal(sResult, "Test", "Result of formatting");
@@ -94,7 +98,7 @@ sap.ui.define([
 
 	QUnit.test("Formatting: EQ - simple String with whitespaces", function(assert) {
 
-		const oCondition = Condition.createCondition("EQ", ["Test   Test"], undefined, undefined, ConditionValidated.Validated);
+		const oCondition = Condition.createCondition(OperatorName.EQ, ["Test   Test"], undefined, undefined, ConditionValidated.Validated);
 		let sResult = oConditionType.formatValue(oCondition);
 		assert.equal(sResult, "Test   Test", "Result of formatting");
 
@@ -117,7 +121,7 @@ sap.ui.define([
 		assert.ok(oException, "exception fired");
 		oException = undefined;
 
-		let oCondition = Condition.createCondition("EQ", []);
+		let oCondition = Condition.createCondition(OperatorName.EQ, []);
 		try {
 			oConditionType.formatValue(oCondition, "int");
 		} catch (e) {
@@ -141,7 +145,7 @@ sap.ui.define([
 
 	QUnit.test("Formatting: Contains - simple String", function(assert) {
 
-		const oCondition = Condition.createCondition("Contains", ["Test"]);
+		const oCondition = Condition.createCondition(OperatorName.Contains, ["Test"]);
 		const sResult = oConditionType.formatValue(oCondition);
 		assert.equal(sResult, "*Test*", "Result of formatting");
 
@@ -150,7 +154,7 @@ sap.ui.define([
 	QUnit.test("Formatting: Contains - simple String (hideOperator)", function(assert) {
 
 		oConditionType.oFormatOptions.hideOperator = true; // fake setting directly
-		const oCondition = Condition.createCondition("Contains", ["Test"]);
+		const oCondition = Condition.createCondition(OperatorName.Contains, ["Test"]);
 		const sResult = oConditionType.formatValue(oCondition);
 		assert.equal(sResult, "Test", "Result of formatting");
 
@@ -161,7 +165,7 @@ sap.ui.define([
 		let oCondition = oConditionType.parseValue("Test");
 		assert.ok(oCondition, "Result returned");
 		assert.equal(typeof oCondition, "object", "Result is object");
-		assert.equal(oCondition.operator, "EQ", "Operator");
+		assert.equal(oCondition.operator, OperatorName.EQ, "Operator");
 		assert.ok(Array.isArray(oCondition.values), "values are array");
 		assert.equal(oCondition.values.length, 1, "Values length");
 		assert.equal(oCondition.values[0], "Test", "Values entry");
@@ -169,18 +173,18 @@ sap.ui.define([
 		oCondition = oConditionType.parseValue(1, "int");
 		assert.ok(oCondition, "Result returned");
 		assert.equal(typeof oCondition, "object", "Result is object");
-		assert.equal(oCondition.operator, "EQ", "Operator");
+		assert.equal(oCondition.operator, OperatorName.EQ, "Operator");
 		assert.ok(Array.isArray(oCondition.values), "values are array");
 		assert.equal(oCondition.values.length, 1, "Values length");
 		assert.equal(oCondition.values[0], "1", "Values entry");
 
 		// Default operator not in list of operators
-		oConditionType.setFormatOptions({operators: ["GT", "LT"]});
+		oConditionType.setFormatOptions({operators: [OperatorName.GT, OperatorName.LT]});
 
 		oCondition = oConditionType.parseValue("Test");
 		assert.ok(oCondition, "Result returned");
 		assert.equal(typeof oCondition, "object", "Result is object");
-		assert.equal(oCondition.operator, "GT", "Operator");
+		assert.equal(oCondition.operator, OperatorName.GT, "Operator");
 		assert.ok(Array.isArray(oCondition.values), "values are array");
 		assert.equal(oCondition.values.length, 1, "Values length");
 		assert.equal(oCondition.values[0], "Test", "Values entry");
@@ -188,18 +192,18 @@ sap.ui.define([
 		oCondition = oConditionType.parseValue(1, "int");
 		assert.ok(oCondition, "Result returned");
 		assert.equal(typeof oCondition, "object", "Result is object");
-		assert.equal(oCondition.operator, "GT", "Operator");
+		assert.equal(oCondition.operator, OperatorName.GT, "Operator");
 		assert.ok(Array.isArray(oCondition.values), "values are array");
 		assert.equal(oCondition.values.length, 1, "Values length");
 		assert.equal(oCondition.values[0], "1", "Values entry");
 
 		// Default operator set in FormatOptions
-		oConditionType.setFormatOptions({operators: ["GT", "LT"], defaultOperatorName: "LT"});
+		oConditionType.setFormatOptions({operators: [OperatorName.GT, OperatorName.LT], defaultOperatorName: "LT"});
 
 		oCondition = oConditionType.parseValue("Test");
 		assert.ok(oCondition, "Result returned");
 		assert.equal(typeof oCondition, "object", "Result is object");
-		assert.equal(oCondition.operator, "LT", "Operator");
+		assert.equal(oCondition.operator, OperatorName.LT, "Operator");
 		assert.ok(Array.isArray(oCondition.values), "values are array");
 		assert.equal(oCondition.values.length, 1, "Values length");
 		assert.equal(oCondition.values[0], "Test", "Values entry");
@@ -208,11 +212,11 @@ sap.ui.define([
 
 	QUnit.test("Parsing: only EQ - simple String", function(assert) {
 
-		oConditionType.setFormatOptions({operators: ["EQ"]});
+		oConditionType.setFormatOptions({operators: [OperatorName.EQ]});
 		let oCondition = oConditionType.parseValue("Test");
 		assert.ok(oCondition, "Result returned");
 		assert.equal(typeof oCondition, "object", "Result is object");
-		assert.equal(oCondition.operator, "EQ", "Operator");
+		assert.equal(oCondition.operator, OperatorName.EQ, "Operator");
 		assert.ok(Array.isArray(oCondition.values), "values are array");
 		assert.equal(oCondition.values.length, 1, "Values length");
 		assert.equal(oCondition.values[0], "Test", "Values entry");
@@ -220,7 +224,7 @@ sap.ui.define([
 		oCondition = oConditionType.parseValue(1, "int");
 		assert.ok(oCondition, "Result returned");
 		assert.equal(typeof oCondition, "object", "Result is object");
-		assert.equal(oCondition.operator, "EQ", "Operator");
+		assert.equal(oCondition.operator, OperatorName.EQ, "Operator");
 		assert.ok(Array.isArray(oCondition.values), "values are array");
 		assert.equal(oCondition.values.length, 1, "Values length"); // second value not set right now TODO: validate for help too?
 		assert.equal(oCondition.values[0], "1", "Values entry");
@@ -229,11 +233,11 @@ sap.ui.define([
 
 	QUnit.test("Parsing: EQ - simple String as 'any'", function(assert) {
 
-		oConditionType.setFormatOptions({operators: ["EQ"]});
+		oConditionType.setFormatOptions({operators: [OperatorName.EQ]});
 		const oCondition = oConditionType.parseValue("Test", "any");
 		assert.ok(oCondition, "Result returned");
 		assert.equal(typeof oCondition, "object", "Result is object");
-		assert.equal(oCondition.operator, "EQ", "Operator");
+		assert.equal(oCondition.operator, OperatorName.EQ, "Operator");
 		assert.ok(Array.isArray(oCondition.values), "values are array");
 		assert.equal(oCondition.values.length, 1, "Values length");
 		assert.equal(oCondition.values[0], "Test", "Values entry");
@@ -242,7 +246,7 @@ sap.ui.define([
 
 	QUnit.test("Parsing: EQ - empty string", function(assert) {
 
-		oConditionType.setFormatOptions({operators: ["EQ"]});
+		oConditionType.setFormatOptions({operators: [OperatorName.EQ]});
 		const oCondition = oConditionType.parseValue("");
 		assert.notOk(oCondition, "no Result returned");
 
@@ -250,15 +254,15 @@ sap.ui.define([
 
 	QUnit.test("Parsing: limited operators - simple string", function(assert) {
 
-		oConditionType.setFormatOptions({operators: ["NOTGT", "GT", "NOTLT", "LT"]});
+		oConditionType.setFormatOptions({operators: [OperatorName.NOTGT, OperatorName.GT, OperatorName.NOTLT, OperatorName.LT]});
 		let oCondition = oConditionType.parseValue(">Test");
-		assert.equal(oCondition.operator, "GT", "Operator");
+		assert.equal(oCondition.operator, OperatorName.GT, "Operator");
 		assert.ok(Array.isArray(oCondition.values), "values are array");
 		assert.equal(oCondition.values.length, 1, "Values length");
 		assert.equal(oCondition.values[0], "Test", "Values entry");
 
 		oCondition = oConditionType.parseValue("Test");
-		assert.equal(oCondition.operator, "GT", "Operator"); // first include operator should be used as default
+		assert.equal(oCondition.operator, OperatorName.GT, "Operator"); // first include operator should be used as default
 		assert.ok(Array.isArray(oCondition.values), "values are array");
 		assert.equal(oCondition.values.length, 1, "Values length");
 		assert.equal(oCondition.values[0], "Test", "Values entry");
@@ -267,15 +271,15 @@ sap.ui.define([
 
 	QUnit.test("Parsing: single operator - simple string", function(assert) {
 
-		oConditionType.setFormatOptions({operators: ["GT"]});
+		oConditionType.setFormatOptions({operators: [OperatorName.GT]});
 		let oCondition = oConditionType.parseValue(">Test");
-		assert.equal(oCondition.operator, "GT", "Operator");
+		assert.equal(oCondition.operator, OperatorName.GT, "Operator");
 		assert.ok(Array.isArray(oCondition.values), "values are array");
 		assert.equal(oCondition.values.length, 1, "Values length");
 		assert.equal(oCondition.values[0], "Test", "Values entry");
 
 		oCondition = oConditionType.parseValue("Test");
-		assert.equal(oCondition.operator, "GT", "Operator");
+		assert.equal(oCondition.operator, OperatorName.GT, "Operator");
 		assert.ok(Array.isArray(oCondition.values), "values are array");
 		assert.equal(oCondition.values.length, 1, "Values length");
 		assert.equal(oCondition.values[0], "Test", "Values entry");
@@ -287,7 +291,7 @@ sap.ui.define([
 		const oCondition = oConditionType.parseValue("<empty>");
 		assert.ok(oCondition, "Result returned");
 		assert.equal(typeof oCondition, "object", "Result is object");
-		assert.equal(oCondition.operator, "Empty", "Operator");
+		assert.equal(oCondition.operator, OperatorName.Empty, "Operator");
 		assert.ok(Array.isArray(oCondition.values), "values are array");
 		assert.equal(oCondition.values.length, 0, "Values length");
 
@@ -303,7 +307,7 @@ sap.ui.define([
 	QUnit.test("destroyed ConditionType", function(assert) {
 
 		oConditionType.destroy();
-		let oCondition = Condition.createCondition("EQ", ["Test"]);
+		let oCondition = Condition.createCondition(OperatorName.EQ, ["Test"]);
 		const sResult = oConditionType.formatValue(oCondition);
 		assert.equal(sResult, null, "no formatting");
 
@@ -337,7 +341,7 @@ sap.ui.define([
 
 	QUnit.test("Formatting: EQ - number", function(assert) {
 
-		const oCondition = Condition.createCondition("EQ", [2]);
+		const oCondition = Condition.createCondition(OperatorName.EQ, [2]);
 		let sResult = oConditionType.formatValue(oCondition);
 		assert.equal(sResult, "=2", "Result of formatting");
 
@@ -355,11 +359,11 @@ sap.ui.define([
 
 	QUnit.test("Parsing: EQ - number", function(assert) {
 
-		oConditionType.setFormatOptions({operators: ["EQ"], fieldPath: "X"});
+		oConditionType.setFormatOptions({operators: [OperatorName.EQ], fieldPath: "X"});
 		let oCondition = oConditionType.parseValue("1");
 		assert.ok(oCondition, "Result returned");
 		assert.equal(typeof oCondition, "object", "Result is object");
-		assert.equal(oCondition.operator, "EQ", "Operator");
+		assert.equal(oCondition.operator, OperatorName.EQ, "Operator");
 		assert.ok(Array.isArray(oCondition.values), "values are array");
 		assert.equal(oCondition.values.length, 1, "Values length");
 		assert.equal(oCondition.values[0], 1, "Values entry");
@@ -367,7 +371,7 @@ sap.ui.define([
 		oCondition = oConditionType.parseValue(1, "int");
 		assert.ok(oCondition, "Result returned");
 		assert.equal(typeof oCondition, "object", "Result is object");
-		assert.equal(oCondition.operator, "EQ", "Operator");
+		assert.equal(oCondition.operator, OperatorName.EQ, "Operator");
 		assert.ok(Array.isArray(oCondition.values), "values are array");
 		assert.equal(oCondition.values.length, 1, "Values length");
 		assert.equal(oCondition.values[0], 1, "Values entry");
@@ -375,7 +379,7 @@ sap.ui.define([
 		oCondition = oConditionType.parseValue(1, "sap.ui.mdc.raw");
 		assert.ok(oCondition, "Result returned");
 		assert.equal(typeof oCondition, "object", "Result is object");
-		assert.equal(oCondition.operator, "EQ", "Operator");
+		assert.equal(oCondition.operator, OperatorName.EQ, "Operator");
 		assert.ok(Array.isArray(oCondition.values), "values are array");
 		assert.equal(oCondition.values.length, 1, "Values length");
 		assert.equal(oCondition.values[0], 1, "Values entry");
@@ -387,7 +391,7 @@ sap.ui.define([
 		const oCondition = oConditionType.parseValue(">1");
 		assert.ok(oCondition, "Result returned");
 		assert.equal(typeof oCondition, "object", "Result is object");
-		assert.equal(oCondition.operator, "GT", "Operator");
+		assert.equal(oCondition.operator, OperatorName.GT, "Operator");
 		assert.ok(Array.isArray(oCondition.values), "values are array");
 		assert.equal(oCondition.values.length, 1, "Values length");
 		assert.equal(oCondition.values[0], 1, "Values entry");
@@ -410,7 +414,7 @@ sap.ui.define([
 
 	QUnit.test("Validating: invalid value", function(assert) {
 
-		let oCondition = Condition.createCondition("EQ", [200]);
+		let oCondition = Condition.createCondition(OperatorName.EQ, [200]);
 		let oException;
 
 		try {
@@ -448,7 +452,7 @@ sap.ui.define([
 		beforeEach: function() {
 			oValueType = new DateType({pattern: "yyyy-MM-dd"}, {minimum: new Date(2000, 0, 1)});
 			oOriginalType = new DateType({pattern: "dd.MM.yyyy"}, {minimum: new Date(2000, 0, 1)});
-			oConditionType = new ConditionType({valueType: oValueType, originalDateType: oOriginalType, fieldPath: "X", operators: ["EQ"]});
+			oConditionType = new ConditionType({valueType: oValueType, originalDateType: oOriginalType, fieldPath: "X", operators: [OperatorName.EQ]});
 		},
 		afterEach: function() {
 			oConditionType.destroy();
@@ -462,7 +466,7 @@ sap.ui.define([
 
 	QUnit.test("Formatting: EQ - date", function(assert) {
 
-		const oCondition = Condition.createCondition("EQ", [new Date(2020, 1, 3)], undefined, undefined, ConditionValidated.Validated);
+		const oCondition = Condition.createCondition(OperatorName.EQ, [new Date(2020, 1, 3)], undefined, undefined, ConditionValidated.Validated);
 		const sResult = oConditionType.formatValue(oCondition);
 		assert.equal(sResult, "2020-02-03", "Result of formatting");
 
@@ -473,7 +477,7 @@ sap.ui.define([
 		const oCondition = oConditionType.parseValue("2020-02-03");
 		assert.ok(oCondition, "Result returned");
 		assert.equal(typeof oCondition, "object", "Result is object");
-		assert.equal(oCondition.operator, "EQ", "Operator");
+		assert.equal(oCondition.operator, OperatorName.EQ, "Operator");
 		assert.ok(Array.isArray(oCondition.values), "values are array");
 		assert.equal(oCondition.values.length, 1, "Values length");
 		assert.deepEqual(oCondition.values[0], new Date(2020, 1, 3), "Values entry");
@@ -500,7 +504,7 @@ sap.ui.define([
 
 	QUnit.test("Validating: invalid value", function(assert) {
 
-		const oCondition = Condition.createCondition("EQ", [new Date(1900, 0, 1)]);
+		const oCondition = Condition.createCondition(OperatorName.EQ, [new Date(1900, 0, 1)]);
 		let oException;
 		sinon.spy(oValueType, "validateValue");
 		sinon.spy(oOriginalType, "validateValue");
@@ -553,7 +557,7 @@ sap.ui.define([
 				valueType: oValueType,
 				originalDateType: oOriginalType,
 				compositeTypes: [oDateTimeOffsetType, oStringType],
-				operators: ["EQ"],
+				operators: [OperatorName.EQ],
 				hideOperator: true,
 				delegate: FieldBaseDelegate
 			});
@@ -563,7 +567,7 @@ sap.ui.define([
 				valueType: oValueType2,
 				originalDateType: oOriginalType,
 				compositeTypes: [oDateTimeOffsetType, oStringType],
-				operators: ["EQ"],
+				operators: [OperatorName.EQ],
 				hideOperator: true,
 				delegate: FieldBaseDelegate
 			});
@@ -588,7 +592,7 @@ sap.ui.define([
 
 	QUnit.test("Formatting: EQ", function(assert) {
 
-		const oCondition = Condition.createCondition("EQ", [["2022-02-25T07:06:30+01:00", "Europe/Berlin"]], undefined, undefined, ConditionValidated.NotValidated);
+		const oCondition = Condition.createCondition(OperatorName.EQ, [["2022-02-25T07:06:30+01:00", "Europe/Berlin"]], undefined, undefined, ConditionValidated.NotValidated);
 		let sResult = oConditionType.formatValue(oCondition);
 		assert.equal(sResult, "2022-02-25T07:06:30", "Result of formatting for DateTime part");
 
@@ -608,7 +612,7 @@ sap.ui.define([
 		let oCondition = oConditionType.parseValue("2022-02-25T07:32:30");
 		assert.ok(oCondition, "Result returned");
 		assert.equal(typeof oCondition, "object", "Result is object");
-		assert.equal(oCondition.operator, "EQ", "Operator");
+		assert.equal(oCondition.operator, OperatorName.EQ, "Operator");
 		assert.ok(Array.isArray(oCondition.values), "values are array");
 		assert.equal(oCondition.values.length, 1, "Values length");
 		assert.deepEqual(oCondition.values[0], ["2022-02-25T07:32:30+01:00", "Europe/Berlin"], "Values entry");
@@ -617,7 +621,7 @@ sap.ui.define([
 		oCondition = oConditionType2.parseValue("Americas, New York");
 		assert.ok(oCondition, "Result returned");
 		assert.equal(typeof oCondition, "object", "Result is object");
-		assert.equal(oCondition.operator, "EQ", "Operator");
+		assert.equal(oCondition.operator, OperatorName.EQ, "Operator");
 		assert.ok(Array.isArray(oCondition.values), "values are array");
 		assert.equal(oCondition.values.length, 1, "Values length");
 		assert.deepEqual(oCondition.values[0], ["2022-02-25T07:06:30+01:00", "America/New_York"], "Values entry");
@@ -625,7 +629,7 @@ sap.ui.define([
 		oCondition = oConditionType2.parseValue("Europe/Berlin", "sap.ui.mdc.raw:1"); // without type parsing
 		assert.ok(oCondition, "Result returned");
 		assert.equal(typeof oCondition, "object", "Result is object");
-		assert.equal(oCondition.operator, "EQ", "Operator");
+		assert.equal(oCondition.operator, OperatorName.EQ, "Operator");
 		assert.ok(Array.isArray(oCondition.values), "values are array");
 		assert.equal(oCondition.values.length, 1, "Values length");
 		assert.deepEqual(oCondition.values[0], ["2022-02-25T07:06:30+01:00", "Europe/Berlin"], "Values entry");
@@ -634,7 +638,7 @@ sap.ui.define([
 
 	QUnit.test("Validating: valid value", function(assert) {
 
-		const oCondition = Condition.createCondition("EQ", [["2022-02-25T07:06:30+01:00", "Europe/Berlin"]], undefined, undefined, ConditionValidated.NotValidated);
+		const oCondition = Condition.createCondition(OperatorName.EQ, [["2022-02-25T07:06:30+01:00", "Europe/Berlin"]], undefined, undefined, ConditionValidated.NotValidated);
 		let oException;
 		sinon.spy(oValueType, "validateValue");
 		sinon.spy(oValueType2, "validateValue");
@@ -723,7 +727,7 @@ sap.ui.define([
 				valueType: oValueType,
 				display: FieldDisplay.Description,
 				valueHelpID: "VH1",
-				operators: ["EQ"],
+				operators: [OperatorName.EQ],
 				asyncParsing: fnAsync,
 				delegate: FieldBaseDelegate,
 				bindingContext: "BC", // just dummy to test forwarding to valueHelp
@@ -763,7 +767,7 @@ sap.ui.define([
 
 	QUnit.test("Formatting: key -> description (from help)", function(assert) {
 
-		let oCondition = Condition.createCondition("EQ", ["Sync"], undefined, undefined, ConditionValidated.Validated);
+		let oCondition = Condition.createCondition(OperatorName.EQ, ["Sync"], undefined, undefined, ConditionValidated.Validated);
 		const oConfig = { // to compare
 			value: "Sync",
 			parsedValue: "Sync",
@@ -782,7 +786,7 @@ sap.ui.define([
 		assert.ok(oValueHelp.getItemForValue.calledWith(oConfig), "getItemForValue called with config");
 
 		const fnDone = assert.async();
-		oCondition = Condition.createCondition("EQ", ["I1"], undefined, undefined, ConditionValidated.Validated);
+		oCondition = Condition.createCondition(OperatorName.EQ, ["I1"], undefined, undefined, ConditionValidated.Validated);
 		let oPromise = oConditionType.formatValue(oCondition);
 		assert.ok(oPromise instanceof Promise, "Promise returned");
 		oPromise.then(function(sDescription) {
@@ -799,7 +803,7 @@ sap.ui.define([
 				assert.equal(sDescription, "Item1 (I1)", "Result of formatting");
 
 				oConditionType.oFormatOptions.display = FieldDisplay.ValueDescription; // fake setting directly
-				oCondition = Condition.createCondition("EQ", ["I2"], undefined, undefined, ConditionValidated.Validated);
+				oCondition = Condition.createCondition(OperatorName.EQ, ["I2"], undefined, undefined, ConditionValidated.Validated);
 				oPromise = oConditionType.formatValue(oCondition);
 				assert.ok(oPromise instanceof Promise, "Promise returned");
 				oPromise.then(function(sDescription) {
@@ -829,7 +833,7 @@ sap.ui.define([
 
 		// test fallbacks without delegate
 		oConditionType.oFormatOptions.delegate = undefined; // fake setting directly
-		let oCondition = Condition.createCondition("EQ", ["YY"], undefined, undefined, ConditionValidated.Validated);
+		let oCondition = Condition.createCondition(OperatorName.EQ, ["YY"], undefined, undefined, ConditionValidated.Validated);
 		let oException;
 
 		try {
@@ -841,7 +845,7 @@ sap.ui.define([
 		assert.ok(oException, "exception fired");
 		assert.equal(oException.message, "myError", "error text");
 
-		oCondition = Condition.createCondition("EQ", ["ZZZ"], undefined, undefined, ConditionValidated.Validated);
+		oCondition = Condition.createCondition(OperatorName.EQ, ["ZZZ"], undefined, undefined, ConditionValidated.Validated);
 		let oPromise;
 		oException = undefined;
 		try {
@@ -882,7 +886,7 @@ sap.ui.define([
 		const oCondition = oConditionType.parseValue("SyncCall");
 		assert.ok(oCondition, "Result returned");
 		assert.equal(typeof oCondition, "object", "Result is object");
-		assert.equal(oCondition.operator, "EQ", "Operator");
+		assert.equal(oCondition.operator, OperatorName.EQ, "Operator");
 		assert.ok(Array.isArray(oCondition.values), "values are array");
 		assert.equal(oCondition.values.length, 2, "Values length");
 		assert.equal(oCondition.values[0], "Sync", "Values entry0");
@@ -899,7 +903,7 @@ sap.ui.define([
 		oPromise.then(function(oCondition) {
 			assert.ok(oCondition, "Result returned");
 			assert.equal(typeof oCondition, "object", "Result is object");
-			assert.equal(oCondition.operator, "EQ", "Operator");
+			assert.equal(oCondition.operator, OperatorName.EQ, "Operator");
 			assert.ok(Array.isArray(oCondition.values), "values are array");
 			assert.equal(oCondition.values.length, 2, "Values length");
 			assert.equal(oCondition.values[0], "I1", "Values entry0");
@@ -916,7 +920,7 @@ sap.ui.define([
 			oPromise.then(function(oCondition) {
 				assert.ok(oCondition, "Result returned");
 				assert.equal(typeof oCondition, "object", "Result is object");
-				assert.equal(oCondition.operator, "EQ", "Operator");
+				assert.equal(oCondition.operator, OperatorName.EQ, "Operator");
 				assert.ok(Array.isArray(oCondition.values), "values are array");
 				assert.equal(oCondition.values.length, 2, "Values length");
 				assert.equal(oCondition.values[0], "i2", "Values entry0");
@@ -948,7 +952,7 @@ sap.ui.define([
 		oPromise.then(function(oCondition) {
 			assert.ok(oCondition, "Result returned");
 			assert.equal(typeof oCondition, "object", "Result is object");
-			assert.equal(oCondition.operator, "EQ", "Operator");
+			assert.equal(oCondition.operator, OperatorName.EQ, "Operator");
 			assert.ok(Array.isArray(oCondition.values), "values are array");
 			assert.equal(oCondition.values.length, 2, "Values length");
 			assert.equal(oCondition.values[0], "i2", "Values entry0");
@@ -975,7 +979,7 @@ sap.ui.define([
 		oPromise.then(function(oCondition) {
 			assert.ok(oCondition, "Result returned");
 			assert.equal(typeof oCondition, "object", "Result is object");
-			assert.equal(oCondition.operator, "EQ", "Operator");
+			assert.equal(oCondition.operator, OperatorName.EQ, "Operator");
 			assert.ok(Array.isArray(oCondition.values), "values are array");
 			assert.equal(oCondition.values.length, 2, "Values length");
 			assert.equal(oCondition.values[0], "i2", "Values entry0");
@@ -1002,7 +1006,7 @@ sap.ui.define([
 			oPromise.then(function(oCondition) {
 				assert.ok(oCondition, "Result returned");
 				assert.equal(typeof oCondition, "object", "Result is object");
-				assert.equal(oCondition.operator, "EQ", "Operator");
+				assert.equal(oCondition.operator, OperatorName.EQ, "Operator");
 				assert.ok(Array.isArray(oCondition.values), "values are array");
 				assert.equal(oCondition.values.length, 2, "Values length");
 				assert.equal(oCondition.values[0], "I3", "Values entry0");
@@ -1017,7 +1021,7 @@ sap.ui.define([
 				oPromise.then(function(oCondition) {
 					assert.ok(oCondition, "Result returned");
 					assert.equal(typeof oCondition, "object", "Result is object");
-					assert.equal(oCondition.operator, "EQ", "Operator");
+					assert.equal(oCondition.operator, OperatorName.EQ, "Operator");
 					assert.ok(Array.isArray(oCondition.values), "values are array");
 					assert.equal(oCondition.values.length, 2, "Values length");
 					assert.equal(oCondition.values[0], "i2", "Values entry0");
@@ -1228,7 +1232,7 @@ sap.ui.define([
 		oPromise.then(function(oCondition) {
 			assert.ok(true, "Promise Then must be called");
 			assert.equal(typeof oCondition, "object", "Result is object");
-			assert.equal(oCondition.operator, "EQ", "Operator");
+			assert.equal(oCondition.operator, OperatorName.EQ, "Operator");
 			assert.ok(Array.isArray(oCondition.values), "values are array");
 			assert.equal(oCondition.values.length, 1, "Values length");
 			assert.equal(oCondition.values[0], "ZZZ", "Values entry0");
@@ -1240,7 +1244,7 @@ sap.ui.define([
 			oPromise.then(function(oCondition) {
 				assert.ok(true, "Promise Then must be called");
 				assert.equal(typeof oCondition, "object", "Result is object");
-				assert.equal(oCondition.operator, "EQ", "Operator");
+				assert.equal(oCondition.operator, OperatorName.EQ, "Operator");
 				assert.ok(Array.isArray(oCondition.values), "values are array");
 				assert.equal(oCondition.values.length, 1, "Values length");
 				assert.equal(oCondition.values[0], "notUnique", "Values entry0");
@@ -1253,7 +1257,7 @@ sap.ui.define([
 				oPromise.then(function(oCondition) {
 					assert.ok(true, "Promise Then must be called");
 					assert.equal(typeof oCondition, "object", "Result is object");
-					assert.equal(oCondition.operator, "EQ", "Operator");
+					assert.equal(oCondition.operator, OperatorName.EQ, "Operator");
 					assert.ok(Array.isArray(oCondition.values), "values are array");
 					assert.equal(oCondition.values.length, 1, "Values length");
 					assert.equal(oCondition.values[0], "ZZZ", "Values entry0");
@@ -1276,13 +1280,13 @@ sap.ui.define([
 
 	QUnit.test("Parsing: description -> key with default Operator", function(assert) {
 
-		oConditionType.oFormatOptions.operators = ["EQ", "Contains"]; // fake setting directly
-		sinon.stub(FilterOperatorUtil, "getDefaultOperator").returns(FilterOperatorUtil.getOperator("Contains")); // fake contains as default operator
+		oConditionType.oFormatOptions.operators = [OperatorName.EQ, OperatorName.Contains]; // fake setting directly
+		sinon.stub(FilterOperatorUtil, "getDefaultOperator").returns(FilterOperatorUtil.getOperator(OperatorName.Contains)); // fake contains as default operator
 
 		const oCondition = oConditionType.parseValue("X");
 		assert.ok(oCondition, "Result returned");
 		assert.equal(typeof oCondition, "object", "Result is object");
-		assert.equal(oCondition.operator, "Contains", "Operator");
+		assert.equal(oCondition.operator, OperatorName.Contains, "Operator");
 		assert.ok(Array.isArray(oCondition.values), "values are array");
 		assert.equal(oCondition.values.length, 1, "Values length");
 		assert.equal(oCondition.values[0], "X", "Values entry1");
@@ -1291,7 +1295,7 @@ sap.ui.define([
 
 		// default operator not allowed
 		oValueHelp.getItemForValue.resetHistory();
-		oConditionType.oFormatOptions.operators = ["GT", "EQ"]; // fake setting directly
+		oConditionType.oFormatOptions.operators = [OperatorName.GT, OperatorName.EQ]; // fake setting directly
 		const fnDone = assert.async();
 		let oPromise = oConditionType.parseValue("ZZZ");
 		assert.ok(oPromise instanceof Promise, "Promise returned");
@@ -1299,7 +1303,7 @@ sap.ui.define([
 		oPromise.then(function(oCondition) {
 			assert.ok(oCondition, "Result returned");
 			assert.equal(typeof oCondition, "object", "Result is object");
-			assert.equal(oCondition.operator, "GT", "Operator");
+			assert.equal(oCondition.operator, OperatorName.GT, "Operator");
 			assert.ok(Array.isArray(oCondition.values), "values are array");
 			assert.equal(oCondition.values.length, 1, "Values length");
 			assert.equal(oCondition.values[0], "ZZZ", "Values entry1");
@@ -1307,7 +1311,7 @@ sap.ui.define([
 			assert.ok(oValueHelp.getItemForValue.calledOnce, "getItemForValue called");
 
 			// use EQ operator -> if invalid don't use as default
-			FilterOperatorUtil.getDefaultOperator.returns(FilterOperatorUtil.getOperator("EQ"));
+			FilterOperatorUtil.getDefaultOperator.returns(FilterOperatorUtil.getOperator(OperatorName.EQ));
 			oValueHelp.getItemForValue.resetHistory();
 			let oException;
 			try {
@@ -1329,7 +1333,7 @@ sap.ui.define([
 
 				// only one operator
 				oValueHelp.getItemForValue.resetHistory();
-				oConditionType.oFormatOptions.operators = ["EQ"]; // fake setting directly
+				oConditionType.oFormatOptions.operators = [OperatorName.EQ]; // fake setting directly
 				oException = undefined;
 				try {
 					oPromise = oConditionType.parseValue("XXX");
@@ -1364,7 +1368,7 @@ sap.ui.define([
 
 		let oOperator = new Operator({
 			name: "MyContains",
-			filterOperator: "Contains",
+			filterOperator: FilterOperator.Contains,
 			tokenParse: "^\\*(.*)\\*$",
 			tokenFormat: "*{0}*",
 			valueTypes: [OperatorValueType.Self],
@@ -1374,7 +1378,7 @@ sap.ui.define([
 
 		oOperator = new Operator({
 			name: "MyInclude",
-			filterOperator: "EQ",
+			filterOperator: FilterOperator.EQ,
 			tokenParse: "^=([^=].*)$",
 			tokenFormat: "={0}",
 			valueTypes: [OperatorValueType.Self],
@@ -1384,7 +1388,7 @@ sap.ui.define([
 
 		oOperator = new Operator({ // test excluding operator with validation
 			name: "MyExclude",
-			filterOperator: "NE",
+			filterOperator: FilterOperator.NE,
 			tokenParse: "^!=(.+)$",
 			tokenFormat: "!(={0})",
 			valueTypes: [OperatorValueType.Self],
@@ -1466,7 +1470,7 @@ sap.ui.define([
 	QUnit.test("Parsing: description (key entered) -> key", function(assert) {
 
 		oConditionType.oFormatOptions.display = FieldDisplay.Description; // fake setting directly
-		sinon.stub(FilterOperatorUtil, "getDefaultOperator").returns(FilterOperatorUtil.getOperator("Contains")); // fake contains as default operator
+		sinon.stub(FilterOperatorUtil, "getDefaultOperator").returns(FilterOperatorUtil.getOperator(OperatorName.Contains)); // fake contains as default operator
 
 		let oPromise = oConditionType.parseValue("I2");
 		assert.ok(oPromise instanceof Promise, "Promise returned");
@@ -1475,7 +1479,7 @@ sap.ui.define([
 		oPromise.then(function(oCondition) {
 			assert.ok(oCondition, "Result returned");
 			assert.equal(typeof oCondition, "object", "Result is object");
-			assert.equal(oCondition.operator, "EQ", "Operator");
+			assert.equal(oCondition.operator, OperatorName.EQ, "Operator");
 			assert.ok(Array.isArray(oCondition.values), "values are array");
 			assert.equal(oCondition.values.length, 2, "Values length");
 			assert.equal(oCondition.values[0], "i2", "Values entry0");
@@ -1500,7 +1504,7 @@ sap.ui.define([
 				oPromise.then(function(oCondition) {
 					assert.ok(oCondition, "Result returned");
 					assert.equal(typeof oCondition, "object", "Result is object");
-					assert.equal(oCondition.operator, "Contains", "Operator");
+					assert.equal(oCondition.operator, OperatorName.Contains, "Operator");
 					assert.ok(Array.isArray(oCondition.values), "values are array");
 					assert.equal(oCondition.values.length, 1, "Values length");
 					assert.equal(oCondition.values[0], "XXX", "Values entry1");
@@ -1527,7 +1531,7 @@ sap.ui.define([
 	QUnit.test("Parsing: value only -> validation from help", function(assert) {
 
 		oConditionType.oFormatOptions.display = FieldDisplay.Value; // fake setting directly
-		sinon.stub(FilterOperatorUtil, "getDefaultOperator").returns(FilterOperatorUtil.getOperator("Contains")); // fake contains as default operator
+		sinon.stub(FilterOperatorUtil, "getDefaultOperator").returns(FilterOperatorUtil.getOperator(OperatorName.Contains)); // fake contains as default operator
 
 		let oPromise = oConditionType.parseValue("ZZZ");
 		assert.ok(oPromise instanceof Promise, "Promise returned");
@@ -1549,20 +1553,20 @@ sap.ui.define([
 			oPromise.then(function(oCondition) {
 				assert.ok(oCondition, "Result returned");
 				assert.equal(typeof oCondition, "object", "Result is object");
-				assert.equal(oCondition.operator, "Contains", "Operator");
+				assert.equal(oCondition.operator, OperatorName.Contains, "Operator");
 				assert.ok(Array.isArray(oCondition.values), "values are array");
 				assert.equal(oCondition.values.length, 1, "Values length");
 				assert.equal(oCondition.values[0], "ZZZ", "Values entry1");
 				assert.equal(oCondition.validated, ConditionValidated.NotValidated, "condition not validated");
 
-				oConditionType.oFormatOptions.operators = ["EQ"]; // fake setting directly
+				oConditionType.oFormatOptions.operators = [OperatorName.EQ]; // fake setting directly
 				oValueHelp.setValidateInput(false);
 				oPromise = oConditionType.parseValue("ZZZ");
 				assert.ok(oPromise instanceof Promise, "Promise returned");
 				oPromise.then(function(oCondition) {
 					assert.ok(oCondition, "Result returned");
 					assert.equal(typeof oCondition, "object", "Result is object");
-					assert.equal(oCondition.operator, "EQ", "Operator");
+					assert.equal(oCondition.operator, OperatorName.EQ, "Operator");
 					assert.ok(Array.isArray(oCondition.values), "values are array");
 					assert.equal(oCondition.values.length, 1, "Values length");
 					assert.equal(oCondition.values[0], "ZZZ", "Values entry1");
@@ -1596,7 +1600,7 @@ sap.ui.define([
 		oPromise.then(function(oCondition) {
 			assert.ok(oCondition, "Result returned");
 			assert.equal(typeof oCondition, "object", "Result is object");
-			assert.equal(oCondition.operator, "EQ", "Operator");
+			assert.equal(oCondition.operator, OperatorName.EQ, "Operator");
 			assert.ok(Array.isArray(oCondition.values), "values are array");
 			assert.equal(oCondition.values.length, 2, "Values length");
 			assert.equal(oCondition.values[0], "", "Values entry0");
@@ -1629,7 +1633,7 @@ sap.ui.define([
 		oPromise.then(function(oCondition) {
 			assert.ok(oCondition, "Result returned");
 			assert.equal(typeof oCondition, "object", "Result is object");
-			assert.equal(oCondition.operator, "EQ", "Operator");
+			assert.equal(oCondition.operator, OperatorName.EQ, "Operator");
 			assert.ok(Array.isArray(oCondition.values), "values are array");
 			assert.equal(oCondition.values.length, 2, "Values length");
 			assert.equal(oCondition.values[0], "000000", "Values entry0");
@@ -1726,7 +1730,7 @@ sap.ui.define([
 		oPromise.then(function(oCondition) {
 			assert.ok(oCondition, "Result returned");
 			assert.equal(typeof oCondition, "object", "Result is object");
-			assert.equal(oCondition.operator, "EQ", "Operator");
+			assert.equal(oCondition.operator, OperatorName.EQ, "Operator");
 			assert.ok(Array.isArray(oCondition.values), "values are array");
 			assert.equal(oCondition.values.length, 2, "Values length");
 			assert.equal(oCondition.values[0], "", "Values entry0");
@@ -1778,10 +1782,10 @@ sap.ui.define([
 			oValueType = new CurrencyType({showMeasure: false}, {maximum: 1000});
 			oUnitType = new CurrencyType({showNumber: false}, {maximum: 1000});
 			oOriginalType = new CurrencyType(undefined, {maximum: 1000});
-			oConditionType = new ConditionType({valueType: oValueType, additionalType: oUnitType, operators: ["EQ"], originalDateType: oOriginalType, delegate: FieldBaseDelegate});
-			oUnitConditionType = new ConditionType({valueType: oUnitType, additionalType: oValueType, operators: ["EQ"], hideOperator: true, originalDateType: oOriginalType, delegate: FieldBaseDelegate});
+			oConditionType = new ConditionType({valueType: oValueType, additionalType: oUnitType, operators: [OperatorName.EQ], originalDateType: oOriginalType, delegate: FieldBaseDelegate});
+			oUnitConditionType = new ConditionType({valueType: oUnitType, additionalType: oValueType, operators: [OperatorName.EQ], hideOperator: true, originalDateType: oOriginalType, delegate: FieldBaseDelegate});
 			oOneFieldType = new CurrencyType();
-			oOneFieldConditionType = new ConditionType({valueType: oOneFieldType, operators: ["EQ", "BT"], delegate: FieldBaseDelegate});
+			oOneFieldConditionType = new ConditionType({valueType: oOneFieldType, operators: [OperatorName.EQ, OperatorName.BT], delegate: FieldBaseDelegate});
 		},
 		afterEach: function() {
 			oConditionType.destroy();
@@ -1805,7 +1809,7 @@ sap.ui.define([
 
 		let oType = new CurrencyType({showMeasure: false});
 		let sValue = oType.formatValue([123.45, "USD"], "string"); // because of special whitspace and local dependend
-		const oCondition = Condition.createCondition("EQ", [[123.45, "USD"]], undefined, undefined, ConditionValidated.Validated);
+		const oCondition = Condition.createCondition(OperatorName.EQ, [[123.45, "USD"]], undefined, undefined, ConditionValidated.Validated);
 		let sResult = oConditionType.formatValue(oCondition);
 		assert.equal(sResult, sValue, "Result of number formatting");
 
@@ -1825,7 +1829,7 @@ sap.ui.define([
 		let oType = new CurrencyType({showMeasure: false});
 		let sValue1 = oType.formatValue([1, "USD"], "string"); // because of special whitspace and local dependend
 		let sValue2 = oType.formatValue([2, "USD"], "string"); // because of special whitspace and local dependend
-		const oCondition = Condition.createCondition("BT", [[1, "USD"], [2, "USD"]]);
+		const oCondition = Condition.createCondition(OperatorName.BT, [[1, "USD"], [2, "USD"]]);
 		let sResult = oConditionType.formatValue(oCondition);
 		assert.equal(sResult, sValue1 + "..." + sValue2, "Result of number formatting");
 
@@ -1843,7 +1847,7 @@ sap.ui.define([
 	QUnit.test("Formatting: invalid condition", function(assert) {
 
 		let oException;
-		const oCondition = Condition.createCondition("EQ", ["X"]);
+		const oCondition = Condition.createCondition(OperatorName.EQ, ["X"]);
 
 		try {
 			oConditionType.formatValue(oCondition);
@@ -1866,7 +1870,7 @@ sap.ui.define([
 		});
 		oUnitConditionType.oFormatOptions.valueHelpID = "VH1"; // fake setting directly
 		oUnitConditionType.oFormatOptions.display = FieldDisplay.Description; // fake setting directly
-		const oCondition = Condition.createCondition("EQ", [[123.45, "EUR"]], undefined, undefined, ConditionValidated.Validated);
+		const oCondition = Condition.createCondition(OperatorName.EQ, [[123.45, "EUR"]], undefined, undefined, ConditionValidated.Validated);
 
 		const fnDone = assert.async();
 		const oPromise = oUnitConditionType.formatValue(oCondition);
@@ -1895,7 +1899,7 @@ sap.ui.define([
 		let oCondition = oConditionType.parseValue("1.23");
 		assert.ok(oCondition, "Result returned");
 		assert.equal(typeof oCondition, "object", "Result is object");
-		assert.equal(oCondition.operator, "EQ", "Operator");
+		assert.equal(oCondition.operator, OperatorName.EQ, "Operator");
 		assert.ok(Array.isArray(oCondition.values), "values are array");
 		assert.equal(oCondition.values.length, 1, "Values length");
 		assert.equal(oCondition.values[0].length, 2, "Values0 length");
@@ -1906,7 +1910,7 @@ sap.ui.define([
 		oCondition = oUnitConditionType.parseValue("USD");
 		assert.ok(oCondition, "Result returned");
 		assert.equal(typeof oCondition, "object", "Result is object");
-		assert.equal(oCondition.operator, "EQ", "Operator");
+		assert.equal(oCondition.operator, OperatorName.EQ, "Operator");
 		assert.ok(Array.isArray(oCondition.values), "values are array");
 		assert.equal(oCondition.values.length, 1, "Values length");
 		assert.equal(oCondition.values[0].length, 2, "Values0 length");
@@ -1917,7 +1921,7 @@ sap.ui.define([
 		oCondition = oConditionType.parseValue("123.45");
 		assert.ok(oCondition, "Result returned");
 		assert.equal(typeof oCondition, "object", "Result is object");
-		assert.equal(oCondition.operator, "EQ", "Operator");
+		assert.equal(oCondition.operator, OperatorName.EQ, "Operator");
 		assert.ok(Array.isArray(oCondition.values), "values are array");
 		assert.equal(oCondition.values.length, 1, "Values length");
 		assert.equal(oCondition.values[0].length, 2, "Values0 length");
@@ -1929,7 +1933,7 @@ sap.ui.define([
 		oCondition = oConditionType.parseValue("1...2");
 		assert.ok(oCondition, "Result returned");
 		assert.equal(typeof oCondition, "object", "Result is object");
-		assert.equal(oCondition.operator, "BT", "Operator");
+		assert.equal(oCondition.operator, OperatorName.BT, "Operator");
 		assert.ok(Array.isArray(oCondition.values), "values are array");
 		assert.equal(oCondition.values.length, 2, "Values length");
 		assert.equal(oCondition.values[0].length, 2, "Values0 length");
@@ -1941,7 +1945,7 @@ sap.ui.define([
 //		oCondition = oUnitConditionType.parseValue("");
 //		assert.ok(oCondition, "Result returned");
 //		assert.equal(typeof oCondition, "object", "Result is object");
-//		assert.equal(oCondition.operator, "EQ", "Operator"); // as it don't have the old condition just the old value
+//		assert.equal(oCondition.operator, OperatorName.EQ", "Operator"); // as it don't have the old condition just the old value
 //		assert.ok(Array.isArray(oCondition.values), "values are array");
 //		assert.equal(oCondition.values.length, 1, "Values length");
 //		assert.equal(oCondition.values[0].length, 2, "Values0 length");
@@ -1964,7 +1968,7 @@ sap.ui.define([
 		oCondition = oOneFieldConditionType.parseValue(sValue);
 		assert.ok(oCondition, "Result returned");
 		assert.equal(typeof oCondition, "object", "Result is object");
-		assert.equal(oCondition.operator, "EQ", "Operator");
+		assert.equal(oCondition.operator, OperatorName.EQ, "Operator");
 		assert.ok(Array.isArray(oCondition.values), "values are array");
 		assert.equal(oCondition.values.length, 1, "Values length");
 		assert.equal(oCondition.values[0].length, 2, "Values0 length");
@@ -2025,7 +2029,7 @@ sap.ui.define([
 		oCondition = oUnitConditionType.parseValue("USD");
 		assert.ok(oCondition, "Result returned");
 		assert.equal(typeof oCondition, "object", "Result is object");
-		assert.equal(oCondition.operator, "EQ", "Operator");
+		assert.equal(oCondition.operator, OperatorName.EQ, "Operator");
 		assert.ok(Array.isArray(oCondition.values), "values are array");
 		assert.equal(oCondition.values.length, 1, "Values length");
 		assert.equal(oCondition.values[0].length, 2, "Values0 length");
@@ -2035,7 +2039,7 @@ sap.ui.define([
 		oCondition = oConditionType.parseValue("");
 		assert.ok(oCondition, "Result returned");
 		assert.equal(typeof oCondition, "object", "Result is object");
-		assert.equal(oCondition.operator, "EQ", "Operator");
+		assert.equal(oCondition.operator, OperatorName.EQ, "Operator");
 		assert.ok(Array.isArray(oCondition.values), "values are array");
 		assert.equal(oCondition.values.length, 1, "Values length");
 		assert.equal(oCondition.values[0].length, 2, "Values0 length");
@@ -2045,7 +2049,7 @@ sap.ui.define([
 		// oCondition = oUnitConditionType.parseValue("");
 		// assert.ok(oCondition, "Result returned");
 		// assert.equal(typeof oCondition, "object", "Result is object");
-		// assert.equal(oCondition.operator, "EQ", "Operator");
+		// assert.equal(oCondition.operator, OperatorName.EQ", "Operator");
 		// assert.ok(Array.isArray(oCondition.values), "values are array");
 		// assert.equal(oCondition.values.length, 1, "Values length");
 		// assert.equal(oCondition.values[0].length, 2, "Values0 length");
@@ -2056,14 +2060,14 @@ sap.ui.define([
 
 	QUnit.test("Parsing: BT with unit", function(assert) {
 
-		oConditionType.oFormatOptions.operators = ["EQ", "BT"]; // fake setting directly
+		oConditionType.oFormatOptions.operators = [OperatorName.EQ, OperatorName.BT]; // fake setting directly
 		sinon.spy(oValueType, "parseValue");
 		sinon.stub(oValueType, "getParseWithValues").returns(true); // fake parseWithValue
 
 		let oCondition = oConditionType.parseValue("1.23...4.56");
 		assert.ok(oCondition, "Result returned");
 		assert.equal(typeof oCondition, "object", "Result is object");
-		assert.equal(oCondition.operator, "BT", "Operator");
+		assert.equal(oCondition.operator, OperatorName.BT, "Operator");
 		assert.ok(Array.isArray(oCondition.values), "values are array");
 		assert.equal(oCondition.values.length, 2, "Values length");
 		assert.equal(oCondition.values[0].length, 2, "Values0 length");
@@ -2075,7 +2079,7 @@ sap.ui.define([
 		assert.ok(oValueType.parseValue.calledWith("1.23", "string", []), "parseValue of type called with first value");
 		assert.ok(oValueType.parseValue.calledWith("4.56", "string", []), "parseValue of type called with second value");
 
-		oUnitConditionType.oFormatOptions.operators = ["EQ", "BT"]; // fake setting directly
+		oUnitConditionType.oFormatOptions.operators = [OperatorName.EQ, OperatorName.BT]; // fake setting directly
 		let oException;
 
 		try {
@@ -2097,7 +2101,7 @@ sap.ui.define([
 		const oCondition = oConditionType.parseValue("1.23");
 		assert.ok(oCondition, "Result returned");
 		assert.equal(typeof oCondition, "object", "Result is object");
-		assert.equal(oCondition.operator, "EQ", "Operator");
+		assert.equal(oCondition.operator, OperatorName.EQ, "Operator");
 		assert.ok(Array.isArray(oCondition.values), "values are array");
 		assert.equal(oCondition.values.length, 1, "Values length");
 		assert.equal(oCondition.values[0].length, 2, "Values0 length");
@@ -2131,7 +2135,7 @@ sap.ui.define([
 		oPromise.then(function(oCondition) {
 			assert.ok(oCondition, "Result returned");
 			assert.equal(typeof oCondition, "object", "Result is object");
-			assert.equal(oCondition.operator, "EQ", "Operator");
+			assert.equal(oCondition.operator, OperatorName.EQ, "Operator");
 			assert.ok(Array.isArray(oCondition.values), "values are array");
 			assert.equal(oCondition.values.length, 1, "Values length");
 			assert.equal(oCondition.values[0].length, 2, "Values0 length");
@@ -2144,7 +2148,7 @@ sap.ui.define([
 			oPromise.then(function(oCondition) {
 				assert.ok(oCondition, "Result returned");
 				assert.equal(typeof oCondition, "object", "Result is object");
-				assert.equal(oCondition.operator, "EQ", "Operator");
+				assert.equal(oCondition.operator, OperatorName.EQ, "Operator");
 				assert.ok(Array.isArray(oCondition.values), "values are array");
 				assert.equal(oCondition.values.length, 1, "Values length");
 				assert.equal(oCondition.values[0].length, 2, "Values0 length");
@@ -2172,7 +2176,7 @@ sap.ui.define([
 //		oCondition = oUnitConditionType.parseValue("");
 //		assert.ok(oCondition, "Result returned");
 //		assert.equal(typeof oCondition, "object", "Result is object");
-//		assert.equal(oCondition.operator, "EQ", "Operator");
+//		assert.equal(oCondition.operator, OperatorName.EQ", "Operator");
 //		assert.ok(Array.isArray(oCondition.values), "values are array");
 //		assert.equal(oCondition.values.length, 1, "Values length");
 //		assert.equal(oCondition.values[0].length, 2, "Values0 length");
@@ -2203,7 +2207,7 @@ sap.ui.define([
 		sinon.spy(oValueType, "validateValue");
 		sinon.spy(oUnitType, "validateValue");
 
-		const oCondition = Condition.createCondition("EQ", [[123.45, "USD"]]);
+		const oCondition = Condition.createCondition(OperatorName.EQ, [[123.45, "USD"]]);
 		oConditionType.validateValue(oCondition);
 
 		assert.ok(oValueType.validateValue.calledWith([123.45, "USD"]), "Currency type used for validation");
@@ -2216,7 +2220,7 @@ sap.ui.define([
 
 	QUnit.test("Validating: invalid value", function(assert) {
 
-		const oCondition = Condition.createCondition("EQ", [[999999, "USD"]]);
+		const oCondition = Condition.createCondition(OperatorName.EQ, [[999999, "USD"]]);
 		let oException;
 		sinon.spy(oValueType, "validateValue");
 		sinon.spy(oUnitType, "validateValue");
@@ -2250,7 +2254,7 @@ sap.ui.define([
 	QUnit.module("Not nullable type", {
 		beforeEach: function() {
 			oValueType = new StringType({}, {nullable: false});
-			oConditionType = new ConditionType({valueType: oValueType, fieldPath: "X", operators: ["EQ"]});
+			oConditionType = new ConditionType({valueType: oValueType, fieldPath: "X", operators: [OperatorName.EQ]});
 		},
 		afterEach: function() {
 			oConditionType.destroy();
@@ -2278,7 +2282,7 @@ sap.ui.define([
 	QUnit.module("Not nullable type with parseKeepsEmptyString", {
 		beforeEach: function() {
 			oValueType = new StringType({parseKeepsEmptyString: true}, {nullable: false});
-			oConditionType = new ConditionType({valueType: oValueType, fieldPath: "X", operators: ["EQ"]});
+			oConditionType = new ConditionType({valueType: oValueType, fieldPath: "X", operators: [OperatorName.EQ]});
 		},
 		afterEach: function() {
 			oConditionType.destroy();
@@ -2366,7 +2370,7 @@ sap.ui.define([
 			oConditionType = new ConditionType({
 				display: FieldDisplay.Description,
 				valueHelpID: "VH1",
-				operators: ["EQ", "GT"],
+				operators: [OperatorName.EQ, OperatorName.GT],
 				asyncParsing: fnAsync,
 				delegate: FieldBaseDelegate,
 				bindingContext: "BC" // just dummy to test forwarding to valueHelp
@@ -2392,15 +2396,15 @@ sap.ui.define([
 
 	QUnit.test("Formatting: multiple promises", function(assert) {
 
-		let oCondition = Condition.createCondition("EQ", ["1"], undefined, undefined, ConditionValidated.Validated);
+		let oCondition = Condition.createCondition(OperatorName.EQ, ["1"], undefined, undefined, ConditionValidated.Validated);
 		const vResult1 = oConditionType.formatValue(oCondition);
 		assert.ok(vResult1 instanceof Promise, "Promise returned");
 
-		oCondition = Condition.createCondition("EQ", ["2"], undefined, undefined, ConditionValidated.Validated);
+		oCondition = Condition.createCondition(OperatorName.EQ, ["2"], undefined, undefined, ConditionValidated.Validated);
 		const vResult2 = oConditionType.formatValue(oCondition);
 		assert.ok(vResult2 instanceof Promise, "Promise returned");
 
-		oCondition = Condition.createCondition("EQ", ["3"], undefined, undefined, ConditionValidated.Validated);
+		oCondition = Condition.createCondition(OperatorName.EQ, ["3"], undefined, undefined, ConditionValidated.Validated);
 		const vResult3 = oConditionType.formatValue(oCondition);
 		assert.ok(vResult3 instanceof Promise, "Promise returned");
 
@@ -2426,15 +2430,15 @@ sap.ui.define([
 
 	QUnit.test("Formatting: multiple promises with error on last call", function(assert) {
 
-		let oCondition = Condition.createCondition("EQ", ["1"], undefined, undefined, ConditionValidated.Validated);
+		let oCondition = Condition.createCondition(OperatorName.EQ, ["1"], undefined, undefined, ConditionValidated.Validated);
 		const vResult1 = oConditionType.formatValue(oCondition);
 		assert.ok(vResult1 instanceof Promise, "Promise returned");
 
-		oCondition = Condition.createCondition("EQ", ["2"], undefined, undefined, ConditionValidated.Validated);
+		oCondition = Condition.createCondition(OperatorName.EQ, ["2"], undefined, undefined, ConditionValidated.Validated);
 		const vResult2 = oConditionType.formatValue(oCondition);
 		assert.ok(vResult2 instanceof Promise, "Promise returned");
 
-		oCondition = Condition.createCondition("EQ", ["3"], undefined, undefined, ConditionValidated.Validated);
+		oCondition = Condition.createCondition(OperatorName.EQ, ["3"], undefined, undefined, ConditionValidated.Validated);
 		const vResult3 = oConditionType.formatValue(oCondition);
 		assert.ok(vResult3 instanceof Promise, "Promise returned");
 
@@ -2482,15 +2486,15 @@ sap.ui.define([
 
 	QUnit.test("Formatting: multiple promises with error between", function(assert) {
 
-		let oCondition = Condition.createCondition("EQ", ["1"], undefined, undefined, ConditionValidated.Validated);
+		let oCondition = Condition.createCondition(OperatorName.EQ, ["1"], undefined, undefined, ConditionValidated.Validated);
 		const vResult1 = oConditionType.formatValue(oCondition);
 		assert.ok(vResult1 instanceof Promise, "Promise returned");
 
-		oCondition = Condition.createCondition("EQ", ["2"], undefined, undefined, ConditionValidated.Validated);
+		oCondition = Condition.createCondition(OperatorName.EQ, ["2"], undefined, undefined, ConditionValidated.Validated);
 		const vResult2 = oConditionType.formatValue(oCondition);
 		assert.ok(vResult2 instanceof Promise, "Promise returned");
 
-		oCondition = Condition.createCondition("EQ", ["3"], undefined, undefined, ConditionValidated.Validated);
+		oCondition = Condition.createCondition(OperatorName.EQ, ["3"], undefined, undefined, ConditionValidated.Validated);
 		const vResult3 = oConditionType.formatValue(oCondition);
 		assert.ok(vResult3 instanceof Promise, "Promise returned");
 
@@ -2536,15 +2540,15 @@ sap.ui.define([
 
 	QUnit.test("Formatting: multiple promises and call with given description", function(assert) {
 
-		let oCondition = Condition.createCondition("EQ", ["1"], undefined, undefined, ConditionValidated.Validated);
+		let oCondition = Condition.createCondition(OperatorName.EQ, ["1"], undefined, undefined, ConditionValidated.Validated);
 		const vResult1 = oConditionType.formatValue(oCondition);
 		assert.ok(vResult1 instanceof Promise, "Promise returned");
 
-		oCondition = Condition.createCondition("EQ", ["2"], undefined, undefined, ConditionValidated.Validated);
+		oCondition = Condition.createCondition(OperatorName.EQ, ["2"], undefined, undefined, ConditionValidated.Validated);
 		const vResult2 = oConditionType.formatValue(oCondition);
 		assert.ok(vResult2 instanceof Promise, "Promise returned");
 
-		oCondition = Condition.createCondition("EQ", ["S", "Sync Text"], undefined, undefined, ConditionValidated.Validated);
+		oCondition = Condition.createCondition(OperatorName.EQ, ["S", "Sync Text"], undefined, undefined, ConditionValidated.Validated);
 		const vResult3 = oConditionType.formatValue(oCondition);
 		assert.equal(vResult3, "Sync Text", "Description returned");
 
@@ -2732,7 +2736,7 @@ sap.ui.define([
 
 	QUnit.test("Formatting and Parsing", function(assert) {
 
-		const oCondition = Condition.createCondition("EQ", ["1"], undefined, undefined, ConditionValidated.Validated);
+		const oCondition = Condition.createCondition(OperatorName.EQ, ["1"], undefined, undefined, ConditionValidated.Validated);
 		const vResult1 = oConditionType.formatValue(oCondition);
 		assert.ok(vResult1 instanceof Promise, "Promise returned");
 
@@ -2762,7 +2766,7 @@ sap.ui.define([
 		const vResult1 = oConditionType.parseValue("1");
 		assert.ok(vResult1 instanceof Promise, "Promise returned");
 
-		const oCondition = Condition.createCondition("EQ", ["2"], undefined, undefined, ConditionValidated.Validated);
+		const oCondition = Condition.createCondition(OperatorName.EQ, ["2"], undefined, undefined, ConditionValidated.Validated);
 		const vResult2 = oConditionType.formatValue(oCondition);
 		assert.ok(vResult2 instanceof Promise, "Promise returned");
 
@@ -2792,7 +2796,7 @@ sap.ui.define([
 			oConditionType = new ConditionType({
 				valueType: oValueType,
 				additionalValueType: oAdditionalType,
-				operators: ["EQ"],
+				operators: [OperatorName.EQ],
 				display: FieldDisplay.ValueDescription,
 				asyncParsing: fnAsync,
 				delegate: FieldBaseDelegate,
@@ -2838,7 +2842,7 @@ sap.ui.define([
 		const oCondition = oConditionType.parseValue("2 (2023-07-31)");
 		assert.ok(oCondition, "Result returned");
 		assert.equal(typeof oCondition, "object", "Result is object");
-		assert.equal(oCondition.operator, "EQ", "Operator");
+		assert.equal(oCondition.operator, OperatorName.EQ, "Operator");
 		assert.ok(Array.isArray(oCondition.values), "values are array");
 		assert.equal(oCondition.values.length, 2, "Values length");
 		assert.equal(oCondition.values[0], 2, "Values: first entry");
@@ -2899,7 +2903,7 @@ sap.ui.define([
 
 		oConditionType.oFormatOptions.valueHelpID = "VH1"; // fake setting directly
 		const fnDone = assert.async();
-		const oCondition = Condition.createCondition("EQ", [1], undefined, undefined, ConditionValidated.Validated);
+		const oCondition = Condition.createCondition(OperatorName.EQ, [1], undefined, undefined, ConditionValidated.Validated);
 		const oConfig = { // to compare
 			value: 1,
 			parsedValue: 1,
@@ -2949,7 +2953,7 @@ sap.ui.define([
 		oPromise.then(function(oCondition) {
 			assert.ok(oCondition, "Result returned");
 			assert.equal(typeof oCondition, "object", "Result is object");
-			assert.equal(oCondition.operator, "EQ", "Operator");
+			assert.equal(oCondition.operator, OperatorName.EQ, "Operator");
 			assert.ok(Array.isArray(oCondition.values), "values are array");
 			assert.equal(oCondition.values.length, 2, "Values length");
 			assert.equal(oCondition.values[0], 2, "Values entry0");
@@ -2987,7 +2991,7 @@ sap.ui.define([
 		oPromise.then(function(oCondition) {
 			assert.ok(oCondition, "Result returned");
 			assert.equal(typeof oCondition, "object", "Result is object");
-			assert.equal(oCondition.operator, "EQ", "Operator");
+			assert.equal(oCondition.operator, OperatorName.EQ, "Operator");
 			assert.ok(Array.isArray(oCondition.values), "values are array");
 			assert.equal(oCondition.values.length, 2, "Values length");
 			assert.equal(oCondition.values[0], 1, "Values entry0");
@@ -3025,7 +3029,7 @@ sap.ui.define([
 		oPromise.then(function(oCondition) {
 			assert.ok(oCondition, "Result returned");
 			assert.equal(typeof oCondition, "object", "Result is object");
-			assert.equal(oCondition.operator, "EQ", "Operator");
+			assert.equal(oCondition.operator, OperatorName.EQ, "Operator");
 			assert.ok(Array.isArray(oCondition.values), "values are array");
 			assert.equal(oCondition.values.length, 2, "Values length");
 			assert.equal(oCondition.values[0], 1, "Values entry0");

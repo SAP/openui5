@@ -9,6 +9,7 @@ sap.ui.define([
 	"sap/ui/mdc/valuehelp/content/FixedList",
 	"sap/ui/mdc/valuehelp/content/FixedListItem",
 	"sap/ui/mdc/condition/Condition",
+	"sap/ui/mdc/enums/OperatorName",
 	"sap/ui/mdc/enums/ValueHelpSelectionType",
 	"sap/ui/model/ParseException",
 	"sap/ui/model/FormatException",
@@ -20,6 +21,7 @@ sap.ui.define([
 		FixedList,
 		FixedListItem,
 		Condition,
+		OperatorName,
 		ValueHelpSelectionType,
 		ParseException,
 		FormatException,
@@ -70,7 +72,7 @@ sap.ui.define([
 				conditions: aConditions, // don't need to test the binding of Container here
 				config: { // don't need to test the binding of Container here
 					maxConditions: -1,
-					operators: ["EQ"]
+					operators: [OperatorName.EQ]
 				}
 			});
 			sinon.stub(oFixedList, "getParent").returns(oContainer);

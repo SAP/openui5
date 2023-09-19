@@ -6,6 +6,7 @@ sap.ui.define([
 	"sap/ui/mdc/valuehelp/base/ListContent",
 	"sap/ui/mdc/util/loadModules",
 	"sap/ui/mdc/enums/ConditionValidated",
+	"sap/ui/mdc/enums/OperatorName",
 	"sap/ui/mdc/enums/ValueHelpSelectionType",
 	"sap/ui/model/ParseException",
 	"sap/base/util/deepEqual"
@@ -13,6 +14,7 @@ sap.ui.define([
 	ListContent,
 	loadModules,
 	ConditionValidated,
+	OperatorName,
 	ValueHelpSelectionType,
 	ParseException,
 	deepEqual
@@ -249,7 +251,7 @@ sap.ui.define([
 			let bFistFilterItemSelected = false;
 //			var oOperator = this._getOperator();
 
-			if (aConditions.length > 0 && (aConditions[0].validated === ConditionValidated.Validated || aConditions[0].operator === "EQ"/*oOperator.name*/)) {
+			if (aConditions.length > 0 && (aConditions[0].validated === ConditionValidated.Validated || aConditions[0].operator === OperatorName.EQ/*oOperator.name*/)) {
 				vSelectedKey = aConditions[0].values[0];
 			}
 

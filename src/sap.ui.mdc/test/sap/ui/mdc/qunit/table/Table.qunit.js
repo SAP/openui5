@@ -59,6 +59,8 @@ sap.ui.define([
 	"sap/m/table/Util",
 	"sap/ui/mdc/enums/TableP13nMode",
 	"sap/ui/mdc/enums/TableType",
+	"sap/ui/mdc/enums/ConditionValidated",
+	"sap/ui/mdc/enums/OperatorName",
 	"sap/m/Menu",
 	"sap/m/MenuItem"
 ], function(
@@ -119,6 +121,8 @@ sap.ui.define([
 	MTableUtil,
 	TableP13nMode,
 	TableType,
+	ConditionValidated,
+	OperatorName,
 	Menu,
 	MenuItem
 ) {
@@ -1344,8 +1348,8 @@ sap.ui.define([
 			name: [
 				{
 					isEmpty: null,
-					operator: "EQ",
-					validated: "NotValidated",
+					operator: OperatorName.EQ,
+					validated: ConditionValidated.NotValidated,
 					values: ["test"]
 				}
 			]
@@ -2389,7 +2393,7 @@ sap.ui.define([
 	QUnit.test("noDataText - Table with FilterBar with filters and the table is bound", function(assert) {
 		const oFilterBar = new FilterBar("FB1");
 
-		sinon.stub(oFilterBar, "getConditions").returns({key: [{operator: "EQ", values: ["Pr"]}]});
+		sinon.stub(oFilterBar, "getConditions").returns({key: [{operator: OperatorName.EQ, values: ["Pr"]}]});
 		this.oTable.setFilter(oFilterBar);
 
 		return TableQUnitUtils.waitForBindingInfo(this.oTable).then(function() {
@@ -2402,7 +2406,7 @@ sap.ui.define([
 	QUnit.test("noDataAggregation - Table with FilterBar with filters and the table is bound", function(assert) {
 		const oFilterBar = new FilterBar("FB2");
 
-		sinon.stub(oFilterBar, "getConditions").returns({key: [{operator: "EQ", values: ["Pr"]}]});
+		sinon.stub(oFilterBar, "getConditions").returns({key: [{operator: OperatorName.EQ, values: ["Pr"]}]});
 		this.oTable.setFilter(oFilterBar);
 		this.oTable.setNoData(new IllustratedMessage());
 
@@ -2417,7 +2421,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("noDataText - Table without FilterBar but with internal filters and the table is bound", function(assert) {
-		this.oTable.setFilterConditions({ key: [{ operator: "EQ", values: ["Pr"] }] });
+		this.oTable.setFilterConditions({ key: [{ operator: OperatorName.EQ, values: ["Pr"] }] });
 
 		return TableQUnitUtils.waitForBindingInfo(this.oTable).then(function() {
 			const oRb = Core.getLibraryResourceBundle("sap.ui.mdc");
@@ -2427,7 +2431,7 @@ sap.ui.define([
 
 	QUnit.test("noDataAggregation - Table without FilterBar but with internal filters and the table is bound", function(assert) {
 		this.oTable.setNoData(new IllustratedMessage());
-		this.oTable.setFilterConditions({ key: [{ operator: "EQ", values: ["Pr"] }] });
+		this.oTable.setFilterConditions({ key: [{ operator: OperatorName.EQ, values: ["Pr"] }] });
 
 		return TableQUnitUtils.waitForBindingInfo(this.oTable).then(function() {
 			const oRb = Core.getLibraryResourceBundle("sap.ui.mdc");
@@ -4541,8 +4545,8 @@ sap.ui.define([
 					name: [
 						{
 							isEmpty: null,
-							operator: "EQ",
-							validated: "NotValidated",
+							operator: OperatorName.EQ,
+							validated: ConditionValidated.NotValidated,
 							values: ["test"]
 						}
 					]
@@ -4556,8 +4560,8 @@ sap.ui.define([
 				age: [
 					{
 						isEmpty: null,
-						operator: "EQ",
-						validated: "NotValidated",
+						operator: OperatorName.EQ,
+						validated: ConditionValidated.NotValidated,
 						values: ["test"]
 					}
 				]
@@ -4630,8 +4634,8 @@ sap.ui.define([
 						name: [
 							{
 								isEmpty: null,
-								operator: "EQ",
-								validated: "NotValidated",
+								operator: OperatorName.EQ,
+								validated: ConditionValidated.NotValidated,
 								values: ["test"]
 							}
 						]
@@ -4653,16 +4657,16 @@ sap.ui.define([
 					name: [
 						{
 							isEmpty: null,
-							operator: "EQ",
-							validated: "NotValidated",
+							operator: OperatorName.EQ,
+							validated: ConditionValidated.NotValidated,
 							values: ["test"]
 						}
 					],
 					age: [
 						{
 							isEmpty: null,
-							operator: "EQ",
-							validated: "NotValidated",
+							operator: OperatorName.EQ,
+							validated: ConditionValidated.NotValidated,
 							values: ["test"]
 						}
 					]
@@ -4691,24 +4695,24 @@ sap.ui.define([
 					name: [
 						{
 							isEmpty: null,
-							operator: "EQ",
-							validated: "NotValidated",
+							operator: OperatorName.EQ,
+							validated: ConditionValidated.NotValidated,
 							values: ["test"]
 						}
 					],
 					age: [
 						{
 							isEmpty: null,
-							operator: "EQ",
-							validated: "NotValidated",
+							operator: OperatorName.EQ,
+							validated: ConditionValidated.NotValidated,
 							values: ["test"]
 						}
 					],
 					gender: [
 						{
 							isEmpty: null,
-							operator: "EQ",
-							validated: "NotValidated",
+							operator: OperatorName.EQ,
+							validated: ConditionValidated.NotValidated,
 							values: ["test"]
 						}
 					]
@@ -4758,8 +4762,8 @@ sap.ui.define([
 				name: [
 					{
 						isEmpty: null,
-						operator: "EQ",
-						validated: "NotValidated",
+						operator: OperatorName.EQ,
+						validated: ConditionValidated.NotValidated,
 						values: ["test"]
 					}
 				]
@@ -4806,8 +4810,8 @@ sap.ui.define([
 			that.oTable.setFilterConditions({
 				name: [{
 					isEmpty: null,
-					operator: "EQ",
-					validated: "NotValidated",
+					operator: OperatorName.EQ,
+					validated: ConditionValidated.NotValidated,
 					values: ["test"]
 				}]
 			});
@@ -4829,8 +4833,8 @@ sap.ui.define([
 			that.oTable.setFilterConditions({
 				name: [{
 					isEmpty: null,
-					operator: "EQ",
-					validated: "NotValidated",
+					operator: OperatorName.EQ,
+					validated: ConditionValidated.NotValidated,
 					values: ["test"]
 				}]
 			});
@@ -5192,8 +5196,8 @@ sap.ui.define([
 		const oFilterConditions = {
 			name: [{
 				isEmpty: null,
-				operator: "EQ",
-				validated: "NotValidated",
+				operator: OperatorName.EQ,
+				validated: ConditionValidated.NotValidated,
 				values: ["test"]
 			}]
 		};

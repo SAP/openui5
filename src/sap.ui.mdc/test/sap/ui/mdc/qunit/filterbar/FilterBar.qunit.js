@@ -17,7 +17,9 @@ sap.ui.define([
 	'sap/base/util/merge',
 	"sap/ui/core/library",
 	"sap/ui/core/Core",
-	"test-resources/sap/m/qunit/p13n/TestModificationHandler"
+	"test-resources/sap/m/qunit/p13n/TestModificationHandler",
+	"sap/ui/mdc/enums/ConditionValidated",
+	"sap/ui/mdc/enums/OperatorName"
 ], function (
 	QUnitUtils,
 	createAndAppendDiv,
@@ -33,7 +35,9 @@ sap.ui.define([
 	merge,
 	CoreLibrary,
 	oCore,
-	TestModificationHandler
+	TestModificationHandler,
+	ConditionValidated,
+	OperatorName
 ) {
 	"use strict";
 
@@ -233,7 +237,7 @@ sap.ui.define([
 			},
 			filterConditions: {
 				"key1": [{
-					operator: "EQ",
+					operator: OperatorName.EQ,
 					values: ["test"]
 				}]
 			}
@@ -321,13 +325,13 @@ sap.ui.define([
 		sinon.spy(oFilterBar, "_handleConditionModelPropertyChange");
 		oCM.attachPropertyChange(oFilterBar._handleConditionModelPropertyChange, oFilterBar);
 
-		sinon.stub(oFilterBar, "_stringifyConditions").returns([Condition.createCondition("EQ", ["foo"])]);
+		sinon.stub(oFilterBar, "_stringifyConditions").returns([Condition.createCondition(OperatorName.EQ, ["foo"])]);
 		sinon.stub(oFilterBar, "_addConditionChange").callsFake(function() {
 			fResolve();
 		});
 
 
-		oCM.addCondition("fieldPath1", Condition.createCondition("EQ", ["foo"]));
+		oCM.addCondition("fieldPath1", Condition.createCondition(OperatorName.EQ, ["foo"]));
 
 		return oPromise.then(function() {
 			assert.ok(oFilterBar._handleConditionModelPropertyChange.called);
@@ -372,11 +376,11 @@ sap.ui.define([
 
 		oFilterBar.initializedWithMetadata().then(function () {
 
-		sinon.stub(oFilterBar, "_stringifyConditions").returns([Condition.createCondition("EQ", ["foo"])]);
+		sinon.stub(oFilterBar, "_stringifyConditions").returns([Condition.createCondition(OperatorName.EQ, ["foo"])]);
 
 
 			const oCM = oFilterBar._getConditionModel();
-			oCM.addCondition("fieldPath1", Condition.createCondition("EQ", ["foo"]));
+			oCM.addCondition("fieldPath1", Condition.createCondition(OperatorName.EQ, ["foo"]));
 
 			oFilterBar.setBasicSearchField(new FilterField({
 				conditions: "{$filters>/conditions/$search}",
@@ -400,13 +404,13 @@ sap.ui.define([
 				oFilterBar.addFilterItem(oFilterField);
 
 				// with two filters; one is displayed on filter bar, one not
-				oCM.addCondition("fieldPath2", Condition.createCondition("EQ", ["foo"]));
+				oCM.addCondition("fieldPath2", Condition.createCondition(OperatorName.EQ, ["foo"]));
 				mText = oFilterBar.getAssignedFiltersText();
 				assert.equal(mText.filtersText, "2 filters active: Field Path, Field Path2");
 				assert.equal(mText.filtersTextExpanded, "2 filters active (1 hidden)");
 
 				//with basic search and two filter displayed on the filter bar
-				oCM.addCondition("$search", Condition.createCondition("EQ", ["foo"]));
+				oCM.addCondition("$search", Condition.createCondition(OperatorName.EQ, ["foo"]));
 				mText = oFilterBar.getAssignedFiltersText();
 				assert.equal(mText.filtersText, "3 filters active: Search Terms, Field Path, Field Path2");
 				assert.equal(mText.filtersTextExpanded, "3 filters active (1 hidden)");
@@ -552,7 +556,7 @@ sap.ui.define([
 					FlexUtil.handleChanges(aChanges);
 
 					if (iCount == 1) {
-						oFilterBar._getConditionModel().addCondition("key", Condition.createCondition("EQ", ["foo"]));
+						oFilterBar._getConditionModel().addCondition("key", Condition.createCondition(OperatorName.EQ, ["foo"]));
 					}
 
 					if (iCount == 2) {
@@ -566,7 +570,7 @@ sap.ui.define([
 
 				oFilterBar.getEngine()._setModificationHandler(oFilterBar, oTestHandler);
 
-				oFilterBar._getConditionModel().addCondition("key", Condition.createCondition("EQ", ["a"]));
+				oFilterBar._getConditionModel().addCondition("key", Condition.createCondition(OperatorName.EQ, ["a"]));
 			});
 
 		});
@@ -618,7 +622,7 @@ sap.ui.define([
 
 				oFilterBar.getEngine()._setModificationHandler(oFilterBar, oTestHandler);
 
-				oFilterBar._getConditionModel().addCondition("key", Condition.createCondition("EQ", ["a"], { "conditions/in": "INTEST" }));
+				oFilterBar._getConditionModel().addCondition("key", Condition.createCondition(OperatorName.EQ, ["a"], { "conditions/in": "INTEST" }));
 
 			});
 		});
@@ -683,8 +687,8 @@ sap.ui.define([
 
 				oFilterBar.getEngine()._setModificationHandler(oFilterBar, oTestHandler);
 
-				oFilterBar._getConditionModel().addCondition("key", Condition.createCondition("EQ", ["a"]));
-				oFilterBar._getConditionModel().addCondition("key", Condition.createCondition("EQ", ["foo"]));
+				oFilterBar._getConditionModel().addCondition("key", Condition.createCondition(OperatorName.EQ, ["a"]));
+				oFilterBar._getConditionModel().addCondition("key", Condition.createCondition(OperatorName.EQ, ["foo"]));
 			});
 		});
 	});
@@ -702,7 +706,7 @@ sap.ui.define([
 		this.destroyTestObjects();
 		this.createTestObjects(aPropertyInfo);
 
-		oFilterBar.setFilterConditions({ key: [{ operator: "EQ", values: ["a"] }] });
+		oFilterBar.setFilterConditions({ key: [{ operator: OperatorName.EQ, values: ["a"] }] });
 		oFilterBar.setP13nMode(["Value"]);
 
 		let aResultingChanges = [];
@@ -710,8 +714,8 @@ sap.ui.define([
 			aResultingChanges = aChanges;
 		};
 
-		const oCondition1 = Condition.createCondition("EQ", ["a"]);
-		const oCondition2 = Condition.createCondition("EQ", ["foo"]);
+		const oCondition1 = Condition.createCondition(OperatorName.EQ, ["a"]);
+		const oCondition2 = Condition.createCondition(OperatorName.EQ, ["foo"]);
 
 		sinon.stub(oFilterBar, "_getPropertyByName").callsFake(function(sName) {
 			return FilterUtil.getPropertyByKey(aPropertyInfo, sName);
@@ -733,7 +737,7 @@ sap.ui.define([
 					assert.equal(aResultingChanges[0].selectorElement, oFilterBar);
 					assert.equal(aResultingChanges[0].changeSpecificData.changeType, "addCondition");
 					assert.equal(aResultingChanges[0].changeSpecificData.content.name, "key");
-					assert.deepEqual(aResultingChanges[0].changeSpecificData.content.condition, { operator: "EQ", values: ["foo"], validated: undefined});
+					assert.deepEqual(aResultingChanges[0].changeSpecificData.content.condition, { operator: OperatorName.EQ, values: ["foo"], validated: undefined});
 					done();
 					return Promise.resolve(aChanges);
 				};
@@ -790,7 +794,7 @@ sap.ui.define([
 					control: oFilterBar,
 					suppressAppliance: true,
 					key: "Filter",
-					state: {"key": [Condition.createCondition("EQ", ["foo"], { "in1": "IN1_TEST", "in2": "IN2_TEST" })]}
+					state: {"key": [Condition.createCondition(OperatorName.EQ, ["foo"], { "in1": "IN1_TEST", "in2": "IN2_TEST" })]}
 				}).then(function(aChanges){
 
 					assert.equal(aChanges.length, 1);
@@ -817,7 +821,7 @@ sap.ui.define([
 
 					oFilterBar.getEngine()._setModificationHandler(oFilterBar, oTestHandler);
 
-					oFilterBar._getConditionModel().addCondition("key", Condition.createCondition("EQ", ["a"]));
+					oFilterBar._getConditionModel().addCondition("key", Condition.createCondition(OperatorName.EQ, ["a"]));
 				});
 			});
 		});
@@ -887,7 +891,7 @@ sap.ui.define([
 		//--> add a personalization change
 		oFilterBar._addConditionChange({
 			key1: [
-				{operator: "EQ", values: ["Test"]}
+				{operator: OperatorName.EQ, values: ["Test"]}
 			]
 		});
 
@@ -957,14 +961,14 @@ sap.ui.define([
 
 		sinon.stub(oFilterBar, "_applyFilterConditionsChanges");
 		sinon.stub(oFilterBar, "_getPropertyByName").returns(true);
-		const mCondition = { "fieldPath1": [Condition.createCondition("EQ", ["foo"])] };
+		const mCondition = { "fieldPath1": [Condition.createCondition(OperatorName.EQ, ["foo"])] };
 		oFilterBar.setP13nMode(["Item","Value"]);
 		oFilterBar.setFilterConditions(mCondition);
 
 		const oConditions = oFilterBar.getConditions();
 		assert.ok(oConditions);
 		assert.ok(oConditions["fieldPath1"]);
-		assert.equal(oConditions["fieldPath1"][0].operator, "EQ");
+		assert.equal(oConditions["fieldPath1"][0].operator, OperatorName.EQ);
 		assert.equal(oConditions["fieldPath1"][0].values[0], "foo");
 	});
 
@@ -993,7 +997,7 @@ sap.ui.define([
 
 	QUnit.test("check getCurrentState should return a copy", function (assert) {
 
-		const oContent = { "name": { condition:[{operator: "Contains", values: ["value"], validated: "NotValidated"}]}};
+		const oContent = { "name": { condition:[{operator: OperatorName.Contains, values: ["value"], validated: ConditionValidated.NotValidated}]}};
 
 		oFilterBar.setP13nMode(["Value"]);
 		sinon.stub(oFilterBar, "_getPropertyByName").returns(true);
@@ -1078,7 +1082,7 @@ sap.ui.define([
 			name: "key1",
 			label: "Key1",
 			dataType: "sap.ui.model.odata.type.String",
-			filterOperators: ["EQ", "StartsWith"],
+			filterOperators: [OperatorName.EQ, OperatorName.StartsWith],
 			visible: true
 		};
 		const oProperty2 = {
@@ -1158,10 +1162,10 @@ sap.ui.define([
 		sinon.stub(oFilterBar, "_handleAssignedFilterNames");
 
 		const oCM = oFilterBar._getConditionModel();
-		oCM.addCondition("key7", Condition.createCondition("EQ", ["foo"]));
-		oCM.addCondition("key6", Condition.createCondition("EQ", ["foo"]));
-		oCM.addCondition("key2", Condition.createCondition("EQ", ["foo"]));
-		oCM.addCondition("key1", Condition.createCondition("EQ", ["foo"]));
+		oCM.addCondition("key7", Condition.createCondition(OperatorName.EQ, ["foo"]));
+		oCM.addCondition("key6", Condition.createCondition(OperatorName.EQ, ["foo"]));
+		oCM.addCondition("key2", Condition.createCondition(OperatorName.EQ, ["foo"]));
+		oCM.addCondition("key1", Condition.createCondition(OperatorName.EQ, ["foo"]));
 
 		sinon.stub(oFilterBar, "getPropertyInfoSet").returns([oProperty1, oProperty2, oProperty3, oProperty4, oProperty5, oProperty6, oProperty7]);
 		let aNames = oFilterBar.getAssignedFilterNames();
@@ -1173,7 +1177,7 @@ sap.ui.define([
 
 		oFilterBar.getPropertyInfoSet.restore();
 		sinon.stub(oFilterBar, "getPropertyInfoSet").returns([oProperty7, oProperty6, oProperty5, oProperty4, oProperty3, oProperty2, oProperty1]);
-		oCM.addCondition("$search", Condition.createCondition("EQ", ["foo"]));
+		oCM.addCondition("$search", Condition.createCondition(OperatorName.EQ, ["foo"]));
 		aNames = oFilterBar.getAssignedFilterNames();
 		assert.ok(aNames);
 		assert.equal(aNames.length, 4);
@@ -1407,16 +1411,16 @@ sap.ui.define([
 		sinon.stub(oFilterBar, "getTypeMap").returns(ODataTypeMap);
 		sinon.stub(oFilterBar, "_getPropertyByName").returns(oProperty);
 
-		let aConditions = [{operator: "EQ", values: ["string"], isEmpty: false, validated: "NotValidated"}];
+		let aConditions = [{operator: OperatorName.EQ, values: ["string"], isEmpty: false, validated: ConditionValidated.NotValidated}];
 
 		let aStringifiedConditions = oFilterBar._stringifyConditions("test", aConditions);
 		assert.ok(aStringifiedConditions.length, 1);
-		assert.deepEqual(aStringifiedConditions, [{operator: "EQ", values: ["string"], validated: "NotValidated"}]);
+		assert.deepEqual(aStringifiedConditions, [{operator: OperatorName.EQ, values: ["string"], validated: ConditionValidated.NotValidated}]);
 
-		aConditions = [{operator: "TODAY", values: [], isEmpty: false, validated: "NotValidated"}];
+		aConditions = [{operator: OperatorName.TODAY, values: [], isEmpty: false, validated: ConditionValidated.NotValidated}];
 		aStringifiedConditions = oFilterBar._stringifyConditions("test", aConditions);
 		assert.ok(aStringifiedConditions.length, 1);
-		assert.deepEqual(aStringifiedConditions, [{operator: "TODAY", values: [], validated: "NotValidated"}]);
+		assert.deepEqual(aStringifiedConditions, [{operator: OperatorName.TODAY, values: [], validated: ConditionValidated.NotValidated}]);
 
 	});
 

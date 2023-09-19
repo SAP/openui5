@@ -741,7 +741,7 @@ sap.ui.define([
 
 	function _operatorSupportsValueHelp(sKey) {
 		return true;
-		// var aValueHelpSupportedOperators = ["EQ", "NE"]; // only for this operators we use the ValueHelp on the value fields
+		// var aValueHelpSupportedOperators = [OperatorName.EQ, OperatorName.NE]; // only for this operators we use the ValueHelp on the value fields
 		// return aValueHelpSupportedOperators.length === 0 || aValueHelpSupportedOperators.indexOf(sKey) >= 0;
 	}
 

@@ -10,6 +10,7 @@ sap.ui.define([
 	"sap/ui/mdc/odata/v4/vizChart/ChartDelegate",
 	"sap/ui/mdc/chart/Item",
 	"sap/ui/mdc/odata/v4/TypeMap",
+	"sap/ui/mdc/enums/OperatorName",
 	"sap/m/p13n/modules/StateHandlerRegistry",
 	"sap/ui/core/Core",
 	"sap/base/util/merge",
@@ -37,6 +38,7 @@ sap.ui.define([
 	ChartDelegate,
 	ChartItem,
 	ODataV4TypeMap,
+	OperatorName,
 	StateHandlerRegistry,
 	oCore,
 	merge,
@@ -135,10 +137,10 @@ sap.ui.define([
 		const done = assert.async();
 
 		const mFilterConditions = {
-			"String": [{ "operator": "Contains", "values": ["Test"] }],
+			"String": [{ "operator": OperatorName.Contains, "values": ["Test"] }],
 			"Boolean": [{ "operator": "EEQ", "values": [true] }],
-			"Decimal":[{"operator":"ImaginaryOperator","values":["12.01"]}],
-			"Date":[{"operator":"EQ","values":["2020-02-11"]}]
+			"Decimal":[{"operator": "ImaginaryOperator","values":["12.01"]}],
+			"Date":[{"operator": OperatorName.EQ,"values":["2020-02-11"]}]
 		};
 
 		const oExternalState = {
@@ -186,10 +188,10 @@ sap.ui.define([
 
 		const oExternalState = {
 			filter: {
-				"String":[{"operator":"Contains","values":["YUHUUU"]}],
-				"Boolean":[{"operator":"EQ","values":[true]}],
-				"Decimal":[{"operator":"EQ","values":["12.01"]}],
-				"Date":[{"operator":"EQ","values":["2020-02-11"]}]
+				"String":[{"operator": OperatorName.Contains,"values":["YUHUUU"]}],
+				"Boolean":[{"operator": OperatorName.EQ,"values":[true]}],
+				"Decimal":[{"operator": OperatorName.EQ,"values":["12.01"]}],
+				"Date":[{"operator": OperatorName.EQ,"values":["2020-02-11"]}]
 			},
 			items: []
 		};
@@ -219,10 +221,10 @@ sap.ui.define([
 		const done = assert.async();
 
 		const mFilterConditions = {
-			"String": [{ "operator": "Contains", "values": ["Test"] }],
-			"Boolean": [{ "operator": "EQ", "values": [true] }],
-			"Decimal":[{"operator":"EQ","values":["12.01"]}],
-			"Date":[{"operator":"EQ","values":["2020-02-11"]}]
+			"String": [{ "operator": OperatorName.Contains, "values": ["Test"] }],
+			"Boolean": [{ "operator": OperatorName.EQ, "values": [true] }],
+			"Decimal":[{"operator": OperatorName.EQ,"values":["12.01"]}],
+			"Date":[{"operator": OperatorName.EQ,"values":["2020-02-11"]}]
 		};
 
 		this.oFilterBar.setFilterConditions(mFilterConditions);
@@ -251,17 +253,17 @@ sap.ui.define([
 		const done = assert.async();
 
 		const mFilterConditions = {
-			"String": [{ "operator": "Contains", "values": ["Test"] }],
-			"Boolean": [{ "operator": "EQ", "values": [true] }],
-			"Decimal":[{"operator":"EQ","values":["12.01"]}],
-			"Date":[{"operator":"EQ","values":["2020-02-11"]}]
+			"String": [{ "operator": OperatorName.Contains, "values": ["Test"] }],
+			"Boolean": [{ "operator": OperatorName.EQ, "values": [true] }],
+			"Decimal":[{"operator": OperatorName.EQ,"values":["12.01"]}],
+			"Date":[{"operator": OperatorName.EQ,"values":["2020-02-11"]}]
 		};
 
 		const mFilterConditionsNew = {
-			"String": [{ "operator": "Contains", "values": ["Test"] }],
-			"Boolean": [{ "operator": "EQ", "values": [false] }],//set to false --> only add one filter value as delta and not remove existing value
-			"Decimal":[{"operator":"EQ","values":["12.01"]}],
-			"Date":[{"operator":"EQ","values":["2020-02-11"]}]
+			"String": [{ "operator": OperatorName.Contains, "values": ["Test"] }],
+			"Boolean": [{ "operator": OperatorName.EQ, "values": [false] }],//set to false --> only add one filter value as delta and not remove existing value
+			"Decimal":[{"operator": OperatorName.EQ,"values":["12.01"]}],
+			"Date":[{"operator": OperatorName.EQ,"values":["2020-02-11"]}]
 		};
 
 		this.oFilterBar.setFilterConditions(mFilterConditions);
@@ -293,10 +295,10 @@ sap.ui.define([
 		const done = assert.async();
 
 		const mFilterConditions = {
-			"String": [{ "operator": "Contains", "values": ["Test"] }],
-			"Boolean": [{ "operator": "EQ", "values": [true] }],
-			"Decimal":[{"operator":"EQ","values":["12.01"]}],
-			"Date":[{"operator":"EQ","values":["2020-02-11"]}]
+			"String": [{ "operator": OperatorName.Contains, "values": ["Test"] }],
+			"Boolean": [{ "operator": OperatorName.EQ, "values": [true] }],
+			"Decimal":[{"operator": OperatorName.EQ,"values":["12.01"]}],
+			"Date":[{"operator": OperatorName.EQ,"values":["2020-02-11"]}]
 		};
 
 		const oExternalState = {
@@ -331,10 +333,10 @@ sap.ui.define([
 		const done = assert.async();
 
 		const mFilterConditions = {
-			"String": [{ "operator": "Contains", "values": ["Test"] }],
-			"Boolean": [{ "operator": "EQ", "values": [true] }],
-			"Decimal":[{"operator":"EQ","values":["12.01"]}],
-			"Date":[{"operator":"EQ","values":["2020-02-11"]}]
+			"String": [{ "operator": OperatorName.Contains, "values": ["Test"] }],
+			"Boolean": [{ "operator": OperatorName.EQ, "values": [true] }],
+			"Decimal":[{"operator": OperatorName.EQ,"values":["12.01"]}],
+			"Date":[{"operator": OperatorName.EQ,"values":["2020-02-11"]}]
 		};
 
 		const oExternalState = {
@@ -376,10 +378,10 @@ sap.ui.define([
 		const done = assert.async();
 
 		const mFilterConditions = {
-			"String": [{ "operator": "Contains", "values": ["Test"] }],
-			"Boolean": [{ "operator": "EQ", "values": [true] }],
-			"Decimal":[{"operator":"EQ","values":["12.01"]}],
-			"Date":[{"operator":"EQ","values":["2020-02-11"]}]
+			"String": [{ "operator": OperatorName.Contains, "values": ["Test"] }],
+			"Boolean": [{ "operator": OperatorName.EQ, "values": [true] }],
+			"Decimal":[{"operator": OperatorName.EQ,"values":["12.01"]}],
+			"Date":[{"operator": OperatorName.EQ,"values":["2020-02-11"]}]
 		};
 
 		const oExternalState = {
@@ -403,10 +405,10 @@ sap.ui.define([
 				//the second time there should not be any changes
 				const oResetState = {
 					filter: {
-						"String": [{ "operator": "Contains", "values": ["Test"], "filtered": false }],
-						"Boolean": [{ "operator": "EQ", "values": [true], "filtered": false }],
-						"Decimal":[{"operator":"EQ","values":["12.01"], "filtered": false}],
-						"Date":[{"operator":"EQ","values":["2020-02-11"], "filtered": false}]
+						"String": [{ "operator": OperatorName.Contains, "values": ["Test"], "filtered": false }],
+						"Boolean": [{ "operator": OperatorName.EQ, "values": [true], "filtered": false }],
+						"Decimal":[{"operator": OperatorName.EQ,"values":["12.01"], "filtered": false}],
+						"Date":[{"operator": OperatorName.EQ,"values":["2020-02-11"], "filtered": false}]
 					}
 				};
 
@@ -509,10 +511,10 @@ sap.ui.define([
 		];
 
 		const mFilterConditions = {
-			"String": [{ "operator": "Contains", "values": ["Test"] }],
-			"Boolean": [{ "operator": "EQ", "values": [true] }],
-			"Decimal":[{"operator":"EQ","values":["12.01"]}],
-			"Date":[{"operator":"EQ","values":["2020-02-11"]}]
+			"String": [{ "operator": OperatorName.Contains, "values": ["Test"] }],
+			"Boolean": [{ "operator": OperatorName.EQ, "values": [true] }],
+			"Decimal":[{"operator": OperatorName.EQ,"values":["12.01"]}],
+			"Date":[{"operator": OperatorName.EQ,"values":["2020-02-11"]}]
 		};
 
 		const oExternalState = {
@@ -550,10 +552,10 @@ sap.ui.define([
 		];
 
 		var mFilterConditions = {
-			"String": [{ "operator": "Contains", "values": ["Test"] }],
-			"Boolean": [{ "operator": "EQ", "values": [true] }],
-			"Decimal":[{"operator":"EQ","values":["12.01"]}],
-			"Date":[{"operator":"EQ","values":["2020-02-11"]}]
+			"String": [{ "operator": OperatorName.Contains", "values": ["Test"] }],
+			"Boolean": [{ "operator": OperatorName.EQ", "values": [true] }],
+			"Decimal":[{"operator": OperatorName.EQ","values":["12.01"]}],
+			"Date":[{"operator": OperatorName.EQ","values":["2020-02-11"]}]
 		};
 
 		var oExternalState = {
@@ -587,10 +589,10 @@ sap.ui.define([
 		];
 
 		var mFilterConditions = {
-			"String": [{ "operator": "Contains", "values": ["Test"] }],
-			"Boolean": [{ "operator": "EQ", "values": [true] }],
-			"Decimal":[{"operator":"EQ","values":["12.01"]}],
-			"Date":[{"operator":"EQ","values":["2020-02-11"]}]
+			"String": [{ "operator": OperatorName.Contains", "values": ["Test"] }],
+			"Boolean": [{ "operator": OperatorName.EQ", "values": [true] }],
+			"Decimal":[{"operator": OperatorName.EQ","values":["12.01"]}],
+			"Date":[{"operator": OperatorName.EQ","values":["2020-02-11"]}]
 		};
 
 		var oExternalState = {
@@ -974,10 +976,10 @@ sap.ui.define([
 		const done = assert.async();
 
 		const mFilterConditions = {
-			"String": [{ "operator": "Contains", "values": ["Test"] }],
-			"Boolean": [{ "operator": "EQ", "values": [true] }],
-			"Decimal":[{"operator":"EQ","values":["12.01"]}],
-			"Date":[{"operator":"EQ","values":["2020-02-11"]}]
+			"String": [{ "operator": OperatorName.Contains, "values": ["Test"] }],
+			"Boolean": [{ "operator": OperatorName.EQ, "values": [true] }],
+			"Decimal":[{"operator": OperatorName.EQ,"values":["12.01"]}],
+			"Date":[{"operator": OperatorName.EQ,"values":["2020-02-11"]}]
 		};
 
 		const oExternalState = {
@@ -994,7 +996,7 @@ sap.ui.define([
 			const oResetState = {
 				filter: {
 					"String": [],
-					"Date":[{"operator":"EQ","values":["2020-02-12"]}]
+					"Date":[{"operator": OperatorName.EQ,"values":["2020-02-12"]}]
 				}
 			};
 
@@ -1003,7 +1005,7 @@ sap.ui.define([
 				assert.equal(aDirtyChanges.length, 1, "Every condition has been removed via 'removeCondition' change");
 				assert.equal(aDirtyChanges[0].getChangeType(), "addCondition", "The condition change for remove has been created");
 				assert.equal(aDirtyChanges[0].getContent().name, "Date", "The correct property is affected");
-				assert.deepEqual(aDirtyChanges[0].getContent().condition, {"operator":"EQ","values":["2020-02-12"]}, "The correct value is affected");
+				assert.deepEqual(aDirtyChanges[0].getContent().condition, {"operator": OperatorName.EQ,"values":["2020-02-12"]}, "The correct value is affected");
 				done();
 			});
 		}.bind(this));
@@ -1022,7 +1024,7 @@ sap.ui.define([
 				}
 			],
 			filter: {
-				"Date":[{"operator":"EQ","values":["2020-02-12"]}]
+				"Date":[{"operator": OperatorName.EQ,"values":["2020-02-12"]}]
 			}
 		};
 
@@ -1433,13 +1435,13 @@ sap.ui.define([
 				},
 				filter: {
 					String: [{
-						operator: "Contains",
+						operator: OperatorName.Contains,
 						values: [
 							"Test"
 						]
 					}],
 					Boolean: [{
-						operator: "EQ",
+						operator: OperatorName.EQ,
 						values: [
 							true
 						]

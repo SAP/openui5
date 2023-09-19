@@ -11,6 +11,7 @@ sap.ui.define([
 	"sap/ui/mdc/enums/ConditionValidated",
 	"sap/ui/mdc/enums/FieldEditMode",
 	"sap/ui/mdc/enums/FieldDisplay",
+	"sap/ui/mdc/enums/OperatorName",
 	"sap/ui/mdc/field/ConditionsType",
 	"sap/ui/mdc/field/FieldInput",
 	"delegates/odata/v4/FieldBaseDelegate", // make sure delegate is loaded (test delegate loading in FieldBase test)
@@ -48,6 +49,7 @@ sap.ui.define([
 	ConditionValidated,
 	FieldEditMode,
 	FieldDisplay,
+	OperatorName,
 	ConditionsType,
 	FieldInput,
 	FieldBaseDelegate,
@@ -412,7 +414,7 @@ sap.ui.define([
 				assert.equal(oDelegate.createCondition.lastCall.args[1], oFieldEdit, "Correct control instance was given");
 				assert.deepEqual(oDelegate.createCondition.lastCall.args[2], ["Test", "Hello"], "Correct value configuration was given");
 				assert.deepEqual(oDelegate.createCondition.lastCall.args[3], {
-					"operator": "EQ",
+					"operator": OperatorName.EQ,
 					"values": [
 						"Test"
 					],
@@ -1215,7 +1217,7 @@ sap.ui.define([
 
 			oField3.setConditions([Condition.createItemCondition("B", "Text B")]); // fake user input
 			oModel.checkUpdate(true); // otherwise following test behave strange
-			oField3.setConditions([Condition.createCondition("EQ", ["E"], undefined, undefined, ConditionValidated.NotValidated)]); // fake invalid input from valuehelp with validateInput=false
+			oField3.setConditions([Condition.createCondition(OperatorName.EQ, ["E"], undefined, undefined, ConditionValidated.NotValidated)]); // fake invalid input from valuehelp with validateInput=false
 			oModel.checkUpdate(true); // otherwise following test behave strange
 			assert.equal(oModel.getData().items[0].key, "E", "Key updated in Model");
 			assert.equal(oModel.getData().items[0].description, "", "Description updated in Model");
@@ -1371,7 +1373,7 @@ sap.ui.define([
 		oField.setAdditionalValue("Empty");
 		let aConditions = oField.getConditions();
 		assert.equal(aConditions.length, 1, "One condition");
-		assert.equal(aConditions[0].operator, "EQ", "condition operator");
+		assert.equal(aConditions[0].operator, OperatorName.EQ, "condition operator");
 		assert.equal(aConditions[0].values[0], "", "condition value");
 		assert.equal(aConditions[0].values[1], "Empty", "condition description");
 
@@ -1379,7 +1381,7 @@ sap.ui.define([
 		oField.setAdditionalValue(null);
 		aConditions = oField.getConditions();
 		assert.equal(aConditions.length, 1, "One condition");
-		assert.equal(aConditions[0].operator, "EQ", "condition operator");
+		assert.equal(aConditions[0].operator, OperatorName.EQ, "condition operator");
 		assert.equal(aConditions[0].values[0], "", "condition value");
 		assert.equal(aConditions[0].values.length, 1, "no condition description");
 
@@ -1392,7 +1394,7 @@ sap.ui.define([
 		oField.setAdditionalValue("Null");
 		aConditions = oField.getConditions();
 		assert.equal(aConditions.length, 1, "One condition"); // as value could be set later from binding
-		assert.equal(aConditions[0].operator, "EQ", "condition operator");
+		assert.equal(aConditions[0].operator, OperatorName.EQ, "condition operator");
 		assert.equal(aConditions[0].values[0], null, "condition value");
 		assert.equal(aConditions[0].values[1], "Null", "condition description");
 
@@ -1405,7 +1407,7 @@ sap.ui.define([
 		oField.setAdditionalValue("Empty");
 		let aConditions = oField.getConditions();
 		assert.equal(aConditions.length, 1, "One condition");
-		assert.equal(aConditions[0].operator, "EQ", "condition operator");
+		assert.equal(aConditions[0].operator, OperatorName.EQ, "condition operator");
 		assert.equal(aConditions[0].values[0], "", "condition value");
 		assert.equal(aConditions[0].values[1], "Empty", "condition description");
 
@@ -1423,7 +1425,7 @@ sap.ui.define([
 		oField.setAdditionalValue("Null");
 		aConditions = oField.getConditions();
 		assert.equal(aConditions.length, 1, "One condition"); // as value could be set later from binding
-		assert.equal(aConditions[0].operator, "EQ", "condition operator");
+		assert.equal(aConditions[0].operator, OperatorName.EQ, "condition operator");
 		assert.equal(aConditions[0].values[0], null, "condition value");
 		assert.equal(aConditions[0].values[1], "Null", "condition description");
 
@@ -1436,7 +1438,7 @@ sap.ui.define([
 		oField.setAdditionalValue("Empty");
 		let aConditions = oField.getConditions();
 		assert.equal(aConditions.length, 1, "One condition");
-		assert.equal(aConditions[0].operator, "EQ", "condition operator");
+		assert.equal(aConditions[0].operator, OperatorName.EQ, "condition operator");
 		assert.equal(aConditions[0].values[0], "000", "condition value");
 		assert.equal(aConditions[0].values[1], "Empty", "condition description");
 
@@ -1454,7 +1456,7 @@ sap.ui.define([
 		oField.setAdditionalValue("Null");
 		aConditions = oField.getConditions();
 		assert.equal(aConditions.length, 1, "One condition"); // as value could be set later from binding
-		assert.equal(aConditions[0].operator, "EQ", "condition operator");
+		assert.equal(aConditions[0].operator, OperatorName.EQ, "condition operator");
 		assert.equal(aConditions[0].values[0], null, "condition value");
 		assert.equal(aConditions[0].values[1], "Null", "condition description");
 
@@ -1501,7 +1503,7 @@ sap.ui.define([
 		oField.setValue([123.45, "USD", oCurrencyCodeList]);
 		aConditions = oField.getConditions();
 		assert.equal(aConditions.length, 1, "One condition");
-		assert.equal(aConditions[0].operator, "EQ", "condition operator");
+		assert.equal(aConditions[0].operator, OperatorName.EQ, "condition operator");
 		assert.deepEqual(aConditions[0].values[0], [123.45, "USD", oCurrencyCodeList], "condition value");
 		assert.equal(aConditions[0].values[1], null, "condition description");
 		assert.equal(oField.setConditions.getCalls().length, 1, "condition changed once");
@@ -1511,7 +1513,7 @@ sap.ui.define([
 		aConditions = oField.getConditions();
 		assert.equal(aConditions.length, 1, "One condition");
 		assert.equal(oField.setConditions.getCalls().length, 2, "condition changed");
-		assert.equal(aConditions[0].operator, "EQ", "condition operator");
+		assert.equal(aConditions[0].operator, OperatorName.EQ, "condition operator");
 		assert.deepEqual(aConditions[0].values[0], [1, "USD", oCurrencyCodeList], "condition value");
 		assert.equal(aConditions[0].values[1], null, "condition description");
 		assert.equal(oField.setProperty.withArgs("value").getCalls().length, 4, "value only updated once");

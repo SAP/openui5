@@ -9,10 +9,11 @@ sap.ui.define([
 	'sap/ui/mdc/condition/FilterOperatorUtil',
 	'sap/ui/mdc/enums/ConditionValidated',
 	'sap/ui/mdc/enums/ValueHelpSelectionType',
+	'sap/ui/mdc/enums/OperatorName',
 	'sap/ui/core/Core',
 	'sap/base/util/deepEqual'
 ], function(
-	ODataV4ValueHelpDelegate, StateUtil, Condition, FilterOperatorUtil, ConditionValidated, ValueHelpSelectionType, Core, deepEqual
+	ODataV4ValueHelpDelegate, StateUtil, Condition, FilterOperatorUtil, ConditionValidated, ValueHelpSelectionType, OperatorName, Core, deepEqual
 ) {
 	"use strict";
 
@@ -131,7 +132,7 @@ sap.ui.define([
 			return Promise.all(aPropertyPromises).then(function(aResults) {
 				aResults.forEach(function(vResult, index){
 					if (vResult) { // only for already filled properties. But what id "" is a valid key?
-						oConditions[aPropertyPromiseTargets[index]] = [Condition.createCondition("EQ", [vResult], null, null, ConditionValidated.Validated, null)];
+						oConditions[aPropertyPromiseTargets[index]] = [Condition.createCondition(OperatorName.EQ, [vResult], null, null, ConditionValidated.Validated, null)];
 					}
 				});
 				return oConditions;

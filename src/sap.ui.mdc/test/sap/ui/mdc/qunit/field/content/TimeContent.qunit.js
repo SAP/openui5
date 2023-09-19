@@ -3,12 +3,13 @@ sap.ui.define([
 	"sap/ui/thirdparty/qunit-2",
 	"sap/ui/mdc/field/content/TimeContent",
 	"sap/ui/mdc/Field",
-	"sap/m/Text",
 	"sap/ui/mdc/field/FieldInput",
 	"sap/ui/mdc/field/FieldMultiInput",
+	"sap/ui/mdc/enums/OperatorName",
+	"sap/m/Text",
 	"sap/m/Token",
 	"sap/m/TimePicker"
-], function(QUnit, TimeContent, Field, Text, FieldInput, FieldMultiInput, Token, TimePicker) {
+], function(QUnit, TimeContent, Field, FieldInput, FieldMultiInput, OperatorName, Text, Token, TimePicker) {
 	"use strict";
 
 	const oControlMap = {
@@ -52,8 +53,8 @@ sap.ui.define([
 
 	QUnit.test("getEditOperator", function(assert) {
 		const oEditOperator = TimeContent.getEditOperator();
-		assert.equal(oEditOperator["EQ"].name, "sap/m/TimePicker", "Correct editOperator 'EQ' name returned.");
-		assert.equal(oEditOperator["EQ"].create, TimeContent._createDatePickerControl, "Correct editOperator 'EQ' create function returned.");
+		assert.equal(oEditOperator[OperatorName.EQ].name, "sap/m/TimePicker", "Correct editOperator 'EQ' name returned.");
+		assert.equal(oEditOperator[OperatorName.EQ].create, TimeContent._createDatePickerControl, "Correct editOperator 'EQ' create function returned.");
 	});
 
 	QUnit.test("getUseDefaultEnterHandler", function(assert) {
@@ -139,7 +140,7 @@ sap.ui.define([
 				},
 				"createEditMultiLine throws an error.");
 
-			const aCreatedEditOperatorEQControls = TimeContent.create(oContentFactory, "EditOperator", "EQ", [TimePicker], "EditOperatorEQ-create");
+			const aCreatedEditOperatorEQControls = TimeContent.create(oContentFactory, "EditOperator", OperatorName.EQ, [TimePicker], "EditOperatorEQ-create");
 
 			fnSpyCalledOnce(fnCreateDisplayFunction, "Display", assert);
 			fnSpyCalledOnce(fnCreateEditFunction, "Edit", assert);

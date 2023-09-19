@@ -7,9 +7,9 @@
 // ---------------------------------------------------------------------------------------
 // ---------------------------------------------------------------------------------------
 sap.ui.define([
-	"delegates/odata/v4/FilterBarDelegate", 'sap/ui/fl/Utils', 'sap/ui/core/util/reflection/JsControlTreeModifier', 'sap/ui/mdc/enums/FieldDisplay', 'sap/ui/model/odata/type/Int32', 'delegates/util/DelegateCache'
+	"delegates/odata/v4/FilterBarDelegate", 'sap/ui/fl/Utils', 'sap/ui/core/util/reflection/JsControlTreeModifier', 'sap/ui/mdc/enums/FieldDisplay', 'sap/ui/mdc/enums/OperatorName', 'sap/ui/model/odata/type/Int32', 'delegates/util/DelegateCache'
 
-], function (FilterBarDelegate, FlUtils, JsControlTreeModifier, FieldDisplay, TypeInt32, DelegateCache) {
+], function (FilterBarDelegate, FlUtils, JsControlTreeModifier, FieldDisplay, OperatorName, TypeInt32, DelegateCache) {
 	"use strict";
 
 	var FilterBarOrdersSampleDelegate = Object.assign({}, FilterBarDelegate);
@@ -66,8 +66,8 @@ sap.ui.define([
 
 			DelegateCache.add(oFilterBar, {
 				"OrderNo": {valueHelp: "FH1"},
-				"currency_code": {valueHelp: "FH-Currency", display: FieldDisplay.Value, operators: ["EQ"]},
-				"ID": {valueHelp: "VH-ID", display: FieldDisplay.ValueDescription, operators: ["EQ"], additionalDataType: {name: "sap.ui.model.odata.type.String", constraints: {maxLength: 10, isDigitSequence: true}}}
+				"currency_code": {valueHelp: "FH-Currency", display: FieldDisplay.Value, operators: [OperatorName.EQ]},
+				"ID": {valueHelp: "VH-ID", display: FieldDisplay.ValueDescription, operators: [OperatorName.EQ], additionalDataType: {name: "sap.ui.model.odata.type.String", constraints: {maxLength: 10, isDigitSequence: true}}}
 			}, "$Filters");
 
 			return aProperties;
