@@ -8,12 +8,10 @@ sap.ui.define([
 	"sap/ui/layout/VerticalLayout",
 	"sap/m/Button",
 	"sap/ui/core/mvc/XMLView",
-	"sap/base/util/includes",
 	"sap/base/util/LoaderExtensions",
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/core/Core"
-],
-function(
+], function(
 	validateStableIds,
 	UIComponent,
 	ComponentContainer,
@@ -21,7 +19,6 @@ function(
 	VerticalLayout,
 	Button,
 	XMLView,
-	includes,
 	LoaderExtensions,
 	sinon,
 	oCore

@@ -57,7 +57,7 @@ sap.ui.define([
 			var oElementOverlay = aElementOverlays[i];
 			var oElement = oElementOverlay.getElement();
 			var bIsExtensionOverlay = aExtensionList.some(function(mViewExtension) { // eslint-disable-line no-loop-func
-				var ClassDeclaration = ObjectPath.get(mViewExtension.className);
+				var ClassDeclaration = sap.ui.require(mViewExtension.className.replace(/\./g, "/"));
 				var sExtensionName;
 				var sElementName;
 
