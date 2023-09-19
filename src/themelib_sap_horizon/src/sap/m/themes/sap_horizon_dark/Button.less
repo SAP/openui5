@@ -35,7 +35,7 @@ span.sapMBtnInner.sapMBtnEmphasized {
 /* --------------------- */
 .sapMBtnInner {
 	font-size: @sapMFontMediumSize;
-	height: 2.25rem;
+	height: @sapUiElementHeight;
 	min-width: 2.25rem;
 	margin: 0;
 	padding: 0;
@@ -185,6 +185,10 @@ html.sap-desktop .sapMBtn:focus > .sapMBtnNeutral.sapMFocusable:not(.sapMBadgeIn
 	border-color: @sapUiButtonLiteBorderColor;
 }
 
+.sapMBtn .sapMBtnNeutral.sapMBtnInner {
+	text-shadow: @sapUiContentTextShadow;
+}
+
 /* ---------------------------------------------------------------------*/
 /* Disabled, hover and active states:                                   */
 /* ---------------------------------------------------------------------*/
@@ -283,31 +287,6 @@ html.sap-desktop .sapMFooter-CTX .sapMBtnInner.sapMBtnReject {
 :not(.sapMBtnDisabled) .sapMBtnBack > .sapMBtnIcon,
 :not(.sapMBtnDisabled) .sapMBtnTransparent > .sapMBtnIcon {
 	color: @sapUiButtonLiteTextColor;
-}
-
-// box shadow on hover
-.sapMBtn:not(.sapMBtnDisabled):hover .sapMBtnInner:not(.sapMBtnActive) {
-	box-shadow: @sapContent_Interaction_Shadow;
-}
-
-.sapMBtn:not(.sapMBtnDisabled):hover .sapMBtnInner:not(.sapMBtnActive).sapMBtnEmphasized,
-.sapMBtn:not(.sapMBtnDisabled):hover .sapMBtnInner:not(.sapMBtnActive).sapMBtnSuccess,
-.sapMBtn:not(.sapMBtnDisabled):hover .sapMBtnInner:not(.sapMBtnActive).sapMBtnNegative,
-.sapMBtn:not(.sapMBtnDisabled):hover .sapMBtnInner:not(.sapMBtnActive).sapMBtnNeutral,
-.sapMBtn:not(.sapMBtnDisabled):hover .sapMBtnInner:not(.sapMBtnActive).sapMBtnCritical {
-	box-shadow: none;
-}
-
-.sapMBtn:not(.sapMBtnDisabled):hover .sapMBtnInner:not(.sapMBtnActive).sapMBtnAccept {
-	box-shadow: @sapContent_Positive_Shadow;
-}
-
-.sapMBtn:not(.sapMBtnDisabled):hover .sapMBtnInner:not(.sapMBtnActive).sapMBtnReject {
-	box-shadow: @sapContent_Negative_Shadow;
-}
-
-.sapMBtn:not(.sapMBtnDisabled):hover .sapMBtnInner:not(.sapMBtnActive).sapMBtnAttention {
-	box-shadow: @sapContent_Critical_Shadow;
 }
 
 /* ----------------------*/
