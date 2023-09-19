@@ -86,13 +86,18 @@ sap.ui.define([
 		oType.destroy();
 		let oDate = new Date(2000, 0, 1, 10, 10, 10, 100);
 		oType = new ODataDateTimeOffset({pattern: "yyyy M d hh mm ss"}, {V4: true});
-		sTypedValue = ODataV4TypeUtil.internalizeValue(oDate.toISOString(), oType);
-		assert.equal(sTypedValue, oType.parseValue("2000 1 1 10 10 10", "string"), "expected value returned"); // compare with parsing result as string depends on browser timezone
+		sTypedValue = ODataV4TypeUtil.internalizeValue(oDate.toISOString(), oType); // ISO String in UTC
+		// assert.equal(sTypedValue, oType.parseValue("2000 1 1 10 10 10", "string"), "expected value returned"); // compare with parsing result as string depends on browser timezone
+		assert.equal(oType.formatValue(sTypedValue, "string"), "2000 1 1 10 10 10", "expected value returned"); // as type could parse to different ISO format, test result of formatting
+
+		sTypedValue = ODataV4TypeUtil.internalizeValue("2000-01-01T10:10:10+01:00", oType); // ISO string with offset
+		const sTypedValue2 = ODataV4TypeUtil.internalizeValue(new Date("2000-01-01T10:10:10+01:00").toISOString(), oType); // ISO string in UTC
+		assert.equal(oType.formatValue(sTypedValue, "string"), oType.formatValue(sTypedValue2, "string"), "Both ISO formats bring same result"); // as type could parse to different ISO format, test result of formatting
 
 		oDate = new Date(Date.UTC(2000, 0, 1, 9, 10, 10, 100));
 		const sString = "" + oDate.getFullYear() + " " + (oDate.getMonth() + 1) + " " + oDate.getDate() + " " + oDate.getHours() + " " + oDate.getMinutes() + " " + oDate.getSeconds();
 		sTypedValue = ODataV4TypeUtil.internalizeValue("2000-01-01T10:10:10+0100", oType); // old variant value for DateTime FilterField
-		assert.equal(sTypedValue, oType.parseValue(sString, "string"), "expected value returned"); // compare with parsing result as string depends on browser timezone
+		assert.equal(oType.formatValue(sTypedValue, "string"), sString, "expected value returned"); // as type could parse to different ISO format, test result of formatting
 
 		// with UTC (UTC date is shown as locale date)
 		oType.destroy();
@@ -117,12 +122,12 @@ sap.ui.define([
 		oType = new ODataDateTimeOffset({pattern: "yyyy M d hh mm ss"}, {V4: true});
 		const oDate = new Date(2000, 0, 1, 10, 10, 10);
 		sStringifiedValue = ODataV4TypeUtil.externalizeValue(oType.parseValue("2000 1 1 10 10 10", "string"), oType);
-		assert.equal(sStringifiedValue, oDate.toISOString(), "stringified value returned");
+		assert.deepEqual(new Date(sStringifiedValue), oDate, "stringified value returned"); // as different ISO formats are possible, check resulting date
 
 		oType.destroy();
 		oType = new ODataDateTimeOffset({pattern: "yyyy M d hh mm ss", UTC: true}, {V4: true});
 		sStringifiedValue = ODataV4TypeUtil.externalizeValue(oType.parseValue("2000 1 1 10 10 10", "string"), oType);
-		assert.equal(sStringifiedValue, "2000-01-01T10:10:10.000Z", "stringified value returned");
+		assert.deepEqual(new Date(sStringifiedValue), new Date("2000-01-01T10:10:10.000Z"), "stringified value returned"); // as different ISO formats are possible, check resulting date
 
 		oType.destroy();
 		oType = new ODataTimeOfDay();
