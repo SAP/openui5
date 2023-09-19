@@ -3278,12 +3278,12 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the current security token.
+	 * Returns the current security token if available; triggers a request to fetch the security token if it is not
+	 * available.
 	 *
-	 * If the token has not been requested from the server it will be requested first (synchronously).
+	 * @returns {string|undefined} The security token; <code>undefined</code> if it is not available
 	 *
-	 * @returns {string} The security token
-	 *
+	 * @deprecated since 1.119.0; use {@link #securityTokenAvailable} instead
 	 * @public
 	 */
 	ODataModel.prototype.getSecurityToken = function() {
