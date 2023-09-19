@@ -7997,12 +7997,12 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 		var oJSONModel = new JSONModel({
 				data: {SalesOrderID: "1", Note: "Note"}
 			}),
-			oMessage = new Message({
+			oMessage = {
 				processor: oJSONModel,
 				target: ["/data/Note"],
 				message: "Foo",
 				type: MessageType.Warning
-			}),
+			},
 			sView = '\
 <FlexBox id="objectPage" binding="{/data}">\
 	<Input id="Note0" value="{Note}" />\
@@ -8045,7 +8045,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			.expectValueState("Composite4", "None", "")
 			.expectMessages([oMessage]);
 
-		Messaging.addMessages([oMessage]);
+		Messaging.addMessages([new Message(oMessage)]);
 
 		// code under test
 		return this.createView(assert, sView, oJSONModel);
@@ -8059,12 +8059,12 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 	// JIRA: CPOUI5MODELS-1397
 	QUnit.test("XMLPropertyBinding and CompositeBindings: ignoreMessages", function (assert) {
 		var oXMLModel = new XMLModel(),
-			oMessage = new Message({
+			oMessage = {
 				processor: oXMLModel,
 				target: ["/data/0/@Note"],
 				message: "Foo",
 				type: MessageType.Warning
-			}),
+			},
 			sView = '\
 <FlexBox id="objectPage" binding="{/data/0}">\
 	<Input id="Note0" value="{@Note}" />\
@@ -8108,7 +8108,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			.expectMessages([oMessage]);
 
 		oXMLModel.setXML('<?xml version="1.0"?><root><data SalesOrderID="1" Note="Note"/></root>');
-		Messaging.addMessages([oMessage]);
+		Messaging.addMessages([new Message(oMessage)]);
 
 		// code under test
 		return this.createView(assert, sView, oXMLModel);
