@@ -9,8 +9,8 @@ sap.ui.define([
 ], function(FilterBarDelegate, ODataModel, MockServer, FilterBar, JsControlTreeModifier, ODataV4TypeMap) {
 	'use strict';
 
-	var createMockServer = function() {
-		var oMockServer = new MockServer({
+	const createMockServer = function() {
+		const oMockServer = new MockServer({
 			rootUri: "/mdc.v4.FilterBarDelegate/"
 		});
 
@@ -28,9 +28,9 @@ sap.ui.define([
 		return oMockServer;
 	};
 
-	var createDataModel = function () {
+	const createDataModel = function () {
 		return new Promise(function(resolve, reject) {
-			var mModelOptions = {
+			const mModelOptions = {
 					serviceUrl: "/mdc.v4.FilterBarDelegate/",
 					autoExpandSelect: true
 			};
@@ -58,7 +58,7 @@ sap.ui.define([
 	});
 
 	QUnit.test('Check Delegate', function(assert) {
-		var done = assert.async();
+		const done = assert.async();
 
 		this._oFilterBar.initControlDelegate().then(function(oDelegate) {
 			assert.ok(oDelegate);
@@ -67,7 +67,7 @@ sap.ui.define([
 	});
 
 	QUnit.test('Check fetchProperties', function(assert) {
-		var done = assert.async();
+		const done = assert.async();
 
 		createDataModel().then(function (oModel) {
 			this._oFilterBar.setModel(oModel, "sample");
@@ -81,7 +81,7 @@ sap.ui.define([
 	});
 
 	QUnit.test('Check addItem', function(assert) {
-		var done = assert.async();
+		const done = assert.async();
 
 		createDataModel().then(function (oModel) {
 			this._oFilterBar.setModel(oModel, "sample");
@@ -93,7 +93,7 @@ sap.ui.define([
 	});
 
 	QUnit.test('Check removeItem', function(assert) {
-		var done = assert.async();
+		const done = assert.async();
 
 		createDataModel().then(function (oModel) {
 			this._oFilterBar.setModel(oModel, "sample");
@@ -110,7 +110,7 @@ sap.ui.define([
 	});
 
 	QUnit.test('Check complex property ignored', function(assert) {
-		var done = assert.async();
+		const done = assert.async();
 
 		createDataModel().then(function (oModel) {
 			this._oFilterBar.setModel(oModel, "sample");

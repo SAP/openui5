@@ -43,21 +43,21 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var ValueHelpDelegate = Object.assign({}, ODataV4ValueHelpDelegate);
+	const ValueHelpDelegate = Object.assign({}, ODataV4ValueHelpDelegate);
 	ValueHelpDelegate.apiVersion = 2;//CLEANUP_DELEGATE
 
 	ValueHelpDelegate.retrieveContent = function (oValueHelp, oContainer) {
 
-		var oParams = UriParameters.fromQuery(location.search);
-		var oParamSuspended = oParams.get("suspended");
-		var bSuspended = oParamSuspended ? oParamSuspended === "true" : false;
+		const oParams = UriParameters.fromQuery(location.search);
+		const oParamSuspended = oParams.get("suspended");
+		const bSuspended = oParamSuspended ? oParamSuspended === "true" : false;
 
-		var aCurrentContent = oContainer && oContainer.getContent();
-		var oCurrentContent = aCurrentContent && aCurrentContent[0];
+		const aCurrentContent = oContainer && oContainer.getContent();
+		let oCurrentContent = aCurrentContent && aCurrentContent[0];
 
-		var bMultiSelect = oValueHelp.getMaxConditions() === -1;
+		const bMultiSelect = oValueHelp.getMaxConditions() === -1;
 
-		var oCurrentTable = oCurrentContent && oCurrentContent.getTable();
+		let oCurrentTable = oCurrentContent && oCurrentContent.getTable();
 
 		if (oContainer.isA("sap.ui.mdc.valuehelp.Popover")) {
 
@@ -172,16 +172,16 @@ sap.ui.define([
 	};
 
 	ValueHelpDelegate.getFilterConditions = function (oValueHelp, oContent, oConfig) {
-		var oConditions = ODataV4ValueHelpDelegate.getFilterConditions(arguments);
+		const oConditions = ODataV4ValueHelpDelegate.getFilterConditions(arguments);
 
-		var oCountry = Core.byId("FB0-FF6");
-		var aCountryConditions = oCountry && oCountry.getConditions();
+		const oCountry = Core.byId("FB0-FF6");
+		const aCountryConditions = oCountry && oCountry.getConditions();
 		if (aCountryConditions && aCountryConditions.length) {
 			oConditions["country_code"] = aCountryConditions;
 		}
 
-		var oRegion = Core.byId("FB0-FF7");
-		var aRegionConditions = oRegion && oRegion.getConditions();
+		const oRegion = Core.byId("FB0-FF7");
+		const aRegionConditions = oRegion && oRegion.getConditions();
 		if (aRegionConditions && aRegionConditions.length) {
 			oConditions["region_code"] = aRegionConditions;
 		}

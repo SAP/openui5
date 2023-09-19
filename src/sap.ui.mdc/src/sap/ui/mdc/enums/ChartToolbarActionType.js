@@ -15,7 +15,7 @@ sap.ui.define(function() {
      * @enum {string}
      * @public
      */
-    var ChartToolbarActionType = {
+    const ChartToolbarActionType = {
         /**
          * Zoom-in and zoom-out action.
          *

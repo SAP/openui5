@@ -14,7 +14,7 @@ sap.ui.define(function() {
      * @since 1.115
      * @public
      */
-    var TableRowAction = {
+    const TableRowAction = {
         /**
          * Navigation arrow (chevron) is shown in the table rows/items.
          *

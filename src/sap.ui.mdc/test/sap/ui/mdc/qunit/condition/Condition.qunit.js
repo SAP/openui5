@@ -13,7 +13,7 @@ sap.ui.define([
 	// TODO: Move basic tests incorporated in other modules into here?
 
 	QUnit.test("compareConditions", function(assert) {
-		var oCondition1, oCondition2;
+		let oCondition1, oCondition2;
 
 		oCondition1 = Condition.createCondition("EQ", ["A", "A"], undefined, undefined, ConditionValidated.NotValidated, undefined);
 

@@ -15,10 +15,10 @@ sap.ui.define([
 ], function(P13nPropertyHelper, Button, Bar, Title, merge, MessageBox, Device, FieldExtensibility, Configuration, coreLibrary) {
 	"use strict";
 
-	var oRB = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
+	const oRB = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
 
 	//Shortcut to sap.ui.core.TitleLevel
-	var TitleLevel = coreLibrary.TitleLevel;
+	const TitleLevel = coreLibrary.TitleLevel;
 
 	/**
 	 *  Internal Utility class to create personalization UI's
@@ -28,7 +28,7 @@ sap.ui.define([
 	 * @since 1.81.0
 	 * @alias sap.ui.mdc.p13n.P13nBuilder
 	 */
-	var P13nBuilder = {
+	const P13nBuilder = {
 
 		/**
 		 *
@@ -47,7 +47,7 @@ sap.ui.define([
 				sap.ui.require(["sap/m/ResponsivePopover"], function(ResponsivePopover){
 					P13nBuilder["_checkSettings"](oP13nUI, mDialogSettings, reject);
 
-					var oPopover = new ResponsivePopover({
+					const oPopover = new ResponsivePopover({
 						title: mDialogSettings.title,
 						horizontalScrolling: mDialogSettings.hasOwnProperty("horizontalScrolling") ? mDialogSettings.horizontalScrolling : false,
 						verticalScrolling: mDialogSettings.hasOwnProperty("verticalScrolling") ? mDialogSettings.verticalScrolling : false,
@@ -60,7 +60,7 @@ sap.ui.define([
 					});
 
 					if (mDialogSettings.reset) {
-						var oCustomHeader = P13nBuilder._createResetHeader({
+						const oCustomHeader = P13nBuilder._createResetHeader({
 							title: mDialogSettings.title,
 							reset: mDialogSettings.reset.onExecute,
 							idResetButton: mDialogSettings.reset.idButton,
@@ -91,11 +91,11 @@ sap.ui.define([
 
 				P13nBuilder["_checkSettings"](oP13nUI, mDialogSettings, reject);
 
-				var sId = mDialogSettings.id;
+				const sId = mDialogSettings.id;
 
 				sap.ui.require(["sap/m/Dialog", "sap/m/Button"], function(Dialog, Button){
-					var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
-					var oContainer = new Dialog(sId, {
+					const oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
+					const oContainer = new Dialog(sId, {
 						title: mDialogSettings.title,
 						horizontalScrolling: mDialogSettings.hasOwnProperty("horizontalScrolling") ? mDialogSettings.horizontalScrolling : false,
 						verticalScrolling: mDialogSettings.hasOwnProperty("verticalScrolling") ? mDialogSettings.verticalScrolling : true,
@@ -126,7 +126,7 @@ sap.ui.define([
 					});
 
 					if (mDialogSettings.reset) {
-						var oCustomHeader = P13nBuilder._createResetHeader({
+						const oCustomHeader = P13nBuilder._createResetHeader({
 							title: mDialogSettings.title,
 							idResetButton: mDialogSettings.reset.idButton,
 							reset: mDialogSettings.reset.onExecute,
@@ -135,7 +135,7 @@ sap.ui.define([
 						oContainer.setCustomHeader(oCustomHeader);
 					}
 
-					var aAdditionalButtons = mDialogSettings.additionalButtons;
+					const aAdditionalButtons = mDialogSettings.additionalButtons;
 					if (aAdditionalButtons instanceof Array) {
 						aAdditionalButtons.forEach(function(oButton){
 							if (!oButton.isA("sap.m.Button")) {
@@ -161,7 +161,7 @@ sap.ui.define([
 		 */
 		_createResetHeader: function(mSettings) {
 
-			var oBar = new Bar({
+			const oBar = new Bar({
 				contentLeft: [
 					new Title({
 						text: mSettings.title,
@@ -171,15 +171,15 @@ sap.ui.define([
 			});
 
 			if (mSettings.reset) {
-				var sId = mSettings.idResetButton;
+				const sId = mSettings.idResetButton;
 				oBar.addContentRight(new Button( sId, {
 					text: sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc").getText("p13nDialog.RESET"),
 					press: function(oEvt) {
 
-						var oDialog =  oEvt.getSource().getParent().getParent();
-						var oControl = oDialog.getParent();
+						const oDialog =  oEvt.getSource().getParent().getParent();
+						const oControl = oDialog.getParent();
 
-						var sResetText = mSettings.warningText ? mSettings.warningText : sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc").getText("filterbar.ADAPT_RESET_WARNING");
+						const sResetText = mSettings.warningText ? mSettings.warningText : sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc").getText("filterbar.ADAPT_RESET_WARNING");
 						MessageBox.warning(sResetText, {
 							actions: [MessageBox.Action.OK, MessageBox.Action.CANCEL],
 							emphasizedAction: MessageBox.Action.OK,
@@ -200,22 +200,22 @@ sap.ui.define([
 
 		prepareAdaptationData: function(vProperties, fnEnhace, bGroupData) {
 
-			var oPropertyHelper =
+			const oPropertyHelper =
 				vProperties && vProperties.getProperties instanceof Function ?
 				vProperties : new P13nPropertyHelper(vProperties);
 
-			var aItems = [];
-			var mItemsGrouped = bGroupData ? {} : null;
+			const aItems = [];
+			const mItemsGrouped = bGroupData ? {} : null;
 
-			var bEnhance = fnEnhace instanceof Function;
+			const bEnhance = fnEnhace instanceof Function;
 
 			oPropertyHelper.getProperties().forEach(function(oProperty) {
 
-				var mItem = {};
+				const mItem = {};
 				mItem.name = oProperty.name;
 
 				if (bEnhance) {
-					var bIsValid = fnEnhace(mItem, oProperty);
+					const bIsValid = fnEnhace(mItem, oProperty);
 					if (!bIsValid) {
 						return;
 					}
@@ -235,7 +235,7 @@ sap.ui.define([
 
 			});
 
-			var oAdaptationData = {
+			const oAdaptationData = {
 				items: aItems
 			};
 
@@ -250,14 +250,14 @@ sap.ui.define([
 		//TODO: generify
 		sortP13nData: function (oSorting, aItems) {
 
-			var mP13nTypeSorting = oSorting;
+			const mP13nTypeSorting = oSorting;
 
-			var sPositionAttribute = mP13nTypeSorting.position;
-			var sSelectedAttribute = mP13nTypeSorting.visible;
+			const sPositionAttribute = mP13nTypeSorting.position;
+			const sSelectedAttribute = mP13nTypeSorting.visible;
 
-			var sLocale = Configuration.getLocale().toString();
+			const sLocale = Configuration.getLocale().toString();
 
-			var oCollator = window.Intl.Collator(sLocale, {});
+			const oCollator = window.Intl.Collator(sLocale, {});
 
 			// group selected / unselected --> sort alphabetically in each group
 			aItems.sort(function (mField1, mField2) {
@@ -275,7 +275,7 @@ sap.ui.define([
 		},
 
 		_buildGroupStructure: function(mItemsGrouped) {
-			var aGroupedItems = [];
+			const aGroupedItems = [];
 			Object.keys(mItemsGrouped).forEach(function(sGroupKey){
 				this.sortP13nData("generic", mItemsGrouped[sGroupKey]);
 				aGroupedItems.push({
@@ -292,8 +292,8 @@ sap.ui.define([
 		_isExcludeProperty: function(oProperty, aIgnoreAttributes){
 
 			return aIgnoreAttributes.some(function(oKeyValuePair){
-				var sIgnoreKey = oKeyValuePair.ignoreKey;
-				var vIgnoreValue = oKeyValuePair.ignoreValue;
+				const sIgnoreKey = oKeyValuePair.ignoreKey;
+				const vIgnoreValue = oKeyValuePair.ignoreValue;
 				return oProperty[sIgnoreKey] === vIgnoreValue;
 			});
 
@@ -326,7 +326,7 @@ sap.ui.define([
 		 */
 		addRTACustomFieldButton: function (oDialog, oParent) {
 
-			var bExtensibilityEnabled = false,
+			let bExtensibilityEnabled = false,
 				oDialogParent = oDialog.getParent();
 
 			// cover SmartTable scenario
@@ -341,7 +341,7 @@ sap.ui.define([
 					sap.ui.require([
 						"sap/ui/rta/Utils"
 					], function(rtaUtils) {
-						var oHandleExtensibility = Promise.all([
+						const oHandleExtensibility = Promise.all([
 							rtaUtils.isServiceUpToDate(oDialogParent),
 							FieldExtensibility.isExtensibilityEnabled(oDialogParent)
 						]);
@@ -350,12 +350,12 @@ sap.ui.define([
 							bExtensibilityEnabled = !!aResult[1];
 						})
 							.then(function() {
-								var oCustomHeader = oDialog.getCustomHeader(),
-									sId = oDialogParent && oDialogParent.getId ? oDialogParent.getId() : undefined,
-									oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
+								let oCustomHeader = oDialog.getCustomHeader();
+								const 	sId = oDialogParent && oDialogParent.getId ? oDialogParent.getId() : undefined,
+										oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
 
 								if (!oCustomHeader) {
-									var oBar = new Bar({
+									const oBar = new Bar({
 										contentLeft: [
 											new Title({
 												text: oDialog.getTitle(),
@@ -373,9 +373,9 @@ sap.ui.define([
 										enabled: bExtensibilityEnabled,
 										tooltip: oResourceBundle.getText("p13nDialog.rtaAddTooltip"),
 										press: function (oEvt) {
-											var sRtaStyleClassName = rtaUtils.getRtaStyleClassName(),
-												oAdaptDialog =  oEvt.getSource().getParent().getParent(),
-												oControl = oAdaptDialog.getParent();
+											const sRtaStyleClassName = rtaUtils.getRtaStyleClassName(),
+												oAdaptDialog =  oEvt.getSource().getParent().getParent();
+											let oControl = oAdaptDialog.getParent();
 
 											// cover SmartTable scenario
 											if (oParent && oParent.isA('sap.ui.comp.smarttable.SmartTable')) {

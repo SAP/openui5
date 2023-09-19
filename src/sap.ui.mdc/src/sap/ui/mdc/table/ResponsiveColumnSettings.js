@@ -30,7 +30,7 @@ sap.ui.define([
 	 * @since 1.110
 	 */
 
-	var ResponsiveColumnSettings = ColumnSettings.extend("sap.ui.mdc.table.ResponsiveColumnSettings", {
+	const ResponsiveColumnSettings = ColumnSettings.extend("sap.ui.mdc.table.ResponsiveColumnSettings", {
 		metadata: {
 			library: "sap.ui.mdc",
 			"final": true,

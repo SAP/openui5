@@ -8,7 +8,7 @@ sap.ui.define([
 			  Press) {
 		"use strict";
 
-		var sViewName = "Main",
+		const sViewName = "Main",
 			sTableId = "table";
 
 		Opa5.createPageObjects({

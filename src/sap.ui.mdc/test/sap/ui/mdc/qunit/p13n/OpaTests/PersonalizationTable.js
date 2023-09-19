@@ -22,7 +22,7 @@ sap.ui.define([
 		autoWait: true
 	});
 
-	var aTableItems = [
+	let aTableItems = [
 		{p13nItem: "Name", selected: true},
 		{p13nItem: "Founding Year", selected: true},
 		{p13nItem: "Changed By", selected: true},
@@ -37,7 +37,7 @@ sap.ui.define([
 		{p13nItem: "regionOfOrigin_code", selected: false}
 	];
 
-	var aSortItems = [
+	let aSortItems = [
 		{p13nItem: "artistUUID", descending: false},
 		{p13nItem: "Breakout Year", descending: false},
 		{p13nItem: "Changed By", descending: false},
@@ -51,10 +51,10 @@ sap.ui.define([
 		{p13nItem: "regionOfOrigin_code", descending: false}
 	];
 
-	var aAvailableFilters = ["artistUUID", "Breakout Year", "Changed By", "Changed On", "City of Origin", "Country", "Created By", "Created On", "Founding Year", "Name", "regionOfOrigin_code"];
-	var sTableID = "IDTableOfInternalSampleApp_01";
+	const aAvailableFilters = ["artistUUID", "Breakout Year", "Changed By", "Changed On", "City of Origin", "Country", "Created By", "Created On", "Founding Year", "Name", "regionOfOrigin_code"];
+	const sTableID = "IDTableOfInternalSampleApp_01";
 
-	var sViewSettings = Arrangement.P13nDialog.Titles.settings;
+	const sViewSettings = Arrangement.P13nDialog.Titles.settings;
 
 	opaTest("When I start the 'appUnderTestTable' app, the table should appear and contain some columns", function (Given, When, Then) {
 		//insert application

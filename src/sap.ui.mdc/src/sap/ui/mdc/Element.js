@@ -42,7 +42,7 @@ sap.ui.define([
 	 * @public
   	 * @experimental As of version 1.74
 	 */
-	var Element = CoreElement.extend("sap.ui.mdc.Element", /** @lends sap.ui.mdc.Element.prototype */ {
+	const Element = CoreElement.extend("sap.ui.mdc.Element", /** @lends sap.ui.mdc.Element.prototype */ {
 		metadata: {
 			library: "sap.ui.mdc",
 			properties: {

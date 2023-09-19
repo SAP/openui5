@@ -8,7 +8,7 @@ sap.ui.define([
 ], function(ItemBaseFlex, Util) {
 	"use strict";
 
-    var oActionFlex = Object.assign({}, ItemBaseFlex);
+    const oActionFlex = Object.assign({}, ItemBaseFlex);
 
 	oActionFlex.findItem = function(oModifier, aActions, sName) {
 		return aActions.find(function (oAction) {
@@ -26,10 +26,10 @@ sap.ui.define([
 	};
 
 	oActionFlex._applyMove = function(oChange, oControl, mPropertyBag, sChangeReason) {
-		var bIsRevert = sChangeReason === Util.REVERT ? true : false;
-		var oModifier = mPropertyBag.modifier;
+		const bIsRevert = sChangeReason === Util.REVERT ? true : false;
+		const oModifier = mPropertyBag.modifier;
 		if (oModifier.getParent(oControl)){
-			var oParent = oModifier.getParent(oControl);
+			const oParent = oModifier.getParent(oControl);
 			if (oModifier.getControlType(oParent) === "sap.ui.mdc.Chart") {
 				// ActionToolbar of sap.ui.mdc.Chart
 				oControl = oParent;
@@ -43,14 +43,14 @@ sap.ui.define([
 			this._delayInvalidate(oControl);
 		}
 
-		var oChangeContent = bIsRevert ? oChange.getRevertData() : oChange.getContent();
-		var oControlAggregationItem;
-		var oAggregation;
-		var iOldIndex;
-		var sControlAggregationItemId;
+		const oChangeContent = bIsRevert ? oChange.getRevertData() : oChange.getContent();
+		let oControlAggregationItem;
+		let oAggregation;
+		let iOldIndex;
+		let sControlAggregationItemId;
 
 		// 1) Fetch existing item
-		var pMove = this.determineAggregation(oModifier, oControl)
+		const pMove = this.determineAggregation(oModifier, oControl)
 		.then(function(oRetrievedAggregation){
 			oAggregation = oRetrievedAggregation;
 			return this._getExistingAggregationItem(oChangeContent, mPropertyBag, oControl);

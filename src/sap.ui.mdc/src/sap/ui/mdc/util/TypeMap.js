@@ -13,10 +13,10 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var sDatePattern = "yyyy-MM-dd";
-	var sTimePattern = "HH:mm:ss";
+	const sDatePattern = "yyyy-MM-dd";
+	const sTimePattern = "HH:mm:ss";
 
-	var _cache = new WeakMap(); // We do not want to share Maps with derived TypeMaps
+	const _cache = new WeakMap(); // We do not want to share Maps with derived TypeMaps
 
 	/**
 	 * Configuration class for type-handling in MDC delegates.
@@ -31,13 +31,13 @@ sap.ui.define([
 	 * @since 1.114.0
 	 * @alias module:sap/ui/mdc/util/TypeMap
 	 */
-	var TypeMap = {};
+	const TypeMap = {};
 
 	/*
 	* Gets values of the internal map, treating string values as references to other keys (aliases)
 	*/
 	TypeMap._get = function (sType) {
-		var vEntry = this._getMap().get(sType);
+		const vEntry = this._getMap().get(sType);
 		if (typeof vEntry === "string") {
 			return this._get(vEntry);
 		} else if (vEntry) {
@@ -49,7 +49,7 @@ sap.ui.define([
 	* Updates the internal map's values, if not suppressed by TypeMap.freeze()
 	*/
 	TypeMap._set = function (sKey, vValue) {
-		var oMap = this._getMap();
+		const oMap = this._getMap();
 		if (oMap._bFrozen) {
 			throw "TypeMap: You must not modify a frozen TypeMap";
 		}
@@ -61,7 +61,7 @@ sap.ui.define([
 	* Please also see <code>module:sap/ui/mdc/util/TypeMap.import</code>
 	*/
 	TypeMap._getMap = function () {
-		var oMap = _cache.get(this);
+		let oMap = _cache.get(this);
 		if (!oMap) {
 			oMap = new Map();
 			_cache.set(this, oMap);
@@ -104,7 +104,7 @@ sap.ui.define([
 	 * @private
 	 */
 	TypeMap._getBaseType = function (sType) {
-		var aResult = this._get(sType);
+		const aResult = this._get(sType);
 		return aResult && aResult[1][0];
 	};
 
@@ -116,7 +116,7 @@ sap.ui.define([
 	 * @private
 	 */
 	TypeMap._getOptions = function (sType) {
-		var aResult = this._get(sType);
+		const aResult = this._get(sType);
 		return aResult && aResult[1][1];
 	};
 
@@ -128,7 +128,7 @@ sap.ui.define([
 	 * @private
 	 */
 	TypeMap._getClass = function (sAlias) {
-		var aResult = this._get(sAlias);
+		const aResult = this._get(sAlias);
 		return aResult && aResult[0];
 	};
 
@@ -184,7 +184,7 @@ sap.ui.define([
 	 * @public
 	 */
 	TypeMap.getBaseType = function(sType, oFormatOptions, oConstraints) {
-		var vBaseType = this._getBaseType(sType);
+		const vBaseType = this._getBaseType(sType);
 		return vBaseType && (typeof vBaseType === "function" ? vBaseType(oFormatOptions, oConstraints) : vBaseType) || BaseType.String;
 	};
 
@@ -220,8 +220,8 @@ sap.ui.define([
 	 * @public
 	 */
 	TypeMap.getDataTypeClass = function(sDataType) {
-		var sTypeName = this.getDataTypeClassName(sDataType);
-		var TypeClass = sTypeName
+		const sTypeName = this.getDataTypeClassName(sDataType);
+		const TypeClass = sTypeName
 			? sap.ui.require(sTypeName.replace(/\./g, "/")) || ObjectPath.get(sTypeName)
 			: undefined;
 		if (!TypeClass) {
@@ -242,9 +242,9 @@ sap.ui.define([
 	 * @public
 	 */
 	TypeMap.getDataTypeInstance = function(sDataType, oFormatOptions, oConstraints, oOptions) {
-		var TypeClass = this.getDataTypeClass(sDataType);
-		var fnOptions = this._getOptions(TypeClass.getMetadata().getName());
-		var aOverrides = fnOptions && fnOptions(merge({}, oFormatOptions), merge({}, oConstraints), oOptions);
+		const TypeClass = this.getDataTypeClass(sDataType);
+		const fnOptions = this._getOptions(TypeClass.getMetadata().getName());
+		const aOverrides = fnOptions && fnOptions(merge({}, oFormatOptions), merge({}, oConstraints), oOptions);
 		oFormatOptions = aOverrides && aOverrides[0] || oFormatOptions;
 		oConstraints = aOverrides && aOverrides[1] || oConstraints;
 		return new TypeClass(oFormatOptions, oConstraints);
@@ -260,7 +260,7 @@ sap.ui.define([
 	 * @public
 	 */
 	TypeMap.getTypeConfig = function(vType, oFormatOptions, oConstraints) {
-		var oType = this._normalizeType.call(this, vType, oFormatOptions, oConstraints);
+		const oType = this._normalizeType.call(this, vType, oFormatOptions, oConstraints);
 		return {
 			className: oType.getMetadata().getName(),
 			typeInstance: oType,
@@ -283,8 +283,8 @@ sap.ui.define([
 	 * @public
 	 */
 	TypeMap.externalizeValue = function(vValue, vType, oFormatOptions, oConstraints) {
-		var oTypeInstance = this._normalizeType.call(this, vType, oFormatOptions, oConstraints);
-		var sBaseType = this.getBaseTypeForType(oTypeInstance);
+		const oTypeInstance = this._normalizeType.call(this, vType, oFormatOptions, oConstraints);
+		const sBaseType = this.getBaseTypeForType(oTypeInstance);
 		switch (sBaseType) {
 			case BaseType.DateTime:
 				return DateUtil.typeToISO(vValue, oTypeInstance, sBaseType);
@@ -326,8 +326,8 @@ sap.ui.define([
 	 * @public
 	 */
 	TypeMap.internalizeValue = function(vValue, vType, oFormatOptions, oConstraints) {
-		var oTypeInstance = this._normalizeType.call(this, vType, oFormatOptions, oConstraints);
-		var sBaseType = this.getBaseTypeForType(oTypeInstance);
+		const oTypeInstance = this._normalizeType.call(this, vType, oFormatOptions, oConstraints);
+		const sBaseType = this.getBaseTypeForType(oTypeInstance);
 		switch (sBaseType) {
 			case BaseType.DateTime:
 				// eslint-disable-next-line new-cap

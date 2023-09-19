@@ -43,7 +43,7 @@ function(
 		"use strict";
 
 		// translation utils
-		var oMessageBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
+		let oMessageBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
 		sap.ui.getCore().attachLocalizationChanged(function() {
 			oMessageBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
 		});
@@ -67,7 +67,7 @@ function(
 		 *
 		 * @public
 		 */
-		var FilterOperatorUtil = {
+		const FilterOperatorUtil = {
 
 				_mOperators: {
 					/*
@@ -100,18 +100,18 @@ function(
 						},
 						format: function(oCondition, oType, sDisplayFormat, bHideOperator, aCompositeTypes, oAdditionalType, aAdditionalCompositeTypes) {
 							sDisplayFormat = sDisplayFormat || FieldDisplay.DescriptionValue;
-							var iCount = this.valueTypes.length;
-							var aValues = oCondition.values;
-							var sTokenPrefix = (oCondition && oCondition.validated === ConditionValidated.Validated) || aValues.length === 2 || bHideOperator ? "" : "=";
-							var sTokenText = sTokenPrefix + this.displayFormats[sDisplayFormat];
+							let iCount = this.valueTypes.length;
+							const aValues = oCondition.values;
+							const sTokenPrefix = (oCondition && oCondition.validated === ConditionValidated.Validated) || aValues.length === 2 || bHideOperator ? "" : "=";
+							let sTokenText = sTokenPrefix + this.displayFormats[sDisplayFormat];
 
 							if (!aValues[1]) {
 								sTokenText = sTokenPrefix + this.displayFormats["Value"];
 								iCount = 1;
 							}
 
-							for (var i = 0; i < iCount; i++) {
-								var sReplace, vValue = aValues[i];
+							for (let i = 0; i < iCount; i++) {
+								let sReplace, vValue = aValues[i];
 
 								if (vValue === null || vValue === undefined) { // support boolean
 									vValue = "";
@@ -137,7 +137,7 @@ function(
 						},
 						parse: function(sText, oType, sDisplayFormat, bDefaultOperator, aCompositeTypes, oAdditionalType, aAdditionalCompositeTypes) {
 							sDisplayFormat = sDisplayFormat || FieldDisplay.DescriptionValue;
-							var aResult = Operator.prototype.parse.apply(this, [sText, oType, sDisplayFormat, bDefaultOperator, aCompositeTypes, oAdditionalType, aAdditionalCompositeTypes]);
+							let aResult = Operator.prototype.parse.apply(this, [sText, oType, sDisplayFormat, bDefaultOperator, aCompositeTypes, oAdditionalType, aAdditionalCompositeTypes]);
 
 							if (bDefaultOperator && (!aResult || aResult[0] === null || aResult[0] === undefined) && sDisplayFormat !== FieldDisplay.Value) {
 								// in default case and no key determined (simple-EQ case)-> use text as key (parse again to use type)
@@ -151,15 +151,15 @@ function(
 							return aResult;
 						},
 						getValues: function(sText, sDisplayFormat, bDefaultOperator) {
-							var aMatch = sText.match(this.tokenParseRegExp);
-							var aValues;
+							const aMatch = sText.match(this.tokenParseRegExp);
+							let aValues;
 							if (aMatch || (bDefaultOperator && sText)) {
-								var sValue;
-								var sTokenText = this.displayFormats[sDisplayFormat];
-								var iKeyIndex = sTokenText.indexOf("{0}");
-								var iDescriptionIndex = sTokenText.indexOf("{1}");
-								var sKey;
-								var sDescription;
+								let sValue;
+								const sTokenText = this.displayFormats[sDisplayFormat];
+								const iKeyIndex = sTokenText.indexOf("{0}");
+								const iDescriptionIndex = sTokenText.indexOf("{1}");
+								let sKey;
+								let sDescription;
 
 								if (aMatch) {
 									sValue = aMatch[1];
@@ -170,15 +170,15 @@ function(
 								if (iKeyIndex >= 0 && iDescriptionIndex >= 0) {
 									// split string
 									if (sValue.lastIndexOf("(") > 0 && (sValue.lastIndexOf(")") === sValue.length - 1 || sValue.lastIndexOf(")") === -1)) {
-										var iEnd = sValue.length;
+										let iEnd = sValue.length;
 										if (sValue[iEnd - 1] === ")") {
 											iEnd--;
 										}
-										var sValue1 = sValue.substring(0, sValue.lastIndexOf("("));
+										let sValue1 = sValue.substring(0, sValue.lastIndexOf("("));
 										if (sValue1[sValue1.length - 1] === " ") {
 											sValue1 = sValue1.substring(0, sValue1.length - 1);
 										}
-										var sValue2 = sValue.substring(sValue.lastIndexOf("(") + 1, iEnd);
+										const sValue2 = sValue.substring(sValue.lastIndexOf("(") + 1, iEnd);
 										if (iKeyIndex < iDescriptionIndex) {
 											sKey = sValue1;
 											sDescription = sValue2;
@@ -207,8 +207,8 @@ function(
 							return aValues;
 						},
 						isEmpty: function(oCondition, oType) {
-							var isEmpty = false;
-							var v = oCondition.values[0];
+							let isEmpty = false;
+							const v = oCondition.values[0];
 							if ((v === null || v === undefined || v === "") && !oCondition.values[1]) { // empty has to use the oType information
 								// if key is empty but description set, condition is not empty (empty key possible)
 								isEmpty = true;
@@ -582,9 +582,9 @@ function(
 						tokenFormat: "<#tokenText#>",
 						valueTypes: [],
 						getModelFilter: function(oCondition, sFieldPath, oType, bCaseSensitive, sBaseType) {
-							var isNullable = false;
+							let isNullable = false;
 							if (oType) {
-								var vResult = oType.parseValue("", "string");
+								const vResult = oType.parseValue("", "string");
 								try {
 									oType.validateValue(vResult);
 									isNullable = vResult === null;
@@ -619,9 +619,9 @@ function(
 						valueTypes: [],
 						exclude: true,
 						getModelFilter: function(oCondition, sFieldPath, oType, bCaseSensitive, sBaseType) {
-							var isNullable = false;
+							let isNullable = false;
 							if (oType) {
-								var vResult = oType.parseValue("", "string");
+								const vResult = oType.parseValue("", "string");
 								try {
 									oType.validateValue(vResult);
 									isNullable = vResult === null;
@@ -897,8 +897,8 @@ function(
 						//label:["x", "y"],
 						additionalInfo: "",
 						calcRange: function (xDays, yDays) {
-							var oStart = xDays >= 0 ?  UniversalDateUtils.ranges.lastDays(xDays)[0] : UniversalDateUtils.ranges.nextDays(-xDays)[1];
-							var oEnd = yDays >= 0 ? UniversalDateUtils.ranges.nextDays(yDays)[1] : UniversalDateUtils.ranges.lastDays(-yDays)[0];
+							let oStart = xDays >= 0 ?  UniversalDateUtils.ranges.lastDays(xDays)[0] : UniversalDateUtils.ranges.nextDays(-xDays)[1];
+							let oEnd = yDays >= 0 ? UniversalDateUtils.ranges.nextDays(yDays)[1] : UniversalDateUtils.ranges.lastDays(-yDays)[0];
 
 							if (oStart.oDate.getTime() > oEnd.oDate.getTime()) {
 								oEnd = [oStart, oStart = oEnd][0];
@@ -1367,21 +1367,21 @@ function(
 						additionalInfo: "",
 						label: [oMessageBundle.getText("operators.SPECIFICMONTH_MONTH.label")],
 						defaultValues: function() {
-							var oDate = new UniversalDate();
+							const oDate = new UniversalDate();
 							return [
 								oDate.getMonth()
 							];
 						},
 						calcRange: function(iDuration) {
-							var oDate = new UniversalDate();
+							let oDate = new UniversalDate();
 							oDate.setMonth(iDuration);
 							oDate = UniversalDateUtils.getMonthStartDate(oDate);
 							return UniversalDateUtils.getRange(0, "MONTH", oDate);
 						},
 						format: function(oCondition, oType, sDisplayFormat, bHideOperator, aCompositeTypes, oAdditionalType, aAdditionalCompositeTypes) {
-							var iValue = oCondition.values[0];
-							var sTokenText = this.tokenFormat;
-							var sReplace = _getMonths.apply(this)[iValue];
+							const iValue = oCondition.values[0];
+							const sTokenText = this.tokenFormat;
+							const sReplace = _getMonths.apply(this)[iValue];
 
 							if (bHideOperator) {
 								return sReplace;
@@ -1390,12 +1390,12 @@ function(
 							}
 						},
 						getValues: function(sText, sDisplayFormat, bDefaultOperator) {
-							var aMatch = sText.match(this.tokenParseRegExp);
-							var aValues;
+							const aMatch = sText.match(this.tokenParseRegExp);
+							let aValues;
 							if (aMatch || (bDefaultOperator && sText)) {
 								aValues = [];
-								for (var i = 0; i < this.valueTypes.length; i++) {
-									var sValue;
+								for (let i = 0; i < this.valueTypes.length; i++) {
+									let sValue;
 									if (aMatch) {
 										sValue = aMatch[i + 1];
 									} else if ((bDefaultOperator && sText)) { // only month provided
@@ -1409,11 +1409,11 @@ function(
 							return null;
 						},
 						createControl: function(oType, sPath, iIndex, sId)  {
-							var Field = sap.ui.require("sap/ui/mdc/Field");
-							var sValueHelp = _getMonthValueHelp.call(this);
+							const Field = sap.ui.require("sap/ui/mdc/Field");
+							const sValueHelp = _getMonthValueHelp.call(this);
 							if (Field && sValueHelp) {
 
-								var oField = new Field(sId, {
+								const oField = new Field(sId, {
 									value: { path: sPath, type: oType, mode: 'TwoWay', targetType: 'raw' },
 									display: 'Description',
 									width: "100%",
@@ -1445,41 +1445,41 @@ function(
 						additionalInfo: "",
 						label: [oMessageBundle.getText("operators.SPECIFICMONTHINYEAR_MONTH.label"), oMessageBundle.getText("operators.SPECIFICMONTHINYEAR_YEAR.label")],
 						defaultValues: function() {
-							var oDate = new UniversalDate();
+							const oDate = new UniversalDate();
 							return [
 								oDate.getMonth(),
 								oDate.getFullYear()
 							];
 						},
 						calcRange: function(iMonth, iYear) {
-							var oDate = new UniversalDate();
+							let oDate = new UniversalDate();
 							oDate.setMonth(iMonth);
 							oDate.setYear(iYear);
 							oDate = UniversalDateUtils.getMonthStartDate(oDate);
 							return UniversalDateUtils.getRange(0, "MONTH", oDate);
 						},
 						format: function(oCondition, oType, sDisplayFormat, bHideOperator, aCompositeTypes, oAdditionalType, aAdditionalCompositeTypes) {
-							var iValue = oCondition.values[0];
-							var iYear = oCondition.values[1];
-							var sTokenText = this.tokenFormat;
-							var sReplace = _getMonths.apply(this)[iValue];
+							const iValue = oCondition.values[0];
+							const iYear = oCondition.values[1];
+							let sTokenText = this.tokenFormat;
+							const sReplace = _getMonths.apply(this)[iValue];
 
 							if (bHideOperator) {
 								return sReplace + "," + iYear;
 							} else {
-								var replaceRegExp0 = new RegExp("\\$" + 0 + "|" + 0 + "\\$" + "|" + "\\{" + 0 + "\\}", "g");
-								var replaceRegExp1 = new RegExp("\\$" + 1 + "|" + 1 + "\\$" + "|" + "\\{" + 1 + "\\}", "g");
+								const replaceRegExp0 = new RegExp("\\$" + 0 + "|" + 0 + "\\$" + "|" + "\\{" + 0 + "\\}", "g");
+								const replaceRegExp1 = new RegExp("\\$" + 1 + "|" + 1 + "\\$" + "|" + "\\{" + 1 + "\\}", "g");
 								sTokenText = sReplace == null ? null : sTokenText.replace(replaceRegExp0, sReplace);
 								return sTokenText.replace(replaceRegExp1, iYear);
 							}
 						},
 						getValues: function(sText, sDisplayFormat, bDefaultOperator) {
-							var aMatch = sText.match(this.tokenParseRegExp);
-							var aValues;
+							const aMatch = sText.match(this.tokenParseRegExp);
+							let aValues;
 							if (aMatch || (bDefaultOperator && sText)) {
 								aValues = [];
-								for (var i = 0; i < this.valueTypes.length; i++) {
-									var sValue;
+								for (let i = 0; i < this.valueTypes.length; i++) {
+									let sValue;
 									if (aMatch) {
 										sValue = aMatch[i + 1];
 									} else if ((bDefaultOperator && sText)) { // only month provided
@@ -1493,15 +1493,15 @@ function(
 							return null;
 						},
 						createControl: function(oType, sPath, iIndex, sId)  {
-							var oField;
-							var Field = sap.ui.require("sap/ui/mdc/Field");
+							let oField;
+							const Field = sap.ui.require("sap/ui/mdc/Field");
 							if (!Field) {
 								Log.warning("Operator.createControl", "not able to create the control for the operator " + this.name);
 								return null;
 							}
 
 							if (iIndex == 0) {
-								var sValueHelp = _getMonthValueHelp.call(this);
+								const sValueHelp = _getMonthValueHelp.call(this);
 
 								if (sValueHelp) {
 
@@ -1814,13 +1814,13 @@ function(
 				 * @public
 				 */
 				removeOperatorForType: function(sType, vOperator) {
-					var sName;
+					let sName;
 					if (typeof vOperator  === "string") {
 						sName = vOperator;
 					} else {
 						sName = vOperator.name;
 					}
-					for (var i = 0; i < FilterOperatorUtil._mDefaultOpsForType[sType].operators.length; i++) {
+					for (let i = 0; i < FilterOperatorUtil._mDefaultOpsForType[sType].operators.length; i++) {
 						if (FilterOperatorUtil._mDefaultOpsForType[sType].operators[i].name === sName) {
 							FilterOperatorUtil._mDefaultOpsForType[sType].operators.splice(i, 1);
 							return;
@@ -1838,9 +1838,9 @@ function(
 				 */
 				getOperatorsForType: function(sType) {
 
-					var aOperators = [];
+					const aOperators = [];
 
-					for (var i = 0; i < FilterOperatorUtil._mDefaultOpsForType[sType].operators.length; i++) {
+					for (let i = 0; i < FilterOperatorUtil._mDefaultOpsForType[sType].operators.length; i++) {
 						aOperators.push(FilterOperatorUtil._mDefaultOpsForType[sType].operators[i].name);
 
 					}
@@ -1878,10 +1878,10 @@ function(
 				 */
 				getMatchingOperators: function(aOperators, sValue) {
 
-					var aMyOperators = [];
+					const aMyOperators = [];
 
-					for (var i = 0; i < aOperators.length; i++) {
-						var oOperator = this.getOperator(aOperators[i]);
+					for (let i = 0; i < aOperators.length; i++) {
+						const oOperator = this.getOperator(aOperators[i]);
 						if (oOperator) {
 							aMyOperators.push(oOperator);
 						}
@@ -1900,8 +1900,8 @@ function(
 				 */
 				getOperator: function(sOperator) {
 
-					for (var sName in FilterOperatorUtil._mOperators) {
-						var oOperator = FilterOperatorUtil._mOperators[sName];
+					for (const sName in FilterOperatorUtil._mOperators) {
+						const oOperator = FilterOperatorUtil._mOperators[sName];
 						if (oOperator.name === sOperator) {
 							return oOperator;
 						}
@@ -1927,8 +1927,8 @@ function(
 				getEQOperator: function(aOperators) {
 
 					if (aOperators) {
-						for (var i = 0; i < aOperators.length; i++) {
-							var oOperator = this.getOperator(aOperators[i]);
+						for (let i = 0; i < aOperators.length; i++) {
+							const oOperator = this.getOperator(aOperators[i]);
 							if (oOperator && oOperator.validateInput && !oOperator.exclude && oOperator.valueTypes[0] && oOperator.valueTypes[0] !== OperatorValueType.Static) {
 								return oOperator;
 							}
@@ -1975,7 +1975,7 @@ function(
 					}
 
 					aConditions.forEach(function(oCondition) {
-						var oOperator = this.getOperator(oCondition.operator);
+						const oOperator = this.getOperator(oCondition.operator);
 						if (oOperator) {
 							oCondition.isEmpty = oOperator.isEmpty(oCondition);
 						}
@@ -1997,7 +1997,7 @@ function(
 						aConditions = [aConditions];
 					}
 
-					for (var i = 0; i < aConditions.length; i++) {
+					for (let i = 0; i < aConditions.length; i++) {
 						this.updateConditionValues(aConditions[i]);
 					}
 
@@ -2013,11 +2013,11 @@ function(
 				 */
 				updateConditionValues: function(oCondition) {
 
-					var oOperator = this.getOperator(oCondition.operator);
+					const oOperator = this.getOperator(oCondition.operator);
 
 					//update the values array length (Validated conditions are seen as OK)
 					if (oOperator && oCondition.validated !== ConditionValidated.Validated) {
-						var iValueTypesLength = oOperator.valueTypes.length;
+						let iValueTypesLength = oOperator.valueTypes.length;
 
 						if (oOperator.valueTypes.length === 2 && oOperator.valueTypes[1] === null
 								&& (oCondition.values.length < 2 || oCondition.values[1] === null || oCondition.values[1] === undefined)) {
@@ -2058,10 +2058,10 @@ function(
 				 */
 				indexOfCondition: function(oCondition, aConditions) {
 
-					var iIndex = -1;
+					let iIndex = -1;
 
 					// compare operator and value. in EQ case, compare only key
-					for (var i = 0; i < aConditions.length; i++) {
+					for (let i = 0; i < aConditions.length; i++) {
 						if (this.compareConditions(oCondition, aConditions[i])) {
 							iIndex = i;
 							break;
@@ -2087,11 +2087,11 @@ function(
 				 */
 				compareConditions: function(oCondition1, oCondition2) {
 
-					var bEqual = false;
+					let bEqual = false;
 
 					// compare operator and value. in EQ case, compare only key
 					if (oCondition1.operator === oCondition2.operator) {
-						var oOperator = this.getOperator(oCondition1.operator);
+						const oOperator = this.getOperator(oCondition1.operator);
 						if (oOperator) {
 							bEqual = oOperator.compareConditions(oCondition1, oCondition2);
 						}
@@ -2116,11 +2116,11 @@ function(
 				 */
 				compareConditionsArray: function(aConditions1, aConditions2) {
 
-					var bEqual = false;
+					let bEqual = false;
 
 					if (aConditions1.length === aConditions2.length) {
 						bEqual = true;
-						for (var i = 0; i < aConditions1.length; i++) {
+						for (let i = 0; i < aConditions1.length; i++) {
 							if (!this.compareConditions(aConditions1[i], aConditions2[i])) {
 								bEqual = false;
 								break;
@@ -2143,7 +2143,7 @@ function(
 				 */
 				checkConditionValidated: function(oCondition) {
 
-					var oOperator = this.getOperator(oCondition.operator);
+					const oOperator = this.getOperator(oCondition.operator);
 					if (!oCondition.validated && oOperator && oOperator.checkValidated) {
 						// only check if not already validated, keep already validated conditions validated (description might be missing before loaded)
 						oOperator.checkValidated(oCondition);
@@ -2163,7 +2163,7 @@ function(
 				 */
 				 getOperatorForDynamicDateOption: function(sOption, sBaseType) {
 
-					var oOperator;
+					let oOperator;
 
 					// determine operator name if used as custom DynamicDateOption created in DateContent using getCustomDynamicDateOptionForOperator
 					if (sBaseType && sOption.startsWith(sBaseType)) {
@@ -2173,8 +2173,8 @@ function(
 					}
 
 					if (!oOperator && sBaseType) {
-						for (var sName in FilterOperatorUtil._mOperators) {
-							var oCheckOperator = FilterOperatorUtil._mOperators[sName];
+						for (const sName in FilterOperatorUtil._mOperators) {
+							const oCheckOperator = FilterOperatorUtil._mOperators[sName];
 							if (oCheckOperator.alias && oCheckOperator.alias[sBaseType] === sOption) {
 								oOperator = oCheckOperator;
 								break;
@@ -2200,7 +2200,7 @@ function(
 				 */
 				 getDynamicDateOptionForOperator: function(oOperator, oDynamicDateRangeKeys, sBaseType) {
 
-					var sOption;
+					let sOption;
 					if (oOperator) {
 						if (oDynamicDateRangeKeys[oOperator.name]) {
 							sOption = oOperator.name;
@@ -2454,10 +2454,10 @@ function(
 		 */
 		function _getMatchingOperators(aOperators, sValue) {
 			// TODO: sType will be needed for checking the value content:   "=5" matches the EQ operator, but should only match when type is e.g. number, not for e.g. boolean
-			var aResult = [];
+			const aResult = [];
 
-			for (var i = 0; i < aOperators.length; i++) {
-				var oOperator = aOperators[i];
+			for (let i = 0; i < aOperators.length; i++) {
+				const oOperator = aOperators[i];
 				if (oOperator && oOperator.test && oOperator.test(sValue)) {
 					aResult.push(oOperator);
 				}
@@ -2476,16 +2476,16 @@ function(
 
 		function _getMonths() {
 			if (!this._aMonths) {
-				var oDate = new UniversalDate(),
+				const oDate = new UniversalDate(),
 					oFormatter = DateFormat.getDateInstance({
 						pattern: "LLLL"
 					});
 				oDate.setDate(15);
 				oDate.setMonth(0);
 
-				var aMonths = [];
+				const aMonths = [];
 
-				for (var i = 0; i < 12; i++) {
+				for (let i = 0; i < 12; i++) {
 					aMonths.push(oFormatter.format(oDate));
 					oDate.setMonth(oDate.getMonth() + 1);
 				}
@@ -2497,9 +2497,9 @@ function(
 		}
 
 		function _getIndexOfMonth(sMonth) {
-			var sLowerCaseMonth = sMonth.toLowerCase();
-			var aMonths = _getMonths.apply(this);
-			var iIndex = -1;
+			const sLowerCaseMonth = sMonth.toLowerCase();
+			const aMonths = _getMonths.apply(this);
+			let iIndex = -1;
 			aMonths.some(function(sElement, i) {
 				if (sElement.toLowerCase() == sLowerCaseMonth) {
 					iIndex = i;
@@ -2510,11 +2510,11 @@ function(
 		}
 
 
-		var bCreatingMonthValueHelp = false;
+		let bCreatingMonthValueHelp = false;
 
 		function _getMonthValueHelp() {
 
-			var sId = "LFHForSpecificMonth";
+			const sId = "LFHForSpecificMonth";
 
 			if (!bCreatingMonthValueHelp) {
 				bCreatingMonthValueHelp = true;
@@ -2526,18 +2526,18 @@ function(
 					"sap/ui/mdc/valuehelp/Popover",
 					"sap/ui/core/Control"
 				]).then(function (aLoaded) {
-					var FixedList = aLoaded[0];
-					var FixedListItem = aLoaded[1];
-					var ValueHelp = aLoaded[2];
-					var Popover = aLoaded[3];
-					var Control = aLoaded[4];
+					const FixedList = aLoaded[0];
+					const FixedListItem = aLoaded[1];
+					const ValueHelp = aLoaded[2];
+					const Popover = aLoaded[3];
+					const Control = aLoaded[4];
 
-					var getMonthItems = function() {
+					const getMonthItems = function() {
 						if (!this._aMonthsItems) {
-							var aMonths = _getMonths.apply(this);
+							const aMonths = _getMonths.apply(this);
 							this._aMonthsItems = [];
 
-							for (var i = 0; i < 12; i++) {
+							for (let i = 0; i < 12; i++) {
 								this._aMonthsItems.push({
 									text: aMonths[i],
 									key: i
@@ -2548,7 +2548,7 @@ function(
 						return this._aMonthsItems;
 					}.bind(this);
 
-					var oMonthValueHelp = new ValueHelp(sId, {
+					const oMonthValueHelp = new ValueHelp(sId, {
 						typeahead: new Popover(sId + "-pop", {
 							content: [new FixedList(sId + "-FL", {
 								filterList: false,
@@ -2567,8 +2567,8 @@ function(
 
 					// put in static UIArea to have only one instance. As in UIArea only controls are alloweg we need a dummy Control
 					try {
-						var oStaticUIArea = StaticArea.getUIArea();
-						var oControl = new Control(sId + "-parent", {dependents: [oMonthValueHelp]});
+						const oStaticUIArea = StaticArea.getUIArea();
+						const oControl = new Control(sId + "-parent", {dependents: [oMonthValueHelp]});
 						oStaticUIArea.addContent(oControl, true); // do not invalidate UIArea
 					} catch (e) {
 						Log.error(e);

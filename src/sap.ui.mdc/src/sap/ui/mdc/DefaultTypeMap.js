@@ -34,7 +34,7 @@ sap.ui.define([
 	* @alias module:sap/ui/mdc/DefaultTypeMap
 	* @extends module:sap/ui/mdc/util/TypeMap
 	*/
-	var DefaultTypeMap = Object.assign({}, TypeMap);
+	const DefaultTypeMap = Object.assign({}, TypeMap);
 
 	DefaultTypeMap.getUnitBaseType = function (oFormatOptions, oConstraints) {
 		if (!oFormatOptions || ((!oFormatOptions.hasOwnProperty("showMeasure") || oFormatOptions.showMeasure) && (!oFormatOptions.hasOwnProperty("showNumber") || oFormatOptions.showNumber))) {

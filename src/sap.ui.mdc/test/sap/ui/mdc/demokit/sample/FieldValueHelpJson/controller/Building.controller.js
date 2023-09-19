@@ -9,11 +9,11 @@ sap.ui.define([
 			this.getView().bindElement({ path: "/buildings/60", model: "facilities" });
 		},
 		onBuildingSelected: function (oEvent) {
-			var selID = oEvent.getSource().getValue();
+			const selID = oEvent.getSource().getValue();
 			//var oModel = oEvent.getSource().getModel();
-			var oModel = this.getView().getModel("facilities");
-			var aBuildings = oModel.getObject("/buildings");
-			var selIndex = aBuildings.findIndex((building) => building.id === selID);
+			const oModel = this.getView().getModel("facilities");
+			const aBuildings = oModel.getObject("/buildings");
+			const selIndex = aBuildings.findIndex((building) => building.id === selID);
 			this.getView().bindElement({ path: "/buildings/" + selIndex, model: "facilities" });
 		},
 		onGetCountryName: function (countryId) {

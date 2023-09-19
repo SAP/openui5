@@ -12,9 +12,9 @@ sap.ui.define([
 ], function(FilterBarDelegate, Core) {
 	"use strict";
 
-	var mdcMessageBundle = Core.getLibraryResourceBundle("sap.ui.mdc");
+	const mdcMessageBundle = Core.getLibraryResourceBundle("sap.ui.mdc");
 
-	var ValueHelpFilterBarDelegate = Object.assign({}, FilterBarDelegate);
+	const ValueHelpFilterBarDelegate = Object.assign({}, FilterBarDelegate);
 
 	ValueHelpFilterBarDelegate.fetchProperties = function(oFilterBar) {
 		return Promise.resolve([{

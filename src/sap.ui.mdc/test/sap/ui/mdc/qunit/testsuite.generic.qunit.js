@@ -3,7 +3,7 @@ sap.ui.define([
 ], function(GenericTestCollection) {
 	"use strict";
 
-	var oConfig = GenericTestCollection.createTestsuiteConfig({
+	const oConfig = GenericTestCollection.createTestsuiteConfig({
 		library: "sap.ui.mdc",
 		objectCapabilities: {
 			"sap.ui.mdc.Control": {
@@ -86,7 +86,7 @@ sap.ui.define([
 				create: function (ChartTypeButton, mParameters) {
 					return new Promise(function (resolve, reject) {
 						sap.ui.require(["sap/ui/mdc/Chart"], function (Chart) {
-							var oChart = new Chart(mParameters),
+							const oChart = new Chart(mParameters),
 								oChartTypeButton = new ChartTypeButton(oChart);
 
 							oChartTypeButton.destroy = function () {

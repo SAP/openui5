@@ -177,7 +177,7 @@ sap.ui.define([
 		})
 	});
 
-	var oModuleSettings = {
+	const oModuleSettings = {
 		beforeEach: function() {},
 		afterEach: function() {}
 	};
@@ -185,8 +185,8 @@ sap.ui.define([
 	QUnit.module("Overlay Tests", oModuleSettings);
 
 	opaTest("When entering Filter Values, I should see an overlay", function(Given, When, Then){
-		var oFilterBar = "listreport---books--booksFilterBar";
-		var oMDCChart = "listreport---books--bookChart";
+		const oFilterBar = "listreport---books--booksFilterBar";
+		const oMDCChart = "listreport---books--bookChart";
 		Given.iStartMyUIComponentInViewMode();
 
 		When.onTheMDCFilterBar.iEnterFilterValue(oFilterBar, {
@@ -201,8 +201,8 @@ sap.ui.define([
 	});
 
 	opaTest("When I press Go, the overlay should be gone", function(Given, When, Then){
-		var oFilterBar = "listreport---books--booksFilterBar";
-		var oMDCChart = "listreport---books--bookChart";
+		const oFilterBar = "listreport---books--booksFilterBar";
+		const oMDCChart = "listreport---books--bookChart";
 		When.onTheMDCFilterBar.iExpectSearch(oFilterBar);
 
 		Then.iShouldSeeNoOverlayOnTable();
@@ -212,8 +212,8 @@ sap.ui.define([
 
 	opaTest("When opening and closing the AF dialog without changing values, there should be no overlay", function(Given, When, Then) {
 		Given.iStartMyUIComponentInViewMode();
-		var oFilterBar = "listreport---books--booksFilterBar";
-		var oMDCChart = "listreport---books--bookChart";
+		const oFilterBar = "listreport---books--booksFilterBar";
+		const oMDCChart = "listreport---books--bookChart";
 
 		When.onTheMDCFilterBar.iPressOnTheAdaptFiltersButton(oFilterBar);
 		When.onTheMDCFilterBar.iCloseTheAdaptFiltersDialogWithCancel();
@@ -230,8 +230,8 @@ sap.ui.define([
 
 	opaTest("When opening and closing the AF dialog with changing values then pressing cancel, there should be no overlay", function(Given,When,Then) {
 		Given.iStartMyUIComponentInViewMode();
-		var oFilterBar = "listreport---books--booksFilterBar";
-		var oMDCChart = "listreport---books--bookChart";
+		const oFilterBar = "listreport---books--booksFilterBar";
+		const oMDCChart = "listreport---books--bookChart";
 
 		When.onTheMDCFilterBar.iPressOnTheAdaptFiltersButton(oFilterBar);
 		When.iEnterRandomValueInFilterFieldOnVH();
@@ -244,8 +244,8 @@ sap.ui.define([
 
 	opaTest("When opening and closing the AF dialog with changing values then pressing OK, there should be an overlay", function(Given, When, Then){
 		Given.iStartMyUIComponentInViewMode();
-		var oFilterBar = "listreport---books--booksFilterBar";
-		var oMDCChart = "listreport---books--bookChart";
+		const oFilterBar = "listreport---books--booksFilterBar";
+		const oMDCChart = "listreport---books--bookChart";
 
 		When.onTheMDCFilterBar.iEnterFilterValue(oFilterBar, {
 			Books: {
@@ -259,8 +259,8 @@ sap.ui.define([
 	});
 
 	opaTest("When opening and closing the AF dialog with deleting the values then pressing OK, there should be an overlay", function(Given, When, Then){
-		var oFilterBar = "listreport---books--booksFilterBar";
-		var oMDCChart = "listreport---books--bookChart";
+		const oFilterBar = "listreport---books--booksFilterBar";
+		const oMDCChart = "listreport---books--bookChart";
 		When.onTheMDCFilterBar.iPressOnTheAdaptFiltersButton(oFilterBar);
 		When.iClearAuthorFieldInVH();
 		When.onTheMDCFilterBar.iCloseTheAdaptFiltersDialogWithOk();
@@ -271,9 +271,9 @@ sap.ui.define([
 	});
 
 	opaTest("When saving a new variant without changing any filters, there should be no overlay", function(Given, When, Then){
-		var oVM = "listreport---books--IDVariantManagementOfTable";
-		var oVariantName = "New Variant";
-		var oMDCChart = "listreport---books--bookChart";
+		const oVM = "listreport---books--IDVariantManagementOfTable";
+		const oVariantName = "New Variant";
+		const oMDCChart = "listreport---books--bookChart";
 
 		Given.iStartMyUIComponentInViewMode();
 		Then.iShouldSeeNoOverlayOnTable();
@@ -296,8 +296,8 @@ sap.ui.define([
 	});
 
 	opaTest("When adding a new filter via the AF dialog, there should be no overlay", function(Given, When, Then) {
-		var oFilterBar = "listreport---books--booksFilterBar";
-		var oMDCChart = "listreport---books--bookChart";
+		const oFilterBar = "listreport---books--booksFilterBar";
+		const oMDCChart = "listreport---books--bookChart";
 
 		Given.iStartMyUIComponentInViewMode();
 

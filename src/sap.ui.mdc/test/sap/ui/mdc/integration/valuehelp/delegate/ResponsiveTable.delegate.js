@@ -29,15 +29,15 @@ sap.ui.define([
 	/**
 	 * Test delegate for OData V4.
 	 */
-	var ODataTableDelegate = Object.assign({}, TableDelegate);
+	const ODataTableDelegate = Object.assign({}, TableDelegate);
 
 	ODataTableDelegate.getTypeMap = function (oPayload) {
 		return ODataV4TypeMap;
 	};
 
 	ODataTableDelegate.fetchProperties = function(oTable) {
-		var oModel = this._getModel(oTable);
-		var pCreatePropertyInfos;
+		const oModel = this._getModel(oTable);
+		let pCreatePropertyInfos;
 
 		if (!oModel) {
 			pCreatePropertyInfos = new Promise(function(resolve) {
@@ -60,8 +60,8 @@ sap.ui.define([
 	};
 
 	function onModelContextChange(oEvent, oData) {
-		var oTable = oEvent.getSource();
-		var oModel = this._getModel(oTable);
+		const oTable = oEvent.getSource();
+		const oModel = this._getModel(oTable);
 
 		if (oModel) {
 			oTable.detachModelContextChange(onModelContextChange);
@@ -70,22 +70,22 @@ sap.ui.define([
 	}
 
 	ODataTableDelegate._createPropertyInfos = function(oTable, oModel) {
-		var oMetadataInfo = oTable.getDelegate().payload;
-		var aProperties = [];
-		var sEntitySetPath = "/" + oMetadataInfo.collectionName;
-		var oMetaModel = oModel.getMetaModel();
+		const oMetadataInfo = oTable.getDelegate().payload;
+		const aProperties = [];
+		const sEntitySetPath = "/" + oMetadataInfo.collectionName;
+		const oMetaModel = oModel.getMetaModel();
 
 		return Promise.all([
 			oMetaModel.requestObject(sEntitySetPath + "/"), oMetaModel.requestObject(sEntitySetPath + "@")
 		]).then(function(aResults) {
-			var oEntityType = aResults[0], mEntitySetAnnotations = aResults[1];
-			var oSortRestrictions = mEntitySetAnnotations["@Org.OData.Capabilities.V1.SortRestrictions"] || {};
-			var oSortRestrictionsInfo = ODataMetaModelUtil.getSortRestrictionsInfo(oSortRestrictions);
-			var oFilterRestrictions = mEntitySetAnnotations["@Org.OData.Capabilities.V1.FilterRestrictions"];
-			var oFilterRestrictionsInfo = ODataMetaModelUtil.getFilterRestrictionsInfo(oFilterRestrictions);
+			const oEntityType = aResults[0], mEntitySetAnnotations = aResults[1];
+			const oSortRestrictions = mEntitySetAnnotations["@Org.OData.Capabilities.V1.SortRestrictions"] || {};
+			const oSortRestrictionsInfo = ODataMetaModelUtil.getSortRestrictionsInfo(oSortRestrictions);
+			const oFilterRestrictions = mEntitySetAnnotations["@Org.OData.Capabilities.V1.FilterRestrictions"];
+			const oFilterRestrictionsInfo = ODataMetaModelUtil.getFilterRestrictionsInfo(oFilterRestrictions);
 
-			for (var sKey in oEntityType) {
-				var oObj = oEntityType[sKey];
+			for (const sKey in oEntityType) {
+				const oObj = oEntityType[sKey];
 
 				if (oObj && oObj.$kind === "Property") {
 					// ignore (as for now) all complex properties
@@ -97,7 +97,7 @@ sap.ui.define([
 						continue;
 					}
 
-					var oPropertyAnnotations = oMetaModel.getObject(sEntitySetPath + "/" + sKey + "@");
+					const oPropertyAnnotations = oMetaModel.getObject(sEntitySetPath + "/" + sKey + "@");
 
 					aProperties.push({
 						name: sKey,
@@ -123,7 +123,7 @@ sap.ui.define([
 	 */
 	 ODataTableDelegate.updateBindingInfo = function(oTable, oBindingInfo) {
 		TableDelegate.updateBindingInfo.apply(this, arguments);
-		var oDelegatePayload = oTable.getPayload();
+		const oDelegatePayload = oTable.getPayload();
 
 		if (oDelegatePayload ) {
 			oBindingInfo.path = oBindingInfo.path || oDelegatePayload.collectionPath || "/" + oDelegatePayload.collectionName;
@@ -134,11 +134,11 @@ sap.ui.define([
 			oBindingInfo.parameters.$expand = "countryOfOrigin";
 		}
 
-		var oFilterBar = Core.byId(oTable.getFilter());
+		const oFilterBar = Core.byId(oTable.getFilter());
 		// var bTableFilterEnabled = oTable.isFilteringEnabled();
-		var mConditions;
-		var oOuterFilterInfo;
-		var aFilters = [];
+		let mConditions;
+		let oOuterFilterInfo;
+		const aFilters = [];
 
 		// if (bTableFilterEnabled) {
 		// 	mConditions = oTable.getConditions();
@@ -154,7 +154,7 @@ sap.ui.define([
 			mConditions = oFilterBar.getConditions();
 			if (mConditions) {
 
-				var aPropertiesMetadata = oFilterBar.getPropertyHelper().getProperties();
+				const aPropertiesMetadata = oFilterBar.getPropertyHelper().getProperties();
 				oOuterFilterInfo = FilterUtil.getFilterInfo(ODataTableDelegate.getTypeMap(), mConditions, aPropertiesMetadata);
 
 				if (oOuterFilterInfo.filters) {
@@ -163,7 +163,7 @@ sap.ui.define([
 			}
 
 			// get the basic search
-			var sSearchText = oFilterBar.getSearch instanceof Function ? oFilterBar.getSearch() :  "";
+			let sSearchText = oFilterBar.getSearch instanceof Function ? oFilterBar.getSearch() :  "";
 			if (sSearchText && sSearchText.indexOf(" ") === -1) { // to allow search for "(".....
 				sSearchText = '"' + sSearchText + '"'; // TODO: escape " in string
 			} // if it contains spaces allow opeartors like OR...
@@ -180,7 +180,7 @@ sap.ui.define([
 	};
 
 	ODataTableDelegate._getModel = function(oTable) {
-		var oMetadataInfo = oTable.getDelegate().payload;
+		const oMetadataInfo = oTable.getDelegate().payload;
 		return oTable.getModel(oMetadataInfo.model);
 	};
 

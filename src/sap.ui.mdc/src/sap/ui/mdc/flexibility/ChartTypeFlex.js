@@ -7,10 +7,10 @@ sap.ui.define([
 ], function(Util, Classification) {
 	"use strict";
 
-	var ChartTypeFlex = {};
+	const ChartTypeFlex = {};
 
-	var fSetChartType = function(oChange, oChart, mPropertyBag) {
-		var oModifier = mPropertyBag.modifier;
+	const fSetChartType = function(oChange, oChart, mPropertyBag) {
+		const oModifier = mPropertyBag.modifier;
 		return Promise.resolve()
 			.then(oModifier.getProperty.bind(oModifier, oChart, "chartType"))
 			.then(function(vOldValue) {
@@ -21,13 +21,13 @@ sap.ui.define([
 			});
 	};
 
-	var fRevertChartType = function(oChange, oChart, mPropertyBag) {
+	const fRevertChartType = function(oChange, oChart, mPropertyBag) {
 		mPropertyBag.modifier.setProperty(oChart, "chartType", oChange.getRevertData());
 		oChange.resetRevertData();
 		return Promise.resolve();
 	};
 
-	var fGetCondenserInfoChartType = function(oChange, mPropertyBag) {
+	const fGetCondenserInfoChartType = function(oChange, mPropertyBag) {
 		return {
 			classification: Classification.LastOneWins,
 			affectedControl: oChange.getSelector(),

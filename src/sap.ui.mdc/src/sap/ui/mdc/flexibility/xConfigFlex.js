@@ -19,10 +19,10 @@ sap.ui.define([
 	 * @private
 	 * @alias sap.ui.mdc.flexibility.xConfigFlex
 	 */
-    var xConfigFlex = {};
+    const xConfigFlex = {};
 
-    var fnQueueChange = function(oControl, fTask) {
-		var fCleanupPromiseQueue = function(pOriginalPromise) {
+    const fnQueueChange = function(oControl, fTask) {
+		const fCleanupPromiseQueue = function(pOriginalPromise) {
 			if (oControl._pQueue === pOriginalPromise){
 				delete oControl._pQueue;
 			}
@@ -52,17 +52,17 @@ sap.ui.define([
             throw new Error("Please provide a map containing the affected aggregation and property name!");
         }
 
-        var sAffectedAggregation = mMetaConfig.aggregation;
-        var sAffectedProperty = mMetaConfig.property;
+        const sAffectedAggregation = mMetaConfig.aggregation;
+        const sAffectedProperty = mMetaConfig.property;
 
-        var fApply = function (oChange, oControl, mPropertyBag) {
+        const fApply = function (oChange, oControl, mPropertyBag) {
 
             return fnQueueChange(oControl, function(){
                 return Engine.getInstance().readXConfig(oControl, {
                     propertyBag: mPropertyBag
                 })
                 .then(function(oPriorAggregationConfig) {
-                    var sOldValue = null;
+                    let sOldValue = null;
 
                     if (oPriorAggregationConfig
                         && oPriorAggregationConfig.aggregations
@@ -92,7 +92,7 @@ sap.ui.define([
 
         };
 
-        var fRevert = function (oChange, oControl, mPropertyBag) {
+        const fRevert = function (oChange, oControl, mPropertyBag) {
             return Engine.getInstance().enhanceXConfig(oControl, {
                 controlMeta: {
                     aggregation: sAffectedAggregation

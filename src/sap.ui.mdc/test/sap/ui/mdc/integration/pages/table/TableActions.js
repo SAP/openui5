@@ -15,12 +15,12 @@ sap.ui.define(
 
 			return {
 				iClickListItemInViewSettings: function (sColumn) {
-					var sortItem = null;
+					let sortItem = null;
 					return this.waitFor({
 						controlType: "sap.m.StandardListItem",
 						check: function (aListItems) {
-							for (var i = 0; i < aListItems.length; i++) {
-								var sTitle = aListItems[i].getTitle();
+							for (let i = 0; i < aListItems.length; i++) {
+								const sTitle = aListItems[i].getTitle();
 								if (sTitle === sColumn) {
 									sortItem = aListItems[i];
 									return true;
@@ -36,11 +36,11 @@ sap.ui.define(
 				},
 
 				iClickOnColumnHeader : function (sColumn) {
-					var oColumnSelectable;
+					let oColumnSelectable;
 					return this.waitFor({
 						controlType: "sap.ui.table.Column",
 						check : function (aColumns) {
-							for (var i = 0; i < aColumns.length; i++) {
+							for (let i = 0; i < aColumns.length; i++) {
 								if (aColumns[i].sId.indexOf(sColumn) !== -1) {
 									oColumnSelectable = aColumns[i];
 									return true;
@@ -57,15 +57,15 @@ sap.ui.define(
 				},
 				// generic function to select menu items of the column header
 				iSelectColumnMenuItem : function (sColumn, sItemText) {
-					var oMenuItem;
+					let oMenuItem;
 					return this.waitFor({
 						controlType: "sap.ui.table.Column",
 						check : function (aColumns) {
-							for (var i = 0; i < aColumns.length; i++) {
+							for (let i = 0; i < aColumns.length; i++) {
 								// match column and check if open then identify the menu item for selection
 								if (aColumns[i].sId.indexOf(sColumn) !== -1 && aColumns[i].getMenu().bOpen) {
-									var aMenuItems = aColumns[i].getMenu().getItems();
-									for (var j = 0; j < aMenuItems.length; j++) {
+									const aMenuItems = aColumns[i].getMenu().getItems();
+									for (let j = 0; j < aMenuItems.length; j++) {
 										if (aMenuItems[j].getText() === sItemText) {
 											oMenuItem = aMenuItems[j];
 											return true;

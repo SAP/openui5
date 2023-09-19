@@ -27,7 +27,7 @@ sap.ui.define([
 	 * @alias sap.ui.mdc.table.RowActionItem
 	 */
 
-	var RowActionItem = Element.extend("sap.ui.mdc.table.RowActionItem", {
+	const RowActionItem = Element.extend("sap.ui.mdc.table.RowActionItem", {
 		metadata: {
 			library: "sap.ui.mdc",
 			properties: {
@@ -81,16 +81,16 @@ sap.ui.define([
 		}
 	});
 
-	var mThemeParameters = {
+	const mThemeParameters = {
 		navigationIcon: "navigation-right-arrow"
 	};
 
 	RowActionItem.prototype._getText = function () {
-		var sText;
+		let sText;
 		if (this.getText()) {
 			sText = this.getText();
 		} else {
-			var oResourceBundle = Core.getLibraryResourceBundle("sap.ui.mdc");
+			const oResourceBundle = Core.getLibraryResourceBundle("sap.ui.mdc");
 			if (this.getType() === TableRowAction.Navigation) {
 				sText = oResourceBundle.getText("table.ROW_ACTION_ITEM_NAVIGATE");
 			}
@@ -99,7 +99,7 @@ sap.ui.define([
 	};
 
 	RowActionItem.prototype._getIcon = function () {
-		var oIcon;
+		let oIcon;
 		if (this.getIcon()) {
 			oIcon = this.getIcon();
 		} else if (this.getType() === TableRowAction.Navigation) {

@@ -86,7 +86,7 @@ sap.ui.define([
 
 		// Assert
 		assert.ok(!this.oColSearch.oVariantSelectionPage.getShowSubHeader(), "Subheader should not be visible");
-		for (var i = 3; i < 11; i++) {
+		for (let i = 3; i < 11; i++) {
 			this.oColSearch.addItem(new Item({key: "cs" + i, text: "col Search " + i}));
 		}
 		this.oColSearch.onclick();
@@ -102,13 +102,13 @@ sap.ui.define([
 		this.oColSearch.setSelectedItemKey("cs2");
 		this.oColSearch.addItem(new Item({key: "cs1", text: "col Search 1"}));
 		this.oColSearch.addItem(new Item({key: "cs2", text: "col Search 2"}));
-		for (var i = 3; i < 11; i++) {
+		for (let i = 3; i < 11; i++) {
 			this.oColSearch.addItem(new Item({key: "cs" + i, text: "col Search " + i}));
 		}
 		this.oColSearch.onclick();
 
 		// Assert
-		var oFakeEvent = {
+		let oFakeEvent = {
 			newValue: "10"
 		};
 		this.oColSearch._oSearchField.fireLiveChange(oFakeEvent);
@@ -158,7 +158,7 @@ sap.ui.define([
 		}.bind(this));
 
 
-		var oFakeEvent = {
+		let oFakeEvent = {
 			item: new Item({key: "cs2", text: "col Search 2"})
 		};
 		this.oColSearch.oVariantList.fireItemPress(oFakeEvent);

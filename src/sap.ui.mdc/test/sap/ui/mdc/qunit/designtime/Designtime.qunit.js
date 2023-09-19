@@ -41,19 +41,19 @@ sap.ui.define([
 	});
 	QUnit.test("XCheck if all properties are declared in design time file", function(assert) {
 
-		var iIndex = 0;
-		var fnDone = assert.async();
+		let iIndex = 0;
+		const fnDone = assert.async();
 
 		this.aControls.forEach(function(oControl) {
 
-			var mProperties = oControl.getMetadata()._mProperties;
+			const mProperties = oControl.getMetadata()._mProperties;
 			assert.ok(mProperties, "Properties loaded for " + oControl.getMetadata().getName());
 
 //			if (oControl.isA("sap.ui.mdc.FilterBar")) {
 //				mProperties = merge(mProperties, oControl.getMetadata().getParent()._mProperties);
 //			}
 
-			var aProperties = Object.keys(mProperties);
+			const aProperties = Object.keys(mProperties);
 
 			oControl.getMetadata().loadDesignTime().then(function(oDesignTimeMetadata) {
 				assert.ok(oDesignTimeMetadata, "Metadatafile present for " + oControl.getMetadata().getName());

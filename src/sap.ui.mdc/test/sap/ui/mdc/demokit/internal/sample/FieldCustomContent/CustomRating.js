@@ -20,7 +20,7 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var CustomRating = Control.extend("sap.ui.mdc.sample.FieldCustomContent.CustomRating", {
+	const CustomRating = Control.extend("sap.ui.mdc.sample.FieldCustomContent.CustomRating", {
 		metadata: {
 			interfaces: ["sap.ui.core.IFormContent"],
 			library: "sap.ui.mdc",
@@ -109,8 +109,8 @@ sap.ui.define([
 			apiVersion: 2,
 			render: function(oRm, oControl) {
 
-				var oRating = oControl.getAggregation("_rating");
-				var oButton = oControl.getAggregation("_button");
+				const oRating = oControl.getAggregation("_rating");
+				const oButton = oControl.getAggregation("_button");
 				oRm.openStart("div", oControl);
 				oRm.style("width", "100%");
 				oRm.openEnd();
@@ -136,7 +136,7 @@ sap.ui.define([
 			properties: ["conditions"]
 		});
 
-		var oRating = new RatingIndicator(this.getId() + "-RI", {
+		const oRating = new RatingIndicator(this.getId() + "-RI", {
 			editable: {path: "$this>/editable"},
 			enabled: {path: "$this>/enabled"},
 			tooltip: {path: "$this>/tooltip"},
@@ -148,7 +148,7 @@ sap.ui.define([
 		oRating.setModel(this._oManagedObjectModel, "$this");
 		this.setAggregation("_rating", oRating);
 
-		var oButton = new Button(this.getId() + "-B", {
+		const oButton = new Button(this.getId() + "-B", {
 			icon: "sap-icon://delete",
 			enabled: {parts: [{path: "$this>/enabled"}, {path: "$this>/editable"}], formatter: _determineButtonEnabled},
 			width: "2rem",
@@ -175,9 +175,9 @@ sap.ui.define([
 	CustomRating.prototype._observeChanges = function(oChanges) {
 
 		if (oChanges.name === "conditions") {
-			var oRating = this.getAggregation("_rating");
-			var aConditions = oChanges.current;
-			var vValue = null;
+			const oRating = this.getAggregation("_rating");
+			const aConditions = oChanges.current;
+			let vValue = null;
 			if (aConditions && aConditions.length > 0) {
 				vValue = aConditions[0].values[0];
 				vValue = vValue / 1000;
@@ -189,31 +189,31 @@ sap.ui.define([
 
 	CustomRating.prototype.getFocusDomRef = function() {
 
-		var oRating = this.getAggregation("_rating");
+		const oRating = this.getAggregation("_rating");
 		return oRating.getFocusDomRef();
 
 	};
 
 	CustomRating.prototype.getIdForLabel = function() {
 
-		var oRating = this.getAggregation("_rating");
+		const oRating = this.getAggregation("_rating");
 		return oRating.getIdForLabel();
 
 	};
 
 	CustomRating.prototype.getAccessibilityInfo = function() {
 
-		var oRating = this.getAggregation("_rating");
+		const oRating = this.getAggregation("_rating");
 		return oRating.getAccessibilityInfo();
 
 	};
 
 	function _handleChange(oEvent) {
 
-		var vValue = oEvent.getParameter("value");
+		let vValue = oEvent.getParameter("value");
 		vValue = vValue * 1000;
 
-		var oCondition = Condition.createItemCondition(vValue);
+		const oCondition = Condition.createItemCondition(vValue);
 		this.setConditions([oCondition]);
 
 		this.fireChange({value: vValue});
@@ -222,11 +222,11 @@ sap.ui.define([
 
 	function _handleLiveChange(oEvent) {
 
-		var vValue = oEvent.getParameter("value");
+		let vValue = oEvent.getParameter("value");
 		vValue = vValue * 1000;
 
-		var aConditions = this.getConditions();
-		var vPreviousValue;
+		const aConditions = this.getConditions();
+		let vPreviousValue;
 		if (aConditions.length > 0) {
 			vPreviousValue = aConditions[0].values[0];
 		}

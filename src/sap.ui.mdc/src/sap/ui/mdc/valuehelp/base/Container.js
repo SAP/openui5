@@ -31,7 +31,7 @@ sap.ui.define([
 	 * @since 1.95.0
 	 * @alias sap.ui.mdc.valuehelp.base.Container
 	 */
-	var Container = Element.extend("sap.ui.mdc.valuehelp.base.Container", /** @lends sap.ui.mdc.valuehelp.base.Container.prototype */
+	const Container = Element.extend("sap.ui.mdc.valuehelp.base.Container", /** @lends sap.ui.mdc.valuehelp.base.Container.prototype */
 	{
 		metadata: {
 			library: "sap.ui.mdc",
@@ -168,7 +168,7 @@ sap.ui.define([
 	 */
 	Container.prototype.observeChanges = function (oChanges) {
 		if (oChanges.name === "content") {
-			var oContent = oChanges.child;
+			const oContent = oChanges.child;
 			if (oChanges.mutation === "remove") {
 				this.unbindContentFromContainer(oContent);
 			// } else {
@@ -185,7 +185,7 @@ sap.ui.define([
 	Container.prototype.bindContentToContainer = function (oContent) {
 		if (oContent && !oContent._bContentBound) { // to prevent multiple event handlers
 			oContent.bindProperty("filterValue", { path: "/filterValue", model: "$valueHelp", mode: BindingMode.OneWay}); // inherit from ValueHelp
-			var oBindingOptions = { path: "/conditions", model: "$valueHelp", mode: BindingMode.OneWay};
+			const oBindingOptions = { path: "/conditions", model: "$valueHelp", mode: BindingMode.OneWay};
 			if (oContent._formatConditions) {
 				oBindingOptions.formatter = oContent._formatConditions.bind(oContent);
 			}
@@ -264,7 +264,7 @@ sap.ui.define([
 	 * @protected
 	 */
 	Container.prototype.getControl = function () {
-		var oValueHelp = this.getParent();
+		const oValueHelp = this.getParent();
 		return oValueHelp && oValueHelp.getControl();
 	};
 
@@ -274,7 +274,7 @@ sap.ui.define([
 	 * @protected
 	 */
 	Container.prototype.getMaxConditions = function() {
-		var oVHModel = this.getModel("$valueHelp");
+		const oVHModel = this.getModel("$valueHelp");
 		return oVHModel && oVHModel.getObject("/_config/maxConditions");
 	};
 
@@ -288,7 +288,7 @@ sap.ui.define([
 	};
 
 	Container.prototype.getDomRef = function() {
-		var oContainer = this.getAggregation("_container");
+		const oContainer = this.getAggregation("_container");
 		return oContainer && oContainer.getDomRef();
 	};
 
@@ -317,7 +317,7 @@ sap.ui.define([
 	 */
 	Container.prototype.open = function (oValueHelpContentPromise, bTypeahead) {
 		if (!this.isOpening()) {
-			var oOpenPromise = this._addPromise("open");
+			const oOpenPromise = this._addPromise("open");
 			return Promise.all([this.getContainerControl(), oValueHelpContentPromise]).then(function (aResults) {
 				return this.placeContent(aResults[0]);
 			}.bind(this)).then(function(oContainer) {
@@ -338,7 +338,7 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.mdc.ValueHelp
 	 */
 	Container.prototype.close = function () {
-		var oPromise = this._retrievePromise("open");
+		const oPromise = this._retrievePromise("open");
 		if (oPromise) {
 			if (oPromise.isSettled()) {
 				this.closeContainer();
@@ -366,8 +366,8 @@ sap.ui.define([
 	 */
 	Container.prototype.openContainer = function (oContainer, bTypeahead) {
 
-		var aContent = this.getContent();
-		for (var i = 0; i < aContent.length; i++) { // for Dialog overwrite to only bind shown content
+		const aContent = this.getContent();
+		for (let i = 0; i < aContent.length; i++) { // for Dialog overwrite to only bind shown content
 			this.bindContentToContainer(aContent[i]);
 		}
 
@@ -399,8 +399,8 @@ sap.ui.define([
 	Container.prototype.handleClosed = function (oEvent) {
 		this._removePromise("open");
 
-		var aContent = this.getContent();
-		for (var i = 0; i < aContent.length; i++) {
+		const aContent = this.getContent();
+		for (let i = 0; i < aContent.length; i++) {
 			this.unbindContentFromContainer(aContent[i]);
 		}
 
@@ -451,7 +451,7 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.mdc.ValueHelp
 	 */
 	 Container.prototype.isOpen = function () {
-		var oPromise = this._retrievePromise("open");
+		const oPromise = this._retrievePromise("open");
 		return oPromise && oPromise.isSettled();
 	};
 
@@ -466,7 +466,7 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.mdc.ValueHelp
 	 */
 	 Container.prototype.isOpening = function () {
-		var oPromise = this._retrievePromise("open");
+		const oPromise = this._retrievePromise("open");
 		return oPromise && !oPromise.isCanceled() && !oPromise.isSettled();
 	};
 
@@ -550,7 +550,7 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.mdc.valueHelp.base.Content
 	 */
 	Container.prototype.isTypeahead = function () {
-		var oValueHelp = this.getParent();
+		const oValueHelp = this.getParent();
 		return oValueHelp && oValueHelp.getTypeahead() === this;
 	};
 
@@ -581,7 +581,7 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.mdc.valueHelp.base.Content
 	 */
 	Container.prototype.isDialog = function () {
-		var oValueHelp = this.getParent();
+		const oValueHelp = this.getParent();
 		return oValueHelp && (oValueHelp.getDialog() === this || (this.isTypeahead() && !oValueHelp.getDialog() && this.getUseAsValueHelp()));
 	};
 
@@ -596,7 +596,7 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.mdc.valueHelp.base.Content
 	 */
 	Container.prototype.hasDialog = function () {
-		var oValueHelp = this.getParent();
+		const oValueHelp = this.getParent();
 		return !!(oValueHelp && (oValueHelp.getDialog()));
 	};
 
@@ -626,7 +626,7 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.mdc.valueHelp.base.Content
 	 */
 	Container.prototype.getValueHelp = function () {
-		var oValueHelp = this.getParent();
+		const oValueHelp = this.getParent();
 		return oValueHelp;
 	};
 
@@ -642,7 +642,7 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.mdc.valueHelp.base.Content
 	 */
 	Container.prototype.getValueHelpDelegate = function () {
-		var oValueHelp = this.getParent();
+		const oValueHelp = this.getParent();
 		return oValueHelp && oValueHelp.getControlDelegate();
 	};
 
@@ -657,7 +657,7 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.mdc.valueHelp.base.Content
 	 */
 	Container.prototype.getValueHelpDelegatePayload = function () {
-		var oValueHelp = this.getParent();
+		const oValueHelp = this.getParent();
 		return oValueHelp && oValueHelp.getPayload();
 	};
 
@@ -673,7 +673,7 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.mdc.valueHelp.base.Content
 	 */
 	Container.prototype.awaitValueHelpDelegate = function () {
-		var oValueHelp = this.getParent();
+		const oValueHelp = this.getParent();
 		return oValueHelp && oValueHelp.awaitControlDelegate();
 	};
 
@@ -688,7 +688,7 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.mdc.valueHelp.base.Content
 	 */
 	Container.prototype.isValueHelpDelegateInitialized = function () {
-		var oValueHelp = this.getParent();
+		const oValueHelp = this.getParent();
 		return oValueHelp && oValueHelp.bDelegateInitialized;
 	};
 
@@ -746,7 +746,7 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.mdc.valueHelp.base.Content
 	 */
 	Container.prototype.getScrollDelegate = function(iMaxConditions) {
-		var oContainer = this.getAggregation("_container");
+		const oContainer = this.getAggregation("_container");
 		return oContainer && oContainer.getScrollDelegate && oContainer.getScrollDelegate();
 	};
 
@@ -836,12 +836,12 @@ sap.ui.define([
 	 * @protected
 	 */
 	Container.prototype.getContainerConfig = function (oContent) {
-		var oConfig = oContent && oContent.getContainerConfig();
-		var oResult = oConfig && oConfig[this.getMetadata().getName()];	// find configuration for this exact type
+		const oConfig = oContent && oContent.getContainerConfig();
+		let oResult = oConfig && oConfig[this.getMetadata().getName()];	// find configuration for this exact type
 
 		if (!oResult && oConfig) {	// search for configurations of other implemented types
-			var aTypes = Object.keys(oConfig);
-			var sNonSpecificType = aTypes.find(function (sType) {
+			const aTypes = Object.keys(oConfig);
+			const sNonSpecificType = aTypes.find(function (sType) {
 				return this.isA(sType);
 			}.bind(this));
 			if (sNonSpecificType) {
@@ -858,7 +858,7 @@ sap.ui.define([
 	 * @protected
 	 */
 	Container.prototype.getRetrieveDelegateContentPromise = function () {
-		var oValueHelp = this.getParent();
+		const oValueHelp = this.getParent();
 		return 	oValueHelp && oValueHelp._retrievePromise("delegateContent");
 	};
 
@@ -868,7 +868,7 @@ sap.ui.define([
 	 * @protected
 	 */
 	Container.prototype.getSelectedContent = function () {
-		var oContent = this.getContent();
+		const oContent = this.getContent();
 		return oContent && oContent[0];
 	};
 
@@ -878,8 +878,8 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.mdc.ValueHelp
 	 */
 	Container.prototype.onConnectionChange = function () {
-		var aContent = this.getContent();
-		for (var i = 0; i < aContent.length; i++) { // for Dialog overwrite to only bind shown content
+		const aContent = this.getContent();
+		for (let i = 0; i < aContent.length; i++) { // for Dialog overwrite to only bind shown content
 			this.unbindContentFromContainer(aContent[i]); // in navigation case binding might still exist
 			aContent[i].onConnectionChange();
 		}

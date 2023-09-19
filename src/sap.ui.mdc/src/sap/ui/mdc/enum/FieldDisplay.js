@@ -21,7 +21,7 @@ sap.ui.define(function() {
 	 * @ui5-restricted sap.fe
 	 * @deprecated since 1.115.0 - please see {@link sap.ui.mdc.enums.FieldDisplay}
 	 */
-	var FieldDisplay = {
+	const FieldDisplay = {
 		/**
 		 * Only the value (key) is displayed
 		 * @public

@@ -7,7 +7,7 @@ sap.ui.define([
 ], function(DefaultContent, mLibrary) {
 	"use strict";
 
-	var EmptyIndicatorMode = mLibrary.EmptyIndicatorMode;
+	const EmptyIndicatorMode = mLibrary.EmptyIndicatorMode;
 
 	/**
 	 * Object-based definition of the link content type that is used in the {@link sap.ui.mdc.field.content.ContentFactory}.
@@ -21,7 +21,7 @@ sap.ui.define([
 	 * @alias sap.ui.mdc.field.content.LinkContent
 	 * @extends sap.ui.mdc.field.content.DefaultContent
 	 */
-	var LinkContent = Object.assign({}, DefaultContent, {
+	const LinkContent = Object.assign({}, DefaultContent, {
 		getDisplay: function() {
 			return ["sap/m/Link"];
 		},
@@ -35,10 +35,10 @@ sap.ui.define([
 			return false;
 		},
 		createDisplay: function(oContentFactory, aControlClasses, sId) {
-			var Link = aControlClasses[0];
-			var oConditionsType = oContentFactory.getConditionsType();
+			const Link = aControlClasses[0];
+			const oConditionsType = oContentFactory.getConditionsType();
 			// do no set width to open the FieldInfo at the end of the Link
-			var oLink = new Link(sId, {
+			const oLink = new Link(sId, {
 				text: { path: "$field>/conditions", type: oConditionsType },
 				textAlign: "{$field>/textAlign}",
 				textDirection: "{$field>/textDirection}",
@@ -47,7 +47,7 @@ sap.ui.define([
 				wrapping: "{$field>/multipleLines}",
 				emptyIndicatorMode: EmptyIndicatorMode.Auto
 			});
-			var oFieldInfo = oContentFactory.getField().getFieldInfo();
+			const oFieldInfo = oContentFactory.getField().getFieldInfo();
 			if (oFieldInfo) {
 				oFieldInfo.getDirectLinkHrefAndTarget().then(function(oLinkItem) {
 					oContentFactory.getMetadata()._oClass._updateLink(oLink, oLinkItem);

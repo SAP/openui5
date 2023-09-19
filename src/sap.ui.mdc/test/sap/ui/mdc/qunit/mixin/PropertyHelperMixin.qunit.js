@@ -17,13 +17,13 @@ sap.ui.define([
 ) {
     "use strict";
 
-    var TestClass;
-    var oSomeInstance;
-	var oFlexPromiseStub;
-    var PropertyHelperSubclass = PropertyHelper.extend("sap.ui.mdc.mixin.test.PropertyHelper");
+    let TestClass;
+    let oSomeInstance;
+	let oFlexPromiseStub;
+    const PropertyHelperSubclass = PropertyHelper.extend("sap.ui.mdc.mixin.test.PropertyHelper");
 
     function fnCreateTestClass(bEnablePropertyInfo, fnWaitForChangesPromise) {
-		var oPropertyDefinitions = Object.assign({
+		const oPropertyDefinitions = Object.assign({
 			delegate: {
 				type: "object",
 				group: "Data",
@@ -47,7 +47,7 @@ sap.ui.define([
 		});
 
 		if (bEnablePropertyInfo) {
-			var fnOriginalApplySettings = TestClass.prototype.applySettings;
+			const fnOriginalApplySettings = TestClass.prototype.applySettings;
 			TestClass.prototype.applySettings = function (mSettings) {
 				this._setupPropertyInfoStore("propertyInfo");
 				return fnOriginalApplySettings.apply(this, arguments);
@@ -64,7 +64,7 @@ sap.ui.define([
 		return oSomeInstance;
 	}
 
-    var fnCleanup = function () {
+    const fnCleanup = function () {
 
 		if (oFlexPromiseStub) {
 			oFlexPromiseStub.restore();
@@ -80,9 +80,9 @@ sap.ui.define([
     };
 
 	function fnValidateHelperProperties (aExpectedProperties) {
-		var aCurrentProperties = oSomeInstance._oPropertyHelper.getProperties();
-		var bLengthMatch = aCurrentProperties.length === aExpectedProperties.length;
-		var bNoMissingProperty = !!aExpectedProperties.find(function (oExpected) {
+		const aCurrentProperties = oSomeInstance._oPropertyHelper.getProperties();
+		const bLengthMatch = aCurrentProperties.length === aExpectedProperties.length;
+		const bNoMissingProperty = !!aExpectedProperties.find(function (oExpected) {
 			return !!aCurrentProperties.find(function (oCurrent) {
 				return oExpected.name === oCurrent.name;
 			});
@@ -107,9 +107,9 @@ sap.ui.define([
 
     QUnit.test("Manual PropertyHelper initialization", function(assert) {
 		oSomeInstance = fnCreateInstance();
-        var fnDone = assert.async();
+        const fnDone = assert.async();
         assert.ok(oSomeInstance._oPropertyHelperDeferred, "property helper init promise available");
-        var oPropertyHelperPromise = oSomeInstance.initPropertyHelper();
+        const oPropertyHelperPromise = oSomeInstance.initPropertyHelper();
         assert.ok(oSomeInstance._bPropertyHelperInitializing, "property helper init flag");
 
         oPropertyHelperPromise.then(function (oPropertyHelper) {
@@ -136,7 +136,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("PropertyHelper initialization from delegate with valid class", function(assert) {
-		var oDelegate;
+		let oDelegate;
 
 		oSomeInstance = fnCreateInstance();
 
@@ -154,7 +154,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("PropertyHelper initialization from delegate with invalid class", function(assert) {
-		var oDelegate;
+		let oDelegate;
 		oSomeInstance = fnCreateInstance();
 
 		return oSomeInstance.initControlDelegate().then(function(_oDelegate) {
@@ -173,7 +173,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("PropertyHelper initialization from delegate with instance", function(assert) {
-		var oDelegate;
+		let oDelegate;
 
 		oSomeInstance = fnCreateInstance();
 
@@ -193,12 +193,12 @@ sap.ui.define([
 	});
 
 	QUnit.test("Destroy during PropertyHelper initialization", function(assert) {
-		var done = assert.async();
+		const done = assert.async();
 
 		oSomeInstance = fnCreateInstance();
 		oSomeInstance.initControlDelegate().then(function() {
-			var oErrorSpy = sinon.spy();
-			var fnOldOnError = window.onerror;
+			const oErrorSpy = sinon.spy();
+			const fnOldOnError = window.onerror;
 
 			window.onerror = null; // Deactivate qunit global error handler.
 			window.addEventListener("error", oErrorSpy);
@@ -220,7 +220,7 @@ sap.ui.define([
 	QUnit.test("subsequent initPropertyHelper calls", function(assert) {
 		oSomeInstance = fnCreateInstance();
 
-		var pFirstPromise = oSomeInstance.initPropertyHelper();
+		const pFirstPromise = oSomeInstance.initPropertyHelper();
 
 		assert.throws(function () {
 			oSomeInstance.initPropertyHelper(PropertyHelper.extend("sap.ui.mdc.mixin.test.PropertyHelper"));
@@ -228,8 +228,8 @@ sap.ui.define([
 			return oError instanceof Error && oError.message === "PropertyHelper already initializing/ed.";
 		},  "throws error if called with different base class");
 
-		var pSecondPromise = oSomeInstance.initPropertyHelper();
-		var oFirstPropertyHelper;
+		const pSecondPromise = oSomeInstance.initPropertyHelper();
+		let oFirstPropertyHelper;
 
 		assert.ok(pFirstPromise instanceof Promise, "First call to initControlDelegate returns a promise");
 		assert.strictEqual(pFirstPromise, pSecondPromise, "Second call returns the same promise instance as the first call");
@@ -242,7 +242,7 @@ sap.ui.define([
 			assert.ok(oFirstPropertyHelper && oFirstPropertyHelper.isA("sap.ui.mdc.util.PropertyHelper"),
 				"Property helper is an instance of sap.ui.mdc.util.PropertyHelper");
 
-			var pThirdPromise = oSomeInstance.initPropertyHelper();
+			const pThirdPromise = oSomeInstance.initPropertyHelper();
 			assert.strictEqual(pFirstPromise, pThirdPromise,
 				"After the promise has already resolved, calls to initControlDelegate return the same promise");
 
@@ -255,8 +255,8 @@ sap.ui.define([
 	QUnit.test("awaitPropertyHelper", function(assert) {
 		oSomeInstance = fnCreateInstance();
 
-		var pAwaitPropertyHelper = oSomeInstance.awaitPropertyHelper();
-		var pInitPropertyHelper = oSomeInstance.initPropertyHelper();
+		const pAwaitPropertyHelper = oSomeInstance.awaitPropertyHelper();
+		const pInitPropertyHelper = oSomeInstance.initPropertyHelper();
 		oSomeInstance.initControlDelegate();
 
 		assert.strictEqual(pAwaitPropertyHelper, pInitPropertyHelper, "initPropertyHelper and awaitPropertyHelper return the same promise");
@@ -284,7 +284,7 @@ sap.ui.define([
 
 		fnCreateTestClass(true);
 
-		var oSomeInstance = fnCreateInstance({propertyInfo: [{name: "a", label: "a", dataType: "String"}]});
+		const oSomeInstance = fnCreateInstance({propertyInfo: [{name: "a", label: "a", dataType: "String"}]});
 		sinon.stub(AggregationBaseDelegate, "fetchProperties").returns(
 			Promise.resolve([
 				{name : "a", label: "a", dataType: "String"},
@@ -295,7 +295,7 @@ sap.ui.define([
 
         return oSomeInstance.awaitPropertyHelper().then(function (oPropertyHelper) {
 
-            var aProperties = oPropertyHelper.getProperties();
+            const aProperties = oPropertyHelper.getProperties();
 
             assert.ok(aProperties, "property helper field available");
 			assert.equal(aProperties.length, 1," expected 1 property");
@@ -311,7 +311,7 @@ sap.ui.define([
 				oSomeInstance.propertiesFinalized(),
 				oSomeInstance.finalizePropertyHelper().then(function () {
 					assert.ok(oSomeInstance.isPropertyHelperFinal(), "property helper is now final");
-					var aFinalProperties = oPropertyHelper.getProperties();
+					const aFinalProperties = oPropertyHelper.getProperties();
 					assert.equal(aFinalProperties.length, 3, "all properties are now available");
 				})
 			]).then(function() {
@@ -327,10 +327,10 @@ sap.ui.define([
 
 	QUnit.test("Automatic PropertyHelper initialization and updates", function(assert) {
 		fnCreateTestClass(true);
-		var aInitialProperties = [{name: "A", label: "A", dataType: "String"}];
-		var aUpdatedProperties = [{name: "B", label: "B", dataType: "String"}, {name: "C", label: "C", dataType: "String"}];
-		var aIgnoredProperties = [{name: "X", label: "X", dataType: "String"}, {name: "Y", label: "Y", dataType: "String"}];
-		var aFinalProperties = [
+		const aInitialProperties = [{name: "A", label: "A", dataType: "String"}];
+		const aUpdatedProperties = [{name: "B", label: "B", dataType: "String"}, {name: "C", label: "C", dataType: "String"}];
+		const aIgnoredProperties = [{name: "X", label: "X", dataType: "String"}, {name: "Y", label: "Y", dataType: "String"}];
+		const aFinalProperties = [
 			{name : "D", label: "D", dataType: "String"},
 			{name : "E", label: "E", dataType: "String"},
 			{name : "F", label: "F", dataType: "String"}

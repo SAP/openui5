@@ -30,7 +30,7 @@ sap.ui.define([
 	Element) {
 	"use strict";
 
-	var oMockServer;
+	let oMockServer;
 
 	function startMockServer(sMetadataPath, sMockdataBaseUrl, sRootUri) {
 		oMockServer = new MockServer({
@@ -101,9 +101,9 @@ sap.ui.define([
 		}
 	});
 
-	var fnTestRenderAsAText = function(assert, oField) {
+	const fnTestRenderAsAText = function(assert, oField) {
 		// act
-		var done = assert.async();
+		const done = assert.async();
 		oField.setFieldInfo(new Link({
 			delegate: {
 				name: "sap/ui/mdc/flp/FlpLinkDelegate",
@@ -161,10 +161,10 @@ sap.ui.define([
 	});
 
 	QUnit.test("direct link with target='_blank'", function(assert) {
-		var sTarget = "_blank";
-		var done = assert.async();
+		const sTarget = "_blank";
+		const done = assert.async();
 		enableFakeFlpConnector({});
-		var oLink = new Link({
+		const oLink = new Link({
 			delegate: {
 				name: "test-resources/sap/ui/mdc/qunit/field/FieldInfoLinkDelegate",
 				payload: {
@@ -192,10 +192,10 @@ sap.ui.define([
 	});
 
 	QUnit.test("item: with 'href'", function(assert) {
-		var sTarget = "_self";
-		var done = assert.async();
+		const sTarget = "_self";
+		const done = assert.async();
 		enableFakeFlpConnector({});
-		var oLink = new Link({
+		const oLink = new Link({
 			delegate: {
 				name: "test-resources/sap/ui/mdc/qunit/field/FieldInfoLinkDelegate",
 				payload: {
@@ -247,8 +247,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("no links, no popover", function(assert) {
-		var done = assert.async();
-		var oField = this.oField;
+		const done = assert.async();
+		const oField = this.oField;
 		enableFakeFlpConnector({
 			SO1: {
 				links: []
@@ -262,7 +262,7 @@ sap.ui.define([
 				}
 			},
 			popoverAfterOpen: function (oEvent) {
-				var oPopover = oEvent.getSource().getDependents().find(function(oDependent) {
+				const oPopover = oEvent.getSource().getDependents().find(function(oDependent) {
 					return oDependent.isA("sap.m.ResponsivePopover");
 				});
 				assert.equal(oPopover.$().find(".mdcbaseinfoPanelDefaultAdditionalContent").length, 1);
@@ -306,12 +306,12 @@ sap.ui.define([
 		}
 	});
 
-	var fnTestOpenNotEmptyPopover = function(assert, fnCheckPopover) {
+	const fnTestOpenNotEmptyPopover = function(assert, fnCheckPopover) {
 		// act
-		var done = assert.async();
+		const done = assert.async();
 
 		return function(oEvent) {
-			var oFieldInfo = oEvent.getSource();
+			const oFieldInfo = oEvent.getSource();
 			fnCheckPopover(oFieldInfo);
 			done();
 		};
@@ -358,9 +358,9 @@ sap.ui.define([
 
 	QUnit.test("content", function(assert) {
 		enableFakeFlpConnector({});
-		var oField = this.oField;
-		var fnForPopoverAfterOpen = function(oFieldInfo) {
-			var oPopover = oFieldInfo.getDependents()[0];
+		const oField = this.oField;
+		const fnForPopoverAfterOpen = function(oFieldInfo) {
+			const oPopover = oFieldInfo.getDependents()[0];
 			assert.equal(oPopover.$().find(".mdcbaseinfoPanelDefaultAdditionalContent").length, 0);
 			assert.equal(oPopover.$().find("a").length, 0);
 			assert.equal(oPopover.$().find(".sapMLabel:visible").length, 0);
@@ -390,9 +390,9 @@ sap.ui.define([
 
 	QUnit.test("multiple content", function(assert) {
 		enableFakeFlpConnector({});
-		var oField = this.oField;
-		var fnForPopoverAfterOpen = function(oFieldInfo) {
-			var oPopover = oFieldInfo.getDependents()[0];
+		const oField = this.oField;
+		const fnForPopoverAfterOpen = function(oFieldInfo) {
+			const oPopover = oFieldInfo.getDependents()[0];
 			assert.equal(oPopover.$().find(".mdcbaseinfoPanelDefaultAdditionalContent").length, 0);
 			assert.equal(oPopover.$().find("a").length, 0);
 			assert.equal(oPopover.$().find(".sapMLabel:visible").length, 0);

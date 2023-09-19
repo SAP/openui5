@@ -17,10 +17,10 @@ sap.ui.define([
 		},
 
 		init: function() {
-			var oMockServer = new MockServer();
+			const oMockServer = new MockServer();
 			oMockServer.init();
 
-			var oModel = new ODataModel({
+			const oModel = new ODataModel({
 				serviceUrl: "/sap/opu/odata4/IWBEP/V4_SAMPLE/default/IWBEP/V4_GW_SAMPLE_BASIC/0001/",
 				groupId: "$direct",
 				synchronizationMode: 'None',

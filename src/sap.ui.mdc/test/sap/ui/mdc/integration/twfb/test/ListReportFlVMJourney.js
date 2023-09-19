@@ -53,7 +53,7 @@ sap.ui.define([
 		})
 	});
 
-	var sFLVM_ID = "container-v4demo---books--IDVariantManagementOfTable";
+	const sFLVM_ID = "container-v4demo---books--IDVariantManagementOfTable";
 
 
 	QUnit.module("ListReport Fl VM - Books Page Table");

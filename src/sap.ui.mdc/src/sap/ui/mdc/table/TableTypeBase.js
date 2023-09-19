@@ -28,7 +28,7 @@ sap.ui.define([
 	 * @since 1.65
 	 * @alias sap.ui.mdc.table.TableTypeBase
 	 */
-	var TableTypeBase = Element.extend("sap.ui.mdc.table.TableTypeBase", {
+	const TableTypeBase = Element.extend("sap.ui.mdc.table.TableTypeBase", {
 		metadata: {
 			library: "sap.ui.mdc",
 			properties: {}
@@ -54,7 +54,7 @@ sap.ui.define([
 	};
 
 	TableTypeBase.prototype._connectToTable = function() {
-		var oTable = this.getTable();
+		const oTable = this.getTable();
 
 		if (oTable) {
 			oTable.setModel(this._oManagedObjectModel, "$sap.ui.mdc.Table#type");
@@ -62,7 +62,7 @@ sap.ui.define([
 	};
 
 	TableTypeBase.prototype._disconnectFromTable = function() {
-		var oTable = this.getTable();
+		const oTable = this.getTable();
 
 		if (oTable && !oTable.isDestroyStarted()) {
 			oTable.setModel(null, "$sap.ui.mdc.Table#type");
@@ -74,7 +74,7 @@ sap.ui.define([
 	};
 
 	TableTypeBase.prototype.callHook = function(sHookName, oObject, mPropertyBag) {
-		var sFunctionName = "_on" + sHookName;
+		const sFunctionName = "_on" + sHookName;
 
 		if (!oObject || !(oObject[sFunctionName] instanceof Function)) {
 			throw new Error(this + ": Hook '" + sHookName + "' does not exist on " + oObject);
@@ -84,12 +84,12 @@ sap.ui.define([
 	};
 
 	TableTypeBase.prototype.getTable = function() {
-		var oTable = this.getParent();
+		const oTable = this.getParent();
 		return oTable && oTable.isA("sap.ui.mdc.Table") ? oTable : null;
 	};
 
 	TableTypeBase.prototype.getInnerTable = function() {
-		var oTable = this.getTable();
+		const oTable = this.getTable();
 		return oTable ? oTable._oTable : null;
 	};
 
@@ -105,19 +105,19 @@ sap.ui.define([
 	TableTypeBase.prototype.updateTable = function() {
 		// TODO: With getAllProperties it iterates over all properties, also core properties.
 		//  It would be better to configure the inner table correctly on table creation (#createTable) instead of configuring it (directly) afterwards
-		for (var sProperty in this.getMetadata().getAllProperties()) {
+		for (const sProperty in this.getMetadata().getAllProperties()) {
 			this.updateTableByProperty(sProperty, this.getProperty(sProperty));
 		}
 	};
 
 	TableTypeBase.prototype.getTableSettings = function() {
-		var oTable = this.getTable();
+		const oTable = this.getTable();
 
 		if (!oTable) {
 			return {};
 		}
 
-		var oDragDropInfo = new DragDropInfo({
+		const oDragDropInfo = new DragDropInfo({
 			sourceAggregation: "columns",
 			targetAggregation: "columns",
 			dropPosition: "Between",
@@ -134,37 +134,37 @@ sap.ui.define([
 	};
 
 	TableTypeBase.prototype.getThreshold = function() {
-		var oTable = this.getTable();
-		var iThreshold = oTable ? oTable.getThreshold() : -1;
+		const oTable = this.getTable();
+		const iThreshold = oTable ? oTable.getThreshold() : -1;
 		return iThreshold > -1 ? iThreshold : undefined;
 	};
 
 	TableTypeBase.prototype.getRowSettingsConfig = function() {
-		var oTable = this.getTable();
-		var oRowSettings = oTable ? oTable.getRowSettings() : null;
+		const oTable = this.getTable();
+		const oRowSettings = oTable ? oTable.getRowSettings() : null;
 		return oRowSettings ? oRowSettings.getAllSettings() : null;
 	};
 
 	TableTypeBase.prototype.getRowActionsConfig = function() {
-		var oTable = this.getTable();
-		var oRowSettings = oTable ? oTable.getRowSettings() : null;
+		const oTable = this.getTable();
+		const oRowSettings = oTable ? oTable.getRowSettings() : null;
 		return oRowSettings ? oRowSettings.getAllActions() : null;
 	};
 
 	TableTypeBase.prototype._onColumnMove = function(oEvent) {
-		var oTable = this.getTable();
-		var oInnerTable = this.getInnerTable();
-		var oDraggedColumn = oEvent.getParameter("draggedControl");
-		var oDroppedColumn = oEvent.getParameter("droppedControl");
+		const oTable = this.getTable();
+		const oInnerTable = this.getInnerTable();
+		const oDraggedColumn = oEvent.getParameter("draggedControl");
+		const oDroppedColumn = oEvent.getParameter("droppedControl");
 
 		if (oDraggedColumn === oDroppedColumn) {
 			return;
 		}
 
-		var sDropPosition = oEvent.getParameter("dropPosition");
-		var iDraggedIndex = oInnerTable.indexOfColumn(oDraggedColumn);
-		var iDroppedIndex = oInnerTable.indexOfColumn(oDroppedColumn);
-		var iNewIndex = iDroppedIndex + (sDropPosition == "Before" ? 0 : 1) + (iDraggedIndex < iDroppedIndex ? -1 : 0);
+		const sDropPosition = oEvent.getParameter("dropPosition");
+		const iDraggedIndex = oInnerTable.indexOfColumn(oDraggedColumn);
+		const iDroppedIndex = oInnerTable.indexOfColumn(oDroppedColumn);
+		const iNewIndex = iDroppedIndex + (sDropPosition == "Before" ? 0 : 1) + (iDraggedIndex < iDroppedIndex ? -1 : 0);
 
 		this.callHook("ColumnMove", oTable, {
 			column: oTable.getColumns()[iDraggedIndex],

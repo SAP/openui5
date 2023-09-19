@@ -3,7 +3,7 @@ sap.ui.define([
 ], function (FilterBarDelegate, FilterField, IdentifierUtil, merge) {
 	"use strict";
 
-	var UnitTestFilterBarDelegate = Object.assign({}, FilterBarDelegate);
+	const UnitTestFilterBarDelegate = Object.assign({}, FilterBarDelegate);
 	UnitTestFilterBarDelegate.apiVersion = 2;//CLEANUP_DELEGATE
 
 	UnitTestFilterBarDelegate.fetchProperties = function (oFilterBar) {
@@ -11,11 +11,11 @@ sap.ui.define([
 	};
 
 	UnitTestFilterBarDelegate._createFilterField = function(oProperty, oFilterBar) {
-		var oFilterField, sVHId = null, sFilterItemId;
+		let sVHId = null;
 
-		sFilterItemId = IdentifierUtil.getFilterFieldId(oFilterBar, IdentifierUtil.getPropertyKey(oProperty));
+		const sFilterItemId = IdentifierUtil.getFilterFieldId(oFilterBar, IdentifierUtil.getPropertyKey(oProperty));
 
-		oFilterField = new FilterField(sFilterItemId, {
+		const oFilterField = new FilterField(sFilterItemId, {
 			label: oProperty.label,
 			propertyKey: IdentifierUtil.getPropertyKey(oProperty),
 			dataType: oProperty.type,
@@ -30,7 +30,7 @@ sap.ui.define([
 			path: oFilterBar._getConditionModelName() + ">/conditions/" + IdentifierUtil.getPropertyKey(oProperty)
 		}, true);
 
-		var aValues = oProperty.filterConditions;
+		const aValues = oProperty.filterConditions;
 		if (aValues && (aValues.length > 0)) {
 			oFilterField.setConditions(aValues);
 		}
@@ -48,7 +48,7 @@ sap.ui.define([
 			oFilterField.setValueHelp(IdentifierUtil.getView(oFilterBar).createId(sVHId));
 		}
 
-		var oModel = oFilterBar._getConditionModel();
+		const oModel = oFilterBar._getConditionModel();
 		if (oModel) {
 			oFilterField.setModel(oModel, oFilterBar._getConditionModelName());
 		}
@@ -58,7 +58,7 @@ sap.ui.define([
 
 	UnitTestFilterBarDelegate._createFilter = function(sPropertyName, oFilterBar, mPropertyBag) {
 		return this.fetchProperties(oFilterBar).then(function(aProperties) {
-			var oPropertyInfo = aProperties.find(function(oCurrentProperty) {
+			const oPropertyInfo = aProperties.find(function(oCurrentProperty) {
 				return ((oCurrentProperty.path === sPropertyName) || (oCurrentProperty.name === sPropertyName));
 			});
 			if (!oPropertyInfo) {

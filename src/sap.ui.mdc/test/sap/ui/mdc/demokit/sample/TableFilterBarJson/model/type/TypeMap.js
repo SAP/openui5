@@ -5,7 +5,7 @@ sap.ui.define([
 ], function(DefaultTypeMap, BaseType, LengthMeter) {
     "use strict";
 
-	var TypeMap = Object.assign({}, DefaultTypeMap);
+	const TypeMap = Object.assign({}, DefaultTypeMap);
     TypeMap.import(DefaultTypeMap);
 	TypeMap.set("mdc.sample.model.type.LengthMeter", BaseType.Numeric);
 	TypeMap.freeze();

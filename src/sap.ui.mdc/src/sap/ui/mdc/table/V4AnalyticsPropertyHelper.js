@@ -82,7 +82,7 @@ sap.ui.define([
 	 * @since 1.85
 	 * @alias sap.ui.mdc.table.V4AnalyticsPropertyHelper
 	 */
-	var PropertyHelper = TablePropertyHelper.extend("sap.ui.mdc.table.V4AnalyticsPropertyHelper", {
+	const PropertyHelper = TablePropertyHelper.extend("sap.ui.mdc.table.V4AnalyticsPropertyHelper", {
 		constructor: function(aProperties, oParent) {
 			this._bEnableAggregatableAttribute = true;
 			TablePropertyHelper.call(this, aProperties, oParent, {
@@ -166,7 +166,7 @@ sap.ui.define([
 				return aProperties;
 			}
 
-			var oPropertyForPlugin = {
+			const oPropertyForPlugin = {
 				name: oProperty.name,
 				path: oProperty.path,
 				key: oProperty.key,

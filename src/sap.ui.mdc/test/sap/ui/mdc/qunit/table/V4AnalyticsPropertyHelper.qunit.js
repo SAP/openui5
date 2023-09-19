@@ -201,7 +201,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Simple property", function(assert) {
-		var oPropertyHelper = new PropertyHelper([{
+		const oPropertyHelper = new PropertyHelper([{
 			name: "prop",
 			label: "Property",
 			dataType: "String"
@@ -212,7 +212,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Simple property with groupable=true and aggregatable=true", function(assert) {
-		var oPropertyHelper = new PropertyHelper([{
+		const oPropertyHelper = new PropertyHelper([{
 			name: "prop",
 			label: "Property",
 			dataType: "String",
@@ -232,7 +232,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Complex property", function(assert) {
-		var oPropertyHelper = new PropertyHelper([{
+		const oPropertyHelper = new PropertyHelper([{
 			name: "prop",
 			label: "Property",
 			dataType: "String"
@@ -401,8 +401,8 @@ sap.ui.define([
 		assert.deepEqual(this.oPropertyHelper.getProperty("complexProp2").getAggregatableProperties(), [],
 			"Complex property referencing non-aggregatable properties");
 
-		var oSimpleProperty = this.oPropertyHelper.getProperty("prop");
-		var oComplexProperty = this.oPropertyHelper.getProperty("complexProp");
+		const oSimpleProperty = this.oPropertyHelper.getProperty("prop");
+		const oComplexProperty = this.oPropertyHelper.getProperty("complexProp");
 		this.oPropertyHelper.destroy();
 		assert.deepEqual(oComplexProperty.getAggregatableProperties(), [oSimpleProperty], "After destruction");
 	});

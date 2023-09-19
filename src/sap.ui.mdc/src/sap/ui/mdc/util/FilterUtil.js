@@ -10,7 +10,7 @@ sap.ui.define(['sap/ui/mdc/util/IdentifierUtil', 'sap/ui/mdc/enums/ConditionVali
 	"use strict";
 
 	// Added support for deprecated TypeUtil
-	var _getTypeMap = function (vTypeProvider) {
+	const _getTypeMap = function (vTypeProvider) {
 
 		if (vTypeProvider && vTypeProvider.getTypeMap) {
 			return vTypeProvider.getTypeMap();
@@ -32,7 +32,7 @@ sap.ui.define(['sap/ui/mdc/util/IdentifierUtil', 'sap/ui/mdc/enums/ConditionVali
 	 * @since 1.80.0
 	 * @alias sap.ui.mdc.util.FilterUtil
 	 */
-		var FilterUtil = {
+		const FilterUtil = {
 
 				/**
 				 * Returns a specific <code>PropertyInfo</code> object by a given name.<br>
@@ -43,7 +43,7 @@ sap.ui.define(['sap/ui/mdc/util/IdentifierUtil', 'sap/ui/mdc/enums/ConditionVali
 				 * @public
 				 */
 				getPropertyByKey : function(aPropertiesMetadata, sKey) {
-					var oPropertyInfo = null;
+					let oPropertyInfo = null;
 
 					aPropertiesMetadata.some(function(oProp) {
 						if (IdentifierUtil.getPropertyPath(oProp) === sKey) {
@@ -81,19 +81,20 @@ sap.ui.define(['sap/ui/mdc/util/IdentifierUtil', 'sap/ui/mdc/enums/ConditionVali
 				 * @public
 				 */
 				getConditionsMap : function(oFilterBar, aPropertyNames) {
-					var aPropertyConditions, oPropertyCondition, mResultingConditions = {};
+					let aPropertyConditions, oPropertyCondition;
+					const mResultingConditions = {};
 
 					if (!oFilterBar || !oFilterBar.isA("sap.ui.mdc.FilterBar")) {
 						Log.error("instance of sap.ui.mdc.FilterBar expected");
 						return mResultingConditions;
 					}
 
-					var mConditions = oFilterBar.getInternalConditions();
-					for (var sPropertyName in mConditions) {
+					const mConditions = oFilterBar.getInternalConditions();
+					for (const sPropertyName in mConditions) {
 						if (aPropertyNames.indexOf(sPropertyName) >= 0) {
 							aPropertyConditions = [];
 							if (mConditions[sPropertyName]) {
-								for (var i = 0; i < mConditions[sPropertyName].length; i++) {
+								for (let i = 0; i < mConditions[sPropertyName].length; i++) {
 									oPropertyCondition = {};
 									oPropertyCondition.operator = mConditions[sPropertyName][i].operator;
 
@@ -126,8 +127,8 @@ sap.ui.define(['sap/ui/mdc/util/IdentifierUtil', 'sap/ui/mdc/enums/ConditionVali
 				 */
 				getFilterInfo: function(vTypeProvider, mConditionsPerKey, aPropertiesMetadata, aIgnoreProperties) {
 
-					var oFilterInfo = {};
-					var mConditionsPerPath = {};
+					const oFilterInfo = {};
+					let mConditionsPerPath = {};
 
 					/* In case a Table is used for example, the condition key is not necessarily a valid property path in the model
 					* the later creation of filters in the FilterConverter is expecting the map to hold the valid paths to properties in the
@@ -135,10 +136,10 @@ sap.ui.define(['sap/ui/mdc/util/IdentifierUtil', 'sap/ui/mdc/enums/ConditionVali
 					*/
 					if (aPropertiesMetadata && aPropertiesMetadata.length > 0) {
 						Object.keys(mConditionsPerKey).forEach(function(sConditionKey){
-							var oAffectedProperty = aPropertiesMetadata.find(function(oProperty){
+							const oAffectedProperty = aPropertiesMetadata.find(function(oProperty){
 								return oProperty.name === sConditionKey;
 							});
-							var sConditionPath = oAffectedProperty && oAffectedProperty.path ? oAffectedProperty.path : sConditionKey;
+							const sConditionPath = oAffectedProperty && oAffectedProperty.path ? oAffectedProperty.path : sConditionKey;
 							mConditionsPerPath[sConditionPath] = mConditionsPerKey[sConditionKey];
 						});
 					} else {
@@ -147,14 +148,15 @@ sap.ui.define(['sap/ui/mdc/util/IdentifierUtil', 'sap/ui/mdc/enums/ConditionVali
 
 					aIgnoreProperties = aIgnoreProperties ? aIgnoreProperties : [];
 
-					var i, sFieldPath, mInternalFilterConditions = {}, oConditionInternal;
-					var mFilterTypes = {};
+					let i, sFieldPath, oConditionInternal;
+					const mInternalFilterConditions = {};
+					const mFilterTypes = {};
 
 					if (aPropertiesMetadata && aPropertiesMetadata.length > 0) {
 						for (sFieldPath in mConditionsPerPath) {
 							if (aIgnoreProperties.indexOf(sFieldPath) < 0) {
 
-								var oProperty = FilterUtil.getPropertyByKey(aPropertiesMetadata, sFieldPath);
+								const oProperty = FilterUtil.getPropertyByKey(aPropertiesMetadata, sFieldPath);
 								if (oProperty) {
 
 									mFilterTypes[sFieldPath] = { type: oProperty.typeConfig.typeInstance, caseSensitive: oProperty.caseSensitive, baseType: oProperty.typeConfig.baseType };
@@ -190,10 +192,10 @@ sap.ui.define(['sap/ui/mdc/util/IdentifierUtil', 'sap/ui/mdc/enums/ConditionVali
 				 * @public
 				 */
 				getRequiredFieldNamesWithoutValues: function(oFilterBar) {
-					var aReqFiltersWithoutValue = [];
+					const aReqFiltersWithoutValue = [];
 					if (oFilterBar && oFilterBar._getRequiredPropertyNames && oFilterBar._getConditionModel) {
 						oFilterBar._getRequiredPropertyNames().forEach(function(sName) {
-							var aConditions = oFilterBar._getConditionModel().getConditions(sName);
+							const aConditions = oFilterBar._getConditionModel().getConditions(sName);
 							if (!aConditions || aConditions.length === 0) {
 								aReqFiltersWithoutValue.push(sName);
 							}

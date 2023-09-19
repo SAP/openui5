@@ -28,8 +28,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("#update - Without parent", function(assert) {
-		var done = assert.async();
-		var that = this;
+		const done = assert.async();
+		const that = this;
 
 		this.oCreationRow.update().then(function() {
 			assert.ok(!that.oCreationRow._oInnerCreationRow, "No inner creation row instance exists");
@@ -37,14 +37,14 @@ sap.ui.define([
 	});
 
 	QUnit.test("#update - TableType = GridTable", function(assert) {
-		var done = assert.async();
-		var that = this;
+		const done = assert.async();
+		const that = this;
 
 		sinon.stub(this.oCreationRow, "_getTable").returns(this.oMDCGridTable);
 
 		this.oCreationRow.update().then(function() {
-			var oInner = that.oCreationRow._oInnerCreationRow;
-			var oInnerTableRowMode = that.oMDCGridTable._oTable.getRowMode();
+			const oInner = that.oCreationRow._oInnerCreationRow;
+			const oInnerTableRowMode = that.oMDCGridTable._oTable.getRowMode();
 
 			assert.ok(oInner.isA("sap.ui.table.CreationRow"), "Inner creation row is a sap.ui.table.CreationRow");
 			assert.strictEqual(oInner.getVisible(), that.oCreationRow.getVisible(), "'visible' property was forwarded");
@@ -59,9 +59,9 @@ sap.ui.define([
 	});
 
 	QUnit.test("#update - TableType = GridTable delayed table creation", function(assert) {
-		var done = assert.async();
-		var that = this;
-		var oGridTable = this.oMDCGridTable._oTable;
+		const done = assert.async();
+		const that = this;
+		const oGridTable = this.oMDCGridTable._oTable;
 		// simulate no inner table exists
 		delete this.oMDCGridTable._oTable;
 		sinon.stub(this.oCreationRow, "_getTable").returns(this.oMDCGridTable);
@@ -72,8 +72,8 @@ sap.ui.define([
 			that.oMDCGridTable._oTable = oGridTable;
 			return that.oCreationRow.update();
 		}).then(function() {
-			var oInner = that.oCreationRow._oInnerCreationRow;
-			var oInnerTableRowMode = that.oMDCGridTable._oTable.getRowMode();
+			const oInner = that.oCreationRow._oInnerCreationRow;
+			const oInnerTableRowMode = that.oMDCGridTable._oTable.getRowMode();
 
 			assert.ok(oInner.isA("sap.ui.table.CreationRow"), "Inner creation row is a sap.ui.table.CreationRow");
 			assert.strictEqual(oInner.getVisible(), that.oCreationRow.getVisible(), "'visible' property was forwarded");
@@ -88,8 +88,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("#update - TableType = ResponsiveTable", function(assert) {
-		var done = assert.async();
-		var that = this;
+		const done = assert.async();
+		const that = this;
 
 		sinon.stub(this.oCreationRow, "_getTable").returns(this.oMDCResponsiveTable);
 
@@ -102,8 +102,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("#update - Changing TableType", function(assert) {
-		var done = assert.async();
-		var that = this;
+		const done = assert.async();
+		const that = this;
 
 		sinon.stub(this.oCreationRow, "_getTable").returns(this.oMDCGridTable);
 
@@ -129,16 +129,16 @@ sap.ui.define([
 	});
 
 	QUnit.test("Property/Aggregation/Event handling", function(assert) {
-		var done = assert.async();
-		var that = this;
+		const done = assert.async();
+		const that = this;
 
 		sinon.stub(this.oCreationRow, "_getTable").returns(this.oMDCGridTable);
 
 		this.oCreationRow.update().then(function() {
-			var oInner = that.oCreationRow._oInnerCreationRow;
-			var oInnerTableRowMode = that.oMDCGridTable._oTable.getRowMode();
-			var oApplySpy = sinon.spy();
-			var bDefaultPrevented;
+			const oInner = that.oCreationRow._oInnerCreationRow;
+			const oInnerTableRowMode = that.oMDCGridTable._oTable.getRowMode();
+			const oApplySpy = sinon.spy();
+			let bDefaultPrevented;
 
 			// Properties
 			that.oCreationRow.setVisible(false);
@@ -179,8 +179,8 @@ sap.ui.define([
 
 	// BCP: 2280082502
 	QUnit.test("Enable 'hideEmptyRows' if CreationRow is made visible before initialization of inner CreationRow", function(assert) {
-		var that = this;
-		var pSequence;
+		const that = this;
+		let pSequence;
 
 		sinon.stub(this.oCreationRow, "_getTable").returns(this.oMDCGridTable);
 
@@ -188,7 +188,7 @@ sap.ui.define([
 		pSequence = this.oCreationRow.update();
 		this.oCreationRow.setVisible(true);
 		pSequence = pSequence.then(function() {
-			var oInnerTableRowMode = that.oMDCGridTable._oTable.getRowMode();
+			const oInnerTableRowMode = that.oMDCGridTable._oTable.getRowMode();
 			assert.strictEqual(oInnerTableRowMode.getHideEmptyRows(), true, "The inner table's 'hideEmptyRow' feature is enabled");
 		}).then(function() {
 			that.oCreationRow._getTable.restore();
@@ -198,9 +198,9 @@ sap.ui.define([
 	});
 
 	QUnit.test("Binding contexts", function(assert) {
-		var oModel = new JSONModel();
-		var done = assert.async();
-		var that = this;
+		const oModel = new JSONModel();
+		const done = assert.async();
+		const that = this;
 
 		sinon.stub(this.oCreationRow, "_getTable").returns(this.oMDCGridTable);
 
@@ -211,7 +211,7 @@ sap.ui.define([
 			assert.strictEqual(that.oCreationRow._oInnerCreationRow.getBindingContext(), null, "Binding context of unnamed model was forwarded to the inner creation row on initialization");
 			assert.strictEqual(that.oCreationRow.getBindingContext("modelName"), that.oCreationRow._oInnerCreationRow.getBindingContext("modelName"), "Binding context of named model was forwarded to the inner creation row on initialization");
 
-			var oContext = oModel.createBindingContext("/path");
+			const oContext = oModel.createBindingContext("/path");
 			that.oCreationRow.setBindingContext(undefined);
 			that.oCreationRow.setBindingContext(oContext, "modelName");
 
@@ -224,13 +224,13 @@ sap.ui.define([
 	});
 
 	QUnit.test("Busy state", function(assert) {
-		var done = assert.async();
-		var that = this;
+		const done = assert.async();
+		const that = this;
 
 		sinon.stub(this.oCreationRow, "_getTable").returns(this.oMDCGridTable);
 
 		this.oCreationRow.update().then(function() {
-			var oInner = that.oCreationRow._oInnerCreationRow;
+			const oInner = that.oCreationRow._oInnerCreationRow;
 
 			assert.ok(oInner.isA("sap.ui.table.CreationRow"), "Inner creation row is a sap.ui.table.CreationRow");
 			assert.notOk(that.oCreationRow.getBusy(), "CreationRow is not busy");

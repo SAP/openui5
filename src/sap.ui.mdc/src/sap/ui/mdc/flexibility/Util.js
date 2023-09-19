@@ -16,7 +16,7 @@ sap.ui.define([
 	 * @since 1.101
 	 * @private
 	 */
-	var Util = {};
+	const Util = {};
 
 	Util.APPLY = "apply";
 	Util.REVERT = "revert";
@@ -36,7 +36,7 @@ sap.ui.define([
 	 * @param {sap.ui.mdc.Control} oControl
 	 */
 	function suppressInvalidation(oControl) {
-		var oUIArea = oControl && oControl.getUIArea && oControl.getUIArea();
+		const oUIArea = oControl && oControl.getUIArea && oControl.getUIArea();
 		if (oUIArea && !oControl._bInvalidationSuppressed) {
 			oControl._bInvalidationSuppressed = oUIArea.suppressInvalidationFor(oControl);
 		}
@@ -48,7 +48,7 @@ sap.ui.define([
 	 * @param {sap.ui.mdc.Control} oControl
 	 */
 	function resumeInvalidation(oControl) {
-		var oUIArea = oControl && oControl.getUIArea && oControl.getUIArea();
+		const oUIArea = oControl && oControl.getUIArea && oControl.getUIArea();
 		if (oUIArea && oControl._bInvalidationSuppressed) {
 			oUIArea.resumeInvalidationFor(oControl);
 			delete oControl._bInvalidationSuppressed;
@@ -68,7 +68,7 @@ sap.ui.define([
 
 			if (!oControl._pPendingModification && oControl._onModifications instanceof Function) {
 				oControl._pPendingModification = Engine.getInstance().waitForChanges(oControl).then(function() {
-					var aAffectedControllerKeys = Engine.getInstance().getTrace(oControl);
+					const aAffectedControllerKeys = Engine.getInstance().getTrace(oControl);
 					Engine.getInstance().clearTrace(oControl);
 					delete oControl._pPendingModification;
 					resumeInvalidation(oControl);
@@ -93,9 +93,9 @@ sap.ui.define([
 	 */
 	Util.createChangeHandler = function(mSettings) {
 
-		var fApply = mSettings.apply instanceof Function && mSettings.apply;
-		var fRevert = mSettings.revert instanceof Function && mSettings.revert;
-		var fComplete = mSettings.complete instanceof Function && mSettings.complete;
+		const fApply = mSettings.apply instanceof Function && mSettings.apply;
+		const fRevert = mSettings.revert instanceof Function && mSettings.revert;
+		const fComplete = mSettings.complete instanceof Function && mSettings.complete;
 
 		if (!fApply || !fRevert) {
 			throw new Error("Please provide atleast an apply and revert function!");
@@ -128,7 +128,7 @@ sap.ui.define([
 						if (oDelegate) {
 							return loadModules(oDelegate.name)
 							.then(function(aModules){
-								var oDelegate = aModules[0];
+								const oDelegate = aModules[0];
 
 								if (oDelegate.onAfterXMLChangeProcessing instanceof Function) {
 									oDelegate.onAfterXMLChangeProcessing(oControl, mPropertyBag);

@@ -9,7 +9,7 @@ sap.ui.define([
     "use strict";
 
     return function waitForPersonalizationDialog(oSettings) {
-        var sTitle = TestUtil.getTextFromResourceBundle("sap.ui.mdc", "info.SELECTION_DIALOG_ALIGNEDTITLE");
+        const sTitle = TestUtil.getTextFromResourceBundle("sap.ui.mdc", "info.SELECTION_DIALOG_ALIGNEDTITLE");
 
         oSettings = oSettings || {};
         oSettings.errorMessage = oSettings.errorMessage || "No sap.m.Dialog with title '" + sTitle + "' found";
@@ -23,7 +23,7 @@ sap.ui.define([
             actions: oSettings.actions ? oSettings.actions : [],
             success: function(aPersonalizationDialog) {
                 if (typeof oSettings.success === "function") {
-					var oP13nDialog = aPersonalizationDialog[0];
+					const oP13nDialog = aPersonalizationDialog[0];
 					oSettings.success.call(this, oP13nDialog);
 				}
             }

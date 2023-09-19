@@ -79,14 +79,14 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var oField;
-	var sId;
-	var sValue;
-	var bValid;
-	var iCount = 0;
-	var oPromise;
+	let oField;
+	let sId;
+	let sValue;
+	let bValid;
+	let iCount = 0;
+	let oPromise;
 
-	var _myChangeHandler = function(oEvent) {
+	const _myChangeHandler = function(oEvent) {
 		iCount++;
 		sId = oEvent.oSource.getId();
 		sValue = oEvent.getParameter("value");
@@ -94,32 +94,32 @@ sap.ui.define([
 		oPromise = oEvent.getParameter("promise");
 	};
 
-	var sLiveId;
-	var sLiveValue;
-	var iLiveCount = 0;
+	let sLiveId;
+	let sLiveValue;
+	let iLiveCount = 0;
 
-	var _myLiveChangeHandler = function(oEvent) {
+	const _myLiveChangeHandler = function(oEvent) {
 		iLiveCount++;
 		sLiveId = oEvent.oSource.getId();
 		sLiveValue = oEvent.getParameter("value");
 	};
 
-	var iParseError = 0;
-	var _myParseErrorHandler = function(oEvent) {
+	let iParseError = 0;
+	const _myParseErrorHandler = function(oEvent) {
 		iParseError++;
 	};
 
-	var sPressId;
-	var iPressCount = 0;
+	let sPressId;
+	let iPressCount = 0;
 
-	var _myPressHandler = function(oEvent) {
+	const _myPressHandler = function(oEvent) {
 		iPressCount++;
 		sPressId = oEvent.oSource.getId();
 	};
 
-	var _checkException = function(assert, oField, fnFunction, sName, vArgument) {
+	const _checkException = function(assert, oField, fnFunction, sName, vArgument) {
 
-		var oException;
+		let oException;
 
 		try {
 			fnFunction.call(oField, vArgument);
@@ -131,7 +131,7 @@ sap.ui.define([
 
 	};
 
-	var _cleanupEvents = function() {
+	const _cleanupEvents = function() {
 		iCount = 0;
 		sId = null;
 		sValue = null;
@@ -160,12 +160,12 @@ sap.ui.define([
 
 		assert.ok(oField.isA("sap.m.IOverflowToolbarContent"), "Field is sap.m.IOverflowToolbarContent");
 
-		var oCheckConfig = {
+		const oCheckConfig = {
 			canOverflow: true,
 			invalidationEvents: [],
 			propsUnrelatedToSize: ["conditions", "editMode", "display", "valueState", "valueStateText", "value", "additionalValue"]
 		};
-		var oConfig = oField.getOverflowToolbarConfig();
+		const oConfig = oField.getOverflowToolbarConfig();
 		assert.deepEqual(oConfig, oCheckConfig, "Configuration");
 
 	});
@@ -186,8 +186,8 @@ sap.ui.define([
 		oField.placeAt("content");
 		oCore.applyChanges();
 
-		var aContent = oField.getAggregation("_content");
-		var oContent = aContent && aContent.length > 0 && aContent[0];
+		const aContent = oField.getAggregation("_content");
+		const oContent = aContent && aContent.length > 0 && aContent[0];
 		assert.ok(oContent, "default content exist");
 		assert.equal(oContent && oContent.getMetadata().getName(), "sap.ui.mdc.field.FieldInput", "sap.ui.mdc.field.FieldInput is default");
 		assert.notOk(oContent && oContent.getShowValueHelp(), "no valueHelp");
@@ -200,8 +200,8 @@ sap.ui.define([
 		oField.placeAt("content");
 		oCore.applyChanges();
 
-		var aContent = oField.getAggregation("_content");
-		var oContent = aContent && aContent.length > 0 && aContent[0];
+		let aContent = oField.getAggregation("_content");
+		let oContent = aContent && aContent.length > 0 && aContent[0];
 		assert.ok(oContent, "content exist");
 		assert.equal(oContent.getMetadata().getName(), "sap.m.Text", "sap.m.Text is used");
 
@@ -217,7 +217,7 @@ sap.ui.define([
 
 	QUnit.test("external control", function(assert) {
 
-		var oSlider = new Slider("S1");
+		let oSlider = new Slider("S1");
 		oSlider.bindProperty("value", { path: '$field>/conditions', type: new ConditionsType() });
 		oField.setContent(oSlider);
 		oField.setValue(70);
@@ -230,8 +230,8 @@ sap.ui.define([
 		oField.destroyContent();
 		oCore.applyChanges();
 
-		var aContent = oField.getAggregation("_content");
-		var oContent = aContent && aContent.length > 0 && aContent[0];
+		const aContent = oField.getAggregation("_content");
+		const oContent = aContent && aContent.length > 0 && aContent[0];
 		assert.ok(oContent, "internal content exist");
 		assert.equal(oContent && oContent.getMetadata().getName(), "sap.ui.mdc.field.FieldInput", "sap.ui.mdc.field.FieldInput is used");
 
@@ -247,17 +247,17 @@ sap.ui.define([
 
 	QUnit.test("internal control creation", function(assert) {
 
-		var fnDone = assert.async();
+		const fnDone = assert.async();
 		setTimeout(function() { // async control creation in applySettings
-			var aContent = oField.getAggregation("_content");
-			var oContent = aContent && aContent.length > 0 && aContent[0];
+			const aContent = oField.getAggregation("_content");
+			const oContent = aContent && aContent.length > 0 && aContent[0];
 			assert.notOk(oContent, "no content exist before rendering"); // as no data type can be determined
 			fnDone();
 		}, 0);
 
 	});
 
-	var oFieldEdit, oFieldDisplay;
+	let oFieldEdit, oFieldDisplay;
 
 	QUnit.module("properties", {
 		beforeEach: function() {
@@ -283,8 +283,8 @@ sap.ui.define([
 		oFieldEdit.setValue("Test");
 		oFieldDisplay.setValue("Test");
 
-		var aContent = oFieldEdit.getAggregation("_content");
-		var oContent = aContent && aContent.length > 0 && aContent[0];
+		let aContent = oFieldEdit.getAggregation("_content");
+		let oContent = aContent && aContent.length > 0 && aContent[0];
 		assert.equal(oContent.getValue(), "Test", "Value set on Input control");
 
 		aContent = oFieldDisplay.getAggregation("_content");
@@ -296,7 +296,7 @@ sap.ui.define([
 		aContent = oFieldEdit.getAggregation("_content");
 		oContent = aContent && aContent.length > 0 && aContent[0];
 		assert.equal(oContent.getValue(), "", "no Value set on Input control");
-		var aConditions = oFieldEdit.getConditions();
+		let aConditions = oFieldEdit.getConditions();
 		assert.equal(aConditions.length, 0, "no internal conditions");
 		assert.equal(oFieldEdit.getValue(), null, "Field has initial value (null)");
 
@@ -316,9 +316,9 @@ sap.ui.define([
 		oFieldDisplay.setAdditionalValue("Hello");
 		oFieldDisplay.setValue("Test"); // value after additional value to test this direction
 
-		var fnDone = assert.async();
-		var aContent = oFieldEdit.getAggregation("_content");
-		var oContent = aContent && aContent.length > 0 && aContent[0];
+		const fnDone = assert.async();
+		let aContent = oFieldEdit.getAggregation("_content");
+		let oContent = aContent && aContent.length > 0 && aContent[0];
 		assert.equal(oContent.getValue(), "Test", "Value set on Input control");
 		aContent = oFieldDisplay.getAggregation("_content");
 		oContent = aContent && aContent.length > 0 && aContent[0];
@@ -351,7 +351,7 @@ sap.ui.define([
 		oFieldEdit.setAdditionalValue("");
 		oFieldDisplay.setAdditionalValue(null);
 		oCore.applyChanges();
-		var aConditions = oFieldEdit.getConditions();
+		let aConditions = oFieldEdit.getConditions();
 		assert.notEqual(aConditions[0].values[1], "", "Conditions not updated syncronously");
 
 		setTimeout(function() { // async set of condition
@@ -394,11 +394,11 @@ sap.ui.define([
 
 	QUnit.test("setValue / setAdditionalValue consider Delegate.createCondition", function(assert) {
 
-		var oTestPayload = {
+		const oTestPayload = {
 			"payloadKey" : "payloadValue"
 		};
 
-		var oDelegate = sap.ui.require("sap/ui/mdc/field/FieldBaseDelegate");
+		const oDelegate = sap.ui.require("sap/ui/mdc/field/FieldBaseDelegate");
 		sinon.stub(oDelegate, "createConditionPayload").returns(oTestPayload);
 		sinon.spy(oDelegate, "createCondition");
 
@@ -436,8 +436,8 @@ sap.ui.define([
 		oFieldDisplay.setMultipleLines(true);
 		oCore.applyChanges();
 
-		var aContent = oFieldEdit.getAggregation("_content");
-		var oContent = aContent && aContent.length > 0 && aContent[0];
+		let aContent = oFieldEdit.getAggregation("_content");
+		let oContent = aContent && aContent.length > 0 && aContent[0];
 		assert.ok(oContent instanceof TextArea, "TextArea rendered");
 		assert.equal(oContent.getValue(), "Test", "Text set on TextArea control");
 
@@ -455,10 +455,10 @@ sap.ui.define([
 		oFieldDisplay.setDataType("sap.ui.model.type.Date");
 		oFieldDisplay.setValue(new Date(2017, 8, 19));
 
-		var fnDone = assert.async();
+		const fnDone = assert.async();
 		setTimeout(function() {
-			var aContent = oFieldEdit.getAggregation("_content");
-			var oContent = aContent && aContent.length > 0 && aContent[0];
+			let aContent = oFieldEdit.getAggregation("_content");
+			let oContent = aContent && aContent.length > 0 && aContent[0];
 			assert.ok(oContent instanceof DatePicker, "DatePicker rendered");
 			assert.equal(oContent.$("inner").val(), "Sep 19, 2017", "Value shown on DatePicker control");
 
@@ -479,8 +479,8 @@ sap.ui.define([
 		oFieldDisplay.setValue(new Date(1970, 0, 1, 9, 0, 0));
 		oCore.applyChanges();
 
-		var aContent = oFieldEdit.getAggregation("_content");
-		var oContent = aContent && aContent.length > 0 && aContent[0];
+		let aContent = oFieldEdit.getAggregation("_content");
+		let oContent = aContent && aContent.length > 0 && aContent[0];
 		assert.ok(oContent instanceof TimePicker, "TimePicker rendered");
 		assert.equal(oContent.$("inner").val(), " 9:00:00 AM", "Value set on TimePicker control");
 
@@ -499,8 +499,8 @@ sap.ui.define([
 		oFieldDisplay.setValue(new Date(2017, 10, 7, 13, 1, 24));
 		oCore.applyChanges();
 
-		var aContent = oFieldEdit.getAggregation("_content");
-		var oContent = aContent && aContent.length > 0 && aContent[0];
+		let aContent = oFieldEdit.getAggregation("_content");
+		let oContent = aContent && aContent.length > 0 && aContent[0];
 		assert.ok(oContent instanceof DateTimePicker, "DateTimePicker rendered");
 		assert.equal(oContent.$("inner").val(), "Nov 7, 2017, 1:01:24 PM", "Value set on DateTimePicker control");
 
@@ -519,11 +519,11 @@ sap.ui.define([
 		oFieldDisplay.setValue([12.34, "USD"]);
 		oCore.applyChanges();
 
-		var oType = new CurrencyType({ showMeasure: false });
+		let oType = new CurrencyType({ showMeasure: false });
 		sValue = oType.formatValue([12.34, "USD"], "string"); // because of special whitspaced and local dependend
-		var aContent = oFieldEdit.getAggregation("_content");
-		var oContent1 = aContent && aContent.length > 0 && aContent[0];
-		var oContent2 = aContent && aContent.length > 1 && aContent[1];
+		let aContent = oFieldEdit.getAggregation("_content");
+		const oContent1 = aContent && aContent.length > 0 && aContent[0];
+		const oContent2 = aContent && aContent.length > 1 && aContent[1];
 		assert.ok(oContent1 instanceof Input, "Input rendered");
 		assert.equal(oContent1.getValue(), sValue, "Value set on number-Input control");
 		assert.ok(oContent2 instanceof Input, "Input rendered");
@@ -533,7 +533,7 @@ sap.ui.define([
 		oType = new CurrencyType();
 		sValue = oType.formatValue([12.34, "USD"], "string"); // because of special whitspaced and local dependend
 		aContent = oFieldDisplay.getAggregation("_content");
-		var oContent = aContent && aContent.length > 0 && aContent[0];
+		const oContent = aContent && aContent.length > 0 && aContent[0];
 		assert.equal(oContent.getMetadata().getName(), "sap.m.Text", "sap.m.Text is used");
 		assert.equal(oContent.getText(), sValue, "Text set on Text control");
 		oType.destroy();
@@ -549,8 +549,8 @@ sap.ui.define([
 		assert.equal(jQuery("#F1").width(), 100, "Width of Edit Field");
 		assert.equal(jQuery("#F2").width(), 100, "Width of Display Field");
 
-		var aContent = oFieldEdit.getAggregation("_content");
-		var oContent = aContent && aContent.length > 0 && aContent[0];
+		let aContent = oFieldEdit.getAggregation("_content");
+		let oContent = aContent && aContent.length > 0 && aContent[0];
 		assert.equal(oContent.getWidth(), "100%", "width of 100% set on FieldBase control");
 
 		aContent = oFieldDisplay.getAggregation("_content");
@@ -561,12 +561,12 @@ sap.ui.define([
 
 	QUnit.test("required", function(assert) {
 
-		var oLabel = new Label("L1", { text: "test", labelFor: oFieldEdit }).placeAt("content");
+		const oLabel = new Label("L1", { text: "test", labelFor: oFieldEdit }).placeAt("content");
 		oFieldEdit.setRequired(true);
 		oCore.applyChanges();
 
-		var aContent = oFieldEdit.getAggregation("_content");
-		var oContent = aContent && aContent.length > 0 && aContent[0];
+		const aContent = oFieldEdit.getAggregation("_content");
+		const oContent = aContent && aContent.length > 0 && aContent[0];
 		assert.ok(oContent.getRequired(), "Required set on Input control");
 		assert.ok(oLabel.isRequired(), "Label rendered as required");
 		oLabel.destroy();
@@ -578,8 +578,8 @@ sap.ui.define([
 		oFieldEdit.setPlaceholder("Test");
 		oCore.applyChanges();
 
-		var aContent = oFieldEdit.getAggregation("_content");
-		var oContent = aContent && aContent.length > 0 && aContent[0];
+		const aContent = oFieldEdit.getAggregation("_content");
+		const oContent = aContent && aContent.length > 0 && aContent[0];
 		assert.equal(oContent.getPlaceholder(), "Test", "Placeholder set on Input control");
 
 	});
@@ -590,8 +590,8 @@ sap.ui.define([
 		oFieldEdit.setValueStateText("Test");
 		oCore.applyChanges();
 
-		var aContent = oFieldEdit.getAggregation("_content");
-		var oContent = aContent && aContent.length > 0 && aContent[0];
+		const aContent = oFieldEdit.getAggregation("_content");
+		const oContent = aContent && aContent.length > 0 && aContent[0];
 		assert.equal(oContent.getValueState(), "Error", "ValueState set on Input control");
 		assert.equal(oContent.getValueStateText(), "Test", "ValueStateText set on Input control");
 
@@ -608,16 +608,16 @@ sap.ui.define([
 		oFieldEdit.setAdditionalValue("Hello");
 		oFieldEdit.setValueState("Error");
 
-		var fnDone = assert.async();
+		const fnDone = assert.async();
 		setTimeout(function() { // async set of condition
 			setTimeout(function() { // model update
 				assert.ok(oFieldEdit.setConditions.calledOnce, "Conditions are only updated once");
-				var aConditions = oFieldEdit.getConditions();
+				const aConditions = oFieldEdit.getConditions();
 				assert.deepEqual(aConditions[0].values[0], "Test", "Condition key");
 				assert.deepEqual(aConditions[0].values[1], "Hello", "Conditions description");
 				assert.equal(oFieldEdit.getValueState(), "Error", "ValueState set");
-				var aContent = oFieldEdit.getAggregation("_content");
-				var oContent = aContent && aContent.length > 0 && aContent[0];
+				const aContent = oFieldEdit.getAggregation("_content");
+				const oContent = aContent && aContent.length > 0 && aContent[0];
 				assert.equal(oContent.getValue(), "Hello (Test)", "Value set on Input control");
 				assert.equal(oContent.getValueState(), "Error", "ValueState set on Input control");
 				fnDone();
@@ -632,8 +632,8 @@ sap.ui.define([
 		oFieldDisplay.setTextAlign("End");
 		oCore.applyChanges();
 
-		var aContent = oFieldEdit.getAggregation("_content");
-		var oContent = aContent && aContent.length > 0 && aContent[0];
+		let aContent = oFieldEdit.getAggregation("_content");
+		let oContent = aContent && aContent.length > 0 && aContent[0];
 		assert.equal(oContent.getTextAlign(), "End", "TextAlign set on Input control");
 
 		aContent = oFieldDisplay.getAggregation("_content");
@@ -648,8 +648,8 @@ sap.ui.define([
 		oFieldDisplay.setTextDirection("RTL");
 		oCore.applyChanges();
 
-		var aContent = oFieldEdit.getAggregation("_content");
-		var oContent = aContent && aContent.length > 0 && aContent[0];
+		let aContent = oFieldEdit.getAggregation("_content");
+		let oContent = aContent && aContent.length > 0 && aContent[0];
 		assert.equal(oContent.getTextDirection(), "RTL", "TextDirection set on Input control");
 
 		aContent = oFieldDisplay.getAggregation("_content");
@@ -691,9 +691,9 @@ sap.ui.define([
 
 	QUnit.test("with internal content", function(assert) {
 
-		var fnDone = assert.async();
-		var aContent = oField.getAggregation("_content");
-		var oContent = aContent && aContent.length > 0 && aContent[0];
+		const fnDone = assert.async();
+		const aContent = oField.getAggregation("_content");
+		const oContent = aContent && aContent.length > 0 && aContent[0];
 		oContent.focus();
 		jQuery(oContent.getFocusDomRef()).val("X");
 		qutils.triggerKeydown(oContent.getFocusDomRef().id, KeyCodes.ENTER, false, false, false);
@@ -708,7 +708,7 @@ sap.ui.define([
 			assert.equal(vResult, "X", "Promise result");
 
 			// just fake change with additional value
-			var aConditions = [Condition.createItemCondition("key", "text")];
+			const aConditions = [Condition.createItemCondition("key", "text")];
 			oField.setConditions(aConditions);
 			oField.fireChangeEvent(aConditions, true, undefined, Promise.resolve(oField.getResultForChangePromise(aConditions)));
 			assert.equal(iCount, 2, "change event fired again");
@@ -750,7 +750,7 @@ sap.ui.define([
 	QUnit.test("with external content", function(assert) {
 
 		oField.setValue(70);
-		var oSlider = new Slider("S1");
+		const oSlider = new Slider("S1");
 		oSlider.bindProperty("value", { path: '$field>/conditions', type: new ConditionsType() });
 		oField.setContent(oSlider);
 		oCore.applyChanges();
@@ -766,7 +766,7 @@ sap.ui.define([
 		assert.equal(sLiveId, "F1", "liveChange event fired on Field");
 		assert.equal(sLiveValue, 71, "liveChange event value");
 
-		var oButton = new Button("B1");
+		const oButton = new Button("B1");
 		oField.setContent(oButton);
 		oSlider.placeAt("content");
 		oCore.applyChanges();
@@ -783,13 +783,13 @@ sap.ui.define([
 
 	QUnit.test("cleanup wrong input", function(assert) {
 
-		var fnDone = assert.async();
+		const fnDone = assert.async();
 		oCore.getMessageManager().registerObject(oField, true); // to test valueState
 		oField.setDataType("sap.ui.model.type.Date");
 		oCore.applyChanges();
 
-		var aContent = oField.getAggregation("_content");
-		var oContent = aContent && aContent.length > 0 && aContent[0];
+		const aContent = oField.getAggregation("_content");
+		const oContent = aContent && aContent.length > 0 && aContent[0];
 		oContent.focus();
 		jQuery(oContent.getFocusDomRef()).val("XXXX");
 		qutils.triggerKeydown(oContent.getFocusDomRef().id, KeyCodes.ENTER, false, false, false);
@@ -841,15 +841,15 @@ sap.ui.define([
 
 	QUnit.test("with internal content", function(assert) {
 
-		var oClone = oField.clone("myClone");
+		const oClone = oField.clone("myClone");
 		oClone.placeAt("content");
 		oCore.applyChanges();
 
-		var aContent = oField.getAggregation("_content");
-		var oContent = aContent && aContent.length > 0 && aContent[0];
+		const aContent = oField.getAggregation("_content");
+		const oContent = aContent && aContent.length > 0 && aContent[0];
 		assert.equal(oContent.getValue(), "Test", "value set on Input control");
-		var aCloneContent = oClone.getAggregation("_content");
-		var oCloneContent = aCloneContent && aCloneContent.length > 0 && aCloneContent[0];
+		const aCloneContent = oClone.getAggregation("_content");
+		const oCloneContent = aCloneContent && aCloneContent.length > 0 && aCloneContent[0];
 		assert.equal(oCloneContent.getValue(), "Test", "Value set on clone Input control");
 
 		oField.setValue("Hello");
@@ -891,15 +891,15 @@ sap.ui.define([
 	QUnit.test("with external content", function(assert) {
 
 		oField.setValue(70);
-		var oSlider = new Slider("S1");
+		const oSlider = new Slider("S1");
 		oSlider.bindProperty("value", { path: '$field>/conditions', type: new ConditionsType() });
 		oField.setContent(oSlider);
 		oCore.applyChanges();
-		var oClone = oField.clone("myClone");
+		const oClone = oField.clone("myClone");
 		oClone.placeAt("content");
 		oCore.applyChanges();
 
-		var oCloneSlider = oClone.getContent();
+		const oCloneSlider = oClone.getContent();
 		assert.ok(oCloneSlider instanceof Slider, "Clone has Slider as Content");
 		assert.equal(oCloneSlider.getValue(), 70, "Value set on clone Slider control");
 
@@ -939,23 +939,23 @@ sap.ui.define([
 
 	});
 
-	var oModel;
-	var oType;
-	var oField2;
-	var oType2;
-	var oField3;
-	var oType3;
-	var oField4;
-	var oType4;
-	var oField5;
-	var oType5;
-	var ODataCurrencyCodeList = {
+	let oModel;
+	let oType;
+	let oField2;
+	let oType2;
+	let oField3;
+	let oType3;
+	let oField4;
+	let oType4;
+	let oField5;
+	let oType5;
+	const ODataCurrencyCodeList = {
 		"EUR": { Text: "Euro", UnitSpecificScale: 2 },
 		"USD": { Text: "US-Dollar", UnitSpecificScale: 2 },
 		"JPY": { Text: "Japan Yen", UnitSpecificScale: 0 },
 		"SEK": { Text: "Swedish krona", UnitSpecificScale: 5 }
 	};
-	var oAdditionalType;
+	let oAdditionalType;
 
 	QUnit.module("Binding", {
 		beforeEach: function() {
@@ -997,7 +997,7 @@ sap.ui.define([
 			oType3._bMyType = true;
 			oAdditionalType = new StringType({parseKeepsEmptyString: true}, { maxLength: 20 });
 			oAdditionalType._bMyType = true;
-			var oBindingContext = oModel.getContext("/items/0/");
+			const oBindingContext = oModel.getContext("/items/0/");
 			oField3 = new Field("F3", {
 				value: { path: "key", type: oType3 },
 				additionalValue: { path: "description", type: oAdditionalType, mode: "OneWay" },
@@ -1062,12 +1062,12 @@ sap.ui.define([
 	QUnit.test("using given type", function(assert) {
 
 		assert.ok(oField._oContentFactory.getDataType()._bMyType, "Given Type is used in Field");
-		var aContent = oField.getAggregation("_content");
-		var oContent = aContent && aContent.length > 0 && aContent[0];
+		let aContent = oField.getAggregation("_content");
+		let oContent = aContent && aContent.length > 0 && aContent[0];
 		assert.equal(oContent.getValue(), "10", "Value set on Input control");
-		var oBindingInfo = oContent.getBindingInfo("value");
-		var oConditionsType = oBindingInfo.type;
-		var oMyType = oConditionsType.getFormatOptions().valueType;
+		let oBindingInfo = oContent.getBindingInfo("value");
+		let oConditionsType = oBindingInfo.type;
+		let oMyType = oConditionsType.getFormatOptions().valueType;
 		assert.ok(oMyType._bMyType, "Given Type is used in Binding for Input");
 
 		assert.notOk(oField2._oContentFactory.getDataType()._bMyType, "Given Type is not used used in Field");
@@ -1083,16 +1083,16 @@ sap.ui.define([
 		assert.notOk(oMyType._bMyType, "Given Type is not used in Binding for Input");
 		assert.ok(oMyType.isA("sap.ui.model.odata.type.DateTime"), "DateTime type used in ConditionsType");
 
-		var oDummyType = new oDataCurrencyType({ showMeasure: false });
-		var sValue = oDummyType.formatValue([123.45, "USD", ODataCurrencyCodeList], "string"); // because of special whitspaces and local dependend
+		const oDummyType = new oDataCurrencyType({ showMeasure: false });
+		const sValue = oDummyType.formatValue([123.45, "USD", ODataCurrencyCodeList], "string"); // because of special whitspaces and local dependend
 		assert.notOk(oField4._oContentFactory.getDataType()._bMyType, "Given Type is not used used in Field");
 		assert.ok(oField4._oContentFactory.getDataType().isA("sap.ui.model.odata.type.Currency"), "Currency type used");
 		assert.ok(oField4._oContentFactory.getDataType().mCustomUnits, "Currency list used");
 		assert.ok(oField4.getBinding("value").getType().mCustomUnits, "Currency list used on binding-type");
 		aContent = oField4.getAggregation("_content");
 		assert.equal(aContent.length, 2, "2 content controls");
-		var oContent1 = aContent && aContent.length > 0 && aContent[0];
-		var oContent2 = aContent && aContent.length > 1 && aContent[1];
+		let oContent1 = aContent && aContent.length > 0 && aContent[0];
+		let oContent2 = aContent && aContent.length > 1 && aContent[1];
 		assert.ok(oContent1 instanceof Input, "Input rendered");
 		assert.ok(oContent2 instanceof Input, "Input rendered");
 		assert.equal(oContent1.getValue(), sValue, "Value set on number-Input control");
@@ -1123,21 +1123,21 @@ sap.ui.define([
 		oCore.applyChanges();
 
 		assert.ok(oField2._oContentFactory.getDataType()._bMyType, "Given Type is used in Field");
-		var aContent = oField2.getAggregation("_content");
-		var oContent = aContent && aContent.length > 0 && aContent[0];
+		const aContent = oField2.getAggregation("_content");
+		const oContent = aContent && aContent.length > 0 && aContent[0];
 		assert.ok(oContent instanceof Input, "Input used");
 		assert.equal(oContent.getValue(), "10", "Value set on Input control");
-		var oBindingInfo = oContent.getBindingInfo("value");
-		var oConditionsType = oBindingInfo.type;
-		var oMyType = oConditionsType.getFormatOptions().valueType;
+		const oBindingInfo = oContent.getBindingInfo("value");
+		const oConditionsType = oBindingInfo.type;
+		const oMyType = oConditionsType.getFormatOptions().valueType;
 		assert.ok(oMyType._bMyType, "Given Type is used in Binding for Input");
 
 	});
 
 	QUnit.test("update Value", function(assert) {
 
-		var aContent = oField.getAggregation("_content");
-		var oContent = aContent && aContent.length > 0 && aContent[0];
+		const aContent = oField.getAggregation("_content");
+		const oContent = aContent && aContent.length > 0 && aContent[0];
 		jQuery(oContent.getFocusDomRef()).val("11");
 		qutils.triggerKeydown(oContent.getFocusDomRef().id, KeyCodes.ENTER, false, false, false);
 		assert.equal(oModel.getData().value, 11, "Value in Model updated");
@@ -1147,17 +1147,17 @@ sap.ui.define([
 	QUnit.test("additionalValue with oneway-binding", function(assert) {
 
 		assert.ok(oField3._oContentFactory.getAdditionalDataType()._bMyType, "Given Type is used in Field");
-		var aContent = oField3.getAggregation("_content");
-		var oContent = aContent && aContent.length > 0 && aContent[0];
-		var oBindingInfo = oContent.getBindingInfo("value");
-		var oConditionsType = oBindingInfo.type;
-		var oMyType = oConditionsType.getFormatOptions().additionalValueType;
+		const aContent = oField3.getAggregation("_content");
+		const oContent = aContent && aContent.length > 0 && aContent[0];
+		const oBindingInfo = oContent.getBindingInfo("value");
+		const oConditionsType = oBindingInfo.type;
+		const oMyType = oConditionsType.getFormatOptions().additionalValueType;
 		assert.ok(oMyType._bMyType, "Given Type is used as additionalValueType in Binding for Input");
 
-		var fnDone = assert.async();
+		const fnDone = assert.async();
 		setTimeout(function() { // as conditions are updated async
-			var aConditions = oField3.getConditions();
-			var oCondition = aConditions.length === 1 && aConditions[0];
+			let aConditions = oField3.getConditions();
+			let oCondition = aConditions.length === 1 && aConditions[0];
 			assert.deepEqual(oCondition.values, ["A", "Text A"], "Condition ok");
 
 			oField3.setConditions([Condition.createItemCondition("B", "Text B")]); // fake user input
@@ -1197,10 +1197,10 @@ sap.ui.define([
 
 		assert.ok(oField3._oContentFactory.getAdditionalDataType()._bMyType, "Given Type is used in Field");
 
-		var fnDone = assert.async();
+		const fnDone = assert.async();
 		setTimeout(function() { // as conditions are updated async
-			var aConditions = oField3.getConditions();
-			var oCondition = aConditions.length === 1 && aConditions[0];
+			const aConditions = oField3.getConditions();
+			const oCondition = aConditions.length === 1 && aConditions[0];
 			assert.deepEqual(oCondition.values, ["A", "Text A"], "Condition ok");
 
 			oField3.setConditions([Condition.createItemCondition("B", "Text B")]); // fake user input
@@ -1228,11 +1228,11 @@ sap.ui.define([
 	QUnit.test("BindingContext change to same value on wrong input", function(assert) {
 
 		oCore.getMessageManager().registerObject(oField3, true); // to activate message manager
-		var fnDone = assert.async();
+		const fnDone = assert.async();
 
 		setTimeout(function() { // as conditions are updated async
-			var aContent = oField3.getAggregation("_content");
-			var oContent = aContent && aContent.length > 0 && aContent[0];
+			const aContent = oField3.getAggregation("_content");
+			const oContent = aContent && aContent.length > 0 && aContent[0];
 
 			oField3.focus();
 			oContent._$input.val("A1");
@@ -1241,7 +1241,7 @@ sap.ui.define([
 			setTimeout(function() { // as valueState is updates async
 				assert.equal(oField3.getValueState(), "Error", "ValueState set");
 
-				var oBindingContext = oModel.getContext("/items/1/");
+				const oBindingContext = oModel.getContext("/items/1/");
 				oField3.setBindingContext(oBindingContext);
 
 				setTimeout(function() { // as propertys are updated async
@@ -1257,11 +1257,11 @@ sap.ui.define([
 	QUnit.test("BindingContext change to different value on wrong input", function(assert) {
 
 		oCore.getMessageManager().registerObject(oField3, true); // to activate message manager
-		var fnDone = assert.async();
+		const fnDone = assert.async();
 
 		setTimeout(function() { // as conditions are updated async
-			var aContent = oField3.getAggregation("_content");
-			var oContent = aContent && aContent.length > 0 && aContent[0];
+			const aContent = oField3.getAggregation("_content");
+			const oContent = aContent && aContent.length > 0 && aContent[0];
 
 			oField3.focus();
 			oContent._$input.val("A1");
@@ -1270,7 +1270,7 @@ sap.ui.define([
 			setTimeout(function() { // as valueState is updates async
 				assert.equal(oField3.getValueState(), "Error", "ValueState set");
 
-				var oBindingContext = oModel.getContext("/items/2/");
+				const oBindingContext = oModel.getContext("/items/2/");
 				oField3.setBindingContext(oBindingContext);
 
 				setTimeout(function() { // as propertys are updated async
@@ -1291,10 +1291,10 @@ sap.ui.define([
 			change: _myChangeHandler
 		});
 
-		var fnDone = assert.async();
+		const fnDone = assert.async();
 		setTimeout(function() { // async control creation in applySettings
-			var aContent = oField.getAggregation("_content");
-			var oContent = aContent && aContent.length > 0 && aContent[0];
+			let aContent = oField.getAggregation("_content");
+			let oContent = aContent && aContent.length > 0 && aContent[0];
 			assert.notOk(oContent, "no content exist before rendering"); // as edit mode is not explicit defined
 
 			oField.setMultipleLines(false);
@@ -1369,7 +1369,7 @@ sap.ui.define([
 
 		oField.setValue("");
 		oField.setAdditionalValue("Empty");
-		var aConditions = oField.getConditions();
+		let aConditions = oField.getConditions();
 		assert.equal(aConditions.length, 1, "One condition");
 		assert.equal(aConditions[0].operator, "EQ", "condition operator");
 		assert.equal(aConditions[0].values[0], "", "condition value");
@@ -1403,7 +1403,7 @@ sap.ui.define([
 		oField.setDataTypeConstraints({ nullable: false });
 		oField.setValue("");
 		oField.setAdditionalValue("Empty");
-		var aConditions = oField.getConditions();
+		let aConditions = oField.getConditions();
 		assert.equal(aConditions.length, 1, "One condition");
 		assert.equal(aConditions[0].operator, "EQ", "condition operator");
 		assert.equal(aConditions[0].values[0], "", "condition value");
@@ -1434,7 +1434,7 @@ sap.ui.define([
 		oField.setDataTypeConstraints({ maxLength: 3, isDigitSequence: true, nullable: false });
 		oField.setValue("000");
 		oField.setAdditionalValue("Empty");
-		var aConditions = oField.getConditions();
+		let aConditions = oField.getConditions();
 		assert.equal(aConditions.length, 1, "One condition");
 		assert.equal(aConditions[0].operator, "EQ", "condition operator");
 		assert.equal(aConditions[0].values[0], "000", "condition value");
@@ -1460,7 +1460,7 @@ sap.ui.define([
 
 	});
 
-	var oCurrencyCodeList = {
+	const oCurrencyCodeList = {
 		"EUR": { Text: "Euro", UnitSpecificScale: 2 },
 		"USD": { Text: "US-Dollar", UnitSpecificScale: 2 }
 	};
@@ -1487,7 +1487,7 @@ sap.ui.define([
 		sinon.spy(oField, "setProperty");
 
 		oField.setValue([undefined, undefined, undefined]);
-		var aConditions = oField.getConditions();
+		let aConditions = oField.getConditions();
 		assert.equal(aConditions.length, 0, "No condition");
 		assert.equal(oField.setConditions.getCalls().length, 0, "condition not changed");
 		assert.equal(oField.setProperty.withArgs("value").getCalls().length, 1, "value only updated once");
@@ -1532,11 +1532,11 @@ sap.ui.define([
 		oField.placeAt("content");
 		oCore.applyChanges();
 
-		var oType = new CurrencyType({ showMeasure: false });
+		const oType = new CurrencyType({ showMeasure: false });
 		sValue = oType.formatValue([1, "USD"], "string"); // because of special whitspaces and local dependend
-		var aContent = oField.getAggregation("_content");
-		var oContent1 = aContent && aContent.length > 0 && aContent[0];
-		var oContent2 = aContent && aContent.length > 1 && aContent[1];
+		const aContent = oField.getAggregation("_content");
+		const oContent1 = aContent && aContent.length > 0 && aContent[0];
+		const oContent2 = aContent && aContent.length > 1 && aContent[1];
 		assert.equal(oContent1.getValue(), sValue, "number value");
 		assert.equal(oContent2.getValue(), "USD", "unit value");
 
@@ -1558,7 +1558,7 @@ sap.ui.define([
 		oField.setConditions([Condition.createItemCondition([2, "EUR"])]); // fake user Input with parsing
 		assert.equal(oField.setProperty.withArgs("value").getCalls().length, 0, "value not updated");
 
-		var oPromise = Promise.resolve(oField.getResultForChangePromise(oField.getConditions()));
+		let oPromise = Promise.resolve(oField.getResultForChangePromise(oField.getConditions()));
 		oField.fireChangeEvent(oField.getConditions(), true, undefined, oPromise); // fake change event
 		assert.equal(oField.setProperty.withArgs("value").getCalls().length, 1, "value only updated with change event");
 		assert.deepEqual(oField.getValue(), [2, "EUR"], "Field value");
@@ -1567,7 +1567,7 @@ sap.ui.define([
 		oField.setConditions([Condition.createItemCondition([3, "EUR"])]); // fake user Input with parsing
 		assert.equal(oField.setProperty.withArgs("value").getCalls().length, 0, "value not updated");
 
-		var fnDone = assert.async();
+		const fnDone = assert.async();
 		oPromise = Promise.resolve(oField.getResultForChangePromise(oField.getConditions()));
 		oField.fireChangeEvent(undefined, undefined, undefined, oPromise); // fake change event with promise
 		assert.equal(oField.setProperty.withArgs("value").getCalls().length, 0, "value not updated directly");
@@ -1588,22 +1588,22 @@ sap.ui.define([
 
 		sinon.spy(oField, "setProperty");
 
-		var aContent = oField.getAggregation("_content");
-		var oContent1 = aContent && aContent.length > 0 && aContent[0];
-		var oContent2 = aContent && aContent.length > 1 && aContent[1];
+		const aContent = oField.getAggregation("_content");
+		const oContent1 = aContent && aContent.length > 0 && aContent[0];
+		const oContent2 = aContent && aContent.length > 1 && aContent[1];
 
 		oContent1.focus();
 		oContent1._$input.val("1");
 		oContent1.onChange(); // simulate user input
 		oContent2.focus();
 
-		var fnDone = assert.async();
+		const fnDone = assert.async();
 		setTimeout(function() { // model update
 			assert.equal(oField.setProperty.withArgs("value").getCalls().length, 0, "value not updated");
 			assert.deepEqual(oField.getValue(), [undefined, undefined, oCurrencyCodeList], "Value of Field");
-			var aConditions = oField.getConditions();
+			let aConditions = oField.getConditions();
 			assert.equal(aConditions.length, 1, "One condition exist");
-			var oCondition = aConditions[0];
+			let oCondition = aConditions[0];
 			assert.deepEqual(oCondition && oCondition.values[0], [1, null], "Value of condition");
 			assert.equal(iCount, 0, "change event not fired");
 
@@ -1646,7 +1646,7 @@ sap.ui.define([
 					assert.deepEqual(oCondition && oCondition.values[0], [2, "USD", oCurrencyCodeList], "Value of condition");
 
 					setTimeout(function() { // model update
-						var sNumber = oField._oContentFactory.getDataType().formatValue([2, "USD"], "string"); // use parser of type to have locale dependent parsing
+						const sNumber = oField._oContentFactory.getDataType().formatValue([2, "USD"], "string"); // use parser of type to have locale dependent parsing
 						assert.equal(oContent1.getValue(), sNumber, "Value set on number control");
 
 						oField.setProperty.reset();
@@ -1718,22 +1718,22 @@ sap.ui.define([
 		assert.notOk(oField._oContentFactory.getDataType()._bMyType, "Given Type is not used used in Field");
 		assert.ok(oField._oContentFactory.getDataType().isA("sap.ui.model.odata.type.DateTimeWithTimezone"), "DateTimeWithTimezone type used");
 		assert.deepEqual(oField._oContentFactory.getCompositeTypes(), [oType2, oType3], "Composite types stored");
-		var aContent = oField.getAggregation("_content");
-		var oContent = aContent && aContent.length > 0 && aContent[0];
+		let aContent = oField.getAggregation("_content");
+		let oContent = aContent && aContent.length > 0 && aContent[0];
 		assert.ok(oContent instanceof DateTimePicker, "DateTimePicker used");
 		assert.equal(oContent.getValue(), "2022-02-25T07:06:30", "Value set on DateTimePicker control");
 		assert.equal(oContent.getTimezone(), "Europe/Berlin", "Timezone set on DateTimePicker control");
-		var oBindingInfo = oContent.getBindingInfo("value");
-		var oConditionsType = oBindingInfo.type;
-		var oMyType = oConditionsType.getFormatOptions().valueType;
+		let oBindingInfo = oContent.getBindingInfo("value");
+		let oConditionsType = oBindingInfo.type;
+		let oMyType = oConditionsType.getFormatOptions().valueType;
 		assert.notOk(oMyType._bMyType, "Given Type is not used in Binding for DateTimePicker");
 		assert.ok(oMyType.isA("sap.ui.model.odata.type.DateTimeWithTimezone"), "DateTimeWithTimezone type used in ConditionsType");
-		var aCompositeTypes = oConditionsType.getFormatOptions().compositeTypes;
+		let aCompositeTypes = oConditionsType.getFormatOptions().compositeTypes;
 		assert.deepEqual(aCompositeTypes, [oType2, oType3], "Composite types stored used in ConditionsType");
-		var oMyOriginalType = oConditionsType.getFormatOptions().originalDateType;
+		let oMyOriginalType = oConditionsType.getFormatOptions().originalDateType;
 		assert.equal(oMyOriginalType, oType, "original type used in ConditionsType as originalDateType");
 
-		var sText = oType.formatValue([new Date(2022, 1, 25, 7, 6, 30, 0), "Europe/Berlin"], "string"); // as it might locale dependent (formatting and parsing tested in ConditionType)
+		const sText = oType.formatValue([new Date(2022, 1, 25, 7, 6, 30, 0), "Europe/Berlin"], "string"); // as it might locale dependent (formatting and parsing tested in ConditionType)
 		assert.ok(oField2._oContentFactory.getDataType()._bMyType, "Given Type is used used in Field");
 		assert.deepEqual(oField2._oContentFactory.getCompositeTypes(), [oType2, oType3], "Composite types stored");
 		aContent = oField2.getAggregation("_content");

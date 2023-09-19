@@ -16,12 +16,12 @@ sap.ui.define([
 	"use strict";
 
 	// shortcut for sap.m.PlacementType
-	var PlacementType = mobileLibrary.PlacementType;
+	const PlacementType = mobileLibrary.PlacementType;
 
-	var HasPopup = CoreLibrary.aria.HasPopup;
-	var ResponsivePopover, List, SearchField, StandardListItem, InvisibleText, Device, oRb;
+	const HasPopup = CoreLibrary.aria.HasPopup;
+	let ResponsivePopover, List, SearchField, StandardListItem, InvisibleText, Device, oRb;
 
-	var ChartTypeButton = OverflowToolbarButton.extend("sap.ui.mdc.chart.ChartTypeButton", {
+	const ChartTypeButton = OverflowToolbarButton.extend("sap.ui.mdc.chart.ChartTypeButton", {
 		metadata: {
 			library: "sap.ui.mdc"
 		},
@@ -49,7 +49,7 @@ sap.ui.define([
 				mSettings
 			]);
 
-			var oModel = new JSONModel();
+			const oModel = new JSONModel();
 			oModel.setProperty("/ChartTypeInfo", this.oChart.getChartTypeInfo());
 			this.setModel(oModel, "$chart");
 
@@ -174,13 +174,13 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.mdc
 	 */
 	ChartTypeButton.prototype._createPopover = function(oChart) {
-		var oItemTemplate = new StandardListItem({
+		const oItemTemplate = new StandardListItem({
 			title: "{$chartTypes>text}",
 			icon: "{$chartTypes>icon}",
 			selected: "{$chartTypes>selected}"
 		});
 
-		var oList = new List({
+		const oList = new List({
 			mode: "SingleSelectMaster",
 			noData: new IllustratedMessage({title: oRb.getText("chart.NO_CHART_TYPES_AVAILABLE"), description: oRb.getText("chart.NO_CHART_TYPES_AVAILABLE_ACTION"),  illustrationType: MLib.IllustratedMessageType.AddDimensions}),
 			items: {
@@ -190,11 +190,11 @@ sap.ui.define([
 			selectionChange: function(oEvent) {
 				//TODO: Implement Chart Type switch
 				if (oEvent && oEvent.mParameters && oEvent.mParameters.listItem) {
-					var oBinding = oEvent.mParameters.listItem.getBinding("title");
+					const oBinding = oEvent.mParameters.listItem.getBinding("title");
 					if (oBinding) {
-						var oCtx = oBinding.getContext();
+						const oCtx = oBinding.getContext();
 						if (oCtx) {
-							var oObj = oCtx.getObject();
+							const oObj = oCtx.getObject();
 							if (oObj && oObj.key) {
 								sap.ui.require([
 									"sap/ui/mdc/flexibility/Chart.flexibility"
@@ -222,7 +222,7 @@ sap.ui.define([
 			}
 		});
 
-		var oSearchField = new SearchField({
+		const oSearchField = new SearchField({
 			placeholder: oRb.getText("chart.CHART_TYPE_SEARCH"),
 			liveChange: function(oEvent) {
 				if (oChart){
@@ -231,7 +231,7 @@ sap.ui.define([
 			}.bind(this)
 		});
 
-		var oPopover = new ResponsivePopover({
+		const oPopover = new ResponsivePopover({
 			id: oChart.getId() + "-btnChartTypePopover",
 			placement: PlacementType.VerticalPreferredBottom,
 			contentWidth: "25rem"
@@ -246,14 +246,14 @@ sap.ui.define([
 			oPopover.addContent(oSearchField);
 		}
 
-		var oModel = new JSONModel();
+		const oModel = new JSONModel();
 		oModel.setProperty("/AvailableChartTypes", this.oChart.getAvailableChartTypes());
 		oPopover.setModel(oModel, "$chartTypes");
 
 		//Show header only in mobile scenarios
 		//still support screen reader while on desktops.
 		if (Device.system.desktop) {
-			var oInvText = new InvisibleText({
+			const oInvText = new InvisibleText({
 				text: oRb.getText("chart.CHART_TYPELIST_TEXT")
 			});
 			oPopover.setShowHeader(false);
@@ -285,8 +285,8 @@ sap.ui.define([
 			return;
 		}
 
-		var sSearchValue = oEvent.getParameter("newValue");
-		var oSearchFilter = [];
+		const sSearchValue = oEvent.getParameter("newValue");
+		let oSearchFilter = [];
 		if (sSearchValue) {
 			oSearchFilter = new Filter("text", "Contains", sSearchValue);
 		}

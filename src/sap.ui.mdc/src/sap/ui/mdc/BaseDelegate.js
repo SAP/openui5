@@ -21,7 +21,7 @@ sap.ui.define(['sap/ui/mdc/enums/BaseType', 'sap/ui/mdc/DefaultTypeMap', "sap/ba
 	 * @public
 	 * @since 1.79.0
 	 */
-	var BaseDelegate = {};
+	const BaseDelegate = {};
 
 	/**
 	* Returns a TypeUtil for this delegate.
@@ -53,9 +53,9 @@ sap.ui.define(['sap/ui/mdc/enums/BaseType', 'sap/ui/mdc/DefaultTypeMap', "sap/ba
 	 */
 	BaseDelegate.getTypeMap = function (oControl) {
 		// Support existing custom TypeUtils until all stakeholders switched to TypeMaps
-		var fnInstanceGetter = (this.getTypeUtil && this.getTypeUtil.__mapped) ? this.getTypeUtil.getOriginalMethod() : this.getTypeUtil;
-		var fnBaseGetter = (BaseDelegate.getTypeUtil && BaseDelegate.getTypeUtil.__mapped) ? BaseDelegate.getTypeUtil.getOriginalMethod() : BaseDelegate.getTypeUtil;
-		var bHasTypeUtil = fnInstanceGetter && fnInstanceGetter !== fnBaseGetter;
+		const fnInstanceGetter = (this.getTypeUtil && this.getTypeUtil.__mapped) ? this.getTypeUtil.getOriginalMethod() : this.getTypeUtil;
+		const fnBaseGetter = (BaseDelegate.getTypeUtil && BaseDelegate.getTypeUtil.__mapped) ? BaseDelegate.getTypeUtil.getOriginalMethod() : BaseDelegate.getTypeUtil;
+		const bHasTypeUtil = fnInstanceGetter && fnInstanceGetter !== fnBaseGetter;
 		return bHasTypeUtil ? fnInstanceGetter.call(this, oControl) : DefaultTypeMap;
 	};
 

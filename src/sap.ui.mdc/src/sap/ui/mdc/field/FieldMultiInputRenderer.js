@@ -10,7 +10,7 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/m/MultiInputRenderer', 'sap/ui/mdc/f
 	 * FieldMultiInput renderer.
 	 * @namespace
 	 */
-	var FieldMultiInputRenderer = Renderer.extend(MultiInputRenderer);
+	const FieldMultiInputRenderer = Renderer.extend(MultiInputRenderer);
 	FieldMultiInputRenderer.apiVersion = 2;
 
 	FieldMultiInputRenderer.addOuterClasses = function(oRm, oMultiInput) {

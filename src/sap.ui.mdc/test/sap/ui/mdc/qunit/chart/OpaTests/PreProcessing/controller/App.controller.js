@@ -21,18 +21,18 @@ sap.ui.define([
 			oCore.getMessageManager().registerObject(this.getView(), true);
 
 
-			var oCM = new ConditionModel();
+			const oCM = new ConditionModel();
 
 			this.getView().setModel(oCM, "cm");
 			this.getView().setModel(new JSONModel({ routeName: "books" }), "app");
 
-			var oRouter = UIComponent.getRouterFor(this);
+			const oRouter = UIComponent.getRouterFor(this);
 			oRouter.attachRouteMatched(this.onRouteMatched.bind(this));
 		},
 
 		onRouteMatched: function (oEvent) {
-			var oParameters = oEvent.getParameters();
-			var sRouteName = oParameters.name;
+			const oParameters = oEvent.getParameters();
+			let sRouteName = oParameters.name;
 
 			switch (sRouteName) {
 				case "":
@@ -45,7 +45,7 @@ sap.ui.define([
 					break;
 			}
 
-			var oAppModel = this.getView().getModel("app");
+			const oAppModel = this.getView().getModel("app");
 			oAppModel.setProperty("/routeName", sRouteName);
 		}
 	});

@@ -29,7 +29,7 @@ sap.ui.define([
 	 * @since 1.81.0
 	 * @alias sap.ui.mdc.field.FieldMultiInput
 	 */
-	var FieldMultiInput = MultiInput.extend("sap.ui.mdc.field.FieldMultiInput", /** @lends sap.ui.mdc.field.FieldMultiInput.prototype */
+	const FieldMultiInput = MultiInput.extend("sap.ui.mdc.field.FieldMultiInput", /** @lends sap.ui.mdc.field.FieldMultiInput.prototype */
 	{
 		metadata: {
 			library: "sap.ui.mdc",

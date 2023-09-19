@@ -66,14 +66,14 @@ sap.ui.define([
 		StateUtil
 	) {
 	"use strict";
-	var oMdcTableWrapper;
-	var oModel;
-	var oTable;
-	var oItemTemplate;
-	var bIsOpen = true;
-	var bIsTypeahead = true;
-	var iMaxConditions = -1;
-	var oContainer = { //to fake Container
+	let oMdcTableWrapper;
+	let oModel;
+	let oTable;
+	let oItemTemplate;
+	let bIsOpen = true;
+	let bIsTypeahead = true;
+	let iMaxConditions = -1;
+	const oContainer = { //to fake Container
 		getScrollDelegate: function() {
 			return null;
 		},
@@ -118,8 +118,8 @@ sap.ui.define([
 			return undefined;
 		}
 	};
-	var _init = function(bTypeahead, sTableType, sSelectionMode) {
-		var oType;
+	const _init = function(bTypeahead, sTableType, sSelectionMode) {
+		let oType;
 
 		oModel = new JSONModel({
 			items: [
@@ -185,7 +185,7 @@ sap.ui.define([
 		oMdcTableWrapper.setParent(); // just to fake call
 		oMdcTableWrapper.oParent = oContainer; // fake
 	};
-	var _teardown = function() {
+	const _teardown = function() {
 		oMdcTableWrapper.destroy();
 		oMdcTableWrapper = null;
 		oTable = undefined; // destroyed with MDCTable content
@@ -208,9 +208,9 @@ sap.ui.define([
 
 	QUnit.test("getContent for dialog", function(assert) {
 		oMdcTableWrapper.setFilterValue("X");
-		var oContent = oMdcTableWrapper.getContent();
+		const oContent = oMdcTableWrapper.getContent();
 		if (oContent) {
-			var fnDone = assert.async();
+			const fnDone = assert.async();
 			oContent.then(function(oContent) {
 
 				sinon.spy(oTable, "scrollToIndex");
@@ -225,11 +225,11 @@ sap.ui.define([
 						assert.ok(oContent, "Content returned");
 						assert.ok(oContent.isA("sap.ui.layout.FixFlex"), "Content is sap.m.FixFlex");
 						assert.equal(oContent.getFixContent().length, 1, "FixFlex number of Fix items");
-						var oFixContent = oContent.getFixContent()[0];
+						const oFixContent = oContent.getFixContent()[0];
 						assert.ok(oFixContent.isA("sap.m.VBox"), "FixContent is sap.m.VBox");
 						assert.ok(oFixContent.hasStyleClass("sapMdcValueHelpPanelFilterbar"), "VBox has style class sapMdcValueHelpPanelFilterbar");
 						assert.equal(oFixContent.getItems().length, 1, "VBox number of items");
-						var oTableBox = oContent.getFlexContent();
+						const oTableBox = oContent.getFlexContent();
 						assert.ok(oTableBox.isA("sap.m.VBox"), "TableBox is sap.m.VBox");
 						assert.equal(oTableBox.getHeight(), "100%", "Panel height");
 						assert.ok(oTableBox.hasStyleClass("sapMdcValueHelpPanelTableBox"), "Panel has style class sapMdcTablePanel");
@@ -275,7 +275,7 @@ sap.ui.define([
 
 	QUnit.test("handleSelectionChange - Single Select", function(assert) {
 		_init(false, "Table", "Single");
-		var oContentPromise = oMdcTableWrapper.getContent();
+		const oContentPromise = oMdcTableWrapper.getContent();
 
 		sinon.spy(oMdcTableWrapper, "_handleSelectionChange");
 		sinon.spy(oMdcTableWrapper, "_fireSelect");
@@ -283,7 +283,7 @@ sap.ui.define([
 
 		return oContentPromise.then(function (oContent) {
 			return oMdcTableWrapper._retrievePromise("listBinding").then(function () {
-				var oSelectionPlugin = oTable._oTable._getSelectionPlugin();
+				const oSelectionPlugin = oTable._oTable._getSelectionPlugin();
 
 				return oSelectionPlugin.setSelectedIndex(2).then(function () {
 					assert.ok(oMdcTableWrapper._handleSelectionChange.calledTwice, "MDCTable _handleSelectionChange was called twice"); // Once by Table._setSelectedContexts, second time by setSelectedIndex
@@ -323,7 +323,7 @@ sap.ui.define([
 
 	QUnit.test("handleSelectionChange - Multi Select", function(assert) {
 		_init(false, "Table", "Multi");
-		var oPrepareContentPromise = oMdcTableWrapper.getContent().then(function () {
+		const oPrepareContentPromise = oMdcTableWrapper.getContent().then(function () {
 			return oMdcTableWrapper.onBeforeShow();
 		});
 
@@ -334,7 +334,7 @@ sap.ui.define([
 
 		return oPrepareContentPromise.then(function (oContent) {
 			return oMdcTableWrapper._retrievePromise("listBinding").then(function () {
-				var oSelectionPlugin = oTable._oTable._getSelectionPlugin();
+				const oSelectionPlugin = oTable._oTable._getSelectionPlugin();
 
 				return oSelectionPlugin.addSelectionInterval(0,2).then(function () {
 					assert.ok(oMdcTableWrapper._handleSelectionChange.called, "MDCTable _handleSelectionChange was called");
@@ -391,7 +391,7 @@ sap.ui.define([
 
 	QUnit.skip("handleSelectionChange - noop", function(assert) {
 		_init(false, "Table", "Single");
-		var oContentPromise = oMdcTableWrapper.getContent();
+		const oContentPromise = oMdcTableWrapper.getContent();
 
 		sinon.spy(oMdcTableWrapper, "_handleSelectionChange");
 		sinon.spy(oMdcTableWrapper, "_fireSelect");
@@ -433,15 +433,15 @@ sap.ui.define([
 	QUnit.test("handleSelectionChange - SingleSelect", function(assert) {
 		_init(false, "ResponsiveTableType", "Single");
 
-		var oContentPromise = oMdcTableWrapper.getContent();
+		const oContentPromise = oMdcTableWrapper.getContent();
 
 		sinon.spy(oMdcTableWrapper, "_handleSelectionChange");
 		sinon.spy(oMdcTableWrapper, "_fireSelect");
 
 		return oContentPromise.then(function (oContent) {
 			return oMdcTableWrapper._retrievePromise("listBinding").then(function () {
-				var oInnerTable = oTable._oTable;
-				var aTableItems = oInnerTable && oInnerTable.getItems();
+				const oInnerTable = oTable._oTable;
+				const aTableItems = oInnerTable && oInnerTable.getItems();
 
 				oInnerTable.setSelectedItem(aTableItems[2], true, true);
 				assert.ok(oMdcTableWrapper._handleSelectionChange.called, "MDCTable _handleSelectionChange was called");
@@ -487,15 +487,15 @@ sap.ui.define([
 	QUnit.test("handleSelectionChange - MultiSelect", function(assert) {
 		_init(false, "ResponsiveTableType", "Multi");
 
-		var oContentPromise = oMdcTableWrapper.getContent();
+		const oContentPromise = oMdcTableWrapper.getContent();
 
 		sinon.spy(oMdcTableWrapper, "_handleSelectionChange");
 		sinon.spy(oMdcTableWrapper, "_fireSelect");
 
 		return oContentPromise.then(function (oContent) {
 			return oMdcTableWrapper._retrievePromise("listBinding").then(function () {
-				var oInnerTable = oTable._oTable;
-				var aTableItems = oInnerTable && oInnerTable.getItems();
+				const oInnerTable = oTable._oTable;
+				const aTableItems = oInnerTable && oInnerTable.getItems();
 
 				oInnerTable.setSelectedItem(aTableItems[2], true, true);
 				assert.ok(oMdcTableWrapper._handleSelectionChange.called, "MDCTable _handleSelectionChange was called");

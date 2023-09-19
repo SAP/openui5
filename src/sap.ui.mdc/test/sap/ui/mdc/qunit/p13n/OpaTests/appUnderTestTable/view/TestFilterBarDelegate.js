@@ -3,11 +3,11 @@ sap.ui.define([
 ], function (FilterBarDelegate) {
 	"use strict";
 
-	var oCustomDelegate = Object.assign({}, FilterBarDelegate);
-	var aInfo;
+	const oCustomDelegate = Object.assign({}, FilterBarDelegate);
+	let aInfo;
 
 	oCustomDelegate.fetchProperties = function(oFilterBar) {
-		var oFilterPromise = FilterBarDelegate.fetchProperties.apply(this, arguments);
+		const oFilterPromise = FilterBarDelegate.fetchProperties.apply(this, arguments);
 
 		if (aInfo){
 			return Promise.resolve(aInfo);

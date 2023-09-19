@@ -15,7 +15,7 @@ sap.ui.define(function() {
 	 * @alias sap.ui.mdc.enum.ContentMode
 	 * @deprecated since 1.115.0 - please see {@link sap.ui.mdc.enums.ContentMode}
 	 */
-	var ContentMode = {
+	const ContentMode = {
 		/**
 		 * Display mode for single value
 		 * @private

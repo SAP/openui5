@@ -20,7 +20,7 @@ sap.ui.define([
 	 * @alias sap.ui.mdc.qunit.table.OpaTests.pages.Util
 	 * @private
 	 */
-	var Util = {};
+	const Util = {};
 
 	Util.waitForColumnMenu = function(mConfig) {
 		return this.waitFor({

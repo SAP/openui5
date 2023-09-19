@@ -13,7 +13,7 @@ sap.ui.define(function() {
 	 * @since 1.115
 	 * @alias sap.ui.mdc.enums.FieldEditMode
 	 */
-	var FieldEditMode = {
+	const FieldEditMode = {
 		/**
 		 * {@link sap.ui.mdc.Field Field}, {@link sap.ui.mdc.FilterField FilterField} or {@link sap.ui.mdc.MultiValueField MultiValueField} is rendered in display mode
 		 * @public

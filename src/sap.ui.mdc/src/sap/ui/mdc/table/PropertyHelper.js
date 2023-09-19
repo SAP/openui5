@@ -114,7 +114,7 @@ sap.ui.define([
 	 * @since 1.83
 	 * @alias sap.ui.mdc.table.PropertyHelper
 	 */
-	var PropertyHelper = PropertyHelperBase.extend("sap.ui.mdc.table.PropertyHelper", {
+	const PropertyHelper = PropertyHelperBase.extend("sap.ui.mdc.table.PropertyHelper", {
 		constructor: function(aProperties, oParent, mExtensionAttributes) {
 			PropertyHelperBase.call(this, aProperties, oParent, Object.assign({
 				// Enable default attributes
@@ -260,7 +260,7 @@ sap.ui.define([
 		// TODO: The typeConfig can still provided by the user for legacy reasons. Once migration is completed, always create the typeConfig based
 		//  on the provided dataType.
 		if (!oProperty.isComplex() && !oProperty.typeConfig && oProperty.dataType && this.getParent()) {
-			var oTypeUtil = this.getParent().getControlDelegate().getTypeMap();
+			const oTypeUtil = this.getParent().getControlDelegate().getTypeMap();
 			oProperty.typeConfig = oTypeUtil.getTypeConfig(oProperty.dataType, oProperty.formatOptions, oProperty.constraints);
 		}
 
@@ -293,18 +293,18 @@ sap.ui.define([
 	 * @private
 	 */
 	PropertyHelper.prototype.getColumnClipboardSettings = function(oColumn) {
-		var oProperty = this.getProperty(oColumn.getPropertyKey());
+		const oProperty = this.getProperty(oColumn.getPropertyKey());
 		if (!oProperty || oProperty.clipboardSettings === null) {
 			return null;
 		}
 
-		var aProperties = oProperty.getSimpleProperties().map(function(oSimpleProperty) {
+		const aProperties = oProperty.getSimpleProperties().map(function(oSimpleProperty) {
 			return oSimpleProperty.path;
 		});
-		var aTypes = oProperty.getSimpleProperties().map(function(oSimpleProperty) {
+		const aTypes = oProperty.getSimpleProperties().map(function(oSimpleProperty) {
 			return oSimpleProperty.typeConfig && oSimpleProperty.typeConfig.typeInstance;
 		});
-		var sTemplate = oProperty.clipboardSettings.template || Array.from(Array(aProperties.length).keys(), function(iIndex) {
+		const sTemplate = oProperty.clipboardSettings.template || Array.from(Array(aProperties.length).keys(), function(iIndex) {
 			return "{" + iIndex + "}";
 		}).join(" ");
 
@@ -323,28 +323,27 @@ sap.ui.define([
 	 * @private
 	 */
 	PropertyHelper.prototype.getColumnExportSettings = function(oColumn) {
-		var aColumnExportSettings = [];
+		const aColumnExportSettings = [];
 
 		if (!BaseObject.isA(oColumn, "sap.ui.mdc.table.Column")) {
 			return aColumnExportSettings;
 		}
 
-		var oProperty = this.getProperty(oColumn.getPropertyKey());
+		const oProperty = this.getProperty(oColumn.getPropertyKey());
 
 		if (!oProperty) {
 			return aColumnExportSettings;
 		}
 
-		var oExportSettings = oProperty.exportSettings;
+		const oExportSettings = oProperty.exportSettings;
 
 		// exportSettings have been set explicitly to null by the application for this column to exclude it from the export
 		if (oExportSettings === null) {
 			return aColumnExportSettings;
 		}
 
-		var aPaths = [];
-		var oColumnExportSettings;
-		var aPropertiesFromComplexProperty;
+		const aPaths = [];
+		let oColumnExportSettings;
 
 		if (!oProperty.isComplex()) {
 			oColumnExportSettings = getColumnExportSettingsObject(oColumn, oProperty, oExportSettings);
@@ -354,7 +353,7 @@ sap.ui.define([
 			return aColumnExportSettings;
 		}
 
-		aPropertiesFromComplexProperty = oProperty.getSimpleProperties();
+		const aPropertiesFromComplexProperty = oProperty.getSimpleProperties();
 		if (Object.keys(oExportSettings).length) {
 			oColumnExportSettings = getColumnExportSettingsObject(oColumn, oProperty, oExportSettings);
 			aPropertiesFromComplexProperty.forEach(function(oProperty) {
@@ -369,7 +368,7 @@ sap.ui.define([
 					return;
 				}
 
-				var oCurrentColumnExportSettings = getColumnExportSettingsObject(oColumn, oProperty, oProperty.exportSettings);
+				const oCurrentColumnExportSettings = getColumnExportSettingsObject(oColumn, oProperty, oProperty.exportSettings);
 
 				oCurrentColumnExportSettings.property = oProperty.path;
 				if (iIndex > 0) {
@@ -423,15 +422,15 @@ sap.ui.define([
 	 * possible
 	 */
 	PropertyHelper.prototype.calculateColumnWidth = function(oMDCColumn) {
-		var sPropertyName = oMDCColumn.getPropertyKey();
-		var oTable = oMDCColumn.getTable();
+		const sPropertyName = oMDCColumn.getPropertyKey();
+		const oTable = oMDCColumn.getTable();
 
 		return oTable._getPropertyByNameAsync(sPropertyName).then(function(oProperty) {
 			if (!oProperty) {
 			  return null;
 			}
 
-			var mPropertyInfoVisualSettings = oProperty.visualSettings;
+			const mPropertyInfoVisualSettings = oProperty.visualSettings;
 			if (mPropertyInfoVisualSettings && mPropertyInfoVisualSettings.widthCalculation === null) {
 				return null;
 			}
@@ -450,7 +449,7 @@ sap.ui.define([
 	 * @private
 	 */
 	 PropertyHelper.prototype._calcColumnWidth = function (oProperty, oMDCColumn) {
-		var mWidthCalculation = Object.assign({
+		const mWidthCalculation = Object.assign({
 			gap: 0,
 			includeLabel: true,
 			truncateLabel: true,
@@ -458,16 +457,16 @@ sap.ui.define([
 			required: oMDCColumn.getRequired()
 		}, oProperty.visualSettings && oProperty.visualSettings.widthCalculation);
 
-		var oMDCTable = oMDCColumn.getParent();
+		const oMDCTable = oMDCColumn.getParent();
 		if (oMDCTable && oMDCTable._isOfType("TreeTable") && oMDCTable.indexOfColumn(oMDCColumn) == 0) {
 			mWidthCalculation.treeColumn = true;
 		}
 
-		var aTypes = [];
+		let aTypes = [];
 		if (oProperty.isComplex()) {
 			// for complex properties generate [<TypeInstance>, <TypeSettings>][] structure
 			aTypes = oProperty.getSimpleProperties().flatMap(function(oProp) {
-				var mPropWidthCalculation = oProp.visualSettings ? oProp.visualSettings.widthCalculation : undefined;
+				const mPropWidthCalculation = oProp.visualSettings ? oProp.visualSettings.widthCalculation : undefined;
 				return mPropWidthCalculation === null || mWidthCalculation.excludeProperties.includes(oProp.name) ? [] : [
 					[oProp.typeConfig.typeInstance, mPropWidthCalculation]
 				];
@@ -482,7 +481,7 @@ sap.ui.define([
 			mWidthCalculation.gap += 2.5;
 		}
 
-		var sHeader = (mWidthCalculation.includeLabel) ? oMDCColumn.getHeader() || oProperty.label : "";
+		const sHeader = (mWidthCalculation.includeLabel) ? oMDCColumn.getHeader() || oProperty.label : "";
 		return TableUtil.calcColumnWidth(aTypes, sHeader, mWidthCalculation);
 	};
 

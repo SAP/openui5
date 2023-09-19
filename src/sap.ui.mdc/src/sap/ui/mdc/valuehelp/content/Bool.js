@@ -29,7 +29,7 @@ sap.ui.define([
 	 * @experimental As of version 1.95
 	 * @alias sap.ui.mdc.valuehelp.content.Bool
 	 */
-	var Bool = FixedList.extend("sap.ui.mdc.valuehelp.content.Bool", /** @lends sap.ui.mdc.valuehelp.content.Bool.prototype */
+	const Bool = FixedList.extend("sap.ui.mdc.valuehelp.content.Bool", /** @lends sap.ui.mdc.valuehelp.content.Bool.prototype */
 	{
 		metadata: {
 			library: "sap.ui.mdc",
@@ -70,8 +70,8 @@ sap.ui.define([
 				"sap/ui/mdc/valuehelp/content/FixedListItem",
 				"sap/ui/model/json/JSONModel"
 			]).then(function (aModules) {
-				var FixedListItem = aModules[0];
-				var JSONModel = aModules[1];
+				const FixedListItem = aModules[0];
+				const JSONModel = aModules[1];
 				this._oModel = new JSONModel({
 					"type": "",
 					"items": [
@@ -87,7 +87,7 @@ sap.ui.define([
 				});
 				_updateModel.call(this, this.getConfig());
 
-				var oItem = new FixedListItem(this.getId() + "-Item", {
+				const oItem = new FixedListItem(this.getId() + "-Item", {
 					key: {path: "$Bool>key"},
 					text: {path: "$Bool>text"}
 				});
@@ -105,8 +105,8 @@ sap.ui.define([
 
 		return Promise.resolve().then(function () {
 			// don't need to create items for this, just use the type to check
-			var oGlobalConfig = this.getConfig();
-			var oType = oConfig.dataType || (oGlobalConfig && oGlobalConfig.dataType);
+			const oGlobalConfig = this.getConfig();
+			const oType = oConfig.dataType || (oGlobalConfig && oGlobalConfig.dataType);
 
 			if (oType) {
 				if (oConfig.checkKey) {
@@ -118,17 +118,17 @@ sap.ui.define([
 					}
 				}
 				if (oConfig.checkDescription && oConfig.value) {
-					var sTrue = oType.formatValue(true, "string");
+					const sTrue = oType.formatValue(true, "string");
 					if (sTrue.toLowerCase().startsWith(oConfig.value.toLowerCase())) {
 						return { key: true, description: sTrue };
 					}
-					var sFalse = oType.formatValue(false, "string");
+					const sFalse = oType.formatValue(false, "string");
 					if (sFalse.toLowerCase().startsWith(oConfig.value.toLowerCase())) {
 						return { key: false, description: sFalse };
 					}
 				}
-				var sError = this._oResourceBundle.getText("valuehelp.VALUE_NOT_EXIST", [oConfig.value]);
-				var Exception = oConfig.exception || ParseException;
+				const sError = this._oResourceBundle.getText("valuehelp.VALUE_NOT_EXIST", [oConfig.value]);
+				const Exception = oConfig.exception || ParseException;
 				throw new Exception(sError);
 			} else {
 				throw new Error("Type missing");
@@ -161,13 +161,13 @@ sap.ui.define([
 	function _updateModel(oConfig) {
 		if (this._oModel && oConfig) {
 			// use texts of used type
-			var oType = oConfig.dataType;
-			var oData = this._oModel.getData();
+			const oType = oConfig.dataType;
+			const oData = this._oModel.getData();
 			if (oType && oData["type"] !== oType.getMetadata().getName()) {
 				oData["type"] = oType.getMetadata().getName();
-				var aItems = oData["items"];
-				for (var i = 0; i < aItems.length; i++) {
-					var oItem = aItems[i];
+				const aItems = oData["items"];
+				for (let i = 0; i < aItems.length; i++) {
+					const oItem = aItems[i];
 					oItem["text"] = oType.formatValue(oItem["key"], "string");
 				}
 				this._oModel.checkUpdate(true);

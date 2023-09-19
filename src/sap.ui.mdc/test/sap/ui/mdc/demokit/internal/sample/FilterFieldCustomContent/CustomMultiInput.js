@@ -20,11 +20,11 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var ValueState = coreLibrary.ValueState;
-	var TextDirection = coreLibrary.TextDirection;
-	var TextAlign = coreLibrary.TextAlign;
+	const ValueState = coreLibrary.ValueState;
+	const TextDirection = coreLibrary.TextDirection;
+	const TextAlign = coreLibrary.TextAlign;
 
-	var CustomMultiInput = Control.extend("sap.ui.mdc.sample.FieldCustomContent.CustomMultiInput", {
+	const CustomMultiInput = Control.extend("sap.ui.mdc.sample.FieldCustomContent.CustomMultiInput", {
 		metadata: {
 			interfaces: ["sap.ui.core.IFormContent"],
 			library: "sap.ui.mdc",
@@ -183,8 +183,8 @@ sap.ui.define([
 			apiVersion: 2,
 			render: function(oRm, oControl) {
 
-				var oMultiInput = oControl.getAggregation("_multiInput");
-				var oButton = oControl.getAggregation("_button");
+				const oMultiInput = oControl.getAggregation("_multiInput");
+				const oButton = oControl.getAggregation("_button");
 				oRm.openStart("div", oControl);
 				oRm.style("width", "100%");
 				oRm.openEnd();
@@ -206,13 +206,13 @@ sap.ui.define([
 
 		this._oManagedObjectModel = new ManagedObjectModel(this);
 
-		var oToken = new Token(this.getId() + "-token", {
+		const oToken = new Token(this.getId() + "-token", {
 			text: {
 				path: '$this>text'
 			}
 		});
 
-		var oMultiInput = new MultiInput(this.getId() + "-MI", {
+		const oMultiInput = new MultiInput(this.getId() + "-MI", {
 			value: {path: "$this>/value"},
 			placeholder: {path: "$this>/placeholder"},
 			textAlign: {path: "$this>/textAlign"},
@@ -236,7 +236,7 @@ sap.ui.define([
 		oMultiInput.setModel(this._oManagedObjectModel, "$this");
 		this.setAggregation("_multiInput", oMultiInput);
 
-		var oButton = new Button(this.getId() + "-B", {
+		const oButton = new Button(this.getId() + "-B", {
 			icon: {path: "$this>/valueHelpIconSrc"},
 			enabled: {parts: [{path: "$this>/enabled"}, {path: "$this>/editable"}], formatter: _determineButtonEnabled},
 			width: "20%",
@@ -259,42 +259,42 @@ sap.ui.define([
 
 	CustomMultiInput.prototype.getDOMValue = function() {
 
-		var oMultiInput = this.getAggregation("_multiInput");
+		const oMultiInput = this.getAggregation("_multiInput");
 		return oMultiInput.getDOMValue();
 
 	};
 
 	CustomMultiInput.prototype.setDOMValue = function(sValue) {
 
-		var oMultiInput = this.getAggregation("_multiInput");
+		const oMultiInput = this.getAggregation("_multiInput");
 		return oMultiInput.setDOMValue(sValue);
 
 	};
 
 	CustomMultiInput.prototype.getFocusDomRef = function() {
 
-		var oMultiInput = this.getAggregation("_multiInput");
+		const oMultiInput = this.getAggregation("_multiInput");
 		return oMultiInput.getFocusDomRef();
 
 	};
 
 	CustomMultiInput.prototype.getIdForLabel = function() {
 
-		var oMultiInput = this.getAggregation("_multiInput");
+		const oMultiInput = this.getAggregation("_multiInput");
 		return oMultiInput.getIdForLabel();
 
 	};
 
 	CustomMultiInput.prototype.getAccessibilityInfo = function() {
 
-		var oMultiInput = this.getAggregation("_multiInput");
+		const oMultiInput = this.getAggregation("_multiInput");
 		return oMultiInput.getAccessibilityInfo();
 
 	};
 
 	CustomMultiInput.prototype._doSelect = function(iStart, iEnd) {
 
-		var oMultiInput = this.getAggregation("_multiInput");
+		const oMultiInput = this.getAggregation("_multiInput");
 		return oMultiInput._doSelect(iStart, iEnd);
 
 	};
@@ -314,15 +314,15 @@ sap.ui.define([
 	function _handleTokenUpdate(oEvent) {
 
 		if (oEvent.getParameter("type") === "removed") {
-			var aRemovedTokens = oEvent.getParameter("removedTokens");
-			var aTokens = this.getTokens();
-			var aNewRemovedTokens = [];
-			var i;
+			const aRemovedTokens = oEvent.getParameter("removedTokens");
+			const aTokens = this.getTokens();
+			const aNewRemovedTokens = [];
+			let i;
 
 			for (i = 0; i < aRemovedTokens.length; i++) {
-				var oRemovedToken = aRemovedTokens[i];
-				var sPath = oRemovedToken.getBindingContext("$this").sPath;
-				var iIndex = parseInt(sPath.slice(sPath.lastIndexOf("/") + 1));
+				const oRemovedToken = aRemovedTokens[i];
+				const sPath = oRemovedToken.getBindingContext("$this").sPath;
+				const iIndex = parseInt(sPath.slice(sPath.lastIndexOf("/") + 1));
 				aNewRemovedTokens.push(aTokens[iIndex]);
 			}
 

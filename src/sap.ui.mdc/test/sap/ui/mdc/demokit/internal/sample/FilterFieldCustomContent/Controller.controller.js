@@ -20,10 +20,10 @@ sap.ui.define([
 	return Controller.extend("sap.ui.mdc.sample.FilterFieldCustomContent.Controller", {
 
 		onInit: function() {
-			var oView = this.getView();
+			const oView = this.getView();
 			oCore.getMessageManager().registerObject(oView, true);
 
-			var oCM = new ConditionModel();
+			const oCM = new ConditionModel();
 			oCM.addCondition("title", Condition.createCondition("EQ", ["4711"], undefined, undefined, ConditionValidated.NotValidated));
 			oCM.addCondition("metricsWords", Condition.createCondition("EQ", [4711], undefined, undefined, ConditionValidated.NotValidated));
 			oCM.addCondition("descr", Condition.createCondition("GT", ["A"], undefined, undefined, ConditionValidated.NotValidated));
@@ -32,18 +32,18 @@ sap.ui.define([
 			oCM.addCondition("number", Condition.createCondition("EQ", [3], undefined, undefined, ConditionValidated.NotValidated));
 
 			//set the model on Form just to have it somehow local
-			var oForm = this.byId("Form1");
+			const oForm = this.byId("Form1");
 			oForm.setModel(oCM, "cm");
 		},
 
 		handleChange: function(oEvent) {
-			var oFilterField = oEvent.getSource();
-			var oPromise = oEvent.getParameter("promise");
+			const oFilterField = oEvent.getSource();
+			const oPromise = oEvent.getParameter("promise");
 
 			if (oPromise) {
 				oPromise.then(function(aConditions) {
-					var sText = "[";
-					for (var i = 0; i < aConditions.length; i++) {
+					let sText = "[";
+					for (let i = 0; i < aConditions.length; i++) {
 						sText = sText + JSON.stringify(aConditions[i]) + " ;";
 					}
 					sText = sText + "]";

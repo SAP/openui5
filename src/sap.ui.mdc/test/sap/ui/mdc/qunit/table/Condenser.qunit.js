@@ -5,8 +5,8 @@ sap.ui.define([
     'use strict';
 
     function fnGetView() {
-        var sDelegate = '\\{"name": "sap/ui/mdc/qunit/table/CondenserDelegate"\\}';
-        var sView =
+        const sDelegate = '\\{"name": "sap/ui/mdc/qunit/table/CondenserDelegate"\\}';
+        const sView =
         '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.ui.mdc.table" xmlns:m="sap.m" xmlns:mdc="sap.ui.mdc">' +
             '<mdc:Table id="myMDCTable" ' +
                 'selectionMode="Multi" ' +
@@ -43,8 +43,8 @@ sap.ui.define([
     // ---------------------------------------------------------------------
 
     function fnConfirmInitialColumnState(oUiComponent, oViewAfterAction, assert) {
-        var oTable = oViewAfterAction.byId("myMDCTable");
-        var aColumns = oTable.getColumns();
+        const oTable = oViewAfterAction.byId("myMDCTable");
+        const aColumns = oTable.getColumns();
 		assert.ok(oTable, "then the mdc.Table exists");
         assert.equal(aColumns.length, 4, "then the table has correct amount of columns");
         assert.equal(aColumns[0].getId(), "comp---view--IDTableName_01", "then the name column is on Index 0");
@@ -61,7 +61,7 @@ sap.ui.define([
 
     function fnConfirmColumnGotAdded(sPropertyName) {
         return function (oUiComponent, oViewAfterAction, assert) {
-            var oTable = oViewAfterAction.byId("myMDCTable");
+            const oTable = oViewAfterAction.byId("myMDCTable");
             assert.ok(oTable, "then the mdc.Table exists");
             assert.ok(fnHasColumn(oTable, getIdForPropertyName(sPropertyName)), "then the column '" + sPropertyName + "' got added");
         };
@@ -69,7 +69,7 @@ sap.ui.define([
 
     function fnConfirmColumnGotRemoved(sPropertyName) {
         return function (oUiComponent, oViewAfterAction, assert) {
-            var oTable = oViewAfterAction.byId("myMDCTable");
+            const oTable = oViewAfterAction.byId("myMDCTable");
             assert.ok(oTable, "then the mdc.Table exists");
             assert.ok(!fnHasColumn(oTable, getIdForPropertyName(sPropertyName)), "then the column '" + sPropertyName + "' got removed");
         };
@@ -77,7 +77,7 @@ sap.ui.define([
 
     function fnConfirmColumnGotMoved(sPropertyName, iIndex) {
         return function (oUiComponent, oViewAfterAction, assert) {
-            var oTable = oViewAfterAction.byId("myMDCTable");
+            const oTable = oViewAfterAction.byId("myMDCTable");
             assert.ok(oTable, "then the mdc.Table exists");
             assert.equal(oTable.getColumns()[iIndex].getId(), getIdForPropertyName(sPropertyName), "then the column '" + sPropertyName + "' is on Index " + iIndex);
         };
@@ -228,13 +228,13 @@ sap.ui.define([
     // ---------------------------------------------------------------------
 
     function fnConfirmInitialGroupingState(oUiComponent, oViewAfterAction, assert) {
-        var oTable = oViewAfterAction.byId("myMDCTable");
+        const oTable = oViewAfterAction.byId("myMDCTable");
         assert.ok(oTable, "then the mdc.Table exists");
     }
 
     function fnConfirmGroupingGotAdded(sName, iIndex) {
         return function(oUiComponent, oViewAfterAction, assert) {
-            var oTable = oViewAfterAction.byId("myMDCTable");
+            const oTable = oViewAfterAction.byId("myMDCTable");
             assert.ok(oTable, "then the mdc.Table exists");
         };
     }
@@ -275,13 +275,13 @@ sap.ui.define([
     // ---------------------------------------------------------------------
 
     function fnConfirmInitialSortingState(oUiComponent, oViewAfterAction, assert) {
-        var oTable = oViewAfterAction.byId("myMDCTable");
+        const oTable = oViewAfterAction.byId("myMDCTable");
         assert.ok(oTable, "then the mdc.Table exists");
     }
 
     function fnConfirmSortingGotAdded(sName, iIndex, bDescending) {
         return function(oUiComponent, oViewAfterAction, assert) {
-            var oTable = oViewAfterAction.byId("myMDCTable");
+            const oTable = oViewAfterAction.byId("myMDCTable");
             assert.ok(oTable, "then the mdc.Table exists");
         };
     }

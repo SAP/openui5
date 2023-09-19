@@ -25,7 +25,7 @@ sap.ui.define([
 	 * @public
 	 * @alias sap.ui.mdc.actiontoolbar.ActionToolbarAction
 	 */
-	var ActionToolbarAction = Control.extend("sap.ui.mdc.actiontoolbar.ActionToolbarAction", {
+	const ActionToolbarAction = Control.extend("sap.ui.mdc.actiontoolbar.ActionToolbarAction", {
 		metadata: {
 			library: "sap.ui.mdc",
 			designtime: "sap/ui/mdc/designtime/actiontoolbar/ActionToolbarAction.designtime",
@@ -65,21 +65,21 @@ sap.ui.define([
 	};
 
 	ActionToolbarAction.prototype.getLayoutData = function() {
-		var oLayoutData = Control.prototype.getLayoutData.apply(this);
+		const oLayoutData = Control.prototype.getLayoutData.apply(this);
 		// return the LayoutData of the inner Action if there is no LayoutData set
 		return oLayoutData ? oLayoutData : this.getAction() && this.getAction().getLayoutData();
 	};
 
 	ActionToolbarAction.prototype.getOverflowToolbarConfig = function() {
 		// use the Action OverflowToolbarConfig if exist
-		var oConfig = this.getAction() && this.getAction().getOverflowToolbarConfig ? this.getAction().getOverflowToolbarConfig() : { canOverflow: true };
+		const oConfig = this.getAction() && this.getAction().getOverflowToolbarConfig ? this.getAction().getOverflowToolbarConfig() : { canOverflow: true };
 		oConfig.onBeforeEnterOverflow = this._getOnBeforeEnterOverflow(oConfig);
 		oConfig.onAfterExitOverflow = this._getOnAfterExitOverflow(oConfig);
 		return oConfig;
 	};
 
 	ActionToolbarAction.prototype._getOnBeforeEnterOverflow = function(oConfig) {
-		var fnOnBeforeEnterOverflow = oConfig.onBeforeEnterOverflow;
+		const fnOnBeforeEnterOverflow = oConfig.onBeforeEnterOverflow;
 		return function(oControl) {
 			if (fnOnBeforeEnterOverflow) {
 				fnOnBeforeEnterOverflow(oControl.getAction());
@@ -91,7 +91,7 @@ sap.ui.define([
 	};
 
 	ActionToolbarAction.prototype._getOnAfterExitOverflow = function(oConfig) {
-		var fnOnAfterExitOverflow = oConfig.onAfterExitOverflow;
+		const fnOnAfterExitOverflow = oConfig.onAfterExitOverflow;
 		return function(oControl) {
 			if (fnOnAfterExitOverflow) {
 				fnOnAfterExitOverflow(oControl.getAction());
@@ -107,7 +107,7 @@ sap.ui.define([
 	 * @returns {string} a text defining the label of this <code>ActionToolbarAction</code> defined by the inner action.
 	 */
 	ActionToolbarAction.prototype.getLabel = function() {
-		var oAction = this.getAction();
+		const oAction = this.getAction();
 		return oAction && oAction.getText ? oAction.getText() : this.getId();
 	};
 

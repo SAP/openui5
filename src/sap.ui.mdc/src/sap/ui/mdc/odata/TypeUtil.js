@@ -22,7 +22,7 @@ sap.ui.define([
 	 * @alias sap.ui.mdc.odata.TypeUtil
 	 * @ui5-restricted sap.ui.mdc
 	 */
-	var TypeUtil = Object.assign({}, BaseTypeUtil, {
+	const TypeUtil = Object.assign({}, BaseTypeUtil, {
 
 		/**
 		* Maps the Edm type names to primitive type names
@@ -33,7 +33,7 @@ sap.ui.define([
 		* @returns {string} primitive type name
 		*/
 		getPrimitiveType: function (sDataType) {
-			var mType = {
+			const mType = {
 				"Edm.Binary": "boolean",
 				"Edm.Boolean": "boolean",
 				"Edm.Byte": "boolean",
@@ -56,7 +56,7 @@ sap.ui.define([
 
 		getDataTypeClassName: function(sType) {
 
-			var mEdmTypes = {
+			const mEdmTypes = {
 				"Edm.Boolean": "sap.ui.model.odata.type.Boolean",
 				"Edm.Byte": "sap.ui.model.odata.type.Byte",
 				"Edm.DateTime": "sap.ui.model.odata.type.DateTime",
@@ -123,7 +123,7 @@ sap.ui.define([
 		},
 
 		internalizeValue: function (vValue, vType, oFormatOptions, oConstraints) {
-			var oTypeInstance = this._normalizeType(vType, oFormatOptions, oConstraints);
+			const oTypeInstance = this._normalizeType(vType, oFormatOptions, oConstraints);
 			if (this.getBaseTypeForType(oTypeInstance) === BaseType.Numeric) {
 				if (typeof vValue !== "string" && (oTypeInstance.getMetadata().getName() === "sap.ui.model.odata.type.Int64" || oTypeInstance.getMetadata().getName() === "sap.ui.model.odata.type.Decimal")) {
 					// INT64 and Decimal using string as internal value -> if for some reason a number comes in convert it to string
@@ -134,7 +134,7 @@ sap.ui.define([
 		},
 
 		externalizeValue: function (vValue, vType, oFormatOptions, oConstraints) {
-			var oTypeInstance = this._normalizeType(vType, oFormatOptions, oConstraints);
+			const oTypeInstance = this._normalizeType(vType, oFormatOptions, oConstraints);
 			if (this.getBaseTypeForType(oTypeInstance) === BaseType.Numeric) {
 				if (typeof vValue !== "string" && (oTypeInstance.getMetadata().getName() === "sap.ui.model.odata.type.Int64" || oTypeInstance.getMetadata().getName() === "sap.ui.model.odata.type.Decimal")) {
 					// INT64 and Decimal parsed always to string, if for some reason a number comes in -> convert to string, but don't use type at this might have locale dependent formatting
@@ -163,7 +163,7 @@ sap.ui.define([
 
 			if (oType && this.getBaseType(oType.getMetadata().getName()) === BaseType.Unit && Array.isArray(vValue) && vValue.length > 2) {
 				if (vValue[2] !== undefined) {
-					var oTypeInitialization = {mCustomUnits: vValue[2]};
+					const oTypeInitialization = {mCustomUnits: vValue[2]};
 					this.initializeInternalType(oType, oTypeInitialization);
 					return oTypeInitialization;
 				}

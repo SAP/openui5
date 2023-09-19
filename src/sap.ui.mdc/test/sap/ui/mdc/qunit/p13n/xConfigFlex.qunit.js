@@ -30,7 +30,7 @@ sap.ui.define([
 
     QUnit.test("Throw Error if property config is missing 'xConfigFlex#createSetChangeHandler", function(assert){
 
-        var oHandler = xConfigFlex.createSetChangeHandler({
+        const oHandler = xConfigFlex.createSetChangeHandler({
             aggregation: "testAggregation",
             property: "testProperty"
         });
@@ -40,7 +40,7 @@ sap.ui.define([
         assert.ok(oHandler.changeHandler.completeChangeContent instanceof Function, "Change completion implemented");
 	});
 
-	var TestClass = MDCControl.extend("sap.ui.mdc.FlexTestControl", {
+	const TestClass = MDCControl.extend("sap.ui.mdc.FlexTestControl", {
 		metadata: {
 			defaultAggregation: "items",
 			interfaces: [
@@ -65,7 +65,7 @@ sap.ui.define([
 			//Create a new instance of a test control
 			this.oFlexTestControl = new TestClass("FlexTestControl");
 
-			var sTestView = '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m" xmlns="sap.ui.mdc"></mvc:View>';
+			const sTestView = '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m" xmlns="sap.ui.mdc"></mvc:View>';
 
 			//Create the app environment for flex related processing
 			return createAppEnvironment(sTestView, "ItemBaseFlexTest").then(function(mCreatedApp){
@@ -93,10 +93,10 @@ sap.ui.define([
 	});
 
 	QUnit.test("Check 'applyChange'", function(assert){
-		var done = assert.async();
+		const done = assert.async();
 
 		//Note: better use ChangesWriteAPI.create, but we can not register change handlers programatically
-		var oChange = {
+		const oChange = {
 			getChangeType: function() {
 				return "testSetterChange";
 			},
@@ -115,7 +115,7 @@ sap.ui.define([
 			view: this.oView
 		}).then(function(){
 
-			var sXConfig = this.oFlexTestControl.getCustomData()[0].getValue().replaceAll("\\", "");
+			const sXConfig = this.oFlexTestControl.getCustomData()[0].getValue().replaceAll("\\", "");
 
 			assert.equal(sXConfig, '{"aggregations":{"items":{"some_test_property":{"text":"some_test_value"}}}}', "The xConfig has been created");
 			done();
@@ -124,10 +124,10 @@ sap.ui.define([
 	});
 
 	QUnit.test("Check 'revertChange'", function(assert){
-		var done = assert.async();
+		const done = assert.async();
 
 		//Note: better use ChangesWriteAPI.create, but we can not register change handlers programatically
-		var oChange = {
+		const oChange = {
 			getChangeType: function() {
 				return "testSetterChange";
 			},
@@ -153,7 +153,7 @@ sap.ui.define([
 			view: this.oView
 		}).then(function(){
 
-			var sXConfig = this.oFlexTestControl.getCustomData()[0].getValue().replaceAll("\\", "");
+			const sXConfig = this.oFlexTestControl.getCustomData()[0].getValue().replaceAll("\\", "");
 
 			assert.equal(sXConfig, '{"aggregations":{"items":{"some_test_property":{"text":"some_earlierValue"}}}}', "The xConfig has been created");
 			done();

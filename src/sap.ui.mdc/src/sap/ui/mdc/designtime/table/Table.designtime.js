@@ -9,7 +9,7 @@ sap.ui.define([
 	"use strict";
 
 	// initial structure of designTime object
-	var oDesignTime = {
+	const oDesignTime = {
 		name: "{name}",
 		description: "{description}",
 		actions: {
@@ -50,7 +50,7 @@ sap.ui.define([
 		}
 	};
 	// array containing all allowed control properties. Update the aAllowedProperties to enable a property for DTA
-	var aAllowedProperties = ["width", "headerLevel",
+	const aAllowedProperties = ["width", "headerLevel",
 			"header", "headerVisible", "showRowCount", "threshold",
 			"enableExport", "busyIndicatorDelay","enableColumnResize",
 			"showPasteButton", "multiSelectMode"],

@@ -41,12 +41,12 @@ sap.ui.define([
 
 	QUnit.module("Basic Functionality");
 
-	var sFBId = "filterbarTest---IDView--idFilterBarCtrl";
+	const sFBId = "filterbarTest---IDView--idFilterBarCtrl";
 
 	opaTest("1. expected initial filter bar with two filters displayed", function(Given, When, Then) {
 		Given.iStartMyApp();
 
-		var aLabelNames = ["Boolean", "String single"];
+		const aLabelNames = ["Boolean", "String single"];
 		Then.onTheMDCFilterBar.iShouldSeeFilters(sFBId, aLabelNames);
 
 		Then.onTheMDCFilterBar.iShouldSeeTheAdaptFiltersButton();

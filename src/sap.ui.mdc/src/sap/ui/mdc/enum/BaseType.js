@@ -21,7 +21,7 @@ sap.ui.define(function() {
 	 * @ui5-restricted sap.fe
 	 * @deprecated since 1.115.0 - please see {@link sap.ui.mdc.enums.BaseType}
 	 */
-	var BaseType = {
+	const BaseType = {
 		/**
 		 * Data type represents a string
 		 * @public

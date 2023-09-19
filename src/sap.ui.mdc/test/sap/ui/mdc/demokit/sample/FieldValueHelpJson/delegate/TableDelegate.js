@@ -7,7 +7,7 @@ sap.ui.define([
 ], function (TableDelegate, JSONPropertyInfo, Core, Filter, FilterOperator) {
 	"use strict";
 
-	var JSONTableDelegate = Object.assign({}, TableDelegate);
+	const JSONTableDelegate = Object.assign({}, TableDelegate);
 
 	JSONTableDelegate.fetchProperties = function (oTable) {
 		return Promise.resolve(JSONPropertyInfo);
@@ -19,14 +19,14 @@ sap.ui.define([
 	};
 
 	JSONTableDelegate.getFilters = function(oTable) {
-		var aSearchFilters = _createSearchFilters(Core.byId(oTable.getFilter()).getSearch());
+		const aSearchFilters = _createSearchFilters(Core.byId(oTable.getFilter()).getSearch());
 		return TableDelegate.getFilters.apply(this, arguments).concat(aSearchFilters);
 	};
 
 	function _createSearchFilters(sSearch) {
-		var aFilters = [];
+		let aFilters = [];
 		if (sSearch) {
-			var aPaths = ["name", "id"];
+			const aPaths = ["name", "id"];
 			aFilters = aPaths.map(function (sPath) {
 				return new Filter({
 					path: sPath,

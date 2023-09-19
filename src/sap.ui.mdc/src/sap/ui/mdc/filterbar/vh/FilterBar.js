@@ -47,7 +47,7 @@ sap.ui.define(
 		 * @since 1.84.0
 		 * @alias sap.ui.mdc.filterbar.vh.FilterBar
 		 */
-		var FilterBar = FilterBarBase.extend(
+		const FilterBar = FilterBarBase.extend(
 			"sap.ui.mdc.filterbar.vh.FilterBar",
 			{
 				metadata: {
@@ -99,7 +99,7 @@ sap.ui.define(
 			}
 		);
 
-		var ButtonType = mLibrary.ButtonType;
+		const ButtonType = mLibrary.ButtonType;
 
 		FilterBar.prototype._createInnerLayout = function () {
 			this._cLayoutItem = FilterItemLayout;
@@ -289,7 +289,7 @@ sap.ui.define(
 		 * @ui5-restricted sap.ui.mdc
 		 */
 		FilterBar.prototype.getInitialFocusedControl = function() {
-			var oCtrl = this.getBasicSearchField();
+			let oCtrl = this.getBasicSearchField();
 			if (!oCtrl && this.getShowGoButton()) {
 				oCtrl = this._btnSearch;
 			}

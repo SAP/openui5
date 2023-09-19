@@ -11,13 +11,13 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var ChartDelegateHelper = Object.assign({}, ChartDelegate);
+	const ChartDelegateHelper = Object.assign({}, ChartDelegate);
 
 	/**
 	 * @override
 	 */
 	ChartDelegateHelper.retrieveAllMetadata = function() {
-		var oMetadata = {
+		const oMetadata = {
 			chartType: "column",
 			properties: [
 				{

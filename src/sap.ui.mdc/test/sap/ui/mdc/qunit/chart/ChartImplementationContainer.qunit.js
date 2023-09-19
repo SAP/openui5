@@ -23,7 +23,7 @@ function(
             this.oContA = new Control("ControlA");
             this.oContB = new Control("ControlB");
 
-			var TestComponent = UIComponent.extend("test", {
+			const TestComponent = UIComponent.extend("test", {
 				metadata: {
 					manifest: {
 						"sap.app": {
@@ -87,9 +87,9 @@ function(
 	});
 
     QUnit.test("setContent", function(assert) {
-		var oCont = new Control("ControlC");
+		const oCont = new Control("ControlC");
 
-        var oUpdateSpy = sinon.spy(this.oChartContainer, "_updateVisibilities");
+        const oUpdateSpy = sinon.spy(this.oChartContainer, "_updateVisibilities");
 
         this.oChartContainer.setContent(oCont);
         assert.equal(oCont.getVisible(), false, "Content is set invisible");
@@ -97,9 +97,9 @@ function(
 	});
 
     QUnit.test("setNoDataContent", function(assert) {
-		var oCont = new Control("ControlC");
+		const oCont = new Control("ControlC");
 
-        var oUpdateSpy = sinon.spy(this.oChartContainer, "_updateVisibilities");
+        const oUpdateSpy = sinon.spy(this.oChartContainer, "_updateVisibilities");
 
         this.oChartContainer.setNoDataContent(oCont);
         assert.equal(oCont.getVisible(), true, "Content is set visible");
@@ -107,9 +107,9 @@ function(
 	});
 
 	QUnit.test("setChartNoDataContent", function(assert) {
-		var oCont = new Control("ControlC");
+		const oCont = new Control("ControlC");
 
-        var oUpdateSpy = sinon.spy(this.oChartContainer, "_updateVisibilities");
+        const oUpdateSpy = sinon.spy(this.oChartContainer, "_updateVisibilities");
 
         this.oChartContainer.setChartNoDataContent(oCont);
         assert.equal(oCont.getVisible(), true, "Content is set visible");

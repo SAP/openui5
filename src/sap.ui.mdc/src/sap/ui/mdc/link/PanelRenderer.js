@@ -4,12 +4,12 @@
 sap.ui.define([], function() {
 	"use strict";
 
-	var PanelRenderer = {
+	const PanelRenderer = {
 		apiVersion: 2
 	};
 
 	PanelRenderer.render = function(oRenderManager, oPanel) {
-		var oContent = oPanel.getAggregation("_content");
+		const oContent = oPanel.getAggregation("_content");
 
 		oRenderManager.openStart("div", oPanel);
 		oRenderManager.class("mdcbaseinfoPanel");

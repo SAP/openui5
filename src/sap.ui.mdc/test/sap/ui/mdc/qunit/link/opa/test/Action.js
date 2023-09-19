@@ -7,7 +7,7 @@ sap.ui.define([
 ], function(Opa5, Press, EnterText, Properties, Ancestor, TestUtil, PropertyStrictEquals, Descendant, oCore) {
 	'use strict';
 
-	var Action = Opa5.extend("sap.ui.mdc.qunit.link.opa.test.Action", {
+	const Action = Opa5.extend("sap.ui.mdc.qunit.link.opa.test.Action", {
 
 		iPressOnLinkPersonalizationButton: function() {
 			return this.waitFor({
@@ -28,7 +28,7 @@ sap.ui.define([
 				searchOpenDialogs: true,
 				controlType: "sap.m.Table",
 				success: function(aTables) {
-					var oTable = aTables[0];
+					const oTable = aTables[0];
 					this.waitFor({
 						controlType: "sap.m.Link",
 						matchers: [
@@ -39,12 +39,12 @@ sap.ui.define([
 							})
 						],
 						success: function(aLinks) {
-							var oLink = aLinks[0];
+							const oLink = aLinks[0];
 							this.waitFor({
 								controlType: "sap.m.ColumnListItem",
 								matchers: new Descendant(oLink, false),
 								success: function(aColumnListItems) {
-									var oColumnListItem = aColumnListItems[0];
+									const oColumnListItem = aColumnListItems[0];
 									this.waitFor({
 										controlType: "sap.m.CheckBox",
 										matchers: new Ancestor(oColumnListItem, false),
@@ -59,7 +59,7 @@ sap.ui.define([
 		},
 
 		iPressOkButton: function() {
-			var oOKButton;
+			let oOKButton;
 			return this.waitFor({
 				searchOpenDialogs: true,
 				controlType: "sap.m.Button",

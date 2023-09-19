@@ -34,7 +34,7 @@ sap.ui.define([
 
 	QUnit.module("Change handler for visibility of items", {
 		beforeEach: function () {
-			var sChartView = '<core:View' +
+			const sChartView = '<core:View' +
 				'\t\t  xmlns:core="sap.ui.core"\n' +
 				'\t\t  xmlns:chart="sap.ui.mdc.chart"\n' +
 				'\t\t  xmlns:mdc="sap.ui.mdc"\n' +
@@ -68,14 +68,14 @@ sap.ui.define([
 	});
 
 	QUnit.test('RemoveItem - applyChange & revertChange on a js control tree', function(assert) {
-		var done = assert.async();
-		var oContent = createRemoveChangeDefinition();
+		const done = assert.async();
+		const oContent = createRemoveChangeDefinition();
 		oContent.index = 0;
 		return ChangesWriteAPI.create({
 			changeSpecificData: oContent,
 			selector: this.oChart
 		}).then(function(oChange) {
-			var oChangeHandler = ChartFlexibility["removeItem"].changeHandler;
+			const oChangeHandler = ChartFlexibility["removeItem"].changeHandler;
 			assert.strictEqual(oChange.getContent().hasOwnProperty("index"), false, "remove changes do not require the index");
 			assert.strictEqual(this.oChart.getItems().length, 3, "all items existing before the remove change appliance");
 
@@ -101,13 +101,13 @@ sap.ui.define([
 	});
 
 	QUnit.test('AddItem - applyChange & revertChange on a js control tree', function(assert) {
-		var done = assert.async();
-		var sPropertyName = "SomePropertyName";
+		const done = assert.async();
+		const sPropertyName = "SomePropertyName";
 		return ChangesWriteAPI.create({
 			changeSpecificData: createAddChangeDefinition(sPropertyName),
 			selector: this.oChart
 		}).then(function(oChange) {
-			var oChangeHandler = ChartFlexibility["addItem"].changeHandler;
+			const oChangeHandler = ChartFlexibility["addItem"].changeHandler;
 			assert.strictEqual(this.oChart.getItems().length, 3);
 			// Test apply
 			oChangeHandler.applyChange(oChange, this.oChart, {

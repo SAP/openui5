@@ -19,7 +19,7 @@ sap.ui.define([
 	return {
 		createChanges: function(aDeltaMItems) {
 			return aDeltaMItems.map(function(oDeltaMItem) {
-				var oControl = sap.ui.getCore().byId(oDeltaMItem.id);
+				const oControl = sap.ui.getCore().byId(oDeltaMItem.id);
 				if (!oControl) {
 					throw new Error("Invalid 'id'. For the id " + oDeltaMItem.id + " no existing control could be found");
 				}

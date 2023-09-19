@@ -29,7 +29,7 @@ sap.ui.define(['sap/ui/model/ValidateException'],
 	 * @see sap.ui.model.SimpleType#validateValue
 	 * @since 1.109.0
 	 */
-	var ConditionValidateException = function (message, violatedConstraints, oCondition, aConditions) {
+	const ConditionValidateException = function (message, violatedConstraints, oCondition, aConditions) {
 		ValidateException.call(this, message, violatedConstraints);
 		// this.name = "ValidateException";
 		// this.message = message;

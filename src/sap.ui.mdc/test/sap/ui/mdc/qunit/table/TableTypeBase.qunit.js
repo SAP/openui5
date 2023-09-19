@@ -9,7 +9,7 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var TestTableType = TableTypeBase.extend("sap.ui.mdc.test.TestTableType");
+	const TestTableType = TableTypeBase.extend("sap.ui.mdc.test.TestTableType");
 
 	QUnit.module("Lifecycle of the ManagedObjectModel instance", {
 		beforeEach: function() {
@@ -34,7 +34,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("After init", function(assert) {
-		var oModel = this.oTable.getModel(this.sModelName);
+		const oModel = this.oTable.getModel(this.sModelName);
 
 		assert.ok(oModel, "The table has a model with the name '" + this.sModelName + "'");
 		assert.ok(oModel.isA("sap.ui.model.base.ManagedObjectModel"), "The model is of type sap.ui.model.base.ManagedObjectModel");
@@ -42,7 +42,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Remove the type from the table", function(assert) {
-		var oModel = this.oTable.getModel(this.sModelName);
+		const oModel = this.oTable.getModel(this.sModelName);
 
 		this.oTable.setAggregation("type", null); // Table#setType immediately creates a new default type instance.
 
@@ -51,9 +51,9 @@ sap.ui.define([
 	});
 
 	QUnit.test("Destroy the type", function(assert) {
-		var oModel = this.oTable.getModel(this.sModelName);
-		var sModelName = this.sModelName;
-		var fnExit = this.oTable.getType().exit;
+		const oModel = this.oTable.getModel(this.sModelName);
+		const sModelName = this.sModelName;
+		const fnExit = this.oTable.getType().exit;
 
 		// Injecting into the exit hook is necessary, because the table immediately creates a new default type instance.
 		this.oTable.getType().exit = function() {
@@ -68,7 +68,7 @@ sap.ui.define([
 	QUnit.test("Destroy the table", function(assert) {
 		this.oTable.destroy();
 
-		var oModel = this.oTable.getModel(this.sModelName);
+		const oModel = this.oTable.getModel(this.sModelName);
 		assert.ok(oModel, "The table has a model with the name '" + this.sModelName + "'");
 		assert.ok(oModel.bDestroyed, "The model is destroyed");
 	});

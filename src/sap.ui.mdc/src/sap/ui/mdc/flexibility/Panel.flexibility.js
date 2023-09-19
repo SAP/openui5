@@ -8,7 +8,7 @@ sap.ui.define([
 ], function(Base, ItemBaseFlex) {
 	"use strict";
 
-	var oLinkHandler = Object.assign({}, ItemBaseFlex);
+	const oLinkHandler = Object.assign({}, ItemBaseFlex);
     oLinkHandler.findItem = function(oModifier, aActions, sName) {
 		return Promise.resolve(sap.ui.getCore().byId(sName));
 	};
@@ -25,11 +25,11 @@ sap.ui.define([
 	return {
 		createChanges: function(oPanel, aDeltaMItems) {
 			// Create a 'create' change only for items which does not exist
-			var aNotExistingItems = aDeltaMItems.filter(function(oDeltaMItem) {
+			const aNotExistingItems = aDeltaMItems.filter(function(oDeltaMItem) {
 				return !sap.ui.getCore().byId(oDeltaMItem.id);
 			});
 			// Create a 'create' change only once for an item
-			var oNotExistingItemIds = {};
+			const oNotExistingItemIds = {};
 			return aNotExistingItems.reduce(function(aResult, oDeltaMItem) {
 				if (!oNotExistingItemIds[oDeltaMItem.id]) {
 					oNotExistingItemIds[oDeltaMItem.id] = true;
@@ -54,7 +54,7 @@ sap.ui.define([
 			},
 			changeHandler: {
 				applyChange: function(oChange, oPanel, mPropertyBag) {
-					var oSelector = oChange.getContent().selector;
+					const oSelector = oChange.getContent().selector;
 
 					return Promise.resolve()
 						.then(function () {
@@ -74,17 +74,17 @@ sap.ui.define([
 							});
 						})
 						.then(function (MetadataHelper) {
-							var oModifier = mPropertyBag.modifier;
+							const oModifier = mPropertyBag.modifier;
 							if (oModifier.bySelector(oSelector, mPropertyBag.appComponent, mPropertyBag.view)) {
 								return undefined;
 								// return Base.markAsNotApplicable("applyChange of createItem: the item with selector " + oSelector + " is already existing and therefore can not be created.", true);
 							}
 
-							var aMetadataItems = MetadataHelper.retrieveAllMetadata(oPanel);
-							var iItemsIndex;
+							const aMetadataItems = MetadataHelper.retrieveAllMetadata(oPanel);
+							let iItemsIndex;
 
-							var fnIndexOfItemId = function(sId, aItems) {
-								var iFoundIndex = -1;
+							const fnIndexOfItemId = function(sId, aItems) {
+								let iFoundIndex = -1;
 								aItems.some(function(oItem, iIndex) {
 									if (oItem.getId() === sId) {
 										iFoundIndex = iIndex;
@@ -93,15 +93,15 @@ sap.ui.define([
 								});
 								return iFoundIndex;
 							};
-							var sId = oModifier.getControlIdBySelector(oSelector, mPropertyBag.appComponent);
+							const sId = oModifier.getControlIdBySelector(oSelector, mPropertyBag.appComponent);
 
 							return Promise.resolve()
 								.then(oModifier.getAggregation.bind(oModifier, oPanel, "items"))
 								.then(function(aItems) {
 									iItemsIndex = -1;
-									var oMetadataOfNewItem = null;
+									let oMetadataOfNewItem = null;
 									aMetadataItems.some(function(oMetadataItem) {
-										var iItemsIndex_ = fnIndexOfItemId(oMetadataItem.id, aItems);
+										const iItemsIndex_ = fnIndexOfItemId(oMetadataItem.id, aItems);
 										if (iItemsIndex_ > -1) {
 											iItemsIndex = iItemsIndex_;
 										}
@@ -131,10 +131,10 @@ sap.ui.define([
 						});
 				},
 				revertChange: function(oChange, oPanel, mPropertyBag) {
-					var oModifier = mPropertyBag.modifier;
+					const oModifier = mPropertyBag.modifier;
 					if (oChange.getContent() && oChange.getContent().selector) {
-						var sId = oChange.getContent().selector.id;
-						var oItem = oModifier.bySelector(sId, mPropertyBag.appComponent, mPropertyBag.view);
+						const sId = oChange.getContent().selector.id;
+						const oItem = oModifier.bySelector(sId, mPropertyBag.appComponent, mPropertyBag.view);
 						if (!oItem) {
 							return Base.markAsNotApplicable("revertChange of createItem: the item with id " + sId + " is not existing and therefore can not be removed.", true);
 						}
@@ -144,7 +144,7 @@ sap.ui.define([
 				},
 				completeChangeContent: function(oChange, mSpecificChangeInfo, mPropertyBag) {
 					if (mSpecificChangeInfo.content) {
-						var oSelector = mPropertyBag.modifier.getSelector(mSpecificChangeInfo.content.selector, mPropertyBag.appComponent);
+						const oSelector = mPropertyBag.modifier.getSelector(mSpecificChangeInfo.content.selector, mPropertyBag.appComponent);
 						oChange.setContent({
 							selector: oSelector
 						});

@@ -9,13 +9,13 @@ sap.ui.define([
 ], function(Opa5, waitForLink, LinkAssertion) {
 	"use strict";
 
-	var iShouldSeeAPopover = function(oLinkIdentifier, bOpen) {
+	const iShouldSeeAPopover = function(oLinkIdentifier, bOpen) {
 		return waitForLink.call(this, oLinkIdentifier, {
 			success: function(oLink) {
-				var oField = oLink.getParent();
-				var oFieldInfo = oField.getFieldInfo();
-				var aDependents = oFieldInfo.getDependents();
-				var bPopoverFound = aDependents.some(function(oDependent) {
+				const oField = oLink.getParent();
+				const oFieldInfo = oField.getFieldInfo();
+				const aDependents = oFieldInfo.getDependents();
+				const bPopoverFound = aDependents.some(function(oDependent) {
 					return oDependent.isA("sap.m.ResponsivePopover");
 				});
 

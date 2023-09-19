@@ -52,7 +52,7 @@ sap.ui.define([
 	* @alias module:sap/ui/mdc/odata/v4/TypeMap
 	* @extends module:sap/ui/mdc/odata/TypeMap
 	*/
-	var ODataV4TypeMap = Object.assign({}, ODataTypeMap);
+	const ODataV4TypeMap = Object.assign({}, ODataTypeMap);
 
 	ODataV4TypeMap.addV4Constraint = function (oFormatOptions, oConstraints, oCustomOptions) {
 		return [oFormatOptions, Object.assign({}, oConstraints, {V4: true})];

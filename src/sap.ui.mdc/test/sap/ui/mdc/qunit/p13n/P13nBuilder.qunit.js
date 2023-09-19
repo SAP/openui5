@@ -10,9 +10,9 @@ sap.ui.define([
 ], function(P13nBuilder, BasePanel, JSONModel, Element, oCore, FieldExtensibility, Utils) {
 	"use strict";
 
-	var aVisible = ["key1", "key2", "key3"];
+	const aVisible = ["key1", "key2", "key3"];
 
-	var aInfoData = [
+	const aInfoData = [
 		{
 			name: "key1",
 			label: "Field 1"
@@ -63,7 +63,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Test prepareAdaptationData - return object with two keys", function(assert){
-		var oP13nData = P13nBuilder.prepareAdaptationData(this.aMockInfo, this.fnEnhancer, true);
+		const oP13nData = P13nBuilder.prepareAdaptationData(this.aMockInfo, this.fnEnhancer, true);
 		assert.ok(oP13nData.items instanceof Array, "Flat structure created");
 		assert.ok(oP13nData.itemsGrouped instanceof Array, "Group structure created");
 
@@ -76,15 +76,15 @@ sap.ui.define([
 	QUnit.test("Test prepareAdaptationData - check optional ignoring", function(assert){
 		this.aMockInfo[0]["someRandomAttribute"] = true;
 
-		var bIgnore = false;
+		let bIgnore = false;
 
-		var fnIgnore = function(oItem, oInfo) {
+		const fnIgnore = function(oItem, oInfo) {
 			//returned boolean decides the validity of the property
 			return !(oInfo.someRandomAttribute === bIgnore);
 		};
 
 		//Ignore criteria not met
-		var oP13nData = P13nBuilder.prepareAdaptationData(this.aMockInfo, fnIgnore, true);
+		let oP13nData = P13nBuilder.prepareAdaptationData(this.aMockInfo, fnIgnore, true);
 		assert.equal(oP13nData.items.length, this.aMockInfo.length, "correct amount of items created");
 
 		//Ignore criteria met
@@ -97,16 +97,16 @@ sap.ui.define([
 		this.aMockInfo[0]["group"] = "Group2";
 		this.aMockInfo[3]["group"] = "Group2";
 
-		var oP13nData = P13nBuilder.prepareAdaptationData(this.aMockInfo, this.fnEnhancer, true);
+		const oP13nData = P13nBuilder.prepareAdaptationData(this.aMockInfo, this.fnEnhancer, true);
 		assert.equal(oP13nData.itemsGrouped.length, 2, "Additional group created");
 		assert.equal(oP13nData.itemsGrouped[1].items.length, this.aMockInfo.length - 2, "Basic group includes less items");
 		assert.equal(oP13nData.itemsGrouped[0].items.length, 2, "Second group includes the rest");
 	});
 
 	QUnit.test("Check tooltip propagation (only explicitly provided tooltips)", function(assert){
-		var oP13nData = P13nBuilder.prepareAdaptationData(this.aMockInfo, this.fnEnhancer, true);
+		const oP13nData = P13nBuilder.prepareAdaptationData(this.aMockInfo, this.fnEnhancer, true);
 
-		for (var i = 0; i <= 4; i++) {
+		for (let i = 0; i <= 4; i++) {
 			assert.strictEqual(oP13nData.items[i].tooltip, "", "No explicit tooltip provided --> no fallback");
 		}
 
@@ -117,10 +117,10 @@ sap.ui.define([
 
 	QUnit.test("Test createP13nPopover", function(assert){
 
-		var done = assert.async();
+		const done = assert.async();
 
-		var oP13nData = P13nBuilder.prepareAdaptationData(this.aMockInfo, this.fnEnhancer, true);
-		var oPanel = new BasePanel();
+		const oP13nData = P13nBuilder.prepareAdaptationData(this.aMockInfo, this.fnEnhancer, true);
+		const oPanel = new BasePanel();
 		oPanel.setP13nData(oP13nData.items);
 
 	   P13nBuilder.createP13nPopover(oPanel, {
@@ -139,10 +139,10 @@ sap.ui.define([
 
 	QUnit.test("Test createP13nDialog", function(assert){
 
-		var done = assert.async();
+		const done = assert.async();
 
-		var oP13nData = P13nBuilder.prepareAdaptationData(this.aMockInfo, this.fnEnhancer, true);
-		var oPanel = new BasePanel();
+		const oP13nData = P13nBuilder.prepareAdaptationData(this.aMockInfo, this.fnEnhancer, true);
+		const oPanel = new BasePanel();
 		oPanel.setP13nData(oP13nData.items);
 
 		P13nBuilder.createP13nDialog(oPanel, {
@@ -164,10 +164,10 @@ sap.ui.define([
 
 	QUnit.test("Test createP13nDialog with reset included", function(assert){
 
-		var done = assert.async();
+		const done = assert.async();
 
-		var oP13nData = P13nBuilder.prepareAdaptationData(this.aMockInfo, this.fnEnhancer, true);
-		var oPanel = new BasePanel();
+		const oP13nData = P13nBuilder.prepareAdaptationData(this.aMockInfo, this.fnEnhancer, true);
+		const oPanel = new BasePanel();
 		oPanel.setP13nData(oP13nData.items);
 
 		P13nBuilder.createP13nDialog(oPanel, {
@@ -192,12 +192,12 @@ sap.ui.define([
 
 	QUnit.test("Check focus handling after reset", function(assert){
 
-		var done = assert.async();
+		const done = assert.async();
 
-		var oResetBtn, oDialog;
+		let oResetBtn, oDialog;
 
-		var oP13nData = P13nBuilder.prepareAdaptationData(this.aMockInfo, this.fnEnhancer, true);
-		var oPanel = new BasePanel();
+		const oP13nData = P13nBuilder.prepareAdaptationData(this.aMockInfo, this.fnEnhancer, true);
+		const oPanel = new BasePanel();
 		oPanel.setP13nData(oP13nData.items);
 
 		P13nBuilder.createP13nDialog(oPanel, {
@@ -206,7 +206,7 @@ sap.ui.define([
 				onExecute: function() {
 
 					//4) check if the current focused control is the P13nDialogs reset btn
-					var nActiveElement = document.activeElement;
+					const nActiveElement = document.activeElement;
 					assert.ok(oDialog.getButtons()[0].getFocusDomRef() === nActiveElement, "The OK button control of the p13n Dialog is focused");
 					oDialog.destroy();
 					done();
@@ -223,7 +223,7 @@ sap.ui.define([
 			oResetBtn.firePress();
 
 			//2) --> Find MessageBox opened by Dialog
-			var oMessageBox = Element.registry.filter(function(oElement){return oElement.getMetadata().isA("sap.m.Dialog") && oElement.getTitle() === "Warning";})[0];
+			const oMessageBox = Element.registry.filter(function(oElement){return oElement.getMetadata().isA("sap.m.Dialog") && oElement.getTitle() === "Warning";})[0];
 
 			//3) confirm warning
 			oMessageBox.getButtons()[0].firePress();
@@ -235,16 +235,17 @@ sap.ui.define([
 
     QUnit.test("Test addRTACustomFieldButton with reset included", function(assert){
 
-        var done = assert.async(), oAddCustomFieldButton;
+        const done = assert.async();
+		let oAddCustomFieldButton;
 
         // Arrange
         sinon.stub(FieldExtensibility, "isExtensibilityEnabled").returns(Promise.resolve(true));
         sinon.stub(Utils, "isServiceUpToDate").returns(Promise.resolve(false));
-        var oLibraryResourceBundleStub = sinon.stub(sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc"), "getText");
+        const oLibraryResourceBundleStub = sinon.stub(sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc"), "getText");
         oLibraryResourceBundleStub.withArgs("p13nDialog.rtaAddTooltip").returns("OK");
 
-        var oP13nData = P13nBuilder.prepareAdaptationData(this.aMockInfo, this.fnEnhancer, true);
-        var oPanel = new BasePanel();
+        const oP13nData = P13nBuilder.prepareAdaptationData(this.aMockInfo, this.fnEnhancer, true);
+        const oPanel = new BasePanel();
         oPanel.setP13nData(oP13nData.items);
 
         P13nBuilder.createP13nDialog(oPanel, {

@@ -18,7 +18,7 @@ sap.ui.define([
 	 * @author SAP SE
 	 * @since 1.82
 	 */
-	var PressKey = Action.extend("sap.ui.mdc.opaTests.PressKey", {
+	const PressKey = Action.extend("sap.ui.mdc.opaTests.PressKey", {
 
 		metadata : {
 			properties: {
@@ -34,7 +34,7 @@ sap.ui.define([
 		},
 
 		executeOn : function (oControl) {
-			var sKeyCode = this.getKeyCode();
+			const sKeyCode = this.getKeyCode();
 
 			oControl.$().trigger(jQuery.Event("keydown", { keyCode: sKeyCode }));
 

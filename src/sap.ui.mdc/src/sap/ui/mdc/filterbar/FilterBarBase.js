@@ -49,7 +49,7 @@ sap.ui.define([
 	) {
 	"use strict";
 
-	var ValueState = coreLibrary.ValueState;
+	const ValueState = coreLibrary.ValueState;
 
 	/**
 	 * Constructor for a new FilterBarBase.
@@ -64,7 +64,7 @@ sap.ui.define([
 	 * @since 1.80.0
 	 * @alias sap.ui.mdc.filterbar.FilterBarBase
 	 */
-	var FilterBarBase = Control.extend("sap.ui.mdc.filterbar.FilterBarBase", /** @lends sap.ui.mdc.filterbar.FilterBarBase.prototype */
+	const FilterBarBase = Control.extend("sap.ui.mdc.filterbar.FilterBarBase", /** @lends sap.ui.mdc.filterbar.FilterBarBase.prototype */
 	{
 		metadata: {
 			library: "sap.ui.mdc",
@@ -283,7 +283,7 @@ sap.ui.define([
 		renderer: FilterBarBaseRenderer
 	});
 
-	var ButtonType = mLibrary.ButtonType;
+	const ButtonType = mLibrary.ButtonType;
 
 	FilterBarBase.INNER_MODEL_NAME = "$sap.ui.filterbar.mdc.FilterBarBase";
 	FilterBarBase.CONDITION_MODEL_NAME = "$filters";
@@ -474,12 +474,12 @@ sap.ui.define([
 	 * @returns {sap.ui.mdc.State} Object containing the current status of the <code>FilterBarBase</code>
 	 */
 	FilterBarBase.prototype.getCurrentState = function() {
-		var oState = {};
+		const oState = {};
 
 		oState.filter = merge({}, this.getFilterConditions());
 
-		var aFilterItems = this.getFilterItems();
-		var aItems = [];
+		const aFilterItems = this.getFilterItems();
+		const aItems = [];
 		aFilterItems.forEach(function(oFilterField){
 			aItems.push({
 				name: oFilterField.getPropertyKey()
@@ -500,18 +500,19 @@ sap.ui.define([
 	 * @public
 	 */
 	FilterBarBase.prototype.getAssignedFilterNames = function() {
-		var sName, aFilterNames = null, oModel = this._getConditionModel();
+		let sName, aFilterNames = null;
+		const oModel = this._getConditionModel();
 		if (oModel) {
 			aFilterNames = [];
 
-			var aConditions = oModel.getConditions("$search");
+			const aConditions = oModel.getConditions("$search");
 			if (aConditions && aConditions.length > 0) {
 				aFilterNames.push(this._oRb.getText("filterbar.ADAPT_SEARCHTERM"));
 			}
 
 			this._getNonHiddenPropertyInfoSet().forEach(function(oProperty) {
 				sName = IdentifierUtil.getPropertyKey(oProperty);
-				var aConditions = oModel.getConditions(sName);
+				const aConditions = oModel.getConditions(sName);
 				if (aConditions && aConditions.length > 0) {
 					aFilterNames.push(oProperty.label || sName);
 				}
@@ -524,7 +525,7 @@ sap.ui.define([
 
 
 	FilterBarBase.prototype._getAssignedFiltersText = function() {
-		var mTexts = {};
+		const mTexts = {};
 
 		mTexts.filtersText = this._getAssignedFiltersCollapsedText(this.getAssignedFilterNames());
 		mTexts.filtersTextExpanded = this._getAssignedFiltersExpandedText();
@@ -534,11 +535,12 @@ sap.ui.define([
 
 	FilterBarBase.prototype._getAssignedFiltersExpandedText = function() {
 
-		var nActive = 0, nNonVisible = 0, oModel = this._getConditionModel();
+		let nActive = 0, nNonVisible = 0;
+		const oModel = this._getConditionModel();
 		if (oModel) {
-			var aAllConditions = oModel.getAllConditions();
-			for (var sFieldPath in aAllConditions) {
-				var oProperty = this._getPropertyByName(sFieldPath);
+			const aAllConditions = oModel.getAllConditions();
+			for (const sFieldPath in aAllConditions) {
+				const oProperty = this._getPropertyByName(sFieldPath);
 				if (oProperty && !oProperty.hiddenFilter && (aAllConditions[sFieldPath].length > 0)) {
 					++nActive;
 					if (!(((sFieldPath === "$search") && this.getAggregation("basicSearchField")) || this._getFilterField(sFieldPath))) {
@@ -576,7 +578,7 @@ sap.ui.define([
 	};
 
 	FilterBarBase.prototype._getAssignedFiltersCollapsedText = function(aFilterNames) {
-		var sAssignedFiltersList;
+		let sAssignedFiltersList;
 
 		aFilterNames = aFilterNames || [];
 
@@ -656,10 +658,10 @@ sap.ui.define([
 
 	FilterBarBase.prototype._handleConditionModelPropertyChange = function(oEvent) {
 
-		var pConditionState;
+		let pConditionState;
 
-		var fAddConditionChange = function(sFieldPath, aConditions) {
-			var mOrigConditions = {};
+		const fAddConditionChange = function(sFieldPath, aConditions) {
+			const mOrigConditions = {};
 			mOrigConditions[sFieldPath] = this._stringifyConditions(sFieldPath, merge([], aConditions));
 			this._cleanupConditions(mOrigConditions[sFieldPath]);
 			return mOrigConditions;
@@ -667,12 +669,12 @@ sap.ui.define([
 
 		if (!this._bIgnoreChanges) {
 
-			var sPath = oEvent.getParameter("path");
+			const sPath = oEvent.getParameter("path");
 			if (sPath.indexOf("/conditions/") === 0) {
 
-				var sFieldPath = sPath.substring("/conditions/".length);
+				const sFieldPath = sPath.substring("/conditions/".length);
 
-				var aConditions = oEvent.getParameter("value");
+				const aConditions = oEvent.getParameter("value");
 
 				if (this._getPropertyByName(sFieldPath)) {
 					pConditionState = fAddConditionChange(sFieldPath, aConditions);
@@ -693,7 +695,7 @@ sap.ui.define([
 
 
 	FilterBarBase.prototype._toExternal = function(oProperty, oCondition) {
-		var oConditionExternal = merge({}, oCondition);
+		let oConditionExternal = merge({}, oCondition);
 		oConditionExternal = ConditionConverter.toString(oConditionExternal, oProperty.typeConfig.typeInstance, this.getTypeMap());
 
 		this._cleanupCondition(oConditionExternal);
@@ -705,7 +707,7 @@ sap.ui.define([
 	};
 
 	FilterBarBase.prototype._toInternal = function(oProperty, oCondition) {
-		var oConditionInternal = merge({}, oCondition);
+		let oConditionInternal = merge({}, oCondition);
 
 		oConditionInternal = ConditionConverter.toType(oConditionInternal, oProperty.typeConfig.typeInstance, this.getTypeMap());
 
@@ -718,11 +720,11 @@ sap.ui.define([
 	FilterBarBase.prototype._convertInOutParameters = function(oCondition, oConditionConverted, sParameterName, fnConverter) {
 		if (oCondition[sParameterName] && (Object.keys(oCondition[sParameterName]).length > 0)) {
 			Object.keys(oCondition[sParameterName]).forEach(function(sKey) {
-				var sName = sKey.startsWith("conditions/") ? sKey.slice(11) : sKey; // just use field name
-				var oProperty = this._getPropertyByName(sName);
+				const sName = sKey.startsWith("conditions/") ? sKey.slice(11) : sKey; // just use field name
+				const oProperty = this._getPropertyByName(sName);
 				if (oProperty) {
-					var oOutCondition = Condition.createCondition("EQ", [oCondition[sParameterName][sKey]]);
-					var vValue = fnConverter(oOutCondition, oProperty.typeConfig.typeInstance, this.getTypeMap());
+					const oOutCondition = Condition.createCondition("EQ", [oCondition[sParameterName][sKey]]);
+					const vValue = fnConverter(oOutCondition, oProperty.typeConfig.typeInstance, this.getTypeMap());
 					if (!oConditionConverted[sParameterName]) {
 						oConditionConverted[sParameterName] = {};
 					}
@@ -755,7 +757,7 @@ sap.ui.define([
 	};
 
 	FilterBarBase.prototype._stringifyCondition = function(oProperty, oCondition) {
-		var oResultCondition = oCondition;
+		let oResultCondition = oCondition;
 		if (oCondition && oCondition.values) {
 			if (oCondition.values.length > 0) {
 				oResultCondition = this._toExternal(oProperty, oCondition);
@@ -769,8 +771,8 @@ sap.ui.define([
 	};
 
 	FilterBarBase.prototype._stringifyConditions = function(sFieldPath, aConditions) {
-		var oProperty = this._getPropertyByName(sFieldPath);
-		var aResultConditions = aConditions;
+		const oProperty = this._getPropertyByName(sFieldPath);
+		let aResultConditions = aConditions;
 
 		if (oProperty && aConditions) {
 			aResultConditions = [];
@@ -784,11 +786,11 @@ sap.ui.define([
 	};
 
 	FilterBarBase.prototype._internalizeConditions = function(mConditionExternal) {
-		var mConditionsInternal = merge({}, mConditionExternal);
+		const mConditionsInternal = merge({}, mConditionExternal);
 
 		Object.keys(mConditionsInternal).forEach(function(sKey){
 			mConditionsInternal[sKey].forEach(function(oCondition, iConditionIndex){
-				var oProperty = this._getPropertyByName(sKey);
+				const oProperty = this._getPropertyByName(sKey);
 				if (oProperty) {
 					try {
 						mConditionsInternal[sKey][iConditionIndex] = this._toInternal(oProperty, oCondition);
@@ -812,13 +814,13 @@ sap.ui.define([
 
 		if (!bFiltersAggregationChanged) {
 			if (this._btnAdapt) {
-				var aFilterNames = this.getAssignedFilterNames();
+				const aFilterNames = this.getAssignedFilterNames();
 				this.setProperty("_filterCount", this._oRb.getText(aFilterNames.length ? "filterbar.ADAPT_NONZERO" : "filterbar.ADAPT", [aFilterNames.length]), false);
 			}
 		}
 
-		var mTexts = this._getAssignedFiltersText();
-		var oObj = {
+		const mTexts = this._getAssignedFiltersText();
+		const oObj = {
 				conditionsBased: (!bFiltersAggregationChanged && !this._bDoNotTriggerFiltersChangeEventBasedOnVariantSwitch),
 				filtersText: mTexts.filtersText,
 				filtersTextExpanded: mTexts.filtersTextExpanded
@@ -874,9 +876,9 @@ sap.ui.define([
 	 */
 	FilterBarBase.prototype.validate = function(bSuppressSearch) {
 
-		var bFireSearch = !bSuppressSearch;
+		const bFireSearch = !bSuppressSearch;
 
-		var fValidateFc = function() {
+		const fValidateFc = function() {
 			if (!this._oValidationPromise) {
 
 				this._oValidationPromise = new Promise(function(resolve, reject) {
@@ -884,7 +886,7 @@ sap.ui.define([
 					this._fRejectedSearchPromise = reject;
 				}.bind(this));
 
-				var fDelayedFunction = function() {
+				const fDelayedFunction = function() {
 					this._validate(bFireSearch);
 				};
 				setTimeout(fDelayedFunction.bind(this), 0);
@@ -912,7 +914,7 @@ sap.ui.define([
 	};
 
 	FilterBarBase.prototype._checkAsyncValidation = function() {
-		var vRetErrorState = FilterBarValidationStatus.NoError;
+		let vRetErrorState = FilterBarValidationStatus.NoError;
 
 		if (this._aFIChanges && this._aFIChanges.length > 0) {
 			vRetErrorState = FilterBarValidationStatus.AsyncValidation;
@@ -922,7 +924,7 @@ sap.ui.define([
 	};
 
 	FilterBarBase.prototype._checkOngoingChangeAppliance = function() {
-		var vRetErrorState = FilterBarValidationStatus.NoError;
+		let vRetErrorState = FilterBarValidationStatus.NoError;
 
 		if (this._aOngoingChangeAppliance && this._aOngoingChangeAppliance.length > 0) {
 			vRetErrorState = FilterBarValidationStatus.OngoingChangeAppliance;
@@ -940,7 +942,7 @@ sap.ui.define([
 
 	FilterBarBase.prototype._recheckMissingRequiredFields = function() {
 		this.getFilterItems().forEach(function(oFilterField) {
-			var aReqFiltersWithoutValue;
+			let aReqFiltersWithoutValue;
 			if (oFilterField) {
 				if ((oFilterField.getValueState() !== ValueState.None) &&
 					(oFilterField.getValueStateText() === this._getRequiredFilterFieldValueText(oFilterField))) {
@@ -958,11 +960,11 @@ sap.ui.define([
 	};
 
 	FilterBarBase.prototype._checkRequiredFields = function() {
-		var vRetErrorState = FilterBarValidationStatus.NoError;
+		let vRetErrorState = FilterBarValidationStatus.NoError;
 
-		var aReqFiltersWithoutValue = FilterUtil.getRequiredFieldNamesWithoutValues(this);
+		const aReqFiltersWithoutValue = FilterUtil.getRequiredFieldNamesWithoutValues(this);
 		aReqFiltersWithoutValue.forEach(function(sName) {
-			var oFilterField = this._getFilterField(sName);
+			const oFilterField = this._getFilterField(sName);
 			if (oFilterField) {
 				if (oFilterField.getValueState() === ValueState.None) {
 					oFilterField.setValueState(ValueState.Error);
@@ -979,7 +981,7 @@ sap.ui.define([
 	};
 
 	FilterBarBase.prototype._checkFieldsInErrorState = function() {
-		var vRetErrorState = FilterBarValidationStatus.NoError;
+		let vRetErrorState = FilterBarValidationStatus.NoError;
 
 		if (this._bFieldInErrorState) {
 			return FilterBarValidationStatus.FieldInErrorState;
@@ -1003,13 +1005,13 @@ sap.ui.define([
 	};
 	FilterBarBase.prototype._handleFilterItemSubmit = function(oEvent) {
 
-		var oPromise = oEvent.getParameter("promise");
+		const oPromise = oEvent.getParameter("promise");
 		if (oPromise) {
 
 			this._sReason = ReasonMode.Enter;
 
 			oPromise.then(function() {
-				var aWaitPromises = this._hasAppliancePromises();
+				const aWaitPromises = this._hasAppliancePromises();
 				if (!aWaitPromises) { // no changes
 					this.triggerSearch();
 				} else {
@@ -1032,7 +1034,7 @@ sap.ui.define([
 			return;
 		}
 
-		var oFilterField = oEvent.oSource;
+		const oFilterField = oEvent.oSource;
 		if (oFilterField.getRequired() && (oFilterField.getValueState() === ValueState.Error) && oEvent.getParameter("valid")) {
 			oFilterField.setValueState(ValueState.None);
 			return;
@@ -1042,7 +1044,7 @@ sap.ui.define([
 			this._aFIChanges = [];
 		}
 
-		var sFilterName = oFilterField.getPropertyKey();
+		const sFilterName = oFilterField.getPropertyKey();
 		this._aFIChanges.some(function(oFieldInfo, nIdx) {
 			if (oFieldInfo.name === sFilterName) {
 				this._aFIChanges.splice(nIdx, 1);    //this entry will be replaced with the latest values
@@ -1062,7 +1064,7 @@ sap.ui.define([
 	  * @returns {sap.ui.mdc.enums.FilterBarValidationStatus} Returns the validation status
 	  */
 	FilterBarBase.prototype.checkFilters = function() {
-		var vRetErrorState = this._checkAsyncValidation();
+		let vRetErrorState = this._checkAsyncValidation();
 		if (vRetErrorState !== FilterBarValidationStatus.NoError) {
 			return vRetErrorState;
 		}
@@ -1086,7 +1088,7 @@ sap.ui.define([
 	};
 
 	FilterBarBase.prototype._setFocusOnFirstErroneousField = function() {
-		var oFilterField = null;
+		let oFilterField = null;
 		this.getFilterItems().some(function(oFilterItem) {
 			if (oFilterItem.getValueState() !== ValueState.None) {
 				oFilterField = oFilterItem;
@@ -1106,10 +1108,10 @@ sap.ui.define([
 
 		if (this._aFIChanges && (this._aFIChanges.length > 0)) {
 
-			var aNamePromisesArray = this._aFIChanges.slice();
+			const aNamePromisesArray = this._aFIChanges.slice();
 			this._aFIChanges = null;
 
-			var aChangePromises = [];
+			const aChangePromises = [];
 			aNamePromisesArray.forEach(function(oNamePromise) {
 				aChangePromises.push(oNamePromise.promise);
 			});
@@ -1117,7 +1119,7 @@ sap.ui.define([
 			Promise.all(aChangePromises).then(function(aConditionsArray) {
 
 				aConditionsArray.forEach(function(aConditions, nIdx) {
-					var oFF = this._getFilterField(aNamePromisesArray[nIdx].name);
+					const oFF = this._getFilterField(aNamePromisesArray[nIdx].name);
 					if (oFF && oFF.getRequired() && (oFF.getValueState() === ValueState.Error)) {
 						oFF.setValueState(ValueState.None); //valid existing value -> clear missing required error
 					}
@@ -1142,7 +1144,7 @@ sap.ui.define([
 
         if (this._aOngoingChangeAppliance && (this._aOngoingChangeAppliance.length > 0)) {
 
-            var aChangePromises = this._aOngoingChangeAppliance.slice();
+            const aChangePromises = this._aOngoingChangeAppliance.slice();
             this._aOngoingChangeAppliance = [];
 
             if (this._oApplyingChanges) {
@@ -1186,14 +1188,14 @@ sap.ui.define([
 
 
 	 FilterBarBase.prototype._restartCheckAndNotify = function(bFireSearch) {
-		 var vRetErrorState = this.checkFilters();
+		 const vRetErrorState = this.checkFilters();
 		 this._checkAndNotify(bFireSearch, vRetErrorState);
 	 };
 
 	 FilterBarBase.prototype._checkAndNotify = function(bFireSearch, vRetErrorState) {
-		 var fnCheckAndFireSearch = function() {
+		 const fnCheckAndFireSearch = function() {
 			 if (bFireSearch) {
-					var oObj = {
+					const oObj = {
 						reason: this._sReason ? this._sReason : ReasonMode.Unclear
 					};
 					this._sReason = ReasonMode.Unclear;
@@ -1202,7 +1204,7 @@ sap.ui.define([
 			 }
 		 }.bind(this);
 
-		 var fnCleanup = function() {
+		 const fnCleanup = function() {
 			 this._bFieldInErrorState = false;
 			 this._oValidationPromise = null;
 			 this._fRejectedSearchPromise = null;
@@ -1236,7 +1238,7 @@ sap.ui.define([
 	 // Executes the search.
 	 FilterBarBase.prototype._validate = function(bFireSearch) {
 
-		var fnCleanup = function() {
+		const fnCleanup = function() {
 			this._oValidationPromise = null;
 			this._fRejectedSearchPromise = null;
 			this._fResolvedSearchPromise = null;
@@ -1259,7 +1261,7 @@ sap.ui.define([
 	 * @param {map} mConditions A map containing the conditions
 	 */
 	FilterBarBase.prototype.setInternalConditions = function(mConditions) {
-		var oModel = this._getConditionModel();
+		const oModel = this._getConditionModel();
 		if (oModel) {
 			oModel.setConditions(mConditions);
 		}
@@ -1318,15 +1320,15 @@ sap.ui.define([
 	 * @returns {map} A map containing the conditions
 	 */
 	FilterBarBase.prototype._getModelConditions = function(oModel, bDoNotExternalize, bKeepAllValues) {
-		var mConditions = {};
+		const mConditions = {};
 		if (oModel) {
-			var aAllConditions = merge({}, oModel.getAllConditions());
-			for (var sFieldPath in aAllConditions) {
+			const aAllConditions = merge({}, oModel.getAllConditions());
+			for (const sFieldPath in aAllConditions) {
 				if (aAllConditions[sFieldPath] && (bKeepAllValues || aAllConditions[sFieldPath].length > 0)) {
 					mConditions[sFieldPath] = aAllConditions[sFieldPath];
 					if (!bDoNotExternalize) {
 						this._cleanupConditions(mConditions[sFieldPath]);
-						var aFieldConditions = this._stringifyConditions(sFieldPath, mConditions[sFieldPath]);
+						const aFieldConditions = this._stringifyConditions(sFieldPath, mConditions[sFieldPath]);
 						mConditions[sFieldPath] = aFieldConditions;
 					}
 				}
@@ -1337,7 +1339,7 @@ sap.ui.define([
 	};
 
 	FilterBarBase.prototype._isPathKnown = function(sFieldPath, oXCondition) {
-		var sKey, sName;
+		let sKey, sName;
 
 		if (!this._getPropertyByName(sFieldPath)) {
 			return false;
@@ -1374,7 +1376,7 @@ sap.ui.define([
 			return Promise.resolve();
 		}
 
-		var fResolveApplyingChanges;
+		let fResolveApplyingChanges;
 
 		if (!this._oApplyingChanges) {
 			this._oApplyingChanges = new Promise(function(resolve) {
@@ -1398,9 +1400,9 @@ sap.ui.define([
 	FilterBarBase.prototype._setXConditions = function(mConditionsData) {
 		if (mConditionsData) {
 
-			var bAllPropertiesKnown = true;
-			for (var sFieldPath in mConditionsData) {
-				var aConditions = mConditionsData[sFieldPath];
+			let bAllPropertiesKnown = true;
+			for (const sFieldPath in mConditionsData) {
+				const aConditions = mConditionsData[sFieldPath];
 
 				if (!this._isPathKnown(sFieldPath, aConditions)) {
 					bAllPropertiesKnown = false;
@@ -1408,13 +1410,13 @@ sap.ui.define([
 				}
 			}
 
-			var pBeforeSet = bAllPropertiesKnown ? Promise.resolve() : this._retrieveMetadata();
-			var oConditionModel = this._getConditionModel();
+			const pBeforeSet = bAllPropertiesKnown ? Promise.resolve() : this._retrieveMetadata();
+			const oConditionModel = this._getConditionModel();
 
 			return pBeforeSet.then(function(){
 
-				var mNewInternal = this._internalizeConditions(mConditionsData);
-				var mCurrentInternal = this._getModelConditions(oConditionModel, true);
+				const mNewInternal = this._internalizeConditions(mConditionsData);
+				const mCurrentInternal = this._getModelConditions(oConditionModel, true);
 
 				oConditionModel.detachPropertyChange(this._handleConditionModelPropertyChange, this);
 
@@ -1450,7 +1452,7 @@ sap.ui.define([
 
 
 	FilterBarBase.prototype._getRequiredPropertyNames = function() {
-		var aReqFilterNames = [];
+		const aReqFilterNames = [];
 
 		this._getNonHiddenPropertyInfoSet().forEach(function(oProperty) {
 			if (oProperty.required) {
@@ -1463,7 +1465,7 @@ sap.ui.define([
 
 
 	FilterBarBase.prototype._getNonRequiredPropertyNames = function() {
-		var aNonReqFilterNames = [];
+		const aNonReqFilterNames = [];
 
 		this._getNonHiddenPropertyInfoSet().forEach(function(oProperty) {
 			if (!oProperty.required) {
@@ -1480,8 +1482,8 @@ sap.ui.define([
 			return;
 		}
 
-		var LayoutItem = this._cLayoutItem;
-		var oLayoutItem = new LayoutItem();
+		const LayoutItem = this._cLayoutItem;
+		const oLayoutItem = new LayoutItem();
 		oLayoutItem.setFilterField(oFilterItem);
 
 		this._oFilterBarLayout.insertFilterField(oLayoutItem, nIdx);
@@ -1503,16 +1505,16 @@ sap.ui.define([
 	};
 
 	FilterBarBase.prototype._applyFilterItemInserted = function(oFilterField) {
-		var nIndex, iIndex;
+		let iIndex;
 
 		iIndex = this.indexOfAggregation("filterItems", oFilterField);
 		if (this.getAggregation("basicSearchField")) {
 			iIndex++;
 		}
 
-		nIndex = iIndex;
-		var aFilterFields = this.getFilterItems();
-		for (var i = 0; i < nIndex; i++) {
+		const nIndex = iIndex;
+		const aFilterFields = this.getFilterItems();
+		for (let i = 0; i < nIndex; i++) {
 			if (!aFilterFields[i].getVisible()) {
 				iIndex--;
 			}
@@ -1540,7 +1542,7 @@ sap.ui.define([
 	};
 
 	FilterBarBase.prototype._removeFilterFieldFromContentByName = function(sFieldPath) {
-		var oLayoutItem = this._getFilterItemLayoutByName(sFieldPath);
+		const oLayoutItem = this._getFilterItemLayoutByName(sFieldPath);
 
 		if (oLayoutItem) {
 			this._oFilterBarLayout.removeFilterField(oLayoutItem);
@@ -1582,7 +1584,7 @@ sap.ui.define([
 				}
 			}
 		} else if (oChanges.type === "property") {
-			var oFilterField;
+			let oFilterField;
 
 			if (oChanges.object.isA && oChanges.object.isA("sap.ui.mdc.FilterField")) { // only visible is considered
 				oFilterField = oChanges.object; //this._getFilterField(oChanges.object.getPropertyKey());
@@ -1603,7 +1605,7 @@ sap.ui.define([
 		return this._getFilterItemLayoutByName(oFilterField.getPropertyKey());
 	};
 	FilterBarBase.prototype._getFilterItemLayoutByName = function(sFieldPath) {
-		var oFilterItemLayout = null;
+		let oFilterItemLayout = null;
 
 		if (this._oFilterBarLayout) {
 			this._oFilterBarLayout.getFilterFields().some(function(oItemLayout) {
@@ -1619,7 +1621,7 @@ sap.ui.define([
 	};
 
 	FilterBarBase.prototype._getFilterField = function(sName) {
-		var oFilterField = null;
+		let oFilterField = null;
 		this.getFilterItems().some(function(oFilterItem) {
 			if (oFilterItem && (oFilterItem.getPropertyKey() === sName)) {
 				oFilterField = oFilterItem;
@@ -1651,7 +1653,7 @@ sap.ui.define([
 		this.initControlDelegate().then(function() {
 			if (!this._bIsBeingDestroyed) {
 
-				var fnResolveMetadata = function(bFlag) {
+				const fnResolveMetadata = function(bFlag) {
 					bFlag ? this._fResolveMetadataApplied() : this._fRejectMetadataApplied();
 					this._fResolveMetadataApplied = null;
 					this._fRejectMetadataApplied = null;
@@ -1673,7 +1675,7 @@ sap.ui.define([
 
 	FilterBarBase.prototype.setBasicSearchField = function(oBasicSearchField) {
 
-		var oOldBasicSearchField = this.getAggregation("basicSearchField");
+		const oOldBasicSearchField = this.getAggregation("basicSearchField");
 		if (oOldBasicSearchField) {
 			this.removeAggregation("basicSearchField", oOldBasicSearchField);
 		}
@@ -1691,7 +1693,7 @@ sap.ui.define([
 
 
 	FilterBarBase.prototype._getNonHiddenPropertyInfoSet = function() {
-		var aVisibleProperties = [];
+		const aVisibleProperties = [];
 		this.getPropertyInfoSet().every(function(oProperty) {
 			if (!oProperty.hiddenFilter) {
 
@@ -1708,7 +1710,7 @@ sap.ui.define([
 
 
 	FilterBarBase.prototype._getNonHiddenPropertyByName = function(sName) {
-		var oProperty = null;
+		let oProperty = null;
 		this._getNonHiddenPropertyInfoSet().some(function(oProp) {
 			if (IdentifierUtil.getPropertyKey(oProp) === sName) {
 				oProperty = oProp;
@@ -1722,8 +1724,8 @@ sap.ui.define([
 
 
 	FilterBarBase.prototype._cleanUpFilterFieldInErrorStateByName = function(sFieldName) {
-		var oFilterField = null;
-		var aFilterFields = this.getFilterItems();
+		let oFilterField = null;
+		const aFilterFields = this.getFilterItems();
 		aFilterFields.some( function(oFF) {
 			if (oFF.getPropertyKey() === sFieldName) {
 				oFilterField = oFF;
@@ -1747,7 +1749,7 @@ sap.ui.define([
 
 		this._getConditionModel().checkUpdate(true);
 
-		var aFilterFields = this.getFilterItems();
+		const aFilterFields = this.getFilterItems();
 		aFilterFields.forEach( function(oFilterField) {
 			this._cleanUpFilterFieldInErrorState(oFilterField);
 		}.bind(this));
@@ -1778,9 +1780,9 @@ sap.ui.define([
 
 	FilterBarBase.prototype._applyFilterConditionsChanges = function() {
 
-		var mSettings, mConditionsData;
+		let mConditionsData;
 
-		mSettings = this.getProperty("filterConditions");
+		const mSettings = this.getProperty("filterConditions");
 		if (Object.keys(mSettings).length > 0) {
 			mConditionsData = merge({}, mSettings);
 			return this._setXConditions(mConditionsData);
@@ -1833,7 +1835,8 @@ sap.ui.define([
 	};
 
 	FilterBarBase.prototype._getExecuteOnSelectionOnVariant = function(oVariant) {
-		var bExecuteOnSelect = false, oVariantManagement = this._getAssignedVariantManagement();
+		let bExecuteOnSelect = false;
+		const oVariantManagement = this._getAssignedVariantManagement();
 		if (oVariantManagement) {
 			bExecuteOnSelect = oVariantManagement.getApplyAutomaticallyOnVariant(oVariant);
 		}
@@ -1846,10 +1849,10 @@ sap.ui.define([
 	};
 
 	FilterBarBase.prototype._getAssignedVariantManagement = function() {
-		var sVariantControlId = this.getVariantBackreference();
+		const sVariantControlId = this.getVariantBackreference();
 
 		if (sVariantControlId) {
-			var oVariantManagement = sap.ui.getCore().byId(sVariantControlId);
+			const oVariantManagement = sap.ui.getCore().byId(sVariantControlId);
 			if (oVariantManagement && oVariantManagement.isA("sap.ui.fl.variants.VariantManagement")) {
 				return oVariantManagement;
 			}
@@ -1869,7 +1872,7 @@ sap.ui.define([
 	 * @returns {map} Map containing the external conditions
 	 */
 	FilterBarBase.prototype.getConditions = function() {
-		var mConditions = this.getCurrentState().filter;
+		const mConditions = this.getCurrentState().filter;
 		if (mConditions && mConditions["$search"]) {
 			delete mConditions["$search"];
 		}
@@ -1884,7 +1887,7 @@ sap.ui.define([
 	 * @returns {string} Value of search condition or empty
 	 */
 	FilterBarBase.prototype.getSearch = function() {
-		var aSearchConditions = this._getConditionModel() ? this._getConditionModel().getConditions("$search") : [];
+		const aSearchConditions = this._getConditionModel() ? this._getConditionModel().getConditions("$search") : [];
 		return aSearchConditions[0] ? aSearchConditions[0].values[0] : "";
 	};
 

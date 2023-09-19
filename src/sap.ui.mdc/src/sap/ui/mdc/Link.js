@@ -29,7 +29,7 @@ sap.ui.define([
 	"use strict";
 
 	// shortcut for sap.ui.layout.form.SimpleFormLayout.ResponsiveGridLayout
-	var ResponsiveGridLayout = layoutLibrary.form.SimpleFormLayout.ResponsiveGridLayout;
+	const ResponsiveGridLayout = layoutLibrary.form.SimpleFormLayout.ResponsiveGridLayout;
 
 	/**
 	 * Object holding the information regarding direct link navigation when there is no other link item.
@@ -87,7 +87,7 @@ sap.ui.define([
 	 * @public
    	 * @experimental As of version 1.74.0
 	 */
-	var Link = FieldInfoBase.extend("sap.ui.mdc.Link", /** @lends sap.ui.mdc.Link.prototype */ {
+	const Link = FieldInfoBase.extend("sap.ui.mdc.Link", /** @lends sap.ui.mdc.Link.prototype */ {
 		metadata: {
 			library: "sap.ui.mdc",
 			properties: {
@@ -128,7 +128,7 @@ sap.ui.define([
 	};
 
 	Link.prototype.init = function() {
-		var oModel = new JSONModel({
+		const oModel = new JSONModel({
 			contentTitle: undefined,
 			linkItems: []
 		});
@@ -174,8 +174,8 @@ sap.ui.define([
 			if (!oLinkTypeObject) {
 				return false;
 			}
-			var oRuntimeLinkTypePromise = oLinkTypeObject.runtimeType;
-			var oInitialLinkType = oLinkTypeObject.initialType ? oLinkTypeObject.initialType : oLinkTypeObject;
+			const oRuntimeLinkTypePromise = oLinkTypeObject.runtimeType;
+			const oInitialLinkType = oLinkTypeObject.initialType ? oLinkTypeObject.initialType : oLinkTypeObject;
 
 			if (oRuntimeLinkTypePromise && oRuntimeLinkTypePromise instanceof Promise) {
 				oRuntimeLinkTypePromise.then(function(oRuntimeLinkType) {
@@ -225,7 +225,7 @@ sap.ui.define([
 				return this._oLinkType.directLink;
 			}
 
-			var oLinkType = oLinkTypeObject.initialType ? oLinkTypeObject.initialType : oLinkTypeObject;
+			const oLinkType = oLinkTypeObject.initialType ? oLinkTypeObject.initialType : oLinkTypeObject;
 
 			if (this._linkTypeHasDirectLink(oLinkType)) {
 				return oLinkType.directLink;
@@ -245,24 +245,24 @@ sap.ui.define([
 	};
 
 	Link.prototype.getContent = function(fnGetAutoClosedControl) {
-		var oLinkItemsPromise = this.retrieveLinkItems();
-		var oAdditionalContentPromise = this.retrieveAdditionalContent();
+		const oLinkItemsPromise = this.retrieveLinkItems();
+		const oAdditionalContentPromise = this.retrieveAdditionalContent();
 		return Promise.all([oLinkItemsPromise, oAdditionalContentPromise]).then(function(values) {
-			var aLinkItems = values[0];
-			var aAdditionalContent = values[1];
+			const aLinkItems = values[0];
+			const aAdditionalContent = values[1];
 			return new Promise(function(resolve) {
 				sap.ui.require([
 					'sap/ui/fl/Utils',
 					'sap/ui/fl/apply/api/FlexRuntimeInfoAPI'
 				], function(Utils, FlexRuntimeInfoAPI) {
 					this._setConvertedLinkItems(aLinkItems);
-					var aMLinkItems = this._getInternalModel().getProperty("/linkItems");
-					var aMBaselineLinkItems = this._getInternalModel().getProperty("/baselineLinkItems");
+					const aMLinkItems = this._getInternalModel().getProperty("/linkItems");
+					const aMBaselineLinkItems = this._getInternalModel().getProperty("/baselineLinkItems");
 
-					var oPanelAdditionalContent = !aAdditionalContent.length && !aMLinkItems.length ? this._getNoContent() : aAdditionalContent;
+					const oPanelAdditionalContent = !aAdditionalContent.length && !aMLinkItems.length ? this._getNoContent() : aAdditionalContent;
 
-					var sPanelId = this._createPanelId(Utils, FlexRuntimeInfoAPI);
-					var oExistingPanel = sap.ui.getCore().byId(sPanelId);
+					const sPanelId = this._createPanelId(Utils, FlexRuntimeInfoAPI);
+					const oExistingPanel = sap.ui.getCore().byId(sPanelId);
 					if (oExistingPanel) {
 						// close Popover if existing
 						if (oExistingPanel.getParent() && oExistingPanel.getParent().close) {
@@ -271,7 +271,7 @@ sap.ui.define([
 						oExistingPanel.destroy();
 					}
 
-					var oPanel = new Panel(sPanelId, {
+					const oPanel = new Panel(sPanelId, {
 						enablePersonalization: this.getEnablePersonalization(), // brake the binding chain
 						items: aMBaselineLinkItems.map(function(oMLinkItem) {
 							return new PanelItem(oMLinkItem.key, {
@@ -312,14 +312,14 @@ sap.ui.define([
 	};
 
 	Link.prototype.checkDirectNavigation = function() {
-		var oLinkItemsPromise = this.retrieveLinkItems();
-		var oAdditionalContentPromise = this.retrieveAdditionalContent();
+		const oLinkItemsPromise = this.retrieveLinkItems();
+		const oAdditionalContentPromise = this.retrieveAdditionalContent();
 		return Promise.all([oLinkItemsPromise, oAdditionalContentPromise]).then(function(values) {
-			var aLinkItems = values[0];
-			var aAdditionalContent = values[1];
+			const aLinkItems = values[0];
+			const aAdditionalContent = values[1];
 
 			this._setConvertedLinkItems(aLinkItems);
-			var aMLinkItems = this._getInternalModel().getProperty("/linkItems");
+			const aMLinkItems = this._getInternalModel().getProperty("/linkItems");
 
 			if (aMLinkItems.length === 1 && !aAdditionalContent.length) {
 				Panel.navigate(aMLinkItems[0].href);
@@ -334,8 +334,8 @@ sap.ui.define([
 	 * @param {sap.ui.mdc.link.LinkItem[]} aLinkItems The given <code>LinkItem</code> objects
 	 */
 	Link.prototype._setConvertedLinkItems = function(aLinkItems) {
-		var oModel = this._getInternalModel();
-		var aMLinkItems = aLinkItems.map(function(oLinkItem) {
+		const oModel = this._getInternalModel();
+		const aMLinkItems = aLinkItems.map(function(oLinkItem) {
 			if (!oLinkItem.getKey()) {
 				SapBaseLog.error("sap.ui.mdc.Link: undefined 'key' property of the LinkItem " + oLinkItem.getId() + ". The mandatory 'key' property should be defined due to personalization reasons.");
 			}
@@ -353,7 +353,7 @@ sap.ui.define([
 		});
 		oModel.setProperty("/linkItems/", aMLinkItems);
 
-		var aMBaselineLinkItems = aMLinkItems.filter(function(oMLinkItem) {
+		const aMBaselineLinkItems = aMLinkItems.filter(function(oMLinkItem) {
 			return oMLinkItem.initiallyVisible;
 		});
 		oModel.setProperty("/baselineLinkItems/", aMBaselineLinkItems);
@@ -364,7 +364,7 @@ sap.ui.define([
 	 * @returns {sap.ui.layout.form.SimpleForm} Form containing a title which notices the user that there is no content for this link
 	 */
 	Link.prototype._getNoContent = function() {
-		var oSimpleForm = new SimpleForm({
+		const oSimpleForm = new SimpleForm({
 			layout: ResponsiveGridLayout,
 			content: [
 				new CoreTitle({
@@ -384,11 +384,11 @@ sap.ui.define([
 	 * @returns {string} Generated ID of the panel
 	 */
 	Link.prototype._createPanelId = function(Utils, FlexRuntimeInfoAPI) {
-		var oField;
+		let oField;
 		if (this.getParent()) {
 			oField = this.getParent();
 		}
-		var oControl = this._getSourceControl();
+		let oControl = this._getSourceControl();
 		if (!oControl) {
 			//SapBaseLog.error("Invalid source control: " + this.getSourceControl() + ". The mandatory 'sourceControl' association should be defined due to personalization reasons, parent: " + oField + " used instead.");
 			this.setSourceControl(oField);
@@ -398,7 +398,7 @@ sap.ui.define([
 			SapBaseLog.error("Invalid component. The mandatory 'sourceControl' association should be assigned to the app component due to personalization reasons.");
 			return this.getId() + "-idInfoPanel";
 		}
-		var oAppComponent = Utils.getAppComponentForControl(oControl) || Utils.getAppComponentForControl(oField);
+		const oAppComponent = Utils.getAppComponentForControl(oControl) || Utils.getAppComponentForControl(oField);
 		return oAppComponent.createId("idInfoPanel");
 	};
 
@@ -414,7 +414,7 @@ sap.ui.define([
 		if (!oPanel.getModel || !oPanel.getModel("$sapuimdcLink")) {
 			return [];
 		}
-		var oModel = oPanel.getModel("$sapuimdcLink");
+		const oModel = oPanel.getModel("$sapuimdcLink");
 		return oModel.getProperty("/metadata").map(function(oMLinkItem) {
 			return {
 				id: oMLinkItem.key,
@@ -438,7 +438,7 @@ sap.ui.define([
 		if (!oPanel.getModel || !oPanel.getModel("$sapuimdcLink")) {
 			return [];
 		}
-		var oModel = oPanel.getModel("$sapuimdcLink");
+		const oModel = oPanel.getModel("$sapuimdcLink");
 		return oModel.getProperty("/baseline").map(function(oMLinkItem) {
 			return {
 				id: oMLinkItem.key,
@@ -546,7 +546,7 @@ sap.ui.define([
 	 * @public
 	 */
 	Link.prototype.retrieveLinkItems = function() {
-		var oBindingContext = this._getControlBindingContext();
+		const oBindingContext = this._getControlBindingContext();
 		return this._retrieveUnmodifiedLinkItems().then(function(aUnmodifiedLinkItems) {
 			return this.getControlDelegate().modifyLinkItems(this, oBindingContext, aUnmodifiedLinkItems).then(function(aLinkItems) {
 				return aLinkItems;
@@ -578,8 +578,8 @@ sap.ui.define([
 		if (this.awaitControlDelegate()) {
 			return this.awaitControlDelegate().then(function() {
 				// Assign new Object so payload.id won't get set for the whole Link class
-				var oBindingContext = this._getControlBindingContext();
-				var oInfoLog = this._getInfoLog();
+				const oBindingContext = this._getControlBindingContext();
+				const oInfoLog = this._getInfoLog();
 				return new Promise(function(resolve) {
 					this.getControlDelegate().fetchLinkItems(this, oBindingContext, oInfoLog).then(function(aLinkItems) {
 						this._setLinkItems(aLinkItems === null ? [] : aLinkItems);
@@ -598,7 +598,7 @@ sap.ui.define([
 	 * @param {sap.ui.mdc.link.LinkItem[]} aLinkItems The given <code>LinkItem</code> objects
 	 */
 	Link.prototype._setLinkItems = function(aLinkItems) {
-		var aLinkItemsMissingParent = aLinkItems.filter(function(oLinkItem) {
+		const aLinkItemsMissingParent = aLinkItems.filter(function(oLinkItem) {
 			return oLinkItem.getParent() === null;
 		});
 		aLinkItemsMissingParent.forEach(function(oLinkItem) {
@@ -630,7 +630,7 @@ sap.ui.define([
 	 * @returns {sap.ui.model.Context|null|undefined} The binding context of the SourceControl / link
 	 */
 	Link.prototype._getControlBindingContext = function() {
-		var oControl = this._getSourceControl();
+		const oControl = this._getSourceControl();
 		return oControl && oControl.getBindingContext() || this.getBindingContext();
 	};
 

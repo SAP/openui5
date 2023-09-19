@@ -14,10 +14,10 @@ sap.ui.define([
 ], function(OverflowToolbarButton, MLibrary, OverflowToolbarMenuButton, Menu, MenuItem, CoreLibrary, Device, ShortcutHintsMixin, ThemeParameters, FESRHelper) {
 	"use strict";
 
-	var HasPopup = CoreLibrary.aria.HasPopup;
+	const HasPopup = CoreLibrary.aria.HasPopup;
 
 	// TODO: this is just a draft version and is not final --> just for verifying flex/p13n concepts
-	var oRb;
+	let oRb;
 	/**
 	 * P13n/Settings helper class for sap.ui.mdc.Table.
 	 * <h3><b>Note:</b></h3>
@@ -29,12 +29,12 @@ sap.ui.define([
 	 * @since 1.60
 	 * @alias sap.ui.mdc.table.TableSettings
 	 */
-	var TableSettings = {
+	const TableSettings = {
 		createSettingsButton: function(sIdPrefix, aEventInfo) {
 			if (!oRb) {
 				this._loadResourceBundle();
 			}
-			var oBtn = this._createButton(sIdPrefix + "-settings", {
+			const oBtn = this._createButton(sIdPrefix + "-settings", {
 				icon: "sap-icon://action-settings",
 				text: oRb.getText("table.SETTINGS"),
 				press: aEventInfo,
@@ -54,7 +54,7 @@ sap.ui.define([
 			return oBtn;
 		},
 		createPasteButton: function (sIdPrefix) {
-			var oPasteButton = this._createButton(sIdPrefix + "-paste");
+			const oPasteButton = this._createButton(sIdPrefix + "-paste");
 
 			FESRHelper.setSemanticStepname(oPasteButton, "press", "mdc:tbl:paste");
 
@@ -70,8 +70,8 @@ sap.ui.define([
 			if (!oRb) {
 				this._loadResourceBundle();
 			}
-			var sButtonType = ThemeParameters.get({name: "_sap_ui_mdc_Table_ExportButtonType"});
-			var oMenuButton = new OverflowToolbarMenuButton(sIdPrefix + "-export", {
+			const sButtonType = ThemeParameters.get({name: "_sap_ui_mdc_Table_ExportButtonType"});
+			const oMenuButton = new OverflowToolbarMenuButton(sIdPrefix + "-export", {
 				icon: "sap-icon://excel-attachment",
 				text: oRb.getText("table.QUICK_EXPORT"),
 				tooltip: oRb.getText("table.EXPORT_BUTTON_TEXT"),
@@ -81,7 +81,7 @@ sap.ui.define([
 				defaultAction: mEventInfo.default
 			});
 
-			var oMenu = new Menu({
+			const oMenu = new Menu({
 				items: [
 					new MenuItem({
 						text: oRb.getText("table.QUICK_EXPORT"),
@@ -113,10 +113,10 @@ sap.ui.define([
 				this._loadResourceBundle();
 			}
 
-			var sId = bIsExpand ? sIdPrefix + "-expandAll" : sIdPrefix + "-collapseAll",
+			const sId = bIsExpand ? sIdPrefix + "-expandAll" : sIdPrefix + "-collapseAll",
 				sText = bIsExpand ? oRb.getText("table.EXPAND_ALL") : oRb.getText("table.COLLAPSE_ALL");
 
-			var oButton = this._createButton(sId, {
+			const oButton = this._createButton(sId, {
 				icon: bIsExpand ? "sap-icon://expand-all" : "sap-icon://collapse-all",
 				text: sText,
 				press: aEventInfo,

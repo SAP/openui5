@@ -1,7 +1,7 @@
 sap.ui.define(['./util/EnvHelper', "sap/base/util/merge"], function (EnvHelper, merge) {
 	"use strict";
 
-	var mConfig =  {
+	let mConfig =  {
 		name: "Library 'sap.ui.mdc'", /* Just for a nice title on the pages */
 		defaults: {
 			group: "Library",

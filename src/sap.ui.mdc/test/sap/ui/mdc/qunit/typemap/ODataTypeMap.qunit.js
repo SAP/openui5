@@ -37,7 +37,7 @@ function(
     "use strict";
 
 	QUnit.test("ODataTypeMap.getDateTimeBaseType", function(assert) {
-		var sBaseType = ODataTypeMap.getDateTimeBaseType();
+		let sBaseType = ODataTypeMap.getDateTimeBaseType();
 		assert.equal(sBaseType, BaseType.DateTime, "DateTime baseType is returned");
 		sBaseType = ODataTypeMap.getDateTimeBaseType(undefined, {displayFormat: "Date"});
 		assert.equal(sBaseType, BaseType.Date, "Date baseType is returned");
@@ -47,7 +47,7 @@ function(
 
 	QUnit.test("getBaseTypeForType", function(assert) {
 
-		var aTypeList = [
+		const aTypeList = [
 			[new ODataDateTime(), BaseType.DateTime],
 			[new ODataDateTime({},{displayFormat: "Date"}), BaseType.Date],
 			[new ODataDateTimeOffset(), BaseType.DateTime],
@@ -56,22 +56,22 @@ function(
 		];
 
 		aTypeList.forEach(function (aEntry) {
-			var oType = aEntry[0];
-			var oExpected = aEntry[1];
+			const oType = aEntry[0];
+			const oExpected = aEntry[1];
 			assert.equal(ODataTypeMap.getBaseTypeForType(oType), oExpected, "expected baseType returned for type " + oType.getName() + ": " + oExpected);
 		});
 
-		var aNumerics = [ODataByte, ODataSByte, ODataDecimal, ODataInt16, ODataInt32, ODataInt64, ODataSingle, ODataDouble];
+		const aNumerics = [ODataByte, ODataSByte, ODataDecimal, ODataInt16, ODataInt32, ODataInt64, ODataSingle, ODataDouble];
 
 		aNumerics.forEach(function (NumericType) {
-			var oType = new NumericType();
+			const oType = new NumericType();
 			assert.equal(ODataTypeMap.getBaseTypeForType(oType), BaseType.Numeric, "expected baseType returned for type " + oType.getName() + ": " + BaseType.Numeric);
 		});
 	});
 
 	QUnit.test("getDataTypeClass", function(assert) {
 
-		var mEdmTypes = {
+		const mEdmTypes = {
 			"Edm.Boolean": "sap.ui.model.odata.type.Boolean",
 			"Edm.Byte": "sap.ui.model.odata.type.Byte",
 			"Edm.DateTime": "sap.ui.model.odata.type.DateTime",
@@ -90,7 +90,7 @@ function(
 		};
 
 		Object.keys(mEdmTypes).forEach(function (sKey) {
-			var oExpected = mEdmTypes[sKey];
+			const oExpected = mEdmTypes[sKey];
 			assert.equal(ODataTypeMap.getDataTypeClassName(sKey), oExpected, "expected odata type returned for edm type " + sKey + ": " + oExpected);
 		});
 
@@ -104,7 +104,7 @@ function(
 
 	QUnit.test("getTypeConfig with constraints", function (assert) {
 
-		var oTypeConfig = ODataTypeMap.getTypeConfig("sap.ui.model.odata.type.DateTime", undefined, undefined);
+		let oTypeConfig = ODataTypeMap.getTypeConfig("sap.ui.model.odata.type.DateTime", undefined, undefined);
 		assert.equal(oTypeConfig.baseType, BaseType.DateTime , "expected basetype returned");
 
 		oTypeConfig = ODataTypeMap.getTypeConfig("sap.ui.model.odata.type.DateTime", undefined, {displayFormat: "Date"});
@@ -112,7 +112,7 @@ function(
 	});
 
 	QUnit.test("internalizeValue", function (assert) {
-		var oTypedValue = ODataTypeMap.internalizeValue(50, new ODataInt64()); //
+		let oTypedValue = ODataTypeMap.internalizeValue(50, new ODataInt64()); //
 		assert.equal(oTypedValue, '50', "expected value returned");
 
 		oTypedValue = ODataTypeMap.internalizeValue('50', new ODataInt64());
@@ -126,7 +126,7 @@ function(
 	});
 
 	QUnit.test("externalizeValue", function (assert) {
-		var oStringifiedValue = ODataTypeMap.externalizeValue(50, new ODataInt64());
+		let oStringifiedValue = ODataTypeMap.externalizeValue(50, new ODataInt64());
 		assert.equal(oStringifiedValue, "50", "stringified value returned");
 
 		oStringifiedValue = ODataTypeMap.externalizeValue('50', new ODataInt64());
@@ -139,7 +139,7 @@ function(
 		assert.equal(oStringifiedValue, '50', "expected value returned");
 	});
 
-	var ODataCurrencyCodeList = {
+	const ODataCurrencyCodeList = {
 		"EUR" : {Text : "Euro", UnitSpecificScale : 2},
 		"USD" : {Text : "US-Dollar", UnitSpecificScale : 2},
 		"JPY" : {Text : "Japan Yen", UnitSpecificScale : 0},
@@ -149,7 +149,7 @@ function(
 	QUnit.module("Type initialization");
 
 	QUnit.test("initializeTypeFromValue", function(assert) {
-		var oType = new ODataSingle();
+		let oType = new ODataSingle();
 		assert.deepEqual(ODataTypeMap.initializeTypeFromValue(oType, 0), {}, "empty object returned");
 		oType.destroy();
 
@@ -161,7 +161,7 @@ function(
 	});
 
 	QUnit.test("initializeInternalType", function(assert) {
-		var oType = new ODataCurrency();
+		const oType = new ODataCurrency();
 		assert.deepEqual(ODataTypeMap.initializeInternalType(oType, {mCustomUnits: ODataCurrencyCodeList}), undefined, "nothing returned");
 		assert.ok(oType.mCustomUnits, "CustomUnits set in Type");
 		oType.destroy();

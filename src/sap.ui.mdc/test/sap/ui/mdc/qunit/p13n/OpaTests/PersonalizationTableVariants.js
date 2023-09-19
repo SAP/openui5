@@ -17,7 +17,7 @@ sap.ui.define([
 		autoWait: true
 	});
 
-	var aTableItems = [
+	const aTableItems = [
 		{p13nItem: "Name", selected: true},
 		{p13nItem: "Founding Year", selected: true},
 		{p13nItem: "Changed By", selected: true},
@@ -32,7 +32,7 @@ sap.ui.define([
 		{p13nItem: "regionOfOrigin_code", selected: false}
 	];
 
-	var aSortItems = [
+	let aSortItems = [
 		{p13nItem: "artistUUID", descending: false},
 		{p13nItem: "Breakout Year", descending: false},
 		{p13nItem: "Changed By", descending: false},
@@ -46,7 +46,7 @@ sap.ui.define([
 		{p13nItem: "regionOfOrigin_code", descending: false}
 	];
 
-	var sTableID = "IDTableOfInternalSampleApp_01";
+	const sTableID = "IDTableOfInternalSampleApp_01";
 
 	// ----------------------------------------------------------------
 	// Check if the application is running normaly
@@ -215,7 +215,7 @@ sap.ui.define([
 		]);
 	});
 
-	var oTableConditions = {
+	const oTableConditions = {
 		foundingYear:[
 			{operator:"EQ",values:["1989"],validated:"NotValidated"},
 			{operator:"EQ",values:["1904"],validated:"NotValidated"}

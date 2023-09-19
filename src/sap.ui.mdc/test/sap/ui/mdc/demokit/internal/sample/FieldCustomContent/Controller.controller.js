@@ -16,11 +16,11 @@ sap.ui.define([
 	return Controller.extend("sap.ui.mdc.sample.FieldCustomContent.Controller", {
 
 		onInit: function() {
-			var oView = this.getView();
+			const oView = this.getView();
 			oView.bindElement("/Books(1)");
 			oCore.getMessageManager().registerObject(oView, true);
 
-			var oViewModel = new JSONModel({
+			const oViewModel = new JSONModel({
 				editMode: FieldEditMode.Editable
 			});
 			oView.setModel(oViewModel, "view");
@@ -44,8 +44,8 @@ sap.ui.define([
 		},
 
 		handleChange: function(oEvent) {
-			var oField = oEvent.getSource();
-			var oPromise = oEvent.getParameter("promise");
+			const oField = oEvent.getSource();
+			const oPromise = oEvent.getParameter("promise");
 
 			if (oPromise) {
 				oPromise.then(function(vValue) {

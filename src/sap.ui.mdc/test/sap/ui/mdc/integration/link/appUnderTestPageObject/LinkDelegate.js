@@ -7,12 +7,12 @@ sap.ui.define([
 ], function(LinkDelegate, LinkItem) {
 	"use strict";
 
-	var sBaseUrl = window.location.href;
+	const sBaseUrl = window.location.href;
 
-	var SampleLinkDelegate = Object.assign({}, LinkDelegate);
+	const SampleLinkDelegate = Object.assign({}, LinkDelegate);
 
 	SampleLinkDelegate.fetchLinkItems = function() {
-		var aLinkItems = [
+		const aLinkItems = [
 			new LinkItem({
 				key: "IDLinkItem00",
 				text: "TextLinkItem00",

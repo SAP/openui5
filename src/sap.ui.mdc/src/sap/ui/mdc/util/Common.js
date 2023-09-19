@@ -5,10 +5,10 @@
 sap.ui.define([], function() {
 	"use strict";
 
-	var Common = {
+	const Common = {
 		cleanup: function (oTarget, aFields) {
 			aFields.forEach(function (sField) {
-				var oRemovable = oTarget[sField];
+				const oRemovable = oTarget[sField];
 				if (oRemovable) {
 					if (oRemovable.destroy && !oRemovable.bIsDestroyed) {
 						oRemovable.destroy();

@@ -13,7 +13,7 @@ sap.ui.define(function() {
 	 * @public
 	 * @since 1.115
 	 */
-	var OperatorOverwrite = {
+	const OperatorOverwrite = {
 		/**
 		 * Overwrite the <code>getModelFilter</code> function of the operator.
 		 * @public

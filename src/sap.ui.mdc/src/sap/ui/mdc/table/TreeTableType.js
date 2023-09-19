@@ -9,7 +9,7 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var InnerTable;
+	let InnerTable;
 
 	/**
 	 * Constructor for a new <code>TreeTableType</code>.
@@ -24,7 +24,7 @@ sap.ui.define([
 	 * @alias sap.ui.mdc.table.TreeTableType
 	 */
 
-	var TreeTableType = GridTableType.extend("sap.ui.mdc.table.TreeTableType", {
+	const TreeTableType = GridTableType.extend("sap.ui.mdc.table.TreeTableType", {
 		metadata: {
 			library: "sap.ui.mdc"
 		}
@@ -53,13 +53,13 @@ sap.ui.define([
 	};
 
 	TreeTableType.prototype.createTable = function(sId) {
-		var oTable = this.getTable();
+		const oTable = this.getTable();
 
 		if (!oTable || !InnerTable) {
 			return null;
 		}
 
-		var oTreeTable = new InnerTable(sId, this.getTableSettings());
+		const oTreeTable = new InnerTable(sId, this.getTableSettings());
 
 		oTreeTable._oProxy._bEnableV4 = true;
 

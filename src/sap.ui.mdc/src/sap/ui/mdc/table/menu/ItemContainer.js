@@ -12,7 +12,7 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var ItemContainer = ItemContainerBase.extend("sap.ui.mdc.table.menu.ItemContainer", {
+	const ItemContainer = ItemContainerBase.extend("sap.ui.mdc.table.menu.ItemContainer", {
 		metadata: {
 			library: "sap.ui.mdc",
 			associations: {
@@ -23,7 +23,7 @@ sap.ui.define([
 	});
 
 	ItemContainer.prototype.initializeItems = function() {
-		var oTable = this.getTable();
+		const oTable = this.getTable();
 		this.destroyItems();
 
 		if (oTable._isP13nButtonHidden()) {

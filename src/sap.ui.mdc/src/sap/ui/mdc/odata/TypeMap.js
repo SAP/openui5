@@ -52,7 +52,7 @@ sap.ui.define([
 	* @alias module:sap/ui/mdc/odata/TypeMap
 	* @extends module:sap/ui/mdc/DefaultTypeMap
 	*/
-	var ODataTypeMap = Object.assign({}, DefaultTypeMap);
+	const ODataTypeMap = Object.assign({}, DefaultTypeMap);
 
 	ODataTypeMap.getDateTimeBaseType = function (oFormatOptions, oConstraints) {
 		if (oConstraints && oConstraints.displayFormat === "Date") {
@@ -126,7 +126,7 @@ sap.ui.define([
 
 		if (oType && this.getBaseType(oType.getMetadata().getName()) === BaseType.Unit && Array.isArray(vValue) && vValue.length > 2) {
 			if (vValue[2] !== undefined) {
-				var oTypeInitialization = {mCustomUnits: vValue[2]};
+				const oTypeInitialization = {mCustomUnits: vValue[2]};
 				this.initializeInternalType(oType, oTypeInitialization);
 				return oTypeInitialization;
 			}

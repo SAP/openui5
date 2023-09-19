@@ -8,19 +8,19 @@ sap.ui.define([
 ], function(FlpLinkDelegate, LinkItem, Log) {
 	"use strict";
 
-	var SampleLinkDelegate = Object.assign({}, FlpLinkDelegate);
+	const SampleLinkDelegate = Object.assign({}, FlpLinkDelegate);
 	FlpLinkDelegate.apiVersion = 2;//CLEANUP_DELEGATE
 
 	SampleLinkDelegate.fetchLinkItems = function(oLink, oBindingContext, oInfoLog) {
-		var oPayload = oLink.getPayload();
-		var aItemsToReturn = [
+		const oPayload = oLink.getPayload();
+		let aItemsToReturn = [
 			new LinkItem({
 				key: "item00",
 				href: "#Action00",
 				text: "item 00"
 			})
 		];
-		var oContextObject = oBindingContext ? oBindingContext.getObject(oBindingContext.getPath()) : undefined;
+		const oContextObject = oBindingContext ? oBindingContext.getObject(oBindingContext.getPath()) : undefined;
 		if (oInfoLog) {
 			oInfoLog.initialize(FlpLinkDelegate._getSemanticObjects(oPayload));
 			aItemsToReturn.forEach(function(oItem) {
@@ -30,7 +30,7 @@ sap.ui.define([
 				});
 			});
 		}
-		var oSemanticAttributes = FlpLinkDelegate._calculateSemanticAttributes(oContextObject, oPayload, oInfoLog);
+		const oSemanticAttributes = FlpLinkDelegate._calculateSemanticAttributes(oContextObject, oPayload, oInfoLog);
 		return FlpLinkDelegate._retrieveNavigationTargets("", oSemanticAttributes, oPayload, oInfoLog).then(function(aLinks, oOwnNavigationLink) {
 			aItemsToReturn = aItemsToReturn.concat(aLinks);
 			return Promise.resolve(aItemsToReturn);

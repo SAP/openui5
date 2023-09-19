@@ -30,7 +30,7 @@ sap.ui.define([
          * @since 1.88
          * @alias sap.ui.mdc.chart.ChartSelectionDetails
          */
-        var ChartSelectionDetails = SelectionDetails.extend("sap.ui.mdc.chart.ChartSelectionDetails", /** @lends sap.ui.mdc.chart.ChartSelectionDetails.prototype */ {
+        const ChartSelectionDetails = SelectionDetails.extend("sap.ui.mdc.chart.ChartSelectionDetails", /** @lends sap.ui.mdc.chart.ChartSelectionDetails.prototype */ {
             metadata: {
                 library: "sap.ui.mdc",
                 interfaces: [
@@ -69,9 +69,9 @@ sap.ui.define([
             this.registerSelectionDetailsItemFactory([
                 //TODO: Template might need to be handed in via delegate to support other libraries and non-odata services
             ], function(aDisplayData, aData, oContext, oData) {
-                var aLines = [];
+                const aLines = [];
 
-                for (var i = 0; i < aDisplayData.length; i++) {
+                for (let i = 0; i < aDisplayData.length; i++) {
                     aLines.push(new SelectionDetailsItemLine({
                         label: aDisplayData[i].label,
                         value: this._formatValue(aDisplayData[i].value),
@@ -114,9 +114,9 @@ sap.ui.define([
             });*/
 
             this.attachActionPress(function(oEvent) {
-                var oChart = this.getParent().getParent();
+                const oChart = this.getParent().getParent();
                 // extract binding information of each item
-                var aItemContexts = [];
+                const aItemContexts = [];
                 oEvent.getParameter("items").forEach(function(oItem) {
                     aItemContexts.push(oItem.getBindingContext());
                 });

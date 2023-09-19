@@ -3,7 +3,7 @@ sap.ui.define([
 	"sap/m/p13n/Engine", "../../QUnitUtils", "sap/ui/mdc/FilterBarDelegate", "sap/ui/mdc/FilterBar", "sap/ui/mdc/FilterField", "test-resources/sap/m/qunit/p13n/TestModificationHandler", "sap/ui/core/Core"
 ], function (Engine, MDCQUnitUtils, FilterBarDelegate, FilterBar, FilterField, TestModificationHandler, oCore) {
 	"use strict";
-	var oResourceBundle = oCore.getLibraryResourceBundle("sap.ui.mdc");
+	const oResourceBundle = oCore.getLibraryResourceBundle("sap.ui.mdc");
 
 	QUnit.module("Engine API tests showUI FilterBar", {
 		setLiveMode: function(sController, bLiveMode) {
@@ -84,7 +84,7 @@ sap.ui.define([
 
 
 	QUnit.test("PropertyInfo should not take $search into account for FilterBar", function(assert){
-		var done = assert.async();
+		const done = assert.async();
 
 		this.setLiveMode("Item", false);
 
@@ -97,9 +97,9 @@ sap.ui.define([
 			assert.ok(Engine.getInstance().hasActiveP13n(this.oFilterBar),"dialog is open");
 
 			//check inner panel
-			var oPanel = oP13nControl.getContent()[0]._oFilterBarLayout.getInner();
+			const oPanel = oP13nControl.getContent()[0]._oFilterBarLayout.getInner();
 			oPanel.switchView(oPanel.LIST_KEY);
-			var oInnerTable = oP13nControl.getContent()[0]._oFilterBarLayout.getInner().getCurrentViewContent()._oListControl;
+			const oInnerTable = oP13nControl.getContent()[0]._oFilterBarLayout.getInner().getCurrentViewContent()._oListControl;
 			assert.ok(oP13nControl.getContent()[0].isA("sap.ui.mdc.filterbar.p13n.AdaptationFilterBar"), "Correct P13n UI created");
 			assert.ok(oInnerTable, "Inner Table has been created");
 			assert.equal(oInnerTable.getItems().length, 3, "Inner Table does not know $search");
@@ -110,10 +110,10 @@ sap.ui.define([
 	});
 
 	QUnit.test("PropertyInfo should not take 'hiddenFilter' into account for FilterBar 'Adapt Filters'", function(assert){
-		var done = assert.async();
+		const done = assert.async();
 
 		Engine.getInstance().uimanager.show(this.oFilterBar, "Item").then(function(oP13nControl){
-			var oInnerTable = oP13nControl.getContent()[0]._oFilterBarLayout.getInner().getCurrentViewContent()._oListControl;
+			const oInnerTable = oP13nControl.getContent()[0]._oFilterBarLayout.getInner().getCurrentViewContent()._oListControl;
 			assert.equal(oInnerTable.getItems().length, 3, "Inner Table does not know about 'hiddenFilter'");
 			done();
 		});
@@ -121,13 +121,13 @@ sap.ui.define([
 	});
 
 	QUnit.test("PropertyInfo 'required' should be respected in 'Adapt Filters' Dialog", function(assert){
-		var done = assert.async();
+		const done = assert.async();
 
 		Engine.getInstance().uimanager.show(this.oFilterBar, "Item").then(function(oP13nControl){
-			var oAdaptationFilterBar = oP13nControl.getContent()[0];
-			var oAdaptFiltersPanel = oAdaptationFilterBar._oFilterBarLayout.getInner();
-			var oInnerTable = oAdaptFiltersPanel.getCurrentViewContent()._oListControl;
-			var oLabelThirdItem = oInnerTable.getItems()[2].getCells()[0].getItems()[0];
+			const oAdaptationFilterBar = oP13nControl.getContent()[0];
+			const oAdaptFiltersPanel = oAdaptationFilterBar._oFilterBarLayout.getInner();
+			const oInnerTable = oAdaptFiltersPanel.getCurrentViewContent()._oListControl;
+			const oLabelThirdItem = oInnerTable.getItems()[2].getCells()[0].getItems()[0];
 			assert.ok(oLabelThirdItem.getRequired(), "Required property info has been propagated to the UI");
 			done();
 		});
@@ -135,26 +135,26 @@ sap.ui.define([
 	});
 
 	QUnit.test("use AdaptationFilterBar", function (assert) {
-		var done = assert.async();
+		const done = assert.async();
 
 		Engine.getInstance().uimanager.show(this.oFilterBar, "Item").then(function(oP13nControl){
 
 			assert.ok(oP13nControl.isA("sap.m.Dialog"), "Dialog as container created");
 
-			var oP13nFilter = oP13nControl.getContent()[0];
+			const oP13nFilter = oP13nControl.getContent()[0];
 			assert.ok(oP13nFilter.isA("sap.ui.mdc.filterbar.p13n.AdaptationFilterBar"), "P13n FilterBar created for filter UI adaptation");
 
-			var oAdaptFilterPanel = oP13nFilter._oFilterBarLayout.getInner();
+			const oAdaptFilterPanel = oP13nFilter._oFilterBarLayout.getInner();
 			oAdaptFilterPanel.switchView("group");
 			assert.ok(oAdaptFilterPanel.isA("sap.ui.mdc.p13n.panels.AdaptFiltersPanel"), "AdaptFiltersPanel as inner layout");
 
-			var oList = oAdaptFilterPanel.getView("group").getContent()._oListControl;
+			const oList = oAdaptFilterPanel.getView("group").getContent()._oListControl;
 			assert.ok(oList.isA("sap.m.ListBase"), "ListBase control as inner representation");
 
-			var oFirstGroup = oList.getItems()[0];
+			const oFirstGroup = oList.getItems()[0];
 			assert.ok(oFirstGroup.isA("sap.m.ListItemBase"), "ListItem for group presentation");
 
-			var oFirstGroupList = oFirstGroup.getContent()[0].getContent()[0];
+			const oFirstGroupList = oFirstGroup.getContent()[0].getContent()[0];
 			assert.equal(oFirstGroupList.getItems().length, 3, "3 items created");
 			assert.equal(oFirstGroupList.getSelectedItems().length, 2, "2 items selected");
 
@@ -164,23 +164,23 @@ sap.ui.define([
 	});
 
 	QUnit.test("check inner model reset", function (assert) {
-		var done = assert.async();
+		const done = assert.async();
 		Engine.getInstance().uimanager.show(this.oFilterBar, "Item").then(function(oP13nControl){
 
-			var oP13nFilter = oP13nControl.getContent()[0];
-			var oAFPanel = oP13nFilter._oFilterBarLayout.getInner();
+			const oP13nFilter = oP13nControl.getContent()[0];
+			const oAFPanel = oP13nFilter._oFilterBarLayout.getInner();
 			oAFPanel.switchView("group");
-			var oList = oAFPanel.getCurrentViewContent()._oListControl;
-			var oFirstGroup = oList.getItems()[0];
+			const oList = oAFPanel.getCurrentViewContent()._oListControl;
+			const oFirstGroup = oList.getItems()[0];
 
 			//3 items, 2 initially selected
-			var oFirstGroupList = oFirstGroup.getContent()[0].getContent()[0];
+			const oFirstGroupList = oFirstGroup.getContent()[0].getContent()[0];
 			assert.equal(oFirstGroupList.getItems().length, 3, "3 items created");
 			assert.equal(oFirstGroupList.getSelectedItems().length, 2, "2 items selected");
 
-			var oAddaptFiltersController = Engine.getInstance().getController(this.oFilterBar, "Item");
-			var aModelItems = oAddaptFiltersController._oPanel.getP13nData().items;
-			var aModelItemsGrouped = oAddaptFiltersController._oPanel.getP13nData().itemsGrouped;
+			const oAddaptFiltersController = Engine.getInstance().getController(this.oFilterBar, "Item");
+			const aModelItems = oAddaptFiltersController._oPanel.getP13nData().items;
+			const aModelItemsGrouped = oAddaptFiltersController._oPanel.getP13nData().itemsGrouped;
 
 			aModelItems[2].visible = true;
 			aModelItemsGrouped[0].items[2].visible = true;
@@ -194,7 +194,7 @@ sap.ui.define([
 			assert.equal(oFirstGroupList.getItems().length, 3, "3 items created");
 			assert.equal(oFirstGroupList.getSelectedItems().length, 3, "3 items selected");
 
-			var oTestModifier = TestModificationHandler.getInstance();
+			const oTestModifier = TestModificationHandler.getInstance();
 			oTestModifier.reset = function() {
 				return Promise.resolve();
 			};
@@ -213,9 +213,9 @@ sap.ui.define([
 	});
 
 	QUnit.test("create condition changes via 'createChanges'", function(assert){
-		var done = assert.async();
+		const done = assert.async();
 
-		var mConditions = {
+		const mConditions = {
 			item1: [{operator: "EQ", values:["Test"]}],
 			item2: [{operator: "EQ", values:["Test"]}],
 			item3: [{operator: "EQ", values:["Test"]}]
@@ -242,10 +242,10 @@ sap.ui.define([
 
 
 	QUnit.test("Engine/FilterBar should not crash for non present properties", function(assert){
-		var done = assert.async();
+		const done = assert.async();
 
 		//use Engine with a non existing property
-		var mConditions = {
+		const mConditions = {
 			someNonexistingProperty: [{operator: "EQ", values:["Test"]}]
 		};
 
@@ -262,9 +262,9 @@ sap.ui.define([
 	});
 
 	QUnit.test("create condition changes via 'createChanges' with initial filterConditions", function(assert){
-		var done = assert.async();
+		const done = assert.async();
 
-		var mConditions = {
+		const mConditions = {
 			item1: [{operator: "EQ", values:["Test"]}],
 			item2: [{operator: "EQ", values:["Test"]}],
 			item3: [{operator: "EQ", values:["Test"]}]
@@ -288,9 +288,9 @@ sap.ui.define([
 	});
 
 	QUnit.test("create condition changes via 'createChanges' with initial filterConditions", function(assert){
-		var done = assert.async();
+		const done = assert.async();
 
-		var mConditions = {
+		const mConditions = {
 			item1: [],
 			item2: [{operator: "EQ", values:["Test"]}],
 			item3: [{operator: "EQ", values:["Test"]}]
@@ -316,9 +316,9 @@ sap.ui.define([
 	});
 
 	QUnit.test("create condition changes via 'createChanges' and always consider $search", function(assert){
-		var done = assert.async();
+		const done = assert.async();
 
-		var mConditions = {
+		const mConditions = {
 			$search: [{operator: "EQ", values:["Test"]}]
 		};
 

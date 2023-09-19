@@ -26,7 +26,7 @@ sap.ui.define(
 		 * @borrows sap.ui.mdc.util.PromiseCache.retrieve as retrievePromise
 		 * @borrows sap.ui.mdc.util.PromiseCache.retrieveMany as retrievePromises
 		 */
-		var PromiseMixin = {};
+		const PromiseMixin = {};
 		PromiseMixin.addPromise = function (sName, fnCreate) {
 			return this.promiseCache.add(sName, fnCreate);
 		};
@@ -67,7 +67,7 @@ sap.ui.define(
 			};
 		};
 		return function () {
-			var _noop = function (fnMethod) {
+			const _noop = function (fnMethod) {
 				return function () {
 					if (this.bIsDestroyed) {
 						return undefined;

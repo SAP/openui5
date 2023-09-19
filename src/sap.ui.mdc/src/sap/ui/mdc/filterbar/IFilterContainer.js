@@ -13,7 +13,7 @@ sap.ui.define([
 	 * @since 1.61.0
 	 * @alias sap.ui.mdc.filterbar.IFilterContainer
 	 */
-	var IFilterContainer = Element.extend("sap.ui.mdc.filterbar.IFilterContainer");
+	const IFilterContainer = Element.extend("sap.ui.mdc.filterbar.IFilterContainer");
 
 	/**
 	 * Creates the inner layout for the <code>IFilterContainer</code>.

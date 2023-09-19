@@ -206,7 +206,7 @@ sap.ui.define([
 		Then.iTeardownMyAppFrame();
 	});
 
-	var oFilterBarConfigs = {
+	const oFilterBarConfigs = {
 		"Default FilterBar": "test-resources/sap/ui/mdc/integration/valuehelp/index.html?view=sap.ui.v4demo.view.OPA-2",
 		"Dedicated FilterBar": "test-resources/sap/ui/mdc/integration/valuehelp/index.html?view=sap.ui.v4demo.view.OPA-4"
 	};

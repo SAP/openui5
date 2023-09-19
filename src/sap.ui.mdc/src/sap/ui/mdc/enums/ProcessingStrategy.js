@@ -14,7 +14,7 @@ sap.ui.define(function() {
 	 * @since 1.115
 	 * @alias sap.ui.mdc.enums.ProcessingStrategy
 	 */
-	var ProcessingStrategy = {
+	const ProcessingStrategy = {
 		/**
 		 * The delta will only calculate changes that will be added in addition to the existing state
 		 */

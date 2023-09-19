@@ -11,10 +11,10 @@ sap.ui.define([
 
 	QUnit.module("Generic API tests", {
 		prepareController: function() {
-			var oURLParams = new SAPUriParameters(window.location.search);
-			var sSubControllerClassPath = "sap/ui/mdc/p13n/subcontroller/" + oURLParams.getAll("test")[0];
+			const oURLParams = new SAPUriParameters(window.location.search);
+			const sSubControllerClassPath = "sap/ui/mdc/p13n/subcontroller/" + oURLParams.getAll("test")[0];
 
-			var TestClass = Control.extend("temp",{
+			const TestClass = Control.extend("temp",{
 				metadata: {
 					properties: {
 						delegate: {
@@ -94,14 +94,14 @@ sap.ui.define([
 	});
 
 	QUnit.test("Check 'getAdaptationControl'", function(assert){
-		var bIsMDCControl = this.oController.getAdaptationControl().isA("sap.ui.mdc.Control");
-		var bIsMDCElement = this.oController.getAdaptationControl().isA("sap.ui.mdc.Element");
+		const bIsMDCControl = this.oController.getAdaptationControl().isA("sap.ui.mdc.Control");
+		const bIsMDCElement = this.oController.getAdaptationControl().isA("sap.ui.mdc.Element");
 		assert.ok(bIsMDCControl || bIsMDCElement, "Adaptation is only allowed for MDC instances");
 	});
 
 	QUnit.test("check 'getAdaptationUI' return value", function(assert){
 
-		var vAdaptationUI = this.oController.getAdaptationUI(new PropertyHelper(this.aPropertyInfo));
+		const vAdaptationUI = this.oController.getAdaptationUI(new PropertyHelper(this.aPropertyInfo));
 
 		assert.ok(vAdaptationUI, "'getAdaptationControl' has a return value");
 		assert.ok(vAdaptationUI instanceof Promise, "'getAdaptationControl' returns a Promise");
@@ -109,17 +109,17 @@ sap.ui.define([
 	});
 
 	QUnit.test("check 'getLiveMode' ", function(assert){
-		var bLiveMode = this.oController.getLiveMode();
+		const bLiveMode = this.oController.getLiveMode();
 		assert.ok(typeof bLiveMode == "boolean", "'getLiveMode' returns a Boolean");
 	});
 
 	QUnit.test("check 'getResetEnabled' ", function(assert){
-		var bResetEnabled = this.oController.getResetEnabled();
+		const bResetEnabled = this.oController.getResetEnabled();
 		assert.ok(typeof bResetEnabled == "boolean", "'getResetEnabled' returns a Boolean");
 	});
 
 	QUnit.test("check 'getBeforeApply' ", function(assert){
-		var pBeforeApply = this.oController.getBeforeApply();
+		const pBeforeApply = this.oController.getBeforeApply();
 		assert.ok(pBeforeApply instanceof Promise, "'getBeforeApply' returns a Promise");
 	});
 
@@ -131,7 +131,7 @@ sap.ui.define([
 
 	QUnit.test("check 'getDelta'", function(assert){
 
-		var aChanges = this.oController.getDelta({
+		const aChanges = this.oController.getDelta({
 			control: this.oAdaptationControl,
 			existingState: this.oController.getCurrentState(),
 			changeOperations: this.oController.getChangeOperations(),
@@ -150,7 +150,7 @@ sap.ui.define([
 
 	QUnit.test("check 'getDelta' without absolute appliance", function(assert){
 
-		var aChanges = this.oController.getDelta({
+		const aChanges = this.oController.getDelta({
 			control: this.oAdaptationControl,
 			deltaAttributes: ["name"],
 			changeOperations: this.oController.getChangeOperations(),
@@ -165,18 +165,18 @@ sap.ui.define([
 	});
 
 	QUnit.test("check 'mixInfoAndState'", function(assert){
-		var oP13nData = this.oController.mixInfoAndState(new PropertyHelper(this.aPropertyInfo));
+		const oP13nData = this.oController.mixInfoAndState(new PropertyHelper(this.aPropertyInfo));
 		assert.ok(oP13nData, "'setP13nData' returns a value");
 	});
 
 	QUnit.test("check '_getP13nModel'", function(assert){
-		var oAdaptationModel = this.oController._getP13nModel(new PropertyHelper(this.aPropertyInfo));
+		const oAdaptationModel = this.oController._getP13nModel(new PropertyHelper(this.aPropertyInfo));
 		assert.ok(oAdaptationModel.isA("sap.ui.model.json.JSONModel"), "'getP13nModel' returns a JSONModel");
 	});
 
 	QUnit.test("check 'getChangeOperations'", function(assert){
 
-		var mChangeOperations = this.oController.getChangeOperations();
+		const mChangeOperations = this.oController.getChangeOperations();
 
 		//This might be a valid assumption in the current setup, but can be changed
 		assert.ok(mChangeOperations.hasOwnProperty("add"), "Required changetype provided");
@@ -186,7 +186,7 @@ sap.ui.define([
 
 	QUnit.test("check 'model2State'", function(assert){
 
-		var fnValidateP13n = this.oController.model2State;
+		const fnValidateP13n = this.oController.model2State;
 
 		if (fnValidateP13n) {
 			assert.ok(fnValidateP13n instanceof Function, "Model2State implemented");

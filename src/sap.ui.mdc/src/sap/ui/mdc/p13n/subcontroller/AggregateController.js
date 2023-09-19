@@ -6,7 +6,7 @@ sap.ui.define([
 ], function (BaseController, P13nBuilder, merge) {
     "use strict";
 
-    var AggregateController = BaseController.extend("sap.ui.mdc.p13n.subcontroller.AggregateController");
+    const AggregateController = BaseController.extend("sap.ui.mdc.p13n.subcontroller.AggregateController");
 
     AggregateController.prototype.getStateKey = function () {
         return "aggregations";
@@ -17,9 +17,9 @@ sap.ui.define([
 	};
 
     AggregateController.prototype.sanityCheck = function(change) {
-        var aAggregations = [];
+        const aAggregations = [];
         Object.keys(change).forEach(function(sKey) {
-            var oAggregate = {
+            const oAggregate = {
                 name: sKey,
                 key: sKey
             };
@@ -53,10 +53,10 @@ sap.ui.define([
 
     AggregateController.prototype.mixInfoAndState = function(oPropertyHelper) {
 
-        var mExistingAggregations = this.getCurrentState();
+        const mExistingAggregations = this.getCurrentState();
 
-        var oP13nData = this.prepareAdaptationData(oPropertyHelper, function(mItem, oProperty){
-            var oExisting = mExistingAggregations[oProperty.name];
+        const oP13nData = this.prepareAdaptationData(oPropertyHelper, function(mItem, oProperty){
+            const oExisting = mExistingAggregations[oProperty.name];
             mItem.aggregated = !!oExisting;
             return oProperty.aggregatable;
         });

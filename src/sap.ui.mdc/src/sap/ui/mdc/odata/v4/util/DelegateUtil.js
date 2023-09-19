@@ -20,13 +20,13 @@ sap.ui.define(['sap/ui/mdc/util/FilterUtil',
 	 * @private
 	 * @experimental This module is only for internal/experimental use!
 	 */
-	var DelegateUtil = {
+	const DelegateUtil = {
 
 		_getParameters: function(oMDCFilterBar) {
-			var oParameters = null;
+			let oParameters = null;
 
 			if (oMDCFilterBar && oMDCFilterBar.getDelegate() && oMDCFilterBar.getDelegate().payload && oMDCFilterBar.getDelegate().payload.collectionName) {
-				var sEntitySetName = oMDCFilterBar.getDelegate().payload.collectionName;
+				const sEntitySetName = oMDCFilterBar.getDelegate().payload.collectionName;
 
 				if (window[oMDCFilterBar.getId() + '->' + sEntitySetName + "-Parameters"]) {
 					oParameters = window[oMDCFilterBar.getId() + '->' + sEntitySetName + "-Parameters"];
@@ -44,18 +44,18 @@ sap.ui.define(['sap/ui/mdc/util/FilterUtil',
 		 * @protected
 		 */
 		getParametersInfo : function(oMDCFilterBar) {
-			var oParameters = DelegateUtil._getParameters(oMDCFilterBar);
+			const oParameters = DelegateUtil._getParameters(oMDCFilterBar);
 
 			return DelegateUtil._getParameterPath(oMDCFilterBar, oParameters);
 		},
 
 		_getParametersListUrl : function(oMDCFilterBar, aParameterNames) {
-			var aParams = [];
-			var mConditionsMap = FilterUtil.getConditionsMap(oMDCFilterBar, aParameterNames);
-			var aPropertyInfos = oMDCFilterBar.getPropertyInfoSet();
+			const aParams = [];
+			const mConditionsMap = FilterUtil.getConditionsMap(oMDCFilterBar, aParameterNames);
+			const aPropertyInfos = oMDCFilterBar.getPropertyInfoSet();
 
 			aParameterNames.forEach(function(sParameterName) {
-				var oProperty = FilterUtil.getPropertyByKey(aPropertyInfos, sParameterName);
+				const oProperty = FilterUtil.getPropertyByKey(aPropertyInfos, sParameterName);
 
 				if (oProperty && (oProperty.maxConditions === 1)) {    						// only single valued parameters are considered
 					mConditionsMap[sParameterName].forEach(function(oCondition) {
@@ -79,9 +79,9 @@ sap.ui.define(['sap/ui/mdc/util/FilterUtil',
 				return null;
 			}
 
-			var sEntitySetName = oMDCFilterBar.getDelegate().payload.collectionName;
+			const sEntitySetName = oMDCFilterBar.getDelegate().payload.collectionName;
 
-			var aParams = DelegateUtil._getParametersListUrl(oMDCFilterBar, oParameters.parameters);
+			const aParams = DelegateUtil._getParametersListUrl(oMDCFilterBar, oParameters.parameters);
 
 			// create parameter context
 			return '/' + sEntitySetName + '(' + aParams.toString() + ")/" + oParameters.parameterNavigationName;
@@ -95,7 +95,8 @@ sap.ui.define(['sap/ui/mdc/util/FilterUtil',
 		 * @protected
 		 */
 		getParameterNames : function(oMDCFilterBar) {
-			var aParameterNames = null, oParameters = DelegateUtil._getParameters(oMDCFilterBar);
+			let aParameterNames = null;
+			const oParameters = DelegateUtil._getParameters(oMDCFilterBar);
 
 			if (oParameters) {
 				aParameterNames = oParameters.parameters;

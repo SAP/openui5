@@ -88,7 +88,7 @@ sap.ui.define([
 	"use strict";
 
 	MemoryLeakCheck.checkControl("FieldBase", function() {
-		var oField = new FieldBase("F1", {
+		const oField = new FieldBase("F1", {
 			dataType: 'sap.ui.model.type.String' // set to prevent test to set dummy value
 		});
 		// configure the Field
@@ -96,7 +96,7 @@ sap.ui.define([
 	});
 
 	MemoryLeakCheck.checkControl("Field", function() {
-		var oField = new Field("F1", {
+		const oField = new Field("F1", {
 			dataType: 'sap.ui.model.type.String' // set to prevent test to set dummy value
 		});
 		// configure the Field
@@ -104,7 +104,7 @@ sap.ui.define([
 	});
 
 	MemoryLeakCheck.checkControl("FilterField", function() {
-		var oField = new FilterField("F1", {
+		const oField = new FilterField("F1", {
 			dataType: 'sap.ui.model.type.String', // set to prevent test to set dummy value
 			dataTypeFormatOptions: {}, // set to prevent test to set dummy value
 			dataTypeConstraints: {maxLength: 1000}, // set to prevent test to set dummy value
@@ -115,7 +115,7 @@ sap.ui.define([
 	});
 
 	MemoryLeakCheck.checkControl("MultiValueField", function() {
-		var oField = new MultiValueField("F1", {
+		const oField = new MultiValueField("F1", {
 			dataType: 'sap.ui.model.type.String', // set to prevent test to set dummy value
 			dataTypeFormatOptions: {}, // set to prevent test to set dummy value
 			dataTypeConstraints: {maxLength: 1000} // set to prevent test to set dummy value
@@ -124,7 +124,7 @@ sap.ui.define([
 		return oField;
 	});
 
-	var oModel = new JSONModel({
+	const oModel = new JSONModel({
 		items:[{text: "Item 1", key: "I1", additionalText: "Text 1", filter: "XXX"},
 			   {text: "Item 2", key: "I2", additionalText: "Text 2", filter: "XXX"},
 			   {text: "X-Item 3", key: "I3", additionalText: "Text 3", filter: "YYY"}]
@@ -133,14 +133,14 @@ sap.ui.define([
 
 	MemoryLeakCheck.checkControl("ValueHelp Typeahead", function() {
 		// don't need to be really rendered or opened, just test if inner controls are cleared.
-		var oItemTemplate = new ColumnListItem({
+		const oItemTemplate = new ColumnListItem({
 			type: "Active",
 			cells: [new Text({text: "{key}"}),
 					new Text({text: "{text}"}),
 					new Text({text: "{additionalText}"})]
 		});
 
-		var oMTable = new MTable("VH1-MTable", {
+		const oMTable = new MTable("VH1-MTable", {
 			filterFields: "text",
 			keyPath: "key",
 			descriptionPath: "text",
@@ -152,14 +152,14 @@ sap.ui.define([
 				items: {path: "/items", template: oItemTemplate}
 			})
 		});
-		var oPopover = new VHPopover("VH1-Pop", {
+		const oPopover = new VHPopover("VH1-Pop", {
 			title: "Title",
 			content: oMTable
 		});
-		var oValueHelp = new ValueHelp("VH1", {
+		const oValueHelp = new ValueHelp("VH1", {
 			typeahead: oPopover
 		});
-		var oField = new FilterField("F1", {
+		const oField = new FilterField("F1", {
 			dataType: 'sap.ui.model.type.String', // set to prevent test to set dummy value
 			valueHelp: "VH1",
 			dependents: [oValueHelp, oItemTemplate]
@@ -174,14 +174,14 @@ sap.ui.define([
 
 	MemoryLeakCheck.checkControl("ValueHelp Dialog", function() {
 		// don't need to be really rendered or opened, just test if inner controls are cleared.
-		var oItemTemplate = new ColumnListItem({
+		const oItemTemplate = new ColumnListItem({
 			type: "Active",
 			cells: [new Text({text: "{key}"}),
 					new Text({text: "{text}"}),
 					new Text({text: "{additionalText}"})]
 		});
 
-		var oMTable = new MTable("VH1-MTable", {
+		const oMTable = new MTable("VH1-MTable", {
 			filterFields: "text",
 			keyPath: "key",
 			descriptionPath: "text",
@@ -193,14 +193,14 @@ sap.ui.define([
 				items: {path: "/items", template: oItemTemplate}
 			})
 		});
-		var oDialog = new VHDialog("VH1-Dia", {
+		const oDialog = new VHDialog("VH1-Dia", {
 			title: "Title",
 			content: [oMTable, new VHConditions("VH1-Cond", {label: "Label"})]
 		});
-		var oValueHelp = new ValueHelp("VH1", {
+		const oValueHelp = new ValueHelp("VH1", {
 			dialog: oDialog
 		});
-		var oField = new FilterField("F1", {
+		const oField = new FilterField("F1", {
 			dataType: 'sap.ui.model.type.String', // set to prevent test to set dummy value
 			conditions: [Condition.createItemCondition("I1"),
 						 Condition.createCondition("BT", ["A", "Z"])],
@@ -216,14 +216,14 @@ sap.ui.define([
 	});
 
 	MemoryLeakCheck.checkControl("DefineConditionPanel", function() {
-		var oDataType = new StringType();
-		var oConfig = {
+		const oDataType = new StringType();
+		const oConfig = {
 				dataType: oDataType,
 				maxConditions: -1,
 				delegate: FieldBaseDelegate
 		};
 
-		var oDCP = new DefineConditionPanel("DCP1", {
+		const oDCP = new DefineConditionPanel("DCP1", {
 			conditions: [Condition.createCondition("EQ", ["Test1"]),
 						 Condition.createCondition("BT", ["A", "Z"])],
 			config: oConfig

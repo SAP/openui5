@@ -29,7 +29,7 @@ sap.ui.define([
 	 * @since 1.56.0
 	 * @alias sap.ui.mdc.link.ContactDetails
 	 */
-	var ContactDetails = Control.extend("sap.ui.mdc.link.ContactDetails", /** @lends sap.ui.mdc.link.ContactDetails.prototype */ {
+	const ContactDetails = Control.extend("sap.ui.mdc.link.ContactDetails", /** @lends sap.ui.mdc.link.ContactDetails.prototype */ {
 		metadata: {
 			library: "sap.ui.mdc",
 			defaultAggregation: "items",
@@ -49,68 +49,68 @@ sap.ui.define([
 		renderer: ContactDetailsRenderer
 	});
 
-	var oRB = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
+	const oRB = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
 	ContactDetails.prototype.applySettings = function() {
 		Control.prototype.applySettings.apply(this, arguments);
 
 		this._createContent();
 	};
 	ContactDetails.prototype._createContent = function() {
-		var aSimpleForms = [];
+		const aSimpleForms = [];
 		this.getItems().forEach(function(oContactDetailsItem) {
-			var oTitle = new Title({
+			const oTitle = new Title({
 				text: oContactDetailsItem.getSectionTitle()
 			});
-			var oImage = new Image({
+			const oImage = new Image({
 				src: oContactDetailsItem.getPhoto(),
 				visible: !!oContactDetailsItem.getPhoto(),
 				decorative: false,
 				width: "5rem",
 				height: "5rem"
 			});
-			var oLabelImage = new Label({
+			const oLabelImage = new Label({
 				text: "",
 				labelFor: oImage,
 				visible: !!oContactDetailsItem.getPhoto()
 			});
-			var oTextName = new Text({
+			const oTextName = new Text({
 				text: oContactDetailsItem.getFormattedName(),
 				visible: !!oContactDetailsItem.getFormattedName()
 			});
-			var oLabelName = new Label({
+			const oLabelName = new Label({
 				text: oRB.getText("info.POPOVER_CONTACT_SECTION_NAME"),
 				labelFor: oTextName,
 				visible: !!oContactDetailsItem.getFormattedName()
 			});
-			var oTextRole = new Text({
+			const oTextRole = new Text({
 				text: oContactDetailsItem.getRole(),
 				visible: !!oContactDetailsItem.getRole()
 			});
-			var oLabelRole = new Label({
+			const oLabelRole = new Label({
 				text: oRB.getText("info.POPOVER_CONTACT_SECTION_ROLE"),
 				labelFor: oTextRole,
 				visible: !!oContactDetailsItem.getRole()
 			});
-			var oTextTitle = new Text({
+			const oTextTitle = new Text({
 				text: oContactDetailsItem.getTitle(),
 				visible: !!oContactDetailsItem.getTitle()
 			});
-			var oLabelTitle = new Label({
+			const oLabelTitle = new Label({
 				text: oRB.getText("info.POPOVER_CONTACT_SECTION_JOBTITLE"),
 				labelFor: oTextTitle,
 				visible: !!oContactDetailsItem.getTitle()
 			});
-			var oTextOrg = new Text({
+			const oTextOrg = new Text({
 				text: oContactDetailsItem.getOrg(),
 				visible: !!oContactDetailsItem.getOrg()
 			});
-			var oLabelOrg = new Label({
+			const oLabelOrg = new Label({
 				text: oRB.getText("info.POPOVER_CONTACT_SECTION_DEPARTMENT"),
 				labelFor: oTextOrg,
 				visible: !!oContactDetailsItem.getOrg()
 			});
 
-			var oSimpleForm = new SimpleForm({
+			const oSimpleForm = new SimpleForm({
 				editable: false,
 				layout: "ColumnLayout",
 				content: [
@@ -226,8 +226,8 @@ sap.ui.define([
 	};
 	ContactDetails.prototype._addLabeledAddress = function(oContactDetailsAddressItem, oSimpleForm, oRB) {
 		// Defined order: <Street with housenumber>, <Postalcode> <City>, <State>, <Country>
-		var fnAddressFormatter = function(sStreet, sCode, sLocality, sRegion, sCountry) {
-			var aValidComponents = [];
+		const fnAddressFormatter = function(sStreet, sCode, sLocality, sRegion, sCountry) {
+			const aValidComponents = [];
 			if (sStreet) {
 				aValidComponents.push(sStreet);
 			}
@@ -249,11 +249,11 @@ sap.ui.define([
 			}
 			return aValidComponents.join(', ');
 		};
-		var fnAddressVisibilityFormatter = function(sStreet, sCode, sLocality, sRegion, sCountry) {
+		const fnAddressVisibilityFormatter = function(sStreet, sCode, sLocality, sRegion, sCountry) {
 			return !!(sStreet || sCode || sLocality || sRegion || sCountry);
 		};
-		var aParts;
-		var oControl;
+		let aParts;
+		let oControl;
 		if (oContactDetailsAddressItem.getBindingPath("street") && oContactDetailsAddressItem.getBindingPath("code") && oContactDetailsAddressItem.getBindingPath("locality") && oContactDetailsAddressItem.getBindingPath("region") && oContactDetailsAddressItem.getBindingPath("country")) {
 			aParts = [
 				{
@@ -283,7 +283,7 @@ sap.ui.define([
 				visible: fnAddressVisibilityFormatter(oContactDetailsAddressItem.getStreet(), oContactDetailsAddressItem.getCode(), oContactDetailsAddressItem.getLocality(), oContactDetailsAddressItem.getRegion(), oContactDetailsAddressItem.getCountry())
 			});
 		}
-		var oLabel = new Label({
+		const oLabel = new Label({
 			text: oRB.getText("info.POPOVER_CONTACT_SECTION_ADR"),
 			labelFor: oControl.getId()
 		});
@@ -291,7 +291,7 @@ sap.ui.define([
 		oSimpleForm.addContent(oControl);
 	};
 	ContactDetails.prototype._addLabeledLink = function(sLinkType, sLabelText, oContactDetailsLinkItem, oSimpleForm) {
-		var oControl;
+		let oControl;
 		if (oContactDetailsLinkItem.getBindingPath("uri")) {
 			oControl = new Link();
 			oControl.bindProperty("href", {
@@ -316,7 +316,7 @@ sap.ui.define([
 				visible: !!oContactDetailsLinkItem.getUri()
 			});
 		}
-		var oLabel = new Label({
+		const oLabel = new Label({
 			text: sLabelText,
 			labelFor: oControl.getId()
 		});

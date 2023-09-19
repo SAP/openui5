@@ -19,11 +19,11 @@ sap.ui.define([
 	 * @since 1.80.0
 	 * @alias sap.ui.mdc.filterbar.p13n.TableContainer
 	 */
-	var TableContainer = IFilterContainer.extend("sap.ui.mdc.filterbar.p13n.TableContainer");
+	const TableContainer = IFilterContainer.extend("sap.ui.mdc.filterbar.p13n.TableContainer");
 
 	TableContainer.prototype.init = function() {
 		IFilterContainer.prototype.init.apply(this, arguments);
-		var oRB = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
+		const oRB = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
 		this._oTable = new Table({
 			sticky: ["ColumnHeaders"],
 			growing: true,
@@ -44,8 +44,8 @@ sap.ui.define([
 		this.oLayout = new FilterPanel({
 			enableReorder: false,
 			itemFactory: function(oItem){
-				var sKey = oItem.name;
-				var oFilterItem = this.mFilterItems[sKey];
+				const sKey = oItem.name;
+				const oFilterItem = this.mFilterItems[sKey];
 				return oFilterItem;
 			}.bind(this)
 		});
@@ -55,8 +55,8 @@ sap.ui.define([
 	};
 
 	TableContainer.prototype.insertFilterField = function(oControl, iIndex) {
-		var oFilterBar = oControl._oFilterField.getParent();
-		var oProperty = oFilterBar._getPropertyByName(oControl._getFieldPath());
+		const oFilterBar = oControl._oFilterField.getParent();
+		const oProperty = oFilterBar._getPropertyByName(oControl._getFieldPath());
 		if (oProperty) {
 			this.mFilterItems[oProperty.name] = oControl;
 		}

@@ -20,11 +20,11 @@ sap.ui.define([
 ], function (FilterBarDelegate, IdentifierUtil, DefaultTypeMap, BooleanType, StringType, IntegerType, DateType, DateTimeType, TimeType, FloatType) {
 	"use strict";
 
-	var FilterBarTestDelegate = Object.assign({}, FilterBarDelegate);
+	const FilterBarTestDelegate = Object.assign({}, FilterBarDelegate);
 	FilterBarTestDelegate.apiVersion = 2;//CLEANUP_DELEGATE
 
 	FilterBarTestDelegate.fetchProperties = function (oFilterBar) {
-		var aProperties = [];
+		const aProperties = [];
 
 		aProperties.push({
 			name: "prop1",
@@ -94,7 +94,7 @@ sap.ui.define([
 
 		return FilterBarTestDelegate.fetchProperties(oFilterBar).then(function(aProperties) {
 
-			var oProperty = null;
+			let oProperty = null;
 			aProperties.some(function(oPropertyInfo) {
 				if (sPropertyName === IdentifierUtil.getPropertyKey(oPropertyInfo)) {
 					oProperty = oPropertyInfo;

@@ -68,7 +68,7 @@ sap.ui.define([
 	}
 
 	function fetchProperties() {
-		var mProperties = {
+		const mProperties = {
 			String: {label: "String",name:"String",dataType:"Edm.String", groupable: true},
 			Boolean: {label: "Boolean",name:"Boolean",dataType:"Edm.Boolean"},
 			Int16: {label: "Int16",name:"Int16",dataType:"Edm.Int16"},
@@ -84,8 +84,8 @@ sap.ui.define([
 			Guid: {label: "Guid",name:"Guid",dataType:"Edm.Guid"}
 		};
 
-		var aProperties = [];
-		for (var sProperty in mProperties) {
+		const aProperties = [];
+		for (const sProperty in mProperties) {
 			aProperties.push({
 				name: mProperties[sProperty].name,
 				label: mProperties[sProperty].label,
@@ -103,7 +103,7 @@ sap.ui.define([
 	QUnit.module("API tests for FilterBar", {
 		before: function(){
 
-			var sFilterBarView = '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:mdc="sap.ui.mdc"><mdc:FilterBar id="myFilterBar" p13nMode="Item,Value"></mdc:FilterBar></mvc:View>';
+			const sFilterBarView = '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:mdc="sap.ui.mdc"><mdc:FilterBar id="myFilterBar" p13nMode="Item,Value"></mdc:FilterBar></mvc:View>';
 
 			FilterBarDelegate.fetchProperties = fetchProperties;
 			FilterBarDelegate.addItem = createFilterItem;
@@ -132,16 +132,16 @@ sap.ui.define([
 
 	//Removal of 'EEQ' operator
 	QUnit.test("call 'applyExternalState' with 'EEQ' operator' and non existing operator", function(assert){
-		var done = assert.async();
+		const done = assert.async();
 
-		var mFilterConditions = {
+		const mFilterConditions = {
 			"String": [{ "operator": "Contains", "values": ["Test"] }],
 			"Boolean": [{ "operator": "EEQ", "values": [true] }],
 			"Decimal":[{"operator":"ImaginaryOperator","values":["12.01"]}],
 			"Date":[{"operator":"EQ","values":["2020-02-11"]}]
 		};
 
-		var oExternalState = {
+		const oExternalState = {
 			filter: mFilterConditions
 		};
 
@@ -170,7 +170,7 @@ sap.ui.define([
 	/*********************************************************************************************/
 
 	QUnit.test("retrieveExternalState for FilterBar without any conditions", function(assert){
-		var done = assert.async();
+		const done = assert.async();
 
 		//If there are no conditions explicitly set, the retrieved state shold return an empty 'filter' object
 		StateUtil.retrieveExternalState(this.oFilterBar).then(function(oExternalizedState){
@@ -182,9 +182,9 @@ sap.ui.define([
 	});
 
 	QUnit.test("applyExternalState to FilterBar without any conditions + retrieve afterwards", function(assert){
-		var done = assert.async();
+		const done = assert.async();
 
-		var oExternalState = {
+		const oExternalState = {
 			filter: {
 				"String":[{"operator":"Contains","values":["YUHUUU"]}],
 				"Boolean":[{"operator":"EQ","values":[true]}],
@@ -216,9 +216,9 @@ sap.ui.define([
 	});
 
 	QUnit.test("call 'applyExternalState' without new conditions (no change expected)", function(assert){
-		var done = assert.async();
+		const done = assert.async();
 
-		var mFilterConditions = {
+		const mFilterConditions = {
 			"String": [{ "operator": "Contains", "values": ["Test"] }],
 			"Boolean": [{ "operator": "EQ", "values": [true] }],
 			"Decimal":[{"operator":"EQ","values":["12.01"]}],
@@ -227,7 +227,7 @@ sap.ui.define([
 
 		this.oFilterBar.setFilterConditions(mFilterConditions);
 
-		var oExternalState = {
+		const oExternalState = {
 			filter: mFilterConditions,
 			items: []
 		};
@@ -248,16 +248,16 @@ sap.ui.define([
 	});
 
 	QUnit.test("call 'applyExternalState' with new conditions for existing conditions", function(assert){
-		var done = assert.async();
+		const done = assert.async();
 
-		var mFilterConditions = {
+		const mFilterConditions = {
 			"String": [{ "operator": "Contains", "values": ["Test"] }],
 			"Boolean": [{ "operator": "EQ", "values": [true] }],
 			"Decimal":[{"operator":"EQ","values":["12.01"]}],
 			"Date":[{"operator":"EQ","values":["2020-02-11"]}]
 		};
 
-		var mFilterConditionsNew = {
+		const mFilterConditionsNew = {
 			"String": [{ "operator": "Contains", "values": ["Test"] }],
 			"Boolean": [{ "operator": "EQ", "values": [false] }],//set to false --> only add one filter value as delta and not remove existing value
 			"Decimal":[{"operator":"EQ","values":["12.01"]}],
@@ -266,7 +266,7 @@ sap.ui.define([
 
 		this.oFilterBar.setFilterConditions(mFilterConditions);
 
-		var oExternalState = {
+		const oExternalState = {
 			filter: mFilterConditionsNew,
 			items: []
 		};
@@ -290,16 +290,16 @@ sap.ui.define([
 	});
 
 	QUnit.test("call 'applyExternalState' with the same conditions twice", function(assert){
-		var done = assert.async();
+		const done = assert.async();
 
-		var mFilterConditions = {
+		const mFilterConditions = {
 			"String": [{ "operator": "Contains", "values": ["Test"] }],
 			"Boolean": [{ "operator": "EQ", "values": [true] }],
 			"Decimal":[{"operator":"EQ","values":["12.01"]}],
 			"Date":[{"operator":"EQ","values":["2020-02-11"]}]
 		};
 
-		var oExternalState = {
+		const oExternalState = {
 			filter: mFilterConditions
 		};
 
@@ -328,16 +328,16 @@ sap.ui.define([
 	});
 
 	QUnit.test("call 'applyExternalState' with an empty objects --> no implict reset triggered", function(assert){
-		var done = assert.async();
+		const done = assert.async();
 
-		var mFilterConditions = {
+		const mFilterConditions = {
 			"String": [{ "operator": "Contains", "values": ["Test"] }],
 			"Boolean": [{ "operator": "EQ", "values": [true] }],
 			"Decimal":[{"operator":"EQ","values":["12.01"]}],
 			"Date":[{"operator":"EQ","values":["2020-02-11"]}]
 		};
 
-		var oExternalState = {
+		const oExternalState = {
 			filter: mFilterConditions
 		};
 
@@ -356,7 +356,7 @@ sap.ui.define([
 				assert.equal(aDirtyChanges[3].getContent().name, "Date", "The correct property is affected");
 
 				//the second time there should not be any changes
-				var oResetState = {
+				const oResetState = {
 					filter: {
 						"String": [],
 						"Boolean": [],
@@ -373,16 +373,16 @@ sap.ui.define([
 	});
 
 	QUnit.test("call 'applyExternalState' with an empty objects --> explicit reset triggered", function(assert){
-		var done = assert.async();
+		const done = assert.async();
 
-		var mFilterConditions = {
+		const mFilterConditions = {
 			"String": [{ "operator": "Contains", "values": ["Test"] }],
 			"Boolean": [{ "operator": "EQ", "values": [true] }],
 			"Decimal":[{"operator":"EQ","values":["12.01"]}],
 			"Date":[{"operator":"EQ","values":["2020-02-11"]}]
 		};
 
-		var oExternalState = {
+		const oExternalState = {
 			filter: mFilterConditions
 		};
 
@@ -401,7 +401,7 @@ sap.ui.define([
 				assert.equal(aDirtyChanges[3].getContent().name, "Date", "The correct property is affected");
 
 				//the second time there should not be any changes
-				var oResetState = {
+				const oResetState = {
 					filter: {
 						"String": [{ "operator": "Contains", "values": ["Test"], "filtered": false }],
 						"Boolean": [{ "operator": "EQ", "values": [true], "filtered": false }],
@@ -430,15 +430,15 @@ sap.ui.define([
 	/*********************************************************************************************/
 
 	QUnit.test("call 'applyExternalState' with only new items", function(assert){
-		var done = assert.async();
+		const done = assert.async();
 
-		var aItemState = [
+		const aItemState = [
 			{name: "String", position: 0},
 			{name: "Boolean", position: 1},
 			{name: "Date", position: 2}
 		];
 
-		var oExternalState = {
+		const oExternalState = {
 			filter: {},
 			items: aItemState
 		};
@@ -465,15 +465,15 @@ sap.ui.define([
 	});
 
 	QUnit.test("call 'applyExternalState' with only new items (but no position provided)", function(assert){
-		var done = assert.async();
+		const done = assert.async();
 
-		var aItemState = [
+		const aItemState = [
 			{name: "String"},
 			{name: "Boolean"},
 			{name: "Date"}
 		];
 
-		var oExternalState = {
+		const oExternalState = {
 			filter: {},
 			items: aItemState
 		};
@@ -500,22 +500,22 @@ sap.ui.define([
 	});
 
 	QUnit.test("call 'applyExternalState' and trigger 'reset' afterwards (no key specified)", function(assert){
-		var done = assert.async();
+		const done = assert.async();
 
-		var aItemState = [
+		const aItemState = [
 			{name: "String"},
 			{name: "Boolean"},
 			{name: "Date"}
 		];
 
-		var mFilterConditions = {
+		const mFilterConditions = {
 			"String": [{ "operator": "Contains", "values": ["Test"] }],
 			"Boolean": [{ "operator": "EQ", "values": [true] }],
 			"Decimal":[{"operator":"EQ","values":["12.01"]}],
 			"Date":[{"operator":"EQ","values":["2020-02-11"]}]
 		};
 
-		var oExternalState = {
+		const oExternalState = {
 			filter: mFilterConditions,
 			items: aItemState
 		};
@@ -618,9 +618,9 @@ sap.ui.define([
 	});*/
 
 	QUnit.test("call 'applyExternalState' and remove existing items", function(assert){
-		var done = assert.async();
+		const done = assert.async();
 
-		var fnCreateFilterItem = function(sPath) {
+		const fnCreateFilterItem = function(sPath) {
 			return new FilterField({
 				conditions: "{$filters>/conditions/" + sPath + "}",
 				propertyKey: sPath
@@ -632,12 +632,12 @@ sap.ui.define([
 		this.oFilterBar.addFilterItem(fnCreateFilterItem("Double"));
 		this.oFilterBar.addFilterItem(fnCreateFilterItem("Boolean"));
 
-		var aItemState = [
+		const aItemState = [
 			{name: "String", visible: false},
 			{name: "Boolean", visible: false}
 		];
 
-		var oExternalState = {
+		const oExternalState = {
 			filter: {},
 			items: aItemState
 		};
@@ -662,9 +662,9 @@ sap.ui.define([
 	});
 
 	QUnit.test("call 'applyExternalState' and reorder multiple items", function(assert){
-		var done = assert.async();
+		const done = assert.async();
 
-		var fnCreateFilterItem = function(sPath) {
+		const fnCreateFilterItem = function(sPath) {
 			return new FilterField({
 				conditions: "{$filters>/conditions/" + sPath + "}",
 				propertyKey: sPath
@@ -676,12 +676,12 @@ sap.ui.define([
 		this.oFilterBar.addFilterItem(fnCreateFilterItem("Double"));
 		this.oFilterBar.addFilterItem(fnCreateFilterItem("Boolean"));
 
-		var aItemState = [
+		const aItemState = [
 			{name: "String", position: 1},
 			{name: "Double", position: 3}
 		];
 
-		var oExternalState = {
+		const oExternalState = {
 			filter: {},
 			items: aItemState //Expected outcome: Date, String, Boolean, Double (2x move change)
 		};
@@ -709,9 +709,9 @@ sap.ui.define([
 	});
 
 	QUnit.test("call 'applyExternalState' and add items without position with existing items", function(assert){
-		var done = assert.async();
+		const done = assert.async();
 
-		var fnCreateFilterItem = function(sPath) {
+		const fnCreateFilterItem = function(sPath) {
 			return new FilterField({
 				conditions: "{$filters>/conditions/" + sPath + "}",
 				propertyKey: sPath
@@ -721,12 +721,12 @@ sap.ui.define([
 		this.oFilterBar.addFilterItem(fnCreateFilterItem("String"));
 		this.oFilterBar.addFilterItem(fnCreateFilterItem("Double"));
 
-		var aItemState = [
+		const aItemState = [
 			{name: "Date"},
 			{name: "Boolean"}
 		];
 
-		var oExternalState = {
+		const oExternalState = {
 			filter: {},
 			items: aItemState //Expected outcome: Date, String, Boolean, Double (2x move change)
 		};
@@ -755,7 +755,7 @@ sap.ui.define([
 
 	QUnit.module("API tests for Table", {
 		before: function(){
-			var sTableView = '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:mdc="sap.ui.mdc"><mdc:Table id="mdcTable" p13nMode="Column,Sort,Filter,Group,Aggregate"></mdc:Table></mvc:View>';
+			const sTableView = '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:mdc="sap.ui.mdc"><mdc:Table id="mdcTable" p13nMode="Column,Sort,Filter,Group,Aggregate"></mdc:Table></mvc:View>';
 
 			return createAppEnvironment(sTableView, "Table").then(function(mCreatedApp){
 				TableDelegate.fetchProperties = fetchProperties;
@@ -791,9 +791,9 @@ sap.ui.define([
 
 	QUnit.test("Create columns via 'applyExternalState'", function(assert){
 
-		var done = assert.async();
+		const done = assert.async();
 
-		var oState = {
+		const oState = {
 			items: [
 				{
 					name: "String"
@@ -810,7 +810,7 @@ sap.ui.define([
 			assert.equal(aChanges[1].getChangeType(), "addColumn", "Correct change type created");
 			assert.equal(this.oTable.getColumns().length, oState.items.length, "Number of created columns correct");
 
-			var oRemoveState = {
+			const oRemoveState = {
 				items: [
 					{
 						name: "String",
@@ -838,9 +838,9 @@ sap.ui.define([
 
 	QUnit.test("Create columns and sorter via 'applyExternalState'", function(assert){
 
-		var done = assert.async();
+		const done = assert.async();
 
-		var oState = {
+		const oState = {
 			sorters: [
 				{
 					name: "String",
@@ -878,9 +878,9 @@ sap.ui.define([
 
 	QUnit.test("Create different sort changes via 'applyExternalState'", function(assert){
 
-		var done = assert.async();
+		const done = assert.async();
 
-		var oState = {
+		const oState = {
 			sorters: [
 				{
 					name: "String",
@@ -921,9 +921,9 @@ sap.ui.define([
 
 	QUnit.test("Create different width/supplementaryConfig changes via 'applyExternalState'", function(assert){
 
-		var done = assert.async();
+		const done = assert.async();
 
-		var oState = {
+		const oState = {
 			supplementaryConfig: {
 				aggregations : {
 					columns: {
@@ -971,16 +971,16 @@ sap.ui.define([
 	});
 
 	QUnit.test("call 'applyExternalState' twice to create and change some filter conditions", function(assert){
-		var done = assert.async();
+		const done = assert.async();
 
-		var mFilterConditions = {
+		const mFilterConditions = {
 			"String": [{ "operator": "Contains", "values": ["Test"] }],
 			"Boolean": [{ "operator": "EQ", "values": [true] }],
 			"Decimal":[{"operator":"EQ","values":["12.01"]}],
 			"Date":[{"operator":"EQ","values":["2020-02-11"]}]
 		};
 
-		var oExternalState = {
+		const oExternalState = {
 			filter: mFilterConditions
 		};
 
@@ -991,7 +991,7 @@ sap.ui.define([
 			assert.equal(aDirtyChanges.length, 4, "The correct amount of changes has been created");
 
 			//the second time there should not be any changes
-			var oResetState = {
+			const oResetState = {
 				filter: {
 					"String": [],
 					"Date":[{"operator":"EQ","values":["2020-02-12"]}]
@@ -1010,11 +1010,11 @@ sap.ui.define([
 	});
 
 	QUnit.test("call 'applyExternalState' to create filter values but without p13nMode enabled", function(assert) {
-		var done = assert.async();
+		const done = assert.async();
 
 		this.oTable.setP13nMode(["Column","Sort"]);
 
-		var oState = {
+		const oState = {
 			sorters: [
 				{
 					name: "String",
@@ -1038,7 +1038,7 @@ sap.ui.define([
 
 	QUnit.module("API tests for Table with V4 Analytics", {
 		before: function(){
-			var sTableView = '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:mdc="sap.ui.mdc"><mdc:Table id="mdcTable" p13nMode="Column,Sort,Filter,Group,Aggregate" ' +
+			const sTableView = '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:mdc="sap.ui.mdc"><mdc:Table id="mdcTable" p13nMode="Column,Sort,Filter,Group,Aggregate" ' +
 				'delegate="{name: \'sap/ui/mdc/odata/v4/TableDelegate\', payload: {}}"></mdc:Table></mvc:View>';
 
 			return createAppEnvironment(sTableView, "V4AnalyticsTable").then(function(mCreatedApp){
@@ -1074,9 +1074,9 @@ sap.ui.define([
 
 	QUnit.test("Create different group changes via 'applyExternalState'", function(assert){
 
-		var done = assert.async();
+		const done = assert.async();
 
-		var oState = {
+		const oState = {
 			groupLevels: [
 				{
 					name: "String"
@@ -1107,9 +1107,9 @@ sap.ui.define([
 
 	QUnit.test("Create different aggregate changes via 'applyExternalState'", function(assert){
 
-		var done = assert.async();
+		const done = assert.async();
 
-		var oState = {
+		const oState = {
 			aggregations: {
 				String : {}
 			}
@@ -1136,9 +1136,9 @@ sap.ui.define([
 		}.bind(this));
 	});
 
-	var myChartDelegatefetchProperties = function (oMDCChart) {
+	const myChartDelegatefetchProperties = function (oMDCChart) {
 
-        var aMetadata = [
+        const aMetadata = [
             {
                 name: "CategoryName",
                 dataType: "String",
@@ -1202,7 +1202,7 @@ sap.ui.define([
 					return Promise.resolve(this._createMDCChartItem(sPropertyName, oChart, sRole));
 				}
 			};
-			var sChartView = '<mvc:View' +
+			const sChartView = '<mvc:View' +
 				'\t\t  xmlns:mvc="sap.ui.core.mvc"\n' +
 				'\t\t  xmlns:chart="sap.ui.mdc.chart"\n' +
 				'\t\t  xmlns:mdc="sap.ui.mdc"\n' +
@@ -1236,9 +1236,9 @@ sap.ui.define([
 
 	QUnit.test("Create / Remove items via 'applyExternalState'", function(assert){
 
-		var done = assert.async();
+		const done = assert.async();
 
-		var oState = {
+		const oState = {
 			items: [
 				{
 				  "name": "Industry",
@@ -1253,7 +1253,7 @@ sap.ui.define([
 			assert.equal(aChanges[0].getChangeType(), "addItem", "Correct change type created");
 			assert.equal(this.oChart.getItems().length, 4, "Correct amount of items");
 
-			var oRemoveState = {
+			const oRemoveState = {
 				items: [
 					{
 						"name": "Industry",
@@ -1277,9 +1277,9 @@ sap.ui.define([
 
 	QUnit.test("Change an items role via 'applyExternalState'", function(assert){
 
-		var done = assert.async();
+		const done = assert.async();
 
-		var oState = {
+		const oState = {
 			items: [
 				{
 				  "name": "Name",
@@ -1303,9 +1303,9 @@ sap.ui.define([
 
 	QUnit.test("Create / Remove sorters via 'applyExternalState'", function(assert){
 
-		var done = assert.async();
+		const done = assert.async();
 
-		var oState = {
+		const oState = {
 			sorters: [
 				{
 				  "name": "Name",
@@ -1324,7 +1324,7 @@ sap.ui.define([
 
 			assert.deepEqual(oState.sorters, this.oChart.getSortConditions().sorters, "Correct SortConditions created");
 
-			var oRemoveState = {
+			const oRemoveState = {
 				sorters: [
 				  {
 					  "name": "Date",
@@ -1343,9 +1343,9 @@ sap.ui.define([
 
 	QUnit.test("Change chart type via 'applyExternalState'", function(assert){
 
-		var done = assert.async();
+		const done = assert.async();
 
-		var oState = {
+		let oState = {
 			"supplementaryConfig": {
 				"properties": {
 					"chartType": "pie"
@@ -1390,8 +1390,8 @@ sap.ui.define([
 
 	QUnit.test("Ceck attaching & detaching", function(assert) {
 
-		var fnHandler1 = function(){};
-		var fnHandler2 = function(){};
+		const fnHandler1 = function(){};
+		const fnHandler2 = function(){};
 
 		StateUtil.attachStateChange(fnHandler1);
 		StateUtil.attachStateChange(fnHandler2);
@@ -1454,7 +1454,7 @@ sap.ui.define([
 			};
 		},
 		before: function(){
-			var sTableView = '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:mdc="sap.ui.mdc"><mdc:Table id="mdcTable2" p13nMode="Column,Sort,Filter,Group"></mdc:Table></mvc:View>';
+			const sTableView = '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:mdc="sap.ui.mdc"><mdc:Table id="mdcTable2" p13nMode="Column,Sort,Filter,Group"></mdc:Table></mvc:View>';
 			TableDelegate.getSupportedP13nModes = function() {
 				return ["Column","Sort","Filter","Group"];
 			};
@@ -1490,7 +1490,7 @@ sap.ui.define([
 
 	QUnit.test("Ceck empty diff between identical states", function(assert) {
 
-		var done = assert.async();
+		const done = assert.async();
 
 		StateUtil.retrieveExternalState(this.oTable).then(function(oInitialState){
 			// 1) Store the initial state before appliance begins
@@ -1514,11 +1514,11 @@ sap.ui.define([
 
 	QUnit.test("Ceck empty diff after appliance", function(assert) {
 
-		var done = assert.async();
+		const done = assert.async();
 
-		var oSampleState = this.getSampleState();
+		const oSampleState = this.getSampleState();
 
-		var oInitialState;
+		let oInitialState;
 
 		StateUtil.retrieveExternalState(this.oTable).then(function(oState){
 			// 1) Store the initial state before appliance begins
@@ -1547,7 +1547,7 @@ sap.ui.define([
 
 	QUnit.test("Ceck in case the position explicitly changed through an insert", function(assert) {
 
-		var done = assert.async();
+		const done = assert.async();
 
 		StateUtil.diffState(this.oTable, {
 			items: [{
@@ -1574,9 +1574,9 @@ sap.ui.define([
 
 	QUnit.test("Ceck diff takes position into account", function(assert) {
 
-		var done = assert.async();
+		const done = assert.async();
 
-		var oInitialState = {
+		const oInitialState = {
 			items: [{
 				name: "Single"
 			},{
@@ -1588,7 +1588,7 @@ sap.ui.define([
 			}]
 		};
 
-		var oNewState = {
+		const oNewState = {
 			items: [
 			{
 				name: "Double"
@@ -1616,9 +1616,9 @@ sap.ui.define([
 
 	QUnit.test("Ceck only diff returned between two different states", function(assert) {
 
-		var done = assert.async();
+		const done = assert.async();
 
-		var oInitialState = this.getSampleState();
+		const oInitialState = this.getSampleState();
 
 		//1) initial state has one less item
 		oInitialState.items.pop();
@@ -1627,7 +1627,7 @@ sap.ui.define([
 		delete oInitialState.filter.String;
 
 		//--> oNewState has one item change and one filter change in addition, the two changes done above should be the diff
-		var oNewState = this.getSampleState();
+		const oNewState = this.getSampleState();
 
 		StateUtil.diffState(this.oTable, oInitialState, oNewState)
 		.then(function(oStateDiff){
@@ -1643,12 +1643,12 @@ sap.ui.define([
 
 	QUnit.test("Check diff in case information gets removed", function(assert) {
 
-		var done = assert.async();
+		const done = assert.async();
 
-		var oInitialState = this.getSampleState();
+		const oInitialState = this.getSampleState();
 
 		//--> oNewState has a filter removed
-		var oNewState = this.getSampleState();
+		const oNewState = this.getSampleState();
 		delete oNewState.filter.String;//new state has one less filter
 
 		//we expect the diff to only return that one filter got removed

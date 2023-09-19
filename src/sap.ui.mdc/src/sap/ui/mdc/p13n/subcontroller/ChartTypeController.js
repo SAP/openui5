@@ -7,7 +7,7 @@ sap.ui.define([
 ], function (BaseController) {
 	"use strict";
 
-    var ChartTypeController = BaseController.extend("sap.ui.mdc.p13n.subcontroller.ChartTypeController", {
+    const ChartTypeController = BaseController.extend("sap.ui.mdc.p13n.subcontroller.ChartTypeController", {
         constructor: function() {
 			BaseController.apply(this, arguments);
 			this._bResetEnabled = true;
@@ -24,14 +24,14 @@ sap.ui.define([
 
     ChartTypeController.prototype.getDelta = function(mPropertyBag) {
 
-        var sNewType;
+        let sNewType;
         if (mPropertyBag.changedState && mPropertyBag.changedState.properties) {
             sNewType = mPropertyBag.changedState.properties.chartType;
         }
 
-        var sOldType = this.getAdaptationControl().getChartType();
+        const sOldType = this.getAdaptationControl().getChartType();
 
-        var aChartTypeChanges = [];
+        let aChartTypeChanges = [];
 
         if (sNewType && sNewType !== sOldType) {
             aChartTypeChanges = [{

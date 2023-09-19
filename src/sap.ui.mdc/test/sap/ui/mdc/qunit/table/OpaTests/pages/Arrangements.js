@@ -16,7 +16,7 @@ sap.ui.define([
 	 * @private
 	 * @alias sap.ui.mdc.qunit.table.OpaTests.pages.Arrangements
 	 */
-	var Arrangements = Opa5.extend("sap.ui.mdc.tableOpaTests.pages.Arrangements", {
+	const Arrangements = Opa5.extend("sap.ui.mdc.tableOpaTests.pages.Arrangements", {
 		iStartMyApp: function(sAppFolderName) {
 			return this.iStartMyAppInAFrame({
 				source: "test-resources/sap/ui/mdc/qunit/table/OpaTests/" + sAppFolderName + "/start.html",

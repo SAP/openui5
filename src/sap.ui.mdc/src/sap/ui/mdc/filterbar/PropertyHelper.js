@@ -31,7 +31,7 @@ sap.ui.define([
 	 * @since 1.95
 	 * @alias sap.ui.mdc.filterbar.PropertyHelper
 	 */
-	var PropertyHelper = PropertyHelperBase.extend("sap.ui.mdc.filterbar.PropertyHelper", {
+	const PropertyHelper = PropertyHelperBase.extend("sap.ui.mdc.filterbar.PropertyHelper", {
 		constructor: function(aProperties, oParent) {
 			PropertyHelperBase.call(this, aProperties, oParent, {
 				required: { // Whether there must be a filter condition for this property before firing a "search" event.
@@ -58,9 +58,9 @@ sap.ui.define([
 
 		if (!oProperty.typeConfig) {
 
-			var oParent = this.getParent();
+			const oParent = this.getParent();
 			if (oParent && oParent._oDelegate) {
-				var oTypeUtil = oParent._oDelegate.getTypeMap(oParent);
+				const oTypeUtil = oParent._oDelegate.getTypeMap(oParent);
 				try {
 					oProperty.typeConfig = oTypeUtil.getTypeConfig(oProperty.dataType, oProperty.formatOptions, oProperty.constraints);
 				} catch (ex) {
