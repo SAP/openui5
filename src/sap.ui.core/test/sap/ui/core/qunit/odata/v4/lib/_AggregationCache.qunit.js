@@ -2459,22 +2459,26 @@ sap.ui.define([
 					cache : oGroupLevelCache,
 					groupLevelCount : 7,
 					spliced : [{
-						"@$ui5._" : {predicate : "('A')"}
+						"@$ui5._" : {predicate : "('A')"},
+						"@$ui5.node.level" : 10
 					}, {
-						"@$ui5._" : {placeholder : true, predicate : "n/a"}
+						"@$ui5._" : {placeholder : true, predicate : "n/a"},
+						"@$ui5.node.level" : 11
 					}, {
-						"@$ui5._" : {expanding : true, predicate : "('C')"}
+						"@$ui5._" : {expanding : true, predicate : "('C')"},
+						"@$ui5.node.level" : 12
 					}]
 				},
 				"@$ui5.node.isExpanded" : false,
-				"@$ui5.node.level" : 0
+				"@$ui5.node.level" : 5
 			},
 			oPromise,
 			aSpliced,
 			oUpdateAllExpectation;
 
 		oGroupNode["@$ui5._"].spliced[200000] = {
-			"@$ui5._" : {predicate : "('D')"}
+			"@$ui5._" : {predicate : "('D')"},
+			"@$ui5.node.level" : 10
 		};
 		aSpliced = oGroupNode["@$ui5._"].spliced.slice();
 		if (bStale) {
@@ -2525,11 +2529,15 @@ sap.ui.define([
 			assert.deepEqual(Object.keys(oCache.aElements),
 				["0", "1", "2", "3", "4", "200002", "200003", "200004", "$byPredicate", "$count"]);
 			assert.strictEqual(oCache.aElements[2], aSpliced[0]);
+			assert.strictEqual(aSpliced[0]["@$ui5.node.level"], 6);
 			assert.strictEqual(oCache.aElements[3], aSpliced[1]);
+			assert.strictEqual(aSpliced[1]["@$ui5.node.level"], 7);
 			assert.strictEqual(oCache.aElements[4], aSpliced[2]);
+			assert.strictEqual(aSpliced[2]["@$ui5.node.level"], 8);
 			assert.strictEqual(_Helper.hasPrivateAnnotation(aSpliced[2], "expanding"), bStale,
 				"deleted only if not stale");
 			assert.strictEqual(oCache.aElements[200002], aSpliced[200000]);
+			assert.strictEqual(aSpliced[200000]["@$ui5.node.level"], 6);
 
 			// check moved nodes
 			assert.strictEqual(oCache.aElements[200003], aElements[2]);
