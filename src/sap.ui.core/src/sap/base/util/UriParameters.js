@@ -42,6 +42,7 @@ sap.ui.define([
 	}
 
 	/**
+	 * @deprecated as of version 1.119. See class description for details.
 	 * @class Provides access to the individual parameters of a URL query string.
 	 *
 	 * This class parses the query string from a URL and provides access to the values of individual parameters.
@@ -50,9 +51,6 @@ sap.ui.define([
 	 * of all values (<code>getAll()</code>)} for a parameter. Another method allows to {@link #keys iterate over
 	 * all parameter names (<code>keys()</code>)}.
 	 *
-	 * The signature and behavior of those methods is aligned with the corresponding methods of the upcoming Web API
-	 * <code>URLSearchParams</code>.
-	 *
 	 * <h3>Decoding</h3>
 	 *
 	 * The constructor and the factory methods expect percentage encoded input whereas all other APIs expect and
@@ -60,25 +58,28 @@ sap.ui.define([
 	 * by a blank (0x20) and the resulting strings are percentage decoded (<code>decodeURIComponent</code>).
 	 *
 	 *
-	 * <h3>Future Migration</h3>
+	 * <h3>Deprecation</h3>
 	 *
-	 * <b>Note:</b> To simplify a future migration from this class to the standard <code>URLSearchParams</code>
-	 * API, consuming code should follow some recommendations:
+	 * This class is deprecated in favor of the URL web standard classes <code>URLSearchParams</code> / <code>URL</code>.
+	 *
+	 * <code>UriParameters.fromQuery(input)</code> can be migrated to <code>new URLSearchParams(input)</code>
+	 *
+	 * <code>UriParameters.fromURL(input)</code> can be migrated to <code>new URL(input).searchParams</code>
+	 *
+	 * <h4>Caveats</h4>
+	 *
+	 * The API has already been designed to be a drop-in replacement but there are some important caveats to consider when switching to the
+	 * standard APIs <code>URLSearchParams</code> / <code>URL</code>:
 	 * <ul>
-	 * <li>do not use the constructor, either use {@link #.fromURL UriParameters.fromURL} when the input is a full URL,
-	 *     or use {@link #.fromQuery UriParameters.fromQuery} when the input only contains the query part of an URL
-	 *     (e.g. <code>location.search</code>).</li>
-	 * <li>do not use the <code>get</code> method with the second parameter <code>bAll</code>; use the <code>getAll</code>
-	 *     method instead</li>
-	 * <li>do not access the internal property <code>mParams</code> (you never should access internal properties of
+	 * <li>In some edge cases, especially for incomplete/invalid encoding, decoding behaves differently. Decoding in <code>UriParameters</code> is described in the section above.
+	 *     For details about the encoding/decoding of <code>URLSearchParams</code>, see the WHATWG URL Standard ({@link https://url.spec.whatwg.org}).</li>
+	 * <li>The <code>get</code> method's second parameter, <code>bAll</code>, is not available;
+	 *     use the <code>getAll</code> method instead.</li>
+	 * <li>The internal <code>mParams</code> property is not available anymore (you should never access internal properties of
 	 *     UI5 classes or objects). With the predecessor of this API, access to <code>mParams</code> was often used
-	 *     to check whether a parameter is defined at all. Using the new <code>has</code> method or checking the
+	 *     to check whether a parameter is defined at all. Using the <code>has</code> method or checking the
 	 *     result of <code>get</code> against <code>null</code> serves the same purpose.</li>
 	 * </ul>
-	 * Callers using <code>UriParameters.fromQuery(input)</code> can be migrated to <code>new URLSearchParams(input)</code>
-	 * once the new API is available in all supported browsers. Callers using <code>UriParameters.fromURL(input)</code>
-	 * can be migrated to <code>new URL(input).searchParams</code> then.
-	 *
 	 * @since 1.68
 	 * @alias module:sap/base/util/UriParameters
 	 * @param {string} [sURL] URL with parameters
@@ -121,9 +122,11 @@ sap.ui.define([
 
 		/**
 		 * Internal implementation of get
+		 * @param {string} sName parameter name
+		 * @returns {string|null} value
 		 * @private
 		 */
-		this._get = function(sName, bAll) {
+		this._get = function(sName) {
 			return sName in mParams ? mParams[sName][0] : null;
 		};
 
@@ -152,7 +155,7 @@ sap.ui.define([
 		/**
 		 * Returns an iterator for all contained parameter names.
 		 *
-		 * @example <caption>Using keys() iterator without ES6 syntax</caption>
+		 * @example <caption>Using keys() iterator</caption>
 		 *
 		 * var params = UriParameters.fromQuery("?a=1&b=2&c=3");
 		 * var keys = Array.from(params.keys()); // ["a", "b", "c"]
