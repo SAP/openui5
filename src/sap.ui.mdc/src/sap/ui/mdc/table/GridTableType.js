@@ -187,11 +187,10 @@ sap.ui.define([
 			SingleMaster: "RowOnly"
 		};
 
-		return Object.assign({}, TableTypeBase.prototype.getTableSettings.apply(this, arguments), {
+		const mSettings = {
 			enableBusyIndicator: true,
 			enableColumnReordering: false,
 			threshold: this.getThreshold(),
-			cellClick: [this._onCellClick, this],
 			noData: oTable._getNoDataText(),
 			extension: [oTable._oToolbar],
 			ariaLabelledBy: [oTable._oTitle],
@@ -203,7 +202,13 @@ sap.ui.define([
 					return mSelectionBehaviorMap[sSelectionMode]; // Default is "RowSelector"
 				}
 			}
-		});
+		};
+
+		if (oTable.hasListeners("rowPress")) {
+			mSettings.cellClick = [this._onCellClick, this];
+		}
+
+		return Object.assign({}, TableTypeBase.prototype.getTableSettings.apply(this, arguments), mSettings);
 	};
 
 	GridTableType.prototype._onCellClick = function(oEvent) {
@@ -359,6 +364,22 @@ sap.ui.define([
 		this.callHook("Press", this._oRowActionItem, {
 			bindingContext: oEvent.getParameter("row").getBindingContext()
 		});
+	};
+
+	GridTableType.prototype.prepareRowPress = function() {
+		const oGridTable = this.getInnerTable();
+		if (oGridTable && !oGridTable.hasListeners("cellClick")) {
+			// Only add cellClick listener, if none has been registered yet
+			oGridTable.attachEvent("cellClick", this._onCellClick, this);
+		}
+	};
+
+	GridTableType.prototype.cleanupRowPress = function() {
+		const oTable = this.getTable();
+		if (!oTable.hasListeners("rowPress")) {
+			// Only detach cellClick listener, if table has no rowPress event listener anymore
+			this.getInnerTable()?.detachEvent("cellClick", this._onCellClick, this);
+		}
 	};
 
 	GridTableType.prototype.removeToolbar = function() {

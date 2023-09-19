@@ -192,6 +192,8 @@ sap.ui.define([
 	TableTypeBase.prototype.removeToolbar = function() {};
 	TableTypeBase.prototype.scrollToIndex = function(iIndex) {return Promise.reject();};
 	TableTypeBase.prototype.updateRowSettings = function() {};
+	TableTypeBase.prototype.prepareRowPress = function() {};
+	TableTypeBase.prototype.cleanupRowPress = function() {};
 	TableTypeBase.prototype.createTable = function(sId) {};
 	TableTypeBase.prototype.getRowBinding = function() {};
 	TableTypeBase.prototype.bindRows = function(oBindingInfo) {};

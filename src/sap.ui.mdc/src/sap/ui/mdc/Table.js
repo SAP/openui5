@@ -576,7 +576,19 @@ sap.ui.define([
 				 *
 				 * @since 1.118
 				 */
-				contextMenu : {type : "sap.ui.core.IContextMenu", multiple : false}
+				contextMenu : {type : "sap.ui.core.IContextMenu", multiple : false},
+
+				/**
+				 * Defines an aggregation for the <code>CellSelector</code> plugin that provides cell selection capabilities to the table.
+				 *
+				 * <b>Note:</b> The <code>CellSelector</code> is currently only available in combination with the <code>GridTableType</code>. Please refer to
+				 * {@link sap.m.plugins.CellSelector} see the addiditional restrictions.
+				 * @since 1.119
+				 */
+				cellSelector: {
+					type: "sap.m.plugins.CellSelector",
+					multiple: false
+				}
 			},
 			associations: {
 				/**
@@ -822,18 +834,35 @@ sap.ui.define([
 		return this._oFullInitialize.promise;
 	};
 
-	Table.prototype.getDataStateIndicatorPluginOwner = function(oDataStateIndicator) {
-		return this._oTable || this._oFullInitialize.promise;
-	};
-
-	Table.prototype.getCopyProviderPluginOwner = function() {
-		return this._oTable || this._oFullInitialize.promise;
-	};
+	/**
+	 * Plugin owner methods for plugins applied to MDCTable.
+	 */
+	["CopyProvider", "CellSelector", "DataStateIndicator"].forEach((sPlugin) => {
+		Table.prototype[`get${sPlugin}PluginOwner`] = function() {
+			return this._oTable || this._oFullInitialize?.promise;
+		};
+	});
 
 	Table.prototype.setCopyProvider = function(oCopyProvider) {
 		this.setAggregation("copyProvider", oCopyProvider, true);
 		if (oCopyProvider && this._oToolbar && !Core.byId(this.getId() + "-copy")) {
 			this._oToolbar.insertEnd(this._getCopyButton(), 0);
+		}
+		return this;
+	};
+
+	Table.prototype.attachEvent = function(sEventId) {
+		Control.prototype.attachEvent.apply(this, arguments);
+		if (sEventId == "rowPress") {
+			this._getType().prepareRowPress();
+		}
+		return this;
+	};
+
+	Table.prototype.detachEvent = function(sEventId) {
+		Control.prototype.detachEvent.apply(this, arguments);
+		if (sEventId == "rowPress") {
+			this._getType().cleanupRowPress();
 		}
 		return this;
 	};
