@@ -1394,12 +1394,13 @@ sap.ui.define([
 			let oContent = aContent && aContent.length > 0 && aContent[0];
 			assert.ok(oContent instanceof TimePicker, "TimePicker rendered");
 			assert.equal(oContent.getValue(), "19:00:00", "Value set on TimePicker control");
-			assert.equal(jQuery(oContent.getFocusDomRef()).val(), " 7:00:00 PM", "Value shown on TimePicker control");
+			// \u202f is a Narrow No-Break Space which has been introduced with CLDR version 43
+			assert.equal(jQuery(oContent.getFocusDomRef()).val(), " 7:00:00\u202fPM", "Value shown on TimePicker control");
 
 			aContent = oFieldDisplay.getAggregation("_content");
 			oContent = aContent && aContent.length > 0 && aContent[0];
 			assert.equal(oContent.getMetadata().getName(), "sap.m.Text", "sap.m.Text is used");
-			assert.equal(oContent.getText(), "=7:00:00 PM", "Text set on Text control");
+			assert.equal(oContent.getText(), "=7:00:00\u202fPM", "Text set on Text control");
 			fnDone();
 		}, 0);
 
@@ -1428,7 +1429,8 @@ sap.ui.define([
 				aContent = oFieldDisplay.getAggregation("_content");
 				oContent = aContent && aContent.length > 0 && aContent[0];
 				assert.equal(oContent.getMetadata().getName(), "sap.m.Text", "sap.m.Text is used");
-				assert.equal(oContent.getText(), "=Nov 7, 2017, 1:01:24 PM", "Text set on Text control");
+				// \u202f is a Narrow No-Break Space which has been introduced with CLDR version 43
+				assert.equal(oContent.getText(), "=Nov 7, 2017, 1:01:24\u202fPM", "Text set on Text control");
 				fnDone();
 			}, 0);
 		});

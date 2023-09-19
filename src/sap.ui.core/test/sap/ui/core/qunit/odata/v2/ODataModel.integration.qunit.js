@@ -5039,7 +5039,7 @@ usePreliminaryContext : false}}">\
 				}]
 			})
 			.expectValue("connectionID", ["10"])
-			.expectValue("flightDate", ["5/30/15, 1:47 PM"])
+			.expectValue("flightDate", ["5/30/15, 1:47\u202FPM"])
 			.expectMessage(oFlight10PriceError, "/FlightCollection",
 				"/CarrierCollection('1')/carrierFlights")
 			.expectMessage(oFlight20PriceWarning, "/FlightCollection",
@@ -5056,7 +5056,7 @@ usePreliminaryContext : false}}">\
 			});
 		}).then(function (oFilter) {
 			that.expectValue("connectionID", ["20"])
-				.expectValue("flightDate", ["6/30/15, 1:47 PM"]);
+				.expectValue("flightDate", ["6/30/15, 1:47\u202FPM"]);
 
 			oItemsBinding.filter(oFilter);
 
@@ -8250,11 +8250,11 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				ID : "1",
 				TimezoneID : "America/New_York"
 			}, {"sap-message" : getMessageHeader(oDateWarning)})
-			.expectValue("dateAndTime", "Jan 17, 2022, 4:54:48 AM")
+			.expectValue("dateAndTime", "Jan 17, 2022, 4:54:48\u202FAM")
 			.expectValue("date", "Jan 17, 2022")
-			.expectValue("time", "4:54:48 AM")
+			.expectValue("time", "4:54:48\u202FAM")
 			.expectValue("timezone", "Americas, New York")
-			.expectValue("default", "Jan 17, 2022, 4:54:48 AM Americas, New York")
+			.expectValue("default", "Jan 17, 2022, 4:54:48\u202FAM Americas, New York")
 			.expectMessage(oDateWarning, "/DateTimeWithTimezoneSet('1')/")
 			.expectValueState("dateAndTime", "Warning", "Foo")
 			.expectValueState("date", "Warning", "Foo")
@@ -20081,7 +20081,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				]
 			})
 			.expectValue("SalesOrderID", ["1", "2"])
-			.expectValue("CreatedAt", ["Jan 25, 2023, 12:00:00 AM", "Jan 29, 2023, 11:00:00 PM"]);
+			.expectValue("CreatedAt", ["Jan 25, 2023, 12:00:00\u202FAM", "Jan 29, 2023, 11:00:00\u202FPM"]);
 
 		return this.createView(assert, sView, mModels).then(function () {
 			that.oView.byId("DateRangeSelection").setValue("Jan 30, 2023 - Jan 31, 2023");
@@ -20089,7 +20089,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			return that.waitForChanges(assert);
 		}).then(function () {
 			that.expectValue("SalesOrderID", ["3"])
-				.expectValue("CreatedAt", ["Jan 31, 2023, 11:00:00 PM"]);
+				.expectValue("CreatedAt", ["Jan 31, 2023, 11:00:00\u202FPM"]);
 
 			// code under test
 			that.oView.byId("Table").getBinding("items").filter(new Filter({

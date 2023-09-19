@@ -120,7 +120,8 @@ sap.ui.define([
 
 		assert.ok(Util.calcTypeWidth(new DateTime()) > Util.calcTypeWidth(new Time()) + Util.calcTypeWidth(new DateType(null, { displayFormat : "Date" })));
 
-		assert.equal(Util.calcTypeWidth(new TimeOfDay()), Util.measureText("10:47:58 PM"));
+		// \u202f is a Narrow No-Break Space which has been introduced with CLDR version 43
+		assert.equal(Util.calcTypeWidth(new TimeOfDay()), Util.measureText("10:47:58\u202fPM"));
 
 		assert.ok(Util.calcTypeWidth(new DateTimeWithTimezone()) > Util.calcTypeWidth(new DateTime()), "Column with timezone has a higher width");
 		assert.ok(Util.calcTypeWidth(new DateTimeWithTimezone()) > Util.calcTypeWidth(new DateTimeWithTimezone({

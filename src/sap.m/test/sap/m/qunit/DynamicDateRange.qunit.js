@@ -877,8 +877,8 @@ sap.ui.define([
 			.getAggregation('content')[0]
 			.getText();
 
-		//Check the label.
-		assert.strictEqual(sLabelText, "Selected: Jan 8, 2023, 12:12:37 AM – Jan 8, 2023, 12:13:37 AM", "correct label for last minute");
+		//Check the label. Char code \u202f is a Narrow No-Break Space and \u2009 is a thin space (both introduced with CLDR version 43), \u2013 is a dash
+		assert.strictEqual(sLabelText, "Selected: Jan 8, 2023, 12:12:37\u202fAM\u2009\u2013\u2009Jan 8, 2023, 12:13:37\u202fAM", "correct label for last minute");
 
 		oDDR.setStandardOptions([]);
 		oDDR.addStandardOption("LASTHOURS");
@@ -892,8 +892,8 @@ sap.ui.define([
 			.getAggregation('content')[0]
 			.getText();
 
-		//Check the label.
-		assert.strictEqual(sLabelText, "Selected: Jan 7, 2023, 11:13:37 PM – Jan 8, 2023, 12:13:37 AM", "correct label for last hour");
+		//Check the label. Char code \u202f is a Narrow No-Break Space and \u2009 is a thin space (both introduced with CLDR version 43), \u2013 is a dash
+		assert.strictEqual(sLabelText, "Selected: Jan 7, 2023, 11:13:37\u202fPM\u2009\u2013\u2009Jan 8, 2023, 12:13:37\u202fAM", "correct label for last hour");
 
 		//cleanup
 		oDDR.destroy();
@@ -908,9 +908,9 @@ sap.ui.define([
 		//act
 		aResultRange = DynamicDateRange.toDates({ operator: "DATE", values: [UI5Date.getInstance(2021, 8, 23)] });
 
-		// assert
-		assert.equal(oDateFormatter.format(aResultRange[0]), "Sep 23, 2021, 12:00:00 AM", "correct start date");
-		assert.equal(oDateFormatter.format(aResultRange[1]), "Sep 23, 2021, 11:59:59 PM", "correct end date");
+		// assert; \u202f is a Narrow No-Break Space which has been introduced with CLDR version 43
+		assert.equal(oDateFormatter.format(aResultRange[0]), "Sep 23, 2021, 12:00:00\u202fAM", "correct start date");
+		assert.equal(oDateFormatter.format(aResultRange[1]), "Sep 23, 2021, 11:59:59\u202fPM", "correct end date");
 	});
 
 	QUnit.test("toDates - DATERANGE", function(assert) {
@@ -921,9 +921,9 @@ sap.ui.define([
 		//act
 		aResultRange = DynamicDateRange.toDates({ operator: "DATERANGE", values: [UI5Date.getInstance(2021, 8, 23), UI5Date.getInstance(2021, 8, 24)] });
 
-		// assert
-		assert.equal(oDateFormatter.format(aResultRange[0]), "Sep 23, 2021, 12:00:00 AM", "correct start date");
-		assert.equal(oDateFormatter.format(aResultRange[1]), "Sep 24, 2021, 11:59:59 PM", "correct end date");
+		// assert; \u202f is a Narrow No-Break Space which has been introduced with CLDR version 43
+		assert.equal(oDateFormatter.format(aResultRange[0]), "Sep 23, 2021, 12:00:00\u202fAM", "correct start date");
+		assert.equal(oDateFormatter.format(aResultRange[1]), "Sep 24, 2021, 11:59:59\u202fPM", "correct end date");
 	});
 
 	QUnit.test("valueHelpUITypes objects lifecycle", function(assert) {
@@ -1053,8 +1053,8 @@ sap.ui.define([
 		//act
 		oResult = DynamicDateRange.toDates({ operator: "DATETIME", values: [oDate] });
 
-		// assert
-		assert.equal(oDateFormatter.format(oResult[0]), "Dec 20, 2021, 3:50:00 PM", "correct date/time");
+		// assert; \u202f is a Narrow No-Break Space which has been introduced with CLDR version 43
+		assert.equal(oDateFormatter.format(oResult[0]), "Dec 20, 2021, 3:50:00\u202fPM", "correct date/time");
 	});
 
 	QUnit.test("valueHelpUITypes objects lifecycle", function(assert) {
@@ -1175,8 +1175,8 @@ sap.ui.define([
 		//act
 		oResult = this.ddr.toDates({ operator: "DATETIMERANGE", values: [oDate, oDate2] });
 
-		// assert
-		assert.equal(oDateFormatter.format(oResult[0]) + " - " + oDateFormatter.format(oResult[1]), "Dec 20, 2021, 3:50:00 PM - Dec 29, 2021, 3:50:00 PM", "correct date/time");
+		// assert; \u202f is a Narrow No-Break Space which has been introduced with CLDR version 43
+		assert.equal(oDateFormatter.format(oResult[0]) + " - " + oDateFormatter.format(oResult[1]), "Dec 20, 2021, 3:50:00\u202fPM - Dec 29, 2021, 3:50:00\u202fPM", "correct date/time");
 	});
 
 	QUnit.test("valueHelpUITypes objects lifecycle", function(assert) {

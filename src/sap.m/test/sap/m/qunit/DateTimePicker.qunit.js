@@ -120,11 +120,12 @@ sap.ui.define([
 		assert.ok(!oDTP1.getDateValue(), "DTP1: no DateValue");
 		assert.equal(oDTP2.getValue(), "2016-02-17,10-11-12", "DTP2: Value in internal format set");
 		assert.equal(oDTP2.getDateValue().getTime(), UI5Date.getInstance("2016", "01", "17", "10", "11", "12").getTime(), "DTP2: DateValue set");
-		assert.equal(oDTP3.getValue(), "Feb 17, 2016, 10:11:12 AM", "DTP3: Value in internal format set");
+		// \u202f is a Narrow No-Break Space which has been introduced with CLDR version 43
+		assert.equal(oDTP3.getValue(), "Feb 17, 2016, 10:11:12\u202fAM", "DTP3: Value in internal format set");
 		assert.equal(oDTP3.getDateValue().getTime(), UI5Date.getInstance("2016", "01", "17", "10", "11", "12").getTime(), "DTP3: DateValue set");
-		assert.equal(oDTP4.getValue(), "Feb 17, 2016, 10:11:12 AM", "DTP4: Value in internal format set");
+		assert.equal(oDTP4.getValue(), "Feb 17, 2016, 10:11:12\u202fAM", "DTP4: Value in internal format set");
 		assert.equal(oDTP4.getDateValue().getTime(), UI5Date.getInstance("2016", "01", "17", "10", "11", "12").getTime(), "DTP4: DateValue set");
-		assert.equal(oDTP6.getValue(), "Oct 25, 2019, 11:12:13 AM", "oDTP6: Default Value Format Set");
+		assert.equal(oDTP6.getValue(), "Oct 25, 2019, 11:12:13\u202fAM", "oDTP6: Default Value Format Set");
 	});
 
 	QUnit.test("Calendar instance is created poroperly", function(assert) {
@@ -235,8 +236,8 @@ sap.ui.define([
 
 		oInputRef = oDTP.$("inner");
 
-		// assert
-		assert.equal(oInputRef.val(), "Feb 18, 2016, 10:00:00 AM", "correct displayed value");
+		// assert; \u202f is a Narrow No-Break Space which has been introduced with CLDR version 43
+		assert.equal(oInputRef.val(), "Feb 18, 2016, 10:00:00\u202fAM", "correct displayed value");
 
 		// act - type into the input
 		oInputRef.val("Feb 18, 2016, 9:00:00 AM");
@@ -274,8 +275,9 @@ sap.ui.define([
 	QUnit.test("date format", function(assert) {
 		assert.ok(!jQuery("#DTP1").find("input").val(), "DTP1: empty date");
 		assert.equal(jQuery("#DTP2").find("input").val(), "17+02+2016:10+11", "DTP2: defined output format used");
-		assert.equal(jQuery("#DTP3").find("input").val(), "2/17/16, 10:11 AM", "DTP3: defined output format used");
-		assert.equal(jQuery("#DTP4").find("input").val(), "Feb 17, 2016, 10:11:12 AM", "DTP4: defined output format from binding used");
+		// \u202f is a Narrow No-Break Space which has been introduced with CLDR version 43
+		assert.equal(jQuery("#DTP3").find("input").val(), "2/17/16, 10:11\u202fAM", "DTP3: defined output format used");
+		assert.equal(jQuery("#DTP4").find("input").val(), "Feb 17, 2016, 10:11:12\u202fAM", "DTP4: defined output format from binding used");
 	});
 
 	QUnit.test("placeholder", function(assert) {
@@ -573,8 +575,9 @@ sap.ui.define([
 			assert.ok(!jQuery("#DTP3-cal").is(":visible"), "calendar is invisible");
 			assert.ok(!jQuery("#DTP3-Clocks").is(":visible"), "Silder is invisible");
 			assert.equal(sId, "DTP3", "Change event fired");
-			assert.equal(sValue, "Feb 10, 2016, 11:11:00 AM", "Value in internal format priovided");
-			assert.equal(oDTP3.getValue(), "Feb 10, 2016, 11:11:00 AM", "Value in internal format set");
+			// \u202f is a Narrow No-Break Space which has been introduced with CLDR version 43
+			assert.equal(sValue, "Feb 10, 2016, 11:11:00\u202fAM", "Value in internal format priovided");
+			assert.equal(oDTP3.getValue(), "Feb 10, 2016, 11:11:00\u202fAM", "Value in internal format set");
 			assert.equal(oDTP3.getDateValue().getTime(), UI5Date.getInstance("2016", "01", "10", "11", "11").getTime(), "DateValue set");
 			done();
 		});
@@ -816,7 +819,8 @@ sap.ui.define([
 			}).setModel(oModel);
 
 		assert.equal(oDateTimePicker._parseValue("Jun 6, 2019, 3:40:46 AM").getTime(), oDate.getTime(), "Value successfully parsed");
-		assert.equal(oDateTimePicker._formatValue(oDate), "Jun 6, 2019, 3:40:46 AM", "Date successfully formatted");
+		// \u202f is a Narrow No-Break Space which has been introduced with CLDR version 43
+		assert.equal(oDateTimePicker._formatValue(oDate), "Jun 6, 2019, 3:40:46\u202fAM", "Date successfully formatted");
 
 	});
 
@@ -1168,8 +1172,8 @@ sap.ui.define([
 		}).placeAt("qunit-fixture");
 		oCore.applyChanges();
 
-		// assert
-		assert.equal(oDTP.$("inner").val(), "Jum. I 9, 1437 AH, 10:00:00 AM", "correct displayed value");
+		// assert; \u202f is a Narrow No-Break Space which has been introduced with CLDR version 43
+		assert.equal(oDTP.$("inner").val(), "Jum. I 9, 1437 AH, 10:00:00\u202fAM", "correct displayed value");
 
 		// act
 		oDTP.setTimezone("America/New_York");
@@ -1178,7 +1182,8 @@ sap.ui.define([
 		// assert
 		assert.equal(oDTP.getValue(), "Feb 18, 2016, 10:00:00 AM", "value is not changed despite the DTP timezone change");
 		assert.equal(oDTP.getTimezone(), "America/New_York", "the value changes when the time zone changes");
-		assert.equal(oDTP.$("inner").val(), "Jum. I 9, 1437 AH, 10:00:00 AM", "correct displayed value");
+		// \u202f is a Narrow No-Break Space which has been introduced with CLDR version 43
+		assert.equal(oDTP.$("inner").val(), "Jum. I 9, 1437 AH, 10:00:00\u202fAM", "correct displayed value");
 		assert.equal(oDTP.getDateValue().getTime(), UI5Date.getInstance(oDTP.getValue()).getTime(), "value is not changed despite the DTP timezone change");
 
 		// clean
@@ -1461,9 +1466,9 @@ sap.ui.define([
 
 		oCore.applyChanges();
 
-		// assert
-		assert.equal(oDTP._getInputValue(), "Mar 31, 2023, 6:32:00 PM", "correct displayed value");
-		assert.equal(oDTP.getValue(), "Mar 31, 2023, 6:32:00 PM Asia, Tokyo", "correct displayed value");
+		// assert; \u202f is a Narrow No-Break Space which has been introduced with CLDR version 43
+		assert.equal(oDTP._getInputValue(), "Mar 31, 2023, 6:32:00\u202fPM", "correct displayed value");
+		assert.equal(oDTP.getValue(), "Mar 31, 2023, 6:32:00\u202fPM Asia, Tokyo", "correct displayed value");
 
 		// clean
 		oDTP.destroy();
@@ -1476,8 +1481,8 @@ sap.ui.define([
 		}).placeAt("qunit-fixture");
 		oCore.applyChanges();
 
-		// assert
-		assert.equal(oDTP.$().find(".sapMDummyContent").text(), "Nov 20, 2000, 10:10:10 AM",
+		// assert; \u202f is a Narrow No-Break Space which has been introduced with CLDR version 43
+		assert.equal(oDTP.$().find(".sapMDummyContent").text(), "Nov 20, 2000, 10:10:10\u202fAM",
 			"the correct formatted date and time is used to measure the input width");
 
 		// clean

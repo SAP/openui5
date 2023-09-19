@@ -33,11 +33,11 @@ sap.ui.define([
 		oDateTimeUTC = UI5Date.getInstance(Date.UTC(2014, 10, 27, 13, 47, 26)),
 		oDateTimeWithMS = UI5Date.getInstance(2014, 10, 27, 13, 47, 26, 456),
 		sFormattedDateOnly = "Nov 27, 2014",
-		sFormattedDateTime = "Nov 27, 2014, 1:47:26 PM",
+		sFormattedDateTime = "Nov 27, 2014, 1:47:26\u202FPM",
 //		sFormattedDateTimeWithMS = "Nov 27, 2014, 1:47:26.456 PM",
 		iFullYear = UI5Date.getInstance().getFullYear(),
 		oMessages = {
-			"EnterDateTime" : "EnterDateTime Dec 31, " + iFullYear + ", 11:59:58 PM",
+			"EnterDateTime" : "EnterDateTime Dec 31, " + iFullYear + ", 11:59:58\u202FPM",
 			"EnterDate" : "EnterDate Dec 31, " + iFullYear
 		};
 
@@ -291,7 +291,7 @@ sap.ui.define([
 		QUnit.test("format option UTC", function (assert) {
 			var oType = createInstance(sTypeName, {UTC : true}),
 				oDateTime = UI5Date.getInstance(Date.UTC(2014, 10, 27, 13, 47, 26)),
-				sFormattedDateTime = "Nov 27, 2014, 1:47:26 PM";
+				sFormattedDateTime = "Nov 27, 2014, 1:47:26\u202FPM";
 
 			assert.strictEqual(oType.formatValue(oDateTime, "string"), sFormattedDateTime);
 			assert.deepEqual(oType.parseValue(sFormattedDateTime, "string"), oDateTime);
@@ -983,7 +983,7 @@ sap.ui.define([
 	QUnit.test("V4: format option UTC", function (assert) {
 		var oType = new DateTimeOffset({UTC : true}, {V4 : true}),
 			sDateTime = "2014-11-27T13:47:26Z",
-			sFormattedDateTime = "Nov 27, 2014, 1:47:26 PM",
+			sFormattedDateTime = "Nov 27, 2014, 1:47:26\u202FPM",
 			oFormattedDateTime = UI5Date.getInstance(Date.UTC(2014, 10, 27, 13, 47, 26));
 
 		oType._resetModelFormatter();

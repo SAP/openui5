@@ -211,8 +211,8 @@ sap.ui.define([
 		var oLocale = new Locale("he_IL");
 		var oFormat = getCurrencyInstance({ currencyCode: true }, oLocale);
 
-		assert.strictEqual(oFormat.format(-123456.789, "EUR"), "\u200f\u200e-123,456.79\xa0EUR\u200e");
-		assert.strictEqual(oFormat.format(-123456.789, "JPY"), "\u200f\u200e-123,457\xa0JPY\u200e");
+		assert.strictEqual(oFormat.format(-123456.789, "EUR"), "\u200f\u200e-123,456.79\u00a0\u200fEUR\u200e");
+		assert.strictEqual(oFormat.format(-123456.789, "JPY"), "\u200f\u200e-123,457\u00a0\u200fJPY\u200e");
 	});
 
 	QUnit.test("Currency format with different parameters undefined", function (assert) {
@@ -1700,7 +1700,8 @@ sap.ui.define([
 
 		// execution
 		var sFormatted = oFormat.format(iExpectedNumber);
-		assert.strictEqual(sFormatted, "‏50,000.00‎", "can be formatted '" + sFormatted + "' (contains RTL character)");
+		assert.strictEqual(sFormatted, "\u200f50,000.00\u00a0\u200f\u200e",
+			"can be formatted '" + sFormatted + "' (contains RTL character)");
 
 		var aParsed = oFormat.parse(sFormatted);
 		assert.deepEqual(aParsed, [50000, undefined], "should match input number " + iExpectedNumber);
@@ -1988,7 +1989,7 @@ sap.ui.define([
 	QUnit.test("getScale", function (assert) {
 		var oLocale = new Locale("en");
 		var oFormat = getCurrencyInstance({style: "short", shortRefNumber: 1234}, oLocale);
-		assert.strictEqual(oFormat.getScale(), "\u00a4K", "scale is correctly retrieved");
+		assert.strictEqual(oFormat.getScale(), "\u00a4\u00a0K", "scale is correctly retrieved");
 
 		oFormat = getCurrencyInstance({style: "short"}, oLocale);
 		assert.strictEqual(oFormat.getScale(), undefined, "scale not retrieved");
