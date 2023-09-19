@@ -28619,7 +28619,7 @@ sap.ui.define([
 				"@$ui5.context.isTransient" : false,
 				"@$ui5.node.isExpanded" : true,
 				"@$ui5.node.level" : 2,
-				"@odata.etag" : "etag1.0", //TODO outdated
+				"@odata.etag" : "etag1.0",
 				ArtistID : "1",
 				IsActiveEntity : false,
 				Name : "Beta: β"
@@ -28691,7 +28691,7 @@ sap.ui.define([
 			assert.deepEqual(oBeta.getObject(), {
 				"@$ui5.context.isTransient" : false,
 				"@$ui5.node.level" : 2,
-				"@odata.etag" : "etag1.0", //TODO outdated
+				"@odata.etag" : "etag1.0",
 				ArtistID : "1",
 				IsActiveEntity : false,
 				Name : "Beta: β"
