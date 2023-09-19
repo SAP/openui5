@@ -6,6 +6,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/initial/api/Version",
 	"sap/ui/fl/initial/_internal/FlexConfiguration",
+	"sap/ui/fl/initial/_internal/FlexInfoSession",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/write/_internal/Storage",
 	"sap/ui/fl/write/_internal/Versions",
@@ -25,6 +26,7 @@ sap.ui.define([
 	ManifestUtils,
 	Version,
 	FlexConfiguration,
+	FlexInfoSession,
 	Settings,
 	Storage,
 	Versions,
@@ -56,10 +58,6 @@ sap.ui.define([
 		var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(sReference);
 		sandbox.stub(oChangePersistence, "getDirtyChanges").returns(aDirtyChanges);
 		return sandbox.stub(oChangePersistence, sFunctionName).resolves();
-	}
-
-	function _prepareURLSearchParam(sValue) {
-		sandbox.stub(URLSearchParams.prototype, "get").returns(sValue);
 	}
 
 	QUnit.module("Initialization", {
@@ -225,8 +223,10 @@ sap.ui.define([
 					return this.sComponentId;
 				}
 			};
+			this.sReference = "com.sap.app";
 		},
 		afterEach() {
+			FlexInfoSession.removeByReference(this.sReference);
 			Versions.clearInstances();
 			sandbox.restore();
 		}
@@ -234,7 +234,7 @@ sap.ui.define([
 		QUnit.test("and a connector is configured which returns a list of versions", function(assert) {
 			var mPropertyBag = {
 				layer: Layer.CUSTOMER,
-				reference: "com.sap.app"
+				reference: this.sReference
 			};
 			var aReturnedVersions = [];
 			sandbox.stub(KeyUserConnector.versions, "load").resolves(aReturnedVersions);
@@ -249,7 +249,7 @@ sap.ui.define([
 
 			var mPropertyBag = {
 				layer: Layer.CUSTOMER,
-				reference: "com.sap.app"
+				reference: this.sReference
 			};
 
 			var oFirstVersion = {
@@ -286,10 +286,10 @@ sap.ui.define([
 		QUnit.test("with setDirtyChange(false) and a connector is configured which returns a list of versions with entries while an older version is displayed", function(assert) {
 			var sActiveVersion = "2";
 			// set displayedVersion to draft
-			_prepareURLSearchParam(Version.Number.Draft);
+			FlexInfoSession.setByReference({version: Version.Number.Draft}, this.sReference);
 			var mPropertyBag = {
 				layer: Layer.CUSTOMER,
-				reference: "com.sap.app",
+				reference: this.sReference,
 				control: new Control(),
 				version: "1"
 			};
@@ -321,7 +321,7 @@ sap.ui.define([
 
 			return Versions.initialize(mPropertyBag)
 			.then(function(oModel) {
-				assert.equal(oModel.getProperty("/displayedVersion"), Version.Number.Draft, "when initial version model with url parameter displayedVersion is set correct");
+				assert.equal(oModel.getProperty("/displayedVersion"), Version.Number.Draft, "when initial version model with flex info session displayedVersion is set correct");
 			})
 			// switch to another version
 			.then(VersionsAPI.loadVersionForApplication.bind(this, mPropertyBag))
@@ -350,7 +350,7 @@ sap.ui.define([
 
 			var mPropertyBag = {
 				layer: Layer.CUSTOMER,
-				reference: "com.sap.app"
+				reference: this.sReference
 			};
 
 			var oDraftVersion = {
@@ -407,6 +407,7 @@ sap.ui.define([
 					return this.sComponentId;
 				}
 			};
+			this.sReference = "com.sap.app";
 		},
 		beforeEach() {
 			setVersioningEnabled({CUSTOMER: true});
@@ -415,6 +416,7 @@ sap.ui.define([
 			]);
 		},
 		afterEach() {
+			FlexInfoSession.removeByReference(this.sReference);
 			Versions.clearInstances();
 			sandbox.restore();
 		}
@@ -422,12 +424,11 @@ sap.ui.define([
 		QUnit.test("and a connector is configured which returns a list of versions while a draft exists", function(assert) {
 			var sActiveVersion = 2;
 			// set displayedVersion to draft
-			_prepareURLSearchParam(Version.Number.Draft);
-			var sReference = "com.sap.app";
+			FlexInfoSession.setByReference({version: Version.Number.Draft}, this.sReference);
 			var mPropertyBag = {
 				layer: Layer.CUSTOMER,
-				reference: sReference,
-				nonNormalizedReference: sReference,
+				reference: this.sReference,
+				nonNormalizedReference: this.sReference,
 				appComponent: this.oAppComponent
 			};
 
@@ -451,7 +452,7 @@ sap.ui.define([
 				oFirstVersion
 			];
 
-			var oSaveStub = _prepareResponsesAndStubMethod(sReference, aReturnedVersions, "saveDirtyChanges", []);
+			var oSaveStub = _prepareResponsesAndStubMethod(this.sReference, aReturnedVersions, "saveDirtyChanges", []);
 
 			var oActivatedVersion = {
 				activatedBy: "qunit",
@@ -490,14 +491,13 @@ sap.ui.define([
 		});
 
 		QUnit.test("to reactivate an old version and a connector is configured which returns a list of versions while a draft does NOT exists", function(assert) {
-			var sReference = "com.sap.app";
 			var sActiveVersion = "3";
 			// set displayedVersion to 1
-			_prepareURLSearchParam("1");
+			FlexInfoSession.setByReference({version: "1"}, this.sReference);
 			var mPropertyBag = {
 				layer: Layer.CUSTOMER,
-				reference: sReference,
-				nonNormalizedReference: sReference,
+				reference: this.sReference,
+				nonNormalizedReference: this.sReference,
 				appComponent: this.oAppComponent
 			};
 
@@ -518,7 +518,7 @@ sap.ui.define([
 				oFirstVersion
 			];
 
-			var oSaveStub = _prepareResponsesAndStubMethod(sReference, aReturnedVersions, "saveDirtyChanges", []);
+			var oSaveStub = _prepareResponsesAndStubMethod(this.sReference, aReturnedVersions, "saveDirtyChanges", []);
 
 			var oActivatedVersion = {
 				activatedBy: "qunit",
@@ -549,11 +549,10 @@ sap.ui.define([
 		});
 
 		QUnit.test("and a connector is configured which returns a list of versions while a draft does NOT exists", function(assert) {
-			var sReference = "com.sap.app";
 			var mPropertyBag = {
 				layer: Layer.CUSTOMER,
-				reference: sReference,
-				nonNormalizedReference: sReference,
+				reference: this.sReference,
+				nonNormalizedReference: this.sReference,
 				appComponent: this.oAppComponent,
 				displayedVersion: "1"
 			};
@@ -568,7 +567,7 @@ sap.ui.define([
 				oFirstVersion
 			];
 
-			var oSaveStub = _prepareResponsesAndStubMethod(sReference, aReturnedVersions, "saveDirtyChanges", []);
+			var oSaveStub = _prepareResponsesAndStubMethod(this.sReference, aReturnedVersions, "saveDirtyChanges", []);
 
 			var oActivatedVersion = {
 				activatedBy: "qunit",
@@ -586,10 +585,9 @@ sap.ui.define([
 		});
 
 		QUnit.test("and a connector is configured which returns a list of versions while dirty changes exists", function(assert) {
-			var sReference = "com.sap.app";
 			var mPropertyBag = {
 				layer: Layer.CUSTOMER,
-				reference: sReference,
+				reference: this.sReference,
 				appComponent: this.oAppComponent
 			};
 
@@ -931,6 +929,7 @@ sap.ui.define([
 					return this.sComponentId;
 				}
 			};
+			this.sReference = "com.sap.app";
 		},
 		beforeEach() {
 			setVersioningEnabled({CUSTOMER: true});
@@ -939,18 +938,18 @@ sap.ui.define([
 			]);
 		},
 		afterEach() {
+			FlexInfoSession.removeByReference(this.sReference);
 			Versions.clearInstances();
 			sandbox.restore();
 		}
 	}, function() {
 		QUnit.test("to publish a version", function(assert) {
-			var sReference = "com.sap.app";
 			// set displayedVersion to 2
-			_prepareURLSearchParam("2");
+			FlexInfoSession.setByReference({version: "2"}, this.sReference);
 			var mPropertyBag = {
 				layer: Layer.CUSTOMER,
-				reference: sReference,
-				nonNormalizedReference: sReference,
+				reference: this.sReference,
+				nonNormalizedReference: this.sReference,
 				appComponent: this.oAppComponent,
 				version: "3"
 			};
@@ -990,7 +989,7 @@ sap.ui.define([
 				oFirstVersion
 			];
 
-			_prepareResponsesAndStubMethod(sReference, aReturnedVersions, "saveDirtyChanges", []);
+			_prepareResponsesAndStubMethod(this.sReference, aReturnedVersions, "saveDirtyChanges", []);
 			sandbox.stub(LrepConnector.versions, "publish").resolves("Success");
 
 			return Versions.initialize(mPropertyBag)

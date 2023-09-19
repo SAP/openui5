@@ -2,6 +2,7 @@
 
 sap.ui.define([
 	"sap/ui/fl/apply/api/FlexRuntimeInfoAPI",
+	"sap/ui/fl/initial/_internal/FlexInfoSession",
 	"sap/ui/fl/write/api/ReloadInfoAPI",
 	"sap/ui/fl/write/api/VersionsAPI",
 	"sap/ui/fl/Layer",
@@ -11,6 +12,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	FlexRuntimeInfoAPI,
+	FlexInfoSession,
 	ReloadInfoAPI,
 	VersionsAPI,
 	Layer,
@@ -28,7 +30,7 @@ sap.ui.define([
 		RELOAD_PAGE: "HARD_RELOAD"
 	};
 
-	QUnit.module("handleUrlParametersOnExit", {
+	QUnit.module("handleReloadOnExit", {
 		beforeEach() {
 			this.oReloadStub = sandbox.stub(ReloadManager, "triggerReload");
 		},
@@ -37,17 +39,17 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("in USER layer", function(assert) {
-			ReloadManager.handleUrlParametersOnExit({layer: Layer.USER});
+			ReloadManager.handleReloadOnExit({layer: Layer.USER});
 			assert.strictEqual(this.oReloadStub.callCount, 0, "the reload method was not called");
 		});
 
 		QUnit.test("with reloadMethod NOT_NEEDED", function(assert) {
-			ReloadManager.handleUrlParametersOnExit({reloadMethod: mReloadMethods.NOT_NEEDED});
+			ReloadManager.handleReloadOnExit({reloadMethod: mReloadMethods.NOT_NEEDED});
 			assert.strictEqual(this.oReloadStub.callCount, 0, "the reload method was not called");
 		});
 
 		QUnit.test("with reload needed", function(assert) {
-			ReloadManager.handleUrlParametersOnExit({});
+			ReloadManager.handleReloadOnExit({});
 			assert.strictEqual(this.oReloadStub.callCount, 1, "the reload method was called");
 			assert.deepEqual(this.oReloadStub.lastCall.args[0].removeVersionParameter, true, "the parameter was added");
 		});
@@ -389,8 +391,8 @@ sap.ui.define([
 		beforeEach() {
 			sandbox.stub(FlUtils, "getUshellContainer").returns(true);
 			this.oHardReloadStub = sandbox.stub(ReloadManager, "reloadPage");
-			this.oHandleParamsOnStartStub = sandbox.stub(ReloadInfoAPI, "handleParametersOnStart");
-			this.oHandleUrlParamsStub = sandbox.stub(ReloadInfoAPI, "handleUrlParameters");
+			this.oHandleReloadInfoOnStartStub = sandbox.stub(ReloadInfoAPI, "handleReloadInfoOnStart");
+			this.oHandleReloadInfoStub = sandbox.stub(ReloadInfoAPI, "handleReloadInfo");
 			sandbox.stub(FlUtils, "getParsedURLHash").returns({
 				semanticObject: "semanticObject",
 				action: "action",
@@ -402,8 +404,7 @@ sap.ui.define([
 			this.oToExternalStub = sandbox.stub();
 			ReloadManager.setUShellServices({
 				URLParsing: "foo",
-				AppLifeCycle: {reloadCurrentApp: this.oReloadCurrentAppStub},
-				CrossApplicationNavigation: {toExternal: this.oToExternalStub}
+				AppLifeCycle: {reloadCurrentApp: this.oReloadCurrentAppStub}
 			});
 		},
 		afterEach() {
@@ -411,27 +412,16 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("onStart with changed params", function(assert) {
-			this.oHandleParamsOnStartStub.callsFake(function(oReloadInfo) {
-				oReloadInfo.parameters["sap-ui-fl-version"] = ["1"];
+			FlexInfoSession.setByReference({version: "1"});
+			this.oHandleReloadInfoOnStartStub.callsFake(function() {
 				return true;
 			});
 			ReloadManager.triggerReload({
 				onStart: true
 			});
-			assert.strictEqual(this.oReloadCurrentAppStub.callCount, 0, "the reloadCurrentApp was not called");
-			assert.strictEqual(this.oHandleParamsOnStartStub.callCount, 1, "the handleParams was called");
-			assert.strictEqual(this.oHandleParamsOnStartStub.lastCall.args[1], "flp", "with the correct scenario");
-			var oExpectedParameters = {
-				target: {
-					semanticObject: "semanticObject",
-					action: "action",
-					context: "contextRaw"
-				},
-				params: {"sap-ui-fl-version": ["1"]},
-				appSpecificRoute: "appSpecificRoute",
-				writeHistory: false
-			};
-			assert.deepEqual(this.oToExternalStub.lastCall.args[0], oExpectedParameters, "the hash is correct");
+			assert.strictEqual(this.oReloadCurrentAppStub.callCount, 1, "the reloadCurrentApp was not called");
+			assert.strictEqual(this.oHandleReloadInfoOnStartStub.callCount, 1, "the handleParams was called");
+			FlexInfoSession.removeByReference();
 		});
 
 		QUnit.test("onStart with no changed params", function(assert) {
@@ -439,30 +429,26 @@ sap.ui.define([
 				onStart: true
 			});
 			assert.strictEqual(this.oReloadCurrentAppStub.callCount, 1, "the reloadCurrentApp was called");
-			assert.strictEqual(this.oToExternalStub.callCount, 0, "the triggerCrossAppNav was not called");
 		});
 
 		QUnit.test("onStart with changed params and triggerHardReload", function(assert) {
-			this.oHandleParamsOnStartStub.returns(true);
+			this.oHandleReloadInfoOnStartStub.returns(true);
 			ReloadManager.triggerReload({
 				onStart: true,
 				triggerHardReload: true
 			});
-			assert.strictEqual(this.oReloadCurrentAppStub.callCount, 0, "the reloadCurrentApp was not called");
-			assert.strictEqual(this.oToExternalStub.callCount, 1, "the triggerCrossAppNav was called");
+			assert.strictEqual(this.oReloadCurrentAppStub.callCount, 1, "the reloadCurrentApp was called");
 			assert.strictEqual(this.oHardReloadStub.callCount, 1, "the hardReload was triggered");
 		});
 
 		QUnit.test("not on start without changed params", function(assert) {
-			this.oHandleUrlParamsStub.returns(true);
+			this.oHandleReloadInfoStub.returns(true);
 			ReloadManager.triggerReload({
 				onStart: false,
 				triggerHardReload: true
 			});
-			assert.strictEqual(this.oHandleUrlParamsStub.callCount, 1, "the handleParams was called");
-			assert.strictEqual(this.oHandleUrlParamsStub.lastCall.args[1], "flp", "with the correct scenario");
-			assert.strictEqual(this.oReloadCurrentAppStub.callCount, 0, "the reloadCurrentApp was not called");
-			assert.strictEqual(this.oToExternalStub.callCount, 1, "the triggerCrossAppNav was called");
+			assert.strictEqual(this.oHandleReloadInfoStub.callCount, 1, "the handleParams was called");
+			assert.strictEqual(this.oReloadCurrentAppStub.callCount, 1, "the reloadCurrentApp was called");
 			assert.strictEqual(this.oHardReloadStub.callCount, 1, "the hardReload was triggered");
 		});
 	});
@@ -471,45 +457,29 @@ sap.ui.define([
 		beforeEach() {
 			sandbox.stub(FlUtils, "getUshellContainer").returns(false);
 			this.oHardReloadStub = sandbox.stub(ReloadManager, "reloadPage");
-			this.oSetUriStub = sandbox.stub(ReloadManager, "setUriParameters");
-			this.oHandleParamsOnStartStub = sandbox.stub(ReloadInfoAPI, "handleParametersOnStart");
-			this.oHandleUrlParamsStub = sandbox.stub(ReloadInfoAPI, "handleUrlParameters");
+			this.oHandleReloadInfoOnStartStub = sandbox.stub(ReloadInfoAPI, "handleReloadInfoOnStart");
+			this.oHandleReloadInfoStub = sandbox.stub(ReloadInfoAPI, "handleReloadInfo");
 		},
 		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
-		QUnit.test("onStart with changed params", function(assert) {
-			this.oHandleParamsOnStartStub.callsFake(function(oReloadInfo) {
-				oReloadInfo.parameters += "foo";
-			});
-			ReloadManager.triggerReload({
-				onStart: true
-			});
-			assert.strictEqual(this.oSetUriStub.callCount, 1, "the uri parameters were set");
-			assert.strictEqual(this.oHardReloadStub.callCount, 0, "the hard reload was not triggered");
-			assert.strictEqual(this.oHandleParamsOnStartStub.callCount, 1, "the handleParams was called");
-			assert.strictEqual(this.oHandleParamsOnStartStub.lastCall.args[1], "standalone", "with the correct scenario");
-		});
-
 		QUnit.test("onStart with no changed params", function(assert) {
 			ReloadManager.triggerReload({
 				onStart: true
 			});
-			assert.strictEqual(this.oSetUriStub.callCount, 0, "the uri parameters were not set");
 			assert.strictEqual(this.oHardReloadStub.callCount, 1, "the hard reload was triggered");
-			assert.strictEqual(this.oHandleParamsOnStartStub.callCount, 1, "the handleParams was called");
-			assert.strictEqual(this.oHandleParamsOnStartStub.lastCall.args[1], "standalone", "with the correct scenario");
+			assert.strictEqual(this.oHandleReloadInfoOnStartStub.callCount, 1, "the handleReloadInfoOnStart was called");
+			assert.strictEqual(this.oHandleReloadInfoStub.callCount, 0, "the handleReloadInfo was not called");
 		});
 
 		QUnit.test("not onStart with no changed params", function(assert) {
 			ReloadManager.triggerReload({
 				onStart: false
 			});
-			assert.strictEqual(this.oSetUriStub.callCount, 0, "the uri parameters were not set");
 			assert.strictEqual(this.oHardReloadStub.callCount, 1, "the hard reload was triggered");
-			assert.strictEqual(this.oHandleUrlParamsStub.callCount, 1, "the handleParams was called");
-			assert.strictEqual(this.oHandleUrlParamsStub.lastCall.args[1], "standalone", "with the correct scenario");
+			assert.strictEqual(this.oHandleReloadInfoOnStartStub.callCount, 0, "the handleReloadInfoOnStart was not called");
+			assert.strictEqual(this.oHandleReloadInfoStub.callCount, 1, "the handleReloadInfo was called");
 		});
 	});
 

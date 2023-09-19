@@ -7,49 +7,15 @@ sap.ui.define([
 	"sap/ui/fl/initial/_internal/storageResultDisassemble",
 	"sap/ui/fl/initial/_internal/StorageResultMerger",
 	"sap/ui/fl/initial/_internal/StorageUtils",
-	"sap/ui/fl/initial/api/Version",
-	"sap/ui/fl/Utils"
+	"sap/ui/fl/Layer"
 ], function(
 	FlexInfoSession,
 	storageResultDisassemble,
 	StorageResultMerger,
 	StorageUtils,
-	Version,
-	Utils
+	Layer
 ) {
 	"use strict";
-
-	function _addDraftLayerToResponsibleConnectorsPropertyBag(oConnectorSpecificPropertyBag, oConnectorConfig, mPropertyBag) {
-		if (!oConnectorConfig.layers || (oConnectorConfig.layers[0] !== "ALL" && oConnectorConfig.layers.indexOf("CUSTOMER") === -1)) {
-			delete oConnectorSpecificPropertyBag.version;
-			return oConnectorSpecificPropertyBag;
-		}
-
-		if (_shouldAllContextsParameterBeSet(mPropertyBag.reference)) {
-			oConnectorSpecificPropertyBag.allContexts = true;
-		}
-
-		if (mPropertyBag.version !== undefined) {
-			// an API call set a version number
-			oConnectorSpecificPropertyBag.version = mPropertyBag.version;
-			return oConnectorSpecificPropertyBag;
-		}
-
-		var sVersion = Utils.getUrlParameter(Version.UrlParameter);
-		if (sVersion === null) {
-			// url parameter is not present --> remove an existing version entry copied from the original mPropertyBag
-			delete oConnectorSpecificPropertyBag.version;
-		} else {
-			oConnectorSpecificPropertyBag.version = parseInt(sVersion);
-		}
-		return oConnectorSpecificPropertyBag;
-	}
-
-	function _shouldAllContextsParameterBeSet(sFlexReference) {
-		var oFlexInfoSession = FlexInfoSession.getByReference(sFlexReference);
-		// a sign that we are in the RTA mode and allContexts query parameter should be set for flex/data request
-		return oFlexInfoSession && oFlexInfoSession.initialAllContexts;
-	}
 
 	/**
 	 * Abstraction providing an API to handle communication with persistence like back ends, local & session storage or work spaces.
@@ -68,7 +34,22 @@ sap.ui.define([
 				path: oConnectorConfig.path
 			});
 
-			oConnectorSpecificPropertyBag = _addDraftLayerToResponsibleConnectorsPropertyBag(oConnectorSpecificPropertyBag, oConnectorConfig, mPropertyBag);
+			if (!oConnectorConfig.layers || (oConnectorConfig.layers[0] !== "ALL" && oConnectorConfig.layers.indexOf(Layer.CUSTOMER) === -1)) {
+				delete oConnectorSpecificPropertyBag.version;
+			} else {
+				var oFlexInfoSession = FlexInfoSession.getByReference(mPropertyBag.reference);
+				// a sign that we are in the RTA mode and allContexts query parameter should be set for flex/data request
+				if (oFlexInfoSession?.initialAllContexts) {
+					oConnectorSpecificPropertyBag.allContexts = true;
+				}
+				if (!oConnectorSpecificPropertyBag.version && oFlexInfoSession?.version) {
+					oConnectorSpecificPropertyBag.version = oFlexInfoSession.version;
+				}
+			}
+			var bIsRtaStarting = !!window.sessionStorage.getItem(`sap.ui.rta.restart.${Layer.CUSTOMER}`);
+			if (!bIsRtaStarting) {
+				FlexInfoSession.removeByReference(mPropertyBag.reference);
+			}
 
 			return oConnectorConfig.loadConnectorModule.loadFlexData(oConnectorSpecificPropertyBag)
 			.then(function(oResponse) {

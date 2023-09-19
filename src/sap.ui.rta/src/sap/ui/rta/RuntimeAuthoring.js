@@ -673,7 +673,7 @@ sap.ui.define([
 			checkToolbarAndExecuteFunction.call(this, "hide", bSkipSave);
 			this.fireStop();
 			if (!bSkipRestart) {
-				ReloadManager.handleUrlParametersOnExit(oReloadInfo);
+				ReloadManager.handleReloadOnExit(oReloadInfo);
 			}
 			VersionsAPI.clearInstances();
 		}.bind(this))
