@@ -1357,6 +1357,9 @@ function(
 			groupItem : Core.byId(this._getSelectedGroupItem()),
 			groupDescending : this.getGroupDescending(),
 			presetFilterItem : Core.byId(this.getSelectedPresetFilterItem()),
+			/**
+			 * @deprecated as of version 1.42
+			 */
 			filterKeys : this.getSelectedFilterKeys(),
 			filterCompoundKeys: this.getSelectedFilterCompoundKeys(),
 			navPage : this._getNavContainer().getCurrentPage(),
@@ -3467,6 +3470,9 @@ function(
 					groupDescending     : that.getGroupDescending(),
 					presetFilterItem    : Core.byId(that.getSelectedPresetFilterItem()),
 					filterItems         : that.getSelectedFilterItems(),
+					/**
+					 * @deprecated as of version 1.42
+					 */
 					filterKeys          : that.getSelectedFilterKeys(),
 					filterCompoundKeys  : that.getSelectedFilterCompoundKeys(),
 					filterString        : that.getSelectedFilterString()
