@@ -733,6 +733,8 @@ sap.ui.define([
 				'bell-2': 0xe2a0,
 				'accessibility': 0xe2a1,
 				'high-priority': 0xe2a2,
+				'da': 0xe2a3,
+				'da-2': 0xe2a4,
 				'gender-male-and-female': 0x1e300,
 				'rotate': 0xe301,
 				'locate-me-2': 0xe302,

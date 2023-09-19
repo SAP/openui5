@@ -1206,7 +1206,9 @@
 				{ "name" : "cloud-check" },
 				{ "name" : "enablement" },
 				{ "name" : "map-fill" },
-				{ "name" : "bell-2" }
+				{ "name" : "bell-2" },
+				{ "name" : "da" },
+				{ "name" : "da-2" }
 			]
 		},
 		{
