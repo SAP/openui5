@@ -1915,14 +1915,15 @@ sap.ui.define([
 	 *   <code>""</code> (only in a CollectionCache)
 	 * @param {int} [iDeletedIndex]
 	 *   The index of the entry in <code>aElements.$deleted</code> if any
-	 *
+	 * @param {string} [sTransientPredicate]
+	 *  The element's (future) transient predicate
 	 * @protected
 	 */
 	// eslint-disable-next-line default-param-last
 	_Cache.prototype.restoreElement = function (aElements = this.aElements, iIndex, oElement, sPath,
-			iDeletedIndex) {
+			iDeletedIndex,
+			sTransientPredicate = _Helper.getPrivateAnnotation(oElement, "transientPredicate")) {
 		this.adjustIndexes(sPath, aElements, iIndex, 1, iDeletedIndex);
-		const sTransientPredicate = _Helper.getPrivateAnnotation(oElement, "transientPredicate");
 		if (sTransientPredicate) {
 			aElements.$created += 1;
 			if (!sPath) {

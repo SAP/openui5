@@ -1482,44 +1482,26 @@ sap.ui.define([
 	 * @see #collapse
 	 */
 	ODataListBinding.prototype.expand = function (oContext) {
-		var bDataRequested = false,
-			that = this;
-
 		this.checkSuspended();
+		let bDataRequested = false;
 
 		return this.oCache.expand(this.lockGroup(),
 			_Helper.getRelativePath(oContext.getPath(), this.oHeaderContext.getPath()),
-			function () {
+			/*fnDataRequested*/ () => {
 				bDataRequested = true;
-				that.fireDataRequested();
+				this.fireDataRequested();
 			}
-		).then(function (iCount) {
-			var aContexts = that.aContexts,
-				iModelIndex,
-				oMovingContext,
-				i;
-
-			if (iCount > 0) {
-				iModelIndex = oContext.getModelIndex(); // already destroyed if !iCount
-				for (i = aContexts.length - 1; i > iModelIndex; i -= 1) {
-					oMovingContext = aContexts[i];
-					if (oMovingContext) {
-						oMovingContext.iIndex += iCount;
-						aContexts[i + iCount] = oMovingContext;
-						delete aContexts[i]; // Note: iCount > 0
-					}
-					// else: nothing to do because !(i in aContexts) and aContexts[i + iCount]
-					// has been deleted before (loop works backwards)
-				}
-				that.iMaxLength += iCount;
-				that._fireChange({reason : ChangeReason.Change});
-			} // else: collapse before expand has finished
+		).then((iCount) => {
+			if (iCount) {
+				this.insertGap(oContext.getModelIndex(), iCount);
+				this._fireChange({reason : ChangeReason.Change});
+			} // else: collapse before expand has finished, oContext already destroyed
 			if (bDataRequested) {
-				that.fireDataReceived({});
+				this.fireDataReceived({});
 			}
-		}, function (oError) {
+		}, (oError) => {
 			if (bDataRequested) {
-				that.fireDataReceived({error : oError});
+				this.fireDataReceived({error : oError});
 			}
 
 			throw oError;
@@ -2959,6 +2941,30 @@ sap.ui.define([
 	};
 
 	/**
+	 * Inserts a new gap into <code>this.aContexts</code> just after the given index and with the
+	 * given positive length.
+	 *
+	 * @param {number} iPreviousIndex - Last index just before the new gap
+	 * @param {number} iLength - Positive length of the new gap
+	 *
+	 * @private
+	 */
+	ODataListBinding.prototype.insertGap = function (iPreviousIndex, iLength) {
+		const aContexts = this.aContexts;
+		for (let i = aContexts.length - 1; i > iPreviousIndex; i -= 1) {
+			const oMovingContext = aContexts[i];
+			if (oMovingContext) {
+				oMovingContext.iIndex += iLength;
+				aContexts[i + iLength] = oMovingContext;
+				delete aContexts[i]; // Note: iLength > 0
+			}
+			// else: nothing to do because !(i in aContexts) and aContexts[i + iLength]
+			// has been deleted before (loop works backwards)
+		}
+		this.iMaxLength += iLength;
+	};
+
+	/**
 	 * Returns whether the overall position of created entries is at the end of the list; this is
 	 * determined by the first call to {@link #create}.
 	 *
@@ -3072,7 +3078,9 @@ sap.ui.define([
 	};
 
 	/**
-	 * Moves the given (child) node to the given parent.
+	 * Moves the given (child) node to the given parent. An expanded (child) node is silently
+	 * collapsed before and expanded after the move. A collapsed parent is automatically expanded;
+	 * so is a leaf. The (child) node is added as the parent's 1st child (created persisted).
 	 *
 	 * @param {sap.ui.model.odata.v4.Context} oChildContext - The (child) node to be moved
 	 * @param {sap.ui.model.odata.v4.Context} oParentContext - The new parent's context
@@ -3106,7 +3114,12 @@ sap.ui.define([
 		const sParentPath = oParentContext.getCanonicalPath().slice(1); // before #lockGroup!
 		const oGroupLock = this.lockGroup(this.getUpdateGroupId(), true, true);
 
-		return this.oCache.move(oGroupLock, sChildPath, sParentPath).then(() => {
+		return this.oCache.move(oGroupLock, sChildPath, sParentPath).then((iCount) => {
+			if (iCount > 1) {
+				iCount -= 1; // skip oChildContext which is treated below
+				this.insertGap(oParentContext.getModelIndex(), iCount);
+			}
+
 			const iChildIndex = this.aContexts.indexOf(oChildContext);
 			const iParentIndex = this.aContexts.indexOf(oParentContext); // Note: !== iChildIndex
 			if (iChildIndex < iParentIndex) {
@@ -3122,7 +3135,7 @@ sap.ui.define([
 				oChildContext.setCreatedPersisted();
 			}
 			if (bExpanded) {
-				this.expand(oChildContext); // guaranteed to by sync! incl. _fireChange
+				this.expand(oChildContext).unwrap(); // guaranteed to by sync! incl. _fireChange
 			} else {
 				this._fireChange({reason : ChangeReason.Change});
 			}
