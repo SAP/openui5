@@ -1,0 +1,81 @@
+sap.ui.define([
+	"sap/ui/core/mvc/Controller",
+	"sap/ui/core/util/MockServer",
+	"sap/ui/model/odata/v2/ODataModel",
+	"sap/m/MessageToast",
+	"sap/ui/model/json/JSONModel",
+	"sap/m/MessageBox"
+], function(Controller, MockServer, ODataModel, MessageToast, JSONModel, MessageBox) {
+	"use strict";
+
+	const sServiceUrl = "http://my.test.service.com/";
+
+	return Controller.extend("sap.ui.table.sample.SelectCopyPaste.Controller", {
+
+		onInit: function() {
+			this.oMockServer = new MockServer({
+				rootUri: sServiceUrl
+			});
+
+			MockServer.config({autoRespondAfter: 2000});
+
+			const sMockDataPath = sap.ui.require.toUrl("sap/ui/table/sample/OData");
+			this.oMockServer.simulate(sMockDataPath + "/metadata.xml", {
+				sMockdataBaseUrl: sMockDataPath,
+				bGenerateMissingMockData: true
+			});
+
+			this.oMockServer.start();
+
+			const oView = this.getView();
+			oView.setModel(new ODataModel(sServiceUrl));
+
+			const oUiData = {
+				"initial": {"SelectionMode": "MultiToggle"},
+				"SelectionMode": [{mode: "MultiToggle"}, {mode: "Single"}, {mode: "None"}]
+			};
+			oView.setModel(new JSONModel(oUiData), "ui");
+
+			const oToolbar = this.byId("toolbar"), oCopyProvider = this.byId("copyProvider");
+			oToolbar.addContent(oCopyProvider.getCopyButton());
+		},
+
+		onExit: function() {
+			this.oMockServer.destroy();
+			this.oMockServer = null;
+			MockServer.config({autoRespondAfter: 0});
+		},
+
+		extractData: function(oRowContext, oColumn) {
+			const oValue = oRowContext.getProperty(oColumn.getSortProperty());
+			return oColumn.__type ? oColumn.__type.formatValue(oValue, "string") : oValue;
+		},
+
+		onCopy: function(oEvent) {
+			MessageToast.show("Selection copied to clipboard");
+		},
+
+		onSelectChange: function(oEvent) {
+			const aParams = oEvent.getParameters(), oTable = this.byId("table");
+			oTable.getPlugins()[0].setSelectionMode(aParams.selectedItem.getKey());
+		},
+
+		onPaste: function(oEvent) {
+			function handlePaste(aData, oCellInfo) {
+				MessageToast.show("Pasted Data (on " + (oCellInfo ? "Cell (" + (oCellInfo.from.rowIndex + "/" + oCellInfo.from.colIndex) + ")" : "Table") + " Level):\n\n" + aData);
+			}
+
+			const aData = oEvent.getParameter("data");
+			const oRange = this.byId("cellSelector").getSelectionRange();
+
+			if (oRange) {
+				MessageBox.confirm("Do you want to paste at position " + (oRange.from.rowIndex + "/" + oRange.from.colIndex) + "?", {onClose: function(sAction) {
+					handlePaste(aData, sAction == "OK" ? oRange : null);
+				}});
+			} else {
+				handlePaste(aData, null);
+			}
+		}
+	});
+
+});

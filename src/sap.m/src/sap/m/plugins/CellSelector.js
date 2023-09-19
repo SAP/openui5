@@ -293,9 +293,8 @@ sap.ui.define([
 
 		if (isKeyCombination(oEvent, KeyCodes.A, true, true) || isKeyCombination(oEvent, KeyCodes.A, false, false)) {
 			this.removeSelection();
+			oEvent.preventDefault();
 		}
-
-		oEvent.preventDefault();
 	};
 
 	/**
@@ -316,6 +315,8 @@ sap.ui.define([
 				this.getConfig("selectRows", this.getControl(), mBounds.from.rowIndex, mBounds.to.rowIndex, oInfo.rowIndex) && this.removeSelection();
 				oEvent.setMarked();
 			}
+
+			oEvent.preventDefault();
 		} else if (this._bSelecting && isKeyCombination(oEvent, KeyCodes.SPACE, false, true)) {
 			if (!this._inSelection(oEvent.target)) {
 				// If focus is on cell outside of selection, select focused column
@@ -325,9 +326,9 @@ sap.ui.define([
 			mBounds.from.rowIndex = 0;
 			mBounds.to.rowIndex = Infinity;
 			this._selectCells(mBounds.from, mBounds.to);
-		}
 
-		oEvent.preventDefault();
+			oEvent.preventDefault();
+		}
 	};
 
 	// Mouse Navigation
