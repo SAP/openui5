@@ -12,47 +12,60 @@ sap.ui.define([
 
 	function editIFrame (oIFrame/*, mPropertyBag*/) {
 		var oAddIFrameDialog = new AddIFrameDialog();
-		var oSettings = oIFrame.get_settings();
+		var oInitialSettings = oIFrame.get_settings();
 		var mDialogSettings;
 		return AddIFrameDialog.buildUrlBuilderParametersFor(oIFrame)
-			.then(function(mURLParameters) {
-				mDialogSettings = {
-					parameters: mURLParameters,
-					frameUrl: oSettings.url,
-					frameWidth: oSettings.width,
-					frameHeight: oSettings.height,
-					updateMode: true
-				};
-				return oAddIFrameDialog.open(mDialogSettings);
-			})
-			.then(function (mSettings) {
-				if (!mSettings) {
-					return []; // No change
-				}
-				var sWidth;
-				var sHeight;
-				if (mSettings.frameWidth) {
-					sWidth = mSettings.frameWidth + mSettings.frameWidthUnit;
-				} else {
-					sWidth = "100%";
-				}
-				if (mSettings.frameHeight) {
-					sHeight = mSettings.frameHeight + mSettings.frameHeightUnit;
-				} else {
-					sHeight = "100%";
-				}
-				return [{
+		.then(function(mURLParameters) {
+			mDialogSettings = {
+				parameters: mURLParameters,
+				frameUrl: oInitialSettings.url,
+				frameWidth: oInitialSettings.width,
+				frameHeight: oInitialSettings.height,
+				useLegacyNavigation: oInitialSettings.useLegacyNavigation,
+				updateMode: true
+			};
+			return oAddIFrameDialog.open(mDialogSettings);
+		})
+		.then(function(mSettings) {
+			if (!mSettings) {
+				return []; // No change
+			}
+			var aChanges = [];
+			var bContentChanged = false;
+			var oNewContent = {
+				url: oInitialSettings.url,
+				height: oInitialSettings.height,
+				width: oInitialSettings.width
+			};
+
+			if (mSettings.frameHeight + mSettings.frameHeightUnit !== oInitialSettings.height) {
+				bContentChanged = true;
+				oNewContent.height = mSettings.frameHeight + mSettings.frameHeightUnit;
+			}
+			if (mSettings.frameWidth + mSettings.frameWidthUnit !== oInitialSettings.width) {
+				bContentChanged = true;
+				oNewContent.width = mSettings.frameWidth + mSettings.frameWidthUnit;
+			}
+			if (mSettings.frameUrl !== oInitialSettings.url) {
+				bContentChanged = true;
+				oNewContent.url = mSettings.frameUrl;
+			}
+			if (mSettings.useLegacyNavigation !== !!oInitialSettings.useLegacyNavigation) {
+				bContentChanged = true;
+				oNewContent.useLegacyNavigation = mSettings.useLegacyNavigation;
+			}
+
+			if (bContentChanged) {
+				aChanges.push({
 					selectorControl: oIFrame,
 					changeSpecificData: {
 						changeType: "updateIFrame",
-						content: {
-							url: mSettings.frameUrl,
-							width: sWidth,
-							height: sHeight
-						}
+						content: oNewContent
 					}
-				}];
-			});
+				});
+			}
+			return aChanges;
+		});
 	}
 
 	return {

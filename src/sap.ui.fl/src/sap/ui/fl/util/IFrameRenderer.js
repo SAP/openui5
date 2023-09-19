@@ -38,7 +38,15 @@ sap.ui.define([
 		oRm.style("border", "none");
 
 		oRm.attr("sandbox", "allow-forms allow-popups allow-scripts allow-same-origin allow-modals");
-		oRm.attr("src", oIFrame.getUrl());
+
+		if (oIFrame.getUseLegacyNavigation()) {
+			oRm.attr("src", oIFrame.getUrl());
+		} else {
+			// With the new location.replace approach, the actual
+			// target url will be set onAfterRendering
+			oRm.attr("src", "about:blank");
+		}
+
 		var sTitle = oIFrame.getTitle();
 		if (sTitle) {
 			oRm.attr("title", sTitle);

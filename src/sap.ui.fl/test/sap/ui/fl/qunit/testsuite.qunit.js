@@ -990,6 +990,13 @@ sap.ui.define([
 				}
 			},
 
+			"designtime/util/IFrame.designtime": {
+				group: "Designtime",
+				coverage: {
+					only: ["sap/ui/fl/designtime/util/IFrame.designtime"]
+				}
+			},
+
 			// Variant tests:
 			"variants/VariantManagement": {
 				group: "Variants",
