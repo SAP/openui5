@@ -335,6 +335,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("CellSelector", function(assert) {
+		this.oCopyProvider.setCopyPreference("Full");
 		this.removeSelections();
 		var oCellSelector = new CellSelector({ rangeLimit: 15 });
 		this.oTable.addDependent(oCellSelector);
@@ -367,6 +368,19 @@ sap.ui.define([
 		triggerCopy();
 		assert.equal(this.getClipboardText().split("\n").length, oCellSelector.getRangeLimit(), "Copied only up to rangeLimit value");
 		assert.equal(this.getClipboardText().split("\n")[10].split("\t").length, this.oTable.getColumns().length, "All columns are in the clipboard");
+
+		this.oCopyProvider.setCopyPreference("Cells");
+		this.removeSelections();
+
+		this.selectRow(5);
+		oCellSelector._bSelecting = true;
+		oCellSelector._selectCells({rowIndex: 2, colIndex: 0}, {rowIndex: 3, colIndex: 2});
+		triggerCopy();
+		assert.equal(this.getClipboardText(), "2\tname2\tcolor2\n3\tname3\tcolor3", "Only cell selection is copied");
+
+		oCellSelector.removeSelection();
+		triggerCopy();
+		assert.equal(this.getClipboardText(), "5\tname5\tcolor5", "Cell and row selection are copied to clipboard");
 	});
 
 	QUnit.module("MDCTable", TableModule(createMDCTable));
