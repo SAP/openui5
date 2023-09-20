@@ -395,6 +395,9 @@ sap.ui.define([
 			var oMetadata = oModel.getServiceMetadata();
 			var oAnnotations = oModel.getServiceAnnotations();
 
+			// private member used because oModel.annotationsLoaded() returns null
+			oModel.pAnnotationsLoaded.catch(() => {/* avoid Uncaught (in promise) */});
+
 			if (bServiceValid) {
 				if (sAnnotationsValid === "all" || sAnnotationsValid === "some") {
 					// This should have worked.
@@ -461,6 +464,9 @@ sap.ui.define([
 					fnResolveMetadata = resolve;
 					fnRejectMetadata = reject;
 				});
+
+			// private member used because oModel.annotationsLoaded() returns null
+			oModel.pAnnotationsLoaded.catch(() => {/* avoid Uncaught (in promise) */});
 
 			// Metadata must be loaded before annotations
 			oModel.attachMetadataLoaded(function() {
@@ -591,6 +597,8 @@ sap.ui.define([
 					fnRejectMetadata = reject;
 				});
 
+			oModel.annotationsLoaded().catch(() => {/* avoid Uncaught (in promise) */});
+
 			// Metadata must be loaded before annotations
 			oModel.attachMetadataLoaded(function() {
 				bMetadataLoaded = true;
@@ -650,6 +658,7 @@ sap.ui.define([
 					oModel.destroy();
 				});
 			} else if (!bServiceValid){
+				oAnnotationsPromise.catch(() => {/* avoid Uncaught (in promise) */});
 				return oMetadataPromise.then(function () {
 					assert.ok(false);
 				}, function () {
@@ -722,6 +731,9 @@ sap.ui.define([
 					fnResolveMetadata = resolve;
 					fnRejectMetadata = reject;
 				});
+
+			// private member used because oModel.annotationsLoaded() returns null
+			oModel.pAnnotationsLoaded.catch(() => {/* avoid Uncaught (in promise) */});
 
 			// Use internal metadata loaded event, because in case of joined loading, the real one
 			// does not fire until Annotations are there
@@ -853,6 +865,8 @@ sap.ui.define([
 					fnRejectMetadata = reject;
 				});
 
+			oModel.annotationsLoaded().catch(() => {/* avoid Uncaught (in promise) */});
+
 			// Use internal metadata loaded event, because in case of joined loading, the real one
 			// does not fire until Annotations are there
 			if (oModel.oMetadata.getServiceMetadata()){
@@ -978,6 +992,8 @@ sap.ui.define([
 			loadMetadataAsync: false
 		});
 
+		// private member used because oModel.annotationsLoaded() returns null
+		oModel.pAnnotationsLoaded.catch(() => {/* avoid Uncaught (in promise) */});
 
 		// Everything should be ready right now due to synchronous operation mode
 		var oMetadata = oModel.getServiceMetadata();

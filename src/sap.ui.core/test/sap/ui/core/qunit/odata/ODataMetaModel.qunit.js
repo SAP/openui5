@@ -2296,7 +2296,8 @@ sap.ui.define([
 	// Note: http://www.html5rocks.com/en/tutorials/es6/promises/ says that
 	// "Any errors thrown in the constructor callback will be implicitly passed to reject()."
 	QUnit.test("Errors thrown inside load(), async = false", function (assert) {
-		var oDataModel, oError;
+		var oDataModel, oError,
+			that = this;
 
 		this.oLogMock.expects("warning").exactly(1)
 			.withExactArgs(sIgnoreThisWarning);
@@ -2322,6 +2323,12 @@ sap.ui.define([
 				throw new Error("Unexpected success");
 			}, function (ex0) {
 				assert.strictEqual(ex0, oError, ex0.message);
+
+				that.mock(oDataModel.oMetadata).expects("refresh").rejects(oError);
+				that.mock(Log).expects("fatal").withExactArgs(oError);
+
+				// code under test (failed refresh results in console error)
+				oDataModel.refreshMetadata();
 			});
 		});
 	});

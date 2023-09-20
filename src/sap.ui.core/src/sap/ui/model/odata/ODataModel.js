@@ -653,7 +653,7 @@ sap.ui.define([
 	 */
 	ODataModel.prototype.refreshMetadata = function(){
 		if (this.oMetadata && this.oMetadata.refresh){
-			this.oMetadata.refresh();
+			this.oMetadata.refresh().catch((oError) => { Log.fatal(oError); });
 		}
 	};
 
