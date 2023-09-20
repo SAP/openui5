@@ -67,6 +67,7 @@
 		elements: [
 			"sap.ui.mdc.table.Column",
 			"sap.ui.mdc.table.CreationRow",
+			"sap.ui.mdc.table.DragDropConfig",
 			"sap.ui.mdc.table.TableTypeBase",
 			"sap.ui.mdc.table.GridTableType",
 			"sap.ui.mdc.table.ResponsiveTableType",
