@@ -2077,18 +2077,24 @@ sap.ui.define([
 			sResolvedPath = this.getResolvedPath(),
 			that = this;
 
+		function isNonTransientTarget(sFullTarget) {
+			return aCreatedContextDeepPaths
+				.every((sCreatedContextDeepPath) => !sFullTarget.startsWith(sCreatedContextDeepPath));
+		}
+
 		if (!sResolvedPath) {
 			return Promise.resolve(null);
 		}
 
+		const aCreatedContextDeepPaths = this._getCreatedContexts()
+			.map((oCreatedContext) => oCreatedContext.getDeepPath());
 		this.oModel.getMessagesByPath(sDeepPath, true).forEach(function (oMessage) {
 			var sPredicate;
 
 			if (!fnFilter || fnFilter(oMessage)) {
-				// this.oModel.getMessagesByPath returns only messages with full target starting with
-				// deep path
+				// this.oModel.getMessagesByPath returns only messages with full target starting with deep path
 				oMessage.aFullTargets.forEach(function (sFullTarget) {
-					if (sFullTarget.startsWith(sDeepPath)) {
+					if (sFullTarget.startsWith(sDeepPath) && isNonTransientTarget(sFullTarget)) {
 						sPredicate = sFullTarget.slice(sDeepPath.length).split("/")[0];
 						if (sPredicate) {
 							aPredicateSet.add(sPredicate);

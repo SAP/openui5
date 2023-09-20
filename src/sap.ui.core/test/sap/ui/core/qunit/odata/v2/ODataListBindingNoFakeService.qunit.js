@@ -1036,7 +1036,7 @@ sap.ui.define([
 [true, false].forEach(function (bWithFilter) {
 	[{
 		aFilterForPredicate : [],
-		aMessages : [] // contains sap.ui.core.message.Message objects
+		aMessages : [] // full targets of message objects and whether the message is not filtered out (message === "in")
 	}, {
 		aFilterForPredicate : bWithFilter ? [] : ["(~keyPredicate~)"],
 		aMessages : [{aFullTargets : ["~deepPath~(~keyPredicate~)"], message : "out"}]
@@ -1072,6 +1072,21 @@ sap.ui.define([
 			aFullTargets : ["~parentEntity~", "~deepPath~(~keyPredicate~)/B"],
 			message : "in"
 		}]
+	}, { // BCP 2370088390: only messages on transient entries (filter null expected)
+		aCreatedContextDeepPaths : ["~deepPath~(~uid0~)", "~deepPath~(~uid1~)", "~deepPath~(~uid2~)"],
+		aFilterForPredicate : [],
+		aMessages : [
+			{aFullTargets : ["~deepPath~(~uid0~)"], message : "in"},
+			{aFullTargets : ["~deepPath~(~uid1~)/property"], message : "in"}
+		]
+	}, { // BCP 2370088390: messages on both persistent and transient entries (filter w/o transient expected)
+		aCreatedContextDeepPaths : ["~deepPath~(~uid0~)", "~deepPath~(~uid1~)", "~deepPath~(~uid2~)"],
+		aFilterForPredicate : ["(~keyPredicate~)"],
+		aMessages : [
+			{aFullTargets : ["~deepPath~(~uid0~)"], message : "in"},
+			{aFullTargets : ["~deepPath~(~uid1~)/property"], message : "in"},
+			{aFullTargets : ["~deepPath~(~keyPredicate~)"], message : "in"}
+		]
 	}].forEach(function (oFixture, i) {
 	var sTitle = "requestFilterForMessages: with filter: " + bWithFilter + ", " + i;
 
@@ -1080,6 +1095,8 @@ sap.ui.define([
 				fnFilter : function () {}
 			},
 			oCallbackMock = this.mock(oCallback),
+			aCreatedContexts = (oFixture.aCreatedContextDeepPaths || [])
+				.map((sDeepPath) => ({ getDeepPath() {return sDeepPath;} })),
 			aFilterForPredicate = oFixture.aFilterForPredicate,
 			aFilters = [],
 			aMessages = oFixture.aMessages,
@@ -1087,6 +1104,7 @@ sap.ui.define([
 			oBinding = {
 				sDeepPath : "~deepPath~",
 				oModel : oModel,
+				_getCreatedContexts : function () {},
 				_getFilterForPredicate : function () {},
 				getResolvedPath : function () {}
 			},
@@ -1094,6 +1112,7 @@ sap.ui.define([
 			oPromise;
 
 		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("resolvedPath");
+		this.mock(oBinding).expects("_getCreatedContexts").withExactArgs().returns(aCreatedContexts);
 		this.mock(oModel).expects("getMessagesByPath").withExactArgs("~deepPath~", true)
 			.returns(aMessages);
 		if (aMessages.length && bWithFilter) {
@@ -1104,6 +1123,9 @@ sap.ui.define([
 		} else {
 			oCallbackMock.expects("fnFilter").never();
 		}
+		aCreatedContexts.forEach((oCreatedContext) => {
+			this.mock(oCreatedContext).expects("getDeepPath").withExactArgs().callThrough();
+		});
 		if (aFilterForPredicate.length) {
 			aFilterForPredicate.forEach(function (sPredicate) {
 				var oFilter = new Filter("~property~", FilterOperator.EQ, "~value~");
