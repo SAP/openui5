@@ -33,19 +33,19 @@ sap.ui.define([
         path : "locationId",
         label : "Location",
         dataType : "sap.ui.model.type.String",
-        sortable : true
+        sortable : false
     },{
         name : "buildingCountry",
         path : "countryId",
         label : "Country",
         dataType : "sap.ui.model.type.String",
-        sortable : true
+        sortable : false
     },{
         name : "buildingRegion",
         path : "regionId",
         label : "Region",
         dataType : "sap.ui.model.type.String",
-        sortable : true
+        sortable : false
     }];
 
 	return aPropertyInfos;
