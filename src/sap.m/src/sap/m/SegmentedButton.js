@@ -465,8 +465,8 @@ function(
 	SegmentedButton.prototype.getOverflowToolbarConfig = function() {
 		return {
 			canOverflow: true,
-			listenForEvents: ["select"],
-			autoCloseEvents: ["select"],
+			listenForEvents: ["selectionChange"],
+			autoCloseEvents: ["selectionChange"],
 			propsUnrelatedToSize: ["enabled", "selectedKey"],
 			invalidationEvents: ["_containerWidthChanged"],
 			onBeforeEnterOverflow: this._onBeforeEnterOverflow,
@@ -773,7 +773,9 @@ function(
 				item: oItemPressed
 			});
 
-			// support old API
+			/**
+			 * @deprecated as of version 1.52, replaced by <code>selectionChange</code> event
+			 */
 			this.fireSelect({
 				button: oButtonPressed,
 				id: oButtonPressed.getId(),

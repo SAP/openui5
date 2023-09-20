@@ -359,7 +359,7 @@ sap.ui.define([
 						new SegmentedButtonItem(this.getId() + "-Switch-Clk", {key: "Clk", text: sTimeText})
 					]
 				});
-				oSwitcher.attachSelect(this._handleSelect, this);
+				oSwitcher.attachSelectionChange(this._handleSelectionChange, this);
 
 				this.setAggregation("_switcher", oSwitcher);
 			}
@@ -388,9 +388,8 @@ sap.ui.define([
 			this.getCalendar().addDelegate(oOnAfterRenderingDelegate);
 		},
 
-		_handleSelect: function(oEvent) {
-
-			var sKey = oEvent.getParameter("key");
+		_handleSelectionChange: function(oEvent) {
+			var sKey = oEvent.getParameter("item").getKey();
 
 			this._switchVisibility(sKey);
 			if (sKey === "Clk") {

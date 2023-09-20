@@ -153,8 +153,9 @@
 			buttons: [button1, button2, button3],
 			selectedButton: button2,
 			visible: true,
-			select: function(oEvent) {
-				jQuery.sap.log.info('press event segmented: ' + oEvent.getParameter('id'));
+			selectionChange: function(oEvent) {
+				debugger;
+				jQuery.sap.log.info('press event segmented: ' + oEvent.getSource().getSelectedButton());
 			}
 		})],
 		contentRight: [new sap.m.Button('Button1', {text: "Edit"})]
@@ -163,8 +164,8 @@
 
 	//---CONTENT---
 	var oSegmented2 = new sap.m.SegmentedButton('SegmentedCnt1', {
-		select: function(oEvent) {
-			jQuery.sap.log.info('press event segmented: ' + oEvent.getParameter('id'));
+		selectionChange: function(oEvent) {
+			jQuery.sap.log.info('press event segmented: ' + oEvent.getSource().getSelectedButton());
 		},
 		width: '100%'
 	});
@@ -177,8 +178,8 @@
 	var oSegmented3 = new sap.m.SegmentedButton('SegmentedCnt2', {
 		buttons: [button5, button6],
 		selectedButton: button5,
-		select: function(oEvent) {
-			jQuery.sap.log.info('press event segmented: ' + oEvent.getParameter('id'));
+		selectionChange: function(oEvent) {
+			jQuery.sap.log.info('press event segmented: ' + oEvent.getSource().getSelectedButton());
 		}
 	});
 	page.addContent(oSegmented3);
@@ -206,8 +207,8 @@
 				enabled: true
 			})
 		],
-		select: function(oEvent) {
-			jQuery.sap.log.info('press event segmented: ' + oEvent.getParameter('id'));
+		selectionChange: function(oEvent) {
+			jQuery.sap.log.info('press event segmented: ' + oEvent.getSource().getSelectedButton());
 		}
 	});
 	page.addContent(oSegmentedIcons);
@@ -229,8 +230,8 @@
 	var Segmented4 = new sap.m.SegmentedButton('SegmentedFooter', {
 		buttons: [button13, button14,button15],
 		selectedButton: button14,
-		select: function(oEvent) {
-			jQuery.sap.log.info('press event segmented: ' + oEvent.getParameter('id'));
+		selectionChange: function(oEvent) {
+			jQuery.sap.log.info('press event segmented: ' + oEvent.getSource().getSelectedButton());
 		}
 	});
 	var footer = new sap.m.Bar({
@@ -260,8 +261,8 @@
 		 * API test Start                       *
 		 ****************************************/
 		var oSegmentedButtonApiTest = new sap.m.SegmentedButton('oSegmentedButtonApiTest', {
-			select: function(oEvent) {
-				jQuery.sap.log.info('press event segmented: ' + oEvent.getParameter('id'));
+			selectionChange: function(oEvent) {
+				jQuery.sap.log.info('press event segmented: ' + oEvent.getSource().getSelectedButton());
 			},
 			width: '100%'
 		});
@@ -305,8 +306,8 @@
 				new sap.m.Button({text: "100px", width: "100px"}),
 				new sap.m.Button({text: "no width -> segmentedButton: 400px"})
 			],
-			select: function(oEvent) {
-				jQuery.sap.log.info('press event segmented: ' + oEvent.getParameter('id'));
+			selectionChange: function(oEvent) {
+				jQuery.sap.log.info('press event segmented: ' + oEvent.getSource().getSelectedButton());
 			},
 			width: "400px"
 		});
@@ -342,8 +343,8 @@
 					tooltip: "Star"
 				})
 			],
-			select: function(oEvent) {
-				jQuery.sap.log.info('press event segmented: ' + oEvent.getParameter('id'));
+			selectionChange: function(oEvent) {
+				jQuery.sap.log.info('press event segmented: ' + oEvent.getSource().getSelectedButton());
 			}
 		});
 		vBox.addItem(oSegmentedButtonImage);
@@ -367,8 +368,8 @@
 					enabled: true
 				})
 			],
-			select: function(oEvent) {
-				jQuery.sap.log.info('press event segmented: ' + oEvent.getParameter('id'));
+			selectionChange: function(oEvent) {
+				jQuery.sap.log.info('press event segmented: ' + oEvent.getSource().getSelectedButton());
 			}
 		});
 		vBox.addItem(oSegmentedButtonImage2);
@@ -391,8 +392,8 @@
 					enabled: false
 				})
 			],
-			select: function(oEvent) {
-				jQuery.sap.log.info('press event segmented: ' + oEvent.getParameter('id'));
+			selectionChange: function(oEvent) {
+				jQuery.sap.log.info('press event segmented: ' + oEvent.getSource().getSelectedButton());
 			}
 		});
 		vBox.addItem(oSegmentedImageAndText);
@@ -420,8 +421,8 @@
 					enabled: true
 				})
 			],
-			select: function(oEvent) {
-				jQuery.sap.log.info('press event segmented: ' + oEvent.getParameter('id'));
+			selectionChange: function(oEvent) {
+				jQuery.sap.log.info('press event segmented: ' + oEvent.getSource().getSelectedButton());
 			}
 		});
 		vBox.addItem(oSegmentedIconAndText);
@@ -442,8 +443,8 @@
 					visible: false
 				})
 			],
-			select: function(oEvent) {
-				jQuery.sap.log.info('press event segmented: ' + oEvent.getParameter('id'));
+			selectionChange: function(oEvent) {
+				jQuery.sap.log.info('press event segmented: ' + oEvent.getSource().getSelectedButton());
 			}
 		});
 		vBox.addItem(oSegmentedLastNotVisible);
@@ -464,8 +465,8 @@
 					visible: false
 				})
 			],
-			select: function(oEvent) {
-				jQuery.sap.log.info('press event segmented: ' + oEvent.getParameter('id'));
+			selectionChange: function(oEvent) {
+				jQuery.sap.log.info('press event segmented: ' + oEvent.getSource().getSelectedButton());
 			}
 		});
 		vBox.addItem(oSegmentedLastNotVisibleDis);
