@@ -2,11 +2,18 @@
  * ${copyright}
  */
 sap.ui.define([
+	"sap/ui/table/rowmodes/Type",
 	"./TableHelper.support",
 	"sap/ui/support/library",
 	"sap/ui/Device",
 	"sap/ui/thirdparty/jquery"
-], function(SupportHelper, SupportLibrary, Device, jQuery) {
+], function(
+	RowModeType,
+	SupportHelper,
+	SupportLibrary,
+	Device,
+	jQuery
+) {
 	"use strict";
 
 	var Categories = SupportLibrary.Categories;
@@ -162,13 +169,25 @@ sap.ui.define([
 			}
 
 			function checkConfiguration(oTable, oDynamicPage) {
-				if (oTable._getRowMode().isA("sap.ui.table.rowmodes.Auto") && !oDynamicPage.getFitContent()) {
+				var vRowMode = oTable.getRowMode();
+				var bIsTableInAutoMode = false;
+
+				/**
+				 * @deprecated As of version 1.119
+				 */
+				if (!vRowMode) {
+					bIsTableInAutoMode = oTable.getVisibleRowCountMode() === "Auto";
+				}
+
+				if (vRowMode) {
+					bIsTableInAutoMode = vRowMode === RowModeType.Auto || vRowMode.isA("sap.ui.table.rowmodes.Auto");
+				}
+
+				if (bIsTableInAutoMode && !oDynamicPage.getFitContent()) {
 					SupportHelper.reportIssue(oIssueManager,
 						"A table with an auto row mode is placed inside a sap.f.DynamicPage with fitContent=\"false\"",
 						Severity.High, oTable.getId());
-				} else if ((oTable._getRowMode().isA("sap.ui.table.rowmodes.Fixed")
-							|| oTable._getRowMode().isA("sap.ui.table.rowmodes.Interactive"))
-						   && oDynamicPage.getFitContent()) {
+				} else if (!bIsTableInAutoMode && oDynamicPage.getFitContent()) {
 					SupportHelper.reportIssue(oIssueManager,
 						"A table with a fixed or interactive row mode is placed inside a sap.f.DynamicPage with fitContent=\"true\"",
 						Severity.Low, oTable.getId());

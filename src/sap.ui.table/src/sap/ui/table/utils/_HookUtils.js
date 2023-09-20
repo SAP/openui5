@@ -174,6 +174,33 @@ sap.ui.define(["sap/ui/base/DataType"], function(DataType) {
 				]
 			}
 		},
+		TableRenderer: {
+			RenderTableStyles: {
+				arguments: [
+					{type: "object" /* RenderManager */}
+				]
+			},
+			RenderInTableBottomArea: {
+				arguments: [
+					{type: "object" /* RenderManager */}
+				]
+			},
+			RenderRowContainerStyles: {
+				arguments: [
+					{type: "object" /* RenderManager */}
+				]
+			},
+			RenderRowStyles: {
+				arguments: [
+					{type: "object" /* RenderManager */}
+				]
+			},
+			RenderCellContentStyles: {
+				arguments: [
+					{type: "object" /* RenderManager */}
+				]
+			}
+		},
 		Row: {
 			UpdateState: {
 				arguments: [

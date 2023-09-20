@@ -3987,17 +3987,18 @@ sap.ui.define([
 	});
 
 	QUnit.test("#_getBaseRowHeight", function(assert) {
-		sinon.stub(oTable, "_getRowMode").returns({
-			getBaseRowContentHeight: sinon.stub()
-		});
+		var oRowMode = new FixedRowMode();
 
-		oTable._getRowMode().getBaseRowContentHeight.returns(98);
+		oTable.setRowMode(oRowMode);
+		sinon.stub(oRowMode, "getBaseRowContentHeight");
+
+		oRowMode.getBaseRowContentHeight.returns(98);
 		assert.strictEqual(oTable._getBaseRowHeight(), 99, "The base row height is application defined (99)");
 
-		oTable._getRowMode().getBaseRowContentHeight.returns(9);
+		oRowMode.getBaseRowContentHeight.returns(9);
 		assert.strictEqual(oTable._getBaseRowHeight(), 10, "The base row height is application defined (10)");
 
-		oTable._getRowMode().getBaseRowContentHeight.returns(0);
+		oRowMode.getBaseRowContentHeight.returns(0);
 		assert.strictEqual(oTable._getBaseRowHeight(), TableUtils.DefaultRowHeight.sapUiSizeCozy,
 			"The base row height is correct in cozy density (49)");
 
@@ -5708,15 +5709,18 @@ sap.ui.define([
 		createTable: function(mSettings) {
 			this.oTable?.destroy();
 			this.oTable = TableQUnitUtils.createTable(mSettings);
+		},
+		getDefaultRowMode: function() {
+			return this.oTable.getAggregation("_hiddenDependents").filter((oObject) => oObject.isA("sap.ui.table.rowmodes.RowMode"))[0];
 		}
 	});
 
 	QUnit.test("Default", function(assert) {
 		this.createTable();
 		assert.strictEqual(this.oTable.getRowMode(), null, "value of 'rowMode' aggregation");
-		assert.ok(TableUtils.isA(this.oTable._getRowMode(), "sap.ui.table.rowmodes.Fixed"),
-			"Table#_getRowMode returns an instance of sap.ui.table.rowmodes.Fixed (default)");
-		assert.ok(Object.keys(this.oTable._getRowMode().getMetadata().getAllProperties()).every((sPropertyName) => {
+		assert.ok(TableUtils.isA(this.getDefaultRowMode(), "sap.ui.table.rowmodes.Fixed"),
+			"A default instance of sap.ui.table.rowmodes.Fixed is applied");
+		assert.ok(Object.keys(this.getDefaultRowMode().getMetadata().getAllProperties()).every((sPropertyName) => {
 			return this.oTable.isPropertyInitial(sPropertyName);
 		}), "All properties of the default row mode instance are initial");
 	});
@@ -5725,9 +5729,9 @@ sap.ui.define([
 		Object.values(RowModeType).forEach((sRowMode) => {
 			this.createTable({rowMode: sRowMode});
 			assert.strictEqual(this.oTable.getRowMode(), sRowMode, "value of 'rowMode' aggregation");
-			assert.ok(TableUtils.isA(this.oTable._getRowMode(), "sap.ui.table.rowmodes." + sRowMode),
-				`Table#_getRowMode returns an instance of sap.ui.table.rowmodes.${sRowMode}`);
-			assert.ok(Object.keys(this.oTable._getRowMode().getMetadata().getAllProperties()).every((sPropertyName) => {
+			assert.ok(TableUtils.isA(this.getDefaultRowMode(), "sap.ui.table.rowmodes." + sRowMode),
+				`A default instance of sap.ui.table.rowmodes.${sRowMode} is applied`);
+			assert.ok(Object.keys(this.getDefaultRowMode().getMetadata().getAllProperties()).every((sPropertyName) => {
 				return this.oTable.isPropertyInitial(sPropertyName);
 			}), `All properties of the '${sRowMode}' row mode instance are initial`);
 		});

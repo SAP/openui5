@@ -3,9 +3,25 @@
  */
 
 //Provides default renderer for control sap.ui.table.Table
-sap.ui.define(['sap/ui/Device', './library', "./Column", './utils/TableUtils', "./extensions/ExtensionBase",
-			   'sap/ui/core/Renderer', 'sap/ui/core/IconPool', "sap/base/Log"],
-	function(Device, library, Column, TableUtils, ExtensionBase, Renderer, IconPool, Log) {
+sap.ui.define([
+	"sap/ui/Device",
+	"./library",
+	"./Column",
+	"./utils/TableUtils",
+	"./extensions/ExtensionBase",
+	"sap/ui/core/Renderer",
+	"sap/ui/core/IconPool",
+	"sap/base/Log"
+], function(
+	Device,
+	library,
+	Column,
+	TableUtils,
+	ExtensionBase,
+	Renderer,
+	IconPool,
+	Log
+) {
 	"use strict";
 
 	var SortOrder = library.SortOrder;
@@ -17,6 +33,7 @@ sap.ui.define(['sap/ui/Device', './library', "./Column", './utils/TableUtils', "
 		Right: undefined, // Set on every call of TableRenderer#render to respect the current text direction.
 		Center: "center"
 	};
+	var Hook = TableUtils.Hook.Keys.TableRenderer;
 
 	/**
 	 * Table renderer.
@@ -114,7 +131,7 @@ sap.ui.define(['sap/ui/Device', './library', "./Column", './utils/TableUtils', "
 
 		rm.style("width", oTable.getWidth());
 
-		oTable._getRowMode().applyTableStyles(rm);
+		TableUtils.Hook.call(oTable, Hook.RenderTableStyles, rm);
 
 		if (oTable._bFirstRendering) {
 			// This class hides the table by setting opacity to 0. It will be removed in Table#_updateTableSizes.
@@ -193,7 +210,7 @@ sap.ui.define(['sap/ui/Device', './library', "./Column", './utils/TableUtils', "
 			this.renderFooter(rm, oTable, oTable.getFooter());
 		}
 
-		oTable._getRowMode().renderInTableBottomArea(rm);
+		TableUtils.Hook.call(oTable, Hook.RenderInTableBottomArea, rm);
 
 		rm.close("div");
 
@@ -265,7 +282,7 @@ sap.ui.define(['sap/ui/Device', './library', "./Column", './utils/TableUtils', "
 		this.renderTabElement(rm, "sapUiTableCtrlBefore", bHasRows ? "0" : "-1");
 
 		rm.openStart("div", oTable.getId() + "-tableCCnt");
-		oTable._getRowMode().applyRowContainerStyles(rm);
+		TableUtils.Hook.call(oTable, Hook.RenderRowContainerStyles, rm);
 		rm.class("sapUiTableCCnt");
 		rm.openEnd();
 
@@ -690,7 +707,7 @@ sap.ui.define(['sap/ui/Device', './library', "./Column", './utils/TableUtils', "
 		rm.class("sapUiTableContentCell");
 		rm.class(bHeader ? "sapUiTableRowSelectionCell" : "sapUiTableRowActionCell");
 
-		oTable._getRowMode().renderRowStyles(rm);
+		TableUtils.Hook.call(oTable, Hook.RenderRowStyles, rm);
 
 		rm.attr("tabindex", "-1");
 
@@ -1095,7 +1112,7 @@ sap.ui.define(['sap/ui/Device', './library', "./Column", './utils/TableUtils', "
 		this.addRowCSSClasses(rm, oTable, iRowIndex);
 
 		rm.attr("data-sap-ui-rowindex", iRowIndex);
-		oTable._getRowMode().renderRowStyles(rm);
+		TableUtils.Hook.call(oTable, Hook.RenderRowStyles, rm);
 
 		var oRowSettings = oRow.getAggregation("_settings");
 		var oParams = {
@@ -1176,7 +1193,7 @@ sap.ui.define(['sap/ui/Device', './library', "./Column", './utils/TableUtils', "
 				rm.class("sapUiTableFirstColumnCell");
 			}
 
-			oTable._getRowMode().renderCellContentStyles(rm);
+			TableUtils.Hook.call(oTable, Hook.RenderCellContentStyles, rm);
 
 			rm.openEnd();
 			this.renderTableCellControl(rm, oTable, oCell, bIsFirstColumn);

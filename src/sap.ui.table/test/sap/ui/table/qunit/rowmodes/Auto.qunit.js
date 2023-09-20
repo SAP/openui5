@@ -62,11 +62,14 @@ sap.ui.define([
 		},
 		after: function() {
 			TableQUnitUtils.setDefaultSettings(this.mDefaultSettings);
+		},
+		getDefaultRowMode: function(oTable) {
+			return oTable.getAggregation("_hiddenDependents").filter((oObject) => oObject.isA("sap.ui.table.rowmodes.Auto"))[0];
 		}
 	});
 
 	QUnit.test("Instance", function(assert) {
-		assert.ok(TableUtils.isA(this.oTable._getRowMode(), "sap.ui.table.rowmodes.Auto"),
+		assert.ok(TableUtils.isA(this.getDefaultRowMode(this.oTable), "sap.ui.table.rowmodes.Auto"),
 			"The table creates an instance of sap.ui.table.rowmodes.Auto");
 	});
 
@@ -78,7 +81,7 @@ sap.ui.define([
 			minAutoRowCount: 8,
 			rowHeight: 9
 		});
-		var oMode = oTable._getRowMode();
+		var oMode = this.getDefaultRowMode(oTable);
 
 		oTable.setProperty("visibleRowCount", 5);
 

@@ -485,7 +485,7 @@ sap.ui.define([
 
 		function testEmptyRow() {
 			var sOriginalDropPosition = oTable.getDragDropConfig()[0].getDropPosition();
-			var iVisibleRowCount = oTable._getRowMode().getRowCount();
+			var iOriginalRowCount = oTable.getRowMode().getRowCount();
 
 			oTable.getRowMode().setRowCount(10);
 			oCore.applyChanges();
@@ -500,7 +500,7 @@ sap.ui.define([
 
 			// Restore
 			oTable.getDragDropConfig()[0].setDropPosition(sOriginalDropPosition);
-			oTable.getRowMode().setRowCount(iVisibleRowCount);
+			oTable.getRowMode().setRowCount(iOriginalRowCount);
 			oCore.applyChanges();
 		}
 
