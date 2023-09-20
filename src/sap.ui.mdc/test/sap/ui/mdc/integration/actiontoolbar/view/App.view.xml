@@ -1,146 +1,146 @@
 <mvc:View controllerName="sap.ui.mdc.ActionToolbarTesting.controller.App"
 	xmlns="sap.m"
-    xmlns:core="sap.ui.core"
+	xmlns:core="sap.ui.core"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns:tnt="sap.tnt"
-    xmlns:mdc="sap.ui.mdc"
-    xmlns:mdcat="sap.ui.mdc.actiontoolbar"
-    xmlns:mdcc="sap.ui.mdc.chart"
-    xmlns:variants="sap.ui.fl.variants">
-    <App id="app">
-        <Page id="pageId">
+	xmlns:mdc="sap.ui.mdc"
+	xmlns:mdcat="sap.ui.mdc.actiontoolbar"
+	xmlns:mdcc="sap.ui.mdc.chart"
+	xmlns:variants="sap.ui.fl.variants">
+	<App id="app">
+		<Page id="pageId">
 			<headerContent>
 				<Button id="RTAButtonId" icon="sap-icon://wrench" press="onPressRTA"/>
 			</headerContent>
 			<content class="sapUiContentPadding">
-                <mdc:ActionToolbar id="actionToolbarId" width="100%">
-                    <mdc:begin>
-                        <Title id="idTitle" text="Test Title"/>
-                    </mdc:begin>
-                    <mdc:between>
-                        <Button id="idButtonBetween" text="Between" />
-                    </mdc:between>
-                    <mdc:end>
-                        <Button id="idButtonEnd" text="Test End" />
-                    </mdc:end>
-                    <mdc:actions>
-                        <mdcat:ActionToolbarAction id="standaloneAction1">
-                            <Button text="Action 1" id="standaloneButton1" />
-                        </mdcat:ActionToolbarAction>
-                        <mdcat:ActionToolbarAction id="standaloneAction2" layoutInformation="{
-                                aggregationName: 'end',
-                                alignment: 'End'
-                            }">
-                            <Button text="Action 2" id="standaloneButton2" />
-                        </mdcat:ActionToolbarAction>
+				<mdc:ActionToolbar id="actionToolbarId" width="100%">
+					<mdc:begin>
+						<Title id="idTitle" text="Test Title"/>
+					</mdc:begin>
+					<mdc:between>
+						<Button id="idButtonBetween" text="Between" />
+					</mdc:between>
+					<mdc:end>
+						<Button id="idButtonEnd" text="Test End" />
+					</mdc:end>
+					<mdc:actions>
+						<mdcat:ActionToolbarAction id="standaloneAction1">
+							<Button text="Action 1" id="standaloneButton1" />
+						</mdcat:ActionToolbarAction>
+						<mdcat:ActionToolbarAction id="standaloneAction2" layoutInformation="{
+								aggregationName: 'end',
+								alignment: 'End'
+							}">
+							<Button text="Action 2" id="standaloneButton2" />
+						</mdcat:ActionToolbarAction>
 
 
-                        <mdcat:ActionToolbarAction id="standaloneAction3" layoutInformation="{
-                            aggregationName: 'end',
-                            alignment: 'End'
-                        }">
-                            <Button text="Action 3" id="standaloneButton3" />
-                        </mdcat:ActionToolbarAction>
+						<mdcat:ActionToolbarAction id="standaloneAction3" layoutInformation="{
+							aggregationName: 'end',
+							alignment: 'End'
+						}">
+							<Button text="Action 3" id="standaloneButton3" />
+						</mdcat:ActionToolbarAction>
 
-                        <mdcat:ActionToolbarAction id="standaloneAction4">
-                            <Button text="Action 4" id="standaloneButton4" />
-                        </mdcat:ActionToolbarAction>
-                        <mdcat:ActionToolbarAction id="standaloneAction5">
-                            <Button text="Action 5" id="standaloneButton5" />
-                        </mdcat:ActionToolbarAction>
-                    </mdc:actions>
-                </mdc:ActionToolbar>
+						<mdcat:ActionToolbarAction id="standaloneAction4">
+							<Button text="Action 4" id="standaloneButton4" />
+						</mdcat:ActionToolbarAction>
+						<mdcat:ActionToolbarAction id="standaloneAction5">
+							<Button text="Action 5" id="standaloneButton5" />
+						</mdcat:ActionToolbarAction>
+					</mdc:actions>
+				</mdc:ActionToolbar>
 
-                <mdc:Table id="actionToolbarTable" header="Dummy Table" enableExport="true" p13nMode="{=['Sort', 'Column', 'Filter']}" delegate='\{"name": "delegates/TableDelegate", "payload": \{"collectionName": "Books"\}\}' showRowCount="true" threshold="50" width="100%">
-                    <mdc:variant>
-                        <variants:VariantManagement id="IDVariantManagementOfTable" for="dynamicPage"/>
-                    </mdc:variant>
-                    <mdc:actions>
-                        <mdcat:ActionToolbarAction id="tableAction1">
-                            <Button text="Action 1" id="tableButton1" />
-                        </mdcat:ActionToolbarAction>
-                        <mdcat:ActionToolbarAction id="tableAction2" layoutInformation="{
-                                aggregationName: 'end',
-                                alignment: 'End'
-                            }">
-                            <Button text="Action 2" id="tableButton2" />
-                        </mdcat:ActionToolbarAction>
-
-
-                        <mdcat:ActionToolbarAction id="tableAction3" layoutInformation="{
-                            aggregationName: 'end',
-                            alignment: 'End'
-                        }">
-                            <Button text="Action 3" id="tableButton3" />
-                        </mdcat:ActionToolbarAction>
-
-                        <mdcat:ActionToolbarAction id="tableAction4">
-                            <Button text="Action 4" id="tableButton4" />
-                        </mdcat:ActionToolbarAction>
-                        <mdcat:ActionToolbarAction id="tableAction5">
-                            <Button text="Action 5" id="tableButton5" />
-                        </mdcat:ActionToolbarAction>
-                    </mdc:actions>
-                    <mdc:type>
-                        <mdc:table.ResponsiveTableType growingMode="Scroll" />
-                    </mdc:type>
-                </mdc:Table>
-
-                <mdc:Chart id="actionToolbarChart" autoBindOnInit="true" noDataText="This is a test noData text" delegate='\{"name": "delegates/ChartDelegate"\}' chartType="column" header="Books Chart" height="400px" width="100%">
-                    <mdc:variant>
-                        <variants:VariantManagement id="IDVariantManagementOfChart" for="dynamicPage"/>
-                    </mdc:variant>
-                    <mdc:selectionDetailsActions>
-                        <mdcc:SelectionDetailsActions>
-                            <mdcc:detailsItemActions>
-                                <core:Item key="ItemAction1" text="ItemAction 1"></core:Item>
-                                <core:Item key="ItemAction2" text="ItemAction 2"></core:Item>
-                            </mdcc:detailsItemActions>
-
-                            <mdcc:detailsActions>
-                                <core:Item key="Action1" text="Action 1"></core:Item>
-                                <core:Item key="Action2" text="Action 2"></core:Item>
-                            </mdcc:detailsActions>
-
-                            <mdcc:actionGroups>
-                                <core:Item key="GroupAction1" text="GroupAction 1"></core:Item>
-                                <core:Item key="GroupAction2" text="GroupAction 2"></core:Item>
-                            </mdcc:actionGroups>
-                        </mdcc:SelectionDetailsActions>
-                    </mdc:selectionDetailsActions>
-                    <mdc:actions>
-                        <mdcat:ActionToolbarAction id="chartAction1">
-                            <Button text="Action 1" id="chartButton1" />
-                        </mdcat:ActionToolbarAction>
-                        <mdcat:ActionToolbarAction id="chartAction2" layoutInformation="{
-                                aggregationName: 'end',
-                                alignment: 'End'
-                            }">
-                            <Button text="Action 2" id="chartButton2" />
-                        </mdcat:ActionToolbarAction>
+				<mdc:Table id="actionToolbarTable" header="Dummy Table" enableExport="true" p13nMode="{=['Sort', 'Column', 'Filter']}" delegate='\{"name": "delegates/TableDelegate", "payload": \{"collectionName": "Books"\}\}' showRowCount="true" threshold="50" width="100%">
+					<mdc:variant>
+						<variants:VariantManagement id="IDVariantManagementOfTable" for="dynamicPage"/>
+					</mdc:variant>
+					<mdc:actions>
+						<mdcat:ActionToolbarAction id="tableAction1">
+							<Button text="Action 1" id="tableButton1" />
+						</mdcat:ActionToolbarAction>
+						<mdcat:ActionToolbarAction id="tableAction2" layoutInformation="{
+								aggregationName: 'end',
+								alignment: 'End'
+							}">
+							<Button text="Action 2" id="tableButton2" />
+						</mdcat:ActionToolbarAction>
 
 
-                        <mdcat:ActionToolbarAction id="chartAction3" layoutInformation="{
-                            aggregationName: 'end',
-                            alignment: 'End'
-                        }">
-                            <Button text="Action 3" id="chartButton3" />
-                        </mdcat:ActionToolbarAction>
+						<mdcat:ActionToolbarAction id="tableAction3" layoutInformation="{
+							aggregationName: 'end',
+							alignment: 'End'
+						}">
+							<Button text="Action 3" id="tableButton3" />
+						</mdcat:ActionToolbarAction>
 
-                        <mdcat:ActionToolbarAction id="chartAction4">
-                            <Button text="Action 4" id="chartButton4" />
-                        </mdcat:ActionToolbarAction>
-                        <mdcat:ActionToolbarAction id="chartAction5">
-                            <Button text="Action 5" id="chartButton5" />
-                        </mdcat:ActionToolbarAction>
-                    </mdc:actions>
-                    <mdc:items>
-                        <mdcc:Item id="dim1" type="groupable" name="language_code" role="category" label="Languages"/>
-                        <mdcc:Item id="meas1" type="aggregatable" name="averagemetricsWords" role="axis1" label="Words (avg)"/>
-                    </mdc:items>
-                </mdc:Chart>
+						<mdcat:ActionToolbarAction id="tableAction4">
+							<Button text="Action 4" id="tableButton4" />
+						</mdcat:ActionToolbarAction>
+						<mdcat:ActionToolbarAction id="tableAction5">
+							<Button text="Action 5" id="tableButton5" />
+						</mdcat:ActionToolbarAction>
+					</mdc:actions>
+					<mdc:type>
+						<mdc:table.ResponsiveTableType growingMode="Scroll" />
+					</mdc:type>
+				</mdc:Table>
 
-            </content>
-        </Page>
+				<mdc:Chart id="actionToolbarChart" autoBindOnInit="true" noDataText="This is a test noData text" delegate='\{"name": "delegates/ChartDelegate"\}' chartType="column" header="Books Chart" height="400px" width="100%">
+					<mdc:variant>
+						<variants:VariantManagement id="IDVariantManagementOfChart" for="dynamicPage"/>
+					</mdc:variant>
+					<mdc:selectionDetailsActions>
+						<mdcc:SelectionDetailsActions>
+							<mdcc:detailsItemActions>
+								<core:Item key="ItemAction1" text="ItemAction 1"></core:Item>
+								<core:Item key="ItemAction2" text="ItemAction 2"></core:Item>
+							</mdcc:detailsItemActions>
+
+							<mdcc:detailsActions>
+								<core:Item key="Action1" text="Action 1"></core:Item>
+								<core:Item key="Action2" text="Action 2"></core:Item>
+							</mdcc:detailsActions>
+
+							<mdcc:actionGroups>
+								<core:Item key="GroupAction1" text="GroupAction 1"></core:Item>
+								<core:Item key="GroupAction2" text="GroupAction 2"></core:Item>
+							</mdcc:actionGroups>
+						</mdcc:SelectionDetailsActions>
+					</mdc:selectionDetailsActions>
+					<mdc:actions>
+						<mdcat:ActionToolbarAction id="chartAction1">
+							<Button text="Action 1" id="chartButton1" />
+						</mdcat:ActionToolbarAction>
+						<mdcat:ActionToolbarAction id="chartAction2" layoutInformation="{
+								aggregationName: 'end',
+								alignment: 'End'
+							}">
+							<Button text="Action 2" id="chartButton2" />
+						</mdcat:ActionToolbarAction>
+
+
+						<mdcat:ActionToolbarAction id="chartAction3" layoutInformation="{
+							aggregationName: 'end',
+							alignment: 'End'
+						}">
+							<Button text="Action 3" id="chartButton3" />
+						</mdcat:ActionToolbarAction>
+
+						<mdcat:ActionToolbarAction id="chartAction4">
+							<Button text="Action 4" id="chartButton4" />
+						</mdcat:ActionToolbarAction>
+						<mdcat:ActionToolbarAction id="chartAction5">
+							<Button text="Action 5" id="chartButton5" />
+						</mdcat:ActionToolbarAction>
+					</mdc:actions>
+					<mdc:items>
+						<mdcc:Item id="dim1" type="groupable" name="language_code" role="category" label="Languages"/>
+						<mdcc:Item id="meas1" type="aggregatable" name="averagemetricsWords" role="axis1" label="Words (avg)"/>
+					</mdc:items>
+				</mdc:Chart>
+
+			</content>
+		</Page>
 	</App>
 </mvc:View>

@@ -1,14 +1,14 @@
 {
-  "name": "walkthrough-tutorial",
-  "private": true,
+  "name": "ui5.walkthrough",
   "version": "1.0.0",
+  "private": true,
   "author": "SAP SE",
   "description": "UI5 Demo App - Walkthrough Tutorial",
   "scripts": {
-    "start": "ui5 serve",
-    "build": "ui5 build"
+    "start": "ui5 serve -o test/mockServer.html"
   },
   "devDependencies": {
-    "@ui5/cli": "^3"
+    "@ui5/cli": "^3",
+    "ui5-middleware-simpleproxy": "^3"
   }
 }

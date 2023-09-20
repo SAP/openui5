@@ -2,73 +2,56 @@ sap.ui.define([
 	"sap/ui/core/Control",
 	"sap/m/RatingIndicator",
 	"sap/m/Label",
-	"sap/m/Button",
-	"sap/ui/core/InvisibleText"
-], function (Control, RatingIndicator, Label, Button, InvisibleText) {
+	"sap/m/Button"
+], (Control, RatingIndicator, Label, Button) => {
 	"use strict";
 
-	return Control.extend("sap.ui.demo.walkthrough.control.ProductRating", {
-
+	return Control.extend("ui5.walkthrough.control.ProductRating", {
 		metadata: {
 			properties: {
-				value: {type: "float", defaultValue: 0}
+				value: { type: "float", defaultValue: 0 }
 			},
+
 			aggregations: {
-				_rating: {type: "sap.m.RatingIndicator", multiple: false, visibility: "hidden"},
-				_label: {type: "sap.m.Label", multiple: false, visibility: "hidden"},
-				_button: {type: "sap.m.Button", multiple: false, visibility: "hidden"},
-				_invText1: {type: "sap.ui.core.InvisibleText", multiple: false, visibility: "hidden"},
-				_invText2: {type: "sap.ui.core.InvisibleText", multiple: false, visibility: "hidden"},
-				_invText3: {type: "sap.ui.core.InvisibleText", multiple: false, visibility: "hidden"},
-				_invText4: {type: "sap.ui.core.InvisibleText", multiple: false, visibility: "hidden"}
+				_rating: { type: "sap.m.RatingIndicator", multiple: false, visibility: "hidden" },
+				_label: { type: "sap.m.Label", multiple: false, visibility: "hidden" },
+				_button: { type: "sap.m.Button", multiple: false, visibility: "hidden" }
 			},
+
 			events: {
 				change: {
 					parameters: {
-						value: {type: "int"}
+						value: { type: "int" }
 					}
 				}
 			}
 		},
 
-		init: function () {
-			var invText1 = new InvisibleText({text:"{i18n>ratingIndicatorLabel}"});
-			var invText2 = new InvisibleText({text:"{i18n>ratingIndicatorDescription}"});
-			var invText3 = new InvisibleText({text:"{i18n>rateButtonLabel}"});
-			var invText4 = new InvisibleText({text:"{i18n>rateButtonDescription}"});
-			this.setAggregation("_invText1", invText1);
-			this.setAggregation("_invText2", invText2);
-			this.setAggregation("_invText3", invText3);
-			this.setAggregation("_invText4", invText4);
-
+		init() {
 			this.setAggregation("_rating", new RatingIndicator({
 				value: this.getValue(),
 				iconSize: "2rem",
 				visualMode: "Half",
-				liveChange: this._onRate.bind(this),
-				ariaLabelledBy: invText1,
-				ariaDescribedBy: invText2
+				liveChange: this._onRate.bind(this)
 			}));
 			this.setAggregation("_label", new Label({
 				text: "{i18n>productRatingLabelInitial}"
 			}).addStyleClass("sapUiSmallMargin"));
 			this.setAggregation("_button", new Button({
 				text: "{i18n>productRatingButton}",
-				press: this._onSubmit.bind(this),
-				ariaLabelledBy: invText3,
-				ariaDescribedBy: invText4
+				press: this._onSubmit.bind(this)
 			}).addStyleClass("sapUiTinyMarginTopBottom"));
 		},
 
-		setValue: function (fValue) {
+		setValue(fValue) {
 			this.setProperty("value", fValue, true);
 			this.getAggregation("_rating").setValue(fValue);
 
 			return this;
 		},
 
-		reset: function () {
-			var oResourceBundle = this.getModel("i18n").getResourceBundle();
+		reset() {
+			const oResourceBundle = this.getModel("i18n").getResourceBundle();
 
 			this.setValue(0);
 			this.getAggregation("_label").setDesign("Standard");
@@ -77,9 +60,9 @@ sap.ui.define([
 			this.getAggregation("_button").setEnabled(true);
 		},
 
-		_onRate: function (oEvent) {
-			var oRessourceBundle = this.getModel("i18n").getResourceBundle();
-			var fValue = oEvent.getParameter("value");
+		_onRate(oEvent) {
+			const oRessourceBundle = this.getModel("i18n").getResourceBundle();
+			const fValue = oEvent.getParameter("value");
 
 			this.setProperty("value", fValue, true);
 
@@ -87,8 +70,8 @@ sap.ui.define([
 			this.getAggregation("_label").setDesign("Bold");
 		},
 
-		_onSubmit: function (oEvent) {
-			var oResourceBundle = this.getModel("i18n").getResourceBundle();
+		_onSubmit(oEvent) {
+			const oResourceBundle = this.getModel("i18n").getResourceBundle();
 
 			this.getAggregation("_rating").setEnabled(false);
 			this.getAggregation("_label").setText(oResourceBundle.getText("productRatingLabelFinal"));
@@ -98,22 +81,14 @@ sap.ui.define([
 			});
 		},
 
-		renderer: {
-			apiVersion: 2,
-			render: function (oRM, oControl) {
-				oRM.openStart("div", oControl);
-				oRM.class("myAppDemoWTProductRating");
-				oRM.openEnd();
-				oRM.renderControl(oControl.getAggregation("_rating"));
-				oRM.renderControl(oControl.getAggregation("_label"));
-				oRM.renderControl(oControl.getAggregation("_button"));
-				oRM.renderControl(oControl.getAggregation("_invText1"));
-				oRM.renderControl(oControl.getAggregation("_invText2"));
-				oRM.renderControl(oControl.getAggregation("_invText3"));
-				oRM.renderControl(oControl.getAggregation("_invText4"));
-				oRM.close("div");
-			}
+		renderer(oRm, oControl) {
+			oRm.openStart("div", oControl);
+			oRm.class("myAppDemoWTProductRating");
+			oRm.openEnd();
+			oRm.renderControl(oControl.getAggregation("_rating"));
+			oRm.renderControl(oControl.getAggregation("_label"));
+			oRm.renderControl(oControl.getAggregation("_button"));
+			oRm.close("div");
 		}
 	});
-
 });
