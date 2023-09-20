@@ -74,9 +74,13 @@
 	opacity: @sapUiContentDisabledOpacity;
 }
 
-.sapMFocus.sapMInputBase .sapMInputBaseContentWrapper {
+.sapMFocus.sapMInputBase .sapMInputBaseContentWrapper:not(.sapMInputBaseDisabledWrapper) {
 	background-color: @sapField_Focus_Background;
 	outline: none;
+
+	&::before {
+		border-color: @sapUiFieldActiveBorderColor;
+	}
 
 	&.sapMInputBaseReadonlyWrapper {
 		background: @sapField_ReadOnly_Background;
