@@ -6,7 +6,6 @@ sap.ui.define([
 	"sap/m/App",
 	"sap/m/MessageBox",
 	"sap/ui/core/mvc/XMLView",
-	"sap/base/util/ObjectPath",
 	"sap/ui/core/Core"
 ], function(
 	UIComponent,
@@ -16,7 +15,6 @@ sap.ui.define([
 	App,
 	MessageBox,
 	XMLView,
-	ObjectPath,
 	oCore
 ) {
 	"use strict";
@@ -76,26 +74,11 @@ sap.ui.define([
 				return Promise.resolve("./extensibilityTool.html");
 			};
 
-			var oUshellContainer = ObjectPath.get("sap.ushell.Container");
+			var oUshellContainer = sap.ui.require("sap/ushell/Container");
 			if (oUshellContainer) {
 				ABAPAccess.isExtensibilityEnabled = function() {
 					return Promise.resolve(true);
 				};
-				sap.ushell.Container = Object.assign({}, sap.ushell.Container, {
-					getLogonSystem() {
-						return {
-							getName() {
-								return "ABC";
-							},
-							getClient() {
-								return "123";
-							},
-							isTrial() {
-								return false;
-							}
-						};
-					}
-				});
 			}
 
 			oCore.getEventBus().subscribe("sap.ui.core.UnrecoverableClientStateCorruption", "RequestReload", function() {

@@ -107,17 +107,17 @@
 
 		<script type="text/javascript">
 			sap.ui.getCore().attachInit(function() {
-				sap.ushell.Container.createRenderer(true).then(function(oRenderer){
+				sap.ui.require("sap/ushell/Container").createRenderer(true).then(function(oRenderer){
 					oRenderer.placeAt("content");
 				});
 			});
 		</script>
-        <style>
-            .sapUxAPObjectPageHeader .sapMBarRight {
-                overflow: visible;
-								margin: 0.125rem;
-            }
-        </style>
+		<style>
+			.sapUxAPObjectPageHeader .sapMBarRight {
+				overflow: visible;
+				margin: 0.125rem;
+			}
+		</style>
 	</head>
 
 	<!-- UI Content -->
