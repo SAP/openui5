@@ -17,7 +17,7 @@ function(
 	QUnit.module("sap.ui.mdc.util.InfoBar", {
 
 		beforeEach: function() {
-			var TestComponent = UIComponent.extend("test", {
+			const TestComponent = UIComponent.extend("test", {
 				metadata: {
 					manifest: {
 						"sap.app": {
@@ -66,8 +66,8 @@ function(
 	});
 
     QUnit.test("InfoBar init with default value", function(assert) {
-        var oSampleText = "Test123";
-        var oTestIB = new InfoBar("SomeSampleId" ,{infoText: oSampleText});
+        const oSampleText = "Test123";
+        const oTestIB = new InfoBar("SomeSampleId" ,{infoText: oSampleText});
 
         assert.ok(oTestIB, "InfoBar is instantiated");
 
@@ -84,7 +84,7 @@ function(
     });
 
     QUnit.test("setInfoText function", function(assert) {
-        var oSampleText = "Test123";
+        const oSampleText = "Test123";
 
         this.oMDCInfoBar.setInfoText(oSampleText);
         assert.ok(this.oMDCInfoBar.getVisible(), "InfoBar should be visible");
@@ -112,7 +112,7 @@ function(
     });
 
     QUnit.test("testing event handling", function(assert) {
-        var iCalled = 0;
+        let iCalled = 0;
         function testOnFirePress(oEvent) {
             iCalled++;
         }

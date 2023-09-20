@@ -933,6 +933,28 @@ sap.ui.define([
 		assert.strictEqual(fnHandleMenuItemSelected.calledTwice, true, "_menuItemSelected handler is notified in split Mode");
 	});
 
+	QUnit.test('Regular mode beforeMenuOpen event', function (assert) {
+		this.sut.destroy();
+		this.sut = null;
+		this.sut = new MenuButton({
+			beforeMenuOpen : function () {}
+		});
+		this.sut.setButtonMode(MenuButtonMode.Regular);
+		this.sut.placeAt("content");
+		oCore.applyChanges();
+
+		var fnFireBeforeMenuOpen = sinon.spy(this.sut, "fireBeforeMenuOpen");
+		this.sut.getAggregation('_button').firePress();
+
+		this.clock.tick(1000);
+
+		assert.strictEqual(this.sut.getAggregation('_button').getMetadata().getName() === 'sap.m.Button', true, 'Normal sap m button.');
+		assert.strictEqual(jQuery('.sapMMenuBtnSplit').length, 0, 'Split button not rendered');
+		assert.strictEqual(jQuery('.sapMMenuBtn').length, 1, 'Normal button rendered');
+		assert.strictEqual(fnFireBeforeMenuOpen.calledOnce, true, 'BeforeMenuOpen event fired.');
+
+	});
+
 	QUnit.test('SplitButton mode', function (assert) {
 		this.sut.destroy();
 		this.sut = null;

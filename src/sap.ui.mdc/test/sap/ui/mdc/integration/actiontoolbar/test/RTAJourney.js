@@ -38,7 +38,7 @@ sap.ui.define([
 		}
 	});
 
-    var aTestSettings = [
+    const aTestSettings = [
         {
             name: "StandAlone",
             toolbarID: "---app--actionToolbarId",

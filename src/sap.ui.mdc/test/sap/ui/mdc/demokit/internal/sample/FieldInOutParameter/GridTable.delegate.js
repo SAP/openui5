@@ -33,15 +33,15 @@ sap.ui.define([
 	/**
 	 * Test delegate for OData V4.
 	 */
-	var ODataTableDelegate = Object.assign({}, TableDelegate);
+	const ODataTableDelegate = Object.assign({}, TableDelegate);
 
 	ODataTableDelegate.getTypeMap = function (oPayload) {
 		return ODataV4TypeMap;
 	};
 
 	ODataTableDelegate.fetchProperties = function(oTable) {
-		var oModel = this._getModel(oTable);
-		var pCreatePropertyInfos;
+		const oModel = this._getModel(oTable);
+		let pCreatePropertyInfos;
 
 		if (!oModel) {
 			pCreatePropertyInfos = new Promise(function(resolve) {
@@ -64,8 +64,8 @@ sap.ui.define([
 	};
 
 	function onModelContextChange(oEvent, oData) {
-		var oTable = oEvent.getSource();
-		var oModel = this._getModel(oTable);
+		const oTable = oEvent.getSource();
+		const oModel = this._getModel(oTable);
 
 		if (oModel) {
 			oTable.detachModelContextChange(onModelContextChange);
@@ -74,22 +74,22 @@ sap.ui.define([
 	}
 
 	ODataTableDelegate._createPropertyInfos = function(oTable, oModel) {
-		var oMetadataInfo = oTable.getDelegate().payload;
-		var aProperties = [];
-		var sEntitySetPath = "/" + oMetadataInfo.collectionName;
-		var oMetaModel = oModel.getMetaModel();
+		const oMetadataInfo = oTable.getDelegate().payload;
+		const aProperties = [];
+		const sEntitySetPath = "/" + oMetadataInfo.collectionName;
+		const oMetaModel = oModel.getMetaModel();
 
 		return Promise.all([
 			oMetaModel.requestObject(sEntitySetPath + "/"), oMetaModel.requestObject(sEntitySetPath + "@")
 		]).then(function(aResults) {
-			var oEntityType = aResults[0], mEntitySetAnnotations = aResults[1];
-			var oSortRestrictions = mEntitySetAnnotations["@Org.OData.Capabilities.V1.SortRestrictions"] || {};
-			var oSortRestrictionsInfo = ODataMetaModelUtil.getSortRestrictionsInfo(oSortRestrictions);
-			var oFilterRestrictions = mEntitySetAnnotations["@Org.OData.Capabilities.V1.FilterRestrictions"];
-			var oFilterRestrictionsInfo = ODataMetaModelUtil.getFilterRestrictionsInfo(oFilterRestrictions);
+			const oEntityType = aResults[0], mEntitySetAnnotations = aResults[1];
+			const oSortRestrictions = mEntitySetAnnotations["@Org.OData.Capabilities.V1.SortRestrictions"] || {};
+			const oSortRestrictionsInfo = ODataMetaModelUtil.getSortRestrictionsInfo(oSortRestrictions);
+			const oFilterRestrictions = mEntitySetAnnotations["@Org.OData.Capabilities.V1.FilterRestrictions"];
+			const oFilterRestrictionsInfo = ODataMetaModelUtil.getFilterRestrictionsInfo(oFilterRestrictions);
 
-			for (var sKey in oEntityType) {
-				var oObj = oEntityType[sKey];
+			for (const sKey in oEntityType) {
+				const oObj = oEntityType[sKey];
 
 				if (oObj && oObj.$kind === "Property") {
 					// ignore (as for now) all complex properties
@@ -101,7 +101,7 @@ sap.ui.define([
 						continue;
 					}
 
-					var oPropertyAnnotations = oMetaModel.getObject(sEntitySetPath + "/" + sKey + "@");
+					const oPropertyAnnotations = oMetaModel.getObject(sEntitySetPath + "/" + sKey + "@");
 
 					aProperties.push({
 						name: sKey,
@@ -129,7 +129,7 @@ sap.ui.define([
 		if (!oMDCTable) {
 			return;
 		}
-		var oMetadataInfo = oMDCTable.getPayload();
+		const oMetadataInfo = oMDCTable.getPayload();
 
 		if (oMetadataInfo && oBindingInfo) {
 			oBindingInfo.path = oBindingInfo.path || oMetadataInfo.collectionPath || "/" + oMetadataInfo.collectionName;
@@ -140,14 +140,15 @@ sap.ui.define([
 			oBindingInfo = {};
 		}
 
-		var oFilter = Core.byId(oMDCTable.getFilter()), bFilterEnabled = oMDCTable.isFilteringEnabled(), mConditions;
-		var oInnerFilterInfo, oOuterFilterInfo;
-		var aFilters = [];
+		const oFilter = Core.byId(oMDCTable.getFilter()), bFilterEnabled = oMDCTable.isFilteringEnabled();
+		let mConditions;
+		let oInnerFilterInfo, oOuterFilterInfo;
+		const aFilters = [];
 
 		//TODO: consider a mechanism ('FilterMergeUtil' or enhance 'FilterUtil') to allow the connection between different filters)
 		if (bFilterEnabled) {
 			mConditions = oMDCTable.getConditions();
-			var aTableProperties = oMDCTable.data("$tablePropertyInfo");
+			const aTableProperties = oMDCTable.data("$tablePropertyInfo");
 			oInnerFilterInfo = FilterUtil.getFilterInfo(ODataTableDelegate.getTypeMap(), mConditions, aTableProperties);
 			if (oInnerFilterInfo.filters) {
 				aFilters.push(oInnerFilterInfo.filters);
@@ -158,22 +159,22 @@ sap.ui.define([
 			mConditions = oFilter.getConditions();
 			if (mConditions) {
 
-				var aPropertiesMetadata = oFilter.getPropertyInfoSet ? oFilter.getPropertyInfoSet() : null;
-				var aParameterNames = DelegateUtil.getParameterNames(oFilter);
+				const aPropertiesMetadata = oFilter.getPropertyInfoSet ? oFilter.getPropertyInfoSet() : null;
+				const aParameterNames = DelegateUtil.getParameterNames(oFilter);
 				oOuterFilterInfo = FilterUtil.getFilterInfo(ODataTableDelegate.getTypeMap(), mConditions, aPropertiesMetadata, aParameterNames);
 
 				if (oOuterFilterInfo.filters) {
 					aFilters.push(oOuterFilterInfo.filters);
 				}
 
-				var sParameterPath = DelegateUtil.getParametersInfo(oFilter, mConditions);
+				const sParameterPath = DelegateUtil.getParametersInfo(oFilter, mConditions);
 				if (sParameterPath) {
 					oBindingInfo.path = sParameterPath;
 				}
 			}
 
 			// get the basic search
-			var sSearchText = oFilter.getSearch instanceof Function ? oFilter.getSearch() :  "";
+			const sSearchText = oFilter.getSearch instanceof Function ? oFilter.getSearch() :  "";
 			if (sSearchText) {
 
 				if (!oBindingInfo.parameters) {
@@ -188,12 +189,12 @@ sap.ui.define([
 		oBindingInfo.filters = new Filter(aFilters, true);
 
 		// select In- and OutParameter values
-		var oVHPayload = oMDCTable.getParent().getParent().getParent().getPayload();
+		const oVHPayload = oMDCTable.getParent().getParent().getParent().getPayload();
 		if (oVHPayload) {
-			var aInParameters = oVHPayload.inParameters || [];
-			var aOutParameters = oVHPayload.outParameters || [];
-			var sContentId = oMDCTable.getParent().getId();
-			var aProperties = [];
+			const aInParameters = oVHPayload.inParameters || [];
+			const aOutParameters = oVHPayload.outParameters || [];
+			const sContentId = oMDCTable.getParent().getId();
+			const aProperties = [];
 			aInParameters.forEach(function(oInParameter) {
 				if (sContentId.endsWith(oInParameter.contentId)) {
 					aProperties.push(oInParameter.target);
@@ -220,7 +221,7 @@ sap.ui.define([
 	};
 
 	ODataTableDelegate._getModel = function(oTable) {
-		var oMetadataInfo = oTable.getDelegate().payload;
+		const oMetadataInfo = oTable.getDelegate().payload;
 		return oTable.getModel(oMetadataInfo.model);
 	};
 
@@ -241,7 +242,7 @@ sap.ui.define([
 	 */
 	ODataTableDelegate._createColumn = function(sPropertyName, oTable) {
 		return this.fetchProperties(oTable).then(function(aProperties) {
-			var oPropertyInfo = aProperties.find(function(oCurrentPropertyInfo) {
+			const oPropertyInfo = aProperties.find(function(oCurrentPropertyInfo) {
 				return oCurrentPropertyInfo.name === sPropertyName;
 			});
 
@@ -250,7 +251,7 @@ sap.ui.define([
 			}
 
 			return this._createColumnTemplate(oPropertyInfo, oTable).then(function(oTemplate) {
-				var oColumnInfo = this._getColumnInfo(oPropertyInfo, oTable);
+				const oColumnInfo = this._getColumnInfo(oPropertyInfo, oTable);
 				oColumnInfo.template = oTemplate;
 				oColumnInfo.propertyKey = sPropertyName;
 				return new Column(oTable.getId() + "--" + oPropertyInfo.name, oColumnInfo);

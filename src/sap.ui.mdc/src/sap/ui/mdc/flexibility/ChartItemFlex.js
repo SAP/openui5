@@ -7,7 +7,7 @@ sap.ui.define([
 ], function(ItemBaseFlex) {
 	"use strict";
 
-	var oChartItemFlex = Object.assign({}, ItemBaseFlex);
+	const oChartItemFlex = Object.assign({}, ItemBaseFlex);
 
 	oChartItemFlex.beforeAddItem = function(Delegate, sPropertyKey, oControl, mPropertyBag, oChangeContent) {
 		return Delegate.addItem.call(Delegate, oControl, sPropertyKey, mPropertyBag, oChangeContent.role);

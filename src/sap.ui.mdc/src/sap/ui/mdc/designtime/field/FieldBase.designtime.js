@@ -7,9 +7,9 @@ sap.ui.define([
 ], function (FieldBase, Util) {
 	"use strict";
 
-	var oDesignTime = {};
+	const oDesignTime = {};
 
-	var aAllowedAggregations = [],
+	const aAllowedAggregations = [],
 		aAllowedProperties = [];
 
 	return Util.getDesignTime(FieldBase, aAllowedProperties, aAllowedAggregations, oDesignTime);

@@ -34,7 +34,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("inner layout exists on initialization", function(assert) {
-		var done = assert.async();
+		const done = assert.async();
 		assert.ok(this.oFilterBar);
 
 		this.oFilterBar.initialized().then(function() {
@@ -48,7 +48,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("get GO/Search button visiblity", function (assert) {
-		var oButton = this.oFilterBar._btnSearch;
+		const oButton = this.oFilterBar._btnSearch;
 
 		assert.equal(this.oFilterBar.getBasicSearchField(), null, "No Basis Search exist");
 		assert.notOk(this.oFilterBar._oShowAllFiltersBtn.getVisible(), "showAllFilters button is not visible");
@@ -91,7 +91,7 @@ sap.ui.define([
 
 
 	QUnit.test("check liveMode property", function (assert) {
-		var oButton = this.oFilterBar._btnSearch;
+		const oButton = this.oFilterBar._btnSearch;
 		assert.ok(oButton);
 
 		assert.ok(!this.oFilterBar.getLiveMode());
@@ -107,9 +107,9 @@ sap.ui.define([
 	});
 
 	QUnit.test("check ExpandFilterFields", function (assert) {
-		var oLayout = this.oFilterBar._oFilterBarLayout.oAlgnLayout;
-		var oButton = this.oFilterBar._oBtnFilters;
-		var bExpanded = this.oFilterBar.getExpandFilterFields();
+		const oLayout = this.oFilterBar._oFilterBarLayout.oAlgnLayout;
+		const oButton = this.oFilterBar._oBtnFilters;
+		const bExpanded = this.oFilterBar.getExpandFilterFields();
 		assert.ok(bExpanded);
 
 		assert.equal(oButton.getText(), "Hide Filters");
@@ -130,15 +130,15 @@ sap.ui.define([
 	});
 
 	QUnit.test("check BasicSearch", function (assert) {
-		var oCtrl = this.oFilterBar.getBasicSearchField();
+		let oCtrl = this.oFilterBar.getBasicSearchField();
 		assert.ok(oCtrl === undefined, "BasicSearchField should not exist");
 
-		var oBSField = new FilterField();
+		const oBSField = new FilterField();
 		this.oFilterBar.setBasicSearchField(oBSField);
 		oCtrl = this.oFilterBar.getBasicSearchField();
 		assert.ok(oCtrl === oBSField, "BasicSearchField should exist");
 
-		var oNewBSField = new FilterField();
+		const oNewBSField = new FilterField();
 		this.oFilterBar.setBasicSearchField(oNewBSField);
 		oCtrl = this.oFilterBar.getBasicSearchField();
 		assert.ok(oCtrl === oNewBSField, "new BasicSearchField should exist");
@@ -149,15 +149,15 @@ sap.ui.define([
 	});
 
 	QUnit.test("check CollectiveSearch", function (assert) {
-		var oCtrl = this.oFilterBar.getCollectiveSearch();
+		let oCtrl = this.oFilterBar.getCollectiveSearch();
 		assert.ok(oCtrl === undefined, "CollectiveSearchSelect should not exist");
 
-		var oColSearch = new CollectiveSearchSelect();
+		const oColSearch = new CollectiveSearchSelect();
 		this.oFilterBar.setCollectiveSearch(oColSearch);
 		oCtrl = this.oFilterBar.getCollectiveSearch();
 		assert.ok(oCtrl === oColSearch, "CollectiveSearchSelect should exist");
 
-		var oNewColSearch = new CollectiveSearchSelect();
+		const oNewColSearch = new CollectiveSearchSelect();
 		this.oFilterBar.setCollectiveSearch(oNewColSearch);
 		oCtrl = this.oFilterBar.getCollectiveSearch();
 		assert.ok(oCtrl === oNewColSearch, "new CollectiveSearchSelect should exist");

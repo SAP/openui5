@@ -22,7 +22,7 @@ sap.ui.define([
 		autoWait: true
 	});
 
-	var sTableID = "IDTableOfInternalSampleApp_01";
+	const sTableID = "IDTableOfInternalSampleApp_01";
 
 	opaTest("When I start the 'appUnderTestTable' app, the table should appear and contain some columns", function (Given, When, Then) {
 		//insert application

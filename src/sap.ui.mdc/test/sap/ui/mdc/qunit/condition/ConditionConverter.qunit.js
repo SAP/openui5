@@ -47,8 +47,8 @@ sap.ui.define([
 
 	function _testConvert(assert, bToString, oType, sOperator, aValuesIn, aValuesOut) {
 
-		var oCondition;
-		var oResult;
+		let oCondition;
+		let oResult;
 
 		if (sOperator === "EQ") {
 			oCondition = Condition.createItemCondition(aValuesIn[0], aValuesIn[1]); // to use validate logic
@@ -66,7 +66,7 @@ sap.ui.define([
 		assert.equal(oResult.operator, oCondition.operator, "operator");
 		assert.ok(Array.isArray(oResult.values), "value array returned");
 		assert.equal(oResult.values.length, aValuesOut.length, "expect number of values returned");
-		for (var i = 0; i < aValuesOut.length; i++) {
+		for (let i = 0; i < aValuesOut.length; i++) {
 			assert.deepEqual(oResult.values[i], aValuesOut[i], "stringified value" + i);
 		}
 
@@ -82,56 +82,56 @@ sap.ui.define([
 
 	QUnit.test("String", function(assert) {
 
-		var oType = new StringType();
+		const oType = new StringType();
 		_testConvert(assert, true, oType, "EQ", ["Test"], ["Test"]);
 
 	});
 
 	QUnit.test("Date", function(assert) {
 
-		var oType = new DateType({style: "long"});
+		const oType = new DateType({style: "long"});
 		_testConvert(assert, true, oType, "GT", [new Date(2019, 11, 11)], ["2019-12-11"]);
 
 	});
 
 	QUnit.test("V2-Date", function(assert) {
 
-		var oType = new V2DateTimeType({style: "long"}, {displayFormat: "Date"});
+		const oType = new V2DateTimeType({style: "long"}, {displayFormat: "Date"});
 		_testConvert(assert, true, oType, "BT", [new Date(Date.UTC(2019, 11, 11)), new Date(Date.UTC(2019, 11, 12))], ["2019-12-11", "2019-12-12"]);
 
 	});
 
 	QUnit.test("V4-Date", function(assert) {
 
-		var oType = new V4DateType({style: "long"});
+		const oType = new V4DateType({style: "long"});
 		_testConvert(assert, true, oType, "LT", ["2019-12-11"], ["2019-12-11"]);
 
 	});
 
 	QUnit.test("Time", function(assert) {
 
-		var oType = new TimeType({style: "long"});
+		const oType = new TimeType({style: "long"});
 		_testConvert(assert, true, oType, "EQ", [new Date(2019, 11, 12, 19, 38, 30)], ["19:38:30"]);
 
 	});
 
 	QUnit.test("V2-Time", function(assert) {
 
-		var oType = new V2TimeType({style: "long"});
+		const oType = new V2TimeType({style: "long"});
 		_testConvert(assert, true, oType, "EQ", [{__edmType: "Edm.Time", ms: 27510000}], ["07:38:30"]);
 
 	});
 
 	QUnit.test("V4Time", function(assert) {
 
-		var oType = new V4TimeType({style: "long"});
+		const oType = new V4TimeType({style: "long"});
 		_testConvert(assert, true, oType, "EQ", ["07:38:30"], ["07:38:30"]);
 
 	});
 
 	QUnit.test("Boolean", function(assert) {
 
-		var oType = new V2Boolean();
+		let oType = new V2Boolean();
 		_testConvert(assert, true, oType, "EQ", [true, "Yes"], [true]);
 		_testConvert(assert, true, oType, "EQ", [false, "No"], [false]);
 
@@ -149,56 +149,56 @@ sap.ui.define([
 
 	QUnit.test("Byte", function(assert) {
 
-		var oType = new Byte();
+		const oType = new Byte();
 		_testConvert(assert, true, oType, "EQ", [123], [123]);
 
 	});
 
 	QUnit.test("SByte", function(assert) {
 
-		var oType = new SByte();
+		const oType = new SByte();
 		_testConvert(assert, true, oType, "EQ", [-123], [-123]);
 
 	});
 
 	QUnit.test("Int16", function(assert) {
 
-		var oType = new Int16();
+		const oType = new Int16();
 		_testConvert(assert, true, oType, "EQ", [1234], [1234]);
 
 	});
 
 	QUnit.test("Int64", function(assert) {
 
-		var oType = new Int64();
+		const oType = new Int64();
 		_testConvert(assert, true, oType, "EQ", ["12345678"], ["12345678"]);
 
 	});
 
 	QUnit.test("Double", function(assert) {
 
-		var oType = new Double();
+		const oType = new Double();
 		_testConvert(assert, true, oType, "EQ", [123456.78], [123456.78]);
 
 	});
 
 	QUnit.test("Decimal", function(assert) {
 
-		var oType = new Decimal();
+		const oType = new Decimal();
 		_testConvert(assert, true, oType, "EQ", ["123456.78"], ["123456.78"]);
 
 	});
 
 	QUnit.test("EQ Operator", function(assert) {
 
-		var oType = new StringType();
+		const oType = new StringType();
 		_testConvert(assert, true, oType, "EQ", ["id", "desc"], ["id"]);
 
 	});
 
 	QUnit.test("Today", function(assert) {
 
-		var oType = new V4DateType({style: "long"});
+		const oType = new V4DateType({style: "long"});
 		// Today has no Values and the oType will be not used
 		_testConvert(assert, true, oType, "TODAY", [], []);
 
@@ -206,7 +206,7 @@ sap.ui.define([
 
 	QUnit.test("Next x Days", function(assert) {
 
-		var oType = new V4DateType({style: "long"});
+		const oType = new V4DateType({style: "long"});
 		// NEXTDAYS has an integer type for the values and the oType will internal not be used
 		_testConvert(assert, true, oType, "NEXTDAYS", [10], [10]);
 
@@ -214,7 +214,7 @@ sap.ui.define([
 
 	QUnit.test("Empty", function(assert) {
 
-		var oType = new StringType();
+		const oType = new StringType();
 		// EMPTY has no values
 		_testConvert(assert, true, oType, "Empty", [], []);
 
@@ -228,56 +228,56 @@ sap.ui.define([
 
 	QUnit.test("String", function(assert) {
 
-		var oType = new StringType();
+		const oType = new StringType();
 		_testConvert(assert, false, oType, "EQ", ["Test"], ["Test"]);
 
 	});
 
 	QUnit.test("Date", function(assert) {
 
-		var oType = new DateType({style: "long"});
+		const oType = new DateType({style: "long"});
 		_testConvert(assert, false, oType, "GT", ["2019-12-11"], [new Date(2019, 11, 11)]);
 
 	});
 
 	QUnit.test("V2-Date", function(assert) {
 
-		var oType = new V2DateTimeType({style: "long"}, {displayFormat: "Date"});
+		const oType = new V2DateTimeType({style: "long"}, {displayFormat: "Date"});
 		_testConvert(assert, false, oType, "BT", ["2019-12-11", "2019-12-12"], [new Date(Date.UTC(2019, 11, 11)), new Date(Date.UTC(2019, 11, 12))]);
 
 	});
 
 	QUnit.test("V4-Date", function(assert) {
 
-		var oType = new V4DateType({style: "long"});
+		const oType = new V4DateType({style: "long"});
 		_testConvert(assert, false, oType, "LT", ["2019-12-11"], ["2019-12-11"]);
 
 	});
 
 	QUnit.test("Time", function(assert) {
 
-		var oType = new TimeType({style: "long"});
+		const oType = new TimeType({style: "long"});
 		_testConvert(assert, false, oType, "EQ", ["19:38:30"], [new Date(1970, 0, 1, 19, 38, 30)]);
 
 	});
 
 	QUnit.test("V2Time", function(assert) {
 
-		var oType = new V2TimeType({style: "long"});
+		const oType = new V2TimeType({style: "long"});
 		_testConvert(assert, false, oType, "EQ", ["07:38:30"], [{__edmType: "Edm.Time", ms: 27510000}]);
 
 	});
 
 	QUnit.test("V4Time", function(assert) {
 
-		var oType = new V4TimeType({style: "long"});
+		const oType = new V4TimeType({style: "long"});
 		_testConvert(assert, false, oType, "EQ", ["07:38:30"], ["07:38:30"]);
 
 	});
 
 	QUnit.test("Boolean", function(assert) {
 
-		var oType = new V2Boolean();
+		let oType = new V2Boolean();
 		_testConvert(assert, false, oType, "EQ", [true], [true]);
 		_testConvert(assert, false, oType, "EQ", [false], [false]);
 
@@ -289,42 +289,42 @@ sap.ui.define([
 
 	QUnit.test("Byte", function(assert) {
 
-		var oType = new Byte();
+		const oType = new Byte();
 		_testConvert(assert, false, oType, "EQ", [123], [123]);
 
 	});
 
 	QUnit.test("SByte", function(assert) {
 
-		var oType = new SByte();
+		const oType = new SByte();
 		_testConvert(assert, false, oType, "EQ", [-123], [-123]);
 
 	});
 
 	QUnit.test("Int16", function(assert) {
 
-		var oType = new Int16();
+		const oType = new Int16();
 		_testConvert(assert, false, oType, "EQ", [123], [123]);
 
 	});
 
 	QUnit.test("Int64", function(assert) {
 
-		var oType = new Int64();
+		const oType = new Int64();
 		_testConvert(assert, false, oType, "EQ", ["12345678"], ["12345678"]);
 
 	});
 
 	QUnit.test("Double", function(assert) {
 
-		var oType = new Double();
+		const oType = new Double();
 		_testConvert(assert, false, oType, "EQ", [123456.78], [123456.78]);
 
 	});
 
 	QUnit.test("Decimal", function(assert) {
 
-		var oType = new Decimal();
+		const oType = new Decimal();
 		_testConvert(assert, false, oType, "EQ", ["123456.78"], ["123456.78"]);
 
 	});
@@ -332,14 +332,14 @@ sap.ui.define([
 
 	QUnit.test("EQ Operator", function(assert) {
 
-		var oType = new StringType();
+		const oType = new StringType();
 		_testConvert(assert, false, oType, "EQ", ["id"], ["id"]);
 
 	});
 
 	QUnit.test("Today", function(assert) {
 
-		var oType = new V4DateType({style: "long"});
+		const oType = new V4DateType({style: "long"});
 		// Today has no Values and the oType will be not used
 		_testConvert(assert, false, oType, "TODAY", [], []);
 
@@ -347,7 +347,7 @@ sap.ui.define([
 
 	QUnit.test("Next x Days", function(assert) {
 
-		var oType = new V4DateType({style: "long"});
+		const oType = new V4DateType({style: "long"});
 		// NEXTDAYS has an integer type for the values and the oType will internal not be used
 		_testConvert(assert, false, oType, "NEXTDAYS", [10], [10]);
 
@@ -355,7 +355,7 @@ sap.ui.define([
 
 	QUnit.test("Empty", function(assert) {
 
-		var oType = new StringType();
+		const oType = new StringType();
 		// EMPTY has no values
 		_testConvert(assert, false, oType, "Empty", [], []);
 

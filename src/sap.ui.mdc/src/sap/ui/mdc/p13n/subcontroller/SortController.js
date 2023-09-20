@@ -7,7 +7,7 @@ sap.ui.define([
 ], function (BaseController, P13nBuilder, SortPanel) {
 	"use strict";
 
-    var SortController = BaseController.extend("sap.ui.mdc.p13n.subcontroller.SortController", {
+    const SortController = BaseController.extend("sap.ui.mdc.p13n.subcontroller.SortController", {
         constructor: function() {
 			BaseController.apply(this, arguments);
 			this._bResetEnabled = true;
@@ -31,11 +31,8 @@ sap.ui.define([
     };
 
     SortController.prototype.initAdaptationUI = function(oPropertyHelper){
-
-        var oSortPanel;
-
-        oSortPanel = new SortPanel();
-        var oAdaptationData = this.mixInfoAndState(oPropertyHelper);
+        const oSortPanel = new SortPanel();
+        const oAdaptationData = this.mixInfoAndState(oPropertyHelper);
         oSortPanel.setP13nData(oAdaptationData.items);
         this._oPanel = oSortPanel;
 
@@ -43,7 +40,7 @@ sap.ui.define([
     };
 
     SortController.prototype.model2State = function() {
-        var aItems = [];
+        const aItems = [];
         if (this._oPanel) {
             this._oPanel.getP13nData(true).forEach(function(oItem){
                 if (oItem.sorted){
@@ -70,12 +67,12 @@ sap.ui.define([
 
     SortController.prototype.mixInfoAndState = function(oPropertyHelper) {
 
-        var aItemState = this.getCurrentState();
-        var mExistingSorters = P13nBuilder.arrayToMap(aItemState);
+        const aItemState = this.getCurrentState();
+        const mExistingSorters = P13nBuilder.arrayToMap(aItemState);
 
-        var oP13nData = this.prepareAdaptationData(oPropertyHelper, function(mItem, oProperty){
+        const oP13nData = this.prepareAdaptationData(oPropertyHelper, function(mItem, oProperty){
 
-            var oExistingSorter = mExistingSorters[oProperty.name];
+            const oExistingSorter = mExistingSorters[oProperty.name];
 
             mItem.sorted = oExistingSorter ? true : false;
             mItem.sortPosition = oExistingSorter ? oExistingSorter.position : -1;

@@ -30,7 +30,7 @@ sap.ui.define([
 		}
 	});
 
-	var sTableId = "container-appMDCTreeTableV4---MyView--MDCTreeTableV4";
+	const sTableId = "container-appMDCTreeTableV4---MyView--MDCTreeTableV4";
 
 	QUnit.module("TreeTable Table OpaTests");
 

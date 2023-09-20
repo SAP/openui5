@@ -23,7 +23,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Instance", function(assert) {
-		var done = assert.async(2);
+		const done = assert.async(2);
 		assert.ok(this.oLink);
 		assert.deepEqual(this.oLink.getDelegate().name, "sap/ui/mdc/LinkDelegate");
 		assert.deepEqual(this.oLink.getDelegate().payload, {});
@@ -61,11 +61,11 @@ sap.ui.define([
 				}
 			}
 		});
-		var oPayload = this.oLink.getDelegate().payload;
-		var done = assert.async();
+		const oPayload = this.oLink.getDelegate().payload;
+		const done = assert.async();
 		// this.oLink.setModel(this.oODataModel);
 		this.oLink.awaitControlDelegate().then(function() {
-			var oDELEGATE = this.oLink.getControlDelegate();
+			const oDELEGATE = this.oLink.getControlDelegate();
 			assert.deepEqual(oDELEGATE._getSemanticObjects(oPayload), [
 				"SO1"
 			]);
@@ -105,11 +105,11 @@ sap.ui.define([
 				}
 			}
 		});
-		var oPayload = this.oLink.getDelegate().payload;
-		var done = assert.async();
+		const oPayload = this.oLink.getDelegate().payload;
+		const done = assert.async();
 		// this.oLink.setModel(this.oODataModel);
 		this.oLink.awaitControlDelegate().then(function() {
-			var oDELEGATE = this.oLink.getControlDelegate();
+			const oDELEGATE = this.oLink.getControlDelegate();
 			assert.deepEqual(oDELEGATE._getSemanticObjects(oPayload), [
 				"SO1", "SOAdd"
 			]);
@@ -134,11 +134,11 @@ sap.ui.define([
 				}
 			}
 		});
-		var oPayload = this.oLink.getDelegate().payload;
-		var done = assert.async();
+		const oPayload = this.oLink.getDelegate().payload;
+		const done = assert.async();
 		// this.oLink.setModel(this.oODataModel);
 		this.oLink.awaitControlDelegate().then(function() {
-			var oDELEGATE = this.oLink.getControlDelegate();
+			const oDELEGATE = this.oLink.getControlDelegate();
 			assert.deepEqual(oDELEGATE._getSemanticObjects(oPayload), [
 				"SO1"
 			]);
@@ -160,7 +160,7 @@ sap.ui.define([
 		}
 	});
 
-	var _calculateSemanticAttributesOfLink = function(oLink, oContextObject) {
+	const _calculateSemanticAttributesOfLink = function(oLink, oContextObject) {
 		return oLink.awaitControlDelegate().then(function() {
 			return oLink.getControlDelegate()._calculateSemanticAttributes(oContextObject, oLink.getDelegate().payload, oLink._getInfoLog());
 		});
@@ -168,7 +168,7 @@ sap.ui.define([
 
 	QUnit.test("without semanticObjectMappings", function(assert) {
 		assert.expect(8);
-		var done = assert.async(7);
+		const done = assert.async(7);
 
 		assert.deepEqual(this.oContextObject, {
 			Category: "Monitor",
@@ -314,7 +314,7 @@ sap.ui.define([
 
 	QUnit.test("with semanticObjectMappings", function(assert) {
 		assert.expect(3);
-		var done = assert.async(2);
+		const done = assert.async(2);
 
 		assert.deepEqual(this.oContextObject, {
 			Category: "Monitor",
@@ -380,7 +380,7 @@ sap.ui.define([
 
 	QUnit.test("with semanticObjectMapping qualifier", function(assert) {
 		assert.expect(2);
-		var done = assert.async();
+		const done = assert.async();
 
 		assert.deepEqual(this.oContextObject, {
 			Category: "Monitor",
@@ -482,9 +482,9 @@ sap.ui.define([
 		}
 	});
 	QUnit.test("CrossApplicationNavigation service not available", function(assert) {
-		var fnSapLogErrorSpy = sinon.spy(SapBaseLog, "error").withArgs("FlpLinkDelegate: Service 'CrossApplicationNavigation' or 'URLParsing' could not be obtained");
+		const fnSapLogErrorSpy = sinon.spy(SapBaseLog, "error").withArgs("FlpLinkDelegate: Service 'CrossApplicationNavigation' or 'URLParsing' could not be obtained");
 		FakeFlpConnector.disableFakeConnector();
-		var done = assert.async();
+		const done = assert.async();
 		this.oLink = new Link({
 			delegate: {
 				name: "sap/ui/mdc/flp/FlpLinkDelegate",
@@ -505,8 +505,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("CrossApplicationNavigation service returns empty links", function(assert) {
-		var fnSapLogErrorSpy = sinon.spy(SapBaseLog, "error");
-		var done = assert.async();
+		const fnSapLogErrorSpy = sinon.spy(SapBaseLog, "error");
+		const done = assert.async();
 		this.oLink = new Link({
 			delegate: {
 				name: "sap/ui/mdc/flp/FlpLinkDelegate",
@@ -528,7 +528,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("CrossApplicationNavigation service returns one link with any action", function(assert) {
-		var done = assert.async();
+		const done = assert.async();
 		this.oLink = new Link({
 			delegate: {
 				name: "sap/ui/mdc/flp/FlpLinkDelegate",
@@ -549,7 +549,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("CrossApplicationNavigation service returns two links with any actions", function(assert) {
-		var done = assert.async();
+		const done = assert.async();
 		this.oLink = new Link({
 			delegate: {
 				name: "sap/ui/mdc/flp/FlpLinkDelegate",
@@ -572,7 +572,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("different SemanticObjects", function(assert) {
-		var done = assert.async();
+		const done = assert.async();
 		this.oLink = new Link({
 			delegate: {
 				name: "sap/ui/mdc/flp/FlpLinkDelegate",
@@ -643,7 +643,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Dummy semantic object", function(assert) {
-		var done = assert.async();
+		const done = assert.async();
 		this.oLink = new Link({
 			delegate: {
 				name: "sap/ui/mdc/flp/FlpLinkDelegate",
@@ -671,7 +671,7 @@ sap.ui.define([
 		}.bind(this));
 	});
 	QUnit.test("Correct semantic object", function(assert) {
-		var done = assert.async();
+		const done = assert.async();
 		this.oLink = new Link({
 			delegate: {
 				name: "sap/ui/mdc/flp/FlpLinkDelegate",
@@ -728,7 +728,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("retrieveNavigationTargets", function(assert) {
-		var done = assert.async();
+		const done = assert.async();
 		// act
 		this.oLink._retrieveUnmodifiedLinkItems().then(function() {
 			// assert
@@ -740,7 +740,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("calculateSemanticAttributes", function(assert) {
-		var done = assert.async();
+		const done = assert.async();
 		// act
 		_calculateSemanticAttributesOfLink(this.oLink, {
 			param01: "value of param01",
@@ -756,7 +756,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("determineItems", function(assert) {
-		var done = assert.async();
+		const done = assert.async();
 		// act
 		this.oLink._retrieveUnmodifiedLinkItems().then(function() {
 			// assert

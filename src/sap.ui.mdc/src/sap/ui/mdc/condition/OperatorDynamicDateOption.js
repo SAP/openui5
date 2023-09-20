@@ -33,9 +33,9 @@ sap.ui.define([
 	) {
 		"use strict";
 
-		var ValueState = coreLibrary.ValueState;
-		var DatePicker;
-		var DateTimePicker;
+		const ValueState = coreLibrary.ValueState;
+		let DatePicker;
+		let DateTimePicker;
 
 		/**
 		 * Constructor for a new OperatorDynamicDateOption.
@@ -57,7 +57,7 @@ sap.ui.define([
 		 * @since 1.96
 		 * @alias sap.ui.mdc.condition.OperatorDynamicDateOption
 		 */
-		var OperatorDynamicDateOption = DynamicDateOption.extend("sap.ui.mdc.condition.OperatorDynamicDateOption", /** @lends sap.ui.mdc.condition.OperatorDynamicDateOption.prototype */ {
+		const OperatorDynamicDateOption = DynamicDateOption.extend("sap.ui.mdc.condition.OperatorDynamicDateOption", /** @lends sap.ui.mdc.condition.OperatorDynamicDateOption.prototype */ {
 			metadata: {
 				library: "sap.ui.mdc",
 				properties: {
@@ -90,7 +90,7 @@ sap.ui.define([
 			}
 
 			if (this._aUITypes) {
-				for (var i = 0; i < this._aUITypes.length; i++) {
+				for (let i = 0; i < this._aUITypes.length; i++) {
 					this._aUITypes[i].destroy();
 				}
 				this._aUITypes = undefined;
@@ -103,8 +103,8 @@ sap.ui.define([
 
 			// load needed pickers
 			// TODO: request in DateContent to be sure that loaded? But needed only on opening, so async loading on initialization should be ok
-			var aModules = [];
-			var sBaseType = this.getBaseType();
+			const aModules = [];
+			const sBaseType = this.getBaseType();
 			if (sBaseType === BaseType.DateTime) {
 				if (!DateTimePicker) {
 					aModules.push("sap/m/DateTimePicker");
@@ -141,15 +141,15 @@ sap.ui.define([
 
 		OperatorDynamicDateOption.prototype.isRange = function() {
 
-			var oOperator = this.getOperator();
+			const oOperator = this.getOperator();
 			return oOperator.isA("sap.ui.mdc.condition.RangeOperator");
 
 		};
 
 		OperatorDynamicDateOption.prototype.getText = function(oControl) {
 
-			var oOperator = this.getOperator();
-			var sBaseType = this.getBaseType();
+			const oOperator = this.getOperator();
+			const sBaseType = this.getBaseType();
 			return oOperator.getLongText(sBaseType);
 
 		};
@@ -157,15 +157,15 @@ sap.ui.define([
 		OperatorDynamicDateOption.prototype.getValueHelpUITypes = function(oControl) {
 
 			if (!this._aUITypes) {
-				var oOperator = this.getOperator();
-				var oType = this.getType();
-				var sBaseType = this.getBaseType();
+				const oOperator = this.getOperator();
+				let oType = this.getType();
+				const sBaseType = this.getBaseType();
 				this._aUITypes = [];
 
-				for (var i = 0; i < oOperator.valueTypes.length; i++) {
-					var vType = oOperator.valueTypes[i];
+				for (let i = 0; i < oOperator.valueTypes.length; i++) {
+					const vType = oOperator.valueTypes[i];
 					if (vType === OperatorValueType.Self) {
-						var sType;
+						let sType;
 						if (sBaseType === BaseType.DateTime) {
 							sType = "datetime";
 						} else {
@@ -196,11 +196,11 @@ sap.ui.define([
 		};
 
 		OperatorDynamicDateOption.prototype.createValueHelpUI = function(oControl, fnControlsUpdated) {
-			var oValue = oControl.getValue();
-			var oOperator = this.getOperator();
-			var oType = this.getType();
-			var sKey = this.getKey();
-			var sControlId = oControl.getId();
+			let oValue = oControl.getValue();
+			const oOperator = this.getOperator();
+			let oType = this.getType();
+			const sKey = this.getKey();
+			const sControlId = oControl.getId();
 
 			if (!oValue || oValue.operator !== sKey) {
 				// initialize value
@@ -217,14 +217,14 @@ sap.ui.define([
 			}
 			oControl.aControlsByParameters[sKey] = [];
 
-			var fnChangeHandler = function(oEvent) {
+			let fnChangeHandler = function(oEvent) {
 				fnControlsUpdated(this);
 			}.bind(this);
 
-			for (var i = 0; i < oOperator.valueTypes.length; i++) {
-				var vType = oOperator.valueTypes[i];
-				var sBaseType = this.getBaseType();
-				var oDate;
+			for (let i = 0; i < oOperator.valueTypes.length; i++) {
+				const vType = oOperator.valueTypes[i];
+				const sBaseType = this.getBaseType();
+				let oDate;
 
 				if (!vType) {
 					continue;
@@ -234,9 +234,9 @@ sap.ui.define([
 						// use internal model to bind the control
 						if (!this._oModel) {
 							fnChangeHandler = function(oEvent) {
-								var sPath = oEvent.getParameter("path");
-								var aParts = sPath.split("/");
-								var sControlId = aParts[0] || aParts[1];
+								const sPath = oEvent.getParameter("path");
+								const aParts = sPath.split("/");
+								const sControlId = aParts[0] || aParts[1];
 								if (this._mChangeHandler && this._mChangeHandler[sControlId]) {
 									this._mChangeHandler[sControlId](this);
 								}
@@ -245,7 +245,7 @@ sap.ui.define([
 							this._oModel.attachPropertyChange({}, fnChangeHandler, this);
 							this._mChangeHandler = {};
 						}
-						var oModelData = this._oModel.getData();
+						const oModelData = this._oModel.getData();
 						oModelData[sControlId] = { // only change for current control
 							value0: oValue && oValue.values[0],
 							value1: oValue && oValue.values[1]
@@ -254,7 +254,7 @@ sap.ui.define([
 						if (vType !== OperatorValueType.Self) {
 							oType = oOperator._createLocalType(vType, oType);
 						}
-						var oInputControl = oOperator.createControl(oType, "internal>/" + sControlId + "/value" + i, i, sControlId + "-" + i);
+						const oInputControl = oOperator.createControl(oType, "internal>/" + sControlId + "/value" + i, i, sControlId + "-" + i);
 						oInputControl.setModel(this._oModel, "internal");
 						oControl.aControlsByParameters[sKey].push(oInputControl);
 					} else if (vType === OperatorValueType.Self) {
@@ -263,15 +263,15 @@ sap.ui.define([
 						if (oValue && oValue.values[i]) {
 							oDate = DateUtil.typeToDate(oValue.values[i], oType, sBaseType);
 						}
-						var oFormatOptions = oType.getFormatOptions();
+						const oFormatOptions = oType.getFormatOptions();
 
-						var Picker;
+						let Picker;
 						if (sBaseType === BaseType.DateTime) {
 							Picker = DateTimePicker;
 						} else {
 							Picker = DatePicker;
 						}
-						var oDatePicker = new Picker(sControlId + "-" + i, {
+						const oDatePicker = new Picker(sControlId + "-" + i, {
 							dateValue: oDate,
 							displayFormat: oFormatOptions.style || oFormatOptions.pattern,
 							displayFormatType: oFormatOptions.calendarType,
@@ -282,8 +282,8 @@ sap.ui.define([
 						// just use Input
 						oType = oOperator._createLocalType(oOperator.valueTypes[i], oType);
 						// format value to String using type
-						var sValue = oType.formatValue(oValue && oValue.values[i], "string");
-						var oInput = new Input(sControlId + "-" + i, {
+						const sValue = oType.formatValue(oValue && oValue.values[i], "string");
+						const oInput = new Input(sControlId + "-" + i, {
 							value: sValue,
 							change: fnChangeHandler
 						});
@@ -311,19 +311,19 @@ sap.ui.define([
 
 		OperatorDynamicDateOption.prototype.validateValueHelpUI = function(oControl) {
 
-			var sKey = this.getKey();
-			var oOperator = this.getOperator();
-			var oType = this.getType();
-			var oOutput;
-			var bValid = true;
-			var sValueState = ValueState.None;
-			var sValueStateText;
-			var i = 0;
+			const sKey = this.getKey();
+			const oOperator = this.getOperator();
+			const oType = this.getType();
+			let oOutput;
+			let bValid = true;
+			let sValueState = ValueState.None;
+			let sValueStateText;
+			let i = 0;
 
 			try {
 				oOutput = this.getValueHelpOutput(oControl); // catch ParseExeptions
 				for (i = 0; i < oOutput.values.length; i++) {
-					var vValue = oOutput.values[i];
+					const vValue = oOutput.values[i];
 					if (vValue === undefined || vValue === null) { // TODO: might be operator dependent
 						bValid = false;
 					}
@@ -341,7 +341,7 @@ sap.ui.define([
 			if (!oOperator.createControl) {
 				// custom control is bound, so input is checked in binding
 				for (i = 0; i < oControl.aControlsByParameters[sKey].length; i++) {
-					var oInputControl = oControl.aControlsByParameters[sKey][i];
+					const oInputControl = oControl.aControlsByParameters[sKey][i];
 					if (oInputControl.setValueState) {
 						oInputControl.setValueState(sValueState);
 						oInputControl.setValueStateText(sValueStateText);
@@ -355,20 +355,20 @@ sap.ui.define([
 
 		OperatorDynamicDateOption.prototype.getValueHelpOutput = function(oControl) {
 
-			var sKey = this.getKey();
-			var oResult = {operator: sKey, values: []};
-			var oOperator = this.getOperator();
-			var oType = this.getType();
-			var sBaseType = this.getBaseType();
-			var sControlId = oControl.getId();
+			const sKey = this.getKey();
+			const oResult = {operator: sKey, values: []};
+			const oOperator = this.getOperator();
+			let oType = this.getType();
+			const sBaseType = this.getBaseType();
+			const sControlId = oControl.getId();
 
-			for (var i = 0; i < oOperator.valueTypes.length; i++) {
+			for (let i = 0; i < oOperator.valueTypes.length; i++) {
 				if (!oOperator.valueTypes[i]) {
 					continue;
 				}
-				var oInputControl = oControl.aControlsByParameters[sKey][i];
+				const oInputControl = oControl.aControlsByParameters[sKey][i];
 				if (oInputControl) {
-					var vValue;
+					let vValue;
 					if (oOperator.createControl) {
 						// use value from internal Model
 						vValue = this._oModel ? this._oModel.getProperty("/" + sControlId + "/value" + i) : null;
@@ -397,7 +397,7 @@ sap.ui.define([
 		};
 
 		OperatorDynamicDateOption.prototype.getGroupHeader = function() {
-			var oOperator = this.getOperator();
+			const oOperator = this.getOperator();
 			if (oOperator.group && oOperator.group.text) {
 				return oOperator.group.text;
 			}
@@ -406,7 +406,7 @@ sap.ui.define([
 		};
 
 		OperatorDynamicDateOption.prototype.getGroup = function() {
-			var oOperator = this.getOperator();
+			const oOperator = this.getOperator();
 			if (oOperator.group) {
 				return oOperator.group.id;
 			}
@@ -414,11 +414,11 @@ sap.ui.define([
 		};
 
 		OperatorDynamicDateOption.prototype.toDates = function(oValue) {
-			var oOperator = this.getOperator();
-			var oType = this.getType();
-			var sBaseType = this.getBaseType();
-			var aRange;
-			var i = 0;
+			const oOperator = this.getOperator();
+			const oType = this.getType();
+			const sBaseType = this.getBaseType();
+			let aRange;
+			let i = 0;
 
 			if (oOperator.isA("sap.ui.mdc.condition.RangeOperator")) {
 				aRange = oOperator._getRange(oValue && oValue.values, oType, sBaseType); // aRange contains date in Type presentation
@@ -445,17 +445,17 @@ sap.ui.define([
 		};
 
 		OperatorDynamicDateOption.prototype.format = function(oValue) {
-			var oOperator = this.getOperator();
-			var oType = this.getType();
+			const oOperator = this.getOperator();
+			const oType = this.getType();
 			return oOperator.format(oValue, oType, FieldDisplay.Value);
 		};
 
 		OperatorDynamicDateOption.prototype.parse = function(sValue) {
-			var oOperator = this.getOperator();
-			var oType = this.getType();
+			const oOperator = this.getOperator();
+			const oType = this.getType();
 
 			if (sValue && oOperator.parse(sValue)) {
-				var oResult = {};
+				const oResult = {};
 				oResult.operator = this.getKey();
 				oResult.values = oOperator.parse(sValue, oType, FieldDisplay.Value);
 				return oResult;
@@ -468,11 +468,11 @@ sap.ui.define([
 
 		function _removeControls(oControl) {
 
-			var sKey = this.getKey();
+			const sKey = this.getKey();
 
 			if (oControl && oControl.aControlsByParameters && oControl.aControlsByParameters[sKey]) {
-				for (var i = 0; i < oControl.aControlsByParameters[sKey].length; i++) {
-					var oUIControl = oControl.aControlsByParameters[sKey][i];
+				for (let i = 0; i < oControl.aControlsByParameters[sKey].length; i++) {
+					const oUIControl = oControl.aControlsByParameters[sKey][i];
 					if (!oUIControl.bIsDestroyed) {
 						oUIControl.destroy();
 					}

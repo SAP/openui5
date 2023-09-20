@@ -70,8 +70,7 @@
 html.sap-desktop .sapMSegBBtnFocusable:hover .sapMSegBBtnInner {
 	background: @sapUiButtonHoverBackground;
 	border-radius: 0.5rem;
-	box-shadow: 0 0 0.125rem 0 fade(@sapContent_ShadowColor, 72);
-	border-color: transparent;
+	border-color: @sapUiButtonHoverBorderColor;
 }
 
 html.sap-desktop .sapMSegBBtnFocusable.sapMSegBBtnSel:hover .sapMSegBBtnInner {
@@ -79,7 +78,7 @@ html.sap-desktop .sapMSegBBtnFocusable.sapMSegBBtnSel:hover .sapMSegBBtnInner {
 }
 
 html.sap-desktop .sapMSegBBtnFocusable.sapMBtnActive:hover .sapMSegBBtnInner {
-	box-shadow: 0 0 0.125rem 0 fade(@sapInformativeColor, 72);
+	border-color: @sapUiButtonHoverBorderColor;
 }
 
 /* Custom focus outline: */

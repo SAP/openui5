@@ -23,7 +23,7 @@ sap.ui.define([
 		timeout: 45
 	});
 
-	var aChartItems = [
+	let aChartItems = [
 		{p13nItem: "Genre", selected: true},
 		{p13nItem: "Price (average)", selected: true},
 		{p13nItem: "Author ID", selected: false},
@@ -39,7 +39,7 @@ sap.ui.define([
 		{p13nItem: "Words (min)", selected: false}
 	];
 
-	var aSortItems = [
+	const aSortItems = [
 		{p13nItem: "Author ID", selected: false},
 		{p13nItem: "Classification", selected: false},
 		{p13nItem: "DetailGenre", selected: false},
@@ -55,7 +55,7 @@ sap.ui.define([
 		{p13nItem: "Words (min)", selected: false}
 	];
 
-	var sViewSettings = Arrangement.P13nDialog.Titles.settings;
+	const sViewSettings = Arrangement.P13nDialog.Titles.settings;
 
 	opaTest("When I start the 'appUnderTestChart' app, the chart with some dimentions and measures appears", function(Given, When, Then) {
 		Given.enableAndDeleteLrepLocalStorage();

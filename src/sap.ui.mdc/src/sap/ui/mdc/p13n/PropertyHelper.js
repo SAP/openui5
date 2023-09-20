@@ -28,7 +28,7 @@ sap.ui.define([
 	 * @since 1.85
 	 * @alias sap.ui.mdc.p13n.PropertyHelper
 	 */
-	var PropertyHelper = PropertyHelperBase.extend("sap.ui.mdc.p13n.PropertyHelper", {
+	const PropertyHelper = PropertyHelperBase.extend("sap.ui.mdc.p13n.PropertyHelper", {
 		constructor: function(aProperties, oParent) {
 			// Because this helper does not validate, this is only required for setting defaults.
 			PropertyHelperBase.call(this, aProperties, oParent, {

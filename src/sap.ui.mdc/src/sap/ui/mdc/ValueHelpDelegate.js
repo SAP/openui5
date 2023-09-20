@@ -32,7 +32,7 @@ sap.ui.define([
 	 * @extends module:sap/ui/mdc/BaseDelegate
 	 * @alias module:sap/ui/mdc/ValueHelpDelegate
 	 */
-	var ValueHelpDelegate = Object.assign({}, BaseDelegate);
+	const ValueHelpDelegate = Object.assign({}, BaseDelegate);
 
 	/**
 	 * Requests the content of the value help.
@@ -81,8 +81,8 @@ sap.ui.define([
 		if (!oContent || (oContent.isA("sap.ui.mdc.valuehelp.base.FilterableListContent") && !oContent.getFilterValue())) { // Do not show non-existing content or suggestions without filterValue
 			return false;
 		} else if (oContent.isA("sap.ui.mdc.valuehelp.base.ListContent")) { // All List-like contents should have some data to show
-			var oListBinding = oContent.getListBinding();
-			var iLength = oListBinding && oListBinding.getAllCurrentContexts().length;
+			const oListBinding = oContent.getListBinding();
+			const iLength = oListBinding && oListBinding.getAllCurrentContexts().length;
 			return iLength > 0;
 		}
 		return true; // All other content should be shown by default
@@ -101,19 +101,19 @@ sap.ui.define([
 		oBindingInfo.parameters = {};
 		oBindingInfo.filters = [];
 
-		var sFilterFields = oContent.getFilterFields();
-		var sFieldSearch = oContent._getPriorityFilterValue();
-		var oFilterBar = oContent._getPriorityFilterBar();
-		var oConditions = oFilterBar ? oFilterBar.getInternalConditions() : oContent._oInitialFilterConditions || {};
+		const sFilterFields = oContent.getFilterFields();
+		const sFieldSearch = oContent._getPriorityFilterValue();
+		const oFilterBar = oContent._getPriorityFilterBar();
+		const oConditions = oFilterBar ? oFilterBar.getInternalConditions() : oContent._oInitialFilterConditions || {};
 
 		if (!oFilterBar && sFieldSearch && sFilterFields && sFilterFields !== "$search") {
 			// add condition for Search value
-			var oCondition = Condition.createCondition("Contains", [sFieldSearch], undefined, undefined, ConditionValidated.NotValidated);
+			const oCondition = Condition.createCondition("Contains", [sFieldSearch], undefined, undefined, ConditionValidated.NotValidated);
 			oConditions[sFilterFields] = [oCondition];
 		}
 
-		var oConditionTypes = oConditions && oContent._getTypesForConditions(oConditions);
-		var oFilter = oConditions && FilterConverter.createFilters( oConditions, oConditionTypes, undefined, oContent.getCaseSensitive());
+		const oConditionTypes = oConditions && oContent._getTypesForConditions(oConditions);
+		const oFilter = oConditions && FilterConverter.createFilters( oConditions, oConditionTypes, undefined, oContent.getCaseSensitive());
 
 		if (oFilter) {
 			oBindingInfo.filters = [oFilter];
@@ -202,7 +202,7 @@ sap.ui.define([
 	 * @since 1.118.0
 	 */
 	ValueHelpDelegate.findConditionsForContext = function (oValueHelp, oContent, oContext, aConditions) {
-		var vKey = oContext.getObject(oContent.getKeyPath());
+		const vKey = oContext.getObject(oContent.getKeyPath());
 		return aConditions.filter(function (oCondition) {
 			return oCondition.validated === ConditionValidated.Validated && vKey === oCondition.values[0];
 		});
@@ -254,8 +254,8 @@ sap.ui.define([
 	 * @since 1.101.0
 	 */
 	ValueHelpDelegate.getTypesForConditions = function (oValueHelp, oContent, oConditions) {	// TODO: MDC.Table add UI.Table support
-		var oConditionTypes = {};
-		var oListBindingInfo = oContent && oContent.getListBindingInfo();
+		const oConditionTypes = {};
+		const oListBindingInfo = oContent && oContent.getListBindingInfo();
 
 		if (oListBindingInfo && oListBindingInfo.template) {
 			oListBindingInfo.template.mAggregations.cells.forEach(function (oCell) {

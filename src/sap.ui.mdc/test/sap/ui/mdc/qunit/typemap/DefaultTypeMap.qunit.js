@@ -48,7 +48,7 @@ function(
 
 	QUnit.test("getBaseType", function(assert) {
 
-		var aTypeList = [
+		const aTypeList = [
 			["sap.ui.model.type.Date", undefined, {displayFormat: "Date"}, BaseType.Date],
 			["sap.ui.model.type.Currency", undefined, undefined, BaseType.Unit],
 			["sap.ui.model.type.Currency", {showMeasure:false}, undefined, BaseType.Numeric],
@@ -56,17 +56,17 @@ function(
 		];
 
 		aTypeList.forEach(function (aEntry) {
-			var sType = aEntry[0];
-			var oFormatOptions = aEntry[1];
-			var oConstraints = aEntry[2];
-			var oExpected = aEntry[3];
+			const sType = aEntry[0];
+			const oFormatOptions = aEntry[1];
+			const oConstraints = aEntry[2];
+			const oExpected = aEntry[3];
 			assert.equal(DefaultTypeMap.getBaseType(sType, oFormatOptions, oConstraints), oExpected, "expected baseType returned for type " + sType + ": " + oExpected);
 		});
 	});
 
 	QUnit.test("getBaseTypeForType", function(assert) {
 
-		var aTypeList = [
+		const aTypeList = [
 			[new DateType({style: "long"}, {displayFormat: "Date"}), BaseType.Date],
 			[new DateTime(), BaseType.DateTime],
 			[new Time(), BaseType.Time],
@@ -79,21 +79,21 @@ function(
 		];
 
 		aTypeList.forEach(function (aEntry) {
-			var oType = aEntry[0];
-			var oExpected = aEntry[1];
+			const oType = aEntry[0];
+			const oExpected = aEntry[1];
 			assert.equal(DefaultTypeMap.getBaseTypeForType(oType), oExpected, "expected baseType returned for type " + oType.getName() + ": " + oExpected);
 		});
 
-		var aNumerics = [Integer, Float];
+		const aNumerics = [Integer, Float];
 
 		aNumerics.forEach(function (NumericType) {
-			var oType = new NumericType();
+			const oType = new NumericType();
 			assert.equal(DefaultTypeMap.getBaseTypeForType(oType), BaseType.Numeric, "expected baseType returned for type " + oType.getName() + ": " + BaseType.Numeric);
 		});
 	});
 
 	QUnit.test("getTypeConfig", function (assert) {
-		var oTypeConfig = DefaultTypeMap.getTypeConfig("sap.ui.model.type.Date");
+		const oTypeConfig = DefaultTypeMap.getTypeConfig("sap.ui.model.type.Date");
 		assert.equal(oTypeConfig.className, "sap.ui.model.type.Date", "expected typestring returned");
 		assert.ok(oTypeConfig.typeInstance.isA("sap.ui.model.type.Date") , "expected model type returned");
 		assert.equal(oTypeConfig.baseType, BaseType.Date , "expected basetype returned");
@@ -101,7 +101,7 @@ function(
 
 	QUnit.test("getTypeConfig with formatOptions", function (assert) {
 
-		var oTypeConfig = DefaultTypeMap.getTypeConfig("sap.ui.model.type.Currency", {showMeasure: false});
+		let oTypeConfig = DefaultTypeMap.getTypeConfig("sap.ui.model.type.Currency", {showMeasure: false});
 		assert.equal(oTypeConfig.baseType, BaseType.Numeric , "expected basetype returned");
 
 		oTypeConfig = DefaultTypeMap.getTypeConfig("sap.ui.model.type.Currency", {showMeasure: true});
@@ -110,7 +110,7 @@ function(
 
 	QUnit.test("_normalizeType", function (assert) {
 
-		var oTypeInstance = DefaultTypeMap._normalizeType("sap.ui.model.type.Currency", {showMeasure: false}, {maximum: 999});
+		let oTypeInstance = DefaultTypeMap._normalizeType("sap.ui.model.type.Currency", {showMeasure: false}, {maximum: 999});
 		assert.ok(oTypeInstance instanceof SimpleType, "type instance returned");
 		assert.equal(oTypeInstance.getFormatOptions().showMeasure, false, "formatoptions are considered");
 		assert.equal(oTypeInstance.getConstraints().maximum, 999, "constraints are considered");
@@ -120,9 +120,9 @@ function(
 	});
 
 	QUnit.test("internalizeValue", function (assert) {
-		var oType = new DateType();
-		var oTypedValue = DefaultTypeMap.internalizeValue("2000-01-01", oType);
-		var oDate = new Date(2000, 0, 1);
+		let oType = new DateType();
+		let oTypedValue = DefaultTypeMap.internalizeValue("2000-01-01", oType);
+		let oDate = new Date(2000, 0, 1);
 		assert.equal(oTypedValue.toString(), oDate.toString(), "expected value returned");
 
 		oTypedValue = DefaultTypeMap.internalizeValue("2000-01-01T00:00:00+0100", oType); // old variant value for pure date inside DateTime FilterField
@@ -153,9 +153,9 @@ function(
 	});
 
 	QUnit.test("externalizeValue", function (assert) {
-		var oType = new DateType();
-		var oDate = new Date(2000, 0, 1); // inside type the date is 00:00:00 on local time
-		var oStringifiedValue = DefaultTypeMap.externalizeValue(oDate, oType);
+		let oType = new DateType();
+		let oDate = new Date(2000, 0, 1); // inside type the date is 00:00:00 on local time
+		let oStringifiedValue = DefaultTypeMap.externalizeValue(oDate, oType);
 		assert.equal(oStringifiedValue, "2000-01-01", "stringified value returned");
 
 		oType.destroy();

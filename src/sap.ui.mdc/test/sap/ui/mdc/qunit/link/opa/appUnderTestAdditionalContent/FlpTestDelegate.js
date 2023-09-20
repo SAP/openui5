@@ -6,7 +6,7 @@ sap.ui.define([
 ], function(LinkDelegate) {
 	"use strict";
 
-	var SampleLinkDelegate = Object.assign({}, LinkDelegate);
+	const SampleLinkDelegate = Object.assign({}, LinkDelegate);
 
 	SampleLinkDelegate.beforeNavigationCallback = function(oPayload, oEvent) {
 		return new Promise(function(resolve) {

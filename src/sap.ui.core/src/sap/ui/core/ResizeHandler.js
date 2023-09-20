@@ -50,10 +50,6 @@ sap.ui.define([
 
 			this.iIdCounter = 0;
 
-			this.fnDestroyHandler = this.destroy.bind(this);
-
-			jQuery(window).on("unload", this.fnDestroyHandler);
-
 			ActivityDetection.attachActivate(initListener, this);
 
 			if (oResizeHandler) {
@@ -78,22 +74,6 @@ sap.ui.define([
 			IntervalTrigger.addListener(this.checkSizes, this);
 		}
 	}
-
-	/**
-	 * Destroy method of the Resize Handler.
-	 *
-	 * It unregisters the event handlers.
-	 *
-	 * @param {jQuery.Event} oEvent the event that initiated the destruction of the ResizeHandler
-	 * @private
-	 */
-	ResizeHandler.prototype.destroy = function(oEvent) {
-		ActivityDetection.detachActivate(initListener, this);
-		jQuery(window).off("unload", this.fnDestroyHandler);
-		this.aResizeListeners = [];
-		this.aSuspendedDomRefs = [];
-		clearListener.call(this);
-	};
 
 	/**
 	 * Attaches listener to resize event.

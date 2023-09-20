@@ -12,7 +12,7 @@ sap.ui.define([
 	"use strict";
 
 
-	var a11Children = [{
+	const a11Children = [{
 			AGE : 38,
 			DrillState : "leaf",
 			ID : "1.1.1",
@@ -191,9 +191,9 @@ sap.ui.define([
 			}],
 			sSourceBase : "sap/ui/core/sample/odata/v4/RecursiveHierarchy/data"
 		},
-		iRevision = 0,
-		mRevisionOfAgeById = {},
-		SandboxModel;
+		mRevisionOfAgeById = {};
+
+	let iRevision = 0;
 
 	function countSkipTop(sRelativeUrlPrefix, aRows) {
 		oMockData.aRegExps.push({
@@ -202,7 +202,7 @@ sap.ui.define([
 				+ "(&\\$count=true)?&\\$skip=(\\d+)&\\$top=(\\d+)$"),
 			response : {
 				buildResponse : function (aMatches, oResponse) {
-					var bCount = !!aMatches[1],
+					const bCount = !!aMatches[1],
 						oMessage = {},
 						iSkip = parseInt(aMatches[2]),
 						iTop = parseInt(aMatches[3]);
@@ -247,12 +247,12 @@ sap.ui.define([
 			+ "([^&]+)(?:&\\$top=(\\d+))?$"), // Note: just ignore $top
 		response : {
 			buildResponse : function (aMatches, oResponse) {
-				var aResult = [],
+				const aResult = [],
 					// ID%20eq%20'0'%20or%20ID%20eq%20'1'%20or%20ID%20eq%20'1.1'
 					sKeyFilterList = aMatches[1];
 
 				sKeyFilterList.split("%20or%20").forEach(function (sKeyFilter) {
-					var sId = sKeyFilter.split("%20eq%20")[1].slice(1, -1),
+					const sId = sKeyFilter.split("%20eq%20")[1].slice(1, -1),
 						oNode = mNodeById[sId];
 
 					aResult.push({ // poor man's $select ;-)
@@ -277,7 +277,7 @@ sap.ui.define([
 			+ "'([0-9.]+)'$"),
 		response : {
 			buildResponse : function (aMatches, oResponse) {
-				var oNode = mNodeById[aMatches[1]];
+				let oNode = mNodeById[aMatches[1]];
 
 				oNode = { // poor man's $select ;-)
 					AGE : oNode.AGE,
@@ -293,7 +293,7 @@ sap.ui.define([
 		}
 	});
 
-	SandboxModel = ODataModel.extend(
+	const SandboxModel = ODataModel.extend(
 		"sap.ui.mdc.tableOpaTests.appMDCTreeTableV4.SandboxModel", {
 			constructor : function (mParameters) {
 				return SandboxModelHelper.adaptModelParametersAndCreateModel(mParameters,

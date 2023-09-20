@@ -41,7 +41,7 @@ sap.ui.define([
 	 * @since 1.95.0
 	 * @alias sap.ui.mdc.valuehelp.content.MDCTable
 	 */
-	var MDCTable = FilterableListContent.extend("sap.ui.mdc.valuehelp.content.MDCTable", /** @lends sap.ui.mdc.valuehelp.content.MDCTable.prototype */
+	const MDCTable = FilterableListContent.extend("sap.ui.mdc.valuehelp.content.MDCTable", /** @lends sap.ui.mdc.valuehelp.content.MDCTable.prototype */
 	{
 		metadata: {
 			library: "sap.ui.mdc",
@@ -89,7 +89,7 @@ sap.ui.define([
 
 	MDCTable.prototype._setTableSelectionState = function () {
 		this._bSelectionIsUpdating = true;
-		var aAllCurrentContexts = this._getAllCurrentContexts();
+		const aAllCurrentContexts = this._getAllCurrentContexts();
 		if (aAllCurrentContexts) {
 			this._oTable._setSelectedContexts(aAllCurrentContexts.filter(function (oContext) {
 				return this._isContextSelected(oContext, this.getConditions());
@@ -121,7 +121,7 @@ sap.ui.define([
 	MDCTable.prototype._handleUpdateFinishedThrottled = _throttle(MDCTable.prototype._handleUpdateFinished, 100, {leading: false});
 
 	MDCTable.prototype._handleRowBinding = function () {
-		var oRowBinding = this._oTable.getRowBinding();
+		const oRowBinding = this._oTable.getRowBinding();
 		if (oRowBinding) {
 			this._resolvePromise("listBinding", oRowBinding);
 		}
@@ -129,7 +129,7 @@ sap.ui.define([
 
 	MDCTable.prototype.observeChanges = function (oChanges) {
 		if (oChanges.name === "table") { // outer table
-			var oTable = oChanges.child;
+			const oTable = oChanges.child;
 			if (oChanges.mutation === "remove") {
 				this._oTable.detachEvent('_bindingChange', this._handleUpdateFinishedThrottled, this);
 				this._oTable.detachEvent('selectionChange', this._handleSelectionChange, this);
@@ -145,7 +145,7 @@ sap.ui.define([
 				}
 
 				oTable.addDelegate({ onmouseover: function (oEvent) {   // Fix m.Table itemPress
-					var oItem = Element.closestTo(oEvent.target);
+					const oItem = Element.closestTo(oEvent.target);
 					if (oItem && oItem.isA("sap.m.ColumnListItem")) {
 						oItem.setType("Active");
 					}
@@ -163,7 +163,7 @@ sap.ui.define([
 	};
 
 	MDCTable.prototype._getAllCurrentContexts = function () {
-		var oRowBinding = this._oTable && this._oTable.getRowBinding();
+		const oRowBinding = this._oTable && this._oTable.getRowBinding();
 		if (oRowBinding) {
 			return oRowBinding.getAllCurrentContexts ? oRowBinding.getAllCurrentContexts() : oRowBinding.getContexts();
 		}
@@ -173,22 +173,22 @@ sap.ui.define([
 	MDCTable.prototype._handleSelectionChange = function (oEvent) {
 		if (!this._bSelectionIsUpdating) { // TODO: New handling for internally triggered events on MDC Table's events?
 			this._bQueryingContexts = true; // In ODataV4 getAllCurrentContexts may lead to a binding change event
-			var aAllCurrentContexts = this._getAllCurrentContexts();
-			var aSelectedTableContexts = aAllCurrentContexts && this._oTable.getSelectedContexts();
+			const aAllCurrentContexts = this._getAllCurrentContexts();
+			const aSelectedTableContexts = aAllCurrentContexts && this._oTable.getSelectedContexts();
 			this._bQueryingContexts = false;
 
 			if (aAllCurrentContexts) {
-				var aCurrentConditions = this.getConditions();
-				var aModifiedConditions = aCurrentConditions;
-				var bFireSelect = false;
+				const aCurrentConditions = this.getConditions();
+				let aModifiedConditions = aCurrentConditions;
+				let bFireSelect = false;
 
 				aAllCurrentContexts.forEach(function (oContext) {
-					var aConditionsForContext = this._findConditionsForContext(oContext, aCurrentConditions);
-					var bIsInSelectedConditions = !!aConditionsForContext.length;
-					var bSelectedInTable = aSelectedTableContexts.indexOf(oContext) >= 0;
+					const aConditionsForContext = this._findConditionsForContext(oContext, aCurrentConditions);
+					const bIsInSelectedConditions = !!aConditionsForContext.length;
+					const bSelectedInTable = aSelectedTableContexts.indexOf(oContext) >= 0;
 					if (!bIsInSelectedConditions && bSelectedInTable) {
-						var oItem = this.getItemFromContext(oContext);
-						var oCondition = oItem && this.createCondition(oItem.key, oItem.description, oItem.payload);
+						const oItem = this.getItemFromContext(oContext);
+						const oCondition = oItem && this.createCondition(oItem.key, oItem.description, oItem.payload);
 						aModifiedConditions = this.isSingleSelect() ? [oCondition] : aModifiedConditions.concat(oCondition);
 						bFireSelect = true;
 					} else if (bIsInSelectedConditions && !bSelectedInTable) {
@@ -208,7 +208,7 @@ sap.ui.define([
 
 
 	MDCTable.prototype._prepareSelect = function (aConditions, vSelected) {
-		var sMultiSelectType = typeof vSelected === 'string' && vSelected;
+		let sMultiSelectType = typeof vSelected === 'string' && vSelected;
 		sMultiSelectType = sMultiSelectType || (vSelected ? ValueHelpSelectionType.Add : ValueHelpSelectionType.Remove);
 		this._bIgnoreNextConditionChange = true;
 		this._fireSelect({type: sMultiSelectType, conditions: aConditions});
@@ -226,9 +226,9 @@ sap.ui.define([
 				"sap/m/ScrollContainer"
 			]).then(function(aModules) {
 
-				var FixFlex = aModules[0];
-				var VBox = aModules[1];
-				var ScrollContainer = aModules[2];
+				const FixFlex = aModules[0];
+				const VBox = aModules[1];
+				const ScrollContainer = aModules[2];
 
 				if (!this._oContentLayout) {
 
@@ -236,8 +236,8 @@ sap.ui.define([
 					this._oFilterBarVBox.addStyleClass("sapMdcValueHelpPanelFilterbar");
 					this._oFilterBarVBox._oWrapper = this;
 					this._oFilterBarVBox.getItems = function () {
-						var oFilterBar = this._oWrapper._getPriorityFilterBar.call(this._oWrapper);
-						var aItems = oFilterBar ? [oFilterBar] : [];
+						const oFilterBar = this._oWrapper._getPriorityFilterBar.call(this._oWrapper);
+						const aItems = oFilterBar ? [oFilterBar] : [];
 						return aItems;
 					};
 
@@ -245,8 +245,8 @@ sap.ui.define([
 					this._oTableBox.addStyleClass("sapMdcValueHelpPanelTableBox");
 					this._oTableBox._oWrapper = this;
 					this._oTableBox.getItems = function () {
-						var oTable = this._oWrapper._oTable._isOfType(TableType.ResponsiveTable) ? this._oWrapper._oScrollContainer : this._oWrapper._oTable;
-						var aItems = oTable ? [oTable] : [];
+						const oTable = this._oWrapper._oTable._isOfType(TableType.ResponsiveTable) ? this._oWrapper._oScrollContainer : this._oWrapper._oTable;
+						const aItems = oTable ? [oTable] : [];
 						return aItems;
 					};
 
@@ -260,8 +260,8 @@ sap.ui.define([
 
 					this._oScrollContainer._oWrapper = this;
 					this._oScrollContainer.getContent = function() {
-						var aContent = [];
-						var oTable = this._oWrapper && this._oWrapper._oTable;
+						const aContent = [];
+						const oTable = this._oWrapper && this._oWrapper._oTable;
 						if (oTable) {
 							aContent.push(oTable);
 						}
@@ -283,17 +283,17 @@ sap.ui.define([
 	};
 
 	MDCTable.prototype.getListBinding = function() {
-		var oTable = this.getTable();
+		const oTable = this.getTable();
 		return oTable && oTable.getRowBinding();
 	};
 
 	MDCTable.prototype._configureTable = function () {
 		if (this._oTable) {
-			var bSingleSelect = FilterableListContent.prototype.isSingleSelect.apply(this);
-			var oTableType = this._oTable._getType();
+			const bSingleSelect = FilterableListContent.prototype.isSingleSelect.apply(this);
+			const oTableType = this._oTable._getType();
 
 			// Connect filterBar
-			var oFilterBar = this._getPriorityFilterBar();
+			const oFilterBar = this._getPriorityFilterBar();
 			if (oFilterBar && this._oTable.getFilter() !== oFilterBar.getId()) {
 				this._oTable.setFilter(oFilterBar);
 			}
@@ -304,7 +304,7 @@ sap.ui.define([
 			}
 
 			// Adjust selection
-			var sSelectionMode = bSingleSelect ? TableSelectionMode.SingleMaster : TableSelectionMode.Multi;
+			const sSelectionMode = bSingleSelect ? TableSelectionMode.SingleMaster : TableSelectionMode.Multi;
 			if (this._oTable.getSelectionMode() === TableSelectionMode.None) { // only set automatically if not provided from outside (and do it only once)
 				this._oTable.setSelectionMode(sSelectionMode);
 			}
@@ -313,11 +313,11 @@ sap.ui.define([
 				throw new Error("Table selectionMode needs to be " + sSelectionMode);
 			}
 
-			var bGridTableType = this._oTable._isOfType(TableType.Table);
-			var bResponsiveTableType = !bGridTableType && this._oTable._isOfType(TableType.ResponsiveTable);
+			const bGridTableType = this._oTable._isOfType(TableType.Table);
+			const bResponsiveTableType = !bGridTableType && this._oTable._isOfType(TableType.ResponsiveTable);
 
 			if (bGridTableType) {
-				var oRowCountMode = oTableType.getRowCountMode();
+				const oRowCountMode = oTableType.getRowCountMode();
 				if (oRowCountMode === TableRowCountMode.Auto) {
 					oTableType.setRowCount(3);
 				}
@@ -343,10 +343,10 @@ sap.ui.define([
 	MDCTable.prototype.onBeforeShow = function (bInitial) {
 		this._configureTable();
 		return Promise.resolve(FilterableListContent.prototype.onBeforeShow.apply(this, arguments)).then(function () {
-			var oTable = this.getTable();
+			const oTable = this.getTable();
 			if (oTable) {
-				var bTableBound = oTable.isTableBound();
-				var bOverlay = bTableBound && oTable._oTable.getShowOverlay();
+				const bTableBound = oTable.isTableBound();
+				const bOverlay = bTableBound && oTable._oTable.getShowOverlay();
 				if (this._bRebindTable || bOverlay) {
 					oTable.rebind();
 					this._bRebindTable = false;

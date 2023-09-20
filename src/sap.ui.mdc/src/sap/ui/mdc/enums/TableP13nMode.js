@@ -14,7 +14,7 @@ sap.ui.define(function() {
      * @since 1.115
      * @public
      */
-    var TableP13nMode = {
+    const TableP13nMode = {
         /**
          * Column personalization is enabled.
          *

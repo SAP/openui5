@@ -39,7 +39,7 @@ sap.ui.define([
 	 * @since 1.58
 	 * @alias sap.ui.mdc.table.Column
 	 */
-	var Column = Control.extend("sap.ui.mdc.table.Column", {
+	const Column = Control.extend("sap.ui.mdc.table.Column", {
 		metadata: {
 			library: "sap.ui.mdc",
 			defaultAggregation: "template",
@@ -180,7 +180,7 @@ sap.ui.define([
 	};
 
 	Column.prototype.getInnerColumn = function() {
-		var oTable = this.getTable();
+		const oTable = this.getTable();
 
 		if (oTable && (!this._oInnerColumn || this._oInnerColumn.isDestroyed())) {
 			this._oInnerColumn = this._createInnerColumn();
@@ -190,10 +190,10 @@ sap.ui.define([
 	};
 
 	Column.prototype._createInnerColumn = function() {
-		var oTable = this.getTable();
-		var oColumn;
+		const oTable = this.getTable();
+		let oColumn;
 
-		var oWidthBindingInfo = {
+		const oWidthBindingInfo = {
 			parts: [
 				{path: "$this>/width"},
 				{path: "$columnSettings>/calculatedWidth"},
@@ -204,7 +204,7 @@ sap.ui.define([
 			}
 		};
 
-		var oTooltipBindingInfo = {
+		const oTooltipBindingInfo = {
 			parts: [
 				{path: "$this>/tooltip"},
 				{path: "$this>/header"},
@@ -289,7 +289,7 @@ sap.ui.define([
 		return oColumn;
 	};
 
-	var ColumnHeaderLabel = Control.extend("sap.ui.mdc.table.ColumnHeaderLabel", {
+	const ColumnHeaderLabel = Control.extend("sap.ui.mdc.table.ColumnHeaderLabel", {
 		metadata: {
 			"final": true,
 			aggregations: {
@@ -327,7 +327,7 @@ sap.ui.define([
 	 * @private
 	 */
 	Column.prototype._getColumnHeaderLabel = function(oTooltipBindingInfo) {
-		var oTable = this.getTable();
+		const oTable = this.getTable();
 
 		if (oTable && (!this._oColumnHeaderLabel || this._oColumnHeaderLabel.isDestroyed())) {
 			this._oColumnHeaderLabel = new ColumnHeaderLabel({
@@ -356,8 +356,8 @@ sap.ui.define([
 	};
 
 	Column.prototype.getTemplateClone = function() {
-		var oTable = this.getTable();
-		var oTemplate = this.getTemplate();
+		const oTable = this.getTable();
+		const oTemplate = this.getTemplate();
 
 		if (oTable && oTemplate && (!this._oTemplateClone || this._oTemplateClone.isDestroyed())) {
 			this._oTemplateClone = oTemplate.clone();
@@ -377,8 +377,8 @@ sap.ui.define([
 	};
 
 	Column.prototype.getCreationTemplateClone = function() {
-		var oTable = this.getTable();
-		var oCreationTemplate = this.getCreationTemplate();
+		const oTable = this.getTable();
+		const oCreationTemplate = this.getCreationTemplate();
 
 		if (oTable && oCreationTemplate && (!this._oCreationTemplateClone || this._oCreationTemplateClone.isDestroyed())) {
 			this._oCreationTemplateClone = oCreationTemplate.clone();
@@ -400,7 +400,7 @@ sap.ui.define([
 	Column.prototype.setHeader = function(sHeader) {
 		this.setProperty("header", sHeader, true);
 
-		var oLabelElement = this.getDomRef();
+		const oLabelElement = this.getDomRef();
 		if (oLabelElement) {
 			oLabelElement.textContent = this.getHeader();
 		}
@@ -410,7 +410,7 @@ sap.ui.define([
 
 	//Temporary fallback for compatibility until the dataProperty can be removed
 	Column.prototype.getPropertyKey = function() {
-		var sPropertyKey = this.getProperty("propertyKey");
+		const sPropertyKey = this.getProperty("propertyKey");
 		return sPropertyKey || undefined;
 	};
 
@@ -442,13 +442,13 @@ sap.ui.define([
 	};
 
 	Column.prototype._readTableSettings = function() {
-		var oTable = this.getTable();
+		const oTable = this.getTable();
 
 		this._oSettingsModel.setProperty("/resizable", oTable.getEnableColumnResize());
 	};
 
 	Column.prototype.setParent = function(oParent) {
-		var oPreviousTable = this.getTable();
+		const oPreviousTable = this.getTable();
 		Control.prototype.setParent.apply(this, arguments);
 
 		if (this._bIsBeingMoved) { // Set by the table when moving this column.
@@ -460,7 +460,7 @@ sap.ui.define([
 	};
 
 	Column.prototype._connectToTable = function() {
-		var oTable = this.getTable();
+		const oTable = this.getTable();
 
 		if (!oTable) {
 			return;
@@ -489,13 +489,13 @@ sap.ui.define([
 	};
 
 	Column.prototype._calculateColumnWidth = function() {
-		var oTable = this.getTable();
+		const oTable = this.getTable();
 
 		if (!oTable || !oTable.getEnableAutoColumnWidth() || !this.isPropertyInitial("width")) {
 			return;
 		}
 
-		var oPropertyHelper = oTable.getPropertyHelper();
+		const oPropertyHelper = oTable.getPropertyHelper();
 
 		if (oPropertyHelper) {
 			oPropertyHelper.calculateColumnWidth(this).then(function(sWidth) {
@@ -507,16 +507,16 @@ sap.ui.define([
 	};
 
 	Column.prototype._readP13nValues = function() {
-		var oTable = this.getTable();
-		var vXConfig = oTable.getCurrentState().xConfig;
-		var sPropertyKey = this.getPropertyKey();
+		const oTable = this.getTable();
+		const vXConfig = oTable.getCurrentState().xConfig;
+		const sPropertyKey = this.getPropertyKey();
 
 		if (vXConfig instanceof Promise) {
 			vXConfig.then(this._readP13nValues.bind(this));
 			return;
 		}
 
-		var sWidth = vXConfig &&
+		const sWidth = vXConfig &&
 			vXConfig.aggregations &&
 			vXConfig.aggregations.columns &&
 			vXConfig.aggregations.columns[sPropertyKey] &&
@@ -526,7 +526,7 @@ sap.ui.define([
 	};
 
 	Column.prototype.getTable = function() {
-		var oParent = this.getParent();
+		const oParent = this.getParent();
 		return oParent && oParent.isA("sap.ui.mdc.Table") ? oParent : null;
 	};
 

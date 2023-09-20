@@ -58,10 +58,10 @@ sap.ui.define([
 
 	QUnit.test("createOperator", function(assert) {
 
-		var _getModelFilter = function(oCondition, sFieldPath, oType, bCaseSensitive, sBaseType) {
+		const _getModelFilter = function(oCondition, sFieldPath, oType, bCaseSensitive, sBaseType) {
 			return new Filter({ path: sFieldPath, operator: "EQ", value1: new Date().getFullYear() });
 		};
-		var oOperator = new Operator({
+		let oOperator = new Operator({
 			name: "THISYEAR",
 			valueTypes: [],
 			getModelFilter: _getModelFilter
@@ -75,7 +75,7 @@ sap.ui.define([
 
 		// invalid operator
 		oOperator = undefined;
-		var oError;
+		let oError;
 		try {
 			oOperator = new Operator({
 				name: "INVALID",
@@ -92,11 +92,11 @@ sap.ui.define([
 
 	QUnit.test("createRangeOperator", function(assert) {
 
-		var _getModelFilter = function(oCondition, sFieldPath, oType, bCaseSensitive, sBaseType) {
+		const _getModelFilter = function(oCondition, sFieldPath, oType, bCaseSensitive, sBaseType) {
 			return new Filter({ path: sFieldPath, operator: "EQ", value1: new Date().getFullYear() });
 		};
 
-		var oOperator = new RangeOperator({
+		const oOperator = new RangeOperator({
 			name: "TODAY",
 			valueTypes: [OperatorValueType.Static],
 			calcRange: function() {
@@ -161,7 +161,7 @@ sap.ui.define([
 
 	QUnit.test("getOperator", function(assert) {
 
-		var oOperator = FilterOperatorUtil.getOperator("EQ");
+		const oOperator = FilterOperatorUtil.getOperator("EQ");
 		assert.ok(oOperator, "Operator returned");
 		assert.equal(oOperator.name, "EQ", "EQ operator returned");
 
@@ -169,7 +169,7 @@ sap.ui.define([
 
 	QUnit.test("getEQOperator", function(assert) {
 
-		var oMyOperator = new Operator({
+		const oMyOperator = new Operator({
 			name: "MyEqual",
 			filterOperator: "EQ",
 			tokenParse: "^=([^=].*)$",
@@ -179,7 +179,7 @@ sap.ui.define([
 		});
 		FilterOperatorUtil.addOperator(oMyOperator);
 
-		var oOperator = FilterOperatorUtil.getEQOperator();
+		let oOperator = FilterOperatorUtil.getEQOperator();
 		assert.equal(oOperator && oOperator.name, "EQ", "EQ operator returned");
 
 		oOperator = FilterOperatorUtil.getEQOperator(["GT", oMyOperator.name, "LT"]);
@@ -194,7 +194,7 @@ sap.ui.define([
 
 	QUnit.test("getOperatorForDynamicDateOption", function(assert) {
 
-		var oOperator = FilterOperatorUtil.getOperatorForDynamicDateOption("FROM", BaseType.Date);
+		let oOperator = FilterOperatorUtil.getOperatorForDynamicDateOption("FROM", BaseType.Date);
 		assert.ok(oOperator, "Operator returned");
 		assert.equal(oOperator.name, "GE", "GE operator returned");
 
@@ -206,8 +206,8 @@ sap.ui.define([
 
 	QUnit.test("getDynamicDateOptionForOperator", function(assert) {
 
-		var oOperator = FilterOperatorUtil.getOperator("TODAY");
-		var sOption = FilterOperatorUtil.getDynamicDateOptionForOperator(oOperator, mLibrary.StandardDynamicDateRangeKeys, BaseType.Date);
+		let oOperator = FilterOperatorUtil.getOperator("TODAY");
+		let sOption = FilterOperatorUtil.getDynamicDateOptionForOperator(oOperator, mLibrary.StandardDynamicDateRangeKeys, BaseType.Date);
 		assert.equal(sOption, "TODAY", "TODAY option returned");
 
 		oOperator = FilterOperatorUtil.getOperator("GE");
@@ -218,8 +218,8 @@ sap.ui.define([
 
 	QUnit.test("getCustomDynamicDateOptionForOperator", function(assert) {
 
-		var oOperator = FilterOperatorUtil.getOperator("LT");
-		var sOption = FilterOperatorUtil.getCustomDynamicDateOptionForOperator(oOperator, BaseType.Date);
+		const oOperator = FilterOperatorUtil.getOperator("LT");
+		const sOption = FilterOperatorUtil.getCustomDynamicDateOptionForOperator(oOperator, BaseType.Date);
 		assert.equal(sOption, "Date-LT", "custom option returned");
 
 	});
@@ -227,9 +227,9 @@ sap.ui.define([
 	function fOperatorCheck(assert, aOperators, aFormatTest) {
 
 		//checking all above Operators for validity
-		for (var i = 0; i < aOperators.length; i++) {
-			var oOperator = aOperators[i];
-			var sOperator = oOperator.name;
+		for (let i = 0; i < aOperators.length; i++) {
+			const oOperator = aOperators[i];
+			const sOperator = oOperator.name;
 			assert.ok(true, "--------------------   Checking Operator " + sOperator + "   -----------------------------------------");
 			assert.strictEqual(oOperator.shortText !== "", true, "Operator " + sOperator + " has a valid shortText " + oOperator.shortText);
 			assert.strictEqual(oOperator.longText !== "", true, "Operator " + sOperator + " has a valid longText " + oOperator.longText);
@@ -242,25 +242,25 @@ sap.ui.define([
 
 			//check formatting and parsing of values
 			if (aFormatTest[sOperator]) {
-				for (var j = 0; j < aFormatTest[sOperator].length; j++) {
-					var oTest = aFormatTest[sOperator][j];
+				for (let j = 0; j < aFormatTest[sOperator].length; j++) {
+					const oTest = aFormatTest[sOperator][j];
 
 					// EQ-Operator.format(["Test"]) --> "=Test"
-					var sFormattedText = oOperator.format.apply(oOperator, oTest.formatArgs);
+					const sFormattedText = oOperator.format.apply(oOperator, oTest.formatArgs);
 					assert.strictEqual(sFormattedText, oTest.formatValue, "Formatting: Operator " + sOperator + " has formated correctly from " + oTest.formatArgs.join() + " to " + oTest.formatValue);
 
 					// EQ-Operator.parse("=Test") --> ["Test"]
 					try {
-						var aParseText = oOperator.parse.apply(oOperator, oTest.parseArgs || [sFormattedText, oTest.type]);
-						var sParseText = Array.isArray(aParseText) ? aParseText.join("") : aParseText; // also test undefined result
-						var sTestText = Array.isArray(oTest.parseArgs) ? oTest.parseArgs[0] : sFormattedText;
+						const aParseText = oOperator.parse.apply(oOperator, oTest.parseArgs || [sFormattedText, oTest.type]);
+						const sParseText = Array.isArray(aParseText) ? aParseText.join("") : aParseText; // also test undefined result
+						const sTestText = Array.isArray(oTest.parseArgs) ? oTest.parseArgs[0] : sFormattedText;
 						assert.strictEqual(sParseText, oTest.parsedValue, "Parsing: Operator " + sOperator + " has parsed correctly from " + sTestText + " to " + sParseText);
 					} catch (oException) {
 						assert.ok(oTest.exception, "Exception fired in parsing");
 					}
 
 					// EQ-Operator.getCondition("=Test") --> {operator: "EQ", values: ["Test"]]}
-					var oCondition;
+					let oCondition;
 					try {
 						oCondition = oOperator.getCondition.apply(oOperator, oTest.parseArgs || [sFormattedText, oTest.type]);
 						if (oTest.condition) {
@@ -275,7 +275,7 @@ sap.ui.define([
 					}
 
 					if (oCondition) {
-						var bIsEmpty = oOperator.isEmpty(oCondition);
+						const bIsEmpty = oOperator.isEmpty(oCondition);
 						assert.equal(bIsEmpty, oTest.isEmpty, "isEmpty check");
 
 						try {
@@ -285,7 +285,7 @@ sap.ui.define([
 						}
 
 						if (oTest.filter) {
-							var oFilter = oOperator.getModelFilter(oCondition, "test", oTest.oType, oTest.caseSensitive, oTest.baseType);
+							const oFilter = oOperator.getModelFilter(oCondition, "test", oTest.oType, oTest.caseSensitive, oTest.baseType);
 							assert.ok(oFilter, "Filter returned");
 							assert.equal(oFilter.sPath, oTest.filter.path, "Filter path");
 							assert.equal(oFilter.sOperator, oTest.filter.operator, "Filter operator");
@@ -324,23 +324,23 @@ sap.ui.define([
 			}
 		}));
 
-		var aOperators = [];
-		for (var sName in FilterOperatorUtil._mOperators) {
+		const aOperators = [];
+		for (const sName in FilterOperatorUtil._mOperators) {
 			aOperators.push(FilterOperatorUtil._mOperators[sName]);
 		}
 
-		var oIntType = new IntegerType({}, {maximum: 3});
-		var oStringType = new StringType({}, {maxLength: 5});
-		var oNUMCType = new StringType({}, {maxLength: 5, isDigitSequence: true, nullable: false});
-		var oDateTimeWithTimezoneType1 = new DateTimeWithTimezoneType({pattern: "yyyy-MM-dd'T'HH:mm:ss", showTimezone: false});
+		const oIntType = new IntegerType({}, {maximum: 3});
+		const oStringType = new StringType({}, {maxLength: 5});
+		const oNUMCType = new StringType({}, {maxLength: 5, isDigitSequence: true, nullable: false});
+		const oDateTimeWithTimezoneType1 = new DateTimeWithTimezoneType({pattern: "yyyy-MM-dd'T'HH:mm:ss", showTimezone: false});
 		oDateTimeWithTimezoneType1._aCurrentValue = ["2022-02-24T12:15:30Z", "Europe/Berlin"];
-		var oDateTimeWithTimezoneType2 = new DateTimeWithTimezoneType({showTimezone: true, showDate: false, showTime: false});
+		const oDateTimeWithTimezoneType2 = new DateTimeWithTimezoneType({showTimezone: true, showDate: false, showTime: false});
 		oDateTimeWithTimezoneType2._aCurrentValue = ["2022-02-24T12:15:30Z", "Europe/Berlin"];
-		var oDateTimeOffsetType = new DateTimeOffsetType({}, {V4: true, nullable: false});
-		var sDateTimeFormatted = oDateTimeOffsetType.formatValue("2023-07-31T07:42:30Z", "string");
-		var sDateTimeParsed = oDateTimeOffsetType.parseValue(sDateTimeFormatted, "string");
+		const oDateTimeOffsetType = new DateTimeOffsetType({}, {V4: true, nullable: false});
+		const sDateTimeFormatted = oDateTimeOffsetType.formatValue("2023-07-31T07:42:30Z", "string");
+		const sDateTimeParsed = oDateTimeOffsetType.parseValue(sDateTimeFormatted, "string");
 
-		var aFormatTest = {
+		const aFormatTest = {
 				"EQ": [{
 						formatArgs: [Condition.createItemCondition("Test", "desc")],
 						formatValue: "desc (Test)",
@@ -1325,37 +1325,37 @@ sap.ui.define([
 	QUnit.test("Checks for Range Configuration", function(assert) {
 
 		// get all standard Operators
-		var aOperators = [];
-		for (var sName in FilterOperatorUtil._mOperators) {
+		const aOperators = [];
+		for (const sName in FilterOperatorUtil._mOperators) {
 			aOperators.push(FilterOperatorUtil._mOperators[sName]);
 		}
 
-		var oDateTimeOffsetType = new DateTimeOffsetType({pattern: "yyyyMMdd-HHmmssSSS"}, {V4: true});
-		var oDateType = new DateType({pattern: "yyyyMMdd"}, {});
-		var oDate = UI5Date.getInstance(); // Today (filter-test for one range should be enough)
-		var sYear = oDate.getFullYear().toString();
-		var iMonth = oDate.getMonth() + 1;
-		var sMonth = iMonth < 10 ? "0" + iMonth : iMonth.toString();
-		var iDate = oDate.getDate();
-		var sDate = iDate < 10 ? "0" + iDate : iDate.toString();
-		var sTodayStart = oDateTimeOffsetType.parseValue(sYear + sMonth + sDate + "-000000000", "string"); // Today start
-		var sTodayEnd = oDateTimeOffsetType.parseValue(sYear + sMonth + sDate + "-235959999", "string"); // Today end
+		const oDateTimeOffsetType = new DateTimeOffsetType({pattern: "yyyyMMdd-HHmmssSSS"}, {V4: true});
+		const oDateType = new DateType({pattern: "yyyyMMdd"}, {});
+		const oDate = UI5Date.getInstance(); // Today (filter-test for one range should be enough)
+		let sYear = oDate.getFullYear().toString();
+		let iMonth = oDate.getMonth() + 1;
+		let sMonth = iMonth < 10 ? "0" + iMonth : iMonth.toString();
+		let iDate = oDate.getDate();
+		let sDate = iDate < 10 ? "0" + iDate : iDate.toString();
+		const sTodayStart = oDateTimeOffsetType.parseValue(sYear + sMonth + sDate + "-000000000", "string"); // Today start
+		const sTodayEnd = oDateTimeOffsetType.parseValue(sYear + sMonth + sDate + "-235959999", "string"); // Today end
 		oDate.setDate(iDate - 1);
 		sYear = oDate.getFullYear().toString();
 		iMonth = oDate.getMonth() + 1;
 		sMonth = iMonth < 10 ? "0" + iMonth : iMonth.toString();
 		iDate = oDate.getDate();
 		sDate = iDate < 10 ? "0" + iDate : iDate.toString();
-		var sLastDaysEnd = oDateType.parseValue(sYear + sMonth + sDate, "string"); // LastDays end
+		const sLastDaysEnd = oDateType.parseValue(sYear + sMonth + sDate, "string"); // LastDays end
 		oDate.setDate(iDate - 3);
 		sYear = oDate.getFullYear().toString();
 		iMonth = oDate.getMonth() + 1;
 		sMonth = iMonth < 10 ? "0" + iMonth : iMonth.toString();
 		iDate = oDate.getDate();
 		sDate = iDate < 10 ? "0" + iDate : iDate.toString();
-		var sLastDaysStart = oDateType.parseValue(sYear + sMonth + sDate, "string"); // LastDays start
+		const sLastDaysStart = oDateType.parseValue(sYear + sMonth + sDate, "string"); // LastDays start
 
-		var aFormatTest = {
+		const aFormatTest = {
 			"YESTERDAY": [{
 				formatArgs: [Condition.createCondition("YESTERDAY", [undefined])],
 				formatValue: "Yesterday",
@@ -1968,12 +1968,12 @@ sap.ui.define([
 
 	QUnit.test("getMatchingOperators", function(assert) {
 
-		var aAllOperators = FilterOperatorUtil.getOperatorsForType(BaseType.String);
-		var aOperators = FilterOperatorUtil.getMatchingOperators(["X", "Y"]);
+		const aAllOperators = FilterOperatorUtil.getOperatorsForType(BaseType.String);
+		let aOperators = FilterOperatorUtil.getMatchingOperators(["X", "Y"]);
 		assert.strictEqual(aOperators.length, 0, "invalid operators should not result in anything");
 
 		aOperators = FilterOperatorUtil.getMatchingOperators(aAllOperators, "=true");
-		var oExpected = FilterOperatorUtil.getOperator("EQ", aAllOperators);
+		let oExpected = FilterOperatorUtil.getOperator("EQ", aAllOperators);
 		assert.strictEqual(aOperators.length, 1, "there should be one matching operator");
 		assert.deepEqual(aOperators[0], oExpected, "'=true' should match the EQ operator");
 
@@ -1991,7 +1991,7 @@ sap.ui.define([
 
 	QUnit.test("getDefaultOperatorForType", function(assert) {
 
-		var oOperator = FilterOperatorUtil.getDefaultOperator(BaseType.String);
+		let oOperator = FilterOperatorUtil.getDefaultOperator(BaseType.String);
 		assert.strictEqual(oOperator.name, "EQ", "EQ should be default operator for string type");
 
 		oOperator = FilterOperatorUtil.getDefaultOperator(BaseType.DateTime);
@@ -2001,7 +2001,7 @@ sap.ui.define([
 
 	QUnit.test("checkConditionsEmpty", function(assert) {
 
-		var aConditions = [
+		const aConditions = [
 						   Condition.createCondition("EQ", ["X"]),
 						   Condition.createCondition("EQ", []),
 						   Condition.createCondition("BT", ["X", "Y"]),
@@ -2017,7 +2017,7 @@ sap.ui.define([
 		assert.ok(aConditions[3].isEmpty, "Condition 3 is empty");
 
 		//test single Condition
-		var oCondition = Condition.createCondition("EQ", []);
+		const oCondition = Condition.createCondition("EQ", []);
 		FilterOperatorUtil.checkConditionsEmpty(oCondition);
 
 		assert.ok(oCondition.isEmpty, "Condition 1 is empty");
@@ -2026,7 +2026,7 @@ sap.ui.define([
 
 	QUnit.test("updateConditionsValues", function(assert) {
 
-		var aConditions = [
+		const aConditions = [
 						   Condition.createCondition("EQ", ["X"]),
 						   Condition.createCondition("EQ", []),
 						   Condition.createCondition("EQ", ["X", undefined]),
@@ -2054,7 +2054,7 @@ sap.ui.define([
 		assert.equal(aConditions[9].values.length, 0, "Condition 9 values length");
 
 		//test single Condition
-		var oCondition = Condition.createCondition("EQ", ["X", undefined]);
+		const oCondition = Condition.createCondition("EQ", ["X", undefined]);
 		FilterOperatorUtil.updateConditionsValues(oCondition);
 
 		assert.equal(oCondition.values.length, 1, "Condition values length");
@@ -2063,7 +2063,7 @@ sap.ui.define([
 
 	QUnit.test("indexOfCondition", function(assert) {
 
-		var aConditions = [
+		const aConditions = [
 						   Condition.createCondition("EQ", ["X", "Y"], undefined, undefined, ConditionValidated.Validated),
 						   Condition.createCondition("EQ", ["Y"], undefined, undefined, ConditionValidated.NotValidated),
 						   Condition.createCondition("EQ", ["Z"]),
@@ -2072,8 +2072,8 @@ sap.ui.define([
 						   ];
 
 		// same validated condition
-		var oCondition = Condition.createCondition("EQ", ["X", "Z"], undefined, undefined, ConditionValidated.Validated);
-		var iIndex = FilterOperatorUtil.indexOfCondition(oCondition, aConditions);
+		let oCondition = Condition.createCondition("EQ", ["X", "Z"], undefined, undefined, ConditionValidated.Validated);
+		let iIndex = FilterOperatorUtil.indexOfCondition(oCondition, aConditions);
 		assert.equal(iIndex, 0, "same validated condition: Index of Condition");
 
 		// same key, but not validated
@@ -2130,10 +2130,10 @@ sap.ui.define([
 
 	QUnit.test("compareConditionsArray", function(assert) {
 
-		var aConditions1 = [];
-		var aConditions2 = [];
+		let aConditions1 = [];
+		let aConditions2 = [];
 
-		var bEqual = FilterOperatorUtil.compareConditionsArray(aConditions1, aConditions2);
+		let bEqual = FilterOperatorUtil.compareConditionsArray(aConditions1, aConditions2);
 		assert.ok(bEqual, "2 empty arrays of conditions are equal");
 
 		aConditions1.push(Condition.createItemCondition("X", "Y"));
@@ -2195,7 +2195,7 @@ sap.ui.define([
 
 	QUnit.test("checkConditionValidated", function(assert) {
 
-		var oCondition = Condition.createCondition("EQ", ["X"]);
+		let oCondition = Condition.createCondition("EQ", ["X"]);
 		FilterOperatorUtil.checkConditionValidated(oCondition);
 		assert.equal(oCondition.validated, ConditionValidated.NotValidated, "Condition not validated");
 
@@ -2222,7 +2222,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("operator with special characters", function(assert) {
-		var operatorWithSpecialCharacters = new RangeOperator({
+		const operatorWithSpecialCharacters = new RangeOperator({
 			name: "OPT",
 			tokenText: "+foo {0} operator",
 			valueTypes: [{name: "sap.ui.model.type.Integer", formatOptions: {emptyString: null}}],
@@ -2238,7 +2238,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("testing placeholder", function(assert) {
-		var operatorWithSpecialCharacters = new RangeOperator({
+		let operatorWithSpecialCharacters = new RangeOperator({
 			name: "OPT",
 			tokenText: "foo $0 operator",
 			valueTypes: [{name: "sap.ui.model.type.Integer", formatOptions: {emptyString: null}}],
@@ -2283,7 +2283,7 @@ sap.ui.define([
 
 	QUnit.test("testing OperatorsForType", function(assert) {
 
-		var oMyEQ = new Operator({
+		const oMyEQ = new Operator({
 			name: "MYEQ",
 			filterOperator: "EQ",
 			tokenParse: "^=([^=].*)$",
@@ -2292,7 +2292,7 @@ sap.ui.define([
 			validateInput: true
 		});
 
-		var oLowerThan = new Operator({
+		const oLowerThan = new Operator({
 			name: "MYLT",
 			filterOperator: "LT",
 			tokenParse: "^<([^=].*)$",
@@ -2302,12 +2302,12 @@ sap.ui.define([
 
 		FilterOperatorUtil.setOperatorsForType("myType", [oMyEQ, oLowerThan], oMyEQ);
 
-		var aOperators = FilterOperatorUtil.getOperatorsForType("myType");
+		let aOperators = FilterOperatorUtil.getOperatorsForType("myType");
 
 		assert.equal(aOperators[0], "MYEQ", "Name set");
 		assert.equal(aOperators[1], "MYLT", "Name set");
 
-		var oDefaultOperator = FilterOperatorUtil.getDefaultOperator("myType");
+		let oDefaultOperator = FilterOperatorUtil.getDefaultOperator("myType");
 
 		assert.equal(oDefaultOperator.name, "MYEQ", "Name set");
 
@@ -2327,7 +2327,7 @@ sap.ui.define([
 
 	QUnit.test("testing set/add/removeOperator", function(assert) {
 
-		var oMyOperator = new Operator({
+		const oMyOperator = new Operator({
 			name: "MyEqual",
 			filterOperator: "EQ",
 			tokenParse: "^=([^=].*)$",
@@ -2335,7 +2335,7 @@ sap.ui.define([
 			valueTypes: [OperatorValueType.Self],
 			validateInput: true
 		});
-		var oMyOperator2 = new Operator({
+		const oMyOperator2 = new Operator({
 			name: "MyEqual2",
 			filterOperator: "EQ",
 			tokenParse: "^=([^=].*)$",
@@ -2347,7 +2347,7 @@ sap.ui.define([
 		// add one Operator and remove it
 		FilterOperatorUtil.addOperator(oMyOperator);
 
-		var oOperator = FilterOperatorUtil.getOperator("MyEqual");
+		let oOperator = FilterOperatorUtil.getOperator("MyEqual");
 		assert.ok(oOperator, "Operator exist");
 
 		FilterOperatorUtil.removeOperators(oMyOperator);
@@ -2375,11 +2375,11 @@ sap.ui.define([
 
 	QUnit.test("testing overwrite", function(assert) {
 
-		var oOperator = FilterOperatorUtil.getOperator("Empty");
+		let oOperator = FilterOperatorUtil.getOperator("Empty");
 		assert.ok(oOperator, "Operator exist");
 		assert.ok(oOperator.getLongText("String") === "empty", "Operator getLongText returns default text");
 
-		var fCallbackGetLongText = function(sBaseType) {
+		const fCallbackGetLongText = function(sBaseType) {
 			if (sBaseType === "String") {
 				return "foo";
 			} else {
@@ -2394,7 +2394,7 @@ sap.ui.define([
 		oOperator = FilterOperatorUtil.getOperator("TODAY");
 		assert.ok(oOperator, "Operator exist");
 
-		var fCallbackGetModelFilter = function(oCondition, sFieldPath, oType, bCaseSensitive, sBaseType) {
+		const fCallbackGetModelFilter = function(oCondition, sFieldPath, oType, bCaseSensitive, sBaseType) {
 			return "foo";
 		};
 		oOperator.overwrite(OperatorOverwrite.getModelFilter, fCallbackGetModelFilter);

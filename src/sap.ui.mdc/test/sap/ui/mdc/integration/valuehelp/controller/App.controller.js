@@ -19,7 +19,7 @@ sap.ui.define([
 	"use strict";
 
 	function _updateParams(mParams) {
-		var uri = URI(document.location.href);
+		const uri = URI(document.location.href);
 		Object.keys(mParams).forEach(function (sKey) {
 			uri.removeQuery(sKey);
 			uri.addQuery(sKey, mParams[sKey]);
@@ -27,7 +27,7 @@ sap.ui.define([
 		document.location = uri.toString();
 	}
 
-	var aAllViews = [
+	const aAllViews = [
 		{path: "sap.ui.v4demo.view.Typeahead", text: "Explore: Controlled Open State for Typeahead", maxConditions: 1, maxConditionsToggleEnabled: true},
 		{path: "sap.ui.v4demo.view.SingleSelect", text: "Explore: ValueHelp Examples SingleSelect", maxConditions: 1, maxConditionsToggleEnabled: false},
 		{path: "sap.ui.v4demo.view.MultiSelect", text: "Explore: ValueHelp Examples MultiSelect", maxConditions: -1, maxConditionsToggleEnabled: false},
@@ -48,19 +48,19 @@ sap.ui.define([
 			oCore.getMessageManager().registerObject(this.getView(), true);
 
 			this.oParams = UriParameters.fromQuery(location.search);
-			var oParamSuspended = this.oParams.get("suspended");
-			var bSuspended = oParamSuspended ? oParamSuspended === "true" : false;
+			const oParamSuspended = this.oParams.get("suspended");
+			const bSuspended = oParamSuspended ? oParamSuspended === "true" : false;
 
-			var sSelectedView = this.oParams.get("view") || aAllViews[0].path;
-			var oSelectedView = aAllViews.find(function (oView) {
+			const sSelectedView = this.oParams.get("view") || aAllViews[0].path;
+			const oSelectedView = aAllViews.find(function (oView) {
 				return oView.path === sSelectedView;
 			});
 
 
-			var oParamMaxConditions = this.oParams.get("maxconditions");
-			var iMaxConditions = oParamMaxConditions ? parseInt(oParamMaxConditions) : (oSelectedView.maxConditions || 1);
+			const oParamMaxConditions = this.oParams.get("maxconditions");
+			const iMaxConditions = oParamMaxConditions ? parseInt(oParamMaxConditions) : (oSelectedView.maxConditions || 1);
 
-			var oCM = new ConditionModel();
+			const oCM = new ConditionModel();
 			this.getView().setModel(oCM, "cm");
 
 			this.oJSONModel = new JSONModel();
@@ -131,7 +131,7 @@ sap.ui.define([
 		},
 
 		setFragment: function (sFragment, sFragmentController) {
-			var oPage = this.getView().byId('P0');
+			const oPage = this.getView().byId('P0');
 			return Fragment.load({name: sFragment, type: "XML", controller: this}).then(function name(oFragment) {
 				oPage.removeAllContent();
 				oPage.addContent(oFragment);
@@ -139,7 +139,7 @@ sap.ui.define([
 		},
 
 		setFooterFragment: function (sFragment, sFragmentController) {
-			var oPage = this.getView().byId('P0');
+			const oPage = this.getView().byId('P0');
 			return Fragment.load({name: sFragment + "-Footer", type: "XML", controller: this}).then(function name(oFragment) {
 				oPage.setFooter(oFragment);
 			}).catch(function (oError) {
@@ -148,23 +148,23 @@ sap.ui.define([
 		},
 
 		onMaxConditionsSwitchChange: function (oEvent) {
-			var iNewMaxConditions = oEvent.getParameter("state") ? -1 : 1;
+			const iNewMaxConditions = oEvent.getParameter("state") ? -1 : 1;
 			_updateParams({
 				"maxconditions": iNewMaxConditions.toString()
 			});
 		},
 
 		onSuspendedSwitchChange: function (oEvent) {
-			var bSuspended = oEvent.getParameter("state");
+			const bSuspended = oEvent.getParameter("state");
 			_updateParams({
 				"suspended": bSuspended ? "true" : "false"
 			});
 		},
 
 		onViewSwitch: function (oEvent) {
-			var view = oEvent.getParameter("selectedItem").getKey();
+			const view = oEvent.getParameter("selectedItem").getKey();
 
-			var iMaxConditions;
+			let iMaxConditions;
 
 			if (view === "sap.ui.v4demo.view.SingleSelect") {
 				iMaxConditions = 1;

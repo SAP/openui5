@@ -14,10 +14,10 @@ sap.ui.define([
 ], function(QUnit, UnitContent, Field, FieldBaseDelegate, Text, FieldInput, FieldMultiInput, Token, InvisibleText, UnitType, ODataV4TypeMap) {
 	"use strict";
 
-	var sInvisibleTextIdNumber = InvisibleText.getStaticId("sap.ui.mdc", "field.NUMBER");
-	var sInvisibleTextIdUnit = InvisibleText.getStaticId("sap.ui.mdc", "field.UNIT");
+	const sInvisibleTextIdNumber = InvisibleText.getStaticId("sap.ui.mdc", "field.NUMBER");
+	const sInvisibleTextIdUnit = InvisibleText.getStaticId("sap.ui.mdc", "field.UNIT");
 
-	var oControlMap = {
+	const oControlMap = {
 		"Display": {
 			getPathsFunction: "getDisplay",
 			paths: ["sap/m/Text"],
@@ -51,12 +51,12 @@ sap.ui.define([
 		}
 	};
 
-	var aControlMapKeys = Object.keys(oControlMap);
+	const aControlMapKeys = Object.keys(oControlMap);
 
 	QUnit.module("Getters");
 
 	aControlMapKeys.forEach(function(sControlMapKey) {
-		var oValue = oControlMap[sControlMapKey];
+		const oValue = oControlMap[sControlMapKey];
 		QUnit.test(oValue.getPathsFunction, function(assert) {
 			assert.deepEqual(UnitContent[oValue.getPathsFunction](), oValue.paths, "Correct control path returned for ContentMode '" + sControlMapKey + "'.");
 		});
@@ -98,7 +98,7 @@ sap.ui.define([
 		afterEach: function() {
 			delete this.oField;
 			while (this.aControls.length > 0) {
-				var oControl = this.aControls.pop();
+				const oControl = this.aControls.pop();
 				if (oControl) {
 					oControl.destroy();
 				}
@@ -106,36 +106,36 @@ sap.ui.define([
 		}
 	});
 
-	var fnCreateControls = function(oContentFactory, sContentMode, sIdPostFix) {
+	const fnCreateControls = function(oContentFactory, sContentMode, sIdPostFix) {
 		return UnitContent.create(oContentFactory, sContentMode, null, oControlMap[sContentMode].instances, sContentMode + sIdPostFix);
 	};
 
-	var fnSpyOnCreateFunction = function(sContentMode) {
+	const fnSpyOnCreateFunction = function(sContentMode) {
 		return oControlMap[sContentMode].createFunction ? sinon.spy(UnitContent, oControlMap[sContentMode].createFunction) : null;
 	};
 
-	var fnSpyCalledOnce = function(fnSpyFunction, sContentMode, assert) {
+	const fnSpyCalledOnce = function(fnSpyFunction, sContentMode, assert) {
 		if (fnSpyFunction) {
 			assert.ok(fnSpyFunction.calledOnce, oControlMap[sContentMode].createFunction + " called once.");
 		}
 	};
 
 	QUnit.test("create", function(assert) {
-		var done = assert.async();
-		var oContentFactory = this.oField._oContentFactory;
+		const done = assert.async();
+		const oContentFactory = this.oField._oContentFactory;
 		this.oField.awaitControlDelegate().then(function() {
-			var aDisplayControls = oControlMap["Display"].instances;
-			var aEditControls = oControlMap["Edit"].instances;
-			var aEditMultiValueControls = oControlMap["EditMultiValue"].instances;
+			const aDisplayControls = oControlMap["Display"].instances;
+			const aEditControls = oControlMap["Edit"].instances;
+			const aEditMultiValueControls = oControlMap["EditMultiValue"].instances;
 
-			var fnCreateDisplayFunction = fnSpyOnCreateFunction("Display");
-			var fnCreateEditFunction = fnSpyOnCreateFunction("Edit");
-			var fnCreateEditMultiValueFunction = fnSpyOnCreateFunction("EditMultiValue");
-			var fnCreateEditMultiLineFunction = fnSpyOnCreateFunction("EditMultiLine");
+			const fnCreateDisplayFunction = fnSpyOnCreateFunction("Display");
+			const fnCreateEditFunction = fnSpyOnCreateFunction("Edit");
+			const fnCreateEditMultiValueFunction = fnSpyOnCreateFunction("EditMultiValue");
+			const fnCreateEditMultiLineFunction = fnSpyOnCreateFunction("EditMultiLine");
 
-			var aCreatedDisplayControls = fnCreateControls(oContentFactory, "Display", "-create");
-			var aCreatedEditControls = fnCreateControls(oContentFactory, "Edit", "-create");
-			var aCreatedEditMultiValueControls = fnCreateControls(oContentFactory, "EditMultiValue", "-create");
+			const aCreatedDisplayControls = fnCreateControls(oContentFactory, "Display", "-create");
+			const aCreatedEditControls = fnCreateControls(oContentFactory, "Edit", "-create");
+			const aCreatedEditMultiValueControls = fnCreateControls(oContentFactory, "EditMultiValue", "-create");
 
 			assert.throws(
 				function() {
@@ -163,29 +163,29 @@ sap.ui.define([
 	});
 
 	aControlMapKeys.forEach(function(sControlMapKey) {
-		var oValue = oControlMap[sControlMapKey];
+		const oValue = oControlMap[sControlMapKey];
 		if (oValue.createFunction && !oValue.throwsError) {
 			QUnit.test(oValue.createFunction, function(assert) {
-				var done = assert.async();
-				var oContentFactory = this.oField._oContentFactory;
+				const done = assert.async();
+				const oContentFactory = this.oField._oContentFactory;
 				this.oField.awaitControlDelegate().then(function() {
-					var aCreatedInstances = oValue.createdInstances;
-					var aControls = UnitContent.create(oContentFactory, sControlMapKey, null, oValue.instances, sControlMapKey);
+					const aCreatedInstances = oValue.createdInstances;
+					const aControls = UnitContent.create(oContentFactory, sControlMapKey, null, oValue.instances, sControlMapKey);
 					assert.equal(aControls.length, aCreatedInstances.length, "number of created controls");
 
-					for (var i = 0; i < aControls.length; i++) {
+					for (let i = 0; i < aControls.length; i++) {
 						assert.ok(aControls[i] instanceof aCreatedInstances[i].control, "Correct control created in " + oValue.createFunction);
 						if (aCreatedInstances[i].boundProperty || aCreatedInstances[i].boundAggregation) {
-							var oBindingInfo = aControls[i].getBindingInfo(aCreatedInstances[i].boundAggregation || aCreatedInstances[i].boundProperty);
+							let oBindingInfo = aControls[i].getBindingInfo(aCreatedInstances[i].boundAggregation || aCreatedInstances[i].boundProperty);
 							assert.ok(oBindingInfo, "Control BindingInfo created");
-							var sPath = oBindingInfo.path || oBindingInfo.parts[0].path;
+							const sPath = oBindingInfo.path || oBindingInfo.parts[0].path;
 							assert.equal(sPath, "/conditions", "BindingInfo path");
 							if (aCreatedInstances[i].boundAggregation) {
 								oBindingInfo = oBindingInfo.template.getBindingInfo(aCreatedInstances[i].boundProperty);
 							}
-							var oConditionType = oBindingInfo.type;
-							var oType = oConditionType.getFormatOptions().valueType;
-							var oFormatOptions = oType.getFormatOptions();
+							const oConditionType = oBindingInfo.type;
+							const oType = oConditionType.getFormatOptions().valueType;
+							const oFormatOptions = oType.getFormatOptions();
 							assert.equal(oType.getMetadata().getName(), aCreatedInstances[i].type, "Type of binding");
 							assert.deepEqual(oFormatOptions, aCreatedInstances[i].formatOptions, "FormatOptions");
 						}
@@ -200,7 +200,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("createEditMultiLine", function(assert) {
-		var done = assert.async();
+		const done = assert.async();
 		this.oField.awaitControlDelegate().then(function() {
 			assert.throws(
 				function() {
@@ -223,7 +223,7 @@ sap.ui.define([
 		afterEach: function() {
 			delete this.oField;
 			while (this.aControls.length > 0) {
-				var oControl = this.aControls.pop();
+				const oControl = this.aControls.pop();
 				if (oControl) {
 					oControl.destroy();
 				}
@@ -233,10 +233,10 @@ sap.ui.define([
 
 	QUnit.test("Prefers deprecated getUnitTypeInstance, if available", function(assert) {
 
-		var oAdjustDataTypeForUnitSpy = sinon.spy(UnitContent, "_adjustDataTypeForUnit");
-		var oGetUnitTypeInstanceStub;
-		var oTypeUtilStub = sinon.stub(FieldBaseDelegate, "getTypeMap").callsFake(function () {
-			var oResult  = Object.assign({}, oTypeUtilStub.wrappedMethod.call(this), {getUnitTypeInstance: function () {
+		const oAdjustDataTypeForUnitSpy = sinon.spy(UnitContent, "_adjustDataTypeForUnit");
+		let oGetUnitTypeInstanceStub;
+		const oTypeUtilStub = sinon.stub(FieldBaseDelegate, "getTypeMap").callsFake(function () {
+			const oResult  = Object.assign({}, oTypeUtilStub.wrappedMethod.call(this), {getUnitTypeInstance: function () {
 				return false;
 			}});
 			oGetUnitTypeInstanceStub = sinon.stub(oResult, "getUnitTypeInstance");
@@ -253,7 +253,7 @@ sap.ui.define([
 			UnitContent.createEdit(this.oField._oContentFactory, [FieldInput, InvisibleText]);
 			assert.ok(oAdjustDataTypeForUnitSpy.calledOnce, "_adjustDataTypeForUnit is called.");
 			assert.ok(oGetUnitTypeInstanceStub.calledTwice, "getUnitTypeInstance is called twice.");
-			var oType = this.oField._oContentFactory.retrieveDataType();
+			const oType = this.oField._oContentFactory.retrieveDataType();
 			assert.deepEqual(oGetUnitTypeInstanceStub.args[0], [oType, true, false], "getUnitTypeInstance is called with expected args.");
 			assert.deepEqual(oGetUnitTypeInstanceStub.args[1], [oType, false, true], "getUnitTypeInstance is called with expected args.");
 
@@ -265,8 +265,8 @@ sap.ui.define([
 
 	QUnit.test("Calls getDataTypeInstance with additional options, if getUnitTypeInstance is unavailable", function(assert) {
 
-		var oAdjustDataTypeForUnitSpy = sinon.spy(UnitContent, "_adjustDataTypeForUnit");
-		var oGetDataTypeInstanceSpy = sinon.spy(ODataV4TypeMap, "getDataTypeInstance");
+		const oAdjustDataTypeForUnitSpy = sinon.spy(UnitContent, "_adjustDataTypeForUnit");
+		const oGetDataTypeInstanceSpy = sinon.spy(ODataV4TypeMap, "getDataTypeInstance");
 
 		this.oField = new Field({
 			dataType: "sap.ui.model.odata.type.Unit",
@@ -275,9 +275,9 @@ sap.ui.define([
 		this.aControls = [];
 
 		return this.oField.awaitControlDelegate().then(function() {
-			var oType = this.oField._oContentFactory.retrieveDataType();
-			var sType = oType.getMetadata().getName();
-			var oFormatOptions = oType.getFormatOptions();
+			const oType = this.oField._oContentFactory.retrieveDataType();
+			const sType = oType.getMetadata().getName();
+			const oFormatOptions = oType.getFormatOptions();
 
 			UnitContent.createEdit(this.oField._oContentFactory, [FieldInput, InvisibleText], "t1");
 			assert.ok(oAdjustDataTypeForUnitSpy.calledOnce, "_adjustDataTypeForUnit is called.");

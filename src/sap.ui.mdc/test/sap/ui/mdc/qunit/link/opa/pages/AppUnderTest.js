@@ -45,7 +45,7 @@ sap.ui.require([
                         }),
                         success: function(aLinks) {
                             Opa5.assert.equal(aLinks.length, 1, "Link found");
-                            var oLink = aLinks[0];
+                            const oLink = aLinks[0];
                             this.waitFor({
                                 controlType: "sap.ui.dt.ElementOverlay",
                                 matchers: function(oElementOverlay) {

@@ -10,7 +10,7 @@ sap.ui.define([], function() {
 	 * @since 1.61
 	 * @alias sap.ui.mdc.Delegate
 	 */
-	var Delegate = function() {
+	const Delegate = function() {
 
 	};
 

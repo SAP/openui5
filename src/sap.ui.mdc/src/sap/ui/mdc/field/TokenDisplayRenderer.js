@@ -10,7 +10,7 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/m/TokenRenderer'],
 	 * TokenDisplay renderer.
 	 * @namespace
 	 */
-	var TokenDisplayRenderer = Renderer.extend(TokenRenderer);
+	const TokenDisplayRenderer = Renderer.extend(TokenRenderer);
 	TokenDisplayRenderer.apiVersion = 2;
 
 	TokenDisplayRenderer._setAttributes = function(oRm, oControl) {

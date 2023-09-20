@@ -14,7 +14,7 @@ sap.ui.define(function() {
      * @since 1.115
      * @public
      */
-    var ChartP13nMode = {
+    const ChartP13nMode = {
         /**
          * Item personalization is enabled.
          *

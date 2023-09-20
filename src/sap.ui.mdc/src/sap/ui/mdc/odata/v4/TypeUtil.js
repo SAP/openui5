@@ -31,7 +31,7 @@ sap.ui.define(['sap/ui/mdc/odata/TypeUtil', 'sap/ui/mdc/enums/BaseType',	'sap/ba
 	ODataV4TypeUtil.getDataTypeClassName = function(sType) {
 
 		// V4 specific types
-		var mEdmTypes = {
+		const mEdmTypes = {
 			"Edm.Date": "sap.ui.model.odata.type.Date", // V4 Date
 			"Edm.TimeOfDay": "sap.ui.model.odata.type.TimeOfDay" // V4 constraints: {precision}
 		};
@@ -54,7 +54,7 @@ sap.ui.define(['sap/ui/mdc/odata/TypeUtil', 'sap/ui/mdc/enums/BaseType',	'sap/ba
 			default:
 		}
 
-		var TypeClass = this.getDataTypeClass(sDataType);
+		const TypeClass = this.getDataTypeClass(sDataType);
 		return new TypeClass(oFormatOptions, oConstraints);
 	};
 

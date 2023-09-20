@@ -9,7 +9,7 @@ sap.ui.define([
 ], function(Engine, Util, FLChangeHandlerBase, CondenserClassification) {
 	"use strict";
 
-	var fFinalizeSortChange = function(oChange, oControl, oSortContent, bIsRevert) {
+	const fFinalizeSortChange = function(oChange, oControl, oSortContent, bIsRevert) {
 		if (bIsRevert) {
 			// Clear the revert data on the change
 			oChange.resetRevertData();
@@ -19,17 +19,17 @@ sap.ui.define([
 		}
 	};
 
-	var fAddSort = function(oChange, oControl, mPropertyBag, sChangeReason) {
+	const fAddSort = function(oChange, oControl, mPropertyBag, sChangeReason) {
 		return new Promise(function(resolve, reject) {
-			var bIsRevert = (sChangeReason === Util.REVERT);
-			var oModifier = mPropertyBag.modifier;
-			var oChangeContent = bIsRevert ? oChange.getRevertData() : oChange.getContent();
+			const bIsRevert = (sChangeReason === Util.REVERT);
+			const oModifier = mPropertyBag.modifier;
+			const oChangeContent = bIsRevert ? oChange.getRevertData() : oChange.getContent();
 			Promise.resolve()
 				.then(oModifier.getProperty.bind(oModifier, oControl, "sortConditions"))
 				.then(function(oSortConditions) {
-					var aValue = oSortConditions ? oSortConditions.sorters : [];
+					const aValue = oSortConditions ? oSortConditions.sorters : [];
 
-					var oSortContent = {
+					const oSortContent = {
 						name: oChangeContent.key || oChangeContent.name,
 						descending: oChangeContent.descending
 					};
@@ -50,25 +50,25 @@ sap.ui.define([
 		});
 	};
 
-	var fRemoveSort = function(oChange, oControl, mPropertyBag, sChangeReason) {
+	const fRemoveSort = function(oChange, oControl, mPropertyBag, sChangeReason) {
 		return new Promise(function(resolve, reject) {
-			var oModifier = mPropertyBag.modifier;
-			var bIsRevert = (sChangeReason === Util.REVERT);
-			var oChangeContent = bIsRevert ? oChange.getRevertData() : oChange.getContent();
+			const oModifier = mPropertyBag.modifier;
+			const bIsRevert = (sChangeReason === Util.REVERT);
+			const oChangeContent = bIsRevert ? oChange.getRevertData() : oChange.getContent();
 			Promise.resolve()
 				.then(oModifier.getProperty.bind(oModifier, oControl, "sortConditions"))
 				.then(function(oSortConditions) {
-					var aValue = oSortConditions ? oSortConditions.sorters : [];
+					const aValue = oSortConditions ? oSortConditions.sorters : [];
 
 					if (!aValue) {
 						// Nothing to remove
 						reject();
 					}
 
-					var aFoundValue = aValue.filter(function(o) {
+					const aFoundValue = aValue.filter(function(o) {
 						return o.name === oChangeContent.name;
 					});
-					var iIndex = aValue.indexOf(aFoundValue[0]);
+					const iIndex = aValue.indexOf(aFoundValue[0]);
 
 					if (iIndex > -1) {
 						aValue.splice(iIndex, 1);
@@ -91,22 +91,22 @@ sap.ui.define([
 		});
 	};
 
-	var fMoveSort = function(oChange, oControl, mPropertyBag, sChangeReason) {
+	const fMoveSort = function(oChange, oControl, mPropertyBag, sChangeReason) {
 		return new Promise(function(resolve, reject) {
-			var bIsRevert = (sChangeReason === Util.REVERT);
-			var oModifier = mPropertyBag.modifier;
-			var oChangeContent = bIsRevert ? oChange.getRevertData() : oChange.getContent();
+			const bIsRevert = (sChangeReason === Util.REVERT);
+			const oModifier = mPropertyBag.modifier;
+			const oChangeContent = bIsRevert ? oChange.getRevertData() : oChange.getContent();
 			Promise.resolve()
 				.then(oModifier.getProperty.bind(oModifier, oControl, "sortConditions"))
 				.then(function(oSortConditions) {
-					var aValue = oSortConditions ? oSortConditions.sorters : [];
+					const aValue = oSortConditions ? oSortConditions.sorters : [];
 
-					var aFoundValue = aValue.filter(function(o) {
+					const aFoundValue = aValue.filter(function(o) {
 						return o.name === oChangeContent.name;
 					});
 
 					//remove the item from the 'sortConditions' array, insert it at the new position
-					var iOldIndex = aValue.indexOf(aFoundValue[0]);
+					const iOldIndex = aValue.indexOf(aFoundValue[0]);
 					aValue.splice(oChangeContent.index, 0, aValue.splice(iOldIndex, 1)[0]);
 
 					oSortConditions = {
@@ -124,7 +124,7 @@ sap.ui.define([
 		});
 	};
 
-	var Sort = {};
+	const Sort = {};
 	Sort.addSort = Util.createChangeHandler({
 		apply: fAddSort,
 		revert: fRemoveSort,
@@ -159,7 +159,7 @@ sap.ui.define([
 				classification: CondenserClassification.Destroy,
 				sourceIndex: oChange.getRevertData().index,
 				setIndexInRevertData: function(oChange, iIndex) {
-					var oRevertData = oChange.getRevertData();
+					const oRevertData = oChange.getRevertData();
 					oRevertData.index = iIndex;
 					oChange.setRevertData(oRevertData);
 				}
@@ -189,7 +189,7 @@ sap.ui.define([
 					return oChange.getContent().index;
 				},
 				setIndexInRevertData: function(oChange, iIndex) {
-					var oRevertData = oChange.getRevertData();
+					const oRevertData = oChange.getRevertData();
 					oRevertData.index = iIndex;
 					oChange.setRevertData(oRevertData);
 				}

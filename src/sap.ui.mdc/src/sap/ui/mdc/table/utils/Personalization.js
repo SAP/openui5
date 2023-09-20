@@ -18,7 +18,7 @@ sap.ui.define([
 	 * @alias sap.ui.mdc.table.utils.Personalization
 	 * @private
 	 */
-	var PersonalizationUtils = {};
+	const PersonalizationUtils = {};
 
 	/**
 	 * Checks whether a p13n UI, e.g. column header menu or settings dialog, is currently shown, or changes that the user has created with this UI
@@ -75,7 +75,7 @@ sap.ui.define([
 
 	function openP13nDialog(oTable, aPanelKeys, fnOnClose) {
 		return oTable.finalizePropertyHelper().then(function() {
-			var oEngine = oTable.getEngine();
+			const oEngine = oTable.getEngine();
 
 			if (oTable.getInbuiltFilter()) {
 				oTable.getInbuiltFilter().setVisibleFields(null);
@@ -131,7 +131,7 @@ sap.ui.define([
 	 * @param {string} mSettings.property The name of the property to group, as specified in the <code>PropertyInfo</code>.
 	 */
 	PersonalizationUtils.createGroupChange = function(oTable, mSettings) {
-		var bIsGrouped = (oTable.getCurrentState().groupLevels || []).some(function(oProperty) {
+		const bIsGrouped = (oTable.getCurrentState().groupLevels || []).some(function(oProperty) {
 			return oProperty.name == mSettings.property;
 		});
 
@@ -172,7 +172,7 @@ sap.ui.define([
 	 * @param {string} mSettings.property The name of the property to aggregate, as specified in the <code>PropertyInfo</code>.
 	 */
 	PersonalizationUtils.createAggregateChange = function(oTable, mSettings) {
-		var bHasAggregate = mSettings.property in (oTable.getCurrentState().aggregations || {});
+		const bHasAggregate = mSettings.property in (oTable.getCurrentState().aggregations || {});
 
 		oTable.getEngine().createChanges({
 			control: oTable,
@@ -214,7 +214,7 @@ sap.ui.define([
 	 * @param {int} mSettings.index The new index of the column.
 	 */
 	PersonalizationUtils.createColumnReorderChange = function(oTable, mSettings) {
-		var iCurrentIndex = oTable.indexOfColumn(mSettings.column);
+		const iCurrentIndex = oTable.indexOfColumn(mSettings.column);
 
 		if (iCurrentIndex === mSettings.index) {
 			return;

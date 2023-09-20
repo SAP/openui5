@@ -66,7 +66,7 @@ sap.ui.define([
 		 * @private
 		 */
 		iClickOnSelectAllCheckBox: function(oControl) {
-			var sTableId = typeof oControl === "string" ? oControl : oControl.getId();
+			const sTableId = typeof oControl === "string" ? oControl : oControl.getId();
 
 			return waitForTable.call(this, oControl, {
 				success: function(oTable) {
@@ -105,7 +105,7 @@ sap.ui.define([
 		 * @private
 		 */
 		iClickOnClearAllIcon: function(oControl) {
-			var sTableId = typeof oControl === "string" ? oControl : oControl.getId();
+			const sTableId = typeof oControl === "string" ? oControl : oControl.getId();
 
 			return waitForTable.call(this, oControl, {
 				success: function(oTable) {
@@ -145,8 +145,8 @@ sap.ui.define([
 		iClickOnRowSelectCheckBox: function(oControl, iStartIndex, iEndIndex) {
 			return waitForTable.call(this, oControl, {
 				success: function(oTable) {
-					var iIndex = iStartIndex;
-					var oInnerTable = oTable._oTable;
+					let iIndex = iStartIndex;
+					const oInnerTable = oTable._oTable;
 
 					if (oTable._isOfType(TableType.ResponsiveTable)) {
 						for (iIndex; iIndex <= iEndIndex; iIndex++) {
@@ -296,7 +296,7 @@ sap.ui.define([
 		 * @private
 		 */
 		iPressQuickExportButton: function(oControl) {
-			var sTableId = typeof oControl === "string" ? oControl : oControl.getId();
+			const sTableId = typeof oControl === "string" ? oControl : oControl.getId();
 
 			return this.waitFor({
 				id: sTableId + "-export-internalSplitBtn-textButton",
@@ -322,7 +322,7 @@ sap.ui.define([
 		 * @private
 		 */
 		iPressExportMenuButton: function(oControl) {
-			var sTableId = typeof oControl === "string" ? oControl : oControl.getId();
+			const sTableId = typeof oControl === "string" ? oControl : oControl.getId();
 
 			return this.waitFor({
 				id: sTableId + "-export-internalSplitBtn-arrowButton",
@@ -342,7 +342,7 @@ sap.ui.define([
 		 * @private
 		 */
 		iPressExportButtonInMenu: function() {
-			var oResourceBundle = Core.getLibraryResourceBundle("sap.ui.mdc");
+			const oResourceBundle = Core.getLibraryResourceBundle("sap.ui.mdc");
 
 			return this.waitFor({
 				controlType: "sap.ui.unified.MenuItem",
@@ -367,7 +367,7 @@ sap.ui.define([
 		 * @private
 		 */
 		iPressExportAsButtonInMenu: function() {
-			var oResourceBundle = Core.getLibraryResourceBundle("sap.ui.mdc");
+			const oResourceBundle = Core.getLibraryResourceBundle("sap.ui.mdc");
 
 			return this.waitFor({
 				controlType: "sap.ui.unified.MenuItem",
@@ -494,11 +494,11 @@ sap.ui.define([
 		iPressOnColumnHeader: function(oControl, vColumn) {
 			return waitForTable.call(this, oControl, {
 				success: function() {
-					var oColumnSelectable;
+					let oColumnSelectable;
 					return this.waitFor({
 						controlType: "sap.ui.mdc.table.Column",
 						check : function (aColumns) {
-							for (var i = 0; i < aColumns.length; i++) {
+							for (let i = 0; i < aColumns.length; i++) {
 								if (aColumns[i].getHeader() === vColumn || ( typeof vColumn === 'object' && aColumns[i].getHeader() === vColumn.getHeader())) {
 									oColumnSelectable = aColumns[i];
 									return true;
@@ -765,7 +765,7 @@ sap.ui.define([
 		 * @returns {Promise} OPA waitFor
 		 */
 		iPressFilterInfoBar: function(vControl) {
-			var sTableId = typeof vControl === "string" ? vControl : vControl.getId();
+			const sTableId = typeof vControl === "string" ? vControl : vControl.getId();
 			return this.waitFor({
 				id: sTableId + "-filterInfoBar",
 				controlType: "sap.m.OverflowToolbar",
@@ -775,7 +775,7 @@ sap.ui.define([
 		},
 
 		iRemoveAllFiltersViaInfoFilterBar: function(oControl) {
-			var sTableId = typeof oControl === "string" ? oControl : oControl.getId();
+			const sTableId = typeof oControl === "string" ? oControl : oControl.getId();
 
 			return this.waitFor({
 				id: sTableId + "-filterInfoBar",

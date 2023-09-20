@@ -20,7 +20,7 @@ sap.ui.define([
 	 * @since 1.56.0
 	 * @alias sap.ui.mdc.link.ContactDetailsEmailItem
 	 */
-	var ContactDetailsEmailItem = Element.extend("sap.ui.mdc.link.ContactDetailsEmailItem", /** @lends sap.ui.mdc.link.ContactDetailsEmailItem.prototype */
+	const ContactDetailsEmailItem = Element.extend("sap.ui.mdc.link.ContactDetailsEmailItem", /** @lends sap.ui.mdc.link.ContactDetailsEmailItem.prototype */
 	{
 		metadata: {
 			library: "sap.ui.mdc",

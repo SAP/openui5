@@ -22,8 +22,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("check getPropertyByKey method", function(assert) {
-		var aPropertyMetadata = [{name: "Property0"}, {name: "Property1"}, {name: "Property2"}];
-		var oProperty = FilterUtil.getPropertyByKey(aPropertyMetadata, "Property1");
+		const aPropertyMetadata = [{name: "Property0"}, {name: "Property1"}, {name: "Property2"}];
+		let oProperty = FilterUtil.getPropertyByKey(aPropertyMetadata, "Property1");
 		assert.ok(oProperty);
 
 		oProperty = FilterUtil.getPropertyByKey(aPropertyMetadata, "Property2");
@@ -34,19 +34,19 @@ sap.ui.define([
 	});
 
 	QUnit.test("check getConditionsMap method", function(assert) {
-		var oInnerConditions = {
+		const oInnerConditions = {
 			"Filter1" : [{operator: "EQ", values: ["values1"]}, {operator: "BT", values: ["0", "10"]}],
 			"Filter2" : [{operator: "EQ", values: ["values2"], inParameters : "test"}],
 			"Filter3" : [{operator: "EQ", values: ["values3", "Some Text"], isEmpty: true, validated: "Validated"}]
 		};
-		var oFilterBar = {
+		const oFilterBar = {
 			getInternalConditions: function() {
 				return oInnerConditions;
 			},
 			isA : function(s) { return true; }
 		};
 
-		var oResultingConditions = FilterUtil.getConditionsMap(oFilterBar, ["Filter1", "Filter3", "Filter4"]);
+		const oResultingConditions = FilterUtil.getConditionsMap(oFilterBar, ["Filter1", "Filter3", "Filter4"]);
 		assert.ok(oResultingConditions);
 		assert.equal(Object.keys(oResultingConditions).length, 2);
 		assert.ok(oResultingConditions["Filter1"]);
@@ -61,8 +61,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("check getRequiredFieldNamesWithoutValues method", function(assert) {
-		var aReturns = {"A": {}, "B":{}};
-		var oFilterBar = {
+		let aReturns = {"A": {}, "B":{}};
+		const oFilterBar = {
 				_getRequiredPropertyNames: function() {
 					return ["A", "B"];
 				},
@@ -75,7 +75,7 @@ sap.ui.define([
 				}
 		};
 
-		var aMissingRequiredNames = FilterUtil.getRequiredFieldNamesWithoutValues(oFilterBar);
+		let aMissingRequiredNames = FilterUtil.getRequiredFieldNamesWithoutValues(oFilterBar);
 		assert.equal(aMissingRequiredNames.length, 0);
 
 		aReturns = {"A": {}};
@@ -96,7 +96,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("check key to path mapping in #getFilterInfo (keys are valid paths already --> backwards compatibility)", function(assert) {
-		var oControl = new Control({
+		const oControl = new Control({
 			delegate: {
 				payload: {},
 				name: "sap/ui/mdc/AggregationBaseDelegate"
@@ -106,7 +106,7 @@ sap.ui.define([
 		return oControl.initControlDelegate()
 		.then(function(){
 
-			var oConditions = {
+			const oConditions = {
 				myProperty: [{
 					operator: "EQ",
 					values: [
@@ -114,11 +114,11 @@ sap.ui.define([
 					]
 				}]
 			};
-			var aProperties = [
+			const aProperties = [
 				{name: "myProperty", path: "myProperty", typeConfig: oControl.getTypeMap(oControl).getTypeConfig("String", null, null)}
 			];
 
-			var oFilterInfo = FilterUtil.getFilterInfo(oControl, oConditions, aProperties);
+			const oFilterInfo = FilterUtil.getFilterInfo(oControl, oConditions, aProperties);
 
 			assert.equal(oFilterInfo.filters.sOperator, "EQ", "Correct operator set in model filter");
 			assert.equal(oFilterInfo.filters.sPath, "myProperty", "Correct path set in model filter");
@@ -129,7 +129,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("check key to path mapping in #getFilterInfo (unique property keys are mapped to valid model paths)", function(assert) {
-		var oControl = new Control({
+		const oControl = new Control({
 			delegate: {
 				payload: {},
 				name: "sap/ui/mdc/AggregationBaseDelegate"
@@ -139,7 +139,7 @@ sap.ui.define([
 		return oControl.initControlDelegate()
 		.then(function(){
 
-			var oConditions = {
+			const oConditions = {
 				keyMyProperty: [{
 					operator: "EQ",
 					values: [
@@ -147,11 +147,11 @@ sap.ui.define([
 					]
 				}]
 			};
-			var aProperties = [
+			const aProperties = [
 				{name: "keyMyProperty", path: "path/to/property", typeConfig: oControl.getTypeMap(oControl).getTypeConfig("String", null, null)}
 			];
 
-			var oFilterInfo = FilterUtil.getFilterInfo(oControl, oConditions, aProperties);
+			const oFilterInfo = FilterUtil.getFilterInfo(oControl, oConditions, aProperties);
 
 			assert.equal(oFilterInfo.filters.sOperator, "EQ", "Correct operator set in model filter");
 			assert.equal(oFilterInfo.filters.sPath, "path/to/property", "Correct path set in model filter");

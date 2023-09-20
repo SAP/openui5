@@ -4,12 +4,12 @@ sap.ui.define([
 	], function (FilterBarDelegate, JSONPropertyInfo) {
 	"use strict";
 
-	var JSONFilterBarDelegate = Object.assign({}, FilterBarDelegate);
+	const JSONFilterBarDelegate = Object.assign({}, FilterBarDelegate);
 
     JSONFilterBarDelegate.fetchProperties = function(oFilterBar) {
-		var aPropertyInfo = [];
+		const aPropertyInfo = [];
 		JSONPropertyInfo.forEach(function(oPI) {
-			var oFilterBarPropertyInfo;
+			let oFilterBarPropertyInfo;
 			if (oPI.name.match(/Region|Country|Location/)) {
 				oFilterBarPropertyInfo = Object.assign({}, oPI);
 				delete oFilterBarPropertyInfo.sortable;

@@ -8,7 +8,7 @@ sap.ui.define([
 ], function(Controller, Message, Fragment, oCore, ResponsiveColumnSettings, coreLibrary) {
 	"use strict";
 
-	var ValueState = coreLibrary.ValueState;
+	const ValueState = coreLibrary.ValueState;
 
 	return Controller.extend("sap.ui.mdc.sample.ResponsiveTable.Controller", {
 
@@ -26,7 +26,7 @@ sap.ui.define([
 		},
 
 		onMessagePopoverPress : function (oEvent) {
-			var oSourceControl = oEvent.getSource();
+			const oSourceControl = oEvent.getSource();
 			this._getMessagePopover().then(function(oMessagePopover){
 				oMessagePopover.openBy(oSourceControl);
 			});
@@ -54,14 +54,14 @@ sap.ui.define([
 		},
 
 		showRandomMessage: function() {
-			var sTypes = Object.keys(ValueState);
-			var sRandomType = sTypes[Math.floor(Math.random() * (sTypes.length - 1))];
-			var sRandomText = Math.random().toString(36).substring(2);
+			const sTypes = Object.keys(ValueState);
+			const sRandomType = sTypes[Math.floor(Math.random() * (sTypes.length - 1))];
+			const sRandomText = Math.random().toString(36).substring(2);
 			this.oDataStatePlugin.showMessage("Psst! This secret message is coming from the DataStateIndicator plugin: " + sRandomText, sRandomType);
 		},
 
 		addTableMessage: function(sType) {
-			var sTableBindingPath = "/ProductList";
+			const sTableBindingPath = "/ProductList";
 			this.oMessageManager.addMessages(
 				new Message({
 					message: "Hold on! " + sType + " message came out for the table.",
@@ -74,7 +74,7 @@ sap.ui.define([
 		},
 
 		onMergeCellsChange: function(oEvent) {
-			var oColumn = this.byId("onlyTableView--mdcTable--Category");
+			const oColumn = this.byId("onlyTableView--mdcTable--Category");
 
 			if (oEvent.getParameter("state")) {
 				oColumn.setExtendedSettings(new ResponsiveColumnSettings({
@@ -88,7 +88,7 @@ sap.ui.define([
 		//################ Private APIs ###################
 
 		_getMessagePopover : function () {
-			var oView = this.getView();
+			const oView = this.getView();
 
 			// create popover lazily (singleton)
 			if (!this._pMessagePopover) {

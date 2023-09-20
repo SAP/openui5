@@ -22,7 +22,7 @@ sap.ui.define([
 		autoWait: true
 	});
 
-	var oFilterItems = {
+	const oFilterItems = {
 		"Artists": [
 			{p13nItem: "artistUUID", selected: true},
 			{p13nItem: "Breakout Year", selected: true},
@@ -155,7 +155,7 @@ sap.ui.define([
 		When.iChangeAdaptFiltersView("sap-icon://list");
 		When.iClickOnTableItem("Country").and.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.MoveToTop);
 
-		var aCurrentFilterItems = [
+		const aCurrentFilterItems = [
 			{p13nItem: "Country", selected: true},
 			{p13nItem: "Name", selected: true},
 			{p13nItem: "Founding Year", selected: true},

@@ -29,7 +29,7 @@ sap.ui.define([
      * @since 1.111.0
      * @alias sap.ui.mdc.util.InfoBar
      */
-    var InfoBar = Control.extend("sap.ui.mdc.util.InfoBar", {
+    const InfoBar = Control.extend("sap.ui.mdc.util.InfoBar", {
         metadata: {
             properties: {
                 infoText: {
@@ -90,7 +90,7 @@ sap.ui.define([
             tooltip: sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc").getText("infobar.REMOVEALLFILTERS")
         });
 
-        var oToolbar = new Toolbar(this.getId() + "--bar", { design: "Info", active: true, content: [this.oText, new ToolbarSpacer(), this.oRemoveAllFiltersBtn] });
+        const oToolbar = new Toolbar(this.getId() + "--bar", { design: "Info", active: true, content: [this.oText, new ToolbarSpacer(), this.oRemoveAllFiltersBtn] });
         oToolbar.attachPress(function (oSrc) {
             this.firePress({
                 srcControl: oSrc

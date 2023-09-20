@@ -16,7 +16,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("getLayoutData without action", function(assert) {
-		var oLayoutData = new OverflowToolbarLayoutData({
+		const oLayoutData = new OverflowToolbarLayoutData({
 			priority: "AlwaysOverflow"
 		});
 		this.oActionToolbarAction.setLayoutData(oLayoutData);
@@ -25,10 +25,10 @@ sap.ui.define([
 	});
 
 	QUnit.test("getLayoutData with action", function(assert) {
-		var oLayoutData = new OverflowToolbarLayoutData({
+		const oLayoutData = new OverflowToolbarLayoutData({
 			priority: "AlwaysOverflow"
 		});
-		var oButton = new Button({
+		const oButton = new Button({
 			text: "Test Button",
 			layoutData: oLayoutData
 		});
@@ -38,16 +38,16 @@ sap.ui.define([
 	});
 
 	QUnit.test("getLayoutData with action and own layoutData", function(assert) {
-		var oLayoutDataButton = new OverflowToolbarLayoutData({
+		const oLayoutDataButton = new OverflowToolbarLayoutData({
 			priority: "AlwaysOverflow"
 		});
-		var oButton = new Button({
+		const oButton = new Button({
 			text: "Test Button",
 			layoutData: oLayoutDataButton
 		});
 		this.oActionToolbarAction.setAction(oButton);
 
-		var oLayoutDataAction = new OverflowToolbarLayoutData({
+		const oLayoutDataAction = new OverflowToolbarLayoutData({
 			priority: "AlwaysOverflow"
 		});
 		this.oActionToolbarAction.setLayoutData(oLayoutDataAction);
@@ -56,12 +56,12 @@ sap.ui.define([
 	});
 
 	QUnit.test("getDomRef", function(assert) {
-		var oButton = new Button({
+		const oButton = new Button({
 			text: "Test Button"
 		});
 		this.oActionToolbarAction.setAction(oButton);
 
-		var fnButtonGetDomRef = sinon.spy(oButton, "getDomRef");
+		const fnButtonGetDomRef = sinon.spy(oButton, "getDomRef");
 
 		assert.ok(fnButtonGetDomRef.notCalled, "Actions 'getDomRef' not called yet");
 		assert.equal(oButton.getDomRef(), this.oActionToolbarAction.getDomRef(), "correct DomRef returned");

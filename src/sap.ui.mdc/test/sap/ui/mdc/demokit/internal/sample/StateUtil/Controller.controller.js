@@ -28,12 +28,12 @@ sap.ui.define([
 
 		changeFBItems: function(oEvt) {
 
-			var oButton = oEvt.getSource();
-			var bAdd = oButton.getType() === "Success";
+			const oButton = oEvt.getSource();
+			const bAdd = oButton.getType() === "Success";
 
-			var oFilterBar = this.byId("mdcFilterBar");
+			const oFilterBar = this.byId("mdcFilterBar");
 
-			var oState = {
+			const oState = {
 				items: [
 					{name: "language_code", visible: bAdd}
 				]
@@ -45,17 +45,17 @@ sap.ui.define([
 		},
 
 		showFBDiff: function() {
-			var oFilterBar = this.byId("mdcFilterBar");
+			const oFilterBar = this.byId("mdcFilterBar");
 			this.showDiff(oFilterBar, this.mState["mdcFilterBar"]);
 		},
 
 		showTableDiff: function() {
-			var oTable = this.byId("mdcTable");
+			const oTable = this.byId("mdcTable");
 			this.showDiff(oTable, this.mState["mdcTable"]);
 		},
 
 		showChartDiff: function() {
-			var oChart = this.byId("mdcChart");
+			const oChart = this.byId("mdcChart");
 			this.showDiff(oChart, this.mState["mdcChart"]);
 		},
 
@@ -76,12 +76,12 @@ sap.ui.define([
 
 		changeFBValues: function(oEvt) {
 
-			var oButton = oEvt.getSource();
-			var bAdd = oButton.getType() === "Success";
+			const oButton = oEvt.getSource();
+			const bAdd = oButton.getType() === "Success";
 
-			var oFilterBar = this.byId("mdcFilterBar");
+			const oFilterBar = this.byId("mdcFilterBar");
 
-			var oState = {
+			const oState = {
 				filter: {
 					title: bAdd ? [
 						{
@@ -99,12 +99,12 @@ sap.ui.define([
 
 		changeChartItems: function(oEvt) {
 
-			var oButton = oEvt.getSource();
-			var bAdd = oButton.getType() === "Success";
+			const oButton = oEvt.getSource();
+			const bAdd = oButton.getType() === "Success";
 
-			var oChart = this.byId("mdcChart");
+			const oChart = this.byId("mdcChart");
 
-			var oState = {
+			const oState = {
 				items: [
 					{name: "title", visible: bAdd}
 				]
@@ -117,12 +117,12 @@ sap.ui.define([
 
 		changeChartSorting: function(oEvt) {
 
-			var oButton = oEvt.getSource();
-			var bAdd = oButton.getType() === "Success";
+			const oButton = oEvt.getSource();
+			const bAdd = oButton.getType() === "Success";
 
-			var oChart = this.byId("mdcChart");
+			const oChart = this.byId("mdcChart");
 
-			var oState = {
+			const oState = {
 				sorters: [
 					{name: "language_code", descending: true, sorted: bAdd}
 				]
@@ -135,9 +135,9 @@ sap.ui.define([
 
 		changeChartRole: function(oEvt) {
 
-			var oChart = this.byId("mdcChart");
+			const oChart = this.byId("mdcChart");
 
-			var oState = {
+			const oState = {
 				items: [
 					{name: "language_code", role: "series"}
 				]
@@ -149,12 +149,12 @@ sap.ui.define([
 
 		changeTableColumns: function(oEvt) {
 
-			var oButton = oEvt.getSource();
-			var bAdd = oButton.getType() === "Success";
+			const oButton = oEvt.getSource();
+			const bAdd = oButton.getType() === "Success";
 
-			var oChart = this.byId("mdcTable");
+			const oChart = this.byId("mdcTable");
 
-			var oState = {
+			const oState = {
 				items: [
 					{name: "language_code", visible: bAdd}
 				]
@@ -167,12 +167,12 @@ sap.ui.define([
 
 		changeTableSorting: function(oEvt) {
 
-			var oButton = oEvt.getSource();
-			var bAdd = oButton.getType() === "Success";
+			const oButton = oEvt.getSource();
+			const bAdd = oButton.getType() === "Success";
 
-			var oTable = this.byId("mdcTable");
+			const oTable = this.byId("mdcTable");
 
-			var oState = {
+			const oState = {
 				sorters: [
 					{name: "title", descending: true, sorted: bAdd}
 				]
@@ -185,12 +185,12 @@ sap.ui.define([
 
 		changeTableFiltering: function(oEvt) {
 
-			var oButton = oEvt.getSource();
-			var bAdd = oButton.getType() === "Success";
+			const oButton = oEvt.getSource();
+			const bAdd = oButton.getType() === "Success";
 
-			var oTable = this.byId("mdcTable");
+			const oTable = this.byId("mdcTable");
 
-			var oState = {
+			const oState = {
 				filter: {
 					title: bAdd ? [
 						{
@@ -208,12 +208,12 @@ sap.ui.define([
 
 		changeTableGrouping: function(oEvt) {
 
-			var oButton = oEvt.getSource();
-			var bAdd = oButton.getType() === "Success";
+			const oButton = oEvt.getSource();
+			const bAdd = oButton.getType() === "Success";
 
-			var oTable = this.byId("mdcTable");
+			const oTable = this.byId("mdcTable");
 
-			var oState = {
+			const oState = {
 				groupLevels: [
 					{name: "language_code", grouped: bAdd}
 				]
@@ -226,9 +226,9 @@ sap.ui.define([
 
 		changeColumnWidth: function(oEvt) {
 
-			var oTable = this.byId("mdcTable");
+			const oTable = this.byId("mdcTable");
 
-			var oState = {
+			const oState = {
 				supplementaryConfig: {
 					aggregations: {
 						columns: {
@@ -271,7 +271,7 @@ sap.ui.define([
 
 		_openEditor: function (oControl, oState) {
 
-			var oDialog = new Dialog({
+			const oDialog = new Dialog({
 				contentHeight: "30rem",
 				contentWidth: "25rem",
 				title: "Modify State",

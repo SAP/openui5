@@ -7,16 +7,16 @@ sap.ui.define([
 ], function (BaseController) {
     "use strict";
 
-    var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
+    const oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
 
-    var ChartItemController = BaseController.extend("sap.ui.mdc.p13n.subcontroller.ChartItemController");
+    const ChartItemController = BaseController.extend("sap.ui.mdc.p13n.subcontroller.ChartItemController");
 
     ChartItemController.prototype.initAdaptationUI = function(oPropertyHelper) {
 
         return this.getAdaptationControl().getAdaptationUI().then(function(oPanel){
             this._oPanel = oPanel;
             oPanel.setTitle(oResourceBundle.getText("p13nDialog.TAB_Chart"));
-            var oAdaptationData = this.mixInfoAndState(oPropertyHelper);
+            const oAdaptationData = this.mixInfoAndState(oPropertyHelper);
             oPanel.setP13nData(oAdaptationData.items);
             return oPanel;
         }.bind(this));
@@ -35,11 +35,11 @@ sap.ui.define([
 
     ChartItemController.prototype.mixInfoAndState = function(oPropertyHelper) {
 
-        var aItemState = this.getCurrentState();
-        var mItemState = this.arrayToMap(aItemState);
+        const aItemState = this.getCurrentState();
+        const mItemState = this.arrayToMap(aItemState);
 
-        var oP13nData = this.prepareAdaptationData(oPropertyHelper, function(mItem, oProperty){
-            var oExisting = mItemState[oProperty.name];
+        const oP13nData = this.prepareAdaptationData(oPropertyHelper, function(mItem, oProperty){
+            const oExisting = mItemState[oProperty.name];
             mItem.visible = !!oExisting;
             mItem.position =  oExisting ? oExisting.position : -1;
             mItem.role =  oExisting ? oExisting.role : oProperty.role;

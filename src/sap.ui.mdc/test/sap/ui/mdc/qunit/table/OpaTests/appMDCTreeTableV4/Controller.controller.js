@@ -10,10 +10,10 @@ sap.ui.define([
 		},
 
 		_onStateChange: function(oEvent) {
-			var oMdcControl = oEvent.getParameter("control");
+			const oMdcControl = oEvent.getParameter("control");
 
 			StateUtil.retrieveExternalState(oMdcControl).then(function(oState) {
-				var oOutput = this.getView().byId("CEretrieveTableState");
+				const oOutput = this.getView().byId("CEretrieveTableState");
 				if (oOutput) {
 					oOutput.setValue(JSON.stringify(oState, null, "  "));
 				}

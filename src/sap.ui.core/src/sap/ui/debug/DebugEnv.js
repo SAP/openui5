@@ -162,12 +162,6 @@ sap.ui.define('sap/ui/debug/DebugEnv', ['sap/ui/base/Interface', './ControlTree'
 		if ( !bOnInit ) {
 			this.oControlTree.renderDelayed();
 		}
-
-		window.addEventListener("unload", function(oEvent) {
-			this.oControlTree.exit();
-			this.oPropertyList.exit();
-		}.bind(this));
-
 	};
 
 	/**

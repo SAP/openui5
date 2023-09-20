@@ -38,7 +38,7 @@ sap.ui.define(
          * @experimental As of version 1.82.0
          * @ui5-restricted sap.ui.mdc
         */
-        var AdaptationMixin = {};
+        const AdaptationMixin = {};
 
         AdaptationMixin.getEngine = function() {
             return Engine.getInstance();
@@ -64,8 +64,8 @@ sap.ui.define(
          * @returns {Promise} Resolves with a list of changes (may be empty list) after all control updates have been considered
          */
         AdaptationMixin.awaitPendingModification = function() {
-            var pPendingModification = this._pPendingModification || Promise.resolve();
-            var aChangesProcessed = Engine.getInstance().getTrace(this);
+            const pPendingModification = this._pPendingModification || Promise.resolve();
+            const aChangesProcessed = Engine.getInstance().getTrace(this);
 
             return pPendingModification.then(function(){
                 return aChangesProcessed;
@@ -155,7 +155,7 @@ sap.ui.define(
 
         // Needed for unit testing as flex is not available
         AdaptationMixin._getWaitForChangesPromise = function() {
-            var oEngine = this.getEngine && this.getEngine();
+            const oEngine = this.getEngine && this.getEngine();
             if (!oEngine) {
                 throw "Engine instance not found.";
             }

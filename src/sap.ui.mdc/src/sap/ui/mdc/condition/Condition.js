@@ -11,7 +11,7 @@ sap.ui.define([
 	) {
 		"use strict";
 
-		var fnSerializeCondition = function (oCondition) {
+		const fnSerializeCondition = function (oCondition) {
 			return JSON.stringify(Object.assign({}, oCondition, {isEmpty: undefined}), function (sKey, vValue) {
 				return vValue === undefined ? '[undefined]' : vValue;
 			});
@@ -38,7 +38,7 @@ sap.ui.define([
 		 *
 		 * @public
 		 */
-		var Condition = {
+		const Condition = {
 
 				/**
 				 * Condition object type defining the structure of a condition.
@@ -72,8 +72,8 @@ sap.ui.define([
 				 *
 				 */
 				createItemCondition: function(sKey, sDescription, oInParameters, oOutParameters, oPayload) {
-					var sValidated = ConditionValidated.NotValidated;
-					var aValues = [sKey, sDescription];
+					let sValidated = ConditionValidated.NotValidated;
+					const aValues = [sKey, sDescription];
 					if (sDescription === null || sDescription === undefined) {
 						aValues.pop();
 					} else {
@@ -96,7 +96,7 @@ sap.ui.define([
 				 *
 				 */
 				createCondition: function(sOperator, aValues, oInParameters, oOutParameters, sValidated, oPayload) {
-					var oCondition = { operator: sOperator, values: aValues, isEmpty: null, validated: sValidated }; // use null as undefined is not recognized by filter
+					const oCondition = { operator: sOperator, values: aValues, isEmpty: null, validated: sValidated }; // use null as undefined is not recognized by filter
 					if (oInParameters) {
 						oCondition.inParameters = oInParameters;
 					}
@@ -121,14 +121,14 @@ sap.ui.define([
 				 * @ui5-restricted sap.ui.mdc
 				 */
 				compareConditions: function(oCondition1, oCondition2) {
-					var sCheckValue1 = fnSerializeCondition(oCondition1);
-					var sCheckValue2 = fnSerializeCondition(oCondition2);
+					const sCheckValue1 = fnSerializeCondition(oCondition1);
+					const sCheckValue2 = fnSerializeCondition(oCondition2);
 					return sCheckValue1 === sCheckValue2;
 
 				},
 
 				_removeEmptyConditions: function(aConditions) {
-					for (var i = aConditions.length - 1; i > -1; i--) {
+					for (let i = aConditions.length - 1; i > -1; i--) {
 						if (aConditions[i].isEmpty) {
 							aConditions.splice(parseInt(i), 1);
 						}
@@ -137,7 +137,7 @@ sap.ui.define([
 				},
 
 				_removeInitialFlags: function(aConditions) {
-					for (var i = aConditions.length - 1; i > -1; i--) {
+					for (let i = aConditions.length - 1; i > -1; i--) {
 						if (aConditions[i].isInitial) {
 							delete aConditions[i].isInitial;
 						}

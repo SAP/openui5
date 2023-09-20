@@ -8,7 +8,7 @@ sap.ui.define([
 ], function(Engine, Util, CondenserClassification) {
 	"use strict";
 
-	var fFinalizeAggregateChange = function (oChange, oControl, oAggregateContent, bIsRevert) {
+	const fFinalizeAggregateChange = function (oChange, oControl, oAggregateContent, bIsRevert) {
 		if (bIsRevert) {
 			// Clear the revert data on the change
 			oChange.resetRevertData();
@@ -18,17 +18,17 @@ sap.ui.define([
 		}
 	};
 
-	var fAddAggregate = function (oChange, oControl, mPropertyBag, sChangeReason) {
+	const fAddAggregate = function (oChange, oControl, mPropertyBag, sChangeReason) {
 		return new Promise(function (resolve, reject) {
-			var bIsRevert = (sChangeReason === Util.REVERT);
-			var oModifier = mPropertyBag.modifier;
-			var oChangeContent = bIsRevert ? oChange.getRevertData() : oChange.getContent();
+			const bIsRevert = (sChangeReason === Util.REVERT);
+			const oModifier = mPropertyBag.modifier;
+			const oChangeContent = bIsRevert ? oChange.getRevertData() : oChange.getContent();
 			Promise.resolve()
 				.then(oModifier.getProperty.bind(oModifier, oControl, "aggregateConditions"))
 				.then(function(oAggregateConditions) {
-					var oAggregations = oAggregateConditions ? oAggregateConditions : {};
+					const oAggregations = oAggregateConditions ? oAggregateConditions : {};
 					oAggregations[oChangeContent.name] = {};
-					var oAggregateContent = {
+					const oAggregateContent = {
 						name: oChangeContent.name
 					};
 					oModifier.setProperty(oControl, "aggregateConditions", oAggregations);
@@ -41,15 +41,15 @@ sap.ui.define([
 		});
 	};
 
-	var fRemoveAggregate = function (oChange, oControl, mPropertyBag, sChangeReason) {
+	const fRemoveAggregate = function (oChange, oControl, mPropertyBag, sChangeReason) {
 		return new Promise(function (resolve, reject) {
-			var bIsRevert = (sChangeReason === Util.REVERT);
-			var oModifier = mPropertyBag.modifier;
-			var oChangeContent = bIsRevert ? oChange.getRevertData() : oChange.getContent();
+			const bIsRevert = (sChangeReason === Util.REVERT);
+			const oModifier = mPropertyBag.modifier;
+			const oChangeContent = bIsRevert ? oChange.getRevertData() : oChange.getContent();
 			Promise.resolve()
 				.then(oModifier.getProperty.bind(oModifier, oControl, "aggregateConditions"))
 				.then(function(oAggregateConditions) {
-					var aValue = oAggregateConditions ? oAggregateConditions : {};
+					const aValue = oAggregateConditions ? oAggregateConditions : {};
 
 					if (!aValue) {
 						// Nothing to remove
@@ -67,10 +67,10 @@ sap.ui.define([
 		});
 	};
 
-	var Aggregate = {};
+	const Aggregate = {};
 
-	var fGetCondenserInfoCondition = function(oChange, mPropertyBag) {
-		var oContent = oChange.getContent();
+	const fGetCondenserInfoCondition = function(oChange, mPropertyBag) {
+		const oContent = oChange.getContent();
 		return {
 			classification: CondenserClassification.Reverse,
 			affectedControl: oChange.getSelector(),

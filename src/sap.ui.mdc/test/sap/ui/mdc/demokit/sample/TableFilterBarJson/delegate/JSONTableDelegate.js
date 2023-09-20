@@ -12,21 +12,21 @@ sap.ui.define([
 	Core, JSONPropertyInfo, JSONBaseDelegate) {
 	"use strict";
 
-	var JSONTableDelegate = Object.assign({}, TableDelegate, JSONBaseDelegate);
+	const JSONTableDelegate = Object.assign({}, TableDelegate, JSONBaseDelegate);
 
 	JSONTableDelegate.fetchProperties = function () {
 		return Promise.resolve(JSONPropertyInfo.filter((oPropertyInfo) => oPropertyInfo.name !== "$search"));
 	};
 
 	JSONTableDelegate.addItem = function (oTable, sPropertyName) {
-		var oPropertyInfo = JSONPropertyInfo.find((oPropertyInfo) => oPropertyInfo.name === sPropertyName);
+		const oPropertyInfo = JSONPropertyInfo.find((oPropertyInfo) => oPropertyInfo.name === sPropertyName);
 		return Promise.resolve(_addColumn(oPropertyInfo, oTable));
 	};
 
 	function _addColumn(oPropertyInfo, oTable) {
-		var sName = oPropertyInfo.name;
-		var sId = oTable.getId() + "---col-" + sName;
-		var oColumn = Core.byId(sId);
+		const sName = oPropertyInfo.name;
+		const sId = oTable.getId() + "---col-" + sName;
+		let oColumn = Core.byId(sId);
 		if (!oColumn) {
 			oColumn = new Column(sId, {
 				propertyKey: sName,
@@ -53,14 +53,14 @@ sap.ui.define([
 	};
 
 	JSONTableDelegate.getFilters = function(oTable) {
-		var aSearchFilters = _createSearchFilters(Core.byId(oTable.getFilter()).getSearch());
+		const aSearchFilters = _createSearchFilters(Core.byId(oTable.getFilter()).getSearch());
 		return TableDelegate.getFilters(oTable).concat(aSearchFilters);
 	};
 
 	function _createSearchFilters(sSearch) {
-		var aFilters = [];
+		let aFilters = [];
 		if (sSearch) {
-			var aPaths = ["name", "range", "parent_mountain", "countries"];
+			const aPaths = ["name", "range", "parent_mountain", "countries"];
 			aFilters = aPaths.map(function (sPath) {
 				return new Filter({
 					path: sPath,

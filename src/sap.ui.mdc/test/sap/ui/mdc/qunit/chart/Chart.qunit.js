@@ -35,14 +35,14 @@ sap.ui.define([
 		"use strict";
 
 		// shortcut for sap.ui.core.TitleLevel
-		var TitleLevel = CoreLibrary.TitleLevel;
+		const TitleLevel = CoreLibrary.TitleLevel;
 
-		var sDelegatePath = "test-resources/sap/ui/mdc/delegates/ChartDelegate";
+		const sDelegatePath = "test-resources/sap/ui/mdc/delegates/ChartDelegate";
 
 		QUnit.module("sap.ui.mdc.Chart: Simple Properties", {
 
 			beforeEach: function () {
-				var TestComponent = UIComponent.extend("test", {
+				const TestComponent = UIComponent.extend("test", {
 					metadata: {
 						manifest: {
 							"sap.app": {
@@ -101,7 +101,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("Init", function (assert) {
-			var done = assert.async();
+			const done = assert.async();
 
 			this.oMDCChart.initialized().then(function () {
 				assert.ok(this.oMDCChart, "The chart is created");
@@ -112,7 +112,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("_loadDelegate", function (assert) {
-			var done = assert.async();
+			const done = assert.async();
 
 			this.oMDCChart._loadDelegate().then(function (oDelegate) {
 				assert.ok(oDelegate, "Delegate loaded");
@@ -121,15 +121,15 @@ sap.ui.define([
 		});
 
 		QUnit.test("MDC Chart rebind", function (assert) {
-			var done = assert.async();
+			const done = assert.async();
 
 			this.oMDCChart.initialized().then(function () {
 				assert.ok(this.oMDCChart.getControlDelegate(), "Control delegate is initialized");
 				this.oMDCChart.getControlDelegate().setInnerChartBoundTest(true); //Mock value for inner chart bound
 
-				var getBindingInfoSpy = sinon.spy(this.oMDCChart.getControlDelegate(), "getBindingInfo");
-				var updateBindingInfoSpy = sinon.spy(this.oMDCChart.getControlDelegate(), "updateBindingInfo");
-				var rebindSpy = sinon.spy(this.oMDCChart.getControlDelegate(), "rebind");
+				const getBindingInfoSpy = sinon.spy(this.oMDCChart.getControlDelegate(), "getBindingInfo");
+				const updateBindingInfoSpy = sinon.spy(this.oMDCChart.getControlDelegate(), "updateBindingInfo");
+				const rebindSpy = sinon.spy(this.oMDCChart.getControlDelegate(), "rebind");
 
 				this.oMDCChart.rebind();
 
@@ -143,7 +143,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("_getToolbar", function (assert) {
-			var done = assert.async();
+			const done = assert.async();
 
 			this.oMDCChart.initialized().then(function () {
 				this.oMDCChart.getAggregation("_toolbar").destroy();
@@ -160,10 +160,10 @@ sap.ui.define([
 		});
 
 		QUnit.test("_updateToolbar", function (assert) {
-			var done = assert.async();
+			const done = assert.async();
 
 			this.oMDCChart.initialized().then(function () {
-				var toolbarSpy = sinon.spy(this.oMDCChart.getAggregation("_toolbar"), "updateToolbar");
+				const toolbarSpy = sinon.spy(this.oMDCChart.getAggregation("_toolbar"), "updateToolbar");
 
 				this.oMDCChart._updateToolbar();
 				assert.ok(toolbarSpy.calledOnce, "_updateToolbar was called on toolbar");
@@ -174,10 +174,10 @@ sap.ui.define([
 		});
 
 		QUnit.test("_getInnerChart", function (assert) {
-			var done = assert.async();
+			const done = assert.async();
 
 			this.oMDCChart.initialized().then(function () {
-				var delegateSpy = sinon.spy(this.oMDCChart.getControlDelegate(), "getInnerChart");
+				const delegateSpy = sinon.spy(this.oMDCChart.getControlDelegate(), "getInnerChart");
 
 				this.oMDCChart._getInnerChart();
 				assert.ok(delegateSpy.calledOnce, "getInnerChart was called on innerChart");
@@ -188,10 +188,10 @@ sap.ui.define([
 		});
 
 		QUnit.test("zoomIn", function (assert) {
-			var done = assert.async();
+			const done = assert.async();
 
 			this.oMDCChart.initialized().then(function () {
-				var zoomInSpy = sinon.spy(this.oMDCChart.getControlDelegate(), "zoomIn");
+				const zoomInSpy = sinon.spy(this.oMDCChart.getControlDelegate(), "zoomIn");
 
 				this.oMDCChart.zoomIn();
 				assert.ok(zoomInSpy.calledOnce, "Zoom in was called on delegate");
@@ -200,10 +200,10 @@ sap.ui.define([
 		});
 
 		QUnit.test("zoomOut", function (assert) {
-			var done = assert.async();
+			const done = assert.async();
 
 			this.oMDCChart.initialized().then(function () {
-				var zoomOutSpy = sinon.spy(this.oMDCChart.getControlDelegate(), "zoomOut");
+				const zoomOutSpy = sinon.spy(this.oMDCChart.getControlDelegate(), "zoomOut");
 
 				this.oMDCChart.zoomOut();
 				assert.ok(zoomOutSpy.calledOnce, "Zoom out was called on delegate");
@@ -212,10 +212,10 @@ sap.ui.define([
 		});
 
 		QUnit.test("getZoomState", function (assert) {
-			var done = assert.async();
+			const done = assert.async();
 
 			this.oMDCChart.initialized().then(function () {
-				var zoomSpy = sinon.spy(this.oMDCChart.getControlDelegate(), "getZoomState");
+				const zoomSpy = sinon.spy(this.oMDCChart.getControlDelegate(), "getZoomState");
 
 				this.oMDCChart.getZoomState();
 				assert.ok(zoomSpy.calledOnce, "Zoom status was called on delegate");
@@ -224,10 +224,10 @@ sap.ui.define([
 		});
 
 		QUnit.test("setLegendVisible", function (assert) {
-			var done = assert.async();
+			const done = assert.async();
 
 			this.oMDCChart.initialized().then(function () {
-				var legendSpy = sinon.spy(this.oMDCChart.getControlDelegate(), "setLegendVisible");
+				const legendSpy = sinon.spy(this.oMDCChart.getControlDelegate(), "setLegendVisible");
 				assert.ok(this.oMDCChart.getLegendVisible() == true, "Property is in initial state");
 
 				this.oMDCChart.setLegendVisible(false);
@@ -239,11 +239,11 @@ sap.ui.define([
 		});
 
 		QUnit.test("setShowChartTooltip", function (assert) {
-			var done = assert.async();
+			const done = assert.async();
 
 			this.oMDCChart.initialized().then(function () {
 				assert.ok(this.oMDCChart.getShowChartTooltip(), "Initial value of property is true");
-				var tooltipSpy = sinon.spy(this.oMDCChart.getControlDelegate(), "setChartTooltipVisibility");
+				const tooltipSpy = sinon.spy(this.oMDCChart.getControlDelegate(), "setChartTooltipVisibility");
 
 				this.oMDCChart.setShowChartTooltip(false);
 				assert.ok(tooltipSpy.calledOnce, "delegate function was called");
@@ -254,12 +254,12 @@ sap.ui.define([
 		});
 
 		QUnit.test("MDC Chart _propagatePropertiesToInnerChart", function (assert) {
-			var done = assert.async();
+			const done = assert.async();
 
 			this.oMDCChart.initialized().then(function () {
-				var legendSpy = sinon.spy(this.oMDCChart, "setLegendVisible");
-				var tooltipSpy = sinon.spy(this.oMDCChart, "setShowChartTooltip");
-				var typeSpy = sinon.spy(this.oMDCChart, "setChartType");
+				const legendSpy = sinon.spy(this.oMDCChart, "setLegendVisible");
+				const tooltipSpy = sinon.spy(this.oMDCChart, "setShowChartTooltip");
+				const typeSpy = sinon.spy(this.oMDCChart, "setChartType");
 
 				this.oMDCChart._propagatePropertiesToInnerChart();
 				assert.ok(legendSpy.calledOnce, "setLegendVisible was called");
@@ -271,12 +271,12 @@ sap.ui.define([
 		});
 
 		QUnit.test("getChartTypeInfo", function (assert) {
-			var done = assert.async();
+			const done = assert.async();
 
 			this.oMDCChart.initialized().then(function () {
-				var delegateSpy = sinon.spy(this.oMDCChart.getControlDelegate(), "getChartTypeInfo");
+				const delegateSpy = sinon.spy(this.oMDCChart.getControlDelegate(), "getChartTypeInfo");
 
-				var info = this.oMDCChart.getChartTypeInfo();
+				const info = this.oMDCChart.getChartTypeInfo();
 				assert.ok(delegateSpy.calledOnce, "getChartTypeInfo was called on delegate");
 				assert.ok(info, "charttypeinfo is present");
 
@@ -285,10 +285,10 @@ sap.ui.define([
 		});
 
 		QUnit.test("getAvailableChartTypes", function (assert) {
-			var done = assert.async();
+			const done = assert.async();
 
 			this.oMDCChart.initialized().then(function () {
-				var delegateSpy = sinon.spy(this.oMDCChart.getControlDelegate(), "getAvailableChartTypes");
+				const delegateSpy = sinon.spy(this.oMDCChart.getControlDelegate(), "getAvailableChartTypes");
 
 				this.oMDCChart.getAvailableChartTypes();
 				assert.ok(delegateSpy.calledOnce, "getAvailableChartTypes was called on delegate");
@@ -297,10 +297,10 @@ sap.ui.define([
 		});
 
 		QUnit.test("setChartType", function (assert) {
-			var done = assert.async();
+			const done = assert.async();
 
 			this.oMDCChart.initialized().then(function () {
-				var delegateSpy = sinon.spy(this.oMDCChart.getControlDelegate(), "setChartType");
+				const delegateSpy = sinon.spy(this.oMDCChart.getControlDelegate(), "setChartType");
 
 				this.oMDCChart.setChartType();
 				assert.ok(delegateSpy.calledOnce, "setChartType was called on delegate");
@@ -309,10 +309,10 @@ sap.ui.define([
 		});
 
 		QUnit.test("getCurrentState", function (assert) {
-			var done = assert.async();
+			const done = assert.async();
 
 			this.oMDCChart.initialized().then(function () {
-				var oState = this.oMDCChart.getCurrentState();
+				let oState = this.oMDCChart.getCurrentState();
 				assert.ok(oState, "p13n state object was returned");
 				assert.ok(!oState.items, "p13n state contains no items");
 				assert.ok(!oState.sorters, "p13n state contains no sorters");
@@ -330,13 +330,13 @@ sap.ui.define([
 		});
 
 		QUnit.test("_getVisibleProperties", function (assert) {
-			var done = assert.async();
+			const done = assert.async();
 
 			this.oMDCChart.initialized().then(function () {
-				var oMDCItem = new Item("testItem1", { propertyKey: "testName", role: "testRole" });
+				const oMDCItem = new Item("testItem1", { propertyKey: "testName", role: "testRole" });
 				this.oMDCChart.insertItem(oMDCItem, 0);
 
-				var aVisibleItems = this.oMDCChart._getVisibleProperties();
+				const aVisibleItems = this.oMDCChart._getVisibleProperties();
 				assert.ok(aVisibleItems.length === 1, "Visible Properties contain 1 item");
 				assert.ok(aVisibleItems[0].name === "testName", "Item has correct name");
 				assert.ok(aVisibleItems[0].role === "testRole", "Item has correct role");
@@ -346,12 +346,12 @@ sap.ui.define([
 		});
 
 		QUnit.test("_renderOverlay", function (assert) {
-			var done = assert.async();
+			const done = assert.async();
 
 			this.oMDCChart.initialized().then(function () {
 
 				this.oMDCChart._renderOverlay(true);
-				var oOverlay = this.oMDCChart.getControlDelegate().getInnerChart().$().find(".sapUiMdcChartOverlay");
+				let oOverlay = this.oMDCChart.getControlDelegate().getInnerChart().$().find(".sapUiMdcChartOverlay");
 				assert.ok(oOverlay, "Overlay was added to inner chart");
 
 				this.oMDCChart._renderOverlay(false);
@@ -363,20 +363,20 @@ sap.ui.define([
 
 
 		QUnit.test("_propagateItemChangeToInnerChart", function (assert) {
-			var done = assert.async();
+			const done = assert.async();
 
 			this.oMDCChart.initialized().then(function () {
 				//Arrange
-				var oMockItem = new Item({ propertyKey: "testName", label: "testLabel", type: "groupable", role: "category" });
-				var oMockChange = { mutation: "insert", child: oMockItem };
-				var oMockBreadcrumbs = { updateDrillBreadcrumbs: function () { } };
+				const oMockItem = new Item({ propertyKey: "testName", label: "testLabel", type: "groupable", role: "category" });
+				const oMockChange = { mutation: "insert", child: oMockItem };
+				const oMockBreadcrumbs = { updateDrillBreadcrumbs: function () { } };
 				this.oMDCChart._oBreadcrumbs = oMockBreadcrumbs;
 
 				this.oMDCChart.addItem(new Item({ propertyKey: "testName1", label: "testLabel1", type: "groupable", role: "category" }));
 				this.oMDCChart.addItem(new Item({ propertyKey: "testName2", label: "testLabel2", type: "aggregatable", role: "category" }));
 				this.oMDCChart.addItem(oMockItem);
 
-				var oInsertItemSpy = sinon.spy(this.oMDCChart.getControlDelegate(), "insertItemToInnerChart");
+				const oInsertItemSpy = sinon.spy(this.oMDCChart.getControlDelegate(), "insertItemToInnerChart");
 
 				//Act
 				this.oMDCChart._propagateItemChangeToInnerChart(oMockChange);
@@ -389,10 +389,10 @@ sap.ui.define([
 		});
 
 		QUnit.test("setNoDataText", function (assert) {
-			var done = assert.async();
+			const done = assert.async();
 
 			this.oMDCChart.initialized().then(function () {
-				var delegateSpy = sinon.spy(this.oMDCChart.getControlDelegate(), "setNoDataText");
+				const delegateSpy = sinon.spy(this.oMDCChart.getControlDelegate(), "setNoDataText");
 
 				this.oMDCChart.setNoDataText("Test Text 12345");
 				assert.ok(delegateSpy.calledOnce, "setNoDataText was called on delegate");
@@ -403,10 +403,10 @@ sap.ui.define([
 		});
 
 		QUnit.test("setNoData", function (assert) {
-			var done = assert.async();
+			const done = assert.async();
 
 			this.oMDCChart.initialized().then(function () {
-				var delegateSpy = sinon.spy(this.oMDCChart.getControlDelegate(), "changedNoDataStruct");
+				const delegateSpy = sinon.spy(this.oMDCChart.getControlDelegate(), "changedNoDataStruct");
 
 				this.oMDCChart.setNoData(new IllustratedMessage({ title: "ABCDEFG" }));
 				assert.ok(delegateSpy.calledOnce, "changedNoDataStruct was called on delegate");
@@ -421,15 +421,15 @@ sap.ui.define([
 		 */
 		QUnit.test("setP13nMode", function (assert) {
 
-			var done = assert.async();
+			const done = assert.async();
 
 			this.oMDCChart.initialized().then(function () {
 
 				//1
-				var aMode = ['Item', 'Sort', 'Type', 'Filter'];
-				var _updateAdaptationStub = sinon.stub(this.oMDCChart, "_updateAdaptation");
-				var aModeSorted = ['Item', 'Sort', 'Filter', 'Type'];
-				var setPropertySpy = sinon.spy(this.oMDCChart, "setProperty");
+				let aMode = ['Item', 'Sort', 'Type', 'Filter'];
+				const _updateAdaptationStub = sinon.stub(this.oMDCChart, "_updateAdaptation");
+				const aModeSorted = ['Item', 'Sort', 'Filter', 'Type'];
+				const setPropertySpy = sinon.spy(this.oMDCChart, "setProperty");
 
 				this.oMDCChart.setP13nMode(aMode);
 
@@ -449,11 +449,11 @@ sap.ui.define([
 		});
 
 		QUnit.test("_updateAdaption", function (assert) {
-			var done = assert.async();
+			const done = assert.async();
 
 			this.oMDCChart.initialized().then(function () {
 
-				var aMode = ['Item', 'Sort', 'Type', 'Filter'];
+				const aMode = ['Item', 'Sort', 'Type', 'Filter'];
 				sinon.spy(this.oMDCChart.getEngine(), "register");
 
 				this.oMDCChart._updateAdaptation(aMode);
@@ -465,11 +465,11 @@ sap.ui.define([
 		});
 
 		QUnit.test("isFilteringEnabled", function (assert) {
-			var done = assert.async();
+			const done = assert.async();
 
 			this.oMDCChart.initialized().then(function () {
 
-				var aMode = ['Item', 'Sort', 'Type', 'Filter'];
+				const aMode = ['Item', 'Sort', 'Type', 'Filter'];
 
 				this.oMDCChart.setP13nMode(aMode);
 
@@ -486,17 +486,17 @@ sap.ui.define([
 		});
 
 		QUnit.test("setFilterConditions", function (assert) {
-			var done = assert.async();
+			const done = assert.async();
 
 			this.oMDCChart.initialized().then(function () {
 
-				var mConditions = {};
-				var setPropertySpy = sinon.spy(this.oMDCChart, "setProperty");
-				var setFilterConditionsStub = sinon.stub();
-				var getInbuiltFilterStub = sinon.stub(this.oMDCChart, "getInbuiltFilter").returns(
+				const mConditions = {};
+				const setPropertySpy = sinon.spy(this.oMDCChart, "setProperty");
+				const setFilterConditionsStub = sinon.stub();
+				const getInbuiltFilterStub = sinon.stub(this.oMDCChart, "getInbuiltFilter").returns(
 					{ setFilterConditions: setFilterConditionsStub }
 				);
-				var oUpdateInfoToolbarSpy = sinon.spy(this.oMDCChart, "_updateInfoToolbar");
+				const oUpdateInfoToolbarSpy = sinon.spy(this.oMDCChart, "_updateInfoToolbar");
 
 				this.oMDCChart.setFilterConditions(mConditions);
 
@@ -510,22 +510,22 @@ sap.ui.define([
 		});
 
 		QUnit.test("getConditions", function (assert) {
-			var done = assert.async();
+			const done = assert.async();
 
 			this.oMDCChart.initialized().then(function () {
-				var aConditions = [1, 2, 3];
-				var getConditionsStub = sinon.stub().returns(aConditions);
-				var getInbuiltFilterStub = sinon.stub(this.oMDCChart, "getInbuiltFilter").returns(
+				const aConditions = [1, 2, 3];
+				const getConditionsStub = sinon.stub().returns(aConditions);
+				const getInbuiltFilterStub = sinon.stub(this.oMDCChart, "getInbuiltFilter").returns(
 					{ getConditions: getConditionsStub }
 				);
 
-				var aCon = this.oMDCChart.getConditions();
+				let aCon = this.oMDCChart.getConditions();
 
 				assert.equal(aCon, aConditions, "Conditions correctly returned");
 
 				getInbuiltFilterStub.returns(undefined);
 
-				var aCon = this.oMDCChart.getConditions();
+				aCon = this.oMDCChart.getConditions();
 
 				assert.equal(aCon.length, 0, "No Conditions correctly returned");
 
@@ -534,12 +534,12 @@ sap.ui.define([
 		});
 
 		QUnit.test("_registerInnerFilter", function (assert) {
-			var done = assert.async();
+			const done = assert.async();
 
 			this.oMDCChart.initialized().then(function () {
 
-				var oFilter = { attachSearch: function () { } };
-				var attachSearchSpy = sinon.spy(oFilter, "attachSearch");
+				const oFilter = { attachSearch: function () { } };
+				const attachSearchSpy = sinon.spy(oFilter, "attachSearch");
 
 				this.oMDCChart._registerInnerFilter(oFilter);
 
@@ -550,21 +550,21 @@ sap.ui.define([
 		});
 
 		QUnit.test("applySettings", function (assert) {
-			var done = assert.async();
+			const done = assert.async();
 
 			this.oMDCChart.initialized().then(function () {
 
-				var mSettings = {};
-				var oScope = {};
+				const mSettings = {};
+				const oScope = {};
 
 				function isPromise(p) {
 					return p && Object.prototype.toString.call(p) === "[object Promise]";
 				}
 
-				var _setPropertyHelperClassStub = sinon.stub(this.oMDCChart, "_setPropertyHelperClass");
+				const _setPropertyHelperClassStub = sinon.stub(this.oMDCChart, "_setPropertyHelperClass");
 				// var _loadDelegateSpy = sinon.spy(this.oMDCChart, "_loadDelegate");
-				var isFilteringEnabledStub = sinon.stub(this.oMDCChart, "isFilteringEnabled").returns(true);
-				var retrieveInbuiltFilterSpy = sinon.spy(this.oMDCChart, "retrieveInbuiltFilter");
+				const isFilteringEnabledStub = sinon.stub(this.oMDCChart, "isFilteringEnabled").returns(true);
+				const retrieveInbuiltFilterSpy = sinon.spy(this.oMDCChart, "retrieveInbuiltFilter");
 
 				this.oMDCChart.applySettings(mSettings, oScope);
 
@@ -584,14 +584,14 @@ sap.ui.define([
 		});
 
 		QUnit.test("_createContentFromPropertyInfos", function (assert) {
-			var done = assert.async();
-			var oMockDelegate = { checkAndUpdateMDCItems: function () { return Promise.resolve(); }, createInnerChartContent: function () { return Promise.resolve(); }, getDrillableItems: function () { return []; } };
-			var _getControlDelegateStub = sinon.stub(this.oMDCChart, "getControlDelegate").returns(oMockDelegate);
+			const done = assert.async();
+			const oMockDelegate = { checkAndUpdateMDCItems: function () { return Promise.resolve(); }, createInnerChartContent: function () { return Promise.resolve(); }, getDrillableItems: function () { return []; } };
+			const _getControlDelegateStub = sinon.stub(this.oMDCChart, "getControlDelegate").returns(oMockDelegate);
 			// this.oMDCChart.getControlDelegate = function() {return oMockDelegate;};
 			this.oMDCChart._propagatePropertiesToInnerChart = function () { }; //Mock this as it requires an inner chart (which we don't want to test in this case)
 
-			var oCreateCrumbsSpy = sinon.spy(this.oMDCChart, "_createBreadcrumbs");
-			var oPropagateSpy = sinon.spy(this.oMDCChart, "_propagatePropertiesToInnerChart");
+			const oCreateCrumbsSpy = sinon.spy(this.oMDCChart, "_createBreadcrumbs");
+			const oPropagateSpy = sinon.spy(this.oMDCChart, "_propagatePropertiesToInnerChart");
 
 			this.oMDCChart._createContentfromPropertyInfos();
 
@@ -607,8 +607,8 @@ sap.ui.define([
 		});
 
 		QUnit.test("_createBreadcrumbs", function (assert) {
-			var oMockDelegate = { getDrillableItems: function () { return []; } };
-			var _getControlDelegateStub = sinon.stub(this.oMDCChart, "getControlDelegate").returns(oMockDelegate);
+			const oMockDelegate = { getDrillableItems: function () { return []; } };
+			const _getControlDelegateStub = sinon.stub(this.oMDCChart, "getControlDelegate").returns(oMockDelegate);
 			// this.oMDCChart.getControlDelegate = function () { return oMockDelegate; };
 			this.oMDCChart.setAggregation("_breadcrumbs", null);
 
@@ -619,12 +619,12 @@ sap.ui.define([
 		});
 
 		QUnit.test("getAdaptionUI", function (assert) {
-			var oMockDelegate = { getAdaptionUI: function () { return "Test"; } };
-			var _getControlDelegateStub = sinon.stub(this.oMDCChart, "getControlDelegate").returns(oMockDelegate);
+			const oMockDelegate = { getAdaptionUI: function () { return "Test"; } };
+			const _getControlDelegateStub = sinon.stub(this.oMDCChart, "getControlDelegate").returns(oMockDelegate);
 			// this.oMDCChart.getControlDelegate = function () { return oMockDelegate; };
-			var oDelegateSpy = sinon.spy(oMockDelegate, "getAdaptionUI");
+			const oDelegateSpy = sinon.spy(oMockDelegate, "getAdaptionUI");
 
-			var sResult = this.oMDCChart.getAdaptationUI();
+			const sResult = this.oMDCChart.getAdaptationUI();
 
 			assert.equal(sResult, "Test", "Correct result returned");
 			assert.ok(oDelegateSpy.calledOnce, "Function was called on delegate");
@@ -641,9 +641,9 @@ sap.ui.define([
 		});
 
 		QUnit.test("innerChartBound", function (assert) {
-			var done = assert.async();
-			var oMockDelegate = { checkAndUpdateMDCItems: function () { return Promise.resolve(); }, createInnerChartContent: function () { return Promise.resolve(); }, getDrillableItems: function () { return []; } };
-			var _getControlDelegateStub = sinon.stub(this.oMDCChart, "getControlDelegate").returns(oMockDelegate);
+			const done = assert.async();
+			const oMockDelegate = { checkAndUpdateMDCItems: function () { return Promise.resolve(); }, createInnerChartContent: function () { return Promise.resolve(); }, getDrillableItems: function () { return []; } };
+			const _getControlDelegateStub = sinon.stub(this.oMDCChart, "getControlDelegate").returns(oMockDelegate);
 			// this.oMDCChart.getControlDelegate = function () { return oMockDelegate; };
 			this.oMDCChart._propagatePropertiesToInnerChart = function () { }; //Mock this as it requires an inner chart (which we don't want to test in this case)
 
@@ -658,10 +658,10 @@ sap.ui.define([
 		});
 
 		QUnit.test("getSelectionHandler", function (assert) {
-			var done = assert.async();
+			const done = assert.async();
 			this.oMDCChart.initialized().then(function () {
 
-				var getInnerChartSelectionHandlerSpy = sinon.spy(this.oMDCChart.getControlDelegate(), "getInnerChartSelectionHandler");
+				const getInnerChartSelectionHandlerSpy = sinon.spy(this.oMDCChart.getControlDelegate(), "getInnerChartSelectionHandler");
 
 				this.oMDCChart.getSelectionHandler();
 
@@ -673,12 +673,12 @@ sap.ui.define([
 		});
 
 		QUnit.test("getChartTypeLayoutConfig", function (assert) {
-			var oMockDelegate = { getChartTypeLayoutConfig: function () { return "Test"; } };
-			var _getControlDelegateStub = sinon.stub(this.oMDCChart, "getControlDelegate").returns(oMockDelegate);
+			const oMockDelegate = { getChartTypeLayoutConfig: function () { return "Test"; } };
+			const _getControlDelegateStub = sinon.stub(this.oMDCChart, "getControlDelegate").returns(oMockDelegate);
 			// this.oMDCChart.getControlDelegate = function () { return oMockDelegate; };
-			var oDelegateSpy = sinon.spy(oMockDelegate, "getChartTypeLayoutConfig");
+			const oDelegateSpy = sinon.spy(oMockDelegate, "getChartTypeLayoutConfig");
 
-			var sResult = this.oMDCChart.getChartTypeLayoutConfig();
+			const sResult = this.oMDCChart.getChartTypeLayoutConfig();
 
 			assert.equal(sResult, "Test", "Correct result returned");
 			assert.ok(oDelegateSpy.calledOnce, "Function was called on delegate");
@@ -687,12 +687,12 @@ sap.ui.define([
 		});
 
 		QUnit.test("getAllowedRolesForKinds", function (assert) {
-			var oMockDelegate = { getAllowedRolesForKinds: function () { return "Test"; } };
-			var _getControlDelegateStub = sinon.stub(this.oMDCChart, "getControlDelegate").returns(oMockDelegate);
+			const oMockDelegate = { getAllowedRolesForKinds: function () { return "Test"; } };
+			const _getControlDelegateStub = sinon.stub(this.oMDCChart, "getControlDelegate").returns(oMockDelegate);
 			// this.oMDCChart.getControlDelegate = function () { return oMockDelegate; };
-			var oDelegateSpy = sinon.spy(oMockDelegate, "getAllowedRolesForKinds");
+			const oDelegateSpy = sinon.spy(oMockDelegate, "getAllowedRolesForKinds");
 
-			var sResult = this.oMDCChart.getAllowedRolesForKinds();
+			const sResult = this.oMDCChart.getAllowedRolesForKinds();
 
 			assert.equal(sResult, "Test", "Correct result returned");
 			assert.ok(oDelegateSpy.calledOnce, "Function was called on delegate");
@@ -716,7 +716,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("getManagedObjectModel", function (assert) {
-			var done = assert.async();
+			const done = assert.async();
 			this.oMDCChart.initialized().then(function(){
 				assert.equal(this.oMDCChart.getManagedObjectModel(), this.oMDCChart._oManagedObjectModel, "ManagedObjectModel of chart was returned");
 				done();
@@ -724,17 +724,17 @@ sap.ui.define([
 		});
 
 		QUnit.test("_innerChartDataLoadComplete", function (assert) {
-			var done = assert.async();
+			const done = assert.async();
 			this.oMDCChart.initialized().then(function(){
 
 				//Arrange
-				var oMockDelegate = { requestToolbarUpdate: function () { return; }, getInnerChart: function () { return; } };
-				var _getControlDelegateStub = sinon.stub(this.oMDCChart, "getControlDelegate").returns(oMockDelegate);
+				const oMockDelegate = { requestToolbarUpdate: function () { return; }, getInnerChart: function () { return; } };
+				const _getControlDelegateStub = sinon.stub(this.oMDCChart, "getControlDelegate").returns(oMockDelegate);
 				// this.oMDCChart.getControlDelegate = function () { return oMockDelegate; };
-				var setBusySpy = sinon.spy(this.oMDCChart, "setBusy");
-				var _checkStyleClassesForDimensionsSpy = sinon.spy(this.oMDCChart, "_checkStyleClassesForDimensions");
-				var _renderOverlaySpy = sinon.spy(this.oMDCChart, "_renderOverlay");
-				var requestToolbarUpdateSpy = sinon.spy(this.oMDCChart.getControlDelegate(), "requestToolbarUpdate");
+				const setBusySpy = sinon.spy(this.oMDCChart, "setBusy");
+				const _checkStyleClassesForDimensionsSpy = sinon.spy(this.oMDCChart, "_checkStyleClassesForDimensions");
+				const _renderOverlaySpy = sinon.spy(this.oMDCChart, "_renderOverlay");
+				const requestToolbarUpdateSpy = sinon.spy(this.oMDCChart.getControlDelegate(), "requestToolbarUpdate");
 
 				//Act
 				this.oMDCChart._innerChartDataLoadComplete({});
@@ -756,8 +756,8 @@ sap.ui.define([
 			this.oMDCChart.removeAllItems([]);
 			this.oMDCChart.addStyleClass("sapUiMDCChartGrid");
 
-			var addStyleClassSpy = sinon.spy(this.oMDCChart, "addStyleClass");
-			var removeStyleClassSpy = sinon.spy(this.oMDCChart, "removeStyleClass");
+			const addStyleClassSpy = sinon.spy(this.oMDCChart, "addStyleClass");
+			const removeStyleClassSpy = sinon.spy(this.oMDCChart, "removeStyleClass");
 
 			//Act
 			this.oMDCChart._checkStyleClassesForDimensions();
@@ -778,8 +778,8 @@ sap.ui.define([
 			this.oMDCChart._checkStyleClassesForDimensions();
 			this.oMDCChart.addItem(new Item({ propertyKey: "Test1", type: "groupable" }));
 
-			var addStyleClassSpy = sinon.spy(this.oMDCChart, "addStyleClass");
-			var removeStyleClassSpy = sinon.spy(this.oMDCChart, "removeStyleClass");
+			const addStyleClassSpy = sinon.spy(this.oMDCChart, "addStyleClass");
+			const removeStyleClassSpy = sinon.spy(this.oMDCChart, "removeStyleClass");
 
 			//Act
 			this.oMDCChart._checkStyleClassesForDimensions();
@@ -810,11 +810,11 @@ sap.ui.define([
 		});
 
 		QUnit.test("_onFiltersChanged", function (assert) {
-			var oMockDelegate = { getInnerChartBound: function () { return true; } };
-			var _getControlDelegateStub = sinon.stub(this.oMDCChart, "getControlDelegate").returns(oMockDelegate);
+			const oMockDelegate = { getInnerChartBound: function () { return true; } };
+			const _getControlDelegateStub = sinon.stub(this.oMDCChart, "getControlDelegate").returns(oMockDelegate);
 			// this.oMDCChart.getControlDelegate = function () { return oMockDelegate; };
 			this.oMDCChart._renderOverlay = function () { };
-			var oOverlaySpy = sinon.spy(this.oMDCChart, "_renderOverlay");
+			const oOverlaySpy = sinon.spy(this.oMDCChart, "_renderOverlay");
 			this.oMDCChart._bInnerChartReady = true;
 
 			this.oMDCChart._onFiltersChanged({ getParameter: function () { return true; } });
@@ -825,11 +825,11 @@ sap.ui.define([
 		});
 
 		QUnit.test("_onFiltersChanged with invalid event", function (assert) {
-			var oMockDelegate = { getInnerChartBound: function () { return true; } };
-			var _getControlDelegateStub = sinon.stub(this.oMDCChart, "getControlDelegate").returns(oMockDelegate);
+			const oMockDelegate = { getInnerChartBound: function () { return true; } };
+			const _getControlDelegateStub = sinon.stub(this.oMDCChart, "getControlDelegate").returns(oMockDelegate);
 			// this.oMDCChart.getControlDelegate = function () { return oMockDelegate; };
 			this.oMDCChart._renderOverlay = function () { };
-			var oOverlaySpy = sinon.spy(this.oMDCChart, "_renderOverlay");
+			const oOverlaySpy = sinon.spy(this.oMDCChart, "_renderOverlay");
 			this.oMDCChart._bInnerChartReady = true;
 
 			this.oMDCChart._onFiltersChanged({ getParameter: function () { return false; } });
@@ -840,11 +840,11 @@ sap.ui.define([
 		});
 
 		QUnit.test("_onFiltersChanged with unbound chart", function (assert) {
-			var oMockDelegate = { getInnerChartBound: function () { return false; } };
-			var _getControlDelegateStub = sinon.stub(this.oMDCChart, "getControlDelegate").returns(oMockDelegate);
+			const oMockDelegate = { getInnerChartBound: function () { return false; } };
+			const _getControlDelegateStub = sinon.stub(this.oMDCChart, "getControlDelegate").returns(oMockDelegate);
 			// this.oMDCChart.getControlDelegate = function () { return oMockDelegate; };
 			this.oMDCChart._renderOverlay = function () { };
-			var oOverlaySpy = sinon.spy(this.oMDCChart, "_renderOverlay");
+			const oOverlaySpy = sinon.spy(this.oMDCChart, "_renderOverlay");
 			this.oMDCChart._bInnerChartReady = true;
 
 			this.oMDCChart._onFiltersChanged({ getParameter: function () { return true; } });
@@ -855,11 +855,11 @@ sap.ui.define([
 		});
 
 		QUnit.test("_initInfoToolbar", function (assert) {
-			var done = assert.async();
+			const done = assert.async();
 
 			this.oMDCChart.initialized().then(function () {
 				this.oMDCChart.setAggregation("_infoToolbar", null);
-				var oAttributeSpy = sinon.spy(this.oMDCChart.getDomRef(), "setAttribute");
+				const oAttributeSpy = sinon.spy(this.oMDCChart.getDomRef(), "setAttribute");
 
 				this.oMDCChart._initInfoToolbar();
 
@@ -872,14 +872,14 @@ sap.ui.define([
 		});
 
 		QUnit.test("_updateInfoToolbar function", function (assert) {
-			var done = assert.async();
+			const done = assert.async();
 
 			this.oMDCChart.initialized().then(function () {
 				this.oMDCChart.setP13nMode(["Filter"]);
 				this.oMDCChart._initInfoToolbar();
-				var oToolbarSpy = sinon.spy(this.oMDCChart.getAggregation("_infoToolbar"), "setInfoText");
-				var sMockLabel = "ABC";
-				var oConditionsStub = sinon.stub(this.oMDCChart, "_getFilterInfoText").returns(sMockLabel);
+				const oToolbarSpy = sinon.spy(this.oMDCChart.getAggregation("_infoToolbar"), "setInfoText");
+				const sMockLabel = "ABC";
+				const oConditionsStub = sinon.stub(this.oMDCChart, "_getFilterInfoText").returns(sMockLabel);
 
 				this.oMDCChart._updateInfoToolbar();
 
@@ -894,7 +894,7 @@ sap.ui.define([
 		QUnit.module("sap.ui.mdc.Chart: Toolbar Actions", {
 
 			beforeEach: function () {
-				var TestComponent = UIComponent.extend("test", {
+				const TestComponent = UIComponent.extend("test", {
 					metadata: {
 						manifest: {
 							"sap.app": {
@@ -937,7 +937,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("MDC Chart Initial Action is added to toolbar with the correct layout", function (assert) {
-			var done = assert.async();
+			const done = assert.async();
 
 			this.oMDCChart.initialized().then(function () {
 
@@ -950,11 +950,11 @@ sap.ui.define([
 		});
 
 		QUnit.test("setHeaderLevel", function (assert) {
-			var done = assert.async();
+			const done = assert.async();
 
 			this.oMDCChart.initialized().then(function () {
 
-				var toolbarSpy = sinon.spy(this.oMDCChart.getAggregation("_toolbar"), "_setHeaderLevel");
+				const toolbarSpy = sinon.spy(this.oMDCChart.getAggregation("_toolbar"), "_setHeaderLevel");
 
 				assert.ok(this.oMDCChart.setHeaderLevel(TitleLevel.H3));
 
@@ -966,11 +966,11 @@ sap.ui.define([
 		});
 
 		QUnit.test("setHeaderVisible", function (assert) {
-			var done = assert.async();
+			const done = assert.async();
 
 			this.oMDCChart.initialized().then(function () {
 
-				var oToolbarSpy = sinon.spy(this.oMDCChart.getAggregation("_toolbar"), "setHeaderVisible");
+				const oToolbarSpy = sinon.spy(this.oMDCChart.getAggregation("_toolbar"), "setHeaderVisible");
 				assert.ok(this.oMDCChart.getHeaderVisible(), "Header is set to visible initially");
 
 				this.oMDCChart.setHeaderVisible(false);
@@ -985,10 +985,10 @@ sap.ui.define([
 		});
 
 		QUnit.test("setVariant", function (assert) {
-			var done = assert.async();
+			const done = assert.async();
 
 			this.oMDCChart.initialized().then(function () {
-				var oToolbarSpy = sinon.spy(this.oMDCChart.getAggregation("_toolbar"), "addVariantManagement");
+				const oToolbarSpy = sinon.spy(this.oMDCChart.getAggregation("_toolbar"), "addVariantManagement");
 
 				this.oMDCChart.setVariant(new VM());
 

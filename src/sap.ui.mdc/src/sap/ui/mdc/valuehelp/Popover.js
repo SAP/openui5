@@ -15,10 +15,10 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var MPopover, MLibrary, Toolbar, ToolbarSpacer, ValueStateHeader, InvisibleText;
+	let MPopover, MLibrary, Toolbar, ToolbarSpacer, ValueStateHeader, InvisibleText;
 
 	// shortcut for sap.ui.core.ValueState
-	var ValueState = coreLibrary.ValueState;
+	const ValueState = coreLibrary.ValueState;
 
 	/**
 	 * Constructor for a new <code>Popover</code> container.
@@ -34,7 +34,7 @@ sap.ui.define([
 	 * @since 1.95.0
 	 * @alias sap.ui.mdc.valuehelp.Popover
 	 */
-	var Popover = Container.extend("sap.ui.mdc.valuehelp.Popover", /** @lends sap.ui.mdc.valuehelp.Popover.prototype */
+	const Popover = Container.extend("sap.ui.mdc.valuehelp.Popover", /** @lends sap.ui.mdc.valuehelp.Popover.prototype */
 	{
 		metadata: {
 			library: "sap.ui.mdc",
@@ -76,8 +76,8 @@ sap.ui.define([
 	Popover.prototype.invalidate = function(oOrigin) {
 
 		if (oOrigin) {
-			var oPopover = this.getAggregation("_container");
-			var oContent = this._oCurrentContent;
+			const oPopover = this.getAggregation("_container");
+			const oContent = this._oCurrentContent;
 			if (oPopover && oContent && oOrigin === oContent && !this.isDestroyStarted()) {
 				// Content invalidated -> invalidate Popover to rerender content
 				oPopover.invalidate(oOrigin);
@@ -90,7 +90,7 @@ sap.ui.define([
 
 	Popover.prototype.getUIAreaForContent = function() {
 		// if List or Table needs to be rerendered because of a change the corresponding UIArea is the static-UIArea used in the Popover.
-		var oPopover = this.getAggregation("_container");
+		const oPopover = this.getAggregation("_container");
 		if (oPopover) {
 			return oPopover.getUIArea();
 		}
@@ -100,13 +100,13 @@ sap.ui.define([
 	};
 
 	Popover.prototype._getContent = function () {
-		var oContent = this.getContent();
+		const oContent = this.getContent();
 		return oContent && oContent[0];
 	};
 
 	Popover.prototype.getContainerControl = function () {
-		var oPopover = this.getAggregation("_container");
-		var fUpdateValueHelpHeader = function(oControl, oValueStateHeader) {
+		let oPopover = this.getAggregation("_container");
+		const fUpdateValueHelpHeader = function(oControl, oValueStateHeader) {
 			if (oControl && oControl.getValueState && oControl.getValueState() !== ValueState.None) {
 				oValueStateHeader.setText(oControl.getValueStateText());
 				oValueStateHeader.setValueState(oControl.getValueState());
@@ -132,7 +132,7 @@ sap.ui.define([
 				ValueStateHeader = aLoaded[4];
 				InvisibleText = aLoaded[5];
 
-				var oValueStateHeader = new ValueStateHeader();
+				const oValueStateHeader = new ValueStateHeader();
 				fUpdateValueHelpHeader(this.getControl(), oValueStateHeader);
 
 				oPopover = new MPopover(this.getId() + "-pop", {
@@ -163,8 +163,8 @@ sap.ui.define([
 				oPopover.addDelegate({onsapshow: this.handleRequestSwitchToDialog.bind(this)});
 
 				oPopover._getAllContent = function() {
-					var oParent = this.getParent();
-					var aContent = [];
+					const oParent = this.getParent();
+					const aContent = [];
 					if (oParent) {
 						if (this._oCurrentContent) {
 							aContent.push(this._oCurrentContent);
@@ -173,8 +173,8 @@ sap.ui.define([
 					return aContent;
 				}.bind(this);
 
-				var oContent = this._getContent();
-				var oContainerConfig = this.getContainerConfig(oContent);
+				const oContent = this._getContent();
+				const oContainerConfig = this.getContainerConfig(oContent);
 
 				if (oContainerConfig) {
 					oPopover.setShowArrow(!!oContainerConfig.showArrow);
@@ -202,7 +202,7 @@ sap.ui.define([
 
 	Popover.prototype.observeChanges = function (oChanges) {
 		if (oChanges.name === "content") {
-			var oContent = oChanges.child;
+			const oContent = oChanges.child;
 			if (oChanges.mutation === "remove") {
 				oContent.detachNavigated(this.handleNavigated, this);
 			}
@@ -212,14 +212,14 @@ sap.ui.define([
 
 	Popover.prototype.placeContent = function (oPopover) {
 
-		var oContent = this._getContent();
-		var oContentPromise = oContent && oContent.getContent();
-		var oContainerConfig = this.getContainerConfig(oContent);
-		var oFooterContentPromise = oContainerConfig && oContainerConfig.getFooter && oContainerConfig.getFooter();
+		const oContent = this._getContent();
+		const oContentPromise = oContent && oContent.getContent();
+		const oContainerConfig = this.getContainerConfig(oContent);
+		const oFooterContentPromise = oContainerConfig && oContainerConfig.getFooter && oContainerConfig.getFooter();
 
 		return Promise.all([oContentPromise, oFooterContentPromise]).then(function (aContents) {
 			this._oCurrentContent = aContents[0];
-			var oFooterContent = aContents[1];
+			const oFooterContent = aContents[1];
 
 			if (oFooterContent && oPopover.getFooter() != oFooterContent && oFooterContent.isA && oFooterContent.isA("sap.m.Toolbar")) {
 				oPopover.setFooter(oFooterContent);
@@ -228,8 +228,8 @@ sap.ui.define([
 
 			if (oFooterContent) {
 				if (!oPopover.getFooter()) {
-					var aToolbarContent = [new ToolbarSpacer(this.getId() + "-Spacer")].concat(oFooterContent);
-					var oToolbar = new Toolbar(this.getId() + "-TB", {
+					const aToolbarContent = [new ToolbarSpacer(this.getId() + "-Spacer")].concat(oFooterContent);
+					const oToolbar = new Toolbar(this.getId() + "-TB", {
 						content: aToolbarContent
 					}).setModel(this._oManagedObjectModel, "$help"); // TODO: ManagedObjectModel never created!!!
 					oPopover.setFooter(oToolbar);
@@ -250,11 +250,11 @@ sap.ui.define([
 
 		Container.prototype.openContainer.apply(this, arguments);
 
-		var oContent = this._getContent();
-		var oOpenPromise = this._retrievePromise("open");
+		const oContent = this._getContent();
+		const oOpenPromise = this._retrievePromise("open");
 		Promise.resolve(oContent && oContent.onBeforeShow(true)).then(function () {// onBeforeShow should guarantee filtering is done, when we observe the table in showTypeahead
-			var oDelegate = this.getValueHelpDelegate();
-			var oValueHelp = this.getValueHelp();
+			const oDelegate = this.getValueHelpDelegate();
+			const oValueHelp = this.getValueHelp();
 
 			return Promise.resolve(bTypeahead ? oDelegate.showTypeahead(oValueHelp, oContent) : true).then(function (bShowTypeahead) {
 				// Only continue the opening process, if delegate confirms "showTypeahead" and open promise is not canceled (might happen due to focus loss in target control).
@@ -271,8 +271,8 @@ sap.ui.define([
 	};
 
 	Popover.prototype._openContainerByTarget = function (oPopover) {
-		var oControl = this.getControl();
-		var oTarget = oControl && oControl.getFocusElementForValueHelp ? oControl.getFocusElementForValueHelp(this.isTypeahead()) : oControl;
+		const oControl = this.getControl();
+		const oTarget = oControl && oControl.getFocusElementForValueHelp ? oControl.getFocusElementForValueHelp(this.isTypeahead()) : oControl;
 		if (oTarget && oTarget.getDomRef()) {
 			oPopover.setContentMinWidth(jQuery(oTarget.getDomRef()).outerWidth() + "px");
 			if (!this.isFocusInHelp()) {
@@ -285,7 +285,7 @@ sap.ui.define([
 	Popover.prototype.closeContainer = function () {
 
 		Container.prototype.closeContainer.apply(this, arguments);
-		var oPopover = this.getAggregation("_container");
+		const oPopover = this.getAggregation("_container");
 		if (oPopover) {
 			oPopover.close();
 		}
@@ -295,7 +295,7 @@ sap.ui.define([
 	Popover.prototype.handleOpened = function () {
 		Container.prototype.handleOpened.apply(this, arguments);
 
-		var oContent = this._getContent();
+		const oContent = this._getContent();
 
 		if (oContent) {
 			oContent.onContainerOpen();
@@ -310,14 +310,14 @@ sap.ui.define([
 
 	Popover.prototype.handleClosed = function (oEvent) {
 
-		var oContent = this._getContent();
+		const oContent = this._getContent();
 
 		if (oContent) {
 			oContent.onHide();
 			oContent.onContainerClose();
 		}
 
-		var oPopover = this.getAggregation("_container");
+		const oPopover = this.getAggregation("_container");
 		if (oPopover) {
 			oPopover._oPreviousFocus = null; // TODO - find real solution
 		}
@@ -326,14 +326,14 @@ sap.ui.define([
 	};
 
 	Popover.prototype.removeFocus = function() {
-		var oContent = this._getContent();
+		const oContent = this._getContent();
 		if (oContent) {
 			oContent.removeFocus();
 		}
 	};
 
 	Popover.prototype.navigateInContent = function (iStep) {
-		var oContent = this._getContent();
+		const oContent = this._getContent();
 		if (oContent) {
 			oContent.navigate(iStep);
 		}
@@ -341,14 +341,14 @@ sap.ui.define([
 
 
 	Popover.prototype.getItemForValue = function(oConfig) {
-		var oContent = this._getContent();
+		const oContent = this._getContent();
 		if (oContent) {
 			return oContent.getItemForValue(oConfig);
 		}
 	};
 
 	Popover.prototype.isValidationSupported = function(oConfig) {
-		var oContent = this._getContent();
+		const oContent = this._getContent();
 		if (oContent) {
 			return oContent.isValidationSupported();
 		}
@@ -356,7 +356,7 @@ sap.ui.define([
 
 	Popover.prototype.getUseAsValueHelp = function() {
 
-		var oContent = this._getContent();
+		const oContent = this._getContent();
 		return oContent && oContent.getUseAsValueHelp && oContent.getUseAsValueHelp();
 
 	};
@@ -364,15 +364,15 @@ sap.ui.define([
 	Popover.prototype.getValueHelpIcon = function() {
 
 		// ask content for icon
-		var oContent = this._getContent();
+		const oContent = this._getContent();
 		return oContent && oContent.getValueHelpIcon();
 
 	};
 
 	Popover.prototype.getAriaAttributes = function(iMaxConditions) {
 
-		var oContent = this._getContent();
-		var oContentAttributes = oContent && oContent.getAriaAttributes(iMaxConditions);
+		const oContent = this._getContent();
+		const oContentAttributes = oContent && oContent.getAriaAttributes(iMaxConditions);
 
 		if (oContentAttributes) {
 			return {
@@ -395,14 +395,14 @@ sap.ui.define([
 
 	Popover.prototype.shouldOpenOnClick = function() {
 
-		var oContent = this._getContent();
+		const oContent = this._getContent();
 		return this.isPropertyInitial("opensOnClick") ? !!oContent && oContent.shouldOpenOnClick() : this.getOpensOnClick(); //If opensOnClick is not explicitly set,  the content's preference is used instead.
 
 	};
 
 	Popover.prototype.shouldOpenOnNavigate = function() {
 
-		var oContent = this._getContent();
+		const oContent = this._getContent();
 		this.bindContentToContainer(oContent); // Content might need config data to determine it's behaviour
 		return !!oContent && oContent.shouldOpenOnNavigate();
 		// TODO: do we need to unbind here? Re-binding on every navigation would reset selected condition on content what is not wanted
@@ -413,7 +413,7 @@ sap.ui.define([
 	Popover.prototype.isNavigationEnabled = function(iStep) {
 
 		if (this.isOpen() || this.getUseAsValueHelp()) { //Typeahead already open or it is used for typing and as value help (ComboBox case)
-			var oContent = this._getContent();
+			const oContent = this._getContent();
 			return !!oContent && oContent.isNavigationEnabled(iStep);
 		}
 
@@ -423,21 +423,21 @@ sap.ui.define([
 
 	Popover.prototype.isFocusInHelp = function() {
 
-		var oContent = this._getContent();
+		const oContent = this._getContent();
 		return !!oContent && oContent.isFocusInHelp();
 
 	};
 
 	Popover.prototype.isMultiSelect = function() {
 
-		var oContent = this._getContent();
+		const oContent = this._getContent();
 		return !!oContent && oContent.isMultiSelect();
 
 	};
 
 	Popover.prototype.isTypeaheadSupported = function () {
 
-		var oContent = this._getContent();
+		const oContent = this._getContent();
 		return oContent && oContent.isSearchSupported();
 
 	};

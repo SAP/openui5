@@ -19,7 +19,7 @@ sap.ui.define(function() {
 	 * @since 1.115
 	 * @alias sap.ui.mdc.enums.FieldDisplay
 	 */
-	var FieldDisplay = {
+	const FieldDisplay = {
 		/**
 		 * Only the value (key) is displayed
 		 * @public

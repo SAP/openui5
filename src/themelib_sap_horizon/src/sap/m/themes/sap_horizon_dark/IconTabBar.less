@@ -754,10 +754,11 @@ html.sap-desktop {
 			.sapMITBItem {
 				&:active{
 					background-color: @_sap_m_IconTabBar_Overflow_BackgroundColorPressed;
+					border: 1px solid @_sap_m_IconTabBar_Overflow_BorderColorPressed;
 				}
 				&:active::after {
-					// when overflow is pressed, make the focus white
-					border-color: @_sap_m_IconTabBar_Overflow_TextColorPressed;
+					// when overflow is pressed, hide the focus
+					border-color: transparent;
 				}
 			}
 		}

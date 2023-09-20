@@ -67,9 +67,10 @@ sap.ui.define(
 					return this.waitFor({
 						controlType: "sap.m.Table",
 						matchers: function (oTable) {
-							var iSortColumn = 0, aItems = oTable.getItems(), aCells = aItems[0].getCells();
-							var value1, value2;
-							for (var i = 0; i < aCells.length; i++) {
+							let iSortColumn = 0;
+							const aItems = oTable.getItems(), aCells = aItems[0].getCells();
+							let value1, value2;
+							for (let i = 0; i < aCells.length; i++) {
 								if (aCells[i].getBinding('value').getPath().indexOf(sColumn) > -1) {
 									iSortColumn = i;
 									break;
@@ -78,7 +79,7 @@ sap.ui.define(
 							if (iSortColumn === aCells.length) {
 								return false;
 							}
-							for (i = 0; i < aItems.length - 1; i++) {
+							for (let i = 0; i < aItems.length - 1; i++) {
 								value1 = aItems[i].getCells()[iSortColumn].getValue();
 								value2 = aItems[i + 1].getCells()[iSortColumn].getValue();
 								if (bAscendingOrder && value1 > value2) {
@@ -101,12 +102,11 @@ sap.ui.define(
 					return this.waitFor({
 						controlType: "sap.ui.table.Table",
 						matchers: function (oTable) {
-							var rowObjects = oTable.getRows(),
-							value1,
-							value2;
-							for (var i = 0 ; i < rowObjects.length - 1; i++) {
-								var value1 = rowObjects[i].getBindingContext().getProperty("Category");
-								var value2 = rowObjects[i + 1].getBindingContext().getProperty("Category");
+							const rowObjects = oTable.getRows();
+							let value1, value2;
+							for (let i = 0; i < rowObjects.length - 1; i++) {
+								value1 = rowObjects[i].getBindingContext().getProperty("Category");
+								value2 = rowObjects[i + 1].getBindingContext().getProperty("Category");
 								if (bAscendingOrder && value1 > value2) {
 									return false;
 								}
@@ -127,17 +127,17 @@ sap.ui.define(
 					return this.waitFor({
 						controlType: "sap.m.GroupHeaderListItem",
 						check: function (aGroupHeaders) {
-							var iGroupHeaders = aGroupHeaders.length - 1;
-							var row1 = Math.floor((Math.random() * iGroupHeaders) + 1);
-							var row2 = Math.floor((Math.random() * iGroupHeaders) + 1);
+							const iGroupHeaders = aGroupHeaders.length - 1;
+							let row1 = Math.floor((Math.random() * iGroupHeaders) + 1);
+							let row2 = Math.floor((Math.random() * iGroupHeaders) + 1);
 
 							if (row1 > row2) {
 								row1 = row1 + row2;
 								row2 = row1 - row2;
 								row1 = row1 - row2;
 							}
-							var sGroupName1 = aGroupHeaders[row1].getTitle();
-							var sGroupName2 = aGroupHeaders[row2].getTitle();
+							const sGroupName1 = aGroupHeaders[row1].getTitle();
+							const sGroupName2 = aGroupHeaders[row2].getTitle();
 
 							if (sGroupName1 <= sGroupName2) {
 								return true;
@@ -158,20 +158,21 @@ sap.ui.define(
 							new AggregationFilled({
 								name: "items"
 							}), function (oTable) {
-								var aItems = oTable.getItems(), iIndex1, iGroupColumn, aColumns = oTable.getColumns();
-								for (var i = 0; i < aColumns.length; i++) {
+								const aItems = oTable.getItems(), aColumns = oTable.getColumns();
+								let iIndex1, iGroupColumn;
+								for (let i = 0; i < aColumns.length; i++) {
 									if (aColumns[i].getId().indexOf(sGroupName) > -1) {
 										iGroupColumn = i;
 										break;
 									}
 								}
-								for (var i = 0; i < aItems.length; i++) {
+								for (let i = 0; i < aItems.length; i++) {
 									if (aItems[i].getMetadata().getName() === "sap.m.GroupHeaderListItem") {
 										iIndex1 = i;
 										break;
 									}
 								}
-								var sValue = aItems[iIndex1 + 1].getCells()[iGroupColumn].getValue();
+								const sValue = aItems[iIndex1 + 1].getCells()[iGroupColumn].getValue();
 								if (aItems[iIndex1].getTitle().indexOf(sValue) > -1) {
 									return true;
 								}

@@ -15,11 +15,11 @@ sap.ui.define([
 		], function(ConditionModel, Condition, JSONModel, ChangeReason, ConditionValidated) {
 	"use strict";
 
-	var oConditionModel;
-	var iCount = 0;
-	var oPropertyChange = {};
+	let oConditionModel;
+	let iCount = 0;
+	let oPropertyChange = {};
 	function handlePropertyChange(oEvent) {
-		var sPath = oEvent.getParameter("path");
+		const sPath = oEvent.getParameter("path");
 		iCount++;
 		if (!oPropertyChange[sPath]) {
 			oPropertyChange[sPath] = {reason: "", count: 0, value: undefined};
@@ -48,7 +48,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("create condition", function(assert) {
-		var sData = JSON.stringify(oConditionModel.getData());
+		const sData = JSON.stringify(oConditionModel.getData());
 		assert.ok(sData === '{"conditions":{},"fieldPath":{}}', "Default Data exist");
 	});
 
@@ -106,7 +106,7 @@ sap.ui.define([
 
 		oConditionModel.removeCondition("fieldPath3", 0);
 		assert.equal(oConditionModel.getConditions("fieldPath3").length, 2, "two condition expected");
-		var oCondition = oConditionModel.getConditions("fieldPath3")[0];
+		let oCondition = oConditionModel.getConditions("fieldPath3")[0];
 		oConditionModel.removeCondition("fieldPath3", oCondition);
 		assert.equal(oConditionModel.getConditions("fieldPath3").length, 1, "one condition expected");
 		oCondition = Condition.createCondition("GT", ["XYZ"]);
@@ -138,7 +138,7 @@ sap.ui.define([
 		assert.deepEqual(oPropertyChange["/conditions/fieldPath1"] && oPropertyChange["/conditions/fieldPath1"].value, oConditionModel.getConditions("fieldPath1"), "PropertyChange event for fieldPath1 value");
 		iCount = 0;	oPropertyChange = {};
 
-		var aConditions = oConditionModel.getConditions("fieldPath1");
+		const aConditions = oConditionModel.getConditions("fieldPath1");
 		assert.equal(aConditions.length, 3, "number of conditions");
 		assert.equal(aConditions[0].values.length, 1, "Condition.values.length");
 		assert.equal(aConditions[0].values[0], undefined, "Condition.values[0]");
@@ -155,17 +155,17 @@ sap.ui.define([
 	});
 
 	QUnit.test("ConditionModel.indexOf/exist", function(assert) {
-		var c1 = Condition.createCondition("EQ", ["foo"]);
+		const c1 = Condition.createCondition("EQ", ["foo"]);
 		oConditionModel.addCondition("fieldPath1", c1);
-		var c2 = Condition.createCondition("EQ", ["foo2"]);
+		const c2 = Condition.createCondition("EQ", ["foo2"]);
 		oConditionModel.addCondition("fieldPath1", c2);
-		var c3 = Condition.createCondition("BT", [1, 100]);
+		const c3 = Condition.createCondition("BT", [1, 100]);
 		oConditionModel.addCondition("fieldPath2", c3);
-		var c4 = Condition.createCondition("BT", [2, 99]);
+		const c4 = Condition.createCondition("BT", [2, 99]);
 		oConditionModel.addCondition("fieldPath2", c4);
-		var c5 = Condition.createCondition("GT", [new Date()]);
+		const c5 = Condition.createCondition("GT", [new Date()]);
 		oConditionModel.addCondition("fieldPath3", c5);
-		var c6 = Condition.createCondition("GT", [new Date(2018, 7, 24)]);
+		const c6 = Condition.createCondition("GT", [new Date(2018, 7, 24)]);
 		oConditionModel.addCondition("fieldPath3", c6);
 
 		assert.equal(oConditionModel.indexOf("fieldPath1", c1), 0, "condition found");
@@ -181,15 +181,15 @@ sap.ui.define([
 		assert.notOk(oConditionModel.exist(c3, "fieldPath2"), "condition should not exist");
 
 		// normalization
-		var iNormalized = 0;
-		var fnNormalize = function (oCondition) {
+		let iNormalized = 0;
+		const fnNormalize = function (oCondition) {
 			iNormalized++;
 			return Object.assign({}, oCondition, {values: oCondition.values.map(function (sValue) {
 				return sValue.replace(/^0*(?=\d)/, "");
 			})});
 		};
-		var oLeadingZerosCondition = Condition.createCondition("EQ", ["0000000763"]);
-		var oCondition = Condition.createCondition("EQ", ["763"]);
+		const oLeadingZerosCondition = Condition.createCondition("EQ", ["0000000763"]);
+		const oCondition = Condition.createCondition("EQ", ["763"]);
 		oConditionModel.addCondition("fieldPath4", oCondition);
 		assert.ok(oConditionModel.indexOf("fieldPath4", oLeadingZerosCondition) === -1, "Existing condition not considered without normalization.");
 		assert.ok(oConditionModel.indexOf("fieldPath4", oLeadingZerosCondition, fnNormalize) >= 0, "Existing condition considered.");
@@ -197,21 +197,20 @@ sap.ui.define([
 	});
 
 	QUnit.test("getAllConditions", function(assert) {
-		var c1 = Condition.createCondition("EQ", ["foo"]);
+		const c1 = Condition.createCondition("EQ", ["foo"]);
 		oConditionModel.addCondition("fieldPath1", c1);
-		var c2 = Condition.createCondition("EQ", ["foo2"]);
+		const c2 = Condition.createCondition("EQ", ["foo2"]);
 		oConditionModel.addCondition("fieldPath1", c2);
-		var c3 = Condition.createCondition("BT", [1, 100]);
+		const c3 = Condition.createCondition("BT", [1, 100]);
 		oConditionModel.addCondition("field/Path2", c3);
-		var c4 = Condition.createCondition("BT", [2, 99]);
+		const c4 = Condition.createCondition("BT", [2, 99]);
 		oConditionModel.addCondition("field/Path2", c4);
-		var c5 = Condition.createCondition("GT", [new Date()]);
+		const c5 = Condition.createCondition("GT", [new Date()]);
 		oConditionModel.addCondition("fieldPath3", c5);
 
-		var oConditions = oConditionModel.getAllConditions();
-		var iNumber = 0;
-		var sFieldPath; // eslint-disable-line no-unused-vars
-		for (sFieldPath in oConditions) {
+		let oConditions = oConditionModel.getAllConditions();
+		let iNumber = 0;
+		for (const sFieldPath in oConditions) {// eslint-disable-line
 			iNumber++;
 		}
 		assert.equal(iNumber, 3, "FieldPaths returned");
@@ -221,7 +220,7 @@ sap.ui.define([
 
 		oConditions = oConditionModel.getAllConditions("field/Path2");
 		iNumber = 0;
-		for (sFieldPath in oConditions) {
+		for (let sFieldPath in oConditions) {// eslint-disable-line
 			iNumber++;
 		}
 		assert.equal(iNumber, 1, "FieldPaths returned");
@@ -229,7 +228,7 @@ sap.ui.define([
 
 		oConditions = oConditionModel.getAllConditions(["fieldPath1", "field/Path2"]);
 		iNumber = 0;
-		for (sFieldPath in oConditions) {
+		for (let sFieldPath in oConditions) {// eslint-disable-line
 			iNumber++;
 		}
 		assert.equal(iNumber, 2, "FieldPaths returned");
@@ -238,7 +237,7 @@ sap.ui.define([
 
 		oConditions = oConditionModel.getAllConditions("X");
 		iNumber = 0;
-		for (var sFieldPath in oConditions) { // eslint-disable-line
+		for (let sFieldPath in oConditions) { // eslint-disable-line
 			iNumber++;
 		}
 		assert.equal(iNumber, 0, "FieldPaths returned");
@@ -251,7 +250,7 @@ sap.ui.define([
 		oConditionModel.addCondition("fieldPath2", Condition.createCondition("BT", [1, 100]));
 		oConditionModel.addCondition("fieldPath3", Condition.createCondition("GT", [new Date()]));
 
-		var oClone = oConditionModel.clone("fieldPath1");
+		let oClone = oConditionModel.clone("fieldPath1");
 		assert.equal(oClone.getConditions("fieldPath1").length, 1, "only one condition expected for FieldPath1");
 		assert.equal(oClone.getConditions("fieldPath2").length, 0, "no condition expected for FieldPath2");
 		assert.equal(oClone.getConditions("fieldPath3").length, 0, "no condition expected for FieldPath3");
@@ -271,7 +270,7 @@ sap.ui.define([
 		oConditionModel.addCondition("fieldPath2", Condition.createCondition("BT", [1, 100]));
 		oConditionModel.addCondition("fieldPath3", Condition.createCondition("GT", [new Date()]));
 
-		var oConditionModel2 = new ConditionModel();
+		const oConditionModel2 = new ConditionModel();
 		oConditionModel2.addCondition("fieldPath1", Condition.createCondition("EQ", ["new"]));
 		oConditionModel2.addCondition("fieldPath1", Condition.createCondition("BT", ["new2", "news2"]));
 		oConditionModel2.addCondition("fieldPath2", Condition.createCondition("EQ", ["new3"]));
@@ -299,20 +298,20 @@ sap.ui.define([
 		oConditionModel.addCondition("fieldPath1", Condition.createCondition("BT", []));
 		oConditionModel.addCondition("fieldPath1", Condition.createCondition("GT", []));
 
-		var aConditions = Condition._removeEmptyConditions(oConditionModel.getConditions("fieldPath1"));
+		const aConditions = Condition._removeEmptyConditions(oConditionModel.getConditions("fieldPath1"));
 		assert.equal(aConditions.length, 1, "1 condition expected");
 
 	});
 
 	QUnit.test("ConditionModel.serialize/parse", function(assert) {
 
-		var oCM = new ConditionModel();
+		const oCM = new ConditionModel();
 
 		oCM.addCondition("fieldPath1", Condition.createCondition("EQ", ["foo"]));
 		oCM.addCondition("fieldPath2", Condition.createCondition("BT", [1, 100]));
 		oCM.addCondition("fieldPath3", Condition.createCondition("GT", [new Date(Date.UTC(2017, 3, 25, 10, 30, 0, 0))]));
 
-		var s = oCM.serialize();
+		const s = oCM.serialize();
 		assert.strictEqual(s, '{\"conditions\":{\"fieldPath1\":[{\"operator\":\"EQ\",\"values\":[\"foo\"]}],\"fieldPath2\":[{\"operator\":\"BT\",\"values\":[1,100]}],\"fieldPath3\":[{\"operator\":\"GT\",\"values\":[\"2017-04-25T10:30:00.000Z\"]}]}}', "serialize returns the expected value");
 
 		oCM.parse('{"conditions":{"fieldPath1":[{"operator":"EQ","values":["foo"]}],"fieldPath2":[{"operator":"BT","values":[1,100]}],"fieldPath3":[{"operator":"GT","values":["2017-04-25T10:30:00.000Z"]}]}}');
@@ -325,12 +324,12 @@ sap.ui.define([
 		oCM.destroy();
 	});
 
-	var oConditionChangeBinding;
-	var oConditionChangeBinding1;
-	var oConditionChangeBinding2;
-	var oConditionChangeBinding3;
-	var oConditionChangeBinding4;
-	var oConditionChange = {};
+	let oConditionChangeBinding;
+	let oConditionChangeBinding1;
+	let oConditionChangeBinding2;
+	let oConditionChangeBinding3;
+	let oConditionChangeBinding4;
+	let oConditionChange = {};
 	function handleChange(oEvent) {
 		if (!oConditionChange[oEvent.oSource._sOriginapPath]) {
 			oConditionChange[oEvent.oSource._sOriginapPath] = {reason: "", count: 0};
@@ -373,10 +372,10 @@ sap.ui.define([
 	});
 
 	QUnit.test("ConditionModel Change event for new condition", function(assert) {
-		var fnDone = assert.async();
+		const fnDone = assert.async();
 		setTimeout(function () {
 			oConditionChange = {};
-			var aConditions = oConditionChangeBinding1.getExternalValue();
+			let aConditions = oConditionChangeBinding1.getExternalValue();
 			aConditions.push(Condition.createItemCondition("X", "Y"));
 			oConditionChangeBinding1.setExternalValue(aConditions);
 			setTimeout(function () {
@@ -412,10 +411,10 @@ sap.ui.define([
 	});
 
 	QUnit.test("ConditionModel Change event for changed condition", function(assert) {
-		var fnDone = assert.async();
+		const fnDone = assert.async();
 		setTimeout(function () {
 			oConditionChange = {};
-			var aConditions = oConditionChangeBinding1.getExternalValue();
+			let aConditions = oConditionChangeBinding1.getExternalValue();
 			aConditions[0].values[0] = "A";
 			oConditionChangeBinding1.setExternalValue(aConditions);
 
@@ -454,7 +453,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("ConditionModel Change event ConditionModel.setConditions (add conditions)", function(assert) {
-		var fnDone = assert.async();
+		const fnDone = assert.async();
 		setTimeout(function () {
 			oConditionChange = {};
 			oConditionModel.oData.conditions = {}; // just initialize
@@ -478,7 +477,7 @@ sap.ui.define([
 				assert.equal(oPropertyChange["/conditions/field/Path2"] && oPropertyChange["/conditions/field/Path2"].reason, ChangeReason.Binding, "PropertyChange event for field/Path2 reason");
 				assert.deepEqual(oPropertyChange["/conditions/field/Path2"] && oPropertyChange["/conditions/field/Path2"].value, oConditionModel.getConditions("field/Path2"), "PropertyChange event for fieldPath2 value");
 
-				var aConditions = oConditionChangeBinding1.getExternalValue();
+				let aConditions = oConditionChangeBinding1.getExternalValue();
 				assert.equal(aConditions.length, 1, "Condititions length for fieldPath1");
 				assert.equal(aConditions[0].operator, "BT", "Conditition operator fieldPath1");
 				assert.deepEqual(aConditions[0].values, ["A", "C"], "Conditition values fieldPath1");
@@ -494,7 +493,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("ConditionModel Change event ConditionModel.setConditions (change conditions)", function(assert) {
-		var fnDone = assert.async();
+		const fnDone = assert.async();
 		setTimeout(function () {
 			oConditionChange = {};
 
@@ -517,7 +516,7 @@ sap.ui.define([
 				assert.equal(oPropertyChange["/conditions/field/Path2"] && oPropertyChange["/conditions/field/Path2"].reason, ChangeReason.Binding, "PropertyChange event for field/Path2 reason");
 				assert.deepEqual(oPropertyChange["/conditions/field/Path2"] && oPropertyChange["/conditions/field/Path2"].value, oConditionModel.getConditions("field/Path2"), "PropertyChange event for fieldPath2 value");
 
-				var aConditions = oConditionChangeBinding1.getExternalValue();
+				let aConditions = oConditionChangeBinding1.getExternalValue();
 				assert.equal(aConditions.length, 1, "Condititions length for fieldPath1");
 				assert.equal(aConditions[0].operator, "BT", "Conditition operator fieldPath1");
 				assert.deepEqual(aConditions[0].values, ["A", "C"], "Conditition values fieldPath1");
@@ -533,7 +532,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("ConditionModel Change event ConditionModel.setConditions (set same conditions)", function(assert) {
-		var fnDone = assert.async();
+		const fnDone = assert.async();
 		setTimeout(function () {
 			oConditionChange = {};
 
@@ -547,7 +546,7 @@ sap.ui.define([
 				assert.notOk(oConditionChange["/conditions/field/Path2"] && oConditionChange["/conditions/field/Path2"].count, "Change event for field/Path2 not fired");
 				assert.equal(iCount, 0, "PropertyChange event not fired");
 
-				var aConditions = oConditionChangeBinding1.getExternalValue();
+				let aConditions = oConditionChangeBinding1.getExternalValue();
 				assert.equal(aConditions.length, 1, "Condititions length for fieldPath1");
 				assert.equal(aConditions[0].operator, "EQ", "Conditition operator fieldPath1");
 				assert.deepEqual(aConditions[0].values, ["key", "description"], "Conditition values fieldPath1");
@@ -563,7 +562,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("ConditionModel Change event ConditionModel.setConditions (change one condition, set same on other path)", function(assert) {
-		var fnDone = assert.async();
+		const fnDone = assert.async();
 		setTimeout(function () {
 			oConditionChange = {};
 
@@ -583,7 +582,7 @@ sap.ui.define([
 				assert.deepEqual(oPropertyChange["/conditions/fieldPath1"] && oPropertyChange["/conditions/fieldPath1"].value, oConditionModel.getConditions("fieldPath1"), "PropertyChange event for fieldPath1 value");
 				assert.notOk(oPropertyChange["/conditions/field/Path2"] && oPropertyChange["/conditions/field/Path2"].count, "PropertyChange event for field/Path2 not fired");
 
-				var aConditions = oConditionChangeBinding1.getExternalValue();
+				let aConditions = oConditionChangeBinding1.getExternalValue();
 				assert.equal(aConditions.length, 1, "Condititions length for fieldPath1");
 				assert.equal(aConditions[0].operator, "BT", "Conditition operator fieldPath1");
 				assert.deepEqual(aConditions[0].values, ["A", "C"], "Conditition values fieldPath1");
@@ -599,7 +598,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("ConditionModel Change event ConditionModel.setConditions (remove conditions)", function(assert) {
-		var fnDone = assert.async();
+		const fnDone = assert.async();
 		setTimeout(function () {
 			oConditionChange = {};
 
@@ -621,7 +620,7 @@ sap.ui.define([
 				assert.equal(oPropertyChange["/conditions/field/Path2"] && oPropertyChange["/conditions/field/Path2"].reason, ChangeReason.Binding, "PropertyChange event for field/Path2 reason");
 				assert.deepEqual(oPropertyChange["/conditions/field/Path2"] && oPropertyChange["/conditions/field/Path2"].value, oConditionModel.getConditions("field/Path2"), "PropertyChange event for fieldPath2 value");
 
-				var aConditions = oConditionChangeBinding1.getExternalValue();
+				let aConditions = oConditionChangeBinding1.getExternalValue();
 				assert.equal(aConditions.length, 0, "Condititions length for fieldPath1");
 
 				aConditions = oConditionChangeBinding3.getExternalValue();
@@ -633,7 +632,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("ConditionModel Change event ConditionModel.insertCondition (2 paths)", function(assert) {
-		var fnDone = assert.async();
+		const fnDone = assert.async();
 		setTimeout(function () {
 			oConditionChange = {};
 
@@ -654,7 +653,7 @@ sap.ui.define([
 				assert.equal(oPropertyChange["/conditions/field/Path2"] && oPropertyChange["/conditions/field/Path2"].reason, ChangeReason.Binding, "PropertyChange event for field/Path2 reason");
 				assert.deepEqual(oPropertyChange["/conditions/field/Path2"] && oPropertyChange["/conditions/field/Path2"].value, oConditionModel.getConditions("field/Path2"), "PropertyChange event for fieldPath2 value");
 
-				var aConditions = oConditionChangeBinding1.getExternalValue();
+				let aConditions = oConditionChangeBinding1.getExternalValue();
 				assert.equal(aConditions.length, 2, "Condititions length for fieldPath1");
 				assert.deepEqual(aConditions[0].values, ["A", "C"], "Conditition values fieldPath1");
 
@@ -668,7 +667,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("ConditionModel Change event ConditionModel.insertCondition (only 1 path)", function(assert) {
-		var fnDone = assert.async();
+		const fnDone = assert.async();
 		setTimeout(function () {
 			oConditionChange = {};
 
@@ -685,7 +684,7 @@ sap.ui.define([
 				assert.deepEqual(oPropertyChange["/conditions/fieldPath1"] && oPropertyChange["/conditions/fieldPath1"].value, oConditionModel.getConditions("fieldPath1"), "PropertyChange event for fieldPath1 value");
 				assert.notOk(oPropertyChange["/conditions/field/Path2"] && oPropertyChange["/conditions/field/Path2"].count, "PropertyChange event for field/Path2 not fired");
 
-				var aConditions = oConditionChangeBinding1.getExternalValue();
+				let aConditions = oConditionChangeBinding1.getExternalValue();
 				assert.equal(aConditions.length, 2, "Condititions length for fieldPath1");
 				assert.deepEqual(aConditions[0].values, ["A", "C"], "Conditition values fieldPath1");
 
@@ -699,7 +698,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("ConditionModel Change event ConditionModel.removeCondition (2 paths)", function(assert) {
-		var fnDone = assert.async();
+		const fnDone = assert.async();
 		setTimeout(function () {
 			oConditionChange = {};
 
@@ -720,7 +719,7 @@ sap.ui.define([
 				assert.equal(oPropertyChange["/conditions/field/Path2"] && oPropertyChange["/conditions/field/Path2"].reason, ChangeReason.Binding, "PropertyChange event for field/Path2 reason");
 				assert.deepEqual(oPropertyChange["/conditions/field/Path2"] && oPropertyChange["/conditions/field/Path2"].value, oConditionModel.getConditions("field/Path2"), "PropertyChange event for fieldPath2 value");
 
-				var aConditions = oConditionChangeBinding1.getExternalValue();
+				let aConditions = oConditionChangeBinding1.getExternalValue();
 				assert.equal(aConditions.length, 0, "Condititions length for fieldPath1");
 
 				aConditions = oConditionChangeBinding3.getExternalValue();
@@ -731,7 +730,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("ConditionModel Change event ConditionModel.removeCondition (only 1 path)", function(assert) {
-		var fnDone = assert.async();
+		const fnDone = assert.async();
 		setTimeout(function () {
 			oConditionChange = {};
 
@@ -748,7 +747,7 @@ sap.ui.define([
 				assert.deepEqual(oPropertyChange["/conditions/fieldPath1"] && oPropertyChange["/conditions/fieldPath1"].value, oConditionModel.getConditions("fieldPath1"), "PropertyChange event for fieldPath1 value");
 				assert.notOk(oPropertyChange["/conditions/field/Path2"] && oPropertyChange["/conditions/field/Path2"].count, "PropertyChange event for field/Path2 not fired");
 
-				var aConditions = oConditionChangeBinding1.getExternalValue();
+				let aConditions = oConditionChangeBinding1.getExternalValue();
 				assert.equal(aConditions.length, 0, "Condititions length for fieldPath1");
 
 				aConditions = oConditionChangeBinding3.getExternalValue();
@@ -761,7 +760,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("ConditionModel Change event ConditionModel.removeAllConditions", function(assert) {
-		var fnDone = assert.async();
+		const fnDone = assert.async();
 		setTimeout(function () {
 			oConditionChange = {};
 
@@ -782,7 +781,7 @@ sap.ui.define([
 				assert.equal(oPropertyChange["/conditions/field/Path2"] && oPropertyChange["/conditions/field/Path2"].reason, ChangeReason.Binding, "PropertyChange event for field/Path2 reason");
 				assert.deepEqual(oPropertyChange["/conditions/field/Path2"] && oPropertyChange["/conditions/field/Path2"].value, oConditionModel.getConditions("field/Path2"), "PropertyChange event for fieldPath2 value");
 
-				var aConditions = oConditionChangeBinding1.getExternalValue();
+				let aConditions = oConditionChangeBinding1.getExternalValue();
 				assert.equal(aConditions.length, 0, "Condititions length for fieldPath1");
 
 				aConditions = oConditionChangeBinding3.getExternalValue();

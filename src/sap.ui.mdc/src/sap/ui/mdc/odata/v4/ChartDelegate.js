@@ -23,7 +23,7 @@ sap.ui.define([
 	 * @public
      *
      */
-    var Delegate = Object.assign({}, ChartDelegate);
+    const Delegate = Object.assign({}, ChartDelegate);
 
     Delegate.getTypeMap = function (oPayload) {
 		return ODataV4TypeMap;

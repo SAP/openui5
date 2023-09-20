@@ -42,7 +42,7 @@ sap.ui.define([
 		}
 	});
 
-	var sTableId = "container-appUnderTestMDCTable---MyView--mdcTable";
+	const sTableId = "container-appUnderTestMDCTable---MyView--mdcTable";
 
 	QUnit.module("MDC Table OpaTests");
 

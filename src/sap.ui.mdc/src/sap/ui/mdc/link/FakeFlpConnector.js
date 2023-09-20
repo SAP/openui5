@@ -53,18 +53,18 @@ sap.ui.define([
 							return oTarget.target.shellHash;
 						},
 						getDistinctSemanticObjects: function() {
-							var aSemanticObjects = [];
-							for ( var sSemanticObject in oSetting) {
+							const aSemanticObjects = [];
+							for ( const sSemanticObject in oSetting) {
 								aSemanticObjects.push(sSemanticObject);
 							}
-							var oDeferred = jQuery.Deferred();
+							const oDeferred = jQuery.Deferred();
 							setTimeout(function() {
 								oDeferred.resolve(aSemanticObjects);
 							}, 0);
 							return oDeferred.promise();
 						},
 						getLinks: function(aParams) {
-							var aLinks = [];
+							let aLinks = [];
 							if (!Array.isArray(aParams)) {
 								oSetting[aParams.semanticObject] ? aLinks = oSetting[aParams.semanticObject].links : aLinks = [];
 							} else {
@@ -76,7 +76,7 @@ sap.ui.define([
 									]);
 								});
 							}
-							var oDeferred = jQuery.Deferred();
+							const oDeferred = jQuery.Deferred();
 							setTimeout(function() {
 								oDeferred.resolve(aLinks);
 							}, 0);
@@ -87,14 +87,14 @@ sap.ui.define([
 					return {
 						parseShellHash: function(sIntent) {
 							// var sAction;
-							var fnFindAction = function(aLinks) {
-								var aLink = aLinks.filter(function(oLink) {
+							const fnFindAction = function(aLinks) {
+								const aLink = aLinks.filter(function(oLink) {
 									return oLink.intent === sIntent;
 								});
 								return aLink[0];
 							};
-							for ( var sSemanticObject in oSetting) {
-								var oLink = fnFindAction(oSetting[sSemanticObject].links);
+							for ( const sSemanticObject in oSetting) {
+								const oLink = fnFindAction(oSetting[sSemanticObject].links);
 								if (oLink) {
 									return {
 										semanticObject: sSemanticObject,

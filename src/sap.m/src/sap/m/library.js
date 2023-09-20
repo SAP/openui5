@@ -180,6 +180,7 @@ sap.ui.define([
 		  "sap.m.VerticalPlacementType",
 		  "sap.m.WrappingType",
 		  "sap.m.WizardRenderMode",
+		  "sap.m.plugins.CopyPreference",
 		  "sap.m.semantic.SemanticRuleSetType",
 		  "sap.m.table.columnmenu.Category",
 		  "sap.m.upload.UploaderHttpRequestMethod"
@@ -4837,6 +4838,30 @@ sap.ui.define([
 		  * @since 1.109
 		  */
 		 SelectAll: "SelectAll"
+	 };
+
+	 thisLib.plugins = thisLib.plugins || {};
+
+	 /**
+	  * Enumeration of the <code>copyPreference</code> in <code>CopyProvider</code>. Determines what is copied during a copy operation.
+	  * @enum {string}
+	  * @public
+	  * @since 1.119
+	  */
+	 thisLib.plugins.CopyPreference = {
+		 /**
+		  * The entire selected scope is copied, including both row and cell selection.
+		  * @public
+		  */
+		 Full: "Full",
+
+		 /**
+		  * If cells are selected, only the content of the selected cells is copied,
+		  * regardless of any other rows or elements that might also be selected. If no cells are selected,
+		  * the copy operation will default to copying the selected rows.
+		  * @public
+		  */
+		 Cells: "Cells"
 	 };
 
 	 //Internal: test the whole page with compact design

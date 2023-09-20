@@ -21,6 +21,7 @@ sap.ui.define([
 	 * @param {string} [sId] ID for the new <code>CellSelector</code>, generated automatically if no id is given
 	 * @param {object} [mSettings] Initial settings for the new <code>CellSelector</code>
 	 *
+	 * @class
 	 * The <code>CellSelector</code> plugin enables cell selection inside the table when it is added as a dependent to the control.
 	 * It allows the user to individually select a cell block.
 	 *
@@ -28,23 +29,28 @@ sap.ui.define([
 	 *
 	 * The <code>CellSelector</code> plugin cannot be used if the following applies:
 	 * <ul>
-	 * 	<li>Drag and drop is active</li>
+	 * 	<li>Drag for rows is active</li>
 	 * 	<li>The target control is not a {@link sap.ui.table.Table}</li>
 	 *	<li>If used in combination with {@link sap.ui.table.Table#cellClick}</li>
 	 *	<li>If used in combination with the following selection behavior: <code>sap.ui.table.SelectionBehavior.RowOnly</code> and <code>sap.ui.table.SelectionBehavior.Row</code>
 	 * </ul>
 	 *
-	 * @extends sap.m.plugins.PluginBase
-	 * @class
+	 * When the <code>CellSelector</code> is used in combination with the {@link sap.ui.mdc.Table}, modifying the following settings on the {@link sap.ui.mdc.Table} may lead to problems:
+	 * <ul>
+	 * 	<li>attaching a {@link sap.ui.mdc.Table#rowPress rowPress} event to the table after initialization of table and plugin</li>
+	 * 	<li>changing {@link sap.ui.mdc.Table#getSelectionMode selectionMode} to something else than <code>Multi</code></li>
+	 * </ul>
+	 *
+	 * @extends sap.ui.core.Element
 	 * @version ${version}
 	 * @author SAP SE
 	 *
-	 * @private
+	 * @public
 	 * @experimental
-	 * @since 1.118
+	 * @since 1.119
 	 * @alias sap.m.plugins.CellSelector
 	 */
-	var CellSelector = PluginBase.extend("sap.m.plugins.CellSelector", {
+	var CellSelector = PluginBase.extend("sap.m.plugins.CellSelector", /** @lends sap.m.plugins.CellSelector.prototype */  {
 		metadata: {
 			library: "sap.m",
 			properties: {
@@ -83,14 +89,7 @@ sap.ui.define([
 	*/
 
 	CellSelector.prototype.isApplicable = function() {
-		if (this.getControl().getDragDropConfig().length > 0
-			|| !this.getControl().isA("sap.ui.table.Table")) {
-			return !this.getControl()
-				.getDragDropConfig()
-				.some((oConfig) => oConfig.getSourceAggregation() == this.getConfig("dataCellAggregation"));
-		}
-
-		return this.getConfig("isApplicable", this.getControl());
+		return PluginBase.prototype.isApplicable.apply(this, arguments) && this.getConfig("isApplicable", this.getControl());
 	};
 
 	CellSelector.prototype.onActivate = function (oControl) {
@@ -124,7 +123,7 @@ sap.ui.define([
 		this._deregisterEvents();
 	};
 
-	CellSelector.prototype.destroy = function() {
+	CellSelector.prototype.exit = function() {
 		if (this.getControl()  && !this.getControl().isDestroyed() && this._oSession) {
 			this.removeSelection();
 		}
@@ -132,7 +131,7 @@ sap.ui.define([
 		this._oSession = null;
 		this._mTimeouts = null;
 
-		return PluginBase.prototype.destroy.call(this);
+		PluginBase.prototype.exit.call(this);
 	};
 
 	CellSelector.prototype.onBeforeRendering = function() {
@@ -294,9 +293,8 @@ sap.ui.define([
 
 		if (isKeyCombination(oEvent, KeyCodes.A, true, true) || isKeyCombination(oEvent, KeyCodes.A, false, false)) {
 			this.removeSelection();
+			oEvent.preventDefault();
 		}
-
-		oEvent.preventDefault();
 	};
 
 	/**
@@ -317,6 +315,8 @@ sap.ui.define([
 				this.getConfig("selectRows", this.getControl(), mBounds.from.rowIndex, mBounds.to.rowIndex, oInfo.rowIndex) && this.removeSelection();
 				oEvent.setMarked();
 			}
+
+			oEvent.preventDefault();
 		} else if (this._bSelecting && isKeyCombination(oEvent, KeyCodes.SPACE, false, true)) {
 			if (!this._inSelection(oEvent.target)) {
 				// If focus is on cell outside of selection, select focused column
@@ -326,9 +326,9 @@ sap.ui.define([
 			mBounds.from.rowIndex = 0;
 			mBounds.to.rowIndex = Infinity;
 			this._selectCells(mBounds.from, mBounds.to);
-		}
 
-		oEvent.preventDefault();
+			oEvent.preventDefault();
+		}
 	};
 
 	// Mouse Navigation
@@ -795,7 +795,8 @@ sap.ui.define([
 			 * @returns {boolean} compatibility with cell selection
 			 */
 			isApplicable: function(oTable) {
-				return !oTable.hasListeners("cellClick") && oTable.getSelectionBehavior() == "RowSelector";
+				return !oTable.hasListeners("cellClick") && oTable.getSelectionBehavior() == "RowSelector"
+					&& !oTable.getDragDropConfig().some((oConfig) => oConfig.getSourceAggregation() == "rows");
 			},
 			/**
 			 * Get visible columns of the table.

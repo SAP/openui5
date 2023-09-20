@@ -19,7 +19,7 @@ sap.ui.define(function() {
 	 * @since 1.115
 	 * @alias sap.ui.mdc.enums.BaseType
 	 */
-	var BaseType = {
+	const BaseType = {
 		/**
 		 * Data type represents a string
 		 * @public

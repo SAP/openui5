@@ -61,13 +61,13 @@ sap.ui.define([
 		) {
 	"use strict";
 
-	var oMessageBundle = oCore.getLibraryResourceBundle("sap.ui.mdc");
-	var oDefineConditionPanel;
-	var oModel;
-	var oDataType;
-	var oConfig;
+	const oMessageBundle = oCore.getLibraryResourceBundle("sap.ui.mdc");
+	let oDefineConditionPanel;
+	let oModel;
+	let oDataType;
+	let oConfig;
 
-	var _init = function(bNoRender, oType) {
+	const _init = function(bNoRender, oType) {
 		if (!oType) {
 			oDataType = new StringType();
 		} else {
@@ -97,7 +97,7 @@ sap.ui.define([
 		}
 	};
 
-	var _teardown = function() {
+	const _teardown = function() {
 		oDefineConditionPanel.destroy();
 		oDataType.destroy();
 		oDataType = undefined;
@@ -121,7 +121,7 @@ sap.ui.define([
 
 	QUnit.test("bind empty condition Model and add one condition", function(assert) {
 
-		var aConditions = oModel.getConditions("Name");
+		let aConditions = oModel.getConditions("Name");
 		assert.equal(aConditions.length, 1, "one empty condition should exist");
 		assert.equal(aConditions[0].operator, "EQ", "Operator of empty condition");
 		assert.equal(aConditions[0].values[0], null, "Value of empty condition");
@@ -155,10 +155,10 @@ sap.ui.define([
 		oDefineConditionPanel.invalidate(); // to invalidate operator texts
 		oCore.applyChanges();
 
-		var fnDone = assert.async();
+		const fnDone = assert.async();
 		setTimeout(function () { // to wait for retemplating
 			setTimeout(function () { // to for internal Conditions update in DefineConditionPanel (is async)
-				var aConditions = oModel.getConditions("Name");
+				const aConditions = oModel.getConditions("Name");
 				assert.equal(aConditions.length, 1, "one empty condition should exist");
 				assert.equal(aConditions[0].operator, "BT", "Operator of empty condition");
 				assert.equal(aConditions[0].values[0], null, "Value of empty condition");
@@ -171,7 +171,7 @@ sap.ui.define([
 
 	QUnit.test("bind filled condition Model", function(assert) {
 
-		var oConfig = merge({}, oDefineConditionPanel.getConfig());
+		const oConfig = merge({}, oDefineConditionPanel.getConfig());
 		oConfig.maxConditions = 4;
 		oDefineConditionPanel.setConfig(oConfig); // to test visibility of add button
 
@@ -196,19 +196,19 @@ sap.ui.define([
 			}
 		});
 
-		var fnDone = assert.async();
+		const fnDone = assert.async();
 
 		setTimeout(function () {
 			oCore.applyChanges();
 			assert.ok(oDefineConditionPanel.updateDefineConditions.calledOnce, "updateDefineConditions called once");
 			assert.equal(oModel.getConditions("Name").length, 3, "3 conditions should exist");
-			var oGrid = oCore.byId("DCP1--conditions");
-			var aContent = oGrid.getContent();
+			const oGrid = oCore.byId("DCP1--conditions");
+			let aContent = oGrid.getContent();
 			assert.equal(aContent.length, 9, "two rows with one field created - Grid contains 9 controls");
 
 
-			var oAddBtn = oCore.byId("DCP1--addBtn");
-			var oGridData = oAddBtn.getLayoutData();
+			const oAddBtn = oCore.byId("DCP1--addBtn");
+			const oGridData = oAddBtn.getLayoutData();
 			assert.ok(oGridData.getVisibleL(), "Add-Button is visible");
 			oAddBtn.firePress();
 			setTimeout(function () { // as condition rendering is triggered async.
@@ -218,7 +218,7 @@ sap.ui.define([
 				assert.equal(aContent.length, 13, "three rows with one field created - Grid contains 13 controls");
 				assert.notOk(oGridData.getVisibleL(), "Add-Button is not visible");
 
-				var oRemoveBtn = oCore.byId("DCP1--2--removeBtnLarge");
+				const oRemoveBtn = oCore.byId("DCP1--2--removeBtnLarge");
 				oRemoveBtn.firePress();
 				setTimeout(function () { // as condition rendering is triggered async.
 					oCore.applyChanges();
@@ -237,7 +237,7 @@ sap.ui.define([
 
 	QUnit.test("show conditions with custom Operator", function(assert) {
 
-		var oOperator = new Operator({
+		let oOperator = new Operator({
 			name: "MyInclude",
 			filterOperator: "EQ",
 			tokenParse: "^=([^=].*)$",
@@ -258,7 +258,7 @@ sap.ui.define([
 		});
 		FilterOperatorUtil.addOperator(oOperator);
 
-		var oConfig = merge({}, oDefineConditionPanel.getConfig());
+		const oConfig = merge({}, oDefineConditionPanel.getConfig());
 		oConfig.maxConditions = 4;
 		oConfig.operators = ["MyInclude", "BT", "MyExclude"];
 		oDefineConditionPanel.setConfig(oConfig); // to test visibility of add button
@@ -273,13 +273,13 @@ sap.ui.define([
 			}
 		});
 
-		var fnDone = assert.async();
+		const fnDone = assert.async();
 
 		setTimeout(function () { // for model update
 			oCore.applyChanges();
 			setTimeout(function () { // for internal Controls update via ManagedObjectModel
-				var oGrid = oCore.byId("DCP1--conditions");
-				var aContent = oGrid.getContent();
+				const oGrid = oCore.byId("DCP1--conditions");
+				const aContent = oGrid.getContent();
 				assert.equal(aContent.length, 9, "two rows with one field created - Grid contains 9 controls");
 
 				delete FilterOperatorUtil._mOperators["MyInclude"]; // TODO API to remove operator
@@ -300,20 +300,20 @@ sap.ui.define([
 			}
 		});
 
-		var fnDone = assert.async();
+		const fnDone = assert.async();
 
 		setTimeout(function () { // for model update
 			oCore.applyChanges();
 			assert.equal(oModel.getConditions("Name").length, 1, "1 conditions should exist");
 
-			var oGrid = oCore.byId("DCP1--conditions");
-			var aContent = oGrid.getContent();
-			var oField = aContent[2];
+			const oGrid = oCore.byId("DCP1--conditions");
+			let aContent = oGrid.getContent();
+			const oField = aContent[2];
 
 			assert.equal(aContent.length, 5, "One row with one field created - Grid contains 5 controls");
 			assert.ok(oField && oField.isA("sap.ui.mdc.Field"), "Field is mdc Field");
 			aContent = oField.getAggregation("_content");
-			var oControl = aContent && aContent.length > 0 && aContent[0];
+			const oControl = aContent && aContent.length > 0 && aContent[0];
 			assert.ok(oControl.isA("sap.ui.mdc.field.FieldInput"), "Field uses Input");
 			assert.equal(oField.getValue(), "Andreas", "Value of Field");
 			assert.equal(oField.getPlaceholder(), oMessageBundle.getText("valuehelp.DEFINECONDITIONS_VALUE"), "Placeholder of Field");
@@ -339,10 +339,10 @@ sap.ui.define([
 			}
 		});
 
-		var fnDone = assert.async();
+		const fnDone = assert.async();
 		setTimeout(function () { // wait for rendering
 			oCore.applyChanges();
-			var oOperatorField = oCore.byId("DCP1--0-operator-inner");
+			const oOperatorField = oCore.byId("DCP1--0-operator-inner");
 			oOperatorField.setValue("BT");
 			oOperatorField.fireChange({value: "BT"}); // fake item select
 
@@ -351,14 +351,14 @@ sap.ui.define([
 					setTimeout(function () { // as model update is async
 						setTimeout(function () { // as row update is async
 							oCore.applyChanges();
-							var aConditions = oDefineConditionPanel.getConditions();
+							const aConditions = oDefineConditionPanel.getConditions();
 							assert.equal(aConditions[0].operator, "BT", "Operator set on condition");
 							assert.deepEqual(aConditions[0].values, ["Andreas", null], "Values set on condition");
 
-							var oGrid = oCore.byId("DCP1--conditions");
-							var aContent = oGrid.getContent();
-							var oField1 = aContent[2];
-							var oField2 = aContent[3];
+							const oGrid = oCore.byId("DCP1--conditions");
+							const aContent = oGrid.getContent();
+							const oField1 = aContent[2];
+							const oField2 = aContent[3];
 
 							assert.equal(aContent.length, 6, "One row with two fields created - Grid contains 6 controls");
 							assert.ok(oField1 && oField1.isA("sap.ui.mdc.Field"), "Field1 is mdc Field");
@@ -386,10 +386,10 @@ sap.ui.define([
 			}
 		});
 
-		var fnDone = assert.async();
+		const fnDone = assert.async();
 		setTimeout(function () { // wait for rendering
 			oCore.applyChanges();
-			var oOperatorField = oCore.byId("DCP1--0-operator-inner");
+			const oOperatorField = oCore.byId("DCP1--0-operator-inner");
 			oOperatorField.setValue("EQ");
 			oOperatorField.fireChange({value: "EQ"}); // fake item select
 
@@ -398,13 +398,13 @@ sap.ui.define([
 					setTimeout(function () { // as model update is async
 						setTimeout(function () { // as row update is async
 							oCore.applyChanges();
-							var aConditions = oDefineConditionPanel.getConditions();
+							const aConditions = oDefineConditionPanel.getConditions();
 							assert.equal(aConditions[0].operator, "EQ", "Operator set on condition");
 							assert.deepEqual(aConditions[0].values, ["A"], "Values set on condition");
 
-							var oGrid = oCore.byId("DCP1--conditions");
-							var aContent = oGrid.getContent();
-							var oField1 = aContent[2];
+							const oGrid = oCore.byId("DCP1--conditions");
+							const aContent = oGrid.getContent();
+							const oField1 = aContent[2];
 
 							assert.equal(aContent.length, 5, "One row with one fields created - Grid contains 5 controls");
 							assert.ok(oField1 && oField1.isA("sap.ui.mdc.Field"), "Field1 is mdc Field");
@@ -430,10 +430,10 @@ sap.ui.define([
 			}
 		});
 
-		var fnDone = assert.async();
+		const fnDone = assert.async();
 		setTimeout(function () { // wait for rendering
 			oCore.applyChanges();
-			var oOperatorField = oCore.byId("DCP1--0-operator-inner");
+			const oOperatorField = oCore.byId("DCP1--0-operator-inner");
 			oOperatorField.setValue("Empty");
 			oOperatorField.fireChange({value: "Empty"}); // fake item select
 
@@ -442,12 +442,12 @@ sap.ui.define([
 					setTimeout(function () { // as model update is async
 						setTimeout(function () { // as row update is async
 							oCore.applyChanges();
-							var aConditions = oDefineConditionPanel.getConditions();
+							const aConditions = oDefineConditionPanel.getConditions();
 							assert.equal(aConditions[0].operator, "Empty", "Operator set on condition");
 							assert.deepEqual(aConditions[0].values, [], "Values set on condition");
 
-							var oGrid = oCore.byId("DCP1--conditions");
-							var aContent = oGrid.getContent();
+							const oGrid = oCore.byId("DCP1--conditions");
+							const aContent = oGrid.getContent();
 
 							assert.equal(aContent.length, 4, "One row with no fields created - Grid contains 4 controls");
 
@@ -470,10 +470,10 @@ sap.ui.define([
 			}
 		});
 
-		var fnDone = assert.async();
+		const fnDone = assert.async();
 		setTimeout(function () { // wait for rendering
 			oCore.applyChanges();
-			var oOperatorField = oCore.byId("DCP1--0-operator-inner");
+			const oOperatorField = oCore.byId("DCP1--0-operator-inner");
 			oOperatorField.setDOMValue("XXX");
 			oOperatorField.setValue("XXX");
 			oOperatorField.fireChange({value: "XXX"}); // fake wrong input
@@ -483,14 +483,14 @@ sap.ui.define([
 					setTimeout(function () { // as model update is async
 						setTimeout(function () { // as row update is async
 							oCore.applyChanges();
-							var aConditions = oDefineConditionPanel.getConditions();
+							let aConditions = oDefineConditionPanel.getConditions();
 							assert.equal(aConditions[0].operator, "BT", "Operator set on condition");
 							assert.deepEqual(aConditions[0].values, ["A", "Z"], "Values set on condition");
 
-							var oGrid = oCore.byId("DCP1--conditions");
-							var aContent = oGrid.getContent();
-							var oField1 = aContent[2];
-							var oField2 = aContent[3];
+							const oGrid = oCore.byId("DCP1--conditions");
+							let aContent = oGrid.getContent();
+							let oField1 = aContent[2];
+							let oField2 = aContent[3];
 
 							assert.equal(aContent.length, 6, "One row with two fields created - Grid contains 6 controls");
 							assert.ok(oField1 && oField1.isA("sap.ui.mdc.Field"), "Field1 is mdc Field");
@@ -545,19 +545,19 @@ sap.ui.define([
 			}
 		});
 
-		var fnDone = assert.async();
+		const fnDone = assert.async();
 
 		setTimeout(function () { // for model update
 			oCore.applyChanges();
 			assert.equal(oModel.getConditions("Name").length, 1, "1 conditions should exist");
 			assert.ok(oDefineConditionPanel.getInputOK(), "InputOK set as default");
 
-			var oGrid = oCore.byId("DCP1--conditions");
-			var aContent = oGrid.getContent();
-			var oOperatorField = aContent[0];
-			var oField1 = aContent[2];
-			var oField2 = aContent[3];
-			var oButton = aContent[4];
+			const oGrid = oCore.byId("DCP1--conditions");
+			const aContent = oGrid.getContent();
+			const oOperatorField = aContent[0];
+			const oField1 = aContent[2];
+			const oField2 = aContent[3];
+			const oButton = aContent[4];
 
 			oField1.focus();
 			setTimeout(function() { // for FieldGroup delay
@@ -628,7 +628,7 @@ sap.ui.define([
 
 	});
 
-	var oCustomOperator;
+	let oCustomOperator;
 
 	QUnit.module("Custom Operator", {
 		beforeEach: function() {
@@ -675,21 +675,21 @@ sap.ui.define([
 		oDefineConditionPanel.setConfig(oConfig);
 		oCore.applyChanges();
 
-		var fnDone = assert.async();
+		const fnDone = assert.async();
 		setTimeout(function () { // to wait for rendering
-			var oGrid = oCore.byId("DCP1--conditions");
-			var aContent = oGrid.getContent();
-			var oField = aContent[2];
+			const oGrid = oCore.byId("DCP1--conditions");
+			const aContent = oGrid.getContent();
+			const oField = aContent[2];
 
 			assert.equal(aContent.length, 5, "One row with one field created - Grid contains 5 controls");
 			assert.ok(oField && oField.isA("sap.m.Button"), "Field is sap.m.Button");
 			assert.equal(oField.getText(), "Test", "Value of FIeld");
 
-			var oOperatorField = aContent[0];
-			var oVH = oCore.byId(oOperatorField.getValueHelp());
-			var oPopover = oVH.getTypeahead();
-			var oFL = oPopover.getContent()[0];
-			var aItems = oFL.getItems();
+			const oOperatorField = aContent[0];
+			const oVH = oCore.byId(oOperatorField.getValueHelp());
+			const oPopover = oVH.getTypeahead();
+			const oFL = oPopover.getContent()[0];
+			const aItems = oFL.getItems();
 
 			assert.equal(aItems.length, 1, "Only one Operator available");
 			assert.equal(aItems[0].getText(), "Longtext", "Text of operator");
@@ -705,22 +705,22 @@ sap.ui.define([
 
 	QUnit.test("switch custom operator", function(assert) {
 
-		var aOriginalOperators = FilterOperatorUtil.getOperatorsForType(BaseType.String);
+		const aOriginalOperators = FilterOperatorUtil.getOperatorsForType(BaseType.String);
 		FilterOperatorUtil.setOperatorsForType(BaseType.String, [FilterOperatorUtil.getOperator("BT"), oCustomOperator], oCustomOperator);
 
 		oCore.applyChanges();
 
-		var fnDone = assert.async();
+		const fnDone = assert.async();
 		setTimeout(function () { // to wait for rendering
-			var oGrid = oCore.byId("DCP1--conditions");
-			var aContent = oGrid.getContent();
-			var oOperatorField = aContent[0]; // operator
-			var oVH = oCore.byId(oOperatorField.getValueHelp());
-			var oPopover = oVH.getTypeahead();
-			var oFL = oPopover.getContent()[0];
-			var aItems = oFL.getItems();
-			var oField = aContent[2];
-			var aConditions = oDefineConditionPanel.getConditions();
+			const oGrid = oCore.byId("DCP1--conditions");
+			let aContent = oGrid.getContent();
+			const oOperatorField = aContent[0]; // operator
+			const oVH = oCore.byId(oOperatorField.getValueHelp());
+			const oPopover = oVH.getTypeahead();
+			const oFL = oPopover.getContent()[0];
+			const aItems = oFL.getItems();
+			let oField = aContent[2];
+			let aConditions = oDefineConditionPanel.getConditions();
 
 			// check for default operator
 			assert.equal(oOperatorField.getValue(), "MyOperator", "Operator value");
@@ -787,7 +787,7 @@ sap.ui.define([
 		afterEach: _teardown
 	});
 
-	var _initType = function(oType, oCondition, sBaseType) {
+	const _initType = function(oType, oCondition, sBaseType) {
 
 		oDataType.destroy();
 		oDataType = oType;
@@ -815,19 +815,19 @@ sap.ui.define([
 
 		_initType(new DateType(), Condition.createCondition("EQ", [new Date(2018, 10, 16)], undefined, undefined, ConditionValidated.NotValidated), BaseType.Date);
 
-		var fnDone = assert.async();
+		const fnDone = assert.async();
 		setTimeout(function () { // to wait for retemplating
 			oCore.applyChanges();
-			var oGrid = oCore.byId("DCP1--conditions");
-			var aContent = oGrid.getContent();
-			var oField = aContent[2];
+			const oGrid = oCore.byId("DCP1--conditions");
+			let aContent = oGrid.getContent();
+			const oField = aContent[2];
 
 			assert.equal(aContent.length, 5, "One row with one field created - Grid contains 5 controls");
 			aContent = oField.getAggregation("_content");
-			var oControl = aContent && aContent.length > 0 && aContent[0];
+			const oControl = aContent && aContent.length > 0 && aContent[0];
 
 			assert.ok(oControl.isA("sap.m.DatePicker"), "Field uses DatePicker");
-			var oType = oField.getBindingInfo("value").type;
+			const oType = oField.getBindingInfo("value").type;
 			assert.ok(oType instanceof DateType, "Type of Field binding");
 			assert.ok(oField.getValue() instanceof Date, "Value of Field is Date");
 			assert.equal(oField.getValue().getFullYear(), 2018, "Year");
@@ -838,23 +838,23 @@ sap.ui.define([
 
 	QUnit.test("use date type - TODAY", function(assert) {
 
-		var oDateType = new DateType();
+		const oDateType = new DateType();
 		_initType(oDateType, Condition.createCondition("TODAY", [], undefined, undefined, ConditionValidated.NotValidated), BaseType.Date);
 
-		var fnDone = assert.async();
+		const fnDone = assert.async();
 		setTimeout(function () { // to wait for retemplating
 			oCore.applyChanges();
-			var oGrid = oCore.byId("DCP1--conditions");
-			var aContent = oGrid.getContent();
-			var oField = aContent[2];
+			const oGrid = oCore.byId("DCP1--conditions");
+			let aContent = oGrid.getContent();
+			const oField = aContent[2];
 
 			assert.equal(aContent.length, 5, "One row with one field created - Grid contains 5 controls");
 			aContent = oField.getAggregation("_content");
-			var oControl = aContent && aContent.length > 0 && aContent[0];
+			const oControl = aContent && aContent.length > 0 && aContent[0];
 
 			assert.equal(oField && oField.getEditMode(), FieldEditMode.Display, "Field is in display mode");
 			assert.ok(oControl.isA("sap.m.Text"), "Field uses Text");
-			var oType = oField.getBindingInfo("value").type;
+			const oType = oField.getBindingInfo("value").type;
 			assert.ok(oType instanceof StringType, "Type of Field binding");
 			assert.equal(typeof oField.getValue(), "string", "Value of Field is String");
 			assert.equal(oField.getValue(), oDateType.formatValue(new Date(), "string"), "Text");
@@ -865,22 +865,22 @@ sap.ui.define([
 
 	QUnit.test("use date type - NEXTDAYS", function(assert) {
 
-		var oDateType = new DateType();
+		const oDateType = new DateType();
 		_initType(oDateType, Condition.createCondition("NEXTDAYS", [5], undefined, undefined, ConditionValidated.NotValidated), BaseType.Date);
 
-		var fnDone = assert.async();
+		const fnDone = assert.async();
 		setTimeout(function () { // to wait for retemplating
 			oCore.applyChanges();
-			var oGrid = oCore.byId("DCP1--conditions");
-			var aContent = oGrid.getContent();
-			var oField = aContent[2];
+			const oGrid = oCore.byId("DCP1--conditions");
+			let aContent = oGrid.getContent();
+			const oField = aContent[2];
 
 			assert.equal(aContent.length, 5, "One row with one field created - Grid contains 5 controls");
 			aContent = oField.getAggregation("_content");
-			var oControl = aContent && aContent.length > 0 && aContent[0];
+			const oControl = aContent && aContent.length > 0 && aContent[0];
 
 			assert.ok(oControl.isA("sap.ui.mdc.field.FieldInput"), "Field uses Input");
-			var oType = oField.getBindingInfo("value").type;
+			const oType = oField.getBindingInfo("value").type;
 			assert.ok(oType instanceof IntegerType, "Type of Field binding");
 			assert.equal(typeof oField.getValue(), "number", "Value of Field is Number");
 			assert.equal(oField.getValue(), 5, "Value");
@@ -891,28 +891,28 @@ sap.ui.define([
 
 	QUnit.test("use date type - Change Operator", function(assert) {
 
-		var oDateType = new DateType();
+		const oDateType = new DateType();
 		_initType(new DateType(), Condition.createCondition("EQ", [new Date(2020, 1, 24)], undefined, undefined, ConditionValidated.NotValidated), BaseType.Date);
 
-		var fnDone = assert.async();
+		const fnDone = assert.async();
 		setTimeout(function () { // to wait for retemplating
 			oCore.applyChanges();
-			var oGrid = oCore.byId("DCP1--conditions");
-			var aContent = oGrid.getContent();
-			var oOperatorField = aContent[0];
+			const oGrid = oCore.byId("DCP1--conditions");
+			let aContent = oGrid.getContent();
+			const oOperatorField = aContent[0];
 			oOperatorField.setValue("TODAY");
 			oOperatorField.fireChange({value: "TODAY", valid: true, promise: Promise.resolve("TODAY")}); // fake item select
 
 			setTimeout(function () { // as model update is async
 				oCore.applyChanges();
 				aContent = oGrid.getContent();
-				var oField = aContent[2];
+				let oField = aContent[2];
 				assert.equal(aContent.length, 5, "One row with one field created - Grid contains 5 controls");
 				aContent = oField && oField.getAggregation("_content");
-				var oControl = aContent && aContent.length > 0 && aContent[0];
+				let oControl = aContent && aContent.length > 0 && aContent[0];
 
 				assert.ok(oControl.isA("sap.m.Text"), "Field uses Text");
-				var oType = oField.getBindingInfo("value").type;
+				let oType = oField.getBindingInfo("value").type;
 				assert.ok(oType instanceof StringType, "Type of Field binding");
 				assert.equal(typeof oField.getValue(), "string", "Value of Field is String");
 				assert.equal(oField.getValue(), oDateType.formatValue(new Date(), "string"), "Text");
@@ -1027,31 +1027,31 @@ sap.ui.define([
 
 	QUnit.test("use date type - change to dateTimetype", function(assert) {
 
-		var oDateType = new DateType();
-		var oCondition = Condition.createCondition("EQ", [new Date(Date.UTC(2022, 8, 14, 10, 27, 30))], undefined, undefined, ConditionValidated.NotValidated);
+		const oDateType = new DateType();
+		const oCondition = Condition.createCondition("EQ", [new Date(Date.UTC(2022, 8, 14, 10, 27, 30))], undefined, undefined, ConditionValidated.NotValidated);
 		oCondition.isEmpty = false; // to really have the same data
 		_initType(oDateType, oCondition, BaseType.Date);
 
-		var fnDone = assert.async();
+		const fnDone = assert.async();
 		setTimeout(function () { // to wait for retemplating
 			oCore.applyChanges();
 
-			var oDateTimeType = new DateTimeType();
+			const oDateTimeType = new DateTimeType();
 			_initType(oDateTimeType, oCondition, BaseType.DateTime);
 
 			setTimeout(function () { // to wait for retemplating
 				oCore.applyChanges();
-				var oGrid = oCore.byId("DCP1--conditions");
-				var aContent = oGrid.getContent();
-				var oField = aContent[2];
+				const oGrid = oCore.byId("DCP1--conditions");
+				let aContent = oGrid.getContent();
+				const oField = aContent[2];
 
 				assert.equal(aContent.length, 5, "One row with one field created - Grid contains 5 controls");
 				aContent = oField.getAggregation("_content");
-				var oControl = aContent && aContent.length > 0 && aContent[0];
+				const oControl = aContent && aContent.length > 0 && aContent[0];
 
 				assert.equal(oField && oField.getEditMode(), FieldEditMode.Editable, "Field is in edit mode");
 				assert.ok(oControl.isA("sap.m.DateTimePicker"), "Field uses DateTimePicker");
-				var oType = oField.getBindingInfo("value").type;
+				const oType = oField.getBindingInfo("value").type;
 				assert.ok(oType instanceof DateTimeType, "Type of Field binding");
 				assert.ok(oField.getValue() instanceof Date, "Value of Field is Date");
 				assert.equal(oField.getValue().getFullYear(), 2022, "Year");
@@ -1065,19 +1065,19 @@ sap.ui.define([
 
 		_initType(new BooleanType(), Condition.createCondition("EQ", [true], undefined, undefined, ConditionValidated.NotValidated), BaseType.Boolean);
 
-		var fnDone = assert.async();
+		const fnDone = assert.async();
 		setTimeout(function () { // to wait for condition update
 			oCore.applyChanges();
 			setTimeout(function () { // to wait for renderng
-				var oGrid = oCore.byId("DCP1--conditions");
-				var aContent = oGrid.getContent();
-				var oField = aContent[2];
+				const oGrid = oCore.byId("DCP1--conditions");
+				let aContent = oGrid.getContent();
+				const oField = aContent[2];
 				assert.equal(aContent.length, 5, "One row with one field created - Grid contains 5 controls");
 				aContent = oField.getAggregation("_content");
-				var oControl = aContent && aContent.length > 0 && aContent[0];
+				const oControl = aContent && aContent.length > 0 && aContent[0];
 
 				assert.ok(oControl.isA("sap.ui.mdc.field.FieldInput"), "Field uses Input");
-				var oType = oField.getBindingInfo("value").type;
+				const oType = oField.getBindingInfo("value").type;
 				assert.ok(oType.isA("sap.ui.model.odata.type.Boolean"), "Type of Field binding");
 				assert.notOk(oType.oContraints && oType.oContraints.nullabale, "Type of Field has not nullable set to false");
 				assert.equal(typeof oField.getValue(), "boolean", "Value of Field is Boolean");
@@ -1092,17 +1092,17 @@ sap.ui.define([
 
 		_initType(new IntegerType(), Condition.createCondition("EQ", [1], undefined, undefined, ConditionValidated.NotValidated), BaseType.Numeric);
 
-		var fnDone = assert.async();
+		const fnDone = assert.async();
 		setTimeout(function () { // to wait for retemplating
-			var oGrid = oCore.byId("DCP1--conditions");
-			var aContent = oGrid.getContent();
-			var oField = aContent[2];
+			const oGrid = oCore.byId("DCP1--conditions");
+			let aContent = oGrid.getContent();
+			const oField = aContent[2];
 			assert.equal(aContent.length, 5, "One row with one field created - Grid contains 5 controls");
 			aContent = oField.getAggregation("_content");
-			var oControl = aContent && aContent.length > 0 && aContent[0];
+			const oControl = aContent && aContent.length > 0 && aContent[0];
 
 			assert.ok(oControl.isA("sap.ui.mdc.field.FieldInput"), "Field uses Input");
-			var oType = oField.getBindingInfo("value").type;
+			const oType = oField.getBindingInfo("value").type;
 			assert.ok(oType.isA("sap.ui.model.type.Integer"), "Type of Field binding");
 			assert.equal(typeof oField.getValue(), "number", "Value of Field is Number");
 			assert.equal(oField.getValue(), 1, "Value");
@@ -1115,23 +1115,23 @@ sap.ui.define([
 
 		_initType(new IntegerType(), Condition.createCondition("EQ", [1], undefined, undefined, ConditionValidated.NotValidated), BaseType.Numeric);
 
-		var fnDone = assert.async();
+		const fnDone = assert.async();
 		setTimeout(function () { // to wait for retemplating
-			var oGrid = oCore.byId("DCP1--conditions");
+			const oGrid = oCore.byId("DCP1--conditions");
 			// sap.ui.getCore().getMessageManager().registerObject(oGrid, true); // to activate message manager
 
-			var aContent = oGrid.getContent();
-			var oField = aContent[2];
+			let aContent = oGrid.getContent();
+			const oField = aContent[2];
 			assert.equal(aContent.length, 5, "One row with one field created - Grid contains 5 controls");
 			aContent = oField.getAggregation("_content");
-			var oControl = aContent && aContent.length > 0 && aContent[0];
+			const oControl = aContent && aContent.length > 0 && aContent[0];
 
 			oControl.setValue("foo");
 			oControl.fireChange({value: "foo"}); //fake invalide input
 			setTimeout(function () { // as model update is async
 				assert.equal( oControl.getValueState(), "Error", "Error shown on the value field");
 
-				var oRemoveBtn = oCore.byId("DCP1--0--removeBtnLarge");
+				const oRemoveBtn = oCore.byId("DCP1--0--removeBtnLarge");
 				oRemoveBtn.firePress();
 				setTimeout(function () { // as condition rendering is triggered async.
 					oCore.applyChanges();
@@ -1150,17 +1150,17 @@ sap.ui.define([
 
 		_initType(new FloatType(), Condition.createCondition("EQ", [1.1], undefined, undefined, ConditionValidated.NotValidated), BaseType.Numeric);
 
-		var fnDone = assert.async();
+		const fnDone = assert.async();
 		setTimeout(function () { // to wait for retemplating
-			var oGrid = oCore.byId("DCP1--conditions");
-			var aContent = oGrid.getContent();
-			var oField = aContent[2];
+			const oGrid = oCore.byId("DCP1--conditions");
+			let aContent = oGrid.getContent();
+			const oField = aContent[2];
 			assert.equal(aContent.length, 5, "One row with one field created - Grid contains 5 controls");
 			aContent = oField.getAggregation("_content");
-			var oControl = aContent && aContent.length > 0 && aContent[0];
+			const oControl = aContent && aContent.length > 0 && aContent[0];
 
 			assert.ok(oControl.isA("sap.ui.mdc.field.FieldInput"), "Field uses Input");
-			var oType = oField.getBindingInfo("value").type;
+			const oType = oField.getBindingInfo("value").type;
 			assert.ok(oType.isA("sap.ui.model.type.Float"), "Type of Field binding");
 			assert.equal(typeof oField.getValue(), "number", "Value of Field is Number");
 			assert.equal(oField.getValue(), 1.1, "Value");
@@ -1189,17 +1189,17 @@ sap.ui.define([
 		oDefineConditionPanel.setConfig(oConfig);
 		oCore.applyChanges();
 
-		var fnDone = assert.async();
+		const fnDone = assert.async();
 		setTimeout(function () { // to wait for retemplating
-			var oGrid = oCore.byId("DCP1--conditions");
-			var aContent = oGrid.getContent();
-			var oField = aContent[2];
+			const oGrid = oCore.byId("DCP1--conditions");
+			let aContent = oGrid.getContent();
+			const oField = aContent[2];
 			assert.equal(aContent.length, 5, "One row with one field created - Grid contains 5 controls");
 			aContent = oField.getAggregation("_content");
-			var oControl = aContent && aContent.length > 0 && aContent[0];
+			const oControl = aContent && aContent.length > 0 && aContent[0];
 
 			assert.ok(oControl.isA("sap.ui.mdc.field.FieldInput"), "Field uses Input");
-			var oType = oField.getBindingInfo("value").type;
+			const oType = oField.getBindingInfo("value").type;
 			assert.ok(oType.isA("sap.ui.model.type.String"), "Type of Field binding");
 			assert.equal(typeof oField.getValue(), "string", "Value of Field is string");
 			assert.equal(oField.getValue(), "x", "Value");
@@ -1217,24 +1217,24 @@ sap.ui.define([
 
 	QUnit.test("paste multiple values", function(assert) {
 
-		var oConfig = merge({}, oDefineConditionPanel.getConfig());
+		const oConfig = merge({}, oDefineConditionPanel.getConfig());
 		oConfig.maxConditions = 3;
 		oDefineConditionPanel.setConfig(oConfig); // to test with maxConditions
 
-		var fnDone = assert.async();
+		const fnDone = assert.async();
 		setTimeout(function () { // as model update is async
 			oCore.applyChanges();
-			var oGrid = oCore.byId("DCP1--conditions");
-			var aContent = oGrid.getContent();
-			var oField = aContent[2];
+			const oGrid = oCore.byId("DCP1--conditions");
+			let aContent = oGrid.getContent();
+			const oField = aContent[2];
 			assert.equal(aContent.length, 5, "Dummy line created");
 
 			aContent = oField.getAggregation("_content");
-			var oControl = aContent && aContent.length > 0 && aContent[0];
+			const oControl = aContent && aContent.length > 0 && aContent[0];
 
-			var sPastedValues = "AA\nBB\nC	D\nEE";
+			const sPastedValues = "AA\nBB\nC	D\nEE";
 
-			var oFakeClipboardData = {
+			const oFakeClipboardData = {
 					getData: function() {
 						return sPastedValues;
 					}
@@ -1246,7 +1246,7 @@ sap.ui.define([
 
 			qutils.triggerEvent("paste", oControl.getFocusDomRef(), {clipboardData: oFakeClipboardData});
 			setTimeout(function () { // as past handling is async
-				var aConditions = oModel.getConditions("Name");
+				const aConditions = oModel.getConditions("Name");
 				assert.equal(aConditions.length, 3, "3 Conditions exist");
 				assert.equal(aConditions[0].values[0], "BB", "1. Condition");
 				assert.equal(aConditions[1].values[0], "C", "2. Condition BT");
@@ -1268,24 +1268,24 @@ sap.ui.define([
 
 	QUnit.test("paste multiple values with operators and invalid values", function(assert) {
 
-		var oConfig = merge({}, oDefineConditionPanel.getConfig());
+		const oConfig = merge({}, oDefineConditionPanel.getConfig());
 		oConfig.maxConditions = -1;
 		oDefineConditionPanel.setConfig(oConfig); // to test with maxConditions
 
-		var fnDone = assert.async();
+		const fnDone = assert.async();
 		setTimeout(function () { // as model update is async
 			oCore.applyChanges();
-			var oGrid = oCore.byId("DCP1--conditions");
-			var aContent = oGrid.getContent();
-			var oField = aContent[2];
+			const oGrid = oCore.byId("DCP1--conditions");
+			let aContent = oGrid.getContent();
+			const oField = aContent[2];
 			assert.equal(aContent.length, 5, "Dummy line created");
 
 			aContent = oField.getAggregation("_content");
-			var oControl = aContent && aContent.length > 0 && aContent[0];
+			const oControl = aContent && aContent.length > 0 && aContent[0];
 
-			var sPastedValues = "1\n2\n1	10\n4...8\n<10\n=12";
+			const sPastedValues = "1\n2\n1	10\n4...8\n<10\n=12";
 
-			var oFakeClipboardData = {
+			const oFakeClipboardData = {
 					getData: function() {
 						return sPastedValues;
 					}
@@ -1297,7 +1297,7 @@ sap.ui.define([
 
 			qutils.triggerEvent("paste", oControl.getFocusDomRef(), {clipboardData: oFakeClipboardData});
 			setTimeout(function () { // as paste handling is async
-				var aConditions = oModel.getConditions("Name");
+				const aConditions = oModel.getConditions("Name");
 				assert.equal(aConditions.length, 1, "1 Condition exist"); // just dummy condition
 				assert.ok(oField.isInvalidInput(), "Field has error state"); // don't test valueState as this is set async by binding
 
@@ -1330,10 +1330,10 @@ sap.ui.define([
 		oDefineConditionPanel.setValueHelp("MyTestValueHelp");
 		assert.equal(oDefineConditionPanel.getValueHelp(), "MyTestValueHelp", "valueHelp is set");
 
-		var fnDone = assert.async();
+		const fnDone = assert.async();
 		setTimeout(function () { // wait for rendering
 			oCore.applyChanges();
-			var oOperatorField = oCore.byId("DCP1--0-operator-inner");
+			const oOperatorField = oCore.byId("DCP1--0-operator-inner");
 			oOperatorField.setValue("EQ");
 			oOperatorField.fireChange({value: "EQ"}); // fake item select
 
@@ -1343,9 +1343,9 @@ sap.ui.define([
 						setTimeout(function () { // as row update is async
 							oCore.applyChanges();
 
-							var oField1 = oCore.byId("DCP1--0-values0");
-							var oField2 = oCore.byId("DCP1--1-values0");
-							var oField3 = oCore.byId("DCP1--2-values0");
+							const oField1 = oCore.byId("DCP1--0-values0");
+							const oField2 = oCore.byId("DCP1--1-values0");
+							const oField3 = oCore.byId("DCP1--2-values0");
 							assert.equal(oField1.getValueHelp(), "MyTestValueHelp", "valueHelp on field is set");
 							assert.equal(oField2.getValueHelp(), "MyTestValueHelp", "valueHelp on field is set");
 							assert.equal(oField3.getValueHelp(), "MyTestValueHelp", "valueHelp on field is set");

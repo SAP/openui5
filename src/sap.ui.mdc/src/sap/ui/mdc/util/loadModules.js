@@ -60,7 +60,7 @@ sap.ui.define([
 		assert(typeof vModulePaths === "string" || Array.isArray(vModulePaths), "vModulePaths" +
 		" param either must be a single string or an array of strings. - sap.ui.mdc.util.loadModules");
 
-		var aModulesPaths;
+		let aModulesPaths;
 
 		if (typeof vModulePaths === "string") {
 			aModulesPaths = [ vModulePaths ];
@@ -68,33 +68,33 @@ sap.ui.define([
 			aModulesPaths = vModulePaths;
 		}
 
-		var oModulesMap = new Map();
+		const oModulesMap = new Map();
 
 		aModulesPaths.forEach(function(sModulePath) {
-			var vModule = sap.ui.require(sModulePath);
+			const vModule = sap.ui.require(sModulePath);
 			oModulesMap.set(sModulePath, vModule);
 		});
 
-		var aNotLoadedModulePaths = aModulesPaths.filter(function(sModulePath) {
+		const aNotLoadedModulePaths = aModulesPaths.filter(function(sModulePath) {
 			return oModulesMap.get(sModulePath) === undefined;
 		});
 
 		// all required modules are already loaded
 		if (aNotLoadedModulePaths.length === 0) {
-			var aModules = Array.from(oModulesMap.values());
+			const aModules = Array.from(oModulesMap.values());
 			return SyncPromise.resolve(aModules);
 		}
 
 		return new SyncPromise(function(resolve, reject) {
 
 			function onModulesLoadedSuccess() {
-				var aNewLoadedModules = Array.from(arguments);
+				const aNewLoadedModules = Array.from(arguments);
 
 				aNotLoadedModulePaths.forEach(function(sModulePath, iIndex) {
 					oModulesMap.set(sModulePath, aNewLoadedModules[iIndex]);
 				});
 
-				var aModules = Array.from(oModulesMap.values());
+				const aModules = Array.from(oModulesMap.values());
 				resolve(aModules);
 			}
 

@@ -16,7 +16,7 @@ sap.ui.define(['sap/ui/base/DataType'], function(DataType) {
 	 * @since 1.61.0
 	 * @alias sap.ui.mdc.util.IdentifierUtil
 	 */
-	var IdentifierUtil = {
+	const IdentifierUtil = {
 
 		/**
 		 * Static function that replaces special characters with a underscore.<br>
@@ -27,7 +27,7 @@ sap.ui.define(['sap/ui/base/DataType'], function(DataType) {
 		 */
 		replace: function(sName) {
 
-			var t = DataType.getType("sap.ui.core.ID");
+			const t = DataType.getType("sap.ui.core.ID");
 			if (!t.isValid(sName)) {
 				sName = sName.replace(/[^A-Za-z0-9_.:]+/g, "__mdc__");
 				if (!t.isValid(sName)) {
@@ -72,9 +72,9 @@ sap.ui.define(['sap/ui/base/DataType'], function(DataType) {
 		 * @protected
 		 */
 		getView :  function(oControl) {
-			var oView = null;
+			let oView = null;
 			if (oControl) {
-				var oObj = oControl.getParent();
+				let oObj = oControl.getParent();
 				while (oObj) {
 					if (oObj.isA("sap.ui.core.mvc.View")) {
 						oView = oObj;

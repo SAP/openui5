@@ -13,7 +13,7 @@ sap.ui.define(function() {
 	 * @since 1.115
 	 * @alias sap.ui.mdc.enums.OperatorValueType
 	 */
-	var OperatorValueType = {
+	const OperatorValueType = {
 		/**
 		 * The <code>Type</code> of the <code>Field</code> or <code>FilterField</code> using the <code>Operator</code> is used.
 		 *

@@ -10,8 +10,8 @@ sap.ui.define([
 ], function (P13nBuilder, BaseController, SelectionPanel, MessageBox) {
     "use strict";
 
-    var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
-    var LinkPanelController = BaseController.extend("sap.ui.mdc.p13n.subcontroller.LinkPanelController", {
+    const oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
+    const LinkPanelController = BaseController.extend("sap.ui.mdc.p13n.subcontroller.LinkPanelController", {
         constructor: function() {
 			BaseController.apply(this, arguments);
 			this._bResetEnabled = true;
@@ -34,7 +34,7 @@ sap.ui.define([
     };
 
     LinkPanelController.prototype.initAdaptationUI = function(oPropertyHelper) {
-        var oSelectionPanel = new SelectionPanel({
+        const oSelectionPanel = new SelectionPanel({
             title: oResourceBundle.getText("info.SELECTION_DIALOG_ALIGNEDTITLE"),
             showHeader: true,
             fieldColumn: oResourceBundle.getText("info.SELECTION_DIALOG_COLUMNHEADER_WITHOUT_COUNT"),
@@ -42,17 +42,17 @@ sap.ui.define([
             enableReorder: false,
             linkPressed: this._onLinkPressed.bind(this)
         });
-        var oAdaptationData = this.mixInfoAndState(oPropertyHelper);
+        const oAdaptationData = this.mixInfoAndState(oPropertyHelper);
         oSelectionPanel.setP13nData(oAdaptationData.items);
         this._oPanel = oSelectionPanel;
         return Promise.resolve(oSelectionPanel);
     };
 
     LinkPanelController.prototype._onLinkPressed = function(oEvent) {
-        var oSource = oEvent.getParameter("oSource");
-        var oPanel = this.getAdaptationControl();
-        var bUseInternalHref = !!(oSource && oSource.getCustomData() && oSource.getCustomData()[0].getValue());
-        var sHref = bUseInternalHref ? oSource.getCustomData()[0].getValue() : oSource.getHref();
+        const oSource = oEvent.getParameter("oSource");
+        const oPanel = this.getAdaptationControl();
+        const bUseInternalHref = !!(oSource && oSource.getCustomData() && oSource.getCustomData()[0].getValue());
+        const sHref = bUseInternalHref ? oSource.getCustomData()[0].getValue() : oSource.getHref();
 
         if (oPanel.getBeforeNavigationCallback) {
             oPanel.getBeforeNavigationCallback()(oEvent).then(function (bNavigate) {
@@ -78,11 +78,11 @@ sap.ui.define([
     };
 
     LinkPanelController.prototype._createAddRemoveChange = function(oControl, vOperations, oContent) {
-        var sLinkItemId = oContent.name;
+        const sLinkItemId = oContent.name;
 
-        var oLinkItem = sap.ui.getCore().byId(sLinkItemId);
+        const oLinkItem = sap.ui.getCore().byId(sLinkItemId);
 
-        var oAddRemoveChange;
+        let oAddRemoveChange;
 
         if (!oLinkItem) {
             oAddRemoveChange = {
@@ -109,12 +109,12 @@ sap.ui.define([
 
     LinkPanelController.prototype.mixInfoAndState = function(oPropertyHelper) {
 
-        var aItemState = this.getCurrentState();
-        var mExistingLinkItems = P13nBuilder.arrayToMap(aItemState);
+        const aItemState = this.getCurrentState();
+        const mExistingLinkItems = P13nBuilder.arrayToMap(aItemState);
 
-        var oP13nData = this.prepareAdaptationData(oPropertyHelper, function(mItem, oProperty){
+        const oP13nData = this.prepareAdaptationData(oPropertyHelper, function(mItem, oProperty){
 
-            var oExistingLinkItem = mExistingLinkItems[oProperty.name];
+            const oExistingLinkItem = mExistingLinkItems[oProperty.name];
             mItem.visible = oExistingLinkItem ? true : false;
             mItem.position = oExistingLinkItem ? oExistingLinkItem.position : -1;
             mItem.href = oProperty.href;

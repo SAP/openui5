@@ -4,7 +4,7 @@ sap.ui.define([
 ], function(createAppEnvironment, SortFlex, ChangesWriteAPI, JsControlTreeModifier, oCore) {
 	"use strict";
 
-	var fCreateAddSortDefinition = function(){
+	const fCreateAddSortDefinition = function(){
 		return {
 			"changeType": "addSort",
 			"selector": {
@@ -18,7 +18,7 @@ sap.ui.define([
 		};
 	};
 
-	var fCreateRemoveSortDefintion = function(){
+	const fCreateRemoveSortDefintion = function(){
 		return {
 			"changeType": "removeSort",
 			"selector": {
@@ -35,7 +35,7 @@ sap.ui.define([
 	QUnit.module("change handlers", {
 		beforeEach: function() {
 
-			var sTableView = '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m" xmlns="sap.ui.mdc" xmlns:mdcTable="sap.ui.mdc.table"><Table id="myTable"></Table></mvc:View>';
+			const sTableView = '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m" xmlns="sap.ui.mdc" xmlns:mdcTable="sap.ui.mdc.table"><Table id="myTable"></Table></mvc:View>';
 
 			return createAppEnvironment(sTableView, "Table").then(function(mCreatedApp){
 				this.oView = mCreatedApp.view;
@@ -60,8 +60,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("addSort", function(assert) {
-		var done = assert.async();
-		var oContent = fCreateAddSortDefinition();
+		const done = assert.async();
+		const oContent = fCreateAddSortDefinition();
 
 		return ChangesWriteAPI.create({
 			changeSpecificData: oContent,
@@ -74,8 +74,8 @@ sap.ui.define([
 				view: this.oView
 			}).then(function(){
 
-				var oSortConditions = this.oTable.getSortConditions();
-				var aSorters = oSortConditions.sorters;
+				const oSortConditions = this.oTable.getSortConditions();
+				const aSorters = oSortConditions.sorters;
 
 				assert.equal(aSorters.length, 1, "one sorter has been created");
 				assert.equal(aSorters[0].name, "Category", "correct sorter has been created");
@@ -87,8 +87,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("removeSort", function(assert) {
-		var done = assert.async();
-		var oAddContent = fCreateAddSortDefinition();
+		const done = assert.async();
+		const oAddContent = fCreateAddSortDefinition();
 
 		//create addSort
 		return ChangesWriteAPI.create({
@@ -102,15 +102,15 @@ sap.ui.define([
 				view: this.oView
 			}).then(function(){
 
-				var oSortConditions = this.oTable.getSortConditions();
-				var aSorters = oSortConditions.sorters;
+				let oSortConditions = this.oTable.getSortConditions();
+				const aSorters = oSortConditions.sorters;
 
 				assert.equal(aSorters.length, 1, "one sorter has been created");
 				assert.equal(aSorters[0].name, "Category", "correct sorter has been created");
 				assert.equal(aSorters[0].descending, false, "correct sort order has been created");
 
 				//create removeSort
-				var oRemoveContent = fCreateRemoveSortDefintion();
+				const oRemoveContent = fCreateRemoveSortDefintion();
 				return ChangesWriteAPI.create({
 					changeSpecificData: oRemoveContent,
 					selector: this.oTable
@@ -134,8 +134,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("removeSort (for a sorter that does not exist) with a different existing sorter", function(assert) {
-		var done = assert.async();
-		var oAddContent = fCreateAddSortDefinition();
+		const done = assert.async();
+		const oAddContent = fCreateAddSortDefinition();
 
 		//create addSort
 		return ChangesWriteAPI.create({
@@ -149,15 +149,15 @@ sap.ui.define([
 				view: this.oView
 			}).then(function(){
 
-				var oSortConditions = this.oTable.getSortConditions();
-				var aSorters = oSortConditions.sorters;
+				let oSortConditions = this.oTable.getSortConditions();
+				const aSorters = oSortConditions.sorters;
 
 				assert.equal(aSorters.length, 1, "one sorter has been created");
 				assert.equal(aSorters[0].name, "Category", "correct sorter has been created");
 				assert.equal(aSorters[0].descending, false, "correct sort order has been created");
 
 				//create removeSort
-				var oRemoveContent = {
+				const oRemoveContent = {
 					changeType: "removeSort",
 					selector: {
 						id: "comp---view--myTable"
@@ -190,7 +190,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("apply and revert 'removeSort' with exisiting sortConditions", function(assert) {
-		var done = assert.async();
+		const done = assert.async();
 
 		this.oTable.setSortConditions({
 			sorters: [
@@ -201,10 +201,10 @@ sap.ui.define([
 			]
 		});
 
-		var oInitialSortConditions = this.oTable.getSortConditions();
+		const oInitialSortConditions = this.oTable.getSortConditions();
 
 		//create removeSort
-		var oRemoveContent = fCreateRemoveSortDefintion();
+		const oRemoveContent = fCreateRemoveSortDefintion();
 		return ChangesWriteAPI.create({
 			changeSpecificData: oRemoveContent,
 			selector: this.oTable
@@ -218,7 +218,7 @@ sap.ui.define([
 			}).then(function(){
 
 				//existing sort condition removed
-				var oSortConditions = this.oTable.getSortConditions();
+				const oSortConditions = this.oTable.getSortConditions();
 				assert.equal(oSortConditions.sorters.length, 0, "no sorters - sort has been removed");
 
 				//revert 'removeSort'
@@ -229,7 +229,7 @@ sap.ui.define([
 				}).then(function(){
 
 					//sortConditions should be similar to the initial state
-					var oCurrentSortConditions = this.oTable.getSortConditions();
+					const oCurrentSortConditions = this.oTable.getSortConditions();
 					assert.deepEqual(oCurrentSortConditions, oInitialSortConditions, "sorter has been reverted and is available again");
 
 				}.bind(this));
@@ -240,10 +240,10 @@ sap.ui.define([
 	});
 
 	QUnit.test("apply and revert 'addSort'", function(assert) {
-		var done = assert.async();
+		const done = assert.async();
 
 		//create removeSort
-		var oRemoveContent = fCreateAddSortDefinition();
+		const oRemoveContent = fCreateAddSortDefinition();
 		return ChangesWriteAPI.create({
 			changeSpecificData: oRemoveContent,
 			selector: this.oTable
@@ -257,7 +257,7 @@ sap.ui.define([
 			}).then(function(){
 
 				//existing sort condition removed
-				var oSortConditions = this.oTable.getSortConditions();
+				const oSortConditions = this.oTable.getSortConditions();
 				assert.equal(oSortConditions.sorters.length, 1, "sorter added");
 
 				//revert 'removeSort'
@@ -268,7 +268,7 @@ sap.ui.define([
 				}).then(function(){
 
 					//'addSort' reverted --> no sorters
-					var oSortConditions = this.oTable.getSortConditions();
+					const oSortConditions = this.oTable.getSortConditions();
 					assert.equal(oSortConditions.sorters.length, 0, "no sorter available - addSort successfully reverted");
 
 				}.bind(this));

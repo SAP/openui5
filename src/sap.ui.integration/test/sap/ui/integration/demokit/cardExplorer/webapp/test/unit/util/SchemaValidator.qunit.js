@@ -85,8 +85,23 @@ sap.ui.define([
 		this.fakeJSVClass.prototype.validate = fnValidateError;
 
 		SchemaValidator.validate({})
-			.catch(function () {
+			.catch(function (oError) {
 				assert.ok(true, "When 'validate' returns errors, should reject promise");
+				assert.deepEqual(oError, [ "error" ], "Error should contain manifest validation errors");
+				done();
+			});
+	});
+
+	QUnit.test("Validation error caused by incorrect schema", function (assert) {
+		var done = assert.async();
+
+		this.fakeJSVClass.prototype.validate = () => {
+			throw "Incorrect schema";
+		};
+
+		SchemaValidator.validate({})
+			.catch(function (sMessage) {
+				assert.strictEqual(sMessage, "Could not execute validation!", "Error should be handled correctly");
 				done();
 			});
 	});

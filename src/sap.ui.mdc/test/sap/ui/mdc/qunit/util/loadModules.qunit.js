@@ -14,22 +14,22 @@
 	QUnit.test("it should load the given modules in order (initial loading)", function(assert) {
 
 		// arrange
-		var done = assert.async();
-		var aModulePaths = [
+		const done = assert.async();
+		const aModulePaths = [
 			"sap/base/strings/capitalize",
 			"sap/base/strings/toHex"
 		];
 
 		// act
-		var oLoadModulesPromise = loadModules(aModulePaths);
+		const oLoadModulesPromise = loadModules(aModulePaths);
 
 		// arrange
 		oLoadModulesPromise.then(function onModulesLoaded(aModules) {
-			var capitalize = aModules[0],
+			const capitalize = aModules[0],
 				toHex = aModules[1];
 
 			// assert
-			var MESSAGE = "the correct module should be loaded";
+			const MESSAGE = "the correct module should be loaded";
 			assert.strictEqual(capitalize("lorem"), "Lorem", MESSAGE);
 			assert.strictEqual(toHex(10, 2), "0a", MESSAGE);
 			assert.strictEqual(aModules.length, 2, "the exact number of modules should be loaded");
@@ -42,21 +42,21 @@
 	QUnit.test("it should load the given modules in order (cached version)", function(assert) {
 
 		// arrange
-		var done = assert.async();
-		var aModulePaths = [
+		const done = assert.async();
+		const aModulePaths = [
 			"sap/base/strings/camelize",
 			"sap/base/strings/hash"
 		];
-		var MESSAGE = "the correct module should be loaded";
+		const MESSAGE = "the correct module should be loaded";
 
 		// act
-		var oLoadModulesPromise = loadModules(aModulePaths);
+		const oLoadModulesPromise = loadModules(aModulePaths);
 
 		// assert
 		function onModulesLoaded(aModules) {
-			var bModulesLoadedSync = false;
+			let bModulesLoadedSync = false;
 
-			var camelize = aModules[0],
+			const camelize = aModules[0],
 				hash = aModules[1];
 
 			assert.strictEqual(camelize("lorem-ipsum"), "loremIpsum", MESSAGE);
@@ -86,17 +86,17 @@
 	QUnit.test("it should load the given module (initial loading)", function(assert) {
 
 		// arrange
-		var done = assert.async();
+		const done = assert.async();
 
 		// act
-		var oLoadModulesPromise = loadModules("sap/base/strings/camelize");
+		const oLoadModulesPromise = loadModules("sap/base/strings/camelize");
 
 		// arrange
 		oLoadModulesPromise.then(function onModulesLoaded(aModules) {
-			var camelize = aModules[0];
+			const camelize = aModules[0];
 
 			// assert
-			var MESSAGE = "the correct module should be loaded";
+			const MESSAGE = "the correct module should be loaded";
 			assert.strictEqual(camelize("lorem-ipsum"), "loremIpsum", MESSAGE);
 			assert.strictEqual(aModules.length, 1, "only one module should be loaded");
 			done();

@@ -16,7 +16,7 @@ sap.ui.define([
 		viewNamespace: "view.",
 		autoWait: true
 	});
-	var aGroupItems = [
+	const aGroupItems = [
 		{p13nItem: "artistUUID"},
 		{p13nItem: "Breakout Year"},
 		{p13nItem: "Changed By"},
@@ -80,7 +80,7 @@ sap.ui.define([
 		When.iPressDialogOk();
 
         //Check grouping on Table column
-		var oGroupConditions = {
+		const oGroupConditions = {
 			groupLevels: [
 				{name: "foundingYear"}
 			]
@@ -104,7 +104,7 @@ sap.ui.define([
 		When.iPressDialogOk();
 
         //Check grouping on Table column
-		var oGroupConditions = {
+		const oGroupConditions = {
 			groupLevels: []
 		};
         Then.iShouldSeeGroupConditions(oGroupConditions);

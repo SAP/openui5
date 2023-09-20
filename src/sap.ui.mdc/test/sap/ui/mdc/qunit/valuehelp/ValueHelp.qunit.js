@@ -31,52 +31,52 @@ sap.ui.define([
 	) {
 	"use strict";
 
-	var oValueHelp;
-	var oContainer;
+	let oValueHelp;
+	let oContainer;
 //	var iPopoverDuration = 355;
-	var oField;
-	var oField2;
-	var iDisconnect = 0;
-	var iSelect = 0;
-	var aSelectConditions;
-	var bSelectAdd;
-	var bSelectClose;
+	let oField;
+	let oField2;
+	let iDisconnect = 0;
+	let iSelect = 0;
+	let aSelectConditions;
+	let bSelectAdd;
+	let bSelectClose;
 
-	var _myDisconnectHandler = function(oEvent) {
+	const _myDisconnectHandler = function(oEvent) {
 		iDisconnect++;
 	};
 
-	var _mySelectHandler = function(oEvent) {
+	const _mySelectHandler = function(oEvent) {
 		iSelect++;
 		aSelectConditions = oEvent.getParameter("conditions");
 		bSelectAdd = oEvent.getParameter("add");
 		bSelectClose = oEvent.getParameter("close");
 	};
 
-	var _fPressHandler = function(oEvent) {}; // just dummy handler to make Icon focusable
+	const _fPressHandler = function(oEvent) {}; // just dummy handler to make Icon focusable
 
-	var iNavigate = 0;
-	var oNavigateCondition;
-	var sNavigateItemId;
-	var bNavigateLeaveFocus;
-	var _myNavigateHandler = function(oEvent) {
+	let iNavigate = 0;
+	let oNavigateCondition;
+	let sNavigateItemId;
+	let bNavigateLeaveFocus;
+	const _myNavigateHandler = function(oEvent) {
 		iNavigate++;
 		oNavigateCondition = oEvent.getParameter("condition");
 		sNavigateItemId = oEvent.getParameter("itemId");
 		bNavigateLeaveFocus = oEvent.getParameter("leaveFocus");
 	};
 
-	var iClosed;
-	var _myClosedHandler = function(oEvent) {
+	let iClosed;
+	const _myClosedHandler = function(oEvent) {
 		iClosed++;
 	};
 
-	var oModel;
+	let oModel;
 
 	/* use dummy control to simulate Field */
 
 //	var oClock;
-	var _initFields = function() {
+	const _initFields = function() {
 		oField = new Icon("I1", {src:"sap-icon://sap-ui5", decorative: false, press: _fPressHandler});
 		oField2 = new Icon("I2", {src:"sap-icon://sap-ui5", decorative: false, press: _fPressHandler});
 
@@ -87,7 +87,7 @@ sap.ui.define([
 //		oClock = sinon.useFakeTimers();
 	};
 
-	var _teardown = function() {
+	const _teardown = function() {
 //		if (oClock) {
 //			oClock.restore();
 //			oClock = undefined;
@@ -138,11 +138,11 @@ sap.ui.define([
 
 	QUnit.test("isTypeaheadSupported", function(assert) {
 
-		var oPromise = oValueHelp.isTypeaheadSupported();
+		const oPromise = oValueHelp.isTypeaheadSupported();
 		assert.ok(oPromise instanceof Promise, "isTypeaheadSupported returns promise");
 
 		if (oPromise) {
-			var fnDone = assert.async();
+			const fnDone = assert.async();
 			oPromise.then(function(bSupported) {
 				assert.strictEqual(bSupported, false, "TypeAhead not supported per default");
 				fnDone();
@@ -190,14 +190,14 @@ sap.ui.define([
 
 	QUnit.test("getAriaAttributes", function(assert) {
 
-		var oCheckAttributes = {
+		const oCheckAttributes = {
 			contentId: undefined,
 			ariaHasPopup: null,
 			role: null,
 			roleDescription: null,
 			valueHelpEnabled: false
 		};
-		var oAttributes = oValueHelp.getAriaAttributes();
+		const oAttributes = oValueHelp.getAriaAttributes();
 		assert.ok(oAttributes, "Aria attributes returned");
 		assert.deepEqual(oAttributes, oCheckAttributes, "returned attributes");
 
@@ -206,7 +206,7 @@ sap.ui.define([
 	QUnit.test("getControl", function(assert) {
 
 		oValueHelp.connect(oField);
-		var oMyField = oValueHelp.getControl();
+		const oMyField = oValueHelp.getControl();
 		assert.equal(oMyField.getId(), "I1", "field using connect");
 
 	});
@@ -249,7 +249,7 @@ sap.ui.define([
 		sinon.spy(oValueHelp, "fireOpened");
 
 
-		var fnDone = assert.async();
+		const fnDone = assert.async();
 		oValueHelp.open(false); //-> check nothing happens
 		assert.notOk(oContainer.open.called, "Container open not called for Dialog opening");
 
@@ -354,11 +354,11 @@ sap.ui.define([
 	QUnit.test("isTypeaheadSupported - not supported(default)", function(assert) {
 
 		sinon.spy(ValueHelpDelegate, "retrieveContent");
-		var oPromise = oValueHelp.isTypeaheadSupported();
+		const oPromise = oValueHelp.isTypeaheadSupported();
 		assert.ok(oPromise instanceof Promise, "isTypeaheadSupported returns promise");
 
 		if (oPromise) {
-			var fnDone = assert.async();
+			const fnDone = assert.async();
 			oPromise.then(function(bSupported) {
 				assert.strictEqual(bSupported, false, "TypeAhead not supported");
 				assert.ok(ValueHelpDelegate.retrieveContent.called, "ValueHelpDelegate.retrieveContent called to check if search supported");
@@ -377,11 +377,11 @@ sap.ui.define([
 
 		sinon.spy(ValueHelpDelegate, "retrieveContent");
 		sinon.stub(oContainer, "isTypeaheadSupported").returns(true);
-		var oPromise = oValueHelp.isTypeaheadSupported();
+		const oPromise = oValueHelp.isTypeaheadSupported();
 		assert.ok(oPromise instanceof Promise, "isTypeaheadSupported returns promise");
 
 		if (oPromise) {
-			var fnDone = assert.async();
+			const fnDone = assert.async();
 			oPromise.then(function(bSupported) {
 				assert.strictEqual(bSupported, true, "TypeAhead supported");
 				assert.ok(ValueHelpDelegate.retrieveContent.called, "ValueHelpDelegate.retrieveContent called to check if search supported");
@@ -399,7 +399,7 @@ sap.ui.define([
 	QUnit.test("getItemForValue with result", function(assert) {
 
 		sinon.stub(oContainer, "getItemForValue").returns(Promise.resolve({key: "X", description: "Text"}));
-		var oConfig = {
+		const oConfig = {
 				parsedValue: "A",
 				value: "a",
 				bindingContext: "BC",
@@ -407,7 +407,7 @@ sap.ui.define([
 				checkDescription: true,
 				exception: ParseException
 		};
-		var oCheckConfig = {
+		const oCheckConfig = {
 				parsedValue: "A",
 				value: "a",
 				bindingContext: "BC",
@@ -416,11 +416,11 @@ sap.ui.define([
 				exception: ParseException,
 				caseSensitive: false
 		};
-		var oPromise = oValueHelp.getItemForValue(oConfig);
+		const oPromise = oValueHelp.getItemForValue(oConfig);
 		assert.ok(oPromise instanceof Promise, "getItemForValue returns promise");
 
 		if (oPromise) {
-			var fnDone = assert.async();
+			const fnDone = assert.async();
 			oPromise.then(function(oItem) {
 				assert.ok(true, "Promise Then must be called");
 				assert.ok(oContainer.getItemForValue.calledWith(oCheckConfig), "getItemForValue called on Container with Config");
@@ -437,7 +437,7 @@ sap.ui.define([
 	QUnit.test("getItemForValue with error", function(assert) {
 
 		sinon.stub(oContainer, "getItemForValue").returns(Promise.reject(new ParseException("Error")));
-		var oConfig = {
+		const oConfig = {
 				parsedValue: "A",
 				value: "a",
 				inParameters: null,
@@ -447,11 +447,11 @@ sap.ui.define([
 				checkDescription: true,
 				exception: ParseException
 		};
-		var oPromise = oValueHelp.getItemForValue(oConfig);
+		const oPromise = oValueHelp.getItemForValue(oConfig);
 		assert.ok(oPromise instanceof Promise, "getItemForValue returns promise");
 
 		if (oPromise) {
-			var fnDone = assert.async();
+			const fnDone = assert.async();
 			oPromise.then(function(oItem) {
 				assert.notOk(true, "Promise Then must not be called");
 				fnDone();
@@ -468,7 +468,7 @@ sap.ui.define([
 	QUnit.test("getIcon", function(assert) {
 
 		sinon.stub(oContainer, "getValueHelpIcon").returns("X");
-		var sIcon = oValueHelp.getIcon();
+		const sIcon = oValueHelp.getIcon();
 		assert.ok(oContainer.getValueHelpIcon(), "Container getValueHelpIcon called");
 		assert.equal(sIcon, "X", "Icon of Container returned");
 
@@ -485,7 +485,7 @@ sap.ui.define([
 	QUnit.test("getDomRef", function(assert) {
 
 		sinon.stub(oContainer, "getDomRef").returns(oField.getDomRef()); // just fake
-		var oDomRef = oValueHelp.getDomRef();
+		let oDomRef = oValueHelp.getDomRef();
 		assert.notOk(oContainer.getDomRef.called, "Container getDomRef not called if closed");
 		assert.notOk(oDomRef, "no DomRef returned if closed");
 
@@ -507,14 +507,14 @@ sap.ui.define([
 
 	QUnit.test("getAriaAttributes", function(assert) {
 
-		var oCheckAttributes = {
+		const oCheckAttributes = {
 			contentId: undefined,
 			ariaHasPopup: "listbox",
 			role: "combobox",
 			roleDescription: null,
 			valueHelpEnabled: false
 		};
-		var oAttributes = oValueHelp.getAriaAttributes();
+		let oAttributes = oValueHelp.getAriaAttributes();
 		assert.ok(oAttributes, "Aria attributes returned");
 		assert.deepEqual(oAttributes, oCheckAttributes, "returned attributes on closed typeaheas");
 
@@ -582,7 +582,7 @@ sap.ui.define([
 		sinon.spy(ValueHelpDelegate, "retrieveContent");
 		oValueHelp.navigate(1);
 
-		var fnDone = assert.async();
+		const fnDone = assert.async();
 		setTimeout(function() { // as Promise used inside
 			assert.ok(oContainer.navigate.calledWith(1), "Container.navigate called");
 			assert.ok(ValueHelpDelegate.retrieveContent.called, "ValueHelpDelegate.retrieveContent called for navigation");
@@ -603,7 +603,7 @@ sap.ui.define([
 
 		oValueHelp.navigate(1);
 
-		var fnDone = assert.async();
+		const fnDone = assert.async();
 		setTimeout(function() { // as Promise used inside
 			assert.ok(oContainer.navigate.calledWith(1), "Container.navigate called");
 			assert.ok(ValueHelpDelegate.retrieveContent.called, "ValueHelpDelegate.retrieveContent called for navigation");
@@ -617,7 +617,7 @@ sap.ui.define([
 
 	QUnit.test("navigated event", function(assert) {
 
-		var oCondition = Condition.createItemCondition("Test");
+		const oCondition = Condition.createItemCondition("Test");
 		oContainer.fireNavigated({condition: oCondition, itemId: "I1", leaveFocus: true});
 
 		assert.equal(iNavigate, 1, "Navigated Event fired");
@@ -649,12 +649,12 @@ sap.ui.define([
 	QUnit.test("Selection handling", function(assert) {
 
 		// set
-		var aSelectConditions = [
+		let aSelectConditions = [
 								 Condition.createCondition("EQ", ["X"]),
 								 Condition.createCondition("BT", ["A", "C"])
 								 ];
 		oContainer.fireSelect({type: ValueHelpSelectionType.Set, conditions: aSelectConditions});
-		var aConditions = oValueHelp.getConditions();
+		let aConditions = oValueHelp.getConditions();
 		assert.deepEqual(aConditions, aSelectConditions, "Set: Selected condtions set on ValueHelp");
 
 		// add
@@ -663,7 +663,7 @@ sap.ui.define([
 							 Condition.createCondition("EQ", ["Y"])
 							 ];
 		oContainer.fireSelect({type: ValueHelpSelectionType.Add, conditions: aSelectConditions});
-		var aCheckConditions = [
+		let aCheckConditions = [
 								Condition.createCondition("EQ", ["X"]),
 								Condition.createCondition("BT", ["A", "C"]),
 								Condition.createCondition("EQ", ["X"]),
@@ -709,19 +709,19 @@ sap.ui.define([
 	QUnit.test("Confirmation handling", function(assert) {
 
 		sinon.spy(oValueHelp, "close");
-		var aConditions = [
+		const aConditions = [
 						   Condition.createCondition("EQ", ["X", "X"], undefined, undefined, ConditionValidated.Validated),
 						   Condition.createCondition("BT", ["A", "C"], undefined, undefined, ConditionValidated.NotValidated),
 						   {operator: "EQ", values: [], isEmpty: true, validated: ConditionValidated.NotValidated},
 						   {operator: "EQ", values: [1, undefined], isInitial: true, validated: ConditionValidated.NotValidated, isEmpty: null}
 						   ];
-		var aCheckConditions = [
+		const aCheckConditions = [
 						   Condition.createCondition("EQ", ["X", "X"], undefined, undefined, ConditionValidated.Validated),
 						   Condition.createCondition("BT", ["A", "C"], undefined, undefined, ConditionValidated.NotValidated),
 						   Condition.createCondition("EQ", [1], undefined, undefined, ConditionValidated.NotValidated)
 						   ];
 
-		var fnDone = assert.async();
+		const fnDone = assert.async();
 		oValueHelp.initControlDelegate().then(function () {
 			oValueHelp.setConditions(aConditions);
 			oContainer.fireConfirm({});
@@ -771,7 +771,7 @@ sap.ui.define([
 		sinon.spy(ValueHelpDelegate, "retrieveContent");
 		oContainer.fireRequestDelegateContent({container: oContainer});
 
-		var fnDone = assert.async();
+		const fnDone = assert.async();
 		setTimeout(function() { // Delegate is called async
 			assert.ok(ValueHelpDelegate.retrieveContent.calledWith(oValueHelp, oContainer), "ValueHelpDelegate.retrieveContent called for typeahead");
 
@@ -784,7 +784,7 @@ sap.ui.define([
 
 	QUnit.test("SwitchToValueHelp event", function(assert) {
 
-		var bFired = false;
+		let bFired = false;
 		oValueHelp.attachSwitchToValueHelp(function(oEvent) {
 			bFired = true;
 		});
@@ -830,7 +830,7 @@ sap.ui.define([
 		sinon.spy(oValueHelp, "fireOpen");
 		sinon.spy(oValueHelp, "fireOpened");
 
-		var fnDone = assert.async();
+		const fnDone = assert.async();
 		oValueHelp.open(true); //-> check nothing happens
 		assert.notOk(oContainer.open.called, "Container open not called for typeahead opening");
 
@@ -930,11 +930,11 @@ sap.ui.define([
 	QUnit.test("isTypeaheadSupported", function(assert) {
 
 		sinon.spy(ValueHelpDelegate, "retrieveContent");
-		var oPromise = oValueHelp.isTypeaheadSupported();
+		const oPromise = oValueHelp.isTypeaheadSupported();
 		assert.ok(oPromise instanceof Promise, "isTypeaheadSupported returns promise");
 
 		if (oPromise) {
-			var fnDone = assert.async();
+			const fnDone = assert.async();
 			oPromise.then(function(bSupported) {
 				assert.strictEqual(bSupported, false, "TypeAhead not supported");
 				assert.notOk(ValueHelpDelegate.retrieveContent.called, "ValueHelpDelegate.retrieveContent not called for dialog");
@@ -952,7 +952,7 @@ sap.ui.define([
 	QUnit.test("getItemForValue", function(assert) {
 
 		sinon.spy(oContainer, "getItemForValue");
-		var oConfig = {
+		const oConfig = {
 				parsedValue: "A",
 				value: "a",
 				bindingContext: "BC",
@@ -960,11 +960,11 @@ sap.ui.define([
 				exception: ParseException,
 				caseSensitive: true
 		};
-		var oPromise = oValueHelp.getItemForValue(oConfig);
+		const oPromise = oValueHelp.getItemForValue(oConfig);
 		assert.ok(oPromise instanceof Promise, "getItemForValue returns promise");
 
 		if (oPromise) {
-			var fnDone = assert.async();
+			const fnDone = assert.async();
 			oPromise.then(function(sText) {
 				assert.notOk(true, "Promise Then must not be called");
 				fnDone();
@@ -980,7 +980,7 @@ sap.ui.define([
 	QUnit.test("getIcon", function(assert) {
 
 		sinon.stub(oContainer, "getValueHelpIcon").returns("X");
-		var sIcon = oValueHelp.getIcon();
+		const sIcon = oValueHelp.getIcon();
 		assert.ok(oContainer.getValueHelpIcon(), "Container getValueHelpIcon called");
 		assert.equal(sIcon, "X", "Icon of Container returned");
 
@@ -997,7 +997,7 @@ sap.ui.define([
 	QUnit.test("getDomRef", function(assert) {
 
 		sinon.stub(oContainer, "getDomRef").returns(oField.getDomRef()); // just fake
-		var oDomRef = oValueHelp.getDomRef();
+		let oDomRef = oValueHelp.getDomRef();
 		assert.notOk(oContainer.getDomRef.called, "Container getDomRef not called if closed");
 		assert.notOk(oDomRef, "no DomRef returned if closed");
 
@@ -1019,7 +1019,7 @@ sap.ui.define([
 
 	QUnit.test("getAriaAttributes", function(assert) {
 
-		var oCheckAttributes = {
+		const oCheckAttributes = {
 			contentId: undefined,
 			ariaHasPopup: "dialog",
 			role: "combobox",
@@ -1034,7 +1034,7 @@ sap.ui.define([
 			roleDescription: null
 		});
 
-		var oAttributes = oValueHelp.getAriaAttributes();
+		let oAttributes = oValueHelp.getAriaAttributes();
 		assert.ok(oAttributes, "Aria attributes returned");
 		assert.deepEqual(oAttributes, oCheckAttributes, "returned attributes on closed typeaheas");
 
@@ -1085,10 +1085,10 @@ sap.ui.define([
 		// nothing must happen as onyl supported for Typeahead
 		sinon.spy(oContainer, "navigate");
 		sinon.spy(ValueHelpDelegate, "retrieveContent");
-		var oPromise = oValueHelp.navigate(1);
+		const oPromise = oValueHelp.navigate(1);
 		assert.notOk(oPromise, "navigate returns nothing");
 
-		var fnDone = assert.async();
+		const fnDone = assert.async();
 		setTimeout(function() { // to check if something is async called
 			assert.notOk(oContainer.navigate.called, "Container.navigate not called");
 			assert.notOk(ValueHelpDelegate.retrieveContent.called, "ValueHelpDelegate.retrieveContent not called");
@@ -1107,12 +1107,12 @@ sap.ui.define([
 	QUnit.test("Selection handling", function(assert) {
 
 		// Just test event is processed, Details are tested in TypeAhead (there is no check for kind of content)
-		var aSelectConditions = [
+		const aSelectConditions = [
 								 Condition.createCondition("EQ", ["X"]),
 								 Condition.createCondition("BT", ["A", "C"])
 								 ];
 		oContainer.fireSelect({type: ValueHelpSelectionType.Set, conditions: aSelectConditions});
-		var aConditions = oValueHelp.getConditions();
+		const aConditions = oValueHelp.getConditions();
 		assert.deepEqual(aConditions, aSelectConditions, "Set: Selected condtions set on ValueHelp");
 
 	});
@@ -1120,7 +1120,7 @@ sap.ui.define([
 	QUnit.test("Confirmation handling", function(assert) {
 
 		// Just test event is processed, Details are tested in TypeAhead (there is no check for kind of content)
-		var fnDone = assert.async();
+		const fnDone = assert.async();
 		oValueHelp.initControlDelegate().then(function () {
 			sinon.spy(oValueHelp, "close");
 			oContainer.fireConfirm({});

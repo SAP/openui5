@@ -5,7 +5,7 @@ sap.ui.define([], function() {
 	"use strict";
 
 	util.fetchAllAnnotations = function(oMetaModel, sEntityPath) {
-		var oCtx = oMetaModel.getMetaContext(sEntityPath);
+		const oCtx = oMetaModel.getMetaContext(sEntityPath);
 		return oMetaModel.requestObject("@", oCtx).then( function (mAnnos) {
 			return mAnnos;
 		});
@@ -18,11 +18,12 @@ sap.ui.define([], function() {
 	 * @returns {object} mCustomAggregates a map to the custom aggregates keyed by theri qualifiers
 	 */
 	util.getAllCustomAggregates = function (mAnnos) {
-		var mCustomAggregates = {}, sAnno;
-		for (var sAnnoKey in mAnnos) {
+		const mCustomAggregates = {};
+		let sAnno;
+		for (const sAnnoKey in mAnnos) {
 			if (sAnnoKey.startsWith("@Org.OData.Aggregation.V1.CustomAggregate")) {
 				sAnno = sAnnoKey.replace("@Org.OData.Aggregation.V1.CustomAggregate#", "");
-				var aAnno = sAnno.split("@");
+				const aAnno = sAnno.split("@");
 
 				if (aAnno.length == 2) {
 					//inner annotation that is not part of 	Validation.AggregatableTerms
@@ -51,11 +52,12 @@ sap.ui.define([], function() {
 	};
 
 	util.getAllAggregatableProperties = function (mAnnos) {
-		var mAggregatableProperties = {}, aProperties, oProperty;
+		const mAggregatableProperties = {};
+		let aProperties, oProperty;
 		if (mAnnos["@com.sap.vocabularies.Analytics.v1.AggregatedProperties"]) {
 			aProperties = mAnnos["@com.sap.vocabularies.Analytics.v1.AggregatedProperties"];
 
-			for (var i = 0; i < aProperties.length; i++) {
+			for (let i = 0; i < aProperties.length; i++) {
 				oProperty = aProperties[i];
 
 				mAggregatableProperties[oProperty.Value] = {
@@ -84,11 +86,11 @@ sap.ui.define([], function() {
 	 * </ul>
 	 */
 	util.getAllDataPoints = function(mAnnos) {
-		var mDataPoints = {};
-		for (var sAnnoKey in mAnnos) {
+		const mDataPoints = {};
+		for (const sAnnoKey in mAnnos) {
 			if (sAnnoKey.startsWith("@com.sap.vocabularies.UI.v1.DataPoint")) {
-				var sQualifier = sAnnoKey.replace("@com.sap.vocabularies.UI.v1.DataPoint#", "");
-				var sValue = mAnnos[sAnnoKey].Value.$Path;
+				const sQualifier = sAnnoKey.replace("@com.sap.vocabularies.UI.v1.DataPoint#", "");
+				const sValue = mAnnos[sAnnoKey].Value.$Path;
 				mDataPoints[sValue] = mDataPoints[sValue] || {};
 				mDataPoints[sValue][sQualifier] = util.createDataPointProperty(mAnnos[sAnnoKey]);
 			}
@@ -104,7 +106,7 @@ sap.ui.define([], function() {
 	 * @param oDataPointAnno
 	 */
 	util.createDataPointProperty = function(oDataPointAnno) {
-		var oDataPoint = {};
+		const oDataPoint = {};
 
 		if (oDataPointAnno.TargetValue) {
 			oDataPoint.targetValue = oDataPointAnno.TargetValue.$Path;
@@ -114,7 +116,7 @@ sap.ui.define([], function() {
 			oDataPoint.foreCastValue = oDataPointAnno.ForeCastValue.$Path;
 		}
 
-		var oCriticality = null;
+		let oCriticality = null;
 		if (oDataPointAnno.Criticality) {
 
 			if (oDataPointAnno.Criticality.$Path) {
@@ -129,8 +131,8 @@ sap.ui.define([], function() {
 			}
 
 		} else if (oDataPointAnno.CriticalityCalculation) {
-			var oThresholds = {};
-			var bConstant = util._buildThresholds(oThresholds, oDataPointAnno.CriticalityCalculation);
+			const oThresholds = {};
+			const bConstant = util._buildThresholds(oThresholds, oDataPointAnno.CriticalityCalculation);
 
 			if (bConstant) {
 				oCriticality = {
@@ -160,26 +162,26 @@ sap.ui.define([], function() {
 	 * @private
 	 */
 	util._buildThresholds = function(oThresholds, oCriticalityCalculation) {
-		var aKeys = [
+		const aKeys = [
 			"AcceptanceRangeLowValue", "AcceptanceRangeHighValue", "ToleranceRangeLowValue", "ToleranceRangeHighValue", "DeviationRangeLowValue", "DeviationRangeHighValue"
 		];
-		var bConstant = true, sKey;
+		let bConstant = true, sKey;
 
 
 		oThresholds.ImprovementDirection = oCriticalityCalculation.ImprovementDirection.$EnumMember.replace("com.sap.vocabularies.UI.v1.ImprovementDirectionType/", "");
 
 
-		var oDynamicThresholds = {
+		const oDynamicThresholds = {
 			oneSupplied: false,
 			usedMeasures: []
 			// combination to check whether at least one is supplied
 		};
-		var oConstantThresholds = {
+		const oConstantThresholds = {
 			oneSupplied: false
 			// combination to check whether at least one is supplied
 		};
 
-		for (var i = 0; i < aKeys.length; i++) {
+		for (let i = 0; i < aKeys.length; i++) {
 			sKey = aKeys[i];
 			oDynamicThresholds[sKey] = oCriticalityCalculation[sKey] ? oCriticalityCalculation[sKey].$Path : undefined;
 			oDynamicThresholds.oneSupplied = oDynamicThresholds.oneSupplied || oDynamicThresholds[sKey];
@@ -197,14 +199,14 @@ sap.ui.define([], function() {
 		if (oDynamicThresholds.oneSupplied) {
 			bConstant = false;
 
-			for (var i = 0; i < aKeys.length; i++) {
+			for (let i = 0; i < aKeys.length; i++) {
 				if (oDynamicThresholds[aKeys[i]]) {
 					oThresholds[aKeys[i]] = oDynamicThresholds[aKeys[i]];
 				}
 			}
 			oThresholds.usedMeasures = oDynamicThresholds.usedMeasures;
 		} else {
-			var oAggregationLevel;
+			let oAggregationLevel;
 			oThresholds.AggregationLevels = [];
 
 			// check if at least one static value is supplied
@@ -215,7 +217,7 @@ sap.ui.define([], function() {
 					VisibleDimensions: null
 				};
 
-				for (var i = 0; i < aKeys.length; i++) {
+				for (let i = 0; i < aKeys.length; i++) {
 					if (oConstantThresholds[aKeys[i]]) {
 						oAggregationLevel[aKeys[i]] = oConstantThresholds[aKeys[i]];
 					}
@@ -227,13 +229,13 @@ sap.ui.define([], function() {
 
 			// further check for ConstantThresholds
 			if (oCriticalityCalculation.ConstantThresholds && oCriticalityCalculation.ConstantThresholds.length > 0) {
-				for (var i = 0; i < oCriticalityCalculation.ConstantThresholds.length; i++) {
-					var oAggregationLevelInfo = oCriticalityCalculation.ConstantThresholds[i];
+				for (let i = 0; i < oCriticalityCalculation.ConstantThresholds.length; i++) {
+					const oAggregationLevelInfo = oCriticalityCalculation.ConstantThresholds[i];
 
-					var aVisibleDimensions = oAggregationLevelInfo.AggregationLevel ? [] : null;
+					const aVisibleDimensions = oAggregationLevelInfo.AggregationLevel ? [] : null;
 
 					if (oAggregationLevelInfo.AggregationLevel && oAggregationLevelInfo.AggregationLevel.length > 0) {
-						for (var j = 0; j < oAggregationLevelInfo.AggregationLevel.length; j++) {
+						for (let j = 0; j < oAggregationLevelInfo.AggregationLevel.length; j++) {
 							aVisibleDimensions.push(oAggregationLevelInfo.AggregationLevel[j].$PropertyPath);
 						}
 					}
@@ -242,8 +244,8 @@ sap.ui.define([], function() {
 						VisibleDimensions: aVisibleDimensions
 					};
 
-					for (var j = 0; j < aKeys.length; j++) {
-						var nValue = oAggregationLevelInfo[aKeys[j]];
+					for (let j = 0; j < aKeys.length; j++) {
+						const nValue = oAggregationLevelInfo[aKeys[j]];
 						if (nValue) {
 							oAggregationLevel[aKeys[j]] = nValue;
 						}
@@ -264,7 +266,8 @@ sap.ui.define([], function() {
 	 * @returns {{sortable: boolean, propertyInfo: {}}} An object containing the sort restriction information
 	 */
 	util.getSortRestrictionsInfo = function(oSortRestrictions) {
-		var i, sPropertyName, oSortRestrictionsInfo = {
+		let i, sPropertyName;
+		const oSortRestrictionsInfo = {
 			sortable: true,
 			propertyInfo: {}
 		};
@@ -309,7 +312,7 @@ sap.ui.define([], function() {
 	 * @param oSortRestrictionInfo the SortInformation restrictions
 	 */
 	util.addSortInfoForProperty = function(oProperty, oSortRestrictionInfo) {
-		var oPropertyInfo = oSortRestrictionInfo[oProperty.name];
+		const oPropertyInfo = oSortRestrictionInfo[oProperty.name];
 		oProperty.sortable = oSortRestrictionInfo.sortable && oPropertyInfo ? oPropertyInfo.sortable : true;
 
 		if (oProperty.sortable) {
@@ -324,7 +327,8 @@ sap.ui.define([], function() {
 	 * @return {{filterable: boolean, propertyInfo: {}}} An object containing the filter restriction information
 	 */
 	util.getFilterRestrictionsInfo = function(oFilterRestrictions) {
-		var i, sPropertyName, oFilterRestrictionsInfo = {
+		let i, sPropertyName;
+		const oFilterRestrictionsInfo = {
 			filterable: true,
 			propertyInfo: {}
 		};
@@ -369,7 +373,7 @@ sap.ui.define([], function() {
 	};
 
 	util.isMultiValueFilterExpression = function(sFilterExpression) {
-		var bIsMultiValue = true;
+		let bIsMultiValue = true;
 
 		//SingleValue | MultiValue | SingleRange | MultiRange | SearchExpression | MultiRangeOrSearchExpression
 
@@ -389,7 +393,7 @@ sap.ui.define([], function() {
 	 * @param oFilterRestrictionInfo the filter restrictions
 	 */
 	util.addFilterInfoForProperty = function(oProperty, oFilterRestrictionInfo) {
-		var oPropertyInfo = oFilterRestrictionInfo[oProperty.name];
+		const oPropertyInfo = oFilterRestrictionInfo[oProperty.name];
 		oProperty.filterable = oFilterRestrictionInfo.filterable && oPropertyInfo ? oPropertyInfo.filterable : true;
 
 		if (oProperty.filterable) {
@@ -398,7 +402,7 @@ sap.ui.define([], function() {
 	};
 
 	util.fetchCalendarTag = function(oMetaModel, oCtx) {
-		var COMMON = "@com.sap.vocabularies.Common.v1.";
+		const COMMON = "@com.sap.vocabularies.Common.v1.";
 		return Promise.all([
 			oMetaModel.requestObject(COMMON + "IsCalendarYear", oCtx),
 			oMetaModel.requestObject(COMMON + "IsCalendarHalfyear", oCtx),
@@ -469,7 +473,7 @@ sap.ui.define([], function() {
 	};
 
 	util.fetchFiscalTag = function(oMetaModel, oCtx) {
-		var COMMON = "@com.sap.vocabularies.Common.v1.";
+		const COMMON = "@com.sap.vocabularies.Common.v1.";
 		return Promise.all([
 			oMetaModel.requestObject(COMMON + "IsFiscalYear", oCtx),
 			oMetaModel.requestObject(COMMON + "IsFiscalPeriod", oCtx),
@@ -525,9 +529,9 @@ sap.ui.define([], function() {
 	};
 
 	util.fetchCriticality = function(oMetaModel, oCtx) {
-		var UI = "@com.sap.vocabularies.UI.v1";
+		const UI = "@com.sap.vocabularies.UI.v1";
 		return oMetaModel.requestObject(UI + ".ValueCriticality", oCtx).then(function(aValueCriticality) {
-			var oCriticality, oValueCriticality;
+			let oCriticality, oValueCriticality;
 
 			if (aValueCriticality) {
 				oCriticality = {
@@ -539,7 +543,7 @@ sap.ui.define([], function() {
 					Neutral: []
 				};
 
-				for (var i = 0; i < aValueCriticality.length; i++) {
+				for (let i = 0; i < aValueCriticality.length; i++) {
 					oValueCriticality = aValueCriticality[i];
 
 					if (oValueCriticality.Criticality.$EnumMember.endsWith("VeryPositive")) {
@@ -558,7 +562,7 @@ sap.ui.define([], function() {
 
 				}
 
-				for (var sKey in oCriticality) {
+				for (const sKey in oCriticality) {
 					if (oCriticality[sKey].length == 0) {
 						delete  oCriticality[sKey];
 					}

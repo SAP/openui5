@@ -50,12 +50,12 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var iDataCount = 400;
+	const iDataCount = 400;
 
 	sap.ui.define("odata.v4.TestDelegate", [
 		"sap/ui/mdc/odata/v4/TableDelegate"
 	], function(TableDelegate) {
-		var TestDelegate = Object.assign({}, TableDelegate);
+		const TestDelegate = Object.assign({}, TableDelegate);
 
 		TestDelegate.updateBindingInfo = function(oTable, oBindingInfo) {
 			TableDelegate.updateBindingInfo.apply(this, arguments);
@@ -66,13 +66,13 @@ sap.ui.define([
 	});
 
 	function createData(iStartIndex, iLength) {
-		var aData = [];
+		const aData = [];
 
 		if (iStartIndex + iLength > iDataCount) {
 			iLength = iDataCount - iStartIndex;
 		}
 
-		for (var i = iStartIndex; i < iStartIndex + iLength; i++) {
+		for (let i = iStartIndex; i < iStartIndex + iLength; i++) {
 			aData.push({
 				Name: "Test Product (" + i + ")"
 			});
@@ -90,10 +90,10 @@ sap.ui.define([
 		regExp: /^GET \/MyService\/Products\?(\$count=true&)?\$skip=(\d+)\&\$top=(\d+)$/,
 		response: {
 			buildResponse: function(aMatches, oResponse) {
-				var bWithCount = !!aMatches[1];
-				var iSkip = parseInt(aMatches[2]);
-				var iTop = parseInt(aMatches[3]);
-				var mResponse = {value: createData(iSkip, iTop)};
+				const bWithCount = !!aMatches[1];
+				const iSkip = parseInt(aMatches[2]);
+				const iTop = parseInt(aMatches[3]);
+				const mResponse = {value: createData(iSkip, iTop)};
 
 				if (bWithCount) {
 					mResponse["@odata.count"] = iDataCount;
@@ -106,7 +106,7 @@ sap.ui.define([
 
 	Core.loadLibrary("sap.ui.fl");
 
-	var sTableView1 =
+	const sTableView1 =
 		'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m" xmlns="sap.ui.mdc" xmlns:mdcTable="sap.ui.mdc.table">' +
 		'<Table p13nMode="Group,Aggregate" id="myTable" delegate=\'\{ name : "odata.v4.TestDelegate" \}\'>' +
 		'<columns><mdcTable:Column id="myTable--column0" header="column 0" propertyKey="Name">' +
@@ -117,7 +117,7 @@ sap.ui.define([
 		'<m:Text text="{Name}" id="myTable--text2" /></mdcTable:Column></columns> ' +
 		'</Table></mvc:View>';
 
-	var sTableView2 =
+	const sTableView2 =
 		'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m" xmlns="sap.ui.mdc" xmlns:mdcTable="sap.ui.mdc.table">' +
 		'<Table p13nMode="Group,Aggregate" id="myTable" delegate=\'\{ name : "odata.v4.TestDelegate" \}\'>' +
 		'<columns>' +
@@ -126,7 +126,7 @@ sap.ui.define([
 		'</Table></mvc:View>';
 
 	function createColumnStateIdMap(oTable, aStates) {
-		var mState = {};
+		const mState = {};
 
 		oTable.getColumns().forEach(function(oColumn, iIndex) {
 			mState[oColumn.getId() + "-innerColumn"] = aStates[iIndex];
@@ -136,11 +136,11 @@ sap.ui.define([
 	}
 
 	function getQuickAction(oMenu, sType) {
-		var oQuickActionContainer = oMenu.getAggregation("_quickActions")[0];
+		const oQuickActionContainer = oMenu.getAggregation("_quickActions")[0];
 		if (!oQuickActionContainer) {
 			return null;
 		}
-		var aQuickActions = oQuickActionContainer.getQuickActions().filter(function(oQuickAction) {
+		const aQuickActions = oQuickActionContainer.getQuickActions().filter(function(oQuickAction) {
 			return oQuickAction.isA("sap.m.table.columnmenu." + sType);
 		});
 
@@ -204,8 +204,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("GridTableType", function(assert) {
-		var mSelectionChangeParameters;
-		var oSelectionChangeStub = sinon.stub();
+		let mSelectionChangeParameters;
+		const oSelectionChangeStub = sinon.stub();
 
 		oSelectionChangeStub.callsFake(function(oEvent) {
 			mSelectionChangeParameters = oEvent.getParameters();
@@ -222,7 +222,7 @@ sap.ui.define([
 		}, function(oTable) {
 			assert.deepEqual(oTable.getSelectedContexts(), [], "#getSelectedContexts if not yet initialized");
 		}).then(function(oTable) {
-			var oPlugin = PluginBase.getPlugin(oTable._oTable, "sap.ui.table.plugins.ODataV4Selection");
+			const oPlugin = PluginBase.getPlugin(oTable._oTable, "sap.ui.table.plugins.ODataV4Selection");
 
 			assert.ok(oPlugin, "Applied sap.ui.table.plugins.ODataV4Selection");
 			assert.equal(oPlugin.getLimit(), 1337, "Selection limit");
@@ -262,8 +262,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("TreeTableType", function(assert) {
-		var mSelectionChangeParameters;
-		var oSelectionChangeStub = sinon.stub();
+		let mSelectionChangeParameters;
+		const oSelectionChangeStub = sinon.stub();
 
 		oSelectionChangeStub.callsFake(function(oEvent) {
 			mSelectionChangeParameters = oEvent.getParameters();
@@ -280,7 +280,7 @@ sap.ui.define([
 		}, function(oTable) {
 			assert.deepEqual(oTable.getSelectedContexts(), [], "#getSelectedContexts if not yet initialized");
 		}).then(function(oTable) {
-			var oPlugin = PluginBase.getPlugin(oTable._oTable, "sap.ui.table.plugins.ODataV4Selection");
+			const oPlugin = PluginBase.getPlugin(oTable._oTable, "sap.ui.table.plugins.ODataV4Selection");
 
 			assert.ok(oPlugin, "Applied sap.ui.table.plugins.ODataV4Selection");
 			assert.equal(oPlugin.getLimit(), 1337, "Selection limit");
@@ -320,8 +320,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("ResponsiveTableType", function(assert) {
-		var mSelectionChangeParameters;
-		var oSelectionChangeStub = sinon.stub();
+		let mSelectionChangeParameters;
+		const oSelectionChangeStub = sinon.stub();
 
 		oSelectionChangeStub.callsFake(function(oEvent) {
 			mSelectionChangeParameters = oEvent.getParameters();
@@ -336,7 +336,7 @@ sap.ui.define([
 		}, function(oTable) {
 			assert.deepEqual(oTable.getSelectedContexts(), [], "#getSelectedContexts if not yet initialized");
 		}).then(function(oTable) {
-			var oInnerTable = oTable._oTable;
+			const oInnerTable = oTable._oTable;
 
 			assert.equal(oInnerTable.getMode(), "SingleSelectLeft", "Selection mode");
 			assert.equal(oInnerTable.getMultiSelectMode(), "ClearAll", "Multi select mode");
@@ -422,11 +422,11 @@ sap.ui.define([
 				SalesAmount: {}
 			}
 		}).then(function(oTable) {
-			var oPlugin = oTable._oTable.getDependents()[0];
+			const oPlugin = oTable._oTable.getDependents()[0];
 			assert.ok(oPlugin.isA("sap.ui.table.plugins.V4Aggregation"), "V4Aggregation plugin is added to the inner table");
 			assert.ok(oPlugin.isActive(), "V4Aggregation plugin is active");
 
-			var oGroupHeaderFormatter = sinon.stub(oTable.getControlDelegate(), "formatGroupHeader");
+			const oGroupHeaderFormatter = sinon.stub(oTable.getControlDelegate(), "formatGroupHeader");
 			oPlugin.getGroupHeaderFormatter()("MyContext", "MyProperty");
 			assert.ok(oGroupHeaderFormatter.calledOnceWithExactly(oTable, "MyContext", "MyProperty"), "Call Delegate.formatGroupHeader");
 			oGroupHeaderFormatter.restore();
@@ -503,8 +503,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("Type", function(assert) {
-		var that = this;
-		var oOldPlugin = that.oTable._oTable.getDependents()[0];
+		const that = this;
+		const oOldPlugin = that.oTable._oTable.getDependents()[0];
 
 		this.resetFetchPropertyCalls();
 		this.oTable.setType(TableType.ResponsiveTable);
@@ -519,13 +519,13 @@ sap.ui.define([
 			that.oTable.setType(TableType.Table);
 			return that.oTable._fullyInitialized();
 		}).then(function() {
-			var oPlugin = that.oTable._oTable.getDependents()[0];
+			const oPlugin = that.oTable._oTable.getDependents()[0];
 			assert.ok(oPlugin.isA("sap.ui.table.plugins.V4Aggregation"), "V4Aggregation plugin is added to the inner table");
 			assert.ok(oPlugin.isActive(), "V4Aggregation plugin is active");
 			assert.notEqual(oPlugin, oOldPlugin, "V4Aggregation plugin is not the same instance");
 			assert.ok(oOldPlugin.bIsDestroyed, "Old V4Aggregation plugin is destroyed");
 
-			var oGroupHeaderFormatter = sinon.stub(that.oTable.getControlDelegate(), "formatGroupHeader");
+			const oGroupHeaderFormatter = sinon.stub(that.oTable.getControlDelegate(), "formatGroupHeader");
 			oPlugin.getGroupHeaderFormatter()("MyContext", "MyProperty");
 			assert.ok(oGroupHeaderFormatter.calledOnceWithExactly(that.oTable, "MyContext", "MyProperty"), "Call Delegate.formatGroupHeader");
 			oGroupHeaderFormatter.restore();
@@ -535,7 +535,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("GridTable; p13nMode", function(assert) {
-		var oPlugin = this.oTable._oTable.getDependents()[0];
+		const oPlugin = this.oTable._oTable.getDependents()[0];
 
 		this.resetFetchPropertyCalls();
 		this.oTable.setP13nMode();
@@ -553,7 +553,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("GridTable; Initial activation of analytical p13n modes", function(assert) {
-		var that = this;
+		const that = this;
 
 		return this.initTable({
 			p13nMode: []
@@ -573,11 +573,11 @@ sap.ui.define([
 				});
 			});
 		}).then(function() {
-			var oPlugin = that.oTable._oTable.getDependents()[0];
+			const oPlugin = that.oTable._oTable.getDependents()[0];
 			assert.ok(oPlugin.isA("sap.ui.table.plugins.V4Aggregation"), "V4Aggregation plugin is added to the inner table");
 			assert.ok(oPlugin.isActive(), "V4Aggregation plugin is active");
 
-			var oGroupHeaderFormatter = sinon.stub(that.oTable.getControlDelegate(), "formatGroupHeader");
+			const oGroupHeaderFormatter = sinon.stub(that.oTable.getControlDelegate(), "formatGroupHeader");
 			oPlugin.getGroupHeaderFormatter()("MyContext", "MyProperty");
 			assert.ok(oGroupHeaderFormatter.calledOnceWithExactly(that.oTable, "MyContext", "MyProperty"), "Call Delegate.formatGroupHeader");
 			oGroupHeaderFormatter.restore();
@@ -654,8 +654,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("Allowed analytics on column header and tableDelegate API's", function(assert) {
-		var oTable = this.oTable;
-		var oPlugin, oQuickAction, fSetAggregationSpy;
+		const oTable = this.oTable;
+		let oPlugin, oQuickAction, fSetAggregationSpy;
 
 		this.oTable.addColumn(new Column({
 			header: "Value",
@@ -746,17 +746,17 @@ sap.ui.define([
 	});
 
 	QUnit.test("Grouping enabled on column menu open", function(assert) {
-		var oTable = this.oTable;
-		var done = assert.async();
+		const oTable = this.oTable;
+		const done = assert.async();
 
 		oTable._fullyInitialized().then(function() {
 			return TableQUnitUtils.openColumnMenu(oTable, 0);
 		}).then(function() {
 			 oTable._fullyInitialized().then(function() {
-				var oPlugin = oTable._oTable.getDependents()[0];
-				var fSetAggregationSpy = sinon.spy(oPlugin, "setAggregationInfo");
-				var oDelegate = oTable.getControlDelegate();
-				var fnRebind = oDelegate.rebind;
+				const oPlugin = oTable._oTable.getDependents()[0];
+				const fSetAggregationSpy = sinon.spy(oPlugin, "setAggregationInfo");
+				const oDelegate = oTable.getControlDelegate();
+				const fnRebind = oDelegate.rebind;
 
 				oDelegate.rebind = function () {
 					fnRebind.apply(this, arguments);
@@ -785,17 +785,17 @@ sap.ui.define([
 	});
 
 	QUnit.test("Aggregation enabled on column menu open", function(assert) {
-		var oTable = this.oTable;
-		var done = assert.async();
+		const oTable = this.oTable;
+		const done = assert.async();
 
 		oTable._fullyInitialized().then(function() {
 			return TableQUnitUtils.openColumnMenu(oTable, 1);
 		}).then(function() {
 			oTable._fullyInitialized().then(function() {
-				var oDelegate = oTable.getControlDelegate();
-				var oPlugin = oTable._oTable.getDependents()[0];
-				var fSetAggregationSpy = sinon.spy(oPlugin, "setAggregationInfo");
-				var fnRebind = oDelegate.rebind;
+				const oDelegate = oTable.getControlDelegate();
+				const oPlugin = oTable._oTable.getDependents()[0];
+				const fSetAggregationSpy = sinon.spy(oPlugin, "setAggregationInfo");
+				const fnRebind = oDelegate.rebind;
 
 				oDelegate.rebind = function () {
 					fnRebind.apply(this, arguments);
@@ -824,16 +824,16 @@ sap.ui.define([
 	});
 
 	QUnit.test("Grouping and Aggregation on two columns", function(assert) {
-		var oTable = this.oTable;
-		var done = assert.async();
+		const oTable = this.oTable;
+		const done = assert.async();
 
 		oTable._fullyInitialized().then(function() {
 			return TableQUnitUtils.openColumnMenu(oTable, 0);
 		}).then(function() {
-			var oDelegate = oTable.getControlDelegate();
-			var oPlugin = oTable._oTable.getDependents()[0];
-			var fSetAggregationSpy = sinon.spy(oPlugin, "setAggregationInfo");
-			var fnRebind = oDelegate.rebind;
+			const oDelegate = oTable.getControlDelegate();
+			const oPlugin = oTable._oTable.getDependents()[0];
+			const fSetAggregationSpy = sinon.spy(oPlugin, "setAggregationInfo");
+			const fnRebind = oDelegate.rebind;
 
 			oDelegate.rebind = function () {
 				fnRebind.apply(this, arguments);
@@ -854,10 +854,10 @@ sap.ui.define([
 				oDelegate.rebind = fnRebind;
 
 				TableQUnitUtils.openColumnMenu(oTable, 1).then(function() {
-					var oDelegate = oTable.getControlDelegate();
-					var oPlugin = oTable._oTable.getDependents()[0];
-					var fSetAggregationSpy = sinon.spy(oPlugin, "setAggregationInfo");
-					var fnRebind = oDelegate.rebind;
+					const oDelegate = oTable.getControlDelegate();
+					const oPlugin = oTable._oTable.getDependents()[0];
+					const fSetAggregationSpy = sinon.spy(oPlugin, "setAggregationInfo");
+					const fnRebind = oDelegate.rebind;
 
 					oDelegate.rebind = function () {
 						fnRebind.apply(this, arguments);
@@ -891,8 +891,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("Grouping and aggregation on the same column", function(assert) {
-		var oTable = this.oTable;
-		var oDelegate, oPlugin, fSetAggregationSpy, fnRebind;
+		const oTable = this.oTable;
+		let oDelegate, oPlugin, fSetAggregationSpy, fnRebind;
 
 		return oTable._fullyInitialized().then(function() {
 			return TableQUnitUtils.openColumnMenu(oTable, 0);
@@ -957,12 +957,12 @@ sap.ui.define([
 	});
 
 	QUnit.test("Sorting restriction", function(assert) {
-		var oTable = this.oTable;
+		const oTable = this.oTable;
 
 		return oTable._fullyInitialized().then(function() {
-			var sMessage = Core.getLibraryResourceBundle("sap.ui.mdc").getText("table.PERSONALIZATION_DIALOG_SORT_RESTRICTION");
-			var oState;
-			var oValidationState;
+			const sMessage = Core.getLibraryResourceBundle("sap.ui.mdc").getText("table.PERSONALIZATION_DIALOG_SORT_RESTRICTION");
+			let oState;
+			let oValidationState;
 
 			oState = {items: [{name: "Name"}, {name: "name_country"}]};
 			oValidationState = oTable.validateState(oState, "Sort");
@@ -1016,12 +1016,12 @@ sap.ui.define([
 	});
 
 	QUnit.test("Group restriction", function(assert) {
-		var oTable = this.oTable;
+		const oTable = this.oTable;
 
 		return oTable._fullyInitialized().then(function() {
-			var oDelegate = oTable.getControlDelegate();
-			var oResourceBundle = Core.getLibraryResourceBundle("sap.ui.mdc");
-			var oState, oValidationState;
+			const oDelegate = oTable.getControlDelegate();
+			const oResourceBundle = Core.getLibraryResourceBundle("sap.ui.mdc");
+			let oState, oValidationState;
 
 			oState = {
 				items: [{name: "Name"}, {name: "Country"}, {name: "name_country"}]
@@ -1073,11 +1073,11 @@ sap.ui.define([
 	});
 
 	QUnit.test("Column restriction", function(assert) {
-		var oTable = this.oTable;
+		const oTable = this.oTable;
 
 		return oTable._fullyInitialized().then(function() {
-			var oResourceBundle = Core.getLibraryResourceBundle("sap.ui.mdc");
-			var oState, oValidationState;
+			const oResourceBundle = Core.getLibraryResourceBundle("sap.ui.mdc");
+			let oState, oValidationState;
 
 			oState = {
 				items: [{name: "Name"}, {name: "Country"}, {name: "name_country"}]
@@ -1183,7 +1183,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Check column header for analytics buttons", function(assert) {
-		var oTable = this.oTable;
+		const oTable = this.oTable;
 
 		return oTable._fullyInitialized().then(function() {
 			return TableQUnitUtils.openColumnMenu(oTable, 0);
@@ -1299,11 +1299,11 @@ sap.ui.define([
 	});
 
 	QUnit.test("Aggregate", function(assert) {
-		var oTable = this.oTable;
+		const oTable = this.oTable;
 
 		return oTable._fullyInitialized().then(function() {
-			var oPlugin = oTable._oTable.getDependents()[0];
-			var oSetAggregation = sinon.spy(oPlugin, "setAggregationInfo");
+			const oPlugin = oTable._oTable.getDependents()[0];
+			const oSetAggregation = sinon.spy(oPlugin, "setAggregationInfo");
 
 			oTable.setAggregateConditions({
 				SalesAmount: {}
@@ -1333,11 +1333,11 @@ sap.ui.define([
 	});
 
 	QUnit.test("Group", function(assert) {
-		var oTable = this.oTable;
+		const oTable = this.oTable;
 
 		return oTable._fullyInitialized().then(function() {
-			var oPlugin = oTable._oTable.getDependents()[0];
-			var oSetAggregation = sinon.spy(oPlugin, "setAggregationInfo");
+			const oPlugin = oTable._oTable.getDependents()[0];
+			const oSetAggregation = sinon.spy(oPlugin, "setAggregationInfo");
 
 			oTable.setGroupConditions({
 				groupLevels: [{
@@ -1369,11 +1369,11 @@ sap.ui.define([
 	});
 
 	QUnit.test("Group and aggregate", function(assert) {
-		var oTable = this.oTable;
+		const oTable = this.oTable;
 
 		return oTable._fullyInitialized().then(function() {
-			var oPlugin = oTable._oTable.getDependents()[0];
-			var oSetAggregation = sinon.spy(oPlugin, "setAggregationInfo");
+			const oPlugin = oTable._oTable.getDependents()[0];
+			const oSetAggregation = sinon.spy(oPlugin, "setAggregationInfo");
 
 			oTable.setGroupConditions({
 				groupLevels: [{
@@ -1408,9 +1408,9 @@ sap.ui.define([
 	});
 
 	QUnit.test("Transformation Search", function(assert) {
-		var done = assert.async();
-		var oTable = this.oTable;
-		var fnOriginalUpdateBindingInfo;
+		const done = assert.async();
+		const oTable = this.oTable;
+		let fnOriginalUpdateBindingInfo;
 
 		return oTable._fullyInitialized().then(function() {
 			fnOriginalUpdateBindingInfo = oTable.getControlDelegate().updateBindingInfo;
@@ -1420,11 +1420,11 @@ sap.ui.define([
 			};
 			return TableQUnitUtils.waitForBindingInfo(oTable);
 		}).then(function() {
-			var oPlugin = oTable._oTable.getDependents()[0];
-			var oBindRowsSpy = sinon.spy(oTable._oTable, "bindRows");
-			var oSetAggregation = sinon.spy(oPlugin, "setAggregationInfo");
+			const oPlugin = oTable._oTable.getDependents()[0];
+			const oBindRowsSpy = sinon.spy(oTable._oTable, "bindRows");
+			const oSetAggregation = sinon.spy(oPlugin, "setAggregationInfo");
 			oTable.setGroupConditions({ groupLevels: [{ name: "CountryKey" }] }).rebind();
-			var oBinding = oTable._oTable.getBindingInfo("rows");
+			const oBinding = oTable._oTable.getBindingInfo("rows");
 
 			assert.notOk(oBinding.parameters["$search"], "$search has been removed from oBinding");
 			assert.ok(oBindRowsSpy.calledWithExactly(oBinding), "BindRows of inner table called with oBindingInfo without $search parameter");
@@ -1525,7 +1525,7 @@ sap.ui.define([
 		this.oTable.setGroupConditions({groupLevels: [{name: "Name"}]});
 		this.oTable.setAggregateConditions({Name: {}});
 		this.oTable._rebind();
-		var aTableProperties = this.oTable.getPropertyHelper().getProperties();
+		const aTableProperties = this.oTable.getPropertyHelper().getProperties();
 		assert.equal(this.oSortSpy.callCount, 1, "Binding#sort called once");
 		sinon.assert.calledWithExactly(this.oSortSpy, [new Sorter("Name", true)]);
 		assert.equal(this.oFilterSpy.callCount, 1, "Binding#filter called once");
@@ -1578,8 +1578,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("Filter", function(assert) {
-		var aFilters = [new Filter("Name", "EQ", "a")];
-		var oUpdateBindingInfoStub = sinon.stub(this.oTable.getControlDelegate(), "updateBindingInfo");
+		const aFilters = [new Filter("Name", "EQ", "a")];
+		const oUpdateBindingInfoStub = sinon.stub(this.oTable.getControlDelegate(), "updateBindingInfo");
         oUpdateBindingInfoStub.callsFake(function (oMDCTable, oBindingInfo) {
 			oUpdateBindingInfoStub.wrappedMethod.apply(this, arguments);
 			oBindingInfo.path = "/ProductList";
@@ -1624,7 +1624,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Parameters", function(assert) {
-		var oUpdateBindingInfoStub = sinon.stub(this.oTable.getControlDelegate(), "updateBindingInfo");
+		const oUpdateBindingInfoStub = sinon.stub(this.oTable.getControlDelegate(), "updateBindingInfo");
 
         oUpdateBindingInfoStub.onCall(0).callsFake(function (oMDCTable, oBindingInfo) {
 			oUpdateBindingInfoStub.wrappedMethod.apply(this, arguments);
@@ -1663,7 +1663,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Change path", function(assert) {
-		var oUpdateBindingInfoStub = sinon.stub(this.oTable.getControlDelegate(), "updateBindingInfo");
+		const oUpdateBindingInfoStub = sinon.stub(this.oTable.getControlDelegate(), "updateBindingInfo");
 
 		oUpdateBindingInfoStub.onCall(1).callsFake(function (oMDCTable, oBindingInfo) {
 			oUpdateBindingInfoStub.wrappedMethod.apply(this, arguments);
@@ -1756,16 +1756,15 @@ sap.ui.define([
 		}).then(() => {
 			return this.oTable._fullyInitialized();
 		}).then(() => {
-			var aExpectedSorter = [new Sorter("Name_Path", true)];
-			var aExpectedFilter = [FilterUtil.getFilterInfo(this.oTable.getControlDelegate().getTypeMap(),
-															this.oTable.getConditions(),
-															this.oTable.getPropertyHelper().getProperties()).filters];
-			var oBindingInfo = {};
+			const aExpectedSorter = [new Sorter("Name_Path", true)];
+			const aExpectedFilter = [FilterUtil.getFilterInfo(this.oTable.getControlDelegate().getTypeMap(),
+													this.oTable.getConditions(),
+													this.oTable.getPropertyHelper().getProperties()).filters];
 
+			const oBindingInfo = {};
 			TableDelegate.updateBindingInfo(this.oTable, oBindingInfo);
 			assert.deepEqual(oBindingInfo, {parameters: {}, sorter: aExpectedSorter, filters: aExpectedFilter}, "Table");
 
-			oBindingInfo = {};
 			this.oTable.setType("ResponsiveTable");
 			aExpectedSorter.push(new Sorter("FirstName_Path", true));
 			TableDelegate.updateBindingInfo(this.oTable, oBindingInfo);
@@ -1776,10 +1775,10 @@ sap.ui.define([
 	});
 
 	QUnit.test("#getSupportedFeatures", function(assert) {
-		var fnTest = function(sTableType, oExpectedFeatures) {
-			var pInit = this.oTable ? this.oTable.setType(sTableType).initialized() : this.initTable({type: sTableType});
+		const fnTest = function(sTableType, oExpectedFeatures) {
+			const pInit = this.oTable ? this.oTable.setType(sTableType).initialized() : this.initTable({type: sTableType});
 			return pInit.then(function(oTable) {
-				var oFeatures = oTable.getControlDelegate().getSupportedFeatures(oTable);
+				const oFeatures = oTable.getControlDelegate().getSupportedFeatures(oTable);
 				assert.deepEqual(oFeatures, oExpectedFeatures, sTableType + ": supported features are correct");
 			});
 		}.bind(this);
@@ -1804,8 +1803,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("#expandAll", function(assert) {
-		var fnTest = function (sTableType, bExpandsAll) {
-			var pInit = this.oTable ? this.oTable.setType(sTableType).initialized() : this.initTable({type: sTableType});
+		const fnTest = function (sTableType, bExpandsAll) {
+			const pInit = this.oTable ? this.oTable.setType(sTableType).initialized() : this.initTable({type: sTableType});
 			return pInit.then(function(oTable) {
 				sinon.stub(oTable, "getRowBinding").returns({
 					setAggregation: function(oObject) {
@@ -1816,7 +1815,7 @@ sap.ui.define([
 						return {expandTo: 1, test: "Test"};
 					}
 				});
-				var oSetAggregationSpy = sinon.spy(oTable.getRowBinding(), "setAggregation");
+				const oSetAggregationSpy = sinon.spy(oTable.getRowBinding(), "setAggregation");
 
 				oTable.getControlDelegate().expandAll(oTable);
 				if (bExpandsAll) {
@@ -1838,8 +1837,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("#collapseAll", function(assert) {
-		var fnTest = function (sTableType, bExpandsAll) {
-			var pInit = this.oTable ? this.oTable.setType(sTableType).initialized() : this.initTable({type: sTableType});
+		const fnTest = function (sTableType, bExpandsAll) {
+			const pInit = this.oTable ? this.oTable.setType(sTableType).initialized() : this.initTable({type: sTableType});
 			return pInit.then(function(oTable) {
 				sinon.stub(oTable, "getRowBinding").returns({
 					setAggregation: function(oObject) {
@@ -1850,7 +1849,7 @@ sap.ui.define([
 						return {expandTo: 12, test: "Test"};
 					}
 				});
-				var oSetAggregationSpy = sinon.spy(oTable.getRowBinding(), "setAggregation");
+				const oSetAggregationSpy = sinon.spy(oTable.getRowBinding(), "setAggregation");
 
 				oTable.getControlDelegate().collapseAll(oTable);
 				if (bExpandsAll) {

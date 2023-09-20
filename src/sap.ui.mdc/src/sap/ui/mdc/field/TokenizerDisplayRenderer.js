@@ -6,16 +6,16 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/m/TokenizerRenderer', 'sap/m/library
 	function(Renderer, TokenizerRenderer, mLibrary, Core) {
 	"use strict";
 
-	var EmptyIndicatorMode = mLibrary.EmptyIndicatorMode;
+	const EmptyIndicatorMode = mLibrary.EmptyIndicatorMode;
 
 	// shortcut for library resource bundle
-	var oRb = Core.getLibraryResourceBundle("sap.m");
+	const oRb = Core.getLibraryResourceBundle("sap.m");
 
 	/**
 	 * TokenizerDisplay renderer.
 	 * @namespace
 	 */
-	var TokenizerDisplayRenderer = Renderer.extend(TokenizerRenderer);
+	const TokenizerDisplayRenderer = Renderer.extend(TokenizerRenderer);
 	TokenizerDisplayRenderer.apiVersion = 2;
 
 	TokenizerDisplayRenderer._renderIndicator = function(oRm, oControl){

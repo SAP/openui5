@@ -8,11 +8,11 @@ sap.ui.define([
 
 	function buildXML(sFilterConditions) {
 
-		var sPropertyInfo = '[\\{"name":"prop2", "label":"Prop2", "dataType":"sap.ui.model.type.String", "maxConditions":1\\}, \\{"name":"prop3", "label":"Prop3", "dataType":"sap.ui.model.type.String", "maxConditions":-1\\},' +
+		const sPropertyInfo = '[\\{"name":"prop2", "label":"Prop2", "dataType":"sap.ui.model.type.String", "maxConditions":1\\}, \\{"name":"prop3", "label":"Prop3", "dataType":"sap.ui.model.type.String", "maxConditions":-1\\},' +
 							 '\\{"name":"prop4", "label":"Prop4", "dataType":"sap.ui.model.type.String", "maxConditions":1\\}, \\{"name":"prop5", "label":"Prop5", "dataType":"sap.ui.model.type.String", "maxConditions":-1\\}]';
-		var sDelegate = '\\{"name": "sap/ui/mdc/qunit/filterbar/sample/FilterBarTest.delegate", "payload": \\{\\}\\}';
+		const sDelegate = '\\{"name": "sap/ui/mdc/qunit/filterbar/sample/FilterBarTest.delegate", "payload": \\{\\}\\}';
 
-		var b = '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:mdc="sap.ui.mdc">' +
+		const b = '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:mdc="sap.ui.mdc">' +
 		'<mdc:FilterBar id="myFilterBar" p13nMode="Value" delegate=\'' +  sDelegate + '\' filterConditions="' + sFilterConditions + '" propertyInfo=\'' + sPropertyInfo + '\'>' +
 		'<mdc:filterItems>' +
 		'<mdc:FilterField id="myFilterBar--prop2" conditions="{$filters>/conditions/prop2}" propertyKey="prop2" maxConditions="1"  dataType="sap.ui.model.type.String"/>' +
@@ -25,14 +25,14 @@ sap.ui.define([
 	}
 
 	function fnConfirm(oUiComponent, oViewAfterAction, assert) {
-		var oFB = oViewAfterAction.byId("myFilterBar");
+		const oFB = oViewAfterAction.byId("myFilterBar");
 		assert.ok(oFB);
 	}
 
 	// -------------------------------------
 
 	function fnOnAfterAction(oUiComponent, oViewAfterAction, assert) {
-		var oFB = oViewAfterAction.byId("myFilterBar");
+		const oFB = oViewAfterAction.byId("myFilterBar");
 		assert.ok(oFB);
 		if (oFB.getMetadata) {
 			assert.deepEqual(oFB.getInternalConditions(), {}, "expected inner conditions found");
@@ -86,7 +86,7 @@ sap.ui.define([
 	// -------------------------------------
 
 	function fnOnAfterAction2(oUiComponent, oViewAfterAction, assert) {
-		var oFB = oViewAfterAction.byId("myFilterBar");
+		const oFB = oViewAfterAction.byId("myFilterBar");
 		assert.ok(oFB);
 
 		if (oFB.getMetadata) {
@@ -142,7 +142,7 @@ sap.ui.define([
 	// -------------------------------------
 
 	function fnOnAfterAction3(oUiComponent, oViewAfterAction, assert) {
-		var oFB = oViewAfterAction.byId("myFilterBar");
+		const oFB = oViewAfterAction.byId("myFilterBar");
 		assert.ok(oFB);
 
 		if (oFB.getMetadata) {
@@ -229,7 +229,7 @@ sap.ui.define([
 	// -------------------------------------
 
 	function fnOnAfterActionAddRemoveItem(oUiComponent, oViewAfterAction, assert) {
-		var oFB = oViewAfterAction.byId("myFilterBar");
+		const oFB = oViewAfterAction.byId("myFilterBar");
 		assert.ok(oFB);
 
 		if (oFB.getMetadata) {
@@ -324,7 +324,7 @@ sap.ui.define([
 	// -------------------------------------
 
 	function fnOnAfterActionAddAddRemoveItem(oUiComponent, oViewAfterAction, assert) {
-		var oFB = oViewAfterAction.byId("myFilterBar");
+		const oFB = oViewAfterAction.byId("myFilterBar");
 		assert.ok(oFB);
 
 		if (oFB.getMetadata) {

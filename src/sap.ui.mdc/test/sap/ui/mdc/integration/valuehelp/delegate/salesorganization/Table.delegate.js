@@ -19,7 +19,7 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var TestTableDelegate = Object.assign({}, TableDelegate);
+	const TestTableDelegate = Object.assign({}, TableDelegate);
 
 	TestTableDelegate.fetchProperties = function (oTable) {
 		return Promise.resolve(['key', 'text', 'salesOrganization', 'division'].map(function (sProp) {
@@ -46,18 +46,18 @@ sap.ui.define([
 
 	TestTableDelegate.updateBindingInfo = function(oMDCTable, oBindingInfo) {
 		TableDelegate.updateBindingInfo.apply(this, arguments);
-		var oMetadataInfo = oMDCTable.getPayload();
+		const oMetadataInfo = oMDCTable.getPayload();
 		oBindingInfo.path = oBindingInfo.path || oMetadataInfo.collectionPath || "/" + oMetadataInfo.collectionName;
 		oBindingInfo.model = oBindingInfo.model || oMetadataInfo.model;
 
-		var oFilter = Core.byId(oMDCTable.getFilter());
-		var bFilterEnabled = oMDCTable.isFilteringEnabled();
-		var aFilters = [];
-		var oDataStateIndicator = oMDCTable.getDataStateIndicator();
+		const oFilter = Core.byId(oMDCTable.getFilter());
+		const bFilterEnabled = oMDCTable.isFilteringEnabled();
+		const aFilters = [];
+		const oDataStateIndicator = oMDCTable.getDataStateIndicator();
 
 		if (bFilterEnabled) {
-			var aTableProperties = oMDCTable.getPropertyHelper().getProperties();
-			var oInnerFilterInfo = FilterUtil.getFilterInfo(TestTableDelegate.getTypeMap(), oMDCTable.getConditions(), aTableProperties);
+			const aTableProperties = oMDCTable.getPropertyHelper().getProperties();
+			const oInnerFilterInfo = FilterUtil.getFilterInfo(TestTableDelegate.getTypeMap(), oMDCTable.getConditions(), aTableProperties);
 
 			if (oInnerFilterInfo.filters) {
 				aFilters.push(oInnerFilterInfo.filters);
@@ -65,11 +65,11 @@ sap.ui.define([
 		}
 
 		if (oFilter) {
-			var mConditions = oFilter.getConditions();
+			const mConditions = oFilter.getConditions();
 
 			if (mConditions) {
-				var aPropertiesMetadata = oFilter.getPropertyInfoSet ? oFilter.getPropertyInfoSet() : null;
-				var oFilterInfo = FilterUtil.getFilterInfo(TestTableDelegate.getTypeMap(), mConditions, aPropertiesMetadata);
+				const aPropertiesMetadata = oFilter.getPropertyInfoSet ? oFilter.getPropertyInfoSet() : null;
+				const oFilterInfo = FilterUtil.getFilterInfo(TestTableDelegate.getTypeMap(), mConditions, aPropertiesMetadata);
 
 				if (oFilterInfo.filters) {
 					aFilters.push(oFilterInfo.filters);

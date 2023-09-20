@@ -16,7 +16,7 @@ sap.ui.define([
 		}
 
 		sinon.spy(BaseDelegate, "getTypeMap");
-		var oTypeUtil = null;
+		const oTypeUtil = null;
 		assert.ok(BaseDelegate.getTypeMap.calledOnce, "calls getTypeMap");
 		assert.equal(oTypeUtil, BaseDelegate.getTypeMap(), "returns getTypeMap result");
 	});
@@ -24,8 +24,8 @@ sap.ui.define([
 	QUnit.test("getTypeMap", function(assert) {
 		assert.equal(BaseDelegate.getTypeMap(), DefaultTypeMap, "returns correct default");
 
-		var oFakeTypeUtil = {};
-		var oFakeDelegateWithTypeUtil = Object.assign({}, BaseDelegate, {
+		const oFakeTypeUtil = {};
+		const oFakeDelegateWithTypeUtil = Object.assign({}, BaseDelegate, {
 			getTypeUtil: function () { return oFakeTypeUtil; }
 		});
 

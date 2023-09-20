@@ -23,7 +23,7 @@ sap.ui.define([
 	 * @since 1.87
 	 * @alias sap.ui.mdc.filterbar.vh.CollectiveSearchSelect
 	 */
-	var CollectiveSearchSelect = VariantManagement.extend("sap.ui.mdc.filterbar.vh.CollectiveSearchSelect", /** @lends sap.ui.mdc.filterbar.vh.CollectiveSearchSelect.prototype */ {
+	const CollectiveSearchSelect = VariantManagement.extend("sap.ui.mdc.filterbar.vh.CollectiveSearchSelect", /** @lends sap.ui.mdc.filterbar.vh.CollectiveSearchSelect.prototype */ {
 		metadata: {
 			library: "sap.ui.mdc",
 			properties: {
@@ -126,7 +126,7 @@ sap.ui.define([
 	 * @returns {object} Configuration information for the <code>sap.m.IOverflowToolbarContent</code> interface.
 	 */
 	CollectiveSearchSelect.prototype.getOverflowToolbarConfig = function() {
-		var oOverflowToolbarConfig = VariantManagement.prototype.getOverflowToolbarConfig.apply(this); // Call base class
+		const oOverflowToolbarConfig = VariantManagement.prototype.getOverflowToolbarConfig.apply(this); // Call base class
 		oOverflowToolbarConfig.canOverflow = true;
 		return oOverflowToolbarConfig;
 	};

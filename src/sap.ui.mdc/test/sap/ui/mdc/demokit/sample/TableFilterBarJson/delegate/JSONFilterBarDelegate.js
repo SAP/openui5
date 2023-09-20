@@ -8,14 +8,14 @@ sap.ui.define([
 ], function (FilterBarDelegate, JSONPropertyInfo, JSONBaseDelegate, FilterField, Core, Fragment) {
 	"use strict";
 
-	var JSONFilterBarDelegate = Object.assign({}, FilterBarDelegate, JSONBaseDelegate);
+	const JSONFilterBarDelegate = Object.assign({}, FilterBarDelegate, JSONBaseDelegate);
 
 	JSONFilterBarDelegate.fetchProperties = function () {
 		return Promise.resolve(JSONPropertyInfo);
 	};
 
 	JSONFilterBarDelegate.addItem = function(oFilterBar, sPropertyName) {
-		var oProperty = JSONPropertyInfo.find((oPropertyInfo) => oPropertyInfo.name === sPropertyName);
+		const oProperty = JSONPropertyInfo.find((oPropertyInfo) => oPropertyInfo.name === sPropertyName);
 		return _addFilterField(oProperty, oFilterBar);
 	};
 
@@ -25,10 +25,10 @@ sap.ui.define([
 	};
 
 	function _addFilterField(oProperty, oFilterBar) {
-		var sName = oProperty.name;
-		var sFilterFieldId = oFilterBar.getId() + "--filter--" + sName;
-		var oFilterField = Core.byId(sFilterFieldId);
-		var pFilterField;
+		const sName = oProperty.name;
+		const sFilterFieldId = oFilterBar.getId() + "--filter--" + sName;
+		let oFilterField = Core.byId(sFilterFieldId);
+		let pFilterField;
 
 		if (oFilterField) {
 			pFilterField = Promise.resolve(oFilterField);
@@ -53,14 +53,14 @@ sap.ui.define([
 	}
 
 	function _addValueHelp(oFilterBar, oFilterField, sName) {
-		var oValueHelp = oFilterBar.getDependents().find((oD) => oD.getId().includes(sName));
-		var pFieldWithVH;
+		const oValueHelp = oFilterBar.getDependents().find((oD) => oD.getId().includes(sName));
+		let pFieldWithVH;
 
 		if (oValueHelp) {
 			oFilterField.setValueHelp(oValueHelp);
 			pFieldWithVH = Promise.resolve(oFilterField);
 		} else {
-			var sPath = "mdc.sample.view.fragment.";
+			const sPath = "mdc.sample.view.fragment.";
 			pFieldWithVH = Fragment.load({
 				name: sPath + oFilterBar.getPayload().valueHelp[sName]
 			}).then(function(oValueHelp) {

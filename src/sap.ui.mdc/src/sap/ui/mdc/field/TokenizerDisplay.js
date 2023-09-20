@@ -15,7 +15,7 @@ sap.ui.define([
 	) {
 	"use strict";
 
-	var EmptyIndicatorMode = mLibrary.EmptyIndicatorMode;
+	const EmptyIndicatorMode = mLibrary.EmptyIndicatorMode;
 
 	/**
 	 * Constructor for a new <code>TokenizerDisplay</code>.
@@ -34,7 +34,7 @@ sap.ui.define([
 	 * @since 1.99.0
 	 * @alias sap.ui.mdc.field.TokenizerDisplay
 	 */
-	var TokenizerDisplay = Tokenizer.extend("sap.ui.mdc.field.TokenizerDisplay", /** @lends sap.ui.mdc.field.TokenizerDisplay.prototype */
+	const TokenizerDisplay = Tokenizer.extend("sap.ui.mdc.field.TokenizerDisplay", /** @lends sap.ui.mdc.field.TokenizerDisplay.prototype */
 	{
 		metadata: {
 			library: "sap.ui.mdc",
@@ -75,7 +75,7 @@ sap.ui.define([
 
 	TokenizerDisplay.prototype.getAccessibilityInfo = function () {
 		// just concatenate token texts and return it as description
-		var sText = this.getTokens().map(function (oToken) {
+		const sText = this.getTokens().map(function (oToken) {
 			return oToken.getText();
 		}).join(" ");
 

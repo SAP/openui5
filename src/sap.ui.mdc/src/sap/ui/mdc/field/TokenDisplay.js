@@ -29,7 +29,7 @@ sap.ui.define([
 	 * @since 1.99.0
 	 * @alias sap.ui.mdc.field.TokenDisplay
 	 */
-	var TokenDisplay = Token.extend("sap.ui.mdc.field.TokenDisplay", /** @lends sap.ui.mdc.field.TokenDisplay.prototype */
+	const TokenDisplay = Token.extend("sap.ui.mdc.field.TokenDisplay", /** @lends sap.ui.mdc.field.TokenDisplay.prototype */
 	{
 		metadata: {
 			library: "sap.ui.mdc",

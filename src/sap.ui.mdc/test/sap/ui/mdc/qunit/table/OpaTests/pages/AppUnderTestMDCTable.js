@@ -410,7 +410,7 @@ sap.ui.define([
 				},
 
 				iSelectVariant: function(sVariantName) {
-					var Action = new P13nAction();
+					const Action = new P13nAction();
 					return Action.iSelectVariant(sVariantName);
 				},
 
@@ -421,7 +421,7 @@ sap.ui.define([
 				 * @returns {Promise} OPA waitFor
 				 */
 				iSelectColumns: function(aColumnName, bModal) {
-					var Action = new P13nAction();
+					const Action = new P13nAction();
 					return aColumnName.forEach(function(sColumnName) {
 						Action.iSelectColumn(sColumnName, null, undefined, bModal);
 					});
@@ -432,7 +432,7 @@ sap.ui.define([
 				 * @returns {Promise} OPA waitFor
 				 */
 				iPressDialogOk: function() {
-					var Action = new P13nAction();
+					const Action = new P13nAction();
 					return Action.iPressDialogOk();
 				}
 			},

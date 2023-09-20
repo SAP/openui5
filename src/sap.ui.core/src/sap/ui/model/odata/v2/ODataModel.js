@@ -3251,24 +3251,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the current security token.
-	 *
-	 * If the token has not been requested from the server it will be requested first (synchronously).
-	 *
-	 * @returns {string} The security token
-	 *
-	 * @public
-	 */
-	ODataModel.prototype.getSecurityToken = function() {
-		var sToken = this.oSharedServiceData.securityToken;
-		if (!sToken) {
-			this.refreshSecurityToken();
-			sToken = this.oSharedServiceData.securityToken;
-		}
-		return sToken;
-	};
-
-	/**
 	 * Returns a promise, which will resolve with the security token as soon as it is available.
 	 *
 	 * @returns {Promise} A promise on the security token

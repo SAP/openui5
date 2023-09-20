@@ -17,9 +17,9 @@ sap.ui.define([
 	 * @private
 	 * @ui5-restricted sap.ui.mdc
 	 */
-	var fnSplitValue = function(vValue, bSplitOnTab) {
+	const fnSplitValue = function(vValue, bSplitOnTab) {
 
-		var aSeparatedText;
+		let aSeparatedText;
 		if (typeof vValue === "string") {
 			// Pasting from Excel on Windows always adds "\r\n" at the end, even if a single cell is selected
 			if (vValue.length && vValue.endsWith("\r\n")) {

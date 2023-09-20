@@ -10,7 +10,7 @@ sap.ui.define([
 ], function (BaseController, FlexUtil, xConfigAPI, merge) {
 	"use strict";
 
-	var ColumnWidthController = BaseController.extend("sap.ui.mdc.p13n.subcontroller.ColumnWidthController", {
+	const ColumnWidthController = BaseController.extend("sap.ui.mdc.p13n.subcontroller.ColumnWidthController", {
 		constructor: function() {
 			BaseController.apply(this, arguments);
 			this._bXConfigEnabled = true;
@@ -19,10 +19,10 @@ sap.ui.define([
 	});
 
 	ColumnWidthController.prototype.sanityCheck = function(oState) {
-        var aColumnWidth = [];
+        const aColumnWidth = [];
 		if (oState && oState.hasOwnProperty("aggregations") && oState.aggregations.hasOwnProperty("columns")) {
 			Object.keys(oState.aggregations.columns).forEach(function(sItem) {
-				var oColumnWidth = {
+				const oColumnWidth = {
 					name: sItem,
 					width: oState.aggregations.columns[sItem].width
 				};
@@ -42,12 +42,12 @@ sap.ui.define([
 
 	ColumnWidthController.prototype.changesToState = function(aChanges) {
 
-        var oState;
-		var oControl = aChanges.length && aChanges[0].selectorElement;
+        let oState;
+		const oControl = aChanges.length && aChanges[0].selectorElement;
 
         aChanges.forEach(function(oChange){
-			var oChangeContent = merge({}, oChange.changeSpecificData.content);
-			var oXSettings = {
+			const oChangeContent = merge({}, oChange.changeSpecificData.content);
+			const oXSettings = {
 				key: oChangeContent.name,
 				controlMeta: {
 					aggregation: "columns"

@@ -37,7 +37,7 @@ sap.ui.define([
         "use strict";
 
 		// shortcut for sap.ui.core.aria.HasPopup
-		var AriaHasPopup = coreLibrary.aria.HasPopup;
+		const AriaHasPopup = coreLibrary.aria.HasPopup;
 
         /**
          * Constructor for a new ChartToolbar.
@@ -54,7 +54,7 @@ sap.ui.define([
          * @since 1.88
          * @alias sap.ui.mdc.chart.ChartToolbar
          */
-        var ChartToolbar = ActionToolbar.extend("sap.ui.mdc.chart.ChartToolbar", /** @lends sap.ui.mdc.chart.ChartToolbar.prototype */ {
+        const ChartToolbar = ActionToolbar.extend("sap.ui.mdc.chart.ChartToolbar", /** @lends sap.ui.mdc.chart.ChartToolbar.prototype */ {
             metadata: {
                 library: "sap.ui.mdc",
                 interfaces: [],
@@ -67,7 +67,7 @@ sap.ui.define([
             renderer: OverflowToolbarRenderer
         });
 
-        var MDCRb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
+        const MDCRb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
 
         /**
          * Initialises the MDC Chart Selection Details
@@ -116,7 +116,7 @@ sap.ui.define([
             }
 
             //Check p13n mode property on the chart and enable only desired buttons
-			var aP13nMode = oChart.getP13nMode() || [];
+			const aP13nMode = oChart.getP13nMode() || [];
 
             if (  aP13nMode.indexOf("Item") > -1 && (!oChart.getIgnoreToolbarActions().length || oChart.getIgnoreToolbarActions().indexOf(ChartToolbarActionType.DrillDownUp) < 0)) {
                 this._oDrillDownBtn = new OverflowButton(oChart.getId() + "-drillDown", {
@@ -183,8 +183,8 @@ sap.ui.define([
                     text: MDCRb.getText('chart.SETTINGS'),
                     enabled: false,
                     press: function (oEvent) {
-                        var aP13nMode = oChart.getP13nMode();
-                        var iIdx = aP13nMode.indexOf("Type");
+                        const aP13nMode = oChart.getP13nMode();
+                        const iIdx = aP13nMode.indexOf("Type");
 						if (iIdx > -1) {
 							aP13nMode.splice(iIdx, 1);
 						}
@@ -255,7 +255,7 @@ sap.ui.define([
          * @ui5-restricted sap.ui.mdc, sap.fe
          */
         ChartToolbar.prototype.toggleZoomButtons = function (oChart) {
-            var oZoomInfo = this._getZoomEnablement(oChart);
+            const oZoomInfo = this._getZoomEnablement(oChart);
 
             if (oZoomInfo.enabled) {
                 this.oZoomInButton.setEnabled(oZoomInfo.enabledZoomIn);
@@ -289,7 +289,7 @@ sap.ui.define([
                 this._toolbarInitialUpdated = true;
             }
 
-            var oSelectionHandler = oChart.getSelectionHandler();
+            const oSelectionHandler = oChart.getSelectionHandler();
             if (oSelectionHandler && oChart.getShowSelectionDetails()) {
                 this._oChartSelectionDetails.attachSelectionHandler(oSelectionHandler.eventId, oSelectionHandler.listener);
             }
@@ -300,7 +300,7 @@ sap.ui.define([
         };
 
         ChartToolbar.prototype._getZoomEnablement = function (oChart) {
-            var zoomInfo;
+            let zoomInfo;
 
             try {
                 zoomInfo = oChart.getZoomState();
@@ -311,7 +311,7 @@ sap.ui.define([
 
 
             if (zoomInfo && zoomInfo.hasOwnProperty("currentZoomLevel") && zoomInfo.currentZoomLevel != null && zoomInfo.enabled) {
-                var toolbarZoomInfo = {enabled: true};
+                const toolbarZoomInfo = {enabled: true};
 
                 //TODO: Move this to the delegate since we don't know how other chart librariers handle this
                 toolbarZoomInfo.enabledZoomOut = zoomInfo.currentZoomLevel > 0;
@@ -329,14 +329,15 @@ sap.ui.define([
                 return;
             }
 
-            var oSelectionDetailsActions = oChart.getSelectionDetailsActions(), oClone;
+            const oSelectionDetailsActions = oChart.getSelectionDetailsActions();
+            let oClone;
 
             if (oSelectionDetailsActions) {
                 // Update item actions
-                var aSelectionItems = this._oChartSelectionDetails.getItems();
+                const aSelectionItems = this._oChartSelectionDetails.getItems();
 
                 aSelectionItems.forEach(function (oItem) {
-                    var aItemActions = oSelectionDetailsActions.getDetailsItemActions();
+                    const aItemActions = oSelectionDetailsActions.getDetailsItemActions();
                     aItemActions.forEach(function (oAction) {
                         oClone = oAction.clone();
                         oItem.addAction(oClone);
@@ -344,7 +345,7 @@ sap.ui.define([
                 });
 
                 // Update list actions
-                var aDetailsActions = oSelectionDetailsActions.getDetailsActions();
+                const aDetailsActions = oSelectionDetailsActions.getDetailsActions();
                 this._oChartSelectionDetails.removeAllActions();
                 aDetailsActions.forEach(function (oAction) {
                     oClone = oAction.clone();
@@ -352,7 +353,7 @@ sap.ui.define([
                 }.bind(this));
 
                 // Update group actions
-                var aActionGroups = oSelectionDetailsActions.getActionGroups();
+                const aActionGroups = oSelectionDetailsActions.getActionGroups();
                 this._oChartSelectionDetails.removeAllActionGroups();
                 aActionGroups.forEach(function (oActionGroup) {
                     oClone = oActionGroup.clone();

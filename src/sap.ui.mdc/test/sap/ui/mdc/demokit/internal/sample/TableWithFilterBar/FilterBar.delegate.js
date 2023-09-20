@@ -11,12 +11,12 @@ sap.ui.define([
 ], function (FilterBarDelegate, FlUtils, JsControlTreeModifier) {
 	"use strict";
 
-	var FilterBarBooksSampleDelegate = Object.assign({}, FilterBarDelegate);
+	const FilterBarBooksSampleDelegate = Object.assign({}, FilterBarDelegate);
 
 	FilterBarBooksSampleDelegate.fetchProperties = function () {
-		var oFetchPropertiesPromise = FilterBarDelegate.fetchProperties.apply(this, arguments);
+		const oFetchPropertiesPromise = FilterBarDelegate.fetchProperties.apply(this, arguments);
 
-		var bSearchExists = false;
+		let bSearchExists = false;
 
 		return oFetchPropertiesPromise.then(function (aProperties) {
 			aProperties.forEach(function(oPropertyInfo){
@@ -103,9 +103,9 @@ sap.ui.define([
 			appComponent: FlUtils.getAppComponentForControl(oFilterBar)
 		};
 
-		var oModifier = mPropertyBag.modifier;
-		var sName = oProperty.path || oProperty.name;
-		var oFilterFieldPromise = FilterBarDelegate._createFilterField.apply(this, arguments);
+		const oModifier = mPropertyBag.modifier;
+		const sName = oProperty.path || oProperty.name;
+		const oFilterFieldPromise = FilterBarDelegate._createFilterField.apply(this, arguments);
 
 		oFilterFieldPromise.then(function (oFilterField) {
 

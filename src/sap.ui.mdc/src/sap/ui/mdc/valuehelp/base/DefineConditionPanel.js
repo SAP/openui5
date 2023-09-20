@@ -83,20 +83,20 @@ sap.ui.define([
 	"use strict";
 
 	// translation utils
-	var oMessageBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
-	var oMessageBundleM = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+	let oMessageBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
+	let oMessageBundleM = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 	sap.ui.getCore().attachLocalizationChanged(function() {
 		oMessageBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
 		oMessageBundleM = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 	});
 
-	var ButtonType = mLibrary.ButtonType;
-	var ValueState = coreLibrary.ValueState;
-	var InvisibleMessageMode = coreLibrary.InvisibleMessageMode;
-	var TextAlign = coreLibrary.TextAlign;
-	var BackgroundDesign = mLibrary.BackgroundDesign;
-	var ToolbarDesign = mLibrary.ToolbarDesign;
-	var OverflowToolbarPriority = mLibrary.OverflowToolbarPriority;
+	const ButtonType = mLibrary.ButtonType;
+	const ValueState = coreLibrary.ValueState;
+	const InvisibleMessageMode = coreLibrary.InvisibleMessageMode;
+	const TextAlign = coreLibrary.TextAlign;
+	const BackgroundDesign = mLibrary.BackgroundDesign;
+	const ToolbarDesign = mLibrary.ToolbarDesign;
+	const OverflowToolbarPriority = mLibrary.OverflowToolbarPriority;
 
 	/**
 	 * Constructor for a new <code>DefineConditionPanel</code>.
@@ -121,7 +121,7 @@ sap.ui.define([
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.valuehelp.content.Conditions
 	 */
-	var DefineConditionPanel = Control.extend("sap.ui.mdc.valuehelp.base.DefineConditionPanel", {
+	const DefineConditionPanel = Control.extend("sap.ui.mdc.valuehelp.base.DefineConditionPanel", {
 		metadata: {
 			library: "sap.ui.mdc",
 			properties: {
@@ -297,12 +297,12 @@ sap.ui.define([
 		},
 
 		removeCondition: function(oEvent) {
-			var oSource = oEvent.oSource;
-			var oBindingContext = oSource.getBindingContext("$this");
-			var aConditions = this.getConditions();
-			var sPath = oBindingContext.getPath();
-			var aMatch = sPath.match(/^.*\/(\d+)\/$/);
-			var iIndex;
+			const oSource = oEvent.oSource;
+			const oBindingContext = oSource.getBindingContext("$this");
+			let aConditions = this.getConditions();
+			const sPath = oBindingContext.getPath();
+			const aMatch = sPath.match(/^.*\/(\d+)\/$/);
+			let iIndex;
 			if (aMatch) {
 				iIndex = parseInt(aMatch[1]);
 			}
@@ -314,11 +314,11 @@ sap.ui.define([
 			this.oInvisibleMessage.announce(oMessageBundle.getText("valuehelp.DEFINECONDITIONS_REMOVECONDITION_ANNOUNCE"), InvisibleMessageMode.Assertive);
 
 			// try to reset valueState and value of value Fields inside the removed row
-			var oGrid = this.byId("conditions");
-			var aGridContent = oGrid.getContent();
-			var iRow = -1;
-			for (var i = 0; i < aGridContent.length; i++) {
-				var oField = aGridContent[i];
+			const oGrid = this.byId("conditions");
+			const aGridContent = oGrid.getContent();
+			let iRow = -1;
+			for (let i = 0; i < aGridContent.length; i++) {
+				const oField = aGridContent[i];
 				if (oField instanceof Field && oField.getValueHelp() === this._sOperatorHelpId) {
 					// Operator field starts new row
 					iRow++;
@@ -350,22 +350,22 @@ sap.ui.define([
 		},
 
 		addCondition: function(oEvent) {
-			var aConditions = this.getConditions();
-			var oConfig = this.getConfig();
-			var iMaxConditions = oConfig.maxConditions;
+			const aConditions = this.getConditions();
+			const oConfig = this.getConfig();
+			const iMaxConditions = oConfig.maxConditions;
 
-			var oGrid = this.byId("conditions");
-			var aGridContent = oGrid.getContent();
-			var iRows = 0;
-			var iIndex = -1;
-			for (var i = 0; i < aGridContent.length; i++) {
-				var oField = aGridContent[i];
+			const oGrid = this.byId("conditions");
+			const aGridContent = oGrid.getContent();
+			let iRows = 0;
+			let iIndex = -1;
+			for (let i = 0; i < aGridContent.length; i++) {
+				const oField = aGridContent[i];
 				if (oField instanceof Field && oField.getValueHelp() === this._sOperatorHelpId) {
 					// Operator field starts new row
 					iRows++;
-					var oBindingContext = oField.getBindingContext("$this");
-					var sPath = oBindingContext.getPath();
-					var aMatch = sPath.match(/^.*\/(\d+)\/$/);
+					const oBindingContext = oField.getBindingContext("$this");
+					const sPath = oBindingContext.getPath();
+					const aMatch = sPath.match(/^.*\/(\d+)\/$/);
 					if (aMatch) {
 						iIndex = parseInt(aMatch[1]);
 					}
@@ -386,10 +386,10 @@ sap.ui.define([
 		},
 
 		addDummyCondition: function(index) {
-			var aOperators = _getOperators.call(this);
-			var oOperator = _getDefaultOperator.call(this);
-			var sOperator = oOperator.name;
-			var oCondition = Condition.createCondition(sOperator, oOperator.valueDefaults ? oOperator.valueDefaults : [], undefined, undefined, ConditionValidated.NotValidated);
+			const aOperators = _getOperators.call(this);
+			const oOperator = _getDefaultOperator.call(this);
+			const sOperator = oOperator.name;
+			const oCondition = Condition.createCondition(sOperator, oOperator.valueDefaults ? oOperator.valueDefaults : [], undefined, undefined, ConditionValidated.NotValidated);
 
 			if (oOperator.valueTypes[0] && oOperator.valueTypes[0] !== OperatorValueType.Static) {
 				// mark the condition as initial and not modified by the user
@@ -398,7 +398,7 @@ sap.ui.define([
 
 			FilterOperatorUtil.updateConditionValues(oCondition);
 			FilterOperatorUtil.checkConditionsEmpty(oCondition, aOperators);
-			var aConditions = this.getConditions();
+			const aConditions = this.getConditions();
 			if (index !== undefined) {
 				aConditions.splice(index, 0, oCondition);
 			} else {
@@ -414,7 +414,7 @@ sap.ui.define([
 		},
 
 		updateDefineConditions: function() {
-			var aConditions = _getDefineConditions.call(this);
+			const aConditions = _getDefineConditions.call(this);
 
 			_addStaticText.call(this, aConditions, true, false);
 
@@ -428,11 +428,11 @@ sap.ui.define([
 
 		// called when the user has change the value of the condition field
 		onChange: function(oEvent) {
-			var oPromise = oEvent && oEvent.getParameter("promise");
-			var oSourceControl = oEvent && oEvent.getSource();
-			var fnHandleChange = function(oEvent) {
-				var aOperators = _getOperators.call(this);
-				var aConditions = this.getConditions();
+			const oPromise = oEvent && oEvent.getParameter("promise");
+			const oSourceControl = oEvent && oEvent.getSource();
+			const fnHandleChange = function(oEvent) {
+				const aOperators = _getOperators.call(this);
+				const aConditions = this.getConditions();
 				FilterOperatorUtil.checkConditionsEmpty(aConditions, aOperators);
 				FilterOperatorUtil.updateConditionsValues(aConditions, aOperators);
 				_addStaticText.call(this, aConditions, false, false); // as updateConditionsValues removes static text
@@ -474,24 +474,24 @@ sap.ui.define([
 		},
 
 		onSelectChange: function(oEvent) {
-			var oField = oEvent.getSource();
-			var oPromise = oEvent.getParameter("promise"); // as with FixedList direct user input is parsed async wait for the promise
+			const oField = oEvent.getSource();
+			const oPromise = oEvent.getParameter("promise"); // as with FixedList direct user input is parsed async wait for the promise
 
 			oPromise.then(function (sKey) {
-				var sOldKey = oField._sOldKey;
-				var oOperator = FilterOperatorUtil.getOperator(sKey); // operator must exist as List is created from valid operators
-				var oOperatorOld = sOldKey && FilterOperatorUtil.getOperator(sOldKey);
-				var oBindingContext = oField.getBindingContext("$this");
-				var oCondition = oBindingContext.getObject();
-				var sConditionPath = oBindingContext.getPath(); // Path to condition of the active control
-				var iIndex = parseInt(sConditionPath.split("/")[2]); // index of current condition
-				var aConditions = this.getConditions();
+				const sOldKey = oField._sOldKey;
+				const oOperator = FilterOperatorUtil.getOperator(sKey); // operator must exist as List is created from valid operators
+				const oOperatorOld = sOldKey && FilterOperatorUtil.getOperator(sOldKey);
+				const oBindingContext = oField.getBindingContext("$this");
+				let oCondition = oBindingContext.getObject();
+				const sConditionPath = oBindingContext.getPath(); // Path to condition of the active control
+				const iIndex = parseInt(sConditionPath.split("/")[2]); // index of current condition
+				const aConditions = this.getConditions();
 				if (iIndex >= 0) {
 					oCondition = aConditions[iIndex]; // to get right instance
 				}
 
 				if (oOperator && oOperatorOld) {
-					var bUpdate = false;
+					let bUpdate = false;
 
 					if (!deepEqual(oOperator.valueTypes[0], oOperatorOld.valueTypes[0]) && oOperator.valueTypes[0] !== OperatorValueType.Static ) {
 						// type changed -> remove entered value (only if changed by user in Select)
@@ -502,10 +502,10 @@ sap.ui.define([
 									if ((oOperator.valueTypes[index] === OperatorValueType.Self && oOperatorOld.valueTypes[index] === OperatorValueType.SelfNoParse) ||
 											(oOperator.valueTypes[index] === OperatorValueType.SelfNoParse && oOperatorOld.valueTypes[index] === OperatorValueType.Self)) {
 										// as for Decimal values the type might change we need to format and parse again
-										var oType = _getFieldType.call(this, oOperator.name, index);
-										var oTypeOld = _getFieldType.call(this, oOperatorOld.name, index);
-										var sValue = oTypeOld.formatValue(oCondition.values[index], "string");
-										var vValue = oType.parseValue(sValue, "string");
+										const oType = _getFieldType.call(this, oOperator.name, index);
+										const oTypeOld = _getFieldType.call(this, oOperatorOld.name, index);
+										const sValue = oTypeOld.formatValue(oCondition.values[index], "string");
+										const vValue = oType.parseValue(sValue, "string");
 										if (vValue !== oCondition.values[index]) {
 											oCondition.values[index] = oType.parseValue(sValue, "string");
 											bUpdate = true;
@@ -554,11 +554,11 @@ sap.ui.define([
 
 				delete oField._sOldKey;
 			}.bind(this)).catch(function (oException) { // if Operator in error state -> don't update values
-				var oBindingContext = oField.getBindingContext("$this");
-				var oCondition = oBindingContext.getObject();
-				var sConditionPath = oBindingContext.getPath(); // Path to condition of the active control
-				var iIndex = parseInt(sConditionPath.split("/")[2]); // index of current condition
-				var aConditions = this.getConditions();
+				const oBindingContext = oField.getBindingContext("$this");
+				let oCondition = oBindingContext.getObject();
+				const sConditionPath = oBindingContext.getPath(); // Path to condition of the active control
+				const iIndex = parseInt(sConditionPath.split("/")[2]); // index of current condition
+				const aConditions = this.getConditions();
 				if (iIndex >= 0) {
 					oCondition = aConditions[iIndex]; // to get right instance
 				}
@@ -572,25 +572,25 @@ sap.ui.define([
 
 		onPaste: function(oEvent) {
 			// for the purpose to copy from column in Excel and paste as new conditions
-			var sOriginalText = oEvent.originalEvent.clipboardData.getData('text/plain');
-			var aSeparatedText = splitValue(sOriginalText, true); // check without BT support as if TAB is inside the Paste logic needs to be used anyhow
+			const sOriginalText = oEvent.originalEvent.clipboardData.getData('text/plain');
+			const aSeparatedText = splitValue(sOriginalText, true); // check without BT support as if TAB is inside the Paste logic needs to be used anyhow
 
 			if (aSeparatedText.length > 1) { // if no linebreak just process normal paste-logic
-				var oSource = oEvent.srcControl;
-				var sConditionPath = oSource.getBindingContext("$condition").getPath(); // Path to condition of the active control
-				var iIndex = parseInt(sConditionPath.split("/")[2]); // index of current condition - to remove before adding new ones
-				var aConditions = this.getConditions();
-				var oFormatOptions = merge({}, this.getConfig());
+				const oSource = oEvent.srcControl;
+				const sConditionPath = oSource.getBindingContext("$condition").getPath(); // Path to condition of the active control
+				const iIndex = parseInt(sConditionPath.split("/")[2]); // index of current condition - to remove before adding new ones
+				const aConditions = this.getConditions();
+				const oFormatOptions = merge({}, this.getConfig());
 				oFormatOptions.display = FieldDisplay.Value;
 				oFormatOptions.getConditions = function() {return aConditions;}; // as condition where inserted will be removed
 				oFormatOptions.defaultOperatorName = aConditions[iIndex].operator; // use current operator as default
 				oFormatOptions.valueType = oFormatOptions.dataType;
 				delete oFormatOptions.dataType;
-				var oConditionsType = new ConditionsType(oFormatOptions);
+				const oConditionsType = new ConditionsType(oFormatOptions);
 
 				try {
 					aConditions.splice(iIndex, 1); // remove old condition that is overwitten by pasting
-					var aNewConditions = oConditionsType._parseValueToIndex(sOriginalText, "string", iIndex);
+					const aNewConditions = oConditionsType._parseValueToIndex(sOriginalText, "string", iIndex);
 					oConditionsType.validateValue(aConditions);
 
 					FilterOperatorUtil.checkConditionsEmpty(aNewConditions);
@@ -598,8 +598,8 @@ sap.ui.define([
 
 					this.fireConditionProcessed();
 				} catch (error) {
-					var oException = new ParseException(oMessageBundle.getText("field.PASTE_ERROR"));
-					var mErrorParameters = {
+					const oException = new ParseException(oMessageBundle.getText("field.PASTE_ERROR"));
+					const mErrorParameters = {
 						element: oSource,
 						property: "value", // TODO: right property for custom content
 						type: oConditionsType,
@@ -620,10 +620,10 @@ sap.ui.define([
 
 		cleanUp: function() {
 			// of Dialog is closed all error messages and invalid input should be removed to be clean on reopening
-			var oGrid = this.byId("conditions");
-			var aGridContent = oGrid.getContent();
-			for (var i = 0; i < aGridContent.length; i++) {
-				var oField = aGridContent[i];
+			const oGrid = this.byId("conditions");
+			const aGridContent = oGrid.getContent();
+			for (let i = 0; i < aGridContent.length; i++) {
+				const oField = aGridContent[i];
 				if (oField instanceof Field && oField.hasOwnProperty("_iValueIndex")) {
 					if (oField.isInvalidInput()) { // TODO: better was to find out parsing error
 						oField.setValue(); // to remove invalid value from parsing
@@ -647,8 +647,8 @@ sap.ui.define([
 		 * @ui5-restricted sap.ui.mdc
 		 */
 		getInitialFocusedControl: function() {
-			var oGrid = this.getAggregation("_content").getContent()[1];
-			var oCtrl = oGrid.getContent()[0]; // 0=Operator Field, 2=first Value Field which might not exist
+			const oGrid = this.getAggregation("_content").getContent()[1];
+			const oCtrl = oGrid.getContent()[0]; // 0=Operator Field, 2=first Value Field which might not exist
 			return oCtrl;
 		},
 
@@ -669,24 +669,24 @@ sap.ui.define([
 
 		if (oChanges.name === "config") {
 			// type or maxConditions might changed -> resume ListBinding
-			var aConditions = this.getConditions();
-			var oOperators = oChanges.current && oChanges.current.operators;
-			var oOperatorsOld = oChanges.old && oChanges.old.operators;
-			var bOperatorModelUpdated = false;
+			const aConditions = this.getConditions();
+			const oOperators = oChanges.current && oChanges.current.operators;
+			const oOperatorsOld = oChanges.old && oChanges.old.operators;
+			let bOperatorModelUpdated = false;
 			if (!deepEqual(oOperators, oOperatorsOld)) {
 				// operators changed
 				bOperatorModelUpdated = true;
 				_updateOperatorModel.call(this);
 			}
 
-			var oType = oChanges.current && oChanges.current.dataType;
-			var oTypeOld = oChanges.old && oChanges.old.valueType;
-			var sType = oType && oType.getMetadata().getName();
-			var sTypeOld = oTypeOld && oTypeOld.getMetadata().getName();
-			var oFormatOptions = oType && oType.getFormatOptions();
-			var oFormatOptionsOld = oTypeOld && oTypeOld.getFormatOptions();
-			var oConstraints = oType && oType.getConstraints();
-			var oConstraintsOld = oTypeOld && oTypeOld.getConstraints();
+			const oType = oChanges.current && oChanges.current.dataType;
+			const oTypeOld = oChanges.old && oChanges.old.valueType;
+			const sType = oType && oType.getMetadata().getName();
+			const sTypeOld = oTypeOld && oTypeOld.getMetadata().getName();
+			const oFormatOptions = oType && oType.getFormatOptions();
+			const oFormatOptionsOld = oTypeOld && oTypeOld.getFormatOptions();
+			const oConstraints = oType && oType.getConstraints();
+			const oConstraintsOld = oTypeOld && oTypeOld.getConstraints();
 			if (sType !== sTypeOld || !deepEqual(oFormatOptions, oFormatOptionsOld) || !deepEqual(oConstraints, oConstraintsOld)) {
 				// operators might be changed if type changed
 				// Field binding needs to be updated if type changed
@@ -733,15 +733,15 @@ sap.ui.define([
 
 		oField._sOldKey = sOldKey; // to know in change event
 
-		var iIndex = 0;
+		let iIndex = 0;
 
 		// if type of operator changed -> remove binding and create it new later on
 		if (sKey && sOldKey) {
-			var oOperator = FilterOperatorUtil.getOperator(sKey);
-			var oOperatorOld = FilterOperatorUtil.getOperator(sOldKey);
-			var oGrid = oField.getParent();
-			var oValue0Field;
-			var oValue1Field;
+			const oOperator = FilterOperatorUtil.getOperator(sKey);
+			const oOperatorOld = FilterOperatorUtil.getOperator(sOldKey);
+			const oGrid = oField.getParent();
+			let oValue0Field;
+			let oValue1Field;
 			iIndex = oGrid.indexOfContent(oField);
 
 			// find fields and initialize error state
@@ -768,7 +768,7 @@ sap.ui.define([
 
 			if (_operatorSupportsValueHelp(sKey)) {
 				// enable the ValueHelp for the used value fields
-				var sValueHelp = this._getValueHelp();
+				const sValueHelp = this._getValueHelp();
 				oValue0Field && oValue0Field.setValueHelp && oValue0Field.setValueHelp(sValueHelp);
 				oValue1Field && oValue1Field.setValueHelp && oValue1Field.setValueHelp(sValueHelp);
 			} else {
@@ -797,9 +797,9 @@ sap.ui.define([
 
 		if (!sKey) { // TODO: remove? Because cannot longer happen as Field don't allow empty input because of used data type constraints
 			// key must not be empty
-			var oCondition = oField.getBindingContext("$this").getObject();
+			let oCondition = oField.getBindingContext("$this").getObject();
 			if (oCondition) { // condition might be deleted before Field instance is deleted
-				var aConditions = this.getConditions();
+				const aConditions = this.getConditions();
 				iIndex = FilterOperatorUtil.indexOfCondition(oCondition, aConditions);
 				if (iIndex >= 0) {
 					oCondition = aConditions[iIndex]; // to get right instance
@@ -810,10 +810,10 @@ sap.ui.define([
 		}
 
 		// as additinalValue is not updated automatically if operator is set from outside just take it from OperatorModel
-		var aOperatorsData = this.oOperatorModel.getData();
-		var sDescription;
-		for (var i = 0; i < aOperatorsData.length; i++) {
-			var oOperatorData = aOperatorsData[i];
+		const aOperatorsData = this.oOperatorModel.getData();
+		let sDescription;
+		for (let i = 0; i < aOperatorsData.length; i++) {
+			const oOperatorData = aOperatorsData[i];
 			if (oOperatorData.key === sKey) {
 				sDescription = oOperatorData.text;
 				break;
@@ -827,15 +827,15 @@ sap.ui.define([
 
 	function _createControl(oCondition, iIndex, sId, oBindingContext) {
 
-		var oOperator = FilterOperatorUtil.getOperator(oCondition.operator);
+		const oOperator = FilterOperatorUtil.getOperator(oCondition.operator);
 		if (!oOperator || !oOperator.valueTypes[iIndex]) {
 			return null; // TODO: exception?
 		}
 
-		var oNullableType = _getFieldType.call(this, oOperator.name, iIndex);
-		var oValueBindingContext = this._oManagedObjectModel.getContext(oBindingContext.getPath() + "values/" + iIndex + "/");
+		const oNullableType = _getFieldType.call(this, oOperator.name, iIndex);
+		const oValueBindingContext = this._oManagedObjectModel.getContext(oBindingContext.getPath() + "values/" + iIndex + "/");
 
-		var oControl;
+		let oControl;
 		if (oOperator.createControl) {
 			oControl = oOperator.createControl(oNullableType, "$this>", iIndex, sId); // the returned control can be null, in this case the default Field will be used
 		}
@@ -877,26 +877,25 @@ sap.ui.define([
 
 	function _getFieldType(sOperator, iIndex) {
 
-		var oDataType = _getType.call(this);
-		var oOperator = FilterOperatorUtil.getOperator(sOperator);
+		let oDataType = _getType.call(this);
+		const oOperator = FilterOperatorUtil.getOperator(sOperator);
 
 		if (oOperator.valueTypes[iIndex] && [OperatorValueType.Self, OperatorValueType.Static].indexOf(oOperator.valueTypes[iIndex]) === -1) {
 			oDataType = oOperator._createLocalType(oOperator.valueTypes[iIndex], oDataType);
 		}
 
-		var bStaticText = false;
+		let bStaticText = false;
 
 		if (oOperator.valueTypes[iIndex] === OperatorValueType.Static) {
 			bStaticText = true;
 			oDataType = _getDefaultType.call(this);
 		}
 
-		var sType = bStaticText ? BaseType.String : _getBaseType.call(this, oDataType);
-		var oNullableType;
-
+		const sType = bStaticText ? BaseType.String : _getBaseType.call(this, oDataType);
+		let oNullableType;
+		const oFormatOptions = oDataType.getFormatOptions();
 		switch (sType) {
 			case BaseType.Numeric:
-				var oFormatOptions = oDataType.getFormatOptions();
 				if (oFormatOptions && oFormatOptions.hasOwnProperty("emptyString") && oFormatOptions.emptyString === null) {
 					// given type can be used
 					oNullableType = oDataType;
@@ -932,9 +931,9 @@ sap.ui.define([
 
 	function _createNullableType(oType, oNewFormatOprtions, oNewConstraints) {
 
-		var Type = sap.ui.require(oType.getMetadata().getName().replace(/\./g, "/")); // type is already loaded because instance is provided
-		var oFormatOptions = merge(oType.getFormatOptions(), oNewFormatOprtions || {});
-		var oConstraints = merge(oType.getConstraints(), oNewConstraints || {});
+		const Type = sap.ui.require(oType.getMetadata().getName().replace(/\./g, "/")); // type is already loaded because instance is provided
+		const oFormatOptions = merge(oType.getFormatOptions(), oNewFormatOprtions || {});
+		const oConstraints = merge(oType.getConstraints(), oNewConstraints || {});
 
 		if (oConstraints.hasOwnProperty("nullable") && oConstraints.nullable === false) {
 			oConstraints.nullable = true; // make nullable
@@ -946,20 +945,20 @@ sap.ui.define([
 	}
 
 	function _getDefaultOperator() {
-		var aOperators = _getOperators.call(this);
-		var oOperator;
-		var sOperatorName = this.getConfig().defaultOperatorName;
+		const aOperators = _getOperators.call(this);
+		let oOperator;
+		const sOperatorName = this.getConfig().defaultOperatorName;
 		if (sOperatorName) {
 			oOperator = FilterOperatorUtil.getOperator(sOperatorName);
 		} else {
-			var oType = _getType.call(this);
-			var sType = _getBaseType.call(this, oType);
+			const oType = _getType.call(this);
+			const sType = _getBaseType.call(this, oType);
 			oOperator = FilterOperatorUtil.getDefaultOperator(sType);
 		}
 
 		if (oOperator && aOperators.indexOf(oOperator.name) < 0) {
 			// default operator not valid -> cannot use -> use first include-operator which requires some values
-			for (var i = 0; i < aOperators.length; i++) {
+			for (let i = 0; i < aOperators.length; i++) {
 				oOperator = FilterOperatorUtil.getOperator(aOperators[i]);
 				if (!oOperator || oOperator.exclude || !oOperator.hasRequiredValues()) {
 					oOperator = undefined;
@@ -978,8 +977,8 @@ sap.ui.define([
 
 	function _getOperators() {
 
-		var oConfig = this.getConfig();
-		var aOperators = oConfig && oConfig.operators;
+		const oConfig = this.getConfig();
+		let aOperators = oConfig && oConfig.operators;
 
 		if (!aOperators || aOperators.length === 0) {
 			// TODO: better default
@@ -991,11 +990,11 @@ sap.ui.define([
 	}
 
 	function _hasMultipleOperatorGroups() {
-		var firstGroupId;
-		var aOperators = _getOperators.call(this);
-		for (var i = 0; i < aOperators.length; i++) {
-			var sOperator = aOperators[i];
-			var oOperator = FilterOperatorUtil.getOperator(sOperator);
+		let firstGroupId;
+		const aOperators = _getOperators.call(this);
+		for (let i = 0; i < aOperators.length; i++) {
+			const sOperator = aOperators[i];
+			const oOperator = FilterOperatorUtil.getOperator(sOperator);
 
 			if (!firstGroupId) {
 				firstGroupId = oOperator.group.id;
@@ -1012,17 +1011,17 @@ sap.ui.define([
 			return;
 		}
 
-		var oType = _getType.call(this);
+		const oType = _getType.call(this);
 		// assert(oOperatorConfig == null, "oOperatorConfig does not exist - no operators for Select control can be added");
-		var aOperators = _getOperators.call(this);
-		var aOperatorsData = [];
+		const aOperators = _getOperators.call(this);
+		const aOperatorsData = [];
 
-		var bHasMultipleGroups = _hasMultipleOperatorGroups.call(this);
+		const bHasMultipleGroups = _hasMultipleOperatorGroups.call(this);
 
-		var sFixedListId = this._sOperatorHelpId + "-pop-fl";
-		var oFixedList = sap.ui.getCore().byId(sFixedListId);
+		const sFixedListId = this._sOperatorHelpId + "-pop-fl";
+		const oFixedList = sap.ui.getCore().byId(sFixedListId);
 
-		var oTemplate;
+		let oTemplate;
 		if (bHasMultipleGroups) {
 			oTemplate = new FixedListItem({key: "{om>key}", text: "{om>text}", additionalText: "{om>additionalText}", groupKey: "{om>groupId}", groupText: "{om>groupText}"});
 		} else {
@@ -1031,18 +1030,18 @@ sap.ui.define([
 		oFixedList.bindAggregation("items", { path: 'om>/', templateShareable: false, template: oTemplate});
 		oFixedList.setGroupable(bHasMultipleGroups);
 
-		for (var i = 0; i < aOperators.length; i++) {
-			var sOperator = aOperators[i];
-			var oOperator = FilterOperatorUtil.getOperator(sOperator);
+		for (let i = 0; i < aOperators.length; i++) {
+			const sOperator = aOperators[i];
+			const oOperator = FilterOperatorUtil.getOperator(sOperator);
 			if (!oOperator || (oOperator.showInSuggest !== undefined && oOperator.showInSuggest == false)) {
 				continue;
 			}
 
 			// try to load the operator longText which is type dependent
-			var sText = oOperator.getLongText(_getBaseType.call(this, oType));
+			const sText = oOperator.getLongText(_getBaseType.call(this, oType));
 
 			//Update the additionalInfo text for the operator
-			var sAdditionalText = oOperator.additionalInfo;
+			let sAdditionalText = oOperator.additionalInfo;
 			if (sAdditionalText === undefined)  {
 				if (sAdditionalText !== "" && oOperator.formatRange)  {
 					sAdditionalText = oOperator.formatRange( oOperator._getRange(undefined, oType), oType);
@@ -1066,8 +1065,8 @@ sap.ui.define([
 
 	function _getType() {
 
-		var oConfig = this.getConfig();
-		var oType = oConfig && oConfig.dataType;
+		const oConfig = this.getConfig();
+		let oType = oConfig && oConfig.dataType;
 		if (!oType) {
 			oType = _getDefaultType.call(this);
 		}
@@ -1087,12 +1086,12 @@ sap.ui.define([
 
 	function _getBaseType(oType) {
 
-		var sType = oType.getMetadata().getName();
-		var oFormatOptions = oType.getFormatOptions();
-		var oConstraints = oType.getConstraints();
-		var oDelegate = this.getConfig().delegate;
-		var oField = this.getConfig().control;
-		var sBaseType = oDelegate ? oDelegate.getTypeMap(oField).getBaseType(sType, oFormatOptions, oConstraints) : BaseType.String; // if not configured use string
+		const sType = oType.getMetadata().getName();
+		const oFormatOptions = oType.getFormatOptions();
+		const oConstraints = oType.getConstraints();
+		const oDelegate = this.getConfig().delegate;
+		const oField = this.getConfig().control;
+		let sBaseType = oDelegate ? oDelegate.getTypeMap(oField).getBaseType(sType, oFormatOptions, oConstraints) : BaseType.String; // if not configured use string
 
 		if (sBaseType === BaseType.Unit) {
 			sBaseType = BaseType.Numeric;
@@ -1104,9 +1103,9 @@ sap.ui.define([
 
 	function _getDelegate() {
 
-		var oConfig = this.getConfig();
-		var sName = oConfig.delegateName || "sap/ui/mdc/field/FieldBaseDelegate";
-		var oPayload = oConfig.payload;
+		const oConfig = this.getConfig();
+		const sName = oConfig.delegateName || "sap/ui/mdc/field/FieldBaseDelegate";
+		const oPayload = oConfig.payload;
 
 		return {name: sName, payload: oPayload};
 
@@ -1115,16 +1114,16 @@ sap.ui.define([
 	function _addStaticText(aConditions, bUpdateProperty, bTypeChange) {
 
 		// for static operators add static text as value to render text control
-		var oDataType = _getType.call(this);
-		var aUpdate = [];
-		var i = 0;
+		const oDataType = _getType.call(this);
+		const aUpdate = [];
+		let i = 0;
 		for (i = 0; i < aConditions.length; i++) {
-			var oCondition = aConditions[i];
-			var oOperator = FilterOperatorUtil.getOperator(oCondition.operator);
+			const oCondition = aConditions[i];
+			const oOperator = FilterOperatorUtil.getOperator(oCondition.operator);
 			if (oOperator && oOperator.valueTypes[0] === OperatorValueType.Static && (oCondition.values.length === 0 || bTypeChange)) {
 				// if type changed the text needs to be new formatted (setting of type and conditions might be async.)
 				if (oOperator.getStaticText) {
-					var sText = oOperator.getStaticText(oDataType, _getBaseType.call(this, oDataType));
+					const sText = oOperator.getStaticText(oDataType, _getBaseType.call(this, oDataType));
 					if (oCondition.values.length > 0) {
 						oCondition.values[0] = sText;
 					} else {
@@ -1142,9 +1141,9 @@ sap.ui.define([
 	}
 
 	function _createInnerControls() {
-		var oInvisibleOperatorText = new InvisibleText(this.getId() + "--ivtOperator", {text: "{$i18n>valuehelp.DEFINECONDITIONS_OPERATORLABEL}"});
-		var oTitle = new Title(this.getId() + "-title", {text: {path: "$this>/label"}});
-		var oButtonPrev = new Button(this.getId() + "--prev", {
+		const oInvisibleOperatorText = new InvisibleText(this.getId() + "--ivtOperator", {text: "{$i18n>valuehelp.DEFINECONDITIONS_OPERATORLABEL}"});
+		const oTitle = new Title(this.getId() + "-title", {text: {path: "$this>/label"}});
+		const oButtonPrev = new Button(this.getId() + "--prev", {
 			icon: IconPool.getIconURI("navigation-left-arrow"),
 			tooltip: oMessageBundleM.getText("PAGINGBUTTON_PREVIOUS"),
 			visible: {path: "$this>/_pagination"},
@@ -1153,7 +1152,7 @@ sap.ui.define([
 			}),
 			press: _handlePrevious.bind(this)
 		});
-		var oButtonNext = new Button(this.getId() + "--next", {
+		const oButtonNext = new Button(this.getId() + "--next", {
 			icon: IconPool.getIconURI("navigation-right-arrow"),
 			tooltip: oMessageBundleM.getText("PAGINGBUTTON_NEXT"),
 			visible: {path: "$this>/_pagination"},
@@ -1162,7 +1161,7 @@ sap.ui.define([
 			}),
 			press: _handleNext.bind(this)
 		});
-		var oButtonRemoveAll = new Button(this.getId() + "--removeAll", {
+		const oButtonRemoveAll = new Button(this.getId() + "--removeAll", {
 			text: oMessageBundleM.getText("CONDITIONPANEL_REMOVE_ALL"),
 			visible: {path: "$this>/_pagination"},
 			layoutData: new OverflowToolbarLayoutData({
@@ -1170,7 +1169,7 @@ sap.ui.define([
 			}),
 			press: _handleRemoveAll.bind(this)
 		});
-		var oButtonInsert = new Button(this.getId() + "--insert", {
+		const oButtonInsert = new Button(this.getId() + "--insert", {
 			icon: IconPool.getIconURI("add"),
 			visible: {path: "$this>/_pagination"},
 			layoutData: new OverflowToolbarLayoutData({
@@ -1178,7 +1177,7 @@ sap.ui.define([
 			}),
 			press: _handleInsert.bind(this)
 		});
-		var oPageCount = new Text(this.getId() + "--pageCount", {
+		const oPageCount = new Text(this.getId() + "--pageCount", {
 			text: _getPageText.call(this),
 			wrapping: false,
 			textAlign: TextAlign.Center,
@@ -1187,13 +1186,13 @@ sap.ui.define([
 				priority: OverflowToolbarPriority.NeverOverflow
 			})
 		});
-		var oToolbar = new OverflowToolbar(this.getId() + "--toolbar", {
+		const oToolbar = new OverflowToolbar(this.getId() + "--toolbar", {
 			width: "100%",
 			design: ToolbarDesign.Transparent,
 			content: [oTitle, new ToolbarSpacer(), oButtonPrev, oPageCount, oButtonNext, oButtonRemoveAll, oButtonInsert]
 		});
 
-		var oPanel = new Panel(this.getId() + "--panel", {
+		const oPanel = new Panel(this.getId() + "--panel", {
 			headerToolbar: oToolbar,
 			expanded: true,
 			height: "100%",
@@ -1211,7 +1210,7 @@ sap.ui.define([
 			})
 		);
 
-		var oGrid = new Grid(this.getId() + "--conditions", {
+		const oGrid = new Grid(this.getId() + "--conditions", {
 			width: "100%",
 			hSpacing: 0,
 			vSpacing: 0,
@@ -1228,7 +1227,7 @@ sap.ui.define([
 		});
 		oPanel.addContent(this._oInvisibleAddOperatorButtonText);
 
-		var oAddBtn = new Button(this.getId() + "--addBtn", {
+		const oAddBtn = new Button(this.getId() + "--addBtn", {
 			press: this.addCondition.bind(this),
 			type: ButtonType.Default,
 			text: "{$i18n>valuehelp.DEFINECONDITIONS_ADDCONDITION}",
@@ -1253,7 +1252,7 @@ sap.ui.define([
 
 	function _getAddButtonVisible(aConditions, oConfig) {
 
-		var iMaxConditions = oConfig.hasOwnProperty("maxConditions") ? oConfig.maxConditions : -1;
+		const iMaxConditions = oConfig.hasOwnProperty("maxConditions") ? oConfig.maxConditions : -1;
 
 		return iMaxConditions === -1 || aConditions.length < iMaxConditions;
 
@@ -1261,7 +1260,7 @@ sap.ui.define([
 
 	function _getRemoveButtonVisible(aConditions, oConfig) {
 
-		var iMaxConditions = oConfig.hasOwnProperty("maxConditions") ? oConfig.maxConditions : -1;
+		const iMaxConditions = oConfig.hasOwnProperty("maxConditions") ? oConfig.maxConditions : -1;
 
 		// only on case of maxCondition==1 the Remove icons should be invisible
 		return iMaxConditions !== 1;
@@ -1270,20 +1269,20 @@ sap.ui.define([
 
 	function _renderConditions() {
 
-		var aConditions = this.getConditions();
-		var oGrid = this.byId("conditions");
-		var oButtonPrev = this.byId("prev");
-		var oButtonNext = this.byId("next");
-		var oPageCount = this.byId("pageCount");
-		var aGridContent;
-		var iRow = -1;
-		var iIndex = 0;
-		var iDefineConditions = -1;
-		var iShownConditions = this._iShownConditions + this._iShownAdditionalConditions;
+		const aConditions = this.getConditions();
+		const oGrid = this.byId("conditions");
+		const oButtonPrev = this.byId("prev");
+		const oButtonNext = this.byId("next");
+		const oPageCount = this.byId("pageCount");
+		let aGridContent;
+		let iRow = -1;
+		let iIndex = 0;
+		let iDefineConditions = -1;
+		const iShownConditions = this._iShownConditions + this._iShownAdditionalConditions;
 
-		for (var i = 0; i < aConditions.length && iRow < iShownConditions; i++) {
-			var oCondition = aConditions[i];
-			var oOperator = FilterOperatorUtil.getOperator(oCondition.operator);
+		for (let i = 0; i < aConditions.length && iRow < iShownConditions; i++) {
+			const oCondition = aConditions[i];
+			const oOperator = FilterOperatorUtil.getOperator(oCondition.operator);
 			if (oCondition.validated !== ConditionValidated.Validated || oOperator.exclude) {
 				// show only validated conditions
 				iDefineConditions++;
@@ -1291,7 +1290,7 @@ sap.ui.define([
 					// show only conditions on this page
 					iRow++;
 					if (iRow < iShownConditions) {
-						var oBindingContext = this._oManagedObjectModel.getContext("/conditions/" + i + "/");
+						const oBindingContext = this._oManagedObjectModel.getContext("/conditions/" + i + "/");
 
 						if (!this.oOperatorModel) {
 							// init operatorModel if first row is created (needed to check operator)
@@ -1340,21 +1339,21 @@ sap.ui.define([
 	}
 
 	function _getGridIndexOfLastRowWithVisibleElement(aIdEndsWith) {
-		var oGrid = this.byId("conditions");
-		var aElements = oGrid.getContent();
-		var n = aElements.length - 1;
+		const oGrid = this.byId("conditions");
+		const aElements = oGrid.getContent();
+		let n = aElements.length - 1;
 
 		if (!Array.isArray(aIdEndsWith)) {
 			aIdEndsWith = [aIdEndsWith];
 		}
 
-		var i = 0;
-		var sSearch = aIdEndsWith[i];
+		let i = 0;
+		let sSearch = aIdEndsWith[i];
 
 		while (n >= 0 && sSearch !== undefined) {
-			var oElement = aElements[n];
+			const oElement = aElements[n];
 			if (oElement.getId().endsWith(sSearch)) {
-				var $check = jQuery(oElement.getDomRef());
+				const $check = jQuery(oElement.getDomRef());
 				if ($check.is(":visible")) {
 					return n;
 				} else {
@@ -1369,14 +1368,14 @@ sap.ui.define([
 	}
 
 	function _getGridIndexOfLastRow(sIdEndsWith) {
-		var oGrid = this.byId("conditions");
-		var aElements = oGrid.getContent();
-		var n = aElements.length - 1;
+		const oGrid = this.byId("conditions");
+		const aElements = oGrid.getContent();
+		let n = aElements.length - 1;
 
-		var sSearch = sIdEndsWith;
+		const sSearch = sIdEndsWith;
 
 		while (n >= 0) {
-			var oElement = aElements[n];
+			const oElement = aElements[n];
 			if (oElement.getId().endsWith(sSearch)) {
 				return n;
 			}
@@ -1388,13 +1387,13 @@ sap.ui.define([
 
 	function _createRow(oCondition, oGrid, iIndex, oBindingContext, iRow) {
 
-		var sIdPrefix = this.getId() + "--" + iRow;
+		const sIdPrefix = this.getId() + "--" + iRow;
 
 		if (!this._oOperatorFieldType) {
 			this._oOperatorFieldType = new StringType({}, {minLength: 1});
 		}
 
-		var oOperatorField = new Field(sIdPrefix + "-operator", {
+		const oOperatorField = new Field(sIdPrefix + "-operator", {
 			value: {path: "$this>operator", type: this._oOperatorFieldType},
 			width: "100%",
 			display: FieldDisplay.Description,
@@ -1419,7 +1418,7 @@ sap.ui.define([
 		oGrid.insertContent(oOperatorField, iIndex); // insert as add-Button is already at the end
 		iIndex++;
 
-		var oRemoveButton = new Button(sIdPrefix + "--removeBtnSmall", {
+		const oRemoveButton = new Button(sIdPrefix + "--removeBtnSmall", {
 			press: this.removeCondition.bind(this),
 			type: ButtonType.Transparent,
 			icon: "sap-icon://decline",
@@ -1442,8 +1441,8 @@ sap.ui.define([
 		iIndex++;
 
 		if (oCondition) { // for initial dummy row don't create value fields (as we don't know the operator or type)
-			for (var i = 0; i < oCondition.values.length; i++) {
-				var oControl = _createControl.call(this, oCondition, i, sIdPrefix + "-values" + i, oBindingContext);
+			for (let i = 0; i < oCondition.values.length; i++) {
+				const oControl = _createControl.call(this, oCondition, i, sIdPrefix + "-values" + i, oBindingContext);
 				if (oControl) {
 					oGrid.insertContent(oControl, iIndex);
 					iIndex++;
@@ -1451,7 +1450,7 @@ sap.ui.define([
 			}
 		}
 
-		var oRemoveButton2 = new Button(sIdPrefix + "--removeBtnLarge", {
+		const oRemoveButton2 = new Button(sIdPrefix + "--removeBtnLarge", {
 			press: this.removeCondition.bind(this),
 			type: ButtonType.Transparent,
 			icon: "sap-icon://decline",
@@ -1481,8 +1480,8 @@ sap.ui.define([
 			return FieldEditMode.ReadOnly;
 		}
 
-		var oOperator = FilterOperatorUtil.getOperator(sOperator);
-		var bStaticText = false;
+		const oOperator = FilterOperatorUtil.getOperator(sOperator);
+		let bStaticText = false;
 
 		if (oOperator && oOperator.valueTypes[0] === OperatorValueType.Static) {
 			bStaticText = true;
@@ -1494,7 +1493,7 @@ sap.ui.define([
 
 	function _getIndentForOperator(sOperator) {
 
-		var oOperator = sOperator && FilterOperatorUtil.getOperator(sOperator);
+		const oOperator = sOperator && FilterOperatorUtil.getOperator(sOperator);
 
 		if (!oOperator || !oOperator.valueTypes[0] || (oOperator.valueTypes[0] === OperatorValueType.Static && !oOperator.getStaticText)) {
 			return "XL8 L8 M8 S0";
@@ -1505,8 +1504,8 @@ sap.ui.define([
 	}
 
 	function _getSpanForOperator(aConditions, oConfig) {
-		var iMaxConditions = oConfig.hasOwnProperty("maxConditions") ? oConfig.maxConditions : -1;
-		var sSpan = "XL3 L3 M3 ";
+		const iMaxConditions = oConfig.hasOwnProperty("maxConditions") ? oConfig.maxConditions : -1;
+		let sSpan = "XL3 L3 M3 ";
 
 		if (iMaxConditions === 1) {
 			sSpan += "S12";
@@ -1517,10 +1516,10 @@ sap.ui.define([
 	}
 
 	function _getSpanForValue(oCondition, oConfig) {
-		var iMaxConditions = oConfig.hasOwnProperty("maxConditions") ? oConfig.maxConditions : -1;
+		const iMaxConditions = oConfig.hasOwnProperty("maxConditions") ? oConfig.maxConditions : -1;
 
-		var oOperator = oCondition && FilterOperatorUtil.getOperator(oCondition.operator);
-		var sSpan = "";
+		const oOperator = oCondition && FilterOperatorUtil.getOperator(oCondition.operator);
+		let sSpan = "";
 
 		if (oOperator && oOperator.valueTypes[1]) {
 			sSpan = "XL4 L4 M4 ";
@@ -1538,7 +1537,7 @@ sap.ui.define([
 
 	function _getPlaceholder1ForOperator(sOperator) {
 
-		var oOperator = sOperator && FilterOperatorUtil.getOperator(sOperator);
+		const oOperator = sOperator && FilterOperatorUtil.getOperator(sOperator);
 
 		if (oOperator && oOperator.aLabels) {
 			return oOperator.aLabels[0];
@@ -1552,7 +1551,7 @@ sap.ui.define([
 
 	function _getPlaceholder2ForOperator(sOperator) {
 
-		var oOperator = sOperator && FilterOperatorUtil.getOperator(sOperator);
+		const oOperator = sOperator && FilterOperatorUtil.getOperator(sOperator);
 
 		if (oOperator && oOperator.aLabels) {
 			return oOperator.aLabels[1];
@@ -1563,11 +1562,11 @@ sap.ui.define([
 
 	function _updateRow(oCondition, oGrid, iIndex, oBindingContext, iRow) {
 
-		var sIdPrefix = this.getId() + "--" + iRow;
-		var aGridContent = oGrid.getContent();
-		var oNullableType;
+		const sIdPrefix = this.getId() + "--" + iRow;
+		let aGridContent = oGrid.getContent();
+		let oNullableType;
 
-		var oOperatorField = aGridContent[iIndex];
+		const oOperatorField = aGridContent[iIndex];
 		oOperatorField.setBindingContext(oBindingContext, "$this");
 		if (oBindingContext) {
 			oOperatorField.setFieldGroupIds([oBindingContext.getPath()]); // use path to have a ID for every condition
@@ -1578,7 +1577,7 @@ sap.ui.define([
 		}
 		iIndex++;
 
-		var oRemoveButton = aGridContent[iIndex];
+		const oRemoveButton = aGridContent[iIndex];
 		oRemoveButton.setBindingContext(oBindingContext, "$this");
 		if (oBindingContext) {
 			// as Button is between Operatot and Value don't trigger validation on tabbing between
@@ -1586,9 +1585,9 @@ sap.ui.define([
 		}
 		iIndex++;
 
-		var oValueBindingContext;
-		var oValue0Field = aGridContent[iIndex];
-		var oValue1Field;
+		let oValueBindingContext;
+		let oValue0Field = aGridContent[iIndex];
+		let oValue1Field;
 		if (oValue0Field.hasOwnProperty("_iValueIndex") && oValue0Field._iValueIndex === 0) {
 			if (oCondition.values.length > 0) {
 				oValueBindingContext = this._oManagedObjectModel.getContext(oBindingContext.getPath() + "values/0/");
@@ -1633,8 +1632,8 @@ sap.ui.define([
 				}
 			}
 		} else if (oCondition.values.length > 0) {
-			for (var i = 0; i < oCondition.values.length; i++) {
-				var oControl = _createControl.call(this, oCondition, i, sIdPrefix + "-values" + i, oBindingContext);
+			for (let i = 0; i < oCondition.values.length; i++) {
+				const oControl = _createControl.call(this, oCondition, i, sIdPrefix + "-values" + i, oBindingContext);
 				if (oControl) {
 					oGrid.insertContent(oControl, iIndex);
 					iIndex++;
@@ -1643,7 +1642,7 @@ sap.ui.define([
 		}
 
 		aGridContent = oGrid.getContent(); // as field might be added or removed
-		var oRemoveButton2 = aGridContent[iIndex];
+		const oRemoveButton2 = aGridContent[iIndex];
 		oRemoveButton2.setBindingContext(oBindingContext, "$this");
 		iIndex++;
 
@@ -1659,7 +1658,7 @@ sap.ui.define([
 		}
 
 		// TODO: can there be FieldGroups set from outside?
-		var oField = oEvent.getSource();
+		let oField = oEvent.getSource();
 		while (!(oField.getParent() instanceof Grid)) {
 			// event might be fired on inner control -> find Field
 			oField = oField.getParent();
@@ -1671,9 +1670,9 @@ sap.ui.define([
 
 	function _validateCondition(oField) {
 
-		var oGrid = oField.getParent();
-		var iIndex = oGrid.indexOfContent(oField);
-		var oBindingContext;
+		const oGrid = oField.getParent();
+		let iIndex = oGrid.indexOfContent(oField);
+		let oBindingContext;
 
 		if (oField.getId().endsWith("-operator")) {
 			// operator field - use first value field fo validate
@@ -1689,10 +1688,10 @@ sap.ui.define([
 			oBindingContext = oField.getBindingContext("$condition");
 		}
 
-		var oField2; // also update second Field if exist
-		var oCondition = oBindingContext.getObject();
-		var oOperator = FilterOperatorUtil.getOperator(oCondition.operator);
-		var bInvalid = !!oCondition.invalid;
+		let oField2; // also update second Field if exist
+		const oCondition = oBindingContext.getObject();
+		const oOperator = FilterOperatorUtil.getOperator(oCondition.operator);
+		let bInvalid = !!oCondition.invalid;
 
 		if (!bInvalid && oOperator.valueTypes.length > 0 && oOperator.valueTypes[0] !== OperatorValueType.Static) {
 			// check only not static operators
@@ -1707,7 +1706,7 @@ sap.ui.define([
 
 			if (oField.getMetadata().getAllProperties().valueState && !oField.isInvalidInput() && (!oField2 || !oField2.isInvalidInput())) { // TODO: better was to find out parsing error
 				// if Field is in parsing error state, user entry is not transfered to condition, so validating makes no sense.
-				var oType = oField.getBinding("value").getType(); // use nullable data type from Field - don't create new type for each check
+				const oType = oField.getBinding("value").getType(); // use nullable data type from Field - don't create new type for each check
 				try {
 					oOperator.validate(oCondition.values, oType);
 					oField.setValueState(ValueState.None);
@@ -1738,11 +1737,11 @@ sap.ui.define([
 
 	function _checkInvalidInput(bInvalid) {
 
-		var i = 0;
+		let i = 0;
 
 		if (bInvalid !== true) {
 			// if already known that invalid input exist -> no additional check needed
-			var aConditions = this.getConditions();
+			const aConditions = this.getConditions();
 			for (i = 0; i < aConditions.length; i++) {
 				if (aConditions[i].invalid) {
 					bInvalid = true;
@@ -1752,11 +1751,11 @@ sap.ui.define([
 		}
 
 		if (bInvalid !== true) {
-			var oGrid = this.byId("conditions");
-			var aContent = oGrid.getContent();
+			const oGrid = this.byId("conditions");
+			const aContent = oGrid.getContent();
 			bInvalid = false;
 			for (i = 0; i < aContent.length; i++) {
-				var oControl = aContent[i];
+				const oControl = aContent[i];
 				if (oControl.hasOwnProperty("_iValueIndex") && oControl.getValueState && oControl.getValueState() === ValueState.Error) {
 					bInvalid = true;
 					break;
@@ -1771,7 +1770,7 @@ sap.ui.define([
 	function _getDefineConditions() {
 
 		return this.getConditions().filter(function(oCondition) {
-			var oOperator = FilterOperatorUtil.getOperator(oCondition.operator);
+			const oOperator = FilterOperatorUtil.getOperator(oCondition.operator);
 			return oCondition.validated !== ConditionValidated.Validated || oOperator.exclude;
 		});
 
@@ -1798,8 +1797,8 @@ sap.ui.define([
 
 	function _handleRemoveAll(oEvent) {
 
-		var aConditions = this.getConditions().filter(function(oCondition) {
-			var oOperator = FilterOperatorUtil.getOperator(oCondition.operator);
+		const aConditions = this.getConditions().filter(function(oCondition) {
+			const oOperator = FilterOperatorUtil.getOperator(oCondition.operator);
 			return oCondition.validated === ConditionValidated.Validated && !oOperator.exclude;
 		});
 		this.addDummyCondition(aConditions.length + 1);
@@ -1814,25 +1813,25 @@ sap.ui.define([
 
 	function _handleInsert(oEvent) {
 
-		var aConditions = this.getConditions();
-		var oFormatOptions = this.getFormatOptions();
-		var iMaxConditions = oFormatOptions.maxConditions;
+		const aConditions = this.getConditions();
+		const oFormatOptions = this.getFormatOptions();
+		const iMaxConditions = oFormatOptions.maxConditions;
 
 		// get Index of first row (as validated conditions might exist and are hidden)
-		var oGrid = this.byId("conditions");
-		var aGridContent = oGrid.getContent();
-		var iRows = 0;
-		var iIndex = -1;
-		for (var i = 0; i < aGridContent.length; i++) {
-			var oField = aGridContent[i];
+		const oGrid = this.byId("conditions");
+		const aGridContent = oGrid.getContent();
+		let iRows = 0;
+		let iIndex = -1;
+		for (let i = 0; i < aGridContent.length; i++) {
+			const oField = aGridContent[i];
 			if (oField instanceof Field && oField.getValueHelp() === this._sOperatorHelpId) {
 				// Operator field starts new row
 				iRows++;
 				if (iRows === 1) {
 					// determine index for condition in first row
-					var oBindingContext = oField.getBindingContext("$this");
-					var sPath = oBindingContext.getPath();
-					var aMatch = sPath.match(/^.*\/(\d+)\/$/);
+					const oBindingContext = oField.getBindingContext("$this");
+					const sPath = oBindingContext.getPath();
+					const aMatch = sPath.match(/^.*\/(\d+)\/$/);
 					if (aMatch) {
 						iIndex = parseInt(aMatch[1]);
 					}
@@ -1855,10 +1854,10 @@ sap.ui.define([
 
 	function _getPageText() {
 
-		var aConditions = _getDefineConditions.call(this); // show only validated conditions
-		var iPages = Math.ceil((aConditions.length - this._iShownAdditionalConditions) / this._iShownConditions);
-		var iPage = Math.floor(this._iStartIndex / this._iShownConditions) + 1;
-		var sText = oMessageBundle.getText("valuehelp.PAGE_COUNT", [iPage, iPages]);
+		const aConditions = _getDefineConditions.call(this); // show only validated conditions
+		const iPages = Math.ceil((aConditions.length - this._iShownAdditionalConditions) / this._iShownConditions);
+		const iPage = Math.floor(this._iStartIndex / this._iShownConditions) + 1;
+		const sText = oMessageBundle.getText("valuehelp.PAGE_COUNT", [iPage, iPages]);
 
 		return sText;
 

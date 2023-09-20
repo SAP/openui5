@@ -741,7 +741,6 @@ sap.ui.define([
 	 * initialize the Component and keep the component data
 	 */
 	Component.prototype._initCompositeSupport = function(mSettings) {
-
 		// make user specific data available during component instantiation
 		this.oComponentData = mSettings && mSettings.componentData;
 
@@ -764,38 +763,6 @@ sap.ui.define([
 
 		// init the component models
 		this.initComponentModels();
-
-		// error handler (if exists)
-		if (this.onWindowError) {
-			this._fnWindowErrorHandler = function(oEvent) {
-				var oError = oEvent.originalEvent;
-				this.onWindowError(oError.message, oError.filename, oError.lineno);
-
-			}.bind(this);
-			window.addEventListener("error", this._fnWindowErrorHandler);
-		}
-
-		// before unload handler (if exists)
-		if (this.onWindowBeforeUnload) {
-			this._fnWindowBeforeUnloadHandler = function(oEvent) {
-				var vReturnValue = this.onWindowBeforeUnload.apply(this, arguments);
-				// set returnValue for Chrome
-				if (typeof (vReturnValue) === 'string') {
-					oEvent.returnValue = vReturnValue;
-					oEvent.preventDefault();
-					return vReturnValue;
-				}
-			}.bind(this);
-			window.addEventListener("beforeunload", this._fnWindowBeforeUnloadHandler);
-		}
-
-		// unload handler (if exists)
-		if (this.onWindowUnload) {
-
-			this._fnWindowUnloadHandler = this.onWindowUnload.bind(this);
-			window.addEventListener("unload", this._fnWindowUnloadHandler);
-		}
-
 	};
 
 	/**
@@ -837,20 +804,6 @@ sap.ui.define([
 			this._mManifestModels[sModelName].destroy();
 		}
 		delete this._mManifestModels;
-
-		// remove the event handlers
-		if (this._fnWindowErrorHandler) {
-			window.removeEventListener("error", this._fnWindowErrorHandler);
-			delete this._fnWindowErrorHandler;
-		}
-		if (this._fnWindowBeforeUnloadHandler) {
-			window.removeEventListener("beforeunload", this._fnWindowBeforeUnloadHandler);
-			delete this._fnWindowBeforeUnloadHandler;
-		}
-		if (this._fnWindowUnloadHandler) {
-			window.removeEventListener("unload", this._fnWindowUnloadHandler);
-			delete this._fnWindowUnloadHandler;
-		}
 
 		// destroy event bus
 		if (this._oEventBus) {
@@ -1361,48 +1314,12 @@ sap.ui.define([
 	//Component.prototype.exit = function() {};
 
 
-	/**
-	 * The window before unload hook. Override this method in your Component class
-	 * implementation, to handle cleanup before the real unload or to prompt a question
-	 * to the user, if the component should be exited.
-	 *
-	 * @return {string|undefined} a string if a prompt should be displayed to the user
-	 *                  confirming closing the Component (e.g. when the Component is not yet saved),
-	 * 					or <code>undefined</code> if no prompt should be shown.
-	 *
-	 * @public
-	 * @since 1.15.1
-	 * @name sap.ui.core.Component.prototype.onWindowBeforeUnload
-	 * @function
-	 */
 	//onWindowBeforeUnload : function() {},
 
 
-	/**
-	 * The window unload hook. Override this method in your Component class
-	 * implementation, to handle cleanup of the component once the window
-	 * will be unloaded (e.g. closed).
-	 *
-	 * @public
-	 * @since 1.15.1
-	 * @name sap.ui.core.Component.prototype.onWindowUnload
-	 * @function
-	 */
 	//onWindowUnload : function() {},
 
 
-	/**
-	 * The window error hook. Override this method in your Component class implementation
-	 * to listen to unhandled errors.
-	 *
-	 * @param {string} sMessage The error message.
-	 * @param {string} sFile File where the error occurred
-	 * @param {int} iLine Line number of the error
-	 * @public
-	 * @since 1.15.1
-	 * @name sap.ui.core.Component.prototype.onWindowError
-	 * @function
-	 */
 	//onWindowError : null, // function(sMessage, sFile, iLine) - function not added directly as it might result in bad stack traces in older browsers
 
 

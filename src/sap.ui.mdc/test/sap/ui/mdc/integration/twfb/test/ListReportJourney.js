@@ -30,7 +30,7 @@ sap.ui.define([
 		autoWait: true
 	});
 
-	var oModuleSettings = {
+	const oModuleSettings = {
 		beforeEach: function() {},
 		afterEach: function() {
 			// in case the flex/variant changes are stored in the local browser storage
@@ -101,7 +101,7 @@ sap.ui.define([
 	opaTest("Table - check if sorting works correctly on Table via column header menu", function(Given, When, Then) {
 		Given.iStartMyAppInAFrame("test-resources/sap/ui/mdc/internal/TableWithFilterBar/index.html");
 
-		var fnSortByColumnTitle = function(sColumnTitle, sBookKeyAscending, sBookKeyDescending) {
+		const fnSortByColumnTitle = function(sColumnTitle, sBookKeyAscending, sBookKeyDescending) {
 			//Sort Ascending (first click)
 			When.onPage.iClickOnColumnHeader(sColumnTitle);
 			Then.onPage.iShouldSeeAColumnHeaderMenu(sColumnTitle);
@@ -136,8 +136,8 @@ sap.ui.define([
 
 	opaTest("I should see the filter fields", function(Given, When, Then) {
 		Given.iStartMyAppInAFrame("test-resources/sap/ui/mdc/internal/TableWithFilterBar/index.html");
-		var oFilterBar = "container-v4demo---books--booksFilterBar";
-		var aLabelNames = ["Author ID", "Title", "Stock range"];
+		const oFilterBar = "container-v4demo---books--booksFilterBar";
+		const aLabelNames = ["Author ID", "Title", "Stock range"];
 		Then.onTheMDCFilterBar.iShouldSeeFilters(oFilterBar, aLabelNames);
 
 		// cleanup
@@ -155,7 +155,7 @@ sap.ui.define([
 	opaTest('I should see the "Book ID ..." filter field', function(Given, When, Then) {
 		Given.iStartMyAppInAFrame("test-resources/sap/ui/mdc/internal/TableWithFilterBar/index.html");
 
-		var oFilterBar = "container-v4demo---books--booksFilterBar";
+		const oFilterBar = "container-v4demo---books--booksFilterBar";
 
 		When.onTheMDCFilterBar.iPersonalizeFilter(oFilterBar, {
 			Books: [
@@ -174,7 +174,7 @@ sap.ui.define([
 	opaTest('I should not see the "Stock" filter field', function(Given, When, Then) {
 		Given.iStartMyAppInAFrame("test-resources/sap/ui/mdc/internal/TableWithFilterBar/index.html");
 
-		var oFilterBar = "container-v4demo---books--booksFilterBar";
+		const oFilterBar = "container-v4demo---books--booksFilterBar";
 
 		When.onTheMDCFilterBar.iPersonalizeFilter(oFilterBar, {
 			Books: [
@@ -182,7 +182,7 @@ sap.ui.define([
 			]
 		});
 
-		var aLabelNames = ["Author ID", "Title", "Created On", "Language"];
+		const aLabelNames = ["Author ID", "Title", "Created On", "Language"];
 		Then.onTheMDCFilterBar.iShouldSeeFilters(oFilterBar, aLabelNames);
 
 		// cleanup

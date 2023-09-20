@@ -11,21 +11,21 @@ sap.ui.define([
 ) {
 	"use strict";
 
-    var versionMappings = {
+    const versionMappings = {
         1: {
             // ------------------------- FilterBarDelegate, ChartDelegate & TableDelegate -------------------------
             addItem: function(fnCalled, Delegate, argList) {
                 if (!(typeof argList[0] === "string")) {
-                    var oControl = argList[1];
-                    var sProp = argList[0];
+                    const oControl = argList[1];
+                    const sProp = argList[0];
                     argList[0] = oControl;
                     argList[1] = sProp;
                 }
                 return fnCalled.apply(Delegate, argList);
             },
             removeItem: function(fnCalled, Delegate, argList) {
-                var oControl = argList[1];
-                var sProp = argList[0];
+                const oControl = argList[1];
+                const sProp = argList[0];
                 argList[0] = oControl;
                 argList[1] = sProp;
                 return fnCalled.apply(Delegate, argList);
@@ -74,7 +74,7 @@ sap.ui.define([
                 return fnCalled.apply(Delegate, argList);
             },
             onConditionPropagation: function(fnCalled, Delegate, argList) {
-                var argListNew = [
+                const argListNew = [
                     (argList[0] && argList[0].getPayload) ? argList[0].getPayload() : argList[0],
                     argList[0],
                     argList[1],
@@ -169,13 +169,13 @@ sap.ui.define([
         }
     };
 
-    var mapVersions = function(obj) {
+    const mapVersions = function(obj) {
 
         Object.keys(obj).forEach(function (prop) {
 
-            var apiVersion;
+            let apiVersion;
 
-            var bNeedOldApiVersion =
+            const bNeedOldApiVersion =
             ("sap.fe.core" in Core.getLoadedLibraries()) ||
             ("sap.fe.macros" in Core.getLoadedLibraries()) ||
             ("sap.sac.df" in Core.getLoadedLibraries());
@@ -188,13 +188,13 @@ sap.ui.define([
 
             if (versionMappings[apiVersion] && versionMappings[apiVersion][prop] && obj[prop] instanceof Function) {
 
-                var fnDelegateMethod = obj[prop];
+                const fnDelegateMethod = obj[prop];
 
                 if (fnDelegateMethod.__mapped) {
                     return obj;
                 }
 
-                var proxy = new Proxy(fnDelegateMethod, {
+                const proxy = new Proxy(fnDelegateMethod, {
                     apply: function(fnCalled, Delegate, argList) {
                         if (apiVersion > 1) {
                             return fnCalled.apply(Delegate, argList);

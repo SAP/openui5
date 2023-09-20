@@ -9,7 +9,7 @@ sap.ui.define([
 		beforeEach: function() {
 			this.oTableMetadata = Table.getMetadata();
 			this.fnExecuteWhenDesigntimeIsLoaded = function(assert, fnExecute) {
-				var fnDone = assert.async();
+				const fnDone = assert.async();
 				this.oTableMetadata.loadDesignTime().then(function(mDesignTimeMetadata) {
 					fnExecute.apply(this, [mDesignTimeMetadata, fnDone]);
 				}.bind(this));
@@ -24,12 +24,12 @@ sap.ui.define([
 		this.fnExecuteWhenDesigntimeIsLoaded(assert, function(mDesignTimeMetadata, fnDone) {
 			assert.ok(Object.keys(mDesignTimeMetadata.properties).length > 0, "properties are defined in the DesignTime metadata");
 
-			var aAllowedProperties = ["width", "headerLevel",
+			const aAllowedProperties = ["width", "headerLevel",
 				"header", "headerVisible", "showRowCount", "threshold",
 				"enableExport", "busyIndicatorDelay","enableColumnResize",
 				"showPasteButton", "multiSelectMode"];
 
-			for (var sKey in mDesignTimeMetadata.properties) {
+			for (const sKey in mDesignTimeMetadata.properties) {
 				if (aAllowedProperties.includes(sKey)) {
 					assert.strictEqual(mDesignTimeMetadata.properties[sKey].ignore, false, sKey + " is allowed for DesignTime changes");
 				} else {
@@ -45,9 +45,9 @@ sap.ui.define([
 		this.fnExecuteWhenDesigntimeIsLoaded(assert, function(mDesignTimeMetadata, fnDone) {
 			assert.ok(Object.keys(mDesignTimeMetadata.aggregations).length > 0, "aggregations are defined in the DesignTime metadata");
 
-			var aAllowedAggregations = ["_content"];
+			const aAllowedAggregations = ["_content"];
 
-			for (var sKey in mDesignTimeMetadata.aggregations) {
+			for (const sKey in mDesignTimeMetadata.aggregations) {
 				if (aAllowedAggregations.includes(sKey)) {
 					assert.ok(!mDesignTimeMetadata.aggregations[sKey].ignore, sKey + " is allowed for DesignTime changes");
 				} else {

@@ -6,14 +6,14 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var QUnitUtils = {};
+	const QUnitUtils = {};
 
 	QUnitUtils.stubPropertyInfos = function(oTarget, aPropertyInfos) {
-		var fnOriginalGetControlDelegate = oTarget.getControlDelegate;
-		var fnOriginalAwaitControlDelegate = oTarget.awaitControlDelegate;
-		var oDelegate;
-		var fnOriginalFetchProperties;
-		var bPropertyHelperExists;
+		const fnOriginalGetControlDelegate = oTarget.getControlDelegate;
+		const fnOriginalAwaitControlDelegate = oTarget.awaitControlDelegate;
+		let oDelegate;
+		let fnOriginalFetchProperties;
+		let bPropertyHelperExists;
 
 		if (typeof fnOriginalGetControlDelegate !== "function") {
 			throw new Error("The target cannot be stubbed. " + oTarget);

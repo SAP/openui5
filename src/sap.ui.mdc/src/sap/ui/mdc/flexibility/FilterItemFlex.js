@@ -13,12 +13,12 @@ sap.ui.define(['./ItemBaseFlex'], function(ItemBaseFlex) {
 	 * @version ${version}
 	 */
 
-	var oFilterItemFlex = Object.assign({}, ItemBaseFlex);
+	const oFilterItemFlex = Object.assign({}, ItemBaseFlex);
 
 	oFilterItemFlex.findItem = function(oModifier, aFilters, sName) {
 		return aFilters.find(function(oFilter) {
 
-			var sFieldPath;
+			let sFieldPath;
 
 			if (oModifier.targets === "jsControlTree") {
 				sFieldPath = oFilter.getPropertyKey();
@@ -27,7 +27,8 @@ sap.ui.define(['./ItemBaseFlex'], function(ItemBaseFlex) {
 				//TODO: needs to be reworked. Expected a name like property on FilterItem
 				sFieldPath = oFilter.getAttribute("conditions");
 				if (sFieldPath) {
-					var iEnd, iStart = sFieldPath.indexOf("/conditions/");
+					let iEnd;
+					const iStart = sFieldPath.indexOf("/conditions/");
 					if (iStart >= 0) {
 						sFieldPath = sFieldPath.slice(iStart + 12);
 						iEnd = sFieldPath.indexOf("}");

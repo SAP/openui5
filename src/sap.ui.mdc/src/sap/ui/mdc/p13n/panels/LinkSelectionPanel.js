@@ -18,12 +18,12 @@ sap.ui.define([
     "use strict";
 
     // shortcut for sap.m.ListType
-    var ListType = mLibrary.ListType;
+    const ListType = mLibrary.ListType;
 
     // shortcut for sap.m.MultiSelectMode
-	var MultiSelectMode = mLibrary.MultiSelectMode;
+	const MultiSelectMode = mLibrary.MultiSelectMode;
 
-    var LinkSelectionPanel = SelectionPanel.extend("sap.ui.mdc.p13n.panels.LinkSelectionPanel", {
+    const LinkSelectionPanel = SelectionPanel.extend("sap.ui.mdc.p13n.panels.LinkSelectionPanel", {
         metadata: {
             properties: {
                 /**
@@ -93,7 +93,7 @@ sap.ui.define([
 	};
 
     LinkSelectionPanel.prototype._getSearchField = function() {
-		var oSearchField = SelectionPanel.prototype._getSearchField.apply(this, arguments);
+		const oSearchField = SelectionPanel.prototype._getSearchField.apply(this, arguments);
 
 		oSearchField.getLayoutData().setMaxWidth(undefined);
 
@@ -101,7 +101,7 @@ sap.ui.define([
 	};
 
     LinkSelectionPanel.prototype._onLinkPressed = function(oEvent) {
-        var bCtrlKeyPressed = oEvent.getParameters().ctrlKey || oEvent.getParameters().metaKey;
+        const bCtrlKeyPressed = oEvent.getParameters().ctrlKey || oEvent.getParameters().metaKey;
         if (oEvent.getSource().getTarget() !== "_blank" && !bCtrlKeyPressed) {
             oEvent.preventDefault();
             this.fireLinkPressed(oEvent);
@@ -109,7 +109,7 @@ sap.ui.define([
     };
 
     LinkSelectionPanel.prototype._filterList = function(bShowSelected, sSarch) {
-		var oSearchFilter = [], oSelectedFilter = [];
+		let oSearchFilter = [], oSelectedFilter = [];
 		if (bShowSelected) {
 			oSelectedFilter = new Filter(this.PRESENCE_ATTRIBUTE, "EQ", true);
 		}

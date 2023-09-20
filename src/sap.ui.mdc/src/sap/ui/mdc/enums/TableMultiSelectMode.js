@@ -14,7 +14,7 @@ sap.ui.define(function() {
      * @since 1.115
      * @ui5-restricted sap.ui.mdc
      */
-    var TableMultiSelectMode = {
+    const TableMultiSelectMode = {
         /**
          * Renders the <code>selectAll</code> checkbox (default behavior).
          * @public

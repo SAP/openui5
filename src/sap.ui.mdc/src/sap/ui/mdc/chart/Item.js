@@ -19,7 +19,7 @@ sap.ui.define([
      * @since 1.88
      * @alias sap.ui.mdc.chart.Item
      */
-    var Item = Element.extend("sap.ui.mdc.chart.Item", /** @lends sap.ui.mdc.chart.Item.prototype */
+    const Item = Element.extend("sap.ui.mdc.chart.Item", /** @lends sap.ui.mdc.chart.Item.prototype */
         {
             metadata: {
                 "abstract": false, //TODO: see comment at the end.
@@ -65,7 +65,7 @@ sap.ui.define([
 
     //Temporary fallback for compatibility until the dataProperty can be removed
     Item.prototype.getPropertyKey = function() {
-		var sPropertyKey = this.getProperty("propertyKey");
+		const sPropertyKey = this.getProperty("propertyKey");
 		return sPropertyKey || undefined;
 	};
 

@@ -5,7 +5,7 @@ sap.ui.define([
 
 	return Controller.extend("appUnderTest.Test", {
 		onPressRTA: function() {
-			var oOwnerComponent = this.getOwnerComponent();
+			const oOwnerComponent = this.getOwnerComponent();
 			startKeyUserAdaptation({
 				rootControl: oOwnerComponent.getAggregation("rootControl")
 			});

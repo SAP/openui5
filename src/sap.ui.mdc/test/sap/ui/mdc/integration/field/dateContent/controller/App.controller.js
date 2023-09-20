@@ -5,12 +5,12 @@ sap.ui.define([
 ], function (Controller, UIComponent, JSONModel) {
 	"use strict";
 
-	var oFieldDate = new Date(2022, 10, 28, 12, 45, 52);
+	const oFieldDate = new Date(2022, 10, 28, 12, 45, 52);
 
 	return Controller.extend("sap.ui.mdc.integration.field.dateContent.controller.App", {
 		onInit: function () {
 			sap.ui.getCore().getMessageManager().registerObject(this.getView(), true);
-			var oDataModel = new JSONModel({
+			const oDataModel = new JSONModel({
 				date: oFieldDate,
 				dateTime: oFieldDate,
 				time: oFieldDate

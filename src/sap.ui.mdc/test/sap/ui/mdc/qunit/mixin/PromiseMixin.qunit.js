@@ -11,10 +11,10 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var TestClass;
-	var oSomeInstance;
+	let TestClass;
+	let oSomeInstance;
 
-	var fnCreateInstance = function () {
+	const fnCreateInstance = function () {
 		TestClass = ManagedObject.extend("temp", {
 			metadata: {
 				properties: {}
@@ -24,7 +24,7 @@ sap.ui.define([
 		oSomeInstance = new TestClass();
 	};
 
-	var fnCleanup = function () {
+	const fnCleanup = function () {
 		if (oSomeInstance) {
 			oSomeInstance.destroy();
 			oSomeInstance = undefined;
@@ -69,7 +69,7 @@ sap.ui.define([
 
 	QUnit.test("_addPromise", function(assert) {
 		sinon.spy(PromiseCache.prototype, "add");
-		var oPromise = oSomeInstance._addPromise("a");
+		const oPromise = oSomeInstance._addPromise("a");
 		assert.ok(PromiseCache.prototype.add.calledWith("a"), "calls PromiseCache.prototype.add.");
 		assert.ok(PromiseCache.prototype.add.returned(oPromise), "returns PromiseCache.prototype.add returnValue.");
 
@@ -81,8 +81,8 @@ sap.ui.define([
 
 	QUnit.test("_retrievePromise", function(assert) {
 		sinon.spy(PromiseCache.prototype, "retrieve");
-		var aArgs = ["a", Promise.resolve()];
-		var oPromise = oSomeInstance._retrievePromise.apply(oSomeInstance, aArgs);
+		const aArgs = ["a", Promise.resolve()];
+		const oPromise = oSomeInstance._retrievePromise.apply(oSomeInstance, aArgs);
 		assert.ok(PromiseCache.prototype.retrieve.calledWith(aArgs[0], aArgs[1]), "calls PromiseCache.prototype.retrieve.");
 		assert.ok(PromiseCache.prototype.retrieve.returned(oPromise), "returns PromiseCache.prototype.retrieve returnValue.");
 
@@ -102,8 +102,8 @@ sap.ui.define([
 
 	QUnit.test("_retrievePromises", function(assert) {
 		sinon.spy(PromiseCache.prototype, "retrieveMany");
-		var aArgs = ["a"];
-		var oPromise = oSomeInstance._retrievePromises.apply(oSomeInstance, aArgs);
+		const aArgs = ["a"];
+		const oPromise = oSomeInstance._retrievePromises.apply(oSomeInstance, aArgs);
 		assert.ok(PromiseCache.prototype.retrieveMany.calledWith(aArgs[0]), "calls PromiseCache.prototype.retrieve.");
 		assert.ok(PromiseCache.prototype.retrieveMany.returned(oPromise), "returns PromiseCache.prototype.retrieve returnValue.");
 
@@ -115,8 +115,8 @@ sap.ui.define([
 
 	QUnit.test("_retrievePromise", function(assert) {
 		sinon.spy(PromiseCache.prototype, "retrieve");
-		var aArgs = ["a"];
-		var oPromise = oSomeInstance._retrievePromise.apply(oSomeInstance, aArgs);
+		const aArgs = ["a"];
+		const oPromise = oSomeInstance._retrievePromise.apply(oSomeInstance, aArgs);
 		assert.ok(PromiseCache.prototype.retrieve.calledWith(aArgs[0]), "calls PromiseCache.prototype.retrieve.");
 		assert.ok(PromiseCache.prototype.retrieve.returned(oPromise), "returns PromiseCache.prototype.retrieve returnValue.");
 
@@ -129,8 +129,8 @@ sap.ui.define([
 
 	QUnit.test("_cancelPromise", function(assert) {
 		sinon.spy(PromiseCache.prototype, "cancel");
-		var aArgs = ["a"];
-		var oPromise = oSomeInstance._cancelPromise.apply(oSomeInstance, aArgs);
+		const aArgs = ["a"];
+		const oPromise = oSomeInstance._cancelPromise.apply(oSomeInstance, aArgs);
 		assert.ok(PromiseCache.prototype.cancel.calledWith(aArgs[0]), "calls PromiseCache.prototype.cancel.");
 		assert.ok(PromiseCache.prototype.cancel.returned(oPromise), "returns PromiseCache.prototype.cancel returnValue.");
 
@@ -142,8 +142,8 @@ sap.ui.define([
 
 	QUnit.test("_removePromise", function(assert) {
 		sinon.spy(PromiseCache.prototype, "remove");
-		var aArgs = ["a"];
-		var oPromise = oSomeInstance._removePromise.apply(oSomeInstance, aArgs);
+		const aArgs = ["a"];
+		const oPromise = oSomeInstance._removePromise.apply(oSomeInstance, aArgs);
 		assert.ok(PromiseCache.prototype.remove.calledWith(aArgs[0]), "calls PromiseCache.prototype.remove.");
 		assert.ok(PromiseCache.prototype.remove.returned(oPromise), "returns PromiseCache.prototype.remove returnValue.");
 
@@ -155,8 +155,8 @@ sap.ui.define([
 
 	QUnit.test("_resolvePromise", function(assert) {
 		sinon.spy(PromiseCache.prototype, "resolve");
-		var aArgs = ["a"];
-		var oPromise = oSomeInstance._resolvePromise.apply(oSomeInstance, aArgs);
+		const aArgs = ["a"];
+		const oPromise = oSomeInstance._resolvePromise.apply(oSomeInstance, aArgs);
 		assert.ok(PromiseCache.prototype.resolve.calledWith(aArgs[0]), "calls PromiseCache.prototype.resolve.");
 		assert.ok(PromiseCache.prototype.resolve.returned(oPromise), "returns PromiseCache.prototype.resolve returnValue.");
 
@@ -168,8 +168,8 @@ sap.ui.define([
 
 	QUnit.test("_rejectPromise", function(assert) {
 		sinon.spy(PromiseCache.prototype, "reject");
-		var aArgs = ["a"];
-		var oPromise = oSomeInstance._rejectPromise.apply(oSomeInstance, aArgs);
+		const aArgs = ["a"];
+		const oPromise = oSomeInstance._rejectPromise.apply(oSomeInstance, aArgs);
 		assert.ok(PromiseCache.prototype.reject.calledWith(aArgs[0]), "calls PromiseCache.prototype.reject.");
 		assert.ok(PromiseCache.prototype.reject.returned(oPromise), "returns PromiseCache.prototype.reject returnValue.");
 

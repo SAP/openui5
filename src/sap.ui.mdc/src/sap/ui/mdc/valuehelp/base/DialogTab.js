@@ -27,7 +27,7 @@ sap.ui.define([
 	 * @experimental As of version 1.95
 	 * @alias sap.ui.mdc.valuehelp.base.DialogTab
 	 */
-	var DialogTab = Control.extend("sap.ui.mdc.valuehelp.base.DialogTab", /** @lends sap.ui.mdc.valuehelp.base.DialogTab.prototype */
+	const DialogTab = Control.extend("sap.ui.mdc.valuehelp.base.DialogTab", /** @lends sap.ui.mdc.valuehelp.base.DialogTab.prototype */
 	{
 		metadata: {
 			library: "sap.ui.mdc",
@@ -82,7 +82,7 @@ sap.ui.define([
 				oRm.openStart("div", oControl);
 				oRm.class("sapUiMdcDialogTab");
 				oRm.openEnd();
-				var oContent = oControl.getContent();
+				const oContent = oControl.getContent();
 				if (oContent) {
 					oRm.renderControl(oContent);
 				}

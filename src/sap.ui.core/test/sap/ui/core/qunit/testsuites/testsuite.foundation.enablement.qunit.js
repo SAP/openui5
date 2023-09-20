@@ -123,10 +123,6 @@ sap.ui.define(function() {
 				title: "QUnit Page for uid"
 			},
 
-			"base/util/UriParameters": {
-				title: "QUnit Page for UriParameters"
-			},
-
 			"ui/base/syncXHRFix-error-handling": {
 				title: "QUnit Page for syncXHRFix (error handling)"
 			},

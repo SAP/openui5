@@ -15,7 +15,7 @@ sap.ui.define([
 	) {
 		"use strict";
 
-		var CalendarType = coreLibrary.CalendarType;
+		const CalendarType = coreLibrary.CalendarType;
 
 		/**
 		 * Utility class with functions for Date conversion
@@ -27,7 +27,7 @@ sap.ui.define([
 		 * @since 1.74.0
 		 * @alias sap.ui.mdc.util.DateUtil
 		 */
-		var DateUtil = {
+		const DateUtil = {
 
 				/**
 				 * "Clones" a given data type to use a given pattern.
@@ -41,9 +41,9 @@ sap.ui.define([
 				 */
 				createInternalType: function(oType, sPattern) {
 
-					var Type = sap.ui.require(oType.getMetadata().getName().replace(/\./g, "/")); // type is already loaded because instance is provided
-					var oConstraints = merge({}, oType.getConstraints());
-					var oFormatOptions = merge({}, oType.getFormatOptions());
+					const Type = sap.ui.require(oType.getMetadata().getName().replace(/\./g, "/")); // type is already loaded because instance is provided
+					const oConstraints = merge({}, oType.getConstraints());
+					const oFormatOptions = merge({}, oType.getFormatOptions());
 
 					if (oFormatOptions.style) {
 						delete oFormatOptions.style;
@@ -71,8 +71,8 @@ sap.ui.define([
 				 */
 				showTimezone: function(oType) {
 
-					var oFormatOptions = oType.getFormatOptions();
-					var fnCheckProperty = function(oFormatOptions, sProperty) {
+					const oFormatOptions = oType.getFormatOptions();
+					const fnCheckProperty = function(oFormatOptions, sProperty) {
 						return !oFormatOptions.hasOwnProperty(sProperty) || oFormatOptions[sProperty]; // if not set, showTimezone=true, showDate=true or showTime=true is default
 					};
 
@@ -93,8 +93,8 @@ sap.ui.define([
 				 */
 				typeToString: function(vDate, oType, sPattern) {
 
-					var oInternalType = this.createInternalType(oType, sPattern);
-					var sDate = oInternalType.formatValue(vDate, "string");
+					const oInternalType = this.createInternalType(oType, sPattern);
+					const sDate = oInternalType.formatValue(vDate, "string");
 					return sDate;
 
 				},
@@ -112,8 +112,8 @@ sap.ui.define([
 				 */
 				stringToType: function(sDate, oType, sPattern) {
 
-					var oInternalType = this.createInternalType(oType, sPattern);
-					var vDate = oInternalType.parseValue(sDate, "string");
+					const oInternalType = this.createInternalType(oType, sPattern);
+					const vDate = oInternalType.parseValue(sDate, "string");
 					return vDate;
 
 				},
@@ -131,13 +131,17 @@ sap.ui.define([
 				 */
 				typeToISO: function(vDate, oType, sBaseType) {
 
-					var oDate = this.typeToDate(vDate, oType, sBaseType);
+					if (oType.getISOStringFromModelValue) {
+						return oType.getISOStringFromModelValue(vDate);
+					} else { // old types cannot convert to ISO by itself
+						let oDate = this.typeToDate(vDate, oType, sBaseType);
 
-					if (oType.getFormatOptions().UTC) { // in UTC date we need to bring the local date to UTC
-						oDate = UI5Date.getInstance(Date.UTC(oDate.getFullYear(), oDate.getMonth(), oDate.getDate(), oDate.getHours(), oDate.getMinutes(), oDate.getSeconds(), oDate.getMilliseconds()));
+						if (oType.getFormatOptions().UTC) { // in UTC date we need to bring the local date to UTC
+							oDate = UI5Date.getInstance(Date.UTC(oDate.getFullYear(), oDate.getMonth(), oDate.getDate(), oDate.getHours(), oDate.getMinutes(), oDate.getSeconds(), oDate.getMilliseconds()));
+						}
+
+						return oDate.toISOString();
 					}
-
-					return oDate.toISOString();
 
 				},
 
@@ -154,13 +158,17 @@ sap.ui.define([
 				 */
 				ISOToType: function(sISODate, oType, sBaseType) {
 
-					var oDate = UI5Date.getInstance(sISODate); // can also interpret string with pattern "yyyy-MM-ddTHH:mm:ssZ"
+					if (oType.getModelValueFromISOString) {
+						return oType.getModelValueFromISOString(sISODate);
+					} else { // old types cannot convert to ISO by itself
+						let oDate = UI5Date.getInstance(sISODate); // can also interpret string with pattern "yyyy-MM-ddTHH:mm:ssZ"
 
-					if (oType.getFormatOptions().UTC) { // in UTC date we need to bring the UTC to local date
-						oDate = UI5Date.getInstance(oDate.getUTCFullYear(), oDate.getUTCMonth(), oDate.getUTCDate(), oDate.getUTCHours(), oDate.getUTCMinutes(), oDate.getUTCSeconds(), oDate.getUTCMilliseconds());
+						if (oType.getFormatOptions().UTC) { // in UTC date we need to bring the UTC to local date
+							oDate = UI5Date.getInstance(oDate.getUTCFullYear(), oDate.getUTCMonth(), oDate.getUTCDate(), oDate.getUTCHours(), oDate.getUTCMinutes(), oDate.getUTCSeconds(), oDate.getUTCMilliseconds());
+						}
+
+						return this.dateToType(oDate, oType, sBaseType);
 					}
-
-					return this.dateToType(oDate, oType, sBaseType);
 
 				},
 
@@ -176,16 +184,16 @@ sap.ui.define([
 				 * @private
 				 */
 				dateToType: function(oDate, oType, sBaseType) {
-					var vDate;
+					let vDate;
 
 					if (oType.getModelValue) {
 						vDate = oType.getModelValue(oDate);
 					} else if (oType.isA("sap.ui.model.type.DateTime") && oType.getFormatOptions().UTC) { // old DateTime don't support UTC on ModelFormat
 						vDate = UI5Date.getInstance(Date.UTC(oDate.getFullYear(), oDate.getMonth(), oDate.getDate(), oDate.getHours(), oDate.getMinutes(), oDate.getSeconds(), oDate.getMilliseconds()));
 					} else { // older types don't support the new getModelValue
-						var oModelFormat = oType.getModelFormat();
-						var oFormatOptions = oType.getFormatOptions();
-						var bUTC = sBaseType === BaseType.DateTime ? !!oFormatOptions.UTC : false;
+						const oModelFormat = oType.getModelFormat();
+						const oFormatOptions = oType.getFormatOptions();
+						const bUTC = sBaseType === BaseType.DateTime ? !!oFormatOptions.UTC : false;
 						vDate = oModelFormat.format(oDate, bUTC);
 					}
 
@@ -204,16 +212,16 @@ sap.ui.define([
 				 * @private
 				 */
 				typeToDate: function(vDate, oType, sBaseType) {
-					var oDate;
+					let oDate;
 
 					if (oType.getDateValue) {
 						oDate = oType.getDateValue(vDate);
 					} else if (oType.isA("sap.ui.model.type.DateTime") && oType.getFormatOptions().UTC) { // old DateTime don't support UTC on ModelFormat
 						oDate = UI5Date.getInstance(vDate.getUTCFullYear(), vDate.getUTCMonth(), vDate.getUTCDate(), vDate.getUTCHours(), vDate.getUTCMinutes(), vDate.getUTCSeconds(), vDate.getUTCMilliseconds());
 					} else { // older types don't support the new getDateValue
-						var oModelFormat = oType.getModelFormat();
-						var oFormatOptions = oType.getFormatOptions();
-						var bUTC = sBaseType === BaseType.DateTime ? !!oFormatOptions.UTC : false;
+						const oModelFormat = oType.getModelFormat();
+						const oFormatOptions = oType.getFormatOptions();
+						const bUTC = sBaseType === BaseType.DateTime ? !!oFormatOptions.UTC : false;
 						oDate = oModelFormat.parse(vDate, bUTC);
 					}
 

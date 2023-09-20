@@ -49,20 +49,20 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var ValueHelpDelegate = Object.assign({}, ODataV4ValueHelpDelegate);
+	const ValueHelpDelegate = Object.assign({}, ODataV4ValueHelpDelegate);
 	ValueHelpDelegate.apiVersion = 2;//CLEANUPD_DELEGATE
 
-	ValueHelpDelegate.retrieveContent = function (oValueHelp, oContainer, sContentId) {
-		var oValueHelp = oContainer && oContainer.getParent();
+	ValueHelpDelegate.retrieveContent = function (_oValueHelp, oContainer, sContentId) {
+		const oValueHelp = oContainer && oContainer.getParent();
 
-		var oParams = UriParameters.fromQuery(location.search);
-		var oParamSuspended = oParams.get("suspended");
-		var bSuspended = oParamSuspended ? oParamSuspended === "true" : false;
+		const oParams = UriParameters.fromQuery(location.search);
+		const oParamSuspended = oParams.get("suspended");
+		const bSuspended = oParamSuspended ? oParamSuspended === "true" : false;
 
-		var aCurrentContent = oContainer && oContainer.getContent();
-		var oCurrentContent = aCurrentContent && aCurrentContent[0];
+		const aCurrentContent = oContainer && oContainer.getContent();
+		let oCurrentContent = aCurrentContent && aCurrentContent[0];
 
-		var bMultiSelect = oValueHelp.getMaxConditions() === -1;
+		const bMultiSelect = oValueHelp.getMaxConditions() === -1;
 
 
 		if (oContainer.isA("sap.ui.mdc.valuehelp.Popover")) {
@@ -169,7 +169,7 @@ sap.ui.define([
 				oContainer.addContent(oCurrentContent);
 
 				if (bMultiSelect) {
-					var oAdditionalContent = new Conditions({
+					const oAdditionalContent = new Conditions({
 						title:"Define Conditions",
 						shortTitle:"Conditions",
 						label:"Label of Field"
@@ -190,19 +190,19 @@ sap.ui.define([
 	};
 
 	ValueHelpDelegate.getFilterConditions = function (oValueHelp, oContent, oConfig) {
-		var oConditions = ODataV4ValueHelpDelegate.getFilterConditions(arguments);
+		const oConditions = ODataV4ValueHelpDelegate.getFilterConditions(arguments);
 
-		var oFilterBar = oContent.getFilterBar();
+		const oFilterBar = oContent.getFilterBar();
 
 		if (oFilterBar) {
 
-			var bHasCountryFilter = [].find(function (oFilterItem) {
+			const bHasCountryFilter = [].find(function (oFilterItem) {
 				return oFilterItem.getBinding("conditions").sPath.indexOf("countryOfOrigin_code") >= 0;
 			});
 
 			if (bHasCountryFilter) {
-				var oCountry = Core.byId("FB0-FF6");
-				var aCountryConditions = oCountry && oCountry.getConditions();
+				const oCountry = Core.byId("FB0-FF6");
+				const aCountryConditions = oCountry && oCountry.getConditions();
 				if (aCountryConditions && aCountryConditions.length) {
 					oConditions["countryOfOrigin_code"] = aCountryConditions;
 					return oConditions;
@@ -216,7 +216,7 @@ sap.ui.define([
 	// Exemplatory implementation of outparameter update
 	ValueHelpDelegate.onConditionPropagation = function (oValueHelp, sReason, oConfig) {
 		// find all conditions carrying country information
-		var aAllConditionCountries = oValueHelp.getConditions().reduce(function (aResult, oCondition) {
+		const aAllConditionCountries = oValueHelp.getConditions().reduce(function (aResult, oCondition) {
 			if (oCondition.payload) {
 				Object.values(oCondition.payload).forEach(function (oSegment) {
 					if (oSegment["countryOfOrigin_code"] && aResult.indexOf(oSegment["countryOfOrigin_code"]) === -1) {
@@ -228,14 +228,14 @@ sap.ui.define([
 		}, []);
 
 		if (aAllConditionCountries && aAllConditionCountries.length) {
-			var oFilterBar = Core.byId("FB0");
+			const oFilterBar = Core.byId("FB0");
 			StateUtil.retrieveExternalState(oFilterBar).then(function (oState) {
 				aAllConditionCountries.forEach(function(sCountry) {
-					var bExists = oState.filter && oState.filter['countryOfOrigin_code'] && oState.filter['countryOfOrigin_code'].find(function (oCondition) {
+					const bExists = oState.filter && oState.filter['countryOfOrigin_code'] && oState.filter['countryOfOrigin_code'].find(function (oCondition) {
 						return oCondition.values[0] === sCountry;
 					});
 					if (!bExists) {
-						var oNewCondition = Condition.createCondition("EQ", [sCountry], undefined, undefined, ConditionValidated.Validated);
+						const oNewCondition = Condition.createCondition("EQ", [sCountry], undefined, undefined, ConditionValidated.Validated);
 						oState.filter['countryOfOrigin_code'] = oState.filter && oState.filter['countryOfOrigin_code'] || [];
 						oState.filter['countryOfOrigin_code'].push(oNewCondition);
 					}

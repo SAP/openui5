@@ -22,7 +22,7 @@ sap.ui.define([
 		autoWait: true
 	});
 
-	var oFilterItems = {
+	const oFilterItems = {
 		"Artists": [
 			{p13nItem: "artistUUID", selected: true},
 			{p13nItem: "Breakout Year", selected: true},

@@ -7,10 +7,10 @@ sap.ui.define(
     function (AdaptationMixin, DelegateMixin, Control) {
         "use strict";
 
-        var TestClass;
-        var oSomeInstance;
+        let TestClass;
+        let oSomeInstance;
 
-        var fnExtendTestClass = function () {
+        const fnExtendTestClass = function () {
             TestClass = Control.extend("temp", {
                 metadata: {
                     interfaces: [
@@ -38,7 +38,7 @@ sap.ui.define(
             };
         };
 
-        var fnCleanup = function () {
+        const fnCleanup = function () {
             if (oSomeInstance) {
                 oSomeInstance.destroy();
                 oSomeInstance = undefined;
@@ -59,7 +59,7 @@ sap.ui.define(
         });
 
         QUnit.test("retrieveInbuiltFilter", function (assert) {
-            var done = assert.async();
+            const done = assert.async();
 
             oSomeInstance.retrieveInbuiltFilter()
             .then(function (oFilterControl) {
@@ -79,7 +79,7 @@ sap.ui.define(
         });
 
         QUnit.test("retrieveInbuiltFilter after destruction", function (assert) {
-            var done = assert.async();
+            const done = assert.async();
 
             oSomeInstance.destroy();
             oSomeInstance.retrieveInbuiltFilter()
@@ -90,11 +90,11 @@ sap.ui.define(
         });
 
         QUnit.test("exit", function (assert) {
-            var done = assert.async();
-            var oExitSpy = sinon.spy(TestClass.prototype, "exit");
+            const done = assert.async();
+            const oExitSpy = sinon.spy(TestClass.prototype, "exit");
             oSomeInstance.retrieveInbuiltFilter()
             .then(function() {
-                var oAdaptationFilterBarDestroySpy = sinon.spy(
+                const oAdaptationFilterBarDestroySpy = sinon.spy(
                     oSomeInstance._oP13nFilter,
                     "destroy"
                 );

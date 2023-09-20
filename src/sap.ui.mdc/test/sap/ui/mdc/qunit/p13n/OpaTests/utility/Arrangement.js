@@ -11,7 +11,7 @@ sap.ui.define([
 ], function(Opa5, TestUtil, PropertyStrictEquals, Ancestor, Press) {
 	"use strict";
 
-	var Arrangement = Opa5.extend("sap.ui.mdc.qunit.p13n.test.Arrangement", {
+	const Arrangement = Opa5.extend("sap.ui.mdc.qunit.p13n.test.Arrangement", {
 
 		closeAllPopovers: function() {
 			return this.waitFor({
@@ -37,7 +37,7 @@ sap.ui.define([
 			return this.waitFor({
 				controlType: "sap.m.Dialog",
 				success: function(aControls) {
-					var oDialog = aControls[0];
+					const oDialog = aControls[0];
 					return this.waitFor({
 						controlType: "sap.m.Button",
 						matchers: [
@@ -53,9 +53,9 @@ sap.ui.define([
 			});
 		},
 		enableAndDeleteLrepLocalStorage: function() {
-			var oStorage = window.localStorage;
-			var fnRemoveItem = function(sKey) {
-				var bIsFlexObject = sKey.includes("sap.ui.fl");
+			const oStorage = window.localStorage;
+			const fnRemoveItem = function(sKey) {
+				const bIsFlexObject = sKey.includes("sap.ui.fl");
 
 				if (!bIsFlexObject) {
 					return;

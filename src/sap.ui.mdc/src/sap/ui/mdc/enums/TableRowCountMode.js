@@ -14,7 +14,7 @@ sap.ui.define(function() {
      * @since 1.115
      * @public
      */
-    var TableRowCountMode = {
+    const TableRowCountMode = {
         /**
          * The table automatically fills the height of the surrounding container.
          *

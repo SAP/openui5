@@ -15,7 +15,7 @@ sap.ui.define([
                 return this.waitFor({
                     controlType: "sap.m.Dialog",
                     success: function (aDialog) {
-                        var oResetBtn = aDialog[0].getParent().getResetButton();
+                        const oResetBtn = aDialog[0].getParent().getResetButton();
                         const sEnableStatus = bEnabled ? "enabled" : "disabled";
                         Opa5.assert.ok(oResetBtn.getEnabled() === bEnabled, `The reset button should be ${sEnableStatus}`);
                     }
@@ -26,7 +26,7 @@ sap.ui.define([
                     searchOpenDialogs: true,
                     controlType: "sap.m.table.columnmenu.Menu",
                     success: function (oColumnMenu) {
-                        var oResetBtn = oColumnMenu[0].getDependents()[2].getHeader().getContentRight()[0];
+                        const oResetBtn = oColumnMenu[0].getDependents()[2].getHeader().getContentRight()[0];
                         const sEnableStatus = bEnabled ? "enabled" : "disabled";
                         Opa5.assert.ok(oResetBtn.getEnabled() === bEnabled, `The reset button should be ${sEnableStatus}`);
                     }

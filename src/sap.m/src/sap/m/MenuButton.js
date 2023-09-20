@@ -379,7 +379,7 @@ sap.ui.define([
 					minus2_left: "-2 0"
 				};
 
-			this._isSplitButton() && this.fireBeforeMenuOpen();
+			this.fireBeforeMenuOpen();
 
 			if (!oMenu) {
 				return;

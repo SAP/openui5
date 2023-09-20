@@ -51,9 +51,9 @@ sap.ui.define([
 	 * @experimental
 	 * @ui5-restricted sap.ui.mdc
 	*/
-    var FilterIntegrationMixin = {};
+    const FilterIntegrationMixin = {};
 
-    var IFILTER = "sap.ui.mdc.IFilter";
+    const IFILTER = "sap.ui.mdc.IFilter";
 
 	/**
 	 * Set an external IFilter source to connect it with the given control instance.
@@ -63,20 +63,20 @@ sap.ui.define([
 	 */
 	FilterIntegrationMixin.setFilter = function (vFilter) {
 
-		var sNewFilter = typeof vFilter === "object" ? vFilter.getId() : vFilter;
-		var sOldFilter = this.getFilter();
+		const sNewFilter = typeof vFilter === "object" ? vFilter.getId() : vFilter;
+		const sOldFilter = this.getFilter();
 
 		if (sOldFilter !== sNewFilter) {
 			this._validateFilter(vFilter);
 
-			var oOldFilter = Core.byId(this.getFilter());
+			const oOldFilter = Core.byId(this.getFilter());
 			if (oOldFilter) {
 				deregisterFilter(this, oOldFilter);
 			}
 
 			this.setAssociation("filter", vFilter, true);
 
-			var oNewFilter = Core.byId(this.getFilter());
+			const oNewFilter = Core.byId(this.getFilter());
 			if (oNewFilter) {
 				registerFilter(this, oNewFilter);
 			}
@@ -174,7 +174,7 @@ sap.ui.define([
 	FilterIntegrationMixin._validateFilter = function(vFilter) {
 		_checkFISanity(this);
 
-		var oFilter = typeof vFilter === "object" ? vFilter : Core.byId(vFilter);
+		const oFilter = typeof vFilter === "object" ? vFilter : Core.byId(vFilter);
 		if (oFilter && !oFilter.isA(IFILTER)) {
 			throw new Error("\"" + vFilter + "\" is not valid for association \"filter\"."
 							+ " Please use an object that implements the \"" + IFILTER + "\" interface");
@@ -194,9 +194,9 @@ sap.ui.define([
 		}
 
 		//check for internal and external filtering before triggering a rebind
-		var pOuterFilterSearch;
-		var pInnerFilterSearch;
-		var oFilter = Core.byId(this.getFilter()), bInbuiltEnabled = this.isFilteringEnabled();
+		let pOuterFilterSearch;
+		let pInnerFilterSearch;
+		const oFilter = Core.byId(this.getFilter()), bInbuiltEnabled = this.isFilteringEnabled();
 
 		//check if there is any external/internal filter source
 		if (bInbuiltEnabled || oFilter) {
@@ -231,17 +231,17 @@ sap.ui.define([
 	};
 
 	FilterIntegrationMixin._getLabelsFromFilterConditions = function() {
-		var aLabels = [];
+		const aLabels = [];
 
 		if (this.getFilterConditions) {
-			var aFilterConditions = this.getFilterConditions();
+			const aFilterConditions = this.getFilterConditions();
 			Object.keys(aFilterConditions).forEach(function(oConditionKey){
 
 				if (!aFilterConditions[oConditionKey] || aFilterConditions[oConditionKey].length < 1) {
 					return;
 				}
 
-				var sLabel = this.getPropertyHelper().getProperty(oConditionKey) ? this.getPropertyHelper().getProperty(oConditionKey).label : oConditionKey; //TODO the property for the filter might not exitst when you select a variant
+				const sLabel = this.getPropertyHelper().getProperty(oConditionKey) ? this.getPropertyHelper().getProperty(oConditionKey).label : oConditionKey; //TODO the property for the filter might not exitst when you select a variant
 
 				if (sLabel) {
 					aLabels.push(sLabel);

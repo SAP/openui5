@@ -3,10 +3,10 @@ sap.ui.define([
 	"sap/ui/mdc/Field"
 ], function (ODataTableDelegate, Field) {
 	"use strict";
-	var BooksTableDelegate = Object.assign({}, ODataTableDelegate);
+	const BooksTableDelegate = Object.assign({}, ODataTableDelegate);
 
 	BooksTableDelegate._createColumnTemplate = function (oInfo) {
-		var oProps = { value: "{" + (oInfo.path || oInfo.name) + "}", editMode: "Display", width:"100%", multipleLines: false };
+		const oProps = { value: "{" + (oInfo.path || oInfo.name) + "}", editMode: "Display", width:"100%", multipleLines: false };
 
 		if (oInfo.name === "price") {
 			oProps.value = "{parts: [{path: 'price'}, {path: 'currency_code'}], type: 'sap.ui.model.type.Currency'}";
@@ -21,8 +21,8 @@ sap.ui.define([
 
 	BooksTableDelegate.addItem = function (sPropertyName, oTable, mPropertyBag) {
 		return ODataTableDelegate.addItem.apply(this, arguments).then(function (oColumn) {
-			var oProperty = oTable.getPropertyHelper().getProperty(sPropertyName);
-			var aSmallCols = ["actions", "stock", "ID"];
+			const oProperty = oTable.getPropertyHelper().getProperty(sPropertyName);
+			const aSmallCols = ["actions", "stock", "ID"];
 
 			if (oProperty.name === "title") {
 				oColumn.setWidth("15rem");
