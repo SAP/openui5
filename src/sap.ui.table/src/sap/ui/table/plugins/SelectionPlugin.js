@@ -108,9 +108,10 @@ sap.ui.define([
 	 * TODO: Also provide the event object?
 	 *
 	 * @param {string} sType Type of the keyboard shortcut.
+	 * @param {sap.ui.base.Event} oEvent The emitted event.
 	 * @private
 	 */
-	SelectionPlugin.prototype.onKeyboardShortcut = function(sType) {};
+	SelectionPlugin.prototype.onKeyboardShortcut = function(sType, oEvent) {};
 
 	/**
 	 * Changes the selection state of a row.

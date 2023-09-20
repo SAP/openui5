@@ -2679,42 +2679,65 @@ sap.ui.define([
 	});
 
 	QUnit.test("CellSelector - rowPress event", function(assert) {
+		const done = assert.async();
+		const oModel = new JSONModel();
+		oModel.setData({
+			testPath: [
+				{}, {}, {}, {}, {}
+			]
+		});
+
+		this.oTable.destroy();
+		this.oTable = new Table({
+			delegate: {
+				name: sDelegatePath,
+				payload: {
+					collectionPath: "/testPath"
+				}
+			},
+			type: new GridTableType()
+		});
+
+		this.oTable.setModel(oModel);
+		this.oTable.addColumn(new Column({
+			header: "test",
+			template: new Text()
+		}));
+
 		const oCellSelector = new CellSelector();
 		const oRemoveSelectionStub = sinon.spy(oCellSelector, "removeSelection");
 		this.oTable.addDependent(oCellSelector);
-
-		this.oTable.addColumn(new Column({
-			header: "Test",
-			template: new Text({
-				text: "Test"
-			})
-		}));
+		this.oTable.placeAt("qunit-fixture");
+		Core.applyChanges();
 
 		return this.oTable._fullyInitialized().then(() => {
-			assert.equal(this.oTable.getCellSelectorPluginOwner(), this.oTable._oTable, "The inner table is set as plugin owner for the CellSelector");
-			assert.notOk(this.oTable.hasListeners("rowPress"), "Table has no rowPress listener");
-			assert.ok(oCellSelector.getEnabled(), "CellSelector Plugin is enabled");
-			assert.ok(oCellSelector.isActive(), "CellSelector is active");
+			this.oTable._oTable.attachEventOnce("rowsUpdated", () => {
+				assert.equal(this.oTable.getCellSelectorPluginOwner(), this.oTable._oTable, "The inner table is set as plugin owner for the CellSelector");
+				assert.notOk(this.oTable.hasListeners("rowPress"), "Table has no rowPress listener");
+				assert.ok(oCellSelector.getEnabled(), "CellSelector Plugin is enabled");
+				assert.ok(oCellSelector.isActive(), "CellSelector is active");
 
-			oCellSelector._bSelecting = true;
-			const oEvent = { isMarked: () => false, keyCode: KeyCodes.A, shiftKey: true, ctrlKey: true, preventDefault: () => {} };
-			oCellSelector.onkeydown(oEvent);
-			assert.ok(oRemoveSelectionStub.calledOnce, "Cells are removed.");
-			assert.deepEqual(oCellSelector.getSelectionRange(), null);
+				oCellSelector._bSelecting = true;
+				const oCell = this.oTable._oTable.getRows()[0].getCells()[0].$().parents("td")[0];
 
-			this.oTable.attachRowPress(function() {});
+				QUtils.triggerKeydown(oCell, KeyCodes.A, true, false, true);
+				assert.ok(oRemoveSelectionStub.calledOnce, "Cells are removed.");
+				assert.deepEqual(oCellSelector.getSelectionRange(), null);
 
-			return this.oTable._fullyInitialized().then(() => {
+				this.oTable.attachRowPress(function() {});
+
 				assert.ok(this.oTable.hasListeners("rowPress"), "Table has rowPress listener");
 				assert.equal(this.oTable.getCellSelectorPluginOwner(), this.oTable._oTable, "The inner table is set as plugin owner for the CellSelector");
 				assert.ok(oCellSelector.isActive(), "CellSelector is active");
 
-				oCellSelector.onkeydown(oEvent);
+				QUtils.triggerKeydown(oCell, KeyCodes.A, true, false, true);
 				assert.ok(oRemoveSelectionStub.calledOnce, "removeSelection is not called again");
 				assert.deepEqual(oCellSelector.getSelectionRange(), null);
 
 				this.oTable.removeDependent(oCellSelector);
 				oRemoveSelectionStub.reset();
+
+				done();
 			});
 		});
 	});
