@@ -278,7 +278,24 @@ sap.ui.define([
 		return new QuickGroup({
 			items: new QuickGroupItem(),
 			change: [function(oEvent) {
-				this._oColumn._setGrouped(oEvent.getParameter("item").getGrouped());
+				var bGrouped = oEvent.getParameter("item").getGrouped();
+
+				if (bGrouped && (!this._oColumn.getShowIfGrouped || !this._oColumn.getShowIfGrouped())) {
+					var oTable = this._oColumn._getTable();
+					var oDomRef;
+
+					if (TableUtils.isNoDataVisible(oTable)) {
+						oDomRef = oTable.getDomRef("noDataCnt");
+					} else {
+						oDomRef = oTable.getDomRef("rowsel0");
+					}
+
+					if (oDomRef) {
+						oDomRef.focus();
+					}
+				}
+
+				this._oColumn._setGrouped(bGrouped);
 			}, this]
 		});
 	};
