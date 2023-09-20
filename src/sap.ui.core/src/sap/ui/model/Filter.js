@@ -158,7 +158,7 @@ sap.ui.define([
 	 * @param {boolean} [vFilterInfo.caseSensitive]
 	 *   Indicates whether a string value should be compared case sensitive or not. The handling of
 	 *   <code>undefined</code> depends on the model implementation.
-	 * @param {sap.ui.model.FilterOperator|function(any):boolean|boolean} [vOperator]
+	 * @param {sap.ui.model.FilterOperator|boolean|function(any):boolean} [vOperator]
 	 *   Either a filter operator or a custom filter function or
 	 *   a <code>boolean</code> flag that defines how to combine multiple filters
 	 * @param {any} [vValue1]
