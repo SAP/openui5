@@ -315,10 +315,16 @@ sap.ui.define([
 			done = assert.async();
 
 		sap.ui.require(["testdata/core/testdata/MyControl"], function(MyControl) {
+			/**
+			 * @deprecated Sync loading is deprecated
+			 */
 			var oSyncLoadSpy = that.spy(sap.ui, "requireSync");
 
 			var oRenderer = MyControl.getMetadata().getRenderer();
 			assert.ok(oRenderer, "Renderer can be found");
+			/**
+			 * @deprecated Sync loading is deprecated
+			 */
 			assert.notOk(oSyncLoadSpy.called, "Renderer shouldn't be loaded synchronously");
 
 			done();

@@ -9,14 +9,29 @@
 	<!-- Initialization -->
 	<script id="sap-ui-bootstrap"
 			src="../../../../../../resources/sap-ui-core.js"
-			data-sap-ui-config="theme:'fantasy',language:'klingon',accessibility:true,animation:false,rtl:true,debug:true,noConflict:true,trace:true,libs:'sap.m',modules:'sap.m.Button',areas:'area-51,no-go',onInit:'window[\'I was here\']=\'u.g.a.d.m.k.\';',ignoreUrlParams:true"
+			data-sap-ui-async="true"
+			data-sap-ui-config='
+				"theme": "fantasy",
+				"language": "klingon",
+				"accessibility": true,
+				"animation": false,
+				"rtl": true,
+				"debug": true,
+				"noConflict": true,
+				"trace": true,
+				"libs": "sap.m",
+				"modules": "sap.m.Button",
+				"areas": "area-51,no-go",
+				"onInit": "module:sap/ui/core/ComponentSupport",
+				"ignoreUrlParams": true
+			'
 			>
 	</script>
 
 	<link  href="../../../../../../resources/sap/ui/thirdparty/qunit-2.css" rel="stylesheet" media="screen">
 	<script src="../../../../../../resources/sap/ui/thirdparty/qunit-2.js"></script>
 	<script src="../../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-	<script src="../../../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
+	<script src="../../../../../../resources/sap/ui/qunit/qunit-coverage-istanbul.js"></script>
 
 	<script src="CfgFromConfigAttribute.qunit.js"></script>
 

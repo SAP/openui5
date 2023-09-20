@@ -1,11 +1,14 @@
 /*global QUnit */
-sap.ui.define([
+QUnit.config.autostart = false;
+
+sap.ui.require([
 	"sap/ui/core/Configuration",
+	"sap/ui/core/Core",
 	"sap/ui/core/Locale",
 	"sap/ui/core/Theming",
 	"sap/ui/core/theming/ThemeHelper",
 	"sap/ui/Device"
-], function(Configuration, Locale, Theming, ThemeHelper, Device) {
+], async function(Configuration, Core, Locale, Theming, ThemeHelper, Device) {
 	"use strict";
 
 	/*
@@ -43,6 +46,8 @@ sap.ui.define([
 		return str == null ? str : String(str).toLowerCase();
 	}
 
+	await Core.ready();
+
 	QUnit.module("Configuration Defaults");
 
 	QUnit.test("Settings", function(assert) {
@@ -68,4 +73,5 @@ sap.ui.define([
 		assert.equal(window.jQuery, window.$, "$ is a synonym for jQuery");
 	});
 
+	QUnit.start();
 });
