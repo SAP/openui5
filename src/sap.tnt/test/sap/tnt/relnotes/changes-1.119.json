@@ -3,6 +3,17 @@
     "date": "September 2023",
     "notes": [
       {
+        "id": "50f70dfc0fb31fd5c25c5cdd6e2da7513e97be94",
+        "type": "FIX",
+        "text": " sap.tnt.SideNavigation: Overflow menu icons are now correctly displayed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370092046"
+          }
+        ]
+      },
+      {
         "id": "3285d030c137c537bbafe8463cfdba2d2b2b0e76",
         "type": "FIX",
         "text": " sap.tnt.NavigationListItem: Avoid unnecessary truncation in SAP Horizon themes",

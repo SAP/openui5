@@ -3,6 +3,22 @@
     "date": "September 2023",
     "notes": [
       {
+        "id": "95f0130fa0fbd6cec11081864d9f7618234f8f88",
+        "type": "FIX",
+        "text": " sap.f.SidePanel: fixed resize loop when SidePanel is in DynamicPage",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380114272"
+          }
+        ]
+      },
+      {
+        "id": "3a9b8d0f9245bb24ef8b43633fe81459218eb364",
+        "type": "FEATURE",
+        "text": " Table: Add rowMode aggregation"
+      },
+      {
         "id": "a2b27bbc43ea5b0c1a6b32cfffb99ebdf873dc1e",
         "type": "FIX",
         "text": " sap.f.DynamicPage: Unstable test fixed",

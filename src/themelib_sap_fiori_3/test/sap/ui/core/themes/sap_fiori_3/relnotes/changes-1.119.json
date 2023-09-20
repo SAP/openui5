@@ -3,6 +3,28 @@
     "date": "September 2023",
     "notes": [
       {
+        "id": "2bca1d7d56b1683d0e6fe583f32ab209b72f3593",
+        "type": "FIX",
+        "text": " sap.m.Button: remove hover shadows",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
+        "id": "50166688bb4d7d23432903cef46ab8b85e1dc5d2",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus: apply horizon theme updates",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
         "id": "8e8f41f1990ec8aac1eb127b3cfdc15957af3b4b",
         "type": "FIX",
         "text": " sap.uxap.HierarchicalSelect: Adjust the width of label indicator",

@@ -8,6 +8,11 @@
         "text": " Integration Cards: Avoid 'parameters>/visibleItems' being undefined"
       },
       {
+        "id": "3a9b8d0f9245bb24ef8b43633fe81459218eb364",
+        "type": "FEATURE",
+        "text": " Table: Add rowMode aggregation"
+      },
+      {
         "id": "3371a30649a55f7b8a9bbbaa673d38aa51f64706",
         "type": "FEATURE",
         "text": " Integration Cards: Enable binding to paginator model for client-side pagination"

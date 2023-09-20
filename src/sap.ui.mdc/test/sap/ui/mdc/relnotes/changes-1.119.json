@@ -3,6 +3,32 @@
     "date": "September 2023",
     "notes": [
       {
+        "id": "ad6a5b7536355a5bfadcdb4caed470b9c0570a76",
+        "type": "FEATURE",
+        "text": " ui5.walkthrough: Refactor tutorial to align on latest best practices"
+      },
+      {
+        "id": "16189b16a109c9ef4de8ef0c2c485f223d1e132b",
+        "type": "FEATURE",
+        "text": " CellSelector: Publicize CellSelector & enable in MDCTable"
+      },
+      {
+        "id": "581ff0da9acb04629d69869e7b1ed80cc8107b6d",
+        "type": "FIX",
+        "text": " Field: only unit with ValueHelp fails on ValueHelp-selection",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380126254"
+          }
+        ]
+      },
+      {
+        "id": "3a9b8d0f9245bb24ef8b43633fe81459218eb364",
+        "type": "FEATURE",
+        "text": " Table: Add rowMode aggregation"
+      },
+      {
         "id": "a47b036c9f81dff4f5532c33ddcfed3103715ee1",
         "type": "FIX",
         "text": " Field: error message after invalid input",

@@ -3,6 +3,74 @@
     "date": "September 2023",
     "notes": [
       {
+        "id": "ad6a5b7536355a5bfadcdb4caed470b9c0570a76",
+        "type": "FEATURE",
+        "text": " ui5.walkthrough: Refactor tutorial to align on latest best practices"
+      },
+      {
+        "id": "2bca1d7d56b1683d0e6fe583f32ab209b72f3593",
+        "type": "FIX",
+        "text": " sap.m.Button: remove hover shadows",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
+        "id": "16189b16a109c9ef4de8ef0c2c485f223d1e132b",
+        "type": "FEATURE",
+        "text": " CellSelector: Publicize CellSelector & enable in MDCTable"
+      },
+      {
+        "id": "ec3eb91a14f7b6a89535d56dc6e397d162f6d173",
+        "type": "FEATURE",
+        "text": " CopyProvider: Setting for full or cell selection copy added"
+      },
+      {
+        "id": "50166688bb4d7d23432903cef46ab8b85e1dc5d2",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus: apply horizon theme updates",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
+        "id": "0b3c1a4f04d943443bf64a120e60a50805ce29d6",
+        "type": "FEATURE",
+        "text": " sap.ui.core.IconPool: Update icon font v5.06 and v4.18"
+      },
+      {
+        "id": "7eba188f2a5d55df17c2f8bf3788ca7a93ff7d09",
+        "type": "FEATURE",
+        "text": " sap.m.PlanningCalendar: event rowHeaderClick can now be triggered via keyboard"
+      },
+      {
+        "id": "587c92509faa6373d744e01ec778fb75293585d7",
+        "type": "FEATURE",
+        "text": " sap.m.MenuButton: Fire beforeMenuOpen on the regular button too"
+      },
+      {
+        "id": "04c398341c43e31b4d6b30e0c7f1ace4b3601497",
+        "type": "FIX",
+        "text": " - sap.m.NumericContent",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500007160152023"
+          }
+        ]
+      },
+      {
+        "id": "3a9b8d0f9245bb24ef8b43633fe81459218eb364",
+        "type": "FEATURE",
+        "text": " Table: Add rowMode aggregation"
+      },
+      {
         "id": "1e01bd9005f45c5718ba763e39dbd418ea384f20",
         "type": "FIX",
         "text": " sap.m.Avatar: Delete active state for now",
@@ -28,6 +96,17 @@
         "id": "1b8958e6e35ca2bf8ccd152753ec709a8d480c55",
         "type": "FIX",
         "text": " sap.m.InputBase: Value state box-shadow adjusted"
+      },
+      {
+        "id": "38c6438ddaebfb08a7c4f1d28eef33ee6c0fb79f",
+        "type": "FIX",
+        "text": " sap.m.TimePickerSliders: Expand column on dialog open",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370039853"
+          }
+        ]
       },
       {
         "id": "0614ee321ff7a8d874f00f6fde411af1d38b9877",

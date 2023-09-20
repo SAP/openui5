@@ -3,9 +3,72 @@
     "date": "September 2023",
     "notes": [
       {
+        "id": "ad6a5b7536355a5bfadcdb4caed470b9c0570a76",
+        "type": "FEATURE",
+        "text": " ui5.walkthrough: Refactor tutorial to align on latest best practices"
+      },
+      {
+        "id": "af22453c75791da22ce2c727e1b0ba9c39d9c855",
+        "type": "FEATURE",
+        "text": " QUnit: Allow coverage watermarks configuration via frontend"
+      },
+      {
+        "id": "e84926b754e21c20b5d0aabfc1cd4ace81176809",
+        "type": "FEATURE",
+        "text": " sap.ui.model.*: method getPlaceholderText no longer experimental for relevant types"
+      },
+      {
+        "id": "0b3c1a4f04d943443bf64a120e60a50805ce29d6",
+        "type": "FEATURE",
+        "text": " sap.ui.core.IconPool: Update icon font v5.06 and v4.18"
+      },
+      {
+        "id": "3359baca121331ff5195d96b3d12cba139e8f1dd",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v2.ODataListBinding#requestFilterForMessages: filter must not refer to transient entries",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370088390"
+          }
+        ]
+      },
+      {
+        "id": "4d9d37980072b4719b211b243fb6e6d8c047f616",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v4.ODataListBinding#getContexts: fix initial E.C.D.",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380130744"
+          }
+        ]
+      },
+      {
+        "id": "5f50ea90fae3283e21e2aadb42267ab213406d0d",
+        "type": "FEATURE",
+        "text": " Prepare for upcoming 'unload' event deprecation and deprecate APIs 'onWindowBeforeUnload', 'onWindowUnload' and 'onWindowError' in 'sap/ui/core/Component'"
+      },
+      {
+        "id": "d952b51f3607c5ad8cc4a3ab7d439ba7a20f4813",
+        "type": "FIX",
+        "text": " sap/base/i18n/Localization: Fix evaluation order of different configuration parameters for language",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380121948"
+          }
+        ]
+      },
+      {
         "id": "95f833567bb6ed3264e2d91ef56de770d7779312",
         "type": "FEATURE",
         "text": " sap.ui.model.odata.v2.ODataModel: Allow to switch off server cache for security tokens"
+      },
+      {
+        "id": "3a9b8d0f9245bb24ef8b43633fe81459218eb364",
+        "type": "FEATURE",
+        "text": " Table: Add rowMode aggregation"
       },
       {
         "id": "3a944315b3848f932804d925370554b979bc3c99",
