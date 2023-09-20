@@ -2486,18 +2486,18 @@ sap.ui.define([
 			assert.equal(this.oTable.getCellSelectorPluginOwner(), this.oTable._oTable, "The inner table is set as plugin owner for the CellSelector");
 			assert.ok(oCellSelector.getEnabled(), "CellSelector Plugin is enabled");
 			assert.ok(oCellSelector.isActive(), "CellSelector is active");
+			assert.ok(oCellSelector.getConfig("isSupported", this.oTable._oTable, oCellSelector), "CellSelector is supported for table");
 
 			this.oTable.removeDependent(oCellSelector);
 			this.oTable.setType(TableType.ResponsiveTable);
+			this.oTable.addDependent(oCellSelector);
 
 			return this.oTable._fullyInitialized().then(() => {
-				assert.throws(() => {
-					this.oTable.addDependent(oCellSelector);
-				},
-				Error(oCellSelector + " is not applicable to " + this.oTable._oTable),
-				"CellSelector cannot be activated for ResponsiveTable");
 				assert.equal(this.oTable.getCellSelectorPluginOwner(), this.oTable._oTable, "The inner table is set as plugin owner for the CellSelector");
-				assert.notOk(oCellSelector.isActive(), "CellSelector is not active");
+				assert.ok(oCellSelector.getEnabled(), "CellSelector Plugin is enabled");
+				assert.ok(oCellSelector.isActive(), "CellSelector is active");
+				assert.ok(!oCellSelector.getConfig("isSupported", this.oTable._oTable, oCellSelector), "CellSelector is not supported for table");
+
 				this.oTable.removeDependent(oCellSelector);
 			});
 		});
@@ -2512,18 +2512,18 @@ sap.ui.define([
 			assert.equal(oTable.getCellSelectorPluginOwner(), this.oTable._oTable, "The inner table is set as plugin owner for the CellSelector");
 			assert.ok(oCellSelector.getEnabled(), "CellSelector Plugin is enabled");
 			assert.ok(oCellSelector.isActive(), "CellSelector is active");
+			assert.ok(oCellSelector.getConfig("isSupported", this.oTable._oTable, oCellSelector), "CellSelector is supported for table");
 
 			oTable.removeDependent(oCellSelector);
 			oTable.setType(TableType.ResponsiveTable);
+			oTable.addDependent(oCellSelector);
 
 			return oTable.getCellSelectorPluginOwner().then((oTable) => {
-				assert.throws(() => {
-					oTable.addDependent(oCellSelector);
-				},
-				Error(oCellSelector + " is not applicable to " + this.oTable._oTable),
-				"CellSelector cannot be activated for ResponsiveTable");
 				assert.equal(oTable.getCellSelectorPluginOwner(), this.oTable._oTable, "The inner table is set as plugin owner for the CellSelector");
-				assert.notOk(oCellSelector.isActive(), "CellSelector is not active");
+				assert.ok(oCellSelector.getEnabled(), "CellSelector Plugin is enabled");
+				assert.ok(oCellSelector.isActive(), "CellSelector is active");
+				assert.ok(!oCellSelector.getConfig("isSupported", this.oTable._oTable, oCellSelector), "CellSelector is not supported for table");
+
 				this.oTable.removeDependent(oCellSelector);
 			});
 		});

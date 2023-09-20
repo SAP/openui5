@@ -7,13 +7,33 @@ sap.ui.define([
 	"sap/base/util/deepEqual",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/core/Element",
-	"sap/base/Log"
-], function (PluginBase, Localization, deepEqual, KeyCodes, Element, Log) {
+	"sap/m/library"
+], function (PluginBase, Localization, deepEqual, KeyCodes, Element, library) {
 	"use strict";
 
-	var DIRECTION = {
+	const ListMode = library.ListMode;
+	const RESPONSIVETABLE_ENABLED = new URLSearchParams(window.location.search).get("sap-ui-xx-cellSelectionMTable") === "true";
+	const DELAY_SHORT = 250; //TBD Are 2 different delays necessary?
+	const DELAY_LONG  = DELAY_SHORT * 2;
+
+	const DIRECTION = {
 		ROW: "row",
 		COL: "col"
+	};
+
+	const CellType = {
+		/**
+		 * Data cells that can be selected.
+		 */
+		Cell: "Cell",
+		/**
+		 * Cells that are not "normal" and could require special handling or look different.
+		 */
+		Other: "Other",
+		/**
+		 * Cells that can be ignored from selection, but should be respected to not interrupt selection.
+		 */
+		Ignore: "Ignore"
 	};
 
 	/**
@@ -93,6 +113,16 @@ sap.ui.define([
 	 */
 
 	/**
+	 * An object representing the position of a cell.
+	 *
+	 * Consists of a row index and a column index describing the position of the cell in the table.
+	 * @private
+	 * @typedef {object} sap.m.plugins.CellSelector.CellPosition
+	 * @property {number} rowIndex row index of the cell
+	 * @property {number} colIndex column index of the cell
+	 */
+
+	/**
 	 * Event Delegate that containts events, that need to be executed after control events.
 	 */
 	const EventDelegate = {
@@ -103,10 +133,13 @@ sap.ui.define([
 
 			if (isKeyCombination(oEvent, KeyCodes.A, true, true)
 				|| (isKeyCombination(oEvent, KeyCodes.A, false, true) && oEvent.isMarked(this.getConfig("eventClearedAll")))) {
-				if (isCell(oEvent.target, this.getConfig("tableCell"))) {
+				if (isSelectableCell(oEvent.target, this.getConfig("selectableCells"))) {
 					this.removeSelection();
 					oEvent.preventDefault();
 				}
+			} else if (isKeyCombination(oEvent, KeyCodes.SPACE, true, false) || isKeyCombination(oEvent, KeyCodes.SPACE, false, true)) {
+				// prevent scrolling by pressing space
+				oEvent.preventDefault();
 			}
 		}
 	};
@@ -116,19 +149,21 @@ sap.ui.define([
 	 */
 	const PriorityDelegate = {
 		onBeforeRendering: function() {
-			this._iRtl = Localization.getRTL() ? -1 : 1;
+			this._iBtt = this.getConfig("isBottomToTop", this.getControl()) ? -1 : 1;
 			if (this._oResizer) {
 				// remove resizer, as due to rerendering table element may be gone
 				this._oResizer.remove();
 				this._oResizer = null;
 			}
-			if (this._bSelecting) {
-				this.removeSelection();
-			}
 		},
 		onAfterRendering: function() {
 			this._deregisterEvents();
 			this._registerEvents();
+
+			this._bSelecting && !this._bMouseDown && this.removeSelection();
+			this._bSelecting && this._selectCells();
+
+			this._bRenderResizer = this.getConfig("shouldRenderResizer", this.getControl());
 		},
 		onsapupmodifiers: function(oEvent) {
 			this._onsaparrowmodifiers(oEvent, DIRECTION.ROW, -1, 0);
@@ -147,7 +182,7 @@ sap.ui.define([
 				return;
 			}
 
-			if (this._bSelecting && isCell(oEvent.target, this.getConfig("tableCell"))) {
+			if (this._bSelecting && isSelectableCell(oEvent.target, this.getConfig("selectableCells"))) {
 				this.removeSelection();
 				oEvent.preventDefault();
 				oEvent.stopPropagation();
@@ -158,29 +193,36 @@ sap.ui.define([
 				return;
 			}
 
-			var mBounds = this._bSelecting ? this._getNormalizedBounds(this._oSession.mSource, this._oSession.mTarget) : undefined;
+			var mBounds = this._bSelecting ? this._getNormalizedBounds(this._oSession.mSource, this._oSession.mTarget) : {};
 			if (isKeyCombination(oEvent, KeyCodes.SPACE, false, false)) {
-				if (!this._isSelectableCell(oEvent.target)) {
+				if (!isSelectableCell(oEvent.target, this.getConfig("selectableCells"))) {
 					return;
 				}
+				this._oPreviousCell = null;
 				this._startSelection(oEvent, false);
-				oEvent.setMarked(); // mark event to prevent ui.Table from focusing interactive elements
+				oEvent.setMarked();
 			} else if (isKeyCombination(oEvent, KeyCodes.SPACE, true, false)) {
-				if (this._inSelection(oEvent.target)) {
-					var oInfo = this.getConfig("getCellInfo", this.getControl(), oEvent.target);
-					this.getConfig("selectRows", this.getControl(), mBounds.from.rowIndex, mBounds.to.rowIndex, oInfo.rowIndex);
-					oEvent.setMarked();
+				var oInfo = this.getConfig("getCellInfo", this.getControl(), oEvent.target, this._oPreviousCell);
+				if (!this._inSelection(oEvent.target)) {
+					mBounds.from = mBounds.to = {};
+					mBounds.from.rowIndex = mBounds.to.rowIndex = oInfo.rowIndex;
 				}
 
+				this.getConfig("selectRows", this.getControl(), mBounds.from.rowIndex, mBounds.to.rowIndex, oInfo.rowIndex);
+
+				oEvent.setMarked();
 				oEvent.preventDefault();
-			} else if (this._bSelecting && isKeyCombination(oEvent, KeyCodes.SPACE, false, true)) {
+			} else if (isKeyCombination(oEvent, KeyCodes.SPACE, false, true) && this._getSelectableCell(oEvent.target)) {
 				if (!this._inSelection(oEvent.target)) {
 					// If focus is on cell outside of selection, select focused column
-					var oInfo = this.getConfig("getCellInfo", this.getControl(), oEvent.target);
-					mBounds.from.colIndex = mBounds.to.colIndex = oInfo.colIndex;
+					var oInfo = this.getConfig("getCellInfo", this.getControl(), oEvent.target, this._oPreviousCell);
+					mBounds.from = Object.assign({}, oInfo);
+					mBounds.to = Object.assign({}, oInfo);
 				}
 				mBounds.from.rowIndex = 0;
 				mBounds.to.rowIndex = Infinity;
+
+				this._bSelecting = true;
 				this._selectCells(mBounds.from, mBounds.to);
 
 				oEvent.preventDefault();
@@ -198,24 +240,41 @@ sap.ui.define([
 			var oSelectableCell = this._getSelectableCell(oEvent.target);
 			if (oSelectableCell) {
 				this._bMouseDown = true;
-				this._mClickedCell = this._oPreviousCell = this.getConfig("getCellInfo", this.getControl(), oSelectableCell);
+				this._mClickedCell = this.getConfig("getCellInfo", this.getControl(), oSelectableCell, this._oPreviousCell);
+				this._oPreviousCell = this._mClickedCell;
 			}
 		},
 		onmouseup: function(oEvent) {
+			clearTimeout(this._iTimer);
 			this._bMouseDown = false;
 			this._bBorderDown = false;
 			this._mClickedCell = undefined;
 			this._bScrolling = false;
 			this._oPreviousCell = undefined;
+			this._mTempCell = undefined;
+			this._oHoveredCell = undefined;
 			this._clearScroller();
 		}
+	};
+
+	function getRTL() {
+		return Localization.getRTL() ? -1 : 1;
+	}
+
+	CellSelector.prototype.init = function() {
+		this._iRtl = getRTL();
+	};
+
+	CellSelector.prototype.onLocalizationChanged = function() {
+		this._iRtl = getRTL();
+		this.removeSelection();
 	};
 
 	CellSelector.prototype.onActivate = function (oControl) {
 		oControl.addDelegate(PriorityDelegate, true, this);
 		oControl.addDelegate(EventDelegate, false, this);
 
-		this._oSession = { cellRefs: [] };
+		this._oSession = { cellRefs: [], cellTypes: [] };
 		this._mTimeouts = {};
 		this._fnControlUpdate = function(oEvent) {
 			if (this._bScrolling) {
@@ -272,7 +331,7 @@ sap.ui.define([
 	 * @ui5-restricted sap.m.plugins.CopyProvider
 	 */
 	CellSelector.prototype.isSelectable = function() {
-		return this.isActive() ? this.getConfig("isSupported", this.getControl()) : false;
+		return this.isActive() ? this.getConfig("isSupported", this.getControl(), this) : false;
 	};
 
 	/**
@@ -298,15 +357,15 @@ sap.ui.define([
 	CellSelector.prototype._registerEvents = function() {
 		var oControl = this.getControl();
 		if (oControl) {
-			oControl.attachEvent(this.getConfig("scrollEvent"), this._fnControlUpdate);
+			this.getConfig("scrollEvent") && oControl.attachEvent(this.getConfig("scrollEvent"), this._fnControlUpdate);
 			this.getConfig("attachSelectionChange", oControl, this._fnRemoveSelection);
 			var oScrollArea = oControl.getDomRef(this.getConfig("scrollArea"));
 			if (oScrollArea) {
 				oScrollArea.addEventListener("mouseleave", this._fnOnMouseOut);
 				oScrollArea.addEventListener("mouseenter", this._fnOnMouseEnter);
+				oScrollArea.addEventListener("mousemove", this._fnOnMouseMove);
 			}
 		}
-		document.addEventListener("mousemove", this._fnOnMouseMove);
 		document.addEventListener("mouseup", this._fnOnMouseUp);
 	};
 
@@ -319,9 +378,9 @@ sap.ui.define([
 			if (oScrollArea) {
 				oScrollArea.removeEventListener("mouseleave", this._fnOnMouseOut);
 				oScrollArea.removeEventListener("mouseenter", this._fnOnMouseEnter);
+				oScrollArea.removeEventListener("mousemove", this._fnOnMouseMove);
 			}
 		}
-		document.removeEventListener("mousemove", this._fnOnMouseMove);
 		document.removeEventListener("mouseup", this._fnOnMouseUp);
 	};
 
@@ -345,9 +404,9 @@ sap.ui.define([
 			return null;
 		}
 
-		var iMaxColumnIndex = this.getConfig("getVisibleColumns", this.getControl()).length - 1;
+		var iMaxColumnIndex = this.getConfig("numberOfColumns", this.getControl(), true) - 1;
 		mSelectionRange.from.colIndex = Math.max(mSelectionRange.from.colIndex, 0);
-		mSelectionRange.to.colIndex = Math.min(mSelectionRange.to.colIndex, iMaxColumnIndex);
+		mSelectionRange.to.colIndex = this._oSession.cellTypes.includes(CellType.Other) ? iMaxColumnIndex : Math.min(mSelectionRange.to.colIndex, iMaxColumnIndex);
 		mSelectionRange.from.rowIndex = Math.max(mSelectionRange.from.rowIndex, 0);
 
 		if (bIgnore) {
@@ -360,6 +419,8 @@ sap.ui.define([
 				}
 			});
 		}
+		delete mSelectionRange.from.type;
+		delete mSelectionRange.to.type;
 
 		return mSelectionRange;
 	};
@@ -412,7 +473,7 @@ sap.ui.define([
 			aSelection = aSelection.filter((oContext, iIndex) => !isGroupRow(this._getBinding(), oContext, iIndex + mSelectionRange.from.rowIndex));
 		}
 
-		var aSelectedColumns = this.getConfig("getVisibleColumns", this.getControl()).slice(mSelectionRange.from.colIndex, mSelectionRange.to.colIndex + 1);
+		var aSelectedColumns = this.getConfig("getVisibleColumns", this.getControl(), true).slice(mSelectionRange.from.colIndex, mSelectionRange.to.colIndex + 1);
 		if (this.getControl().getParent().isA("sap.ui.mdc.Table")) {
 			aSelectedColumns = aSelectedColumns.map(function(oSelectedColumn) {
 				return Element.getElementById(oSelectedColumn.getId().replace(/\-innerColumn$/, ""));
@@ -425,8 +486,26 @@ sap.ui.define([
 		};
 	};
 
+	/**
+	 * Remove the current selection block.
+	 *
+	 * @public
+	 */
+	CellSelector.prototype.removeSelection = function () {
+		this._clearSelection();
+
+		const bSelectionChange = this._oSession?.mSource || this._oSession?.mTarget;
+		this._bSelecting = false;
+		this._mClickedCell = this._oPreviousCell = this._oHoveredCell = null;
+		this._oSession = { cellRefs: [], cellTypes: [] };
+		if (bSelectionChange) {
+			this._onSelectionChange();
+		}
+	};
+
 	CellSelector.prototype._onsaparrowmodifiers = function(oEvent, sDirectionType, iRowDiff, iColDiff) {
-		if (!this._shouldBeHandled(oEvent) || !oEvent.shiftKey || !this._isSelectableCell(oEvent.target)) {
+		if (!this._shouldBeHandled(oEvent) || !oEvent.shiftKey || !this._getSelectableCell(oEvent.target)) {
+			this._oPreviousCell = undefined;
 			return;
 		}
 
@@ -435,23 +514,35 @@ sap.ui.define([
 			return;
 		}
 
-		var oInfo = this.getConfig("getCellInfo", this.getControl(), oSelectableCell);
+		var oInfo = this.getConfig("getCellInfo", this.getControl(), oSelectableCell, this._oPreviousCell);
+
 		if (!this._inSelection(oEvent.target) || !this._oSession.mSource || !this._oSession.mTarget) {
 			if (this.getConfig("isRowSelected", this.getControl(), oInfo.rowIndex)) {
 				return;
 			}
 			// If not in selection block, start new selection block
 			this._oSession.mSource = this._oSession.mTarget = oInfo;
+			this._oPreviousCell = null;
 		}
 
-		var mBounds = this._getNormalizedBounds(this._oSession.mSource, this._oSession.mTarget);
-		const { from, to, focus } = this._getUpdatedBounds(iRowDiff, iColDiff * this._iRtl, oInfo);
+		if (oInfo.type == CellType.Ignore) {
+			if (sDirectionType == DIRECTION.COL || !this._oPreviousCell) {
+				// Do not modify/select if on a header/group header row and navigating in column direction (as their is technically only one)
+				return;
+			}
+			oInfo.colIndex = this._oPreviousCell.colIndex;
+		}
 
-		if (focus[sDirectionType + "Index"] < 0 || focus.colIndex >= this.getConfig("getVisibleColumns", this.getControl()).length) {
+		this._oPreviousCell = oInfo;
+
+		var mBounds = this._getNormalizedBounds(this._oSession.mSource, this._oSession.mTarget);
+		const { from, to, focus } = this._getUpdatedBounds(iRowDiff * this._iBtt, iColDiff * this._iRtl, oInfo);
+
+		if (focus[sDirectionType + "Index"] < 0 || focus.colIndex >= this.getConfig("numberOfColumns", this.getControl())) {
 			return;
 		}
 
-		this.getConfig("focusCell", this.getControl(), focus, iRowDiff > 0);
+		this.getConfig("focusCell", this.getControl(), focus, true, iRowDiff > 0);
 		if (sDirectionType == DIRECTION.ROW && (oInfo.rowIndex == mBounds.from.rowIndex || oInfo.rowIndex == mBounds.to.rowIndex)
 			|| sDirectionType == DIRECTION.COL && (oInfo.colIndex == mBounds.from.colIndex || oInfo.colIndex == mBounds.to.colIndex)) {
 			this._bSelecting = true;
@@ -471,41 +562,81 @@ sap.ui.define([
 	 * @param {sap.ui.base.Event} oEvent event
 	 */
 	CellSelector.prototype._onmousemove = function(oEvent) {
+		function select() {
+			if (this._bBorderDown && !this._bScrolling) {
+				var oBorder = this._oSession.border;
+				var mDiff = {
+					colIndex: isNaN(oBorder.colIndex) ? 0 : oInfo.colIndex - oBorder.colIndex,
+					rowIndex: isNaN(oBorder.rowIndex) ? 0 : oInfo.rowIndex - oBorder.rowIndex
+				};
+
+				if (mDiff.rowIndex != 0 || mDiff.colIndex != 0) {
+					const { from, to } = this._getUpdatedBounds(mDiff.rowIndex, mDiff.colIndex, oBorder);
+					this._selectCells(from, to);
+				}
+			} else {
+				this._startSelection(oEvent, true);
+			}
+
+			this.getConfig("focusCell", this.getControl(), oInfo, false);
+			this._oPreviousCell = oInfo;
+			this._oHoveredCell = oInfo;
+		}
+
 		// Only update the resizer, if we are selecting and the border is not pressed. During border/edge pressing, don't update it
-		if (this._bSelecting && !this._bMouseDown) {
-			var mBounds = this._getNormalizedBounds(this._oSession.mSource, this._oSession.mTarget);
+		if (this._bSelecting && !this._bMouseDown && this._bRenderResizer) {
+			const mBounds = this._getNormalizedBounds(this._oSession.mSource, this._oSession.mTarget);
 			this._updateResizers(mBounds, oEvent.clientX, oEvent.clientY);
 		}
 
 		var oSelectableCell = this._getSelectableCell(oEvent.target);
 		if (!oSelectableCell || !this._bMouseDown) {
+			// if mouse is not down/target is not a cell, we should not execute selection logic
 			return;
 		}
 
-		// If clicked cell (=starting cell) is equal to currently hovered cell, don't do anything
-		var oInfo = this.getConfig("getCellInfo", this.getControl(), oSelectableCell);
-		if (oInfo.rowIndex == this._oPreviousCell?.rowIndex && oInfo.colIndex == this._oPreviousCell?.colIndex) {
-			// If currently hovered cell is the same as previous cell, nothing needs to be done.
+		clearTimeout(this._iTimer);
+		oEvent.stopImmediatePropagation(); // stop propagation to surpress other mechanisms such as column resizing
+
+		var oInfo = this.getConfig("getCellInfo", this.getControl(), oSelectableCell, this._oPreviousCell);
+		const bClickedHovered = oInfo.rowIndex == this._oPreviousCell?.rowIndex && oInfo.colIndex == this._oPreviousCell?.colIndex;
+		if (bClickedHovered || oInfo.type == CellType.Ignore) {
 			return;
 		}
-		this._oPreviousCell = oInfo;
+
+		// If previously hovered cell is the same as the currently hovered one, do not execute anything. Only do this in case the hovered one is of category Other.
+		if (oInfo.type == CellType.Other && this._oHoveredCell?.rowIndex == oInfo.rowIndex && this._oHoveredCell?.colIndex == oInfo.colIndex) {
+			return;
+		}
 
 		// Remove text selection during mouse cell selection
 		window.getSelection().removeAllRanges();
 
-		if (this._bBorderDown && !this._bScrolling) {
-			var oBorder = this._oSession.border;
-			var mDiff = {
-				colIndex: isNaN(oBorder.colIndex) ? 0 : oInfo.colIndex - oBorder.colIndex,
-				rowIndex: isNaN(oBorder.rowIndex) ? 0 : oInfo.rowIndex - oBorder.rowIndex
-			};
+		if (!this._oSession.mSource && !this._oSession.mTarget) {
+			this._oSession.mSource = this._oSession.mTarget = this._mClickedCell;
+		}
 
-			if (mDiff.rowIndex != 0 || mDiff.colIndex != 0) {
-				const { from, to } = this._getUpdatedBounds(mDiff.rowIndex, mDiff.colIndex, oBorder);
-				this._selectCells(from, to);
-			}
+		this._oHoveredCell = null;
+
+		if (this._oPreviousCell && this._oPreviousCell.type != oInfo.type) {
+			this._iTimer = setTimeout(select.bind(this), DELAY_SHORT);
+			return;
+		}
+
+		if (this._mClickedCell
+			&& this._mClickedCell.type == CellType.Other
+			&& this._oPreviousCell?.type == CellType.Cell
+			&& oInfo.type == CellType.Other) {
+			this._iTimer = setTimeout(select.bind(this), DELAY_LONG);
 		} else {
-			this._startSelection(oEvent, true);
+			if (oInfo.type == CellType.Other && this._mClickedCell.type != CellType.Other) {
+				const mBounds = this._getNormalizedBounds(this._oSession.mSource, this._oSession.mTarget);
+				this._mTempCell = this._mClickedCell; // very hacky to get it to work with popin hover starting from last column
+				this._mClickedCell = mBounds.from;
+			} else {
+				this._mClickedCell = this._mTempCell ?? this._mClickedCell;
+			}
+			select.call(this);
 		}
 	};
 
@@ -545,7 +676,7 @@ sap.ui.define([
 		this._clearScroller();
 		if (this._bScrolling) {
 			this.getConfig("scroll", this.getControl(), bForward, bVertical);
-			this._mTimeouts.scrollTimerId = setTimeout(this._doScroll.bind(this, bForward, bVertical), 500);
+			this._mTimeouts.scrollTimerId = setTimeout(this._doScroll.bind(this, bForward, bVertical), DELAY_LONG);
 
 			// If vertical scrolling, wait for the event, then select the next cells, not possible currently with horizontal scrolling
 			if (!bVertical) {
@@ -594,23 +725,26 @@ sap.ui.define([
 	 * @returns {HTMLELement|null}
 	 */
 	 CellSelector.prototype._getSelectableCell = function (oDomRef) {
-		return oDomRef?.closest(`.${this.getConfig("selectableCells")}`);
-	};
+		if (!oDomRef) {
+			return;
+		}
 
-	CellSelector.prototype._isSelectableCell = function(oDomRef) {
-		return oDomRef?.classList.contains(this.getConfig("selectableCells"));
+		return oDomRef.closest(this.getConfig("selectableCells"));
 	};
 
 	CellSelector.prototype._inSelection = function(oTarget) {
-		var oInfo = this.getConfig("getCellInfo", this.getControl(), oTarget);
+		var oInfo = this.getConfig("getCellInfo", this.getControl(), oTarget, this._oPreviousCell);
 		if (!oInfo || !this._oSession.mSource || !this._oSession.mTarget) {
 			return false;
 		}
 
 		var oBounds = this._getNormalizedBounds(this._oSession.mSource, this._oSession.mTarget);
 
-		return !(oInfo.rowIndex < oBounds.from.rowIndex || oInfo.rowIndex > oBounds.to.rowIndex
+		const bInBounds = !(oInfo.rowIndex < oBounds.from.rowIndex || oInfo.rowIndex > oBounds.to.rowIndex
 			|| oInfo.colIndex < oBounds.from.colIndex || oInfo.colIndex > oBounds.to.colIndex);
+		const bOtherSelected = oInfo.type == CellType.Other && this._oSession.cellTypes.includes(CellType.Other);
+
+		return bInBounds || bOtherSelected;
 	};
 
 	CellSelector.prototype._startSelection = function(oEvent, bMove) {
@@ -626,13 +760,13 @@ sap.ui.define([
 		if (this._inSelection(oTarget) && !bMove) {
 			this.removeSelection();
 		} else {
-			var oCellInfo = this.getConfig("getCellInfo", this.getControl(), oTarget);
+			var oCellInfo = this.getConfig("getCellInfo", this.getControl(), oTarget, this._oPreviousCell);
 			var mStart = this._mClickedCell ? this._mClickedCell : oCellInfo;
 
 			this._bSelecting = true;
 			this._oSession.mSource = oCellInfo;
 			this._selectCells(mStart, oCellInfo);
-			this.getConfig("focusCell", this.getControl(), oCellInfo);
+			this._oPreviousCell = oCellInfo;
 		}
 
 		oEvent.preventDefault();
@@ -651,8 +785,13 @@ sap.ui.define([
 		var sAdjustRowType = mFocus.rowIndex == mBounds.from.rowIndex ? "from" : "to";
 		var sAdjustColType = mFocus.colIndex == mBounds.from.colIndex ? "from" : "to";
 
-		mBounds[sAdjustRowType].rowIndex += iRowDiff;
-		mBounds[sAdjustColType].colIndex += iColDiff;
+		mBounds[sAdjustRowType].rowIndex = Math.max(mBounds[sAdjustRowType].rowIndex + iRowDiff, 0);
+		mBounds[sAdjustColType].colIndex = Math.max(mBounds[sAdjustColType].colIndex + iColDiff, 0);
+
+		const oAdjustedColCell = this.getConfig("getCellRef", this.getControl(), mBounds[sAdjustColType]);
+		if (oAdjustedColCell) {
+			mBounds[sAdjustColType].type = this.getConfig("getCellType", this.getControl(), oAdjustedColCell);
+		}
 
 		if (!this._bBorderDown) {
 			mFocus.rowIndex = Math.max(0, mFocus.rowIndex + iRowDiff);
@@ -677,12 +816,8 @@ sap.ui.define([
 	 * a) source cell to target cell or
 	 * b) source cell to current lower right cell.
 	 * The bigger bounding box of the two will be inspected.
-	 * @param {Object} mFrom source cell coordinates
-	 * @param {int} mFrom.rowIndex row index
-	 * @param {int} mFrom.colIndex column index
-	 * @param {Object} mTo target cell coordinates
-	 * @param {int} mTo.rowIndex row index
-	 * @param {int} mTo.colIndex column index
+	 * @param {sap.m.plugins.CellSelector.CellPosition} mFrom source cell coordinates
+	 * @param {sap.m.plugins.CellSelector.CellPosition} mTo target cell coordinates
 	 * @private
 	 */
 	CellSelector.prototype._selectCells = function (mFrom, mTo) {
@@ -692,6 +827,14 @@ sap.ui.define([
 
 		mFrom = mFrom ? mFrom : this._oSession.mSource;
 		mTo = mTo ? mTo : this._oSession.mTarget;
+
+		this._oSession.cellTypes = [mFrom.type];
+
+		// If the cell type of the hovered cell is not in cell types add it (a Set is probably better here)
+		if (!this._oSession.cellTypes.includes(mTo.type)) {
+			this._oSession.cellTypes.push(mTo.type);
+		}
+
 		var mBounds = this._getNormalizedBounds(mFrom, mTo);
 
 		if (mTo.rowIndex == Infinity || mFrom.rowIndex == Infinity) {
@@ -707,13 +850,6 @@ sap.ui.define([
 		}
 	};
 
-	/**
-	 * Draws the selection for the given bounds.
-	 * @param {Object} mBounds object containing the bounds information (from, to)
-	 * @param {Object} mBounds.from from position
-	 * @param {Object} mBounds.to to position
-	 * @private
-	 */
 	CellSelector.prototype._drawSelection = function (mBounds) {
 		if (!mBounds.from || !mBounds.to) {
 			return;
@@ -722,28 +858,29 @@ sap.ui.define([
 		this._clearSelection();
 
 		this._oSession.cellRefs = [];
-		for (var iRow = mBounds.from.rowIndex; iRow <= mBounds.to.rowIndex; iRow++) {
-			for (var iCol = mBounds.from.colIndex; iCol <= mBounds.to.colIndex; iCol++) {
-				var oCellRef = this.getConfig("getCellRef", this.getControl(), {rowIndex: iRow, colIndex: iCol});
-				if (oCellRef) {
-					oCellRef.classList.toggle("sapMPluginsCellSelectorTop", iRow == mBounds.from.rowIndex);
-					oCellRef.classList.toggle("sapMPluginsCellSelectorBottom", iRow == mBounds.to.rowIndex);
-					oCellRef.classList.toggle("sapMPluginsCellSelectorRight", iCol == mBounds.to.colIndex);
-					oCellRef.classList.toggle("sapMPluginsCellSelectorSelected", true);
-					oCellRef.setAttribute("aria-selected", "true");
-					this._oSession.cellRefs.push(oCellRef);
 
-					// Grid Table has only border-right, so adding border-left would change the size of the column. Instead, for the left border, take the previous cell and set border-right.
-					if (iCol == mBounds.from.colIndex) {
-						const oPrevCellRef = this.getConfig("getCellRef", this.getControl(), {rowIndex: iRow, colIndex: iCol - 1});
-						let sClass = "sapMPluginsCellSelectorLeft";
-						if (oPrevCellRef) {
-							oCellRef = oPrevCellRef;
-							sClass = "sapMPluginsCellSelectorRight";
-							this._oSession.cellRefs.push(oCellRef);
-						}
-						oCellRef.classList.toggle(sClass, iCol == mBounds.from.colIndex);
+		// Check if we need to draw "Other" cells
+		const bDrawOther = this._oSession.cellTypes.includes(CellType.Other);
+		for (var iRow = mBounds.from.rowIndex; iRow <= mBounds.to.rowIndex; iRow++) {
+			// Only draw cells, if the Cell type is included in the selection
+			if (this._oSession.cellTypes.includes(CellType.Cell)) {
+				for (var iCol = mBounds.from.colIndex; iCol <= mBounds.to.colIndex; iCol++) {
+					const mPosition = {rowIndex: iRow, colIndex: iCol};
+					var oCellRef = this.getConfig("getCellRef", this.getControl(), mPosition);
+					if (oCellRef) {
+						const aRefs = this.getConfig("drawCellBorder", this.getControl(), oCellRef, mPosition, mBounds);
+						this._oSession.cellRefs.push(...aRefs);
 					}
+				}
+			}
+			// Draw other cells, like Popin
+			if (bDrawOther) {
+				const iCol = this.getConfig("numberOfColumns", this.getControl()) - 1;
+				const mPosition = {rowIndex: iRow, colIndex: iCol};
+				const oCellRef = this.getConfig("getCellRef", this.getControl(), mPosition);
+				if (oCellRef) {
+					const aRefs = this.getConfig("drawCellBorder", this.getControl(), oCellRef, mPosition, mBounds);
+					this._oSession.cellRefs.push(...aRefs);
 				}
 			}
 		}
@@ -825,6 +962,10 @@ sap.ui.define([
 		}
 	};
 
+	/**
+	 * Retrieves the resizer element. If none is existent, creates an element.
+	 * @returns {HTMLELement} resizer element
+	 */
 	CellSelector.prototype._getResizer = function() {
 		if (!this._oResizer) {
 			this._oResizer = document.createElement("div");
@@ -851,20 +992,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Remove the current selection block.
-	 */
-	CellSelector.prototype.removeSelection = function () {
-		this._clearSelection();
-
-		const bSelectionChange = this._oSession?.mSource || this._oSession?.mTarget;
-		this._bSelecting = false;
-		this._oSession = { cellRefs: [] };
-		if (bSelectionChange) {
-			this._onSelectionChange();
-		}
-	};
-
-	/**
 	 * Returns an object containing normalized coordinates for the given bounding area.
 	 * <code>from</code> will contain the coordinates for the upper left corner of the bounding area,
 	 * while <code>to</code> contains the coordinates of the lower right corner of the bounding area.
@@ -877,7 +1004,7 @@ sap.ui.define([
 	 * @returns object containing coordinates for from and to
 	 */
 	CellSelector.prototype._getNormalizedBounds = function(mFrom, mTo, bKeepBounds) {
-		const iMaxColumns = this.getConfig("getVisibleColumns", this.getControl()).length;
+		const iMaxColumns = this.getConfig("numberOfColumns", this.getControl());
 		const iMaxRows = this.getRangeLimit() == 0 ? this.getConfig("getRowCount", this.getControl()) : this.getRangeLimit();
 
 		let toRowIndex = Math.max(mFrom.rowIndex, mTo.rowIndex), toColIndex = Math.max(mFrom.colIndex, mTo.colIndex);
@@ -887,22 +1014,22 @@ sap.ui.define([
 		}
 
 		return {
-			from: {rowIndex: Math.max(0, Math.min(mFrom.rowIndex, mTo.rowIndex)), colIndex: Math.max(0, Math.min(mFrom.colIndex, mTo.colIndex))},
-			to: {rowIndex: toRowIndex, colIndex: toColIndex}
+			from: {rowIndex: Math.max(0, Math.min(mFrom.rowIndex, mTo.rowIndex)), colIndex: Math.max(0, Math.min(mFrom.colIndex, mTo.colIndex)), type: mFrom.type},
+			to: {rowIndex: toRowIndex, colIndex: toColIndex, type: mTo.type}
 		};
 	};
 
 	CellSelector.prototype._shouldBeHandled = function(oEvent) {
 		// Handle if event is not marked and control is applicable
-		return !oEvent.isMarked?.() && this.getConfig("isSupported", this.getControl());
+		return !oEvent.isMarked?.() && this.getConfig("isSupported", this.getControl(), this);
 	};
 
 	CellSelector.prototype._getBinding = function() {
 		return this.getConfig("getBinding", this.getControl());
 	};
 
-	function isCell(oTarget, sCell) {
-		return oTarget.classList.contains(sCell);
+	function isSelectableCell(oDomRef, sSelectors) {
+		return oDomRef.matches(sSelectors);
 	}
 
 	function isGroupRow(oBinding, oContext, iIndex) {
@@ -911,6 +1038,17 @@ sap.ui.define([
 			return oBinding.nodeHasChildren(oRowContext);
 		}
 		return !(oRowContext.getProperty("@ui5.node.isExpanded") === undefined);
+	}
+
+	function getRow(aRows, iRow, bIsRange, fnGetIndex) {
+		if (bIsRange && aRows[0]) {
+			return fnGetIndex(aRows[0]) > iRow ? aRows[0] : aRows[aRows.length - 1];
+		}
+		return aRows.find((oRow) => fnGetIndex(oRow) == iRow);
+	}
+
+	function getCellDOM(aCells, iCol, sClasses) {
+		return aCells[iCol]?.$().closest(sClasses)[0];
 	}
 
 	/**
@@ -925,20 +1063,29 @@ sap.ui.define([
 		return oEvent.keyCode == sKeyCode && oEvent.shiftKey == bShift && (oEvent.ctrlKey == bCtrl || oEvent.metaKey == bCtrl);
 	}
 
+	/**
+	 * Checks if drag on the rows/items aggregation is activated.
+	 * @param {sap.ui.core.Control} oControl control to be checked
+	 * @param {string} sAffectedAggregation name of the aggregation which is affected by D&D
+	 * @returns {boolean} whether drag on rows is enabled
+	 */
+	function hasDragEnabled(oControl, sAffectedAggregation) {
+		return oControl.getDragDropConfig().some((oConfig) => oConfig.getSourceAggregation?.() == sAffectedAggregation && oConfig.getEnabled());
+	}
+
 	PluginBase.setConfigs({
 		"sap.ui.table.Table": {
-			tableCell: "sapUiTableCell",
-			selectableCells: "sapUiTableDataCell",
+			selectableCells: ".sapUiTableDataCell",
 			scrollArea: "sapUiTableCtrlScr",
-			scrollEvent: "_rowsUpdated",
+			scrollEvent: "firstVisibleRowChanged",
 			eventClearedAll: "sapUiTableClearAll",
 			onActivate: function(oTable, oPlugin) {
 				oTable.attachEvent("_change", oPlugin, this._onPropertyChange);
 				oTable.attachEvent("EventHandlerChange", oPlugin, this._onEventHandlerChange);
 			},
 			onDeactivate: function(oTable, oPlugin) {
-				oTable.detachEvent("_change", this._onPropertyChange);
-				oTable.detachEvent("EventHandlerChange", this._onEventHandlerChange);
+				oTable.detachEvent("_change", oPlugin, this._onPropertyChange);
+				oTable.detachEvent("EventHandlerChange", oPlugin, this._onEventHandlerChange);
 			},
 			_onPropertyChange: function(oEvent, oPlugin) {
 				oEvent.getParameter("name") == "selectionBehavior" && oPlugin._onSelectableChange();
@@ -951,9 +1098,13 @@ sap.ui.define([
 			 * @param {sap.ui.table.Table} oTable table instance
 			 * @returns {boolean} compatibility with cell selection
 			 */
-			isSupported: function(oTable) {
-				return !oTable.hasListeners("cellClick") && oTable.getSelectionBehavior() == "RowSelector"
-					&& !oTable.getDragDropConfig().some((oConfig) => oConfig.getSourceAggregation?.() == "rows" && oConfig.getEnabled());
+			isSupported: function(oTable, oPlugin) {
+				return !oTable.hasListeners("cellClick")
+					&& oTable.getSelectionBehavior() == "RowSelector"
+					&& !hasDragEnabled(oTable, "rows");
+			},
+			isBottomToTop: function(oTable) {
+				return false;
 			},
 			/**
 			 * Get visible columns of the table.
@@ -965,72 +1116,62 @@ sap.ui.define([
 					return oColumn.getDomRef();
 				});
 			},
+			/**
+			 * Retrieve the number of visible columns in the table.
+			 * @param {sap.ui.table.Table} oTable table instance
+			 * @param {boolean} bIncludeSpecial include special columns, e.g. such as popins as separate columns
+			 * @returns {number} number of columns
+			 */
+			numberOfColumns: function(oTable, bIncludeSpecial) {
+				return this.getVisibleColumns(oTable).length;
+			},
 			getRowCount: function(oTable) {
 				return oTable._getTotalRowCount();
 			},
 			/**
 			 * Retrieve the cell reference for a given position
 			 * @param {sap.ui.table.Table} oTable table instance
-			 * @param {Object} mPosition position
-			 * @param {int} mPosition.rowIndex row index
-			 * @param {int} mPosition.colIndex column index
-			 * @returns {HTMLElement} cell's DOM element
+			 * @param {sap.m.plugins.CellSelector.CellPosition} mPosition position of cell
+			 * @returns {HTMLElement|undefined} cell's DOM element or undefined if the row or column index are invalid
 			 */
 			getCellRef: function (oTable, mPosition, bRange) {
-				var aRows = oTable.getRows();
-				var oRow = aRows.find(function(oRow) {
-					return oRow.getIndex() == mPosition.rowIndex;
-				});
-				if (oRow) {
-					var oColumn = this.getVisibleColumns(oTable)[mPosition.colIndex];
-					var oCell = oColumn && oRow.getCells()[oColumn.getIndex()];
-					if (oCell) {
-						return oCell.$().closest(`.${this.selectableCells}`)[0];
-					}
-				} else if (bRange) {
-					if (aRows[0].getIndex() > mPosition.rowIndex) {
-						oRow = aRows[0];
-						var oColumn = this.getVisibleColumns(oTable)[mPosition.colIndex];
-						var oCell = oColumn && oRow.getCells()[mPosition.colIndex];
-						if (oCell) {
-							return oCell.$().closest(`.${this.selectableCells}`)[0];
-						}
-					} else if (aRows[aRows.length - 1].getIndex() < mPosition.rowIndex) {
-						oRow = aRows[aRows.length - 1];
-						var oColumn = this.getVisibleColumns(oTable)[mPosition.colIndex];
-						var oCell = oColumn && oRow.getCells()[mPosition.colIndex];
-						if (oCell) {
-							return oCell.$().closest(`.${this.selectableCells}`)[0];
-						}
-					}
+				const oRow = getRow(oTable.getRows(), mPosition.rowIndex, bRange, (oRow) => oRow?.getIndex());
+
+				if (!oRow) {
+					return;
 				}
+
+				const oColumn = this.getVisibleColumns(oTable)[mPosition.colIndex];
+				return oColumn && getCellDOM(oRow.getCells(), oColumn.getIndex(), this.selectableCells);
 			},
 			/**
 			 * Retrieve cell information for a given DOM element.
 			 * @param {sap.ui.table.Table} oTable table instance
 			 * @param {HTMLElement} oTarget DOM element of cell
-			 * @returns {Object} cell information containing rowIndex and colIndex
+			 * @returns {object} cell information containing rowIndex, colIndex and type of the cell
 			 */
 			getCellInfo: function (oTable, oTarget) {
 				return {
 					rowIndex: Element.closestTo(oTarget, true).getIndex(),
-					colIndex: this.getVisibleColumns(oTable).indexOf(Element.getElementById(oTarget.getAttribute("data-sap-ui-colid")))
+					colIndex: this.getVisibleColumns(oTable).indexOf(Element.getElementById(oTarget.getAttribute("data-sap-ui-colid"))),
+					type: this.getCellType(oTable, oTarget)
 				};
 			},
 			/**
-			 * Loads contexts according to the provided parameters without changing the binding's state.
-			 *
-			 * @param {sap.ui.table.Table} oTable The Table instance
-			 * @param {int} iStartIndex The index where to start the retrieval of contexts
-			 * @param {int} iLength The number of contexts to retrieve beginning from the start index.
+			 * Returns the cell type of the given target cell.
+			 * @param {sap.ui.table.Table} oTable table instance
+			 * @param {HTMLELement} oTarget cell reference
+			 * @returns {string} cell type
 			 */
-			loadContexts: function(oTable, iStartIndex, iLength) {
-				var oBinding = oTable.getBinding("rows");
-				if (!oBinding || oBinding.isA("sap.ui.model.ClientListBinding")) {
-					return;
+			getCellType: function(oTable, oTarget) {
+				const oRow = Element.closestTo(oTarget, true);
+				let sType = CellType.Cell;
+
+				if (oRow.isGroupHeader()) {
+					sType = CellType.Ignore;
 				}
 
-				oBinding.getContexts(Math.max(0, iStartIndex), Math.max(1, iLength), 0, true);
+				return sType;
 			},
 			/**
 			 * Retrieves the row contexts of the table according to the specified parameters.
@@ -1069,8 +1210,16 @@ sap.ui.define([
 					iFrom = iTo = iFocus;
 				}
 
-				if (oSelectionOwner.addSelectionInterval) {
-					oSelectionOwner.addSelectionInterval(iFrom, iTo);
+				if (oSelectionOwner.addSelectionInterval && oSelectionOwner.removeSelectionInterval) {
+					for (let i = iFrom; i <= iTo; i++) {
+						const bSelected = oSelectionOwner.isIndexSelected?.(i) ?? false;
+						// Toggle Selection State
+						if (bSelected) {
+							oSelectionOwner.removeSelectionInterval(i, i);
+						} else {
+							oSelectionOwner.addSelectionInterval(i, i);
+						}
+					}
 					return true;
 				}
 
@@ -1078,23 +1227,32 @@ sap.ui.define([
 				var aRows = oTable.getRows().filter(function(oRow) {
 					return oRow.getIndex() >= iFrom && oRow.getIndex() <= iTo;
 				});
-				aRows.forEach(function(oRow) {
-					oSelectionOwner.setSelected(oRow, true);
+				aRows.forEach((oRow) => {
+					oSelectionOwner.setSelected(oRow, !this.isRowSelected(oTable, oRow));
 				});
 				return true;
 			},
-			isRowSelected: function(oTable, iRow) {
+			/**
+			 * Checks if the given row is selected.
+			 * @param {sap.ui.table.Table} oTable table instance
+			 * @param {number|sap.ui.table.Row} vRow either row index or row instance
+			 * @returns {boolean} selection state
+			 */
+			isRowSelected: function(oTable, vRow) {
 				var oSelectionOwner = this._getSelectionOwner(oTable);
-				var oRow = oTable.getRows().find(function(oRow) {
-					return oRow.getIndex() == iRow;
-				});
-
-				if (oRow) {
-					return oSelectionOwner.isSelected ? oSelectionOwner.isSelected(oRow) : oSelectionOwner.isIndexSelected(iRow);
+				if (typeof vRow === "number") {
+					vRow = oTable.getRows().find(function(oRow) {
+						return oRow.getIndex() == vRow;
+					});
 				}
-				return false;
+
+				let bSelectionState = oSelectionOwner.isIndexSelected?.(vRow);
+				if (vRow) {
+					bSelectionState = oSelectionOwner.isSelected?.(vRow);
+				}
+				return bSelectionState ?? false;
 			},
-			focusCell: function(oTable, mFocus, bForward) {
+			focusCell: function(oTable, mFocus, bIsKeyboard, bForward) {
 				var oCellRef = this.getCellRef(oTable, mFocus);
 				if (!oCellRef) {
 					this.scroll(oTable, bForward, true);
@@ -1140,6 +1298,273 @@ sap.ui.define([
 			},
 			getBinding: function(oTable) {
 				return oTable.getBinding("rows");
+			},
+			shouldRenderResizer: function(oTable) {
+				return true;
+			},
+			drawCellBorder: function(oTable, oCellRef, mPosition, mBounds) {
+				const aRefs = [oCellRef];
+				oCellRef.classList.toggle("sapMPluginsCellSelectorTop", mPosition.rowIndex == mBounds.from.rowIndex);
+				oCellRef.classList.toggle("sapMPluginsCellSelectorBottom", mPosition.rowIndex == mBounds.to.rowIndex);
+				oCellRef.classList.toggle("sapMPluginsCellSelectorRight", mPosition.colIndex == mBounds.to.colIndex);
+				oCellRef.classList.toggle("sapMPluginsCellSelectorSelected", true);
+				oCellRef.setAttribute("aria-selected", "true");
+
+				// Grid Table has only border-right, so adding border-left would change the size of the column. Instead, for the left border, take the previous cell and set border-right.
+				if (mPosition.colIndex == mBounds.from.colIndex) {
+					const oPrevCellRef = this.getCellRef(oTable, {rowIndex: mPosition.rowIndex, colIndex: mPosition.colIndex - 1});
+					let sClass = "sapMPluginsCellSelectorLeft";
+					if (oPrevCellRef) {
+						oCellRef = oPrevCellRef;
+						sClass = "sapMPluginsCellSelectorRight";
+						aRefs.push(oCellRef);
+					}
+					oCellRef.classList.toggle(sClass, mPosition.colIndex == mBounds.from.colIndex);
+				}
+				return aRefs;
+			},
+			loadContexts: function (oTable, iStartIndex, iLength) {
+				var oBinding = oTable.getBinding("rows");
+				if (!oBinding || oBinding.isA("sap.ui.model.ClientListBinding")) {
+					return;
+				}
+				oBinding.getContexts(Math.max(0, iStartIndex), Math.max(1, iLength), 0, true);
+			}
+		},
+		"sap.m.Table": {
+			selectableCells: ".sapMLIBFocusable, .sapMListTblCell, .sapMListTblSubRowCell, .sapMListTblSubCnt",
+			scrollArea: "listUl",
+			onActivate: function(oTable, oPlugin) {
+				oTable.attachEvent("_change", oPlugin, this._onPropertyChange);
+				oTable.attachEvent("EventHandlerChange", oPlugin, this._onEventHandlerChange);
+			},
+			onDeactivate: function(oTable, oPlugin) {
+				oTable.detachEvent("_change", oPlugin, this._onPropertyChange);
+				oTable.detachEvent("EventHandlerChange", oPlugin, this._onEventHandlerChange);
+			},
+			_onPropertyChange: function(oEvent, oPlugin) {
+				oEvent.getParameter("name") == "mode" && oPlugin._onSelectableChange();
+			},
+			_onEventHandlerChange: function(oEvent, oPlugin) {
+				oEvent.getParameter("EventId") == "itemPress" && oPlugin._onSelectableChange();
+			},
+			_getVisibleItems: function(oTable) {
+				return oTable.getVisibleItems();
+			},
+			/**
+			 * Checks if the table is compatible with cell selection.
+			 * @param {sap.m.Table} oTable table instance
+			 * @returns {boolean} compatibility with cell selection
+			 */
+			isSupported: function(oTable, oPlugin) {
+				return (RESPONSIVETABLE_ENABLED /*URL param*/ || oPlugin._bEnableMTable /*programmatic way*/) && oTable.getMode() != ListMode.SingleSelectMaster
+					&& !hasDragEnabled(oTable, "items");
+			},
+			isBottomToTop: function(oTable) {
+				return oTable.getGrowingDirection() == "Upwards";
+			},
+			/**
+			 * Get visible columns of the table.
+			 * @param {sap.m.Table} oTable table instance
+			 * @returns {sap.m.Column[]} array of visible columns
+			 */
+			getVisibleColumns: function (oTable, bIncludeSpecial) {
+				return oTable.getColumns(true).filter(function (oColumn) {
+					const bIncludePopin = bIncludeSpecial && oColumn.isPopin();
+					return oColumn.getVisible() && ((oColumn.getDomRef() && !oColumn.isPopin()) || bIncludePopin);
+				});
+			},
+			/**
+			 * Retrieve the number of visible columns in the table.
+			 * @param {sap.m.Table} oTable table instance
+			 * @param {boolean} bIncludeSpecial include special columns, e.g. such as popins as separate columns
+			 * @returns {number} number of columns
+			 */
+			numberOfColumns: function(oTable, bIncludeSpecial) {
+				var iColCount = this.getVisibleColumns(oTable, bIncludeSpecial).length;
+				return bIncludeSpecial ? iColCount : iColCount + oTable.hasPopin();
+			},
+			/**
+			 * Retrieve the current row count.
+			 * @param {sap.m.Table} oTable table instance
+			 * @returns {number} row count
+			 */
+			getRowCount: function(oTable) {
+				return this._getVisibleItems(oTable).length;
+			},
+			/**
+			 * Retrieve the cell reference for a given position
+			 * @param {sap.m.Table} oTable table instance
+			 * @param {sap.m.plugins.CellSelector.CellPosition} mPosition position of cell
+			 * @returns {HTMLElement|undefined} cell's DOM element or undefined if the row or column index are invalid
+			 */
+			getCellRef: function (oTable, mPosition, bRange) {
+				const aRows = this._getVisibleItems(oTable);
+				const oRow = getRow(oTable.getItems(), mPosition.rowIndex, bRange, (oRow) => aRows.indexOf(oRow));
+
+				if (!oRow) {
+					return;
+				}
+
+				if (oRow.isGroupHeader()) {
+					return oRow.getDomRef();
+				}
+
+				if (oTable.hasPopin() && mPosition.colIndex == this.numberOfColumns(oTable) - 1) {
+					return oRow.$Popin()[0].querySelector(".sapMListTblSubRowCell");
+				}
+
+				const oColumn = this.getVisibleColumns(oTable)[mPosition.colIndex];
+				return oColumn && getCellDOM(oRow.getCells(), oColumn.getInitialOrder(), this.selectableCells);
+			},
+			/**
+			 * Retrieve cell information for a given DOM element.
+			 * @param {sap.m.Table} oTable table instance
+			 * @param {HTMLElement} oTarget DOM element of cell
+			 * @returns {object} cell information containing rowIndex, colIndex and type of the cell
+			 */
+			getCellInfo: function (oTable, oTarget, mPrevious) {
+				const aColumns = this.getVisibleColumns(oTable);
+
+				const oColumn = Element.closestTo(`#${oTarget.getAttribute("data-sap-ui-column")}`);
+				const sType = this.getCellType(oTable, oTarget);
+				let iColIndex = aColumns.indexOf(oColumn);
+
+				if (sType == CellType.Other) {
+					iColIndex = this.numberOfColumns(oTable) - 1;
+				}
+
+				if (sType == CellType.Ignore) {
+					iColIndex = mPrevious?.colIndex ?? iColIndex;
+				}
+
+				return {
+					rowIndex: this._getVisibleItems(oTable).indexOf(Element.closestTo(oTarget, true)),
+					colIndex: iColIndex,
+					type: sType
+				};
+			},
+			/**
+			 * Returns the cell type of the given target cell.
+			 * @param {sap.m.Table} oTable table instance
+			 * @param {HTMLELement} oTarget cell reference
+			 * @returns {string} cell type
+			 */
+			getCellType: function (oTable, oTarget) {
+				const oColumn = Element.closestTo(`#${oTarget.getAttribute("data-sap-ui-column")}`);
+				const oItem = Element.closestTo(oTarget, true);
+
+				if (!oItem) {
+					return;
+				}
+
+				if (oItem.isGroupHeader?.()) {
+					return CellType.Ignore;
+				}
+
+				const bIsPopin = oTarget.classList.contains("sapMListTblSubRowCell") || oTarget.classList.contains("sapMListTblSubCnt") || oTarget.classList.contains("sapMListTblSubRow");
+				if (!oColumn && bIsPopin) {
+					return CellType.Other;
+				}
+				return CellType.Cell;
+			},
+			/**
+			 * Retrieves the row contexts of the table according to the specified parameters.
+			 * @param {sap.m.Table} oTable The table instance
+			 * @param {int} iFromIndex The start index
+			 * @param {int} iToIndex The end index
+			 * @param {int} iLimit The range limit
+			 * @returns {sap.ui.model.Context[]} A portion of the row binding contexts
+			 */
+			getSelectedRowContexts: function(oTable, iFromIndex, iToIndex, iLimit) {
+				const oItems = this._getVisibleItems(oTable);
+				if (iToIndex == Infinity) {
+					const iMaxIndex = oItems.length;
+					iToIndex = Math.min(iToIndex, iFromIndex + iLimit - 1, iMaxIndex);
+				}
+
+				return oItems.filter((oItem) => !oItem.isGroupHeader?.()) // ignore group headers
+					.slice(iFromIndex, iToIndex + 1)
+					.map((oItem) => oItem?.getBindingContext(oTable.getBindingInfo("items")?.model));
+			},
+			/**
+			 * Select rows beginning at iFrom to iTo.
+			 * @param {sap.m.Table} oTable The table instance
+			 * @param {int} iFrom starting row index
+			 * @param {int} iTo ending row index
+			 * @param {int} mFocus focused row index
+			 */
+			selectRows: function(oTable, iFrom, iTo, iFocus) {
+				var sSelectionMode = oTable.getMode();
+
+				if (sSelectionMode == "Delete" || sSelectionMode == "None") {
+					return false;
+				} else if (sSelectionMode == "Single") {
+					iFrom = iTo = iFocus;
+				}
+
+				const oItems = this._getVisibleItems(oTable);
+				for (let i = iFrom; i < iTo; i++) {
+					oTable.setSelectedItem(oItems[i], !this.isRowSelected(oTable, oItems[i]));
+				}
+				oTable.setSelectedItem(oItems[iTo], !this.isRowSelected(oTable, oItems[iTo]), true);
+
+				return true;
+			},
+			/**
+			 * Checks if the given row is selected
+			 * @param {sap.m.Table} oTable table instance
+			 * @param {number|sap.m.ListBase} vRow either row index or row instance
+			 * @returns {boolean} selection state
+			 */
+			isRowSelected: function(oTable, vRow) {
+				if (typeof vRow === "number") {
+					vRow = this._getVisibleItems(oTable)[vRow];
+				}
+				return vRow.getSelected();
+			},
+			focusCell: function(oTable, mFocus, bIsKeyboard, bForward) {
+				if (bIsKeyboard) {
+					// do not focus, if keyboard selection
+					return;
+				}
+
+				const aRows = this._getVisibleItems(oTable);
+				const oRow = getRow(oTable.getItems(), mFocus.rowIndex, false, (oRow) => aRows.indexOf(oRow));
+				oRow?.focus();
+			},
+			scroll: function(oTable, bForward, bVertical) {
+				return Promise.resolve();
+			},
+			attachSelectionChange: function(oTable, fnCallback) {
+				oTable.attachSelectionChange(fnCallback);
+			},
+			detachSelectionChange: function(oTable, fnCallback) {
+				oTable.detachSelectionChange(fnCallback);
+			},
+			getBinding: function(oTable) {
+				return oTable.getBinding("items");
+			},
+			shouldRenderResizer: function(oTable) {
+				return !oTable.hasPopin();
+			},
+			drawCellBorder: function(oTable, oCellRef, mPosition, mBounds) {
+				const bHasPopin = oTable.hasPopin();
+				const bPopinSelected = bHasPopin && mBounds.to.colIndex == this.numberOfColumns(oTable) - 1;
+
+				const sTop = this.isBottomToTop(oTable) ? "sapMPluginsCellSelectorBottom" : "sapMPluginsCellSelectorTop";
+				const sBottom = this.isBottomToTop(oTable) ? "sapMPluginsCellSelectorTop" : "sapMPluginsCellSelectorBottom";
+
+				oCellRef.classList.toggle(sTop, mPosition.rowIndex == mBounds.from.rowIndex || bHasPopin);
+				oCellRef.classList.toggle(sBottom, mPosition.rowIndex == mBounds.to.rowIndex || bHasPopin);
+				oCellRef.classList.toggle("sapMPluginsCellSelectorRight", mPosition.colIndex == mBounds.to.colIndex || (bPopinSelected && mPosition.colIndex == mBounds.to.colIndex - 1));
+				oCellRef.classList.toggle("sapMPluginsCellSelectorLeft", mPosition.colIndex == mBounds.from.colIndex || (bPopinSelected && mPosition.colIndex == mBounds.to.colIndex));
+				oCellRef.classList.toggle("sapMPluginsCellSelectorSelected", true);
+				oCellRef.setAttribute("aria-selected", "true");
+
+				return [oCellRef];
+			},
+			loadContexts: function (oBinding, iStartIndex, iLength) {
 			}
 		}
 	}, CellSelector);
