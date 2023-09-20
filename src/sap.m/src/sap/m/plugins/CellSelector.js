@@ -46,7 +46,7 @@ sap.ui.define([
 	 * @author SAP SE
 	 *
 	 * @public
-	 * @experimental
+	 * @experimental Since 1.119. This class is experimental. The API might be changed in the future.
 	 * @since 1.119
 	 * @alias sap.m.plugins.CellSelector
 	 */
