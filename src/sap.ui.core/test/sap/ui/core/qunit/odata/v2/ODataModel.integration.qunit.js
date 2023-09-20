@@ -386,6 +386,7 @@ sap.ui.define([
 				for (j = aChildNodes.length - 1; j >= 0; j -= 1) {
 					oChildNode = aChildNodes[j];
 					if (oChildNode.nodeType === Node.ELEMENT_NODE
+							&& oChildNode.localName !== "AnalyticalColumn"
 							&& oChildNode.localName !== "Column"
 							&& oChildNode.localName !== "rowMode") {
 						oColumn = document.createElementNS("sap.ui.table", "Column");
@@ -399,6 +400,7 @@ sap.ui.define([
 			}
 		}
 
+		convertElements(oDocument.getElementsByTagNameNS("sap.ui.table", "AnalyticalTable"));
 		convertElements(oDocument.getElementsByTagNameNS("sap.ui.table", "Table"));
 		convertElements(oDocument.getElementsByTagNameNS("sap.ui.table", "TreeTable"));
 	}
