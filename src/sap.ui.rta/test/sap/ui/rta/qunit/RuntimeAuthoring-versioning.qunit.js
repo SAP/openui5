@@ -422,6 +422,16 @@ sap.ui.define([
 				dialogCreated: false
 			}
 		}, {
+			testName: "when the stack was modified but nothing can be undone",
+			input: {
+				versionDisplayed: Version.Number.Original,
+				backendDraft: true,
+				canUndo: false
+			},
+			expectation: {
+				dialogCreated: false
+			}
+		}, {
 			testName: "and a new draft is created, an old draft does not exist",
 			input: {
 				versionDisplayed: Version.Number.Original,

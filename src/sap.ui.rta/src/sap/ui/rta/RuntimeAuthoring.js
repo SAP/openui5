@@ -1074,8 +1074,9 @@ sap.ui.define([
 	 * Adapt the enablement of undo/redo/reset button
 	 */
 	function onStackModified() {
+		var bOnlySwitchVersion = !this.getShowToolbars() || !this.getCommandStack().canUndo();
 		// warn the user: the existing draft would be discarded in case the user saves
-		Utils.checkDraftOverwrite(this._oVersionsModel)
+		Utils.checkDraftOverwrite(this._oVersionsModel, bOnlySwitchVersion)
 		.then(() => {
 			if (this.getShowToolbars()) {
 				var oCommandStack = this.getCommandStack();
