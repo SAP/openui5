@@ -173,6 +173,19 @@ sap.ui.define([
 		assert.equal(info(2).text, "B", "Third item should be titled 'Adelheid'");
 	});
 
+	QUnit.test("Group/Ungroup", function(assert) {
+		var oBinding = gl.getBinding("items");
+		oBinding.sort(new Sorter("", false, function(oContext){
+			return oContext.getProperty("name").charAt(0);
+		}));
+		oCore.applyChanges();
+		assert.ok(info(0).header, "First item should be a group header");
+
+		oBinding.sort();
+		oCore.applyChanges();
+		assert.notOk(info(0).header, "The group header should be removed");
+	});
+
 	QUnit.module("OData V4", {
 		before: function() {
 			// The TestUtils FakeServer Cannot be used together with the sap.ui.core.util.MockServer!
