@@ -12,8 +12,7 @@ sap.ui.define([
 	'sap/ui/model/type/Float',
 	'sap/ui/model/type/Integer',
 	'sap/ui/model/type/Time',
-	'./utils/TableUtils',
-	'./AnalyticalColumnMenu'
+	'./utils/TableUtils'
 ],
 	function(
 		Column,
@@ -24,8 +23,7 @@ sap.ui.define([
 		Float,
 		Integer,
 		Time,
-		TableUtils,
-		AnalyticalColumnMenu
+		TableUtils
 	) {
 	"use strict";
 
@@ -96,15 +94,6 @@ sap.ui.define([
 		"Boolean": new BooleanType()
 	};
 
-	/*
-	 * Factory method. Creates the column menu.
-	 *
-	 * @returns {sap.ui.table.AnalyticalColumnMenu} The created column menu.
-	 */
-	AnalyticalColumn.prototype._createMenu = function() {
-		return new AnalyticalColumnMenu(this.getId() + "-menu");
-	};
-
 	AnalyticalColumn.prototype._setGrouped = function(bGrouped) {
 		var oTable = this._getTable();
 		var sGroupEventType = bGrouped ? GroupEventType.group : GroupEventType.ungroup;
@@ -125,6 +114,7 @@ sap.ui.define([
 		var oParent = this.getParent();
 
 		if (isInstanceOfAnalyticalTable(oParent)) {
+			oParent._bContextsAvailable = false;
 			if (bGrouped) {
 				oParent._addGroupedColumn(this.getId());
 			} else {

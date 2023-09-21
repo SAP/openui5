@@ -14,10 +14,11 @@ sap.ui.define([
 	"sap/ui/table/library",
 	"sap/ui/core/TooltipBase",
 	"sap/ui/core/Core",
+	"sap/m/table/columnmenu/Menu",
 	"sap/ui/core/qunit/analytics/TBA_ServiceDocument", // provides mock data
 	"sap/ui/core/qunit/analytics/ATBA_Batch_Contexts" // provides mock data
 ], function(TableQUnitUtils, AnalyticalTable, TableUtils, ODataModel, ODataModelV2, o4aFakeService,
-			TreeAutoExpandMode, AnalyticalColumn, Filter, FloatType, Row, library, TooltipBase, Core) {
+			TreeAutoExpandMode, AnalyticalColumn, Filter, FloatType, Row, library, TooltipBase, Core, ColumnMenu) {
 	/*global QUnit,sinon*/
 	"use strict";
 
@@ -140,6 +141,32 @@ sap.ui.define([
 		],
 		header: o4aFakeService.headers.BATCH,
 		content: createResponse(0, 0, 0, true)
+	});
+
+	o4aFakeService.addResponse({
+		batch: true,
+		uri: [
+			"ActualPlannedCosts(P_ControllingArea='US01',P_CostCenter='100-1000',P_CostCenterTo='999-9999')"
+			+ "/Results?$select=CostCenter,Currency"
+			+ "&$top=0&$inlinecount=allpages",
+			"ActualPlannedCosts(P_ControllingArea='US01',P_CostCenter='100-1000',P_CostCenterTo='999-9999')"
+			+ "/Results?$select=CostCenter,Currency,PlannedCosts"
+			+ "&$top=120&$inlinecount=allpages"
+		],
+		header: o4aFakeService.headers.BATCH,
+		content: createResponse(0, 120, 120)
+	});
+
+	o4aFakeService.addResponse({
+		batch: true,
+		uri: [
+			"ActualPlannedCosts(P_ControllingArea='US01',P_CostCenter='100-1000',P_CostCenterTo='999-9999')"
+			+ "/Results?$select=CostCenter"
+			+ "&$orderby=CostCenter%20asc"
+			+ "&$top=120&$inlinecount=allpages"
+		],
+		header: o4aFakeService.headers.BATCH,
+		content: createResponse(0, 10)
 	});
 
 	function attachEventHandler(oControl, iSkipCalls, fnHandler, that) {
@@ -603,6 +630,85 @@ sap.ui.define([
 		afterEach: function() {
 			this.oTable.destroy();
 		}
+	});
+
+	/**
+	 * @deprecated As of Version 1.117
+	 */
+	QUnit.test("Grouping and focus handling - legacy menu", function(assert) {
+		var done = assert.async();
+		this.oModel.metadataLoaded().then(function() {
+			var mSettings = {
+				columns: [
+					createColumn({name: "CostCenter"}),
+					createColumn({name: "PlannedCosts"}),
+					createColumn({name: "Currency"})
+				]
+			};
+			this.oTable = createTable.call(this, mSettings);
+
+			var fnHandler1 = function() {
+				var oColumn = this.oTable.getColumns()[0];
+				oColumn.attachEventOnce("columnMenuOpen", () => {
+					TableQUnitUtils.wait(0).then(() => {
+						this.oTable.getBinding().attachChange(() => {
+							this.oTable.attachEventOnce("rowsUpdated", () => {
+								assert.deepEqual(document.activeElement, this.oTable.getDomRef("rowsel0"));
+								done();
+							});
+						});
+
+						oColumn.getMenu().getItems()[3].fireSelect();
+					});
+				});
+
+				oColumn._openHeaderMenu(oColumn.getDomRef());
+			};
+
+			attachEventHandler(this.oTable, 0, fnHandler1, this);
+			this.oTable.bindRows("/ActualPlannedCosts(P_ControllingArea='US01',P_CostCenter='100-1000',P_CostCenterTo='999-9999')/Results");
+
+		}.bind(this));
+	});
+
+	QUnit.test("Grouping and focus handling", function(assert) {
+		var done = assert.async();
+		this.oModel.metadataLoaded().then(function() {
+			var mSettings = {
+				columns: [
+					createColumn({name: "CostCenter"}),
+					createColumn({name: "PlannedCosts"}),
+					createColumn({name: "Currency"})
+				]
+			};
+			this.oTable = createTable.call(this, mSettings);
+
+			var fnHandler1 = function() {
+				var oColumn = this.oTable.getColumns()[0];
+				var oColumnMenu = new ColumnMenu();
+				oColumn.setHeaderMenu(oColumnMenu);
+
+				oColumnMenu.attachEventOnce("beforeOpen", () => {
+					TableQUnitUtils.wait(0).then(() => {
+						var oGroupButton = oColumnMenu._getAllEffectiveQuickActions()[2].getContent()[0];
+						oGroupButton.$().trigger("tap");
+
+						this.oTable.getBinding().attachChange(() => {
+							this.oTable.attachEventOnce("rowsUpdated", () => {
+								assert.deepEqual(document.activeElement, this.oTable.getDomRef("rowsel0"));
+								done();
+							});
+						});
+					});
+				});
+
+				oColumn._openHeaderMenu(oColumn.getDomRef());
+			};
+
+			attachEventHandler(this.oTable, 0, fnHandler1, this);
+			this.oTable.bindRows("/ActualPlannedCosts(P_ControllingArea='US01',P_CostCenter='100-1000',P_CostCenterTo='999-9999')/Results");
+
+		}.bind(this));
 	});
 
 	QUnit.test("getAnalyticalInfoOfRow", function(assert) {
@@ -1177,12 +1283,6 @@ sap.ui.define([
 		assert.ok(!this._oColumn.isFilterableByMenu(), "Not filterable by menu: " +
 			"filterProperty: '" + (this._oColumn.getFilterProperty() ? this._oColumn.getFilterProperty() : "") + "', " +
 			"showFilterMenuEntry: " + this._oColumn.getShowFilterMenuEntry());
-	});
-
-	QUnit.test("Menu Creation", function(assert) {
-		var oMenu = this._oColumn._createMenu();
-		assert.ok(oMenu.isA("sap.ui.table.AnalyticalColumnMenu"), "Menu available");
-		assert.equal(oMenu.getId(), this._oColumn.getId() + "-menu", "Menu Id");
 	});
 
 	QUnit.module("BusyIndicator", {
