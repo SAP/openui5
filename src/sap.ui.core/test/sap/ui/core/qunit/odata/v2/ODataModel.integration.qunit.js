@@ -20819,9 +20819,11 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 
 	//*********************************************************************************************
 	// Scenario: For a table where transient entries have messages, the filter returned by requestFilterForMessages does
-	// not refer to these entries. For the BCP incident, check the case no item loaded from the backend has a message:
-	// the filter is null then.
+	// not refer to these entries. For the BCP incident, check the case that no item loaded from the backend has a
+	// message: the filter is Filter.NONE then.
 	// BCP: 2370088390
+	// When the list is filtered only the transient entry is shown and no entries are requested.
+	// JIRA: CPOUI5MODELS-1421
 	QUnit.test("Filter table where only transient items have messages", function (assert) {
 		let oCreatedContext, oRowsBinding;
 		const oModel = createSalesOrdersModel({preliminaryContext : true});
@@ -20881,7 +20883,186 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				this.waitForChanges(assert)
 			]);
 		}).then((aResults) => {
-			assert.strictEqual(aResults[0], null, "no message filter, only transient item has message");
+			assert.strictEqual(aResults[0], Filter.NONE, "Filter.NONE message filter, only transient item has message");
+
+			this.expectValue("itemPosition", "", 1)
+				.expectValue("note", "", 1);
+
+			oRowsBinding.filter(aResults[0], FilterType.Application);
+
+			return this.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: For a table where only transient entries have messages, the filter returned by requestFilterForMessages
+	// is Filter.NONE. When the list is filtered, only the transient entries are shown and no $filter and no $count
+	// request occurs. It is still possible to create new inactive entries. Check that count and length of the binding
+	// is always correct.
+	// JIRA: CPOUI5MODELS-1421
+	QUnit.test("Filter table where only transient items have messages, countMode=Request", function (assert) {
+		let oMessage, oRowsBinding, oTable;
+		let aExpectedMessages = [];
+		const oModel = createSalesOrdersModel({
+				defaultBindingMode : BindingMode.TwoWay,
+				defaultCountMode : CountMode.Request,
+				preliminaryContext : true
+			});
+		const sView = '\
+<t:Table id="table" rows="{/SalesOrderSet(\'1\')/ToLineItems}" visibleRowCount="3">\
+	<Input id="itemPosition" value="{ItemPosition}" />\
+	<Input id="note" value="{Note}" />\
+</t:Table>';
+		const that = this;
+
+		/* Prevents activation of passed inactive context, adds a message to the message model for
+		this context, creates another inactive context at the end if ItemPosition is empty.*/
+		function onCreateActivate(oEvent) {
+			const oCreatedContext = oEvent.getParameter("context");
+			if (!oCreatedContext.getObject("").ItemPosition) {
+				oMessage = {
+					message : "Item position is required",
+					type : "Error",
+					target : oCreatedContext.getPath() + "/ItemPosition",
+					fullTarget : oCreatedContext.getDeepPath() + "/ItemPosition",
+					processor : oModel
+				};
+				aExpectedMessages.push(oMessage);
+				that.expectMessages(aExpectedMessages);
+				Messaging.addMessages(new Message(oMessage));
+				oEvent.preventDefault();
+			} else {
+				const aCurrentMessages = Messaging.getMessageModel().getObject("/");
+				aCurrentMessages.some((oMessage) => {
+					if (oMessage.getTarget() === oCreatedContext.getPath() + "/ItemPosition") {
+						Messaging.removeMessages(oMessage);
+						aExpectedMessages = aExpectedMessages.slice(0, 1);
+						return true;
+					}
+					return false;
+				});
+				that.expectMessages(aExpectedMessages);
+
+				return; // do not create another inactive row
+			}
+
+			// code under test - create works also if binding length is not final but Filter.NONE is set
+			oRowsBinding.create({}, /*bAtEnd*/ true, {inactive: true});
+		}
+
+		this.expectHeadRequest()
+			.expectRequest("SalesOrderSet('1')/ToLineItems/$count", "1")
+			.expectRequest({
+				requestUri : "SalesOrderSet('1')/ToLineItems?$skip=0&$top=103"
+			}, {
+				results : [{
+					__metadata : {
+						uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10')"
+					},
+					Note : "Bar",
+					ItemPosition : "10",
+					SalesOrderID : "1"
+				}]
+			})
+			.expectValue("itemPosition", ["10", "", ""])
+			.expectValue("note", ["Bar", "", ""]);
+
+		return this.createView(assert, sView, oModel).then(() => {
+			oTable = this.oView.byId("table");
+			oRowsBinding = oTable.getBinding("rows");
+			oRowsBinding.attachCreateActivate(onCreateActivate);
+			oRowsBinding.create({}, /*bAtEnd*/ true, {inactive: true});
+
+			assert.strictEqual(oRowsBinding.getCount(), 1, "1 active entry - count 1");
+			assert.strictEqual(oRowsBinding.getLength(), 2, "length is 2");
+
+			return this.waitForChanges(assert);
+		}).then(() => {
+			this.expectValue("note", "Foo", 1)
+				.expectValueState(oTable.getRows()[0].getCells()[0], "None", "")
+				.expectValueState(oTable.getRows()[1].getCells()[0], "Error", "Item position is required")
+				.expectValueState(oTable.getRows()[2].getCells()[0], "None", "");
+
+			oTable.getRows()[1].getCells()[1].setValue("Foo");
+
+			return this.waitForChanges(assert);
+		}).then(() => {
+			assert.strictEqual(oRowsBinding.getCount(), 1, "1 active entry - count 1");
+			assert.strictEqual(oRowsBinding.getLength(), 3, "length is 3");
+
+			return Promise.all([
+				oRowsBinding.requestFilterForMessages(),
+				this.waitForChanges(assert)
+			]);
+		}).then((aResults) => {
+			assert.strictEqual(aResults[0], Filter.NONE, "only transient items have messages");
+
+			this.expectValue("itemPosition", "", 0)
+				.expectValue("note", "Foo", 0)
+				.expectValue("note", "", 1)
+				.expectValueState(oTable.getRows()[0].getCells()[0], "Error", "Item position is required")
+				.expectValueState(oTable.getRows()[1].getCells()[0], "None", "")
+				.expectValueState(oTable.getRows()[2].getCells()[0], "None", "");
+
+			// code under test - no requests
+			oRowsBinding.filter(aResults[0], FilterType.Application);
+
+			assert.strictEqual(oRowsBinding.getCount(), 0, "no active entry - count 0");
+			assert.strictEqual(oRowsBinding.getLength(), 2, "length is 2");
+
+			return this.waitForChanges(assert);
+		}).then(() => {
+			this.expectValue("note", "Bar", 1)
+				.expectValueState(oTable.getRows()[0].getCells()[0], "Error", "Item position is required")
+				.expectValueState(oTable.getRows()[1].getCells()[0], "Error", "Item position is required")
+				.expectValueState(oTable.getRows()[2].getCells()[0], "None", "");
+
+			oTable.getRows()[1].getCells()[1].setValue("Bar");
+
+			return this.waitForChanges(assert);
+		}).then(() => {
+			this.expectValue("itemPosition", "30", 1)
+				.expectValueState(oTable.getRows()[0].getCells()[0], "Error", "Item position is required")
+				.expectValueState(oTable.getRows()[1].getCells()[0], "None", "")
+				.expectValueState(oTable.getRows()[2].getCells()[0], "None", "");
+
+			oTable.getRows()[1].getCells()[0].setValue("30");
+
+			return this.waitForChanges(assert);
+		}).then(() => {
+			assert.strictEqual(oRowsBinding.getCount(), 1, "one active entry - count 1");
+			assert.strictEqual(oRowsBinding.getLength(), 3, "length is 3");
+			this.expectRequest("SalesOrderSet('1')/ToLineItems/$count", "1")
+				.expectRequest({
+					requestUri : "SalesOrderSet('1')/ToLineItems?$skip=0&$top=103"
+				}, {
+					results : [{
+						__metadata : {
+							uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10')"
+						},
+						Note : "Bar",
+						ItemPosition : "10",
+						SalesOrderID : "1"
+					}]
+				})
+				.expectValue("itemPosition", ["10", "", "30"])
+				.expectValue("note", ["Bar", "Foo", "Bar"]);
+
+			// code under test
+			oRowsBinding.filter([], FilterType.Application);
+
+			return this.waitForChanges(assert);
+		}).then(() => {
+			assert.strictEqual(oRowsBinding.getCount(), 2, "1 active entry - count 1");
+			assert.strictEqual(oRowsBinding.getLength(), 4, "length is 4");
+
+			return Promise.all([
+				// code under test (filter out all messages)
+				oRowsBinding.requestFilterForMessages(() => false),
+				this.waitForChanges(assert)
+			]);
+		}).then((aResults) => {
+			assert.strictEqual(aResults[0], null);
 		});
 	});
 
