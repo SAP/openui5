@@ -32,8 +32,8 @@ function(
 
 	/**
 	 * Check if the overlay is in target zone aggregation.
-	 * @param  {sap.ui.dt.ElementOverlay}  oElementOverlay The overlay to be checked
-	 * @return {boolean}                   Returns true if overlay is in target zone
+	 * @param  {sap.ui.dt.ElementOverlay} oElementOverlay The overlay to be checked
+	 * @return {boolean} Returns true if overlay is in target zone
 	 * @private
 	 */
 	OverlayUtil.isInTargetZoneAggregation = function(oElementOverlay) {
@@ -398,11 +398,30 @@ function(
 	};
 
 	/**
+	 * Changes the movability of the parent of the passed overlay to the provided boolean
+	 * If a parent overlay is movable it should not be draggable by a non-movable child
+	 * @param  {sap.ui.dt.Overlay} oOverlay	Overlay for which we want to change the parents movability
+	 * @param  {sap.ui.dt.Overlay} bMovable New value for the overlay parents movability
+	 */
+	OverlayUtil.setFirstParentMovable = function(oOverlay, bMovable) {
+		if (!bMovable) {
+			const oFirstMovableParentOverlay = this.getFirstMovableParentOverlay(oOverlay);
+			if (oFirstMovableParentOverlay) {
+				oOverlay._firstMovableParentOverlay = oFirstMovableParentOverlay;
+				oFirstMovableParentOverlay.setMovable(false);
+			}
+		} else if (oOverlay._firstMovableParentOverlay) {
+			oOverlay._firstMovableParentOverlay.setMovable(true);
+			delete oOverlay._firstMovableParentOverlay;
+		}
+	};
+
+	/**
 	 * Returns all the sibling overlays in a container. It checks recursively for every overlay belonging
 	 * to the same relevant container in the tree which has DesignTime Metadata.
-	 * @param  {sap.ui.dt.Overlay} oOverlay                  Overlay for which we want to find the siblings
+	 * @param  {sap.ui.dt.Overlay} oOverlay	Overlay for which we want to find the siblings
 	 * @param  {sap.ui.dt.Overlay} oRelevantContainerOverlay Relevant container of the overlay
-	 * @return {sap.ui.dt.Overlay[]}                         Returns a flat array with all sibling overlays
+	 * @return {sap.ui.dt.Overlay[]} Returns a flat array with all sibling overlays
 	 */
 	OverlayUtil.findAllSiblingOverlaysInContainer = function(oOverlay, oRelevantContainerOverlay) {
 		var oParentOverlay = oOverlay.getParentElementOverlay();
@@ -412,7 +431,9 @@ function(
 			if (oParentOverlay !== oRelevantContainerOverlay) {
 				var aParents = OverlayUtil.findAllSiblingOverlaysInContainer(oParentOverlay, oRelevantContainerOverlay);
 				aRelevantOverlays = aParents.map(function(oParentOverlay) {
-					var oAggregationOverlay = oParentOverlay.getAggregationOverlay(oOverlay.getParentAggregationOverlay().getAggregationName());
+					var oAggregationOverlay = oParentOverlay.getAggregationOverlay(
+						oOverlay.getParentAggregationOverlay().getAggregationName()
+					);
 					return oAggregationOverlay ? oAggregationOverlay.getChildren() : [];
 				}).reduce(function(aFlattenedArray, oCurrentValue) {
 					return aFlattenedArray.concat(oCurrentValue);

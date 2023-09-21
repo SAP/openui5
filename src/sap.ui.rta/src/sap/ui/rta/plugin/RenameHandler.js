@@ -44,6 +44,7 @@ sap.ui.define([
 	 * @since 1.52
 	 * @alias sap.ui.rta.plugin.RenameHandler
 	 */
+
 	var RenameHandler = {
 
 		errorStyleClass: "sapUiRtaErrorBg",
@@ -76,6 +77,11 @@ sap.ui.define([
 		startEdit(mPropertyBag) {
 			this.setBusy(true);
 			this._oEditedOverlay = mPropertyBag.overlay;
+
+			this._bPreviouslyMovable = this._oEditedOverlay.getMovable();
+			// This prevents a bug in firefox where the element can be dragged during rename
+			this._oEditedOverlay.setMovable(false);
+			OverlayUtil.setFirstParentMovable(this._oEditedOverlay, false);
 
 			var oElement = mPropertyBag.overlay.getElement();
 
@@ -326,6 +332,8 @@ sap.ui.define([
 			if (oEditField) {
 				oEditField.remove();
 			}
+			this._oEditedOverlay.setMovable(this._bPreviouslyMovable);
+			OverlayUtil.setFirstParentMovable(this._oEditedOverlay, true);
 			delete this._oEditableControlDomRef;
 			delete this._oEditedOverlay;
 			delete this._bBlurOrKeyDownStarted;
