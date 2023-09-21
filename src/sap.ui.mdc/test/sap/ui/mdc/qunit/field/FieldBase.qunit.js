@@ -3147,6 +3147,28 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.test("FocusInfo.targetInfo.silent - ValueHelp should not open on focus", function (assert) {
+
+		var oFieldHelp = oCore.byId(oField.getValueHelp());
+
+		sinon.stub(oFieldHelp, "shouldOpenOnFocus").returns(true);
+		sinon.spy(oFieldHelp, "toggleOpen");
+		sinon.stub(oFieldHelp, "isOpen").callsFake(function() {
+			return this.toggleOpen.called;
+		});
+
+		oField.focus({targetInfo: {silent: true}});
+
+		return new Promise(function (resolve, reject) {
+			setTimeout(function () {
+				assert.notOk(oFieldHelp.shouldOpenOnFocus.calledOnce, "shouldOpenOnFocus called once");
+				assert.notOk(oField._iFocusTimer, "FocusTimer not triggered");
+				assert.notOk(oFieldHelp.toggleOpen.calledOnce, "open called once");
+				resolve();
+			},350);
+		});
+	});
+
 	QUnit.test("shouldOpenOnClick - FieldHelp should open on click", function (assert) {
 
 		var oFieldHelp = oCore.byId(oField.getValueHelp());
