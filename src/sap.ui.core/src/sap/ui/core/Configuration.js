@@ -13,6 +13,7 @@ sap.ui.define([
 	"sap/ui/core/_ConfigurationProvider",
 	"sap/ui/core/getCompatibilityVersion",
 	"sap/ui/core/date/CalendarWeekNumbering",
+	"sap/ui/core/Security",
 	"sap/ui/core/Theming",
 	"sap/base/util/Version",
 	"sap/base/Log",
@@ -33,6 +34,7 @@ sap.ui.define([
 		_ConfigurationProvider,
 		getCompatibilityVersion,
 		CalendarWeekNumbering,
+		Security,
 		Theming,
 		Version,
 		Log,
@@ -135,14 +137,6 @@ sap.ui.define([
 			} else {
 				throw new Error("illegal state");
 			}
-		}
-	}
-
-	function getMetaTagValue(sName) {
-		var oMetaTag = document.querySelector("META[name='" + sName + "']"),
-			sMetaContent = oMetaTag && oMetaTag.getAttribute("content");
-		if (sMetaContent) {
-			return sMetaContent;
 		}
 	}
 
@@ -376,36 +370,6 @@ sap.ui.define([
 		}
 
 		config['xx-fiori2Adaptation'] = vAdaptations;
-
-		config["allowlistService"] = config["allowlistService"] || /* fallback to legacy config */ config["whitelistService"];
-
-		// Configure allowlistService / frameOptions via <meta> tag if not already defined via UI5 configuration
-		if (!config["allowlistService"]) {
-			var sAllowlistMetaTagValue = getMetaTagValue('sap.allowlistService') || /* fallback to legacy config */ getMetaTagValue('sap.whitelistService');
-			if (sAllowlistMetaTagValue) {
-				config["allowlistService"] = sAllowlistMetaTagValue;
-				// Set default "frameOptions" to "trusted" instead of "allow"
-				if (config["frameOptions"] === "default") {
-					config["frameOptions"] = "trusted";
-				}
-			}
-		}
-
-		// Verify and set default for "frameOptions" configuration
-		if (config["frameOptions"] === "default" ||
-			(config["frameOptions"] !== "allow"
-			&& config["frameOptions"] !== "deny"
-			&& config["frameOptions"] !== "trusted")) {
-
-			// default => allow
-			config["frameOptions"] = "allow";
-		}
-
-		// frameOptionsConfig: Handle compatibility of renamed config option
-		var oFrameOptionsConfig = config["frameOptionsConfig"];
-		if (oFrameOptionsConfig) {
-			oFrameOptionsConfig.allowlist = oFrameOptionsConfig.allowlist || oFrameOptionsConfig.whitelist;
-		}
 
 		// in case the flexibilityServices configuration was set to a non-empty, non-default value, sap.ui.fl becomes mandatory
 		// if not overruled by xx-skipAutomaticFlLibLoading
@@ -1064,33 +1028,32 @@ sap.ui.define([
 		 *
 		 * @return {string} frameOptions mode
 		 * @public
+		 * @function
+		 * @deprecated Since 1.120. Please use {@link module:sap/ui/core/Security.getFrameOptions} instead.
 		 */
-		getFrameOptions : function() {
-			return Configuration.getValue("frameOptions");
-		},
+		getFrameOptions : Security.getFrameOptions,
 
 		/**
 		 * URL of the whitelist service.
 		 *
 		 * @return {string} whitelist service URL
 		 * @public
+		 * @function
 		 * @deprecated Since 1.85.0. Use {@link sap.ui.core.Configuration#getAllowlistService} instead.
 		 * SAP strives to replace insensitive terms with inclusive language.
 		 * Since APIs cannot be renamed or immediately removed for compatibility reasons, this API has been deprecated.
 		 */
-		getWhitelistService : function() {
-			return Configuration.getAllowlistService();
-		},
+		getWhitelistService : Security.getAllowlistService,
 
 		/**
 		 * URL of the allowlist service.
 		 *
 		 * @return {string} allowlist service URL
 		 * @public
-		 */
-		getAllowlistService : function() {
-			return Configuration.getValue("allowlistService");
-		},
+		 * @function
+		 * @deprecated Since 1.120. Please use {@link module:sap/ui/core/Security.getAllowlistService} instead.
+		*/
+		getAllowlistService : Security.getAllowlistService,
 
 		/**
 		 * Name (ID) of a UI5 module that implements file share support.
@@ -1190,12 +1153,11 @@ sap.ui.define([
 		 *
 		 * @returns {Array<function(sap.ui.core.URI):Promise>} the security token handlers (an empty array if there are none)
 		 * @public
-		 * @since 1.95.0
+		 * @function
+		 * @deprecated Since 1.120. Please use {@link module:sap/ui/core/Security.getSecurityTokenHandlers} instead.
 		 * @see #setSecurityTokenHandlers
 		 */
-		getSecurityTokenHandlers : function () {
-			return Configuration.getValue("securityTokenHandlers").slice();
-		},
+		getSecurityTokenHandlers : Security.getSecurityTokenHandlers,
 
 		/**
 		 * Sets the security token handlers for an OData V4 model. See chapter
@@ -1203,16 +1165,11 @@ sap.ui.define([
 		 *
 		 * @param {Array<function(sap.ui.core.URI):Promise>} aSecurityTokenHandlers - The security token handlers
 		 * @public
-		 * @since 1.95.0
+		 * @function
+		 * @deprecated Since 1.120. Please use {@link module:sap/ui/core/Security.setSecurityTokenHandlers} instead.
 		 * @see #getSecurityTokenHandlers
 		 */
-		setSecurityTokenHandlers : function (aSecurityTokenHandlers) {
-			aSecurityTokenHandlers.forEach(function (fnSecurityTokenHandler) {
-				check(typeof fnSecurityTokenHandler === "function",
-					"Not a function: " + fnSecurityTokenHandler);
-			});
-			config.securityTokenHandlers = aSecurityTokenHandlers.slice();
-		},
+		setSecurityTokenHandlers : Security.setSecurityTokenHandlers,
 
 		/**
 		 * Applies multiple changes to the configuration at once.

@@ -52,25 +52,19 @@ sap.ui.define(function() {
 			 * @deprecated since 1.58
 			 */
 			"util/jQuery.sap.FrameOptions-meta-tag-override-mode": {
-				beforeBootstrap: "test-resources/sap/ui/core/qunit/util/beforeBootstrap/jQuery.sap.FrameOptions-meta-tag",
-				ui5: {
-					frameOptions: "deny"
-				}
+				page: "test-resources/sap/ui/core/qunit/{name}.qunit.html"
 			},
 			/**
 			 * @deprecated since 1.58
 			 */
 			"util/jQuery.sap.FrameOptions-meta-tag-override-service": {
-				beforeBootstrap: "test-resources/sap/ui/core/qunit/util/beforeBootstrap/jQuery.sap.FrameOptions-meta-tag",
-				ui5: {
-					allowlistService: "/url/to/service/via/ui5/config"
-				}
+				page: "test-resources/sap/ui/core/qunit/{name}.qunit.html"
 			},
 			/**
 			 * @deprecated since 1.58
 			 */
 			"util/jQuery.sap.FrameOptions-meta-tag": {
-				beforeBootstrap: "test-resources/sap/ui/core/qunit/util/beforeBootstrap/jQuery.sap.FrameOptions-meta-tag"
+				page: "test-resources/sap/ui/core/qunit/{name}.qunit.html"
 			},
 			/**
 			 * @deprecated since 1.58
