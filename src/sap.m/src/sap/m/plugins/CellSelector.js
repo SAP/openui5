@@ -254,6 +254,9 @@ sap.ui.define([
 
 		var oInfo = this.getConfig("getCellInfo", this.getControl(), oSelectableCell);
 		if (!this._inSelection(oEvent.target) || !this._oSession.mSource || !this._oSession.mTarget) {
+			if (this.getConfig("isRowSelected", this.getControl(), oInfo.rowIndex)) {
+				return;
+			}
 			// If not in selection block, start new selection block
 			this._oSession.mSource = this._oSession.mTarget = oInfo;
 		}
@@ -270,11 +273,11 @@ sap.ui.define([
 			|| sDirectionType == DIRECTION.COL && (oInfo.colIndex == mBounds.from.colIndex || oInfo.colIndex == mBounds.to.colIndex)) {
 			this._bSelecting = true;
 			this._selectCells(from, to);
-
-			oEvent.preventDefault();
-			oEvent.setMarked();
-			oEvent.setMarked("sapUiTableSkipItemNavigation", true); // Required to prevent item navigation in GridTable for MultiToggle
 		}
+
+		oEvent.setMarked();
+		oEvent.preventDefault();
+		oEvent.stopPropagation();
 	};
 
 	// To be implemented. See internal documentation.
@@ -935,6 +938,17 @@ sap.ui.define([
 					oSelectionOwner.setSelected(oRow, true);
 				});
 				return true;
+			},
+			isRowSelected: function(oTable, iRow) {
+				var oSelectionOwner = PluginBase.getPlugin(oTable, "sap.ui.table.plugins.SelectionPlugin") || oTable;
+				var oRow = oTable.getRows().find(function(oRow) {
+					return oRow.getIndex() == iRow;
+				});
+
+				if (oRow) {
+					return oSelectionOwner.isSelected ? oSelectionOwner.isSelected(oRow) : oSelectionOwner.isIndexSelected(iRow);
+				}
+				return false;
 			},
 			focusCell: function(oTable, mFocus, bForward) {
 				var oCellRef = this.getCellRef(oTable, mFocus);

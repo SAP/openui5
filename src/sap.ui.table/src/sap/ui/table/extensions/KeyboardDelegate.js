@@ -1414,6 +1414,11 @@ sap.ui.define([
 	};
 
 	KeyboardDelegate.prototype.onsapdownmodifiers = function(oEvent) {
+		if (oEvent.isMarked()) {
+			preventItemNavigation(oEvent);
+			return;
+		}
+
 		handleNavigationEvent(oEvent);
 
 		if (KeyboardDelegate._isKeyCombination(oEvent, null, ModKey.CTRL)) {
@@ -1438,7 +1443,6 @@ sap.ui.define([
 		var oCellInfo = TableUtils.getCellInfo(oEvent.target);
 
 		if (KeyboardDelegate._isKeyCombination(oEvent, null, ModKey.SHIFT)) {
-
 			/* Range Selection */
 
 			if (oCellInfo.isOfType(CellType.ANYCONTENTCELL)) {
@@ -1499,6 +1503,11 @@ sap.ui.define([
 	};
 
 	KeyboardDelegate.prototype.onsapupmodifiers = function(oEvent) {
+		if (oEvent.isMarked()) {
+			preventItemNavigation(oEvent);
+			return;
+		}
+
 		handleNavigationEvent(oEvent);
 
 		if (KeyboardDelegate._isKeyCombination(oEvent, null, ModKey.CTRL)) {
@@ -1523,7 +1532,6 @@ sap.ui.define([
 		var oCellInfo = TableUtils.getCellInfo(oEvent.target);
 
 		if (KeyboardDelegate._isKeyCombination(oEvent, null, ModKey.SHIFT)) {
-
 			/* Range Selection */
 
 			if (oCellInfo.isOfType(CellType.ANYCONTENTCELL)) {
@@ -1585,6 +1593,11 @@ sap.ui.define([
 	};
 
 	KeyboardDelegate.prototype.onsapleftmodifiers = function(oEvent) {
+		if (oEvent.isMarked()) {
+			preventItemNavigation(oEvent);
+			return;
+		}
+
 		handleNavigationEvent(oEvent);
 
 		if (this._getKeyboardExtension().isInActionMode()) {
@@ -1664,6 +1677,11 @@ sap.ui.define([
 	};
 
 	KeyboardDelegate.prototype.onsaprightmodifiers = function(oEvent) {
+		if (oEvent.isMarked()) {
+			preventItemNavigation(oEvent);
+			return;
+		}
+
 		handleNavigationEvent(oEvent);
 
 		if (this._getKeyboardExtension().isInActionMode()) {
