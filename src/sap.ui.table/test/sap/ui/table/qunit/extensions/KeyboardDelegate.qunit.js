@@ -1017,7 +1017,11 @@ sap.ui.define([
 			var bHasRowHeaders = TableUtils.hasRowHeader(this.oTable);
 			var bHasRowActions = TableUtils.hasRowActions(this.oTable);
 			var iColumnCount = this.oTable._getVisibleColumns().length;
-			var iRowCount = this.oTable.getGroupBy() ? 2 * window.iNumberOfRows : window.iNumberOfRows;
+			var iRowCount = window.iNumberOfRows;
+			/**
+			 *  @deprecated As of version 1.119.
+			 */
+			iRowCount = (this.oTable.getGroupBy && this.oTable.getGroupBy()) ? 2 * window.iNumberOfRows : window.iNumberOfRows;
 			var oTarget, i, iRowIndex, oRow;
 
 			oTarget = TableQUnitUtils.setFocusOutsideOfTable(assert, "FocusDummyBeforeTable");
@@ -1094,8 +1098,16 @@ sap.ui.define([
 			this.triggerKey(Key.Arrow.RIGHT, oTarget, oTarget);
 			this.triggerKey(Key.Arrow.DOWN, oTarget, oTarget);
 
-			var iStartIndex = iColumnCount - (bHasRowActions || this.oTable.getGroupBy() ? 1 : 2);
-			var iEndIndex = this.oTable.getGroupBy() ? 1 : 0;
+			var iStartIndex = iColumnCount - (bHasRowActions ? 1 : 2);
+			/**
+			 *  @deprecated As of version 1.119.
+			 */
+			iStartIndex = iColumnCount - (bHasRowActions || this.oTable.getGroupBy() ? 1 : 2);
+			var iEndIndex = 0;
+			/**
+			 *  @deprecated As of version 1.119.
+			 */
+			iEndIndex = (this.oTable.getGroupBy && this.oTable.getGroupBy()) ? 1 : 0;
 
 			for (i = iStartIndex; i >= iEndIndex; i--) {
 				this.triggerKey(Key.Arrow.LEFT, oTarget, this.oTable.qunit.getDataCell(-1, i));

@@ -66,6 +66,26 @@ sap.ui.define([
 	QUnit.test("shouldRender", function(assert) {
 		var that = this;
 
+		function test(bShouldRender, bVisible, vTemplate) {
+			that._oColumn.setVisible(bVisible);
+			that._oColumn.setTemplate(vTemplate);
+
+			var sMessage = "Returned " + bShouldRender + ": " + (bVisible ? "Visible" : "Not visible") + ", " + (vTemplate != null ? ",has template" : "has no template");
+			assert.strictEqual(that._oColumn.shouldRender(), bShouldRender, sMessage);
+		}
+
+		test(true, true, "dummy");
+		test(false, false, "dummy");
+		test(false, true, null);
+		test(false, false, null);
+	});
+
+	/**
+	 * @deprecated As of Version 1.119
+	 */
+	QUnit.test("shouldRender with grouping", function(assert) {
+		var that = this;
+
 		function test(bShouldRender, bVisible, bGrouped, vTemplate) {
 			that._oColumn.setVisible(bVisible);
 			if (that._oColumn.setGrouped) {
@@ -73,7 +93,7 @@ sap.ui.define([
 			}
 			that._oColumn.setTemplate(vTemplate);
 
-			var sMessage = "Returned " + bShouldRender + ": " + (bVisible ? "Visible" : "Not visible") + (that._oColumn.setGrouped ? ", " + (bGrouped ? "grouped" : "not grouped") : "") + ", " + (vTemplate != null ? ",has template" : "has no template");
+			var sMessage = "Returned " + bShouldRender + ": " + (bVisible ? "Visible" : "Not visible") + ", " + (bGrouped ? "grouped" : "not grouped") + ", " + (vTemplate != null ? ",has template" : "has no template");
 			assert.strictEqual(that._oColumn.shouldRender(), bShouldRender, sMessage);
 		}
 

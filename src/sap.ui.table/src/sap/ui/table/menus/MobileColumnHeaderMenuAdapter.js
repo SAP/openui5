@@ -145,9 +145,7 @@ sap.ui.define([
 
 		this._oQuickActionContainer.addQuickAction(this._oQuickSort);
 		this._oQuickActionContainer.addQuickAction(this._oQuickFilter);
-
 		this._oQuickActionContainer.addQuickAction(this._oQuickGroup);
-
 		this._oQuickActionContainer.addQuickAction(this._oQuickTotal);
 		this._oQuickActionContainer.addQuickAction(this._oQuickFreeze);
 		this._oQuickActionContainer.addQuickAction(this._oQuickResize);
@@ -265,7 +263,7 @@ sap.ui.define([
 	};
 
 	MobileColumnHeaderMenuAdapter.prototype._prepareQuickGroup = function(oColumn) {
-		if (oColumn.isGroupableByMenu()) {
+		if (oColumn._isGroupableByMenu()) {
 			if (!this._oQuickGroup) {
 				this._oQuickGroup = this._createQuickGroup();
 			}
