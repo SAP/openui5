@@ -1,9 +1,14 @@
 /*global QUnit */
-sap.ui.define([
+QUnit.config.autostart = false;
+
+sap.ui.require([
 	"sap/ui/core/Configuration",
+	"sap/ui/core/Core",
 	"sap/ui/core/Theming"
-], function(Configuration, Theming) {
+], async function(Configuration, Core, Theming) {
 	"use strict";
+
+	await Core.ready();
 
 	QUnit.module("Configuration From Global Object");
 
@@ -37,4 +42,5 @@ sap.ui.define([
 		assert.ok(!window.$ || window.$ !== window.jQuery, "window.$ not available or not the same as jQuery");
 	});
 
+	QUnit.start();
 });

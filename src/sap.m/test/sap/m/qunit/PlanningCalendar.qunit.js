@@ -3020,11 +3020,11 @@ sap.ui.define([
 		assert.equal(oIntervalRow.getId(), "PC1-Row1", "row returned");
 	});
 
-	QUnit.test("rowHeaderClick", function (assert) {
+	QUnit.test("rowHeaderPress", function (assert) {
 		// Arrange
 		var oSpy,
 			oSecondRow = oPC1.getRows()[1], // Get second row
-			handleRowHeaderClick = function (oEvent) {
+			handleRowHeaderPress = function (oEvent) {
 				var oRow = oEvent.getParameter("row");
 				var sRowHeaderId = oEvent.getParameter("headerId");
 
@@ -3035,8 +3035,8 @@ sap.ui.define([
 				assert.strictEqual(sRowHeaderId, oSecondRow.sId + "-Head", "Returned id must be equal to the second row header id");
 			};
 
-		oSpy = this.spy(handleRowHeaderClick);
-		oPC1.attachEvent("rowHeaderClick", oSpy);
+		oSpy = this.spy(handleRowHeaderPress);
+		oPC1.attachEvent("rowHeaderPress", oSpy);
 
 		// Act - click on the second row header
 		qutils.triggerEvent("click", "PC1-Row2-Head-content");
@@ -3045,7 +3045,7 @@ sap.ui.define([
 		assert.strictEqual(oSpy.callCount, 1, "Event method must be called once");
 
 		// Cleanup
-		oPC1.detachEvent("rowHeaderClick", oSpy);
+		oPC1.detachEvent("rowHeaderPress", oSpy);
 	});
 
 	QUnit.module("Proxy calls", {

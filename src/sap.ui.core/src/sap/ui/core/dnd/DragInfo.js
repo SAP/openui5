@@ -58,7 +58,7 @@ sap.ui.define(["./DragDropBase"],
 			},
 
 			/**
-			 * This event is fired when a drag operation is being ended.
+			 * This event is fired when a drag operation is ended.
 			 *
 			 * @name sap.ui.core.dnd.DragInfo#dragEnd
 			 * @event

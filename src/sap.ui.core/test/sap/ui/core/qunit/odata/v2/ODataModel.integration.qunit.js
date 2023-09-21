@@ -20354,4 +20354,71 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			checkServiceCache(["token0", "token1"]);
 		}).finally(clearCaches);
 	});
+	//*********************************************************************************************
+	// Scenario: For a table where transient entries have messages, the filter returned by requestFilterForMessages does
+	// not refer to these entries. For the BCP incident, check the case no item loaded from the backend has a message:
+	// the filter is null then.
+	// BCP: 2370088390
+	QUnit.test("Filter table where only transient items have messages", function (assert) {
+		let oCreatedContext, oRowsBinding;
+		const oModel = createSalesOrdersModel({preliminaryContext : true});
+		const sView = '\
+<t:Table id="table" rows="{/SalesOrderSet(\'1\')/ToLineItems}" visibleRowCount="2">\
+	<Input id="itemPosition" value="{ItemPosition}" />\
+	<Input id="note" value="{Note}" />\
+</t:Table>';
+
+		this.expectHeadRequest()
+			.expectRequest({
+				requestUri : "SalesOrderSet('1')/ToLineItems?$skip=0&$top=102"
+			}, {
+				results : [{
+					__metadata : {
+						uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10')"
+					},
+					Note : "Bar",
+					ItemPosition : "10",
+					SalesOrderID : "1"
+				}, {
+					__metadata : {
+						uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='20')"
+					},
+					Note : "Baz",
+					ItemPosition : "20",
+					SalesOrderID : "1"
+				}]
+			})
+			.expectValue("itemPosition", ["10", "20"])
+			.expectValue("note", ["Bar", "Baz"]);
+
+		return this.createView(assert, sView, oModel).then(() => {
+			this.expectValue("itemPosition", ["", "10"])
+				.expectValue("note", ["Foo", "Bar"]);
+
+			// code under test
+			oRowsBinding = this.oView.byId("table").getBinding("rows");
+			oCreatedContext = oRowsBinding.create({Note : "Foo"}, /*bAtEnd*/ false, {inactive: true});
+
+			return this.waitForChanges(assert);
+		}).then(() => {
+			const oMessage = { // usually, this message occurs on activation
+				message: "Item position is required",
+				type: "Error",
+				target: oCreatedContext.getPath() + "/ItemPosition",
+				fullTarget: oCreatedContext.getDeepPath() + "/ItemPosition",
+				processor: oModel
+			};
+			this.expectMessages(oMessage);
+
+			// code under test
+			Messaging.addMessages(new Message(oMessage));
+
+			return Promise.all([
+				oRowsBinding.requestFilterForMessages(),
+				this.waitForChanges(assert)
+			]);
+		}).then((aResults) => {
+			assert.strictEqual(aResults[0], null, "no message filter, only transient item has message");
+		});
+	});
 });

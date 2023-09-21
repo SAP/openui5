@@ -461,42 +461,6 @@ sap.ui.define([
 
 	QUnit.module("Event");
 
-	//1780019055
-	QUnit.test("Select event in overflowed mode", function(assert) {
-		//arrange
-		var fnCallback = sinon.spy(),
-			oBtn1 = new SegmentedButtonItem({
-				text: "button 1"
-			}),
-			oBtn2 = new SegmentedButtonItem({
-				text: "button 2"
-			}),
-			oSegmentedButton = new SegmentedButton({
-				width: "300px",
-				items : [oBtn1,oBtn2],
-				select: fnCallback
-			}),
-			oToolbar = new OverflowToolbar({
-				width: "200px",
-				content : [oSegmentedButton]
-			}),
-			oInnerSelect;
-
-		oToolbar.placeAt('qunit-fixture');
-		oCore.applyChanges();
-
-		oInnerSelect = oSegmentedButton.getAggregation("_select");
-
-		//act
-		oInnerSelect.fireChange({ selectedItem: oInnerSelect.getItems()[1] });
-
-		//assert
-		assert.strictEqual(fnCallback.callCount, 1, "select event callback should be called once");
-
-		//clean
-		oToolbar.destroy();
-	});
-
 	//BCP: 1770067241
 	QUnit.test("SegmentedItem press", function(assert) {
 		//arrange
@@ -1293,8 +1257,8 @@ sap.ui.define([
 		var oSB = new SegmentedButton(),
 			oExpected = {
 				canOverflow: true,
-				listenForEvents: ["select"],
-				autoCloseEvents: ["select"], // BCP: 1970012411 In overflow - selection should close the popover.
+				listenForEvents: ["selectionChange"],
+				autoCloseEvents: ["selectionChange"], // BCP: 1970012411 In overflow - selection should close the popover.
 				propsUnrelatedToSize: ["enabled", "selectedKey"],
 				invalidationEvents: ["_containerWidthChanged"],
 				onBeforeEnterOverflow: oSB._onBeforeEnterOverflow,
@@ -1508,59 +1472,6 @@ sap.ui.define([
 	checkKeyboardEventhandling("Firing SPACE event", {
 		keyCode : KeyCodes.SPACE
 	});
-
-	function testNavigationSegmentedButton4Items(options) {
-		//Arrange
-		var sAddIconURI = IconPool.getIconURI("add");
-		var oButton1 = new Button('buttonIcon0', {
-			type: ButtonType.Default,
-			icon: sAddIconURI,
-			enabled: true
-		});
-		var oButton2 = new Button('buttonIcon1', {
-			type: ButtonType.Default,
-			icon: sAddIconURI,
-			enabled: true
-		});
-		var oButton3 = new Button('buttonIcon2', {
-			type: ButtonType.Default,
-			icon: sAddIconURI,
-			enabled: true
-		});
-		var oButton4 = new Button('buttonIcon3', {
-			type: ButtonType.Default,
-			icon: sAddIconURI,
-			enabled: true
-		});
-
-		//System under test
-		var SegmentedIcons = new SegmentedButton('SegmentedIcons', {
-			buttons: [oButton1, oButton2, oButton3, oButton4],
-			select: function(oEvent) {
-				Log.info('press event segmented: ' + oEvent.getParameter('id'));
-			}
-		});
-		SegmentedIcons.placeAt("qunit-fixture");
-		oCore.applyChanges();
-
-		//Arrange
-		var btn = SegmentedIcons.getButtons()[options.initialSelectedIndex];
-		SegmentedIcons.setSelectedButton(btn);
-		btn.focus();
-
-		//Act
-		qutils.triggerKeydown(btn.getDomRef(), options.keycode);
-		qutils.triggerKeyup(btn.getDomRef(), options.keycode);
-
-		//Assert
-		var focussedButtonId = document.activeElement.id;
-		QUnit.assert.strictEqual(focussedButtonId,
-				'buttonIcon' + options.expectedFocusedIndex,
-				"Button with index " + options.expectedFocusedIndex + " should be focussed.");
-
-		//Clean up
-		SegmentedIcons.destroy();
-	}
 
 	QUnit.test("Press 'SPACE' should not scroll the page", function (assert) {
 		// Arrange

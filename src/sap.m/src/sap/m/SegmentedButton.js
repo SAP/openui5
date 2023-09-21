@@ -441,8 +441,8 @@ function(
 	SegmentedButton.prototype.getOverflowToolbarConfig = function() {
 		return {
 			canOverflow: true,
-			listenForEvents: ["select"],
-			autoCloseEvents: ["select"],
+			listenForEvents: ["selectionChange"],
+			autoCloseEvents: ["selectionChange"],
 			propsUnrelatedToSize: ["enabled", "selectedKey"],
 			invalidationEvents: ["_containerWidthChanged"],
 			onBeforeEnterOverflow: this._onBeforeEnterOverflow,

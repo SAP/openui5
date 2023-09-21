@@ -11,6 +11,7 @@
 			rows="{path: '/people'}"
 			appointmentsVisualization="Filled"
 			appointmentSelect="handleAppointmentSelect"
+			rowHeaderPress="handleRowHeaderPress"
 			showEmptyIntervalHeaders="false"
 			showWeekNumbers="true">
 			<toolbarContent>

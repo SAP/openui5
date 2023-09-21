@@ -58,11 +58,11 @@
 				"icon": "learning-assistant",
 				"text": "Walkthrough",
 				"desc": "Created with the 'Walkthrough' tutorial, showing all major development paradigms",
-				"ref": "test-resources/sap/m/demokit/tutorial/walkthrough/37/webapp/test/mockServer.html",
+				"ref": "test-resources/sap/m/demokit/tutorial/walkthrough/38/webapp/test/mockServer.html",
 				"links": {
 					"View Tutorial": "topic/3da5f4be63264db99f2e5b04c5e853db",
-					"Run Integration Tests": "test-resources/sap/m/demokit/tutorial/walkthrough/37/webapp/test/integration/opaTests.qunit.html",
-					"Run Unit Tests": "test-resources/sap/m/demokit/tutorial/walkthrough/37/webapp/test/unit/unitTests.qunit.html"
+					"Run Integration Tests": "test-resources/sap/m/demokit/tutorial/walkthrough/38/webapp/test/integration/opaTests.qunit.html",
+					"Run Unit Tests": "test-resources/sap/m/demokit/tutorial/walkthrough/38/webapp/test/unit/unitTests.qunit.html"
 				},
 				"category": "Tutorial",
 				"config": "test-resources/sap/m/demokit/tutorial/walkthrough/demoapp.json"
@@ -1775,7 +1775,8 @@
 					"Responsiveness",
 					"Device Adaptation",
 					"Content Density",
-					"Accessibility"
+					"Accessibility",
+					"Build"
 				]
 			},
 			{

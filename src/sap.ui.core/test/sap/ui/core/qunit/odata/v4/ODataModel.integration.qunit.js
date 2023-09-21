@@ -29952,7 +29952,8 @@ sap.ui.define([
 	// properly computed.
 	// BCP 1870081505
 	QUnit.test("bindElement called twice on table", function (assert) {
-		var oModel = this.createTeaBusiModel({autoExpandSelect : true}),
+		var fnRespond,
+			oModel = this.createTeaBusiModel({autoExpandSelect : true}),
 			oTable,
 			// Note: table must be "growing" otherwise it does not use ECD
 			sView = '\
@@ -29984,22 +29985,86 @@ sap.ui.define([
 			return that.waitForChanges(assert);
 		}).then(function () {
 			that.expectRequest("TEAMS('TEAM_01')?$select=Team_Id"
-					+ "&$expand=TEAM_2_EMPLOYEES($select=ID,Name)", {
-					Team_Id : "TEAM_01",
-					TEAM_2_EMPLOYEES : [{
-						ID : "3",
-						Name : "Jonathan Smith"
-					}]
-				})
-				.expectChange("name", ["Jonathan Smith"]);
+					+ "&$expand=TEAM_2_EMPLOYEES($select=ID,Name)", new Promise(function (resolve) {
+					fnRespond = resolve.bind(null, {
+						Team_Id : "TEAM_01",
+						TEAM_2_EMPLOYEES : [{
+							ID : "3",
+							Name : "Jonathan Smith"
+						}]
+					});
+				}));
 
 			// code under test
 			oTable.bindElement("/TEAMS('TEAM_01')");
 
-			return that.waitForChanges(assert);
+			return that.waitForChanges(assert, "request");
 		}).then(function () {
-			assert.strictEqual(oTable.getItems().length, 1, "The one entry is still displayed");
+			assert.strictEqual(oTable.getItems().length, 0, "All gone");
+
+			that.expectChange("name", ["Jonathan Smith"]);
+
+			fnRespond();
+
+			return that.waitForChanges(assert, "response");
+		}).then(function () {
+			assert.strictEqual(oTable.getItems().length, 1, "The one entry is displayed again");
 		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: ManagedObject#setParent is called on a table to remove and add a parent. This
+	// causes the list binding to be recreated. No diff must be used in order to avoid duplicate
+	// data.
+	// BCP: 2380130744
+	QUnit.test("BCP: 2380130744", async function (assert) {
+		const oModel = this.createTeaBusiModel({autoExpandSelect : true});
+		// Note: table must be "growing" otherwise it does not use ECD
+		const sView = `
+<FlexBox id="form">
+	<Table id="table" items="{/EMPLOYEES}" growing="true">
+		<Text id="name" text="{Name}"/>
+	</Table>
+</FlexBox>`;
+
+		this.expectRequest("EMPLOYEES?$select=ID,Name&$skip=0&$top=20", {
+				value : [{
+					ID : "3",
+					Name : "Jonathan Smith"
+				}]
+			})
+			.expectChange("name", ["Jonathan Smith"]);
+
+		await this.createView(assert, sView, oModel);
+
+		const oTable = this.oView.byId("table");
+
+		// code under test
+		oTable.setParent(null);
+
+		await this.waitForChanges(assert, "remove parent");
+
+		assert.strictEqual(oTable.getBinding("items"), undefined);
+		assert.strictEqual(oTable.getItems().length, 1);
+		assert.strictEqual(oTable.getItems()[0].getCells()[0].getText(), "Jonathan Smith",
+			"still there!");
+
+		this.expectRequest("EMPLOYEES?$select=ID,Name&$skip=0&$top=20", {
+				value : [{
+					ID : "2",
+					Name : "Frederic Fall"
+				}]
+			})
+			.expectChange("name", ["Frederic Fall"]);
+
+		// code under test
+		oTable.setParent(this.oView.byId("form"));
+
+		await this.waitForChanges(assert, "restore parent");
+
+		checkTable("after restore parent", assert, oTable, ["/EMPLOYEES('2')"], [
+			["Frederic Fall"]
+		]);
 	});
 
 	//*********************************************************************************************

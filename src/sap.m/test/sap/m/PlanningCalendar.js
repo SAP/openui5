@@ -457,10 +457,10 @@ sap.ui.define([
 		oEventLabel.$().attr('style', "background-color: rgb(" + Math.ceil(Math.random() * 255).toString() + "," + Math.ceil(Math.random() * 255).toString() + "," + Math.ceil(Math.random() * 255).toString() + ");");
 	}
 
-	var handleRowHeaderClick = function (oEvent) {
+	var handleRowHeaderPress = function (oEvent) {
 		var oRow = oEvent.getParameter("row"),
 			sEmployeeInfo = oRow.getTitle() + " " + oRow.getText();
-		setEventLog("'rowHeaderClick' on employee:\n'" + sEmployeeInfo + "'");
+		setEventLog("'rowHeaderPress' on employee:\n'" + sEmployeeInfo + "'");
 	};
 
 	var handleLegend = function () {
@@ -1377,7 +1377,7 @@ sap.ui.define([
 		intervalSelect: handleIntervalSelect,
 		appointmentSelect: handleAppointmentSelect,
 		startDateChange: handleStartDateChange,
-		rowHeaderClick: handleRowHeaderClick,
+		rowHeaderPress: handleRowHeaderPress,
 		rowSelectionChange: handleRowSelectionChange
 	});
 

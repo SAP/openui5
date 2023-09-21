@@ -1,20 +1,20 @@
 <mvc:View
-	controllerName="sap.ui.demo.walkthrough.controller.App"
+	controllerName="ui5.walkthrough.controller.App"
 	xmlns="sap.m"
 	xmlns:mvc="sap.ui.core.mvc"
-	displayBlock="true">
+	displayBlock="true"
+>
 	<Shell>
 		<App class="myAppDemoWT">
 			<pages>
 				<Page title="{i18n>homePageTitle}">
-					<headerContent>
-						<Button
-							icon="sap-icon://hello-world"
-							press=".onOpenDialog"/>
-					</headerContent>
 					<content>
-						<mvc:XMLView viewName="sap.ui.demo.walkthrough.view.HelloPanel"/>
-						<mvc:XMLView viewName="sap.ui.demo.walkthrough.view.InvoiceList"/>
+						<mvc:XMLView
+							viewName="ui5.walkthrough.view.HelloPanel"
+						/>
+						<mvc:XMLView
+							viewName="ui5.walkthrough.view.InvoiceList"
+						/>
 					</content>
 				</Page>
 			</pages>
