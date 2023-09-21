@@ -5,10 +5,10 @@
 // Provides control sap.ui.layout.form.FormElement.
 sap.ui.define([
 	'./FormElement',
-	'sap/ui/layout/library'
+	'./FormHelper'
 	], function(
 		FormElement,
-		library
+		FormHelper
 	) {
 	"use strict";
 
@@ -396,9 +396,9 @@ sap.ui.define([
 		for (i = 0; i < aFields.length; i++) {
 			if (i < aFields.length - 1) {
 				if (aDelimiters.length > i) {
-					library.form.FormHelper.updateDelimiter(aDelimiters[i], sDelimiter);
+					FormHelper.updateDelimiter(aDelimiters[i], sDelimiter);
 				} else {
-					var oDelimiter = library.form.FormHelper.createDelimiter(sDelimiter, sId + i);
+					var oDelimiter = FormHelper.createDelimiter(sDelimiter, sId + i);
 					oDelimiter.addStyleClass("sapUiFormDelimiter");
 					this.addAggregation("_delimiters", oDelimiter);
 				}
@@ -441,7 +441,7 @@ sap.ui.define([
 			_updateDisplayText.call(this, false); // if already rendered update text
 		} else {
 			var sId = this.getId() + "-display";
-			oDisplay = library.form.FormHelper.createSemanticDisplayControl("", sId);
+			oDisplay = FormHelper.createSemanticDisplayControl("", sId);
 			oDisplay.addDelegate(oRenderingDelegate, true, this);
 			this.setAggregation("_displayField", oDisplay);
 		}
@@ -490,11 +490,11 @@ sap.ui.define([
 					var oDisplay = this.getAggregation("_displayField");
 					var sText = _concatenateTexts.call(this, aTexts);
 					oDisplay._bNoForceUpdate = true; // prevent double update, as setText might trigger re-rendering (again as a re-rendeing could happen until promise resolved)
-					library.form.FormHelper.updateSemanticDisplayControl(oDisplay, sText);
+					FormHelper.updateSemanticDisplayControl(oDisplay, sText);
 				}.bind(this));
 			} else {
 				var sText = _concatenateTexts.call(this, aTexts);
-				library.form.FormHelper.updateSemanticDisplayControl(oDisplay, sText);
+				FormHelper.updateSemanticDisplayControl(oDisplay, sText);
 			}
 		} else if (oDisplay && oDisplay._bNoForceUpdate) { // execute update on next rendering
 			oDisplay._bNoForceUpdate = false;
