@@ -167,6 +167,9 @@ sap.ui.define(function() {
 				}
 			},
 
+			/**
+			 * @deprecated As of version 1.120
+			 */
 			Core_repeatedExecution: {
 				title: "sap.ui.core.Core: Repeated execution",
 				bootCore: false

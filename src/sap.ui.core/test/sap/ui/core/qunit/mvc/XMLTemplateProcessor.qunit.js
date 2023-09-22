@@ -36,11 +36,12 @@ sap.ui.define([
 			'</Panel>' +
 		'</mvc:View>';
 
-	QUnit.module("parseViewAttributes");
 
 	/**
-	 * @deprecated As of version 1.110
+	 * @deprecated As of version 1.120
 	 */
+	QUnit.module("parseViewAttributes");
+
 	QUnit.test("return value - legacy factory API", function(assert) {
 		var oView = sap.ui.xmlview({
 			viewContent: sRootView
@@ -49,7 +50,7 @@ sap.ui.define([
 		var oSpy = this.spy(oView, "applySettings");
 
 		var xmlNode = XMLHelper.parse(sView).documentElement;
-		XMLTemplateProcessor.parseTemplate(xmlNode, oView, mSettings);
+		XMLTemplateProcessor.parseTemplate(xmlNode, oView);
 
 		assert.strictEqual(oSpy.callCount, 1, "applySettings is called once within the parsing process");
 		var mSettings = oSpy.getCall(0).args[0];
@@ -66,7 +67,7 @@ sap.ui.define([
 			var oSpy = this.spy(oView, "applySettings");
 
 			var xmlNode = XMLHelper.parse(sView).documentElement;
-			XMLTemplateProcessor.parseTemplate(xmlNode, oView, mSettings);
+			XMLTemplateProcessor.parseTemplate(xmlNode, oView);
 
 			assert.strictEqual(oSpy.callCount, 1, "applySettings is called once within the parsing process");
 			var mSettings = oSpy.getCall(0).args[0];
@@ -75,7 +76,6 @@ sap.ui.define([
 			assert.strictEqual(mSettings.height, "100%", "height is parsed");
 			assert.notOk(mSettings.hasOwnProperty("unknownProperty"), "unknownProperty should be ignored");
 		}.bind(this));
-
 	});
 
 	QUnit.module("parseScalarType", {
@@ -195,6 +195,9 @@ sap.ui.define([
 		}.bind(this));
 	});
 
+	/**
+	 * @deprecated As of version 1.120
+	 */
 	QUnit.module("enrichTemplateIds", {
 		beforeEach: function() {
 			this.pView = XMLView.create({

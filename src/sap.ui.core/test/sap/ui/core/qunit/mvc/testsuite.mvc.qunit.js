@@ -101,6 +101,14 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 					}
 				}
 			},
+			XMLTemplateProcessorRequireXML_unavoidablySync: {
+				title: "QUnit Page for XMLTemplateProcessor - Require in XML (cases that use sync processing)",
+				loader: {
+					paths: {
+						"testdata": "test-resources/sap/ui/core/qunit/testdata"
+					}
+				}
+			},
 			CacheManager: {
 				title: "sap.ui.core.cache.CacheManager",
 				module: "test-resources/sap/ui/core/qunit/CacheManager.qunit"
