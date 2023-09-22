@@ -174,6 +174,77 @@ sap.ui.define([
 		oComponent.destroy();
 	});
 
+	QUnit.module("Routing classes: Loading behavior", {
+		/**
+		 * @deprecated since 1.120
+		 */
+		beforeEach() {
+			this.requireSyncSpy = sinon.spy(sap.ui, "requireSync");
+		},
+		/**
+		 * @deprecated since 1.120
+		 */
+		afterEach() {
+			this.requireSyncSpy.restore();
+		}
+	});
+
+	QUnit.test("[Router] manifest = false", async function(assert) {
+		const oComp = await Component.create({
+			name: "sap.ui.test.routerPreloading",
+			manifest: false
+		});
+
+		assert.ok(oComp.getRouter().isA("sap.m.routing.Router"), "sap.m.routing.Router was correctly instantiated");
+
+		/** @deprecated since 1.120 */
+		assert.equal(this.requireSyncSpy.callCount, 0, "No sync request issued");
+
+		oComp.destroy();
+	});
+
+	QUnit.test("[Router] manifest = true", async function(assert) {
+		const oComp = await Component.create({
+			name: "sap.ui.test.routerPreloading"
+			// manifest: true // implicitly set
+		});
+
+		assert.ok(oComp.getRouter().isA("sap.m.routing.Router"), "sap.m.routing.Router was correctly instantiated");
+
+		/** @deprecated since 1.120 */
+		assert.equal(this.requireSyncSpy.callCount, 0, "No sync request issued");
+
+		oComp.destroy();
+	});
+
+	QUnit.test("[Targets] manifest = false", async function(assert) {
+		const oComp = await Component.create({
+			name: "sap.ui.test.targetsPreloading",
+			manifest: false
+		});
+
+		assert.ok(oComp.getTargets().isA("sap.m.routing.Targets"), "sap.m.routing.Router was correctly instantiated");
+
+		/** @deprecated since 1.120 */
+		assert.equal(this.requireSyncSpy.callCount, 0, "No sync request issued");
+
+		oComp.destroy();
+	});
+
+	QUnit.test("[Targets] manifest = true", async function(assert) {
+		const oComp = await Component.create({
+			name: "sap.ui.test.targetsPreloading",
+			manifest: false
+		});
+
+		assert.ok(oComp.getTargets().isA("sap.m.routing.Targets"), "sap.m.routing.Router was correctly instantiated");
+
+		/** @deprecated since 1.120 */
+		assert.equal(this.requireSyncSpy.callCount, 0, "No sync request issued");
+
+		oComp.destroy();
+	});
+
 	QUnit.module("Special Cases & Compatibility Check", {
 		before: function() {
 			// Root View
@@ -391,7 +462,7 @@ sap.ui.define([
 		sinon.assert.calledOnce(fnDestroySpy);
 	});
 
-	QUnit.module("Routing", {
+	QUnit.module("Routing - General", {
 		beforeEach : function () {
 			// System under test
 			return Component.create({
@@ -440,7 +511,7 @@ sap.ui.define([
 		}.bind(this));
 	});
 
-	QUnit.module("Routing", {
+	QUnit.module("Routing - Targets", {
 		beforeEach : function (assert) {
 			var done = assert.async();
 			var that = this;
@@ -487,8 +558,7 @@ sap.ui.define([
 		beforeEach : function () {
 			// System under test
 			return Component.create({
-				name: "sap.ui.test.routing",
-				async: true
+				name: "sap.ui.test.routing"
 			}).then(function(oComponent) {
 				this.oComponent = oComponent;
 			}.bind(this));
