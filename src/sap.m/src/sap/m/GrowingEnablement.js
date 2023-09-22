@@ -66,7 +66,6 @@ sap.ui.define([
 			this._iRenderedDataItems = iRenderedItemsLength;
 			this._iLimit = iRenderedItemsLength;
 			this._bLoading = false;
-			this._sGroupingPath = "";
 			this._bDataRequested = false;
 			this._bSkippedItemsUpdateUntilDataReceived = false;
 			this._iLastItemsCount = 0;
@@ -354,7 +353,7 @@ sap.ui.define([
 		_getGroupingPath : function(oBinding) {
 			var aSorters = oBinding.aSorters || [];
 			var oSorter = aSorters[0] || {};
-			return (oSorter.fnGroup) ? oSorter.sPath || "" : "";
+			return (oSorter.fnGroup) ? oSorter.sPath || "" : undefined;
 		},
 
 		// if table has pop-in then we have two rows for one item
@@ -725,7 +724,7 @@ sap.ui.define([
 
 				} else {
 
-					if (sGroupingPath && !this._sGroupingPath) {
+					if (sGroupingPath != undefined && this._sGroupingPath == undefined) {
 						// if it was already grouped then we need to remove group headers first
 						oControl.removeGroupHeaders(true);
 					}
