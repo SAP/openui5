@@ -51,13 +51,13 @@ sap.ui.define([
 	 * @property {boolean} [extension.technicallyGroupable=false]
 	 *   If <code>groupable</code> is set to <code>false</code> to exclude it from group personalization on the UI, the UI still needs to know that
 	 *   this property is groupable for data requests.
-	 * @property {boolean} [technicallyAggregatable=false]
+	 * @property {boolean} [extension.technicallyAggregatable=false]
 	 *   If <code>aggregatable</code> is set to <code>false</code> to exclude it from aggregate personalization on the UI, the UI still needs to know
 	 *   that this property is aggregatable for data requests.
-	 * @property {Object} [customAggregate]
+	 * @property {Object} [extension.customAggregate]
 	 *   Provide an object, it can be empty, if there is a <code>CustomAggregate</code> whose <code>Qualifier</code> is equal to the name of this
 	 *   property. This enables the option to show totals if <code>aggregatable</code> is <code>true</code>.
-	 * @property {string[]} [customAggregate.contextDefiningProperties]
+	 * @property {string[]} [extension.customAggregate.contextDefiningProperties]
 	 *   A list of related properties (by name) that are the context-defining properties of the <code>CustomAggregate</code>.
 	 *
 	 * @public
