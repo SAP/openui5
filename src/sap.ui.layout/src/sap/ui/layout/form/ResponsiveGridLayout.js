@@ -37,19 +37,19 @@ sap.ui.define([
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * The <code>ResponsiveGridLayout</code> control renders a <code>Form</code> using a responsive grid. Internally the <code>Grid</code> control is used for rendering.
-	 * Using this layout, the <code>Form</code> is rendered in a responsive way.
-	 * Depending on the available space, the <code>FormContainers</code> are rendered in one or different columns and the labels are rendered in the same row as the fields or above the fields.
+	 * The <code>ResponsiveGridLayout</code> control renders a {@link sap.ui.layout.form.Form Form} using a responsive grid. Internally the {@link sap.ui.layout.Grid Grid} control is used for rendering.
+	 * Using this layout, the {@link sap.ui.layout.form.Form Form} is rendered in a responsive way.
+	 * Depending on the available space, the {@link sap.ui.layout.form.FormContainer FormContainers} are rendered in one or different columns and the labels are rendered in the same row as the fields or above the fields.
 	 * This behavior can be influenced by the properties of this layout control.
 	 *
-	 * On the <code>FormContainers</code>, labels and content fields, <code>GridData</code> can be used to change the default rendering.
-	 * <code>GridData</code> is not supported for <code>FormElements</code>.
+	 * On the {@link sap.ui.layout.form.FormContainer FormContainers}, labels and content fields, {@link sap.ui.layout.GridGata GridData} can be used to change the default rendering.
+	 * {@link sap.ui.layout.GridGata GridData} is not supported for {@link sap.ui.layout.form.FormElement FormElements}.
 	 *
-	 * <b>Note:</b> If <code>GridData</code> is used, this may result in a much more complex layout than the default one.
+	 * <b>Note:</b> If {@link sap.ui.layout.GridGata GridData} is used, this may result in a much more complex layout than the default one.
 	 * This means that in some cases, the calculation for the other content may not bring the expected result.
-	 * In such cases, <code>GridData</code> should be used for all content controls to disable the default behavior.
+	 * In such cases, {@link sap.ui.layout.GridGata GridData} should be used for all content controls to disable the default behavior.
 	 *
-	 * This control cannot be used stand-alone, it just renders a <code>Form</code>, so it must be assigned to a <code>Form</code> using the <code>layout</code> aggregation.
+	 * This control cannot be used stand-alone, it just renders a {@link sap.ui.layout.form.Form Form}, so it must be assigned to a {@link sap.ui.layout.form.Form Form} using the <code>layout</code> aggregation.
 	 * @extends sap.ui.layout.form.FormLayout
 	 * @version ${version}
 	 *
@@ -75,7 +75,7 @@ sap.ui.define([
 				/**
 				 * Default span for labels in large size.
 				 *
-				 * <b>Note:</b> If <code>adjustLabelSpan</code> is set, this property is only used if more than 1 <code>FormContainer</code> is in one line. If only 1 <code>FormContainer</code> is in the line, then the <code>labelSpanM</code> value is used.
+				 * <b>Note:</b> If <code>adjustLabelSpan</code> is set, this property is only used if more than 1 {@link sap.ui.layout.form.FormContainer FormContainer} is in one line. If only 1 {@link sap.ui.layout.form.FormContainer FormContainer} is in the line, then the <code>labelSpanM</code> value is used.
 				 * @since 1.16.3
 				 */
 				labelSpanL : {type : "int", group : "Misc", defaultValue : 4},
@@ -83,7 +83,7 @@ sap.ui.define([
 				/**
 				 * Default span for labels in medium size.
 				 *
-				 * <b>Note:</b> If <code>adjustLabelSpan</code> is set this property is used for full-size <code>FormContainers</code>. If more than one <code>FormContainer</code> is in one line, <code>labelSpanL</code> is used.
+				 * <b>Note:</b> If <code>adjustLabelSpan</code> is set this property is used for full-size {@link sap.ui.layout.form.FormContainer FormContainers}. If more than one {@link sap.ui.layout.form.FormContainer FormContainer} is in one line, <code>labelSpanL</code> is used.
 				 * @since 1.16.3
 				 */
 				labelSpanM : {type : "int", group : "Misc", defaultValue : 2},
@@ -95,14 +95,14 @@ sap.ui.define([
 				labelSpanS : {type : "int", group : "Misc", defaultValue : 12},
 
 				/**
-				 * If set, the usage of <code>labelSpanL</code> and <code>labelSpanM</code> are dependent on the number of <code>FormContainers</code> in one row.
-				 * If only one <code>FormContainer</code> is displayed in one row, <code>labelSpanM</code> is used to define the size of the label.
+				 * If set, the usage of <code>labelSpanL</code> and <code>labelSpanM</code> are dependent on the number of {@link sap.ui.layout.form.FormContainer FormContainers} in one row.
+				 * If only one {@link sap.ui.layout.form.FormContainer FormContainer} is displayed in one row, <code>labelSpanM</code> is used to define the size of the label.
 				 * This is the same for medium and large <code>Forms</code>.
-				 * This is done to align the labels on forms where full-size <code>FormContainers</code> and multiple-column rows are used in the same <code>Form</code>
-				 * (because every <code>FormContainer</code> has its own <code>Grid</code> inside).
+				 * This is done to align the labels on forms where full-size {@link sap.ui.layout.form.FormContainer FormContainers} and multiple-column rows are used in the same {@link sap.ui.layout.form.Form Form}
+				 * (because every {@link sap.ui.layout.form.FormContainer FormContainer} has its own {@link sap.ui.layout.Grid Grid} inside).
 				 *
-				 * If not set, the usage of <code>labelSpanL</code> and <code>labelSpanM</code> are dependent on the <code>Form</code> size.
-				 * The number of <code>FormContainers</code> doesn't matter in this case.
+				 * If not set, the usage of <code>labelSpanL</code> and <code>labelSpanM</code> are dependent on the {@link sap.ui.layout.form.Form Form} size.
+				 * The number of {@link sap.ui.layout.form.FormContainer FormContainers} doesn't matter in this case.
 				 * @since 1.34.0
 				 */
 				adjustLabelSpan : {type : "boolean", group : "Misc", defaultValue : true},
@@ -157,11 +157,11 @@ sap.ui.define([
 				columnsM : {type : "int", group : "Misc", defaultValue : 1},
 
 				/**
-				 * If the <code>Form</code> contains only one single <code>FormContainer</code> and this property is set,
-				 * the <code>FormContainer</code> is displayed using the full size of the <code>Form</code>.
+				 * If the {@link sap.ui.layout.form.Form Form} contains only one single {@link sap.ui.layout.form.FormContainer FormContainer} and this property is set,
+				 * the {@link sap.ui.layout.form.FormContainer FormContainer} is displayed using the full size of the {@link sap.ui.layout.form.Form Form}.
 				 * In this case the properties <code>columnsXL</code>, <code>columnsL</code> and <code>columnsM</code> are ignored.
 				 *
-				 * In all other cases the <code>FormContainer</code> is displayed in the size of one column.
+				 * In all other cases the {@link sap.ui.layout.form.FormContainer FormContainer} is displayed in the size of one column.
 				 * @since 1.34.0
 				 */
 				singleContainerFullSize : {type : "boolean", group : "Misc", defaultValue : true},
