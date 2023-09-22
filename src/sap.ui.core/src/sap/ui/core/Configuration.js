@@ -13,6 +13,7 @@ sap.ui.define([
 	"sap/ui/core/_ConfigurationProvider",
 	"sap/ui/core/getCompatibilityVersion",
 	"sap/ui/core/date/CalendarWeekNumbering",
+	"sap/ui/core/Security",
 	"sap/ui/core/Theming",
 	"sap/base/util/Version",
 	"sap/base/Log",
@@ -33,6 +34,7 @@ sap.ui.define([
 		_ConfigurationProvider,
 		getCompatibilityVersion,
 		CalendarWeekNumbering,
+		Security,
 		Theming,
 		Version,
 		Log,
@@ -135,14 +137,6 @@ sap.ui.define([
 			} else {
 				throw new Error("illegal state");
 			}
-		}
-	}
-
-	function getMetaTagValue(sName) {
-		var oMetaTag = document.querySelector("META[name='" + sName + "']"),
-			sMetaContent = oMetaTag && oMetaTag.getAttribute("content");
-		if (sMetaContent) {
-			return sMetaContent;
 		}
 	}
 
@@ -376,36 +370,6 @@ sap.ui.define([
 		}
 
 		config['xx-fiori2Adaptation'] = vAdaptations;
-
-		config["allowlistService"] = config["allowlistService"] || /* fallback to legacy config */ config["whitelistService"];
-
-		// Configure allowlistService / frameOptions via <meta> tag if not already defined via UI5 configuration
-		if (!config["allowlistService"]) {
-			var sAllowlistMetaTagValue = getMetaTagValue('sap.allowlistService') || /* fallback to legacy config */ getMetaTagValue('sap.whitelistService');
-			if (sAllowlistMetaTagValue) {
-				config["allowlistService"] = sAllowlistMetaTagValue;
-				// Set default "frameOptions" to "trusted" instead of "allow"
-				if (config["frameOptions"] === "default") {
-					config["frameOptions"] = "trusted";
-				}
-			}
-		}
-
-		// Verify and set default for "frameOptions" configuration
-		if (config["frameOptions"] === "default" ||
-			(config["frameOptions"] !== "allow"
-			&& config["frameOptions"] !== "deny"
-			&& config["frameOptions"] !== "trusted")) {
-
-			// default => allow
-			config["frameOptions"] = "allow";
-		}
-
-		// frameOptionsConfig: Handle compatibility of renamed config option
-		var oFrameOptionsConfig = config["frameOptionsConfig"];
-		if (oFrameOptionsConfig) {
-			oFrameOptionsConfig.allowlist = oFrameOptionsConfig.allowlist || oFrameOptionsConfig.whitelist;
-		}
 
 		// in case the flexibilityServices configuration was set to a non-empty, non-default value, sap.ui.fl becomes mandatory
 		// if not overruled by xx-skipAutomaticFlLibLoading
@@ -1007,26 +971,6 @@ sap.ui.define([
 		},
 
 		/**
-		 * frameOptions mode (allow/deny/trusted).
-		 *
-		 * @return {string} frameOptions mode
-		 * @public
-		 */
-		getFrameOptions : function() {
-			return Configuration.getValue("frameOptions");
-		},
-
-		/**
-		 * URL of the allowlist service.
-		 *
-		 * @return {string} allowlist service URL
-		 * @public
-		 */
-		getAllowlistService : function() {
-			return Configuration.getValue("allowlistService");
-		},
-
-		/**
 		 * Name (ID) of a UI5 module that implements file share support.
 		 *
 		 * If no implementation is known, <code>undefined</code> is returned.
@@ -1079,35 +1023,6 @@ sap.ui.define([
 				// access to local storage might fail due to security / privacy settings
 			}
 			return result;
-		},
-
-		/**
-		 * Returns the security token handlers of an OData V4 model.
-		 *
-		 * @returns {Array<function(sap.ui.core.URI):Promise>} the security token handlers (an empty array if there are none)
-		 * @public
-		 * @since 1.95.0
-		 * @see #setSecurityTokenHandlers
-		 */
-		getSecurityTokenHandlers : function () {
-			return Configuration.getValue("securityTokenHandlers").slice();
-		},
-
-		/**
-		 * Sets the security token handlers for an OData V4 model. See chapter
-		 * {@link topic:9613f1f2d88747cab21896f7216afdac/section_STH Security Token Handling}.
-		 *
-		 * @param {Array<function(sap.ui.core.URI):Promise>} aSecurityTokenHandlers - The security token handlers
-		 * @public
-		 * @since 1.95.0
-		 * @see #getSecurityTokenHandlers
-		 */
-		setSecurityTokenHandlers : function (aSecurityTokenHandlers) {
-			aSecurityTokenHandlers.forEach(function (fnSecurityTokenHandler) {
-				check(typeof fnSecurityTokenHandler === "function",
-					"Not a function: " + fnSecurityTokenHandler);
-			});
-			config.securityTokenHandlers = aSecurityTokenHandlers.slice();
 		},
 
 		/**

@@ -257,7 +257,7 @@ sap.ui.define(["./PluginBase", "sap/base/Log", "sap/ui/core/Core", "sap/base/str
 		var aAllSelectedRowContexts = [];
 		var bCopySparse = this.getCopySparse();
 		var fnExludeContext = this.getExcludeContext();
-		var oCellSelectorPlugin = PluginBase.getPlugin(this.getParent(), "sap.m.plugins.CellSelector");
+		var oCellSelectorPlugin = PluginBase.getPlugin(this.getParent(), "sap.m.plugins.CellSelector") ?? PluginBase.getPlugin(oControl, "sap.m.plugins.CellSelector");
 		var mCellSelectionRange = oCellSelectorPlugin && oCellSelectorPlugin.getSelectionRange();
 		var aCellSelectorRowContexts = mCellSelectionRange ? oCellSelectorPlugin.getSelectedRowContexts() : [];
 		var bCellSelectorRowContextsMustBeMerged = Boolean(aCellSelectorRowContexts.length);

@@ -66,25 +66,18 @@ sap.ui.define([
 	QUnit.test("shouldRender", function(assert) {
 		var that = this;
 
-		function test(bShouldRender, bVisible, bGrouped, vTemplate) {
+		function test(bShouldRender, bVisible, vTemplate) {
 			that._oColumn.setVisible(bVisible);
-			if (that._oColumn.setGrouped) {
-				that._oColumn.setGrouped(bGrouped);
-			}
 			that._oColumn.setTemplate(vTemplate);
 
-			var sMessage = "Returned " + bShouldRender + ": " + (bVisible ? "Visible" : "Not visible") + (that._oColumn.setGrouped ? ", " + (bGrouped ? "grouped" : "not grouped") : "") + ", " + (vTemplate != null ? ",has template" : "has no template");
+			var sMessage = "Returned " + bShouldRender + ": " + (bVisible ? "Visible" : "Not visible") + ", " + (vTemplate != null ? ",has template" : "has no template");
 			assert.strictEqual(that._oColumn.shouldRender(), bShouldRender, sMessage);
 		}
 
-		test(true, true, false, "dummy");
-		test(false, true, true, "dummy");
-		test(false, false, false, "dummy");
-		test(false, false, true, "dummy");
-		test(false, true, true, null);
-		test(false, true, false, null);
-		test(false, false, false, null);
-		test(false, false, true, null);
+		test(true, true, "dummy");
+		test(false, false, "dummy");
+		test(false, true, null);
+		test(false, false, null);
 	});
 
 	QUnit.test("#isDragAllowed", function(assert) {

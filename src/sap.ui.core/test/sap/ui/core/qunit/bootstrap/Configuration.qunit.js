@@ -34,6 +34,7 @@ sap.ui.define([
 	};
 
 	var AnimationMode = Configuration.AnimationMode;
+	let mConfigStubValues = {};
 
 	var sLocalTimezone = TimezoneUtil.getLocalTimezone();
 
@@ -1039,109 +1040,92 @@ sap.ui.define([
 
 	QUnit.module("Allowlist configuration options", {
 		beforeEach: function() {
-			delete window["sap-ui-config"]["allowlistservice"];
-			delete window["sap-ui-config"]["frameoptionsconfig"];
+			BaseConfig._.invalidate();
+			this.oStub = sinon.stub(BaseConfig, "get");
+			this.oStub.callsFake((oParams) =>
+				(mConfigStubValues.hasOwnProperty(oParams.name) ? mConfigStubValues[oParams.name] : this.oStub.wrappedMethod.call(this, oParams))
+			);
 		},
 		afterEach: function() {
-			delete window["sap-ui-config"]["allowlistservice"];
-			delete window["sap-ui-config"]["frameoptionsconfig"];
-			if (this.oMetaWhiteList) {
-				this.oMetaWhiteList.remove();
-				this.oMetaWhiteList = null;
-			}
-			if (this.oMetaAllowList) {
-				this.oMetaAllowList.remove();
-				this.oMetaAllowList = null;
-			}
+			mConfigStubValues = {};
+			this.oStub.restore();
 		}
 	});
 
 	// AllowList Service only
 	QUnit.test("allowlistService", function(assert) {
 		var SERVICE_URL = "/service/url/from/config";
-		window["sap-ui-config"]["allowlistservice"] = SERVICE_URL;
-		Configuration.setCore();
+		mConfigStubValues["sapUiAllowlistService"] = SERVICE_URL;
+
 		assert.equal(Configuration.getAllowlistService(), SERVICE_URL, "Successor getAllowlistService should return service url");
 	});
 
-	QUnit.test("sap.allowlistService meta tag", function(assert) {
-		var SERVICE_URL = "/service/url/from/meta";
-		this.oMetaWhiteList = document.createElement('meta');
-		this.oMetaWhiteList.setAttribute('name', 'sap.allowlistService');
-		this.oMetaWhiteList.setAttribute('content', SERVICE_URL);
-		document.head.appendChild(this.oMetaWhiteList);
-
-		Configuration.setCore();
-		assert.equal(Configuration.getAllowlistService(), SERVICE_URL, "Successor getAllowlistService should return service url");
+	QUnit.module("OData V4", {
+		beforeEach: function() {
+			BaseConfig._.invalidate();
+			this.oStub = sinon.stub(GlobalConfigurationProvider, "get");
+			this.oStub.callsFake((sKey) =>
+				(mConfigStubValues.hasOwnProperty(sKey) ? mConfigStubValues[sKey] : this.oStub.wrappedMethod.call(this, sKey))
+			);
+		},
+		afterEach: function() {
+			mConfigStubValues = {};
+			this.oStub.restore();
+		}
 	});
-
-	QUnit.test("frameOptionsConfig.allowlist", function(assert) {
-		var LIST = "example.com";
-		window["sap-ui-config"]["frameoptionsconfig"] = {
-			allowlist: LIST
-		};
-		Configuration.setCore();
-		assert.equal(Configuration.getValue("frameOptionsConfig").allowlist, LIST, "Successor frameOptionsConfig.allowlist should be set");
-	});
-
-	QUnit.module("OData V4");
 
 	QUnit.test("securityTokenHandlers", function(assert) {
 		var oCfg = Configuration,
 			fnSecurityTokenHandler1 = function () {},
-			fnSecurityTokenHandler2 = function () {},
-			aSecurityTokenHandlers = [fnSecurityTokenHandler1];
+			fnSecurityTokenHandler2 = function () {};
+		BaseConfig._.invalidate();
 
 		// code under test
-		Configuration.setCore();
-
 		assert.deepEqual(oCfg.getSecurityTokenHandlers(), []);
 
 		// bootstrap does some magic and converts to lower case, test does not :-(
-		window["sap-ui-config"].securitytokenhandlers = [];
+		mConfigStubValues["sapUiSecurityTokenHandlers"] = [];
+		BaseConfig._.invalidate();
 
 		// code under test
-		Configuration.setCore();
-
 		assert.strictEqual(oCfg.getSecurityTokenHandlers().length, 0, "check length");
 
-		window["sap-ui-config"].securitytokenhandlers = aSecurityTokenHandlers;
+		mConfigStubValues["sapUiSecurityTokenHandlers"] = [fnSecurityTokenHandler1];
+		BaseConfig._.invalidate();
 
 		// code under test
-		Configuration.setCore();
-
-		assert.notStrictEqual(aSecurityTokenHandlers, oCfg.securityTokenHandlers);
-		assert.strictEqual(oCfg.getSecurityTokenHandlers().length, 1, "check length");
 		assert.strictEqual(oCfg.getSecurityTokenHandlers()[0], fnSecurityTokenHandler1, "check Fn");
+		assert.strictEqual(oCfg.getSecurityTokenHandlers().length, 1, "check length");
 
-		window["sap-ui-config"].securitytokenhandlers
+		mConfigStubValues["sapUiSecurityTokenHandlers"]
 			= [fnSecurityTokenHandler1, fnSecurityTokenHandler2];
+		BaseConfig._.invalidate();
 
 		// code under test
-		Configuration.setCore();
-
 		assert.strictEqual(oCfg.getSecurityTokenHandlers().length, 2, "check length");
 		assert.strictEqual(oCfg.getSecurityTokenHandlers()[0], fnSecurityTokenHandler1, "check Fn");
 		assert.strictEqual(oCfg.getSecurityTokenHandlers()[1], fnSecurityTokenHandler2, "check Fn");
 
-		window["sap-ui-config"].securitytokenhandlers = fnSecurityTokenHandler1;
+		mConfigStubValues["sapUiSecurityTokenHandlers"] = fnSecurityTokenHandler1;
+		BaseConfig._.invalidate();
 
 		assert.throws(function () {
 			// code under test
-			Configuration.setCore();
+			oCfg.getSecurityTokenHandlers();
 		}); // aSecurityTokenHandlers.forEach is not a function
 
-		window["sap-ui-config"].securitytokenhandlers = [fnSecurityTokenHandler1, "foo"];
+		mConfigStubValues["sapUiSecurityTokenHandlers"] = [fnSecurityTokenHandler1, "foo"];
+		BaseConfig._.invalidate();
 
 		assert.throws(function () {
 			// code under test
-			Configuration.setCore();
+			oCfg.getSecurityTokenHandlers();
 		}, "Not a function: foo");
 
 		// code under test
-		oCfg.setSecurityTokenHandlers(aSecurityTokenHandlers);
+		oCfg.setSecurityTokenHandlers([fnSecurityTokenHandler1]);
 
-		assert.notStrictEqual(aSecurityTokenHandlers, oCfg.securityTokenHandlers);
+		assert.notStrictEqual([fnSecurityTokenHandler1], oCfg.securityTokenHandlers);
 		assert.notStrictEqual(oCfg.getSecurityTokenHandlers(), oCfg.securityTokenHandlers);
 		assert.strictEqual(oCfg.getSecurityTokenHandlers().length, 1);
 		assert.strictEqual(oCfg.getSecurityTokenHandlers()[0], fnSecurityTokenHandler1);
@@ -1172,7 +1156,5 @@ sap.ui.define([
 		oCfg.setSecurityTokenHandlers([]);
 
 		assert.deepEqual(oCfg.getSecurityTokenHandlers(), []);
-
-		delete window["sap-ui-config"].securitytokenhandlers;
 	});
 });
