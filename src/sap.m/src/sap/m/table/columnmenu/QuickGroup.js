@@ -147,6 +147,10 @@ sap.ui.define([
 		}
 	};
 
+	QuickGroup.prototype.getEffectiveQuickActions = function() {
+		return (this.getVisible() && this.getItems().length) ? [this] : [];
+	};
+
 	QuickGroup.prototype.onChange = function(oEvent, oItem) {
 		oItem.setProperty("grouped", oEvent.getParameters().pressed, true);
 		this.fireChange({item: oItem});
