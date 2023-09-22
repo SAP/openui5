@@ -445,6 +445,10 @@ sap.ui.define([
 		//Act part 2 - group the list
 		jQuery.when(oInitialLoadDeferred).then(function () {
 			iInitialItemCount = oList.getItems().length;
+
+			oList.setBusyIndicatorDelay(0);
+			oList.focus();
+			oList.setBusy(true);
 			groupList(oList);
 
 			oList.attachEventOnce("updateFinished", oAfterGroupingDeferred.resolve);
@@ -452,6 +456,8 @@ sap.ui.define([
 
 		//Act part 3 - ungroup the list
 		jQuery.when(oAfterGroupingDeferred).then(function () {
+			assert.strictEqual(document.activeElement, oList.getItems()[0].getDomRef(), "The focus is set correctly");
+
 			//ungroup
 			oList.getBinding("items").sort([]);
 

@@ -822,7 +822,6 @@ sap.ui.define([
 
 				// put the focus to the newly added item if growing button is pressed
 				// or to the item if the focus was on the items container
-
 				if (this._bHadFocus) {
 					this._bHadFocus = false;
 					jQuery(this._oControl.getNavigationRoot()).trigger("focus");
