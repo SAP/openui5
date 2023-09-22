@@ -61,10 +61,9 @@ sap.ui.define(['./ColumnMenu', "sap/ui/unified/MenuRenderer", './utils/TableUtil
 				oColumn.getGrouped() ? "accept" : null,
 				function(oEvent) {
 					var oMenuItem = oEvent.getSource();
-					var bGrouped = oColumn.getGrouped();
+					var bGrouped = !oColumn.getGrouped();
 
-					oColumn._setGrouped(!bGrouped);
-					if (!bGrouped && !oColumn.getShowIfGrouped()) {
+					if (bGrouped && !oColumn.getShowIfGrouped()) {
 						var oDomRef;
 
 						if (TableUtils.isNoDataVisible(oTable)) {
@@ -77,7 +76,9 @@ sap.ui.define(['./ColumnMenu', "sap/ui/unified/MenuRenderer", './utils/TableUtil
 							oDomRef.focus();
 						}
 					}
-					oMenuItem.setIcon(!bGrouped ? "sap-icon://accept" : null);
+
+					oColumn._setGrouped(bGrouped);
+					oMenuItem.setIcon(bGrouped ? "sap-icon://accept" : null);
 				}
 			);
 			this.addItem(this._oGroupIcon);
