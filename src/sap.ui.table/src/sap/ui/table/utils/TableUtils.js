@@ -339,8 +339,7 @@ sap.ui.define([
 		 * @returns {boolean} Whether the no data text is shown.
 		 */
 		isNoDataVisible: function(oTable) {
-			return oTable.getShowNoData() && (oTable._getRowMode() && !oTable._getRowMode().isNoDataDisabled()) && !TableUtils.hasData(oTable)
-				   || TableUtils.getVisibleColumnCount(oTable) === 0;
+			return !oTable._isNoDataDisabled() && !TableUtils.hasData(oTable) || TableUtils.getVisibleColumnCount(oTable) === 0;
 		},
 
 		/**

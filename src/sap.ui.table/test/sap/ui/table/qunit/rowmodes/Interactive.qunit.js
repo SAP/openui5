@@ -55,11 +55,14 @@ sap.ui.define([
 		},
 		after: function() {
 			TableQUnitUtils.setDefaultSettings(this.mDefaultSettings);
+		},
+		getDefaultRowMode: function(oTable) {
+			return oTable.getAggregation("_hiddenDependents").filter((oObject) => oObject.isA("sap.ui.table.rowmodes.Interactive"))[0];
 		}
 	});
 
 	QUnit.test("Instance", function(assert) {
-		assert.ok(TableUtils.isA(this.oTable._getRowMode(), "sap.ui.table.rowmodes.Interactive"),
+		assert.ok(TableUtils.isA(this.getDefaultRowMode(this.oTable), "sap.ui.table.rowmodes.Interactive"),
 			"The table creates an instance of sap.ui.table.rowmodes.Interactive");
 	});
 
@@ -72,7 +75,7 @@ sap.ui.define([
 			minAutoRowCount: 3,
 			rowHeight: 9
 		});
-		var oMode = oTable._getRowMode();
+		var oMode = this.getDefaultRowMode(oTable);
 
 		assert.strictEqual(oMode.getRowCount(), 5, "The row count is taken from the table");
 		assert.strictEqual(oMode.getFixedTopRowCount(), 1, "The fixed row count is taken from the table");

@@ -137,6 +137,11 @@ sap.ui.define([
 
 		TableUtils.Hook.register(oTable, Hook.Table.RowsUnbound, this._onTableRowsUnbound, this);
 		TableUtils.Hook.register(oTable, Hook.Table.UpdateRows, this._onTableUpdateRows, this);
+		TableUtils.Hook.register(oTable, Hook.TableRenderer.RenderTableStyles, this.applyTableStyles, this);
+		TableUtils.Hook.register(oTable, Hook.TableRenderer.RenderInTableBottomArea, this.renderInTableBottomArea, this);
+		TableUtils.Hook.register(oTable, Hook.TableRenderer.RenderRowContainerStyles, this.applyRowContainerStyles, this);
+		TableUtils.Hook.register(oTable, Hook.TableRenderer.RenderRowStyles, this.renderRowStyles, this);
+		TableUtils.Hook.register(oTable, Hook.TableRenderer.RenderCellContentStyles, this.renderCellContentStyles, this);
 	};
 
 	/**
@@ -150,6 +155,11 @@ sap.ui.define([
 
 		TableUtils.Hook.deregister(oTable, Hook.Table.RowsUnbound, this._onTableRowsUnbound, this);
 		TableUtils.Hook.deregister(oTable, Hook.Table.UpdateRows, this._onTableUpdateRows, this);
+		TableUtils.Hook.deregister(oTable, Hook.TableRenderer.RenderTableStyles, this.applyTableStyles, this);
+		TableUtils.Hook.deregister(oTable, Hook.TableRenderer.RenderInTableBottomArea, this.renderInTableBottomArea, this);
+		TableUtils.Hook.deregister(oTable, Hook.TableRenderer.RenderRowContainerStyles, this.applyRowContainerStyles, this);
+		TableUtils.Hook.deregister(oTable, Hook.TableRenderer.RenderRowStyles, this.renderRowStyles, this);
+		TableUtils.Hook.deregister(oTable, Hook.TableRenderer.RenderCellContentStyles, this.renderCellContentStyles, this);
 	};
 
 	/**

@@ -51,11 +51,14 @@ sap.ui.define([
 		},
 		after: function() {
 			TableQUnitUtils.setDefaultSettings(this.mDefaultSettings);
+		},
+		getDefaultRowMode: function(oTable) {
+			return oTable.getAggregation("_hiddenDependents").filter((oObject) => oObject.isA("sap.ui.table.rowmodes.Fixed"))[0];
 		}
 	});
 
 	QUnit.test("Instance", function(assert) {
-		assert.ok(TableUtils.isA(this.oTable._getRowMode(), "sap.ui.table.rowmodes.Fixed"),
+		assert.ok(TableUtils.isA(this.getDefaultRowMode(this.oTable), "sap.ui.table.rowmodes.Fixed"),
 			"The table creates an instance of sap.ui.table.rowmodes.Fixed");
 	});
 
@@ -67,7 +70,7 @@ sap.ui.define([
 			fixedBottomRowCount: 2,
 			rowHeight: 8
 		});
-		var oMode = oTable._getRowMode();
+		var oMode = this.getDefaultRowMode(oTable);
 
 		assert.strictEqual(oMode.getRowCount(), 5, "The row count is taken from the table");
 		assert.strictEqual(oMode.getFixedTopRowCount(), 1, "The fixed top row count is taken from the table");
@@ -106,7 +109,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("#getRowContainerStyles", function(assert) {
-		var oMode = this.oTable._getRowMode();
+		var oMode = this.getDefaultRowMode(this.oTable);
 
 		sinon.stub(oMode, "getComputedRowCounts").returns({count: 9});
 		sinon.stub(oMode, "getBaseRowHeightOfTable").returns(9);
