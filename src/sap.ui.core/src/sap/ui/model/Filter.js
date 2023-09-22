@@ -251,6 +251,13 @@ sap.ui.define([
 	});
 
 	/**
+	 * A filter instance that is never fulfilled.
+	 *
+	 * @private
+	 */
+	Filter.NONE = new Filter({path : "/", operator : () => false});
+
+	/**
 	 * Checks the types of the arguments for a lambda operator.
 	 * @private
 	 */
