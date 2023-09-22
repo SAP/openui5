@@ -771,25 +771,6 @@ sap.ui.define([
 	DataType.getType('int')
 	);
 
-	// factory for Form to create labels and buttons to be overwritten by commons and mobile library
-	if (!thisLib.form.FormHelper) {
-		thisLib.form.FormHelper = {
-			init: function() {return null;}, /* must return a Promise if modules still needs to be loaded. The promise must be fulfilled if everything is loaded. */
-			createLabel: function(sText){ throw new Error("no Label control available!"); }, /* must return a Label control */
-			createButton: function(sId, fPressFunction, oListener){ throw new Error("no Button control available!"); }, /* must return a button control */
-			setButtonContent: function(oButton, sText, sTooltip, sIcon, sIconHovered){ throw new Error("no Button control available!"); },
-			addFormClass: function(){ return null; },
-			setToolbar: function(oToolbar){ return oToolbar; }, /* allow to overwrite toolbar settings */
-			getToolbarTitle: function(oToolbar) { return oToolbar && oToolbar.getId(); }, /* To determine title ID in toolbar for aria-label */
-			createDelimiter: function(sDelimiter, sId){ throw new Error("no delimiter control available!"); }, /* must return a kind of text control */
-			createSemanticDisplayControl: function(sText, sId){ throw new Error("no display control available!"); }, /* must return a kind of text control */
-			updateDelimiter: function(oDelimiter, sDelimiter){ throw new Error("no delimiter control available!"); },
-			updateSemanticDisplayControl: function(oControl, sText){ throw new Error("no display control available!"); },
-			bArrowKeySupport: true, /* enables the keyboard support for arrow keys */
-			bFinal: false /* if true, the helper must not be overwritten by an other library */
-		};
-	}
-
 	if (!thisLib.GridHelper) {
 		thisLib.GridHelper = {
 			getLibrarySpecificClass: function () {

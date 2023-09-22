@@ -7,10 +7,9 @@ sap.ui.define([
 	'sap/ui/core/Element',
 	'sap/ui/core/Control',
 	'sap/ui/base/ManagedObjectObserver',
-	'sap/ui/layout/library',
 	'./FormHelper',
 	'sap/base/Log'
-	], function(Element, Control, ManagedObjectObserver, library, FormHelper, Log) {
+	], function(Element, Control, ManagedObjectObserver, FormHelper, Log) {
 	"use strict";
 
 	/**
@@ -84,7 +83,6 @@ sap.ui.define([
 
 	FormElement.prototype.init = function(){
 
-		this._oInitPromise = library.form.FormHelper.init(); // TODO: remove after usage in SemanticGroupElement was removed
 		this._oInitPromise = FormHelper.init();
 
 		this._oFieldDelegate = {oElement: this, onAfterRendering: _fieldOnAfterRendering};
