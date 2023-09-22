@@ -2,7 +2,6 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/base/util/UriParameters",
 	"sap/base/Log",
 	"sap/ui/core/Control",
 	"sap/ui/core/UIComponent",
@@ -14,7 +13,6 @@ sap.ui.define([
 	"sap/ui/rta/RuntimeAuthoring",
 	"sap/ui/core/Core"
 ], function(
-	UriParameters,
 	Log,
 	Control,
 	UIComponent,
@@ -45,7 +43,7 @@ sap.ui.define([
 
 	function checkFlexEnabled(oAppComponent) {
 		// fiori tools is always a developer scenario where the flexEnabled flag should not be evaluated
-		var sFioriToolsMode = UriParameters.fromQuery(window.location.search).get("fiori-tools-rta-mode");
+		var sFioriToolsMode = new URLSearchParams(window.location.search).get("fiori-tools-rta-mode");
 		if (!sFioriToolsMode || sFioriToolsMode === "false") {
 			var oManifest = oAppComponent.getManifest() || {};
 			var vFlexEnabled = oManifest["sap.ui5"] && oManifest["sap.ui5"].flexEnabled;

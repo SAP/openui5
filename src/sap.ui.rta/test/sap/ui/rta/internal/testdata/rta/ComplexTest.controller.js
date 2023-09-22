@@ -1,5 +1,4 @@
 sap.ui.define([
-	"sap/base/util/UriParameters",
 	"sap/base/Log",
 	"sap/m/MessageToast",
 	"sap/ui/core/mvc/Controller",
@@ -12,7 +11,6 @@ sap.ui.define([
 	"sap/ui/fl/Utils",
 	"sap/ui/core/Core"
 ], function(
-	UriParameters,
 	Log,
 	MessageToast,
 	Controller,
@@ -45,7 +43,7 @@ sap.ui.define([
 		onInit() {
 			this._sResourcePath = sap.ui.require.toUrl("sap/ui/rta/test");
 			var oManifest = FlUtils.getAppComponentForControl(this.getView()).getManifest();
-			var iServerDelay = UriParameters.fromQuery(window.location.search).get("serverDelay");
+			var iServerDelay = new URLSearchParams(window.location.search).get("serverDelay");
 
 			var iAutoRespond = iServerDelay || 1000;
 			var oMockServer;

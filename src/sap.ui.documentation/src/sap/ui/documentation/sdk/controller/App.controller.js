@@ -13,7 +13,6 @@ sap.ui.define([
 	"sap/ui/core/ResizeHandler",
 	"sap/ui/Device",
 	"sap/ui/core/Fragment",
-	"sap/base/util/UriParameters",
 	"sap/ui/documentation/library",
 	"sap/m/library",
 	"sap/base/Log",
@@ -39,7 +38,6 @@ sap.ui.define([
 	ResizeHandler,
 	Device,
 	Fragment,
-	UriParameters,
 	library,
 	mobileLibrary,
 	Log,
@@ -713,7 +711,7 @@ sap.ui.define([
 		 * @private
 		 */
 		_createConfigurationBasedOnURIInput: function () {
-			var oUriParams = UriParameters.fromQuery(window.location.search);
+			var oUriParams = new URLSearchParams(window.location.search);
 			this._aConfiguration = [];
 
 			if (!(oUriParams.has('sap-ui-language') || oUriParams.has('sap-language'))) {

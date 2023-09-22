@@ -6,7 +6,6 @@ sap.ui.define([
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/LayerUtils",
 	"sap/ui/fl/registry/Settings",
-	"sap/base/util/UriParameters",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	FlexObject,
@@ -14,7 +13,6 @@ sap.ui.define([
 	Layer,
 	LayerUtils,
 	Settings,
-	UriParameters,
 	sinon
 ) {
 	"use strict";
@@ -41,7 +39,7 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("isSapUiLayerParameterProvided shall return true if the sap-ui-layer parameter is set", function(assert) {
-			sandbox.stub(UriParameters.prototype, "get").withArgs("sap-ui-layer").returns(Layer.VENDOR);
+			sandbox.stub(URLSearchParams.prototype, "get").withArgs("sap-ui-layer").returns(Layer.VENDOR);
 			var bIsSapUiParameterProvided = LayerUtils.isSapUiLayerParameterProvided();
 			assert.equal(bIsSapUiParameterProvided, true);
 		});
@@ -52,25 +50,25 @@ sap.ui.define([
 		});
 
 		QUnit.test("getCurrentLayer shall return sap-ui-layer parameter", function(assert) {
-			sandbox.stub(UriParameters.prototype, "get").withArgs("sap-ui-layer").returns(Layer.VENDOR);
+			sandbox.stub(URLSearchParams.prototype, "get").withArgs("sap-ui-layer").returns(Layer.VENDOR);
 			var sLayer = LayerUtils.getCurrentLayer();
 			assert.equal(sLayer, Layer.VENDOR);
 		});
 
 		QUnit.test("getCurrentLayer shall return sap-ui-layer parameter and turn it to upper case", function(assert) {
-			sandbox.stub(UriParameters.prototype, "get").withArgs("sap-ui-layer").returns(Layer.VENDOR.toLowerCase());
+			sandbox.stub(URLSearchParams.prototype, "get").withArgs("sap-ui-layer").returns(Layer.VENDOR.toLowerCase());
 			var sLayer = LayerUtils.getCurrentLayer();
 			assert.equal(sLayer, Layer.VENDOR);
 		});
 
 		QUnit.test("getCurrentLayer shall return default CUSTOMER layer", function(assert) {
-			sandbox.stub(UriParameters.prototype, "get").withArgs("sap-ui-layer").returns(null);
+			sandbox.stub(URLSearchParams.prototype, "get").withArgs("sap-ui-layer").returns(null);
 			var sLayer = LayerUtils.getCurrentLayer();
 			assert.equal(sLayer, Layer.CUSTOMER);
 		});
 
 		QUnit.test("compareAgainstCurrentLayer shall return a layer comparision between current (CUSTOMER) and passed layers", function(assert) {
-			sandbox.stub(UriParameters.prototype, "get").withArgs("sap-ui-layer").returns(Layer.CUSTOMER);
+			sandbox.stub(URLSearchParams.prototype, "get").withArgs("sap-ui-layer").returns(Layer.CUSTOMER);
 			assert.equal(LayerUtils.compareAgainstCurrentLayer(""), -1, "then with VENDOR layer -1 is returned");
 			assert.equal(LayerUtils.compareAgainstCurrentLayer(Layer.VENDOR), -1, "then with VENDOR layer -1 is returned");
 			assert.equal(LayerUtils.compareAgainstCurrentLayer(Layer.CUSTOMER), 0, "then with CUSTOMER layer 0 is returned");
@@ -146,19 +144,19 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("compare maxLayer: CUSTOMER with layer BASE", function(assert) {
-			sandbox.stub(UriParameters.prototype, "get").withArgs("sap-ui-fl-max-layer").returns(Layer.CUSTOMER);
+			sandbox.stub(URLSearchParams.prototype, "get").withArgs("sap-ui-fl-max-layer").returns(Layer.CUSTOMER);
 
 			assert.equal(LayerUtils.isOverMaxLayer(Layer.BASE, this.oURLParsingService), false, "false");
 		});
 
 		QUnit.test("compare maxLayer: CUSTOMER with layer CUSTOMER", function(assert) {
-			sandbox.stub(UriParameters.prototype, "get").withArgs("sap-ui-fl-max-layer").returns(Layer.CUSTOMER);
+			sandbox.stub(URLSearchParams.prototype, "get").withArgs("sap-ui-fl-max-layer").returns(Layer.CUSTOMER);
 
 			assert.equal(LayerUtils.isOverMaxLayer(Layer.CUSTOMER, this.oURLParsingService), false, "false");
 		});
 
 		QUnit.test("compare maxLayer: CUSTOMER with layer USER", function(assert) {
-			sandbox.stub(UriParameters.prototype, "get").withArgs("sap-ui-fl-max-layer").returns(Layer.CUSTOMER);
+			sandbox.stub(URLSearchParams.prototype, "get").withArgs("sap-ui-fl-max-layer").returns(Layer.CUSTOMER);
 
 			assert.equal(LayerUtils.isOverMaxLayer(Layer.USER, this.oURLParsingService), true, "true");
 		});
@@ -194,7 +192,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("sap-ui-fl-max-layer is set as url parameter", function(assert) {
-			sandbox.stub(UriParameters.prototype, "get").withArgs("sap-ui-fl-max-layer").returns(Layer.VENDOR);
+			sandbox.stub(URLSearchParams.prototype, "get").withArgs("sap-ui-fl-max-layer").returns(Layer.VENDOR);
 			assert.equal(LayerUtils.getMaxLayer(this.oURLParsingService), Layer.VENDOR, "get UriParamter");
 		});
 
@@ -204,7 +202,7 @@ sap.ui.define([
 					"sap-ui-fl-max-layer": [Layer.CUSTOMER]
 				}
 			});
-			sandbox.stub(UriParameters.prototype, "get").withArgs("sap-ui-fl-max-layer").returns(Layer.VENDOR);
+			sandbox.stub(URLSearchParams.prototype, "get").withArgs("sap-ui-fl-max-layer").returns(Layer.VENDOR);
 			assert.equal(LayerUtils.getMaxLayer(this.oURLParsingService), Layer.CUSTOMER, "get UriParamter");
 		});
 	});

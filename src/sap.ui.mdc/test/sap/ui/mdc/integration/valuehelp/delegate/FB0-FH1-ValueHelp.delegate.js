@@ -12,8 +12,7 @@ sap.ui.define([
 	"sap/m/Table",
 	"sap/m/Column",
 	"sap/m/ColumnListItem",
-	"sap/m/Text",
-	"sap/base/util/UriParameters"
+	"sap/m/Text"
 ], function(
 	ODataV4ValueHelpDelegate,
 	MTable,
@@ -24,8 +23,7 @@ sap.ui.define([
 	Table,
 	Column,
 	ColumnListItem,
-	Text,
-	UriParameters
+	Text
 ) {
 	"use strict";
 
@@ -35,7 +33,7 @@ sap.ui.define([
 //	var counter = 0;
 
 	ValueHelpDelegate.retrieveContent = function (oValueHelp, oContainer) {
-		const oParams = UriParameters.fromQuery(location.search);
+		const oParams = new URLSearchParams(window.location.search);
 		const oParamSuspended = oParams.get("suspended");
 		const bSuspended = oParamSuspended ? oParamSuspended === "true" : false;
 

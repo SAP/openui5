@@ -3,7 +3,6 @@
  */
 sap.ui.define([
 	"sap/base/Log",
-	"sap/base/util/UriParameters",
 	"sap/m/Button",
 	"sap/m/Column",
 	"sap/m/ColumnListItem",
@@ -16,14 +15,14 @@ sap.ui.define([
 	"sap/ui/core/Control",
 	"sap/ui/core/Item",
 	"sap/ui/model/odata/v4/ValueListType"
-], function (Log, UriParameters, Button, Column, ColumnListItem, ComboBox, Input, library,
+], function (Log, Button, Column, ColumnListItem, ComboBox, Input, library,
 		ResponsivePopover, Table, Text, Control, Item, ValueListType) {
 	"use strict";
 
 	// shortcut for sap.m.PlacementType
 	var PlacementType = library.PlacementType,
 		bSharedRequest
-			= UriParameters.fromQuery(window.location.search).get("$$sharedRequest") !== "false";
+			= new URLSearchParams(window.location.search).get("$$sharedRequest") !== "false";
 
 	return Control.extend("sap.ui.core.sample.common.ValueHelp", {
 		metadata : {

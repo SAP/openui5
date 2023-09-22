@@ -1,10 +1,9 @@
 sap.ui.define([
-	"sap/base/util/UriParameters",
 	"sap/ui/core/UIComponent",
 	"sap/ui/model/json/JSONModel",
 	"sap/f/library",
 	"sap/f/FlexibleColumnLayoutSemanticHelper"
-], function (UriParameters, UIComponent, JSONModel, library, FlexibleColumnLayoutSemanticHelper) {
+], function (UIComponent, JSONModel, library, FlexibleColumnLayoutSemanticHelper) {
 	"use strict";
 
 	var LayoutType = library.LayoutType;
@@ -35,7 +34,7 @@ sap.ui.define([
 		 */
 		getHelper: function () {
 			var oFCL = this.getRootControl().byId("fcl"),
-				oParams = UriParameters.fromQuery(location.search),
+				oParams = new URLSearchParams(window.location.search),
 				oSettings = {
 					defaultTwoColumnLayoutType: LayoutType.TwoColumnsMidExpanded,
 					defaultThreeColumnLayoutType: LayoutType.ThreeColumnsMidExpanded,

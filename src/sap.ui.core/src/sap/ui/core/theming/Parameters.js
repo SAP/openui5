@@ -15,14 +15,13 @@ sap.ui.define([
 	'sap/ui/core/Theming',
 	'sap/ui/thirdparty/URI',
 	'../Element',
-	'sap/base/util/UriParameters',
 	'sap/base/Log',
 	'sap/base/util/extend',
 	'sap/base/util/syncFetch',
 	'sap/ui/core/theming/ThemeManager',
 	'./ThemeHelper'
 ],
-	function(Core, Configuration, Library, Theming, URI, Element, UriParameters, Log, extend, syncFetch, ThemeManager, ThemeHelper) {
+	function(Core, Configuration, Library, Theming, URI, Element, Log, extend, syncFetch, ThemeManager, ThemeHelper) {
 	"use strict";
 
 	var syncCallBehavior = Configuration.getSyncCallBehavior();
@@ -51,7 +50,7 @@ sap.ui.define([
 		// match a CSS url
 		var rCssUrl = /url[\s]*\('?"?([^\'")]*)'?"?\)/;
 
-		var bUseInlineParameters = UriParameters.fromQuery(window.location.search).get("sap-ui-xx-no-inline-theming-parameters") !== "true";
+		var bUseInlineParameters = new URLSearchParams(window.location.search).get("sap-ui-xx-no-inline-theming-parameters") !== "true";
 
 		/**
 		 * Resolves relative URLs in parameter values.

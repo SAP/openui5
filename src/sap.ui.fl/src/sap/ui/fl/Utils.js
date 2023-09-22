@@ -5,7 +5,6 @@
 sap.ui.define([
 	"sap/base/util/isPlainObject",
 	"sap/base/util/uid",
-	"sap/base/util/UriParameters",
 	"sap/base/util/restricted/_isEqual",
 	"sap/base/Log",
 	"sap/ui/base/SyncPromise",
@@ -19,7 +18,6 @@ sap.ui.define([
 ], function(
 	isPlainObject,
 	uid,
-	UriParameters,
 	isEqual,
 	Log,
 	SyncPromise,
@@ -237,7 +235,7 @@ sap.ui.define([
 		 * @ui5-restricted sap.ui.fl.write._internal.transport.Transport
 		 */
 		getClient() {
-			return UriParameters.fromQuery(window.location.search).get("sap-client");
+			return new URLSearchParams(window.location.search).get("sap-client");
 		},
 
 		getLrepUrl() {
@@ -316,7 +314,7 @@ sap.ui.define([
 		 * @private
 		 */
 		getUrlParameter(sParameterName) {
-			return UriParameters.fromQuery(window.location.search).get(sParameterName);
+			return new URLSearchParams(window.location.search).get(sParameterName);
 		},
 
 		/**

@@ -5,14 +5,12 @@
 sap.ui.define([
 		"sap/ui/thirdparty/jquery",
 		'sap/ui/base/Object',
-		"sap/base/util/UriParameters",
 		"sap/base/Log",
 		"sap/ui/support/RuleAnalyzer",
 		"sap/ui/support/library"
 	],
 	function(jQuery,
 			 BaseObject,
-			 UriParameters,
 			 Log,
 			 RuleAnalyzer,
 			 library) {
@@ -73,7 +71,7 @@ sap.ui.define([
 		getAssertions : function () {
 
 			var fnShouldSkipRulesIssues = function () {
-				return UriParameters.fromQuery(window.location.search).get('sap-skip-rules-issues') == 'true';
+				return new URLSearchParams(window.location.search).get('sap-skip-rules-issues') == 'true';
 			};
 			var getWindow = function () {
 				var opaWindow = window.parent;

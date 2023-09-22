@@ -4,12 +4,11 @@
 sap.ui.define([
 	'sap/ui/core/Component',
 	"sap/ui/core/ComponentContainer",
-	"sap/base/util/UriParameters",
 	"sap/ui/core/Configuration"
-], function (Component, ComponentContainer, UriParameters, Configuration) {
+], function (Component, ComponentContainer, Configuration) {
 	"use strict";
 
-	var oUriParameters = UriParameters.fromQuery(window.location.search);
+	var oUriParameters = new URLSearchParams(window.location.search);
 
 	// set the default language to "de" if parameter is not present
 	if (!oUriParameters.get("sap-ui-language")) {

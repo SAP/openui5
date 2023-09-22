@@ -2,7 +2,6 @@
 
 sap.ui.define([
 	"sap/base/util/LoaderExtensions",
-	"sap/base/util/UriParameters",
 	"sap/ui/core/Control",
 	"sap/ui/core/UIComponent",
 	"sap/ui/fl/apply/_internal/flexObjects/States",
@@ -23,7 +22,6 @@ sap.ui.define([
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	LoaderExtensions,
-	UriParameters,
 	Control,
 	UIComponent,
 	States,
@@ -1460,11 +1458,7 @@ sap.ui.define([
 			// Stub to check for the actual call of the TransportSelection function (no direct stubbing due to the .call usage)
 			// returns empty to not trigger further functionality within the selectTransport
 			var oUtilsStub = sandbox.stub(Utils, "getLrepUrl").returns("");
-			sandbox.stub(UriParameters, "fromQuery").returns({
-				get() {
-					return Layer.VENDOR;
-				}
-			});
+			sandbox.stub(URLSearchParams.prototype, "get").returns(Layer.VENDOR);
 
 			return new Promise(function(resolve) {
 				var oTransportSelection = SmartVariantManagementWriteAPI._getTransportSelection();

@@ -8,16 +8,14 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/base/util/merge",
 	"sap/base/util/isPlainObject",
-	"sap/base/Log",
-	"sap/base/util/UriParameters"
+	"sap/base/Log"
 ], function(
 	BaseObject,
 	DataType,
 	Core,
 	merge,
 	isPlainObject,
-	Log,
-	UriParameters
+	Log
 ) {
 	"use strict";
 
@@ -280,13 +278,13 @@ sap.ui.define([
 		if (
 			(
 				!(window['sap-ui-mdc-config'] && window['sap-ui-mdc-config'].disableStrictPropertyInfoValidation
-					|| UriParameters.fromQuery(window.location.search).get("sap-ui-xx-disableStrictPropertyValidation") == "true")
+					|| new URLSearchParams(window.location.search).get("sap-ui-xx-disableStrictPropertyValidation") == "true")
 				&& !("sap.fe.core" in mLoadedLibraries
 					|| "sap.fe.macros" in mLoadedLibraries
 					|| "sap.sac.df" in mLoadedLibraries)
 			)
 				||
-				(UriParameters.fromQuery(window.location.search).get("sap-ui-xx-enableStrictPropertyValidation") == "true")
+				(new URLSearchParams(window.location.search).get("sap-ui-xx-enableStrictPropertyValidation") == "true")
 			) {
 			throwInvalidPropertyError(sMessage, oAdditionalInfo);
 		}

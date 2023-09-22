@@ -1,5 +1,4 @@
 sap.ui.define([
-	"sap/base/util/UriParameters",
 	"sap/m/App",
 	"sap/m/FeedContent",
 	"sap/m/FlexBox",
@@ -20,7 +19,6 @@ sap.ui.define([
 	"sap/ui/util/Mobile",
 	"sap/ui/ux3/QuickView"
 ], function(
-	UriParameters,
 	App,
 	FeedContent,
 	FlexBox,
@@ -57,7 +55,7 @@ sap.ui.define([
 			red : "#FF6666",
 			green : "#66FF66"
 		};
-		var sParam = UriParameters.fromQuery(window.location.search).get("sap-ui-suite-background-color");
+		var sParam = new URLSearchParams(window.location.search).get("sap-ui-suite-background-color");
 		if (sParam) {
 			var sColor = oColors[sParam.toLowerCase()];
 			if (sColor) {

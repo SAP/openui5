@@ -3,16 +3,15 @@ sap.ui.define([
 	"sap/ui/mdc/Control",
 	"sap/ui/mdc/p13n/subcontroller/BaseController",
 	"sap/ui/mdc/util/PropertyHelper",
-	"sap/base/util/UriParameters",
 	"sap/ui/mdc/Table",
 	"sap/ui/mdc/Chart",
 	"sap/ui/mdc/enums/OperatorName"
-], function (Control, Controller, PropertyHelper, SAPUriParameters, Table, Chart, OperatorName) {
+], function (Control, Controller, PropertyHelper, Table, Chart, OperatorName) {
 	"use strict";
 
 	QUnit.module("Generic API tests", {
 		prepareController: function() {
-			const oURLParams = new SAPUriParameters(window.location.search);
+			const oURLParams = new URLSearchParams(window.location.search);
 			const sSubControllerClassPath = "sap/ui/mdc/p13n/subcontroller/" + oURLParams.getAll("test")[0];
 
 			const TestClass = Control.extend("temp",{

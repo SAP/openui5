@@ -5,13 +5,11 @@
 sap.ui.define([
 	"sap/ui/fl/write/_internal/Storage",
 	"sap/ui/fl/Utils",
-	"sap/base/Log",
-	"sap/base/util/UriParameters"
+	"sap/base/Log"
 ], function(
 	Storage,
 	Utils,
-	Log,
-	UriParameters
+	Log
 ) {
 	"use strict";
 
@@ -239,7 +237,7 @@ sap.ui.define([
 	 * @returns {boolean} <code>true</code> if the underlying ABAP system allows save as adaptation, <code>false</code> if not supported
 	 */
 	Settings.prototype.isContextBasedAdaptationEnabled = function() {
-		var oUriParameters = UriParameters.fromQuery(window.location.search);
+		var oUriParameters = new URLSearchParams(window.location.search);
 		var bIsContextBasedAdaptationEnabled = oUriParameters.get("sap-ui-xx-rta-adaptations");
 		return bIsContextBasedAdaptationEnabled === "true" || this._getBooleanProperty("isContextBasedAdaptationEnabled");
 	};

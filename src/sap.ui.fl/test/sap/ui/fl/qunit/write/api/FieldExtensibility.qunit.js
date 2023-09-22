@@ -5,14 +5,12 @@ sap.ui.define([
 	"sap/ui/fl/write/_internal/fieldExtensibility/cap/CAPAccess",
 	"sap/ui/fl/write/api/FieldExtensibility",
 	"sap/ui/thirdparty/sinon-4",
-	"sap/base/util/UriParameters",
 	"sap/ui/base/ManagedObject"
 ], function(
 	ABAPAccess,
 	CAPAccess,
 	FieldExtensibility,
 	sinon,
-	UriParameters,
 	ManagedObject
 ) {
 	"use strict";
@@ -65,7 +63,7 @@ sap.ui.define([
 
 	QUnit.module("Given a CAP system is identified", {
 		before() {
-			sandbox.stub(UriParameters.prototype, "get")
+			sandbox.stub(URLSearchParams.prototype, "get")
 			.callThrough()
 			.withArgs("sap-ui-fl-xx-capScenario")
 			.returns("true");

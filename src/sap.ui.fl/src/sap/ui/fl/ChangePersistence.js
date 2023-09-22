@@ -6,7 +6,6 @@ sap.ui.define([
 	"sap/base/util/restricted/_union",
 	"sap/base/util/includes",
 	"sap/base/util/merge",
-	"sap/base/util/UriParameters",
 	"sap/base/Log",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/core/Component",
@@ -30,7 +29,6 @@ sap.ui.define([
 	union,
 	includes,
 	merge,
-	UriParameters,
 	Log,
 	JsControlTreeModifier,
 	Component,
@@ -482,7 +480,7 @@ sap.ui.define([
 			}
 		}
 
-		var oUriParameters = UriParameters.fromURL(window.location.href);
+		var oUriParameters = new URLSearchParams(window.location.search);
 		if (oUriParameters.has("sap-ui-xx-condense-changes")) {
 			bCondenserEnabled = oUriParameters.get("sap-ui-xx-condense-changes") === "true";
 		}

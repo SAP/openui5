@@ -2,11 +2,10 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/base/util/UriParameters",
 	"sap/m/MessageBox",
 	"sap/ui/core/sample/common/Controller",
 	"sap/ui/test/TestUtils"
-], function (UriParameters, MessageBox, Controller, TestUtils) {
+], function (MessageBox, Controller, TestUtils) {
 	"use strict";
 
 	return Controller.extend("sap.ui.core.sample.odata.v4.RecursiveHierarchy.RecursiveHierarchy", {
@@ -23,7 +22,7 @@ sap.ui.define([
 		},
 
 		onInit : function () {
-			const oUriParameters = UriParameters.fromQuery(window.location.search);
+			const oUriParameters = new URLSearchParams(window.location.search);
 			const sExpandTo = TestUtils.retrieveData( // controlled by OPA
 					"sap.ui.core.sample.odata.v4.RecursiveHierarchy.expandTo")
 				|| oUriParameters.get("expandTo");

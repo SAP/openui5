@@ -3,12 +3,10 @@
  */
 
 sap.ui.define([
-	"sap/base/util/UriParameters",
 	"sap/ui/thirdparty/hasher",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/initial/_internal/FlexInfoSession"
 ], function(
-	UriParameters,
 	hasher,
 	Layer,
 	FlexInfoSession
@@ -33,7 +31,7 @@ sap.ui.define([
 	});
 
 	function getUrlParameter(sParameter) {
-		return UriParameters.fromQuery(window.location.search).get(sParameter);
+		return new URLSearchParams(window.location.search).get(sParameter);
 	}
 
 	/**

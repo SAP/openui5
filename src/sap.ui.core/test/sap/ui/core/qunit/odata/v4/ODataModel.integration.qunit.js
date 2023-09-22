@@ -4,7 +4,6 @@
 sap.ui.define([
 	"sap/base/Log",
 	"sap/base/util/uid",
-	"sap/base/util/UriParameters",
 	"sap/m/ColumnListItem",
 	"sap/m/CustomListItem",
 	"sap/m/FlexBox",
@@ -35,7 +34,7 @@ sap.ui.define([
 	"sap/ui/util/XMLHelper",
 	// load Table resources upfront to avoid loading times > 1 second for the first test using Table
 	"sap/ui/table/Table"
-], function (Log, uid, UriParameters, ColumnListItem, CustomListItem, FlexBox, _MessageStrip, Text,
+], function (Log, uid, ColumnListItem, CustomListItem, FlexBox, _MessageStrip, Text,
 		Device, EventProvider, SyncPromise, Configuration, Messaging, Rendering, Controller, View,
 		ChangeReason, Filter, FilterOperator, FilterType, Sorter, OperationMode, AnnotationHelper,
 		ODataListBinding, ODataMetaModel, ODataModel, ODataPropertyBinding, ValueListType, _Helper,
@@ -56,7 +55,7 @@ sap.ui.define([
 		rSkip = /&\$skip=(\d+)/, // $skip=<number>
 		sTeaBusi = "/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/",
 		// the timeout for the tests and for waitForChanges in millseconds, 0 = keep defaults
-		iTestTimeout = parseInt(UriParameters.fromQuery(window.location.search).get("timeout")),
+		iTestTimeout = parseInt(new URLSearchParams(window.location.search).get("timeout")),
 		rTop = /&\$top=(\d+)/, // $top=<number>
 		rTransientPredicate = /\(\$uid=[-\w]+\)/g;
 

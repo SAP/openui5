@@ -14,7 +14,6 @@ sap.ui.define([
 	"sap/ui/rta/command/Stack",
 	"sap/ui/core/Control",
 	"sap/base/Log",
-	"sap/base/util/UriParameters",
 	"sap/ui/fl/write/api/AppVariantWriteAPI",
 	"sap/ui/fl/write/api/ChangesWriteAPI",
 	"sap/m/MessageBox",
@@ -33,7 +32,6 @@ sap.ui.define([
 	Stack,
 	Control,
 	Log,
-	UriParameters,
 	AppVariantWriteAPI,
 	ChangesWriteAPI,
 	MessageBox,
@@ -214,14 +212,14 @@ sap.ui.define([
 		});
 
 		QUnit.test("when isOverviewExtended() is called when the query parameter is given and is true,", function(assert) {
-			var oStub = sandbox.stub(UriParameters.prototype, "get");
+			var oStub = sandbox.stub(URLSearchParams.prototype, "get");
 			oStub.withArgs("sap-ui-xx-app-variant-overview-extended").returns("true");
 			assert.equal(RtaAppVariantFeature.isOverviewExtended(), true, "then the app variant overview is shown both for key user and SAP developer");
 			oStub.restore();
 		});
 
 		QUnit.test("when isOverviewExtended() is called when the query parameter is given and is false,", function(assert) {
-			var oStub = sandbox.stub(UriParameters.prototype, "get");
+			var oStub = sandbox.stub(URLSearchParams.prototype, "get");
 			oStub.withArgs("sap-ui-xx-app-variant-overview-extended").returns("false");
 			assert.equal(RtaAppVariantFeature.isOverviewExtended(), false, "then the app variant overview is shown only for key user");
 			oStub.restore();

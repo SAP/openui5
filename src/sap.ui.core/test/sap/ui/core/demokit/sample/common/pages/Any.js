@@ -3,7 +3,6 @@
  */
 sap.ui.define([
 	"sap/base/Log",
-	"sap/base/util/UriParameters",
 	"sap/ui/core/sample/common/Helper",
 	"sap/ui/model/odata/v4/lib/_Requestor",
 	"sap/ui/qunit/QUnitUtils",
@@ -14,7 +13,7 @@ sap.ui.define([
 	"sap/ui/test/TestUtils",
 	"sap/ui/test/matchers/Properties",
 	"sap/ui/core/Configuration"
-], function (Log, UriParameters, Helper, _Requestor, QUnitUtils, RuleAnalyzer, Press, Opa, Opa5,
+], function (Log, Helper, _Requestor, QUnitUtils, RuleAnalyzer, Press, Opa, Opa5,
 		TestUtils, Properties, Configuration) {
 	"use strict";
 
@@ -172,7 +171,7 @@ sap.ui.define([
 				applySupportAssistant : function () {
 					// we use support assistant only on-demand and only with mock data
 					Opa.getContext().bSupportAssistant = !TestUtils.isRealOData()
-						&& UriParameters.fromQuery(window.location.search)
+						&& new URLSearchParams(window.location.search)
 							.get("supportAssistant") === "true";
 					Opa5.extendConfig(getConfig(Opa.getContext().bSupportAssistant));
 				},
