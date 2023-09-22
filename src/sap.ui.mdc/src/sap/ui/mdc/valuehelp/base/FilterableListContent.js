@@ -7,6 +7,7 @@ sap.ui.define([
 	'sap/ui/mdc/valuehelp/base/ListContent',
 	'sap/ui/mdc/condition/Condition',
 	'sap/ui/mdc/enums/ConditionValidated',
+	"sap/ui/mdc/enums/OperatorName",
 	'sap/ui/mdc/util/Common',
 	'sap/m/p13n/enum/PersistenceMode',
 	'sap/m/p13n/Engine',
@@ -19,6 +20,7 @@ sap.ui.define([
 	ListContent,
 	Condition,
 	ConditionValidated,
+	OperatorName,
 	Common,
 	PersistenceMode,
 	Engine,
@@ -614,7 +616,7 @@ sap.ui.define([
 	};
 
 	function _addSearchConditionToConditionMap(oConditions, sFilterFields, sFilterValue) {
-		oConditions[sFilterFields] = sFilterValue ? [Condition.createCondition("Contains", [sFilterValue], undefined, undefined, ConditionValidated.NotValidated)] : [];
+		oConditions[sFilterFields] = sFilterValue ? [Condition.createCondition(OperatorName.Contains, [sFilterValue], undefined, undefined, ConditionValidated.NotValidated)] : [];
 		return;
 	}
 

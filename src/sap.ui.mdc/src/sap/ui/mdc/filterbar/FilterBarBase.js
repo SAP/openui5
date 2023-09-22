@@ -19,6 +19,7 @@ sap.ui.define([
 	"sap/ui/mdc/filterbar/PropertyHelper",
 	"sap/ui/mdc/enums/ReasonMode",
 	"sap/ui/mdc/enums/FilterBarValidationStatus",
+	"sap/ui/mdc/enums/OperatorName",
 	"sap/ui/fl/apply/api/ControlVariantApplyAPI",
 	"sap/m/library",
 	"sap/m/Button",
@@ -42,6 +43,7 @@ sap.ui.define([
 		PropertyHelper,
 		ReasonMode,
 		FilterBarValidationStatus,
+		OperatorName,
 		ControlVariantApplyAPI,
 		mLibrary,
 		Button,
@@ -723,7 +725,7 @@ sap.ui.define([
 				const sName = sKey.startsWith("conditions/") ? sKey.slice(11) : sKey; // just use field name
 				const oProperty = this._getPropertyByName(sName);
 				if (oProperty) {
-					const oOutCondition = Condition.createCondition("EQ", [oCondition[sParameterName][sKey]]);
+					const oOutCondition = Condition.createCondition(OperatorName.EQ, [oCondition[sParameterName][sKey]]);
 					const vValue = fnConverter(oOutCondition, oProperty.typeConfig.typeInstance, this.getTypeMap());
 					if (!oConditionConverted[sParameterName]) {
 						oConditionConverted[sParameterName] = {};

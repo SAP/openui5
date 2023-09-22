@@ -13,6 +13,7 @@ sap.ui.define([
 	"sap/ui/mdc/table/GridTableType",
 	"sap/ui/mdc/Table",
 	"sap/ui/mdc/table/Column",
+	"sap/ui/mdc/enums/OperatorName",
 	"sap/m/library",
 	"sap/m/Table",
 	"sap/m/Column",
@@ -34,6 +35,7 @@ sap.ui.define([
 	GridTableType,
 	mdcTable,
 	mdcColumn,
+	OperatorName,
 	mLibrary,
 	Table,
 	Column,
@@ -260,7 +262,7 @@ sap.ui.define([
 						}
 						const sFilterValue = oCurrentContent.getFilterValue();
 						if (sFilterValue) {
-							oConditions['$search'] = [Condition.createCondition("StartsWith", [sFilterValue])];
+							oConditions['$search'] = [Condition.createCondition(OperatorName.StartsWith, [sFilterValue])];
 						}
 						oFilterBar.setInternalConditions(oConditions);
 					});

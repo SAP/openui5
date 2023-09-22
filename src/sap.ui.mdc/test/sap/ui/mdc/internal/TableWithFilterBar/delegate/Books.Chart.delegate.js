@@ -7,11 +7,12 @@ sap.ui.define([
 	"./Books.FB.delegate",
 	"./GridTable.delegate",
 	"sap/ui/mdc/enums/FieldDisplay",
+	"sap/ui/mdc/enums/OperatorName",
 	"sap/base/Log",
 	"sap/ui/core/Core",
 	"sap/ui/mdc/enums/ChartItemRoleType",
 	"delegates/util/DelegateCache"
-], function(ChartDelegate, ODataMetaModelUtil, BooksFBDelegate, GridTableDelegate, FieldDisplay, Log, Core, ChartItemRoleType, DelegateCache) {
+], function(ChartDelegate, ODataMetaModelUtil, BooksFBDelegate, GridTableDelegate, FieldDisplay, OperatorName, Log, Core, ChartItemRoleType, DelegateCache) {
 	"use strict";
 
 	var SampleChartDelegate = Object.assign({}, ChartDelegate);
@@ -213,15 +214,15 @@ sap.ui.define([
 				"ID": {dataTypeFormatOptions: {groupingEnabled: false}},
 				"author_ID": {dataTypeFormatOptions: {groupingEnabled: false}, valueHelp: "FH1", display: FieldDisplay.Description},
 				"title": {valueHelp: "FH4"},
-				"published": {valueHelp: "FHPublished", operators: ["EQ", "GT", "LT", "BT", "MEDIEVAL", "RENAISSANCE", "MODERN", "LASTYEAR"]},
+				"published": {valueHelp: "FHPublished", operators: [OperatorName.EQ, OperatorName.GT, OperatorName.LT, OperatorName.BT, "MEDIEVAL", "RENAISSANCE", "MODERN", OperatorName.LASTYEAR]},
 				"language_code": {dataTypeConstraints: {nullable: false, maxLength: 3}, valueHelp: "FHLanguage", maxConditions: 1, display: FieldDisplay.Description},
-				"stock": {maxConditions: 1, operators: ["BT"]},
+				"stock": {maxConditions: 1, operators: [OperatorName.BT]},
 				"classification_code": {valueHelp: "FHClassification", display: FieldDisplay.Description},
 				"genre_code": {valueHelp: "FHGenre", display: FieldDisplay.Description},
 				"subgenre_code": {valueHelp: "FHSubGenre", display: FieldDisplay.Description},
 				"detailgenre_code": {valueHelp: "FHDetailGenre", display: FieldDisplay.Description},
-				"currency_code": {valueHelp: "FH-Currency", display: FieldDisplay.Value, maxConditions: 1, operators: ["EQ"]},
-				"createdAt": {maxConditions: 1, operators: ["MYDATE", "MYDATERANGE", "EQ", "GE", "LE", "BT", "LT", "TODAY", "YESTERDAY", "TOMORROW", "LASTDAYS", "MYNEXTDAYS", "THISWEEK", "THISMONTH", "THISQUARTER", "THISYEAR", "NEXTHOURS", "NEXTMINUTES", "LASTHOURS"]}
+				"currency_code": {valueHelp: "FH-Currency", display: FieldDisplay.Value, maxConditions: 1, operators: [OperatorName.EQ]},
+				"createdAt": {maxConditions: 1, operators: ["MYDATE", "MYDATERANGE", OperatorName.EQ, OperatorName.GE, OperatorName.LE, OperatorName.BT, OperatorName.LT, OperatorName.TODAY, OperatorName.YESTERDAY, OperatorName.TOMORROW, OperatorName.LASTDAYS, "MYNEXTDAYS", OperatorName.THISWEEK, OperatorName.THISMONTH, OperatorName.THISQUARTER, OperatorName.THISYEAR, OperatorName.NEXTHOURS, OperatorName.NEXTMINUTES, OperatorName.LASTHOURS]}
 			}, "$Filters");
 
 			return aProperties;

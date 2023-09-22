@@ -18,6 +18,7 @@ sap.ui.define([
 	'sap/ui/mdc/condition/Condition',
 	'sap/base/util/merge',
 	'sap/ui/mdc/enums/ConditionValidated',
+	'sap/ui/mdc/enums/OperatorName',
 	'sap/ui/mdc/p13n/StateUtil',
 	'sap/base/util/deepEqual',
 	'sap/ui/model/odata/v4/OPropertyKeyBinding'
@@ -37,6 +38,7 @@ sap.ui.define([
 	Condition,
 	merge,
 	ConditionValidated,
+	OperatorName,
 	StateUtil,
 	deepEqual,
 	OPropertyKeyBinding
@@ -249,7 +251,7 @@ sap.ui.define([
 						return oCondition.values[0] === sCountry;
 					});
 					if (!bExists) {
-						const oNewCondition = Condition.createCondition("EQ", [sCountry], undefined, undefined, ConditionValidated.Validated);
+						const oNewCondition = Condition.createCondition(OperatorName.EQ, [sCountry], undefined, undefined, ConditionValidated.Validated);
 						oState.filter['countryOfOrigin_code'] = oState.filter && oState.filter['countryOfOrigin_code'] || [];
 						oState.filter['countryOfOrigin_code'].push(oNewCondition);
 					}

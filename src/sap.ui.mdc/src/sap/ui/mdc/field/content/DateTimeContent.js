@@ -2,11 +2,12 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/ui/mdc/field/content/DefaultContent",
-	"sap/ui/mdc/field/content/DateContent",
-	"sap/ui/mdc/util/DateUtil",
-	"sap/base/util/merge"
-], function(DefaultContent, DateContent, DateUtil, merge) {
+	'sap/ui/mdc/field/content/DefaultContent',
+	'sap/ui/mdc/field/content/DateContent',
+	'sap/ui/mdc/enums/OperatorName',
+	'sap/ui/mdc/util/DateUtil',
+	'sap/base/util/merge'
+], function(DefaultContent, DateContent, OperatorName, DateUtil, merge) {
 	"use strict";
 
 	/**
@@ -24,7 +25,7 @@ sap.ui.define([
 	const DateTimeContent = Object.assign({}, DateContent, {
 		getEditOperator: function() {
 			return {
-				"EQ": { name: "sap/m/DateTimePicker", create: this._createDatePickerControl }  // as same API as DatePicker
+				[OperatorName.EQ]: { name: "sap/m/DateTimePicker", create: this._createDatePickerControl }  // as same API as DatePicker
 			};
 		},
 		createEditMultiLine: function() {

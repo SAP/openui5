@@ -2,63 +2,63 @@
  * ${copyright}
  */
 sap.ui.define([
-	'sap/ui/Device',
+	'sap/ui/mdc/Control',
+	'sap/ui/mdc/enums/BaseType',
 	'sap/ui/mdc/enums/FieldEditMode',
 	'sap/ui/mdc/enums/FieldDisplay',
 	'sap/ui/mdc/enums/ConditionValidated',
+	'sap/ui/mdc/enums/OperatorName',
 	'sap/ui/mdc/field/FieldBaseRenderer',
-	'sap/ui/mdc/condition/FilterOperatorUtil',
-	'sap/ui/mdc/condition/Condition',
-	'sap/ui/mdc/condition/ConditionValidateException',
 	'sap/ui/mdc/field/ConditionType',
 	'sap/ui/mdc/field/ConditionsType',
 	'sap/ui/mdc/field/splitValue',
-	'sap/ui/mdc/enums/BaseType',
 	'sap/ui/mdc/field/content/ContentFactory',
-	'sap/ui/mdc/Control',
+	'sap/ui/mdc/condition/FilterOperatorUtil',
+	'sap/ui/mdc/condition/Condition',
+	'sap/ui/mdc/condition/ConditionValidateException',
 	'sap/ui/mdc/util/loadModules',
 	'sap/ui/core/library',
 	'sap/ui/core/LabelEnablement',
 	'sap/ui/core/message/MessageMixin',
 	'sap/base/util/deepEqual',
 	'sap/base/util/merge',
+	'sap/base/util/restricted/_debounce',
 	'sap/ui/dom/containsOrEquals',
 	'sap/ui/model/BindingMode',
 	'sap/ui/model/FormatException',
 	'sap/ui/model/ParseException',
 	'sap/ui/model/ValidateException',
 	'sap/ui/model/base/ManagedObjectModel',
-	'sap/ui/base/ManagedObjectObserver',
-	'sap/base/util/restricted/_debounce'
+	'sap/ui/base/ManagedObjectObserver'
 ], function(
-	Device,
+	Control,
+	BaseType,
 	FieldEditMode,
 	FieldDisplay,
 	ConditionValidated,
+	OperatorName,
 	FieldBaseRenderer,
-	FilterOperatorUtil,
-	Condition,
-	ConditionValidateException,
 	ConditionType,
 	ConditionsType,
 	splitValue,
-	BaseType,
 	ContentFactory,
-	Control,
+	FilterOperatorUtil,
+	Condition,
+	ConditionValidateException,
 	loadModules,
 	coreLibrary,
 	LabelEnablement,
 	MessageMixin,
 	deepEqual,
 	merge,
+	debounce,
 	containsOrEquals,
 	BindingMode,
 	FormatException,
 	ParseException,
 	ValidateException,
 	ManagedObjectModel,
-	ManagedObjectObserver,
-	debounce
+	ManagedObjectObserver
 ) {
 	"use strict";
 
@@ -2777,7 +2777,7 @@ sap.ui.define([
 			if (aNewConditions.length > 1) {
 				throw new Error("Only one item must be selected! " + this);
 			}
-			if (aNewConditions[0].operator !== "EQ") {
+			if (aNewConditions[0].operator !== OperatorName.EQ) {
 				throw new Error("Only EQ allowed! " + this);
 			}
 
@@ -2785,7 +2785,7 @@ sap.ui.define([
 				// TODO: update all conditions?
 				for (i = 0; i < aConditions.length; i++) {
 					aConditions[i].values[0][1] = aNewConditions[0].values[0];
-					if (aConditions[i].operator === "BT") {
+					if (aConditions[i].operator === OperatorName.BT) {
 						aConditions[i].values[1][1] = aNewConditions[0].values[0];
 					}
 					if (aNewConditions[0].inParameters) {
@@ -2944,7 +2944,7 @@ sap.ui.define([
 			if (aConditions.length > 0) {
 				this._oNavigateCondition.operator = aConditions[0].operator;
 				this._oNavigateCondition.values[0] = [aConditions[0].values[0][0], vKey];
-				if (aConditions[0].operator === "BT") {
+				if (aConditions[0].operator === OperatorName.BT) {
 					this._oNavigateCondition.values[1] = [aConditions[0].values[1][0], this._oNavigateCondition.values[0][1]];
 				} else if (this._oNavigateCondition.values.length > 1) {
 					this._oNavigateCondition.values.splice(1);
@@ -3321,7 +3321,7 @@ sap.ui.define([
 			additionalCompositeTypes: this.getContentFactory().getAdditionalCompositeTypes(), // only set if CompositeType used
 			display: this.getDisplay(),
 			valueHelpID: this._getValueHelp() || this._sDefaultFieldHelp,
-			operators: ["EQ"],
+			operators: [OperatorName.EQ],
 			hideOperator: true, // TODO: no operator for units
 			maxConditions: 1, // TODO: only one unit allowed
 			bindingContext: this.getBindingContext(), // to dertmine text and key usding in/out-parameter using correct bindingContext (In Table FieldHelp might be connected to other row)
@@ -3462,7 +3462,7 @@ sap.ui.define([
 		let aOperators;
 		if (this.isSearchField()) {
 			// for SearchField use Contains operator
-			aOperators =  ["Contains"];
+			aOperators =  [OperatorName.Contains];
 		} else {
 			// get default operators for type
 			let sBaseType = this.getBaseType(); // TODO what if delegate not loaded

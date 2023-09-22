@@ -5,6 +5,7 @@ sap.ui.define([
 	"sap/ui/mdc/Link",
 	"sap/ui/mdc/enums/FieldDisplay",
 	"sap/ui/mdc/enums/FieldEditMode",
+	"sap/ui/mdc/enums/OperatorName",
 	"delegates/odata/v4/util/DelegateUtil",
 	"sap/ui/model/odata/type/Currency",
 	"sap/ui/model/odata/type/Decimal",
@@ -12,7 +13,7 @@ sap.ui.define([
 	"sap/ui/model/odata/type/String",
 	"sap/m/Text",
 	'delegates/util/DelegateCache'
-], function (ODataTableDelegate, BooksFBDelegate, Field, Link, FieldDisplay, FieldEditMode, DelegateUtil, CurrencyType, DecimalType, Int32Type, StringType, Text, DelegateCache) {
+], function (ODataTableDelegate, BooksFBDelegate, Field, Link, FieldDisplay, FieldEditMode, OperatorName, DelegateUtil, CurrencyType, DecimalType, Int32Type, StringType, Text, DelegateCache) {
 	"use strict";
 	var BooksTableDelegate = Object.assign({}, ODataTableDelegate);
 	BooksTableDelegate.apiVersion = 2;//CLEANUP_DELEGATE
@@ -59,15 +60,15 @@ sap.ui.define([
 			DelegateCache.add(oTable, {
 				"author_ID": {valueHelp: "FH1", display: FieldDisplay.Description},
 				"title": {valueHelp: "FH4"},
-				"published": {valueHelp: "FHPublished", operators: ["EQ", "GT", "LT", "BT", "MEDIEVAL", "RENAISSANCE", "MODERN", "LASTYEAR"]},
+				"published": {valueHelp: "FHPublished", operators: [OperatorName.EQ, OperatorName.GT, OperatorName.LT, OperatorName.BT, "MEDIEVAL", "RENAISSANCE", "MODERN", OperatorName.LASTYEAR]},
 				"language_code": {dataTypeConstraints: {nullable: false, maxLength: 3}, valueHelp: "FHLanguage", maxConditions: 1, display: FieldDisplay.Description},
-				"stock": {maxConditions: 1, operators: ["BT"]},
+				"stock": {maxConditions: 1, operators: [OperatorName.BT]},
 				"classification_code": {valueHelp: "FHClassification", display: FieldDisplay.Description},
 				"genre_code": {valueHelp: "FHGenre", display: FieldDisplay.Description},
 				"subgenre_code": {valueHelp: "FHSubGenre", display: FieldDisplay.Description},
 				"detailgenre_code": {valueHelp: "FHDetailGenre", display: FieldDisplay.Description},
-				"currency_code": {valueHelp: "FH-Currency", display: FieldDisplay.Value, maxConditions: 1, operators: ["EQ"]},
-				"createdAt": {maxConditions: 1, operators: ["MYDATE", "MYDATERANGE", "EQ", "GE", "LE", "BT", "LT", "TODAY", "YESTERDAY", "TOMORROW", "LASTDAYS", "MYNEXTDAYS", "THISWEEK", "THISMONTH", "THISQUARTER", "THISYEAR", "NEXTHOURS", "NEXTMINUTES", "LASTHOURS"]}
+				"currency_code": {valueHelp: "FH-Currency", display: FieldDisplay.Value, maxConditions: 1, operators: [OperatorName.EQ]},
+				"createdAt": {maxConditions: 1, operators: ["MYDATE", "MYDATERANGE", OperatorName.EQ, OperatorName.GE, OperatorName.LE, OperatorName.BT, OperatorName.LT, OperatorName.TODAY, OperatorName.YESTERDAY, OperatorName.TOMORROW, OperatorName.LASTDAYS, "MYNEXTDAYS", OperatorName.THISWEEK, OperatorName.THISMONTH, OperatorName.THISQUARTER, OperatorName.THISYEAR, OperatorName.NEXTHOURS, OperatorName.NEXTMINUTES, OperatorName.LASTHOURS]}
 			}, "$Filters");
 
 			DelegateCache.add(oTable, {

@@ -11,7 +11,9 @@ sap.ui.define([
 	"sap/ui/mdc/condition/FilterOperatorUtil",
 	"sap/ui/mdc/condition/Operator",
 	"sap/ui/mdc/enums/ConditionValidated",
-	"sap/ui/mdc/enums/OperatorValueType"
+	"sap/ui/mdc/enums/OperatorName",
+	"sap/ui/mdc/enums/OperatorValueType",
+	"sap/ui/model/FilterOperator"
 ], function (
 		ValueHelpDelegate,
 		Content,
@@ -19,7 +21,9 @@ sap.ui.define([
 		FilterOperatorUtil,
 		Operator,
 		ConditionValidated,
-		OperatorValueType
+		OperatorName,
+		OperatorValueType,
+		FilterOperator
 		) {
 	"use strict";
 
@@ -129,7 +133,7 @@ sap.ui.define([
 	QUnit.test("EQ operator determination", function(assert) {
 		const oOperator = new Operator({
 			name: "MyTest",
-			filterOperator: "EQ",
+			filterOperator: FilterOperator.EQ,
 			tokenParse: "^=([^=].*)$",
 			tokenFormat: "={0}",
 			valueTypes: [OperatorValueType.Self],
@@ -138,7 +142,7 @@ sap.ui.define([
 		FilterOperatorUtil.addOperator(oOperator);
 
 		sinon.spy(oContent, "invalidate");
-		oContent.setConfig({operators: ["GT", "LT", oOperator.name]});
+		oContent.setConfig({operators: [OperatorName.GT, OperatorName.LT, oOperator.name]});
 		assert.ok(oContent._oOperator.isA("sap.ui.mdc.condition.Operator"), "Operator was created.");
 		assert.ok(oContent._oOperator.name === "MyTest", "Operator was set via configuration");
 		assert.ok(oContent.invalidate.notCalled, "Content not invalidated");
@@ -148,7 +152,7 @@ sap.ui.define([
 
 		const oOperator = new Operator({
 			name: "MyTest",
-			filterOperator: "EQ",
+			filterOperator: FilterOperator.EQ,
 			tokenParse: "^=([^=].*)$",
 			tokenFormat: "={0}",
 			valueTypes: [OperatorValueType.Self],
@@ -156,7 +160,7 @@ sap.ui.define([
 		});
 		FilterOperatorUtil.addOperator(oOperator);
 
-		oContent.setConfig({operators: ["GT", "LT", oOperator.name]});
+		oContent.setConfig({operators: [OperatorName.GT, OperatorName.LT, oOperator.name]});
 
 		let oCondition = oContent.createCondition("1", "Text1", {myPayload: true});
 		assert.ok(oCondition, "Condition created");
@@ -173,7 +177,7 @@ sap.ui.define([
 		oCondition = oContent.createCondition("1", "Text1");
 		assert.ok(oCondition, "Condition created");
 		if (oCondition) {
-			assert.equal(oCondition && oCondition.operator, "EQ", "Condition Operator");
+			assert.equal(oCondition && oCondition.operator, OperatorName.EQ, "Condition Operator");
 			assert.equal(oCondition.values.length, 2, "Condition values length");
 			assert.equal(oCondition.values[0], "1", "Condition values[0]");
 			assert.equal(oCondition.values[1], "Text1", "Condition values[1]");

@@ -24,6 +24,7 @@ sap.ui.define([
 	"sap/ui/mdc/condition/ConditionModel",
 	"sap/ui/mdc/condition/Condition",
 	"sap/ui/mdc/condition/FilterOperatorUtil",
+	"sap/ui/mdc/enums/OperatorName",
 	"sap/m/library",
 	"sap/m/Popover",
 	"sap/m/Dialog",
@@ -64,6 +65,7 @@ sap.ui.define([
 		ConditionModel,
 		Condition,
 		FilterOperatorUtil,
+		OperatorName,
 		mLibrary,
 		Popover,
 		Dialog,
@@ -108,7 +110,7 @@ sap.ui.define([
 			dataType: 'sap.ui.model.type.String', // set to prevent test to set dummy value
 			dataTypeFormatOptions: {}, // set to prevent test to set dummy value
 			dataTypeConstraints: {maxLength: 1000}, // set to prevent test to set dummy value
-			operators: ["EQ", "BT", "GE", "LE"] // set to prevent test to set dummy value
+			operators: [OperatorName.EQ, OperatorName.BT, OperatorName.GE, OperatorName.LE] // set to prevent test to set dummy value
 		});
 		// configure the Field
 		return oField;
@@ -203,7 +205,7 @@ sap.ui.define([
 		const oField = new FilterField("F1", {
 			dataType: 'sap.ui.model.type.String', // set to prevent test to set dummy value
 			conditions: [Condition.createItemCondition("I1"),
-						 Condition.createCondition("BT", ["A", "Z"])],
+						 Condition.createCondition(OperatorName.BT, ["A", "Z"])],
 			valueHelp: "VH1",
 			dependents: [oValueHelp, oItemTemplate]
 		});
@@ -224,8 +226,8 @@ sap.ui.define([
 		};
 
 		const oDCP = new DefineConditionPanel("DCP1", {
-			conditions: [Condition.createCondition("EQ", ["Test1"]),
-						 Condition.createCondition("BT", ["A", "Z"])],
+			conditions: [Condition.createCondition(OperatorName.EQ, ["Test1"]),
+						 Condition.createCondition(OperatorName.BT, ["A", "Z"])],
 			config: oConfig
 		});
 

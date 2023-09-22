@@ -4,9 +4,11 @@ sap.ui.define([
 	"sap/ui/mdc/filterbar/FilterBarBase",
 	"sap/ui/mdc/FilterField",
 	"sap/ui/mdc/DefaultTypeMap",
+	"sap/ui/mdc/enums/ConditionValidated",
+	"sap/ui/mdc/enums/OperatorName",
 	'sap/base/Log'
 ], function (
-	FilterBarBase, FilterField, DefaultTypeMap, Log
+	FilterBarBase, FilterField, DefaultTypeMap, ConditionValidated, OperatorName, Log
 ) {
 	"use strict";
 
@@ -34,11 +36,11 @@ sap.ui.define([
         this.oFilterBarBase.setFilterConditions({
             "key1": [
                 {
-                  "operator": "EQ",
+                  "operator": OperatorName.EQ,
                   "values": [
                     "SomeTestValue"
                   ],
-                  "validated": "Validated"
+                  "validated": ConditionValidated.Validated
                 }
               ]
         });
@@ -65,11 +67,11 @@ sap.ui.define([
         const oDummyCondition = {
             "key1": [
                 {
-                  "operator": "EQ",
+                  "operator": OperatorName.EQ,
                   "values": [
                     "SomeTestValue"
                   ],
-                  "validated": "Validated"
+                  "validated": ConditionValidated.Validated
                 }
               ]
         };
@@ -179,9 +181,9 @@ sap.ui.define([
                 return "/conditions/$search";
             } else if (sParam === "value") {
                 return [{
-                    "operator": "EQ",
+                    "operator": OperatorName.EQ,
                     "values": ["SomeTestValue"],
-                    "validated": "Validated"
+                    "validated": ConditionValidated.Validated
                 }];
             }
         }});
@@ -501,11 +503,11 @@ sap.ui.define([
             this.oFilterBarBase.setFilterConditions({
                 "key1": [
                     {
-                    "operator": "EQ",
+                    "operator": OperatorName.EQ,
                     "values": [
                         "SomeTestValue"
                     ],
-                    "validated": "Validated"
+                    "validated": ConditionValidated.Validated
                     }
                 ]
             });
@@ -526,7 +528,7 @@ sap.ui.define([
         assert.ok(this.oFilterBarBase._aOngoingChangeAppliance.length === 0, "no pending appliance");
         this.oFilterBarBase._addConditionChange({
 			key1: [
-				{operator: "EQ", value: ["Test"]}
+				{operator: OperatorName.EQ, value: ["Test"]}
 			]
 		});
         assert.ok(this.oFilterBarBase._aOngoingChangeAppliance.length === 1, "pending appliance");
@@ -579,7 +581,7 @@ sap.ui.define([
             //add condition to filterConditions --> simulate flex change
             this.oFilterBarBase.setFilterConditions({
                 key1: [
-                    {operator: "EQ", values: ["Test"]}
+                    {operator: OperatorName.EQ, values: ["Test"]}
                 ]
             });
 
@@ -612,10 +614,10 @@ sap.ui.define([
 		//set initial conditions
 		this.oFilterBarBase.setFilterConditions({
 			key2: [
-				{operator: "EQ", values: ["Test"]}
+				{operator: OperatorName.EQ, values: ["Test"]}
 			],
 			key1: [
-				{operator: "EQ", values: ["Test"]}
+				{operator: OperatorName.EQ, values: ["Test"]}
 			]
 		});
 
@@ -630,7 +632,7 @@ sap.ui.define([
 			this.oFilterBarBase._setXConditions({
 				key1: [],
 				key2: [
-					{operator: "EQ", values: ["Test"]}
+					{operator: OperatorName.EQ, values: ["Test"]}
 				]
 			})
 			.then(function(){
@@ -664,7 +666,7 @@ sap.ui.define([
 
 		//set initial conditions
 		this.oFilterBarBase.setFilterConditions(this.oFilterBarBase._setXConditions({
-			key2: [{operator: "EQ", values: ["Test"]}]
+			key2: [{operator: OperatorName.EQ, values: ["Test"]}]
 		}));
 
 		return this.oFilterBarBase.initialized().then(function () {
@@ -676,7 +678,7 @@ sap.ui.define([
 
 			//clear the current condition
 			this.oFilterBarBase._setXConditions({
-				key1: [{operator: "EQ", values: ["Test"]}]
+				key1: [{operator: OperatorName.EQ, values: ["Test"]}]
 			})
 			.then(function(){
 
@@ -754,7 +756,7 @@ sap.ui.define([
             this.oFilterBarBase.setFilterConditions({
                 "key1": [
                     {
-                    "operator": "EQ",
+                    "operator": OperatorName.EQ,
                     "values": [
                         "test"
                     ]
@@ -775,11 +777,11 @@ sap.ui.define([
                 this.oFilterBarBase.setFilterConditions({
                     "key1": [
                         {
-                        "operator": "EQ",
+                        "operator": OperatorName.EQ,
                         "values": [
                            "too long"
                         ],
-                        "validated": "Validated"
+                        "validated": ConditionValidated.Validated
                         }
                     ]
                 });
@@ -900,30 +902,30 @@ sap.ui.define([
         const mDummyCondition = {
             "key1": [
                 {
-                  "operator": "EQ",
+                  "operator": OperatorName.EQ,
                   "values": [
                     "SomeTestValue"
                   ],
-                  "validated": "Validated"
+                  "validated": ConditionValidated.Validated
                 }
               ],
              "unknown": [                {
-                  "operator": "EQ",
+                  "operator": OperatorName.EQ,
                   "values": [
                     "SomeTestValue"
                   ],
-                  "validated": "Validated"
+                  "validated": ConditionValidated.Validated
                 }]
         };
         const mResultCondition = {
             "key1": [
                 {
 				  "isEmpty": false,
-                  "operator": "EQ",
+                  "operator": OperatorName.EQ,
                   "values": [
                     "SomeTestValue"
                   ],
-                  "validated": "Validated"
+                  "validated": ConditionValidated.Validated
                 }
               ]
         };

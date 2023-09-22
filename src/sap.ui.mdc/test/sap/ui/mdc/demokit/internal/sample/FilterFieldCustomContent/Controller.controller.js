@@ -4,7 +4,8 @@ sap.ui.define([
 	"sap/ui/mdc/condition/ConditionModel",
 	"sap/ui/mdc/condition/Condition",
 	"sap/ui/mdc/enums/FieldEditMode",
-	'sap/ui/mdc/enums/ConditionValidated',
+	"sap/ui/mdc/enums/ConditionValidated",
+	"sap/ui/mdc/enums/OperatorName",
 	"sap/m/MessageToast"
 ], function(
 	Controller,
@@ -13,6 +14,7 @@ sap.ui.define([
 	Condition,
 	FieldEditMode,
 	ConditionValidated,
+	OperatorName,
 	MessageToast
 	) {
 	"use strict";
@@ -24,12 +26,12 @@ sap.ui.define([
 			oCore.getMessageManager().registerObject(oView, true);
 
 			const oCM = new ConditionModel();
-			oCM.addCondition("title", Condition.createCondition("EQ", ["4711"], undefined, undefined, ConditionValidated.NotValidated));
-			oCM.addCondition("metricsWords", Condition.createCondition("EQ", [4711], undefined, undefined, ConditionValidated.NotValidated));
-			oCM.addCondition("descr", Condition.createCondition("GT", ["A"], undefined, undefined, ConditionValidated.NotValidated));
-			oCM.addCondition("descr", Condition.createCondition("BT", ["B", "C"], undefined, undefined, ConditionValidated.NotValidated));
-			oCM.addCondition("number", Condition.createCondition("EQ", [1], undefined, undefined, ConditionValidated.NotValidated));
-			oCM.addCondition("number", Condition.createCondition("EQ", [3], undefined, undefined, ConditionValidated.NotValidated));
+			oCM.addCondition("title", Condition.createCondition(OperatorName.EQ, ["4711"], undefined, undefined, ConditionValidated.NotValidated));
+			oCM.addCondition("metricsWords", Condition.createCondition(OperatorName.EQ, [4711], undefined, undefined, ConditionValidated.NotValidated));
+			oCM.addCondition("descr", Condition.createCondition(OperatorName.GT, ["A"], undefined, undefined, ConditionValidated.NotValidated));
+			oCM.addCondition("descr", Condition.createCondition(OperatorName.BT, ["B", "C"], undefined, undefined, ConditionValidated.NotValidated));
+			oCM.addCondition("number", Condition.createCondition(OperatorName.EQ, [1], undefined, undefined, ConditionValidated.NotValidated));
+			oCM.addCondition("number", Condition.createCondition(OperatorName.EQ, [3], undefined, undefined, ConditionValidated.NotValidated));
 
 			//set the model on Form just to have it somehow local
 			const oForm = this.byId("Form1");

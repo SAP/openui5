@@ -10,6 +10,7 @@ sap.ui.define([
 	"sap/ui/mdc/condition/OperatorDynamicDateOption",
 	"sap/ui/mdc/enums/ConditionValidated",
 	"sap/ui/mdc/enums/OperatorValueType",
+	"sap/ui/mdc/enums/OperatorName",
 	"sap/ui/model/odata/type/Date",
 	"sap/ui/model/odata/type/DateTimeOffset",
 	"sap/ui/model/FilterOperator",
@@ -28,6 +29,7 @@ sap.ui.define([
 		OperatorDynamicDateOption,
 		ConditionValidated,
 		OperatorValueType,
+		OperatorName,
 		DateType,
 		DateTimeOffsetType,
 		FilterOperator,
@@ -161,19 +163,19 @@ sap.ui.define([
 
 	QUnit.test("normal operators", function(assert) {
 
-		let oCondition = _createCondition("EQ", ["2021-10-04"]);
+		let oCondition = _createCondition(OperatorName.EQ, ["2021-10-04"]);
 		let oResult = oDynamicDateRangeConditionsType.formatValue([oCondition]);
 		assert.deepEqual(oResult, {operator: "DATE", values: [UI5Date.getInstance(2021, 9, 4)]}, "Result of formatting: " + oCondition.operator); // DynamicDateRange works with local dates
 
-		oCondition = _createCondition("BT", ["2021-10-04", "2021-10-05"]);
+		oCondition = _createCondition(OperatorName.BT, ["2021-10-04", "2021-10-05"]);
 		oResult = oDynamicDateRangeConditionsType.formatValue([oCondition]);
 		assert.deepEqual(oResult, {operator: "DATERANGE", values: [UI5Date.getInstance(2021, 9, 4), UI5Date.getInstance(2021, 9, 5)]}, "Result of formatting: " + oCondition.operator);
 
-		oCondition = _createCondition("GE", ["2021-10-04"]);
+		oCondition = _createCondition(OperatorName.GE, ["2021-10-04"]);
 		oResult = oDynamicDateRangeConditionsType.formatValue([oCondition]);
 		assert.deepEqual(oResult, {operator: "FROM", values: [UI5Date.getInstance(2021, 9, 4)]}, "Result of formatting: " + oCondition.operator);
 
-		oCondition = _createCondition("LE", ["2021-10-04"]);
+		oCondition = _createCondition(OperatorName.LE, ["2021-10-04"]);
 		oResult = oDynamicDateRangeConditionsType.formatValue([oCondition]);
 		assert.deepEqual(oResult, {operator: "TO", values: [UI5Date.getInstance(2021, 9, 4)]}, "Result of formatting: " + oCondition.operator);
 
@@ -249,19 +251,19 @@ sap.ui.define([
 
 	QUnit.test("normal operators", function(assert) {
 
-		let oCondition = _createCondition("EQ", ["2022-02-01T09:08:30Z"]); // for Type UTC is used
+		let oCondition = _createCondition(OperatorName.EQ, ["2022-02-01T09:08:30Z"]); // for Type UTC is used
 		let oResult = oDynamicDateRangeConditionsType.formatValue([oCondition]);
 		assert.deepEqual(oResult, {operator: "DATETIME", values: [UI5Date.getInstance(2022, 1, 1, 9, 8, 30, 0)]}, "Result of formatting: " + oCondition.operator); // DynamicDateRange uses local date
 
-		oCondition = _createCondition("BT", ["2022-02-01T09:08:30Z", "2022-02-02T09:08:30Z"]);
+		oCondition = _createCondition(OperatorName.BT, ["2022-02-01T09:08:30Z", "2022-02-02T09:08:30Z"]);
 		oResult = oDynamicDateRangeConditionsType.formatValue([oCondition]);
 		assert.deepEqual(oResult, {operator: "DATETIMERANGE", values: [UI5Date.getInstance(2022, 1, 1, 9, 8, 30, 0), UI5Date.getInstance(2022, 1, 2, 9, 8, 30)]}, "Result of formatting: " + oCondition.operator);
 
-		oCondition = _createCondition("GE", ["2022-02-08T12:22:30Z"]);
+		oCondition = _createCondition(OperatorName.GE, ["2022-02-08T12:22:30Z"]);
 		oResult = oDynamicDateRangeConditionsType.formatValue([oCondition]);
 		assert.deepEqual(oResult, {operator: "FROMDATETIME", values: [UI5Date.getInstance(2022, 1, 8, 12, 22, 30, 0)]}, "Result of formatting: " + oCondition.operator);
 
-		oCondition = _createCondition("LE", ["2022-02-08T12:22:30Z"]);
+		oCondition = _createCondition(OperatorName.LE, ["2022-02-08T12:22:30Z"]);
 		oResult = oDynamicDateRangeConditionsType.formatValue([oCondition]);
 		assert.deepEqual(oResult, {operator: "TODATETIME", values: [UI5Date.getInstance(2022, 1, 8, 12, 22, 30)]}, "Result of formatting: " + oCondition.operator);
 
@@ -323,19 +325,19 @@ sap.ui.define([
 
 	QUnit.test("normal operators", function(assert) {
 
-		let oCondition = _createCondition("EQ", ["2021-10-04"]);
+		let oCondition = _createCondition(OperatorName.EQ, ["2021-10-04"]);
 		let aConditions = oDynamicDateRangeConditionsType.parseValue({operator: "DATE", values: [UI5Date.getInstance(2021, 9, 4)]});
 		assert.deepEqual(aConditions, [oCondition], "Result of parsing: " + oCondition.operator);
 
-		oCondition = _createCondition("BT", ["2021-10-04", "2021-10-05"]);
+		oCondition = _createCondition(OperatorName.BT, ["2021-10-04", "2021-10-05"]);
 		aConditions = oDynamicDateRangeConditionsType.parseValue({operator: "DATERANGE", values: [UI5Date.getInstance(2021, 9, 4), UI5Date.getInstance(2021, 9, 5)]});
 		assert.deepEqual(aConditions, [oCondition], "Result of parsing: " + oCondition.operator);
 
-		oCondition = _createCondition("GE", ["2021-10-04"]);
+		oCondition = _createCondition(OperatorName.GE, ["2021-10-04"]);
 		aConditions = oDynamicDateRangeConditionsType.parseValue({operator: "FROM", values: [UI5Date.getInstance(2021, 9, 4)]});
 		assert.deepEqual(aConditions, [oCondition], "Result of parsing: " + oCondition.operator);
 
-		oCondition = _createCondition("LE", ["2021-10-04"]);
+		oCondition = _createCondition(OperatorName.LE, ["2021-10-04"]);
 		aConditions = oDynamicDateRangeConditionsType.parseValue({operator: "TO", values: [UI5Date.getInstance(2021, 9, 4)]});
 		assert.deepEqual(aConditions, [oCondition], "Result of parsing: " + oCondition.operator);
 
@@ -396,19 +398,19 @@ sap.ui.define([
 
 	QUnit.test("normal operators", function(assert) {
 
-		let oCondition = _createCondition("EQ", ["2022-02-01T09:21:30Z"]); // Data type uses UTC
+		let oCondition = _createCondition(OperatorName.EQ, ["2022-02-01T09:21:30Z"]); // Data type uses UTC
 		let aConditions = oDynamicDateRangeConditionsType.parseValue({operator: "DATETIME", values: [UI5Date.getInstance(2022, 1, 1, 9, 21, 30, 0)]}); // DynamicDateRange uses local date
 		assert.deepEqual(aConditions, [oCondition], "Result of parsing: " + oCondition.operator);
 
-		oCondition = _createCondition("BT", ["2022-02-01T09:21:30Z", "2022-02-01T10:21:30Z"]);
+		oCondition = _createCondition(OperatorName.BT, ["2022-02-01T09:21:30Z", "2022-02-01T10:21:30Z"]);
 		aConditions = oDynamicDateRangeConditionsType.parseValue({operator: "DATETIMERANGE", values: [UI5Date.getInstance(2022, 1, 1, 9, 21, 30, 0), UI5Date.getInstance(2022, 1, 1, 10, 21, 30, 999)]});
 		assert.deepEqual(aConditions, [oCondition], "Result of parsing: " + oCondition.operator);
 
-		oCondition = _createCondition("GE", ["2022-02-08T12:22:30Z"]);
+		oCondition = _createCondition(OperatorName.GE, ["2022-02-08T12:22:30Z"]);
 		aConditions = oDynamicDateRangeConditionsType.parseValue({operator: "FROMDATETIME", values: [UI5Date.getInstance(2022, 1, 8, 12, 22, 30, 0)]});
 		assert.deepEqual(aConditions, [oCondition], "Result of parsing: " + oCondition.operator);
 
-		oCondition = _createCondition("LE", ["2022-02-08T12:22:30Z"]);
+		oCondition = _createCondition(OperatorName.LE, ["2022-02-08T12:22:30Z"]);
 		aConditions = oDynamicDateRangeConditionsType.parseValue({operator: "TODATETIME", values: [UI5Date.getInstance(2022, 1, 8, 12, 22, 30, 999)]});
 		assert.deepEqual(aConditions, [oCondition], "Result of parsing: " + oCondition.operator);
 
@@ -502,7 +504,7 @@ sap.ui.define([
 	QUnit.test("invalid condition", function(assert) {
 
 		let oException;
-		const oCondition = _createCondition("SPECIFICMONTH", [20]);
+		const oCondition = _createCondition(OperatorName.SPECIFICMONTH, [20]);
 
 		try {
 			oDynamicDateRangeConditionsType.validateValue([oCondition]);
@@ -519,7 +521,7 @@ sap.ui.define([
 	QUnit.test("valid condition", function(assert) {
 
 		let oException;
-		const oCondition = _createCondition("SPECIFICMONTH", [2]);
+		const oCondition = _createCondition(OperatorName.SPECIFICMONTH, [2]);
 
 		try {
 			oDynamicDateRangeConditionsType.validateValue([oCondition]);

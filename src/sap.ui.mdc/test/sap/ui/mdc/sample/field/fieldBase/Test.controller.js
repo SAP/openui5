@@ -10,6 +10,7 @@ sap.ui.define([
 	"sap/ui/mdc/condition/Operator",
 	"sap/ui/mdc/enums/ConditionValidated",
 	'sap/ui/mdc/enums/FieldEditMode',
+	"sap/ui/mdc/enums/OperatorName",
 	"sap/m/Table",
 	"sap/m/ColumnListItem",
 	"sap/m/Column",
@@ -29,6 +30,7 @@ sap.ui.define([
 	Operator,
 	ConditionValidated,
 	FieldEditMode,
+	OperatorName,
 	Table,
 	ColumnListItem,
 	Column,
@@ -85,19 +87,19 @@ sap.ui.define([
 			var oConditionChangeBinding = oCM.bindProperty("/conditions", oCM.getContext("/conditions"));
 			oConditionChangeBinding.attachChange(this.handleConditionModelChange.bind(this));
 
-			oCM.addCondition("ProductId", Condition.createCondition("EQ", ["22134T"], undefined, undefined, ConditionValidated.Validated));
-			oCM.addCondition("Name", Condition.createCondition("StartsWith", ["Web"], undefined, undefined, ConditionValidated.NotValidated));
-			oCM.addCondition("Date", Condition.createCondition("EQ", [new Date(1397520000000)], undefined, undefined, ConditionValidated.NotValidated));
-			oCM.addCondition("Quantity", Condition.createCondition("EQ", [22], undefined, undefined, ConditionValidated.NotValidated));
-			oCM.addCondition("Description", Condition.createCondition("Contains", ["USB"], undefined, undefined, ConditionValidated.NotValidated));
-			oCM.addCondition("Status", Condition.createCondition("EQ", ["S1"], undefined, undefined, ConditionValidated.Validated));
-			oCM.addCondition("WeightMeasure,WeightUnit", Condition.createCondition("EQ", [[700, "g"]], undefined, undefined, ConditionValidated.NotValidated));
+			oCM.addCondition("ProductId", Condition.createCondition(OperatorName.EQ, ["22134T"], undefined, undefined, ConditionValidated.Validated));
+			oCM.addCondition("Name", Condition.createCondition(OperatorName.StartsWith, ["Web"], undefined, undefined, ConditionValidated.NotValidated));
+			oCM.addCondition("Date", Condition.createCondition(OperatorName.EQ, [new Date(1397520000000)], undefined, undefined, ConditionValidated.NotValidated));
+			oCM.addCondition("Quantity", Condition.createCondition(OperatorName.EQ, [22], undefined, undefined, ConditionValidated.NotValidated));
+			oCM.addCondition("Description", Condition.createCondition(OperatorName.Contains, ["USB"], undefined, undefined, ConditionValidated.NotValidated));
+			oCM.addCondition("Status", Condition.createCondition(OperatorName.EQ, ["S1"], undefined, undefined, ConditionValidated.Validated));
+			oCM.addCondition("WeightMeasure,WeightUnit", Condition.createCondition(OperatorName.EQ, [[700, "g"]], undefined, undefined, ConditionValidated.NotValidated));
 
 			//set the model on your view
 			oView.setModel(oCM, "cm");
 
 			var fnFireChange = function(aConditions, bValid, vWrongValue, oPromise) { this.fireEvent("change", { conditions: aConditions, valid: bValid, promise: oPromise }); };
-			var fnGetOperators = function() { return ["EQ"]; };
+			var fnGetOperators = function() { return [OperatorName.EQ]; };
 			var oBaseField = oView.byId("FB1");
 			oBaseField.fireChangeEvent = fnFireChange;
 			oBaseField.attachEvent("change", this.handleChange, this);
@@ -141,7 +143,7 @@ sap.ui.define([
 			oBaseField = oView.byId("FB10");
 			var oCM2 = new ConditionModel(); // dummy for Link
 			oView.setModel(oCM2, "cm2");
-			oCM2.addCondition("Link", Condition.createCondition("EQ", ["My Link"]));
+			oCM2.addCondition("Link", Condition.createCondition(OperatorName.EQ, ["My Link"]));
 			oBaseField.fireChangeEvent = fnFireChange;
 			oBaseField.attachEvent("change", this.handleChange, this);
 			oBaseField = oView.byId("FB11");
@@ -186,7 +188,7 @@ sap.ui.define([
 			oBaseField.attachEvent("change", this.handleChange, this);
 
 			// add custom operators
-			var oOperator = FilterOperatorUtil.getOperator("EQ");
+			var oOperator = FilterOperatorUtil.getOperator(OperatorName.EQ);
 			var oMyOperator = new Operator({
 				name: "myEQ",
 				filterOperator: oOperator.filterOperator,
@@ -206,7 +208,7 @@ sap.ui.define([
 			FilterOperatorUtil.addOperator(oMyOperator);
 			oMyOperator = new Operator({
 				name: "myNE",
-				filterOperator: "NE",
+				filterOperator: FilterOperator.NE,
 				tokenParse: "^!=(.+)$",
 				tokenFormat: "!(={0})",
 				tokenText: "My NotEqual",
@@ -228,7 +230,7 @@ sap.ui.define([
 			oBaseField = oView.byId("FB-MatrId");
 			oBaseField.fireChangeEvent = fnFireChange;
 			oBaseField.attachEvent("change", this.handleChange, this);
-			oBaseField.getSupportedOperators = function() {return ["GT", "LT", "myEQ", "myNE"];};
+			oBaseField.getSupportedOperators = function() {return [OperatorName.GT, OperatorName.LT, "myEQ", "myNE"];};
 
 		},
 

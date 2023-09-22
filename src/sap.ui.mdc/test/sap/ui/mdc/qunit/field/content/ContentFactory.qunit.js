@@ -13,6 +13,7 @@ sap.ui.define([
 	"sap/ui/mdc/field/content/SearchContent",
 	"sap/ui/mdc/enums/FieldEditMode",
 	"sap/ui/mdc/enums/ContentMode",
+	"sap/ui/mdc/enums/OperatorName",
 	"sap/ui/mdc/Link",
 	"sap/m/Text",
 	"sap/m/ExpandableText",
@@ -27,7 +28,7 @@ sap.ui.define([
 	"sap/m/SearchField",
 	"sap/m/TimePicker",
 	"sap/m/DynamicDateRange"
-], function(QUnit, FieldBase, ContentFactory, DefaultContent, LinkContent, DateContent, DateTimeContent, TimeContent, BooleanContent, UnitContent, SearchContent, FieldEditMode, ContentMode, MdcLink, Text, ExpandableText, Link, FieldInput, FieldMultiInput, TokenizerDisplay, TextArea, DatePicker, DateRangeSelection, DateTimePicker, SearchField, TimePicker, DynamicDateRange) {
+], function(QUnit, FieldBase, ContentFactory, DefaultContent, LinkContent, DateContent, DateTimeContent, TimeContent, BooleanContent, UnitContent, SearchContent, FieldEditMode, ContentMode, OperatorName, MdcLink, Text, ExpandableText, Link, FieldInput, FieldMultiInput, TokenizerDisplay, TextArea, DatePicker, DateRangeSelection, DateTimePicker, SearchField, TimePicker, DynamicDateRange) {
 	"use strict";
 
 	QUnit.test("Constructor", function(assert) {
@@ -148,8 +149,8 @@ sap.ui.define([
 		assert.equal(this.oContentFactory.getContentMode(null, null, 1, true, []), ContentMode.EditMultiLine, "ContentMode 'EditMultiLine' returned.");
 
 		/* ContentMode EditOperator */
-		assert.equal(this.oContentFactory.getContentMode(DateContent, null, 1, false, ["BT"]), ContentMode.EditOperator, "ContentMode 'EditOperator' returned.");
-		assert.equal(this.oContentFactory.getContentMode(DateContent, null, 1, false, ["EQ"]), ContentMode.EditOperator, "ContentMode 'EditOperator' returned.");
+		assert.equal(this.oContentFactory.getContentMode(DateContent, null, 1, false, [OperatorName.BT]), ContentMode.EditOperator, "ContentMode 'EditOperator' returned.");
+		assert.equal(this.oContentFactory.getContentMode(DateContent, null, 1, false, [OperatorName.EQ]), ContentMode.EditOperator, "ContentMode 'EditOperator' returned.");
 
 		/* ContentMode EditForHelp */
 		this.oField.setValueHelp("X"); // just ID needed
@@ -243,10 +244,10 @@ sap.ui.define([
 		const oCreateEditPromise = this.oContentFactory.createContent(oContentType, ContentMode.Edit, sContentTypeName + "-" + ContentMode.Edit);
 		const oCreateEditMultiValuePromise = this.oContentFactory.createContent(oContentType, ContentMode.EditMultiValue, sContentTypeName + "-" + ContentMode.EditMultiValue);
 		const oCreateEditMutliLinePromise = this.oContentFactory.createContent(oContentType, ContentMode.EditMultiLine, sContentTypeName + "-" + ContentMode.EditMultiLine);
-		this.oContentFactory._sOperator = "EQ";
-		const oCreateEditOperatorEQPromise = this.oContentFactory.createContent(oContentType, ContentMode.EditOperator, sContentTypeName + "-" + ContentMode.EditOperator + "EQ");
-		this.oContentFactory._sOperator = "BT";
-		const oCreateEditOperatorBTPromise = this.oContentFactory.createContent(oContentType, ContentMode.EditOperator, sContentTypeName + "-" + ContentMode.EditOperator + "BT");
+		this.oContentFactory._sOperator = OperatorName.EQ;
+		const oCreateEditOperatorEQPromise = this.oContentFactory.createContent(oContentType, ContentMode.EditOperator, sContentTypeName + "-" + ContentMode.EditOperator + OperatorName.EQ);
+		this.oContentFactory._sOperator = OperatorName.BT;
+		const oCreateEditOperatorBTPromise = this.oContentFactory.createContent(oContentType, ContentMode.EditOperator, sContentTypeName + "-" + ContentMode.EditOperator + OperatorName.BT);
 		const oCreateEditForHelpPromise = this.oContentFactory.createContent(oContentType, ContentMode.EditForHelp, sContentTypeName + "-" + ContentMode.EditForHelp);
 
 		return [

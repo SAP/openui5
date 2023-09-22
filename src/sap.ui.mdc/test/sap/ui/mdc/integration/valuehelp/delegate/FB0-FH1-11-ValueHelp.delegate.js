@@ -22,6 +22,7 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	'sap/ui/mdc/condition/Condition',
 	'sap/ui/mdc/enums/ConditionValidated',
+	'sap/ui/mdc/enums/OperatorName',
 	'sap/ui/mdc/p13n/StateUtil',
 	'sap/base/util/deepEqual'
 ], function(
@@ -44,6 +45,7 @@ sap.ui.define([
 	Core,
 	Condition,
 	ConditionValidated,
+	OperatorName,
 	StateUtil,
 	deepEqual
 ) {
@@ -235,7 +237,7 @@ sap.ui.define([
 						return oCondition.values[0] === sCountry;
 					});
 					if (!bExists) {
-						const oNewCondition = Condition.createCondition("EQ", [sCountry], undefined, undefined, ConditionValidated.Validated);
+						const oNewCondition = Condition.createCondition(OperatorName.EQ, [sCountry], undefined, undefined, ConditionValidated.Validated);
 						oState.filter['countryOfOrigin_code'] = oState.filter && oState.filter['countryOfOrigin_code'] || [];
 						oState.filter['countryOfOrigin_code'].push(oNewCondition);
 					}

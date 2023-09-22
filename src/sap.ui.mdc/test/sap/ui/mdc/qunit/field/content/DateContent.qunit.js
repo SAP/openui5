@@ -14,6 +14,7 @@ sap.ui.define([
 	"sap/m/DynamicDateRange",
 	"sap/ui/mdc/condition/OperatorDynamicDateOption",
 	"sap/ui/mdc/field/DynamicDateRangeConditionsType",
+	"sap/ui/mdc/enums/OperatorName",
 	"sap/m/library",
 	"sap/m/DynamicDateFormat",
 	"sap/ui/model/json/JSONModel",
@@ -33,6 +34,7 @@ sap.ui.define([
 	DynamicDateRange,
 	OperatorDynamicDateOption,
 	DynamicDateRangeConditionsType,
+	OperatorName,
 	mobileLibrary,
 	DynamicDateFormat,
 	JSONModel,
@@ -103,7 +105,7 @@ sap.ui.define([
 		tooltip: "Tooltip",
 		textAlign: "Initial",
 		textDirection: "Inherit",
-		_operators: ["EQ", "TODAY", "BT", "NOTBT"]
+		_operators: [OperatorName.EQ, OperatorName.TODAY, OperatorName.BT, OperatorName.NOTBT]
 	});
 	const oStub = sinon.stub(oModel, "getProperty");
 	oStub.withArgs("/").callsFake(function(sPath, oContext) { // fake behaviour of ManagedObjectModel
@@ -122,11 +124,11 @@ sap.ui.define([
 
 	QUnit.test("getEditOperator", function(assert) {
 		const oEditOperator = DateContent.getEditOperator();
-		assert.equal(oEditOperator["EQ"].name, "sap/m/DatePicker", "Correct editOperator 'EQ' name returned.");
-		assert.equal(oEditOperator["EQ"].create, DateContent._createDatePickerControl, "Correct editOperator 'EQ' create function returned.");
+		assert.equal(oEditOperator[OperatorName.EQ].name, "sap/m/DatePicker", "Correct editOperator 'EQ' name returned.");
+		assert.equal(oEditOperator[OperatorName.EQ].create, DateContent._createDatePickerControl, "Correct editOperator 'EQ' create function returned.");
 
-		assert.equal(oEditOperator["BT"].name, "sap/m/DateRangeSelection", "Correct editOperator 'BT' name returned.");
-		assert.equal(oEditOperator["BT"].create, DateContent._createDateRangePickerControl, "Correct editOperator 'BT' create function returned.");
+		assert.equal(oEditOperator[OperatorName.BT].name, "sap/m/DateRangeSelection", "Correct editOperator 'BT' name returned.");
+		assert.equal(oEditOperator[OperatorName.BT].create, DateContent._createDateRangePickerControl, "Correct editOperator 'BT' create function returned.");
 	});
 
 	QUnit.test("getUseDefaultEnterHandler", function(assert) {
@@ -151,8 +153,8 @@ sap.ui.define([
 		assert.deepEqual(DateContent.getControlNames("EditMultiValue"), ["sap/ui/mdc/field/FieldMultiInput", "sap/m/Token"], "Correct controls returned for ContentMode 'EditMultiValue'");
 		assert.deepEqual(DateContent.getControlNames("EditMultiLine"), [null], "Correct controls returned for ContentMode 'EditMultiLine'");
 		assert.deepEqual(DateContent.getControlNames("EditOperator"), [null], "Correct controls returned for ContentMode 'EditOperator'");
-		assert.deepEqual(DateContent.getControlNames("EditOperator", "EQ"), ["sap/m/DatePicker"], "Correct controls returned for ContentMode 'EditOperator' and 'EQ'");
-		assert.deepEqual(DateContent.getControlNames("EditOperator", "BT"), ["sap/m/DateRangeSelection"], "Correct controls returned for ContentMode 'EditOperator' and 'BT'");
+		assert.deepEqual(DateContent.getControlNames("EditOperator", OperatorName.EQ), ["sap/m/DatePicker"], "Correct controls returned for ContentMode 'EditOperator' and 'EQ'");
+		assert.deepEqual(DateContent.getControlNames("EditOperator", OperatorName.BT), ["sap/m/DateRangeSelection"], "Correct controls returned for ContentMode 'EditOperator' and 'BT'");
 		assert.deepEqual(DateContent.getControlNames("EditForHelp"), ["sap/ui/mdc/field/FieldInput"], "Correct controls returned for ContentMode 'Edit'");
 	});
 
@@ -219,8 +221,8 @@ sap.ui.define([
 				},
 				"createEditMultiLine throws an error.");
 
-			const aCreatedEditOperatorEQControls = DateContent.create(oContentFactory, "EditOperator", "EQ", [DatePicker], "EditOperatorEQ-create");
-			const aCreatedEditOperatorBTControls = DateContent.create(oContentFactory, "EditOperator", "BT", [DateRangeSelection], "EditOperatorBT-create");
+			const aCreatedEditOperatorEQControls = DateContent.create(oContentFactory, "EditOperator", OperatorName.EQ, [DatePicker], "EditOperatorEQ-create");
+			const aCreatedEditOperatorBTControls = DateContent.create(oContentFactory, "EditOperator", OperatorName.BT, [DateRangeSelection], "EditOperatorBT-create");
 
 			fnSpyCalledOnce(fnCreateDisplayFunction, "Display", assert);
 			fnSpyCalledOnce(fnCreateEditFunction, "Edit", assert);

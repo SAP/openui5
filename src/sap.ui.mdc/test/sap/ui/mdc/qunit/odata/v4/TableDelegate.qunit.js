@@ -22,6 +22,8 @@ sap.ui.define([
 	"sap/ui/mdc/enums/TableMultiSelectMode",
 	"sap/ui/mdc/enums/TableSelectionMode",
 	"sap/ui/mdc/enums/TableType",
+	"sap/ui/mdc/enums/ConditionValidated",
+	"sap/ui/mdc/enums/OperatorName",
 	"sap/ui/mdc/util/FilterUtil"
 ], function(
 	TableQUnitUtils,
@@ -46,6 +48,8 @@ sap.ui.define([
 	TableMultiSelectMode,
 	TableSelectionMode,
 	TableType,
+	ConditionValidated,
+	OperatorName,
 	FilterUtil
 ) {
 	"use strict";
@@ -1521,7 +1525,7 @@ sap.ui.define([
 
 	QUnit.test("Update binding within suspend and resume", function(assert) {
 		this.oTable.setSortConditions({sorters: [{name: "Name", descending: true}]});
-		this.oTable.setFilterConditions({Name: [{operator: "EQ", values: ["Test"], validated: "NotValidated"}]});
+		this.oTable.setFilterConditions({Name: [{operator: OperatorName.EQ, values: ["Test"], validated: ConditionValidated.NotValidated}]});
 		this.oTable.setGroupConditions({groupLevels: [{name: "Name"}]});
 		this.oTable.setAggregateConditions({Name: {}});
 		this.oTable._rebind();
@@ -1748,8 +1752,8 @@ sap.ui.define([
 			filterConditions: {
 				ID: [{
 					isEmpty: null,
-					operator: "EQ",
-					validated: "NotValidated",
+					operator: OperatorName.EQ,
+					validated: ConditionValidated.NotValidated,
 					values: ["test"]
 				}]
 			}

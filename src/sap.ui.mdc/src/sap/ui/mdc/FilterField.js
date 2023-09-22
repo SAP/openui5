@@ -67,7 +67,7 @@ sap.ui.define([
 				/**
 				 * Supported operator names for conditions.
 				 *
-				 * If empty, default operators depending on used data type are taken.
+				 * If empty, default operators depending on used data type are taken. The standard operators can are mentioned in {@link sap.ui.mdc.enums.OperatorName OperatorName}.
 				 *
 				 * @since 1.73.0
 				 */
@@ -279,6 +279,7 @@ sap.ui.define([
 	 * Adds an operator to the list of known operators.
 	 *
  	 * <b>Note</b>: If no operator is set, the used <code>datatType</code> of the <code>FilterField</code> defines the set of default operators.
+	 * The standard operators can are mentioned in {@link sap.ui.mdc.enums.OperatorName OperatorName}.
 	 *
 	 * @param {sap.ui.mdc.condition.Operator|string} vOperator The operator instance or operator name
 	 * @returns {this} Reference to <code>this</code> to allow method chaining
@@ -305,6 +306,7 @@ sap.ui.define([
 	 * Adds an array of operators to the list of known operators.
 	 *
 	 * <b>Note</b>: <code>aOperators</code> can be the name of an {@link sap.ui.mdc.condition.Operator Operator}, the instance itself, or multiple operators inside an array.
+	 * The standard operators can are mentioned in {@link sap.ui.mdc.enums.OperatorName OperatorName}.
 	 *
 	 * @param {sap.ui.mdc.condition.Operator[]} aOperators Array of operators
 	 * @returns {this} Reference to <code>this</code> to allow method chaining
@@ -326,6 +328,7 @@ sap.ui.define([
 
 	/**
 	 * Removes an operator from the list of known operators.
+	 * The standard operators can are mentioned in {@link sap.ui.mdc.enums.OperatorName OperatorName}.
 	 *
 	 * @param {sap.ui.mdc.condition.Operator|string} vOperator The operator instance or operator name
 	 *
@@ -349,6 +352,7 @@ sap.ui.define([
 	 * Removes all given operators from the list of known operators.
 	 *
 	 * <b>Note</b>: <code>aOperators</code> can be the name of an {@link sap.ui.mdc.condition.Operator Operator}, the instance itself, or multiple operators inside an array.
+	 * The standard operators can are mentioned in {@link sap.ui.mdc.enums.OperatorName OperatorName}.
 	 *
 	 * @param {sap.ui.mdc.condition.Operator[]} aOperators Array of operators
 	 *

@@ -2,17 +2,19 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/ui/mdc/field/content/DefaultContent",
-	"sap/ui/mdc/enums/BaseType",
+	'sap/ui/mdc/field/content/DefaultContent',
+	'sap/ui/mdc/enums/BaseType',
 	'sap/ui/mdc/enums/OperatorValueType',
-	"sap/ui/mdc/util/DateUtil",
-	"sap/ui/mdc/condition/FilterOperatorUtil",
-	"sap/ui/core/library",
-	"sap/ui/model/Filter"
+	'sap/ui/mdc/enums/OperatorName',
+	'sap/ui/mdc/util/DateUtil',
+	'sap/ui/mdc/condition/FilterOperatorUtil',
+	'sap/ui/core/library',
+	'sap/ui/model/Filter'
 ], function(
 	DefaultContent,
 	BaseType,
 	OperatorValueType,
+	OperatorName,
 	DateUtil,
 	FilterOperatorUtil,
 	coreLibrary,
@@ -44,8 +46,8 @@ sap.ui.define([
 		},
 		getEditOperator: function() {
 			return {
-				"EQ": { name: "sap/m/DatePicker", create: this._createDatePickerControl }, // TODO: how to check custom operators
-				"BT": { name: "sap/m/DateRangeSelection", create: this._createDateRangePickerControl }
+				[OperatorName.EQ]: { name: "sap/m/DatePicker", create: this._createDatePickerControl }, // TODO: how to check custom operators
+				[OperatorName.BT]: { name: "sap/m/DateRangeSelection", create: this._createDateRangePickerControl }
 			};
 		},
 		getEditForHelp: function() {

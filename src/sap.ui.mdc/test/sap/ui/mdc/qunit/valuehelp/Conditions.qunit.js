@@ -11,6 +11,7 @@ sap.ui.define([
 	"sap/ui/mdc/condition/Condition",
 	"sap/ui/mdc/enums/ConditionValidated",
 	"sap/ui/mdc/enums/FieldDisplay",
+	"sap/ui/mdc/enums/OperatorName",
 	"sap/ui/mdc/enums/ValueHelpSelectionType",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/type/String",
@@ -23,6 +24,7 @@ sap.ui.define([
 		Condition,
 		ConditionValidated,
 		FieldDisplay,
+		OperatorName,
 		ValueHelpSelectionType,
 		JSONModel,
 		StringType,
@@ -90,7 +92,7 @@ sap.ui.define([
 		beforeEach: function() {
 			oType = new StringType();
 
-			const aConditions = [Condition.createCondition("EQ", ["X"], undefined, undefined, ConditionValidated.NotValidated)];
+			const aConditions = [Condition.createCondition(OperatorName.EQ, ["X"], undefined, undefined, ConditionValidated.NotValidated)];
 			oConditions = new Conditions("C1", {
 				label: "Test",
 				conditions: aConditions, // don't need to test the binding of Container here
@@ -100,8 +102,8 @@ sap.ui.define([
 					delegate: FieldBaseDelegate,
 					delegateName: "sap/ui/mdc/field/FieldBaseDelegate",
 					payload: { text: "X" },
-					operators: ["EQ", "BT", "Contains"],
-					defaultOperatorName: "EQ",
+					operators: [OperatorName.EQ, OperatorName.BT, OperatorName.Contains],
+					defaultOperatorName: OperatorName.EQ,
 					display: FieldDisplay.Description
 				}
 			});
@@ -151,15 +153,15 @@ sap.ui.define([
 					delegate: FieldBaseDelegate,
 					delegateName: "sap/ui/mdc/field/FieldBaseDelegate",
 					payload: { text: "X" },
-					operators: ["EQ", "BT", "Contains"],
-					defaultOperatorName: "EQ",
+					operators: [OperatorName.EQ, OperatorName.BT, OperatorName.Contains],
+					defaultOperatorName: OperatorName.EQ,
 					display: FieldDisplay.Description
 				};
 				assert.deepEqual(oConfig, oTestConfig, "Config on DefineConditionPanel");
 
 				let aNewConditions = [
-					Condition.createCondition("EQ", ["Y"], undefined, undefined, ConditionValidated.NotValidated),
-					Condition.createCondition("EQ", ["Z"], undefined, undefined, ConditionValidated.NotValidated)
+					Condition.createCondition(OperatorName.EQ, ["Y"], undefined, undefined, ConditionValidated.NotValidated),
+					Condition.createCondition(OperatorName.EQ, ["Z"], undefined, undefined, ConditionValidated.NotValidated)
 				];
 				oDefineConditionPanel.setConditions(aNewConditions);
 				oDefineConditionPanel.fireConditionProcessed();
@@ -176,15 +178,15 @@ sap.ui.define([
 					delegate: FieldBaseDelegate,
 					delegateName: "sap/ui/mdc/field/FieldBaseDelegate",
 					payload: {text: "X"},
-					operators: ["EQ", "BT", "Contains"],
-					defaultOperatorName: "EQ",
+					operators: [OperatorName.EQ, OperatorName.BT, OperatorName.Contains],
+					defaultOperatorName: OperatorName.EQ,
 					display: FieldDisplay.Description
 				});
 				aNewConditions = [
 					Condition.createItemCondition("X", "Text"),
-					Condition.createCondition("EQ", ["Y"], undefined, undefined, ConditionValidated.NotValidated)
+					Condition.createCondition(OperatorName.EQ, ["Y"], undefined, undefined, ConditionValidated.NotValidated)
 				];
-				const aCheckConditions = [Condition.createCondition("EQ", ["Y"], undefined, undefined, ConditionValidated.NotValidated)];
+				const aCheckConditions = [Condition.createCondition(OperatorName.EQ, ["Y"], undefined, undefined, ConditionValidated.NotValidated)];
 				oDefineConditionPanel.setConditions(aNewConditions);
 				oDefineConditionPanel.fireConditionProcessed();
 				assert.equal(iSelect, 1, "select event fired");
@@ -225,8 +227,8 @@ sap.ui.define([
 					delegate: FieldBaseDelegate,
 					delegateName: "sap/ui/mdc/field/FieldBaseDelegate",
 					payload: { text: "X" },
-					operators: ["EQ", "BT", "Contains"],
-					defaultOperatorName: "EQ",
+					operators: [OperatorName.EQ, OperatorName.BT, OperatorName.Contains],
+					defaultOperatorName: OperatorName.EQ,
 					display: FieldDisplay.Description
 				};
 				assert.deepEqual(oConfig, oTestConfig, "Config on DefineConditionPanel");
@@ -303,8 +305,8 @@ sap.ui.define([
 
 		const aConditions = [
 			Condition.createItemCondition("X", "Text"),
-			Condition.createCondition("EQ", ["Y"], undefined, undefined, ConditionValidated.NotValidated),
-			Condition.createCondition("Contains", [], undefined, undefined, ConditionValidated.NotValidated)
+			Condition.createCondition(OperatorName.EQ, ["Y"], undefined, undefined, ConditionValidated.NotValidated),
+			Condition.createCondition(OperatorName.Contains, [], undefined, undefined, ConditionValidated.NotValidated)
 		];
 		aConditions[2].isEmpty = true;
 

@@ -2,12 +2,12 @@
  * ${copyright}
  */
 sap.ui.define([
-		'sap/base/Log',
-		'sap/ui/mdc/enums/ConditionValidated'
+		'sap/ui/mdc/enums/ConditionValidated',
+		'sap/ui/mdc/enums/OperatorName'
 	],
 	function(
-		Log,
-		ConditionValidated
+		ConditionValidated,
+		OperatorName
 	) {
 		"use strict";
 
@@ -46,7 +46,7 @@ sap.ui.define([
 				 * @static
 				 * @constant
 				 * @typedef {object} sap.ui.mdc.condition.ConditionObject
-				 * @property {string} operator Operator of the condition
+				 * @property {string} operator Operator of the condition. The standard operators can are mentioned in {@link sap.ui.mdc.enums.OperatorName OperatorName}.
 				 * @property {any[]} values Array of values of the condition. Depending on the <code>operator</code>, this contains one or more entries. The entries are sored in internal format regarding the used data type.
 				 * @property {object} [inParameters] In parameters of the condition. For each field path, a value is stored. (It is obsolete and only filled for conditions stored on old user-variants.)
 				 * @property {object} [outParameters] Out parameters of the condition. For each field path, a value is stored. (It is obsolete and only filled for conditions stored on old user-variants.)
@@ -79,13 +79,13 @@ sap.ui.define([
 					} else {
 						sValidated = ConditionValidated.Validated; // if there is a description set it is validated (even if empty string)
 					}
-					return this.createCondition("EQ", aValues, oInParameters, oOutParameters, sValidated, oPayload);
+					return this.createCondition(OperatorName.EQ, aValues, oInParameters, oOutParameters, sValidated, oPayload);
 				},
 
 				/**
 				 * Creates a condition object.
 				 *
-				 * @param {string} sOperator Operator for the condition
+				 * @param {string} sOperator Operator for the condition. The standard operators can are mentioned in {@link sap.ui.mdc.enums.OperatorName OperatorName}.
 				 * @param {any[]} aValues Array of values for the condition
 				 * @param {object} [oInParameters] In parameters of the condition. (Do not use it for new conditions, use payload instead.)
 				 * @param {object} [oOutParameters] Out parameters of the condition. (Do not use it for new conditions, use payload instead.)

@@ -10,6 +10,7 @@ sap.ui.define([
 	'sap/ui/model/ValidateException',
 	'sap/ui/model/type/String',
 	'sap/ui/mdc/enums/FieldDisplay',
+	'sap/ui/mdc/enums/OperatorName',
 	'sap/ui/mdc/enums/OperatorValueType',
 	'sap/ui/mdc/condition/FilterOperatorUtil',
 	'sap/ui/mdc/condition/Condition',
@@ -27,6 +28,7 @@ sap.ui.define([
 		ValidateException,
 		StringType,
 		FieldDisplay,
+		OperatorName,
 		OperatorValueType,
 		FilterOperatorUtil,
 		Condition,
@@ -229,7 +231,7 @@ sap.ui.define([
 
 		if (bIsUnit && oCondition.values.length > 1 && oCondition.values[0][1] === oCondition.values[1][1]) { // in Between case format only one unit
 			oCondition = merge({}, oCondition); // don't use same object
-			oCondition.operator = "EQ";
+			oCondition.operator = OperatorName.EQ;
 			oCondition.values.splice(1);
 		}
 
@@ -525,7 +527,7 @@ sap.ui.define([
 				// TODO: if no unit provided use last one
 				const sUnit = oType._aCurrentValue[1] === undefined ? null : oType._aCurrentValue[1]; // undefined in CompositeType means "not changed" -> if no current unit it needs to be null
 				oCondition.values[0][1] = sUnit;
-				if (oCondition.operator === "BT") {
+				if (oCondition.operator === OperatorName.BT) {
 					oCondition.values[1][1] = sUnit;
 				}
 			}
@@ -619,7 +621,7 @@ sap.ui.define([
 				if (_isUnit(oType)) {
 					// create condition based on type
 					if (oCondition) {
-						if (oCondition.operator !== "EQ") {
+						if (oCondition.operator !== OperatorName.EQ) {
 							throw new ParseException("unsupported operator");
 						}
 						const vNumber = oType._aCurrentValue && oType._aCurrentValue[0] !== undefined ? oType._aCurrentValue[0] : null; // undefined not valid for formatting, needs to be null
@@ -697,7 +699,7 @@ sap.ui.define([
 		let oOperator;
 		if (_isUnit(oType)) {
 			// in unit case just use EQ operator
-			oOperator = FilterOperatorUtil.getEQOperator("EQ");
+			oOperator = FilterOperatorUtil.getEQOperator();
 		} else if (aOperators.length === 1) {
 			// just use the one supported type
 			oOperator = FilterOperatorUtil.getOperator(aOperators[0]);

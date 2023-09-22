@@ -9,6 +9,7 @@ sap.ui.define([
 	'sap/m/ToggleButton',
 	'sap/ui/mdc/condition/Condition',
 	'sap/ui/mdc/enums/ConditionValidated',
+	'sap/ui/mdc/enums/OperatorName',
 	'sap/ui/mdc/condition/FilterOperatorUtil'
 ], function(
 	Control,
@@ -18,6 +19,7 @@ sap.ui.define([
 	ToggleButton,
 	Condition,
 	ConditionValidated,
+	OperatorName,
 	FilterOperatorUtil
 ) {
 	"use strict";
@@ -187,7 +189,7 @@ sap.ui.define([
 		}
 
 		if (bPressed && !bFound) {
-			const oCondition = Condition.createCondition("EQ", [iIndex], undefined, undefined, ConditionValidated.NotValidated);
+			const oCondition = Condition.createCondition(OperatorName.EQ, [iIndex], undefined, undefined, ConditionValidated.NotValidated);
 			aConditions.push(oCondition);
 		}
 		FilterOperatorUtil.checkConditionsEmpty(aConditions);

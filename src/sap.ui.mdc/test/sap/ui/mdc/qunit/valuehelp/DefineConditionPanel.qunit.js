@@ -15,6 +15,7 @@ sap.ui.define([
 	"sap/ui/mdc/enums/BaseType",
 	"sap/ui/mdc/enums/ConditionValidated",
 	"sap/ui/mdc/enums/FieldEditMode",
+	"sap/ui/mdc/enums/OperatorName",
 	"sap/ui/mdc/enums/OperatorValueType",
 	"sap/ui/model/type/String",
 	"sap/ui/model/type/Date",
@@ -22,6 +23,7 @@ sap.ui.define([
 	"sap/ui/model/odata/type/Boolean",
 	"sap/ui/model/type/Integer",
 	"sap/ui/model/type/Float",
+	"sap/ui/model/FilterOperator",
 	"sap/m/DatePicker", // don't want to test async loading in Field here
 	"sap/m/DateTimePicker", // don't want to test async loading in Field here
 	"sap/m/Text", // don't want to test async loading in Field here
@@ -43,6 +45,7 @@ sap.ui.define([
 		BaseType,
 		ConditionValidated,
 		FieldEditMode,
+		OperatorName,
 		OperatorValueType,
 		StringType,
 		DateType,
@@ -50,6 +53,7 @@ sap.ui.define([
 		BooleanType,
 		IntegerType,
 		FloatType,
+		FilterOperator,
 		DatePicker,
 		DateTimePicker,
 		Text,
@@ -123,18 +127,18 @@ sap.ui.define([
 
 		let aConditions = oModel.getConditions("Name");
 		assert.equal(aConditions.length, 1, "one empty condition should exist");
-		assert.equal(aConditions[0].operator, "EQ", "Operator of empty condition");
+		assert.equal(aConditions[0].operator, OperatorName.EQ, "Operator of empty condition");
 		assert.equal(aConditions[0].values[0], null, "Value of empty condition");
 		assert.ok(aConditions[0].isEmpty, "isEmpty of empty condition");
 
-		oModel.addCondition("Name", Condition.createCondition("EQ", ["Andreas"], undefined, undefined, ConditionValidated.NotValidated));
+		oModel.addCondition("Name", Condition.createCondition(OperatorName.EQ, ["Andreas"], undefined, undefined, ConditionValidated.NotValidated));
 		oCore.applyChanges();
 		aConditions = oModel.getConditions("Name");
 		assert.equal(aConditions.length, 2, "2 conditions should exist");
-		assert.equal(aConditions[0].operator, "EQ", "Operator of first condition");
+		assert.equal(aConditions[0].operator, OperatorName.EQ, "Operator of first condition");
 		assert.equal(aConditions[0].values[0], null, "Value of first condition");
 		assert.ok(aConditions[0].isEmpty, "isEmpty of first condition");
-		assert.equal(aConditions[1].operator, "EQ", "Operator of second condition");
+		assert.equal(aConditions[1].operator, OperatorName.EQ, "Operator of second condition");
 		assert.equal(aConditions[1].values[0], "Andreas", "Value of second condition");
 		assert.notOk(aConditions[1].isEmpty, "isEmpty of second condition");
 
@@ -145,7 +149,7 @@ sap.ui.define([
 		oConfig = {
 				dataType: oDataType,
 				maxConditions: -1,
-				operators: ["BT"],
+				operators: [OperatorName.BT],
 				delegate: FieldBaseDelegate,
 				delegateName: "sap/ui/mdc/field/FieldBaseDelegate"
 		};
@@ -160,7 +164,7 @@ sap.ui.define([
 			setTimeout(function () { // to for internal Conditions update in DefineConditionPanel (is async)
 				const aConditions = oModel.getConditions("Name");
 				assert.equal(aConditions.length, 1, "one empty condition should exist");
-				assert.equal(aConditions[0].operator, "BT", "Operator of empty condition");
+				assert.equal(aConditions[0].operator, OperatorName.BT, "Operator of empty condition");
 				assert.equal(aConditions[0].values[0], null, "Value of empty condition");
 				assert.ok(aConditions[0].isEmpty, "isEmpty of empty condition");
 				fnDone();
@@ -181,7 +185,7 @@ sap.ui.define([
 		oModel.setData({
 			conditions: {
 				Name: [
-					   Condition.createCondition("EQ", ["Peter"], undefined, undefined, ConditionValidated.NotValidated)
+					   Condition.createCondition(OperatorName.EQ, ["Peter"], undefined, undefined, ConditionValidated.NotValidated)
 					   ]
 			}
 		});
@@ -189,9 +193,9 @@ sap.ui.define([
 		oModel.setData({
 			conditions: {
 				Name: [
-					   Condition.createCondition("EQ", ["Andreas"], undefined, undefined, ConditionValidated.NotValidated),
-					   Condition.createCondition("EQ", ["Martin"], undefined, undefined, ConditionValidated.Validated), // will be hidden
-					   Condition.createCondition("EQ", ["Peter"], undefined, undefined, ConditionValidated.NotValidated)
+					   Condition.createCondition(OperatorName.EQ, ["Andreas"], undefined, undefined, ConditionValidated.NotValidated),
+					   Condition.createCondition(OperatorName.EQ, ["Martin"], undefined, undefined, ConditionValidated.Validated), // will be hidden
+					   Condition.createCondition(OperatorName.EQ, ["Peter"], undefined, undefined, ConditionValidated.NotValidated)
 					   ]
 			}
 		});
@@ -239,7 +243,7 @@ sap.ui.define([
 
 		let oOperator = new Operator({
 			name: "MyInclude",
-			filterOperator: "EQ",
+			filterOperator: FilterOperator.EQ,
 			tokenParse: "^=([^=].*)$",
 			tokenFormat: "={0}",
 			valueTypes: [OperatorValueType.Self],
@@ -249,7 +253,7 @@ sap.ui.define([
 
 		oOperator = new Operator({ // test excluding operator with validation
 			name: "MyExclude",
-			filterOperator: "NE",
+			filterOperator: FilterOperator.NE,
 			tokenParse: "^!=(.+)$",
 			tokenFormat: "!(={0})",
 			valueTypes: [OperatorValueType.Self],
@@ -260,7 +264,7 @@ sap.ui.define([
 
 		const oConfig = merge({}, oDefineConditionPanel.getConfig());
 		oConfig.maxConditions = 4;
-		oConfig.operators = ["MyInclude", "BT", "MyExclude"];
+		oConfig.operators = ["MyInclude", OperatorName.BT, "MyExclude"];
 		oDefineConditionPanel.setConfig(oConfig); // to test visibility of add button
 
 		oModel.setData({
@@ -295,7 +299,7 @@ sap.ui.define([
 		oModel.setData({
 			conditions: {
 				Name: [
-					   Condition.createCondition("EQ", ["Andreas"], undefined, undefined, ConditionValidated.NotValidated)
+					   Condition.createCondition(OperatorName.EQ, ["Andreas"], undefined, undefined, ConditionValidated.NotValidated)
 					   ]
 			}
 		});
@@ -334,7 +338,7 @@ sap.ui.define([
 		oModel.setData({
 			conditions: {
 				Name: [
-					   Condition.createCondition("EQ", ["Andreas"], undefined, undefined, ConditionValidated.NotValidated)
+					   Condition.createCondition(OperatorName.EQ, ["Andreas"], undefined, undefined, ConditionValidated.NotValidated)
 					   ]
 			}
 		});
@@ -343,8 +347,8 @@ sap.ui.define([
 		setTimeout(function () { // wait for rendering
 			oCore.applyChanges();
 			const oOperatorField = oCore.byId("DCP1--0-operator-inner");
-			oOperatorField.setValue("BT");
-			oOperatorField.fireChange({value: "BT"}); // fake item select
+			oOperatorField.setValue(OperatorName.BT);
+			oOperatorField.fireChange({value: OperatorName.BT}); // fake item select
 
 			setTimeout(function () { // as model update is async
 				setTimeout(function () { // as parsing is async
@@ -352,7 +356,7 @@ sap.ui.define([
 						setTimeout(function () { // as row update is async
 							oCore.applyChanges();
 							const aConditions = oDefineConditionPanel.getConditions();
-							assert.equal(aConditions[0].operator, "BT", "Operator set on condition");
+							assert.equal(aConditions[0].operator, OperatorName.BT, "Operator set on condition");
 							assert.deepEqual(aConditions[0].values, ["Andreas", null], "Values set on condition");
 
 							const oGrid = oCore.byId("DCP1--conditions");
@@ -381,7 +385,7 @@ sap.ui.define([
 		oModel.setData({
 			conditions: {
 				Name: [
-					   Condition.createCondition("BT", ["A", "Z"], undefined, undefined, ConditionValidated.NotValidated)
+					   Condition.createCondition(OperatorName.BT, ["A", "Z"], undefined, undefined, ConditionValidated.NotValidated)
 					   ]
 			}
 		});
@@ -390,8 +394,8 @@ sap.ui.define([
 		setTimeout(function () { // wait for rendering
 			oCore.applyChanges();
 			const oOperatorField = oCore.byId("DCP1--0-operator-inner");
-			oOperatorField.setValue("EQ");
-			oOperatorField.fireChange({value: "EQ"}); // fake item select
+			oOperatorField.setValue(OperatorName.EQ);
+			oOperatorField.fireChange({value: OperatorName.EQ}); // fake item select
 
 			setTimeout(function () { // as model update is async
 				setTimeout(function () { // as parsing is async
@@ -399,7 +403,7 @@ sap.ui.define([
 						setTimeout(function () { // as row update is async
 							oCore.applyChanges();
 							const aConditions = oDefineConditionPanel.getConditions();
-							assert.equal(aConditions[0].operator, "EQ", "Operator set on condition");
+							assert.equal(aConditions[0].operator, OperatorName.EQ, "Operator set on condition");
 							assert.deepEqual(aConditions[0].values, ["A"], "Values set on condition");
 
 							const oGrid = oCore.byId("DCP1--conditions");
@@ -425,7 +429,7 @@ sap.ui.define([
 		oModel.setData({
 			conditions: {
 				Name: [
-					   Condition.createCondition("BT", ["A", "Z"], undefined, undefined, ConditionValidated.NotValidated)
+					   Condition.createCondition(OperatorName.BT, ["A", "Z"], undefined, undefined, ConditionValidated.NotValidated)
 					   ]
 			}
 		});
@@ -434,8 +438,8 @@ sap.ui.define([
 		setTimeout(function () { // wait for rendering
 			oCore.applyChanges();
 			const oOperatorField = oCore.byId("DCP1--0-operator-inner");
-			oOperatorField.setValue("Empty");
-			oOperatorField.fireChange({value: "Empty"}); // fake item select
+			oOperatorField.setValue(OperatorName.Empty);
+			oOperatorField.fireChange({value: OperatorName.Empty}); // fake item select
 
 			setTimeout(function () { // as model update is async
 				setTimeout(function () { // as parsing is async
@@ -443,7 +447,7 @@ sap.ui.define([
 						setTimeout(function () { // as row update is async
 							oCore.applyChanges();
 							const aConditions = oDefineConditionPanel.getConditions();
-							assert.equal(aConditions[0].operator, "Empty", "Operator set on condition");
+							assert.equal(aConditions[0].operator, OperatorName.Empty, "Operator set on condition");
 							assert.deepEqual(aConditions[0].values, [], "Values set on condition");
 
 							const oGrid = oCore.byId("DCP1--conditions");
@@ -465,7 +469,7 @@ sap.ui.define([
 		oModel.setData({
 			conditions: {
 				Name: [
-					   Condition.createCondition("BT", ["A", "Z"], undefined, undefined, ConditionValidated.NotValidated)
+					   Condition.createCondition(OperatorName.BT, ["A", "Z"], undefined, undefined, ConditionValidated.NotValidated)
 					   ]
 			}
 		});
@@ -484,7 +488,7 @@ sap.ui.define([
 						setTimeout(function () { // as row update is async
 							oCore.applyChanges();
 							let aConditions = oDefineConditionPanel.getConditions();
-							assert.equal(aConditions[0].operator, "BT", "Operator set on condition");
+							assert.equal(aConditions[0].operator, OperatorName.BT, "Operator set on condition");
 							assert.deepEqual(aConditions[0].values, ["A", "Z"], "Values set on condition");
 
 							const oGrid = oCore.byId("DCP1--conditions");
@@ -499,8 +503,8 @@ sap.ui.define([
 							assert.equal(oField2 && oField2.getEditMode(), FieldEditMode.ReadOnly, "Field2 is readonly");
 							assert.notOk(oDefineConditionPanel.getInputOK(), "InputOK not set");
 
-							oOperatorField.setValue("BT");
-							oOperatorField.fireChange({value: "BT"}); // fake right input
+							oOperatorField.setValue(OperatorName.BT);
+							oOperatorField.fireChange({value: OperatorName.BT}); // fake right input
 
 							setTimeout(function () { // as model update is async
 								setTimeout(function () { // as parsing is async
@@ -508,7 +512,7 @@ sap.ui.define([
 										setTimeout(function () { // as row update is async
 											oCore.applyChanges();
 											aConditions = oDefineConditionPanel.getConditions();
-											assert.equal(aConditions[0].operator, "BT", "Operator set on condition");
+											assert.equal(aConditions[0].operator, OperatorName.BT, "Operator set on condition");
 											assert.deepEqual(aConditions[0].values, ["A", "Z"], "Values set on condition");
 
 											aContent = oGrid.getContent();
@@ -540,7 +544,7 @@ sap.ui.define([
 		oModel.setData({
 			conditions: {
 				Name: [
-					   Condition.createCondition("BT", ["A", "B"], undefined, undefined, ConditionValidated.NotValidated)
+					   Condition.createCondition(OperatorName.BT, ["A", "B"], undefined, undefined, ConditionValidated.NotValidated)
 					   ]
 			}
 		});
@@ -634,7 +638,7 @@ sap.ui.define([
 		beforeEach: function() {
 			oCustomOperator = new Operator({
 				name: "MyOperator",
-				filterOperator: "EQ",
+				filterOperator: FilterOperator.EQ,
 				tokenParse: "^#tokenText#$",
 				tokenFormat: "#tokenText#",
 				tokenText: "Text",
@@ -706,7 +710,7 @@ sap.ui.define([
 	QUnit.test("switch custom operator", function(assert) {
 
 		const aOriginalOperators = FilterOperatorUtil.getOperatorsForType(BaseType.String);
-		FilterOperatorUtil.setOperatorsForType(BaseType.String, [FilterOperatorUtil.getOperator("BT"), oCustomOperator], oCustomOperator);
+		FilterOperatorUtil.setOperatorsForType(BaseType.String, [FilterOperatorUtil.getOperator(OperatorName.BT), oCustomOperator], oCustomOperator);
 
 		oCore.applyChanges();
 
@@ -736,13 +740,13 @@ sap.ui.define([
 			assert.deepEqual(oField.getText && oField.getText(), "", "Field empty");
 
 			// switch operator
-			oOperatorField.setValue("BT");
-			oOperatorField.fireChange({value: "BT", valid: true, promise: Promise.resolve("BT")}); // fake item select
+			oOperatorField.setValue(OperatorName.BT);
+			oOperatorField.fireChange({value: OperatorName.BT, valid: true, promise: Promise.resolve(OperatorName.BT)}); // fake item select
 
 			setTimeout(function () { // as model update is async
 				oCore.applyChanges();
 				aConditions = oDefineConditionPanel.getConditions();
-				assert.equal(aConditions[0].operator, "BT", "Operator set on condition");
+				assert.equal(aConditions[0].operator, OperatorName.BT, "Operator set on condition");
 				assert.deepEqual(aConditions[0].values, [null, null], "Values set on condition");
 
 				aContent = oGrid.getContent();
@@ -757,7 +761,7 @@ sap.ui.define([
 
 				// switch operator back
 				oOperatorField.setValue("MyOperator");
-				oOperatorField.fireChange({value: "MyOperator", valid: true, promise: Promise.resolve("MyOperator")}); // fake item select
+				oOperatorField.fireChange({value: "MyOperator", valid: true, promise: Promise.resolve(OperatorName.MyOperator)}); // fake item select
 
 				setTimeout(function () { // as model update is async
 					oCore.applyChanges();
@@ -772,7 +776,7 @@ sap.ui.define([
 					assert.ok(oField && oField.isA("sap.m.Button"), "Field is sap.m.Button");
 					assert.deepEqual(oField.getText && oField.getText(), "", "Field empty");
 
-					FilterOperatorUtil.setOperatorsForType(BaseType.String, aOriginalOperators, FilterOperatorUtil.getOperator("EQ"));
+					FilterOperatorUtil.setOperatorsForType(BaseType.String, aOriginalOperators, FilterOperatorUtil.getOperator(OperatorName.EQ));
 					fnDone();
 				}, 0);
 			}, 0);
@@ -813,7 +817,7 @@ sap.ui.define([
 
 	QUnit.test("use date type - EQ", function(assert) {
 
-		_initType(new DateType(), Condition.createCondition("EQ", [new Date(2018, 10, 16)], undefined, undefined, ConditionValidated.NotValidated), BaseType.Date);
+		_initType(new DateType(), Condition.createCondition(OperatorName.EQ, [new Date(2018, 10, 16)], undefined, undefined, ConditionValidated.NotValidated), BaseType.Date);
 
 		const fnDone = assert.async();
 		setTimeout(function () { // to wait for retemplating
@@ -839,7 +843,7 @@ sap.ui.define([
 	QUnit.test("use date type - TODAY", function(assert) {
 
 		const oDateType = new DateType();
-		_initType(oDateType, Condition.createCondition("TODAY", [], undefined, undefined, ConditionValidated.NotValidated), BaseType.Date);
+		_initType(oDateType, Condition.createCondition(OperatorName.TODAY, [], undefined, undefined, ConditionValidated.NotValidated), BaseType.Date);
 
 		const fnDone = assert.async();
 		setTimeout(function () { // to wait for retemplating
@@ -866,7 +870,7 @@ sap.ui.define([
 	QUnit.test("use date type - NEXTDAYS", function(assert) {
 
 		const oDateType = new DateType();
-		_initType(oDateType, Condition.createCondition("NEXTDAYS", [5], undefined, undefined, ConditionValidated.NotValidated), BaseType.Date);
+		_initType(oDateType, Condition.createCondition(OperatorName.NEXTDAYS, [5], undefined, undefined, ConditionValidated.NotValidated), BaseType.Date);
 
 		const fnDone = assert.async();
 		setTimeout(function () { // to wait for retemplating
@@ -892,7 +896,7 @@ sap.ui.define([
 	QUnit.test("use date type - Change Operator", function(assert) {
 
 		const oDateType = new DateType();
-		_initType(new DateType(), Condition.createCondition("EQ", [new Date(2020, 1, 24)], undefined, undefined, ConditionValidated.NotValidated), BaseType.Date);
+		_initType(new DateType(), Condition.createCondition(OperatorName.EQ, [new Date(2020, 1, 24)], undefined, undefined, ConditionValidated.NotValidated), BaseType.Date);
 
 		const fnDone = assert.async();
 		setTimeout(function () { // to wait for retemplating
@@ -900,8 +904,8 @@ sap.ui.define([
 			const oGrid = oCore.byId("DCP1--conditions");
 			let aContent = oGrid.getContent();
 			const oOperatorField = aContent[0];
-			oOperatorField.setValue("TODAY");
-			oOperatorField.fireChange({value: "TODAY", valid: true, promise: Promise.resolve("TODAY")}); // fake item select
+			oOperatorField.setValue(OperatorName.TODAY);
+			oOperatorField.fireChange({value: OperatorName.TODAY, valid: true, promise: Promise.resolve(OperatorName.TODAY)}); // fake item select
 
 			setTimeout(function () { // as model update is async
 				oCore.applyChanges();
@@ -917,8 +921,8 @@ sap.ui.define([
 				assert.equal(typeof oField.getValue(), "string", "Value of Field is String");
 				assert.equal(oField.getValue(), oDateType.formatValue(new Date(), "string"), "Text");
 
-				oOperatorField.setValue("NEXTDAYS");
-				oOperatorField.fireChange({value: "NEXTDAYS", valid: true, promise: Promise.resolve("NEXTDAYS")}); // fake item select
+				oOperatorField.setValue(OperatorName.NEXTDAYS);
+				oOperatorField.fireChange({value: OperatorName.NEXTDAYS, valid: true, promise: Promise.resolve(OperatorName.NEXTDAYS)}); // fake item select
 
 				setTimeout(function () { // as model update is async
 					setTimeout(function () { // as change event is async
@@ -937,8 +941,8 @@ sap.ui.define([
 						oControl.setValue("5");
 						oControl.fireChange({value: "5"}); //fake input
 						setTimeout(function () { // as model update is async
-							oOperatorField.setValue("EQ");
-							oOperatorField.fireChange({value: "EQ", valid: true, promise: Promise.resolve("EQ")}); // fake item select
+							oOperatorField.setValue(OperatorName.EQ);
+							oOperatorField.fireChange({value: OperatorName.EQ, valid: true, promise: Promise.resolve(OperatorName.EQ)}); // fake item select
 
 							setTimeout(function () { // as model update is async
 								setTimeout(function () { // as change event is async
@@ -954,8 +958,8 @@ sap.ui.define([
 									assert.ok(oType instanceof DateType, "Type of Field binding");
 									assert.notOk(oField.getValue(), "no Value");
 
-									oOperatorField.setValue("TODAYFROMTO");
-									oOperatorField.fireChange({value: "TODAYFROMTO", valid: true, promise: Promise.resolve("TODAYFROMTO")}); // fake item select
+									oOperatorField.setValue(OperatorName.TODAYFROMTO);
+									oOperatorField.fireChange({value: OperatorName.TODAYFROMTO, valid: true, promise: Promise.resolve(OperatorName.TODAYFROMTO)}); // fake item select
 
 									setTimeout(function () { // as model update is async
 										setTimeout(function () { // as change event is async
@@ -984,8 +988,8 @@ sap.ui.define([
 											oControl.fireChange({value: "6"}); //fake input
 
 											setTimeout(function () { // as model update is async
-												oOperatorField.setValue("BT");
-												oOperatorField.fireChange({value: "BT", valid: true, promise: Promise.resolve("BT")}); // fake item select
+												oOperatorField.setValue(OperatorName.BT);
+												oOperatorField.fireChange({value: OperatorName.BT, valid: true, promise: Promise.resolve(OperatorName.BT)}); // fake item select
 
 												setTimeout(function () { // as model update is async
 													setTimeout(function () { // as change event is async
@@ -1028,7 +1032,7 @@ sap.ui.define([
 	QUnit.test("use date type - change to dateTimetype", function(assert) {
 
 		const oDateType = new DateType();
-		const oCondition = Condition.createCondition("EQ", [new Date(Date.UTC(2022, 8, 14, 10, 27, 30))], undefined, undefined, ConditionValidated.NotValidated);
+		const oCondition = Condition.createCondition(OperatorName.EQ, [new Date(Date.UTC(2022, 8, 14, 10, 27, 30))], undefined, undefined, ConditionValidated.NotValidated);
 		oCondition.isEmpty = false; // to really have the same data
 		_initType(oDateType, oCondition, BaseType.Date);
 
@@ -1063,7 +1067,7 @@ sap.ui.define([
 
 	QUnit.test("use boolean type", function(assert) {
 
-		_initType(new BooleanType(), Condition.createCondition("EQ", [true], undefined, undefined, ConditionValidated.NotValidated), BaseType.Boolean);
+		_initType(new BooleanType(), Condition.createCondition(OperatorName.EQ, [true], undefined, undefined, ConditionValidated.NotValidated), BaseType.Boolean);
 
 		const fnDone = assert.async();
 		setTimeout(function () { // to wait for condition update
@@ -1090,7 +1094,7 @@ sap.ui.define([
 
 	QUnit.test("use integer type", function(assert) {
 
-		_initType(new IntegerType(), Condition.createCondition("EQ", [1], undefined, undefined, ConditionValidated.NotValidated), BaseType.Numeric);
+		_initType(new IntegerType(), Condition.createCondition(OperatorName.EQ, [1], undefined, undefined, ConditionValidated.NotValidated), BaseType.Numeric);
 
 		const fnDone = assert.async();
 		setTimeout(function () { // to wait for retemplating
@@ -1113,7 +1117,7 @@ sap.ui.define([
 
 	QUnit.test("enter invalid value and remove condition", function(assert) {
 
-		_initType(new IntegerType(), Condition.createCondition("EQ", [1], undefined, undefined, ConditionValidated.NotValidated), BaseType.Numeric);
+		_initType(new IntegerType(), Condition.createCondition(OperatorName.EQ, [1], undefined, undefined, ConditionValidated.NotValidated), BaseType.Numeric);
 
 		const fnDone = assert.async();
 		setTimeout(function () { // to wait for retemplating
@@ -1148,7 +1152,7 @@ sap.ui.define([
 
 	QUnit.test("use float type", function(assert) {
 
-		_initType(new FloatType(), Condition.createCondition("EQ", [1.1], undefined, undefined, ConditionValidated.NotValidated), BaseType.Numeric);
+		_initType(new FloatType(), Condition.createCondition(OperatorName.EQ, [1.1], undefined, undefined, ConditionValidated.NotValidated), BaseType.Numeric);
 
 		const fnDone = assert.async();
 		setTimeout(function () { // to wait for retemplating
@@ -1175,7 +1179,7 @@ sap.ui.define([
 		oModel.setData({
 			conditions: {
 				Name: [
-					   Condition.createCondition("EQ", ["x"], undefined, undefined, ConditionValidated.NotValidated)
+					   Condition.createCondition(OperatorName.EQ, ["x"], undefined, undefined, ConditionValidated.NotValidated)
 					   ]
 			}
 		});
@@ -1319,9 +1323,9 @@ sap.ui.define([
 		oModel.setData({
 			conditions: {
 				Name: [
-					   Condition.createCondition("BT", ["A", "Z"], undefined, undefined, ConditionValidated.NotValidated),
-					   Condition.createCondition("NE", ["X"], undefined, undefined, ConditionValidated.NotValidated),
-					   Condition.createCondition("LE", ["X"], undefined, undefined, ConditionValidated.NotValidated)
+					   Condition.createCondition(OperatorName.BT, ["A", "Z"], undefined, undefined, ConditionValidated.NotValidated),
+					   Condition.createCondition(OperatorName.NE, ["X"], undefined, undefined, ConditionValidated.NotValidated),
+					   Condition.createCondition(OperatorName.LE, ["X"], undefined, undefined, ConditionValidated.NotValidated)
 					   ]
 			}
 		});
@@ -1334,8 +1338,8 @@ sap.ui.define([
 		setTimeout(function () { // wait for rendering
 			oCore.applyChanges();
 			const oOperatorField = oCore.byId("DCP1--0-operator-inner");
-			oOperatorField.setValue("EQ");
-			oOperatorField.fireChange({value: "EQ"}); // fake item select
+			oOperatorField.setValue(OperatorName.EQ);
+			oOperatorField.fireChange({value: OperatorName.EQ}); // fake item select
 
 			setTimeout(function () { // as model update is async
 				setTimeout(function () { // as parsing is async

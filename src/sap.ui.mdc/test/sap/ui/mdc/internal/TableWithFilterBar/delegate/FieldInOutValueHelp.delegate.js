@@ -9,10 +9,11 @@ sap.ui.define([
 	'sap/ui/mdc/p13n/StateUtil',
 	'sap/ui/mdc/condition/Condition',
 	'sap/ui/mdc/enums/ConditionValidated',
+	'sap/ui/mdc/enums/OperatorName',
 	'sap/ui/model/ParseException',
 	'sap/ui/core/Core'
 ], function(
-	BaseValueHelpDelegate, StateUtil, Condition, ConditionValidated, ParseException, Core
+	BaseValueHelpDelegate, StateUtil, Condition, ConditionValidated, OperatorName, ParseException, Core
 ) {
 	"use strict";
 
@@ -52,7 +53,7 @@ sap.ui.define([
 			if (aPropertyPromises.length > 0) {
 				return Promise.all(aPropertyPromises).then(function(aResults) {
 					aResults.forEach(function(vResult, index){
-						oConditions[aPropertyPromiseTargets[index]] = [Condition.createCondition("EQ", [vResult], null, null, ConditionValidated.Validated, null)];
+						oConditions[aPropertyPromiseTargets[index]] = [Condition.createCondition(OperatorName.EQ, [vResult], null, null, ConditionValidated.Validated, null)];
 					});
 					return oConditions;
 				});
@@ -124,7 +125,7 @@ sap.ui.define([
 								control: oTargetField
 							};
 							oOutValueHelp.getItemForValue(oConfig).then(function(oItem) { // if this is an In-Parameter for another this update would need to wait until this one
-								var oNewCondition = Condition.createCondition("EQ", [oItem.key], undefined, undefined, ConditionValidated.Validated, oItem.payload);
+								var oNewCondition = Condition.createCondition(OperatorName.EQ, [oItem.key], undefined, undefined, ConditionValidated.Validated, oItem.payload);
 								if (oItem.description) {
 									oNewCondition.values.push(oItem.description);
 								}

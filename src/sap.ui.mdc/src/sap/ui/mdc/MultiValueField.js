@@ -6,13 +6,15 @@ sap.ui.define([
 	'sap/ui/mdc/field/FieldBase',
 	'sap/ui/mdc/field/FieldBaseRenderer',
 	'sap/ui/mdc/condition/Condition',
-	'sap/ui/mdc/enums/ConditionValidated'
+	'sap/ui/mdc/enums/ConditionValidated',
+	'sap/ui/mdc/enums/OperatorName'
 ], function(
 		library,
 		FieldBase,
 		FieldBaseRenderer,
 		Condition,
-		ConditionValidated
+		ConditionValidated,
+		OperatorName
 	) {
 	"use strict";
 
@@ -119,7 +121,7 @@ sap.ui.define([
 
 		FieldBase.prototype.init.apply(this, arguments);
 
-		this.setProperty("_operators", ["EQ"], true);
+		this.setProperty("_operators", [OperatorName.EQ], true);
 
 		this._oObserver.observe(this, {
 			aggregations: ["items"]
