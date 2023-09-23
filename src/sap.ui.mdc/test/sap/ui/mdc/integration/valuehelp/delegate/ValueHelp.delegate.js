@@ -7,6 +7,7 @@ sap.ui.define([
 	"delegates/odata/v4/ValueHelpDelegate",
 	'sap/ui/mdc/condition/Condition',
 	'sap/ui/mdc/enums/ConditionValidated',
+	'sap/ui/mdc/enums/OperatorName',
 	'sap/ui/mdc/p13n/StateUtil',
 	'sap/base/util/deepEqual',
 	"sap/ui/core/Core",
@@ -18,6 +19,7 @@ sap.ui.define([
 	ODataV4ValueHelpDelegate,
 	Condition,
 	ConditionValidated,
+	OperatorName,
 	StateUtil,
 	deepEqual,
 	Core,
@@ -236,7 +238,7 @@ sap.ui.define([
 							return oCondition.values[0] === sCountry;
 						});
 						if (!bExists) {
-							const oNewCondition = Condition.createCondition("EQ", [sCountry], undefined, undefined, ConditionValidated.Validated);
+							const oNewCondition = Condition.createCondition(OperatorName.EQ, [sCountry], undefined, undefined, ConditionValidated.Validated);
 							oState.filter['salesOrganization'] = oState.filter && oState.filter['salesOrganization'] || [];
 							oState.filter['salesOrganization'].push(oNewCondition);
 							bModify = true;
@@ -356,7 +358,7 @@ sap.ui.define([
 				aEntries.forEach(function (oEntry) {
 					Object.keys(oEntry).forEach(function (sKey) {
 						oConditions[sKey] = oConditions[sKey] || [];
-						oConditions[sKey].push(Condition.createCondition("EQ", [oEntry[sKey]], undefined, undefined, ConditionValidated.NotValidated));
+						oConditions[sKey].push(Condition.createCondition(OperatorName.EQ, [oEntry[sKey]], undefined, undefined, ConditionValidated.NotValidated));
 					});
 				});
 			});

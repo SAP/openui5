@@ -6,12 +6,14 @@ sap.ui.define([
 	"./ValueHelpODataV2.delegate",
 	"sap/ui/mdc/condition/Condition",
 	"sap/ui/mdc/enums/ConditionValidated",
+	"sap/ui/mdc/enums/OperatorName",
 	"sap/base/util/merge",
 	"sap/base/util/deepEqual"
 ], function(
 	MDCValueHelpDelegate,
 	Condition,
 	ConditionValidated,
+	OperatorName,
 	merge,
 	deepEqual
 ) {
@@ -77,7 +79,7 @@ sap.ui.define([
 				var oCondition;
 				var aConditions = [];
 				if (oIn.hasOwnProperty("value")) {
-					oCondition = Condition.createCondition("EQ", [oIn.value], undefined, undefined, ConditionValidated.Validated, undefined);
+					oCondition = Condition.createCondition(OperatorName.EQ, [oIn.value], undefined, undefined, ConditionValidated.Validated, undefined);
 					aConditions.push(oCondition);
 				} else if (oIn.hasOwnProperty("source")) {
 					if (oIn.source.startsWith("conditions/")) {
@@ -95,10 +97,10 @@ sap.ui.define([
 							vValue = oContext.getProperty(oIn.source);
 						}
 						if (oIn.initialValueFilterEmpty && !vValue) {
-							oCondition = Condition.createCondition("Empty", []);
+							oCondition = Condition.createCondition(OperatorName.Empty, []);
 							aConditions.push(oCondition);
 						} else if (vValue) { // TODO: also select for empty string?
-							oCondition = Condition.createCondition("EQ", [vValue], undefined, undefined, ConditionValidated.Validated, undefined);
+							oCondition = Condition.createCondition(OperatorName.EQ, [vValue], undefined, undefined, ConditionValidated.Validated, undefined);
 							aConditions.push(oCondition);
 						}
 					}
@@ -162,7 +164,7 @@ sap.ui.define([
 							}
 						}
 						if (oOut.target.startsWith("conditions/") && bUpdate) {
-							var oNewCondition = Condition.createCondition("EQ", [vNewValue], undefined, undefined, ConditionValidated.Validated, undefined);
+							var oNewCondition = Condition.createCondition(OperatorName.EQ, [vNewValue], undefined, undefined, ConditionValidated.Validated, undefined);
 							oCM.addCondition(oOut.target.slice(11), oNewCondition); // will be checked if allready exist inside
 						}
 					}
@@ -225,7 +227,7 @@ sap.ui.define([
 							var bFound = false;
 							for (var j = 0; j < oInConditions[sIn].length; j++) {
 								var oInCondition = oInConditions[sIn][j];
-								if (oInCondition.operator === "EQ" && oInCondition.values[0] === oItemData.payload.in[sIn]) { // TODO: check for other operators than EQ
+								if (oInCondition.operator === OperatorName.EQ && oInCondition.values[0] === oItemData.payload.in[sIn]) { // TODO: check for other operators than EQ
 									// at least one in-condition fit to the item
 									// TODO: check payload of there coditions too?
 									bFound = true;

@@ -3,15 +3,27 @@
  */
 
 // Provides the Design Time Metadata for the sap.ui.table.Table control
-sap.ui.define(function() {
+sap.ui.define([
+	"sap/ui/table/rowmodes/Type"
+], function(
+	RowModeType
+) {
 	"use strict";
 
 	return {
 		domRef: function(oTable) {
-			if (oTable._getRowMode().isA("sap.ui.table.rowmodes.Auto")) {
+			var vRowMode = oTable.getRowMode();
+			var bIsTableInAutoMode = false;
+
+			if (vRowMode) {
+				bIsTableInAutoMode = vRowMode === RowModeType.Auto || vRowMode.isA("sap.ui.table.rowmodes.Auto");
+			}
+
+			if (bIsTableInAutoMode) {
 				//control domRef has height:0px set, but footer & scrollbar is missing
 				return oTable.$("sapUiTableCnt").get(0);
 			}
+
 			return oTable.getDomRef();
 		},
 		aggregations: {

@@ -5,6 +5,7 @@ sap.ui.define([
 	"sap/ui/mdc/Link",
 	"sap/ui/mdc/enums/FieldDisplay",
 	"sap/ui/mdc/enums/FieldEditMode",
+	'sap/ui/mdc/enums/OperatorName',
 	"sap/ui/mdc/util/FilterUtil",
 	"delegates/odata/v4/util/DelegateUtil",
 	"sap/ui/core/Core",
@@ -16,7 +17,7 @@ sap.ui.define([
 	"sap/ui/model/odata/type/String",
 	"sap/m/Text",
 	"delegates/util/DelegateCache"
-], function (ODataTableDelegate, OrdersFBDelegate, Field, Link, FieldDisplay, FieldEditMode, FilterUtil, DelegateUtil, Core, Filter, FilterOperator, CurrencyType, DecimalType, Int32Type, StringType, Text, DelegateCache) {
+], function (ODataTableDelegate, OrdersFBDelegate, Field, Link, FieldDisplay, FieldEditMode, OperatorName, FilterUtil, DelegateUtil, Core, Filter, FilterOperator, CurrencyType, DecimalType, Int32Type, StringType, Text, DelegateCache) {
 	"use strict";
 	var OrdersTableDelegate = Object.assign({}, ODataTableDelegate);
 	OrdersTableDelegate.apiVersion = 2;//CLEANUP_DELEGATE
@@ -49,7 +50,7 @@ sap.ui.define([
 			}, "$Columns");
 			DelegateCache.add(oTable, {
 				"OrderNo": {valueHelp: "FH1"},
-				"currency_code": {display: FieldDisplay.Value, maxConditions: 1, operators: ["EQ"], valueHelp: "FH-Currency"}
+				"currency_code": {display: FieldDisplay.Value, maxConditions: 1, operators: [OperatorName.EQ], valueHelp: "FH-Currency"}
 			}, "$Filters");
 
 			return aProperties;

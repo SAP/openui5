@@ -5,8 +5,8 @@
 // ------------------------------------------------------------------------------------------
 // Utility class used mdc table and chart
 // ------------------------------------------------------------------------------------------
-sap.ui.define(['sap/ui/mdc/util/IdentifierUtil', 'sap/ui/mdc/enums/ConditionValidated', "sap/ui/mdc/condition/ConditionConverter", 'sap/ui/mdc/condition/FilterConverter', 'sap/base/Log', 'sap/base/util/merge'],
-		function(IdentifierUtil, ConditionValidated, ConditionConverter, FilterConverter, Log, merge) {
+sap.ui.define(['sap/ui/mdc/util/IdentifierUtil', 'sap/ui/mdc/enums/ConditionValidated', 'sap/ui/mdc/enums/OperatorName', "sap/ui/mdc/condition/ConditionConverter", 'sap/ui/mdc/condition/FilterConverter', 'sap/base/Log', 'sap/base/util/merge'],
+		function(IdentifierUtil, ConditionValidated, OperatorName, ConditionConverter, FilterConverter, Log, merge) {
 	"use strict";
 
 	// Added support for deprecated TypeUtil
@@ -98,7 +98,7 @@ sap.ui.define(['sap/ui/mdc/util/IdentifierUtil', 'sap/ui/mdc/enums/ConditionVali
 									oPropertyCondition = {};
 									oPropertyCondition.operator = mConditions[sPropertyName][i].operator;
 
-									if ((oPropertyCondition.operator === "EQ") && (mConditions[sPropertyName][i].validated === ConditionValidated.Validated)) {
+									if ((oPropertyCondition.operator === OperatorName.EQ) && (mConditions[sPropertyName][i].validated === ConditionValidated.Validated)) {
 										oPropertyCondition.values = [mConditions[sPropertyName][i].values[0]];
 									} else {
 										oPropertyCondition.values = mConditions[sPropertyName][i].values;

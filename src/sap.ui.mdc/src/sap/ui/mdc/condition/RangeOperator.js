@@ -5,6 +5,7 @@ sap.ui.define([
 	'sap/ui/mdc/condition/Operator',
 	'sap/ui/mdc/util/DateUtil',
 	'sap/ui/model/Filter',
+	'sap/ui/model/FilterOperator',
 	'sap/base/Log'
 ],
 
@@ -12,6 +13,7 @@ function(
 	Operator,
 	DateUtil,
 	Filter,
+	FilterOperator,
 	Log
 ) {
 	"use strict";
@@ -85,7 +87,7 @@ function(
 
 	RangeOperator.prototype.getModelFilter = function(oCondition, sFieldPath, oType, bCaseSensitive, sBaseType) {
 		const aRange = this._getRange(oCondition.values, oType, sBaseType);
-		return new Filter({ path: sFieldPath, operator: "BT", value1: aRange[0], value2: aRange[1] });
+		return new Filter({ path: sFieldPath, operator: FilterOperator.BT, value1: aRange[0], value2: aRange[1] });
 	};
 
 	RangeOperator.prototype._getRange = function(aValues, oType, sBaseType) {

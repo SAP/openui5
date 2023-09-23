@@ -828,7 +828,7 @@ sap.ui.define([
 			}
 		}
 
-		this._initDefaultRowMode();
+		initDefaultRowMode(this);
 		this._initLegacySelectionPlugin();
 
 		Control.prototype.applySettings.call(this, mSettings, oScope);
@@ -1877,71 +1877,76 @@ sap.ui.define([
 	Table.prototype._onBindingChange = function(oEvent) {};
 
 	Table.prototype.setRowMode = function(vRowMode) {
-		this._destroyDefaultRowMode();
+		destroyDefaultRowMode(this);
 		this.setAggregation("rowMode", vRowMode);
-		this._initDefaultRowMode();
+		initDefaultRowMode(this);
 		return this;
 	};
 
 	Table.prototype.destroyRowMode = function() {
 		this.destroyAggregation("rowMode");
 
-		if (!this._oDefaultRowMode) {
-			this._initDefaultRowMode();
+		if (!_private(this).oDefaultRowMode) {
+			initDefaultRowMode(this);
 		}
 
 		return this;
 	};
 
 	/**
-	 * Gets the row mode of the table. If no row mode instance is set, a default row mode is returned.
+	 * Gets the row mode of the table. This is either the applied row mode instance, or the default row mode instance if it was already created.
 	 *
-	 * @returns {sap.ui.table.rowmodes.RowMode} The row mode of the table.
-	 * @private
+	 * @param {sap.ui.table.Table} oTable The table from which to get the row mode.
+	 * @returns {sap.ui.table.rowmodes.RowMode | undefined} The row mode of the table.
 	 */
-	Table.prototype._getRowMode = function() {
-		var vRowMode = this.getRowMode();
+	function getRowMode(oTable) {
+		var vRowMode = oTable.getRowMode();
 
-		return TableUtils.isA(vRowMode, "sap.ui.table.rowmodes.RowMode") ? vRowMode : this._oDefaultRowMode;
-	};
+		return TableUtils.isA(vRowMode, "sap.ui.table.rowmodes.RowMode") ? vRowMode : _private(oTable).oDefaultRowMode;
+	}
 
 	/**
 	 * Initializes a row mode instance with default settings if no row mode instance exists.
 	 *
-	 * @private
+	 * @param {sap.ui.table.Table} oTable The table for which to create a default row mode instance.
 	 */
-	Table.prototype._initDefaultRowMode = function() {
-		const vRowMode = this.getRowMode();
+	function initDefaultRowMode(oTable) {
+		const vRowMode = oTable.getRowMode();
 		const sRowMode = TableUtils.isA(vRowMode, "sap.ui.table.rowmodes.RowMode") ? undefined : vRowMode || RowModeType.Fixed;
 
 		// If row mode is an instance, a default is not needed.
-		if (sRowMode === undefined || this._oDefaultRowMode) {
+		if (sRowMode === undefined || _private(oTable).oDefaultRowMode) {
 			return;
 		}
 
 		switch (sRowMode) {
 			case RowModeType.Fixed:
-				this._oDefaultRowMode = new FixedRowMode();
+				_private(oTable).oDefaultRowMode = new FixedRowMode();
 				break;
 			case RowModeType.Interactive:
-				this._oDefaultRowMode = new InteractiveRowMode();
+				_private(oTable).oDefaultRowMode = new InteractiveRowMode();
 				break;
 			case RowModeType.Auto:
-				this._oDefaultRowMode = new AutoRowMode();
+				_private(oTable).oDefaultRowMode = new AutoRowMode();
 				break;
 			default:
 				throw new Error("Default row mode could not be created");
 		}
 
-		this.addAggregation("_hiddenDependents", this._oDefaultRowMode);
-	};
+		oTable.addAggregation("_hiddenDependents", _private(oTable).oDefaultRowMode);
+	}
 
-	Table.prototype._destroyDefaultRowMode = function() {
-		if (this._oDefaultRowMode) {
-			this._oDefaultRowMode.destroy();
-			delete this._oDefaultRowMode;
+	/**
+	 * Destroys the default row mode instance.
+	 *
+	 * @param {sap.ui.table.Table} oTable The table whose default row mode instance to destroy.
+	 */
+	function destroyDefaultRowMode(oTable) {
+		if (_private(oTable).oDefaultRowMode) {
+			_private(oTable).oDefaultRowMode.destroy();
+			delete _private(oTable).oDefaultRowMode;
 		}
-	};
+	}
 
 	/**
 	 * Gets the numbers of scrollable and fixed rows as they are currently computed by the row mode that is applied to the table.
@@ -1950,7 +1955,7 @@ sap.ui.define([
 	 * @private
 	 */
 	Table.prototype._getRowCounts = function() {
-		var mRowCounts = this._getRowMode().getComputedRowCounts();
+		var mRowCounts = getRowMode(this).getComputedRowCounts();
 
 		// TODO: Enhance the RowMode interface and move these calculations to the row modes that support variable row heights.
 		// TableUtils.isVariableRowHeightEnabled can't be used because it calls this method, which causes infinite recursion.
@@ -1963,6 +1968,15 @@ sap.ui.define([
 		}
 
 		return mRowCounts;
+	};
+
+	/**
+	 * Returns whether showing the NoData element is disabled. It can, for example, be disabled with the <code>showNoData</code> property.
+	 *
+	 * @returns {boolean} Whether showing the NoData element is disabled.
+	 */
+	Table.prototype._isNoDataDisabled = function() {
+		return !this.getShowNoData() || (getRowMode(this)?.isNoDataDisabled() ?? false);
 	};
 
 	/**
@@ -2007,7 +2021,7 @@ sap.ui.define([
 			iThreshold = Math.max(iRequestLength - mRowCounts.fixedTop - mRowCounts.fixedBottom, iThreshold);
 		}
 
-		iRequestLength = Math.max(iRequestLength, this._getRowMode().getMinRequestLength(), 0);
+		iRequestLength = Math.max(iRequestLength, getRowMode(this).getMinRequestLength(), 0);
 
 		if (!oBinding || iRequestLength === 0) {
 			return [];
@@ -3255,7 +3269,7 @@ sap.ui.define([
 	 * @private
 	 */
 	Table.prototype._getBaseRowHeight = function() {
-		var iBaseRowContentHeight = this._getRowMode().getBaseRowContentHeight();
+		var iBaseRowContentHeight = getRowMode(this).getBaseRowContentHeight();
 
 		if (iBaseRowContentHeight > 0) {
 			return iBaseRowContentHeight + TableUtils.RowHorizontalFrameSize;

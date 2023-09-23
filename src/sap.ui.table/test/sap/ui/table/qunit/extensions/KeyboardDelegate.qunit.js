@@ -920,12 +920,12 @@ sap.ui.define([
 	QUnit.test("CreationRow when hideEmptyRows is set to true", function(assert) {
 		var oElem, oCreationRow, oInput, oApplyButton;
 
-		oTable.unbindRows();
 		oTable.getRowMode().setRowCount(5);
 		oTable.setAggregation("rowMode", new FixedRowMode().setHideEmptyRows(true));
 		oTable.getColumns()[0].setCreationTemplate(new TestInputControl({text: "test"}));
 		oCreationRow = new CreationRow();
 		oTable.setCreationRow(oCreationRow);
+		oTable.unbindRows();
 		oCore.applyChanges();
 
 		oElem = checkFocus(getColumnHeader(0, true), assert);

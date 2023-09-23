@@ -15,6 +15,7 @@ sap.ui.define([
 	"sap/ui/mdc/field/FieldMultiInput", // async. loading of content control tested in FieldBase test
 	"sap/ui/mdc/condition/FilterOperatorUtil",
 	"sap/ui/mdc/enums/BaseType",
+	"sap/ui/mdc/enums/OperatorName",
 	"delegates/odata/v4/FieldBaseDelegate", // make sure delegate is loaded (test delegate loading in FieldBase test)
 	"sap/ui/events/KeyCodes",
 	"sap/ui/core/Core",
@@ -34,6 +35,7 @@ sap.ui.define([
 		FieldMultiInput,
 		FilterOperatorUtil,
 		BaseType,
+		OperatorName,
 		FieldBaseDelegate,
 		KeyCodes,
 		oCore,
@@ -159,11 +161,11 @@ sap.ui.define([
 		assert.ok(bValid, "change event valid");
 		assert.equal(aChangedConditions.length, 1, "Conditions of the change event");
 		assert.equal(aChangedConditions[0].values[0], 10, "condition value");
-		assert.equal(aChangedConditions[0].operator, "EQ", "condition operator");
+		assert.equal(aChangedConditions[0].operator, OperatorName.EQ, "condition operator");
 		const aConditions = oFilterField.getConditions();
 		assert.equal(aConditions.length, 1, "one condition in Codition model");
 		assert.equal(aConditions[0].values[0], 10, "condition value");
-		assert.equal(aConditions[0].operator, "EQ", "condition operator");
+		assert.equal(aConditions[0].operator, OperatorName.EQ, "condition operator");
 		const aTokens = oContent.getTokens ? oContent.getTokens() : [];
 		assert.equal(aTokens.length, 1, "MultiInput has one Token");
 		const oToken = aTokens[0];
@@ -289,10 +291,10 @@ sap.ui.define([
 		assert.ok(FilterOperatorUtil.getOperatorsForType.calledWith(BaseType.String), "Default operators for string used");
 
 		FilterOperatorUtil.getOperatorsForType.resetHistory();
-		oFilterField.setOperators(["EQ"]);
+		oFilterField.setOperators([OperatorName.EQ]);
 		aOperators = oFilterField.getSupportedOperators();
 		assert.equal(aOperators.length, 1, "one Operator returned");
-		assert.equal(aOperators[0], "EQ", "right Operator returned");
+		assert.equal(aOperators[0], OperatorName.EQ, "right Operator returned");
 		assert.notOk(FilterOperatorUtil.getOperatorsForType.called, "Default operators not used");
 
 		FilterOperatorUtil.getOperatorsForType.restore();
@@ -301,63 +303,63 @@ sap.ui.define([
 
 	QUnit.test("set/add/removeOperators", function(assert) {
 
-		const oNE = FilterOperatorUtil.getOperator("NE");
+		const oNE = FilterOperatorUtil.getOperator(OperatorName.NE);
 
 		let aOperators = oFilterField.getOperators();
 		assert.ok(aOperators.length == 0, "no Operators returned");
 
-		oFilterField.setOperators("BT,LT");
+		oFilterField.setOperators(OperatorName.BT + "," + OperatorName.LT);
 		aOperators = oFilterField.getOperators();
 		assert.equal(aOperators.length, 2, "two Operator returned");
-		assert.equal(aOperators[0], "BT", "right Operator returned");
-		assert.equal(aOperators[1], "LT", "right Operator returned");
+		assert.equal(aOperators[0], OperatorName.BT, "right Operator returned");
+		assert.equal(aOperators[1], OperatorName.LT, "right Operator returned");
 
-		oFilterField.setOperators(["BT"]);
+		oFilterField.setOperators([OperatorName.BT]);
 		aOperators = oFilterField.getOperators();
 		assert.equal(aOperators.length, 1, "one Operator returned");
-		assert.equal(aOperators[0], "BT", "right Operator returned");
+		assert.equal(aOperators[0], OperatorName.BT, "right Operator returned");
 
-		oFilterField.addOperator("EQ");
+		oFilterField.addOperator(OperatorName.EQ);
 		aOperators = oFilterField.getOperators();
 		assert.equal(aOperators.length, 2, "two Operators returned");
 
-		oFilterField.removeOperator("EQ");
+		oFilterField.removeOperator(OperatorName.EQ);
 		aOperators = oFilterField.getOperators();
 		assert.equal(aOperators.length, 1, "one Operator returned");
-		assert.equal(aOperators[0], "BT", "right Operator returned");
+		assert.equal(aOperators[0], OperatorName.BT, "right Operator returned");
 
-		oFilterField.addOperators(["LT", oNE]);
+		oFilterField.addOperators([OperatorName.LT, oNE]);
 		aOperators = oFilterField.getOperators();
 		assert.equal(aOperators.length, 3, "two Operators returned");
 
-		oFilterField.removeOperators(["LT", oNE]);
+		oFilterField.removeOperators([OperatorName.LT, oNE]);
 		aOperators = oFilterField.getOperators();
 		assert.equal(aOperators.length, 1, "one Operator returned");
-		assert.equal(aOperators[0], "BT", "right Operator returned");
+		assert.equal(aOperators[0], OperatorName.BT, "right Operator returned");
 
 		oFilterField.removeAllOperators();
 		aOperators = oFilterField.getOperators();
 		assert.ok(aOperators.length == 0, "no Operators returned");
 
-		oFilterField.removeOperator("EQ");
+		oFilterField.removeOperator(OperatorName.EQ);
 		aOperators = oFilterField.getOperators();
 		assert.ok(aOperators.length == 19, "all default Operators without EQreturned");
 	});
 
 	QUnit.test("set/getDefaultOperator", function(assert) {
 
-		const oNE = FilterOperatorUtil.getOperator("NE");
+		const oNE = FilterOperatorUtil.getOperator(OperatorName.NE);
 
 		let sOperatorName = oFilterField.getDefaultOperator();
 		assert.equal(sOperatorName, "", "no default Operator set");
 
-		oFilterField.setDefaultOperator("BT");
+		oFilterField.setDefaultOperator(OperatorName.BT);
 		sOperatorName = oFilterField.getDefaultOperator();
-		assert.equal(sOperatorName, "BT", "correct defaultOperator returned");
+		assert.equal(sOperatorName, OperatorName.BT, "correct defaultOperator returned");
 
 		oFilterField.setDefaultOperator(oNE);
 		sOperatorName = oFilterField.getDefaultOperator();
-		assert.equal(sOperatorName, "NE", "correct defaultOperator returned");
+		assert.equal(sOperatorName, OperatorName.NE, "correct defaultOperator returned");
 
 		oFilterField.setDefaultOperator();
 		sOperatorName = oFilterField.getDefaultOperator();

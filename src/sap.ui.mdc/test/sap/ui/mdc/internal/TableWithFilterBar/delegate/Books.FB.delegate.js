@@ -7,8 +7,8 @@
 // ---------------------------------------------------------------------------------------
 // ---------------------------------------------------------------------------------------
 sap.ui.define([
-	"delegates/odata/v4/FilterBarDelegate", 'sap/ui/fl/Utils', 'sap/ui/core/util/reflection/JsControlTreeModifier', 'sap/ui/mdc/enums/FieldDisplay', 'delegates/util/DelegateCache'
-], function (FilterBarDelegate, FlUtils, JsControlTreeModifier, FieldDisplay, DelegateCache) {
+	"delegates/odata/v4/FilterBarDelegate", 'sap/ui/fl/Utils', 'sap/ui/core/util/reflection/JsControlTreeModifier', 'sap/ui/mdc/enums/FieldDisplay', 'sap/ui/mdc/enums/OperatorName', 'delegates/util/DelegateCache'
+], function (FilterBarDelegate, FlUtils, JsControlTreeModifier, FieldDisplay, OperatorName, DelegateCache) {
 	"use strict";
 
 	var FilterBarBooksSampleDelegate = Object.assign({}, FilterBarDelegate);
@@ -68,17 +68,17 @@ sap.ui.define([
 			}
 
 			DelegateCache.add(oFilterBar, {
-				"stock": { "operators": ["BT"] },
+				"stock": { "operators": [OperatorName.BT] },
 				"author_ID": { "valueHelp": "FH1", display: FieldDisplay.Description},
 				"title": { "valueHelp": "FH4" },
-				"published": { "defaultOperator": "RENAISSANCE", "valueHelp": "FHPublished", "operators": ["EQ", "GT", "LT", "BT", "MEDIEVAL", "RENAISSANCE", "MODERN", "LASTYEAR"] },
+				"published": { "defaultOperator": "RENAISSANCE", "valueHelp": "FHPublished", "operators": [OperatorName.EQ, OperatorName.GT, OperatorName.LT, OperatorName.BT, "MEDIEVAL", "RENAISSANCE", "MODERN", OperatorName.LASTYEAR] },
 				"language_code": { "valueHelp": "FHLanguage", "display": FieldDisplay.Description},
 				"classification_code": { "valueHelp": "FHClassification", "display": FieldDisplay.Description},
 				"genre_code": { "valueHelp": "FHGenre", "display": FieldDisplay.Description},
 				"subgenre_code": { "valueHelp": "FHSubGenre", "display": FieldDisplay.Description },
 				"detailgenre_code": { "valueHelp": "FHDetailGenre", "display": FieldDisplay.Description},
-				"currency_code": { "valueHelp": "FH-Currency", display: FieldDisplay.Value, operators: ["EQ"]},
-				"createdAt": { "operators": ["MYDATE", "MYDATERANGE", "EQ", "GE", "LE", "BT", "LT", "TODAY", "YESTERDAY", "TOMORROW", "LASTDAYS", "MYNEXTDAYS", "THISWEEK", "THISMONTH", "THISQUARTER", "THISYEAR", "NEXTHOURS", "NEXTMINUTES", "LASTHOURS"] }
+				"currency_code": { "valueHelp": "FH-Currency", display: FieldDisplay.Value, operators: [OperatorName.EQ]},
+				"createdAt": { "operators": ["MYDATE", "MYDATERANGE", OperatorName.EQ, OperatorName.GE, OperatorName.LE, OperatorName.BT, OperatorName.LT, OperatorName.TODAY, OperatorName.YESTERDAY, OperatorName.TOMORROW, OperatorName.LASTDAYS, "MYNEXTDAYS", OperatorName.THISWEEK, OperatorName.THISMONTH, OperatorName.THISQUARTER, OperatorName.THISYEAR, OperatorName.NEXTHOURS, OperatorName.NEXTMINUTES, OperatorName.LASTHOURS] }
 			}, "$Filters");
 
 			return aProperties;

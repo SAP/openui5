@@ -11,6 +11,7 @@ sap.ui.define([
 	"sap/ui/mdc/valuehelp/content/MTable",
 	"sap/ui/mdc/condition/Condition",
 	"sap/ui/mdc/enums/ConditionValidated",
+	"sap/ui/mdc/enums/OperatorName",
 	"sap/ui/mdc/enums/ValueHelpSelectionType",
 	"sap/ui/mdc/filterbar/vh/FilterBar",
 	"sap/ui/mdc/FilterField", // to have it loaded when BasicSearch should be created
@@ -40,6 +41,7 @@ sap.ui.define([
 		MTable,
 		Condition,
 		ConditionValidated,
+		OperatorName,
 		ValueHelpSelectionType,
 		FilterBar,
 		FilterField,
@@ -163,7 +165,7 @@ sap.ui.define([
 			conditions: aConditions, // don't need to test the binding of Container here
 			config: { // don't need to test the binding of Container here
 				maxConditions: iMaxConditions,
-				operators: ["EQ", "BT"]
+				operators: [OperatorName.EQ, OperatorName.BT]
 			}
 		}).setModel(oModel);
 		sinon.stub(oMTable, "getParent").returns(oContainer);
@@ -361,7 +363,7 @@ sap.ui.define([
 		const oListBinding = oTable.getBinding("items");
 		_fakeV4Binding(oListBinding);
 		sinon.spy(oListBinding, "filter");
-		const oCondition = Condition.createCondition("EQ", ["3"], undefined, undefined, ConditionValidated.NotValidated);
+		const oCondition = Condition.createCondition(OperatorName.EQ, ["3"], undefined, undefined, ConditionValidated.NotValidated);
 		const oInPromise = Promise.resolve({inValue: [oCondition]});
 		sinon.stub(ValueHelpDelegate, "getFilterConditions").returns(oInPromise);
 
@@ -423,7 +425,7 @@ sap.ui.define([
 
 		var oListBinding = oTable.getBinding("items");
 		sinon.spy(oListBinding, "filter");
-		var oCondition = Condition.createCondition("EQ", ["3"], undefined, undefined, ConditionValidated.NotValidated);
+		var oCondition = Condition.createCondition(OperatorName.EQ", ["3"], undefined, undefined, ConditionValidated.NotValidated);
 		oMTable.setProperty("inConditions", {inValue: [oCondition]});
 		oMTable.onShow(); // to trigger filtering
 
@@ -529,7 +531,7 @@ sap.ui.define([
 			]
 		});
 
-		const oCondition = Condition.createCondition("EQ", ["3"], undefined, undefined, ConditionValidated.NotValidated);
+		const oCondition = Condition.createCondition(OperatorName.EQ, ["3"], undefined, undefined, ConditionValidated.NotValidated);
 		const oInPromise = Promise.resolve({inValue: [oCondition]});
 		sinon.stub(ValueHelpDelegate, "getFilterConditions").returns(oInPromise);
 
@@ -667,7 +669,7 @@ sap.ui.define([
 			]
 		});
 
-		const oCondition = Condition.createCondition("EQ", ["3"], undefined, undefined, ConditionValidated.NotValidated);
+		const oCondition = Condition.createCondition(OperatorName.EQ, ["3"], undefined, undefined, ConditionValidated.NotValidated);
 		const oInPromise = Promise.resolve({inValue: [oCondition]});
 		sinon.stub(ValueHelpDelegate, "getFilterConditions").returns(oInPromise);
 
@@ -992,7 +994,7 @@ sap.ui.define([
 			assert.ok(true, "ValueHelpDelegate.getFilterConditions is called.");
 			assert.equal(oContent, oMTable, "getFilterConditions receives correct content");
 			assert.equal(oLocalConfig, oConfig, "getFilterConditions receives correct config");
-			return 	{"inValue": [{operator: "EQ", values: ["b"], validated: "NotValidated"}]};
+			return 	{"inValue": [{operator: OperatorName.EQ, values: ["b"], validated: "NotValidated"}]};
 		});
 
 		_fakeV4Binding();
@@ -1137,7 +1139,7 @@ sap.ui.define([
 		oTable.setMode(ListMode.MultiSelect);
 		oMTable.setConfig({
 			maxConditions: -1,
-			operators: ["EQ", "BT"]
+			operators: [OperatorName.EQ, OperatorName.BT]
 		});
 		sinon.spy(oTable, "focus");
 
@@ -1562,7 +1564,7 @@ sap.ui.define([
 
 		var oFilterBar = new FilterBar("FB1");
 		oFilterBar.setInternalConditions({
-			additionalText: [Condition.createCondition("Contains", "2")]
+			additionalText: [Condition.createCondition(OperatorName.Contains", "2")]
 		});
 
 		oMTable.setFilterBar(oFilterBar);
@@ -1589,7 +1591,7 @@ sap.ui.define([
 		oListBinding.filter.reset();
 		oMTable.setFilterBar();
 		oFilterBar.setInternalConditions({
-			additionalText: [Condition.createCondition("Contains", "3")]
+			additionalText: [Condition.createCondition(OperatorName.Contains", "3")]
 		});
 		assert.notOk(oFilterBar.getBasicSearchField(), "SearchField removed from FilterBar");
 
@@ -1619,8 +1621,8 @@ sap.ui.define([
 
 		var oFilterBar = new FilterBar("FB1");
 		oFilterBar.setInternalConditions({
-			additionalText: [Condition.createCondition("Contains", "2")],
-			$search: [Condition.createCondition("StartsWith", "i")]
+			additionalText: [Condition.createCondition(OperatorName.Contains", "2")],
+			$search: [Condition.createCondition(OperatorName.StartsWith", "i")]
 		});
 
 		oMTable.setFilterValue("i");

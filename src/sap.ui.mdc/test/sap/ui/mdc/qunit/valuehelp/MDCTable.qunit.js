@@ -9,6 +9,7 @@ sap.ui.define([
 	"sap/ui/mdc/valuehelp/content/MDCTable",
 	"sap/ui/mdc/condition/Condition",
 	"sap/ui/mdc/enums/ConditionValidated",
+	"sap/ui/mdc/enums/OperatorName",
 	"sap/ui/mdc/enums/ValueHelpSelectionType",
 	"sap/ui/mdc/filterbar/vh/FilterBar",
 	"sap/ui/mdc/FilterField", // to have it loaded when BasicSearch should be created
@@ -40,6 +41,7 @@ sap.ui.define([
 		MDCTable,
 		Condition,
 		ConditionValidated,
+		OperatorName,
 		ValueHelpSelectionType,
 		FilterBar,
 		FilterField,
@@ -178,7 +180,7 @@ sap.ui.define([
 			conditions: [Condition.createItemCondition("I2", "Item 2", {inParameter: null})], // don't need to test the binding of Container here
 			config: { // don't need to test the binding of Container here
 				maxConditions: iMaxConditions,
-				operators: ["EQ", "BT"]
+				operators: [OperatorName.EQ, OperatorName.BT]
 			}
 		}).setModel(oModel);
 		sinon.stub(oMdcTableWrapper, "getParent").returns(oContainer);
@@ -292,13 +294,13 @@ sap.ui.define([
 						"type": "Set",
 						"conditions": [
 							{
-								"operator": "EQ",
+								"operator": OperatorName.EQ,
 								"values": [
 									"I3",
 									"X-Item 3"
 								],
 								"isEmpty": null,
-								"validated": "Validated"
+								"validated": ConditionValidated.Validated
 							}
 						],
 						"id": "MT1"
@@ -346,8 +348,8 @@ sap.ui.define([
 							  "inParameter": null
 							},
 							"isEmpty": null,
-							"operator": "EQ",
-							"validated": "Validated",
+							"operator": OperatorName.EQ,
+							"validated": ConditionValidated.Validated,
 							"values": [
 							  "I2",
 							  "Item 2"
@@ -355,8 +357,8 @@ sap.ui.define([
 						  },
 						  {
 							"isEmpty": null,
-							"operator": "EQ",
-							"validated": "Validated",
+							"operator": OperatorName.EQ,
+							"validated": ConditionValidated.Validated,
 							"values": [
 							  "I1",
 							  "Item 1"
@@ -364,8 +366,8 @@ sap.ui.define([
 						  },
 						  {
 							"isEmpty": null,
-							"operator": "EQ",
-							"validated": "Validated",
+							"operator": OperatorName.EQ,
+							"validated": ConditionValidated.Validated,
 							"values": [
 							  "I3",
 							  "X-Item 3"
@@ -450,13 +452,13 @@ sap.ui.define([
 					"type": "Set",
 					"conditions": [
 						{
-							"operator": "EQ",
+							"operator": OperatorName.EQ,
 							"values": [
 								"I3",
 								"X-Item 3"
 							],
 							"isEmpty": null,
-							"validated": "Validated"
+							"validated": ConditionValidated.Validated
 						}
 					],
 					"id": "MT1"
@@ -507,8 +509,8 @@ sap.ui.define([
 						  "inParameter": null
 						},
 						"isEmpty": null,
-						"operator": "EQ",
-						"validated": "Validated",
+						"operator": OperatorName.EQ,
+						"validated": ConditionValidated.Validated,
 						"values": [
 						  "I2",
 						  "Item 2"
@@ -516,8 +518,8 @@ sap.ui.define([
 					  },
 					  {
 						"isEmpty": null,
-						"operator": "EQ",
-						"validated": "Validated",
+						"operator": OperatorName.EQ,
+						"validated": ConditionValidated.Validated,
 						"values": [
 						  "I3",
 						  "X-Item 3"
@@ -546,8 +548,8 @@ sap.ui.define([
 								"inParameter": null
 							},
 							"isEmpty": null,
-							"operator": "EQ",
-							"validated": "Validated",
+							"operator": OperatorName.EQ,
+							"validated": ConditionValidated.Validated,
 							"values": [
 							  "I3",
 							  "X-Item 3"

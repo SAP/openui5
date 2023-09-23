@@ -575,12 +575,12 @@ sap.ui.define([
 						aFiltered.push(oUpdate.flexObject);
 						break;
 					case "delete":
-						aFiltered.splice(aFiltered.find((oFlexObject) => oFlexObject.fileName === sFileName), 1);
-						aUnfiltered.splice(aUnfiltered.find((oFlexObject) => oFlexObject.fileName === sFileName), 1);
+						aFiltered.splice(aFiltered.findIndex((oFlexObject) => oFlexObject.fileName === sFileName), 1);
+						aUnfiltered.splice(aUnfiltered.findIndex((oFlexObject) => oFlexObject.fileName === sFileName), 1);
 						break;
 					case "update":
-						aFiltered.splice(aFiltered.find((oFlexObject) => oFlexObject.fileName === sFileName), 1, oUpdate.flexObject);
-						aUnfiltered.splice(aUnfiltered.find((oFlexObject) => oFlexObject.fileName === sFileName), 1, oUpdate.flexObject);
+						aFiltered.splice(aFiltered.findIndex((oFlexObject) => oFlexObject.fileName === sFileName), 1, oUpdate.flexObject);
+						aUnfiltered.splice(aUnfiltered.findIndex((oFlexObject) => oFlexObject.fileName === sFileName), 1, oUpdate.flexObject);
 						break;
 					default:
 				}

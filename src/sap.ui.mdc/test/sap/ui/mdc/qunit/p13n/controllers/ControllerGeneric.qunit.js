@@ -5,8 +5,9 @@ sap.ui.define([
 	"sap/ui/mdc/util/PropertyHelper",
 	"sap/base/util/UriParameters",
 	"sap/ui/mdc/Table",
-	"sap/ui/mdc/Chart"
-], function (Control, Controller, PropertyHelper, SAPUriParameters, Table, Chart) {
+	"sap/ui/mdc/Chart",
+	"sap/ui/mdc/enums/OperatorName"
+], function (Control, Controller, PropertyHelper, SAPUriParameters, Table, Chart, OperatorName) {
 	"use strict";
 
 	QUnit.module("Generic API tests", {
@@ -51,7 +52,7 @@ sap.ui.define([
 					filter: {
 						test: [
 							{
-								operator: "EQ",
+								operator: OperatorName.EQ,
 								values: [
 									"testvalue"
 								]

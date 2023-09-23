@@ -3,15 +3,16 @@ sap.ui.define([
 	"sap/ui/mdc/condition/Operator",
 	"sap/ui/mdc/condition/RangeOperator",
 	"sap/ui/model/Filter",
+	'sap/ui/model/FilterOperator',
 	'sap/ui/core/date/UniversalDate',
 	'sap/ui/core/date/UniversalDateUtils',
-	'sap/ui/model/FilterOperator',
 	'sap/m/DatePicker',
 	'sap/m/Slider',
 	'sap/ui/mdc/enums/BaseType',
 	'sap/ui/mdc/enums/OperatorOverwrite',
-	'sap/ui/mdc/enums/OperatorValueType'
-], function (FilterOperatorUtil, Operator, RangeOperator, Filter, UniversalDate, UniversalDateUtils, ModelOperator, DatePicker, Slider, BaseType, OperatorOverwrite, OperatorValueType) {
+	'sap/ui/mdc/enums/OperatorValueType',
+	'sap/ui/mdc/enums/OperatorName'
+], function (FilterOperatorUtil, Operator, RangeOperator, Filter, ModelOperator, UniversalDate, UniversalDateUtils, DatePicker, Slider, BaseType, OperatorOverwrite, OperatorValueType, OperatorName) {
 	"use strict";
 
 	var getCustomYearFormat = function (date) {
@@ -45,7 +46,7 @@ sap.ui.define([
 		tokenFormat: "#tokenText#",
 		valueTypes: [OperatorValueType.Static],
 		getModelFilter: function (oCondition, sFieldPath) {
-			return new Filter({ path: sFieldPath, operator: "BT", value1: "1500-01-01", value2: "1600-01-01" });
+			return new Filter({ path: sFieldPath, operator: ModelOperator.BT, value1: "1500-01-01", value2: "1600-01-01" });
 		}
 	});
 
@@ -57,7 +58,7 @@ sap.ui.define([
 		tokenFormat: "#tokenText#",
 		valueTypes: [OperatorValueType.Static],
 		getModelFilter: function (oCondition, sFieldPath) {
-			return new Filter({ path: sFieldPath, operator: "BT", value1: "1600-01-01", value2: getCustomYearFormat(new Date()) });
+			return new Filter({ path: sFieldPath, operator: ModelOperator.BT, value1: "1600-01-01", value2: getCustomYearFormat(new Date()) });
 		}
 	});
 
@@ -69,7 +70,7 @@ sap.ui.define([
 		valueTypes: [OperatorValueType.Static],
 		getModelFilter: function (oCondition, sFieldPath) {
 			var currentDate = new Date();
-			return new Filter({ path: sFieldPath, operator: "BT", value1: getCustomYearFormat(new Date(currentDate.getFullYear() - 1, currentDate.getMonth(), currentDate.getDate())), value2: getCustomYearFormat(new Date(new Date().getFullYear(), currentDate.getMonth(), currentDate.getDate())) });
+			return new Filter({ path: sFieldPath, operator: ModelOperator.BT, value1: getCustomYearFormat(new Date(currentDate.getFullYear() - 1, currentDate.getMonth(), currentDate.getDate())), value2: getCustomYearFormat(new Date(new Date().getFullYear(), currentDate.getMonth(), currentDate.getDate())) });
 
 		}
 	});
@@ -82,7 +83,7 @@ sap.ui.define([
 		tokenFormat: "#tokenText#",
 		valueTypes: [OperatorValueType.Self, OperatorValueType.Self],
 		getModelFilter: function (oCondition, sFieldPath) {
-			return new Filter({ path: sFieldPath, operator: "BT", value1: oCondition.values[0], value2: oCondition.values[1] });
+			return new Filter({ path: sFieldPath, operator: ModelOperator.BT, value1: oCondition.values[0], value2: oCondition.values[1] });
 		}
 	});
 
@@ -95,7 +96,7 @@ sap.ui.define([
 		valueTypes: [OperatorValueType.Self, OperatorValueType.Self],
 		exclude: true,
 		getModelFilter: function (oCondition, sFieldPath) {
-			return new Filter({ path: sFieldPath, operator: "BT", value1: oCondition.values[0], value2: oCondition.values[1] });
+			return new Filter({ path: sFieldPath, operator: ModelOperator.BT, value1: oCondition.values[0], value2: oCondition.values[1] });
 		}
 	});
 
@@ -139,7 +140,7 @@ sap.ui.define([
 				"United Kingdom": "GB",
 				"Vatican City": "VA"
 			}).map(function (code) {
-				return new Filter({ path: sFieldPath, operator: "EQ", value1: code });
+				return new Filter({ path: sFieldPath, operator: ModelOperator.EQ, value1: code });
 			});
 
 			return new Filter({ filters: aFilters, and: false });
@@ -305,15 +306,15 @@ sap.ui.define([
 	// FilterOperatorUtil.addOperatorForType(BaseType.Date, customDateNotEmpty);
 
 
-	var oTodayOp = FilterOperatorUtil.getOperator("TODAY");
+	var oTodayOp = FilterOperatorUtil.getOperator(OperatorName.TODAY);
 	var fOrgTodayGetModelFilter = oTodayOp.overwrite(OperatorOverwrite.getModelFilter,
 		function(oCondition, sFieldPath, oType, bCaseSensitive, sBaseType) {
 			var oFilter = fOrgTodayGetModelFilter(oCondition, sFieldPath, oType, bCaseSensitive, sBaseType);
-			return new Filter({path: sFieldPath, operator: "EQ", value1: oFilter.oValue1});
+			return new Filter({path: sFieldPath, operator: ModelOperator.EQ, value1: oFilter.oValue1});
 		}
 	);
 
-	var oEmptyOp = FilterOperatorUtil.getOperator("Empty");
+	var oEmptyOp = FilterOperatorUtil.getOperator(OperatorName.Empty);
 	FilterOperatorUtil.addOperatorForType(BaseType.Date, oEmptyOp);
 	var fOrgEmptyGetModelFilter = oEmptyOp.overwrite(OperatorOverwrite.getModelFilter,
 		function(oCondition, sFieldPath, oType, bCaseSensitive, sBaseType) {
@@ -341,16 +342,16 @@ sap.ui.define([
 		}.bind(oEmptyOp)
 	);
 
-	var oYesterdayOp = FilterOperatorUtil.getOperator("YESTERDAY");
+	var oYesterdayOp = FilterOperatorUtil.getOperator(OperatorName.YESTERDAY);
 	var fOrgYesterdayGetModelFilter = oYesterdayOp.overwrite(OperatorOverwrite.getModelFilter,
 		function(oCondition, sFieldPath, oType, bCaseSensitive, sBaseType) {
 			var oFilter = fOrgYesterdayGetModelFilter(oCondition, sFieldPath, oType, bCaseSensitive, sBaseType);
-			return new Filter({path: sFieldPath, operator: "EQ", value1: oFilter.oValue1});
+			return new Filter({path: sFieldPath, operator: ModelOperator.EQ, value1: oFilter.oValue1});
 		}
 	);
 
 
-	var oLessOp = FilterOperatorUtil.getOperator("LT");
+	var oLessOp = FilterOperatorUtil.getOperator(OperatorName.LT);
 	var fOrgLessOpGetLongText = oLessOp.overwrite(OperatorOverwrite.getLongText,
 		function(sBaseType) {
 			if (sBaseType === "Date") {

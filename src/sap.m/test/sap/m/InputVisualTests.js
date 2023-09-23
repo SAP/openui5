@@ -18,11 +18,10 @@ sap.ui.define([
 	"sap/ui/core/VariantLayoutData",
 	"sap/ui/layout/GridData",
 	"sap/ui/layout/form/ColumnElementData",
-	"sap/ui/layout/form/GridElementData",
 	"sap/ui/layout/form/SimpleForm",
 	"sap/ui/model/Sorter",
 	"sap/ui/model/json/JSONModel"
-	],
+],
 	function(
 		App,
 		Button,
@@ -43,11 +42,10 @@ sap.ui.define([
 		VariantLayoutData,
 		GridData,
 		ColumnElementData,
-		GridElementData,
 		SimpleForm,
 		Sorter,
 		JSONModel
-	){
+	) {
 
 		"use strict";
 
@@ -479,7 +477,7 @@ sap.ui.define([
 						new Input("I2", { value:"Value 2/1" }),
 						new Input("I3", { value:"Value 2/2",
 							layoutData: new VariantLayoutData({multipleLayoutData: [
-								new GridElementData({hCells: "1"}),
+								new undefined/*GridElementData*/({hCells: "1"}),
 								new GridData({span: "L2 M2 S2"}),
 								new ColumnElementData({cellsSmall: 2, cellsLarge: 2})
 							]})

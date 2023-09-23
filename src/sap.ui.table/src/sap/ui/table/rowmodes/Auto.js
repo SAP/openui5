@@ -233,16 +233,16 @@ sap.ui.define([
 		return iRequestLength;
 	};
 
-	AutoRowMode.prototype.updateTableRows = function() {
+	AutoRowMode.prototype.updateTable = function() {
 		if (this.getHideEmptyRows() && this.getComputedRowCounts().count === 0) {
 			var iConfiguredRowCount = this.getConfiguredRowCount();
 
 			if (iConfiguredRowCount > 0) {
-				return this.getRowContexts(iConfiguredRowCount).length > 0;
+				this.getRowContexts(iConfiguredRowCount);
 			}
-		} else {
-			return RowMode.prototype.updateTableRows.call(this);
 		}
+
+		return RowMode.prototype.updateTable.apply(this, arguments);
 	};
 
 	AutoRowMode.prototype.getComputedRowCounts = function() {

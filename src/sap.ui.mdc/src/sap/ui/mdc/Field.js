@@ -6,21 +6,23 @@ sap.ui.define([
 	'sap/ui/mdc/field/FieldBaseRenderer',
 	'sap/ui/mdc/enums/FieldDisplay',
 	'sap/ui/mdc/enums/BaseType',
+	'sap/ui/mdc/enums/OperatorName',
+	'sap/ui/mdc/condition/Condition',
 	'sap/base/util/deepEqual',
 	'sap/base/util/merge',
 	'sap/ui/model/BindingMode',
-	'sap/ui/model/Context',
-	'sap/ui/mdc/condition/Condition'
+	'sap/ui/model/Context'
 ], function(
 	FieldBase,
 	FieldBaseRenderer,
 	FieldDisplay,
 	BaseType,
+	OperatorName,
+	Condition,
 	deepEqual,
 	merge,
 	BindingMode,
-	Context,
-	Condition
+	Context
 ) {
 	"use strict";
 
@@ -137,7 +139,7 @@ sap.ui.define([
 		FieldBase.prototype.init.apply(this, arguments);
 
 		this.setMaxConditions(1);
-		this.setProperty("_operators", ["EQ"], true);
+		this.setProperty("_operators", [OperatorName.EQ], true);
 
 		this._oObserver.observe(this, {
 			properties: ["value", "additionalValue", "valueState"]
@@ -379,7 +381,7 @@ sap.ui.define([
 			const oCurrentCondition = aConditions[0];
 			const vOldValue = oCurrentCondition && oCurrentCondition.values[0];
 			const vOldAdditionalValue = oCurrentCondition && oCurrentCondition.values[1] ? oCurrentCondition.values[1] : null; // to compare with default value
-			if (!oCurrentCondition || oCurrentCondition.operator !== "EQ" || !_compareValues.call(this, vOldValue, vValue) || !_compareAdditionalValues.call(this, vAdditionalValue, vOldAdditionalValue)) {
+			if (!oCurrentCondition || oCurrentCondition.operator !== OperatorName.EQ || !_compareValues.call(this, vOldValue, vValue) || !_compareAdditionalValues.call(this, vAdditionalValue, vOldAdditionalValue)) {
 				const oDelegate = this.getControlDelegate();
 				const oNextCondition = oDelegate.createCondition(this, this, [vValue, vAdditionalValue], oCurrentCondition);
 				if (!Condition.compareConditions(oCurrentCondition, oNextCondition)) { // We do a full comparison here as FilterOperatorUtils.compareConditions may ignore text changes

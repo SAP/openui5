@@ -7,6 +7,7 @@ sap.ui.define([
 	"sap/ui/core/util/reflection/XmlTreeModifier",
 	"sap/ui/mdc/FilterBarDelegate",
 	'sap/ui/mdc/FilterField',
+	"sap/ui/mdc/enums/OperatorName",
 	'sap/ui/model/odata/type/String',
 	"sap/ui/mdc/odata/TypeMap"
 ], function(createAppEnvironment,
@@ -16,13 +17,14 @@ sap.ui.define([
 	XMLTreeModifier,
 	FilterBarDelegate,
 	FilterField,
+	OperatorName,
 	StringType,
 	ODataTypeMap
 	) {
 	'use strict';
 
 	function createAddConditionChangeDefinition(sOperator) {
-		sOperator = sOperator ? sOperator : "Contains";
+		sOperator = sOperator ? sOperator : OperatorName.Contains;
 		return {
 			"changeType": "addCondition",
 			"selector": {
@@ -476,7 +478,7 @@ sap.ui.define([
 		const done = assert.async();
 
 		//create a change with a non existing operator to check failures during preprocessing
-		const oContent = createAddConditionChangeDefinition("EQ");
+		const oContent = createAddConditionChangeDefinition(OperatorName.EQ);
 
 		return ChangesWriteAPI.create({
 			changeSpecificData: oContent,
@@ -510,7 +512,7 @@ sap.ui.define([
 			"changeType": "addCondition",
 			"content": {
 				"name":"to_nav/field1",
-				"condition":{"operator": "EQ","values":["test1"]}
+				"condition":{"operator": OperatorName.EQ,"values":["test1"]}
 			}
 		};
 
@@ -518,7 +520,7 @@ sap.ui.define([
 			"changeType": "addCondition",
 			"content": {
 				"name":"to_nav/field1",
-				"condition":{"operator": "EQ","values":["test2"]}
+				"condition":{"operator": OperatorName.EQ,"values":["test2"]}
 			}
 		};
 
@@ -526,7 +528,7 @@ sap.ui.define([
 			"changeType": "addCondition",
 			"content": {
 				"name":"to_nav/field1",
-				"condition":{"operator": "EQ","values":["test3"]}
+				"condition":{"operator": OperatorName.EQ,"values":["test3"]}
 			}
 		};
 
@@ -574,19 +576,19 @@ sap.ui.define([
 			assert.deepEqual(mAppliedConditions, {
 				"to_nav/field1": [
 					{
-						"operator": "EQ",
+						"operator": OperatorName.EQ,
 						"values": [
 							"test1"
 						]
 					},
 					{
-						"operator": "EQ",
+						"operator": OperatorName.EQ,
 						"values": [
 							"test2"
 						]
 					},
 					{
-						"operator": "EQ",
+						"operator": OperatorName.EQ,
 						"values": [
 							"test3"
 						]
@@ -602,7 +604,7 @@ sap.ui.define([
 			"changeType": "addCondition",
 			"content": {
 				"name":"to_nav/field1",
-				"condition":{"operator": "EQ","values":["test1"]}
+				"condition":{"operator": OperatorName.EQ,"values":["test1"]}
 			}
 		};
 
@@ -610,7 +612,7 @@ sap.ui.define([
 			"changeType": "addCondition",
 			"content": {
 				"name":"to_nav/field1",
-				"condition":{"operator": "EQ","values":["test2"]}
+				"condition":{"operator": OperatorName.EQ,"values":["test2"]}
 			}
 		};
 
@@ -618,7 +620,7 @@ sap.ui.define([
 			"changeType": "addCondition",
 			"content": {
 				"name":"to_nav/field1",
-				"condition":{"operator": "EQ","values":["test3"]}
+				"condition":{"operator": OperatorName.EQ,"values":["test3"]}
 			}
 		};
 
@@ -663,19 +665,19 @@ sap.ui.define([
 			assert.deepEqual(mAppliedConditions, {
 				"to_nav/field1": [
 					{
-						"operator": "EQ",
+						"operator": OperatorName.EQ,
 						"values": [
 							"test1"
 						]
 					},
 					{
-						"operator": "EQ",
+						"operator": OperatorName.EQ,
 						"values": [
 							"test2"
 						]
 					},
 					{
-						"operator": "EQ",
+						"operator": OperatorName.EQ,
 						"values": [
 							"test3"
 						]

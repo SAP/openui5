@@ -25,6 +25,7 @@ sap.ui.define([
 	"sap/ui/mdc/enums/FieldEditMode",
 	"sap/ui/mdc/enums/FieldDisplay",
 	"sap/ui/mdc/enums/ConditionValidated",
+	"sap/ui/mdc/enums/OperatorName",
 	"sap/ui/mdc/condition/ConditionValidateException",
 	"sap/m/Label",
 	"sap/m/MultiInput",
@@ -93,6 +94,7 @@ sap.ui.define([
 	FieldEditMode,
 	FieldDisplay,
 	ConditionValidated,
+	OperatorName,
 	ConditionValidateException,
 	Label,
 	MultiInput,
@@ -169,7 +171,7 @@ sap.ui.define([
 		this.fireEvent("change", { conditions: aConditions, valid: bValid, wrongValue: vWrongValue, promise: oPromise });
 	};
 
-	const fnOnlyEQ = function() {return ["EQ"];};
+	const fnOnlyEQ = function() {return [OperatorName.EQ];};
 
 	let sLiveId;
 	let sLiveValue;
@@ -484,7 +486,7 @@ sap.ui.define([
 
 		oSlider.bindProperty("value", { path: '$field>/conditions', type: oConditionsType});
 		oField.setContent(oSlider);
-		const oCondition = Condition.createCondition("EQ", [70]);
+		const oCondition = Condition.createCondition(OperatorName.EQ, [70]);
 		oCM.addCondition("Name", oCondition);
 		oField.placeAt("content");
 		oCore.applyChanges();
@@ -538,7 +540,7 @@ sap.ui.define([
 		oConditionsType._sId = "P1-Type"; // to identify instance
 		oProgressIndicator.bindProperty("percentValue", { path: '$field>/conditions', type: oConditionsType});
 		oField.setContentDisplay(oProgressIndicator);
-		const oCondition = Condition.createCondition("EQ", [70]);
+		const oCondition = Condition.createCondition(OperatorName.EQ, [70]);
 		oCM.addCondition("Name", oCondition);
 		oField.placeAt("content");
 		oCore.applyChanges();
@@ -591,9 +593,9 @@ sap.ui.define([
 		const oSegmentedButton = new SegmentedButton("SB1");
 		oSegmentedButton.bindAggregation("items", { path: '$field>/conditions', template: oItem });
 		oField.setContentEdit(oSegmentedButton);
-		let oCondition = Condition.createCondition("EQ", ["A"], undefined, undefined, ConditionValidated.Validated);
+		let oCondition = Condition.createCondition(OperatorName.EQ, ["A"], undefined, undefined, ConditionValidated.Validated);
 		oCM.addCondition("Name", oCondition);
-		oCondition = Condition.createCondition("EQ", ["B"], undefined, undefined, ConditionValidated.Validated);
+		oCondition = Condition.createCondition(OperatorName.EQ, ["B"], undefined, undefined, ConditionValidated.Validated);
 		oCM.addCondition("Name", oCondition);
 		oField.placeAt("content");
 		oCore.applyChanges();
@@ -894,7 +896,7 @@ sap.ui.define([
 		oField.bindProperty("conditions", {path: "cm>/conditions/$search"});
 		aOperators = oField.getSupportedOperators();
 		assert.ok(aOperators.length === 1, "Operators returned");
-		assert.equal(aOperators[0], "Contains", "Contains used for SearchField");
+		assert.equal(aOperators[0], OperatorName.Contains, "Contains used for SearchField");
 		assert.notOk(FilterOperatorUtil.getOperatorsForType.called, "No default operators of type used");
 
 		FilterOperatorUtil.getOperatorsForType.restore();
@@ -957,7 +959,7 @@ sap.ui.define([
 		assert.ok(oFormatOptions.originalDateType.isA("sap.ui.model.type.Currency"), "originalDateType");
 		assert.equal(oFormatOptions.display, FieldDisplay.Value, "display");
 		assert.equal(oFormatOptions.valueHelpID, "X", "valueHelpID");
-		assert.deepEqual(oFormatOptions.operators, ["EQ"], "operators");
+		assert.deepEqual(oFormatOptions.operators, [OperatorName.EQ], "operators");
 		assert.equal(oFormatOptions.hideOperator, true, "hideOperator");
 		assert.equal(oFormatOptions.maxConditions, 1, "maxConditions");
 		assert.equal(oFormatOptions.bindingContext, oContext, "bindingContext");
@@ -1013,7 +1015,7 @@ sap.ui.define([
 		oField.setDataTypeFormatOptions({pattern: "dd/MM/yyyy"});
 		oField.setMaxConditions(1);
 		sinon.stub(oField, "getSupportedOperators").callsFake(fnOnlyEQ); // fake Field
-		const oCondition = Condition.createCondition("EQ", [new Date(2020, 11, 18)]);
+		const oCondition = Condition.createCondition(OperatorName.EQ, [new Date(2020, 11, 18)]);
 		oCM.addCondition("Name", oCondition);
 		oCM.checkUpdate(true, false); // update model syncronous
 		oField.placeAt("content");
@@ -1091,9 +1093,9 @@ sap.ui.define([
 
 	QUnit.test("value", function(assert) {
 
-		let oCondition = Condition.createCondition("EQ", ["Test"], undefined, undefined, ConditionValidated.Validated);
+		let oCondition = Condition.createCondition(OperatorName.EQ, ["Test"], undefined, undefined, ConditionValidated.Validated);
 		oCM.addCondition("Name", oCondition);
-		oCondition = Condition.createCondition("EQ", ["bar"], undefined, undefined, ConditionValidated.Validated);
+		oCondition = Condition.createCondition(OperatorName.EQ, ["bar"], undefined, undefined, ConditionValidated.Validated);
 		oCM.addCondition("$search", oCondition);
 
 		const fnDone = assert.async();
@@ -1131,7 +1133,7 @@ sap.ui.define([
 	QUnit.test("description", function(assert) {
 
 		oFieldEditMulti.setDisplay(FieldDisplay.DescriptionValue);
-		const oCondition = Condition.createCondition("EQ", ["Test", "Hello"]);
+		const oCondition = Condition.createCondition(OperatorName.EQ, ["Test", "Hello"]);
 		oCM.addCondition("Name", oCondition);
 		oCore.applyChanges();
 
@@ -1178,7 +1180,7 @@ sap.ui.define([
 
 	QUnit.test("multipleLines", function(assert) {
 
-		const oCondition = Condition.createCondition("EQ", ["Test"], undefined, undefined, ConditionValidated.Validated);
+		const oCondition = Condition.createCondition(OperatorName.EQ, ["Test"], undefined, undefined, ConditionValidated.Validated);
 		oCM.addCondition("Name", oCondition);
 		oFieldEditMulti.setMultipleLines(true);
 		oFieldEditSingle.setMultipleLines(true);
@@ -1205,7 +1207,7 @@ sap.ui.define([
 
 	QUnit.test("dataType Date", function(assert) {
 
-		let oCondition = Condition.createCondition("EQ", [new Date(2017, 8, 19)]);
+		let oCondition = Condition.createCondition(OperatorName.EQ, [new Date(2017, 8, 19)]);
 		oCM.addCondition("Name", oCondition);
 		oFieldEditMulti.setDataTypeFormatOptions({style: "long"});
 		oFieldEditMulti.setDataType("sap.ui.model.type.Date");
@@ -1214,7 +1216,7 @@ sap.ui.define([
 		oFieldDisplay.setMaxConditions(1);
 		oFieldDisplay.setDataType("sap.ui.model.type.Date");
 
-		oCondition = Condition.createCondition("EQ", [new Date(Date.UTC(2018, 11, 20))]);
+		oCondition = Condition.createCondition(OperatorName.EQ, [new Date(Date.UTC(2018, 11, 20))]);
 		oCM.addCondition("Date", oCondition);
 		const oFieldEditSingle2 = new FieldBase("F5", {
 			editMode: FieldEditMode.Editable,
@@ -1228,7 +1230,7 @@ sap.ui.define([
 		oFieldEditSingle2.placeAt("content");
 
 		// DateRangeSelection
-		oCondition = Condition.createCondition("BT", [new Date(Date.UTC(2020, 1, 6)), new Date(Date.UTC(2020, 1, 8))]);
+		oCondition = Condition.createCondition(OperatorName.BT, [new Date(Date.UTC(2020, 1, 6)), new Date(Date.UTC(2020, 1, 8))]);
 		oCM.addCondition("Date2", oCondition);
 		const oFieldEditSingle3 = new FieldBase("F6", {
 			editMode: FieldEditMode.Editable,
@@ -1238,7 +1240,7 @@ sap.ui.define([
 			dataTypeConstraints: {displayFormat: "Date"},
 			dataTypeFormatOptions: {pattern: "dd/MM/yyyy"}
 		});
-		sinon.stub(oFieldEditSingle3, "getSupportedOperators").callsFake(function() {return ["BT"];});
+		sinon.stub(oFieldEditSingle3, "getSupportedOperators").callsFake(function() {return [OperatorName.BT];});
 		oFieldEditSingle3.placeAt("content");
 
 		// DynamicDateRange
@@ -1378,7 +1380,7 @@ sap.ui.define([
 
 	QUnit.test("dataType sap.ui.model.type.Time", function(assert) {
 
-		const oCondition = Condition.createCondition("EQ", [new Date(1970, 0, 1, 19, 0, 0)]);
+		const oCondition = Condition.createCondition(OperatorName.EQ, [new Date(1970, 0, 1, 19, 0, 0)]);
 		oCM.addCondition("Name", oCondition);
 		oFieldEditSingle.setDataType("sap.ui.model.type.Time");
 		oFieldDisplay.setMaxConditions(1);
@@ -1405,7 +1407,7 @@ sap.ui.define([
 
 	QUnit.test("dataType DateTimeOffset", function(assert) {
 
-		const oCondition = Condition.createCondition("EQ", [new Date(2017, 10, 7, 13, 1, 24)]);
+		const oCondition = Condition.createCondition(OperatorName.EQ, [new Date(2017, 10, 7, 13, 1, 24)]);
 		oCM.addCondition("Name", oCondition);
 		oFieldEditSingle.setDataTypeFormatOptions({pattern: "HH:mm:ss yyyy-MM-dd"});
 		oFieldEditSingle.setDataType("Edm.DateTimeOffset");
@@ -1435,7 +1437,7 @@ sap.ui.define([
 
 	QUnit.test("dataType Boolean", function(assert) {
 
-		const oCondition = Condition.createCondition("EQ", [true], undefined, undefined, ConditionValidated.Validated);
+		const oCondition = Condition.createCondition(OperatorName.EQ, [true], undefined, undefined, ConditionValidated.Validated);
 		oCM.addCondition("Name", oCondition);
 		oFieldEditSingle.setDisplay(FieldDisplay.Description);
 		oFieldEditSingle.setDataType("Edm.Boolean");
@@ -1490,7 +1492,7 @@ sap.ui.define([
 		oStub.withArgs("sap/ui/mdc/valuehelp/content/Bool").onFirstCall().returns(undefined);
 		oStub.callThrough();
 
-		const oCondition = Condition.createCondition("EQ", [true], undefined, undefined, ConditionValidated.Validated);
+		const oCondition = Condition.createCondition(OperatorName.EQ, [true], undefined, undefined, ConditionValidated.Validated);
 		oCM.addCondition("Name", oCondition);
 		oFieldEditSingle.setDisplay(FieldDisplay.Description);
 		oFieldEditSingle.setDataType("Edm.Boolean");
@@ -1538,7 +1540,7 @@ sap.ui.define([
 
 	QUnit.test("dataType sap.ui.model.type.Currency", function(assert) {
 
-		const oCondition = Condition.createCondition("EQ", [[123.45, "USD"]], undefined, undefined, ConditionValidated.Validated);
+		const oCondition = Condition.createCondition(OperatorName.EQ, [[123.45, "USD"]], undefined, undefined, ConditionValidated.Validated);
 		oCM.addCondition("Name", oCondition);
 		oFieldEditSingle.setDataType("sap.ui.model.type.Currency");
 		oFieldEditMulti.setDataType("sap.ui.model.type.Currency");
@@ -1922,7 +1924,7 @@ sap.ui.define([
 			assert.deepEqual(vResult, aConditions, "Promise result");
 			assert.equal(aConditions.length, 1, "one condition in Codition model");
 			assert.equal(aConditions[0].values[0], "X", "condition value");
-			assert.equal(aConditions[0].operator, "EQ", "condition operator");
+			assert.equal(aConditions[0].operator, OperatorName.EQ, "condition operator");
 			let aTokens = oContent.getTokens ? oContent.getTokens() : [];
 			assert.equal(aTokens.length, 1, "MultiInput has one Token");
 			let oToken = aTokens[0];
@@ -1958,7 +1960,7 @@ sap.ui.define([
 						aConditions = oCM.getConditions("Name");
 						assert.equal(aConditions.length, 1, "one condition in Codition model");
 						assert.equal(aConditions[0].values[0], "X", "condition value");
-						assert.equal(aConditions[0].operator, "EQ", "condition operator");
+						assert.equal(aConditions[0].operator, OperatorName.EQ, "condition operator");
 						aTokens = oContent.getTokens ? oContent.getTokens() : [];
 						assert.equal(aTokens.length, 1, "MultiInput has one Token");
 						oToken = aTokens[0];
@@ -2006,7 +2008,7 @@ sap.ui.define([
 	QUnit.test("with multi value and maxConditions", function(assert) {
 
 		oField.setMaxConditions(2);
-		const oCondition = Condition.createCondition("EQ", ["Test"]);
+		const oCondition = Condition.createCondition(OperatorName.EQ, ["Test"]);
 		oCM.addCondition("Name", oCondition);
 		oCore.applyChanges();
 
@@ -2024,9 +2026,9 @@ sap.ui.define([
 			let aConditions = oCM.getConditions("Name");
 			assert.equal(aConditions.length, 2, "two conditions in Codition model");
 			assert.equal(aConditions[0].values[0], "Test", "first condition value");
-			assert.equal(aConditions[0].operator, "EQ", "first condition operator");
+			assert.equal(aConditions[0].operator, OperatorName.EQ, "first condition operator");
 			assert.equal(aConditions[1].values[0], "X", "second condition value");
-			assert.equal(aConditions[1].operator, "EQ", "second condition operator");
+			assert.equal(aConditions[1].operator, OperatorName.EQ, "second condition operator");
 			let aTokens = oContent.getTokens ? oContent.getTokens() : [];
 			assert.equal(aTokens.length, 2, "MultiInput has two Tokens");
 			let oToken = aTokens[1];
@@ -2043,9 +2045,9 @@ sap.ui.define([
 			aConditions = oCM.getConditions("Name");
 			assert.equal(aConditions.length, 2, "two conditions in Codition model");
 			assert.equal(aConditions[0].values[0], "X", "first condition value");
-			assert.equal(aConditions[0].operator, "EQ", "first condition operator");
+			assert.equal(aConditions[0].operator, OperatorName.EQ, "first condition operator");
 			assert.equal(aConditions[1].values[0], "Y", "second condition value");
-			assert.equal(aConditions[1].operator, "EQ", "second condition operator");
+			assert.equal(aConditions[1].operator, OperatorName.EQ, "second condition operator");
 			aTokens = oContent.getTokens ? oContent.getTokens() : [];
 			assert.equal(aTokens.length, 2, "MultiInput has two Tokens");
 			oToken = aTokens[0];
@@ -2198,7 +2200,7 @@ sap.ui.define([
 		let aConditions = oCM.getConditions("Name");
 		assert.equal(aConditions.length, 1, "one condition in Codition model");
 		assert.equal(aConditions[0].values[0], "X", "condition value");
-		assert.equal(aConditions[0].operator, "EQ", "condition operator");
+		assert.equal(aConditions[0].operator, OperatorName.EQ, "condition operator");
 
 		//simulate liveChange by calling from internal control
 		oContent.fireLiveChange({ value: "Y" });
@@ -2238,7 +2240,7 @@ sap.ui.define([
 		const aConditions = oCM.getConditions("Name");
 		assert.equal(aConditions.length, 1, "one condition in Codition model");
 		assert.equal(aConditions[0] && aConditions[0].values[0], "X", "condition value");
-		assert.equal(aConditions[0] && aConditions[0].operator, "EQ", "condition operator");
+		assert.equal(aConditions[0] && aConditions[0].operator, OperatorName.EQ, "condition operator");
 		assert.equal(oContent.getValue(), "=X", "Condition is displayed with operator");
 
 	});
@@ -2269,7 +2271,7 @@ sap.ui.define([
 		assert.ok(aConditions[0] && Array.isArray(aConditions[0].values), "condition value is array");
 		assert.equal(aConditions[0] && aConditions[0].values[0][0], 1.11, "condition value0");
 		assert.equal(aConditions[0] && aConditions[0].values[0][1], "EUR", "condition value1");
-		assert.equal(aConditions[0] && aConditions[0].operator, "EQ", "condition operator");
+		assert.equal(aConditions[0] && aConditions[0].operator, OperatorName.EQ, "condition operator");
 
 	});
 
@@ -2297,7 +2299,7 @@ sap.ui.define([
 		assert.ok(aConditions[0] && Array.isArray(aConditions[0].values), "condition value is array");
 		assert.equal(aConditions[0] && aConditions[0].values[0][0], 1.11, "condition value-number");
 		assert.equal(aConditions[0] && aConditions[0].values[0][1], "EUR", "condition value-unit");
-		assert.equal(aConditions[0] && aConditions[0].operator, "EQ", "condition operator");
+		assert.equal(aConditions[0] && aConditions[0].operator, OperatorName.EQ, "condition operator");
 
 		iCount = 0;
 		sId = undefined;
@@ -2315,7 +2317,7 @@ sap.ui.define([
 		assert.equal(aConditions[1] && aConditions[1].values[0][1], "EUR", "condition value0-unit");
 		assert.equal(aConditions[1] && aConditions[1].values[1][0], 3, "condition value1-number");
 		assert.equal(aConditions[1] && aConditions[1].values[1][1], "EUR", "condition value1-unit");
-		assert.equal(aConditions[1] && aConditions[1].operator, "BT", "condition operator");
+		assert.equal(aConditions[1] && aConditions[1].operator, OperatorName.BT, "condition operator");
 
 		iCount = 0;
 		sId = undefined;
@@ -2331,13 +2333,13 @@ sap.ui.define([
 		assert.ok(aConditions[0] && Array.isArray(aConditions[0].values), "condition1 value is array");
 		assert.equal(aConditions[0] && aConditions[0].values[0][0], 1.11, "condition1 value-number");
 		assert.equal(aConditions[0] && aConditions[0].values[0][1], "USD", "condition1 value-unit");
-		assert.equal(aConditions[0] && aConditions[0].operator, "EQ", "condition1 operator");
+		assert.equal(aConditions[0] && aConditions[0].operator, OperatorName.EQ, "condition1 operator");
 		assert.ok(aConditions[1] && Array.isArray(aConditions[1].values), "condition2 value is array");
 		assert.equal(aConditions[1] && aConditions[1].values[0][0], 1, "condition2 value0-number");
 		assert.equal(aConditions[1] && aConditions[1].values[0][1], "USD", "condition2 value0-unit");
 		assert.equal(aConditions[1] && aConditions[1].values[1][0], 3, "condition2 value1-number");
 		assert.equal(aConditions[1] && aConditions[1].values[1][1], "USD", "condition2 value1-unit");
-		assert.equal(aConditions[1] && aConditions[1].operator, "BT", "condition2 operator");
+		assert.equal(aConditions[1] && aConditions[1].operator, OperatorName.BT, "condition2 operator");
 
 	});
 
@@ -2458,7 +2460,7 @@ sap.ui.define([
 		let aConditions = oCM.getConditions("$search");
 		assert.equal(aConditions.length, 1, "one condition in Codition model");
 		assert.equal(aConditions[0] && aConditions[0].values[0], "X", "condition value");
-		assert.equal(aConditions[0] && aConditions[0].operator, "Contains", "condition operator");
+		assert.equal(aConditions[0] && aConditions[0].operator, OperatorName.Contains, "condition operator");
 
 		iCount = 0; sId = undefined; sValue = undefined; bValid = undefined;
 		iSubmitCount = 0; sSubmitId = ""; oSubmitPromise = undefined;
@@ -2481,7 +2483,7 @@ sap.ui.define([
 		aConditions = oCM.getConditions("$search");
 		assert.equal(aConditions.length, 1, "one condition in Codition model");
 		assert.equal(aConditions[0] && aConditions[0].values[0], "Y", "condition value");
-		assert.equal(aConditions[0] && aConditions[0].operator, "Contains", "condition operator");
+		assert.equal(aConditions[0] && aConditions[0].operator, OperatorName.Contains, "condition operator");
 
 		//simulate liveChange by calling from internal control
 		oContent.fireLiveChange({ newValue: "Z" });
@@ -2494,7 +2496,7 @@ sap.ui.define([
 	QUnit.test("with external content single value", function(assert) {
 
 		const fnDone = assert.async();
-		const oCondition = Condition.createCondition("EQ", [70]);
+		const oCondition = Condition.createCondition(OperatorName.EQ, [70]);
 		oCM.addCondition("Name", oCondition);
 		oField.setMaxConditions(1);
 		oField.setDataType("Edm.Float");
@@ -2554,9 +2556,9 @@ sap.ui.define([
 		const oMultiInput = new MultiInput("MI1");
 		oMultiInput.bindAggregation("tokens", { path: '$field>/conditions', template: oToken });
 		oField.setContentEdit(oMultiInput);
-		let oCondition = Condition.createCondition("EQ", ["A"], undefined, undefined, ConditionValidated.Validated);
+		let oCondition = Condition.createCondition(OperatorName.EQ, ["A"], undefined, undefined, ConditionValidated.Validated);
 		oCM.addCondition("Name", oCondition);
-		oCondition = Condition.createCondition("EQ", ["B"], undefined, undefined, ConditionValidated.Validated);
+		oCondition = Condition.createCondition(OperatorName.EQ, ["B"], undefined, undefined, ConditionValidated.Validated);
 		oCM.addCondition("Name", oCondition);
 		oField.placeAt("content");
 		oCore.applyChanges();
@@ -2580,7 +2582,7 @@ sap.ui.define([
 				assert.deepEqual(vResult, aConditions, "Promise result");
 				assert.equal(aConditions.length, 1, "one condition in Codition model");
 				assert.equal(aConditions[0].values[0], "B", "condition value");
-				assert.equal(aConditions[0].operator, "EQ", "condition operator");
+				assert.equal(aConditions[0].operator, OperatorName.EQ, "condition operator");
 				aTokens = oMultiInput.getTokens();
 				assert.equal(aTokens.length, 1, "Tokenizer has one Token");
 				assert.equal(aTokens[0].getText(), "B", "Text of Token0");
@@ -2594,7 +2596,7 @@ sap.ui.define([
 	QUnit.test("with type currency", function(assert) {
 
 		oField.setDataType("sap.ui.model.type.Currency");
-		const oCondition = Condition.createCondition("EQ", [[123.45, "USD"]], undefined, undefined, ConditionValidated.NotValidated, {payload: "X"});
+		const oCondition = Condition.createCondition(OperatorName.EQ, [[123.45, "USD"]], undefined, undefined, ConditionValidated.NotValidated, {payload: "X"});
 		oField.setConditions([oCondition]);
 		oCore.applyChanges();
 
@@ -2620,7 +2622,7 @@ sap.ui.define([
 			assert.equal(aConditions.length, 1, "one dummy condition in Codition model after delete Token");
 			assert.equal(aConditions[0].values[0][0], undefined, "condition value0");
 			assert.equal(aConditions[0].values[0][1], "USD", "condition value1");
-			assert.equal(aConditions[0].operator, "EQ", "condition operator");
+			assert.equal(aConditions[0].operator, OperatorName.EQ, "condition operator");
 			assert.deepEqual(aConditions[0].payload, {payload: "X"}, "condition payload");
 			aTokens = oContent1.getTokens ? oContent1.getTokens() : [];
 			assert.equal(aTokens.length, 0, "MultiInput has no Token after delete");
@@ -2631,7 +2633,7 @@ sap.ui.define([
 	QUnit.test("wrong input with type currency", function(assert) {
 
 		oField.setDataType("sap.ui.model.type.Currency");
-		const oCondition = Condition.createCondition("EQ", [[123.45, "USD"]], undefined, undefined, ConditionValidated.NotValidated, {payload: "X"});
+		const oCondition = Condition.createCondition(OperatorName.EQ, [[123.45, "USD"]], undefined, undefined, ConditionValidated.NotValidated, {payload: "X"});
 		oField.setConditions([oCondition]);
 		oCore.applyChanges();
 
@@ -2711,7 +2713,7 @@ sap.ui.define([
 								assert.ok(true, "submit: Promise rejected");
 
 								// updating condition must remove value state
-								let oCondition = Condition.createCondition("EQ", [[234, "USD"]], undefined, undefined, ConditionValidated.NotValidated, {payload: "X"});
+								let oCondition = Condition.createCondition(OperatorName.EQ, [[234, "USD"]], undefined, undefined, ConditionValidated.NotValidated, {payload: "X"});
 								oField.setConditions([oCondition]);
 								setTimeout(function() { // to wait to update ValueState via binding
 									assert.equal(oField.getValueState(), "None", "No ValueState after updating condition");
@@ -2733,7 +2735,7 @@ sap.ui.define([
 										assert.equal(oContent2.getValueStateText(), "My Warning", "ValueStateText on Content2");
 
 										// updating conditions should not reset value state from outside
-										oCondition = Condition.createCondition("EQ", [[567, "USD"]], undefined, undefined, ConditionValidated.NotValidated, {payload: "X"});
+										oCondition = Condition.createCondition(OperatorName.EQ, [[567, "USD"]], undefined, undefined, ConditionValidated.NotValidated, {payload: "X"});
 										oField.setConditions([oCondition]);
 										setTimeout(function() { // to wait to update ValueState via binding
 											assert.equal(oField.getValueState(), "Warning", "ValueState after updating condition");
@@ -2793,11 +2795,11 @@ sap.ui.define([
 			const aConditions = oField.getConditions();
 			assert.deepEqual(vResult, aConditions, "Promise returns same conditions like Field has set");
 			assert.equal(aConditions.length, 3, "Three conditions returned");
-			assert.equal(aConditions[0].operator, "EQ", "condition operator");
+			assert.equal(aConditions[0].operator, OperatorName.EQ, "condition operator");
 			assert.equal(aConditions[0].values[0], "AA", "condition value");
-			assert.equal(aConditions[1].operator, "EQ", "condition operator");
+			assert.equal(aConditions[1].operator, OperatorName.EQ, "condition operator");
 			assert.equal(aConditions[1].values[0], "BB", "condition value");
-			assert.equal(aConditions[2].operator, "EQ", "condition operator");
+			assert.equal(aConditions[2].operator, OperatorName.EQ, "condition operator");
 			assert.equal(aConditions[2].values[0], "CC", "condition value");
 			const aTokens = oContent.getTokens ? oContent.getTokens() : [];
 			assert.equal(aTokens.length, 3, "MultiInput has three Tokens");
@@ -2898,7 +2900,7 @@ sap.ui.define([
 			oField.attachEvent("change", _myChangeHandler);
 			oCM = new ConditionModel();
 			oCore.setModel(oCM, "cm");
-			const oCondition = Condition.createCondition("EQ", ["Test"], undefined, undefined, ConditionValidated.Validated);
+			const oCondition = Condition.createCondition(OperatorName.EQ, ["Test"], undefined, undefined, ConditionValidated.Validated);
 			oCM.addCondition("Name", oCondition);
 			oField.placeAt("content");
 			oCore.applyChanges();
@@ -2957,7 +2959,7 @@ sap.ui.define([
 		oField.setMaxConditions(1);
 		oField.setDataType("Edm.Float");
 		oCM.removeAllConditions();
-		const oCondition = Condition.createCondition("EQ", [70]);
+		const oCondition = Condition.createCondition(OperatorName.EQ, [70]);
 		oCM.addCondition("Name", oCondition);
 		oCM.checkUpdate(true, false); // update model syncronous
 		const oSlider = new Slider("S1");
@@ -2998,7 +3000,7 @@ sap.ui.define([
 		oField.setMaxConditions(1);
 		oField.setDataType("Edm.Float");
 		oCM.removeAllConditions();
-		const oCondition = Condition.createCondition("EQ", [70]);
+		const oCondition = Condition.createCondition(OperatorName.EQ, [70]);
 		oCM.addCondition("Name", oCondition);
 		oCM.checkUpdate(true, false); // update model syncronous
 		const oSlider1 = new Slider("S1");
@@ -3059,7 +3061,7 @@ sap.ui.define([
 			oField.attachEvent("change", _myChangeHandler);
 			oCM = new ConditionModel();
 			oCore.setModel(oCM, "cm");
-			const oCondition = Condition.createCondition("EQ", ["I2"]);
+			const oCondition = Condition.createCondition(OperatorName.EQ, ["I2"]);
 			oCM.addCondition("Name", oCondition);
 
 			oField.placeAt("content");
@@ -3127,13 +3129,13 @@ sap.ui.define([
 		assert.equal(oField.getFocusElementForValueHelp(false), oIcon, "For Dialog mode icon is focus element");
 
 		// simulate select event to see if field is updated
-		const oCondition = Condition.createCondition("EQ", ["Hello"]);
+		const oCondition = Condition.createCondition(OperatorName.EQ, ["Hello"]);
 		oFieldHelp.fireSelect({ conditions: [oCondition] });
 		assert.equal(iCount, 1, "Change Event fired once");
 		let aConditions = oCM.getConditions("Name");
 		assert.equal(aConditions.length, 1, "one condition in Codition model");
 		assert.equal(aConditions[0].values[0], "Hello", "condition value");
-		assert.equal(aConditions[0].operator, "EQ", "condition operator");
+		assert.equal(aConditions[0].operator, OperatorName.EQ, "condition operator");
 		assert.ok(oFieldHelp.onControlChange.calledOnce, "onControlChange called on FieldHelp");
 		assert.notOk(oField.hasPendingUserInput(), "no user interaction after select");
 
@@ -3142,7 +3144,7 @@ sap.ui.define([
 		aConditions = oCM.getConditions("Name");
 		assert.equal(aConditions.length, 1, "one condition in Codition model");
 		assert.equal(aConditions[0].values[0], "Hello", "condition value");
-		assert.equal(aConditions[0].operator, "EQ", "condition operator");
+		assert.equal(aConditions[0].operator, OperatorName.EQ, "condition operator");
 		assert.equal(oContent._$input.val(), "Navigate (Y)", "Field shown value");
 		assert.ok(oField.hasPendingUserInput(), "user interaction after navigation");
 
@@ -3158,7 +3160,7 @@ sap.ui.define([
 		assert.equal(aConditions.length, 2, "two conditions in Codition model");
 		assert.equal(aConditions[1].values[0], "Y", "condition value[0]");
 		assert.equal(aConditions[1].values[1], "Navigate", "condition value[1]");
-		assert.equal(aConditions[1].operator, "EQ", "condition operator");
+		assert.equal(aConditions[1].operator, OperatorName.EQ, "condition operator");
 		assert.notOk(oField.hasPendingUserInput(), "no user interaction after ENTER");
 
 		// simulate value help request to see if FieldHelp opens
@@ -3190,7 +3192,7 @@ sap.ui.define([
 		assert.equal(oIcon && oIcon.getSrc(), "sap-icon://sap-ui5", "ValueHelpIcon set");
 
 		// simulate select event to see if field is updated
-		const oCondition = Condition.createCondition("EQ", ["Hello"], undefined, undefined, ConditionValidated.Validated);
+		const oCondition = Condition.createCondition(OperatorName.EQ, ["Hello"], undefined, undefined, ConditionValidated.Validated);
 		oFieldHelp.fireSelect({ conditions: [oCondition] });
 		assert.equal(iCount, 1, "Change Event fired once");
 		assert.equal(iLiveCount, 1, "LiveChange Event fired once");
@@ -3198,7 +3200,7 @@ sap.ui.define([
 		let aConditions = oCM.getConditions("Name");
 		assert.equal(aConditions.length, 1, "one condition in Codition model");
 		assert.equal(aConditions[0].values[0], "Hello", "condition value");
-		assert.equal(aConditions[0].operator, "EQ", "condition operator");
+		assert.equal(aConditions[0].operator, OperatorName.EQ, "condition operator");
 		assert.equal(oContent.getDOMValue(), "Hello", "value shown in inner control");
 
 		// check selecting same value updates typed value
@@ -3229,7 +3231,7 @@ sap.ui.define([
 		aConditions = oCM.getConditions("Name");
 		assert.equal(aConditions.length, 1, "one condition in Codition model");
 		assert.equal(aConditions[0].values[0], "Hello", "condition value");
-		assert.equal(aConditions[0].operator, "EQ", "condition operator");
+		assert.equal(aConditions[0].operator, OperatorName.EQ, "condition operator");
 		assert.equal(oContent.getDOMValue(), "Navigate (Y)", "value shown in inner control");
 
 		// simulate value help request to see if FieldHelp opens (use icon click to test own created icon)
@@ -3645,7 +3647,7 @@ sap.ui.define([
 			oField.attachEvent("change", _myChangeHandler);
 			oCM = new ConditionModel();
 			oCore.setModel(oCM, "cm");
-			const oCondition = Condition.createCondition("EQ", ["I2"], undefined, undefined, ConditionValidated.Validated); // use validated condition
+			const oCondition = Condition.createCondition(OperatorName.EQ, ["I2"], undefined, undefined, ConditionValidated.Validated); // use validated condition
 			oCM.addCondition("Name", oCondition);
 			oCore.getMessageManager().registerObject(oField, true); // to test valueState
 
@@ -3730,7 +3732,7 @@ sap.ui.define([
 		assert.equal(aConditions.length, 1, "one condition in Codition model");
 		assert.equal(aConditions[0] && aConditions[0].values[0], "I3", "condition value");
 		assert.equal(aConditions[0] && aConditions[0].values[1], "Item3", "condition description");
-		assert.equal(aConditions[0] && aConditions[0].operator, "EQ", "condition operator");
+		assert.equal(aConditions[0] && aConditions[0].operator, OperatorName.EQ, "condition operator");
 		assert.notOk(oFieldHelp.getItemForValue.called, "getItemForValue not called");
 		assert.ok(oFieldHelp.onControlChange.called, "onControlChange called on FieldHelp");
 		assert.equal(oContent.getDOMValue(), "I", "value still shown in inner control");
@@ -3762,7 +3764,7 @@ sap.ui.define([
 		assert.equal(aConditions.length, 1, "one condition in Codition model");
 		assert.equal(aConditions[0] && aConditions[0].values[0], "I3", "condition value");
 		assert.equal(aConditions[0] && aConditions[0].values[1], "Item3", "condition description");
-		assert.equal(aConditions[0] && aConditions[0].operator, "EQ", "condition operator");
+		assert.equal(aConditions[0] && aConditions[0].operator, OperatorName.EQ, "condition operator");
 		assert.notOk(oFieldHelp.getItemForValue.called, "getItemForValue not called");
 		assert.equal(oContent.getDOMValue(), "", "value not longer shown in inner control");
 		assert.equal(oField.getValueState(), "None", "No ValueState on Field");
@@ -3787,10 +3789,10 @@ sap.ui.define([
 		assert.equal(aConditions.length, 2, "two condition in Codition model");
 		assert.equal(aConditions[0] && aConditions[0].values[0], "I3", "condition value");
 		assert.equal(aConditions[0] && aConditions[0].values[1], "Item3", "condition description");
-		assert.equal(aConditions[0] && aConditions[0].operator, "EQ", "condition operator");
+		assert.equal(aConditions[0] && aConditions[0].operator, OperatorName.EQ, "condition operator");
 		assert.equal(aConditions[1] && aConditions[1].values[0], "I1", "condition value");
 		assert.equal(aConditions[1] && aConditions[1].values[1], "Item1", "condition description");
-		assert.equal(aConditions[1] && aConditions[1].operator, "EQ", "condition operator");
+		assert.equal(aConditions[1] && aConditions[1].operator, OperatorName.EQ, "condition operator");
 		assert.notOk(oFieldHelp.getItemForValue.called, "getItemForValue not called");
 		assert.equal(oContent.getDOMValue(), "", "no value shown in inner control");
 		assert.equal(oContent.getProperty("value"), "", "no value set in inner control"); // as getValue returns DomValue, not property
@@ -3826,14 +3828,14 @@ sap.ui.define([
 		assert.equal(aConditions.length, 1, "one condition in Codition model");
 		assert.equal(aConditions[0] && aConditions[0].values[0], "I2", "condition value");
 		assert.equal(aConditions[0] && aConditions[0].values[1], "Item2", "condition description");
-		assert.equal(aConditions[0] && aConditions[0].operator, "EQ", "condition operator");
+		assert.equal(aConditions[0] && aConditions[0].operator, OperatorName.EQ, "condition operator");
 		assert.notOk(oFieldHelp.getItemForValue.called, "getItemForValue not called");
 		assert.equal(oContent.getDOMValue(), "Item2", "value shown in inner control");
 
 		oFieldHelp.getItemForValue.resetHistory();
 		iCount = 0;
 		sValue = ""; bValid = undefined;
-		oCondition = Condition.createCondition("EQ", ["I3"], undefined, undefined, ConditionValidated.Validated);
+		oCondition = Condition.createCondition(OperatorName.EQ, ["I3"], undefined, undefined, ConditionValidated.Validated);
 		oFieldHelp.fireSelect({ conditions: [oCondition], add: false });
 		assert.equal(iCount, 1, "Change Event fired once");
 		assert.ok(bValid, "Change event valid");
@@ -3841,7 +3843,7 @@ sap.ui.define([
 		assert.equal(aConditions.length, 1, "one condition in Codition model");
 		assert.equal(aConditions[0] && aConditions[0].values[0], "I3", "condition value");
 		assert.equal(aConditions[0] && aConditions[0].values[1], undefined, "condition description");
-		assert.equal(aConditions[0] && aConditions[0].operator, "EQ", "condition operator");
+		assert.equal(aConditions[0] && aConditions[0].operator, OperatorName.EQ, "condition operator");
 		const fnDone = assert.async();
 		setTimeout(function() { // as text is updated async
 			assert.equal(oContent.getDOMValue(), "Item3", "value shown in inner control");
@@ -4442,7 +4444,7 @@ sap.ui.define([
 		const oFieldHelp = oCore.byId(oField.getValueHelp());
 
 		const oCM2 = new ConditionModel();
-		let oCondition = Condition.createCondition("EQ", ["I3"]);
+		let oCondition = Condition.createCondition(OperatorName.EQ, ["I3"]);
 		oCM2.addCondition("Name", oCondition);
 		oCore.setModel(oCM2, "cm2");
 
@@ -4464,7 +4466,7 @@ sap.ui.define([
 		const aContent2 = oField2.getAggregation("_content");
 		const oContent2 = aContent2 && aContent2.length > 0 && aContent2[0];
 
-		oCondition = Condition.createCondition("EQ", ["I1", "Item1"]);
+		oCondition = Condition.createCondition(OperatorName.EQ, ["I1", "Item1"]);
 		oFieldHelp.fireSelect({ conditions: [oCondition] });
 		let aConditions = oCM.getConditions("Name");
 		assert.equal(aConditions.length, 1, "one condition in Codition model of first Field");
@@ -4481,7 +4483,7 @@ sap.ui.define([
 		oField2.focus(); // as FieldHelp is connected with focus
 		assert.ok(oFieldHelp.fireDisconnect.called, "disconnect event fired");
 
-		oCondition = Condition.createCondition("EQ", ["I1", "Item1"]);
+		oCondition = Condition.createCondition(OperatorName.EQ, ["I1", "Item1"]);
 		oFieldHelp.fireSelect({ conditions: [oCondition] });
 		aConditions = oCM.getConditions("Name");
 		assert.equal(aConditions.length, 2, "two conditions in Codition model of first Field");
@@ -4524,7 +4526,7 @@ sap.ui.define([
 			assert.equal(aConditions.length, 2, "two conditions in Codition model");
 			assert.equal(aConditions[1].values[0], "I3", "condition value");
 			assert.equal(aConditions[1].values[1], "Item3", "condition value");
-			assert.equal(aConditions[1].operator, "EQ", "condition operator");
+			assert.equal(aConditions[1].operator, OperatorName.EQ, "condition operator");
 			const aTokens = oContent.getTokens ? oContent.getTokens() : [];
 			assert.equal(aTokens.length, 2, "MultiInput has two Tokens");
 			const oToken = aTokens[1];
@@ -4573,7 +4575,7 @@ sap.ui.define([
 			assert.equal(aConditions.length, 1, "one condition in Codition model");
 			assert.equal(aConditions[0].values[0], "I3", "condition value");
 			assert.equal(aConditions[0].values[1], "Item3", "condition value");
-			assert.equal(aConditions[0].operator, "EQ", "condition operator");
+			assert.equal(aConditions[0].operator, OperatorName.EQ, "condition operator");
 			assert.ok(oFieldHelp.onControlChange.calledOnce, "onControlChange called on FieldHelp");
 			assert.equal(oField._aAsyncChanges.length, 0, "no async changes stored in Field");
 			assert.notOk(oField.hasPendingUserInput(), "no user interaction after Promise resolved");
@@ -4612,7 +4614,7 @@ sap.ui.define([
 			assert.equal(aConditions.length, 1, "one condition in Codition model");
 			assert.equal(aConditions[0].values[0], "I3", "condition value");
 			assert.equal(aConditions[0].values[1], "Item3", "condition value");
-			assert.equal(aConditions[0].operator, "EQ", "condition operator");
+			assert.equal(aConditions[0].operator, OperatorName.EQ, "condition operator");
 			assert.ok(oFieldHelp.onControlChange.notCalled, "onControlChange not called on FieldHelp");
 			assert.equal(oField._aAsyncChanges.length, 0, "no async changes stored in Field");
 			assert.notOk(oField.hasPendingUserInput(), "no user interaction after Promise resolved");
@@ -4626,7 +4628,7 @@ sap.ui.define([
 
 	QUnit.test("invalid input with async parsing", function(assert) {
 
-		sinon.stub(FilterOperatorUtil, "getDefaultOperator").returns(FilterOperatorUtil.getOperator("Contains")); // fake contains as default operator
+		sinon.stub(FilterOperatorUtil, "getDefaultOperator").returns(FilterOperatorUtil.getOperator(OperatorName.Contains)); // fake contains as default operator
 		const oFieldHelp = oCore.byId(oField.getValueHelp());
 		oFieldHelp.setValidateInput(true);
 
@@ -4700,13 +4702,13 @@ sap.ui.define([
 								assert.equal(oContent.getValueStateText(), "", "ValueStateText");
 								aConditions = oFieldHelp.getConditions();
 								assert.equal(aConditions.length, 2, "Conditions set on FieldHelp");
-								assert.equal(aConditions[1] && aConditions[1].operator, "Contains", "condition operator");
+								assert.equal(aConditions[1] && aConditions[1].operator, OperatorName.Contains, "condition operator");
 								assert.equal(aConditions[1] && aConditions[1].values[0], "Invalid", "condition value");
 								assert.ok(oFieldHelp.close.called, "close called");
 								aConditions = oCM.getConditions("Name");
 								assert.deepEqual(vResult, aConditions, "Promise result");
 								assert.equal(aConditions.length, 2, "one condition in Codition model");
-								assert.equal(aConditions[1] && aConditions[1].operator, "Contains", "condition operator");
+								assert.equal(aConditions[1] && aConditions[1].operator, OperatorName.Contains, "condition operator");
 								assert.equal(aConditions[1] && aConditions[1].values[0], "Invalid", "condition value");
 								assert.equal(oField._aAsyncChanges.length, 0, "no async changes stored in Field");
 
@@ -4726,13 +4728,13 @@ sap.ui.define([
 											assert.equal(oContent.getValueStateText(), "", "ValueState text");
 											aConditions = oFieldHelp.getConditions();
 											assert.equal(aConditions.length, 3, "Conditions set on FieldHelp");
-											assert.equal(aConditions[2] && aConditions[2].operator, "EQ", "condition operator");
+											assert.equal(aConditions[2] && aConditions[2].operator, OperatorName.EQ, "condition operator");
 											assert.equal(aConditions[2] && aConditions[2].values[0], "Unknown", "condition value");
 											assert.ok(oFieldHelp.close.called, "close called");
 											aConditions = oCM.getConditions("Name");
 											assert.deepEqual(vResult, aConditions, "Promise result");
 											assert.equal(aConditions.length, 3, "three conditions in Codition model");
-											assert.equal(aConditions[2] && aConditions[2].operator, "EQ", "condition operator");
+											assert.equal(aConditions[2] && aConditions[2].operator, OperatorName.EQ, "condition operator");
 											assert.equal(aConditions[2] && aConditions[2].values[0], "Unknown", "condition value");
 											assert.equal(oField._aAsyncChanges.length, 0, "no async changes stored in Field");
 
@@ -5183,7 +5185,7 @@ sap.ui.define([
 			oField.attachEvent("change", _myChangeHandler);
 			oCM = new ConditionModel();
 			oCore.setModel(oCM, "cm");
-			const oCondition = Condition.createCondition("EQ", [[123.45, "USD"]]);
+			const oCondition = Condition.createCondition(OperatorName.EQ, [[123.45, "USD"]]);
 			oCM.addCondition("Price", oCondition);
 
 			oField.placeAt("content");
@@ -5232,14 +5234,14 @@ sap.ui.define([
 		assert.equal(oFieldHelp.connect.args[0][0], oField, "FieldHelp connected to Field");
 		assert.equal(oFieldHelp.connect.args[0][1].dataType, oStringType, "Type of currency part used for FieldHelp");
 		// simulate select event to see if field is updated
-		let oCondition = Condition.createCondition("EQ", ["EUR", "EUR"], {inTest: "X"}, {outTest: "Y"}, ConditionValidated.Validated, {payloadTest: "Z"});
+		let oCondition = Condition.createCondition(OperatorName.EQ, ["EUR", "EUR"], {inTest: "X"}, {outTest: "Y"}, ConditionValidated.Validated, {payloadTest: "Z"});
 		oFieldHelp.fireSelect({ conditions: [oCondition] });
 		assert.equal(iCount, 0, "Change Event not fired");
 		let aConditions = oCM.getConditions("Price");
 		assert.equal(aConditions.length, 1, "one condition in Codition model");
 		assert.equal(aConditions[0].values[0][0], 123.45, "condition value0");
 		assert.equal(aConditions[0].values[0][1], "EUR", "condition value1");
-		assert.equal(aConditions[0].operator, "EQ", "condition operator");
+		assert.equal(aConditions[0].operator, OperatorName.EQ, "condition operator");
 		assert.ok(aConditions[0].hasOwnProperty("inParameters"), "Condition has in-partameters");
 		assert.equal(aConditions[0].inParameters.inTest, "X", "In-parameter value");
 		assert.ok(aConditions[0].hasOwnProperty("outParameters"), "Condition has out-partameters");
@@ -5256,13 +5258,13 @@ sap.ui.define([
 
 				oCM.removeAllConditions();
 				setTimeout(function() { // wait for Model update
-					oCondition = Condition.createCondition("EQ", ["USD", "USD"], {inTest: "X"}, {outTest: "Y"}, ConditionValidated.Validated, {payloadTest: "Z"});
+					oCondition = Condition.createCondition(OperatorName.EQ, ["USD", "USD"], {inTest: "X"}, {outTest: "Y"}, ConditionValidated.Validated, {payloadTest: "Z"});
 					oFieldHelp.fireSelect({ conditions: [oCondition] });
 					aConditions = oCM.getConditions("Price");
 					assert.equal(aConditions.length, 1, "one condition in Codition model");
 					assert.equal(aConditions[0].values[0][0], undefined, "condition value0");
 					assert.equal(aConditions[0].values[0][1], "USD", "condition value1");
-					assert.equal(aConditions[0].operator, "EQ", "condition operator");
+					assert.equal(aConditions[0].operator, OperatorName.EQ, "condition operator");
 					assert.ok(aConditions[0].hasOwnProperty("inParameters"), "Condition has in-partameters");
 					assert.equal(aConditions[0].inParameters.inTest, "X", "In-parameter value");
 					assert.ok(aConditions[0].hasOwnProperty("outParameters"), "Condition has out-partameters");
@@ -5305,14 +5307,14 @@ sap.ui.define([
 		assert.equal(oFieldHelp.connect.args[0][0], oField, "FieldHelp connected to Field");
 		assert.equal(oFieldHelp.connect.args[0][1].dataType, oStringType, "Type of currency part used for FieldHelp");
 		// simulate select event to see if field is updated
-		const oCondition = Condition.createCondition("EQ", ["EUR", "EUR"], undefined, undefined, ConditionValidated.Validated, {payloadTest: "Z"});
+		const oCondition = Condition.createCondition(OperatorName.EQ, ["EUR", "EUR"], undefined, undefined, ConditionValidated.Validated, {payloadTest: "Z"});
 		oFieldHelp.fireSelect({ conditions: [oCondition] });
 		assert.equal(iCount, 1, "Change Event fired");
 		const aConditions = oField.getConditions();
 		assert.equal(aConditions.length, 1, "one condition in Codition model");
 		assert.equal(aConditions[0].values[0][0], 123.45, "condition value0");
 		assert.equal(aConditions[0].values[0][1], "EUR", "condition value1");
-		assert.equal(aConditions[0].operator, "EQ", "condition operator");
+		assert.equal(aConditions[0].operator, OperatorName.EQ, "condition operator");
 		assert.ok(aConditions[0].hasOwnProperty("payload"), "Condition has payload");
 		assert.equal(aConditions[0].payload.payloadTest, "Z", "payload value");
 		assert.equal(oContent1.getDOMValue(), "EUR", "value in inner control");
@@ -5365,7 +5367,7 @@ sap.ui.define([
 					assert.equal(aConditions.length, 1, "one condition in Codition model");
 					assert.equal(aConditions[0].values[0][0], 123.45, "condition value0");
 					assert.equal(aConditions[0].values[0][1], "EUR", "condition value1");
-					assert.equal(aConditions[0].operator, "EQ", "condition operator");
+					assert.equal(aConditions[0].operator, OperatorName.EQ, "condition operator");
 					assert.ok(aConditions[0].hasOwnProperty("inParameters"), "Condition has in-partameters");
 					assert.equal(aConditions[0].inParameters.inTest, "X", "In-parameter value");
 					assert.ok(aConditions[0].hasOwnProperty("outParameters"), "Condition has out-partameters");
@@ -5392,7 +5394,7 @@ sap.ui.define([
 							assert.equal(aConditions.length, 1, "one condition in Codition model");
 							assert.equal(aConditions[0].values[0][0], 123.45, "condition value0");
 							assert.equal(aConditions[0].values[0][1], "USD", "condition value1");
-							assert.equal(aConditions[0].operator, "EQ", "condition operator");
+							assert.equal(aConditions[0].operator, OperatorName.EQ, "condition operator");
 							assert.notOk(aConditions[0].hasOwnProperty("inParameters"), "Condition has no in-partameters");
 							assert.notOk(aConditions[0].hasOwnProperty("outParameters"), "Condition has no out-partameters");
 							assert.ok(aConditions[0].hasOwnProperty("payload"), "Condition has payload");
@@ -5429,7 +5431,7 @@ sap.ui.define([
 									assert.equal(aConditions.length, 1, "one condition in Codition model");
 									assert.equal(aConditions[0].values[0][0], 123.45, "condition value0");
 									assert.equal(aConditions[0].values[0][1], "USD", "condition value1");
-									assert.equal(aConditions[0].operator, "EQ", "condition operator");
+									assert.equal(aConditions[0].operator, OperatorName.EQ, "condition operator");
 									assert.notOk(aConditions[0].hasOwnProperty("inParameters"), "Condition has no in-partameters");
 									assert.notOk(aConditions[0].hasOwnProperty("outParameters"), "Condition has no out-partameters");
 									assert.ok(aConditions[0].hasOwnProperty("payload"), "Condition has payload");
@@ -5524,9 +5526,9 @@ sap.ui.define([
 			oField.attachEvent("change", _myChangeHandler);
 			oCM = new ConditionModel();
 			oCore.setModel(oCM, "cm");
-			let oCondition = Condition.createCondition("EQ", [[123.45, "USD"]]);
+			let oCondition = Condition.createCondition(OperatorName.EQ, [[123.45, "USD"]]);
 			oCM.addCondition("Price", oCondition);
-			oCondition = Condition.createCondition("BT", [[100, "USD"], [200, "USD"]]);
+			oCondition = Condition.createCondition(OperatorName.BT, [[100, "USD"], [200, "USD"]]);
 			oCM.addCondition("Price", oCondition);
 
 			oField.placeAt("content");
@@ -5564,19 +5566,19 @@ sap.ui.define([
 
 		oContent2.focus(); // as FieldHelp is connected with focus
 		// simulate select event to see if field is updated
-		let oCondition = Condition.createCondition("EQ", ["EUR", "EUR"]);
+		let oCondition = Condition.createCondition(OperatorName.EQ, ["EUR", "EUR"]);
 		oFieldHelp.fireSelect({ conditions: [oCondition] });
 		assert.equal(iCount, 0, "Change Event not fired");
 		let aConditions = oCM.getConditions("Price");
 		assert.equal(aConditions.length, 2, "two conditions in Codition model");
 		assert.equal(aConditions[0].values[0][0], 123.45, "condition value0-number");
 		assert.equal(aConditions[0].values[0][1], "EUR", "condition value0-unit");
-		assert.equal(aConditions[0].operator, "EQ", "condition operator");
+		assert.equal(aConditions[0].operator, OperatorName.EQ, "condition operator");
 		assert.equal(aConditions[1].values[0][0], 100, "condition value0-number");
 		assert.equal(aConditions[1].values[0][1], "EUR", "condition value0-unit");
 		assert.equal(aConditions[1].values[1][0], 200, "condition value1-number");
 		assert.equal(aConditions[1].values[1][1], "EUR", "condition value1-unit");
-		assert.equal(aConditions[1].operator, "BT", "condition operator");
+		assert.equal(aConditions[1].operator, OperatorName.BT, "condition operator");
 		assert.equal(oContent2.getDOMValue(), "EUR", "value in inner control");
 
 		qutils.triggerKeydown(oContent2.getFocusDomRef().id, KeyCodes.ENTER, false, false, false);
@@ -5585,13 +5587,13 @@ sap.ui.define([
 		setTimeout(function() { // wait for Model update
 			oCM.removeAllConditions();
 			setTimeout(function() { // wait for Model update
-				oCondition = Condition.createCondition("EQ", ["USD", "USD"]);
+				oCondition = Condition.createCondition(OperatorName.EQ, ["USD", "USD"]);
 				oFieldHelp.fireSelect({ conditions: [oCondition] });
 				aConditions = oCM.getConditions("Price");
 				assert.equal(aConditions.length, 1, "one condition in Codition model");
 				assert.equal(aConditions[0].values[0][0], undefined, "condition value0");
 				assert.equal(aConditions[0].values[0][1], "USD", "condition value1");
-				assert.equal(aConditions[0].operator, "EQ", "condition operator");
+				assert.equal(aConditions[0].operator, OperatorName.EQ, "condition operator");
 
 				// check selecting same value updates typed value
 				iCount = 0;
@@ -5619,7 +5621,7 @@ sap.ui.define([
 		const oContent2 = aContent && aContent.length > 1 && aContent[1];
 
 		oContent2.focus(); // as FieldHelp is connected with focus
-		const oCondition = Condition.createCondition("EQ", ["EUR", "EUR"], {inTest: "X"}, {outTest: "Y"}, ConditionValidated.Validated, {payloadTest: "Z"});
+		const oCondition = Condition.createCondition(OperatorName.EQ, ["EUR", "EUR"], {inTest: "X"}, {outTest: "Y"}, ConditionValidated.Validated, {payloadTest: "Z"});
 		oFieldHelp.fireNavigated({ condition: oCondition });
 		assert.equal(iLiveCount, 1, "LiveChange Event fired once");
 		assert.equal(oContent1.getDOMValue(), "", "value in inner number-control");
@@ -5630,7 +5632,7 @@ sap.ui.define([
 		assert.equal(aConditions.length, 2, "two conditions in Codition model");
 		assert.equal(aConditions[0].values[0][0], 123.45, "condition0 value0-number");
 		assert.equal(aConditions[0].values[0][1], "EUR", "condition0 value0-unit");
-		assert.equal(aConditions[0].operator, "EQ", "condition0 operator");
+		assert.equal(aConditions[0].operator, OperatorName.EQ, "condition0 operator");
 		assert.ok(aConditions[0].hasOwnProperty("inParameters"), "Condition0 has in-partameters");
 		assert.equal(aConditions[0].inParameters.inTest, "X", "In-parameter value");
 		assert.ok(aConditions[0].hasOwnProperty("outParameters"), "Condition0 has out-partameters");
@@ -5641,7 +5643,7 @@ sap.ui.define([
 		assert.equal(aConditions[1].values[0][1], "EUR", "condition1 value0-unit");
 		assert.equal(aConditions[1].values[1][0], 200, "condition1 value1-number");
 		assert.equal(aConditions[1].values[1][1], "EUR", "condition1 value1-unit");
-		assert.equal(aConditions[1].operator, "BT", "condition operator");
+		assert.equal(aConditions[1].operator, OperatorName.BT, "condition operator");
 		assert.ok(aConditions[1].hasOwnProperty("inParameters"), "Condition1 has in-partameters");
 		assert.equal(aConditions[1].inParameters.inTest, "X", "In-parameter value");
 		assert.ok(aConditions[1].hasOwnProperty("outParameters"), "Condition1 has out-partameters");
@@ -5658,7 +5660,7 @@ sap.ui.define([
 				assert.equal(aConditions.length, 1, "one condition in Codition model");
 				assert.equal(aConditions[0].values[0][0], undefined, "condition0 value0-number");
 				assert.equal(aConditions[0].values[0][1], "EUR", "condition0 value0-unit");
-				assert.equal(aConditions[0].operator, "EQ", "condition0 operator");
+				assert.equal(aConditions[0].operator, OperatorName.EQ, "condition0 operator");
 				assert.ok(aConditions[0].hasOwnProperty("inParameters"), "Condition0 has in-partameters");
 				assert.equal(aConditions[0].inParameters.inTest, "X", "In-parameter value");
 				assert.ok(aConditions[0].hasOwnProperty("outParameters"), "Condition0 has out-partameters");
@@ -5728,7 +5730,7 @@ sap.ui.define([
 		const oContent = aContent && aContent.length > 0 && aContent[0];
 		assert.notOk(oContent.getValue(), "Input control is empty");
 
-		const oCondition = Condition.createCondition("EQ", [""], undefined, undefined, ConditionValidated.Validated);
+		const oCondition = Condition.createCondition(OperatorName.EQ, [""], undefined, undefined, ConditionValidated.Validated);
 		oField.setConditions([oCondition]);
 		assert.equal(oContent.getValue(), "Empty");
 
@@ -5739,12 +5741,12 @@ sap.ui.define([
 		const oFieldHelp = oCore.byId(oField.getValueHelp());
 		oField.focus(); // as FieldHelp is connected with focus
 
-		const oCondition = Condition.createCondition("EQ", ["", "Empty"]);
+		const oCondition = Condition.createCondition(OperatorName.EQ, ["", "Empty"]);
 		oFieldHelp.fireSelect({ conditions: [oCondition] });
 
 		const aConditions = oField.getConditions();
 		assert.equal(aConditions.length, 1, "one condition set");
-		assert.equal(aConditions[0].operator, "EQ", "condition operator");
+		assert.equal(aConditions[0].operator, OperatorName.EQ, "condition operator");
 		assert.equal(aConditions[0].values[0], "", "condition value");
 		assert.equal(aConditions[0].values[1], "Empty", "condition description");
 
@@ -5757,7 +5759,7 @@ sap.ui.define([
 		const oContent = aContent && aContent.length > 0 && aContent[0];
 		oField.focus(); // as FieldHelp is connected with focus
 
-		const oCondition = Condition.createCondition("EQ", ["", "Empty"]);
+		const oCondition = Condition.createCondition(OperatorName.EQ, ["", "Empty"]);
 		oFieldHelp.fireNavigated({condition: oCondition});
 
 		assert.equal(iLiveCount, 1, "LiveChange Event fired once");
@@ -5789,7 +5791,7 @@ sap.ui.define([
 
 			oCM = new ConditionModel();
 			oCore.setModel(oCM, "cm");
-			const oCondition = Condition.createCondition("EQ", ["Test"], undefined, undefined, ConditionValidated.Validated);
+			const oCondition = Condition.createCondition(OperatorName.EQ, ["Test"], undefined, undefined, ConditionValidated.Validated);
 			oCM.addCondition("Name", oCondition);
 
 			oField.placeAt("content");
@@ -5851,7 +5853,7 @@ sap.ui.define([
 
 			oCM = new ConditionModel();
 			oCore.setModel(oCM, "cm");
-			const oCondition = Condition.createCondition("EQ", ["Test"], undefined, undefined, ConditionValidated.Validated);
+			const oCondition = Condition.createCondition(OperatorName.EQ, ["Test"], undefined, undefined, ConditionValidated.Validated);
 			oCM.addCondition("Name", oCondition);
 
 			oField.placeAt("content");

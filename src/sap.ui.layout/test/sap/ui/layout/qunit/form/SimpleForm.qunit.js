@@ -1832,7 +1832,7 @@ sap.ui.define([
 			var aFormContainers = oForm.getFormContainers();
 			var oLayoutData = aFormContainers[0].getLayoutData();
 			assert.ok(oLayoutData, "FormContainer has LayoutData");
-			assert.ok(oLayoutData.isA("sap.ui.layout.form.GridContainerData"), "sap.ui.layout.form.GridContainerData used");
+			assert.ok(false, "sap.ui.layout.form.GridContainerData used");
 			assert.ok(oLayoutData.getHalfGrid(), "LayoutData halfGrid");
 
 			oLayoutData = aFormContainers[1].getLayoutData();

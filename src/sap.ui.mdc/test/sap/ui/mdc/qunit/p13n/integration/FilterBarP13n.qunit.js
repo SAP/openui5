@@ -1,7 +1,7 @@
 /* global QUnit, sinon */
 sap.ui.define([
-	"sap/m/p13n/Engine", "../../QUnitUtils", "sap/ui/mdc/FilterBarDelegate", "sap/ui/mdc/FilterBar", "sap/ui/mdc/FilterField", "test-resources/sap/m/qunit/p13n/TestModificationHandler", "sap/ui/core/Core"
-], function (Engine, MDCQUnitUtils, FilterBarDelegate, FilterBar, FilterField, TestModificationHandler, oCore) {
+	"sap/m/p13n/Engine", "../../QUnitUtils", "sap/ui/mdc/FilterBarDelegate", "sap/ui/mdc/FilterBar", "sap/ui/mdc/FilterField", "sap/ui/mdc/enums/OperatorName", "test-resources/sap/m/qunit/p13n/TestModificationHandler", "sap/ui/core/Core"
+], function (Engine, MDCQUnitUtils, FilterBarDelegate, FilterBar, FilterField, OperatorName, TestModificationHandler, oCore) {
 	"use strict";
 	const oResourceBundle = oCore.getLibraryResourceBundle("sap.ui.mdc");
 
@@ -216,9 +216,9 @@ sap.ui.define([
 		const done = assert.async();
 
 		const mConditions = {
-			item1: [{operator: "EQ", values:["Test"]}],
-			item2: [{operator: "EQ", values:["Test"]}],
-			item3: [{operator: "EQ", values:["Test"]}]
+			item1: [{operator: OperatorName.EQ, values:["Test"]}],
+			item2: [{operator: OperatorName.EQ, values:["Test"]}],
+			item3: [{operator: OperatorName.EQ, values:["Test"]}]
 		};
 
         sinon.stub(Engine.getInstance(), '_processChanges').callsFake(function fakeFn(vControl, aChanges) {
@@ -246,7 +246,7 @@ sap.ui.define([
 
 		//use Engine with a non existing property
 		const mConditions = {
-			someNonexistingProperty: [{operator: "EQ", values:["Test"]}]
+			someNonexistingProperty: [{operator: OperatorName.EQ, values:["Test"]}]
 		};
 
 		Engine.getInstance().createChanges({
@@ -265,13 +265,13 @@ sap.ui.define([
 		const done = assert.async();
 
 		const mConditions = {
-			item1: [{operator: "EQ", values:["Test"]}],
-			item2: [{operator: "EQ", values:["Test"]}],
-			item3: [{operator: "EQ", values:["Test"]}]
+			item1: [{operator: OperatorName.EQ, values:["Test"]}],
+			item2: [{operator: OperatorName.EQ, values:["Test"]}],
+			item3: [{operator: OperatorName.EQ, values:["Test"]}]
 		};
 
 		sinon.stub(this.oFilterBar, "getPropertyInfoSet").returns(this.aPropertyInfos);
-		this.oFilterBar.setFilterConditions({item1: [{operator: "EQ", values:["Test"]}]});
+		this.oFilterBar.setFilterConditions({item1: [{operator: OperatorName.EQ, values:["Test"]}]});
 
 		Engine.getInstance().createChanges({
 			control: this.oFilterBar,
@@ -292,12 +292,12 @@ sap.ui.define([
 
 		const mConditions = {
 			item1: [],
-			item2: [{operator: "EQ", values:["Test"]}],
-			item3: [{operator: "EQ", values:["Test"]}]
+			item2: [{operator: OperatorName.EQ, values:["Test"]}],
+			item3: [{operator: OperatorName.EQ, values:["Test"]}]
 		};
 
 		sinon.stub(this.oFilterBar, "getPropertyInfoSet").returns(this.aPropertyInfos);
-		this.oFilterBar.setFilterConditions({item1: [{operator: "EQ", values:["Test"]}]});
+		this.oFilterBar.setFilterConditions({item1: [{operator: OperatorName.EQ, values:["Test"]}]});
 
 		Engine.getInstance().createChanges({
 			control: this.oFilterBar,
@@ -319,11 +319,11 @@ sap.ui.define([
 		const done = assert.async();
 
 		const mConditions = {
-			$search: [{operator: "EQ", values:["Test"]}]
+			$search: [{operator: OperatorName.EQ, values:["Test"]}]
 		};
 
 		sinon.stub(this.oFilterBar, "getPropertyInfoSet").returns(this.aPropertyInfos);
-		this.oFilterBar.setFilterConditions({item1: [{operator: "EQ", values:["Test"]}]});
+		this.oFilterBar.setFilterConditions({item1: [{operator: OperatorName.EQ, values:["Test"]}]});
 
 		Engine.getInstance().createChanges({
 			control: this.oFilterBar,

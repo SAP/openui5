@@ -9,8 +9,9 @@ sap.ui.define([
 	"sap/m/DynamicDateRange", // to have it loaded before rendering starts
 	"sap/ui/mdc/condition/OperatorDynamicDateOption", // to have it loaded before rendering starts
 	"sap/ui/mdc/field/DynamicDateRangeConditionsType", // to have it loaded before rendering starts
-	"sap/ui/mdc/condition/FilterOperatorUtil"
-], function (Controller, UIComponent, Text, FieldBaseDelegate, FieldMultiInput, Token, ExpandableText, DynamicDateRange, OperatorDynamicDateOption, DynamicDateRangeConditionsType, FilterOperatorUtil) {
+	"sap/ui/mdc/condition/FilterOperatorUtil",
+	"sap/ui/mdc/enums/OperatorName"
+], function (Controller, UIComponent, Text, FieldBaseDelegate, FieldMultiInput, Token, ExpandableText, DynamicDateRange, OperatorDynamicDateOption, DynamicDateRangeConditionsType, FilterOperatorUtil, OperatorName) {
 
 	"use strict";
 
@@ -19,14 +20,14 @@ sap.ui.define([
 		onInit: function () {
 			var oFilterField = this.byId("ff1");
 
-			oFilterField.removeOperator("LT");
-			oFilterField.removeOperator("GT");
-			oFilterField.removeOperator("NE");
-			oFilterField.removeOperator("NOTBT");
-			oFilterField.removeOperator("NOTLT");
-			oFilterField.removeOperator("NOTLE");
-			oFilterField.removeOperator("NOTGT");
-			oFilterField.removeOperator("NOTGE");
+			oFilterField.removeOperator(OperatorName.LT);
+			oFilterField.removeOperator(OperatorName.GT);
+			oFilterField.removeOperator(OperatorName.NE);
+			oFilterField.removeOperator(OperatorName.NOTBT);
+			oFilterField.removeOperator(OperatorName.NOTLT);
+			oFilterField.removeOperator(OperatorName.NOTLE);
+			oFilterField.removeOperator(OperatorName.NOTGT);
+			oFilterField.removeOperator(OperatorName.NOTGE);
 
 			oFilterField.addOperator("CustomDateEmpty");
 

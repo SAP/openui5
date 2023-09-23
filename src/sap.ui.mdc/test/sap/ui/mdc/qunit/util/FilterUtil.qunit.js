@@ -7,10 +7,16 @@
 sap.ui.define([
 	"sap/ui/mdc/util/FilterUtil",
 	"sap/ui/mdc/Control",
+	"sap/ui/mdc/enums/ConditionValidated",
+	"sap/ui/mdc/enums/OperatorName",
+	"sap/ui/model/FilterOperator",
 	"sap/ui/model/type/String" // needs to be loaded for legacyFree UI5
 ], function(
 	FilterUtil,
 	Control,
+	ConditionValidated,
+	OperatorName,
+	FilterOperator,
 	StringType
 ) {
 	"use strict";
@@ -35,9 +41,9 @@ sap.ui.define([
 
 	QUnit.test("check getConditionsMap method", function(assert) {
 		const oInnerConditions = {
-			"Filter1" : [{operator: "EQ", values: ["values1"]}, {operator: "BT", values: ["0", "10"]}],
-			"Filter2" : [{operator: "EQ", values: ["values2"], inParameters : "test"}],
-			"Filter3" : [{operator: "EQ", values: ["values3", "Some Text"], isEmpty: true, validated: "Validated"}]
+			"Filter1" : [{operator: OperatorName.EQ, values: ["values1"]}, {operator: OperatorName.BT, values: ["0", "10"]}],
+			"Filter2" : [{operator: OperatorName.EQ, values: ["values2"], inParameters : "test"}],
+			"Filter3" : [{operator: OperatorName.EQ, values: ["values3", "Some Text"], isEmpty: true, validated: ConditionValidated.Validated}]
 		};
 		const oFilterBar = {
 			getInternalConditions: function() {
@@ -51,11 +57,11 @@ sap.ui.define([
 		assert.equal(Object.keys(oResultingConditions).length, 2);
 		assert.ok(oResultingConditions["Filter1"]);
 		assert.equal(oResultingConditions["Filter1"].length, 2);
-		assert.deepEqual(oResultingConditions["Filter1"], [{operator: "EQ", values: ["values1"]}, {operator: "BT", values: ["0", "10"]}]);
+		assert.deepEqual(oResultingConditions["Filter1"], [{operator: OperatorName.EQ, values: ["values1"]}, {operator: OperatorName.BT, values: ["0", "10"]}]);
 
 		assert.ok(oResultingConditions["Filter3"]);
 		assert.equal(oResultingConditions["Filter3"].length, 1);
-		assert.deepEqual(oResultingConditions["Filter3"], [{operator: "EQ", values: ["values3"]}]);
+		assert.deepEqual(oResultingConditions["Filter3"], [{operator: OperatorName.EQ, values: ["values3"]}]);
 
 		assert.ok(!oResultingConditions["Filter4"]);
 	});
@@ -108,7 +114,7 @@ sap.ui.define([
 
 			const oConditions = {
 				myProperty: [{
-					operator: "EQ",
+					operator: OperatorName.EQ,
 					values: [
 						"test"
 					]
@@ -120,7 +126,7 @@ sap.ui.define([
 
 			const oFilterInfo = FilterUtil.getFilterInfo(oControl, oConditions, aProperties);
 
-			assert.equal(oFilterInfo.filters.sOperator, "EQ", "Correct operator set in model filter");
+			assert.equal(oFilterInfo.filters.sOperator, FilterOperator.EQ, "Correct operator set in model filter");
 			assert.equal(oFilterInfo.filters.sPath, "myProperty", "Correct path set in model filter");
 
 			return;
@@ -141,7 +147,7 @@ sap.ui.define([
 
 			const oConditions = {
 				keyMyProperty: [{
-					operator: "EQ",
+					operator: OperatorName.EQ,
 					values: [
 						"test"
 					]
@@ -153,7 +159,7 @@ sap.ui.define([
 
 			const oFilterInfo = FilterUtil.getFilterInfo(oControl, oConditions, aProperties);
 
-			assert.equal(oFilterInfo.filters.sOperator, "EQ", "Correct operator set in model filter");
+			assert.equal(oFilterInfo.filters.sOperator, FilterOperator.EQ, "Correct operator set in model filter");
 			assert.equal(oFilterInfo.filters.sPath, "path/to/property", "Correct path set in model filter");
 
 			return;

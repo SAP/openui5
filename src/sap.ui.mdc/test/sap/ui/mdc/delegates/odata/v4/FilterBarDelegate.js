@@ -9,6 +9,7 @@
 sap.ui.define([
 	'delegates/odata/v4/ODataMetaModelUtil',
 	'sap/ui/mdc/enums/FieldDisplay',
+	'sap/ui/mdc/enums/OperatorName',
 	"sap/ui/fl/Utils",
 	"sap/ui/mdc/FilterBarDelegate",
 	'sap/base/util/ObjectPath',
@@ -21,7 +22,7 @@ sap.ui.define([
 	'sap/base/Log',
 	'sap/ui/mdc/odata/v4/TypeMap',
 	'delegates/util/DelegateCache'
-	], function (ODataMetaModelUtil, FieldDisplay, FlUtils, FilterBarDelegate, ObjectPath, merge, FilterOperatorUtil, ModelOperator, Filter, IdentifierUtil, JsControlTreeModifier, Log, ODataV4TypeMap, DelegateCache) {
+	], function (ODataMetaModelUtil, FieldDisplay, OperatorName, FlUtils, FilterBarDelegate, ObjectPath, merge, FilterOperatorUtil, ModelOperator, Filter, IdentifierUtil, JsControlTreeModifier, Log, ODataV4TypeMap, DelegateCache) {
 	"use strict";
 
 	var ODataFilterBarDelegate = Object.assign({}, FilterBarDelegate);
@@ -125,7 +126,7 @@ sap.ui.define([
 	ODataFilterBarDelegate._ensureSingleRangeEQOperators = function() {
 		var oOperator;
 		if (!FilterOperatorUtil.getOperator("SINGLE_RANGE_EQ")) {
-			oOperator = merge({}, FilterOperatorUtil.getOperator("EQ"));
+			oOperator = merge({}, FilterOperatorUtil.getOperator(OperatorName.EQ));
 			oOperator.name = "SINGLE_RANGE_EQ";
 			oOperator.getModelFilter = function(oCondition, sFieldPath) {
 				return new Filter({ filters: [new Filter(sFieldPath, ModelOperator.GE, oCondition.values[0]),
@@ -137,7 +138,7 @@ sap.ui.define([
 		}
 
 		if (!FilterOperatorUtil.getOperator("SINGLE_RANGE_EQ")) {
-			oOperator = merge({}, FilterOperatorUtil.getOperator("EQ"));
+			oOperator = merge({}, FilterOperatorUtil.getOperator(OperatorName.EQ));
 			oOperator.name = "SINGLE_RANGE_EQ";
 			oOperator.getModelFilter = function(oCondition, sFieldPath) {
 				return new Filter({ filters: [new Filter(sFieldPath, ModelOperator.GE, oCondition.values[0]),
@@ -151,7 +152,7 @@ sap.ui.define([
 
 	ODataFilterBarDelegate._ensureMultiRangeBTEXOperator = function() {
 		if (!FilterOperatorUtil.getOperator("MULTI_RANGE_BTEX")) {
-			var oOperator = merge({}, FilterOperatorUtil.getOperator("BT"));
+			var oOperator = merge({}, FilterOperatorUtil.getOperator(OperatorName.BT));
 			oOperator.name = "MULTI_RANGE_BTEX";
 			oOperator.getModelFilter = function(oCondition, sFieldPath) {
 				return new Filter({ filters:[new Filter(sFieldPath, ModelOperator.GT, oCondition.values[0]),
@@ -495,7 +496,7 @@ sap.ui.define([
 		}
 
 		if (oFilterDefaultValue) {
-			oProperty.defaultFilterConditions = [{ fieldPath: sKey, operator: "EQ", values: [oFilterDefaultValue] }];
+			oProperty.defaultFilterConditions = [{ fieldPath: sKey, operator: OperatorName.EQ, values: [oFilterDefaultValue] }];
 		}
 
 		//Currently the FilterBar will use 'name' as key for the identification between existing

@@ -10,12 +10,14 @@ sap.ui.define([
 	"sap/ui/mdc/BaseDelegate",
 	"sap/ui/model/FilterType",
 	"sap/ui/mdc/enums/ConditionValidated",
+	"sap/ui/mdc/enums/OperatorName",
 	'sap/ui/mdc/condition/Condition',
 	'sap/ui/mdc/condition/FilterConverter'
 ], function(
 	BaseDelegate,
 	FilterType,
 	ConditionValidated,
+	OperatorName,
 	Condition,
 	FilterConverter
 ) {
@@ -108,7 +110,7 @@ sap.ui.define([
 
 		if (!oFilterBar && sFieldSearch && sFilterFields && sFilterFields !== "$search") {
 			// add condition for Search value
-			const oCondition = Condition.createCondition("Contains", [sFieldSearch], undefined, undefined, ConditionValidated.NotValidated);
+			const oCondition = Condition.createCondition(OperatorName.Contains, [sFieldSearch], undefined, undefined, ConditionValidated.NotValidated);
 			oConditions[sFilterFields] = [oCondition];
 		}
 

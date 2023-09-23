@@ -78,19 +78,17 @@ sap.ui.define([
 		 "sap.ui.layout.cssgrid.CSSGrid"
 		],
 		elements: [
-			"sap.ui.layout.BlockLayoutCellData",
-			"sap.ui.layout.GridData",
-			"sap.ui.layout.ResponsiveFlowLayoutData",
-			"sap.ui.layout.SplitterLayoutData",
-			"sap.ui.layout.form.FormContainer",
-			"sap.ui.layout.form.FormElement",
-			"sap.ui.layout.form.GridContainerData",
-			"sap.ui.layout.PaneContainer",
-			"sap.ui.layout.SplitPane",
-			"sap.ui.layout.form.GridElementData",
-			"sap.ui.layout.form.ColumnElementData",
-			"sap.ui.layout.form.ColumnContainerData",
-			"sap.ui.layout.cssgrid.GridItemLayoutData"
+		 "sap.ui.layout.BlockLayoutCellData",
+		 "sap.ui.layout.GridData",
+		 "sap.ui.layout.ResponsiveFlowLayoutData",
+		 "sap.ui.layout.SplitterLayoutData",
+		 "sap.ui.layout.form.FormContainer",
+		 "sap.ui.layout.form.FormElement",
+		 "sap.ui.layout.PaneContainer",
+		 "sap.ui.layout.SplitPane",
+		 "sap.ui.layout.form.ColumnElementData",
+		 "sap.ui.layout.form.ColumnContainerData",
+		 "sap.ui.layout.cssgrid.GridItemLayoutData"
 		],
 		extensions: {
 			flChangeHandlers: {

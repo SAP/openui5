@@ -16,7 +16,8 @@ sap.ui.define([
 	"../QUnitUtils",
 	"sap/m/p13n/Engine",
 	"sap/ui/mdc/p13n/subcontroller/FilterController",
-	"sap/ui/mdc/util/PropertyHelper"
+	"sap/ui/mdc/util/PropertyHelper",
+	"sap/ui/mdc/enums/OperatorName"
 ], function (
 	AdaptationFilterBar,
 	FlexUtil,
@@ -33,7 +34,8 @@ sap.ui.define([
 	MDCQUnitUtils,
 	Engine,
 	FilterController,
-	PropertyHelper
+	PropertyHelper,
+	OperatorName
 ) {
 	"use strict";
 
@@ -92,7 +94,7 @@ sap.ui.define([
 		const mSampleConditions = {
 			key1: [
 				{
-					operator:"EQ",
+					operator: OperatorName.EQ,
 					values: [
 						"Test"
 					]
@@ -340,7 +342,7 @@ sap.ui.define([
 			oAdaptationFilterBar.setLiveMode(false);
 
 			oAdaptationFilterBar.setFilterConditions({"key1": [{
-				operator:"EQ",
+				operator: OperatorName.EQ,
 				values: [
 					"Externalized Test"
 				]
@@ -383,7 +385,7 @@ sap.ui.define([
 			oAdaptationFilterBar.setLiveMode(false);
 
 			oAdaptationFilterBar.setFilterConditions({"key2": [{
-				operator:"EQ",
+				operator: OperatorName.EQ,
 				values: [
 					"Dec 31, 2020, 11:59:58 PM"
 				]

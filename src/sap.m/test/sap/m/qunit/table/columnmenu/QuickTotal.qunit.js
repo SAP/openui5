@@ -47,6 +47,13 @@ sap.ui.define([
 	QUnit.test("getEffectiveQuickActions", function(assert) {
 		assert.deepEqual(this.oQuickTotal.getEffectiveQuickActions(), [this.oQuickTotal],
 			"It returns an array that contains the QuickTotal instance");
+
+		this.oQuickTotal.setVisible(false);
+		assert.equal(this.oQuickTotal.getEffectiveQuickActions().length, 0, "Returns an array that contains 0 items");
+
+		this.oQuickTotal.setVisible(true);
+		this.oQuickTotal.removeAllItems();
+		assert.equal(this.oQuickTotal.getEffectiveQuickActions().length, 0, "Returns an array that contains 0 items");
 	});
 
 	QUnit.test("Label", function(assert) {

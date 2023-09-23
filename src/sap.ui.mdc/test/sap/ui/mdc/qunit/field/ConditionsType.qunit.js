@@ -6,6 +6,7 @@ sap.ui.define([
 	"sap/ui/mdc/condition/FilterOperatorUtil",
 	"sap/ui/mdc/condition/ConditionValidateException",
 	"sap/ui/mdc/enums/ConditionValidated",
+	"sap/ui/mdc/enums/OperatorName",
 	"sap/ui/model/type/Integer",
 	"sap/ui/model/type/Currency",
 	"sap/ui/model/odata/type/String",
@@ -16,6 +17,7 @@ sap.ui.define([
 		FilterOperatorUtil,
 		ConditionValidateException,
 		ConditionValidated,
+		OperatorName,
 		IntegerType,
 		CurrencyType,
 		StringType,
@@ -51,7 +53,7 @@ sap.ui.define([
 
 	QUnit.module("Default type", {
 		beforeEach: function() {
-			oConditionsType = new ConditionsType({operators: ["EQ"]});
+			oConditionsType = new ConditionsType({operators: [OperatorName.EQ]});
 		},
 		afterEach: function() {
 			oConditionsType.destroy();
@@ -69,7 +71,7 @@ sap.ui.define([
 
 	QUnit.test("Formatting: simple String", function(assert) {
 
-		const oCondition = Condition.createCondition("EQ", ["Test"], undefined, undefined, ConditionValidated.Validated);
+		const oCondition = Condition.createCondition(OperatorName.EQ, ["Test"], undefined, undefined, ConditionValidated.Validated);
 		const sResult = oConditionsType.formatValue([oCondition]);
 		assert.equal(sResult, "Test", "Result of formatting");
 
@@ -115,9 +117,9 @@ sap.ui.define([
 
 	QUnit.test("Formatting: array of conditions", function(assert) {
 
-		oConditionsType.setFormatOptions({operators: ["EQ"], maxConditions: -1});
-		const oCondition1 = Condition.createCondition("EQ", ["Test1"]);
-		const oCondition2 = Condition.createCondition("EQ", ["Test2"]);
+		oConditionsType.setFormatOptions({operators: [OperatorName.EQ], maxConditions: -1});
+		const oCondition1 = Condition.createCondition(OperatorName.EQ, ["Test1"]);
+		const oCondition2 = Condition.createCondition(OperatorName.EQ, ["Test2"]);
 		const sResult = oConditionsType.formatValue([oCondition1, oCondition2]);
 		assert.equal(sResult, "=Test1" + oResourceBundle.getText("field.SEPARATOR") + "=Test2", "Result of formatting");
 
@@ -125,13 +127,13 @@ sap.ui.define([
 
 	QUnit.test("Formatting: array of conditions with noFormatting", function(assert) {
 
-		oConditionsType.setFormatOptions({operators: ["EQ"], maxConditions: -1, noFormatting: true});
-		const oCondition1 = Condition.createCondition("EQ", ["Test1"]);
-		const oCondition2 = Condition.createCondition("EQ", ["Test2"]);
+		oConditionsType.setFormatOptions({operators: [OperatorName.EQ], maxConditions: -1, noFormatting: true});
+		const oCondition1 = Condition.createCondition(OperatorName.EQ, ["Test1"]);
+		const oCondition2 = Condition.createCondition(OperatorName.EQ, ["Test2"]);
 		let sResult = oConditionsType.formatValue([oCondition1, oCondition2]);
 		assert.equal(sResult, "", "Result of formatting");
 
-		oConditionsType.setFormatOptions({operators: ["EQ"], maxConditions: -1, noFormatting: true, keepValue: "A"});
+		oConditionsType.setFormatOptions({operators: [OperatorName.EQ], maxConditions: -1, noFormatting: true, keepValue: "A"});
 		sResult = oConditionsType.formatValue([oCondition1, oCondition2]);
 		assert.equal(sResult, "A", "Result of formatting with keepValue");
 
@@ -143,7 +145,7 @@ sap.ui.define([
 		assert.ok(aConditions, "Result returned");
 		assert.ok(Array.isArray(aConditions), "Arry returned");
 		assert.equal(aConditions.length, 1, "1 condition returned");
-		_checkCondition(assert, aConditions[0], "EQ", ["Test"], ConditionValidated.NotValidated);
+		_checkCondition(assert, aConditions[0], OperatorName.EQ, ["Test"], ConditionValidated.NotValidated);
 
 	});
 
@@ -160,9 +162,9 @@ sap.ui.define([
 	QUnit.test("Formatting: simple Integer", function(assert) {
 
 		oValueType = new IntegerType();
-		oConditionsType.setFormatOptions({operators: ["EQ"], valueType: oValueType});
+		oConditionsType.setFormatOptions({operators: [OperatorName.EQ], valueType: oValueType});
 
-		const oCondition = Condition.createCondition("EQ", [5], undefined, undefined, ConditionValidated.Validated);
+		const oCondition = Condition.createCondition(OperatorName.EQ, [5], undefined, undefined, ConditionValidated.Validated);
 		const sResult = oConditionsType.formatValue([oCondition]);
 		assert.equal(sResult, "5", "Result of formatting");
 
@@ -173,13 +175,13 @@ sap.ui.define([
 	QUnit.test("Parsing: simple Integer", function(assert) {
 
 		oValueType = new IntegerType();
-		oConditionsType.setFormatOptions({operators: ["EQ"], valueType: oValueType});
+		oConditionsType.setFormatOptions({operators: [OperatorName.EQ], valueType: oValueType});
 
 		const aConditions = oConditionsType.parseValue("5");
 		assert.ok(aConditions, "Result returned");
 		assert.ok(Array.isArray(aConditions), "Arry returned");
 		assert.equal(aConditions.length, 1, "1 condition returned");
-		_checkCondition(assert, aConditions[0], "EQ", [5], ConditionValidated.NotValidated);
+		_checkCondition(assert, aConditions[0], OperatorName.EQ, [5], ConditionValidated.NotValidated);
 
 		oValueType.destroy();
 
@@ -188,7 +190,7 @@ sap.ui.define([
 	QUnit.test("Parsing: invalid value", function(assert) {
 
 		oValueType = new IntegerType();
-		oConditionsType.setFormatOptions({operators: ["EQ"], valueType: oValueType});
+		oConditionsType.setFormatOptions({operators: [OperatorName.EQ], valueType: oValueType});
 		let oException;
 
 		try {
@@ -203,14 +205,14 @@ sap.ui.define([
 
 	QUnit.test("Parsing: maxConditions > 1", function(assert) {
 
-		const aCompareConditions = [Condition.createCondition("EQ", ["X"], undefined, undefined, ConditionValidated.NotValidated, undefined)];
+		const aCompareConditions = [Condition.createCondition(OperatorName.EQ, ["X"], undefined, undefined, ConditionValidated.NotValidated, undefined)];
 		let aConditions = [];
-		oConditionsType.setFormatOptions({operators: ["EQ"], maxConditions: 2, getConditions: function() {return aConditions;}, noFormatting: true});
+		oConditionsType.setFormatOptions({operators: [OperatorName.EQ], maxConditions: 2, getConditions: function() {return aConditions;}, noFormatting: true});
 
 		aConditions = oConditionsType.parseValue("X");
 		assert.deepEqual(aConditions, aCompareConditions, "Result returned");
 
-		aCompareConditions.push(Condition.createCondition("EQ", ["Y"], undefined, undefined, ConditionValidated.NotValidated, undefined));
+		aCompareConditions.push(Condition.createCondition(OperatorName.EQ, ["Y"], undefined, undefined, ConditionValidated.NotValidated, undefined));
 		aConditions = oConditionsType.parseValue("Y");
 		assert.deepEqual(aConditions, aCompareConditions, "Result returned");
 
@@ -224,7 +226,7 @@ sap.ui.define([
 
 		assert.ok(oException, "exception fired");
 
-		aCompareConditions.push(Condition.createCondition("EQ", ["Z"], undefined, undefined, ConditionValidated.NotValidated, undefined));
+		aCompareConditions.push(Condition.createCondition(OperatorName.EQ, ["Z"], undefined, undefined, ConditionValidated.NotValidated, undefined));
 		aCompareConditions.splice(0, 1);
 		aConditions = oConditionsType.parseValue("Z");
 		assert.deepEqual(aConditions, aCompareConditions, "Result returned");
@@ -237,8 +239,8 @@ sap.ui.define([
 	QUnit.test("Validating: valid value", function(assert) {
 
 		oValueType = new IntegerType({}, {maximum: 100});
-		oConditionsType.setFormatOptions({operators: ["EQ"], valueType: oValueType});
-		const oCondition = Condition.createCondition("EQ", [20]);
+		oConditionsType.setFormatOptions({operators: [OperatorName.EQ], valueType: oValueType});
+		const oCondition = Condition.createCondition(OperatorName.EQ, [20]);
 		let oException;
 
 		try {
@@ -254,7 +256,7 @@ sap.ui.define([
 	QUnit.test("Validating: nothing", function(assert) {
 
 		oValueType = new IntegerType({}, {maximum: 100});
-		oConditionsType.setFormatOptions({operators: ["EQ"], valueType: oValueType});
+		oConditionsType.setFormatOptions({operators: [OperatorName.EQ], valueType: oValueType});
 		let oException;
 
 		try {
@@ -284,8 +286,8 @@ sap.ui.define([
 	QUnit.test("Validating: invalid value", function(assert) {
 
 		oValueType = new IntegerType({}, {maximum: 100});
-		oConditionsType.setFormatOptions({operators: ["EQ"], valueType: oValueType});
-		const oCondition = Condition.createCondition("EQ", [200]);
+		oConditionsType.setFormatOptions({operators: [OperatorName.EQ], valueType: oValueType});
+		const oCondition = Condition.createCondition(OperatorName.EQ, [200]);
 		let oException;
 
 		try {
@@ -320,8 +322,8 @@ sap.ui.define([
 
 	QUnit.test("Parsing: unsing condition from navigation", function(assert) {
 
-		const oNavigateCondition = Condition.createCondition("EQ", ["I3"], {testIn: "A"}, {testOut: "B"}, ConditionValidated.Validated);
-		oConditionsType.setFormatOptions({operators: ["EQ"], navigateCondition: oNavigateCondition});
+		const oNavigateCondition = Condition.createCondition(OperatorName.EQ, ["I3"], {testIn: "A"}, {testOut: "B"}, ConditionValidated.Validated);
+		oConditionsType.setFormatOptions({operators: [OperatorName.EQ], navigateCondition: oNavigateCondition});
 
 		let aConditions = oConditionsType.parseValue("I3");
 		assert.deepEqual(aConditions, [oNavigateCondition], "navigationCondition returned");
@@ -334,7 +336,7 @@ sap.ui.define([
 	QUnit.test("destroyed ConditionsType", function(assert) {
 
 		oConditionsType.destroy();
-		let oCondition = Condition.createCondition("EQ", ["Test"]);
+		let oCondition = Condition.createCondition(OperatorName.EQ, ["Test"]);
 		const sResult = oConditionsType.formatValue([oCondition]);
 		assert.equal(sResult, null, "no formatting");
 
@@ -355,22 +357,22 @@ sap.ui.define([
 
 	QUnit.test("Parsing: multiple values from Paste", function(assert) {
 
-		let aConditions = [Condition.createCondition("EQ", ["X"], undefined, undefined, ConditionValidated.NotValidated, undefined)];
+		let aConditions = [Condition.createCondition(OperatorName.EQ, ["X"], undefined, undefined, ConditionValidated.NotValidated, undefined)];
 		oConditionsType.setFormatOptions({operators: [], maxConditions: -1, getConditions: function() {return aConditions;}, asyncParsing: fnAsync});
 		aConditions = oConditionsType.parseValue("I1\n!=I2\nI3	I5");
 		assert.ok(aConditions, "Result returned");
 		assert.ok(Array.isArray(aConditions), "Arry returned");
 		assert.equal(aConditions.length, 4, "3 condition returned");
-		_checkCondition(assert, aConditions[0], "EQ", ["X"], ConditionValidated.NotValidated);
-		_checkCondition(assert, aConditions[1], "EQ", ["I1"], ConditionValidated.NotValidated);
-		_checkCondition(assert, aConditions[2], "NE", ["I2"], ConditionValidated.NotValidated);
-		_checkCondition(assert, aConditions[3], "BT", ["I3", "I5"], ConditionValidated.NotValidated);
+		_checkCondition(assert, aConditions[0], OperatorName.EQ, ["X"], ConditionValidated.NotValidated);
+		_checkCondition(assert, aConditions[1], OperatorName.EQ, ["I1"], ConditionValidated.NotValidated);
+		_checkCondition(assert, aConditions[2], OperatorName.NE, ["I2"], ConditionValidated.NotValidated);
+		_checkCondition(assert, aConditions[3], OperatorName.BT, ["I3", "I5"], ConditionValidated.NotValidated);
 
 	});
 
 	QUnit.module("Async", {
 		beforeEach: function() {
-			oConditionsType = new ConditionsType({operators: ["EQ"], asyncParsing: fnAsync});
+			oConditionsType = new ConditionsType({operators: [OperatorName.EQ], asyncParsing: fnAsync});
 		},
 		afterEach: function() {
 			oConditionsType.destroy();
@@ -381,9 +383,9 @@ sap.ui.define([
 	QUnit.test("Formatting", function(assert) {
 
 		oConditionsType.setFormatOptions({operators: [], maxConditions: -1});
-		const oCondition1 = Condition.createCondition("EQ", ["I1"]);
-		const oCondition2 = Condition.createCondition("EQ", ["I2"]);
-		const oCondition3 = Condition.createCondition("EQ", ["I3"]);
+		const oCondition1 = Condition.createCondition(OperatorName.EQ, ["I1"]);
+		const oCondition2 = Condition.createCondition(OperatorName.EQ, ["I2"]);
+		const oCondition3 = Condition.createCondition(OperatorName.EQ, ["I3"]);
 		const oStub = sinon.stub(oConditionsType._oConditionType, "formatValue");
 
 		oStub.callsFake(function(oCondition) {
@@ -431,9 +433,9 @@ sap.ui.define([
 	QUnit.test("Formatting with error", function(assert) {
 
 		oConditionsType.setFormatOptions({operators: [], maxConditions: -1});
-		const oCondition1 = Condition.createCondition("EQ", ["I1"]);
-		const oCondition2 = Condition.createCondition("EQ", ["I2"]);
-		const oCondition3 = Condition.createCondition("EQ", ["I3"]);
+		const oCondition1 = Condition.createCondition(OperatorName.EQ, ["I1"]);
+		const oCondition2 = Condition.createCondition(OperatorName.EQ, ["I2"]);
+		const oCondition3 = Condition.createCondition(OperatorName.EQ, ["I3"]);
 		const oStub = sinon.stub(oConditionsType._oConditionType, "formatValue");
 
 		oStub.callsFake(function(oCondition) {
@@ -520,7 +522,7 @@ sap.ui.define([
 			assert.ok(aConditions, "Result returned");
 			assert.ok(Array.isArray(aConditions), "Arry returned");
 			assert.equal(aConditions.length, 1, "1 condition returned");
-			_checkCondition(assert, aConditions[0], "EQ", ["I2", "Item2"], ConditionValidated.Validated);
+			_checkCondition(assert, aConditions[0], OperatorName.EQ, ["I2", "Item2"], ConditionValidated.Validated);
 			fnDone();
 		});
 
@@ -558,17 +560,17 @@ sap.ui.define([
 
 	QUnit.test("Parsing: maxConditions > 1", function(assert) {
 
-		const aCompareConditions = [Condition.createCondition("EQ", ["X"], undefined, undefined, ConditionValidated.NotValidated, undefined),
-								  Condition.createCondition("EQ", ["Y"], undefined, undefined, ConditionValidated.NotValidated, undefined)];
-		const aConditions = [Condition.createCondition("EQ", ["X"], undefined, undefined, ConditionValidated.NotValidated, undefined)];
-		oConditionsType.setFormatOptions({operators: ["EQ"], maxConditions: -1, getConditions: function() {return aConditions;}, asyncParsing: fnAsync});
+		const aCompareConditions = [Condition.createCondition(OperatorName.EQ, ["X"], undefined, undefined, ConditionValidated.NotValidated, undefined),
+								  Condition.createCondition(OperatorName.EQ, ["Y"], undefined, undefined, ConditionValidated.NotValidated, undefined)];
+		const aConditions = [Condition.createCondition(OperatorName.EQ, ["X"], undefined, undefined, ConditionValidated.NotValidated, undefined)];
+		oConditionsType.setFormatOptions({operators: [OperatorName.EQ], maxConditions: -1, getConditions: function() {return aConditions;}, asyncParsing: fnAsync});
 
 		const oStub = sinon.stub(oConditionsType._oConditionType, "parseValue");
 
 		oStub.callsFake(function(sText) {
 				const oPromise = new Promise(function(fResolve) {
 					setTimeout(function () { // simulate request
-						fResolve(Condition.createCondition("EQ", [sText], undefined, undefined, ConditionValidated.NotValidated, undefined));
+						fResolve(Condition.createCondition(OperatorName.EQ, [sText], undefined, undefined, ConditionValidated.NotValidated, undefined));
 					}, 0);
 				});
 				return oPromise;
@@ -592,8 +594,8 @@ sap.ui.define([
 
 	QUnit.module("currency type", {
 		beforeEach: function() {
-			const oCondition1 = Condition.createCondition("EQ", [[1.23, "EUR"]], undefined, undefined, ConditionValidated.NotValidated);
-			const oCondition2 = Condition.createCondition("BT", [[1, "EUR"], [2, "EUR"]], undefined, undefined, ConditionValidated.NotValidated);
+			const oCondition1 = Condition.createCondition(OperatorName.EQ, [[1.23, "EUR"]], undefined, undefined, ConditionValidated.NotValidated);
+			const oCondition2 = Condition.createCondition(OperatorName.BT, [[1, "EUR"], [2, "EUR"]], undefined, undefined, ConditionValidated.NotValidated);
 			const aConditions = [oCondition1, oCondition2];
 			oOriginalType = new CurrencyType();
 			oValueType = new CurrencyType({showMeasure: false});
@@ -607,7 +609,7 @@ sap.ui.define([
 			});
 			oUnitConditionsType = new ConditionsType({
 				valueType: oUnitType,
-				operators: ["EQ"],
+				operators: [OperatorName.EQ],
 				hideOperator: true,
 				originalDateType: oOriginalType,
 				additionalType: oValueType,
@@ -634,8 +636,8 @@ sap.ui.define([
 		const sValue1 = oValueType.formatValue([1.23, "EUR"], "string"); // because of special whitspace and local dependend
 		const sValue2 = oValueType.formatValue([1, "EUR"], "string"); // because of special whitspace and local dependend
 		const sValue3 = oValueType.formatValue([2, "EUR"], "string"); // because of special whitspace and local dependend
-		const oCondition1 = Condition.createCondition("EQ", [[1.23, "EUR"]], undefined, undefined, ConditionValidated.Validated);
-		const oCondition2 = Condition.createCondition("BT", [[1, "EUR"], [2, "EUR"]]);
+		const oCondition1 = Condition.createCondition(OperatorName.EQ, [[1.23, "EUR"]], undefined, undefined, ConditionValidated.Validated);
+		const oCondition2 = Condition.createCondition(OperatorName.BT, [[1, "EUR"], [2, "EUR"]]);
 		let sResult = oConditionsType.formatValue([oCondition1, oCondition2]);
 		assert.equal(sResult, sValue1 + oResourceBundle.getText("field.SEPARATOR") + sValue2 + "..." + sValue3, "Result of number formatting");
 		sResult = oUnitConditionsType.formatValue([oCondition1, oCondition2]);
@@ -647,16 +649,16 @@ sap.ui.define([
 
 		let aConditions = oUnitConditionsType.parseValue("USD");
 		assert.equal(aConditions.length, 2, "two conditions");
-		_checkCondition(assert, aConditions[0], "EQ", [[1.23, "USD"]], ConditionValidated.NotValidated);
-		_checkCondition(assert, aConditions[1], "BT", [[1, "USD"], [2, "USD"]], ConditionValidated.NotValidated);
+		_checkCondition(assert, aConditions[0], OperatorName.EQ, [[1.23, "USD"]], ConditionValidated.NotValidated);
+		_checkCondition(assert, aConditions[1], OperatorName.BT, [[1, "USD"], [2, "USD"]], ConditionValidated.NotValidated);
 
 //		aConditions = oUnitConditionsType.parseValue("");
 //		assert.equal(aConditions.length, 2, "two conditions");
 //		assert.equal(aConditions[0].values.length, 1, "Condition 0: Values length");
-//		assert.equal(aConditions[0].operator, "EQ", "Condition 0: Operator");
+//		assert.equal(aConditions[0].operator, OperatorName.EQ, "Condition 0: Operator");
 //		assert.ok(isNaN(aConditions[0].values[0][0]), "Condition 0: Values entry 0 number"); // as number is cleared by type if unit is cleared
 //		assert.equal(aConditions[0].values[0][1], null, "Condition 0: Values entry 0 unit");
-//		assert.equal(aConditions[1].operator, "BT", "Condition 1: Operator");
+//		assert.equal(aConditions[1].operator, OperatorName.BT, "Condition 1: Operator");
 //		assert.ok(isNaN(aConditions[1].values[0][0]), "Condition 0: Values entry 0 number"); // as number is cleared by type if unit is cleared
 //		assert.equal(aConditions[1].values[0][1], null, "Condition 1: Values entry 0 unit");
 //		assert.ok(isNaN(aConditions[1].values[1][0]), "Condition 0: Values entry 0 number"); // as number is cleared by type if unit is cleared
@@ -667,24 +669,24 @@ sap.ui.define([
 		oUnitConditionsType.oFormatOptions.getConditions = function() {return [];};
 		aConditions = oUnitConditionsType.parseValue("EUR");
 		assert.equal(aConditions.length, 1, "one conditions");
-		_checkCondition(assert, aConditions[0], "EQ", [[1, "EUR"]], ConditionValidated.NotValidated);
+		_checkCondition(assert, aConditions[0], OperatorName.EQ, [[1, "EUR"]], ConditionValidated.NotValidated);
 
 	});
 
 	QUnit.test("unit Parsing unsing condition from navigation", function(assert) {
 
-		const oNavigateCondition = Condition.createCondition("EQ", [[1, "USD"]], {testIn: "A"}, {testOut: "B"}, ConditionValidated.Validated, {testPayload: "C"});
+		const oNavigateCondition = Condition.createCondition(OperatorName.EQ, [[1, "USD"]], {testIn: "A"}, {testOut: "B"}, ConditionValidated.Validated, {testPayload: "C"});
 		const oFormatOptions = oUnitConditionsType.getFormatOptions();
 		oFormatOptions.navigateCondition = oNavigateCondition;
 		oUnitConditionsType.setFormatOptions(oFormatOptions);
 
 		const aConditions = oUnitConditionsType.parseValue("USD");
 		assert.equal(aConditions.length, 2, "two conditions");
-		_checkCondition(assert, aConditions[0], "EQ", [[1.23, "USD"]], ConditionValidated.NotValidated);
+		_checkCondition(assert, aConditions[0], OperatorName.EQ, [[1.23, "USD"]], ConditionValidated.NotValidated);
 		assert.deepEqual(aConditions[0].inParameters, oNavigateCondition.inParameters, "Condition 0: inParameters");
 		assert.deepEqual(aConditions[0].outParameters, oNavigateCondition.outParameters, "Condition 0: outParameters");
 		assert.deepEqual(aConditions[0].payload, oNavigateCondition.payload, "Condition 0: payload");
-		_checkCondition(assert, aConditions[1], "BT", [[1, "USD"], [2, "USD"]], ConditionValidated.NotValidated);
+		_checkCondition(assert, aConditions[1], OperatorName.BT, [[1, "USD"], [2, "USD"]], ConditionValidated.NotValidated);
 		assert.deepEqual(aConditions[1].inParameters, oNavigateCondition.inParameters, "Condition 1: inParameters");
 		assert.deepEqual(aConditions[1].outParameters, oNavigateCondition.outParameters, "Condition 1: outParameters");
 		assert.deepEqual(aConditions[1].payload, oNavigateCondition.payload, "Condition 1: payload");
@@ -697,7 +699,7 @@ sap.ui.define([
 		oValueType._aCurrentValue = [1, "USD"]; // fake existing value
 		oOriginalType._aCurrentValue = [1, "USD"]; // fake existing value
 		let aConditions = oUnitConditionsType.oFormatOptions.getConditions();
-		let aCompareConditions = [aConditions[0], aConditions[1], Condition.createCondition("EQ", [[9.99, "USD"]], undefined, undefined, ConditionValidated.NotValidated, undefined)];
+		let aCompareConditions = [aConditions[0], aConditions[1], Condition.createCondition(OperatorName.EQ, [[9.99, "USD"]], undefined, undefined, ConditionValidated.NotValidated, undefined)];
 
 		aConditions = oConditionsType.parseValue("9.99");
 		assert.deepEqual(aConditions, aCompareConditions, "Result returned");
@@ -706,7 +708,7 @@ sap.ui.define([
 		oValueType._aCurrentValue = undefined; // fake initial value
 		oOriginalType._aCurrentValue = undefined; // fake initial value
 		oUnitConditionsType.oFormatOptions.getConditions = function() {return [];};
-		aCompareConditions = [Condition.createCondition("EQ", [[7.77, "EUR"]], undefined, undefined, ConditionValidated.NotValidated, undefined)];
+		aCompareConditions = [Condition.createCondition(OperatorName.EQ, [[7.77, "EUR"]], undefined, undefined, ConditionValidated.NotValidated, undefined)];
 
 		aConditions = oUnitConditionsType.parseValue("EUR");
 		oConditionsType.oFormatOptions.getConditions = function() {return aConditions;};
@@ -718,7 +720,7 @@ sap.ui.define([
 	QUnit.module("Not nullable type", {
 		beforeEach: function() {
 			oValueType = new StringType({}, {nullable: false});
-			oConditionsType = new ConditionsType({valueType: oValueType, operators: ["EQ"], maxConditions: 1});
+			oConditionsType = new ConditionsType({valueType: oValueType, operators: [OperatorName.EQ], maxConditions: 1});
 		},
 		afterEach: function() {
 			oConditionsType.destroy();
@@ -753,7 +755,7 @@ sap.ui.define([
 
 		assert.notOk(oException, "No exception fired if maxConditions=1 and not only EQ operators");
 
-		oConditionsType.setFormatOptions({valueType: oValueType, operators: ["EQ"], maxConditions: -1});
+		oConditionsType.setFormatOptions({valueType: oValueType, operators: [OperatorName.EQ], maxConditions: -1});
 		oException = undefined;
 
 		try {

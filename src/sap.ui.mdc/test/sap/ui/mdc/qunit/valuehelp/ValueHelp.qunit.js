@@ -10,6 +10,7 @@ sap.ui.define([
 	"sap/ui/mdc/valuehelp/base/Container",
 	"sap/ui/mdc/condition/Condition",
 	"sap/ui/mdc/enums/ConditionValidated",
+	"sap/ui/mdc/enums/OperatorName",
 	"sap/ui/mdc/enums/ValueHelpSelectionType",
 	"sap/ui/core/Icon",
 	"sap/ui/model/FormatException",
@@ -22,6 +23,7 @@ sap.ui.define([
 		Container,
 		Condition,
 		ConditionValidated,
+		OperatorName,
 		ValueHelpSelectionType,
 		Icon,
 		FormatException,
@@ -650,8 +652,8 @@ sap.ui.define([
 
 		// set
 		let aSelectConditions = [
-								 Condition.createCondition("EQ", ["X"]),
-								 Condition.createCondition("BT", ["A", "C"])
+								 Condition.createCondition(OperatorName.EQ, ["X"]),
+								 Condition.createCondition(OperatorName.BT, ["A", "C"])
 								 ];
 		oContainer.fireSelect({type: ValueHelpSelectionType.Set, conditions: aSelectConditions});
 		let aConditions = oValueHelp.getConditions();
@@ -659,28 +661,28 @@ sap.ui.define([
 
 		// add
 		aSelectConditions = [
-							 Condition.createCondition("EQ", ["X"]),
-							 Condition.createCondition("EQ", ["Y"])
+							 Condition.createCondition(OperatorName.EQ, ["X"]),
+							 Condition.createCondition(OperatorName.EQ, ["Y"])
 							 ];
 		oContainer.fireSelect({type: ValueHelpSelectionType.Add, conditions: aSelectConditions});
 		let aCheckConditions = [
-								Condition.createCondition("EQ", ["X"]),
-								Condition.createCondition("BT", ["A", "C"]),
-								Condition.createCondition("EQ", ["X"]),
-								Condition.createCondition("EQ", ["Y"])
+								Condition.createCondition(OperatorName.EQ, ["X"]),
+								Condition.createCondition(OperatorName.BT, ["A", "C"]),
+								Condition.createCondition(OperatorName.EQ, ["X"]),
+								Condition.createCondition(OperatorName.EQ, ["Y"])
 								];
 		aConditions = oValueHelp.getConditions();
 		assert.deepEqual(aConditions, aCheckConditions, "Add: Conditions added");
 
 		// remove
 		aSelectConditions = [
-							 Condition.createCondition("EQ", ["X"])
+							 Condition.createCondition(OperatorName.EQ, ["X"])
 							 ];
 		oContainer.fireSelect({type: ValueHelpSelectionType.Remove, conditions: aSelectConditions});
 		aCheckConditions = [
-								Condition.createCondition("BT", ["A", "C"]),
-								Condition.createCondition("EQ", ["X"]),
-								Condition.createCondition("EQ", ["Y"])
+								Condition.createCondition(OperatorName.BT, ["A", "C"]),
+								Condition.createCondition(OperatorName.EQ, ["X"]),
+								Condition.createCondition(OperatorName.EQ, ["Y"])
 								];
 		aConditions = oValueHelp.getConditions();
 		assert.deepEqual(aConditions, aCheckConditions, "Remove: Condition removed");
@@ -690,12 +692,12 @@ sap.ui.define([
 		oValueHelp.setProperty("_config", {maxConditions: 1});
 
 		aSelectConditions = [
-							 Condition.createCondition("EQ", ["X"]),
-							 Condition.createCondition("EQ", ["Y"])
+							 Condition.createCondition(OperatorName.EQ, ["X"]),
+							 Condition.createCondition(OperatorName.EQ, ["Y"])
 							 ];
 		oContainer.fireSelect({type: ValueHelpSelectionType.Add, conditions: aSelectConditions});
 		aCheckConditions = [
-								Condition.createCondition("EQ", ["X"])
+								Condition.createCondition(OperatorName.EQ, ["X"])
 								];
 		aConditions = oValueHelp.getConditions();
 		assert.deepEqual(aConditions, aCheckConditions, "SingleSelect - Add: Only first condition taken");
@@ -710,15 +712,15 @@ sap.ui.define([
 
 		sinon.spy(oValueHelp, "close");
 		const aConditions = [
-						   Condition.createCondition("EQ", ["X", "X"], undefined, undefined, ConditionValidated.Validated),
-						   Condition.createCondition("BT", ["A", "C"], undefined, undefined, ConditionValidated.NotValidated),
-						   {operator: "EQ", values: [], isEmpty: true, validated: ConditionValidated.NotValidated},
-						   {operator: "EQ", values: [1, undefined], isInitial: true, validated: ConditionValidated.NotValidated, isEmpty: null}
+						   Condition.createCondition(OperatorName.EQ, ["X", "X"], undefined, undefined, ConditionValidated.Validated),
+						   Condition.createCondition(OperatorName.BT, ["A", "C"], undefined, undefined, ConditionValidated.NotValidated),
+						   {operator: OperatorName.EQ, values: [], isEmpty: true, validated: ConditionValidated.NotValidated},
+						   {operator: OperatorName.EQ, values: [1, undefined], isInitial: true, validated: ConditionValidated.NotValidated, isEmpty: null}
 						   ];
 		const aCheckConditions = [
-						   Condition.createCondition("EQ", ["X", "X"], undefined, undefined, ConditionValidated.Validated),
-						   Condition.createCondition("BT", ["A", "C"], undefined, undefined, ConditionValidated.NotValidated),
-						   Condition.createCondition("EQ", [1], undefined, undefined, ConditionValidated.NotValidated)
+						   Condition.createCondition(OperatorName.EQ, ["X", "X"], undefined, undefined, ConditionValidated.Validated),
+						   Condition.createCondition(OperatorName.BT, ["A", "C"], undefined, undefined, ConditionValidated.NotValidated),
+						   Condition.createCondition(OperatorName.EQ, [1], undefined, undefined, ConditionValidated.NotValidated)
 						   ];
 
 		const fnDone = assert.async();
@@ -1108,8 +1110,8 @@ sap.ui.define([
 
 		// Just test event is processed, Details are tested in TypeAhead (there is no check for kind of content)
 		const aSelectConditions = [
-								 Condition.createCondition("EQ", ["X"]),
-								 Condition.createCondition("BT", ["A", "C"])
+								 Condition.createCondition(OperatorName.EQ, ["X"]),
+								 Condition.createCondition(OperatorName.BT, ["A", "C"])
 								 ];
 		oContainer.fireSelect({type: ValueHelpSelectionType.Set, conditions: aSelectConditions});
 		const aConditions = oValueHelp.getConditions();

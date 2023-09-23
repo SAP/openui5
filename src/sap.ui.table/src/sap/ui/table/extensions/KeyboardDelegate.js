@@ -1017,11 +1017,7 @@ sap.ui.define([
 
 		} else if ($Target.hasClass("sapUiTableCtrlAfter")) {
 			if (!TableUtils.isNoDataVisible(this)) {
-				if (this._getRowMode().getHideEmptyRows && this._getRowMode().getHideEmptyRows()) {
-					setFocusOnColumnHeaderOfLastFocusedDataCell(this, oEvent);
-				} else {
-					restoreFocusOnLastFocusedDataCell(this, oEvent);
-				}
+				restoreFocusOnLastFocusedDataCell(this, oEvent);
 			}
 		}
 

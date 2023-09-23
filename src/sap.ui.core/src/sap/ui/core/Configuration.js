@@ -1026,6 +1026,27 @@ sap.ui.define([
 		},
 
 		/**
+		 * Returns the security token handlers of an OData V4 model.
+		 *
+		 * @returns {Array<function(sap.ui.core.URI):Promise>} the security token handlers (an empty array if there are none)
+		 * @public
+		 * @function
+		 * @see #setSecurityTokenHandlers
+		 */
+		getSecurityTokenHandlers : Security.getSecurityTokenHandlers,
+
+		/**
+		 * Sets the security token handlers for an OData V4 model. See chapter
+		 * {@link topic:9613f1f2d88747cab21896f7216afdac/section_STH Security Token Handling}.
+		 *
+		 * @param {Array<function(sap.ui.core.URI):Promise>} aSecurityTokenHandlers - The security token handlers
+		 * @public
+		 * @function
+		 * @see #getSecurityTokenHandlers
+		 */
+		setSecurityTokenHandlers : Security.setSecurityTokenHandlers,
+
+		/**
 		 * Applies multiple changes to the configuration at once.
 		 *
 		 * If the changed settings contain localization related settings like <code>language</code>
