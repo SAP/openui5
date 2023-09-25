@@ -15,6 +15,7 @@
 @_sap_m_SearchField_FocusOffset: 1px;
 @_sap_m_SearchField_FocusBorderRadius: unset;
 @_sap_m_SearchField_PlaceholderFontStyle: italic;
+@_sap_m_SearchField_ActiveBackgroundStyle: @sapUiFieldFocusBackground;
 
 .sapMSF {
 	position: relative;
@@ -112,7 +113,7 @@ input.sapMSFI[type="search"]:focus {
 }
 
 :not(.sapMSFDisabled) > .sapMSFF:active {
-	background: @sapUiFieldFocusBackground;
+	background: @_sap_m_SearchField_ActiveBackgroundStyle;
 }
 
 .sapMSFI {
