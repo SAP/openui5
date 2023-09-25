@@ -438,7 +438,7 @@ sap.ui.define([
 			rows: {type: "sap.ui.table.Row", multiple: true, singularName: "row", bindable: "bindable", selector: "#{id}-tableCCnt", dnd: true},
 
 			/**
-			 * Defines how the table handles the rows.
+			 * Defines how the table handles the rows. By default, the table operates in {@link sap.ui.table.rowmodes.Type Fixed} mode.
 			 *
 			 * @since 1.119
 			 */
