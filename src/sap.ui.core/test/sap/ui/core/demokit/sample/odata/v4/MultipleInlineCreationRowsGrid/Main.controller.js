@@ -136,7 +136,6 @@ sap.ui.define([
 			} else {
 				Messaging.removeMessages(oMessage);
 				delete this.mCreateActivateMessages[oContext.getPath()];
-				this.messagePopover.navigateBack();
 
 				setTimeout(function () { // there are sporadic issues without using setTimeout
 					if (oBinding.getPath() === "/Products") {
@@ -167,7 +166,6 @@ sap.ui.define([
 				oContext.resetChanges();
 				Messaging.removeMessages(this.mCreateActivateMessages[oContext.getPath()]);
 				delete this.mCreateActivateMessages[oContext.getPath()];
-				this.messagePopover.navigateBack();
 			} else {
 				MessageBox.confirm(
 					"Do you really want to delete " + sEntity + " " + sObjectId + "?",
@@ -331,7 +329,6 @@ sap.ui.define([
 					delete that.mCreateActivateMessages[sKey];
 				}
 			});
-			this.messagePopover.navigateBack();
 		},
 
 		setPartsContext : function (oContext) {
