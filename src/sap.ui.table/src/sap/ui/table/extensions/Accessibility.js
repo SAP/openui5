@@ -125,14 +125,15 @@ sap.ui.define([
 	};
 
 	/*
-	 * Provides utility functions used this extension
+	 * Provides utility functions used by this extension
 	 */
 	var ExtensionHelper = {
 
-		/*
+		/**
 		 * Returns the index of the column (in the array of visible columns (see Table._getVisibleColumns())) of the current focused cell
 		 * In case the focused cell is a row action the given index equals the length of the visible columns.
 		 * This function must not be used if the focus is on a row header.
+		 * @param {sap.ui.table.extensions.Accessibility} oExtension The accessibility extension.
 		 * @returns {int}
 		 */
 		getColumnIndexOfFocusedCell: function(oExtension) {
@@ -145,7 +146,7 @@ sap.ui.define([
 		 * If the current focus is on a cell of the table, this function returns
 		 * the cell type and the jQuery wrapper object of the corresponding cell:
 		 *
-		 * @param {sap.ui.table.AccExtension} oExtension The accessibility extension.
+		 * @param {sap.ui.table.extensions.Accessibility} oExtension The accessibility extension.
 		 * @returns {sap.ui.table.utils.TableUtils.CellInfo} An object containing information about the cell.
 		 */
 		getInfoOfFocusedCell: function(oExtension) {
@@ -281,8 +282,9 @@ sap.ui.define([
 			return oRow.getIndex() + 1 + TableUtils.getHeaderRowCount(oRow.getTable());
 		},
 
-		/*
+		/**
 		 * Determines the current row and column and updates the hidden description texts of the table accordingly.
+		 * @param {sap.ui.table.extensions.Accessibility} oExtension The accessibility extension.
 		 */
 		updateRowColCount: function(oExtension) {
 			var oTable = oExtension.getTable(),
@@ -317,8 +319,9 @@ sap.ui.define([
 			};
 		},
 
-		/*
+		/**
 		 * Removes the acc modifications of the cell which had the focus before.
+		 * @param {sap.ui.table.extensions.Accessibility} oExtension The accessibility extension.
 		 */
 		cleanupCellModifications: function(oExtension) {
 			if (oExtension._cleanupInfo) {
@@ -626,6 +629,9 @@ sap.ui.define([
 		/**
 		 * Returns the default aria attributes for the given element type with the given settings.
 		 * @see sap.ui.table.extensions.Accessibility.ELEMENTTYPES
+		 * @param {sap.ui.table.extensions.Accessibility} oExtension The accessibility extension.
+		 * @param {string} sType
+		 * @param {object} [mParams]
 		 */
 		getAriaAttributesFor: function(oExtension, sType, mParams) {
 			var mAttributes = {},

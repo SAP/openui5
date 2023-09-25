@@ -5913,6 +5913,9 @@ sap.ui.define([
 		var aTestElements = [
 			oTable.getExtension()[0].getDomRef(),
 			oTable.getFooter().getDomRef(),
+			/**
+			 * @deprecated As of version 1.72
+			 */
 			oTable.getTitle().getDomRef(),
 			oCell,
 			oTable.getRows()[0].getCells()[0].getDomRef(),
