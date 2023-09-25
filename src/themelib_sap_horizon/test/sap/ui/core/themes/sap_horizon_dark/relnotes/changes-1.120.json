@@ -1,0 +1,12 @@
+{
+  "1.120.0": {
+    "date": "September 2023",
+    "notes": [
+      {
+        "id": "0d0411cc8299574b7b609dd2b411f1fa748dc16e",
+        "type": "FIX",
+        "text": " sap.m.Slider: Handles styles adjusted"
+      }
+    ]
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "1.120.0": {
+    "date": "September 2023",
+    "notes": [
+      {
+        "id": "2d5372c9ee017b789db2c76e6559a4b8d8811719",
+        "type": "FIX",
+        "text": " CopyProvider: Search owner control for CellSelector",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370098720"
+          }
+        ]
+      }
+    ]
+  }
+}

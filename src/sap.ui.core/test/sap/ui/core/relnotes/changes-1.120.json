@@ -1,0 +1,12 @@
+{
+  "1.120.0": {
+    "date": "September 2023",
+    "notes": [
+      {
+        "id": "d0b62530a47decc982e60e27d6169404e1510d47",
+        "type": "FEATURE",
+        "text": " Introduce new sap/ui/core/Security facade and deprecate APIs 'setSecurityTokenHandlers', 'getSecurityTokenHandlers', 'getFrameOptions' and 'getAllowlistService' on sap.ui.core.Configuration."
+      }
+    ]
+  }
+}
