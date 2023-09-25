@@ -7,7 +7,7 @@
 	xmlns:rm="sap.ui.table.rowmodes">
 
 	<TreeTable id="table" ariaLabelledBy="title"
-		rows="{path : '/P_SADL_RS_HIER_BIND_ACTION',
+		rows="{path : '/I_SADL_BHV_HIER_BIND_DIRECTORY(\'1\')/_Hierarchy',
 			parameters : {$count : true, $$patchWithoutSideEffects : true}, suspended : true}"
 		selectionMode="None" threshold="0">
 		<extension>
@@ -16,7 +16,7 @@
 			</m:Toolbar>
 		</extension>
 		<rowMode>
-			<rm:Interactive rowCount="5" minRowCount="2"/>
+			<rm:Interactive rowCount="10" minRowCount="2"/>
 		</rowMode>
 		<Column width="20em">
 			<m:Label text="ID"/>
@@ -31,27 +31,21 @@
 			</template>
 		</Column>
 		<Column>
+			<m:Label text="Sibling Order"/>
+			<template>
+				<m:Text text="{SiblingOrder}" wrapping="false"/>
+			</template>
+		</Column>
+		<Column>
 			<m:Label text="Description"/>
 			<template>
 				<m:Input value="{Description}"/>
 			</template>
 		</Column>
 		<Column>
-			<m:Label text="Material"/>
+			<m:Label text="Hierarchy"/>
 			<template>
-				<m:Input value="{Material}"/>
-			</template>
-		</Column>
-		<Column>
-			<m:Label text="Quantity"/>
-			<template>
-				<m:Input value="{Quantity}"/>
-			</template>
-		</Column>
-		<Column>
-			<m:Label text="Quantity Unit"/>
-			<template>
-				<m:Input value="{QuantityUnit}"/>
+				<m:Text text="{Hierarchy}" wrapping="false"/>
 			</template>
 		</Column>
 		<Column width="4em">
@@ -62,8 +56,7 @@
 		</Column>
 		<Column width="4em">
 			<template>
-				<m:Button enabled="{= %{@$ui5.node.isExpanded} !== true}" id="cut"
-					icon="sap-icon://scissors" press=".onCut" tooltip="Cut"/>
+				<m:Button id="cut" icon="sap-icon://scissors" press=".onCut" tooltip="Cut"/>
 			</template>
 		</Column>
 		<Column width="4em">
@@ -73,17 +66,18 @@
 		</Column>
 		<Column width="4em">
 			<template>
-				<m:Button enabled="{= %{@$ui5.node.isExpanded} !== true}" id="delete"
-					icon="sap-icon://delete" press=".onDelete" tooltip="Delete"/>
+				<m:Button id="delete" icon="sap-icon://delete" press=".onDelete" tooltip="Delete"/>
 			</template>
 		</Column>
 	</TreeTable>
 
 	<mvc:dependents>
 		<m:SelectDialog confirm=".onMoveConfirm" draggable="true" id="moveDialog"
-			items="{path : '/P_SADL_RS_HIER_BIND_ACTION', parameters : {$count : true}, suspended : true}"
-			title="Select New Parent">
-			<m:StandardListItem description="{Description}" title="{Id}" type="Active" />
+			items="{path : '/I_SADL_BHV_HIER_BIND_DIRECTORY(\'1\')/_Hierarchy',
+				parameters : {$count : true, $$sharedRequest : true}, suspended : true}"
+			title="Select New Parent For {Id}">
+			<!-- description="{Description}" -->
+			<m:StandardListItem title="{Id}" type="Active" />
 		</m:SelectDialog>
 	</mvc:dependents>
 </mvc:View>
