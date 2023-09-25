@@ -574,28 +574,6 @@ sap.ui.define([
     };
 
 	/**
-	 * Downloads the item. Only possible when the item has a valid URL specified in the <code>url</code> property of the item.
-	 * @param {UploadSetwithTableItem[]} aItemsToDownload The list items the selection state is to be set for
-	 * @param {boolean} bAskForLocation If the location is to be determined as to where the file is to be downloaded.
-	 * @public
-	 */
-	UploadSetwithTable.prototype.downloadItems = function (aItemsToDownload, bAskForLocation) {
-        if (aItemsToDownload && aItemsToDownload.length) {
-			aItemsToDownload.forEach(function(oItem){
-				// Check if items are instances of "sap.m.UploadSetwithTableItem"
-				var isUploadSetwithTableItemInstance = oItem && oItem instanceof UploadSetwithTableItem ? true : false;
-				var oParent = oItem && oItem.getParent ? oItem.getParent() : null;
-				// Download files individually
-				if (isUploadSetwithTableItemInstance && oParent === this) {
-					this._getActiveUploader().download(oItem, [], bAskForLocation);
-				} else {
-					Log.warning("Download cannot proceed without a parent association.");
-				}
-			}.bind(this));
-		}
-    };
-
-	/**
 	 * Attaches all necessary handlers to the given uploader instance, so that the progress and status of the upload can be
 	 * displayed and monitored.
 	 * This is necessary in case when custom uploader is used.
