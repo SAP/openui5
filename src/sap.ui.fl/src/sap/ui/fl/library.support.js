@@ -10,12 +10,14 @@ sap.ui.define([
 	"sap/ui/fl/Utils",
 	"sap/ui/dt/DesignTime",
 	"sap/ui/rta/util/validateStableIds",
+	"sap/base/util/ObjectPath",
 	"sap/m/InstanceManager"
 ], function(
 	SupportLib,
 	Utils,
 	DesignTime,
 	validateStableIds,
+	ObjectPath,
 	InstanceManager
 ) {
 	"use strict";
@@ -55,9 +57,10 @@ sap.ui.define([
 		}],
 		async: true,
 		check(issueManager, oCoreFacade, oScope, resolve) {
+			var oUshellContainer = ObjectPath.get("sap.ushell.Container");
+
 			Promise.resolve()
 			.then(function() {
-				var oUshellContainer = Utils.getUshellContainer();
 				if (oUshellContainer) {
 					return Utils.getUShellService("AppLifeCycle")
 					.then(function(oAppLifeCycle) {
