@@ -6,9 +6,9 @@
 sap.ui.define([
 	'sap/ui/core/Control',
 	'sap/ui/base/ManagedObjectObserver',
-	'sap/ui/layout/library',
-	'./FormRenderer'
-	], function(Control, ManagedObjectObserver, library, FormRenderer) {
+	'./FormRenderer',
+	'./FormHelper'
+	], function(Control, ManagedObjectObserver, FormRenderer, FormHelper) {
 	"use strict";
 
 	/**
@@ -131,6 +131,8 @@ sap.ui.define([
 
 	Form.prototype.init = function(){
 
+		this._oInitPromise = FormHelper.init(); // check for used library and request needed controls
+
 		this._oObserver = new ManagedObjectObserver(_observeChanges.bind(this));
 
 		this._oObserver.observe(this, {
@@ -221,9 +223,17 @@ sap.ui.define([
 	Form.prototype.setToolbar = function(oToolbar) { // don't use observer as library function needs to be called before aggregation update
 
 		// for sap.m.Toolbar Auto-design must be set to transparent
-		oToolbar = library.form.FormHelper.setToolbar.call(this, oToolbar);
+		if (this._oInitPromise) {
+			// module needs to be loaded -> create Button async
+			this._oInitPromise.then(function () {
+				delete this._oInitPromise; // not longer needed as resolved
+				oToolbar = FormHelper.setToolbar(oToolbar, this.getToolbar()); // Toolbar is only changes, so no late set is needed.
+			}.bind(this));
+		} else {
+			oToolbar = FormHelper.setToolbar(oToolbar, this.getToolbar());
+		}
 
-		this.setAggregation("toolbar", oToolbar);
+		this.setAggregation("toolbar", oToolbar); // set Toolbar synchronously as later on only the design might be changed
 
 		return this;
 

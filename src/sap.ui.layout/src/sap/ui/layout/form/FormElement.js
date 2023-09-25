@@ -8,8 +8,9 @@ sap.ui.define([
 	'sap/ui/core/Control',
 	'sap/ui/base/ManagedObjectObserver',
 	'sap/ui/layout/library',
-	"sap/base/Log"
-	], function(Element, Control, ManagedObjectObserver, library, Log) {
+	'./FormHelper',
+	'sap/base/Log'
+	], function(Element, Control, ManagedObjectObserver, library, FormHelper, Log) {
 	"use strict";
 
 	/**
@@ -83,7 +84,8 @@ sap.ui.define([
 
 	FormElement.prototype.init = function(){
 
-		this._oInitPromise = library.form.FormHelper.init();
+		this._oInitPromise = library.form.FormHelper.init(); // TODO: remove after usage in SemanticGroupElement was removed
+		this._oInitPromise = FormHelper.init();
 
 		this._oFieldDelegate = {oElement: this, onAfterRendering: _fieldOnAfterRendering};
 
@@ -180,7 +182,7 @@ sap.ui.define([
 	FormElement.prototype._setInternalLabel = function(sText) {
 
 		if (!this._oLabel) {
-			this._oLabel = library.form.FormHelper.createLabel(sText, this.getId() + "-label");
+			this._oLabel = FormHelper.createLabel(sText, this.getId() + "-label"); // called only after Helper-Promise resolved
 			this.setAggregation("_label", this._oLabel); // use Aggregation to allow model inheritance
 			this._oLabel.disableRequiredChangeCheck(true);
 			if (this._oLabel.isRequired) {
