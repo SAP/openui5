@@ -212,7 +212,9 @@ sap.ui.define([
 		// Download files handler
 		onDownloadFiles: function(oEvent) {
 			var oUploadSet = this.byId("UploadSetTable");
-			oUploadSet.downloadItems(oUploadSet.getSelectedItems());
+			const oItems = oUploadSet.getSelectedItems();
+
+			oItems.forEach((oItem) => {oItem.download(true);});
 		},
 		onBeforeInitiatingItemUpload: function(oEvent) {
 			// Event triggered before initiating each upload.
