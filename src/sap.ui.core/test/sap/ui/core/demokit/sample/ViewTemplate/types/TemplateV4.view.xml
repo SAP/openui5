@@ -5,7 +5,7 @@
 	xmlns:form="sap.ui.layout.form"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns:template="http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1"
-	template:require="{AnnotationHelper: 'sap/ui/model/odata/v4/AnnotationHelper'}"
+	template:require="{AH: 'sap/ui/model/odata/v4/AnnotationHelper'}"
 	width="100%">
 	<form:SimpleForm columnsM="1" editable="true" id="simpleForm" labelSpanL="12"
 			labelSpanM="12" layout="ResponsiveGridLayout">
@@ -13,7 +13,7 @@
 		<template:repeat list="{meta>@com.sap.vocabularies.UI.v1.Identification}" var="field">
 			<Label labelFor="Identification::{field>Value/$Path}" text="{field>Label}"/>
 			<Input id="Identification::{field>Value/$Path}"
-				value="{field>Value@@AnnotationHelper.format(null,$(style:'short'$))}"/>
+				value="{field>Value@@AH.format(null,$(style:'short'$))}"/>
 		</template:repeat>
 	</form:SimpleForm>
 </mvc:View>
