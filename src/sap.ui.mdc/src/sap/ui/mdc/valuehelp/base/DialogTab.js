@@ -20,7 +20,6 @@ sap.ui.define([
 	 * @extends sap.ui.core.Control
 	 * @version ${version}
 	 * @constructor
-	 * @abstract
 	 * @private
 	 * @ui5-restricted sap.ui.mdc
 	 * @since 1.95.0
