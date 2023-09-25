@@ -507,6 +507,9 @@ sap.ui.define([
 	 *
 	 * @namespace
 	 * @public
+	 * @deprecated Since version 1.67.0.
+	 * as <code>sap.ui.commons</code> library is deprecated and the <code>GridLayout</code> must not be used in responsive applications.
+	 * Please use <code>ResponsiveGridLayout</code> or <code>ColumnLayout</code> instead.
 	 */
 	thisLib.form.GridElementCells = DataType.createType('sap.ui.layout.form.GridElementCells', {
 		isValid : function(vValue) {
