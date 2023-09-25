@@ -13,6 +13,7 @@
 @_sap_tnt_ToolHeader_IconTabHeader_Height: auto;
 @_sap_tnt_ToolHeader_Shadow: 0 0 0 0.0625rem @sapUiContentShadowColor, 0 0.5rem 1rem 0 fade(@sapUiContentShadowColor, 16);
 @_sap_tnt_ToolHeader_DisabledOpacity: @sapUiContentDisabledOpacity;
+@_sap_tnt_ToolHeader_SF_Border: 0.0625rem solid @sapUiShellBorderColor;
 
 // ==========================================================================
 // sap.m.Toolbar overriding
@@ -207,6 +208,7 @@
 	.sapMSF .sapMSFF {
 		border-radius: 2rem;
 		height: 2.5rem;
+		border: @_sap_tnt_ToolHeader_SF_Border;
 	}
 
 	.sapMSFB {
