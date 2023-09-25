@@ -57,6 +57,7 @@
 		</f:header>
 		<f:content>
 			<List
+				class="sapUiSmallMarginBottom"
 				showSeparators="None"
 				items="{
 					path: 'products>/productItems'
