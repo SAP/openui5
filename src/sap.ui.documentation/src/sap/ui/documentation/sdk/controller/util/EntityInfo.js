@@ -30,26 +30,28 @@ sap.ui.define([
 	}
 
 	function findLibraryName(sEntityName, sLibraryName) {
-
-		// if library name is provided, go with it
-		if (sLibraryName) {
-			return Promise.resolve(sLibraryName);
-		}
-
-		// check if sEntityName represents a subclass of BaseObject and if so, use the metadata
-		// TODO this relies on global names and needs to be refactored
-		var oClass = ObjectPath.get(sEntityName || "");
-		if (oClass && oClass.getMetadata) {
-			var oMetadata = oClass.getMetadata();
-			if (oMetadata.getLibraryName) {
-				sLibraryName = oMetadata.getLibraryName();
-			} else {
-				sLibraryName = "sap.ui.core";
+		return new Promise(function(resolve, reject) {
+			// if library name is provided, go with it
+			if (sLibraryName) {
+				resolve(sLibraryName);
+				return;
 			}
-			return Promise.resolve(sLibraryName);
-		}
 
-		return findLibraryFromEntityName(sEntityName);
+			// check if sEntityName represents a subclass of BaseObject and if so, use the metadata
+			sap.ui.require([sEntityName.replaceAll('.', '/')], function(oClass) {
+				if (oClass && oClass.getMetadata) {
+					var oMetadata = oClass.getMetadata();
+					if (oMetadata.getLibraryName) {
+						sLibraryName = oMetadata.getLibraryName();
+					} else {
+						sLibraryName = "sap.ui.core";
+					}
+					return resolve(sLibraryName);
+				}
+
+				return findLibraryFromEntityName(sEntityName);
+			}, reject);
+		});
 	}
 
 	function getAsync(sEntityName, sLibraryName) {
