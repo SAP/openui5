@@ -255,7 +255,7 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	Filter.NONE = new Filter({path : "/", operator : () => false});
+	Filter.NONE = new Filter({path : "/", test : () => false});
 
 	/**
 	 * Checks the types of the arguments for a lambda operator.
