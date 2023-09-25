@@ -219,25 +219,25 @@
 	}
 
 
-  //More Button
-  .sapMITHStartOverflow,
-  .sapMITHEndOverflow {
-	.sapMITBItem {
-	  color: @sapButton_TextColor;
-	  background: @sapButton_Hover_Background;
-	  border: 1px solid @sapButton_BorderColor;
+	//More Button
+	.sapMITHStartOverflow,
+	.sapMITHEndOverflow {
+		.sapMITBItem {
+			color: @sapButton_TextColor;
+			background: @sapButton_Background;
+			border: 1px solid @sapButton_BorderColor;
 
-	  .sapMITHShowSubItemsIcon {
-	   color: @sapButton_TextColor;
-	  }
+			.sapMITHShowSubItemsIcon {
+				color: @sapUiBaseText;
+			}
+		}
 	}
-  }
 
 	.sapMITHEndOverflow,
 	.sapMITHStartOverflow {
 		.sapMITBItem:hover {
-			background: @sapButton_Background;
-			border: 1px solid @_sap_m_IconTabBar_ShellOverflowHoverBorderColor;
+			background: @sapButton_Hover_Background;
+			border: 1px solid @_sap_m_IconTabBar_Overflow_BorderColorHover;
 		}
 	}
 
@@ -250,7 +250,7 @@
 
 	//Arrow button
 	.sapMITBFilterWithItems .sapMITBFilterExpandBtn .sapMBtnIcon  {
-		color: @sapButton_TextColor;
+		color: @sapUiBaseText;
 	}
 }
 
@@ -387,7 +387,7 @@
 			border-color: @sapContent_Selected_ForegroundColor;
 		}
 		.sapMBtnIcon {
-			color: @_sap_m_IconTabBar_SelectedTextColor;
+			color: @_sap_m_IconTabBar_SelectedTextColor !important;
 		}
 	}
 
@@ -467,6 +467,28 @@
 .sapMITBFilterDefault {
 	border-color: @sapUiContentSelectedForegroundColor;
 	color: @sapUiContentSelectedForegroundColor;
+
+	.sapMITBFilterExpandBtnSeparator {
+		border-color: @sapUiBaseText;
+	}
+
+	.sapMBtnIcon {
+		color: @sapUiBaseText !important;
+	}
+}
+
+.sapMITBFilterDefault {
+	.sapMITBFilterWrapper:hover {
+		.sapMITBText {
+			color: @sapUiContentSelectedForegroundColor;
+		}
+	}
+
+	.sapMITBFilterExpandBtn:hover {
+		.sapMBtnIcon {
+			color: @sapUiBaseText;
+		}
+	}
 }
 
 .sapMITBFilterNeutral {
