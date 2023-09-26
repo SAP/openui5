@@ -660,10 +660,7 @@ sap.ui.define([
 						name: "routingConfig",
 						controlAggregation: "content",
 						controlId: this.oShell.getId(),
-						type: "Component",
-						options: {
-							manifest: false
-						}
+						type: "Component"
 					}
 				},
 				config: {

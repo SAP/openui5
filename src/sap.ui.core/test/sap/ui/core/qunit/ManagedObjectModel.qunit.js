@@ -11,12 +11,13 @@ sap.ui.define([
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/model/base/ManagedObjectModel",
 	"sap/ui/model/json/JSONModel",
+	"sap/ui/model/type/Boolean",
 	"sap/ui/model/type/Date",
 	"sap/ui/model/Context",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator"
 ], function (CustomListItem, DatePicker, Input, List, Select, Text, VBox, Element, Item, XMLView,
-			 ManagedObjectModel, JSONModel, DateType, Context, Filter, FilterOperator) {
+			 ManagedObjectModel, JSONModel, BooleanType, DateType, Context, Filter, FilterOperator) {
 	/*global QUnit */
 	/*eslint no-warning-comments: 0 */
 	"use strict";
