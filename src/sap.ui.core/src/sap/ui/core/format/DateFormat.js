@@ -524,14 +524,6 @@ sap.ui.define([
 		return this.createInstance(oFormatOptions, oLocale, this.oTimeInfo);
 	};
 
-	function createIntervalPatternWithNormalConnector(oFormat) {
-		var sPattern = oFormat.oLocaleData.getIntervalPattern("", oFormat.oFormatOptions.calendarType);
-
-		sPattern = sPattern.replace(/[^\{\}01 ]/, "-");
-
-		return sPattern.replace(/\{(0|1)\}/g, oFormat.oFormatOptions.pattern);
-	}
-
 	/**
 	 * Create instance of the DateFormat.
 	 *
@@ -635,8 +627,7 @@ sap.ui.define([
 					oFormat.oFormatOptions.pattern
 				];
 			}
-			var sCommonConnectorPattern = createIntervalPatternWithNormalConnector(oFormat);
-			oFormat.intervalPatterns.push(sCommonConnectorPattern);
+			oFormat.intervalPatterns.push(oFormat.oFormatOptions.pattern + " - " + oFormat.oFormatOptions.pattern);
 			if (sDelimiter) { // use delimiter pattern as first choice
 				sDelimiter = sDelimiter.replace(/'/g, "''");
 				sDelimiter = "'" + sDelimiter + "'";
@@ -1078,9 +1069,11 @@ sap.ui.define([
 				// Compare the letters in oPart.value (the pattern) and sValue (the given string to parse)
 				// one by one.
 				// If the current letter in the pattern is " ", sValue is allowed to have no match, exact match
-				// or multiple " ". This makes the parsing more tolerant.
-				for (; iPatternIndex < oPart.value.length; iPatternIndex++) {
-					sChar = oPart.value.charAt(iPatternIndex);
+				// or multiple " ". This makes the parsing more tolerant. Special spaces or RTL characters have
+				// to be normalized before comparison.
+				const sPartValue = DateFormat._normalize(oPart.value);
+				for (; iPatternIndex < sPartValue.length; iPatternIndex++) {
+					sChar = sPartValue.charAt(iPatternIndex);
 
 					if (sChar === " ") {
 						// allows to have multiple spaces
@@ -1726,7 +1719,7 @@ sap.ui.define([
 			parse : function (sValue, oPart, oFormat, oConfig, sTimezone) {
 				// process longer patterns first to find the longest match
 				// wide > abbreviated > narrow
-				var rAMPM, bAMPMAlternativeCase, oEntry, i, aMatch, normalize, aVariants,
+				var rAMPM, bAMPMAlternativeCase, oEntry, i, aMatch, aVariants,
 					aDayPeriodsVariants = [oFormat.aDayPeriodsWide, oFormat.aDayPeriodsAbbrev,
 						oFormat.aDayPeriodsNarrow];
 
@@ -1736,20 +1729,21 @@ sap.ui.define([
 				rAMPM = /[aApP](?:\.)?[\x20\xA0]?[mM](?:\.)?/;
 				aMatch = sValue.match(rAMPM);
 				bAMPMAlternativeCase = aMatch && aMatch.index === 0;
-				function normalize (sValue) {
+				function removeSpacesAndDots (sValue) {
 					// Remove normal and non-breaking spaces and remove dots
 					return sValue.replace(/[\x20\xA0]/g, "").replace(/\./g, "");
 				}
 				if (bAMPMAlternativeCase) {
-					sValue = normalize(sValue);
+					sValue = removeSpacesAndDots(sValue);
 				}
 
 				for (i = 0; i < aDayPeriodsVariants.length; i += 1) {
-					aVariants = aDayPeriodsVariants[i];
-
+					aVariants = aDayPeriodsVariants[i].map((sDayPeriod) => {
+						return DateFormat._normalize(sDayPeriod);
+					});
 					if (bAMPMAlternativeCase) {
 						// check normalized match for alternative case of am/pm
-						aVariants = aVariants.map(normalize);
+						aVariants = aVariants.map(removeSpacesAndDots);
 					}
 					// check exact and case-insensitive match
 					oEntry = oParseHelper.findEntry(sValue, aVariants,
@@ -2873,6 +2867,9 @@ sap.ui.define([
 		}
 
 		sValue = sValue == null ? "" : String(sValue).trim();
+		// normalize input by removing all RTL special characters and replacing all special spaces
+		// by a standard space (\u0020)
+		sValue = DateFormat._normalize(sValue);
 
 		var oDateValue;
 		var sCalendarType = this.oFormatOptions.calendarType;
@@ -3476,6 +3473,20 @@ sap.ui.define([
 		}
 
 		return [oDate];
+	};
+
+	const rAllRTLCharacters = /[\u200e\u200f\u202a\u202b\u202c]/g;
+	const rAllSpaces = /\s/g;
+
+	/**
+	 * Normalizes the given string by removing RTL characters and replacing special space characters
+	 * by the standard ASCII space (\u0020).
+	 *
+	 * @param {string} sValue The value to be normalized
+	 * @return {string} The normalized value
+	 */
+	DateFormat._normalize = function (sValue) {
+		return sValue.replace(rAllRTLCharacters, "").replace(rAllSpaces, " ");
 	};
 
 	return DateFormat;

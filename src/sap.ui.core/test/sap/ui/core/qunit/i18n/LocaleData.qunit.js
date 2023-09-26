@@ -1100,4 +1100,82 @@ sap.ui.define([
 		// clean up configuration
 		Configuration.setCalendarWeekNumbering(CalendarWeekNumbering.Default);
 	});
+
+	//*********************************************************************************************
+[
+	{fallbackPattern: "{0} \u2013 {1}", result: "~pattern \u2013 ~pattern"},
+	{fallbackPattern: "{0} - {1}", result: "~pattern - ~pattern"},
+	{fallbackPattern: "{0}-{1}", result: "~pattern-~pattern"},
+	{fallbackPattern: "{0} a el {1}", result: "~pattern 'a el' ~pattern"},
+	{fallbackPattern: "{0}\u2013{1}", result: "~pattern\u2013~pattern"},
+	{fallbackPattern: "{0} \u2018al\u2019 {1}", result: "~pattern '\u2018al\u2019' ~pattern"},
+	{fallbackPattern: "{0} \u062a\u0627 {1}", result: "~pattern \u062a\u0627 ~pattern"},
+	{fallbackPattern: "du {0} au {1}", result: "'du' ~pattern 'au' ~pattern"},
+	{fallbackPattern: "{0}\uff5e{1}", result: "~pattern\uff5e~pattern"},
+	{fallbackPattern: "{0} ~ {1}", result: "~pattern ~ ~pattern"},
+	{fallbackPattern: "{0}\u81f3{1}", result: "~pattern\u81f3~pattern"}
+].forEach((oFixture, i) => {
+	QUnit.test("getCombinedIntervalPattern: integrative #" + i, function (assert) {
+		const oLocalData = {_get() {}};
+		this.mock(oLocalData).expects("_get").withExactArgs("ca-~calendar", "dateTimeFormats", "intervalFormats")
+			.returns({intervalFormatFallback: oFixture.fallbackPattern});
+
+		// code under test
+		assert.strictEqual(LocaleData.prototype.getCombinedIntervalPattern.call(oLocalData, "~pattern", "~calendar"),
+			oFixture.result);
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("getCombinedIntervalPattern", function (assert) {
+		const oLocalData = {_get() {}};
+		this.mock(oLocalData).expects("_get").withExactArgs("ca-~calendar", "dateTimeFormats", "intervalFormats")
+			.returns({intervalFormatFallback: "prefix{0}infix{1}suffix"});
+		const oLocalDataMock = this.mock(LocaleData);
+		oLocalDataMock.expects("_escapeIfNeeded").withExactArgs("prefix").returns("~p");
+		oLocalDataMock.expects("_escapeIfNeeded").withExactArgs("infix").returns("~i");
+		oLocalDataMock.expects("_escapeIfNeeded").withExactArgs("suffix").returns("~s");
+
+		// code under test
+		assert.strictEqual(LocaleData.prototype.getCombinedIntervalPattern.call(oLocalData, "~pattern", "~calendar"),
+			"~p~pattern~i~pattern~s");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_escapeIfNeeded: value contains a CLDR symbol -> escape", function (assert) {
+		// all CLDR symbols in alphabetic order
+		Array.from("ABDEFGHKLMOQSUVWXYZabcdeghkmqrsuvwxyz").forEach((sSymbol) => {
+			const sValue = "~" + sSymbol + "~";
+
+			// code under test
+			assert.strictEqual(LocaleData._escapeIfNeeded(sValue), "'" + sValue + "'", sSymbol);
+
+			["\t", " ", "\u00a0", "\u2009", "\u202f"].forEach((sSpace) => {
+				const sValueWithSpaces = sSpace + sSpace + sValue + sSpace + sSpace;
+
+				// code under test
+				assert.strictEqual(LocaleData._escapeIfNeeded(sValueWithSpaces),
+					sSpace + "'" + sSpace + sValue + sSpace + "'" + sSpace,
+					"\\u" + sSpace.charCodeAt(0).toString(16).padStart(4, "0"));
+			});
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_escapeIfNeeded: value does not contain a CLDR symbol -> no escaping", function (assert) {
+		// some characters that aren't a CLDR symbol
+		Array.from("CIJNPRTfijlnopt\u2013-~\uff5e\u81f3").forEach((sSymbol) => {
+			const sValue = "~" + sSymbol + "~";
+
+			// code under test
+			assert.strictEqual(LocaleData._escapeIfNeeded(sValue), sValue, sSymbol);
+
+			["\t", " ", "\u00a0", "\u2009", "\u202f"].forEach((sSpace) => {
+				const sValueWithSpaces = sSpace + sSpace + sValue + sSpace + sSpace;
+				// code under test
+				assert.strictEqual(LocaleData._escapeIfNeeded(sValueWithSpaces), sValueWithSpaces,
+					"\\u" + sSpace.charCodeAt(0).toString(16).padStart(4, "0"));
+			});
+		});
+	});
 });
