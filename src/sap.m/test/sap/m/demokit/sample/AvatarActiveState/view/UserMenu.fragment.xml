@@ -1,0 +1,17 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
+	xmlns:l="sap.ui.layout">
+	<List>
+		<items>
+			<StandardListItem icon="sap-icon://customer-history" title="Recent Activities" type="Active" press="onListItemPress" />
+			<StandardListItem icon="sap-icon://activity-individual" title="Frequently Used" type="Active" press="onListItemPress" />
+			<StandardListItem icon="sap-icon://sys-find" title="App Finder" type="Active" press="onListItemPress" />
+			<StandardListItem icon="sap-icon://action-settings" title="Settings" type="Active" press="onListItemPress" />
+			<StandardListItem icon="sap-icon://edit" title="Edit Home Page" type="Active" press="onListItemPress" />
+			<StandardListItem icon="sap-icon://email" title="Contact Support" type="Active" press="onListItemPress" />
+			<StandardListItem icon="sap-icon://hint" title="About" type="Active" press="onListItemPress" />
+			<StandardListItem icon="sap-icon://log" title="Sign Out" type="Active" press="onListItemPress" />
+		</items>
+	</List>
+</core:FragmentDefinition>
