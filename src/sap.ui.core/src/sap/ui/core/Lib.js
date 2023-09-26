@@ -1336,6 +1336,11 @@ sap.ui.define([
 	 * @public
 	 */
 	Library.init = function(mSettings) {
+		// throw error if a Library is initialized before the core is ready.
+		if (!sap.ui.require("sap/ui/core/Core")) {
+			throw new Error("Library " + mSettings.name + ": Library must not be used before the core is ready!");
+		}
+
 		assert(typeof mSettings === "object" , "mSettings given to 'sap/ui/core/Lib.init' must be an object");
 		assert(typeof mSettings.name === "string" && mSettings.name, "mSettings given to 'sap/ui/core/Lib.init' must have the 'name' property set");
 
