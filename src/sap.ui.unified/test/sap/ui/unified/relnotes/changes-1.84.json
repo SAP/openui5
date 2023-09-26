@@ -530,5 +530,47 @@
         ]
       }
     ]
+  },
+  "1.84.39": {
+    "date": "September 2023",
+    "notes": [
+      {
+        "id": "703564920fe99acb0405ad057cfdccf206db1548",
+        "type": "FIX",
+        "text": " sap.ui.unified.FileUploader: stop drag and drop event propagation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400006011772023"
+          },
+          {
+            "type": "BCP",
+            "reference": "2370078629"
+          }
+        ]
+      },
+      {
+        "id": "2af18cb50d5e3a17424b6560dcf1e0638c06d265",
+        "type": "FIX",
+        "text": " sap.ui.unified.FileUploader: register events once",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370078629"
+          }
+        ]
+      },
+      {
+        "id": "26c4c48477e10e0e1bc353b594e6a6b993051b1a",
+        "type": "FIX",
+        "text": " sap.ui.unified.FileUploader: enable drop over the browse button",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400006011772023"
+          }
+        ]
+      }
+    ]
   }
 }

@@ -2062,5 +2062,54 @@
         ]
       }
     ]
+  },
+  "1.84.39": {
+    "date": "September 2023",
+    "notes": [
+      {
+        "id": "432f37b66c9ff3723c7b2d3fb1deee5c38782ba5",
+        "type": "FIX",
+        "text": " - sap.m.NumericContent",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500007160152023"
+          }
+        ]
+      },
+      {
+        "id": "f54f0d507356f4271534a1497e789509a9dd39f8",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: Fix navigation skipping",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400005568382023"
+          }
+        ]
+      },
+      {
+        "id": "aa23602020e4f25a65499c74ddfc9ba87e3c68f9",
+        "type": "FIX",
+        "text": " sap.m.FeedListItem: fixed icon appearance",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370079966"
+          }
+        ]
+      },
+      {
+        "id": "146d7a05958c82fd8720d6f265eb04c6c1b39c01",
+        "type": "FIX",
+        "text": " sap.m.Dialog: Dimensions are correctly restored when closing soft keyboard",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400004963822023"
+          }
+        ]
+      }
+    ]
   }
 }
