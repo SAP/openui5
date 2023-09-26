@@ -127,6 +127,17 @@
 		.sapMBarChild:not(.sapMMenuBtn) {
 			&.sapMBtn {
 				padding-top: 0;
+
+				.sapMBadgeTopRight.sapMBadge .sapMBadgeIndicator {
+					position: absolute;
+					top: -0.3125rem;
+					right: -0.4375rem;
+					padding-right: 0.125rem;
+				}
+
+				.sapMBadgeTopRight.sapMBadge.sapMBtnIconFirst:not(.sapMBtnText) {
+					padding: 0;
+				}
 			}
 
 			&.sapMBtn .sapMBtnTransparent,

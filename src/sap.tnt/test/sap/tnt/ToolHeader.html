@@ -122,7 +122,14 @@
 						icon: "sap-icon://bell",
 						layoutData: new sap.m.OverflowToolbarLayoutData({
 							priority: sap.m.OverflowToolbarPriority.NeverOverflow
-						})
+						}),
+						customData: [
+							new sap.m.BadgeCustomData({
+								key:"badge",
+								value:"5",
+								visible:true
+							})
+						]
 					}),
 					new sap.tnt.ToolHeaderUtilitySeparator(),
 					new sap.m.ToolbarSpacer({
