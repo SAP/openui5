@@ -1763,13 +1763,11 @@ sap.ui.define([
 	PlanningCalendar.prototype.setCalendarWeekNumbering = function(sCalendarWeekNumbering) {
 		var oHeader = this._getHeader(),
 			oCalendarPicker = oHeader._oPopup && oHeader._oPopup.getContent()[0],
-			sLocale = Configuration.getFormatSettings().getFormatLocale().toString(),
-			oWeekConfiguration = CalendarDateUtils.getWeekConfigurationValues(sCalendarWeekNumbering, new Locale(sLocale)),
 			key;
 
 		this.setProperty("calendarWeekNumbering", sCalendarWeekNumbering);
 
-		this._dateNav.setWeekConfiguration(oWeekConfiguration);
+		this._updateWeekConfiguration();
 		oHeader.setCalendarWeekNumbering(sCalendarWeekNumbering);
 		oCalendarPicker && oCalendarPicker.setCalendarWeekNumbering(sCalendarWeekNumbering);
 		for (key in INTERVAL_METADATA) {
@@ -2089,7 +2087,23 @@ sap.ui.define([
 			}.bind(this));
 		}
 
-		return this.setProperty("firstDayOfWeek", iFirstDayOfWeek);
+		this.setProperty("firstDayOfWeek", iFirstDayOfWeek);
+		this._updateWeekConfiguration();
+
+		return this;
+	};
+
+	PlanningCalendar.prototype._updateWeekConfiguration = function() {
+		var sLocale = Configuration.getFormatSettings().getFormatLocale().toString(),
+			sCalendarWeekNumbering = this.getCalendarWeekNumbering(),
+			iFirstDayOfWeek = this.getFirstDayOfWeek(),
+			oWeekConfiguration = CalendarDateUtils.getWeekConfigurationValues(sCalendarWeekNumbering, new Locale(sLocale));
+
+		if (iFirstDayOfWeek > -1 ) {
+			oWeekConfiguration.firstDayOfWeek = iFirstDayOfWeek;
+		}
+
+		this._dateNav.setWeekConfiguration(oWeekConfiguration);
 	};
 
 	PlanningCalendar.prototype._handleFocus = function (oEvent) {

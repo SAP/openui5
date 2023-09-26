@@ -3486,6 +3486,64 @@ sap.ui.define([
 		assert.equal(iSelectedDate, 29, "Start date changes correctly with Back arrow");
 	});
 
+	QUnit.test("Change in date navigation does not reset firstDayOfWeek", function (assert) {
+		// Arrange
+		var oStartDate = UI5Date.getInstance(2023, 9, 16),
+			oShiftToDate = UI5Date.getInstance(2023, 9, 19),
+			oNewStartDate = UI5Date.getInstance(2023, 9, 18);
+
+		this.oPC2.setStartDate(oStartDate);
+		this.oPC2.setBuiltInViews(["Week"]);
+		Core.applyChanges();
+
+		// Assert - Default behaviour
+		assert.deepEqual(this.oPC2._dateNav.getStart(), oStartDate, "Start date is October 16th");
+
+		// Act - Set FirstDayOfWeek to wednesday
+		this.oPC2.setFirstDayOfWeek(3);
+		Core.applyChanges();
+
+		// Assert - First day of week is changed to wednesday
+		assert.deepEqual(this.oPC2._dateNav.getStart(), oNewStartDate, "Start date changes to firstDayOfWeek");
+
+		// Act - Date navigation change
+		this.oPC2.shiftToDate(oShiftToDate);
+		Core.applyChanges();
+
+		// Assert - First day of week has not been reset
+		assert.deepEqual(this.oPC2._dateNav.getStart(), oNewStartDate, "Start date remains the same after change in date navigation");
+	});
+
+	QUnit.test("CalendarWeekNumbering does not overwrite firstDayOfWeek", function (assert) {
+		// Arrange
+		var oStartDate = UI5Date.getInstance(2023, 9, 16),
+			oNewStartDate = UI5Date.getInstance(2023, 9, 18),
+			oNewStartDate2 = UI5Date.getInstance(2023, 9, 19);
+
+		this.oPC2.setStartDate(oStartDate);
+		this.oPC2.setBuiltInViews(["Week"]);
+
+		// Act
+		this.oPC2.setFirstDayOfWeek(3);
+		Core.applyChanges();
+
+		// Assert - First day of week is changed to wednesday
+		assert.deepEqual(this.oPC2._dateNav.getStart(), oNewStartDate, "Start date changes to firstDayOfWeek");
+
+		// Act
+		this.oPC2.setCalendarWeekNumbering("MiddleEastern");
+		Core.applyChanges();
+
+		assert.deepEqual(this.oPC2._dateNav.getStart(), oNewStartDate, "Start Date is unchanged after CalendarWeekNumbering is set");
+
+		// Act
+		this.oPC2.setFirstDayOfWeek(4);
+		Core.applyChanges();
+
+		// Assert
+		assert.deepEqual(this.oPC2._dateNav.getStart(), oNewStartDate2, "Start date changes to firstDayOfWeek again");
+	});
+
 	QUnit.test("Navigaton buttons disabled when on min/max dates", function(assert) {
 		var oStartDate = this.oPC2.getStartDate();
 
