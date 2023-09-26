@@ -998,7 +998,7 @@ sap.ui.define([
 		this.mock(oCache).expects("adjustIndexes")
 			.withExactArgs(sPath, sinon.match.same(aElements), 42, 1, "~iDeletedIndex~");
 		const oHelperMock = this.mock(_Helper);
-		oHelperMock.expects("getPrivateAnnotation")
+		oHelperMock.expects("getPrivateAnnotation").exactly(bDefault && bTransient ? 0 : 1)
 			.withExactArgs("~oElement~", "transientPredicate")
 			.returns(bTransient ? "($uid=id-1-23)" : undefined);
 		oHelperMock.expects("addToCount")
@@ -1010,7 +1010,7 @@ sap.ui.define([
 
 		// code under test
 		oCache.restoreElement(bDefault ? undefined : aElements, 42, "~oElement~", sPath,
-			"~iDeletedIndex~");
+			"~iDeletedIndex~", bDefault && bTransient ? "($uid=id-1-23)" : undefined);
 
 		assert.strictEqual(oCache.iLimit, bTransient || sPath ? 234 : 235);
 		assert.strictEqual(aElements.$created, bTransient ? 3 : 2);
