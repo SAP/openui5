@@ -1270,6 +1270,10 @@ sap.ui.define([
 		return BasePanel.prototype.exit.apply(this, arguments);
 	};
 
+	ChartItemPanel.prototype.onReset = function() {
+		// TODO: check why not overriding the BasePanel onReset will cause unwanted behaviour
+	};
+
 	return ChartItemPanel;
 
 });

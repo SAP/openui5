@@ -3234,9 +3234,16 @@ sap.ui.define([
 	 *
 	 * Interface for P13nPopup which are suitable as content for the <code>sap.m.p13n.Popup</code>.
 	 * Implementation of this interface should include the following methods:
+	 *
 	 * <ul>
 	 * <li><code>getTitle</code></li>
+	 * </ul>
+	 *
+	 * Implementation of this interface can optionally provide the following methods:
+	 *
+	 * <ul>
 	 * <li><code>getVerticalScrolling</code></li>
+	 * <li><code>onReset</code></li>
 	 * </ul>
 	 *
 	 * @since 1.97
@@ -3263,6 +3270,14 @@ sap.ui.define([
 	 *
 	 * @function
 	 * @name sap.m.p13n.IContent.getVerticalScrolling?
+	 * @public
+	 */
+
+	/**
+	 * Optional hook that will be executed when the panel is used by a <code>sap.m.p13n.Popup</code> that may trigger a reset on the panel
+	 *
+	 * @function
+	 * @name sap.m.p13n.IContent.onReset?
 	 * @public
 	 */
 
