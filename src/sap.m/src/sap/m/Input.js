@@ -1450,6 +1450,7 @@ function(
 		var bPopupOpened = this._isSuggestionsPopoverOpen(),
 			bFocusInPopup = !this.hasStyleClass("sapMFocus") && bPopupOpened,
 			aItems = this._hasTabularSuggestions() ? this.getSuggestionRows() : this.getSuggestionItems(),
+			bFireSubmit = this.getEnabled() && this.getEditable(),
 			iValueLength, oSelectedItem;
 
 		// when enter is pressed before the timeout of suggestion delay, suggest event is cancelled
@@ -1474,7 +1475,12 @@ function(
 
 		!bFocusInPopup && InputBase.prototype.onsapenter.apply(this, arguments);
 
-		if (this.getEnabled() && this.getEditable() && !(this.getValueHelpOnly() && this.getShowValueHelp())) {
+		/**
+		 * @deprecated As of version 1.119
+		 */
+		bFireSubmit = bFireSubmit && !(this.getShowValueHelp() && this.getValueHelpOnly());
+
+		if (bFireSubmit) {
 			this.fireSubmit({value: this.getValue()});
 		}
 
@@ -1992,7 +1998,14 @@ function(
 		oFilterResults = this._getFilteredSuggestionItems(sTypedChars);
 		iSuggestionsLength = oFilterResults.items.length;
 
-		if (iSuggestionsLength > 0 && !this.getValueHelpOnly()) {
+		var bOpenSuggestionsPopup = iSuggestionsLength > 0;
+
+		/**
+		 * @deprecated As of version 1.119
+		 */
+		bOpenSuggestionsPopup = bOpenSuggestionsPopup && !this.getValueHelpOnly();
+
+		if (bOpenSuggestionsPopup) {
 			this._openSuggestionPopup(this.getValue().length >= this.getStartSuggestion());
 		} else {
 			this._hideSuggestionPopup();
@@ -3138,10 +3151,16 @@ function(
 	 */
 	Input.prototype.showItems = function (fnFilter) {
 		var oFilterResults, iSuggestionsLength,
-			fnFilterStore = this._getFilterFunction();
+			fnFilterStore = this._getFilterFunction(),
+			bShowItems = !this.getEnabled() || !this.getEditable();
+
+		/**
+		 * @deprecated As of version 1.119
+		 */
+		bShowItems = bShowItems || this.getValueHelpOnly();
 
 		// in case of a non-editable or disabled, the popup cannot be opened
-		if (!this.getEnabled() || !this.getEditable() || this.getValueHelpOnly()) {
+		if (bShowItems) {
 			return;
 		}
 
