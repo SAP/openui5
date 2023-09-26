@@ -681,7 +681,8 @@ sap.ui.define([
 			ariaHasPopup: "dialog",
 			role: null,
 			roleDescription: null,
-			valueHelpEnabled: true
+			valueHelpEnabled: true,
+			autocomplete: "none"
 		};
 		const oAttributes = oDialog.getAriaAttributes();
 		assert.ok(oAttributes, "Aria attributes returned");

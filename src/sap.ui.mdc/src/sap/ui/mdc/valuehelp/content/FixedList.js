@@ -159,7 +159,7 @@ sap.ui.define([
 					oList.setModel(this._oManagedObjectModel, "$help");
 //					oList.bindElement({ path: "/", model: "$help" });
 					this.setAggregation("displayContent", oList, true); // to have in control tree
-					_updateSelection.call(this);
+					_updateSelection.call(this, true);
 
 					return oList;
 				}.bind(this));
@@ -226,7 +226,7 @@ sap.ui.define([
 			oListBinding.update();
 			oList.updateItems();
 			oList.invalidate();
-			_updateSelection.call(this); // to update selection
+			_updateSelection.call(this, true); // to update selection
 		}
 
 	}
@@ -239,7 +239,7 @@ sap.ui.define([
 
 	}
 
-	function _updateSelection() {
+	function _updateSelection(bFireTypeaheadSuggested) {
 
 		const oList = _getList.call(this);
 		if (oList) {
@@ -248,6 +248,7 @@ sap.ui.define([
 			const sFilterValue = this.getFilterValue();
 			const bUseFirstMatch = this.getUseFirstMatch();
 			let bFirstFilterItemSelected = false;
+			let sFirstMatchItemId;
 //			var oOperator = this._getOperator();
 
 			if (aConditions.length > 0 && (aConditions[0].validated === ConditionValidated.Validated || aConditions[0].operator === OperatorName.EQ/*oOperator.name*/)) {
@@ -279,13 +280,32 @@ sap.ui.define([
 						oListItem.setSelected(true);
 					} else if (aConditions.length === 0 && this._iNavigateIndex < 0 && !bFirstFilterItemSelected && oFirstMatchItem && oFirstMatchItem === oOriginalItem) {
 						oListItem.setSelected(true);
+						sFirstMatchItemId = oListItem.getId();
 						bFirstFilterItemSelected = true;
 					} else {
 						oListItem.setSelected(false);
 					}
 				}
 			}
+
+			if (bFireTypeaheadSuggested && bFirstFilterItemSelected) {
+				_fireTypeahedSuggested.call(this, oFirstMatchItem, sFirstMatchItemId);
+			}
 		}
+	}
+
+	function _fireTypeahedSuggested(oItem, sItemId) {
+
+		// use selected item as typeahead suggestion
+		const sFilterValue = this.getFilterValue();
+		const bUseFirstMatch = this.getUseFirstMatch();
+		if (bUseFirstMatch && sFilterValue && oItem) {
+			const vKey = _getKey.call(this, oItem);
+			const vDescription = _getText.call(this, oItem);
+			const oCondition = this.createCondition(vKey, vDescription);
+			this.fireTypeaheadSuggested({condition: oCondition, filterValue: sFilterValue, itemId: sItemId});
+		}
+
 	}
 
 	// returns FixedList item for inner list item
@@ -381,7 +401,7 @@ sap.ui.define([
 	};
 
 	FixedList.prototype.handleConditionsUpdate = function(oChanges) {
-		_updateSelection.call(this);
+		_updateSelection.call(this, false);
 	};
 
 	FixedList.prototype.handleFilterValueUpdate = function(oChanges) {
@@ -523,16 +543,20 @@ sap.ui.define([
 
 		// scroll to selected item
 		const oList = _getList.call(this);
+		let sItemId;
 
 		if (!oList) {
-			return; // TODO: should not happen? Create List?
+			return null; // TODO: should not happen? Create List?
 		}
 
 		const oSelectedItem = oList.getSelectedItem();
 		if (oSelectedItem) {
 			const iSelectedIndex = oList.indexOfItem(oSelectedItem);
 			oList.scrollToIndex(iSelectedIndex);
+			sItemId = oSelectedItem.getId();
 		}
+
+		return sItemId;
 
 	};
 
@@ -560,7 +584,8 @@ sap.ui.define([
 			contentId: this.getId() + "-List", // as list might be created async, use fix ID
 			ariaHasPopup: "listbox",
 			roleDescription: null, // no multi-selection
-			valueHelpEnabled: false // a dropdown on a popover is not seen as value help
+			valueHelpEnabled: false, // a dropdown on a popover is not seen as value help
+			autocomplete: this.getUseFirstMatch() ? "both" : "none" // first match is used for autocomplete
 		};
 
 	};

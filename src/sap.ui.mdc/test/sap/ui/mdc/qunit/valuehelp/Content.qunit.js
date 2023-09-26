@@ -274,7 +274,8 @@ sap.ui.define([
 			contentId: null,
 			ariaHasPopup: "listbox",
 			roleDescription: null,
-			valueHelpEnabled: false
+			valueHelpEnabled: false,
+			autocomplete: "none"
 		};
 		const oAttributes = oContent.getAriaAttributes();
 		assert.ok(oAttributes, "Aria attributes returned");

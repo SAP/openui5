@@ -224,15 +224,17 @@ sap.ui.define([
 	QUnit.test("open / close", function(assert) {
 
 		let iOpened = 0;
+		let sItemId;
 		oPopover.attachEvent("opened", function(oEvent) {
 			iOpened++;
+			sItemId = oEvent.getParameter("itemId");
 		});
 		let iClosed = 0;
 		oPopover.attachEvent("closed", function(oEvent) {
 			iClosed++;
 		});
 
-		sinon.spy(oContent, "onShow");
+		sinon.stub(oContent, "onShow").returns("MyItem");
 		sinon.spy(oContent, "onHide");
 		sinon.spy(oPopover, "_openContainerByTarget");
 		oContent.getContentHeight = function () {
@@ -247,6 +249,7 @@ sap.ui.define([
 			oPromise.then(function() {
 				setTimeout(function() { // wait until open
 					assert.equal(iOpened, 1, "Opened event fired once");
+					assert.equal(sItemId, "MyItem", "Opened event returns itemId");
 					const oContainer = oPopover.getAggregation("_container");
 					assert.ok(oPopover._openContainerByTarget.called, "_openContainerByTarget was called.");
 					assert.ok(oContainer.isA("sap.m.Popover"), "Container is sap.m.Popover");
@@ -485,7 +488,8 @@ sap.ui.define([
 			contentId: "X",
 			ariaHasPopup: "dialog",
 			roleDescription: "X",
-			valueHelpEnabled: true
+			valueHelpEnabled: true,
+			autocomplete: "none"
 		});
 
 		const oCheckAttributes = {
@@ -493,7 +497,8 @@ sap.ui.define([
 			ariaHasPopup: "dialog",
 			role: null,
 			roleDescription: "X",
-			valueHelpEnabled: true
+			valueHelpEnabled: true,
+			autocomplete: "none"
 		};
 		let oAttributes = oPopover.getAriaAttributes();
 		assert.ok(oAttributes, "Aria attributes returned");
