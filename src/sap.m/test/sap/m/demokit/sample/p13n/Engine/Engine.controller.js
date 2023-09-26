@@ -5,13 +5,15 @@ sap.ui.define([
 	'sap/m/p13n/SelectionController',
 	'sap/m/p13n/SortController',
 	'sap/m/p13n/GroupController',
+	'sap/m/p13n/FilterController',
 	'sap/m/p13n/MetadataHelper',
 	'sap/ui/model/Sorter',
 	'sap/m/ColumnListItem',
 	'sap/m/Text',
 	'sap/ui/core/library',
-	'sap/m/table/ColumnWidthController'
-], function(Controller, JSONModel, Engine, SelectionController, SortController, GroupController, MetadataHelper, Sorter, ColumnListItem, Text, coreLibrary, ColumnWidthController) {
+	'sap/m/table/ColumnWidthController',
+	'sap/ui/model/Filter'
+], function(Controller, JSONModel, Engine, SelectionController, SortController, GroupController, FilterController, MetadataHelper, Sorter, ColumnListItem, Text, coreLibrary, ColumnWidthController, Filter) {
 	"use strict";
 
 	return Controller.extend("sap.m.sample.p13n.Engine.Page", {
@@ -19,15 +21,16 @@ sap.ui.define([
 		onInit: function() {
 			var oData = {
 				items: [
-					{firstName: "Peter", lastName: "Mueller", size: "1.75", city: "Walldorf"},
-					{firstName: "Petra", lastName: "Maier", size: "1.85", city: "Walldorf"},
-					{firstName: "Thomas", lastName: "Smith", size: "1.95", city: "Walldorf"},
-					{firstName: "John", lastName: "Williams", size: "1.65", city: "Walldorf"},
-					{firstName: "Maria", lastName: "Jones", size: "1.55", city: "Walldorf"}
+					{key: "P1", firstName: "Peter", lastName: "Mueller", size: "1.75", city: "Walldorf"},
+					{key: "P2", firstName: "Petra", lastName: "Maier", size: "1.85", city: "Walldorf"},
+					{key: "P3", firstName: "Thomas", lastName: "Smith", size: "1.95", city: "Walldorf"},
+					{key: "P4", firstName: "John", lastName: "Williams", size: "1.65", city: "Walldorf"},
+					{key: "P5", firstName: "Maria", lastName: "Jones", size: "1.55", city: "Walldorf"}
 				]
 			};
 
 			var oModel = new JSONModel(oData);
+			this._oModel = oModel;
 
 			this.getView().setModel(oModel);
 
@@ -59,6 +62,9 @@ sap.ui.define([
 					}),
 					ColumnWidth: new ColumnWidthController({
 						control: oTable
+					}),
+					Filter: new FilterController({
+						control: oTable
 					})
 				}
 			});
@@ -69,9 +75,9 @@ sap.ui.define([
 		openPersoDialog: function(oEvt) {
 			var oTable = this.byId("persoTable");
 
-			Engine.getInstance().show(oTable, ["Columns", "Sorter", "Groups"], {
-				contentHeight: "35rem",
-				contentWidth: "32rem",
+			Engine.getInstance().show(oTable, ["Columns", "Sorter", "Groups", "Filter"], {
+				contentHeight: "50rem",
+				contentWidth: "45rem",
 				source: oEvt.getSource()
 			});
 		},
@@ -88,12 +94,48 @@ sap.ui.define([
 				return;
 			}
 
-			var aSorter = [];
+			//Update the columns per selection in the state
+			this.updateColumns(oState);
 
-			oState.Groups.forEach(function(oGroup) {
-				aSorter.push(new Sorter(this.oMetadataHelper.getProperty(oGroup.key).path, false, true));
+			//Create Filters & Sorters
+			var aFilter = this.createFilters(oState);
+			var aSorter = this.createSorters(oState);
+			var aGroups = this.createGroups(oState);
+
+			var aCells = oState.Columns.map(function(oColumnState) {
+				return new Text({
+					text: "{" + this.oMetadataHelper.getProperty(oColumnState.key).path + "}"
+				});
 			}.bind(this));
 
+			//rebind the table with the updated cell template
+			oTable.bindItems({
+				templateShareable: false,
+				path: '/items',
+				sorter: aSorter.concat(aGroups),
+				filters: aFilter,
+				template: new ColumnListItem({
+					cells: aCells
+				})
+			});
+
+		},
+
+		createFilters: function(oState) {
+			var aFilter = [];
+			Object.keys(oState.Filter).forEach((sFilterKey) => {
+				var filterPath = this.oMetadataHelper.getProperty(sFilterKey).path;
+
+				oState.Filter[sFilterKey].forEach(function(oConditon){
+					aFilter.push(new Filter(filterPath, oConditon.operator, oConditon.values[0]));
+				});
+			});
+
+			return aFilter;
+		},
+
+		createSorters: function(oState) {
+			var aSorter = [];
 			oState.Sorter.forEach(function(oSorter) {
 				var oExistingSorter = aSorter.find(function(oSort){
 					return oSort.sPath === this.oMetadataHelper.getProperty(oSorter.key).path;
@@ -106,13 +148,6 @@ sap.ui.define([
 				}
 			}.bind(this));
 
-			oTable.getColumns().forEach(function(oColumn, iIndex){
-				oColumn.setVisible(false);
-				oColumn.setWidth(oState.ColumnWidth[this._getKey(oColumn)]);
-				oColumn.setSortIndicator(coreLibrary.SortOrder.None);
-				oColumn.data("grouped", false);
-			}.bind(this));
-
 			oState.Sorter.forEach(function(oSorter) {
 				var oCol = this.byId(oSorter.key);
 				if (oSorter.sorted !== false) {
@@ -120,9 +155,31 @@ sap.ui.define([
 				}
 			}.bind(this));
 
+			return aSorter;
+		},
+
+		createGroups: function(oState) {
+			var aGroupings = [];
+			oState.Groups.forEach(function(oGroup) {
+				aGroupings.push(new Sorter(this.oMetadataHelper.getProperty(oGroup.key).path, false, true));
+			}.bind(this));
+
 			oState.Groups.forEach(function(oSorter) {
 				var oCol = this.byId(oSorter.key);
 				oCol.data("grouped", true);
+			}.bind(this));
+
+			return aGroupings;
+		},
+
+		updateColumns: function(oState) {
+			var oTable = this.byId("persoTable");
+
+			oTable.getColumns().forEach(function(oColumn, iIndex){
+				oColumn.setVisible(false);
+				oColumn.setWidth(oState.ColumnWidth[this._getKey(oColumn)]);
+				oColumn.setSortIndicator(coreLibrary.SortOrder.None);
+				oColumn.data("grouped", false);
 			}.bind(this));
 
 			oState.Columns.forEach(function(oProp, iIndex){
@@ -132,22 +189,6 @@ sap.ui.define([
 				oTable.removeColumn(oCol);
 				oTable.insertColumn(oCol, iIndex);
 			}.bind(this));
-
-			var aCells = oState.Columns.map(function(oColumnState) {
-				return new Text({
-					text: "{" + this.oMetadataHelper.getProperty(oColumnState.key).path + "}"
-				});
-			}.bind(this));
-
-			oTable.bindItems({
-				templateShareable: false,
-				path: '/items',
-				sorter: aSorter,
-				template: new ColumnListItem({
-					cells: aCells
-				})
-			});
-
 		},
 
 		beforeOpenColumnMenu: function(oEvt) {
