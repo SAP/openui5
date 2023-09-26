@@ -149,7 +149,7 @@ sap.ui.define([
 		assert.equal(this.oVM.getTitle().getText(), "Hugo", "expected text");
 	});
 
-	QUnit.test("VariantManagement check showAsText", function(assert) {
+	QUnit.test("VariantManagement check _showAsText", function(assert) {
 		assert.equal(this.oVM.getShowAsText(), false, "expected default value");
 
 		assert.ok(this.oVM.getTitle());

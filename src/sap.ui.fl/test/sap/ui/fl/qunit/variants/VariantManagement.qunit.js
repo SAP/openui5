@@ -1457,7 +1457,7 @@ sap.ui.define([
 			assert.ok(this.oVariantManagement._getEmbeddedVM().oVariantText.getTitleStyle(), "H1");
 		});
 
-		QUnit.test("VariantManagement check showAsText", function(assert) {
+		QUnit.test("VariantManagement check get-/setShowAsText", function(assert) {
 			assert.equal(this.oVariantManagement.getShowAsText(), false, "expected default value");
 
 			assert.ok(this.oVariantManagement.getTitle());
