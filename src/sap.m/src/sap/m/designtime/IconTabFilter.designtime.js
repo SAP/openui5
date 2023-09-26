@@ -27,7 +27,7 @@ sap.ui.define([],
 			aggregations: {
 				content: {
 					propagateMetadata: function (oControl) {
-						if (oControl.getParent().isA("sap.m.IconTabFilter")) {
+						if (oControl.getParent()?.isA("sap.m.IconTabFilter")) {
 							return {
 								actions: {
 									remove: null,
