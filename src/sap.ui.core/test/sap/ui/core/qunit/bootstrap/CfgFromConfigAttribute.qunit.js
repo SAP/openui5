@@ -30,9 +30,6 @@ sap.ui.require([
 		// libs must have been converted and prepended to modules
 		assert.deepEqual(Configuration.getValue("modules"), [ "sap.m.library", "sap.m.Button" ], "modules and libraries");
 
-		// init module must have been loaded
-		assert.ok(sap.ui.require("sap/ui/core/ComponentSupport"), "onInit module should be required");
-
 		assert.ok(sap.ui.require("sap/m/Button"), "configured module has been loaded");
 	});
 

@@ -13,7 +13,6 @@
 		libs : "sap.m",
 		modules : "sap.m.Button",
 		areas : "area-51,no-go",
-		onInit : function() { window["I was here"] = "u.g.a.d.m.k."; },
 		ignoreUrlParams : true
 	};
 

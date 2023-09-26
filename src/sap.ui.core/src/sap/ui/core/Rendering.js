@@ -8,12 +8,12 @@ sap.ui.define([
 	"sap/ui/base/EventProvider",
 	"sap/ui/performance/trace/Interaction",
 	"sap/ui/performance/Measurement"
-], function(
+], (
 	Log,
 	EventProvider,
 	Interaction,
 	Measurement
-) {
+) => {
 	"use strict";
 
 	/**
@@ -26,7 +26,7 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	var oRenderLog = Log.getLogger("sap.ui.Rendering",
+	const oRenderLog = Log.getLogger("sap.ui.Rendering",
 			(
 				// Note that the sap-ui-config option still is expected in camel case.
 				// Lower case is only accepted here because of the config normalization which will be removed in future
@@ -35,31 +35,31 @@ sap.ui.define([
 			) ? Log.Level.DEBUG : Math.min(Log.Level.INFO, Log.getLevel())
 		);
 
-	var MAX_RENDERING_ITERATIONS = 20;
+	const MAX_RENDERING_ITERATIONS = 20,
+		_oEventProvider = new EventProvider(),
+		// to protect against nested rendering we use an array of Steps instead of a single one
+		aFnDone = [];
 
-	var _sRerenderTimer;
-
-	var mUIAreas = {};
+	let _sRerenderTimer,
+		mUIAreas = {};
 
 	/**
 	 * Tasks that are called just before the rendering starts.
 	 * @private
 	 */
-	var aPrerenderingTasks = [];
+	let aPrerenderingTasks = [];
 
-	var _oEventProvider = new EventProvider();
+	let _bRendering = false;
 
-	var _bRendering = false;
-
-	function _renderPendingUIUpdates(sCaller) {
+	const _renderPendingUIUpdates = (sCaller) => {
 		// start performance measurement
 		Measurement.start("renderPendingUIUpdates","Render pending UI updates in all UIAreas");
 
 		oRenderLog.debug("Render pending UI updates: start (" + (sCaller || "by timer" ) + ")");
 
-		var bUIUpdated = false,
-			bLooped = MAX_RENDERING_ITERATIONS > 0,
-			iLoopCount = 0;
+		let iLoopCount = 0;
+
+		const bLooped = MAX_RENDERING_ITERATIONS > 0;
 
 		_bRendering = true;
 
@@ -81,21 +81,21 @@ sap.ui.define([
 
 			// clear a pending timer so that the next call to re-render will create a new timer
 			if (_sRerenderTimer) {
-				if ( _sRerenderTimer !== this ) { // 'this' is used as a marker for a delayed initial rendering, no timer to cleanup then
+				if ( _sRerenderTimer !== Rendering ) { // 'this' is used as a marker for a delayed initial rendering, no timer to cleanup then
 					clearTimeout(_sRerenderTimer); // explicitly stop the timer, as this call might be a synchronous call (applyChanges) while still a timer is running
 				}
 				_sRerenderTimer = undefined;
-				if (Rendering.aFnDone.length > 0) {
-					Rendering.aFnDone.pop()();
+				if (aFnDone.length > 0) {
+					aFnDone.pop()();
 				}
 			}
 
 			runPrerenderingTasks();
 
-			var mUIAreasSnapshot = mUIAreas;
+			const mUIAreasSnapshot = mUIAreas;
 			mUIAreas = {};
-			for (var sId in mUIAreasSnapshot) {
-				bUIUpdated = mUIAreasSnapshot[sId].rerender() || bUIUpdated;
+			for (const sId in mUIAreasSnapshot) {
+				mUIAreasSnapshot[sId].rerender();
 			}
 
 		// eslint-disable-next-line no-unmodified-loop-condition
@@ -104,28 +104,32 @@ sap.ui.define([
 		_bRendering = false;
 
 		// TODO: Provide information on what actually was re-rendered...
-		if (bUIUpdated) {
-			Rendering.fireUIUpdated();
-		}
+		Rendering.fireUIUpdated();
+
 
 		oRenderLog.debug("Render pending UI updates: finished");
 
 		// end performance measurement
 		Measurement.end("renderPendingUIUpdates");
-	}
+	};
 
-	var Rendering = {
-		// to protect against nested rendering we use an array of Steps instead of a single one
-		aFnDone: [],
-
+	/**
+	 * Collects and triggers rendering for invalidated UIAreas
+	 *
+	 * @namespace
+	 * @alias module:sap/ui/core/Rendering
+	 * @private
+	 * @ui5-restricted sap.ui.core, sap.ui.model.odata.v4
+	 */
+	const Rendering = {
 		/**
 		 * Notify async Interaction step.
 		 *
 		 * @private
 		 * @ui5-restricted sap.ui.core.Core
 		 */
-		notifyInteractionStep: function () {
-			Rendering.aFnDone.push(Interaction.notifyAsyncStep());
+		notifyInteractionStep() {
+			aFnDone.push(Interaction.notifyAsyncStep());
 		},
 
 		/**
@@ -139,7 +143,7 @@ sap.ui.define([
 		 * @private
 		 * @ui5-restricted sap.ui.model.odata.v4
 		 */
-		addPrerenderingTask: function (fnPrerenderingTask, bFirst) {
+		addPrerenderingTask(fnPrerenderingTask, bFirst) {
 			if (bFirst) {
 				aPrerenderingTasks.unshift(fnPrerenderingTask);
 			} else {
@@ -159,10 +163,10 @@ sap.ui.define([
 		 * @param {string} sCaller The Caller id
 		 * @private
 		 */
-		renderPendingUIUpdates: function(sCaller, iTimeout) {
+		renderPendingUIUpdates(sCaller, iTimeout) {
 			if (iTimeout !== undefined) {
 				// start async interaction step
-				Rendering.aFnDone.push(Interaction.notifyAsyncStep());
+				aFnDone.push(Interaction.notifyAsyncStep());
 				_sRerenderTimer = setTimeout(_renderPendingUIUpdates.bind(null, sCaller), iTimeout);
 			} else {
 				_renderPendingUIUpdates(sCaller);
@@ -174,7 +178,7 @@ sap.ui.define([
 		 * @private
 		 * @ui5-restricted sap.ui.core
 		 */
-		suspend: function() {
+		suspend() {
 			/**
 			 * The ID of a timer that will execute the next rendering.
 			 *
@@ -183,7 +187,7 @@ sap.ui.define([
 			 * to the special value <code>this</code> which is non-falsy and which should never
 			 * represent a valid timer ID (no chance of misinterpretation).
 			 */
-			_sRerenderTimer = this; //eslint-disable-line consistent-this
+			_sRerenderTimer = Rendering; //eslint-disable-line consistent-this
 		},
 		/**
 		 * Resumes rendering if it was suspended by calling <code>sap.ui.core.Rendering.suspend</code> and
@@ -193,7 +197,7 @@ sap.ui.define([
 		 * @private
 		 * @ui5-restricted sap.ui.core
 		 */
-		resume: function(sReason) {
+		resume(sReason) {
 			Rendering.renderPendingUIUpdates(sReason, 0);
 		},
 
@@ -205,7 +209,7 @@ sap.ui.define([
 		 * @private
 		 * @ui5-restricted sap.ui.core
 		 */
-		isPending: function() {
+		isPending() {
 			return !!(_sRerenderTimer || _bRendering);
 		},
 
@@ -215,15 +219,15 @@ sap.ui.define([
 		 * @private
 		 * @function
 		 */
-		attachUIUpdated: function(fnFunction, oListener) {
+		attachUIUpdated(fnFunction, oListener) {
 			_oEventProvider.attachEvent("UIUpdated", fnFunction, oListener);
 		},
 
-		detachUIUpdated: function(fnFunction, oListener) {
+		detachUIUpdated(fnFunction, oListener) {
 			_oEventProvider.detachEvent("UIUpdated", fnFunction, oListener);
 		},
 
-		fireUIUpdated: function(mParameters) {
+		fireUIUpdated(mParameters) {
 			_oEventProvider.fireEvent("UIUpdated", mParameters);
 		},
 
@@ -233,7 +237,7 @@ sap.ui.define([
 		 * @returns {module:sap/base/Log} The Rendering logger
 		 * @private
 		 */
-		getLogger: function() {
+		getLogger() {
 			return oRenderLog;
 		},
 
@@ -243,7 +247,7 @@ sap.ui.define([
 		 * @param {sap.ui.core.UIArea} oUIArea The invalidated UIArea
 		 * @private
 		 */
-		invalidateUIArea: function(oUIArea) {
+		invalidateUIArea(oUIArea) {
 			mUIAreas[oUIArea.getId()] = oUIArea;
 			if ( !_sRerenderTimer ) {
 				// TODO: we should handle xx-waitForTheme here...
@@ -257,14 +261,14 @@ sap.ui.define([
 	 * Runs all prerendering tasks and resets the list.
 	 * @private
 	 */
-	function runPrerenderingTasks() {
-		var aTasks = aPrerenderingTasks.slice();
+	const runPrerenderingTasks = () => {
+		const aTasks = aPrerenderingTasks.slice();
 
 		aPrerenderingTasks = [];
-		aTasks.forEach(function (fnPrerenderingTask) {
+		aTasks.forEach((fnPrerenderingTask) => {
 			fnPrerenderingTask();
 		});
-	}
+	};
 
 	return Rendering;
 });

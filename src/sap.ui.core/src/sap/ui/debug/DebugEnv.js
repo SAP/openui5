@@ -225,7 +225,7 @@ sap.ui.define('sap/ui/debug/DebugEnv', ['sap/ui/base/Interface', './ControlTree'
 			this.oTimer = undefined;
 		}
 		// clear listener (necessary to avoid multiple calls and in case we are called via timer)
-		this.oCore.detachUIUpdated(this.enableLogViewer, this);
+		Rendering.detachUIUpdated(this.enableLogViewer, this);
 
 		// real action: enable the LogViewer
 		if ( this.oTraceViewer) {
