@@ -52,6 +52,7 @@ module.exports = [
 	"MessageView.spec.js",
 	"MMenuVisual.spec.js",
 	"MultiComboBox.spec.js",
+	"MultiComboBoxBasic.spec.js",
 	"MultiInput.spec.js",
 	"NotificationListGroup.spec.js",
 	"NotificationListItem.spec.js",
