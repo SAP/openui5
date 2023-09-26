@@ -45,7 +45,6 @@ sap.ui.define([
 	 * @extends sap.ui.mdc.valuehelp.base.FilterableListContent
 	 * @version ${version}
 	 * @constructor
-	 * @abstract
 	 * @public
 	 * @since 1.95.0
 	 * @alias sap.ui.mdc.valuehelp.content.MTable

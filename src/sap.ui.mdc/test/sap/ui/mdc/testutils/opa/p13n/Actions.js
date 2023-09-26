@@ -672,173 +672,167 @@ sap.ui.define([
 			fnOpenThePersonalizationDialog = fnOpenThePersonalizationDialog ? fnOpenThePersonalizationDialog : iOpenThePersonalizationDialog;
 			return iPersonalize.call(this, oControl, Util.texts.chart, fnOpenThePersonalizationDialog, {
 				success: function(oP13nDialog) {
-
 					var sViewName = bIsMDC ? "Item" : "dimeasure";
 
-					//oP13nDialog.getContent()[0].getView("item") && oP13nDialog.getContent()[0].getView("item").getContent().isA("sap.m.p13n.SelectionPanel")
-					if (oP13nDialog.getContent()[0].getView(sViewName).getContent().isA("sap.m.P13nDimMeasurePanel")){
-						iPersonalizeOldChartP13n.call(this, oControl, sChartType, aItems, oP13nDialog);
-					} else {
-						this.waitFor({
-							controlType: "sap.ui.mdc.p13n.panels.ChartItemPanel",
-							matchers: new Ancestor(oP13nDialog, false),
-							success: function(aItemPanels) {
-								//This is done in 3 steps
-								//1. Remove current selection
-								//2. Add items in order
-								//3. Select correct roles
+					this.waitFor({
+						controlType: "sap.ui.mdc.p13n.panels.ChartItemPanel",
+						matchers: new Ancestor(oP13nDialog, false),
+						success: function(aItemPanels) {
+							//This is done in 3 steps
+							//1. Remove current selection
+							//2. Add items in order
+							//3. Select correct roles
 
-								var aItemsToRemoveIds = [];
-								var oItemPanel = aItemPanels[0];
+							var aItemsToRemoveIds = [];
+							var oItemPanel = aItemPanels[0];
 
-								this.waitFor({
+							this.waitFor({
 
-									controlType: "sap.m.ColumnListItem",
-									matchers: [
-										new Ancestor(oP13nDialog, false)
-									],
-									actions: function(oColumnListItem) {
-										//Step 1.1: Find all remove buttons
-										var  bTemplate = oColumnListItem.getCells().length === 1;
+								controlType: "sap.m.ColumnListItem",
+								matchers: [
+									new Ancestor(oP13nDialog, false)
+								],
+								actions: function(oColumnListItem) {
+									//Step 1.1: Find all remove buttons
+									var  bTemplate = oColumnListItem.getCells().length === 1;
 
-										if (!bTemplate){
-											this.waitFor({
-												controlType: "sap.m.Button",
-												matchers: [
-													new Ancestor(oColumnListItem),
-													new Properties({
-														icon: "sap-icon://decline"
-													})
-												],
-												success: function(aBtns) {
-													var oButton = aBtns[0];
-													aItemsToRemoveIds.push(oButton.getId());
+									if (!bTemplate){
+										this.waitFor({
+											controlType: "sap.m.Button",
+											matchers: [
+												new Ancestor(oColumnListItem),
+												new Properties({
+													icon: "sap-icon://decline"
+												})
+											],
+											success: function(aBtns) {
+												var oButton = aBtns[0];
+												aItemsToRemoveIds.push(oButton.getId());
+											}
+										});
+									}
+								}.bind(this),
+								success: function() {
+
+									var iClickOnChartP13nRemoveButton = function(sCurrentBtnId, oP13nDialog, aBtnIds, fnFollowUpFunction, aFollowUpParams){
+										this.waitFor({
+
+											controlType: "sap.m.Button",
+											id: sCurrentBtnId,
+											matchers: [
+												new Ancestor(oP13nDialog, false)
+											],
+											success: function(oBtn) {
+												new Press().executeOn(oBtn);
+
+												var iIdx = aBtnIds.indexOf(sCurrentBtnId);
+
+												if (iIdx === aBtnIds.length - 1){
+													fnFollowUpFunction.apply(this, aFollowUpParams);
+												} else {
+													iClickOnChartP13nRemoveButton.call(this, aBtnIds[iIdx + 1], oP13nDialog, aBtnIds, fnFollowUpFunction, aFollowUpParams);
 												}
-											});
-										}
-									}.bind(this),
-									success: function() {
+											}
+										});
+									};
 
-										var iClickOnChartP13nRemoveButton = function(sCurrentBtnId, oP13nDialog, aBtnIds, fnFollowUpFunction, aFollowUpParams){
+									var fnAddAllItems = function(oCurrentItem, aItems, fnFollowUp){
+										if (oCurrentItem.kind) {
+
+											var sKind = oCurrentItem.kind;
+
+											if (bIsMDC) {
+												if (sKind === "Dimension") {
+													sKind = "Groupable";
+												} else if (sKind === "Measure") {
+													sKind = "Aggregatable";
+												}
+											}
+
 											this.waitFor({
+												controlType: "sap.m.ComboBox",
+												id: "p13nPanel-templateComboBox-" + sKind,
+												matchers: new Ancestor(oP13nDialog, false),
+												actions: function(oComboBox) {
+													iChangeComboBoxSelection.call(this, oComboBox, oCurrentItem.key);
+												}.bind(this),
+												success: function(){
+													var iIdx = aItems.indexOf(oCurrentItem);
 
-												controlType: "sap.m.Button",
-												id: sCurrentBtnId,
-												matchers: [
-													new Ancestor(oP13nDialog, false)
-												],
-												success: function(oBtn) {
-													new Press().executeOn(oBtn);
-
-													var iIdx = aBtnIds.indexOf(sCurrentBtnId);
-
-													if (iIdx === aBtnIds.length - 1){
-														fnFollowUpFunction.apply(this, aFollowUpParams);
+													if (iIdx === aItems.length - 1){
+														fnFollowUp.call(this);
 													} else {
-														iClickOnChartP13nRemoveButton.call(this, aBtnIds[iIdx + 1], oP13nDialog, aBtnIds, fnFollowUpFunction, aFollowUpParams);
+														fnAddAllItems.call(this, aItems[iIdx + 1], aItems, fnFollowUp);
 													}
 												}
 											});
-										};
+										} else {
+											Log.error("P13nChartPersonalizationOPA: No kind field given for " + oCurrentItem.key + ". Ignoring the field!");
+										}
+									};
 
-										var fnAddAllItems = function(oCurrentItem, aItems, fnFollowUp){
-											if (oCurrentItem.kind) {
+									var fnAssignRoles = function(){
+										this.waitFor({
 
-												var sKind = oCurrentItem.kind;
-
-												if (bIsMDC) {
-													if (sKind === "Dimension") {
-														sKind = "Groupable";
-													} else if (sKind === "Measure") {
-														sKind = "Aggregatable";
-													}
-												}
-
+											controlType: "sap.m.ColumnListItem",
+											matchers: [
+												new Ancestor(oP13nDialog, false)
+											],
+											actions: function(oColumnListItem) {
 												this.waitFor({
 													controlType: "sap.m.ComboBox",
-													id: "p13nPanel-templateComboBox-" + sKind,
-													matchers: new Ancestor(oP13nDialog, false),
-													actions: function(oComboBox) {
-														iChangeComboBoxSelection.call(this, oComboBox, oCurrentItem.key);
-													}.bind(this),
-													success: function(){
-														var iIdx = aItems.indexOf(oCurrentItem);
-
-														if (iIdx === aItems.length - 1){
-															fnFollowUp.call(this);
-														} else {
-															fnAddAllItems.call(this, aItems[iIdx + 1], aItems, fnFollowUp);
-														}
-													}
-												});
-											} else {
-												Log.error("P13nChartPersonalizationOPA: No kind field given for " + oCurrentItem.key + ". Ignoring the field!");
-											}
-										};
-
-										var fnAssignRoles = function(){
-											this.waitFor({
-
-												controlType: "sap.m.ColumnListItem",
-												matchers: [
-													new Ancestor(oP13nDialog, false)
-												],
-												actions: function(oColumnListItem) {
-													this.waitFor({
-														controlType: "sap.m.ComboBox",
-														matchers: new Ancestor(oColumnListItem),
-														success: function(aComboBoxes) {
-															var oComboBox = aComboBoxes[0];
-															var oItem = aItems.find(function(oItem) {
-																if (bIsMDC){
-																	//Account for templates
-																	return oComboBox.getSelectedItem() ? oComboBox.getSelectedItem().getText() === oItem.key : undefined;
-																}
-																return oComboBox.getSelectedKey() === oItem.key;
-															});
-															var bItemIsPresent = !!oItem;
-
-															if (bItemIsPresent) {
-
-																//Ignore templates / items with no role select (due to chart type)
-																var bMobile = oItemPanel._bMobileMode;
-																if (bMobile && oColumnListItem.getCells()[0].getItems[1].getVisible() == false) {
-																	return;
-																}
-
-															if (!bMobile && !oColumnListItem.getCells()[1].getVisible()) {
-																	return;
-																}
-
-																//Select correct role if selected
-																this.waitFor({
-																	controlType: "sap.m.Select",
-																	matchers: new Ancestor(oColumnListItem),
-																	actions: function(oSelect) {
-																		iChangeSelectSelection.call(this, oSelect, oItem.role);
-																	}.bind(this)
-																});
+													matchers: new Ancestor(oColumnListItem),
+													success: function(aComboBoxes) {
+														var oComboBox = aComboBoxes[0];
+														var oItem = aItems.find(function(oItem) {
+															if (bIsMDC){
+																//Account for templates
+																return oComboBox.getSelectedItem() ? oComboBox.getSelectedItem().getText() === oItem.key : undefined;
 															}
-														}.bind(this)
-													});
-												}.bind(this),
-												success: function() {
-													iPressTheOKButtonOnTheDialog.call(this, oP13nDialog);
-												}
-											});
-										};
+															return oComboBox.getSelectedKey() === oItem.key;
+														});
+														var bItemIsPresent = !!oItem;
+
+														if (bItemIsPresent) {
+
+															//Ignore templates / items with no role select (due to chart type)
+															var bMobile = oItemPanel._bMobileMode;
+															if (bMobile && oColumnListItem.getCells()[0].getItems[1].getVisible() == false) {
+																return;
+															}
+
+														if (!bMobile && !oColumnListItem.getCells()[1].getVisible()) {
+																return;
+															}
+
+															//Select correct role if selected
+															this.waitFor({
+																controlType: "sap.m.Select",
+																matchers: new Ancestor(oColumnListItem),
+																actions: function(oSelect) {
+																	iChangeSelectSelection.call(this, oSelect, oItem.role);
+																}.bind(this)
+															});
+														}
+													}.bind(this)
+												});
+											}.bind(this),
+											success: function() {
+												iPressTheOKButtonOnTheDialog.call(this, oP13nDialog);
+											}
+										});
+									};
 
 
-										if (aItemsToRemoveIds.length != 0){
-											iClickOnChartP13nRemoveButton.call(this, aItemsToRemoveIds[0], oP13nDialog, aItemsToRemoveIds, fnAddAllItems, [aItems[0], aItems, fnAssignRoles]);
-										} else {
-											fnAddAllItems.call(this, aItems[0], aItems, fnAssignRoles);
-										}
+									if (aItemsToRemoveIds.length != 0){
+										iClickOnChartP13nRemoveButton.call(this, aItemsToRemoveIds[0], oP13nDialog, aItemsToRemoveIds, fnAddAllItems, [aItems[0], aItems, fnAssignRoles]);
+									} else {
+										fnAddAllItems.call(this, aItems[0], aItems, fnAssignRoles);
 									}
-								});
-							}
-						});
-					}
+								}
+							});
+						}
+					});
 				}
 			});
 		},

@@ -5549,6 +5549,7 @@ sap.ui.define([
 	QUnit.test("On element that is not a cell", function(assert) {
 		oTable.addExtension(new TestInputControl());
 		oTable.setFooter(new TestInputControl());
+		oTable.setTitle(new TestInputControl());
 		oTable.addEventDelegate({
 			onkeydown: function(oEvent) {
 				assert.ok(!oEvent.isDefaultPrevented(), "Default action was not prevented");
@@ -5563,7 +5564,6 @@ sap.ui.define([
 		var aTestElements = [
 			oTable.getExtension()[0].getDomRef(),
 			oTable.getFooter().getDomRef(),
-			null.getDomRef(),
 			oCell,
 			oTable.getRows()[0].getCells()[0].getDomRef(),
 			oTable.getRows()[0].getCells()[1].getDomRef()

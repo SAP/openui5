@@ -1031,6 +1031,7 @@ sap.ui.define([
 		 * @returns {Array<function(sap.ui.core.URI):Promise>} the security token handlers (an empty array if there are none)
 		 * @public
 		 * @function
+		 * @deprecated Since 1.120. Please use {@link module:sap/ui/core/Security.getSecurityTokenHandlers} instead.
 		 * @see #setSecurityTokenHandlers
 		 */
 		getSecurityTokenHandlers : Security.getSecurityTokenHandlers,
@@ -1042,6 +1043,7 @@ sap.ui.define([
 		 * @param {Array<function(sap.ui.core.URI):Promise>} aSecurityTokenHandlers - The security token handlers
 		 * @public
 		 * @function
+		 * @deprecated Since 1.120. Please use {@link module:sap/ui/core/Security.setSecurityTokenHandlers} instead.
 		 * @see #getSecurityTokenHandlers
 		 */
 		setSecurityTokenHandlers : Security.setSecurityTokenHandlers,

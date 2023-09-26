@@ -20,7 +20,6 @@ sap.ui.define([
 	"use strict";
 
 	var ValueHelpDelegate = Object.assign({}, MDCValueHelpDelegate);
-	ValueHelpDelegate.apiVersion = 2;//CLEANUP_DELEGATE
 
 	ValueHelpDelegate.retrieveContent = function(oValueHelp, oContainer, sContentId) {
 		var oPayload = oValueHelp.getPayload();

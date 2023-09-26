@@ -401,21 +401,16 @@ sap.ui.define([
 		});
 		var oListSelect = new Select({
 			change: function(oEvent) {
-
 				var oItem = oEvent.getParameter("selectedItem");
 				var oList = sap.ui.getCore().byId(oItem.getKey());
 				oSequence.setValue(oList.getSequence());
-				if (oList.getMultiSelect()) {
-					oRadioMultiSelect.setSelected(true);
-				} else {
-					oRadioSingleSelect.setSelected(true);
-				}
+				oRadioMultiSelect.setSelected(true);
 				oAllCount.setValue(oList.getAllCount());
 				oActiveCheckbox.setSelected(oList.getActive());
 				oShowRemoveFacetIconCheckBox.setSelected(oList.getShowRemoveFacetIcon());
 				oGrowingCheckbox.setSelected(oList.getGrowing());
 				oRetainListSequenceCheckBox.setSelected(oList.getRetainListSequence());
-				}
+			}
 
 		});
 		for (var i = 0; i < oFF.getLists().length; i++) {
@@ -430,9 +425,7 @@ sap.ui.define([
 			selected: false,
 			text: "Single Select",
 			select: function(oEvent) {
-
 				var oList = sap.ui.getCore().byId(oListSelect.getSelectedKey());
-				oList.setMultiSelect(!oEvent.getParameter("selected"));
 			}
 		});
 
@@ -442,9 +435,7 @@ sap.ui.define([
 			selected: true,
 			text: "Multi Select",
 			select: function(oEvent) {
-
 				var oList = sap.ui.getCore().byId(oListSelect.getSelectedKey());
-				oList.setMultiSelect(oEvent.getParameter("selected"));
 			}
 		});
 

@@ -70,10 +70,14 @@ sap.ui.define([
 	 * The API has already been designed to be a drop-in replacement but there are some important caveats to consider when switching to the
 	 * standard APIs <code>URLSearchParams</code> / <code>URL</code>:
 	 * <ul>
+	 * <li><code>new URL(input).searchParams</code> validates the given URL according to the WHATWG URL Standard ({@link https://url.spec.whatwg.org}).
+	 *     <code>UriParameters.fromURL(input)</code> only extracts the query string from the given input but does not perform any validation.</li>
 	 * <li>In some edge cases, especially for incomplete/invalid encoding, decoding behaves differently. Decoding in <code>UriParameters</code> is described in the section above.
 	 *     For details about the encoding/decoding of <code>URLSearchParams</code>, see the WHATWG URL Standard ({@link https://url.spec.whatwg.org}).</li>
 	 * <li>The <code>get</code> method's second parameter, <code>bAll</code>, is not available;
 	 *     use the <code>getAll</code> method instead.</li>
+	 * <li>The <code>keys</code> method's return value contains an entry for every occurrence of the key within the query, in the defined order and including duplicates.
+	 *     <code>UriParameters#keys()</code> yields unique key values, even when there are multiple values for the same key.</li>
 	 * <li>The internal <code>mParams</code> property is not available anymore (you should never access internal properties of
 	 *     UI5 classes or objects). With the predecessor of this API, access to <code>mParams</code> was often used
 	 *     to check whether a parameter is defined at all. Using the <code>has</code> method or checking the

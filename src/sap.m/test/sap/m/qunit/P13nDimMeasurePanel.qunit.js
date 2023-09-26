@@ -2,10 +2,8 @@
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
-	"sap/m/P13nDimMeasurePanel",
 	"sap/m/library",
 	"sap/m/P13nItem",
-	"sap/m/P13nDimMeasureItem",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/Core",
 	"sap/base/util/deepExtend",
@@ -13,10 +11,8 @@ sap.ui.define([
 ], function(
 	qutils,
 	createAndAppendDiv,
-	P13nDimMeasurePanel,
 	mobileLibrary,
 	P13nItem,
-	P13nDimMeasureItem,
 	JSONModel,
 	oCore,
 	deepExtend,
@@ -46,7 +42,7 @@ sap.ui.define([
 	QUnit.test("constructor - items: []", function(assert) {
 
 		// system under test
-		var oDimMeasurePanel = new P13nDimMeasurePanel({
+		var oDimMeasurePanel = new undefined/*P13nDimMeasurePanel*/({
 			items: []
 		});
 
@@ -68,7 +64,7 @@ sap.ui.define([
 
 		// system under test
 		var oItemA, oItemB, oItemC;
-		var oDimMeasurePanel = new P13nDimMeasurePanel({
+		var oDimMeasurePanel = new undefined/*P13nDimMeasurePanel*/({
 			items: [
 				oItemC = new P13nItem({
 					columnKey: "keyC",
@@ -111,7 +107,7 @@ sap.ui.define([
 	QUnit.test("constructor - [], addItem", function(assert) {
 
 		// system under test
-		var oDimMeasurePanel = new P13nDimMeasurePanel();
+		var oDimMeasurePanel = new undefined/*P13nDimMeasurePanel*/();
 		var oItemA = new P13nItem({
 			columnKey: "keyA",
 			text: "A"
@@ -156,7 +152,7 @@ sap.ui.define([
 			columnKey: "keyB",
 			text: "B"
 		}), oItemC;
-		var oDimMeasurePanel = new P13nDimMeasurePanel({
+		var oDimMeasurePanel = new undefined/*P13nDimMeasurePanel*/({
 			items: [
 				oItemC = new P13nItem({
 					columnKey: "keyC",
@@ -197,7 +193,7 @@ sap.ui.define([
 
 		// system under test
 		var oItemA, oItemB, oItemC;
-		var oDimMeasurePanel = new P13nDimMeasurePanel({
+		var oDimMeasurePanel = new undefined/*P13nDimMeasurePanel*/({
 			items: [
 				oItemC = new P13nItem({
 					columnKey: "keyC",
@@ -243,7 +239,7 @@ sap.ui.define([
 			columnKey: "keyB",
 			text: "B"
 		}), oItemC;
-		var oDimMeasurePanel = new P13nDimMeasurePanel({
+		var oDimMeasurePanel = new undefined/*P13nDimMeasurePanel*/({
 			items: [
 				oItemC = new P13nItem({
 					columnKey: "keyC",
@@ -283,7 +279,7 @@ sap.ui.define([
 
 		// system under test
 		var oItemA, oItemB, oItemC;
-		var oDimMeasurePanel = new P13nDimMeasurePanel({
+		var oDimMeasurePanel = new undefined/*P13nDimMeasurePanel*/({
 			items: [
 				oItemC = new P13nItem({
 					columnKey: "keyC",
@@ -321,7 +317,7 @@ sap.ui.define([
 	QUnit.test("constructor - items: [aItems], destroyItems", function(assert) {
 
 		// system under test
-		var oDimMeasurePanel = new P13nDimMeasurePanel({
+		var oDimMeasurePanel = new undefined/*P13nDimMeasurePanel*/({
 			items: [
 				new P13nItem({
 					columnKey: "keyC",
@@ -357,7 +353,7 @@ sap.ui.define([
 
 		// system under test
 		var oItemA, oItemB, oItemC;
-		var oDimMeasurePanel = new P13nDimMeasurePanel({
+		var oDimMeasurePanel = new undefined/*P13nDimMeasurePanel*/({
 			items: [
 				oItemC = new P13nItem({
 					columnKey: "keyC",
@@ -371,7 +367,7 @@ sap.ui.define([
 				})
 			],
 			dimMeasureItems: [
-				new P13nDimMeasureItem({
+				new undefined/*P13nDimMeasureItem*/({
 					columnKey: "keyC",
 					index: 1,
 					visible: true
@@ -404,9 +400,9 @@ sap.ui.define([
 
 		// system under test
 		var oItemA, oItemB, oItemC;
-		var oDimMeasurePanel = new P13nDimMeasurePanel({
+		var oDimMeasurePanel = new undefined/*P13nDimMeasurePanel*/({
 			dimMeasureItems: [
-				new P13nDimMeasureItem({
+				new undefined/*P13nDimMeasureItem*/({
 					columnKey: "keyC",
 					visible: true,
 					index: 1
@@ -452,7 +448,7 @@ sap.ui.define([
 		// system under test
 		var oItemA, oItemB, oItemC;
 		var oDimMeasureItemC;
-		var oDimMeasurePanel = new P13nDimMeasurePanel({
+		var oDimMeasurePanel = new undefined/*P13nDimMeasurePanel*/({
 			items: [
 				oItemC = new P13nItem({
 					columnKey: "keyC",
@@ -466,7 +462,7 @@ sap.ui.define([
 				})
 			],
 			dimMeasureItems: [
-				oDimMeasureItemC = new P13nDimMeasureItem({
+				oDimMeasureItemC = new undefined/*P13nDimMeasureItem*/({
 					columnKey: "keyC",
 					index: 1,
 					visible: true
@@ -501,7 +497,7 @@ sap.ui.define([
 	QUnit.test("getOkPayload: â0 -> a0", function(assert) {
 		// system under test
 		var oDimMeasureItemA;
-		var oDimMeasurePanel = new P13nDimMeasurePanel({
+		var oDimMeasurePanel = new undefined/*P13nDimMeasurePanel*/({
 			items: [
 				new P13nItem({
 					columnKey: "keyA",
@@ -509,7 +505,7 @@ sap.ui.define([
 				})
 			],
 			dimMeasureItems: [
-				oDimMeasureItemA = new P13nDimMeasureItem({
+				oDimMeasureItemA = new undefined/*P13nDimMeasureItem*/({
 					columnKey: "keyA",
 					index: 0,
 					visible: true
@@ -549,7 +545,7 @@ sap.ui.define([
 
 	QUnit.test("getOkPayload: a0 -> â0", function(assert) {
 		// system under test
-		var oDimMeasurePanel = new P13nDimMeasurePanel({
+		var oDimMeasurePanel = new undefined/*P13nDimMeasurePanel*/({
 			items: [
 				new P13nItem({
 					columnKey: "keyA",
@@ -559,7 +555,7 @@ sap.ui.define([
 			dimMeasureItems: [],
 			changeDimMeasureItems: function(oEvent) {
 				// At least enough for this test!
-				oDimMeasurePanel.addDimMeasureItem(new P13nDimMeasureItem({
+				oDimMeasurePanel.addDimMeasureItem(new undefined/*P13nDimMeasureItem*/({
 					columnKey: oEvent.getParameter("items")[0].columnKey,
 					visible: oEvent.getParameter("items")[0].visible,
 					index: oEvent.getParameter("items")[0].index
@@ -593,7 +589,7 @@ sap.ui.define([
 
 	QUnit.test("getOkPayload: a0 -> a1", function(assert) {
 		// system under test
-		var oDimMeasurePanel = new P13nDimMeasurePanel({
+		var oDimMeasurePanel = new undefined/*P13nDimMeasurePanel*/({
 			items: [
 				new P13nItem({
 					columnKey: "keyA",
@@ -606,12 +602,12 @@ sap.ui.define([
 			dimMeasureItems: [],
 			changeDimMeasureItems: function(oEvent) {
 				// At least enough for this test!
-				oDimMeasurePanel.addDimMeasureItem(new P13nDimMeasureItem({
+				oDimMeasurePanel.addDimMeasureItem(new undefined/*P13nDimMeasureItem*/({
 					columnKey: oEvent.getParameter("items")[0].columnKey,
 					visible: oEvent.getParameter("items")[0].visible,
 					index: oEvent.getParameter("items")[0].index
 				}));
-				oDimMeasurePanel.addDimMeasureItem(new P13nDimMeasureItem({
+				oDimMeasurePanel.addDimMeasureItem(new undefined/*P13nDimMeasureItem*/({
 					columnKey: oEvent.getParameter("items")[1].columnKey,
 					visible: oEvent.getParameter("items")[1].visible,
 					index: oEvent.getParameter("items")[1].index
@@ -639,7 +635,7 @@ sap.ui.define([
 
 	QUnit.test("getOkPayload: a0 -> â1", function(assert) {
 		// system under test
-		var oDimMeasurePanel = new P13nDimMeasurePanel({
+		var oDimMeasurePanel = new undefined/*P13nDimMeasurePanel*/({
 			items: [
 				new P13nItem({
 					columnKey: "keyA",
@@ -654,7 +650,7 @@ sap.ui.define([
 				// At least enough for this test!
 				this.destroyDimMeasureItems();
 				oEvent.getParameter("items").forEach(function(oMItem) {
-					this.addDimMeasureItem(new P13nDimMeasureItem({
+					this.addDimMeasureItem(new undefined/*P13nDimMeasureItem*/({
 						columnKey: oMItem.columnKey,
 						visible: oMItem.visible,
 						index: oMItem.index
@@ -714,7 +710,7 @@ sap.ui.define([
 
 	QUnit.test("getOkPayload: â0 -> â1", function(assert) {
 		// system under test
-		var oDimMeasurePanel = new P13nDimMeasurePanel({
+		var oDimMeasurePanel = new undefined/*P13nDimMeasurePanel*/({
 			items: [
 				new P13nItem({
 					columnKey: "keyA",
@@ -725,7 +721,7 @@ sap.ui.define([
 				})
 			],
 			dimMeasureItems: [
-				new P13nDimMeasureItem({
+				new undefined/*P13nDimMeasureItem*/({
 					columnKey: "keyA",
 					index: 0,
 					visible: true
@@ -735,7 +731,7 @@ sap.ui.define([
 				// At least enough for this test!
 				this.destroyDimMeasureItems();
 				oEvent.getParameter("items").forEach(function(oMItem) {
-					this.addDimMeasureItem(new P13nDimMeasureItem({
+					this.addDimMeasureItem(new undefined/*P13nDimMeasureItem*/({
 						columnKey: oMItem.columnKey,
 						visible: oMItem.visible,
 						index: oMItem.index
@@ -770,7 +766,7 @@ sap.ui.define([
 
 	QUnit.test("getOkPayload: â0 -> a1", function(assert) {
 		// system under test
-		var oDimMeasurePanel = new P13nDimMeasurePanel({
+		var oDimMeasurePanel = new undefined/*P13nDimMeasurePanel*/({
 			items: [
 				new P13nItem({
 					columnKey: "keyA",
@@ -781,7 +777,7 @@ sap.ui.define([
 				})
 			],
 			dimMeasureItems: [
-				new P13nDimMeasureItem({
+				new undefined/*P13nDimMeasureItem*/({
 					columnKey: "keyA",
 					index: 0,
 					visible: true
@@ -791,7 +787,7 @@ sap.ui.define([
 				// At least enough for this test!
 				this.destroyDimMeasureItems();
 				oEvent.getParameter("items").forEach(function(oMItem) {
-					this.addDimMeasureItem(new P13nDimMeasureItem({
+					this.addDimMeasureItem(new undefined/*P13nDimMeasureItem*/({
 						columnKey: oMItem.columnKey,
 						visible: oMItem.visible,
 						index: oMItem.index
@@ -827,7 +823,7 @@ sap.ui.define([
 
 	QUnit.module("sap.m.P13nDimMeasurePanel: FIX", {
 		beforeEach: function() {
-			this.oPanel = new P13nDimMeasurePanel({
+			this.oPanel = new undefined/*P13nDimMeasurePanel*/({
 				items: {
 					path: "/items",
 					template: new P13nItem({
@@ -838,7 +834,7 @@ sap.ui.define([
 				},
 				dimMeasureItems: {
 					path: "/dimMeasureItems",
-					template: new P13nDimMeasureItem({
+					template: new undefined/*P13nDimMeasureItem*/({
 						columnKey: "{columnKey}",
 						index: "{index}",
 						visible: "{visible}"
@@ -991,7 +987,7 @@ sap.ui.define([
 
 	QUnit.module("sap.m.P13nDimMeasurePanel: FIX 0020751294 0000593415 2018", {
 		beforeEach: function() {
-			this.oPanel = new P13nDimMeasurePanel({
+			this.oPanel = new undefined/*P13nDimMeasurePanel*/({
 				items: {
 					path: "/items",
 					template: new P13nItem({
@@ -1002,7 +998,7 @@ sap.ui.define([
 				},
 				dimMeasureItems: {
 					path: "/dimMeasureItems",
-					template: new P13nDimMeasureItem({
+					template: new undefined/*P13nDimMeasureItem*/({
 						columnKey: "{columnKey}",
 						index: "{index}",
 						visible: "{visible}"

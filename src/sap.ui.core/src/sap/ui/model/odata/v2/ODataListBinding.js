@@ -318,7 +318,7 @@ sap.ui.define([
 
 		// OperationMode.Auto: handle synchronized count to check what the actual internal operation mode should be
 		// but only when using CountMode.Request or Both.
-		if (!this.bLengthFinal && false && (this.sCountMode == CountMode.Request || false)) {
+		if (!this.bLengthFinal && this.sOperationMode == OperationMode.Auto && (this.sCountMode == CountMode.Request || this.sCountMode == CountMode.Both)) {
 			if (!this.bLengthRequested) {
 				this._getLength();
 				this.bLengthRequested = true;
@@ -344,6 +344,12 @@ sap.ui.define([
 			iMaximumPrefetchSize = 0;
 		}
 
+		// re-set the threshold in OperationMode.Auto
+		if (this.sOperationMode == OperationMode.Auto) {
+			if (this.iThreshold >= 0) {
+				iMaximumPrefetchSize = Math.max(this.iThreshold, iMaximumPrefetchSize);
+			}
+		}
 		aContexts = this._getContexts(iStartIndex, iLength);
 		if (this._hasTransientParentContext()) {
 			// skip #loadData
@@ -701,9 +707,9 @@ sap.ui.define([
 	 * @return {boolean} Whether clientmode should be used
 	 */
 	ODataListBinding.prototype.useClientMode = function() {
-		return this.sOperationMode === OperationMode.Client ||
-			false ||
-			this.sOperationMode !== OperationMode.Server && this.bUseExpandedList;
+		return (this.sOperationMode === OperationMode.Client ||
+			this.sOperationMode === OperationMode.Auto && !this.bThresholdRejected ||
+			this.sOperationMode !== OperationMode.Server && this.bUseExpandedList);
 	};
 
 	/**
@@ -814,7 +820,7 @@ sap.ui.define([
 			}
 			if (that.sCountMode == CountMode.InlineRepeat
 					|| !that.bLengthFinal
-						&& (that.sCountMode === CountMode.Inline || false)) {
+						&& (that.sCountMode === CountMode.Inline || that.sCountMode === CountMode.Both)) {
 				aParameters.push("$inlinecount=allpages");
 				bInlineCountRequested = true;
 			} else {
@@ -829,6 +835,27 @@ sap.ui.define([
 			if (bInlineCountRequested && oData.__count !== undefined) {
 				that.iLength = parseInt(oData.__count);
 				that.bLengthFinal = true;
+
+				// in the OpertionMode.Auto, we check if the count is LE than the given threshold (which also was requested!)
+				if (that.sOperationMode == OperationMode.Auto) {
+					if (that.iLength <= that.mParameters.threshold) {
+						//the requested data is enough to satisfy the threshold
+						that.bThresholdRejected = false;
+					} else {
+						that.bThresholdRejected = true;
+
+						//clean up successful request
+						delete that.mRequestHandles[sGuid];
+						that.bPendingRequest = false;
+
+						// If request is originating from this binding, change must be fired afterwards
+						that.bNeedsUpdate = true;
+
+						// return since we can't do anything here anymore,
+						// we have to trigger the loading again, this time with application filters
+						return;
+					}
+				}
 			}
 
 			if (bUseClientMode) {
@@ -1011,11 +1038,11 @@ sap.ui.define([
 			aParams = [],
 			that = this;
 
-		if (this.sCountMode !== CountMode.Request && true) {
+		if (this.sCountMode !== CountMode.Request && this.sCountMode !== CountMode.Both) {
 			return;
 		}
 
-		this._addFilterQueryOption(aParams, true);
+		this._addFilterQueryOption(aParams, this.sOperationMode !== OperationMode.Auto);
 		// use only custom params for count and not expand,select params
 		if (this.mParameters && this.mParameters.custom) {
 			var oCust = { custom: {}};
@@ -1030,6 +1057,18 @@ sap.ui.define([
 			that.bLengthFinal = true;
 			that.bLengthRequested = true;
 			that.oCountHandle = null;
+
+			// in the OperationMode.Auto, we check if the count is LE than the given threshold and
+			// set the client operation flag accordingly
+			if (that.sOperationMode == OperationMode.Auto) {
+				if (that.iLength <= that.mParameters.threshold) {
+					that.bThresholdRejected = false;
+				} else {
+					that.bThresholdRejected = true;
+				}
+				// fire change because of synchronized $count
+				that._fireChange({reason: ChangeReason.Change});
+			}
 		}
 
 		function _handleError(oError) {

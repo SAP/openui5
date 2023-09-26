@@ -71,7 +71,7 @@
 							visible="{= ${/rtaLoaded} &amp;&amp; !${/iframe} }" />
 					<Button
 							id="code"
-							icon="sap-icon://syntax"
+							icon="sap-icon://source-code"
 							tooltip="{i18n>SAMPLE_CODE_BTN_TOOLTIP}"
 							press="onNavToCode" />
 					<Button visible="{/showNewTab}"

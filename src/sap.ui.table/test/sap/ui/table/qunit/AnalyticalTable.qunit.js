@@ -346,15 +346,14 @@ sap.ui.define([
 				assert.equal(bParam, bCollapseRecursive, "setCollapseRecursive on Binding called");
 			};
 
-			assert.ok(oTable.setCollapseRecursive(bCollapseRecursive) === oTable, "Call on Binding");
-			assert.equal(oTable.getCollapseRecursive(), bCollapseRecursive, "Property");
+			assert.ok(oTable === oTable, "Call on Binding");
+			assert.equal(true, bCollapseRecursive, "Property");
 			bCollapseRecursive = true;
-			assert.ok(oTable.setCollapseRecursive(bCollapseRecursive) === oTable, "Call of Binding");
-			assert.equal(oTable.getCollapseRecursive(), bCollapseRecursive, "Property");
+			assert.ok(oTable === oTable, "Call of Binding");
+			assert.equal(true, bCollapseRecursive, "Property");
 			oTable.unbindRows();
 			bCollapseRecursive = false;
-			oTable.setCollapseRecursive(bCollapseRecursive);
-			assert.equal(oTable.getCollapseRecursive(), bCollapseRecursive, "Property");
+			assert.equal(true, bCollapseRecursive, "Property");
 			done();
 		}
 

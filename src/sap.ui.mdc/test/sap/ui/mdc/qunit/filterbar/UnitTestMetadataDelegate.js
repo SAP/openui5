@@ -4,7 +4,6 @@ sap.ui.define([
 	"use strict";
 
 	const UnitTestFilterBarDelegate = Object.assign({}, FilterBarDelegate);
-	UnitTestFilterBarDelegate.apiVersion = 2;//CLEANUP_DELEGATE
 
 	UnitTestFilterBarDelegate.fetchProperties = function (oFilterBar) {
 		return Promise.resolve([{name: "key1", label:"key1", dataType:"Edm.String"}, {name: "key2", label:"Key2",dataType:"Edm.String"}]);

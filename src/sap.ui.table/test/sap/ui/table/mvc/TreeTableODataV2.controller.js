@@ -540,20 +540,6 @@ sap.ui.define([
 			oTable.setEnableBusyIndicator(true);
 			oTable.setBusy(true);
 
-			// send collected change data to the back-end
-			oBinding.submitChanges({
-				success: function(oData) {
-					// remove busy state of table
-					oTable.setBusy(false);
-					// re-setup and clear the clipboard
-					this.setupCutAndPaste();
-
-					this.getView().getModel().setProperty("/pendingChanges", false);
-				}.bind(this),
-				error: function(oEvent) {
-					oTable.setBusy(false);
-				}
-			});
 			// scroll to top after submitting
 			oTable.setFirstVisibleRow(0);
 		},

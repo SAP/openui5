@@ -399,6 +399,8 @@ sap.ui.define([
 					fnRejectMetadata = reject;
 				});
 
+			oModel.annotationsLoaded().catch(() => {/* avoid Uncaught (in promise) */});
+
 			// Metadata must be loaded before annotations
 			oModel.attachMetadataLoaded(function() {
 				bMetadataLoaded = true;
@@ -458,6 +460,7 @@ sap.ui.define([
 					oModel.destroy();
 				});
 			} else if (!bServiceValid){
+				oAnnotationsPromise.catch(() => {/* avoid Uncaught (in promise) */});
 				return oMetadataPromise.then(function () {
 					assert.ok(false);
 				}, function () {
@@ -528,6 +531,8 @@ sap.ui.define([
 					fnResolveMetadata = resolve;
 					fnRejectMetadata = reject;
 				});
+
+			oModel.annotationsLoaded().catch(() => {/* avoid Uncaught (in promise) */});
 
 			// Use internal metadata loaded event, because in case of joined loading, the real one
 			// does not fire until Annotations are there

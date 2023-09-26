@@ -2,8 +2,8 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/m/p13n/Engine", "sap/base/Log", "sap/ui/mdc/flexibility/Util", "sap/ui/fl/changeHandler/Base", "sap/ui/fl/changeHandler/condenser/Classification", "sap/ui/mdc/util/mapVersions"
-], function(Engine, Log, Util, FLChangeHandlerBase, CondenserClassification, mapVersions) {
+	"sap/m/p13n/Engine", "sap/base/Log", "sap/ui/mdc/flexibility/Util", "sap/ui/fl/changeHandler/Base", "sap/ui/fl/changeHandler/condenser/Classification"
+], function(Engine, Log, Util, FLChangeHandlerBase, CondenserClassification) {
 	"use strict";
 
 	const ItemBaseFlex = {
@@ -123,7 +123,6 @@ sap.ui.define([
 				], fResolveLoad, fRejectLoad);
 			})
 			.then(function(Delegate){
-				mapVersions(Delegate);
 				return Delegate;
 			});
 		},

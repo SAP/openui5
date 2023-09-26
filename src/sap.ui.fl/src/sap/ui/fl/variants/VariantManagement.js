@@ -162,23 +162,6 @@ sap.ui.define([
 					type: "sap.ui.core.CSSSize",
 					group: "Dimension",
 					defaultValue: "100%"
-				},
-
-				/**
-				 * Renders the name of the variant as a text.
-				 * The name of the variant is usually rendered as {@link sap.m.Title}
-				 * but there are use cases - related to accessibility requirements - where the
-				 * rendering should be done using {@link sap.m.Text} instead.
-				 * <b>Note:</b>:<br>
-				 * If the name of the variant is rendered as <code>sap.m.Text</code>, all the <code>sap.m.Title</code>-
-				 * specific information (<code>headerLevel</code> and <code>titleStyle</code>) is ignored.
-				 *
-				 * @since 1.118
-				 */
-				showAsText: {
-					type: "boolean",
-					group: "Misc",
-					defaultValue: false
 				}
 			},
 			events: {
@@ -673,10 +656,26 @@ sap.ui.define([
 		return this;
 	};
 
+	/**
+ 	 * Special handling of the rendering of this control.
+	 * @param {boolean} bValue defines the intended rendering
+	 * @returns {sap.ui.fl.variants.VariantManagement} the current instance
+	 * @private
+	 * @restricted sap.ui.mdc
+ 	 */
 	VariantManagement.prototype.setShowAsText = function(bValue) {
-		this.setProperty("showAsText", bValue);
 		this._oVM.setShowAsText(bValue);
 		return this;
+	};
+
+	/**
+ 	 * Special handling of the rendering of this control.
+	 * @returns {boolean} the current intend
+	 * @private
+	 * @restricted sap.ui.mdc
+ 	 */
+	VariantManagement.prototype.getShowAsText = function() {
+		return this._oVM.getShowAsText();
 	};
 
 	VariantManagement.prototype.setEditable = function(bValue) {

@@ -1004,13 +1004,16 @@ sap.ui.define([
 
 	UploadSet.prototype.getUploadButtonForIllustratedMessage = function () {
 		if (!this._oUploadButton) {
+			var oAccIds = this.getAggregation("_illustratedMessage").getAccessibilityReferences();
+			var sTitleId = oAccIds.title;
+			var sDescriptionId = oAccIds.description;
 			this._oUploadButton = new Button({
 				id: this.getId() + "-uploadButton",
 				type: MobileLibrary.ButtonType.Standard,
 				enabled: this.getUploadEnabled(),
 				visible: !this.getUploadButtonInvisible(),
 				text: this._oRb.getText("UPLOADCOLLECTION_UPLOAD"),
-				ariaDescribedBy: this.getAggregation("_illustratedMessage").getId(),
+				ariaDescribedBy: [sTitleId,sDescriptionId],
 				press: function () {
 					var FileUploader = this.getDefaultFileUploader();
 					FileUploader.$().find("input[type=file]").trigger("click");

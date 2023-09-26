@@ -20,7 +20,6 @@ sap.ui.define([
 	"use strict";
 
 	var FilterbarInOutValueHelpDelegate = Object.assign({}, BaseValueHelpDelegate);
-	FilterbarInOutValueHelpDelegate.apiVersion = 2;//CLEANUP_DELEGATE
 
 	FilterbarInOutValueHelpDelegate.getFilterConditions = function (oValueHelp, oContent, oConfig) {
 		var oPayload = oValueHelp.getPayload();

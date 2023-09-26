@@ -1501,7 +1501,7 @@ sap.ui.define([
 		assert.strictEqual($Elem.attr("aria-rowcount"), "9", "aria-rowcount");
 		assert.strictEqual($Elem.attr("aria-colcount"), "6", "aria-colcount");
 		assert.strictEqual($Elem.attr("aria-multiselectable"), "true", "aria-multiselectable");
-		assert.strictEqual($Elem.attr("aria-labelledby"), oTable.getAriaLabelledBy() + " " + null.getId(), "aria-labelledby");
+		assert.strictEqual($Elem.attr("aria-labelledby"), oTable.getAriaLabelledBy() + " " + oTable.getTitle().getId(), "aria-labelledby");
 
 		oTable.attachEventOnce("rowsUpdated", function() {
 			assert.strictEqual($Elem.attr("aria-rowcount"), "4", "aria-rowcount after filter is applied");
@@ -1513,7 +1513,7 @@ sap.ui.define([
 			assert.strictEqual($Elem.attr("aria-colcount"), "7", "aria-colcount");
 			oTable.removeAriaLabelledBy(oTable.getAriaLabelledBy()[0]);
 			oCore.applyChanges();
-			assert.strictEqual($Elem.attr("aria-labelledby"), null.getId(), "aria-labelledby when ariaLabelledBy association is empty array");
+			assert.strictEqual($Elem.attr("aria-labelledby"), oTable.getTitle().getId(), "aria-labelledby when ariaLabelledBy association is empty array");
 			done();
 		});
 
@@ -1744,7 +1744,7 @@ sap.ui.define([
 		});
 		var $Elem = jQuery(document.getElementById(sTableId + "-overlay"));
 		assert.strictEqual($Elem.attr("aria-labelledby"),
-			oTable.getAriaLabelledBy() + " " + null.getId() + " " + sTableId + "-ariainvalid", "aria-labelledby");
+			oTable.getAriaLabelledBy() + " " + oTable.getTitle().getId() + " " + sTableId + "-ariainvalid", "aria-labelledby");
 		oTable.invalidate();
 		oCore.applyChanges();
 		$OverlayCoveredElements = oTable.$().find("[data-sap-ui-table-acc-covered*='overlay']");
@@ -1761,7 +1761,7 @@ sap.ui.define([
 		oCore.applyChanges();
 		$Elem = jQuery(document.getElementById(sTableId + "-overlay"));
 		assert.strictEqual($Elem.attr("aria-labelledby"),
-			null.getId() + " " + sTableId + "-ariainvalid", "aria-labelledby when ariaLabelledBy association is empty array");
+			oTable.getTitle().getId() + " " + sTableId + "-ariainvalid", "aria-labelledby when ariaLabelledBy association is empty array");
 	});
 
 	QUnit.test("ARIA for NoData", function(assert) {

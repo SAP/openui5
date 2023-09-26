@@ -7,7 +7,6 @@ sap.ui.define([
 	"use strict";
 
 	const SampleLinkDelegate = Object.assign({}, LinkDelegate);
-	SampleLinkDelegate.apiVersion = 2;//CLEANUP_DELEGATE
 
 	SampleLinkDelegate.modifyLinkItems = function(oLink, oBindingContext, aLinkItems) {
 		const oPayload = oLink.getPayload();

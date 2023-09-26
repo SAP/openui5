@@ -21,7 +21,6 @@ sap.ui.define([
 	"use strict";
 
 	const FilterBarTestDelegate = Object.assign({}, FilterBarDelegate);
-	FilterBarTestDelegate.apiVersion = 2;//CLEANUP_DELEGATE
 
 	FilterBarTestDelegate.fetchProperties = function (oFilterBar) {
 		const aProperties = [];

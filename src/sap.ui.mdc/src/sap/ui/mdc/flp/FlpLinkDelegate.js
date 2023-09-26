@@ -25,7 +25,6 @@ sap.ui.define([
 	 * @alias sap.ui.mdc.flp.FlpLinkDelegate
 	 */
 	const FlpLinkDelegate = Object.assign({}, LinkDelegate);
-	FlpLinkDelegate.apiVersion = 2;//CLEANUP_DELEGATE
 
 	/**
 	 * Fetches the relevant {@link sap.ui.mdc.link.LinkItem} for the Link and returns them.

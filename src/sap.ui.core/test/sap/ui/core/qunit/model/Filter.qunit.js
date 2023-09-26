@@ -753,7 +753,7 @@ sap.ui.define([
 	QUnit.test("Static never fulfilled filter", function(assert) {
 		assert.ok(Filter.NONE instanceof Filter);
 		assert.strictEqual(Filter.NONE.getPath(), "/");
-		assert.strictEqual(typeof Filter.NONE.getOperator(), "function");
-		assert.strictEqual(Filter.NONE.getOperator()(), false);
+		assert.strictEqual(typeof Filter.NONE.getTest(), "function");
+		assert.strictEqual(Filter.NONE.getTest()(), false);
 	});
 });

@@ -8,12 +8,13 @@ sap.ui.define([
 	'sap/ui/core/Element',
 	'sap/ui/layout/library',
 	'./FormLayoutRenderer',
+	'./FormHelper',
 	'sap/ui/core/theming/Parameters',
 	'sap/ui/thirdparty/jquery',
 	"sap/ui/core/Configuration",
 	// jQuery custom selectors ":sapFocusable"
 	'sap/ui/dom/jquery/Selectors'
-], function(Control, Element, library, FormLayoutRenderer, Parameters, jQuery, Configuration) {
+], function(Control, Element, library, FormLayoutRenderer, FormHelper, Parameters, jQuery, Configuration) {
 	"use strict";
 
 	// shortcut for sap.ui.layout.BackgroundDesign
@@ -64,6 +65,8 @@ sap.ui.define([
 
 	FormLayout.prototype.init = function(){
 
+		this._oInitPromise = FormHelper.init();
+
 		this._sFormTitleSize = "H4"; // to have default as Theme parameter could be loaded async.
 		this._sFormSubTitleSize = "H5";
 
@@ -78,7 +81,7 @@ sap.ui.define([
 
 	FormLayout.prototype.contentOnAfterRendering = function(oFormElement, oControl){
 
-		if (library.form.FormHelper.bArrowKeySupport) {
+		if (FormHelper.isArrowKeySupported()) { // no async call needed here
 			jQuery(oControl.getFocusDomRef()).data("sap.InNavArea", true);
 		}
 
@@ -147,7 +150,7 @@ sap.ui.define([
 
 	FormLayout.prototype.onsapright = function(oEvent){
 
-		if (library.form.FormHelper.bArrowKeySupport) {
+		if (FormHelper.isArrowKeySupported()) { // no async call needed here
 			var bRtl = Configuration.getRTL();
 
 			if (!bRtl) {
@@ -161,7 +164,7 @@ sap.ui.define([
 
 	FormLayout.prototype.onsapleft = function(oEvent){
 
-		if (library.form.FormHelper.bArrowKeySupport) {
+		if (FormHelper.isArrowKeySupported()) { // no async call needed here
 			var bRtl = Configuration.getRTL();
 
 			if (!bRtl) {
@@ -175,7 +178,7 @@ sap.ui.define([
 
 	FormLayout.prototype.onsapdown = function(oEvent){
 
-		if (library.form.FormHelper.bArrowKeySupport) {
+		if (FormHelper.isArrowKeySupported()) { // no async call needed here
 			var oControl = oEvent.srcControl;
 			var oNewDomRef;
 			var oRoot = this.findElement(oControl);
@@ -198,7 +201,7 @@ sap.ui.define([
 
 	FormLayout.prototype.onsapup = function(oEvent){
 
-		if (library.form.FormHelper.bArrowKeySupport) {
+		if (FormHelper.isArrowKeySupported()) { // no async call needed here
 			var oControl = oEvent.srcControl;
 			var iCurrentIndex = 0;
 			var oNewDomRef;
@@ -224,7 +227,7 @@ sap.ui.define([
 
 	FormLayout.prototype.onsaphome = function(oEvent){
 
-		if (library.form.FormHelper.bArrowKeySupport) {
+		if (FormHelper.isArrowKeySupported()) { // no async call needed here
 			var oControl = oEvent.srcControl;
 			var iCurrentIndex = 0;
 			var oNewDomRef;
@@ -247,7 +250,7 @@ sap.ui.define([
 
 	FormLayout.prototype.onsaptop = function(oEvent){
 
-		if (library.form.FormHelper.bArrowKeySupport) {
+		if (FormHelper.isArrowKeySupported()) { // no async call needed here
 			var oControl = oEvent.srcControl;
 			var oRoot = this.findElement(oControl);
 			var oElement = oRoot.element;
@@ -274,7 +277,7 @@ sap.ui.define([
 
 	FormLayout.prototype.onsapend = function(oEvent){
 
-		if (library.form.FormHelper.bArrowKeySupport) {
+		if (FormHelper.isArrowKeySupported()) { // no async call needed here
 			var oControl = oEvent.srcControl;
 			var iCurrentIndex = 0;
 			var oNewDomRef;
@@ -296,7 +299,7 @@ sap.ui.define([
 
 	FormLayout.prototype.onsapbottom = function(oEvent){
 
-		if (library.form.FormHelper.bArrowKeySupport) {
+		if (FormHelper.isArrowKeySupported()) { // no async call needed here
 			var oControl = oEvent.srcControl;
 			var oRoot = this.findElement(oControl);
 			var oElement = oRoot.element;

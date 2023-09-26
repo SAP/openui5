@@ -295,7 +295,6 @@ sap.ui.define([
 		  "sap.m.OverflowToolbarToggleButton",
 		  "sap.m.OverflowToolbarMenuButton",
 		  "sap.m.P13nSelectionPanel",
-		  "sap.m.P13nDimMeasurePanel",
 		  "sap.m.P13nConditionPanel",
 		  "sap.m.P13nFilterPanel",
 		  "sap.m.P13nPanel",
@@ -412,10 +411,6 @@ sap.ui.define([
 		  "sap.m.P13nItem",
 		  "sap.m.PlanningCalendarRow",
 		  "sap.m.PlanningCalendarView",
-		  "sap.m.P13nColumnsItem",
-		  "sap.m.P13nDimMeasureItem",
-		  "sap.m.P13nGroupItem",
-		  "sap.m.P13nSortItem",
 		  "sap.m.QuickViewGroup",
 		  "sap.m.QuickViewGroupElement",
 		  "sap.m.ResponsiveScale",
@@ -5708,90 +5703,6 @@ sap.ui.define([
 		 };
 		 return oInputODataSuggestProvider;
 	 }());
-
-	 // implement Form helper factory with m controls
-	 // possible is set before layout lib is loaded.
-	 ObjectPath.set("sap.ui.layout.form.FormHelper", {
-		 Label: undefined,
-		 Button: undefined,
-		 Text: undefined,
-		 init: function() {
-			 // normally this basic controls should be always loaded
-			 this.Label = sap.ui.require("sap/m/Label");
-			 this.Text = sap.ui.require("sap/m/Text");
-			 this.Button = sap.ui.require("sap/m/Button");
-
-			 if (!this.Label || !this.Text || !this.Button) {
-				 if (!this.oInitPromise) {
-					 this.oInitPromise = new Promise(function(fResolve, fReject) {
-						 sap.ui.require(["sap/m/Label", "sap/m/Text", "sap/m/Button"], function(Label, Text, Button) {
-							 this.Label = Label;
-							 this.Text = Text;
-							 this.Button = Button;
-							 fResolve(true);
-						 }.bind(this));
-					 }.bind(this));
-				 }
-				 return this.oInitPromise;
-			 } else if (this.oInitPromise) {
-				 delete this.oInitPromise; // not longer needed
-			 }
-			 return null;
-		 },
-		 createLabel: function(sText, sId){
-			 return new this.Label(sId, {text: sText});
-		 },
-		 createButton: function(sId, fnPressFunction, oListener){
-			 var oButton = new this.Button(sId, {type: thisLib.ButtonType.Transparent});
-			 oButton.attachEvent("press", fnPressFunction, oListener); // attach event this way to have the right this-reference in handler
-			 return oButton;
-		 },
-		 setButtonContent: function(oButton, sText, sTooltip, sIcon, sIconHovered){
-			 oButton.setText(sText);
-			 oButton.setTooltip(sTooltip);
-			 oButton.setIcon(sIcon);
-			 oButton.setActiveIcon(sIconHovered);
-		 },
-		 addFormClass: function(){ return "sapUiFormM"; },
-		 setToolbar: function(oToolbar){
-			 var oOldToolbar = this.getToolbar();
-			 if (oOldToolbar && oOldToolbar.setDesign) {
-				 // check for setDesign because we don't know what kind of custom toolbars might be used.
-				 oOldToolbar.setDesign(oOldToolbar.getDesign(), true);
-			 }
-			 if (oToolbar && oToolbar.setDesign) {
-				 oToolbar.setDesign(thisLib.ToolbarDesign.Transparent, true);
-			 }
-			 return oToolbar;
-		 },
-		 getToolbarTitle: function(oToolbar) {
-			 // determine Title to point aria-label on this. As Fallback use the whole Toolbar
-			 if (oToolbar) {
-				 var aContent = oToolbar.getContent();
-				 for (var i = 0; i < aContent.length; i++) {
-					 var oContent = aContent[i];
-					 if (oContent.isA("sap.m.Title")) {
-						 return oContent.getId();
-					 }
-				 }
-				 return oToolbar.getId(); // fallback
-			 }
-		 },
-		 createDelimiter: function(sDelimiter, sId){
-			 return new this.Text(sId, {text: sDelimiter, textAlign: CoreLibrary.TextAlign.Center});
-		 },
-		 createSemanticDisplayControl: function(sText, sId){
-			 return new this.Text(sId, {text: sText});
-		 },
-		 updateDelimiter: function(oText, sDelimiter){
-			 oText.setText(sDelimiter);
-		 },
-		 updateSemanticDisplayControl: function(oText, sText){
-			 oText.setText(sText);
-		 },
-		 bArrowKeySupport: false, /* disables the keyboard support for arrow keys */
-		 bFinal: true
-	 });
 
 	 //implement FileUploader helper factory with m controls
 	 ObjectPath.set("sap.ui.unified.FileUploaderHelper", {

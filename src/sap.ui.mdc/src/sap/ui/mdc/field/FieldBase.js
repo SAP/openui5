@@ -2509,7 +2509,7 @@ sap.ui.define([
 									} else {
 										_setShowValueStateMessage.call(this, false);
 									}
-									_setAriaAttributes.call(this, true);
+									_setAriaAttributes.call(this, bIsFHOpen); // change open state for aria only if really opened or closed (_handleFieldHelpOpened/_handleFieldHelpAfterClose)
 									delete this._vLiveChangeValue;
 								}
 							}.bind(this);

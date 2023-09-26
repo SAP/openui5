@@ -172,7 +172,6 @@ sap.ui.define([
 			FilterBarDelegate.fetchProperties = fetchProperties;
 			FilterBarDelegate.addCondition = addCondition;
 			FilterBarDelegate.addItem = addItem;
-			FilterBarDelegate.apiVersion = 2;//CLEANUP_DELEGATE
 		},
 		beforeEach: function() {
 			const sFilterBarView = '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:mdc="sap.ui.mdc"><mdc:FilterBar id="myFilterBar" p13nMode="Value"><mdc:filterItems><mdc:FilterField id="myFilterBar--field1" conditions="{$filters>/conditions/Category}" propertyKey="Category" maxConditions="1" dataType="Edm.String"/><mdc:FilterField id="myFilterBar--field2" conditions="{$filters>/conditions/Name}" propertyKey="Name" maxConditions="1" dataType="Edm.String"/><mdc:FilterField id="myFilterBar--field3" conditions="{$filters>/conditions/ProductID}" propertyKey="ProductID" maxConditions="1" dataType="Edm.String"/></mdc:filterItems></mdc:FilterBar></mvc:View>';
@@ -191,7 +190,6 @@ sap.ui.define([
 			FilterBarFlexHandler.fetchProperties = this._fnFetchPropertiers;
 			FilterBarFlexHandler.addCondition = this._fnAddCondition;
 			FilterBarFlexHandler.addItem = this._fnAddItem;
-			delete FilterBarDelegate.apiVersion;//CLEANUP_DELEGATE
 			this._fnFetchPropertiers = null;
 			this._fnAddCondition = null;
 			this._fnAddItem = null;

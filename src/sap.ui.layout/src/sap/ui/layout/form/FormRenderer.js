@@ -3,9 +3,9 @@
  */
 
 sap.ui.define([
-	'sap/ui/layout/library',
-	"sap/base/Log"
-	], function(library, Log) {
+	'./FormHelper',
+	'sap/base/Log'
+	], function(FormHelper, Log) {
 	"use strict";
 
 
@@ -33,7 +33,7 @@ sap.ui.define([
 			.class("sapUiFormLblColon") // to always have the ":" at the Labels
 			.attr("data-sap-ui-customfastnavgroup", "true");
 
-		var sClass = library.form.FormHelper.addFormClass();
+		var sClass = FormHelper.addFormClass(); // FormHelper must already be initialized by Form
 		if (sClass) {
 			rm.class(sClass);
 		}
@@ -57,7 +57,7 @@ sap.ui.define([
 		if (oToolbar) {
 			if (!oForm.getAriaLabelledBy() || oForm.getAriaLabelledBy().length == 0) {
 				// no aria-label -> use Title of Toolbar
-				var sToolbarTitleID = library.form.FormHelper.getToolbarTitle(oToolbar);
+				var sToolbarTitleID = FormHelper.getToolbarTitle(oToolbar); // FormHelper must already be initialized by Form
 				mAriaProps["labelledby"] = sToolbarTitleID;
 			}
 		} else if (oTitle) {

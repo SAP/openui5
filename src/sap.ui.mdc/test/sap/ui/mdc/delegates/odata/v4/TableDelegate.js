@@ -34,7 +34,6 @@ sap.ui.define([
 	 * Test delegate for OData V4.
 	 */
 	var TestTableDelegate = Object.assign({}, TableDelegate);
-	TestTableDelegate.apiVersion = 2;//CLEANUP_DELEGATE
 
 	TestTableDelegate.addItem = function(oTable, sPropertyName, mPropertyBag) {
 		return TableDelegateUtils.createColumn(oTable, sPropertyName, function(oTable, oProperty) {

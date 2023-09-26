@@ -24,7 +24,6 @@ sap.ui.define([
 	var ListMode = library.ListMode;
 
 	var ValueHelpDelegate = Object.assign({}, MDCValueHelpDelegate);
-	ValueHelpDelegate.apiVersion = 2;//CLEANUP_DELEGATE
 
 	ValueHelpDelegate.retrieveContent = function(oValueHelp, oContainer, sContentId) {
 

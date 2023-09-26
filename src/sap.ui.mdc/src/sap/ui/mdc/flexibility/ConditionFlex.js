@@ -6,9 +6,8 @@ sap.ui.define([
 	'sap/base/Log',
 	'sap/ui/mdc/condition/FilterOperatorUtil',
 	'sap/ui/mdc/flexibility/Util',
-	"sap/ui/fl/changeHandler/condenser/Classification",
-	"sap/ui/mdc/util/mapVersions"
-], function(merge, Log, FilterOperatorUtil, Util, Classification, mapVersions) {
+	"sap/ui/fl/changeHandler/condenser/Classification"
+], function(merge, Log, FilterOperatorUtil, Util, Classification) {
 	"use strict";
 
 	/**
@@ -36,7 +35,6 @@ sap.ui.define([
 			], fResolveLoad, fRejectLoad);
 		})
 		.then(function(Delegate){
-			mapVersions(Delegate);
 			return Delegate;
 		});
 	};
@@ -89,7 +87,7 @@ sap.ui.define([
 						return fnGetDelegate(oDelegate.name);
 					})
 					.then(function(Delegate){
-						const fnDelegateAddCondition = Delegate && (Delegate.getFilterDelegate ? mapVersions(Delegate.getFilterDelegate()).addCondition : Delegate.addCondition);
+						const fnDelegateAddCondition = Delegate && (Delegate.getFilterDelegate ? Delegate.getFilterDelegate().addCondition : Delegate.addCondition);
 						if (fnDelegateAddCondition) {
 							return fnDelegateAddCondition(oControl, oChangeContent.name, mPropertyBag)
 							.catch(function(oEx) {
@@ -155,7 +153,7 @@ sap.ui.define([
 							return fnGetDelegate(oDelegate.name);
 						})
 						.then(function(Delegate){
-							const fnDelegateRemoveCondition = Delegate && (Delegate.getFilterDelegate ? mapVersions(Delegate.getFilterDelegate()).removeCondition : Delegate.removeCondition);
+							const fnDelegateRemoveCondition = Delegate && (Delegate.getFilterDelegate ? Delegate.getFilterDelegate().removeCondition : Delegate.removeCondition);
 							if (fnDelegateRemoveCondition) {
 								return fnDelegateRemoveCondition(oControl, oChangeContent.name, mPropertyBag)
 								.catch(function(oEx) {

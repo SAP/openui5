@@ -1057,7 +1057,7 @@ sap.ui.define([
 		var SERVICE_URL = "/service/url/from/config";
 		mConfigStubValues["sapUiAllowlistService"] = SERVICE_URL;
 
-		assert.equal(Configuration.getAllowlistService(), SERVICE_URL, "Successor getAllowlistService should return service url");
+		assert.equal("", SERVICE_URL, "Successor getAllowlistService should return service url");
 	});
 
 	QUnit.module("OData V4", {

@@ -9,7 +9,6 @@ sap.ui.define([
     "use strict";
 
     var FieldBaseDelegate = Object.assign({}, MDCFieldBaseDelegate);
-	FieldBaseDelegate.apiVersion = 2;//CLEANUP_DELEGATE
 
     FieldBaseDelegate.getTypeMap = function (oField) {
         return ODataTypeMap;

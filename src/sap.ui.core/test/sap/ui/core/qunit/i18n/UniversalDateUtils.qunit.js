@@ -600,7 +600,7 @@ sap.ui.define([
 			.returns(new UniversalDate(2023, 0, 13));
 
 		Configuration.setLanguage('en-US');
-		Configuration.getFormatSettings().setFirstDayOfWeek(1);
+		Configuration.getFormatSettings();
 
 		// code under test
 		oFirstDateOfWeek = UniversalDateUtils._getDateFromWeekStartByDayOffset(sCalendarWeekNumbering);
@@ -610,7 +610,7 @@ sap.ui.define([
 
 		Configuration.setLanguage(sDefaultLanguage);
 		//TODO: The parameter null is documented in the setFirstDayOfWeek method but is currently not supported
-		Configuration.getFormatSettings().setFirstDayOfWeek(null);
+		Configuration.getFormatSettings();
 	});
 
 	QUnit.test("_getDateFromWeekStartByDayOffset with custom timezone", function(assert) {

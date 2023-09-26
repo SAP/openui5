@@ -109,7 +109,6 @@ sap.ui.define([
 
 			FilterBarDelegate.fetchProperties = fetchProperties;
 			FilterBarDelegate.addItem = createFilterItem;
-			FilterBarDelegate.apiVersion = 2;//CLEANUP_DELEGATE
 			FilterBarDelegate.getTypeMap = getTypeMap;
 			return createAppEnvironment(sFilterBarView, "FilterBar").then(function(mCreatedApp){
 				this.oView = mCreatedApp.view;
@@ -761,7 +760,6 @@ sap.ui.define([
 
 			return createAppEnvironment(sTableView, "Table").then(function(mCreatedApp){
 				TableDelegate.fetchProperties = fetchProperties;
-				TableDelegate.apiVersion = 2;//CLEANUP_DELEGATE
 				TableDelegate.getTypeMap = getTypeMap;
 				TableDelegate.addItem = function(oControl, sPropertyName) {
 					return Promise.resolve(new Column({propertyKey: sPropertyName}));
