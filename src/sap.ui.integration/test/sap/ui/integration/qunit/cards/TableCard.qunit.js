@@ -1116,4 +1116,75 @@ sap.ui.define([
 		this.oCard.setManifest(oManifest);
 	});
 
+	QUnit.module("Table card grouping", {
+		beforeEach: function () {
+			this.oCard = new Card();
+		},
+		afterEach: function () {
+			this.oCard.destroy();
+			this.oCard = null;
+		}
+	});
+
+	QUnit.test("Table card grouping", function (assert) {
+		// Arrange
+		const done = assert.async();
+
+		this.oCard.attachEvent("_ready", () => {
+			const aItems = this.oCard.getCardContent().getInnerList().getItems();
+
+			// Assert
+			assert.strictEqual(aItems.length, 4, "There are two list items and two group titles in the list.");
+			assert.ok(aItems[0].isA("sap.m.GroupHeaderListItem"), "The first item of the list is the group title");
+			assert.strictEqual(aItems[0].getTitle(), "Cheap", "The group title is correct");
+
+			done();
+		});
+
+		// Act
+		this.oCard.setManifest({
+			"sap.app": {
+				"id": "test.card.tableGrouping.card"
+			},
+			"sap.card": {
+				"type": "Table",
+				"data": {
+					"json":[{
+						"Name": "Product 1",
+						"Price": "100"
+					},
+					{
+						"Name": "Product 2",
+						"Price": "200"
+					}
+				]
+				},
+				"header": {
+					"title": "L3 Request list content Card"
+				},
+				"content": {
+					"row": {
+						"columns": [{
+								"title": "Name",
+								"value": "{Name}"
+							},
+							{
+								"title": "Price",
+								"value": "{Price}"
+							}
+						]
+					},
+					"group": {
+						"title": "{= ${Price} > 150 ? 'Expensive' : 'Cheap'}",
+						"order": {
+							"path": "Price",
+							"dir": "ASC"
+						}
+					}
+				}
+			}
+		});
+		this.oCard.startManifestProcessing();
+	});
+
 });
