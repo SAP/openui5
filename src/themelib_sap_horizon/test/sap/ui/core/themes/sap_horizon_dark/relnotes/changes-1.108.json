@@ -279,5 +279,87 @@
         ]
       }
     ]
+  },
+  "1.108.20": {
+    "date": "September 2023",
+    "notes": [
+      {
+        "id": "b08498322a05d3729733762469693281538edc25",
+        "type": "FIX",
+        "text": " sap.m.Button: remove hover shadows",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
+        "id": "ec313ce3a84630d81791ae4be82b3b95a716f695",
+        "type": "FIX",
+        "text": " sap.m.InputBase: Focus border color changed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
+        "id": "804716630a0b8fc303deb4cc2671de19a126f748",
+        "type": "FIX",
+        "text": " sap.m.MessageStrip: Close button hover background fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
+        "id": "9c0361dee33c8e8bf270e734690234fe89e23ab3",
+        "type": "FIX",
+        "text": " sap.m.Page: Floating footer styles adjustments",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
+        "id": "c3d873b27e35740509844fcdb29e028f9944e7dc",
+        "type": "FIX",
+        "text": " sap.m.ColorPicker: adjust alpha handle position",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
+        "id": "191e3ed398b9376cbb240b596fc33e64ea967b28",
+        "type": "FIX",
+        "text": " sap.m.ToggleButton: Remove box shadow.",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
+        "id": "d42b1a30a5b8401533d4f6ab7a69051f90919657",
+        "type": "FIX",
+        "text": " sap.ui.layout.Splitter: Added borders in Morning/Evening Horizon themes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      }
+    ]
   }
 }

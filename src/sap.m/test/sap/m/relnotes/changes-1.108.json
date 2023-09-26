@@ -1192,5 +1192,113 @@
         ]
       }
     ]
+  },
+  "1.108.20": {
+    "date": "September 2023",
+    "notes": [
+      {
+        "id": "b08498322a05d3729733762469693281538edc25",
+        "type": "FIX",
+        "text": " sap.m.Button: remove hover shadows",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
+        "id": "354cc8c250a9bb29c4f2a94fe79dd3be8a61c13f",
+        "type": "FIX",
+        "text": " sap.m.Table: busy indicator should be visible until data received",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500004282162023"
+          }
+        ]
+      },
+      {
+        "id": "a057adfb9d49dd4680c77a654eb668675bae486a",
+        "type": "FIX",
+        "text": " - sap.m.NumericContent",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500007160152023"
+          }
+        ]
+      },
+      {
+        "id": "13abdbce25cf18beee897a18122c4796f7ed5142",
+        "type": "FIX",
+        "text": " sap.m.InputBase: Value state box-shadow adjusted",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
+        "id": "1969823e15dbb52af4eee2f935be28e9efad5108",
+        "type": "FIX",
+        "text": " sap.m.Avatar: Delete active state for now",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380118028"
+          },
+          {
+            "type": "BCP",
+            "reference": "2380121540"
+          }
+        ]
+      },
+      {
+        "id": "ebe498469253c1401a2e5ceaacee3d4e4ba436eb",
+        "type": "FIX",
+        "text": " sap.m.Wizard: enable insert/remove step for designMode",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400006646292023"
+          }
+        ]
+      },
+      {
+        "id": "4230a252e47fed5d5d9bb906cbe6bbe2be017834",
+        "type": "FIX",
+        "text": " sap.m.StepInput: Align decrement icon",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
+        "id": "c6e5d78225d35f4583328147fc01728cb6919321",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: Fix navigation skipping",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400005568382023"
+          }
+        ]
+      },
+      {
+        "id": "a7fe381fcc9c1a04ac7bba54ceb3e4fadceac067",
+        "type": "FIX",
+        "text": " sap.m.FeedListItem: fixed icon appearance",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370079966"
+          }
+        ]
+      }
+    ]
   }
 }

@@ -55,5 +55,21 @@
         ]
       }
     ]
+  },
+  "1.108.20": {
+    "date": "September 2023",
+    "notes": [
+      {
+        "id": "d42b1a30a5b8401533d4f6ab7a69051f90919657",
+        "type": "FIX",
+        "text": " sap.ui.layout.Splitter: Added borders in Morning/Evening Horizon themes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      }
+    ]
   }
 }

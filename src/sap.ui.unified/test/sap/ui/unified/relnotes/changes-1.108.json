@@ -174,5 +174,47 @@
         ]
       }
     ]
+  },
+  "1.108.20": {
+    "date": "September 2023",
+    "notes": [
+      {
+        "id": "c3d873b27e35740509844fcdb29e028f9944e7dc",
+        "type": "FIX",
+        "text": " sap.m.ColorPicker: adjust alpha handle position",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
+        "id": "9838ba15b360628f6c80a21f42555b9a93cb6252",
+        "type": "FIX",
+        "text": " sap.ui.unified.FileUploader: stop drag and drop event propagation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400006011772023"
+          },
+          {
+            "type": "BCP",
+            "reference": "2370078629"
+          }
+        ]
+      },
+      {
+        "id": "df246d6b0fbdfefd1985b00b53e3c3fc56103bff",
+        "type": "FIX",
+        "text": " sap.ui.unified.FileUploader: register events once",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370078629"
+          }
+        ]
+      }
+    ]
   }
 }
