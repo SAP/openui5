@@ -321,10 +321,11 @@ sap.ui.define([
 				 *
 				 * @since 1.118
 				 */
-				showAsText: {
+				_showAsText: {
 					type: "boolean",
 					group: "Misc",
-					defaultValue: false
+					defaultValue: false,
+					visibility: "hidden"
 				},
 
 				/**
@@ -570,10 +571,27 @@ sap.ui.define([
 		this._initializeControl();
 	};
 
+	/**
+ 	 * Special handling of the rendering of this control.
+	 * @param {boolean} bValue defines the intended rendering
+	 * @returns {sap.ui.m.VariantManagement} the current instance
+	 * @private
+	 * @restricted sap.ui.mdc, sap.ui.comp
+ 	 */
 	VariantManagement.prototype.setShowAsText = function(bValue) {
-		this.setProperty("showAsText", bValue);
+		this.setProperty("_showAsText", bValue);
 		this._reCreateVariantTextControl();
 		return this;
+	};
+
+	/**
+ 	 * Special handling of the rendering of this control.
+	 * @returns {boolean} the current intend
+	 * @private
+	 * @restricted sap.ui.mdc, sap.ui.comp
+ 	 */
+	VariantManagement.prototype.getShowAsText = function() {
+		return this.getProperty("_showAsText");
 	};
 
 	VariantManagement.prototype.setShowFooter = function(bValue) {
