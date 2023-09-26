@@ -1080,7 +1080,8 @@ sap.ui.define([
 		SinglePlanningCalendarMonthGrid.prototype._isCompact = function() {
 			var oDomRef = this.getDomRef()
 				|| (this.getParent() && this.getParent().getDomRef && this.getParent().getDomRef()
-				|| (this.getParent() && this.getParent().getRootNode && this.getParent().getRootNode()));
+				|| (this.getParent() && this.getParent().getRootNode && this.getParent().getRootNode())
+				|| document.body);
 
 			while (oDomRef && oDomRef.classList) {
 				if (oDomRef.classList.contains("sapUiSizeCompact")) {
