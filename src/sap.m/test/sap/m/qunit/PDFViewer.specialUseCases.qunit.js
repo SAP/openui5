@@ -110,7 +110,7 @@ sap.ui.define( [
 				oPDFViewer.attachLoaded(fnLoadedOkListener);
 				oPDFViewer.attachError(fnErrorFailListener);
 				oPDFViewer.setSource("test-resources/sap/m/qunit/pdfviewer/sample-file.pdf");
-				TestUtils.rerender();
+				TestUtils.triggerRerender();
 			})
 			.then(TestUtils.wait(4000))
 			.then(function () {
@@ -120,7 +120,7 @@ sap.ui.define( [
 				oPDFViewer.attachLoaded(fnLoadedFailListener);
 				oPDFViewer.attachError(fnErrorOkListener);
 				oPDFViewer.setSource("test-resources/sap/m/qunit/pdfviewer/not-existing");
-				TestUtils.rerender();
+				TestUtils.triggerRerender();
 			})
 			.then(TestUtils.wait(4000))
 			.then(function () {

@@ -60,12 +60,12 @@ sap.ui.define([
 			assert.ok(oPdfViewer.$("toolbarDownloadButton").length === 1, "Download button is displayed in Auto mode");
 
 			oPdfViewer.setDisplayType(PDFViewerDisplayType.Embedded);
-			TestUtils.rerender();
+			TestUtils.triggerRerender();
 			assert.equal(oPdfViewer.getDisplayType(), PDFViewerDisplayType.Embedded, "Set displayType to Embedded mode");
 			assert.ok(fnIsContentDisplayed(), "Content is displayed in Embedded mode");
 
 			oPdfViewer.setDisplayType(PDFViewerDisplayType.Link);
-			TestUtils.rerender();
+			TestUtils.triggerRerender();
 			assert.equal(oPdfViewer.getDisplayType(), PDFViewerDisplayType.Link, "Set displayType to Link mode");
 			assert.ok(oPdfViewer.$("toolbarDownloadButton").length === 1, "Download button is displayed in Link mode");
 			assert.notOk(fnIsContentDisplayed(), "Content is not displayed in Link mode");
@@ -75,7 +75,7 @@ sap.ui.define([
 			assert.ok(oPdfViewer.$("toolbarDownloadButton").length === 1, "Download button is displayed in Link mode always");
 
 			oPdfViewer.setDisplayType(PDFViewerDisplayType.Embedded);
-			TestUtils.rerender();
+			TestUtils.triggerRerender();
 			assert.equal(oPdfViewer.getDisplayType(), PDFViewerDisplayType.Embedded, "Set displayType to Embedded mode");
 			assert.ok(fnIsErrorContentDisplayed(), "Error Content is displayed in Embedded mode when pdf plugin is disabled");
 
