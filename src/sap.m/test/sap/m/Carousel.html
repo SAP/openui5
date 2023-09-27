@@ -678,16 +678,12 @@
 
 		carouselContainer.addContent(carousel);
 
-		var toolbar = new sap.m.Toolbar({
-			height: "auto"
+		var carouselFlexBox = new sap.m.FlexBox({
+			justifyContent: "Center",
+			renderType: "Bare"
 		});
 
-		var toolbarSpacer1 = new sap.m.ToolbarSpacer();
-		var toolbarSpacer2 = new sap.m.ToolbarSpacer();
-
-		toolbar.addContent(toolbarSpacer1);
-		toolbar.addContent(carouselContainer);
-		toolbar.addContent(toolbarSpacer2);
+		carouselFlexBox.addItem(carouselContainer);
 
 		//Listen to 'pageChanged' events
 		carousel.attachPageChanged(function(oControlEvent) {
@@ -774,7 +770,7 @@
 		});
 
 		carouselPage.addContent(appearanceForm1);
-		carouselPage.addContent(toolbar);
+		carouselPage.addContent(carouselFlexBox);
 		carouselPage.addContent(appearanceForm2);
 		carouselPage.addContent(buttonChangeHeightTo50Percents);
 		carouselPage.addContent(buttonChangeHeightTo600px);

@@ -124,7 +124,6 @@ module.exports = function(grunt) {
 						'!sap/ui/thirdparty/jszip.js',
 						'!sap/ui/thirdparty/klay.js',
 						'!sap/ui/thirdparty/less.js',
-						'!sap/ui/thirdparty/mobify-carousel.js',
 						'!sap/ui/thirdparty/mobiscroll/js/mobiscroll-core.js',
 						'!sap/ui/thirdparty/mobiscroll/js/mobiscroll-scroller.js',
 						'!sap/ui/thirdparty/mobiscroll/js/mobiscroll-datetime.js',

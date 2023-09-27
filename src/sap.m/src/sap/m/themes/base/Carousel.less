@@ -87,12 +87,8 @@
 	/*  Removes  inline-block  gaps  due  to  whitespace  */
 	font-size: 0;
 	/*  Configure  animations  */
-	-webkit-transition-property: -webkit-transform;
 	transition-property: transform;
-	/*  iOS  like  slide  timings  */
-	-webkit-transition-timing-function: cubic-bezier(0.46, 0, 0.44, 1);
 	transition-timing-function: cubic-bezier(0.46, 0, 0.44, 1);
-	-webkit-transition-duration: 0.5s;
 	transition-duration: 0.5s;
 }
 
@@ -103,8 +99,8 @@
 	}
 }
 
-html[data-sap-ui-animation='off'] .sapMCrslInner {
-	transition-duration: 0.01s;
+html[data-sap-ui-animation='off'] .sapMCrsl .sapMCrslInner {
+	transition: none;
  }
 
 .sapMCrslItemTable {
@@ -137,10 +133,9 @@ html[data-sap-ui-animation='off'] .sapMCrslInner {
 	max-width: 100%;
 	max-height: 100%;
 }
-
-.sapMCrslInner.sapMCrslNoTransition {
-	-webkit-transition-duration: 0.01s;
-	transition-duration: 0.01s;
+.sapMCrsl.sapMCrslDragging .sapMCrslInner,
+.sapMCrsl .sapMCrslInner.sapMCrslNoTransition {
+	transition: none;
 }
 
 .sapMCrslInner.sapMCrslHideNonActive>:not(.sapMCrslActive) .sapMCrslItemTableCell {
@@ -214,7 +209,6 @@ html[data-sap-ui-animation='off'] .sapMCrslInner {
 	padding: 0;
 	text-decoration: none;
 	border-radius: 50%;
-	-webkit-transition: opacity 0.1s ease-in;
 	transition: opacity 0.1s ease-in;
 	box-sizing: border-box;
 	background-color: @sapUiButtonBackground;
@@ -263,7 +257,6 @@ html[data-sap-ui-animation='off'] .sapMCrslInner {
 	width: @_sap_m_Carousel_BulletInactiveWidth;
 	height: @_sap_m_Carousel_BulletInactiveWidth;
 	margin: @_sap_m_Carousel_BulletInactiveMargin;
-	-webkit-transition: background-color 0.1s ease-in;
 	transition: background-color 0.1s ease-in;
 	border-radius: 50%;
 	align-self: center;
@@ -277,7 +270,7 @@ html[data-sap-ui-animation='off'] .sapMCrslInner {
 .sapMCrslTopOffset {
 	.sapMCrslItem {
 		padding-top: calc(@_sap_m_Carousel_ControlsNoArrowsHeight ~"+" 1px);
-	
+
 		&:focus {
 			&::before,
 			&::after {
@@ -288,7 +281,7 @@ html[data-sap-ui-animation='off'] .sapMCrslInner {
 
 	&.sapMCrslTopArrowsOffset .sapMCrslItem {
 		padding-top: calc(~"3.5rem + 1px");
-	
+
 		&:focus {
 			&::before,
 			&::after {
@@ -302,7 +295,7 @@ html[data-sap-ui-animation='off'] .sapMCrslInner {
 .sapMCrslBottomOffset {
 	.sapMCrslItem {
 		padding-bottom: calc(@_sap_m_Carousel_ControlsNoArrowsHeight ~"+" 1px);
-	
+
 		&:focus {
 			&::before,
 			&::after {
@@ -313,7 +306,7 @@ html[data-sap-ui-animation='off'] .sapMCrslInner {
 
 	&.sapMCrslBottomArrowsOffset .sapMCrslItem {
 		padding-bottom: calc(~"3.5rem + 1px");
-	
+
 		&:focus {
 			&::before,
 			&::after {
@@ -464,11 +457,11 @@ html[data-sap-ui-animation='off'] .sapMCrslInner {
 /* Styles needed for keyboard handling
    ========================================================================== */
 .sapMCrslItem {
-	opacity: 0;
+	visibility: hidden;
 	overflow: hidden;
 }
 .sapMCrslActive {
-	opacity: 1;
+	visibility: visible;
 }
 
 /* Page Indicator Numeric
@@ -483,14 +476,6 @@ html[data-sap-ui-animation='off'] .sapMCrslInner {
 	text-align: left;
 	text-overflow: ellipsis;
 	align-self: center;
-}
-
-/* remove transition when animation is off . As js depends of the animation, the duration is 0.01s */
-html[data-sap-ui-animation='off'] {
-	.sapMCrslInner {
-		-webkit-transition-duration: 0.01s;
-		transition-duration: 0.01s;
-	}
 }
 
 /* Carousel controls: Bulleted */

@@ -395,6 +395,7 @@ sap.ui.define([
 		],
 		elements: [
 			"sap.m.BadgeCustomData",
+			"sap.m.CarouselLayout",
 			"sap.m.Column",
 			"sap.m.ColumnPopoverActionItem",
 			"sap.m.ColumnPopoverCustomItem",

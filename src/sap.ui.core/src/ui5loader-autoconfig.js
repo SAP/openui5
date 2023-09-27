@@ -390,10 +390,6 @@
 				amd: true,
 				exports: 'less'
 			},
-			'sap/ui/thirdparty/mobify-carousel': {
-				amd: false,
-				exports: 'Mobify' // or Mobify.UI.Carousel?
-			},
 			'sap/ui/thirdparty/qunit-2': {
 				amd: false,
 				exports: 'QUnit'
