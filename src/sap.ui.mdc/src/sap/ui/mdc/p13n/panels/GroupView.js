@@ -75,7 +75,7 @@ sap.ui.define([
 				//Do not read the whole content
 				//Announce tet 'Filter Group' + <grouplabel>, e.g. "Filter Group Basic"
 				formatter: function(sGroupLabel) {
-					return sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc").getText("p13nDialog.FILTER_GROUP_DESCRIPTION", sGroupLabel);
+					return sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc").getText("p13nDialog.FILTER_GROUP_DESCRIPTION", [sGroupLabel]);
 				}
 			},
 			content: [
