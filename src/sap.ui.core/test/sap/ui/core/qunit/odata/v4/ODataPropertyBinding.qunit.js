@@ -2299,40 +2299,19 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("deregisterChangeListener", function () {
-		var oBinding = this.oModel.bindProperty("/EMPLOYEES('1')/AGE"),
-			oMock,
-			oOtherBinding = {
-				doDeregisterChangeListener : function () {}
-			},
-			sPath = "foo";
+		var oBinding = this.oModel.bindProperty("/EMPLOYEES('1')/AGE");
 
-		oMock = this.mock(oBinding).expects("withCache")
-			.withExactArgs(sinon.match.func, "", false, /*bWithOrWithoutCache*/true)
-			.returns(SyncPromise.resolve());
+		oBinding.sReducedPath = "/reduced/path";
+		this.mock(oBinding).expects("doDeregisterChangeListener")
+			.withExactArgs("/reduced/path", sinon.match.same(oBinding));
 
 		// code under test
 		oBinding.deregisterChangeListener();
 
-		this.mock(oOtherBinding).expects("doDeregisterChangeListener")
-			.withExactArgs(sPath, sinon.match.same(oBinding));
+		oBinding.sReducedPath = undefined;
 
-		// code under test - check that the function passed to withCache works as expected
-		oMock.firstCall.args[0](null, sPath, oOtherBinding);
-	});
-
-	//*********************************************************************************************
-	QUnit.test("deregisterChangeListener: withCache rejects sync", function () {
-		var oBinding = this.oModel.bindProperty("/EMPLOYEES('1')/AGE"),
-			oError = new Error("fail intentionally"),
-			fnReporter = sinon.spy();
-
-		this.mock(oBinding).expects("withCache").returns(SyncPromise.reject(oError));
-		this.mock(this.oModel).expects("getReporter").withExactArgs().returns(fnReporter);
-
-		// code under test
+		// code under test - no further doDeregisterChangeListener
 		oBinding.deregisterChangeListener();
-
-		sinon.assert.calledOnceWithExactly(fnReporter, sinon.match.same(oError));
 	});
 
 	//*********************************************************************************************
