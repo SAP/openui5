@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define(function() {
+sap.ui.define(["sap/ui/base/DataType"], function(DataType) {
 	"use strict";
 
 	/**
@@ -36,6 +36,8 @@ sap.ui.define(function() {
 		 */
 		SelfNoParse: "selfNoParse"
 	};
+
+	DataType.registerEnum("sap.ui.mdc.enums.OperatorValueType", OperatorValueType);
 
 	return OperatorValueType;
 

@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define(function() {
+sap.ui.define(["sap/ui/base/DataType"], function(DataType) {
 	"use strict";
 
 	/**
@@ -30,6 +30,8 @@ sap.ui.define(function() {
 		 */
 		Popover: 2
 	};
+
+	DataType.registerEnum("sap.ui.mdc.enums.LinkType", LinkType);
 
 	return LinkType;
 

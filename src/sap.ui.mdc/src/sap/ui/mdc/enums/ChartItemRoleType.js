@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define(function() {
+sap.ui.define(["sap/ui/base/DataType"], function(DataType) {
     "use strict";
 
     /**
@@ -53,6 +53,8 @@ sap.ui.define(function() {
          */
         axis3: "axis3"
     };
+
+    DataType.registerEnum("sap.ui.mdc.enums.ChartItemRoleType", ChartItemRoleType);
 
     return ChartItemRoleType;
 
