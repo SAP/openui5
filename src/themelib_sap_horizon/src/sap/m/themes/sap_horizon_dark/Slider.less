@@ -12,10 +12,6 @@
 	height: 1.5rem;
 	margin-left: -1rem;
 	top: -0.625rem;
-
-	&:not(:focus) {
-		box-shadow: @sapUiContentSelectedShadow;
-	}
 }
 
 .sapMSlider {
@@ -23,7 +19,7 @@
 	align-items: center;
 }
 
-.sapMSliderInner .sapMSliderHandle:not(.sapMSliderHandlePressed):not(.sapMRangeSlider.sapMSlider .sapMSliderInner:not(.sapMSliderInnerDisabled) .sapMSliderHandle:focus):after {
+.sapMSliderInner .sapMSliderHandle:not(:focus):not(.sapMSliderHandlePressed):not(.sapMRangeSlider.sapMSlider .sapMSliderInner:not(.sapMSliderInnerDisabled) .sapMSliderHandle:focus):after {
 	font-family: SAP-icons;
 	content: "\e29c";
 	position: absolute;
@@ -48,15 +44,13 @@
 	&:not(:focus) {
 		border-color: @sapUiSliderHoverHandleBorderColor;
 		background: @sapUiSliderHoverHandleBackground;
-		box-shadow: @sapUiContentSelectedShadow;
 	}
 }
 
 .sapMSliderInner:not(.sapMSliderInnerDisabled) .sapMSliderHandle:focus {
-	background: @sapUiSliderActiveHandleBackground;
-	border: 0.125rem solid #4DB1FF;
+	background: @sapUiSliderActiveRangeHandleBackground;
+	border: @sapUiContentFocusWidth solid @sapUiContentFocusColor;
 	outline: none;
-	box-shadow: none;
 	top: -0.625rem;
 }
 
@@ -104,7 +98,7 @@
 	width: 0.5rem;
 	height: 0.5rem;
 	right: 0.125rem;
-	top: 1.25rem;
+	top: 1.375rem;
 }
 
 .sapMSliderTooltip {
@@ -121,12 +115,14 @@
 }
 
 .sapMSliderTickmarks {
+	top: -0.75rem;
 	display: flex;
 	box-sizing: border-box;
 	align-items: center;
 }
 
 .sapMSliderTick {
+	border-color: @sapUiContentMeasureIndicatorColor;
 	margin: 0;
 	height: .5rem;
 }
@@ -149,7 +145,7 @@
 	}
 
 	.sapMSlider::after {
-		top: 0.875rem;
+		top: 0.75rem;
 		right: 0.375rem;
 	}
 
