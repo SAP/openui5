@@ -68,6 +68,7 @@ sap.ui.define([
 		onMove : function (oEvent) {
 			this.oNode = oEvent.getSource().getBindingContext();
 			const oSelectDialog = this.byId("moveDialog");
+			oSelectDialog.setBindingContext(this.oNode);
 			const oListBinding = oSelectDialog.getBinding("items");
 			if (oListBinding.isSuspended()) {
 				oListBinding.resume();
@@ -78,7 +79,8 @@ sap.ui.define([
 		onMoveConfirm : async function (oEvent) {
 			try {
 				this.getView().setBusy(true);
-				const sParentId = oEvent.getParameter("selectedItem").getTitle();
+				const sParentId = oEvent.getParameter("selectedItem").getBindingContext()
+					.getProperty("ID");
 				const oParent = this.oNode.getBinding().getAllCurrentContexts()
 					.find((oNode) => oNode.getProperty("ID") === sParentId);
 				await this.oNode.move({parent : oParent});
