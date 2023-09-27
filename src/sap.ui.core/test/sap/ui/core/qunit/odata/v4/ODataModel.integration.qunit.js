@@ -28693,6 +28693,9 @@ sap.ui.define([
 	// JIRA: CPOUI5ODATAV4-2326
 	//
 	// A failed move must not leave the node collapsed (JIRA: CPOUI5ODATAV4-2343)
+	//
+	// Determine the parent nodes of "Alpha", "Beta", "Kappa", and "Omega".
+	// JIRA: CPOUI5ODATAV4-2323
 [false, true].forEach((bMoveCollapsed) => {
 	[false, true].forEach((bExpandCollapseBeta) => {
 		const sTitle = `Recursive Hierarchy: move node w/ children, collapsed=${bMoveCollapsed},
@@ -29012,6 +29015,10 @@ sap.ui.define([
 		assert.strictEqual(oBeta.isAncestorOf(oKappa), true, "JIRA: CPOUI5ODATAV4-2337");
 		assert.strictEqual(oOmega.isAncestorOf(oKappa), true, "JIRA: CPOUI5ODATAV4-2337");
 		assert.strictEqual(oKappa.isAncestorOf(oOmega), false, "JIRA: CPOUI5ODATAV4-2337");
+		assert.strictEqual(oKappa.getParent(), oBeta, "JIRA: CPOUI5ODATAV4-2323");
+		assert.strictEqual(oBeta.getParent(), oAlpha, "JIRA: CPOUI5ODATAV4-2323");
+		assert.strictEqual(oAlpha.getParent(), oOmega, "JIRA: CPOUI5ODATAV4-2323");
+		assert.strictEqual(oOmega.getParent(), null, "JIRA: CPOUI5ODATAV4-2323");
 	});
 	});
 });

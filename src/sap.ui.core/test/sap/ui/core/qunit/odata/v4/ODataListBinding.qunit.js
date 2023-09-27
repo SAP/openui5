@@ -8475,6 +8475,129 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+[0, 1].forEach(function (iNodeLevel) {
+	QUnit.test("getParent: given node is a root node with level: " + iNodeLevel, function (assert) {
+		const oBinding = this.bindList("/EMPLOYEES");
+		const oNode = {
+			iIndex : 0,
+			getProperty : mustBeMocked
+		};
+		// Note: autoExpandSelect at model would be required for hierarchyQualifier, but that leads
+		// too far
+		oBinding.mParameters = {
+			$$aggregation : {
+				expandTo : 1,
+				hierarchyQualifier : "X"
+			}
+		};
+		oBinding.aContexts = [oNode];
+
+		this.mock(oNode).expects("getProperty").withExactArgs("@$ui5.node.level")
+			.returns(iNodeLevel);
+
+		// code under test
+		assert.strictEqual(oBinding.getParent(oNode), null);
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("getParent: throws error if expandTo > 1", function (assert) {
+		const oBinding = this.bindList("/EMPLOYEES");
+		// Note: autoExpandSelect at model would be required for hierarchyQualifier, but that leads
+		// too far
+		oBinding.mParameters = {
+			$$aggregation : {
+				expandTo : 2,
+				hierarchyQualifier : "X"
+			}
+		};
+
+		assert.throws(function () {
+			// code under test
+			oBinding.getParent();
+		}, new Error("Unsupported $$aggregation.expandTo: 2"));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getParent: Missing recursive hierarchy", function (assert) {
+		const oBinding = this.bindList("/EMPLOYEES");
+
+		assert.throws(function () {
+			// code under test
+			oBinding.getParent();
+		}, new Error("Missing recursive hierarchy"));
+
+		oBinding.mParameters = {$$aggregation : {}};
+
+		assert.throws(function () {
+			// code under test
+			oBinding.getParent();
+		}, new Error("Missing recursive hierarchy"));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getParent: given node is not part of a recursive hierachy", function (assert) {
+		const oBinding = this.bindList("/EMPLOYEES");
+		const oNode = Context.create({/*oModel*/}, oBinding, "/EMPLOYEES('42')", 23);
+		// Note: autoExpandSelect at model would be required for hierarchyQualifier, but that leads
+		// too far
+		oBinding.mParameters = {
+			$$aggregation : {
+				expandTo : 1,
+				hierarchyQualifier : "X"
+			}
+		};
+
+		assert.throws(function () {
+			// code under test
+			oBinding.getParent(oNode);
+		}, new Error("Not currently part of a recursive hierarchy: " + oNode));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getParent", function (assert) {
+		const oBinding = this.bindList("/EMPLOYEES");
+		const oNode = {getProperty : mustBeMocked, iIndex : 7};
+		const oSiblingNode = {getProperty : mustBeMocked};
+		const oChildNode = {getProperty : mustBeMocked};
+		const oParentContext = {getProperty : mustBeMocked};
+
+		oBinding.aContexts = [
+			{/*Root node*/}, //@$ui5.node.level 1
+			{}, // Level @$ui5.node.level 2
+			{}, // Level @$ui5.node.level 3
+			oParentContext,
+			oChildNode,
+			oSiblingNode,
+			undefined,
+			oNode
+		];
+
+		// Note: autoExpandSelect at model would be required for hierarchyQualifier, but that leads
+		// too far
+		oBinding.mParameters = {
+			$$aggregation : {
+				expandTo : 1,
+				hierarchyQualifier : "X"
+			}
+		};
+
+		this.mock(oNode).expects("getProperty").withExactArgs("@$ui5.node.level").returns(5);
+		this.mock(oSiblingNode).expects("getProperty")
+			.withExactArgs("@$ui5.node.level")
+			.returns(5);
+		this.mock(oChildNode).expects("getProperty")
+			.withExactArgs("@$ui5.node.level")
+			.returns(6);
+		this.mock(oParentContext).expects("getProperty")
+			.withExactArgs("@$ui5.node.level")
+			.returns(4);
+
+		// code under test
+		assert.strictEqual(oBinding.getParent(oNode), oParentContext);
+	});
+
+	//*********************************************************************************************
 	QUnit.test("getQueryOptions: with system query options", function (assert) {
 		var oBinding = this.bindList("/Set");
 
