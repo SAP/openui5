@@ -187,7 +187,7 @@
 						</OverflowToolbarMenuButton>
 
 						<OverflowToolbarButton
-							class="newsButton"
+							class="sapUiDemoKitHeaderActionsNewsButton"
 							icon="sap-icon://bell"
 							press="onNewsButtonPress"
 							text="{i18n>APP_INFORMATION_BTN_NEWS}"
