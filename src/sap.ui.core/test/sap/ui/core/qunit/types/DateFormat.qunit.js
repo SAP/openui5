@@ -1,5 +1,6 @@
 /*global QUnit, sinon */
 sap.ui.define([
+	"sap/base/Log",
 	"sap/base/util/extend",
 	"sap/ui/core/format/DateFormat",
 	"sap/ui/core/Locale",
@@ -10,19 +11,19 @@ sap.ui.define([
 	"sap/ui/core/Configuration",
 	"sap/ui/core/date/CalendarWeekNumbering",
 	"sap/ui/test/TestUtils"
-], function (extend, DateFormat, Locale, LocaleData, UniversalDate, UI5Date, library, Configuration,
+], function (Log, extend, DateFormat, Locale, LocaleData, UniversalDate, UI5Date, library, Configuration,
 		CalendarWeekNumbering, TestUtils) {
 	"use strict";
 
-		// shortcut for sap.ui.core.CalendarType
-		var CalendarType = library.CalendarType;
-
-		var oDateTime = UI5Date.getInstance("Tue Sep 23 06:46:13 2000 GMT+0000"),
-			oTZDateTime = UI5Date.getInstance("Tue Sep 23 03:46:13 2000 GMT+0530"),
-			oDefaultDate = DateFormat.getInstance(),
-			oDefaultDateTime = DateFormat.getDateTimeInstance(),
-			oDefaultTime = DateFormat.getTimeInstance(),
-			sDefaultTimezone = Configuration.getTimezone();
+	// shortcut for sap.ui.core.CalendarType
+	const CalendarType = library.CalendarType;
+	const oDateTime = UI5Date.getInstance("Tue Sep 23 06:46:13 2000 GMT+0000");
+	const oTZDateTime = UI5Date.getInstance("Tue Sep 23 03:46:13 2000 GMT+0530");
+	const oDefaultDate = DateFormat.getInstance();
+	const oDefaultDateTime = DateFormat.getDateTimeInstance();
+	const oDefaultTime = DateFormat.getTimeInstance();
+	const sDefaultTimezone = Configuration.getTimezone();
+	const sDefaultLanguage = Configuration.getLanguage();
 
 	//*********************************************************************************************
 	QUnit.module("DateFormat instantiation and parseCldrDatePattern");
@@ -1886,7 +1887,7 @@ sap.ui.define([
 	{pattern : "hh:mm aa", formatted : "07:37 priešpiet"},
 	{pattern : "hh:mm aaa", formatted : "07:37 priešpiet"},
 	{pattern : "hh:mm aaaa", formatted : "07:37 priešpiet"},
-	{pattern : "hh:mm aaaaa", formatted : "07:37 pr.\xa0p."}
+	{pattern : "hh:mm aaaaa", formatted : "07:37 pr.\u00a0p."}
 ].forEach(function (oFixture, i) {
 	QUnit.test("format/parse time with day period, narrow pattern differs #" + i,
 			function (assert) {
@@ -2519,7 +2520,6 @@ sap.ui.define([
 			oOriginInfoStub.restore();
 		});
 
-		var sDefaultLanguage = Configuration.getLanguage();
 		QUnit.module("Calendar Week precedence", {
 			beforeEach: function () {
 				Configuration.setLanguage("de_DE"); // ISO 8601
@@ -4488,12 +4488,17 @@ sap.ui.define([
 		});
 
 	//*****************************************************************************************************************
-	QUnit.module("DateFormat", {
+	QUnit.module("sap.ui.core.format.DateFormat", {
 		beforeEach: function () {
+			this.oLogMock = this.mock(Log);
+			this.oLogMock.expects("error").never();
+			this.oLogMock.expects("warning").never();
+			Configuration.setLanguage("en_US");
 			Configuration.setTimezone("Europe/Berlin");
 		},
 		afterEach: function () {
 			Configuration.setTimezone(sDefaultTimezone);
+			Configuration.setLanguage(sDefaultLanguage);
 		}
 	});
 
@@ -4980,5 +4985,125 @@ sap.ui.define([
 		oParsedDate = oFormat.parse(oFormat.format(oDate));
 
 		assert.deepEqual(oParsedDate, oDate);
+	});
+
+	//*****************************************************************************************************************
+	QUnit.test("parse: normalize input and pattern values (integrative test)", function (assert) {
+		const oDate0 = UI5Date.getInstance("1970-01-01T02:22:33Z");
+		const oLocale = new Locale("en_US");
+		let oFormat = DateFormat.getDateTimeInstance({pattern: "h:mm:ss\u202fa", UTC: true}, oLocale);
+
+		// code under test - formatted string can be parsed again
+		assert.deepEqual(oFormat.parse(oFormat.format(oDate0)), oDate0);
+
+		// code under test - input without special characters can be parsed
+		assert.deepEqual(oFormat.parse("02:22:33 AM"), oDate0);
+
+		const oFormatOptions = {interval: true, pattern: "h:mm:ss\u202fa", UTC: true};
+		oFormat = DateFormat.getDateTimeInstance(oFormatOptions, oLocale);
+
+		// code under test - default interval pattern uses " - " as delimiter
+		assert.strictEqual(oFormat.intervalPatterns[oFormat.intervalPatterns.length - 1],
+			"h:mm:ss\u202fa - h:mm:ss\u202fa");
+
+		const oDate1 = UI5Date.getInstance("1970-01-01T15:16:17Z");
+
+		// code under test - formatted string can be parsed again
+		assert.deepEqual(oFormat.parse(oFormat.format([oDate0, oDate1])), [oDate0, oDate1]);
+
+		// code under test - input with special characters can be parsed
+		assert.deepEqual(oFormat.parse("02:22:33\u202fAM\u2009\u2013\u200903:16:17\u202fPM"), [oDate0, oDate1]);
+
+		// code under test - input without special characters can be parsed
+		assert.deepEqual(oFormat.parse("02:22:33 AM - 03:16:17 PM"), [oDate0, oDate1]);
+		// code under test - input without spaces can be parsed
+		assert.deepEqual(oFormat.parse("02:22:33AM-03:16:17PM"), [oDate0, oDate1]);
+
+		oFormat = DateFormat.getDateTimeInstance(oFormatOptions, new Locale("es_AR"));
+
+		// code under test - default interval pattern uses " - " as delimiter
+		assert.strictEqual(oFormat.intervalPatterns[oFormat.intervalPatterns.length - 1],
+			"h:mm:ss\u202fa - h:mm:ss\u202fa");
+
+		// code under test - formatted string can be parsed again
+		assert.deepEqual(oFormat.parse(oFormat.format([oDate0, oDate1])), [oDate0, oDate1]);
+
+		// code under test - input with special characters can be parsed
+		assert.deepEqual(oFormat.parse("02:22:33\u202fa.\u00a0m. a el 03:16:17\u202fp.\u00a0m."), [oDate0, oDate1]);
+
+		// code under test - input without special characters can be parsed
+		assert.deepEqual(oFormat.parse("02:22:33a.m. - 03:16:17p.m."), [oDate0, oDate1]);
+
+		oFormat = DateFormat.getDateTimeInstance(oFormatOptions, new Locale("fa"));
+
+		// code under test - default interval pattern uses " - " as delimiter
+		assert.strictEqual(oFormat.intervalPatterns[oFormat.intervalPatterns.length - 1],
+			"h:mm:ss\u202fa - h:mm:ss\u202fa");
+
+		// code under test - formatted string can be parsed again
+		assert.deepEqual(oFormat.parse(oFormat.format([oDate0, oDate1])), [oDate0, oDate1]);
+
+		// code under test - input with special characters can be parsed
+		assert.deepEqual(oFormat.parse("2:22:33\u202f\u0642.\u0638. \u062a\u0627 3:16:17\u202f\u0628\.\u0638\."),
+			[oDate0, oDate1]);
+
+		// code under test - input without special characters can be parsed
+		assert.deepEqual(oFormat.parse("02:22:33\u202f\u0642.\u0638.-03:16:17\u202f\u0628\.\u0638\."),
+			[oDate0, oDate1]);
+	});
+
+	//*****************************************************************************************************************
+[
+	{input: "a\u00a0b\u2009c\u202fd e", output: "a b c d e"}, // special spaces are replaced by \u0020
+	{input: "a\u200eb\u200fc\u202ad\u202be\u202cf", output: "abcdef"} // RTL characters are removed
+].forEach((oFixture, i) => {
+	QUnit.test(`DateFormat._normalize: ${i}`, function (assert) {
+		assert.strictEqual(DateFormat._normalize(oFixture.input), oFixture.output);
+	});
+});
+
+	//*****************************************************************************************************************
+	QUnit.test("DateFormat#oSymbols[''].parse: normalizes part value", function (assert) {
+		const oPart = {value: "~partValue"};
+
+		this.mock(DateFormat).expects("_normalize").withExactArgs("~partValue").returns("~sNormalized");
+
+		// code under test
+		assert.deepEqual(DateFormat.prototype.oSymbols[""].parse("~sNormalizedValue", oPart),
+			{length: 12});
+	});
+
+	//*****************************************************************************************************************
+	QUnit.test("DateFormat#oSymbols['a'].parse: normalizes variants", function (assert) {
+		const oFormat = {
+			aDayPeriodsWide: ["~wide0"],
+			aDayPeriodsAbbrev: ["~abbrev0", "~abbrev1"],
+			aDayPeriodsNarrow: ["~narrow0", "~narrow1"],
+			oLocaleData: {sCLDRLocaleId: "en-US"}
+		};
+		const oDateFormatMock = this.mock(DateFormat);
+		oDateFormatMock.expects("_normalize").withExactArgs("~wide0").returns("~sNormalizedWide0");
+		oDateFormatMock.expects("_normalize").withExactArgs("~abbrev0").returns("~sNormalizedAbbrev0");
+		oDateFormatMock.expects("_normalize").withExactArgs("~abbrev1").returns("~sDayPeriod");
+
+		// code under test
+		assert.deepEqual(
+			DateFormat.prototype.oSymbols["a"].parse("~sDayPeriodValue", /*unused*/undefined, oFormat),
+			{pm: true, length: 11});
+	});
+
+	//*****************************************************************************************************************
+	QUnit.test("DateFormat#parse: normalizes user input", function (assert) {
+		const oFormat = {
+			oFormatOptions: {},
+			parseRelative() {}
+		};
+		this.mock(DateFormat).expects("_normalize").withExactArgs("~value").returns("~normalizedValue");
+		this.mock(Configuration).expects("getTimezone").withExactArgs().returns("~timezone");
+		this.mock(oFormat).expects("parseRelative").withExactArgs("~normalizedValue", undefined)
+			.returns("~dateObject");
+
+		// code under test
+		assert.strictEqual(DateFormat.prototype.parse.call(oFormat, "~value"), "~dateObject");
 	});
 });
