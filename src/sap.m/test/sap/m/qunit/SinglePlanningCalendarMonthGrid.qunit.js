@@ -405,7 +405,7 @@ sap.ui.define([
 			var oGrid = new SinglePlanningCalendarMonthGrid({
 				startDate: UI5Date.getInstance(2022,0,1),
 				firstDayOfWeek: 1,
-				enableMultiDaySelection: true
+				dateSelectionMode: SinglePlanningCalendarSelectionMode.MultiSelect
 			});
 			oGrid.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
@@ -441,7 +441,7 @@ sap.ui.define([
 			var oGrid = new SinglePlanningCalendarMonthGrid({
 				startDate: UI5Date.getInstance(2022,0,1),
 				firstDayOfWeek: 1,
-				enableMultiDaySelection: true,
+				dateSelectionMode: SinglePlanningCalendarSelectionMode.MultiSelect,
 				selectedDates: [
 					new DateRange({startDate: UI5Date.getInstance(2022, 0, 10)}),
 					new DateRange({startDate: UI5Date.getInstance(2022, 0, 13)})
@@ -482,7 +482,6 @@ sap.ui.define([
 				oGrid = new SinglePlanningCalendarMonthGrid({
 					startDate: UI5Date.getInstance(2022,0,1),
 					firstDayOfWeek: 1,
-					enableMultiDaySelection: true,
 					dateSelectionMode: SinglePlanningCalendarSelectionMode.MultiSelect
 				});
 
@@ -515,7 +514,6 @@ sap.ui.define([
 				i,
 				oGrid = new SinglePlanningCalendarMonthGrid({
 					startDate: UI5Date.getInstance(2022,0,1),
-					enableMultiDaySelection: true,
 					firstDayOfWeek: 1,
 					dateSelectionMode: SinglePlanningCalendarSelectionMode.MultiSelect,
 					selectedDates: [
@@ -563,7 +561,6 @@ sap.ui.define([
 				oGrid = new SinglePlanningCalendarMonthGrid({
 					startDate: UI5Date.getInstance(2022,0,1),
 					firstDayOfWeek: 1,
-					enableMultiDaySelection: true,
 					dateSelectionMode: SinglePlanningCalendarSelectionMode.MultiSelect
 				});
 
@@ -609,7 +606,6 @@ sap.ui.define([
 				oGrid = new SinglePlanningCalendarMonthGrid({
 					startDate: UI5Date.getInstance(2022,0,1),
 					firstDayOfWeek: 1,
-					enableMultiDaySelection: true,
 					dateSelectionMode: SinglePlanningCalendarSelectionMode.MultiSelect,
 					selectedDates: [
 						new DateRange({startDate: UI5Date.getInstance(2022, 0, 2)}),
@@ -662,7 +658,7 @@ sap.ui.define([
 				oTestNotSelectdDate = new CalendarDate(2022, 0, 11),
 				oGrid = new SinglePlanningCalendarMonthGrid({
 					firstDayOfWeek: 1,
-					enableMultiDaySelection: true,
+					dateSelectionMode: SinglePlanningCalendarSelectionMode.MultiSelect,
 					selectedDates: [
 						new DateRange({startDate: UI5Date.getInstance(2022, 0, 10)})
 					]
