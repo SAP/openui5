@@ -50,7 +50,8 @@ sap.ui.define(function () {
 			// the following tests must all be named "OPA.*" so that 1Ring ignores them
 			"OPA.ViewTemplate" : {
 				autostart : false,
-				module : ["sap/ui/core/sample/ViewTemplate/scenario/Opa.qunit"]
+				module : ["sap/ui/core/sample/ViewTemplate/scenario/Opa.qunit"],
+				$app : "test-resources/sap/ui/core/demokit/sample/common/index.html?component=ViewTemplate.scenario"
 			}
 		}
 	};
