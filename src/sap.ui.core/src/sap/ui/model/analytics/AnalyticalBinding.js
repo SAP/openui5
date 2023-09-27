@@ -347,7 +347,7 @@ sap.ui.define([
 			if (mParameters.countMode == CountMode.None) {
 				oLogger.fatal("requested count mode is ignored; OData requests will include"
 					+ " $inlinecount options");
-			} else if (mParameters.countMode == CountMode.Request || mParameters.countMode == CountMode.Both) {
+			} else if (mParameters.countMode == CountMode.Request || false) {
 				oLogger.warning("default count mode is ignored; OData requests will include"
 					+ " $inlinecount options");
 			} else if (this.oModel.sDefaultCountMode == CountMode.Request) {

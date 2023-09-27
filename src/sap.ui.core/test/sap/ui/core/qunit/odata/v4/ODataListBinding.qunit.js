@@ -8937,10 +8937,10 @@ sap.ui.define([
 				toString : function () { return "~context~"; }
 			},
 			oChangeCall,
-			aContextsBefore,
 			oDataReceivedCall,
 			oError = new Error(),
 			oExpectation,
+			oGapCall,
 			oGroupLock = {},
 			oPromise,
 			that = this;
@@ -8948,9 +8948,6 @@ sap.ui.define([
 		oBinding.oCache = { // simulate an aggregation cache
 			expand : function () {}
 		};
-		oBinding.createContexts(0, createData(2, 0, true, 5));
-		oBinding.createContexts(3, createData(2, 3, true, 5));
-		aContextsBefore = oBinding.aContexts.slice();
 
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
 		this.mock(oBinding).expects("lockGroup").withExactArgs().returns(oGroupLock);
@@ -8965,7 +8962,9 @@ sap.ui.define([
 			.returns(Promise.resolve().then(function () {
 				if (bSuccess) {
 					that.mock(oContext).expects("getModelIndex").exactly(iCount ? 1 : 0)
-						.withExactArgs().returns(1);
+						.withExactArgs().returns("~iModelIndex~");
+					oGapCall = that.mock(oBinding).expects("insertGap").exactly(iCount ? 1 : 0)
+						.withExactArgs("~iModelIndex~", iCount);
 					oChangeCall = that.mock(oBinding).expects("_fireChange").exactly(iCount ? 1 : 0)
 						.withExactArgs({reason : ChangeReason.Change});
 					oDataReceivedCall = that.mock(oBinding).expects("fireDataReceived")
@@ -8982,30 +8981,8 @@ sap.ui.define([
 		// code under test
 		oPromise = oBinding.expand(oContext).then(function () {
 			assert.ok(bSuccess);
-			assert.strictEqual(oBinding.getLength(), 5 + iCount);
-			assert.strictEqual(oBinding.aContexts.length, 5 + iCount);
-			assert.strictEqual(oBinding.aContexts[0], aContextsBefore[0], "0");
-			assert.strictEqual(oBinding.aContexts[0].iIndex, 0);
-			assert.strictEqual(oBinding.aContexts[1], aContextsBefore[1], "1");
-			assert.strictEqual(oBinding.aContexts[1].iIndex, 1);
-			assert.notOk(2 in oBinding.aContexts, "2");
-			if (iCount) {
-				assert.notOk(3 in oBinding.aContexts, "3");
-				assert.notOk(4 in oBinding.aContexts, "4");
-				assert.notOk(5 in oBinding.aContexts, "5");
-				assert.strictEqual(oBinding.aContexts[6], aContextsBefore[3], "6");
-				assert.strictEqual(oBinding.aContexts[6].iIndex, 6);
-				assert.strictEqual(oBinding.aContexts[7], aContextsBefore[4], "7");
-				assert.strictEqual(oBinding.aContexts[7].iIndex, 7);
-			} else {
-				assert.strictEqual(oBinding.aContexts[3], aContextsBefore[3], "3");
-				assert.strictEqual(oBinding.aContexts[3].iIndex, 3);
-				assert.strictEqual(oBinding.aContexts[4], aContextsBefore[4], "4");
-				assert.strictEqual(oBinding.aContexts[4].iIndex, 4);
-			}
-
 			if (bDataRequested && iCount) {
-				sinon.assert.callOrder(oChangeCall, oDataReceivedCall);
+				sinon.assert.callOrder(oGapCall, oChangeCall, oDataReceivedCall);
 			}
 		}, function (oResult) {
 			assert.notOk(bSuccess);
@@ -9020,10 +8997,36 @@ sap.ui.define([
 
 		return oPromise;
 	});
-	// TODO aContexts may be sparse
 		});
 	});
 });
+
+	//*********************************************************************************************
+	QUnit.test("insertGap", function (assert) {
+		const oBinding = this.bindList("/EMPLOYEES");
+		oBinding.createContexts(0, createData(2, 0, true, 5));
+		oBinding.createContexts(3, createData(2, 3, true, 5));
+		const aContextsBefore = oBinding.aContexts.slice();
+
+		// code under test
+		oBinding.insertGap(1, 3);
+
+		assert.strictEqual(oBinding.getLength(), 5 + 3);
+		assert.strictEqual(oBinding.aContexts.length, 5 + 3);
+		assert.strictEqual(oBinding.aContexts[0], aContextsBefore[0], "0");
+		assert.strictEqual(oBinding.aContexts[0].iIndex, 0);
+		assert.strictEqual(oBinding.aContexts[1], aContextsBefore[1], "1");
+		assert.strictEqual(oBinding.aContexts[1].iIndex, 1);
+		assert.notOk(2 in oBinding.aContexts, "2");
+		assert.notOk(3 in oBinding.aContexts, "3");
+		assert.notOk(4 in oBinding.aContexts, "4");
+		assert.notOk(5 in oBinding.aContexts, "5");
+		assert.strictEqual(oBinding.aContexts[6], aContextsBefore[3], "6");
+		assert.strictEqual(oBinding.aContexts[6].iIndex, 6);
+		assert.strictEqual(oBinding.aContexts[7], aContextsBefore[4], "7");
+		assert.strictEqual(oBinding.aContexts[7].iIndex, 7);
+	});
+	// TODO aContexts may be sparse
 
 	//*********************************************************************************************
 [0, 3].forEach((iCount) => {
@@ -10309,8 +10312,9 @@ sap.ui.define([
 [false, true].forEach((bCreated) => {
 	[-1, +1, 0].forEach((iDirection) => { // child is before or after parent (or right in place)
 		[false, true].forEach((bIsExpanded) => {
-			const sTitle = `move: created=${bCreated}, direction=${iDirection},
- expanded=${bIsExpanded}`;
+			[1, 4].forEach((iCount) => {
+				const sTitle = `move: created=${bCreated}, direction=${iDirection},
+ expanded=${bIsExpanded}, child nodes added=${iCount}`;
 
 	QUnit.test(sTitle, function (assert) {
 		const iParentIndex = 42;
@@ -10331,7 +10335,8 @@ sap.ui.define([
 		this.mock(oChildContext).expects("getCanonicalPath").withExactArgs().returns("/~child~");
 		const oParentContext = {
 			iIndex : iParentIndex,
-			getCanonicalPath : mustBeMocked
+			getCanonicalPath : mustBeMocked,
+			getModelIndex : mustBeMocked
 		};
 		this.mock(oParentContext).expects("getCanonicalPath").withExactArgs().returns("/~parent~");
 		const oBinding = this.bindList("/EMPLOYEES");
@@ -10348,6 +10353,10 @@ sap.ui.define([
 			.withExactArgs("~oGroupLock~", "~child~", "~parent~")
 			.returns(new SyncPromise((resolve) => {
 				setTimeout(() => {
+					this.mock(oParentContext).expects("getModelIndex").exactly(iCount > 1 ? 1 : 0)
+						.withExactArgs().returns("~iModelIndex~");
+					this.mock(oBinding).expects("insertGap").exactly(iCount > 1 ? 1 : 0)
+						.withExactArgs("~iModelIndex~", iCount - 1);
 					for (let i = 0; i < 100; i += 1) {
 						if (i % 5) {
 							oBinding.aContexts[i] = {iIndex : i};
@@ -10360,11 +10369,12 @@ sap.ui.define([
 					this.mock(oChildContext).expects("setCreatedPersisted")
 						.exactly(bCreated ? 0 : 1).withExactArgs();
 					this.mock(oBinding).expects("expand").exactly(bIsExpanded ? 1 : 0)
-						.withExactArgs(sinon.match.same(oChildContext));
+						.withExactArgs(sinon.match.same(oChildContext))
+						.returns(SyncPromise.resolve());
 					this.mock(oBinding).expects("_fireChange").exactly(bIsExpanded ? 0 : 1)
 						.withExactArgs({reason : ChangeReason.Change});
 
-					resolve("n/a");
+					resolve(iCount);
 				}, 0);
 			}));
 
@@ -10389,6 +10399,7 @@ sap.ui.define([
 			}
 		});
 	});
+			});
 		});
 	});
 });
@@ -10417,6 +10428,51 @@ sap.ui.define([
 		oBinding.oCache = oCache;
 		this.mock(oCache).expects("move").withExactArgs("~oGroupLock~", "~child~", "~parent~")
 			.returns(SyncPromise.reject("~error~"));
+
+		// code under test
+		const oSyncPromise = oBinding.move(oChildContext, oParentContext);
+
+		assert.strictEqual(oSyncPromise.isRejected(), true);
+		assert.strictEqual(oSyncPromise.getResult(), "~error~");
+
+		oSyncPromise.caught(); // avoid "Uncaught (in promise)"
+	});
+
+	//*********************************************************************************************
+	QUnit.test("move: expand fails", function (assert) {
+		const oChildContext = {
+			iIndex : 43,
+			created : mustBeMocked,
+			getCanonicalPath : mustBeMocked,
+			isExpanded : mustBeMocked
+		};
+		this.mock(oChildContext).expects("isExpanded").withExactArgs().returns(true);
+		this.mock(oChildContext).expects("getCanonicalPath").withExactArgs().returns("/~child~");
+		const oParentContext = {
+			iIndex : 42,
+			getCanonicalPath : mustBeMocked
+		};
+		this.mock(oParentContext).expects("getCanonicalPath").withExactArgs().returns("/~parent~");
+		const oBinding = this.bindList("/EMPLOYEES");
+		this.mock(oBinding).expects("collapse")
+			.withExactArgs(sinon.match.same(oChildContext), true);
+		this.mock(oBinding).expects("getUpdateGroupId").withExactArgs().returns("~group~");
+		this.mock(oBinding).expects("lockGroup").withExactArgs("~group~", true, true)
+			.returns("~oGroupLock~");
+		const oCache = {
+			move : mustBeMocked
+		};
+		oBinding.oCache = oCache;
+		this.mock(oCache).expects("move").withExactArgs("~oGroupLock~", "~child~", "~parent~")
+			.returns(SyncPromise.resolve(1));
+		this.mock(oBinding).expects("insertGap").never();
+		oBinding.aContexts[43] = oChildContext;
+		oBinding.aContexts[42] = oParentContext;
+		this.mock(oChildContext).expects("created").withExactArgs().returns(true);
+		this.mock(oBinding).expects("expand")
+			.withExactArgs(sinon.match.same(oChildContext))
+			.returns(SyncPromise.reject("~error~"));
+		this.mock(oBinding).expects("_fireChange").never();
 
 		// code under test
 		const oSyncPromise = oBinding.move(oChildContext, oParentContext);

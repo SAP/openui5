@@ -1633,15 +1633,7 @@ function(
 					}
 
 				} else if (oClass.getMetadata().isA("sap.ui.core.Fragment") && bAsync) {
-
-					// Pass processingMode to any fragments except JS
-					// XML / HTML fragments: might include nested views / fragments,
-					//  which are processed asynchronously. Therefore the processingMode is needed
-					// JS fragments: might include synchronously or asynchronously created content. Nevertheless, the execution of the
-					//  content creation is not in the scope of the xml template processor, therefore the processing mode is not needed
-					if (sType !== ViewType.JS) {
-						mSettings.processingMode = oView._sProcessingMode;
-					}
+					mSettings.processingMode = oView._sProcessingMode;
 
 					var sFragmentPath = "sap/ui/core/Fragment";
 					var Fragment = sap.ui.require(sFragmentPath);

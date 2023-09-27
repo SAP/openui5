@@ -21,11 +21,25 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var DOM_RENDER_LOCATION = "qunit-fixture";
+	const DOM_RENDER_LOCATION = "qunit-fixture";
+	const AvatarColor = mLibrary.AvatarColor;
+	const pIfMicrochartsAvailable = Core.loadLibrary("sap.suite.ui.microchart", { async: true });
 
-	var AvatarColor = mLibrary.AvatarColor;
+	function testWithMicrochart(assert, oCard, oManifest, fnTest) {
+		const done = assert.async();
 
-	var pIfMicrochartsAvailable = Core.loadLibrary("sap.suite.ui.microchart", { async: true });
+		pIfMicrochartsAvailable
+			.then(function () {
+				oCard.attachEventOnce("_ready", function () {
+					fnTest(done);
+				});
+				oCard.setManifest(oManifest);
+			})
+			.catch(function () {
+				assert.ok(true, "Usage of Microcharts is not available with this distribution.");
+				done();
+			});
+	}
 
 	var oManifest_ListCard = {
 		"sap.app": {
@@ -119,59 +133,59 @@ sap.ui.define([
 		"sap.card": {
 			"type": "List",
 			"header": {
-			  "title": "List Card",
-			  "subTitle": "With static list items",
-			  "icon": {
-				"src": "sap-icon://business-objects-experience"
-			  },
-			  "status": {
-				"text": "5 of 17"
-			  }
+				"title": "List Card",
+				"subTitle": "With static list items",
+				"icon": {
+					"src": "sap-icon://business-objects-experience"
+				},
+				"status": {
+					"text": "5 of 17"
+				}
 			},
 			"content": {
-			  "items":[
-				{
-				  "title":"Laurent Dubois",
-				  "description":"I am Laurent. I put great attention to detail.",
-				  "infoState":"Error",
-				  "info":"Manager",
-				  "highlight":"Success",
-				  "action":{
-					"url":"https://www.w3schools.com"
-				  }
-				},
-				{
-				  "title":"Alain Chevalier",
-				  "description":"I am Alain. I put great attention to detail.",
-				  "infoState":"Success",
-				  "info":"Credit Analyst",
-				  "highlight":"Error"
-				},
-				{
-				  "title":"Alain Chevalier",
-				  "description":"I am Alain. I put great attention to detail.",
-				  "infoState":"Information",
-				  "info":"Configuration Expert",
-				  "highlight":"Information"
-				},
-				{
-				  "title":"Alain Chevalier",
-				  "description":"I am Alain. I put great attention to detail.",
-				  "highlight":"Warning"
-				},
-				{
-				  "title":"Laurent Dubois",
-				  "description":"I am Laurent. I put great attention to detail.",
-				  "infoState":"Error",
-				  "info":"Manager",
-				  "highlight":"Success",
-				  "action":{
-					"url":"https://www.w3schools.com"
-				  }
-				}
-			  ]
+				"items": [
+					{
+						"title": "Laurent Dubois",
+						"description": "I am Laurent. I put great attention to detail.",
+						"infoState": "Error",
+						"info": "Manager",
+						"highlight": "Success",
+						"action": {
+							"url": "https://www.w3schools.com"
+						}
+					},
+					{
+						"title": "Alain Chevalier",
+						"description": "I am Alain. I put great attention to detail.",
+						"infoState": "Success",
+						"info": "Credit Analyst",
+						"highlight": "Error"
+					},
+					{
+						"title": "Alain Chevalier",
+						"description": "I am Alain. I put great attention to detail.",
+						"infoState": "Information",
+						"info": "Configuration Expert",
+						"highlight": "Information"
+					},
+					{
+						"title": "Alain Chevalier",
+						"description": "I am Alain. I put great attention to detail.",
+						"highlight": "Warning"
+					},
+					{
+						"title": "Laurent Dubois",
+						"description": "I am Laurent. I put great attention to detail.",
+						"infoState": "Error",
+						"info": "Manager",
+						"highlight": "Success",
+						"action": {
+							"url": "https://www.w3schools.com"
+						}
+					}
+				]
 			}
-		  }
+		}
 	};
 
 	var oManifest_ListCard_MaxItems = {
@@ -185,7 +199,8 @@ sap.ui.define([
 			},
 			"content": {
 				"data": {
-					"json": [{
+					"json": [
+						{
 							"Name": "Notebook Basic 15"
 						},
 						{
@@ -237,7 +252,8 @@ sap.ui.define([
 			},
 			"content": {
 				"data": {
-					"json": [{
+					"json": [
+						{
 							"Name": "Notebook Basic 15"
 						},
 						{
@@ -563,7 +579,7 @@ sap.ui.define([
 							},
 							{
 								"value": "{Notebook17}",
-								"legendTitle":"Notebook 17 title"
+								"legendTitle": "Notebook 17 title"
 							}
 						]
 					}
@@ -667,12 +683,13 @@ sap.ui.define([
 			},
 			"content": {
 				"data": {
-					"json": [{
-						"Name": "Comfort Easy",
-						"Description": "32 GB Digital Assistant with high-resolution color screen",
-						"Highlight": "Error",
-						"IsFavorite": true
-					},
+					"json": [
+						{
+							"Name": "Comfort Easy",
+							"Description": "32 GB Digital Assistant with high-resolution color screen",
+							"Highlight": "Error",
+							"IsFavorite": true
+						},
 						{
 							"Name": "ITelO Vault",
 							"Description": "Digital Organizer with State-of-the-Art Storage Encryption",
@@ -1394,7 +1411,7 @@ sap.ui.define([
 		var done = assert.async(),
 			oManifest = {
 				"sap.app": {
-					"id":  "test.cards.list.itemsLengthGrouping"
+					"id": "test.cards.list.itemsLengthGrouping"
 				},
 				"sap.card": {
 					"type": "List",
@@ -1403,7 +1420,8 @@ sap.ui.define([
 					},
 					"content": {
 						"data": {
-							"json": [{
+							"json": [
+								{
 									"Name": "Product 1",
 									"Price": "100"
 								},
@@ -1446,7 +1464,7 @@ sap.ui.define([
 		var done = assert.async(),
 			oManifest = {
 				"sap.app": {
-					"id":  "test.cards.list.itemsLengthGrouping"
+					"id": "test.cards.list.itemsLengthGrouping"
 				},
 				"sap.card": {
 					"type": "List",
@@ -1455,7 +1473,8 @@ sap.ui.define([
 					},
 					"content": {
 						"data": {
-							"json": [{
+							"json": [
+								{
 									"Name": "Product 1"
 								},
 								{
@@ -1721,7 +1740,6 @@ sap.ui.define([
 				height: "600px"
 			});
 			this.oCard.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
 		},
 		afterEach: function () {
 			this.oCard.destroy();
@@ -1729,24 +1747,8 @@ sap.ui.define([
 		}
 	});
 
-	function testMicrochartCreation(assert, oCard, oManifest, fnTest) {
-		var done = assert.async();
-
-		pIfMicrochartsAvailable
-			.then(function () {
-				oCard.attachEventOnce("_ready", function () {
-					fnTest(done);
-				});
-				oCard.setManifest(oManifest);
-			})
-			.catch(function () {
-				assert.ok(true, "The usage of Microcharts is not available with this distribution.");
-				done();
-			});
-	}
-
 	QUnit.test("Creation of Bullet MicroChart", function (assert) {
-		testMicrochartCreation(assert, this.oCard, oManifest_ListCard_BulletMicrochart, function (done) {
+		testWithMicrochart(assert, this.oCard, oManifest_ListCard_BulletMicrochart, function (done) {
 			var oChart = this.oCard.getCardContent().getAggregation("_content").getItems()[0].getMicrochart().getChart(),
 				oExpectedSettings = oManifest_ListCard_BulletMicrochart["sap.card"]["content"]["data"]["json"][0];
 
@@ -1763,7 +1765,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Creation of StackedBar MicroChart", function (assert) {
-		testMicrochartCreation(assert, this.oCard, oManifest_ListCard_StackedBarMicrochart, function (done) {
+		testWithMicrochart(assert, this.oCard, oManifest_ListCard_StackedBarMicrochart, function (done) {
 			var oChart = this.oCard.getCardContent().getAggregation("_content").getItems()[0].getMicrochart().getChart(),
 				aBars = oChart.getBars(),
 				oExpectedSettings = oManifest_ListCard_StackedBarMicrochart["sap.card"]["content"]["data"]["json"];
@@ -1780,7 +1782,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Bullet MicroCharts sizes are equal", function (assert) {
-		testMicrochartCreation(assert, this.oCard, oManifest_ListCard_BulletMicrochartMultiple, function (done) {
+		testWithMicrochart(assert, this.oCard, oManifest_ListCard_BulletMicrochartMultiple, function (done) {
 			var $charts = this.oCard.$().find(".sapUiIntMicrochartChart"),
 				sMaxWidth,
 				bMaxWidthIsSame = true;
@@ -1807,7 +1809,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("StackedBar MicroCharts sizes are equal", function (assert) {
-		testMicrochartCreation(assert, this.oCard, oManifest_ListCard_StackedBarMicrochart, function (done) {
+		testWithMicrochart(assert, this.oCard, oManifest_ListCard_StackedBarMicrochart, function (done) {
 			var $charts = this.oCard.$().find(".sapUiIntMicrochartChart"),
 				sMaxWidth,
 				bMaxWidthIsSame = true;
@@ -1862,7 +1864,7 @@ sap.ui.define([
 			}
 		};
 
-		testMicrochartCreation(assert, this.oCard, oManifest, function (done) {
+		testWithMicrochart(assert, this.oCard, oManifest, function (done) {
 			var oMicrochart = this.oCard.getCardContent().getAggregation("_content").getItems()[0].getMicrochart();
 			var oLegend = this.oCard.getCardContent().getAggregation("_legend");
 
@@ -1888,31 +1890,15 @@ sap.ui.define([
 		}
 	});
 
-	function testLegend(assert, oCard, oManifest, fnTest) {
-		var done = assert.async();
-
-		pIfMicrochartsAvailable
-			.then(function () {
-				oCard.attachEventOnce("_ready", function () {
-					fnTest(done);
-				});
-				oCard.setManifest(oManifest);
-			})
-			.catch(function () {
-				assert.ok(true, "The usage of Microcharts is not available with this distribution.");
-				done();
-			});
-	}
-
 	QUnit.test("There should be a legend when chart type is 'StackedBar'", function (assert) {
-		testLegend(assert, this.oCard, oManifest_ListCard_StackedBarMicrochart, function (done) {
+		testWithMicrochart(assert, this.oCard, oManifest_ListCard_StackedBarMicrochart, function (done) {
 			assert.ok(this.oCard.getCardContent().getAggregation("_legend"), "Legend is created.");
 			done();
 		}.bind(this));
 	});
 
 	QUnit.test("Relative binding - the legend items should have correct titles", function (assert) {
-		testLegend(assert, this.oCard, oManifest_ListCard_StackedBarMicrochart, function (done) {
+		testWithMicrochart(assert, this.oCard, oManifest_ListCard_StackedBarMicrochart, function (done) {
 			// Arrange
 			Core.applyChanges();
 			var aExpectedTitles = oManifest_ListCard_StackedBarMicrochart["sap.card"]["content"]["data"]["json"]["Notebooks"],
@@ -1926,7 +1912,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Absolute binding- the legend items should have correct titles", function (assert) {
-		testLegend(assert, this.oCard, oManifest_ListCard_StackedBarMicrochart_AbsoluteBinding, function (done) {
+		testWithMicrochart(assert, this.oCard, oManifest_ListCard_StackedBarMicrochart_AbsoluteBinding, function (done) {
 			// Arrange
 			Core.applyChanges();
 			var oTitles = oManifest_ListCard_StackedBarMicrochart_AbsoluteBinding["sap.card"]["content"]["data"]["json"]["titles"],
@@ -1940,7 +1926,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("No binding- the legend items should have the same titles as the chart bars", function (assert) {
-		testLegend(assert, this.oCard, oManifest_ListCard_StackedBarMicrochart_NoBinding, function (done) {
+		testWithMicrochart(assert, this.oCard, oManifest_ListCard_StackedBarMicrochart_NoBinding, function (done) {
 			// Arrange
 			Core.applyChanges();
 			var aExpectedTitles = oManifest_ListCard_StackedBarMicrochart_NoBinding["sap.card"]["content"]["item"]["chart"]["bars"],
@@ -1954,7 +1940,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Legend is destroyed when the card type has changed", function (assert) {
-		testLegend(assert, this.oCard, oManifest_ListCard_StackedBarMicrochart, function (done) {
+		testWithMicrochart(assert, this.oCard, oManifest_ListCard_StackedBarMicrochart, function (done) {
 			assert.ok(this.oCard.getCardContent().getAggregation("_legend"), "Legend is created when it is needed.");
 
 			this.oCard.attachEvent("_ready", function () {
@@ -2046,5 +2032,126 @@ sap.ui.define([
 
 		// Act
 		this.oCard.setManifest(oManifest_ListCard);
+	});
+
+	QUnit.module("List card grouping", {
+		beforeEach: function () {
+			this.oCard = new Card();
+			this.oCard.placeAt(DOM_RENDER_LOCATION);
+		},
+		afterEach: function () {
+			this.oCard.destroy();
+			this.oCard = null;
+		}
+	});
+
+	QUnit.test("List card items can be grouped", function (assert) {
+		// Arrange
+		const done = assert.async();
+
+		this.oCard.attachEvent("_ready", () => {
+			const aItems = this.oCard.getCardContent().getInnerList().getItems();
+
+			// Assert
+			assert.strictEqual(aItems.length, 4, "There are two list items and two group titles in the list.");
+			assert.ok(aItems[0].isA("sap.m.GroupHeaderListItem"), "The first item of the list is the group title");
+			assert.strictEqual(aItems[0].getTitle(), "Expensive", "The group title is correct");
+
+			done();
+		});
+
+		// Act
+		this.oCard.setManifest({
+			"sap.app": {
+				"id": "test.card.listGrouping.card"
+			},
+			"sap.card": {
+				"type": "List",
+				"header": {
+					"title": "List Card"
+				},
+				"content": {
+					"data": {
+						"json": [
+							{
+								"Name": "Product 1",
+								"Price": "100"
+							},
+							{
+								"Name": "Product 2",
+								"Price": "200"
+							}
+						]
+					},
+					"item": {
+						"title": "{Name}",
+						"description": "{Price}"
+					},
+					"group": {
+						"title": "{= ${Price} > 150 ? 'Expensive' : 'Cheap'}",
+						"order": {
+							"path": "Price",
+							"dir": "DESC"
+						}
+					}
+				}
+			}
+		});
+	});
+
+	QUnit.test("List card grouping with microcharts", function (assert) {
+		const oManifest = {
+			"sap.app": {
+				"id": "test.card.listGrouping.card"
+			},
+			"sap.card": {
+				"type": "List",
+				"header": {
+					"title": "List Card"
+				},
+				"content": {
+					"data": {
+						"json": [
+							{
+								"Name": "Product 1",
+								"Price": "100"
+							},
+							{
+								"Name": "Product 2",
+								"Price": "200"
+							}
+						]
+					},
+					"item": {
+						"title": "{Name}",
+						"chart": {
+							"type": "StackedBar",
+							"bars": [
+								{
+									"value": 1000
+								}
+							]
+						}
+					},
+					"group": {
+						"title": "{= ${Price} > 150 ? 'Expensive' : 'Cheap'}",
+						"order": {
+							"path": "Price"
+						}
+					}
+				}
+			}
+		};
+
+		testWithMicrochart(assert, this.oCard, oManifest, (done) => {
+			const aItems = this.oCard.getCardContent().getInnerList().getItems();
+
+			// Assert
+			assert.strictEqual(aItems.length, 4, "There are two list items and two group titles in the list.");
+			assert.ok(aItems[0].isA("sap.m.GroupHeaderListItem"), "The first item of the list is the group title");
+			assert.strictEqual(aItems[0].getTitle(), "Cheap", "The group title is correct");
+
+			done();
+		});
 	});
 });

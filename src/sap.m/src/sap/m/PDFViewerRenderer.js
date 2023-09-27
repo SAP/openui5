@@ -139,7 +139,7 @@ sap.ui.define(['sap/ui/Device', "sap/base/Log", "sap/base/security/URLListValida
 
 		PDFViewerRenderer.renderErrorContent = function (oRm, oControl) {
 			var oErrorContent = oControl.getErrorPlaceholder() ? oControl.getErrorPlaceholder() :
-					oControl._objectsRegister.getPlaceholderMessagePageControl();
+					oControl._objectsRegister.getPlaceholderIllustratedMessageControl();
 
 			oRm.openStart("div");
 			oRm.class("sapMPDFViewerError");

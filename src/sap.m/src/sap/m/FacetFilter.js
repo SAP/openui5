@@ -2077,6 +2077,7 @@ sap.ui.define([
 		if (!oFooter) {
 			oButton = new Button({
 				text: this._bundle.getText("FACETFILTER_ACCEPT"),
+				type: ButtonType.Emphasized,
 				press: function() {
 					this._closePopover();
 				}.bind(this)

@@ -535,31 +535,10 @@ sap.ui.define([
 		var aContexts = [],
 			sKey;
 
-		// OperationMode.Auto: handle synchronized count to check what the actual internal operation mode should be
-		// If the $count or $inlinecount is used, is determined by the respective
-		if (this.sOperationMode == OperationMode.Auto) {
-			// as long as we do not have a collection count, we return an empty array
-			if (this.iTotalCollectionCount == null) {
-				if (!this.bCollectionCountRequested) {
-					this._getCountForCollection();
-					this.bCollectionCountRequested = true;
-				}
-				return [];
-			}
-		}
-
 		// Set default values if startindex, threshold or length are not defined
 		iStartIndex = iStartIndex || 0;
 		iLength = iLength || this.oModel.iSizeLimit;
 		iThreshold = iThreshold || 0;
-
-		// re-set the threshold in OperationMode.Auto
-		// between binding-treshold and the threshold given as an argument, the bigger one will be taken
-		if (this.sOperationMode == OperationMode.Auto) {
-			if (this.iThreshold >= 0) {
-				iThreshold = Math.max(this.iThreshold, iThreshold);
-			}
-		}
 
 		if (!this._mLoadedSections[sNodeId]) {
 			this._mLoadedSections[sNodeId] = [];
@@ -756,7 +735,7 @@ sap.ui.define([
 	 */
 	ODataTreeBinding.prototype._getCountForCollection = function () {
 
-		if (!this.bHasTreeAnnotations || this.sOperationMode != OperationMode.Auto) {
+		if (!this.bHasTreeAnnotations || true) {
 			Log.error("The Count for the collection can only be retrieved with Hierarchy Annotations and in OperationMode.Auto.");
 			return;
 		}
@@ -765,23 +744,10 @@ sap.ui.define([
 		var aParams = [];
 
 		function _handleSuccess(oData) {
-
 			// $inlinecount is in oData.__count, the $count is just oData
 			var iCount = oData.__count ? parseInt(oData.__count) : parseInt(oData);
 
 			this.iTotalCollectionCount = iCount;
-
-			// in the OpertionMode.Auto, we check if the count is LE than the given threshold and set the client operation flag accordingly
-			if (this.sOperationMode == OperationMode.Auto) {
-				if (this.iTotalCollectionCount <= this.iThreshold) {
-					this.bClientOperation = true;
-					this.bThresholdRejected = false;
-				} else {
-					this.bClientOperation = false;
-					this.bThresholdRejected = true;
-				}
-				this._fireChange({reason: ChangeReason.Change});
-			}
 		}
 
 		function _handleError(oError) {
@@ -821,7 +787,7 @@ sap.ui.define([
 
 		// figure out how to request the count
 		var sCountType = "";
-		if (this.sCountMode == CountMode.Request || this.sCountMode == CountMode.Both) {
+		if (this.sCountMode == CountMode.Request || false) {
 			sCountType = "/$count";
 		} else if (this.sCountMode == CountMode.Inline || this.sCountMode == CountMode.InlineRepeat) {
 			aParams.push("$top=0");
@@ -1141,7 +1107,7 @@ sap.ui.define([
 		//check if we already have a count
 		if (!this.oFinalLengths[sNodeId] || this.sCountMode == CountMode.InlineRepeat) {
 			// issue $inlinecount
-			if (this.sCountMode == CountMode.Inline || this.sCountMode == CountMode.InlineRepeat || this.sCountMode == CountMode.Both) {
+			if (this.sCountMode == CountMode.Inline || this.sCountMode == CountMode.InlineRepeat || false) {
 				aParams.push("$inlinecount=allpages");
 				bInlineCountRequested = true;
 			} else if (this.sCountMode == CountMode.Request) {

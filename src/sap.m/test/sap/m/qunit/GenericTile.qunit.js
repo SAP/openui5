@@ -27,13 +27,15 @@ sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/core/dnd/DragInfo",
 	"sap/f/dnd/GridDropInfo",
+	"sap/ui/core/Core",
+	"sap/ui/core/Theming",
 	/* jQuery custom selectors ":sapTabbable"*/
 	"sap/ui/dom/jquery/Selectors",
 	// used only indirectly
 	"sap/ui/events/jquery/EventExtension"
 ], function(jQuery, GenericTile, TileContent, NumericContent, ImageContent, Device, IntervalTrigger, ResizeHandler, GenericTileLineModeRenderer,
 			Button, Text, ScrollContainer, FlexBox, GenericTileRenderer, library, isEmptyObject, KeyCodes, oCore, GridContainerItemLayoutData,
-			GridContainerSettings, GridContainer, FormattedText, NewsContent, Parameters,qutils,DragInfo,GridDropInfo) {
+			GridContainerSettings, GridContainer, FormattedText, NewsContent, Parameters,qutils,DragInfo,GridDropInfo, Core, Theming) {
 	"use strict";
 
 	// shortcut for sap.m.Size
@@ -64,11 +66,9 @@ sap.ui.define([
 
 	QUnit.module("Control initialization core and theme checks", {
 		beforeEach: function() {
-			this.fnStubIsInitialized = this.stub(sap.ui.getCore(), "isInitialized");
-			this.fnSpyAttachInit = this.spy(sap.ui.getCore(), "attachInit");
+			this.fnSpyReady = this.spy(Core, "ready");
 			this.fnSpyHandleCoreInitialized = this.spy(GenericTile.prototype, "_handleCoreInitialized");
-			this.fnStubThemeApplied = this.stub(sap.ui.getCore(), "isThemeApplied");
-			this.fnStubAttachThemeApplied = this.stub(sap.ui.getCore(), "attachThemeChanged").callsFake(function(fn, context) {
+			this.fnStubAttachThemeApplied = this.stub(Theming, "attachApplied").callsFake(function(fn, context) {
 				fn.call(context); //simulate immediate theme change
 			});
 			this.fnSpyHandleThemeApplied = this.spy(GenericTile.prototype, "_handleThemeApplied");
@@ -77,74 +77,20 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Core initialization check - no core, no theme", function(assert) {
-		//Arrange
-		this.fnStubIsInitialized.returns(false);
-		this.fnStubThemeApplied.returns(false);
-
-		//Act
-		var oTile = new GenericTile();
-
-		//Assert
-		assert.ok(oTile._bThemeApplied, "Rendering variable has been correctly set.");
-		assert.ok(this.fnSpyAttachInit.calledOnce, "Method Core.attachInit has been called once.");
-		assert.ok(this.fnSpyHandleCoreInitialized.calledOnce, "Method _handleCoreInitialized has been called once.");
-		assert.ok(this.fnStubAttachThemeApplied.calledOnce, "Method Core.attachThemeChanged has been called once.");
-		assert.ok(this.fnSpyHandleThemeApplied.calledOnce, "Method _handleThemeApplied has been called once.");
-	});
-
-	QUnit.test("Core initialization check - no core, but theme", function(assert) {
-		//Arrange
-		this.fnStubIsInitialized.returns(false);
-		this.fnStubThemeApplied.returns(true);
-
-		//Act
-		var oTile = new GenericTile();
-
-		//Assert
-		assert.ok(oTile._bThemeApplied, "Rendering variable has been correctly set.");
-		assert.ok(this.fnSpyAttachInit.calledOnce, "Method Core.attachInit has been called once.");
-		assert.ok(this.fnSpyHandleCoreInitialized.calledOnce, "Method _handleCoreInitialized has been called once.");
-		assert.ok(this.fnStubAttachThemeApplied.notCalled, "Method Core.attachThemeChanged has not been called.");
-		assert.ok(this.fnSpyHandleThemeApplied.notCalled, "Method _handleThemeApplied has not been called.");
-	});
-
-	QUnit.test("Core initialization check - core, but no theme", function(assert) {
-		//Arrange
-		this.fnStubIsInitialized.returns(true);
-		this.fnStubThemeApplied.returns(false);
-
-		//Act
-		var oTile = new GenericTile();
-
-		//Assert
-		assert.ok(oTile._bThemeApplied, "Rendering variable has been correctly set.");
-		assert.ok(this.fnSpyAttachInit.notCalled, "Method Core.attachInit has not been called.");
-		assert.ok(this.fnSpyHandleCoreInitialized.calledOnce, "Method _handleCoreInitialized has been called once.");
-		assert.ok(this.fnStubAttachThemeApplied.calledOnce, "Method Core.attachThemeChanged has been called once.");
-		assert.ok(this.fnSpyHandleThemeApplied.calledOnce, "Method _handleThemeApplied has been called once.");
-	});
-
 	QUnit.test("Core initialization check - core and theme", function(assert) {
-		//Arrange
-		this.fnStubIsInitialized.returns(true);
-		this.fnStubThemeApplied.returns(true);
-
 		//Act
 		var oTile = new GenericTile();
 
 		//Assert
 		assert.ok(oTile._bThemeApplied, "Rendering variable has been correctly set.");
-		assert.ok(this.fnSpyAttachInit.notCalled, "Method Core.attachInit has not been called.");
+		assert.ok(this.fnSpyReady.calledOnce, "Method Core.ready has been called once.");
 		assert.ok(this.fnSpyHandleCoreInitialized.calledOnce, "Method _handleCoreInitialized has been called once.");
-		assert.ok(this.fnStubAttachThemeApplied.notCalled, "Method Core.attachThemeChanged has not been called.");
-		assert.ok(this.fnSpyHandleThemeApplied.notCalled, "Method _handleThemeApplied has not been called.");
+		assert.ok(this.fnStubAttachThemeApplied.calledOnce, "Method Core.attachThemeChanged has been called once.");
+		assert.ok(this.fnSpyHandleThemeApplied.calledOnce, "Method _handleThemeApplied has been called once.");
 	});
 
 	QUnit.test("Clamp title height when theme is ready", function(assert) {
 		//Arrange
-		this.fnStubIsInitialized.returns(true);
-		this.fnStubThemeApplied.returns(false);
 		this.spy(Text.prototype, "clampHeight");
 
 		//Act
@@ -351,33 +297,6 @@ sap.ui.define([
 		assert.strictEqual(document.getElementById("generic-tile-focus").parentNode, oTileElement, "The tile content is a child of the link.");
 	});
 
-	QUnit.test("GenericTile border rendered - blue crystal", function(assert) {
-		var $tile = this.oGenericTile.$();
-
-		var done = assert.async();
-		this.applyTheme("sap_bluecrystal", function() {
-			// the complete property name should be written for test in 'ie' and 'firefox'
-			assert.equal($tile.css("border-bottom-width"), "1px", "Border bottom width was rendered successfully");
-			assert.equal($tile.css("border-bottom-style"), "solid", "Border bottom style was rendered successfully");
-			assert.equal($tile.css("border-top-width"), "1px", "Border top width was rendered successfully");
-			assert.equal($tile.css("border-top-style"), "solid", "Border top style was rendered successfully");
-			assert.equal($tile.css("border-right-width"), "1px", "Border right width was rendered successfully");
-			assert.equal($tile.css("border-right-style"), "solid", "Border right style was rendered successfully");
-			assert.equal($tile.css("border-left-width"), "1px", "Border left width was rendered successfully");
-			assert.equal($tile.css("border-left-style"), "solid", "Border left style was rendered successfully");
-			done();
-		});
-	});
-
-	QUnit.test("GenericTile focus rendered - blue crystal", function(assert) {
-		var done = assert.async();
-		this.applyTheme("sap_bluecrystal", function() {
-			assert.ok(document.getElementById("generic-tile-hover-overlay"), "Hover overlay div was rendered successfully");
-			assert.ok(document.getElementById("generic-tile-focus"), "Focus div was rendered successfully");
-			done();
-		});
-	});
-
 	QUnit.test("GenericTile border rendered - HCB", function(assert) {
 		var done = assert.async();
 		this.applyTheme("sap_hcb", function() {
@@ -482,35 +401,6 @@ sap.ui.define([
 
 			done();
 		});
-	});
-
-	QUnit.test("GenericTile does not expand on focus - theme bluecrystal", function(assert) {
-		var $tile = this.oGenericTile.$();
-
-		var done = assert.async();
-		this.applyTheme("sap_bluecrystal", function() {
-
-			//get dimensions
-			var beforeWidth = $tile.outerWidth();
-			var beforeHeight = $tile.outerHeight();
-
-			//set :focus on tile
-			$tile.trigger("focus");
-			if (!this.checkFocus($tile)) {
-				assert.expect(0);
-				done();
-				return;
-			}
-
-			//get new dimensions
-			var afterWidth = $tile.outerWidth();
-			var afterHeight = $tile.outerHeight();
-
-			assert.strictEqual(afterWidth, beforeWidth, "Tile's outer width did not change");
-			assert.strictEqual(afterHeight, beforeHeight, "Tile's outer height did not change");
-
-			done();
-		}.bind(this));
 	});
 
 	QUnit.test("Wrapping type is propagated to title", function(assert) {
@@ -3658,7 +3548,7 @@ sap.ui.define([
 
 	QUnit.test("Priority Changes for TileContent", function(assert) {
 		var oTileContent = this.oGenericTile.getTileContent()[0];
-		var sPriority = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("TEXT_CONTENT_PRIORITY");
+		var sPriority = Core.getLibraryResourceBundle("sap.m").getText("TEXT_CONTENT_PRIORITY");
 
 		//Switch to None Priority
 		oTileContent.setPriority(Priority.None);

@@ -6,6 +6,8 @@ sap.ui.define([
 	"sap/m/library",
 	"sap/m/Dialog",
 	"sap/m/Button",
+	"sap/m/IllustratedMessage",
+	"sap/m/IllustratedMessageType",
 	"sap/m/OverflowToolbar",
 	"sap/m/OverflowToolbarButton",
 	"sap/m/Title",
@@ -15,6 +17,8 @@ sap.ui.define([
 	library,
 	Dialog,
 	Button,
+	IllustratedMessage,
+	IllustratedMessageType,
 	OverflowToolbar,
 	OverflowToolbarButton,
 	Title,
@@ -111,24 +115,25 @@ sap.ui.define([
 				}
 			};
 
-			PDFViewer.prototype._initPlaceholderMessagePageControl = function () {
+			PDFViewer.prototype._initPlaceholderIllustratedMessageControl = function () {
 				var that = this,
-				sPlaceholderMessagePageFactoryFunctionName = "getPlaceholderMessagePageControl";
+				sPlaceholderIllustratedMessageFactoryFunctionName = "getPlaceholderIllustratedMessageControl";
 
-				this._objectsRegister[sPlaceholderMessagePageFactoryFunctionName] = function () {
-					var oMessagePage = new undefined/*MessagePage*/({
-						showHeader: false,
-						text: that._getMessagePageErrorMessage(),
-						description: ""
+				this._objectsRegister[sPlaceholderIllustratedMessageFactoryFunctionName] = function () {
+					var oIllustratedMessage = new IllustratedMessage({
+						title: that._getIllustratedMessageErrorMessage(),
+						illustrationType: IllustratedMessageType.SimpleError,
+						enableDefaultTitleAndDescription: false
 					});
 
-					that._objectsRegister[sPlaceholderMessagePageFactoryFunctionName] = function () {
-						oMessagePage.setText(that._getMessagePageErrorMessage());
-
-						return oMessagePage;
+					that._objectsRegister[sPlaceholderIllustratedMessageFactoryFunctionName] = function () {
+						oIllustratedMessage.setTitle(that._getIllustratedMessageErrorMessage());
+						oIllustratedMessage.setIllustrationType(IllustratedMessageType.SimpleError);
+						oIllustratedMessage.setEnableDefaultTitleAndDescription(false);
+						return oIllustratedMessage;
 					};
 
-					return oMessagePage;
+					return oIllustratedMessage;
 				};
 			};
 

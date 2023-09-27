@@ -833,7 +833,8 @@ sap.ui.define([
 
 	/**
 	 * Moves the (child) node with the given path to the parent node with the given path by sending
-	 * a PATCH request for "<parent navigation>@odata.bind".
+	 * a PATCH request for "<parent navigation>@odata.bind". The (child) node may be a leaf or a
+	 * collapsed node, but not expanded!
 	 *
 	 * @param {sap.ui.model.odata.v4.lib._GroupLock} oGroupLock
 	 *   A lock for the group to associate the requests with
@@ -841,58 +842,84 @@ sap.ui.define([
 	 *   The (child) node's path relative to the cache
 	 * @param {string} sParentPath
 	 *   The parent node's path relative to the cache
-	 * @returns {sap.ui.base.SyncPromise<void>}
-	 *   A promise which is resolved without a defined result when the move is finished, or
-	 *   rejected in case of an error
+	 * @returns {sap.ui.base.SyncPromise<number>}
+	 *   A promise which is resolved with the number of child nodes added (normally one, but maybe
+	 *   more in case parent node was collapsed before) when the move is finished, or rejected in
+	 *   case of an error
 	 *
 	 * @public
 	 */
 	_AggregationCache.prototype.move = function (oGroupLock, sChildPath, sParentPath) {
+		const sTransientPredicate = "($uid=" + _Helper.uid() + ")";
+
 		const sChildPredicate = sChildPath.slice(sChildPath.indexOf("("));
 		const oChildNode = this.aElements.$byPredicate[sChildPredicate];
+		const sParentPredicate = sParentPath.slice(sParentPath.indexOf("("));
+		const oParentNode = this.aElements.$byPredicate[sParentPredicate];
 
-		return this.oRequestor.request("PATCH", sChildPath, oGroupLock, {
+		let oReadPromise;
+		let oCache = _Helper.getPrivateAnnotation(oParentNode, "cache");
+		if (!oCache && oParentNode["@$ui5.node.isExpanded"] === false) {
+			oCache = this.createGroupLevelCache(oParentNode);
+			// @see #getExclusiveFilter
+			oCache.restoreElement(undefined, 0, oChildNode, "", undefined, sTransientPredicate);
+			// prefetch from the group level cache
+			oReadPromise = oCache.read(0, this.iReadLength, 0, oGroupLock.getUnlockedCopy());
+		}
+
+		return SyncPromise.all([
+			this.oRequestor.request("PATCH", sChildPath, oGroupLock, {
 					"If-Match" : oChildNode,
 					Prefer : "return=minimal"
 				}, {[this.oAggregation.$ParentNavigationProperty + "@odata.bind"] : sParentPath},
-				/*fnSubmit*/null, function fnCancel() { /*nothing to do*/ })
-			.then((oPatchResult) => {
-				// update the cache with the PATCH response (Note: "@odata.etag" is optional!)
-				_Helper.updateExisting(this.mChangeListeners, sChildPredicate, oChildNode,
-					{"@odata.etag" : oPatchResult["@odata.etag"]});
+				/*fnSubmit*/null, function fnCancel() { /*nothing to do*/ }),
+			oReadPromise
+		]).then(([oPatchResult, _oReadResult]) => {
+			// update the cache with the PATCH response (Note: "@odata.etag" is optional!)
+			_Helper.updateExisting(this.mChangeListeners, sChildPredicate, oChildNode, {
+				"@odata.etag" : oPatchResult["@odata.etag"],
+				"@$ui5.node.level" : oParentNode["@$ui5.node.level"] + 1
+			});
 
-				const iOldIndex = this.aElements.indexOf(oChildNode);
-				this.shiftIndex(iOldIndex, -1);
-				this.aElements.splice(iOldIndex, 1);
+			const iOldIndex = this.aElements.indexOf(oChildNode);
+			this.shiftIndex(iOldIndex, -1);
+			this.aElements.splice(iOldIndex, 1);
 
-				// remove original element from its cache's collection
-				const oOldParentCache = _Helper.getPrivateAnnotation(oChildNode, "parent");
-				oOldParentCache.removeElement(undefined,
-					_Helper.getPrivateAnnotation(oChildNode, "index"), sChildPredicate, "");
-				if (oOldParentCache.getValue("$count") === 0) { // last child has gone
-					const oOldParent = this.aElements[iOldIndex - 1];
-					_Helper.updateAll(this.mChangeListeners,
-						_Helper.getPrivateAnnotation(oOldParent, "predicate"),
-						oOldParent, {"@$ui5.node.isExpanded" : undefined}); // a leaf now
-					// _Helper.updateAll only sets it to undefined
-					delete oOldParent["@$ui5.node.isExpanded"];
-					_Helper.deletePrivateAnnotation(oOldParent, "cache");
-					oOldParentCache.setActive(false);
-				}
+			// remove original element from its cache's collection
+			const oOldParentCache = _Helper.getPrivateAnnotation(oChildNode, "parent");
+			oOldParentCache.removeElement(undefined,
+				_Helper.getPrivateAnnotation(oChildNode, "index"), sChildPredicate, "");
+			if (oOldParentCache.getValue("$count") === 0) { // last child has gone
+				const oOldParent = this.aElements[iOldIndex - 1];
+				_Helper.updateAll(this.mChangeListeners,
+					_Helper.getPrivateAnnotation(oOldParent, "predicate"),
+					oOldParent, {"@$ui5.node.isExpanded" : undefined}); // a leaf now
+				// _Helper.updateAll only sets it to undefined
+				delete oOldParent["@$ui5.node.isExpanded"];
+				_Helper.deletePrivateAnnotation(oOldParent, "cache");
+				oOldParentCache.setActive(false);
+			}
 
-				// once oChildNode has moved, it should look 'created' because of its new position
-				if (!_Helper.hasPrivateAnnotation(oChildNode, "transientPredicate")) {
-					const sTransientPredicate = "($uid=" + _Helper.uid() + ")";
-					_Helper.setPrivateAnnotation(oChildNode, "transientPredicate",
-						sTransientPredicate);
-					this.aElements.$byPredicate[sTransientPredicate] = oChildNode;
-					_Helper.updateAll(this.mChangeListeners, sChildPredicate, oChildNode,
-						{"@$ui5.context.isTransient" : false});
-				}
+			// once oChildNode has moved, it should look 'created' because of its new position
+			if (!_Helper.hasPrivateAnnotation(oChildNode, "transientPredicate")) {
+				_Helper.setPrivateAnnotation(oChildNode, "transientPredicate",
+					sTransientPredicate);
+				this.aElements.$byPredicate[sTransientPredicate] = oChildNode;
+				_Helper.updateAll(this.mChangeListeners, sChildPredicate, oChildNode,
+					{"@$ui5.context.isTransient" : false});
+			}
 
-				const sParentPredicate = sParentPath.slice(sParentPath.indexOf("("));
-				const oParentNode = this.aElements.$byPredicate[sParentPredicate];
-				let oCache = _Helper.getPrivateAnnotation(oParentNode, "cache");
+			let iResult = 1;
+			_Helper.setPrivateAnnotation(oChildNode, "index", 0);
+			if (oReadPromise) {
+				_Helper.setPrivateAnnotation(oChildNode, "parent", oCache);
+				_Helper.setPrivateAnnotation(oParentNode, "cache", oCache);
+				// Note: "@$ui5.node.level" will be created by #expand for oChildNode's siblings
+				// Note: oChildNode already belongs to oCache!
+				this.aElements.$count -= 1; // #expand adjusts $count incl. oChildNode!
+				iResult = this.expand(_GroupLock.$cached, sParentPredicate).unwrap();
+				// Note: "index" created OK by #expand for oChildNode's siblings
+			} else {
 				if (!oCache) {
 					oCache = this.createGroupLevelCache(oParentNode);
 					oCache.setEmpty();
@@ -900,16 +927,25 @@ sap.ui.define([
 					_Helper.updateAll(this.mChangeListeners, sParentPredicate, oParentNode,
 						{"@$ui5.node.isExpanded" : true}); // not a leaf anymore
 				}
-				oCache.restoreElement(undefined, 0, oChildNode, "");
-				_Helper.setPrivateAnnotation(oChildNode, "index", 0);
 				_Helper.setPrivateAnnotation(oChildNode, "parent", oCache);
+				oCache.restoreElement(undefined, 0, oChildNode, "");
 
-				_Helper.updateAll(this.mChangeListeners, sChildPredicate, oChildNode,
-					{"@$ui5.node.level" : oParentNode["@$ui5.node.level"] + 1});
 				const iNewIndex = this.aElements.indexOf(oParentNode) + 1;
-				this.aElements.splice(iNewIndex, 0, oChildNode);
+				const aSpliced = _Helper.getPrivateAnnotation(oParentNode, "spliced");
+				if (aSpliced) {
+					// Note: "@$ui5.node.level" will be adjusted by #expand for aSpliced!
+					oChildNode["@$ui5.node.level"] = aSpliced[0]["@$ui5.node.level"];
+					aSpliced.unshift(oChildNode);
+					this.aElements.$count -= 1; // #expand adjusts $count incl. oChildNode!
+					iResult = this.expand(_GroupLock.$cached, sParentPredicate).unwrap();
+				} else {
+					this.aElements.splice(iNewIndex, 0, oChildNode);
+				}
 				this.shiftIndex(iNewIndex, +1); // relies on "parent" & "@$ui5.node.level"!
-			});
+			}
+
+			return iResult;
+		});
 	};
 
 	/**

@@ -9,6 +9,7 @@ sap.ui.define([
 	"sap/m/ToolbarSpacer",
 	"sap/m/Button",
 	"sap/m/List",
+	"sap/m/ListBase",
 	"sap/m/StandardListItem",
 	"sap/ui/layout/FixFlex",
 	"sap/m/ScrollContainer",
@@ -19,32 +20,10 @@ sap.ui.define([
 	"sap/ui/Device",
 	"sap/ui/base/ManagedObject",
 	"sap/ui/core/Control",
-	"sap/ui/core/Core",
-	"sap/m/library",
-	"sap/ui/layout/library"
+	"sap/ui/core/Core"
 ], function(
-	jQuery,
-	NavContainer,
-	ResponsivePopover,
-	Page,
-	Toolbar,
-	OverflowToolbar,
-	ToolbarSpacer,
-	Button,
-	List,
-	StandardListItem,
-	FixFlex,
-	ScrollContainer,
-	Title,
-	SelectionDetails,
-	Item,
-	SelectionDetailsItem,
-	Device,
-	ManagedObject,
-	Control,
-	oCore,
-	mobileLibrary,
-	layoutLibrary
+	jQuery, NavContainer, ResponsivePopover, Page, Toolbar, OverflowToolbar, ToolbarSpacer, Button, List, ListBase, StandardListItem,
+	FixFlex, ScrollContainer, Title, SelectionDetails, Item, SelectionDetailsItem, Device, ManagedObject, Control, oCore
 ) {
 	"use strict";
 
@@ -210,22 +189,22 @@ sap.ui.define([
 			this.oSelectionDetails.placeAt("qunit-fixture");
 			oCore.applyChanges();
 
-			sinon.spy(mobileLibrary, "ResponsivePopover");
-			sinon.spy(mobileLibrary, "Page");
-			sinon.spy(mobileLibrary, "List");
-			sinon.spy(layoutLibrary, "FixFlex");
-			sinon.spy(mobileLibrary, "NavContainer");
+			this.oResponsivePopoverSpy = sinon.spy(ResponsivePopover.prototype, "init");
+			this.oPageSpy = sinon.spy(Page.prototype, "init");
+			this.oListBaseSpy = sinon.spy(ListBase.prototype, "init");
+			this.oFixFlexSpy = sinon.spy(FixFlex.prototype, "init");
+			this.oNavContainerSpy = sinon.spy(NavContainer.prototype, "init");
 			this._aGetPopoverArgs = [
 				NavContainer, ResponsivePopover, Toolbar, ToolbarSpacer, Page,
 				List, FixFlex, ScrollContainer, Title
 			];
 		},
 		afterEach: function() {
-			sap.m.ResponsivePopover.restore();
-			sap.m.Page.restore();
-			sap.m.List.restore();
-			sap.ui.layout.FixFlex.restore();
-			sap.m.NavContainer.restore();
+			this.oResponsivePopoverSpy.restore();
+			this.oPageSpy.restore();
+			this.oListBaseSpy.restore();
+			this.oFixFlexSpy.restore();
+			this.oNavContainerSpy.restore();
 
 			this.oSelectionDetails.destroy();
 			this.oSelectionDetails = null;
@@ -240,11 +219,11 @@ sap.ui.define([
 		//Act
 		//Assert
 		assert.deepEqual(this.oSelectionDetails._getPopover.apply(this.oSelectionDetails, this._aGetPopoverArgs), oPopover, "Return value is correct.");
-			assert.equal(sap.m.ResponsivePopover.callCount, 1, "Constructor for ResponsivePopover has been called only once.");
-			assert.equal(sap.m.Page.callCount, 1, "Constructor for Page has been called only once.");
-			assert.equal(sap.m.List.callCount, 2, "Constructor for List has been called twice.");
-			assert.equal(sap.ui.layout.FixFlex.callCount, 1, "Constructor for FixFlex has been called only once.");
-			assert.equal(sap.m.NavContainer.callCount, 1, "Constructor for NavContainer has been called only once.");
+			assert.equal(this.oResponsivePopoverSpy.callCount, 1, "Constructor for ResponsivePopover has been called only once.");
+			assert.equal(this.oPageSpy.callCount, 1, "Constructor for Page has been called only once.");
+			assert.equal(this.oListBaseSpy.callCount, 2, "Constructor for List has been called twice.");
+			assert.equal(this.oFixFlexSpy.callCount, 1, "Constructor for FixFlex has been called only once.");
+			assert.equal(this.oNavContainerSpy.callCount, 1, "Constructor for NavContainer has been called only once.");
 		assert.equal(oPopover.setProperty, this.oSelectionDetails._setPopoverProperty, "Method 'setProperty' overridden");
 	});
 

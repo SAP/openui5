@@ -17,6 +17,7 @@
 @_sap_m_SearchField_FocusOffset: 0;
 @_sap_m_SearchField_FocusBorderRadius: inherit;
 @_sap_m_SearchField_PlaceholderFontStyle: italic;
+@_sap_m_SearchField_ActiveBackgroundStyle: @sapUiFieldBackgroundStyle;
 
 .sapMSFF {
 	border-radius: @sapUiFieldBorderCornerRadius;
@@ -27,10 +28,6 @@
 }
 
 .sapMSFB {
-	// don't overlap the bottom line
-	margin-bottom: 1px;
-	height: ~"calc(100% - 1px)";
-
 	border-radius: @sapUiFieldBorderCornerRadius;
 	color: @sapUiFieldTextColor;
 
@@ -44,6 +41,7 @@
 
 	&:hover {
 		box-shadow: @sapUiFieldHoverShadow;
+		background: @sapUiFieldBackgroundStyle;
 		background-color: @sapUiFieldHoverBackground;
 	}
 

@@ -48,6 +48,7 @@ sap.ui.define(['sap/ui/core/InvisibleText', 'sap/ui/core/Renderer', './InputBase
 	 */
 	InputRenderer.writeInnerAttributes = function (oRm, oControl) {
 		var bShowSuggestions = oControl.getShowSuggestion();
+		var bAddReadOnly = (!oControl.getEnabled() && oControl.getType() == "Password") || (oControl.getShowSuggestion() && oControl.isMobileDevice());
 
 		oRm.attr("type", oControl.getType().toLowerCase());
 		//if Input is of type "Number" step attribute should be "any" allowing input of floating point numbers
@@ -62,9 +63,7 @@ sap.ui.define(['sap/ui/core/InvisibleText', 'sap/ui/core/Renderer', './InputBase
 			oRm.attr("autocomplete", "off"); // autocomplete="off" needed so the native browser autocomplete is not shown?
 		}
 
-		if ((!oControl.getEnabled() && oControl.getType() == "Password")
-			|| (oControl.getShowSuggestion() && oControl.isMobileDevice())
-			|| (false)) {
+		if (bAddReadOnly) {
 			// required for JAWS reader on password fields on desktop and in other cases:
 			oRm.attr("readonly", "readonly");
 		}

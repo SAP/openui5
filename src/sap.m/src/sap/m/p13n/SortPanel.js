@@ -97,8 +97,9 @@ sap.ui.define([
 					icon: "sap-icon://sort-descending"
 				})
 			],
-			select: function (oEvt) {
-				var sSortOrder = oEvt.getParameter("key");
+			selectionChange: function (oEvt) {
+				var oItem = oEvt.getParameter("item");
+				var sSortOrder = oItem.getKey();
 				var oText = oEvt.getSource().getParent().getContent()[2];
 				oText.setText(this._getSortOrderText(sSortOrder === "desc"));
 				var sKey = oEvt.oSource.getParent().getContent()[0].getSelectedItem().getKey();

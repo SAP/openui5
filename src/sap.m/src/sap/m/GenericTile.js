@@ -23,8 +23,9 @@ sap.ui.define([
 	"sap/ui/core/library",
 	"sap/ui/core/Configuration",
 	"sap/ui/core/InvisibleText",
-	"sap/ui/core/Core"
-], function(
+	"sap/ui/core/Core",
+	"sap/ui/core/Theming"
+], function (
 	library,
 	Control,
 	Text,
@@ -45,7 +46,8 @@ sap.ui.define([
 	coreLibrary,
 	Configuration,
 	InvisibleText,
-	Core
+	Core,
+	Theming
 ) {
 	"use strict";
 
@@ -375,7 +377,7 @@ sap.ui.define([
 	/* --- Lifecycle Handling --- */
 
 	GenericTile.prototype.init = function () {
-		this._oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+		this._oRb = Core.getLibraryResourceBundle("sap.m");
 
 		// Defines custom screen range set: smaller than or equal to 449px defines 'small' and bigger than 449px defines 'large' screen
 		if (!Device.media.hasRangeSet(DEVICE_SET)) {
@@ -437,13 +439,8 @@ sap.ui.define([
 		this._bTilePress = true;
 
 		this._sBGColor = DEFAULT_BG_COLOR;
-		this._bThemeApplied = true;
-		if (!sap.ui.getCore().isInitialized()) {
-			this._bThemeApplied = false;
-			Core.ready(this._handleCoreInitialized.bind(this));
-		} else {
-			this._handleCoreInitialized();
-		}
+		this._bThemeApplied = false;
+		Core.ready(this._handleCoreInitialized.bind(this));
 
 		//Navigate Action Button in Article Mode
 		this._oNavigateAction = new Button(this.getId() + "-navigateAction");
@@ -486,10 +483,7 @@ sap.ui.define([
 	 * @private
 	 */
 	GenericTile.prototype._handleCoreInitialized = function () {
-		this._bThemeApplied = sap.ui.getCore().isThemeApplied();
-		if (!this._bThemeApplied) {
-			sap.ui.getCore().attachThemeChanged(this._handleThemeApplied, this);
-		}
+		Theming.attachApplied(this._handleThemeApplied.bind(this));
 	};
 
 	/**
@@ -500,7 +494,7 @@ sap.ui.define([
 	GenericTile.prototype._handleThemeApplied = function () {
 		this._bThemeApplied = true;
 		this._oTitle.clampHeight();
-		sap.ui.getCore().detachThemeChanged(this._handleThemeApplied, this);
+		Theming.detachApplied(this._handleThemeApplied.bind(this));
 	};
 
 	/**

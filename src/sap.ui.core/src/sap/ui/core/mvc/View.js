@@ -1197,16 +1197,10 @@ sap.ui.define([
 		}
 		if (!oViewSettings.type) {
 			throw new Error("No view type specified.");
-		} else if (oViewSettings.type === ViewType.JS) {
-			sViewClass = 'sap/ui/core/mvc/JSView';
 		} else if (oViewSettings.type === ViewType.JSON) {
 			sViewClass = 'sap/ui/core/mvc/JSONView';
 		} else if (oViewSettings.type === ViewType.XML) {
 			sViewClass = 'sap/ui/core/mvc/XMLView';
-		} else if (oViewSettings.type === ViewType.HTML) {
-			sViewClass = 'sap/ui/core/mvc/HTMLView';
-		} else if (oViewSettings.type === ViewType.Template) {
-			sViewClass = 'sap/ui/core/mvc/TemplateView';
 		} else { // unknown view type
 			throw new Error("Unknown view type " + oViewSettings.type + " specified.");
 		}

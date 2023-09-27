@@ -198,7 +198,8 @@ sap.ui.define(
 					// get component and data when sample is changed or nothing exists so far
 					return this._createComponent().then(function (oComponent) {
 						// create data object
-						var oConfig = oComponent.getManifestEntry("/sap.ui5/config") || {};
+						var oConfig = oComponent.getManifestEntry("/sap.ui5/config") || {},
+							aAdditionalEditableFiles = oConfig.sample && oConfig.sample.additionalEditableFiles;
 						this._oData = {
 							id: oSample.id,
 							title: "Code: " + oSample.name,
@@ -208,6 +209,8 @@ sap.ui.define(
 								return {
 									key: sFile,
 									name: sFile,
+									editable: !!(sFile.endsWith(".xml") || sFile.endsWith(".js")
+										|| (aAdditionalEditableFiles && aAdditionalEditableFiles.indexOf(sFile) > -1)),
 									url: sap.ui.require.toUrl((oSample.id).replace(/\./g, "/")) + "/" + sFile
 								};
 							}),
