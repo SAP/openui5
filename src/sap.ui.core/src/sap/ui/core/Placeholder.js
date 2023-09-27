@@ -3,11 +3,13 @@
  */
 sap.ui.define([
 	'sap/ui/base/Object',
+	'sap/base/config',
 	'sap/base/util/Deferred',
 	'sap/base/util/LoaderExtensions',
 	'sap/ui/core/BlockLayerUtils'
 ], function(
 	BaseObject,
+	BaseConfig,
 	Deferred,
 	LoaderExtensions,
 	BlockLayerUtils
@@ -178,6 +180,22 @@ sap.ui.define([
 		}
 
 		return oProviderConfig;
+	};
+
+	/**
+	 * Returns whether placeholders are active or not
+	 *
+	 * @returns {boolean} Whether placeholders are active or not
+	 * @private
+	 * @ui5-restricted sap.ui.core, sap.m, sap.f
+	 */
+	Placeholder.isEnabled = function() {
+		return BaseConfig.get({
+			name: "sapUiXxPlaceholder",
+			type: BaseConfig.Type.Boolean,
+			external: true,
+			defaultValue: true
+		});
 	};
 
 	return Placeholder;

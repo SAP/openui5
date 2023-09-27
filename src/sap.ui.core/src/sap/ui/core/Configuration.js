@@ -428,19 +428,6 @@ sap.ui.define([
 
 		getTheme : Theming.getTheme,
 
-		/**
-		 * Returns whether placeholders are active or not
-		 * @returns {boolean} Whether placeholders are active or not
-		 */
-		getPlaceholder : function() {
-			return BaseConfig.get({
-				name: "sapUiXxPlaceholder",
-				type: BaseConfig.Type.Boolean,
-				external: true,
-				defaultValue: true
-			});
-		},
-
 		setTheme : function (sTheme) {
 			Theming.setTheme(sTheme);
 			return this;
