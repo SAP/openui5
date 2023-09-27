@@ -24787,7 +24787,7 @@ sap.ui.define([
 	// JIRA: CPOUI5ODATAV4-1643
 	//
 	// Request various side effects that do not affect the hierarchy (JIRA: CPOUI5ODATAV4-1785).
-	// Check that create, delete, and refresh are not supported (JIRA: CPOUI5ODATAV4-1851).
+	// Check that refresh is not supported (JIRA: CPOUI5ODATAV4-1851).
 	// Additionally, ODLB#getDownloadUrl is tested (JIRA: CPOUI5ODATAV4-1920, BCP: 2370011296).
 	// Retrieve "DistanceFromRoot" property path via ODLB#getAggregation (JIRA: CPOUI5ODATAV4-1961).
 	//
