@@ -400,7 +400,7 @@ sap.ui.define([
 				aModules.push("sap.ui.core.plugin.LessSupport");
 			}
 
-			var sPreloadMode = Configuration.getPreload();
+			var sPreloadMode = Library.getPreloadMode();
 			// This flag controls the core initialization flow.
 			// We can switch to async when an async preload is used or the ui5loader
 			// is in async mode. The latter might also happen for debug scenarios

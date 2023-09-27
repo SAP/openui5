@@ -8,7 +8,7 @@ sap.ui.define([
 	"sap/ui/base/ManagedObject",
 	"sap/ui/core/Element",
 	"sap/ui/core/CustomData",
-	"sap/ui/core/Configuration",
+	"sap/ui/core/Lib",
 	"sap/ui/thirdparty/jquery"
 ],
 function(
@@ -16,7 +16,7 @@ function(
 	ManagedObject,
 	Element,
 	CustomData,
-	Configuration,
+	Library,
 	jQuery
 ) {
 	"use strict";
@@ -160,6 +160,9 @@ function(
 			this.oRequireStub.withArgs(["sap/test/otherInstanceSpecific.designtime"]).callsArgWithAsync(1, this.oDTForOtherInstance);
 			this.oRequireStub.withArgs(["sap/test/instanceSpecificFunction.designtime"]).callsArgWithAsync(1, this.oDTForInstanceFunction);
 			this.oRequireStub.withArgs(["sap/ui/dt/defaultDesigntime/defaultDT.designtime"]).callsArgWithAsync(1, this.oDTForPredefinedDefaultDT);
+			// For some reason sinon v1 must be used for this test which does not support callThrough on stubs therefore implemented a stub for
+			// the sap.ui.require(["sap/ui/core/Lib"]) call
+			this.oRequireStub.withArgs(["sap/ui/core/Lib"]).callsArgWithAsync(1, Library);
 
 			this.oInstanceWithoutSpecificDTMetadata = new Element();
 			this.oInstanceWithSpecificDTMetadata = new Element({
@@ -427,7 +430,7 @@ function(
 			]).then(function(aDesignTimes) {
 
 				// Only 3 require calls are expected, as one ManagedObject (NoDTManagedObjectChild2) does not have design time data
-				sinon.assert.callCount(this.oRequireStub, 3);
+				sinon.assert.callCount(this.oRequireStub, 6);
 
 				var oDTManagedObjectDesignTime = aDesignTimes[0];
 				assert.strictEqual(oDTManagedObjectDesignTime.metaProp1, "1", "DesignTime data was passed");
@@ -471,7 +474,7 @@ function(
 		QUnit.test("loadDesignTime - cache the results", function(assert) {
 			var oDTManagedObjectMetadata = DTManagedObjectChild3.getMetadata();
 			return oDTManagedObjectMetadata.loadDesignTime().then(function() {
-				sinon.assert.callCount(this.oRequireStub, 3);
+				sinon.assert.callCount(this.oRequireStub, 6);
 				this.oRequireStub.reset();
 				return oDTManagedObjectMetadata.loadDesignTime().then(function() {
 					assert.notOk(this.oRequireStub.called, "sap.ui.require was not called");
@@ -481,17 +484,17 @@ function(
 
 		QUnit.test("loadDesignTime - cache the results implicitly (parent first)", function(assert) {
 			return DTManagedObjectChild.getMetadata().loadDesignTime().then(function() {
-				sinon.assert.callCount(this.oRequireStub, 2);
+				sinon.assert.callCount(this.oRequireStub, 4);
 				this.oRequireStub.reset();
 				return DTManagedObjectChild3.getMetadata().loadDesignTime().then(function() {
-					sinon.assert.callCount(this.oRequireStub, 1);
+					sinon.assert.callCount(this.oRequireStub, 2);
 				}.bind(this));
 			}.bind(this));
 		});
 
 		QUnit.test("loadDesignTime - cache the results implicitly (child first)", function(assert) {
 			return DTManagedObjectChild3.getMetadata().loadDesignTime().then(function() {
-				sinon.assert.callCount(this.oRequireStub, 3);
+				sinon.assert.callCount(this.oRequireStub, 6);
 				this.oRequireStub.reset();
 				return DTManagedObjectChild.getMetadata().loadDesignTime().then(function() {
 					assert.notOk(this.oRequireStub.called, "sap.ui.require was not called");
@@ -501,14 +504,14 @@ function(
 
 		QUnit.test("loadDesignTime - cache the results implicitly (child  with parent + other child with same parent)", function(assert) {
 			return DTManagedObjectChild.getMetadata().loadDesignTime().then(function(oTestOuter) {
-				sinon.assert.callCount(this.oRequireStub, 2);
+				sinon.assert.callCount(this.oRequireStub, 4);
 				this.oRequireStub.reset();
 				//previously the issue was that a derived control deleted the parents designtimeModule.
 				//any other child did not set the correct designtimeModule path
 
 				//load derived metadata DTManagedObjectChild3 that inherits DTManagedObject
 				DTManagedObjectChild3.getMetadata().loadDesignTime().then(function(oTestOuter3) {
-					sinon.assert.callCount(this.oRequireStub, 1);
+					sinon.assert.callCount(this.oRequireStub, 2);
 					this.oRequireStub.reset();
 					return DTManagedObject.getMetadata().loadDesignTime().then(function(oTestInner) {
 						assert.strictEqual(oTestInner.designtimeModule, "DTManagedObject.designtime", "DesignTime module path defined DTManagedObjectChild");
@@ -530,7 +533,7 @@ function(
 		QUnit.test("loadDesignTime - cache the results with designtime only via inheritance", function(assert) {
 			var oDTManagedObjectMetadataChild = NoDTManagedObjectChild2.getMetadata();
 			return oDTManagedObjectMetadataChild.loadDesignTime().then(function(oDesignTime) {
-				sinon.assert.callCount(this.oRequireStub, 2);
+				sinon.assert.callCount(this.oRequireStub, 4);
 				this.oRequireStub.reset();
 				return oDTManagedObjectMetadataChild.loadDesignTime().then(function() {
 					assert.notOk(this.oRequireStub.called, "sap.ui.require was not called");
@@ -575,7 +578,7 @@ function(
 		}
 	}, function () {
 		QUnit.test("loadDesignTime - from core for custom data no preload", function(assert) {
-			this.oConfigurationGetPreloadStub = sinon.stub(Configuration, "getPreload").returns("");
+			this.oLibraryGetPreloadStub = sinon.stub(Library, "getPreloadMode").returns("");
 			this.spy(sap.ui, 'require');
 			this.spy(privateLoaderAPI, 'loadJSResourceAsync');
 			return this.oMetadata.loadDesignTime().then(function(oDesignTime) {
@@ -586,13 +589,13 @@ function(
 				assert.ok(sap.ui.require.calledWith(["sap/ui/core/designtime/CustomData.designtime"]), "CustomData.designtime.js was required");
 				assert.ok(oDesignTime._oLib !== undefined, "sap/ui/core/designtime/library.designtime.js is available in designtime object");
 			}.bind(this)).finally(function () {
-				this.oConfigurationGetPreloadStub.restore();
+				this.oLibraryGetPreloadStub.restore();
 			}.bind(this));
 		});
 
 		QUnit.test("loadDesignTime - from core for custom data with preload async", function(assert) {
 			//async configuration simulation
-			this.oConfigurationGetPreloadStub = sinon.stub(Configuration, "getPreload").returns("async");
+			this.oLibraryGetPreloadStub = sinon.stub(Library, "getPreloadMode").returns("async");
 			this.spy(sap.ui, 'require');
 			this.spy(privateLoaderAPI, 'loadJSResourceAsync');
 
@@ -608,13 +611,13 @@ function(
 				assert.ok(sap.ui.require.calledWith(["sap/ui/core/designtime/CustomData.designtime"]), "CustomData.designtime.js was required");
 				assert.ok(oDesignTime._oLib !== undefined, "sap/ui/core/designtime/library.designtime.js loaded");
 			}.bind(this)).finally(function () {
-				this.oConfigurationGetPreloadStub.restore();
+				this.oLibraryGetPreloadStub.restore();
 			}.bind(this));
 		});
 
 		QUnit.test("loadDesignTime - from core for custom data with preload sync", function(assert) {
 			//sync configuration simulation
-			this.oConfigurationGetPreloadStub = sinon.stub(Configuration, "getPreload").returns("sync");
+			this.oLibraryGetPreloadStub = sinon.stub(Library, "getPreloadMode").returns("sync");
 			this.spy(sap.ui, 'require');
 			this.spy(privateLoaderAPI, 'loadJSResourceAsync');
 
@@ -630,7 +633,7 @@ function(
 				assert.ok(sap.ui.require.calledWith(["sap/ui/core/designtime/CustomData.designtime"]), "CustomData.designtime.js was required");
 				assert.ok(oDesignTime._oLib !== undefined, "sap/ui/core/designtime/library.designtime.js loaded");
 			}.bind(this)).finally(function () {
-				this.oConfigurationGetPreloadStub.restore();
+				this.oLibraryGetPreloadStub.restore();
 			}.bind(this));
 		});
 	});
@@ -712,6 +715,9 @@ function(
 			this.oRequireStub.withArgs(["DTManagedObjectChild.designtime"]).callsArgWithAsync(1, this.oDTForManagedObjectChild);
 			this.oRequireStub.withArgs(["sap/test/instanceSpecific.designtime"]).callsArgWithAsync(1, this.oDTForInstance);
 			this.oRequireStub.withArgs(["sap/test/otherInstanceSpecific.designtime"]).callsArgWithAsync(1, this.oDTForOtherInstance);
+			// For some reason sinon v1 must be used for this test which does not support callThrough on stubs therefore implemented a stub for
+			// the sap.ui.require(["sap/ui/core/Lib"]) call
+			this.oRequireStub.withArgs(["sap/ui/core/Lib"]).callsArgWithAsync(1, Library);
 
 			this.oInstanceWithoutSpecificDTMetadata = new Element();
 			this.oInstanceWithSpecificDTMetadata = new Element({

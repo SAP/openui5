@@ -13,9 +13,7 @@ sap.ui.define([
 	'sap/base/strings/capitalize',
 	'sap/base/strings/escapeRegExp',
 	'sap/base/util/merge',
-	'sap/base/util/isPlainObject',
-	'sap/ui/core/Configuration',
-	'sap/ui/core/Lib'
+	'sap/base/util/isPlainObject'
 ],
 function(
 	DataType,
@@ -27,9 +25,7 @@ function(
 	capitalize,
 	escapeRegExp,
 	merge,
-	isPlainObject,
-	Configuration,
-	Library
+	isPlainObject
 ) {
 	"use strict";
 
@@ -1791,33 +1787,35 @@ function(
 	/**
 	 * Returns a promise that resolves if the designtime preload of a library is loaded for the given oMetadata
 	 * object is loaded.
-	 * If the corresponding library does not contain a designtime setting with a module path to the library.designtime file
-	 * the promise resolves immediately.
 	 *
 	 * @private
 	 */
 	function preloadDesigntimeLibrary(oMetadata) {
-		//preload the designtime data for the library
-		var sLibrary = oMetadata.getLibraryName(),
-			sPreload = Configuration.getPreload(),
-			oLibrary = Library.all()[sLibrary];
-		if (oLibrary && oLibrary.designtime) {
-			var oPromise;
-			if (sPreload === "async" || sPreload === "sync") {
-				//ignore errors _loadJSResourceAsync is true here, do not break if there is no preload.
-				oPromise = sap.ui.loader._.loadJSResourceAsync(oLibrary.designtime.replace(/\.designtime$/, "-preload.designtime.js"), true);
-			} else {
-				oPromise = Promise.resolve();
-			}
-			return new Promise(function(fnResolve, fnReject) {
-				oPromise.then(function() {
-					sap.ui.require([oLibrary.designtime], function(oLib) {
-						fnResolve(oLib);
-					}, fnReject);
-				});
-			});
-		}
-		return Promise.resolve(null);
+		return new Promise(function(resolve, reject) {
+			sap.ui.require(["sap/ui/core/Lib"], function (Library) {
+				//preload the designtime data for the library
+				var sLibrary = oMetadata.getLibraryName(),
+					sPreload = Library.getPreloadMode(),
+					oLibrary = Library.all()[sLibrary];
+				if (oLibrary && oLibrary.designtime) {
+					var oPromise;
+					if (sPreload === "async" || sPreload === "sync") {
+						//ignore errors _loadJSResourceAsync is true here, do not break if there is no preload.
+						oPromise = sap.ui.loader._.loadJSResourceAsync(oLibrary.designtime.replace(/\.designtime$/, "-preload.designtime.js"), true);
+					} else {
+						oPromise = Promise.resolve();
+					}
+					resolve(new Promise(function(fnResolve, fnReject) {
+						oPromise.then(function() {
+							sap.ui.require([oLibrary.designtime], function(oLib) {
+								fnResolve(oLib);
+							}, fnReject);
+						});
+					}));
+				}
+				resolve(null);
+			}, reject);
+		});
 	}
 
 	/**

@@ -2,8 +2,8 @@
 sap.ui.define([
 	"sap/base/util/ObjectPath",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Configuration" // provides jQuery.sap.require
-], function(ObjectPath, jQuery, Configuration) {
+	"sap/ui/core/Lib"
+], function(ObjectPath, jQuery, Library) {
 	"use strict";
 
 	// custom assertion
@@ -58,7 +58,7 @@ sap.ui.define([
 		assert.ok(EXPECTATIONS[cfgLibraryPreloadFiles], "[precondition] configured variants should be described in EXPECTATIONS");
 
 		// sync or async both activate the preload
-		this.oConfigurationGetPreloadStub = sinon.stub(Configuration, "getPreload").returns("sync");
+		this.oLibraryGetPreloadStub = sinon.stub(Library, "getPreloadMode").returns("sync");
 
 		this.spy(sap.ui.loader._, 'loadJSResourceAsync');
 		this.spy(XMLHttpRequest.prototype, 'open');
@@ -130,7 +130,7 @@ sap.ui.define([
 			});
 
 		}).finally(function () {
-			this.oConfigurationGetPreloadStub.restore();
+			this.oLibraryGetPreloadStub.restore();
 		}.bind(this));
 
 	});
@@ -147,7 +147,7 @@ sap.ui.define([
 		assert.ok(EXPECTATIONS[cfgLibraryPreloadFiles], "[precondition] configured variants should be described in EXPECTATIONS");
 
 		// sync or async both activate the preload
-		this.oConfigurationGetPreloadStub = sinon.stub(Configuration, "getPreload").returns("sync");
+		this.oLibraryGetPreloadStub = sinon.stub(Library, "getPreloadMode").returns("sync");
 
 		this.spy(sap.ui, 'requireSync');
 		this.spy(XMLHttpRequest.prototype, 'open');
@@ -212,7 +212,7 @@ sap.ui.define([
 			}
 		});
 
-		this.oConfigurationGetPreloadStub.restore();
+		this.oLibraryGetPreloadStub.restore();
 	});
 
 });
