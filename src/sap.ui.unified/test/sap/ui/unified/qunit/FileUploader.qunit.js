@@ -4,6 +4,7 @@ sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/unified/FileUploader",
 	"sap/ui/unified/library",
+	"sap/ui/core/StaticArea",
 	"sap/ui/core/TooltipBase",
 	"sap/ui/core/InvisibleText",
 	"sap/m/Label",
@@ -11,7 +12,7 @@ sap.ui.define([
 	"sap/ui/Device",
 	"sap/ui/core/Core",
 	"sap/ui/thirdparty/jquery"
-], function(qutils, FileUploader, unifiedLibrary, TooltipBase, InvisibleText, Label, Text, Device, oCore, jQuery) {
+], function(qutils, FileUploader, unifiedLibrary, StaticArea, TooltipBase, InvisibleText, Label, Text, Device, oCore, jQuery) {
 	"use strict";
 
 	// shortcut for sap.ui.unified.FileUploaderHttpRequestMethod
@@ -115,7 +116,7 @@ sap.ui.define([
 	QUnit.test("Destroy: cleans the file uploader input filed from static area", function(assert) {
 		// prepare
 		var oFileUploader = new FileUploader(),
-			oStaticArea = oCore.getStaticAreaRef();
+			oStaticArea = StaticArea.getDomRef();
 
 		oFileUploader.placeAt("qunit-fixture");
 		oCore.applyChanges();
@@ -1198,7 +1199,7 @@ sap.ui.define([
 		var $Frame = this.oFileUploader.$("frame");
 
 		var oParentRef = $Frame.parent().get(0);
-		var oStatic = oCore.getStaticAreaRef();
+		var oStatic = StaticArea.getDomRef();
 
 		assert.equal($Frame.length, 1, "iFrame was inserted into DOM");
 		assert.equal(oParentRef, oStatic, "FileUploader's Blindlayer UI-area is the static UI-area");

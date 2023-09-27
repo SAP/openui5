@@ -22,12 +22,13 @@ sap.ui.define([
 	'sap/ui/Global',
 	'sap/ui/base/Object',
 	'sap/ui/core/Element',
+	'sap/ui/core/StaticArea',
 	'sap/ui/core/mvc/View',
 	'sap/ui/test/matchers/Ancestor',
 	'sap/ui/test/matchers/MatcherFactory',
 	'sap/ui/test/pipelines/MatcherPipeline',
 	'sap/ui/test/_OpaLogger'
-], function (extend, ObjectPath, $, Global, UI5Object, UI5Element, View, Ancestor, MatcherFactory,
+], function (extend, ObjectPath, $, Global, UI5Object, UI5Element, StaticArea, View, Ancestor, MatcherFactory,
 			MatcherPipeline, _OpaLogger) {
 
 		/**
@@ -235,7 +236,7 @@ sap.ui.define([
 
 			// get control in static area that matches a control type, ID (string, array, regex), viewId, viewName, fragmentId
 			_getControlsInStaticArea: function (oOptions) {
-				var oStaticArea = $(sap.ui.getCore().getStaticAreaRef());
+				var oStaticArea = $(StaticArea.getDomRef());
 				var vControls = this._getControlsInContainer(oStaticArea) || [];
 
 				if (oOptions.id) {
