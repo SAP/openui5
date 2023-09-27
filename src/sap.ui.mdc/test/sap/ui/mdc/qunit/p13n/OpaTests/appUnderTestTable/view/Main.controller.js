@@ -2,17 +2,16 @@
 sap.ui.define([
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/core/Fragment",
-	"sap/base/util/UriParameters",
 	"sap/ui/core/Core",
 	"sap/ui/mdc/p13n/StateUtil",
 	"test-resources/sap/ui/mdc/qunit/util/V4ServerHelper",
 	"sap/ui/model/odata/v4/ODataModel"
-], function(Controller, Fragment, UriParameters, oCore, StateUtil, V4ServerHelper, ODataModel) {
+], function(Controller, Fragment, oCore, StateUtil, V4ServerHelper, ODataModel) {
 	"use strict";
 	return Controller.extend("view.Main", {
 
 		onInit: function () {
-			const oParams = UriParameters.fromQuery(location.search);
+			const oParams = new URLSearchParams(window.location.search);
 			const sSubView = oParams.get("view") || "Explicit";
 
 			const mViews = {

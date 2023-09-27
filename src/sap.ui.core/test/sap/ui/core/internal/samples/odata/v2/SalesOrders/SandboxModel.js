@@ -6,14 +6,13 @@
 // mock server for the back-end requests is set up.
 sap.ui.define([
 	"sap/base/util/merge",
-	"sap/base/util/UriParameters",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/odata/CountMode",
 	"sap/ui/model/odata/OperationMode",
 	"sap/ui/model/odata/v2/ODataModel",
 	"sap/ui/test/TestUtils",
 	"sap/ui/thirdparty/sinon"
-], function (merge, UriParameters, JSONModel, CountMode, OperationMode, ODataModel, TestUtils,
+], function (merge, JSONModel, CountMode, OperationMode, ODataModel, TestUtils,
 		sinon) {
 	"use strict";
 
@@ -1052,7 +1051,7 @@ sap.ui.define([
 					"/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/", oMockServerFixtures.aRegExpFixture);
 			} else {
 				mParameters = Object.assign({}, mParameters);
-				oUriParameters = UriParameters.fromQuery(window.location.search);
+				oUriParameters = new URLSearchParams(window.location.search);
 				sParameter = OperationMode[oUriParameters.get("operationMode")];
 				if (sParameter) {
 					mParameters.defaultOperationMode = sParameter;

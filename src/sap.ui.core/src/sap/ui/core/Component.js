@@ -21,7 +21,6 @@ sap.ui.define([
 	'sap/base/assert',
 	'sap/base/Log',
 	'sap/base/util/ObjectPath',
-	'sap/base/util/UriParameters',
 	'sap/base/util/isPlainObject',
 	'sap/base/util/LoaderExtensions',
 	'sap/base/strings/camelize',
@@ -47,7 +46,6 @@ sap.ui.define([
 	assert,
 	Log,
 	ObjectPath,
-	UriParameters,
 	isPlainObject,
 	LoaderExtensions,
 	camelize,
@@ -2119,7 +2117,7 @@ sap.ui.define([
 		//   sap-ui-xx-preload-component-models-<componentName>=, => preload default model (empty string key)
 		//   sap-ui-xx-preload-component-models-<componentName>=foo, => preload "foo" + default model (empty string key)
 		//   sap-ui-xx-preload-component-models-<componentName>=foo,bar => preload "foo" + "bar" models
-		var sPreloadModels = UriParameters.fromQuery(window.location.search).get("sap-ui-xx-preload-component-models-" + oManifest.getComponentName());
+		var sPreloadModels = new URLSearchParams(window.location.search).get("sap-ui-xx-preload-component-models-" + oManifest.getComponentName());
 		var aPreloadModels = sPreloadModels && sPreloadModels.split(",");
 
 		for (var sModelName in mAllModelConfigurations) {

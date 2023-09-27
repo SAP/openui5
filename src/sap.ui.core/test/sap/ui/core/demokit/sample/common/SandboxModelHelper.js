@@ -3,11 +3,10 @@
  */
 // SandboxModelHelper functions used within sap.ui.core.sample.common namespace
 sap.ui.define([
-	"sap/base/util/UriParameters",
 	"sap/ui/model/odata/v4/ODataModel",
 	"sap/ui/test/TestUtils",
 	"sap/ui/thirdparty/sinon-4"
-], function (UriParameters, ODataModel, TestUtils, sinon) {
+], function (ODataModel, TestUtils, sinon) {
 	"use strict";
 
 	var SandboxModelHelper = {
@@ -23,7 +22,7 @@ sap.ui.define([
 			 * @returns {object} The adapted model parameters as a clone
 			 */
 			adaptModelParameters : function (mParameters, sUpdateGroupId) {
-				var oUriParameters = UriParameters.fromQuery(window.location.search);
+				var oUriParameters = new URLSearchParams(window.location.search);
 
 				// clone: do not modify constructor call parameter
 				return Object.assign({}, mParameters, {

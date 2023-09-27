@@ -1,7 +1,6 @@
 /* global QUnit */
 
 sap.ui.define([
-	"sap/base/util/UriParameters",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/initial/_internal/FlexInfoSession",
 	"sap/ui/fl/write/_internal/flexState/compVariants/CompVariantState",
@@ -15,7 +14,6 @@ sap.ui.define([
 	"sap/ui/fl/Layer",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
-	UriParameters,
 	ManifestUtils,
 	FlexInfoSession,
 	CompVariantState,
@@ -207,8 +205,8 @@ sap.ui.define([
 				params: Version.UrlParameter
 			};
 
-			var oUriWithVersionUrlParameter = UriParameters.fromQuery(`?${Version.UrlParameter}=${Version.Number.Draft}`);
-			sandbox.stub(UriParameters, "fromQuery").returns(oUriWithVersionUrlParameter);
+			var oUriWithVersionUrlParameter = new URLSearchParams(`?${Version.UrlParameter}=${Version.Number.Draft}`);
+			sandbox.stub(window, "URLSearchParams").returns(oUriWithVersionUrlParameter);
 			sandbox.stub(ReloadInfoAPI, "hasMaxLayerParameterWithValue");
 			sandbox.stub(ReloadInfoAPI, "hasVersionParameterWithValue").returns(true);
 			sandbox.stub(FlexUtils, "getParsedURLHash").returns(mParsedHash);
@@ -800,12 +798,12 @@ sap.ui.define([
 	function checkParameters(oExpectedParameters, oActualParameters, sScenario, assert) {
 		var vParameters = oExpectedParameters;
 		if (sScenario === "standalone") {
-			var oUriParameters = UriParameters.fromQuery(oActualParameters);
+			var oUriParameters = new URLSearchParams(oActualParameters);
 			Object.entries(oExpectedParameters).forEach(function(aKeyValue) {
 				var sActualValue = parseBooleanOrReturnValue(oUriParameters.get(aKeyValue[0]));
 				assert.strictEqual(sActualValue, aKeyValue[1][0], "the parameters are correct");
 			});
-			assert.strictEqual(Object.keys(oExpectedParameters).length, Object.keys(oUriParameters.mParams).length, "the number of params is correct");
+			assert.strictEqual(Array.from(oUriParameters.keys()).length, Object.keys(oExpectedParameters).length, "the number of params is correct");
 		} else {
 			assert.deepEqual(oActualParameters, vParameters, "the parameters are correct");
 		}
@@ -881,8 +879,8 @@ sap.ui.define([
 					parameters: sScenario === "flp" ? {} : "",
 					layer: Layer.CUSTOMER
 				};
-				sandbox.stub(UriParameters, "fromQuery").callsFake(function() {
-					return UriParameters.fromQuery.wrappedMethod(this.oReloadInfo.parameters);
+				sandbox.stub(window, "URLSearchParams").callsFake(function() {
+					return new URLSearchParams.wrappedMethod(this.oReloadInfo.parameters);
 				}.bind(this));
 			},
 			afterEach() {

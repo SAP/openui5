@@ -8,7 +8,6 @@ sap.ui.define([
 	"sap/ui/fl/write/api/ContextBasedAdaptationsAPI",
 	"sap/ui/fl/write/_internal/flexState/compVariants/CompVariantState",
 	"sap/ui/fl/write/_internal/transport/TransportSelection",
-	"sap/base/util/UriParameters",
 	"sap/ui/fl/registry/Settings"
 ], function(
 	CompVariantUtils,
@@ -16,7 +15,6 @@ sap.ui.define([
 	ContextBasedAdaptationsAPI,
 	CompVariantState,
 	TransportSelection,
-	UriParameters,
 	Settings
 ) {
 	"use strict";
@@ -366,7 +364,7 @@ sap.ui.define([
 		 */
 		_getTransportSelection() {
 			function transportSelectionRequired() {
-				var sLayer = UriParameters.fromQuery(window.location.search).get("sap-ui-layer") || "";
+				var sLayer = new URLSearchParams(window.location.search).get("sap-ui-layer") || "";
 				return !!sLayer;
 			}
 

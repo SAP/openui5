@@ -1,7 +1,6 @@
 /* global QUnit */
 
 sap.ui.define([
-	"sap/base/util/UriParameters",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/LayerUtils",
 	"sap/ui/fl/apply/api/SmartVariantManagementApplyAPI",
@@ -12,7 +11,6 @@ sap.ui.define([
 	"sap/base/util/LoaderExtensions",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
-	UriParameters,
 	Utils,
 	LayerUtils,
 	SmartVariantManagementApplyAPI,
@@ -302,7 +300,7 @@ sap.ui.define([
 
 		QUnit.test("When isVariantDownport() is called it calls the corresponding Utils function", function(assert) {
 			sandbox.stub(LayerUtils, "getCurrentLayer").withArgs().returns("VENDOR");
-			sandbox.stub(UriParameters.prototype, "get").withArgs("hotfix").returns("true");
+			sandbox.stub(URLSearchParams.prototype, "get").withArgs("hotfix").returns("true");
 			var bVendorLayer = SmartVariantManagementApplyAPI.isVariantDownport();
 
 			assert.strictEqual(bVendorLayer, true);

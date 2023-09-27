@@ -1,9 +1,8 @@
 sap.ui.define([
 	"sap/ui/core/util/MockServer",
 	"sap/base/Log",
-	"sap/base/util/UriParameters",
 	"jQuery.sap.sjax"
-], function (MockServer, Log, UriParameters, jQuery) {
+], function (MockServer, Log, jQuery) {
 	"use strict";
 	var oMockServer,
 		_sAppModulePath = "cp/opa/test/app/",
@@ -18,7 +17,7 @@ sap.ui.define([
 		 * @public
 		 */
 		init : function () {
-			var oUriParameters = UriParameters.fromQuery(window.location.search),
+			var oUriParameters = new URLSearchParams(window.location.search),
 				sJsonFilesUrl = sap.ui.require.toUrl((_sJsonFilesModulePath).replace(/\./g, "/")),
 				sManifestUrl = sap.ui.require.toUrl((_sAppModulePath + "manifest").replace(/\./g, "/")) + ".json",
 				sEntity = "Objects",

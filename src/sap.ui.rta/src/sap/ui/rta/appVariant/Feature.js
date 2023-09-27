@@ -6,7 +6,6 @@ sap.ui.define([
 	"sap/ui/fl/Utils",
 	"sap/ui/rta/appVariant/AppVariantUtils",
 	"sap/ui/core/BusyIndicator",
-	"sap/base/util/UriParameters",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/write/_internal/appVariant/AppVariantFactory",
 	"sap/ui/fl/write/api/FeaturesAPI",
@@ -15,7 +14,6 @@ sap.ui.define([
 	FlexUtils,
 	AppVariantUtils,
 	BusyIndicator,
-	UriParameters,
 	Settings,
 	AppVariantFactory,
 	FeaturesAPI,
@@ -134,7 +132,7 @@ sap.ui.define([
 		 * When this method returns <code>false</code>, an app variant overview is shown only for a key user.
 		 */
 		isOverviewExtended() {
-			var oUriParams = UriParameters.fromQuery(window.location.search);
+			var oUriParams = new URLSearchParams(window.location.search);
 			var sMode = oUriParams.get("sap-ui-xx-app-variant-overview-extended");
 			if (!sMode) {
 				return false;

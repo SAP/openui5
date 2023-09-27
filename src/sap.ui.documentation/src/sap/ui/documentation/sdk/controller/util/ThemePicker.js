@@ -3,11 +3,9 @@
  */
 
 sap.ui.define([
-	"sap/ui/core/Core",
-	"sap/base/util/UriParameters"
+	"sap/ui/core/Core"
 ], function(
-	Core,
-	UriParameters
+	Core
 ) {
 	"use strict";
 
@@ -188,7 +186,7 @@ sap.ui.define([
 	* @private
 	*/
 	ThemePicker._createConfigurationBasedOnURIInput = function () {
-	   var oUriParams = UriParameters.fromQuery(window.location.search);
+	   var oUriParams = new URLSearchParams(window.location.search);
 	   this._aConfiguration = [];
 
 	   if (!(oUriParams.has('sap-ui-theme') || oUriParams.has('sap-theme'))) {

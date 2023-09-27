@@ -13,7 +13,6 @@ sap.ui.define([
 	"sap/ui/core/UIComponent",
 	"sap/base/Log",
 	"sap/base/util/isEmptyObject",
-	"sap/base/util/UriParameters",
 	"sap/ui/core/Configuration",
 	"sap/ui/core/Manifest",
 	"sap/ui/core/mvc/View",
@@ -32,7 +31,6 @@ sap.ui.define([
 	UIComponent,
 	Log,
 	isEmptyObject,
-	UriParameters,
 	Configuration,
 	Manifest,
 	View,
@@ -87,7 +85,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("getClient", function(assert) {
-			sandbox.stub(UriParameters.prototype, "get").withArgs("sap-client").returns("123");
+			sandbox.stub(URLSearchParams.prototype, "get").withArgs("sap-client").returns("123");
 			var sClient = Utils.getClient();
 			assert.equal(sClient, "123");
 		});
@@ -1045,25 +1043,25 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("parameter name doesnt exist", function(assert) {
-			sandbox.stub(UriParameters.prototype, "get").withArgs(this.sParameterName).returns(null);
+			sandbox.stub(URLSearchParams.prototype, "get").withArgs(this.sParameterName).returns(null);
 			var bResult = Utils.hasParameterAndValue(this.sParameterName, this.sParameterValue);
 			assert.equal(bResult, false, "the function returns false");
 		});
 
 		QUnit.test("parameter value empty string", function(assert) {
-			sandbox.stub(UriParameters.prototype, "get").withArgs(this.sParameterName).returns("");
+			sandbox.stub(URLSearchParams.prototype, "get").withArgs(this.sParameterName).returns("");
 			var bResult = Utils.hasParameterAndValue(this.sParameterName, this.sParameterValue);
 			assert.equal(bResult, false, "the function returns false");
 		});
 
 		QUnit.test("parameter value not equal", function(assert) {
-			sandbox.stub(UriParameters.prototype, "get").withArgs(this.sParameterName).returns("notEqual");
+			sandbox.stub(URLSearchParams.prototype, "get").withArgs(this.sParameterName).returns("notEqual");
 			var bResult = Utils.hasParameterAndValue(this.sParameterName, this.sParameterValue);
 			assert.equal(bResult, false, "the function returns false");
 		});
 
 		QUnit.test("parameter value is equal", function(assert) {
-			sandbox.stub(UriParameters.prototype, "get").withArgs(this.sParameterName).returns(this.sParameterValue);
+			sandbox.stub(URLSearchParams.prototype, "get").withArgs(this.sParameterName).returns(this.sParameterValue);
 			var bResult = Utils.hasParameterAndValue(this.sParameterName, this.sParameterValue);
 			assert.equal(bResult, true, "the function returns true");
 		});

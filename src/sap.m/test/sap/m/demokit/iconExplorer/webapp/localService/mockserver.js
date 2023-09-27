@@ -1,9 +1,8 @@
 sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/thirdparty/sinon",
-	"sap/base/Log",
-	"sap/base/util/UriParameters"
-], function (JSONModel, sinon, Log, UriParameters) {
+	"sap/base/Log"
+], function (JSONModel, sinon, Log) {
 	"use strict";
 
 	var iAutoRespondAfterDefault = 10;
@@ -14,7 +13,7 @@ sap.ui.define([
 		 * @public
 		 */
 		init: function () {
-			var oUriParameters = UriParameters.fromQuery(window.location.search);
+			var oUriParameters = new URLSearchParams(window.location.search);
 			this._oMockModels = {
 
 			};

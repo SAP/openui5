@@ -21,7 +21,6 @@ sap.ui.define([
 	"sap/m/Label",
 	"sap/m/App",
 	"sap/ui/util/Mobile",
-	"sap/base/util/UriParameters",
 	"sap/ui/thirdparty/jquery"
 ], function(
 	Log,
@@ -46,7 +45,6 @@ sap.ui.define([
 	Label,
 	App,
 	Mobile,
-	UriParameters,
 	jQuery
 ) {
 	"use strict";
@@ -58,7 +56,7 @@ sap.ui.define([
 
 	function setDefaultParameters(oData) {
 		var sName, sValue;
-		var oUriParameters = UriParameters.fromQuery(window.location.search);
+		var oUriParameters = new URLSearchParams(window.location.search);
 
 		for (sName in oData) {
 			sValue = oUriParameters.get(sName);

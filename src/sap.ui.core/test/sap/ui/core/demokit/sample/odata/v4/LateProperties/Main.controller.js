@@ -3,7 +3,6 @@
  */
 
 sap.ui.define([
-	"sap/base/util/UriParameters",
 	"sap/m/Button",
 	"sap/m/library",
 	"sap/m/Dialog",
@@ -19,13 +18,13 @@ sap.ui.define([
 	"sap/ui/model/Sorter",
 	"sap/ui/model/odata/v4/ODataModel",
 	"sap/ui/test/TestUtils"
-], function (UriParameters, Button, mobileLibrary, Dialog, Input, Label, MessageToast, Text,
+], function (Button, mobileLibrary, Dialog, Input, Label, MessageToast, Text,
 		Controller, Title, UI5Date, _ColumnLayout, SimpleForm, Sorter, ODataModel, TestUtils) {
 	"use strict";
 
 	// shortcut for sap.m.ButtonType
 	var ButtonType = mobileLibrary.ButtonType,
-		sOptimisticBatch = UriParameters.fromQuery(window.location.search).get("optimisticBatch");
+		sOptimisticBatch = new URLSearchParams(window.location.search).get("optimisticBatch");
 
 	return Controller.extend("sap.ui.core.sample.odata.v4.LateProperties.Main", {
 		onCleanUpOptimisticBatchCache : function (oEvent) {
