@@ -81,7 +81,7 @@ sap.ui.define([
 			});
 			assert.equal(oPdfViewer.getSource(), sExpectedSource);
 
-			TestUtils.rerender();
+			TestUtils.triggerRerender();
 			return Promise.resolve();
 		};
 
@@ -129,7 +129,7 @@ sap.ui.define([
 			oPdfViewer.setSource(sExpectedSource);
 			assert.equal(oModel.getProperty('/source'), sExpectedSource);
 
-			TestUtils.rerender();
+			TestUtils.triggerRerender();
 		};
 
 		oPdfViewer = TestUtils.createPdfViewer(oOptions);

@@ -178,7 +178,7 @@ sap.ui.define([
 		TestUtils.wait(2000)()
 			.then(function () {
 				oModel.setData({showDownloadButton: true}, true);
-				TestUtils.rerender();
+				TestUtils.triggerRerender();
 			})
 			.then(TestUtils.wait(2000))
 			.then(function () {
@@ -193,7 +193,7 @@ sap.ui.define([
 			})
 			.then(function () {
 				oModel.setData({showDownloadButton: false}, true);
-				TestUtils.rerender();
+				TestUtils.triggerRerender();
 			})
 			.then(TestUtils.wait(2000))
 			.then(function () {
@@ -232,12 +232,12 @@ sap.ui.define([
 			assert.ok(fnIsContentDisplayed(), "Content is displayed in Auto mode");
 
 			oPdfViewer.setDisplayType(PDFViewerDisplayType.Embedded);
-			TestUtils.rerender();
+			TestUtils.triggerRerender();
 			assert.equal(oPdfViewer.getDisplayType(), PDFViewerDisplayType.Embedded, "Set displayType to Embedded mode");
 			assert.ok(fnIsContentDisplayed(), "Content is displayed in Embedded mode");
 
 			oPdfViewer.setDisplayType(PDFViewerDisplayType.Link);
-			TestUtils.rerender();
+			TestUtils.triggerRerender();
 			assert.equal(oPdfViewer.getDisplayType(), PDFViewerDisplayType.Link, "Set displayType to Link mode");
 			assert.ok(oPdfViewer.$("toolbarDownloadButton").length === 1, "Download button is displayed in Link mode");
 			assert.notOk(fnIsContentDisplayed(), "Content is not displayed in Link mode");
@@ -253,7 +253,7 @@ sap.ui.define([
 			Device.system.desktop = false;
 			Device.system.phone = true;
 			oPdfViewer.setDisplayType(PDFViewerDisplayType.Embedded);
-			TestUtils.rerender();
+			TestUtils.triggerRerender();
 			assert.ok(!fnIsErrorContentDisplayed(), "Error Content is not displayed in Mobile and Embedded mode");
 			Device.system.desktop = true;
 			Device.system.phone = false;
