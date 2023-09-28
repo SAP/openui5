@@ -2431,7 +2431,7 @@ sap.ui.define([
 					if (!sCollectionPath) {
 						// remember the key predicates / indices of the root entries to remove all
 						// messages for entities that have been read
-						aCachePaths.push(sPredicate || iIndex.toString());
+						aCachePaths.push(sPredicate || "" + iIndex);
 					}
 					if (sPredicate) {
 						mByPredicate[sPredicate] = vInstance;

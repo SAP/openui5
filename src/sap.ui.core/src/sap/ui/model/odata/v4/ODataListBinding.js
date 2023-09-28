@@ -1125,7 +1125,7 @@ sap.ui.define([
 
 		const bExpanded = oContext.isExpanded();
 		if (bExpanded) {
-			this.collapse(oContext);
+			this.collapse(oContext, /*bSilent*/true);
 		}
 
 		// When deleting a context with negative index, iCreatedContexts et al. must be adjusted.
@@ -1208,7 +1208,8 @@ sap.ui.define([
 				that.reset(ChangeReason.Change);
 			} else {
 				if (bExpanded) {
-					that.expand(oContext); // runs synchronously because it was expanded before
+					// runs synchronously because it was expanded before
+					that.expand(oContext, /*bSilent*/true).unwrap();
 				}
 				that._fireChange({reason : ChangeReason.Add});
 			}
