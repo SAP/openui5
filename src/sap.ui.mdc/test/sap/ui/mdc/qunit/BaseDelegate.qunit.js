@@ -8,13 +8,10 @@ sap.ui.define([
 	) {
 	"use strict";
 
+	/**
+	 *  @deprecated since 1.115.0
+	 */
 	QUnit.test("getTypeUtil", function(assert) {
-
-		if (!BaseDelegate.getTypeUtil) {
-			assert.ok(true, "Test not executed in legacy-free build");
-			return undefined;
-		}
-
 		sinon.spy(BaseDelegate, "getTypeMap");
 		const oTypeUtil = BaseDelegate.getTypeUtil();
 		assert.ok(BaseDelegate.getTypeMap.calledOnce, "calls getTypeMap");
@@ -23,14 +20,16 @@ sap.ui.define([
 
 	QUnit.test("getTypeMap", function(assert) {
 		assert.equal(BaseDelegate.getTypeMap(), DefaultTypeMap, "returns correct default");
+	});
 
+	/**
+	 *  @deprecated since 1.115.0
+	 */
+	QUnit.test("getTypeMap - TypeUtil support", function(assert) {
 		const oFakeTypeUtil = {};
 		const oFakeDelegateWithTypeUtil = Object.assign({}, BaseDelegate, {
 			getTypeUtil: function () { return oFakeTypeUtil; }
 		});
-
 		assert.equal(oFakeDelegateWithTypeUtil.getTypeMap(), oFakeTypeUtil, "returns custom typeutil");
 	});
-
-
 });
