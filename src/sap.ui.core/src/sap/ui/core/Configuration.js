@@ -832,33 +832,6 @@ sap.ui.define([
 		},
 
 		/**
-		 * Currently active preload mode for libraries or falsy value.
-		 *
-		 * @returns {string} preload mode
-		 * @private
-		 * @ui5-restricted sap.ui.core.Core
-		 * @since 1.16.3
-		 */
-		getPreload : function() {
-			// if debug sources are requested, then the preload feature must be deactivated
-			if (Configuration.getDebug() === true) {
-				return "";
-			}
-			// determine preload mode (e.g. resolve default or auto)
-			var sPreloadMode = BaseConfig.get({name: "sapUiPreload", type: BaseConfig.Type.String, defaultValue: "auto", external: true});
-			// when the preload mode is 'auto', it will be set to 'async' or 'sync' for optimized sources
-			// depending on whether the ui5loader is configured async
-			if ( sPreloadMode === "auto" ) {
-				if (window["sap-ui-optimized"]) {
-					sPreloadMode = sap.ui.loader.config().async ? "async" : "sync";
-				} else {
-					sPreloadMode = "";
-				}
-			}
-			return sPreloadMode;
-		},
-
-		/**
 		 * Currently active syncCallBehavior
 		 *
 		 * @returns {int} syncCallBehavior
@@ -947,17 +920,6 @@ sap.ui.define([
 		 */
 		setFlexibilityServices: function (aFlexibilityServices) {
 			config.flexibilityServices = aFlexibilityServices.slice();
-		},
-
-		/**
-		 * Currently active preload mode for components or falsy value.
-		 *
-		 * @returns {string} component preload mode
-		 * @private
-		 * @experimental Since 1.16.3, might change completely.
-		 */
-		getComponentPreload : function() {
-			return BaseConfig.get({name: "sapUiXxComponentPreload", type: BaseConfig.Type.String, external: true}) || Configuration.getPreload();
 		},
 
 		/**

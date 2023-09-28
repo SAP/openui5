@@ -17,7 +17,6 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/ChangePersistenceFactory",
-	"sap/base/util/UriParameters",
 	"sap/ui/core/Control",
 	"sap/ui/core/Core"
 ], function(
@@ -37,7 +36,6 @@ sap.ui.define([
 	ManifestUtils,
 	FlexState,
 	ChangePersistenceFactory,
-	UriParameters,
 	Control,
 	oCore
 ) {
@@ -60,12 +58,8 @@ sap.ui.define([
 		return sandbox.stub(oChangePersistence, sFunctionName).resolves();
 	}
 
-	function _prepareUriParametersFromQuery(sValue) {
-		sandbox.stub(UriParameters, "fromQuery").returns({
-			get() {
-				return sValue;
-			}
-		});
+	function _prepareURLSearchParam(sValue) {
+		sandbox.stub(URLSearchParams.prototype, "get").returns(sValue);
 	}
 
 	QUnit.module("Initialization", {
@@ -292,7 +286,7 @@ sap.ui.define([
 		QUnit.test("with setDirtyChange(false) and a connector is configured which returns a list of versions with entries while an older version is displayed", function(assert) {
 			var sActiveVersion = "2";
 			// set displayedVersion to draft
-			_prepareUriParametersFromQuery(Version.Number.Draft);
+			_prepareURLSearchParam(Version.Number.Draft);
 			var mPropertyBag = {
 				layer: Layer.CUSTOMER,
 				reference: "com.sap.app",
@@ -428,7 +422,7 @@ sap.ui.define([
 		QUnit.test("and a connector is configured which returns a list of versions while a draft exists", function(assert) {
 			var sActiveVersion = 2;
 			// set displayedVersion to draft
-			_prepareUriParametersFromQuery(Version.Number.Draft);
+			_prepareURLSearchParam(Version.Number.Draft);
 			var sReference = "com.sap.app";
 			var mPropertyBag = {
 				layer: Layer.CUSTOMER,
@@ -499,7 +493,7 @@ sap.ui.define([
 			var sReference = "com.sap.app";
 			var sActiveVersion = "3";
 			// set displayedVersion to 1
-			_prepareUriParametersFromQuery("1");
+			_prepareURLSearchParam("1");
 			var mPropertyBag = {
 				layer: Layer.CUSTOMER,
 				reference: sReference,
@@ -952,7 +946,7 @@ sap.ui.define([
 		QUnit.test("to publish a version", function(assert) {
 			var sReference = "com.sap.app";
 			// set displayedVersion to 2
-			_prepareUriParametersFromQuery("2");
+			_prepareURLSearchParam("2");
 			var mPropertyBag = {
 				layer: Layer.CUSTOMER,
 				reference: sReference,

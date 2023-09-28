@@ -159,8 +159,8 @@ sap.ui.define([
 		Name : "Omega"
 	}];
 
-	let aAllNodes;
-	let mChildrenByParentId;
+	let aAllNodes; // in preorder
+	let mChildrenByParentId; // no entry for leaves!
 	let mNodeById;
 	let iRevision;
 	let mRevisionOfAgeById;
@@ -275,6 +275,34 @@ sap.ui.define([
 	 * @param {object} oRequest - Request object to get PATCH body from
 	 */
 	function buildPatchResponse(aMatches, _oResponse, oRequest) {
+		/**
+		 * Adjust the DescendantCount of the node with given ID (and all of its ancestors) by the
+		 * given difference.
+		 *
+		 * @param {string} sId - A node ID
+		 * @param {number} iDiff - Some difference
+		 */
+		function adjustDescendantCount(sId, iDiff) {
+			mNodeById[sId].DescendantCount += iDiff;
+			sId = mNodeById[sId].MANAGER_ID;
+			if (sId) {
+				adjustDescendantCount(sId, iDiff);
+			}
+		}
+
+		/**
+		 * Adjust the DistanceFromRoot of the given node (and all of its descendants) by the given
+		 * difference.
+		 *
+		 * @param {object} oNode - A node
+		 * @param {number} iDiff - Some difference
+		 */
+		function adjustDistanceFromRoot(oNode, iDiff) {
+			oNode.DistanceFromRoot += iDiff;
+			(mChildrenByParentId[oNode.ID] || [])
+				.forEach((oChild) => adjustDistanceFromRoot(oChild, iDiff));
+		}
+
 		if (oRequest.requestHeaders.Prefer !== "return=minimal") {
 			throw new Error("Unsupported Prefer header: " + oRequest.requestHeaders.Prefer);
 		}
@@ -286,17 +314,35 @@ sap.ui.define([
 				const oChild = mNodeById[aMatches[1]];
 				const sParentId = oBody["EMPLOYEE_2_MANAGER@odata.bind"]
 					.slice(11, -2);
-				//TODO prevent cycles!
+
+				for (let sId = sParentId; sId; sId = mNodeById[sId].MANAGER_ID) {
+					if (sId === oChild.ID) { // cycle detected
+						throw new Error("Parent must not be a descendant of moved node");
+					}
+				}
 
 				if (oChild.MANAGER_ID) {
 					const aChildren = mChildrenByParentId[oChild.MANAGER_ID];
 					aChildren.splice(aChildren.indexOf(oChild), 1);
+					if (!aChildren.length) { // last child has gone
+						delete mChildrenByParentId[oChild.MANAGER_ID];
+						mNodeById[oChild.MANAGER_ID].DrillState = "leaf";
+					}
+					adjustDescendantCount(oChild.MANAGER_ID, -(oChild.DescendantCount + 1));
+				} // else: cannot really happen w/ a single root and no cycles!
+
+				if (!(sParentId in mChildrenByParentId)) { // new parent not a leaf anymore
+					mNodeById[sParentId].DrillState = "collapsed"; // @see #reset
 				}
 				//TODO Note: "AGE determines sibling order (ascending)"
 				(mChildrenByParentId[sParentId] ??= []).push(oChild);
-
 				oChild.MANAGER_ID = sParentId;
-				//TODO update position in aAllNodes!
+				adjustDescendantCount(sParentId, oChild.DescendantCount + 1);
+				adjustDistanceFromRoot(oChild,
+					mNodeById[sParentId].DistanceFromRoot + 1 - oChild.DistanceFromRoot);
+				const aSpliced
+					= aAllNodes.splice(aAllNodes.indexOf(oChild), oChild.DescendantCount + 1);
+				aAllNodes.splice(aAllNodes.indexOf(mNodeById[sParentId]) + 1, 0, ...aSpliced);
 				break;
 			}
 
@@ -347,7 +393,7 @@ sap.ui.define([
 				oNewChild.ID = "" + (parseInt(sLastChildID) + 1);
 			}
 		} else { // parent not a leaf anymore
-			oParent.DrillState = "expanded";
+			oParent.DrillState = "collapsed"; // @see #reset
 			mChildrenByParentId[sParentId] = [];
 			oNewChild.AGE = oParent.AGE - 1;
 			oNewChild.ID = sParentId + ".1";

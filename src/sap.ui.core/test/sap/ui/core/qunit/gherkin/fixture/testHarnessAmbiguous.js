@@ -1,15 +1,14 @@
 /*global QUnit */
 sap.ui.require([
-	"sap/base/util/UriParameters",
 	"sap/m/Text",
 	"sap/ui/test/gherkin/qUnitTestHarness",
 	"sap/ui/test/gherkin/opa5TestHarness",
 	"test/testHarnessAmbiguousSteps"
-], function(UriParameters, Text, qUnitTestHarness, opa5TestHarness, Steps) {
+], function(Text, qUnitTestHarness, opa5TestHarness, Steps) {
 	"use strict";
 
 	// Test with either qunit or opa5 test harness depending on how page is called
-	var sTestHarness = UriParameters.fromQuery(window.location.search).get("harness");
+	var sTestHarness = new URLSearchParams(window.location.search).get("harness");
 	if ( (sTestHarness !== "qUnitTestHarness") && (sTestHarness !== "opa5TestHarness") ) {
 		throw new Error("Pass in URL parameter 'harness' with value 'qUnitTestHarness' or 'opa5TestHarness'");
 	}

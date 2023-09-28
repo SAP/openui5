@@ -9,7 +9,6 @@ sap.ui.define([
 	"sap/ui/core/ElementMetadata",
 	"sap/ui/core/Theming",
 	"sap/base/util/LoaderExtensions",
-	"sap/base/util/UriParameters",
 	"sap/ui/thirdparty/jquery"
 ],
 	function(
@@ -19,7 +18,6 @@ sap.ui.define([
 		ElementMetadata,
 		Theming,
 		LoaderExtensions,
-		UriParameters,
 		jQuery
 	) {
 		'use strict';
@@ -67,7 +65,7 @@ sap.ui.define([
 		 * @returns {Object<string,string[]>} Map of parameter value arrays keyed by parameter names
 		 */
 		function getURLParameters() {
-			var oParams = UriParameters.fromQuery(window.location.search);
+			var oParams = new URLSearchParams(window.location.search);
 			return Array.from(oParams.keys()).reduce(function(oResult, sKey) {
 				oResult[sKey] = oParams.getAll(sKey);
 				return oResult;

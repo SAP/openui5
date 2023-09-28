@@ -1,5 +1,4 @@
 sap.ui.define([
-	"sap/base/util/UriParameters",
 	"sap/base/Log",
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/core/util/MockServer",
@@ -10,7 +9,6 @@ sap.ui.define([
 	"sap/ui/fl/Utils",
 	"sap/ui/core/Core"
 ], function(
-	UriParameters,
 	Log,
 	Controller,
 	MockServer,
@@ -27,7 +25,7 @@ sap.ui.define([
 		onInit() {
 			this._sResourcePath = sap.ui.require.toUrl("sap/ui/rta/test");
 			var oManifest = FlUtils.getAppComponentForControl(this.getView()).getManifest();
-			var iServerDelay = UriParameters.fromQuery(window.location.search).get("serverDelay");
+			var iServerDelay = new URLSearchParams(window.location.search).get("serverDelay");
 
 			var iAutoRespond = iServerDelay || 1000;
 			var oMockServer;
@@ -114,7 +112,7 @@ sap.ui.define([
 
 		switchToAdaptionMode() {
 			sap.ui.require(["sap/ui/rta/api/startAdaptation"], function(startAdaptation) {
-				var sUriParam = UriParameters.fromQuery(window.location.search).get("sap-ui-xx-ccf");
+				var sUriParam = new URLSearchParams(window.location.search).get("sap-ui-xx-ccf");
 				startAdaptation({
 					rootControl: oCore.byId("Comp1---idMain1"),
 					customFieldUrl: `${this._sResourcePath}/testdata/rta/CustomField.html`,

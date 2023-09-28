@@ -352,21 +352,6 @@ sap.ui.define([
 		assert.strictEqual(DataType.getType("hasOwnProperty"), DataType.getType("any"), "'hasOwnProperty' should not resolve to something");
 	});
 
-	QUnit.test("invalid type", function (assert) {
-		var oWarningSpy = this.spy(Log, "warning");
-		var oErrorSpy = this.spy(Log, "error");
-		Log.setLevel(Log.Level.DEBUG);
-
-		// check precondition
-		var vGlobalProperty = ObjectPath.get("sap.ui.base.Object");
-		assert.ok(vGlobalProperty && !isPlainObject(vGlobalProperty), "[precondition] Object with name sap.ui.base.Object exists and is not a plain object");
-
-
-		assert.strictEqual(DataType.getType("sap.ui.base.Object"), DataType.getType("any"), "access to an invalid type should fallback to type 'any'");
-		assert.ok(oWarningSpy.calledWith(sinon.match(/not a valid data type/)), "access to an invalid type should produce a warning message in the log");
-		assert.ok(!oErrorSpy.called, "no errors should be produced");
-	});
-
 
 
 	QUnit.module("Type Creation");
@@ -799,5 +784,4 @@ sap.ui.define([
 		assert.equal(_uri.normalize("http://www.sap.com"), "/proxy/http/www.sap.com", "the url should be normalized");
 		assert.equal(_string.normalize("test"), "test", "the normalizer must not be applied for other types");
 	});
-
 });

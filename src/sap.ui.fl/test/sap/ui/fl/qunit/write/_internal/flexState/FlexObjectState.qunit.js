@@ -3,7 +3,6 @@
 sap.ui.define([
 	"sap/ui/core/UIComponent",
 	"sap/ui/core/Control",
-	"sap/base/util/UriParameters",
 	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
@@ -23,7 +22,6 @@ sap.ui.define([
 ], function(
 	UIComponent,
 	Control,
-	UriParameters,
 	FlexObjectFactory,
 	FlexState,
 	ManifestUtils,
@@ -336,11 +334,7 @@ sap.ui.define([
 				reference: sReference,
 				persistencyKey: sPersistencyKey
 			});
-			sandbox.stub(UriParameters, "fromQuery").returns({
-				get() {
-					return Layer.VENDOR;
-				}
-			});
+			sandbox.stub(URLSearchParams.prototype, "get").returns(Layer.VENDOR);
 			CompVariantState.addVariant({
 				changeSpecificData: {
 					type: "pageVariant",

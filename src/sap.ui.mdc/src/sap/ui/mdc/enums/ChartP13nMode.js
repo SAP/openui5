@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define(function() {
+sap.ui.define(["sap/ui/base/DataType"], function(DataType) {
     "use strict";
 
     /**
@@ -40,6 +40,8 @@ sap.ui.define(function() {
          */
         Filter: "Filter"
     };
+
+    DataType.registerEnum("sap.ui.mdc.enums.ChartP13nMode", ChartP13nMode);
 
     return ChartP13nMode;
 

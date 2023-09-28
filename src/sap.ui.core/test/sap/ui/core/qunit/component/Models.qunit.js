@@ -6,6 +6,7 @@ sap.ui.define([
 	"sap/ui/base/config/URLConfigurationProvider",
 	"sap/ui/core/Component",
 	"sap/ui/core/Configuration",
+	"sap/ui/core/Lib",
 	"sap/ui/core/Manifest",
 	"sap/ui/core/UIComponentMetadata",
 	"sap/ui/model/json/JSONModel",
@@ -22,6 +23,7 @@ sap.ui.define([
 	URLConfigurationProvider,
 	Component,
 	Configuration,
+	Library,
 	Manifest,
 	UIComponentMetadata,
 	JSONModel,
@@ -1359,7 +1361,7 @@ sap.ui.define([
 			this.oLogErrorSpy = sinon.spy(Log, "error");
 			this.oLogWarningSpy = sinon.spy(Log, "warning");
 			// enable async preloading
-			this.oConfigurationGetPreloadStub = sinon.stub(Configuration, "getPreload").returns("");
+			this.oConfigurationGetPreloadStub = sinon.stub(Library, "getPreloadMode").returns("");
 
 			// unload not existing module to prevent different logs
 			// depending on cached 404 response or not

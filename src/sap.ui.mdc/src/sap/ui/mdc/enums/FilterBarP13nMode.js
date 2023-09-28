@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define(function() {
+sap.ui.define(["sap/ui/base/DataType"], function(DataType) {
     "use strict";
 
     /**
@@ -28,6 +28,8 @@ sap.ui.define(function() {
          */
         Value: "Value"
     };
+
+    DataType.registerEnum("sap.ui.mdc.enums.FilterBarP13nMode", FilterBarP13nMode);
 
     return FilterBarP13nMode;
 

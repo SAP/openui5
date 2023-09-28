@@ -874,7 +874,7 @@ sap.ui.define([
 
 
 		HeaderContainer.prototype._handleMobileScrolling = function () {
-			if (Core.isMobile()) {
+			if (Device.browser.mobile) {
 				var $scroll = this.$("scrl-cntnr-scroll"),
 					bIsHorizontal = this.getOrientation() === Orientation.Horizontal,
 					sProperty = bIsHorizontal ? "clientX" : "clientY",

@@ -20,7 +20,6 @@ sap.ui.define('sap/ui/qunit/QUnitUtils', [
 	'sap/ui/events/KeyCodes',
 	"sap/base/strings/camelize",
 	"sap/base/strings/capitalize",
-	"sap/base/util/UriParameters",
 	"sap/base/Log",
 	"sap/ui/core/Element",
 	"sap/ui/dom/jquery/control" // jQuery Plugin "control"
@@ -32,7 +31,6 @@ sap.ui.define('sap/ui/qunit/QUnitUtils', [
 		KeyCodes,
 		camelize,
 		capitalize,
-		UriParameters,
 		Log,
 		Element
 	) {
@@ -45,7 +43,7 @@ sap.ui.define('sap/ui/qunit/QUnitUtils', [
 			var bLegacySupport = !(parseFloat(QUnit.version) >= 2.0);
 
 			// extract the URL parameters
-			var mParams = UriParameters.fromQuery(window.location.search);
+			var mParams = new URLSearchParams(window.location.search);
 
 			if ( bLegacySupport ) {
 			// TODO: Remove deprecated code once all projects adapted

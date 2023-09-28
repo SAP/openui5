@@ -16,11 +16,10 @@
 sap.ui.define([
 	"sap/ui/qunit/utils/ControlIterator",
 	"sap/ui/qunit/utils/MemoryLeakCheck",
-	"sap/base/util/UriParameters",
 	"../helper/_LoadingIndicator",
 	"sap/ui/dom/includeStylesheet",
 	"require"
-], function(ControlIterator, MemoryLeakCheck, UriParameters, LoadingIndicator, includeStylesheet, require) {
+], function(ControlIterator, MemoryLeakCheck, LoadingIndicator, includeStylesheet, require) {
 	"use strict";
 
 	// disable require.js to avoid issues with thirdparty
@@ -87,12 +86,12 @@ sap.ui.define([
 			}
 		};
 
-		var sLib = UriParameters.fromQuery(window.location.search).get("library");
+		var sLib = new URLSearchParams(window.location.search).get("library");
 		if (sLib) {
 			mOptions.librariesToTest = [sLib];
 		}
 
-		var sControl = UriParameters.fromQuery(window.location.search).get("control");
+		var sControl = new URLSearchParams(window.location.search).get("control");
 		if (sControl) {
 			mOptions.controlsToTest = [sControl];
 		}

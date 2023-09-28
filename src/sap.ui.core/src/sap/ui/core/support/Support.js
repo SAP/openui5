@@ -6,7 +6,6 @@
 sap.ui.define([
 	"sap/ui/base/EventProvider",
 	"./Plugin",
-	"sap/base/util/UriParameters",
 	"sap/ui/thirdparty/jquery",
 	"sap/base/Log",
 	"sap/base/security/encodeURL",
@@ -15,7 +14,6 @@ sap.ui.define([
 ], function (
 	EventProvider,
 	Plugin,
-	UriParameters,
 	jQuery,
 	Log,
 	encodeURL,
@@ -86,7 +84,7 @@ sap.ui.define([
 					break;
 				case mTypes.TOOL:
 					this._oRemoteWindow = window.opener;
-					this._sRemoteOrigin = UriParameters.fromQuery(window.location.search).get("sap-ui-xx-support-origin");
+					this._sRemoteOrigin = new URLSearchParams(window.location.search).get("sap-ui-xx-support-origin");
 					jQuery(window).on("unload", function(oEvent){
 						that.sendEvent(mEvents.TEAR_DOWN);
 						Support.exitPlugins(that, true);

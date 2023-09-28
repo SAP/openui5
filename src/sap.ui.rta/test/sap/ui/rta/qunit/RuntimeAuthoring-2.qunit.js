@@ -3,7 +3,6 @@
 sap.ui.define([
 	"qunit/RtaQunitUtils",
 	"sap/base/util/isEmptyObject",
-	"sap/base/util/UriParameters",
 	"sap/m/MessageToast",
 	"sap/m/Page",
 	"sap/ui/core/ComponentContainer",
@@ -33,7 +32,6 @@ sap.ui.define([
 ], function(
 	RtaQunitUtils,
 	isEmptyObject,
-	UriParameters,
 	MessageToast,
 	Page,
 	ComponentContainer,
@@ -572,25 +570,9 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		/**
-		 * Stubs the return value of UriParameter's "has" function
-		 * when called with "fiori-tools-rta-mode".
-		 * This has to be stubbed like this because "has" is not static, nor is it part of the prototype
-		 *
-		 * @param {boolean} bValue the return value for "has"
-		 */
-		function stubUriParametersHasFioriToolsParam(bValue) {
-			sandbox.stub(UriParameters, "fromURL").callsFake(function(...aArgs) {
-				var oUriParameters = UriParameters.fromURL.wrappedMethod.apply(this, aArgs);
-				sandbox.stub(oUriParameters, "has").callThrough().withArgs("fiori-tools-rta-mode").returns(bValue);
-				return oUriParameters;
-			});
-		}
-
 		QUnit.test("when the URL parameter set by Fiori tools is set to 'true'", function(assert) {
-			stubUriParametersHasFioriToolsParam(true);
-
-			sandbox.stub(UriParameters.prototype, "get").callThrough().withArgs("fiori-tools-rta-mode").returns("true");
+			sandbox.stub(URLSearchParams.prototype, "has").callThrough().withArgs("fiori-tools-rta-mode").returns(true);
+			sandbox.stub(URLSearchParams.prototype, "get").callThrough().withArgs("fiori-tools-rta-mode").returns("true");
 
 			return this.oRta.start().then(function() {
 				var oToolbar = this.oRta.getToolbar();
@@ -599,8 +581,8 @@ sap.ui.define([
 		});
 
 		QUnit.test("when the URL parameter set by Fiori tools is set to 'false'", function(assert) {
-			stubUriParametersHasFioriToolsParam(true);
-			sandbox.stub(UriParameters.prototype, "get").callThrough().withArgs("fiori-tools-rta-mode").returns("false");
+			sandbox.stub(URLSearchParams.prototype, "has").callThrough().withArgs("fiori-tools-rta-mode").returns(true);
+			sandbox.stub(URLSearchParams.prototype, "get").callThrough().withArgs("fiori-tools-rta-mode").returns("false");
 
 			return this.oRta.start().then(function() {
 				var oToolbar = this.oRta.getToolbar();
@@ -609,7 +591,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when the URL parameter used by Fiori tools is not set", function(assert) {
-			stubUriParametersHasFioriToolsParam(false);
+			sandbox.stub(URLSearchParams.prototype, "has").callThrough().withArgs("fiori-tools-rta-mode").returns(false);
 
 			return this.oRta.start().then(function() {
 				var oToolbar = this.oRta.getToolbar();

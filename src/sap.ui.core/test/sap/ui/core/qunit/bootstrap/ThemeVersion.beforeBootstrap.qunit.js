@@ -1,7 +1,6 @@
 /*global sinon */
 sap.ui.define([
-	"sap/base/util/UriParameters"
-], function(UriParameters) {
+], function() {
 	"use strict";
 
 	function setupFakeServer(mOptions) {
@@ -43,7 +42,7 @@ sap.ui.define([
 	}
 
 	// nomen est omen
-	var sTestName = UriParameters.fromQuery(location.search).get("test");
+	var sTestName = new URLSearchParams(window.location.search).get("test");
 
 	var oOptions = window.oTestOptions = {
 		async: /-async(?:-|$)/.test(sTestName),

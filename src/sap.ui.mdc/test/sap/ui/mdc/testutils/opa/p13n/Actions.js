@@ -16,7 +16,6 @@ sap.ui.define([
 	"./waitForSelectWithSelectedTextOnPanel",
 	"./Util",
 	"sap/base/Log",
-	"sap/base/util/UriParameters",
 	"sap/ui/core/Core",
 	"sap/ui/Device"
 ], function(
@@ -33,7 +32,6 @@ sap.ui.define([
 	waitForSelectWithSelectedTextOnPanel,
 	Util,
 	Log,
-	UriParameters,
 	oCore,
 	Device
 ) {

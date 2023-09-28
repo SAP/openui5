@@ -6,7 +6,6 @@
 sap.ui.define([
 	"sap/base/strings/capitalize",
 	"sap/base/util/isPlainObject",
-	"sap/base/util/UriParameters",
 	"sap/base/Log",
 	"sap/m/MessageBox",
 	"sap/m/MessageToast",
@@ -55,7 +54,6 @@ sap.ui.define([
 ], function(
 	capitalize,
 	isPlainObject,
-	UriParameters,
 	Log,
 	MessageBox,
 	MessageToast,
@@ -392,7 +390,7 @@ sap.ui.define([
 	 */
 	RuntimeAuthoring.prototype.setFlexSettings = function(mFlexSettings) {
 		// Check URI-parameters for sap-ui-layer
-		var oUriParams = UriParameters.fromQuery(window.location.search);
+		var oUriParams = new URLSearchParams(window.location.search);
 		var sUriLayer = oUriParams.get("sap-ui-layer");
 
 		mFlexSettings = Object.assign({}, this.getFlexSettings(), mFlexSettings);
@@ -964,7 +962,7 @@ sap.ui.define([
 	};
 
 	function shouldValidateFlexEnabled() {
-		var sUriParam = UriParameters.fromQuery(window.location.search).get("sap-ui-rta-skip-flex-validation");
+		var sUriParam = new URLSearchParams(window.location.search).get("sap-ui-rta-skip-flex-validation");
 		return Settings.getInstance()
 		.then(function(oSettings) {
 			return !oSettings.isCustomerSystem() && sUriParam !== "true";
@@ -1530,7 +1528,7 @@ sap.ui.define([
 				var bTranslationAvailable = aArguments[1];
 				var bAppVariantsAvailable = mButtonsAvailability.saveAsAvailable;
 				var bExtendedOverview = bAppVariantsAvailable && RtaAppVariantFeature.isOverviewExtended();
-				var oUriParameters = UriParameters.fromURL(window.location.href);
+				var oUriParameters = new URLSearchParams(window.location.search);
 				// the "Visualization" tab should not be visible if the "fiori-tools-rta-mode" URL-parameter is set to any value but "false"
 				var bVisualizationButtonVisible;
 				bVisualizationButtonVisible = !oUriParameters.has("fiori-tools-rta-mode")

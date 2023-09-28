@@ -10,6 +10,8 @@ sap.ui.define([
 	'sap/base/i18n/ResourceBundle',
 	'sap/base/Log',
 	'sap/base/util/deepExtend',
+	"sap/base/util/isEmptyObject",
+	"sap/base/util/isPlainObject",
 	'sap/base/util/LoaderExtensions',
 	'sap/base/util/mixedFetch',
 	"sap/base/util/ObjectPath",
@@ -30,6 +32,8 @@ sap.ui.define([
 	ResourceBundle,
 	Log,
 	deepExtend,
+	isEmptyObject,
+	isPlainObject,
 	LoaderExtensions,
 	mixedFetch,
 	ObjectPath,
@@ -1171,6 +1175,88 @@ sap.ui.define([
 		return mInitLibraries;
 	};
 
+	/*
+	 * A symbol used to mark a Proxy as such
+	 * Proxys are indistinguishable from the outside, but we need a way
+	 * to prevent duplicate Proxy wrapping for library namespaces.
+	 */
+	const symIsProxy = Symbol("isProxy");
+
+	/**
+	 * Creates a Proxy handler object for the a library namespace.
+	 * Additionally creates a WeakMap for storing sub-namespace segments.
+	 * @param {string} sLibName the library name in dot-notation
+	 * @param {object} oLibNamespace the top-level library namespace object
+	 * @returns {object} an object containing the proxy-handler and the sub-namespace map
+	 */
+	function createProxyForLibraryNamespace(sLibName, oLibNamespace) {
+		// weakmap to track sub-namespaces for a library
+		// key: the sub-namespace objects, value: the accumulated namespace segments as string[]
+		// initial entry (the first 'target') is the library namespace object itself
+		const mSubNamespaces = new WeakMap();
+		mSubNamespaces.set(oLibNamespace, `${sLibName}.`);
+
+		// Proxy facade for library namespace/info-object
+		// will be filled successively by the library after Library.init()
+		const oLibProxyHandler = {
+
+			set(target, prop, value) {
+				// only analyze plain-objects: literals and (Constructor) functions, etc. must not have a proxy
+				// note: we explicitly must exclude Proxies here, since they are recognized as plain and empty
+				if ( isPlainObject(value) && !value[symIsProxy]) {
+					//Check Objects if they only contain static values
+					// assumption: a non-empty plain-object with only static content is an enum
+					const valueIsEmpty = isEmptyObject(value);
+
+					let registerProxy = valueIsEmpty;
+
+					if (!valueIsEmpty) {
+						if (DataType._isEnumCandidate(value)) {
+							// general namespace assignment
+							target[prop] = value;
+
+							// join library sub-paths when registering an enum type
+							// note: namespace already contains a trailing dot '.'
+							const sNamespacePrefix = mSubNamespaces.get(target);
+							DataType.registerEnum(`${sNamespacePrefix}${prop}`, value);
+						} else {
+							const firstChar = prop.charAt(0);
+							if (firstChar === firstChar.toLowerCase() && firstChar !== firstChar.toUpperCase()) {
+								registerProxy = true;
+							} else {
+								// general namespace assignment
+								target[prop] = value;
+							}
+						}
+					}
+
+					if (registerProxy) {
+						target[prop] = new Proxy(value, oLibProxyHandler);
+						// append currently written property to the namespace (mind the '.' at the end for the next level)
+						const sNamespacePrefix = `${mSubNamespaces.get(target)}${prop}.`;
+						// track nested namespace paths segments per proxy object
+						mSubNamespaces.set(value, sNamespacePrefix);
+					}
+				} else {
+					// no plain-object values, e.g. strings, classes
+					target[prop] = value;
+				}
+
+				return true;
+			},
+
+			get(target, prop) {
+				// check if an object is a proxy
+				if (prop === symIsProxy) {
+					return true;
+				}
+				return target[prop];
+			}
+		};
+
+		return oLibProxyHandler;
+	}
+
 	/**
 	 * Provides information about a library.
 	 *
@@ -1262,6 +1348,20 @@ sap.ui.define([
 		// ensure namespace
 		var oLibNamespace = ObjectPath.create(mSettings.name),
 			i;
+
+		// If a library states that it is using apiVersion 2, we expect types to be fully declared.
+		// In this case we don't need to create Proxies for the library namespace.
+		const apiVersion = mSettings.apiVersion ?? 1;
+		if (apiVersion < 2) {
+			const oLibProxyHandler = createProxyForLibraryNamespace(mSettings.name, oLibNamespace);
+
+			// activate proxy for outer library namespace object
+			oLibNamespace = new Proxy(oLibNamespace, oLibProxyHandler);
+
+			// proxy must be written back to the original path (global)
+			ObjectPath.set(mSettings.name, oLibNamespace);
+		}
+
 
 		// resolve dependencies
 		for (i = 0; i < oLib.dependencies.length; i++) {
@@ -1453,7 +1553,7 @@ sap.ui.define([
 			}
 		});
 
-		var bPreload = Configuration.getPreload() === 'sync' || Configuration.getPreload() === 'async',
+		var bPreload = Library.getPreloadMode() === 'sync' || Library.getPreloadMode() === 'async',
 			bRequire = !mOptions.preloadOnly;
 
 		if (!mOptions.sync) {
@@ -1705,6 +1805,40 @@ sap.ui.define([
 			type: BaseConfig.Type.Boolean,
 			external: true
 		});
+	};
+
+
+
+	/**
+	 * Currently active preload mode for libraries or falsy value.
+	 *
+	 * @returns {string} preload mode
+	 * @private
+	 * @ui5-restricted sap.ui.core
+	 * @since 1.120.0
+	 */
+	Library.getPreloadMode = function() {
+		// if debug sources are requested, then the preload feature must be deactivated
+		if (Configuration.getDebug() === true) {
+			return "";
+		}
+		// determine preload mode (e.g. resolve default or auto)
+		let sPreloadMode = BaseConfig.get({
+			name: "sapUiPreload",
+			type: BaseConfig.Type.String,
+			defaultValue: "auto",
+			external: true
+		});
+		// when the preload mode is 'auto', it will be set to 'async' or 'sync' for optimized sources
+		// depending on whether the ui5loader is configured async
+		if ( sPreloadMode === "auto" ) {
+			if (window["sap-ui-optimized"]) {
+				sPreloadMode = sap.ui.loader.config().async ? "async" : "sync";
+			} else {
+				sPreloadMode = "";
+			}
+		}
+		return sPreloadMode;
 	};
 
 	return Library;

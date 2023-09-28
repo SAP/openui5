@@ -1,5 +1,4 @@
 sap.ui.define([
-	"sap/base/util/UriParameters",
 	"sap/m/ActionSheet",
 	"sap/m/App",
 	"sap/m/Button",
@@ -25,7 +24,6 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/util/Mobile"
 ], function(
-	UriParameters,
 	ActionSheet,
 	App,
 	Button,
@@ -85,7 +83,7 @@ sap.ui.define([
 			red : "#FF6666",
 			green : "#66FF66"
 		};
-		var sParam = UriParameters.fromQuery(window.location.search).get("sap-ui-suite-background-color");
+		var sParam = new URLSearchParams(window.location.search).get("sap-ui-suite-background-color");
 		if (sParam) {
 			var sColor = oColors[sParam.toLowerCase()];
 			if (sColor) {
@@ -175,7 +173,7 @@ sap.ui.define([
 
 	function setDefaultParameters(oData) {
 		var sName;
-		var oUriParameters = UriParameters.fromQuery(window.location.search);
+		var oUriParameters = new URLSearchParams(window.location.search);
 
 		for (sName in oData) {
 			if (oData.hasOwnProperty(sName) && typeof oData[sName] === 'string') {

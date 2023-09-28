@@ -12,7 +12,6 @@ sap.ui.define([
 	"sap/m/Column",
 	"sap/m/ColumnListItem",
 	"sap/m/Text",
-	"sap/base/util/UriParameters",
 	"sap/ui/mdc/condition/FilterOperatorUtil",
 	"sap/ui/core/Core",
 	'sap/ui/mdc/condition/Condition',
@@ -32,7 +31,6 @@ sap.ui.define([
 	Column,
 	ColumnListItem,
 	Text,
-	UriParameters,
 	FilterOperatorUtil,
 	Core,
 	Condition,
@@ -49,7 +47,7 @@ sap.ui.define([
 
 	ValueHelpDelegate.retrieveContent = function (oValueHelp, oContainer) {
 
-		const oParams = UriParameters.fromQuery(window.location.search);
+		const oParams = new URLSearchParams(window.location.search);
 		const oParamSuspended = oParams.get("suspended");
 		const bSuspended = oParamSuspended ? oParamSuspended === "true" : false;
 

@@ -21,7 +21,6 @@ sap.ui.define([
 	'sap/base/assert',
 	'sap/base/Log',
 	'sap/base/util/ObjectPath',
-	'sap/base/util/UriParameters',
 	'sap/base/util/isPlainObject',
 	'sap/base/util/LoaderExtensions',
 	'sap/base/strings/camelize',
@@ -47,7 +46,6 @@ sap.ui.define([
 	assert,
 	Log,
 	ObjectPath,
-	UriParameters,
 	isPlainObject,
 	LoaderExtensions,
 	camelize,
@@ -503,6 +501,23 @@ sap.ui.define([
 
 		var oComponent = getCustomizingComponent(vObject);
 		return oComponent ? oComponent._getManifestEntry(sPath, true) : undefined;
+	};
+
+	/**
+	 * Currently active preload mode for components or falsy value.
+	 *
+	 * @returns {string} component preload mode
+	 * @private
+	 * @ui5-restricted sap.ui.core, sap.ui.fl
+	 * @experimental Might change completely.
+	 * @since 1.120.0
+	 */
+	Component.getComponentPreloadMode = function() {
+		return BaseConfig.get({
+			name: "sapUiXxComponentPreload",
+			type: BaseConfig.Type.String,
+			external: true
+		}) || Library.getPreloadMode();
 	};
 
 	/**
@@ -1999,7 +2014,7 @@ sap.ui.define([
 		//   sap-ui-xx-preload-component-models-<componentName>=, => preload default model (empty string key)
 		//   sap-ui-xx-preload-component-models-<componentName>=foo, => preload "foo" + default model (empty string key)
 		//   sap-ui-xx-preload-component-models-<componentName>=foo,bar => preload "foo" + "bar" models
-		var sPreloadModels = UriParameters.fromQuery(window.location.search).get("sap-ui-xx-preload-component-models-" + oManifest.getComponentName());
+		var sPreloadModels = new URLSearchParams(window.location.search).get("sap-ui-xx-preload-component-models-" + oManifest.getComponentName());
 		var aPreloadModels = sPreloadModels && sPreloadModels.split(",");
 
 		for (var sModelName in mAllModelConfigurations) {
@@ -2569,7 +2584,7 @@ sap.ui.define([
 			sName = oConfig.name,
 			sUrl = oConfig.url,
 			oConfiguration = Configuration,
-			bComponentPreload = /^(sync|async)$/.test(oConfiguration.getComponentPreload()),
+			bComponentPreload = /^(sync|async)$/.test(Component.getComponentPreloadMode()),
 			vManifest = oConfig.manifest,
 			bManifestFirst,
 			sManifestUrl,

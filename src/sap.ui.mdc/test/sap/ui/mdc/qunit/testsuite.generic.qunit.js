@@ -83,19 +83,10 @@ sap.ui.define([
 				}
 			},
 			"sap.ui.mdc.chart.ChartTypeButton": {
-				create: function (ChartTypeButton, mParameters) {
-					return new Promise(function (resolve, reject) {
-						sap.ui.require(["sap/ui/mdc/Chart"], function (Chart) {
-							const oChart = new Chart(mParameters),
-								oChartTypeButton = new ChartTypeButton(oChart);
-
-							oChartTypeButton.destroy = function () {
-								ChartTypeButton.prototype.destroy.call(this);
-								oChart.destroy();
-							};
-							resolve(oChartTypeButton);
-						}, reject);
-					});
+				create: false, // the ChartTypeButton is not build like a normal control and can not be tested
+				knownIssues: {
+					memoryLeaks: true,
+					id: true
 				}
 			}
 		}

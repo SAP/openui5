@@ -12,8 +12,6 @@ sap.ui.define([
 		},
 
 		init: function() {
-			undefined/*FakeLrepConnectorLocalStorage*/.enableFakeConnector();
-
 			// initialization has to be done here because parent.init() calls createContent()
 			oCore.loadLibrary("sap.ui.mdc");
 
@@ -39,10 +37,6 @@ sap.ui.define([
 			}));
 
 			UIComponent.prototype.init.apply(this, arguments);
-		},
-
-		exit: function() {
-			undefined/*FakeLrepConnectorLocalStorage*/.disableFakeConnector();
 		}
 	});
 });

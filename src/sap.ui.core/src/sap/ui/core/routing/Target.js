@@ -8,7 +8,6 @@ sap.ui.define([
 	'sap/ui/base/EventProvider',
 	'sap/ui/core/mvc/View',
 	'sap/ui/core/routing/async/Target',
-	"sap/base/util/UriParameters",
 	"sap/base/Log"
 ],
 	function(
@@ -16,7 +15,6 @@ sap.ui.define([
 		EventProvider,
 		View,
 		asyncTarget,
-		UriParameters,
 		Log
 	) {
 		"use strict";
@@ -251,7 +249,7 @@ sap.ui.define([
 				var sErrorMessage;
 				// temporarily: for checking the url param
 				function checkUrl() {
-					if (UriParameters.fromQuery(window.location.search).get("sap-ui-xx-asyncRouting") === "true") {
+					if (new URLSearchParams(window.location.search).get("sap-ui-xx-asyncRouting") === "true") {
 						Log.warning("Activation of async view loading in routing via url parameter is only temporarily supported and may be removed soon", "Target");
 						return true;
 					}

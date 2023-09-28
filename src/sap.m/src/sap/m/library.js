@@ -98,6 +98,7 @@ sap.ui.define([
 		  "sap.m.DialogType",
 		  "sap.m.DraftIndicatorState",
 		  "sap.m.DynamicDateRangeGroups",
+		  "sap.m.EmptyIndicatorMode",
 		  "sap.m.FacetFilterListDataType",
 		  "sap.m.FacetFilterType",
 		  "sap.m.FlexAlignContent",

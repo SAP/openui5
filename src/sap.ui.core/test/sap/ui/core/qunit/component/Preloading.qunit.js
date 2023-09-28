@@ -1,11 +1,9 @@
 sap.ui.define([
 	"sap/base/Log",
-	"sap/base/util/deepExtend",
 	"sap/base/util/Deferred",
 	"sap/base/util/fetch",
 	"sap/base/util/LoaderExtensions",
 	"sap/ui/core/Component",
-	"sap/ui/core/Configuration",
 	"sap/ui/core/Lib",
 	"sap/ui/core/Manifest",
 	"sap/ui/core/UIComponent",
@@ -13,12 +11,10 @@ sap.ui.define([
 	"sap/ui/VersionInfo"
 ], function(
 	Log,
-	deepExtend,
 	Deferred,
 	fetch,
 	LoaderExtensions,
 	Component,
-	Configuration,
 	Library,
 	Manifest,
 	UIComponent,
@@ -382,7 +378,7 @@ sap.ui.define([
 
 	QUnit.test("preload only", function(assert) {
 
-		this.oConfigurationGetPreloadStub = sinon.stub(Configuration, "getPreload").returns("async"); // sync or async both activate the preload
+		this.oLibraryGetPreloadStub = sinon.stub(Library, "getPreloadMode").returns("async"); // sync or async both activate the preload
 
 		function contains(dep) {
 			return sinon.match(function(value) {
@@ -421,14 +417,14 @@ sap.ui.define([
 			}.bind(this));
 
 		}.bind(this)).finally(function () {
-			this.oConfigurationGetPreloadStub.restore();
+			this.oLibraryGetPreloadStub.restore();
 		}.bind(this));
 
 	});
 
 	QUnit.test("preload bundles and libs", function(assert) {
 
-		this.oConfigurationGetPreloadStub = sinon.stub(Configuration, "getPreload").returns("async"); // sync or async both activate the preload
+		this.oLibraryGetPreloadStub = sinon.stub(Library, "getPreloadMode").returns("async"); // sync or async both activate the preload
 
 		function contains(dep) {
 			return sinon.match(function(value) {
@@ -482,7 +478,7 @@ sap.ui.define([
 			assert.ok( this.requireSpy.calledWith( contains('scenario2/lib2/library') ), "lib2 has been required");
 			assert.ok( this.requireSpy.calledWith( contains('scenario2/comp/Component') ), "component has been required");
 		}.bind(this)).finally(function () {
-			this.oConfigurationGetPreloadStub.restore();
+			this.oLibraryGetPreloadStub.restore();
 		}.bind(this));
 
 	});
@@ -513,7 +509,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("dependencies with manifest component", function(assert) {
-		this.oConfigurationGetPreloadStub = sinon.stub(Configuration, "getPreload").returns("async"); // sync or async both activate the preload
+		this.oLibraryGetPreloadStub = sinon.stub(Library, "getPreloadMode").returns("async"); // sync or async both activate the preload
 
 		var done = assert.async();
 
@@ -554,13 +550,13 @@ sap.ui.define([
 		}.bind(this), function(oError) {
 			assert.ok(false, "Promise of Component hasn't been resolved correctly.");
 		}).finally(function () {
-			this.oConfigurationGetPreloadStub.restore();
+			this.oLibraryGetPreloadStub.restore();
 			done();
 		}.bind(this));
 	});
 
 	QUnit.test("dependencies with component (no manifest first)", function(assert) {
-		this.oConfigurationGetPreloadStub = sinon.stub(Configuration, "getPreload").returns("async"); // sync or async both activate the preload
+		this.oLibraryGetPreloadStub = sinon.stub(Library, "getPreloadMode").returns("async"); // sync or async both activate the preload
 
 		var done = assert.async();
 
@@ -593,7 +589,7 @@ sap.ui.define([
 		}.bind(this), function(oError) {
 			assert.ok(false, "Promise of Component hasn't been resolved correctly.");
 		}).finally(function () {
-			this.oConfigurationGetPreloadStub.restore();
+			this.oLibraryGetPreloadStub.restore();
 			done();
 		}.bind(this));
 	});

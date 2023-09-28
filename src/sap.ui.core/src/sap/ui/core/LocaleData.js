@@ -35,6 +35,7 @@ sap.ui.define([
 		},
 		rNumberInScientificNotation = /^([+-]?)((\d+)(?:\.(\d+))?)[eE]([+-]?\d+)$/,
 		rTrailingZeroes = /0+$/;
+	const rFallbackPatternTextParts = /(.*)?\{[0|1]}(.*)?\{[0|1]}(.*)?/;
 
 	/**
 	 * Creates an instance of LocaleData for the given locale.
@@ -602,10 +603,15 @@ sap.ui.define([
 		 * @since 1.46
 		 * @public
 		 */
-		getCombinedIntervalPattern : function(sPattern, sCalendarType) {
-			var oIntervalFormats = this._get(getCLDRCalendarName(sCalendarType), "dateTimeFormats", "intervalFormats"),
-				sFallbackPattern = oIntervalFormats.intervalFormatFallback;
-			return sFallbackPattern.replace(/\{(0|1)\}/g, sPattern);
+		getCombinedIntervalPattern: function (sPattern, sCalendarType) {
+			const oIntervalFormats = this._get(getCLDRCalendarName(sCalendarType), "dateTimeFormats",
+				"intervalFormats");
+			const [/*sAll*/, sTextBefore, sTextBetween, sTextAfter] =
+				rFallbackPatternTextParts.exec(oIntervalFormats.intervalFormatFallback);
+
+			// text part of intervalFormatFallback is not escaped
+			return LocaleData._escapeIfNeeded(sTextBefore) + sPattern + LocaleData._escapeIfNeeded(sTextBetween)
+				+ sPattern + LocaleData._escapeIfNeeded(sTextAfter);
 		},
 
 		/**
@@ -2604,6 +2610,27 @@ sap.ui.define([
 	// name
 	LocaleData._mTimezoneTranslations = {};
 
-	return LocaleData;
+	const rContainsSymbol = new RegExp("[" + Object.keys(mCLDRSymbols).join("") + "]");
+	const rTextWithOptionalSpacesAtStartAndEnd = /^(\s)?(.*?)(\s)?$/;
 
+	/**
+	 * Returns the escaped value if the given value contains CLDR symbols.
+	 *
+	 * @param {string} [sValue=""]
+	 *   The value to be checked and escaped if needed; the value must not contain '
+	 * @returns {string}
+	 *   The escaped value; only the string between one optional space at the beginning and at the
+	 *   end is escaped
+	 */
+	LocaleData._escapeIfNeeded = function (sValue) {
+		if (sValue === undefined) {
+			return "";
+		}
+		if (rContainsSymbol.test(sValue)) {
+			return sValue.replace(rTextWithOptionalSpacesAtStartAndEnd, "$1'$2'$3");
+		}
+		return sValue;
+	};
+
+	return LocaleData;
 });

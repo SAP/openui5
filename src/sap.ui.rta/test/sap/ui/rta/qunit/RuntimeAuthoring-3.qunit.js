@@ -2,7 +2,6 @@
 
 sap.ui.define([
 	"sap/base/util/isPlainObject",
-	"sap/base/util/UriParameters",
 	"sap/base/Log",
 	"sap/m/Button",
 	"sap/m/MessageBox",
@@ -31,7 +30,6 @@ sap.ui.define([
 	"test-resources/sap/ui/rta/qunit/RtaQunitUtils"
 ], function(
 	isPlainObject,
-	UriParameters,
 	Log,
 	Button,
 	MessageBox,
@@ -809,7 +807,7 @@ sap.ui.define([
 			});
 			assert.equal(oRuntimeAuthoring.getLayer(), Layer.CUSTOMER, "then the layer is the default 'CUSTOMER'");
 
-			sandbox.stub(UriParameters.prototype, "get").withArgs("sap-ui-layer").returns(Layer.VENDOR);
+			sandbox.stub(URLSearchParams.prototype, "get").withArgs("sap-ui-layer").returns(Layer.VENDOR);
 
 			oRuntimeAuthoring.setFlexSettings(oRuntimeAuthoring.getFlexSettings());
 			assert.equal(oRuntimeAuthoring.getLayer(), Layer.VENDOR, "then the function reacts to the URL parameter and sets the layer to VENDOR");
@@ -822,7 +820,7 @@ sap.ui.define([
 			});
 			assert.equal(oRuntimeAuthoring.getLayer(), Layer.CUSTOMER, "then the layer is the default 'CUSTOMER'");
 
-			sandbox.stub(UriParameters.prototype, "get").withArgs("sap-ui-layer").returns("vendor");
+			sandbox.stub(URLSearchParams.prototype, "get").withArgs("sap-ui-layer").returns("vendor");
 
 			oRuntimeAuthoring.setFlexSettings(oRuntimeAuthoring.getFlexSettings());
 			assert.equal(oRuntimeAuthoring.getLayer(), Layer.VENDOR, "then the function reacts to the URL parameter and sets the layer to VENDOR");

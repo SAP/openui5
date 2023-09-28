@@ -8,14 +8,13 @@
  * @version @version@
  */
 sap.ui.define([
-	"sap/base/util/UriParameters",
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/core/sample/common/Component",
 	"sap/ui/core/util/MockServer",
 	"sap/ui/core/util/XMLPreprocessor",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/odata/v2/ODataModel"
-], function(UriParameters, XMLView, BaseComponent, MockServer, XMLPreprocessor, JSONModel, ODataModel2) {
+], function(XMLView, BaseComponent, MockServer, XMLPreprocessor, JSONModel, ODataModel2) {
 	"use strict";
 
 	/*
@@ -76,7 +75,7 @@ sap.ui.define([
 					= "test-resources/sap/ui/core/demokit/sample/ViewTemplate/scenario/data/",
 				oModel,
 				sServiceUri,
-				oUriParameters = UriParameters.fromQuery(window.location.search),
+				oUriParameters = new URLSearchParams(window.location.search),
 				bRealOData = oUriParameters.get("realOData") === "true",
 				fnModel = oUriParameters.get("oldOData") === "true" ? undefined/*ODataModel*/ : ODataModel2;
 

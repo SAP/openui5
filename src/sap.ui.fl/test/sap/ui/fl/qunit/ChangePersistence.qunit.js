@@ -5,7 +5,6 @@ QUnit.dump.maxDepth = 10;
 
 sap.ui.define([
 	"sap/base/util/merge",
-	"sap/base/util/UriParameters",
 	"sap/ui/core/Component",
 	"sap/ui/core/Control",
 	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
@@ -26,7 +25,6 @@ sap.ui.define([
 	"test-resources/sap/ui/fl/qunit/FlQUnitUtils"
 ], function(
 	merge,
-	UriParameters,
 	Component,
 	Control,
 	FlexObjectFactory,
@@ -1516,7 +1514,7 @@ sap.ui.define([
 	});
 
 	function setURLParameterForCondensing(sValue) {
-		sandbox.stub(UriParameters, "fromURL").returns({
+		sandbox.stub(window, "URLSearchParams").returns({
 			has() {return true;},
 			get() {return sValue;}
 		});

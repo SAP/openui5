@@ -35,9 +35,7 @@ sap.ui.define(['sap/ui/mdc/enums/BaseType', 'sap/ui/mdc/DefaultTypeMap', "sap/ba
   * @public
   */
  BaseDelegate.getTypeMap = function (oControl) {
-	 // Support existing custom TypeUtils until all stakeholders switched to TypeMaps
-	 const bHasTypeUtil = this.getTypeUtil && this.getTypeUtil !== BaseDelegate.getTypeUtil;
-	 return bHasTypeUtil ? null : DefaultTypeMap;
+  return DefaultTypeMap;
  };
 
  return BaseDelegate;

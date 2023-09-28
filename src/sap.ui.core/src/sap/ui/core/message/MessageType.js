@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
- sap.ui.define([], () => {
+ sap.ui.define(["sap/ui/base/DataType"], (DataType) => {
 	"use strict";
 
 	/**
@@ -46,6 +46,7 @@
 		Success : "Success"
 
 	};
+	DataType.registerEnum("sap.ui.core.MessageType", MessageType);
 
 	return MessageType;
 });

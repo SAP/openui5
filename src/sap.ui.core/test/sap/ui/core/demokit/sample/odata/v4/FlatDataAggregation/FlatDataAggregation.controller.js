@@ -2,12 +2,11 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/base/util/UriParameters",
 	"sap/m/MessageToast",
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/test/TestUtils"
-], function (UriParameters, MessageToast, Controller, JSONModel, TestUtils) {
+], function (MessageToast, Controller, JSONModel, TestUtils) {
 	"use strict";
 
 	return Controller.extend(
@@ -69,7 +68,7 @@ sap.ui.define([
 		onFilterGrid : function () {
 			var sFilter = this.getView().getModel("ui").getProperty("/sFilterGrid"),
 				sGrandTotalAtBottomOnly
-					= UriParameters.fromQuery(window.location.search)
+					= new URLSearchParams(window.location.search)
 						.get("grandTotalAtBottomOnly"),
 				oTTable = this.byId("tTable"),
 				oTTableMode = oTTable.getRowMode(),
@@ -132,7 +131,7 @@ sap.ui.define([
 		},
 
 		onInit : function () {
-			var oUriParameters = UriParameters.fromQuery(window.location.search),
+			var oUriParameters = new URLSearchParams(window.location.search),
 				sGrandTotalAtBottomOnly = oUriParameters.get("grandTotalAtBottomOnly"),
 				bGrandTotalAtBottomOnly = sGrandTotalAtBottomOnly === "true",
 				sGrandTotalLike184 = oUriParameters.get("grandTotalLike1.84"),

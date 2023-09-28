@@ -8,11 +8,13 @@
 sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/model/TreeAutoExpandMode",
+	"sap/ui/table/rowmodes/Type",
 	"sap/ui/core/library", // library dependency
 	"sap/ui/unified/library" // library dependency
 ], function(
 	Core,
-	TreeAutoExpandMode
+	TreeAutoExpandMode,
+	RowModeType
 ) {
  "use strict";
 
@@ -366,6 +368,9 @@ sap.ui.define([
 	  */
 	 MultiToggle: "MultiToggle"
  };
+
+ thisLib.rowmodes = thisLib.rowmodes || {};
+ thisLib.rowmodes.Type = RowModeType;
 
  //factory for table to create labels and textviews to be overwritten by commons and mobile library
  /* -------------------------------------- */

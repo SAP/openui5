@@ -21,9 +21,8 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/Device",
 	"sap/m/library",
-	"sap/base/util/UriParameters",
 	"sap/ui/core/InvisibleText"
-], function(JSONModel, VBox, Control, Column, Text, Filter, Table, OverflowToolbar, SearchField, ToolbarSpacer, OverflowToolbarButton, OverflowToolbarLayoutData, DragDropInfo, ShortcutHintsMixin, KeyCodes, Log, Device, library, UriParameters, InvisibleText) {
+], function(JSONModel, VBox, Control, Column, Text, Filter, Table, OverflowToolbar, SearchField, ToolbarSpacer, OverflowToolbarButton, OverflowToolbarLayoutData, DragDropInfo, ShortcutHintsMixin, KeyCodes, Log, Device, library, InvisibleText) {
 	"use strict";
 
 	/**

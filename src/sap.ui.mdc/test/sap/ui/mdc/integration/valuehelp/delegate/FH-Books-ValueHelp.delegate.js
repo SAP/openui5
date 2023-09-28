@@ -16,7 +16,6 @@ sap.ui.define([
 	"sap/m/Column",
 	"sap/m/ColumnListItem",
 	"sap/m/Text",
-	"sap/base/util/UriParameters",
 	"sap/ui/mdc/enums/TableSelectionMode"
 ], function(
 	ODataV4ValueHelpDelegate,
@@ -32,7 +31,6 @@ sap.ui.define([
 	Column,
 	ColumnListItem,
 	Text,
-	UriParameters,
 	TableSelectionMode
 ) {
 	"use strict";
@@ -47,7 +45,7 @@ sap.ui.define([
 		const bMultiSelect = oValueHelp.getMaxConditions() === -1;
 		const sId = oValueHelp.getId();
 
-		const oParams = UriParameters.fromQuery(location.search);
+		const oParams = new URLSearchParams(window.location.search);
 		const oParamSuspended = oParams.get("suspended");
 		const bSuspended = oParamSuspended ? oParamSuspended === "true" : false;
 

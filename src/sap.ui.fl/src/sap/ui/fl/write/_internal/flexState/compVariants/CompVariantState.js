@@ -5,7 +5,6 @@
 sap.ui.define([
 	"sap/base/util/restricted/_omit",
 	"sap/base/util/restricted/_pick",
-	"sap/base/util/UriParameters",
 	"sap/ui/core/Core",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
@@ -24,7 +23,6 @@ sap.ui.define([
 ], function(
 	_omit,
 	_pick,
-	UriParameters,
 	Core,
 	Layer,
 	Utils,
@@ -211,7 +209,7 @@ sap.ui.define([
 			return Layer.USER;
 		}
 
-		var sLayer = UriParameters.fromQuery(window.location.search).get("sap-ui-layer") || "";
+		var sLayer = new URLSearchParams(window.location.search).get("sap-ui-layer") || "";
 		sLayer = sLayer.toUpperCase();
 		if (sLayer) {
 			return sLayer;
@@ -316,7 +314,7 @@ sap.ui.define([
 			defaultVariantName: mPropertyBag.defaultVariantId
 		};
 		// TODO: remove as soon as the development uses an IDE using rta which passes the correct parameter
-		mPropertyBag.layer = mPropertyBag.layer || UriParameters.fromQuery(window.location.search).get("sap-ui-layer") || Layer.USER;
+		mPropertyBag.layer = mPropertyBag.layer || new URLSearchParams(window.location.search).get("sap-ui-layer") || Layer.USER;
 
 		var mCompVariantsMap = FlexState.getCompVariantsMap(mPropertyBag.reference)._getOrCreate(mPropertyBag.persistencyKey);
 		var sChangeType = "defaultVariant";

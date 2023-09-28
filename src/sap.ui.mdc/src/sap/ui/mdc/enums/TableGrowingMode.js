@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define(function() {
+sap.ui.define(["sap/ui/base/DataType"], function(DataType) {
     "use strict";
 
     /**
@@ -34,6 +34,8 @@ sap.ui.define(function() {
          */
         Scroll: "Scroll"
     };
+
+    DataType.registerEnum("sap.ui.mdc.enums.TableGrowingMode", TableGrowingMode);
 
     return TableGrowingMode;
 

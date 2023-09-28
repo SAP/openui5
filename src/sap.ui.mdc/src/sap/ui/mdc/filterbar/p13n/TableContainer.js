@@ -4,8 +4,8 @@
 
 // Provides control sap.ui.mdc.filterbar.FilterItemLayout.
 sap.ui.define([
-	'sap/ui/mdc/filterbar/IFilterContainer','sap/m/Table', 'sap/m/Column', 'sap/m/Text', 'sap/m/VBox', 'sap/ui/mdc/p13n/panels/FilterPanel', 'sap/base/util/UriParameters'
-], function(IFilterContainer, Table, Column, Text, VBox, FilterPanel, SAPUriParameters) {
+	'sap/ui/mdc/filterbar/IFilterContainer','sap/m/Table', 'sap/m/Column', 'sap/m/Text', 'sap/m/VBox', 'sap/ui/mdc/p13n/panels/FilterPanel'
+], function(IFilterContainer, Table, Column, Text, VBox, FilterPanel) {
 	"use strict";
 
 	/**

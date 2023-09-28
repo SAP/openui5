@@ -30,10 +30,11 @@ sap.ui.define([
 	"sap/m/MessageBox",
 	"sap/m/Button",
 	"sap/ui/base/Event",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/ui/core/Element"
 ], function (Table, ToolbarSpacer, UploadSetwithTableRenderer, FileUploader,
     UploadSetToolbarPlaceholder, UploaderHttpRequestMethod, OverFlowToolbar, UploadSetwithTableItem, deepEqual, Log, Library, IllustratedMessageType,
-	IllustratedMessage, IllustratedMessageSize, Uploader, DragDropInfo, DropInfo, DragInfo, FilePreviewDialog, Event, Dialog, Label, Input, MessageBox, Button, EventBase, Core) {
+	IllustratedMessage, IllustratedMessageSize, Uploader, DragDropInfo, DropInfo, DragInfo, FilePreviewDialog, Event, Dialog, Label, Input, MessageBox, Button, EventBase, Core, Element) {
     "use strict";
 
 	/**
@@ -1025,7 +1026,7 @@ sap.ui.define([
 			const oAssociatedPreviewDialog = new FilePreviewDialog();
 			this.setPreviewDialog(oAssociatedPreviewDialog);
 		}
-		this._filePreviewDialogControl = Core.byId(this.getPreviewDialog());
+		this._filePreviewDialogControl = Element.getElementById(this.getPreviewDialog());
 		// var aitems = this.getAdditionalFooterButtons();
 		if (this._filePreviewDialogControl) {
 			this._filePreviewDialogControl._previewItem = oItem;

@@ -11,7 +11,6 @@ sap.ui.define([
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
-	"sap/base/util/UriParameters",
 	"sap/ui/core/Control",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
@@ -25,7 +24,6 @@ sap.ui.define([
 	Layer,
 	Utils,
 	ManifestUtils,
-	UriParameters,
 	Control,
 	sinon
 ) {
@@ -306,11 +304,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when a control and a layer were provided and display version is not equal to active version", function(assert) {
-			sandbox.stub(UriParameters, "fromQuery").returns({
-				get() {
-					return "1";
-				}
-			});
+			sandbox.stub(URLSearchParams.prototype, "get").returns("1");
 			var mPropertyBag = {
 				layer: Layer.CUSTOMER,
 				control: new Control(),
