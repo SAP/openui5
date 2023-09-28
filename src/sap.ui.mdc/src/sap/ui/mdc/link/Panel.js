@@ -70,6 +70,14 @@ sap.ui.define([
 				 */
 				beforeNavigationCallback: {
 					type: "function"
+				},
+				/**
+				 * Function that is called when the navigation happens. This function is used mainly inside the <code>SmartLink</code> control to provide
+				 * its <code>navigate</code> and <code>innerNavigate</code> event handlings. The function will be called with the <code>Event</code> that
+				 * is provided by the <code>press</code> handling of the given <code>Link</code> control.
+				 */
+				onNavigationCallback: {
+					type: "function"
 				}
 			},
 			aggregations: {
@@ -115,15 +123,7 @@ sap.ui.define([
 	Panel.prototype.init = function() {
 		Control.prototype.init.call(this);
 
-		Engine.getInstance().register(this, {
-			controller: {
-				LinkItems: new LinkPanelController({ control: this })
-			}
-		});
-
-		AdaptationMixin.call(Panel.prototype);
-
-		Engine.getInstance().defaultProviderRegistry.attach(this, "Global");
+		this._registerP13n();
 
 		sap.ui.require([
 			this.getMetadataHelperPath() || "sap/ui/mdc/Link"
@@ -177,6 +177,18 @@ sap.ui.define([
 		iSeparatorIndex = 1,
 		iLinkAreaIndex = 2,
 		iFooterAreaIndex = 3;
+
+	Panel.prototype._registerP13n = function() {
+		Engine.getInstance().register(this, {
+			controller: {
+				LinkItems: new LinkPanelController({ control: this })
+			}
+		});
+
+		AdaptationMixin.call(Panel.prototype);
+
+		Engine.getInstance().defaultProviderRegistry.attach(this, "Global");
+	};
 
 	Panel.prototype._createContent = function() {
 		const oVerticalLayoutContent = [];
@@ -331,9 +343,18 @@ sap.ui.define([
 			oEvent.preventDefault();
 			this.getBeforeNavigationCallback()(oEvent).then((bNavigate) => {
 				if (bNavigate) {
+					this._onNavigate(oLink);
 					Panel.navigate(sHref);
 				}
 			});
+		} else {
+			this._onNavigate(oLink);
+		}
+	};
+
+	Panel.prototype._onNavigate = function(oLink) {
+		if (this.getOnNavigationCallback()) {
+			this.getOnNavigationCallback()(oLink);
 		}
 	};
 
@@ -388,7 +409,7 @@ sap.ui.define([
 	};
 
 	Panel._getVisibleItems = function(aMItems) {
-		return aMItems.filter(function(oItem) {
+		return aMItems.filter((oItem) => {
 			return oItem.id !== undefined && oItem.visible;
 		});
 	};
