@@ -23,8 +23,9 @@ sap.ui.define([
 	"sap/m/p13n/Engine",
 	"sap/ui/mdc/mixin/AdaptationMixin",
 	"sap/ui/mdc/link/PanelItem",
-	"sap/ui/core/CustomData"
-], function(Control, PanelRenderer, VerticalLayout, Log, HorizontalLayout, HBox, VBox, ImageContent, Link, Label, Text, Button, FlexItemData, JSONModel, BindingMode, ManagedObjectObserver, LinkPanelController, Engine, AdaptationMixin, PanelItem, CustomData) {
+	"sap/ui/core/CustomData",
+	"./Factory"
+], function(Control, PanelRenderer, VerticalLayout, Log, HorizontalLayout, HBox, VBox, ImageContent, Link, Label, Text, Button, FlexItemData, JSONModel, BindingMode, ManagedObjectObserver, LinkPanelController, Engine, AdaptationMixin, PanelItem, CustomData, Factory) {
 	"use strict";
 
 	/**
@@ -342,10 +343,11 @@ sap.ui.define([
 	Panel.oNavigationPromise = undefined;
 
 	Panel.navigate = function(sHref) {
-		if (sHref.indexOf("#") === 0 && sap.ushell && sap.ushell.Container && sap.ushell.Container.getServiceAsync) {
+		const oContainer = Factory.getUShellContainer();
+		if (sHref.indexOf("#") === 0 && oContainer) {
 			// if we are inside a FLP -> navigate with CrossApplicationNavigation
 			if (!Panel.oNavigationPromise) {
-				Panel.oNavigationPromise = sap.ushell.Container.getServiceAsync("CrossApplicationNavigation").then(function (oCrossApplicationNavigation) {
+				Panel.oNavigationPromise = Factory.getServiceAsync("CrossApplicationNavigation").then(function (oCrossApplicationNavigation) {
 					oCrossApplicationNavigation.toExternal({
 						target: {
 							// navigate to href without #
