@@ -1075,6 +1075,9 @@ sap.ui.define([
 					libs: ["sap.m", "sap.ui.layout", "sap.ui.unified"] // to compensate 2 sync loadLibrary
 				}
 			},
+            /**
+             * @deprecated as of version 1.120
+             */
 			P13nDimMeasurePanel: {
 				title: "Test Page for sap.m.P13nDimMeasurePanel",
 				sinon: {
