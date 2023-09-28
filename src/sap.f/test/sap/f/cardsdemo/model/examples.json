@@ -138,149 +138,149 @@
 		"title": "Default Header",
 		"description": "Example page for Card with Default Header",
 		"route": "defaultHeader",
-		"group": "Other Card Examples"
+		"group": "Header and Footer"
 	},
 	{
 		"title": "Numeric Header",
 		"description": "Example page for Card with Numeric Header",
 		"route": "numericHeader",
-		"group": "Other Card Examples"
+		"group": "Header and Footer"
 	},
 	{
 		"title": "Footer (experimental)",
 		"description": "Having buttons with actions in a footer",
 		"route": "footer",
-		"group": "Other Card Examples"
+		"group": "Header and Footer"
 	},
 	{
 		"title": "Manifest initialization",
 		"description": "Three types of manifest initializations are possible",
 		"route": "manifest",
-		"group": "Other Card Examples"
+		"group": "Initialization and Data"
 	},
 	{
 		"title": "Data Service",
 		"description": "Examples for FLP data scenarios",
 		"route": "dataService",
-		"group": "Other Card Examples"
+		"group": "Initialization and Data"
 	},
 	{
 		"title": "Loading behavior",
 		"description": "Busy indicators and heights examples",
 		"route": "delayedLoading",
-		"group": "Other Card Examples"
+		"group": "Initialization and Data"
 	},
 	{
 		"title": "No Header / No Content",
 		"description": "Examples of cards with no header or no content provided",
 		"route": "noHeaderNoContent",
-		"group": "Other Card Examples"
+		"group": "Initialization and Data"
 	},
 	{
 		"title": "Active/Inactive data mode",
 		"description": "Example with 'enabled' property of the Card",
 		"route": "dataMode",
-		"group": "Other Card Examples"
+		"group": "Initialization and Data"
 	},
 	{
 		"title": "Translations & Header Count",
 		"description": "Example with card translations and count binding",
 		"route": "translation",
-		"group": "Other Card Examples"
+		"group": "Localization and Customization"
 	},
 	{
 		"title": "Card bundles",
 		"description": "Example with card bundles with static resources and baseURL usage",
 		"route": "bundle",
-		"group": "Other Card Examples"
+		"group": "Initialization and Data"
 	},
 	{
 		"title": "Manifest Ready Event",
 		"description": "Example showing the manifestReady event",
 		"route": "manifestReady",
-		"group": "Other Card Examples"
+		"group": "Initialization and Data"
 	},
 	{
 		"title": "Badges",
 		"description": "Example with cards with badge",
 		"route": "badges",
-		"group": "Other Card Examples"
+		"group": "Localization and Customization"
 	},
 	{
 		"title": "Preview",
 		"route": "preview",
-		"group": "Other Card Examples"
+		"group": "Localization and Customization"
 	},
 	{
 		"title": "Filters",
 		"description": "Example with cards using Filters",
 		"route": "filters",
-		"group": "Other Card Examples"
+		"group": "Localization and Customization"
 	},
 	{
 		"title": "Extension and Host",
 		"description": "Example with cards using Extension and Host",
 		"route": "extensionAndHost",
-		"group": "Other Card Examples"
+		"group": "Localization and Customization"
 	},
 	{
 		"title": "Parameters",
 		"description": "Card Parameters",
 		"route": "parameters",
-		"group": "Other Card Examples"
+		"group": "Localization and Customization"
 	},
 	{
 		"title": "CSRF Tokens",
 		"description": "Play around with CSRF tokens",
 		"route": "csrfToken",
-		"group": "Other Card Examples"
+		"group": "Security and Performance"
 	},
 	{
 		"title": "Pagination",
 		"description": "Play around with pagination.",
 		"route": "pagination",
-		"group": "Other Card Examples"
+		"group": "Security and Performance"
 	},
 	{
 		"title": "Message",
 		"description": "Play around with showMessage() method",
 		"route": "message",
-		"group": "Other Card Examples"
+		"group": "Errors and Messages"
 	},
 	{
 		"title": "Transparent",
 		"description": "Card without background and border",
 		"route": "transparent",
-		"group": "Other Card Examples"
+		"group": "Card Variants"
 	},
 	{
 		"title": "Performance Measurements",
 		"description": "Get an overview of which card lifecycle events are measured.\nNote: this page is not optimized and the results should not be taken into account",
 		"route": "measurements",
-		"group": "Other Card Examples"
+		"group": "Security and Performance"
 	},
 	{
 		"title": "Data Requests",
 		"description": "Play around with data requests.",
 		"route": "requests",
-		"group": "Other Card Examples"
+		"group": "Initialization and Data"
 	},
 	{
 		"title": "Card Errors",
 		"description": "Play around with Card errors.",
 		"route": "cardErrors",
-		"group": "Other Card Examples"
+		"group": "Errors and Messages"
 	},
 	{
 		"title": "Model Size Limit",
 		"description": "Play around with Card model size limit.",
 		"route": "modelSizeLimit",
-		"group": "Other Card Examples"
+		"group": "Security and Performance"
 	},
 	{
 		"title": "Tiles Variants",
 		"description": "Render cards as tiles.",
 		"route": "tilesVariants",
-		"group": "Other Card Examples"
+		"group": "Card Variants"
 	}
 ]
