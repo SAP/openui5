@@ -20927,13 +20927,16 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 	// is Filter.NONE. When the list is filtered, only the transient entries are shown and no $filter and no $count
 	// request occurs. It is still possible to create new inactive entries. Check that count and length of the binding
 	// is always correct.
-	// JIRA: CPOUI5MODELS-1421
-	QUnit.test("Filter table where only transient items have messages, countMode=Request", function (assert) {
+	// JIRA:CPOUI5MODELS-1421
+["Default", "Client"].forEach((sOperationMode) => {
+	const sTitle = "Filter table where only transient items have messages: operation mode=" + sOperationMode;
+	QUnit.test(sTitle, function (assert) {
 		let oMessage, oRowsBinding, oTable;
 		let aExpectedMessages = [];
 		const oModel = createSalesOrdersModel({
 				defaultBindingMode : BindingMode.TwoWay,
 				defaultCountMode : CountMode.Request,
+				defaultOperationMode : sOperationMode,
 				preliminaryContext : true
 			});
 		const sView = '\
@@ -20981,7 +20984,8 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 		this.expectHeadRequest()
 			.expectRequest("SalesOrderSet('1')/ToLineItems/$count", "1")
 			.expectRequest({
-				requestUri : "SalesOrderSet('1')/ToLineItems?$skip=0&$top=103"
+				requestUri : "SalesOrderSet('1')/ToLineItems"
+					+ (sOperationMode === "Default" ? "?$skip=0&$top=103" : "")
 			}, {
 				results : [{
 					__metadata : {
@@ -21060,20 +21064,22 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 		}).then(() => {
 			assert.strictEqual(oRowsBinding.getCount(), 1, "one active entry - count 1");
 			assert.strictEqual(oRowsBinding.getLength(), 3, "length is 3");
-			this.expectRequest("SalesOrderSet('1')/ToLineItems/$count", "1")
-				.expectRequest({
-					requestUri : "SalesOrderSet('1')/ToLineItems?$skip=0&$top=103"
-				}, {
-					results : [{
-						__metadata : {
-							uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10')"
-						},
-						Note : "Bar",
-						ItemPosition : "10",
-						SalesOrderID : "1"
-					}]
-				})
-				.expectValue("itemPosition", ["10", "", "30"])
+			if (sOperationMode === "Default" ) {
+				this.expectRequest("SalesOrderSet('1')/ToLineItems/$count", "1")
+					.expectRequest({
+						requestUri : "SalesOrderSet('1')/ToLineItems?$skip=0&$top=103"
+					}, {
+						results : [{
+							__metadata : {
+								uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10')"
+							},
+							Note : "Bar",
+							ItemPosition : "10",
+							SalesOrderID : "1"
+						}]
+					});
+			}
+			this.expectValue("itemPosition", ["10", "", "30"])
 				.expectValue("note", ["Bar", "Foo", "Bar"]);
 
 			// code under test
@@ -21093,6 +21099,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			assert.strictEqual(aResults[0], null);
 		});
 	});
+});
 
 	//*********************************************************************************************
 	// Scenario: The data state of a control in a table needs to be reevaluated if the row context changes but the
