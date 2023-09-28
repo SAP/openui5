@@ -123,37 +123,49 @@ sap.ui.define([
 			new Table({dependents: new CopyProvider()});
 		}, "extractData property is missing in the constructor");
 
-		var oClipboardStub = sinon.stub(window, "navigator").value({clipboard: undefined});
-		assert.throws(function() {
-			new Table({dependents: new CopyProvider({
-				extractData: function() {}
-			})});
-		}, "not in a secure context");
-		oClipboardStub.restore();
+		var oSecureContextStub = sinon.stub(window, "isSecureContext").value(false);
+		var oCopyProvider = new CopyProvider({
+			extractData: function() {}
+		});
+		var oTable = new Table({
+			dependents: oCopyProvider
+		});
+		assert.ok(oCopyProvider.isApplicable(), "isApplicable returns true despite insecure context");
+		oTable.destroy();
+		oSecureContextStub.restore();
 	});
 
 	QUnit.test("extractData is managed by the CopyProvider, this method must be empty", function(assert) {
+		const oClipboardStub = sinon.stub(window, "navigator").value({clipboard: {}});
+		const oSecureContextStub = sinon.stub(window, "isSecureContext").value(true);
 		var oCopyProvider = new CopyProvider({
 			extractData: Function.prototype
 		});
-
 		var oTable = createMDCTable();
+
 		return oTable.initialized().then(function() {
 			assert.throws(function() {
 				oTable.setCopyProvider(oCopyProvider);
 			}, "extractData property must be managed by the CopyProvider");
+			oClipboardStub.restore();
+			oSecureContextStub.restore();
 			oTable.destroy();
 		});
 	});
 
 	QUnit.test("extractData is managed by the CopyProvider, getColumnClipboardSettings method must be implemented", function(assert) {
+		const oClipboardStub = sinon.stub(window, "navigator").value({clipboard: {}});
+		const oSecureContextStub = sinon.stub(window, "isSecureContext").value(true);
 		var oCopyProvider = new CopyProvider();
 		var oTable = createMDCTable();
+
 		oTable.getColumnClipboardSettings = undefined;
 		return oTable.initialized().then(function() {
 			assert.throws(function() {
 				oTable.setCopyProvider(oCopyProvider);
 			}, "getColumnClipboardSettings method must be implemented by the parent of CopyProvider");
+			oClipboardStub.restore();
+			oSecureContextStub.restore();
 			oTable.destroy();
 		});
 	});
@@ -170,6 +182,7 @@ sap.ui.define([
 						}
 					}
 				});
+				this._oSecureContextStub = sinon.stub(window, "isSecureContext").value(true);
 				this.getClipboardText = function() {
 					return sClipboardText;
 				};
@@ -215,6 +228,7 @@ sap.ui.define([
 			},
 			after: function() {
 				this._oClipboardStub.restore();
+				this._oSecureContextStub.restore();
 			}
 		};
 	};
@@ -292,6 +306,30 @@ sap.ui.define([
 		this.oCopyProvider.detachCopy(this.IwillNeverBeCalled);
 
 		assert.ok(this.oCopyProviderInvalidateSpy.notCalled, "CopyProvider was never invalidated");
+
+		// context is not secure
+		var oClipboardStub = sinon.stub(window, "navigator").value({clipboard: undefined});
+		var oSecureContextStub = sinon.stub(window, "isSecureContext").value(false);
+
+		assert.ok(function() {
+			this.oCopyProvider.copySelectionData(false);
+		}.bind(this), "executed in unsecure context, does not throw an error when selection data is empty");
+
+		var oSelectionDataStub = sinon.stub(this.oCopyProvider, "getSelectionData").returns(["A", "B"]);
+		assert.throws(function() {
+			this.oCopyProvider.copySelectionData(false);
+		}.bind(this), "throws an error when not in a secure context");
+
+		this.oCopyProvider.attachEventOnce("copy", function(oEvent) {
+			oEvent.preventDefault();
+		});
+		assert.ok(function() {
+			this.oCopyProvider.copySelectionData(true);
+		}.bind(this), "executed in unsecure context, does not throw an error when default is prevented");
+
+		oClipboardStub.restore();
+		oSecureContextStub.restore();
+		oSelectionDataStub.restore();
 	};
 
 
@@ -496,7 +534,7 @@ sap.ui.define([
 
 			this.oCopyProvider.setVisible(true);
 			this.oTable.setCopyProvider();
-			assert.ok(oCopyButton.isDestroyed(), "Removing the plugin destroy the copy button");
+			assert.ok(oCopyButton.isDestroyed(), "Removing the plugin destroys the copy button");
 
 			var oNewCopyProvider = new CopyProvider();
 			this.oTable.setCopyProvider(oNewCopyProvider);
@@ -507,6 +545,7 @@ sap.ui.define([
 			oNewCopyButton.firePress();
 			assert.equal(this.getClipboardText(), "name1 (1)\t1 name1 color1\nname3 (3)\t3 name3 color3", "Selection is copied via new copy button");
 
+			this._oSecureContextStub.restore();
 			oNewCopyProvider.destroy();
 			assert.ok(oNewCopyProvider.isDestroyed(), "Destroying the plugin destroys the copy button");
 		}.bind(this));

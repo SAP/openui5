@@ -687,6 +687,7 @@ sap.ui.define([
 				 * To hide the Copy button from the toolbar, the <code>visible</code> property of the <code>CopyProvider</code> must be set to <code>false</code>.
 				 *
 				 * <b>Note:</b> The {@link sap.m.plugins.CopyProvider#extractData extractData} property of the <code>CopyProvider</code> must not be managed by the application.
+				 * <b>Note:</b> The <code>CopyProvider</code> requires a secure context to access the clipboard API. If the context is not secure, the plugin will not be added, and the copy button will not be generated.
 				 * @since 1.114
 				 */
 				copyProvider: {
@@ -966,7 +967,7 @@ sap.ui.define([
 
 	Table.prototype.setCopyProvider = function(oCopyProvider) {
 		this.setAggregation("copyProvider", oCopyProvider, true);
-		if (oCopyProvider && this._oToolbar && !Core.byId(this.getId() + "-copy")) {
+		if (window.isSecureContext && oCopyProvider && this._oToolbar && !Core.byId(this.getId() + "-copy")) {
 			this._oToolbar.insertEnd(this._getCopyButton(), 0);
 		}
 		return this;
@@ -2120,9 +2121,8 @@ sap.ui.define([
 	};
 
 	Table.prototype._getCopyButton = function() {
-		const oCopyProvider = this.getCopyProvider();
-		if (oCopyProvider) {
-			return oCopyProvider.getCopyButton({id: this.getId() + "-copy"});
+		if (window.isSecureContext) {
+			return this.getCopyProvider()?.getCopyButton({id: this.getId() + "-copy"});
 		}
 	};
 

@@ -4,11 +4,14 @@ sap.ui.define([
 	"sap/ui/model/odata/v2/ODataModel",
 	"sap/m/MessageToast",
 	"sap/ui/model/json/JSONModel",
-	"sap/m/MessageBox"
-], function(Controller, MockServer, ODataModel, MessageToast, JSONModel, MessageBox) {
+	"sap/m/MessageBox",
+	"sap/m/plugins/CellSelector",
+	"sap/m/plugins/CopyProvider"
+], function(Controller, MockServer, ODataModel, MessageToast, JSONModel, MessageBox, CellSelector, CopyProvider) {
 	"use strict";
 
 	const sServiceUrl = "http://my.test.service.com/";
+	var oCellSelector, oCopyProvider;
 
 	return Controller.extend("sap.ui.table.sample.SelectCopyPaste.Controller", {
 
@@ -36,8 +39,17 @@ sap.ui.define([
 			};
 			oView.setModel(new JSONModel(oUiData), "ui");
 
-			const oToolbar = this.byId("toolbar"), oCopyProvider = this.byId("copyProvider");
-			oToolbar.addContent(oCopyProvider.getCopyButton());
+			if (window.isSecureContext) {
+				const oTable = this.byId("table");
+				oCellSelector = new CellSelector();
+				oTable.addDependent(oCellSelector);
+
+				oCopyProvider = new CopyProvider({extractData: this.extractData, copy: this.onCopy});
+				oTable.addDependent(oCopyProvider);
+
+				const oToolbar = this.byId("toolbar");
+				oToolbar.addContent(oCopyProvider.getCopyButton());
+			}
 		},
 
 		onExit: function() {
@@ -66,7 +78,7 @@ sap.ui.define([
 			}
 
 			const aData = oEvent.getParameter("data");
-			const oRange = this.byId("cellSelector").getSelectionRange();
+			const oRange = oCellSelector.getSelectionRange();
 
 			if (oRange) {
 				MessageBox.confirm("Do you want to paste at position " + (oRange.from.rowIndex + "/" + oRange.from.colIndex) + "?", {onClose: function(sAction) {
