@@ -524,10 +524,7 @@ sap.ui.define([
 			this.btn = new Button("btn",{});
 
 			this.input1 = new Input("I1",{
-				enabled:true,
-				editable:true,
-				showValueHelp:true,
-				valueHelpOnly:true
+				editable: false
 			});
 
 			this.input2 = new Input("I2", {});
