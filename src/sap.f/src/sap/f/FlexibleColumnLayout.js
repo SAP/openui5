@@ -2308,7 +2308,9 @@ sap.ui.define([
 	 * @since 1.91
 	 */
 	FlexibleColumnLayout.prototype.showPlaceholder = function(mSettings) {
-		if (!Configuration.getPlaceholder()) {
+		var Placeholder = sap.ui.require("sap/ui/core/Placeholder");
+
+		if (!Placeholder || !Placeholder.isEnabled()) {
 			return;
 		}
 
