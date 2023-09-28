@@ -30,7 +30,6 @@
 .sapMSliderHandle:hover {
 	background: @sapUiSliderHoverHandleBackground;
 	border-color: @sapUiSliderHoverHandleBorderColor;
-	box-shadow: @sapUiContentSelectedShadow;
 }
 
 /* slider handle */
@@ -42,10 +41,6 @@
 	height: 1.5rem;
 	margin-left: -1rem;
 	top: -0.625rem;
-
-	&:not(:focus) {
-		box-shadow: @sapUiContentSelectedShadow;
-	}
 
 	&:focus:before {
 		content: '';
@@ -60,7 +55,7 @@
 	}
 }
 
-.sapMSliderInner .sapMSliderHandle:not(.sapMSliderHandlePressed):not(.sapMRangeSlider.sapMSlider .sapMSliderInner:not(.sapMSliderInnerDisabled) .sapMSliderHandle:focus):after {
+.sapMSliderInner .sapMSliderHandle:not(:focus):not(.sapMSliderHandlePressed):not(.sapMRangeSlider.sapMSlider .sapMSliderInner:not(.sapMSliderInnerDisabled) .sapMSliderHandle:focus):after {
 	font-family: SAP-icons;
 	content: "\e29c";
 	position: absolute;
@@ -73,34 +68,17 @@
 	color: @sapContent_Selected_ForegroundColor;
 }
 
-.sapMSliderInner .sapMSliderHandle:not(.sapMSliderHandlePressed):not(.sapMRangeSlider.sapMSlider .sapMSliderInner:not(.sapMSliderInnerDisabled):hover>.sapMSliderHandle):not(.sapMRangeSlider.sapMSlider .sapMSliderInner:not(.sapMSliderInnerDisabled) .sapMSliderHandle:focus):focus:active {
-	&:after {
-		top: 0.1875rem;
-		right: 0.4375rem;
-	}
-}
-
 .sapMSliderInner:not(.sapMSliderInnerDisabled) .sapMSliderHandle {
 	&:hover {
 		background: @sapUiSliderHoverHandleBackground;
 		border-color: @sapUiSliderHoverHandleBorderColor;
-		box-shadow: @sapUiContentSelectedShadow;
-	}
-
-	&:focus:active {
-		background: @sapUiSliderActiveHandleBackground;
-		border: 0.125rem solid @sapUiSliderActiveHandleBorderColor;
-		box-shadow: none;
-		&:before {
-			content: none;
-		}
 	}
 }
 
 .sapMSliderInner:not(.sapMSliderInnerDisabled) .sapMSliderHandle:focus {
-	background: @sapUiSliderHandleBackground;
+	background: @sapUiSliderActiveRangeHandleBackground;
+	border: @sapUiContentFocusWidth solid @sapUiContentFocusColor;
 	outline: none;
-	box-shadow: none;
 	top: -0.625rem;
 }
 
@@ -120,6 +98,7 @@
 }
 
 .sapMSliderTick {
+	border-color: @sapUiContentMeasureIndicatorColor;
 	margin: 0;
 	height: .5rem;
 }
@@ -212,13 +191,6 @@
 	.sapMSliderInner .sapMSliderHandle:not(.sapMSliderHandlePressed):not(.sapMRangeSlider.sapMSlider .sapMSliderInner:not(.sapMSliderInnerDisabled):hover>.sapMSliderHandle):not(.sapMRangeSlider.sapMSlider .sapMSliderInner:not(.sapMSliderInnerDisabled) .sapMSliderHandle:focus):after {
 		top: 0.125rem;
 		right: 0.25rem;
-	}
-
-	.sapMSliderInner .sapMSliderHandle:not(.sapMSliderHandlePressed):not(.sapMRangeSlider.sapMSlider .sapMSliderInner:not(.sapMSliderInnerDisabled):hover>.sapMSliderHandle):not(.sapMRangeSlider.sapMSlider .sapMSliderInner:not(.sapMSliderInnerDisabled) .sapMSliderHandle:focus):focus:active {
-		&:after {
-			top: 0.0625rem;
-			right: 0.1875rem;
-		}
 	}
 }
 
