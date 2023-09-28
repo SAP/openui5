@@ -1,46 +1,54 @@
-/* =============================================== */
+/* ======================================================== */
 /* CSS for control sap.ui.integration.controls/ObjectStatus */
-/* Base theme                                      */
-/* ================================================*/
+/* Base theme                                               */
+/* ======================================================== */
 
-.sapUiIntCard {
-	.sapMObjStatus.sapMObjStatusShowIcon {
-		align-items: center;
+.sapUiIntCard .sapMObjStatus {
+	&.sapMObjStatusShowIcon {
+		&::before {
+			display: inline;
+			font-size: 1rem;
+			line-height: 1;
+			font-family: 'SAP-icons';
+			padding-inline-end: 0.25rem;
+		}
 
 		.sapMObjStatusText {
-			min-width: 0;
-			flex: 1;
+			display: inline;
+		}
+
+		&.sapMObjStatusError::before {
+			color: @sapNegativeElementColor;
+			content: "\e1ec";
+		}
+
+		&.sapMObjStatusWarning::before {
+			color: @sapCriticalElementColor;
+			content: "\e053";
+		}
+
+		&.sapMObjStatusSuccess::before {
+			color: @sapPositiveElementColor;
+			content: "\e1c1";
+		}
+
+		&.sapMObjStatusInformation::before {
+			color: @sapInformativeElementColor;
+			content: "\e289";
 		}
 	}
 
-	.sapMObjStatus:not(.sapMObjStatusShowCustomIcon) .sapMObjStatusIcon {
+	&:not(.sapMObjStatusShowCustomIcon) .sapMObjStatusIcon {
 		display: none
 	}
 
-	.sapMObjStatus.sapMObjStatusShowIcon:before {
-		font-size: 1rem;
-		line-height: 1;
-		font-family: 'SAP-icons';
-		padding-inline-end: 0.25rem;
-	}
+	&.sapMObjStatusShowCustomIcon {
+		.sapMObjStatusIcon {
+			display: inline;
+		}
 
-	.sapMObjStatusShowIcon.sapMObjStatusError:before {
-		color: @sapNegativeElementColor;
-		content: "\e1ec";
-	}
-
-	.sapMObjStatusShowIcon.sapMObjStatusWarning:before {
-		color: @sapCriticalElementColor;
-		content: "\e053";
-	}
-
-	.sapMObjStatusShowIcon.sapMObjStatusSuccess:before {
-		color: @sapPositiveElementColor;
-		content: "\e1c1";
-	}
-
-	.sapMObjStatusShowIcon.sapMObjStatusInformation:before {
-		color: @sapInformativeElementColor;
-		content: "\e289";
+		.sapMObjStatusText {
+			display: inline;
+		}
 	}
 }
