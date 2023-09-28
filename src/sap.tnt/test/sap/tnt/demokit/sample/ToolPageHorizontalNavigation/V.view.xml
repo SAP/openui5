@@ -10,32 +10,56 @@
 				<Image height="1.5rem"
 					   class="sapUiSmallMarginBegin"
 					   src="https://www.sap.com/dam/application/shared/logos/sap-logo-svg.svg" />
-				<Title level="H1" text="Product Name">
+				<Title level="H1" text="Product Name" wrapping="false" id="productName">
 					<layoutData>
-						<OverflowToolbarLayoutData shrinkable="true" />
+						<OverflowToolbarLayoutData priority="Disappear"/>
 					</layoutData>
 				</Title>
-				<Title level="H3" titleStyle="H6" text="Second Title">
+				<Text text="Second Тitle" wrapping="false" id="secondTitle">
 					<layoutData>
-						<OverflowToolbarLayoutData shrinkable="true" />
+						<OverflowToolbarLayoutData priority="Disappear"/>
 					</layoutData>
-				</Title>
-				<ToolbarSpacer>
+				</Text>
+				<ToolbarSpacer />
+				<SearchField width="16rem" id="searchField">
 					<layoutData>
-						<OverflowToolbarLayoutData priority="NeverOverflow" minWidth="20px" />
+						<OverflowToolbarLayoutData priority="Low" group="1"/>
+					</layoutData>
+				</SearchField>
+				<ToolbarSpacer id="spacer">
+					<layoutData>
+						<OverflowToolbarLayoutData priority="Low" group="1"/>
 					</layoutData>
 				</ToolbarSpacer>
-				<tnt:ToolHeaderUtilitySeparator />
-				<OverflowToolbarButton text="Search" tooltip="Search" icon="sap-icon://search" type="Transparent" />
-				<OverflowToolbarButton text="Tasks" tooltip="Tasks" icon="sap-icon://circle-task" type="Transparent" />
-				<OverflowToolbarButton text="Notifications" tooltip="Notifications" icon="sap-icon://bell" type="Transparent" />
-				<Avatar src="test-resources/sap/tnt/images/John_Miller.png"
-						displaySize="XS">
+				<Button visible="false" icon="sap-icon://search" type="Transparent" id="searchButton" tooltip="Search"/>
+				<OverflowToolbarButton icon="sap-icon://source-code" type="Transparent" tooltip="Action 1" text="Action 1">
 					<layoutData>
-						<OverflowToolbarLayoutData priority="NeverOverflow" />
+						<OverflowToolbarLayoutData group="2"/>
+					</layoutData>
+				</OverflowToolbarButton>
+				<OverflowToolbarButton icon="sap-icon://card" type="Transparent" tooltip="Action 2" text="Action 2">
+					<layoutData>
+						<OverflowToolbarLayoutData group="2"/>
+					</layoutData>
+				</OverflowToolbarButton>
+				<ToolbarSeparator>
+					<layoutData>
+						<OverflowToolbarLayoutData group="2"/>
+					</layoutData>
+				</ToolbarSeparator>
+				<OverflowToolbarButton icon="sap-icon://action-settings" type="Transparent" text="Settings"/>
+				<Button icon="sap-icon://bell" type="Transparent" tooltip="Notification">
+					<layoutData>
+						<OverflowToolbarLayoutData priority="NeverOverflow"/>
+					</layoutData>
+				</Button>
+				<tnt:ToolHeaderUtilitySeparator/>
+				<ToolbarSpacer width="1.125rem"/>
+				<Avatar src="test-resources/sap/tnt/images/Woman_avatar_01.png" displaySize="XS" press=".onAvatarPressed" tooltip="Profile">
+					<layoutData>
+						<OverflowToolbarLayoutData priority="NeverOverflow"/>
 					</layoutData>
 				</Avatar>
-				<OverflowToolbarButton text="Custom Action" tooltip="Custom Action" icon="sap-icon://grid" type="Transparent" />
 			</tnt:ToolHeader>
 		</tnt:header>
 		<tnt:subHeader>
