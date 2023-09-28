@@ -849,7 +849,8 @@ sap.ui.define([
 			return;
 		}
 
-		var sValue = this._$input.val();
+		var sInputValue = this._$input.val();
+		var sValue = sInputValue;
 		var aDates = [undefined, undefined];
 
 		if (this.getShowFooter() && this._oPopup && !sValue) {
@@ -913,6 +914,11 @@ sap.ui.define([
 
 			_fireChange.call(this, this._bValid);
 
+		} else if (sInputValue !== this.getLastValue() && sValue === this.getLastValue()) {
+			if (this.getDomRef() && (this._$input.val() !== sValue)) {
+				this._$input.val(sValue);
+				this._curpos = this._$input.cursorPos();
+			}
 		}
 
 	};
