@@ -227,6 +227,10 @@ sap.ui.define([
 			}
 		})
 	});
+	sap.ui.define("example/BaseController.controller", [], function() {
+		return BaseController;
+	});
+
 	//Provider extensions
 	sap.ui.define("example/ProviderExt1",
 		["sap/ui/core/mvc/ControllerExtension"], function(ControllerExtension) {
