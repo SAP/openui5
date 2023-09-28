@@ -115,7 +115,7 @@ sap.ui.define([
 				oTimeoutWaiter._oLogger.trace("Timeout with ID " + iID + " started");
 				oCurrentTimeout.status = timeoutStatus.STARTED;
 				try {
-					fnCallback();
+					fnCallback.apply(window, aCallbackArgs);
 				} finally {
 					iInitiatorId = undefined;
 				}
