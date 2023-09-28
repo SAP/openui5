@@ -67,8 +67,8 @@ sap.ui.define([
 		assert.notOk(SearchContent.getUseDefaultEnterHandler(), "Correct useDefaultEnterHandler value returned.");
 	});
 
-	QUnit.test("getUseDefaultFieldHelp", function(assert) {
-		assert.notOk(SearchContent.getUseDefaultFieldHelp(), "DefaultFieldHelp is not used.");
+	QUnit.test("getUseDefaultValueHelp", function(assert) {
+		assert.notOk(SearchContent.getUseDefaultValueHelp(), "DefaultValueHelp is not used.");
 	});
 
 	QUnit.test("getControlNames", function(assert) {

@@ -31,7 +31,7 @@ sap.ui.define([
 		getDisplayMultiLine: function() {
 			return ["sap/m/Link"]; // render Link too, it wraps in Multiline
 		},
-		getUseDefaultFieldHelp: function() {
+		getUseDefaultValueHelp: function() {
 			return false;
 		},
 		createDisplay: function(oContentFactory, aControlClasses, sId) {

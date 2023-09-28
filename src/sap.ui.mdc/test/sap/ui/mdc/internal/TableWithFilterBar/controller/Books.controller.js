@@ -100,60 +100,6 @@ sap.ui.define([
 			UIComponent.getRouterFor(this).navTo("bookdetails", {
 				bookId: oContext.getProperty("ID")
 			});
-		},
-
-		onGenreVHOpen: function(oEvent) {
-			// var isSuggest = oEvent.getParameter("suggestion") === true;
-			var oFieldHelp = oEvent.getSource();
-
-			if (!oFieldHelp.getFilterBar()) {
-				var oFilterBar = new FilterBar({
-					liveMode: false,
-					filterItems: [
-						new FilterField({
-							delegate:{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}},
-							label: "Code",
-							dataType: "Edm.String",
-							conditions: "{$filters>/conditions/code}"
-						}),
-						new FilterField({
-							delegate:{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}},
-							label: "Title",
-							dataType: "Edm.String",
-							conditions: "{$filters>/conditions/title}"
-						}),
-						new FilterField({
-							delegate:{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}},
-							label: "Classification",
-							dataType: "Edm.String",
-							conditions: "{$filters>/conditions/classification_code}"
-						})]
-				});
-				oFieldHelp.setFilterBar(oFilterBar);
-			}
-
-			if (!oFieldHelp.getContent().getTable()) {
-				oFieldHelp.getContent().setTable(
-					new Table({
-						growing: true, growingScrollToLoad: true, growingThreshold: 20,
-						columns: [
-							new Column({header: new Text({text : "Code"})}),
-							new Column({header: new Text({text : "Title"})}),
-							new Column({header: new Text({text : "Classification"})})
-						],
-						items: {
-							path : "/Genres",
-							template : new ColumnListItem({
-								type: "Active",
-								cells: [new Text({text: "{code}"}),
-										new Text({text: "{title}"}),
-										new Text({text: "{classification_code}"})]
-							})
-						},
-						width: "30rem"
-					})
-				);
-			}
 
 		}
 	});

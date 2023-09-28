@@ -30,8 +30,8 @@ sap.ui.define([
 		return oODataProps.then(function (aProperties) {
 
 			// Provide the label for the properties which are the same on the xml view. so that the column header and p13n dialog has the same names.
-			// Provide the fieldHelp for some of the properties. Without fieldHelp the filter panel will not provide the expected VH.
-			// TODO fieldHelp is not a supported property of the table propertyHelper and we will get warning logn in the console.
+			// Provide the ValueHelp for some of the properties. Without ValueHelp the filter panel will not provide the expected VH.
+			// TODO ValueHelp is not a supported property of the table propertyHelper and we will get warning logn in the console.
 			aProperties.forEach(function(oProperty){
 				if (oProperty.name === "title") {
 					oProperty.caseSensitive = false;

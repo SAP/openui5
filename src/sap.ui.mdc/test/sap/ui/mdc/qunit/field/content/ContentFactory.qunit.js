@@ -88,8 +88,8 @@ sap.ui.define([
 		assert.equal(this.oContentFactory.getField(), this.oField, "Correct Field returned.");
 	});
 
-	QUnit.test("getFieldHelpIcon", function(assert) {
-		assert.equal(this.oContentFactory.getFieldHelpIcon(), this.oField._getFieldHelpIcon(), "Correct FieldHelpIcon returned.");
+	QUnit.test("getValueHelpIcon", function(assert) {
+		assert.equal(this.oContentFactory.getValueHelpIcon(), this.oField._getValueHelpIcon(), "Correct ValueHelpIcon returned.");
 	});
 
 	QUnit.test("getConditionType", function(assert) {

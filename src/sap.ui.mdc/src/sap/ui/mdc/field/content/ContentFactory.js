@@ -241,8 +241,8 @@ sap.ui.define([
 		return this._oField;
 	};
 
-	ContentFactory.prototype.getFieldHelpIcon = function() {
-		return this.getField()._getFieldHelpIcon();
+	ContentFactory.prototype.getValueHelpIcon = function() {
+		return this.getField()._getValueHelpIcon();
 	};
 
 	ContentFactory.prototype.getHandleTokenUpdate = function() {

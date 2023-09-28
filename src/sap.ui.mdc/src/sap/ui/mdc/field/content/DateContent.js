@@ -53,7 +53,7 @@ sap.ui.define([
 		getEditForHelp: function() {
 			return DefaultContent.getEdit.apply(this, arguments);
 		},
-		getUseDefaultFieldHelp: function() {
+		getUseDefaultValueHelp: function() {
 			return { name: "defineConditions", oneOperatorSingle: false, oneOperatorMulti: true, single: false, multi: true };
 		},
 		createEditMultiLine: function() {

@@ -668,7 +668,7 @@ sap.ui.define([
 			return oCtrl;
 		},
 
-		// TODO: remove this function and replace by getValueHelp onde FieldHelp association is completetly removed.
+		// TODO: remove this function and replace by getValueHelp once FieldHelp association is completetly removed.
 		_getValueHelp: function() {
 
 			return this.getValueHelp() || (this.getFieldHelp && this.getFieldHelp()); // as getFieldHelp not exist in legacy-free UI5

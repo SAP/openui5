@@ -39,11 +39,11 @@ sap.ui.define([
 		getEditMultiLine: function() {
 			return [null];
 		},
-		getUseDefaultFieldHelp: function() {
+		getUseDefaultValueHelp: function() {
 			return false;
 		},
 		createEdit: function(oContentFactory, aControlClasses, sId) {
-			oContentFactory.setIsMeasure(true); // FieldHelp only on unit field
+			oContentFactory.setIsMeasure(true); // ValueHelp only on unit field
 			const Input = aControlClasses[0];
 			const InvisibleText = aControlClasses[1];
 			const oConditionsType = oContentFactory.getConditionsType();
@@ -79,7 +79,7 @@ sap.ui.define([
 			return aControls;
 		},
 		createEditMultiValue: function(oContentFactory, aControlClasses, sId) {
-			oContentFactory.setIsMeasure(true); // FieldHelp only on unit field
+			oContentFactory.setIsMeasure(true); // ValueHelp only on unit field
 			const MultiInput = aControlClasses[0];
 			const Token = aControlClasses[2]; // is loaded by MultiInput
 			const Input = aControlClasses[1];
@@ -167,8 +167,8 @@ sap.ui.define([
 					enabled: { path: "$field>/editMode", formatter: oContentFactory.getMetadata()._oClass._getEnabled },
 					valueState: { path: "$field>/valueState", formatter: _setValueStateForControl },
 					valueStateText: { path: "$field>/valueStateText", formatter: _setValueStateTextForControl },
-					valueHelpIconSrc: oContentFactory.getFieldHelpIcon(),
-					showValueHelp: "{$field>/_fieldHelpEnabled}",
+					valueHelpIconSrc: oContentFactory.getValueHelpIcon(),
+					showValueHelp: "{$field>/_valueHelpEnabled}",
 					ariaAttributes: "{$field>/_ariaAttributes}",
 					width: "30%",
 					tooltip: "{$field>/tooltip}",
