@@ -48,7 +48,10 @@ sap.ui.define(['./Filter', 'sap/base/Log'],
 			return aFilters[0];
 		}
 		// Collect filters on same path, make sure to keep order as before for compatibility with tests
-		aFilters.forEach(function(oFilter) {
+		if (aFilters.some(function(oFilter) {
+			if (oFilter === Filter.NONE) {
+				return true;
+			}
 			if (oFilter.aFilters || oFilter.sVariable) { // multi/lambda filter
 				sCurPath = "__multiFilter";
 			} else {
@@ -58,7 +61,11 @@ sap.ui.define(['./Filter', 'sap/base/Log'],
 				mSamePath[sCurPath] = [];
 			}
 			mSamePath[sCurPath].push(oFilter);
-		});
+
+			return false;
+		})) {
+			return Filter.NONE;
+		}
 		// Create ORed multifilters for all filter groups
 		for (var sPath in mSamePath) {
 			aResult.push(getFilter(mSamePath[sPath], sPath === "__multiFilter")); // multi filters are ANDed
@@ -82,6 +89,9 @@ sap.ui.define(['./Filter', 'sap/base/Log'],
 
 		oGroupedFilter = this.groupFilters(aFilters);
 		oGroupedApplicationFilter = this.groupFilters(aApplicationFilters);
+		if (oGroupedFilter === Filter.NONE || oGroupedApplicationFilter === Filter.NONE) {
+			return Filter.NONE;
+		}
 
 		if (oGroupedFilter) {
 			aCombinedFilters.push(oGroupedFilter);

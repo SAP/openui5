@@ -397,6 +397,41 @@ sap.ui.define([
 		assert.notOk(oGroupedFilter.aFilters[1]._bMultiFilter, "Second Filter should not be a MultiFilter");
 	});
 
+	//*********************************************************************************************
+	QUnit.test("groupFilters with Filter.NONE", function(assert) {
+		const aFilters = [new Filter({path: 'Price', operator: FilterOperator.EQ, value1: 100}), Filter.NONE];
+
+		// code under test
+		assert.strictEqual(FilterProcessor.groupFilters(aFilters), Filter.NONE);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("combineFilters with application Filter.NONE", function(assert) {
+		const aApplicationFilters = [Filter.NONE];
+		const aControlFilters = [new Filter({path: 'Price', operator: FilterOperator.EQ, value1: 100})];
+		const oFilterProcessorMock = this.mock(FilterProcessor);
+
+		oFilterProcessorMock.expects("groupFilters").withExactArgs(aControlFilters).returns("~oGroupedFilter");
+		oFilterProcessorMock.expects("groupFilters").withExactArgs(aApplicationFilters).returns(Filter.NONE);
+
+		// code under test
+		assert.strictEqual(FilterProcessor.combineFilters(aControlFilters, aApplicationFilters), Filter.NONE);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("combineFilters with control Filter.NONE", function(assert) {
+		const aApplicationFilters = [new Filter({path: 'Price', operator: FilterOperator.EQ, value1: 100})];
+		const aControlFilters = [Filter.NONE];
+		const oFilterProcessorMock = this.mock(FilterProcessor);
+
+		oFilterProcessorMock.expects("groupFilters").withExactArgs(aControlFilters).returns(Filter.NONE);
+		oFilterProcessorMock.expects("groupFilters").withExactArgs(aApplicationFilters)
+			.returns("~oGroupedApplicationFilter");
+
+		// code under test
+		assert.strictEqual(FilterProcessor.combineFilters(aControlFilters, aApplicationFilters), Filter.NONE);
+	});
+
 	QUnit.test("apply: values contain 'toString' value", function (assert) {
 		var aData = ["foo", "toString", "bar", "foo bar"],
 			oFilter = new Filter({path: "name", operator: FilterOperator.Contains, value1: "foo"});
