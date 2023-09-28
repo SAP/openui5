@@ -645,13 +645,14 @@ function(
 	 * @return {Promise.<boolean>} It either resolves with an indicator whether a confirmation
 	 * was shown or rejects with "cancel" if cancel was pressed
 	 */
-	Utils.checkDraftOverwrite = function(oVersionsModel) {
+	Utils.checkDraftOverwrite = function(oVersionsModel, bOnlySwitch) {
 		var bBackEndDraftExists = oVersionsModel.getProperty("/backendDraft");
 		var bDraftDisplayed = oVersionsModel.getProperty("/displayedVersion") === Version.Number.Draft;
 
 		if (
 			bDraftDisplayed ||
-			!bBackEndDraftExists
+			!bBackEndDraftExists ||
+			bOnlySwitch
 		) {
 			return Promise.resolve(false);
 		}
