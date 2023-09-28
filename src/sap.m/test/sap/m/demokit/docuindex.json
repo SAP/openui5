@@ -1735,7 +1735,18 @@
 			"samples" : [
 				"sap.m.sample.TsTodos.webapp"
 			]
-		  }
+		  },
+		{
+			"id": "sap.m.VariantManagement",
+			"name": "Variant Management",
+		  	"category": "Action",			
+			"description": "This sample demonstrates the variant management control UI5.",
+			"since": "1.120",
+			"samples": [
+				"sap.m.sample.VariantManagement",
+				"sap.m.sample.VariantManagement.model"
+			]
+		}
 	  ],
 	  "samples": [
 		{
@@ -3885,7 +3896,12 @@
 		  "id": "sap.m.sample.TsTodos.webapp",
 		  "name": "TypeScript To-Do List",
 		  "description": "This to-do app demonstrates a TypeScript setup for developing UI5 applications."
+		},
+		{
+			"id": "sap.m.sample.VariantManagement",
+			"name": "VariantManagement using dedicated items",
+			"description": "VariantManagement with dedicated items"
 		}
-		]
+	  ]
 	}
 }
