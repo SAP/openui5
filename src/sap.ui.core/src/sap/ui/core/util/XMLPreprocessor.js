@@ -1360,6 +1360,9 @@ sap.ui.define([
 					if (!oViewInfo.sync) {
 						return asyncRequire();
 					}
+					/**
+					 * @deprecated As of version 1.120
+					 */
 					aURNs.forEach(sap.ui.requireSync); // legacy-relevant: Sync path
 				}
 				return oSyncPromiseResolved;

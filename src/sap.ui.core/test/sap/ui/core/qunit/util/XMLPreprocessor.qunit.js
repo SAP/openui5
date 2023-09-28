@@ -562,8 +562,14 @@ sap.ui.define([
 							}, 0); // simulate AMD
 						});
 				}
+				/**
+				 * @deprecated As of version 1.120
+				 */
 				this.oSapUiMock.expects("requireSync").never();
 			} else {
+				/**
+				 * @deprecated As of version 1.120
+				 */
 				aURNs.forEach(function (sURN, i) {
 					that.oSapUiMock.expects("requireSync").withArgs(sURN)
 						.callsFake(i === 0 ? fnCallback : undefined);
@@ -2243,7 +2249,7 @@ sap.ui.define([
 		], "Missing variable name for {0}");
 	});
 
-	[false, true].forEach(function (bAsync) {
+	[/**@deprecated*/false, true].forEach(function (bAsync) {
 		[false, true].forEach(function (bDebug) {
 			//**************************************************************************************
 			QUnit.test("fragment support incl. template:require, async = " + bAsync
