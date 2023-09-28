@@ -54,7 +54,7 @@ sap.ui.define([
 	/**
 	 * Provides security related API
 	 *
-	 * @alias module:sap/ui/core/Security
+	 * @alias module:sap/ui/security/Security
 	 * @namespace
 	 * @public
 	 * @since 1.120.0
@@ -76,7 +76,7 @@ sap.ui.define([
 		 * @public
 		 * @since 1.120.0
 		 */
-		getFrameOptions: () => {
+		getFrameOptions() {
 			var sFrameOptions = oWritableConfig.get({
 				name: "sapUiFrameOptions",
 				type: oWritableConfig.Type.String,
@@ -98,7 +98,7 @@ sap.ui.define([
 		 * @since 1.120.0
 		 * @see #setSecurityTokenHandlers
 		 */
-		getSecurityTokenHandlers: () => {
+		getSecurityTokenHandlers() {
 			return oWritableConfig.get({
 				name: "sapUiSecurityTokenHandlers",
 				type: oWritableConfig.Type.FunctionArray
@@ -114,7 +114,7 @@ sap.ui.define([
 		 * @since 1.120.0
 		 * @see #getSecurityTokenHandlers
 		 */
-		setSecurityTokenHandlers: (aSecurityTokenHandlers) => {
+		setSecurityTokenHandlers(aSecurityTokenHandlers) {
 			aSecurityTokenHandlers.forEach(function (fnSecurityTokenHandler) {
 				if (typeof fnSecurityTokenHandler !== "function") {
 					throw new Error("Not a function: " + fnSecurityTokenHandler);

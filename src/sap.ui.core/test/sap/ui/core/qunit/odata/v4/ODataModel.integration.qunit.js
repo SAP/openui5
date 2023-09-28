@@ -30,6 +30,7 @@ sap.ui.define([
 	"sap/ui/model/odata/v4/ODataPropertyBinding",
 	"sap/ui/model/odata/v4/ValueListType",
 	"sap/ui/model/odata/v4/lib/_Helper",
+	"sap/ui/security/Security",
 	"sap/ui/test/TestUtils",
 	"sap/ui/util/XMLHelper",
 	// load Table resources upfront to avoid loading times > 1 second for the first test using Table
@@ -38,7 +39,7 @@ sap.ui.define([
 		Device, EventProvider, SyncPromise, Configuration, Messaging, Rendering, Controller, View,
 		ChangeReason, Filter, FilterOperator, FilterType, Sorter, OperationMode, AnnotationHelper,
 		ODataListBinding, ODataMetaModel, ODataModel, ODataPropertyBinding, ValueListType, _Helper,
-		TestUtils, XMLHelper) {
+		Security, TestUtils, XMLHelper) {
 	/*eslint no-sparse-arrays: 0, "max-len": ["error", {"code": 100,
 		"ignorePattern": "/sap/opu/odata4/|\" :$|\" : \\{$|\\{meta>"}], */
 	"use strict";
@@ -41489,7 +41490,7 @@ sap.ui.define([
 		}
 
 		// code under test
-		Configuration.setSecurityTokenHandlers([
+		Security.setSecurityTokenHandlers([
 			securityTokenHandler0,
 			securityTokenHandler1,
 			securityTokenHandler2
@@ -41513,7 +41514,7 @@ sap.ui.define([
 
 			return that.waitForChanges(assert);
 		}).finally(function () {
-			Configuration.setSecurityTokenHandlers([]);
+			Security.setSecurityTokenHandlers([]);
 		});
 	});
 });

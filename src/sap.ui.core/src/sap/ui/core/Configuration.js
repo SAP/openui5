@@ -13,8 +13,8 @@ sap.ui.define([
 	"sap/ui/core/_ConfigurationProvider",
 	"sap/ui/core/getCompatibilityVersion",
 	"sap/ui/core/date/CalendarWeekNumbering",
-	"sap/ui/core/Security",
 	"sap/ui/core/Theming",
+	"sap/ui/security/Security",
 	"sap/base/util/Version",
 	"sap/base/Log",
 	"sap/base/assert",
@@ -34,8 +34,8 @@ sap.ui.define([
 		_ConfigurationProvider,
 		getCompatibilityVersion,
 		CalendarWeekNumbering,
-		Security,
 		Theming,
+		Security,
 		Version,
 		Log,
 		assert,
@@ -977,7 +977,7 @@ sap.ui.define([
 		 * @return {string} frameOptions mode
 		 * @public
 		 * @function
-		 * @deprecated Since 1.120. Please use {@link module:sap/ui/core/Security.getFrameOptions} instead.
+		 * @deprecated Since 1.120. Please use {@link module:sap/ui/security/Security.getFrameOptions} instead.
 		 */
 		getFrameOptions : Security.getFrameOptions,
 
@@ -987,7 +987,7 @@ sap.ui.define([
 		 * @return {string} whitelist service URL
 		 * @public
 		 * @function
-		 * @deprecated Since 1.85.0. Use {@link sap.ui.core.Configuration#getAllowlistService} instead.
+		 * @deprecated Since 1.85.0. Use {@link module:sap/ui/security/Security.getAllowlistService} instead.
 		 * SAP strives to replace insensitive terms with inclusive language.
 		 * Since APIs cannot be renamed or immediately removed for compatibility reasons, this API has been deprecated.
 		 */
@@ -999,7 +999,7 @@ sap.ui.define([
 		 * @return {string} allowlist service URL
 		 * @public
 		 * @function
-		 * @deprecated Since 1.120. Please use {@link module:sap/ui/core/Security.getAllowlistService} instead.
+		 * @deprecated Since 1.120. Please use {@link module:sap/ui/security/Security.getAllowlistService} instead.
 		*/
 		getAllowlistService : Security.getAllowlistService,
 
@@ -1102,7 +1102,7 @@ sap.ui.define([
 		 * @returns {Array<function(sap.ui.core.URI):Promise>} the security token handlers (an empty array if there are none)
 		 * @public
 		 * @function
-		 * @deprecated Since 1.120. Please use {@link module:sap/ui/core/Security.getSecurityTokenHandlers} instead.
+		 * @deprecated Since 1.120. Please use {@link module:sap/ui/security/Security.getSecurityTokenHandlers} instead.
 		 * @see #setSecurityTokenHandlers
 		 */
 		getSecurityTokenHandlers : Security.getSecurityTokenHandlers,
@@ -1114,7 +1114,7 @@ sap.ui.define([
 		 * @param {Array<function(sap.ui.core.URI):Promise>} aSecurityTokenHandlers - The security token handlers
 		 * @public
 		 * @function
-		 * @deprecated Since 1.120. Please use {@link module:sap/ui/core/Security.setSecurityTokenHandlers} instead.
+		 * @deprecated Since 1.120. Please use {@link module:sap/ui/security/Security.setSecurityTokenHandlers} instead.
 		 * @see #getSecurityTokenHandlers
 		 */
 		setSecurityTokenHandlers : Security.setSecurityTokenHandlers,
