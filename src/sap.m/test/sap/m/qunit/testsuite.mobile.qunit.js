@@ -961,15 +961,6 @@ sap.ui.define([
 					}
 				}
 			},
-			"p13n.FlexUtil": {
-				title: "Test Page for sap.m.p13n.FlexUtil",
-				module: "test-resources/sap/m/qunit/p13n/FlexUtil.qunit",
-				loader: {
-					paths: {
-						resourceroot: "test-resources/sap/m/qunit/p13n"
-					}
-				}
-			},
 			"p13n.modules.xConfigAPI": {
 				title: "Test Page for sap.m.p13n.modules.xConfigAPI",
 				module: "test-resources/sap/m/qunit/p13n/xConfigAPI.qunit",
@@ -1570,6 +1561,13 @@ sap.ui.define([
 				sinon: {
 					version: 1, // custom handling of fakeTimer fails with sinon-4
 					useFakeTimers: false // some tests activate it
+				}
+			},
+			"table.ColumnWidthController": {
+				title: "Test Page for sap.m.table.ColumnWidthController",
+				module: "test-resources/sap/m/qunit/table/ColumnWidthController.qunit",
+				paths: {
+					resourceroot: "test-resources/sap/m/qunit/table/"
 				}
 			},
 			"table.columnmenu.Menu": {
