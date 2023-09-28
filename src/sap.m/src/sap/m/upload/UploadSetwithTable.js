@@ -117,6 +117,7 @@ sap.ui.define([
 				 * @description Item info object sent as paramter to {@link sap.m.upload.UploadSetwithTable.itemValidationHandler itemValidationHandler callback}
 				 * @property {sap.m.upload.UploadSetwithTableItem} oItem Current item queued for upload.
 				 * @property {number} iTotalItemsForUpload Total count of items queued for upload.
+				 * @property {sap.m.upload.UploadSetwithTable} oSource Source on which the callback was invoked.
 				 * @public
 				**/
 
@@ -733,7 +734,8 @@ sap.ui.define([
 
 				const oItemInfo = {
 					oItem: oItem,
-					iTotalItemsForUpload: aFiles.length
+					iTotalItemsForUpload: aFiles.length,
+					oSource: this
 				};
 
 				var oPromise = this.getItemValidationHandler()(oItemInfo);
