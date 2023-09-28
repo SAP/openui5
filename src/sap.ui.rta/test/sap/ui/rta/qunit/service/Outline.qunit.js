@@ -628,7 +628,7 @@ sap.ui.define([
 	});
 
 	var sXmlString =
-	'<mvc:View id="testComponent---myView" xmlns:mvc="sap.ui.core.mvc"  xmlns:core="sap.ui.core" xmlns="sap.m">' +
+	'<mvc:View xmlns:mvc="sap.ui.core.mvc"  xmlns:core="sap.ui.core" xmlns="sap.m">' +
 		'<Panel id="panel">' +
 			"<content>" +
 				'<core:ExtensionPoint name="ExtensionPoint1" />' +
@@ -773,7 +773,7 @@ sap.ui.define([
 	});
 
 	var oXmlSimpleForm =
-		'<mvc:View id="testComponent---myView" xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" xmlns:form="sap.ui.layout.form" xmlns="sap.m">' +
+		'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" xmlns:form="sap.ui.layout.form" xmlns="sap.m">' +
 			'<form:SimpleForm editable="true" layout="ResponsiveGridLayout" labelSpanL="1" labelSpanM="3" columnsL="1" ' +
 				'columnsM="1" emptySpanL="1" emptySpanM="0" width="100%" title="test_simpleform" maxContainerCols="1">' +
 				"<form:content>" +
@@ -837,12 +837,16 @@ sap.ui.define([
 	});
 
 	function createController(sController, oData) {
-		Controller.extend(sController, {
-			onInit() {
-				var oModel = new JSONModel(oData);
-				this.getView().setModel(oModel);
-			}
+		const sControllerModule = `${sController.replace(/\./g, "/")}.controller`;
+		sap.ui.define(sControllerModule, function() {
+			return Controller.extend(sController, {
+				onInit() {
+					var oModel = new JSONModel(oData);
+					this.getView().setModel(oModel);
+				}
+			});
 		});
+
 		return Controller.create({name: sController});
 	}
 
@@ -853,7 +857,7 @@ sap.ui.define([
 	}, function() {
 		QUnit.test("for four products in the collection, when get() is called", function(assert) {
 			var oXmlTable =
-			'<mvc:View id="testComponent---myView" controllerName="myController" xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" xmlns="sap.m">' +
+			'<mvc:View controllerName="myController" xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" xmlns="sap.m">' +
 				'<List id="ShortProductList" headerText="Products" items="{path: \'/ProductCollection\'}">' +
 					"<items>" +
 						'<StandardListItem title="{Name}" />' +
@@ -869,7 +873,7 @@ sap.ui.define([
 					{ ProductId: "HT-1010", Category: "Memory" }
 				]
 			};
-			return createController("myController", oData)
+			return createController("myController01", oData)
 			.then(function(oController) {
 				return beforeEachExtensionPoint.call(this, oXmlTable, oController);
 			}.bind(this))
@@ -921,8 +925,8 @@ sap.ui.define([
 
 		QUnit.test("when an aggregation contains a template with a nested aggregation", function(assert) {
 			var oXmlTable =
-			'<mvc:View id="testComponent---myView" controllerName="myController" xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" xmlns="sap.m">' +
-				'<VBox id="ShortProductList" headerText="Products" items="{path: \'/ProductCollection\'}">' +
+			'<mvc:View controllerName="myController" xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" xmlns="sap.m">' +
+				'<VBox id="ShortProductList" items="{path: \'/ProductCollection\'}">' +
 					"<items>" +
 						'<VBox id="vb2">' +
 							"<items>" +
@@ -941,7 +945,7 @@ sap.ui.define([
 					{ ProductId: "HT-1010", Category: "Memory" }
 				]
 			};
-			return createController("myController", oData)
+			return createController("myController02", oData)
 			.then(function(oController) {
 				return beforeEachExtensionPoint.call(this, oXmlTable, oController);
 			}.bind(this))
@@ -972,8 +976,8 @@ sap.ui.define([
 
 		QUnit.test("when an aggregation contains a template with a nested template", function(assert) {
 			var oXmlTable =
-			'<mvc:View id="testComponent---myView" controllerName="myController" xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" xmlns="sap.m">' +
-				'<VBox id="ShortProductList" headerText="Products" items="{path: \'/ProductCollection\', templateShareable: false}">' +
+			'<mvc:View controllerName="myController" xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" xmlns="sap.m">' +
+				'<VBox id="ShortProductList" items="{path: \'/ProductCollection\', templateShareable: false}">' +
 					"<items>" +
 						'<VBox id="vb2NoTemplate">' +
 							'<Button id="vb2TopButton" text="Prepended element" />' +
@@ -996,7 +1000,7 @@ sap.ui.define([
 					{ ProductId: "HT-1010", Category: "Memory" }
 				]
 			};
-			return createController("myController", oData)
+			return createController("myController03", oData)
 			.then(function(oController) {
 				return beforeEachExtensionPoint.call(this, oXmlTable, oController);
 			}.bind(this))
@@ -1040,7 +1044,7 @@ sap.ui.define([
 
 		QUnit.test("for empty product collection, when get() is called", function(assert) {
 			var oXmlTable =
-			'<mvc:View id="testComponent---myView" controllerName="myController" xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" xmlns="sap.m">' +
+			'<mvc:View controllerName="myController" xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" xmlns="sap.m">' +
 				'<List id="ShortProductList" headerText="Products" items="{path: \'/ProductCollection\'}">' +
 					"<items>" +
 						'<StandardListItem title="{Name}" />' +
@@ -1051,7 +1055,7 @@ sap.ui.define([
 			var oData = {
 				ProductCollection: []
 			};
-			return createController("myController", oData)
+			return createController("myController04", oData)
 			.then(function(oController) {
 				return beforeEachExtensionPoint.call(this, oXmlTable, oController);
 			}.bind(this))
@@ -1078,7 +1082,7 @@ sap.ui.define([
 
 		QUnit.test("for two lists, when get() is called", function(assert) {
 			var oXmlTable =
-			'<mvc:View id="testComponent---myView" controllerName="myController" xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" xmlns="sap.m">' +
+			'<mvc:View controllerName="myController" xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" xmlns="sap.m">' +
 				'<List id="ShortProductList" headerText="Products" items="{path: \'/ProductCollection\'}">' +
 					"<items>" +
 						'<StandardListItem title="{Name}" />' +
@@ -1100,7 +1104,7 @@ sap.ui.define([
 					{ PotatoId: "French Fries", Category: "Fried" }
 				]
 			};
-			return createController("myController", oData)
+			return createController("myController05", oData)
 			.then(function(oController) {
 				return beforeEachExtensionPoint.call(this, oXmlTable, oController);
 			}.bind(this))
