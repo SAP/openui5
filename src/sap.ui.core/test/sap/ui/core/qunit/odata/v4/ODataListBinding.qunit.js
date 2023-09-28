@@ -8922,8 +8922,9 @@ sap.ui.define([
 [false, true].forEach(function (bSuccess) {
 	[false, true].forEach(function (bDataRequested) {
 		[0, 3].forEach(function (iCount) { // 0 means collapse before expand has finished
-			var sTitle = "expand: success=" + bSuccess + ", data requested=" + bDataRequested
-					+ ", count=" + iCount;
+			[false, true].forEach((bSilent) => {
+				var sTitle = "expand: success=" + bSuccess + ", data requested=" + bDataRequested
+						+ ", count=" + iCount + ", silent=" + bSilent;
 
 	if (!bSuccess && !iCount) { // ignore useless combination
 		return;
@@ -8965,7 +8966,8 @@ sap.ui.define([
 						.withExactArgs().returns("~iModelIndex~");
 					oGapCall = that.mock(oBinding).expects("insertGap").exactly(iCount ? 1 : 0)
 						.withExactArgs("~iModelIndex~", iCount);
-					oChangeCall = that.mock(oBinding).expects("_fireChange").exactly(iCount ? 1 : 0)
+					oChangeCall = that.mock(oBinding).expects("_fireChange")
+						.exactly(iCount && !bSilent ? 1 : 0)
 						.withExactArgs({reason : ChangeReason.Change});
 					oDataReceivedCall = that.mock(oBinding).expects("fireDataReceived")
 						.exactly(bDataRequested ? 1 : 0).withExactArgs({});
@@ -8979,10 +8981,14 @@ sap.ui.define([
 			}));
 
 		// code under test
-		oPromise = oBinding.expand(oContext).then(function () {
+		oPromise = oBinding.expand(oContext, bSilent).then(function () {
 			assert.ok(bSuccess);
 			if (bDataRequested && iCount) {
-				sinon.assert.callOrder(oGapCall, oChangeCall, oDataReceivedCall);
+				if (bSilent) {
+					sinon.assert.callOrder(oGapCall, oDataReceivedCall);
+				} else {
+					sinon.assert.callOrder(oGapCall, oChangeCall, oDataReceivedCall);
+				}
 			}
 		}, function (oResult) {
 			assert.notOk(bSuccess);
@@ -8997,6 +9003,7 @@ sap.ui.define([
 
 		return oPromise;
 	});
+			});
 		});
 	});
 });
@@ -10405,20 +10412,28 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
-	QUnit.test("move: fails", function (assert) {
+[false, true].forEach((bIsExpanded) => {
+	[false, true].forEach((bExpandFails) => {
+		const sTitle = `move: fails, expanded=${bIsExpanded}, expand fails=${bExpandFails}`;
+
+		if (bExpandFails && !bIsExpanded) {
+			return;
+		}
+
+	QUnit.test(sTitle, function (assert) {
 		const oChildContext = {
 			getCanonicalPath : mustBeMocked,
 			isExpanded : mustBeMocked
 		};
-		this.mock(oChildContext).expects("isExpanded").withExactArgs().returns(false);
+		this.mock(oChildContext).expects("isExpanded").withExactArgs().returns(bIsExpanded);
 		this.mock(oChildContext).expects("getCanonicalPath").withExactArgs().returns("/~child~");
 		const oParentContext = {
 			getCanonicalPath : mustBeMocked
 		};
 		this.mock(oParentContext).expects("getCanonicalPath").withExactArgs().returns("/~parent~");
 		const oBinding = this.bindList("/EMPLOYEES");
-		this.mock(oBinding).expects("collapse").never();
-		this.mock(oBinding).expects("expand").never();
+		this.mock(oBinding).expects("collapse").exactly(bIsExpanded ? 1 : 0)
+			.withExactArgs(sinon.match.same(oChildContext), true);
 		this.mock(oBinding).expects("getUpdateGroupId").withExactArgs().returns("~group~");
 		this.mock(oBinding).expects("lockGroup").withExactArgs("~group~", true, true)
 			.returns("~oGroupLock~");
@@ -10428,15 +10443,20 @@ sap.ui.define([
 		oBinding.oCache = oCache;
 		this.mock(oCache).expects("move").withExactArgs("~oGroupLock~", "~child~", "~parent~")
 			.returns(SyncPromise.reject("~error~"));
+		this.mock(oBinding).expects("expand").exactly(bIsExpanded ? 1 : 0)
+			.withExactArgs(sinon.match.same(oChildContext), true)
+			.returns(bExpandFails ? SyncPromise.reject("~expandError~") : SyncPromise.resolve());
 
 		// code under test
 		const oSyncPromise = oBinding.move(oChildContext, oParentContext);
 
 		assert.strictEqual(oSyncPromise.isRejected(), true);
-		assert.strictEqual(oSyncPromise.getResult(), "~error~");
+		assert.strictEqual(oSyncPromise.getResult(), bExpandFails ? "~expandError~" : "~error~");
 
 		oSyncPromise.caught(); // avoid "Uncaught (in promise)"
 	});
+	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("move: expand fails", function (assert) {
