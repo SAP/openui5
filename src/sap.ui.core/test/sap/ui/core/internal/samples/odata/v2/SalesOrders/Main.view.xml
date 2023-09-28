@@ -202,7 +202,7 @@
 						path : 'ToLineItems'
 					}" rowSelectionChange="onSelectItem" selectionMode="Single" threshold="0">
 					<t:rowMode>
-						<trm:Interactive rowCount="4"/>
+						<trm:Fixed rowCount="4"/>
 					</t:rowMode>
 					<t:dependents>
 						<plugins:DataStateIndicator />
