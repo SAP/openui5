@@ -13,26 +13,14 @@
 	<div class="topic">
 		<div class="content">
 
-			<h2 id="dateFormatters">
-				Date and Time Formatter
-			</h2>
+			<h2 id="dateFormatters">Date and Time Formatters</h2>
 			<p>
-				Formats single date and time values or date and time intervals according to a set of format options.
-			</p>
-			<h2 id="api">API</h2>
-			<p>
-				The <code>dateTime</code> formatter takes as a first parameter a date, as second parameter it takes the format options,
-				and as third parameter custom locale code.
-				Underneath the <code>dateTime</code> formatter uses
-				<a data-demokit-href="#/api/sap.ui.core.format.DateFormat" target="_blank">sap.ui.core.format.DateFormat</a> and the second parameter
-				<code>options</code> is passed unchanged to the 
-				<a data-demokit-href="#/api/sap.ui.core.format.DateFormat/methods/sap.ui.core.format.DateFormat.getDateTimeInstance" target="_blank">getDateTimeInstance</a>.
-			</p>
-			<p>
-				The <code>options</code> and <code>locale</code> parameters are optional and can be omitted. If only
-				<code>options</code> is omitted the <code>locale</code> will be shifted in its place.
+				Format single date and time values or date and time intervals according to a set of format options.
 			</p>
 
+			<h2 id="api">API</h2>
+
+			<h3 id="dateTime">dateTime</h3>
 			<p><code>format.dateTime(date, options?, locale?)</code></p>
 			<div class="tableWrapper">
 				<table>
@@ -75,7 +63,65 @@
 							<td>1.74</td>
 						</tr>
 					</tbody>
+					<tbody>
+						<tr>
+							<th>Returns</th>
+							<th></th>
+							<th></th>
+							<th></th>
+							<th></th>
+						</tr>
+						<tr>
+							<td></td>
+							<td>string</td>
+							<td></td>
+							<td>The formatted date and time.</td>
+							<td>1.74</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
 
+			<h3 id="date">date</h3>
+			<p><code>format.date(date, options?, locale?)</code></p>
+			<div class="tableWrapper">
+				<table>
+					<tbody>
+						<tr>
+							<th>Param</th>
+							<th>Type</th>
+							<th>Required</th>
+							<th>Description</th>
+							<th>Since</th>
+						</tr>
+						<tr>
+							<td>date</td>
+							<td>string|integer|Date|Array&lt;string|integer|Date&gt;</td>
+							<td>Yes</td>
+							<td>
+								The date to be formatted.
+								Each date can be given as a date string, recognized by the <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/parse" rel="noopener noreferrer" target="_blank">Date.parse()</a> method,
+								an integer value representing the number of milliseconds since January 1, 1970, 00:00:00 UTC,
+								or a <code>Date</code> instance.
+								In other words, any valid JavaScript Date constructor single parameter. See <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/Date" rel="noopener noreferrer" target="_blank">Date() constructor</a>.
+							</td>
+							<td>1.120</td>
+						</tr>
+						<tr>
+							<td>options</td>
+							<td>object</td>
+							<td>No</td>
+							<td><a data-demokit-href="#/api/sap.ui.core.format.DateFormat/methods/sap.ui.core.format.DateFormat.getDateInstance" target="_blank">Formatting options.</a></td>
+							<td>1.120</td>
+						</tr>
+						<tr>
+							<td>locale</td>
+							<td>string</td>
+							<td>No</td>
+							<td>A string representing the locale code. If no locale is given the current user locale is used.</td>
+							<td>1.120</td>
+						</tr>
+					</tbody>
 					<tbody>
 						<tr>
 							<th>Returns</th>
@@ -89,21 +135,22 @@
 							<td>string</td>
 							<td></td>
 							<td>The formatted date.</td>
-							<td>1.74</td>
+							<td>1.120</td>
 						</tr>
 					</tbody>
 				</table>
 			</div>
-
+			<p>
+				The <code>options</code> and <code>locale</code> parameters are optional and can be omitted. If only
+				<code>options</code> is omitted the <code>locale</code> will be shifted in its place.
+			</p>
 			<p>
 				The <code>date</code> parameter can come from different places including
 				<code>{parameters>/TODAY_ISO}}</code>, <code>{parameters>/NOW_ISO}}</code>,
 				data binding, <code>Date.now()</code> and many more.
 			</p>
 
-			<h2 id="examples">
-				Examples
-			</h2>
+			<h2 id="examples">Examples</h2>
 
 			<p>A card with a <code>dateTime</code> formatter using expression binding for today with
 				<code>{pattern: 'MMMM d, y'}</code> as format options</p>
@@ -112,7 +159,7 @@
 "sap.card": {
 	"type": "List",
 	"header": {
-		"title": "Orders in the Interval {= format.dateTime(['2020-05-05T00:00:00.000Z', Date.now()], {format: 'yMMMd', interval: true}) }"
+		"title": "Orders in the Interval {= format.date(['2020-05-05T00:00:00.000Z', Date.now()], { interval: true }) }"
 	},
 	"content": {
 		"data": {

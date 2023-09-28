@@ -24,7 +24,7 @@
 	"sap.card": {
 		"type": "List",
 		"header": {
-			"title": "Orders in the Interval {= format.dateTime(['2020-05-05T00:00:00.000Z', Date.now()], {format: 'yMMMd', interval: true}) }",
+			"title": "Orders in the Interval {= format.date(['2020-05-05T00:00:00.000Z', Date.now()], { interval: true }) }",
 			"icon": {
 				"src": "sap-icon://desktop-mobile"
 			},
@@ -39,30 +39,30 @@
 						"Name": "Keyboard and Mouse",
 						"Image": "sap-icon://keyboard-and-mouse",
 						"Price": 155,
-						"CreatedAt": "/Date(1600430944000)/"
+						"Created": "/Date(1600430944000)/"
 					},
 					{
 						"Name": "ITelO Vault",
 						"Image": "sap-icon://shield",
 						"Price": 30,
-						"CreatedAt": 1600430944000
+						"Created": 1600430944000
 					},
 					{
 						"Name": "Notebook Professional 15",
 						"Image": "sap-icon://laptop",
 						"Price": 30,
-						"CreatedAt": "Fri Sep 18 2020 03:24:00 GMT+0200 (Eastern European Standard Time)"
+						"Created": "Fri Sep 18 2020 03:24:00 GMT+0200 (Eastern European Standard Time)"
 					},
 					{
 						"Name": "Ergo Screen E-I",
 						"Image": "sap-icon://desktop-mobile",
-						"CreatedAt": "Sun May 2 2021 03:24:00 GMT+0200 (Eastern European Standard Time)",
+						"Created": "Sun May 2 2021 03:24:00 GMT+0200 (Eastern European Standard Time)",
 						"Price": 69
 					},
 					{
 						"Name": "Laser Professional Eco",
 						"Image": "sap-icon://keyboard-and-mouse",
-						"CreatedAt": "2020-08-17T01:24:00.000Z",
+						"Created": "2020-08-17T01:24:00.000Z",
 						"Price": 40
 					}
 				]
@@ -70,7 +70,7 @@
 			"maxItems": 4,
 			"item": {
 				"title": "{Name}",
-				"description": "Created {= format.dateTime(${CreatedAt}, {relative: true}) }",
+				"description": "Created on {= format.date(${Created}) }",
 				"icon": {
 					"src": "{Image}"
 				},
