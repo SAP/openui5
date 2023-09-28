@@ -11,20 +11,6 @@
 	vertical-align: bottom;
 }
 
-.newsButton.sapMBtn .sapMBadgeTopRight.sapMBadge .sapMBadgeIndicator,
-.surveyButton.sapMBtn .sapMBadgeTopRight.sapMBadge .sapMBadgeIndicator {
-	position: absolute;
-	top: 0;
-	right: 0;
-	padding: 0;
-}
-
-.sapUiSizeCompact .newsButton.sapMBtn .sapMBadgeTopRight.sapMBadge .sapMBadgeIndicator,
-.sapUiSizeCompact .surveyButton.sapMBtn .sapMBadgeTopRight.sapMBadge .sapMBadgeIndicator {
-	top: -0.125rem;
-	right: -0.125rem;
-}
-
 .sapUiDemokitCustomNLI.sapMNLI {
 	cursor: default;
 }
