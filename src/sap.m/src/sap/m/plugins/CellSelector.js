@@ -659,13 +659,16 @@ sap.ui.define([
 			oToRef = this.getConfig("getCellRef", this.getControl(), mBounds.to, true);
 		}
 
+		if (!oFromRef || !oToRef) {
+			return;
+		}
+
 		var oFromRect = oFromRef.getBoundingClientRect(),
 			oToRect = oToRef.getBoundingClientRect(),
 			oTableRect = this.getControl().getDomRef().getBoundingClientRect();
-		var iOffsetLeft = this.getControl().getDomRef().offsetLeft;
 
 		var mStyleMap = {
-			x: { 0: oFromRect.left - iOffsetLeft, 1: oToRect.left + oToRect.width - iOffsetLeft },
+			x: { 0: oFromRect.left - oTableRect.left, 1: oToRect.left + oToRect.width - oTableRect.left },
 			y: { 0: oFromRect.top - oTableRect.top, 1: oToRect.top + oToRect.height - oTableRect.top }
 		};
 		var mDiffMap = {
