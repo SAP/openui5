@@ -227,7 +227,10 @@ sap.ui.define([
 				// "EMPLOYEES?$apply=orderby(AGE)"
 				// + "/com.sap.vocabularies.Hierarchy.v1.TopLevels(HierarchyNodes=$root/EMPLOYEES"
 				// + ",HierarchyQualifier='OrgChart',NodeProperty='ID',Levels=" + iLevels + ")"
-				const iLevels = parseInt(mQueryOptions.$apply.match(/,Levels=(\d+)/)[1]);
+				// Note: "Levels" is optional!
+				const iLevels = mQueryOptions.$apply.includes(",Levels=")
+					? parseInt(mQueryOptions.$apply.match(/,Levels=(\d+)/)[1])
+					: Infinity;
 				selectCountSkipTop(topLevels(iLevels - 1), mQueryOptions, oResponse);
 				return;
 			}

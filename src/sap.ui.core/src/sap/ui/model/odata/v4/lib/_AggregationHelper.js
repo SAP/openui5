@@ -514,9 +514,10 @@ sap.ui.define([
 				sApply += "com.sap.vocabularies.Hierarchy.v1.TopLevels(HierarchyNodes=$root"
 					+ (oAggregation.$path || "")
 					+ ",HierarchyQualifier='" + oAggregation.hierarchyQualifier
-					+ "',NodeProperty='" + sNodeProperty
-					+ "',Levels=" + (bAllLevels ? 999 : oAggregation.expandTo || 1)
-					+ ")";
+					+ "',NodeProperty='" + sNodeProperty + "'"
+					+ (bAllLevels || oAggregation.expandTo >= Number.MAX_SAFE_INTEGER
+						? ")" // "all levels"
+						: ",Levels=" + (oAggregation.expandTo || 1) + ")");
 				if (bAllLevels) {
 					select("DistanceFromRootProperty");
 				} else if (oAggregation.expandTo > 1) {
