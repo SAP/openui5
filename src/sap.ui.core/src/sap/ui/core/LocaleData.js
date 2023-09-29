@@ -7,13 +7,15 @@ sap.ui.define([
 	"./CalendarType",
 	"./Locale",
 	"sap/base/assert",
+	"sap/base/i18n/LanguageTag",
 	"sap/base/i18n/Localization",
 	"sap/base/util/extend",
 	"sap/base/util/LoaderExtensions",
 	"sap/ui/base/Object",
 	"sap/ui/core/Configuration",
 	"sap/ui/core/date/CalendarWeekNumbering"
-], function(CalendarType, Locale, assert, Localization, extend, LoaderExtensions, BaseObject, Configuration, CalendarWeekNumbering) {
+], function(CalendarType, Locale, assert, LanguageTag, Localization, extend, LoaderExtensions, BaseObject,
+		Configuration, CalendarWeekNumbering) {
 	"use strict";
 
 	var rCIgnoreCase = /c/i,
@@ -113,32 +115,61 @@ sap.ui.define([
 		 * @private
 		 * @ui5-restricted sap.ushell
 		 */
-		getCurrentLanguageName: function() {
-			var oLanguages = this.getLanguages();
-			var sCurrentLanguage;
-			var sLanguage = Localization.getModernLanguage(this.oLocale.language);
-			var sScript = this.oLocale.getScript();
+		getCurrentLanguageName: function () {
+			return this.getLanguageName(this.oLocale.toString());
+		},
+
+		/**
+		 * Gets the locale specific language name for the given language tag.
+		 *
+		 * {@link #getLanguages} returns only the languages contained in CLDR raw data which don't
+		 * contain the language names if they can be derived from the language and the script or the
+		 * territory. If there is no entry for the given language tag in the map of languages,
+		 * derive the language name from the used script or region.
+		 *
+		 * @param {string} sLanguageTag
+		 *   The language tag identifier, for example "en", "en-US", "en_US", "zh-Hant", or "zh_Hant"
+		 * @returns {string|undefined}
+		 *   The language name, or <code>undefined</code> if the name cannot be determined
+		 * @throws {TypeError} When the given language tag isn't valid
+		 *
+		 * @public
+		 */
+		getLanguageName: function (sLanguageTag) {
+			const oLanguageTag = new LanguageTag(sLanguageTag);
+			let sLanguage = Localization.getModernLanguage(oLanguageTag.language);
+			let sScript = oLanguageTag.script;
 			// special case for "sr_Latn" language: "sh" should then be used
-			// the key used in the languages object for serbian latin is "sh"
 			if (sLanguage === "sr" && sScript === "Latn") {
 				sLanguage = "sh";
 				sScript = null;
 			}
-			if (this.oLocale.getRegion()) {
-				// fall back to language and region, e.g. "en_GB"
-				sCurrentLanguage = oLanguages[sLanguage + "_" + this.oLocale.getRegion()];
+			const sRegion = oLanguageTag.region;
+			const oLanguages = this._get("languages");
+			const sLanguageText = oLanguages[sLanguage];
+			if (!sScript && !sRegion || !sLanguageText) {
+				return sLanguageText;
 			}
 
-			if (!sCurrentLanguage && sScript) {
-				// fall back to language and script, e.g. "zh_Hant"
-				sCurrentLanguage = oLanguages[sLanguage + "_" + sScript];
+			const sResult = oLanguages[sLanguage + "_" + sRegion] || oLanguages[sLanguage + "_" + sScript];
+			if (sResult) {
+				return sResult;
 			}
 
-			if (!sCurrentLanguage) {
-				// fall back to language only, e.g. "en"
-				sCurrentLanguage = oLanguages[sLanguage];
+			if (sScript) {
+				const sScriptText = this._get("scripts")[sScript];
+				if (sScriptText) {
+					return sLanguageText + " (" + sScriptText + ")";
+				}
 			}
-			return sCurrentLanguage;
+			if (sRegion) {
+				const sRegionText = this._get("territories")[sRegion];
+				if (sRegionText) {
+					return sLanguageText + " (" + sRegionText + ")";
+				}
+			}
+
+			return sLanguageText;
 		},
 
 		/**
