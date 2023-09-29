@@ -762,8 +762,6 @@ sap.ui.define([
 
 		return VersionInfo.load().then(function(versioninfo) {
 			this.spy(privateLoaderAPI, 'loadJSResourceAsync');
-			this.spy(sap.ui, 'require');
-			this.spy(sap.ui, 'requireSync');
 
 			var vLib8 = oCore.loadLibraries(['testlibs.scenario14.lib8']);
 			assert.ok(vLib8 instanceof Promise, "async call to loadLibraries should return a promise");
