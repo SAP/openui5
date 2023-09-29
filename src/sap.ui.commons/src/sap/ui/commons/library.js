@@ -1245,25 +1245,6 @@ sap.ui.define(['sap/ui/base/DataType', 'sap/base/util/ObjectPath',
 		};
 	}
 
-	//implement FileUploader helper factory with commons controls
-	if (!sap.ui.unified.FileUploaderHelper || !sap.ui.unified.FileUploaderHelper.bFinal) {
-		sap.ui.unified.FileUploaderHelper = {
-			createTextField: function(sId){
-				var oTextField = new sap.ui.commons.TextField(sId);
-				return oTextField;
-			},
-			setTextFieldContent: function(oTextField, sWidth){
-				oTextField.setWidth(sWidth);
-			},
-			createButton: function(sId){
-				var oButton = new sap.ui.commons.Button(sId);
-				return oButton;
-			},
-			addFormClass: function(){ return "sapUiCFUM"; },
-			bFinal: false /* to allow mobile to overwrite  */
-		};
-	}
-
 	//implement table helper factory with m controls
 	//possible is set before layout lib is loaded.
 	var oTableHelper = ObjectPath.get("sap.ui.table.TableHelper");
