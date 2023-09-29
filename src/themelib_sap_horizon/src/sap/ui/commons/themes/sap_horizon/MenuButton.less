@@ -67,3 +67,15 @@ html[data-sap-ui-browser^="ie"] .sapUiBtnLite > .sapUiMenuButtonIco{
 .sapUiBtnS.sapUiBtnEmph > .sapUiMenuButtonIco{
 	background-image: url("img/menubutton/Menu_Hover.png");
 }
+
+.sapMMenuBtn.sapMMenuBtnRegular .sapMBtn:not(.sapMBtnDisabled) .sapMBtnInner.sapMBtnNegative.sapMBtnActive::after {
+	color: @sapUiButtonNegativeActiveTextColor;
+}
+
+.sapMMenuBtn.sapMMenuBtnRegular .sapMBtn:not(.sapMBtnDisabled) .sapMBtnInner.sapMBtnCritical.sapMBtnActive::after {
+	color: @sapUiButtonCriticalActiveTextColor;
+}
+
+.sapMMenuBtn.sapMMenuBtnRegular .sapMBtn:not(.sapMBtnDisabled) .sapMBtnInner.sapMBtnSuccess.sapMBtnActive::after {
+	color: @sapUiButtonSuccessActiveTextColor;
+}
