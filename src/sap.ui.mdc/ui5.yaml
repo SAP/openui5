@@ -2,7 +2,6 @@
 specVersion: "3.0"
 type: library
 metadata:
-  sapInternal: true
   name: sap.ui.mdc
   copyright: |-
     OpenUI5
