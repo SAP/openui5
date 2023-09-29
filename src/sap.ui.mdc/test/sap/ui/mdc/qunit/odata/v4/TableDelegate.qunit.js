@@ -960,176 +960,6 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Sorting restriction", function(assert) {
-		const oTable = this.oTable;
-
-		return oTable._fullyInitialized().then(function() {
-			const sMessage = Core.getLibraryResourceBundle("sap.ui.mdc").getText("table.PERSONALIZATION_DIALOG_SORT_RESTRICTION");
-			let oState;
-			let oValidationState;
-
-			oState = {items: [{name: "Name"}, {name: "name_country"}]};
-			oValidationState = oTable.validateState(oState, "Sort");
-			assert.strictEqual(oValidationState.validation, coreLibrary.MessageType.None, "No sorted properties: Validation result");
-			assert.strictEqual(oValidationState.message, undefined, "No sorted properties: Message text");
-
-			oState = {sorters: [{name: "Name"}, {name: "Country"}]};
-			oValidationState = oTable.validateState(oState, "Sort");
-			assert.strictEqual(oValidationState.validation, coreLibrary.MessageType.Information,
-				"Sorted properties and no visible columns: Validation result");
-			assert.strictEqual(oValidationState.message, sMessage,
-				"Sorted properties and no visible columns: Message text");
-
-			oState = {
-				items: [{name: "Name"}, {name: "Country"}, {name: "name_country"}],
-				sorters: [{name: "Name"}, {name: "Country"}]
-			};
-			oValidationState = oTable.validateState(oState, "Sort");
-			assert.strictEqual(oValidationState.validation, coreLibrary.MessageType.None, "All sorted properties visible: Validation result");
-			assert.strictEqual(oValidationState.message, undefined, "All sorted properties visible: Message text");
-
-			oState = {
-				items: [{name: "Name"}],
-				sorters: [{name: "Country"}]
-			};
-			oValidationState = oTable.validateState(oState, "Sort");
-			assert.strictEqual(oValidationState.validation, coreLibrary.MessageType.Information, "Sorted property invisible: Validation result");
-			assert.strictEqual(oValidationState.message, sMessage, "Sorted property invisible: Message text");
-
-			oState = {
-				items: [{name: "Name"}, {name: "name_country"}],
-				sorters: [{name: "Country"}]
-			};
-			oValidationState = oTable.validateState(oState, "Sort");
-			assert.strictEqual(oValidationState.validation, coreLibrary.MessageType.None,
-				"Sorted property is part of a visible complex property: Validation result");
-			assert.strictEqual(oValidationState.message, undefined,
-				"Sorted property is part of a visible complex property: Message text");
-
-			oTable.setP13nMode();
-			oState = {
-				items: [{name: "Name"}],
-				sorters: [{name: "Country"}]
-			};
-			oValidationState = oTable.validateState(oState, "Sort");
-			assert.strictEqual(oValidationState.validation, coreLibrary.MessageType.None,
-				"Sorted property invisible and analytical features not enabled: Validation result");
-			assert.strictEqual(oValidationState.message, undefined,
-				"Sorted property invisible and analytical features not enabled: Message text");
-		});
-	});
-
-	QUnit.test("Group restriction", function(assert) {
-		const oTable = this.oTable;
-
-		return oTable._fullyInitialized().then(function() {
-			const oDelegate = oTable.getControlDelegate();
-			const oResourceBundle = Core.getLibraryResourceBundle("sap.ui.mdc");
-			let oState, oValidationState;
-
-			oState = {
-				items: [{name: "Name"}, {name: "Country"}, {name: "name_country"}]
-			};
-			oValidationState = oTable.validateState(oState, "Group");
-			assert.equal(oValidationState.validation, coreLibrary.MessageType.None, "No message");
-			assert.equal(oValidationState.message, undefined, "Message text is not defined");
-
-			oState = {
-				items: [{name: "Name"}],
-				aggregations: { Name : {}}
-			};
-			oValidationState = oTable.validateState(oState, "Group");
-			assert.equal(oValidationState.validation, coreLibrary.MessageType.Information,
-				"Information message, Grouping and aggreagtion can't be used simulatneously");
-			assert.equal(oValidationState.message, oResourceBundle.getText("table.PERSONALIZATION_DIALOG_GROUP_RESTRICTION_TOTALS", "Name"),
-				"Message text is correct");
-
-			oState = {
-				items: [{name: "Name"}, {name: "name_country"}],
-				sorters: [{name: "Country"}]
-			};
-			oValidationState = oDelegate.validateState(oTable, oState);
-			assert.equal(oValidationState.validation, coreLibrary.MessageType.None,
-				"No message, the sorted property is not visible but part of a visible complex property");
-			assert.equal(oValidationState.message, undefined, "Message text is undefined");
-
-			oState = {};
-			oValidationState = oDelegate.validateState(oTable, oState);
-			assert.equal(oValidationState.validation, coreLibrary.MessageType.None,
-				"No message because oState.items is undefined");
-			assert.equal(oValidationState.message, undefined, "Message text is undefined");
-
-
-			// Test grouping on non visible column in ResponsiveTable
-			oTable.setType(TableType.ResponsiveTable);
-			return oTable._fullyInitialized().then(function() {
-				oState = {
-					items: [{name: "Name"}],
-					groupLevels: [{name: "Country"}]
-				};
-				oValidationState = oTable.validateState(oState, "Group");
-				assert.equal(oValidationState.validation, coreLibrary.MessageType.Information,
-					"Information message, Grouping can't be used on non visible column.");
-				assert.equal(oValidationState.message, oResourceBundle.getText("table.PERSONALIZATION_DIALOG_GROUP_RESTRICTION_VISIBLE", "Country"),
-					"Message text is correct");
-			});
-		});
-	});
-
-	QUnit.test("Column restriction", function(assert) {
-		const oTable = this.oTable;
-
-		return oTable._fullyInitialized().then(function() {
-			const oResourceBundle = Core.getLibraryResourceBundle("sap.ui.mdc");
-			let oState, oValidationState;
-
-			oState = {
-				items: [{name: "Name"}, {name: "Country"}, {name: "name_country"}]
-			};
-			oValidationState = oTable.validateState(oState, "Column");
-			assert.equal(oValidationState.validation, coreLibrary.MessageType.None, "No message");
-			assert.equal(oValidationState.message, undefined, "Message text is not defined");
-
-			oState = {
-				items: [{name: "Country"}],
-				aggregations: { Name : {}}
-			};
-			oValidationState = oTable.validateState(oState, "Column");
-			assert.equal(oValidationState.validation, coreLibrary.MessageType.Information,
-				"Information message, Cannot remove column when the total is showed for the column");
-			assert.equal(oValidationState.message, oResourceBundle.getText("table.PERSONALIZATION_DIALOG_TOTAL_RESTRICTION"),
-				"Message text is correct");
-
-			oState = {
-				items: [{name: "Name"}],
-				sorters: [{name: "Country"}]
-			};
-			oValidationState = oTable.validateState(oState, "Column");
-			assert.equal(oValidationState.validation, coreLibrary.MessageType.Information,
-				"Information message, Cannot remove column when the sorters is applied for the column");
-			assert.equal(oValidationState.message, oResourceBundle.getText("table.PERSONALIZATION_DIALOG_SORT_RESTRICTION", "Name"),
-				"Message text is correct");
-
-			oState = {
-				items: [{name: "Country"}],
-				sorters: [{name: "Name"}],
-				aggregations: { Name : {}}
-			};
-			oValidationState = oTable.validateState(oState, "Column");
-			assert.equal(oValidationState.validation, coreLibrary.MessageType.Information,
-				"Information message, Cannot remove column when the sorters and totals is shown for the column");
-			assert.equal(oValidationState.message, oResourceBundle.getText("table.PERSONALIZATION_DIALOG_TOTAL_RESTRICTION") + "\n" +
-				oResourceBundle.getText("table.PERSONALIZATION_DIALOG_SORT_RESTRICTION", "Name"),
-				"Message text is correct");
-
-			oState = {};
-			oValidationState = oTable.validateState(oState, "Column");
-			assert.equal(oValidationState.validation, coreLibrary.MessageType.None,
-				"No message because oState.items is undefined");
-			assert.equal(oValidationState.message, undefined, "Message text is undefined");
-		});
-	});
-
 	QUnit.module("Tests with specific propertyInfos", {
 		before: function() {
 			TableQUnitUtils.stubPropertyInfos(Table.prototype, [{
@@ -1690,6 +1520,198 @@ sap.ui.define([
 		assert.equal(this.oRefreshSpy.callCount, 1, "Binding#refresh has been called");
 	});
 
+	QUnit.module("#validateState", {
+		before: function() {
+			TableQUnitUtils.stubPropertyInfos(Table.prototype, [{
+				name: "Name",
+				label: "Name",
+				path: "Name",
+				dataType: "String",
+				groupable: true,
+				aggregatable: true,
+				extension: {
+					customAggregate: {}
+				}
+			}, {
+				name: "Country",
+				label: "Country",
+				path: "Country",
+				dataType: "String",
+				groupable: true,
+				aggregatable: true,
+				extension: {
+					customAggregate: {}
+				}
+			}, {
+				name: "name_country",
+				label: "Complex Title & Description",
+				propertyInfos: ["Name", "Country"]
+			}, {
+				name: "Value",
+				label: "Value",
+				path: "Value",
+				dataType: "String",
+				sortable: false,
+				filterable: false
+			}]);
+		},
+		beforeEach: function() {
+			this.oTable = new Table({
+				p13nMode: ["Group", "Aggregate"],
+				delegate: {
+					name: "sap/ui/mdc/odata/v4/TableDelegate"
+				}
+			});
+			return this.oTable.initialized();
+		},
+		afterEach: function() {
+			this.oTable.destroy();
+		},
+		after: function() {
+			TableQUnitUtils.restorePropertyInfos(Table.prototype);
+		}
+	});
+
+	QUnit.test("Sort restrictions", function(assert) {
+		const sMessage = Core.getLibraryResourceBundle("sap.ui.mdc").getText("table.PERSONALIZATION_DIALOG_SORT_RESTRICTION");
+
+		assert.deepEqual(this.oTable.validateState({
+			items: [{name: "Name"}, {name: "name_country"}]
+		}, "Sort"), {
+			validation: coreLibrary.MessageType.None,
+			message: undefined
+		}, "No sorted properties");
+
+		assert.deepEqual(this.oTable.validateState({
+			sorters: [{name: "Name"}, {name: "Country"}]
+		}, "Sort"), {
+			validation: coreLibrary.MessageType.Information,
+			message: sMessage
+		}, "Sorted properties and no visible columns");
+
+		assert.deepEqual(this.oTable.validateState({
+			items: [{name: "Name"}, {name: "Country"}, {name: "name_country"}],
+			sorters: [{name: "Name"}, {name: "Country"}]
+		}, "Sort"), {
+			validation: coreLibrary.MessageType.None,
+			message: undefined
+		}, "All sorted properties visible");
+
+		assert.deepEqual(this.oTable.validateState({
+			items: [{name: "Name"}],
+			sorters: [{name: "Country"}]
+		}, "Sort"), {
+			validation: coreLibrary.MessageType.Information,
+			message: sMessage
+		}, "Sorted property invisible");
+
+		assert.deepEqual(this.oTable.validateState({
+			items: [{name: "Name"}, {name: "name_country"}],
+			sorters: [{name: "Country"}]
+		}, "Sort"), {
+			validation: coreLibrary.MessageType.None,
+			message: undefined
+		}, "Sorted property is part of a visible complex property");
+
+		this.oTable.setP13nMode();
+		assert.deepEqual(this.oTable.validateState({
+			items: [{name: "Name"}],
+			sorters: [{name: "Country"}]
+		}, "Sort"), {
+			validation: coreLibrary.MessageType.None,
+			message: undefined
+		}, "Sorted property invisible and analytical features not enabled");
+	});
+
+	QUnit.test("Group restrictions", function(assert) {
+		const oResourceBundle = Core.getLibraryResourceBundle("sap.ui.mdc");
+
+		assert.deepEqual(this.oTable.validateState({
+			items: [{name: "Name"}, {name: "Country"}, {name: "name_country"}]
+		}, "Group"), {
+			validation: coreLibrary.MessageType.None,
+			message: undefined
+		}, "No grouped properties");
+
+		assert.deepEqual(this.oTable.validateState({
+			groupLevels: [{name: "Country"}]
+		}, "Group"), {
+			validation: coreLibrary.MessageType.None,
+			message: undefined
+		}, "Grouped properties and no visible columns");
+
+		assert.deepEqual(this.oTable.validateState({
+			items: [{name: "Name"}],
+			aggregations: { Name : {}}
+		}, "Group"), {
+			validation: coreLibrary.MessageType.Information,
+			message: oResourceBundle.getText("table.PERSONALIZATION_DIALOG_GROUP_RESTRICTION_TOTALS", "Name")
+		}, "Grouping and aggreagtion can't be used simulatneously");
+
+		assert.deepEqual(this.oTable.validateState({
+			items: [{name: "Name"}, {name: "name_country"}],
+			groupLevels: [{name: "Country"}]
+		}, "Group"), {
+			validation: coreLibrary.MessageType.None,
+			message: undefined
+		}, "The grouped property is part of a visible complex property");
+
+		this.oTable.setType(TableType.ResponsiveTable);
+		assert.deepEqual(this.oTable.validateState({
+			items: [{name: "Name"}],
+			groupLevels: [{name: "Country"}]
+		}, "Group"), {
+			validation: coreLibrary.MessageType.Information,
+			message: oResourceBundle.getText("table.PERSONALIZATION_DIALOG_GROUP_RESTRICTION_VISIBLE")
+		}, "Grouped property invisible with ResponsiveTable type");
+	});
+
+	QUnit.test("Column restrictions", function(assert) {
+		const oResourceBundle = Core.getLibraryResourceBundle("sap.ui.mdc");
+
+		assert.deepEqual(this.oTable.validateState({
+			items: [{name: "Name"}, {name: "Country"}, {name: "name_country"}]
+		}, "Column"), {
+			validation: coreLibrary.MessageType.None,
+			message: undefined
+		}, "Valid state");
+
+		assert.deepEqual(this.oTable.validateState({
+			items: [{name: "Name"}],
+			sorters: [{name: "Country"}]
+		}, "Column"), {
+			validation: coreLibrary.MessageType.Information,
+			message: oResourceBundle.getText("table.PERSONALIZATION_DIALOG_SORT_RESTRICTION")
+		}, "Removing the column that contains a sorted property");
+
+		assert.deepEqual(this.oTable.validateState({
+			items: [{name: "Name"}],
+			aggregations: {Country : {}}
+		}, "Column"), {
+			validation: coreLibrary.MessageType.Information,
+			message: oResourceBundle.getText("table.PERSONALIZATION_DIALOG_TOTAL_RESTRICTION")
+		}, "Removing the column that contains an aggregated property");
+
+		assert.deepEqual(this.oTable.validateState({
+			items: [{name: "Name"}],
+			sorters: [{name: "Country"}],
+			aggregations: {Country : {}}
+		}, "Column"), {
+			validation: coreLibrary.MessageType.Information,
+			message: oResourceBundle.getText("table.PERSONALIZATION_DIALOG_TOTAL_RESTRICTION")
+					 + "\n" + oResourceBundle.getText("table.PERSONALIZATION_DIALOG_SORT_RESTRICTION")
+		}, "Removing the column that contains a sorted and an aggregated property");
+
+		this.oTable.setType(TableType.ResponsiveTable);
+		assert.deepEqual(this.oTable.validateState({
+			items: [{name: "Name"}],
+			groupLevels: [{name: "Country"}]
+		}, "Column"), {
+			validation: coreLibrary.MessageType.Information,
+			message: oResourceBundle.getText("table.PERSONALIZATION_DIALOG_GROUP_RESTRICTION_VISIBLE")
+		}, "Removing the column that contains a grouped property with ResponsiveTable type");
+	});
+
 	QUnit.module("API", {
 		afterEach: function() {
 			this.destroyTable();
@@ -1712,7 +1734,7 @@ sap.ui.define([
 	});
 
 	// BCP: 2380131026
-	QUnit.test("updateBindingInfo - Sort invisible property if analytics is enabled", function(assert) {
+	QUnit.test("#updateBindingInfo - Sort invisible property if analytics is enabled", function(assert) {
 		TableQUnitUtils.stubPropertyInfos(Table.prototype, [{
 			name: "Name",
 			path: "Name_Path",
