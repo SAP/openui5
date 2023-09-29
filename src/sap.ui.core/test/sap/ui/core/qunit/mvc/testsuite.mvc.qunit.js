@@ -109,6 +109,9 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 				title: "sap.ui.core.CommandExecution",
 				module: "test-resources/sap/ui/core/qunit/CommandExecution.qunit"
 			},
+			/**
+			 * @deprecated As of 1.120
+			 */
 			Declarative: {
 				title: "sap.ui.core.DeclarativeSupport",
 				// we keep the HTML page here, because of the complex test fixture
