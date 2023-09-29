@@ -56,11 +56,11 @@ sap.ui.define([
 		assert.ok(BooleanContent.getUseDefaultEnterHandler(), "Correct useDefaultEnterHandler value returned.");
 	});
 
-	QUnit.test("getUseDefaultFieldHelp", function(assert) {
-		const oUseDefaultFieldHelp = BooleanContent.getUseDefaultFieldHelp();
-		assert.equal(oUseDefaultFieldHelp.name, "bool", "Correct useDefaultFieldHelp.name value returned.");
-		assert.ok(oUseDefaultFieldHelp.oneOperatorSingle, "Correct useDefaultFieldHelp.oneOperatorSingle value returned.");
-		assert.ok(oUseDefaultFieldHelp.oneOperatorMulti, "Correct useDefaultFieldHelp.oneOperatorMulti value returned.");
+	QUnit.test("getUseDefaultValueHelp", function(assert) {
+		const oUseDefaultValueHelp = BooleanContent.getUseDefaultValueHelp();
+		assert.equal(oUseDefaultValueHelp.name, "bool", "Correct useDefaultValueHelp.name value returned.");
+		assert.ok(oUseDefaultValueHelp.oneOperatorSingle, "Correct useDefaultValueHelp.oneOperatorSingle value returned.");
+		assert.ok(oUseDefaultValueHelp.oneOperatorMulti, "Correct useDefaultValueHelp.oneOperatorMulti value returned.");
 	});
 
 	QUnit.test("getControlNames", function(assert) {

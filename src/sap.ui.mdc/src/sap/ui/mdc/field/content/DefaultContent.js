@@ -53,7 +53,7 @@ sap.ui.define([
 		getUseDefaultEnterHandler: function() {
 			return true;
 		},
-		getUseDefaultFieldHelp: function() {
+		getUseDefaultValueHelp: function() {
 			return { name: "defineConditions", oneOperatorSingle: false, oneOperatorMulti: false, single: true, multi: true };
 		},
 		/**
@@ -162,8 +162,8 @@ sap.ui.define([
 				enabled: { path: "$field>/editMode", formatter: oContentFactory.getMetadata()._oClass._getEnabled },
 				valueState: "{$field>/valueState}",
 				valueStateText: "{$field>/valueStateText}",
-				valueHelpIconSrc: oContentFactory.getFieldHelpIcon(),
-				showValueHelp: "{$field>/_fieldHelpEnabled}",
+				valueHelpIconSrc: oContentFactory.getValueHelpIcon(),
+				showValueHelp: "{$field>/_valueHelpEnabled}",
 				ariaAttributes: "{$field>/_ariaAttributes}",
 				width: "100%",
 				// fieldGroupIds: are taken from parent if not automatically set (see Element.prototype._getFieldGroupIds) -> so no binding needed
@@ -208,8 +208,8 @@ sap.ui.define([
 				enabled: { path: "$field>/editMode", formatter: oContentFactory.getMetadata()._oClass._getEnabled },
 				valueState: "{$field>/valueState}",
 				valueStateText: "{$field>/valueStateText}",
-				showValueHelp: "{$field>/_fieldHelpEnabled}",
-				valueHelpIconSrc: oContentFactory.getFieldHelpIcon(),
+				showValueHelp: "{$field>/_valueHelpEnabled}",
+				valueHelpIconSrc: oContentFactory.getValueHelpIcon(),
 				ariaAttributes: "{$field>/_ariaAttributes}",
 				width: "100%",
 				// fieldGroupIds: are taken from parent if not automatically set (see Element.prototype._getFieldGroupIds) -> so no binding needed

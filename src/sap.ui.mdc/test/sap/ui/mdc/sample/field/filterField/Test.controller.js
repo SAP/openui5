@@ -248,14 +248,6 @@ sap.ui.define([
 				oIcon.setSrc("sap-icon://sys-cancel");
 				oIcon.setColor("Warning");
 			}
-			//		},
-			//
-			//		handleGo: function(oEvent) { // TODO: need trigger in FieldHelp
-			//			var oFilterConditionModel = oEvent.oSource.getModel("filter");
-			//			if (oFilterConditionModel) {
-			//				var oFilter = oFilterConditionModel.getFilters();
-			//				oFilterConditionModel._oListBinding.filter(oFilter); // TODO: function on CM
-			//			}
 		},
 		clearFilters: function(oEvent) {
 			var oView = this.getView();

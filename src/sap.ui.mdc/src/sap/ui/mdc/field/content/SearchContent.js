@@ -43,7 +43,7 @@ sap.ui.define([
 		getUseDefaultEnterHandler: function() {
 			return false;
 		},
-		getUseDefaultFieldHelp: function() {
+		getUseDefaultValueHelp: function() {
 			return false;
 		},
 		createEdit: function(oContentFactory, aControlClasses, sId) {
