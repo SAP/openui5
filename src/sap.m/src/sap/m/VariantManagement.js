@@ -258,16 +258,6 @@ sap.ui.define([
 				},
 
 				/**
-				 * Determines the behavior for Apply Automatically if the standard variant is marked as the default variant.
-				 *
-				 */
-				executeOnSelectionForStandardDefault: {
-					type: "boolean",
-					group: "Misc",
-					defaultValue: false
-				},
-
-				/**
 				 * Defines the Apply Automatically text for the standard variant in the Manage Views dialog if the application controls this behavior.
 				 */
 				displayTextForExecuteOnSelectionForStandardVariant: {
