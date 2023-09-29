@@ -945,7 +945,7 @@ sap.ui.define([
 		}
 
 		assertButton(oFirstButton, {
-			left: 4,
+			left: 0,
 			right : 0
 		});
 
