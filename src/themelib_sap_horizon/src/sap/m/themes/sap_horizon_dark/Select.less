@@ -164,6 +164,10 @@ div.sapMSltPicker .sapMSltPickerValueState {
 .sapMSltArrow {
     width: 2.25rem;
     height: 2.25rem;
+
+	&:hover {
+		box-shadow: @sapUiFieldHoverShadow;
+	}
 }
 
 .sapUiSizeCompact .sapMSltArrow {
@@ -174,7 +178,6 @@ div.sapMSltPicker .sapMSltPickerValueState {
 .sapMSltPressed >.sapMSltArrow,
 .sapMSlt:hover > .sapMSltArrow {
     background-color: @sapUiButtonActiveBackground;
-    box-shadow: @sapUiFieldHoverShadow;
     overflow: none;
     border-radius: 0.125rem;
 }
