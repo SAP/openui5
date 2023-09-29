@@ -94,7 +94,7 @@ sap.ui.define([
 			oText.setText(sText);
 		},
 		isArrowKeySupported: function() {
-			return true; /* disables the keyboard support for arrow keys */
+			return false; /* disables the keyboard support for arrow keys */
 		}
 	};
 
