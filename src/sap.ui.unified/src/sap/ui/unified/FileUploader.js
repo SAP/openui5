@@ -11,6 +11,7 @@ sap.ui.define([
 	'sap/ui/core/LabelEnablement',
 	'sap/ui/core/InvisibleText',
 	'sap/ui/core/library',
+	'sap/ui/core/StaticArea',
 	'sap/ui/Device',
 	'./FileUploaderRenderer',
 	'sap/ui/dom/containsOrEquals',
@@ -28,6 +29,7 @@ sap.ui.define([
 	LabelEnablement,
 	InvisibleText,
 	coreLibrary,
+	StaticArea,
 	Device,
 	FileUploaderRenderer,
 	containsOrEquals,
@@ -870,7 +872,7 @@ sap.ui.define([
 		// remove the IFRAME
 		if (this.oIFrameRef) {
 			jQuery(this.oIFrameRef).off();
-			sap.ui.getCore().getStaticAreaRef().removeChild(this.oIFrameRef);
+			StaticArea.getDomRef().removeChild(this.oIFrameRef);
 			this.oIFrameRef = null;
 		}
 
@@ -899,7 +901,7 @@ sap.ui.define([
 	 */
 	FileUploader.prototype.onBeforeRendering = function() {
 		// store the file uploader outside in the static area
-		var oStaticArea = sap.ui.getCore().getStaticAreaRef();
+		var oStaticArea = StaticArea.getDomRef();
 		jQuery(this.oFileUpload).appendTo(oStaticArea);
 
 		if (!this.getName()) {
@@ -1943,7 +1945,7 @@ sap.ui.define([
 			oIFrameRef.style.display = "none";
 			/*eslint-enable no-script-url */
 			oIFrameRef.id = this.getId() + "-frame";
-			sap.ui.getCore().getStaticAreaRef().appendChild(oIFrameRef);
+			StaticArea.getDomRef().appendChild(oIFrameRef);
 			oIFrameRef.contentWindow.name = this.getId() + "-frame";
 
 			// sink the load event of the upload iframe

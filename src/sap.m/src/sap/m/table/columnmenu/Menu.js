@@ -9,10 +9,10 @@ sap.ui.define([
 	"sap/m/library",
 	"sap/ui/Device",
 	"sap/ui/core/Control",
-	"sap/ui/core/Core",
 	"sap/ui/core/Element",
+	"sap/ui/core/Lib",
 	"sap/ui/core/library",
-	"sap/ui/core/UIArea",
+	"sap/ui/core/StaticArea",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/dom/containsOrEquals",
 	"sap/ui/events/ControlEvents",
@@ -34,10 +34,10 @@ sap.ui.define([
 	library,
 	Device,
 	Control,
-	Core,
 	Element,
+	Library,
 	coreLibrary,
-	UIArea,
+	StaticArea,
 	jQuery,
 	containsOrEquals,
 	ControlEvents,
@@ -199,7 +199,7 @@ sap.ui.define([
 		this._initItemsContainer();
 
 		if (!this.getParent()) {
-			UIArea.registry.get(Core.getStaticAreaRef().id).addContent(this, true);
+			StaticArea.getUIArea().addContent(this, true);
 		}
 
 		this._oPopover.openBy(oAnchor);
@@ -313,7 +313,7 @@ sap.ui.define([
 		}
 
 		if (oEvent.relatedControlId &&
-			(!containsOrEquals(this.getDomRef(), jQuery(document.getElementById(oEvent.relatedControlId)).get(0)) && !isInControlTree(this, Core.byId(oEvent.relatedControlId)))) {
+			(!containsOrEquals(this.getDomRef(), jQuery(document.getElementById(oEvent.relatedControlId)).get(0)) && !isInControlTree(this, Element.getElementById(oEvent.relatedControlId)))) {
 			this.close();
 		}
 	};
@@ -326,7 +326,7 @@ sap.ui.define([
 		}
 
 		if (oEvent.type == "mousedown" || oEvent.type == "touchstart") {
-			if (!containsOrEquals(this.getDomRef(), oEvent.target) && !containsOrEquals(Core.getStaticAreaRef(), oEvent.target) && !isInControlTree(this, Element.closestTo(oEvent.target))) {
+			if (!containsOrEquals(this.getDomRef(), oEvent.target) && !containsOrEquals(StaticArea.getDomRef(), oEvent.target) && !isInControlTree(this, Element.closestTo(oEvent.target))) {
 				this.close();
 			}
 		}
@@ -379,7 +379,7 @@ sap.ui.define([
 				oRm.openStart("div", oControl);
 				oControl.getHeight() && oRm.style("height", "100%");
 				oRm.openEnd();
-				oRm.renderControl(sap.ui.getCore().byId(oControl.getControl()));
+				oRm.renderControl(Element.getElementById(oControl.getControl()));
 				oRm.close("div");
 			}
 		}
@@ -405,7 +405,7 @@ sap.ui.define([
 			text: this._getResourceText("table.COLUMNMENU_CANCEL"),
 			press: [function () {
 				var sKey = this._oItemsContainer.getCurrentViewKey();
-				if (this._fireEvent(Core.byId(sKey), "cancel")) {
+				if (this._fireEvent(Element.getElementById(sKey), "cancel")) {
 					this.close();
 				}
 			}, this]
@@ -415,7 +415,7 @@ sap.ui.define([
 			type: library.ButtonType.Emphasized,
 			press: [function () {
 				var sKey = this._oItemsContainer.getCurrentViewKey();
-				if (this._fireEvent(Core.byId(sKey), "confirm")) {
+				if (this._fireEvent(Element.getElementById(sKey), "confirm")) {
 					this.close();
 				}
 			}, this]
@@ -470,7 +470,7 @@ sap.ui.define([
 		this._oItemsContainer.getHeader().addContentRight(new Button({
 			text: this._getResourceText("table.COLUMNMENU_RESET"),
 			press: [function () {
-				this._fireEvent(Core.byId(this._oItemsContainer.getCurrentViewKey()), "reset", false);
+				this._fireEvent(Element.getElementById(this._oItemsContainer.getCurrentViewKey()), "reset", false);
 			}, this]
 		}));
 		this._oItemsContainer._getNavigationList().addAriaLabelledBy(this.getId() + "-itemContainerDescription");
@@ -491,7 +491,7 @@ sap.ui.define([
 	};
 
 	Menu.prototype._getResourceText = function(sText, aValue) {
-		this.oResourceBundle = this.oResourceBundle ? this.oResourceBundle : sap.ui.getCore().getLibraryResourceBundle("sap.m");
+		this.oResourceBundle = this.oResourceBundle ? this.oResourceBundle : Library.getResourceBundleFor("sap.m");
 		return sText ? this.oResourceBundle.getText(sText, aValue) : this.oResourceBundle;
 	};
 

@@ -6,12 +6,13 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/base/Object",
 	"sap/ui/core/Element",
+	"sap/ui/core/StaticArea",
 	"sap/ui/testrecorder/Constants",
 	"sap/ui/testrecorder/interaction/Commands",
 	"sap/ui/testrecorder/interaction/CommandExecutor",
 	"sap/ui/testrecorder/CommunicationBus",
 	"sap/ui/testrecorder/CommunicationChannels"
-], function ($, BaseObject, Element, constants, Commands, CommandExecutor, CommunicationBus, CommunicationChannels) {
+], function ($, BaseObject, Element, StaticArea, constants, Commands, CommandExecutor, CommunicationBus, CommunicationChannels) {
 	"use strict";
 
 	var CONTEXTMENU_MARGIN = 5;
@@ -63,7 +64,7 @@ sap.ui.define([
 		}
 
 		// when the context menu opens in app context, prevent the static area controls from auto-closing, so that we can inspect their inner content
-		var $staticArea = $(sap.ui.getCore().getStaticAreaRef());
+		var $staticArea = $(StaticArea.getDomRef());
 		$.map($staticArea.find(":visible"), function (staticAreaChild) {
 			var oStaticAreaChild = Element.closestTo(staticAreaChild);
 			if (oStaticAreaChild) {
