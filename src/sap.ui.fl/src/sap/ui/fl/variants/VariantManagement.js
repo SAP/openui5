@@ -696,12 +696,6 @@ sap.ui.define([
 		return this;
 	};
 
-	VariantManagement.prototype.setExecuteOnSelectionForStandardDefault = function(bValue) {
-		this.setProperty("executeOnSelectionForStandardDefault", bValue);
-		this._oVM.setExecuteOnSelectionForStandardDefault(bValue);
-		return this;
-	};
-
 	VariantManagement.prototype.setDisplayTextForExecuteOnSelectionForStandardVariant = function(sValue) {
 		this.setProperty("displayTextForExecuteOnSelectionForStandardVariant", sValue);
 		this._oVM.setDisplayTextForExecuteOnSelectionForStandardVariant(sValue);
