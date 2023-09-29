@@ -68,7 +68,7 @@ sap.ui.define([
 
 			assertions: {
 				/**
-				 * OPA5 test action
+				 * OPA5 test assertion
 				 * @memberof onTheMDCValueHelp
 				 * @method iShouldSeeValueHelpListItems
 				 * @param {string|Array<string>|Array<Array<String>>} vTexts Text(s) the searched listitems must contain
@@ -80,7 +80,7 @@ sap.ui.define([
 					return Assertions.iShouldSeeValueHelpListItems.call(this, vTexts, sValueHelp);
 				},
 				/**
-				 * OPA5 test action
+				 * OPA5 test assertion
 				 * @memberof onTheMDCValueHelp
 				 * @method iShouldSeeTheValueHelpDialog
 				 * @param {string} [sValueHelp] Optional identifier for the affected valuehelp
@@ -91,7 +91,7 @@ sap.ui.define([
 					return Assertions.iShouldSeeTheValueHelpDialog.call(this, sValueHelp);
 				},
 				/**
-				 * OPA5 test action
+				 * OPA5 test assertion
 				 * @memberof onTheMDCValueHelp
 				 * @method iShouldSeeValueHelpContent
 				 * @param {object} oProperties Properties identifying the searched content
@@ -103,7 +103,7 @@ sap.ui.define([
 					return Assertions.iShouldSeeValueHelpContent.call(this, oProperties, sValueHelp);
 				},
 				/**
-				 * OPA5 test action
+				 * OPA5 test assertion
 				 * @memberof onTheMDCValueHelp
 				 * @method iShouldSeeValueHelpToken
 				 * @param {object} sValue Text the token should hold
@@ -113,6 +113,17 @@ sap.ui.define([
 				 */
 				iShouldSeeValueHelpToken: function (sValue, sValueHelp) {
 					return Assertions.iShouldSeeValueHelpToken.call(this, sValue, sValueHelp);
+				},
+				/**
+				 * OPA5 test assertion
+				 * @memberof onTheMDCValueHelp
+				 * @method iShouldSeeValueHelpPopover
+				 * @param {string} [sValueHelp] Optional identifier for the affected valuehelp
+				 * @returns {Promise} OPA waitFor
+				 * Searches for an open popover which has a valuehelp ancestor
+				 */
+				iShouldSeeValueHelpPopover: function(sValueHelp) {
+					return Assertions.iShouldSeeValueHelpPopover.call(this, sValueHelp);
 				}
 			}
 		}

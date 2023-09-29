@@ -244,35 +244,44 @@ sap.ui.define([
 		const oList = _getList.call(this);
 		if (oList) {
 			const aConditions = this.getConditions();
-			let vSelectedKey;
+			let vSelectedKey, oFirstMatchItem;
 			const sFilterValue = this.getFilterValue();
 			const bUseFirstMatch = this.getUseFirstMatch();
-			let bFistFilterItemSelected = false;
+			let bFirstFilterItemSelected = false;
 //			var oOperator = this._getOperator();
 
 			if (aConditions.length > 0 && (aConditions[0].validated === ConditionValidated.Validated || aConditions[0].operator === OperatorName.EQ/*oOperator.name*/)) {
 				vSelectedKey = aConditions[0].values[0];
 			}
 
-			const aItems = oList.getItems();
-			for (let i = 0; i < aItems.length; i++) {
-				const oItem = aItems[i];
-				if (i === this._iNavigateIndex) {
-					oItem.addStyleClass("sapMLIBFocused").addStyleClass("sapMListFocus");
+			if (bUseFirstMatch && sFilterValue) {
+				const oContext = this.getValueHelpDelegate().getFirstMatch(this.getValueHelpInstance(), this, {
+					checkDescription: true,
+					value: sFilterValue
+				});
+				oFirstMatchItem = _getItemFromContext.call(this, oContext);
+			}
+
+			const aListItems = oList.getItems();
+
+			for (let iIndex = 0; iIndex < aListItems.length; iIndex++) {
+				const oListItem = aListItems[iIndex];
+				if (iIndex === this._iNavigateIndex) {
+					oListItem.addStyleClass("sapMLIBFocused").addStyleClass("sapMListFocus");
 				} else {
-					oItem.removeStyleClass("sapMLIBFocused").removeStyleClass("sapMListFocus");
+					oListItem.removeStyleClass("sapMLIBFocused").removeStyleClass("sapMListFocus");
 				}
-				if (oItem.isA("sap.m.DisplayListItem")) { // not for group headers
-					const oOriginalItem = _getOriginalItem.call(this, oItem);
+
+				if (oListItem.isA("sap.m.DisplayListItem")) { // check if it's not a group header
+					const oOriginalItem = _getOriginalItem.call(this, oListItem);
 					if (aConditions.length > 0 && _getKey.call(this, oOriginalItem) === vSelectedKey) {
 						// conditions given -> use them to show selected items
-						oItem.setSelected(true);
-					} else if (aConditions.length === 0 && this._iNavigateIndex < 0 && bUseFirstMatch && sFilterValue && !bFistFilterItemSelected && _filterText.call(this, oItem.getLabel(), sFilterValue)) {
-						// filter value used -> show first match as selected (not of group header selected)
-						oItem.setSelected(true);
-						bFistFilterItemSelected = true;
+						oListItem.setSelected(true);
+					} else if (aConditions.length === 0 && this._iNavigateIndex < 0 && !bFirstFilterItemSelected && oFirstMatchItem && oFirstMatchItem === oOriginalItem) {
+						oListItem.setSelected(true);
+						bFirstFilterItemSelected = true;
 					} else {
-						oItem.setSelected(false);
+						oListItem.setSelected(false);
 					}
 				}
 			}
@@ -282,9 +291,12 @@ sap.ui.define([
 	// returns FixedList item for inner list item
 	function _getOriginalItem(oItem) {
 
-		const sPath = oItem.getBindingContextPath();
-		return this._oManagedObjectModel.getProperty(sPath);
+		return this._oManagedObjectModel.getProperty(oItem.getBindingContextPath());
 
+	}
+
+	function _getItemFromContext(oContext) {
+		return this._oManagedObjectModel.getProperty(oContext.getPath());
 	}
 
 	function _getKey(oItem) {
@@ -315,7 +327,7 @@ sap.ui.define([
 
 	FixedList.prototype.getItemForValue = function (oConfig) {
 
-		return Promise.resolve().then(function() {
+		return this.getContent().then(function() {
 			if (oConfig.value === null || oConfig.value === undefined) {
 				return null;
 			} else if (!oConfig.value && oConfig.checkDescription) {
@@ -343,14 +355,12 @@ sap.ui.define([
 			}
 
 			if (this.getUseFirstMatch()) {
-				for (i = 0; i < aItems.length; i++) {
-					oItem = aItems[i];
-					const sText = oConfig.checkDescription ? oItem.getText() : oItem.getKey(); // don't use oConfig.parsedValue as entered value non't neet to be a valid (complete) key
-					if (_filterText.call(this, sText, oConfig.value)) {
-						vKey = _getKey.call(this, oItem);
-						vText = _getText.call(this, oItem);
-						return {key: vKey, description: vText};
-					}
+				const oContext = this.getValueHelpDelegate().getFirstMatch(this.getValueHelpInstance(), this, oConfig);
+				if (oContext) {
+					const oOriginalItem = _getItemFromContext.call(this, oContext);
+					vKey = _getKey.call(this, oOriginalItem);
+					vText = _getText.call(this, oOriginalItem);
+					return {key: vKey, description: vText};
 				}
 			}
 
@@ -593,6 +603,16 @@ sap.ui.define([
 	FixedList.prototype.getListBinding = function () {
 		const oList = _getList.call(this);
 		return oList && oList.getBinding("items");
+	};
+
+	FixedList.prototype.getRelevantContexts = function(oConfig) {
+		const oListBinding = this.getListBinding();
+		const aListBindingContexts = oListBinding.getContexts();
+
+		return aListBindingContexts.filter((oListBindingContext) => {
+			const sText = oConfig.checkDescription ? oListBindingContext.getProperty("text") : oListBindingContext.getProperty("key"); // don't use oConfig.parsedValue as entered value doesn't need to be a valid (complete) key
+			return _filterText.call(this, sText, oConfig.value);
+		});
 	};
 
 	return FixedList;

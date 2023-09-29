@@ -111,6 +111,16 @@ sap.ui.define([
 		throw new Error("ListContent: Every listcontent must implement this method.");
 	};
 
+	/**
+	 * Gets the relevant <code>BindingContexts</code> of the content.
+	 * @param {sap.ui.mdc.valuehelp.base.ItemForValueConfiguration} oConfig
+	 * @returns {sap.ui.model.Context[]} <code>BindingContexts</code>
+	 * @protected
+	 */
+	ListContent.prototype.getRelevantContexts = function(oConfig) {
+		throw new Error("ListContent: Every listcontent must implement this method.");
+	};
+
 	return ListContent;
 
 });

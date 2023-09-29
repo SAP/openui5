@@ -7,12 +7,15 @@
 sap.ui.define([
 	"sap/ui/test/Opa5",
 	"test-resources/sap/ui/mdc/testutils/opa/valueHelp/Actions",
-	"sap/ui/test/opaQunit"
-	// "test-resources/sap/ui/mdc/testutils/opa/Util"
+	"test-resources/sap/ui/mdc/testutils/opa/filterfield/Actions",
+	"sap/ui/test/opaQunit",
+	"sap/ui/events/KeyCodes"
 ], function(
 	Opa5,
 	ValueHelpActions,
-	opaTest
+	FilterFieldActions,
+	opaTest,
+	KeyCodes
 ) {
 	"use strict";
 
@@ -35,6 +38,12 @@ sap.ui.define([
 		actions: new Opa5({
 			iToggleTheValueHelpListItem: function (sText, sValueHelpId) {
 				return ValueHelpActions.iToggleTheValueHelpListItem.call(this, sText, sValueHelpId);
+			},
+			iEnterTextOnTheFilterField: function(vIdentifier, sValue, oConfig) {
+				return FilterFieldActions.iEnterTextOnTheFilterField.call(this, vIdentifier, sValue,oConfig);
+			},
+			iPressKeyOnTheFilterField: function(vIdentifier, keyCode) {
+				return FilterFieldActions.iPressKeyOnTheFilterField.call(this, vIdentifier, keyCode);
 			}
 		})
 	});
@@ -112,6 +121,27 @@ sap.ui.define([
 		sFieldID = "container-v4demo---books--ff2";
 		When.onTheMDCFilterField.iOpenTheValueHelpForFilterField(sFieldID, true);
 		When.onTheMDCValueHelp.iCloseTheValueHelpDialog(true);
+
+		When.iEnterTextOnTheFilterField(sFieldID, "The Yellow", {
+			keepFocus: true
+		});
+		Then.onTheMDCValueHelp.iShouldSeeValueHelpPopover("container-v4demo---books--FH4");
+		When.iPressKeyOnTheFilterField(sFieldID, KeyCodes.ESCAPE);
+		Then.onTheMDCFilterField.iShouldSeeTheFilterFieldWithValues(sFieldID, "");
+
+		When.iEnterTextOnTheFilterField(sFieldID, "Pride", {
+			keepFocus: true
+		});
+		Then.onTheMDCValueHelp.iShouldSeeValueHelpPopover("container-v4demo---books--FH4");
+		When.iPressKeyOnTheFilterField(sFieldID, KeyCodes.ENTER);
+		Then.onTheMDCFilterField.iShouldSeeTheFilterFieldWithValues(sFieldID, "Pride and Prejudice");
+
+        When.iEnterTextOnTheFilterField(sFieldID, "Yellow", {
+			keepFocus: true
+		});
+		Then.onTheMDCValueHelp.iShouldSeeValueHelpPopover("container-v4demo---books--FH4");
+		When.iEnterTextOnTheFilterField(sFieldID, "Yellow");
+		Then.onTheMDCFilterField.iShouldSeeTheFilterFieldWithValues(sFieldID, "The Yellow Wallpaper");
 
 		Then.iTeardownMyAppFrame();
 	});

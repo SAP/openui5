@@ -363,5 +363,15 @@ sap.ui.define([
 		return {};
 	};
 
+	/**
+	 * @param {sap.ui.mdc.ValueHelp} oValueHelp The <code>ValueHelp</code> control instance
+	 * @param {sap.ui.mdc.valuehelp.base.ListContent} oContent <code>ValueHelp</code> content instance
+	 * @param {sap.ui.mdc.valuehelp.base.ItemForValueConfiguration} oConfig Configuration
+	 * @returns {sap.ui.model.Context} Promise resolving in the <code>Context</code> that's relevant'
+	 */
+	ValueHelpDelegate.getFirstMatch = function(oValueHelp, oContent, oConfig) {
+		return oContent.getRelevantContexts(oConfig)[0];
+	};
+
 	return ValueHelpDelegate;
 });

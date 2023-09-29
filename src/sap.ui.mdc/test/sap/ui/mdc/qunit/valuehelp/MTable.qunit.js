@@ -990,7 +990,8 @@ sap.ui.define([
 			control: "MyControl"
 		};
 
-		sinon.stub(ValueHelpDelegate, "getFilterConditions").callsFake(function (oPayload, oContent, oLocalConfig) {
+		const getFilterConditionsStub = sinon.stub(ValueHelpDelegate, "getFilterConditions");
+		getFilterConditionsStub.callsFake(function (oPayload, oContent, oLocalConfig) {
 			assert.ok(true, "ValueHelpDelegate.getFilterConditions is called.");
 			assert.equal(oContent, oMTable, "getFilterConditions receives correct content");
 			assert.equal(oLocalConfig, oConfig, "getFilterConditions receives correct config");
@@ -1010,10 +1011,49 @@ sap.ui.define([
 			}).catch(function(oError) {
 				assert.notOk(true, "Promise Catch called: " + oError.message || oError);
 			}).finally(function() {
+				getFilterConditionsStub.restore();
 				fnDone();
 			});
 		}
 
+	});
+
+	QUnit.test("getItemForValue: _oFirstItemResult", (assert) => {
+		const fnDone = assert.async();
+		const sFilterValue = "IR";
+		const oExpectedResultItem = {
+			text: "FirstItemResult", key: "IR", additionalText: "Not in the Model"
+		};
+		oMTable._oFirstItemResult = {
+			filterValue: sFilterValue,
+			result: oExpectedResultItem
+		};
+
+		const oConfig = {
+			parsedValue: sFilterValue,
+			parsedDescription: undefined,
+			value: sFilterValue,
+			context: {payload: {inValue: "b"}},
+			bindingContext: undefined,
+			checkKey: true,
+			checkDescription: false,
+			caseSensitive: false,
+			exception: ParseException,
+			control: "MyControl"
+		};
+
+		const oPromise = oMTable.getItemForValue(oConfig);
+		assert.ok(oPromise instanceof Promise, "getItemForValue returns promise");
+		if (oPromise) {
+			oPromise.then(function(oItem) {
+				assert.ok(true, "Promise Then must be called");
+				assert.deepEqual(oItem, oExpectedResultItem, "Correct value returned");
+			}).catch(function(oError) {
+				assert.notOk(true, "Promise Catch called: " + oError.message || oError);
+			}).finally(function() {
+				fnDone();
+			});
+		}
 	});
 
 	QUnit.test("isValidationSupported", function(assert) {
