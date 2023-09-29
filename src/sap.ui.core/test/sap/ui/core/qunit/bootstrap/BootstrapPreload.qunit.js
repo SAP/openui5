@@ -8,12 +8,11 @@ sap.ui.define([
 	"use strict";
 
 	QUnit.test("Check Existance of Core", function(assert) {
-		assert.expect(9);
+		assert.expect(7);
 
-		var aExpectedLibraries = ["sap.m", "sap.ui.layout", "sap.ui.table"].sort();
-		var aConfigurationModules = Configuration.getValue("modules").sort();
-		var oLoadedLibraries = Core.getLoadedLibraries();
-		var sExpectedLibrary, sLoadedLibrary, aDependendLibraries = [];
+		var aExpectedLibraries = ["sap.ui.core", "sap.m", "sap.ui.layout", "sap.ui.table"].sort();
+		var aLoadedLibraries = Object.keys(Core.getLoadedLibraries());
+		var sExpectedLibrary, aDependendLibraries = [];
 
 		/* check that SAPUI5 has been loaded */
 		assert.ok(sap.ui.getCore(), "sap.ui.getCore() returns a value");
@@ -25,20 +24,20 @@ sap.ui.define([
 			assert.ok(!id, "browser is unknown: data-sap-ui-browser should not have been set (or empty)");
 		}
 
-		for (sLoadedLibrary in oLoadedLibraries) {
+		aLoadedLibraries.forEach((sLoadedLibrary) => {
 			if (!aDependendLibraries.includes(sLoadedLibrary) && !aExpectedLibraries.includes(sLoadedLibrary)) {
 				// Don't collect duplicates and only collect dependend libraries which are not already expected
 				aDependendLibraries.push(sLoadedLibrary);
 			}
-		}
+		});
 
 		for (var i = 0; i < aExpectedLibraries.length; i++) {
 			sExpectedLibrary = aExpectedLibraries[i];
-			assert.strictEqual(sExpectedLibrary + ".library", aConfigurationModules[i], "'" +  sExpectedLibrary + "' is part of sap.ui.core.Configuration property 'module'");
-			assert.ok(oLoadedLibraries[sExpectedLibrary], "'" +  sExpectedLibrary + "' is registered as loadedLibrary within Core");
+			//assert.strictEqual(sExpectedLibrary + ".library", aConfigurationModules[i], "'" +  sExpectedLibrary + "' is part of sap.ui.core.Configuration property 'module'");
+			assert.ok(aLoadedLibraries.includes(sExpectedLibrary) , "'" +  sExpectedLibrary + "' is registered as loadedLibrary within Core");
 		}
 
-		assert.strictEqual(aExpectedLibraries.concat(aDependendLibraries).length, Object.keys(oLoadedLibraries).length, "Only libraries declared in bootstrap including their dependencies are loaded");
+		assert.strictEqual(aExpectedLibraries.concat(aDependendLibraries).length, Object.keys(aLoadedLibraries).length, "Only libraries declared in bootstrap including their dependencies are loaded");
 	});
 
 });

@@ -30,6 +30,7 @@ sap.ui.define([
 	"sap/ui/security/Security",
 	"sap/base/assert",
 	"sap/base/util/Deferred",
+	"sap/base/util/deepEqual",
 	"sap/base/util/ObjectPath",
 	'sap/ui/performance/trace/initTraces',
 	'sap/base/util/isEmptyObject',
@@ -66,6 +67,7 @@ sap.ui.define([
 		Security,
 		assert,
 		Deferred,
+		deepEqual,
 		ObjectPath,
 		initTraces,
 		isEmptyObject,
@@ -132,6 +134,13 @@ sap.ui.define([
 		}
 
 		return sWaitForTheme;
+	}
+
+	function ui5ToRJS(sName) {
+		if ( /^jquery\.sap\./.test(sName) ) {
+			return sName;
+		}
+		return sName.replace(/\./g, "/");
 	}
 
 	/*
@@ -353,6 +362,18 @@ sap.ui.define([
 			// freeze Config
 			var GlobalConfigurationProvider = sap.ui.require("sap/base/config/GlobalConfigurationProvider");
 			GlobalConfigurationProvider.freeze();
+
+			// register resourceRoots
+			const paths = {};
+			const oResourceRoots = BaseConfig.get({
+				name: "sapUiResourceRoots",
+				type: BaseConfig.Type.Object
+			}) ?? {};
+			for (const n in oResourceRoots) {
+				paths[ui5ToRJS(n)] = oResourceRoots[n] || ".";
+			}
+			sap.ui.loader.config({paths: paths});
+
 			Configuration.setCore(this);
 
 			/**
@@ -381,25 +402,73 @@ sap.ui.define([
 			// let Element and Component get friend access to the respective register/deregister methods
 			this._grantFriendAccess();
 
-			// handle modules
-			var aModules = this.aModules = Configuration.getValue("modules");
-			if ( Supportability.isDebugModeEnabled() ) {
+			// handle libraries & modules
+			this.aModules = BaseConfig.get({
+				name: "sapUiModules",
+				type: BaseConfig.Type.StringArray
+			}) ?? [];
+			this.aLibs = BaseConfig.get({
+				name: "sapUiLibs",
+				type: BaseConfig.Type.StringArray
+			}) ?? [];
+
+			// as modules could also contain libraries move it to aLibs!
+			this.aModules = this.aModules.filter((module) => {
+				const m = module.match(/^(.*)\.library$/);
+				if (m) {
+					this.aLibs.push(m[1]);
+				} else {
+					return module;
+				}
+			});
+
+			/**
+			 * in case the flexibilityServices configuration was set to a non-empty,
+			 * non-default value, sap.ui.fl becomes mandatoryif not overruled by
+			 * 'xx-skipAutomaticFlLibLoading'.
+			 * @deprecated As of Version 1.120.0
+			 */
+			(() => {
+				const sFlexDefault = "/sap/bc/lrep";
+				const vFlexibilityServices = BaseConfig.get({
+					name: "sapUiFlexibilityServices",
+					type: (value) => {
+						return value;
+					},
+					external: true,
+					defaultValue: sFlexDefault
+				});
+				const bXxSkipAutomaticFlLibLoading =  BaseConfig.get({
+					name: "sapUiXxSkipAutomaticFlLibLoading",
+					type: BaseConfig.Type.Boolean,
+					external: true
+				});
+				if (vFlexibilityServices
+					&& vFlexibilityServices !== sFlexDefault
+					&& !bXxSkipAutomaticFlLibLoading
+					&& !this.aLibs.includes("sap.ui.fl")) {
+
+					this.aLibs.push("sap.ui.fl");
+				}
+			})();
+
+			if (Supportability.isDebugModeEnabled()) {
 				// add debug module if configured
-				aModules.unshift("sap.ui.debug.DebugEnv");
+				this.aModules.unshift("sap.ui.debug.DebugEnv");
 			}
 			// enforce the core library as the first loaded module
-			var i = aModules.indexOf("sap.ui.core.library");
+			var i = this.aLibs.indexOf("sap.ui.core");
 			if ( i != 0 ) {
 				if ( i > 0 ) {
-					aModules.splice(i,1);
+					this.aLibs.splice(i,1);
 				}
-				aModules.unshift("sap.ui.core.library");
+				this.aLibs.unshift("sap.ui.core");
 			}
 
 			// enable LessSupport if specified in configuration
-			if (BaseConfig.get({name: "sapUiXxLesssupport", type: BaseConfig.Type.Boolean}) && aModules.indexOf("sap.ui.core.plugin.LessSupport") == -1) {
+			if (BaseConfig.get({name: "sapUiXxLesssupport", type: BaseConfig.Type.Boolean}) && !this.aModules.includes("sap.ui.core.plugin.LessSupport")) {
 				Log.info("Including LessSupport into declared modules");
-				aModules.push("sap.ui.core.plugin.LessSupport");
+				this.aModules.push("sap.ui.core.plugin.LessSupport");
 			}
 
 			var sPreloadMode = Library.getPreloadMode();
@@ -413,7 +482,9 @@ sap.ui.define([
 			document.documentElement.classList.add("sapUiTheme-" + Theming.getTheme());
 			Log.info("Declared theme " + Theming.getTheme(), null, METHOD);
 
-			Log.info("Declared modules: " + aModules, METHOD);
+			Log.info("Declared modules: " + this.aModules, METHOD);
+
+			Log.info("Declared libraries: " + this.aLibs, METHOD);
 
 			this._setupContentDirection();
 
@@ -524,16 +595,7 @@ sap.ui.define([
 				}
 
 				if ( sPreloadMode === "sync" || sPreloadMode === "async" ) {
-					// determine set of libraries
-					var aLibs = that.aModules.reduce(function(aResult, sModule) {
-						var iPos = sModule.search(/\.library$/);
-						if ( iPos >= 0 ) {
-							aResult.push(sModule.slice(0, iPos));
-						}
-						return aResult;
-					}, []);
-
-					var pLibraryPreloaded = Library._load(aLibs, {
+					var pLibraryPreloaded = Library._load(that.aLibs, {
 						sync: !bAsync,
 						preloadOnly: true
 					});
@@ -872,38 +934,30 @@ sap.ui.define([
 			};
 		});
 
+		this.aLibs.forEach( function(lib) {
+			Library._load(lib, {
+				sync: true
+			});
+		});
 		this.aModules.forEach( function(mod) {
-			var m = mod.match(/^(.*)\.library$/);
-			if ( m ) {
-				Library._load(m[1], {
-					sync: true
-				});
-			} else {
-				// data-sap-ui-modules might contain legacy jquery.sap.* modules
-				sap.ui.requireSync( /^jquery\.sap\./.test(mod) ?  mod : mod.replace(/\./g, "/")); // legacy-relevant: Sync loading of modules and libraries
-			}
+			// data-sap-ui-modules might contain legacy jquery.sap.* modules
+			sap.ui.requireSync( /^jquery\.sap\./.test(mod) ?  mod : mod.replace(/\./g, "/")); // legacy-relevant: Sync loading of modules and libraries
 		});
 
 		fnCallback();
 	};
 
 	Core.prototype._requireModulesAsync = function() {
-		var aLibs = [],
-			aModules = [];
+		var aModules = [];
 
 		this.aModules.forEach(function(sModule) {
-			var m = sModule.match(/^(.*)\.library$/);
-			if (m) {
-				aLibs.push(m[1]);
-			} else {
-				// data-sap-ui-modules might contain legacy jquery.sap.* modules
-				aModules.push(/^jquery\.sap\./.test(sModule) ? sModule : sModule.replace(/\./g, "/"));
-			}
+			// data-sap-ui-modules might contain legacy jquery.sap.* modules
+			aModules.push(/^jquery\.sap\./.test(sModule) ? sModule : sModule.replace(/\./g, "/"));
 		});
 
 		// TODO: require libs and modules in parallel or define a sequence?
 		return Promise.all([
-			Library._load(aLibs),
+			Library._load(this.aLibs),
 			new Promise(function(resolve) {
 				sap.ui.require(aModules, function() {
 					resolve(Array.prototype.slice.call(arguments));

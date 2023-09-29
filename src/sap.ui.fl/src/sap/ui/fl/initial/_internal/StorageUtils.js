@@ -5,17 +5,17 @@
 sap.ui.define([
 	"sap/base/security/encodeURLParameters",
 	"sap/base/Log",
+	"sap/ui/fl/initial/_internal/config",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/LayerUtils",
-	"sap/base/util/isEmptyObject",
-	"sap/ui/core/Configuration"
+	"sap/base/util/isEmptyObject"
 ], function(
 	encodeURLParameters,
 	Log,
+	config,
 	Layer,
 	LayerUtils,
-	isEmptyObject,
-	Configuration
+	isEmptyObject
 ) {
 	"use strict";
 
@@ -134,7 +134,7 @@ sap.ui.define([
 		 * @returns {Promise<map[]>} Resolving with a list of maps for all configured connectors and their requested modules
 		 */
 		getConnectors(sNameSpace, bLoadConnectors) {
-			var aConfiguredConnectors = Configuration.getFlexibilityServices();
+			var aConfiguredConnectors = config.getFlexibilityServices();
 			var mConnectors = [];
 			if (bLoadConnectors) {
 				mConnectors = [STATIC_FILE_CONNECTOR_CONFIGURATION];

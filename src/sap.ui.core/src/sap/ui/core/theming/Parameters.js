@@ -2,7 +2,6 @@
  * ${copyright}
  */
 sap.ui.define([
-	'sap/ui/core/Configuration',
 	'sap/ui/core/Lib',
 	'sap/ui/core/Theming',
 	'sap/ui/thirdparty/URI',
@@ -13,10 +12,10 @@ sap.ui.define([
 	'sap/ui/core/theming/ThemeManager',
 	'./ThemeHelper'
 ],
-	function(Configuration, Library, Theming, URI, Element, Log, extend, syncFetch, ThemeManager, ThemeHelper) {
+	function(Library, Theming, URI, Element, Log, extend, syncFetch, ThemeManager, ThemeHelper) {
 	"use strict";
 
-	var syncCallBehavior = Configuration.getSyncCallBehavior();
+	var syncCallBehavior = sap.ui.loader._.getSyncCallBehavior();
 
 		/**
 		 * A helper used for (read-only) access to CSS parameters at runtime.

@@ -1,1 +1,1 @@
-window["sap-ui-config"] = sap.ui.require.toUrl("testdata/core/") + "sap-ui-config.json";
+window["sap-ui-config"] = "/test-resources/sap/ui/core/qunit/sap-ui-config.json";

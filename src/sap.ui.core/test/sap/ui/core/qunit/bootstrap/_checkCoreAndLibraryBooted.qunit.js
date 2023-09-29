@@ -6,7 +6,7 @@
 		 return new Promise((resolve, reject) => {
 			sap.ui.require(["sap/ui/core/Core", "sap/ui/core/Lib", "sap/ui/Device"], async function(Core, Lib, Device) {
 				assert.expect(5);
-				var aExpectedLibraries = ["sap.m"];
+				var aExpectedLibraries = ["sap.ui.core", "sap.m"];
 
 				/**
 				 * @deprecated As of version 1.120
@@ -23,7 +23,6 @@
 					assert.ok(!id, "browser is unknown: data-sap-ui-browser should not have been set (or empty)");
 				}
 
-				var aConfigurationModules = sap.ui.getCore().getConfiguration().getValue("modules");
 				var oLoadedLibraries = Lib.all();
 				var sExpectedLibrary, sLoadedLibrary, aDependendLibraries = [];
 
@@ -36,7 +35,6 @@
 
 				for (var i = 0; i < aExpectedLibraries.length; i++) {
 					sExpectedLibrary = aExpectedLibraries[i];
-					assert.strictEqual(sExpectedLibrary + ".library", aConfigurationModules[i], "'" +  sExpectedLibrary + "' is part of sap.ui.core.Configuration property 'module'");
 					assert.ok(oLoadedLibraries[sExpectedLibrary], "'" +  sExpectedLibrary + "' is registered as loadedLibrary within Core");
 				}
 
