@@ -2158,6 +2158,24 @@ function (
 		}, this.iDelay);
 	});
 
+	QUnit.test("test removing and destroying Section on mobile (with binding)", function (assert) {
+		var oObjectPage = this.oOP,
+			done = assert.async();
+
+			this.stub(lib.Utilities, "isPhoneScenario").returns(true);
+
+		oObjectPage.attachEventOnce("onAfterRenderingDOMReady", function () {
+			// Act
+			oObjectPage.removeSection(oObjectPage.getSections()[1]).destroy("KeepDom");
+			Core.applyChanges();
+
+			setTimeout(function () {
+				assert.ok(true, "Error is not thrown");
+				done();
+			},  this.iDelay);
+		}.bind(this));
+	});
+
 	QUnit.module("ObjectPage API: invalidate");
 
 	QUnit.test("inactive section does not invalidate the objectPage", function (assert) {

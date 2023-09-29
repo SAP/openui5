@@ -35,9 +35,9 @@ sap.ui.define([], function () {
 		 * or in case the active tab is closed. On mobile devices it's the only
 		 * reliable event for detecting tab switch or minimizing/closing the
 		 * browser.
-		 * Previously also the pagehinde event was needed because safari did not
+		 * Previously also the 'pagehide' event was needed because safari did not
 		 * fire the 'visibilitychange' event on navigating away from a page but
-		 * but as of Safari 14.5 this issue is fixed.
+		 * as of Safari 14.5 this issue is fixed.
 		 */
 		document.addEventListener("visibilitychange", function () {
 			if (document.visibilityState === "hidden") {

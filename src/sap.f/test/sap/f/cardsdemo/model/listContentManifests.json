@@ -648,7 +648,7 @@
 									"showStateIcon": true
 								},
 								{
-									"name": "Warning",
+									"name": "Warning - very very very very very very long status that should stay on the same line with the icon",
 									"state": "Warning",
 									"showStateIcon": true
 								},

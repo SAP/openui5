@@ -333,7 +333,7 @@ sap.ui.define([
 			this._oColumnHeaderLabel = new ColumnHeaderLabel({
 				column: this,
 				label: new Label({
-					width: "{= ${$this>/headerVisible} ? null : '0px' }",
+					width: "{= ${$this>/headerVisible} ? '100%' : '0px' }",
 					text: "{$this>/header}",
 					textAlign: "{$this>/hAlign}",
 					tooltip: oTooltipBindingInfo ? oTooltipBindingInfo : "",

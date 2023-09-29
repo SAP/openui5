@@ -3609,8 +3609,24 @@ sap.ui.define([
 		this.oTable.addAggregation("_hiddenDependents", oText);
 		this.oTableInvalidate.resetHistory();
 		oText.destroy();
-		assert.ok(this.oTableInvalidate.notCalled,
-			"The table is not invalidated when destroying a hidden dependent");
+		assert.ok(this.oTableInvalidate.notCalled, "The table is not invalidated when destroying a hidden dependent");
+	});
+
+	QUnit.test("clone", function(assert) {
+		var oText = new Text("myHiddenDependentText");
+		var oTableClone;
+
+		sinon.spy(oText, "clone");
+		this.oTable.addAggregation("_hiddenDependents", oText);
+		oTableClone = this.oTable.clone();
+
+		assert.ok(!oTableClone.getAggregation("_hiddenDependents").some((oElement) => {
+			return oElement.getId().startsWith("myHiddenDependentText");
+		}), "The clone does not contain clones of the hidden dependents of the original table");
+		assert.ok(oText.clone.notCalled, "The 'clone' method of the hidden dependent was not called");
+
+		oText.clone.restore();
+		oTableClone.destroy();
 	});
 
 	QUnit.module("Hooks", {

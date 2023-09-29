@@ -12,6 +12,7 @@
 	"sap.ui5": {
 		"rootView": {
 			"viewName": "sap.ui.testrecorder.appMock.view.Main",
+			"async": true,
 			"type": "XML",
 			"id": "main"
 		},

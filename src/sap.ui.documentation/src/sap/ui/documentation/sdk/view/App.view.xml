@@ -69,7 +69,7 @@
 
 					<OverflowToolbar class="sapUiDemoKitHeaderOTB" style="Clear">
 						<ObjectStatus
-							text="{= ${versionData>/isDevVersion}
+							text="{= ${versionData>/isDevVersion} &amp;&amp; !${appView>/bShowVersionSwitchButton}
 								? [${i18n>APP_VERSION_VERSION}, ${versionData>/version}, ${i18n>APP_VERSION_IN_PROGRESS}].join(' ')
 								: '' }"
 							state="Information"
@@ -86,7 +86,7 @@
 								? [${i18n>APP_VERSION_VERSION}, ${versionData>/version}].join(' ')
 								: '' }"
 							press="onChangeVersionButtonPress"
-							visible="{= ${appView>/bShowVersionSwitchButton} &amp;&amp; !${versionData>/isSnapshotVersion} }">
+							visible="{= ${appView>/bShowVersionSwitchButton} }">
 						</Button>
 
 						<OverflowToolbarButton
@@ -187,7 +187,7 @@
 						</OverflowToolbarMenuButton>
 
 						<OverflowToolbarButton
-							class="newsButton"
+							class="sapUiDemoKitHeaderActionsNewsButton"
 							icon="sap-icon://bell"
 							press="onNewsButtonPress"
 							text="{i18n>APP_INFORMATION_BTN_NEWS}"

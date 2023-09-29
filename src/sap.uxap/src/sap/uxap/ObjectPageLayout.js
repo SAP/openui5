@@ -2613,7 +2613,7 @@ sap.ui.define([
 			//on mobile, each section and subsection is considered equally (a section is a very tiny subsection containing only a title)
 			if (this._bMobileScenario) {
 				// BCP 1680331690. Should skip subsections that are in a section with lower importance, which makes them hidden.
-				var sectionParent = this.oCore.byId(oSectionBase.getId()).getParent();
+				var sectionParent = oSectionBase.getParent();
 				if (sectionParent instanceof ObjectPageSection && sectionParent._getIsHidden()) {
 					return;
 				}

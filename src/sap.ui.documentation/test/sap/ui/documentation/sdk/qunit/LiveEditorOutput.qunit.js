@@ -4,23 +4,21 @@ sap.ui.define(["sap/ui/thirdparty/URI"],
 		"use strict";
 
 		var sFrameURL = sap.ui.require.toUrl("sap/ui/documentation/sdk/util/liveEditorOutput.html"),
-
-		sXmlSrc = '<mvc:View\n' +
-			'        controllerName="HelloWorld.App"\n' +
-			'        xmlns:mvc="sap.ui.core.mvc"\n' +
-			'        data-sap-ui-theme="sap_fiori_3"\n' +
-			'        xmlns="sap.m">\n' +
-			'    <Page id="myPage" title="My App"/>\n' +
-			'    <Button\n' +
-			'            id="helloButton"\n' +
-			'            visible="false"\n' +
-			'            type="Emphasized"\n' +
-			'            icon="sap-icon://sap-ui5"\n' +
-			'            text="Say Hello"\n' +
-			'            press="onShowHello"\n' +
-			'            class="sapUiSmallMargin"/>\n' +
-			'</mvc:View>',
-
+			sXmlSrc = '<mvc:View\n' +
+				'        controllerName="HelloWorld.App"\n' +
+				'        xmlns:mvc="sap.ui.core.mvc"\n' +
+				'        data-sap-ui-theme="sap_fiori_3"\n' +
+				'        xmlns="sap.m">\n' +
+				'    <Page id="myPage" title="My App"/>\n' +
+				'    <Button\n' +
+				'            id="helloButton"\n' +
+				'            visible="false"\n' +
+				'            type="Emphasized"\n' +
+				'            icon="sap-icon://sap-ui5"\n' +
+				'            text="Say Hello"\n' +
+				'            press="onShowHello"\n' +
+				'            class="sapUiSmallMargin"/>\n' +
+				'</mvc:View>',
 			sControllerSrc = 'sap.ui.define([\n' +
 				'            "sap/ui/core/mvc/Controller",\n' +
 				'            "sap/m/MessageToast"\n' +
@@ -32,7 +30,6 @@ sap.ui.define(["sap/ui/thirdparty/URI"],
 				'                }\n' +
 				'            });\n' +
 				'        });',
-
 			// uses latest api to create the view asynchronously
 			sIndexJs_v1 = 'sap.ui.getCore().attachInit(function () {\n' +
 				'            sap.ui.require(["sap/ui/core/mvc/XMLView"], function(XMLView) {\n' +
@@ -44,15 +41,6 @@ sap.ui.define(["sap/ui/thirdparty/URI"],
 				'                 });\n' +
 				'            });\n' +
 				'         });\n',
-
-			// uses legacy api to create the view synchronously
-			sIndexJs_v2 = 'sap.ui.getCore().attachInit(function () {\n' +
-				'       sap.ui.xmlview({\n' +
-				'          id: "myView2",' +
-				'          viewName: "HelloWorld.App"\n' +
-				'       }).placeAt("content");\n' +
-				'    });\n',
-
 			// uses legacy api to create the view asynchronously
 			sIndexJs_v3 = 'sap.ui.getCore().attachInit(function () {\n' +
 				'       sap.ui.xmlview({\n' +
@@ -61,7 +49,6 @@ sap.ui.define(["sap/ui/thirdparty/URI"],
 				'          viewName: "HelloWorld.App"\n' +
 				'       }).placeAt("content");\n' +
 				'    });\n',
-
 			// throws error in a seaprate task to test error handling
 			sIndexJs_v4 =
 				'    sap.ui.getCore().attachInit(function () {\n' +
@@ -69,7 +56,6 @@ sap.ui.define(["sap/ui/thirdparty/URI"],
 				'          throw new Error("TestErrorMessage");\n' +
 				'       }, 200);\n' +
 				'    });\n',
-
 			// throws error in a micro task to test error handling
 			sIndexJs_v5 =
 				'    sap.ui.getCore().attachInit(function () {\n' +
@@ -170,72 +156,6 @@ sap.ui.define(["sap/ui/thirdparty/URI"],
 					oFrame.contentWindow.postMessage(oData, "*");
 
 					waitForUI5Object(oFrame.contentWindow, "myView1").then(function(oView) {
-						assert.ok(oView, "the view is created");
-
-						oView.loaded().then(function() {
-							checkViewContentCreated(assert, oView);
-							done();
-						});
-					});
-				}
-			};
-
-			oFrame.src = sFrameURL;
-		});
-
-		QUnit.test("loads view content when view created with sap.ui.xmlview", function(assert) {
-
-			var done = assert.async(),
-				oFrame = this.iframe,
-				oData = {
-					src: {
-						'HelloWorld/index.js': sIndexJs_v2,
-						'HelloWorld/App.view.xml': sXmlSrc,
-						'HelloWorld/App.controller.js': sControllerSrc
-					},
-					moduleNameToRequire: "HelloWorld/index"
-				};
-
-			assert.expect(3);
-
-			oFrame.onload = function() {
-				if (oFrame.contentWindow) {
-					oFrame.contentWindow.postMessage(oData, "*");
-
-					waitForUI5Object(oFrame.contentWindow, "myView2").then(function(oView) {
-						assert.ok(oView, "the view is created");
-
-						oView.loaded().then(function() {
-							checkViewContentCreated(assert, oView);
-							done();
-						});
-					});
-				}
-			};
-
-			oFrame.src = sFrameURL;
-		});
-
-		QUnit.test("loads view content when view created with sap.ui.xmlview async", function(assert) {
-
-			var done = assert.async(),
-				oFrame = this.iframe,
-				oData = {
-					src: {
-						'HelloWorld/index.js': sIndexJs_v3,
-						'HelloWorld/App.view.xml': sXmlSrc,
-						'HelloWorld/App.controller.js': sControllerSrc
-					},
-					moduleNameToRequire: "HelloWorld/index"
-				};
-
-			assert.expect(3);
-
-			oFrame.onload = function() {
-				if (oFrame.contentWindow) {
-					oFrame.contentWindow.postMessage(oData, "*");
-
-					waitForUI5Object(oFrame.contentWindow, "myView3").then(function(oView) {
 						assert.ok(oView, "the view is created");
 
 						oView.loaded().then(function() {
@@ -350,6 +270,4 @@ sap.ui.define(["sap/ui/thirdparty/URI"],
 
 			oFrame.src = sFrameURL;
 		});
-
-
 	});

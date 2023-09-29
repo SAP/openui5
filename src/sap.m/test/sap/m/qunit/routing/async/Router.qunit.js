@@ -46,6 +46,12 @@ sap.ui.define([
 		return new (Function.prototype.bind.apply(Router, args))();
 	};
 
+	var fnGetView = function(oRouter, options) {
+		var oViews = oRouter.getViews();
+
+		return oViews.getView(options);
+	};
+
 	QUnit.module("Construction and destruction");
 
 	QUnit.test("Should pass the targetHandler to the targets instance", function (assert) {
@@ -206,13 +212,15 @@ sap.ui.define([
 			helpers.createViewAndController("second"),
 			helpers.createViewAndController("initial")
 		]).then(function () {
-			oRouter.getTargets().display("initial").then(function () {
+			return oRouter.getTargets().display("initial").then(async function () {
 					// Act
 					oRouter.parse("anyPattern");
+					var oView = await fnGetView(oRouter, {viewName: "sap.ui.test.views.second", viewType: "XML"});
+
 					return oRouteMatchedSpy.returnValues[0].then(function () {
 						// Assert
 						assert.strictEqual(fnBackSpy.callCount, 1, "Did execute a back navigation");
-						assert.strictEqual(fnBackSpy.firstCall.args[0], null.getId(), "The second page was target of the back navigation");
+						assert.strictEqual(fnBackSpy.firstCall.args[0], oView.getId(), "The second page was target of the back navigation");
 
 						// Cleanup
 						oRouter.destroy();
@@ -264,7 +272,8 @@ sap.ui.define([
 					}
 				}),
 			fnBackSpy = this.spy(oNavContainer, "backToPage"),
-			oRouteMatchedSpy = sinon.spy(oRouter.getRoute("route"), "_routeMatched");
+			oRouteMatchedSpy = sinon.spy(oRouter.getRoute("route"), "_routeMatched"),
+			oView;
 
 		// views
 		Promise.all([
@@ -272,14 +281,15 @@ sap.ui.define([
 			helpers.createViewAndController("second"),
 			helpers.createViewAndController("third"),
 			helpers.createViewAndController("initial")
-		]).then(function() {
+		]).then(async function() {
+			oView = await fnGetView(oRouter, { viewName: "sap.ui.test.views.third", type: "XML" });
 			oRouter.getTargets().display("initial").then(function () {
 				// Act
 				oRouter.parse("anyPattern");
 				return oRouteMatchedSpy.returnValues[0].then(function () {
 					// Assert
 					assert.strictEqual(fnBackSpy.callCount, 1, "Did execute a back navigation");
-					assert.strictEqual(fnBackSpy.firstCall.args[0], null.getId(), "The second page was target of the back navigation");
+					assert.strictEqual(fnBackSpy.firstCall.args[0], oView.getId(), "The second page was target of the back navigation");
 
 					// Cleanup
 					oRouter.destroy();
@@ -291,7 +301,8 @@ sap.ui.define([
 
 	QUnit.test("Should pass some data to the SplitContainer", function (assert) {
 		//Arrange
-		var fnDone = assert.async();
+		var fnDone = assert.async(),
+			oMasterView;
 
 		helpers.createViewAndController("InitialMaster").then(function(oView) {
 			var oSplitContainer = new SplitContainer({
@@ -313,8 +324,9 @@ sap.ui.define([
 			this.stub(Device.system, "phone").value(false);
 
 			// views
-			helpers.createViewAndController("Master").then(function () {
-				null.addEventDelegate({
+			helpers.createViewAndController("Master").then(async function () {
+				oMasterView = await fnGetView(oRouter, { viewName: "sap.ui.test.views.Master", type: "XML" });
+				oMasterView.addEventDelegate({
 					onBeforeShow: function (oEvent) {
 						data = oEvent.data.id;
 					}
@@ -349,11 +361,13 @@ sap.ui.define([
 				}
 			}),
 			data = null,
-			done = assert.async();
+			done = assert.async(),
+			oView;
 
 		// views
-		helpers.createViewAndController("view1").then(function () {
-			null.addEventDelegate({
+		helpers.createViewAndController("view1").then(async function () {
+			oView = await fnGetView(oRouter, { viewName: "sap.ui.test.views.view1", type: "XML" });
+			oView.addEventDelegate({
 				onBeforeShow: function(oEvent) {
 					data = oEvent.data.id;
 					// Assert
@@ -404,19 +418,23 @@ sap.ui.define([
 			}),
 			oMasterData = null,
 			oDetailData = null,
-			done = assert.async();
+			done = assert.async(),
+			oMasterView,
+			oDetailView;
 
 		// views
 		Promise.all([
 			helpers.createViewAndController("Master"),
 			helpers.createViewAndController("Detail")
-		]).then(function() {
-			null.addEventDelegate({
+		]).then(async function() {
+			oMasterView = await fnGetView(oRouter, { viewName: "sap.ui.test.views.Master", type: "XML" });
+			oDetailView = await fnGetView(oRouter, { viewName: "sap.ui.test.views.Detail", type: "XML" });
+			oMasterView.addEventDelegate({
 				onBeforeShow: function(oEvent) {
 					oMasterData = oEvent.data.id;
 				}
 			});
-			null.addEventDelegate({
+			oDetailView.addEventDelegate({
 				onBeforeShow: function(oEvent) {
 					oDetailData = oEvent.data.id;
 					// Assert

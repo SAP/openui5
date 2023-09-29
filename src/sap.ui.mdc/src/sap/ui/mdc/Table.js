@@ -39,7 +39,7 @@ sap.ui.define([
 	"sap/ui/mdc/p13n/subcontroller/FilterController",
 	"sap/ui/mdc/p13n/subcontroller/GroupController",
 	"sap/ui/mdc/p13n/subcontroller/AggregateController",
-	"sap/ui/mdc/p13n/subcontroller/ColumnWidthController",
+	"sap/m/table/ColumnWidthController",
 	"sap/ui/mdc/actiontoolbar/ActionToolbarAction",
 	"sap/ui/mdc/table/menu/QuickActionContainer",
 	"sap/ui/mdc/table/menu/ItemContainer",
@@ -1392,7 +1392,7 @@ sap.ui.define([
 			Group: new GroupController({control: this}),
 			Filter: new FilterController({control: this}),
 			Aggregate: new AggregateController({control: this}),
-			ColumnWidth: new ColumnWidthController({control: this})
+			ColumnWidth: new ColumnWidthController({control: this, exposeXConfig: true})
 		};
 
 		this.getActiveP13nModes().forEach(function(sMode){

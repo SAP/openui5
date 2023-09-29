@@ -18,7 +18,8 @@ sap.ui.define([
 	"sap/m/Dialog",
 	"sap/m/Table",
 	"sap/ui/core/mvc/XMLView",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate"
 ], function(
 	createAndAppendDiv,
 	Fiori20Adapter,
@@ -38,7 +39,8 @@ sap.ui.define([
 	Dialog,
 	Table,
 	XMLView,
-	Core
+	Core,
+	nextUIUpdate
 ) {
 	"use strict";
 
@@ -1108,7 +1110,7 @@ sap.ui.define([
 		Fiori20Adapter.detachViewChange(oSpy);
 	});
 
-	QUnit.test("First page of nested navContainer is identified on revisit", function(assert) {
+	QUnit.test("First page of nested navContainer is identified on revisit", async function(assert) {
 		var oAdaptOptions = {bMoveTitle: true, bHideBackButton: true, bCollapseHeader: true},
 				sPageTitle,
 				oBackButton,
@@ -1165,6 +1167,7 @@ sap.ui.define([
 		}
 		oSpy.resetHistory();
 		oNestedNavContainer.attachEventOnce("afterNavigate", checkOnAfterNavigateToPage2);
+		await nextUIUpdate();
 		oNestedNavContainer.to("page2");
 	});
 

@@ -27,7 +27,7 @@
             </headerToolbar>
 
             <dependents>
-                <plugins:ColumnResizer/>
+                <plugins:ColumnResizer columnResize="onColumnResize"/>
                 <columnmenu:Menu id="menu" beforeOpen="beforeOpenColumnMenu">
                     <columnmenu:QuickSort change="onSort">
                         <columnmenu:items>
@@ -67,7 +67,7 @@
                 <Column id="city_col" headerMenu="menu">
                     <Text text="City"/>
                 </Column>
-                <Column id="size_col" hAlign="End" visible="false" width="100px" headerMenu="menu">
+                <Column id="size_col" hAlign="End" visible="false" headerMenu="menu">
                     <Text text="Size"/>
                 </Column>
             </columns>

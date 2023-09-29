@@ -3698,7 +3698,7 @@ sap.ui.define([
 					} else {
 						oRowHeader.setProperty(oChanges.name, oChanges.current);
 					}
-					oRowHeader.getAvatar() && oRowHeader.getAvatar().setSrc(oChanges.current);
+					oRowHeader.getAvatar() && oRowHeader.getAvatar().setSrc(oChanges.current).setVisible(!!oChanges.current);
 				},
 				text: function (oChanges) {
 					// Large row style class
@@ -3779,7 +3779,10 @@ sap.ui.define([
 	 * @private
 	 */
 	PlanningCalendar.prototype._createPlanningCalendarListItem = function(oRow) {
-		var oListItem, oRowHeader, oRowTimeline;
+		var oListItem,
+			oRowHeader,
+			oRowTimeline,
+			oIcon = oRow.getIcon();
 
 		//if there's a headerContent in the row or binding - render only the content,
 		//otherwise render PlanningCalendarRowHeader
@@ -3788,10 +3791,11 @@ sap.ui.define([
 		} else {
 			oRowHeader = new PlanningCalendarRowHeader(oRow.getId() + "-Head", {
 				avatar: new Avatar({
-					src: oRow.getIcon(),
-					displayShape: this.getIconShape()
+					src: oIcon,
+					displayShape: this.getIconShape(),
+					visible: !!oIcon
 				}),
-				icon : oRow.getIcon(),
+				icon : oIcon,
 				description : oRow.getText(),
 				title : oRow.getTitle(),
 				tooltip : oRow.getTooltip(),

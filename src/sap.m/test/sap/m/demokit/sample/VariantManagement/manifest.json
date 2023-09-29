@@ -1,0 +1,30 @@
+{
+	"sap.app": {
+		"id": "sap.m.sample.VariantManagement",
+		"type": "application",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.m.sample.VariantManagement.VariantManagement",
+			"type": "XML",
+			"async": true
+		},
+		"dependencies": {
+			"libs": {
+				"sap.ui.layout": {}
+			}
+		},
+		"config": {
+			"sample": {
+				"files": [
+					"VariantManagement.view.xml",
+					"VariantManagement.controller.js",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}

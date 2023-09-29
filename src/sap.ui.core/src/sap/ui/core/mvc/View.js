@@ -490,10 +490,8 @@ sap.ui.define([
 				}
 			}
 		} else if (bAsync) {
-			Controller.extend("sap.ui.core.mvc.EmptyControllerImpl", { "_sap.ui.core.mvc.EmptyControllerImpl": true });
-			return Controller.create({
-				name: "sap.ui.core.mvc.EmptyControllerImpl"
-			}).then(connectToView);
+			const oController = Object.assign(new Controller(), { "_sap.ui.core.mvc.EmptyControllerImpl": true });
+			return Promise.resolve(oController).then(connectToView);
 		} else {
 			sap.ui.controller("sap.ui.core.mvc.EmptyControllerImpl", {"_sap.ui.core.mvc.EmptyControllerImpl":true}); // legacy-relevant: Sync path
 			oThis.oController = sap.ui.controller("sap.ui.core.mvc.EmptyControllerImpl"); // legacy-relevant: Sync path

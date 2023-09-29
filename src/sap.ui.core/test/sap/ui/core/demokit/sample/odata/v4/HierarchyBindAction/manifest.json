@@ -7,7 +7,7 @@
 		},
 		"dataSources" : {
 			"default" : {
-				"uri" : "/sap/opu/odata4/sap/zjb_v4_sadl_rs_hier_bind_act/srvd/sap/zjb_sd_sadl_rs_hier_bind_act/0001/",
+				"uri" : "/sap/opu/odata4/sap/zjb_sadl_rs_hier_dir_v4/srvd/sap/zjb_sadl_rs_hier_dir_sd/0001/",
 				"type" : "OData",
 				"settings" : {
 					"odataVersion" : "4.0"

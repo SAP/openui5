@@ -120,13 +120,12 @@ sap.ui.define([
 	 * Constructor for a new <code>VariantManagement</code>.
 	 * @param {string} [sId] - ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] - Initial settings for the new control
-	 * @class Can be used to manage variants. You can use this control in most controls that are enabled for <i>key user adaptation</i>.<br>
+	 * @class Can be used to manage variants. You can use this control to create and maintain personalization changes.
+	 * The persistency and retrieval of such changes has to be handled by the hosting application.<br>
 	 * <b>Note: </b>On the user interface, variants are generally referred to as "views".
 	 * @extends sap.ui.core.Control
 	 * @constructor
-	 * @experimental As of version 1.103
-	 * @private
-	 * @ui5-restricted sap.ui.fl, sap.ui.rta, sap.ui.comp
+	 * @public
 	 * @since 1.103
 	 * @alias sap.m.VariantManagement
 	 */

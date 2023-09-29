@@ -1784,11 +1784,19 @@ sap.ui.define([
 		Core.applyChanges();
 
 		assert.strictEqual(oRowHeader.getAvatar().getSrc(), oRow.getIcon(), "row header icon is sync with Avatar img");
+		assert.ok(oRowHeader.getAvatar().getVisible(),"Avatar is visible when there is icon set");
+
+		oRow.setIcon();
+		Core.applyChanges();
+
+		assert.strictEqual(oRowHeader.getAvatar().getSrc(), oRow.getIcon(), "row header icon is sync with Avatar img");
+		assert.notOk(oRowHeader.getAvatar().getVisible(),"Avatar is not visible when there is no icon set");
 
 		oRow.setIcon("../../ui/unified/images/m_01.png");
 		Core.applyChanges();
 
 		assert.strictEqual(oRowHeader.getAvatar().getSrc(), oRow.getIcon(), "row header icon is sync with Avatar img");
+		assert.ok(oRowHeader.getAvatar().getVisible(),"Avatar is visible when there is icon set");
 	});
 
 	QUnit.test("specialDates in relative period not rendered", function(assert){

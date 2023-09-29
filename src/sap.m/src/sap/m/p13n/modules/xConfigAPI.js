@@ -210,7 +210,7 @@ sap.ui.define([
 			oConfig.aggregations[sAggregationName][sPropertyInfoKey] = {};
 		}
 
-		if (vValue !== null) {
+		if (vValue !== null || (vValue && vValue.hasOwnProperty("value") && vValue.value !== null)) {
 
 			switch (oModificationPayload.operation) {
 				case "move":

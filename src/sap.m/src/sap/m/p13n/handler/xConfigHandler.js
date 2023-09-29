@@ -54,6 +54,15 @@ sap.ui.define([
 		}
 	}
 
+    function getOperationType(sChangeType) {
+        const aChangeTypes = ["add", "remove", "move", "set"];
+
+        return aChangeTypes.find((sType) => {
+            return sChangeType.indexOf(sType) === 0;
+        });
+
+    }
+
     /**
      * Creates a changehandler specific to the provided aggregation and property name,
      * to enhance the xConfig object for a given mdc control instance.
@@ -86,15 +95,20 @@ sap.ui.define([
                         })
                         .then(function(oPriorAggregationConfig) {
 
-                            var sOperation = oChange.getChangeType().indexOf("add") > -1 ? "add" : "remove";
-                            sOperation = oChange.getChangeType().indexOf("move") === 0 ? "move" : sOperation;
+                            var sOperation = getOperationType(oChange.getChangeType());
 
                             sAffectedAggregation = oChange.getContent().targetAggregation;
 
                             var oRevertData = {
                                 key: oChange.getContent().key
                             };
-                            oRevertData.value = sOperation !== "add";
+
+                            if (sOperation !== "set") {
+                                //In case there is a add/remove operation, flag the revert data as the opposite of the current action (add will be removed as revert and vice versa)
+                                oRevertData.value = sOperation !== "add";
+                            } else {
+                                oRevertData.value = null;
+                            }
 
                             var aCurrentState;
                             if (sOperation === "move") {
@@ -148,8 +162,7 @@ sap.ui.define([
                 },
                 revertChange: function (oChange, oControl, mPropertyBag) {
 
-                    var sOperation = oChange.getChangeType().indexOf("add") > -1 ? "remove" : "add";
-                    sOperation = oChange.getChangeType().indexOf("move") === 0 ? "move" : sOperation;
+                    var sOperation = getOperationType(oChange.getChangeType());
 
                     sAffectedAggregation = oChange.getContent().targetAggregation;
 

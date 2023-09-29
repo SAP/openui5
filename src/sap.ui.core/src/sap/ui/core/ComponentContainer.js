@@ -278,9 +278,10 @@ sap.ui.define([
 	 * @since 1.91
 	 */
 	ComponentContainer.prototype.showPlaceholder = function(mSettings) {
-		var pLoaded;
+		var pLoaded,
+			Placeholder = sap.ui.require("sap/ui/core/Placeholder");
 
-		if (!Configuration.getPlaceholder()) {
+		if (!Placeholder || !Placeholder.isEnabled()) {
 			return;
 		}
 

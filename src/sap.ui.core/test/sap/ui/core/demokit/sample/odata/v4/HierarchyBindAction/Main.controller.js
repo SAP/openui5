@@ -59,7 +59,7 @@ sap.ui.define([
 
 			this._oAggregation = {
 				expandTo : 1,
-				hierarchyQualifier : "R_SADL_RS_HIERVIEW_BIND"
+				hierarchyQualifier : "I_SADL_BHV_BIND_DIR_HIERVIEW"
 			};
 			oRowsBinding.setAggregation(this._oAggregation);
 			oRowsBinding.resume();
@@ -75,6 +75,7 @@ sap.ui.define([
 			if (oListBinding.isSuspended()) {
 				oListBinding.resume();
 			}
+			oSelectDialog.setBindingContext(this.oNode);
 			oSelectDialog.open();
 		},
 
