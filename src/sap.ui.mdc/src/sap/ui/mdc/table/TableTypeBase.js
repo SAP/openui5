@@ -31,6 +31,7 @@ sap.ui.define([
 	const TableTypeBase = Element.extend("sap.ui.mdc.table.TableTypeBase", {
 		metadata: {
 			library: "sap.ui.mdc",
+			"abstract": true,
 			properties: {}
 		}
 	});
@@ -187,7 +188,7 @@ sap.ui.define([
 	};
 
 	// To be implemented in the subclass
-	TableTypeBase.prototype.loadModules = function() {return Promise.reject();};
+	TableTypeBase.prototype.loadModules = function() {return Promise.reject(this + " does not implement #loadModules");};
 	TableTypeBase.prototype.updateTableByProperty = function(sProperty, vValue) {};
 	TableTypeBase.prototype.removeToolbar = function() {};
 	TableTypeBase.prototype.scrollToIndex = function(iIndex) {return Promise.reject();};

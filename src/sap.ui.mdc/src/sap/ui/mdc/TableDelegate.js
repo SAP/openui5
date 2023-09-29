@@ -348,7 +348,7 @@ sap.ui.define([
 			const MultiSelectionPlugin = aModules[0];
 
 			if (oTable.isDestroyed()) {
-				throw new Error("Is destroyed");
+				return Promise.reject("Destroyed");
 			}
 
 			oTable._oTable.addPlugin(new MultiSelectionPlugin({
