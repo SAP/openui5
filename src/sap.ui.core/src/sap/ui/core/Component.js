@@ -3075,7 +3075,7 @@ sap.ui.define([
 		function preload(sComponentName, bAsync) {
 
 			var sController = sComponentName + '.Component',
-				http2 = Configuration.getDepCache(),
+				http2 = Library.isDepCacheEnabled(),
 				sPreloadName,
 				oTransitiveDependencies,
 				aLibs,

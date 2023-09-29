@@ -512,7 +512,7 @@ sap.ui.define([
 			var sFileType = this._getFileType(mOptions.json),
 				sLibPackage = this.name.replace(/\./g, '/'),
 				bEntryModuleExists = !!sap.ui.loader._.getModuleState(sLibPackage + '/library.js'),
-				bHttp2 = Configuration.getDepCache();
+				bHttp2 = Library.isDepCacheEnabled();
 
 			if (sFileType === 'none') {
 				return mOptions.sync ? this : Promise.resolve(this);
@@ -1833,7 +1833,20 @@ sap.ui.define([
 		});
 	};
 
-
+	/**
+	 * Whether dependency cache info files should be loaded instead of preload files.
+	 *
+	 * @private
+	 * @ui5-restricted sap.ui.core
+	 * @returns {boolean} whether dep-cache info files should be loaded
+	 */
+	Library.isDepCacheEnabled = function() {
+		return BaseConfig.get({
+			name: "sapUiXxDepCache",
+			type: BaseConfig.Type.Boolean,
+			external: true
+		});
+	};
 
 	/**
 	 * Currently active preload mode for libraries or falsy value.
