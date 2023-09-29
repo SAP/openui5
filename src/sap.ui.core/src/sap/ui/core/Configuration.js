@@ -910,6 +910,7 @@ sap.ui.define([
 		 * @returns {boolean} true if a Component should load the manifest first
 		 * @public
 		 * @since 1.33.0
+		 * @deprecated As of 1.120, manifest-first is the default for the {@link sap.ui.core.Component.create} factory.
 		 */
 		getManifestFirst : function() {
 			return BaseConfig.get({name: "sapUiManifestFirst", type: BaseConfig.Type.Boolean, external: true});
