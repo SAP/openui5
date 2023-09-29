@@ -48,6 +48,14 @@ sap.ui.define([
 				library: 'sap.tnt',
 				properties: {
 					/**
+					 * Specifies the width of the control.
+					 *
+					 * <Note:> Depending on the theme, there is a minimum width set (16rem for Horizon theme).
+					 * This property can be used to set a bigger width.
+					 * @since 1.120
+					 */
+					width: {type: "sap.ui.core.CSSSize", group: "Dimension"},
+					/**
 					 * Specifies if the control is expanded.
 					 */
 					expanded: {type: 'boolean', group: 'Misc', defaultValue: true},
@@ -109,12 +117,6 @@ sap.ui.define([
 			this.data('sap-ui-fastnavgroup', 'true', true);
 		};
 
-		// event listener for theme changed
-		SideNavigation.prototype.onThemeChanged = function() {
-			this._mThemeParams = null;
-			this._initThemeParams();
-		};
-
 		SideNavigation.prototype.setAggregation = function (aggregationName, object) {
 			if (object && object.attachItemSelect) {
 				object.attachItemSelect(this._itemSelectionHandler.bind(this));
@@ -131,107 +133,25 @@ sap.ui.define([
 		 * @returns {this} this SideNavigation reference for chaining.
 		 */
 		SideNavigation.prototype.setExpanded = function (isExpanded) {
-
 			if (this.getExpanded() === isExpanded) {
 				return this;
 			}
 
 			var that = this,
-				$this = this.$(),
 				itemAggregation = that.getAggregation('item'),
-				fixedItemAggregation = that.getAggregation('fixedItem'),
-				themeParams,
-				expandedWidth,
-				collapsedWidth,
-				width;
+				fixedItemAggregation = that.getAggregation('fixedItem');
 
-			if (!this.getDomRef()) {
-				this.setProperty('expanded', isExpanded);
+			this.setProperty('expanded', isExpanded);
 
-				if (itemAggregation) {
-					itemAggregation.setExpanded(isExpanded);
-				}
-
-				if (fixedItemAggregation) {
-					fixedItemAggregation.setExpanded(isExpanded);
-				}
-
-				return this;
+			if (itemAggregation) {
+				itemAggregation.setExpanded(isExpanded);
 			}
 
-			this.setProperty('expanded', isExpanded, true);
-
-			if (that._hasActiveAnimation) {
-				that._finishAnimation(!isExpanded);
-				$this.stop();
+			if (fixedItemAggregation) {
+				fixedItemAggregation.setExpanded(isExpanded);
 			}
-
-			if (isExpanded) {
-				this.getDomRef().classList.toggle('sapTntSideNavigationNotExpanded', !isExpanded);
-
-				if (itemAggregation) {
-					itemAggregation.setExpanded(isExpanded);
-				}
-
-				if (fixedItemAggregation) {
-					fixedItemAggregation.setExpanded(isExpanded);
-				}
-			}
-
-			that._hasActiveAnimation = true;
-
-			themeParams = this._mThemeParams || {};
-			expandedWidth = themeParams['_sap_tnt_SideNavigation_Width'] || "15rem";
-			collapsedWidth = themeParams['_sap_tnt_SideNavigation_CollapsedWidth'] || "3rem";
-			width = isExpanded ? expandedWidth : collapsedWidth;
-
-			$this.animate({
-					width: width
-				},
-				{
-					duration: 300,
-					complete: function () {
-						var isExpanded = that.getExpanded();
-						that._finishAnimation(isExpanded);
-					}
-				});
 
 			return this;
-		};
-
-		/**
-		 * @private
-		 */
-		SideNavigation.prototype._finishAnimation = function (isExpanded) {
-			if (!this._hasActiveAnimation || !this.getDomRef()) {
-				return;
-			}
-
-			this.getDomRef().classList.toggle('sapTntSideNavigationNotExpandedWidth', !isExpanded);
-
-			if (!isExpanded) {
-				this.getDomRef().classList.toggle('sapTntSideNavigationNotExpanded', !isExpanded);
-
-				if (this.getAggregation('item')) {
-					this.getAggregation('item').setExpanded(isExpanded);
-				}
-
-				if (this.getAggregation('fixedItem')) {
-					this.getAggregation('fixedItem').setExpanded(isExpanded);
-				}
-			}
-
-			this.$().css('width', '');
-			this._hasActiveAnimation = false;
-		};
-
-		SideNavigation.prototype._initThemeParams = function() {
-			this._mThemeParams = Parameters.get({
-				name: ["_sap_tnt_SideNavigation_Width", "_sap_tnt_SideNavigation_CollapsedWidth"],
-				callback: function (mParams) {
-					this._mThemeParams = mParams;
-				}.bind(this)
-			});
 		};
 
 		/**
@@ -245,10 +165,6 @@ sap.ui.define([
 				this.setSelectedKey(selectedKey);
 			} else if (selectedItem) {
 				this.setSelectedItem(selectedItem);
-			}
-
-			if (!this._mThemeParams) {
-				this._initThemeParams();
 			}
 		};
 

@@ -27,19 +27,32 @@
 	border-right: @_sap_tnt_SideNavigation_BorderRight;
 	box-shadow: @_sap_tnt_SideNavigation_BoxShadow;
 	border-radius: @_sap_tnt_SideNavigation_BorderRadius;
+	min-width: @_sap_tnt_SideNavigation_Width;
+	max-width: 100%;
 	width: @_sap_tnt_SideNavigation_Width;
+	transition: width 0.3s, min-width 0.3s;
+}
+
+html[data-sap-ui-animation='off'] .sapTntSideNavigation {
+	transition: none;
 }
 
 html.sap-phone,
 html.sap-tablet:not(html.sap-combi) {
 	.sapTntSideNavigation {
 		border-radius: @_sap_tnt_SideNavigation_PhoneBorderRadius;
+	}
+}
+
+html.sap-phone {
+	.sapTntSideNavigation {
 		width: @_sap_tnt_SideNavigation_PhoneWidth;
 	}
 }
 
 .sapTntSideNavigation.sapTntSideNavigationNotExpandedWidth {
-  width: @_sap_tnt_SideNavigation_CollapsedWidth;
+	min-width: @_sap_tnt_SideNavigation_CollapsedWidth;
+	width: @_sap_tnt_SideNavigation_CollapsedWidth;
 }
 
 .sapTntSideNavigationNotExpanded {
