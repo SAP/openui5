@@ -1473,6 +1473,8 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.model.odata.v4.Context} oContext
 	 *   The context corresponding to the group node
+	 * @param {boolean} [bSilent]
+	 *   Whether no ("change") events should be fired
 	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise that is resolved when the expand is successful and rejected when it fails
 	 * @throws {Error}
@@ -1481,7 +1483,7 @@ sap.ui.define([
 	 * @private
 	 * @see #collapse
 	 */
-	ODataListBinding.prototype.expand = function (oContext) {
+	ODataListBinding.prototype.expand = function (oContext, bSilent) {
 		this.checkSuspended();
 		let bDataRequested = false;
 
@@ -1494,7 +1496,9 @@ sap.ui.define([
 		).then((iCount) => {
 			if (iCount) {
 				this.insertGap(oContext.getModelIndex(), iCount);
-				this._fireChange({reason : ChangeReason.Change});
+				if (!bSilent) {
+					this._fireChange({reason : ChangeReason.Change});
+				}
 			} // else: collapse before expand has finished, oContext already destroyed
 			if (bDataRequested) {
 				this.fireDataReceived({});
@@ -3135,10 +3139,15 @@ sap.ui.define([
 				oChildContext.setCreatedPersisted();
 			}
 			if (bExpanded) {
-				this.expand(oChildContext).unwrap(); // guaranteed to by sync! incl. _fireChange
+				this.expand(oChildContext).unwrap(); // guaranteed to be sync! incl. _fireChange
 			} else {
 				this._fireChange({reason : ChangeReason.Change});
 			}
+		}, (oError) => {
+			if (bExpanded) {
+				this.expand(oChildContext, /*bSilent*/true).unwrap(); // guaranteed to be sync!
+			}
+			throw oError;
 		});
 	};
 
