@@ -1333,4 +1333,104 @@ sap.ui.define([
 		// code under test
 		assert.strictEqual(LocaleData.prototype.getLanguageName.call(oLocaleData, "sr_Latn"), "~SH");
 	});
+
+	/** @deprecated As of version 1.120.0 */
+	QUnit.test("getLanguages: ensure missing entries are added", function (assert) {
+		const oLocaleData = {
+			_get() {},
+			getLanguageName() {}
+		};
+		const oLocaleDataMock = this.mock(oLocaleData);
+		const oLanguages = {de: "~DE", en: "~EN"};
+		oLocaleDataMock.expects("_get").withExactArgs("languages").returns(oLanguages);
+		[
+			"ar_001", "de_AT", "de_CH", "en_AU", "en_CA", "en_GB", "en_US", "es_419", "es_ES", "es_MX", "fa_AF",
+			"fr_CA", "fr_CH", "nds_NL", "nl_BE", "pt_BR", "pt_PT", "ro_MD", "sw_CD", "zh_Hans", "zh_Hant"
+		].forEach((sLanguageTag) => {
+			oLocaleDataMock.expects("getLanguageName").withExactArgs(sLanguageTag).returns("~" + sLanguageTag);
+		});
+		const oExpectedResult = {
+			"de": "~DE",
+			"en": "~EN",
+			"ar_001": "~ar_001",
+			"de_AT": "~de_AT",
+			"de_CH": "~de_CH",
+			"en_AU": "~en_AU",
+			"en_CA": "~en_CA",
+			"en_GB": "~en_GB",
+			"en_US": "~en_US",
+			"es_419": "~es_419",
+			"es_ES": "~es_ES",
+			"es_MX": "~es_MX",
+			"fa_AF": "~fa_AF",
+			"fr_CA": "~fr_CA",
+			"fr_CH": "~fr_CH",
+			"nds_NL": "~nds_NL",
+			"nl_BE": "~nl_BE",
+			"pt_BR": "~pt_BR",
+			"pt_PT": "~pt_PT",
+			"ro_MD": "~ro_MD",
+			"sw_CD": "~sw_CD",
+			"zh_Hans": "~zh_Hans",
+			"zh_Hant": "~zh_Hant"
+		};
+
+		// code under test
+		assert.deepEqual(LocaleData.prototype.getLanguages.call(oLocaleData), oExpectedResult);
+
+		// original languages object has been enhanced - no need to do replacement twice
+		assert.deepEqual(oExpectedResult, oLanguages);
+	});
+
+/** @deprecated As of version 1.120.0 */
+[
+	"ar_001", "de_AT", "de_CH", "en_AU", "en_CA", "en_GB", "en_US", "es_419", "es_ES", "es_MX", "fa_AF",
+	"fr_CA", "fr_CH", "nds_NL", "nl_BE", "pt_BR", "pt_PT", "ro_MD", "sw_CD", "zh_Hans", "zh_Hant"
+].forEach((sLanguageTag) => {
+	QUnit.test(`getLanguages: don't overwrite existing entry ${sLanguageTag}`, function (assert) {
+		const oLocaleData = {
+			_get() {},
+			getLanguageName() {}
+		};
+		const oLocaleDataMock = this.mock(oLocaleData);
+		const oLanguages = {};
+		oLanguages[sLanguageTag] = "~" + sLanguageTag + "_original";
+		oLocaleDataMock.expects("_get").withExactArgs("languages").returns(oLanguages);
+		[
+			"ar_001", "de_AT", "de_CH", "en_AU", "en_CA", "en_GB", "en_US", "es_419", "es_ES", "es_MX", "fa_AF",
+			"fr_CA", "fr_CH", "nds_NL", "nl_BE", "pt_BR", "pt_PT", "ro_MD", "sw_CD", "zh_Hans", "zh_Hant"
+		].forEach((sLanguageTag0) => {
+			if (sLanguageTag0 !== sLanguageTag) {
+				oLocaleDataMock.expects("getLanguageName").withExactArgs(sLanguageTag0).returns("~" + sLanguageTag0);
+			}
+		});
+		const oExpectedResult = {
+			"ar_001": "~ar_001",
+			"de_AT": "~de_AT",
+			"de_CH": "~de_CH",
+			"en_AU": "~en_AU",
+			"en_CA": "~en_CA",
+			"en_GB": "~en_GB",
+			"en_US": "~en_US",
+			"es_419": "~es_419",
+			"es_ES": "~es_ES",
+			"es_MX": "~es_MX",
+			"fa_AF": "~fa_AF",
+			"fr_CA": "~fr_CA",
+			"fr_CH": "~fr_CH",
+			"nds_NL": "~nds_NL",
+			"nl_BE": "~nl_BE",
+			"pt_BR": "~pt_BR",
+			"pt_PT": "~pt_PT",
+			"ro_MD": "~ro_MD",
+			"sw_CD": "~sw_CD",
+			"zh_Hans": "~zh_Hans",
+			"zh_Hant": "~zh_Hant"
+		};
+		oExpectedResult[sLanguageTag] = "~" + sLanguageTag + "_original"; // don't overwrite existing entry
+
+		// code under test
+		assert.deepEqual(LocaleData.prototype.getLanguages.call(oLocaleData), oExpectedResult);
+	});
+});
 });
