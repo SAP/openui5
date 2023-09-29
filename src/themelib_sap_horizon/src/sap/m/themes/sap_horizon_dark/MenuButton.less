@@ -60,9 +60,6 @@
 }
 
 .sapMMenuBtnSplit .sapMSB:not(.sapMBtnDisabled) .sapMBtnInner.sapMBtnEmphasized.sapMBtnActive {
-	padding-right: 0.4375rem;
-	padding-left: 0.4375rem;
-
 	.sapMBtnContent {
 		position: relative;
 		left: 0;
@@ -74,4 +71,22 @@
 		padding-right: 0.3125rem;
 		padding-left: 0.3125rem;
 	}
+	.sapMMenuBtn .sapMBtn:not(.sapMSBArrow) .sapMBtnInner .sapMBtnIcon,
+	.sapMMenuBtn .sapMBtn:not(.sapMSBArrow) .sapMBtnInner .sapMBtnContent {
+		position: relative;
+		top: 0;
+		left: 0;
+	}
+}
+
+.sapMMenuBtn.sapMMenuBtnRegular .sapMBtn:not(.sapMBtnDisabled) .sapMBtnInner.sapMBtnNegative.sapMBtnActive::after {
+	color: @sapUiButtonNegativeActiveTextColor;
+}
+
+.sapMMenuBtn.sapMMenuBtnRegular .sapMBtn:not(.sapMBtnDisabled) .sapMBtnInner.sapMBtnCritical.sapMBtnActive::after {
+	color: @sapUiButtonCriticalActiveTextColor;
+}
+
+.sapMMenuBtn.sapMMenuBtnRegular .sapMBtn:not(.sapMBtnDisabled) .sapMBtnInner.sapMBtnSuccess.sapMBtnActive::after {
+	color: @sapUiButtonSuccessActiveTextColor;
 }
