@@ -298,7 +298,7 @@ function(
 						exclude: true
 					}),
 					/*
-					 * "Less Then Or Equal To" operator
+					 * "Less Than Or Equal To" operator
 					 */
 					lessEqual: new Operator({
 						name: OperatorName.LE,
@@ -331,7 +331,7 @@ function(
 						valueTypes: [OperatorValueType.Self]
 					}),
 					/*
-					 * "NOT Greater Than Or Equal To" operator
+					 * "Not Greater Than Or Equal To" operator
 					 */
 					notGreaterEqual: new Operator({
 						name: OperatorName.NOTGE,
@@ -857,7 +857,7 @@ function(
 						}
 					}),
 					/*
-					 * "Forth Quarter" operator
+					 * "Fourth Quarter" operator
 					 */
 					quarter4: new RangeOperator({
 						name: OperatorName.QUARTER4,

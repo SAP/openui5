@@ -15,21 +15,21 @@ sap.ui.define(function() {
 	 */
 	const OperatorName = {
 		/**
-		* "Equal to" operator
+		* "equal to" operator
 		*
-		* Depending on the used <code>DisplayFormat</code> the key, the description or both is used as output of formatting in parsing.
+		* Depending on the used <code>DisplayFormat</code>, the key, the description, or both are used as output of formatting during parsing.
 		*
 		* The operator is available for all data types.
 		*
-		* If a {@link sap.m.DynamicDateRange DynamicDateRange} control is used for the output the operator is mapped to the <code>DATE</code> option if a date type is used
-		* and to the <code>DATETIME</code> option if a datetime type is used.
+		* If a {@link sap.m.DynamicDateRange DynamicDateRange} control is used for the output, the operator is mapped to the <code>DATE</code> option if a date type is used
+		* and to the <code>DATETIME</code> option if a date/time type is used.
 		* @since 1.73.0
 		* @public
 		*/
 		EQ: "EQ",
 
 		/**
-		 * "Not Equal To" operator
+		 * "not equal to" operator
 		 *
 		 * The operator is available for all types.
 		 * @since 1.73.0
@@ -38,112 +38,112 @@ sap.ui.define(function() {
 		NE: "NE",
 
 		/**
-		 * "Between" operator
+		 * "between" operator
 		 *
-		 * There is no validation if the first value is less than the second value as the comparison would be type dependent and cannot performed
+		 * There is no validation if the first value is less than the second value as the comparison would be type-dependent and cannot be performed
 		 * in a generic way.
 		 *
-		 * The operator is available for string, numeric, date, time and datetime types.
+		 * The operator is available for string, numeric, date, time, and date/time types.
 		 *
-		 * If a {@link sap.m.DynamicDateRange DynamicDateRange} control is used for the output the operator is mapped to the <code>DATERANGE</code> option if a date type is used
-		 * and to the <code>DATETIMERANGE</code> option if a datetime type is used.
+		 * If a {@link sap.m.DynamicDateRange DynamicDateRange} control is used for the output, the operator is mapped to the <code>DATERANGE</code> option if a date type is used
+		 * and to the <code>DATETIMERANGE</code> option if a date/time type is used.
 		 * @since 1.73.0
 		 * @public
 		 */
 		BT: "BT",
 
 		/**
-		 * "Not Between" operator
+		 * "not between" operator
 		 *
-		 * There is no validation if the first value is less than the second value as the comparison would be type dependent and cannot performed
+		 * There is no validation if the first value is less than the second value as the comparison would be type-dependent and cannot be performed
 		 * in a generic way.
 		 *
-		 * The operator is available for string, numeric, date, time and datetime types.
+		 * The operator is available for string, numeric, date, time, and date/time types.
 		 * @since 1.73.0
 		 * @public
 		 */
 		NOTBT: "NOTBT",
 
 		/**
-		 * "Less Than" operator
+		 * "less than" operator
 		 *
-		 * The operator is available for string, numeric, date, time and datetime types.
+		 * The operator is available for string, numeric, date, time, and date/time types.
 		 * @since 1.73.0
 		 * @public
 		 */
 		LT: "LT",
 
 		/**
-		 * "Not Less Than" operator
+		 * "not less than" operator
 		 *
-		 * The operator is available for string, numeric, date, time and datetime types.
+		 * The operator is available for string, numeric, date, time, and date/time types.
 		 * @since 1.73.0
 		 * @public
 		 */
 		NOTLT: "NOTLT",
 
 		/**
-		 * "Greater Than" operator
+		 * "greater than" operator
 		 *
-		 * The operator is available for string, numeric, date, time and datetime types.
+		 * The operator is available for string, numeric, date, time, and date/time types.
 		 * @since 1.73.0
 		 * @public
 		*/
 		GT: "GT",
 
 		/**
-		 * "Not Greater Than" operator
+		 * "not greater than" operator
 		 *
-		 * The operator is available for string, numeric, date, time and datetime types.
+		 * The operator is available for string, numeric, date, time, and date/time types.
 		 * @since 1.73.0
 		 * @public
 		 */
 		NOTGT: "NOTGT",
 
 		/**
-		 * "Less Then Or Equal To" operator
+		 * "less than or equal to" operator
 		 *
-		 * The operator is available for string, numeric, date, time and datetime types.
+		 * The operator is available for string, numeric, date, time, and date/time types.
 		 *
-		 * If a {@link sap.m.DynamicDateRange DynamicDateRange} control is used for the output the operator is mapped to the <code>TO</code> option if a date type is used
-		 * and to the <code>TODATETIME</code> option if a datetime type is used.
+		 * If a {@link sap.m.DynamicDateRange DynamicDateRange} control is used for the output the operator, is mapped to the <code>TO</code> option if a date type is used
+		 * and to the <code>TODATETIME</code> option if a date/time type is used.
 		 * @since 1.73.0
 		 * @public
 		 */
 		LE: "LE",
 
 		/**
-		 * "Not Less Than Or Equal To" operator
+		 * "not less than or equal to" operator
 		 *
-		 * The operator is available for string, numeric, date, time and datetime types.
+		 * The operator is available for string, numeric, date, time, and date/time types.
 		 * @since 1.73.0
 		 * @public
 		 */
 		NOTLE: "NOTLE",
 
 		/**
-		 * "Greater Than Or Equal To" operator
+		 * "greater than or equal to" operator
 		 *
-		 * The operator is available for string, numeric, date, time and datetime types.
+		 * The operator is available for string, numeric, date, time, and date/time types.
 		 *
-		 * If a {@link sap.m.DynamicDateRange DynamicDateRange} control is used for the output the operator is mapped to the <code>FROM</code> option if a date type is used
-		 * and to the <code>FROMDATETIME</code> option if a datetime type is used.
+		 * If a {@link sap.m.DynamicDateRange DynamicDateRange} control is used for the output the operator, is mapped to the <code>FROM</code> option if a date type is used
+		 * and to the <code>FROMDATETIME</code> option if a date/time type is used.
 		 * @since 1.73.0
 		 * @public
 		 */
 		GE: "GE",
 
 		/**
-		 * "NOT Greater Than Or Equal To" operator
+		 * "not greater than or equal to" operator
 		 *
-		 * The operator is available for string, numeric, date, time and datetime types.
+		 * The operator is available for string, numeric, date, time, and date/time types.
 		 * @since 1.73.0
 		 * @public
 		 */
 		NOTGE: "NOTGE",
 
 		/**
-		 * "Starts With" operator
+		 * "starts with" operator
 		 *
 		 * The operator is available for string types.
 		 * @since 1.73.0
@@ -152,7 +152,7 @@ sap.ui.define(function() {
 		StartsWith: "StartsWith",
 
 		/**
-		 * "Does Not Start With" operator
+		 * "does not start with" operator
 		 *
 		 * The operator is available for string types.
 		 * @since 1.73.0
@@ -161,7 +161,7 @@ sap.ui.define(function() {
 		NotStartsWith: "NotStartsWith",
 
 		/**
-		 * "Ends With" operator
+		 * "ends with" operator
 		 *
 		 * The operator is available for string types.
 		 * @since 1.73.0
@@ -170,7 +170,7 @@ sap.ui.define(function() {
 		EndsWith: "EndsWith",
 
 		/**
-		 * "Does Not End With" operator
+		 * "does not end with" operator
 		 *
 		 * The operator is available for string types.
 		 * @since 1.73.0
@@ -179,7 +179,7 @@ sap.ui.define(function() {
 		NotEndsWith: "NotEndsWith",
 
 		/**
-		 * "Contains" operator
+		 * "contains" operator
 		 *
 		 * The operator is available for string types.
 		 * @since 1.73.0
@@ -188,7 +188,7 @@ sap.ui.define(function() {
 		Contains: "Contains",
 
 		/**
-		 * "Does Not Contain" operator
+		 * "does not contain" operator
 		 *
 		 * The operator is available for string types.
 		 * @since 1.73.0
@@ -197,7 +197,7 @@ sap.ui.define(function() {
 		NotContains: "NotContains",
 
 		/**
-		 * "Empty" operator
+		 * "empty" operator
 		 *
 		 * The operator is available for string types.
 		 * @since 1.73.0
@@ -206,7 +206,7 @@ sap.ui.define(function() {
 		Empty: "Empty",
 
 		/**
-		 * "Not Empty" operator
+		 * "not empty" operator
 		 *
 		 * The operator is available for string types.
 		 * @since 1.73.0
@@ -217,7 +217,7 @@ sap.ui.define(function() {
 		/**
 		 * "Yesterday" operator
 		 *
-		 * The operator is available for date and datetime types.
+		 * The operator is available for date and date/time types.
 		 * @since 1.74.0
 		 * @public
 		 */
@@ -226,7 +226,7 @@ sap.ui.define(function() {
 		/**
 		 * "Today" operator
 		 *
-		 * The operator is available for date and datetime types.
+		 * The operator is available for date and date/time types.
 		 * @since 1.74.0
 		 * @public
 		 */
@@ -235,7 +235,7 @@ sap.ui.define(function() {
 		/**
 		 * "Tomorrow" operator
 		 *
-		 * The operator is available for date and datetime types.
+		 * The operator is available for date and date/time types.
 		 * @since 1.74.0
 		 * @public
 		 */
@@ -244,88 +244,88 @@ sap.ui.define(function() {
 		/**
 		 * "Last X Days" operator
 		 *
-		 * The operator is available for date and datetime types.
+		 * The operator is available for date and date/time types.
 		 * @since 1.74.0
 		 * @public
 		 */
 		LASTDAYS: "LASTDAYS",
 
 		/**
-		 * "First Date In This Week" operator
+		 * "First Day in This Week" operator
 		 *
-		 * The operator is available for date and datetime types.
+		 * The operator is available for date and date/time types.
 		 * @since 1.99.0
 		 * @public
 		 */
 		FIRSTDAYWEEK: "FIRSTDAYWEEK",
 
 		/**
-		 * "Last Date In This Week" operator
+		 * "Last Day in This Week" operator
 		 *
-		 * The operator is available for date and datetime types.
+		 * The operator is available for date and date/time types.
 		 * @since 1.99.0
 		 * @public
 		 */
 		LASTDAYWEEK: "LASTDAYWEEK",
 
 		/**
-		 * "First Date In This Month" operator
+		 * "First Day in This Month" operator
 		 *
-		 * The operator is available for date and datetime types.
+		 * The operator is available for date and date/time types.
 		 * @since 1.99.0
 		 * @public
 		 */
 		FIRSTDAYMONTH: "FIRSTDAYMONTH",
 
 		/**
-		 * "Last Date In This Month" operator
+		 * "Last Day in This Month" operator
 		 *
-		 * The operator is available for date and datetime types.
+		 * The operator is available for date and date/time types.
 		 * @since 1.99.0
 		 * @public
 		 */
 		LASTDAYMONTH: "LASTDAYMONTH",
 
 		/**
-		 * "First Date In This Quarter" operator
+		 * "First Day in This Quarter" operator
 		 *
-		 * The operator is available for date and datetime types.
+		 * The operator is available for date and date/time types.
 		 * @since 1.99.0
 		 * @public
 		 */
 		FIRSTDAYQUARTER: "FIRSTDAYQUARTER",
 
 		/**
-		 * "Last Date In This Quarter" operator
+		 * "Last Day in This Quarter" operator
 		 *
-		 * The operator is available for date and datetime types.
+		 * The operator is available for date and date/time types.
 		 * @since 1.99.0
 		 * @public
 		 */
 		LASTDAYQUARTER: "LASTDAYQUARTER",
 
 		/**
-		 * "First Date In This Year" operator
+		 * "First Day in This Year" operator
 		 *
-		 * The operator is available for date and datetime types.
+		 * The operator is available for date and date/time types.
 		 * @since 1.99.0
 		 * @public
 		 */
 		FIRSTDAYYEAR: "FIRSTDAYYEAR",
 
 		/**
-		 * "Last Date In This Year" operator
+		 * "Last Day in This Year" operator
 		 *
-		 * The operator is available for date and datetime types.
+		 * The operator is available for date and date/time types.
 		 * @since 1.99.0
 		 * @public
 		 */
 		LASTDAYYEAR: "LASTDAYYEAR",
 
 		/**
-		 * "Today -X/ +Y days" operator
+		 * "Today -X / +Y Days" operator
 		 *
-		 * The operator is available for date and datetime types.
+		 * The operator is available for date and date/time types.
 		 * @since 1.86.0
 		 * @public
 		 */
@@ -334,7 +334,7 @@ sap.ui.define(function() {
 		/**
 		 * "Next X Days" operator
 		 *
-		 * The operator is available for date and datetime types.
+		 * The operator is available for date and date/time types.
 		 * @since 1.74.0
 		 * @public
 		 */
@@ -343,7 +343,7 @@ sap.ui.define(function() {
 		/**
 		 * "Last Week" operator
 		 *
-		 * The operator is available for date and datetime types.
+		 * The operator is available for date and date/time types.
 		 * @since 1.74.0
 		 * @public
 		 */
@@ -352,7 +352,7 @@ sap.ui.define(function() {
 		/**
 		 * "This Week" operator
 		 *
-		 * The operator is available for date and datetime types.
+		 * The operator is available for date and date/time types.
 		 * @since 1.86.0
 		 * @public
 		 */
@@ -361,7 +361,7 @@ sap.ui.define(function() {
 		/**
 		 * "Next Week" operator
 		 *
-		 * The operator is available for date and datetime types.
+		 * The operator is available for date and date/time types.
 		 * @since 1.74.0
 		 * @public
 		 */
@@ -370,7 +370,7 @@ sap.ui.define(function() {
 		/**
 		 * "Last X Weeks" operator
 		 *
-		 * The operator is available for date and datetime types.
+		 * The operator is available for date and date/time types.
 		 * @since 1.74.0
 		 * @public
 		 */
@@ -379,7 +379,7 @@ sap.ui.define(function() {
 		/**
 		 * "Next X Weeks" operator
 		 *
-		 * The operator is available for date and datetime types.
+		 * The operator is available for date and date/time types.
 		 * @since 1.74.0
 		 * @public
 		 */
@@ -388,7 +388,7 @@ sap.ui.define(function() {
 		/**
 		 * "Last Month" operator
 		 *
-		 * The operator is available for date and datetime types.
+		 * The operator is available for date and date/time types.
 		 * @since 1.74.0
 		 * @public
 		 */
@@ -397,7 +397,7 @@ sap.ui.define(function() {
 		/**
 		 * "This Month" operator
 		 *
-		 * The operator is available for date and datetime types.
+		 * The operator is available for date and date/time types.
 		 * @since 1.86.0
 		 * @public
 		 */
@@ -406,7 +406,7 @@ sap.ui.define(function() {
 		/**
 		 * "Next Month" operator
 		 *
-		 * The operator is available for date and datetime types.
+		 * The operator is available for date and date/time types.
 		 * @since 1.74.0
 		 * @public
 		 */
@@ -415,7 +415,7 @@ sap.ui.define(function() {
 		/**
 		 * "Last X Months" operator
 		 *
-		 * The operator is available for date and datetime types.
+		 * The operator is available for date and date/time types.
 		 * @since 1.74.0
 		 * @public
 		 */
@@ -424,7 +424,7 @@ sap.ui.define(function() {
 		/**
 		 * "Next X Months" operator
 		 *
-		 * The operator is available for date and datetime types.
+		 * The operator is available for date and date/time types.
 		 * @since 1.74.0
 		 * @public
 		 */
@@ -433,7 +433,7 @@ sap.ui.define(function() {
 		/**
 		 * "Last Quarter" operator
 		 *
-		 * The operator is available for date and datetime types.
+		 * The operator is available for date and date/time types.
 		 * @since 1.74.0
 		 * @public
 		 */
@@ -442,7 +442,7 @@ sap.ui.define(function() {
 		/**
 		 * "This Quarter" operator
 		 *
-		 * The operator is available for date and datetime types.
+		 * The operator is available for date and date/time types.
 		 * @since 1.86.0
 		 * @public
 		 */
@@ -451,7 +451,7 @@ sap.ui.define(function() {
 		/**
 		 * "Next Quarter" operator
 		 *
-		 * The operator is available for date and datetime types.
+		 * The operator is available for date and date/time types.
 		 * @since 1.74.0
 		 * @public
 		 */
@@ -460,7 +460,7 @@ sap.ui.define(function() {
 		/**
 		 * "Last X Quarters" operator
 		 *
-		 * The operator is available for date and datetime types.
+		 * The operator is available for date and date/time types.
 		 * @since 1.74.0
 		 * @public
 		 */
@@ -469,7 +469,7 @@ sap.ui.define(function() {
 		/**
 		 * "Next X Quarters" operator
 		 *
-		 * The operator is available for date and datetime types.
+		 * The operator is available for date and date/time types.
 		 * @since 1.74.0
 		 * @public
 		 */
@@ -478,7 +478,7 @@ sap.ui.define(function() {
 		/**
 		 * "First Quarter" operator
 		 *
-		 * The operator is available for date and datetime types.
+		 * The operator is available for date and date/time types.
 		 * @since 1.86.0
 		 * @public
 		 */
@@ -487,7 +487,7 @@ sap.ui.define(function() {
 		/**
 		 * "Second Quarter" operator
 		 *
-		 * The operator is available for date and datetime types.
+		 * The operator is available for date and date/time types.
 		 * @since 1.86.0
 		 * @public
 		 */
@@ -496,16 +496,16 @@ sap.ui.define(function() {
 		/**
 		 * "Third Quarter" operator
 		 *
-		 * The operator is available for date and datetime types.
+		 * The operator is available for date and date/time types.
 		 * @since 1.86.0
 		 * @public
 		 */
 		QUARTER3: "QUARTER3",
 
 		/**
-		 * "Forth Quarter" operator
+		 * "Fourth Quarter" operator
 		 *
-		 * The operator is available for date and datetime types.
+		 * The operator is available for date and date/time types.
 		 * @since 1.86.0
 		 * @public
 		 */
@@ -514,7 +514,7 @@ sap.ui.define(function() {
 		/**
 		 * "Last Year" operator
 		 *
-		 * The operator is available for date and datetime types.
+		 * The operator is available for date and date/time types.
 		 * @since 1.74.0
 		 * @public
 		 */
@@ -523,7 +523,7 @@ sap.ui.define(function() {
 		/**
 		 * "This Year" operator
 		 *
-		 * The operator is available for date and datetime types.
+		 * The operator is available for date and date/time types.
 		 * @since 1.86.0
 		 * @public
 		 */
@@ -532,7 +532,7 @@ sap.ui.define(function() {
 		/**
 		 * "Next Year" operator
 		 *
-		 * The operator is available for date and datetime types.
+		 * The operator is available for date and date/time types.
 		 * @since 1.74.0
 		 * @public
 		 */
@@ -541,7 +541,7 @@ sap.ui.define(function() {
 		/**
 		 * "Last X Years" operator
 		 *
-		 * The operator is available for date and datetime types.
+		 * The operator is available for date and date/time types.
 		 * @since 1.74.0
 		 * @public
 		 */
@@ -550,7 +550,7 @@ sap.ui.define(function() {
 		/**
 		 * "Next X Years" operator
 		 *
-		 * The operator is available for date and datetime types.
+		 * The operator is available for date and date/time types.
 		 * @since 1.74.0
 		 * @public
 		 */
@@ -559,34 +559,34 @@ sap.ui.define(function() {
 		/**
 		 * "Month" operator
 		 *
-		 * The operator is available for date and datetime types.
+		 * The operator is available for date and date/time types.
 		 * @since 1.85.0
 		 * @public
 		 */
 		SPECIFICMONTH: "SPECIFICMONTH",
 
 		/**
-		 * "Month In Year" operator
+		 * "Month in Year" operator
 		 *
-		 * The operator is available for date and datetime types.
+		 * The operator is available for date and date/time types.
 		 * @since 1.99.0
 		 * @public
 		 */
 		SPECIFICMONTHINYEAR: "SPECIFICMONTHINYEAR",
 
 		/**
-		 * "Year To Date" operator
+		 * "Year to Date" operator
 		 *
-		 * The operator is available for date and datetime types.
+		 * The operator is available for date and date/time types.
 		 * @since 1.74.0
 		 * @public
 		 */
 		YEARTODATE: "YEARTODATE",
 
 		/**
-		 * "Date To Year" operator
+		 * "Date to Year" operator
 		 *
-		 * The operator is available for date and datetime types.
+		 * The operator is available for date and date/time types.
 		 * @since 1.99.0
 		 * @public
 		 */
@@ -595,7 +595,7 @@ sap.ui.define(function() {
 		/**
 		 * "Last X Minutes" operator
 		 *
-		 * The operator is available for datetime types.
+		 * The operator is available for date/time types.
 		 * @since 1.112.0
 		 * @public
 		 */
@@ -604,7 +604,7 @@ sap.ui.define(function() {
 		/**
 		 * "Next X Minutes" operator
 		 *
-		 * The operator is available for datetime types.
+		 * The operator is available for date/time types.
 		 * @since 1.112.0
 		 * @public
 		 */
@@ -613,7 +613,7 @@ sap.ui.define(function() {
 		/**
 		 * "Last X Hours" operator
 		 *
-		 * The operator is available for datetime types.
+		 * The operator is available for date/time types.
 		 * @since 1.112.0
 		 * @public
 		 */
@@ -622,7 +622,7 @@ sap.ui.define(function() {
 		/**
 		 * "Next X Hours" operator
 		 *
-		 * The operator is available for datetime types.
+		 * The operator is available for date/time types.
 		 * @since 1.112.0
 		 * @public
 		 */
