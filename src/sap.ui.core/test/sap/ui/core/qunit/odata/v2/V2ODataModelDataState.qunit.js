@@ -15,9 +15,10 @@ sap.ui.define([
 	"sap/ui/model/DataState",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/odata/v2/ODataModel",
+	"sap/ui/model/type/Currency",
 	"sap/ui/model/type/Float"
 ], function(deepEqual, deepExtend, Button, Input, Text, Configuration, library, Messaging, ControlMessageProcessor,
-		Message, MockServer, VerticalLayout, DataState, JSONModel, ODataModel, Float) {
+		Message, MockServer, VerticalLayout, DataState, JSONModel, ODataModel, Currency, Float) {
 	"use strict";
 
 	// shortcut for sap.ui.core.MessageType
@@ -1565,7 +1566,7 @@ sap.ui.define([
 					{ path: "/ProductSet('AD-1000')/Price" },
 					{ path: "/ProductSet('AD-1000')/CurrencyCode" }
 				],
-				type: 'sap.ui.model.type.Currency'
+				type: Currency.getMetadata().getName()
 			}
 		});
 		//let the message manager control the vertical layout for messages
