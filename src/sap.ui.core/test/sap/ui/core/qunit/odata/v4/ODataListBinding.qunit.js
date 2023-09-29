@@ -10181,6 +10181,69 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("isAncestorOf: Missing recursive hierarchy", function (assert) {
+		const oBinding1 = this.bindList("/EMPLOYEES");
+		assert.throws(function () {
+			// code under test
+			oBinding1.isAncestorOf();
+		}, new Error("Missing recursive hierarchy"));
+
+		const oBinding2 = this.bindList("/EMPLOYEES", undefined, undefined, undefined,
+			{$$aggregation : {}}); // Note: no hierarchyQualifier!
+		assert.throws(function () {
+			// code under test
+			oBinding2.isAncestorOf();
+		}, new Error("Missing recursive hierarchy"));
+	});
+
+	//*********************************************************************************************
+[0, 1].forEach((iIndex) => {
+	const sTitle = `isAncestorOf: Not currently part of a recursive hierarchy; iIndex = ${iIndex}`;
+
+	QUnit.test(sTitle, function (assert) {
+		const oBinding = this.bindList("/EMPLOYEES");
+		// Note: autoExpandSelect at model would be required for hierarchyQualifier, but that leads
+		// too far :-(
+		oBinding.mParameters = {$$aggregation : {hierarchyQualifier : "X"}};
+		const oAncestor = {
+			iIndex : iIndex, // 1 is correct
+			toString : () => "~oAncestor~"
+		};
+		oBinding.aContexts[1] = oAncestor;
+		const oDescendant = {
+			iIndex : 42, // 42 always wrong
+			toString : () => "~oDescendant~"
+		};
+
+		assert.throws(function () {
+			// code under test
+			oBinding.isAncestorOf(oAncestor, oDescendant);
+		}, new Error("Not currently part of a recursive hierarchy: "
+			 + (iIndex ? "~oDescendant~" : "~oAncestor~")));
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("isAncestorOf", function (assert) {
+		const oBinding = this.bindList("/EMPLOYEES");
+		// Note: autoExpandSelect at model would be required for hierarchyQualifier, but that leads
+		// too far :-(
+		oBinding.mParameters = {$$aggregation : {hierarchyQualifier : "X"}};
+		const oAncestor = {iIndex : 23};
+		oBinding.aContexts[23] = oAncestor;
+		const oDescendant = {iIndex : 42};
+		oBinding.aContexts[42] = oDescendant;
+		oBinding.oCache = {
+			isAncestorOf : mustBeMocked
+		};
+		this.mock(oBinding.oCache).expects("isAncestorOf").withExactArgs(23, 42)
+			.returns("~result~");
+
+		// code under test
+		assert.strictEqual(oBinding.isAncestorOf(oAncestor, oDescendant), "~result~");
+	});
+
+	//*********************************************************************************************
 	QUnit.test("restoreCreated", function (assert) {
 		var oBinding = this.bindList("/EMPLOYEES"),
 			oCache = {
