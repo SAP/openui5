@@ -14,6 +14,7 @@ sap.ui.define([
 
 	var WaiterBase = UI5Object.extend("sap.ui.test.autowaiter.WaiterBase", {
 		constructor: function () {
+			UI5Object.call(this);
 			this._mConfig = this._getDefaultConfig();
 			this._sName = this.getMetadata().getName();
 			this._oLogger = _OpaLogger.getLogger(this._sName);

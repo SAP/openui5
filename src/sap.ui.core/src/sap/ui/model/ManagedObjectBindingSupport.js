@@ -330,8 +330,8 @@ sap.ui.define([
 			}
 
 			if (this.isBound(sName)) {
-				var oBindingInfo = this.mBindingInfos[sName],
-					oBinding = oBindingInfo.binding;
+				oBindingInfo = this.mBindingInfos[sName];
+				oBinding = oBindingInfo.binding;
 
 				// If property change was triggered by the model, don't update the model again
 				if (oBindingInfo.skipModelUpdate || (oBinding && oBinding.isSuspended())) {

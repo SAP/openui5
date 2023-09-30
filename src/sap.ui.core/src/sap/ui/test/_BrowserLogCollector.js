@@ -27,6 +27,7 @@ sap.ui.define([
 
 	var _BrowserLogCollector = UI5Object.extend("sap.ui.test._BrowserLogCollector", {
 		constructor: function () {
+			UI5Object.call(this);
 			this._console = {};
 			this._logs = [];
 		},

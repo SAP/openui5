@@ -55,8 +55,8 @@ sap.ui.define([
 	var LocaleData = BaseObject.extend("sap.ui.core.LocaleData", /** @lends sap.ui.core.LocaleData.prototype */ {
 
 		constructor: function(oLocale) {
-			this.oLocale = Locale._getCoreLocale(oLocale);
 			BaseObject.apply(this);
+			this.oLocale = Locale._getCoreLocale(oLocale);
 			var oDataLoaded = getData(this.oLocale);
 			this.mData = oDataLoaded.mData;
 			this.sCLDRLocaleId = oDataLoaded.sCLDRLocaleId;

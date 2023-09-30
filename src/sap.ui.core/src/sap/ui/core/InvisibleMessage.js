@@ -40,6 +40,7 @@ function (coreLibrary, ManagedObject, Log, StaticArea) {
 	var InvisibleMessage = ManagedObject.extend("sap.ui.core.InvisibleMessage", /** @lends sap.ui.core.InvisibleMessage.prototype */ {
 
 		constructor: function () {
+			ManagedObject.apply(this, arguments);
 			if (oInstance) {
 				Log.warning('This is a singleton, therefore you are not able to create another instance of this class.');
 
@@ -47,8 +48,6 @@ function (coreLibrary, ManagedObject, Log, StaticArea) {
 			}
 
 			oInstance = this;
-
-			ManagedObject.apply(this, arguments);
 		}
 	});
 
