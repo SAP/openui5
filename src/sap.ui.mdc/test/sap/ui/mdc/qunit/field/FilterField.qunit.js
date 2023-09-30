@@ -94,9 +94,9 @@ sap.ui.define([
 		assert.ok(oContent, "default content exist");
 		assert.equal(oContent && oContent.getMetadata().getName(), "sap.ui.mdc.field.FieldMultiInput", "sap.ui.mdc.field.FieldMultiInput is default");
 		assert.ok(oContent.getShowValueHelp(), "valueHelp used");
-		assert.equal(oFilterField._sDefaultFieldHelp, "Field-DefineConditions-Help", "Default Field help set");
-		const oFieldHelp = oCore.byId(oFilterField._sDefaultFieldHelp);
-		assert.ok(oFieldHelp && oFieldHelp instanceof ValueHelp, "ValueHelp used");
+		assert.equal(oFilterField._sDefaultValueHelp, "Field-DefineConditions-Help", "Default Field help set");
+		const oValueHelp = oCore.byId(oFilterField._sDefaultValueHelp);
+		assert.ok(oValueHelp && oValueHelp instanceof ValueHelp, "ValueHelp used");
 
 	});
 

@@ -3,22 +3,20 @@
  */
 sap.ui.define([
 	'sap/ui/core/Control',
-	'sap/ui/core/Core',
-	'sap/ui/core/UIArea',
+	'sap/ui/core/Lib',
+	'sap/ui/core/StaticArea',
 	'sap/m/Toolbar',
 	'sap/m/Button',
 	'sap/m/ResponsivePopover',
-	'sap/m/ToolbarSpacer',
-	"sap/ui/core/StaticArea"
+	'sap/m/ToolbarSpacer'
 ], function(
 	Control,
-	oCore,
-	UIArea,
+	Library,
+	StaticArea,
 	Toolbar,
 	Button,
 	ResponsivePopover,
-	ToolbarSpacer,
-	StaticArea
+	ToolbarSpacer
 ) {
 	"use strict";
 
@@ -86,7 +84,7 @@ sap.ui.define([
 	ColumnHeaderPopover.prototype._createPopover = function() {
 		var that = this;
 		this._oShownCustomContent = null;
-		var oBundle = oCore.getLibraryResourceBundle("sap.m"),
+		var oBundle = Library.getResourceBundleFor("sap.m"),
 			sCloseText = oBundle.getText("COLUMNHEADERPOPOVER_CLOSE_BUTTON");
 
 		var oPopover = new ResponsivePopover(this.getId() + "-popover", {
@@ -171,8 +169,7 @@ sap.ui.define([
 		this._oToolbar.addContent(this._closeBtn);
 		// Append to static area of the UIArea once
 		if (!this._bAppendedToUIArea && !this.getParent()) {
-			var oStatic = StaticArea.getDomRef()/* LFUI5: Check: StaticArea's API might have a better fit for your use case. */;
-			oStatic = UIArea.registry.get(oStatic.id);
+			var oStatic = StaticArea.getUIArea();
 			oStatic.addContent(this, true);
 			this._bAppendedToUIArea = true;
 		}

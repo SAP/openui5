@@ -14,11 +14,10 @@ sap.ui.define([
 	"sap/ui/base/Event",
 	"sap/ui/core/Item",
 	"sap/ui/core/Core",
-	"sap/ui/core/UIArea",
+	"sap/ui/core/StaticArea",
 	"sap/ui/layout/GridData",
 	"sap/ui/Device",
-	"sap/ui/dom/containsOrEquals",
-	"sap/ui/core/StaticArea"
+	"sap/ui/dom/containsOrEquals"
 ], function(
 	QUnitUtils,
 	createAndAppendDiv,
@@ -34,11 +33,10 @@ sap.ui.define([
 	Event,
 	CoreItem,
 	oCore,
-	UIArea,
+	StaticArea,
 	GridData,
 	Device,
-	containsOrEquals,
-	StaticArea
+	containsOrEquals
 ) {
 	"use strict";
 	// Test setup
@@ -678,7 +676,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Without parent", function (assert) {
-		var oStaticArea = UIArea.registry.get(StaticArea.getDomRef()/* LFUI5: Check: StaticArea's API might have a better fit for your use case. */.id);
+		var oStaticArea = StaticArea.getUIArea();
 		var oInvalidateSpy = sinon.spy(oStaticArea, "invalidate");
 		assert.notOk(this.oColumnMenu.getUIArea(), "Before opening, the menu has no connection to the UIArea");
 

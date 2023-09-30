@@ -584,7 +584,11 @@ sap.ui.define([
 					oResponse = aResponses[0];
 					if (typeof oResponse.buildResponse === "function") {
 						oResponse = merge({}, oResponse);
-						oResponse.buildResponse(oMatch.match, oResponse, oRequest);
+						try {
+							oResponse.buildResponse(oMatch.match, oResponse, oRequest);
+						} catch (oError) {
+							oResponse = error(500, oRequest, oError.message);
+						}
 					}
 					if (oMatch.responses.length > 1) {
 						iAlternative = oMatch.responses.indexOf(oResponse);

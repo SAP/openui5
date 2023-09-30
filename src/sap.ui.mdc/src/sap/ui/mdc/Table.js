@@ -832,9 +832,7 @@ sap.ui.define([
 			}
 		},
 		constructor: function() {
-			this._oTableReady = new Deferred();
-			this._oFullInitialize = new Deferred();
-
+			this._createInitPromises();
 			Control.apply(this, arguments);
 			this.bCreated = true;
 			this._updateAdaptation();
@@ -1177,9 +1175,8 @@ sap.ui.define([
 			this._oTable.destroy("KeepDom");
 			this._oTable = null;
 		} else {
-			// reject any pending promise
-			this._onAfterTableCreated();
-			this._onAfterFullInitialization();
+			this._onAfterInitialization("Type changed");
+			this._onAfterFullInitialization("Type changed");
 		}
 
 		if (this._oRowTemplate) {
@@ -1187,10 +1184,7 @@ sap.ui.define([
 			this._oRowTemplate = null;
 		}
 
-		// recreate the defers when switching table
-		this._oTableReady = new Deferred();
-		this._oFullInitialize = new Deferred();
-		this._bFullyInitialized = false;
+		this._createInitPromises();
 		this._initializeContent();
 
 		return this;
@@ -1559,11 +1553,11 @@ sap.ui.define([
 	function getFilterInfoBar(oTable) {
 		const oFilterInfoBar = internal(oTable).oFilterInfoBar;
 
-		if (oFilterInfoBar && (oFilterInfoBar.isDestroyed() || oFilterInfoBar.isDestroyStarted())) {
+		if (oFilterInfoBar?.isDestroyStarted()) {
 			return null;
 		}
 
-		return internal(oTable).oFilterInfoBar;
+		return oFilterInfoBar;
 	}
 
 	function getFilterInfoBarText(oTable) {
@@ -1723,7 +1717,7 @@ sap.ui.define([
 		Promise.all(aInitPromises).then(() => {
 			// The table type might be switched while the necessary libs, modules are being loaded; hence the below checks
 			if (this.isDestroyed()) {
-				throw new Error("Is destroyed");
+				return Promise.reject("Destroyed");
 			}
 
 			this._updateAdaptation();
@@ -1739,22 +1733,37 @@ sap.ui.define([
 			} else {
 				return Promise.resolve();
 			}
-		}).catch((oError) => {
-			this._onAfterTableCreated();
-			this._onAfterFullInitialization();
-			throw oError;
+		}).catch((vError) => {
+			this._onAfterInitialization(vError || "");
+			this._onAfterFullInitialization(vError || "");
 		});
 	};
 
-	Table.prototype._onAfterTableCreated = function(bResult) {
+	Table.prototype._createInitPromises = function() {
+		this._oTableReady = new Deferred();
+		this._oFullInitialize = new Deferred();
+		this._oFullInitialize.promise = this._oFullInitialize.promise.catch((vError) => {}); // Avoid uncaught error
+		this._bFullyInitialized = false;
+	};
+
+	Table.prototype._onAfterInitialization = function(vError) {
 		if (this._oTableReady) {
-			this._oTableReady[bResult ? "resolve" : "reject"](this);
+			if (vError != null) {
+				this._oTableReady.reject(vError);
+			} else {
+				this._oTableReady.resolve(this);
+			}
 		}
 	};
 
-	Table.prototype._onAfterFullInitialization = function(bResult) {
+	Table.prototype._onAfterFullInitialization = function(vError) {
 		if (this._oFullInitialize) {
-			this._oFullInitialize[bResult ? "resolve" : "reject"](this);
+			if (vError != null) {
+				this._oFullInitialize.reject(vError);
+			} else {
+				this._bFullyInitialized = true;
+				this._oFullInitialize.resolve(this);
+			}
 		}
 	};
 
@@ -1770,11 +1779,11 @@ sap.ui.define([
 
 		return this.getControlDelegate().initializeContent(this).then(() => {
 			if (this.isDestroyed()) {
-				throw new Error("Is destroyed");
+				return Promise.reject("Destroyed");
 			}
 
 			this.setAggregation("_content", this._oTable);
-			this._onAfterTableCreated(true); // Resolve any pending promise if table exists
+			this._onAfterInitialization();
 
 			return Promise.all([
 				this.getPropertyInfo().length === 0 ? this.finalizePropertyHelper() : this.awaitPropertyHelper(),
@@ -1782,7 +1791,7 @@ sap.ui.define([
 			]);
 		}).then(() => {
 			if (this.isDestroyed()) {
-				throw new Error("Is destroyed");
+				return Promise.reject("Destroyed");
 			}
 
 			// Add this to the micro task execution queue to enable consumers to handle this correctly.
@@ -1805,8 +1814,7 @@ sap.ui.define([
 				});
 			}
 
-			this._bFullyInitialized = true;
-			this._onAfterFullInitialization(true);
+			this._onAfterFullInitialization();
 		});
 	};
 
@@ -1886,7 +1894,7 @@ sap.ui.define([
 	};
 
 	Table.prototype._createToolbar = function() {
-		if (this.isDestroyStarted() || this.isDestroyed()) {
+		if (this.isDestroyStarted()) {
 			return;
 		}
 
@@ -2351,13 +2359,13 @@ sap.ui.define([
 					that._oExportHandler.attachBeforeExport(that._onBeforeExport, that);
 					fnResolve(that._oExportHandler);
 				});
-			}).catch(function(error) {
+			}).catch(function(vError) {
 				// If sap.ui.export is not loaded, show an error message and return without exporting
 				if (!sap.ui.getCore().getLoadedLibraries().hasOwnProperty("sap.ui.export")) {
 					MessageBox.error(Core.getLibraryResourceBundle("sap.ui.mdc").getText("ERROR_MISSING_EXPORT_LIBRARY"));
 				}
 
-				fnReject(error);
+				fnReject(vError);
 			});
 		});
 	};
@@ -2950,6 +2958,9 @@ sap.ui.define([
 	 * @private
 	 */
 	Table.prototype.exit = function() {
+		this._onAfterInitialization("Destroyed");
+		this._onAfterFullInitialization("Destroyed");
+
 		// Destroy destructible elements and delete references.
 		[
 			"_oTable",

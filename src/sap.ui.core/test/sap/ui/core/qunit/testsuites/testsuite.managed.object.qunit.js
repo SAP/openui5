@@ -33,7 +33,7 @@ sap.ui.define(function() {
 				title: "sap.ui.base.ManagedObject"
 			},
 
-			ManagedObject_noBoot: {
+			ManagedObject_BindingParser: {
 				title: "sap.ui.base.ManagedObject (no core boot)",
 				bootCore: false
 			},

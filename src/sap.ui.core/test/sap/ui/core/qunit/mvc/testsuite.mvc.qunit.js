@@ -115,13 +115,6 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 				module: "test-resources/sap/ui/core/qunit/CommandExecution.qunit"
 			},
 
-			Declarative: {
-				title: "sap.ui.core.DeclarativeSupport",
-				// we keep the HTML page here, because of the complex test fixture
-				page: "test-resources/sap/ui/core/qunit/Declarative.qunit.html",
-				module: "test-resources/sap/ui/core/qunit/Declarative.qunit"
-			},
-
 			Fragment: {
 				title: "sap.ui.core.Fragment",
 				loader: {

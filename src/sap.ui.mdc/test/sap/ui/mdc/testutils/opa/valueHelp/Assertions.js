@@ -68,6 +68,13 @@ sap.ui.define(["./doWait", "sap/ui/test/matchers/Ancestor"
                     });
                 }
             }, sValueHelp);
+        },
+        iShouldSeeValueHelpPopover: function(sValueHelp) {
+            return doWait(this).forValueHelpPopover({
+                success: function(oPopover) {
+                    QUnit.assert.ok(oPopover, "Found ValueHelp popover");
+                }
+            }, sValueHelp);
         }
     };
 });

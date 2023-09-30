@@ -15,6 +15,7 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Core",
+	"sap/ui/unified/ColorPickerHelper",
 	"sap/ui/base/Object"
 ], function(
 	ColorPicker,
@@ -31,6 +32,7 @@ sap.ui.define([
 	KeyCodes,
 	jQuery,
 	oCore,
+	ColorPickerHelper,
 	BaseObject
 ) {
 	"use strict";
@@ -42,28 +44,28 @@ sap.ui.define([
 		QUnit.module("sap.ui.unified.ColorPickerHelper");
 
 		QUnit.test("Responsive mode", function (oAssert) {
+			var oColorPickerHelper = ColorPickerHelper.getHelper();
 			// Arrange
 			var oRBGroup,
 				oInput,
 				oSlider;
 
 			// Assert - Properties
-			oAssert.strictEqual(library.ColorPickerHelper.isResponsive(), true, "Helper should be in responsive mode");
-			oAssert.ok(library.ColorPickerHelper.bFinal, "All further overwriting of this object is prohibited");
+			oAssert.strictEqual(oColorPickerHelper.isResponsive(), true, "Helper should be in responsive mode");
 
 			// Assert - Factory
-			oAssert.ok(library.ColorPickerHelper.factory.createLabel() instanceof Label,
+			oAssert.ok(oColorPickerHelper.factory.createLabel() instanceof Label,
 				"Factory label control should be instance of sap.m.Label");
 
-			oInput = library.ColorPickerHelper.factory.createInput("MYCUSTOMINPUTID");
+			oInput = oColorPickerHelper.factory.createInput("MYCUSTOMINPUTID");
 			oAssert.ok(oInput instanceof InputBase,
 				"Factory input control should be instance of sap.m.InputBase");
 			oAssert.strictEqual(oInput.getId(), "MYCUSTOMINPUTID",
 				"Factory input control should have 'MYCUSTOMINPUTID' assigned as ID");
 
 			// RadioButton group and RadioButtonItem
-			oRBGroup = library.ColorPickerHelper.factory.createRadioButtonGroup({
-				buttons: library.ColorPickerHelper.factory.createRadioButtonItem()
+			oRBGroup = oColorPickerHelper.factory.createRadioButtonGroup({
+				buttons: oColorPickerHelper.factory.createRadioButtonItem()
 			});
 			oAssert.ok(oRBGroup instanceof RadioButtonGroup,
 				"Factory RadioButtonGroup control should be instance of sap.m.RadioButtonGroup");
@@ -73,7 +75,7 @@ sap.ui.define([
 				"sap.m.RadioButton");
 
 			// Slider
-			oSlider = library.ColorPickerHelper.factory.createSlider("MYCUSTOMSLIDERID", {step: 0.1});
+			oSlider = oColorPickerHelper.factory.createSlider("MYCUSTOMSLIDERID", {step: 0.1});
 			oAssert.ok(oSlider instanceof Slider, "Factory Slider control should be instance of sap.m.Slider");
 			oAssert.strictEqual(oSlider.getId(), "MYCUSTOMSLIDERID",
 				"Factory Slider control should have 'MYCUSTOMSLIDERID' assigned as ID");

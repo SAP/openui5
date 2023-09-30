@@ -4,14 +4,14 @@
 
 // Provides class sap.ui.core.support.plugins.Selector (Selector support plugin)
 sap.ui.define([
-	"sap/ui/core/Core",
 	"sap/ui/core/Popup",
+	"sap/ui/core/RenderManager",
+	"sap/ui/core/StaticArea",
 	"../Plugin",
 	"../Support",
 	"sap/ui/thirdparty/jquery",
-	"sap/base/util/uid",
-	"sap/ui/core/StaticArea"
-], function(Core, Popup, Plugin, Support, jQuery, uid, StaticArea) {
+	"sap/base/util/uid"
+], function (Popup, RenderManager, StaticArea, Plugin, Support, jQuery, uid) {
 	"use strict";
 
 		/**
@@ -52,14 +52,14 @@ sap.ui.define([
 
 			if (!this._sPopupId) {
 				this._sPopupId = this.getId() + "-" + uid();
-				var rm = Core.createRenderManager();
+				var rm = new RenderManager();
 				rm.openStart("div", this._sPopupId)
 					.style("border", "2px solid rgb(0, 128, 0)")
 					.style("background-color", "rgba(0, 128, 0, .55)")
 					.openEnd()
 					.close("div");
 
-				rm.flush(StaticArea.getDomRef()/* LFUI5: Check: StaticArea's API might have a better fit for your use case. */, false, true);
+				rm.flush(StaticArea.getDomRef(), false, true);
 				rm.destroy();
 
 				jPopupRef = jQuery(document.getElementById(this._sPopupId));

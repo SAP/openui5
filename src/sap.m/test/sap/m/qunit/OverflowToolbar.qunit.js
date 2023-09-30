@@ -2917,15 +2917,14 @@ sap.ui.define([
 									minWidth: "50px"
 								})
 							}),
-			oOTB = createOverflowToolbar({}, [oTestButton]),
-			iRemInPx = DomUnitsRem.toPx("1rem");
+			oOTB = createOverflowToolbar({}, [oTestButton]);
 
 		oOTB.placeAt("qunit-fixture");
 		oCore.applyChanges();
 
 		// Assert
-		assert.strictEqual(oOTB._getOptimalControlWidth(oTestButton), 50 + (0.25 * iRemInPx),
-			"Size is equal to minWidth + margins");
+		assert.strictEqual(oOTB._getOptimalControlWidth(oTestButton), 50,
+			"Size is equal to minWidth without margin, as it is only one control, so no margin-left is applied (instead, there is a padding added to the OFT)");
 	});
 
 	QUnit.test("Size of a control with LayoutData, shrinkable = true and minWidth and visible = false, is reported correctly", function (assert) {
@@ -2961,14 +2960,13 @@ sap.ui.define([
 									minWidth: "50px"
 								})
 							}),
-			oOTB = createOverflowToolbar({}, [oTestButton]),
-			iRemInPx = DomUnitsRem.toPx("1rem");
+			oOTB = createOverflowToolbar({}, [oTestButton]);
 
 		oOTB.placeAt("qunit-fixture");
 		oCore.applyChanges();
 
 		// Assert
-		assert.strictEqual(oOTB._getOptimalControlWidth(oTestButton), 200 + (0.25 * iRemInPx),
+		assert.strictEqual(oOTB._getOptimalControlWidth(oTestButton), 200,
 			"Size is equal to outer width");
 	});
 
@@ -2997,8 +2995,8 @@ sap.ui.define([
 		oCore.applyChanges();
 
 		// Assert
-		assert.strictEqual(oOTB._getOptimalControlWidth(oTestButton), (3 * iRemInPx) + (0.25 * iRemInPx),
-			"Size is equal to minWidth (3rem) + left margin of first child");
+		assert.strictEqual(oOTB._getOptimalControlWidth(oTestButton), (3 * iRemInPx),
+			"Size is equal to minWidth (3rem), as it is only one control, so no margin-left is applied (instead, there is a padding added to the OFT)");
 
 		// OFT has right padding, we deduct it
 		assert.strictEqual(oOTB._getOptimalControlWidth(oTestButton2), (50 * (300 - (oOTB.$().innerWidth() - oOTB.$().width()))) / 100 + (0.5 * iRemInPx),
@@ -3907,6 +3905,26 @@ sap.ui.define([
 
 		oPanel.setWidth("0px");
 		oPanel.addEventDelegate(oPanelRerenderingDelegate);
+	});
+
+	QUnit.test("OverflowToolbar with one Control, having 100% width", function (assert) {
+
+		//Arrange
+		var oOtb = new OverflowToolbar({
+			content: [
+				new SearchField()
+			]
+		});
+
+		//Act
+		oOtb.placeAt("qunit-fixture");
+		oCore.applyChanges();
+
+		//Assert
+		assert.strictEqual(oOtb._getPopover().getAssociatedContent().length, 0, "SearchField is not in overflow Popover");
+
+		//Clean up
+		oOtb.destroy();
 	});
 
 	QUnit.module("Associative popover");

@@ -10,11 +10,11 @@ sap.ui.define([
 	"./_V2Requestor",
 	"sap/base/Log",
 	"sap/ui/base/SyncPromise",
-	"sap/ui/core/Configuration",
 	"sap/ui/core/cache/CacheManager",
+	"sap/ui/security/Security",
 	"sap/ui/thirdparty/jquery"
-], function (_Batch, _GroupLock, _Helper, asV2Requestor, Log, SyncPromise, Configuration,
-		CacheManager, jQuery) {
+], function (_Batch, _GroupLock, _Helper, asV2Requestor, Log, SyncPromise, CacheManager,
+		Security, jQuery) {
 	"use strict";
 
 	var mBatchHeaders = { // headers for the $batch request
@@ -1519,8 +1519,8 @@ sap.ui.define([
 
 	/**
 	 * Calls the security token handlers returned by
-	 * {@link sap.ui.core.Configuration#getSecurityTokenHandlers} one by one with the requestor's
-	 * service URL. The first handler not returning <code>undefined</code> but a
+	 * {@link module:sap/ui/security/Security.getSecurityTokenHandlers} one by one with the
+	 * requestor's service URL. The first handler not returning <code>undefined</code> but a
 	 * <code>Promise</code> is used to determine the required security tokens.
 	 *
 	 * @private
@@ -1530,7 +1530,7 @@ sap.ui.define([
 
 		this.oSecurityTokenPromise = null;
 
-		Configuration.getSecurityTokenHandlers().some(function (fnHandler) {
+		Security.getSecurityTokenHandlers().some(function (fnHandler) {
 			var oSecurityTokenPromise = fnHandler(that.sServiceUrl);
 
 			if (oSecurityTokenPromise !== undefined) {

@@ -13,16 +13,15 @@ sap.ui.define([
 	'./SelectDialogBase',
 	'sap/ui/core/InvisibleText',
 	'sap/ui/core/InvisibleMessage',
-	'sap/ui/core/UIArea',
+	'sap/ui/core/StaticArea',
 	'sap/ui/Device',
 	'sap/m/Toolbar',
 	'sap/m/Text',
 	'sap/m/BusyIndicator',
 	'sap/m/Bar',
 	'sap/m/Title',
-	'sap/base/Log',
-	"sap/ui/core/StaticArea"
-], function(
+	'sap/base/Log'
+], function (
 	Button,
 	Dialog,
 	SearchField,
@@ -32,15 +31,14 @@ sap.ui.define([
 	SelectDialogBase,
 	InvisibleText,
 	InvisibleMessage,
-	UIArea,
+	StaticArea,
 	Device,
 	Toolbar,
 	Text,
 	BusyIndicator,
 	Bar,
 	Title,
-	Log,
-	StaticArea
+	Log
 ) {
 	"use strict";
 
@@ -491,8 +489,7 @@ sap.ui.define([
 		// sap.ui.core.Popup removes its content on close()/destroy() automatically from the static UIArea,
 		// but only if it added it there itself. As we did that, we have to remove it also on our own
 		if ( this._bAppendedToUIArea ) {
-			var oStatic = StaticArea.getDomRef()/* LFUI5: Check: StaticArea's API might have a better fit for your use case. */;
-			oStatic = UIArea.registry.get(oStatic.id);
+			var oStatic = StaticArea.getUIArea();
 			oStatic.removeContent(this, true);
 		}
 
@@ -559,8 +556,7 @@ sap.ui.define([
 	 */
 	TableSelectDialog.prototype.open = function (sSearchValue) {
 		if (!this.getParent() && !this._bAppendedToUIArea) {
-			var oStatic = StaticArea.getDomRef()/* LFUI5: Check: StaticArea's API might have a better fit for your use case. */;
-			oStatic = UIArea.registry.get(oStatic.id);
+			var oStatic = StaticArea.getUIArea();
 			oStatic.addContent(this, true);
 			this._bAppendedToUIArea = true;
 		}

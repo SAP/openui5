@@ -23,7 +23,7 @@ sap.ui.define([
 	ColumnPopoverSelectListItem,
 	MessageBox,
 	Item,
-	Core,
+	oCore,
 	coreLibrary,
 	ListFormat,
 	ManagedObjectObserver,
@@ -197,66 +197,110 @@ sap.ui.define([
 	};
 
 	Delegate.validateState = function(oTable, oState, sKey) {
-		const oBaseStates = TableDelegate.validateState.apply(this, arguments);
-		let oValidation;
+		const oBaseValidationResult = TableDelegate.validateState.apply(this, arguments);
+		let oValidationResult;
 
-		const oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
+		if (sKey == "Sort") {
+			oValidationResult = validateSortState(oTable, oState);
+		} else if (sKey == "Group") {
+			oValidationResult = validateGroupState(oTable, oState);
+		} else if (sKey == "Column") {
+			oValidationResult = validateColumnState(oTable, oState);
+		}
 
-		if (sKey == "Sort" && oState.sorters) {
-			if (isAnalyticsEnabled(oTable) && !checkForValidity(oTable, oState.items, oState.sorters)) {
-				oValidation = {
+		return mergeValidationResults(oBaseValidationResult, oValidationResult);
+	};
+
+	function validateSortState(oTable, oState) {
+		if (isAnalyticsEnabled(oTable) && hasStateForInvisibleColumns(oTable, oState.items, oState.sorters)) {
+			// Sorting by properties that are not visible in the table (not requested from the backend) is not possible in analytical scenarios.
+			// Corresponding sort conditions are not applied.
+			return {
+				validation: coreLibrary.MessageType.Information,
+				message: oCore.getLibraryResourceBundle("sap.ui.mdc").getText("table.PERSONALIZATION_DIALOG_SORT_RESTRICTION")
+			};
+		}
+
+		return null;
+	}
+
+	function validateGroupState(oTable, oState) {
+		const oResourceBundle = oCore.getLibraryResourceBundle("sap.ui.mdc");
+
+		if (oState.aggregations) {
+			const aAggregateProperties = Object.keys(oState.aggregations);
+			const aAggregatedGroupableProperties = [];
+			const oListFormat = ListFormat.getInstance();
+
+			aAggregateProperties.forEach(function(sProperty) {
+				const oProperty = oTable.getPropertyHelper().getProperty(sProperty);
+				if (oProperty && oProperty.groupable) {
+					aAggregatedGroupableProperties.push(sProperty);
+				}
+			});
+
+			if (aAggregatedGroupableProperties.length > 0) {
+				// It is not possible to group and aggregate by the same property at the same time. Aggregated properties that are also groupable are
+				// filtered out in the GroupController. This message should inform the user about that.
+				return {
 					validation: coreLibrary.MessageType.Information,
-					message: oResourceBundle.getText("table.PERSONALIZATION_DIALOG_SORT_RESTRICTION")
+					message: oResourceBundle.getText("table.PERSONALIZATION_DIALOG_GROUP_RESTRICTION_TOTALS", [
+						oListFormat.format(aAggregatedGroupableProperties)
+					])
 				};
 			}
-		} else if (sKey == "Group") {
-			if (oState.aggregations) {
-				const aAggregateProperties = Object.keys(oState.aggregations);
-				const aAggregateGroupableProperties = [];
-				const oListFormat = ListFormat.getInstance();
-				aAggregateProperties.forEach(function(sProperty) {
-					const oProperty = oTable.getPropertyHelper().getProperty(sProperty);
-					if (oProperty && oProperty.groupable) {
-						aAggregateGroupableProperties.push(sProperty);
-					}
-				});
-
-				if (aAggregateGroupableProperties.length) {
-					oValidation = {
-						validation: coreLibrary.MessageType.Information,
-						message: oResourceBundle.getText("table.PERSONALIZATION_DIALOG_GROUP_RESTRICTION_TOTALS", [oListFormat.format(aAggregateGroupableProperties)])
-					};
-				}
-			} else if (oTable._isOfType(TableType.ResponsiveTable)) {
-				if (!checkForValidity(oTable, oState.items, oState.groupLevels)) {
-					oValidation = {
-						validation: coreLibrary.MessageType.Information,
-						message: oResourceBundle.getText("table.PERSONALIZATION_DIALOG_GROUP_RESTRICTION_VISIBLE")
-					};
-				}
-			}
-		} else if (sKey == "Column") {
-			let sMessage;
-			const aAggregateProperties = oState.aggregations && Object.keys(oState.aggregations);
-
-			if (!checkForValidity(oTable, oState.items, aAggregateProperties)) {
-				sMessage = oResourceBundle.getText("table.PERSONALIZATION_DIALOG_TOTAL_RESTRICTION");
-			}
-
-			if (isAnalyticsEnabled(oTable) && !checkForValidity(oTable, oState.items, oState.sorters)) {
-				sMessage = sMessage ? sMessage + "\n" + oResourceBundle.getText("table.PERSONALIZATION_DIALOG_SORT_RESTRICTION")
-					: oResourceBundle.getText("table.PERSONALIZATION_DIALOG_SORT_RESTRICTION");
-			}
-			if (sMessage) {
-				oValidation = {
+		} else if (oTable._isOfType(TableType.ResponsiveTable)) {
+			if (hasStateForInvisibleColumns(oTable, oState.items, oState.groupLevels)) {
+				// Grouping by a property that isn't visible in the table (not requested from the backend) causes issues with the group header text.
+				// Corresponding group conditions are not applied.
+				return {
 					validation: coreLibrary.MessageType.Information,
-					message: sMessage
+					message: oResourceBundle.getText("table.PERSONALIZATION_DIALOG_GROUP_RESTRICTION_VISIBLE")
 				};
 			}
 		}
 
-		return mergeValidation(oBaseStates, oValidation);
-	};
+		return null;
+	}
+
+	function validateColumnState(oTable, oState) {
+		const oResourceBundle = oCore.getLibraryResourceBundle("sap.ui.mdc");
+		const aAggregateProperties = oState.aggregations && Object.keys(oState.aggregations);
+		let sMessage;
+
+		if (oTable._isOfType(TableType.ResponsiveTable)) {
+			if (hasStateForInvisibleColumns(oTable, oState.items, oState.groupLevels)) {
+				// Grouping by a property that isn't visible in the table (not requested from the backend) causes issues with the group header text.
+				// Corresponding group conditions are not applied.
+				return {
+					validation: coreLibrary.MessageType.Information,
+					message: oResourceBundle.getText("table.PERSONALIZATION_DIALOG_GROUP_RESTRICTION_VISIBLE")
+				};
+			}
+		}
+
+		if (hasStateForInvisibleColumns(oTable, oState.items, aAggregateProperties)) {
+			// Aggregating by properties that are not visible in the table (not requested from the backend) is not possible in analytical scenarios.
+			// Corresponding aggregate conditions are not applied.
+			sMessage = oResourceBundle.getText("table.PERSONALIZATION_DIALOG_TOTAL_RESTRICTION");
+		}
+
+		if (isAnalyticsEnabled(oTable) && hasStateForInvisibleColumns(oTable, oState.items, oState.sorters)) {
+			// Sorting by properties that are not visible in the table (not requested from the backend) is not possible in analytical scenarios.
+			// Corresponding sort conditions are not applied.
+			const sSortMessage = oResourceBundle.getText("table.PERSONALIZATION_DIALOG_SORT_RESTRICTION");
+			sMessage = sMessage ? sMessage + "\n" + sSortMessage : sSortMessage;
+		}
+
+		if (sMessage) {
+			return {
+				validation: coreLibrary.MessageType.Information,
+				message: sMessage
+			};
+		}
+
+		return null;
+	}
 
 	/**
 	 * Provides hook to update the binding info object that is used to bind the table to the model.
@@ -383,7 +427,7 @@ sap.ui.define([
 		if (oPopover) {
 			oPopover.getItems().forEach(function(oItem, iIndex, aItems) {
 				const sLabel = oItem.getLabel();
-				const oResourceBundle = Core.getLibraryResourceBundle("sap.ui.mdc");
+				const oResourceBundle = oCore.getLibraryResourceBundle("sap.ui.mdc");
 
 				if (sLabel === oResourceBundle.getText("table.SETTINGS_GROUP") || sLabel === oResourceBundle.getText("table.SETTINGS_TOTALS")) {
 					aItems[iIndex].destroy();
@@ -507,7 +551,7 @@ sap.ui.define([
 		if (aGroupChildren.length > 0) {
 			return new ColumnPopoverSelectListItem({
 				items: aGroupChildren,
-				label: Core.getLibraryResourceBundle("sap.ui.mdc").getText("table.SETTINGS_GROUP"),
+				label: oCore.getLibraryResourceBundle("sap.ui.mdc").getText("table.SETTINGS_GROUP"),
 				icon: "sap-icon://group-2",
 				action: [{
 					sName: "Group",
@@ -528,7 +572,7 @@ sap.ui.define([
 		if (aAggregateChildren.length > 0) {
 			return new ColumnPopoverSelectListItem({
 				items: aAggregateChildren,
-				label: Core.getLibraryResourceBundle("sap.ui.mdc").getText("table.SETTINGS_TOTALS"),
+				label: oCore.getLibraryResourceBundle("sap.ui.mdc").getText("table.SETTINGS_TOTALS"),
 				icon: "sap-icon://sum",
 				action: [{
 					sName: "Aggregate",
@@ -553,7 +597,7 @@ sap.ui.define([
 		let bForcedAnalytics = false;
 
 		if (bForce) {
-			const oResourceBundle = Core.getLibraryResourceBundle("sap.ui.mdc");
+			const oResourceBundle = oCore.getLibraryResourceBundle("sap.ui.mdc");
 			let sTitle;
 			let sMessage;
 			let sActionText;
@@ -734,24 +778,24 @@ sap.ui.define([
 		});
 	}
 
-	function checkForValidity(oControl, aItems, aStates) {
-		const aProperties = [];
+	function hasStateForInvisibleColumns(oTable, aItems, aStates) {
+		const aPropertyNames = [];
 
 		if (aItems) {
 			aItems.forEach(function(oItem) {
-				oControl.getPropertyHelper().getProperty(oItem.name).getSimpleProperties().forEach(function(oProperty) {
-					aProperties.push(oProperty.name);
+				oTable.getPropertyHelper().getProperty(oItem.name).getSimpleProperties().forEach(function(oProperty) {
+					aPropertyNames.push(oProperty.name);
 				});
 			});
 		}
 
 		const bOnlyVisibleColumns = aStates ? aStates.every(function(oState) {
-			return aProperties.find(function(sPropertyName) {
+			return aPropertyNames.find(function(sPropertyName) {
 				return oState.name ? oState.name === sPropertyName : oState === sPropertyName;
 			});
 		}) : true;
 
-		return bOnlyVisibleColumns;
+		return !bOnlyVisibleColumns;
 	}
 
 	/**
@@ -762,7 +806,7 @@ sap.ui.define([
 	 * @returns {Object} The message with higher priority
 	 * @private
 	 */
-	function mergeValidation(oBaseState, oValidationState) {
+	function mergeValidationResults(oBaseState, oValidationState) {
 		const oSeverity = {Error: 1, Warning: 2, Information: 3, None: 4};
 
 		if (!oValidationState || oSeverity[oValidationState.validation] - oSeverity[oBaseState.validation] > 0) {

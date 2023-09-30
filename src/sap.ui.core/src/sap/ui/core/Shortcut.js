@@ -3,14 +3,14 @@
  */
 
 sap.ui.define([
+	"sap/ui/core/StaticArea",
 	"sap/ui/core/util/ShortcutHelper",
-	'sap/base/assert',
-	"sap/ui/core/StaticArea"
+	'sap/base/assert'
 ], function(
-	ShortcutHelper,
-	assert,
-	StaticArea
-) {
+		StaticArea,
+		ShortcutHelper,
+		assert
+	) {
 	"use strict";
 
 	/**
@@ -94,7 +94,7 @@ sap.ui.define([
 			function wrapCallback() {
 				var oFocusedElement = document.activeElement,
 					oSpan = document.createElement("span"),
-					oStaticUiAreaDomRef = StaticArea.getDomRef()/* LFUI5: Check: StaticArea's API might have a better fit for your use case. */,
+					oStaticAreaDomRef = StaticArea.getDomRef(),
 					args = arguments;
 
 				oSpan.setAttribute("tabindex", 0);
@@ -106,7 +106,7 @@ sap.ui.define([
 				oSpan.style.right = "50%";
 
 				// add span to static-ui-area
-				oStaticUiAreaDomRef.appendChild(oSpan);
+				oStaticAreaDomRef.appendChild(oSpan);
 
 				// set focus on span to enforce blur - e.g. data of input field needs to get peristed
 				oSpan.focus();
@@ -116,7 +116,7 @@ sap.ui.define([
 					oFocusedElement.focus();
 
 					// cleanup DOM
-					oStaticUiAreaDomRef.removeChild(oSpan);
+					oStaticAreaDomRef.removeChild(oSpan);
 
 					// trigger callback
 					fnCallback.apply(null, args);

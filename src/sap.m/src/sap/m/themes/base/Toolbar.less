@@ -14,9 +14,8 @@
 	margin: 0 0 0 0.5rem;
 }
 
-.sapMIBar.sapMTB .sapMBarChild:first-child[style*="width: 100%"] {
+.sapMIBar.sapMTB .sapMBarChild:first-child {
 	margin-left: 0;
-	padding-left: 0.25rem;
 }
 
 .sapMTB {
@@ -29,6 +28,7 @@
 	-webkit-text-size-adjust: none;
 	-moz-text-size-adjust: none;
 	height: 3rem;
+	padding-left: 0.25rem;
 	padding-right: 0.25rem;
 	background: @sapUiToolbarBackground;
 }
@@ -54,14 +54,9 @@
 	border-bottom: none;
 }
 
-/* Transparent Toolbar Context */
-.sapMTB-Transparent-CTX.sapMTB {
-	padding-left: 0.75rem;
-}
-
 /* Info Toolbar Context */
-.sapMIBar.sapMTB.sapMTB-Info-CTX {
-	padding: 0 1rem 0 0.75rem;
+.sapMIBar.sapMTB.sapMTB-Info-CTX:not(.sapMTBActive) {
+	padding: 0 1rem;
 }
 
 .sapMIBar.sapMTB.sapMTB-Info-CTX > .sapUiIcon:first-child {

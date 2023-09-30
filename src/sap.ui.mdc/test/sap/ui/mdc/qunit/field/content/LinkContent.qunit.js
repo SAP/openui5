@@ -75,7 +75,7 @@ sap.ui.define([
 					enabled: "$field>/editMode",
 					valueState: "$field>/valueState",
 					valueStateText: "$field>/valueStateText",
-					showValueHelp: "$field>/_fieldHelpEnabled",
+					showValueHelp: "$field>/_valueHelpEnabled",
 					ariaAttributes: "$field>/_ariaAttributes",
 					tooltip: "$field>/tooltip"
 				},
@@ -106,7 +106,7 @@ sap.ui.define([
 					enabled: "$field>/editMode",
 					valueState: "$field>/valueState",
 					valueStateText: "$field>/valueStateText",
-					showValueHelp: "$field>/_fieldHelpEnabled",
+					showValueHelp: "$field>/_valueHelpEnabled",
 					ariaAttributes: "$field>/_ariaAttributes",
 					tooltip: "$field>/tooltip",
 					tokens: "$field>/conditions"
@@ -173,8 +173,8 @@ sap.ui.define([
 		assert.ok(LinkContent.getUseDefaultEnterHandler(), "Correct useDefaultEnterHandler value returned.");
 	});
 
-	QUnit.test("getUseDefaultFieldHelp", function(assert) {
-		assert.notOk(LinkContent.getUseDefaultFieldHelp(), "DefaultFieldHelp is not used.");
+	QUnit.test("getUseDefaultValueHelp", function(assert) {
+		assert.notOk(LinkContent.getUseDefaultValueHelp(), "DefaultValueHelp is not used.");
 	});
 
 	QUnit.test("getControlNames", function(assert) {

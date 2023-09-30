@@ -89,6 +89,7 @@ sap.ui.define([
 		this._oMResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 
 		this._iNavigateIndex = -1; // initially nothing is navigated
+		this._oFirstItemResult = {};
 	};
 
 	MTable.prototype.getValueHelpIcon = function() {
@@ -200,6 +201,13 @@ sap.ui.define([
 			throw oError;
 		}).finally(function() {
 			const oLatestApplyFiltersPromise = this._retrievePromise("applyFilters");
+			oLatestApplyFiltersPromise?.getInternalPromise().then((bApplyFilters) => {
+				const oBindingContext = this.getValueHelpDelegate().getFirstMatch(this.getValueHelpInstance(), this);
+				this._oFirstItemResult = {
+					result: this.getItemFromContext(oBindingContext),
+					filterValue: this.getFilterValue()
+				};
+			});
 			return oLatestApplyFiltersPromise && oLatestApplyFiltersPromise.getInternalPromise(); // re-fetching the applyFilters promise, in case filterValue was changed during the filtering and a parallel run was triggered
 		}.bind(this));
 	};
@@ -412,7 +420,15 @@ sap.ui.define([
 
 			if (!bPending) {
 				const oTable = this.getTable();
-				oResult = _filterItems.call(this, oConfig, oTable.getItems(), oConditions);
+				const oContainer = oTable.getParent()?.getParent();
+				if (oTable.getItems().length > 0
+					&& this.getUseFirstMatch()
+					&& oContainer?.isOpen()) {
+						oResult = this._oFirstItemResult.filterValue === oConfig.value ? this._oFirstItemResult.result : undefined;
+				}
+				if (!oResult) {
+					oResult = _filterItems.call(this, oConfig, oTable.getItems(), oConditions);
+				}
 			}
 
 			if (!oResult) {
@@ -829,6 +845,7 @@ sap.ui.define([
 
 		if (oChanges.name === "table") {
 			const oTable = oChanges.child;
+			this._oFirstItemResult = {};
 
 			if (oChanges.mutation === "remove") {
 				this._oObserver.unobserve(oTable);
@@ -913,16 +930,24 @@ sap.ui.define([
 	MTable.prototype.onConnectionChange = function () {
 
 		this._iNavigateIndex = -1; // initially nothing is navigated
+		this._oFirstItemResult = {};
 
 	};
 
 	MTable.prototype.exit = function () {
 
 		Common.cleanup(this, [
-			"_sTableWidth", "_oTable", "_oScrollContainer", "_oContentLayout", "_oTablePanel", "_oFilterBarVBox", "_oMResourceBundle", "_oResourceBundle", "_oTableDelegate"
+			"_sTableWidth", "_oTable", "_oScrollContainer", "_oContentLayout", "_oTablePanel", "_oFilterBarVBox", "_oMResourceBundle", "_oResourceBundle", "_oTableDelegate", "_oFirstItemResult"
 		]);
 
 		FilterableListContent.prototype.exit.apply(this, arguments);
+	};
+
+    MTable.prototype.getRelevantContexts = function(oConfig) {
+		const oListBinding = this.getListBinding();
+		const aListBindingContexts = oListBinding.getContexts();
+
+		return aListBindingContexts;
 	};
 
 	return MTable;

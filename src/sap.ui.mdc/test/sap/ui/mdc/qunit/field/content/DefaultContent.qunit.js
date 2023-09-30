@@ -98,7 +98,7 @@ sap.ui.define([
 					enabled: "$field>/editMode",
 					valueState: "$field>/valueState",
 					valueStateText: "$field>/valueStateText",
-					showValueHelp: "$field>/_fieldHelpEnabled",
+					showValueHelp: "$field>/_valueHelpEnabled",
 					ariaAttributes: "$field>/_ariaAttributes",
 					tooltip: "$field>/tooltip"
 				},
@@ -129,7 +129,7 @@ sap.ui.define([
 					enabled: "$field>/editMode",
 					valueState: "$field>/valueState",
 					valueStateText: "$field>/valueStateText",
-					showValueHelp: "$field>/_fieldHelpEnabled",
+					showValueHelp: "$field>/_valueHelpEnabled",
 					ariaAttributes: "$field>/_ariaAttributes",
 					tooltip: "$field>/tooltip",
 					tokens: "$field>/conditions"
@@ -191,7 +191,7 @@ sap.ui.define([
 					enabled: "$field>/editMode",
 					valueState: "$field>/valueState",
 					valueStateText: "$field>/valueStateText",
-					showValueHelp: "$field>/_fieldHelpEnabled",
+					showValueHelp: "$field>/_valueHelpEnabled",
 					ariaAttributes: "$field>/_ariaAttributes",
 					tooltip: "$field>/tooltip"
 				},
@@ -227,11 +227,11 @@ sap.ui.define([
 		assert.ok(DefaultContent.getUseDefaultEnterHandler(), "Correct useDefaultEnterHandler value returned.");
 	});
 
-	QUnit.test("getUseDefaultFieldHelp", function(assert) {
-		const oUseDefaultFieldHelp = DefaultContent.getUseDefaultFieldHelp();
-		assert.equal(oUseDefaultFieldHelp.name, "defineConditions", "Correct useDefaultFieldHelp.name value returned.");
-		assert.notOk(oUseDefaultFieldHelp.oneOperatorSingle, "Correct useDefaultFieldHelp.oneOperatorSingle value returned.");
-		assert.notOk(oUseDefaultFieldHelp.oneOperatorMulti, "Correct useDefaultFieldHelp.oneOperatorMulti value returned.");
+	QUnit.test("getUseDefaultValueHelp", function(assert) {
+		const oUseDefaultValueHelp = DefaultContent.getUseDefaultValueHelp();
+		assert.equal(oUseDefaultValueHelp.name, "defineConditions", "Correct useDefaultValueHelp.name value returned.");
+		assert.notOk(oUseDefaultValueHelp.oneOperatorSingle, "Correct useDefaultValueHelp.oneOperatorSingle value returned.");
+		assert.notOk(oUseDefaultValueHelp.oneOperatorMulti, "Correct useDefaultValueHelp.oneOperatorMulti value returned.");
 	});
 
 	QUnit.test("getControlNames", function(assert) {

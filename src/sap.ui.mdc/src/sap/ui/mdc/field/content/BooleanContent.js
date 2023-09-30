@@ -31,7 +31,7 @@ sap.ui.define([
 		getEditMultiLine: function() {
 			return [null];
 		},
-		getUseDefaultFieldHelp: function() {
+		getUseDefaultValueHelp: function() {
 			return { name: "bool", oneOperatorSingle: true, oneOperatorMulti: true, single: true, multi: true };
 		},
 		createEditMultiValue: function() {

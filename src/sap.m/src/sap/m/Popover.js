@@ -18,6 +18,7 @@ sap.ui.define([
 	'sap/ui/core/library',
 	'sap/ui/core/Element',
 	'sap/ui/core/ResizeHandler',
+	'sap/ui/core/StaticArea',
 	'./PopoverRenderer',
 	"sap/ui/dom/containsOrEquals",
 	"sap/ui/thirdparty/jquery",
@@ -25,11 +26,8 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	"sap/base/Log",
 	"sap/ui/core/Configuration",
-	"sap/ui/core/StaticArea",
-	// jQuery Plugin "firstFocusableDomRef", "lastFocusableDomRef"
-	"sap/ui/dom/jquery/Focusable",
-	// jQuery Plugin "rect"
-	"sap/ui/dom/jquery/rect"
+	"sap/ui/dom/jquery/Focusable", // jQuery Plugin "firstFocusableDomRef", "lastFocusableDomRef"
+	"sap/ui/dom/jquery/rect" // jQuery Plugin "rect"
 ],
 	function(
 		Bar,
@@ -46,14 +44,14 @@ sap.ui.define([
 		coreLibrary,
 		Element,
 		ResizeHandler,
+		StaticArea,
 		PopoverRenderer,
 		containsOrEquals,
 		jQuery,
 		getScrollbarSize,
 		KeyCodes,
 		Log,
-		Configuration,
-		StaticArea
+		Configuration
 	) {
 		"use strict";
 
@@ -2174,7 +2172,7 @@ sap.ui.define([
 		 */
 		Popover.prototype._isPopupElement = function (oDOMNode) {
 			var oParentDomRef = this._getOpenByDomRef();
-			return !!(jQuery(oDOMNode).closest(StaticArea.getDomRef()/* LFUI5: Check: StaticArea's API might have a better fit for your use case. */).length) || !!(jQuery(oDOMNode).closest(oParentDomRef).length);
+			return !!(jQuery(oDOMNode).closest(StaticArea.getDomRef()).length) || !!(jQuery(oDOMNode).closest(oParentDomRef).length);
 		};
 
 		/**

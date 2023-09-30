@@ -70,8 +70,8 @@ sap.ui.define([
 		assert.ok(UnitContent.getUseDefaultEnterHandler(), "Correct useDefaultEnterHandler value returned.");
 	});
 
-	QUnit.test("getUseDefaultFieldHelp", function(assert) {
-		assert.notOk(UnitContent.getUseDefaultFieldHelp(), "DefaultFieldHelp is not used.");
+	QUnit.test("getUseDefaultValueHelp", function(assert) {
+		assert.notOk(UnitContent.getUseDefaultValueHelp(), "DefaultValueHelp is not used.");
 	});
 
 	QUnit.test("getControlNames", function(assert) {

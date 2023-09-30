@@ -5,7 +5,6 @@
 sap.ui.define([
 	'../base/ManagedObject',
 	'./Element',
-	'./DeclarativeSupport',
 	'./XMLTemplateProcessor',
 	'sap/base/Log',
 	'sap/base/util/LoaderExtensions',
@@ -17,7 +16,6 @@ sap.ui.define([
 function(
 	ManagedObject,
 	Element,
-	DeclarativeSupport,
 	XMLTemplateProcessor,
 	Log,
 	LoaderExtensions,

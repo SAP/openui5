@@ -6238,4 +6238,73 @@ sap.ui.define([
 			assert.notOk(this.oTable._oCollapseAllButton, "Collapse All Button was not created");
 		}.bind(this));
 	});
+
+	QUnit.module("Initialized promise", {
+		createInitPromise: function(assert, oTable, vExpectedError) {
+			return oTable.initialized().then((_oTable) => {
+				if (vExpectedError) {
+					assert.ok(false, "The 'initialized' promise resolved when it should have rejected");
+				} else {
+					assert.equal(oTable, _oTable, "The 'initialized' promise resolved with the table instance");
+				}
+			}).catch((vError) => {
+				if (!vExpectedError) {
+					assert.ok(false, "The 'initialized' promise rejected when it should have resolved");
+				} else {
+					assert.equal(vError, vExpectedError, "The 'initialized promise rejected with the expected error");
+				}
+			}).finally(() => {
+				oTable.destroy();
+			});
+		}
+	});
+
+	QUnit.test("Default settings", function(assert) {
+		const oTable = new Table();
+		return this.createInitPromise(assert, oTable);
+	});
+
+	QUnit.test("Type change", function(assert) {
+		const oTable = new Table();
+		const pInitPromise = this.createInitPromise(assert, oTable, "Type changed");
+
+		oTable.setType(TableType.ResponsiveTable);
+
+		return pInitPromise;
+	});
+
+	QUnit.test("Destroy", function(assert) {
+		const oTable = new Table();
+		const pInitPromise = this.createInitPromise(assert, oTable, "Destroyed");
+
+		return oTable.awaitControlDelegate().then(() => {
+			oTable.destroy();
+			return pInitPromise;
+		});
+	});
+
+	QUnit.test("Uncaught errors", function(assert) {
+		const aErrors = [];
+		const done = assert.async();
+		const fnOnRejectedPromiseError = (oEvent) => {
+			aErrors.push(oEvent.reason);
+		};
+
+		window.addEventListener("unhandledrejection", fnOnRejectedPromiseError);
+
+		const oTable = new Table();
+		oTable.initialized().catch(() => {});
+
+		oTable.awaitControlDelegate().then(() => {
+			const pFullyInitialized = oTable._fullyInitialized();
+			oTable.destroy();
+			return pFullyInitialized;
+		}).finally(() => {
+			wait(1000).then(() => {
+				window.removeEventListener("unhandledrejection", fnOnRejectedPromiseError);
+				assert.deepEqual(aErrors, [], "No uncaught errors detected");
+				done();
+			});
+		});
+	});
 });

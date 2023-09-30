@@ -5705,51 +5705,6 @@ sap.ui.define([
 		 return oInputODataSuggestProvider;
 	 }());
 
-	 //implement FileUploader helper factory with m controls
-	 ObjectPath.set("sap.ui.unified.FileUploaderHelper", {
-		 createTextField: function(sId){
-			 var oTextField = new sap.m.Input(sId);
-			 return oTextField;
-		 },
-		 setTextFieldContent: function(oTextField, sWidth){
-			 oTextField.setWidth(sWidth);
-		 },
-		 createButton: function(sId){
-			 var oButton = new sap.m.Button(sId);
-			 return oButton;
-		 },
-		 addFormClass: function(){ return "sapUiFUM"; },
-		 bFinal: true
-	 });
-
-	 // implements ColorPicker helper factory with common controls
-	 ObjectPath.set("sap.ui.unified.ColorPickerHelper", {
-		 isResponsive: function () {
-			 return true;
-		 },
-		 factory: {
-			 createLabel: function (mConfig) {
-				 return new sap.m.Label(mConfig);
-			 },
-			 createInput: function (sId, mConfig) {
-				 return new sap.m.InputBase(sId, mConfig);
-			 },
-			 createSlider: function (sId, mConfig) {
-				 return new sap.m.Slider(sId, mConfig);
-			 },
-			 createRadioButtonGroup: function (mConfig) {
-				 return new sap.m.RadioButtonGroup(mConfig);
-			 },
-			 createRadioButtonItem: function (mConfig) {
-				 return new sap.m.RadioButton(mConfig);
-			 },
-			 createButton: function (sId, mConfig) {
-				 return new sap.m.Button(sId, mConfig);
-			 }
-		 },
-		 bFinal: true
-	 });
-
 	 //implement table helper factory with m controls
 	 //possible is set before layout lib is loaded.
 	 /* -------------------------------------- */

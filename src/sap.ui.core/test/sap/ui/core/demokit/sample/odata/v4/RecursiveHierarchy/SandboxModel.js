@@ -312,9 +312,12 @@ sap.ui.define([
 		switch (Object.keys(oBody).length === 1 && Object.keys(oBody)[0]) {
 			case "EMPLOYEE_2_MANAGER@odata.bind": {
 				const oChild = mNodeById[aMatches[1]];
+				if (oChild.Name.includes("ERROR")) {
+					throw new Error("This request intentionally failed!");
+				}
+
 				const sParentId = oBody["EMPLOYEE_2_MANAGER@odata.bind"]
 					.slice(11, -2);
-
 				for (let sId = sParentId; sId; sId = mNodeById[sId].MANAGER_ID) {
 					if (sId === oChild.ID) { // cycle detected
 						throw new Error("Parent must not be a descendant of moved node");

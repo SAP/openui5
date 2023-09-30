@@ -51,7 +51,9 @@ sap.ui.define([
 			return undefined;
 		},
 		invalidate: function () {},
-		getValueHelpDelegate: function () {}
+		getValueHelpDelegate: function () {
+			return ValueHelpDelegate;
+		}
 	};
 
 	const _teardown = function() {
@@ -436,7 +438,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("getItemForValue - useFirstMatch for key", function(assert) {
-
+		const fnDone = assert.async();
 		const oConfig = {
 			parsedValue: undefined,
 			parsedDescription: undefined,
@@ -454,7 +456,6 @@ sap.ui.define([
 		assert.ok(oPromise instanceof Promise, "getItemForValue returns promise");
 
 		if (oPromise) {
-			const fnDone = assert.async();
 			oPromise.then(function(oItem) {
 				assert.ok(true, "Promise Then must be called");
 				assert.deepEqual(oItem, {key: "I1", description: "Item 1"}, "Item returned");
@@ -468,7 +469,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("getItemForValue - useFirstMatch for description", function(assert) {
-
+		const fnDone = assert.async();
 		const oConfig = {
 			parsedValue: undefined,
 			parsedDescription: "I",
@@ -486,7 +487,6 @@ sap.ui.define([
 		assert.ok(oPromise instanceof Promise, "getItemForValue returns promise");
 
 		if (oPromise) {
-			const fnDone = assert.async();
 			oPromise.then(function(oItem) {
 				assert.ok(true, "Promise Then must be called");
 				assert.deepEqual(oItem, {key: "I1", description: "Item 1"}, "Item returned");

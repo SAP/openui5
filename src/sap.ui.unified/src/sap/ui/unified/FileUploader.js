@@ -11,6 +11,7 @@ sap.ui.define([
 	'sap/ui/core/LabelEnablement',
 	'sap/ui/core/InvisibleText',
 	'sap/ui/core/library',
+	'sap/ui/core/StaticArea',
 	'sap/ui/Device',
 	'./FileUploaderRenderer',
 	'sap/ui/dom/containsOrEquals',
@@ -19,7 +20,7 @@ sap.ui.define([
 	'sap/base/security/encodeXML',
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Configuration",
-	"sap/ui/core/StaticArea",
+	"./FileUploaderHelper",
 	// jQuery Plugin "addAriaDescribedBy"
 	'sap/ui/dom/jquery/Aria'
 ], function(
@@ -28,6 +29,7 @@ sap.ui.define([
 	LabelEnablement,
 	InvisibleText,
 	coreLibrary,
+	StaticArea,
 	Device,
 	FileUploaderRenderer,
 	containsOrEquals,
@@ -36,7 +38,7 @@ sap.ui.define([
 	encodeXML,
 	jQuery,
 	Configuration,
-	StaticArea
+	FileUploaderHelper
 ) {
 	// shortcut for sap.ui.core.ValueState
 	var ValueState = coreLibrary.ValueState;
@@ -597,15 +599,16 @@ sap.ui.define([
 	 */
 	FileUploader.prototype.init = function(){
 		var that = this;
+		this.oFileUploaderHelper = FileUploaderHelper.getHelper();
 		// load the respective UI-Elements from the FileUploaderHelper
-		this.oFilePath = library.FileUploaderHelper.createTextField(this.getId() + "-fu_input").addEventDelegate({
+		this.oFilePath = this.oFileUploaderHelper.createTextField(this.getId() + "-fu_input").addEventDelegate({
 			onAfterRendering: function () {
 				if (that.getWidth()) {
 					that._resizeDomElements();
 				}
 			}
 		});
-		this.oBrowse = library.FileUploaderHelper.createButton(this.getId() + "-fu_button");
+		this.oBrowse = this.oFileUploaderHelper.createButton(this.getId() + "-fu_button");
 		this.oFilePath.setParent(this);
 		this.oBrowse.setParent(this);
 
@@ -866,7 +869,7 @@ sap.ui.define([
 		// remove the IFRAME
 		if (this.oIFrameRef) {
 			jQuery(this.oIFrameRef).off();
-			StaticArea.getDomRef()/* LFUI5: Check: StaticArea's API might have a better fit for your use case. */.removeChild(this.oIFrameRef);
+			StaticArea.getDomRef().removeChild(this.oIFrameRef);
 			this.oIFrameRef = null;
 		}
 
@@ -895,7 +898,7 @@ sap.ui.define([
 	 */
 	FileUploader.prototype.onBeforeRendering = function() {
 		// store the file uploader outside in the static area
-		var oStaticArea = StaticArea.getDomRef()/* LFUI5: Check: StaticArea's API might have a better fit for your use case. */;
+		var oStaticArea = StaticArea.getDomRef();
 		jQuery(this.oFileUpload).appendTo(oStaticArea);
 
 		if (!this.getName()) {
@@ -1930,7 +1933,7 @@ sap.ui.define([
 			oIFrameRef.style.display = "none";
 			/*eslint-enable no-script-url */
 			oIFrameRef.id = this.getId() + "-frame";
-			StaticArea.getDomRef()/* LFUI5: Check: StaticArea's API might have a better fit for your use case. */.appendChild(oIFrameRef);
+			StaticArea.getDomRef().appendChild(oIFrameRef);
 			oIFrameRef.contentWindow.name = this.getId() + "-frame";
 
 			// sink the load event of the upload iframe

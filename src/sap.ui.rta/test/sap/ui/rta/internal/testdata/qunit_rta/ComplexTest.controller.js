@@ -21,7 +21,7 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	Controller.extend("sap.ui.rta.qunitrta.ComplexTest", {
+	return Controller.extend("sap.ui.rta.qunitrta.ComplexTest", {
 		onInit() {
 			this._sResourcePath = sap.ui.require.toUrl("sap/ui/rta/test");
 			var oManifest = FlUtils.getAppComponentForControl(this.getView()).getManifest();

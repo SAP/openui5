@@ -1261,7 +1261,7 @@ sap.ui.define([
 	 * Provides information about a library.
 	 *
 	 * This method is intended to be called exactly once while the main module of a library (its <code>library.js</code>
-	 * module) is executing, typically at its begin. The single parameter <code>oLibInfo</code> is an info object that
+	 * module) is executing, typically at its begin. The single parameter <code>mSettings</code> is an info object that
 	 * describes the content of the library.
 	 *
 	 * When the <code>mSettings</code> has been processed, a normalized version will be set on the library instance
@@ -1278,9 +1278,11 @@ sap.ui.define([
 	 *
 	 * <li>If the object contains a list of <code>controls</code> or <code>elements</code>, {@link sap.ui.lazyRequire
 	 * lazy stubs} will be created for their constructor as well as for their static <code>extend</code> and
-	 * <code>getMetadata</code> methods.<br> <b>Note:</b> Future versions might abandon the concept of lazy stubs as it
-	 * requires synchronous XMLHttpRequests which have been deprecated (see {@link http://xhr.spec.whatwg.org}). To be
-	 * on the safe side, productive applications should always require any modules that they directly depend on.</li>
+	 * <code>getMetadata</code> methods.
+	 *
+	 * <b>Note:</b> Future versions of UI5 will abandon the concept of lazy stubs as it requires synchronous
+	 * XMLHttpRequests which have been deprecated (see {@link http://xhr.spec.whatwg.org}). To be on the safe side,
+	 * productive applications should always require any modules that they directly depend on.</li>
 	 *
 	 * <li>With the <code>noLibraryCSS</code> property, the library can be marked as 'theming-free'.  Otherwise, the
 	 * framework will add a &lt;link&gt; tag to the page's head, pointing to the library's theme-specific stylesheet.
@@ -1290,9 +1292,21 @@ sap.ui.define([
 	 * loaded the resulting stylesheet.</li>
 	 *
 	 * <li>If a list of library <code>dependencies</code> is specified in the info object, those libraries will be
-	 * loaded synchronously.<br> <b>Note:</b> Dependencies between libraries don't have to be modeled as AMD
-	 * dependencies. Only when enums or types from an additional library are used in the coding of the
-	 * <code>library.js</code> module, the library should be additionally listed in the AMD dependencies.</li>
+	 * loaded synchronously if they haven't been loaded yet.
+	 *
+	 * <b>Note:</b> Dependencies between libraries have to be modeled consistently in several places:
+	 * <ul>
+	 * <li>Both eager and lazy dependencies have to be modelled in the <code>.library</code> file.</li>
+	 * <li>By default, UI5 Tooling generates a <code>manifest.json</code> file from the content of the <code>.library</code>
+	 * file. However, if the <code>manifest.json</code> file for the library is not generated but
+	 * maintained manually, it must be kept consistent with the <code>.library</code> file, especially regarding
+	 * its listed library dependencies.</li>
+	 * <li>All eager library dependencies must be declared as AMD dependencies of the <code>library.js</code> module
+	 * by referring to the corresponding <code>"some/lib/namespace/library"</code> module of each library
+	 * dependency.</code></li>
+	 * <li>All eager dependencies must be listed in the <code>dependencies</code> property of the info object.</li>
+	 * <li>All lazy dependencies <b>must not</b> be listed as AMD dependencies or in the <code>dependencies</code>
+	 * property of the info object.</li>
 	 * </ul>
 	 *
 	 * Last but not least, higher layer frameworks might want to include their own metadata for libraries.
@@ -1301,19 +1315,15 @@ sap.ui.define([
 	 * in the <code>extensions</code> object and that the name of that property contains some namespace
 	 * information (e.g. library name that introduces the feature) to avoid conflicts with other extensions.
 	 * The framework won't touch the content of <code>extensions</code> but will make it available
-	 * in the library info objects returned by {@link #.getInitializedLibraries}.
+	 * in the library info objects provided by {@link #.load}.
 	 *
 	 *
 	 * <h3>Relationship to Descriptor for Libraries (manifest.json)</h3>
 	 *
 	 * The information contained in <code>mSettings</code> is partially redundant to the content of the descriptor
-	 * for the same library (its <code>manifest.json</code> file). Future versions of UI5 might ignore the information
-	 * provided in <code>oLibInfo</code> and might evaluate the descriptor file instead. Library developers therefore
-	 * should keep the information in both files in sync.
-	 *
-	 * When the <code>manifest.json</code> is generated from the <code>.library</code> file (which is the default
-	 * for UI5 libraries built with Maven), then the content of the <code>.library</code> and <code>library.js</code>
-	 * files must be kept in sync.
+	 * for the same library (its <code>manifest.json</code> file). Future versions of UI5 will ignore the information
+	 * provided in <code>mSettings</code> and will evaluate the descriptor file instead. Library developers therefore
+	 * must keep the information in both files in sync if the <code>manifest.json</code> file is maintained manually.
 	 *
 	 * @param {object} mSettings Info object for the library
 	 * @param {string} mSettings.name Name of the library; It must match the name by which the library has been loaded
@@ -1332,10 +1342,15 @@ sap.ui.define([
 	 *  When set to true, no library.css will be loaded for this library
 	 * @param {object} [mSettings.extensions] Potential extensions of the library metadata; structure not defined by the
 	 *  UI5 core framework.
-	 * @returns {object} As of version 1.101; returns the library namespace, based on the given library name.
+	 * @returns {object} Returns the library namespace, based on the given library name.
 	 * @public
 	 */
 	Library.init = function(mSettings) {
+		// throw error if a Library is initialized before the core is ready.
+		if (!sap.ui.require("sap/ui/core/Core")) {
+			throw new Error("Library " + mSettings.name + ": Library must not be used before the core is ready!");
+		}
+
 		assert(typeof mSettings === "object" , "mSettings given to 'sap/ui/core/Lib.init' must be an object");
 		assert(typeof mSettings.name === "string" && mSettings.name, "mSettings given to 'sap/ui/core/Lib.init' must have the 'name' property set");
 
@@ -1476,13 +1491,11 @@ sap.ui.define([
 	 * For example, when an app uses a heavy-weight charting library that shouldn't be loaded during startup, it can
 	 * declare it as "lazy" and load it just before it loads and displays a view that uses the charting library:
 	 * <pre>
-	 *   Lib.load({name: "heavy.charting"})
-	 *     .then(function() {
-	 *       View.create({
-	 *         name: "myapp.views.HeavyChartingView",
-	 *         type: ViewType.XML
-	 *       });
-	 *     });
+	 *   await Library.load({name: "heavy.charting"});
+	 *   await View.create({
+	 *       name: "myapp.views.HeavyChartingView",
+	 *       type: ViewType.XML
+	 *   });
 	 * </pre>
 	 *
 	 * @param {object} mOptions The options object that contains the following properties

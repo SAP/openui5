@@ -30,6 +30,7 @@ sap.ui.define([
 	"sap/ui/model/odata/v4/ODataPropertyBinding",
 	"sap/ui/model/odata/v4/ValueListType",
 	"sap/ui/model/odata/v4/lib/_Helper",
+	"sap/ui/security/Security",
 	"sap/ui/test/TestUtils",
 	"sap/ui/util/XMLHelper",
 	// load Table resources upfront to avoid loading times > 1 second for the first test using Table
@@ -38,7 +39,7 @@ sap.ui.define([
 		Device, EventProvider, SyncPromise, Configuration, Messaging, Rendering, Controller, View,
 		ChangeReason, Filter, FilterOperator, FilterType, Sorter, OperationMode, AnnotationHelper,
 		ODataListBinding, ODataMetaModel, ODataModel, ODataPropertyBinding, ValueListType, _Helper,
-		TestUtils, XMLHelper) {
+		Security, TestUtils, XMLHelper) {
 	/*eslint no-sparse-arrays: 0, "max-len": ["error", {"code": 100,
 		"ignorePattern": "/sap/opu/odata4/|\" :$|\" : \\{$|\\{meta>"}], */
 	"use strict";
@@ -28885,6 +28886,8 @@ sap.ui.define([
 	// Move "Kappa" so that "Beta" becomes its parent, thus expanding it again, then check the
 	// level of the latter's children.
 	// JIRA: CPOUI5ODATAV4-2326
+	//
+	// A failed move must not leave the node collapsed (JIRA: CPOUI5ODATAV4-2343)
 [false, true].forEach((bMoveCollapsed) => {
 	[false, true].forEach((bExpandCollapseBeta) => {
 		const sTitle = `Recursive Hierarchy: move node w/ children, collapsed=${bMoveCollapsed},
@@ -29061,6 +29064,48 @@ sap.ui.define([
 		if (bMoveCollapsed) {
 			this.expectChange("id", [, "9"]);
 			oAlpha.collapse();
+		} else { // "A failed move must not leave the node collapsed"
+			const oBeta = oTable.getRows()[1].getBindingContext();
+
+			this.expectEvents(assert, "sap.ui.model.odata.v4.ODataListBinding: /EMPLOYEES", [])
+				.expectRequest({
+					headers : {
+						Prefer : "return=minimal"
+					},
+					method : "PATCH",
+					url : "EMPLOYEES('0')",
+					payload : {
+						"EMPLOYEE_2_MANAGER@odata.bind" : "EMPLOYEES('9')"
+					}
+				}, createErrorInsideBatch());
+
+			await Promise.all([
+				oAlpha.move({parent : oOmega}).then(mustFail(assert), function (oError) {
+					assert.strictEqual(oError.message, "Request intentionally failed");
+				}), // (JIRA: CPOUI5ODATAV4-2343)
+				this.waitForChanges(assert, "move 0 (Alpha) to 9 (Omega) *FAILS*")
+			]);
+
+			this.expectEvents(assert, "sap.ui.model.odata.v4.ODataListBinding: /EMPLOYEES", [
+					[, "change", {reason : "change"}] // caused by ODLB#getAllCurrentContexts
+				]);
+			checkTable("after failed move", assert, oTable, [
+				"/EMPLOYEES('0')",
+				"/EMPLOYEES('1')",
+				"/EMPLOYEES('2')",
+				"/EMPLOYEES('3')",
+				"/EMPLOYEES('9')"
+			], [
+				[true, 1, "0", "", "Alpha", 60],
+				[false, 2, "1", "0", "Beta", 55],
+				[undefined, 2, "2", "0", "Kappa", 56],
+				[undefined, 2, "3", "0", "Lambda", 57],
+				[undefined, 1, "9", "", "Omega", 69]
+			]);
+			assert.strictEqual(oTable.getRows()[1].getBindingContext(), oBeta, "unchanged");
+
+			// wait for UI changes caused by "change" event above
+			await resolveLater(undefined, /*iDelay*/1);
 		}
 
 		this.expectEvents(assert, "sap.ui.model.odata.v4.ODataListBinding: /EMPLOYEES", [
@@ -29109,11 +29154,12 @@ sap.ui.define([
 		const oBeta = oTable.getRows()[2].getBindingContext();
 		const oKappa = oTable.getRows()[3].getBindingContext();
 
+		const iBatchNo = this.iBatchNo + 1; // don't care about exact no., but use twice below
 		this.expectEvents(assert, "sap.ui.model.odata.v4.ODataListBinding: /EMPLOYEES", [
 				[, "change", {reason : "change"}]
 			])
 			.expectRequest({
-				batchNo : bExpandCollapseBeta ? 5 : 4,
+				batchNo : iBatchNo,
 				headers : {
 					Prefer : "return=minimal"
 				},
@@ -29126,7 +29172,7 @@ sap.ui.define([
 			.expectChange("id", [,,,, "1.1", "1.2", "3"]);
 		if (!bExpandCollapseBeta) {
 			this.expectRequest({
-					batchNo : bExpandCollapseBeta ? 5 : 4,
+					batchNo : iBatchNo,
 					url : "EMPLOYEES?$apply=descendants($root/EMPLOYEES,OrgChart,ID"
 							+ ",filter(ID eq '1'),1)"
 						+ "&$select=AGE,DrillState,ID,MANAGER_ID,Name&$count=true"
@@ -41489,7 +41535,7 @@ sap.ui.define([
 		}
 
 		// code under test
-		Configuration.setSecurityTokenHandlers([
+		Security.setSecurityTokenHandlers([
 			securityTokenHandler0,
 			securityTokenHandler1,
 			securityTokenHandler2
@@ -41513,7 +41559,7 @@ sap.ui.define([
 
 			return that.waitForChanges(assert);
 		}).finally(function () {
-			Configuration.setSecurityTokenHandlers([]);
+			Security.setSecurityTokenHandlers([]);
 		});
 	});
 });

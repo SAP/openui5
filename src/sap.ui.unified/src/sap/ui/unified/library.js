@@ -595,32 +595,6 @@ sap.ui.define([
 
 	thisLib._iNumberOfOpenedShellOverlays = 0;
 
-	// Default implementation of ColorPickerHelper - to be overwritten by commons or mobile library
-	if (!thisLib.ColorPickerHelper) {
-		thisLib.ColorPickerHelper = {
-			isResponsive: function () { return false; },
-			factory: {
-				createLabel:  function () { throw new Error("no Label control available"); },
-				createInput:  function () { throw new Error("no Input control available"); },
-				createSlider: function () { throw new Error("no Slider control available"); },
-				createRadioButtonGroup: function () { throw new Error("no RadioButtonGroup control available"); },
-				createRadioButtonItem: function () { throw new Error("no RadioButtonItem control available"); }
-			},
-			bFinal: false
-		};
-	}
-
-	//factory for the FileUploader to create TextField and Button to be overwritten by commons and mobile library
-	if (!thisLib.FileUploaderHelper) {
-		thisLib.FileUploaderHelper = {
-			createTextField: function(sId){ throw new Error("no TextField control available!"); }, /* must return a TextField control */
-			setTextFieldContent: function(oTextField, sWidth){ throw new Error("no TextField control available!"); },
-			createButton: function(sId){ throw new Error("no Button control available!"); }, /* must return a Button control */
-			addFormClass: function(){ return null; },
-			bFinal: false /* if true, the helper must not be overwritten by an other library */
-		};
-	}
-
 	thisLib.calendar = thisLib.calendar || {};
 
 	return thisLib;

@@ -6,16 +6,16 @@
 sap.ui.define([
 	'./library',
 	'sap/ui/core/Control',
+	'sap/ui/core/StaticArea',
 	'sap/ui/core/theming/Parameters',
 	'./RatingIndicatorRenderer',
 	"sap/ui/events/KeyCodes",
 	"sap/base/Log",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Configuration",
-	'sap/ui/core/LabelEnablement',
-	"sap/ui/core/StaticArea"
+	'sap/ui/core/LabelEnablement'
 ],
-	function(library, Control, Parameters, RatingIndicatorRenderer, KeyCodes, Log, jQuery, Configuration, LabelEnablement, StaticArea) {
+	function(library, Control, StaticArea, Parameters, RatingIndicatorRenderer, KeyCodes, Log, jQuery, Configuration, LabelEnablement) {
 	"use strict";
 
 
@@ -451,7 +451,7 @@ sap.ui.define([
 			if (RegExp("^(auto|0)$|^[+-\.]?[0-9].?([0-9]+)?(px|em|rem|ex|%|in|cm|mm|pt|pc)$").test(cssSize)) {
 				oScopeTest = jQuery('<div>&nbsp;</div>')
 					.css({"display": "none", "width": cssSize, "margin": 0, "padding": 0, "height": "auto", "line-height": 1, "border": 0, "overflow": "hidden"})
-					.appendTo(StaticArea.getDomRef()/* LFUI5: Check: StaticArea's API might have a better fit for your use case. */);
+					.appendTo(StaticArea.getDomRef());
 				vScopeVal = oScopeTest.width();
 				oScopeTest.remove();
 			} else {
