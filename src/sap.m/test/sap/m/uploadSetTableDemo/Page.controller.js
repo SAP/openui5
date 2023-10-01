@@ -1000,6 +1000,20 @@ sap.ui.define([
 		onBeforeUploadStarts: function() {
 			// This code block is only for demonstration purpose to simulate XHR requests, hence starting the mockserver.
 			this.oMockServer.start();
+		},
+		onSearch: function (oEvent) {
+			// add filter for search
+			var aFilters = [];
+			var sQuery = oEvent.getSource().getValue();
+			if (sQuery && sQuery.length > 0) {
+				var filter = new Filter("fileName", FilterOperator.Contains, sQuery);
+				aFilters.push(filter);
+			}
+
+			// update list binding
+			var oUploadSet = this.byId("UploadSetTable");
+			var oBinding = oUploadSet.getBinding("items");
+			oBinding.filter(aFilters, "Application");
 		}
 	});
 });
