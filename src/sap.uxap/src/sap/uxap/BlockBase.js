@@ -16,7 +16,8 @@ sap.ui.define([
 	"./library",
 	"sap/ui/core/Component",
 	"sap/ui/layout/library",
-	"sap/base/Log"
+	"sap/base/Log",
+	"sap/uxap/ModelMapping"
 ], function(
 	jQuery,
 	Control,
@@ -30,7 +31,8 @@ sap.ui.define([
 	library,
 	Component,
 	layoutLibrary,
-	Log
+	Log,
+	ModelMapping
 ) {
 		"use strict";
 
