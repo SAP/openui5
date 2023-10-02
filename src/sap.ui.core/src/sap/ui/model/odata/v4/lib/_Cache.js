@@ -1663,10 +1663,14 @@ sap.ui.define([
 	 * <code>$byPredicate</code>, <code>$created</code> and <code>$count</code>, and a collection
 	 * cache's limit and number of active elements (if applicable).
 	 *
+	 * If the predicate is given, the index is determined again to handle the case that the element
+	 * has been moved (via a parallel insert/delete) in the meantime. Otherwise, the index is taken
+	 * as is.
+	 *
 	 * @param {number} [iIndex]
 	 *   The array index of the old element to be removed or <code>undefined</code> in case the
 	 *   element is a kept-alive element without an index
-	 * @param {string} sPredicate
+	 * @param {string} [sPredicate]
 	 *   The key predicate of the old element to be removed
 	 * @param {object[]} [aElements]
 	 *   The array of elements, defaults to a collection cache's own elements
@@ -1680,20 +1684,25 @@ sap.ui.define([
 	 */
 	_Cache.prototype.removeElement = function (iIndex, sPredicate, aElements = this.aElements,
 			sPath = "") {
-		var oElement = aElements.$byPredicate[sPredicate],
-			bDeleted = oElement["@$ui5.context.isDeleted"],
-			sTransientPredicate = _Helper.getPrivateAnnotation(oElement, "transientPredicate");
+		const oElement = sPredicate
+			? aElements.$byPredicate[sPredicate]
+			: aElements[iIndex]; // undefined in case it was not yet read
 
-		if (iIndex !== undefined) {
+		if (!sPredicate) {
+			sPredicate = oElement && _Helper.getPrivateAnnotation(oElement, "predicate");
+		} else if (iIndex !== undefined) {
 			// the element might have moved due to parallel insert/delete
 			iIndex = _Cache.getElementIndex(aElements, sPredicate, iIndex);
 		}
+		const bDeleted = oElement?.["@$ui5.context.isDeleted"];
 		if (!bDeleted) {
 			delete aElements.$byPredicate[sPredicate];
 		}
 		if (iIndex >= 0) {
 			aElements.splice(iIndex, 1);
 			_Helper.addToCount(this.mChangeListeners, sPath, aElements, -1);
+			const sTransientPredicate
+				= oElement && _Helper.getPrivateAnnotation(oElement, "transientPredicate");
 			if (sTransientPredicate) {
 				aElements.$created -= 1;
 				if (!sPath) {

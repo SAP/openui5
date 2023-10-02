@@ -1115,14 +1115,8 @@ sap.ui.define([
 		var bReset = false,
 			that = this;
 
-		const oAggregation = this.mParameters.$$aggregation;
-		if (oAggregation) {
-			if (oAggregation.expandTo > 1) {
-				throw new Error("Unsupported $$aggregation.expandTo: " + oAggregation.expandTo);
-			}
-			if (oContext.iIndex === undefined) {
-				throw new Error("Unsupported kept-alive context: " + oContext);
-			}
+		if (this.mParameters.$$aggregation && oContext.iIndex === undefined) {
+			throw new Error("Unsupported kept-alive context: " + oContext);
 		}
 		if (oContext.isDeleted()) {
 			return oContext.oDeletePromise; // do not delete twice

@@ -4691,13 +4691,6 @@ sap.ui.define([
 			// code under test
 			oBinding.delete("~oGroupLock~", "~sEditUrl~", oContext);
 		}, new Error("Unsupported kept-alive context: ~toString~"));
-
-		oBinding.mParameters.$$aggregation = {expandTo : 2, hierarchyQualifier : "X"};
-
-		assert.throws(function () {
-			// code under test
-			oBinding.delete("~oGroupLock~", "~sEditUrl~", {/*oContext*/});
-		}, new Error("Unsupported $$aggregation.expandTo: 2"));
 	});
 
 	//*********************************************************************************************

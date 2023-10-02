@@ -28052,9 +28052,9 @@ sap.ui.define([
 	<Text id="name" text="{Name}"/>
 </Table>`;
 
-		this.expectRequest("EMPLOYEES?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels"
-				+ "(HierarchyNodes=$root/EMPLOYEES,HierarchyQualifier='OrgChart',NodeProperty='ID'"
-				+ ",Levels=1)"
+		this.expectRequest("EMPLOYEES?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels("
+					+ "HierarchyNodes=$root/EMPLOYEES,HierarchyQualifier='OrgChart'"
+					+ ",NodeProperty='ID',Levels=1)"
 				+ "&$select=DrillState,ID,Name&$count=true&$skip=0&$top=100", {
 				"@odata.count" : "1",
 				value : [{
@@ -28113,9 +28113,9 @@ sap.ui.define([
 		//    5 Zeta (read via paging after delete)
 		//    6 Eta (read via paging after delete)
 		// 7 Theta
-		this.expectRequest("EMPLOYEES?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels"
-				+ "(HierarchyNodes=$root/EMPLOYEES,HierarchyQualifier='OrgChart',NodeProperty='ID'"
-				+ ",Levels=1)"
+		this.expectRequest("EMPLOYEES?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels("
+					+ "HierarchyNodes=$root/EMPLOYEES,HierarchyQualifier='OrgChart'"
+					+ ",NodeProperty='ID',Levels=1)"
 				+ "&$select=DrillState,ID,MANAGER_ID,Name&$count=true&$skip=0&$top=3", {
 				"@odata.count" : "2",
 				value : [{
@@ -28576,6 +28576,735 @@ sap.ui.define([
 			[true, 1, "0", "", "Alpha"],
 			[undefined, 2, "3", "0", "Delta"]
 		]);
+	});
+
+	//*********************************************************************************************
+	// Scenario: Delete a non-leaf node with descendants loaded partially via expandTo in a
+	// recursive hierarchy which is the only child of its parent.
+	//
+	// JIRA: CPOUI5ODATAV4-2302
+	QUnit.test("Recursive Hierarchy: delete & expandTo, one ancestor", async function (assert) {
+		const oModel = this.createTeaBusiModel({autoExpandSelect : true});
+		const sView = `
+<t:Table id="table" rows="{path : '/EMPLOYEES',
+		parameters : {
+			$$aggregation : {
+				expandTo : 4,
+				hierarchyQualifier : 'OrgChart'
+			}
+		}}" threshold="0" visibleRowCount="4">
+	<Text id="expanded" text="{= %{@$ui5.node.isExpanded} }"/>
+	<Text text="{= %{@$ui5.node.level} }"/>
+	<Text text="{ID}"/>
+	<Text text="{MANAGER_ID}"/>
+	<Text id="name" text="{Name}"/>
+</t:Table>`;
+
+		// 0 Alpha
+		//   1 Beta (deleted)
+		//     2 Gamma (visible during the delete)
+		//        3 Delta (visible during the delete)
+	    //     4 Epsilon (invisible during the delete)
+		//  5 Zeta (only helps with the eventing)
+		this.expectRequest("EMPLOYEES?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels("
+					+ "HierarchyNodes=$root/EMPLOYEES,HierarchyQualifier='OrgChart'"
+					+ ",NodeProperty='ID',Levels=4)"
+				+ "&$select=DescendantCount,DistanceFromRoot,DrillState,ID,MANAGER_ID,Name"
+				+ "&$count=true&$skip=0&$top=4", {
+				"@odata.count" : "6",
+				value : [{
+					DescendantCount : "4",
+					DistanceFromRoot : "0",
+					DrillState : "expanded",
+					ID : "0",
+					MANAGER_ID : null,
+					Name : "Alpha"
+				}, {
+					DescendantCount : "3",
+					DistanceFromRoot : "1",
+					DrillState : "expanded",
+					ID : "1",
+					MANAGER_ID : "0",
+					Name : "Beta"
+				}, {
+					DescendantCount : "1",
+					DistanceFromRoot : "2",
+					DrillState : "expanded",
+					ID : "2",
+					MANAGER_ID : "1",
+					Name : "Gamma"
+				}, {
+					DescendantCount : "0",
+					DistanceFromRoot : "3",
+					DrillState : "collapsed",
+					ID : "3",
+					MANAGER_ID : "2",
+					Name : "Delta"
+				}]
+			})
+			.expectChange("expanded", [true, true, true, false])
+			.expectChange("name", ["Alpha", "Beta", "Gamma", "Delta"]);
+
+		await this.createView(assert, sView, oModel);
+
+		const oTable = this.oView.byId("table");
+		checkTable("initially", assert, oTable, [
+			"/EMPLOYEES('0')",
+			"/EMPLOYEES('1')",
+			"/EMPLOYEES('2')",
+			"/EMPLOYEES('3')"
+		], [
+			[true, 1, "0", "", "Alpha"],
+			[true, 2, "1", "0", "Beta"],
+			[true, 3, "2", "1", "Gamma"],
+			[false, 4, "3", "2", "Delta"]
+		], 6);
+
+		this.expectChange("expanded", [, false]) // Beta is collapsed before being deleted
+			.expectRequest("DELETE EMPLOYEES('1')")
+			.expectRequest("EMPLOYEES?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels("
+					+ "HierarchyNodes=$root/EMPLOYEES,HierarchyQualifier='OrgChart'"
+					+ ",NodeProperty='ID',Levels=4)"
+				+ "&$select=DescendantCount,DistanceFromRoot,DrillState,ID,MANAGER_ID,Name"
+				+ "&$skip=1&$top=1", {
+				value : [{
+					DescendantCount : "0",
+					DistanceFromRoot : "0",
+					DrillState : "leaf",
+					ID : "5",
+					MANAGER_ID : null,
+					Name : "Zeta"
+				}]
+			})
+			.expectChange("expanded", [undefined]) // Alpha is now a leaf
+			.expectChange("name", [, "Zeta"]);
+
+		await Promise.all([
+			oTable.getRows()[1].getBindingContext().delete(), // code under test
+			this.waitForChanges(assert, "delete Beta")
+		]);
+
+		checkTable("finally", assert, oTable, [
+			"/EMPLOYEES('0')",
+			"/EMPLOYEES('5')"
+		], [
+			[undefined, 1, "0", "", "Alpha"], // now a leaf
+			[undefined, 1, "5", "", "Zeta"]
+		]);
+	});
+
+	//*********************************************************************************************
+	// Scenario: Delete node Epsilon in a recursive hierarchy, preloaded via expandTo. The parent
+	// node Gamma has not been loaded yet, but the grandparent Beta has. Load Gamma and Delta,
+	// delete Delta, so that two ancestors need to be adjusted. In the end, collapse Beta to see
+	// that it was adjusted correctly.
+	// JIRA: CPOUI5ODATAV4-2302
+	QUnit.test("Recursive Hierarchy: delete & expandTo, two ancestors", async function (assert) {
+		const oModel = this.createTeaBusiModel({autoExpandSelect : true});
+		const sView = `
+<t:Table id="table" rows="{path : '/EMPLOYEES',
+		parameters : {
+			$$aggregation : {
+				expandTo : 3,
+				hierarchyQualifier : 'OrgChart'
+			}
+		}}" threshold="0" visibleRowCount="2">
+	<Text id="expanded" text="{= %{@$ui5.node.isExpanded} }"/>
+	<Text text="{= %{@$ui5.node.level} }"/>
+	<Text text="{ID}"/>
+	<Text text="{MANAGER_ID}"/>
+	<Text id="name" text="{Name}"/>
+</t:Table>`;
+
+		// 0 Alpha
+		// 1 Beta (grandparent)
+		//    2 Gamma (invisible during the 1st delete)
+		//       3 Delta (invisible during the 1st delete, deleted later)
+		//       4 Epsilon (deleted)
+		// 5 Zeta
+		//    6 Eta
+		this.expectRequest("EMPLOYEES?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels("
+					+ "HierarchyNodes=$root/EMPLOYEES,HierarchyQualifier='OrgChart'"
+					+ ",NodeProperty='ID',Levels=3)"
+				+ "&$select=DescendantCount,DistanceFromRoot,DrillState,ID,MANAGER_ID,Name"
+				+ "&$count=true&$skip=0&$top=2", {
+				"@odata.count" : "7",
+				value : [{
+					DescendantCount : "0",
+					DistanceFromRoot : "0",
+					DrillState : "leaf",
+					ID : "0",
+					MANAGER_ID : null,
+					Name : "Alpha"
+				}, {
+					DescendantCount : "3",
+					DistanceFromRoot : "0",
+					DrillState : "expanded",
+					ID : "1",
+					MANAGER_ID : null,
+					Name : "Beta"
+				}]
+			})
+			.expectChange("expanded", [undefined, true])
+			.expectChange("name", ["Alpha", "Beta"]);
+
+		await this.createView(assert, sView, oModel);
+
+		this.expectRequest("EMPLOYEES?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels("
+					+ "HierarchyNodes=$root/EMPLOYEES,HierarchyQualifier='OrgChart'"
+					+ ",NodeProperty='ID'" + ",Levels=3)"
+				+ "&$select=DescendantCount,DistanceFromRoot,DrillState,ID,MANAGER_ID,Name"
+				+ "&$skip=4&$top=2", {
+				value : [{
+					DescendantCount : "0",
+					DistanceFromRoot : "2",
+					DrillState : "collapsed",
+					ID : "4",
+					MANAGER_ID : "3",
+					Name : "Epsilon"
+				}, {
+					DescendantCount : "1",
+					DistanceFromRoot : "0",
+					DrillState : "expanded",
+					ID : "5",
+					MANAGER_ID : null,
+					Name : "Zeta"
+				}]
+			})
+			.expectChange("expanded", [,,,, false, true])
+			.expectChange("name", [,,,, "Epsilon", "Zeta"]);
+
+		const oTable = this.oView.byId("table");
+		oTable.setFirstVisibleRow(4);
+
+		await this.waitForChanges(assert, "scroll down creating gap");
+
+		checkTable("before delete", assert, oTable, [
+			"/EMPLOYEES('0')",
+			"/EMPLOYEES('1')",
+			"/EMPLOYEES('4')",
+			"/EMPLOYEES('5')"
+		], [
+			[false, 3, "4", "3", "Epsilon"],
+			[true, 1, "5", "", "Zeta"]
+		], 7);
+
+		this.expectRequest("DELETE EMPLOYEES('4')")
+			.expectRequest("EMPLOYEES?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels("
+					+ "HierarchyNodes=$root/EMPLOYEES,HierarchyQualifier='OrgChart'"
+					+ ",NodeProperty='ID',Levels=3)"
+				+ "&$select=DescendantCount,DistanceFromRoot,DrillState,ID,MANAGER_ID,Name"
+				+ "&$skip=5&$top=1", {
+				value : [{
+					DescendantCount : "0",
+					DistanceFromRoot : "1",
+					DrillState : "leaf",
+					ID : "6",
+					MANAGER_ID : "5",
+					Name : "Eta"
+				}]
+			})
+			.expectChange("expanded", [,,,, true])
+			.expectChange("name", [,,,, "Zeta", "Eta"]);
+
+		await Promise.all([
+			// code under test
+			oTable.getRows()[0].getBindingContext().delete(),
+			this.waitForChanges(assert, "1st delete")
+		]);
+
+		checkTable("after 1st delete", assert, oTable, [
+			"/EMPLOYEES('0')",
+			"/EMPLOYEES('1')",
+			"/EMPLOYEES('5')",
+			"/EMPLOYEES('6')"
+		], [
+			[true, 1, "5", "", "Zeta"],
+			[undefined, 2, "6", "5", "Eta"]
+		], 6);
+
+		this.expectRequest("EMPLOYEES?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels("
+					+ "HierarchyNodes=$root/EMPLOYEES,HierarchyQualifier='OrgChart'"
+					+ ",NodeProperty='ID',Levels=3)"
+				+ "&$select=DescendantCount,DistanceFromRoot,DrillState,ID,MANAGER_ID,Name"
+				+ "&$skip=2&$top=2", {
+				value : [
+					{
+						DescendantCount : "1",
+						DistanceFromRoot : "1",
+						DrillState : "expanded",
+						ID : "2",
+						MANAGER_ID : "1",
+						Name : "Gamma"
+					}, {
+						DescendantCount : "0",
+						DistanceFromRoot : "2",
+						DrillState : "collapsed", // "leaf" is similar (nothing to do)
+						ID : "3",
+						MANAGER_ID : "2",
+						Name : "Delta"
+					}
+				]
+			})
+			.expectChange("expanded", [, , true, false])
+			.expectChange("name", [, , "Gamma", "Delta"]);
+
+		oTable.setFirstVisibleRow(2);
+
+		await this.waitForChanges(assert, "scroll up closing gap");
+
+		checkTable("before 2nd delete", assert, oTable, [
+			"/EMPLOYEES('0')",
+			"/EMPLOYEES('1')",
+			"/EMPLOYEES('2')",
+			"/EMPLOYEES('3')",
+			"/EMPLOYEES('5')",
+			"/EMPLOYEES('6')"
+		], [
+			[true, 2, "2", "1", "Gamma"],
+			[false, 3, "3", "2", "Delta"]
+		]);
+
+		this.expectRequest("DELETE EMPLOYEES('3')")
+			.expectChange("expanded", [,, undefined, true]) // Gamma becomes leaf
+			.expectChange("name", [,,, "Zeta"]);
+
+		await Promise.all([
+			oTable.getRows()[1].getBindingContext().delete(), // code under test
+			this.waitForChanges(assert, "2nd delete")
+		]);
+
+		checkTable("after 2nd delete", assert, oTable, [
+			"/EMPLOYEES('0')",
+			"/EMPLOYEES('1')",
+			"/EMPLOYEES('2')",
+			"/EMPLOYEES('5')",
+			"/EMPLOYEES('6')"
+		], [
+			[undefined, 2, "2", "1", "Gamma"],
+			[true, 1, "5", "", "Zeta"]
+		]);
+
+		this.expectChange("expanded", [, true, undefined])
+			.expectChange("name", [, "Beta", "Gamma"]);
+
+		oTable.setFirstVisibleRow(1);
+
+		await this.waitForChanges(assert, "make Beta visible");
+
+		checkTable("after making Beta visible", assert, oTable, [
+			"/EMPLOYEES('0')",
+			"/EMPLOYEES('1')",
+			"/EMPLOYEES('2')",
+			"/EMPLOYEES('5')",
+			"/EMPLOYEES('6')"
+		], [
+			[true, 1, "1", "", "Beta"],
+			[undefined, 2, "2", "1", "Gamma"]
+		]);
+
+		this.expectChange("expanded", [, false, true])
+			.expectChange("name", [,, "Zeta"]);
+
+		oTable.getRows()[0].getBindingContext().collapse();
+
+		await this.waitForChanges(assert, "collapse Beta");
+
+		checkTable("after collapse", assert, oTable, [
+			"/EMPLOYEES('0')",
+			"/EMPLOYEES('1')",
+			"/EMPLOYEES('5')",
+			"/EMPLOYEES('6')"
+		], [
+			[false, 1, "1", "", "Beta"],
+			[true, 1, "5", "", "Zeta"]
+		]);
+	});
+
+	//*********************************************************************************************
+	// Scenario: Delete node Epsilon, preloaded via expandTo and expanded manually. Its parent Delta
+	// is not loaded yet. Collapse Beta to see that it is not accidentally adjusted instead of
+	// Delta. Collapse Alpha to see that it has been adjusted.
+	// JIRA: CPOUI5ODATAV4-2302
+	QUnit.test("Recursive Hierarchy: delete & expandTo, invisible parent", async function (assert) {
+		const oModel = this.createTeaBusiModel({autoExpandSelect : true});
+		const sView = `
+<t:Table id="table" rows="{path : '/EMPLOYEES',
+		parameters : {
+			$$aggregation : {
+				expandTo : 3,
+				hierarchyQualifier : 'OrgChart'
+			}
+		}}" threshold="0" visibleRowCount="3">
+	<Text id="expanded" text="{= %{@$ui5.node.isExpanded} }"/>
+	<Text text="{= %{@$ui5.node.level} }"/>
+	<Text text="{ID}"/>
+	<Text text="{MANAGER_ID}"/>
+	<Text id="name" text="{Name}"/>
+</t:Table>`;
+
+		// 0 Alpha
+		//    1 Beta
+		//       2 Gamma
+		//    3 Delta (invisible parent)
+		//       4 Epsilon (deleted)
+		//          4.1 Omega
+		// 5 Zeta
+		// 6 Theta
+		this.expectRequest("EMPLOYEES?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels("
+					+ "HierarchyNodes=$root/EMPLOYEES,HierarchyQualifier='OrgChart'"
+					+ ",NodeProperty='ID',Levels=3)"
+				+ "&$select=DescendantCount,DistanceFromRoot,DrillState,ID,MANAGER_ID,Name"
+				+ "&$count=true&$skip=0&$top=3", {
+				"@odata.count" : "7",
+				value : [{
+					DescendantCount : "4",
+					DistanceFromRoot : "0",
+					DrillState : "expanded",
+					ID : "0",
+					MANAGER_ID : null,
+					Name : "Alpha"
+				}, {
+					DescendantCount : "1",
+					DistanceFromRoot : "1",
+					DrillState : "expanded",
+					ID : "1",
+					MANAGER_ID : "0",
+					Name : "Beta"
+				}, {
+					DescendantCount : "0",
+					DistanceFromRoot : "2",
+					DrillState : "leaf",
+					ID : "2",
+					MANAGER_ID : "1",
+					Name : "Gamma"
+				}]
+			})
+			.expectChange("expanded", [true, true, undefined])
+			.expectChange("name", ["Alpha", "Beta", "Gamma"]);
+
+		await this.createView(assert, sView, oModel);
+
+		this.expectRequest("EMPLOYEES?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels("
+					+ "HierarchyNodes=$root/EMPLOYEES,HierarchyQualifier='OrgChart',"
+					+ "NodeProperty='ID',Levels=3)"
+				+ "&$select=DescendantCount,DistanceFromRoot,DrillState,ID,MANAGER_ID,Name"
+				+ "&$skip=4&$top=3", {
+				value : [{
+					DescendantCount : "0",
+					DistanceFromRoot : "2",
+					DrillState : "collapsed",
+					ID : "4",
+					MANAGER_ID : "3",
+					Name : "Epsilon"
+				}, {
+					DescendantCount : "0",
+					DistanceFromRoot : "0",
+					DrillState : "leaf",
+					ID : "5",
+					MANAGER_ID : null,
+					Name : "Zeta"
+				}, {
+					DescendantCount : "0",
+					DistanceFromRoot : "0",
+					DrillState : "leaf",
+					ID : "6",
+					MANAGER_ID : null,
+					Name : "Theta"
+				}]
+			})
+			.expectChange("expanded", [,,,, false])
+			.expectChange("name", [,,,, "Epsilon", "Zeta", "Theta"]);
+
+		const oTable = this.oView.byId("table");
+		oTable.setFirstVisibleRow(4);
+
+		await this.waitForChanges(assert, "scroll down creating gap");
+
+		this.expectRequest("EMPLOYEES?$apply=descendants($root/EMPLOYEES,OrgChart,ID"
+				+ ",filter(ID eq '4'),1)&$select=DrillState,ID,MANAGER_ID,Name&$count=true"
+				+ "&$skip=0&$top=3", {
+				"@odata.count" : "1",
+				value : [{
+					DrillState : "leaf",
+					ID : "4.1",
+					MANAGER_ID : "4",
+					Name : "Omega"
+				}]
+			})
+			.expectChange("expanded", [,,,, true])
+			.expectChange("name", [,,,,, "Omega", "Zeta"]);
+
+		await Promise.all([
+			oTable.getRows()[0].getBindingContext().expand(),
+			this.waitForChanges(assert, "expand Epsilon")
+		]);
+
+		checkTable("after expanding Epsilon", assert, oTable, [
+			"/EMPLOYEES('0')",
+			"/EMPLOYEES('1')",
+			"/EMPLOYEES('2')",
+			"/EMPLOYEES('4')",
+			"/EMPLOYEES('4.1')",
+			"/EMPLOYEES('5')",
+			"/EMPLOYEES('6')"
+		], [
+			[true, 3, "4", "3", "Epsilon"],
+			[undefined, 4, "4.1", "4", "Omega"],
+			[undefined, 1, "5", "", "Zeta"]
+		], 8);
+
+		this.expectRequest("DELETE EMPLOYEES('4')")
+			// Note: the table sets the first visible row to 3 due to the length
+			.expectRequest("EMPLOYEES?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels("
+					+ "HierarchyNodes=$root/EMPLOYEES,HierarchyQualifier='OrgChart'"
+					+ ",NodeProperty='ID',Levels=3)"
+				+ "&$select=DescendantCount,DistanceFromRoot,DrillState,ID,MANAGER_ID,Name"
+				+ "&$skip=3&$top=1", {
+				value : [{
+					DescendantCount : "0",
+					DistanceFromRoot : "1",
+					DrillState : "leaf",
+					ID : "3",
+					MANAGER_ID : "0",
+					Name : "Delta"
+				}]
+			})
+			.expectChange("expanded", [,,,, false]) // Epsilon is collapsed before the delete
+			.expectChange("name", [,,, "Delta", "Zeta", "Theta"]);
+
+		await Promise.all([
+			oTable.getRows()[0].getBindingContext().delete(),
+			this.waitForChanges(assert, "delete")
+		]);
+
+		checkTable("after delete", assert, oTable, [
+			"/EMPLOYEES('0')",
+			"/EMPLOYEES('1')",
+			"/EMPLOYEES('2')",
+			"/EMPLOYEES('3')",
+			"/EMPLOYEES('5')",
+			"/EMPLOYEES('6')"
+		], [
+			[undefined, "2", "3", "0", "Delta"],
+			[undefined, "1", "5", "", "Zeta"],
+			[undefined, "1", "6", "", "Theta"]
+		]);
+
+		this.expectChange("expanded", [true, true])
+			.expectChange("name", ["Alpha", "Beta", "Gamma"]);
+
+		oTable.setFirstVisibleRow(0);
+
+		await this.waitForChanges(assert, "make Alpha & Beta visible");
+
+		this.expectChange("expanded", [, false])
+			.expectChange("name", [,, "Delta"]);
+
+		oTable.getRows()[1].getBindingContext().collapse();
+
+		await this.waitForChanges(assert, "collapse Beta");
+
+		checkTable("after collapsing Beta", assert, oTable, [
+			"/EMPLOYEES('0')",
+			"/EMPLOYEES('1')",
+			"/EMPLOYEES('3')",
+			"/EMPLOYEES('5')",
+			"/EMPLOYEES('6')"
+		], [
+			[true, 1, "0", "", "Alpha"],
+			[false, 2, "1", "0", "Beta"],
+			[undefined, 2, "3", "0", "Delta"]
+		]);
+
+		this.expectChange("expanded", [false, undefined])
+			.expectChange("name", [, "Zeta", "Theta"]);
+
+		oTable.getRows()[0].getBindingContext().collapse();
+
+		await this.waitForChanges(assert, "collapse Alpha");
+
+		checkTable("after collapsing Alpha", assert, oTable, [
+			"/EMPLOYEES('0')",
+			"/EMPLOYEES('5')",
+			"/EMPLOYEES('6')"
+		], [
+			[false, 1, "0", "", "Alpha"],
+			[undefined, 1, "5", "", "Zeta"],
+			[undefined, 1, "6", "", "Theta"]
+		]);
+	});
+
+	//*********************************************************************************************
+	// Scenario: Delete node Beta, preloaded via expandTo. Its parent is not loaded yet, hence no
+	// ancestor can be found at all. Before the deletion collapse Gamma manually. See that after the
+	// deletion Epsilon is requested correctly when Gamma is expanded again.
+	// JIRA: CPOUI5ODATAV4-2302
+	QUnit.test("Recursive Hierarchy: delete & expandTo, parent missing", async function (assert) {
+		const oModel = this.createTeaBusiModel({autoExpandSelect : true});
+		const sView = `
+<t:Table firstVisibleRow="1" id="table" rows="{path : '/EMPLOYEES',
+		parameters : {
+			$$aggregation : {
+				expandTo : 3,
+				hierarchyQualifier : 'OrgChart'
+			}
+		}}" threshold="0" visibleRowCount="3">
+	<Text id="expanded" text="{= %{@$ui5.node.isExpanded} }"/>
+	<Text text="{= %{@$ui5.node.level} }"/>
+	<Text text="{ID}"/>
+	<Text text="{MANAGER_ID}"/>
+	<Text id="name" text="{Name}"/>
+</t:Table>`;
+
+		// 0 Alpha (invisible parent)
+		//    1 Beta (delete)
+		//    2 Gamma (manually collapsed before delete)
+		//       3 Delta (loaded before the delete)
+		//       4 Epsilon (loaded when re-expanding after the delete)
+		//    5 Zeta
+		//    6 Eta
+		this.expectRequest("EMPLOYEES?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels("
+					+ "HierarchyNodes=$root/EMPLOYEES,HierarchyQualifier='OrgChart'"
+					+ ",NodeProperty='ID',Levels=3)"
+				+ "&$select=DescendantCount,DistanceFromRoot,DrillState,ID,MANAGER_ID,Name"
+				+ "&$count=true&$skip=1&$top=3", {
+				"@odata.count" : "7",
+				value : [{
+					DescendantCount : "0",
+					DistanceFromRoot : "1",
+					DrillState : "leaf",
+					ID : "1",
+					MANAGER_ID : "0",
+					Name : "Beta"
+				}, {
+					DescendantCount : "2",
+					DistanceFromRoot : "1",
+					DrillState : "expanded",
+					ID : "2",
+					MANAGER_ID : "0",
+					Name : "Gamma"
+				}, {
+					DescendantCount : "0",
+					DistanceFromRoot : "2",
+					DrillState : "leaf",
+					ID : "3",
+					MANAGER_ID : "2",
+					Name : "Delta"
+				}]
+			})
+			.expectChange("expanded", [, undefined, true, undefined])
+			.expectChange("name", [, "Beta", "Gamma", "Delta"]);
+
+		await this.createView(assert, sView, oModel);
+
+		const oTable = this.oView.byId("table");
+		checkTable("initial", assert, oTable, [
+			"/EMPLOYEES('1')",
+			"/EMPLOYEES('2')",
+			"/EMPLOYEES('3')"
+		], [
+			[undefined, 2, "1", "0", "Beta"],
+			[true, 2, "2", "0", "Gamma"],
+			[undefined, 3, "3", "2", "Delta"]
+		], 7);
+
+		this.expectRequest("EMPLOYEES?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels("
+					+ "HierarchyNodes=$root/EMPLOYEES,HierarchyQualifier='OrgChart'"
+					+ ",NodeProperty='ID',Levels=3)"
+				+ "&$select=DescendantCount,DistanceFromRoot,DrillState,ID,MANAGER_ID,Name"
+				+ "&$skip=5&$top=1", {
+				value : [{
+					DescendantCount : "0",
+					DistanceFromRoot : "1",
+					DrillState : "leaf",
+					ID : "5",
+					MANAGER_ID : "0",
+					Name : "Zeta"
+				}]
+			})
+			.expectChange("expanded", [,, false])
+			.expectChange("name", [,,, "Zeta"]);
+
+		oTable.getRows()[1].getBindingContext().collapse();
+
+		await this.waitForChanges(assert, "collapse Gamma");
+
+		checkTable("after collapsing Gamma", assert, oTable, [
+			"/EMPLOYEES('1')",
+			"/EMPLOYEES('2')",
+			"/EMPLOYEES('5')"
+		], [
+			[undefined, 2, "1", "0", "Beta"],
+			[false, 2, "2", "0", "Gamma"],
+			[undefined, 2, "5", "0", "Zeta"]
+		], 5);
+
+		this.expectRequest("DELETE EMPLOYEES('1')")
+			.expectRequest("EMPLOYEES?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels("
+					+ "HierarchyNodes=$root/EMPLOYEES,HierarchyQualifier='OrgChart'"
+					+ ",NodeProperty='ID',Levels=3)"
+				+ "&$select=DescendantCount,DistanceFromRoot,DrillState,ID,MANAGER_ID,Name"
+				+ "&$skip=5&$top=1", {
+				value : [{
+					DescendantCount : "0",
+					DistanceFromRoot : "1",
+					DrillState : "leaf",
+					ID : "6",
+					MANAGER_ID : "0",
+					Name : "Eta"
+				}]
+			})
+			.expectChange("expanded", [, false, undefined])
+			.expectChange("name", [, "Gamma", "Zeta", "Eta"]);
+
+		await Promise.all([
+			oTable.getRows()[0].getBindingContext().delete(),
+			this.waitForChanges(assert, "delete Beta")
+		]);
+
+		checkTable("after delete Beta", assert, oTable, [
+			"/EMPLOYEES('2')",
+			"/EMPLOYEES('5')",
+			"/EMPLOYEES('6')"
+		], [
+			[false, 2, "2", "0", "Gamma"],
+			[undefined, 2, "5", "0", "Zeta"],
+			[undefined, 2, "6", "0", "Eta"]
+		], 4);
+
+		this.expectRequest("EMPLOYEES?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels("
+					+ "HierarchyNodes=$root/EMPLOYEES,HierarchyQualifier='OrgChart'"
+					+ ",NodeProperty='ID',Levels=3)"
+				+ "&$select=DescendantCount,DistanceFromRoot,DrillState,ID,MANAGER_ID,Name"
+				+ "&$skip=3&$top=1", {
+				value : [{
+					DescendantCount : "0",
+					DistanceFromRoot : "2",
+					DrillState : "leaf",
+					ID : "4",
+					MANAGER_ID : "2",
+					Name : "Epsilon"
+				}]
+			})
+			.expectChange("expanded", [, true])
+			.expectChange("name", [,, "Delta", "Epsilon"]);
+
+		oTable.getRows()[0].getBindingContext().expand();
+
+		await this.waitForChanges(assert, "expand Gamma");
+
+		checkTable("after expand Gamma", assert, oTable, [
+			"/EMPLOYEES('2')",
+			"/EMPLOYEES('3')",
+			"/EMPLOYEES('4')",
+			"/EMPLOYEES('5')",
+			"/EMPLOYEES('6')"
+		], [
+			[true, 2, "2", "0", "Gamma"],
+			[undefined, 3, "3", "2", "Delta"],
+			[undefined, 3, "4", "2", "Epsilon"]
+		], 6);
 	});
 
 	//*********************************************************************************************

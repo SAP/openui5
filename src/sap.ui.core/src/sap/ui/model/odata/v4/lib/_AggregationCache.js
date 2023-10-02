@@ -139,24 +139,25 @@ sap.ui.define([
 	 * @returns {sap.ui.base.SyncPromise<void>}
 	 *   A promise which is resolved without a result in case of success, or rejected with an
 	 *   instance of <code>Error</code> in case of failure
-	 * @throws {Error} If the cache is shared, <code>this.oAggregation.expandTo > 1</code>, or
-	 *   <code>sIndex</code> is not a number.
+	 * @throws {Error} If the cache is shared, <code>sIndex</code> is not a number, or the node
+	 *   at the given index is expanded.
 	 *
 	 * @public
 	 */
 	// @override sap.ui.model.odata.v4.lib._Cache#_delete
 	_AggregationCache.prototype._delete = function (oGroupLock, sEditUrl, sIndex, _oETagEntity,
 			fnCallback) {
-		if (this.oAggregation.expandTo > 1) {
-			throw new Error("Unsupported expandTo: " + this.oAggregation.expandTo);
-		}
-
 		let iIndex = parseInt(sIndex);
 		if (isNaN(iIndex)) {
 			throw new Error(`Unsupported kept-alive entity: ${this.sResourcePath}${sIndex}`);
 		}
 
 		const oElement = this.aElements[iIndex];
+		const sPredicate = _Helper.getPrivateAnnotation(oElement, "predicate");
+		if (oElement["@$ui5.node.isExpanded"]) {
+			throw new Error(`Unsupported expanded node: ${this.sResourcePath}${sPredicate}`);
+		}
+
 		const oParentCache = _Helper.getPrivateAnnotation(oElement, "parent");
 		const iIndexInParentCache = _Helper.getPrivateAnnotation(oElement, "index");
 		if (oElement["@$ui5.context.isTransient"]) {
@@ -164,7 +165,6 @@ sap.ui.define([
 			return oParentCache._delete(oGroupLock, sEditUrl, "" + iIndexInParentCache);
 		}
 
-		const sPredicate = _Helper.getPrivateAnnotation(oElement, "predicate");
 		return SyncPromise.resolve(
 			this.oRequestor.request("DELETE", sEditUrl, oGroupLock, {"If-Match" : oElement})
 		).then(() => {
@@ -172,17 +172,20 @@ sap.ui.define([
 			iIndex = _Cache.getElementIndex(this.aElements, sPredicate, iIndex);
 			// remove in parent cache
 			oParentCache.removeElement(iIndexInParentCache, sPredicate);
-			if (iIndex && !oParentCache.getValue("$count")) {
-				// make parent a leaf (the direct predecessor; if index is 0, there is no parent)
-				const oParent = this.aElements[iIndex - 1];
-				_Helper.updateAll(this.mChangeListeners,
-					_Helper.getPrivateAnnotation(oParent, "predicate"), oParent,
-					{"@$ui5.node.isExpanded" : undefined});
-				// _Helper.updateAll only sets it to undefined
-				delete oParent["@$ui5.node.isExpanded"];
+			// remove the descendants in the parent cache (if any)
+			const iDescendants = _Helper.getPrivateAnnotation(oElement, "descendants") || 0;
+			for (let i = 0; i < iDescendants; i += 1) {
+				oParentCache.removeElement(iIndexInParentCache);
+			}
+			const iOffset = iDescendants + 1;
+			if (oParentCache === this.oFirstLevel) {
+				this.adjustDescendantCount(oElement, iIndex, -iOffset);
+			} else if (!oParentCache.getValue("$count")) {
+				// make parent a leaf (the direct predecessor)
+				this.makeLeaf(this.aElements[iIndex - 1]);
 			}
 			// remove in this cache
-			this.shiftIndex(iIndex, -1);
+			this.shiftIndex(iIndex, -iOffset);
 			this.removeElement(iIndex, sPredicate);
 			// notify caller
 			fnCallback(iIndex, -1);
@@ -262,6 +265,47 @@ sap.ui.define([
 			vReadElements.forEach(addElement);
 		} else {
 			addElement(vReadElements, 0);
+		}
+	};
+
+	/**
+	 * Adjusts the (limited) descendant count at all ancestors of the given element which must be
+	 * part of <code>this.oFirstLevel</code>, handles placeholders. Makes the parent a leaf if its
+	 * descendant count becomes 0.
+	 *
+	 * @param {object} oElement - The element
+	 * @param {number} iIndex - Its index
+	 * @param {number} iOffset - The offset
+	 *
+	 * @private
+	 */
+	_AggregationCache.prototype.adjustDescendantCount = function (oElement, iIndex, iOffset) {
+		let iLevel = oElement["@$ui5.node.level"];
+		let bInitialPlaceholderFound = false;
+
+		for (let iCandidateIndex = iIndex - 1; iCandidateIndex >= 0 && iLevel > 1;
+				iCandidateIndex -= 1) {
+			const oCandidate = this.aElements[iCandidateIndex];
+			const iCandidateLevel = oCandidate["@$ui5.node.level"];
+			if (iCandidateLevel === 0) {
+				// Note: level 0 means "don't know" for initial *placeholders* of 1st level cache!
+				bInitialPlaceholderFound = true;
+			} else if (iCandidateLevel < iLevel) {
+				if (!bInitialPlaceholderFound || this.isAncestorOf(iCandidateIndex, iIndex)) {
+					const iCount
+						= _Helper.getPrivateAnnotation(oCandidate, "descendants") + iOffset;
+					_Helper.setPrivateAnnotation(oCandidate, "descendants", iCount);
+					if (iCount === 0) {
+						this.makeLeaf(oCandidate);
+					}
+					// the next candidate must be an ancestor of this node
+					iIndex = iCandidateIndex;
+					bInitialPlaceholderFound = false;
+				}
+				// we have a node or placeholder at this level => there can only be ancestors at
+				// lower levels
+				iLevel = iCandidateLevel;
+			}
 		}
 	};
 
@@ -877,6 +921,21 @@ sap.ui.define([
 	};
 
 	/**
+	 * Makes the given element a leaf.
+	 *
+	 * @param {object} oElement - The element
+	 *
+	 * @private
+	 */
+	_AggregationCache.prototype.makeLeaf = function (oElement) {
+		_Helper.updateAll(this.mChangeListeners,
+			_Helper.getPrivateAnnotation(oElement, "predicate"), oElement,
+			{"@$ui5.node.isExpanded" : undefined});
+		// _Helper.updateAll only sets it to undefined
+		delete oElement["@$ui5.node.isExpanded"];
+	};
+
+	/**
 	 * Moves the (child) node with the given path to the parent node with the given path by sending
 	 * a PATCH request for "<parent navigation>@odata.bind". The (child) node may be a leaf or a
 	 * collapsed node, but not expanded!
@@ -936,11 +995,7 @@ sap.ui.define([
 				sChildPredicate);
 			if (oOldParentCache.getValue("$count") === 0) { // last child has gone
 				const oOldParent = this.aElements[iOldIndex - 1];
-				_Helper.updateAll(this.mChangeListeners,
-					_Helper.getPrivateAnnotation(oOldParent, "predicate"),
-					oOldParent, {"@$ui5.node.isExpanded" : undefined}); // a leaf now
-				// _Helper.updateAll only sets it to undefined
-				delete oOldParent["@$ui5.node.isExpanded"];
+				this.makeLeaf(oOldParent);
 				_Helper.deletePrivateAnnotation(oOldParent, "cache");
 				oOldParentCache.setActive(false);
 			}
@@ -1392,9 +1447,9 @@ sap.ui.define([
 	 * by the given offset.
 	 *
 	 * @param {number} iIndex
-	 *   Index in <code>this.aElements</code> of a node which is inserted (+1) or removed (-1)
+	 *   Index in <code>this.aElements</code> of a node
 	 * @param {number} iOffset
-	 *   Offset (either -1 or +1) to add to "index"
+	 *   Offset to add to "index"
 	 *
 	 * @private
 	 */
@@ -1408,11 +1463,10 @@ sap.ui.define([
 				_Helper.setPrivateAnnotation(oSibling, "index",
 					_Helper.getPrivateAnnotation(oSibling, "index") + iOffset);
 			}
-			if (oSibling["@$ui5.node.level"] < oNode["@$ui5.node.level"]
-					&& !_Helper.hasPrivateAnnotation(oSibling, "placeholder")) {
-				// Note: level 0 means "don't know" for initial *placeholders* of 1st level cache!
-				// Note: oCache !== this.oFirstLevel, thus "descendants" should not matter
-				break;
+			if (oCache !== this.oFirstLevel
+					&& oSibling["@$ui5.node.level"] < oNode["@$ui5.node.level"]) {
+				// Note: placeholders with level 0 only exist in 1st level cache!
+				break; // no use in searching further
 			}
 		}
 	};
