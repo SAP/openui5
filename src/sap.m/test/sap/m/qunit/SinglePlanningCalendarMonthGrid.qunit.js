@@ -493,7 +493,7 @@ sap.ui.define([
 
 			// act
 			oGrid.$().find('.sapMSPCMonthDay')[iCellIndexInMiddleInWeek].focus();
-			qutils.triggerKeyboardEvent(document.activeElement, KeyCodes.SPACE, true);
+			qutils.triggerKeydown(document.activeElement, KeyCodes.SPACE, true);
 			sap.ui.getCore().applyChanges();
 
 			// assert
@@ -537,7 +537,7 @@ sap.ui.define([
 
 			// act
 			oGrid.$().find('.sapMSPCMonthDay')[iCellIndexInMiddleInWeek].focus();
-			qutils.triggerKeyboardEvent(document.activeElement, KeyCodes.SPACE, true);
+			qutils.triggerKeydown(document.activeElement, KeyCodes.SPACE, true);
 			sap.ui.getCore().applyChanges();
 
 			// assert
