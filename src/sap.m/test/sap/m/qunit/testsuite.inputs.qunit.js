@@ -40,6 +40,15 @@ sap.ui.define([
 				version: 2
 			}
 		},
+		"inputUtils/highlightItemsWithContains": {
+			title: "QUnit Page for sap.m.inputs.highlightItemsWithContains",
+			ui5: {
+				compatVersion: "1.120"
+			},
+			qunit: {
+				version: 2
+			}
+		},
 		"inputUtils/wordStartsWithValue": {
 			title: "QUnit Page for sap.m.inputs.wordStartsWithValue",
 			ui5: {
