@@ -42,17 +42,13 @@
                         level="H2"
                     />
                     <m:ToolbarSpacer />
-                    <m:SearchField width="15%">
+                    <m:SearchField width="15%" liveChange=".onSearch">
                         <m:layoutData>
                             <m:OverflowToolbarLayoutData
                                 priority="NeverOverflow"
                             />
                         </m:layoutData>
                     </m:SearchField>
-                    <m:Button
-                        id="advancedSearch"
-                        text="Advanced Search"
-                    />
                     <m:ToolbarSeparator />
                     <UploadSetToolbarPlaceholder />
                     <m:Button
@@ -66,12 +62,6 @@
                         text="Change Status"
                         enabled="false"
                         press="onChangeStatus"
-                    />
-                     <m:Button
-                        id="createRevisionButton"
-                        text="Create Revision"
-                        enabled="false"
-                        press="onCreateRevision"
                     />
 
                     <m:ToggleButton icon="sap-icon://overflow" press="onOverflowPress"/>
