@@ -20,10 +20,10 @@ builder:
             filters:
               - sap/ui/layout/
               - sap/ui/layout/manifest.json
-              - '!sap/ui/layout/*-preload.js'
-              - '!sap/ui/layout/**/*.designtime.js'
-              - '!sap/ui/layout/**/designtime/'
-              - '!sap/ui/layout/**/*.support.js'
+              - "!sap/ui/layout/*-preload.js"
+              - "!sap/ui/layout/**/*.designtime.js"
+              - "!sap/ui/layout/**/designtime/"
+              - "!sap/ui/layout/**/*.support.js"
             resolve: false
       bundleOptions:
         optimize: true

@@ -43,7 +43,7 @@ customConfiguration:
   ui5-tooling-webc:
     packages:
       # main
-      '@ui5/webcomponents':
+      "@ui5/webcomponents":
         aliases: # used to convert ES6 imports to UI5 module paths
           "^@ui5\/webcomponents\/dist\/(.*?).js$": "sap/ui/webc/main/thirdparty/$1"
         reverseAliases: # used by the middleware to serve third-party files as UI5 modules
