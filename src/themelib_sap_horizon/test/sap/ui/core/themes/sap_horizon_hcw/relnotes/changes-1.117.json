@@ -89,5 +89,43 @@
         ]
       }
     ]
+  },
+  "1.117.2": {
+    "date": "October 2023",
+    "notes": [
+      {
+        "id": "37cc2703f3e586d6f9dab59d7af30964a0715765",
+        "type": "FIX",
+        "text": " sap.m.MessageStrip: Close button hover background fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
+        "id": "4600d3363676f6779fdb1aa8777dc84f5ba221f1",
+        "type": "FIX",
+        "text": " sap.m.Page: Floating footer styles adjustments",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
+        "id": "725cf837f74e89772c06ea7714fca03a6682da6e",
+        "type": "FIX",
+        "text": " sap.m.InputBase: Focus border color changed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      }
+    ]
   }
 }

@@ -123,5 +123,54 @@
         ]
       }
     ]
+  },
+  "1.117.2": {
+    "date": "October 2023",
+    "notes": [
+      {
+        "id": "35f5ee9865ab77db23321440812472799586f9dd",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v2.ODataListBinding#loadData: read all data (up to model size limit) in \"Client\" mode",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380127053"
+          }
+        ]
+      },
+      {
+        "id": "61138d76952718c7461d311c8d6879f0b337dedb",
+        "type": "FIX",
+        "text": " sap.ui.model.type.DateInterval#parseValue: no milliseconds at interval end",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400006908592023"
+          }
+        ]
+      },
+      {
+        "id": "e548182650511d0232c32dac93c312d5b78bb7b4",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v2.ODataListBinding#_getSkipAndTop: fix calculation of \"iLimit\"",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400006921272023"
+          }
+        ]
+      },
+      {
+        "id": "17c4c620e67233d18911e2369c9d29547d7e4a93",
+        "type": "FIX",
+        "text": " Fix Core Qunit tests",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      }
+    ]
   }
 }

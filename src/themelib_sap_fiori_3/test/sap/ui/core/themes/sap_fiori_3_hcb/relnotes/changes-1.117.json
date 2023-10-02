@@ -19,5 +19,21 @@
         ]
       }
     ]
+  },
+  "1.117.2": {
+    "date": "October 2023",
+    "notes": [
+      {
+        "id": "4600d3363676f6779fdb1aa8777dc84f5ba221f1",
+        "type": "FIX",
+        "text": " sap.m.Page: Floating footer styles adjustments",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      }
+    ]
   }
 }
