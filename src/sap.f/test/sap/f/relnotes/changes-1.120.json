@@ -1,0 +1,29 @@
+{
+  "1.120.0": {
+    "date": "October 2023",
+    "notes": [
+      {
+        "id": "7090aa25d0943f10e2987ad5e48b470e2f560ba8",
+        "type": "FIX",
+        "text": " Integration Cards: Attribute icon in List card is now always on the same line with text",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370092417"
+          }
+        ]
+      },
+      {
+        "id": "8f224ee85ca8cceb038231e999747f96af5c259d",
+        "type": "FIX",
+        "text": " sap.f.Card: Fixed cut off corners in sap.f.Card sample",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370098967"
+          }
+        ]
+      }
+    ]
+  }
+}

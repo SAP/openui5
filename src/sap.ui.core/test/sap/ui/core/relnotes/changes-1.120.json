@@ -1,7 +1,43 @@
 {
   "1.120.0": {
-    "date": "September 2023",
+    "date": "October 2023",
     "notes": [
+      {
+        "id": "7d7dfa208d4b28eb7c99ee35e1237953d5a13be1",
+        "type": "FEATURE",
+        "text": " Deprecation of sap/ui/core/DeclarativeSupport"
+      },
+      {
+        "id": "cd7524243b75cc2b9e7dcd4d7c2500aaee948a4d",
+        "type": "FEATURE",
+        "text": " sap.ui.core.LocaleData#getLanguageName: derive language name if necessary"
+      },
+      {
+        "id": "c58231b007b6c1119245332eef111f438e8a5c2e",
+        "type": "FIX",
+        "text": " sap.ui.test.autowaiter._timeoutWaiter: Callback arguments corrected",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370100483"
+          }
+        ]
+      },
+      {
+        "id": "dbd7430219b051903847319296cd46af1889d66d",
+        "type": "FEATURE",
+        "text": " Move new security facade from sap/ui/core/Security.js to sap/ui/security/Security.js"
+      },
+      {
+        "id": "d73a742c9de5007efb19eff8f314a74fb8063d65",
+        "type": "FEATURE",
+        "text": " DataType, Library: Enable enum type registration without globals"
+      },
+      {
+        "id": "5c5da5e8352e9d097887430424bea49d063f9dec",
+        "type": "FIX",
+        "text": " sap/ui/qunit/utils/nextUIUpdate"
+      },
       {
         "id": "d0b62530a47decc982e60e27d6169404e1510d47",
         "type": "FEATURE",

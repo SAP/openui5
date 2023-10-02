@@ -1,11 +1,44 @@
 {
   "1.120.0": {
-    "date": "September 2023",
+    "date": "October 2023",
     "notes": [
+      {
+        "id": "92d74530a2718787ac816aaba9df4cbd8d999d08",
+        "type": "FIX",
+        "text": " sap.ui.core.IconPool: correction for icon 'slim-arrow-up' for theme 'horizon'",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370103925"
+          }
+        ]
+      },
+      {
+        "id": "94a8bff9a4252bbf586c9d813598d321947f5ad9",
+        "type": "FIX",
+        "text": " sap.m.OverflowToolbar: Fix overflowing controls with 100% width",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370093601"
+          }
+        ]
+      },
       {
         "id": "0d0411cc8299574b7b609dd2b411f1fa748dc16e",
         "type": "FIX",
         "text": " sap.m.Slider: Handles styles adjusted"
+      },
+      {
+        "id": "babd23a496c12c13f0495558a29ff2fb000adc69",
+        "type": "FIX",
+        "text": " sap.tnt.ToolHeader: Badge on Button for Compact content density is properly positioned now",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370082470"
+          }
+        ]
       }
     ]
   }

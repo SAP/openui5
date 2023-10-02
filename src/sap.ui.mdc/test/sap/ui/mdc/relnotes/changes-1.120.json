@@ -1,0 +1,23 @@
+{
+  "1.120.0": {
+    "date": "October 2023",
+    "notes": [
+      {
+        "id": "d73a742c9de5007efb19eff8f314a74fb8063d65",
+        "type": "FEATURE",
+        "text": " DataType, Library: Enable enum type registration without globals"
+      },
+      {
+        "id": "e56497c9d011b9f5737acc021e5ce5be34c653c7",
+        "type": "FIX",
+        "text": " Field: update aria-expanded only if valuHelp state changed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370089302"
+          }
+        ]
+      }
+    ]
+  }
+}

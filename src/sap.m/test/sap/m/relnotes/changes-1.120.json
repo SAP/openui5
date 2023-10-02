@@ -1,7 +1,121 @@
 {
   "1.120.0": {
-    "date": "September 2023",
+    "date": "October 2023",
     "notes": [
+      {
+        "id": "7d7dfa208d4b28eb7c99ee35e1237953d5a13be1",
+        "type": "FEATURE",
+        "text": " Deprecation of sap/ui/core/DeclarativeSupport"
+      },
+      {
+        "id": "e524484cce25779181e64834c9bb86e1c83b6f38",
+        "type": "FIX",
+        "text": " sap.m.MessageView: Html structure improved",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380026756"
+          }
+        ]
+      },
+      {
+        "id": "92d74530a2718787ac816aaba9df4cbd8d999d08",
+        "type": "FIX",
+        "text": " sap.ui.core.IconPool: correction for icon 'slim-arrow-up' for theme 'horizon'",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370103925"
+          }
+        ]
+      },
+      {
+        "id": "94a8bff9a4252bbf586c9d813598d321947f5ad9",
+        "type": "FIX",
+        "text": " sap.m.OverflowToolbar: Fix overflowing controls with 100% width",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370093601"
+          }
+        ]
+      },
+      {
+        "id": "86c333a9411abb71792f8111dae709a98e01832e",
+        "type": "FIX",
+        "text": " sap.m.DateRangeSelection: Value is now formatted even if matching with previous value",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500006449282023"
+          }
+        ]
+      },
+      {
+        "id": "d73a742c9de5007efb19eff8f314a74fb8063d65",
+        "type": "FEATURE",
+        "text": " DataType, Library: Enable enum type registration without globals"
+      },
+      {
+        "id": "44826940534971b2a944dabd691c0ecde1dd4b82",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: Avatar is not shown if there is no icon set",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400008015282023"
+          }
+        ]
+      },
+      {
+        "id": "ee9e4f3393055fe2985f2114b4493c1e6a51a972",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendarMonthGrid: Synchronize max appointment count",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370098062"
+          }
+        ]
+      },
+      {
+        "id": "530bd33fe0b85d1a2c575131edbfea21f3316d79",
+        "type": "FIX",
+        "text": " sap.m.NotificationListBase: Priority icons are now correct",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370102009"
+          }
+        ]
+      },
+      {
+        "id": "b7f49e9c43fb345ac3c233fe3d8788134c7574e3",
+        "type": "FIX",
+        "text": " sap.m.FacetFilter: Align button type to design guidelines",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380029846"
+          }
+        ]
+      },
+      {
+        "id": "c15cd6ca70492087e2b7d767336b023c37eb2a5a",
+        "type": "FIX",
+        "text": " sap.m.Input: valueHelpOnly deprecation is now corrected",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370101691"
+          }
+        ]
+      },
+      {
+        "id": "3293838dfa1996fd2d9773d19eb44ab65ee3b7f1",
+        "type": "FIX",
+        "text": " sap.m.Input: Item selection with dynamic suggestions now fixed"
+      },
       {
         "id": "2d5372c9ee017b789db2c76e6559a4b8d8811719",
         "type": "FIX",
@@ -10,6 +124,28 @@
           {
             "type": "BCP",
             "reference": "2370098720"
+          }
+        ]
+      },
+      {
+        "id": "8c499ae1ba5aaeff472e4465a71f93d7f5c28c1c",
+        "type": "FIX",
+        "text": " sap.m.IconTabFilter: Avoid reading parent properties if it doesn't exist during UI Adaptation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370098146"
+          }
+        ]
+      },
+      {
+        "id": "6dc8d61479ed1ff52c155d01e21b3e0b346d3eb4",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus: adjust external label references",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380120722"
           }
         ]
       }

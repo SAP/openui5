@@ -1,0 +1,18 @@
+{
+  "1.120.0": {
+    "date": "October 2023",
+    "notes": [
+      {
+        "id": "94a8bff9a4252bbf586c9d813598d321947f5ad9",
+        "type": "FIX",
+        "text": " sap.m.OverflowToolbar: Fix overflowing controls with 100% width",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370093601"
+          }
+        ]
+      }
+    ]
+  }
+}

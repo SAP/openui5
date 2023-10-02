@@ -1,0 +1,29 @@
+{
+  "1.120.0": {
+    "date": "October 2023",
+    "notes": [
+      {
+        "id": "860186690bd1cb9d44dc99001d67d2529ceb35c2",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageHeader: Fixed rendering of image/avatar",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380114877"
+          }
+        ]
+      },
+      {
+        "id": "b145bbf8d06d73070bae0f9befc09d93b7e05cdf",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Prevent error on mobile",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380126677"
+          }
+        ]
+      }
+    ]
+  }
+}
