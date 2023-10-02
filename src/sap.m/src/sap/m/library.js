@@ -2042,9 +2042,6 @@ sap.ui.define([
 	/**
 	 * Returns the number of tickmarks, which should be placed between labels.
 	 *
-	 * <b>Note:</b> There would always be a tickmark in the beginning and in the end of the slider,
-	 * regardless of the value that this method returns.
-	 *
 	 * @param {object} mOptions The option array
 	 * @returns {int} The number of tickmarks
 	 *
@@ -2054,11 +2051,7 @@ sap.ui.define([
 	 */
 
 	/**
-	 * Returns how many tickmarks would be drawn on the screen.
-	 *
-	 * <b>Note:</b> There would always be a tickmark in the beginning and in the end of the slider,
-	 * regardless of the value this method returns. The start and the end tickmark are taken into account
-	 * for the later calculations.
+	 * Returns how many tickmarks would be drawn on the screen. The start and the end tickmark should be specified in this method.
 	 *
 	 * @param {float} fSize - Size of the scale. This is the distance between the start and end point i.e. 0..100
 	 * @param {float} fStep - The step walking from start to end.
