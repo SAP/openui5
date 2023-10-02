@@ -55,4 +55,46 @@ function (XMLView, Core, StashedSupport, ObjectPageLazyLoader) {
 		assert.equal(oDestroySpy.callCount, stashedObjects * 2, "LazyLoaders are properly disposed of");
 	});
 
+	QUnit.module("Stashing optimization", {
+		beforeEach: function (assert) {
+			var done = assert.async();
+			XMLView.create({
+				id: "UxAP-12-ObjectPageSubSectionStashing-Optimization",
+				viewName: "view.UxAP-12-ObjectPageSubSectionStashing-Optimization"
+			}).then(function (oView) {
+				this.objectPageSampleView = oView;
+				this.objectPageSampleView.placeAt('qunit-fixture');
+				Core.applyChanges();
+				done();
+			}.bind(this));
+		},
+		afterEach: function () {
+			this.objectPageSampleView.destroy();
+		}
+	});
+
+	QUnit.test("ObjectPageSubSection unstashing improved", function (assert) {
+		// Arrange
+		var oOpl = this.objectPageSampleView.byId("ObjectPageLayout"),
+			oSection1 = this.objectPageSampleView.byId("subsection1"),
+			oSection2 = this.objectPageSampleView.byId("subsection2"),
+			oSection4 = this.objectPageSampleView.byId("subsection4"),
+			fnDone = assert.async();
+
+		assert.expect(6);
+
+		oOpl.attachEventOnce("onAfterRenderingDOMReady", function () {
+			// Assert
+			assert.strictEqual(oSection1._aStashedControls.length, 0, "First SubSection is unstashed");
+			assert.ok(!oSection1.$().hasClass("sapUxAPObjectPageSubSectionStashed"), "sapUxAPObjectPageSubSectionStashed class is not added to first SubSection");
+			assert.strictEqual(oSection2._aStashedControls.length, 0, "Second SubSection is unstashed");
+			assert.ok(!oSection2.$().hasClass("sapUxAPObjectPageSubSectionStashed"), "sapUxAPObjectPageSubSectionStashed class is not added to second SubSection");
+			assert.strictEqual(oSection4._aStashedControls.length, 1, "Forth SubSection is not unstashed after optimization");
+			assert.ok(oSection4.$().hasClass("sapUxAPObjectPageSubSectionStashed"), "sapUxAPObjectPageSubSectionStashed class is added to forth SubSection");
+
+			// Clean up
+			fnDone();
+		});
+	});
+
 });

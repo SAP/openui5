@@ -436,10 +436,10 @@ function (jQuery, Core, JSONModel, ObjectPageLayout, XMLView) {
 
 		// Check
 		setTimeout(function() {
-			assert.strictEqual(oLazyLoadingSpy.callCount, 1 , "lazy loading called");
+			assert.strictEqual(oLazyLoadingSpy.callCount, 0 , "lazy loading is not called for unstashing an extra SubSection");
 			done();
 			oObjectPageLayout.destroy();
-		}, oLazyLoading.LAZY_LOADING_EXTRA_SUBSECTION);
+		}, 1000);
 	});
 
 	QUnit.test("lazyLoading interval task cancelled when not needed", function (assert) {
