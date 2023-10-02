@@ -73,6 +73,28 @@ sap.ui.define([
 
 	};
 
+	// ignore touch and tab events for displayed tokens to enable standard event handling if inside of Table
+	TokenizerDisplay.prototype.ontouchstart = function(oEvent) {
+
+		if (!this.hasOneTruncatedToken() && !oEvent.target.classList.contains("sapMTokenizerIndicator")) {
+			return; // if no truncated token, do nothing
+		}
+
+		Tokenizer.prototype.ontouchstart.apply(this, arguments);
+
+	};
+
+	TokenizerDisplay.prototype.ontap = function (oEvent) {
+		const oTargetToken = oEvent.getMark("tokenTap");
+
+		if (oTargetToken && !this.hasOneTruncatedToken()) {
+			return; // on click on token do nothing (on truncated token popover should open)
+		}
+
+		Tokenizer.prototype.ontap.apply(this, arguments);
+
+	};
+
 	TokenizerDisplay.prototype.getAccessibilityInfo = function () {
 		// just concatenate token texts and return it as description
 		const sText = this.getTokens().map(function (oToken) {
