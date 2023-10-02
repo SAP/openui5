@@ -92,7 +92,7 @@ sap.ui.define([
 		onResizableDialogPress: function () {
 			if (!this.oResizableDialog) {
 				this.oResizableDialog = new Dialog({
-					title: "Resizable Available Products",
+					title: "Resizable (only on Desktop) - Available Products",
 					contentWidth: "550px",
 					contentHeight: "300px",
 					resizable: true,
@@ -123,7 +123,7 @@ sap.ui.define([
 		onDraggableDialogPress: function () {
 			if (!this.oDraggableDialog) {
 				this.oDraggableDialog = new Dialog({
-					title: "Draggable Available Products",
+					title: "Draggable (only on Desktop) - Available Products",
 					contentWidth: "550px",
 					contentHeight: "300px",
 					draggable: true,
