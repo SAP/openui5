@@ -18,7 +18,7 @@
 							"fileType": "change",
 							"changeType": "rename",
 							"moduleName": "",
-							"reference": "fl.performance.flexApplyChanges.Component",
+							"reference": "fl.performance.flexApplyChanges",
 							"packageName": "$TMP",
 							"content": {
 								"originalControlType": "sap.m.Button"
@@ -61,7 +61,7 @@
 							"fileType": "change",
 							"changeType": "moveControls",
 							"moduleName": "",
-							"reference": "fl.performance.flexApplyChanges.Component",
+							"reference": "fl.performance.flexApplyChanges",
 							"packageName": "$TMP",
 							"content": {
 								"movedElements": [
@@ -139,7 +139,7 @@
 							"fileType": "change",
 							"changeType": "moveControls",
 							"moduleName": "",
-							"reference": "fl.performance.flexApplyChanges.Component",
+							"reference": "fl.performance.flexApplyChanges",
 							"packageName": "$TMP",
 							"content": {
 								"movedElements": [
@@ -217,7 +217,7 @@
 							"fileType": "change",
 							"changeType": "moveControls",
 							"moduleName": "",
-							"reference": "fl.performance.flexApplyChanges.Component",
+							"reference": "fl.performance.flexApplyChanges",
 							"packageName": "$TMP",
 							"content": {
 								"movedElements": [
@@ -295,7 +295,7 @@
 							"fileType": "change",
 							"changeType": "moveControls",
 							"moduleName": "",
-							"reference": "fl.performance.flexApplyChanges.Component",
+							"reference": "fl.performance.flexApplyChanges",
 							"packageName": "$TMP",
 							"content": {
 								"movedElements": [
@@ -373,7 +373,7 @@
 							"fileType": "change",
 							"changeType": "moveControls",
 							"moduleName": "",
-							"reference": "fl.performance.flexApplyChanges.Component",
+							"reference": "fl.performance.flexApplyChanges",
 							"packageName": "$TMP",
 							"content": {
 								"movedElements": [
@@ -451,7 +451,7 @@
 							"fileType": "change",
 							"changeType": "moveControls",
 							"moduleName": "",
-							"reference": "fl.performance.flexApplyChanges.Component",
+							"reference": "fl.performance.flexApplyChanges",
 							"packageName": "$TMP",
 							"content": {
 								"movedElements": [
@@ -529,7 +529,7 @@
 							"fileType": "change",
 							"changeType": "rename",
 							"moduleName": "",
-							"reference": "fl.performance.flexApplyChanges.Component",
+							"reference": "fl.performance.flexApplyChanges",
 							"packageName": "$TMP",
 							"content": {
 								"originalControlType": "sap.m.Button"
@@ -572,7 +572,7 @@
 							"fileType": "change",
 							"changeType": "rename",
 							"moduleName": "",
-							"reference": "fl.performance.flexApplyChanges.Component",
+							"reference": "fl.performance.flexApplyChanges",
 							"packageName": "$TMP",
 							"content": {
 								"originalControlType": "sap.m.Button"
@@ -615,7 +615,7 @@
 							"fileType": "change",
 							"changeType": "rename",
 							"moduleName": "",
-							"reference": "fl.performance.flexApplyChanges.Component",
+							"reference": "fl.performance.flexApplyChanges",
 							"packageName": "$TMP",
 							"content": {
 								"originalControlType": "sap.m.Button"
@@ -662,7 +662,7 @@
 						"fileType": "ctrl_variant",
 						"variantManagementReference": "idMain1--variantManagementOrdersTable",
 						"variantReference": "idMain1--variantManagementOrdersTable",
-						"reference": "fl.performance.flexApplyChanges.Component",
+						"reference": "fl.performance.flexApplyChanges",
 						"packageName": "$TMP",
 						"content": {
 							"title": "Standard Copy"
@@ -688,7 +688,7 @@
 							"fileType": "change",
 							"changeType": "moveControls",
 							"moduleName": "",
-							"reference": "fl.performance.flexApplyChanges.Component",
+							"reference": "fl.performance.flexApplyChanges",
 							"packageName": "$TMP",
 							"content": {
 								"movedElements": [
@@ -766,7 +766,7 @@
 							"fileType": "change",
 							"changeType": "moveControls",
 							"moduleName": "",
-							"reference": "fl.performance.flexApplyChanges.Component",
+							"reference": "fl.performance.flexApplyChanges",
 							"packageName": "$TMP",
 							"content": {
 								"movedElements": [
@@ -844,7 +844,7 @@
 							"fileType": "change",
 							"changeType": "moveControls",
 							"moduleName": "",
-							"reference": "fl.performance.flexApplyChanges.Component",
+							"reference": "fl.performance.flexApplyChanges",
 							"packageName": "$TMP",
 							"content": {
 								"movedElements": [
@@ -922,7 +922,7 @@
 							"fileType": "change",
 							"changeType": "hideControl",
 							"moduleName": "",
-							"reference": "fl.performance.flexApplyChanges.Component",
+							"reference": "fl.performance.flexApplyChanges",
 							"packageName": "$TMP",
 							"content": {},
 							"selector": {
@@ -958,7 +958,7 @@
 							"fileType": "change",
 							"changeType": "unhideControl",
 							"moduleName": "",
-							"reference": "fl.performance.flexApplyChanges.Component",
+							"reference": "fl.performance.flexApplyChanges",
 							"packageName": "$TMP",
 							"content": {},
 							"selector": {
@@ -994,7 +994,7 @@
 							"fileType": "change",
 							"changeType": "moveControls",
 							"moduleName": "",
-							"reference": "fl.performance.flexApplyChanges.Component",
+							"reference": "fl.performance.flexApplyChanges",
 							"packageName": "$TMP",
 							"content": {
 								"movedElements": [
@@ -1072,7 +1072,7 @@
 							"fileType": "change",
 							"changeType": "moveControls",
 							"moduleName": "",
-							"reference": "fl.performance.flexApplyChanges.Component",
+							"reference": "fl.performance.flexApplyChanges",
 							"packageName": "$TMP",
 							"content": {
 								"movedElements": [
@@ -1150,7 +1150,7 @@
 							"fileType": "change",
 							"changeType": "moveControls",
 							"moduleName": "",
-							"reference": "fl.performance.flexApplyChanges.Component",
+							"reference": "fl.performance.flexApplyChanges",
 							"packageName": "$TMP",
 							"content": {
 								"movedElements": [
@@ -1228,7 +1228,7 @@
 							"fileType": "change",
 							"changeType": "moveControls",
 							"moduleName": "",
-							"reference": "fl.performance.flexApplyChanges.Component",
+							"reference": "fl.performance.flexApplyChanges",
 							"packageName": "$TMP",
 							"content": {
 								"movedElements": [
@@ -1306,7 +1306,7 @@
 							"fileType": "change",
 							"changeType": "moveControls",
 							"moduleName": "",
-							"reference": "fl.performance.flexApplyChanges.Component",
+							"reference": "fl.performance.flexApplyChanges",
 							"packageName": "$TMP",
 							"content": {
 								"movedElements": [

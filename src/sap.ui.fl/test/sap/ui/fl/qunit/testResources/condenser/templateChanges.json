@@ -2,7 +2,7 @@
 	{
 		"fileName": "id_01_rename",
 		"changeType": "rename",
-		"reference": "sap.ui.rta.test.Component",
+		"reference": "sap.ui.rta.test",
 		"content": {
 			"boundAggregation": "items",
 			"originalControlType": "sap.m.Text"
@@ -29,7 +29,7 @@
 	{
 		"fileName": "id_02_rename",
 		"changeType": "rename",
-		"reference": "sap.ui.rta.test.Component",
+		"reference": "sap.ui.rta.test",
 		"content": {
 			"boundAggregation": "items",
 			"originalControlType": "sap.m.Text"
@@ -56,7 +56,7 @@
 	{
 		"fileName": "id_03_rename",
 		"changeType": "rename",
-		"reference": "sap.ui.rta.test.Component",
+		"reference": "sap.ui.rta.test",
 		"content": {
 			"boundAggregation": "items",
 			"originalControlType": "sap.m.Text"
@@ -83,7 +83,7 @@
 	{
 		"fileName": "id_04_rename",
 		"changeType": "rename",
-		"reference": "sap.ui.rta.test.Component",
+		"reference": "sap.ui.rta.test",
 		"content": {
 			"boundAggregation": "items",
 			"originalControlType": "sap.m.Text"
@@ -110,7 +110,7 @@
 	{
 		"fileName": "id_05_rename",
 		"changeType": "rename",
-		"reference": "sap.ui.rta.test.Component",
+		"reference": "sap.ui.rta.test",
 		"content": {
 			"boundAggregation": "items",
 			"originalControlType": "sap.m.Text"
@@ -137,7 +137,7 @@
 	{
 		"fileName": "id_06_rename",
 		"changeType": "rename",
-		"reference": "sap.ui.rta.test.Component",
+		"reference": "sap.ui.rta.test",
 		"content": {
 			"boundAggregation": "items",
 			"originalControlType": "sap.m.Text"
@@ -168,7 +168,7 @@
 			"boundAggregation": "items"
 		},
 		"layer": "CUSTOMER",
-		"reference": "sap.ui.rta.test.Component",
+		"reference": "sap.ui.rta.test",
 		"dependentSelector": {
 			"originalSelector": {
 				"id": "idMain1--idProductsTable-columnLayout02",
@@ -194,7 +194,7 @@
 				"idIsLocal": true
 			}
 		},
-		"reference": "sap.ui.rta.test.Component",
+		"reference": "sap.ui.rta.test",
 		"selector": {
 			"id": "idMain1--idProductsTable",
 			"idIsLocal": true
@@ -208,7 +208,7 @@
 			"boundAggregation": "items"
 		},
 		"layer": "CUSTOMER",
-		"reference": "sap.ui.rta.test.Component",
+		"reference": "sap.ui.rta.test",
 		"dependentSelector": {
 			"originalSelector": {
 				"id": "idMain1--idProductsTable-columnLayout02",
@@ -224,7 +224,7 @@
 	{
 		"fileName": "id_01_move",
 		"changeType": "moveControls",
-		"reference": "sap.ui.rta.test.Component",
+		"reference": "sap.ui.rta.test",
 		"content": {
 			"boundAggregation": "items",
 			"movedElements": [
@@ -269,7 +269,7 @@
 	{
 		"fileName": "id_02_move",
 		"changeType": "moveControls",
-		"reference": "sap.ui.rta.test.Component",
+		"reference": "sap.ui.rta.test",
 		"content": {
 			"boundAggregation": "items",
 			"movedElements": [
@@ -314,7 +314,7 @@
 	{
 		"fileName": "id_03_move",
 		"changeType": "moveControls",
-		"reference": "sap.ui.rta.test.Component",
+		"reference": "sap.ui.rta.test",
 		"content": {
 			"boundAggregation": "items",
 			"movedElements": [
