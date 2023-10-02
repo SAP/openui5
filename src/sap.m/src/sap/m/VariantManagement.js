@@ -258,15 +258,6 @@ sap.ui.define([
 				},
 
 				/**
-				 * Defines the Apply Automatically text for the standard variant in the Manage Views dialog if the application controls this behavior.
-				 */
-				displayTextForExecuteOnSelectionForStandardVariant: {
-					type: "string",
-					group: "Misc",
-					defaultValue: ""
-				},
-
-				/**
 				 * Semantic level of the header.
                  * For more information, see {@link sap.m.Title#setLevel}.
 				 */
@@ -297,6 +288,16 @@ sap.ui.define([
 					type: "sap.ui.core.CSSSize",
 					group: "Dimension",
 					defaultValue: "100%"
+				},
+
+				/**
+				 * Defines the Apply Automatically text for the standard variant in the Manage Views dialog if the application controls this behavior.
+				 */
+				_displayTextForExecuteOnSelectionForStandardVariant: {
+					type: "string",
+					group: "Misc",
+					defaultValue: "",
+					visibility: "hidden"
 				},
 
 				/**
@@ -560,6 +561,26 @@ sap.ui.define([
 		this._initializeControl();
 	};
 
+	/**
+ 	 * Special handling of the rendering the apply automatically control in <i>Manage Views</i>
+	 * @returns {string} Value of the private property
+	 * @private
+	 * @restricted sap.ui.mdc, sap.ui.comp
+ 	 */
+	VariantManagement.prototype.getDisplayTextForExecuteOnSelectionForStandardVariant = function() {
+		return this.getProperty("_displayTextForExecuteOnSelectionForStandardVariant");
+	};
+	/**
+ 	 * Special handling of the rendering the apply automatically control in <i>Manage Views</i>
+	 * @param {string} sValue to be displayed
+	 * @returns {string} the current instance
+	 * @private
+	 * @restricted sap.ui.mdc, sap.ui.comp
+ 	 */
+	VariantManagement.prototype.setDisplayTextForExecuteOnSelectionForStandardVariant = function(sValue) {
+		this.setProperty("_displayTextForExecuteOnSelectionForStandardVariant", sValue);
+		return this;
+	};
 	/**
  	 * Special handling of the rendering of this control.
 	 * @param {boolean} bValue defines the intended rendering
@@ -2095,7 +2116,7 @@ sap.ui.define([
 		if (this.getDisplayTextForExecuteOnSelectionForStandardVariant() && (this.getStandardVariantKey() === oItem.getKey())) {
 			oExecuteOnSelectCtrl = new CheckBox(sIdPrefix + "-exe-" + nPos, {
 				wrapping: true,
-				text: '{' + sModelName + ">/displayTextForExecuteOnSelectionForStandardVariant}",
+				text: '{' + sModelName + ">/_displayTextForExecuteOnSelectionForStandardVariant}",
 				selected: '{' + sModelName + ">executeOnSelect}"
 			});
 		} else {
