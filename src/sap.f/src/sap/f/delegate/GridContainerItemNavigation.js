@@ -281,6 +281,7 @@ sap.ui.define([
 	 *
 	 * @param {int} iIndex Index of the item to focus
 	 * @param {jQuery.Event} oEvent Event that leads to focus change
+	 * @override
 	 * @private
 	 */
 	GridContainerItemNavigation.prototype.focusItem = function(iIndex, oEvent) {
@@ -312,6 +313,10 @@ sap.ui.define([
 		}
 
 		// this is what the GridContainer changes
+		////////////////////////////////////////////
+		if (!oEvent) {
+			this.resetFocusPosition();
+		}
 		if (!this._bIsMouseDown && this.aItemDomRefs.length) {
 			this.aItemDomRefs[this.iFocusedIndex].focus();
 
