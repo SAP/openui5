@@ -3,6 +3,8 @@
 describe('sap.m.MultiComboBoxBasic', function() {
 	"use strict";
 
+	browser.testrunner.currentSuite.meta.controlName = 'sap.m.MultiComboBox';
+
 	// Initial loading
 	it("should load test page",function(){
 		//click over a button that hides the caret when a control is on focus

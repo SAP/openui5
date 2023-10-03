@@ -3,6 +3,8 @@
 describe('sap.m.MultiInputBasic', function() {
 	"use strict";
 
+    browser.testrunner.currentSuite.meta.controlName = 'sap.m.MultiInput';
+
 	it("should load test page", function () {
 		element(by.id("customCssButton")).click();
 		expect(takeScreenshot()).toLookAs("initial");
