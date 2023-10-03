@@ -2086,11 +2086,28 @@ sap.ui.define([
 						key: 'dateAndTime',
 						target: 'exploreSamples',
 						title: 'Date and Time',
-						files: [
+						subSamples: [
 							{
-								url: '/samples/formatters/dateAndTime/manifest.json',
-								name: 'manifest.json',
-								key: 'manifest.json'
+								key: 'dateAndTime',
+								title: 'Date and Time',
+								files: [
+									{
+										url: '/samples/formatters/dateAndTime/dateTime/manifest.json',
+										name: 'manifest.json',
+										key: 'manifest.json'
+									}
+								]
+							},
+							{
+								key: 'date',
+								title: 'Date',
+								files: [
+									{
+										url: '/samples/formatters/dateAndTime/date/manifest.json',
+										name: 'manifest.json',
+										key: 'manifest.json'
+									}
+								]
 							}
 						]
 					},
