@@ -119,11 +119,11 @@ sap.ui.define([
 
 		if (oChart) {
 			aNames = oChart._calculateChartData()
+				.filter(function (oData) {
+					return oData.color?.startsWith("sapUi");
+				})
 				.map(function (oData) {
 					return oData.color;
-				})
-				.filter(function (sColor) {
-					return sColor.startsWith("sapUi");
 				});
 		}
 
