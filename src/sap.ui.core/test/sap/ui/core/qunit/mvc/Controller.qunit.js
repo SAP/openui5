@@ -197,7 +197,6 @@ sap.ui.define([
 
 		sap.ui.define("my/Controller03.controller", function() {
 			return Controller.extend("my.Controller03", {
-
 				onInit: function(){
 					this._pFragment = Fragment.load({
 						name: "testdata.fragments.XMLView",
@@ -229,8 +228,7 @@ sap.ui.define([
 		assert.expect(5);
 
 		sap.ui.define("my/Controller04.controller", function() {
-			Controller.extend("my.Controller04", {
-
+			return Controller.extend("my.Controller04", {
 				onInit: function(){
 					this._pFragment = this.loadFragment({
 						name: "testdata.fragments.XMLView",
@@ -287,7 +285,7 @@ sap.ui.define([
 		var pFragmentReady;
 
 		sap.ui.define("my/Controller05.controller", function() {
-			Controller.extend("my.Controller05", {
+			return Controller.extend("my.Controller05", {
 				onInit: function(){
 					pFragmentReady = new Promise(function(res, rej) {
 						this.loadFragment({
@@ -353,7 +351,7 @@ sap.ui.define([
 		var pFragmentReady;
 
 		sap.ui.define("my/Controller07.controller", function() {
-			Controller.extend("my.Controller07", {
+			return Controller.extend("my.Controller07", {
 				onInit: function(){
 					pFragmentReady = new Promise(function(res, rej) {
 						this.loadFragment({
