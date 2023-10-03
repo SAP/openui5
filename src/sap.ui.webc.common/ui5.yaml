@@ -61,7 +61,7 @@ customConfiguration:
   ui5-tooling-webc:
     packages:
       # base
-      '@ui5/webcomponents-base':
+      "@ui5/webcomponents-base":
         aliases:
           "^@ui5\/webcomponents-base\/dist\/(.*?).js$": "sap/ui/webc/common/thirdparty/base/$1"
         reverseAliases:
@@ -87,7 +87,7 @@ customConfiguration:
           - "!**/URLListValidator.js"
           - "!**/api.json"
       # theming
-      '@ui5/webcomponents-theming':
+      "@ui5/webcomponents-theming":
         aliases:
           "^@ui5\/webcomponents-theming\/dist\/(.*?)": "sap/ui/webc/common/thirdparty/theming/$1"
         reverseAliases:
@@ -98,7 +98,7 @@ customConfiguration:
           - "**/*{.js,.json,.css}"
           - "!**/*-static.js"
       # localization
-      '@ui5/webcomponents-localization':
+      "@ui5/webcomponents-localization":
         aliases:
           "^@ui5\/webcomponents-localization\/dist\/(.*?).js$": "sap/ui/webc/common/thirdparty/localization/$1"
         reverseAliases:
@@ -113,7 +113,7 @@ customConfiguration:
         emptyModules:
           - "generated/json-imports/LocaleData.js"
       # icons
-      '@ui5/webcomponents-icons':
+      "@ui5/webcomponents-icons":
         aliases:
           "^@ui5\/webcomponents-icons\/dist\/(.*?).js$": "sap/ui/webc/common/thirdparty/icons/$1"
         reverseAliases:
@@ -124,7 +124,7 @@ customConfiguration:
           - "**/*{.js,.json,.css}"
           - "!**/*-static.js"
       # icons-tnt
-      '@ui5/webcomponents-icons-tnt':
+      "@ui5/webcomponents-icons-tnt":
         aliases:
           "^@ui5\/webcomponents-icons-tnt\/dist\/(.*?).js$": "sap/ui/webc/common/thirdparty/icons-tnt/$1"
         reverseAliases:
@@ -135,7 +135,7 @@ customConfiguration:
           - "**/*{.js,.json,.css}"
           - "!**/*-static.js"
       # icons-business-suite
-      '@ui5/webcomponents-icons-business-suite':
+      "@ui5/webcomponents-icons-business-suite":
         aliases:
           "^@ui5\/webcomponents-icons-business-suite\/dist\/(.*?).js$": "sap/ui/webc/common/thirdparty/icons-business-suite/$1"
         reverseAliases:
@@ -146,7 +146,7 @@ customConfiguration:
           - "**/*{.js,.json,.css}"
           - "!**/*-static.js"
       # lit-html
-      'lit-html':
+      "lit-html":
         aliases:
           "^lit-html\/(.*?).js$": "sap/ui/webc/common/thirdparty/lit-html/$1"
           "^lit-html$": "sap/ui/webc/common/thirdparty/lit-html/lit-html"

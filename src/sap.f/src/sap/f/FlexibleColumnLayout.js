@@ -10,8 +10,8 @@ sap.ui.define([
 	"sap/ui/Device",
 	"sap/ui/core/ResizeHandler",
 	"sap/ui/core/Control",
+	"sap/ui/util/Storage",
 	"sap/m/library",
-	"sap/m/Button",
 	"sap/m/NavContainer",
 	"sap/ui/core/Configuration",
 	'sap/ui/dom/units/Rem',
@@ -29,8 +29,8 @@ sap.ui.define([
 	Device,
 	ResizeHandler,
 	Control,
+	Storage,
 	mobileLibrary,
-	Button,
 	NavContainer,
 	Configuration,
 	DomUnitsRem,
@@ -189,12 +189,7 @@ sap.ui.define([
 
 				_beginColumnNav: {type : "sap.m.NavContainer", multiple : false, visibility : "hidden"},
 				_midColumnNav: {type : "sap.m.NavContainer", multiple : false, visibility : "hidden"},
-				_endColumnNav: {type : "sap.m.NavContainer", multiple : false, visibility : "hidden"},
-
-				_beginColumnBackArrow: {type: "sap.m.Button", multiple: false, visibility: "hidden"},
-				_midColumnForwardArrow: {type: "sap.m.Button", multiple: false, visibility: "hidden"},
-				_midColumnBackArrow: {type: "sap.m.Button", multiple: false, visibility: "hidden"},
-				_endColumnForwardArrow: {type: "sap.m.Button", multiple: false, visibility: "hidden"}
+				_endColumnNav: {type : "sap.m.NavContainer", multiple : false, visibility : "hidden"}
 			},
 			associations : {
 
@@ -655,25 +650,12 @@ sap.ui.define([
 		"LastColumn" : "FCL_END_COLUMN_REGION_TEXT"
 	};
 
-	FlexibleColumnLayout.DEFAULT_ARROW_LABELS = {
-		"FirstColumnBackArrow" : "FCL_BEGIN_COLUMN_BACK_ARROW",
-		"MiddleColumnForwardArrow" : "FCL_MID_COLUMN_FORWARD_ARROW",
-		"MiddleColumnBackArrow" : "FCL_MID_COLUMN_BACK_ARROW",
-		"LastColumnForwardArrow" : "FCL_END_COLUMN_FORWARD_ARROW"
-	};
-
-	FlexibleColumnLayout.ARROW_AGGREGATION_TO_LABEL_MAP = {
-		"_beginColumnBackArrow" : "FirstColumnBackArrow",
-		"_midColumnForwardArrow" : "MiddleColumnForwardArrow",
-		"_midColumnBackArrow" : "MiddleColumnBackArrow",
-		"_endColumnForwardArrow" : "LastColumnForwardArrow"
-	};
-
 	FlexibleColumnLayout.COLUMN_RESIZING_ANIMATION_DURATION = 560; // ms
 	FlexibleColumnLayout.PINNED_COLUMN_CLASS_NAME = "sapFFCLPinnedColumn";
+	FlexibleColumnLayout.ANIMATED_COLUMN_CLASS_NAME = "sapFFCLAnimatedColumn";
 	FlexibleColumnLayout.COLUMN_ORDER = ["begin", "mid", "end"]; // natural order of the columns in FCL
-	// synced with @_sap_f_FCL_navigation_arrow_width in base less file
-	FlexibleColumnLayout.NAVIGATION_ARROW_WIDTH = DomUnitsRem.toPx("1rem");
+	// synced with @_sap_f_FCL_SeparatorWidth in base less file
+	FlexibleColumnLayout.COLUMN_SEPARATOR_WIDTH = DomUnitsRem.toPx("1rem");
 
 	FlexibleColumnLayout.prototype.init = function () {
 		this._iWidth = 0;
@@ -687,9 +669,6 @@ sap.ui.define([
 
 		// Create the 3 nav containers
 		this._initNavContainers();
-
-		// Create the expand/collapse arrows
-		this._initButtons();
 
 		// Holds an object, responsible for saving and searching the layout history
 		this._oLayoutHistory = new LayoutHistory();
@@ -706,6 +685,24 @@ sap.ui.define([
 		};
 
 		this._oInvisibleMessage = null;
+		this._boundColumnSeparatorMove = this._onColumnSeparatorMove.bind(this);
+		this._boundColumnSeparatorMoveEnd = this._onColumnSeparatorMoveEnd.bind(this);
+		this._oLocalStorage = {};
+		this._bNeverRendered = true;
+	};
+
+	FlexibleColumnLayout.prototype._getLocalStorage = function (iMaxColumnsCount) {
+		if (!iMaxColumnsCount) {
+			iMaxColumnsCount = this.getMaxColumnsCount();
+		}
+		var sKey = (iMaxColumnsCount === 3) ? "desktop" : "tablet";
+		if (!this._oLocalStorage[sKey]) {
+			var sPrefix = sKey === 'desktop' ?
+				FlexibleColumnLayout.STORAGE_PREFIX_DESKTOP :
+				FlexibleColumnLayout.STORAGE_PREFIX_TABLET;
+			this._oLocalStorage[sKey] = new Storage(Storage.Type.local, sPrefix);
+		}
+		return this._oLocalStorage[sKey];
 	};
 
 	FlexibleColumnLayout.prototype._announceMessage = function (sResourceBundleKey) {
@@ -729,7 +726,7 @@ sap.ui.define([
 		this._setColumnPagesRendered(oColumnNavContainer.getId(), bHasPages);
 
 		if (this._hasAnyColumnPagesRendered() !== bHadAnyColumnPagesRendered) {
-			this._hideShowArrows();
+			this._hideShowColumnSeparators();
 		}
 	};
 
@@ -783,27 +780,6 @@ sap.ui.define([
 			role: "region",
 			label: sLabel || FlexibleColumnLayout._getResourceBundle().getText(FlexibleColumnLayout.DEFAULT_COLUMN_LABELS[sColumnName])
 		};
-	};
-
-	/**
-	 * Formats <code>FlexibleColumnLayoutAccessibleLandmarkInfo</code> label/tooltip of the provided <code>FlexibleColumnLayout</code> arrow.
-	 *
-	 * @param {sap.f.FlexibleColumnLayoutAccessibleLandmarkInfo} oLandmarkInfo FlexibleColumnLayout LandmarkInfo
-	 * @param {string} sArrowAggregationName arrow aggregation name of the layout
-	 * @private
-	 */
-	FlexibleColumnLayout.prototype._formatArrowLandmarkInfo = function (oLandmarkInfo, sArrowAggregationName) {
-		var sLabel = null,
-			sArrowName = FlexibleColumnLayout.ARROW_AGGREGATION_TO_LABEL_MAP[sArrowAggregationName];
-
-		if (oLandmarkInfo) {
-			sLabel = oLandmarkInfo["get" + sArrowName + "Label"]();
-		}
-
-		this.getAggregation(sArrowAggregationName).setTooltip(
-			sLabel ||
-			FlexibleColumnLayout._getResourceBundle().getText(FlexibleColumnLayout.DEFAULT_ARROW_LABELS[sArrowName]
-		));
 	};
 
 	/**
@@ -897,7 +873,6 @@ sap.ui.define([
 
 		var vResult = this.setProperty("layout", sNewLayout, true);
 		this._oLayoutHistory.addEntry(sNewLayout);
-		this._hideShowArrows();
 		this._resizeColumns();
 
 		return vResult;
@@ -935,7 +910,6 @@ sap.ui.define([
 
 		this._cacheDOMElements();
 
-		this._hideShowArrows();
 		this._resizeColumns();
 
 		this._flushColumnContent("begin");
@@ -943,6 +917,37 @@ sap.ui.define([
 		this._flushColumnContent("end");
 
 		this._fireStateChange(false, false);
+		this._bNeverRendered = false;
+	};
+
+	FlexibleColumnLayout.prototype.onmousedown = function (oEvent) {
+		if (this._ignoreMouse) {
+			return;
+		}
+		var oTarget = this._getColumnSeparator(oEvent.target);
+
+		if (!oTarget) {
+			return;
+		}
+		this._ignoreTouch = true;
+		this._onColumnSeparatorMoveStart(oEvent, oTarget);
+	};
+
+	FlexibleColumnLayout.prototype.ontouchstart = function (oEvent) {
+		if (this._ignoreTouch) {
+			return;
+		}
+		var oTarget = this._getColumnSeparator(oEvent.target);
+
+		if (!oTarget) {
+			return;
+		}
+		if (!oEvent.changedTouches || !oEvent.changedTouches[0]) {
+			// No touch in event
+			return;
+		}
+		this._ignoreMouse = true;
+		this._onColumnSeparatorMoveStart(oEvent.changedTouches[0], oTarget, true);
 	};
 
 	/**
@@ -982,11 +987,13 @@ sap.ui.define([
 	 * Checks whether or not the focus is in some columns that are previous to the current
 	 * column. For example, if the current is "end", checks if the focus is
 	 * in "mid" or "begin" columns.
+	 * @param {sap.f.LayoutType} sLayout the layout to check
 	 * @returns {boolean} whether or not the focus is in columns that are previous to the current column
 	 * @private
 	 */
-	FlexibleColumnLayout.prototype._isFocusInSomeOfThePreviousColumns = function () {
-		var iIndex = FlexibleColumnLayout.COLUMN_ORDER.indexOf(this._sPreviuosLastVisibleColumn) - 1,
+	FlexibleColumnLayout.prototype._isFocusInSomeOfThePreviousColumns = function (sLayout) {
+		var sLastVisibleColumn = this._getLastVisibleColumnForLayout(sLayout),
+			iIndex = FlexibleColumnLayout.COLUMN_ORDER.indexOf(sLastVisibleColumn) - 1,
 			oCurrentColumn;
 
 		for (; iIndex >= 0; iIndex--) {
@@ -1022,6 +1029,7 @@ sap.ui.define([
 		this._removeNavContainersFocusOutDelegate();
 		this._oRenderedColumnPagesBoolMap = null;
 		this._oColumnFocusInfo = null;
+		this._oLocalStorage = null;
 		this._deregisterResizeHandler();
 		this._handleEvent(jQuery.Event("Destroy"));
 	};
@@ -1064,52 +1072,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Creates the buttons for the layout arrows, which are initially hidden and will only be shown on demand without re-rendering.
-	 * @private
-	 */
-	FlexibleColumnLayout.prototype._initButtons = function () {
-		var oBeginColumnBackArrow = new Button(this.getId() + "-beginBack", {
-			icon: "sap-icon://slim-arrow-left",
-			type: "Transparent",
-			press: function () {
-				this._onArrowClick("left");
-				this._announceMessage("FCL_MIDDLE_COLUMN_EXPANDED_MESSAGE");
-			}.bind(this)
-		}).addStyleClass("sapFFCLNavigationButton").addStyleClass("sapFFCLNavigationButtonRight");
-		this.setAggregation("_beginColumnBackArrow", oBeginColumnBackArrow, true);
-
-		var oMidColumnForwardArrow = new Button(this.getId() + "-midForward", {
-			icon: "sap-icon://slim-arrow-right",
-			type: "Transparent",
-			press: function () {
-				this._onArrowClick("right");
-				this._announceMessage("FCL_FIRST_COLUMN_EXPANDED_MESSAGE");
-			}.bind(this)
-		}).addStyleClass("sapFFCLNavigationButton").addStyleClass("sapFFCLNavigationButtonLeft");
-		this.setAggregation("_midColumnForwardArrow", oMidColumnForwardArrow, true);
-
-		var oMidColumnBackArrow = new Button(this.getId() + "-midBack", {
-			icon: "sap-icon://slim-arrow-left",
-			type: "Transparent",
-			press: function () {
-				this._onArrowClick("left");
-				this._announceMessage("FCL_LAST_COLUMN_EXPANDED_MESSAGE");
-			}.bind(this)
-		}).addStyleClass("sapFFCLNavigationButton").addStyleClass("sapFFCLNavigationButtonRight");
-		this.setAggregation("_midColumnBackArrow", oMidColumnBackArrow, true);
-
-		var oEndColumnForwardArrow = new Button(this.getId() + "-endForward", {
-			icon: "sap-icon://slim-arrow-right",
-			type: "Transparent",
-			press: function () {
-				this._onArrowClick("right");
-				this._announceMessage("FCL_MIDDLE_COLUMN_EXPANDED_MESSAGE");
-			}.bind(this)
-		}).addStyleClass("sapFFCLNavigationButton").addStyleClass("sapFFCLNavigationButtonLeft");
-		this.setAggregation("_endColumnForwardArrow", oEndColumnForwardArrow, true);
-	};
-
-	/**
 	 * Saves the DOM references of the columns and layout arrows.
 	 * @private
 	 */
@@ -1117,7 +1079,9 @@ sap.ui.define([
 		this._cacheColumns();
 
 		if (!Device.system.phone) {
-			this._cacheArrows();
+			this._cacheColumnSeparators();
+			this._$overlay = this.$("overlay");
+			this._$overlaySeparator = this.$("overlaySeparator");
 		}
 	};
 
@@ -1129,224 +1093,364 @@ sap.ui.define([
 		};
 	};
 
-	FlexibleColumnLayout.prototype._cacheArrows = function () {
-		this._oColumnSeparatorArrows = {
-			beginBack: this.$("beginBack"),
-			midForward: this.$("midForward"),
-			midBack: this.$("midBack"),
-			endForward: this.$("endForward")
+	FlexibleColumnLayout.prototype._cacheColumnSeparators = function () {
+		this._oColumnSeparators = {
+			begin: this.$("separator-begin"),
+			end: this.$("separator-end")
 		};
 	};
 
 	/**
 	 * Returns the number of columns that have width > 0
-	 * @returns {Array.<string>}
+	 * @param {sap.f.LayoutType} sLayout the layout to check
+	 * @returns {number} the count
 	 * @private
 	 */
-	FlexibleColumnLayout.prototype._getVisibleColumnsCount = function () {
+	FlexibleColumnLayout.prototype._getVisibleColumnsCount = function (sLayout) {
+		return this._getVisibleColumnsForLayout(sLayout).length;
+	};
+
+	/**
+	 * Returns the names of columns that have width > 0
+	 * @param {sap.f.LayoutType} sLayout the layout to check
+	 * @returns {Array.<string>} the column names
+	 * @private
+	 */
+	FlexibleColumnLayout.prototype._getVisibleColumnsForLayout = function (sLayout) {
 		return FlexibleColumnLayout.COLUMN_ORDER.filter(function (sColumn) {
-			return this._getColumnSize(sColumn) > 0;
-		}, this).length;
+			return this._getColumnSizeForLayout(sColumn, sLayout) > 0;
+		}, this);
 	};
 
 	/**
 	 * Returns the number of columns that have width > 0.
-	 * @returns {number}
+	 * @returns {number} the count
 	 * @private
 	 */
-	FlexibleColumnLayout.prototype._getVisibleArrowsCount = function () {
-		if (!this._oColumnSeparatorArrows) {
+	FlexibleColumnLayout.prototype._getVisibleColumnSeparatorsCount = function () {
+		if (!this._oColumnSeparators) {
 			return 0;
 		}
 
-		return Object.keys(this._oColumnSeparatorArrows).filter(function (sArrow) {
-			return this._oColumnSeparatorArrows[sArrow].data("visible");
+		return Object.keys(this._oColumnSeparators).filter(function (sName) {
+			return this._oColumnSeparators[sName].data("visible");
 		}, this).length;
 	};
 
 	/**
 	 * Returns the total width available for the columns.
-	 * @param {boolean} bHasInsetColumn
-	 * @returns {number}
+	 * @param {sap.f.LayoutType} sLayout the layout t ckeck
+	 * @returns {number} the width in px
 	 * @private
 	 */
-	FlexibleColumnLayout.prototype._getTotalColumnsWidth = function (bHasInsetColumn) {
-		var iSeparatorsCount = this._getVisibleArrowsCount();
-		if (bHasInsetColumn) { // inset column has temporarily hidden nav arrow,
-			// but empty space *in place of* the navigation arrows for visual consistency
-			iSeparatorsCount++;
-		}
-
-		return this._getControlWidth() - iSeparatorsCount * FlexibleColumnLayout.NAVIGATION_ARROW_WIDTH;
+	FlexibleColumnLayout.prototype._getTotalColumnsWidth = function (sLayout) {
+		var iSeparatorsCount = this._getRequiredColumnSeparatorsForLayout(sLayout).length;
+		return this._getControlWidth() - iSeparatorsCount * FlexibleColumnLayout.COLUMN_SEPARATOR_WIDTH;
 	};
 
 	/**
-	 * Changes the width
+	 * Changes the width of the columns
+	 * @param {object} [oOptions] custom resize options (the custom sizes on interactive resize). If not
+	 * provided, the default options returned from <code>_getDefaultResizeOptions</code> will be taken.
+	 * @param {Object<string,number>} [oOptions.columnWidths] the column widths. If not provided, the default widths
+	 * for the current layout will be taken
+	 * @param {int} [oOptions.columnWidths.begin] the width of the 'begin' column in px
+	 * @param {int} [oOptions.columnWidths.mid] the width of the 'mid' column in px
+	 * @param {int} [oOptions.columnWidths.end] the width of the 'end' column in px
+	 * @param {sap.f.LayoutType} [oOptions.layout] the current layout type
+	 * @param {sap.f.LayoutType} [oOptions.previousLayout] the current layout type. If not provided,
+	 * the previous entry from the <code>sap.f.FlexibleColumnLayout.LayoutHistory</code> will be taken.
+	 * @param {boolean} oOptions.restoreFocusOnBackNavigation if focus should be restored upon
+	 * resize that  corresponds to back navigation
+	 * @param {boolean} oOptions.updateDetailedActiveClasses specifies if the CSS classes
+	 * 'sapFFCLColumnOnlyActive', sapFFCLColumnFirstActive, sapFFCLColumnLastActive should be updated
+	 * @param {boolean} oOptions.updateContextualSettings specifies if the contextual settings (for the
+	 * new widths) should be propagated to the controls inside the columns
+	 * @param {boolean} oOptions.updateMediaCSSClases specifies if the CSS classes for the media
+	 * corresponsing to the current columns' width should be set to the columns
+	 * @param {boolean} oOptions.hasAnimations specifies if animations are enabled
 	 * @private
 	 */
-	FlexibleColumnLayout.prototype._resizeColumns = function () {
-		var iPercentWidth,
-			iAvailableWidth,
-			aColumns = FlexibleColumnLayout.COLUMN_ORDER.slice(),
-			bRtl = Configuration.getRTL(),
-			sAnimationMode = Configuration.getAnimationMode(),
-			bHasAnimations = sAnimationMode !== Configuration.AnimationMode.none && sAnimationMode !== Configuration.AnimationMode.minimal,
-			aActiveColumns,
-			iVisibleColumnsCount,
-			iDefaultVisibleColumnsCount,
+	FlexibleColumnLayout.prototype._resizeColumns = function (oOptions) {
+		var aColumns = FlexibleColumnLayout.COLUMN_ORDER.slice(),
+			bHasAnimations,
 			sLayout,
+			sPreviousLayout,
+			iVisibleColumnsCount,
+			oColumnWidths,
 			sLastVisibleColumn,
 			bInsetMidColumn,
 			bRestoreFocusOnBackNavigation,
-			oPendingAnimationEnd = {};
+			oPendingAnimationEnd;
 
 		// Stop here if the control isn't rendered yet
 		if (!this.isActive()) {
 			return;
 		}
 
-		iVisibleColumnsCount = this._getVisibleColumnsCount();
+		oOptions = merge(this._getDefaultResizeOptions(), oOptions);
+		sLayout = oOptions.layout;
+		iVisibleColumnsCount = this._getVisibleColumnsCount(sLayout);
+
 		if (iVisibleColumnsCount === 0) {
 			return;
 		}
 
-		sLayout = this.getLayout();
-		// the default number of columns is the number at maximum control width
-		iDefaultVisibleColumnsCount = this._getMaxColumnsCountForLayout(sLayout, FlexibleColumnLayout.DESKTOP_BREAKPOINT);
-
-		sLastVisibleColumn = aColumns[iDefaultVisibleColumnsCount - 1];
-
-		bRestoreFocusOnBackNavigation = this.getRestoreFocusOnBackNavigation() &&
-			this._isNavigatingBackward(sLastVisibleColumn) &&
-			!this._isFocusInSomeOfThePreviousColumns();
-
+		bHasAnimations = oOptions.hasAnimations;
+		sPreviousLayout = oOptions.previousLayout;
 		bInsetMidColumn = (iVisibleColumnsCount === 3) && (sLayout === LT.ThreeColumnsEndExpanded);
-		// Calculate the width available for the columns
-		iAvailableWidth = this._getTotalColumnsWidth(bInsetMidColumn);
+		oColumnWidths = oOptions.columnWidths || this._getAllColumnSizesForLayout(sLayout, true);
+		sLastVisibleColumn = this._getLastVisibleColumnForLayout(sLayout);
+		bRestoreFocusOnBackNavigation = oOptions.restoreFocusOnBackNavigation &&
+			sPreviousLayout &&
+			this._isNavigatingBackward(sLayout, sPreviousLayout) &&
+			!this._isFocusInSomeOfThePreviousColumns(sPreviousLayout);
+		oPendingAnimationEnd = (bHasAnimations && sPreviousLayout) ?
+			// checks if the previous animation completed
+			this._getAnimationEndStatusForColumns() : {};
+
 
 		// Animations on - Before resizing pin the columns that should not be animated in order to create the reveal/conceal effect
-		if (bHasAnimations) {
+		if (bHasAnimations && sPreviousLayout) {
+			 this._pinColumnsBeforeResize(sLayout, sPreviousLayout, oColumnWidths);
 
-			aColumns.forEach(function (sColumn) {
-				var bShouldConcealColumn = this._shouldConcealColumn(iDefaultVisibleColumnsCount, sColumn),
-					bShouldRevealColumn = this._shouldRevealColumn(iDefaultVisibleColumnsCount, sColumn === sLastVisibleColumn),
-					oColumn = this._$columns[sColumn];
-
-				oColumn.toggleClass(FlexibleColumnLayout.PINNED_COLUMN_CLASS_NAME, bShouldConcealColumn || bShouldRevealColumn);
-
-			}, this);
-
-			// check if the previous animation completed
-			aColumns.forEach(function(sColumn) {
-				oPendingAnimationEnd[sColumn] = this._oAnimationEndListener.isWaitingForColumnResizeEnd(this._$columns[sColumn]);
-			}, this);
 			// detach all listeners to any previous unfinished animation
 			this._oAnimationEndListener.cancelAll();
 		}
+		// update separator visibility only after pinning the columns
+		// to prevent unnecessary resize in the concealed column due to
+		// change of its width upon hiding its preceding separator
+		this._hideShowColumnSeparators();
 
 
 		aColumns.forEach(function (sColumn) {
-			var oColumn = this._$columns[sColumn],
-				oColumnDomRef = oColumn.get(0),
-				iNewWidth,
-				sNewWidth,
-				bShouldRevealColumn,
-				bShouldConcealColumn,
-				bPinned,
-				bCanResizeColumnWithAnimation,
-				oOptions;
 
+			var iWidth = oColumnWidths[sColumn],
+				bShouldRevealColumn = bHasAnimations
+					&& this._shouldRevealColumn(sColumn, sLayout, sPreviousLayout),
+					//&& this._$columns[sColumn].width() < FlexibleColumnLayout.COLUMN_MIN_WIDTH,
+				bShouldConcealColumn = bHasAnimations
+					&& this._shouldConcealColumn(sColumn, sLayout, sPreviousLayout);
 
-			// Calculate the width of the column
-			iPercentWidth = this._getColumnSize(sColumn);
-			iNewWidth = Math.round(iAvailableWidth * (iPercentWidth / 100));
-			if ([100, 0].indexOf(iPercentWidth) !== -1) {
-				sNewWidth = iPercentWidth + "%";
-			} else {
-				sNewWidth = iNewWidth + "px";
-			}
+			this._resizeColumn(sColumn, {
+				width: iWidth,
 
+				shouldRestoreFocus: bRestoreFocusOnBackNavigation &&
+					(sColumn === sLastVisibleColumn),
 
-			// set the resize options for the column:
-			oOptions = {
-				previousAnimationCompleted: !oPendingAnimationEnd[oColumn],
-				iNewWidth: iNewWidth,
-				shouldRestoreFocus: bRestoreFocusOnBackNavigation && (sColumn === sLastVisibleColumn),
-				hidden: iPercentWidth === 0 && this._oColumnWidthInfo[sColumn] === 0 // is hidden both before and after the resize
+				shouldInsetColumn: bInsetMidColumn && (sColumn === "mid"),
+
+				shouldRevealColumn: bShouldRevealColumn,
+				shouldConcealColumn: bShouldConcealColumn,
+
+				// is hidden both before and after the resize
+				hidden: iWidth === 0 && this._oColumnWidthInfo[sColumn] === 0,
+				autoSize: iWidth > 0 && (sColumn === "mid"),
+
+				hasAnimations: bHasAnimations,
+				previousAnimationCompleted: !oPendingAnimationEnd[this._$columns[sColumn]],
+				updateContextualSettings: oOptions.updateContextualSettings,
+				updateMediaCSSClases: oOptions.updateMediaCSSClases
+			});
+		}, this);
+
+		if (oOptions.updateDetailedActiveClasses) {
+			this._addDetailedActiveClasses(sLayout);
+		}
+	};
+
+	/**
+	 * Changes the width of the given column
+	 * @param {"begin" | "mid" | "end"} sColumn the column name
+	 * @param {object} oColumnConfig resize options
+	 * @param {int} oColumnConfig.width the width of the column in px
+	 * @param {boolean} oColumnConfig.shouldInsetColumn if CSS class "sapFFCLColumnInset"
+	 * should be set
+	 * @param {boolean} oColumnConfig.autoSize if autoSize, the it should NOT set a fixed width
+	 * (in px) to the column, to allow the default width of "100%" take effect. As a result,
+	 * the column will take the space that remains after sizing its sibling columns
+	 * @param {boolean} oColumnConfig.shouldRestoreFocus if focus should be restored after resize
+	 * @param {boolean} oColumnConfig.shouldRevealColumn if the column should be resized with
+	 * reveal effect
+	 * @param {boolean} oColumnConfig.shouldConcealColumn if the column should be resized with
+	 * conceal effect
+	 * @param {boolean} oColumnConfig.updateContextualSettings specifies if the contextual settings (for the
+	 * new widths) should be propagated to the controls inside the column
+	 * @param {boolean} oColumnConfig.updateMediaCSSClases specifies if the CSS classes for the media
+	 * corresponsing to the current width should be set to the column
+	 * @param {boolean} oColumnConfig.hasAnimations specifies if animations are enabled
+	 * @private
+	 */
+	FlexibleColumnLayout.prototype._resizeColumn = function (sColumn, oColumnConfig) {
+		var $column = this._$columns[sColumn],
+			oColumnDomRef = $column.get(0),
+			iNewWidth = oColumnConfig.width,
+			sNewWidth = convertPxToCSSSizeString(iNewWidth, this._getControlWidth(), oColumnConfig.shouldInsetColumn),
+			bAutoSize = oColumnConfig.autoSize,
+			bAnimationsEnabled = oColumnConfig.hasAnimations,
+			bPinned = oColumnConfig.shouldRevealColumn || oColumnConfig.shouldConcealColumn,
+			bResizeColumnWithAnimation = this._canResizeColumnWithAnimation(sColumn, oColumnConfig),
+			bSuspendResizeHandler = bAnimationsEnabled && (bResizeColumnWithAnimation || bAutoSize) && !bPinned,
+			fnAfterResizeCallback = this._afterColumnResize.bind(this, sColumn, merge(oColumnConfig, {
+				resumeResizeHandler: bSuspendResizeHandler // toggle back after resize
+			})),
+			fnResizeErrorCallback = function() {
+				ResizeHandler.resume(oColumnDomRef);
+				oColumnDomRef.querySelector(".sapFFCLColumnContent").style.width = "";
 			};
-			if (bHasAnimations) {
-				bShouldRevealColumn = this._shouldRevealColumn(iDefaultVisibleColumnsCount, sColumn === sLastVisibleColumn);
-				bShouldConcealColumn = this._shouldConcealColumn(iDefaultVisibleColumnsCount, sColumn);
-				bPinned = bShouldRevealColumn || bShouldConcealColumn;
-				oOptions = merge(oOptions, {
-					hasAnimations: true,
-					shouldConcealColumn: bShouldConcealColumn,
-					pinned: bPinned
-				});
-				bCanResizeColumnWithAnimation = this._canResizeColumnWithAnimation(sColumn, oOptions);
+
+			if (bAutoSize) {
+				// do not set a fixed size to allow the default width:100% take effect
+				sNewWidth = "";
 			}
 
-
-			if (!bShouldConcealColumn) { // do not remove the active class of the concealed column for now (it should remain visible until the end of animations for other columns)
-				// Add the active class to the column if it shows something
-				oColumn.toggleClass("sapFFCLColumnActive", iPercentWidth > 0);
-			}
-
-			oColumn.toggleClass("sapFFCLColumnInset", bInsetMidColumn && (sColumn === "mid"));
-
+			// Add the active class to the column if it shows something
+			// the concealed column should remain visible until the end of animations for other columns
+			$column.toggleClass("sapFFCLColumnActive", iNewWidth > 0 || oColumnConfig.shouldConcealColumn);
+			$column.toggleClass("sapFFCLColumnInset", oColumnConfig.shouldInsetColumn);
 			// Remove all the classes that are used for HCB theme borders, they will be set again later
-			oColumn.removeClass("sapFFCLColumnHidden");
-			oColumn.removeClass("sapFFCLColumnOnlyActive");
-			oColumn.removeClass("sapFFCLColumnLastActive");
-			oColumn.removeClass("sapFFCLColumnFirstActive");
+			$column.removeClass("sapFFCLColumnHidden sapFFCLColumnOnlyActive sapFFCLColumnLastActive sapFFCLColumnFirstActive");
 
-
-			// toggle ResizeHandler during the animation
-			if (bCanResizeColumnWithAnimation) {
-				ResizeHandler.suspend(oColumnDomRef); // Suspend ResizeHandler while animation is running
-				this._oAnimationEndListener.waitForColumnResizeEnd(oColumn).then(function() {
-					ResizeHandler.resume(oColumnDomRef); // Resume ResizeHandler once animation ended
-				}).catch(function() {
-					ResizeHandler.resume(oColumnDomRef); // Resume ResizeHandler if animation cancelled
-				});
+			// Suspend ResizeHandler while animation is running
+			if (bSuspendResizeHandler) {
+				ResizeHandler.suspend(oColumnDomRef);
 			}
 
+			if (bResizeColumnWithAnimation) {
+				$column.addClass(FlexibleColumnLayout.ANIMATED_COLUMN_CLASS_NAME);
+				$column.width(sNewWidth);
+				this._attachAfterColumnResizedOnce(sColumn, fnAfterResizeCallback, fnResizeErrorCallback);
 
-			// Update the width of the column DOM element
-			if (!bShouldConcealColumn) { // regular case
-				oColumn.width(sNewWidth);
+			} else if (bAutoSize && bAnimationsEnabled){
+				$column.width(sNewWidth);
+				this._attachAfterAllColumnsResizedOnce(fnAfterResizeCallback, fnResizeErrorCallback);
+
 			} else {
-				this._oAnimationEndListener.waitForAllColumnsResizeEnd().then(function() {
-					// the concealed column should be resized last (after all other columns resized)
-					oColumn.width(sNewWidth);
-				}).catch(function() {
-				// no action when no resize
-			});
+				$column.width(sNewWidth);
+				fnAfterResizeCallback();
 			}
-
-
-			// Adjust column after resize
-			if (bCanResizeColumnWithAnimation || bPinned) {
-				this._oAnimationEndListener.waitForAllColumnsResizeEnd().then(this._afterColumnResize.bind(this, sColumn, oOptions)).catch(function() {
-				// no action if resize did not complete
-			});
-			} else {
-				this._afterColumnResize(sColumn, oOptions);
-			}
-
 
 			// For tablet and desktop - notify child controls to render with reduced container size, if they need to
-			if (!Device.system.phone) {
+			if (oColumnConfig.updateContextualSettings && !Device.system.phone) {
 				this._updateColumnContextualSettings(sColumn, iNewWidth);
+			}
+			if (oColumnConfig.updateMediaCSSClases && !Device.system.phone) {
 				this._updateColumnCSSClasses(sColumn, iNewWidth);
 			}
+	};
 
+	/**
+	 * Adjusts the column after resize
+	 *
+	 * @param {"begin" | "mid" | "end"} sColumn the column name
+	 * @param {object} oOptions the resize options
+	 * @param {int} oOptions.width the width of the column in px
+	 * @param {boolean} oOptions.shouldRestoreFocus if focus should be restored after resize
+	 * @param {boolean} oOptions.shouldRevealColumn if the column is being resized with reveal effect
+	 * @param {boolean} oOptions.shouldConcealColumn if the column is being resized with conceal effect
+	 * @param {boolean} oOptions.resumeResizeHandler if the <code>ResizeHandler.resume</code> should
+	 * be called for the column's DOM elemnt after the resize
+	 * @private
+	 */
+	FlexibleColumnLayout.prototype._afterColumnResize = function (sColumn, oOptions) {
+		var oColumn = this._$columns[sColumn],
+			bShouldRevealColumn = oOptions.shouldRevealColumn,
+			bShouldConcealColumn = oOptions.shouldConcealColumn,
+			iNewWidth = oOptions.width,
+			bShouldRestoreFocus = oOptions.shouldRestoreFocus;
+
+		if (bShouldRevealColumn || bShouldConcealColumn ) {
+			oColumn[0].querySelector(".sapFFCLColumnContent").style.width = "";
+		}
+		oColumn.toggleClass(FlexibleColumnLayout.PINNED_COLUMN_CLASS_NAME, false);
+		oColumn.toggleClass(FlexibleColumnLayout.ANIMATED_COLUMN_CLASS_NAME, false);
+
+		if (bShouldConcealColumn) {
+			// The column does not show anything anymore, so we can remove the active class
+			oColumn.removeClass("sapFFCLColumnActive");
+		}
+
+		//BCP: 1980006195
+		oColumn.toggleClass("sapFFCLColumnHidden", iNewWidth === 0);
+
+		if (oOptions.resumeResizeHandler) {
+			ResizeHandler.resume(oColumn[0]);
+		}
+
+		this._cacheColumnWidth(sColumn, iNewWidth);
+		if (bShouldRestoreFocus) {
+			this._restoreFocusToColumn(sColumn);
+		}
+	};
+
+	FlexibleColumnLayout.prototype._pinColumnsBeforeResize = function (sLayout, sPreviousLayout, oColumnWidths) {
+		FlexibleColumnLayout.COLUMN_ORDER.slice().forEach(function (sColumn) {
+			var bShouldConcealColumn = this._shouldConcealColumn(sColumn, sLayout, sPreviousLayout),
+				bShouldRevealColumn = this._shouldRevealColumn(sColumn, sLayout, sPreviousLayout),
+				bShouldPin = bShouldConcealColumn || bShouldRevealColumn,
+				oColumn = this._$columns[sColumn],
+				oColumnDomRef = oColumn[0];
+
+			oColumn.toggleClass(FlexibleColumnLayout.PINNED_COLUMN_CLASS_NAME, bShouldPin);
+
+			if (bShouldRevealColumn) {
+				oColumnDomRef.querySelector(".sapFFCLColumnContent").style.width = convertPxToCSSSizeString(oColumnWidths[sColumn], this._getControlWidth());
+			} else if (bShouldConcealColumn) {
+				oColumnDomRef.querySelector(".sapFFCLColumnContent").style.width = oColumnDomRef.offsetWidth + "px";
+			}
 
 		}, this);
+	};
 
-		aActiveColumns = aColumns.filter(function (sColumn) {
-			return this._getColumnSize(sColumn) > 0;
+	FlexibleColumnLayout.prototype._getAnimationEndStatusForColumns = function () {
+		var oPendingAnimationEnd = {};
+		// check if the previous animation completed
+		FlexibleColumnLayout.COLUMN_ORDER.slice().forEach(function(sColumn) {
+			oPendingAnimationEnd[sColumn] = this._oAnimationEndListener.isWaitingForColumnResizeEnd(this._$columns[sColumn]);
 		}, this);
+		return oPendingAnimationEnd;
+	};
+
+	FlexibleColumnLayout.prototype._getAllColumnSizesForLayout = function (sLayout, bNormalizeWidths) {
+		var oSizes = {};
+		FlexibleColumnLayout.COLUMN_ORDER.slice().forEach(function(sColumn) {
+			var iPercentSize = this._getColumnSizeForLayout(sColumn, sLayout),
+				iPxSize = this._convertColumnPercentWidthToPx(iPercentSize, sLayout);
+			oSizes[sColumn] = iPxSize;
+		}, this);
+
+		///needed to cover the case when the custom column sizes (in %) were saved
+		// when using a *larger* screen size, to prevent too narrow columns if the same sizes (in %)
+		// are applied on the smaller screen size
+		if (bNormalizeWidths) {
+			this._normalizeColumnWidths(oSizes, this._getVisibleColumnsForLayout(sLayout));
+		}
+		return oSizes;
+	};
+
+	FlexibleColumnLayout.prototype._getDefaultResizeOptions = function () {
+		var sAnimationMode = Configuration.getAnimationMode();
+		return {
+			layout: this.getLayout(),
+			previousLayout: this._getPreviousLayout(),
+			restoreFocusOnBackNavigation: this.getRestoreFocusOnBackNavigation(),
+			updateDetailedActiveClasses: true,
+			updateContextualSettings: true,
+			updateMediaCSSClases: true,
+			hasAnimations: sAnimationMode !== Configuration.AnimationMode.none && sAnimationMode !== Configuration.AnimationMode.minimal
+		};
+	};
+
+	FlexibleColumnLayout.prototype._getPreviousLayout = function () {
+		return this._getLayoutHistory().getEntry(1, true /* recent first */) || LT.OneColumn;
+	};
+
+	FlexibleColumnLayout.prototype._addDetailedActiveClasses = function (sLayout) {
+		var aColumns = FlexibleColumnLayout.COLUMN_ORDER.slice(),
+			bRtl = Configuration.getRTL(),
+			aActiveColumns = aColumns.filter(function (sColumn) {
+				return this._getColumnSizeForLayout(sColumn, sLayout) > 0;
+			}, this);
 
 		if (bRtl) {
 			aColumns.reverse();
@@ -1360,37 +1464,569 @@ sap.ui.define([
 			this._$columns[aActiveColumns[0]].addClass("sapFFCLColumnFirstActive");
 			this._$columns[aActiveColumns[aActiveColumns.length - 1]].addClass("sapFFCLColumnLastActive");
 		}
+	};
 
-		this._storePreviousResizingInfo(iDefaultVisibleColumnsCount, sLastVisibleColumn);
+	FlexibleColumnLayout.prototype._onColumnSeparatorMoveStart = function (oEvent, oSeparator, bTouch) {
+		// needed to position the separator presizely
+		var bRtl = Configuration.getRTL(),
+			iStartOffset = this._getDraggedSeparatorStartOffset(oSeparator, bRtl);
+
+		this._oDragInfo = {
+			cursorStartX: oEvent.pageX,
+			cursorX: oEvent.pageX, // the mouse/finger position-x
+			columnWidths: {
+				begin: this._$columns.begin.get(0).offsetWidth,
+				mid: this._$columns.mid.get(0).offsetWidth,
+				end: this._$columns.end.get(0).offsetWidth
+			},
+			separator: oSeparator,
+			separatorPosition: {
+				x: iStartOffset,
+				direction: bRtl ? "right" : "left"
+			},
+			layout: this.getLayout(),
+			rtl: bRtl
+		};
+
+		this._enterInteractiveResizeMode(bTouch);
+	};
+
+	FlexibleColumnLayout.prototype._getDraggedSeparatorStartOffset = function (oSeparator, bRtl) {
+		if (bRtl) {
+			return window.innerWidth - oSeparator.getBoundingClientRect().right;
+		}
+		return oSeparator.getBoundingClientRect().left;
+	};
+
+	FlexibleColumnLayout.prototype._onColumnSeparatorMove = function (oEvent) {
+		if (oEvent.preventDefault && !(oEvent.changedTouches)) {
+			oEvent.preventDefault(); // Do not select text
+		}
+
+		var iCursonX = getCursorPositionX(oEvent);
+		this._previewResizedColumnsOnDrag(iCursonX);
+	};
+
+	FlexibleColumnLayout.prototype._onColumnSeparatorMoveEnd = function (oEvent) {
+		var iCursonX = getCursorPositionX(oEvent);
+		this._previewResizedColumnsOnDrag(iCursonX, true /* resize end */);
+		this._saveResizedColumWidths();
+
+		if (this._oDragInfo.layout !== this.getLayout()) {
+			this.setLayout(this._oDragInfo.layout);
+			this._fireStateChange(true, false);
+		}
+
+		this._exitInteractiveResizeMode();
 	};
 
 	/**
-	 * Adjusts the column after resize
-	 *
-	 * @param {string} sColumn the column name
-	 * @param {object} oOptions the resize options
-	 * @private
+	 * Returns the separator for the given target. If there isn't such, null is returned
+	 * @param {HTMLElement} oTarget The target
+	 * @returns {HTMLElement|null} The found bar or null
 	 */
-	FlexibleColumnLayout.prototype._afterColumnResize = function (sColumn, oOptions) {
-		var oColumn = this._$columns[sColumn],
-			bShouldConcealColumn = oOptions.shouldConcealColumn,
-			iNewWidth = oOptions.iNewWidth,
-			bShouldRestoreFocus = oOptions.shouldRestoreFocus;
+	FlexibleColumnLayout.prototype._getColumnSeparator = function (oTarget) {
+		var oSeparator = oTarget,
+			sId = this.getId();
 
-		oColumn.toggleClass(FlexibleColumnLayout.PINNED_COLUMN_CLASS_NAME, false);
-
-		if (bShouldConcealColumn) {
-			// The column does not show anything anymore, so we can remove the active class
-			oColumn.removeClass("sapFFCLColumnActive");
+		if (oSeparator.classList.contains("sapFFCLColumnSeparatorGripIcon")) {
+			oSeparator = oTarget.parentElement;
 		}
 
-		//BCP: 1980006195
-		oColumn.toggleClass("sapFFCLColumnHidden", iNewWidth === 0);
-
-		this._cacheColumnWidth(sColumn, iNewWidth);
-		if (bShouldRestoreFocus) {
-			this._restoreFocusToColumn(sColumn);
+		if (oSeparator.classList.contains("sapFFCLColumnSeparatorDecorationBefore")
+			|| oSeparator.classList.contains("sapFFCLColumnSeparatorDecorationAfter")
+			|| oSeparator.classList.contains("sapFFCLColumnSeparatorGrip")) {
+				oSeparator = oSeparator.parentElement;
 		}
+
+		if (!oSeparator.id || oSeparator.id.indexOf(sId + "-separator") !== 0) {
+			// The clicked element was not one of my splitter bars
+			return null;
+		}
+		return oSeparator;
+	};
+
+	FlexibleColumnLayout.prototype._enterInteractiveResizeMode = function (bTouch) {
+		var oSeparatorPosition = this._oDragInfo.separatorPosition;
+
+		this._$overlay.css("display", "block");
+		this._$overlaySeparator.css(oSeparatorPosition.direction, oSeparatorPosition.x);
+		this._oDragInfo.separator.style.visibility = "hidden";
+
+		if (bTouch) {
+			document.addEventListener("touchend", this._boundColumnSeparatorMoveEnd);
+			document.addEventListener("touchmove", this._boundColumnSeparatorMove);
+		} else {
+			document.addEventListener("mouseup", this._boundColumnSeparatorMoveEnd);
+			document.addEventListener("mousemove", this._boundColumnSeparatorMove);
+		}
+	};
+
+	FlexibleColumnLayout.prototype._exitInteractiveResizeMode = function () {
+		this._$overlay.css("display", "");
+		this._oDragInfo.separator.style.visibility = "";
+		this._oDragInfo.separator.focus();
+		this._ignoreMouse = false;
+		this._ignoreTouch = false;
+		this._oDragInfo = null;
+		document.removeEventListener("mouseup", this._boundColumnSeparatorMoveEnd);
+		document.removeEventListener("mousemove", this._boundColumnSeparatorMove);
+		document.removeEventListener("touchend", this._boundColumnSeparatorMoveEnd);
+		document.removeEventListener("touchmove", this._boundColumnSeparatorMove);
+	};
+
+	FlexibleColumnLayout.prototype._previewResizedColumnsOnDrag = function (cursorX, bIsResizeEnd) {
+		var getPositionOffset = function (iOldCursorX) {
+			var iOffset = cursorX - iOldCursorX;
+			return this._oDragInfo.rtl ?  -iOffset : iOffset;
+		}.bind(this);
+
+		this._oDragInfo.offsetFromPreviousPosition = getPositionOffset(this._oDragInfo.cursorX);
+		this._oDragInfo.offsetFromStartPosition = getPositionOffset(this._oDragInfo.cursorStartX);
+		this._oDragInfo.cursorX = cursorX;
+
+		if (!this._oDragInfo.offsetFromStartPosition) {
+			return;
+		}
+
+		if (!this._oDragInfo.offsetFromPreviousPosition && !bIsResizeEnd) {
+			return;
+		}
+
+		var aResizedColumns = getInteractivelyResizedColumns(this._oDragInfo.separator, this._oDragInfo.layout, this.getMaxColumnsCount()),
+			sSeparator = getSeparatorName(this._oDragInfo.separator),
+			bForwardResizeDirection = this._oDragInfo.offsetFromStartPosition > 0,
+			sColumnEnlargedByDragging = aResizedColumns[bForwardResizeDirection ? 0 : 1],
+			iSeparatorsCount = this._getVisibleColumnSeparatorsCount(),
+			iSeparatorsCountDiff = 0,
+			iOffsetOnSeparatorsCountChange = 0,
+			iOffsetOnColumnWidthNormalization,
+			sPreviousLayout = this._oDragInfo.layout,
+			sLayout,
+			bLayoutChange,
+			oNewColumnWidths,
+			bResizeWithPinning;
+
+		this._oDragInfo.columnWidths[aResizedColumns[0]] += this._oDragInfo.offsetFromPreviousPosition;
+		this._oDragInfo.columnWidths[aResizedColumns[1]] -= this._oDragInfo.offsetFromPreviousPosition;
+		this._oDragInfo.columnEnlargedByDragging = sColumnEnlargedByDragging;
+
+		oNewColumnWidths = merge({}, this._oDragInfo.columnWidths);
+
+		// if some column is below min allowed width => expand it
+		this._normalizeColumnWidths(oNewColumnWidths, aResizedColumns);
+
+		// if normalization led to width change of some column => the column separator will be offset
+		iOffsetOnColumnWidthNormalization = this._oDragInfo.columnWidths[aResizedColumns[1]] - oNewColumnWidths[aResizedColumns[1]];
+
+		// update the dragged separator to match the new mouse/touch position
+		this._offsetDraggedColumnSeparator(this._oDragInfo.offsetFromPreviousPosition + iOffsetOnColumnWidthNormalization);
+
+		// if the user drags to expand a hidden column, show its content
+		this._toggleColumnVisibility(sColumnEnlargedByDragging, true);
+
+		sLayout = this._getNextLayoutOnResizeByDrag(oNewColumnWidths, sPreviousLayout, sSeparator, bForwardResizeDirection, bIsResizeEnd);
+		bLayoutChange = sLayout !== sPreviousLayout;
+
+		if (bLayoutChange) {
+			this._hideShowColumnSeparators(sLayout);
+			iSeparatorsCountDiff = iSeparatorsCount - this._getRequiredColumnSeparatorsForLayout(sLayout).length;
+			if (iSeparatorsCountDiff) {
+				iOffsetOnSeparatorsCountChange = FlexibleColumnLayout.COLUMN_SEPARATOR_WIDTH * iSeparatorsCountDiff;
+				oNewColumnWidths.mid += iOffsetOnSeparatorsCountChange;
+			}
+
+			bResizeWithPinning = FlexibleColumnLayout.COLUMN_ORDER.some(function(sColumnName) {
+				return this._shouldRevealColumn(sColumnName, sLayout, sPreviousLayout)
+					|| this._shouldConcealColumn(sColumnName, sLayout, sPreviousLayout);
+			}, this);
+
+			oNewColumnWidths = this._mergeColumnWidthsOnInteractiveLayoutChange({
+				oldWidths: this._getAllColumnSizesForLayout(sLayout, true),
+				newWidths: {
+					[aResizedColumns[0]]: oNewColumnWidths[aResizedColumns[0]],
+					[aResizedColumns[1]]: oNewColumnWidths[aResizedColumns[1]]
+				},
+				layout: sLayout,
+				columnEnlargedByDragging: sColumnEnlargedByDragging
+			});
+
+			this._oDragInfo.layout = sLayout;
+			// allow compute dragging direction relative to the last layout
+			this._oDragInfo.cursorStartX = cursorX;
+		}
+
+		this._oDragInfo.columnWidths = oNewColumnWidths;
+
+		if (bResizeWithPinning) {
+			// call the dedicated function in order to resize with reveal/conceal effect
+			this._resizeColumns({
+				columnWidths: oNewColumnWidths,
+				layout: sLayout,
+				previousLayout: sPreviousLayout,
+				updateContextualSettings: false,
+				updateMediaCSSClases: false,
+				updateDetailedActiveClasses: false,
+				restoreFocusOnBackNavigation: false
+			});
+		} else {
+			// only offset the rendered columns
+			// skip mid column as it has width: 100% by default (to allow the mid column
+			// take the space that remains after sizing its sibling columns)
+			this._$columns.begin.css("width", this._oDragInfo.columnWidths.begin + "px");
+			this._$columns.end.css("width", this._oDragInfo.columnWidths.end + "px");
+		}
+	};
+
+	/**
+	 * Merges the default (or previously saved) column widths [for the given layout]
+	 * with the updated column widths upon interactive resize [when the user dragged
+	 * the column separators]
+	 * @param {object} oOptions the oprions
+	 * @param {Object<string,number>} oOptions.oldWidths the default (or previously saved) column widths
+	 * for the given layout
+	 * @param {Object<string,number>} oOptions.newWidths the new  column widths produced
+	 * upon interactive resize, when the user dragged the column separators
+	 * @param {sap.f.LayoutType} oOptions.sLayout the layout
+	 * @param {"begin"|"mid"|"end"} oOptions.columnEnlargedByDragging the name of the column
+	 * enlarged during interactive resize
+	 * @returns {Object<string,number>} the merged widths
+	 */
+	FlexibleColumnLayout.prototype._mergeColumnWidthsOnInteractiveLayoutChange = function (oOptions) {
+		var oOldWidths = oOptions.oldWidths,
+			oNewWidths = oOptions.newWidths,
+			sLayout = oOptions.layout,
+			sColumnEnlargedByDragging = oOptions.columnEnlargedByDragging,
+			aResizedColumnNames = Object.keys(oNewWidths),
+			iAvailableWidth = this._getTotalColumnsWidth(sLayout),
+			isFullyVisible = function(sColumn) {
+				return oNewWidths[sColumn] >= FlexibleColumnLayout.COLUMN_MIN_WIDTH;
+			},
+			autosizeMid = function(oColumnWidths) {
+				// the mid column takes the remaining space after begin and end are sized
+				oColumnWidths.mid = iAvailableWidth - oColumnWidths.begin - oColumnWidths.end;
+				return oColumnWidths;
+			},
+			sColumnToUpdate;
+
+		if (aResizedColumnNames.indexOf("mid") > -1) {
+			// the other resized column is either 'begin' or 'end' =>
+			// to reflect the update in the widths, it is enough to
+			// merge the width of the column closer to the edge ('begin' or 'end')
+			// and allow the size of the 'mid' column be the space that is left by the other two columns
+			sColumnToUpdate = aResizedColumnNames.find((sColumn) => sColumn !== "mid");
+		} else {
+			sColumnToUpdate = sColumnEnlargedByDragging; // covers the known cases
+		}
+
+		if (!isFullyVisible(sColumnToUpdate)) {
+			// this is the case where the user is revealing a column by dragging,
+			// but stopped dragging before the full size of the column was reached
+			// => complete the user action => render that column in its required width
+			// using its previously saved width
+			return oOldWidths;
+		}
+
+		return autosizeMid(merge(oOldWidths, {
+			[sColumnToUpdate]: oNewWidths[sColumnToUpdate]
+		}));
+	};
+
+	FlexibleColumnLayout.prototype._offsetDraggedColumnSeparator = function (iOffset) {
+		this._oDragInfo.separatorPosition.x += iOffset;
+		this._$overlaySeparator.css(this._oDragInfo.separatorPosition.direction,
+			this._oDragInfo.separatorPosition.x);
+	};
+
+	FlexibleColumnLayout.prototype._toggleColumnVisibility = function (sColumn, bShow) {
+		this._$columns[sColumn].toggleClass("sapFFCLColumnHidden", !bShow);
+		this._$columns[sColumn].toggleClass("sapFFCLColumnActive", bShow);
+	};
+
+	/**
+	 * Applies predefined contraints to the column widths.
+	 * Currently checks if the <code>FlexibleColumnLayout.COLUMN_MIN_WIDTH</code>
+	 * constraint is satisfied and corrects the width if not satisfied.
+	 * @param {Object<string,number>} oColumnWidths the column widths
+	 * @param {array} aVisibleColumns the names of the visible columns
+	 */
+	FlexibleColumnLayout.prototype._normalizeColumnWidths = function (oColumnWidths, aVisibleColumns) {
+		var iVisibleColumnsCount = aVisibleColumns.length;
+		if (iVisibleColumnsCount < 2) { // fullscreen case
+			return;
+		}
+
+		var fnNormalizeColumnWidth = function (sColumn) {
+			if (this._isColumnAllowedToHaveBelowMinWidth(sColumn)) {
+				return;
+			}
+
+			var iOffset = oColumnWidths[sColumn] - FlexibleColumnLayout.COLUMN_MIN_WIDTH,
+				sSiblingColumn,
+				iSiblingColumnWidth;
+			if (iOffset < 0) { // column is smaller than min-width
+				oColumnWidths[sColumn] = FlexibleColumnLayout.COLUMN_MIN_WIDTH;
+				sSiblingColumn = getSiblingColumn(sColumn);
+				iSiblingColumnWidth = oColumnWidths[sSiblingColumn];
+				oColumnWidths[sSiblingColumn] = iSiblingColumnWidth - Math.abs(iOffset);
+			}
+		}.bind(this);
+
+		function getSiblingColumn(sColumn) {
+			if (iVisibleColumnsCount === 2) {
+				return aVisibleColumns.find(function(sNextColumn) {
+					return sNextColumn !== sColumn;
+				});
+			}
+			// all three columns are visible
+			if (["begin", "end"].indexOf(sColumn) > -1) {
+				return "mid";
+			}
+			// get sibling for 'mid'
+			return (oColumnWidths.begin > oColumnWidths.end) ? "begin" : "end";
+		}
+
+		aVisibleColumns.forEach(fnNormalizeColumnWidth);
+	};
+
+	/**
+	 * Checks if the column is allowed to be displayed with a width smaller then
+	 * the minimal required by <code>FlexibleColumnLayout.COLUMN_MIN_WIDTH</code>.
+	 *
+	 * This is needed only during interactive resize, when a column can temporarily
+	 * have a smaller width while the user drags and before the user releases the mouse.
+	 * @param {"begin"|"mid"|"end"} sColumn the column name
+	 * @returns {boolean} the flag
+	 */
+	FlexibleColumnLayout.prototype._isColumnAllowedToHaveBelowMinWidth = function (sColumn) {
+		if (!this._oDragInfo) {
+			// outside interactive resize the min-width restriction should always be valid
+			return false;
+		}
+
+		if (sColumn === this._oDragInfo.columnEnlargedByDragging) {
+			// the user us revealing a hidden column by dragging
+			// its ajacent separator => do not yet expand the column to min-width
+			// untill the user stops dragging, to prevent undesired visual jump
+			return true;
+		}
+
+		// allow a column NOT adjacent to the dragged column-separator
+		// to be indirectly shrinked (needed on tablet upon shifts
+		// between ThreeColumnsMidExpanded and ThreeColumnsEndExpanded)
+		return !this._isColumnAdjacentToDraggedSeparator(sColumn);
+	};
+
+	FlexibleColumnLayout.prototype._convertColumnPercentWidthToPx = function (iPercentWidth, sLayout) {
+		if (!iPercentWidth) {
+			return 0;
+		}
+
+		// Calculate the width available for the columns
+		var iAvailableWidth = this._getTotalColumnsWidth(sLayout);
+
+		return Math.round(iAvailableWidth * iPercentWidth / 100);
+	};
+
+	FlexibleColumnLayout.prototype._convertColumnPxWidthToPercent = function (vPx, sLayout) {
+		if (!vPx) {
+			return 0;
+		}
+
+		var iAvailableWidth = this._getTotalColumnsWidth(sLayout),
+			fnConvert = function(vPx) {
+				return vPx / iAvailableWidth * 100;
+			};
+
+		if (typeof vPx === "number") {
+			return fnConvert(vPx);
+		}
+
+		if (typeof vPx === "object") {
+			var oColumnPercentWidths = Object.assign({}, vPx);
+			Object.keys(oColumnPercentWidths).forEach(function(sColumnName) {
+				var iColumnWidth = oColumnPercentWidths[sColumnName];
+				if (iColumnWidth) {
+					oColumnPercentWidths[sColumnName] = fnConvert(iColumnWidth);
+				}
+			}, this);
+			return oColumnPercentWidths;
+		}
+		return null;
+	};
+
+	FlexibleColumnLayout.prototype._isValidWidthDistributionForLayout = function(sNewWidthsDistribution, sLayout) {
+		var aPercentWidths = sNewWidthsDistribution.split("/").map((x) => parseFloat(x)),
+			iSum = aPercentWidths.reduce(function(i, sum) {
+				return parseFloat(i) + sum;
+			}),
+			aPxWidths;
+
+		if (Math.round(iSum) !== 100) {
+			return false;
+		}
+
+		aPxWidths = aPercentWidths.map(function(iPercentWidth) {
+			return this._convertColumnPercentWidthToPx(iPercentWidth, sLayout);
+		}, this);
+
+		if (aPxWidths.some(function(iPxWidth) {
+			return (iPxWidth > 0) && (iPxWidth < FlexibleColumnLayout.COLUMN_MIN_WIDTH);
+		})) {
+			return false;
+		}
+
+		return this._verifyColumnWidthsMatchLayout({
+			begin: aPxWidths[0],
+			mid: aPxWidths[1],
+			end: aPxWidths[2]
+		}, sLayout);
+	};
+
+	FlexibleColumnLayout.prototype._saveResizedColumWidths = function() {
+		var sNewLayout = this._oDragInfo.layout,
+			oColumnPercentWidths = this._convertColumnPxWidthToPercent(this._oDragInfo.columnWidths, sNewLayout),
+			sNewWidthsDistribution = Object.values(oColumnPercentWidths).join("/");
+
+		if (this._isValidWidthDistributionForLayout(sNewWidthsDistribution, sNewLayout)) {
+			this._getLocalStorage().put(sNewLayout, sNewWidthsDistribution);
+		}
+	};
+
+	FlexibleColumnLayout.prototype._getNextLayoutOnResizeByDrag = function (oColumnWidths,
+		sPreviousLayout, sSeparator, bForwardDirection, bResizeEnd) {
+			function dragged(oOptions) {
+				return oOptions.from === sPreviousLayout &&
+					oOptions.separator === sSeparator &&
+					oOptions.forward === bForwardDirection;
+			}
+
+			var iBeginWidth = oColumnWidths.begin,
+				iBeginPercentWidth = Math.ceil(this._convertColumnPxWidthToPercent(iBeginWidth, sPreviousLayout)),
+				iMaxColumnsCount = this.getMaxColumnsCount(),
+				bTablet = iMaxColumnsCount === 2;
+
+			if (dragged({
+				from: LT.TwoColumnsMidExpanded,
+				separator: "begin",
+				forward: true
+			}) && (oColumnWidths.begin >= oColumnWidths.mid)) {
+				return LT.TwoColumnsBeginExpanded;
+			}
+
+			if (dragged({
+				from: LT.TwoColumnsBeginExpanded,
+				separator: "begin",
+				forward: false
+			}) && (oColumnWidths.begin < oColumnWidths.mid)) {
+				return LT.TwoColumnsMidExpanded;
+			}
+
+			if (dragged({
+				from: LT.ThreeColumnsMidExpanded,
+				separator: "begin",
+				forward: true
+			}) && iBeginPercentWidth >= 33) {
+				return LT.ThreeColumnsMidExpandedEndHidden;
+			}
+
+			if (dragged({
+				from: LT.ThreeColumnsMidExpandedEndHidden,
+				separator: "begin",
+				forward: false
+			}) && iBeginPercentWidth < 33) {
+				return LT.ThreeColumnsMidExpanded;
+			}
+
+			if (dragged({
+				from: LT.ThreeColumnsMidExpandedEndHidden,
+				separator: "end",
+				forward: false
+			}) && ((oColumnWidths.end >= FlexibleColumnLayout.COLUMN_MIN_WIDTH) || bResizeEnd)) {
+				return LT.ThreeColumnsMidExpanded;
+			}
+
+			if (dragged({
+				from: LT.ThreeColumnsMidExpanded,
+				separator: "end",
+				forward: false
+			}) && oColumnWidths.mid < oColumnWidths.end) {
+				return LT.ThreeColumnsEndExpanded;
+			}
+
+			if (dragged({
+				from: LT.ThreeColumnsEndExpanded,
+				separator: "end",
+				forward: true
+			}) && oColumnWidths.mid >= oColumnWidths.end) {
+				return LT.ThreeColumnsMidExpanded;
+			}
+
+			if (dragged({
+				from: LT.ThreeColumnsMidExpandedEndHidden,
+				separator: "begin",
+				forward: true
+			}) && oColumnWidths.begin >= oColumnWidths.mid) {
+				return LT.ThreeColumnsBeginExpandedEndHidden;
+			}
+
+			if (dragged({
+				from: LT.ThreeColumnsBeginExpandedEndHidden,
+				separator: "begin",
+				forward: false
+			}) && oColumnWidths.begin < oColumnWidths.mid) {
+				return LT.ThreeColumnsMidExpandedEndHidden;
+			}
+
+			if (dragged({
+				from: LT.ThreeColumnsMidExpanded,
+				separator: "begin",
+				forward: true
+			}) && bTablet && ((iBeginWidth >= FlexibleColumnLayout.COLUMN_MIN_WIDTH) || bResizeEnd)) {
+				return LT.ThreeColumnsMidExpandedEndHidden;
+			}
+
+			if (dragged({
+				from: LT.TwoColumnsMidExpandedEndHidden,
+				separator: "end",
+				forward: false
+			}) && bTablet && ((oColumnWidths.end >= FlexibleColumnLayout.COLUMN_MIN_WIDTH) || bResizeEnd)) {
+				return LT.ThreeColumnsMidExpanded;
+			}
+
+			return sPreviousLayout; // no layout change
+	};
+
+	FlexibleColumnLayout.prototype._verifyColumnWidthsMatchLayout = function (oColumnWidths, sLayout) {
+		var iMaxColumnsCount = this.getMaxColumnsCount(),
+			iBeginWidth = oColumnWidths.begin,
+			iBeginPercentWidth = Math.ceil(this._convertColumnPxWidthToPercent(iBeginWidth, sLayout)),
+			oLayoutMatchers =  {
+				[LT.TwoColumnsBeginExpanded]: function() {
+					return oColumnWidths.begin >= oColumnWidths.mid;
+				},
+				[LT.TwoColumnsMidExpanded]: function() {
+					return oColumnWidths.mid > oColumnWidths.begin;
+				},
+				[LT.ThreeColumnsEndExpanded]: function() {
+					return (oColumnWidths.end > oColumnWidths.mid) && (iBeginPercentWidth < 33);
+				},
+				[LT.ThreeColumnsBeginExpandedEndHidden]: function() {
+					return (oColumnWidths.begin >= oColumnWidths.mid) && oColumnWidths.end === 0;
+				},
+				[LT.ThreeColumnsMidExpanded]: function() {
+					return (oColumnWidths.mid >= oColumnWidths.end) &&
+					(((iMaxColumnsCount === 3) && iBeginPercentWidth < 33) // desktop
+					|| ((iMaxColumnsCount === 2) && iBeginPercentWidth === 0)); // tablet
+				},
+				[LT.ThreeColumnsMidExpandedEndHidden]: function() {
+					return (oColumnWidths.mid > oColumnWidths.begin) &&
+						oColumnWidths.end === 0 &&
+						((iMaxColumnsCount === 3 && iBeginPercentWidth >= 33)
+						|| (iMaxColumnsCount === 2 && iBeginWidth >= FlexibleColumnLayout.COLUMN_MIN_WIDTH));
+				}
+			};
+		return oLayoutMatchers[sLayout]();
 	};
 
 	/**
@@ -1445,68 +2081,112 @@ sap.ui.define([
 	};
 
 	/**
-	 * Stores information from the last columns' resizing.
-	 *
-	 * @param iVisibleColumnsCount
-	 * @param sLastVisibleColumn
-	 * @private
+	 * Returns the name of the last visible column for the given layout
+	 * @param {sap.f.LayoutType} sLayout the layout
+	 * @returns {string} the column name
 	 */
-	FlexibleColumnLayout.prototype._storePreviousResizingInfo = function (iVisibleColumnsCount, sLastVisibleColumn) {
-		var oCurrentLayout = this.getLayout();
-
-		this._iPreviousVisibleColumnsCount = iVisibleColumnsCount;
-		this._bWasFullScreen = oCurrentLayout === LT.MidColumnFullScreen || oCurrentLayout === LT.EndColumnFullScreen;
-		this._sPreviuosLastVisibleColumn = sLastVisibleColumn;
+	FlexibleColumnLayout.prototype._getLastVisibleColumnForLayout = function (sLayout) {
+		var aColumns = FlexibleColumnLayout.COLUMN_ORDER.slice(),
+			iVisibleColumnsCount = this._getMaxColumnsCountForLayout(sLayout, FlexibleColumnLayout.DESKTOP_BREAKPOINT);
+		if (iVisibleColumnsCount > 1) {
+			return aColumns[iVisibleColumnsCount - 1];
+		}
+		if (sLayout === LT.OneColumn) {
+			return "begin";
+		}
+		if (sLayout === LT.MidColumnFullScreen) {
+			return "mid";
+		}
+		if (sLayout === LT.EndColumnFullScreen) {
+			return "end";
+		}
 	};
 
-	FlexibleColumnLayout.prototype._isNavigatingBackward = function (sLastVisibleColumn) {
-		return this._bWasFullScreen ||
-				FlexibleColumnLayout.COLUMN_ORDER.indexOf(this._sPreviuosLastVisibleColumn) >
-				FlexibleColumnLayout.COLUMN_ORDER.indexOf(sLastVisibleColumn);
+	FlexibleColumnLayout.prototype._isNavigatingBackward = function (sLayout, sPreviousLayout) {
+		return ([LT.MidColumnFullScreen, LT.EndColumnFullScreen].indexOf(sPreviousLayout) > -1) ||
+			FlexibleColumnLayout.COLUMN_ORDER.indexOf(this._getLastVisibleColumnForLayout(sPreviousLayout)) >
+			FlexibleColumnLayout.COLUMN_ORDER.indexOf(this._getLastVisibleColumnForLayout(sLayout));
 	};
 
 	/**
 	 *  Decides whether or not a given column should be revealed - another column slide out on top of it).
 	 *
-	 * @param iVisibleColumnsCount
-	 * @param bIsLastColumn
-	 * @returns {boolean|*}
+	 * @param {"begin"|"mid"|"end"} sColumn the column name
+	 * @param {sap.f.LayoutType} sLayout the new layout
+	 * @param {sap.f.LayoutType} sPreviousLayout the previous layout
+	 * @returns {boolean} the flag
 	 * @private
 	 */
-	FlexibleColumnLayout.prototype._shouldRevealColumn = function (iVisibleColumnsCount, bIsLastColumn) {
-		return (iVisibleColumnsCount > this._iPreviousVisibleColumnsCount) && !this._bWasFullScreen && bIsLastColumn;
+	FlexibleColumnLayout.prototype._shouldRevealColumn = function (sColumn, sLayout, sPreviousLayout) {
+		var iVisibleColumnsCount = this._getMaxColumnsCountForLayout(sLayout, FlexibleColumnLayout.DESKTOP_BREAKPOINT),
+			sLastVisibleColumn = this._getLastVisibleColumnForLayout(sLayout),
+			bIsLastColumn = sColumn === sLastVisibleColumn,
+			iPreviousVisibleColumnsCount = this._getMaxColumnsCountForLayout(sPreviousLayout, FlexibleColumnLayout.DESKTOP_BREAKPOINT),
+			bWasFullScreen = (sPreviousLayout === LT.MidColumnFullScreen || sPreviousLayout === LT.EndColumnFullScreen);
+
+		return (iVisibleColumnsCount > iPreviousVisibleColumnsCount) &&
+			!bWasFullScreen &&
+			bIsLastColumn;
+	};
+
+	FlexibleColumnLayout.prototype._isInteractivelyResizedColumn = function (sColumn) {
+		return this._oDragInfo && this._isColumnAdjacentToDraggedSeparator(sColumn);
+	};
+
+	FlexibleColumnLayout.prototype._isColumnAdjacentToDraggedSeparator = function (sColumn) {
+		return this._oDragInfo &&
+			this._oDragInfo.separator &&
+			(this._$columns[sColumn][0] === this._oDragInfo.separator.previousElementSibling ||
+			 this._$columns[sColumn][0] === this._oDragInfo.separator.nextElementSibling);
 	};
 
 	/**
 	 * Decides whether or not a given column should be concealed - another column should slide in on top of it.
 	 *
-	 * @param iVisibleColumnsCount
-	 * @param sColumn
-	 * @returns {boolean|*}
+	 * @param {"begin"|"mid"|"end"} sColumn the column name
+	 * @param {sap.f.LayoutType} sLayout the new layout
+	 * @param {sap.f.LayoutType} sPreviousLayout the previous layout
+	 * @returns {boolean} the flag
 	 * @private
 	 */
-	FlexibleColumnLayout.prototype._shouldConcealColumn = function(iVisibleColumnsCount, sColumn) {
-		return  (iVisibleColumnsCount < this._iPreviousVisibleColumnsCount && sColumn === this._sPreviuosLastVisibleColumn
-					&& !this._bWasFullScreen && this._getColumnSize(sColumn) === 0);
+	FlexibleColumnLayout.prototype._shouldConcealColumn = function (sColumn, sLayout, sPreviousLayout) {
+		var iVisibleColumnsCount = this._getMaxColumnsCountForLayout(sLayout, FlexibleColumnLayout.DESKTOP_BREAKPOINT),
+			iPreviousVisibleColumnsCount = this._getMaxColumnsCountForLayout(sPreviousLayout, FlexibleColumnLayout.DESKTOP_BREAKPOINT),
+			sPreviousLastVisibleColumn = this._getLastVisibleColumnForLayout(sPreviousLayout),
+			bWasFullScreen = (sPreviousLayout === LT.MidColumnFullScreen || sPreviousLayout === LT.EndColumnFullScreen);
+
+		return (iVisibleColumnsCount < iPreviousVisibleColumnsCount
+			&& sColumn === sPreviousLastVisibleColumn
+			&& !bWasFullScreen
+			&& this._getColumnSizeForLayout(sColumn, sLayout) === 0);
 	};
 
 	/**
 	 * Checks if a column can be resized with an animation
 	 *
-	 * @param {string} sColumn the column name
+	 * @param {"begin"|"mid"|"end"} sColumn the column name
 	 * @param {object} oOptions the column resize options
-	 * @returns {boolean|*}
+	 * @param {number} oOptions.width the column width in px
+	 * @param {boolean} oOptions.hasAnimations if animations are enabled
+	 * @param {boolean} oOptions.hidden if the column has 0 width (as it is not required
+	 * to be shown by the current layout)
+	 * @param {boolean} oOptions.previousAnimationCompleted if the previous resize animation
+	 * fuly completed before staring the current one
+	 * @returns {boolean} the flag
 	 * @private
 	 */
 	FlexibleColumnLayout.prototype._canResizeColumnWithAnimation = function(sColumn, oOptions) {
-		var oColumn, bFirstRendering,
-			iNewWidth = oOptions.iNewWidth,
+		var oColumn,
+			iNewWidth = oOptions.width,
 			bHasAnimations = oOptions.hasAnimations,
-			bPinned = oOptions.pinned,
 			bHidden = oOptions.hidden,
 			bWasPartiallyResized = !oOptions.previousAnimationCompleted;
 
-		if (!bHasAnimations || bPinned || bHidden) {
+		if (!bHasAnimations || bHidden) {
+			return false;
+		}
+
+		if (this._isInteractivelyResizedColumn(sColumn)) { // user is dragging to resize it
 			return false;
 		}
 
@@ -1515,9 +2195,8 @@ sap.ui.define([
 			return oColumn.width() !== iNewWidth;
 		}
 
-		bFirstRendering = !oColumn.get(0).style.width;
-		if (bFirstRendering) {
-			return false; // no animation on initial rendering of the column
+		if (this._bNeverRendered || oOptions.autoSize) {
+			return false; // initial rendering or autosized
 		}
 
 		return this._getColumnWidth(sColumn) !== iNewWidth;
@@ -1567,13 +2246,13 @@ sap.ui.define([
 
 	/**
 	 * Gets the size (in %) of a column based on the current layout
-	 * @param {string} sColumn - string: begin/mid/end
-	 * @returns {*}
+	 * @param {"begin"|"mid"|"end"} sColumn - string: begin/mid/end
+	 * @param {sap.f.LayoutType} sLayout the layout
+	 * @returns {number} the size
 	 * @private
 	 */
-	FlexibleColumnLayout.prototype._getColumnSize = function (sColumn) {
-		var sLayout = this.getLayout(),
-			sColumnWidthDistribution = this._getColumnWidthDistributionForLayout(sLayout),
+	FlexibleColumnLayout.prototype._getColumnSizeForLayout = function (sColumn, sLayout) {
+		var sColumnWidthDistribution = this._getColumnWidthDistributionForLayout(sLayout),
 			aSizes = sColumnWidthDistribution.split("/"),
 			aMap = {
 				begin: 0,
@@ -1582,7 +2261,7 @@ sap.ui.define([
 			},
 			sSize = aSizes[aMap[sColumn]];
 
-		return parseInt(sSize);
+		return parseFloat(sSize);
 	};
 
 
@@ -1620,9 +2299,9 @@ sap.ui.define([
 
 	/**
 	 * Returns the maximum number of columns that can be displayed for given layout and control width.
-	 * @param {string} sLayout the layout
-	 * @param {int} iWidth
-	 * @returns {number}
+	 * @param {sap.f.LayoutType} sLayout the layout
+	 * @param {int} iWidth the <code>sap.f.FlexibleColumnLayout</code> control width
+	 * @returns {number} the count
 	 * @private
 	 */
 	FlexibleColumnLayout.prototype._getMaxColumnsCountForLayout = function (sLayout, iWidth) {
@@ -1670,7 +2349,6 @@ sap.ui.define([
 
 		// Only update the arrows and fire the event if the maximum number of columns that can be shown has changed
 		if (iMaxColumnsCount !== iOldMaxColumnsCount) {
-			this._hideShowArrows();
 			this._fireStateChange(false, true);
 		}
 	};
@@ -1697,38 +2375,46 @@ sap.ui.define([
 	};
 
 	/**
-	 * Called when the layout arrows were clicked.
-	 * @param {string} sShiftDirection - left/right (direction of the arrow)
+	 * Obtains the names of the required column separators for the given layout.
+	 * @param {string} sLayout the layout
+	 * @returns {array} the names of the required separators
 	 * @private
 	 */
-	FlexibleColumnLayout.prototype._onArrowClick = function (sShiftDirection) {
-		var sCurrentLayout = this.getLayout(),
-			bIsLayoutValid = typeof FlexibleColumnLayout.SHIFT_TARGETS[sCurrentLayout] !== "undefined" && typeof FlexibleColumnLayout.SHIFT_TARGETS[sCurrentLayout][sShiftDirection] !== "undefined",
-			sNewLayout;
+	FlexibleColumnLayout.prototype._getRequiredColumnSeparatorsForLayout = function (sLayout) {
+		var oMap = {},
+			aNeededSeparators = [],
+			iMaxColumnsCount;
 
-		assert(bIsLayoutValid, "An invalid layout was used for determining arrow behavior");
-		sNewLayout = bIsLayoutValid ? FlexibleColumnLayout.SHIFT_TARGETS[sCurrentLayout][sShiftDirection] : LT.OneColumn;
-
-		this.setLayout(sNewLayout);
-
-		// If the same arrow is hidden in the new layout, focus on the opposite one in it
-		if (FlexibleColumnLayout.ARROWS_NAMES[sNewLayout][sShiftDirection] !== FlexibleColumnLayout.ARROWS_NAMES[sCurrentLayout][sShiftDirection] && bIsLayoutValid) {
-			var sOppositeShiftDirection = sShiftDirection === 'right' ? 'left' : 'right';
-
-			this._oColumnSeparatorArrows[FlexibleColumnLayout.ARROWS_NAMES[sNewLayout][sOppositeShiftDirection]].trigger("focus");
+		if (Device.system.phone) {
+			return [];
 		}
-		this._fireStateChange(true, false);
+
+		iMaxColumnsCount = this.getMaxColumnsCount();
+
+		// Only show arrows if 2 or 3 columns can be displayed at a time
+		if (iMaxColumnsCount > 1) {
+			oMap[LT.TwoColumnsBeginExpanded] = ["begin"];
+			oMap[LT.TwoColumnsMidExpanded] = ["begin"];
+			oMap[LT.ThreeColumnsMidExpanded] = ["begin", "end"];
+			oMap[LT.ThreeColumnsEndExpanded] = ["end"];
+			oMap[LT.ThreeColumnsMidExpandedEndHidden] = ["begin", "end"];
+			oMap[LT.ThreeColumnsBeginExpandedEndHidden] = ["begin"];
+
+			if (typeof oMap[sLayout] === "object") {
+				aNeededSeparators = oMap[sLayout];
+			}
+		}
+
+		return aNeededSeparators;
 	};
 
 	/**
-	 * Updates the visibility of the layout arrows according to the current layout.
+	 * Updates the visibility of the column separators according to the given layout.
+	 * @param {string} [sLayout] the layout. If not provided, the current layout is taken
 	 * @private
 	 */
-	FlexibleColumnLayout.prototype._hideShowArrows = function () {
-		var sLayout = this.getLayout(),
-			oMap = {},
-			aNeededArrows = [],
-			iMaxColumnsCount,
+	FlexibleColumnLayout.prototype._hideShowColumnSeparators = function (sLayout) {
+		var aNeededSeparators = [],
 			bIsNavContainersContentRendered;
 
 		// Stop here if the control isn't rendered yet or in phone mode, where arrows aren't necessary
@@ -1736,41 +2422,28 @@ sap.ui.define([
 			return;
 		}
 
-		iMaxColumnsCount = this.getMaxColumnsCount();
+		sLayout || (sLayout = this.getLayout());
 
-		// Only show arrows if 2 or 3 columns can be displayed at a time
-		if (iMaxColumnsCount > 1) {
-			oMap[LT.TwoColumnsBeginExpanded] = ["beginBack"];
-			oMap[LT.TwoColumnsMidExpanded] = ["midForward"];
-			oMap[LT.ThreeColumnsMidExpanded] = ["midForward", "midBack"];
-			oMap[LT.ThreeColumnsEndExpanded] = ["endForward"];
-			oMap[LT.ThreeColumnsMidExpandedEndHidden] = ["midForward", "midBack"];
-			oMap[LT.ThreeColumnsBeginExpandedEndHidden] = ["beginBack"];
-
-			if (typeof oMap[sLayout] === "object") {
-				aNeededArrows = oMap[sLayout];
-			}
-		}
+		aNeededSeparators = this._getRequiredColumnSeparatorsForLayout(sLayout);
 
 		bIsNavContainersContentRendered = this._hasAnyColumnPagesRendered();
 
-		Object.keys(this._oColumnSeparatorArrows).forEach(function (key) {
-			this._toggleButton(key, aNeededArrows.indexOf(key) !== -1, bIsNavContainersContentRendered);
+		Object.keys(this._oColumnSeparators).forEach(function (key) {
+			this._toggleSeparator(key, aNeededSeparators.indexOf(key) !== -1, bIsNavContainersContentRendered);
 		}, this);
 	};
 
 	/**
-	 * Changes the visibility of a navigation button.
-	 * @param {string} sButton
+	 * Changes the visibility of a separator.
+	 * @param {string} sKey, the separator name
 	 * @param {boolean} bShow
+	 * @param {boolean} bReveal
 	 * @private
 	 */
-	FlexibleColumnLayout.prototype._toggleButton = function (sButton, bShow, bReveal) {
-
-		this._oColumnSeparatorArrows[sButton].toggle(bShow && bReveal);
-		this._oColumnSeparatorArrows[sButton].data("visible", bShow);
+	FlexibleColumnLayout.prototype._toggleSeparator = function (sKey, bShow, bReveal) {
+		this._oColumnSeparators[sKey].toggle(bShow && bReveal);
+		this._oColumnSeparators[sKey].data("visible", bShow);
 	};
-
 
 	FlexibleColumnLayout.prototype._fireStateChange = function (bIsNavigationArrow, bIsResize) {
 
@@ -2177,12 +2850,15 @@ sap.ui.define([
 	 * Returns a string, representing the relative percentage sizes of the columns for the given layout in the format "begin/mid/end" (f.e. "33/67/0")
 	 * @param {string} sLayout - the layout
 	 * @param {boolean} bAsArray - return an array in the format [33, 67, 0] instead of a string "33/67/0"
+	 * @param {number} [iMaxColumnsCount] the maximun number of columns. If not provided, the result of
+	 * <code>getMaxColumnsCount</code> will be taken
 	 * @returns {string|array}
 	 * @private
 	 * @ui5-restricted sap.f.FlexibleColumnLayoutSemanticHelper
 	 */
 	FlexibleColumnLayout.prototype._getColumnWidthDistributionForLayout = function (sLayout, bAsArray, iMaxColumnsCount) {
 		var oMap = {},
+			sColumnWidthDistribution = this._getLocalStorage(iMaxColumnsCount).get(sLayout),
 			vResult;
 
 		iMaxColumnsCount || (iMaxColumnsCount = this.getMaxColumnsCount());
@@ -2191,6 +2867,9 @@ sap.ui.define([
 
 			vResult = "0/0/0";
 
+		} else if (iMaxColumnsCount > 1
+			&& sColumnWidthDistribution) {
+			vResult = sColumnWidthDistribution;
 		} else {
 
 			// Layouts with the same distribution for all cases
@@ -2231,6 +2910,22 @@ sap.ui.define([
 		return vResult;
 	};
 
+	FlexibleColumnLayout.prototype._attachAfterColumnResizedOnce = function (sColumn, fnSuccessCallback, fnErrorCallback) {
+		this._oAnimationEndListener.waitForColumnResizeEnd(this._$columns[sColumn])
+			.then(fnSuccessCallback)
+			.catch(function() {
+				fnErrorCallback && fnErrorCallback();
+			});
+	};
+
+	FlexibleColumnLayout.prototype._attachAfterAllColumnsResizedOnce = function (fnSuccessCallback, fnErrorCallback) {
+		this._oAnimationEndListener.waitForAllColumnsResizeEnd()
+			.then(fnSuccessCallback)
+			.catch(function() {
+				fnErrorCallback && fnErrorCallback();
+			});
+	};
+
 
 	//******************************************************** STATIC MEMBERS *****************************************/
 
@@ -2240,29 +2935,10 @@ sap.ui.define([
 	// The width above which (inclusive) we are in tablet mode
 	FlexibleColumnLayout.TABLET_BREAKPOINT = 960;
 
-	// Arrows names for each shift position in a given layout
-	FlexibleColumnLayout.ARROWS_NAMES = {
-		TwoColumnsBeginExpanded: {
-			"left": "beginBack"
-		},
-		TwoColumnsMidExpanded: {
-			"right": "midForward"
-		},
-		ThreeColumnsMidExpanded: {
-			"left": "midBack",
-			"right": "midForward"
-		},
-		ThreeColumnsEndExpanded: {
-			"right": "endForward"
-		},
-		ThreeColumnsMidExpandedEndHidden: {
-			"left": "midBack",
-			"right": "midForward"
-		},
-		ThreeColumnsBeginExpandedEndHidden: {
-			"left": "beginBack"
-		}
-	};
+	FlexibleColumnLayout.COLUMN_MIN_WIDTH = 312; // px, obtained as 25% of (DESKTOP_BREAKPOINT - 2 * COLUMN_SEPARATOR_WIDTH)
+
+	FlexibleColumnLayout.STORAGE_PREFIX_TABLET = "sap-f-fcl-tablet-column-width-distributions";
+	FlexibleColumnLayout.STORAGE_PREFIX_DESKTOP = "sap-f-fcl-desktop-column-width-distributions";
 
 	/**
 	 * Retrieves the resource bundle for the <code>sap.f</code> library.
@@ -2274,29 +2950,6 @@ sap.ui.define([
 		return sap.ui.getCore().getLibraryResourceBundle("sap.f");
 	};
 
-	// Resulting layouts, after shifting in a given direction from a specific layout
-	FlexibleColumnLayout.SHIFT_TARGETS = {
-		TwoColumnsBeginExpanded: {
-			"left": LT.TwoColumnsMidExpanded
-		},
-		TwoColumnsMidExpanded: {
-			"right": LT.TwoColumnsBeginExpanded
-		},
-		ThreeColumnsMidExpanded: {
-			"left": LT.ThreeColumnsEndExpanded,
-			"right": LT.ThreeColumnsMidExpandedEndHidden
-		},
-		ThreeColumnsEndExpanded: {
-			"right": LT.ThreeColumnsMidExpanded
-		},
-		ThreeColumnsMidExpandedEndHidden: {
-			"left": LT.ThreeColumnsMidExpanded,
-			"right": LT.ThreeColumnsBeginExpandedEndHidden
-		},
-		ThreeColumnsBeginExpandedEndHidden: {
-			"left": LT.ThreeColumnsMidExpandedEndHidden
-		}
-	};
 
 	/**
 	 * Shows the placeholder on the corresponding column for the provided aggregation name.
@@ -2393,6 +3046,20 @@ sap.ui.define([
 		if (typeof sLayout !== "undefined") {
 			this._aLayoutHistory.push(sLayout);
 		}
+	};
+
+	/**
+	 * Retrieves the etry at the given index
+	 * @param {*} iIndex ihe index
+	 * @param {*} bRecentFirst if the history should be ordered from the most recent to the most old
+	 * @returns {string} the entry at the given index
+	 */
+	LayoutHistory.prototype.getEntry = function (iIndex, bRecentFirst) {
+		var aHistory = this._aLayoutHistory;
+		if (bRecentFirst) {
+			aHistory = this._aLayoutHistory.toReversed();
+		}
+		return aHistory[iIndex];
 	};
 
 	/**
@@ -2548,6 +3215,43 @@ sap.ui.define([
 			delete this._oCancelPromises[sId];
 		}
 	};
+
+	//utils
+	function convertPxToCSSSizeString(iPxSize, iTotalPzSize, bIsInsetColumn) {
+		var iContentSize;
+		if (iPxSize === iTotalPzSize) {
+			return "100%";
+		}
+		iContentSize = bIsInsetColumn ? (iPxSize - FlexibleColumnLayout.COLUMN_SEPARATOR_WIDTH) : iPxSize;
+
+		return iContentSize + "px";
+	}
+
+	function getSeparatorName(oColumnSeparator) {
+		return oColumnSeparator.classList.contains("sapFFCLColumnSeparatorBegin") ?
+			"begin" : "end";
+	}
+
+	function getInteractivelyResizedColumns(oColumnSeparator, sLayout, iMaxColumnsCount) {
+		var bIsBeginSeparator = oColumnSeparator.classList.contains("sapFFCLColumnSeparatorBegin");
+
+		if (iMaxColumnsCount === 2 && sLayout == LT.ThreeColumnsMidExpandedEndHidden) {
+			return (bIsBeginSeparator) ? ["begin", "mid"] : ["begin", "end"];
+		}
+
+		if (iMaxColumnsCount === 2 && sLayout == LT.ThreeColumnsMidExpanded) {
+			return (bIsBeginSeparator) ? ["begin", "end"] : ["mid", "end"];
+		}
+		return (bIsBeginSeparator) ? ["begin", "mid"] : ["mid", "end"];
+	}
+
+	function getCursorPositionX (oEvent) {
+		var oConfig = oEvent;
+		if (oEvent.changedTouches && oEvent.changedTouches[0]) {
+			oConfig = oConfig.changedTouches[0];
+		}
+		return oConfig.pageX;
+	}
 
 	return FlexibleColumnLayout;
 

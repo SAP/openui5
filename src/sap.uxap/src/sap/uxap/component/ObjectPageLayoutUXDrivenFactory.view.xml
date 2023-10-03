@@ -8,7 +8,7 @@
 					  showAnchorBar="{objectPageLayoutMetadata>/showAnchorBar}"
 					  height="{objectPageLayoutMetadata>/height}"
 					  enableLazyLoading="{objectPageLayoutMetadata>/enableLazyLoading}"
-					  sections="{objectPageLayoutMetadata>/sections}"
+					  sections="{path: 'objectPageLayoutMetadata>/sections', templateShareable: false}"
 					  headerContent="{path:'objectPageLayoutMetadata>/headerContent', factory:'.controlFactory'}"
 					  showAnchorBarPopover="{objectPageLayoutMetadata>/showAnchorBarPopover}"
 					  upperCaseAnchorBar="{objectPageLayoutMetadata>/upperCaseAnchorBar}"
@@ -28,7 +28,7 @@
 							   title="{objectPageLayoutMetadata>title}"
 							   importance="{objectPageLayoutMetadata>importance}"
 							   showTitle="{objectPageLayoutMetadata>showTitle}"
-							   subSections="{objectPageLayoutMetadata>subSections}"
+							   subSections="{path: 'objectPageLayoutMetadata>subSections', templateShareable: false}"
 							   visible="{objectPageLayoutMetadata>visible}">
 
 				<!-- template for objectPageSubSection -->

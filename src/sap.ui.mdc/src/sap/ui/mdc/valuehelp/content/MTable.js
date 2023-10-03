@@ -108,11 +108,19 @@ sap.ui.define([
 			const aItems = this._oTable.getItems();
 			const aConditions = this.getConditions();
 			const bHideSelection = this.isSingleSelect() && !FilterableListContent.prototype.isSingleSelect.apply(this); // if table is in single selection but Field allows multiple values, don't select items
+			const bUseFirstMatch = this._iNavigateIndex === -1 && this._oFirstItemResult.result;
+			const oFirstItem = this._oFirstItemResult.result;
 
 			aItems.forEach(function(oItem) {
 				const oItemContext = this._getListItemBindingContext(oItem);
-				const bSelected = bHideSelection ? false : this._isContextSelected(oItemContext, aConditions);
-				oItem.setSelected(bSelected);
+				if (bHideSelection) {
+					oItem.setSelected(false);
+				} else if (bUseFirstMatch) {
+					const oItemFromContext = this.getItemFromContext(oItemContext);
+					oItem.setSelected(oItemFromContext.key === oFirstItem.key);
+				} else {
+					oItem.setSelected(this._isContextSelected(oItemContext, aConditions));
+				}
 				if (this._oTable.indexOfItem(oItem) === this._iNavigateIndex) {
 					oItem.addStyleClass("sapMLIBFocused").addStyleClass("sapMListFocus");
 				} else {

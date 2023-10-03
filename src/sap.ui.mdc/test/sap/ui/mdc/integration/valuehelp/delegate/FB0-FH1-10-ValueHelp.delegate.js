@@ -19,9 +19,8 @@ sap.ui.define([
 	"sap/m/Column",
 	"sap/m/ColumnListItem",
 	"sap/m/Text",
-	'sap/m/library',
 	"sap/ui/core/Core",
-	'sap/ui/mdc/condition/Condition'
+	"sap/ui/mdc/condition/Condition"
 
 ], function(
 	ODataV4ValueHelpDelegate,

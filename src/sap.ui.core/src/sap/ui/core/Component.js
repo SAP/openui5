@@ -2583,7 +2583,6 @@ sap.ui.define([
 		var aActiveTerminologies = mOptions.activeTerminologies,
 			sName = oConfig.name,
 			sUrl = oConfig.url,
-			oConfiguration = Configuration,
 			bComponentPreload = /^(sync|async)$/.test(Component.getComponentPreloadMode()),
 			vManifest = oConfig.manifest,
 			bManifestFirst,
@@ -2637,12 +2636,7 @@ sap.ui.define([
 		// which is not true - this component causes the load
 		Interaction.setStepComponent(sName);
 
-		if ( vManifest === undefined ) {
-			// no manifest property set, evaluate legacy properties
-			bManifestFirst = oConfig.manifestFirst === undefined ? oConfiguration.getManifestFirst() : !!oConfig.manifestFirst;
-			sManifestUrl = oConfig.manifestUrl;
-			// oManifest = undefined;
-		} else {
+		if (vManifest !== undefined) {
 			// in case of manifest property is set, by default we load async
 			if ( oConfig.async === undefined ) {
 				oConfig.async = true;

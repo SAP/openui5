@@ -43,6 +43,16 @@ function (
 			TwoColumnsMidExpanded: 2
 		};
 
+	(function clearStoredResizeInfo() {
+		Object.keys(library.LayoutType).forEach(function(sLayoutType) {
+			var sItem1 = FlexibleColumnLayout.STORAGE_PREFIX_DESKTOP + "-" + sLayoutType;
+			var sItem2 = FlexibleColumnLayout.STORAGE_PREFIX_TABLET + "-" + sLayoutType;
+			window.localStorage.removeItem(sItem1);
+			window.localStorage.removeItem(sItem2);
+		});
+
+	})();
+
 	var fnCreatePage = function (sId, oContent) {
 		return new Page(sId, {
 			title: "Page: " + sId,
@@ -78,9 +88,9 @@ function (
 	 * @param {int} iEndVisible - whether we expect the end column to be visible or not
 	 */
 	var assertColumnsVisibility = function(assert, oFCL, iBeginVisible, iMidVisible, iEndVisible) {
-		var bBeginOK = (oFCL.$("beginColumn").width() > 0) === !!iBeginVisible,
-			bMidOK = (oFCL.$("midColumn").width() > 0) === !!iMidVisible,
-			bEndOK = (oFCL.$("endColumn").width() > 0) === !!iEndVisible;
+		var bBeginOK = (parseInt(oFCL.$("beginColumn")[0].style.width) > 0) === !!iBeginVisible,
+			bMidOK = (parseInt(getComputedStyle(oFCL.$("midColumn")[0]).width) > 0) === !!iMidVisible,
+			bEndOK = (parseInt(oFCL.$("endColumn")[0].style.width) > 0) === !!iEndVisible;
 
 		assert.ok(bBeginOK, "The begin column is " + (iBeginVisible ? "" : " not ") +  " visible");
 		assert.ok(bMidOK, "The mid column is " + (iMidVisible ? "" : " not ") +  " visible");
@@ -91,25 +101,27 @@ function (
 	 * Utility function to easily verify arrows visibility
 	 * @param {object} assert - the assert object passed to the test case
 	 * @param {object} oFCL - the instance that is tested upon
-	 * @param {int} iBeginColumnBackArrowVisible - whether we expect the _beginColumnBackArrow to be visible or not
-	 * @param {int} iMidColumnBackArrowVisible - whether we expect the _midColumnBackArrow to be visible or not
-	 * @param {int} iMidColumnForwardArrowVisible - whether we expect the _midColumnForwardArrow to be visible or not
-	 * @param {int} iEndColumnForwardArrowVisible - whether we expect the _endColumnForwardArrow to be visible or not
+	 * @param {int} iBeginColumnSeparatorVisible - whether we expect the begin-separator to be visible
+	 * @param {int} iMidColumnSeparatorVisible - whether we expect the end-separator to be visible
 	 */
-	var assertArrowsVisibility = function(assert, oFCL, iBeginColumnBackArrowVisible, iMidColumnBackArrowVisible, iMidColumnForwardArrowVisible, iEndColumnForwardArrowVisible) {
-		var bBBArrowOK = oFCL.getAggregation("_beginColumnBackArrow").$().is(":visible") === !!iBeginColumnBackArrowVisible,
-			bMBArrowOK = oFCL.getAggregation("_midColumnBackArrow").$().is(":visible") === !!iMidColumnBackArrowVisible,
-			bMFArrowOK = oFCL.getAggregation("_midColumnForwardArrow").$().is(":visible") === !!iMidColumnForwardArrowVisible,
-			bEFArrowOK = oFCL.getAggregation("_endColumnForwardArrow").$().is(":visible") === !!iEndColumnForwardArrowVisible;
+	var assertSeparatorVisibility = function(assert, oFCL, iBeginColumnSeparatorVisible, iMidColumnSeparatorVisible) {
+		var bBeginSeparatorOK = oFCL.$("separator-begin").is(":visible") === !!iBeginColumnSeparatorVisible,
+			bMidSeparatorOK = oFCL.$("separator-end").is(":visible") === !!iMidColumnSeparatorVisible;
 
-		assert.ok(bBBArrowOK, "The _beginColumnBackArrow is " + (iBeginColumnBackArrowVisible ? "" : " not ") +  " visible");
-		assert.ok(bMBArrowOK, "The _midColumnBackArrow is " + (iMidColumnBackArrowVisible ? "" : " not ") +  " visible");
-		assert.ok(bMFArrowOK, "The _midColumnForwardArrow is " + (iMidColumnForwardArrowVisible ? "" : " not ") +  " visible");
-		assert.ok(bEFArrowOK, "The _endColumnForwardArrow is " + (iEndColumnForwardArrowVisible ? "" : " not ") +  " visible");
-
+		assert.ok(bBeginSeparatorOK, "The begin separator is " + (iBeginColumnSeparatorVisible ? "" : " not ") +  " visible");
+		assert.ok(bMidSeparatorOK, "The end separator is " + (iMidColumnSeparatorVisible ? "" : " not ") +  " visible");
 	};
 
+	function dragSeparator(sSeparatorName, iPx, oFCL) {
 
+		var oSeparator = oFCL._oColumnSeparators[sSeparatorName][0],
+			iStartX = oSeparator.getBoundingClientRect().x,
+			iEndX = iStartX + iPx;
+
+		oFCL._onColumnSeparatorMoveStart({pageX: iStartX}, oSeparator);
+		oFCL._onColumnSeparatorMove({pageX: iEndX});
+		oFCL._onColumnSeparatorMoveEnd({pageX: iEndX});
+	}
 
 	QUnit.module("DESKTOP - API", {
 		beforeEach: function () {
@@ -241,46 +253,48 @@ function (
 		assertColumnsVisibility(assert, this.oFCL, 0, 0, 1);
 	});
 
-	QUnit.test("Navigation arrows - 1 column", function (assert) {
+	QUnit.test("Separators - 1 column", function (assert) {
 		this.oFCL = oFactory.createFCL();
-		assertArrowsVisibility(assert, this.oFCL, 0, 0, 0, 0);
+		assertSeparatorVisibility(assert, this.oFCL, 0, 0);
 	});
 
-	QUnit.test("Navigation arrows - 2 columns", function (assert) {
+	QUnit.test("Separators - 2 columns", function (assert) {
 		this.oFCL = oFactory.createFCL({
 			layout: LT.TwoColumnsBeginExpanded,
 			beginColumnPages: [new Page()]
 		});
 		this.oFCL._onNavContainerRendered({srcControl: this.oFCL.getAggregation("_beginColumnNav")});
 
-		assertArrowsVisibility(assert, this.oFCL, 1, 0, 0, 0);
+		assertSeparatorVisibility(assert, this.oFCL, 1, 0);
 	});
 
-	QUnit.test("Navigation arrows - 2 columns operations", function (assert) {
+	QUnit.test("Separators - 2 columns operations", function (assert) {
 		this.oFCL = oFactory.createFCL({
 			layout: LT.TwoColumnsBeginExpanded,
 			beginColumnPages: [new Page()]
 		});
 		this.oFCL._onNavContainerRendered({srcControl: this.oFCL.getAggregation("_beginColumnNav")});
 
-		this.getBeginColumnBackArrow().firePress();
-		assertArrowsVisibility(assert, this.oFCL, 0, 0, 1, 0);
+		dragSeparator("begin", -700, this.oFCL);
+		assertSeparatorVisibility(assert, this.oFCL, 1, 0);
+		assert.equal(this.oFCL.getLayout(), LT.TwoColumnsMidExpanded);
 
-		this.getMidColumnForwardArrow().firePress();
-		assertArrowsVisibility(assert, this.oFCL, 1, 0, 0, 0);
+		dragSeparator("begin", 700, this.oFCL);
+		assertSeparatorVisibility(assert, this.oFCL, 1, 0);
+		assert.equal(this.oFCL.getLayout(), LT.TwoColumnsBeginExpanded);
 	});
 
-	QUnit.test("Navigation arrows - 3 columns (mid column Expanded, not-fixed 3-column layout)", function (assert) {
+	QUnit.test("Separators - 3 columns (mid column Expanded, not-fixed 3-column layout)", function (assert) {
 		this.oFCL = oFactory.createFCL({
 			layout: LT.ThreeColumnsMidExpanded,
 			beginColumnPages: [new Page()]
 		});
 		this.oFCL._onNavContainerRendered({srcControl: this.oFCL.getAggregation("_beginColumnNav")});
 
-		assertArrowsVisibility(assert, this.oFCL, 0, 1, 1, 0);
+		assertSeparatorVisibility(assert, this.oFCL, 1, 1);
 	});
 
-	QUnit.test("Navigation arrows - 3 columns operation (not-fixed 3-column layout)", function (assert) {
+	QUnit.test("Separators - 3 columns operation (not-fixed 3-column layout)", function (assert) {
 		this.clock = sinon.useFakeTimers();
 
 		this.oFCL = oFactory.createFCL({
@@ -289,27 +303,32 @@ function (
 		});
 		this.oFCL._onNavContainerRendered({srcControl: this.oFCL.getAggregation("_beginColumnNav")});
 
-		this.getMidColumnForwardArrow().firePress();
-		assertArrowsVisibility(assert, this.oFCL, 0, 1, 1, 0);
-
+		dragSeparator("begin", 200, this.oFCL);
+		assertSeparatorVisibility(assert, this.oFCL, 1, 1);
 		assertColumnsVisibility(assert, this.oFCL, 1, 1, 0); // End column is gone
+		assert.equal(this.oFCL.getLayout(), LT.ThreeColumnsMidExpandedEndHidden);
 
-		// Click it again
-		this.getMidColumnForwardArrow().firePress();
-		assertArrowsVisibility(assert, this.oFCL, 1, 0, 0, 0);
+		// drag the same separator further
+		dragSeparator("begin", 700, this.oFCL);
+		assertSeparatorVisibility(assert, this.oFCL, 1, 0);
+		assert.equal(this.oFCL.getLayout(), LT.ThreeColumnsBeginExpandedEndHidden);
 
-		this.getBeginColumnBackArrow().firePress();
-		assertArrowsVisibility(assert, this.oFCL, 0, 1, 1, 0);
+		dragSeparator("begin", -400, this.oFCL);
+		assertSeparatorVisibility(assert, this.oFCL, 1, 1);
+		assert.equal(this.oFCL.getLayout(), LT.ThreeColumnsMidExpandedEndHidden);
 
-		this.getMidColumnBackArrow().firePress();
-		assertArrowsVisibility(assert, this.oFCL, 0, 1, 1, 0);
+		dragSeparator("end", -200, this.oFCL);
+		assertSeparatorVisibility(assert, this.oFCL, 1, 1);
 		assertColumnsVisibility(assert, this.oFCL, 1, 1, 1); // End column is back
+		assert.equal(this.oFCL.getLayout(), LT.ThreeColumnsMidExpanded);
 
-		this.getMidColumnBackArrow().firePress();
-		assertArrowsVisibility(assert, this.oFCL, 0, 0, 0, 1);
+		dragSeparator("end", -400, this.oFCL);
+		assertSeparatorVisibility(assert, this.oFCL, 0, 1);
+		assert.equal(this.oFCL.getLayout(), LT.ThreeColumnsEndExpanded);
 
-		this.getEndColumnForwardArrow().firePress();
-		assertArrowsVisibility(assert, this.oFCL, 0, 1, 1, 0);
+		dragSeparator("end", 200, this.oFCL);
+		assertSeparatorVisibility(assert, this.oFCL, 1, 1);
+		assert.equal(this.oFCL.getLayout(), LT.ThreeColumnsMidExpanded);
 		this.clock.restore();
 	});
 
@@ -452,13 +471,13 @@ function (
 		this.clock.restore();
 	});
 
-	QUnit.test("stateChange event is fired on navigation arrow click", function (assert) {
+	QUnit.test("stateChange event is fired upon drag to a new layout", function (assert) {
 		this.oFCL = oFactory.createFCL({
 			layout: LT.ThreeColumnsMidExpanded
 		});
 		var oEventSpy = this.spy(this.oFCL, "fireStateChange");
 
-		this.getMidColumnForwardArrow().firePress();
+		dragSeparator("begin", 100, this.oFCL);
 		assert.ok(oEventSpy.called, "Layout change event fired");
 	});
 
@@ -469,11 +488,6 @@ function (
 			$("html").attr("data-sap-ui-animation", "off");
 			$("#" + sQUnitFixture).width(TABLET_SIZE); // Between 960 and 1280
 			Core.getConfiguration().setAnimationMode("none");
-
-			this.getBeginColumnBackArrow = function () { return this.oFCL.getAggregation("_beginColumnBackArrow"); };
-			this.getMidColumnBackArrow = function () { return this.oFCL.getAggregation("_midColumnBackArrow"); };
-			this.getMidColumnForwardArrow = function () { return this.oFCL.getAggregation("_midColumnForwardArrow"); };
-			this.getEndColumnForwardArrow = function () { return this.oFCL.getAggregation("_endColumnForwardArrow"); };
 		},
 		afterEach: function () {
 			$("html").attr("data-sap-ui-animation", this.sOldAnimationSetting);
@@ -568,21 +582,23 @@ function (
 		});
 		this.oFCL._onNavContainerRendered({srcControl: this.oFCL.getAggregation("_beginColumnNav")});
 
-		assertArrowsVisibility(assert, this.oFCL, 1, 0, 0, 0);
+		assertSeparatorVisibility(assert, this.oFCL, 1, 0);
 	});
 
-	QUnit.test("Navigation arrows - 2 columns operations", function (assert) {
+	QUnit.test("Column separators - 2 columns operations", function (assert) {
 		this.oFCL = oFactory.createFCL({
 			layout: LT.TwoColumnsBeginExpanded,
 			beginColumnPages: [new Page()]
 		});
 		this.oFCL._onNavContainerRendered({srcControl: this.oFCL.getAggregation("_beginColumnNav")});
 
-		this.getBeginColumnBackArrow().firePress();
-		assertArrowsVisibility(assert, this.oFCL, 0, 0, 1, 0);
+		dragSeparator("begin", -700, this.oFCL);
+		assertSeparatorVisibility(assert, this.oFCL, 1, 0);
+		assert.equal(this.oFCL.getLayout(), LT.TwoColumnsMidExpanded);
 
-		this.getMidColumnForwardArrow().firePress();
-		assertArrowsVisibility(assert, this.oFCL, 1, 0, 0, 0);
+		dragSeparator("begin", 700, this.oFCL);
+		assertSeparatorVisibility(assert, this.oFCL, 1, 0);
+		assert.equal(this.oFCL.getLayout(), LT.TwoColumnsBeginExpanded);
 	});
 
 	QUnit.test("Navigation arrows - 3 columns", function (assert) {
@@ -592,7 +608,7 @@ function (
 		});
 		this.oFCL._onNavContainerRendered({srcControl: this.oFCL.getAggregation("_beginColumnNav")});
 
-		assertArrowsVisibility(assert, this.oFCL, 0, 1, 1, 0);
+		assertSeparatorVisibility(assert, this.oFCL, 1, 1);
 	});
 
 	QUnit.test("Navigation arrows - 3 columns operation", function (assert) {
@@ -604,21 +620,25 @@ function (
 		});
 		this.oFCL._onNavContainerRendered({srcControl: this.oFCL.getAggregation("_beginColumnNav")});
 
-		this.getMidColumnForwardArrow().firePress();
-		assertArrowsVisibility(assert, this.oFCL, 0, 1, 1, 0);
-
+		dragSeparator("begin", 100, this.oFCL);
+		assertSeparatorVisibility(assert, this.oFCL, 1, 1);
 		assertColumnsVisibility(assert, this.oFCL, 1, 1, 0); // End column is gone
+		assert.equal(this.oFCL.getLayout(), LT.ThreeColumnsMidExpandedEndHidden);
 
-		// Click it again
-		this.getMidColumnForwardArrow().firePress();
-		assertArrowsVisibility(assert, this.oFCL, 1, 0, 0, 0);
+		// drag it again
+		dragSeparator("begin", 300, this.oFCL);
+		assertSeparatorVisibility(assert, this.oFCL, 1, 0);
+		assert.equal(this.oFCL.getLayout(), LT.ThreeColumnsBeginExpandedEndHidden);
 
-		this.getBeginColumnBackArrow().firePress();
-		assertArrowsVisibility(assert, this.oFCL, 0, 1, 1, 0);
+		dragSeparator("begin", -300, this.oFCL);
+		assertSeparatorVisibility(assert, this.oFCL, 1, 1);
+		assert.equal(this.oFCL.getLayout(), LT.ThreeColumnsMidExpandedEndHidden);
 
-		this.getMidColumnBackArrow().firePress();
-		assertArrowsVisibility(assert, this.oFCL, 0, 1, 1, 0);
-		assertColumnsVisibility(assert, this.oFCL, 0, 1, 1); // End column is back
+		dragSeparator("end", -100, this.oFCL);
+		assertSeparatorVisibility(assert, this.oFCL, 1, 1);
+		assertColumnsVisibility(assert, this.oFCL, 0, 1, 1); // End column is back */
+		assert.equal(this.oFCL.getLayout(), LT.ThreeColumnsMidExpanded);
+
 		this.clock.restore();
 	});
 
@@ -709,14 +729,14 @@ function (
 
 	QUnit.test("Navigation arrows - 1 column", function (assert) {
 		this.oFCL = oFactory.createFCL();
-		assertArrowsVisibility(assert, this.oFCL, 0, 0, 0, 0);
+		assertSeparatorVisibility(assert, this.oFCL, 0, 0, 0, 0);
 	});
 
 	QUnit.test("Navigation arrows - 2 columns", function (assert) {
 		this.oFCL = oFactory.createFCL({
 			layout: LT.TwoColumnsBeginExpanded
 		});
-		assertArrowsVisibility(assert, this.oFCL, 0, 0, 0, 0);
+		assertSeparatorVisibility(assert, this.oFCL, 0, 0, 0, 0);
 	});
 
 	QUnit.test("Navigation arrows - 3 columns", function (assert) {
@@ -724,7 +744,7 @@ function (
 			layout: LT.ThreeColumnsMidExpanded
 		});
 
-		assertArrowsVisibility(assert, this.oFCL, 0, 0, 0, 0);
+		assertSeparatorVisibility(assert, this.oFCL, 0, 0, 0, 0);
 	});
 
 	QUnit.module("Nav containers proxying", {
@@ -899,73 +919,98 @@ function (
 
 		// arrange
 		var fnDone = assert.async(),
-			oBeginColumnArrow =  this.oFCL.getAggregation("_beginColumnBackArrow"),
 			oBeginColumn = this.oFCL._$columns["begin"],
 			oBeginColumnDomRef = oBeginColumn.get(0),
 			oSuspendSpy = this.spy(ResizeHandler, "suspend"),
 			oResumeSpy = this.spy(ResizeHandler, "resume");
 
 		// act
-		oBeginColumnArrow.firePress();
+		this.oFCL.setLayout(LT.TwoColumnsMidExpanded);
 
 		// assert
 		assert.ok(oSuspendSpy.calledWith(oBeginColumnDomRef), "ResizeHandler suspended for column");
-		oBeginColumn.on("webkitTransitionEnd transitionend", function() {
+		this.oFCL._attachAfterAllColumnsResizedOnce(function() {
 			setTimeout(function() { // wait for FCL promise to complete
 				assert.ok(oResumeSpy.calledWith(oBeginColumnDomRef), "ResizeHandler resumed for column");
 				fnDone();
 			}, 0);
 		});
-
 	});
 
-	QUnit.test("Storing resize information for the reveal effect", function (assert) {
-		assert.strictEqual(this.oFCL._iPreviousVisibleColumnsCount, 2, "The default TwoColumnsBeginExpanded layout has 2 columns");
-		assert.strictEqual(this.oFCL._bWasFullScreen, false, "TwoColumnsBeginExpanded isn't a fullscreen layout");
-
-		this.oFCL.setLayout(LT.ThreeColumnsMidExpanded);
-		assert.strictEqual(this.oFCL._iPreviousVisibleColumnsCount, 3, "ThreeColumnsMidExpanded has 3 columns");
-		assert.strictEqual(this.oFCL._bWasFullScreen, false, "ThreeColumnsMidExpanded isn't a fullscreen layout");
-
-		this.oFCL.setLayout(LT.EndColumnFullScreen);
-		assert.strictEqual(this.oFCL._iPreviousVisibleColumnsCount, 1, "EndColumnFullScreen has only 1 visible column");
-		assert.strictEqual(this.oFCL._bWasFullScreen, true, "EndColumnFullScreen is a fullscreen layout");
+	QUnit.test("_getPreviousLayout", function (assert) {
+		var sLayoutBeforeUpdate = this.oFCL.getLayout();
+		this.oFCL.setLayout(LT.TwoColumnsMidExpanded);
+		assert.strictEqual(this.oFCL._getPreviousLayout(), sLayoutBeforeUpdate, "previous layout is correct");
 	});
 
-	QUnit.test("Storing resize information for the conceal effect", function (assert) {
-		assert.strictEqual(this.oFCL._iPreviousVisibleColumnsCount, 2, "The default TwoColumnsBeginExpanded layout has 2 columns");
-		assert.strictEqual(this.oFCL._bWasFullScreen, false, "TwoColumnsBeginExpanded isn't a fullscreen layout");
-		assert.strictEqual(this.oFCL._sPreviuosLastVisibleColumn, "mid",
-			"The default TwoColumnsBeginExpanded layout has the 'mid' column as the last visible column");
-
-		this.oFCL.setLayout(LT.ThreeColumnsMidExpanded);
-		assert.strictEqual(this.oFCL._iPreviousVisibleColumnsCount, 3, "ThreeColumnsMidExpanded has 3 columns");
-		assert.strictEqual(this.oFCL._bWasFullScreen, false, "ThreeColumnsMidExpanded isn't a fullscreen layout");
-		assert.strictEqual(this.oFCL._sPreviuosLastVisibleColumn, "end",
-			"The ThreeColumnsMidExpanded layout has the 'end' column as the last visible column");
+	QUnit.test("_getMaxColumnsCountForLayout", function (assert) {
+		assert.strictEqual(this.oFCL._getMaxColumnsCountForLayout(LT.TwoColumnsBeginExpanded, FlexibleColumnLayout.DESKTOP_BREAKPOINT),
+			2, "The default TwoColumnsBeginExpanded layout has 2 columns");
+		assert.strictEqual(this.oFCL._getMaxColumnsCountForLayout(LT.ThreeColumnsMidExpanded, FlexibleColumnLayout.DESKTOP_BREAKPOINT),
+			3, "ThreeColumnsMidExpanded layout has 3 columns");
+		assert.strictEqual(this.oFCL._getMaxColumnsCountForLayout(LT.EndColumnFullScreen, FlexibleColumnLayout.DESKTOP_BREAKPOINT),
+			1, "EndColumnFullScreen has only 1 visible column");
 	});
 
-	QUnit.test("Reveal effect pinning decision", function (assert) {
+	QUnit.test("_getLastVisibleColumnForLayout", function (assert) {
+		assert.strictEqual(this.oFCL._getLastVisibleColumnForLayout(LT.TwoColumnsBeginExpanded),
+			"mid", "The TwoColumnsBeginExpanded layout has the 'mid' column as the last visible column");
+		assert.strictEqual(this.oFCL._getLastVisibleColumnForLayout(LT.ThreeColumnsMidExpanded),
+			"end", "The ThreeColumnsMidExpanded layout has the 'mid' column as the last visible column");
+		assert.strictEqual(this.oFCL._getLastVisibleColumnForLayout(LT.EndColumnFullScreen),
+			"end", "The EndColumnFullScreen layout has the 'mid' column as the last visible column");
+	});
+
+	QUnit.test("_shouldRevealColumn", function (assert) {
 		// Simulate last column and switch to a layout with more columns
-		assert.strictEqual(this.oFCL._shouldRevealColumn(3, true), true, "Third column should be pinned if any ThreeColumn layout is opened");
+		assert.strictEqual(this.oFCL._shouldRevealColumn("end", LT.ThreeColumnsMidExpanded, LT.TwoColumnsBeginExpanded),
+			true, "Third column should be pinned if any ThreeColumn layout is opened");
+		assert.strictEqual(this.oFCL._shouldRevealColumn("end", LT.ThreeColumnsMidExpanded, LT.TwoColumnsMidExpanded),
+			true, "Third column should be pinned if any ThreeColumn layout is opened");
 
 		// New layout has more columns, but we are not testing the last column
-		assert.strictEqual(this.oFCL._shouldRevealColumn(3, false), false, "First or second columns shouldn't be pinned for ThreeColumn layouts");
+		assert.strictEqual(this.oFCL._shouldRevealColumn("begin", LT.ThreeColumnsMidExpanded, LT.TwoColumnsBeginExpanded),
+			false, "First or second columns shouldn't be pinned for ThreeColumn layouts");
+		assert.strictEqual(this.oFCL._shouldRevealColumn("mid", LT.ThreeColumnsMidExpanded, LT.TwoColumnsBeginExpanded),
+			false, "First or second columns shouldn't be pinned for ThreeColumn layouts");
 
 		// New layout has less columns than the current one
-		assert.strictEqual(this.oFCL._shouldRevealColumn(1, true), false, "No pinning should be done when the new column has fewer columns");
+		assert.strictEqual(this.oFCL._shouldRevealColumn("end", LT.TwoColumnsMidExpanded, LT.ThreeColumnsMidExpanded),
+			false, "No revealing should be done when the new layout has fewer columns");
 
-		// Set a fullscreen layout
-		this.oFCL.setLayout(LT.MidColumnFullScreen);
-		assert.strictEqual(this.oFCL._shouldRevealColumn(2, true), false, "No pinning should be done when closing a fullscreen layout");
+		// Returning from a fullscreen layout
+		assert.strictEqual(this.oFCL._shouldRevealColumn("mid", LT.TwoColumnsBeginExpanded, LT.MidColumnFullScreen),
+			false, "No pinning should be done when closing a fullscreen layout");
+	});
+
+	QUnit.test("_shouldConcealColumn", function (assert) {
+		assert.strictEqual(this.oFCL._shouldConcealColumn("end", LT.TwoColumnsMidExpanded, LT.ThreeColumnsMidExpanded),
+			true, "Third column should be pinned if any TwoColumn layout is opened");
+		assert.strictEqual(this.oFCL._shouldConcealColumn("end", LT.TwoColumnsBeginExpanded, LT.ThreeColumnsMidExpanded),
+			true, "Third column should be pinned if any TwoColumn layout is opened");
+
+		// New layout has more columns, but we are not testing the last column
+		assert.strictEqual(this.oFCL._shouldConcealColumn("begin", LT.TwoColumnsMidExpanded, LT.ThreeColumnsMidExpanded),
+			false, "First or second columns shouldn't be pinned for ThreeColumn layouts");
+		assert.strictEqual(this.oFCL._shouldConcealColumn("mid", LT.TwoColumnsMidExpanded, LT.ThreeColumnsMidExpanded),
+			false, "First or second columns shouldn't be pinned for ThreeColumn layouts");
+
+		// New layout has more columns than the current one
+		assert.strictEqual(this.oFCL._shouldConcealColumn("end", LT.ThreeColumnsMidExpanded, LT.TwoColumnsMidExpanded),
+			false, "No concealing should be done when the new layout has more columns");
+
+		// Returning from a fullscreen layout
+		assert.strictEqual(this.oFCL._shouldConcealColumn("mid", LT.TwoColumnsBeginExpanded, LT.MidColumnFullScreen),
+			false, "No pinning should be done when closing a fullscreen layout");
 	});
 
 	QUnit.test("Conceal effect layout changes", function(assert) {
 		//arrange
 		var $endColumn = this.oFCL._$columns["end"],
-			fnDone = assert.async();
+		fnDone = assert.async();
 
-		assert.expect(8);
+		this.stub(this.oFCL, "_getControlWidth").returns(parseInt(DESKTOP_SIZE));
+		//assert.expect(8);
 
 		this.oFCL.setLayout(LT.ThreeColumnsMidExpanded);
 
@@ -974,7 +1019,7 @@ function (
 		assert.ok($endColumn.hasClass("sapFFCLPinnedColumn"),
 			"End column should have the 'sapFFCLPinnedColumn' class applied.");
 
-		this.oFCL.getAggregation("_midColumnForwardArrow").firePress();
+		this.oFCL.setLayout(LT.TwoColumnsMidExpanded);
 
 		this.oFCL._oAnimationEndListener.waitForAllColumnsResizeEnd().then(function() {
 			setTimeout(function() { // wait for all app callbacks for same event to be called
@@ -984,7 +1029,7 @@ function (
 					"End column should not have the 'sapFFCLPinnedColumn' class applied.");
 
 				fnDone();
-			}.bind(this), 0);
+			}.bind(this), 1000);
 		}.bind(this));
 	});
 
@@ -1081,36 +1126,6 @@ function (
 	});
 
 	QUnit.test("Each column is labeled correctly when there is Landmark Info", function (assert) {
-		// setup
-		var oSpy,
-			oFCL = this.oFCL,
-			fnCheckCorrectAnnouncement = function (oButton, sBundleKey) {
-				// act
-				oButton.firePress();
-				Core.applyChanges();
-
-				// assert
-				assert.strictEqual(oSpy.args[0][0], sBundleKey, "announceMessage is called with correct message");
-				assert.ok(oSpy.called, "announceMessage is called");
-
-				// clean-up
-				oSpy.reset();
-			},
-			fnGetBeginColumnBackArrow = function () { return oFCL.getAggregation("_beginColumnBackArrow"); },
-			fnGetMidColumnForwardArrow = function () { return oFCL.getAggregation("_midColumnForwardArrow"); },
-			fnGetMidColumnBackArrow = function () { return oFCL.getAggregation("_midColumnBackArrow"); },
-			fnGetEndColumnForwardArrow = function () { return oFCL.getAggregation("_endColumnForwardArrow"); };
-
-		this.oFCL.setLayout(LT.ThreeColumnsMidExpanded);
-
-		oSpy = this.spy(this.oFCL, "_announceMessage");
-
-		fnCheckCorrectAnnouncement(fnGetBeginColumnBackArrow(), "FCL_MIDDLE_COLUMN_EXPANDED_MESSAGE");
-		fnCheckCorrectAnnouncement(fnGetMidColumnForwardArrow(), "FCL_FIRST_COLUMN_EXPANDED_MESSAGE");
-		fnCheckCorrectAnnouncement(fnGetMidColumnBackArrow(), "FCL_LAST_COLUMN_EXPANDED_MESSAGE");
-		fnCheckCorrectAnnouncement(fnGetEndColumnForwardArrow(), "FCL_MIDDLE_COLUMN_EXPANDED_MESSAGE");
-	});
-	QUnit.test("Each column is labeled correctly when there is Landmark Info", function (assert) {
 		// Arrange
 		var sTestFirstColumnLabel = "This is test first column label",
 			sTestLastColumnLabel = "This is custom last column label",
@@ -1132,54 +1147,6 @@ function (
 		assert.strictEqual(fnGetLabelText("beginColumn"), sTestFirstColumnLabel, "Begin column has its label changed by the Landmark Info");
 		assert.strictEqual(fnGetLabelText("midColumn"), fnGetResourceBundleText("FCL_MID_COLUMN_REGION_TEXT"), "Middle column remains untouched with its default label");
 		assert.strictEqual(fnGetLabelText("endColumn"), sTestLastColumnLabel, "End column has its label changed by the Landmark Info");
-	});
-
-	QUnit.test("Each arrow is labeled correctly when there is Landmark Info", function (assert) {
-		// Arrange
-		var sTestFirstColBackArrowLabel = "Custom Label For First Column Back Arrow",
-			sTestMidColForwardArrowLabel = "Custom Label For Middle Column Forward Arrow",
-			sTestMidColBackArrowLabel = "Custom Label For Middle Column Back Arrow",
-			sTestEndColForwardArrowLabel = "Custom Label For Middle Column Back Arrow",
-			oLandmarkInfo = new FlexibleColumnLayoutAccessibleLandmarkInfo({
-				firstColumnBackArrowLabel: sTestFirstColBackArrowLabel,
-				middleColumnForwardArrowLabel: sTestMidColForwardArrowLabel,
-				middleColumnBackArrowLabel: sTestMidColBackArrowLabel,
-				lastColumnForwardArrowLabel: sTestEndColForwardArrowLabel
-			});
-
-		// Act
-		this.oFCL.setLandmarkInfo(oLandmarkInfo);
-		Core.applyChanges();
-
-		// Helper function
-		var fnGetButtonTooltip = function (sAggregationName) {
-			return this.oFCL.getAggregation(sAggregationName).getTooltip();
-		}.bind(this);
-
-		// Assert
-		assert.strictEqual(fnGetButtonTooltip("_beginColumnBackArrow"),
-			sTestFirstColBackArrowLabel, "Begin column back arrow has correct tooltip");
-		assert.strictEqual(fnGetButtonTooltip("_midColumnForwardArrow"),
-			sTestMidColForwardArrowLabel, "Mid column back arrow has correct tooltip");
-		assert.strictEqual(fnGetButtonTooltip("_midColumnBackArrow"),
-			sTestMidColBackArrowLabel, "Mid column forward arrow has correct tooltip");
-		assert.strictEqual(fnGetButtonTooltip("_endColumnForwardArrow"),
-			sTestEndColForwardArrowLabel, "End column forward arrow has correct tooltip");
-	});
-
-	QUnit.test("Navigation buttons have correct default tooltips", function (assert) {
-		var fnGetButtonTooltip = function (sAggregationName) {
-			return this.oFCL.getAggregation(sAggregationName).getTooltip();
-		}.bind(this);
-
-		assert.strictEqual(fnGetButtonTooltip("_beginColumnBackArrow"),
-			fnGetResourceBundleText("FCL_BEGIN_COLUMN_BACK_ARROW"), "Begin column back arrow has correct tooltip");
-		assert.strictEqual(fnGetButtonTooltip("_midColumnBackArrow"),
-			fnGetResourceBundleText("FCL_MID_COLUMN_BACK_ARROW"), "Mid column back arrow has correct tooltip");
-		assert.strictEqual(fnGetButtonTooltip("_midColumnForwardArrow"),
-			fnGetResourceBundleText("FCL_MID_COLUMN_FORWARD_ARROW"), "Mid column forward arrow has correct tooltip");
-		assert.strictEqual(fnGetButtonTooltip("_endColumnForwardArrow"),
-			fnGetResourceBundleText("FCL_END_COLUMN_FORWARD_ARROW"), "End column forward arrow has correct tooltip");
 	});
 
 	QUnit.module("FlexibleColumnLayoutSemanticHelper");
@@ -1342,7 +1309,7 @@ function (
 	QUnit.test("_onNavContainerRendered", function (assert) {
 		// setup
 		this.oFCL = new FlexibleColumnLayout();
-		var oEventSpy = this.spy(this.oFCL, "_hideShowArrows");
+		var oEventSpy = this.spy(this.oFCL, "_hideShowColumnSeparators");
 
 		// assert
 		assert.equal(this.oFCL._hasAnyColumnPagesRendered(), false, "_isAnyColumnContentRendered is false before first invocation");
@@ -1352,7 +1319,7 @@ function (
 
 		// assert
 		assert.equal(this.oFCL._hasAnyColumnPagesRendered(), false, "_hasAnyColumnPagesRendered is false when container empty");
-		assert.strictEqual(oEventSpy.callCount, 0, "_hideShowArrows is not called");
+		assert.strictEqual(oEventSpy.callCount, 0, "_hideShowColumnSeparators is not called");
 
 		// act
 		this.oFCL.addBeginColumnPage(new Page());
@@ -1360,7 +1327,7 @@ function (
 
 		// assert
 		assert.equal(this.oFCL._hasAnyColumnPagesRendered(), true, "_hasAnyColumnPagesRendered is true");
-		assert.strictEqual(oEventSpy.callCount, 1, "_hideShowArrows is called");
+		assert.strictEqual(oEventSpy.callCount, 1, "_hideShowColumnSeparators is called");
 	});
 
 	QUnit.module("Focus handling");
@@ -1454,13 +1421,17 @@ function (
 		// setup
 		var fnDone = assert.async(),
 			oResizeFunctionSpy = this.spy(ResizeHandler, "resume"),
+			iEventsCount = 0,
 			fnCallback = function () {
-				this.oFCL.detachColumnResize(fnCallback);
-				// assert
-				assert.equal(oResizeFunctionSpy.callCount, 2, "ResizeHandler.resume is called for both columns");
-				assert.ok(oResizeFunctionSpy.withArgs(this.oFCL._$columns['begin'].get(0)).calledOnce);
-				assert.ok(oResizeFunctionSpy.withArgs(this.oFCL._$columns['mid'].get(0)).calledOnce);
-				fnDone();
+				iEventsCount++;
+				if (iEventsCount == 3) {
+					this.oFCL.detachColumnResize(fnCallback);
+					// assert
+					assert.equal(oResizeFunctionSpy.callCount, 2, "ResizeHandler.resume is called for all columns");
+					assert.ok(oResizeFunctionSpy.withArgs(this.oFCL._$columns['begin'].get(0)).calledOnce);
+					assert.ok(oResizeFunctionSpy.withArgs(this.oFCL._$columns['mid'].get(0)).calledOnce);
+					fnDone();
+				}
 			}.bind(this);
 
 		this.oFCL.setLayout(LT.TwoColumnsMidExpanded);
@@ -1623,7 +1594,7 @@ function (
 
 			FlexibleColumnLayout.COLUMN_ORDER.forEach(function(sColumn) {
 				var oColumn = this.oFCL._$columns[sColumn],
-					iExpectedColumnWidth = oColumn.width(),
+					iExpectedColumnWidth = parseInt(oColumn.css("width")),
 					iActualColumnWidth = this.oFCL._getColumnWidth(sColumn);
 				assert.strictEqual(iActualColumnWidth, iExpectedColumnWidth, "correct with for " + sColumn);
 			}, this);
@@ -1848,10 +1819,10 @@ function (
 		$midColumn = oFCL.$("midColumn");
 		$endColumn = oFCL.$("endColumn");
 
-		assert.equal(parseInt($beginColumn[0].style.width), $beginColumn.width(), "Begin column width correct");
-		assert.equal(parseInt($midColumn[0].style.width), $midColumn.width(), "Mid column width correct");
-		assert.equal(parseInt($endColumn[0].style.width), $endColumn.width(), "End column width correct");
-		assert.ok(oFCL._iWidth > oFCL._getTotalColumnsWidth(), "Some space for arrows is allocated");
-		assert.ok(oFCL._getVisibleArrowsCount() > 0, "Visible arrows count is greater than 0");
+		assert.equal(parseInt($beginColumn[0].style.width), $beginColumn.get(0).offsetWidth, "Begin column width correct");
+		assert.equal($midColumn[0].style.width, "", "Mid column width correct"); // mid has auto-width
+		assert.equal(parseInt($endColumn[0].style.width), $endColumn.get(0).offsetWidth, "End column width correct");
+		assert.ok(oFCL._iWidth > oFCL._getTotalColumnsWidth(oFCL.getLayout()), "Some space for arrows is allocated");
+		assert.ok(oFCL._getVisibleColumnSeparatorsCount() > 0, "Visible arrows count is greater than 0");
 	}
 });

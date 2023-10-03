@@ -20,10 +20,10 @@ builder:
             filters:
               - sap/ui/unified/
               - sap/ui/unified/manifest.json
-              - '!sap/ui/unified/*-preload.js'
-              - '!sap/ui/unified/**/*.designtime.js'
-              - '!sap/ui/unified/**/designtime/'
-              - '!sap/ui/unified/**/*.support.js'
+              - "!sap/ui/unified/*-preload.js"
+              - "!sap/ui/unified/**/*.designtime.js"
+              - "!sap/ui/unified/**/designtime/"
+              - "!sap/ui/unified/**/*.support.js"
             resolve: false
       bundleOptions:
         optimize: true

@@ -853,17 +853,6 @@ sap.ui.define([
 		},
 
 		/**
-		 * Flag whether a Component should load the manifest first.
-		 *
-		 * @returns {boolean} true if a Component should load the manifest first
-		 * @public
-		 * @since 1.33.0
-		 */
-		getManifestFirst : function() {
-			return BaseConfig.get({name: "sapUiManifestFirst", type: BaseConfig.Type.Boolean, external: true});
-		},
-
-		/**
 		 * Returns the URL from where the UI5 flexibility services are called;
 		 * if empty, the flexibility services are not called.
 		 *
@@ -973,29 +962,6 @@ sap.ui.define([
 			}
 			return result;
 		},
-
-		/**
-		 * Returns the security token handlers of an OData V4 model.
-		 *
-		 * @returns {Array<function(sap.ui.core.URI):Promise>} the security token handlers (an empty array if there are none)
-		 * @public
-		 * @function
-		 * @deprecated Since 1.120. Please use {@link module:sap/ui/security/Security.getSecurityTokenHandlers} instead.
-		 * @see #setSecurityTokenHandlers
-		 */
-		getSecurityTokenHandlers : Security.getSecurityTokenHandlers,
-
-		/**
-		 * Sets the security token handlers for an OData V4 model. See chapter
-		 * {@link topic:9613f1f2d88747cab21896f7216afdac/section_STH Security Token Handling}.
-		 *
-		 * @param {Array<function(sap.ui.core.URI):Promise>} aSecurityTokenHandlers - The security token handlers
-		 * @public
-		 * @function
-		 * @deprecated Since 1.120. Please use {@link module:sap/ui/security/Security.setSecurityTokenHandlers} instead.
-		 * @see #getSecurityTokenHandlers
-		 */
-		setSecurityTokenHandlers : Security.setSecurityTokenHandlers,
 
 		/**
 		 * Applies multiple changes to the configuration at once.

@@ -44,23 +44,30 @@ sap.ui.define([
 					});
 				},
 				"compare": function () {
-					var oODataUtils = sap.ui.require("sap/ui/model/odata/v4/ODataUtils")
-							|| sap.ui.requireSync("sap/ui/model/odata/v4/ODataUtils");
+					var oODataUtils = sap.ui.require("sap/ui/model/odata/v4/ODataUtils");
+
+					if (!oODataUtils) {
+						throw new TypeError("Expression uses 'odata.compare' which requires to"
+							+ " import 'sap/ui/model/odata/v4/ODataUtils' in advance");
+					}
 
 					return oODataUtils.compare.apply(oODataUtils, arguments);
 				},
 				"fillUriTemplate": function (sExpression, mData) {
 					if (!URI.expand) {
-						// probing is not required since the presence of URI.expand is the indicator
-						// that URITemplate has been loaded already
-						/* URITemplate = */ sap.ui.requireSync("sap/ui/thirdparty/URITemplate");
+						throw new TypeError("Expression uses 'odata.fillUriTemplate' which requires"
+							+ " to import 'sap/ui/thirdparty/URITemplate' in advance");
 					}
 
 					return URI.expand(sExpression.trim(), mData).toString();
 				},
 				"uriEncode": function () {
-					var oODataUtils = sap.ui.require("sap/ui/model/odata/ODataUtils")
-							|| sap.ui.requireSync("sap/ui/model/odata/ODataUtils");
+					var oODataUtils = sap.ui.require("sap/ui/model/odata/ODataUtils");
+
+					if (!oODataUtils) {
+						throw new TypeError("Expression uses 'odata.uriEncode' which requires to"
+							+ " import 'sap/ui/model/odata/ODataUtils' in advance");
+					}
 
 					return oODataUtils.formatValue.apply(oODataUtils, arguments);
 				}

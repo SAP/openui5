@@ -32,21 +32,21 @@ builder:
               - sap/ui/integration/
               - sap/f/cards/
               - sap/ui/core/date/Gregorian.js
-              - '!sap/ui/integration/sap-ui-integration-config.js'
-              - '!sap/ui/integration/customElements/CustomElementCardEditor.js'
-              - '!sap/ui/integration/customElements/CustomElementEditor.js'
-              - '!sap/ui/core/plugin/'
-              - '!sap/ui/core/support/'
-              - '!sap/ui/core/tmpl/'
-              - '!sap/ui/core/util/serializer/'
-              - '!sap/ui/integration/*-preload.js'
-              - '!sap/ui/integration/designtime/'
-              - '!sap/ui/integration/editor/'
-              - '!sap/viz/'
-              - '!sap/suite/ui/commons/'
+              - "!sap/ui/integration/sap-ui-integration-config.js"
+              - "!sap/ui/integration/customElements/CustomElementCardEditor.js"
+              - "!sap/ui/integration/customElements/CustomElementEditor.js"
+              - "!sap/ui/core/plugin/"
+              - "!sap/ui/core/support/"
+              - "!sap/ui/core/tmpl/"
+              - "!sap/ui/core/util/serializer/"
+              - "!sap/ui/integration/*-preload.js"
+              - "!sap/ui/integration/designtime/"
+              - "!sap/ui/integration/editor/"
+              - "!sap/viz/"
+              - "!sap/suite/ui/commons/"
               - sap/ui/core/support/Hotkeys.js
-              - '!sap/ui/integration/thirdparty/'
-              - '!sap/ui/integration/designtime/thirdparty/'
+              - "!sap/ui/integration/thirdparty/"
+              - "!sap/ui/integration/designtime/thirdparty/"
               # own manifest
               - sap/ui/integration/manifest.json
               # manifests for library dependencies
@@ -73,8 +73,8 @@ builder:
               - sap/ui/integration/sap-ui-integration-config.js
               - ui5loader-autoconfig.js
               - sap/ui/integration/sap-ui-integration-define-nojQuery.js
-              - '!sap/ui/thirdparty/jquery.js'
-              - '!sap/ui/thirdparty/jquery-mobile-custom.js'
+              - "!sap/ui/thirdparty/jquery.js"
+              - "!sap/ui/thirdparty/jquery-mobile-custom.js"
             declareRawModules: false
             resolve: true
             sort: true
@@ -89,23 +89,23 @@ builder:
               - sap/ui/integration/
               - sap/f/cards/
               - sap/ui/core/date/Gregorian.js
-              - '!sap/ui/thirdparty/jquery.js'
-              - '!sap/ui/thirdparty/jquery-mobile-custom.js'
-              - '!sap/ui/integration/sap-ui-integration-config.js'
-              - '!sap/ui/integration/customElements/CustomElementCardEditor.js'
-              - '!sap/ui/integration/customElements/CustomElementEditor.js'
-              - '!sap/ui/core/plugin/'
-              - '!sap/ui/core/support/'
-              - '!sap/ui/core/tmpl/'
-              - '!sap/ui/core/util/serializer/'
-              - '!sap/ui/integration/*-preload.js'
-              - '!sap/ui/integration/designtime/'
-              - '!sap/ui/integration/editor/'
-              - '!sap/viz/'
-              - '!sap/suite/ui/commons/'
+              - "!sap/ui/thirdparty/jquery.js"
+              - "!sap/ui/thirdparty/jquery-mobile-custom.js"
+              - "!sap/ui/integration/sap-ui-integration-config.js"
+              - "!sap/ui/integration/customElements/CustomElementCardEditor.js"
+              - "!sap/ui/integration/customElements/CustomElementEditor.js"
+              - "!sap/ui/core/plugin/"
+              - "!sap/ui/core/support/"
+              - "!sap/ui/core/tmpl/"
+              - "!sap/ui/core/util/serializer/"
+              - "!sap/ui/integration/*-preload.js"
+              - "!sap/ui/integration/designtime/"
+              - "!sap/ui/integration/editor/"
+              - "!sap/viz/"
+              - "!sap/suite/ui/commons/"
               - sap/ui/core/support/Hotkeys.js
-              - '!sap/ui/integration/thirdparty/'
-              - '!sap/ui/integration/designtime/thirdparty/'
+              - "!sap/ui/integration/thirdparty/"
+              - "!sap/ui/integration/designtime/thirdparty/"
             resolve: true
             renderer: true
           - mode: require
@@ -130,21 +130,21 @@ builder:
               - sap/ui/integration/
               - sap/f/cards/
               - sap/ui/core/date/Gregorian.js
-              - '!sap/ui/integration/sap-ui-integration-config.js'
-              - '!sap/ui/integration/customElements/CustomElementCardEditor.js'
-              - '!sap/ui/integration/customElements/CustomElementEditor.js'
-              - '!sap/ui/core/plugin/'
-              - '!sap/ui/core/support/'
-              - '!sap/ui/core/tmpl/'
-              - '!sap/ui/core/util/serializer/'
-              - '!sap/ui/integration/*-preload.js'
-              - '!sap/ui/integration/designtime/'
-              - '!sap/ui/integration/editor/'
-              - '!sap/viz/'
-              - '!sap/suite/ui/commons/'
+              - "!sap/ui/integration/sap-ui-integration-config.js"
+              - "!sap/ui/integration/customElements/CustomElementCardEditor.js"
+              - "!sap/ui/integration/customElements/CustomElementEditor.js"
+              - "!sap/ui/core/plugin/"
+              - "!sap/ui/core/support/"
+              - "!sap/ui/core/tmpl/"
+              - "!sap/ui/core/util/serializer/"
+              - "!sap/ui/integration/*-preload.js"
+              - "!sap/ui/integration/designtime/"
+              - "!sap/ui/integration/editor/"
+              - "!sap/viz/"
+              - "!sap/suite/ui/commons/"
               - sap/ui/core/support/Hotkeys.js
-              - '!sap/ui/integration/thirdparty/'
-              - '!sap/ui/integration/designtime/thirdparty/'
+              - "!sap/ui/integration/thirdparty/"
+              - "!sap/ui/integration/designtime/thirdparty/"
             resolve: true
             renderer: true
           - mode: preload
@@ -175,21 +175,21 @@ builder:
               - sap/ui/integration/
               - sap/f/cards/
               - sap/ui/core/date/Gregorian.js
-              - '!sap/ui/integration/sap-ui-integration-config.js'
-              - '!sap/ui/integration/customElements/CustomElementCardEditor.js'
-              - '!sap/ui/integration/customElements/CustomElementEditor.js'
-              - '!sap/ui/core/plugin/'
-              - '!sap/ui/core/support/'
-              - '!sap/ui/core/tmpl/'
-              - '!sap/ui/core/util/serializer/'
-              - '!sap/ui/integration/*-preload.js'
-              - '!sap/ui/integration/designtime/'
-              - '!sap/ui/integration/editor/'
-              - '!sap/viz/'
-              - '!sap/suite/ui/commons/'
+              - "!sap/ui/integration/sap-ui-integration-config.js"
+              - "!sap/ui/integration/customElements/CustomElementCardEditor.js"
+              - "!sap/ui/integration/customElements/CustomElementEditor.js"
+              - "!sap/ui/core/plugin/"
+              - "!sap/ui/core/support/"
+              - "!sap/ui/core/tmpl/"
+              - "!sap/ui/core/util/serializer/"
+              - "!sap/ui/integration/*-preload.js"
+              - "!sap/ui/integration/designtime/"
+              - "!sap/ui/integration/editor/"
+              - "!sap/viz/"
+              - "!sap/suite/ui/commons/"
               - sap/ui/core/support/Hotkeys.js
-              - '!sap/ui/integration/thirdparty/'
-              - '!sap/ui/integration/designtime/thirdparty/'
+              - "!sap/ui/integration/thirdparty/"
+              - "!sap/ui/integration/designtime/thirdparty/"
             resolve: true
             renderer: true
           - mode: preload
@@ -197,7 +197,7 @@ builder:
             filters:
               - sap/ui/integration/designtime/baseEditor/
               - sap/ui/integration/designtime/cardEditor/
-              - '!sap/ui/integration/designtime/cardEditor/ConfigurationTemplate.js'
+              - "!sap/ui/integration/designtime/cardEditor/ConfigurationTemplate.js"
             resolve: true
             renderer: true
       bundleOptions:
@@ -217,21 +217,21 @@ builder:
               - sap/ui/integration/
               - sap/f/cards/
               - sap/ui/core/date/Gregorian.js
-              - '!sap/ui/integration/sap-ui-integration-config.js'
-              - '!sap/ui/integration/customElements/CustomElementCardEditor.js'
-              - '!sap/ui/integration/customElements/CustomElementEditor.js'
-              - '!sap/ui/core/plugin/'
-              - '!sap/ui/core/support/'
-              - '!sap/ui/core/tmpl/'
-              - '!sap/ui/core/util/serializer/'
-              - '!sap/ui/integration/*-preload.js'
-              - '!sap/ui/integration/designtime/'
-              - '!sap/ui/integration/editor/'
-              - '!sap/viz/'
-              - '!sap/suite/ui/commons/'
+              - "!sap/ui/integration/sap-ui-integration-config.js"
+              - "!sap/ui/integration/customElements/CustomElementCardEditor.js"
+              - "!sap/ui/integration/customElements/CustomElementEditor.js"
+              - "!sap/ui/core/plugin/"
+              - "!sap/ui/core/support/"
+              - "!sap/ui/core/tmpl/"
+              - "!sap/ui/core/util/serializer/"
+              - "!sap/ui/integration/*-preload.js"
+              - "!sap/ui/integration/designtime/"
+              - "!sap/ui/integration/editor/"
+              - "!sap/viz/"
+              - "!sap/suite/ui/commons/"
               - sap/ui/core/support/Hotkeys.js
-              - '!sap/ui/integration/thirdparty/'
-              - '!sap/ui/integration/designtime/thirdparty/'
+              - "!sap/ui/integration/thirdparty/"
+              - "!sap/ui/integration/designtime/thirdparty/"
             resolve: true
             renderer: true
           - mode: preload
@@ -271,21 +271,21 @@ builder:
               - sap/m/GenericTile.js
               - sap/m/TileContent.js
               - sap/m/ImageContent.js
-              - '!sap/ui/integration/sap-ui-integration-config.js'
-              - '!sap/ui/integration/customElements/CustomElementCardEditor.js'
-              - '!sap/ui/integration/customElements/CustomElementEditor.js'
-              - '!sap/ui/core/plugin/'
-              - '!sap/ui/core/support/'
-              - '!sap/ui/core/tmpl/'
-              - '!sap/ui/core/util/serializer/'
-              - '!sap/ui/integration/*-preload.js'
-              - '!sap/ui/integration/designtime/'
-              - '!sap/ui/integration/editor/'
-              - '!sap/viz/'
-              - '!sap/suite/ui/commons/'
+              - "!sap/ui/integration/sap-ui-integration-config.js"
+              - "!sap/ui/integration/customElements/CustomElementCardEditor.js"
+              - "!sap/ui/integration/customElements/CustomElementEditor.js"
+              - "!sap/ui/core/plugin/"
+              - "!sap/ui/core/support/"
+              - "!sap/ui/core/tmpl/"
+              - "!sap/ui/core/util/serializer/"
+              - "!sap/ui/integration/*-preload.js"
+              - "!sap/ui/integration/designtime/"
+              - "!sap/ui/integration/editor/"
+              - "!sap/viz/"
+              - "!sap/suite/ui/commons/"
               - sap/ui/core/support/Hotkeys.js
-              - '!sap/ui/integration/thirdparty/'
-              - '!sap/ui/integration/designtime/thirdparty/'
+              - "!sap/ui/integration/thirdparty/"
+              - "!sap/ui/integration/designtime/thirdparty/"
             resolve: true
             renderer: true
           - mode: require

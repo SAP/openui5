@@ -834,7 +834,7 @@ sap.ui.define([
 	};
 
 	FilterBarBase.prototype.onReset = function(oEvent) {
-		this._getConditionModel().oConditionModel.removeAllConditions();
+		this._getConditionModel().removeAllConditions();
 	};
 
 	FilterBarBase.prototype.onSearch = function(oEvent) {

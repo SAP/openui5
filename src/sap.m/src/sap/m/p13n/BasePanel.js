@@ -323,6 +323,17 @@ sap.ui.define([
 		return this;
 	};
 
+	/**
+	 * Trigger to update the panel after outer influences (e.g. sap.m.p13n.Popup) trigger a reset on the panel
+	 *
+	 * @private
+	 * @ui5-restricted
+	 */
+	BasePanel.prototype.onReset = function() {
+		this._getSearchField()?.setValue("");//Reset the searchfield string
+		this._oListControl.getBinding("items")?.filter([]);//Reset the filtering
+	};
+
 	BasePanel.prototype._getDragDropConfig = function() {
 		if (!this._oDragDropInfo){
 			this._oDragDropInfo = new DragDropInfo({

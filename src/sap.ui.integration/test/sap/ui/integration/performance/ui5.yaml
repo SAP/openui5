@@ -1,4 +1,4 @@
-specVersion: '2.6'
+specVersion: "2.6"
 metadata:
   name: CardsPerformanceTest
 type: application
