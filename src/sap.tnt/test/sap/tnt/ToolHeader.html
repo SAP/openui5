@@ -594,7 +594,14 @@
 						backgroundDesign: "Solid",
 						items: [
 							new sap.m.IconTabFilter({text: "Filter 1"}),
-							new sap.m.IconTabFilter({text: "Filter 2"}),
+							new sap.m.IconTabFilter({
+								text: "Filter 2",
+								items: [
+									new sap.m.IconTabFilter({text: "Filter 2-1"}),
+									new sap.m.IconTabFilter({text: "Filter 2-2"}),
+									new sap.m.IconTabFilter({text: "Filter 2-3"})
+								]
+							}),
 							new sap.m.IconTabFilter({text: "Filter 3"})
 						]
 					}),
