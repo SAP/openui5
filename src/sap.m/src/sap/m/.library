@@ -74,6 +74,7 @@
                 <module>sap/m/CustomAttribute</module>
                 <module>sap/m/SlideTile</module>
                 <module>sap/m/GenericTile</module>
+                <module>sap/m/LinkTileContent</module>
                 <module>sap/m/TileContent</module>
                 <module>sap/m/FeedContent</module>
                 <module>sap/m/NewsContent</module>
