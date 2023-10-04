@@ -1738,7 +1738,7 @@ sap.ui.define([
 	Table.prototype._createInitPromises = function() {
 		this._oTableReady = new Deferred();
 		this._oFullInitialize = new Deferred();
-		this._oFullInitialize.promise = this._oFullInitialize.promise.catch((vError) => {}); // Avoid uncaught error
+		this._oFullInitialize.promise.catch(() => {}); // Avoid uncaught error
 		this._bFullyInitialized = false;
 	};
 

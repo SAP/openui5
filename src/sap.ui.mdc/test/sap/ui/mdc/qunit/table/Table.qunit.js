@@ -6264,7 +6264,7 @@ sap.ui.define([
 		return this.createInitPromise(assert, oTable);
 	});
 
-	QUnit.test("Type change", function(assert) {
+	QUnit.test("Type change during initialization", function(assert) {
 		const oTable = new Table();
 		const pInitPromise = this.createInitPromise(assert, oTable, "Type changed");
 
@@ -6273,7 +6273,7 @@ sap.ui.define([
 		return pInitPromise;
 	});
 
-	QUnit.test("Destroy", function(assert) {
+	QUnit.test("Destroy during initialization", function(assert) {
 		const oTable = new Table();
 		const pInitPromise = this.createInitPromise(assert, oTable, "Destroyed");
 
@@ -6285,7 +6285,6 @@ sap.ui.define([
 
 	QUnit.test("Uncaught errors", function(assert) {
 		const aErrors = [];
-		const done = assert.async();
 		const fnOnRejectedPromiseError = (oEvent) => {
 			aErrors.push(oEvent.reason);
 		};
@@ -6295,16 +6294,12 @@ sap.ui.define([
 		const oTable = new Table();
 		oTable.initialized().catch(() => {});
 
-		oTable.awaitControlDelegate().then(() => {
-			const pFullyInitialized = oTable._fullyInitialized();
+		return oTable.awaitControlDelegate().then(() => {
 			oTable.destroy();
-			return pFullyInitialized;
-		}).finally(() => {
-			wait(1000).then(() => {
-				window.removeEventListener("unhandledrejection", fnOnRejectedPromiseError);
-				assert.deepEqual(aErrors, [], "No uncaught errors detected");
-				done();
-			});
+			return wait(3000);
+		}).then(() => {
+			window.removeEventListener("unhandledrejection", fnOnRejectedPromiseError);
+			assert.deepEqual(aErrors, [], "No uncaught errors detected");
 		});
 	});
 });
