@@ -205,9 +205,8 @@ sap.ui.define([
 	 * This property must not be set for the <code>MultiValueField</code> control.
 	 *
 	 * @param {int} iMaxConditions More than 1 condition must be allowed in <code>MultiValueField</code>
-	 * @returns {sap.ui.mdc.MultiValueField} <code>this</code> to allow method chaining.
-	 * @private
-	 * @ui5-restricted sap.fe
+	 * @returns {this} <code>this</code> to allow method chaining.
+	 * @public
 	 * @deprecated Not supported, this property is not supported for the <code>MultiValueField</code> control.
 	 * @ui5-not-supported
 	 */
@@ -367,15 +366,14 @@ sap.ui.define([
 	};
 
 	/**
-	 * Sets conditions to the property <code>conditions</code>.
+	 * Sets a new value for property {@link #getConditions conditions}.
 	 *
 	 * Do not use the <code>conditions</code> property,
 	 * use the <code>items</code> aggregation instead.
 	 *
 	 * @param {object[]} aConditions Conditions to be set
-	 * @returns {sap.ui.mdc.MultiValueField} Reference to <code>this</code> to allow method chaining
-	 * @private
-	 * @ui5-restricted sap.fe
+	 * @returns {this} Reference to <code>this</code> to allow method chaining
+	 * @public
 	 * @deprecated Not supported, use the <code>items</code> aggregation to bind the control.
 	 * @ui5-not-supported
 	 * @name sap.ui.mdc.MultiValueField#setConditions
@@ -383,14 +381,13 @@ sap.ui.define([
 	 */
 
 	/**
-	 * Gets conditions of the property <code>conditions</code>.
+	 * Gets current value of property {@link #getConditions conditions}.
 	 *
 	 * Do not use the <code>conditions</code> property,
 	 * use the <code>items</code> aggregation instead.
 	 *
 	 * @returns {object[]} conditions of the field
-	 * @private
-	 * @ui5-restricted sap.fe
+	 * @public
 	 * @deprecated Not supported, use the <code>items</code> aggregation to bind the control.
 	 * @ui5-not-supported
 	 * @name sap.ui.mdc.MultiValueField#getConditions
@@ -398,7 +395,7 @@ sap.ui.define([
 	 */
 
 	/**
-	 * Binds property <code>conditions</code> to model data.
+	 * Binds property {@link #getConditions conditions} to model data.
 	 *
 	 * See {@link sap.ui.base.ManagedObject#bindProperty ManagedObject.bindProperty} for a detailed description of the possible properties of oBindingInfo
 	 *
@@ -407,8 +404,7 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.base.ManagedObject.PropertyBindingInfo} oBindingInfo The binding information
 	 * @returns {this} Reference to <code>this</code> to allow method chaining
-	 * @private
-	 * @ui5-restricted sap.fe
+	 * @public
 	 * @deprecated Not supported, use the <code>value</code> property and <code>additionalValue</code> property to bind the control.
 	 * @ui5-not-supported
 	 * @name sap.ui.mdc.MultiValueField#bindConditions
@@ -416,14 +412,13 @@ sap.ui.define([
 	 */
 
 	/**
-	 * Unbinds property <code>conditions</code> from model data.
+	 * Unbinds property {@link #getConditions conditions} from model data.
 	 *
 	 * Do not use the <code>conditions</code> property,
 	 * use the <code>value</code> and <code>additionalValue</code> properties instead.
 	 *
 	 * @returns {this} Reference to <code>this</code> to allow method chaining
-	 * @private
-	 * @ui5-restricted sap.fe
+	 * @public
 	 * @deprecated Not supported, use the <code>value</code> property and <code>additionalValue</code> property to bind the control.
 	 * @ui5-not-supported
 	 * @name sap.ui.mdc.MultiValueField#unbindConditions
@@ -431,15 +426,16 @@ sap.ui.define([
 	 */
 
 	/**
-	 * The type of data handled by the field. The type is used to parse, format, and validate the value.
+	 * Sets a new value for property {@link #getDataType dataType}.
+
+	* The type of data handled by the field. The type is used to parse, format, and validate the value.
 	 *
 	 * <b>Note:</b> If the <code>items</code> aggregation is bound to a model using a type, this type is used.
 	 * In this case the value of the <code>dataType</code> property is ignored.
 	 *
-	 * @param {string} sDataType DataType to be set
-	 * @returns {sap.ui.mdc.MultiValueField} Reference to <code>this</code> to allow method chaining
-	 * @private
-	 * @ui5-restricted sap.fe
+	 * @param {string|undefined} sDataType DataType to be set
+	 * @returns {this} Reference to <code>this</code> to allow method chaining
+	 * @public
 	 * @deprecated Not supported, the type in the binding to the <code>items</code> aggregation is used.
 	 * @ui5-not-supported
 	 * @name sap.ui.mdc.MultiValueField#setDataType
@@ -447,15 +443,32 @@ sap.ui.define([
 	 */
 
 	/**
+	 * Gets current value of property {@link #getDataType dataType}.
+	 *
+	 * The type of data handled by the field. The type is used to parse, format, and validate the value.
+	 *
+	 * <b>Note:</b> If the <code>items</code> aggregation is bound to a model using a type, this type is used.
+	 * In this case the value of the <code>dataType</code> property is ignored.
+	 *
+	 * @returns {string} Value of property <code>dataType</code>
+	 * @public
+	 * @deprecated Not supported, the type in the binding to the <code>value</code> property is used.
+	 * @ui5-not-supported
+	 * @name sap.ui.mdc.MultiValueField#getDataType
+	 * @function
+	 */
+
+	/**
+	 * Sets a new value for property {@link #getDataTypeConstraints dataTypeConstraints}.
+	 *
 	 * The constraints of the type specified in <code>dataType</code>.
 	 *
 	 * <b>Note:</b> If the <code>items</code> aggregation is bound to a model using a type, this type is used.
 	 * In this case the values of the <code>dataType</code> property and the <code>dataTypeConstraints</code> property are ignored.
 	 *
-	 * @param {string} oDataTypeConstraints Constraints to be set
-	 * @returns {sap.ui.mdc.MultiValueField} Reference to <code>this</code> to allow method chaining
-	 * @private
-	 * @ui5-restricted sap.fe
+	 * @param {object|undefined} oDataTypeConstraints Constraints to be set
+	 * @returns {this} Reference to <code>this</code> to allow method chaining
+	 * @public
 	 * @deprecated Not supported, the type in the binding to the <code>items</code> aggregation is used.
 	 * @ui5-not-supported
 	 * @name sap.ui.mdc.MultiValueField#setDataTypeConstraints
@@ -463,15 +476,32 @@ sap.ui.define([
 	 */
 
 	/**
+	 * Gets current value of property {@link #getDataTypeConstraints dataTypeConstraints}.
+	 *
+	 * The constraints of the type specified in <code>dataType</code>.
+	 *
+	 * <b>Note:</b> If the <code>items</code> aggregation is bound to a model using a type, this type is used.
+	 * In this case the values of the <code>dataType</code> property and the <code>dataTypeConstraints</code> property are ignored.
+	 *
+	 * @returns {object} Value of property <code>dataTypeConstraints</code>
+	 * @public
+	 * @deprecated Not supported, the <code>Constraints</code> of the type in the binding to the <code>value</code> property is used.
+	 * @ui5-not-supported
+	 * @name sap.ui.mdc.MultiValueField#getDataTypeConstraints
+	 * @function
+	 */
+
+	/**
+	 * Sets a new value for property {@link #getDataTypeFormatOptions dataTypeFormatOptions}.
+	 *
 	 * The format options of the type specified in <code>dataType</code>.
 	 *
 	 * <b>Note:</b> If the <code>items</code> aggregation is bound to a model using a type, this type is used.
 	 * In this case the values of the <code>dataType</code> property and the <code>dataTypeFormatOptions</code> property are ignored.
 	 *
-	 * @param {string} oDataTypeFormatOptions Format options to be set
-	 * @returns {sap.ui.mdc.MultiValueField} Reference to <code>this</code> to allow method chaining
-	 * @private
-	 * @ui5-restricted sap.fe
+	 * @param {object|undefined} oDataTypeFormatOptions Format options to be set
+	 * @returns {this} Reference to <code>this</code> to allow method chaining
+	 * @public
 	 * @deprecated Not supported, the type in the binding to the <code>items</code> aggregation is used.
 	 * @ui5-not-supported
 	 * @name sap.ui.mdc.MultiValueField#setDataTypeFormatOptions
@@ -479,18 +509,44 @@ sap.ui.define([
 	 */
 
 	/**
-	 * Sets a new value for property <code>multipleLines</code>.
+	 * Gets current value of property {@link #getDataTypeFormatOptions dataTypeFormatOptions}.
+	 *
+	 * The format options of the type specified in <code>dataType</code>.
+	 *
+	 * <b>Note:</b> If the <code>items</code> aggregation is bound to a model using a type, this type is used.
+	 * In this case the values of the <code>dataType</code> property and the <code>dataTypeFormatOptions</code> property are ignored.
+	 *
+	 * @returns {object} Value of property <code>dataTypeFormatOptions</code>
+	 * @public
+	 * @deprecated Not supported, the <code>FormatOptions</code> of the type in the binding to the <code>value</code> property is used.
+	 * @ui5-not-supported
+	 * @name sap.ui.mdc.MultiValueField#getDataTypeFormatOptions
+	 * @function
+	 */
+
+	/**
+	 * Sets a new value for property {@link #getMultipleLines multipleLines}.
 	 *
 	 * @param {boolean} [bMultipleLines=false] New value for property <code>multipleLines</code>
-	 * @returns {sap.ui.mdc.MultiValueField} Reference to <code>this</code> to allow method chaining
-	 * @private
-	 * @ui5-restricted sap.fe
+	 * @returns {this} Reference to <code>this</code> to allow method chaining
+	 * @public
 	 * @deprecated This property is not supported for multi-value fields.
 	 * @ui5-not-supported
 	 * @name sap.ui.mdc.MultiValueField#setMultipleLines
 	 * @function
 	 */
 
-	 return Field;
+	/**
+	 * Gets current value of property {@link #getMultipleLines multipleLines}.
+	 *
+	 * @returns {boolean} Value for property <code>multipleLines</code>
+	 * @public
+	 * @deprecated This property is not supported for multi-value fields.
+	 * @ui5-not-supported
+	 * @name sap.ui.mdc.MultiValueField#getMultipleLines
+	 * @function
+	 */
+
+	return Field;
 
 });
