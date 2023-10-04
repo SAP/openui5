@@ -48,6 +48,7 @@
 							alt="{i18n>APP_HEADER_LOGO_ALT}"
 							class="sapUiDemokitMainHeaderLogo"
 							height="2rem"
+							id="sap_logo"
 							decorative="false"
 							press="onHeaderLogoPress" />
 

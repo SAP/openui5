@@ -26,7 +26,7 @@ sap.ui.define([
 						id: "tree",
 						success: function() {
 							this.waitFor({
-								controlType: "sap.ui.documentation.sdk.controls.DemokitTreeItem",
+								controlType: "sap.ui.documentation.DemokitTreeItem",
 								matchers: new Properties({title: sNode}),
 								actions: new Press(),
 								errorMessage: "Cannot select " + sNode + " node."

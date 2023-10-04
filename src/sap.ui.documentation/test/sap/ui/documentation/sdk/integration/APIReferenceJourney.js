@@ -28,7 +28,7 @@ sap.ui.define([
 
 	opaTest("Should Filter the tree", function (Given, When, Then) {
 		When.onTheApiMasterPage.iSearchFor("sap.ui.base.o");
-		Then.onTheApiMasterPage.iShouldSeeTheseItems(["sap", "ui", "base", "Object", "ObjectPool"]);
+		Then.onTheApiMasterPage.iShouldSeeTheseItems(["sap", "ui", "base", "Object","MetadataOptions", "ObjectPool"]);
 	});
 
 	opaTest("Should select an item from the filtered tree", function (Given, When, Then) {
@@ -57,7 +57,7 @@ sap.ui.define([
 	});
 
 	opaTest("Should scroll to section via link", function (Given, When, Then) {
-		When.onTheSubApiDetailPage.iSelectALink("getInterface");
+		When.onTheSubApiDetailPage.iSelectSectionLink("getInterface");
 		Then.onTheSubApiDetailPage.iShouldSeeTheCorrectSectionSelected("Methods").
 		and.iShouldSeeTheCorrectSubSectionOnTop("getInterface");
 	});
