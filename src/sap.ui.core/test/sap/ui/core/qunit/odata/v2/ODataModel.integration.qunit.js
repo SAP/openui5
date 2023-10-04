@@ -5460,7 +5460,7 @@ usePreliminaryContext : false}}">\
 		}).then(function () {
 			var oResetPromise;
 
-			if (bWithFailedPOST && bPersistTechnicalMessages && !bDeleteCreatedEntities) {
+			if (bWithFailedPOST && bPersistTechnicalMessages) {
 				that.expectMessages([{
 						code : "UF0",
 						fullTarget : "/SalesOrderSet('1')/ToLineItems('~key~')",
