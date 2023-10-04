@@ -30,6 +30,9 @@ sap.ui.define([
 		oView.destroy();
 	});
 
+	/**
+	 * @deprecated As of 1.120
+	 */
 	QUnit.module("sap.ui.core.mvc.View#runPreprocessor(sync)", {
 		beforeEach: function() {
 			this.mock = sinon.mock(XMLPreprocessor);
