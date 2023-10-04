@@ -35,6 +35,18 @@ sap.ui.define(['./library', 'sap/ui/core/Lib'],
 				mTexts[IndicationColor.Indication06] = rb.getText("INDICATION_STATE_INDICATION06");
 				mTexts[IndicationColor.Indication07] = rb.getText("INDICATION_STATE_INDICATION07");
 				mTexts[IndicationColor.Indication08] = rb.getText("INDICATION_STATE_INDICATION08");
+				mTexts[IndicationColor.Indication09] = rb.getText("INDICATION_STATE_INDICATION09");
+				mTexts[IndicationColor.Indication10] = rb.getText("INDICATION_STATE_INDICATION10");
+				mTexts[IndicationColor.Indication11] = rb.getText("INDICATION_STATE_INDICATION11");
+				mTexts[IndicationColor.Indication12] = rb.getText("INDICATION_STATE_INDICATION12");
+				mTexts[IndicationColor.Indication13] = rb.getText("INDICATION_STATE_INDICATION13");
+				mTexts[IndicationColor.Indication14] = rb.getText("INDICATION_STATE_INDICATION14");
+				mTexts[IndicationColor.Indication15] = rb.getText("INDICATION_STATE_INDICATION15");
+				mTexts[IndicationColor.Indication16] = rb.getText("INDICATION_STATE_INDICATION16");
+				mTexts[IndicationColor.Indication17] = rb.getText("INDICATION_STATE_INDICATION17");
+				mTexts[IndicationColor.Indication18] = rb.getText("INDICATION_STATE_INDICATION18");
+				mTexts[IndicationColor.Indication19] = rb.getText("INDICATION_STATE_INDICATION19");
+				mTexts[IndicationColor.Indication20] = rb.getText("INDICATION_STATE_INDICATION20");
 			}
 		};
 

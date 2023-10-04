@@ -129,7 +129,12 @@ sap.ui.define([
 						 * A multiple aggregation for buttons that can be added to the footer of the popup
 						 * dialog. Works only if the PDF viewer is set to open in a popup dialog.
 						 */
-						popupButtons: {type: "sap.m.Button", multiple: true, singularName: "popupButton"}
+						popupButtons: {type: "sap.m.Button", multiple: true, singularName: "popupButton"},
+						/**
+						 * An illustrated message is displayed when pdf cannot be displayed
+						 * @private
+						 */
+						_illustratedMessage: { type: "sap.m.IllustratedMessage", multiple: false, visibility: "hidden" }
 					},
 					events: {
 						/**

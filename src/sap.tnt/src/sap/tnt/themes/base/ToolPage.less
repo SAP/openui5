@@ -24,6 +24,8 @@
 @_sap_tnt_ToolPage_ContentBorderRadiusTabletPhone: 0;
 @_sap_tnt_ToolPage_AsideCollapsedPhoneTransform: -100%;
 @_sap_tnt_ToolPage_AsideCollapsedPhoneTransformRtl: 100%;
+@_sap_tnt_ToolPage_AsidePhoneTop: 0;
+@_sap_tnt_ToolPage_AsidePhoneWidth: auto;
 
 /* ==========================================================================
    Root element
@@ -100,7 +102,8 @@ html.sap-phone {
     position: absolute;
     left: 0;
     bottom: 0;
-    top: 0;
+    top: @_sap_tnt_ToolPage_AsidePhoneTop;
+    width:  @_sap_tnt_ToolPage_AsidePhoneWidth;
 
     margin: @_sap_tnt_ToolPage_AsideMarginsPhone;
   }

@@ -16,6 +16,7 @@
 @_sap_tnt_SideNavigation_PhoneBorderRadius: 0;
 @_sap_tnt_SideNavigation_BoxShadow: none;
 @_sap_tnt_SideNavigation_TriangleDisplay: block;
+@_sap_tnt_SideNavigation_PhoneWidth: @_sap_tnt_SideNavigation_Width;
 
 .sapTntSideNavigation {
 	display: flex;
@@ -33,6 +34,7 @@ html.sap-phone,
 html.sap-tablet:not(html.sap-combi) {
 	.sapTntSideNavigation {
 		border-radius: @_sap_tnt_SideNavigation_PhoneBorderRadius;
+		width: @_sap_tnt_SideNavigation_PhoneWidth;
 	}
 }
 

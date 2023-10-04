@@ -1301,7 +1301,91 @@ sap.ui.define([
 		  * @public
 		  * @since 1.75
 		  */
-		 Indication08 : "Indication08"
+		 Indication08 : "Indication08",
+
+		 /**
+		  * Indication Color 9
+		  * @public
+		  * @since 1.120
+		  */
+		 Indication09 : "Indication09",
+
+		 /**
+		  * Indication Color 10
+		  * @public
+		  * @since 1.120
+		  */
+		 Indication10 : "Indication10",
+
+		 /**
+		  * Indication Color 11
+		  * @public
+		  * @since 1.120
+		  */
+		 Indication11 : "Indication11",
+
+		 /**
+		  * Indication Color 12
+		  * @public
+		  * @since 1.120
+		  */
+		 Indication12 : "Indication12",
+
+		 /**
+		  * Indication Color 13
+		  * @public
+		  * @since 1.120
+		  */
+		 Indication13 : "Indication13",
+
+		 /**
+		  * Indication Color 14
+		  * @public
+		  * @since 1.120
+		  */
+		 Indication14 : "Indication14",
+
+		 /**
+		  * Indication Color 15
+		  * @public
+		  * @since 1.120
+		  */
+		 Indication15 : "Indication15",
+
+		 /**
+		  * Indication Color 16
+		  * @public
+		  * @since 1.120
+		  */
+		 Indication16 : "Indication16",
+
+		 /**
+		  * Indication Color 17
+		  * @public
+		  * @since 1.120
+		  */
+		 Indication17 : "Indication17",
+
+		 /**
+		  * Indication Color 18
+		  * @public
+		  * @since 1.120
+		  */
+		 Indication18 : "Indication18",
+
+		 /**
+		  * Indication Color 19
+		  * @public
+		  * @since 1.120
+		  */
+		 Indication19 : "Indication19",
+
+		 /**
+		  * Indication Color 20
+		  * @public
+		  * @since 1.120
+		  */
+		 Indication20 : "Indication20"
 	 };
 	 DataType.registerEnum("sap.ui.core.IndicationColor", thisLib.IndicationColor);
 

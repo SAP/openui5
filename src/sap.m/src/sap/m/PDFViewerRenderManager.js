@@ -125,7 +125,7 @@ sap.ui.define([
 						illustrationType: IllustratedMessageType.SimpleError,
 						enableDefaultTitleAndDescription: false
 					});
-
+					that.setAggregation("_illustratedMessage", oIllustratedMessage);
 					that._objectsRegister[sPlaceholderIllustratedMessageFactoryFunctionName] = function () {
 						oIllustratedMessage.setTitle(that._getIllustratedMessageErrorMessage());
 						oIllustratedMessage.setIllustrationType(IllustratedMessageType.SimpleError);
