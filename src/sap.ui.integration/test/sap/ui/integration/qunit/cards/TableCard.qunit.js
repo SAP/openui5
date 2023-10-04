@@ -505,6 +505,72 @@ sap.ui.define([
 		}
 	};
 
+	var oManifest_TableCardColumnsFromParams = {
+		"sap.app": {
+			"id": "test.cards.table.card6"
+		},
+		"sap.card": {
+			"type": "Table",
+			"configuration": {
+				"parameters": {
+					"column1Name": {
+						"value": "salesOrder"
+					},
+					"column2Name": {
+						"value": "status"
+					}
+				}
+			},
+			"header": {
+				"title": "Columns from parameters"
+			},
+			"content": {
+				"data": {
+					"json": [
+						{
+							"product": "Beam Breaker B-1",
+							"salesOrder": "5000010050",
+							"customer": "Robert Brown Entertainment",
+							"status": "Delivered",
+							"statusState": "Success",
+							"orderUrl": "http://www.sap.com",
+							"percent": 30,
+							"percentValue": "30%",
+							"progressState": "Error",
+							"iconSrc": "sap-icon://help"
+						},
+						{
+							"product": "Beam Breaker B-2",
+							"salesOrder": "5000010051",
+							"customer": "Entertainment Argentinia",
+							"status": "Canceled",
+							"statusState": "Error",
+							"orderUrl": "http://www.sap.com",
+							"percent": 70,
+							"percentValue": "70 of 100",
+							"progressState": "Success",
+							"iconSrc": "sap-icon://help",
+							"showStateIcon": true,
+							"customStateIcon": "sap-icon://bbyd-active-sales"
+						}
+					]
+				},
+				"row": {
+					"columns": [
+						{
+							"title": "Column 1",
+							"value": "{= ${}[${parameters>/column1Name/value}]}"
+						},
+						{
+							"title": "Column 2",
+							"value": "{= ${}[${parameters>/column2Name/value}]}"
+						}
+					]
+				}
+			}
+		}
+	};
+
 	QUnit.module("Table Card", {
 		beforeEach: function () {
 			this.oCard = new Card({
@@ -691,6 +757,35 @@ sap.ui.define([
 
 		// Act
 		this.oCard.setManifest(oManifest_TableCard_MaxItems);
+	});
+
+	QUnit.test("Using columns defined by parameters", function (assert) {
+
+		// Arrange
+		var done = assert.async();
+
+		this.oCard.attachEvent("_ready", function () {
+			var oCardContent = this.oCard.getAggregation("_content");
+			var oTable = oCardContent.getAggregation("_content");
+			var aRows = oTable.getItems();
+			var aCellsFirstRow = aRows[0].getCells();
+			var aCellsSecondRow = aRows[1].getCells();
+
+
+			Core.applyChanges();
+
+			// Assert column values
+			assert.equal(aCellsFirstRow[0].getText(), "5000010050", "First row should have correct value for first column.");
+			assert.equal(aCellsFirstRow[1].getText(), "Delivered", "First row should have correct value for second column.");
+
+			assert.equal(aCellsSecondRow[0].getText(), "5000010051", "Second row should have correct value for first column.");
+			assert.equal(aCellsSecondRow[1].getText(), "Canceled", "Second row should have correct value for second column.");
+
+			done();
+		}.bind(this));
+
+		// Act
+		this.oCard.setManifest(oManifest_TableCardColumnsFromParams);
 	});
 
 	QUnit.module("Manifest properties", {
