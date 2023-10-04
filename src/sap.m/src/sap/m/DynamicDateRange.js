@@ -249,6 +249,9 @@ sap.ui.define([
 		 * In order for a specific option to be used its key should be added into the <code>standardOptions</code> property
 		 * of the control. No options are added by default.
 		 *
+		 * <b>Note:</b> Property binding with the <code>value</code> and <code>formatter</code> properties is not supported.
+		 * Instead, you should use their public getter and setter methods.
+		 *
 		 * Suggestions are available when the user types in the control input field.
 		 *
 		 * <h3>Responsive behavior</h3>
@@ -275,6 +278,9 @@ sap.ui.define([
 					 * 'values' - an array of parameters for the same option.
 					 * The control uses a special wrong-value object, when the input receives
 					 * an unrecognized string - { operator: "PARSEERROR", values: [...]}
+					 *
+					 *  <b>Note:</b> Data binding for the <code>value</code> property is not supported. Instead,
+					 *  you should use DynamicDateRange's <code>getValue</code> and <code>setValue</code> methods.
 					 *
 					 * @since 1.92
 					 * @private
@@ -351,6 +357,9 @@ sap.ui.define([
 					/**
 					 * An instance of sap.m.DynamicDateFormat or a user defined format object with the
 					 * corresponding formatting and parsing functionality.
+					 *
+					 * <b>Note:</b> Data binding for the <code>formatter</code> property is not supported. Instead,
+					 * you should use DynamicDateRange's <code>getFormatter</code> and <code>setFormatter</code> methods.
 					 *
 					 * @since 1.92
 					 * @private
@@ -567,6 +576,7 @@ sap.ui.define([
 		/**
 		 * Getter for the <code>value</code> of the control.
 		 * @returns {sap.m.DynamicDateRangeValue} A <code>sap.m.DynamicDateRangeValue</code>
+		 * @public
 		 */
 		DynamicDateRange.prototype.getValue = function() {
 			return this.getProperty("value");
@@ -575,6 +585,7 @@ sap.ui.define([
 		/**
 		 * Getter for the <code>formatter</code> of the control.
 		 * @returns {sap.m.DynamicDateFormat} A <code>sap.m.DynamicDateFormat</code>
+		 * @public
 		 */
 		 DynamicDateRange.prototype.getFormatter = function() {
 			return this.getProperty("formatter");
@@ -585,6 +596,7 @@ sap.ui.define([
 		 * @returns {sap.m.DynamicDateFormat} A <code>sap.m.DynamicDateFormat</code>
 		 * @param {sap.m.DynamicDateFormat} oFormatter A <code>sap.m.DynamicDateFormat</code>
 		 * @returns {this} Reference to <code>this</code> for method chaining
+		 * @public
 		 */
 		 DynamicDateRange.prototype.setFormatter = function(oFormatter) {
 			this.setProperty("formatter", oFormatter);
@@ -635,6 +647,7 @@ sap.ui.define([
 		 * Setter for the <code>value</code> control property.
 		 * @param {sap.m.DynamicDateRangeValue} oValue A <code>sap.m.DynamicDateRangeValue</code>
 		 * @returns {this} Reference to <code>this</code> for method chaining
+		 * @public
 		 */
 		DynamicDateRange.prototype.setValue = function(oValue) {
 			var sOptionKey = oValue && oValue.operator;
@@ -841,7 +854,7 @@ sap.ui.define([
 		/**
 		 * Calculates a date range from a provided object in the format of the DynamicDateRange's value.
 		 *
-		 * @param {string} oValue The provided value
+		 * @param {sap.m.DynamicDateRangeValue} oValue A <code>sap.m.DynamicDateRangeValue</code>
 		 * @returns {sap.ui.core.date.UniversalDate[]} An array of two date objects - start and end date
 		 * @public
 		 */
