@@ -205,4 +205,15 @@ describe('sap.m.MultiComboBox', function() {
 			expect(takeScreenshot()).toLookAs("multiComboBox_tokens_order_after_reopen");
 		});
 	});
+
+	it("should visualize popover correctly when having long valueStateText", function() {
+		var arrow = element(by.id("longHeader-arrow"));
+		arrow.click();
+
+		browser.actions().sendKeys(protractor.Key.ARROW_DOWN).perform();
+		browser.actions().sendKeys(protractor.Key.ARROW_DOWN).perform();
+		browser.actions().sendKeys(protractor.Key.SPACE).perform();
+
+		expect(takeScreenshot()).toLookAs("long_vsh_text");
+	});
 });
