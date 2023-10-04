@@ -4056,7 +4056,8 @@ sap.ui.define([
 	 *   {@link sap.ui.model.odata.v4.Context#expand} (@experimental as of version 1.105.0;
 	 *   available for read-only hierarchies since 1.117.0), supported only if a
 	 *   <code>hierarchyQualifier</code> is given. Root nodes are on the first level. By default,
-	 *   only root nodes are available; they are not yet expanded.
+	 *   only root nodes are available; they are not yet expanded. Since 1.120.0,
+	 *   <code>Number.MAX_SAFE_INTEGER</code> can be used to expand all levels.
 	 * @param {boolean} [oAggregation.grandTotalAtBottomOnly]
 	 *   Tells whether the grand totals for aggregatable properties are displayed at the bottom only
 	 *   (since 1.86.0); <code>true</code> for bottom only, <code>false</code> for top and bottom,

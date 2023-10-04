@@ -27,7 +27,9 @@ sap.ui.define([
 					"sap.ui.core.sample.odata.v4.RecursiveHierarchy.expandTo")
 				|| oUriParameters.get("expandTo");
 			this._oAggregation = {
-				expandTo : parseInt(sExpandTo || "3"),
+				expandTo : sExpandTo === "*"
+					? Number.MAX_SAFE_INTEGER
+					: parseInt(sExpandTo || "3"),
 				hierarchyQualifier : "OrgChart"
 			};
 			const sVisibleRowCount = TestUtils.retrieveData( // controlled by OPA
