@@ -896,16 +896,6 @@ sap.ui.define([
 		},
 
 		/**
-		 * Whether dependency cache info files should be loaded instead of preload files.
-		 *
-		 * This is an experimental feature intended for HTTP/2 scenarios.
-		 * @private
-		 */
-		getDepCache : function() {
-			return BaseConfig.get({name: "sapUiXxDepCache", type: BaseConfig.Type.Boolean, external: true});
-		},
-
-		/**
 		 * Flag whether a Component should load the manifest first.
 		 *
 		 * @returns {boolean} true if a Component should load the manifest first
