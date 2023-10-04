@@ -6332,8 +6332,7 @@ sap.ui.define([
 		} else {
 			delete this.mChangedEntities[sKey];
 		}
-		sap.ui.getCore().getMessageManager().removeMessages(this.getMessagesByEntity(sKey,
-			/*bExcludePersistent*/!bDeleteEntity));
+		sap.ui.getCore().getMessageManager().removeMessages(this.getMessagesByEntity(sKey, /*bExcludePersistent*/true));
 
 		return pMetaDataLoaded;
 	};
