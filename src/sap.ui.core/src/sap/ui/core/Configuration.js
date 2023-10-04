@@ -293,6 +293,7 @@ sap.ui.define([
 	var Configuration = BaseObject.extend("sap.ui.core.Configuration", /** @lends sap.ui.core.Configuration.prototype */ {
 
 		constructor : function() {
+			BaseObject.call(this);
 			Log.error(
 				"Configuration is designed as a singleton and should not be created manually! " +
 				"Please require 'sap/ui/core/Configuration' instead and use the module export directly without using 'new'."
@@ -1344,6 +1345,7 @@ sap.ui.define([
 	 */
 	var FormatSettings = BaseObject.extend("sap.ui.core.Configuration.FormatSettings", /** @lends sap.ui.core.Configuration.FormatSettings.prototype */ {
 		constructor : function() {
+			BaseObject.call(this);
 			this.mSettings = {};
 		},
 

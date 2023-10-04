@@ -186,6 +186,7 @@ sap.ui.define([
 	 */
 	var Filter = BaseObject.extend("sap.ui.model.Filter", /** @lends sap.ui.model.Filter.prototype */ {
 		constructor : function(vFilterInfo, vOperator, vValue1, vValue2){
+			BaseObject.call(this);
 			//There are two different ways of specifying a filter
 			//It can be passed in only one object or defined with parameters
 			if (typeof vFilterInfo === "object" && !Array.isArray(vFilterInfo)) {

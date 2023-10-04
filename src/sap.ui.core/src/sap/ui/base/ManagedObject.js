@@ -442,9 +442,10 @@ sap.ui.define([
 
 		constructor : function(sId, mSettings, oScope) {
 
-			var that = this;
-
 			EventProvider.call(this); // no use to pass our arguments
+
+			const that = this;
+
 			if ( typeof sId !== 'string' && sId !== undefined ) {
 				// shift arguments in case sId was missing, but mSettings was given
 				oScope = mSettings;

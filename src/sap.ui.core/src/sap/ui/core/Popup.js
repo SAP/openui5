@@ -543,6 +543,7 @@ sap.ui.define([
 	*/
 	var Layer = BaseObject.extend("sap.ui.core.Popup.Layer", {
 		constructor: function() {
+			BaseObject.call(this);
 			var sDomString = this.getDomString();
 			this._$Ref = jQuery(sDomString).appendTo(StaticArea.getDomRef());
 		}

@@ -126,7 +126,8 @@ sap.ui.define([
 	 * @private
 	 */
 	function hasDisabledAncestor(oControl) {
-		for (var oParent = oControl.getParent(); oParent && !oParent.getEnabled && oParent.getParent; oParent = oParent.getParent()) {/* empty */}
+		let oParent;
+		for (oParent = oControl.getParent(); oParent && !oParent.getEnabled && oParent.getParent; oParent = oParent.getParent()) {/* empty */}
 		return oParent && oParent.getEnabled && !oParent.getEnabled();
 	}
 

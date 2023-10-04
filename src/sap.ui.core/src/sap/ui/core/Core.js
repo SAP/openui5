@@ -243,6 +243,8 @@ sap.ui.define([
 	var Core = BaseObject.extend("sap.ui.core.Core", /** @lends sap.ui.core.Core.prototype */ {
 		constructor : function() {
 
+			BaseObject.call(this);
+
 			var that = this,
 				METHOD = "sap.ui.core.Core";
 
@@ -253,8 +255,6 @@ sap.ui.define([
 						  " and use the module export directly without using 'new'.");
 				return oCore;
 			}
-
-			BaseObject.call(this);
 
 			_oEventProvider = new EventProvider();
 

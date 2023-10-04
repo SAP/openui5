@@ -42,6 +42,7 @@ sap.ui.define([
 		var OpaPlugin = UI5Object.extend("sap.ui.test.OpaPlugin", /** @lends sap.ui.test.OpaPlugin.prototype */ {
 
 			constructor : function() {
+				UI5Object.call(this);
 				this._oLogger = _OpaLogger.getLogger("sap.ui.test.Opa5");
 				this._oMatcherFactory = new MatcherFactory();
 			},
