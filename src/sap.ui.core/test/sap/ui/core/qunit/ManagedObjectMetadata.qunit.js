@@ -502,32 +502,27 @@ function(
 			}.bind(this));
 		});
 
-		QUnit.test("loadDesignTime - cache the results implicitly (child  with parent + other child with same parent)", function(assert) {
-			return DTManagedObjectChild.getMetadata().loadDesignTime().then(function(oTestOuter) {
-				sinon.assert.callCount(this.oRequireStub, 4);
-				this.oRequireStub.reset();
-				//previously the issue was that a derived control deleted the parents designtimeModule.
-				//any other child did not set the correct designtimeModule path
+		QUnit.test("loadDesignTime - cache the results implicitly (child  with parent + other child with same parent)", async function(assert) {
+			await DTManagedObjectChild.getMetadata().loadDesignTime();
+			sinon.assert.callCount(this.oRequireStub, 4);
+			this.oRequireStub.reset();
 
-				//load derived metadata DTManagedObjectChild3 that inherits DTManagedObject
-				DTManagedObjectChild3.getMetadata().loadDesignTime().then(function(oTestOuter3) {
-					sinon.assert.callCount(this.oRequireStub, 2);
-					this.oRequireStub.reset();
-					return DTManagedObject.getMetadata().loadDesignTime().then(function(oTestInner) {
-						assert.strictEqual(oTestInner.designtimeModule, "DTManagedObject.designtime", "DesignTime module path defined DTManagedObjectChild");
-					}.bind(this)).then(function() {
-						assert.strictEqual(oTestOuter3.designtimeModule, "DTManagedObjectChild3.designtime", "DesignTime module path defined DTManagedObjectChild3");
-					});
-				}.bind(this));
-				//load derived metadata DTManagedObjectChild3 that inherits DTManagedObjectChild
-				DTManagedObjectChild.getMetadata().loadDesignTime().then(function(oTestInner) {
-					return DTManagedObject.getMetadata().loadDesignTime().then(function(oTestInner2) {
-						assert.strictEqual(oTestInner2.designtimeModule, "DTManagedObject.designtime", "DesignTime module path defined DTManagedObjectChild");
-					}.bind(this)).then(function() {
-						assert.strictEqual(oTestInner.designtimeModule, "DTManagedObjectChild.designtime", "DesignTime module path defined DTManagedObjectChild, parent still valid");
-					});
-				}.bind(this));
-			}.bind(this));
+			//previously the issue was that a derived control deleted the parents designtimeModule.
+			//any other child did not set the correct designtimeModule path
+
+			//load derived metadata DTManagedObjectChild3 that inherits DTManagedObject
+			const oTestOuter3 = await DTManagedObjectChild3.getMetadata().loadDesignTime();
+			sinon.assert.callCount(this.oRequireStub, 2);
+			this.oRequireStub.reset();
+
+			let oTestInner = await DTManagedObject.getMetadata().loadDesignTime();
+			assert.strictEqual(oTestInner.designtimeModule, "DTManagedObject.designtime", "DesignTime module path defined DTManagedObjectChild");
+			assert.strictEqual(oTestOuter3.designtimeModule, "DTManagedObjectChild3.designtime", "DesignTime module path defined DTManagedObjectChild3");
+
+			oTestInner = await DTManagedObjectChild.getMetadata().loadDesignTime();
+			const oTestInner2 = await DTManagedObject.getMetadata().loadDesignTime();
+			assert.strictEqual(oTestInner2.designtimeModule, "DTManagedObject.designtime", "DesignTime module path defined DTManagedObjectChild");
+			assert.strictEqual(oTestInner.designtimeModule, "DTManagedObjectChild.designtime", "DesignTime module path defined DTManagedObjectChild, parent still valid");
 		});
 
 		QUnit.test("loadDesignTime - cache the results with designtime only via inheritance", function(assert) {
