@@ -81,13 +81,6 @@ sap.ui.define([
 				knownIssues: {
 					memoryLeaks: true // as tested in MemoryLeak.qunit.js
 				}
-			},
-			"sap.ui.mdc.chart.ChartTypeButton": {
-				create: false, // the ChartTypeButton is not build like a normal control and can not be tested
-				knownIssues: {
-					memoryLeaks: true,
-					id: true
-				}
 			}
 		}
 	});

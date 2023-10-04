@@ -224,6 +224,7 @@ sap.ui.define([
 	 * @public
 	 */
 	ChartDelegate.initializeInnerChart = function (oChart) {
+		return Promise.reject();
 	};
 
 	/**

@@ -212,13 +212,15 @@ sap.ui.define([
             }
 
             if (oChart._getTypeBtnActive()) {
-                this._oChartTypeBtn = new ChartTypeButton(oChart, {
+                this._oChartTypeBtn = new ChartTypeButton(this.getId() + "-btnChartType", {
+                    type: "Transparent",
+                    enabled: false,
                     ariaHasPopup: AriaHasPopup.ListBox,
                     layoutData: new OverflowToolbarLayoutData({
                         closeOverflowOnInteraction: false
-                    })
+                    }),
+                    chart: oChart
                 });
-                this._oChartTypeBtn.setEnabled(false);
                 this.addEnd(this._oChartTypeBtn);
                 this._chartInternalButtonsToEnable.push(this._oChartTypeBtn);
             }
