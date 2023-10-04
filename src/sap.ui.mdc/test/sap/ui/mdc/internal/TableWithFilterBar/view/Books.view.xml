@@ -835,8 +835,8 @@
 							</mdcat:ActionToolbarAction> -->
 						</mdc:actions>
 						<mdc:items>
-							<mdcc:Item id="dim1" type="groupable" name="language_code" role="category" label="Languages"/>
-							<mdcc:Item id="meas1" type="aggregatable" name="averagemetricsWords" role="axis1" label="Words (avg)"/>
+							<mdcc:Item id="dim1" type="groupable" propertyKey="language_code" role="category" label="Languages"/>
+							<mdcc:Item id="meas1" type="aggregatable" propertyKey="averagemetricsWords" role="axis1" label="Words (avg)"/>
 						</mdc:items>
 					</mdc:Chart>
 

@@ -76,7 +76,7 @@ sap.ui.define([
 			if (oPropertyInfo.groupable) {
 
 				return oModifier.createControl("sap.ui.mdc.chart.Item", mPropertyBag.appComponent, mPropertyBag.view, sId + "--GroupableItem--" + sPropertyName,{
-					name: oPropertyInfo.name,
+					propertyKey: oPropertyInfo.name,
 					label: oPropertyInfo.label,
 					type: "groupable",
 					role: sRole ? sRole : "category"
@@ -86,7 +86,7 @@ sap.ui.define([
 			if (oPropertyInfo.aggregatable) {
 
 				return oModifier.createControl("sap.ui.mdc.chart.Item", mPropertyBag.appComponent, mPropertyBag.view, sId + "--AggregatableItem--" + sPropertyName,{
-					name: oPropertyInfo.name,
+					propertyKey: oPropertyInfo.name,
 					label: oPropertyInfo.label,
 					type: "aggregatable",
 					role: sRole ? sRole : "axis1"

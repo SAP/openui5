@@ -23,15 +23,15 @@
 										\}
 									\}'
 								p13nMode="Item,Sort,Type,Filter"
-								autoBindOnInit="true" 
+								autoBindOnInit="true"
 								header="MDC: Chart Sample"
 								height="400px"
 								width="1000px">
 						<mdc:items>
-							<chart:Item id="IDGenre" name="genre_code" role="series" type="groupable"
-												 label="Genre"/>
-							<chart:Item id="IDPrice" name="averageprice" role="axis1" type="aggregatable"
-							label="Price (average)"/>
+							<chart:Item id="IDGenre" propertyKey="genre_code" role="series" type="groupable"
+								label="Genre"/>
+							<chart:Item id="IDPrice" propertyKey="averageprice" role="axis1" type="aggregatable"
+								label="Price (average)"/>
 						</mdc:items>
 					</mdc:Chart>
 				</items>
