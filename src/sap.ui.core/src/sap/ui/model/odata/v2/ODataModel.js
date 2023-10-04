@@ -6430,8 +6430,7 @@ sap.ui.define([
 		} else {
 			delete this.mChangedEntities[sKey];
 		}
-		Messaging.removeMessages(this.getMessagesByEntity(sKey,
-			/*bExcludePersistent*/!bDeleteEntity));
+		Messaging.removeMessages(this.getMessagesByEntity(sKey, /*bExcludePersistent*/true));
 
 		return pMetaDataLoaded;
 	};
