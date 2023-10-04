@@ -40,6 +40,10 @@ sap.ui.define([],
 		var aContent = oVerticalLayout.getContent();
 
 		for ( var i = 0; i < aContent.length; i++) {
+			// skip invisible controls
+			if(!aContent[i].getVisible()) {
+				continue;
+			}
 			// for compatibility keep the old, wrong class name
 			rm.openStart("div");
 			rm.class("sapUiVltCell");
