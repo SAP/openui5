@@ -23,7 +23,7 @@
 			<mdc:variant>
 				<variants:VariantManagement id="variantManagementChart" for="bookChart" class="sapUiTinyMarginBottom"/>
 			</mdc:variant>
-			
+
 			<mdc:selectionDetailsActions>
 				<mdcc:SelectionDetailsActions>
 					<mdcc:detailsItemActions>
@@ -46,8 +46,8 @@
 			</mdc:selectionDetailsActions>
 
 			<mdc:items>
-				<mdcc:Item id="dim1" type="groupable" name="language_code" role="category" label="Languages"/>
-				<mdcc:Item id="meas1" type="aggregatable" name="averagemetricsWords" role="axis1" label="Words (average)"/>
+				<mdcc:Item id="dim1" type="groupable" propertyKey="language_code" role="category" label="Languages"/>
+				<mdcc:Item id="meas1" type="aggregatable" propertyKey="averagemetricsWords" role="axis1" label="Words (average)"/>
 			</mdc:items>
 		</mdc:Chart>
 </mvc:View>
