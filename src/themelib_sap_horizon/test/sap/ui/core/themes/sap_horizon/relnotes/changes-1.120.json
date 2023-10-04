@@ -3,6 +3,11 @@
     "date": "October 2023",
     "notes": [
       {
+        "id": "4962fef59d0c1d90aef3a8b2d5bd4fee6f7dfd0f",
+        "type": "FEATURE",
+        "text": "sap.f.FlexibleColumnLayout: Allow resize columns by dragging"
+      },
+      {
         "id": "92d74530a2718787ac816aaba9df4cbd8d999d08",
         "type": "FIX",
         "text": " sap.ui.core.IconPool: correction for icon 'slim-arrow-up' for theme 'horizon'",
@@ -23,6 +28,11 @@
             "reference": "2370093601"
           }
         ]
+      },
+      {
+        "id": "fd123fc79d9f9627efb6edfc29d0c6508f8216b6",
+        "type": "FEATURE",
+        "text": " sap.m.ObjectStatus: introduce new set of indication colors"
       },
       {
         "id": "0d0411cc8299574b7b609dd2b411f1fa748dc16e",

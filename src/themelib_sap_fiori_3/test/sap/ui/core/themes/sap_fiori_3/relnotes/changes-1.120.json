@@ -12,6 +12,11 @@
             "reference": "2370093601"
           }
         ]
+      },
+      {
+        "id": "fd123fc79d9f9627efb6edfc29d0c6508f8216b6",
+        "type": "FEATURE",
+        "text": " sap.m.ObjectStatus: introduce new set of indication colors"
       }
     ]
   }

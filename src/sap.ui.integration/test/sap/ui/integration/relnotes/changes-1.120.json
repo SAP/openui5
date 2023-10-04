@@ -3,6 +3,22 @@
     "date": "October 2023",
     "notes": [
       {
+        "id": "0c62b1a82a52bbfb97da76ff6a6432d99645cb7c",
+        "type": "FEATURE",
+        "text": " Integration Cards: Introduce date formatter"
+      },
+      {
+        "id": "6e86ece6b85543ebcf7cbf3736f2834517144654",
+        "type": "FIX",
+        "text": " Integration Cards: maxValue of micro charts now works without binding",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370098010"
+          }
+        ]
+      },
+      {
         "id": "7090aa25d0943f10e2987ad5e48b470e2f560ba8",
         "type": "FIX",
         "text": " Integration Cards: Attribute icon in List card is now always on the same line with text",

@@ -3,6 +3,11 @@
     "date": "October 2023",
     "notes": [
       {
+        "id": "4962fef59d0c1d90aef3a8b2d5bd4fee6f7dfd0f",
+        "type": "FEATURE",
+        "text": "sap.f.FlexibleColumnLayout: Allow resize columns by dragging"
+      },
+      {
         "id": "7090aa25d0943f10e2987ad5e48b470e2f560ba8",
         "type": "FIX",
         "text": " Integration Cards: Attribute icon in List card is now always on the same line with text",

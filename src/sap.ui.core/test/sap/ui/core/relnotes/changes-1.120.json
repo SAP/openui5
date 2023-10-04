@@ -8,6 +8,11 @@
         "text": " Deprecation of sap/ui/core/DeclarativeSupport"
       },
       {
+        "id": "886995704809aedbaf7c399f3e0e3a5c6f30043c",
+        "type": "FEATURE",
+        "text": " Deprecate Configuration.getManifestFirst"
+      },
+      {
         "id": "cd7524243b75cc2b9e7dcd4d7c2500aaee948a4d",
         "type": "FEATURE",
         "text": " sap.ui.core.LocaleData#getLanguageName: derive language name if necessary"
@@ -27,6 +32,11 @@
         "id": "dbd7430219b051903847319296cd46af1889d66d",
         "type": "FEATURE",
         "text": " Move new security facade from sap/ui/core/Security.js to sap/ui/security/Security.js"
+      },
+      {
+        "id": "fd123fc79d9f9627efb6edfc29d0c6508f8216b6",
+        "type": "FEATURE",
+        "text": " sap.m.ObjectStatus: introduce new set of indication colors"
       },
       {
         "id": "d73a742c9de5007efb19eff8f314a74fb8063d65",

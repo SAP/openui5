@@ -3,6 +3,17 @@
     "date": "October 2023",
     "notes": [
       {
+        "id": "53f5bc866d215dc83289f36176d10cc0427eaa60",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: DateNavigation now uses firstDayOfWeek",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370093247"
+          }
+        ]
+      },
+      {
         "id": "7d7dfa208d4b28eb7c99ee35e1237953d5a13be1",
         "type": "FEATURE",
         "text": " Deprecation of sap/ui/core/DeclarativeSupport"
@@ -50,6 +61,11 @@
             "reference": "002075129500006449282023"
           }
         ]
+      },
+      {
+        "id": "fd123fc79d9f9627efb6edfc29d0c6508f8216b6",
+        "type": "FEATURE",
+        "text": " sap.m.ObjectStatus: introduce new set of indication colors"
       },
       {
         "id": "d73a742c9de5007efb19eff8f314a74fb8063d65",
