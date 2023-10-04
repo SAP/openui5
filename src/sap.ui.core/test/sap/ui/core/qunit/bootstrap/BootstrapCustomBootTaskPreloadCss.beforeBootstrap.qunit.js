@@ -21,8 +21,10 @@
 	window["sap-ui-config"] = window["sap-ui-config"] || {};
 	window["sap-ui-config"]["preloadLibCss"] = [ "!sap.ui.core", "sap.ui.testlib" ];
 	window["sap-ui-config"]["xx-bootTask"] = function(callback) {
-		sap.ui.getCore().loadLibrary("sap.ui.testlib", "test-resources/sap/ui/core/qunit/testdata/uilib");
-		callback();
+		sap.ui.getCore().loadLibrary("sap.ui.testlib", {
+			url: "test-resources/sap/ui/core/qunit/testdata/uilib",
+			async: true
+		}).then(callback);
 	};
 	window["sap-ui-config"]["themeroots"] = {};
 	// Define theme root for current theme for testing purposes

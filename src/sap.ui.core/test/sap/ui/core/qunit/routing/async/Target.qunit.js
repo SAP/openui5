@@ -333,22 +333,24 @@ sap.ui.define([
 			this.oViews = new Views({async: true});
 
 			// System under test + Arrange
-			this.createTarget = function(name) {
-				this.oTarget = new Target(
-					{
-						_name: "componentTarget",
-						name: name,
-						controlAggregation: "content",
-						controlId: this.oShell.getId(),
-						type: "Component",
-						id: "baz",
-						_async: true,
-						options: {
-							manifest: false
-						}
-					},
-					this.oViews
-				);
+			this.createTarget = function(name, noManifest) {
+				var oConfig = {
+					_name: "componentTarget",
+					name: name,
+					controlAggregation: "content",
+					controlId: this.oShell.getId(),
+					type: "Component",
+					id: "baz",
+					_async: true
+				};
+
+				if (noManifest) {
+					oConfig.options =  {
+						manifest: false
+					};
+				}
+
+				this.oTarget = new Target(oConfig, this.oViews);
 			};
 
 			this.sandbox = sinon.sandbox.create();
@@ -372,7 +374,7 @@ sap.ui.define([
 			bComponentCreated,
 			oCreatedComponent;
 
-		this.createTarget("test.routing.target");
+		this.createTarget("test.routing.target", true);
 
 		// Act
 		oDisplayed = this.oTarget.display();
@@ -411,7 +413,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Should destroy the component container once the component is destroyed", function (assert) {
-		this.createTarget("test.routing.target");
+		this.createTarget("test.routing.target", true);
 		var oDisplayed = this.oTarget.display();
 
 		return oDisplayed.then(function (oInfo) {
