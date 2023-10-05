@@ -67,5 +67,17 @@ sap.ui.define([
 	AdaptationMixin.call(Control.prototype);
 	PropertyHelperMixin.call(Control.prototype);
 
+	/**
+	 * @name sap.ui.mdc.Control#setDelegate
+	 * @private
+	 * @ui5-restricted sap.ui.mdc
+	 */
+
+	/**
+	 * @name sap.ui.mdc.Control#getDelegate
+	 * @private
+	 * @ui5-restricted sap.ui.mdc
+	 */
+
 	return Control;
 });

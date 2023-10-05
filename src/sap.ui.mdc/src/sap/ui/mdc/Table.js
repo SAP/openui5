@@ -465,7 +465,7 @@ sap.ui.define([
 				 * Defines the aggregate conditions.
 				 *
 				 * <b>Note</b>: This property must not be bound.<br>
-				 * <b>Note:</b> This property is exclusively used for handling SAPUI5 flexibility changes.
+				 * <b>Note:</b> This property is exclusively used for handling SAPUI5 flexibility changes. Do not use it otherwise.
 				 *
 				 * @since 1.87
 				 */
@@ -603,6 +603,10 @@ sap.ui.define([
 				},
 				/**
 				 * Columns of the table.
+				 * <b>Note:</b>
+				 * This aggregation is managed by the control, can only be populated during the definition in the XML view, and is not bindable.
+				 * Any changes of the initial aggregation content might result in undesired effects.
+				 * Changes of the aggregation have to be made with the {@link sap.ui.mdc.p13n.StateUtil StateUtil}.
 				 */
 				columns: {
 					type: "sap.ui.mdc.table.Column",
@@ -3038,6 +3042,96 @@ sap.ui.define([
 			}
 		}
 	};
+
+	/**
+	 * @name sap.ui.mdc.Table#addColumn
+	 * @private
+	 * @ui5-restricted sap.ui.mdc, sap.ui.fl
+	 */
+
+	/**
+	 * @name sap.ui.mdc.Table#destroyColumns
+	 * @private
+	 * @ui5-restricted sap.ui.mdc, sap.ui.fl
+	 */
+
+	/**
+	 * @name sap.ui.mdc.Table#insertColumn
+	 * @private
+	 * @ui5-restricted sap.ui.mdc, sap.ui.fl
+	 */
+
+	/**
+	 * @name sap.ui.mdc.Table#removeColumn
+	 * @private
+	 * @ui5-restricted sap.ui.mdc, sap.ui.fl
+	 */
+
+	/**
+	 * @name sap.ui.mdc.Table#removeAllColumns
+	 * @private
+	 * @ui5-restricted sap.ui.mdc, sap.ui.fl
+	 */
+
+	/**
+	 * @name sap.ui.mdc.Table#setSortConditions
+	 * @private
+	 * @ui5-restricted sap.ui.mdc, sap.ui.fl
+	 */
+
+	/**
+	 * @name sap.ui.mdc.Table#getSortConditions
+	 * @private
+	 * @ui5-restricted sap.ui.mdc, sap.ui.fl
+	 */
+
+	/**
+	 * @name sap.ui.mdc.Table#setFilterConditions
+	 * @private
+	 * @ui5-restricted sap.ui.mdc, sap.ui.fl
+	 */
+
+	/**
+	 * @name sap.ui.mdc.Table#getFilterConditions
+	 * @private
+	 * @ui5-restricted sap.ui.mdc, sap.ui.fl
+	 */
+
+	/**
+	 * @name sap.ui.mdc.Table#setGroupConditions
+	 * @private
+	 * @ui5-restricted sap.ui.mdc, sap.ui.fl
+	 */
+
+	/**
+	 * @name sap.ui.mdc.Table#getGroupConditions
+	 * @private
+	 * @ui5-restricted sap.ui.mdc, sap.ui.fl
+	 */
+
+	/**
+	 * @name sap.ui.mdc.Table#setAggregateConditions
+	 * @private
+	 * @ui5-restricted sap.ui.mdc, sap.ui.fl
+	 */
+
+	/**
+	 * @name sap.ui.mdc.Table#getAggregateConditions
+	 * @private
+	 * @ui5-restricted sap.ui.mdc, sap.ui.fl
+	 */
+
+	/**
+	 * @name sap.ui.mdc.Table#setPropertyInfo
+	 * @private
+	 * @ui5-restricted sap.ui.mdc, sap.ui.fl
+	 */
+
+	/**
+	 * @name sap.ui.mdc.Table#getPropertyInfo
+	 * @private
+	 * @ui5-restricted sap.ui.mdc, sap.ui.fl
+	 */
 
 	return Table;
 });

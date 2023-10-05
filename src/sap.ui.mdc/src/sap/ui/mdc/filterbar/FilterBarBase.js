@@ -186,10 +186,10 @@ sap.ui.define([
 
 				/**
 				 * Contains all the displayed {@link sap.ui.mdc.FilterField filter fields} of the <code>FilterBarBase</code> control.
-				 * <b>Note:</b><br>
-				 * This aggregation is managed by the control and can only be populated at the initial instantiation in the XML View and not by binding.
-				 * Please be aware that any changes of the initial aggregation content might result in undesired effects and are not allowed.
-				 * Changes of the aggregation should be done with the {@link sap.ui.mdc.p13n.StateUtil StateUtil}.
+				 * <b>Note:</b>
+				 * This aggregation is managed by the control, can only be populated during the definition in the XML view, and is not bindable.
+				 * Any changes of the initial aggregation content might result in undesired effects.
+				 * Changes of the aggregation have to be made with the {@link sap.ui.mdc.p13n.StateUtil StateUtil}.
 				 */
 				filterItems: {
 					type: "sap.ui.mdc.FilterField",
@@ -1956,31 +1956,55 @@ sap.ui.define([
 	/**
 	 * @name sap.ui.mdc.filterbar.FilterBarBase#addFilterItem
 	 * @private
-	 * @ui5-not-supported
+	 * @ui5-restricted sap.ui.mdc, sap.ui.fl
 	 */
 
 	/**
 	 * @name sap.ui.mdc.filterbar.FilterBarBase#destroyFilterItems
 	 * @private
-	 * @ui5-not-supported
+	 * @ui5-restricted sap.ui.mdc, sap.ui.fl
 	 */
 
 	/**
 	 * @name sap.ui.mdc.filterbar.FilterBarBase#insertFilterItem
 	 * @private
-	 * @ui5-not-supported
+	 * @ui5-restricted sap.ui.mdc, sap.ui.fl
 	 */
 
 	/**
 	 * @name sap.ui.mdc.filterbar.FilterBarBase#removeFilterItem
 	 * @private
-	 * @ui5-not-supported
+	 * @ui5-restricted sap.ui.mdc, sap.ui.fl
 	 */
 
 	/**
 	 * @name sap.ui.mdc.filterbar.FilterBarBase#removeAllFilterItems
 	 * @private
-	 * @ui5-not-supported
+	 * @ui5-restricted sap.ui.mdc, sap.ui.fl
+	 */
+
+	/**
+	 * @name sap.ui.mdc.filterbar.FilterBarBase#setFilterConditions
+	 * @private
+	 * @ui5-restricted sap.ui.mdc, sap.ui.fl
+	 */
+
+	/**
+	 * @name sap.ui.mdc.filterbar.FilterBarBase#getFilterConditions
+	 * @private
+	 * @ui5-restricted sap.ui.mdc, sap.ui.fl
+	 */
+
+	/**
+	 * @name sap.ui.mdc.filterbar.FilterBarBase#setPropertyInfo
+	 * @private
+	 * @ui5-restricted sap.ui.mdc, sap.ui.fl
+	 */
+
+	/**
+	 * @name sap.ui.mdc.filterbar.FilterBarBase#getPropertyInfo
+	 * @private
+	 * @ui5-restricted sap.ui.mdc, sap.ui.fl
 	 */
 
 	return FilterBarBase;

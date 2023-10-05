@@ -189,7 +189,7 @@ sap.ui.define([
 
                     /**
                      * Defines the sort conditions.<br>
-                     *
+                     * <b>Note:</b> This property must not be bound.<br>
                      * <b>Note:</b> This property is exclusively used for handling SAPUI5 flexibility changes. Do not use it for anything else.
                      *
                      * @since 1.88
@@ -302,6 +302,10 @@ sap.ui.define([
                     /**
                      * This property describes the measures and dimensions visible in the chart.
                      * Changes in the personalization are also reflected here.
+                     * <b>Note:</b>
+				     * This aggregation is managed by the control, can only be populated during the definition in the XML view, and is not bindable.
+				     * Any changes of the initial aggregation content might result in undesired effects.
+				     * Changes of the aggregation have to be made with the {@link sap.ui.mdc.p13n.StateUtil StateUtil}.
                      */
                     items: {
                         type: "sap.ui.mdc.chart.Item",
@@ -1424,6 +1428,72 @@ sap.ui.define([
             }
 
         };
+
+        /**
+         * @name sap.ui.mdc.Chart#addItem
+         * @private
+         * @ui5-restricted sap.ui.mdc, sap.ui.fl
+         */
+
+        /**
+         * @name sap.ui.mdc.Chart#destroyItems
+         * @private
+         * @ui5-restricted sap.ui.mdc, sap.ui.fl
+         */
+
+        /**
+         * @name sap.ui.mdc.Chart#insertItem
+         * @private
+         * @ui5-restricted sap.ui.mdc, sap.ui.fl
+         */
+
+        /**
+         * @name sap.ui.mdc.Chart#removeItem
+         * @private
+         * @ui5-restricted sap.ui.mdc, sap.ui.fl
+         */
+
+        /**
+         * @name sap.ui.mdc.Chart#removeAllItems
+         * @private
+         * @ui5-restricted sap.ui.mdc, sap.ui.fl
+         */
+
+        /**
+         * @name sap.ui.mdc.Chart#setSortConditions
+         * @private
+         * @ui5-restricted sap.ui.mdc, sap.ui.fl
+         */
+
+        /**
+         * @name sap.ui.mdc.Chart#getSortConditions
+         * @private
+         * @ui5-restricted sap.ui.mdc, sap.ui.fl
+         */
+
+        /**
+         * @name sap.ui.mdc.Chart#setFilterConditions
+         * @private
+         * @ui5-restricted sap.ui.mdc, sap.ui.fl
+         */
+
+        /**
+         * @name sap.ui.mdc.Chart#getFilterConditions
+         * @private
+         * @ui5-restricted sap.ui.mdc, sap.ui.fl
+         */
+
+        /**
+         * @name sap.ui.mdc.Chart#setPropertyInfo
+         * @private
+         * @ui5-restricted sap.ui.mdc, sap.ui.fl
+         */
+
+        /**
+         * @name sap.ui.mdc.Chart#getPropertyInfo
+         * @private
+         * @ui5-restricted sap.ui.mdc, sap.ui.fl
+         */
 
         return Chart;
     });
