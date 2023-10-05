@@ -3231,9 +3231,13 @@ sap.ui.define([
 					this._setRowsStartDate(oFocusedDate);
 					this._oOneMonthsRow._focusDate(CalendarDate.fromLocalJSDate(oFocusedDate, this._getPrimaryCalendarType()), true);
 				} else if (CalendarUtils._isNextMonth(oEvtSelectedStartCalendarDate.toLocalJSDate(), this.getStartDate())) {
-					this.shiftToDate(oEvtSelectedStartCalendarDate);
+					this.shiftToDate(oEvtSelectedStartCalendarDate.toLocalJSDate());
 					this._addMonthFocusDelegate(this._getRowInstanceByViewKey(this.getViewKey()));
-					return;
+					oEndDate.setUTCDate(oEndDate.getUTCDate() + 1);
+					oEndDate.setUTCMilliseconds(oEndDate.getUTCMilliseconds() - 1);
+					oEndDate = CalendarUtils._createLocalDate(oEndDate, true);
+
+					return this.fireIntervalSelect({startDate: oEvtSelectedStartDate, endDate: oEndDate, subInterval: false, row: undefined});
 				}
 				oEndDate.setUTCDate(oEndDate.getUTCDate() + 1);
 				break;
