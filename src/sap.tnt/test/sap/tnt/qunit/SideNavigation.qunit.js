@@ -258,6 +258,10 @@ sap.ui.define([
 	});
 
 	QUnit.test('api', function (assert) {
+		this.sideNavigation.setWidth("20rem");
+		Core.applyChanges();
+
+		assert.strictEqual(this.sideNavigation.getDomRef().style.width, '20rem', 'width is set');
 
 		var selectedItem = Core.byId(this.sideNavigation.getSelectedItem());
 		assert.strictEqual(selectedItem.getText(), 'Root', 'initial selection is correct');
