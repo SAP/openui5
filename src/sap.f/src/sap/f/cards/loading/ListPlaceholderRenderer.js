@@ -20,17 +20,16 @@ sap.ui.define(["sap/ui/core/Renderer", "./PlaceholderBaseRenderer"], function(Re
 	 */
 	ListPlaceholderRenderer.CSS_CLASS_PLACEHOLDER = "sapFCardContentListPlaceholder";
 
-	ListPlaceholderRenderer.renderTitleAndDescription = function(oRm, oItem) {
-		if (oItem.attributes && oItem.title && oItem.description) {
+	ListPlaceholderRenderer.renderTitleAndDescription = function(oRm, oControl) {
+		if (oControl.getAttributesLength() > 0 && oControl.getHasDescription()) {
 			this.renderRow(oRm, true);
 			return;
 		}
 
-		if (oItem.title) {
-			this.renderRow(oRm);
-		}
+		// Render mandatory title
+		this.renderRow(oRm);
 
-		if (oItem.description) {
+		if (oControl.getHasDescription()) {
 			this.renderRow(oRm);
 		}
 	};
@@ -48,12 +47,12 @@ sap.ui.define(["sap/ui/core/Renderer", "./PlaceholderBaseRenderer"], function(Re
 			.close("div");
 	};
 
-	ListPlaceholderRenderer.renderAttributes = function (oRm, oItem) {
-		if (!oItem.attributes) {
+	ListPlaceholderRenderer.renderAttributes = function (oRm, iAttributesLength) {
+		if (iAttributesLength < 1) {
 			return;
 		}
 
-		var iAttrRows = oItem.attributes.length / 2 + 1;
+		var iAttrRows = Math.floor(iAttributesLength / 2 + 1);
 
 		for (var j = 0; j < iAttrRows; j++) {
 			oRm.openStart("div")
@@ -75,8 +74,7 @@ sap.ui.define(["sap/ui/core/Renderer", "./PlaceholderBaseRenderer"], function(Re
 	};
 
 	ListPlaceholderRenderer.renderContent = function(oControl, oRm) {
-		var iMinItems = oControl.getMinItems(),
-			oItem = oControl.getItem();
+		var iMinItems = oControl.getMinItems();
 
 		for (var i = 0; i < iMinItems; i++) {
 			oRm.openStart("div")
@@ -84,7 +82,7 @@ sap.ui.define(["sap/ui/core/Renderer", "./PlaceholderBaseRenderer"], function(Re
 				.style("height", oControl.getItemHeight())
 				.openEnd();
 
-			if (oItem && oItem.icon) {
+			if (oControl.getHasIcon()) {
 				oRm.openStart("div")
 					.class("sapFCardListPlaceholderImg")
 					.class("sapFCardLoadingShimmer")
@@ -96,17 +94,16 @@ sap.ui.define(["sap/ui/core/Renderer", "./PlaceholderBaseRenderer"], function(Re
 				.class("sapFCardListPlaceholderRows")
 				.openEnd();
 
-			if (oItem) {
-				this.renderTitleAndDescription(oRm, oItem);
-				this.renderAttributes(oRm, oItem);
+			this.renderTitleAndDescription(oRm, oControl);
 
-				if (oItem.chart) {
-					this.renderRow(oRm);
-				}
+			this.renderAttributes(oRm, oControl.getAttributesLength());
 
-				if (oItem.actionsStrip) {
-					this.renderRow(oRm);
-				}
+			if (oControl.getHasChart()) {
+				this.renderRow(oRm);
+			}
+
+			if (oControl.getHasActionsStrip()) {
+				this.renderRow(oRm);
 			}
 
 			oRm.close("div");

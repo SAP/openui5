@@ -122,10 +122,16 @@ sap.ui.define([
 	ListContent.prototype.createLoadingPlaceholder = function (oConfiguration) {
 		var oCard = this.getCardInstance(),
 			iContentMinItems = oCard.getContentMinItems(oConfiguration);
+		const oResolvedConfig = BindingResolver.resolveValue(oConfiguration.item, this);
+		const oPlaceholderInfo = ListContentItem.getPlaceholderInfo(oResolvedConfig);
 
 		return new ListPlaceholder({
 			minItems: iContentMinItems !== null ? iContentMinItems : 2,
-			item: oConfiguration.item,
+			hasIcon: oPlaceholderInfo.hasIcon,
+			attributesLength: oPlaceholderInfo.attributesLength,
+			hasChart: oPlaceholderInfo.hasChart,
+			hasActionsStrip: oPlaceholderInfo.hasActionsStrip,
+			hasDescription: oPlaceholderInfo.hasDescription,
 			itemHeight: ListContentRenderer.getItemMinHeight(oConfiguration, this) + "rem"
 		});
 	};
