@@ -1343,13 +1343,10 @@ sap.ui.define([
 		assert.equal(iCounter, 0, "Number of rerenderings of Ctrl2");
 	});
 
-	/**
-	 * @deprecated As of 1.92
-	 */
-	QUnit.test("RenderManager writeIcon with Icon URL", function(assert) {
+	QUnit.test("RenderManager.prototype.icon with Icon URL", function(assert) {
 		var rm = new RenderManager().getInterface();
 		var oIconInfo = IconPool.getIconInfo("wrench");
-		rm.writeIcon(oIconInfo.uri, ["classA", "classB"], {
+		rm.icon(oIconInfo.uri, ["classA", "classB"], {
 			id: "icon1",
 			propertyA: "valueA",
 			propertyB: "valueB"
@@ -1357,24 +1354,25 @@ sap.ui.define([
 		rm.flush(document.getElementById("area6"));
 		rm.destroy();
 
-		var $icon1 = jQueryById("icon1");
-		assert.ok($icon1[0], "icon should be rendered");
-		assert.ok($icon1.is("span"), "Icon URI should be rendered as a span");
-		assert.equal($icon1.css("font-family").replace(/"|'/g, ""), oIconInfo.fontFamily, "Icon's font family is rendered");
-		assert.equal($icon1.attr("data-sap-ui-icon-content"), oIconInfo.content, "Icon content is rendered as attribute");
-		assert.ok($icon1.hasClass("classA"), "icon has classA as a CSS class");
-		assert.ok($icon1.hasClass("classB"), "icon has classB as a CSS class");
-		assert.ok($icon1.hasClass("sapUiIcon"), "icon has sapUiIcon as a CSS class");
-		assert.ok($icon1.hasClass("sapUiIconMirrorInRTL"), "icon has sapUiIconMirrorInRTL as a CSS class");
-		assert.equal($icon1.attr("propertyA"), "valueA", "Attribute should be set");
-		assert.equal($icon1.attr("propertyB"), "valueB", "Attribute should be set");
-		assert.notEqual($icon1.attr("aria-label"), undefined, "Attribute aria-label should be set");
+		var icon1 = document.getElementById("icon1");
+		assert.ok(icon1, "icon should be rendered");
+		assert.equal(icon1.tagName.toLowerCase(), "span", "Icon URI should be rendered as a span");
+		assert.equal(icon1.style["fontFamily"].replace(/"|'/g, ""), oIconInfo.fontFamily, "Icon's font family is rendered");
+		assert.equal(icon1.getAttribute("data-sap-ui-icon-content"), oIconInfo.content, "Icon content is rendered as attribute");
+		assert.ok(icon1.classList.contains("classA"), "icon has classA as a CSS class");
+		assert.ok(icon1.classList.contains("classB"), "icon has classB as a CSS class");
+		assert.ok(icon1.classList.contains("sapUiIcon"), "icon has sapUiIcon as a CSS class");
+		assert.ok(icon1.classList.contains("sapUiIconMirrorInRTL"), "icon has sapUiIconMirrorInRTL as a CSS class");
+		assert.equal(icon1.getAttribute("propertyA"), "valueA", "Attribute should be set");
+		assert.equal(icon1.getAttribute("propertyB"), "valueB", "Attribute should be set");
+		assert.equal(icon1.getAttribute("aria-hidden"), "true", "Attribute 'aria-hidden' should be set");
+		assert.notEqual(icon1.getAttribute("aria-label"), undefined, "Attribute aria-label should be set");
 
-		jQueryById("area6").empty();
+		document.getElementById("area6").innerHTML = "";
 
 		rm = new RenderManager().getInterface();
 		oIconInfo = IconPool.getIconInfo("calendar");
-		rm.writeIcon(oIconInfo.uri, ["classA", "classB"], {
+		rm.icon(oIconInfo.uri, ["classA", "classB"], {
 			id: "icon1",
 			propertyA: "valueA",
 			propertyB: "valueB"
@@ -1382,54 +1380,50 @@ sap.ui.define([
 		rm.flush(document.getElementById("area6"));
 		rm.destroy();
 
-		$icon1 = jQueryById("icon1");
-		assert.ok($icon1[0], "icon should be rendered");
-		assert.ok($icon1.is("span"), "Icon URI should be rendered as a span");
-		assert.equal($icon1.css("font-family").replace(/"|'/g, ""), oIconInfo.fontFamily, "Icon's font family is rendered");
-		assert.equal($icon1.attr("data-sap-ui-icon-content"), oIconInfo.content, "Icon content is rendered as attribute");
-		assert.ok($icon1.hasClass("classA"), "icon has classA as a CSS class");
-		assert.ok($icon1.hasClass("classB"), "icon has classB as a CSS class");
-		assert.ok($icon1.hasClass("sapUiIcon"), "icon has sapUiIcon as a CSS class");
-		assert.ok(!$icon1.hasClass("sapUiIconMirrorInRTL"), "icon doesn't have sapUiIconMirrorInRTL as a CSS class");
-		assert.equal($icon1.attr("propertyA"), "valueA", "Attribute should be set");
-		assert.equal($icon1.attr("propertyB"), "valueB", "Attribute should be set");
-		assert.notEqual($icon1.attr("aria-label"), undefined, "Attribute aria-label should be set");
+		icon1 = document.getElementById("icon1");
+		assert.ok(icon1, "icon should be rendered");
+		assert.equal(icon1.tagName.toLowerCase(), "span", "Icon URI should be rendered as a span");
+		assert.equal(icon1.style["fontFamily"].replace(/"|'/g, ""), oIconInfo.fontFamily, "Icon's font family is rendered");
+		assert.equal(icon1.getAttribute("data-sap-ui-icon-content"), oIconInfo.content, "Icon content is rendered as attribute");
+		assert.ok(icon1.classList.contains("classA"), "icon has classA as a CSS class");
+		assert.ok(icon1.classList.contains("classB"), "icon has classB as a CSS class");
+		assert.ok(icon1.classList.contains("sapUiIcon"), "icon has sapUiIcon as a CSS class");
+		assert.ok(!icon1.classList.contains("sapUiIconMirrorInRTL"), "icon has sapUiIconMirrorInRTL as a CSS class");
+		assert.equal(icon1.getAttribute("propertyA"), "valueA", "Attribute should be set");
+		assert.equal(icon1.getAttribute("propertyB"), "valueB", "Attribute should be set");
+		assert.notEqual(icon1.getAttribute("aria-label"), undefined, "Attribute aria-label should be set");
 
-		jQueryById("area6").empty();
+		document.getElementById("area6").innerHTML = "";
 	});
 
-	/**
-	 * @deprecated As of 1.92
-	 */
-	QUnit.test("RenderManager writeIcon with Icon URL. aria-label and aria-labelledby are set to null", function(assert) {
+	QUnit.test("RenderManager.prototype.icon with Icon URL. aria-label and aria-labelledby are set to null", function(assert) {
 		var rm = new RenderManager().getInterface();
 		var oIconInfo = IconPool.getIconInfo("wrench");
-		rm.writeIcon(oIconInfo.uri, [], {
+		rm.icon(oIconInfo.uri, [], {
 			id: "icon1",
 			"aria-label": null,
-			"aria-labelledby": null
+			"aria-labelledby": null,
+			"role": "button"
 		});
 		rm.flush(document.getElementById("area6"));
 		rm.destroy();
 
-		var $icon1 = jQueryById("icon1"),
-			$invisibleText = jQueryById("icon1-label");
+		var icon1 = document.getElementById("icon1"),
+			invisibleText = document.getElementById("icon1-label");
 
-		assert.ok($icon1[0], "icon should be rendered");
-		assert.equal($icon1.attr("aria-label"), undefined, "Attribute aria-label should not be set");
-		assert.equal($icon1.attr("aria-labelledby"), undefined, "Attribute aria-labelledby should not be set");
-		assert.equal($invisibleText.length, 0, "No invisible text is rendered");
+		assert.ok(icon1, "icon should be rendered");
+		assert.equal(icon1.getAttribute("aria-label"), undefined, "Attribute aria-label should not be set");
+		assert.equal(icon1.getAttribute("aria-labelledby"), undefined, "Attribute aria-labelledby should not be set");
+		assert.notOk(icon1.hasAttribute("aria-hidden"), "'aria-hidden' should not be set when role isn't 'presentation'");
+		assert.notOk(invisibleText, "No invisible text is rendered");
 
-		jQueryById("area6").empty();
+		document.getElementById("area6").innerHTML = "";
 	});
 
-	/**
-	 * @deprecated As of 1.92
-	 */
-	QUnit.test("RenderManager writeIcon with Icon URL and aria-labelledby", function(assert) {
+	QUnit.test("RenderManager.prototype.icon with Icon URL and aria-labelledby", function(assert) {
 		var rm = new RenderManager().getInterface();
 		var oIconInfo = IconPool.getIconInfo("wrench");
-		rm.writeIcon(oIconInfo.uri, [], {
+		rm.icon(oIconInfo.uri, [], {
 			id: "icon1",
 			"aria-labelledby": "foo",
 			alt: "abc"
@@ -1437,22 +1431,19 @@ sap.ui.define([
 		rm.flush(document.getElementById("area6"));
 		rm.destroy();
 
-		var $icon1 = jQueryById("icon1"),
-			$invisibleText = jQueryById("icon1-label"),
-			sText = $invisibleText.text();
-		assert.ok($icon1[0], "icon should be rendered");
+		var icon1 = document.getElementById("icon1"),
+			invisibleText = document.getElementById("icon1-label"),
+			sText = invisibleText.textContent;
+		assert.ok(icon1, "icon should be rendered");
 
-		assert.equal($icon1.attr("aria-label"), undefined, "Attribute aria-label should not be set");
-		assert.equal($icon1.attr("aria-labelledby"), "foo icon1-label", "Attribute aria-labelledby should contain both the given id and the id of the invisible text");
+		assert.equal(icon1.getAttribute("aria-label"), undefined, "Attribute aria-label should not be set");
+		assert.equal(icon1.getAttribute("aria-labelledby"), "foo icon1-label", "Attribute aria-labelledby should contain both the given id and the id of the invisible text");
 		assert.equal(sText, "abc", "The content of invisible text should be set");
 
-		jQueryById("area6").empty();
+		document.getElementById("area6").innerHTML = "";
 	});
 
-	/**
-	 * @deprecated As of 1.92
-	 */
-	QUnit.test("RenderManager writeIcon with font-family which has space inside", function(assert) {
+	QUnit.test("RenderManager.prototype.icon with font-family which has space inside", function(assert) {
 		var fnOrigGetIconInfo = IconPool.getIconInfo,
 			sFontFamily = "fontfamily which has space inside";
 
@@ -1464,31 +1455,30 @@ sap.ui.define([
 
 		var rm = new RenderManager().getInterface();
 		var oIconInfo = IconPool.getIconInfo("wrench");
-		rm.writeIcon(oIconInfo.uri, [], {
+		rm.icon(oIconInfo.uri, [], {
 			id: "icon1"
 		});
 		rm.flush(document.getElementById("area6"));
 		rm.destroy();
 
-		var $icon1 = jQueryById("icon1");
-		assert.ok($icon1[0], "icon should be rendered");
-		assert.ok($icon1.is("span"), "Icon URI should be rendered as a span");
-		assert.equal($icon1.css("font-family"), "\"" + sFontFamily + "\"", "Icon's font family is rendered");
-		assert.equal($icon1.attr("data-sap-ui-icon-content"), oIconInfo.content, "Icon content is rendered as attribute");
-		assert.ok($icon1.hasClass("sapUiIcon"), "icon has sapUiIcon as a CSS class");
-		assert.ok($icon1.hasClass("sapUiIconMirrorInRTL"), "icon has sapUiIconMirrorInRTL as a CSS class");
-		assert.notEqual($icon1.attr("aria-label"), undefined, "Attribute aria-label should be set");
+		var icon1 = document.getElementById("icon1");
 
-		jQueryById("area6").empty();
+		assert.ok(icon1, "icon should be rendered");
+		assert.equal(icon1.tagName.toLowerCase(), "span", "Icon URI should be rendered as a span");
+		assert.equal(icon1.style["fontFamily"], "\"" + sFontFamily + "\"", "Icon's font family is rendered");
+		assert.equal(icon1.getAttribute("data-sap-ui-icon-content"), oIconInfo.content, "Icon content is rendered as attribute");
+		assert.ok(icon1.classList.contains("sapUiIcon"), "icon has sapUiIcon as a CSS class");
+		assert.ok(icon1.classList.contains("sapUiIconMirrorInRTL"), "icon has sapUiIconMirrorInRTL as a CSS class");
+		assert.notEqual(icon1.getAttribute("aria-label"), undefined, "Attribute aria-label should be set");
+
+		document.getElementById("area6").innerHTML = "";
 	});
 
-	/**
-	 * @deprecated As of 1.92
-	 */
 	QUnit.test("RenderManager writeIcon with Image URL", function(assert) {
 		var rm = new RenderManager().getInterface(),
 			sImgURL = sap.ui.require.toUrl("sap/ui/core/themes/base/img/Busy.gif");
-			rm.writeIcon(sImgURL, ["classA", "classB"], {
+
+		rm.icon(sImgURL, ["classA", "classB"], {
 			id: "img1",
 			propertyA: "valueA",
 			propertyB: "valueB"
@@ -1496,20 +1486,20 @@ sap.ui.define([
 		rm.flush(document.getElementById("area7"));
 		rm.destroy();
 
-		var $img1 = jQueryById("img1");
-		assert.ok($img1[0], "icon should be rendered");
-		assert.ok($img1.is("img"), "Image URI should be rendered as a img");
-		assert.ok($img1.hasClass("classA"), "img has classA as a CSS class");
-		assert.ok($img1.hasClass("classB"), "img has classB as a CSS class");
-		assert.equal($img1.attr("propertyA"), "valueA", "Attribute should be set");
-		assert.equal($img1.attr("propertyB"), "valueB", "Attribute should be set");
-		assert.equal($img1.attr("role"), "presentation", "Default attribute should be set");
-		assert.equal($img1.attr("alt"), "", "Default attribute should be set");
+		var img1 = document.getElementById("img1");
+		assert.ok(img1, "icon should be rendered");
+		assert.equal(img1.tagName.toLowerCase(), "img", "Image URI should be rendered as a img");
+		assert.ok(img1.classList.contains("classA"), "img has classA as a CSS class");
+		assert.ok(img1.classList.contains("classB"), "img has classB as a CSS class");
+		assert.equal(img1.getAttribute("propertyA"), "valueA", "Attribute should be set");
+		assert.equal(img1.getAttribute("propertyB"), "valueB", "Attribute should be set");
+		assert.equal(img1.getAttribute("role"), "presentation", "Default attribute should be set");
+		assert.equal(img1.getAttribute("alt"), "", "Default attribute should be set");
 
-		jQueryById("area7").empty();
+		document.getElementById("area7").innerHTML = "";
 
 		rm = new RenderManager().getInterface();
-		rm.writeIcon(sImgURL, ["classA", "classB"], {
+		rm.icon(sImgURL, ["classA", "classB"], {
 			id: "img1",
 			role: "",
 			alt: "test alt message"
@@ -1517,13 +1507,15 @@ sap.ui.define([
 		rm.flush(document.getElementById("area7"));
 		rm.destroy();
 
-		$img1 = jQueryById("img1");
-		assert.ok($img1[0], "icon should be rendered");
-		assert.ok($img1.is("img"), "Image URI should be rendered as a img");
-		assert.ok($img1.hasClass("classA"), "img has classA as a CSS class");
-		assert.ok($img1.hasClass("classB"), "img has classB as a CSS class");
-		assert.equal($img1.attr("role"), "", "Attribute should be changed");
-		assert.equal($img1.attr("alt"), "test alt message", "Attribute should be changed");
+		img1 = document.getElementById("img1");
+		assert.ok(img1, "icon should be rendered");
+		assert.equal(img1.tagName.toLowerCase(), "img", "Image URI should be rendered as a img");
+		assert.ok(img1.classList.contains("classA"), "img has classA as a CSS class");
+		assert.ok(img1.classList.contains("classB"), "img has classB as a CSS class");
+		assert.equal(img1.getAttribute("role"), "", "Attribute should be changed");
+		assert.equal(img1.getAttribute("alt"), "test alt message", "Attribute should be changed");
+
+		document.getElementById("area7").innerHTML = "";
 	});
 
 	QUnit.test("RenderManager should not break for controls with invalid renderer", async function(assert) {
