@@ -68,10 +68,6 @@
   margin: @_sap_tnt_ToolPage_AsideMargins;
 }
 
-.sapTntToolPageAsideCollapsed .sapTntToolPageAside {
-  z-index: 2;
-}
-
 .sapTntToolPageAsideContent {
   display: flex;
   flex-direction: column;
@@ -138,10 +134,6 @@ html.sap-phone {
   background: @_sap_tnt_ToolPage_ContentBackgroundStandard;
 }
 
-.sapTntToolPageAsideCollapsed .sapTntToolPageMain {
-  z-index: 1;
-}
-
 .sapTntToolPageMain.sapTntToolPageMainBackground-Solid {
   background: @_sap_tnt_ToolPage_ContentBackgroundSolid;
 }
@@ -178,4 +170,25 @@ html[dir=rtl] {
       }
     }
   }
+}
+
+/* ========================================================================== */
+
+.sapTntToolPageAsideCollapsed {
+
+  .sapTntToolPageMain {
+    z-index: 1;
+  }
+
+  .sapTntToolPageAside {
+    z-index: 2;
+  }
+}
+
+.sapUiLocalBusy > .sapTntToolPage {
+  z-index: 0;
+}
+
+.sapTntToolPage.sapUiLocalBusy .sapUiLocalBusyIndicator {
+  z-index: 3;
 }
