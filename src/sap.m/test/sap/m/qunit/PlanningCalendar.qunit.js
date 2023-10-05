@@ -2902,6 +2902,34 @@ sap.ui.define([
 		assert.equal(oIntervalRow.getId(), "PC1-Row1", "row returned");
 	});
 
+	QUnit.test("intervalselect 1Month View", function (assert) {
+		// Start with oneMonth view
+		//prepare
+		var oStartDate = oPC1.getStartDate();
+		oPC1.setViewKey(CalendarIntervalType.OneMonth);
+		oPC1.setStartDate(new Date(2015,1,1));
+		Core.applyChanges();
+
+		bIntervalSelect = false;
+		oIntervalStartDate = undefined;
+		oIntervalEndDate = undefined;
+
+		//act
+		qutils.triggerKeydown("PC1-OneMonthsRow-20150301", "ENTER");
+		Core.applyChanges();
+
+		// Assert
+		assert.ok(bIntervalSelect, "intervalSelect fired");
+		assert.equal(oFormatYyyyMMddHHmm.format(oIntervalStartDate), "201503010000", "interval start date returned");
+		assert.equal(oFormatYyyyMMddHHmm.format(oIntervalEndDate), "201503012359", "interval end date returned");
+		assert.ok(!jQuery("#PC1-OneMonthsRow-20150301").hasClass("sapUiCalItemSel"), "interval not longer selected");
+
+		// Cleanup
+		oPC1.setViewKey(CalendarIntervalType.Hour);
+		oPC1.setStartDate(oStartDate);
+		Core.applyChanges();
+	});
+
 	QUnit.test("rowHeaderClick", function (assert) {
 		// Arrange
 		var oSpy,
