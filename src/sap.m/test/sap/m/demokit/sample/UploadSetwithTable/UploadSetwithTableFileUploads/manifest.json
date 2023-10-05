@@ -1,0 +1,35 @@
+{
+	"sap.app": {
+		"id": "sap.m.sample.UploadSetwithTableFileUploads",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.m.sample.UploadSetwithTable.UploadSetwithTableFileUploads.Page",
+			"type": "XML",
+			"async": true
+		},
+		"dependencies": {
+			"libs": {
+				"sap.ui.unified": {}
+			}
+		},
+		"config": {
+			"sample": {
+				"stretch": true,
+				"files": [
+					"Page.view.xml",
+					"Page.controller.js",
+					"fragments/FileUpload.fragment.xml",
+					"fragments/AddViaUrl.fragment.xml",
+					"fragments/DocumentWithoutFileDialog.fragment.xml",
+					"test/items.json",
+					"test/mockserver.js",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}

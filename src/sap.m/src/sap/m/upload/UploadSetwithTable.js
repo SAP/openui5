@@ -42,13 +42,15 @@ sap.ui.define([
 	 *
 	 * @param {string} [sId] id for the new control, generated automatically if no id is given.
 	 * @param {object} [mSettings] Initial settings for the new control.
-	 * @class This control allows you to upload one or more files from your device, such as desktop, tablet or phone, and attach them to your application in a tabular manner.
+	 * @class This control allows you to upload one or more files from your device, such as desktop, tablet or phone, and attach them to your application in a responsive tabular manner.<br>
+	 * This control builds on the {@link sap.m.upload.UploadSet UploadSet} control. Provides flexibility to tailor the design of the table including columns, cells and the content to suit specific requirements.
 	 * @extends sap.m.Table
 	 * @author SAP SE
 	 * @constructor
-	 * @private
-	 * @experimental
-	 * @internal
+	 * @public
+	 * @experimental since 1.120
+	 * @since 1.120
+	 * @version ${version}
 	 * @alias sap.m.upload.UploadSetwithTable
 	 */
 	var UploadSetwithTable = Table.extend("sap.m.upload.UploadSetwithTable", {
@@ -139,13 +141,6 @@ sap.ui.define([
             },
             aggregations: {
 				/**
-				 * The header area can be used as a toolbar to add extra controls for user interactions. Note: When set, this overwrites the headerText property.
-				 */
-                headerToolbar : {
-                    type: "sap.m.OverflowToolbar",
-                    multiple: false
-                },
-				/**
 				 * Defines the uploader to be used. If not specified, the default implementation is used.
 				 */
 				uploader: {type: "sap.m.upload.UploaderTableItem", multiple: false},
@@ -165,7 +160,6 @@ sap.ui.define([
 				 */
 				previewDialog: {type: "sap.m.upload.FilePreviewDialog", multiple: false}
 			},
-			defaultAggregation : "items",
 			events: {
 				/**
 				 * The event is triggered when the file name is changed.
@@ -603,7 +597,7 @@ sap.ui.define([
 	 * API recommended for file size formatting purpose.
 	 * @param {int} iFileSize fileSize to determine units
 	 * @public
-	 * @returns {sFileSizeWithUnit} file size in KB/MB/GB default unit is KB
+	 * @returns {string} sFileSizeWithUnit file size in KB/MB/GB default unit is KB
 	 */
 	UploadSetwithTable.getFileSizeWithUnits = function(iFileSize) {
 		var iKilobyte = 1024;
@@ -669,7 +663,7 @@ sap.ui.define([
 
 	/**
 	 * API to rename the document of an item.
-	 * @param {sap.m.upload.UploadSetwithTableItem} oItem, target item.
+	 * @param {sap.m.upload.UploadSetwithTableItem} oItem target item.
 	 * @public
 	 */
 	UploadSetwithTable.prototype.renameItem = function (oItem) {

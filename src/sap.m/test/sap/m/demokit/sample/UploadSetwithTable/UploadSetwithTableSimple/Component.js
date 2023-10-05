@@ -6,7 +6,7 @@ sap.ui.define([
 	 * @internal
 	 */
 
-	var Component = UIComponent.extend("sap.m.sample.UploadSetTable.Component", {
+	var Component = UIComponent.extend("sap.m.sample.UploadSetwithTableSimple.Component", {
 		metadata: {
 			manifest: "json"
 		}
