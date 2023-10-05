@@ -1005,9 +1005,14 @@ sap.ui.define([
 		 * @returns {string|undefined} Module name (ID) of a file share support module
 		 * @public
 		 * @since 1.102
+		 * @deprecated As of version 1.120.0
 		 */
 		getFileShareSupport : function() {
-			return Configuration.getValue("fileShareSupport") || undefined;
+			return BaseConfig.get({
+				name: "sapUiFileShareSupport",
+				type: BaseConfig.Type.String,
+				defaultValue: undefined
+			});
 		},
 
 		/**
