@@ -255,6 +255,9 @@ sap.ui.define(["sap/ui/thirdparty/URI"],
 			oFrame.src = sFrameURL;
 		});
 
+		/**
+		 * @deprecated Since 1.56
+		 */
 		QUnit.test("executes controller", function(assert) {
 
 			var done = assert.async(),
