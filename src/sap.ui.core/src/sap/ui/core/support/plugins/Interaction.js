@@ -4,7 +4,7 @@
 
 // Provides class sap.ui.core.support.plugins.Performance
 sap.ui.define([
-	'sap/ui/core/Configuration',
+	'sap/ui/core/Supportability',
 	'sap/ui/core/support/Plugin',
 	'sap/ui/core/support/controls/InteractionSlider',
 	'sap/ui/core/support/controls/InteractionTree',
@@ -17,7 +17,7 @@ sap.ui.define([
 	"sap/ui/core/date/UI5Date"
 	],
 	function(
-		Configuration,
+		Supportability,
 		Plugin,
 		InteractionSlider,
 		InteractionTree,
@@ -188,7 +188,7 @@ sap.ui.define([
 
 		function initInApps(oSupportStub) {
 			var _bFesrActive = /sap-ui-xx-fesr=(true|x|X)/.test(window.location.search);
-			var _bODATA_Stats_On = Configuration.getStatisticsEnabled();
+			var _bODATA_Stats_On = Supportability.isStatisticsEnabled();
 
 			this._oStub.sendEvent(this.getId() + "SetQueryString", {"queryString": { bFesrActive: _bFesrActive,
 				bODATA_Stats_On: _bODATA_Stats_On}});

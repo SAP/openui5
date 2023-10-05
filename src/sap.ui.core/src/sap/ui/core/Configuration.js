@@ -13,6 +13,7 @@ sap.ui.define([
 	"sap/ui/core/_ConfigurationProvider",
 	"sap/ui/core/getCompatibilityVersion",
 	"sap/ui/core/date/CalendarWeekNumbering",
+	"sap/ui/core/Supportability",
 	"sap/ui/core/Theming",
 	"sap/ui/security/Security",
 	"sap/base/util/Version",
@@ -34,6 +35,7 @@ sap.ui.define([
 		_ConfigurationProvider,
 		getCompatibilityVersion,
 		CalendarWeekNumbering,
+		Supportability,
 		Theming,
 		Security,
 		Version,
@@ -337,11 +339,6 @@ sap.ui.define([
 		if ( !config.ignoreUrlParams ) {
 			var sUrlPrefix = "sap-ui-";
 			oUriParams = new URLSearchParams(window.location.search);
-
-			if (oUriParams.has('sap-statistics')) {
-				var sValue = oUriParams.get('sap-statistics');
-				setValue('statistics', sValue);
-			}
 
 			// now analyze sap-ui parameters
 			for (var n in M_SETTINGS) {
@@ -699,33 +696,29 @@ sap.ui.define([
 		 * Returns whether the page runs in full debug mode.
 		 * @returns {boolean} Whether the page runs in full debug mode
 		 * @public
+		 * @function
+		 * @deprecated As of version 1.120.
 		 */
-		getDebug : function () {
-			// Configuration only maintains a flag for the full debug mode.
-			// ui5loader-autoconfig calculates detailed information also for the partial debug
-			// mode and writes it to window["sap-ui-debug"].
-			// Only a value of true must be reflected by this getter
-			return window["sap-ui-debug"] === true || BaseConfig.get({name: "sapUiDebug", type: BaseConfig.Type.Boolean, external: true});
-		},
+		getDebug : Supportability.isDebugModeEnabled,
 
 		/**
 		 * Returns whether the UI5 control inspe ctor is displayed.
 		 * Has only an effect when the sap-ui-debug module has been loaded
 		 * @return {boolean} whether the UI5 control inspector is displayed
 		 * @public
+		 * @function
+		 * @deprecated As of Version 1.120.
 		 */
-		getInspect : function () {
-			return Configuration.getValue("inspect");
-		},
+		getInspect : Supportability.isControlInspectorEnabled,
 
 		/**
 		 * Returns whether the text origin information is collected.
 		 * @return {boolean} whether the text info is collected
 		 * @public
+		 * @function
+		 * @deprecated As of Version 1.120.
 		 */
-		getOriginInfo : function () {
-			return Configuration.getValue("originInfo");
-		},
+		getOriginInfo : Supportability.collectOriginInfo,
 
 		/**
 		 * Returns whether there should be an exception on any duplicate element IDs.
@@ -734,17 +727,6 @@ sap.ui.define([
 		 */
 		getNoDuplicateIds : function () {
 			return BaseConfig.get({ name: "sapUiNoDuplicateIds", type: BaseConfig.Type.Boolean, defaultValue: true, external: true });
-		},
-
-		/**
-		 * Whether a trace view should be shown or not.
-		 *
-		 * Has only an effect when the sap-ui-debug module has been loaded
-		 * either by explicitly loading it or by setting the 'debug' option to true.
-		 * @return {boolean} whether a trace view should be shown
-		 */
-		getTrace : function () {
-			return Configuration.getValue("trace");
 		},
 
 		/**
@@ -1006,26 +988,6 @@ sap.ui.define([
 		},
 
 		/**
-		 * Whether support mode is enabled.
-		 *
-		 * @return {boolean} support mode is enabled
-		 * @experimental
-		 */
-		getSupportMode : function() {
-			return Configuration.getValue("support");
-		},
-
-		/**
-		 * Whether test tools are enabled.
-		 *
-		 * @return {boolean} test tools are enabled
-		 * @experimental
-		 */
-		getTestRecorderMode : function() {
-			return Configuration.getValue("testRecorder");
-		},
-
-		/**
 		 * Flag if statistics are requested.
 		 *
 		 * Flag set by TechnicalInfo Popup will also be checked
@@ -1049,16 +1011,10 @@ sap.ui.define([
 		 * @returns {boolean} Whether statistics are enabled
 		 * @public
 		 * @since 1.106.0
+		 * @function
+		 * @deprecated As of Version 1.120.
 		 */
-		getStatisticsEnabled : function() {
-			var result = Configuration.getValue("statistics");
-			try {
-				result = result || window.localStorage.getItem("sap-ui-statistics") == "X";
-			} catch (e) {
-				// access to local storage might fail due to security / privacy settings
-			}
-			return result;
-		},
+		getStatisticsEnabled : Supportability.isStatisticsEnabled,
 
 		/**
 		 * Return whether native scrolling should be suppressed on touch devices.

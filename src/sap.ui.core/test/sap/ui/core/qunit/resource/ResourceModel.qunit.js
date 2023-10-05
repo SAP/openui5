@@ -5,10 +5,11 @@ sap.ui.define([
 	"sap/ui/base/SyncPromise",
 	"sap/ui/core/Configuration",
 	"sap/ui/core/Core",
+	"sap/ui/core/Supportability",
 	"sap/ui/model/BindingMode",
 	"sap/ui/model/resource/ResourceModel",
 	"sap/ui/testlib/TestButton"
-], function(Log, ResourceBundle, Device, SyncPromise, Configuration, Core, BindingMode,
+], function(Log, ResourceBundle, Device, SyncPromise, Configuration, Core, Supportability, BindingMode,
 		ResourceModel, TestButton) {
 	/*global sinon, QUnit*/
 	/*eslint no-new: 0 */
@@ -106,7 +107,7 @@ sap.ui.define([
 	QUnit.module("sap.ui.model.resource.ResourceModel: Resources bundle loaded via url", {
 		beforeEach: function() {
 			Configuration.setLanguage("en");
-			this.stub(Configuration, "getOriginInfo").returns(true);
+			this.stub(Supportability, "collectOriginInfo").returns(true);
 			oModel = new ResourceModel({bundleUrl: sMessagesProperties});
 			Core.setModel(oModel, "i18n");
 		},
@@ -1364,7 +1365,7 @@ sap.ui.define([
 	QUnit.module("sap.ui.model.resource.ResourceModel: Parameters passed to ResourceBundle", {
 		beforeEach: function () {
 			Configuration.setLanguage("en");
-			this.stub(Configuration, "getOriginInfo").returns(true);
+			this.stub(Supportability, "collectOriginInfo").returns(true);
 		},
 		afterEach: function () {
 			Configuration.setLanguage(sDefaultLanguage);
@@ -1461,7 +1462,7 @@ sap.ui.define([
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
 			Configuration.setLanguage("en");
-			this.stub(Configuration, "getOriginInfo").returns(true);
+			this.stub(Supportability, "collectOriginInfo").returns(true);
 		},
 		afterEach: function () {
 			Configuration.setLanguage(sDefaultLanguage);

@@ -7,6 +7,7 @@ sap.ui.define([
 	"sap/ui/core/Configuration",
 	"sap/ui/core/Element",
 	"sap/ui/core/ElementMetadata",
+	"sap/ui/core/Supportability",
 	"sap/ui/core/Theming",
 	"sap/base/util/LoaderExtensions",
 	"sap/ui/thirdparty/jquery"
@@ -16,6 +17,7 @@ sap.ui.define([
 		Configuration,
 		Element,
 		ElementMetadata,
+		Supportability,
 		Theming,
 		LoaderExtensions,
 		jQuery
@@ -88,8 +90,8 @@ sap.ui.define([
 					applicationHREF: window.location.href,
 					documentTitle: document.title,
 					documentMode: document.documentMode || '',
-					debugMode: Configuration.getDebug(),
-					statistics: Configuration.getStatisticsEnabled()
+					debugMode: Supportability.isDebugModeEnabled(),
+					statistics: Supportability.isStatisticsEnabled()
 				},
 				configurationBootstrap: window['sap-ui-config'] || Object.create(null),
 				configurationComputed: {
@@ -100,9 +102,9 @@ sap.ui.define([
 					animation: (Configuration.getAnimationMode() !== Configuration.AnimationMode.minimal &&
 								Configuration.getAnimationMode() !== Configuration.AnimationMode.none),
 					rtl: Configuration.getRTL(),
-					debug: Configuration.getDebug(),
-					inspect: Configuration.getInspect(),
-					originInfo: Configuration.getOriginInfo(),
+					debug: Supportability.isDebugModeEnabled(),
+					inspect: Supportability.isControlInspectorEnabled(),
+					originInfo: Supportability.collectOriginInfo(),
 					noDuplicateIds: Configuration.getNoDuplicateIds()
 				},
 				libraries: _getLibraries(),

@@ -8,6 +8,7 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/core/Element",
 	"sap/ui/core/Component",
+	"sap/ui/core/Supportability",
 	"sap/ui/support/supportRules/Analyzer",
 	"sap/ui/support/supportRules/CoreFacade",
 	"sap/ui/support/supportRules/ExecutionScope",
@@ -27,6 +28,7 @@ sap.ui.define([
 	Core,
 	Element,
 	Component,
+	Supportability,
 	Analyzer,
 	CoreFacade,
 	ExecutionScope,
@@ -126,7 +128,7 @@ sap.ui.define([
 		var aSupportModeConfig = this._aSupportModeConfig;
 		this._pluginStarted = true;
 
-		this._supportModeConfig = aSupportModeConfig = aSupportModeConfig || Core.getConfiguration().getSupportMode();
+		this._supportModeConfig = aSupportModeConfig = aSupportModeConfig || Supportability.getSupportSettings();
 		CommunicationBus.bSilentMode = aSupportModeConfig.indexOf("silent") > -1;
 		this._setCommunicationSubscriptions();
 
