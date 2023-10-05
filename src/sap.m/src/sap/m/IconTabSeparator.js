@@ -8,13 +8,15 @@ sap.ui.define([
 	"sap/ui/core/Element",
 	"sap/ui/core/Item",
 	"sap/m/IconTabFilter",
-	"sap/m/ImageHelper"
-], function (
+	"sap/m/ImageHelper",
+	"sap/ui/core/Lib"
+], function(
 	Core,
 	Element,
 	Item,
 	IconTabFilter,
-	ImageHelper
+	ImageHelper,
+	Lib
 ) {
 	"use strict";
 
@@ -130,7 +132,7 @@ sap.ui.define([
 
 		var sIcon = this.getIcon(),
 			oIconTabHeader = this.getParent(),
-			oRB = Core.getLibraryResourceBundle('sap.m'),
+			oRB = Lib.getResourceBundleFor('sap.m'),
 			mAriaParams = {};
 
 		if (sIcon) {
@@ -174,7 +176,7 @@ sap.ui.define([
 
 		var sIcon = this.getIcon(),
 			oIconTabHeader = oSelectList._oIconTabHeader,
-			oRB = Core.getLibraryResourceBundle('sap.m'),
+			oRB = Lib.getResourceBundleFor('sap.m'),
 			mAriaParams = {};
 
 		if (sIcon) {

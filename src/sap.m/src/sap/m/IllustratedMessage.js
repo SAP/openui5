@@ -15,7 +15,8 @@ sap.ui.define([
 	'sap/ui/core/library',
 	"sap/ui/core/ResizeHandler",
 	"sap/ui/thirdparty/jquery",
-	"./IllustratedMessageRenderer"
+	"./IllustratedMessageRenderer",
+	"sap/ui/core/Lib"
 ], function(
 	library,
 	Text,
@@ -28,7 +29,8 @@ sap.ui.define([
 	coreLibrary,
 	ResizeHandler,
 	jQuery,
-	IllustratedMessageRenderer
+	IllustratedMessageRenderer,
+	Lib
 ) {
 	"use strict";
 
@@ -490,7 +492,7 @@ sap.ui.define([
 	};
 
 	IllustratedMessage.prototype._getResourceBundle = function () {
-		return Core.getLibraryResourceBundle("sap.m");
+		return Lib.getResourceBundleFor("sap.m");
 	};
 
 	/**

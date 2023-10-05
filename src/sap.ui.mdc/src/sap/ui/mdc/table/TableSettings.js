@@ -9,9 +9,18 @@
 // ---------------------------------------------------------------------------------------
 // ---------------------------------------------------------------------------------------
 sap.ui.define([
-	"sap/m/OverflowToolbarButton", "sap/m/library", "sap/m/OverflowToolbarMenuButton", "sap/m/Menu", "sap/m/MenuItem", "sap/ui/core/library", "sap/ui/Device", "sap/ui/core/ShortcutHintsMixin", "sap/ui/core/theming/Parameters", "sap/ui/performance/trace/FESRHelper"
-
-], function(OverflowToolbarButton, MLibrary, OverflowToolbarMenuButton, Menu, MenuItem, CoreLibrary, Device, ShortcutHintsMixin, ThemeParameters, FESRHelper) {
+	"sap/m/OverflowToolbarButton",
+	"sap/m/library",
+	"sap/m/OverflowToolbarMenuButton",
+	"sap/m/Menu",
+	"sap/m/MenuItem",
+	"sap/ui/core/library",
+	"sap/ui/Device",
+	"sap/ui/core/ShortcutHintsMixin",
+	"sap/ui/core/theming/Parameters",
+	"sap/ui/performance/trace/FESRHelper",
+	"sap/ui/core/Lib"
+], function(OverflowToolbarButton, MLibrary, OverflowToolbarMenuButton, Menu, MenuItem, CoreLibrary, Device, ShortcutHintsMixin, ThemeParameters, FESRHelper, Lib) {
 	"use strict";
 
 	const HasPopup = CoreLibrary.aria.HasPopup;
@@ -131,7 +140,7 @@ sap.ui.define([
 			return new OverflowToolbarButton(sId, mSettings);
 		},
 		_loadResourceBundle: function() {
-			oRb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
+			oRb = Lib.getResourceBundleFor("sap.ui.mdc");
 		}
 	};
 

@@ -5,10 +5,12 @@
 // Provides the Design Time Metadata for the sap.ui.fl.variants.VariantManagement control.
 sap.ui.define([
 	"sap/ui/fl/apply/api/ControlVariantApplyAPI",
-	"sap/ui/fl/Utils"
+	"sap/ui/fl/Utils",
+	"sap/ui/core/Lib"
 ], function(
 	ControlVariantApplyAPI,
-	flUtils
+	flUtils,
+	Lib
 ) {
 	"use strict";
 	var fnSetControlAttributes = function(oVariantManagement, bDesignTimeMode) {
@@ -93,7 +95,7 @@ sap.ui.define([
 								var iDuplicateCount = oModel._getVariantTitleCount(sNewText, sVariantManagementReference) || 0;
 								return iDuplicateCount === 0;
 							},
-							errorMessage: sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("VARIANT_MANAGEMENT_ERROR_DUPLICATE")
+							errorMessage: Lib.getResourceBundleFor("sap.m").getText("VARIANT_MANAGEMENT_ERROR_DUPLICATE")
 						}
 					]
 				};

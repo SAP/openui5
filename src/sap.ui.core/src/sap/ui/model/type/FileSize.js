@@ -9,8 +9,9 @@ sap.ui.define([
 	"sap/ui/model/FormatException",
 	"sap/ui/model/ParseException",
 	"sap/ui/model/SimpleType",
-	"sap/ui/model/ValidateException"
-], function(each, FileSizeFormat, FormatException, ParseException, SimpleType, ValidateException) {
+	"sap/ui/model/ValidateException",
+	"sap/ui/core/Lib"
+], function(each, FileSizeFormat, FormatException, ParseException, SimpleType, ValidateException, Lib) {
 	"use strict";
 
 	/**
@@ -94,7 +95,7 @@ sap.ui.define([
 			case "string":
 				vResult = this.oOutputFormat.parse(vValue);
 				if (isNaN(vResult)) {
-					oBundle = sap.ui.getCore().getLibraryResourceBundle();
+					oBundle = Lib.getResourceBundleFor("sap.ui.core");
 					throw new ParseException(oBundle.getText("FileSize.Invalid"));
 				}
 				break;
@@ -115,7 +116,7 @@ sap.ui.define([
 
 	FileSize.prototype.validateValue = function(vValue) {
 		if (this.oConstraints) {
-			var oBundle = sap.ui.getCore().getLibraryResourceBundle(),
+			var oBundle = Lib.getResourceBundleFor("sap.ui.core"),
 				aViolatedConstraints = [],
 				aMessages = [],
 				oInputFormat = this.oInputFormat;

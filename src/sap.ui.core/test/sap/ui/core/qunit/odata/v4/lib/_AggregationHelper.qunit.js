@@ -1157,12 +1157,16 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-[undefined, 1, 2, 3].forEach(function (iExpandTo) {
+[undefined, 1, 2, 3, Number.MAX_SAFE_INTEGER, Infinity].forEach(function (iExpandTo) {
 	[false, true].forEach(function (bStored) {
 		[false, true].forEach(function (bAllLevels) {
 			var sTitle = "buildApply4Hierarchy: top levels of nodes, $select, expandTo : "
 				+ iExpandTo + ", property paths already stored: " + bStored
 				+ ", all levels: " + bAllLevels;
+
+			if (iExpandTo >= Number.MAX_SAFE_INTEGER && bAllLevels) {
+				return;
+			}
 
 	QUnit.test(sTitle, function (assert) {
 		var oAggregation = {
@@ -1196,7 +1200,6 @@ sap.ui.define([
 			oAggregation.$ParentNavigationProperty = "SomeParentNavigation";
 		}
 		if (bAllLevels) {
-			iExpectedLevels = 999;
 			aExpectedSelect = ["ID", "SomeNodeID", "DistFromRoot", "myDrillState"];
 			oExpectedAggregation = {
 				$DistanceFromRootProperty : "DistFromRoot"
@@ -1236,7 +1239,10 @@ sap.ui.define([
 			// code under test
 			_AggregationHelper.buildApply4Hierarchy(oAggregation, mQueryOptions, bAllLevels),
 			{
-				$apply : "com.sap.vocabularies.Hierarchy.v1.TopLevels(HierarchyNodes=$root/Foo"
+				$apply : bAllLevels || iExpandTo >= Number.MAX_SAFE_INTEGER
+					? "com.sap.vocabularies.Hierarchy.v1.TopLevels(HierarchyNodes=$root/Foo"
+					+ ",HierarchyQualifier='X',NodeProperty='SomeNodeID')"
+					: "com.sap.vocabularies.Hierarchy.v1.TopLevels(HierarchyNodes=$root/Foo"
 					+ ",HierarchyQualifier='X',NodeProperty='SomeNodeID',Levels=" + iExpectedLevels
 					+ ")",
 				$select : aExpectedSelect,

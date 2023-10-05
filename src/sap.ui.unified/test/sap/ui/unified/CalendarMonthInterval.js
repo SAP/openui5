@@ -24,35 +24,37 @@ sap.ui.define([
 	"sap/ui/unified/DateRange",
 	"sap/ui/unified/DateTypeRange",
 	"sap/ui/unified/library",
-	"sap/ui/core/date/UI5Date"
+	"sap/ui/core/date/UI5Date",
+	"sap/ui/core/Element"
 ], function(
-		Button,
-		Input,
-		Label,
-		MessageToast,
-		ScrollContainer,
-		SelectList,
-		ToggleButton,
-		CalendarType,
-		oCore,
-		DateFormat,
-		Item,
-		coreLibrary,
-		Device,
-		Form,
-		FormContainer,
-		FormElement,
-		ResponsiveGridLayout,
-		layoutLibrary,
-		Calendar,
-		CalendarLegend,
-		CalendarLegendItem,
-		CalendarMonthInterval,
-		DateRange,
-		DateTypeRange,
-		unifiedLibrary,
-		UI5Date
-	) {
+	Button,
+	Input,
+	Label,
+	MessageToast,
+	ScrollContainer,
+	SelectList,
+	ToggleButton,
+	CalendarType,
+	oCore,
+	DateFormat,
+	Item,
+	coreLibrary,
+	Device,
+	Form,
+	FormContainer,
+	FormElement,
+	ResponsiveGridLayout,
+	layoutLibrary,
+	Calendar,
+	CalendarLegend,
+	CalendarLegendItem,
+	CalendarMonthInterval,
+	DateRange,
+	DateTypeRange,
+	unifiedLibrary,
+	UI5Date,
+	Element
+) {
 	"use strict";
 
 	var BackgroundDesign = layoutLibrary.BackgroundDesign;
@@ -113,7 +115,7 @@ sap.ui.define([
 		legend: "Legend1",
 		ariaLabelledBy: "H-C1",
 		select: function(oEvent){
-			var oTF = oCore.byId("TF1");
+			var oTF = Element.registry.get("TF1");
 			var oCalendar = oEvent.oSource;
 			var aSelectedDates = oCalendar.getSelectedDates();
 			var oDate;
@@ -128,7 +130,7 @@ sap.ui.define([
 			MessageToast.show("Cancel");
 		},
 		startDateChange: function(oEvent){
-			var oTF = oCore.byId("TF2");
+			var oTF = Element.registry.get("TF2");
 			var oCalendar = oEvent.oSource;
 			var oDate = oCalendar.getStartDate();
 			oTF.setValue(oFormatYyyymmdd.format(oDate));
@@ -154,7 +156,7 @@ sap.ui.define([
 			new Button({
 				text: "focus now",
 				press: function(oEvent){
-					oCore.byId("Cal1").focusDate(UI5Date.getInstance());
+					Element.registry.get("Cal1").focusDate(UI5Date.getInstance());
 				}
 			}),
 			new ToggleButton({
@@ -170,7 +172,7 @@ sap.ui.define([
 							} else {
 								sType = "Type" + aSpecialDay[3];
 							}
-							oCore.byId("Cal1").addSpecialDate(new DateTypeRange({
+							Element.registry.get("Cal1").addSpecialDate(new DateTypeRange({
 								startDate: oFormatYyyymmdd.parse(aSpecialDay[0]),
 								endDate: oFormatYyyymmdd.parse(aSpecialDay[1]),
 								type: sType,
@@ -178,7 +180,7 @@ sap.ui.define([
 							}));
 						}
 					} else {
-						oCore.byId("Cal1").destroySpecialDates();
+						Element.registry.get("Cal1").destroySpecialDates();
 					}
 				}
 			})
@@ -195,7 +197,7 @@ sap.ui.define([
 				placeholder: "yyyyMMdd",
 				change: function(oEvent){
 					var sValue = oEvent.getParameter('newValue');
-					var oCalendar = oCore.byId("Cal1");
+					var oCalendar = Element.registry.get("Cal1");
 					if (sValue.length == 8 && !isNaN(sValue)){
 						var oDate = oFormatYyyymmdd.parse(sValue);
 						var aSelectedDates = oCalendar.getSelectedDates();
@@ -226,7 +228,7 @@ sap.ui.define([
 				change: function(oEvent){
 					var oTF = oEvent.oSource;
 					var sValue = oEvent.getParameter('newValue');
-					var oCalendar = oCore.byId("Cal1");
+					var oCalendar = Element.registry.get("Cal1");
 					var oDate = oFormatYyyymmdd.parse(sValue);
 					if (oDate){
 						oCalendar.setStartDate(oDate);
@@ -249,7 +251,7 @@ sap.ui.define([
 				placeholder: "yyyyMMdd",
 				change: function(oEvent){
 					var sValue = oEvent.getParameter('newValue');
-					var oCalendar = oCore.byId("Cal1");
+					var oCalendar = Element.registry.get("Cal1");
 					var oDate;
 					if (sValue.length == 8 && !isNaN(sValue)){
 						oDate = oFormatYyyymmdd.parse(sValue);
@@ -270,7 +272,7 @@ sap.ui.define([
 				placeholder: "yyyyMMdd",
 				change: function(oEvent){
 					var sValue = oEvent.getParameter('newValue');
-					var oCalendar = oCore.byId("Cal1");
+					var oCalendar = Element.registry.get("Cal1");
 					var oDate;
 					if (sValue.length == 8 && !isNaN(sValue)){
 						oDate = oFormatYyyymmdd.parse(sValue);
@@ -293,8 +295,8 @@ sap.ui.define([
 		intervalSelection: true,
 		ariaLabelledBy: ["H-C2"],
 		select: function(oEvent){
-			var oTF1 = oCore.byId("TF2-start");
-			var oTF2 = oCore.byId("TF2-end");
+			var oTF1 = Element.registry.get("TF2-start");
+			var oTF2 = Element.registry.get("TF2-end");
 			var oCalendar = oEvent.oSource;
 			var aSelectedDates = oCalendar.getSelectedDates();
 			var oDate;
@@ -336,7 +338,7 @@ sap.ui.define([
 		pickerPopup: true,
 		ariaLabelledBy: "H-C3",
 		select: function(oEvent){
-			var oLB = oCore.byId("LB");
+			var oLB = Element.registry.get("LB");
 			var oCalendar = oEvent.oSource;
 			var aSelectedDates = oCalendar.getSelectedDates();
 			var oDate;

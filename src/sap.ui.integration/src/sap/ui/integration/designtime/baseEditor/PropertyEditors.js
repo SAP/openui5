@@ -13,8 +13,9 @@ sap.ui.define([
 	"sap/base/util/deepClone",
 	"sap/ui/core/Fragment",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/base/ManagedObjectObserver"
-], function (
+	"sap/ui/base/ManagedObjectObserver",
+	"sap/ui/core/Element"
+], function(
 	Control,
 	findClosestInstance,
 	createPromise,
@@ -26,7 +27,8 @@ sap.ui.define([
 	deepClone,
 	Fragment,
 	JSONModel,
-	ManagedObjectObserver
+	ManagedObjectObserver,
+	Element
 ) {
 	"use strict";
 
@@ -395,7 +397,7 @@ sap.ui.define([
 	};
 
 	PropertyEditors.prototype.getEditor = function () {
-		return sap.ui.getCore().byId(this.getAssociation("editor"));
+		return Element.registry.get(this.getAssociation("editor"));
 	};
 
 	PropertyEditors.prototype.setConfig = function (mConfig) {
@@ -433,7 +435,7 @@ sap.ui.define([
 
 	PropertyEditors.prototype.setEditor = function (vEditor) {
 		var oPreviousEditor = this.getEditor();
-		var oEditor = typeof vEditor === "string" ? sap.ui.getCore().byId(vEditor) : vEditor;
+		var oEditor = typeof vEditor === "string" ? Element.registry.get(vEditor) : vEditor;
 		if (oPreviousEditor !== oEditor) {
 			this.setAssociation("editor", vEditor);
 			var oEditor = this.getEditor();
@@ -446,7 +448,7 @@ sap.ui.define([
 
 	PropertyEditors.prototype._removePropertyEditors = function () {
 		var aPropertyEditors = this.removeAllAssociation("propertyEditors").map(function (sPropertyEditorId) {
-			return sap.ui.getCore().byId(sPropertyEditorId);
+			return Element.registry.get(sPropertyEditorId);
 		});
 
 		this._iExpectedWrapperCount = 0;
@@ -776,7 +778,7 @@ sap.ui.define([
 
 	PropertyEditors.prototype._getPropertyEditors = function () {
 		var aPropertyEditors = (this.getAssociation("propertyEditors") || []).map(function (sId) {
-			return sap.ui.getCore().byId(sId);
+			return Element.registry.get(sId);
 		});
 
 		return aPropertyEditors.length && aPropertyEditors || null; // returning null when empty array — backwards compatibility

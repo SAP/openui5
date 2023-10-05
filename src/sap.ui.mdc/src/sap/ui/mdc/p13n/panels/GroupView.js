@@ -2,7 +2,7 @@
  * ${copyright}
  */
 sap.ui.define([
-    "sap/m/p13n/BasePanel",
+	"sap/m/p13n/BasePanel",
 	"sap/m/Label",
 	"sap/base/util/deepEqual",
 	"sap/m/CustomListItem",
@@ -15,8 +15,10 @@ sap.ui.define([
 	"sap/m/HBox",
 	"sap/m/library",
 	"sap/base/util/merge",
-	"sap/m/Title"
-], function(BasePanel, Label, deepEqual, CustomListItem, List, Panel, Toolbar,Text, Icon, coreLibrary, HBox, mLibrary, merge, Title) {
+	"sap/m/Title",
+	"sap/ui/core/Lib",
+	"sap/ui/core/Element"
+], function(BasePanel, Label, deepEqual, CustomListItem, List, Panel, Toolbar, Text, Icon, coreLibrary, HBox, mLibrary, merge, Title, Lib, Element) {
 	"use strict";
 
 
@@ -75,7 +77,7 @@ sap.ui.define([
 				//Do not read the whole content
 				//Announce tet 'Filter Group' + <grouplabel>, e.g. "Filter Group Basic"
 				formatter: function(sGroupLabel) {
-					return sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc").getText("p13nDialog.FILTER_GROUP_DESCRIPTION", [sGroupLabel]);
+					return Lib.getResourceBundleFor("sap.ui.mdc").getText("p13nDialog.FILTER_GROUP_DESCRIPTION", [sGroupLabel]);
 				}
 			},
 			content: [
@@ -325,7 +327,7 @@ sap.ui.define([
 	GroupView.prototype._getInitializedLists = function(){
 		const aLists = [];
 		this._aInitializedLists.forEach(function(sListId){
-			const oList = sap.ui.getCore().byId(sListId);
+			const oList = Element.registry.get(sListId);
 			if (oList){
 				aLists.push(oList);
 			}
@@ -449,14 +451,14 @@ sap.ui.define([
 
 		this._oListControl.getInfoToolbar().addContent(new Text({
 			width: "75%",
-			text: sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc").getText("p13nDialog.LIST_VIEW_COLUMN")
+			text: Lib.getResourceBundleFor("sap.ui.mdc").getText("p13nDialog.LIST_VIEW_COLUMN")
 		}).addStyleClass("firstColumnPadding"));
 
 		if (!this._bShowFactory) {
 			this._oListControl.getInfoToolbar().addContent(new Text({
 				textAlign: "Center",
 				width: "25%",
-				text: sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc").getText("p13nDialog.LIST_VIEW_ACTIVE")
+				text: Lib.getResourceBundleFor("sap.ui.mdc").getText("p13nDialog.LIST_VIEW_ACTIVE")
 			}).addStyleClass("firstColumnPadding"));
 		}
 

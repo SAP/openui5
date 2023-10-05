@@ -732,6 +732,64 @@ sap.ui.define([
 		}
 	};
 
+	var oManifest_TitleAndDescriptionFromParams = {
+		"sap.app": {
+			"id": "oManifest_TitleAndDescriptionFromParams"
+		},
+		"sap.card": {
+			"type": "List",
+			"configuration": {
+				"parameters": {
+					"titleColumn": {
+						"value": "salesOrder"
+					},
+					"descriptionColumn": {
+						"value": "status"
+					}
+				}
+			},
+			"header": {
+				"title": "Title and description from parameters"
+			},
+			"content": {
+				"data": {
+					"json": [
+						{
+							"product": "Beam Breaker B-1",
+							"salesOrder": "5000010050",
+							"customer": "Robert Brown Entertainment",
+							"status": "Delivered",
+							"statusState": "Success",
+							"orderUrl": "http://www.sap.com",
+							"percent": 30,
+							"percentValue": "30%",
+							"progressState": "Error",
+							"iconSrc": "sap-icon://help"
+						},
+						{
+							"product": "Beam Breaker B-2",
+							"salesOrder": "5000010051",
+							"customer": "Entertainment Argentinia",
+							"status": "Canceled",
+							"statusState": "Error",
+							"orderUrl": "http://www.sap.com",
+							"percent": 70,
+							"percentValue": "70 of 100",
+							"progressState": "Success",
+							"iconSrc": "sap-icon://help",
+							"showStateIcon": true,
+							"customStateIcon": "sap-icon://bbyd-active-sales"
+						}
+					]
+				},
+				"item": {
+					"title": "{= ${}[${parameters>/titleColumn/value}]}",
+					"description": "{= ${}[${parameters>/descriptionColumn/value}]}"
+				}
+			}
+		}
+	};
+
 	QUnit.module("List Card", {
 		beforeEach: function () {
 			this.oCard = new Card({
@@ -844,6 +902,30 @@ sap.ui.define([
 
 		// Act
 		this.oCard.setManifest(oManifest);
+	});
+
+	QUnit.test("List card with title and description defined by parameters", function (assert) {
+
+		// Arrange
+		var done = assert.async();
+
+		this.oCard.attachEvent("_ready", function () {
+			var oListItems = this.oCard.getCardContent().getAggregation("_content").getItems();
+
+			Core.applyChanges();
+
+			// Assert column values
+			assert.equal(oListItems[0].getTitle(), "5000010050", "First item should have correct value for first column.");
+			assert.equal(oListItems[0].getDescription(), "Delivered", "First item should have correct value for second column.");
+
+			assert.equal(oListItems[1].getTitle(), "5000010051", "Second item should have correct value for first column.");
+			assert.equal(oListItems[1].getDescription(), "Canceled", "Second item should have correct value for second column.");
+
+			done();
+		}.bind(this));
+
+		// Act
+		this.oCard.setManifest(oManifest_TitleAndDescriptionFromParams);
 	});
 
 	QUnit.test("List Card - info field", function (assert) {

@@ -96,7 +96,7 @@ sap.ui.define([
 		}
 		Object.keys(mStaticAreaData).forEach(function (sId) {
 			// relies on the idea that the static area doesn't change while the context menu is open
-			var oPopup = sap.ui.getCore().byId(sId).oPopup;
+			var oPopup = Element.registry.get(sId).oPopup;
 			oPopup.setAutoClose(mStaticAreaData[sId].autoClose);
 			oPopup._$().focus();
 		});

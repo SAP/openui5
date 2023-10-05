@@ -5,11 +5,13 @@
 sap.ui.define([
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/base/util/uid",
-	"sap/base/Log"
+	"sap/base/Log",
+	"sap/ui/core/Element"
 ], function(
 	JsControlTreeModifier,
 	uid,
-	Log
+	Log,
+	Element
 ) {
 	"use strict";
 
@@ -392,14 +394,14 @@ sap.ui.define([
 			Log.warning("Moving more than 1 Formelement is not yet supported.");
 		}
 		var mMovedElement = aMovedElements[0];
-		mMovedElement.element = sap.ui.getCore().byId(mMovedElement.id);
+		mMovedElement.element = Element.registry.get(mMovedElement.id);
 		var oSource = Object.assign({}, mSpecificChangeInfo.source);
 		var oTarget = Object.assign({}, mSpecificChangeInfo.target);
 		if (!oTarget.parent) {
-			oTarget.parent = sap.ui.getCore().byId(oTarget.id);
+			oTarget.parent = Element.registry.get(oTarget.id);
 		}
 		if (!oSource.parent) {
-			oSource.parent = sap.ui.getCore().byId(oSource.id);
+			oSource.parent = Element.registry.get(oSource.id);
 		}
 		if (oSimpleForm && mMovedElement.element && oTarget.parent) {
 			if (mSpecificChangeInfo.changeType === "moveSimpleFormGroup") {

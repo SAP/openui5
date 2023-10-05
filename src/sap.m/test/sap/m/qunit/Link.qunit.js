@@ -11,8 +11,9 @@ sap.ui.define([
 	"sap/m/Panel",
 	"sap/m/library",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/Device"
-], function(qutils, createAndAppendDiv, Link, Text, KeyCodes, coreLibrary, Core, DragInfo, Panel, mobileLibrary, jQuery, Device) {
+	"sap/ui/Device",
+	"sap/ui/core/Lib"
+], function(qutils, createAndAppendDiv, Link, Text, KeyCodes, coreLibrary, Core, DragInfo, Panel, mobileLibrary, jQuery, Device, Lib) {
 	"use strict";
 
 	// shortcut for sap.ui.core.TextDirection
@@ -27,7 +28,7 @@ sap.ui.define([
 	var LinkAccessibleRole = mobileLibrary.LinkAccessibleRole;
 
 	// shortcut for library resource bundle
-	var oRb = Core.getLibraryResourceBundle("sap.m");
+	var oRb = Lib.getResourceBundleFor("sap.m");
 
 	createAndAppendDiv("uiArea1");
 
@@ -544,7 +545,7 @@ sap.ui.define([
 	QUnit.test("getAccessibilityInfo", function(assert) {
 		var oControl = new Link({ text: "Text", href: "HRef" }),
 			oInfo = oControl.getAccessibilityInfo(),
-			oResourceBundle = Core.getLibraryResourceBundle("sap.m");
+			oResourceBundle = Lib.getResourceBundleFor("sap.m");
 
 		assert.strictEqual(oInfo.role, "link", "AriaRole");
 		assert.strictEqual(oInfo.type, oResourceBundle.getText("ACC_CTR_TYPE_LINK"), "Type");

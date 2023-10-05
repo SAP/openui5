@@ -31,9 +31,10 @@ sap.ui.define([
 	"sap/m/CheckBox",
 	"sap/m/RatingIndicator",
 	"sap/ui/core/Item",
-	"sap/m/TextArea"
-], function(Core, qutils, KeyCodes, JSONModel, Device, Filter, Sorter, InvisibleText, DragDropInfo, ListBase, Table, Column,
-	 Label, Link, Toolbar, ToolbarSpacer, Button, Input, ColumnListItem, Text, Title, ScrollContainer, library, VerticalLayout, Message, jQuery, IllustratedMessage, ComboBox, CheckBox, RatingIndicator, Item, TextArea) {
+	"sap/m/TextArea",
+	"sap/ui/core/Lib",
+	"sap/ui/core/Element"
+], function(Core, qutils, KeyCodes, JSONModel, Device, Filter, Sorter, InvisibleText, DragDropInfo, ListBase, Table, Column, Label, Link, Toolbar, ToolbarSpacer, Button, Input, ColumnListItem, Text, Title, ScrollContainer, library, VerticalLayout, Message, jQuery, IllustratedMessage, ComboBox, CheckBox, RatingIndicator, Item, TextArea, Lib, Element) {
 	"use strict";
 
 	function createSUT(bCreateColumns, bCreateHeader, sMode, bNoDataIllustrated) {
@@ -528,7 +529,7 @@ sap.ui.define([
 
 	QUnit.test("MultiSelect", function(assert) {
 		var sut = createSUT(true, true, "MultiSelect");
-		var oBundle = Core.getLibraryResourceBundle("sap.m");
+		var oBundle = Lib.getResourceBundleFor("sap.m");
 		sut.placeAt("qunit-fixture");
 		Core.applyChanges();
 
@@ -890,7 +891,7 @@ sap.ui.define([
 
 	QUnit.test("Test for multiSelectMode", function(assert) {
 		this.clock = sinon.useFakeTimers();
-		var oResourceBundle = Core.getLibraryResourceBundle("sap.m");
+		var oResourceBundle = Lib.getResourceBundleFor("sap.m");
 		var sut = createSUT(true, false, "MultiSelect");
 		sut.placeAt("qunit-fixture");
 		Core.applyChanges();
@@ -1063,7 +1064,7 @@ sap.ui.define([
 		oColumnHeader.setRequired(true);
 		sut.placeAt("qunit-fixture");
 		Core.applyChanges();
-		var oResourceBundle = Core.getLibraryResourceBundle("sap.m");
+		var oResourceBundle = Lib.getResourceBundleFor("sap.m");
 
 		// accessibility role
 		assert.equal(sut.getAccessibilityType(), oResourceBundle.getText("TABLE_ROLE_DESCRIPTION"), "Accessilitiy role correctly set");
@@ -1126,7 +1127,7 @@ sap.ui.define([
 				new Label({text: "Mustermann"})
 			]
 		});
-		var oBundle = Core.getLibraryResourceBundle("sap.m");
+		var oBundle = Lib.getResourceBundleFor("sap.m");
 		var oTable = new Table({
 			mode: "MultiSelect",
 			header: "header",
@@ -2969,18 +2970,18 @@ sap.ui.define([
 		var $noData = sut.$("nodata");
 		var $noDataText = sut.$("nodata-text");
 		assert.ok(sut.getNoData().isA("sap.m.IllustratedMessage"), "noData aggregation is of type sap.m.IllustratedMessage");
-		assert.strictEqual($noDataText.children().get(0), Core.byId("noDataIllustratedMessage").getDomRef(), "Table's nodata-text contains figure's DOM element");
+		assert.strictEqual($noDataText.children().get(0), Element.registry.get("noDataIllustratedMessage").getDomRef(), "Table's nodata-text contains figure's DOM element");
 
 		$noData.trigger("focus");
 		var sLabelledBy = $noData.attr("aria-labelledby");
-		assert.equal(Core.byId(sLabelledBy).getText(), "Illustrated Message Custom Title. This is a custom description.", "Accessbility text is set correctly");
+		assert.equal(Element.registry.get(sLabelledBy).getText(), "Illustrated Message Custom Title. This is a custom description.", "Accessbility text is set correctly");
 
 		sut.destroy();
 	});
 
 	QUnit.test("No Column Illustrated Message", function(assert) {
 		var sut = createSUT(false, false, "None", true);
-		var oBundle = Core.getLibraryResourceBundle("sap.m");
+		var oBundle = Lib.getResourceBundleFor("sap.m");
 		sut.placeAt("qunit-fixture");
 		Core.applyChanges();
 
@@ -2999,7 +3000,7 @@ sap.ui.define([
 
 		$noData.trigger("focus");
 		var sLabelledBy = $noData.attr("aria-labelledby");
-		assert.equal(Core.byId(sLabelledBy).getText(), "Illustrated Message " + sTitle + ". " + sDescription, "Accessbility text is set correctly");
+		assert.equal(Element.registry.get(sLabelledBy).getText(), "Illustrated Message " + sTitle + ". " + sDescription, "Accessbility text is set correctly");
 
 		sut.setNoData(new Button({text: "Test Button"}));
 		Core.applyChanges();
@@ -3026,7 +3027,7 @@ sap.ui.define([
 
 		$noData.trigger("focus");
 		var sLabelledBy = $noData.attr("aria-labelledby");
-		assert.equal(Core.byId(sLabelledBy).getText(), "No data", "Accessbility text is set correctly");
+		assert.equal(Element.registry.get(sLabelledBy).getText(), "No data", "Accessbility text is set correctly");
 
 		sut.setNoData(sNoData);
 		Core.applyChanges();
@@ -3036,7 +3037,7 @@ sap.ui.define([
 
 		$noData.trigger("focus");
 		var sLabelledBy = $noData.attr("aria-labelledby");
-		assert.equal(Core.byId(sLabelledBy).getText(), sNoData, "Accessbility text is set correctly");
+		assert.equal(Element.registry.get(sLabelledBy).getText(), sNoData, "Accessbility text is set correctly");
 
 		sut.destroy();
 	});
@@ -3045,7 +3046,7 @@ sap.ui.define([
 		var done = assert.async(2);
 
 		var sut = createSUT(false, false, "None", false);
-		var oBundle = Core.getLibraryResourceBundle("sap.m");
+		var oBundle = Lib.getResourceBundleFor("sap.m");
 		var oInvisibleMessage = ListBase.getInvisibleText();
 		sut.placeAt("qunit-fixture");
 		Core.applyChanges();
@@ -3103,7 +3104,7 @@ sap.ui.define([
 
 		$noData.trigger("focus");
 		var sLabelledBy = $noData.attr("aria-labelledby");
-		assert.equal(Core.byId(sLabelledBy).getText(), "Button Button 1", "Accessbility text is set correctly");
+		assert.equal(Element.registry.get(sLabelledBy).getText(), "Button Button 1", "Accessbility text is set correctly");
 
 		oControl = new Text({text: "Text 1"});
 		sut.setNoData(oControl);
@@ -3115,7 +3116,7 @@ sap.ui.define([
 
 		$noData.trigger("focus");
 		var sLabelledBy = $noData.attr("aria-labelledby");
-		assert.equal(Core.byId(sLabelledBy).getText(), "Text 1", "Accessbility text is set correctly");
+		assert.equal(Element.registry.get(sLabelledBy).getText(), "Text 1", "Accessbility text is set correctly");
 	});
 
 	QUnit.module("Keyboard Navigation for Cells", {
@@ -3527,7 +3528,7 @@ sap.ui.define([
 
 	QUnit.module("role=grid", {
 		before: function() {
-			this.oRB = Core.getLibraryResourceBundle("sap.m");
+			this.oRB = Lib.getResourceBundleFor("sap.m");
 		},
 		beforeEach: function() {
 			this.oTable = createVarietyTable();

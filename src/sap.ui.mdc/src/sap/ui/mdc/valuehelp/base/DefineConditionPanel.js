@@ -39,55 +39,59 @@ sap.ui.define([
 	'sap/m/Title',
 	'sap/ui/core/IconPool',
 	'sap/ui/core/InvisibleMessage',
-	'sap/ui/thirdparty/jquery'
+	'sap/ui/thirdparty/jquery',
+	"sap/ui/core/Lib",
+	"sap/ui/core/Element"
 ], function(
-		Control,
-		ManagedObjectObserver,
-		merge,
-		deepEqual,
-		Condition,
-		FilterOperatorUtil,
-		ConditionsType,
-		splitValue,
-		FieldEditMode,
-		FieldDisplay,
-		BaseType,
-		ConditionValidated,
-		OperatorValueType,
-		Field,
-		ValueHelp,
-		Popover,
-		FixedList,
-		FixedListItem,
-		ManagedObjectModel,
-		JSONModel,
-		ResourceModel,
-		StringType,
-		ParseException,
-		coreLibrary,
-		InvisibleText,
-		Grid,
-		GridData,
-		mLibrary,
-		Button,
-		Panel,
-		OverflowToolbar,
-		OverflowToolbarLayoutData,
-		ToolbarSpacer,
-		Text,
-		Title,
-		IconPool,
-		InvisibleMessage,
-		jQuery
-		) {
+	Control,
+	ManagedObjectObserver,
+	merge,
+	deepEqual,
+	Condition,
+	FilterOperatorUtil,
+	ConditionsType,
+	splitValue,
+	FieldEditMode,
+	FieldDisplay,
+	BaseType,
+	ConditionValidated,
+	OperatorValueType,
+	Field,
+	ValueHelp,
+	Popover,
+	FixedList,
+	FixedListItem,
+	ManagedObjectModel,
+	JSONModel,
+	ResourceModel,
+	StringType,
+	ParseException,
+	coreLibrary,
+	InvisibleText,
+	Grid,
+	GridData,
+	mLibrary,
+	Button,
+	Panel,
+	OverflowToolbar,
+	OverflowToolbarLayoutData,
+	ToolbarSpacer,
+	Text,
+	Title,
+	IconPool,
+	InvisibleMessage,
+	jQuery,
+	Lib,
+	Element
+) {
 	"use strict";
 
 	// translation utils
-	let oMessageBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
-	let oMessageBundleM = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+	let oMessageBundle = Lib.getResourceBundleFor("sap.ui.mdc");
+	let oMessageBundleM = Lib.getResourceBundleFor("sap.m");
 	sap.ui.getCore().attachLocalizationChanged(function() {
-		oMessageBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
-		oMessageBundleM = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+		oMessageBundle = Lib.getResourceBundleFor("sap.ui.mdc");
+		oMessageBundleM = Lib.getResourceBundleFor("sap.m");
 	});
 
 	const ButtonType = mLibrary.ButtonType;
@@ -279,7 +283,7 @@ sap.ui.define([
 		},
 
 		byId: function(sId) {
-			return sap.ui.getCore().byId(this.getId() + "--" + sId);
+			return Element.registry.get(this.getId() + "--" + sId);
 		},
 
 		onBeforeRendering: function() {
@@ -1019,7 +1023,7 @@ sap.ui.define([
 		const bHasMultipleGroups = _hasMultipleOperatorGroups.call(this);
 
 		const sFixedListId = this._sOperatorHelpId + "-pop-fl";
-		const oFixedList = sap.ui.getCore().byId(sFixedListId);
+		const oFixedList = Element.registry.get(sFixedListId);
 
 		let oTemplate;
 		if (bHasMultipleGroups) {

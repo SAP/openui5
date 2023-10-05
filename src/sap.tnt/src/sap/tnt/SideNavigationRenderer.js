@@ -3,8 +3,9 @@
  */
 
 sap.ui.define([
-	"sap/ui/core/Core"
-], function (Core) {
+	"sap/ui/core/Core",
+	"sap/ui/core/Lib"
+], function(Core, Lib) {
 	"use strict";
 
 	/**
@@ -16,7 +17,7 @@ sap.ui.define([
 	};
 
 	// load resource bundle
-	var oRB = Core.getLibraryResourceBundle("sap.tnt");
+	var oRB = Lib.getResourceBundleFor("sap.tnt");
 
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.

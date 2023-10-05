@@ -3,9 +3,11 @@
 */
 
 sap.ui.define([
-	'sap/ui/core/IconPool'
-], function (
-	IconPool
+	'sap/ui/core/IconPool',
+	"sap/ui/core/Lib"
+], function(
+	IconPool,
+	Lib
 ) {
 	"use strict";
 
@@ -32,7 +34,7 @@ sap.ui.define([
 		CLOSABLE: "data-sap-ui-ms-closable"
 	};
 
-	MessageStripUtilities.RESOURCE_BUNDLE = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+	MessageStripUtilities.RESOURCE_BUNDLE = Lib.getResourceBundleFor("sap.m");
 
 	/**
 	 * Calculate the icon uri that should be set to the control property.

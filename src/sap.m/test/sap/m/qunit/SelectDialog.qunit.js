@@ -18,7 +18,9 @@ sap.ui.define([
 	"sap/ui/core/InvisibleText",
 	"sap/ui/core/mvc/XMLView",
 	"sap/m/library",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/core/Lib",
+	"sap/ui/core/Element"
 ],
 	function(
 		SelectDialog,
@@ -38,7 +40,9 @@ sap.ui.define([
 		InvisibleText,
 		XMLView,
 		mobileLibrary,
-		jQuery
+		jQuery,
+		Lib,
+		Element
 	) {
 		"use strict";
 
@@ -307,7 +311,7 @@ sap.ui.define([
 		QUnit.test("confirmButtonText", function(assert) {
 			// assert
 			assert.equal(this.oSelectDialog._oOkButton.getText(),
-				Core.getLibraryResourceBundle("sap.m").getText("SELECT_CONFIRM_BUTTON"),
+				Lib.getResourceBundleFor("sap.m").getText("SELECT_CONFIRM_BUTTON"),
 				'The default confirmation text is set.');
 
 			// act
@@ -526,7 +530,7 @@ sap.ui.define([
 				definition: sFragmentText
 			}).then(function(oFragment) {
 				this.oXmlViewOrFragment = oFragment;
-				this.oSelectDialog = Core.byId("fragmentSelectDialog");
+				this.oSelectDialog = Element.registry.get("fragmentSelectDialog");
 
 				assert.strictEqual(this.oSelectDialog.getParent(), null, "Dialog's parent is null");
 				assert.strictEqual(this.oSelectDialog.getUIArea(), null, "Dialog has no ui area before opening");
@@ -1667,7 +1671,7 @@ sap.ui.define([
 		//assert
 		assert.equal(oClearButton.getVisible(), true, 'Clear button is not visible');
 		assert.ok(oClearButton.getDomRef(), 'Clear button is in dom');
-		assert.equal(oClearButton.getProperty("text"), Core.getLibraryResourceBundle("sap.m").getText("SELECTDIALOG_CLEARBUTTON"), 'Text of clear button is set');
+		assert.equal(oClearButton.getProperty("text"), Lib.getResourceBundleFor("sap.m").getText("SELECTDIALOG_CLEARBUTTON"), 'Text of clear button is set');
 	});
 
 	QUnit.test("There is no content in the contentRight aggregation of the header", function(assert) {

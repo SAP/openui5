@@ -6,11 +6,15 @@
 sap.ui.define([
 	"sap/m/Title",
 	"sap/ui/core/Title",
-	"sap/ui/fl/Utils"
+	"sap/ui/fl/Utils",
+	"sap/ui/core/Element",
+	"sap/ui/core/Lib"
 ], function(
 	MTitle,
 	CoreTitle,
-	FlexUtils
+	FlexUtils,
+	Element,
+	Lib
 ) {
 	"use strict";
 
@@ -116,7 +120,7 @@ sap.ui.define([
 							return true;
 						},
 						getCreatedContainerId: function(sNewControlID) {
-							var oTitle = sap.ui.getCore().byId(sNewControlID);
+							var oTitle = Element.registry.get(sNewControlID);
 							var sParentElementId = oTitle.getParent().getId();
 
 							return sParentElementId;
@@ -208,7 +212,7 @@ sap.ui.define([
 							}
 						}
 						if (bContent) {
-							var oTextResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.layout.designtime");
+							var oTextResources = Lib.getResourceBundleFor("sap.ui.layout.designtime");
 							return oTextResources.getText("MSG_REMOVING_TOOLBAR");
 						}
 					}

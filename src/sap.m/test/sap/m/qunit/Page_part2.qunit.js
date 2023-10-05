@@ -4,8 +4,9 @@ sap.ui.define([
 	"sap/m/Page",
 	"sap/m/App",
 	"sap/m/Bar",
-	"sap/ui/core/Core"
-], function(createAndAppendDiv, Page, App, Bar, oCore) {
+	"sap/ui/core/Core",
+	"sap/ui/core/Element"
+], function(createAndAppendDiv, Page, App, Bar, oCore, Element) {
 	"use strict";
 
 	createAndAppendDiv("page-content");
@@ -19,7 +20,7 @@ sap.ui.define([
 	var cacheAndInitializeDomRefs = function(sId) {
 
 		// global variables
-		var oPage = oCore.byId(sId);
+		var oPage = Element.registry.get(sId);
 		$Page = oPage.$();
 		$PageHeader = $Page.find(".sapMBar.sapMHeader-CTX");
 		$PageSubHeader = $Page.find(".sapMBar.sapMSubHeader-CTX");

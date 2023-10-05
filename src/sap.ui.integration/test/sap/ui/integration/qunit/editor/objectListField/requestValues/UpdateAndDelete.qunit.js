@@ -8,8 +8,9 @@ sap.ui.define([
 	"sap/base/util/deepEqual",
 	"sap/base/util/deepClone",
 	"sap/ui/core/util/MockServer",
-	"sap/ui/core/Core"
-], function (
+	"sap/ui/core/Core",
+	"sap/ui/core/Element"
+], function(
 	x,
 	Editor,
 	Host,
@@ -18,7 +19,8 @@ sap.ui.define([
 	deepEqual,
 	deepClone,
 	MockServer,
-	Core
+	Core,
+	Element
 ) {
 	"use strict";
 
@@ -948,7 +950,7 @@ sap.ui.define([
 									oDeleteButton.firePress();
 									wait().then(function () {
 										var sMessageBoxId = document.querySelector(".sapMMessageBox").id;
-										var oMessageBox = Core.byId(sMessageBoxId);
+										var oMessageBox = Element.registry.get(sMessageBoxId);
 										var oOKButton = oMessageBox._getToolbar().getContent()[1];
 										oOKButton.firePress();
 										wait().then(function () {
@@ -1042,7 +1044,7 @@ sap.ui.define([
 									oDeleteButton.firePress();
 									wait().then(function () {
 										var sMessageBoxId = document.querySelector(".sapMMessageBox").id;
-										var oMessageBox = Core.byId(sMessageBoxId);
+										var oMessageBox = Element.registry.get(sMessageBoxId);
 										var oOKButton = oMessageBox._getToolbar().getContent()[1];
 										oOKButton.firePress();
 										wait().then(function () {

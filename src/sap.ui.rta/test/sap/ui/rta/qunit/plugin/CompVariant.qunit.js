@@ -18,7 +18,8 @@ sap.ui.define([
 	"sap/ui/rta/plugin/CompVariant",
 	"sap/ui/rta/Utils",
 	"sap/ui/thirdparty/sinon-4",
-	"test-resources/sap/ui/rta/qunit/RtaQunitUtils"
+	"test-resources/sap/ui/rta/qunit/RtaQunitUtils",
+	"sap/ui/core/Lib"
 ], function(
 	Button,
 	HBox,
@@ -37,7 +38,8 @@ sap.ui.define([
 	CompVariant,
 	Utils,
 	sinon,
-	RtaQunitUtils
+	RtaQunitUtils,
+	Lib
 ) {
 	"use strict";
 
@@ -77,7 +79,7 @@ sap.ui.define([
 			this.oVariantManagementControl = new SmartVariantManagement("svm", {
 				persistencyKey: "myPersistencyKey"
 			});
-			this.oLibraryBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
+			this.oLibraryBundle = Lib.getResourceBundleFor("sap.ui.rta");
 			return SmartVariantManagementApplyAPI.loadVariants({
 				control: this.oVariantManagementControl,
 				standardVariant: {}
@@ -579,7 +581,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when the current variant is read only and the content gets changed and a new variant is created", function(assert) {
-			var oLibraryBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
+			var oLibraryBundle = Lib.getResourceBundleFor("sap.ui.rta");
 			sandbox.stub(this.oVariant, "isEditEnabled").returns(false);
 			this.oDTHandlerStub.resolves([
 				{

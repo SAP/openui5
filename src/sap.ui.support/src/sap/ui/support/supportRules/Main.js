@@ -250,7 +250,7 @@ sap.ui.define([
 		}, this);
 
 		CommunicationBus.subscribe(channelNames.HIGHLIGHT_ELEMENT, function (id) {
-			var $domElem = Core.byId(id).$();
+			var $domElem = Element.registry.get(id).$();
 			$domElem.css("background-color", "red");
 		}, this);
 
@@ -432,7 +432,7 @@ sap.ui.define([
 			}
 
 			for (i = 0; i < aSelectors.length; i++) {
-				if (Core.byId(aSelectors[i])) {
+				if (Element.registry.get(aSelectors[i])) {
 					bHasValidSelector = true;
 					break;
 				}

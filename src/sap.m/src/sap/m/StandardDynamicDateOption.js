@@ -4,15 +4,17 @@
 
 // Provides control sap.m.StandardDynamicDateOption.
 sap.ui.define([
-		'sap/ui/core/library',
-		'./DynamicDateOption',
-		'./Label',
-		'./RadioButton',
-		'./RadioButtonGroup',
-		'sap/ui/core/date/UniversalDateUtils',
-		'sap/ui/core/date/UniversalDate',
-		'sap/m/DynamicDateValueHelpUIType',
-		'./library'],
+	'sap/ui/core/library',
+	'./DynamicDateOption',
+	'./Label',
+	'./RadioButton',
+	'./RadioButtonGroup',
+	'sap/ui/core/date/UniversalDateUtils',
+	'sap/ui/core/date/UniversalDate',
+	'sap/m/DynamicDateValueHelpUIType',
+	'./library',
+	"sap/ui/core/Lib"
+],
 	function(
 		coreLibrary,
 		DynamicDateOption,
@@ -22,7 +24,9 @@ sap.ui.define([
 		UniversalDateUtils,
 		UniversalDate,
 		DynamicDateValueHelpUIType,
-		library) {
+		library,
+		Lib
+	) {
 		"use strict";
 
 		// shortcut for sap.ui.core.VerticalAlign
@@ -191,7 +195,7 @@ sap.ui.define([
 		StandardDynamicDateOption.LastXKeys = aLastOptions;
 		StandardDynamicDateOption.NextXKeys = aNextOptions;
 
-		var _resourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+		var _resourceBundle = Lib.getResourceBundleFor("sap.m");
 
 		StandardDynamicDateOption.Keys = Keys;
 

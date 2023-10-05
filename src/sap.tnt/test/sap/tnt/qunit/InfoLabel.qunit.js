@@ -6,7 +6,8 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/core/IconPool",
 	"sap/ui/core/library",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/core/Lib"
 ], function(
 	log,
 	InfoLabel,
@@ -14,7 +15,9 @@ sap.ui.define([
 	Core,
 	IconPool,
 	coreLibrary,
-	jQuery) {
+	jQuery,
+	Lib
+) {
 	'use strict';
 
 	// shortcut for sap.tnt.RenderMode
@@ -270,7 +273,7 @@ sap.ui.define([
 
 	QUnit.module("Accessibility", {
 		beforeEach: function () {
-			this.oRB = Core.getLibraryResourceBundle("sap.tnt");
+			this.oRB = Lib.getResourceBundleFor("sap.tnt");
 
 			this.InfoLabel = new InfoLabel("iLabel1").placeAt("qunit-fixture");
 			this.InfoLabelNotEmpty = new InfoLabel({text: "Available"}).placeAt("qunit-fixture");

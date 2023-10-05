@@ -12,8 +12,9 @@ sap.ui.define([
 	"sap/ui/Device",
 	"sap/m/library",
 	"sap/ui/core/Core",
-	"sap/ui/core/InvisibleText"
-], function (
+	"sap/ui/core/InvisibleText",
+	"sap/ui/core/Lib"
+], function(
 	Toolbar,
 	Button,
 	Dialog,
@@ -23,7 +24,8 @@ sap.ui.define([
 	Device,
 	library,
 	Core,
-	InvisibleText
+	InvisibleText,
+	Lib
 ) {
 	"use strict";
 
@@ -125,7 +127,7 @@ sap.ui.define([
 			});
 
 			okButton = new Button({
-				text : Core.getLibraryResourceBundle("sap.m").getText("MSGBOX_OK"),
+				text : Lib.getResourceBundleFor("sap.m").getText("MSGBOX_OK"),
 				press : function() {
 					dialog.close();
 				}

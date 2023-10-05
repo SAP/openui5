@@ -3,11 +3,13 @@
  */
 
 sap.ui.define([
-	"./SelectionController", "sap/m/p13n/SelectionPanel"
-], function (BaseController, SelectionPanel) {
+    "./SelectionController",
+    "sap/m/p13n/SelectionPanel",
+    "sap/ui/core/Lib"
+], function(BaseController, SelectionPanel, Lib) {
     "use strict";
 
-    const oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
+    const oResourceBundle = Lib.getResourceBundleFor("sap.ui.mdc");
     const ColumnController = BaseController.extend("sap.ui.mdc.p13n.subcontroller.ColumnController");
 
     ColumnController.prototype.getUISettings = function() {

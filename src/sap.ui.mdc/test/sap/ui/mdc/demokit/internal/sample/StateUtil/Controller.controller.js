@@ -4,8 +4,9 @@ sap.ui.define([
 	"sap/ui/mdc/p13n/StateUtil",
 	"sap/m/Dialog",
 	"sap/ui/codeeditor/CodeEditor",
-	"sap/m/Button"
-], function(Controller, oCore, StateUtil, Dialog, CodeEditor, Button) {
+	"sap/m/Button",
+	"sap/ui/core/Element"
+], function(Controller, oCore, StateUtil, Dialog, CodeEditor, Button, Element) {
 	"use strict";
 
 	return Controller.extend("sap.ui.mdc.sample.StateUtil.Controller", {
@@ -287,7 +288,7 @@ sap.ui.define([
 					new Button({
 						text: "Confirm",
 						press: function() {
-							this.applyState(oControl, JSON.parse(sap.ui.getCore().byId("stateEditor").getValue()));
+							this.applyState(oControl, JSON.parse(Element.registry.get("stateEditor").getValue()));
 							oDialog.close();
 							oDialog.destroy();
 						}.bind(this)
@@ -302,7 +303,7 @@ sap.ui.define([
 				]
 			});
 
-			sap.ui.getCore().byId("stateEditor").setValue(JSON.stringify(oState, null, "  "));
+			Element.registry.get("stateEditor").setValue(JSON.stringify(oState, null, "  "));
 
 			oDialog.open();
 		}

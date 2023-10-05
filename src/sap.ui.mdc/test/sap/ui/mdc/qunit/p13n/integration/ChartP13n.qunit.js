@@ -1,9 +1,16 @@
 /* global QUnit */
 sap.ui.define([
-	"sap/m/p13n/Engine", "../../QUnitUtils", "sap/ui/mdc/Chart", "sap/m/Button", "sap/ui/mdc/chart/DimensionItem", "sap/ui/mdc/chart/MeasureItem", "sap/ui/core/Core"
-], function (Engine, MDCQUnitUtils, Chart, Button, Dimension, Measure, oCore) {
+	"sap/m/p13n/Engine",
+	"../../QUnitUtils",
+	"sap/ui/mdc/Chart",
+	"sap/m/Button",
+	"sap/ui/mdc/chart/DimensionItem",
+	"sap/ui/mdc/chart/MeasureItem",
+	"sap/ui/core/Core",
+	"sap/ui/core/Lib"
+], function(Engine, MDCQUnitUtils, Chart, Button, Dimension, Measure, oCore, Lib) {
 	"use strict";
-	const oResourceBundle = oCore.getLibraryResourceBundle("sap.ui.mdc");
+	const oResourceBundle = Lib.getResourceBundleFor("sap.ui.mdc");
 
 	QUnit.module("Controller API tests showUI Chart", {
 		beforeEach: function () {

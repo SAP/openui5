@@ -11,7 +11,8 @@ sap.ui.define([
 	'sap/ui/base/ManagedObjectObserver',
 	'./RadioButton',
 	'./RadioButtonGroupRenderer',
-	"sap/base/Log"
+	"sap/base/Log",
+	"sap/ui/core/Element"
 ],
 	function(
 		library,
@@ -21,8 +22,9 @@ sap.ui.define([
 		ManagedObjectObserver,
 		RadioButton,
 		RadioButtonGroupRenderer,
-		Log
-		) {
+		Log,
+		Element
+	) {
 			"use strict";
 
 			// shortcut for sap.ui.core.TextDirection
@@ -482,7 +484,7 @@ sap.ui.define([
 
 				var iIndex = vElement;
 				if (typeof (vElement) == "string") { // ID of the element is given
-					vElement = sap.ui.getCore().byId(vElement);
+					vElement = Element.registry.get(vElement);
 				}
 				if (typeof (vElement) == "object") { // the element itself is given or has just been retrieved
 					iIndex = this.indexOfButton(vElement);

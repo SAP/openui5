@@ -36,11 +36,10 @@ sap.ui.define([
 	"sap/m/plugins/DataStateIndicator",
 	"sap/ui/layout/VerticalLayout",
 	"sap/m/IllustratedMessage",
-	"sap/ui/core/InvisibleMessage"
-], function(Core, createAndAppendDiv, jQuery,
-			qutils, KeyCodes, JSONModel, Sorter, Filter, FilterOperator, Device, coreLibrary, ThemeParameters, library, StandardListItem, App, Page, ListBase, List, Toolbar,
-			ToolbarSpacer, GrowingEnablement, Input, CustomListItem, InputListItem, GroupHeaderListItem, Button, VBox, Text, Menu, MenuItem, MessageToast, ScrollContainer, Title, DataStateIndicator,
-			VerticalLayout, IllustratedMessage, InvisibleMessage) {
+	"sap/ui/core/InvisibleMessage",
+	"sap/ui/core/Lib",
+	"sap/ui/core/Element"
+], function(Core, createAndAppendDiv, jQuery, qutils, KeyCodes, JSONModel, Sorter, Filter, FilterOperator, Device, coreLibrary, ThemeParameters, library, StandardListItem, App, Page, ListBase, List, Toolbar, ToolbarSpacer, GrowingEnablement, Input, CustomListItem, InputListItem, GroupHeaderListItem, Button, VBox, Text, Menu, MenuItem, MessageToast, ScrollContainer, Title, DataStateIndicator, VerticalLayout, IllustratedMessage, InvisibleMessage, Lib, Element) {
 	"use strict";
 	jQuery("#qunit-fixture").attr("data-sap-ui-fastnavgroup", "true");
 
@@ -361,7 +360,7 @@ sap.ui.define([
 	}
 
 	// app
-	var oRB = Core.getLibraryResourceBundle("sap.m"),
+	var oRB = Lib.getResourceBundleFor("sap.m"),
 		oApp = new App("myApp", { initialPage: "myFirstPage" }),
 		oPage = new Page("myFirstPage", {
 			title : "ListBase Test Page"
@@ -2720,7 +2719,7 @@ sap.ui.define([
 
 		// Default text
 		aMessageTypes.forEach(function(sHighlight) {
-			var sDefaultText = Core.getLibraryResourceBundle("sap.m").getText("LIST_ITEM_STATE_" + sHighlight.toUpperCase());
+			var sDefaultText = Lib.getResourceBundleFor("sap.m").getText("LIST_ITEM_STATE_" + sHighlight.toUpperCase());
 			fnTestHighlight(sHighlight, undefined, sDefaultText);
 		});
 
@@ -2782,7 +2781,7 @@ sap.ui.define([
 		});
 
 		bindListData(oList, data3, "/items", oListItem);
-		var oBundle = Core.getLibraryResourceBundle("sap.m");
+		var oBundle = Lib.getResourceBundleFor("sap.m");
 
 		oList.setMode("None");
 		var sStates = oList.getAccessibilityStates();
@@ -2848,7 +2847,7 @@ sap.ui.define([
 				value: "Content"
 			})
 		});
-		var oBundle = Core.getLibraryResourceBundle("sap.m");
+		var oBundle = Lib.getResourceBundleFor("sap.m");
 
 		oInputListItem.setSelected(true);
 		oInputListItem.setHighlight("Information");
@@ -2872,7 +2871,7 @@ sap.ui.define([
 		Core.applyChanges();
 
 		var oItem = oList.getItems()[0],
-			oRb = Core.getLibraryResourceBundle("sap.m"),
+			oRb = Lib.getResourceBundleFor("sap.m"),
 			fnInvisibleMessageAnnounce = sinon.spy(InvisibleMessage.prototype, "announce");
 
 		// item is focused
@@ -2954,12 +2953,12 @@ sap.ui.define([
 		Core.applyChanges();
 
 		var sSelectionItemId = oListItem._oMultiSelectControl.getAriaLabelledBy();
-		assert.strictEqual(Core.byId(sSelectionItemId).getText(), "Item Selection", "MultiSelect associated with aria-labelledBy");
+		assert.strictEqual(Element.registry.get(sSelectionItemId).getText(), "Item Selection", "MultiSelect associated with aria-labelledBy");
 
 		oList.setMode("SingleSelectLeft");
 		Core.applyChanges();
 		sSelectionItemId = oListItem._oMultiSelectControl.getAriaLabelledBy();
-		assert.strictEqual(Core.byId(sSelectionItemId).getText(), "Item Selection", "Invisible text added to Static area");
+		assert.strictEqual(Element.registry.get(sSelectionItemId).getText(), "Item Selection", "Invisible text added to Static area");
 	});
 
 	QUnit.test("Events when multiSelectMode property is changed", function(assert) {
@@ -3004,7 +3003,7 @@ sap.ui.define([
 
 		oSLI.focus();
 		var $SLI = oSLI.$();
-		var oRb = Core.getLibraryResourceBundle("sap.m");
+		var oRb = Lib.getResourceBundleFor("sap.m");
 		var oCustomAnnouncement = document.getElementById($SLI.attr("aria-labelledby")),
 			aTexts = oCustomAnnouncement.innerText.split(" . ");
 		assert.ok(aTexts.indexOf(oRb.getText("ACC_CTR_TYPE_LISTITEM")) !== -1, "Type info is added to custom announcement for compatibility reasons");
@@ -3022,7 +3021,7 @@ sap.ui.define([
 
 		oSLI.focus();
 		var $SLI = oSLI.$();
-		var oRb = Core.getLibraryResourceBundle("sap.m");
+		var oRb = Lib.getResourceBundleFor("sap.m");
 		var oCustomAnnouncement = document.getElementById($SLI.attr("aria-labelledby")),
 			aTexts = oCustomAnnouncement.innerText.split(" . ");
 		assert.ok(aTexts.indexOf(oRb.getText("ACC_CTR_TYPE_LISTITEM")) === -1, "Type info is not added to custom announcement since Jaws also does not announce the role option");
@@ -3049,7 +3048,7 @@ sap.ui.define([
 			return oItem.isGroupHeader();
 		});
 
-		var oRb = Core.getLibraryResourceBundle("sap.m");
+		var oRb = Lib.getResourceBundleFor("sap.m");
 
 		aGroupHeaderListItems.forEach(function(oGroupItem) {
 			var $GroupItem = oGroupItem.$();
@@ -3654,27 +3653,27 @@ sap.ui.define([
 		var $noData = oList.$("nodata");
 
 		assert.ok(oList.getNoData().isA("sap.m.IllustratedMessage"));
-		assert.strictEqual($noDataText.children().get(0), Core.byId("nodataIllustratedMessage").getDomRef(), "List contains figure's DOM element");
+		assert.strictEqual($noDataText.children().get(0), Element.registry.get("nodataIllustratedMessage").getDomRef(), "List contains figure's DOM element");
 
 		$noData.focus();
 		var sLabelledBy = $noData.attr("aria-labelledby");
-		assert.equal(Core.byId(sLabelledBy).getText(), "Illustrated Message Custom Title. This is a custom description.", "Accessbility text is set correctly");
+		assert.equal(Element.registry.get(sLabelledBy).getText(), "Illustrated Message Custom Title. This is a custom description.", "Accessbility text is set correctly");
 
 		oList.setEnableBusyIndicator(true);
 		oList._showBusyIndicator();
 		this.clock.tick(1000);
 
 		assert.ok(oList.getBusy(), "List is set to busy");
-		assert.strictEqual($noDataText.children().get(0), Core.byId("nodataIllustratedMessage").getDomRef(), "Busy indicator does not clear illustrated message");
+		assert.strictEqual($noDataText.children().get(0), Element.registry.get("nodataIllustratedMessage").getDomRef(), "Busy indicator does not clear illustrated message");
 
 		oList._hideBusyIndicator();
 		Core.applyChanges();
 
 		assert.notOk(oList.getBusy(), "List is not set to busy");
-		assert.strictEqual($noDataText.children().get(0), Core.byId("nodataIllustratedMessage").getDomRef(), "List contains figure's DOM element after busy indicator hidden");
+		assert.strictEqual($noDataText.children().get(0), Element.registry.get("nodataIllustratedMessage").getDomRef(), "List contains figure's DOM element after busy indicator hidden");
 
 		oList.setNoDataText("Test");
-		assert.strictEqual($noDataText.children().get(0), Core.byId("nodataIllustratedMessage").getDomRef(), "List contains figure's DOM element");
+		assert.strictEqual($noDataText.children().get(0), Element.registry.get("nodataIllustratedMessage").getDomRef(), "List contains figure's DOM element");
 
 		oMessage.destroy();
 	});
@@ -3692,7 +3691,7 @@ sap.ui.define([
 
 		$noData.focus();
 		var sLabelledBy = $noData.attr("aria-labelledby");
-		assert.equal(Core.byId(sLabelledBy).getText(), sNoData, "Accessbility text is set correctly");
+		assert.equal(Element.registry.get(sLabelledBy).getText(), sNoData, "Accessbility text is set correctly");
 
 		oList.setNoDataText("Test");
 		assert.strictEqual($noDataText.text(), sNoData, "List contains correct button");
@@ -3712,7 +3711,7 @@ sap.ui.define([
 
 		$noData.focus();
 		var sLabelledBy = $noData.attr("aria-labelledby");
-		assert.equal(Core.byId(sLabelledBy).getText(), "Button Button 1", "Accessbility text is set correctly");
+		assert.equal(Element.registry.get(sLabelledBy).getText(), "Button Button 1", "Accessbility text is set correctly");
 
 		oList.setNoDataText("Test");
 		assert.strictEqual($noDataText.children().get(0), oControl.getDomRef(), "List contains correct button");
@@ -3727,7 +3726,7 @@ sap.ui.define([
 
 		$noData.focus();
 		var sLabelledBy = $noData.attr("aria-labelledby");
-		assert.equal(Core.byId(sLabelledBy).getText(), "Text 1", "Accessbility text is set correctly");
+		assert.equal(Element.registry.get(sLabelledBy).getText(), "Text 1", "Accessbility text is set correctly");
 
 		oList.setNoData();
 		Core.applyChanges();
@@ -3737,7 +3736,7 @@ sap.ui.define([
 
 		$noData.focus();
 		var sLabelledBy = $noData.attr("aria-labelledby");
-		assert.equal(Core.byId(sLabelledBy).getText(), "Test", "Accessbility text is set correctly");
+		assert.equal(Element.registry.get(sLabelledBy).getText(), "Test", "Accessbility text is set correctly");
 	});
 }
 );

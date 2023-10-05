@@ -14,7 +14,8 @@ sap.ui.define([
 	"sap/ui/rta/Utils",
 	"sap/ui/dt/DOMUtil",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/dt/OverlayUtil"
+	"sap/ui/dt/OverlayUtil",
+	"sap/ui/core/Element"
 ], function(
 	jQuery,
 	Device,
@@ -26,7 +27,8 @@ sap.ui.define([
 	Utils,
 	DOMUtil,
 	KeyCodes,
-	OverlayUtil
+	OverlayUtil,
+	Element
 ) {
 	"use strict";
 
@@ -438,7 +440,7 @@ sap.ui.define([
 		 * @private
 		 */
 		_onClick(oEvent) {
-			var oOverlay = sap.ui.getCore().byId(oEvent.currentTarget.id);
+			var oOverlay = Element.registry.get(oEvent.currentTarget.id);
 			if (this.isRenameEnabled([oOverlay]) && !oEvent.metaKey && !oEvent.ctrlKey && !oEvent.shiftKey) {
 				this.startEdit(oOverlay);
 				RenameHandler._preventDefault.call(this, oEvent);

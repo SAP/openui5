@@ -5,18 +5,20 @@ sap.ui.define([
 	"sap/ui/core/library",
 	"sap/m/library",
 	"sap/ui/core/Core",
-	"sap/ui/qunit/utils/createAndAppendDiv"
-], function (
+	"sap/ui/qunit/utils/createAndAppendDiv",
+	"sap/ui/core/Lib"
+], function(
 	jQuery,
 	ExpandableText,
 	coreLibrary,
 	library,
 	Core,
-	createAndAppendDiv
+	createAndAppendDiv,
+	Lib
 ) {
 	"use strict";
 
-	var oRb = Core.getLibraryResourceBundle("sap.m");
+	var oRb = Lib.getResourceBundleFor("sap.m");
 
 	var TEXT_SHOW_MORE = oRb.getText("EXPANDABLE_TEXT_SHOW_MORE");
 	var TEXT_SHOW_LESS = oRb.getText("EXPANDABLE_TEXT_SHOW_LESS");

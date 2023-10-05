@@ -8,9 +8,10 @@ sap.ui.define([
 	'sap/ui/core/Locale',
 	'sap/ui/core/LocaleData',
 	'sap/ui/core/format/NumberFormat',
-	'sap/ui/core/Configuration'
+	'sap/ui/core/Configuration',
+	"sap/ui/core/Lib"
 ],
-	function(BaseObject, Locale, LocaleData, NumberFormat, Configuration) {
+	function(BaseObject, Locale, LocaleData, NumberFormat, Configuration, Lib) {
 	"use strict";
 
 
@@ -111,7 +112,7 @@ sap.ui.define([
 		oFormat.oLocale = oLocale;
 		oFormat.oLocaleData = LocaleData.getInstance(oLocale);
 		oFormat.oNumberFormat = NumberFormat.getFloatInstance(oFormatOptions, oLocale);
-		oFormat.oBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.core", oLocale.toString());
+		oFormat.oBundle = Lib.getResourceBundleFor("sap.ui.core", oLocale.toString());
 
 		oFormat.bBinary = oFormatOptions ? !!oFormatOptions.binaryFilesize : false;
 

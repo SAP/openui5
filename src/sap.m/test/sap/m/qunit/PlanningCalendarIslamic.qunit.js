@@ -31,7 +31,9 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	"sap/ui/core/Core",
 	"sap/ui/core/Locale",
-	"sap/ui/core/date/UI5Date"
+	"sap/ui/core/date/UI5Date",
+	"sap/ui/core/Lib",
+	"sap/ui/core/Element"
 ], function(
 	qutils,
 	createAndAppendDiv,
@@ -64,7 +66,9 @@ sap.ui.define([
 	KeyCodes,
 	Core,
 	Locale,
-	UI5Date
+	UI5Date,
+	Lib,
+	Element
 ) {
 	"use strict";
 
@@ -212,7 +216,7 @@ sap.ui.define([
 	};
 
 	var _switchToView = function(sViewName, oPC) {
-		var oRb = Core.getLibraryResourceBundle("sap.m"),
+		var oRb = Lib.getResourceBundleFor("sap.m"),
 			mIntervalStringsMap = {},
 			sIntervalTypeDropdownId,
 			oViewSwitch,
@@ -228,7 +232,7 @@ sap.ui.define([
 		sViewI18Name = oRb.getText(mIntervalStringsMap[sViewName]);
 		QUnit.assert.ok(sViewI18Name, "There must be internationalized string corresponding to the viewName " + sViewName);
 		sIntervalTypeDropdownId = oPC.getId() + "-Header-ViewSwitch-select";
-		oViewSwitch = Core.byId(sIntervalTypeDropdownId);
+		oViewSwitch = Element.registry.get(sIntervalTypeDropdownId);
 		aItemsToSelect = oViewSwitch.getItems().filter(function(item) {
 			return item.getText().toLowerCase() === sViewI18Name.toLowerCase();
 		});
@@ -248,7 +252,7 @@ sap.ui.define([
 	};
 
 	var _getTodayButton = function(oPC) {
-		return Core.byId(oPC.getId() + "-Header-NavToolbar-TodayBtn");
+		return Element.registry.get(oPC.getId() + "-Header-NavToolbar-TodayBtn");
 	};
 
 	//Verifies that given Date is "displayed" in the Planning Calendar

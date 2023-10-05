@@ -10,8 +10,9 @@ sap.ui.define([
 	"sap/m/Label",
 	"sap/m/Panel",
 	"sap/m/Text",
-	"sap/m/library"
-], function(createAndAppendDiv, ObjectNumber, jQuery, coreLibrary, Core, Device, Version, Label, Panel, Text, mobileLibrary) {
+	"sap/m/library",
+	"sap/ui/core/Lib"
+], function(createAndAppendDiv, ObjectNumber, jQuery, coreLibrary, Core, Device, Version, Label, Panel, Text, mobileLibrary, Lib) {
 	"use strict";
 
 	// shortcut for sap.ui.core.TextAlign
@@ -27,7 +28,7 @@ sap.ui.define([
 	var EmptyIndicatorMode = mobileLibrary.EmptyIndicatorMode;
 
 	// shortcut for library resource bundle
-	var oRb = Core.getLibraryResourceBundle("sap.m");
+	var oRb = Lib.getResourceBundleFor("sap.m");
 
 	createAndAppendDiv("content");
 
@@ -242,7 +243,7 @@ sap.ui.define([
 		var oStateElement = document.getElementById(this.oONStateId),
 			oEmphasizedInfoElement = document.getElementById(this.oONEmphasizedInfoId),
 			oRoleDescriptionElement = document.getElementById(this.oONRoleDescriptionId),
-			sControlName = Core.getLibraryResourceBundle("sap.m").getText("OBJECTNUMBER_NAME"),
+			sControlName = Lib.getResourceBundleFor("sap.m").getText("OBJECTNUMBER_NAME"),
 			oControlRef = this.oON.getDomRef();
 
 		assert.notOk(oEmphasizedInfoElement, "Additional SPAN for emphasized information isn't created");
@@ -274,7 +275,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("ObjectNumber with state (different than 'None')", function (assert) {
-		var sErrorText = Core.getLibraryResourceBundle("sap.m").getText("OBJECTNUMBER_ARIA_VALUE_STATE_ERROR"),
+		var sErrorText = Lib.getResourceBundleFor("sap.m").getText("OBJECTNUMBER_ARIA_VALUE_STATE_ERROR"),
 			oStateElement;
 
 		this.oON.setState(ValueState.Error);
@@ -288,7 +289,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("ObjectNumber's Emphasized information", function (assert) {
-		var sEmphasizedText = Core.getLibraryResourceBundle("sap.m").getText("OBJECTNUMBER_EMPHASIZED"),
+		var sEmphasizedText = Lib.getResourceBundleFor("sap.m").getText("OBJECTNUMBER_EMPHASIZED"),
 			oEmphasizedInfoElement;
 
 		this.oON.setEmphasized(true);
@@ -321,7 +322,7 @@ sap.ui.define([
 	QUnit.test("getAccessibilityInfo()", function (assert) {
 		var oAccInfo = this.oON.getAccessibilityInfo(),
 			sExpectedDescription = this.oON.getNumber() + " " + this.oON.getUnit(),
-			sErrorText = Core.getLibraryResourceBundle("sap.m").getText("OBJECTNUMBER_ARIA_VALUE_STATE_ERROR");
+			sErrorText = Lib.getResourceBundleFor("sap.m").getText("OBJECTNUMBER_ARIA_VALUE_STATE_ERROR");
 
 		assert.strictEqual(oAccInfo.description, sExpectedDescription, "Description contains just number and unit");
 

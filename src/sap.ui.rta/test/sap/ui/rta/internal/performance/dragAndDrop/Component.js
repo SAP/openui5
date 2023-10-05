@@ -9,7 +9,8 @@ sap.ui.define([
 	"sap/ui/layout/VerticalLayout",
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/core/Core",
-	"test-resources/sap/ui/rta/qunit/RtaQunitUtils"
+	"test-resources/sap/ui/rta/qunit/RtaQunitUtils",
+	"sap/ui/core/Element"
 ], function(
 	UIComponent,
 	DtPerformanceTestUtil,
@@ -21,7 +22,8 @@ sap.ui.define([
 	VerticalLayout,
 	sinon,
 	oCore,
-	RtaQunitUtils
+	RtaQunitUtils,
+	Element
 ) {
 	"use strict";
 
@@ -33,7 +35,7 @@ sap.ui.define([
 		},
 
 		onAfterRendering() {
-			window.fnResolve(RtaPerformanceTestUtil.startRta(oCore.byId("HBox")));
+			window.fnResolve(RtaPerformanceTestUtil.startRta(Element.registry.get("HBox")));
 		},
 
 		createContent() {

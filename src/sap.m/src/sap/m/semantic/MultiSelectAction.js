@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define(['sap/m/semantic/SemanticToggleButton'], function(SemanticToggleButton) {
+sap.ui.define(['sap/m/semantic/SemanticToggleButton', "sap/ui/core/Lib"], function(SemanticToggleButton, Lib) {
 	"use strict";
 
 	/**
@@ -31,7 +31,7 @@ sap.ui.define(['sap/m/semantic/SemanticToggleButton'], function(SemanticToggleBu
 		}
 	});
 
-	var oBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+	var oBundle = Lib.getResourceBundleFor("sap.m");
 
 	/**
 	 * Defines the icon url for each state

@@ -2,19 +2,19 @@
  * ${copyright}
  */
 sap.ui.define([
-		"sap/ui/integration/library",
-		"sap/ui/core/library",
-		"sap/ui/dom/includeScript",
-		"sap/ui/integration/cards/BaseContent",
-		"sap/ui/integration/cards/adaptivecards/elements/hostConfig",
-		"sap/m/VBox",
-		"sap/ui/core/HTML",
-		"sap/ui/core/Core",
-		"sap/ui/model/json/JSONModel",
-		"sap/base/Log"
-	],
-	function (library, coreLibrary, includeScript, BaseContent, hostConfig,
-			VBox, HTML, Core, JSONModel, Log) {
+	"sap/ui/integration/library",
+	"sap/ui/core/library",
+	"sap/ui/dom/includeScript",
+	"sap/ui/integration/cards/BaseContent",
+	"sap/ui/integration/cards/adaptivecards/elements/hostConfig",
+	"sap/m/VBox",
+	"sap/ui/core/HTML",
+	"sap/ui/core/Core",
+	"sap/ui/model/json/JSONModel",
+	"sap/base/Log",
+	"sap/ui/core/Lib"
+],
+	function(library, coreLibrary, includeScript, BaseContent, hostConfig, VBox, HTML, Core, JSONModel, Log, Lib) {
 		"use strict";
 
 		// lazy dependencies, loaded on demand
@@ -298,7 +298,7 @@ sap.ui.define([
 		};
 
 		AdaptiveContent.prototype.onActionSubmitEnd = function (oResponse, oError) {
-			var oResourceBundle = Core.getLibraryResourceBundle("sap.ui.integration"),
+			var oResourceBundle = Lib.getResourceBundleFor("sap.ui.integration"),
 				sMessage = oError ? oResourceBundle.getText("CARDS_ADAPTIVE_ACTION_SUBMIT_ERROR") :
 					oResourceBundle.getText("CARDS_ADAPTIVE_ACTION_SUBMIT_SUCCESS"),
 				sMessageType = oError ? MessageType.Error : MessageType.Success;

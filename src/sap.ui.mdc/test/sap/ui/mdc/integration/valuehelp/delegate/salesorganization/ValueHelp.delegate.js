@@ -4,10 +4,12 @@
 
 sap.ui.define([
 	"../ValueHelp.delegate",
-	"sap/ui/model/FilterType"
+	"sap/ui/model/FilterType",
+	"sap/ui/core/Element"
 ], function(
 	BaseValueHelpDelegate,
-	FilterType
+	FilterType,
+	Element
 ) {
 	"use strict";
 
@@ -17,8 +19,8 @@ sap.ui.define([
 		const oConditions = BaseValueHelpDelegate.getFilterConditions(oPayload, oContent, oConfig);
 
 		if (oContent.getId() === "FB0-FH-D-Popover-MTable") {
-			oConditions['distributionChannel'] = sap.ui.getCore().byId('FB0-DC').getConditions();
-			oConditions['salesOrganization'] = sap.ui.getCore().byId('FB0-SO').getConditions();
+			oConditions['distributionChannel'] = Element.registry.get('FB0-DC').getConditions();
+			oConditions['salesOrganization'] = Element.registry.get('FB0-SO').getConditions();
 		}
 
 		return oConditions;

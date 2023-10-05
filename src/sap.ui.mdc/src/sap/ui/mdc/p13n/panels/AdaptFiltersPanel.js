@@ -2,23 +2,24 @@
  * ${copyright}
  */
 sap.ui.define([
-    "sap/m/p13n/AbstractContainer",
-    "sap/m/p13n/AbstractContainerItem",
-    "sap/m/p13n/SelectionPanel",
-    "./GroupView",
-    "sap/ui/model/Filter",
-    "sap/m/Button",
-    "sap/m/Bar",
-    "sap/m/ToolbarSpacer",
-    "sap/m/Select",
-    "sap/m/SegmentedButton",
-    "sap/m/SegmentedButtonItem",
-    "sap/m/SearchField",
-    "sap/m/OverflowToolbarLayoutData",
-    "sap/ui/core/Item",
-    "sap/m/library",
-    "sap/ui/model/json/JSONModel"
-], function(AbstractContainer, AbstractContainerItem, SelectionPanel, GroupView, Filter, Button, Bar, ToolbarSpacer, Select, SegmentedButton, SegmentedButtonItem, SearchField, OverflowToolbarLayoutData, Item, mLibrary, JSONModel) {
+	"sap/m/p13n/AbstractContainer",
+	"sap/m/p13n/AbstractContainerItem",
+	"sap/m/p13n/SelectionPanel",
+	"./GroupView",
+	"sap/ui/model/Filter",
+	"sap/m/Button",
+	"sap/m/Bar",
+	"sap/m/ToolbarSpacer",
+	"sap/m/Select",
+	"sap/m/SegmentedButton",
+	"sap/m/SegmentedButtonItem",
+	"sap/m/SearchField",
+	"sap/m/OverflowToolbarLayoutData",
+	"sap/ui/core/Item",
+	"sap/m/library",
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/core/Lib"
+], function(AbstractContainer, AbstractContainerItem, SelectionPanel, GroupView, Filter, Button, Bar, ToolbarSpacer, Select, SegmentedButton, SegmentedButtonItem, SearchField, OverflowToolbarLayoutData, Item, mLibrary, JSONModel, Lib) {
     "use strict";
 
     // shortcut for sap.m.BarDesign
@@ -448,7 +449,7 @@ sap.ui.define([
 
 
     AdaptFiltersPanel.prototype._getResourceText = function(sKey) {
-        return sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc").getText(sKey);
+        return Lib.getResourceBundleFor("sap.ui.mdc").getText(sKey);
     };
 
     //TODO: Renable with refactoring

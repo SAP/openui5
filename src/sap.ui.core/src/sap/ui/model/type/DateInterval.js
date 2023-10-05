@@ -8,9 +8,9 @@ sap.ui.define([
 	"sap/ui/model/CompositeType",
 	"sap/ui/model/FormatException",
 	"sap/ui/model/ParseException",
-	"sap/ui/model/ValidateException"
-], function (isEmptyObject, UI5Date, DateFormat, CompositeType, FormatException, ParseException,
-		ValidateException) {
+	"sap/ui/model/ValidateException",
+	"sap/ui/core/Lib"
+], function(isEmptyObject, UI5Date, DateFormat, CompositeType, FormatException, ParseException, ValidateException, Lib) {
 	"use strict";
 
 	/**
@@ -183,7 +183,7 @@ sap.ui.define([
 
 				if (!aDates[0] || (!aDates[1] && !this.oFormatOptions.singleIntervalValue)) {
 					// at least one single date should be returned
-					oBundle = sap.ui.getCore().getLibraryResourceBundle();
+					oBundle = Lib.getResourceBundleFor("sap.ui.core");
 					throw new ParseException(oBundle.getText(this.sName + ".Invalid"));
 				}
 
@@ -223,7 +223,7 @@ sap.ui.define([
 	 */
 	DateInterval.prototype.validateValue = function (aValues) {
 		var bCheckSecondValue, oCompareValue,
-			oBundle = sap.ui.getCore().getLibraryResourceBundle(),
+			oBundle = Lib.getResourceBundleFor("sap.ui.core"),
 			aViolatedConstraints = [],
 			aMessages = [],
 			that = this;

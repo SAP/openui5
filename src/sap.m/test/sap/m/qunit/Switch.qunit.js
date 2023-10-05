@@ -9,8 +9,10 @@ sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/core/Core"
-], function(Switch, Page, Label, mobileLibrary, jQuery, qutils, createAndAppendDiv, KeyCodes, oCore) {
+	"sap/ui/core/Core",
+	"sap/ui/core/Element",
+	"sap/ui/core/Lib"
+], function(Switch, Page, Label, mobileLibrary, jQuery, qutils, createAndAppendDiv, KeyCodes, oCore, Element, Lib) {
 	"use strict";
 	createAndAppendDiv("content");
 
@@ -88,7 +90,7 @@ sap.ui.define([
 	// helper functions
 	var fnGetDomRefs = function (sId) {
 
-		var oSwitch = oCore.byId(sId),
+		var oSwitch = Element.registry.get(sId),
 			$SwtCont = oSwitch.$(),
 			$Swt = $SwtCont.children(".sapMSwt"),
 			$SwtInner = $Swt.children(".sapMSwtInner"),
@@ -138,10 +140,10 @@ sap.ui.define([
 		assert.strictEqual(oSwitch6.getEnabled(), true, "Check setEnabled() and getEnabled()");
 		assert.strictEqual(oSwitch6.getName(), "switch-1", "Check setName() and getName()");
 		assert.strictEqual(oSwitch6.getFocusDomRef(), oSwitch6.getDomRef());
-		assert.strictEqual(oCore.byId("__switch9").getCustomTextOn(), "I", "");
-		assert.strictEqual(oCore.byId("__switch9").getCustomTextOff(), "O", "");
-		assert.strictEqual(oCore.byId("__switch11")._sOn, "111", "");
-		assert.strictEqual(oCore.byId("__switch11")._sOff, "000", "");
+		assert.strictEqual(Element.registry.get("__switch9").getCustomTextOn(), "I", "");
+		assert.strictEqual(Element.registry.get("__switch9").getCustomTextOff(), "O", "");
+		assert.strictEqual(Element.registry.get("__switch11")._sOn, "111", "");
+		assert.strictEqual(Element.registry.get("__switch11")._sOff, "000", "");
 	});
 
 	/* ------------------------------ */
@@ -305,7 +307,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("getAccessibilityInfo", function (assert) {
-		var oBundle = oCore.getLibraryResourceBundle("sap.m");
+		var oBundle = Lib.getResourceBundleFor("sap.m");
 		var oSwitch = new Switch({
 			customTextOn: "CustomON",
 			customTextOff: "CustomOff"
@@ -394,7 +396,7 @@ sap.ui.define([
 		oCore.applyChanges();
 
 		// assert
-		assert.strictEqual(oSwitch.getDomRef("invisible").textContent, oCore.getLibraryResourceBundle("sap.m").getText("SWITCH_ARIA_REJECT"));
+		assert.strictEqual(oSwitch.getDomRef("invisible").textContent, Lib.getResourceBundleFor("sap.m").getText("SWITCH_ARIA_REJECT"));
 		assert.strictEqual(getComputedStyle(oSwitch.getDomRef("invisible")).getPropertyValue("display"), "none");
 		assert.strictEqual(oSwitch.getDomRef("invisible").getAttribute("aria-hidden"), "true");
 
@@ -420,7 +422,7 @@ sap.ui.define([
 	 */
 	function testSwitchON(assert, oSwitch) {
 		var mDomRefs = fnGetDomRefs(oSwitch.getId());
-		var switchOnText = oCore.getLibraryResourceBundle("sap.m").getText("SWITCH_ON");
+		var switchOnText = Lib.getResourceBundleFor("sap.m").getText("SWITCH_ON");
 
 		// assert
 		assert.ok(oSwitch.$().hasClass("sapMSwtCont"), 'The switch container html element "must have" the css class "sapMSwtCont"');
@@ -454,7 +456,7 @@ sap.ui.define([
 
 		// arrange
 		var mDomRefs = fnGetDomRefs(oSwitch.getId());
-		var switchOffText = oCore.getLibraryResourceBundle("sap.m").getText("SWITCH_OFF");
+		var switchOffText = Lib.getResourceBundleFor("sap.m").getText("SWITCH_OFF");
 
 		// assert
 		assert.ok(oSwitch.$().hasClass("sapMSwtCont"), 'The switch container html element "must have" the css class "sapMSwtCont"');
@@ -547,7 +549,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Testing that setName() method add the html attribute name", function (assert) {
-		var oSwitch7 = oCore.byId("__switch7");
+		var oSwitch7 = Element.registry.get("__switch7");
 		assert.strictEqual(oSwitch7.$().find("input[type=checkbox]").attr("name"), "switch-7", "The attribute name from the input type checkbox inside the switch must have the value " + oSwitch7.getName());
 	});
 
@@ -561,8 +563,8 @@ sap.ui.define([
 		var j,
 			i,
 			oTouchMove,
-			oSwitch0 = oCore.byId("__switch0"),
-			oSwitch8 = oCore.byId("__switch8");
+			oSwitch0 = Element.registry.get("__switch0"),
+			oSwitch8 = Element.registry.get("__switch8");
 
 		qutils.triggerTouchEvent("touchstart", oSwitch0.getDomRef(), {
 			touches: {

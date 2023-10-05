@@ -24,8 +24,8 @@ sap.ui.define([
     var _Selector = ManagedObject.extend("sap.ui.test.selectors._Selector", {
 
         constructor: function () {
+            ManagedObject.prototype.constructor.apply(this, arguments);
             this._oLogger = _OpaLogger.getLogger(this.getMetadata().getName());
-            return ManagedObject.prototype.constructor.apply(this, arguments);
         },
 
         /**

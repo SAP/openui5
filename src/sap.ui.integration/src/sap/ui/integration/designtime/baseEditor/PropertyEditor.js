@@ -9,8 +9,9 @@ sap.ui.define([
 	"sap/ui/integration/designtime/baseEditor/propertyEditor/PropertyEditorFactory",
 	"sap/base/util/restricted/_merge",
 	"sap/base/util/restricted/_omit",
-	"sap/base/util/deepEqual"
-], function (
+	"sap/base/util/deepEqual",
+	"sap/ui/core/Element"
+], function(
 	Control,
 	findClosestInstance,
 	createPromise,
@@ -18,7 +19,8 @@ sap.ui.define([
 	PropertyEditorFactory,
 	_merge,
 	_omit,
-	deepEqual
+	deepEqual,
+	Element
 ) {
 	"use strict";
 
@@ -325,7 +327,7 @@ sap.ui.define([
 	};
 
 	PropertyEditor.prototype.getEditor = function () {
-		return sap.ui.getCore().byId(this.getAssociation("editor"));
+		return Element.registry.get(this.getAssociation("editor"));
 	};
 
 	PropertyEditor.prototype._prepareConfig = function(oConfig) {
@@ -370,7 +372,7 @@ sap.ui.define([
 
 	PropertyEditor.prototype.setEditor = function (vEditor) {
 		var oPreviousEditor = this.getEditor();
-		var oEditor = typeof vEditor === "string" ? sap.ui.getCore().byId(vEditor) : vEditor;
+		var oEditor = typeof vEditor === "string" ? Element.registry.get(vEditor) : vEditor;
 		if (oPreviousEditor !== oEditor) {
 			this.setAssociation("editor", vEditor);
 			var oEditor = this.getEditor();

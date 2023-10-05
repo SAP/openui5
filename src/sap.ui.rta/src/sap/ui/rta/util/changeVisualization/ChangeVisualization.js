@@ -20,7 +20,9 @@ sap.ui.define([
 	"sap/ui/rta/util/changeVisualization/ChangeIndicator",
 	"sap/ui/rta/util/changeVisualization/ChangeIndicatorRegistry",
 	"sap/ui/rta/util/changeVisualization/ChangeCategories",
-	"sap/ui/rta/util/changeVisualization/ChangeStates"
+	"sap/ui/rta/util/changeVisualization/ChangeStates",
+	"sap/ui/core/Lib",
+	"sap/ui/core/Element"
 ], function(
 	Core,
 	Fragment,
@@ -39,7 +41,9 @@ sap.ui.define([
 	ChangeIndicator,
 	ChangeIndicatorRegistry,
 	ChangeCategories,
-	ChangeStates
+	ChangeStates,
+	Lib,
+	Element
 ) {
 	"use strict";
 
@@ -116,7 +120,7 @@ sap.ui.define([
 
 			Control.prototype.constructor.apply(this, aArgs);
 
-			this._oTextBundle = Core.getLibraryResourceBundle("sap.ui.rta");
+			this._oTextBundle = Lib.getResourceBundleFor("sap.ui.rta");
 			this.setModel(new ResourceModel({
 				bundle: this._oTextBundle
 			}), "i18n");
@@ -326,7 +330,7 @@ sap.ui.define([
 
 	ChangeVisualization.prototype.openChangeCategorySelectionPopover = function(oEvent) {
 		// Event bubbled through the toolbar, get original source
-		this._oToolbarButton ||= Core.byId(oEvent.getParameter("id"));
+		this._oToolbarButton ||= Element.registry.get(oEvent.getParameter("id"));
 		var oPopover = this.getPopover();
 
 		if (!oPopover) {
@@ -603,7 +607,7 @@ sap.ui.define([
 				oIndicator.attachBrowserEvent("focusout", onIndicatorInteraction.bind(this, false));
 				oIndicator.attachDetailPopoverOpened(onDetailPopoverOpened.bind(this));
 
-				var oOverlay = Core.byId(oIndicator.getOverlayId());
+				var oOverlay = Element.registry.get(oIndicator.getOverlayId());
 				// De-selection of connected overlays must happen when the hover/focus leaves the overlay
 				oOverlay.attachBrowserEvent("mouseout", onIndicatorInteraction.bind(this, false));
 				oOverlay.attachBrowserEvent("focusout", onIndicatorInteraction.bind(this, false));

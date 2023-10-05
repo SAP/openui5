@@ -4,8 +4,14 @@
 
 // Provides control sap.ui.mdc.filterbar.FilterItemLayout.
 sap.ui.define([
-	'sap/ui/mdc/filterbar/IFilterContainer','sap/m/Table', 'sap/m/Column', 'sap/m/Text', 'sap/m/VBox', 'sap/ui/mdc/p13n/panels/FilterPanel'
-], function(IFilterContainer, Table, Column, Text, VBox, FilterPanel) {
+	'sap/ui/mdc/filterbar/IFilterContainer',
+	'sap/m/Table',
+	'sap/m/Column',
+	'sap/m/Text',
+	'sap/m/VBox',
+	'sap/ui/mdc/p13n/panels/FilterPanel',
+	"sap/ui/core/Lib"
+], function(IFilterContainer, Table, Column, Text, VBox, FilterPanel, Lib) {
 	"use strict";
 
 	/**
@@ -23,7 +29,7 @@ sap.ui.define([
 
 	TableContainer.prototype.init = function() {
 		IFilterContainer.prototype.init.apply(this, arguments);
-		const oRB = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
+		const oRB = Lib.getResourceBundleFor("sap.ui.mdc");
 		this._oTable = new Table({
 			sticky: ["ColumnHeaders"],
 			growing: true,

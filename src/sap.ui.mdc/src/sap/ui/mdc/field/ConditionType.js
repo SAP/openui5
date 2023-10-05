@@ -19,7 +19,9 @@ sap.ui.define([
 	'sap/ui/mdc/enums/ConditionValidated',
 	'sap/base/util/merge',
 	'sap/base/strings/whitespaceReplacer',
-	'sap/ui/base/SyncPromise'
+	'sap/ui/base/SyncPromise',
+	"sap/ui/core/Lib",
+	"sap/ui/core/Element"
 ],
 	function(
 		SimpleType,
@@ -37,7 +39,9 @@ sap.ui.define([
 		ConditionValidated,
 		merge,
 		whitespaceReplacer,
-		SyncPromise
+		SyncPromise,
+		Lib,
+		Element
 	) {
 	"use strict";
 
@@ -90,7 +94,7 @@ sap.ui.define([
 		constructor : function (oFormatOptions, oConstraints) {
 			SimpleType.apply(this, arguments);
 			this.sName = "Condition";
-			this._oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
+			this._oResourceBundle = Lib.getResourceBundleFor("sap.ui.mdc");
 			this._oCalls = {active: 0, last: 0, condition: undefined, exception: undefined}; // if Multiple async. calls, just use the last result
 		}
 
@@ -905,7 +909,7 @@ sap.ui.define([
 
 		const sID = this.oFormatOptions.valueHelpID;
 		if (sID) {
-			const oValueHelp = sap.ui.getCore().byId(sID);
+			const oValueHelp = Element.registry.get(sID);
 			if (oValueHelp && oValueHelp.isValidationSupported()) {
 				return oValueHelp;
 			}

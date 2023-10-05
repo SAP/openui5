@@ -44,7 +44,8 @@ sap.ui.define([
 	"sap/ui/core/message/Message",
 	"sap/m/IllustratedMessage",
 	"sap/ui/table/TreeTableRenderer",
-	"sap/ui/table/AnalyticalTableRenderer"
+	"sap/ui/table/AnalyticalTableRenderer",
+	"sap/ui/core/Element"
 ], function(
 	TableQUnitUtils,
 	qutils,
@@ -89,7 +90,8 @@ sap.ui.define([
 	Message,
 	IllustratedMessage,
 	TreeTableRenderer,
-	AnalyticalTableRenderer
+	AnalyticalTableRenderer,
+	Element
 ) {
 	"use strict";
 
@@ -1538,7 +1540,7 @@ sap.ui.define([
 		var $button = $table.find(".sapUiTableExt").find("#extensionButton");
 		assert.equal(oTable.getExtension().length, 1, "Table has 1 extension");
 		assert.equal($button.length, 1, "Button in extension is rendered");
-		assert.equal(oCore.byId($button.attr("id")).getText(), "Click me!", "The correct button is rendered");
+		assert.equal(Element.registry.get($button.attr("id")).getText(), "Click me!", "The correct button is rendered");
 	});
 
 	QUnit.module("Invisible table", {

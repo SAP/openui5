@@ -19,8 +19,9 @@ sap.ui.define([
 	"./LightBoxRenderer",
 	"sap/m/BusyIndicator",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/dom/units/Rem"
-], function (
+	"sap/ui/dom/units/Rem",
+	"sap/ui/core/Lib"
+], function(
 	library,
 	Control,
 	Popup,
@@ -37,7 +38,8 @@ sap.ui.define([
 	LightBoxRenderer,
 	BusyIndicator,
 	jQuery,
-	DomUnitsRem
+	DomUnitsRem,
+	Lib
 ) {
 	"use strict";
 
@@ -166,7 +168,7 @@ sap.ui.define([
 		this._iResizeListenerId = null;
 		this._$lightBox = null;
 
-		this._oRB = Core.getLibraryResourceBundle("sap.m");
+		this._oRB = Lib.getResourceBundleFor("sap.m");
 
 		// create an ARIA announcement for enlarged image
 		this.setAggregation("_invisiblePopupText", new InvisibleText());

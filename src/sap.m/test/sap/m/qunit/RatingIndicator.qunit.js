@@ -12,8 +12,10 @@ sap.ui.define([
 	'sap/ui/events/KeyCodes',
 	'sap/ui/dom/includeStylesheet',
 	'sap/ui/thirdparty/jquery',
-	'require'
-], function(qutils, createAndAppendDiv, App, Label, Page, RatingIndicator, Core, IconPool, mobileLibrary,  KeyCodes, includeStylesheet, jQuery, require) {
+	'require',
+	"sap/ui/core/Element",
+	"sap/ui/core/Lib"
+], function(qutils, createAndAppendDiv, App, Label, Page, RatingIndicator, Core, IconPool, mobileLibrary, KeyCodes, includeStylesheet, jQuery, require, Element, Lib) {
 	"use strict";
 
 	createAndAppendDiv("content");
@@ -122,7 +124,7 @@ sap.ui.define([
 
 	var init = function (sId) {
 		// global variables
-		oRating = Core.byId(sId);
+		oRating = Element.registry.get(sId);
 		if (!oRating.getVisible()) {
 			return;
 		}
@@ -177,7 +179,7 @@ sap.ui.define([
 	// check if the ARIA attributes are rendered
 	QUnit.test("aria attributes", function (assert) {
 		var i = 0;
-		var oResourceBundle = Core.getLibraryResourceBundle("sap.m");
+		var oResourceBundle = Lib.getResourceBundleFor("sap.m");
 
 		// check HTML divs
 		for (; i < aRatings.length; i++) {
@@ -680,15 +682,15 @@ sap.ui.define([
 		var oInfo = oControl.getAccessibilityInfo();
 		assert.ok(!!oInfo, "getAccessibilityInfo returns a info object");
 		assert.strictEqual(oInfo.role, "slider", "AriaRole");
-		assert.strictEqual(oInfo.type, Core.getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_RATING"), "Type");
-		assert.strictEqual(oInfo.description, Core.getLibraryResourceBundle("sap.m").getText("ACC_CTR_STATE_RATING", [5, 10]), "Description");
+		assert.strictEqual(oInfo.type, Lib.getResourceBundleFor("sap.m").getText("ACC_CTR_TYPE_RATING"), "Type");
+		assert.strictEqual(oInfo.description, Lib.getResourceBundleFor("sap.m").getText("ACC_CTR_STATE_RATING", [5, 10]), "Description");
 		assert.strictEqual(oInfo.focusable, true, "Focusable");
 		assert.strictEqual(oInfo.enabled, true, "Enabled");
 		assert.strictEqual(oInfo.editable, oControl.getEditable(), "Editable");
 		oControl.setValue(0);
 		oControl.setEnabled(false);
 		oInfo = oControl.getAccessibilityInfo();
-		assert.strictEqual(oInfo.description, Core.getLibraryResourceBundle("sap.m").getText("ACC_CTR_STATE_RATING", [0, 10]), "Description");
+		assert.strictEqual(oInfo.description, Lib.getResourceBundleFor("sap.m").getText("ACC_CTR_STATE_RATING", [0, 10]), "Description");
 		assert.strictEqual(oInfo.focusable, false, "Focusable");
 		assert.strictEqual(oInfo.enabled, false, "Enabled");
 
@@ -721,7 +723,7 @@ sap.ui.define([
 		var oRIRequiredDomRef = oRIRequired.getDomRef(),
 		oRIDomRef = oRI.getDomRef(),
 		oLabelDomRef = oLabel.getDomRef(),
-		oResourceBundle = Core.getLibraryResourceBundle("sap.m");
+		oResourceBundle = Lib.getResourceBundleFor("sap.m");
 
 		// Assert
 		assert.strictEqual(oRIRequired.getRequired(), true, "Required property is set correctly");

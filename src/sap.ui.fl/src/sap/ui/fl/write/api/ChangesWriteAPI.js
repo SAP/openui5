@@ -21,7 +21,8 @@ sap.ui.define([
 	"sap/ui/fl/write/api/ContextBasedAdaptationsAPI",
 	"sap/ui/fl/write/_internal/appVariant/AppVariantInlineChangeFactory",
 	"sap/ui/fl/ChangePersistenceFactory",
-	"sap/ui/fl/Utils"
+	"sap/ui/fl/Utils",
+	"sap/ui/core/Lib"
 ], function(
 	_omit,
 	includes,
@@ -41,7 +42,8 @@ sap.ui.define([
 	ContextBasedAdaptationsAPI,
 	AppVariantInlineChangeFactory,
 	ChangePersistenceFactory,
-	Utils
+	Utils,
+	Lib
 ) {
 	"use strict";
 
@@ -196,7 +198,7 @@ sap.ui.define([
 					change: mPropertyBag.change,
 					element: mPropertyBag.element
 				}).then(function() {
-					var oFlResourceBundle = Core.getLibraryResourceBundle("sap.ui.fl");
+					var oFlResourceBundle = Lib.getResourceBundleFor("sap.ui.fl");
 					var sDependentChangesFileNames = aDependentChanges.map(function(oChange) {
 						return oChange.getId();
 					}).join(", ");

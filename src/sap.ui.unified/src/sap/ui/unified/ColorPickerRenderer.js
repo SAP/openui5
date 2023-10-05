@@ -3,8 +3,8 @@
  */
 
 // Provides default renderer for control sap.ui.unified.ColorPicker
-sap.ui.define(['./ColorPickerDisplayMode', "sap/ui/Device"],
-	function(ColorPickerDisplayMode, Device) {
+sap.ui.define(['./ColorPickerDisplayMode', "sap/ui/Device", "sap/ui/core/Lib"],
+	function(ColorPickerDisplayMode, Device, Lib) {
 	"use strict";
 
 
@@ -30,7 +30,7 @@ sap.ui.define(['./ColorPickerDisplayMode', "sap/ui/Device"],
 
 		oRm.accessibilityState(oControl, {
 			role: "group",
-			roledescription: sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified").getText("COLOR_PICKER_TITLE")
+			roledescription: Lib.getResourceBundleFor("sap.ui.unified").getText("COLOR_PICKER_TITLE")
 		});
 
 		if (bResponsive) {

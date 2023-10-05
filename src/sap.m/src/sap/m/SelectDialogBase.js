@@ -4,18 +4,20 @@
 
 // Provides control sap.m.SelectDialogBase.
 sap.ui.define([
-		'./library',
-		'sap/ui/Device',
-		'sap/ui/core/Core',
-		'sap/ui/core/Control',
-		'sap/ui/core/InvisibleText'
+	'./library',
+	'sap/ui/Device',
+	'sap/ui/core/Core',
+	'sap/ui/core/Control',
+	'sap/ui/core/InvisibleText',
+	"sap/ui/core/Lib"
 ],
 function(
 	library,
 	Device,
 	Core,
 	Control,
-	InvisibleText
+	InvisibleText,
+	Lib
 ) {
 	"use strict";
 
@@ -149,7 +151,7 @@ function(
 	SelectDialogBase.getInvisibleText = function() {
 		if (!this.oInvisibleText) {
 			this.oInvisibleText = new InvisibleText({
-				text: Core.getLibraryResourceBundle("sap.m").getText("SELECTDIALOGBASE_LISTLABEL")
+				text: Lib.getResourceBundleFor("sap.m").getText("SELECTDIALOGBASE_LISTLABEL")
 			}).toStatic();
 		}
 

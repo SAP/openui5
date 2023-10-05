@@ -1,8 +1,8 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['./ComboBoxBaseRenderer','./ComboBoxTextFieldRenderer', 'sap/ui/core/Renderer', 'sap/ui/core/Core'],
-	function(ComboBoxBaseRenderer, ComboBoxTextFieldRenderer, Renderer, Core) {
+sap.ui.define(['./ComboBoxBaseRenderer', './ComboBoxTextFieldRenderer', 'sap/ui/core/Renderer', 'sap/ui/core/Core', "sap/ui/core/Lib"],
+	function(ComboBoxBaseRenderer, ComboBoxTextFieldRenderer, Renderer, Core, Lib) {
 	"use strict";
 
 	/**
@@ -54,7 +54,7 @@ sap.ui.define(['./ComboBoxBaseRenderer','./ComboBoxTextFieldRenderer', 'sap/ui/c
 	 */
 	MultiComboBoxRenderer.getAccessibilityState = function (oControl) {
 		var mAccessibilityState = ComboBoxBaseRenderer.getAccessibilityState.apply(this, arguments),
-			oResourceBundle = Core.getLibraryResourceBundle("sap.m");
+			oResourceBundle = Lib.getResourceBundleFor("sap.m");
 
 		mAccessibilityState.roledescription = oResourceBundle.getText("MULTICOMBOBOX_ARIA_ROLE_DESCRIPTION");
 

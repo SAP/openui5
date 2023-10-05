@@ -10,9 +10,9 @@ sap.ui.define([
 	"sap/ui/model/FormatException",
 	"sap/ui/model/ParseException",
 	"sap/ui/model/ValidateException",
-	"sap/ui/model/odata/type/ODataType"
-], function (Log, extend, UI5Date, DateFormat, FormatException, ParseException, ValidateException,
-		ODataType) {
+	"sap/ui/model/odata/type/ODataType",
+	"sap/ui/core/Lib"
+], function(Log, extend, UI5Date, DateFormat, FormatException, ParseException, ValidateException, ODataType, Lib) {
 	"use strict";
 
 	var oDemoTime = {
@@ -35,7 +35,7 @@ sap.ui.define([
 	 * @private
 	 */
 	function getErrorMessage(oType) {
-		return sap.ui.getCore().getLibraryResourceBundle().getText("EnterTime",
+		return Lib.getResourceBundleFor("sap.ui.core").getText("EnterTime",
 			[oType.formatValue(oDemoTime, "string")]);
 	}
 

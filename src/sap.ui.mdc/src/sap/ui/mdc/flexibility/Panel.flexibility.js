@@ -4,13 +4,14 @@
 
 sap.ui.define([
 	'sap/ui/fl/changeHandler/Base',
-	'./ItemBaseFlex'
-], function(Base, ItemBaseFlex) {
+	'./ItemBaseFlex',
+	"sap/ui/core/Element"
+], function(Base, ItemBaseFlex, Element) {
 	"use strict";
 
 	const oLinkHandler = Object.assign({}, ItemBaseFlex);
     oLinkHandler.findItem = function(oModifier, aActions, sName) {
-		return Promise.resolve(sap.ui.getCore().byId(sName));
+		return Promise.resolve(Element.registry.get(sName));
 	};
 
 	/**
@@ -26,7 +27,7 @@ sap.ui.define([
 		createChanges: function(oPanel, aDeltaMItems) {
 			// Create a 'create' change only for items which does not exist
 			const aNotExistingItems = aDeltaMItems.filter(function(oDeltaMItem) {
-				return !sap.ui.getCore().byId(oDeltaMItem.id);
+				return !Element.registry.get(oDeltaMItem.id);
 			});
 			// Create a 'create' change only once for an item
 			const oNotExistingItemIds = {};

@@ -15,10 +15,12 @@ sap.ui.define([
 	"sap/f/GridContainerItemLayoutData",
 	"sap/f/GridContainerSettings",
 	"sap/f/GridContainer",
-	"sap/ui/dom/jquery/Selectors", // provides jQuery custom selector ":sapTabbable"
-	"sap/ui/events/jquery/EventExtension" // only used indirectly?
-], function(jQuery, SlideTile, GenericTile, JSONModel, TileContent, NewsContent, Device, NumericContent, library, KeyCodes, qutils, oCore, GridContainerItemLayoutData,
-	GridContainerSettings, GridContainer) {
+	"sap/ui/core/Lib",
+	// provides jQuery custom selector ":sapTabbable"
+	"sap/ui/dom/jquery/Selectors",
+	// only used indirectly?
+	"sap/ui/events/jquery/EventExtension"
+], function(jQuery, SlideTile, GenericTile, JSONModel, TileContent, NewsContent, Device, NumericContent, library, KeyCodes, qutils, oCore, GridContainerItemLayoutData, GridContainerSettings, GridContainer, Lib) {
 	"use strict";
 
 
@@ -125,7 +127,7 @@ sap.ui.define([
 		this.oSlideTile.setModel(oSlideTileModel);
 	}
 
-	var oResBundle = oCore.getLibraryResourceBundle("sap.m");
+	var oResBundle = Lib.getResourceBundleFor("sap.m");
 
 	QUnit.module("Rendering - sap.m.SlideTile", {
 		beforeEach : function() {

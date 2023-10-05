@@ -17,7 +17,8 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/m/Label",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/ui/core/Lib"
 ], function(
 	qutils,
 	createAndAppendDiv,
@@ -36,7 +37,8 @@ sap.ui.define([
 	Button,
 	Label,
 	KeyCodes,
-	oCore
+	oCore,
+	Lib
 ) {
 	"use strict";
 
@@ -273,7 +275,7 @@ sap.ui.define([
 	QUnit.test("MenuButton in Split mode", function (assert) {
 		//arrange
 		var sText = "Example",
-			sExpectedArrowButtonTooltip = oCore.getLibraryResourceBundle("sap.m").getText("SPLIT_BUTTON_ARROW_TOOLTIP");
+			sExpectedArrowButtonTooltip = Lib.getResourceBundleFor("sap.m").getText("SPLIT_BUTTON_ARROW_TOOLTIP");
 
 		this.sut.setText(sText);
 		this.sut.setButtonMode(MenuButtonMode.Split);
@@ -291,11 +293,11 @@ sap.ui.define([
 				sText,
 				'Referenced control in "aria-labelledby" shows the text of the button');
 		assert.strictEqual(aAriaLabelledByDomElements[1].text(),
-				oCore.getLibraryResourceBundle("sap.m").getText("SPLIT_BUTTON_DESCRIPTION"),
+				Lib.getResourceBundleFor("sap.m").getText("SPLIT_BUTTON_DESCRIPTION"),
 				'Referenced control in "aria-labelledby" shows that this is a split button');
 
 		assert.strictEqual(aAriaLabelledByDomElements[2].text(),
-				oCore.getLibraryResourceBundle("sap.m").getText("SPLIT_BUTTON_KEYBOARD_HINT"),
+				Lib.getResourceBundleFor("sap.m").getText("SPLIT_BUTTON_KEYBOARD_HINT"),
 				'Referenced control in "aria-labelledby" shows the keyboard handling hint');
 
 		assert.strictEqual(oInnerButton._getArrowButton().getTooltip(), sExpectedArrowButtonTooltip,
@@ -336,7 +338,7 @@ sap.ui.define([
 			sInternalTooltipId = oInnerButton.getId() + "-tooltip",
 			bHasAriaLabeledBy = oInnerButton.getDomRef().hasAttribute("aria-labelledby"),
 			aAriaLabelledByIds = oInnerButton.$().attr("aria-labelledby").trim().split(" "),
-			bAriaLabeledByHasCorrectValue = AriaLabeledByHasCorrectValue(aAriaLabelledByIds, oCore.getLibraryResourceBundle("sap.m").getText("SPLIT_BUTTON_KEYBOARD_HINT"));
+			bAriaLabeledByHasCorrectValue = AriaLabeledByHasCorrectValue(aAriaLabelledByIds, Lib.getResourceBundleFor("sap.m").getText("SPLIT_BUTTON_KEYBOARD_HINT"));
 
 		//assert
 		assert.ok(bHasAriaLabeledBy && bAriaLabeledByHasCorrectValue, '"aria-labelledby" is present and has correct value');
@@ -370,8 +372,8 @@ sap.ui.define([
 		var oInnerButton = this.sut._getButtonControl(),
 			bHasAriaLabeledBy = oInnerButton.getDomRef().hasAttribute("aria-labelledby"),
 			aAriaLabelledByIds = oInnerButton.$().attr("aria-labelledby").trim().split(" "),
-			bAriaLabeledByHasCorrectValue1 = AriaLabeledByHasCorrectValue(aAriaLabelledByIds, oCore.getLibraryResourceBundle("sap.m").getText("SPLIT_BUTTON_KEYBOARD_HINT")),
-			bAriaLabeledByHasCorrectValue2 = AriaLabeledByHasCorrectValue(aAriaLabelledByIds, oCore.getLibraryResourceBundle("sap.m").getText("BUTTON_ARIA_TYPE_EMPHASIZED"));
+			bAriaLabeledByHasCorrectValue1 = AriaLabeledByHasCorrectValue(aAriaLabelledByIds, Lib.getResourceBundleFor("sap.m").getText("SPLIT_BUTTON_KEYBOARD_HINT")),
+			bAriaLabeledByHasCorrectValue2 = AriaLabeledByHasCorrectValue(aAriaLabelledByIds, Lib.getResourceBundleFor("sap.m").getText("BUTTON_ARIA_TYPE_EMPHASIZED"));
 
 		//assert
 		assert.ok(bHasAriaLabeledBy && bAriaLabeledByHasCorrectValue1 && bAriaLabeledByHasCorrectValue2, '"aria-labelledby" is present and has correct id references');
@@ -389,8 +391,8 @@ sap.ui.define([
 		var oInnerButton = this.sut._getButtonControl(),
 			bHasAriaLabeledBy = oInnerButton.getDomRef().hasAttribute("aria-labelledby"),
 			aAriaLabelledByIds = oInnerButton.$().attr("aria-labelledby").trim().split(" "),
-			bAriaLabeledByHasCorrectValue1 = AriaLabeledByHasCorrectValue(aAriaLabelledByIds, oCore.getLibraryResourceBundle("sap.m").getText("SPLIT_BUTTON_KEYBOARD_HINT")),
-			bAriaLabeledByHasCorrectValue2 = AriaLabeledByHasCorrectValue(aAriaLabelledByIds, oCore.getLibraryResourceBundle("sap.m").getText("BUTTON_ARIA_TYPE_EMPHASIZED"));
+			bAriaLabeledByHasCorrectValue1 = AriaLabeledByHasCorrectValue(aAriaLabelledByIds, Lib.getResourceBundleFor("sap.m").getText("SPLIT_BUTTON_KEYBOARD_HINT")),
+			bAriaLabeledByHasCorrectValue2 = AriaLabeledByHasCorrectValue(aAriaLabelledByIds, Lib.getResourceBundleFor("sap.m").getText("BUTTON_ARIA_TYPE_EMPHASIZED"));
 
 		//assert
 		assert.strictEqual(oInnerButton.$().attr("title"), sTooltip, "The inner split button has a title property with the provided tooltip");
@@ -408,8 +410,8 @@ sap.ui.define([
 		var oInnerButton = this.sut._getButtonControl(),
 			bHasAriaLabeledBy = oInnerButton.getDomRef().hasAttribute("aria-labelledby"),
 			aAriaLabelledByIds = oInnerButton.$().attr("aria-labelledby").trim().split(" "),
-			bAriaLabeledByHasCorrectValue1 = AriaLabeledByHasCorrectValue(aAriaLabelledByIds, oCore.getLibraryResourceBundle("sap.m").getText("SPLIT_BUTTON_KEYBOARD_HINT")),
-			bAriaLabeledByHasCorrectValue2 = AriaLabeledByHasCorrectValue(aAriaLabelledByIds, oCore.getLibraryResourceBundle("sap.m").getText("BUTTON_ARIA_TYPE_EMPHASIZED"));
+			bAriaLabeledByHasCorrectValue1 = AriaLabeledByHasCorrectValue(aAriaLabelledByIds, Lib.getResourceBundleFor("sap.m").getText("SPLIT_BUTTON_KEYBOARD_HINT")),
+			bAriaLabeledByHasCorrectValue2 = AriaLabeledByHasCorrectValue(aAriaLabelledByIds, Lib.getResourceBundleFor("sap.m").getText("BUTTON_ARIA_TYPE_EMPHASIZED"));
 
 		//assert
 		assert.ok(bHasAriaLabeledBy && bAriaLabeledByHasCorrectValue1 && bAriaLabeledByHasCorrectValue2, '"aria-labelledby" is present and has correct id references');
@@ -428,8 +430,8 @@ sap.ui.define([
 		var oInnerButton = this.sut._getButtonControl(),
 			bHasAriaLabeledBy = oInnerButton.getDomRef().hasAttribute("aria-labelledby"),
 			aAriaLabelledByIds = oInnerButton.$().attr("aria-labelledby").trim().split(" "),
-			bAriaLabeledByHasCorrectValue1 = AriaLabeledByHasCorrectValue(aAriaLabelledByIds, oCore.getLibraryResourceBundle("sap.m").getText("SPLIT_BUTTON_KEYBOARD_HINT")),
-			bAriaLabeledByHasCorrectValue2 = AriaLabeledByHasCorrectValue(aAriaLabelledByIds, oCore.getLibraryResourceBundle("sap.m").getText("BUTTON_ARIA_TYPE_REJECT"));
+			bAriaLabeledByHasCorrectValue1 = AriaLabeledByHasCorrectValue(aAriaLabelledByIds, Lib.getResourceBundleFor("sap.m").getText("SPLIT_BUTTON_KEYBOARD_HINT")),
+			bAriaLabeledByHasCorrectValue2 = AriaLabeledByHasCorrectValue(aAriaLabelledByIds, Lib.getResourceBundleFor("sap.m").getText("BUTTON_ARIA_TYPE_REJECT"));
 
 		//assert
 		assert.ok(bHasAriaLabeledBy && bAriaLabeledByHasCorrectValue1 && bAriaLabeledByHasCorrectValue2, '"aria-labelledby" is present and has correct value');

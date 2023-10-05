@@ -16,7 +16,8 @@ sap.ui.define([
 	"sap/ui/core/BusyIndicator",
 	"sap/base/Log",
 	"sap/m/MessageBox",
-	"sap/base/util/restricted/_pick"
+	"sap/base/util/restricted/_pick",
+	"sap/ui/core/Lib"
 ], function(
 	merge,
 	BaseConnector,
@@ -31,7 +32,8 @@ sap.ui.define([
 	BusyIndicator,
 	Log,
 	MessageBox,
-	_pick
+	_pick,
+	Lib
 ) {
 	"use strict";
 
@@ -264,7 +266,7 @@ sap.ui.define([
 		 * - "Error" in case of a problem
 		 */
 		publish(mPropertyBag) {
-			var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.fl");
+			var oResourceBundle = Lib.getResourceBundleFor("sap.ui.fl");
 
 			var fnHandleAllErrors = function(oError) {
 				BusyIndicator.hide();
@@ -699,7 +701,7 @@ sap.ui.define([
 				return WriteUtils.sendRequest(sVersionsUrl, "DELETE", oRequestOption);
 			},
 			publish(mPropertyBag) {
-				var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.fl");
+				var oResourceBundle = Lib.getResourceBundleFor("sap.ui.fl");
 
 				var fnHandleAllErrors = function(oError) {
 					BusyIndicator.hide();

@@ -21,7 +21,9 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/m/ObjectHeader",
 	"sap/ui/Device",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/core/Lib",
+	"sap/ui/core/Element"
 ], function(
 	qutils,
 	createAndAppendDiv,
@@ -43,7 +45,9 @@ sap.ui.define([
 	Core,
 	ObjectHeader,
 	Device,
-	jQuery
+	jQuery,
+	Lib,
+	Element
 ) {
 	"use strict";
 
@@ -891,7 +895,7 @@ sap.ui.define([
 			]
 		});
 
-		var oResourceBundle = Core.getLibraryResourceBundle("sap.m");
+		var oResourceBundle = Lib.getResourceBundleFor("sap.m");
 
 		// System under test
 		oIconTabBar.placeAt("qunit-fixture");
@@ -922,7 +926,7 @@ sap.ui.define([
 			]
 		});
 
-		var oResourceBundle = Core.getLibraryResourceBundle("sap.m");
+		var oResourceBundle = Lib.getResourceBundleFor("sap.m");
 
 		// System under test
 		oIconTabBar.placeAt("qunit-fixture");
@@ -953,7 +957,7 @@ sap.ui.define([
 			]
 		});
 
-		var oResourceBundle = Core.getLibraryResourceBundle("sap.m");
+		var oResourceBundle = Lib.getResourceBundleFor("sap.m");
 
 		// System under test
 		oIconTabBar.placeAt("qunit-fixture");
@@ -984,7 +988,7 @@ sap.ui.define([
 			]
 		});
 
-		var oResourceBundle = Core.getLibraryResourceBundle("sap.m");
+		var oResourceBundle = Lib.getResourceBundleFor("sap.m");
 
 		// System under test
 		oIconTabBar.placeAt("qunit-fixture");
@@ -1026,7 +1030,7 @@ sap.ui.define([
 			]
 		});
 
-		var oResourceBundle = Core.getLibraryResourceBundle("sap.m");
+		var oResourceBundle = Lib.getResourceBundleFor("sap.m");
 
 		// System under test
 		oIconTabBar.placeAt("qunit-fixture");
@@ -2494,7 +2498,7 @@ sap.ui.define([
 
 		// Act
 		var itemToSelect = selectItems[10];
-		var selectedControl = Core.byId(itemToSelect.id);
+		var selectedControl = Element.registry.get(itemToSelect.id);
 		jQuery(itemToSelect).trigger('tap');
 
 		Core.applyChanges();
@@ -3015,9 +3019,9 @@ sap.ui.define([
 						case "dropPosition" :
 							return "After";
 						case "draggedControl" :
-							return  Core.byId("tabReorder1");
+							return Element.registry.get("tabReorder1");
 						case "droppedControl" :
-							return Core.byId("tabReorder3");
+							return Element.registry.get("tabReorder3");
 					}
 				 }
 			};
@@ -3028,9 +3032,9 @@ sap.ui.define([
 						case "dropPosition" :
 							return "Before";
 						case "draggedControl" :
-							return  Core.byId("tabReorder1");
+							return Element.registry.get("tabReorder1");
 						case "droppedControl" :
-							return Core.byId("tabReorder3");
+							return Element.registry.get("tabReorder3");
 					}
 				}
 			};
@@ -3038,7 +3042,7 @@ sap.ui.define([
 			this.returnMockEvent = function(iKeyCode, sId) {
 				var oMockEventTest = {
 					keyCode: iKeyCode,
-					srcControl: Core.byId(sId),
+					srcControl: Element.registry.get(sId),
 					preventDefault: function () {}
 				};
 
@@ -3088,89 +3092,89 @@ sap.ui.define([
 
 	QUnit.test("Drag&Drop accessibility:", function(assert) {
 		// Assert
-		assert.strictEqual(Core.byId("tabReorder1").getDomRef().getAttribute("aria-posinset"), "1" , 'Aria-pointset should be 1');
-		assert.strictEqual(Core.byId("tabReorder2").getDomRef().getAttribute("aria-posinset"), "2" , 'Aria-pointset should be 2');
-		assert.strictEqual(Core.byId("tabReorder3").getDomRef().getAttribute("aria-posinset"), "3" , 'Aria-pointset should be 3');
-		assert.strictEqual(Core.byId("tabReorder3").getDomRef().getAttribute("aria-setsize"), "3" , 'Aria-setsize should be 3');
+		assert.strictEqual(Element.registry.get("tabReorder1").getDomRef().getAttribute("aria-posinset"), "1" , 'Aria-pointset should be 1');
+		assert.strictEqual(Element.registry.get("tabReorder2").getDomRef().getAttribute("aria-posinset"), "2" , 'Aria-pointset should be 2');
+		assert.strictEqual(Element.registry.get("tabReorder3").getDomRef().getAttribute("aria-posinset"), "3" , 'Aria-pointset should be 3');
+		assert.strictEqual(Element.registry.get("tabReorder3").getDomRef().getAttribute("aria-setsize"), "3" , 'Aria-setsize should be 3');
 		// Act
 		this.oIconTabHeader._handleDragAndDrop(this.oMockEvent);
 		// Assert
-		assert.strictEqual(Core.byId("tabReorder1").getDomRef().getAttribute("aria-posinset"), "3" , 'Aria-pointset should be 3');
-		assert.strictEqual(Core.byId("tabReorder2").getDomRef().getAttribute("aria-posinset"), "1" , 'Aria-pointset should be 1');
-		assert.strictEqual(Core.byId("tabReorder3").getDomRef().getAttribute("aria-posinset"), "2" , 'Aria-pointset should be 2');
-		assert.strictEqual(Core.byId("tabReorder3").getDomRef().getAttribute("aria-setsize"), "3" , 'Aria-setsize should be 3');
+		assert.strictEqual(Element.registry.get("tabReorder1").getDomRef().getAttribute("aria-posinset"), "3" , 'Aria-pointset should be 3');
+		assert.strictEqual(Element.registry.get("tabReorder2").getDomRef().getAttribute("aria-posinset"), "1" , 'Aria-pointset should be 1');
+		assert.strictEqual(Element.registry.get("tabReorder3").getDomRef().getAttribute("aria-posinset"), "2" , 'Aria-pointset should be 2');
+		assert.strictEqual(Element.registry.get("tabReorder3").getDomRef().getAttribute("aria-setsize"), "3" , 'Aria-setsize should be 3');
 	});
 
 	QUnit.test("Drag&Drop Keyboard Handling: CTRL + Arrow Right", function(assert) {
 		// Assert
 		assert.strictEqual(this.oIconTabBar.getItems()[0].getText(), "First tab", 'First Tab is "First Tab"');
-		assert.strictEqual(Core.byId("tabReorder1").getDomRef().getAttribute("aria-posinset"), "1" , 'Aria-pointset should be 1');
+		assert.strictEqual(Element.registry.get("tabReorder1").getDomRef().getAttribute("aria-posinset"), "1" , 'Aria-pointset should be 1');
 		assert.strictEqual(this.oIconTabBar1.getItems()[0].getText(), "First tab", 'First Tab is "First Tab"');
-		assert.strictEqual(Core.byId("tab1").getDomRef().getAttribute("aria-posinset"), "1" , 'Aria-pointset should be 1');
+		assert.strictEqual(Element.registry.get("tab1").getDomRef().getAttribute("aria-posinset"), "1" , 'Aria-pointset should be 1');
 		//ACT
 		this.oIconTabHeader.ondragrearranging(this.returnMockEvent(KeyCodes.ARROW_RIGHT, "tabReorder1"));
 		this.oIconTabHeader1.ondragrearranging(this.returnMockEvent(KeyCodes.ARROW_RIGHT, "tabReorder1"));
 		// Assert
 		assert.strictEqual(this.oIconTabBar.getItems()[1].getText(), "First tab", 'First Tab is "Second Tab"');
-		assert.strictEqual(Core.byId("tabReorder1").getDomRef().getAttribute("aria-posinset"), "2" , 'Aria-pointset should be 1');
+		assert.strictEqual(Element.registry.get("tabReorder1").getDomRef().getAttribute("aria-posinset"), "2" , 'Aria-pointset should be 1');
 		assert.strictEqual(this.oIconTabBar1.getItems()[0].getText(), "First tab", 'First Tab is "First Tab"');
-		assert.strictEqual(Core.byId("tab1").getDomRef().getAttribute("aria-posinset"), "1" , 'Aria-pointset should be 1');
+		assert.strictEqual(Element.registry.get("tab1").getDomRef().getAttribute("aria-posinset"), "1" , 'Aria-pointset should be 1');
 	});
 
 	QUnit.test("Drag&Drop Keyboard Handling: CTRL + Arrow Right of last element", function(assert) {
 		// Assert
 		assert.strictEqual(this.oIconTabBar.getItems()[2].getText(), "Third tab", 'Third Tab is "Third Tab"');
-		assert.strictEqual(Core.byId("tabReorder3").getDomRef().getAttribute("aria-posinset"), "3" , 'Aria-pointset should be 1');
+		assert.strictEqual(Element.registry.get("tabReorder3").getDomRef().getAttribute("aria-posinset"), "3" , 'Aria-pointset should be 1');
 		//ACT
 		this.oIconTabHeader.ondragrearranging(this.returnMockEvent(KeyCodes.ARROW_RIGHT, "tabReorder1"));
 		// Assert
 		assert.strictEqual(this.oIconTabBar.getItems()[2].getText(), "Third tab", 'Third Tab is "Third Tab"');
-		assert.strictEqual(Core.byId("tabReorder3").getDomRef().getAttribute("aria-posinset"), "3" , 'Aria-pointset should be 1');
+		assert.strictEqual(Element.registry.get("tabReorder3").getDomRef().getAttribute("aria-posinset"), "3" , 'Aria-pointset should be 1');
 	});
 
 	QUnit.test("Drag&Drop Keyboard Handling: CTRL + Arrow Left of first element", function(assert) {
 		// Assert
 		assert.strictEqual(this.oIconTabBar.getItems()[0].getText(), "First tab", 'First Tab is "First Tab"');
-		assert.strictEqual(Core.byId("tabReorder1").getDomRef().getAttribute("aria-posinset"), "1" , 'Aria-pointset should be 1');
+		assert.strictEqual(Element.registry.get("tabReorder1").getDomRef().getAttribute("aria-posinset"), "1" , 'Aria-pointset should be 1');
 		//ACT
 
 		this.oIconTabHeader.ondragrearranging(this.returnMockEvent(KeyCodes.ARROW_LEFT, "tabReorder1"));
 		// Assert
 		assert.strictEqual(this.oIconTabBar.getItems()[0].getText(), "First tab", 'First Tab is "First Tab"');
-		assert.strictEqual(Core.byId("tabReorder1").getDomRef().getAttribute("aria-posinset"), "1" , 'Aria-pointset should be 1');
+		assert.strictEqual(Element.registry.get("tabReorder1").getDomRef().getAttribute("aria-posinset"), "1" , 'Aria-pointset should be 1');
 	});
 
 	QUnit.test("Drag&Drop Keyboard Handling: CTRL + Arrow Left", function(assert) {
 		// Assert
 		assert.strictEqual(this.oIconTabBar.getItems()[1].getText(), "Second tab", 'Second Tab is "Second Tab"');
-		assert.strictEqual(Core.byId("tabReorder2").getDomRef().getAttribute("aria-posinset"), "2" , 'Aria-pointset should be 1');
+		assert.strictEqual(Element.registry.get("tabReorder2").getDomRef().getAttribute("aria-posinset"), "2" , 'Aria-pointset should be 1');
 		//ACT
 		this.oIconTabHeader.ondragrearranging(this.returnMockEvent(KeyCodes.ARROW_LEFT, "tabReorder2"));
 		// Assert
 		assert.strictEqual(this.oIconTabBar.getItems()[1].getText(), "First tab", 'First Tab is "Second Tab"');
-		assert.strictEqual(Core.byId("tabReorder1").getDomRef().getAttribute("aria-posinset"), "2" , 'Aria-pointset should be 1');
+		assert.strictEqual(Element.registry.get("tabReorder1").getDomRef().getAttribute("aria-posinset"), "2" , 'Aria-pointset should be 1');
 	});
 
 	QUnit.test("Drag&Drop Keyboard Handling: CTRL + Home", function(assert) {
 		// Assert
 		assert.strictEqual(this.oIconTabBar.getItems()[1].getText(), "Second tab", 'Second Tab is "Second Tab"');
-		assert.strictEqual(Core.byId("tabReorder2").getDomRef().getAttribute("aria-posinset"), "2" , 'Aria-pointset should be 1');
+		assert.strictEqual(Element.registry.get("tabReorder2").getDomRef().getAttribute("aria-posinset"), "2" , 'Aria-pointset should be 1');
 		//ACT
 		this.oIconTabHeader.ondragrearranging(this.returnMockEvent(KeyCodes.HOME, "tabReorder2"));
 		// Assert
 		assert.strictEqual(this.oIconTabBar.getItems()[1].getText(), "First tab", 'First Tab is "Second Tab"');
-		assert.strictEqual(Core.byId("tabReorder1").getDomRef().getAttribute("aria-posinset"), "2" , 'Aria-pointset should be 1');
+		assert.strictEqual(Element.registry.get("tabReorder1").getDomRef().getAttribute("aria-posinset"), "2" , 'Aria-pointset should be 1');
 	});
 
 	QUnit.test("Drag&Drop Keyboard Handling: CTRL + End", function(assert) {
 		// Assert
 		assert.strictEqual(this.oIconTabBar.getItems()[0].getText(), "First tab", 'First Tab is "First Tab"');
-		assert.strictEqual(Core.byId("tabReorder1").getDomRef().getAttribute("aria-posinset"), "1" , 'Aria-pointset should be 1');
+		assert.strictEqual(Element.registry.get("tabReorder1").getDomRef().getAttribute("aria-posinset"), "1" , 'Aria-pointset should be 1');
 		//ACT
 		this.oIconTabHeader.ondragrearranging(this.returnMockEvent(KeyCodes.END, "tabReorder1"));
 		// Assert
 		assert.strictEqual(this.oIconTabBar.getItems()[2].getText(), "First tab", 'First Tab is "Last Tab"');
-		assert.strictEqual(Core.byId("tabReorder1").getDomRef().getAttribute("aria-posinset"), "3" , 'Aria-pointset should be 1');
+		assert.strictEqual(Element.registry.get("tabReorder1").getDomRef().getAttribute("aria-posinset"), "3" , 'Aria-pointset should be 1');
 	});
 
 	QUnit.test("Drag&Drop Keyboard Handling: Event Calling: onsapincreasemodifiers", function(assert) {
@@ -3233,7 +3237,7 @@ sap.ui.define([
 		// act
 		this.oIconTabHeader.onsapincreasemodifiers(this.returnMockEvent(KeyCodes.ARROW_RIGHT, "tabReorder1"));
 		// assert
-		assert.strictEqual(this.oIconTabHeader.indexOfItem(Core.byId("tabReorder1")), 0, "The item should remain on the same position.");
+		assert.strictEqual(this.oIconTabHeader.indexOfItem(Element.registry.get("tabReorder1")), 0, "The item should remain on the same position.");
 	});
 
 	QUnit.test("Drag&Drop Keyboard Handling: Drag through invisible tab", function(assert) {
@@ -3243,7 +3247,7 @@ sap.ui.define([
 		// act
 		this.oIconTabHeader.onsapincreasemodifiers(this.returnMockEvent(KeyCodes.ARROW_RIGHT, "tabReorder1"));
 		// assert
-		assert.strictEqual(this.oIconTabHeader.indexOfItem(Core.byId("tabReorder1")), 2, "Tab index should have changed from 0 to 2.");
+		assert.strictEqual(this.oIconTabHeader.indexOfItem(Element.registry.get("tabReorder1")), 2, "Tab index should have changed from 0 to 2.");
 	});
 
 	QUnit.module("Drag&Drop: Overflow rearranging", {
@@ -3269,9 +3273,9 @@ sap.ui.define([
 						case "dropPosition" :
 							return "After";
 						case "draggedControl" :
-							return  Core.byId(getSelectListId(0));
+							return Element.registry.get(getSelectListId(0));
 						case "droppedControl" :
-							return Core.byId(getSelectListId(2));
+							return Element.registry.get(getSelectListId(2));
 					}
 				}
 			};
@@ -3282,9 +3286,9 @@ sap.ui.define([
 						case "dropPosition" :
 							return "Before";
 						case "draggedControl" :
-							return  Core.byId(getSelectListId(0));
+							return Element.registry.get(getSelectListId(0));
 						case "droppedControl" :
-							return Core.byId(getSelectListId(2));
+							return Element.registry.get(getSelectListId(2));
 					}
 				}
 			};
@@ -3292,7 +3296,7 @@ sap.ui.define([
 			this.returnMockEvent = function(iKeyCode, sId) {
 				var oMockEventTest = {
 					keyCode: iKeyCode,
-					srcControl: Core.byId(sId),
+					srcControl: Element.registry.get(sId),
 					preventDefault: function () {}
 				};
 
@@ -3445,9 +3449,9 @@ sap.ui.define([
 						case "dropPosition":
 							return "After";
 						case "draggedControl":
-							return Core.byId(getSelectListId(0));
+							return Element.registry.get(getSelectListId(0));
 						case "droppedControl":
-							return Core.byId("idTab3");
+							return Element.registry.get("idTab3");
 					}
 				}
 			};
@@ -3458,9 +3462,9 @@ sap.ui.define([
 						case "dropPosition":
 							return "Before";
 						case "draggedControl":
-							return Core.byId(getSelectListId(0));
+							return Element.registry.get(getSelectListId(0));
 						case "droppedControl":
-							return Core.byId("idTab3");
+							return Element.registry.get("idTab3");
 					}
 				}
 			};
@@ -3613,9 +3617,9 @@ sap.ui.define([
 						case "dropPosition" :
 							return "After";
 						case "draggedControl" :
-							return  Core.byId("idTab2");
+							return Element.registry.get("idTab2");
 						case "droppedControl" :
-							return Core.byId(getSelectListId(3));
+							return Element.registry.get(getSelectListId(3));
 					}
 				}
 			};
@@ -3626,9 +3630,9 @@ sap.ui.define([
 						case "dropPosition" :
 							return "Before";
 						case "draggedControl" :
-							return  Core.byId("idTab2");
+							return Element.registry.get("idTab2");
 						case "droppedControl" :
-							return Core.byId(getSelectListId(3));
+							return Element.registry.get(getSelectListId(3));
 					}
 				}
 			};
@@ -3802,9 +3806,9 @@ sap.ui.define([
 					case "dropPosition" :
 						return "On";
 					case "draggedControl" :
-						return  Core.byId("tabReorder3");
+						return Element.registry.get("tabReorder3");
 					case "droppedControl" :
-						return Core.byId("tabReorder1");
+						return Element.registry.get("tabReorder1");
 				}
 			}
 		};
@@ -3815,9 +3819,9 @@ sap.ui.define([
 					case "dropPosition" :
 						return "On";
 					case "draggedControl" :
-						return  Core.byId("tabReorder1");
+						return Element.registry.get("tabReorder1");
 					case "droppedControl" :
-						return Core.byId("subItem1");
+						return Element.registry.get("subItem1");
 				}
 			}
 		};
@@ -3828,9 +3832,9 @@ sap.ui.define([
 					case "dropPosition" :
 						return "On";
 					case "draggedControl" :
-						return  Core.byId("tabReorder3");
+						return Element.registry.get("tabReorder3");
 					case "droppedControl" :
-						return Core.byId("subItem1");
+						return Element.registry.get("subItem1");
 				}
 			}
 		};
@@ -3841,9 +3845,9 @@ sap.ui.define([
 					case "dropPosition" :
 						return "On";
 					case "draggedControl" :
-						return  Core.byId("tab3");
+						return Element.registry.get("tab3");
 					case "droppedControl" :
-						return Core.byId("subtab4");
+						return Element.registry.get("subtab4");
 				}
 			}
 		};
@@ -3854,9 +3858,9 @@ sap.ui.define([
 					case "dropPosition" :
 						return "On";
 					case "draggedControl" :
-						return  Core.byId("tab2");
+						return Element.registry.get("tab2");
 					case "droppedControl" :
-						return Core.byId("tab3");
+						return Element.registry.get("tab3");
 				}
 			}
 		};
@@ -3867,9 +3871,9 @@ sap.ui.define([
 						case "dropPosition" :
 							return "On";
 						case "draggedControl" :
-							return  Core.byId("tab1");
+							return Element.registry.get("tab1");
 						case "droppedControl" :
-							return Core.byId("tab2");
+							return Element.registry.get("tab2");
 					}
 				}
 			};
@@ -3880,9 +3884,9 @@ sap.ui.define([
 					case "dropPosition" :
 						return "Before";
 					case "draggedControl" :
-						return  Core.byId("subItem1");
+						return Element.registry.get("subItem1");
 					case "droppedControl" :
-						return Core.byId("tabReorder3");
+						return Element.registry.get("tabReorder3");
 				}
 			}
 		};
@@ -3890,7 +3894,7 @@ sap.ui.define([
 		this.returnMockEvent = function(iKeyCode, sId) {
 			var oMockEventTest = {
 				keyCode: iKeyCode,
-				srcControl: Core.byId(sId)
+				srcControl: Element.registry.get(sId)
 			};
 
 			return oMockEventTest;
@@ -4115,9 +4119,9 @@ sap.ui.define([
 					case "dropPosition" :
 						return "After";
 					case "draggedControl" :
-						return  Core.byId("subItem1");
+						return Element.registry.get("subItem1");
 					case "droppedControl" :
-						return Core.byId("subItem2");
+						return Element.registry.get("subItem2");
 				}
 			 }
 		};
@@ -4125,7 +4129,7 @@ sap.ui.define([
 		this.returnMockEvent = function(iKeyCode, sId) {
 			var oMockEventTest = {
 				keyCode: iKeyCode,
-				srcControl: Core.byId(sId),
+				srcControl: Element.registry.get(sId),
 				preventDefault: function () {}
 			};
 

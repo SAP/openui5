@@ -14,8 +14,9 @@ sap.ui.define([
 	"sap/m/GroupHeaderListItem",
 	"sap/base/util/deepExtend",
 	"sap/ui/core/library",
-	"sap/ui/core/date/UI5Date"
-], function (
+	"sap/ui/core/date/UI5Date",
+	"sap/ui/core/Element"
+], function(
 	BaseController,
 	SelectionUtils,
 	PresetsUtils,
@@ -27,7 +28,8 @@ sap.ui.define([
 	GroupHeaderListItem,
 	deepExtend,
 	coreLibrary,
-	UI5Date
+	UI5Date,
+	Element
 ) {
 	"use strict";
 
@@ -194,7 +196,7 @@ sap.ui.define([
 		// deleting item fires tap event
 		// for the next item in the list which needs to be suppressed
 		if (iDeletedPresetIndex !== aPresets.length) {
-			var oNextListItem = sap.ui.getCore().byId(sDeletedItemId),
+			var oNextListItem = Element.registry.get(sDeletedItemId),
 				fnOntap = oNextListItem.ontap;
 
 			oNextListItem.ontap = function() {

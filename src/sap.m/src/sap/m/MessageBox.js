@@ -16,8 +16,9 @@ sap.ui.define([
 	'sap/ui/core/library',
 	'sap/ui/core/Control',
 	'sap/m/library',
-	"sap/ui/thirdparty/jquery"
-], function (
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/core/Lib"
+], function(
 	Button,
 	Dialog,
 	Text,
@@ -30,7 +31,8 @@ sap.ui.define([
 	coreLibrary,
 	Control,
 	library,
-	jQuery
+	jQuery,
+	Lib
 ) {
 	"use strict";
 
@@ -213,8 +215,8 @@ sap.ui.define([
 		Icon = MessageBox.Icon;
 
 	function _verifyBundle() {
-		if (MessageBox._rb !== sap.ui.getCore().getLibraryResourceBundle("sap.m")) {
-			MessageBox._rb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+		if (MessageBox._rb !== Lib.getResourceBundleFor("sap.m")) {
+			MessageBox._rb = Lib.getResourceBundleFor("sap.m");
 		}
 	}
 

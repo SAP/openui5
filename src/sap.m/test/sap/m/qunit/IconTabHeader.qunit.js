@@ -15,7 +15,8 @@ sap.ui.define([
 	"sap/ui/core/CustomData",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/m/Panel",
-	"sap/m/library"
+	"sap/m/library",
+	"sap/ui/core/Lib"
 ], function(
 	QUnitUtils,
 	KeyCodes,
@@ -31,7 +32,8 @@ sap.ui.define([
 	CustomData,
 	createAndAppendDiv,
 	Panel,
-	Library
+	Library,
+	Lib
 ) {
 	"use strict";
 
@@ -42,7 +44,7 @@ sap.ui.define([
 	var IconTabHeaderMode = Library.IconTabHeaderMode;
 
 	var DOM_RENDER_LOCATION = "content";
-	var oRB = Core.getLibraryResourceBundle("sap.m");
+	var oRB = Lib.getResourceBundleFor("sap.m");
 
 	createAndAppendDiv(DOM_RENDER_LOCATION);
 

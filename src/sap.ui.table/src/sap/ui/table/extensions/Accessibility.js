@@ -9,8 +9,9 @@ sap.ui.define([
 	"../utils/TableUtils",
 	"../library",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Configuration"
-], function(ExtensionBase, AccRenderExtension, TableUtils, library, jQuery, Configuration) {
+	"sap/ui/core/Configuration",
+	"sap/ui/core/Element"
+], function(ExtensionBase, AccRenderExtension, TableUtils, library, jQuery, Configuration, Element) {
 	"use strict";
 
 	// shortcuts
@@ -517,7 +518,7 @@ sap.ui.define([
 		modifyAccOfCOLUMNHEADER: function(oCellInfo) {
 			var oTable = this.getTable();
 			var $Cell = oCellInfo.cell;
-			var oColumn = sap.ui.getCore().byId($Cell.attr("data-sap-ui-colid"));
+			var oColumn = Element.registry.get($Cell.attr("data-sap-ui-colid"));
 			var oColumnLabel = TableUtils.Column.getHeaderLabel(oColumn);
 			var mAttributes = ExtensionHelper.getAriaAttributesFor(this, AccExtension.ELEMENTTYPES.COLUMNHEADER, {
 					headerId: $Cell.attr("id"),

@@ -13,7 +13,7 @@ sap.ui.define([
 						controlType: "sap.m.Button",
 						matchers : new PropertyStrictEquals({
 							name: "icon",
-							value: "sap-icon://syntax"
+							value: "sap-icon://source-code"
 						}),
 						success : function (aButtons) {
 							aButtons[0].$().trigger("tap");

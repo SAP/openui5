@@ -10,7 +10,8 @@ sap.ui.define([
 	"sap/ui/fl/write/api/ChangesWriteAPI",
 	"sap/ui/fl/Utils",
 	"sap/ui/rta/command/BaseCommand",
-	"sap/ui/rta/library"
+	"sap/ui/rta/library",
+	"sap/ui/core/Element"
 ], function(
 	merge,
 	objectValues,
@@ -20,7 +21,8 @@ sap.ui.define([
 	ChangesWriteAPI,
 	FlUtils,
 	BaseCommand,
-	rtaLibrary
+	rtaLibrary,
+	Element
 ) {
 	"use strict";
 
@@ -104,7 +106,7 @@ sap.ui.define([
 			oSelector = {
 				id: mFlexSettings.templateSelector,
 				appComponent: this.getAppComponent(),
-				controlType: FlUtils.getControlType(sap.ui.getCore().byId(mFlexSettings.templateSelector))
+				controlType: FlUtils.getControlType(Element.registry.get(mFlexSettings.templateSelector))
 			};
 			this.setSelector(oSelector);
 		} else if (!this.getSelector() && this.getElement()) {
@@ -263,7 +265,7 @@ sap.ui.define([
 			return {
 				id: mFlexSettings.originalSelector,
 				appComponent: this.getAppComponent(),
-				controlType: FlUtils.getControlType(sap.ui.getCore().byId(mFlexSettings.originalSelector))
+				controlType: FlUtils.getControlType(Element.registry.get(mFlexSettings.originalSelector))
 			};
 		}
 		return this.getElement() || this.getSelector();

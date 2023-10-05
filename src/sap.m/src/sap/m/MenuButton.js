@@ -14,7 +14,8 @@ sap.ui.define([
 	'sap/ui/core/Popup',
 	'sap/ui/core/LabelEnablement',
 	"./MenuButtonRenderer",
-	"sap/ui/events/KeyCodes"
+	"sap/ui/events/KeyCodes",
+	"sap/ui/core/Element"
 ], function(
 	library,
 	Control,
@@ -26,7 +27,8 @@ sap.ui.define([
 	Popup,
 	LabelEnablement,
 	MenuButtonRenderer,
-	KeyCodes
+	KeyCodes,
+	Element
 ) {
 		"use strict";
 
@@ -291,13 +293,13 @@ sap.ui.define([
 			if (!this._isSplitButton() && this._sDefaultText) {
 				this.setText(this._sDefaultText);
 			} else if (!this.getUseDefaultActionOnly() && this._getLastSelectedItem()) {
-				this.setText(sap.ui.getCore().byId(this._getLastSelectedItem()).getText());
+				this.setText(Element.registry.get(this._getLastSelectedItem()).getText());
 			}
 
 			if (!this._isSplitButton() && this._sDefaultIcon) {
 				this.setIcon(this._sDefaultIcon);
 			} else if (!this.getUseDefaultActionOnly() && this._getLastSelectedItem()) {
-				this.setIcon(sap.ui.getCore().byId(this._getLastSelectedItem()).getIcon());
+				this.setIcon(Element.registry.get(this._getLastSelectedItem()).getIcon());
 			}
 
 			this.invalidate();
@@ -463,7 +465,7 @@ sap.ui.define([
 			var sLastSelectedItemId = this._getLastSelectedItem(),
 				oLastSelectedItem;
 			if (!this.getUseDefaultActionOnly() && sLastSelectedItemId) {
-				oLastSelectedItem = sap.ui.getCore().byId(sLastSelectedItemId);
+				oLastSelectedItem = Element.registry.get(sLastSelectedItemId);
 				this.getMenu().fireItemSelected({ item: oLastSelectedItem });
 			} else {
 				this.fireDefaultAction();

@@ -26,7 +26,9 @@ sap.ui.define([
 	"sap/ui/core/Theming",
 	'sap/ui/core/Configuration',
 	'sap/ui/core/date/UI5Date',
-	'sap/ui/dom/jquery/cursorPos' // provides jQuery.fn.cursorPos
+	"sap/ui/core/Lib",
+	// provides jQuery.fn.cursorPos
+	'sap/ui/dom/jquery/cursorPos'
 ], function(
 	jQuery,
 	InputBase,
@@ -49,7 +51,8 @@ sap.ui.define([
 	IconPool,
 	Theming,
 	Configuration,
-	UI5Date
+	UI5Date,
+	Lib
 ) {
 	"use strict";
 
@@ -347,7 +350,7 @@ sap.ui.define([
 			var oSwitcher = this.getAggregation("_switcher");
 
 			if (!oSwitcher) {
-				var oResourceBundle = Core.getLibraryResourceBundle("sap.m");
+				var oResourceBundle = Lib.getResourceBundleFor("sap.m");
 				var sDateText = oResourceBundle.getText("DATETIMEPICKER_DATE");
 				var sTimeText = oResourceBundle.getText("DATETIMEPICKER_TIME");
 
@@ -681,7 +684,7 @@ sap.ui.define([
 		this.addDependent(this._oTimezonePopup);
 
 		if (Device.system.phone) {
-			oResourceBundle = Core.getLibraryResourceBundle("sap.m");
+			oResourceBundle = Lib.getResourceBundleFor("sap.m");
 
 			this._oTimezonePopup.setEndButton(new Button({
 				text: oResourceBundle.getText("SUGGESTIONSPOPOVER_CLOSE_BUTTON"),
@@ -936,7 +939,7 @@ sap.ui.define([
 		var sLabelId, sLabel, oResourceBundle, sOKButtonText, sCancelButtonText, oPopover;
 
 		if (!this._oPopup) {
-			oResourceBundle = Core.getLibraryResourceBundle("sap.m");
+			oResourceBundle = Lib.getResourceBundleFor("sap.m");
 			sOKButtonText = oResourceBundle.getText("TIMEPICKER_SET");
 			sCancelButtonText = oResourceBundle.getText("TIMEPICKER_CANCEL");
 
@@ -1149,7 +1152,7 @@ sap.ui.define([
 	 */
 	DateTimePicker.prototype.getAccessibilityInfo = function() {
 		var oInfo = DatePicker.prototype.getAccessibilityInfo.apply(this, arguments);
-		oInfo.type = Core.getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_DATETIMEINPUT");
+		oInfo.type = Lib.getResourceBundleFor("sap.m").getText("ACC_CTR_TYPE_DATETIMEINPUT");
 		return oInfo;
 	};
 

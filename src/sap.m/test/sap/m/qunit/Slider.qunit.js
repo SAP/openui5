@@ -16,7 +16,8 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	"sap/ui/dom/includeStylesheet",
 	"sap/ui/thirdparty/jquery",
-	"require"
+	"require",
+	"sap/ui/core/Lib"
 ], function(
 	Core,
 	qutils,
@@ -34,7 +35,8 @@ sap.ui.define([
 	KeyCodes,
 	includeStylesheet,
 	jQuery,
-	require
+	require,
+	Lib
 ) {
 	"use strict";
 
@@ -348,7 +350,7 @@ sap.ui.define([
 
 	QUnit.test("_handlesLabels aggregation", function (assert) {
 		// arrange & act
-		var oResourceBundle = Core.getLibraryResourceBundle("sap.m"),
+		var oResourceBundle = Lib.getResourceBundleFor("sap.m"),
 			oSlider = new Slider(),
 			aLabels = oSlider.getAggregation("_handlesLabels"),
 			oSliderWithTickmarks = new Slider({enableTickmarks: true}),
@@ -2325,7 +2327,7 @@ sap.ui.define([
 		oSlider.placeAt('content');
 		Core.applyChanges();
 
-		var oRb = Core.getLibraryResourceBundle("sap.m"),
+		var oRb = Lib.getResourceBundleFor("sap.m"),
 			sAriaLabel;
 
 		// act
@@ -2360,7 +2362,7 @@ sap.ui.define([
 		sKeyShortcut = oSlider.getDomRef("handle").getAttribute("aria-keyshortcuts");
 
 		// assert
-		assert.strictEqual(Core.byId(sInvisibleTextId).getText(), Core.getLibraryResourceBundle("sap.m").getText("SLIDER_INPUT_TOOLTIP"));
+		assert.strictEqual(Element.registry.get(sInvisibleTextId).getText(), Lib.getResourceBundleFor("sap.m").getText("SLIDER_INPUT_TOOLTIP"));
 		assert.ok(!oSlider.getFocusDomRef().getAttribute("aria-controls"), 'The "aria-controls" should not be set, before the tooltip is rendered');
 		assert.strictEqual(sKeyShortcut, "F2", "The 'aria-keyshortcuts' attribute should be presented with appropriate value");
 

@@ -20,8 +20,9 @@ sap.ui.define([
 	'sap/m/BusyIndicator',
 	'sap/m/Bar',
 	'sap/m/Title',
-	'sap/base/Log'
-], function (
+	'sap/base/Log',
+	"sap/ui/core/Lib"
+], function(
 	Button,
 	Dialog,
 	SearchField,
@@ -38,7 +39,8 @@ sap.ui.define([
 	BusyIndicator,
 	Bar,
 	Title,
-	Log
+	Log,
+	Lib
 ) {
 	"use strict";
 
@@ -350,7 +352,7 @@ sap.ui.define([
 		this._bAppendedToUIArea = false;
 		this._bInitBusy = false;
 		this._bFirstRender = true;
-		this._oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+		this._oRb = Lib.getResourceBundleFor("sap.m");
 
 		// store a reference to the table for binding management
 		this._oTable = new Table(this.getId() + "-table", {

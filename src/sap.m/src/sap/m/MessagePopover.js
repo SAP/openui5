@@ -19,7 +19,8 @@ sap.ui.define([
 	"./MessagePopoverRenderer",
 	"sap/base/Log",
 	"sap/ui/base/ManagedObjectObserver",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/core/Lib"
 ],
 function(
 	Core,
@@ -37,7 +38,8 @@ function(
 	MessagePopoverRenderer,
 	Log,
 	ManagedObjectObserver,
-	jQuery
+	jQuery,
+	Lib
 ) {
 		"use strict";
 
@@ -348,7 +350,7 @@ function(
 			var oPopupControl;
 			this._oOpenByControl = null;
 
-			this._oResourceBundle = Core.getLibraryResourceBundle("sap.m");
+			this._oResourceBundle = Lib.getResourceBundleFor("sap.m");
 
 			this._oMessageView = this._initMessageView();
 
@@ -706,8 +708,7 @@ function(
 		 * @private
 		 */
 		MessagePopover.prototype._expandMsgPopover = function () {
-			var sDomHeight,
-				sHeight = DEFAULT_CONTENT_HEIGHT,
+			var sHeight = DEFAULT_CONTENT_HEIGHT,
 				sDomHeight = this._oPopover.$("cont").css("height");
 
 			if (this.getInitiallyExpanded() && sDomHeight !== "0px") {

@@ -86,7 +86,7 @@ sap.ui.define([
 
 	// It's used many times and save a lot of line that's why has long name and do more than one thing
 	function getColsCountAfterAddingStates(iStatusCount, iAttrCount, sCssQuery) {
-		var oObjectHeader = oCore.byId(sControlId);
+		var oObjectHeader = Element.registry.get(sControlId);
 
 		addStatuses(oObjectHeader, iStatusCount);
 		addAttributes(oObjectHeader, iAttrCount);
@@ -552,7 +552,7 @@ sap.ui.define([
 
 	QUnit.module("Basic aggregations rendering", {
 		afterEach: function () {
-			oCore.byId(sControlId).destroy();
+			Element.registry.get(sControlId).destroy();
 		}
 	});
 
@@ -877,7 +877,7 @@ sap.ui.define([
 			oObjectHeader.placeAt("qunit-fixture");
 		},
 		afterEach: function () {
-			oCore.byId(sControlId).destroy();
+			Element.registry.get(sControlId).destroy();
 		}
 	});
 
@@ -907,7 +907,7 @@ sap.ui.define([
 			oCore.applyChanges();
 		},
 		afterEach: function () {
-			oCore.byId(sControlId).destroy();
+			Element.registry.get(sControlId).destroy();
 		}
 	});
 
@@ -942,7 +942,7 @@ sap.ui.define([
 		afterEach: function () {
 			Device.system.desktop = this.bSystemDesktop;
 			Device.system.tablet = this.bSystemTablet;
-			oCore.byId(sControlId).destroy();
+			Element.registry.get(sControlId).destroy();
 		}
 	});
 
@@ -980,7 +980,7 @@ sap.ui.define([
 		afterEach: function () {
 			Device.system.desktop = this.bSystemDesktop;
 			Device.system.tablet = this.bSystemTablet;
-			oCore.byId(sControlId).destroy();
+			Element.registry.get(sControlId).destroy();
 		}
 	});
 
@@ -1009,7 +1009,7 @@ sap.ui.define([
 		afterEach: function () {
 			this.oStub.restore();
 
-			oCore.byId(sControlId).destroy();
+			Element.registry.get(sControlId).destroy();
 		}
 	});
 
@@ -1069,7 +1069,7 @@ sap.ui.define([
 		afterEach: function () {
 			this.oStub.restore();
 
-			oCore.byId(sControlId).destroy();
+			Element.registry.get(sControlId).destroy();
 		}
 	});
 
@@ -1095,7 +1095,7 @@ sap.ui.define([
 		afterEach: function () {
 			this.oStub.restore();
 
-			oCore.byId(sControlId).destroy();
+			Element.registry.get(sControlId).destroy();
 		}
 	});
 
@@ -1186,7 +1186,7 @@ sap.ui.define([
 				Device.orientation.landscape = true;
 				Device.orientation.portrait = false;
 
-				oCore.byId(sControlId).destroy();
+				Element.registry.get(sControlId).destroy();
 			}
 		});
 
@@ -1207,7 +1207,7 @@ sap.ui.define([
 	/******************************************************************/
 	QUnit.module("OH Screen Reader support", {
 		afterEach: function () {
-			oCore.byId(sControlId).destroy();
+			Element.registry.get(sControlId).destroy();
 		}
 	});
 

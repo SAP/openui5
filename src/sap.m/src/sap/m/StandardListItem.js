@@ -12,9 +12,10 @@ sap.ui.define([
 	"./ListItemBase",
 	"./Image",
 	"./StandardListItemRenderer",
-	"sap/base/Log"
+	"sap/base/Log",
+	"sap/ui/core/Lib"
 ],
-	function(coreLibrary, IconPool, ThemeParameters, Device, library, ListItemBase, Image, StandardListItemRenderer, Log) {
+	function(coreLibrary, IconPool, ThemeParameters, Device, library, ListItemBase, Image, StandardListItemRenderer, Log, Lib) {
 	"use strict";
 
 
@@ -425,7 +426,7 @@ sap.ui.define([
 			oThreeDots = this.getDomRef(sWrapArea + "ThreeDots"),
 			oButton = this.getDomRef(sWrapArea + "Button"),
 			sText = sWrapArea === "title" ? this.getTitle() : this.getDescription(),
-			oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+			oRb = Lib.getResourceBundleFor("sap.m");
 
 		if (!bTextExpanded) {
 			oText.textContent = sText;

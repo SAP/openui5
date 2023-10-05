@@ -8,9 +8,10 @@ sap.ui.define([
 	"sap/ui/layout/GridData",
 	"sap/ui/layout/library",
 	"sap/ui/core/Core",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/core/Element"
 ],
-function (
+function(
 	Label,
 	Button,
 	Input,
@@ -18,7 +19,8 @@ function (
 	GridData,
 	Library,
 	Core,
-	jQuery
+	jQuery,
+	Element
 ) {
 	"use strict";
 
@@ -129,7 +131,7 @@ function (
 				this.oGrid.destroy();
 			},
 			getRefById: function(sId) {
-				var oElement = Core.byId(sId);
+				var oElement = Element.registry.get(sId);
 				return oElement ? oElement.$() : null;
 			},
 			getParentRefById: function(sId) {
@@ -198,8 +200,8 @@ function (
 		assert.ok(!$oVisibleButtonContainer.hasClass("sapUiRespGridSpanInvisible"), "Visible element doesn't have the class for hidden elements");
 
 		// Swap visibility
-		Core.byId('hiddenButton').setVisible(true);
-		Core.byId('visibleButton').setVisible(false);
+		Element.registry.get('hiddenButton').setVisible(true);
+		Element.registry.get('visibleButton').setVisible(false);
 
 		assert.ok(!$oInvisibleButtonContainer.hasClass("sapUiRespGridSpanInvisible"), "Class is removed after element's visibility is changed to visible");
 		assert.ok($oVisibleButtonContainer.hasClass("sapUiRespGridSpanInvisible"), "Class is added when element's visibility changed to hidden");

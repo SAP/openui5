@@ -6,16 +6,20 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/dt/ElementUtil",
-	"sap/ui/rta/util/changeVisualization/ChangeVisualizationUtils"
+	"sap/ui/rta/util/changeVisualization/ChangeVisualizationUtils",
+	"sap/ui/core/Lib",
+	"sap/ui/core/Element"
 ], function(
 	Core,
 	JsControlTreeModifier,
 	ElementUtil,
-	ChangeVisualizationUtils
+	ChangeVisualizationUtils,
+	Lib,
+	Element
 ) {
 	"use strict";
 
-	var oRtaResourceBundle = Core.getLibraryResourceBundle("sap.ui.rta");
+	var oRtaResourceBundle = Lib.getResourceBundleFor("sap.ui.rta");
 
 	var CombineVisualization = {};
 
@@ -50,7 +54,7 @@ sap.ui.define([
 		var aOriginalSelectors = mPayload.originalSelectors;
 		var aLabels = aOriginalSelectors.map(function(oSelector) {
 			var sId = JsControlTreeModifier.getControlIdBySelector(oSelector, oAppComponent);
-			var oControl = Core.byId(sId);
+			var oControl = Element.registry.get(sId);
 			return oControl ? ElementUtil.getLabelForElement(oControl) : sId;
 		});
 		var aShortLabels = aLabels.map(ChangeVisualizationUtils.shortenString);

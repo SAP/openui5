@@ -4,8 +4,9 @@ sap.ui.define([
 	"sap/ui/mdc/p13n/P13nBuilder",
 	"sap/m/VBox",
 	"sap/m/Input",
-	"sap/ui/core/Core"
-], function(GroupView, P13nBuilder, VBox, Input, oCore) {
+	"sap/ui/core/Core",
+	"sap/ui/core/Element"
+], function(GroupView, P13nBuilder, VBox, Input, oCore, Element) {
 	"use strict";
 
 	const aVisible = ["key1", "key2", "key3"];
@@ -167,7 +168,7 @@ sap.ui.define([
 		const aPanels = this.oGroupView.getPanels();
 		aPanels[0].getContent()[0].getItems().forEach(function(oInnerItem, iIndex){
 			const sKey = "key" + (iIndex + 1);
-			const sLabelFor = sap.ui.getCore().byId(oInnerItem.getContent()[0].getItems()[0].getLabelFor()).getIdForLabel();
+			const sLabelFor = Element.registry.get(oInnerItem.getContent()[0].getItems()[0].getLabelFor()).getIdForLabel();
 			assert.equal(sLabelFor, "testAccInput" + sKey, "Label for assocation points to children element");
 		});
     });

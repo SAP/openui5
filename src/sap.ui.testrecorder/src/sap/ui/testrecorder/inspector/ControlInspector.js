@@ -20,9 +20,9 @@ sap.ui.define([
 	"sap/ui/testrecorder/codeSnippets/POMethodUtil",
 	"sap/ui/testrecorder/codeSnippets/RawSnippetUtil",
 	"sap/ui/testrecorder/codeSnippets/CodeSnippetProvider",
-	"sap/ui/testrecorder/ui/models/SharedModel"
-], function (BaseObject, extend, CommunicationBus, CommunicationChannels, AppMutationObserver, ElementMutationObserver, Highlighter, _ControlFinder, ControlAPI, ControlInspectorRepo, constants,
-	DialectRegistry, Dialects, ControlSelectorGenerator, POMethodUtil, RawSnippetUtil, CodeSnippetProvider, SharedModel) {
+	"sap/ui/testrecorder/ui/models/SharedModel",
+	"sap/ui/core/Element"
+], function(BaseObject, extend, CommunicationBus, CommunicationChannels, AppMutationObserver, ElementMutationObserver, Highlighter, _ControlFinder, ControlAPI, ControlInspectorRepo, constants, DialectRegistry, Dialects, ControlSelectorGenerator, POMethodUtil, RawSnippetUtil, CodeSnippetProvider, SharedModel, Element) {
 	"use strict";
 
 	var oControlInspector = null;
@@ -81,7 +81,7 @@ sap.ui.define([
 	 * @param {string} mData.domElementId ID of a dom element from which the control is found (e.g. dom ref)
 	 */
 	ControlInspector.prototype.getControlData = function (mData) {
-		var oDomElement = mData.domElementId ? document.getElementById(mData.domElementId) : sap.ui.getCore().byId(mData.controlId).getDomRef();
+		var oDomElement = mData.domElementId ? document.getElementById(mData.domElementId) : Element.registry.get(mData.controlId).getDomRef();
 		this._selectedElementObserver.stop();
 		this._selectedElementObserver.start(oDomElement); // observe future updates in the control's properties
 

@@ -8,8 +8,9 @@ sap.ui.define([
 	"sap/ui/core/library",
 	"sap/ui/core/Control",
 	"sap/ui/core/Core",
-	"./InfoLabelRenderer"
-], function (library, CoreLibrary, Control, Core, InfoLabelRenderer) {
+	"./InfoLabelRenderer",
+	"sap/ui/core/Lib"
+], function(library, CoreLibrary, Control, Core, InfoLabelRenderer, Lib) {
 	"use strict";
 
 	// shortcut for library.RenderMode
@@ -110,7 +111,7 @@ sap.ui.define([
 	InfoLabel.prototype.init = function () {
 		// Init static text for ARIA
 		if (Core.getConfiguration().getAccessibility() && !InfoLabelRenderer._sAriaText) {
-			var oRB = Core.getLibraryResourceBundle("sap.tnt");
+			var oRB = Lib.getResourceBundleFor("sap.tnt");
 			InfoLabelRenderer._sAriaText = oRB.getText("INFOLABEL_DEFAULT");
 			InfoLabelRenderer._sAriaTextEmpty = oRB.getText("INFOLABEL_EMPTY");
 		}

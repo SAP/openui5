@@ -9,14 +9,16 @@ sap.ui.define([
 	"sap/m/Dialog",
 	"sap/m/DialogRenderer",
 	"sap/ui/rta/appVariant/manageApps/webapp/Component",
-	"sap/ui/rta/Utils"
+	"sap/ui/rta/Utils",
+	"sap/ui/core/Lib"
 ], function(
 	ComponentContainer,
 	Button,
 	Dialog,
 	DialogRenderer,
 	ManageAppsComponent,
-	RtaUtils
+	RtaUtils,
+	Lib
 ) {
 	"use strict";
 
@@ -37,7 +39,7 @@ sap.ui.define([
 		// eslint-disable-next-line object-shorthand
 		constructor: function(...aArgs) {
 			Dialog.prototype.constructor.apply(this, aArgs);
-			this._oTextResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
+			this._oTextResources = Lib.getResourceBundleFor("sap.ui.rta");
 
 			// Create manage apps component
 			this.oManageAppsComponent = new ManageAppsComponent("sap.ui.rta.appVariant.manageApps", {

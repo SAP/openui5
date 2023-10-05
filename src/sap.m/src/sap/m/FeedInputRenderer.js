@@ -2,11 +2,11 @@
  * ${copyright}
  */
 
-sap.ui.define([],
-	function() {
+sap.ui.define(["sap/ui/core/Lib"],
+	function(Lib) {
 	"use strict";
 
-	var oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+	var oRb = Lib.getResourceBundleFor("sap.m");
 
 	var FeedInputRenderer = {
 		apiVersion: 2

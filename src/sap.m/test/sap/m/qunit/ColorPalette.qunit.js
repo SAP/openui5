@@ -12,7 +12,8 @@ sap.ui.define([
 	"sap/ui/core/Control",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/core/Core",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/core/Lib"
 ], function(
 	Button,
 	ColorPalette,
@@ -26,7 +27,8 @@ sap.ui.define([
 	Control,
 	KeyCodes,
 	oCore,
-	jQuery
+	jQuery,
+	Lib
 ) {
 	"use strict";
 
@@ -1595,7 +1597,7 @@ sap.ui.define([
 						"#a811ff"
 					]/*black, white, non-named*/
 				}),
-				oBundle = oCore.getLibraryResourceBundle("sap.m"),
+				oBundle = Lib.getResourceBundleFor("sap.m"),
 				sBlack = oBundle.getText("COLOR_PALETTE_PREDEFINED_COLOR_BLACK"),
 				sWhite = oBundle.getText("COLOR_PALETTE_PREDEFINED_COLOR_WHITE"),
 				$SwatchContainer,

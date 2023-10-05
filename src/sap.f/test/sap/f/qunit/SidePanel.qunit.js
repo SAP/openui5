@@ -12,7 +12,8 @@ sap.ui.define([
 	"sap/f/SidePanelItem",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/core/Core",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/core/Lib"
 ], function(
 	qutils,
 	createAndAppendDiv,
@@ -26,7 +27,8 @@ sap.ui.define([
 	SidePanelItem,
 	KeyCodes,
 	oCore,
-	jQuery
+	jQuery,
+	Lib
 ) {
 	"use strict";
 
@@ -667,7 +669,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("ARIA attributes", function (assert) {
-		var oResourceBundle = oCore.getLibraryResourceBundle("sap.f"),
+		var oResourceBundle = Lib.getResourceBundleFor("sap.f"),
 			oOverflowItemDomRef = this.oSP.getAggregation("_overflowItem").getDomRef(),
 			aItems = this.oSP.getItems(),
 			sSPId = this.oSP.getId(),

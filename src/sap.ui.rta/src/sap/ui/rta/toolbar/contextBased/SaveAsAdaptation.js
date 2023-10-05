@@ -14,7 +14,8 @@ sap.ui.define([
 	"sap/ui/fl/write/api/ContextSharingAPI",
 	"sap/ui/rta/Utils",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/performance/Measurement"
+	"sap/ui/performance/Measurement",
+	"sap/ui/core/Element"
 ], function(
 	ManagedObject,
 	Log,
@@ -27,7 +28,8 @@ sap.ui.define([
 	ContextSharingAPI,
 	Utils,
 	JSONModel,
-	Measurement
+	Measurement,
+	Element
 ) {
 	"use strict";
 
@@ -261,7 +263,7 @@ sap.ui.define([
 			this._oContextComponentInstance = oContextSharingComponent.getComponentInstance();
 			this._oContextComponentInstance.resetSelectedContexts();
 			this._oAddAdaptationDialog.addContent(this._oContextComponent);
-			var oContextsList = sap.ui.getCore().byId("contextSharing---ContextVisibility--selectedContextsList");
+			var oContextsList = Element.registry.get("contextSharing---ContextVisibility--selectedContextsList");
 			oContextsList.attachUpdateFinished(onContextRoleChange.bind(this));
 			oContextsList.getHeaderToolbar().getContent()[0].setRequired(true);
 			this._oContextComponentInstance.setEmptyListTextWithAdvice();

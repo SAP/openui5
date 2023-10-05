@@ -21,6 +21,8 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Configuration",
 	"./FileUploaderHelper",
+	"sap/ui/core/Lib",
+	"sap/ui/core/Element",
 	// jQuery Plugin "addAriaDescribedBy"
 	'sap/ui/dom/jquery/Aria'
 ], function(
@@ -38,7 +40,9 @@ sap.ui.define([
 	encodeXML,
 	jQuery,
 	Configuration,
-	FileUploaderHelper
+	FileUploaderHelper,
+	Lib,
+	Element
 ) {
 	// shortcut for sap.ui.core.ValueState
 	var ValueState = coreLibrary.ValueState;
@@ -619,7 +623,7 @@ sap.ui.define([
 
 		if (Configuration.getAccessibility()) {
 			if (!FileUploader.prototype._sAccText) {
-				var rb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified");
+				var rb = Lib.getResourceBundleFor("sap.ui.unified");
 				FileUploader.prototype._sAccText = rb.getText("FILEUPLOAD_ACC");
 			}
 			if (this.oBrowse.addAriaDescribedBy) {
@@ -819,7 +823,7 @@ sap.ui.define([
 			sAccDescription = "";
 
 		if (bIsRequired) {
-			sAccDescription += sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified").getText("FILEUPLOAD_REQUIRED") + " ";
+			sAccDescription += Lib.getResourceBundleFor("sap.ui.unified").getText("FILEUPLOAD_REQUIRED") + " ";
 		}
 
 		if (sTooltip) {
@@ -970,7 +974,7 @@ sap.ui.define([
 
 	FileUploader.prototype.onsapfocusleave = function(oEvent) {
 
-		if (!oEvent.relatedControlId || !containsOrEquals(this.getDomRef(), sap.ui.getCore().byId(oEvent.relatedControlId).getFocusDomRef())) {
+		if (!oEvent.relatedControlId || !containsOrEquals(this.getDomRef(), Element.registry.get(oEvent.relatedControlId).getFocusDomRef())) {
 			this.closeValueStateMessage();
 		}
 
@@ -1896,7 +1900,7 @@ sap.ui.define([
 
 	   // as the text is the same for all FileUploaders, get it only once
 	   if (!FileUploader.prototype._sBrowseText) {
-		   var rb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified");
+		   var rb = Lib.getResourceBundleFor("sap.ui.unified");
 		   FileUploader.prototype._sBrowseText = rb.getText("FILEUPLOAD_BROWSE");
 	   }
 
@@ -1912,7 +1916,7 @@ sap.ui.define([
 
 	   // as the text is the same for all FileUploaders, get it only once
 	   if (!FileUploader.prototype._sNoFileChosenText) {
-		   var rb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified");
+		   var rb = Lib.getResourceBundleFor("sap.ui.unified");
 		   FileUploader.prototype._sNoFileChosenText = rb.getText("FILEUPLOAD_NO_FILE_CHOSEN");
 	   }
 

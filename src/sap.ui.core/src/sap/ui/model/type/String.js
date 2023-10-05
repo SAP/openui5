@@ -9,8 +9,9 @@ sap.ui.define([
 	"sap/ui/model/FormatException",
 	"sap/ui/model/ParseException",
 	"sap/ui/model/SimpleType",
-	"sap/ui/model/ValidateException"
-], function(Log, each, FormatException, ParseException, SimpleType, ValidateException) {
+	"sap/ui/model/ValidateException",
+	"sap/ui/core/Lib"
+], function(Log, each, FormatException, ParseException, SimpleType, ValidateException, Lib) {
 	"use strict";
 
 	/**
@@ -155,7 +156,7 @@ sap.ui.define([
 	 */
 	StringType.prototype.validateValue = function (sValue) {
 		if (this.oConstraints) {
-			var oBundle = sap.ui.getCore().getLibraryResourceBundle(),
+			var oBundle = Lib.getResourceBundleFor("sap.ui.core"),
 				aViolatedConstraints = [],
 				aMessages = [];
 

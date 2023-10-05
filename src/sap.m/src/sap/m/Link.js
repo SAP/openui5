@@ -15,7 +15,9 @@ sap.ui.define([
 	"sap/ui/Device",
 	"./LinkRenderer",
 	"sap/ui/events/KeyCodes",
-	"sap/base/security/URLListValidator"
+	"sap/base/security/URLListValidator",
+	"sap/ui/core/Lib",
+	"sap/ui/core/Element"
 ],
 function(
 	library,
@@ -29,7 +31,9 @@ function(
 	Device,
 	LinkRenderer,
 	KeyCodes,
-	URLListValidator
+	URLListValidator,
+	Lib,
+	Element
 ) {
 	"use strict";
 
@@ -478,7 +482,7 @@ function(
 	 * @returns {sap.ui.core.AccessibilityInfo} The <code>sap.m.Link</code>  accessibility information
 	 */
 	Link.prototype.getAccessibilityInfo = function() {
-		var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m"),
+		var oResourceBundle = Lib.getResourceBundleFor("sap.m"),
 			sEmphasizedInfo = this.getEmphasized() ? oResourceBundle.getText("LINK_EMPHASIZED") : "",
 			sSubtleInfo = this.getSubtle() ? oResourceBundle.getText("LINK_SUBTLE") : "",
 			sText = this.getText(),
@@ -555,7 +559,7 @@ function(
 		var aLabels = this.getAriaLabelledBy();
 
 		if (aLabels.length) {
-			var oLabel = Core.byId(aLabels[0]);
+			var oLabel = Element.registry.get(aLabels[0]);
 
 			oLabel.setProperty("highlightAccKeysRef", bHighlightAccKeysRef);
 

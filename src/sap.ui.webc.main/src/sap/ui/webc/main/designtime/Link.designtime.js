@@ -3,14 +3,16 @@
  */
 // Provides the Design Time Metadata for the sap.ui.webc.main.Link
 sap.ui.define([
-		"sap/ui/model/json/JSONModel",
-		"sap/ui/core/Core",
-		"sap/ui/core/Fragment"
-	],
-	function (JSONModel, Core, Fragment) {
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/core/Core",
+	"sap/ui/core/Fragment",
+	"sap/ui/core/Lib",
+	"sap/ui/core/Element"
+],
+	function(JSONModel, Core, Fragment, Lib, Element) {
 		"use strict";
 		var oSelectTargetDialog = function(oControl, mPropertyBag) {
-			var oTextResources = Core.getLibraryResourceBundle("sap.ui.webc.main.designtime");
+			var oTextResources = Lib.getResourceBundleFor("sap.ui.webc.main.designtime");
 			return new Promise(function(fnResolve) {
 
 				var data = {
@@ -29,7 +31,7 @@ sap.ui.define([
 					oDialog.setModel(oModel);
 
 					oDialog.getBeginButton().attachPress(function(oEvent) {
-						var sTargetValue = Core.byId("targetCombo").getValue();
+						var sTargetValue = Element.registry.get("targetCombo").getValue();
 
 						fnResolve(sTargetValue);
 						oDialog.close();

@@ -16,7 +16,8 @@ sap.ui.define([
 	'./ObjectIdentifierRenderer',
 	"sap/ui/events/KeyCodes",
 	"sap/ui/core/Configuration",
-	"sap/m/Image"
+	"sap/m/Image",
+	"sap/ui/core/Lib"
 ],
 function(
 	library,
@@ -31,7 +32,8 @@ function(
 	ObjectIdentifierRenderer,
 	KeyCodes,
 	Configuration,
-	Image
+	Image,
+	Lib
 ) {
 	"use strict";
 
@@ -153,7 +155,7 @@ function(
 	 * @private
 	 */
 	ObjectIdentifier.prototype.init = function() {
-		var oLibraryResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+		var oLibraryResourceBundle = Lib.getResourceBundleFor("sap.m");
 
 		if (Configuration.getAccessibility()) {
 			ObjectIdentifier.OI_ARIA_ROLE = oLibraryResourceBundle.getText("OI_ARIA_ROLE");

@@ -11,9 +11,17 @@ sap.ui.define([
 	'sap/ui/mdc/enums/ConditionValidated',
 	'sap/ui/mdc/enums/OperatorName',
 	'sap/ui/model/ParseException',
-	'sap/ui/core/Core'
+	'sap/ui/core/Core',
+	"sap/ui/core/Element"
 ], function(
-	BaseValueHelpDelegate, StateUtil, Condition, ConditionValidated, OperatorName, ParseException, Core
+	BaseValueHelpDelegate,
+	StateUtil,
+	Condition,
+	ConditionValidated,
+	OperatorName,
+	ParseException,
+	Core,
+	Element
 ) {
 	"use strict";
 
@@ -34,7 +42,7 @@ sap.ui.define([
 				if (sContentId === oInParameter.contentId) {
 					if (oInParameter.sourceFieldId) {
 						var sSourceFieldId = oInParameter.sourceFieldId;
-						var oSourceField = Core.byId(sSourceFieldId);
+						var oSourceField = Element.registry.get(sSourceFieldId);
 
 						var aConditions = oSourceField.getConditions();
 						if (aConditions  && aConditions.length) {
@@ -108,10 +116,10 @@ sap.ui.define([
 				if (oOutParameter.targetFieldId) {
 					// update field by Id
 					var sTargetFieldId = oOutParameter.targetFieldId;
-					var oTargetField = Core.byId(sTargetFieldId);
+					var oTargetField = Element.registry.get(sTargetFieldId);
 					if (oTargetField && (bAlways || !oTargetField.getValue())) {
 						var sOutValueHelpId = oTargetField && oTargetField.getValueHelp();
-						var oOutValueHelp = sOutValueHelpId && Core.byId(sOutValueHelpId);
+						var oOutValueHelp = sOutValueHelpId && Element.registry.get(sOutValueHelpId);
 
 						if (oOutValueHelp) {
 							var oConfig = {

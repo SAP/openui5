@@ -14,7 +14,8 @@ sap.ui.define([
 	"test-resources/sap/ui/mdc/qunit/table/OpaTests/pages/Util",
 	"sap/ui/test/actions/Drag",
 	"sap/ui/test/actions/Drop",
-	"sap/ui/mdc/enums/TableType"
+	"sap/ui/mdc/enums/TableType",
+	"sap/ui/core/Lib"
 ], function(
 	/** @type sap.ui.core.Core */ Core,
 	/** @type sap.ui.test.Opa5 */ Opa5,
@@ -27,7 +28,9 @@ sap.ui.define([
 	/** @type sap.ui.mdc.qunit.table.OpaTests.pages.Util */ Util,
 	/** @type sap.ui.test.actions.Drag */ Drag,
 	/** @type sap.ui.test.actions.Drop */ Drop,
-	/** @type sap.ui.mdc.enums.TableType */ TableType) {
+	/** @type sap.ui.mdc.enums.TableType */ TableType,
+	Lib
+) {
 	"use strict";
 
 	/**
@@ -342,7 +345,7 @@ sap.ui.define([
 		 * @private
 		 */
 		iPressExportButtonInMenu: function() {
-			const oResourceBundle = Core.getLibraryResourceBundle("sap.ui.mdc");
+			const oResourceBundle = Lib.getResourceBundleFor("sap.ui.mdc");
 
 			return this.waitFor({
 				controlType: "sap.ui.unified.MenuItem",
@@ -367,7 +370,7 @@ sap.ui.define([
 		 * @private
 		 */
 		iPressExportAsButtonInMenu: function() {
-			const oResourceBundle = Core.getLibraryResourceBundle("sap.ui.mdc");
+			const oResourceBundle = Lib.getResourceBundleFor("sap.ui.mdc");
 
 			return this.waitFor({
 				controlType: "sap.ui.unified.MenuItem",

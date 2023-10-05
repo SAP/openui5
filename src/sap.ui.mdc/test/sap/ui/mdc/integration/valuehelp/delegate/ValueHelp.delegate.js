@@ -13,7 +13,8 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	'sap/ui/model/Filter',
 	'sap/ui/model/FilterOperator',
-	"sap/ui/model/FilterType"
+	"sap/ui/model/FilterType",
+	"sap/ui/core/Element"
 ], function(
 	BaseValueHelpDelegate,
 	ODataV4ValueHelpDelegate,
@@ -25,7 +26,8 @@ sap.ui.define([
 	Core,
 	Filter,
 	FilterOperator,
-	FilterType
+	FilterType,
+	Element
 ) {
 	"use strict";
 
@@ -229,7 +231,7 @@ sap.ui.define([
 			}, []);
 
 			if (aAllConditionCountries && aAllConditionCountries.length) {
-				const oFilterBar = Core.byId("FB0");
+				const oFilterBar = Element.registry.get("FB0");
 				StateUtil.retrieveExternalState(oFilterBar).then(function (oState) {
 					let bModify = false;
 					aAllConditionCountries.forEach(function(sCountry) {
@@ -283,7 +285,7 @@ sap.ui.define([
 			} */
 
 			// Example filterbar extraction:
-			const oSourceFilterBar = Core.byId("FB0");
+			const oSourceFilterBar = Element.registry.get("FB0");
 			return StateUtil.retrieveExternalState(oSourceFilterBar).then(function (oExternalFilterBarState) {
 
 				const aSalesOrganizationConditions = oExternalFilterBarState.filter && oExternalFilterBarState.filter["salesOrganization"];

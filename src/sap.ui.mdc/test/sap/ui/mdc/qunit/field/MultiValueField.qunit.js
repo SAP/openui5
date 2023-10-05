@@ -14,8 +14,10 @@ sap.ui.define([
 	"sap/ui/mdc/enums/ConditionValidated",
 	"sap/ui/mdc/enums/OperatorName",
 	"sap/ui/mdc/field/ConditionsType",
-	"sap/ui/mdc/field/FieldMultiInput", // async. loading of content control tested in FieldBase test
-	"sap/ui/mdc/field/MultiValueFieldDelegate", // make sure delegate is loaded (test delegate loading in FieldBase test)
+	// async. loading of content control tested in FieldBase test
+	"sap/ui/mdc/field/FieldMultiInput",
+	// make sure delegate is loaded (test delegate loading in FieldBase test)
+	"sap/ui/mdc/field/MultiValueFieldDelegate",
 	"sap/ui/mdc/field/MultiValueFieldItem",
 	"sap/ui/mdc/field/TokenizerDisplay",
 	"sap/ui/mdc/field/TokenDisplay",
@@ -36,7 +38,8 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/odata/type/DateTime",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/ui/core/Element"
 ], function(
 	qutils,
 	library,
@@ -71,7 +74,8 @@ sap.ui.define([
 	JSONModel,
 	DateTimeType,
 	KeyCodes,
-	oCore
+	oCore,
+	Element
 ) {
 	"use strict";
 
@@ -332,7 +336,7 @@ sap.ui.define([
 
 		const fnDone = assert.async();
 		setTimeout(function() { // async set of condition
-			const oValueHelp = oCore.byId(oField.getValueHelp());
+			const oValueHelp = Element.registry.get(oField.getValueHelp());
 			const oCondition = Condition.createItemCondition(4, "Text 4");
 			oValueHelp.fireSelect({ conditions: [oCondition], add: false, close: true });
 

@@ -5,8 +5,9 @@
 sap.ui.define([
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/rta/api/startKeyUserAdaptation",
-	"sap/ui/mdc/enums/ChartToolbarActionType"
-], function(Controller, startKeyUserAdaptation, ChartToolbarActionType) {
+	"sap/ui/mdc/enums/ChartToolbarActionType",
+	"sap/ui/core/Element"
+], function(Controller, startKeyUserAdaptation, ChartToolbarActionType, Element) {
 	"use strict";
 
 	const oController = Controller.extend("sap.ui.mdc.ActionToolbarTesting.controller.App", {
@@ -18,7 +19,7 @@ sap.ui.define([
 		},
 		onInit: function() {
 			const oOwnerComponent = this.getOwnerComponent();
-			const oChart = sap.ui.getCore().byId(oOwnerComponent.getId() + "---app--actionToolbarChart");
+			const oChart = Element.registry.get(oOwnerComponent.getId() + "---app--actionToolbarChart");
 
 			oChart.setIgnoreToolbarActions([
 				ChartToolbarActionType.ZoomInOut,

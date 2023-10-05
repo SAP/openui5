@@ -12,7 +12,8 @@ sap.ui.define([
 	"sap/m/library",
 	"sap/base/Log",
 	"sap/base/util/extend",
-	"sap/ui/core/InvisibleText"
+	"sap/ui/core/InvisibleText",
+	"sap/ui/core/Lib"
 ], function(
 	oCore,
 	coreLibrary,
@@ -26,7 +27,8 @@ sap.ui.define([
 	library,
 	Log,
 	extend,
-	InvisibleText
+	InvisibleText,
+	Lib
 ) {
 	"use strict";
 
@@ -719,7 +721,7 @@ sap.ui.define([
 
 	QUnit.test("Check ARIA specific roles", function (assert) {
 		var $oAvatar = this.oAvatar.$(),
-			sDefaultTooltip = oCore.getLibraryResourceBundle("sap.m").getText("AVATAR_TOOLTIP");
+			sDefaultTooltip = Lib.getResourceBundleFor("sap.m").getText("AVATAR_TOOLTIP");
 
 		assert.strictEqual($oAvatar.attr("role"), "img", "Aria role should be 'img'");
 		assert.strictEqual($oAvatar.attr("aria-label"), "sampleTooltip", "Aria-label should be the custom 'sampleTooltip' text tooltip");
@@ -945,7 +947,7 @@ sap.ui.define([
 		//assert
 		assert.equal(this.oAvatar._badgeRef != null, true, "Badge is attached to Avatar");
 		assert.equal(this.oAvatar._badgeRef.getTooltip(),
-			oCore.getLibraryResourceBundle("sap.m").getText("AVATAR_TOOLTIP_ZOOMIN"),
+			Lib.getResourceBundleFor("sap.m").getText("AVATAR_TOOLTIP_ZOOMIN"),
 			"Badge Tooltip is predefined");
 	});
 
@@ -975,7 +977,7 @@ sap.ui.define([
 		oCore.applyChanges();
 
 		//assert
-		assert.equal(this.oAvatar._badgeRef.getTooltip() != oCore.getLibraryResourceBundle("sap.m").getText("AVATAR_TOOLTIP_ZOOMIN"),
+		assert.equal(this.oAvatar._badgeRef.getTooltip() != Lib.getResourceBundleFor("sap.m").getText("AVATAR_TOOLTIP_ZOOMIN"),
 		true, "Badge tooltip is not predefined");
 
 		//assert

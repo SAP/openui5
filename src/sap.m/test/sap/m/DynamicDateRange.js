@@ -14,7 +14,8 @@ sap.ui.define([
 	"sap/m/TextArea",
 	"sap/ui/Device",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/core/date/UI5Date"
+	"sap/ui/core/date/UI5Date",
+	"sap/ui/core/Element"
 ], function(
 	DynamicDateOption,
 	DateFormat,
@@ -31,7 +32,8 @@ sap.ui.define([
 	TextArea,
 	Device,
 	JSONModel,
-	UI5Date
+	UI5Date,
+	Element
 ) {
 	"use strict";
 
@@ -136,7 +138,7 @@ sap.ui.define([
 
 	function handleValueChange(oEvent) {
 		var sDDRValue = JSON.stringify(oEvent.getParameter("value"), null, 2);
-		var oTextArea = sap.ui.getCore().byId("txt1");
+		var oTextArea = Element.registry.get("txt1");
 		var oDDR = oEvent.getSource();
 
 		oTextArea.setValue(sDDRValue + "\n" + oTextArea.getValue());

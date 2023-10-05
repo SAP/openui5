@@ -13,8 +13,8 @@ sap.ui.define([
 	"sap/ui/model/Filter",
 	"sap/ui/core/Core",
 	"sap/base/Log",
-	'sap/ui/mdc/odata/v4/TypeMap'
-
+	'sap/ui/mdc/odata/v4/TypeMap',
+	"sap/ui/core/Element"
 ], function(
 	TableDelegateUtils,
 	TableDelegate,
@@ -26,7 +26,8 @@ sap.ui.define([
 	Filter,
 	Core,
 	Log,
-	ODataV4TypeMap
+	ODataV4TypeMap,
+	Element
 ) {
 	"use strict";
 
@@ -95,7 +96,7 @@ sap.ui.define([
 	}
 
 	function createOuterFilters(oTable) {
-		var oFilter = Core.byId(oTable.getFilter());
+		var oFilter = Element.registry.get(oTable.getFilter());
 		var aFilters = [];
 
 		if (!oFilter) {
@@ -118,7 +119,7 @@ sap.ui.define([
 	}
 
 	function addSearchParameter(oTable, oBindingInfo) {
-		var oFilter = Core.byId(oTable.getFilter());
+		var oFilter = Element.registry.get(oTable.getFilter());
 		if (!oFilter) {
 			return;
 		}

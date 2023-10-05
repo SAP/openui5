@@ -20,8 +20,9 @@ sap.ui.define([
 	"sap/m/Title",
 	"sap/m/Label",
 	"sap/m/Input",
-	"sap/ui/core/Core"
-	],
+	"sap/ui/core/Core",
+	"sap/ui/core/Element"
+],
 	function(
 		jQuery,
 		qutils,
@@ -42,7 +43,8 @@ sap.ui.define([
 		mTitle,
 		Label,
 		Input,
-		oCore
+		oCore,
+		Element
 	) {
 	"use strict";
 
@@ -334,8 +336,8 @@ sap.ui.define([
 		assert.equal(aFormContainers.length, 0, "no FormContainers assigned");
 		assert.notOk(window.document.getElementById("FC1"), "Container1 is not rendered");
 		assert.notOk(window.document.getElementById("FC2"), "Container2 is not rendered");
-		assert.notOk(oCore.byId("FC1"), "FormContainer1 destroyed");
-		assert.notOk(oCore.byId("FC2"), "FormContainer2 destroyed");
+		assert.notOk(Element.registry.get("FC1"), "FormContainer1 destroyed");
+		assert.notOk(Element.registry.get("FC2"), "FormContainer2 destroyed");
 	});
 
 	QUnit.test("visibility", function(assert) {

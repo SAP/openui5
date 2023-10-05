@@ -4,18 +4,20 @@
 
 // Provides control sap.uxap.ObjectPageHeaderContent.
 sap.ui.define([
-    "sap/ui/core/Control",
-    "./library",
-    "sap/m/Button",
-    "./ObjectImageHelper",
-    "./ObjectPageHeaderContentRenderer"
+	"sap/ui/core/Control",
+	"./library",
+	"sap/m/Button",
+	"./ObjectImageHelper",
+	"./ObjectPageHeaderContentRenderer",
+	"sap/ui/core/Lib"
 ],
 	function(
-	    Control,
+		Control,
 		library,
 		Button,
 		ObjectImageHelper,
-		ObjectPageHeaderContentRenderer
+		ObjectPageHeaderContentRenderer,
+		Lib
 	) {
 		"use strict";
 
@@ -115,7 +117,7 @@ sap.ui.define([
 		ObjectPageHeaderContent.prototype._getInternalBtnAggregation = function (sAggregationName, sBtnText, sBtnIdText, sBtnType) {
 			if (!this.getAggregation(sAggregationName)) {
 				var oBtn = new Button({
-					text: sap.ui.getCore().getLibraryResourceBundle("sap.uxap").getText(sBtnText),
+					text: Lib.getResourceBundleFor("sap.uxap").getText(sBtnText),
 					type: sBtnType,
 					id: this.getId() + sBtnIdText
 				});

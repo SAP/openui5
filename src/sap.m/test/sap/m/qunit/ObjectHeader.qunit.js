@@ -14,7 +14,8 @@ sap.ui.define([
 	"sap/m/ObjectMarker",
 	"sap/m/Label",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/ui/core/Element"
 ], function(
 	qutils,
 	createAndAppendDiv,
@@ -30,7 +31,8 @@ sap.ui.define([
 	ObjectMarker,
 	Label,
 	KeyCodes,
-	oCore
+	oCore,
+	Element
 ) {
 	"use strict";
 
@@ -994,13 +996,13 @@ sap.ui.define([
 
 		var $sImg = iconOH.$("img");
 		assert.ok(!(iconOH === null), "iconOH is not null");
-		assert.ok(oCore.byId("iconOH"), "Icon is found in UI5 Core");
+		assert.ok(Element.registry.get("iconOH"), "Icon is found in UI5 Core");
 		assert.ok(!$sImg.attr("title"), "Icon has no tooltip");
-		assert.ok(oCore.byId("iconOH-flag"), "Flag icon is found in UI5 Core");
-		assert.ok(oCore.byId("iconOH-favorite"), "Favorite icon is found in UI5 Core");
+		assert.ok(Element.registry.get("iconOH-flag"), "Flag icon is found in UI5 Core");
+		assert.ok(Element.registry.get("iconOH-favorite"), "Favorite icon is found in UI5 Core");
 		iconOH.destroy();
-		assert.notOk(oCore.byId("iconOH-flag"), "Flag icon is not found in UI5 Core");
-		assert.notOk(oCore.byId("iconOH-favorite"), "Favorite icon is not found in UI5 Core");
+		assert.notOk(Element.registry.get("iconOH-flag"), "Flag icon is not found in UI5 Core");
+		assert.notOk(Element.registry.get("iconOH-favorite"), "Favorite icon is not found in UI5 Core");
 	});
 
 	QUnit.test("TestImageExit", function(assert) {
@@ -1017,10 +1019,10 @@ sap.ui.define([
 
 		var $sImg = imageOH.$("img");
 		assert.ok(!(imageOH === null), "imageOH is not null");
-		assert.ok(oCore.byId("imageOH"), "Image is found in UI5 Core");
+		assert.ok(Element.registry.get("imageOH"), "Image is found in UI5 Core");
 		assert.equal($sImg.attr("title"), "test tooltip", "Image has tooltip");
 		imageOH.destroy();
-		assert.notOk(oCore.byId("imageOH"), "Image is removed from UI5 Core");
+		assert.notOk(Element.registry.get("imageOH"), "Image is removed from UI5 Core");
 	});
 
 	QUnit.test("Title selector icon size", function(assert) {

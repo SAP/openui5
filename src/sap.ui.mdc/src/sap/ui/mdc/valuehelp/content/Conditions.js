@@ -7,13 +7,15 @@ sap.ui.define([
 	'sap/ui/mdc/util/loadModules',
 	'sap/ui/mdc/enums/ValueHelpSelectionType',
 	'sap/ui/mdc/enums/ConditionValidated',
-	'sap/ui/mdc/util/Common'
+	'sap/ui/mdc/util/Common',
+	"sap/ui/core/Lib"
 ], function(
 	Content,
 	loadModules,
 	ValueHelpSelectionType,
 	ConditionValidated,
-	Common
+	Common,
+	Lib
 ) {
 	"use strict";
 	/**
@@ -82,7 +84,7 @@ sap.ui.define([
 
 	Conditions.prototype.init = function () {
 		Content.prototype.init.apply(this, arguments);
-		this._oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
+		this._oResourceBundle = Lib.getResourceBundleFor("sap.ui.mdc");
 	};
 
 	Conditions.prototype.exit = function () {

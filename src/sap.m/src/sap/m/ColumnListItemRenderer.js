@@ -9,9 +9,10 @@ sap.ui.define([
 	"sap/ui/Device",
 	"sap/base/Log",
 	"./library",
-	"./ListItemBaseRenderer"
+	"./ListItemBaseRenderer",
+	"sap/ui/core/Lib"
 ],
-	function(Renderer, coreLibrary, Core, Device, Log, library, ListItemBaseRenderer) {
+	function(Renderer, coreLibrary, Core, Device, Log, library, ListItemBaseRenderer, Lib) {
 	"use strict";
 
 	// shortcut for sap.m.PopinDisplay
@@ -322,7 +323,7 @@ sap.ui.define([
 				oLI._addClonedHeader(oHeader);
 				rm.renderControl(oHeader);
 				rm.openStart("span").class("sapMListTblSubCntSpr");
-				rm.attr("data-popin-colon", Core.getLibraryResourceBundle("sap.m").getText("TABLE_POPIN_LABEL_COLON"));
+				rm.attr("data-popin-colon", Lib.getResourceBundleFor("sap.m").getText("TABLE_POPIN_LABEL_COLON"));
 				rm.openEnd().close("span");
 				rm.close("div");
 			}

@@ -4,14 +4,15 @@
 sap.ui.define([
 	"sap/ui/core/library",
 	"sap/ui/core/Core",
-	"sap/ui/core/Configuration"
-], function(coreLibrary, Core, Configuration) {
+	"sap/ui/core/Configuration",
+	"sap/ui/core/Lib"
+], function(coreLibrary, Core, Configuration, Lib) {
 	"use strict";
 
 	// shortcut for sap.ui.core.Orientation
 	var Orientation = coreLibrary.Orientation;
 
-	var oResourceBundle = Core.getLibraryResourceBundle("sap.ui.layout");
+	var oResourceBundle = Lib.getResourceBundleFor("sap.ui.layout");
 
 	/**
 	 * Splitter renderer.

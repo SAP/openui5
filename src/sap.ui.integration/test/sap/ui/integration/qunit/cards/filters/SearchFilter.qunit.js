@@ -5,13 +5,15 @@ sap.ui.define([
 	"sap/ui/integration/widgets/Card",
 	"sap/ui/core/Core",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/qunit/QUnitUtils"
-], function (
+	"sap/ui/qunit/QUnitUtils",
+	"sap/ui/core/Element"
+], function(
 	SearchFilter,
 	Card,
 	Core,
 	KeyCodes,
-	QUnitUtils
+	QUnitUtils,
+	Element
 ) {
 	"use strict";
 
@@ -113,7 +115,7 @@ sap.ui.define([
 		var oSF = new SearchFilter({
 			config: oConfig
 		});
-		var oLabel = Core.byId(oSF.getField().getAriaLabelledBy()[0]);
+		var oLabel = Element.registry.get(oSF.getField().getAriaLabelledBy()[0]);
 
 		// Assert
 		assert.ok(oLabel.getDomRef(), "Hidden label is created and added");

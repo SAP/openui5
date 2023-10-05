@@ -16,7 +16,8 @@ sap.ui.define([
 	"sap/ui/unified/CalendarLegendItem",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/type/DateTime",
-	"sap/ui/core/date/UI5Date"
+	"sap/ui/core/date/UI5Date",
+	"sap/ui/core/Element"
 ], function(
 	App,
 	Bar,
@@ -35,7 +36,8 @@ sap.ui.define([
 	CalendarLegendItem,
 	JSONModel,
 	DateTime,
-	UI5Date
+	UI5Date,
+	Element
 ) {
 	"use strict";
 
@@ -66,7 +68,7 @@ sap.ui.define([
 
 	function handleChange(oEvent){
 		var oDTP = oEvent.getSource();
-		var oInput = oCore.byId("I2");
+		var oInput = Element.registry.get("I2");
 		var sValue = oEvent.getParameter("value");
 		var bValid = oEvent.getParameter("valid");
 		iEvent++;
@@ -83,7 +85,7 @@ sap.ui.define([
 				var oElement = oEvent.getParameter("element");
 				var oValue = oEvent.getParameter('newValue');
 
-				var oInput = oCore.byId("I2");
+				var oInput = Element.registry.get("I2");
 				oInput.setValue( "ParseError: Entered value: " + oValue);
 
 				if (oElement.setValueState) {
@@ -96,7 +98,7 @@ sap.ui.define([
 				var oElement = oEvent.getParameter("element");
 				var oValue = oEvent.getParameter('newValue');
 
-				var oInput = oCore.byId("I2");
+				var oInput = Element.registry.get("I2");
 				oInput.setValue( "ValidationSuccess: Entered value: " + oValue);
 
 				if (oElement.setValueState) {
@@ -106,7 +108,7 @@ sap.ui.define([
 
 	var handleFieldGroupValidation = function (oEvent) {
 		var oDTP = oEvent.getSource();
-		var oInput = oCore.byId("I2");
+		var oInput = Element.registry.get("I2");
 		oInput.setValue("ValidateFieldGroup - Event: DateTimePicker " + oDTP.getId());
 	};
 
@@ -114,7 +116,7 @@ sap.ui.define([
 
 	function toggleSpecialDates(oEvent) {
 		var bPressed = oEvent.getParameter("pressed");
-		var oDTP = oCore.byId("DTP2");
+		var oDTP = Element.registry.get("DTP2");
 		if (!oLegend) {
 			oLegend = new CalendarLegend("Legend1", {
 				items: [

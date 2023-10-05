@@ -12,7 +12,8 @@ sap.ui.define([
 	"sap/ui/commons/layout/MatrixLayoutCell",
 	"sap/ui/commons/library",
 	"sap/ui/core/Core",
-	"sap/ui/core/library"
+	"sap/ui/core/library",
+	"sap/ui/core/Element"
 ], function(
 	Log,
 	App,
@@ -27,7 +28,8 @@ sap.ui.define([
 	MatrixLayoutCell,
 	commonsLibrary,
 	oCore,
-	coreLibrary
+	coreLibrary,
+	Element
 ) {
 	"use strict";
 
@@ -44,7 +46,7 @@ sap.ui.define([
 	}
 
 	function handlePressAdd(oEvent) {
-		var oRBGroup = oCore.byId("RBG5");
+		var oRBGroup = Element.registry.get("RBG5");
 
 		iIndex++;
 		var oButton = new RadioButton("RB5-" + iIndex);
@@ -55,7 +57,7 @@ sap.ui.define([
 	}
 
 	function handlePressInsertBefore(oEvent) {
-		var oRBGroup = oCore.byId("RBG5");
+		var oRBGroup = Element.registry.get("RBG5");
 
 		iIndex++;
 		var oButton = new RadioButton("RB5-" + iIndex);
@@ -71,7 +73,7 @@ sap.ui.define([
 	}
 
 	function handlePressInsertAfter(oEvent) {
-		var oRBGroup = oCore.byId("RBG5");
+		var oRBGroup = Element.registry.get("RBG5");
 
 		iIndex++;
 		var oButton = new RadioButton("RB5-" + iIndex);
@@ -87,7 +89,7 @@ sap.ui.define([
 	}
 
 	function handlePressRemove(oEvent) {
-		var oRBGroup = oCore.byId("RBG5");
+		var oRBGroup = Element.registry.get("RBG5");
 
 		if (oRBGroup.getButtons().length > 0) {
 			oRBGroup.removeButton(0);
@@ -97,7 +99,7 @@ sap.ui.define([
 	}
 
 	function handlePressRemoveAll(oEvent) {
-		var oRBGroup = oCore.byId("RBG5");
+		var oRBGroup = Element.registry.get("RBG5");
 
 		oRBGroup.removeAllButtons();
 
@@ -105,7 +107,7 @@ sap.ui.define([
 	}
 
 	function handlePressDestroy(oEvent) {
-		var oRBGroup = oCore.byId("RBG5");
+		var oRBGroup = Element.registry.get("RBG5");
 
 		oRBGroup.destroyButtons();
 
@@ -114,7 +116,7 @@ sap.ui.define([
 
 	function handlePressEditable(oEvent) {
 		var oButton = oEvent.getSource();
-		var oRBGroup = oCore.byId("RBG5");
+		var oRBGroup = Element.registry.get("RBG5");
 
 		oRBGroup.setEditable(!oRBGroup.getEditable());
 		if (oRBGroup.getEditable()){
@@ -128,7 +130,7 @@ sap.ui.define([
 
 	function handlePressEnabled(oEvent) {
 		var oButton = oEvent.getSource();
-		var oRBGroup = oCore.byId("RBG5");
+		var oRBGroup = Element.registry.get("RBG5");
 
 		oRBGroup.setEnabled(!oRBGroup.getEnabled());
 		if (oRBGroup.getEnabled()){
@@ -141,11 +143,11 @@ sap.ui.define([
 	}
 
 	function updateInfo(){
-		var oRBGroup = oCore.byId("RBG5");
-		var oText2 = oCore.byId("TF2");
-		var oText3 = oCore.byId("TF4");
-		var oText5 = oCore.byId("TF5");
-		var oCB = oCore.byId("CB1");
+		var oRBGroup = Element.registry.get("RBG5");
+		var oText2 = Element.registry.get("TF2");
+		var oText3 = Element.registry.get("TF4");
+		var oText5 = Element.registry.get("TF5");
+		var oCB = Element.registry.get("CB1");
 		if (oRBGroup.getButtons().length > 0){
 			oText2.setValue(oRBGroup.getSelectedIndex());
 			if (oRBGroup.getSelectedButton()) {

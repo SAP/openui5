@@ -15,7 +15,9 @@ sap.ui.define([
 	"sap/ui/core/Control",
 	"sap/ui/core/delegate/ItemNavigation",
 	"sap/ui/core/ResizeHandler",
-	"sap/ui/core/RenderManager"
+	"sap/ui/core/RenderManager",
+	"sap/ui/core/Lib",
+	"sap/ui/core/Element"
 ], function(
 	library,
 	PaneContainer,
@@ -28,7 +30,9 @@ sap.ui.define([
 	Control,
 	ItemNavigation,
 	ResizeHandler,
-	RenderManager
+	RenderManager,
+	Lib,
+	Element
 ) {
 	"use strict";
 
@@ -122,7 +126,7 @@ sap.ui.define([
 	ResponsiveSplitter.prototype.init = function () {
 		this._aPaneContainers = [];
 		this._aPanes = [];
-		this._oResourceBundle = Core.getLibraryResourceBundle("sap.ui.layout");
+		this._oResourceBundle = Lib.getResourceBundleFor("sap.ui.layout");
 
 		this._oItemNavigation = new ItemNavigation();
 		this._oItemNavigation.setCycling(false);
@@ -183,7 +187,7 @@ sap.ui.define([
 
 		for (var i = 0; i < aContentAreas.length; i++) {
 			sContentId = aContentAreas[i].childNodes[0].id;
-			oAreaContent = Core.byId(sContentId);
+			oAreaContent = Element.registry.get(sContentId);
 			iCurrentPaneIndex = i + 1;
 			iNextPaneIndex = i + 2;
 
@@ -451,7 +455,7 @@ sap.ui.define([
 	ResponsiveSplitter.prototype._arrangeContent = function () {
 		var aPages = this.getAggregation("_pages") || [],
 			iDefaultPageIndex = 0,
-			oDefaultPane = Core.byId(this.getDefaultPane()),
+			oDefaultPane = Element.registry.get(this.getDefaultPane()),
 			oDefaultPageContent,
 			sDefaultPageContentId,
 			i;

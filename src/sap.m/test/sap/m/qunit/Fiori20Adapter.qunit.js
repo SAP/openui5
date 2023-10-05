@@ -19,7 +19,8 @@ sap.ui.define([
 	"sap/m/Table",
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/core/Core",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/core/Element"
 ], function(
 	createAndAppendDiv,
 	Fiori20Adapter,
@@ -40,7 +41,8 @@ sap.ui.define([
 	Table,
 	XMLView,
 	Core,
-	nextUIUpdate
+	nextUIUpdate,
+	Element
 ) {
 	"use strict";
 
@@ -1053,7 +1055,7 @@ sap.ui.define([
 		Fiori20Adapter.traverse(this.oNavContainer, oAdaptOptions);
 
 		// Assert
-		assert.ok(Core.byId("page1").hasStyleClass("sapF2CollapsedHeader"), "page header is collapsed");
+		assert.ok(Element.registry.get("page1").hasStyleClass("sapF2CollapsedHeader"), "page header is collapsed");
 		assert.ok(oSpy.calledOnce, "view change called once");
 		assert.ok(sPageTitle === "Test", "page title is identified");
 		assert.ok(oBackButton instanceof Button, "back button is identified");
@@ -1099,7 +1101,7 @@ sap.ui.define([
 		oNestedNavContainer.addPage(new Page("page2", {title: "Test2", showNavButton: true}));
 
 		// Assert
-		assert.ok(Core.byId("page1").hasStyleClass("sapF2CollapsedHeader"), "page header is collapsed");
+		assert.ok(Element.registry.get("page1").hasStyleClass("sapF2CollapsedHeader"), "page header is collapsed");
 		assert.ok(oSpy.calledOnce, "view change called once");
 		assert.equal(sViewId, "myBasePage", "view id is identified");
 		assert.ok(sPageTitle === "Test1", "page title is identified");
@@ -1139,7 +1141,7 @@ sap.ui.define([
 
 		function checkOnAfterNavigateToPage2 () {
 			// Assert
-			assert.ok(Core.byId("page2").hasStyleClass("sapF2CollapsedHeader"), "page header is collapsed");
+			assert.ok(Element.registry.get("page2").hasStyleClass("sapF2CollapsedHeader"), "page header is collapsed");
 			assert.ok(oSpy.calledOnce, "view change called once");
 			assert.equal(sViewId, "myBasePage", "view id is identified");
 			assert.ok(sPageTitle === "Test2", "page title is identified");
@@ -1153,7 +1155,7 @@ sap.ui.define([
 
 		function checkOnAfterReturnToPage1 () {
 			// Assert
-			assert.ok(Core.byId("page1").hasStyleClass("sapF2CollapsedHeader"), "page header is collapsed");
+			assert.ok(Element.registry.get("page1").hasStyleClass("sapF2CollapsedHeader"), "page header is collapsed");
 			assert.ok(oSpy.calledOnce, "view change called once");
 			assert.equal(sViewId, "myBasePage", "view id is identified");
 			assert.ok(sPageTitle === "Test1", "page title is identified");
@@ -1203,7 +1205,7 @@ sap.ui.define([
 		Fiori20Adapter.traverse(this.oNavContainer, oAdaptOptions);
 
 		// Assert
-		assert.ok(Core.byId("myBasePage").hasStyleClass("sapF2CollapsedHeader"), "page header is collapsed");
+		assert.ok(Element.registry.get("myBasePage").hasStyleClass("sapF2CollapsedHeader"), "page header is collapsed");
 		assert.ok(oSpy.calledOnce, "view change called once");
 		assert.equal(sViewId, "myBasePage", "view id is identified");
 		assert.equal(sPageTitle, "Test", "page title is identified");
@@ -1259,7 +1261,7 @@ sap.ui.define([
 		Fiori20Adapter.traverse(this.oNavContainer, oAdaptOptions);
 
 		// Assert
-		assert.ok(Core.byId("myBasePage").hasStyleClass("sapF2CollapsedHeader"), "page header is collapsed");
+		assert.ok(Element.registry.get("myBasePage").hasStyleClass("sapF2CollapsedHeader"), "page header is collapsed");
 		assert.ok(oSpy.calledOnce, "view change called once");
 		assert.equal(sViewId, "myBasePage", "view id is identified");
 		assert.equal(sPageTitle, "Test1", "page title is identified");
@@ -1323,7 +1325,7 @@ sap.ui.define([
 		Fiori20Adapter.traverse(this.oNavContainer, oAdaptOptions);
 
 		// Assert
-		assert.ok(Core.byId("myBasePage1").hasStyleClass("sapF2CollapsedHeader"), "page header is collapsed");
+		assert.ok(Element.registry.get("myBasePage1").hasStyleClass("sapF2CollapsedHeader"), "page header is collapsed");
 		assert.ok(oSpy.calledOnce, "view change called once");
 		assert.equal(sViewId, "myBasePage1", "view id is identified");
 		assert.equal(sPageTitle, "Test1", "page title is identified");
@@ -1471,7 +1473,7 @@ sap.ui.define([
 				oSpy = this.spy(fnTitleListener);
 
 		//setup
-		Core.byId("detailPage1-navButton").setVisible(false); //only master page has back button
+		Element.registry.get("detailPage1-navButton").setVisible(false); //only master page has back button
 		Fiori20Adapter.attachViewChange(oSpy);
 
 		//act
@@ -1499,7 +1501,7 @@ sap.ui.define([
 				oSpy = this.spy(fnTitleListener);
 
 		//setup
-		Core.byId("masterPage1-navButton").setVisible(false); //only detail page has back button
+		Element.registry.get("masterPage1-navButton").setVisible(false); //only detail page has back button
 		Fiori20Adapter.attachViewChange(oSpy);
 
 		//act

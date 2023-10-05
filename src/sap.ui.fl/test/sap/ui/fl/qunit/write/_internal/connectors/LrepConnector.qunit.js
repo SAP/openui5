@@ -13,7 +13,8 @@ sap.ui.define([
 	"sap/ui/fl/Layer",
 	"sap/m/MessageBox",
 	"sap/ui/core/BusyIndicator",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/ui/core/Lib"
 ], function(
 	sinon,
 	FlexObjectFactory,
@@ -27,7 +28,8 @@ sap.ui.define([
 	Layer,
 	MessageBox,
 	BusyIndicator,
-	oCore
+	oCore,
+	Lib
 ) {
 	"use strict";
 
@@ -198,7 +200,7 @@ sap.ui.define([
 			var fnOpenTransportSelectionStub = sandbox.stub(TransportSelection.prototype, "openTransportSelection").returns(Promise.resolve(oMockTransportInfo));
 			var fnCheckTransportInfoStub = sandbox.stub(TransportSelection.prototype, "checkTransportInfo").returns(true);
 			var fnPrepareChangesForTransportStub = sandbox.stub(TransportSelection.prototype, "_prepareChangesForTransport").returns(Promise.resolve());
-			var oResourceBundle = oCore.getLibraryResourceBundle("sap.ui.fl");
+			var oResourceBundle = Lib.getResourceBundleFor("sap.ui.fl");
 
 			return WriteLrepConnector.publish({
 				transportDialogSettings: {
@@ -231,7 +233,7 @@ sap.ui.define([
 			var fnOpenTransportSelectionStub = sandbox.stub(TransportSelection.prototype, "openTransportSelection").returns(Promise.resolve(oMockTransportInfo));
 			var fnCheckTransportInfoStub = sandbox.stub(TransportSelection.prototype, "checkTransportInfo").returns(true);
 			var fnPrepareChangesForTransportStub = sandbox.stub(TransportSelection.prototype, "_prepareChangesForTransport").resolves();
-			var oResourceBundle = oCore.getLibraryResourceBundle("sap.ui.fl");
+			var oResourceBundle = Lib.getResourceBundleFor("sap.ui.fl");
 
 			return WriteLrepConnector.publish({
 				transportDialogSettings: {
@@ -1649,7 +1651,7 @@ sap.ui.define([
 
 			var fnOpenTransportSelectionStub = sandbox.stub(TransportSelection.prototype, "openTransportSelection").returns(Promise.resolve(oMockTransportInfo));
 			var fnCheckTransportInfoStub = sandbox.stub(TransportSelection.prototype, "checkTransportInfo").returns(true);
-			var oResourceBundle = oCore.getLibraryResourceBundle("sap.ui.fl");
+			var oResourceBundle = Lib.getResourceBundleFor("sap.ui.fl");
 
 			var sExpectedUrl = "/sap/bc/lrep/flex/versions/publish/sampleComponent?transport=transportId&version=versionToPublish";
 			var mExpectedPropertyBag = {
@@ -1685,7 +1687,7 @@ sap.ui.define([
 
 			var fnOpenTransportSelectionStub = sandbox.stub(TransportSelection.prototype, "openTransportSelection").returns(Promise.resolve(oMockTransportInfo));
 			var fnCheckTransportInfoStub = sandbox.stub(TransportSelection.prototype, "checkTransportInfo").returns(true);
-			var oResourceBundle = oCore.getLibraryResourceBundle("sap.ui.fl");
+			var oResourceBundle = Lib.getResourceBundleFor("sap.ui.fl");
 
 			var sExpectedUrl = "/sap/bc/lrep/flex/versions/publish/sampleComponent?transport=ATO_NOTIFICATION&version=versionToPublish";
 			var mExpectedPropertyBag = {

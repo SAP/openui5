@@ -6,13 +6,15 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/fl/apply/_internal/controlVariants/Utils",
 	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
-	"sap/ui/fl/Layer"
+	"sap/ui/fl/Layer",
+	"sap/ui/core/Lib"
 ], function(
 	includes,
 	Core,
 	ControlVariantUtils,
 	FlexObjectFactory,
-	Layer
+	Layer,
+	Lib
 ) {
 	"use strict";
 
@@ -71,7 +73,7 @@ sap.ui.define([
 				? oFlexObject.variantManagementReference
 				: oFlexObject.variantReference;
 			if (sVariantReference && !includes(aVariantIds, sVariantReference)) {
-				var oResourceBundle = Core.getLibraryResourceBundle("sap.ui.fl");
+				var oResourceBundle = Lib.getResourceBundleFor("sap.ui.fl");
 				var oNewVariant = FlexObjectFactory.createFlVariant({
 					id: sVariantReference,
 					variantManagementReference: sVariantReference,

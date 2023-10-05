@@ -6,14 +6,9 @@ sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/events/KeyCodes",
 	"sap/m/library",
-	"sap/ui/core/Core"
-], function(LightBox,
-	LightBoxItem,
-	qutils,
-	KeyCodes,
-	library,
-	oCore
-) {
+	"sap/ui/core/Core",
+	"sap/ui/core/Lib"
+], function(LightBox, LightBoxItem, qutils, KeyCodes, library, oCore, Lib) {
 		'use strict';
 
 		// shortcut for sap.m.LightBoxLoadingStates
@@ -302,7 +297,7 @@ sap.ui.define([
 						})
 					]
 				});
-				this._oRB = oCore.getLibraryResourceBundle("sap.m");
+				this._oRB = Lib.getResourceBundleFor("sap.m");
 			},
 			afterEach: function() {
 				this.LightBox.close();

@@ -10,8 +10,9 @@ sap.ui.define([
 	"sap/m/Label",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/message/Message",
-	"sap/ui/thirdparty/jquery"
-], function (
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/core/Lib"
+], function(
 	qutils,
 	RadioButton,
 	coreLibrary,
@@ -21,7 +22,8 @@ sap.ui.define([
 	Label,
 	JSONModel,
 	Message,
-	jQuery
+	jQuery,
+	Lib
 ) {
 	"use strict";
 
@@ -1002,7 +1004,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("getAccessibilityInfo", function(assert) {
-		var oBundle = Core.getLibraryResourceBundle("sap.m"),
+		var oBundle = Lib.getResourceBundleFor("sap.m"),
 				oRadioButton = new RadioButton({ text: "testLabel", selected: true }),
 				oRadioButton1 = new RadioButton({ text: "testLabel", selected: false }),
 				sExpectedType = oBundle.getText("ACC_CTR_TYPE_RADIO"),
@@ -1083,7 +1085,7 @@ sap.ui.define([
 				target: "/selected",
 				processor: oModel
 			}),
-			sExpectedTooltipText = Core.getLibraryResourceBundle("sap.ui.core").getText("VALUE_STATE_ERROR");
+			sExpectedTooltipText = Lib.getResourceBundleFor("sap.ui.core").getText("VALUE_STATE_ERROR");
 
 		// act
 		this.oRadioButton.setModel(oModel);

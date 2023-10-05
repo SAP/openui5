@@ -17,7 +17,9 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Core",
-	"sap/ui/dom/jquery/Selectors" // provides jQuery custom selector ":sapTabbable"
+	"sap/ui/core/Element",
+	// provides jQuery custom selector ":sapTabbable"
+	"sap/ui/dom/jquery/Selectors"
 ], function(
 	TableQUnitUtils,
 	qutils,
@@ -34,7 +36,8 @@ sap.ui.define([
 	KeyCodes,
 	JSONModel,
 	jQuery,
-	oCore
+	oCore,
+	Element
 ) {
 	"use strict";
 
@@ -176,7 +179,7 @@ sap.ui.define([
 
 	function removeFocusDummies() {
 		aFocusDummyIds.forEach(function(sId) {
-			oCore.byId(sId).destroy();
+			Element.registry.get(sId).destroy();
 		});
 		aFocusDummyIds = [];
 	}

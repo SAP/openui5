@@ -8,9 +8,8 @@ sap.ui.define([
 	"sap/ui/core/date/UI5Date",
 	"sap/ui/core/format/DateFormat",
 	"sap/ui/core/mvc/XMLView",
-	"sap/ui/model/json/JSONModel",
-	"sap/ui/core/Core"
-], function(Column, ColumnListItem, Label, Text, Locale, LocaleData, UI5Date, DateFormat, XMLView, JSONModel, Core) {
+	"sap/ui/model/json/JSONModel"
+], function (Column, ColumnListItem, Label, Text, Locale, LocaleData, UI5Date, DateFormat, XMLView, JSONModel) {
 	"use strict";
 
 	var aTimezones = Object.keys(LocaleData.getInstance(new Locale("en")).getTimezoneTranslations());
@@ -87,8 +86,7 @@ sap.ui.define([
 			configureTableColumns(aActiveLocales);
 			var aEntities = getEntities(aActiveLocales);
 			oModel.setProperty("/entities", aEntities);
-			oTable.invalidate();
-			Core.applyChanges();
+			oTable.rerender();
 		});
 	});
 });

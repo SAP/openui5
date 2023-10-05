@@ -9,8 +9,9 @@ sap.ui.define([
 	"sap/m/library",
 	"sap/m/MessageToast",
 	"sap/m/Text",
-	"sap/m/TextArea"
-], function (Controller, Core, HorizontalLayout, VerticalLayout, Dialog, Button, Label, mobileLibrary, MessageToast, Text, TextArea) {
+	"sap/m/TextArea",
+	"sap/ui/core/Element"
+], function(Controller, Core, HorizontalLayout, VerticalLayout, Dialog, Button, Label, mobileLibrary, MessageToast, Text, TextArea, Element) {
 	"use strict";
 
 	// shortcut for sap.m.ButtonType
@@ -66,7 +67,7 @@ sap.ui.define([
 						type: ButtonType.Emphasized,
 						text: "Reject",
 						press: function () {
-							var sText = Core.byId("rejectionNote").getValue();
+							var sText = Element.registry.get("rejectionNote").getValue();
 							MessageToast.show("Note is: " + sText);
 							this.oRejectDialog.close();
 						}.bind(this)
@@ -107,7 +108,7 @@ sap.ui.define([
 						text: "Submit",
 						enabled: false,
 						press: function () {
-							var sText = Core.byId("submissionNote").getValue();
+							var sText = Element.registry.get("submissionNote").getValue();
 							MessageToast.show("Note is: " + sText);
 							this.oSubmitDialog.close();
 						}.bind(this)
@@ -158,7 +159,7 @@ sap.ui.define([
 						type: ButtonType.Emphasized,
 						text: "Submit",
 						press: function () {
-							var sText = Core.byId("confirmationNote").getValue();
+							var sText = Element.registry.get("confirmationNote").getValue();
 							MessageToast.show("Note is: " + sText);
 							this.oConfirmDialog.close();
 						}.bind(this)

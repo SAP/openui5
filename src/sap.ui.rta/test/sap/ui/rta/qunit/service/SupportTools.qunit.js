@@ -15,7 +15,8 @@ sap.ui.define([
 	"sap/ui/rta/RuntimeAuthoring",
 	"sap/ui/rta/util/ReloadManager",
 	"sap/ui/thirdparty/sinon-4",
-	"test-resources/sap/ui/rta/qunit/RtaQunitUtils"
+	"test-resources/sap/ui/rta/qunit/RtaQunitUtils",
+	"sap/ui/core/Element"
 ], function(
 	Button,
 	Page,
@@ -31,7 +32,8 @@ sap.ui.define([
 	RuntimeAuthoring,
 	ReloadManager,
 	sinon,
-	RtaQunitUtils
+	RtaQunitUtils,
+	Element
 ) {
 	"use strict";
 
@@ -134,7 +136,7 @@ sap.ui.define([
 
 			ChangesWriteAPI.getChangeHandler({
 				changeType: "rename",
-				element: Core.byId("button1"),
+				element: Element.registry.get("button1"),
 				modifier: JsControlTreeModifier,
 				layer: "CUSTOMER"
 			}).then(function(oChangeHandler) {

@@ -7,8 +7,9 @@ sap.ui.define([
 	"sap/m/Label",
 	"sap/ui/Device",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Core"
-], function(HorizontalLayout, Button, Input, Label, Device, jQuery, oCore) {
+	"sap/ui/core/Core",
+	"sap/ui/core/Element"
+], function(HorizontalLayout, Button, Input, Label, Device, jQuery, oCore, Element) {
 	"use strict";
 
 	var DOM_RENDER_LOCATION = "qunit-fixture";
@@ -46,7 +47,7 @@ sap.ui.define([
 
 	QUnit.test("NoWrap", function(assert) {
 		this.oLayout1.setAllowWrapping(false);
-		oCore.byId("IN1").setWidth("5000px");
+		Element.registry.get("IN1").setWidth("5000px");
 		oCore.applyChanges();
 
 		var oButton = jQuery('#B1');
@@ -58,7 +59,7 @@ sap.ui.define([
 
 	QUnit.test("Wrapping", function(assert) {
 		this.oLayout1.setAllowWrapping(true);
-		oCore.byId("IN1").setWidth("5000px");
+		Element.registry.get("IN1").setWidth("5000px");
 		oCore.applyChanges();
 
 		var oButton = jQuery('#B1');

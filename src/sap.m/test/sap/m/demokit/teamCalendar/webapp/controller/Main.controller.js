@@ -4,8 +4,9 @@ sap.ui.define([
 	"sap/ui/core/Item",
 	"sap/m/MessageToast",
 	"model/formatter",
-	"sap/ui/core/Core"
-], function (Controller, Fragment, Item, MessageToast, formatter, oCore) {
+	"sap/ui/core/Core",
+	"sap/ui/core/Element"
+], function(Controller, Fragment, Item, MessageToast, formatter, oCore, Element) {
 	"use strict";
 
 	return Controller.extend("teamCalendar.controller.Main", {
@@ -53,7 +54,7 @@ sap.ui.define([
 			if (isNaN(this._sSelectedMember)) {
 				this._sSelectedView = oCalendar.getViewKey();
 			} else {
-				this._sSelectedView = oCore.byId(oCalendar.getSelectedView()).getKey();
+				this._sSelectedView = Element.registry.get(oCalendar.getSelectedView()).getKey();
 			}
 			oCalendar.setStartDate(this._oStartDate);
 		},

@@ -11,11 +11,12 @@ sap.ui.define([
 	"sap/ui/Device",
 	"sap/ui/fl/write/api/FieldExtensibility",
 	"sap/ui/core/Configuration",
-	"sap/ui/core/library"
-], function(P13nPropertyHelper, Button, Bar, Title, merge, MessageBox, Device, FieldExtensibility, Configuration, coreLibrary) {
+	"sap/ui/core/library",
+	"sap/ui/core/Lib"
+], function(P13nPropertyHelper, Button, Bar, Title, merge, MessageBox, Device, FieldExtensibility, Configuration, coreLibrary, Lib) {
 	"use strict";
 
-	const oRB = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
+	const oRB = Lib.getResourceBundleFor("sap.ui.mdc");
 
 	//Shortcut to sap.ui.core.TitleLevel
 	const TitleLevel = coreLibrary.TitleLevel;
@@ -94,7 +95,7 @@ sap.ui.define([
 				const sId = mDialogSettings.id;
 
 				sap.ui.require(["sap/m/Dialog", "sap/m/Button"], function(Dialog, Button){
-					const oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
+					const oResourceBundle = Lib.getResourceBundleFor("sap.ui.mdc");
 					const oContainer = new Dialog(sId, {
 						title: mDialogSettings.title,
 						horizontalScrolling: mDialogSettings.hasOwnProperty("horizontalScrolling") ? mDialogSettings.horizontalScrolling : false,
@@ -173,13 +174,13 @@ sap.ui.define([
 			if (mSettings.reset) {
 				const sId = mSettings.idResetButton;
 				oBar.addContentRight(new Button( sId, {
-					text: sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc").getText("p13nDialog.RESET"),
+					text: Lib.getResourceBundleFor("sap.ui.mdc").getText("p13nDialog.RESET"),
 					press: function(oEvt) {
 
 						const oDialog =  oEvt.getSource().getParent().getParent();
 						const oControl = oDialog.getParent();
 
-						const sResetText = mSettings.warningText ? mSettings.warningText : sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc").getText("filterbar.ADAPT_RESET_WARNING");
+						const sResetText = mSettings.warningText ? mSettings.warningText : Lib.getResourceBundleFor("sap.ui.mdc").getText("filterbar.ADAPT_RESET_WARNING");
 						MessageBox.warning(sResetText, {
 							actions: [MessageBox.Action.OK, MessageBox.Action.CANCEL],
 							emphasizedAction: MessageBox.Action.OK,
@@ -352,7 +353,7 @@ sap.ui.define([
 							.then(function() {
 								let oCustomHeader = oDialog.getCustomHeader();
 								const 	sId = oDialogParent && oDialogParent.getId ? oDialogParent.getId() : undefined,
-										oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
+										oResourceBundle = Lib.getResourceBundleFor("sap.ui.mdc");
 
 								if (!oCustomHeader) {
 									const oBar = new Bar({

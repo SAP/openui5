@@ -2,8 +2,8 @@
  * ${copyright}
  */
 sap.ui.define(
-	["sap/ui/core/IconPool", "sap/ui/Device", "sap/ui/core/Core", "sap/ui/core/Configuration"],
-	function(IconPool, Device, Core, Configuration) {
+	["sap/ui/core/IconPool", "sap/ui/Device", "sap/ui/core/Core", "sap/ui/core/Configuration", "sap/ui/core/Lib"],
+	function(IconPool, Device, Core, Configuration, Lib) {
 		"use strict";
 
 		/* =========================================================== */
@@ -21,7 +21,7 @@ sap.ui.define(
 			sIconSizeMeasure = "px";
 
 		// shortcut for library resource bundle
-		var oResourceBundle = Core.getLibraryResourceBundle("sap.m");
+		var oResourceBundle = Lib.getResourceBundleFor("sap.m");
 
 		/**
 		 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.

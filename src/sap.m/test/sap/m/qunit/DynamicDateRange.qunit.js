@@ -13,7 +13,8 @@ sap.ui.define([
 	"sap/m/Label",
 	"sap/ui/Device",
 	"sap/ui/core/date/UI5Date",
-	"sap/ui/core/Configuration"
+	"sap/ui/core/Configuration",
+	"sap/ui/core/Lib"
 ], function(
 	DynamicDateRange,
 	DynamicDateOption,
@@ -28,12 +29,13 @@ sap.ui.define([
 	Label,
 	Device,
 	UI5Date,
-	Configuration
+	Configuration,
+	Lib
 ) {
 	"use strict";
 
 	// shortcut for library resource bundle
-	var oRb = oCore.getLibraryResourceBundle("sap.m"),
+	var oRb = Lib.getResourceBundleFor("sap.m"),
 		testDate = function(assert, oDate, iDuration, sUnit, iFullYear, iMonth, iDate, iHours, iMinutes, iSecond, iMilliseconds) {
 			assert.strictEqual(oDate.getFullYear(), iFullYear, "toDates " + iDuration +  " " + sUnit + ": year set correctly");
 			assert.strictEqual(oDate.getMonth(), iMonth, "toDates " + iDuration +  " " + sUnit + ": month set correctly");
@@ -866,7 +868,7 @@ sap.ui.define([
 		oDDR.setStandardOptions([]);
 		oDDR.addStandardOption("LASTMINUTES");
 		oDDR.open();
-		oLastMinutesOption = oCore.byId('myDDRLast-option-LASTMINUTES');
+		oLastMinutesOption = Element.registry.get('myDDRLast-option-LASTMINUTES');
 
 		oLastMinutesOption.firePress();
 		oCore.applyChanges();
@@ -883,7 +885,7 @@ sap.ui.define([
 		oDDR.setStandardOptions([]);
 		oDDR.addStandardOption("LASTHOURS");
 		oDDR.open();
-		oLastHoursOption = oCore.byId('myDDRLast-option-LASTHOURS');
+		oLastHoursOption = Element.registry.get('myDDRLast-option-LASTHOURS');
 		oLastHoursOption.firePress();
 		oCore.applyChanges();
 
@@ -1295,12 +1297,12 @@ sap.ui.define([
 			oDRS.open();
 			oCore.applyChanges();
 
-			var oDateOptionDomRef = oCore.byId('myDDR-option-DATE');
+			var oDateOptionDomRef = Element.registry.get('myDDR-option-DATE');
 			oCore.applyChanges();
 
 			oDateOptionDomRef.firePress();
 			oCore.applyChanges();
-			var oMonthDomRef = oCore.byId("__calendar3").getAggregation("month")[0].getDomRef();
+			var oMonthDomRef = Element.registry.get("__calendar3").getAggregation("month")[0].getDomRef();
 			var aWeekHeaders = oMonthDomRef.querySelectorAll("#__calendar3 .sapUiCalWH:not(.sapUiCalDummy)");
 
 			//Assert
@@ -1311,7 +1313,7 @@ sap.ui.define([
 			oCore.applyChanges();
 			oDateOptionDomRef.firePress();
 			oCore.applyChanges();
-			oMonthDomRef = oCore.byId("__calendar4").getAggregation("month")[0].getDomRef();
+			oMonthDomRef = Element.registry.get("__calendar4").getAggregation("month")[0].getDomRef();
 			aWeekHeaders = oMonthDomRef.querySelectorAll("#__calendar4 .sapUiCalWH:not(.sapUiCalDummy)");
 			//Assert
 			assert.equal(aWeekHeaders[0].textContent, "Mon", "Monday is the first weekday for ISO_8601");
@@ -1320,7 +1322,7 @@ sap.ui.define([
 			oCore.applyChanges();
 			oDateOptionDomRef.firePress();
 			oCore.applyChanges();
-			oMonthDomRef = oCore.byId("__calendar5").getAggregation("month")[0].getDomRef();
+			oMonthDomRef = Element.registry.get("__calendar5").getAggregation("month")[0].getDomRef();
 			aWeekHeaders = oMonthDomRef.querySelectorAll("#__calendar5 .sapUiCalWH:not(.sapUiCalDummy)");
 			//Assert
 			assert.equal(aWeekHeaders[0].textContent, "Sun", "Sunday is the first weekday for WesternTraditional");
@@ -1388,7 +1390,7 @@ sap.ui.define([
 			oButton = new Button({
 				icon: "sap-icon://appointment-2",
 				press: function() {
-					oCore.byId("HDDR").openBy(this.getDomRef());
+					Element.registry.get("HDDR").openBy(this.getDomRef());
 				}
 			}).placeAt("qunit-fixture");
 
@@ -1400,7 +1402,7 @@ sap.ui.define([
 
 		// Assert
 		assert.ok(oDDR._oPopup, oDDR.getId() + ": popup object exists");
-		assert.ok(oCore.byId(oDDR.getId() + "-RP-popover"), oDDR.getId() + ": popover control exists");
+		assert.ok(Element.registry.get(oDDR.getId() + "-RP-popover"), oDDR.getId() + ": popover control exists");
 		assert.ok(document.body.querySelector("#" + oDDR.getId() + "-RP-popover"), "popover exists in DOM");
 
 		// Clean
@@ -1417,7 +1419,7 @@ sap.ui.define([
 		assert.notOk(oIconOne.getTooltip(), "icon has no tooltip");
 		assert.ok(oIconOne.getDecorative(), "icon is decorative");
 		assert.notOk(oIconOne.getUseIconTooltip(), "icon doesn't have default tooltip");
-		assert.strictEqual(oIconOne.getAlt(), oCore.getLibraryResourceBundle("sap.m").getText("INPUT_VALUEHELP_BUTTON") , "icon alt is present");
+		assert.strictEqual(oIconOne.getAlt(), Lib.getResourceBundleFor("sap.m").getText("INPUT_VALUEHELP_BUTTON") , "icon alt is present");
 
 		// arrange
 		var oTouchStub = this.stub(Device, "support").value({touch: true});

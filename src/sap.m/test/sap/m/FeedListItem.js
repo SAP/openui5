@@ -12,7 +12,8 @@ sap.ui.define([
 	"sap/m/MessageToast",
 	"sap/m/App",
 	"sap/m/Page",
-	"sap/base/Log"
+	"sap/base/Log",
+	"sap/ui/core/Element"
 ], function(
 	List,
 	StandardListItem,
@@ -27,7 +28,8 @@ sap.ui.define([
 	MessageToast,
 	App,
 	Page,
-	Log
+	Log,
+	Element
 ) {
 	"use strict";
 
@@ -330,7 +332,7 @@ sap.ui.define([
 		text: "Invalidate / Rerender",
 		press: function(oEvent) {
 			MessageToast.show("Rerender triggered.");
-			sap.ui.getCore().byId("feedListPage").invalidate();
+			Element.registry.get("feedListPage").invalidate();
 		}
 	});
 

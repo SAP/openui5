@@ -10,7 +10,8 @@ sap.ui.define([
 	'sap/tnt/ToolHeader',
 	'sap/tnt/ToolHeaderUtilitySeparator',
 	'sap/ui/qunit/utils/waitForThemeApplied',
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/ui/core/Element"
 ], function(
 	jQuery,
 	App,
@@ -22,7 +23,8 @@ sap.ui.define([
 	ToolHeader,
 	ToolHeaderUtilitySeparator,
 	waitForThemeApplied,
-	oCore
+	oCore,
+	Element
 ) {
 	'use strict';
 
@@ -216,7 +218,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("created", function (assert) {
-		assert.ok(oCore.byId(this.toolHeader.getId()), "created");
+		assert.ok(Element.registry.get(this.toolHeader.getId()), "created");
 	});
 
 	QUnit.test("contains elements and classes", function (assert) {

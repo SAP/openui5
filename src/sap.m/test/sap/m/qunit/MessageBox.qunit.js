@@ -19,7 +19,8 @@ sap.ui.define([
 	"sap/ui/Device",
 	"sap/ui/core/Core",
 	"sap/ui/core/Element",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/core/Lib"
 ], function(
 	App,
 	Page,
@@ -40,7 +41,8 @@ sap.ui.define([
 	Device,
 	oCore,
 	Element,
-	jQuery
+	jQuery,
+	Lib
 ) {
 	"use strict";
 
@@ -105,7 +107,7 @@ sap.ui.define([
 			styleClass: sClassName
 		});
 		oCore.applyChanges();
-		var oMessageBox = oCore.byId("messagebox1");
+		var oMessageBox = Element.registry.get("messagebox1");
 		assert.ok(oMessageBox, "Dialog should be created");
 		assert.equal(oMessageBox.getType(), DialogType.Message, "Dialog should have type Message");
 		assert.strictEqual(oMessageBox.getProperty("role"), DialogRoleType.AlertDialog, "The correct accessibility role is applied");
@@ -119,7 +121,7 @@ sap.ui.define([
 	QUnit.test("simple show usage", function (assert) {
 		MessageBox.show(sMessageText);
 		oCore.applyChanges();
-		var oMessageBox = oCore.byId(jQuery(".sapMMessageDialog")[0].getAttribute("id"));
+		var oMessageBox = Element.registry.get(jQuery(".sapMMessageDialog")[0].getAttribute("id"));
 		assert.ok(oMessageBox, "Dialog should be created");
 		oMessageBox.destroy();
 	});
@@ -137,7 +139,7 @@ sap.ui.define([
 		fnShowSpy.call(fnShowSpy, "Message box reference call.", mSettings);
 
 		// assert
-		var oMessageBox = oCore.byId("messagebox1_1");
+		var oMessageBox = Element.registry.get("messagebox1_1");
 		assert.ok(oMessageBox, "The message box was shown");
 		assert.strictEqual(fnShowSpy.callCount, 1, "The spy was called exactly 1 time.");
 		assert.strictEqual(fnShowSpy.args[0][0], "Message box reference call.", "The correct text was displayed.");
@@ -158,7 +160,7 @@ sap.ui.define([
 		fnShowSpy.call(fnShowSpy, sText, mSettings);
 
 		// assert
-		var oMessageBox = oCore.byId("messagebox1_2");
+		var oMessageBox = Element.registry.get("messagebox1_2");
 		assert.ok(oMessageBox, "The message box was shown");
 		assert.strictEqual(fnShowSpy.callCount, 1, "The spy was called exactly 1 time.");
 		assert.strictEqual(fnShowSpy.args[0][0], sText, "The correct text was displayed.");
@@ -179,7 +181,7 @@ sap.ui.define([
 		fnShowSpy.call(fnShowSpy, sText, mSettings);
 
 		// assert
-		var oMessageBox = oCore.byId("messagebox1_3");
+		var oMessageBox = Element.registry.get("messagebox1_3");
 		assert.ok(oMessageBox, "The message box was shown");
 		assert.strictEqual(fnShowSpy.callCount, 1, "The spy was called exactly 1 time.");
 		assert.strictEqual(fnShowSpy.args[0][0], sText, "The correct text was displayed.");
@@ -200,7 +202,7 @@ sap.ui.define([
 		fnShowSpy.call(fnShowSpy, sText, mSettings);
 
 		// assert
-		var oMessageBox = oCore.byId("messagebox1_4");
+		var oMessageBox = Element.registry.get("messagebox1_4");
 		assert.ok(oMessageBox, "The message box was shown");
 		assert.strictEqual(fnShowSpy.callCount, 1, "The spy was called exactly 1 time.");
 		assert.strictEqual(fnShowSpy.args[0][0], sText, "The correct text was displayed.");
@@ -221,7 +223,7 @@ sap.ui.define([
 		fnShowSpy.call(fnShowSpy, sText, mSettings);
 
 		// assert
-		var oMessageBox = oCore.byId("messagebox1_5");
+		var oMessageBox = Element.registry.get("messagebox1_5");
 		assert.ok(oMessageBox, "The message box was shown");
 		assert.strictEqual(fnShowSpy.callCount, 1, "The spy was called exactly 1 time.");
 		assert.strictEqual(fnShowSpy.args[0][0], sText, "The correct text was displayed.");
@@ -242,7 +244,7 @@ sap.ui.define([
 		fnShowSpy.call(fnShowSpy, sText, mSettings);
 
 		// assert
-		var oMessageBox = oCore.byId("messagebox1_6");
+		var oMessageBox = Element.registry.get("messagebox1_6");
 		assert.ok(oMessageBox, "The message box was shown");
 		assert.strictEqual(fnShowSpy.callCount, 1, "The spy was called exactly 1 time.");
 		assert.strictEqual(fnShowSpy.args[0][0], sText, "The correct text was displayed.");
@@ -265,24 +267,24 @@ sap.ui.define([
 			styleClass: sClassName
 		});
 		oCore.applyChanges();
-		oMessageBox = oCore.byId("messagebox1");
+		oMessageBox = Element.registry.get("messagebox1");
 		assert.ok(oMessageBox, "Dialog should be created");
 		assert.equal(oMessageBox.getType(), DialogType.Message, "Dialog should have type Message");
 		assert.equal(oMessageBox.getButtons().length, 3, "All three buttons are added to dialog");
 		assert.equal(oMessageBox.getTitle(), sMessageTitle, "Title is assigned");
 		assert.ok(oMessageBox.$().hasClass(sClassName));
-		$TextArea = oCore.byId(sTextAreaId).$();
+		$TextArea = Element.registry.get(sTextAreaId).$();
 		assert.equal($TextArea.length, 1, "TextArea should be created");
 		oMessageBox.destroy();
 	});
 
 	QUnit.test("show error", function (assert) {
-		var oResourceBundle = oCore.getLibraryResourceBundle("sap.m");
+		var oResourceBundle = Lib.getResourceBundleFor("sap.m");
 		MessageBox.error(sMessageText, {
 			id: "messageboxError"
 		});
 		oCore.applyChanges();
-		var oMessageBox = oCore.byId("messageboxError");
+		var oMessageBox = Element.registry.get("messageboxError");
 		assert.ok(oMessageBox, "Dialog should be created");
 		assert.equal(oMessageBox.getType(), DialogType.Message, "Dialog should have type Message");
 		assert.equal(oMessageBox.getButtons().length, 1, "One button is added to the dialog");
@@ -293,12 +295,12 @@ sap.ui.define([
 	});
 
 	QUnit.test("show information", function (assert) {
-		var oResourceBundle = oCore.getLibraryResourceBundle("sap.m");
+		var oResourceBundle = Lib.getResourceBundleFor("sap.m");
 		MessageBox.information(sMessageText, {
 			id: "messageboxInfo"
 		});
 		oCore.applyChanges();
-		var oMessageBox = oCore.byId("messageboxInfo");
+		var oMessageBox = Element.registry.get("messageboxInfo");
 		assert.ok(oMessageBox, "Dialog should be created");
 		assert.equal(oMessageBox.getType(), DialogType.Message, "Dialog should have type Message");
 		assert.equal(oMessageBox.getButtons().length, 1, "One button is added to the dialog");
@@ -309,12 +311,12 @@ sap.ui.define([
 	});
 
 	QUnit.test("show warning", function (assert) {
-		var oResourceBundle = oCore.getLibraryResourceBundle("sap.m");
+		var oResourceBundle = Lib.getResourceBundleFor("sap.m");
 		MessageBox.warning(sMessageText, {
 			id: "messageboxWarning"
 		});
 		oCore.applyChanges();
-		var oMessageBox = oCore.byId("messageboxWarning");
+		var oMessageBox = Element.registry.get("messageboxWarning");
 		assert.ok(oMessageBox, "Dialog should be created");
 		assert.equal(oMessageBox.getType(), DialogType.Message, "Dialog should have type Message");
 		assert.equal(oMessageBox.getButtons().length, 1, "One button is added to the dialog");
@@ -325,12 +327,12 @@ sap.ui.define([
 	});
 
 	QUnit.test("show success", function (assert) {
-		var oResourceBundle = oCore.getLibraryResourceBundle("sap.m");
+		var oResourceBundle = Lib.getResourceBundleFor("sap.m");
 		MessageBox.success(sMessageText, {
 			id: "messageboxSuccess"
 		});
 		oCore.applyChanges();
-		var oMessageBox = oCore.byId("messageboxSuccess");
+		var oMessageBox = Element.registry.get("messageboxSuccess");
 		assert.ok(oMessageBox, "Dialog should be created");
 		assert.equal(oMessageBox.getType(), DialogType.Message, "Dialog should have type Message");
 		assert.equal(oMessageBox.getButtons().length, 1, "One button is added to the dialog");
@@ -375,7 +377,7 @@ sap.ui.define([
 
 
 		oCore.applyChanges();
-		var oMessageBox = oCore.byId("messageBoxScrolling");
+		var oMessageBox = Element.registry.get("messageBoxScrolling");
 		assert.ok(oMessageBox, "Dialog should be created");
 		assert.equal(oMessageBox.getType(), DialogType.Message, "Dialog should have type Message");
 		assert.equal(oMessageBox.getButtons().length, 3, "All three buttons are added to dialog");
@@ -400,7 +402,7 @@ sap.ui.define([
 		});
 		oCore.applyChanges();
 
-		var oMessageBox = oCore.byId("messagebox2");
+		var oMessageBox = Element.registry.get("messagebox2");
 		assert.ok(oMessageBox, "Dialog should be created");
 		assert.equal(oMessageBox.getType(), DialogType.Message, "Dialog should have type Message");
 		assert.equal(oMessageBox.getButtons().length, 4, "All four buttons are added to dialog");
@@ -426,7 +428,7 @@ sap.ui.define([
 		});
 		oCore.applyChanges();
 
-		oMessageBox = oCore.byId("messageboxWithDetails");
+		oMessageBox = Element.registry.get("messageboxWithDetails");
 		oShowMoreLink = oMessageBox.getContent()[0].getItems()[1];
 
 		//act
@@ -448,7 +450,7 @@ sap.ui.define([
 		});
 		oCore.applyChanges();
 
-		oMessageBox = oCore.byId("messageboxWithDetails");
+		oMessageBox = Element.registry.get("messageboxWithDetails");
 		oShowMoreLink = oMessageBox.getContent()[0].getItems()[1];
 
 		assert.ok(oShowMoreLink, "View details link is rendered");
@@ -470,7 +472,7 @@ sap.ui.define([
 		});
 		oCore.applyChanges();
 
-		oMessageBox = oCore.byId("messageboxWithNullDetails");
+		oMessageBox = Element.registry.get("messageboxWithNullDetails");
 		var iContent = oMessageBox.getContent()[0].getItems().length;
 
 		assert.strictEqual(iContent, 1, "There is only one item in the content - the text of the message box.");
@@ -488,7 +490,7 @@ sap.ui.define([
 		});
 		oCore.applyChanges();
 
-		var oMessageBox = oCore.byId("messagebox3");
+		var oMessageBox = Element.registry.get("messagebox3");
 		var aButtons = oMessageBox.getButtons();
 
 		var sInitialFocusControlId = (function () {
@@ -523,8 +525,8 @@ sap.ui.define([
 		});
 		oCore.applyChanges();
 
-		var oResourceBundle = oCore.getLibraryResourceBundle("sap.m");
-		var oMessageBox = oCore.byId("messagebox4");
+		var oResourceBundle = Lib.getResourceBundleFor("sap.m");
+		var oMessageBox = Element.registry.get("messagebox4");
 		var aButtons = oMessageBox.getButtons();
 		var getInitialFocusControlId = (function () {
 			var sInitialFocusControlId;
@@ -556,7 +558,7 @@ sap.ui.define([
 			styleClass: sClassName
 		});
 		oCore.applyChanges();
-		var oMessageBox = oCore.byId("alertbox1");
+		var oMessageBox = Element.registry.get("alertbox1");
 		assert.ok(oMessageBox, "Dialog should be created");
 		assert.equal(oMessageBox.getType(), DialogType.Message, "Dialog should have type Message");
 		assert.ok(oMessageBox.getButtons().length, "Only one button in alert.");
@@ -574,7 +576,7 @@ sap.ui.define([
 			styleClass: sClassName
 		});
 		oCore.applyChanges();
-		var oMessageBox = oCore.byId("confirmbox1");
+		var oMessageBox = Element.registry.get("confirmbox1");
 		assert.ok(oMessageBox, "Dialog should be created");
 		assert.equal(oMessageBox.getType(), DialogType.Message, "Dialog should have type Message");
 		assert.ok(oMessageBox.getButtons().length === 2, "Two buttons are created");
@@ -587,7 +589,7 @@ sap.ui.define([
 	QUnit.test("show with OLD API", function (assert) {
 		MessageBox.show(sMessageText, null, sMessageTitle, [MessageBox.Action.OK, "Custom Text", MessageBox.Action.NO], callback, "messagebox1", sClassName);
 		oCore.applyChanges();
-		var oMessageBox = oCore.byId("messagebox1");
+		var oMessageBox = Element.registry.get("messagebox1");
 		assert.ok(oMessageBox, "Dialog should be created");
 		assert.equal(oMessageBox.getType(), DialogType.Message, "Dialog should have type Message");
 		assert.equal(oMessageBox.getButtons().length, 3, "All three buttons are added to dialog");
@@ -606,13 +608,13 @@ sap.ui.define([
 		// MessageBox.show(message, icon, title, [oActions], fnCallback, oDefaultAaction, sDialogId, sClassName)
 		MessageBox.show(oTextArea, null, sMessageTitle, [MessageBox.Action.OK, "Custom Text", MessageBox.Action.NO], callback, "messagebox1", sClassName);
 		oCore.applyChanges();
-		oMessageBox = oCore.byId("messagebox1");
+		oMessageBox = Element.registry.get("messagebox1");
 		assert.ok(oMessageBox, "Dialog should be created");
 		assert.equal(oMessageBox.getType(), DialogType.Message, "Dialog should have type Message");
 		assert.equal(oMessageBox.getButtons().length, 3, "All three buttons are added to dialog");
 		assert.equal(oMessageBox.getTitle(), sMessageTitle, "Title is assigned");
 		assert.ok(oMessageBox.$().hasClass(sClassName));
-		$TextArea = oCore.byId(sTextAreaId).$();
+		$TextArea = Element.registry.get(sTextAreaId).$();
 		assert.equal($TextArea.length, 1, "TextArea should be created");
 		oMessageBox.destroy();
 	});
@@ -621,7 +623,7 @@ sap.ui.define([
 		// MessageBox.alert(vMessage, fnCallback, sTitle, sDialogId, sStyleClass)
 		MessageBox.alert(sMessageText, callback, sMessageTitle, "alertbox1", sClassName);
 		oCore.applyChanges();
-		var oMessageBox = oCore.byId("alertbox1");
+		var oMessageBox = Element.registry.get("alertbox1");
 		assert.ok(oMessageBox, "Dialog should be created");
 		assert.equal(oMessageBox.getType(), DialogType.Message, "Dialog should have type Message");
 		assert.ok(oMessageBox.getButtons().length, "Only one button is created");
@@ -633,7 +635,7 @@ sap.ui.define([
 	QUnit.test("confirm with OLD API", function (assert) {
 		MessageBox.confirm(sMessageText, callback, sMessageTitle, "confirmbox1", sClassName);
 		oCore.applyChanges();
-		var oMessageBox = oCore.byId("confirmbox1");
+		var oMessageBox = Element.registry.get("confirmbox1");
 		assert.ok(oMessageBox, "Dialog should be created");
 		assert.equal(oMessageBox.getType(), DialogType.Message, "Dialog should have type Message");
 		assert.ok(oMessageBox.getButtons().length === 2, "Two buttons are created");
@@ -664,7 +666,7 @@ sap.ui.define([
 		});
 
 		oCore.applyChanges();
-		oMessageBox = oCore.byId(sMessageBoxId);
+		oMessageBox = Element.registry.get(sMessageBoxId);
 		oMessageTextContainer = oMessageBox.$().find("span.sapMText");
 		assert.equal(jQuery(oMessageTextContainer).attr("dir"), "rtl", "Attribute 'dir' for Text Direction is set to RTL");
 		oMessageBox.destroy();
@@ -679,7 +681,7 @@ sap.ui.define([
 		});
 
 		oCore.applyChanges();
-		oMessageBox = oCore.byId(sMessageBoxId);
+		oMessageBox = Element.registry.get(sMessageBoxId);
 		oMessageTextContainer = oMessageBox.$().find("span.sapMText");
 		assert.equal(jQuery(oMessageTextContainer).attr("dir"), "ltr", "Attribute 'dir' for Text Direction is set to LTR");
 		oMessageBox.destroy();
@@ -698,7 +700,7 @@ sap.ui.define([
 			initialFocus: "OK"
 		});
 		oCore.applyChanges();
-		var oMessageBox = oCore.byId("messagedialog1");
+		var oMessageBox = Element.registry.get("messagedialog1");
 		assert.ok(oMessageBox, "Dialog should be created");
 		assert.equal(oMessageBox.getType(), DialogType.Message, "Dialog should have type Message");
 		assert.ok(oMessageBox.getButtons().length === 2, "Two buttons are created");
@@ -726,7 +728,7 @@ sap.ui.define([
 		});
 
 		oCore.applyChanges();
-		var oMessageBox = oCore.byId("messagedialog1"),
+		var oMessageBox = Element.registry.get("messagedialog1"),
 			oShowMoreLink = oMessageBox.getContent()[0].getItems()[1];
 
 		assert.strictEqual(oMessageBox.getAriaLabelledBy().length, 2, "MessageBox has 2 ARIA labels before 'Show more' press");
@@ -734,7 +736,7 @@ sap.ui.define([
 		oShowMoreLink.firePress();
 		oCore.applyChanges();
 
-		var oDialogAriaLabelDetails = oCore.byId(oMessageBox.getAriaLabelledBy()[2]).getHtmlText();
+		var oDialogAriaLabelDetails = Element.registry.get(oMessageBox.getAriaLabelledBy()[2]).getHtmlText();
 		assert.strictEqual(oMessageBox.getAriaLabelledBy().length, 3, "MessageBox has 3 ARIA labels after 'Show more' press");
 		assert.strictEqual(oDialogAriaLabelDetails, sDetails, "MessageBox details are set as ARIA label for the dialog");
 		oMessageBox.destroy();
@@ -765,14 +767,14 @@ sap.ui.define([
 		});
 
 		oCore.applyChanges();
-		var oMessageBox = oCore.byId("messagedialog2");
+		var oMessageBox = Element.registry.get("messagedialog2");
 		assert.ok(oMessageBox, "Dialog should be created");
 		assert.equal(oMessageBox.getType(), DialogType.Message, "Dialog should have type Message");
 		assert.ok(oMessageBox.getButtons().length === 2, "Two buttons are created");
 		assert.equal(oMessageBox.getTitle(), sMessageTitle, "Title is assigned");
 		assert.ok(oMessageBox.getContent()[0].isA("sap.ui.core.Control"), "Content is control");
 		assert.ok(oMessageBox.$().hasClass(sClassName));
-		$Layout = oCore.byId(sLayoutId).$();
+		$Layout = Element.registry.get(sLayoutId).$();
 		assert.equal($Layout.length, 1, "Layout should be created");
 		oMessageBox.destroy();
 	});
@@ -794,7 +796,7 @@ sap.ui.define([
 		});
 
 		oCore.applyChanges();
-		var oMessageBox = oCore.byId("messagebox5");
+		var oMessageBox = Element.registry.get("messagebox5");
 		assert.ok(true, "LeftButton aggregation is not used.");
 		assert.ok(true, "RightButton aggregation is not used.");
 		assert.equal(oMessageBox.getButtons().length, 2, "Buttons aggregation is used.");
@@ -808,7 +810,7 @@ sap.ui.define([
 		});
 
 		this.clock.tick(500);
-		var oMessageBox = oCore.byId("messagebox6");
+		var oMessageBox = Element.registry.get("messagebox6");
 		var sExpectedAriaLabelledBy = oMessageBox.$("header").find(".sapMTitle").attr("id") + " " + oMessageBox.$().find(".sapMMsgBoxText").attr("id");
 		var sActualAriaLabelledBy = oMessageBox.$().attr("aria-labelledby");
 		assert.equal(sActualAriaLabelledBy, sExpectedAriaLabelledBy, "should point to the header and to the text.");
@@ -822,7 +824,7 @@ sap.ui.define([
 		});
 
 		this.clock.tick(500);
-		var oMessageBox = oCore.byId("messagebox7");
+		var oMessageBox = Element.registry.get("messagebox7");
 		var sExpectedAriaLabelledBy = oMessageBox.$("header").find(".sapMTitle").attr("id");
 		var sActualAriaLabelledBy = oMessageBox.$().attr("aria-labelledby");
 		assert.equal(sActualAriaLabelledBy, sExpectedAriaLabelledBy, "should point to the header.");
@@ -837,7 +839,7 @@ sap.ui.define([
 		});
 
 		this.clock.tick(500);
-		var oMessageBox = oCore.byId("messagebox8");
+		var oMessageBox = Element.registry.get("messagebox8");
 		var sExpectedAriaLabelledBy = oMessageBox.$("header").find(".sapMTitle").attr("id") + " " + oMessageBox.$().find(".sapMMsgBoxText").attr("id");
 		var sActualAriaLabelledBy = oMessageBox.$().attr("aria-labelledby");
 		assert.equal(sActualAriaLabelledBy, sExpectedAriaLabelledBy, "should point to the header and to the text.");
@@ -846,14 +848,14 @@ sap.ui.define([
 
 	QUnit.test("Language change", function (assert) {
 		oCore.getConfiguration().setLanguage("de");
-		assert.notEqual(oCore.getLibraryResourceBundle("sap.m"), MessageBox._rb, "The MessageBox should have a different resource bundle before opening");
+		assert.notEqual(Lib.getResourceBundleFor("sap.m"), MessageBox._rb, "The MessageBox should have a different resource bundle before opening");
 		MessageBox.show(sMessageText, {
 			title: sMessageTitle,
 			details: "Some details",
 			id: "messagebox9"
 		});
-		assert.equal(oCore.getLibraryResourceBundle("sap.m"), MessageBox._rb, "The ResourceBundle should be the same.");
-		oCore.byId("messagebox9").destroy();
+		assert.equal(Lib.getResourceBundleFor("sap.m"), MessageBox._rb, "The ResourceBundle should be the same.");
+		Element.registry.get("messagebox9").destroy();
 	});
 
 	QUnit.test("Check button type on default show method call", function (assert) {
@@ -861,7 +863,7 @@ sap.ui.define([
 		MessageBox.show(undefined, {
 			id: "messageboxButtonType1"
 		});
-		var oMessageBox = oCore.byId("messageboxButtonType1");
+		var oMessageBox = Element.registry.get("messageboxButtonType1");
 
 		// assert
 		assert.equal(oMessageBox.getButtons()[0].getType(), ButtonType.Emphasized, "Button should be with 'Emphasized' type.");
@@ -876,7 +878,7 @@ sap.ui.define([
 			id: "messageboxButtonType2",
 			actions: [MessageBox.Action.OK]
 		});
-		var oMessageBox = oCore.byId("messageboxButtonType2");
+		var oMessageBox = Element.registry.get("messageboxButtonType2");
 
 		// assert
 		assert.equal(oMessageBox.getButtons()[0].getType(), ButtonType.Default, "Button should be with 'Default' type.");
@@ -891,7 +893,7 @@ sap.ui.define([
 			id: "messageboxButtonType3",
 			details: "Test details"
 		});
-		var oMessageBox = oCore.byId("messageboxButtonType3");
+		var oMessageBox = Element.registry.get("messageboxButtonType3");
 
 		// assert
 		assert.equal(oMessageBox.getButtons()[0].getType(), ButtonType.Emphasized, "Button should be with 'Emphasized' type.");
@@ -905,7 +907,7 @@ sap.ui.define([
 		MessageBox.alert(undefined, {
 			id: "messageboxButtonType4"
 		});
-		var oMessageBox = oCore.byId("messageboxButtonType4");
+		var oMessageBox = Element.registry.get("messageboxButtonType4");
 
 		// assert
 		assert.equal(oMessageBox.getButtons()[0].getType(), ButtonType.Emphasized, "Button should be with 'Emphasized' type.");
@@ -919,7 +921,7 @@ sap.ui.define([
 		MessageBox.confirm(undefined, {
 			id: "messageboxButtonType5"
 		});
-		var oMessageBox = oCore.byId("messageboxButtonType5");
+		var oMessageBox = Element.registry.get("messageboxButtonType5");
 
 		// assert
 		assert.equal(oMessageBox.getButtons()[0].getType(), ButtonType.Emphasized, "First button should be with 'Emphasized' type.");
@@ -934,7 +936,7 @@ sap.ui.define([
 		MessageBox.error(undefined, {
 			id: "messageboxButtonType6"
 		});
-		var oMessageBox = oCore.byId("messageboxButtonType6");
+		var oMessageBox = Element.registry.get("messageboxButtonType6");
 
 		// assert
 		assert.equal(oMessageBox.getButtons()[0].getType(), ButtonType.Default, "Button should be with 'Default' type.");
@@ -948,7 +950,7 @@ sap.ui.define([
 		MessageBox.information(undefined, {
 			id: "messageboxButtonType7"
 		});
-		var oMessageBox = oCore.byId("messageboxButtonType7");
+		var oMessageBox = Element.registry.get("messageboxButtonType7");
 
 		// assert
 		assert.equal(oMessageBox.getButtons()[0].getType(), ButtonType.Emphasized, "Button should be with 'Emphasized' type.");
@@ -962,7 +964,7 @@ sap.ui.define([
 		MessageBox.warning(undefined, {
 			id: "messageboxButtonType8"
 		});
-		var oMessageBox = oCore.byId("messageboxButtonType8");
+		var oMessageBox = Element.registry.get("messageboxButtonType8");
 
 		// assert
 		assert.equal(oMessageBox.getButtons()[0].getType(), ButtonType.Emphasized, "Button should be with 'Emphasized' type.");
@@ -976,7 +978,7 @@ sap.ui.define([
 		MessageBox.success(undefined, {
 			id: "messageboxButtonType9"
 		});
-		var oMessageBox = oCore.byId("messageboxButtonType9");
+		var oMessageBox = Element.registry.get("messageboxButtonType9");
 
 		// assert
 		assert.equal(oMessageBox.getButtons()[0].getType(), ButtonType.Emphasized, "Button should be with 'Emphasized' type.");
@@ -991,7 +993,7 @@ sap.ui.define([
 			id: "messageboxButtonType10",
 			actions: [MessageBox.Action.OK]
 		});
-		var oMessageBox = oCore.byId("messageboxButtonType10");
+		var oMessageBox = Element.registry.get("messageboxButtonType10");
 
 		// assert
 		assert.equal(oMessageBox.getButtons()[0].getType(), ButtonType.Default, "Button should be with 'Default' type.");
@@ -1006,7 +1008,7 @@ sap.ui.define([
 			id: "messageboxButtonType11",
 			actions: [MessageBox.Action.OK]
 		});
-		var oMessageBox = oCore.byId("messageboxButtonType11");
+		var oMessageBox = Element.registry.get("messageboxButtonType11");
 
 		// assert
 		assert.equal(oMessageBox.getButtons()[0].getType(), ButtonType.Default, "Button should be with 'Default' type.");
@@ -1021,7 +1023,7 @@ sap.ui.define([
 			id: "messageboxButtonType12",
 			actions: [MessageBox.Action.OK]
 		});
-		var oMessageBox = oCore.byId("messageboxButtonType12");
+		var oMessageBox = Element.registry.get("messageboxButtonType12");
 
 		// assert
 		assert.equal(oMessageBox.getButtons()[0].getType(), ButtonType.Default, "Button should be with 'Default' type.");
@@ -1036,7 +1038,7 @@ sap.ui.define([
 			id: "messageboxButtonType13",
 			actions: [MessageBox.Action.OK]
 		});
-		var oMessageBox = oCore.byId("messageboxButtonType13");
+		var oMessageBox = Element.registry.get("messageboxButtonType13");
 
 		// assert
 		assert.equal(oMessageBox.getButtons()[0].getType(), ButtonType.Default, "Button should be with 'Default' type.");
@@ -1051,7 +1053,7 @@ sap.ui.define([
 			id: "messageboxButtonType14",
 			actions: [MessageBox.Action.OK]
 		});
-		var oMessageBox = oCore.byId("messageboxButtonType14");
+		var oMessageBox = Element.registry.get("messageboxButtonType14");
 
 		// assert
 		assert.equal(oMessageBox.getButtons()[0].getType(), ButtonType.Default, "Button should be with 'Default' type.");
@@ -1067,7 +1069,7 @@ sap.ui.define([
 			actions: [MessageBox.Action.OK],
 			details: "Lorem ipsum"
 		});
-		var oMessageBox = oCore.byId("messageboxButtonType15");
+		var oMessageBox = Element.registry.get("messageboxButtonType15");
 
 		// assert
 		assert.equal(oMessageBox.getButtons()[0].getType(), ButtonType.Default, "Button should be with 'Default' type.");
@@ -1082,7 +1084,7 @@ sap.ui.define([
 			id: "messageboxButtonType16",
 			details: "Lorem ipsum"
 		});
-		var oMessageBox = oCore.byId("messageboxButtonType16");
+		var oMessageBox = Element.registry.get("messageboxButtonType16");
 
 		// assert
 		assert.equal(oMessageBox.getButtons()[0].getType(), ButtonType.Emphasized, "Button should be with 'Emphasized' type.");
@@ -1098,7 +1100,7 @@ sap.ui.define([
 			actions: [MessageBox.Action.YES, MessageBox.Action.NO],
 			emphasizedAction: MessageBox.Action.NO
 		});
-		var oMessageBox = oCore.byId("messageboxButtonType17");
+		var oMessageBox = Element.registry.get("messageboxButtonType17");
 
 		// assert
 		assert.equal(oMessageBox.getButtons()[0].getType(), ButtonType.Default, "'YES' should be with 'Default' type.");
@@ -1115,7 +1117,7 @@ sap.ui.define([
 			actions: [MessageBox.Action.CLOSE ,MessageBox.Action.YES, MessageBox.Action.NO],
 			emphasizedAction: undefined // explicitly to showcase this test
 		});
-		var oMessageBox = oCore.byId("messageboxButtonType18");
+		var oMessageBox = Element.registry.get("messageboxButtonType18");
 
 		// assert
 		oMessageBox.getButtons().forEach(function (oButton) {
@@ -1131,7 +1133,7 @@ sap.ui.define([
 		MessageBox.error(undefined, {
 			id: "messageboxButtonType19"
 		});
-		var oMessageBox = oCore.byId("messageboxButtonType19");
+		var oMessageBox = Element.registry.get("messageboxButtonType19");
 
 		// assert
 		assert.equal(oMessageBox.getButtons()[0].getType(), ButtonType.Default, "Button should be with 'Default' type.");
@@ -1150,7 +1152,7 @@ sap.ui.define([
 		});
 		this.clock.tick(500);
 
-		oDialog = oCore.byId("messageId");
+		oDialog = Element.registry.get("messageId");
 
 		assert.ok(oDialog.isOpen(), "Dialog is opened");
 
@@ -1171,7 +1173,7 @@ sap.ui.define([
 		});
 		this.clock.tick(500);
 
-		oDialog = oCore.byId("messageId");
+		oDialog = Element.registry.get("messageId");
 
 		InstanceManager.closeAllDialogs();
 		this.clock.tick(500);
@@ -1191,7 +1193,7 @@ sap.ui.define([
 		});
 		oCore.applyChanges();
 
-		var oMessageBoxDialog = oCore.byId("messageId");
+		var oMessageBoxDialog = Element.registry.get("messageId");
 
 		// assert
 		assert.strictEqual(oMessageBoxDialog.$().find("a.sapMMessageBoxLinkText").length, 1, "MessageBox has 'View Details' link displayed");
@@ -1214,7 +1216,7 @@ sap.ui.define([
 		});
 		oCore.applyChanges();
 
-		var oMessageBoxDialog = oCore.byId("messageId");
+		var oMessageBoxDialog = Element.registry.get("messageId");
 		var oViewDetails = oMessageBoxDialog.$().find("a.sapMMessageBoxLinkText");
 
 		// Act
@@ -1246,7 +1248,7 @@ sap.ui.define([
 		});
 		oCore.applyChanges();
 
-		var oMessageBoxDialog = oCore.byId("messageId");
+		var oMessageBoxDialog = Element.registry.get("messageId");
 		var oViewDetails = Element.closestTo(oMessageBoxDialog.$().find("a.sapMMessageBoxLinkText")[0]);
 
 		// Act
@@ -1279,8 +1281,8 @@ sap.ui.define([
 			}
 		});
 		oCore.applyChanges();
-		var oResourceBundle = oCore.getLibraryResourceBundle("sap.m");
-		var oMessageBoxDialog = oCore.byId("messageId");
+		var oResourceBundle = Lib.getResourceBundleFor("sap.m");
+		var oMessageBoxDialog = Element.registry.get("messageId");
 		var oViewDetails = Element.closestTo(oMessageBoxDialog.$().find("a.sapMMessageBoxLinkText")[0]);
 
 		// Act
@@ -1324,7 +1326,7 @@ sap.ui.define([
 		});
 		oCore.applyChanges();
 
-		oMessageBoxDialog = oCore.byId("messageId");
+		oMessageBoxDialog = Element.registry.get("messageId");
 		var oViewDetails = oMessageBoxDialog.$().find("a.sapMMessageBoxLinkText");
 
 		// Act
@@ -1344,7 +1346,7 @@ sap.ui.define([
 		});
 		oCore.applyChanges();
 
-		var oMessageBoxDialog = oCore.byId("messageId");
+		var oMessageBoxDialog = Element.registry.get("messageId");
 		var oViewDetails = oMessageBoxDialog.$().find("a.sapMMessageBoxLinkText");
 
 		// Act
@@ -1379,7 +1381,7 @@ sap.ui.define([
 		});
 		oCore.applyChanges();
 
-		var oMessageBoxDialog = oCore.byId("messageId");
+		var oMessageBoxDialog = Element.registry.get("messageId");
 		var oViewDetails = oMessageBoxDialog.$().find("a.sapMMessageBoxLinkText");
 
 		// Act
@@ -1406,7 +1408,7 @@ sap.ui.define([
 			}
 		});
 		oCore.applyChanges();
-		var oMessageBoxDialog = oCore.byId("messageId");
+		var oMessageBoxDialog = Element.registry.get("messageId");
 		var oViewDetails = Element.closestTo(oMessageBoxDialog.$().find("a.sapMMessageBoxLinkText")[0]);
 		pressLink(oViewDetails);
 
@@ -1443,7 +1445,7 @@ sap.ui.define([
 			initialFocus: "OK"
 		});
 		this.clock.tick(500);
-		var oMessageBox = oCore.byId("messagedialog2");
+		var oMessageBox = Element.registry.get("messagedialog2");
 		assert.ok(oMessageBox, "Dialog should be created");
 		assert.equal(oMessageBox.getType(), DialogType.Message, "Dialog should have type Message");
 		assert.ok(oMessageBox.getButtons().length === 2, "Two buttons are created");
@@ -1470,7 +1472,7 @@ sap.ui.define([
 			initialFocus: "OK"
 		});
 		this.clock.tick(500);
-		var oMessageBox = oCore.byId("messagedialogdetails");
+		var oMessageBox = Element.registry.get("messagedialogdetails");
 		assert.ok(oMessageBox, "Dialog should be created");
 		var sLinkText = oMessageBox.$().find("a.sapMMessageBoxLinkText");
 		pressLink(sLinkText);
@@ -1494,7 +1496,7 @@ sap.ui.define([
 		});
 
 		this.clock.tick(500);
-		var oMessageBox = oCore.byId("messagedialog3");
+		var oMessageBox = Element.registry.get("messagedialog3");
 		assert.ok(oMessageBox, "Dialog should be created");
 		assert.equal(oMessageBox.getType(), DialogType.Message, "Dialog should have type Message");
 		assert.ok(oMessageBox.getButtons().length === 2, "Two buttons are created");
@@ -1530,7 +1532,7 @@ sap.ui.define([
 		});
 		oCore.applyChanges();
 
-		var oMessageBoxDialog = oCore.byId("messageId");
+		var oMessageBoxDialog = Element.registry.get("messageId");
 		var oViewDetails = oMessageBoxDialog.$().find("a.sapMMessageBoxLinkText");
 
 		// Act
@@ -1564,7 +1566,7 @@ sap.ui.define([
 			details: sDetails
 		});
 
-		var oMessageBox = oCore.byId("messageId");
+		var oMessageBox = Element.registry.get("messageId");
 		var oViewDetails = oMessageBox.$().find("a.sapMMessageBoxLinkText");
 		pressLink(oViewDetails);
 		oCore.applyChanges();

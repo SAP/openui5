@@ -4,13 +4,15 @@ sap.ui.define([
 	"sap/ui/rta/util/showMessageBox",
 	"sap/ui/core/Core",
 	"sap/m/MessageBox",
-	"sap/ui/thirdparty/sinon-4"
+	"sap/ui/thirdparty/sinon-4",
+	"sap/ui/core/Element"
 ],
 function(
 	showMessageBox,
 	oCore,
 	MessageBox,
-	sinon
+	sinon,
+	Element
 ) {
 	"use strict";
 	var sandbox = sinon.createSandbox();
@@ -39,7 +41,7 @@ function(
 			var messageBoxSpy = sandbox.spy(MessageBox, sType);
 			fnTriggerMessageBox(sMessage, sType);
 
-			var oMessageBoxDialog = oCore.byId("messagebox");
+			var oMessageBoxDialog = Element.registry.get("messagebox");
 
 			oMessageBoxDialog.attachAfterOpen(function() {
 				assert.strictEqual(document.getElementById("messagebox-cont").textContent, sMessage);
@@ -59,7 +61,7 @@ function(
 
 				fnTriggerMessageBox(sMessageWithLink, sType);
 
-				var oMessageBoxDialog = oCore.byId("messagebox");
+				var oMessageBoxDialog = Element.registry.get("messagebox");
 
 				oMessageBoxDialog.attachAfterOpen(function() {
 					var sMessage = "My custom message";
@@ -84,7 +86,7 @@ function(
 
 			fnTriggerMessageBox(sMessageWithLink, sType);
 
-			var oMessageBoxDialog = oCore.byId("messagebox");
+			var oMessageBoxDialog = Element.registry.get("messagebox");
 
 			oMessageBoxDialog.attachAfterOpen(function() {
 				assert.strictEqual(document.getElementById("messagebox-cont").textContent, sMessage);
@@ -122,7 +124,7 @@ function(
 				}
 			);
 
-			var oMessageBoxDialog = oCore.byId("messagebox");
+			var oMessageBoxDialog = Element.registry.get("messagebox");
 
 			oMessageBoxDialog.attachAfterOpen(function() {
 				assert.strictEqual(document.getElementById("messagebox-cont").textContent, sMessage);

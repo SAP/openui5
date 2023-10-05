@@ -12,8 +12,10 @@ sap.ui.define([
 	'sap/m/Text',
 	'sap/m/ScrollContainer',
 	'sap/ui/core/HTML',
-	'sap/ui/events/KeyCodes'
-], function (
+	'sap/ui/events/KeyCodes',
+	"sap/ui/core/Element",
+	"sap/ui/core/Lib"
+], function(
 	Log,
 	Core,
 	QunitUtils,
@@ -26,7 +28,9 @@ sap.ui.define([
 	Text,
 	ScrollContainer,
 	HTML,
-	KeyCodes
+	KeyCodes,
+	Element,
+	Lib
 ) {
 	"use strict";
 
@@ -187,7 +191,7 @@ sap.ui.define([
 
 		assert.strictEqual(this.oResponsiveSplitter.$().find(".sapUiResponsiveSplitterPaginator").css("height"), "0px", "Paginator's height should be 0");
 		assert.strictEqual(this.oResponsiveSplitter.getAggregation("_pages")[0].getVisible(), true, "The first page should be visible");
-		assert.strictEqual(Core.byId(this.oResponsiveSplitter.getAggregation("_pages")[0].getContent()), this.oButton2, "The first page's content should be button from the defaultPane");
+		assert.strictEqual(Element.registry.get(this.oResponsiveSplitter.getAggregation("_pages")[0].getContent()), this.oButton2, "The first page's content should be button from the defaultPane");
 		assert.ok(this.oButton2.getDomRef(), "Second button should be visible");
 		assert.ok(!this.oButton1.getDomRef(), "First button should be visible");
 	});
@@ -409,7 +413,7 @@ sap.ui.define([
 				})]
 			});
 
-			this.oResourceBundle = Core.getLibraryResourceBundle("sap.ui.layout");
+			this.oResourceBundle = Lib.getResourceBundleFor("sap.ui.layout");
 			this.stub(this.oResourceBundle, "getText")
 				.withArgs("RESPONSIVE_SPLITTER_RESIZE", [1, 2]).returns("Resize between pane 1 and pane 2")
 				.withArgs("RESPONSIVE_SPLITTER_RESIZE", [2, 3]).returns("Resize between pane 2 and pane 3")
@@ -452,7 +456,7 @@ sap.ui.define([
 	QUnit.test("Paginator", function (assert) {
 		var oSplitterPaginatorItems = this.oResponsiveSplitter.$().find(".sapUiResponsiveSplitterPaginatorButtons"),
 			sContainerId = oSplitterPaginatorItems.attr("aria-controls"),
-			oContainerPages = Core.byId(sContainerId).getAggregation("_pages") || [],
+			oContainerPages = Element.registry.get(sContainerId).getAggregation("_pages") || [],
 			sRole = "listbox",
 			sLabel = "Pane Switcher";
 

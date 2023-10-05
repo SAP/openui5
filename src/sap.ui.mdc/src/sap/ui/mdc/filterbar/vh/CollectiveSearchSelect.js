@@ -4,9 +4,11 @@
 
 // Provides control sap.ui.mdc.filterbar.vh.CollectiveSearchSelect.
 sap.ui.define([
-	"sap/m/VariantManagement"
+	"sap/m/VariantManagement",
+	"sap/ui/core/Lib"
 ], function(
-	VariantManagement
+	VariantManagement,
+	Lib
 ) {
 	"use strict";
 
@@ -73,7 +75,7 @@ sap.ui.define([
 	CollectiveSearchSelect.prototype.init = function() {
 		VariantManagement.prototype.init.apply(this); // Call base class
 
-		this.oRb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
+		this.oRb = Lib.getResourceBundleFor("sap.ui.mdc");
 	};
 
 	CollectiveSearchSelect.prototype.applySettings = function(mSettings, oScope) {

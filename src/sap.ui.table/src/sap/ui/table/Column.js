@@ -1127,7 +1127,7 @@ sap.ui.define([
 	 * @private
 	 */
 	Column.prototype.getHeaderMenuInstance = function() {
-		return Core.byId(this.getHeaderMenu());
+		return Element.registry.get(this.getHeaderMenu());
 	};
 
 	function validateCellContentVisibilitySettings(mSettings) {

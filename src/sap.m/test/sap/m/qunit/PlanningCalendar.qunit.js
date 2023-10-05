@@ -28,7 +28,8 @@ sap.ui.define([
 	"sap/base/util/deepEqual",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/core/Locale",
-	"sap/ui/core/date/UI5Date"
+	"sap/ui/core/date/UI5Date",
+	"sap/ui/core/Lib"
 ], function(
 	qutils,
 	createAndAppendDiv,
@@ -58,7 +59,8 @@ sap.ui.define([
 	deepEqual,
 	KeyCodes,
 	Locale,
-	UI5Date
+	UI5Date,
+	Lib
 ) {
 	"use strict";
 
@@ -257,7 +259,7 @@ sap.ui.define([
 	};
 
 	var initPlanningCalendar = function(sID, sSearchFieldId, sButtonId) {
-		var oTC = Core.byId(sID);
+		var oTC = Element.registry.get(sID);
 		var oUIArea;
 		if (oTC) {
 			oTC.removeAllToolbarContent();
@@ -265,7 +267,7 @@ sap.ui.define([
 			oTC.destroy();
 		}
 
-		if (!Core.byId(sSearchFieldId)) {
+		if (!Element.registry.get(sSearchFieldId)) {
 			var oSearchField1 = new SearchField(sSearchFieldId, {
 				width: "10rem",
 				search: function() {
@@ -295,7 +297,7 @@ sap.ui.define([
 	};
 
 	var _getListItem = function(oRow) {
-		return Core.byId(oRow.getId() + "-CLI");
+		return Element.registry.get(oRow.getId() + "-CLI");
 	};
 
 	var _getRowHeader = function(oRow) {
@@ -311,7 +313,7 @@ sap.ui.define([
 	};
 
 	var _switchToView = function(sViewName, oPC) {
-		var oRb = Core.getLibraryResourceBundle("sap.m"),
+		var oRb = Lib.getResourceBundleFor("sap.m"),
 			mIntervalStringsMap = {},
 			sIntervalTypeDropdownId,
 			oViewSwitch,
@@ -327,7 +329,7 @@ sap.ui.define([
 		sViewI18Name = oRb.getText(mIntervalStringsMap[sViewName]);
 		QUnit.assert.ok(sViewI18Name, "There must be internationalized string corresponding to the viewName " + sViewName);
 		sIntervalTypeDropdownId = oPC.getId() + "-Header-ViewSwitch-select";
-		oViewSwitch = Core.byId(sIntervalTypeDropdownId);
+		oViewSwitch = Element.registry.get(sIntervalTypeDropdownId);
 		aItemsToSelect = oViewSwitch.getItems().filter(function(item) {
 			return item.getText().toLowerCase() === sViewI18Name.toLowerCase();
 		});
@@ -347,7 +349,7 @@ sap.ui.define([
 	};
 
 	var _getTodayButton = function(oPC) {
-		return Core.byId(oPC.getId() + "-Header-NavToolbar-TodayBtn");
+		return Element.registry.get(oPC.getId() + "-Header-NavToolbar-TodayBtn");
 	};
 
 	var _getChangeMonthButtonText = function(oPC) {
@@ -604,7 +606,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("PlanningCalendarRow", function(assert) {
-		var oRow = Core.byId("PC1-Row1");
+		var oRow = Element.registry.get("PC1-Row1");
 		assert.ok(_getListItem(oRow), "ColumnListItem exist");
 		assert.equal(_getListItem(oRow).getCells().length, 2, "row has 2 columns");
 
@@ -625,7 +627,7 @@ sap.ui.define([
 		assert.ok(!oTimeline.getNonWorkingDays(), "Row1: CalendarRow - nonWorkingDays");
 		assert.ok(!oTimeline.getNonWorkingHours(), "Row1: CalendarRow - nonWorkingHours");
 
-		oRow = Core.byId("PC1-Row2");
+		oRow = Element.registry.get("PC1-Row2");
 		oTimeline = _getRowTimeline(oRow);
 		assert.deepEqual(oTimeline.getNonWorkingDays(), [2, 3], "Row2: CalendarRow - nonWorkingDays");
 		assert.deepEqual(oTimeline.getNonWorkingHours(), [11, 12], "Row2: CalendarRow - nonWorkingHours");
@@ -702,7 +704,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Table", function(assert) {
-		var oTable = Core.byId("PC1-Table");
+		var oTable = Element.registry.get("PC1-Table");
 
 		assert.equal(oTable.getColumns().length, 2, "Table columns");
 		assert.equal(oTable.getItems().length, 2, "Table rows");
@@ -736,7 +738,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("table", function(assert) {
-		var oTable = Core.byId("PC1-Table");
+		var oTable = Element.registry.get("PC1-Table");
 
 		assert.ok(oTable.getDomRef(), "Table rendered");
 		assert.ok(jQuery("#PC1-Row1-Head").get(0), "Row1 Header rendered");
@@ -1314,18 +1316,18 @@ sap.ui.define([
 		var oExpectedDate = UI5Date.getInstance("2015", "0", "1", "08", "00");
 		var iStartTime = oPC1.getStartDate().getTime();
 		assert.equal(oExpectedDate.getTime(), iStartTime, "Start date is OK");
-		assert.equal(Core.byId("PC1-TimesRow").getStartDate().getTime(), iStartTime, "TimesRow Start date");
-		assert.equal(Core.byId("PC1-Row1-CalRow").getStartDate().getTime(), iStartTime, "CalendarRow1 Start date");
-		assert.equal(Core.byId("PC1-Row2-CalRow").getStartDate().getTime(), iStartTime, "CalendarRow2 Start date");
+		assert.equal(Element.registry.get("PC1-TimesRow").getStartDate().getTime(), iStartTime, "TimesRow Start date");
+		assert.equal(Element.registry.get("PC1-Row1-CalRow").getStartDate().getTime(), iStartTime, "CalendarRow1 Start date");
+		assert.equal(Element.registry.get("PC1-Row2-CalRow").getStartDate().getTime(), iStartTime, "CalendarRow2 Start date");
 
 		oExpectedDate = UI5Date.getInstance("2015", "0", "1", "07", "00");
 		oPC1.setStartDate(UI5Date.getInstance("2015", "0", "1", "07", "00"));
 		Core.applyChanges();
 		iStartTime = oPC1.getStartDate().getTime();
 		assert.equal(oExpectedDate.getTime(), iStartTime, "Start date is OK");
-		assert.equal(Core.byId("PC1-TimesRow").getStartDate().getTime(), iStartTime, "TimesRow Start date");
-		assert.equal(Core.byId("PC1-Row1-CalRow").getStartDate().getTime(), iStartTime, "CalendarRow1 Start date");
-		assert.equal(Core.byId("PC1-Row2-CalRow").getStartDate().getTime(), iStartTime, "CalendarRow2 Start date");
+		assert.equal(Element.registry.get("PC1-TimesRow").getStartDate().getTime(), iStartTime, "TimesRow Start date");
+		assert.equal(Element.registry.get("PC1-Row1-CalRow").getStartDate().getTime(), iStartTime, "CalendarRow1 Start date");
+		assert.equal(Element.registry.get("PC1-Row2-CalRow").getStartDate().getTime(), iStartTime, "CalendarRow2 Start date");
 		assert.ok(jQuery("#PC1-R1A1").get(0), "Row1: Appointment1 still rendered");
 		assert.ok(jQuery("#PC1-R1A2").get(0), "Row1: Appointment2 now rendered");
 	});
@@ -1361,20 +1363,20 @@ sap.ui.define([
 	QUnit.test("viewKey", function(assert) {
 		var sViewKey = oPC1.getViewKey();
 		assert.equal(sViewKey, CalendarIntervalType.Hour, "Default ViewKey");
-		assert.equal(Core.byId("PC1-Row1-CalRow").getIntervalType(), CalendarIntervalType.Hour, "CalendarRow1 intervalType");
-		assert.equal(Core.byId("PC1-Row2-CalRow").getIntervalType(), CalendarIntervalType.Hour, "CalendarRow2 intervalType");
-		assert.ok(!Core.byId("PC1-DatesRow"), "DatesRow control not exist");
-		assert.ok(!Core.byId("PC1-MonthsRow"), "MonthsRow control not exist");
+		assert.equal(Element.registry.get("PC1-Row1-CalRow").getIntervalType(), CalendarIntervalType.Hour, "CalendarRow1 intervalType");
+		assert.equal(Element.registry.get("PC1-Row2-CalRow").getIntervalType(), CalendarIntervalType.Hour, "CalendarRow2 intervalType");
+		assert.ok(!Element.registry.get("PC1-DatesRow"), "DatesRow control not exist");
+		assert.ok(!Element.registry.get("PC1-MonthsRow"), "MonthsRow control not exist");
 
 		oPC1.setViewKey(CalendarIntervalType.Day);
 		Core.applyChanges();
 		sViewKey = oPC1.getViewKey();
 		assert.equal(sViewKey, CalendarIntervalType.Day, "Default ViewKey");
-		assert.equal(Core.byId("PC1-Row1-CalRow").getIntervalType(), CalendarIntervalType.Day, "CalendarRow1 intervalType");
-		assert.equal(Core.byId("PC1-Row2-CalRow").getIntervalType(), CalendarIntervalType.Day, "CalendarRow2 intervalType");
-		assert.ok(Core.byId("PC1-TimesRow"), "TimesRow control still exist");
-		assert.ok(Core.byId("PC1-DatesRow"), "DatesRow control now exist");
-		assert.ok(!Core.byId("PC1-MonthsRow"), "MonthsRow control not exist");
+		assert.equal(Element.registry.get("PC1-Row1-CalRow").getIntervalType(), CalendarIntervalType.Day, "CalendarRow1 intervalType");
+		assert.equal(Element.registry.get("PC1-Row2-CalRow").getIntervalType(), CalendarIntervalType.Day, "CalendarRow2 intervalType");
+		assert.ok(Element.registry.get("PC1-TimesRow"), "TimesRow control still exist");
+		assert.ok(Element.registry.get("PC1-DatesRow"), "DatesRow control now exist");
+		assert.ok(!Element.registry.get("PC1-MonthsRow"), "MonthsRow control not exist");
 		assert.ok(!jQuery("#PC1-TimesRow").get(0), "TimesRow not rendered");
 		assert.ok(jQuery("#PC1-DatesRow").get(0), "DatesRow rendered");
 
@@ -1382,11 +1384,11 @@ sap.ui.define([
 		Core.applyChanges();
 		sViewKey = oPC1.getViewKey();
 		assert.equal(sViewKey, CalendarIntervalType.Month, "Default ViewKey");
-		assert.equal(Core.byId("PC1-Row1-CalRow").getIntervalType(), CalendarIntervalType.Month, "CalendarRow1 intervalType");
-		assert.equal(Core.byId("PC1-Row2-CalRow").getIntervalType(), CalendarIntervalType.Month, "CalendarRow2 intervalType");
-		assert.ok(Core.byId("PC1-TimesRow"), "TimesRow control still exist");
-		assert.ok(Core.byId("PC1-DatesRow"), "DatesRow control now exist");
-		assert.ok(Core.byId("PC1-MonthsRow"), "MonthsRow control not exist");
+		assert.equal(Element.registry.get("PC1-Row1-CalRow").getIntervalType(), CalendarIntervalType.Month, "CalendarRow1 intervalType");
+		assert.equal(Element.registry.get("PC1-Row2-CalRow").getIntervalType(), CalendarIntervalType.Month, "CalendarRow2 intervalType");
+		assert.ok(Element.registry.get("PC1-TimesRow"), "TimesRow control still exist");
+		assert.ok(Element.registry.get("PC1-DatesRow"), "DatesRow control now exist");
+		assert.ok(Element.registry.get("PC1-MonthsRow"), "MonthsRow control not exist");
 		assert.ok(!jQuery("#PC1-TimesRow").get(0), "TimesRow not rendered");
 		assert.ok(!jQuery("#PC1-DatesRow").get(0), "DatesRow not rendered");
 		assert.ok(jQuery("#PC1-MonthsRow").get(0), "MonthsRow rendered");
@@ -1522,7 +1524,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("noDataText", function(assert) {
-		var oTable = Core.byId("PC1-Table");
+		var oTable = Element.registry.get("PC1-Table");
 		assert.ok(!oPC1.getNoDataText(), "noDataText empty by default");
 		assert.ok(!oTable.getProperty("noDataText"), "noDataText of table empty by default"); // use getProperty("noDataText") because getter is overwritten in ListBase
 
@@ -1537,28 +1539,28 @@ sap.ui.define([
 
 	QUnit.test("Calendar: minDate/maxDate", function(assert) {
 		assert.ok(!oPC1.getMinDate(), "no minDate set by default");
-		assert.ok(!Core.byId("PC1-Header-Cal").getMinDate(), "Calendar no minDate set by default");
+		assert.ok(!Element.registry.get("PC1-Header-Cal").getMinDate(), "Calendar no minDate set by default");
 
 		assert.ok(!oPC1.getMaxDate(), "no maxDate set by default");
-		assert.ok(!Core.byId("PC1-Header-Cal").getMaxDate(), "Calendar no maxDate set by default");
+		assert.ok(!Element.registry.get("PC1-Header-Cal").getMaxDate(), "Calendar no maxDate set by default");
 
 		var oMinDate = UI5Date.getInstance(2000, 0 , 1, 0, 0, 0);
 		oPC1.setMinDate(oMinDate);
 		assert.ok(deepEqual(oMinDate, oPC1.getMinDate()), "no minDate set");
-		assert.ok(deepEqual(oMinDate, Core.byId("PC1-Header-Cal").getMinDate()), "Calendar minDate set");
+		assert.ok(deepEqual(oMinDate, Element.registry.get("PC1-Header-Cal").getMinDate()), "Calendar minDate set");
 
 		var oMaxDate = UI5Date.getInstance(2050, 11 , 31, 23, 59, 59);
 		oPC1.setMaxDate(oMaxDate);
 		assert.ok(deepEqual(oMaxDate, oPC1.getMaxDate()), "no minDate set");
-		assert.ok(deepEqual(oMaxDate, Core.byId("PC1-Header-Cal").getMaxDate()), "Calendar maxDate set");
+		assert.ok(deepEqual(oMaxDate, Element.registry.get("PC1-Header-Cal").getMaxDate()), "Calendar maxDate set");
 
 		oPC1.setMinDate();
 		assert.ok(!oPC1.getMinDate(), "no minDate set");
-		assert.ok(!Core.byId("PC1-Header-Cal").getMinDate(), "Calendar no minDate");
+		assert.ok(!Element.registry.get("PC1-Header-Cal").getMinDate(), "Calendar no minDate");
 
 		oPC1.setMaxDate();
 		assert.ok(!oPC1.getMaxDate(), "no maxDate");
-		assert.ok(!Core.byId("PC1-Header-Cal").getMaxDate(), "Calendar no maxDate");
+		assert.ok(!Element.registry.get("PC1-Header-Cal").getMaxDate(), "Calendar no maxDate");
 	});
 
 	QUnit.test("CustomMonthPicker: minDate/maxDate", function(assert) {
@@ -1609,7 +1611,7 @@ sap.ui.define([
 
 	QUnit.test("rows", function(assert) {
 		var oSpyRerender;
-		var oTable = Core.byId("PC1-Table");
+		var oTable = Element.registry.get("PC1-Table");
 		assert.equal(oPC1.getRows().length, 2, "PlanningCalendarRows assigned");
 		var iIntervals = 12;
 		if (jQuery("#PC1").outerWidth() < Device.media._predefinedRangeSets[Device.media.RANGESETS.SAP_STANDARD_EXTENDED].points[0]) {
@@ -1658,13 +1660,13 @@ sap.ui.define([
 		}
 
 		oPC1 = initPlanningCalendar("PC1", "SF1", "B1");
-		oTable = Core.byId("PC1-Table");
+		oTable = Element.registry.get("PC1-Table");
 
 		oSpyRerender = this.spy(oPC1, "invalidate");
 		oPC1.destroyRows();
 		Core.applyChanges();
 		assert.equal(oTable.getItems().length, 0, "Table rows destroyed");
-		assert.ok(!Core.byId("PC1-Row1"), "Row1 destroyed");
+		assert.ok(!Element.registry.get("PC1-Row1"), "Row1 destroyed");
 		assert.ok(oSpyRerender.callCount > 0, "Calendar was rerendered");
 
 		oPC1 = initPlanningCalendar("PC1", "SF1", "B1");
@@ -1695,10 +1697,10 @@ sap.ui.define([
 		oPC1.addView(oView);
 		Core.applyChanges();
 		assert.equal(oPC1.getViews().length, 2, "2 views set");
-		assert.equal(Core.byId("PC1-Row1-CalRow").getIntervalType(), CalendarIntervalType.Day, "CalendarRow1 intervalType");
-		assert.equal(Core.byId("PC1-Row1-CalRow").getShowSubIntervals(), true, "CalendarRow1 subIntervals");
+		assert.equal(Element.registry.get("PC1-Row1-CalRow").getIntervalType(), CalendarIntervalType.Day, "CalendarRow1 intervalType");
+		assert.equal(Element.registry.get("PC1-Row1-CalRow").getShowSubIntervals(), true, "CalendarRow1 subIntervals");
 		if (jQuery("#PC1").outerWidth() > 1100) {
-			assert.equal(Core.byId("PC1-Row1-CalRow").getIntervals(), 6, "CalendarRow1 intervals");
+			assert.equal(Element.registry.get("PC1-Row1-CalRow").getIntervals(), 6, "CalendarRow1 intervals");
 		}
 		assert.ok(!jQuery("#PC1-TimesRow").get(0), "TimesRow not rendered");
 		assert.ok(jQuery("#PC1-DatesRow").get(0), "DatesRow rendered");
@@ -1706,20 +1708,20 @@ sap.ui.define([
 		oView.setIntervalsL(5);
 		Core.applyChanges();
 		if (jQuery("#PC1").outerWidth() > 1100) {
-			assert.equal(Core.byId("PC1-Row1-CalRow").getIntervals(), 5, "CalendarRow1 intervals");
+			assert.equal(Element.registry.get("PC1-Row1-CalRow").getIntervals(), 5, "CalendarRow1 intervals");
 		}
 
 		oPC1.destroyViews();
 		oPC1.setViewKey(CalendarIntervalType.Hour);
 		Core.applyChanges();
 		assert.equal(oPC1.getViews().length, 0, "no views set in aggregation");
-		assert.equal(Core.byId("PC1-Row1-CalRow").getIntervalType(), CalendarIntervalType.Hour, "CalendarRow1 intervalType");
-		assert.equal(Core.byId("PC1-Row1-CalRow").getShowSubIntervals(), false, "CalendarRow1 subIntervals");
+		assert.equal(Element.registry.get("PC1-Row1-CalRow").getIntervalType(), CalendarIntervalType.Hour, "CalendarRow1 intervalType");
+		assert.equal(Element.registry.get("PC1-Row1-CalRow").getShowSubIntervals(), false, "CalendarRow1 subIntervals");
 	});
 
 	QUnit.test("specialDates", function(assert) {
 
-		var oTimesRow = Core.byId("PC1-TimesRow");
+		var oTimesRow = Element.registry.get("PC1-TimesRow");
 		assert.equal(oTimesRow.getSpecialDates().length, 2, "TimesRow gets SpecialDates from PlanningCalendar");
 		assert.ok(jQuery("#PC1-TimesRow-201501011200").hasClass("sapUiCalItemType02"), "SpecialDate rendered");
 
@@ -1763,7 +1765,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Row header", function(assert) {
-		var oRow = Core.byId("PC1-Row1");
+		var oRow = Element.registry.get("PC1-Row1");
 		var oRowHeader = _getRowHeader(oRow);
 
 		oRow.setTitle("Test");
@@ -1777,7 +1779,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Row header icon", function(assert) {
-		var oRow = Core.byId("PC1-Row1");
+		var oRow = Element.registry.get("PC1-Row1");
 		var oRowHeader = _getRowHeader(oRow);
 
 		oRow.setIcon("sap-icon://sap-ui5");
@@ -1857,7 +1859,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Row nonWorkingIntervals", function(assert) {
-		var oRow = Core.byId("PC1-Row1");
+		var oRow = Element.registry.get("PC1-Row1");
 		var oTimeline = _getRowTimeline(oRow);
 
 		oRow.setNonWorkingDays([2, 3]);
@@ -1868,7 +1870,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Row selected", function(assert) {
-		var oRow = Core.byId("PC1-Row1");
+		var oRow = Element.registry.get("PC1-Row1");
 		var oColumnListItem = _getListItem(oRow);
 		assert.ok(!oRow.getSelected(), "Row not selected as default");
 		assert.ok(!oColumnListItem.getSelected(), "ColumnListItem not selected as default");
@@ -1880,7 +1882,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Row appointments", function(assert) {
-		var oRow = Core.byId("PC1-Row1");
+		var oRow = Element.registry.get("PC1-Row1");
 		var oTimeline = _getRowTimeline(oRow);
 		assert.ok(deepEqual(oRow.getAppointments(), oTimeline.getAppointments()), "CalendarRow appointments");
 		assert.equal(oRow.getAppointments().length, 4, "number of appointments");
@@ -1921,19 +1923,19 @@ sap.ui.define([
 			aRemoved[i].destroy();
 		}
 
-		oRow = Core.byId("PC1-Row2");
+		oRow = Element.registry.get("PC1-Row2");
 		oTimeline = _getRowTimeline(oRow);
-		assert.ok(Core.byId("PC1-R2A1"), "Appointment exist before destroy");
+		assert.ok(Element.registry.get("PC1-R2A1"), "Appointment exist before destroy");
 		oRow.destroyAppointments();
 		Core.applyChanges();
 		assert.equal(oRow.getAppointments().length, 0, "number of appointments after destroy");
-		assert.ok(!Core.byId("PC1-R2A1"), "Appointment destroyed");
+		assert.ok(!Element.registry.get("PC1-R2A1"), "Appointment destroyed");
 
 		oPC1 = initPlanningCalendar("PC1", "SF1", "B1");
 	});
 
 	QUnit.test("Row intervalHeaders", function(assert) {
-		var oRow = Core.byId("PC1-Row1");
+		var oRow = Element.registry.get("PC1-Row1");
 		var oTimeline = _getRowTimeline(oRow);
 		assert.ok(deepEqual(oRow.getIntervalHeaders(), oTimeline.getIntervalHeaders()), "CalendarRow IntervalHeaders");
 		assert.equal(oRow.getIntervalHeaders().length, 1, "number of IntervalHeaders");
@@ -1973,12 +1975,12 @@ sap.ui.define([
 			aRemoved[i].destroy();
 		}
 
-		oRow = Core.byId("PC1-Row2");
-		assert.ok(Core.byId("PC1-R2H1"), "IntervalHeader exist before destroy");
+		oRow = Element.registry.get("PC1-Row2");
+		assert.ok(Element.registry.get("PC1-R2H1"), "IntervalHeader exist before destroy");
 		oRow.destroyIntervalHeaders();
 		Core.applyChanges();
 		assert.equal(oRow.getIntervalHeaders().length, 0, "number of IntervalHeaders after destroy");
-		assert.ok(!Core.byId("PC1-R2H1"), "IntervalHeader destroyed");
+		assert.ok(!Element.registry.get("PC1-R2H1"), "IntervalHeader destroyed");
 
 		oPC1 = initPlanningCalendar("PC1", "SF1", "B1");
 	});
@@ -2296,7 +2298,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("singleSelection setter", function(assert) {
-		var oTable = Core.byId("SelectionMode-Table");
+		var oTable = Element.registry.get("SelectionMode-Table");
 
 		// Assert
 		assert.strictEqual(this.oPC.getSingleSelection(), true, "Single selection set");
@@ -2440,7 +2442,7 @@ sap.ui.define([
 		Core.applyChanges();
 
 		sCurrentPickerId = this.oPC._getHeader().getAssociation("currentPicker");
-		oPicker = Core.byId(sCurrentPickerId);
+		oPicker = Element.registry.get(sCurrentPickerId);
 		oRow = this.oPC.getAggregation("table").getInfoToolbar().getContent()[1];
 
 		// Act
@@ -2455,7 +2457,7 @@ sap.ui.define([
 		Core.applyChanges();
 
 		sCurrentPickerId = this.oPC._getHeader().getAssociation("currentPicker");
-		oPicker = Core.byId(sCurrentPickerId);
+		oPicker = Element.registry.get(sCurrentPickerId);
 		oRow = this.oPC.getAggregation("table").getInfoToolbar().getContent()[1];
 
 		// Assert
@@ -2467,7 +2469,7 @@ sap.ui.define([
 		Core.applyChanges();
 
 		sCurrentPickerId = this.oPC._getHeader().getAssociation("currentPicker");
-		oPicker = Core.byId(sCurrentPickerId);
+		oPicker = Element.registry.get(sCurrentPickerId);
 		oRow = this.oPC.getAggregation("table").getInfoToolbar().getContent()[1];
 
 		// Assert
@@ -2479,7 +2481,7 @@ sap.ui.define([
 		Core.applyChanges();
 
 		sCurrentPickerId = this.oPC._getHeader().getAssociation("currentPicker");
-		oPicker = Core.byId(sCurrentPickerId);
+		oPicker = Element.registry.get(sCurrentPickerId);
 		oRow = this.oPC.getAggregation("table").getInfoToolbar().getContent()[1];
 		oStartDate.setFullYear(2014, 11, 31, 8);
 
@@ -2513,7 +2515,7 @@ sap.ui.define([
 		Core.applyChanges();
 
 		sCurrentPickerId = this.oPC._getHeader().getAssociation("currentPicker");
-		oPicker = Core.byId(sCurrentPickerId);
+		oPicker = Element.registry.get(sCurrentPickerId);
 		oRow = this.oPC.getAggregation("table").getInfoToolbar().getContent()[1];
 		oStartDate.setDate(1);
 
@@ -2535,7 +2537,7 @@ sap.ui.define([
 		Core.applyChanges();
 
 		sCurrentPickerId = this.oPC._getHeader().getAssociation("currentPicker");
-		oPicker = Core.byId(sCurrentPickerId);
+		oPicker = Element.registry.get(sCurrentPickerId);
 
 		// Assert
 		assert.strictEqual(oPicker.getFirstDayOfWeek(), 5, "firstDayOfWeek in OneMonth view propagated to picker");
@@ -2786,7 +2788,7 @@ sap.ui.define([
 		oSelectedAppointment = undefined;
 		qutils.triggerEvent("tap", "PC1-R1A1");
 		assert.equal(oSelectedAppointment.getId(), "PC1-R1A1", "appointmentSelect event fired and appointment returned");
-		assert.ok(Core.byId("PC1-R1A1").getSelected(), "Appointment is selected");
+		assert.ok(Element.registry.get("PC1-R1A1").getSelected(), "Appointment is selected");
 		assert.equal(sDomRefId, "PC1-R1A1", "sDomRefId returns the right ID of the appointment if clicked on the whole appointment");
 		qutils.triggerEvent("tap", "PC1-R1A1-Title");
 		assert.equal(sDomRefId, "PC1-R1A1", "sDomRefId returns the right ID of the appointment if clicked on the title of the appointment");
@@ -2852,7 +2854,7 @@ sap.ui.define([
 		assert.ok(bRowSelectionChange, "rowSelectionChange fired");
 		assert.equal(aChangedRows.length, 1, "one row changed");
 		assert.equal(aChangedRows[0].getId(), "PC1-Row1", "Row1 changed");
-		assert.ok(Core.byId("PC1-Row1").getSelected(), "Row1 is selected");
+		assert.ok(Element.registry.get("PC1-Row1").getSelected(), "Row1 is selected");
 		assert.equal(oPC1.getSelectedRows().length, 1, "one row selected");
 
 		bRowSelectionChange = false;
@@ -2863,8 +2865,8 @@ sap.ui.define([
 		assert.equal(aChangedRows.length, 2, "two row changed");
 		assert.equal(aChangedRows[0].getId(), "PC1-Row1", "Row1 changed");
 		assert.equal(aChangedRows[1].getId(), "PC1-Row2", "Row2 changed");
-		assert.ok(!Core.byId("PC1-Row1").getSelected(), "Row1 is not selected");
-		assert.ok(Core.byId("PC1-Row2").getSelected(), "Row2 is selected");
+		assert.ok(!Element.registry.get("PC1-Row1").getSelected(), "Row1 is not selected");
+		assert.ok(Element.registry.get("PC1-Row2").getSelected(), "Row2 is selected");
 		assert.equal(oPC1.getSelectedRows().length, 1, "one row selected");
 
 		bRowSelectionChange = false;
@@ -2875,8 +2877,8 @@ sap.ui.define([
 		assert.ok(bRowSelectionChange, "rowSelectionChange fired");
 		assert.equal(aChangedRows.length, 1, "one row changed");
 		assert.equal(aChangedRows[0].getId(), "PC1-Row1", "Row1 changed");
-		assert.ok(Core.byId("PC1-Row1").getSelected(), "Row1 is selected");
-		assert.ok(Core.byId("PC1-Row2").getSelected(), "Row2 is selected");
+		assert.ok(Element.registry.get("PC1-Row1").getSelected(), "Row1 is selected");
+		assert.ok(Element.registry.get("PC1-Row2").getSelected(), "Row2 is selected");
 		assert.equal(oPC1.getSelectedRows().length, 2, "2 row selected");
 
 		bRowSelectionChange = false;
@@ -2884,8 +2886,8 @@ sap.ui.define([
 		oPC1.setSingleSelection(true);
 		Core.applyChanges();
 		assert.ok(!bRowSelectionChange, "rowSelectionChange not fired");
-		assert.ok(!Core.byId("PC1-Row1").getSelected(), "Row1 is not selected");
-		assert.ok(!Core.byId("PC1-Row2").getSelected(), "Row2 is not selected");
+		assert.ok(!Element.registry.get("PC1-Row1").getSelected(), "Row1 is not selected");
+		assert.ok(!Element.registry.get("PC1-Row2").getSelected(), "Row2 is not selected");
 		assert.equal(oPC1.getSelectedRows().length, 0, "No row selected");
 
 		bRowSelectionChange = false;

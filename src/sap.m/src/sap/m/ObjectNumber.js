@@ -9,9 +9,10 @@ sap.ui.define([
 	'sap/ui/core/library',
 	"sap/ui/core/LabelEnablement",
 	"sap/ui/events/KeyCodes",
-	'./ObjectNumberRenderer'
+	'./ObjectNumberRenderer',
+	"sap/ui/core/Lib"
 ],
-	function(library, Control, coreLibrary, LabelEnablement, KeyCodes, ObjectNumberRenderer) {
+	function(library, Control, coreLibrary, LabelEnablement, KeyCodes, ObjectNumberRenderer, Lib) {
 	"use strict";
 
 
@@ -144,7 +145,7 @@ sap.ui.define([
 	ObjectNumber.prototype._getStateText = function() {
 
 		var sState = this.getState(),
-			oRB = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+			oRB = Lib.getResourceBundleFor("sap.m");
 
 			return oRB.getText("OBJECTNUMBER_ARIA_VALUE_STATE_" + sState.toUpperCase(), [], true);
 	};

@@ -17,26 +17,28 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/m/library",
 	"sap/m/Popover",
-	"sap/ui/core/Core"
-], function (
-		ValueHelpDelegate,
-		FilterableListContent,
-		Condition,
-		FilterBar,
-		FilterOperatorUtil,
-		Operator,
-		ValueHelpSelectionType,
-		ConditionValidated,
-		Icon,
-		JSONModel,
-		mLibrary,
-		Popover,
-		oCore
-	) {
+	"sap/ui/core/Core",
+	"sap/ui/core/Lib"
+], function(
+	ValueHelpDelegate,
+	FilterableListContent,
+	Condition,
+	FilterBar,
+	FilterOperatorUtil,
+	Operator,
+	ValueHelpSelectionType,
+	ConditionValidated,
+	Icon,
+	JSONModel,
+	mLibrary,
+	Popover,
+	oCore,
+	Lib
+) {
 	"use strict";
 
 	let oContent;
-	const oResourceBundle = oCore.getLibraryResourceBundle("sap.ui.mdc");
+	const oResourceBundle = Lib.getResourceBundleFor("sap.ui.mdc");
 
 	const _teardown = function() {
 		oContent.destroy();

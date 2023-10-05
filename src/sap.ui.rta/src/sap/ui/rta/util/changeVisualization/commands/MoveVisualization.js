@@ -4,10 +4,12 @@
 
 sap.ui.define([
 	"sap/ui/rta/util/changeVisualization/ChangeVisualizationUtils",
-	"sap/ui/core/util/reflection/JsControlTreeModifier"
+	"sap/ui/core/util/reflection/JsControlTreeModifier",
+	"sap/ui/core/Lib"
 ], function(
 	ChangeVisualizationUtils,
-	JsControlTreeModifier
+	JsControlTreeModifier,
+	Lib
 ) {
 	"use strict";
 
@@ -25,7 +27,7 @@ sap.ui.define([
 	 * @returns {object} Localized description text and button text
 	 */
 	MoveVisualization.getDescription = function(mPayload, sLabel, mPropertyBag) {
-		var oRtaResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
+		var oRtaResourceBundle = Lib.getResourceBundleFor("sap.ui.rta");
 		var sDescriptionText = oRtaResourceBundle.getText("TXT_CHANGEVISUALIZATION_CHANGE_MOVE_WITHIN", [ChangeVisualizationUtils.shortenString(sLabel)]);
 		var sDescriptionTooltip = oRtaResourceBundle.getText("TXT_CHANGEVISUALIZATION_CHANGE_MOVE_WITHIN", [sLabel]);
 		var sButtonText;

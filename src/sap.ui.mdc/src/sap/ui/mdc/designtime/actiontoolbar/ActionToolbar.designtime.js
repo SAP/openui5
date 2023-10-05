@@ -4,11 +4,12 @@
 sap.ui.define([
     "sap/ui/mdc/ActionToolbar",
     "sap/m/p13n/Engine",
-    "../Util"
-], function (ActionToolbar, Engine, Util) {
+    "../Util",
+    "sap/ui/core/Lib"
+], function(ActionToolbar, Engine, Util, Lib) {
 	"use strict";
 
-    const oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
+    const oResourceBundle = Lib.getResourceBundleFor("sap.ui.mdc");
 
     const oDesignTime = {
             description: "{description}",

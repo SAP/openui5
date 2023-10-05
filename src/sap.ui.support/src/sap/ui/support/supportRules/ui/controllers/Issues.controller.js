@@ -11,8 +11,9 @@ sap.ui.define([
 	"sap/ui/support/supportRules/ui/models/formatter",
 	"sap/ui/support/supportRules/Constants",
 	"sap/m/OverflowToolbarAssociativePopoverControls",
-	"sap/base/util/deepExtend"
-], function (
+	"sap/base/util/deepExtend",
+	"sap/ui/core/Element"
+], function(
 	BaseController,
 	CommunicationBus,
 	SharedModel,
@@ -21,7 +22,8 @@ sap.ui.define([
 	formatter,
 	constants,
 	OverflowToolbarAssociativePopoverControls,
-	deepExtend
+	deepExtend,
+	Element
 ) {
 	"use strict";
 
@@ -167,7 +169,7 @@ sap.ui.define([
 
 		},
 		openDocumentation: function (oEvent) {
-			var link = sap.ui.getCore().byId(oEvent.mParameters.id),
+			var link = Element.registry.get(oEvent.mParameters.id),
 				url = link.getBindingContext().getProperty("href");
 			CommunicationBus.publish(channelNames.OPEN_URL, url);
 		},

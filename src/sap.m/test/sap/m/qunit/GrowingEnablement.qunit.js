@@ -18,8 +18,9 @@ sap.ui.define([
 	"sap/m/Page",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/qunit/QUnitUtils",
-	"sap/ui/events/KeyCodes"
-], function(Core, createAndAppendDiv, MockServer, List, GrowingEnablement, Table, Column, ColumnListItem, Text, ODataModel, JSONModel, Sorter, StandardListItem, CustomListItem, HTML, Page, jQuery, qutils, KeyCodes) {
+	"sap/ui/events/KeyCodes",
+	"sap/ui/core/Lib"
+], function(Core, createAndAppendDiv, MockServer, List, GrowingEnablement, Table, Column, ColumnListItem, Text, ODataModel, JSONModel, Sorter, StandardListItem, CustomListItem, HTML, Page, jQuery, qutils, KeyCodes, Lib) {
 	"use strict";
 	createAndAppendDiv("growing1");
 	createAndAppendDiv("growing2");
@@ -59,7 +60,7 @@ sap.ui.define([
 		var oGrowingDelegate = oList._oGrowingDelegate;
 		var oTrigger = oGrowingDelegate._oTrigger;
 
-		assert.equal(document.getElementById(oList.$("trigger").attr("aria-describedby")).textContent, Core.getLibraryResourceBundle("sap.m").getText("LOAD_MORE_DATA_ACC_WITH_COUNT", [1, 2]));
+		assert.equal(document.getElementById(oList.$("trigger").attr("aria-describedby")).textContent, Lib.getResourceBundleFor("sap.m").getText("LOAD_MORE_DATA_ACC_WITH_COUNT", [1, 2]));
 
 		// Act
 		setTimeout(function() {
@@ -576,7 +577,7 @@ sap.ui.define([
 		oTable.placeAt("qunit-fixture");
 		Core.applyChanges();
 
-		assert.equal(document.getElementById(oTable.$("trigger").attr("aria-describedby")).textContent, Core.getLibraryResourceBundle("sap.m").getText("LOAD_MORE_ROWS_ACC_WITH_COUNT", [2, 3]));
+		assert.equal(document.getElementById(oTable.$("trigger").attr("aria-describedby")).textContent, Lib.getResourceBundleFor("sap.m").getText("LOAD_MORE_ROWS_ACC_WITH_COUNT", [2, 3]));
 		assert.strictEqual(oTable.getItems().length, 2, "2 items are rendered");
 		var sItemIds = oTable.getItems().toString();
 

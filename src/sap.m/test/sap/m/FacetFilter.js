@@ -22,7 +22,8 @@ sap.ui.define([
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
 	"sap/ui/model/FilterType",
-	"sap/base/Log"
+	"sap/base/Log",
+	"sap/ui/core/Element"
 ], function(
 	App,
 	Page,
@@ -47,7 +48,8 @@ sap.ui.define([
 	Filter,
 	FilterOperator,
 	FilterType,
-	Log
+	Log,
+	Element
 ) {
 	"use strict";
 
@@ -369,7 +371,7 @@ sap.ui.define([
 			text: "Active",
 			selected: oFF.getLists()[0].getActive(),
 			select: function(oEvent) {
-				var oList = sap.ui.getCore().byId(oListSelect.getSelectedKey());
+				var oList = Element.registry.get(oListSelect.getSelectedKey());
 				oList.setActive(oEvent.getParameter("selected"));
 			}
 		});
@@ -378,7 +380,7 @@ sap.ui.define([
 			text: "Retain List Sequence",
 			selected: oFF.getLists()[0].getRetainListSequence(),
 			select: function(oEvent) {
-				var oList = sap.ui.getCore().byId(oListSelect.getSelectedKey());
+				var oList = Element.registry.get(oListSelect.getSelectedKey());
 				oList.setRetainListSequence(oEvent.getParameter("selected"));
 			}
 		});
@@ -387,7 +389,7 @@ sap.ui.define([
 			text: "Show Remove Facet Icon",
 			selected: oFF.getLists()[0].getShowRemoveFacetIcon(),
 			select: function(oEvent) {
-				var oList = sap.ui.getCore().byId(oListSelect.getSelectedKey());
+				var oList = Element.registry.get(oListSelect.getSelectedKey());
 				oList.setShowRemoveFacetIcon(oEvent.getParameter("selected"));
 			}
 		});
@@ -395,14 +397,14 @@ sap.ui.define([
 			text: "Growing",
 			selected: oFF.getLists()[0].getGrowing(),
 			select: function(oEvent) {
-				var oList = sap.ui.getCore().byId(oListSelect.getSelectedKey());
+				var oList = Element.registry.get(oListSelect.getSelectedKey());
 				oList.setGrowing(oEvent.getParameter("selected"));
 			}
 		});
 		var oListSelect = new Select({
 			change: function(oEvent) {
 				var oItem = oEvent.getParameter("selectedItem");
-				var oList = sap.ui.getCore().byId(oItem.getKey());
+				var oList = Element.registry.get(oItem.getKey());
 				oSequence.setValue(oList.getSequence());
 				oRadioMultiSelect.setSelected(true);
 				oAllCount.setValue(oList.getAllCount());
@@ -425,7 +427,7 @@ sap.ui.define([
 			selected: false,
 			text: "Single Select",
 			select: function(oEvent) {
-				var oList = sap.ui.getCore().byId(oListSelect.getSelectedKey());
+				var oList = Element.registry.get(oListSelect.getSelectedKey());
 			}
 		});
 
@@ -435,7 +437,7 @@ sap.ui.define([
 			selected: true,
 			text: "Multi Select",
 			select: function(oEvent) {
-				var oList = sap.ui.getCore().byId(oListSelect.getSelectedKey());
+				var oList = Element.registry.get(oListSelect.getSelectedKey());
 			}
 		});
 
@@ -443,13 +445,13 @@ sap.ui.define([
 			type: InputType.Number,
 			width: "3rem"
 		});
-		oSequence.setValue(sap.ui.getCore().byId(oListSelect.getSelectedKey()).getSequence());
+		oSequence.setValue(Element.registry.get(oListSelect.getSelectedKey()).getSequence());
 
 		var oAllCount = new Input({
 			type: InputType.Number,
 			width: "3rem"
 		});
-		oAllCount.setValue(sap.ui.getCore().byId(oListSelect.getSelectedKey()).getAllCount());
+		oAllCount.setValue(Element.registry.get(oListSelect.getSelectedKey()).getAllCount());
 
 		var oListLabel = new Label({text: "List:",tooltip:"List", labelFor: oListSelect});
 		var oSequenceLabel = new Label({text: "Sequence: ",tooltip: "Sequence", labelFor: oSequence});
@@ -457,7 +459,7 @@ sap.ui.define([
 		var oApplyButton = new Button({
 							text: "Apply",
 							press: function() {
-								var oList = sap.ui.getCore().byId(oListSelect.getSelectedKey());
+								var oList = Element.registry.get(oListSelect.getSelectedKey());
 								oList.setSequence(parseInt(oSequence.getValue()));
 								oList.setAllCount(parseInt(oAllCount.getValue()));
 								oFF._getSequencedLists(); // hack...force sequencing now so we can update the button text before the FacetFilter is rendered
@@ -467,14 +469,14 @@ sap.ui.define([
 		var oSaveSelectionsButton = new Button({
 			text: "Save Selections",
 			press: function(oEvent) {
-				var oList = sap.ui.getCore().byId(oListSelect.getSelectedKey());
+				var oList = Element.registry.get(oListSelect.getSelectedKey());
 				sessionStorage.setItem(oList.getKey(), JSON.stringify(oList.getSelectedKeys()));
 			}
 		});
 		var oClearSavedSelectionsButton = new Button({
 			text: "Clear Saved Selections",
 			press: function(oEvent) {
-				var oList = sap.ui.getCore().byId(oListSelect.getSelectedKey());
+				var oList = Element.registry.get(oListSelect.getSelectedKey());
 				sessionStorage.removeItem(oList.getKey());
 			}
 		});

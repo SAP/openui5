@@ -1,6 +1,6 @@
 /*global QUnit*/
-sap.ui.define(["sap/ui/core/Core", "sap/f/ProductSwitch", "sap/f/ProductSwitchItem"],
-	function (Core, ProductSwitch, ProductSwitchItem) {
+sap.ui.define(["sap/ui/core/Core", "sap/f/ProductSwitch", "sap/f/ProductSwitchItem", "sap/ui/core/Lib"],
+	function(Core, ProductSwitch, ProductSwitchItem, Lib) {
 		"use strict";
 
 		var TESTS_DOM_CONTAINER = "qunit-fixture",
@@ -173,7 +173,7 @@ sap.ui.define(["sap/ui/core/Core", "sap/f/ProductSwitch", "sap/f/ProductSwitchIt
 
 		QUnit.test("Attributes", function (assert) {
 			var $ProductSwitch = this.oProductSwitch.$(),
-				oRb = Core.getLibraryResourceBundle("sap.f");
+				oRb = Lib.getResourceBundleFor("sap.f");
 
 			assert.equal($ProductSwitch.attr("role"), "menu", "Role menu is set on the container");
 			assert.equal($ProductSwitch.attr("aria-label"), oRb.getText("PRODUCTSWITCH_CONTAINER_LABEL"), "Container aria-label is set correctly");

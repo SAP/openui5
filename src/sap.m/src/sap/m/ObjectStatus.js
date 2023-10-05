@@ -13,9 +13,10 @@ sap.ui.define([
 	'./ObjectStatusRenderer',
 	'sap/m/ImageHelper',
 	'sap/ui/core/LabelEnablement',
-	'sap/ui/core/InvisibleText'
+	'sap/ui/core/InvisibleText',
+	"sap/ui/core/Lib"
 ],
-	function(library, Control, ValueStateSupport, IndicationColorSupport, coreLibrary, DataType, ObjectStatusRenderer, ImageHelper, LabelEnablement, InvisibleText) {
+	function(library, Control, ValueStateSupport, IndicationColorSupport, coreLibrary, DataType, ObjectStatusRenderer, ImageHelper, LabelEnablement, InvisibleText, Lib) {
 	"use strict";
 
 
@@ -203,7 +204,7 @@ sap.ui.define([
 
 		if (bIsIconOnly) {
 			mProperties.decorative = false;
-			mProperties.alt = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("OBJECT_STATUS_ICON");
+			mProperties.alt = Lib.getResourceBundleFor("sap.m").getText("OBJECT_STATUS_ICON");
 		}
 
 		this._oImageControl = ImageHelper.getImageControl(sImgId, this._oImageControl, this, mProperties);
@@ -315,7 +316,7 @@ sap.ui.define([
 		).trim();
 
 		sDescription = this._isActive()
-			? sDescription + (sDescription ? " " + sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("OBJECT_STATUS_ACTIVE") : "")
+			? sDescription + (sDescription ? " " + Lib.getResourceBundleFor("sap.m").getText("OBJECT_STATUS_ACTIVE") : "")
 			: sDescription;
 
 		return { description: sDescription };

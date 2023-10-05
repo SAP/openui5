@@ -29,8 +29,9 @@ sap.ui.require([
 	"sap/ui/core/Icon",
 	"sap/m/App",
 	"sap/m/Page",
-	"sap/m/Bar"
-	],
+	"sap/m/Bar",
+	"sap/ui/core/Element"
+],
 	function(
 		CoreLib,
 		LayoutLib,
@@ -62,8 +63,9 @@ sap.ui.require([
 		Icon,
 		App,
 		Page,
-		Bar
-		) {
+		Bar,
+		Element
+	) {
 	"use strict";
 
 	var oButtonLayout = new SegmentedButton("MyLayout", {
@@ -165,13 +167,13 @@ sap.ui.require([
 					new Label({text:"Change the visibility"}),
 					new ToggleButton("myButton1",{text:"Hide Fields",press:function(oEvent) {
 						if (oEvent.getParameter("pressed")) {
-							sap.ui.getCore().byId("I1").setVisible(false);
-							sap.ui.getCore().byId("I2").setVisible(false);
-							sap.ui.getCore().byId("I3").setVisible(false);
+							Element.registry.get("I1").setVisible(false);
+							Element.registry.get("I2").setVisible(false);
+							Element.registry.get("I3").setVisible(false);
 						} else {
-							sap.ui.getCore().byId("I1").setVisible(true);
-							sap.ui.getCore().byId("I2").setVisible(true);
-							sap.ui.getCore().byId("I3").setVisible(true);
+							Element.registry.get("I1").setVisible(true);
+							Element.registry.get("I2").setVisible(true);
+							Element.registry.get("I3").setVisible(true);
 						}
 					}}),
 					new Button("myButton3",{text:"Destroy",press:function(oEvent) {
@@ -179,7 +181,7 @@ sap.ui.require([
 					}}),
 					new ToggleButton("myButton4",{text:"Label colons",press:function(oEvent) {
 						var bPressed = oEvent.getParameter("pressed");
-						var oForm = sap.ui.getCore().byId("SF1");
+						var oForm = Element.registry.get("SF1");
 						if (bPressed) {
 							oForm.addStyleClass("sapUiFormLblColon");
 						} else {

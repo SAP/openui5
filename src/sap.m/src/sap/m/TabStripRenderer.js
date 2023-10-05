@@ -111,7 +111,7 @@ sap.ui.define([
 			oRm.attr("title", sTooltip);
 		}
 
-		oRm.accessibilityState(oItem, getTabStripItemAccAttributes(oItem, oControl, sap.ui.getCore().byId(oControl.getSelectedItem())));
+		oRm.accessibilityState(oItem, getTabStripItemAccAttributes(oItem, oControl, Element.registry.get(oControl.getSelectedItem())));
 
 		oRm.openEnd();
 

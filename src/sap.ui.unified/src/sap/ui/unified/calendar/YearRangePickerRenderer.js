@@ -8,14 +8,16 @@ sap.ui.define([
 	"./CalendarDate",
 	'sap/ui/core/format/DateFormat',
 	"sap/ui/core/date/UniversalDate",
-	"sap/ui/unified/calendar/CalendarUtils"
+	"sap/ui/unified/calendar/CalendarUtils",
+	"sap/ui/core/Lib"
 ],	function(
 	Renderer,
 	YearPickerRenderer,
 	CalendarDate,
 	DateFormat,
 	UniversalDate,
-	CalendarUtils
+	CalendarUtils,
+	Lib
 ) {
 	"use strict";
 
@@ -36,7 +38,7 @@ sap.ui.define([
 			role: "grid",
 			readonly: "true",
 			multiselectable: false,
-			roledescription: sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified").getText("YEAR_RANGE_PICKER")
+			roledescription: Lib.getResourceBundleFor("sap.ui.unified").getText("YEAR_RANGE_PICKER")
 		};
 	};
 

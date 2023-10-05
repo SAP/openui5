@@ -18,7 +18,8 @@ sap.ui.define([
 	'sap/ui/core/EnabledPropagator',
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Popup",
-	"sap/ui/core/Element"
+	"sap/ui/core/Element",
+	"sap/ui/core/Lib"
 ],
 	function(
 		library,
@@ -35,7 +36,8 @@ sap.ui.define([
 		EnabledPropagator,
 		jQuery,
 		Popup,
-		Element
+		Element,
+		Lib
 	) {
 		"use strict";
 
@@ -374,7 +376,7 @@ sap.ui.define([
 		};
 
 		Menu.prototype._initCloseButton = function() {
-			var oRB = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+			var oRB = Lib.getResourceBundleFor("sap.m");
 
 			return new Button({
 				text: oRB.getText("MENU_CLOSE"),
@@ -398,7 +400,7 @@ sap.ui.define([
 		 * @private
 		 */
 		Menu.prototype._getNavContainer = function() {
-			return sap.ui.getCore().byId(this._navContainerId);
+			return Element.registry.get(this._navContainerId);
 		};
 
 		Menu.prototype._initAllPages = function() {
@@ -441,7 +443,7 @@ sap.ui.define([
 
 		Menu.prototype._handleListItemPress = function(oEvent) {
 			var oListItem = oEvent.getParameter("listItem"),
-				oMenuItem = sap.ui.getCore().byId(oListItem.getMenuItem()),
+				oMenuItem = Element.registry.get(oListItem.getMenuItem()),
 				pageId = oMenuItem._getVisualChild();
 
 			if (pageId) {
@@ -461,7 +463,7 @@ sap.ui.define([
 		 */
 		Menu.prototype._setBackButtonTooltipForPageWithParent = function(oParent, oPage) {
 			var oParentParent = oParent.getParent(),
-				oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m"),
+				oRb = Lib.getResourceBundleFor("sap.m"),
 				sParentPageTitle;
 
 			sParentPageTitle = oParentParent instanceof Menu ? oParentParent.getTitle() : oParentParent.getText();
@@ -575,7 +577,7 @@ sap.ui.define([
 		 * @private
 		 */
 		Menu.prototype._connectVisualItem = function(oItem, oControl, iIndex) {
-			if (!oControl || sap.ui.getCore().byId(oItem._getVisualControl())) {
+			if (!oControl || Element.registry.get(oItem._getVisualControl())) {
 				return;
 			}
 
@@ -739,7 +741,7 @@ sap.ui.define([
 		};
 
 		Menu.prototype._removeVisualItem = function(oItem, oParentItem) {
-			var oVisualItem = sap.ui.getCore().byId(oItem._getVisualControl()),
+			var oVisualItem = Element.registry.get(oItem._getVisualControl()),
 				vMenuOrList;
 
 			if (oVisualItem) {
@@ -785,7 +787,7 @@ sap.ui.define([
 			}
 
 			if (oItem._getVisualChild()) {
-				oSubMenuPage = sap.ui.getCore().byId(oItem._getVisualChild());
+				oSubMenuPage = Element.registry.get(oItem._getVisualChild());
 				if (this._getNavContainer() && oSubMenuPage) {
 					this._getNavContainer().removePage(oSubMenuPage);
 				}
@@ -873,7 +875,7 @@ sap.ui.define([
 				return;
 			}
 
-			oVisualItem = sap.ui.getCore().byId(sVisualItemId);
+			oVisualItem = Element.registry.get(sVisualItemId);
 
 			if (methodName === "set") {
 				oVisualItem.setTooltip(methodParams.item);
@@ -917,15 +919,15 @@ sap.ui.define([
 			var oLI;
 
 			if (oParentItem._getVisualChild()) { //this is not the first sub-item that is added
-				this._connectVisualItem(oNewItem, sap.ui.getCore().byId(oParentItem._getVisualChild()), iInsertIndex);
+				this._connectVisualItem(oNewItem, Element.registry.get(oParentItem._getVisualChild()), iInsertIndex);
 			} else {
 				if (Device.system.phone) {
 					this._initPageForParent(oParentItem);
 					oParentItem._setVisualChild(oParentItem.getItems()[0]._getVisualParent());
-					oLI = sap.ui.getCore().byId(oParentItem._getVisualControl());
+					oLI = Element.registry.get(oParentItem._getVisualControl());
 					oLI.invalidate();
 				} else {
-					this._initMenuForItems(oParentItem.getItems(), sap.ui.getCore().byId(oParentItem._getVisualControl()));
+					this._initMenuForItems(oParentItem.getItems(), Element.registry.get(oParentItem._getVisualControl()));
 					oParentItem._setVisualChild(oParentItem.getItems()[0]._getVisualParent());
 				}
 			}
@@ -936,7 +938,7 @@ sap.ui.define([
 			//so here we receive multiple aggregationChanged events, each one for a separate item
 
 			//in the time we re-render the visual item, it's menuitem still has its subitems, so remove the ref for a while
-			var oVisualItem = sap.ui.getCore().byId(oItem._getVisualControl());
+			var oVisualItem = Element.registry.get(oItem._getVisualControl());
 			if (oVisualItem && oVisualItem.setMenuItem) {
 				oVisualItem.setMenuItem(null);
 			}

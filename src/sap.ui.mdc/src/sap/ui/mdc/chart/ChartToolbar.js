@@ -3,37 +3,39 @@
  */
 
 sap.ui.define([
-        "sap/ui/core/Core",
-        "sap/ui/mdc/ActionToolbar",
-        "sap/m/OverflowToolbarRenderer",
-        "sap/m/OverflowToolbarButton",
-        "sap/m/OverflowToolbarToggleButton",
-        "sap/m/Title",
-        "sap/ui/mdc/chart/ChartTypeButton",
-        "./ChartSelectionDetails",
-        "sap/m/ToolbarSeparator",
-        "sap/m/OverflowToolbarLayoutData",
-        "sap/ui/core/library",
-        "sap/ui/Device",
-        "sap/ui/core/ShortcutHintsMixin",
-        "sap/ui/mdc/enums/ChartToolbarActionType"
-    ],
-    function (
-        Core,
-        ActionToolbar,
-        OverflowToolbarRenderer,
-        OverflowButton,
-        OverflowToggleButton,
-        Title,
-        ChartTypeButton,
-        ChartSelectionDetails,
-        ToolbarSeparator,
-        OverflowToolbarLayoutData,
-        coreLibrary,
-        Device,
-        ShortcutHintsMixin,
-        ChartToolbarActionType
-    ) {
+	"sap/ui/core/Core",
+	"sap/ui/mdc/ActionToolbar",
+	"sap/m/OverflowToolbarRenderer",
+	"sap/m/OverflowToolbarButton",
+	"sap/m/OverflowToolbarToggleButton",
+	"sap/m/Title",
+	"sap/ui/mdc/chart/ChartTypeButton",
+	"./ChartSelectionDetails",
+	"sap/m/ToolbarSeparator",
+	"sap/m/OverflowToolbarLayoutData",
+	"sap/ui/core/library",
+	"sap/ui/Device",
+	"sap/ui/core/ShortcutHintsMixin",
+	"sap/ui/mdc/enums/ChartToolbarActionType",
+	"sap/ui/core/Lib"
+],
+    function(
+		Core,
+		ActionToolbar,
+		OverflowToolbarRenderer,
+		OverflowButton,
+		OverflowToggleButton,
+		Title,
+		ChartTypeButton,
+		ChartSelectionDetails,
+		ToolbarSeparator,
+		OverflowToolbarLayoutData,
+		coreLibrary,
+		Device,
+		ShortcutHintsMixin,
+		ChartToolbarActionType,
+		Lib
+	) {
         "use strict";
 
 		// shortcut for sap.ui.core.aria.HasPopup
@@ -67,7 +69,7 @@ sap.ui.define([
             renderer: OverflowToolbarRenderer
         });
 
-        const MDCRb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
+        const MDCRb = Lib.getResourceBundleFor("sap.ui.mdc");
 
         /**
          * Initialises the MDC Chart Selection Details

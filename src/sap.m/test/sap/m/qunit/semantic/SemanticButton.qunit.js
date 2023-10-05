@@ -20,7 +20,8 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Core",
-	"sap/base/strings/capitalize"
+	"sap/base/strings/capitalize",
+	"sap/ui/core/Element"
 ], function(
 	qutils,
 	createAndAppendDiv,
@@ -42,7 +43,8 @@ sap.ui.define([
 	KeyCodes,
 	jQuery,
 	Core,
-	capitalize
+	capitalize,
+	Element
 ) {
 	"use strict";
 
@@ -259,7 +261,7 @@ sap.ui.define([
 		assert.strictEqual(oEditButton.getId(), "editBtn", "control has the expected id");
 
 		// Act
-		var oRetrievedBtn = Core.byId("editBtn");
+		var oRetrievedBtn = Element.registry.get("editBtn");
 
 		// Assert
 		assert.notEqual(oRetrievedBtn, undefined, "the button is retrieved by id");

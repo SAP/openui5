@@ -8,11 +8,12 @@
 // ---------------------------------------------------------------------------------------
 sap.ui.define([
 	"sap/ui/mdc/FilterBarDelegate",
-	"sap/ui/core/Core"
-], function(FilterBarDelegate, Core) {
+	"sap/ui/core/Core",
+	"sap/ui/core/Lib"
+], function(FilterBarDelegate, Core, Lib) {
 	"use strict";
 
-	const mdcMessageBundle = Core.getLibraryResourceBundle("sap.ui.mdc");
+	const mdcMessageBundle = Lib.getResourceBundleFor("sap.ui.mdc");
 
 	const ValueHelpFilterBarDelegate = Object.assign({}, FilterBarDelegate);
 

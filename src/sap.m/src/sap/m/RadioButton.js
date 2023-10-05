@@ -12,7 +12,8 @@ sap.ui.define([
 	'sap/m/Label',
 	'sap/ui/core/library',
 	'sap/base/strings/capitalize',
-	'./RadioButtonRenderer'
+	'./RadioButtonRenderer',
+	"sap/ui/core/Lib"
 ],
 function(
 	library,
@@ -23,8 +24,9 @@ function(
 	Label,
 	coreLibrary,
 	capitalize,
-	RadioButtonRenderer
-	) {
+	RadioButtonRenderer,
+	Lib
+) {
 	"use strict";
 
 	// shortcut for sap.ui.core.TextAlign
@@ -451,7 +453,7 @@ function(
 	 * @returns {sap.ui.core.AccessibilityInfo} The <code>sap.m.RadioButton</code> accessibility information
 	 */
 	RadioButton.prototype.getAccessibilityInfo = function() {
-		var oBundle = Core.getLibraryResourceBundle("sap.m");
+		var oBundle = Lib.getResourceBundleFor("sap.m");
 		return {
 			role: "radio",
 			type: oBundle.getText("ACC_CTR_TYPE_RADIO"),

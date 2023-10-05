@@ -13,7 +13,8 @@ sap.ui.define([
 	'./library',
 	"sap/base/Log",
 	"sap/ui/core/Configuration",
-	"sap/ui/core/date/UI5Date"
+	"sap/ui/core/date/UI5Date",
+	"sap/ui/core/Lib"
 ],
 	function(
 		DateTypeRange,
@@ -25,8 +26,9 @@ sap.ui.define([
 		library,
 		Log,
 		Configuration,
-		UI5Date
-		) {
+		UI5Date,
+		Lib
+	) {
 	"use strict";
 
 	/**
@@ -151,7 +153,7 @@ sap.ui.define([
 			oCurrentDayStart = UI5Date.getInstance(oCurrentlyDisplayedDate.getFullYear(), oCurrentlyDisplayedDate.getMonth(), oCurrentlyDisplayedDate.getDate(), 0, 0, 0),
 			oNextDayStart = UI5Date.getInstance(oCurrentDayStart.getFullYear(), oCurrentDayStart.getMonth(), oCurrentDayStart.getDate() + 1),
 			oTimeFormat = DateFormat.getTimeInstance({pattern: "HH:mm"}),
-			oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m"),
+			oResourceBundle = Lib.getResourceBundleFor("sap.m"),
 			oHourFormat = NumberFormat.getUnitInstance({
 				allowedUnits: ["duration-hour"]
 			}, Configuration.getFormatSettings().getFormatLocale()),

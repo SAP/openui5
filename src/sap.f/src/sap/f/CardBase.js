@@ -8,15 +8,17 @@ sap.ui.define([
 	"sap/ui/core/InvisibleText",
 	"sap/ui/core/Core",
 	"sap/m/BadgeEnabler",
-	"sap/f/CardRenderer"
-], function (
+	"sap/f/CardRenderer",
+	"sap/ui/core/Lib"
+], function(
 	Control,
 	library,
 	mLibrary,
 	InvisibleText,
 	Core,
 	BadgeEnabler,
-	CardRenderer
+	CardRenderer,
+	Lib
 ) {
 	"use strict";
 
@@ -74,7 +76,7 @@ sap.ui.define([
 	 * @private
 	 */
 	CardBase.prototype.init = function () {
-		this._oRb = Core.getLibraryResourceBundle("sap.f");
+		this._oRb = Lib.getResourceBundleFor("sap.f");
 
 		this._ariaContentText = new InvisibleText({id: this.getId() + "-ariaContentText"});
 		this._ariaContentText.setText(this._oRb.getText("ARIA_LABEL_CARD_CONTENT"));

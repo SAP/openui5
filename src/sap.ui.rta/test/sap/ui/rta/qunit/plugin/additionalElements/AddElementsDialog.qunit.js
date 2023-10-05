@@ -4,17 +4,21 @@ sap.ui.define([
 	"sap/ui/fl/write/api/FieldExtensibility",
 	"sap/ui/rta/plugin/additionalElements/AddElementsDialog",
 	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/ui/core/Lib",
+	"sap/ui/core/Element"
 ], function(
 	FieldExtensibility,
 	AddElementsDialog,
 	sinon,
-	oCore
+	oCore,
+	Lib,
+	Element
 ) {
 	"use strict";
 
 	var sandbox = sinon.createSandbox();
-	var oTextResources = oCore.getLibraryResourceBundle("sap.ui.rta");
+	var oTextResources = Lib.getResourceBundleFor("sap.ui.rta");
 
 	function createDialog() {
 		var aElements = [
@@ -90,7 +94,7 @@ sap.ui.define([
 			}
 
 			this.oAddElementsDialog._oDialogPromise.then(function() {
-				var oList = oCore.byId(`${this.oAddElementsDialog.getId()}--` + `rta_addElementsDialogList`);
+				var oList = Element.registry.get(`${this.oAddElementsDialog.getId()}--` + `rta_addElementsDialogList`);
 				var sBindingPath = oList.getItems()[0].getBindingContext().getPath();
 
 				this.oAddElementsDialog.attachOpened(function() {
@@ -136,7 +140,7 @@ sap.ui.define([
 			});
 			this.oAddElementsDialog.attachOpened(function() {
 				assert.equal(this.getCustomFieldEnabled(), true, "then the button is enabled");
-				var oCustomFieldButton = oCore.byId(`${this.getId()}--` + `rta_customFieldButton`);
+				var oCustomFieldButton = Element.registry.get(`${this.getId()}--` + `rta_customFieldButton`);
 				oCustomFieldButton.firePress();
 			});
 			this.oAddElementsDialog.open();
@@ -147,7 +151,7 @@ sap.ui.define([
 
 			this.oAddElementsDialog.setCustomFieldEnabled(true);
 			this.oAddElementsDialog.attachOpened(function() {
-				var oBCContainer = oCore.byId(`${this.getId()}--` + `rta_businessContextContainer`);
+				var oBCContainer = Element.registry.get(`${this.getId()}--` + `rta_businessContextContainer`);
 				assert.ok(oBCContainer.getVisible(), "then the Business Context Container is visible");
 				assert.equal(oBCContainer.getContent().length, 2, "and the Business Context Container has two entries");
 				assert.equal(oBCContainer.getContent()[0].getText(), "extensibilityHeaderText", "and the first entry is the Title");
@@ -164,7 +168,7 @@ sap.ui.define([
 
 			this.oAddElementsDialog.setCustomFieldEnabled(true);
 			this.oAddElementsDialog.attachOpened(function() {
-				var oBCContainer = oCore.byId(`${this.getId()}--` + `rta_businessContextContainer`);
+				var oBCContainer = Element.registry.get(`${this.getId()}--` + `rta_businessContextContainer`);
 				assert.ok(oBCContainer.getVisible(), "then the Business Context Container is visible");
 				assert.equal(oBCContainer.getContent().length, 4, "and the Business Context Container has four entries");
 				assert.equal(oBCContainer.getContent()[0].getText(), "extensibilityHeaderText", "and the first entry is the Title");
@@ -190,7 +194,7 @@ sap.ui.define([
 				this.oAddElementsDialog.attachEventOnce("opened", fnOnOpen);
 			}
 			function fnOnOpen() {
-				var oBCContainer = oCore.byId(`${this.getId()}--` + `rta_businessContextContainer`);
+				var oBCContainer = Element.registry.get(`${this.getId()}--` + `rta_businessContextContainer`);
 				assert.ok(oBCContainer.getVisible(), "then the Business Context Container is visible");
 				assert.equal(oBCContainer.getContent().length, 4, "and the Business Context Container has four entries");
 				assert.equal(oBCContainer.getContent()[0].getText(), "extensibilityHeaderText", "and the first entry is the Title");

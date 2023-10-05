@@ -9,7 +9,8 @@ sap.ui.define([
 	"sap/ui/rta/command/CompositeCommand",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/rta/util/showMessageBox",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/ui/core/Lib"
 ], function(
 	ManagedObject,
 	PersistenceWriteAPI,
@@ -18,7 +19,8 @@ sap.ui.define([
 	CompositeCommand,
 	JsControlTreeModifier,
 	showMessageBox,
-	Core
+	Core,
+	Lib
 ) {
 	"use strict";
 
@@ -243,7 +245,7 @@ sap.ui.define([
 					oError.index = this._toBeExecuted;
 					oError.command = this.removeCommand(this._toBeExecuted); // remove failing command
 					this._toBeExecuted--;
-					var oRtaResourceBundle = Core.getLibraryResourceBundle("sap.ui.rta");
+					var oRtaResourceBundle = Lib.getResourceBundleFor("sap.ui.rta");
 					showMessageBox(
 						oRtaResourceBundle.getText("MSG_GENERIC_ERROR_MESSAGE", [oError.message]),
 						{title: oRtaResourceBundle.getText("HEADER_ERROR")},

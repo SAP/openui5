@@ -18,7 +18,8 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/unified/library",
 	"sap/ui/unified/ColorPickerDisplayMode",
-	"sap/ui/unified/ColorPicker"
+	"sap/ui/unified/ColorPicker",
+	"sap/ui/core/Lib"
 ], function(
 	Control,
 	Device,
@@ -34,7 +35,8 @@ sap.ui.define([
 	jQuery,
 	unifiedLibrary,
 	ColorPickerDisplayMode,
-	ColorPicker
+	ColorPicker,
+	Lib
 ) {
 		"use strict";
 
@@ -63,7 +65,7 @@ sap.ui.define([
 		var MAX_COLORS = 15;
 
 		// get resource translation bundle;
-		var oLibraryResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+		var oLibraryResourceBundle = Lib.getResourceBundleFor("sap.m");
 
 		/**
 		 * Constructor for a new <code>ColorPalette</code>.

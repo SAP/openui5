@@ -15,7 +15,8 @@ sap.ui.define([
 	'sap/base/util/merge',
 	'sap/ui/mdc/enums/ValueHelpSelectionType',
 	'sap/base/Log',
-	'sap/ui/core/Element'
+	'sap/ui/core/Element',
+	"sap/ui/core/Lib"
 ], function(
 	FilterableListContent,
 	FilterConverter,
@@ -29,7 +30,8 @@ sap.ui.define([
 	merge,
 	ValueHelpSelectionType,
 	Log,
-	Element
+	Element,
+	Lib
 ) {
 	"use strict";
 
@@ -85,8 +87,8 @@ sap.ui.define([
 		});
 
 		this._addPromise("listBinding");
-		this._oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
-		this._oMResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+		this._oResourceBundle = Lib.getResourceBundleFor("sap.ui.mdc");
+		this._oMResourceBundle = Lib.getResourceBundleFor("sap.m");
 
 		this._iNavigateIndex = -1; // initially nothing is navigated
 		this._oFirstItemResult = {};
@@ -108,23 +110,25 @@ sap.ui.define([
 			const aItems = this._oTable.getItems();
 			const aConditions = this.getConditions();
 			const bHideSelection = this.isSingleSelect() && !FilterableListContent.prototype.isSingleSelect.apply(this); // if table is in single selection but Field allows multiple values, don't select items
-			const bUseFirstMatch = this._iNavigateIndex === -1 && this._oFirstItemResult.result;
+			const bUseFirstMatch = this.isTypeahead() && this._iNavigateIndex === -1 && !!this._oFirstItemResult.result;
 			const oFirstItem = this._oFirstItemResult.result;
 
 			aItems.forEach(function(oItem) {
 				const oItemContext = this._getListItemBindingContext(oItem);
+				const oItemFromContext = this.isValueHelpDelegateInitialized() ? this.getItemFromContext(oItemContext) : { key: undefined };
 				if (bHideSelection) {
 					oItem.setSelected(false);
-				} else if (bUseFirstMatch) {
-					const oItemFromContext = this.getItemFromContext(oItemContext);
-					oItem.setSelected(oItemFromContext.key === oFirstItem.key);
 				} else {
 					oItem.setSelected(this._isContextSelected(oItemContext, aConditions));
 				}
-				if (this._oTable.indexOfItem(oItem) === this._iNavigateIndex) {
-					oItem.addStyleClass("sapMLIBFocused").addStyleClass("sapMListFocus");
+				if (this._oTable.indexOfItem(oItem) === this._iNavigateIndex || (bUseFirstMatch && oItemFromContext.key === oFirstItem.key)) {
+					oItem.addStyleClass("sapMLIBFocused")
+						.addStyleClass("sapMListFocus")
+						.addStyleClass("sapMLIBSelected");
 				} else {
-					oItem.removeStyleClass("sapMLIBFocused").removeStyleClass("sapMListFocus");
+					oItem.removeStyleClass("sapMLIBFocused")
+						.removeStyleClass("sapMListFocus")
+						.removeStyleClass("sapMLIBSelected");
 				}
 			}.bind(this));
 		}
@@ -782,7 +786,7 @@ sap.ui.define([
 
 	function _getSAPMResourceBundle () {
 		if (!this._oResourceBundleM) {
-			this._oResourceBundleM = sap.ui.getCore().getLibraryResourceBundle("sap.m"); // sap.m is always loaded
+			this._oResourceBundleM = Lib.getResourceBundleFor("sap.m"); // sap.m is always loaded
 		}
 		return this._oResourceBundleM;
 	}

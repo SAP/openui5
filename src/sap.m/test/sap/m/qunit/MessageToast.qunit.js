@@ -8,7 +8,8 @@ sap.ui.define([
 	"sap/ui/core/HTML",
 	"sap/base/Log",
 	"sap/ui/core/Core",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/core/Element"
 ], function(
 	createAndAppendDiv,
 	App,
@@ -18,7 +19,8 @@ sap.ui.define([
 	HTML,
 	Log,
 	oCore,
-	jQuery
+	jQuery,
+	Element
 ) {
 	"use strict";
 
@@ -180,7 +182,7 @@ sap.ui.define([
 		});
 	};
 
-	isValidOf("of", oCore.byId("myApp"), 0);
+	isValidOf("of", Element.registry.get("myApp"), 0);
 	isValidOf("of", jQuery("html")[0], 0);
 	isValidOf("of", jQuery("html"), 0);
 	isValidOf("of", window, 0);

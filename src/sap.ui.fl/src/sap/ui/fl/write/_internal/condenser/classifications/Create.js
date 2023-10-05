@@ -4,10 +4,12 @@
 
 sap.ui.define([
 	"sap/ui/core/Core",
-	"sap/ui/fl/write/_internal/condenser/Utils"
+	"sap/ui/fl/write/_internal/condenser/Utils",
+	"sap/ui/core/Element"
 ], function(
 	Core,
-	CondenserUtils
+	CondenserUtils,
+	Element
 ) {
 	"use strict";
 
@@ -20,7 +22,7 @@ sap.ui.define([
 		 * @returns {Promise} resolves when a create change is added to UI Reconstruction Map
 		 */
 		addToReconstructionMap(mUIReconstructions, oCondenserInfo) {
-			var oAffectedControl = Core.byId(oCondenserInfo.affectedControl);
+			var oAffectedControl = Element.registry.get(oCondenserInfo.affectedControl);
 			var sAggregationName = oCondenserInfo.targetAggregation || oAffectedControl && oAffectedControl.sParentAggregationName;
 			return CondenserUtils.getContainerElementIds(
 				oCondenserInfo.targetContainer, sAggregationName,

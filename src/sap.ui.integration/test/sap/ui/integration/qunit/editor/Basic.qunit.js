@@ -14,8 +14,9 @@ sap.ui.define([
 	"sap/base/i18n/ResourceBundle",
 	"qunit/designtime/EditorQunitUtils",
 	"sap/ui/core/date/UI5Date",
-	"sap/ui/integration/formatters/IconFormatter"
-], function (
+	"sap/ui/integration/formatters/IconFormatter",
+	"sap/ui/core/Element"
+], function(
 	merge,
 	x,
 	Editor,
@@ -30,7 +31,8 @@ sap.ui.define([
 	ResourceBundle,
 	EditorQunitUtils,
 	UI5Date,
-	IconFormatter
+	IconFormatter,
+	Element
 ) {
 	"use strict";
 
@@ -1287,7 +1289,7 @@ sap.ui.define([
 						assert.equal(oSelect.getItems().length, 3, "Field: select item number is 3");
 						oSelect.focus();
 						var oIconDomRef = oSelect.getDomRef("labelIcon");
-						var oIcon = Core.byId(oIconDomRef.id);
+						var oIcon = Element.registry.get(oIconDomRef.id);
 						QUnitUtils.triggerMouseEvent(oIconDomRef, "click");
 						wait().then(function () {
 							assert.ok(oIcon._oImagePopover.isOpen(), "Field: popover is open");

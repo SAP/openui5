@@ -23,7 +23,9 @@ sap.ui.define([
 	"sap/ui/fl/apply/api/ControlVariantApplyAPI",
 	"sap/m/library",
 	"sap/m/Button",
-	"./FilterBarBaseRenderer"
+	"./FilterBarBaseRenderer",
+	"sap/ui/core/Lib",
+	"sap/ui/core/Element"
 ],
 	function(
 		FilterController,
@@ -47,7 +49,9 @@ sap.ui.define([
 		ControlVariantApplyAPI,
 		mLibrary,
 		Button,
-		FilterBarBaseRenderer
+		FilterBarBaseRenderer,
+		Lib,
+		Element
 	) {
 	"use strict";
 
@@ -294,7 +298,7 @@ sap.ui.define([
 
 		Control.prototype.init.apply(this, arguments);
 
-		this._oRb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
+		this._oRb = Lib.getResourceBundleFor("sap.ui.mdc");
 
 		this._createInnerModel();
 
@@ -1854,7 +1858,7 @@ sap.ui.define([
 		const sVariantControlId = this.getVariantBackreference();
 
 		if (sVariantControlId) {
-			const oVariantManagement = sap.ui.getCore().byId(sVariantControlId);
+			const oVariantManagement = Element.registry.get(sVariantControlId);
 			if (oVariantManagement && oVariantManagement.isA("sap.ui.fl.variants.VariantManagement")) {
 				return oVariantManagement;
 			}

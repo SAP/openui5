@@ -11,7 +11,8 @@ sap.ui.define([
 	'./delegate/ValueStateMessage',
 	'sap/ui/core/ValueStateSupport',
 	"sap/ui/core/InvisibleMessage",
-	'./SliderTooltipRenderer'
+	'./SliderTooltipRenderer',
+	"sap/ui/core/Lib"
 ],
 function(
 	Library,
@@ -22,7 +23,8 @@ function(
 	ValueStateMessage,
 	ValueStateSupport,
 	InvisibleMessage,
-	SliderTooltipRenderer
+	SliderTooltipRenderer,
+	Lib
 ) {
 		"use strict";
 
@@ -212,7 +214,7 @@ function(
 				return;
 			}
 
-			var oRB = Core.getLibraryResourceBundle("sap.m"),
+			var oRB = Lib.getResourceBundleFor("sap.m"),
 			sValueStateTypeText, sInvisibleMessageAnnounce;
 
 			sValueStateTypeText = oRB.getText("INPUTBASE_VALUE_STATE_" + sValueStateType.toUpperCase());

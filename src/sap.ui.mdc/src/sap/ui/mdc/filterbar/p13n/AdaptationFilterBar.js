@@ -13,8 +13,9 @@ sap.ui.define([
 	"sap/ui/mdc/filterbar/FilterBarBaseRenderer",
 	"sap/base/util/merge",
 	"sap/ui/core/Core",
-	"sap/m/p13n/enum/PersistenceMode"
-], function(coreLibrary, FilterController, AdaptFiltersController, GroupContainer, FilterColumnLayout, FilterGroupLayout, TableContainer, FilterBarBase, FilterBarBaseRenderer, merge, Core, PersistenceMode) {
+	"sap/m/p13n/enum/PersistenceMode",
+	"sap/ui/core/Element"
+], function(coreLibrary, FilterController, AdaptFiltersController, GroupContainer, FilterColumnLayout, FilterGroupLayout, TableContainer, FilterBarBase, FilterBarBaseRenderer, merge, Core, PersistenceMode, Element) {
 	"use strict";
 
 	const ValueState = coreLibrary.ValueState;
@@ -539,7 +540,7 @@ sap.ui.define([
 	 */
 	AdaptationFilterBar.prototype._getAdaptationControlInstance = function () {
 		const sAdaptationControlId = this.getAdaptationControl();
-		return sAdaptationControlId && Core.byId(sAdaptationControlId);
+		return sAdaptationControlId && Element.registry.get(sAdaptationControlId);
 	};
 
 	AdaptationFilterBar.prototype.exit = function() {

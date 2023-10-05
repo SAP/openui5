@@ -4,10 +4,12 @@
 
 sap.ui.define([
 	"sap/ui/core/Core",
-	"sap/ui/rta/util/changeVisualization/ChangeVisualizationUtils"
+	"sap/ui/rta/util/changeVisualization/ChangeVisualizationUtils",
+	"sap/ui/core/Lib"
 ], function(
 	Core,
-	ChangeVisualizationUtils
+	ChangeVisualizationUtils,
+	Lib
 ) {
 	"use strict";
 
@@ -23,7 +25,7 @@ sap.ui.define([
 	 * @returns {object} Map containing localized description text and tooltip
 	 */
 	CreateContainerVisualization.getDescription = function(mPayload, sLabel) {
-		var oRtaResourceBundle = Core.getLibraryResourceBundle("sap.ui.rta");
+		var oRtaResourceBundle = Lib.getResourceBundleFor("sap.ui.rta");
 		var sElementLabel = mPayload.originalLabel || sLabel;
 		var sShortenedElementLabel = ChangeVisualizationUtils.shortenString(sElementLabel);
 		var sTextKey = "TXT_CHANGEVISUALIZATION_CHANGE_CREATECONTAINER";

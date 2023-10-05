@@ -315,7 +315,7 @@ sap.ui.define([
 
 	QUnit.test("async: testGetLibraryResourceBundle", function(assert) {
 		var oSpy = this.spy(ResourceBundle, 'create'),
-			pBundle = oCore.getLibraryResourceBundle("sap.ui.core", "en", true);
+			pBundle = Library.getResourceBundleFor("sap.ui.core", "en")/* LFUI5: For asynchronous loading, load the lib asynchronously and on promise resolution get the resource bundle. */;
 
 		assert.ok(pBundle instanceof Promise, "a promise should be returned");
 
@@ -328,9 +328,9 @@ sap.ui.define([
 	});
 
 	QUnit.test("async: testGetLibraryResourceBundle with already loaded bundle", function(assert) {
-		return oCore.getLibraryResourceBundle("sap.ui.core", "de", true).then(function() {
+		return Library.getResourceBundleFor("sap.ui.core", "de")/* LFUI5: For asynchronous loading, load the lib asynchronously and on promise resolution get the resource bundle. */.then(function() {
 			var oSpy = this.spy(ResourceBundle, 'create'),
-				pBundle = oCore.getLibraryResourceBundle("sap.ui.core", "de", true);
+				pBundle = Library.getResourceBundleFor("sap.ui.core", "de")/* LFUI5: For asynchronous loading, load the lib asynchronously and on promise resolution get the resource bundle. */;
 
 			assert.ok(pBundle instanceof Promise, "a promise should be returned");
 
@@ -356,7 +356,7 @@ sap.ui.define([
 			}
 		});
 
-		var pBundle = oCore.getLibraryResourceBundle("sap.test1", "de", true);
+		var pBundle = Library.getResourceBundleFor("sap.test1", "de")/* LFUI5: For asynchronous loading, load the lib asynchronously and on promise resolution get the resource bundle. */;
 
 		assert.ok(pBundle instanceof Promise, "a promise should be returned");
 
@@ -386,7 +386,7 @@ sap.ui.define([
 		});
 
 		var oSpySapUiRequireToUrl = this.spy(sap.ui.require, 'toUrl'),
-			pBundle = oCore.getLibraryResourceBundle("sap.test.i18ntrue", "de", true),
+			pBundle = Library.getResourceBundleFor("sap.test.i18ntrue", "de")/* LFUI5: For asynchronous loading, load the lib asynchronously and on promise resolution get the resource bundle. */,
 			oSpyCall;
 
 		assert.ok(pBundle instanceof Promise, "a promise should be returned");
@@ -408,7 +408,7 @@ sap.ui.define([
 		this.stub(LoaderExtensions, 'loadResource').returns(undefined);
 
 		var oSpySapUiRequireToUrl = this.spy(sap.ui.require, 'toUrl'),
-			pBundle = oCore.getLibraryResourceBundle("sap.test.i18nmissing", "fr", true),
+			pBundle = Library.getResourceBundleFor("sap.test.i18nmissing", "fr")/* LFUI5: For asynchronous loading, load the lib asynchronously and on promise resolution get the resource bundle. */,
 			oSpyCall;
 
 		assert.ok(pBundle instanceof Promise, "a promise should be returned");
@@ -447,7 +447,7 @@ sap.ui.define([
 		});
 
 		var oSpySapUiRequireToUrl = this.spy(sap.ui.require, 'toUrl'),
-			pBundle = oCore.getLibraryResourceBundle("sap.test.i18nstring", "en", true),
+			pBundle = Library.getResourceBundleFor("sap.test.i18nstring", "en")/* LFUI5: For asynchronous loading, load the lib asynchronously and on promise resolution get the resource bundle. */,
 			oSpyCall;
 
 		assert.ok(pBundle instanceof Promise, "a promise should be returned");
@@ -502,7 +502,7 @@ sap.ui.define([
 		});
 
 		var oSpySapUiRequireToUrl = this.spy(sap.ui.require, 'toUrl'),
-			pBundle = oCore.getLibraryResourceBundle("sap.test.i18nobject", "en", true),
+			pBundle = Library.getResourceBundleFor("sap.test.i18nobject", "en")/* LFUI5: For asynchronous loading, load the lib asynchronously and on promise resolution get the resource bundle. */,
 			oSpyCall;
 
 		assert.ok(pBundle instanceof Promise, "a promise should be returned");

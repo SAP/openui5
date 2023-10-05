@@ -14,8 +14,9 @@ sap.ui.define([
 	"sap/ui/core/date/CalendarUtils",
 	'sap/ui/core/Locale',
 	"sap/ui/core/Configuration",
-	"sap/ui/core/date/UI5Date"
-	],
+	"sap/ui/core/date/UI5Date",
+	"sap/ui/core/Element"
+],
 	function(
 		CalendarDate,
 		CalendarUtils,
@@ -28,8 +29,9 @@ sap.ui.define([
 		CalendarDateUtils,
 		Locale,
 		Configuration,
-		UI5Date
-		) {
+		UI5Date,
+		Element
+	) {
 		"use strict";
 
 		// shortcut for sap.ui.unified.CalendarDayType
@@ -176,7 +178,7 @@ sap.ui.define([
 				if (aDayTypes && aDayTypes[0]) {
 					oType = aDayTypes[0];
 					oRm.class("sapUiCalendarSpecialDay" + oType.type);
-					sLegendItemType = PlanningCalendarLegend.findLegendItemForItem(Core.byId(oControl._sLegendId), oType);
+					sLegendItemType = PlanningCalendarLegend.findLegendItemForItem(Element.registry.get(oControl._sLegendId), oType);
 				}
 			}
 

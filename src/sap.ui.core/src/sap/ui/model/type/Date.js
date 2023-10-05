@@ -11,9 +11,9 @@ sap.ui.define([
 	"sap/ui/model/FormatException",
 	"sap/ui/model/ParseException",
 	"sap/ui/model/SimpleType",
-	"sap/ui/model/ValidateException"
-], function(each, isEmptyObject, UI5Date, DateFormat, FormatException, ParseException, SimpleType,
-		ValidateException) {
+	"sap/ui/model/ValidateException",
+	"sap/ui/core/Lib"
+], function(each, isEmptyObject, UI5Date, DateFormat, FormatException, ParseException, SimpleType, ValidateException, Lib) {
 	"use strict";
 
 	/**
@@ -81,7 +81,7 @@ sap.ui.define([
 				}
 				oResult = this.oOutputFormat.parse(oValue);
 				if (!oResult) {
-					oBundle = sap.ui.getCore().getLibraryResourceBundle();
+					oBundle = Lib.getResourceBundleFor("sap.ui.core");
 					throw new ParseException(oBundle.getText(this.sName + ".Invalid"));
 				}
 				if (this.oInputFormat) {
@@ -99,7 +99,7 @@ sap.ui.define([
 
 	Date1.prototype.validateValue = function(oValue) {
 		if (this.oConstraints) {
-			var oBundle = sap.ui.getCore().getLibraryResourceBundle(),
+			var oBundle = Lib.getResourceBundleFor("sap.ui.core"),
 				aViolatedConstraints = [],
 				aMessages = [],
 				oInputFormat = this.oInputFormat,

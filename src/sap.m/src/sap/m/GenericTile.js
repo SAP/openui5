@@ -24,8 +24,9 @@ sap.ui.define([
 	"sap/ui/core/Configuration",
 	"sap/ui/core/InvisibleText",
 	"sap/ui/core/Core",
-	"sap/ui/core/Theming"
-], function (
+	"sap/ui/core/Theming",
+	"sap/ui/core/Lib"
+], function(
 	library,
 	Control,
 	Text,
@@ -47,7 +48,8 @@ sap.ui.define([
 	Configuration,
 	InvisibleText,
 	Core,
-	Theming
+	Theming,
+	Lib
 ) {
 	"use strict";
 
@@ -377,7 +379,7 @@ sap.ui.define([
 	/* --- Lifecycle Handling --- */
 
 	GenericTile.prototype.init = function () {
-		this._oRb = Core.getLibraryResourceBundle("sap.m");
+		this._oRb = Lib.getResourceBundleFor("sap.m");
 
 		// Defines custom screen range set: smaller than or equal to 449px defines 'small' and bigger than 449px defines 'large' screen
 		if (!Device.media.hasRangeSet(DEVICE_SET)) {

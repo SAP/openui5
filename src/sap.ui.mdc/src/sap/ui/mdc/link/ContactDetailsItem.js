@@ -3,8 +3,9 @@
  */
 
 sap.ui.define([
-	'sap/ui/core/Element'
-], function(Element) {
+	'sap/ui/core/Element',
+	"sap/ui/core/Lib"
+], function(Element, Lib) {
 	"use strict";
 
 	/**
@@ -27,7 +28,7 @@ sap.ui.define([
 				properties: {
 					sectionTitle: {
 						type: "string",
-						defaultValue: sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc").getText("info.POPOVER_CONTACT_SECTION_TITLE")
+						defaultValue: Lib.getResourceBundleFor("sap.ui.mdc").getText("info.POPOVER_CONTACT_SECTION_TITLE")
 					},
 					photo: {
 						type: "string"

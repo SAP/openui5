@@ -13,7 +13,8 @@ sap.ui.define([
 	"sap/ui/rta/toolbar/Adaptation",
 	"sap/ui/rta/toolbar/contextBased/ManageAdaptations",
 	"sap/ui/rta/Utils",
-	"sap/ui/thirdparty/sinon-4"
+	"sap/ui/thirdparty/sinon-4",
+	"sap/ui/core/Lib"
 ], function(
 	RtaQunitUtils,
 	MessageBox,
@@ -27,12 +28,13 @@ sap.ui.define([
 	Adaptation,
 	ManageAdaptations,
 	Utils,
-	sinon
+	sinon,
+	Lib
 ) {
 	"use strict";
 
 	var sandbox = sinon.createSandbox();
-	var oRtaResourceBundle = oCore.getLibraryResourceBundle("sap.ui.rta");
+	var oRtaResourceBundle = Lib.getResourceBundleFor("sap.ui.rta");
 
 	function getControl(oToolbar, sControlID) {
 		return oToolbar.getControl(`manageAdaptationDialog--${sControlID}`);

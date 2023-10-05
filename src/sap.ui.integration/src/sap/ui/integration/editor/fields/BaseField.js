@@ -20,8 +20,9 @@ sap.ui.define([
 	"sap/m/CustomListItem",
 	"sap/m/VBox",
 	"sap/ui/core/CustomData",
-	"sap/ui/model/Sorter"
-], function (
+	"sap/ui/model/Sorter",
+	"sap/ui/core/Element"
+], function(
 	Control,
 	Text,
 	Input,
@@ -40,7 +41,8 @@ sap.ui.define([
 	CustomListItem,
 	VBox,
 	CustomData,
-	Sorter
+	Sorter,
+	Element
 ) {
 	"use strict";
 
@@ -182,12 +184,12 @@ sap.ui.define([
 
 	BaseField.prototype.getMessagestrip = function () {
 		var sMessageStripId = this.getAssociation("_messageStrip");
-		return Core.byId(sMessageStripId);
+		return Element.registry.get(sMessageStripId);
 	};
 
 	BaseField.prototype.getMessageIcon = function () {
 		var sMessageIconId = this.getAssociation("_messageIcon");
-		return Core.byId(sMessageIconId);
+		return Element.registry.get(sMessageIconId);
 	};
 
 	BaseField.prototype._removeValidationMessage = function () {
@@ -398,7 +400,7 @@ sap.ui.define([
 	};
 
 	BaseField.prototype._applyMessage = function () {
-		var oIcon = Core.byId(this.getAssociation("_messageIcon"));
+		var oIcon = Element.registry.get(this.getAssociation("_messageIcon"));
 		if (this.getAssociation("_messageIcon") && oIcon) {
 			var oIconDomRef = oIcon.getDomRef();
 			if (oIconDomRef) {

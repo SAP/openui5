@@ -28,7 +28,8 @@ sap.ui.define([
 	"sap/base/util/deepEqual",
 	"sap/base/Log",
 	"sap/ui/core/Configuration",
-	"sap/ui/core/date/CalendarWeekNumbering"
+	"sap/ui/core/date/CalendarWeekNumbering",
+	"sap/ui/core/Element"
 ], function(
 	CalendarType,
 	Control,
@@ -55,7 +56,8 @@ sap.ui.define([
 	deepEqual,
 	Log,
 	Configuration,
-	CalendarWeekNumbering
+	CalendarWeekNumbering,
+	Element
 ) {
 	"use strict";
 
@@ -1294,7 +1296,7 @@ sap.ui.define([
 
 	Calendar.prototype._updateLegendParent = function(){
 		var sLegend = this.getLegend(),
-			oLegend = oCore.byId(sLegend);
+			oLegend = Element.registry.get(sLegend);
 
 		oLegend && oLegend._setParent(this);
 	};

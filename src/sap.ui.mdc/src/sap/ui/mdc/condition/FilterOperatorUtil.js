@@ -19,35 +19,38 @@ sap.ui.define([
 	'sap/ui/core/format/DateFormat',
 	'sap/ui/core/StaticArea',
 	'sap/ui/model/json/JSONModel',
-	'sap/ui/model/type/Integer'
+	'sap/ui/model/type/Integer',
+	"sap/ui/core/Lib"
 ],
 
 function(
-		ModelOperator,
-		Filter,
-		ValidateException,
-		Log,
-		FieldDisplay,
-		OperatorName,
-		Operator,
-		RangeOperator,
-		BaseType,
-		ConditionValidated,
-		OperatorValueType,
-		loadModules,
-		UniversalDate,
-		UniversalDateUtils,
-		DateFormat,
-		StaticArea,
-		JSONModel,
-		Integer	// the Integer type must be  available for some of the RangeOperators
-	) {
+	ModelOperator,
+	Filter,
+	ValidateException,
+	Log,
+	FieldDisplay,
+	OperatorName,
+	Operator,
+	RangeOperator,
+	BaseType,
+	ConditionValidated,
+	OperatorValueType,
+	loadModules,
+	UniversalDate,
+	UniversalDateUtils,
+	DateFormat,
+	StaticArea,
+	JSONModel,
+	// the Integer type must be  available for some of the RangeOperators
+	Integer,
+	Lib
+) {
 		"use strict";
 
 		// translation utils
-		let oMessageBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
+		let oMessageBundle = Lib.getResourceBundleFor("sap.ui.mdc");
 		sap.ui.getCore().attachLocalizationChanged(function() {
-			oMessageBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
+			oMessageBundle = Lib.getResourceBundleFor("sap.ui.mdc");
 		});
 
 		/**

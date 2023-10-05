@@ -15,7 +15,8 @@ sap.ui.define([
 	"sap/m/Dialog",
 	"sap/base/Log",
 	"sap/ui/util/Mobile",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/ui/core/Element"
 ], function(
 	createAndAppendDiv,
 	jQuery,
@@ -32,7 +33,8 @@ sap.ui.define([
 	Dialog,
 	Log,
 	Mobile,
-	Core
+	Core,
+	Element
 ) {
 	"use strict";
 
@@ -111,9 +113,9 @@ sap.ui.define([
 		title: "Page 2"
 	}).addEventDelegate(getDelegate(window.mPage2EventLog)), 1);
 
-	var page1 = Core.byId("page1"),
-		page2 = Core.byId("page2"),
-		page3 = Core.byId("page3");
+	var page1 = Element.registry.get("page1"),
+		page2 = Element.registry.get("page2"),
+		page3 = Element.registry.get("page3");
 
 	resetEventLog(window.mPage1EventLog);
 	resetEventLog(window.mPage2EventLog);
@@ -885,15 +887,15 @@ sap.ui.define([
 
 		assert.equal(pageRenderCounter, 0, "no rendering should have happened yet");
 
-		Core.byId("page2").invalidate();
+		Element.registry.get("page2").invalidate();
 		Core.applyChanges();
 		assert.equal(pageRenderCounter, 1, "one page rendering should have happened");
 
-		Core.byId("page2").addContent(new Button({text:"Button p2"}));
+		Element.registry.get("page2").addContent(new Button({text:"Button p2"}));
 		Core.applyChanges();
 		assert.equal(pageRenderCounter, 2, "two page renderings should have happened");
 
-		Core.byId("page3").addContent(new Button({text:"Button p3"})); // invisible page - should cause NO re-rendering!
+		Element.registry.get("page3").addContent(new Button({text:"Button p3"})); // invisible page - should cause NO re-rendering!
 		Core.applyChanges();
 		assert.equal(pageRenderCounter, 2, "still, only two page renderings should have happened");
 
@@ -1127,7 +1129,7 @@ sap.ui.define([
 					var sPageId = evt.getParameter("toId");
 
 					if (sPageId === "firstPage") {
-						var oButtonPage1FocusDom = Core.byId("btn1_1").getFocusDomRef();
+						var oButtonPage1FocusDom = Element.registry.get("btn1_1").getFocusDomRef();
 						assert.equal(oButtonPage1FocusDom, document.activeElement, "button <To Page 2> on page 1 should have the focus");
 
 						//cleanup
@@ -1135,7 +1137,7 @@ sap.ui.define([
 						done();
 					}
 					if (sPageId === "secondPage") {
-						var oButtonPage2FocusDom = Core.byId("secondPage-navButton").getFocusDomRef();
+						var oButtonPage2FocusDom = Element.registry.get("secondPage-navButton").getFocusDomRef();
 						assert.equal(oButtonPage2FocusDom, document.activeElement, "nav button in the  header on page 2 should have the focus");
 					}
 			};
@@ -1145,7 +1147,7 @@ sap.ui.define([
 		Core.applyChanges();
 
 		// Initial focus check on first page
-		var oButtonPage1FocusDom = Core.byId("btn1_1").getFocusDomRef();
+		var oButtonPage1FocusDom = Element.registry.get("btn1_1").getFocusDomRef();
 		assert.equal(oButtonPage1FocusDom, document.activeElement, "button <To Page 2>  on page 1 should have the focus");
 
 		//Act

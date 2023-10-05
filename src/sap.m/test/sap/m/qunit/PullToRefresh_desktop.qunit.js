@@ -10,7 +10,8 @@ sap.ui.define([
 	"sap/m/Page",
 	"sap/ui/Device",
 	"sap/ui/core/Core",
-	"sap/ui/events/KeyCodes"
+	"sap/ui/events/KeyCodes",
+	"sap/ui/core/Lib"
 ], function(
 	qutils,
 	createAndAppendDiv,
@@ -22,7 +23,8 @@ sap.ui.define([
 	Page,
 	Device,
 	oCore,
-	KeyCodes
+	KeyCodes,
+	Lib
 ) {
 	"use strict";
 
@@ -52,7 +54,7 @@ sap.ui.define([
 			}
 		};
 
-		var oRb = oCore.getLibraryResourceBundle("sap.m");
+		var oRb = Lib.getResourceBundleFor("sap.m");
 		var oApp = new App("p2RApp", {initialPage:"page1"});
 
 		var sPullDwn = oRb.getText("PULL2REFRESH_REFRESH"),

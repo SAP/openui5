@@ -13,7 +13,8 @@ sap.ui.define([
 	"sap/ui/Device",
 	"./waitForP13nButtonWithMatchers",
 	"./waitForP13nDialog",
-	"./waitForButtonInDialog"
+	"./waitForButtonInDialog",
+	"sap/ui/core/Lib"
 ], function(
 	Opa5,
 	Ancestor,
@@ -25,11 +26,12 @@ sap.ui.define([
 	Device,
 	waitForP13nButtonWithMatchers,
 	waitForP13nDialog,
-	waitForButtonInDialog
+	waitForButtonInDialog,
+	Lib
 ) {
 	"use strict";
 
-	var oMDCBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
+	var oMDCBundle = Lib.getResourceBundleFor("sap.ui.mdc");
 
 	var waitForNavigationControl = function (oP13nDialog, oSettings) {
 		oSettings = oSettings || {};

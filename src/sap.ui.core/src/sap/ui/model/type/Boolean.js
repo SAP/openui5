@@ -3,8 +3,8 @@
  */
 /*eslint-disable max-len */
 // Provides the base implementation for all model implementations
-sap.ui.define(['sap/ui/model/SimpleType', 'sap/ui/model/FormatException', 'sap/ui/model/ParseException'],
-	function(SimpleType, FormatException, ParseException) {
+sap.ui.define(['sap/ui/model/SimpleType', 'sap/ui/model/FormatException', 'sap/ui/model/ParseException', "sap/ui/core/Lib"],
+	function(SimpleType, FormatException, ParseException, Lib) {
 	"use strict";
 
 
@@ -64,7 +64,7 @@ sap.ui.define(['sap/ui/model/SimpleType', 'sap/ui/model/FormatException', 'sap/u
 				if (oValue.toLowerCase() == "false" || oValue == "" || oValue == " ") {
 					return false;
 				}
-				oBundle = sap.ui.getCore().getLibraryResourceBundle();
+				oBundle = Lib.getResourceBundleFor("sap.ui.core");
 				throw new ParseException(oBundle.getText("Boolean.Invalid"));
 			default:
 				throw new ParseException("Don't know how to parse Boolean from " + sInternalType);

@@ -29,8 +29,9 @@ sap.ui.define([
 	"sap/m/ListItemBase",
 	"sap/base/Log",
 	"sap/ui/model/Sorter",
-	"sap/ui/core/date/UI5Date"
-], function(jQuery, Core, createAndAppendDiv, qutils, JSONModel, Parameters, CustomData, coreLibrary, library, Device, App, Page, Avatar, Button, Bar, List, DisplayListItem, StandardListItem, InputListItem, CustomListItem, ActionListItem, Input, Text, KeyCodes, Control, Element, ListItemBase, Log, Sorter, UI5Date) {
+	"sap/ui/core/date/UI5Date",
+	"sap/ui/core/Lib"
+], function(jQuery, Core, createAndAppendDiv, qutils, JSONModel, Parameters, CustomData, coreLibrary, library, Device, App, Page, Avatar, Button, Bar, List, DisplayListItem, StandardListItem, InputListItem, CustomListItem, ActionListItem, Input, Text, KeyCodes, Control, Element, ListItemBase, Log, Sorter, UI5Date, Lib) {
 	"use strict";
 	createAndAppendDiv("content").style.height = "100%";
 
@@ -1013,7 +1014,7 @@ sap.ui.define([
 		assert.ok(document.getElementById("sapMList002-listUl").childNodes[0], "standardListThumb ListItem should be rendered");
 		var aItems = oListStandardThumb.getItems();
 		var listItemId = aItems[0].getId();
-		var oListItem = Core.byId(listItemId);
+		var oListItem = Element.registry.get(listItemId);
 		var oEvent = new jQuery.Event();
 		oEvent.srcControl = aItems[0];
 		oListItem.ontap(oEvent);
@@ -1032,7 +1033,7 @@ sap.ui.define([
 		assert.ok(document.getElementById("sapMList002-listUl").childNodes[0], "standardListThumb ListItem should be rendered");
 		var aItems = oListStandardThumb.getItems();
 		var listItemId = aItems[1].getId();
-		var oListItem = Core.byId(listItemId);
+		var oListItem = Element.registry.get(listItemId);
 		var oEvent = new jQuery.Event();
 		oEvent.srcControl = aItems[1];
 		oListItem.ontap(oEvent);
@@ -1051,7 +1052,7 @@ sap.ui.define([
 		assert.ok(document.getElementById("sapMList002-listUl").childNodes[0], "standardListThumb ListItem should be rendered");
 		var aItems = oListStandardThumb.getItems();
 		var listItemId = aItems[2].getId();
-		var oListItem = Core.byId(listItemId);
+		var oListItem = Element.registry.get(listItemId);
 		var oEvent = new jQuery.Event();
 		oEvent.srcControl = aItems[2];
 		oListItem.ontap(oEvent);
@@ -1070,7 +1071,7 @@ sap.ui.define([
 		assert.ok(document.getElementById("sapMList002-listUl").childNodes[0], "standardListThumb ListItem should be rendered");
 		var aItems = oListStandardThumb.getItems();
 		var listItemId = aItems[3].getId();
-		var oListItem = Core.byId(listItemId);
+		var oListItem = Element.registry.get(listItemId);
 		var oEvent = new jQuery.Event();
 		oEvent.srcControl = aItems[3];
 		oListItem.ontap(oEvent);
@@ -1089,7 +1090,7 @@ sap.ui.define([
 		assert.ok(document.getElementById("sapMList002-listUl").childNodes[0], "standardListThumb ListItem should be rendered");
 		var aItems = oListStandardThumb.getItems();
 		var listItemId = aItems[4].getId();
-		var oListItem = Core.byId(listItemId);
+		var oListItem = Element.registry.get(listItemId);
 		var oEvent = new jQuery.Event();
 		oEvent.srcControl = aItems[4];
 		oListItem.ontap(oEvent);
@@ -1287,11 +1288,11 @@ sap.ui.define([
 		qutils.triggerEvent("tap", radioButtonId1);
 
 		setTimeout(function() {
-			assert.equal(Core.byId(radioButtonId1).getSelected(), true, "SingleSelection: Item 1 should be checked");
-			assert.equal(Core.byId(radioButtonId2).getSelected(), false, "SingleSelection: Item 2 should not be checked");
-			assert.equal(Core.byId(radioButtonId3).getSelected(), false, "SingleSelection: Item 3 should not be checked");
-			assert.equal(Core.byId(radioButtonId4).getSelected(), false, "SingleSelection: Item 4 should not be checked");
-			assert.equal(Core.byId(radioButtonId5).getSelected(), false, "SingleSelection: Item 5 should not be checked");
+			assert.equal(Element.registry.get(radioButtonId1).getSelected(), true, "SingleSelection: Item 1 should be checked");
+			assert.equal(Element.registry.get(radioButtonId2).getSelected(), false, "SingleSelection: Item 2 should not be checked");
+			assert.equal(Element.registry.get(radioButtonId3).getSelected(), false, "SingleSelection: Item 3 should not be checked");
+			assert.equal(Element.registry.get(radioButtonId4).getSelected(), false, "SingleSelection: Item 4 should not be checked");
+			assert.equal(Element.registry.get(radioButtonId5).getSelected(), false, "SingleSelection: Item 5 should not be checked");
 
 			done();
 		}, 0);
@@ -1308,11 +1309,11 @@ sap.ui.define([
 		qutils.triggerEvent("tap", radioButtonId2);
 
 		setTimeout(function() {
-			assert.equal(Core.byId(radioButtonId1).getSelected(), false, "SingleSelection: Item 1 should not be checked");
-			assert.equal(Core.byId(radioButtonId2).getSelected(), true, "SingleSelection: Item 2 should be checked");
-			assert.equal(Core.byId(radioButtonId3).getSelected(), false, "SingleSelection: Item 3 should not be checked");
-			assert.equal(Core.byId(radioButtonId4).getSelected(), false, "SingleSelection: Item 4 should not be checked");
-			assert.equal(Core.byId(radioButtonId5).getSelected(), false, "SingleSelection: Item 5 should not be checked");
+			assert.equal(Element.registry.get(radioButtonId1).getSelected(), false, "SingleSelection: Item 1 should not be checked");
+			assert.equal(Element.registry.get(radioButtonId2).getSelected(), true, "SingleSelection: Item 2 should be checked");
+			assert.equal(Element.registry.get(radioButtonId3).getSelected(), false, "SingleSelection: Item 3 should not be checked");
+			assert.equal(Element.registry.get(radioButtonId4).getSelected(), false, "SingleSelection: Item 4 should not be checked");
+			assert.equal(Element.registry.get(radioButtonId5).getSelected(), false, "SingleSelection: Item 5 should not be checked");
 			done();
 		}, 0);
 	});
@@ -1328,11 +1329,11 @@ sap.ui.define([
 		qutils.triggerEvent("tap", radioButtonId3);
 
 		setTimeout(function() {
-			assert.equal(Core.byId(radioButtonId1).getSelected(), false, "SingleSelection: Item 1 should not be checked");
-			assert.equal(Core.byId(radioButtonId2).getSelected(), false, "SingleSelection: Item 2 should not be checked");
-			assert.equal(Core.byId(radioButtonId3).getSelected(), true, "SingleSelection: Item 3 should be checked");
-			assert.equal(Core.byId(radioButtonId4).getSelected(), false, "SingleSelection: Item 4 should not be checked");
-			assert.equal(Core.byId(radioButtonId5).getSelected(), false, "SingleSelection: Item 5 should not be checked");
+			assert.equal(Element.registry.get(radioButtonId1).getSelected(), false, "SingleSelection: Item 1 should not be checked");
+			assert.equal(Element.registry.get(radioButtonId2).getSelected(), false, "SingleSelection: Item 2 should not be checked");
+			assert.equal(Element.registry.get(radioButtonId3).getSelected(), true, "SingleSelection: Item 3 should be checked");
+			assert.equal(Element.registry.get(radioButtonId4).getSelected(), false, "SingleSelection: Item 4 should not be checked");
+			assert.equal(Element.registry.get(radioButtonId5).getSelected(), false, "SingleSelection: Item 5 should not be checked");
 			done();
 		}, 0);
 	});
@@ -1348,11 +1349,11 @@ sap.ui.define([
 		qutils.triggerEvent("tap", radioButtonId4);
 
 		setTimeout(function() {
-			assert.equal(Core.byId(radioButtonId1).getSelected(), false, "SingleSelection: Item 1 should not be checked");
-			assert.equal(Core.byId(radioButtonId2).getSelected(), false, "SingleSelection: Item 2 should not be checked");
-			assert.equal(Core.byId(radioButtonId3).getSelected(), false, "SingleSelection: Item 3 should not be checked");
-			assert.equal(Core.byId(radioButtonId4).getSelected(), true, "SingleSelection: Item 4 should be checked");
-			assert.equal(Core.byId(radioButtonId5).getSelected(), false, "SingleSelection: Item 5 should not be checked");
+			assert.equal(Element.registry.get(radioButtonId1).getSelected(), false, "SingleSelection: Item 1 should not be checked");
+			assert.equal(Element.registry.get(radioButtonId2).getSelected(), false, "SingleSelection: Item 2 should not be checked");
+			assert.equal(Element.registry.get(radioButtonId3).getSelected(), false, "SingleSelection: Item 3 should not be checked");
+			assert.equal(Element.registry.get(radioButtonId4).getSelected(), true, "SingleSelection: Item 4 should be checked");
+			assert.equal(Element.registry.get(radioButtonId5).getSelected(), false, "SingleSelection: Item 5 should not be checked");
 			done();
 		}, 0);
 	});
@@ -1368,11 +1369,11 @@ sap.ui.define([
 		qutils.triggerEvent("tap", radioButtonId5);
 
 		setTimeout(function() {
-			assert.equal(Core.byId(radioButtonId1).getSelected(), false, "SingleSelection: Item 1 should not be checked");
-			assert.equal(Core.byId(radioButtonId2).getSelected(), false, "SingleSelection: Item 2 should not be checked");
-			assert.equal(Core.byId(radioButtonId3).getSelected(), false, "SingleSelection: Item 3 should not be checked");
-			assert.equal(Core.byId(radioButtonId4).getSelected(), false, "SingleSelection: Item 4 should not be checked");
-			assert.equal(Core.byId(radioButtonId5).getSelected(), true, "SingleSelection: Item 5 should be checked");
+			assert.equal(Element.registry.get(radioButtonId1).getSelected(), false, "SingleSelection: Item 1 should not be checked");
+			assert.equal(Element.registry.get(radioButtonId2).getSelected(), false, "SingleSelection: Item 2 should not be checked");
+			assert.equal(Element.registry.get(radioButtonId3).getSelected(), false, "SingleSelection: Item 3 should not be checked");
+			assert.equal(Element.registry.get(radioButtonId4).getSelected(), false, "SingleSelection: Item 4 should not be checked");
+			assert.equal(Element.registry.get(radioButtonId5).getSelected(), true, "SingleSelection: Item 5 should be checked");
 			done();
 		}, 0);
 	});
@@ -1440,11 +1441,11 @@ sap.ui.define([
 		qutils.triggerEvent("tap", radioButtonId1);
 
 		setTimeout(function() {
-			assert.equal(Core.byId(radioButtonId1).getSelected(), true, "SingleSelectionLeft: Item 1 should be checked");
-			assert.equal(Core.byId(radioButtonId2).getSelected(), false, "SingleSelectionLeft: Item 2 should not be checked");
-			assert.equal(Core.byId(radioButtonId3).getSelected(), false, "SingleSelectionLeft: Item 3 should not be checked");
-			assert.equal(Core.byId(radioButtonId4).getSelected(), false, "SingleSelectionLeft: Item 4 should not be checked");
-			assert.equal(Core.byId(radioButtonId5).getSelected(), false, "SingleSelectionLeft: Item 5 should not be checked");
+			assert.equal(Element.registry.get(radioButtonId1).getSelected(), true, "SingleSelectionLeft: Item 1 should be checked");
+			assert.equal(Element.registry.get(radioButtonId2).getSelected(), false, "SingleSelectionLeft: Item 2 should not be checked");
+			assert.equal(Element.registry.get(radioButtonId3).getSelected(), false, "SingleSelectionLeft: Item 3 should not be checked");
+			assert.equal(Element.registry.get(radioButtonId4).getSelected(), false, "SingleSelectionLeft: Item 4 should not be checked");
+			assert.equal(Element.registry.get(radioButtonId5).getSelected(), false, "SingleSelectionLeft: Item 5 should not be checked");
 
 			done();
 		}, 0);
@@ -1461,11 +1462,11 @@ sap.ui.define([
 		qutils.triggerEvent("tap", radioButtonId2);
 		setTimeout(function() {
 
-			assert.equal(Core.byId(radioButtonId1).getSelected(), false, "SingleSelectionLeft: Item 1 should not be checked");
-			assert.equal(Core.byId(radioButtonId2).getSelected(), true, "SingleSelectionLeft: Item 2 should be checked");
-			assert.equal(Core.byId(radioButtonId3).getSelected(), false, "SingleSelectionLeft: Item 3 should not be checked");
-			assert.equal(Core.byId(radioButtonId4).getSelected(), false, "SingleSelectionLeft: Item 4 should not be checked");
-			assert.equal(Core.byId(radioButtonId5).getSelected(), false, "SingleSelectionLeft: Item 5 should not be checked");
+			assert.equal(Element.registry.get(radioButtonId1).getSelected(), false, "SingleSelectionLeft: Item 1 should not be checked");
+			assert.equal(Element.registry.get(radioButtonId2).getSelected(), true, "SingleSelectionLeft: Item 2 should be checked");
+			assert.equal(Element.registry.get(radioButtonId3).getSelected(), false, "SingleSelectionLeft: Item 3 should not be checked");
+			assert.equal(Element.registry.get(radioButtonId4).getSelected(), false, "SingleSelectionLeft: Item 4 should not be checked");
+			assert.equal(Element.registry.get(radioButtonId5).getSelected(), false, "SingleSelectionLeft: Item 5 should not be checked");
 			done();
 		}, 0);
 	});
@@ -1481,11 +1482,11 @@ sap.ui.define([
 		qutils.triggerEvent("tap", radioButtonId3);
 		setTimeout(function() {
 
-			assert.equal(Core.byId(radioButtonId1).getSelected(), false, "SingleSelectionLeft: Item 1 should not be checked");
-			assert.equal(Core.byId(radioButtonId2).getSelected(), false, "SingleSelectionLeft: Item 2 should not be checked");
-			assert.equal(Core.byId(radioButtonId3).getSelected(), true, "SingleSelectionLeft: Item 3 should be checked");
-			assert.equal(Core.byId(radioButtonId4).getSelected(), false, "SingleSelectionLeft: Item 4 should not be checked");
-			assert.equal(Core.byId(radioButtonId5).getSelected(), false, "SingleSelectionLeft: Item 5 should not be checked");
+			assert.equal(Element.registry.get(radioButtonId1).getSelected(), false, "SingleSelectionLeft: Item 1 should not be checked");
+			assert.equal(Element.registry.get(radioButtonId2).getSelected(), false, "SingleSelectionLeft: Item 2 should not be checked");
+			assert.equal(Element.registry.get(radioButtonId3).getSelected(), true, "SingleSelectionLeft: Item 3 should be checked");
+			assert.equal(Element.registry.get(radioButtonId4).getSelected(), false, "SingleSelectionLeft: Item 4 should not be checked");
+			assert.equal(Element.registry.get(radioButtonId5).getSelected(), false, "SingleSelectionLeft: Item 5 should not be checked");
 			done();
 		}, 0);
 	});
@@ -1501,11 +1502,11 @@ sap.ui.define([
 		qutils.triggerEvent("tap", radioButtonId4);
 		setTimeout(function() {
 
-			assert.equal(Core.byId(radioButtonId1).getSelected(), false, "SingleSelectionLeft: Item 1 should not be checked");
-			assert.equal(Core.byId(radioButtonId2).getSelected(), false, "SingleSelectionLeft: Item 2 should not be checked");
-			assert.equal(Core.byId(radioButtonId3).getSelected(), false, "SingleSelectionLeft: Item 3 should not be checked");
-			assert.equal(Core.byId(radioButtonId4).getSelected(), true, "SingleSelectionLeft: Item 4 should be checked");
-			assert.equal(Core.byId(radioButtonId5).getSelected(), false, "SingleSelectionLeft: Item 5 should not be checked");
+			assert.equal(Element.registry.get(radioButtonId1).getSelected(), false, "SingleSelectionLeft: Item 1 should not be checked");
+			assert.equal(Element.registry.get(radioButtonId2).getSelected(), false, "SingleSelectionLeft: Item 2 should not be checked");
+			assert.equal(Element.registry.get(radioButtonId3).getSelected(), false, "SingleSelectionLeft: Item 3 should not be checked");
+			assert.equal(Element.registry.get(radioButtonId4).getSelected(), true, "SingleSelectionLeft: Item 4 should be checked");
+			assert.equal(Element.registry.get(radioButtonId5).getSelected(), false, "SingleSelectionLeft: Item 5 should not be checked");
 			done();
 		}, 0);
 	});
@@ -1521,11 +1522,11 @@ sap.ui.define([
 		qutils.triggerEvent("tap", radioButtonId5);
 		setTimeout(function() {
 
-			assert.equal(Core.byId(radioButtonId1).getSelected(), false, "SingleSelectionLeft: Item 1 should not be checked");
-			assert.equal(Core.byId(radioButtonId2).getSelected(), false, "SingleSelectionLeft: Item 2 should not be checked");
-			assert.equal(Core.byId(radioButtonId3).getSelected(), false, "SingleSelectionLeft: Item 3 should not be checked");
-			assert.equal(Core.byId(radioButtonId4).getSelected(), false, "SingleSelectionLeft: Item 4 should not be checked");
-			assert.equal(Core.byId(radioButtonId5).getSelected(), true, "SingleSelectionLeft: Item 5 should be checked");
+			assert.equal(Element.registry.get(radioButtonId1).getSelected(), false, "SingleSelectionLeft: Item 1 should not be checked");
+			assert.equal(Element.registry.get(radioButtonId2).getSelected(), false, "SingleSelectionLeft: Item 2 should not be checked");
+			assert.equal(Element.registry.get(radioButtonId3).getSelected(), false, "SingleSelectionLeft: Item 3 should not be checked");
+			assert.equal(Element.registry.get(radioButtonId4).getSelected(), false, "SingleSelectionLeft: Item 4 should not be checked");
+			assert.equal(Element.registry.get(radioButtonId5).getSelected(), true, "SingleSelectionLeft: Item 5 should be checked");
 			done();
 		}, 0);
 	});
@@ -1578,17 +1579,17 @@ sap.ui.define([
 		//qutils.triggerEvent("tap", checkBoxId1);
 		//qutils.triggerEvent("tap", checkBoxId3);
 		//qutils.triggerEvent("tap", checkBoxId5);
-		var oCheckbox1 = Core.byId(checkBoxId1);
-		var oCheckbox3 = Core.byId(checkBoxId3);
-		var oCheckbox5 = Core.byId(checkBoxId5);
+		var oCheckbox1 = Element.registry.get(checkBoxId1);
+		var oCheckbox3 = Element.registry.get(checkBoxId3);
+		var oCheckbox5 = Element.registry.get(checkBoxId5);
 		oCheckbox1.ontap(new jQuery.Event());
 		oCheckbox3.ontap(new jQuery.Event());
 		oCheckbox5.ontap(new jQuery.Event());
-		assert.equal(Core.byId(checkBoxId1).getSelected(), true, "MultiSelection: Item 1 should be checked");
-		assert.equal(Core.byId(checkBoxId2).getSelected(), true, "MultiSelection: Item 2 should be checked");
-		assert.equal(Core.byId(checkBoxId3).getSelected(), true, "MultiSelection: Item 3 should be checked");
-		assert.equal(Core.byId(checkBoxId4).getSelected(), true, "MultiSelection: Item 4 should be checked");
-		assert.equal(Core.byId(checkBoxId5).getSelected(), true, "MultiSelection: Item 5 should be checked");
+		assert.equal(Element.registry.get(checkBoxId1).getSelected(), true, "MultiSelection: Item 1 should be checked");
+		assert.equal(Element.registry.get(checkBoxId2).getSelected(), true, "MultiSelection: Item 2 should be checked");
+		assert.equal(Element.registry.get(checkBoxId3).getSelected(), true, "MultiSelection: Item 3 should be checked");
+		assert.equal(Element.registry.get(checkBoxId4).getSelected(), true, "MultiSelection: Item 4 should be checked");
+		assert.equal(Element.registry.get(checkBoxId5).getSelected(), true, "MultiSelection: Item 5 should be checked");
 	});
 
 
@@ -1826,7 +1827,7 @@ sap.ui.define([
 		oList.placeAt("qunit-fixture");
 		Core.applyChanges();
 
-		var oRb = Core.getLibraryResourceBundle("sap.m"),
+		var oRb = Lib.getResourceBundleFor("sap.m"),
 			fnToggleExpandCollapse = sinon.spy(oStdLI, "_toggleExpandCollapse");
 
 		// variables for title elements
@@ -2178,7 +2179,7 @@ sap.ui.define([
 		var oCtr1 = new TestCtr(),
 			oCtr2 = new TestCtr({text: "UVW"}),
 			oCtr3 = new TestCtr({text: "XYZ"}),
-			oRb = Core.getLibraryResourceBundle("sap.m");
+			oRb = Lib.getResourceBundleFor("sap.m");
 
 		oCtr1.placeAt("qunit-fixture");
 		Core.applyChanges();
@@ -2276,7 +2277,7 @@ sap.ui.define([
 
 	QUnit.test("ListItemBase - getAccessibilityDescription", function(assert) {
 		var oItem = new ListItemBase(),
-			oRb = Core.getLibraryResourceBundle("sap.m"),
+			oRb = Lib.getResourceBundleFor("sap.m"),
 			aState = [],
 			sContent = "<CONTENT>", sGroup = "", bShowUnread = false, bSelectable = true;
 

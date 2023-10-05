@@ -130,7 +130,7 @@ sap.ui.define([
 		oItem._getDeleteButton().firePress();
 
 		// Close the dialog
-		var oDialog = oCore.byId(this.oUploadSet.getId() + "-deleteDialog");
+		var oDialog = Element.registry.get(this.oUploadSet.getId() + "-deleteDialog");
 		assert.ok(oDialog, "Remove dialog should now be presented.");
 		oDialog.getButtons()[1].firePress();
 		oDialog.destroy();
@@ -177,7 +177,7 @@ sap.ui.define([
 		assert.equal(oDeleteSpy.callCount, 1, "Upload set item handler for removing a file should be called.");
 
 		// Close the dialog
-		var oDialog = oCore.byId(this.oUploadSet.getId() + "-deleteDialog");
+		var oDialog = Element.registry.get(this.oUploadSet.getId() + "-deleteDialog");
 		oDialog.getButtons()[1].firePress();
 		oDialog.destroy();
 

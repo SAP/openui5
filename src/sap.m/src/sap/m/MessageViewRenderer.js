@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define(["sap/ui/core/Core"], function (Core) {
+sap.ui.define(["sap/ui/core/Core", "sap/ui/core/Lib"], function(Core, Lib) {
 	"use strict";
 
 	var MessageViewRenderer = {
@@ -12,7 +12,7 @@ sap.ui.define(["sap/ui/core/Core"], function (Core) {
 	var CSS_CLASS = "sapMMsgView";
 
 	MessageViewRenderer.render = function (oRm, oControl) {
-		var oResourceBundle = Core.getLibraryResourceBundle("sap.m");
+		var oResourceBundle = Lib.getResourceBundleFor("sap.m");
 
 		oRm.openStart("section", oControl);
 		oRm.class(CSS_CLASS);

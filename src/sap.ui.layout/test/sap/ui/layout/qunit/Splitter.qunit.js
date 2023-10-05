@@ -105,8 +105,7 @@ sap.ui.define([
 			}
 		};
 		oSplitter.addDelegate(oDelegate);
-		oSplitter.invalidate();
-		oCore.applyChanges();
+		oSplitter.rerender();
 	});
 
 	QUnit.test("Absolute vertical sizing", function (assert) {
@@ -127,8 +126,7 @@ sap.ui.define([
 			}
 		};
 		oSplitter.addDelegate(oDelegate);
-		oSplitter.invalidate();
-		oCore.applyChanges();
+		oSplitter.rerender();
 	});
 
 	QUnit.test("Sizing with rems", function (assert) {
@@ -252,8 +250,7 @@ sap.ui.define([
 			}
 		};
 		oSplitter.addDelegate(oDelegate);
-		oSplitter.invalidate();
-		oCore.applyChanges();
+		oSplitter.rerender();
 	});
 
 	QUnit.test("Automatic vertical sizing ", function (assert) {
@@ -273,8 +270,7 @@ sap.ui.define([
 			}
 		};
 		oSplitter.addDelegate(oDelegate);
-		oSplitter.invalidate();
-		oCore.applyChanges();
+		oSplitter.rerender();
 	});
 
 	QUnit.test("Single area with 100% size", function (assert) {
@@ -326,8 +322,7 @@ sap.ui.define([
 			}
 		};
 		oSplitter.addDelegate(oDelegate);
-		oSplitter.invalidate();
-		oCore.applyChanges();
+		oSplitter.rerender();
 	});
 
 	QUnit.test("Mixed vertical sizing", function (assert) {
@@ -353,8 +348,7 @@ sap.ui.define([
 			}
 		};
 		oSplitter.addDelegate(oDelegate);
-		oSplitter.invalidate();
-		oCore.applyChanges();
+		oSplitter.rerender();
 	});
 
 
@@ -671,8 +665,7 @@ sap.ui.define([
 				done();
 			});
 
-			oXMLView.invalidate();
-			oCore.applyChanges();
+			oXMLView.rerender();
 		}.bind(this));
 	});
 

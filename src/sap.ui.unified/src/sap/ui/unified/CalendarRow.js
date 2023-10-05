@@ -23,7 +23,8 @@ sap.ui.define([
 	'sap/ui/core/InvisibleMessage',
 	'sap/ui/core/library',
 	'sap/ui/core/Configuration',
-	"sap/ui/core/date/UI5Date"
+	"sap/ui/core/date/UI5Date",
+	"sap/ui/core/Lib"
 ], function(
 	Control,
 	Device,
@@ -44,7 +45,8 @@ sap.ui.define([
 	InvisibleMessage,
 	corelibrary,
 	Configuration,
-	UI5Date
+	UI5Date,
+	Lib
 ) {
 	"use strict";
 
@@ -349,7 +351,7 @@ sap.ui.define([
 	CalendarRow.prototype.init = function(){
 
 		this._bRTL  = Configuration.getRTL();
-		this._oRb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified");
+		this._oRb = Lib.getResourceBundleFor("sap.ui.unified");
 
 		this._oFormatAria = DateFormat.getDateTimeInstance({
 			pattern: "EEEE dd/MM/YYYY 'at' " + _getLocaleData.call(this).getTimePattern("medium")

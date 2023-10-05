@@ -7,8 +7,9 @@ sap.ui.define([
 	"sap/ui/Device",
 	"sap/ui/unified/Menu",
 	"sap/ui/unified/MenuItem",
-	"sap/ui/core/Popup"
-], function(Device, Menu, MenuItem, Popup) {
+	"sap/ui/core/Popup",
+	"sap/ui/core/Element"
+], function(Device, Menu, MenuItem, Popup, Element) {
 	"use strict";
 
 	function onCellFilterSelect(oColumn, oRow) {
@@ -195,7 +196,7 @@ sap.ui.define([
 			}
 
 			var sCellFilterMenuItemId = oTable._oCellContextMenu.getId() + "-cellfilter";
-			var oCellFilterMenuItem = sap.ui.getCore().byId(sCellFilterMenuItemId);
+			var oCellFilterMenuItem = Element.registry.get(sCellFilterMenuItemId);
 
 			if (oTable.getEnableCellFilter() && oColumn && oColumn.isFilterableByMenu() && !oRow.isGroupHeader()) {
 				if (!oCellFilterMenuItem) {
@@ -273,7 +274,7 @@ sap.ui.define([
 			}
 
 			var sCellFilterMenuItemId = oTable._oCellContextMenu.getId() + "-cellfilter";
-			var oCellFilterMenuItem = sap.ui.getCore().byId(sCellFilterMenuItemId);
+			var oCellFilterMenuItem = Element.registry.get(sCellFilterMenuItemId);
 
 			// We don't want to destroy items which were added, for example, by hooks. The owners of the items are responsible for them.
 			oTable._oCellContextMenu.removeAllItems();

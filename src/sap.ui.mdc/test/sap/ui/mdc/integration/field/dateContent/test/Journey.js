@@ -13,7 +13,8 @@ sap.ui.define([
 	"sap/ui/model/type/DateTime",
 	"sap/ui/model/type/Time",
 	"sap/ui/core/format/DateFormat",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/ui/core/Lib"
 ], function(
 	Opa5,
 	opaTest,
@@ -23,12 +24,13 @@ sap.ui.define([
 	DateTimeType,
 	TimeType,
 	DateFormat,
-	Core
+	Core,
+	Lib
 ) {
 	"use strict";
 
 	// shortcut for sap.m resource bundle
-	const oRb = Core.getLibraryResourceBundle("sap.ui.core");
+	const oRb = Lib.getResourceBundleFor("sap.ui.core");
 
 	Opa5.extendConfig({
 

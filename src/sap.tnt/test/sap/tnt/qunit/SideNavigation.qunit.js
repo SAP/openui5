@@ -3,12 +3,17 @@ sap.ui.define([
 	'sap/tnt/SideNavigation',
 	'sap/tnt/NavigationList',
 	'sap/tnt/NavigationListItem',
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/ui/core/Lib",
+	"sap/ui/core/Element"
 ], function(
 	SideNavigation,
 	NavigationList,
 	NavigationListItem,
-	Core) {
+	Core,
+	Lib,
+	Element
+) {
 	'use strict';
 
 	var DOM_RENDER_LOCATION = 'qunit-fixture';
@@ -36,7 +41,7 @@ sap.ui.define([
 	});
 
 	QUnit.test('SetExpanded true', function (assert) {
-		var oRB = Core.getLibraryResourceBundle("sap.tnt");
+		var oRB = Lib.getResourceBundleFor("sap.tnt");
 
 		this.sideNavigation.getItem().addItem(new NavigationListItem({ text: "Text"}));
 		this.sideNavigation.getFixedItem().addItem(new NavigationListItem({ text: "Fixed Text"}));
@@ -61,7 +66,7 @@ sap.ui.define([
 
 	QUnit.test('SetExpanded false', function (assert) {
 		// arrange
-		var oRB = Core.getLibraryResourceBundle("sap.tnt");
+		var oRB = Lib.getResourceBundleFor("sap.tnt");
 		this.clock.restore(); // using real timeouts for this test
 		var done = assert.async();
 
@@ -259,13 +264,13 @@ sap.ui.define([
 
 	QUnit.test('api', function (assert) {
 
-		var selectedItem = Core.byId(this.sideNavigation.getSelectedItem());
+		var selectedItem = Element.registry.get(this.sideNavigation.getSelectedItem());
 		assert.strictEqual(selectedItem.getText(), 'Root', 'initial selection is correct');
 
 		this.sideNavigation.setSelectedKey('fixed1');
 		Core.applyChanges();
 
-		selectedItem = Core.byId(this.sideNavigation.getSelectedItem());
+		selectedItem = Element.registry.get(this.sideNavigation.getSelectedItem());
 		assert.strictEqual(selectedItem.getText(), 'Fixed 1', 'selection is correct');
 		assert.notOk(this.sideNavigation.getItem()._selectedItem, 'selection is removed');
 		assert.strictEqual(this.sideNavigation.getFixedItem()._selectedItem.getKey(), 'fixed1', 'selection is set');
@@ -273,7 +278,7 @@ sap.ui.define([
 		this.sideNavigation.setSelectedKey('child2');
 		Core.applyChanges();
 
-		selectedItem = Core.byId(this.sideNavigation.getSelectedItem());
+		selectedItem = Element.registry.get(this.sideNavigation.getSelectedItem());
 		assert.strictEqual(selectedItem.getText(), 'Child 2', 'selection is correct');
 		assert.notOk(this.sideNavigation.getFixedItem()._selectedItem, 'selection is removed');
 		assert.strictEqual(this.sideNavigation.getItem()._selectedItem.getKey(), 'child2', 'selection is set');
@@ -284,7 +289,7 @@ sap.ui.define([
 		this.sideNavigation.getFixedItem().getItems()[0]._selectItem();
 		Core.applyChanges();
 
-		var selectedItem = Core.byId(this.sideNavigation.getSelectedItem());
+		var selectedItem = Element.registry.get(this.sideNavigation.getSelectedItem());
 		assert.strictEqual(selectedItem.getText(), 'Fixed 1', 'selection is correct');
 		assert.notOk(this.sideNavigation.getItem()._selectedItem, 'selection is removed');
 		assert.strictEqual(this.sideNavigation.getFixedItem()._selectedItem.getKey(), 'fixed1', 'selection is set');
@@ -292,7 +297,7 @@ sap.ui.define([
 		this.sideNavigation.getItem().getItems()[0].getItems()[1]._selectItem();
 		Core.applyChanges();
 
-		selectedItem = Core.byId(this.sideNavigation.getSelectedItem());
+		selectedItem = Element.registry.get(this.sideNavigation.getSelectedItem());
 		assert.strictEqual(selectedItem.getText(), 'Child 2', 'selection is correct');
 		assert.notOk(this.sideNavigation.getFixedItem()._selectedItem, 'selection is removed');
 		assert.strictEqual(this.sideNavigation.getItem()._selectedItem.getKey(), 'child2', 'selection is set');
@@ -461,7 +466,7 @@ sap.ui.define([
 
 	QUnit.test("Aria attributes - aria-roledescription", function (assert) {
 
-		var sExpectedAriaRoleDescription = Core.getLibraryResourceBundle("sap.tnt")
+		var sExpectedAriaRoleDescription = Lib.getResourceBundleFor("sap.tnt")
 			.getText("NAVIGATION_LIST_ITEM_ROLE_DESCRIPTION_TREE");
 
 		this.sideNavigation.setExpanded(true);

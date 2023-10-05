@@ -17,7 +17,9 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	"sap/ui/core/Core",
 	"sap/ui/base/Event",
-	"sap/ui/dom/jquery/Selectors" // provides jQuery custom selectors ":sapTabbable"
+	"sap/ui/core/Element",
+	// provides jQuery custom selectors ":sapTabbable"
+	"sap/ui/dom/jquery/Selectors"
 ], function(
 	qutils,
 	createAndAppendDiv,
@@ -35,7 +37,8 @@ sap.ui.define([
 	GroupHeaderListItem,
 	KeyCodes,
 	oCore,
-	BaseEvent
+	BaseEvent,
+	Element
 ) {
 	"use strict";
 
@@ -1550,7 +1553,7 @@ sap.ui.define([
 		//act
 		oFF._createSelectAllCheckboxBar(oFFL);
 
-		oAllCheckbox = oCore.byId(oFFL.getAssociation("allcheckbox"));
+		oAllCheckbox = Element.registry.get(oFFL.getAssociation("allcheckbox"));
 
 		//assert
 		assert.ok(oAllCheckbox, "all checkbox is created");
@@ -1605,7 +1608,7 @@ sap.ui.define([
 		oFF.openFilterDialog();
 
 		var oNavContainer = oFF.getAggregation("dialog").getContent()[0];
-		var oFacetPage = oCore.byId(oNavContainer.getInitialPage());
+		var oFacetPage = Element.registry.get(oNavContainer.getInitialPage());
 		var oFacetList = oFacetPage.getContent()[0];
 		var oFacetListItem1 = oFacetList.getItems()[0];
 
@@ -1670,7 +1673,7 @@ sap.ui.define([
 		oFF.openFilterDialog();
 
 		var oNavContainer = oFF.getAggregation("dialog").getContent()[0];
-		var oFacetPage = oCore.byId(oNavContainer.getInitialPage());
+		var oFacetPage = Element.registry.get(oNavContainer.getInitialPage());
 		var oFacetList = oFacetPage.getContent()[0];
 		var oFacetListItem1 = oFacetList.getItems()[0];
 
@@ -1730,7 +1733,7 @@ sap.ui.define([
 		oFF.openFilterDialog();
 
 		var oNavContainer = oFF.getAggregation("dialog").getContent()[0];
-		var oFacetPage = oCore.byId(oNavContainer.getInitialPage());
+		var oFacetPage = Element.registry.get(oNavContainer.getInitialPage());
 		var oFacetList = oFacetPage.getContent()[0];
 		var oFacetListItem1 = oFacetList.getItems()[0];
 
@@ -2565,7 +2568,7 @@ sap.ui.define([
 	}
 
 	function getAddFacetCtrl(oFF) {
-		return oCore.byId(oFF.getId() + "-add");
+		return Element.registry.get(oFF.getId() + "-add");
 	}
 
 	function openPopover(oFF, iIndex) {

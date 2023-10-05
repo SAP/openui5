@@ -16,24 +16,13 @@ sap.ui.define([
 	'sap/m/Button',
 	'sap/m/ResponsivePopover',
 	'sap/m/HyphenationSupport',
-	"./ExpandableTextRenderer"
+	"./ExpandableTextRenderer",
+	"sap/ui/core/Lib"
 ],
-function(library,
-		 Core,
-		 Control,
-		 coreLibrary,
-		 InvisibleText,
-		 Device,
-		 ManagedObject,
-		 Link,
-		 Text,
-		 Button,
-		 ResponsivePopover,
-		 HyphenationSupport,
-		 ExpandableTextRenderer) {
+function(library, Core, Control, coreLibrary, InvisibleText, Device, ManagedObject, Link, Text, Button, ResponsivePopover, HyphenationSupport, ExpandableTextRenderer, Lib) {
 	"use strict";
 
-	var oRb = Core.getLibraryResourceBundle("sap.m");
+	var oRb = Lib.getResourceBundleFor("sap.m");
 
 	var TEXT_SHOW_MORE = oRb.getText("EXPANDABLE_TEXT_SHOW_MORE");
 	var TEXT_SHOW_LESS = oRb.getText("EXPANDABLE_TEXT_SHOW_LESS");

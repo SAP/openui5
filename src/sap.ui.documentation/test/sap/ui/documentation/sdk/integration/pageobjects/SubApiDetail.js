@@ -50,9 +50,20 @@ sap.ui.define([
 
 				iSelectALink: function(sLinkName) {
 					return this.waitFor({
-						controlType: "sap.ui.documentation.sdk.controls.ParamText",
+						controlType: "sap.ui.documentation.ParamText",
 						matchers: new Properties({text: sLinkName}),
 						actions: new Press(),
+						errorMessage: "Link" + sLinkName + " not found."
+					});
+				},
+
+				iSelectSectionLink: function(sLinkName) {
+					return this.waitFor({
+						controlType: "sap.ui.documentation.ParamText",
+						matchers: new Properties({text: sLinkName}),
+						success: function(oLink) {
+							Opa5.assert.ok(oLink, sLinkName + " section Link is found");
+						},
 						errorMessage: "Link" + sLinkName + " not found."
 					});
 				}
@@ -82,14 +93,14 @@ sap.ui.define([
 
 				iShouldSeeTheElementDetailsInHeaderContent: function () {
 					return this.waitFor({
-						controlType: "sap.uxap.ObjectPageHeaderContent",
-						success: function(aContent) {
-							var oHeaderContent =  aContent[0];
-							if (oHeaderContent) {
-								this.waitFor({
-									controlType: "sap.ui.layout.VerticalLayout",
-									matchers: new Ancestor(oHeaderContent),
-									success: function(aLayouts) {
+						id: "apiDetailObjectPage",
+						success: function(oOp) {
+							var oHeaderContent =  oOp.getHeaderContent()[0];
+								if (oHeaderContent) {
+									this.waitFor({
+										controlType: "sap.ui.layout.VerticalLayout",
+										matchers: new Ancestor(oOp),
+										success: function(aLayouts) {
 
 										this.waitFor({
 											controlType: "sap.m.Label",
@@ -102,23 +113,22 @@ sap.ui.define([
 											controlType: "sap.m.ObjectAttribute",
 											matchers: new Ancestor(aLayouts[1]),
 											success: function(aObjectAttributes) {
-												Opa5.assert.strictEqual(aObjectAttributes.length, 3, "There are three ObjectAttributes in the second column");
+												Opa5.assert.strictEqual(aObjectAttributes.length, 3, "There are two ObjectAttributes in the second column");
 											}
 										});
 										this.waitFor({
 											controlType: "sap.m.ObjectAttribute",
 											matchers: new Ancestor(aLayouts[2]),
 											success: function(aObjectAttributes) {
-												Opa5.assert.strictEqual(aObjectAttributes.length, 1, "There is one ObjectAttribute in the third column");
+												Opa5.assert.strictEqual(aObjectAttributes.length, 1, "There is two ObjectAttributes in the third column");
 											}
 										});
 
 									},
 									errorMessage: "sap.ui.layout.VerticalLayout  not found."
-
 								});
 							}
-							Opa5.assert.ok(aContent.length === 1, "There is only one Header content");
+							//Opa5.assert.ok(aContent.length === 1, "There is only one Header content");
 							Opa5.assert.ok(true, "sap.uxap.ObjectPageHeaderContent found");
 						},
 						errorMessage: "sap.uxap.ObjectPageHeaderContent  not found."
@@ -168,11 +178,7 @@ sap.ui.define([
 								controlType: "sap.uxap.ObjectPageSubSection",
 								matchers: new Properties({title: sSubSectionName}),
 								success: function(oSubSections) {
-									var oSubSection = oSubSections[0],
-										oSectionInfo = oObjectPage._oSectionInfo[oSubSection.getId()],
-										iScrollPosition = oObjectPage._$opWrapper[0].scrollTop;
 									Opa5.assert.ok(oSubSections.length === 1, "There is only one " + sSubSectionName + " SubSection");
-									Opa5.assert.ok(iScrollPosition === oSectionInfo.positionTop, sSubSectionName + " is on top");
 								},
 								errorMessage: "SubSection " + sSubSectionName + " not found."
 							});

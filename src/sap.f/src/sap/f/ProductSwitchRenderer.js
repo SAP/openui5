@@ -2,15 +2,15 @@
  * ${copyright}
  */
 
-sap.ui.define(["sap/ui/core/Core"],
-	function (Core) {
+sap.ui.define(["sap/ui/core/Core", "sap/ui/core/Lib"],
+	function(Core, Lib) {
 		"use strict";
 
 		return {
 			apiVersion: 2,
 
 			render: function (oRm, oControl) {
-				var oRb = Core.getLibraryResourceBundle("sap.f");
+				var oRb = Lib.getResourceBundleFor("sap.f");
 
 				oRm.openStart("div", oControl);
 				oRm.attr("role", "menu");

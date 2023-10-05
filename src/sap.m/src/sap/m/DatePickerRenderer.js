@@ -1,8 +1,8 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['sap/ui/core/Renderer', './DateTimeFieldRenderer', 'sap/ui/core/library'],
-	function(Renderer, DateTimeFieldRenderer, coreLibrary) {
+sap.ui.define(['sap/ui/core/Renderer', './DateTimeFieldRenderer', 'sap/ui/core/library', "sap/ui/core/Lib"],
+	function(Renderer, DateTimeFieldRenderer, coreLibrary, Lib) {
 	"use strict";
 
 	/**
@@ -46,7 +46,7 @@ sap.ui.define(['sap/ui/core/Renderer', './DateTimeFieldRenderer', 'sap/ui/core/l
 	DatePickerRenderer.getAccessibilityState = function(oDP) {
 		var mAccessibilityState = DateTimeFieldRenderer.getAccessibilityState.apply(this, arguments);
 
-		mAccessibilityState["roledescription"] = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_DATEINPUT");
+		mAccessibilityState["roledescription"] = Lib.getResourceBundleFor("sap.m").getText("ACC_CTR_TYPE_DATEINPUT");
 		if (oDP.getEditable() && oDP.getEnabled()) {
 			mAccessibilityState["haspopup"] = coreLibrary.aria.HasPopup.Grid.toLowerCase();
 		}

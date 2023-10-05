@@ -16,10 +16,9 @@ sap.ui.define([
 	"sap/ui/core/TooltipBase",
 	"sap/ui/core/Core",
 	"sap/m/table/columnmenu/Menu",
-	// provides mock data
-	"sap/ui/core/qunit/analytics/TBA_ServiceDocument",
-	// provides mock data
-	"sap/ui/core/qunit/analytics/ATBA_Batch_Contexts"
+	"sap/ui/core/Element",
+	"sap/ui/core/qunit/analytics/TBA_ServiceDocument", // provides mock data
+	"sap/ui/core/qunit/analytics/ATBA_Batch_Contexts" // provides mock data
 ], function(
 	TableQUnitUtils,
 	AnalyticalTable,
@@ -35,7 +34,8 @@ sap.ui.define([
 	library,
 	TooltipBase,
 	Core,
-	ColumnMenu
+	ColumnMenu,
+	Element
 ) {
 	"use strict";
 
@@ -1189,7 +1189,7 @@ sap.ui.define([
 			}, mExpectation, sMessage);
 		},
 		getTable: function() {
-			return Core.byId("table");
+			return Element.registry.get("table");
 		}
 	});
 

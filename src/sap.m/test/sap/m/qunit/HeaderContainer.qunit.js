@@ -17,9 +17,9 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/m/Panel",
 	"sap/m/GenericTile",
-	"sap/ui/core/Configuration"
-], function(jQuery, HeaderContainer, FlexBox, Label, VerticalLayout, Button, Device, Icon, coreLibrary, PseudoEvents, Mobile, mobileLibrary,
-			Log, Text, oCore, Panel, GenericTile, Configuration) {
+	"sap/ui/core/Configuration",
+	"sap/ui/core/Element"
+], function(jQuery, HeaderContainer, FlexBox, Label, VerticalLayout, Button, Device, Icon, coreLibrary, PseudoEvents, Mobile, mobileLibrary, Log, Text, oCore, Panel, GenericTile, Configuration, Element) {
 	"use strict";
 
 	// shortcut for sap.m.BackgroundDesign
@@ -806,7 +806,7 @@ sap.ui.define([
 		this.oHeaderContainer.destroyContent();
 		//Assert
 		assert.strictEqual(this.oHeaderContainer.getContent().length, 0, "Content aggregation has been removed");
-		assert.notOk(oCore.byId(sContentId), "The content control has been destroyed");
+		assert.notOk(Element.registry.get(sContentId), "The content control has been destroyed");
 	});
 
 	QUnit.test("HeaderContainer removeContent is properly overwritten", function (assert) {
@@ -1111,7 +1111,7 @@ sap.ui.define([
 			assert.equal($items.eq(i).attr("aria-setsize"), $items.length, "aria-setsize is " + $items.length );
 		}
 
-		oCore.byId("testID0").destroy();
+		Element.registry.get("testID0").destroy();
 
 		this.oHeaderContainer.invalidate();
 
@@ -1125,7 +1125,7 @@ sap.ui.define([
 			assert.equal($items.eq(i).attr("aria-setsize"), $items.length, "aria-setsize is " + $items.length );
 		}
 
-		oCore.byId("testID1").destroy();
+		Element.registry.get("testID1").destroy();
 
 		this.oHeaderContainer.invalidate();
 
@@ -1139,7 +1139,7 @@ sap.ui.define([
 			assert.equal($items.eq(i).attr("aria-setsize"), $items.length, "aria-setsize is " + $items.length );
 		}
 
-		oCore.byId("testID2").destroy();
+		Element.registry.get("testID2").destroy();
 
 		this.oHeaderContainer.invalidate();
 
@@ -1172,7 +1172,7 @@ sap.ui.define([
 			assert.equal($items.eq(i).attr("aria-setsize"), $items.length, "aria-setsize is " + $items.length );
 		}
 
-		oCore.byId("testID4").destroy();
+		Element.registry.get("testID4").destroy();
 
 		this.oHeaderContainer.invalidate();
 
@@ -1186,7 +1186,7 @@ sap.ui.define([
 			assert.equal($items.eq(i).attr("aria-setsize"), $items.length, "aria-setsize is " + $items.length );
 		}
 
-		oCore.byId("testID3").destroy();
+		Element.registry.get("testID3").destroy();
 
 		this.oHeaderContainer.invalidate();
 
@@ -1200,7 +1200,7 @@ sap.ui.define([
 			assert.equal($items.eq(i).attr("aria-setsize"), $items.length, "aria-setsize is " + $items.length );
 		}
 
-		oCore.byId("testID2").destroy();
+		Element.registry.get("testID2").destroy();
 
 		this.oHeaderContainer.invalidate();
 
@@ -1233,7 +1233,7 @@ sap.ui.define([
 			assert.equal($items.eq(i).attr("aria-setsize"), $items.length, "aria-setsize is " + $items.length );
 		}
 
-		oCore.byId("testID0").destroy();
+		Element.registry.get("testID0").destroy();
 
 		this.oHeaderContainer.invalidate();
 
@@ -1247,7 +1247,7 @@ sap.ui.define([
 			assert.equal($items.eq(i).attr("aria-setsize"), $items.length, "aria-setsize is " + $items.length );
 		}
 
-		oCore.byId("testID2").destroy();
+		Element.registry.get("testID2").destroy();
 
 		this.oHeaderContainer.invalidate();
 
@@ -1261,7 +1261,7 @@ sap.ui.define([
 			assert.equal($items.eq(i).attr("aria-setsize"), $items.length, "aria-setsize is " + $items.length );
 		}
 
-		oCore.byId("testID4").destroy();
+		Element.registry.get("testID4").destroy();
 
 		this.oHeaderContainer.invalidate();
 

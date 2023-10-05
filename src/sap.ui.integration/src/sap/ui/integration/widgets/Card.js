@@ -37,8 +37,10 @@ sap.ui.define([
 	"sap/m/IllustratedMessageType",
 	"sap/ui/integration/util/Utils",
 	"sap/ui/integration/util/ParameterMap",
-	"sap/ui/integration/util/Measurement"
-], function (
+	"sap/ui/integration/util/Measurement",
+	"sap/ui/core/Lib",
+	"sap/ui/core/Element"
+], function(
 	CardRenderer,
 	Footer,
 	ActionsToolbar,
@@ -74,7 +76,9 @@ sap.ui.define([
 	IllustratedMessageType,
 	Utils,
 	ParameterMap,
-	Measurement
+	Measurement,
+	Lib,
+	Element
 ) {
 	"use strict";
 
@@ -500,7 +504,7 @@ sap.ui.define([
 
 		this.setAggregation("_loadingProvider", new LoadingProvider());
 
-		this._oIntegrationRb = Core.getLibraryResourceBundle("sap.ui.integration");
+		this._oIntegrationRb = Lib.getResourceBundleFor("sap.ui.integration");
 		this._iModelSizeLimit = DEFAULT_MODEL_SIZE_LIMIT;
 		this._initModels();
 		this._oContentFactory = new ContentFactory(this);
@@ -2017,7 +2021,7 @@ sap.ui.define([
 			return null;
 		}
 
-		return Core.byId(sHost);
+		return Element.registry.get(sHost);
 	};
 
 	/**
@@ -2828,7 +2832,7 @@ sap.ui.define([
 	 * @returns {sap.ui.integration.widgets.Card} The card which opened the current one.
 	 */
 	Card.prototype.getOpener = function () {
-		var oOpener = Core.byId(this.getAssociation("openerReference"));
+		var oOpener = Element.registry.get(this.getAssociation("openerReference"));
 
 		if (!oOpener) {
 			return null;

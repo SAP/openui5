@@ -11,8 +11,9 @@ sap.ui.define([
 	"sap/m/library",
 	"sap/base/util/merge",
 	"sap/ui/model/Filter",
-	"sap/ui/model/json/JSONModel"
-], function(OverflowToolbarButton, ButtonRenderer, ManagedObjectObserver, CoreLibrary, mobileLibrary, IllustratedMessage, MLib, merge, Filter, JSONModel) {
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/core/Lib"
+], function(OverflowToolbarButton, ButtonRenderer, ManagedObjectObserver, CoreLibrary, mobileLibrary, IllustratedMessage, MLib, merge, Filter, JSONModel, Lib) {
 	"use strict";
 
 	// shortcut for sap.m.PlacementType
@@ -134,7 +135,7 @@ sap.ui.define([
 						InvisibleText = InvisibleTextLoaded;
 						Device = DeviceLoaded;
 						if (!oRb) {
-							sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc", true).then(function(oRbLoaded) {
+							Lib.getResourceBundleFor("sap.ui.mdc")/* LFUI5: For asynchronous loading, load the lib asynchronously and on promise resolution get the resource bundle. */.then(function(oRbLoaded) {
 								oRb = oRbLoaded;
 								resolve(true);
 							});

@@ -4,8 +4,9 @@ sap.ui.define([
 	"sap/m/TimePickerInternals",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/core/Core",
-	"sap/ui/core/date/UI5Date"
-], function(TimePickerInputs, TimePickerInternals, KeyCodes, oCore, UI5Date) {
+	"sap/ui/core/date/UI5Date",
+	"sap/ui/core/Element"
+], function(TimePickerInputs, TimePickerInternals, KeyCodes, oCore, UI5Date, Element) {
 	"use strict";
 
 	QUnit.module("API", {
@@ -925,11 +926,11 @@ sap.ui.define([
 			sSecondsLabelled = oSecondsInput.getAriaLabelledBy()[0];
 
 		//assert
-		assert.equal(oCore.byId(sHoursLabelled).getText(), oRB.getText("TIMEPICKER_INPUTS_ENTER_HOURS"), "Hours input is aria-labelledby properly");
+		assert.equal(Element.registry.get(sHoursLabelled).getText(), oRB.getText("TIMEPICKER_INPUTS_ENTER_HOURS"), "Hours input is aria-labelledby properly");
 
-		assert.equal(oCore.byId(sMinutesLabelled).getText(), oRB.getText("TIMEPICKER_INPUTS_ENTER_MINUTES"), "Minutes input is aria-labelledby properly");
+		assert.equal(Element.registry.get(sMinutesLabelled).getText(), oRB.getText("TIMEPICKER_INPUTS_ENTER_MINUTES"), "Minutes input is aria-labelledby properly");
 
-		assert.equal(oCore.byId(sSecondsLabelled).getText(), oRB.getText("TIMEPICKER_INPUTS_ENTER_SECONDS"), "Seconds input is aria-labelledby properly");
+		assert.equal(Element.registry.get(sSecondsLabelled).getText(), oRB.getText("TIMEPICKER_INPUTS_ENTER_SECONDS"), "Seconds input is aria-labelledby properly");
 
 		assert.equal(this.oTPI._getFormatButton().getDomRef().getAttribute("title"), oRB.getText("TIMEPICKER_AMPM_BUTTON_TOOLTIP"), "AM/PM segmented button have proper tooltip");
 

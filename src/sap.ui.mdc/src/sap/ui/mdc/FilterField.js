@@ -6,14 +6,16 @@ sap.ui.define([
 	'sap/ui/mdc/field/FieldBaseRenderer',
 	'sap/ui/mdc/enums/FieldDisplay',
 	'sap/base/util/merge',
-	'sap/base/util/deepEqual'
+	'sap/base/util/deepEqual',
+	"sap/ui/core/Element"
 ], function(
-		FieldBase,
-		FieldBaseRenderer,
-		FieldDisplay,
-		merge,
-		deepEqual
-	) {
+	FieldBase,
+	FieldBaseRenderer,
+	FieldDisplay,
+	merge,
+	deepEqual,
+	Element
+) {
 	"use strict";
 
 	/**
@@ -400,7 +402,7 @@ sap.ui.define([
 			// MaxConditions should also be set on applySettings
 
 			const sId = this._getValueHelp();
-			const oValueHelp = sap.ui.getCore().byId(sId);
+			const oValueHelp = Element.registry.get(sId);
 			const oBindingInfo = this.getBindingInfo("conditions");
 			const oBinding = this.getBinding("conditions");
 			if (this.getDisplay() !== FieldDisplay.Value && sId && (!oValueHelp || (oBindingInfo && !oBinding))) {

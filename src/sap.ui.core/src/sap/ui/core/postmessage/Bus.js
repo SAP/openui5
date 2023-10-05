@@ -5,12 +5,14 @@
 sap.ui.define([
 	"sap/ui/core/EventBus",
 	"sap/base/util/isPlainObject",
-	"sap/base/Log"
+	"sap/base/Log",
+	"sap/ui/core/Lib"
 ],
-function (
+function(
 	EventBus,
 	isPlainObject,
-	Log
+	Log,
+	Lib
 ) {
 	"use strict";
 
@@ -210,7 +212,7 @@ function (
 	 * @private
 	 */
 	PostMessageBus.prototype._getText = function (sKey, aParameters) {
-		return sap.ui.getCore().getLibraryResourceBundle(true)
+		return Lib.getResourceBundleFor("sap.ui.core")/* LFUI5: For asynchronous loading, load the lib asynchronously and on promise resolution get the resource bundle. */
 		.then(function(oLibraryResourceBundle) { return oLibraryResourceBundle.getText(sKey, aParameters); });
 	};
 

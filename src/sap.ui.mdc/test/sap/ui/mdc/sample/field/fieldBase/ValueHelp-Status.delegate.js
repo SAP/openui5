@@ -9,7 +9,8 @@ sap.ui.define([
 	"sap/m/ColumnListItem",
 	"sap/m/Column",
 	"sap/m/Label",
-	"sap/m/Text"
+	"sap/m/Text",
+	"sap/ui/core/Element"
 ], function(
 	MDCValueHelpDelegate,
 	library,
@@ -17,7 +18,8 @@ sap.ui.define([
 	ColumnListItem,
 	Column,
 	Label,
-	Text
+	Text,
+	Element
 ) {
 	"use strict";
 
@@ -27,7 +29,7 @@ sap.ui.define([
 
 	ValueHelpDelegate.retrieveContent = function(oValueHelp, oContainer, sContentId) {
 
-		var oContent = sContentId ? sap.ui.getCore().byId(sContentId) : oContainer.getContent()[0];
+		var oContent = sContentId ? Element.registry.get(sContentId) : oContainer.getContent()[0];
 		sContentId = oContent && oContent.getId();
 
 		if (oContent.getTable && !oContent.getTable()) { // not vor Conditions panel

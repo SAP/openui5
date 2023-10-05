@@ -11,7 +11,8 @@ sap.ui.define([
 	"sap/m/OverflowToolbar",
 	"sap/m/Select",
 	"sap/ui/core/Item",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/ui/core/Element"
 ], function(
 	createAndAppendDiv,
 	coreLibrary,
@@ -24,7 +25,8 @@ sap.ui.define([
 	OverflowToolbar,
 	Select,
 	Item,
-	oCore
+	oCore,
+	Element
 ) {
 	"use strict";
 
@@ -95,8 +97,8 @@ sap.ui.define([
 
 	QUnit.module("Basic", {
 		beforeEach : function(assert) {
-			l1 = oCore.byId("l1");
-			l2 = oCore.byId("l2");
+			l1 = Element.registry.get("l1");
+			l2 = Element.registry.get("l2");
 
 			l1.setDesign(oStandardDesign);
 			l1.setTextDirection(oTextDirectionDefault);

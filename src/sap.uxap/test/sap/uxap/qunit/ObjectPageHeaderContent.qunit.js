@@ -1,13 +1,6 @@
 /*global QUnit*/
-sap.ui.define(["sap/ui/thirdparty/jquery",
-                "sap/ui/core/Core",
-                "sap/m/Label",
-                "sap/m/Text",
-                "sap/uxap/ObjectPageDynamicHeaderTitle",
-                "sap/uxap/ObjectPageLayout",
-                "sap/uxap/testblocks/GenericDiv",
-                "sap/ui/core/mvc/XMLView"],
-function (jQuery, Core, Label, Text, ObjectPageDynamicHeaderTitle, ObjectPageLayout, GenericDiv, XMLView) {
+sap.ui.define(["sap/ui/thirdparty/jquery", "sap/ui/core/Core", "sap/m/Label", "sap/m/Text", "sap/uxap/ObjectPageDynamicHeaderTitle", "sap/uxap/ObjectPageLayout", "sap/uxap/testblocks/GenericDiv", "sap/ui/core/mvc/XMLView", "sap/ui/core/Element"],
+function(jQuery, Core, Label, Text, ObjectPageDynamicHeaderTitle, ObjectPageLayout, GenericDiv, XMLView, Element) {
 	"use strict";
 
 	QUnit.module("API", {
@@ -83,7 +76,7 @@ function (jQuery, Core, Label, Text, ObjectPageDynamicHeaderTitle, ObjectPageLay
 
 	QUnit.test("indexOfHeaderContent", function (assert) {
 		var oPage = this.contentView.byId("ObjectPageLayout"),
-			oNestedControl = Core.byId("UxAP-ObjectPageHeaderContent--testLink");
+			oNestedControl = Element.registry.get("UxAP-ObjectPageHeaderContent--testLink");
 		assert.equal(oPage.indexOfHeaderContent(oNestedControl), 0, "the Link inside the ContentHeader aggregation is on 0 position");
 		assert.strictEqual(oNestedControl.getParent().getId(), oPage.getId(), "control parent is correct");
 	});
@@ -96,7 +89,7 @@ function (jQuery, Core, Label, Text, ObjectPageDynamicHeaderTitle, ObjectPageLay
 		Core.applyChanges();
 
 		assert.equal(oPage.getHeaderContent().length, 5, "contents length is 5 after inserting element in the HeaderContent aggregation");
-		assert.equal(oPage.indexOfHeaderContent(Core.byId("label1")), 1, "the label1 inside the ContentHeader aggregation is insert on 1 position");
+		assert.equal(oPage.indexOfHeaderContent(Element.registry.get("label1")), 1, "the label1 inside the ContentHeader aggregation is insert on 1 position");
 		assert.strictEqual(oControl.getParent().getId(), oPage.getId(), "control parent is correct");
 	});
 
@@ -108,7 +101,7 @@ function (jQuery, Core, Label, Text, ObjectPageDynamicHeaderTitle, ObjectPageLay
 		Core.applyChanges();
 
 		assert.equal(this.contentView.byId("ObjectPageLayout").getHeaderContent().length, 5, "contents length is 5 after inserting element in the HeaderContent aggregation");
-		assert.equal(this.contentView.byId("ObjectPageLayout").indexOfHeaderContent(Core.byId("label2")), 4, "the label2 inside the ContentHeader aggregation is added on the last position");
+		assert.equal(this.contentView.byId("ObjectPageLayout").indexOfHeaderContent(Element.registry.get("label2")), 4, "the label2 inside the ContentHeader aggregation is added on the last position");
 		assert.strictEqual(oControl.getParent().getId(), oPage.getId(), "control parent is correct");
 	});
 

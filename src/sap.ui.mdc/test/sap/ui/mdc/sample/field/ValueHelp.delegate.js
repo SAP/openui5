@@ -8,14 +8,16 @@ sap.ui.define([
 	"sap/ui/mdc/enums/ConditionValidated",
 	"sap/ui/mdc/enums/OperatorName",
 	"sap/base/util/merge",
-	"sap/base/util/deepEqual"
+	"sap/base/util/deepEqual",
+	"sap/ui/core/Element"
 ], function(
 	MDCValueHelpDelegate,
 	Condition,
 	ConditionValidated,
 	OperatorName,
 	merge,
-	deepEqual
+	deepEqual,
+	Element
 ) {
 	"use strict";
 
@@ -23,7 +25,7 @@ sap.ui.define([
 
 	ValueHelpDelegate.retrieveContent = function(oValueHelp, oContainer, sContentId) {
 		var oPayload = oValueHelp.getPayload();
-		var oContent = sContentId ? sap.ui.getCore().byId(sContentId) : oContainer.getContent()[0];
+		var oContent = sContentId ? Element.registry.get(sContentId) : oContainer.getContent()[0];
 		sContentId = oContent && oContent.getId();
 
 		if (oContent.getTable && !oContent.getTable()) {
@@ -40,7 +42,7 @@ sap.ui.define([
 					if (iIndex >= 0) {
 						var sView = sContentId.substr(0, iIndex);
 						var sTableId = sView + (oPayload && oPayload[sContentId.substr(iIndex)]);
-						var oTable = sap.ui.getCore().byId(sTableId);
+						var oTable = Element.registry.get(sTableId);
 						if (oTable) {
 							oContent.setTable(oTable);
 							fResolve();

@@ -14,7 +14,8 @@ sap.ui.define([
 	'sap/base/util/merge',
 	'sap/ui/mdc/p13n/StateUtil',
 	'sap/ui/mdc/condition/FilterOperatorUtil',
-	'sap/base/Log'
+	'sap/base/Log',
+	"sap/ui/core/Lib"
 ], function(
 	loadModules,
 	ListContent,
@@ -27,7 +28,8 @@ sap.ui.define([
 	merge,
 	StateUtil,
 	FilterOperatorUtil,
-	Log
+	Log,
+	Lib
 ) {
 	"use strict";
 
@@ -122,7 +124,7 @@ sap.ui.define([
 
 	FilterableListContent.prototype.init = function() {
 		ListContent.prototype.init.apply(this, arguments);
-		this._oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
+		this._oResourceBundle = Lib.getResourceBundleFor("sap.ui.mdc");
 		this._oObserver.observe(this, {
 			properties: ["filterFields"],
 			aggregations: ["_defaultFilterBar", "filterBar"]

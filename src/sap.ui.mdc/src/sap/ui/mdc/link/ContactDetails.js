@@ -11,8 +11,9 @@ sap.ui.define([
 	"sap/m/Link",
 	"sap/m/Label",
 	"sap/m/Image",
-	"sap/ui/layout/form/SimpleForm"
-], function(Control, ContactDetailsRenderer, Title, VBox, Text, Link, Label, Image, SimpleForm) {
+	"sap/ui/layout/form/SimpleForm",
+	"sap/ui/core/Lib"
+], function(Control, ContactDetailsRenderer, Title, VBox, Text, Link, Label, Image, SimpleForm, Lib) {
 	"use strict";
 
 	/**
@@ -49,7 +50,7 @@ sap.ui.define([
 		renderer: ContactDetailsRenderer
 	});
 
-	const oRB = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
+	const oRB = Lib.getResourceBundleFor("sap.ui.mdc");
 	ContactDetails.prototype.applySettings = function() {
 		Control.prototype.applySettings.apply(this, arguments);
 

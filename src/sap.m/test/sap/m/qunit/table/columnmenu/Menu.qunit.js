@@ -17,7 +17,8 @@ sap.ui.define([
 	"sap/ui/core/StaticArea",
 	"sap/ui/layout/GridData",
 	"sap/ui/Device",
-	"sap/ui/dom/containsOrEquals"
+	"sap/ui/dom/containsOrEquals",
+	"sap/ui/core/Element"
 ], function(
 	QUnitUtils,
 	createAndAppendDiv,
@@ -36,7 +37,8 @@ sap.ui.define([
 	StaticArea,
 	GridData,
 	Device,
-	containsOrEquals
+	containsOrEquals,
+	Element
 ) {
 	"use strict";
 	// Test setup
@@ -756,28 +758,28 @@ sap.ui.define([
 
 		// First Quick Action, expected S(6), M(4)
 		assert.equal(aFormElements[0].getLabel().getText(), sText, "First Quick Action has correct label");
-		oControl = sap.ui.getCore().byId(aFormElements[0].getFields()[0].getControl());
+		oControl = Element.registry.get(aFormElements[0].getFields()[0].getControl());
 		assert.equal(aFormElements[0].getFields()[0].getLayoutData().getSpan(), "L4 M4 S6", "Span is set correctly to 'L4 M4 S6'");
 		assert.ok(oControl.isA("sap.m.Button"), "Control is a button");
 		assert.equal(oControl.getText(), sText + "1", "Correct button with correct button text");
-		oControl = sap.ui.getCore().byId(aFormElements[0].getFields()[1].getControl());
+		oControl = Element.registry.get(aFormElements[0].getFields()[1].getControl());
 		assert.equal(aFormElements[0].getFields()[1].getLayoutData().getSpan(), "L4 M4 S6", "Span is set correctly to 'L4 M4 S6'");
 		assert.ok(oControl.isA("sap.m.Button"), "Control is a button");
 		assert.equal(oControl.getText(), sText + "2", "Correct button with correct button text");
 
 		// Second Quick Action, expected S(12), M(2)
 		assert.equal(aFormElements[1].getLabel().getText(), sText, "Second Quick Action has correct label");
-		oControl = sap.ui.getCore().byId(aFormElements[1].getFields()[0].getControl());
+		oControl = Element.registry.get(aFormElements[1].getFields()[0].getControl());
 		assert.equal(aFormElements[1].getFields()[0].getLayoutData().getSpan(), "L4 M4 S6", "Span is set correctly to 'L4 M4 S6'");
 		assert.ok(!aFormElements[1].getFields()[0].getLayoutData().getIndent(), "No Indent is set");
 		assert.ok(oControl.isA("sap.m.Button"), "Control is a button");
 		assert.equal(oControl.getText(), sText + "1", "Correct button with correct button text");
-		oControl = sap.ui.getCore().byId(aFormElements[1].getFields()[1].getControl());
+		oControl = Element.registry.get(aFormElements[1].getFields()[1].getControl());
 		assert.equal(aFormElements[1].getFields()[1].getLayoutData().getSpan(), "L4 M4 S6", "Span is set correctly to 'L4 M4 S6'");
 		assert.ok(!aFormElements[1].getFields()[1].getLayoutData().getIndent(), "No Indent is set");
 		assert.ok(oControl.isA("sap.m.Button"), "Control is a button");
 		assert.equal(oControl.getText(), sText + "2", "Correct button with correct button text");
-		oControl = sap.ui.getCore().byId(aFormElements[1].getFields()[2].getControl());
+		oControl = Element.registry.get(aFormElements[1].getFields()[2].getControl());
 		assert.equal(aFormElements[1].getFields()[2].getLayoutData().getSpan(), "L4 M4 S6", "Span is set correctly to 'L4 M4 S6'");
 		assert.equal(aFormElements[1].getFields()[2].getLayoutData().getIndent(), "L4 M4 S0", "Indent is set correctly to 'L4 M4 S0'");
 		assert.ok(oControl.isA("sap.m.Button"), "Control is a button");
@@ -785,7 +787,7 @@ sap.ui.define([
 
 		// Third QuickAction, expected custom S(2), M(2)
 		assert.equal(aFormElements[2].getLabel().getText(), sText, "Third Quick Action has correct label");
-		oControl = sap.ui.getCore().byId(aFormElements[2].getFields()[0].getControl());
+		oControl = Element.registry.get(aFormElements[2].getFields()[0].getControl());
 		assert.equal(aFormElements[2].getFields()[0].getLayoutData().getSpanS(), 2, "Span S is set correctly to 2");
 		assert.equal(aFormElements[2].getFields()[0].getLayoutData().getSpanM(), 2, "Span M is set correctly to 2");
 		assert.ok(oControl.isA("sap.m.Button"), "Control is a button");
@@ -793,7 +795,7 @@ sap.ui.define([
 
 		// Fourth QuickAction, expected S(12), M(8)
 		assert.equal(aFormElements[3].getLabel().getText(), sText, "Fourth Quick Action has correct label");
-		oControl = sap.ui.getCore().byId(aFormElements[3].getFields()[0].getControl());
+		oControl = Element.registry.get(aFormElements[3].getFields()[0].getControl());
 		assert.equal(aFormElements[3].getFields()[0].getLayoutData().getSpan(), "L8 M8 S12", "Span is set correctly to 'L8 M8 S12'");
 		assert.ok(oControl.isA("sap.m.Button"), "Control is a button");
 		assert.equal(oControl.getText(), sText, "Correct button with correct button text");
@@ -810,7 +812,7 @@ sap.ui.define([
 
 		// Check if added quick action is rendered
 		assert.equal(aFormElements[4].getLabel().getText(), "Added Action", "Added Quick Action has correct label");
-		oControl = sap.ui.getCore().byId(aFormElements[4].getFields()[0].getControl());
+		oControl = Element.registry.get(aFormElements[4].getFields()[0].getControl());
 		assert.equal(aFormElements[4].getFields()[0].getLayoutData().getSpan(), "L8 M8 S12", "Span is set correctly to 'L8 M8 S12'");
 		assert.ok(oControl.isA("sap.m.Button"), "Control is a button");
 		assert.equal(oControl.getText(), "Button Added", "Correct button with correct button text");

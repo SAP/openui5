@@ -5,18 +5,21 @@ sap.ui.define([
 	"sap/m/Label",
 	"sap/m/Input",
 	"sap/m/Text",
-	"sap/m/Button", // to make FormHelper could load all modules
+	// to make FormHelper could load all modules
+	"sap/m/Button",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/core/Core"
-	],
+	"sap/ui/core/Core",
+	"sap/ui/core/Element"
+],
 	function(
-			FormElement,
-			Label,
-			Input,
-			Text,
-			Button,
-			JSONModel,
-			oCore
+		FormElement,
+		Label,
+		Input,
+		Text,
+		Button,
+		JSONModel,
+		oCore,
+		Element
 	) {
 	"use strict";
 
@@ -128,7 +131,7 @@ sap.ui.define([
 		oFormElement.setLabel(oLabel2);
 		oLabel = oFormElement.getLabelControl();
 
-		assert.notOk(oCore.byId(oLabelId), "internal Label is destroyed");
+		assert.notOk(Element.registry.get(oLabelId), "internal Label is destroyed");
 		assert.equal(oLabel, oLabel2, "Label control is used");
 	});
 
@@ -138,7 +141,7 @@ sap.ui.define([
 		oFormElement.setLabel("Test2");
 		var oLabel2 = oFormElement.getLabelControl();
 
-		assert.ok(oCore.byId("L1"), "old Label still exist");
+		assert.ok(Element.registry.get("L1"), "old Label still exist");
 		assert.equal(oLabel.getText(), "Test", "old Label has still old text");
 		assert.equal(oLabel2.getText(), "Test2", "internal Label created and text set");
 
@@ -151,7 +154,7 @@ sap.ui.define([
 		oFormElement.setLabel(oLabel1);
 		oFormElement.setLabel(oLabel2);
 
-		assert.ok(oCore.byId("L1"), "old Label still exist");
+		assert.ok(Element.registry.get("L1"), "old Label still exist");
 		assert.notOk(oLabel1.getParent(), "old label not longer assigned to element");
 		assert.equal(oLabel1.getText(), "Test", "old Label has still old text");
 		assert.equal(oLabel2.getText(), "Test2", "internal Label created and text set");
@@ -176,7 +179,7 @@ sap.ui.define([
 
 		assert.notOk(oFormElement.getLabel(), "no Label is assigned");
 		assert.notOk(oFormElement.getLabelControl(), "no Label is used");
-		assert.notOk(oCore.byId(oLabelId), "internal Label is destroyed");
+		assert.notOk(Element.registry.get(oLabelId), "internal Label is destroyed");
 	});
 
 	QUnit.test("_setEditable function", function(assert) {
@@ -240,7 +243,7 @@ sap.ui.define([
 
 		oFormElement.destroy();
 		oFormElement = undefined;
-		assert.notOk(oCore.byId(oLabelId), "internal Label is destroyed");
+		assert.notOk(Element.registry.get(oLabelId), "internal Label is destroyed");
 	});
 
 	QUnit.module("Fields", {
@@ -349,8 +352,8 @@ sap.ui.define([
 		assert.equal(aFields.length, 0, "no Fields assigned");
 		assert.deepEqual(aFields, oFormElement.getFieldsForRendering(), "getFieldsForRendering returns same Fields");
 		assert.notOk(oLabel.getLabelForRendering(), "Label points to no field");
-		assert.notOk(oCore.byId("I1"), "Field1 destroyed");
-		assert.notOk(oCore.byId("I2"), "Field2 destroyed");
+		assert.notOk(Element.registry.get("I1"), "Field1 destroyed");
+		assert.notOk(Element.registry.get("I2"), "Field2 destroyed");
 	});
 
 	QUnit.test("updateFields", function(assert) {

@@ -2,8 +2,9 @@
 sap.ui.define([
 	"sap/ui/codeeditor/CodeEditor",
 	"sap/m/Button",
-	"sap/ui/core/Core"
-], function (CodeEditor, Button, Core) {
+	"sap/ui/core/Core",
+	"sap/ui/core/Lib"
+], function(CodeEditor, Button, Core, Lib) {
 	"use strict";
 
 	var DOM_RENDER_LOCATION = "qunit-fixture";
@@ -205,7 +206,7 @@ sap.ui.define([
 
 	QUnit.test("Aria role and roledescription", function(assert) {
 		// Arrange
-		var sExpectedRoleDescriptionText = Core.getLibraryResourceBundle("sap.ui.codeeditor").getText("CODEEDITOR_ROLE_DESCRIPTION");
+		var sExpectedRoleDescriptionText = Lib.getResourceBundleFor("sap.ui.codeeditor").getText("CODEEDITOR_ROLE_DESCRIPTION");
 
 		// Assert
 		assert.strictEqual(this.oCodeEditor.$().attr("role"), "application", "aria-role is 'application'");

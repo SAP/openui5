@@ -13,8 +13,9 @@
 sap.ui.define([
 	'sap/ui/base/Object',
 	'sap/ui/core/Core',
-	'sap/ui/Device'
-], function(BaseObject, Core, Device) {
+	'sap/ui/Device',
+	"sap/ui/core/Lib"
+], function(BaseObject, Core, Device, Lib) {
 	"use strict";
 
 	const Util = BaseObject.extend("sap.ui.mdc.qunit.p13n.test.Util",
@@ -47,11 +48,11 @@ sap.ui.define([
 	};
 
 	Util.getTextFromResourceBundle = function(sLibraryName, sTextKey, iCount) {
-		return Core.getLibraryResourceBundle(sLibraryName).getText(sTextKey, [iCount]);
+		return Lib.getResourceBundleFor(sLibraryName).getText(sTextKey, [iCount]);
 	};
 
 	Util.getTextOfChartType = function(sChartType) {
-		const oBundle = Core.getLibraryResourceBundle("sap.chart.messages");
+		const oBundle = Lib.getResourceBundleFor("sap.chart.messages");
 		return oBundle.getText("info/" + sChartType);
 	};
 

@@ -12,8 +12,9 @@ sap.ui.define([
 	"sap/ui/integration/util/BindingHelper",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/integration/util/BindingResolver",
-	"sap/ui/integration/util/LoadingProvider"
-], function (
+	"sap/ui/integration/util/LoadingProvider",
+	"sap/ui/core/Element"
+], function(
 	Core,
 	extend,
 	FNumericHeader,
@@ -24,7 +25,8 @@ sap.ui.define([
 	BindingHelper,
 	JSONModel,
 	BindingResolver,
-	LoadingProvider
+	LoadingProvider,
+	Element
 ) {
 	"use strict";
 
@@ -342,7 +344,7 @@ sap.ui.define([
 	 * @returns {sap.ui.integration.widgets.Card} The card instance.
 	 */
 	NumericHeader.prototype.getCardInstance = function () {
-		return Core.byId(this.getCard());
+		return Element.registry.get(this.getCard());
 	};
 
 	NumericHeader.prototype._isDataProviderJson = function () {

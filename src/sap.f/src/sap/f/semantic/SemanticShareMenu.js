@@ -15,7 +15,8 @@ sap.ui.define([
 	"sap/m/library",
 	"sap/m/OverflowToolbarButton",
 	"sap/m/OverflowToolbarLayoutData",
-	"./SemanticContainer"
+	"./SemanticContainer",
+	"sap/ui/core/Lib"
 ], function(
 	IconPool,
 	EventProvider,
@@ -26,7 +27,9 @@ sap.ui.define([
 	mobileLibrary,
 	OverflowToolbarButton,
 	OverflowToolbarLayoutData,
-	SemanticContainer) {
+	SemanticContainer,
+	Lib
+) {
 	"use strict";
 
 	// shortcut for sap.m.ButtonType
@@ -300,7 +303,7 @@ sap.ui.define([
 
 		if (!this._oShareMenuBtn) {
 			oContainer = this._getContainer();
-			oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.f");
+			oResourceBundle = Lib.getResourceBundleFor("sap.f");
 			sShortcutKey = "SEMANTIC_CONTROL_ACTION_SHARE_SHORTCUT"; // Ctrl+Shift+S
 
 			if (Device.os.macintosh) {

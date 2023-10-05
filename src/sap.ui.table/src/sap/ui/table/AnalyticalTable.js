@@ -18,7 +18,8 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/base/assert",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/model/controlhelper/TreeBindingProxy"
+	"sap/ui/model/controlhelper/TreeBindingProxy",
+	"sap/ui/core/Element"
 ],
 	function(
 		AnalyticalColumn,
@@ -35,7 +36,8 @@ sap.ui.define([
 		Log,
 		assert,
 		jQuery,
-		TreeBindingProxy
+		TreeBindingProxy,
+		Element
 	) {
 		"use strict";
 
@@ -241,7 +243,7 @@ sap.ui.define([
 				aTableColumns = this.getColumns();
 
 			for (var i = 0; i < this._aGroupedColumns.length; i++) {
-				var oColumn = sap.ui.getCore().byId(this._aGroupedColumns[i]);
+				var oColumn = Element.registry.get(this._aGroupedColumns[i]);
 
 				if (!oColumn) {
 					continue;
@@ -825,7 +827,7 @@ sap.ui.define([
 					// if there is only one dimension left, their columns must remain visible even though they are grouped.
 					// this behavior is controlled by the flag _bLastGroupAndGrouped
 					if (aGroupedDimensions.length == aDimensions.length) {
-						oDimension = oResult.findDimensionByPropertyName(sap.ui.getCore().byId(this._aGroupedColumns[this._aGroupedColumns.length - 1]).getLeadingProperty());
+						oDimension = oResult.findDimensionByPropertyName(Element.registry.get(this._aGroupedColumns[this._aGroupedColumns.length - 1]).getLeadingProperty());
 						var aGroupedDimensionColumns = oDimensionIndex[oDimension.getName()].columns;
 						jQuery.each(aGroupedDimensionColumns, function(i, o) {
 							o._bLastGroupAndGrouped = true;

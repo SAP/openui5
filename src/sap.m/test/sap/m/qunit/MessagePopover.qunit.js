@@ -14,7 +14,8 @@ sap.ui.define([
 	"sap/ui/Device",
 	"sap/ui/core/CustomData",
 	"sap/ui/core/Core",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/core/Element"
 ], function(
 	qutils,
 	MessagePopover,
@@ -30,7 +31,8 @@ sap.ui.define([
 	Device,
 	CustomData,
 	Core,
-	jQuery
+	jQuery,
+	Element
 ) {
 	"use strict";
 
@@ -164,7 +166,7 @@ sap.ui.define([
 
 		Core.applyChanges();
 
-		assert.strictEqual(Core.byId("idHeaderButton").getIcon(), "sap-icon://delete", "The header button is bound correctly");
+		assert.strictEqual(Element.registry.get("idHeaderButton").getIcon(), "sap-icon://delete", "The header button is bound correctly");
 
 		// clean up
 		oMessagePopover.destroy();

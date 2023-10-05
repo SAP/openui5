@@ -28,7 +28,8 @@ sap.ui.define([
 	"sap/ui/rta/plugin/Stretch",
 	"sap/ui/rta/util/ReloadManager",
 	"sap/ui/rta/RuntimeAuthoring",
-	"sap/ui/thirdparty/sinon-4"
+	"sap/ui/thirdparty/sinon-4",
+	"sap/ui/core/Lib"
 ], function(
 	RtaQunitUtils,
 	isEmptyObject,
@@ -57,12 +58,13 @@ sap.ui.define([
 	Stretch,
 	ReloadManager,
 	RuntimeAuthoring,
-	sinon
+	sinon,
+	Lib
 ) {
 	"use strict";
 
 	var sandbox = sinon.createSandbox();
-	var oTextResources = Core.getLibraryResourceBundle("sap.ui.rta");
+	var oTextResources = Lib.getResourceBundleFor("sap.ui.rta");
 	var oComp = RtaQunitUtils.createAndStubAppComponent(sinon, "someId", {
 		"sap.app": {
 			id: "someId"

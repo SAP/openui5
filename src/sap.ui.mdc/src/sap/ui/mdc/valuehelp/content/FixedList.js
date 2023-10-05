@@ -9,7 +9,8 @@ sap.ui.define([
 	"sap/ui/mdc/enums/OperatorName",
 	"sap/ui/mdc/enums/ValueHelpSelectionType",
 	"sap/ui/model/ParseException",
-	"sap/base/util/deepEqual"
+	"sap/base/util/deepEqual",
+	"sap/ui/core/Lib"
 ], function(
 	ListContent,
 	loadModules,
@@ -17,7 +18,8 @@ sap.ui.define([
 	OperatorName,
 	ValueHelpSelectionType,
 	ParseException,
-	deepEqual
+	deepEqual,
+	Lib
 ) {
 	"use strict";
 
@@ -94,7 +96,7 @@ sap.ui.define([
 
 		ListContent.prototype.init.apply(this, arguments);
 
-		this._oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
+		this._oResourceBundle = Lib.getResourceBundleFor("sap.ui.mdc");
 
 		this._iNavigateIndex = -1; // initially nothing is navigated
 

@@ -140,6 +140,11 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 
 			ShortcutHints: {
 				title: "sap.ui.core.ShortcutHintsMixin",
+				loader: {
+					paths: {
+						"my/hints": "test-resources/sap/ui/core/qunit/testdata/shortcutHints"
+					}
+				},
 				module: "test-resources/sap/ui/core/qunit/ShortcutHints.qunit"
 			},
 

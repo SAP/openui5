@@ -11,7 +11,8 @@ sap.ui.define([
 	'sap/ui/core/library',
 	'sap/ui/Device',
 	'sap/m/Button',
-	'./NotificationListGroupRenderer'
+	'./NotificationListGroupRenderer',
+	"sap/ui/core/Lib"
 ],
 function(
 	library,
@@ -22,7 +23,8 @@ function(
 	coreLibrary,
 	Device,
 	Button,
-	NotificationListGroupRenderer
+	NotificationListGroupRenderer,
+	Lib
 ) {
 	'use strict';
 
@@ -32,7 +34,7 @@ function(
 	// shortcut for sap.m.ButtonType
 	var ButtonType = library.ButtonType;
 
-	var RESOURCE_BUNDLE = Core.getLibraryResourceBundle('sap.m'),
+	var RESOURCE_BUNDLE = Lib.getResourceBundleFor('sap.m'),
 		EXPAND_TEXT = RESOURCE_BUNDLE.getText('NOTIFICATION_LIST_GROUP_EXPAND'),
 		COLLAPSE_TEXT = RESOURCE_BUNDLE.getText('NOTIFICATION_LIST_GROUP_COLLAPSE'),
 		READ_TEXT = RESOURCE_BUNDLE.getText('NOTIFICATION_LIST_GROUP_READ'),

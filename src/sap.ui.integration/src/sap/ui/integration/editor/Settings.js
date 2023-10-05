@@ -34,8 +34,10 @@ sap.ui.define([
 	"sap/ui/layout/form/SimpleForm",
 	"sap/ui/integration/util/Utils",
 	"sap/base/util/deepClone",
-	"sap/base/util/deepEqual"
-], function (
+	"sap/base/util/deepEqual",
+	"sap/ui/core/Lib",
+	"sap/ui/core/Element"
+], function(
 	Control,
 	Popover,
 	JSONModel,
@@ -68,7 +70,9 @@ sap.ui.define([
 	SimpleForm,
 	Utils,
 	deepClone,
-	deepEqual
+	deepEqual,
+	Lib,
+	Element
 ) {
 	"use strict";
 
@@ -90,7 +94,7 @@ sap.ui.define([
 		renderer: null // Dialog-like control without renderer
 	});
 
-	var oResourceBundle = Core.getLibraryResourceBundle("sap.ui.integration"),
+	var oResourceBundle = Lib.getResourceBundleFor("sap.ui.integration"),
 		oCurrentModel,
 		bCancel,
 		oCurrentInstance = null,
@@ -137,7 +141,7 @@ sap.ui.define([
 		oControl.addDependent(this);
 		//adjust page admin values table height
 		if (!oCurrentData.allowDynamicValues && oCurrentData.values && oCurrentData.values.item) {
-			Core.byId(sParameterId + "_settings_popover_scroll_container").setHeight("155px");
+			Element.registry.get(sParameterId + "_settings_popover_scroll_container").setHeight("155px");
 		}
 		//force update of all bindings
 		this.getModel("currentSettings").checkUpdate(true, true);
@@ -239,7 +243,7 @@ sap.ui.define([
 							} else {
 								//handle page admin values
 								if (oData.values && oData.values.item) {
-									var oTable = Core.byId(sParameterId + "_settings_popover_pav_table"),
+									var oTable = Element.registry.get(sParameterId + "_settings_popover_pav_table"),
 									selectedContexts = oTable.getSelectedContexts(),
 									selectedKeys = [];
 									if (oCurrentModel.getProperty("/selectedValues") === "Partion") {
@@ -280,7 +284,7 @@ sap.ui.define([
 
 				//handle page admin values selection
 				if (oData.values && oData.values.item) {
-					var oTable = Core.byId(sParameterId + "_settings_popover_pav_table"),
+					var oTable = Element.registry.get(sParameterId + "_settings_popover_pav_table"),
 					paValues = oCurrentModel.getProperty("/_next/pageAdminValues");
 					if (paValues !== undefined && paValues.length > 0) {
 						oTable.removeSelections();
@@ -414,7 +418,7 @@ sap.ui.define([
 
 					//reset table selection
 					if (oData.values && oData.values.item) {
-						var oTable = Core.byId(sParameterId + "_settings_popover_pav_table"),
+						var oTable = Element.registry.get(sParameterId + "_settings_popover_pav_table"),
 							sItems = oCurrentModel.getProperty("/_next/pageAdminValues"),
 							aItems = oTable.getItems();
 						// 	pavItemKey = oCurrentModel.getData().values.item.key;
@@ -437,7 +441,7 @@ sap.ui.define([
 						}
 					}
 				}
-				var oPopover = Core.byId(sParameterId + "_settings_popover");
+				var oPopover = Element.registry.get(sParameterId + "_settings_popover");
 				oPopover.getFooter().getContent()[2].firePress();
 			}
 		}).addStyleClass("resetbutton");
@@ -448,8 +452,8 @@ sap.ui.define([
 		oSettingsPanel.setVisible(true);
 		oDynamicPanel.setVisible(false);
 		oTransformPanel.setVisible(false);
-		Core.byId(sParameterId + "_settings_popover_segmented_btn").setSelectedKey("settings");
-		var oCurrentValue = Core.byId(sParameterId + "_settings_popover_currentvalue");
+		Element.registry.get(sParameterId + "_settings_popover_segmented_btn").setSelectedKey("settings");
+		var oCurrentValue = Element.registry.get(sParameterId + "_settings_popover_currentvalue");
 		oCurrentValue.setVisible(false);
 	}
 
@@ -457,7 +461,7 @@ sap.ui.define([
 		oTransformPanel.setVisible(true);
 		oSettingsPanel.setVisible(false);
 		oDynamicPanel.setVisible(false);
-		var oCurrentValue = Core.byId(sParameterId + "_settings_popover_currentvalue");
+		var oCurrentValue = Element.registry.get(sParameterId + "_settings_popover_currentvalue");
 		oCurrentValue.setVisible(false);
 	}
 
@@ -465,7 +469,7 @@ sap.ui.define([
 		oSettingsPanel.setVisible(false);
 		oTransformPanel.setVisible(false);
 		oDynamicPanel.setVisible(true);
-		Core.byId(sParameterId + "_settings_popover_segmented_btn").setSelectedKey("dynamic");
+		Element.registry.get(sParameterId + "_settings_popover_segmented_btn").setSelectedKey("dynamic");
 		var oFlat = oCurrentInstance.getModel("contextflat"),
 			o = oFlat._getValueObject(oCurrentModel.getProperty("/value"));
 		if (o && o.object.label) {
@@ -477,7 +481,7 @@ sap.ui.define([
 			updateCurrentValue(o);
 		}
 		//visible current value field
-		var oCurrentValue = Core.byId(sParameterId + "_settings_popover_currentvalue");
+		var oCurrentValue = Element.registry.get(sParameterId + "_settings_popover_currentvalue");
 		oCurrentValue.setVisible(true);
 	}
 
@@ -1022,8 +1026,8 @@ sap.ui.define([
 	}
 
 	function onMultiSelectionClick(sParameterId) {
-		var oTable = Core.byId(sParameterId + "_settings_popover_pav_table"),
-		    oResetBtn = Core.byId(sParameterId + "_settings_popover_reset_btn"),
+		var oTable = Element.registry.get(sParameterId + "_settings_popover_pav_table"),
+		    oResetBtn = Element.registry.get(sParameterId + "_settings_popover_reset_btn"),
 		    selectedValues = oCurrentModel.getProperty("/selectedValues");
 		if (selectedValues === "All") {
 			oTable.removeSelections();
@@ -1041,7 +1045,7 @@ sap.ui.define([
 		var oTable = oEvent.getSource(),
 		    selectedItems = oTable.getSelectedItems(),
 		    allItems = oTable.getItems(),
-			oResetBtn = Core.byId(sParameterId + "_settings_popover_reset_btn");
+			oResetBtn = Element.registry.get(sParameterId + "_settings_popover_reset_btn");
 		if (selectedItems.length === allItems.length) {
 			oCurrentModel.setProperty("/selectedValues", "All");
 		} else if (selectedItems.length < allItems.length && selectedItems.length > 0) {

@@ -17,7 +17,9 @@ sap.ui.define([
 	"sap/m/Panel",
 	"sap/m/library",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/ui/core/Lib",
+	"sap/ui/core/Element"
 ], function(
 	qutils,
 	createAndAppendDiv,
@@ -36,7 +38,9 @@ sap.ui.define([
 	Panel,
 	mobileLibrary,
 	KeyCodes,
-	oCore
+	oCore,
+	Lib,
+	Element
 ) {
 	"use strict";
 
@@ -47,7 +51,7 @@ sap.ui.define([
 	var EmptyIndicatorMode = mobileLibrary.EmptyIndicatorMode;
 
 	// shortcut for library resource bundle
-	var oRb = oCore.getLibraryResourceBundle("sap.m");
+	var oRb = Lib.getResourceBundleFor("sap.m");
 
 	createAndAppendDiv("content");
 
@@ -758,7 +762,7 @@ sap.ui.define([
 
 		oTable.removeItem(0);
 
-		var oItemTemplate = oCore.byId('item');
+		var oItemTemplate = Element.registry.get('item');
 		oItemTemplate.getCells()[0].bindProperty('title', {
 			path:'title'
 		});

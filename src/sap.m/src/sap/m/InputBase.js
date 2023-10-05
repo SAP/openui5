@@ -17,7 +17,8 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Lib",
-    // jQuery Plugin "cursorPos"
+	"sap/ui/core/Element",
+	// jQuery Plugin "cursorPos"
 	"sap/ui/dom/jquery/cursorPos",
 	// jQuery Plugin "getSelectedText"
 	"sap/ui/dom/jquery/getSelectedText",
@@ -38,7 +39,8 @@ function(
 	log,
 	KeyCodes,
 	jQuery,
-	Library
+	Library,
+	Element
 ) {
 	"use strict";
 
@@ -1039,14 +1041,14 @@ function(
 	 */
 	InputBase.prototype.getLabels = function() {
 		var aLabelIDs = this.getAriaLabelledBy().map(function(sLabelID) {
-			return sap.ui.getCore().byId(sLabelID);
+			return Element.registry.get(sLabelID);
 		});
 
 		var oLabelEnablement = sap.ui.require("sap/ui/core/LabelEnablement");
 
 		if (oLabelEnablement) {
 			aLabelIDs = aLabelIDs.concat(oLabelEnablement.getReferencingLabels(this).map(function(sLabelID) {
-				return sap.ui.getCore().byId(sLabelID);
+				return Element.registry.get(sLabelID);
 			}));
 		}
 

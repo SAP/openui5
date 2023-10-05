@@ -9,7 +9,9 @@ sap.ui.define([
 	"sap/m/table/columnmenu/Item",
 	"sap/m/Text",
 	"sap/m/plugins/ColumnResizer",
-	"sap/ui/performance/trace/FESRHelper"
+	"sap/ui/performance/trace/FESRHelper",
+	"sap/ui/core/Element",
+	"sap/ui/core/Lib"
 ], function(
 	TableQUnitUtils,
 	Core,
@@ -20,7 +22,9 @@ sap.ui.define([
 	ItemBase,
 	Text,
 	ColumnResizer,
-	FESRHelper
+	FESRHelper,
+	Element,
+	Lib
 ) {
 	"use strict";
 
@@ -111,7 +115,7 @@ sap.ui.define([
 			oTable.initialized().then(function() {
 				return new Promise(function(resolve) {
 					oColumn = oTable._oTable.getColumns()[0];
-					oColumnMenu = Core.byId(oColumn.getHeaderMenu());
+					oColumnMenu = Element.registry.get(oColumn.getHeaderMenu());
 					oColumnMenu.openBy(oColumn);
 
 					oOpenMenuSpy = sinon.spy(oTable._oColumnHeaderMenu, "openBy");
@@ -204,7 +208,7 @@ sap.ui.define([
 		return TableQUnitUtils.openColumnMenu(oTable, 0).then(function() {
 			const oQuickAction = oTable._oQuickActionContainer.getQuickActions()[0];
 			assert.equal(oQuickAction.getLabel(), "", "label is empty");
-			assert.equal(oQuickAction.getContent()[0].getText(), Core.getLibraryResourceBundle("sap.m").getText("table.COLUMNMENU_RESIZE"), "button text is correct");
+			assert.equal(oQuickAction.getContent()[0].getText(), Lib.getResourceBundleFor("sap.m").getText("table.COLUMNMENU_RESIZE"), "button text is correct");
 
 			const oColumnResizer = oTable._oTable.getDependents()[0];
 			oColumnResizer.startResizing = function() {};

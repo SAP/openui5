@@ -10,7 +10,9 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/rta/Utils",
 	"sap/ui/rta/plugin/iframe/AddIFrameDialogController",
-	"sap/ui/fl/util/getContainerUserInfo"
+	"sap/ui/fl/util/getContainerUserInfo",
+	"sap/ui/core/Lib",
+	"sap/ui/core/Element"
 ], function(
 	Log,
 	ManagedObject,
@@ -20,13 +22,15 @@ sap.ui.define([
 	JSONModel,
 	RtaUtils,
 	AddIFrameDialogController,
-	getContainerUserInfo
+	getContainerUserInfo,
+	Lib,
+	Element
 ) {
 	"use strict";
 
 	// shortcut for sap.ui.core.ValueState
 	var {ValueState} = coreLibrary;
-	var _oTextResources = Core.getLibraryResourceBundle("sap.ui.rta");
+	var _oTextResources = Lib.getResourceBundleFor("sap.ui.rta");
 	var _sDocumentationURL = "https://help.sap.com/docs/search?q=Embedding%20Content%20%28Object%20Pages%29";
 	var _sDocumentationHTML = `${_oTextResources.getText("IFRAME_ADDIFRAME_DIALOG_URL_WARNING_TEXT")} (` + `<a href=${_sDocumentationURL}>${_oTextResources.getText("IFRAME_ADDIFRAME_DIALOG_URL_WARNING_LINKTEXT")}</a>` + `)`;
 	var _mText = {
@@ -224,7 +228,7 @@ sap.ui.define([
 	 * @private
 	 */
 	AddIFrameDialog.prototype._disablePanelExpand = function() {
-		var oPanelButton = Core.byId("sapUiRtaAddIFrameDialog_PreviewLinkPanel").getDependents()[0];
+		var oPanelButton = Element.registry.get("sapUiRtaAddIFrameDialog_PreviewLinkPanel").getDependents()[0];
 		if (oPanelButton) {
 			oPanelButton.setEnabled(false);
 		}

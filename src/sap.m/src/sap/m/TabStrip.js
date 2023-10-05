@@ -27,7 +27,9 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	"sap/ui/core/Configuration",
 	"sap/ui/base/Object",
-	"sap/ui/dom/jquery/scrollLeftRTL" // jQuery Plugin "scrollLeftRTL"
+	"sap/ui/core/Lib",
+	// jQuery Plugin "scrollLeftRTL"
+	"sap/ui/dom/jquery/scrollLeftRTL"
 ],
 function(
 	Control,
@@ -53,7 +55,8 @@ function(
 	jQuery,
 	KeyCodes,
 	Configuration,
-	BaseObject
+	BaseObject,
+	Lib
 ) {
 		"use strict";
 
@@ -198,7 +201,7 @@ function(
 		 *
 		 * @type {module:sap/base/i18n/ResourceBundle}
 		 */
-		var oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+		var oRb = Lib.getResourceBundleFor("sap.m");
 
 		/**
 		 * Icon buttons used in <code>TabStrip</code>.
@@ -344,7 +347,7 @@ function(
 		 * @private
 		 */
 		TabStrip.prototype._handleInititalScrollToItem = function() {
-			var oItem = sap.ui.getCore().byId(this.getSelectedItem());
+			var oItem = Element.registry.get(this.getSelectedItem());
 			if (oItem && oItem.$().length > 0) { // check if the item is already in the DOM
 				this._scrollIntoView(oItem, 500);
 			}
@@ -359,7 +362,7 @@ function(
 		 * @override
 		 */
 		TabStrip.prototype.getFocusDomRef = function () {
-			var oTab = sap.ui.getCore().byId(this.getSelectedItem());
+			var oTab = Element.registry.get(this.getSelectedItem());
 
 			if (!oTab) {
 				return null;

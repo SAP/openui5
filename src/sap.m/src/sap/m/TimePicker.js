@@ -30,7 +30,8 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Configuration",
 	"sap/ui/core/date/UI5Date",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/ui/core/Lib"
 ],
 function(
 	InputBase,
@@ -59,7 +60,8 @@ function(
 	jQuery,
 	Configuration,
 	UI5Date,
-	Core
+	Core,
+	Lib
 ) {
 		"use strict";
 
@@ -420,7 +422,7 @@ function(
 
 			this.setDisplayFormat(getDefaultDisplayFormat());
 
-			this._oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+			this._oResourceBundle = Lib.getResourceBundleFor("sap.m");
 
 			// marks if the value is valid or not
 			this._bValid = false;
@@ -1508,7 +1510,7 @@ function(
 				sLabelId,
 				sLabel;
 
-			oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+			oResourceBundle = Lib.getResourceBundleFor("sap.m");
 			sOKButtonText = oResourceBundle.getText("TIMEPICKER_SET");
 			sCancelButtonText = oResourceBundle.getText("TIMEPICKER_CANCEL");
 			sTitle = this._oResourceBundle.getText("TIMEPICKER_SET_TIME");
@@ -1616,7 +1618,7 @@ function(
 				sCancelButtonText,
 				sLocaleId  = this._getLocale().getLanguage();
 
-			oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+			oResourceBundle = Lib.getResourceBundleFor("sap.m");
 			sOKButtonText = oResourceBundle.getText("TIMEPICKER_SET");
 			sCancelButtonText = oResourceBundle.getText("TIMEPICKER_CANCEL");
 
@@ -2302,7 +2304,7 @@ function(
 			var oRenderer = this.getRenderer();
 			var oInfo = DateTimeField.prototype.getAccessibilityInfo.apply(this, arguments);
 			var sValue = this.getValue() || "";
-			var sRequired = this.getRequired() ? Core.getLibraryResourceBundle("sap.m").getText("ELEMENT_REQUIRED") : '';
+			var sRequired = this.getRequired() ? Lib.getResourceBundleFor("sap.m").getText("ELEMENT_REQUIRED") : '';
 
 			if (this._bValid) {
 				var oDate = this.getDateValue();
@@ -2312,7 +2314,7 @@ function(
 			}
 
 			oInfo.role = oRenderer.getAriaRole(this);
-			oInfo.type = Core.getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_TIMEINPUT");
+			oInfo.type = Lib.getResourceBundleFor("sap.m").getText("ACC_CTR_TYPE_TIMEINPUT");
 			oInfo.description = [sValue || this._getPlaceholder(), oRenderer.getDescribedByAnnouncement(this), sRequired].join(" ").trim();
 			oInfo.autocomplete = "none";
 			oInfo.haspopup = true;

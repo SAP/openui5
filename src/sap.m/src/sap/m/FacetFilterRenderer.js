@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(["sap/m/library", "sap/ui/Device", "sap/ui/core/InvisibleText"],
-	function(library, Device, InvisibleText) {
+sap.ui.define(["sap/m/library", "sap/ui/Device", "sap/ui/core/InvisibleText", "sap/ui/core/Element", "sap/ui/core/Lib"],
+	function(library, Device, InvisibleText, Element, Lib) {
 	"use strict";
 
 
@@ -219,7 +219,7 @@ sap.ui.define(["sap/m/library", "sap/ui/Device", "sap/ui/core/InvisibleText"],
 			}
 
 			// Destroy the item itself
-			oItem = sap.ui.getCore().byId(sItemId);
+			oItem = Element.registry.get(sItemId);
 			oItem && oItem.destroy();
 		});
 
@@ -235,7 +235,7 @@ sap.ui.define(["sap/m/library", "sap/ui/Device", "sap/ui/core/InvisibleText"],
 	 * @returns {sap.ui.core.InvisibleText} oStaticLabel The newly created label
 	 */
 	FacetFilterRenderer.createStaticPositioningLabel = function (oControl, iPosInSet, iSetSize) {
-		var oRB = sap.ui.getCore().getLibraryResourceBundle("sap.m"),
+		var oRB = Lib.getResourceBundleFor("sap.m"),
 			sFacetFilterText = oRB.getText("FACETFILTER_ARIA_FACET_FILTER"),
 			sPositioningText = oRB.getText("FACETFILTERLIST_ARIA_POSITION", [iPosInSet, iSetSize]),
 			oStaticLabel = new InvisibleText({ text: sFacetFilterText + " " + sPositioningText }).toStatic();

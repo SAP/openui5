@@ -1554,7 +1554,7 @@ function(
 			oControl;
 
 		if (oFocusDomRef && oFocusDomRef.id) {
-			oControl = Core.byId(oFocusDomRef.id);
+			oControl = Element.registry.get(oFocusDomRef.id);
 		}
 
 		if (oControl) {

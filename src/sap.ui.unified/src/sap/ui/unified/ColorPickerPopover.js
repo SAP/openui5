@@ -11,8 +11,9 @@ sap.ui.define([
 	'./ColorPicker',
 	'./library',
 	'sap/m/library',
-	"sap/ui/thirdparty/jquery"
-], function (
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/core/Lib"
+], function(
 	Control,
 	Device,
 	Button,
@@ -20,7 +21,8 @@ sap.ui.define([
 	ColorPicker,
 	library,
 	mLibrary,
-	jQuery
+	jQuery,
+	Lib
 ) {
 		"use strict";
 
@@ -202,7 +204,7 @@ sap.ui.define([
 		});
 
 		// get resource translation bundle;
-		var oLibraryResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified");
+		var oLibraryResourceBundle = Lib.getResourceBundleFor("sap.ui.unified");
 
 		/**
 		 * Keeps reference to all API properties and/or methods that are about to be forwarded to either a

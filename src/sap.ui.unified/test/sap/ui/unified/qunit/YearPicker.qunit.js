@@ -7,8 +7,9 @@ sap.ui.define([
 	"sap/ui/Device",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Core",
-	"sap/ui/core/date/UI5Date"
-], function(YearPicker, DateRange, CalendarDate, Device, jQuery, oCore, UI5Date) {
+	"sap/ui/core/date/UI5Date",
+	"sap/ui/core/Lib"
+], function(YearPicker, DateRange, CalendarDate, Device, jQuery, oCore, UI5Date, Lib) {
 	"use strict";
 
 	QUnit.module("API ", {
@@ -299,7 +300,7 @@ sap.ui.define([
 
 	QUnit.test("Control description", function (assert) {
 		// Arrange
-		var sControlDescription = oCore.getLibraryResourceBundle("sap.ui.unified").getText("YEAR_PICKER");
+		var sControlDescription = Lib.getResourceBundleFor("sap.ui.unified").getText("YEAR_PICKER");
 
 		// Assert
 		assert.strictEqual(this.oYP.$().attr("aria-roledescription"), sControlDescription , "Control description is added in aria-roledescription");

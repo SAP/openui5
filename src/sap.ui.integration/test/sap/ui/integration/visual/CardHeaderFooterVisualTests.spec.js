@@ -3,7 +3,7 @@
 
 var utils = require("./cardVisualTestUtils");
 
-describe("sap.ui.integration.CardHeadersVisualTests", function () {
+describe("sap.ui.integration.CardHeaderFooterVisualTests", function () {
 	"use strict";
 	browser.testrunner.currentSuite.meta.controlName = "sap.ui.integration.widgets.Card";
 
@@ -39,5 +39,64 @@ describe("sap.ui.integration.CardHeadersVisualTests", function () {
 				}
 			}, "NumericHeader_" + sId);
 		});
+
+		utils.navigateBack();
+	});
+
+	it("No Header", function () {
+		utils.navigateTo("No Header / No Content");
+
+		var aCards = [
+			{ id: "i1" },
+			{ id: "f3" },
+			{ id: "i4", focus: true }
+		];
+
+		aCards.forEach(function (oCard) {
+			var oElement = {
+				control: {
+					viewNamespace: "sap.f.cardsdemo.view.",
+					viewName: "NoHeaderNoContent",
+					interaction: "root",
+					id: oCard.id
+				}
+			};
+
+			function focusElement(oConfig) {
+				var oElement = utils.getElement(oConfig);
+				browser.executeScript("arguments[0].focus()", oElement.getWebElement());
+			}
+
+			if (oCard.focus) {
+				focusElement(oElement);
+			}
+
+			utils.takePictureOfElement(oElement, "1_NoHeader_" + oCard.id);
+		});
+
+		utils.navigateBack();
+	});
+
+	it("Hidden Footer", function () {
+		utils.navigateTo("Footer (experimental)");
+
+		var aCards = [
+			{ id: "card1" },
+			{ id: "card2" }
+		];
+
+		aCards.forEach(function (oCard) {
+			var oElement = {
+				control: {
+					viewNamespace: "sap.f.cardsdemo.view.",
+					viewName: "Footer",
+					interaction: "root",
+					id: oCard.id
+				}
+			};
+
+			utils.takePictureOfElement(oElement, "10_HiddenFooter_" + oCard.id);
+		});
+		utils.navigateBack();
 	});
 });

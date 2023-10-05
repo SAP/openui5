@@ -177,7 +177,11 @@ sap.ui.define([
 				true, `${sTitle}: $byPredicate[${sPredicate}] in aElements`);
 		}
 
-		for (let i = 0, n = oListBinding.getAggregation().expandTo || 1; i <= n; i += 1) {
+		let iExpandTo = oListBinding.getAggregation().expandTo || 1;
+		if (iExpandTo === Number.MAX_SAFE_INTEGER) {
+			iExpandTo = 99; // avoid "Invalid array length" :-)
+		}
+		for (let i = 0; i <= iExpandTo; i += 1) {
 			// Note: level 0 or 1 is used for initial placeholders of 1st level cache!
 			aParentByLevel[i] = oListBinding.oCache.oFirstLevel;
 		}
@@ -24802,7 +24806,7 @@ sap.ui.define([
 	// expanded to reveal the kept-alive node.
 	// JIRA: CPOUI5ODATAV4-2030
 	//
-	// The whole tree is expanded to two levels (JIRA: CPOUI5ODATAV4-2095).
+	// The whole tree is expanded to -two-all levels (JIRA: CPOUI5ODATAV4-2095/-2151).
 	// Selection keeps a context implicitly alive (JIRA: CPOUI5ODATAV4-2053).
 	// Ensure that unchanged $$aggregation is ignored (BCP: 2370045709).
 	//
@@ -24816,7 +24820,7 @@ sap.ui.define([
 		var sExpectedDownloadUrl
 				= "/special/cases/Artists?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels("
 				+ "HierarchyNodes=$root/Artists,HierarchyQualifier='OrgChart'"
-				+ ",NodeProperty='_/NodeID',Levels=999)"
+				+ ",NodeProperty='_/NodeID')"
 				+ "&$select=ArtistID,IsActiveEntity,_/DistanceFromRoot,_/DrillState,_/NodeID"
 				+ "&$expand=BestFriend($select=ArtistID,IsActiveEntity,Name)",
 			oHeaderContext,
@@ -25293,7 +25297,7 @@ sap.ui.define([
 					batchNo : 9,
 					url : "Artists?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels("
 						+ "HierarchyNodes=$root/Artists,HierarchyQualifier='OrgChart'"
-						+ ",NodeProperty='_/NodeID',Levels=2)&$select=ArtistID,IsActiveEntity"
+						+ ",NodeProperty='_/NodeID')&$select=ArtistID,IsActiveEntity"
 						+ ",_/DescendantCount,_/DistanceFromRoot,_/DrillState,_/NodeID"
 						+ "&$expand=BestFriend($select=ArtistID,IsActiveEntity,Name)"
 						+ "&$count=true&$skip=0&$top=3"
@@ -25331,7 +25335,7 @@ sap.ui.define([
 			// code under test
 			// Note: overall count must not change here, just the "expansion state"
 			oListBinding.setAggregation({
-				expandTo : 2,
+				expandTo : Number.MAX_SAFE_INTEGER,
 				hierarchyQualifier : "OrgChart"
 			});
 
@@ -25366,16 +25370,17 @@ sap.ui.define([
 			// no additional request for same aggregation data
 			// code under test (BCP: 2370045709)
 			oListBinding.setAggregation({
-				expandTo : 2,
+				expandTo : Number.MAX_SAFE_INTEGER,
 				hierarchyQualifier : "OrgChart"
 			});
 			// code under test (BCP: 2370045709)
 			oListBinding.changeParameters({
 				$$aggregation : {
-					expandTo : 2,
+					expandTo : Number.MAX_SAFE_INTEGER,
 					hierarchyQualifier : "OrgChart"
 				}
 			});
+			assert.strictEqual(oListBinding.getAggregation().expandTo, Number.MAX_SAFE_INTEGER);
 		});
 	});
 });
@@ -25687,7 +25692,7 @@ sap.ui.define([
 				sTeaBusi + "TEAMS('42')/TEAM_2_EMPLOYEES"
 				+ "?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels("
 					+ "HierarchyNodes=$root/TEAMS('42')/TEAM_2_EMPLOYEES"
-					+ ",HierarchyQualifier='OrgChart',NodeProperty='ID',Levels=999)"
+					+ ",HierarchyQualifier='OrgChart',NodeProperty='ID')"
 				+ "&$select=DistanceFromRoot,DrillState,ID,MANAGER_ID,SALARY/BONUS_CURR"
 					+ ",SALARY/YEARLY_BONUS_AMOUNT,TEAM_ID",
 				"JIRA: CPOUI5ODATAV4-1920, CPOUI5ODATAV4-2275");
@@ -25957,7 +25962,7 @@ sap.ui.define([
 			assert.strictEqual(oListBinding.getDownloadUrl(), sTeaBusi + "EMPLOYEES"
 				+ "?$apply=orderby(AGE%20desc)"
 				+ "/com.sap.vocabularies.Hierarchy.v1.TopLevels(HierarchyNodes=$root/EMPLOYEES"
-					+ ",HierarchyQualifier='OrgChart',NodeProperty='ID',Levels=999)"
+					+ ",HierarchyQualifier='OrgChart',NodeProperty='ID')"
 				+ "&$select=AGE,DistanceFromRoot,DrillState,ID,MANAGER_ID,Name",
 				"JIRA: CPOUI5ODATAV4-1920, CPOUI5ODATAV4-2275");
 
@@ -26434,7 +26439,7 @@ sap.ui.define([
 					+ ",filter(AGE%20ge%200%20and%20(Is_Manager))/search(covfefe),keep%20start)"
 				+ "/orderby(AGE%20desc)"
 				+ "/com.sap.vocabularies.Hierarchy.v1.TopLevels(HierarchyNodes=$root/EMPLOYEES"
-					+ ",HierarchyQualifier='OrgChart',NodeProperty='ID',Levels=999)"
+					+ ",HierarchyQualifier='OrgChart',NodeProperty='ID')"
 				+ "&$select=DistanceFromRoot,DrillState,ID",
 				"JIRA: CPOUI5ODATAV4-1920, CPOUI5ODATAV4-2275");
 

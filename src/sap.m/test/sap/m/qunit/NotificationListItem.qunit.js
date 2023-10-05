@@ -11,7 +11,8 @@ sap.ui.define([
 	"sap/ui/core/Element",
 	"sap/m/Button",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/model/json/JSONModel"
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/core/Lib"
 ], function(
 	NotificationListItem,
 	NotificationListGroup,
@@ -23,7 +24,8 @@ sap.ui.define([
 	Element,
 	Button,
 	KeyCodes,
-	JSONModel
+	JSONModel,
+	Lib
 ) {
 	'use strict';
 
@@ -34,7 +36,7 @@ sap.ui.define([
 	// shortcut for sap.m.OverflowToolbarPriority
 	var OverflowToolbarPriority = mLibrary.OverflowToolbarPriority;
 
-	var  oResourceBundleM = Core.getLibraryResourceBundle("sap.m");
+	var  oResourceBundleM = Lib.getResourceBundleFor("sap.m");
 
 	var RENDER_LOCATION = 'qunit-fixture';
 
@@ -701,7 +703,7 @@ sap.ui.define([
 		var closeButtonId = closeButton.sId;
 
 		notificationListItem.destroy();
-		assert.strictEqual(Core.byId(closeButtonId), undefined, "close button is destroyed");
+		assert.strictEqual(Element.registry.get(closeButtonId), undefined, "close button is destroyed");
 	});
 
 	QUnit.module('Action and close buttons - S Size', {

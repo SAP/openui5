@@ -4,8 +4,9 @@ sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/m/Support",
 	"sap/m/library",
-	"sap/ui/core/Core"
-], function(createAndAppendDiv, Support, mobileLibrary, oCore) {
+	"sap/ui/core/Core",
+	"sap/ui/core/Element"
+], function(createAndAppendDiv, Support, mobileLibrary, oCore, Element) {
 	"use strict";
 
 	// shortcut for sap.m.DialogType
@@ -30,7 +31,7 @@ sap.ui.define([
 		var maxTries = 8; // ~ 2s
 
 		function check() {
-			var oSupport = oCore.byId("__dialog0");
+			var oSupport = Element.registry.get("__dialog0");
 			if ( !oSupport ) {
 				if ( --maxTries > 0 ) {
 					setTimeout(check, 250);

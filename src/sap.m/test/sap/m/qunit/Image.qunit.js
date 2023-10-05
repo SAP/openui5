@@ -11,8 +11,9 @@ sap.ui.define([
 	"sap/ui/Device",
 	"sap/m/VBox",
 	"sap/ui/qunit/utils/createAndAppendDiv",
-	"sap/ui/core/library"
-], function(Image, jQuery, mobileLibrary, LightBox, Page, Text, KeyCodes, Core, Device, VBox, createAndAppendDiv, coreLibrary) {
+	"sap/ui/core/library",
+	"sap/ui/core/Lib"
+], function(Image, jQuery, mobileLibrary, LightBox, Page, Text, KeyCodes, Core, Device, VBox, createAndAppendDiv, coreLibrary, Lib) {
 	"use strict";
 
 	// shortcut for sap.m.ImageMode
@@ -999,7 +1000,7 @@ sap.ui.define([
 		oImage.setDecorative(false);
 		oInfo = oImage.getAccessibilityInfo();
 		assert.strictEqual(oInfo.role, "img", "AriaRole");
-		assert.strictEqual(oInfo.type, Core.getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_IMAGE"), "Type");
+		assert.strictEqual(oInfo.type, Lib.getResourceBundleFor("sap.m").getText("ACC_CTR_TYPE_IMAGE"), "Type");
 		assert.strictEqual(oInfo.description, "Alt", "Description");
 		assert.strictEqual(oInfo.focusable, false, "Focusable");
 		assert.ok(oInfo.enabled === undefined || oInfo.enabled === null, "Enabled");
@@ -1008,7 +1009,7 @@ sap.ui.define([
 		oImage.attachPress(function(){});
 		oInfo = oImage.getAccessibilityInfo();
 		assert.strictEqual(oInfo.role, "button", "AriaRole");
-		assert.strictEqual(oInfo.type, Core.getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_BUTTON"), "Type");
+		assert.strictEqual(oInfo.type, Lib.getResourceBundleFor("sap.m").getText("ACC_CTR_TYPE_BUTTON"), "Type");
 		assert.strictEqual(oInfo.description, "Tooltip", "Description");
 		assert.strictEqual(oInfo.focusable, true, "Focusable");
 		oImage.destroy();

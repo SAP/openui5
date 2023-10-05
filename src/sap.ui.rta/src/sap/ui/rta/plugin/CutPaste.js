@@ -7,14 +7,16 @@ sap.ui.define([
 	"sap/ui/dt/Util",
 	"sap/ui/rta/plugin/Plugin",
 	"sap/ui/rta/plugin/RTAElementMover",
-	"sap/ui/rta/Utils"
+	"sap/ui/rta/Utils",
+	"sap/ui/core/Lib"
 ],
 function(
 	ControlCutPaste,
 	DtUtil,
 	Plugin,
 	RTAElementMover,
-	Utils
+	Utils,
+	Lib
 ) {
 	"use strict";
 
@@ -172,7 +174,7 @@ function(
 		var aMenuItems = [];
 		var oPasteMenuItem = this.enhanceItemWithResponsibleElement({
 			id: "CTX_PASTE",
-			text: sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta").getText("CTX_PASTE"),
+			text: Lib.getResourceBundleFor("sap.ui.rta").getText("CTX_PASTE"),
 			handler: function(aElementOverlays) {
 				return this.paste(aElementOverlays[0]);
 			}.bind(this),
@@ -187,7 +189,7 @@ function(
 		if (this.isAvailable(aResponsibleElementOverlays)) {
 			var oCutMenuItem = this.enhanceItemWithResponsibleElement({
 				id: "CTX_CUT",
-				text: sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta").getText("CTX_CUT"),
+				text: Lib.getResourceBundleFor("sap.ui.rta").getText("CTX_CUT"),
 				handler: function(aElementOverlays) {
 					return this.cut(aElementOverlays[0]);
 				}.bind(this),

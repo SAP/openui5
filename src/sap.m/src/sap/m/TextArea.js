@@ -14,7 +14,8 @@ sap.ui.define([
 	'sap/ui/Device',
 	"sap/base/security/encodeXML",
 	'./TextAreaRenderer',
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/core/Lib"
 ],
 function(
 	InputBase,
@@ -27,7 +28,8 @@ function(
 	Device,
 	encodeXML,
 	TextAreaRenderer,
-	jQuery
+	jQuery,
+	Lib
 ) {
 	"use strict";
 
@@ -597,7 +599,7 @@ function(
 	};
 
 	TextArea.prototype._getCounterValue = function () {
-		var oBundle = oCore.getLibraryResourceBundle("sap.m"),
+		var oBundle = Lib.getResourceBundleFor("sap.m"),
 				iCharactersExceeded = this.getMaxLength() - this.getValue().length,
 				bExceeded = (iCharactersExceeded < 0 ? true : false),
 				sMessageBundleKey = "TEXTAREA_CHARACTER" + ( Math.abs(iCharactersExceeded) === 1 ? "" : "S") + "_" + (bExceeded ? "EXCEEDED" : "LEFT");

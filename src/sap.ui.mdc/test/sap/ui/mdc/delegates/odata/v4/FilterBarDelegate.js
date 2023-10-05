@@ -21,8 +21,9 @@ sap.ui.define([
 	'sap/ui/core/util/reflection/JsControlTreeModifier',
 	'sap/base/Log',
 	'sap/ui/mdc/odata/v4/TypeMap',
-	'delegates/util/DelegateCache'
-	], function (ODataMetaModelUtil, FieldDisplay, OperatorName, FlUtils, FilterBarDelegate, ObjectPath, merge, FilterOperatorUtil, ModelOperator, Filter, IdentifierUtil, JsControlTreeModifier, Log, ODataV4TypeMap, DelegateCache) {
+	'delegates/util/DelegateCache',
+	"sap/ui/core/Element"
+], function(ODataMetaModelUtil, FieldDisplay, OperatorName, FlUtils, FilterBarDelegate, ObjectPath, merge, FilterOperatorUtil, ModelOperator, Filter, IdentifierUtil, JsControlTreeModifier, Log, ODataV4TypeMap, DelegateCache, Element) {
 	"use strict";
 
 	var ODataFilterBarDelegate = Object.assign({}, FilterBarDelegate);
@@ -202,7 +203,7 @@ sap.ui.define([
 
 		var sId = sSelectorId +  "--filter--" + IdentifierUtil.replace(sName);
 
-		var oExistingFilterField = sap.ui.getCore().byId(sId);
+		var oExistingFilterField = Element.registry.get(sId);
 
 		if (oExistingFilterField) {
 			return Promise.resolve(oExistingFilterField);

@@ -19,7 +19,9 @@ sap.ui.define([
 	"sap/ui/unified/DateRange",
 	"sap/ui/core/Configuration",
 	'sap/ui/core/Core',
-	"sap/ui/core/date/UI5Date"
+	"sap/ui/core/date/UI5Date",
+	"sap/ui/core/Lib",
+	"sap/ui/core/Element"
 ], function(
 	Control,
 	LocaleData,
@@ -36,7 +38,9 @@ sap.ui.define([
 	DateRange,
 	Configuration,
 	Core,
-	UI5Date
+	UI5Date,
+	Lib,
+	Element
 ) {
 	"use strict";
 
@@ -190,7 +194,7 @@ sap.ui.define([
 		this._oFormatOnlyYearLong = DateFormat.getInstance({pattern: "yyyy", calendarType: sCalendarType});
 		this._oFormatLong = DateFormat.getInstance({pattern: "MMMM y", calendarType: sCalendarType});
 		this._mouseMoveProxy = jQuery.proxy(this._handleMouseMove, this);
-		this._rb = Core.getLibraryResourceBundle("sap.ui.unified");
+		this._rb = Lib.getResourceBundleFor("sap.ui.unified");
 	};
 
 	MonthsRow.prototype.setPrimaryCalendarType = function (sCalendarType){
@@ -249,7 +253,7 @@ sap.ui.define([
 
 	MonthsRow.prototype.onsapfocusleave = function(oEvent){
 
-		if (!oEvent.relatedControlId || !containsOrEquals(this.getDomRef(), sap.ui.getCore().byId(oEvent.relatedControlId).getFocusDomRef())) {
+		if (!oEvent.relatedControlId || !containsOrEquals(this.getDomRef(), Element.registry.get(oEvent.relatedControlId).getFocusDomRef())) {
 			if (this._bMouseMove) {
 				_unbindMousemove.call(this, true);
 

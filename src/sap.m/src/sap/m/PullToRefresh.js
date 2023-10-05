@@ -13,9 +13,10 @@ sap.ui.define([
 	"sap/base/security/encodeXML",
 	"sap/ui/core/InvisibleText",
 	"sap/m/BusyIndicator",
-	"sap/m/ImageHelper"
+	"sap/m/ImageHelper",
+	"sap/ui/core/Lib"
 ],
-	function(jQuery, library, Control, Device, PullToRefreshRenderer, KeyCodes, encodeXML, InvisibleText, BusyIndicator, ImageHelper) {
+	function(jQuery, library, Control, Device, PullToRefreshRenderer, KeyCodes, encodeXML, InvisibleText, BusyIndicator, ImageHelper, Lib) {
 	"use strict";
 
 	/**
@@ -361,7 +362,7 @@ sap.ui.define([
 	};
 
 	PullToRefresh.prototype._getRB = function(){
-		return sap.ui.getCore().getLibraryResourceBundle("sap.m");
+		return Lib.getResourceBundleFor("sap.m");
 	};
 
 	return PullToRefresh;

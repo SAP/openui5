@@ -4,13 +4,15 @@
 
 sap.ui.define([
     "sap/ui/mdc/p13n/P13nBuilder",
-	"./SelectionController",
+    "./SelectionController",
     "sap/ui/mdc/p13n/panels/LinkSelectionPanel",
-    "sap/m/MessageBox"
-], function (P13nBuilder, BaseController, SelectionPanel, MessageBox) {
+    "sap/m/MessageBox",
+    "sap/ui/core/Lib",
+    "sap/ui/core/Element"
+], function(P13nBuilder, BaseController, SelectionPanel, MessageBox, Lib, Element) {
     "use strict";
 
-    const oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
+    const oResourceBundle = Lib.getResourceBundleFor("sap.ui.mdc");
     const LinkPanelController = BaseController.extend("sap.ui.mdc.p13n.subcontroller.LinkPanelController", {
         constructor: function() {
 			BaseController.apply(this, arguments);
@@ -61,9 +63,9 @@ sap.ui.define([
                 }
             });
         } else {
-            MessageBox.show(sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc").getText("info.SELECTION_DIALOG_LINK_VALIDATION_QUESTION"), {
+            MessageBox.show(Lib.getResourceBundleFor("sap.ui.mdc").getText("info.SELECTION_DIALOG_LINK_VALIDATION_QUESTION"), {
                 icon: MessageBox.Icon.WARNING,
-                title: sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc").getText("info.SELECTION_DIALOG_LINK_VALIDATION_TITLE"),
+                title: Lib.getResourceBundleFor("sap.ui.mdc").getText("info.SELECTION_DIALOG_LINK_VALIDATION_TITLE"),
                 actions: [
                     MessageBox.Action.YES, MessageBox.Action.NO
                 ],
@@ -80,7 +82,7 @@ sap.ui.define([
     LinkPanelController.prototype._createAddRemoveChange = function(oControl, vOperations, oContent) {
         const sLinkItemId = oContent.name;
 
-        const oLinkItem = sap.ui.getCore().byId(sLinkItemId);
+        const oLinkItem = Element.registry.get(sLinkItemId);
 
         let oAddRemoveChange;
 

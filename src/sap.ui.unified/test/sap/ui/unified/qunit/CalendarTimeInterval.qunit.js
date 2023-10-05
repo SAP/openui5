@@ -13,8 +13,9 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Core",
-	"sap/ui/core/date/UI5Date"
-], function(BaseConfig, qutils, CalendarTimeInterval, CalendarLegend, CalendarLegendItem, DateRange, DateTypeRange, unifiedLibrary, DateFormat, KeyCodes, jQuery, oCore, UI5Date) {
+	"sap/ui/core/date/UI5Date",
+	"sap/ui/core/Element"
+], function(BaseConfig, qutils, CalendarTimeInterval, CalendarLegend, CalendarLegendItem, DateRange, DateTypeRange, unifiedLibrary, DateFormat, KeyCodes, jQuery, oCore, UI5Date, Element) {
 	"use strict";
 
 	// set language to en-US, since we have specific language strings tested
@@ -102,13 +103,13 @@ sap.ui.define([
 	});
 
 	QUnit.test("rendered times", function(assert) {
-		var $TimesRow = oCore.byId("Cal1").getAggregation("timesRow").$();
+		var $TimesRow = Element.registry.get("Cal1").getAggregation("timesRow").$();
 		var aItems = $TimesRow.find(".sapUiCalItem");
 		assert.equal(aItems.length, 12, "Calendar1: 12 items rendered");
 		assert.equal(jQuery(aItems[0]).attr("data-sap-time"), oFormatYyyyMMddHHmm.format(oNow), "Calendar1: curent item is now");
 		assert.ok(!jQuery("#Cal1--TimesRow-Head").get(0), "Calendar1: no hader line rendered");
 
-		$TimesRow = oCore.byId("Cal2").getAggregation("timesRow").$();
+		$TimesRow = Element.registry.get("Cal2").getAggregation("timesRow").$();
 		aItems = $TimesRow.find(".sapUiCalItem");
 		assert.equal(aItems.length, 24, "Calendar2: 24 items rendered");
 		assert.equal(jQuery(aItems[0]).attr("data-sap-time"), "201508130800", "Calendar2: first item");
@@ -119,7 +120,7 @@ sap.ui.define([
 		assert.equal(aHeaders.length, 3, "Calendar2: 3 days in header");
 		assert.equal(jQuery(aHeaders[0]).text(), "Aug 13, 2015", "Calendar2: text of first day");
 
-		$TimesRow = oCore.byId("Cal3").getAggregation("timesRow").$();
+		$TimesRow = Element.registry.get("Cal3").getAggregation("timesRow").$();
 		aItems = $TimesRow.find(".sapUiCalItem");
 		assert.equal(aItems.length, 6, "Calendar3: 6 items rendered");
 		assert.equal(jQuery(aItems[0]).attr("data-sap-time"), "201508130800", "Calendar3: first item");
@@ -145,7 +146,7 @@ sap.ui.define([
 		}).placeAt("qunit-fixture");
 		oCore.applyChanges();
 
-		var oHeader = oCore.byId("CalJ--Head").$()[0];
+		var oHeader = Element.registry.get("CalJ--Head").$()[0];
 		assert.ok(oHeader.children[1].id, "#CalJ--Head-B2", "Calendar: year button is shown first");
 		assert.ok(oHeader.children[2].id, "#CalJ--Head-B1", "Calendar: month button is shown second");
 		assert.ok(oHeader.children[3].id, "#CalJ--Head-B0", "Calendar: day button is shown third");
@@ -167,7 +168,7 @@ sap.ui.define([
 		}).placeAt("qunit-fixture");
 		oCore.applyChanges();
 
-		var oHeader = oCore.byId("CalJ--Head").$()[0];
+		var oHeader = Element.registry.get("CalJ--Head").$()[0];
 		assert.ok(oHeader.children[1].id, "#CalJ--Head-B2", "Calendar: year button is shown first");
 		assert.ok(oHeader.children[2].id, "#CalJ--Head-B1", "Calendar: month button is shown second");
 		assert.ok(oHeader.children[3].id, "#CalJ--Head-B0", "Calendar: day button is shown third");
@@ -189,7 +190,7 @@ sap.ui.define([
 		}).placeAt("qunit-fixture");
 		oCore.applyChanges();
 
-		var oHeader = oCore.byId("CalJ--Head").$()[0];
+		var oHeader = Element.registry.get("CalJ--Head").$()[0];
 		assert.ok(oHeader.children[1].id, "#CalJ--Head-B2", "Calendar: year button is shown first");
 		assert.ok(oHeader.children[2].id, "#CalJ--Head-B1", "Calendar: month button is shown second");
 		assert.ok(oHeader.children[3].id, "#CalJ--Head-B0", "Calendar: day button is shown third");
@@ -252,7 +253,7 @@ sap.ui.define([
 
 	QUnit.test("Wrapper of hour cells has role row", function (assert) {
 		// Arrange
-		var $TimesRow = oCore.byId("Cal2").getAggregation("timesRow").$();
+		var $TimesRow = Element.registry.get("Cal2").getAggregation("timesRow").$();
 
 		// Assert
 		assert.equal($TimesRow.find(".sapUiCalItems").attr("role"), "row", "The hour cell's wrapper has role row");
@@ -287,7 +288,7 @@ sap.ui.define([
 	QUnit.test("setStartDate", function(assert) {
 		this.oCal1.setStartDate(UI5Date.getInstance("2015", "2", "10", "10", "10"));
 		oCore.applyChanges();
-		var $TimesRow = oCore.byId("Cal1").getAggregation("timesRow").$();
+		var $TimesRow = Element.registry.get("Cal1").getAggregation("timesRow").$();
 		var aItems = $TimesRow.find(".sapUiCalItem");
 		oCore.applyChanges();
 		assert.equal(jQuery(aItems[0]).attr("data-sap-time"), "201503101000", "Calendar1: new start time");
@@ -301,7 +302,7 @@ sap.ui.define([
 		var oStartDate = this.oCal2.getStartDate();
 		oCore.applyChanges();
 		assert.equal(oFormatYyyyMMddHHmm.format(oStartDate), "201508130857", "Calendar2: start date not changed");
-		var $TimesRow = oCore.byId("Cal2").getAggregation("timesRow").$();
+		var $TimesRow = Element.registry.get("Cal2").getAggregation("timesRow").$();
 		var aItems = $TimesRow.find(".sapUiCalItem");
 		assert.equal(jQuery(aItems[0]).attr("data-sap-time"), "201508130800", "Calendar2: rendered start item not changed");
 		assert.equal(jQuery(aItems[1]).attr("tabindex"), "0", "Calendar2: second item has focus");
@@ -349,7 +350,7 @@ sap.ui.define([
 		assert.ok(bStartDateChanged, "Calendar2: startDateChangeEvent fired");
 		var oStartDate = this.oCal2.getStartDate();
 		assert.equal(oFormatYyyyMMddHHmm.format(oStartDate), "201504130800", "Calendar2: new start date");
-		var $TimesRow = oCore.byId("Cal2").getAggregation("timesRow").$();
+		var $TimesRow = Element.registry.get("Cal2").getAggregation("timesRow").$();
 		var aItems = $TimesRow.find(".sapUiCalItem");
 		assert.equal(jQuery(aItems[0]).attr("data-sap-time"), "201504130800", "Calendar2: new start item rendered");
 		assert.equal(jQuery(aItems[1]).attr("tabindex"), "0", "Calendar2: second item still has focus");
@@ -446,7 +447,7 @@ sap.ui.define([
 		assert.ok(jQuery("#Cal1--DatesRow").get(0), "Calendar1: Day picker rendered");
 		assert.equal(jQuery("#Cal1--DatesRow").parent().attr("id"), "Cal1-content", "Calendar1: Day picker rendered in Calendar");
 		assert.ok(jQuery(jQuery("#Cal1--DatesRow").get(0)).is(":visible"), "Calendar1: Day picker visible");
-		var $DatesRow = oCore.byId("Cal1").getAggregation("datesRow").$();
+		var $DatesRow = Element.registry.get("Cal1").getAggregation("datesRow").$();
 		var aDays = $DatesRow.find(".sapUiCalItem");
 		assert.equal(aDays.length, 18, "Calendar1: 18 days rendered");
 		assert.equal(jQuery(aDays[0]).text(), "1", "Calendar1: first displayed day");
@@ -458,7 +459,7 @@ sap.ui.define([
 		oCore.applyChanges();
 		assert.ok(jQuery("#Cal2--DatesRow").get(0), "Calendar2: Day picker rendered");
 		assert.ok(jQuery(jQuery("#Cal2--DatesRow").get(0)).is(":visible"), "Calendar2: Day picker visible");
-		$DatesRow = oCore.byId("Cal2").getAggregation("datesRow").$();
+		$DatesRow = Element.registry.get("Cal2").getAggregation("datesRow").$();
 		aDays = $DatesRow.find(".sapUiCalItem");
 		assert.equal(aDays.length, 31, "Calendar2: 31 days (full month) rendered");
 		assert.equal(jQuery(aDays[0]).text(), "1", "Calendar2: first displayed day");
@@ -475,7 +476,7 @@ sap.ui.define([
 		oCore.applyChanges();
 		assert.ok(!jQuery("#Cal1--Head-prev").hasClass("sapUiCalDsbl"), "Calendar1: previous button enabled");
 		assert.ok(jQuery("#Cal1--Head-next").hasClass("sapUiCalDsbl"), "Calendar1: next button disabled");
-		var $DatesRow = oCore.byId("Cal1").getAggregation("datesRow").$();
+		var $DatesRow = Element.registry.get("Cal1").getAggregation("datesRow").$();
 		var aDays = $DatesRow.find(".sapUiCalItem");
 		assert.equal(jQuery(aDays[0]).text(), "14", "Calendar1: first displayed day");
 		assert.equal(jQuery(aDays[14]).attr("tabindex"), "0", "Calendar1: 14. displayed day is focused");
@@ -490,7 +491,7 @@ sap.ui.define([
 		qutils.triggerKeydown($NewDay.get(0), KeyCodes.ENTER, false, false, false);
 		oCore.applyChanges();
 		assert.equal(jQuery("#Cal2--Head-B0").text(), "4", "Calendar2: day 4 shown");
-		var $TimesRow = oCore.byId("Cal2").getAggregation("timesRow").$();
+		var $TimesRow = Element.registry.get("Cal2").getAggregation("timesRow").$();
 		var aItems = $TimesRow.find(".sapUiCalItem");
 		assert.equal(jQuery(aItems[0]).attr("data-sap-time"), "201503040800", "Calendar2: new start item");
 		assert.ok(bStartDateChanged, "Calendar2: startDateChangeEvent fired");
@@ -576,7 +577,7 @@ sap.ui.define([
 		assert.ok(jQuery("#Cal1--MP").get(0), "Calendar1: month picker rendered");
 		assert.equal(jQuery("#Cal1--MP").parent().attr("id"), "Cal1-content", "Calendar1: month picker rendered in Calendar");
 		assert.ok(jQuery(jQuery("#Cal1--MP").get(0)).is(":visible"), "Calendar1: month picker visible");
-		var $MP = oCore.byId("Cal1").getAggregation("monthPicker").$();
+		var $MP = Element.registry.get("Cal1").getAggregation("monthPicker").$();
 		var aMonths = $MP.find(".sapUiCalItem");
 		assert.equal(aMonths.length, 6, "Calendar1: 4 months rendered");
 		assert.equal(jQuery(aMonths[0]).text(), "Jan", "Calendar1: first displayed month");
@@ -588,7 +589,7 @@ sap.ui.define([
 		oCore.applyChanges();
 		assert.ok(jQuery("#Cal2--MP").get(0), "Calendar2: month picker rendered");
 		assert.ok(jQuery(jQuery("#Cal2--MP").get(0)).is(":visible"), "Calendar2: month picker visible");
-		$MP = oCore.byId("Cal2").getAggregation("monthPicker").$();
+		$MP = Element.registry.get("Cal2").getAggregation("monthPicker").$();
 		aMonths = $MP.find(".sapUiCalItem");
 		assert.equal(aMonths.length, 12, "Calendar2: 12 months rendered");
 		assert.equal(jQuery(aMonths[0]).text(), "January", "Calendar2: first displayed month");
@@ -605,14 +606,14 @@ sap.ui.define([
 		oCore.applyChanges();
 		assert.ok(!jQuery("#Cal1--Head-prev").hasClass("sapUiCalDsbl"), "Calendar1: previous button enabled");
 		assert.ok(jQuery("#Cal1--Head-next").hasClass("sapUiCalDsbl"), "Calendar1: next button disabled");
-		var $MP = oCore.byId("Cal1").getAggregation("monthPicker").$();
+		var $MP = Element.registry.get("Cal1").getAggregation("monthPicker").$();
 		var aMonths = $MP.find(".sapUiCalItem");
 		assert.equal(jQuery(aMonths[0]).text(), "Jul", "Calendar1: first displayed month");
 		assert.equal(jQuery(aMonths[2]).attr("tabindex"), "0", "Calendar1: 3. displayed month is focused");
 
 		qutils.triggerEvent("click", "Cal1--Head-prev");
 		oCore.applyChanges();
-		$MP = oCore.byId("Cal1").getAggregation("monthPicker").$();
+		$MP = Element.registry.get("Cal1").getAggregation("monthPicker").$();
 		aMonths = $MP.find(".sapUiCalItem");
 		assert.equal(jQuery(aMonths[0]).text(), "Jan", "Calendar1: first displayed month");
 		assert.equal(jQuery(aMonths[2]).attr("tabindex"), "0", "Calendar1: 3. displayed month is focused");
@@ -627,7 +628,7 @@ sap.ui.define([
 		qutils.triggerKeydown($NewMonth.get(0), KeyCodes.ENTER, false, false, false);
 		oCore.applyChanges();
 		assert.equal(jQuery("#Cal2--Head-B1").text(), "February", "Calendar2: Feb. shown");
-		var $TimesRow = oCore.byId("Cal2").getAggregation("timesRow").$();
+		var $TimesRow = Element.registry.get("Cal2").getAggregation("timesRow").$();
 		var aItems = $TimesRow.find(".sapUiCalItem");
 		assert.equal(jQuery(aItems[0]).attr("data-sap-time"), "201502100800", "Calendar2: new start item");
 		assert.ok(bStartDateChanged, "Calendar2: startDateChangeEvent fired");
@@ -686,7 +687,7 @@ sap.ui.define([
 		assert.ok(jQuery("#Cal1--YP").get(0), "Calendar1: Year picker rendered");
 		assert.equal(jQuery("#Cal1--YP").parent().attr("id"), "Cal1-content", "Calendar1: year picker rendered in Calendar");
 		assert.ok(jQuery(jQuery("#Cal1--YP").get(0)).is(":visible"), "Calendar1: Year picker visible");
-		var $YearPicker = oCore.byId("Cal1").getAggregation("yearPicker").$();
+		var $YearPicker = Element.registry.get("Cal1").getAggregation("yearPicker").$();
 		var aYears = $YearPicker.find(".sapUiCalItem");
 		assert.equal(aYears.length, 6, "Calendar1: 6 Years rendered");
 		assert.equal(jQuery(aYears[0]).text(), "2012", "Calendar1: first displayed year");
@@ -698,7 +699,7 @@ sap.ui.define([
 		oCore.applyChanges();
 		assert.ok(jQuery("#Cal2--YP").get(0), "Calendar2: Year picker rendered");
 		assert.ok(jQuery(jQuery("#Cal2--YP").get(0)).is(":visible"), "Calendar2: Year picker visible");
-		$YearPicker = oCore.byId("Cal2").getAggregation("yearPicker").$();
+		$YearPicker = Element.registry.get("Cal2").getAggregation("yearPicker").$();
 		aYears = $YearPicker.find(".sapUiCalItem");
 		assert.equal(aYears.length, 12, "Calendar2: 12 years rendered");
 		assert.equal(jQuery(aYears[0]).text(), "2009", "Calendar2: first displayed year");
@@ -711,7 +712,7 @@ sap.ui.define([
 		oCore.applyChanges();
 		qutils.triggerEvent("click", "Cal1--Head-prev");
 		oCore.applyChanges();
-		var $YearPicker = oCore.byId("Cal1").getAggregation("yearPicker").$();
+		var $YearPicker = Element.registry.get("Cal1").getAggregation("yearPicker").$();
 		var aYears = $YearPicker.find(".sapUiCalItem");
 		assert.equal(jQuery(aYears[0]).text(), "2006", "Calendar1: first displayed year");
 		assert.equal(jQuery(aYears[3]).attr("tabindex"), "0", "Calendar1: 4. displayed year is focused");
@@ -720,7 +721,7 @@ sap.ui.define([
 		oCore.applyChanges();
 		qutils.triggerEvent("click", "Cal2--Head-next");
 		oCore.applyChanges();
-		$YearPicker = oCore.byId("Cal2").getAggregation("yearPicker").$();
+		$YearPicker = Element.registry.get("Cal2").getAggregation("yearPicker").$();
 		aYears = $YearPicker.find(".sapUiCalItem");
 		assert.equal(jQuery(aYears[0]).text(), "2021", "Calendar2: first displayed year");
 		assert.equal(jQuery(aYears[6]).attr("tabindex"), "0", "Calendar2: 7. displayed year is focused");
@@ -736,7 +737,7 @@ sap.ui.define([
 		oCore.applyChanges();
 		assert.ok(!jQuery(jQuery("#Cal2--YP").get(0)).is(":visible"), "Calendar2: Year picker not visible after selecting year");
 		assert.equal(jQuery("#Cal2--Head-B2").text(), "2018", "Calendar2: year 2022 shown");
-		var $TimesRow = oCore.byId("Cal2").getAggregation("timesRow").$();
+		var $TimesRow = Element.registry.get("Cal2").getAggregation("timesRow").$();
 		var aItems = $TimesRow.find(".sapUiCalItem");
 		assert.equal(jQuery(aItems[0]).attr("data-sap-time"), "201804040800", "Calendar2: new start item");
 		assert.ok(bStartDateChanged, "Calendar2: startDateChangeEvent fired");
@@ -1019,7 +1020,7 @@ sap.ui.define([
 		qutils.triggerKeydown($Date[0], KeyCodes.ENTER, false, false, false);
 		oCore.applyChanges();
 
-		assert.equal(oCore.byId("CalP").getStartDate().getDate(), 14, "start date is set correctly");
+		assert.equal(Element.registry.get("CalP").getStartDate().getDate(), 14, "start date is set correctly");
 
 		assert.ok(jQuery("#CalP--Cal").get(0), "Calendar picker still rendered after closing");
 		assert.ok(!jQuery(jQuery("#CalP--Cal").get(0)).is(":visible"), "Calendar picker not visible after closing");
@@ -1067,7 +1068,7 @@ sap.ui.define([
 		qutils.triggerKeydown($Date[0], KeyCodes.ENTER, false, false, false);
 		oCore.applyChanges();
 
-		oCalStartDate = oCore.byId("CalP").getStartDate();
+		oCalStartDate = Element.registry.get("CalP").getStartDate();
 
 		assert.equal(oCalStartDate.getDate(), 14, "start date, date is set correctly");
 		assert.equal(oCalStartDate.getMonth(), 8, "start date, month is set correctly");
@@ -1090,7 +1091,7 @@ sap.ui.define([
 		qutils.triggerEvent("click", "CalP--Head-B1");
 		assert.ok(jQuery(jQuery("#CalP--Cal").get(0)).is(":visible"), "Calendar picker visible");
 
-		qutils.triggerKeydown(oCore.byId("CalP").getFocusDomRef(), KeyCodes.ESCAPE);
+		qutils.triggerKeydown(Element.registry.get("CalP").getFocusDomRef(), KeyCodes.ESCAPE);
 		assert.ok(!jQuery(jQuery("#CalP--Cal").get(0)).is(":visible"), "Calendar picker not visible after closing");
 		assert.strictEqual(oSpyCancel.callCount, 1, "CalendarTimeInterval 'fireCancel' was called once");
 
@@ -1146,7 +1147,7 @@ sap.ui.define([
 		assert.strictEqual(oCalPicker._oMaxDate.getYear(), 9999, "max year is set to 9999");
 
 		// close calendarPicker
-		qutils.triggerKeydown(oCore.byId("CalP").getFocusDomRef(), KeyCodes.ESCAPE);
+		qutils.triggerKeydown(Element.registry.get("CalP").getFocusDomRef(), KeyCodes.ESCAPE);
 		oCore.applyChanges();
 
 		// change the pickerPopup to false
@@ -1167,7 +1168,7 @@ sap.ui.define([
 		assert.strictEqual(oCalPicker._oMinDate.getYear(), 2015, "min year is set to 2015");
 		assert.strictEqual(oCalPicker._oMaxDate.getYear(), 2017, "max year is set to 2017");
 
-		qutils.triggerKeydown(oCore.byId("CalP").getFocusDomRef(), KeyCodes.ESCAPE);
+		qutils.triggerKeydown(Element.registry.get("CalP").getFocusDomRef(), KeyCodes.ESCAPE);
 		// clean
 		oCalP.destroy();
 	});
@@ -1219,7 +1220,7 @@ sap.ui.define([
 		var oCTI = new CalendarTimeInterval("customDataCTI",{
 				intervalMinutes: 60
 			}),
-			oTimesRow = oCore.byId("customDataCTI").getAggregation("timesRow");
+			oTimesRow = Element.registry.get("customDataCTI").getAggregation("timesRow");
 
 		oCore.getConfiguration().getFormatSettings().setTimePattern("short", "HHmm");
 		oTimesRow._oFormatTime = undefined;

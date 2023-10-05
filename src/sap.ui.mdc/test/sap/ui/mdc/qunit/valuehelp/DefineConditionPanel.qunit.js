@@ -10,8 +10,10 @@ sap.ui.define([
 	"sap/ui/mdc/condition/Condition",
 	"sap/ui/mdc/condition/FilterOperatorUtil",
 	"sap/ui/mdc/condition/Operator",
-	"sap/ui/mdc/field/FieldBaseDelegate", // bring back to default one
-	"sap/ui/mdc/field/FieldInput", // don't want to test async loading in Field here
+	// bring back to default one
+	"sap/ui/mdc/field/FieldBaseDelegate",
+	// don't want to test async loading in Field here
+	"sap/ui/mdc/field/FieldInput",
 	"sap/ui/mdc/enums/BaseType",
 	"sap/ui/mdc/enums/ConditionValidated",
 	"sap/ui/mdc/enums/FieldEditMode",
@@ -24,62 +26,77 @@ sap.ui.define([
 	"sap/ui/model/type/Integer",
 	"sap/ui/model/type/Float",
 	"sap/ui/model/FilterOperator",
-	"sap/m/DatePicker", // don't want to test async loading in Field here
-	"sap/m/DateTimePicker", // don't want to test async loading in Field here
-	"sap/m/Text", // don't want to test async loading in Field here
-	"sap/m/Button", // test custom control
+	// don't want to test async loading in Field here
+	"sap/m/DatePicker",
+	// don't want to test async loading in Field here
+	"sap/m/DateTimePicker",
+	// don't want to test async loading in Field here
+	"sap/m/Text",
+	// test custom control
+	"sap/m/Button",
 	"sap/ui/core/ListItem",
 	"sap/base/util/merge",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/core/Core",
-    "sap/m/List", // needed for FixedList getContent
-    "sap/m/DisplayListItem", // needed for FixedList getContent
-    "sap/m/library", // needed for FixedList getContent
-    "sap/ui/model/Filter", // needed for FixedList getContent
-    "sap/ui/model/Sorter", // needed for FixedList getContent
-    "sap/ui/model/base/ManagedObjectModel", // needed for FixedList getContent
-    "sap/base/strings/whitespaceReplacer" // needed for FixedList getContent
+	// needed for FixedList getContent
+	"sap/m/List",
+	// needed for FixedList getContent
+	"sap/m/DisplayListItem",
+	// needed for FixedList getContent
+	"sap/m/library",
+	// needed for FixedList getContent
+	"sap/ui/model/Filter",
+	// needed for FixedList getContent
+	"sap/ui/model/Sorter",
+	// needed for FixedList getContent
+	"sap/ui/model/base/ManagedObjectModel",
+	// needed for FixedList getContent
+	"sap/base/strings/whitespaceReplacer",
+	"sap/ui/core/Lib",
+	"sap/ui/core/Element"
 ], function(
-		jQuery,
-		qutils,
-		DefineConditionPanel,
-		ConditionModel,
-		Condition,
-		FilterOperatorUtil,
-		Operator,
-		FieldBaseDelegate,
-		FieldInput,
-		BaseType,
-		ConditionValidated,
-		FieldEditMode,
-		OperatorName,
-		OperatorValueType,
-		StringType,
-		DateType,
-		DateTimeType,
-		BooleanType,
-		IntegerType,
-		FloatType,
-		FilterOperator,
-		DatePicker,
-		DateTimePicker,
-		Text,
-		Button,
-		ListItem,
-		merge,
-		KeyCodes,
-		oCore,
-        List,
-        DisplayListItem,
-        mLibrary,
-        Filter,
-        Sorter,
-        ManagedObjectModel,
-        whitespaceReplacer
-		) {
+	jQuery,
+	qutils,
+	DefineConditionPanel,
+	ConditionModel,
+	Condition,
+	FilterOperatorUtil,
+	Operator,
+	FieldBaseDelegate,
+	FieldInput,
+	BaseType,
+	ConditionValidated,
+	FieldEditMode,
+	OperatorName,
+	OperatorValueType,
+	StringType,
+	DateType,
+	DateTimeType,
+	BooleanType,
+	IntegerType,
+	FloatType,
+	FilterOperator,
+	DatePicker,
+	DateTimePicker,
+	Text,
+	Button,
+	ListItem,
+	merge,
+	KeyCodes,
+	oCore,
+	List,
+	DisplayListItem,
+	mLibrary,
+	Filter,
+	Sorter,
+	ManagedObjectModel,
+	whitespaceReplacer,
+	Lib,
+	Element
+) {
 	"use strict";
 
-	const oMessageBundle = oCore.getLibraryResourceBundle("sap.ui.mdc");
+	const oMessageBundle = Lib.getResourceBundleFor("sap.ui.mdc");
 	let oDefineConditionPanel;
 	let oModel;
 	let oDataType;
@@ -220,12 +237,12 @@ sap.ui.define([
 			oCore.applyChanges();
 			assert.ok(oDefineConditionPanel.updateDefineConditions.calledOnce, "updateDefineConditions called once");
 			assert.equal(oModel.getConditions("Name").length, 3, "3 conditions should exist");
-			const oGrid = oCore.byId("DCP1--conditions");
+			const oGrid = Element.registry.get("DCP1--conditions");
 			let aContent = oGrid.getContent();
 			assert.equal(aContent.length, 9, "two rows with one field created - Grid contains 9 controls");
 
 
-			const oAddBtn = oCore.byId("DCP1--addBtn");
+			const oAddBtn = Element.registry.get("DCP1--addBtn");
 			const oGridData = oAddBtn.getLayoutData();
 			assert.ok(oGridData.getVisibleL(), "Add-Button is visible");
 			oAddBtn.firePress();
@@ -236,7 +253,7 @@ sap.ui.define([
 				assert.equal(aContent.length, 13, "three rows with one field created - Grid contains 13 controls");
 				assert.notOk(oGridData.getVisibleL(), "Add-Button is not visible");
 
-				const oRemoveBtn = oCore.byId("DCP1--2--removeBtnLarge");
+				const oRemoveBtn = Element.registry.get("DCP1--2--removeBtnLarge");
 				oRemoveBtn.firePress();
 				setTimeout(function () { // as condition rendering is triggered async.
 					oCore.applyChanges();
@@ -296,7 +313,7 @@ sap.ui.define([
 		setTimeout(function () { // for model update
 			oCore.applyChanges();
 			setTimeout(function () { // for internal Controls update via ManagedObjectModel
-				const oGrid = oCore.byId("DCP1--conditions");
+				const oGrid = Element.registry.get("DCP1--conditions");
 				const aContent = oGrid.getContent();
 				assert.equal(aContent.length, 9, "two rows with one field created - Grid contains 9 controls");
 
@@ -324,7 +341,7 @@ sap.ui.define([
 			oCore.applyChanges();
 			assert.equal(oModel.getConditions("Name").length, 1, "1 conditions should exist");
 
-			const oGrid = oCore.byId("DCP1--conditions");
+			const oGrid = Element.registry.get("DCP1--conditions");
 			let aContent = oGrid.getContent();
 			const oField = aContent[2];
 
@@ -360,7 +377,7 @@ sap.ui.define([
 		const fnDone = assert.async();
 		setTimeout(function () { // wait for rendering
 			oCore.applyChanges();
-			const oOperatorField = oCore.byId("DCP1--0-operator-inner");
+			const oOperatorField = Element.registry.get("DCP1--0-operator-inner");
 			oOperatorField.setValue(OperatorName.BT);
 			oOperatorField.fireChange({value: OperatorName.BT}); // fake item select
 
@@ -373,7 +390,7 @@ sap.ui.define([
 							assert.equal(aConditions[0].operator, OperatorName.BT, "Operator set on condition");
 							assert.deepEqual(aConditions[0].values, ["Andreas", null], "Values set on condition");
 
-							const oGrid = oCore.byId("DCP1--conditions");
+							const oGrid = Element.registry.get("DCP1--conditions");
 							const aContent = oGrid.getContent();
 							const oField1 = aContent[2];
 							const oField2 = aContent[3];
@@ -407,7 +424,7 @@ sap.ui.define([
 		const fnDone = assert.async();
 		setTimeout(function () { // wait for rendering
 			oCore.applyChanges();
-			const oOperatorField = oCore.byId("DCP1--0-operator-inner");
+			const oOperatorField = Element.registry.get("DCP1--0-operator-inner");
 			oOperatorField.setValue(OperatorName.EQ);
 			oOperatorField.fireChange({value: OperatorName.EQ}); // fake item select
 
@@ -420,7 +437,7 @@ sap.ui.define([
 							assert.equal(aConditions[0].operator, OperatorName.EQ, "Operator set on condition");
 							assert.deepEqual(aConditions[0].values, ["A"], "Values set on condition");
 
-							const oGrid = oCore.byId("DCP1--conditions");
+							const oGrid = Element.registry.get("DCP1--conditions");
 							const aContent = oGrid.getContent();
 							const oField1 = aContent[2];
 
@@ -451,7 +468,7 @@ sap.ui.define([
 		const fnDone = assert.async();
 		setTimeout(function () { // wait for rendering
 			oCore.applyChanges();
-			const oOperatorField = oCore.byId("DCP1--0-operator-inner");
+			const oOperatorField = Element.registry.get("DCP1--0-operator-inner");
 			oOperatorField.setValue(OperatorName.Empty);
 			oOperatorField.fireChange({value: OperatorName.Empty}); // fake item select
 
@@ -464,7 +481,7 @@ sap.ui.define([
 							assert.equal(aConditions[0].operator, OperatorName.Empty, "Operator set on condition");
 							assert.deepEqual(aConditions[0].values, [], "Values set on condition");
 
-							const oGrid = oCore.byId("DCP1--conditions");
+							const oGrid = Element.registry.get("DCP1--conditions");
 							const aContent = oGrid.getContent();
 
 							assert.equal(aContent.length, 4, "One row with no fields created - Grid contains 4 controls");
@@ -491,7 +508,7 @@ sap.ui.define([
 		const fnDone = assert.async();
 		setTimeout(function () { // wait for rendering
 			oCore.applyChanges();
-			const oOperatorField = oCore.byId("DCP1--0-operator-inner");
+			const oOperatorField = Element.registry.get("DCP1--0-operator-inner");
 			oOperatorField.setDOMValue("XXX");
 			oOperatorField.setValue("XXX");
 			oOperatorField.fireChange({value: "XXX"}); // fake wrong input
@@ -505,7 +522,7 @@ sap.ui.define([
 							assert.equal(aConditions[0].operator, OperatorName.BT, "Operator set on condition");
 							assert.deepEqual(aConditions[0].values, ["A", "Z"], "Values set on condition");
 
-							const oGrid = oCore.byId("DCP1--conditions");
+							const oGrid = Element.registry.get("DCP1--conditions");
 							let aContent = oGrid.getContent();
 							let oField1 = aContent[2];
 							let oField2 = aContent[3];
@@ -570,7 +587,7 @@ sap.ui.define([
 			assert.equal(oModel.getConditions("Name").length, 1, "1 conditions should exist");
 			assert.ok(oDefineConditionPanel.getInputOK(), "InputOK set as default");
 
-			const oGrid = oCore.byId("DCP1--conditions");
+			const oGrid = Element.registry.get("DCP1--conditions");
 			const aContent = oGrid.getContent();
 			const oOperatorField = aContent[0];
 			const oField1 = aContent[2];
@@ -695,7 +712,7 @@ sap.ui.define([
 
 		const fnDone = assert.async();
 		setTimeout(function () { // to wait for rendering
-			const oGrid = oCore.byId("DCP1--conditions");
+			const oGrid = Element.registry.get("DCP1--conditions");
 			const aContent = oGrid.getContent();
 			const oField = aContent[2];
 
@@ -704,7 +721,7 @@ sap.ui.define([
 			assert.equal(oField.getText(), "Test", "Value of FIeld");
 
 			const oOperatorField = aContent[0];
-			const oVH = oCore.byId(oOperatorField.getValueHelp());
+			const oVH = Element.registry.get(oOperatorField.getValueHelp());
 			const oPopover = oVH.getTypeahead();
 			const oFL = oPopover.getContent()[0];
 			const aItems = oFL.getItems();
@@ -730,10 +747,10 @@ sap.ui.define([
 
 		const fnDone = assert.async();
 		setTimeout(function () { // to wait for rendering
-			const oGrid = oCore.byId("DCP1--conditions");
+			const oGrid = Element.registry.get("DCP1--conditions");
 			let aContent = oGrid.getContent();
 			const oOperatorField = aContent[0]; // operator
-			const oVH = oCore.byId(oOperatorField.getValueHelp());
+			const oVH = Element.registry.get(oOperatorField.getValueHelp());
 			const oPopover = oVH.getTypeahead();
 			const oFL = oPopover.getContent()[0];
 			const aItems = oFL.getItems();
@@ -836,7 +853,7 @@ sap.ui.define([
 		const fnDone = assert.async();
 		setTimeout(function () { // to wait for retemplating
 			oCore.applyChanges();
-			const oGrid = oCore.byId("DCP1--conditions");
+			const oGrid = Element.registry.get("DCP1--conditions");
 			let aContent = oGrid.getContent();
 			const oField = aContent[2];
 
@@ -862,7 +879,7 @@ sap.ui.define([
 		const fnDone = assert.async();
 		setTimeout(function () { // to wait for retemplating
 			oCore.applyChanges();
-			const oGrid = oCore.byId("DCP1--conditions");
+			const oGrid = Element.registry.get("DCP1--conditions");
 			let aContent = oGrid.getContent();
 			const oField = aContent[2];
 
@@ -889,7 +906,7 @@ sap.ui.define([
 		const fnDone = assert.async();
 		setTimeout(function () { // to wait for retemplating
 			oCore.applyChanges();
-			const oGrid = oCore.byId("DCP1--conditions");
+			const oGrid = Element.registry.get("DCP1--conditions");
 			let aContent = oGrid.getContent();
 			const oField = aContent[2];
 
@@ -915,7 +932,7 @@ sap.ui.define([
 		const fnDone = assert.async();
 		setTimeout(function () { // to wait for retemplating
 			oCore.applyChanges();
-			const oGrid = oCore.byId("DCP1--conditions");
+			const oGrid = Element.registry.get("DCP1--conditions");
 			let aContent = oGrid.getContent();
 			const oOperatorField = aContent[0];
 			oOperatorField.setValue(OperatorName.TODAY);
@@ -1059,7 +1076,7 @@ sap.ui.define([
 
 			setTimeout(function () { // to wait for retemplating
 				oCore.applyChanges();
-				const oGrid = oCore.byId("DCP1--conditions");
+				const oGrid = Element.registry.get("DCP1--conditions");
 				let aContent = oGrid.getContent();
 				const oField = aContent[2];
 
@@ -1087,7 +1104,7 @@ sap.ui.define([
 		setTimeout(function () { // to wait for condition update
 			oCore.applyChanges();
 			setTimeout(function () { // to wait for renderng
-				const oGrid = oCore.byId("DCP1--conditions");
+				const oGrid = Element.registry.get("DCP1--conditions");
 				let aContent = oGrid.getContent();
 				const oField = aContent[2];
 				assert.equal(aContent.length, 5, "One row with one field created - Grid contains 5 controls");
@@ -1112,7 +1129,7 @@ sap.ui.define([
 
 		const fnDone = assert.async();
 		setTimeout(function () { // to wait for retemplating
-			const oGrid = oCore.byId("DCP1--conditions");
+			const oGrid = Element.registry.get("DCP1--conditions");
 			let aContent = oGrid.getContent();
 			const oField = aContent[2];
 			assert.equal(aContent.length, 5, "One row with one field created - Grid contains 5 controls");
@@ -1135,7 +1152,7 @@ sap.ui.define([
 
 		const fnDone = assert.async();
 		setTimeout(function () { // to wait for retemplating
-			const oGrid = oCore.byId("DCP1--conditions");
+			const oGrid = Element.registry.get("DCP1--conditions");
 			// sap.ui.getCore().getMessageManager().registerObject(oGrid, true); // to activate message manager
 
 			let aContent = oGrid.getContent();
@@ -1149,7 +1166,7 @@ sap.ui.define([
 			setTimeout(function () { // as model update is async
 				assert.equal( oControl.getValueState(), "Error", "Error shown on the value field");
 
-				const oRemoveBtn = oCore.byId("DCP1--0--removeBtnLarge");
+				const oRemoveBtn = Element.registry.get("DCP1--0--removeBtnLarge");
 				oRemoveBtn.firePress();
 				setTimeout(function () { // as condition rendering is triggered async.
 					oCore.applyChanges();
@@ -1170,7 +1187,7 @@ sap.ui.define([
 
 		const fnDone = assert.async();
 		setTimeout(function () { // to wait for retemplating
-			const oGrid = oCore.byId("DCP1--conditions");
+			const oGrid = Element.registry.get("DCP1--conditions");
 			let aContent = oGrid.getContent();
 			const oField = aContent[2];
 			assert.equal(aContent.length, 5, "One row with one field created - Grid contains 5 controls");
@@ -1209,7 +1226,7 @@ sap.ui.define([
 
 		const fnDone = assert.async();
 		setTimeout(function () { // to wait for retemplating
-			const oGrid = oCore.byId("DCP1--conditions");
+			const oGrid = Element.registry.get("DCP1--conditions");
 			let aContent = oGrid.getContent();
 			const oField = aContent[2];
 			assert.equal(aContent.length, 5, "One row with one field created - Grid contains 5 controls");
@@ -1242,7 +1259,7 @@ sap.ui.define([
 		const fnDone = assert.async();
 		setTimeout(function () { // as model update is async
 			oCore.applyChanges();
-			const oGrid = oCore.byId("DCP1--conditions");
+			const oGrid = Element.registry.get("DCP1--conditions");
 			let aContent = oGrid.getContent();
 			const oField = aContent[2];
 			assert.equal(aContent.length, 5, "Dummy line created");
@@ -1293,7 +1310,7 @@ sap.ui.define([
 		const fnDone = assert.async();
 		setTimeout(function () { // as model update is async
 			oCore.applyChanges();
-			const oGrid = oCore.byId("DCP1--conditions");
+			const oGrid = Element.registry.get("DCP1--conditions");
 			let aContent = oGrid.getContent();
 			const oField = aContent[2];
 			assert.equal(aContent.length, 5, "Dummy line created");
@@ -1351,7 +1368,7 @@ sap.ui.define([
 		const fnDone = assert.async();
 		setTimeout(function () { // wait for rendering
 			oCore.applyChanges();
-			const oOperatorField = oCore.byId("DCP1--0-operator-inner");
+			const oOperatorField = Element.registry.get("DCP1--0-operator-inner");
 			oOperatorField.setValue(OperatorName.EQ);
 			oOperatorField.fireChange({value: OperatorName.EQ}); // fake item select
 
@@ -1361,9 +1378,9 @@ sap.ui.define([
 						setTimeout(function () { // as row update is async
 							oCore.applyChanges();
 
-							const oField1 = oCore.byId("DCP1--0-values0");
-							const oField2 = oCore.byId("DCP1--1-values0");
-							const oField3 = oCore.byId("DCP1--2-values0");
+							const oField1 = Element.registry.get("DCP1--0-values0");
+							const oField2 = Element.registry.get("DCP1--1-values0");
+							const oField3 = Element.registry.get("DCP1--2-values0");
 							assert.equal(oField1.getValueHelp(), "MyTestValueHelp", "valueHelp on field is set");
 							assert.equal(oField2.getValueHelp(), "MyTestValueHelp", "valueHelp on field is set");
 							assert.equal(oField3.getValueHelp(), "MyTestValueHelp", "valueHelp on field is set");

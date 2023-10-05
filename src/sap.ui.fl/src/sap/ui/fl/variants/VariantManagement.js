@@ -13,7 +13,8 @@ sap.ui.define([
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/core/Control",
 	"sap/ui/core/library",
-	"sap/base/Log"
+	"sap/base/Log",
+	"sap/ui/core/Lib"
 ], function(
 	Context,
 	Filter,
@@ -24,7 +25,8 @@ sap.ui.define([
 	flSettings,
 	Control,
 	coreLibrary,
-	Log
+	Log,
+	Lib
 ) {
 	"use strict";
 
@@ -322,7 +324,7 @@ sap.ui.define([
 		Control.prototype.init.apply(this); // Call base class
 
 		this.addStyleClass("sapUiFlVarMngmt"); // required for finding the control by RTA/FL
-		this._oRb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.fl");
+		this._oRb = Lib.getResourceBundleFor("sap.ui.fl");
 
 		this.setModelName(ControlVariantApplyAPI.getVariantModelName());
 

@@ -21,7 +21,9 @@ sap.ui.define([
 	"sap/ui/rta/util/changeVisualization/ChangeVisualization",
 	"sap/ui/rta/RuntimeAuthoring",
 	"sap/ui/thirdparty/sinon-4",
-	"test-resources/sap/ui/dt/qunit/TestUtil"
+	"test-resources/sap/ui/dt/qunit/TestUtil",
+	"sap/ui/core/Lib",
+	"sap/ui/core/Element"
 ], function(
 	RtaQunitUtils,
 	merge,
@@ -43,12 +45,14 @@ sap.ui.define([
 	ChangeVisualization,
 	RuntimeAuthoring,
 	sinon,
-	TestUtil
+	TestUtil,
+	Lib,
+	Element
 ) {
 	"use strict";
 
 	var sandbox = sinon.createSandbox();
-	var oRtaResourceBundle = Core.getLibraryResourceBundle("sap.ui.rta");
+	var oRtaResourceBundle = Lib.getResourceBundleFor("sap.ui.rta");
 	var oComp;
 	var oCompCont;
 	QUnit.config.fixture = null;
@@ -193,7 +197,7 @@ sap.ui.define([
 	function collectIndicatorReferences() {
 		// Get all visible change indicator elements on the screen
 		return Array.from(document.getElementsByClassName("sapUiRtaChangeIndicator")).map(function(oDomRef) {
-			return Core.byId(oDomRef.id);
+			return Element.registry.get(oDomRef.id);
 		});
 	}
 
@@ -780,7 +784,7 @@ sap.ui.define([
 				// Simulate a change of the overlay id, e.g. because a change handler recreated the element
 				// during undo/redo
 				this.oRta.setMode("adaptation");
-				var oElement = Core.byId(sElementId);
+				var oElement = Element.registry.get(sElementId);
 				var oParent = oElement.getParent();
 				var {sParentAggregationName} = oElement;
 				oElement.destroy();
@@ -820,7 +824,7 @@ sap.ui.define([
 			var sElementId = "Comp1---idMain1--Dates";
 			var oRelevantContainer = OverlayRegistry.getOverlay(sElementId).getRelevantContainer();
 			var oRelevantContainerOverlay = OverlayRegistry.getOverlay(oRelevantContainer);
-			var oParent = Core.byId(sElementId).getParent();
+			var oParent = Element.registry.get(sElementId).getParent();
 
 			// The selector for the change is the parent element
 			prepareChanges(
@@ -887,7 +891,7 @@ sap.ui.define([
 				[oChangeIndicator] = collectIndicatorReferences().filter(function(oIndicator) {
 					return oIndicator.mProperties.selectorId === "Comp1---idMain1--lb2";
 				});
-				oOverlay = Core.byId(oChangeIndicator.getOverlayId()).getDomRef();
+				oOverlay = Element.registry.get(oChangeIndicator.getOverlayId()).getDomRef();
 				var oCreatePopoverPromise = waitForMethodCall(oChangeIndicator, "setAggregation");
 				QUnitUtils.triggerEvent("click", oOverlay);
 				return oCreatePopoverPromise;
@@ -1014,7 +1018,7 @@ sap.ui.define([
 				{
 					getChangeVisualizationInfo(oChange) {
 						return {
-							dependentControls: [Core.byId("Comp1---idMain1--rb2")], // Test if vis can handle elements
+							dependentControls: [Element.registry.get("Comp1---idMain1--rb2")], // Test if vis can handle elements
 							affectedControls: [oChange.getSelector()] // Test if vis can handle IDs
 						};
 					}
@@ -1111,7 +1115,7 @@ sap.ui.define([
 				});
 			}.bind(this));
 
-			var oPage = Core.byId("Comp1---idMain1--mainPage");
+			var oPage = Element.registry.get("Comp1---idMain1--mainPage");
 			oPage.insertAggregation("content", oHorizontalLayout, 0);
 			Core.applyChanges();
 		});
@@ -1253,7 +1257,7 @@ sap.ui.define([
 			.then(function() {
 				[oChangeIndicator] = collectIndicatorReferences();
 				var oChangeIndicatorElement = oChangeIndicator.getDomRef();
-				var oOverlay = Core.byId(oChangeIndicator.getOverlayId());
+				var oOverlay = Element.registry.get(oChangeIndicator.getOverlayId());
 
 				function checkOnClass() {
 					assert.ok(
@@ -1301,8 +1305,8 @@ sap.ui.define([
 				var oHoveredIndicator = aChangeIndicators[0];
 				var oRelatedIndicator = aChangeIndicators[1];
 				var oHoveredIndicatorElement = oHoveredIndicator.getDomRef();
-				var oHoveredOverlay = Core.byId(oHoveredIndicator.getOverlayId());
-				var oRelatedIndicatorOverlay = Core.byId(oRelatedIndicator.getOverlayId());
+				var oHoveredOverlay = Element.registry.get(oHoveredIndicator.getOverlayId());
+				var oRelatedIndicatorOverlay = Element.registry.get(oRelatedIndicator.getOverlayId());
 
 				function checkOnClasses() {
 					assert.ok(

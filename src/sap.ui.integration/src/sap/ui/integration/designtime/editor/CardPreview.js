@@ -10,9 +10,20 @@ sap.ui.define([
 	"sap/m/ToggleButton",
 	"./Card",
 	"sap/ui/core/Core",
-	"sap/ui/dom/includeStylesheet"
-], function (
-	library, Control, HBox, Image, ToggleButton, Card, Core, includeStylesheet
+	"sap/ui/dom/includeStylesheet",
+	"sap/ui/core/Lib",
+	"sap/ui/core/Element"
+], function(
+	library,
+	Control,
+	HBox,
+	Image,
+	ToggleButton,
+	Card,
+	Core,
+	includeStylesheet,
+	Lib,
+	Element
 ) {
 	"use strict";
 
@@ -136,7 +147,7 @@ sap.ui.define([
 	 */
 	CardPreview.prototype.init = function () {
 		//load translations
-		this._oResourceBundle = Core.getLibraryResourceBundle("sap.ui.integration");
+		this._oResourceBundle = Lib.getResourceBundleFor("sap.ui.integration");
 		//if the theme changes we should toggle the class
 		Core.attachThemeChanged(function () {
 			if (this.getDomRef()) {
@@ -180,7 +191,7 @@ sap.ui.define([
 			window.setTimeout(function() {
 				try {
 					var vizFrameId = oPreview.getDomRef().getElementsByClassName("sapVizFrame")[0].id;
-					var oVizFrame = Core.byId(vizFrameId);
+					var oVizFrame = Element.registry.get(vizFrameId);
 					if (oVizFrame.getVizProperties() && oVizFrame.getVizProperties().legendGroup.layout.position === "bottom" && oVizFrame.getVizProperties().legendGroup.layout.alignment === "center") {
 						oPreview.getDomRef().getElementsByClassName("v-m-legend")[0].transform.baseVal[0].matrix.e = 110;
 					}
@@ -193,7 +204,7 @@ sap.ui.define([
 
 	CardPreview.prototype.getEditor = function () {
 		var sEditorId = this.getAssociation("_editor");
-		return Core.byId(sEditorId);
+		return Element.registry.get(sEditorId);
 	};
 
 	/**
@@ -398,7 +409,7 @@ sap.ui.define([
 	 * @returns {sap.m.ToggleButton}
 	 */
 	 CardPreview.prototype._getModeToggleButton = function () {
-		var oBundle = Core.getLibraryResourceBundle("sap.ui.integration");
+		var oBundle = Lib.getResourceBundleFor("sap.ui.integration");
 
 		if (!this._oModeToggleButton) {
 			this._oModeToggleButton = new ToggleButton();
@@ -487,7 +498,7 @@ sap.ui.define([
 	 * @returns {sap.m.ToggleButton}
 	 */
 	 CardPreview.prototype._getResizeToggleButton = function () {
-		var oBundle = Core.getLibraryResourceBundle("sap.ui.integration");
+		var oBundle = Lib.getResourceBundleFor("sap.ui.integration");
 
 		if (!this._oSizeToggleButton) {
 			this._oSizeToggleButton = new ToggleButton();

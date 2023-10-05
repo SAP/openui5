@@ -14,8 +14,11 @@ sap.ui.define([
 	'sap/ui/core/InvisibleText',
 	'sap/ui/core/Core',
 	'sap/ui/core/Configuration',
-	'sap/ui/core/IconPool', // required by RenderManager#icon
-	'sap/ui/dom/jquery/cursorPos' // provides jQuery.fn.cursorPos
+	"sap/ui/core/Lib",
+	// required by RenderManager#icon
+	'sap/ui/core/IconPool',
+	// provides jQuery.fn.cursorPos
+	'sap/ui/dom/jquery/cursorPos'
 ],
 	function(
 		ValueStateSupport,
@@ -27,7 +30,8 @@ sap.ui.define([
 		PseudoEvents,
 		InvisibleText,
 		Core,
-		Configuration
+		Configuration,
+		Lib
 	) {
 	"use strict";
 
@@ -372,7 +376,7 @@ sap.ui.define([
 		var sCountInfo, sTypeInfo, oUnifiedBundle;
 
 		if (!this._invisibleDescription) {
-			oUnifiedBundle = Core.getLibraryResourceBundle("sap.ui.unified");
+			oUnifiedBundle = Lib.getResourceBundleFor("sap.ui.unified");
 			sCountInfo = oUnifiedBundle.getText("UNIFIED_MENU_ITEM_COUNT_TEXT", [oInfo.iItemNo, oInfo.iTotalItems]);
 			sTypeInfo = oUnifiedBundle.getText("UNIFIED_MENU_ITEM_HINT_TEXT");
 			this._invisibleDescription = new InvisibleText({

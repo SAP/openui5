@@ -13,7 +13,8 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/base/assert",
 	"sap/ui/thirdparty/jquery",
-	"./PDFViewerRenderer"
+	"./PDFViewerRenderer",
+	"sap/ui/core/Lib"
 ],
 	function(
 		library,
@@ -25,7 +26,8 @@ sap.ui.define([
 		Log,
 		assert,
 		jQuery,
-		PDFViewerRenderer1
+		PDFViewerRenderer1,
+		Lib
 	) {
 		"use strict";
 
@@ -527,7 +529,7 @@ sap.ui.define([
 		 * @private
 		 */
 		PDFViewer.prototype._getLibraryResourceBundle = function () {
-			return sap.ui.getCore().getLibraryResourceBundle("sap.m");
+			return Lib.getResourceBundleFor("sap.m");
 		};
 
 		/**

@@ -23,8 +23,9 @@ sap.ui.define([
 	"sap/base/util/deepExtend",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
-	"sap/ui/core/CustomData"
-], function(Controller, JSONModel, UploadSetwithTable, UploadSetwithTableItem, MessageBox, Fragment, MockServer, MessageToast, Dialog, Button, mobileLibrary, Text, coreLibrary, CoreItem, graphUtil, Engine, SelectionController, SortController, GroupController, MetadataHelper, Sorter, deepExtend, Filter, FilterOperator, CustomData) {
+	"sap/ui/core/CustomData",
+	"sap/ui/core/Element"
+], function(Controller, JSONModel, UploadSetwithTable, UploadSetwithTableItem, MessageBox, Fragment, MockServer, MessageToast, Dialog, Button, mobileLibrary, Text, coreLibrary, CoreItem, graphUtil, Engine, SelectionController, SortController, GroupController, MetadataHelper, Sorter, deepExtend, Filter, FilterOperator, CustomData, Element) {
 	"use strict";
 
 	return Controller.extend("sap.m.uploadSetTableDemo.Page", {
@@ -711,7 +712,7 @@ sap.ui.define([
 			return regexp.test(sUrl);
 		},
 		_isValidName: function () {
-			var domRefName = sap.ui.getCore().byId('addViaUrlDialog--nameInput'),
+			var domRefName = Element.registry.get('addViaUrlDialog--nameInput'),
 			sName = domRefName.getValue(),
 			bHasError = false;
 			if (!sName) {
@@ -725,9 +726,9 @@ sap.ui.define([
 			return !bHasError;
 		},
 		_validateAddOrEditUrlDialog:  function () {
-			var domRefUrl = sap.ui.getCore().byId('addViaUrlDialog--urlInput'),
-			domRefName = sap.ui.getCore().byId('addViaUrlDialog--nameInput'),
-			domRefDocType = sap.ui.getCore().byId('addViaUrlDialog--docTypeCombobox'),
+			var domRefUrl = Element.registry.get('addViaUrlDialog--urlInput'),
+			domRefName = Element.registry.get('addViaUrlDialog--nameInput'),
+			domRefDocType = Element.registry.get('addViaUrlDialog--docTypeCombobox'),
 			sUrl = domRefUrl.getValue(),
 			sName = domRefName.getValue(),
 			sDocType = domRefDocType.getValue(),
@@ -868,24 +869,24 @@ sap.ui.define([
 					var editFileInfo = this.oEditDocumentInfo;
 					var renameFileInfo = this.oRenameDocumentInfo;
 					if (this.bEditDocument && this.oEditDocumentInfo) {
-						sap.ui.getCore().byId('addViaUrlDialog--addViaUrlDialog').setTitle("Edit URL");
-						sap.ui.getCore().byId('addViaUrlDialog--addDocumentBtn').setText("Apply");
-						sap.ui.getCore().byId('addViaUrlDialog--urlInput').setValue(editFileInfo.url);
-						sap.ui.getCore().byId('addViaUrlDialog--nameInput').setValue(editFileInfo.name);
-						sap.ui.getCore().byId('addViaUrlDialog--docTypeCombobox').setValue(editFileInfo.docType);
-						sap.ui.getCore().byId('addViaUrlDialog--urlInputLabel').setRequired(false);
-						sap.ui.getCore().byId('addViaUrlDialog--docTypeComboboxLabel').setRequired(false);
-						sap.ui.getCore().byId('addViaUrlDialog--urlInput').setVisible(true);
-						sap.ui.getCore().byId('addViaUrlDialog--docTypeCombobox').setVisible(true);
+						Element.registry.get('addViaUrlDialog--addViaUrlDialog').setTitle("Edit URL");
+						Element.registry.get('addViaUrlDialog--addDocumentBtn').setText("Apply");
+						Element.registry.get('addViaUrlDialog--urlInput').setValue(editFileInfo.url);
+						Element.registry.get('addViaUrlDialog--nameInput').setValue(editFileInfo.name);
+						Element.registry.get('addViaUrlDialog--docTypeCombobox').setValue(editFileInfo.docType);
+						Element.registry.get('addViaUrlDialog--urlInputLabel').setRequired(false);
+						Element.registry.get('addViaUrlDialog--docTypeComboboxLabel').setRequired(false);
+						Element.registry.get('addViaUrlDialog--urlInput').setVisible(true);
+						Element.registry.get('addViaUrlDialog--docTypeCombobox').setVisible(true);
 
 					}
 					if (this.bRenameDocument && renameFileInfo) {
-						sap.ui.getCore().byId('addViaUrlDialog--addViaUrlDialog').setTitle("Rename");
-						sap.ui.getCore().byId('addViaUrlDialog--addViaUrlDialog').setContentHeight("7rem");
-						sap.ui.getCore().byId('addViaUrlDialog--addDocumentBtn').setText("Apply");
-						sap.ui.getCore().byId('addViaUrlDialog--nameInput').setValue(renameFileInfo.name);
-						sap.ui.getCore().byId('addViaUrlDialog--urlInput').setVisible(false);
-						sap.ui.getCore().byId('addViaUrlDialog--docTypeCombobox').setVisible(false);
+						Element.registry.get('addViaUrlDialog--addViaUrlDialog').setTitle("Rename");
+						Element.registry.get('addViaUrlDialog--addViaUrlDialog').setContentHeight("7rem");
+						Element.registry.get('addViaUrlDialog--addDocumentBtn').setText("Apply");
+						Element.registry.get('addViaUrlDialog--nameInput').setValue(renameFileInfo.name);
+						Element.registry.get('addViaUrlDialog--urlInput').setVisible(false);
+						Element.registry.get('addViaUrlDialog--docTypeCombobox').setVisible(false);
 					}
 					oPopover.open();
 				}.bind(this));

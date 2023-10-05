@@ -21,7 +21,8 @@ sap.ui.define([
 	"sap/ui/documentation/sdk/util/Resources",
 	"./config/sampleForwardingConfig",
 	"sap/base/strings/capitalize",
-	"sap/ui/core/Configuration"
+	"sap/ui/core/Configuration",
+	"sap/ui/core/Element"
 ], function(
 	SampleBaseController,
 	JSONModel,
@@ -40,7 +41,8 @@ sap.ui.define([
 	ResourcesUtil,
 	sampleForwardingConfig,
 	capitalize,
-	Configuration
+	Configuration,
+	Element
 ) {
 		"use strict";
 
@@ -319,16 +321,16 @@ sap.ui.define([
 
 			applySampleSettings: function(eMessage) {
 				if (eMessage.data.type === "SETTINGS") {
-					var oThemeSelect = Core.byId("sample--ThemeSelect");
+					var oThemeSelect = Element.registry.get("sample--ThemeSelect");
 
 					// Theme select
 					oThemeSelect.setSelectedKey(eMessage.data.data.theme);
 
 					// RTL
-					Core.byId("sample--RTLSwitch").setState(eMessage.data.data.RTL);
+					Element.registry.get("sample--RTLSwitch").setState(eMessage.data.data.RTL);
 
 					// Density mode select
-					Core.byId("sample--DensityModeSwitch").setSelectedKey(this._presetDensity(eMessage.data.data.density, true));
+					Element.registry.get("sample--DensityModeSwitch").setSelectedKey(this._presetDensity(eMessage.data.data.density, true));
 
 				}
 			},
@@ -363,9 +365,9 @@ sap.ui.define([
 			},
 
 			handleSaveAppSettings: function () {
-				var	sDensityMode = Core.byId("sample--DensityModeSwitch").getSelectedKey(),
-					sTheme = Core.byId("sample--ThemeSelect").getSelectedKey(),
-					bRTL = Core.byId("sample--RTLSwitch").getState();
+				var	sDensityMode = Element.registry.get("sample--DensityModeSwitch").getSelectedKey(),
+					sTheme = Element.registry.get("sample--ThemeSelect").getSelectedKey(),
+					bRTL = Element.registry.get("sample--RTLSwitch").getState();
 
 				this._oSettingsDialog.close();
 

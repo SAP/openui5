@@ -17,7 +17,8 @@ sap.ui.define([
 	'sap/ui/model/ParseException',
 	'sap/ui/model/ValidateException',
 	'sap/m/library',
-	'sap/base/util/merge'
+	'sap/base/util/merge',
+	"sap/ui/core/Lib"
 ],
 	function(
 		ConditionsType,
@@ -33,8 +34,9 @@ sap.ui.define([
 		ParseException,
 		ValidateException,
 		mLibrary,
-		merge
-		) {
+		merge,
+		Lib
+	) {
 	"use strict";
 
 	/**
@@ -83,7 +85,7 @@ sap.ui.define([
 		constructor : function (oFormatOptions, oConstraints) {
 			SimpleType.apply(this, arguments);
 			this.sName = "ConditionsDateRange";
-			this._oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
+			this._oResourceBundle = Lib.getResourceBundleFor("sap.ui.mdc");
 			//TODO: specialConditionDataRangeType if used for tokens in MultiValue FilterField
 		}
 

@@ -14,7 +14,8 @@ sap.ui.define([
 	'sap/m/Column',
 	'sap/m/table/columnmenu/Menu',
 	'sap/m/ColumnListItem',
-	'sap/m/Text'
+	'sap/m/Text',
+	"sap/ui/core/Lib"
 ], function(
 	jQuery,
 	Core,
@@ -25,7 +26,8 @@ sap.ui.define([
 	Column,
 	Menu,
 	ColumnListItem,
-	Text
+	Text,
+	Lib
 ) {
 	"use strict";
 
@@ -142,7 +144,7 @@ sap.ui.define([
 		var aResizableColumns = jQuery(oColumnResizer.getConfig("resizable")).get();
 		aResizableColumns.forEach(function(TH) {
 			assert.ok(TH.classList.contains("sapMPluginsColumnResizerResizable"), "Resizable column have the correct style added");
-			assert.strictEqual(document.getElementById(TH.getAttribute("aria-describedby")).innerText, Core.getLibraryResourceBundle("sap.m").getText("COLUMNRESIZER_RESIZABLE"), "The column is resizable, announcement added");
+			assert.strictEqual(document.getElementById(TH.getAttribute("aria-describedby")).innerText, Lib.getResourceBundleFor("sap.m").getText("COLUMNRESIZER_RESIZABLE"), "The column is resizable, announcement added");
 		});
 
 		oColumnResizer.setEnabled(false);
@@ -678,7 +680,7 @@ sap.ui.define([
 
 		var oResizerButton = this.oColumnResizer.getColumnResizeButton(oColumn);
 		assert.ok(oResizerButton.isA("sap.m.ColumnPopoverActionItem"), "sap.m.ColumnPopoverActionItem instance returned");
-		assert.strictEqual(oResizerButton.getText(), Core.getLibraryResourceBundle("sap.m").getText("COLUMNRESIZER_RESIZE_BUTTON"), "correct text set");
+		assert.strictEqual(oResizerButton.getText(), Lib.getResourceBundleFor("sap.m").getText("COLUMNRESIZER_RESIZE_BUTTON"), "correct text set");
 		assert.strictEqual(oResizerButton.getIcon(), "sap-icon://resize-horizontal", "correct icon set");
 		assert.ok(oResizerButton.hasListeners("press"), "press event registered");
 
@@ -704,7 +706,7 @@ sap.ui.define([
 		var oResizerQuickAction = this.oColumnResizer.getColumnResizeQuickAction(oColumn, oColumnMenu);
 		assert.ok(oResizerQuickAction.isA("sap.m.table.columnmenu.QuickAction"), "sap.m.table.columnmenu.QuickAction instance returned");
 		assert.strictEqual(oResizerQuickAction.getLabel(), "", "label is empty");
-		assert.strictEqual(oResizerQuickAction.getContent()[0].getText(), Core.getLibraryResourceBundle("sap.m").getText("table.COLUMNMENU_RESIZE"), "button text is correct");
+		assert.strictEqual(oResizerQuickAction.getContent()[0].getText(), Lib.getResourceBundleFor("sap.m").getText("table.COLUMNMENU_RESIZE"), "button text is correct");
 		assert.ok(oResizerQuickAction.getContent()[0].hasListeners("press"), "press event registered");
 
 		oResizerQuickAction.getContent()[0].firePress(oColumn);

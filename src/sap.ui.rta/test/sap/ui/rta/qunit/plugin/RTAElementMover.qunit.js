@@ -22,8 +22,8 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/rta/command/CommandFactory",
 	"sap/ui/rta/plugin/DragDrop",
-	"sap/ui/thirdparty/sinon-4"
-
+	"sap/ui/thirdparty/sinon-4",
+	"sap/ui/core/Element"
 ], function(
 	Button,
 	Bar,
@@ -46,7 +46,8 @@ sap.ui.define([
 	JSONModel,
 	CommandFactory,
 	DragDropPlugin,
-	sinon
+	sinon,
+	Element
 ) {
 	"use strict";
 
@@ -113,7 +114,7 @@ sap.ui.define([
 				return oComponent.oView;
 			}.bind(this))
 			.then(function() {
-				this.oView = Core.byId("Comp1---idMain1");
+				this.oView = Element.registry.get("Comp1---idMain1");
 				return this.oView.getController().isDataReady();
 			}.bind(this));
 		},
@@ -271,9 +272,9 @@ sap.ui.define([
 			this.oDesignTime.attachEventOnce("synced", function() {
 				Core.applyChanges();
 
-				this.oGroup1 = Core.byId("group1");
-				this.oGroup2 = Core.byId("group2");
-				[, this.oGroup3] = Core.byId("form1").getGroups();
+				this.oGroup1 = Element.registry.get("group1");
+				this.oGroup2 = Element.registry.get("group2");
+				[, this.oGroup3] = Element.registry.get("form1").getGroups();
 
 				this.oGroup1AggrOverlay = OverlayRegistry.getOverlay(this.oGroup1).getAggregationOverlay("formElements");
 				this.oGroup2AggrOverlay = OverlayRegistry.getOverlay(this.oGroup2).getAggregationOverlay("formElements");

@@ -153,21 +153,21 @@ sap.ui.define([], function() {
 					module: "test-resources/sap/ui/core/qunit/generic/{name}.qunit"
 				},
 				tests: {
-					ControlMemoryLeaks: {
-						title: "QUnit Page for memory leak detection in UI5 controls"
-					},
-					ControlRenderer: {
-						title: "QUnit Page for Control Renderer Tests"
-					},
-					DuplicateIdCheck: {
-						title: "QUnit Page for duplicate ID issues detection in UI5 controls"
-					},
-					SettersContextReturn: {
-						title: "All setters should return correct context (Reason: https://github.com/SAP/openui5/blob/master/docs/guidelines.md#creating-classes)"
-					},
-					EnforceSemanticRendering: {
-						title: "QUnit Page for Semantic Rendering Coverage"
-					}
+				 ControlMemoryLeaks: {
+					 title: "QUnit Page for memory leak detection in UI5 controls"
+				 },
+
+				 DuplicateIdCheck: {
+					 title: "QUnit Page for duplicate ID issues detection in UI5 controls"
+				 },
+
+				 SettersContextReturn: {
+					 title: "All setters should return correct context (Reason: https://github.com/SAP/openui5/blob/master/docs/guidelines.md#creating-classes)"
+				 },
+
+				 EnforceSemanticRendering: {
+					 title: "QUnit Page for Semantic Rendering Coverage"
+				 }
 				}
 			};
 

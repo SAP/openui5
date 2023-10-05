@@ -22,8 +22,10 @@ sap.ui.define([
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/base/ManagedObject",
 	"sap/m/OverflowToolbar",
-	"sap/uxap/ObjectPageAccessibleLandmarkInfo"],
-function (
+	"sap/uxap/ObjectPageAccessibleLandmarkInfo",
+	"sap/ui/core/Element"
+],
+function(
 	jQuery,
 	lib,
 	coreLib,
@@ -46,7 +48,8 @@ function (
 	XMLView,
 	ManagedObject,
 	OverflowToolbar,
-	ObjectPageAccessibleLandmarkInfo
+	ObjectPageAccessibleLandmarkInfo,
+	Element
 ) {
 
 	"use strict";
@@ -1050,7 +1053,7 @@ function (
 		oObjectPage.attachEventOnce("onAfterRenderingDOMReady", function () {
 
 			// Act: change height without invalidating any control
-			Core.byId("b1").getDomRef().style.height = "250px";
+			Element.registry.get("b1").getDomRef().style.height = "250px";
 			oSpy.resetHistory();
 			oObjectPage._onUpdateContentSize({ size: {}, oldSize: {} });
 
@@ -1122,7 +1125,7 @@ function (
 	function sectionIsSelected(oObjectPage, assert, oExpected) {
 
 		var sSelectedBtnId = oObjectPage.getAggregation('_anchorBar').getSelectedButton(),
-			oSelectedBtn = Core.byId(sSelectedBtnId),
+			oSelectedBtn = Element.registry.get(sSelectedBtnId),
 			bExpectedSnapped = oExpected.bSnapped,
 			iExpectedScrollTop = oExpected.iScrollTop;
 
@@ -2215,7 +2218,7 @@ function (
 		});
 
 		//act
-		Core.byId("section2Link").invalidate();
+		Element.registry.get("section2Link").invalidate();
 
 		//check
 		setTimeout(function() {
@@ -2296,7 +2299,7 @@ function (
 				oObjectPage.invalidate();
 				Core.applyChanges();
 				var event,
-					$buttonDomRef = Core.byId("btn1").getDomRef();
+					$buttonDomRef = Element.registry.get("btn1").getDomRef();
 				if (typeof Event === 'function') {
 					event = new Event("click");
 				} else {

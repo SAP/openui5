@@ -88,11 +88,6 @@ sap.ui.define(function() {
 				}
 			},
 
-			Core_repeatedExecution: {
-				title: "sap.ui.core.Core: Repeated execution",
-				bootCore: false
-			},
-
 			Lib: {
 				title: "sap.ui.core: Unit tests for class sap/ui/core/Lib",
 				loader: {

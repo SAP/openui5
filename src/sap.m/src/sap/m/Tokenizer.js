@@ -22,6 +22,7 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/core/EnabledPropagator",
 	"sap/ui/core/theming/Parameters",
+	"sap/ui/core/Lib",
 	// jQuery Plugin "scrollLeftRTL"
 	"sap/ui/dom/jquery/scrollLeftRTL"
 ],
@@ -43,7 +44,8 @@ sap.ui.define([
 		KeyCodes,
 		Log,
 		EnabledPropagator,
-		Parameters
+		Parameters,
+		Lib
 	) {
 		"use strict";
 
@@ -169,7 +171,7 @@ sap.ui.define([
 			renderer: TokenizerRenderer
 		});
 
-		var oRb = Core.getLibraryResourceBundle("sap.m");
+		var oRb = Lib.getResourceBundleFor("sap.m");
 
 		EnabledPropagator.apply(Tokenizer.prototype, [true]);
 
@@ -425,9 +427,9 @@ sap.ui.define([
 		};
 
 		Tokenizer.prototype._getDialogTitle = function () {
-			var oResourceBundle = Core.getLibraryResourceBundle("sap.m");
+			var oResourceBundle = Lib.getResourceBundleFor("sap.m");
 			var aLabeles = this.getAriaLabelledBy().map(function(sLabelID) {
-				return Core.byId(sLabelID);
+				return Element.registry.get(sLabelID);
 			});
 
 			return aLabeles.length ? aLabeles[0].getText() : oResourceBundle.getText("COMBOBOX_PICKER_TITLE");

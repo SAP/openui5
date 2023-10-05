@@ -30,7 +30,9 @@ sap.ui.define([
 	"sap/m/inputUtils/getTokenByItem",
 	"sap/ui/core/SeparatorItem",
 	"sap/ui/core/InvisibleText",
-	"sap/m/library"
+	"sap/m/library",
+	"sap/ui/core/Lib",
+	"sap/ui/core/Element"
 ], function(
 	qutils,
 	createAndAppendDiv,
@@ -62,7 +64,9 @@ sap.ui.define([
 	getTokenByItem,
 	SeparatorItem,
 	InvisibleText,
-	mLibrary
+	mLibrary,
+	Lib,
+	Element
 ) {
 	"use strict";
 
@@ -87,7 +91,7 @@ sap.ui.define([
 	};
 
 
-	var oResourceBundle = Core.getLibraryResourceBundle("sap.m");
+	var oResourceBundle = Lib.getResourceBundleFor("sap.m");
 
 	// =========================================================== //
 	// Check UX requirements on                                    //
@@ -3560,7 +3564,7 @@ sap.ui.define([
 		qutils.triggerKeydown(oMultiComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN, false, true);
 		this.clock.tick(500);
 		var oDomListItem = ListHelpers.getListItem(oMultiComboBox.getFirstItem()).getDomRef();
-		var oListItem = Core.byId(oDomListItem.id);
+		var oListItem = Element.registry.get(oDomListItem.id);
 		qutils.triggerTouchEvent("tap", oDomListItem, {
 			srcControl : oListItem
 		});
@@ -3614,7 +3618,7 @@ sap.ui.define([
 		qutils.triggerKeydown(oMultiComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN, false, true);
 		this.clock.tick(500);
 		var oDomListItem = ListHelpers.getListItem(oMultiComboBox.getFirstItem()).getDomRef();
-		var oListItem = Core.byId(oDomListItem.id);
+		var oListItem = Element.registry.get(oDomListItem.id);
 		qutils.triggerTouchEvent("tap", oDomListItem, {
 			srcControl : oListItem
 		});
@@ -4202,7 +4206,7 @@ sap.ui.define([
 
 		// act
 		var oDomListItem = ListHelpers.getListItem(oMultiComboBox.getFirstItem()).getDomRef();
-		var oListItem = Core.byId(oDomListItem.id);
+		var oListItem = Element.registry.get(oDomListItem.id);
 		qutils.triggerEvent("tap", oDomListItem, {
 			srcControl : oListItem
 		});
@@ -4350,7 +4354,7 @@ sap.ui.define([
 
 		// act
 		var oDomListItem = ListHelpers.getListItem(oMultiComboBox.getFirstItem()).getDomRef();
-		var oListItem = Core.byId(oDomListItem.id);
+		var oListItem = Element.registry.get(oDomListItem.id);
 		oListItem.focus();
 		qutils.triggerTouchEvent("tap", oDomListItem, {
 			srcControl : oListItem
@@ -4473,7 +4477,7 @@ sap.ui.define([
 		qutils.triggerKeydown(oMultiComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN, false, true);
 		this.clock.tick(500);
 		var oDomListItem = ListHelpers.getListItem(oMultiComboBox.getFirstItem()).getDomRef();
-		var oListItem = Core.byId(oDomListItem.id);
+		var oListItem = Element.registry.get(oDomListItem.id);
 		qutils.triggerTouchEvent("tap", oDomListItem, {
 			srcControl : oListItem
 		});
@@ -5572,7 +5576,7 @@ sap.ui.define([
 	QUnit.module("Accessibility");
 
 	QUnit.test("getAccessibilityInfo", function(assert) {
-		var oResourceBundle = Core.getLibraryResourceBundle("sap.m");
+		var oResourceBundle = Lib.getResourceBundleFor("sap.m");
 		var oMultiComboBox = new MultiComboBox({
 			value: "Value",
 			tooltip: "Tooltip",
@@ -5601,7 +5605,7 @@ sap.ui.define([
 		oMultiComboBox.setValue("");
 		oMultiComboBox.setEnabled(false);
 		oInfo = oMultiComboBox.getAccessibilityInfo();
-		assert.strictEqual(oInfo.description, Core.getLibraryResourceBundle("sap.m").getText("INPUTBASE_VALUE_EMPTY"), "Description - Empty as there are no tokens and no value");
+		assert.strictEqual(oInfo.description, Lib.getResourceBundleFor("sap.m").getText("INPUTBASE_VALUE_EMPTY"), "Description - Empty as there are no tokens and no value");
 		assert.strictEqual(oInfo.focusable, false, "Focusable");
 		assert.strictEqual(oInfo.enabled, false, "Enabled");
 		assert.strictEqual(oInfo.editable, false, "Editable");
@@ -5706,7 +5710,7 @@ sap.ui.define([
 				items: [oItem1, oItem2]
 			}),
 			sInvisibleTextId = oMultiComboBox.getAggregation("tokenizer").getTokensInfoId(),
-			oInvisibleText = Core.byId(sInvisibleTextId);
+			oInvisibleText = Element.registry.get(sInvisibleTextId);
 
 		oMultiComboBox.placeAt("MultiComboBoxContent");
 
@@ -6832,7 +6836,7 @@ sap.ui.define([
 		oMultiComboBox.placeAt("MultiComboBoxContent");
 		Core.applyChanges();
 
-		assert.equal(Core.byId(oMultiComboBox.getPickerInvisibleTextId()).getText(), oResourceBundleOptions, 'popup ariaLabelledBy is set');
+		assert.equal(Element.registry.get(oMultiComboBox.getPickerInvisibleTextId()).getText(), oResourceBundleOptions, 'popup ariaLabelledBy is set');
 		oMultiComboBox.destroy();
 	});
 

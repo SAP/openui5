@@ -21,7 +21,9 @@ sap.ui.define([
 	'sap/m/IconTabHeaderRenderer',
 	"sap/ui/thirdparty/jquery",
 	"sap/base/Log",
-	"sap/ui/events/KeyCodes"
+	"sap/ui/events/KeyCodes",
+	"sap/ui/core/Lib",
+	"sap/ui/core/Element"
 ], function(
 	library,
 	Core,
@@ -39,7 +41,9 @@ sap.ui.define([
 	IconTabHeaderRenderer,
 	jQuery,
 	Log,
-	KeyCodes
+	KeyCodes,
+	Lib,
+	Element
 ) {
 	"use strict";
 
@@ -251,7 +255,7 @@ sap.ui.define([
 	 *
 	 * @type {module:sap/base/i18n/ResourceBundle}
 	 */
-	var oResourceBundle = Core.getLibraryResourceBundle("sap.m");
+	var oResourceBundle = Lib.getResourceBundleFor("sap.m");
 
 	EnabledPropagator.apply(IconTabHeader.prototype, [true]);
 
@@ -1311,7 +1315,7 @@ sap.ui.define([
 				if ($target.hasClass('sapMITBFilterIcon') || $target.hasClass('sapMITBCount') || $target.hasClass('sapMITBText') || $target.hasClass('sapMITBTab') || $target.hasClass('sapMITBContentArrow') || $target.hasClass('sapMITBSep') || $target.hasClass('sapMITBSepIcon')) {
 					// click on icon: fetch filter instead
 					sControlId = oEvent.srcControl.getId().replace(/-icon$/, "");
-					oControl = Core.byId(sControlId);
+					oControl = Element.registry.get(sControlId);
 					if (oControl.getMetadata().isInstanceOf("sap.m.IconTab") && !(oControl instanceof IconTabSeparator)) {
 
 						if (this._isUnselectable(oControl)) {

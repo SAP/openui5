@@ -1,8 +1,8 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(["sap/ui/Device", "sap/ui/core/Configuration"],
-	function(Device, Configuration) {
+sap.ui.define(["sap/ui/Device", "sap/ui/core/Configuration", "sap/ui/core/Lib"],
+	function(Device, Configuration, Lib) {
 	"use strict";
 
 
@@ -24,7 +24,7 @@ sap.ui.define(["sap/ui/Device", "sap/ui/core/Configuration"],
 	ActionSheetRenderer.render = function(oRm, oControl){
 		var aActionButtons = oControl._getAllButtons(),
 			aInvisibleTexts = oControl.getAggregation("_invisibleAriaTexts"),
-			oResourceBundle = sap.ui.getCore().getLibraryResourceBundle('sap.m'),
+			oResourceBundle = Lib.getResourceBundleFor('sap.m'),
 			iButtonsCount = aActionButtons.length,
 			bAccessibilityOn = Configuration.getAccessibility(),
 			iVisibleButtonCount = aActionButtons.filter(function (oButton) { return oButton.getVisible(); }).length,

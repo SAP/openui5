@@ -9,7 +9,8 @@ sap.ui.define([
 	"sap/ui/rta/toolbar/Adaptation",
 	"sap/ui/rta/toolbar/contextBased/ManageAdaptations",
 	"sap/ui/rta/toolbar/contextBased/SaveAsAdaptation",
-	"sap/ui/thirdparty/sinon-4"
+	"sap/ui/thirdparty/sinon-4",
+	"sap/ui/core/Lib"
 ], function(
 	Core,
 	Control,
@@ -21,7 +22,8 @@ sap.ui.define([
 	Adaptation,
 	ManageAdapationsDialog,
 	AddAdaptationDialog,
-	sinon
+	sinon,
+	Lib
 ) {
 	"use strict";
 
@@ -32,7 +34,7 @@ sap.ui.define([
 			this.oRolesModel.loadData("./model/roles.json", "", false);
 			this.sandbox = sinon.createSandbox();
 			this.oToolbar = new Adaptation({
-				textResources: Core.getLibraryResourceBundle("sap.ui.rta"),
+				textResources: Lib.getResourceBundleFor("sap.ui.rta"),
 				rtaInformation: {
 					flexSettings: {
 						layer: Layer.CUSTOMER

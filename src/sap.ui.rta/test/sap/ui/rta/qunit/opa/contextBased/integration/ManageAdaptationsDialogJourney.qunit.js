@@ -4,6 +4,7 @@ sap.ui.define(
 		"sap/ui/test/opaQunit",
 		"sap/ui/test/Opa5",
 		"sap/ui/core/Core",
+		"sap/ui/core/Lib",
 		"sap/ui/core/Configuration",
 		"./pages/contextBased/ManageAdaptationsDialog",
 		"./pages/contextBased/SaveContextBasedAdaptationDialog",
@@ -12,10 +13,10 @@ sap.ui.define(
 		"./pages/AppPage",
 		"sap/ui/core/date/UI5Date"
 	],
-	function(opaTest, Opa5, oCore, Configuration) {
+	function(opaTest, Opa5, oCore, Lib, Configuration) {
 		"use strict";
 
-		var oRtaResourceBundle = oCore.getLibraryResourceBundle("sap.ui.rta");
+		var oRtaResourceBundle = Lib.getResourceBundleFor("sap.ui.rta");
 
 		var arrangements = new Opa5({
 			iStartMyApp() {

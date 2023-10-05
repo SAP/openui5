@@ -5,13 +5,15 @@ sap.ui.define([
 	"sap/ui/table/Table",
 	"sap/ui/table/rowmodes/Fixed",
 	"sap/ui/model/Filter",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/ui/core/Element"
 ], function(
 	TableQUnitUtils,
 	Table,
 	FixedRowMode,
 	Filter,
-	Core
+	Core,
+	Element
 ) {
 	"use strict";
 
@@ -109,7 +111,7 @@ sap.ui.define([
 			}, mExpectation, sMessage);
 		},
 		getTable: function() {
-			return Core.byId("table");
+			return Element.registry.get("table");
 		}
 	});
 

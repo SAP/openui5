@@ -21,7 +21,8 @@ sap.ui.define([
 	"sap/m/inputUtils/calculateSelectionStart",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/core/Core",
-	"sap/base/Log"
+	"sap/base/Log",
+	"sap/ui/core/Element"
 ],
 	function(
 		ComboBoxTextField,
@@ -42,7 +43,8 @@ sap.ui.define([
 		calculateSelectionStart,
 		KeyCodes,
 		core,
-		Log
+		Log,
+		Element
 	) {
 		"use strict";
 
@@ -352,7 +354,7 @@ sap.ui.define([
 			this._setPropertyProtected("selectedItemId", (vItem instanceof Item) ? vItem.getId() : vItem, true);
 
 			if (typeof vItem === "string") {
-				vItem = core.byId(vItem);
+				vItem = Element.registry.get(vItem);
 			}
 
 			if (oList) {
@@ -1400,7 +1402,7 @@ sap.ui.define([
 			}
 
 			bTablet = this.isPlatformTablet();
-			oRelatedControl = core.byId(oEvent.relatedControlId);
+			oRelatedControl = Element.registry.get(oEvent.relatedControlId);
 			oFocusDomRef = oRelatedControl && oRelatedControl.getFocusDomRef();
 
 			if (containsOrEquals(oPicker.getFocusDomRef(), oFocusDomRef) && !bTablet && !(this._getSuggestionsPopover().getValueStateActiveState())) {
@@ -1665,7 +1667,7 @@ sap.ui.define([
 
 			if (typeof vItem === "string") {
 				this.setAssociation("selectedItem", vItem, true);
-				vItem = core.byId(vItem);
+				vItem = Element.registry.get(vItem);
 			}
 
 			if (!(vItem instanceof Item) && vItem !== null) {
@@ -1800,7 +1802,7 @@ sap.ui.define([
 		 */
 		ComboBox.prototype.getSelectedItem = function() {
 			var vSelectedItem = this.getAssociation("selectedItem");
-			return (vSelectedItem === null) ? null : core.byId(vSelectedItem) || null;
+			return (vSelectedItem === null) ? null : Element.registry.get(vSelectedItem) || null;
 		};
 
 		/**

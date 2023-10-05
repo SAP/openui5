@@ -5,14 +5,16 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/core/Core",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/core/Element"
 ], function(
 	IconTabBar,
 	IconTabFilter,
 	Button,
 	KeyCodes,
 	Core,
-	jQuery
+	jQuery,
+	Element
 ) {
 	"use strict";
 
@@ -84,9 +86,9 @@ sap.ui.define([
 						case "dropPosition" :
 							return "After";
 						case "draggedControl" :
-							return  Core.byId("tabReorder1");
+							return Element.registry.get("tabReorder1");
 						case "droppedControl" :
-							return Core.byId("tabReorder3");
+							return Element.registry.get("tabReorder3");
 					}
 				}
 			};
@@ -97,9 +99,9 @@ sap.ui.define([
 						case "dropPosition" :
 							return "Before";
 						case "draggedControl" :
-							return  Core.byId("tabReorder1");
+							return Element.registry.get("tabReorder1");
 						case "droppedControl" :
-							return Core.byId("tabReorder3");
+							return Element.registry.get("tabReorder3");
 					}
 				}
 			};
@@ -107,7 +109,7 @@ sap.ui.define([
 			this.returnMockEvent = function(iKeyCode, sId) {
 				var oMockEventTest = {
 					keyCode: iKeyCode,
-					srcControl: Core.byId(sId),
+					srcControl: Element.registry.get(sId),
 					preventDefault: function () {}
 				};
 
@@ -153,88 +155,88 @@ sap.ui.define([
 
 	QUnit.test("Drag&Drop accessibility: RTL", function(assert) {
 		// Assert
-		assert.strictEqual(Core.byId("tabReorder1").getDomRef().getAttribute("aria-posinset"), "1" , 'Aria-pointset should be 1');
-		assert.strictEqual(Core.byId("tabReorder2").getDomRef().getAttribute("aria-posinset"), "2" , 'Aria-pointset should be 2');
-		assert.strictEqual(Core.byId("tabReorder3").getDomRef().getAttribute("aria-posinset"), "3" , 'Aria-pointset should be 3');
-		assert.strictEqual(Core.byId("tabReorder3").getDomRef().getAttribute("aria-setsize"), "3" , 'Aria-setsize should be 3');
+		assert.strictEqual(Element.registry.get("tabReorder1").getDomRef().getAttribute("aria-posinset"), "1" , 'Aria-pointset should be 1');
+		assert.strictEqual(Element.registry.get("tabReorder2").getDomRef().getAttribute("aria-posinset"), "2" , 'Aria-pointset should be 2');
+		assert.strictEqual(Element.registry.get("tabReorder3").getDomRef().getAttribute("aria-posinset"), "3" , 'Aria-pointset should be 3');
+		assert.strictEqual(Element.registry.get("tabReorder3").getDomRef().getAttribute("aria-setsize"), "3" , 'Aria-setsize should be 3');
 		// Act
 		this.oIconTabHeader._handleDragAndDrop(this.oMockEvent2);
 		// Assert
-		assert.strictEqual(Core.byId("tabReorder1").getDomRef().getAttribute("aria-posinset"), "3" , 'Aria-pointset should be 3');
-		assert.strictEqual(Core.byId("tabReorder2").getDomRef().getAttribute("aria-posinset"), "1" , 'Aria-pointset should be 1');
-		assert.strictEqual(Core.byId("tabReorder3").getDomRef().getAttribute("aria-posinset"), "2" , 'Aria-pointset should be 2');
-		assert.strictEqual(Core.byId("tabReorder3").getDomRef().getAttribute("aria-setsize"), "3" , 'Aria-setsize should be 3');
+		assert.strictEqual(Element.registry.get("tabReorder1").getDomRef().getAttribute("aria-posinset"), "3" , 'Aria-pointset should be 3');
+		assert.strictEqual(Element.registry.get("tabReorder2").getDomRef().getAttribute("aria-posinset"), "1" , 'Aria-pointset should be 1');
+		assert.strictEqual(Element.registry.get("tabReorder3").getDomRef().getAttribute("aria-posinset"), "2" , 'Aria-pointset should be 2');
+		assert.strictEqual(Element.registry.get("tabReorder3").getDomRef().getAttribute("aria-setsize"), "3" , 'Aria-setsize should be 3');
 	});
 
 	QUnit.test("Drag&Drop Keyboard Handling: CTRL + Arrow Right RTL", function(assert) {
 		// Assert
 		assert.strictEqual(this.oIconTabBar.getItems()[0].getText(), "First tab", 'First Tab is "First Tab"');
-		assert.strictEqual(Core.byId("tabReorder1").getDomRef().getAttribute("aria-posinset"), "1" , 'Aria-pointset should be 1');
+		assert.strictEqual(Element.registry.get("tabReorder1").getDomRef().getAttribute("aria-posinset"), "1" , 'Aria-pointset should be 1');
 		assert.strictEqual(this.oIconTabBar1.getItems()[0].getText(), "First tab", 'First Tab is "First Tab"');
-		assert.strictEqual(Core.byId("tab1").getDomRef().getAttribute("aria-posinset"), "1" , 'Aria-pointset should be 1');
+		assert.strictEqual(Element.registry.get("tab1").getDomRef().getAttribute("aria-posinset"), "1" , 'Aria-pointset should be 1');
 		//ACT
 		this.oIconTabHeader.ondragrearranging(this.returnMockEvent(KeyCodes.ARROW_RIGHT,"tabReorder2"));
 		this.oIconTabHeader1.ondragrearranging(this.returnMockEvent(KeyCodes.ARROW_RIGHT,"tab2"));
 		// Assert
 		assert.strictEqual(this.oIconTabBar.getItems()[1].getText(), "First tab", 'First Tab is "Second Tab"');
-		assert.strictEqual(Core.byId("tabReorder1").getDomRef().getAttribute("aria-posinset"), "2" , 'Aria-pointset should be 1');
+		assert.strictEqual(Element.registry.get("tabReorder1").getDomRef().getAttribute("aria-posinset"), "2" , 'Aria-pointset should be 1');
 		assert.strictEqual(this.oIconTabBar1.getItems()[0].getText(), "First tab", 'First Tab is "First Tab"');
-		assert.strictEqual(Core.byId("tab1").getDomRef().getAttribute("aria-posinset"), "1" , 'Aria-pointset should be 1');
+		assert.strictEqual(Element.registry.get("tab1").getDomRef().getAttribute("aria-posinset"), "1" , 'Aria-pointset should be 1');
 	});
 
 	QUnit.test("Drag&Drop Keyboard Handling: CTRL + Arrow Right of last element RTL", function(assert) {
 		// Assert
 		assert.strictEqual(this.oIconTabBar.getItems()[2].getText(), "Third tab", 'Third Tab is "Third Tab"');
-		assert.strictEqual(Core.byId("tabReorder3").getDomRef().getAttribute("aria-posinset"), "3" , 'Aria-pointset should be 1');
+		assert.strictEqual(Element.registry.get("tabReorder3").getDomRef().getAttribute("aria-posinset"), "3" , 'Aria-pointset should be 1');
 		//ACT
 		this.oIconTabHeader.ondragrearranging(this.returnMockEvent(KeyCodes.ARROW_RIGHT,"tabReorder3"));
 		// Assert
 		assert.strictEqual(this.oIconTabBar.getItems()[2].getText(), "Second tab", 'Third Tab is "Second Tab"');
-		assert.strictEqual(Core.byId("tabReorder3").getDomRef().getAttribute("aria-posinset"), "2" , 'Aria-pointset should be 2');
+		assert.strictEqual(Element.registry.get("tabReorder3").getDomRef().getAttribute("aria-posinset"), "2" , 'Aria-pointset should be 2');
 	});
 
 	QUnit.test("Drag&Drop Keyboard Handling: CTRL + Arrow Left of first element RTL", function(assert) {
 		// Assert
 		assert.strictEqual(this.oIconTabBar.getItems()[0].getText(), "First tab", 'First Tab is "First Tab"');
-		assert.strictEqual(Core.byId("tabReorder1").getDomRef().getAttribute("aria-posinset"), "1" , 'Aria-pointset should be 1');
+		assert.strictEqual(Element.registry.get("tabReorder1").getDomRef().getAttribute("aria-posinset"), "1" , 'Aria-pointset should be 1');
 		//ACT
 		this.oIconTabHeader.ondragrearranging(this.returnMockEvent(KeyCodes.ARROW_LEFT,"tabReorder1"));
 		// Assert
 		assert.strictEqual(this.oIconTabBar.getItems()[0].getText(), "Second tab", 'Second Tab is "First Tab"');
-		assert.strictEqual(Core.byId("tabReorder1").getDomRef().getAttribute("aria-posinset"), "2" , 'Aria-pointset should be 1');
+		assert.strictEqual(Element.registry.get("tabReorder1").getDomRef().getAttribute("aria-posinset"), "2" , 'Aria-pointset should be 1');
 	});
 
 	QUnit.test("Drag&Drop Keyboard Handling: CTRL + Arrow Left RTL", function(assert) {
 		// Assert
 		assert.strictEqual(this.oIconTabBar.getItems()[0].getText(), "First tab", 'Fisrt Tab is "Fisrt Tab"');
-		assert.strictEqual(Core.byId("tabReorder1").getDomRef().getAttribute("aria-posinset"), "1" , 'Aria-pointset should be 1');
+		assert.strictEqual(Element.registry.get("tabReorder1").getDomRef().getAttribute("aria-posinset"), "1" , 'Aria-pointset should be 1');
 		//ACT
 		this.oIconTabHeader.ondragrearranging(this.returnMockEvent(KeyCodes.ARROW_LEFT,"tabReorder1"));
 		// Assert
 		assert.strictEqual(this.oIconTabBar.getItems()[1].getText(), "First tab", 'First Tab is "Second Tab"');
-		assert.strictEqual(Core.byId("tabReorder1").getDomRef().getAttribute("aria-posinset"), "2" , 'Aria-pointset should be 1');
+		assert.strictEqual(Element.registry.get("tabReorder1").getDomRef().getAttribute("aria-posinset"), "2" , 'Aria-pointset should be 1');
 	});
 
 	QUnit.test("Drag&Drop Keyboard Handling: CTRL + Home RTL", function(assert) {
 		// Assert
 		assert.strictEqual(this.oIconTabBar.getItems()[1].getText(), "Second tab", 'Second Tab is "Second Tab"');
-		assert.strictEqual(Core.byId("tabReorder2").getDomRef().getAttribute("aria-posinset"), "2" , 'Aria-pointset should be 1');
+		assert.strictEqual(Element.registry.get("tabReorder2").getDomRef().getAttribute("aria-posinset"), "2" , 'Aria-pointset should be 1');
 		//ACT
 		this.oIconTabHeader.ondragrearranging(this.returnMockEvent(KeyCodes.HOME,"tabReorder2"));
 		// Assert
 		assert.strictEqual(this.oIconTabBar.getItems()[0].getText(), "Second tab", 'Second Tab is "First Tab"');
-		assert.strictEqual(Core.byId("tabReorder1").getDomRef().getAttribute("aria-posinset"), "2" , 'Aria-pointset should be 1');
+		assert.strictEqual(Element.registry.get("tabReorder1").getDomRef().getAttribute("aria-posinset"), "2" , 'Aria-pointset should be 1');
 	});
 
 	QUnit.test("Drag&Drop Keyboard Handling: CTRL + End RTL", function(assert) {
 		// Assert
 		assert.strictEqual(this.oIconTabBar.getItems()[0].getText(), "First tab", 'First Tab is "First Tab"');
-		assert.strictEqual(Core.byId("tabReorder1").getDomRef().getAttribute("aria-posinset"), "1" , 'Aria-pointset should be 1');
+		assert.strictEqual(Element.registry.get("tabReorder1").getDomRef().getAttribute("aria-posinset"), "1" , 'Aria-pointset should be 1');
 		//ACT
 		this.oIconTabHeader.ondragrearranging(this.returnMockEvent(KeyCodes.END,"tabReorder1"));
 		// Assert
 		assert.strictEqual(this.oIconTabBar.getItems()[2].getText(), "First tab", 'First Tab is "Last Tab"');
-		assert.strictEqual(Core.byId("tabReorder1").getDomRef().getAttribute("aria-posinset"), "3" , 'Aria-pointset should be 1');
+		assert.strictEqual(Element.registry.get("tabReorder1").getDomRef().getAttribute("aria-posinset"), "3" , 'Aria-pointset should be 1');
 	});
 
 });

@@ -32,8 +32,9 @@ sap.ui.define([
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/thirdparty/jquery"
-], function(App, Button, CheckBox, Column, ColumnListItem, IconTabBar, IconTabFilter, IconTabSeparator, Input, Label, mobileLibrary, Link, List, MessageBox, ObjectStatus, Page, Panel, RadioButton, RadioButtonGroup, RatingIndicator, ScrollContainer, StandardListItem, Table, Text, oCore, coreLibrary, NumberFormat, HorizontalLayout, VerticalLayout, SimpleForm, Filter, FilterOperator, JSONModel, jQuery) {
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/core/Element"
+], function(App, Button, CheckBox, Column, ColumnListItem, IconTabBar, IconTabFilter, IconTabSeparator, Input, Label, mobileLibrary, Link, List, MessageBox, ObjectStatus, Page, Panel, RadioButton, RadioButtonGroup, RatingIndicator, ScrollContainer, StandardListItem, Table, Text, oCore, coreLibrary, NumberFormat, HorizontalLayout, VerticalLayout, SimpleForm, Filter, FilterOperator, JSONModel, jQuery, Element) {
 	"use strict";
 
 	// shortcuts
@@ -327,7 +328,7 @@ sap.ui.define([
 			var sSelectedValue = oEvent.getSource().getSelectedButton().getText();
 
 			for (var i = 0; i < jQuery(".sapMITB").length; i++) {
-				oCore.byId(jQuery(".sapMITB")[i].id).setTabDensityMode(sSelectedValue);
+				Element.registry.get(jQuery(".sapMITB")[i].id).setTabDensityMode(sSelectedValue);
 			}
 		}
 	});

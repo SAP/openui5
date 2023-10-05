@@ -13,7 +13,8 @@ sap.ui.define([
 	"sap/ui/core/ResizeHandler",
 	"sap/ui/core/InvisibleText",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/ui/core/Element"
 ], function(
 	Bar,
 	Button,
@@ -26,7 +27,8 @@ sap.ui.define([
 	ResizeHandler,
 	InvisibleText,
 	jQuery,
-	oCore
+	oCore,
+	Element
 ) {
 	"use strict";
 
@@ -152,19 +154,19 @@ sap.ui.define([
 			assert.ok(jQuery("#myBar").is("div"), "bar should be rendered as div");
 			assert.ok(jQuery("#myBar1").is("div"), "bar1 should be rendered as div");
 
-			var bar = oCore.byId("myBar");
+			var bar = Element.registry.get("myBar");
 			bar.setHTMLTag('Header');
 			bar.invalidate();
 			oCore.applyChanges();
 			assert.ok(jQuery("#myBar").is("header"), "bar should be rendered as header");
 
-			var bar1 = oCore.byId("myBar1");
+			var bar1 = Element.registry.get("myBar1");
 			bar1.setHTMLTag('Footer');
 			bar1.invalidate();
 			oCore.applyChanges();
 			assert.ok(jQuery("#myBar1").is("footer"), "bar1 should be rendered as footer");
 
-			var bar2 = oCore.byId("myBar2");
+			var bar2 = Element.registry.get("myBar2");
 			bar2.setHTMLTag('H1');
 			bar2.invalidate();
 			oCore.applyChanges();

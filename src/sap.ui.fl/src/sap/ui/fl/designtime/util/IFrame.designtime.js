@@ -5,10 +5,12 @@
 sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/rta/plugin/iframe/AddIFrameDialog",
+	"sap/ui/core/Element",
 	"sap/m/library"
 ], function(
 	Core,
-	AddIFrameDialog
+	AddIFrameDialog,
+	Element
 ) {
 	"use strict";
 
@@ -22,7 +24,7 @@ sap.ui.define([
 		// The title of the iFrame container could have changed
 		// so we need to retrieve it before opening the dialog
 		if (mRenameInfo) {
-			oContainer = Core.byId(mRenameInfo.sourceControlId);
+			oContainer = Element.registry.get(mRenameInfo.sourceControlId);
 			oInitialSettings.title = oContainer.getProperty(mRenameInfo.propertyName);
 		}
 
@@ -82,7 +84,7 @@ sap.ui.define([
 			// If the title changes a rename change must be created
 			if (mSettings.title !== oInitialSettings.title) {
 				var mRenameChange = {
-					selectorControl: Core.byId(mRenameInfo.selectorControlId),
+					selectorControl: Element.registry.get(mRenameInfo.selectorControlId),
 					changeSpecificData: {
 						changeType: "rename",
 						content: {

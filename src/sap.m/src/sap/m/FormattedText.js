@@ -13,7 +13,8 @@ sap.ui.define([
 	"sap/base/security/URLListValidator",
 	"sap/base/security/sanitizeHTML",
 	"sap/ui/util/openWindow",
-	'sap/ui/core/Core'
+	'sap/ui/core/Core',
+	"sap/ui/core/Element"
 ],
 function(
 	library,
@@ -25,8 +26,9 @@ function(
 	URLListValidator,
 	sanitizeHTML0,
 	openWindow,
-	Core
-	) {
+	Core,
+	Element
+) {
 		"use strict";
 
 
@@ -327,7 +329,7 @@ function(
 				return;
 			}
 			oEvent.preventDefault();
-			var oLink = Core.byId(oEvent.currentTarget.id);
+			var oLink = Element.registry.get(oEvent.currentTarget.id);
 			if (oLink && oLink.isA('sap.m.Link') && (oLink.getAccessibleRole() === library.LinkAccessibleRole.Button || !oLink.getHref())) {
 				return;
 			}

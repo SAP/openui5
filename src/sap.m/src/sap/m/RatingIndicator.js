@@ -13,9 +13,10 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Configuration",
-	'sap/ui/core/LabelEnablement'
+	'sap/ui/core/LabelEnablement',
+	"sap/ui/core/Lib"
 ],
-	function(library, Control, StaticArea, Parameters, RatingIndicatorRenderer, KeyCodes, Log, jQuery, Configuration, LabelEnablement) {
+	function(library, Control, StaticArea, Parameters, RatingIndicatorRenderer, KeyCodes, Log, jQuery, Configuration, LabelEnablement, Lib) {
 	"use strict";
 
 
@@ -195,7 +196,7 @@ sap.ui.define([
 		this._iIconCounter = 0;
 		this._fHoverValue = 0;
 
-		this._oResourceBundle = sap.ui.getCore().getLibraryResourceBundle('sap.m');
+		this._oResourceBundle = Lib.getResourceBundleFor('sap.m');
 	};
 
 	/**
@@ -960,7 +961,7 @@ sap.ui.define([
 	 * @protected
 	 */
 	RatingIndicator.prototype.getAccessibilityInfo = function () {
-		var oBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+		var oBundle = Lib.getResourceBundleFor("sap.m");
 		return {
 			role: "slider",
 			type: oBundle.getText("ACC_CTR_TYPE_RATING"),

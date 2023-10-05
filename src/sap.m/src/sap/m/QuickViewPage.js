@@ -31,8 +31,10 @@ sap.ui.define([
 	"./QuickViewPageRenderer",
 	"sap/base/Log",
 	"sap/base/security/encodeURL",
-	"sap/ui/dom/jquery/Focusable" // jQuery Plugin "firstFocusableDomRef"
-], function (
+	"sap/ui/core/Lib",
+	// jQuery Plugin "firstFocusableDomRef"
+	"sap/ui/dom/jquery/Focusable"
+], function(
 	library,
 	Core,
 	Control,
@@ -60,7 +62,8 @@ sap.ui.define([
 	ResponsiveGridLayout,
 	QuickViewPageRenderer,
 	Log,
-	encodeURL
+	encodeURL,
+	Lib
 ) {
 	"use strict";
 
@@ -85,7 +88,7 @@ sap.ui.define([
 	// shortcut for sap.m.EmptyIndicator
 	var EmptyIndicatorMode = library.EmptyIndicatorMode;
 
-	var oRB = Core.getLibraryResourceBundle('sap.m');
+	var oRB = Lib.getResourceBundleFor('sap.m');
 
 	// shortcut for sap.m.PageBackgroundDesign
 	var PageBackgroundDesign = mLibrary.PageBackgroundDesign;

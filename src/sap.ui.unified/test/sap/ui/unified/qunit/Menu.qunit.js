@@ -13,8 +13,10 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Control",
-	"sap/ui/dom/jquery/cursorPos" // jQuery Plugin "cursorPos"
-], function(qutils, Menu, MenuItem, MenuItemBase, MenuTextFieldItem, Button, Device, KeyCodes, Popup, Core, jQuery, Control) {
+	"sap/ui/core/Element",
+	// jQuery Plugin "cursorPos"
+	"sap/ui/dom/jquery/cursorPos"
+], function(qutils, Menu, MenuItem, MenuItemBase, MenuTextFieldItem, Button, Device, KeyCodes, Popup, Core, jQuery, Control, Element) {
 	"use strict";
 
 	var Dock = Popup.Dock;
@@ -1254,8 +1256,8 @@ sap.ui.define([
 		openRootMenu(true, assert);
 		var bHasPopup = !!oRootMenu.oPopup;
 		oRootMenu.destroy();
-		assert.ok(!Core.byId(sId), "No Menu registered in the Core anymore");
-		assert.ok(!Core.byId(sSubId), "No Submenu registered in the Core anymore");
+		assert.ok(!Element.registry.get(sId), "No Menu registered in the Core anymore");
+		assert.ok(!Element.registry.get(sSubId), "No Submenu registered in the Core anymore");
 		assert.ok(!oRootMenu.oPopup && bHasPopup, "Internal Popup cleaned up");
 	});
 

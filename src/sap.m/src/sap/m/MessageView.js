@@ -29,6 +29,7 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	"sap/base/Log",
 	"sap/base/security/URLListValidator",
+	"sap/ui/core/Lib",
 	"sap/ui/thirdparty/caja-html-sanitizer"
 ], function(
 	jQuery,
@@ -56,7 +57,8 @@ sap.ui.define([
 	MessageViewRenderer,
 	KeyCodes,
 	Log,
-	URLListValidator
+	URLListValidator,
+	Lib
 ) {
 	"use strict";
 
@@ -299,7 +301,7 @@ sap.ui.define([
 		var that = this;
 		this._bHasHeaderButton = false;
 
-		this._oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+		this._oResourceBundle = Lib.getResourceBundleFor("sap.m");
 
 		this._createNavigationPages();
 		this._createLists();

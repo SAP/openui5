@@ -9,7 +9,8 @@ sap.ui.define([
 	"sap/ui/model/Filter",
 	"sap/ui/core/util/MockServer",
 	"sap/ui/core/Core",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/core/Element"
 ], function(
 	TableQUnitUtils,
 	TreeTable,
@@ -19,7 +20,8 @@ sap.ui.define([
 	Filter,
 	MockServer,
 	Core,
-	jQuery
+	jQuery,
+	Element
 ) {
 	"use strict";
 
@@ -613,7 +615,7 @@ sap.ui.define([
 			}, mExpectation, sMessage);
 		},
 		getTable: function() {
-			return Core.byId("table");
+			return Element.registry.get("table");
 		}
 	});
 

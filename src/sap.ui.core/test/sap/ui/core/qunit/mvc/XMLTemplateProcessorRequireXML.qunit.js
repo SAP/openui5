@@ -505,18 +505,6 @@ sap.ui.define([
 				spies: {
 					warning: [Log, "warning"]
 				}
-			},
-			sync: {
-				create: function () {
-					return sap.ui.component({
-						name: TESTDATA_PREFIX + ".extension-points.Child",
-						manifestUrl: sap.ui.require.toUrl("testdata/xml-require/extension-points/Child/manifest-sync-rootview.json"),
-						async: false
-					}).getRootControl().loaded();
-				},
-				spies: {
-					warning: [Log, "warning"]
-				}
 			}
 		},
 		runAssertions: function (oView, mSpies, assert, bAsync) {

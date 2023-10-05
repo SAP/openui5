@@ -21,8 +21,9 @@ sap.ui.define([
 	"sap/ui/integration/util/BindingHelper",
 	"sap/ui/integration/util/BindingResolver",
 	"sap/base/util/merge",
-	"sap/ui/integration/library"
-], function (
+	"sap/ui/integration/library",
+	"sap/ui/core/Element"
+], function(
 	BaseContentRenderer,
 	GenericPlaceholder,
 	MessageStrip,
@@ -41,7 +42,8 @@ sap.ui.define([
 	BindingHelper,
 	BindingResolver,
 	merge,
-	library
+	library,
+	Element
 ) {
 	"use strict";
 
@@ -792,7 +794,7 @@ sap.ui.define([
 	BaseContent.prototype.validateControls = function (bShowValueState, bSkipFiringStateChangedEvent) { };
 
 	BaseContent.prototype.getCardInstance = function () {
-		return Core.byId(this.getCard());
+		return Element.registry.get(this.getCard());
 	};
 
 	BaseContent.prototype.isSkeleton = function () {

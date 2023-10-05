@@ -20,10 +20,12 @@ sap.ui.define([
 	"sap/base/util/isPlainObject",
 	"sap/m/ImageHelper",
 	"sap/ui/thirdparty/jquery",
+	"sap/ui/core/Lib",
 	"sap/ui/core/IconPool",
 	"./CarouselLayout",
-	"sap/ui/dom/jquery/Selectors" // provides jQuery custom selector ":sapTabbable"
-], function (
+	// provides jQuery custom selector ":sapTabbable"
+	"sap/ui/dom/jquery/Selectors"
+], function(
 	library,
 	Core,
 	Control,
@@ -40,7 +42,8 @@ sap.ui.define([
 	isPlainObject,
 	ImageHelper,
 	jQuery
-	/*, IconPool (indirect dependency, kept for compatibility with tests, to be fixed in ImageHelper) */
+	/*, IconPool (indirect dependency, kept for compatibility with tests, to be fixed in ImageHelper) */,
+	Lib
 ) {
 	"use strict";
 
@@ -290,7 +293,7 @@ sap.ui.define([
 
 		this.data("sap-ui-fastnavgroup", "true", true); // Define group for F6 handling
 
-		this._oRb = Core.getLibraryResourceBundle("sap.m");
+		this._oRb = Lib.getResourceBundleFor("sap.m");
 	};
 
 	/**

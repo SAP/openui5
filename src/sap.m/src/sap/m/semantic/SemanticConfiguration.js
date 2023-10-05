@@ -15,8 +15,9 @@ sap.ui.define([
 	"sap/m/library",
 	"sap/m/OverflowToolbarLayoutData",
 	"sap/ui/core/IconPool",
-	"sap/ui/core/InvisibleText"
-], function(BaseObject, library, OverflowToolbarLayoutData, IconPool, InvisibleText) {
+	"sap/ui/core/InvisibleText",
+	"sap/ui/core/Lib"
+], function(BaseObject, library, OverflowToolbarLayoutData, IconPool, InvisibleText, Lib) {
 	"use strict";
 
 	// shortcut for sap.m.ButtonType
@@ -120,7 +121,7 @@ sap.ui.define([
 	SemanticConfiguration._oTypeConfigs = (function () { //TODO: set from outside?
 
 	var oTypeConfigs = {},
-			oBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+			oBundle = Lib.getResourceBundleFor("sap.m");
 
 		oTypeConfigs["sap.m.semantic.MultiSelectAction"] = {
 			position: SemanticConfiguration.prototype._PositionInPage.headerRight,

@@ -6,12 +6,14 @@ sap.ui.define([
 	"sap/base/util/merge",
 	"sap/ui/core/Core",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
-	"sap/ui/fl/changeHandler/MoveControls"
+	"sap/ui/fl/changeHandler/MoveControls",
+	"sap/ui/core/Element"
 ], function(
 	merge,
 	Core,
 	JsControlTreeModifier,
-	MoveControls
+	MoveControls,
+	Element
 ) {
 	"use strict";
 
@@ -65,8 +67,8 @@ sap.ui.define([
 	 * @override
 	 */
 	MoveObjectPageSection.completeChangeContent = function (oChange, mSpecificChangeInfo, mPropertyBag) {
-		var oSourceControl = Core.byId(mSpecificChangeInfo.source.id),
-			oTargetControl = Core.byId(mSpecificChangeInfo.target.id);
+		var oSourceControl = Element.registry.get(mSpecificChangeInfo.source.id),
+			oTargetControl = Element.registry.get(mSpecificChangeInfo.target.id);
 		var oPromise = Promise.resolve();
 		if (oSourceControl.isA("sap.uxap.AnchorBar")
 			&& oTargetControl.isA("sap.uxap.AnchorBar")
@@ -97,9 +99,9 @@ sap.ui.define([
 				var aAnchoredSections = oLayout._getVisibleSections(); // sections that have anchors
 
 				function getSectionForAnchor(sAnchorId) {
-					var oAnchor = Core.byId(sAnchorId),
+					var oAnchor = Element.registry.get(sAnchorId),
 						sSectionId = oAnchor.data("sectionId");
-					return Core.byId(sSectionId);
+					return Element.registry.get(sSectionId);
 				}
 				var aPromiseArray = [];
 				mSpecificChangeInfo.movedElements.forEach(function(oElement) {

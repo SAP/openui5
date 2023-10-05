@@ -39,7 +39,8 @@ sap.ui.define([
 	"sap/m/Title",
 	"sap/m/SegmentedButton",
 	"sap/m/SegmentedButtonItem",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/ui/core/Lib"
 ], function(
 	DomUnitsRem,
 	createAndAppendDiv,
@@ -78,7 +79,8 @@ sap.ui.define([
 	Title,
 	SegmentedButton,
 	SegmentedButtonItem,
-	oCore
+	oCore,
+	Lib
 ) {
 	"use strict";
 
@@ -3571,8 +3573,8 @@ sap.ui.define([
 	QUnit.test("Aria attributes", function (assert) {
 		// arrange
 		var oOverflowTB = createOverflowToolbar(),
-			sExpectedAriaRoleDescription = oCore
-				.getLibraryResourceBundle("sap.m")
+			sExpectedAriaRoleDescription = Lib
+				.getResourceBundleFor("sap.m")
 				.getText(oOverflowTB.constructor.ARIA_ROLE_DESCRIPTION);
 
 		// assert
@@ -3849,7 +3851,7 @@ sap.ui.define([
 			columns: [new Column({})],
 			items: [new ColumnListItem({ cells: [oOtb]})]
 		}),
-		sExpectedTooltip = oCore.getLibraryResourceBundle("sap.m")
+		sExpectedTooltip = Lib.getResourceBundleFor("sap.m")
 			.getText(OverflowToolbar.TOGGLE_BUTTON_TOOLTIP);
 
 		//Act

@@ -16,7 +16,8 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/ui/core/Core",
 	"sap/ui/core/Configuration",
-	"sap/ui/core/InvisibleText"
+	"sap/ui/core/InvisibleText",
+	"sap/ui/core/Lib"
 ], function(
 	library,
 	Control,
@@ -30,7 +31,8 @@ sap.ui.define([
 	Button,
 	Core,
 	Configuration,
-	InvisibleText
+	InvisibleText,
+	Lib
 ) {
 	"use strict";
 
@@ -273,7 +275,7 @@ sap.ui.define([
 	MessageStripRenderer.getAccessibilityState = function () {
 		var mAccessibilityState = MSUtils.getAccessibilityState.call(this),
 			oLink = this.getLink(),
-			oResourceBundle = Core.getLibraryResourceBundle("sap.m");
+			oResourceBundle = Lib.getResourceBundleFor("sap.m");
 
 
 		if (!oLink) {
@@ -305,7 +307,7 @@ sap.ui.define([
 	 * Initialize close button.
 	 */
 	MessageStrip.prototype._initCloseButton = function () {
-		var oRb = Core.getLibraryResourceBundle("sap.m"),
+		var oRb = Lib.getResourceBundleFor("sap.m"),
 			oCloseButton = this.getAggregation("_closeButton");
 
 			if (!oCloseButton) {
@@ -328,7 +330,7 @@ sap.ui.define([
 	 */
 	MessageStrip.prototype._setButtonAriaLabelledBy = function (sType) {
 		var oCloseButton = this.getAggregation("_closeButton"),
-			oRb = Core.getLibraryResourceBundle("sap.m"),
+			oRb = Lib.getResourceBundleFor("sap.m"),
 			sText = oRb.getText("MESSAGE_STRIP_" + sType.toUpperCase() + "_CLOSE_BUTTON");
 
 		if (!this._oInvisibleText) {

@@ -74,7 +74,9 @@ sap.ui.define([
 			oRowsBinding.filter(sFilter
 				? new Filter("hobby", FilterOperator.Contains, sFilter)
 				: []);
-			this._oAggregation.expandTo = sFilter ? 99 : 2; // auto expand on filter
+			this._oAggregation.expandTo = sFilter
+				? Number.MAX_SAFE_INTEGER // auto expand on filter
+				: 2;
 			oRowsBinding.setAggregation(this._oAggregation);
 			oRowsBinding.resume();
 		},

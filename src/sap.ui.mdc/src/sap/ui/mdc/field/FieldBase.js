@@ -29,7 +29,9 @@ sap.ui.define([
 	'sap/ui/model/ParseException',
 	'sap/ui/model/ValidateException',
 	'sap/ui/model/base/ManagedObjectModel',
-	'sap/ui/base/ManagedObjectObserver'
+	'sap/ui/base/ManagedObjectObserver',
+	"sap/ui/core/Lib",
+	"sap/ui/core/Element"
 ], function(
 	Control,
 	BaseType,
@@ -58,7 +60,9 @@ sap.ui.define([
 	ParseException,
 	ValidateException,
 	ManagedObjectModel,
-	ManagedObjectObserver
+	ManagedObjectObserver,
+	Lib,
+	Element
 ) {
 	"use strict";
 
@@ -606,7 +610,7 @@ sap.ui.define([
 
 		this.attachEvent("modelContextChange", this.handleModelContextChange, this);
 
-		this._oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
+		this._oResourceBundle = Lib.getResourceBundleFor("sap.ui.mdc");
 
 		this._aAsyncChanges = [];
 
@@ -1467,7 +1471,7 @@ sap.ui.define([
 
 		if (bShowEmptyIndicator) {
 			if (!this._oResourceBundleM) {
-				this._oResourceBundleM = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+				this._oResourceBundleM = Lib.getResourceBundleFor("sap.m");
 			}
 			return this._oResourceBundleM.getText("EMPTY_INDICATOR"); // TODO: clarify accessibility support for semantic conected fields
 		} else if (this.getContentFactory().isMeasure() && this.getContentFactory().getUnitOriginalType(true)) {
@@ -1648,7 +1652,7 @@ sap.ui.define([
 
 		const aLabels = LabelEnablement.getReferencingLabels(this);
 		for (let i = 0; i < aLabels.length; i++) {
-			const oLabel = sap.ui.getCore().byId(aLabels[i]);
+			const oLabel = Element.registry.get(aLabels[i]);
 			oLabel.invalidate();
 		}
 
@@ -2616,7 +2620,7 @@ sap.ui.define([
 		let oValueHelp;
 
 		if (sMutation === "remove") {
-			oValueHelp = sap.ui.getCore().byId(sId);
+			oValueHelp = Element.registry.get(sId);
 			if (oValueHelp) {
 				_disconnectValueHelp.call(this, oValueHelp);
 				oValueHelp.detachEvent("dataUpdate", _handleHelpDataUpdate, this);
@@ -2643,7 +2647,7 @@ sap.ui.define([
 	function _checkValueHelpExist(sId) {
 
 		if (sId && this.isPropertyInitial("_valueHelpEnabled")) {
-			const oValueHelp = sap.ui.getCore().byId(sId);
+			const oValueHelp = Element.registry.get(sId);
 			if (oValueHelp) {
 				oValueHelp.attachEvent("dataUpdate", _handleHelpDataUpdate, this);
 				if (oValueHelp.getIcon()) { //if there is no icon, the value help is only used as typeahead
@@ -2671,7 +2675,7 @@ sap.ui.define([
 		}
 
 		if (sId) {
-			oValueHelp = sap.ui.getCore().byId(sId);
+			oValueHelp = Element.registry.get(sId);
 		}
 
 		return oValueHelp;
@@ -3127,7 +3131,7 @@ sap.ui.define([
 		const oSourceControl = oEvent.srcControl;
 
 		if (oValueHelp && oContent === oSourceControl) { // in unit case only handle content with assigned value help
-			const oFocusedControl = sap.ui.getCore().byId(oEvent.relatedControlId);
+			const oFocusedControl = Element.registry.get(oEvent.relatedControlId);
 			if (oFocusedControl) {
 				if (containsOrEquals(oValueHelp.getDomRef(), oFocusedControl.getFocusDomRef())) {
 					oEvent.stopPropagation(); // to prevent focusleave on Field itself

@@ -14,7 +14,9 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/mdc/enums/TableP13nMode",
 	"sap/ui/mdc/enums/TableType",
-	"sap/ui/mdc/util/FilterUtil"
+	"sap/ui/mdc/util/FilterUtil",
+	"sap/ui/core/Element",
+	"sap/ui/core/Lib"
 ], function(
 	AggregationBaseDelegate,
 	loadModules,
@@ -23,7 +25,9 @@ sap.ui.define([
 	Core,
 	TableP13nMode,
 	TableType,
-	FilterUtil
+	FilterUtil,
+	Element,
+	Lib
 ) {
 	"use strict";
 
@@ -92,7 +96,7 @@ sap.ui.define([
 			aTableFilters = oTableFilters ? [oTableFilters] : [];
 		}
 
-		const oFilterBar = Core.byId(oTable.getFilter());
+		const oFilterBar = Element.registry.get(oTable.getFilter());
 		if (oFilterBar) {
 			const mFilterBarConditions = oFilterBar.getConditions() || {};
 			const aFilterBarProperties = oTable.getPropertyHelper().getProperties();
@@ -186,7 +190,7 @@ sap.ui.define([
 	TableDelegate.formatGroupHeader = function(oTable, oContext, sProperty) {
 		const oProperty = oTable.getPropertyHelper().getProperty(sProperty);
 		const oTextProperty = oProperty.textProperty;
-		const oResourceBundle = Core.getLibraryResourceBundle("sap.ui.mdc");
+		const oResourceBundle = Lib.getResourceBundleFor("sap.ui.mdc");
 		let sResourceKey = "table.ROW_GROUP_TITLE";
 		const aValues = [oProperty.label, oContext.getProperty(oProperty.path, true)];
 
@@ -200,7 +204,7 @@ sap.ui.define([
 
 	TableDelegate.validateState = function(oTable, oState, sKey) {
 		if (sKey == "Filter" && oTable._oMessageFilter) {
-			const oResourceBundle = Core.getLibraryResourceBundle("sap.ui.mdc");
+			const oResourceBundle = Lib.getResourceBundleFor("sap.ui.mdc");
 			return {
 				validation: coreLibrary.MessageType.Information,
 				message: oResourceBundle.getText("table.PERSONALIZATION_DIALOG_FILTER_MESSAGESTRIP")

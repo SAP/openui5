@@ -458,37 +458,36 @@ html.sap-desktop .sapUiCalHead > button.sapUiCalDsbl:focus,
 	}
 }
 
-	.sapUiSizeCozy {
-		.sapUiCal {
-			min-width: 19.9rem;
-			padding-top: 0.5rem;
-			.sapUiCalMonthView .sapUiCalWH,
-			.sapUiCalMonthView .sapUiCalItem,
-			.sapUiCalMonthView .sapUiCalWeekNum{
-				max-width: 2.25rem;
-			}
-
-			div[role=row] {
-				display: flex;
-				justify-content: space-between;
-			}
-			.sapUiCalHeadNext {
-				right: 0;
-			}
-			.sapUiCalHeadPrev {
-				left: 0;
-			}
-		}
-		.sapUiCal .sapUiCalMonthView,
-		.sapUiCal .sapUiCalRow {
-			padding-left: 0rem;
-			padding-right: 0rem;
-		}
-		.sapUiCal .sapUiCalMonthView {
-			padding-bottom: 0.5rem;
+.sapUiSizeCozy {
+	.sapUiCal:not(.sapUiCalDateInt) {
+		min-width: 19.9rem;
+		padding-top: 0.5rem;
+		.sapUiCalMonthView .sapUiCalWH,
+		.sapUiCalMonthView .sapUiCalItem,
+		.sapUiCalMonthView .sapUiCalWeekNum{
+			max-width: 2.25rem;
 		}
 
+		div[role=row] {
+			display: flex;
+			justify-content: space-between;
+		}
+		.sapUiCalHeadNext {
+			right: 0;
+		}
+		.sapUiCalHeadPrev {
+			left: 0;
+		}
 	}
+	.sapUiCal .sapUiCalMonthView,
+	.sapUiCal .sapUiCalRow {
+		padding-left: 0rem;
+		padding-right: 0rem;
+	}
+	.sapUiCal .sapUiCalMonthView {
+		padding-bottom: 0.5rem;
+	}
+}
 
 .sapUiSizeCompact .sapUiCalMonthPicker.sapUiCalMonthSecType,
 .sapUiSizeCompact .sapUiCalYearPicker.sapUiCalMonthSecType {

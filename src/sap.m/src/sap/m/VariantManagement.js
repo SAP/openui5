@@ -42,7 +42,9 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	'sap/base/Log',
 	"sap/ui/core/library",
-	"sap/m/library"
+	"sap/m/library",
+	"sap/ui/core/Lib",
+	"sap/ui/core/Element"
 ], function(
 	JSONModel,
 	ManagedObjectModel,
@@ -82,7 +84,9 @@ sap.ui.define([
 	KeyCodes,
 	Log,
 	coreLibrary,
-	mobileLibrary
+	mobileLibrary,
+	Lib,
+	Element
 ) {
 	"use strict";
 
@@ -499,7 +503,7 @@ sap.ui.define([
 	 */
 	VariantManagement.prototype.init = function() {
 
-		this._oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+		this._oRb = Lib.getResourceBundleFor("sap.m");
 
 
         this._oManagedObjectModel = new ManagedObjectModel(this);
@@ -913,7 +917,7 @@ sap.ui.define([
 			if (nPos > 0) {
 				sId = sId.substring(0, nPos);
 			}
-			return sap.ui.getCore().byId(sId);
+			return Element.registry.get(sId);
 		}
 
 		return null;

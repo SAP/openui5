@@ -5,11 +5,13 @@
 sap.ui.define([
 	"sap/m/table/columnmenu/QuickActionBase",
 	"sap/m/ToggleButton",
-	"sap/m/library"
-], function (
+	"sap/m/library",
+	"sap/ui/core/Lib"
+], function(
 	QuickActionBase,
 	ToggleButton,
-	library
+	library,
+	Lib
 ) {
 	"use strict";
 
@@ -68,7 +70,7 @@ sap.ui.define([
 	};
 
 	QuickTotal.prototype.getLabel = function() {
-		var oBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+		var oBundle = Lib.getResourceBundleFor("sap.m");
 		return oBundle.getText("table.COLUMNMENU_QUICK_TOTAL");
 	};
 

@@ -9,7 +9,8 @@ sap.ui.define([
 	"sap/m/RadioButton",
 	"sap/m/RadioButtonGroup",
 	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/ui/core/Element"
 ], function(
 	ContextVisibility,
 	WriteStorage,
@@ -19,7 +20,8 @@ sap.ui.define([
 	RadioButton,
 	RadioButtonGroup,
 	sinon,
-	oCore
+	oCore,
+	Element
 ) {
 	"use strict";
 
@@ -154,7 +156,7 @@ sap.ui.define([
 
 			return oController.onAddContextsHandler().then(function() {
 				assert.strictEqual(oConnectorCall.callCount, 1, "then the back end request was sent once");
-				var oSelectedRolesDialog = oCore.byId("selectContexts-dialog");
+				var oSelectedRolesDialog = Element.registry.get("selectContexts-dialog");
 				assert.strictEqual(oSelectedRolesDialog.isOpen(), true, "then the dialog is opened");
 				oSelectedRolesDialog.destroy();
 			});

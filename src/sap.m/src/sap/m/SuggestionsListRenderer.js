@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define(["sap/ui/core/Core"], function (Core) {
+sap.ui.define(["sap/ui/core/Core", "sap/ui/core/Element"], function(Core, Element) {
 	"use strict";
 
 	/**
@@ -42,7 +42,7 @@ sap.ui.define(["sap/ui/core/Core"], function (Core) {
 		var searchValue;
 		var selectedIndex = oList.getSelectedItemIndex();
 		try {
-			searchValue = Core.byId(oList.getParentInput()).getValue();
+			searchValue = Element.registry.get(oList.getParentInput()).getValue();
 		} catch (e) {
 			searchValue = "";
 		}

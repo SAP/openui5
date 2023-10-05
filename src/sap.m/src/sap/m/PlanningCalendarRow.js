@@ -4,17 +4,19 @@
 
 //Provides control sap.ui.unified.PlanningCalendarRow.
 sap.ui.define([
-				'sap/ui/core/Core',
-				'sap/ui/core/Element',
-				'sap/m/CustomListItem',
-				'sap/ui/unified/DateTypeRange',
-				'sap/ui/unified/library'
-			], function (
-				Core,
-				Element,
-				CustomListItem,
-				DateTypeRange,
-				unifiedLibrary
+ 'sap/ui/core/Core',
+ 'sap/ui/core/Element',
+ 'sap/m/CustomListItem',
+ 'sap/ui/unified/DateTypeRange',
+ 'sap/ui/unified/library',
+ "sap/ui/core/Lib"
+], function(
+ Core,
+ Element,
+ CustomListItem,
+ DateTypeRange,
+ unifiedLibrary,
+ Lib
 ) {
 	"use strict";
 
@@ -362,7 +364,7 @@ sap.ui.define([
 	PlanningCalendarRow.prototype._getPlanningCalendarCustomRowHeader = function() {
 		if (!this.oRowHeader) {
 			this.oRowHeader = new CustomListItem(this.getId() + "-CustomHead", {
-				accDescription: Core.getLibraryResourceBundle("sap.m").getText("PC_CUSTOM_ROW_HEADER_CONTENT_DESC")
+				accDescription: Lib.getResourceBundleFor("sap.m").getText("PC_CUSTOM_ROW_HEADER_CONTENT_DESC")
 			});
 		}
 

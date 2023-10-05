@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define(["sap/ui/core/Core"], function(Core) {
+sap.ui.define(["sap/ui/core/Core", "sap/ui/core/Lib"], function(Core, Lib) {
 	"use strict";
 
 	/**
@@ -24,7 +24,7 @@ sap.ui.define(["sap/ui/core/Core"], function(Core) {
 	 * @param {sap.f.cards.loading.PlaceholderBase} oControl An object representation of the control that should be rendered.
 	 */
 	PlaceholderBaseRenderer.render = function(oRm, oControl) {
-		var oResBundle = Core.getLibraryResourceBundle("sap.ui.core"),
+		var oResBundle = Lib.getResourceBundleFor("sap.ui.core"),
 			sTitle = oResBundle.getText("BUSY_TEXT");
 
 		if (!oControl.getHasContent()) {

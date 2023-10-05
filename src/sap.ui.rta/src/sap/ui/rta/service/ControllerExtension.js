@@ -9,7 +9,8 @@ sap.ui.define([
 	"sap/ui/fl/apply/api/FlexRuntimeInfoAPI",
 	"sap/ui/fl/write/api/ChangesWriteAPI",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/core/Element"
 ], function(
 	DtUtil,
 	OverlayRegistry,
@@ -17,7 +18,8 @@ sap.ui.define([
 	FlexRuntimeInfoAPI,
 	ChangesWriteAPI,
 	PersistenceWriteAPI,
-	jQuery
+	jQuery,
+	Element
 ) {
 	"use strict";
 
@@ -84,7 +86,7 @@ sap.ui.define([
 						throw DtUtil.createError("service.ControllerExtension#add", "codeRef has to end with 'js'");
 					}
 
-					var oView = sap.ui.getCore().byId(sViewId);
+					var oView = Element.registry.get(sViewId);
 					var oAppComponent = FlexUtils.getAppComponentForControl(oView);
 					var sControllerName = oView.getControllerName && oView.getControllerName() || oView.getController() && oView.getController().getMetadata().getName();
 					// Calculate moduleName for code extension

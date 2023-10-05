@@ -12,7 +12,8 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/rta/toolbar/Adaptation",
 	"sap/ui/rta/Utils",
-	"sap/ui/thirdparty/sinon-4"
+	"sap/ui/thirdparty/sinon-4",
+	"sap/ui/core/Lib"
 ], function(
 	RtaQunitUtils,
 	Popover,
@@ -25,7 +26,8 @@ sap.ui.define([
 	JSONModel,
 	Adaptation,
 	Utils,
-	sinon
+	sinon,
+	Lib
 ) {
 	"use strict";
 
@@ -61,7 +63,7 @@ sap.ui.define([
 		var oToolbarControlsModel = RtaQunitUtils.createToolbarControlsModel();
 
 		var oToolbar = new Adaptation({
-			textResources: Core.getLibraryResourceBundle("sap.ui.rta"),
+			textResources: Lib.getResourceBundleFor("sap.ui.rta"),
 			rtaInformation: {
 				flexSettings: {
 					layer: Layer.CUSTOMER

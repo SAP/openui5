@@ -22,7 +22,8 @@ sap.ui.define([
 	"sap/base/util/includes",
 	"sap/ui/thirdparty/sinon-4",
 	"test-resources/sap/ui/rta/qunit/RtaQunitUtils",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/ui/core/Element"
 ], function(
 	AppVariantManager,
 	RtaAppVariantFeature,
@@ -45,7 +46,8 @@ sap.ui.define([
 	includes,
 	sinon,
 	RtaQunitUtils,
-	oCore
+	oCore,
+	Element
 ) {
 	"use strict";
 
@@ -72,7 +74,7 @@ sap.ui.define([
 			var fnCancel;
 
 			this.oAppVariantManager._openDialog(fnCreate, fnCancel);
-			var oAppVariantDialog = oCore.byId("appVariantDialog");
+			var oAppVariantDialog = Element.registry.get("appVariantDialog");
 			oAppVariantDialog.fireCreate();
 
 			assert.equal(bCreate, true, "then the create event is correctly triggered");
@@ -87,7 +89,7 @@ sap.ui.define([
 			};
 
 			this.oAppVariantManager._openDialog(fnCreate, fnCancel);
-			var oAppVariantDialog = oCore.byId("appVariantDialog");
+			var oAppVariantDialog = Element.registry.get("appVariantDialog");
 			oAppVariantDialog.fireCancel();
 
 			assert.equal(bCancel, true, "then the cancel event is correctly triggered");

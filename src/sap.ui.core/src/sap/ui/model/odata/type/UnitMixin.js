@@ -6,8 +6,9 @@
 // sap.ui.model.odata.type.Currency or sap.ui.model.odata.type.Unit
 sap.ui.define([
 	"sap/ui/model/ParseException",
-	"sap/ui/model/ValidateException"
-], function (ParseException, ValidateException) {
+	"sap/ui/model/ValidateException",
+	"sap/ui/core/Lib"
+], function(ParseException, ValidateException, Lib) {
 	"use strict";
 
 	var mCodeList2CustomUnits = new Map(),
@@ -26,7 +27,7 @@ sap.ui.define([
 	 *   The message
 	 */
 	function getText(sKey, aParams) {
-		return sap.ui.getCore().getLibraryResourceBundle().getText(sKey, aParams);
+		return Lib.getResourceBundleFor("sap.ui.core").getText(sKey, aParams);
 	}
 
 	/**

@@ -14,7 +14,9 @@ sap.ui.define([
 	"sap/ui/core/dnd/DragInfo",
 	"sap/ui/events/KeyCodes",
 	"sap/m/BadgeCustomData",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/ui/core/Element",
+	"sap/ui/core/Lib"
 ], function(
 	qutils,
 	createAndAppendDiv,
@@ -30,7 +32,9 @@ sap.ui.define([
 	DragInfo,
 	KeyCodes,
 	BadgeCustomData,
-	oCore
+	oCore,
+	Element,
+	Lib
 ) {
 	"use strict";
 
@@ -208,19 +212,19 @@ sap.ui.define([
 
 	QUnit.module("Basic", {
 		beforeEach : function() {
-			b1 = oCore.byId("b1");
-			b2 = oCore.byId("b2");
-			b4 = oCore.byId("b4");
-			b5 = oCore.byId("b5");
-			b6 = oCore.byId("b6");
-			b7 = oCore.byId("b7");
-			b8 = oCore.byId("b8");
-			b9 = oCore.byId("b9");
-			b10 = oCore.byId("b10");
-			b11 = oCore.byId("b11");
-			b12 = oCore.byId("b12");
-			b13 = oCore.byId("b13");
-			b14 = oCore.byId("b14");
+			b1 = Element.registry.get("b1");
+			b2 = Element.registry.get("b2");
+			b4 = Element.registry.get("b4");
+			b5 = Element.registry.get("b5");
+			b6 = Element.registry.get("b6");
+			b7 = Element.registry.get("b7");
+			b8 = Element.registry.get("b8");
+			b9 = Element.registry.get("b9");
+			b10 = Element.registry.get("b10");
+			b11 = Element.registry.get("b11");
+			b12 = Element.registry.get("b12");
+			b13 = Element.registry.get("b13");
+			b14 = Element.registry.get("b14");
 		},
 		afterEach : function() {
 			b1 = null;
@@ -498,7 +502,7 @@ sap.ui.define([
 		var oInfo = oButton.getAccessibilityInfo();
 		assert.ok(!!oInfo, "getAccessibilityInfo returns a info object");
 		assert.strictEqual(oInfo.role, "button", "AriaRole");
-		assert.strictEqual(oInfo.type, oCore.getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_BUTTON"), "Type");
+		assert.strictEqual(oInfo.type, Lib.getResourceBundleFor("sap.m").getText("ACC_CTR_TYPE_BUTTON"), "Type");
 		assert.strictEqual(oInfo.description, "Tooltip", "Description");
 		assert.strictEqual(oInfo.focusable, true, "Focusable");
 		assert.strictEqual(oInfo.enabled, true, "Enabled");
@@ -990,7 +994,7 @@ sap.ui.define([
 
 	QUnit.module("Tap Event Checking", {
 		beforeEach : function() {
-			b15 = oCore.byId("b15");
+			b15 = Element.registry.get("b15");
 		},
 		afterEach : function() {
 			b15 = null;

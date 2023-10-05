@@ -19,8 +19,9 @@ sap.ui.define([
 	"sap/ui/core/InvisibleMessage",
 	"sap/ui/Device",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/thirdparty/jquery"
-], function (
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/core/Lib"
+], function(
 	GridContainerRenderer,
 	GridContainerSettings,
 	GridContainerUtils,
@@ -38,7 +39,8 @@ sap.ui.define([
 	InvisibleMessage,
 	Device,
 	KeyCodes,
-	jQuery
+	jQuery,
+	Lib
 ) {
 	"use strict";
 
@@ -622,7 +624,7 @@ sap.ui.define([
 	 * @private
 	 */
 	GridContainer.prototype.init = function () {
-		this._oRb  = Core.getLibraryResourceBundle("sap.f");
+		this._oRb  = Lib.getResourceBundleFor("sap.f");
 		this.setAggregation("_defaultLayout", new GridContainerSettings());
 
 		this._initRangeSet();

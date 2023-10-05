@@ -6,12 +6,14 @@ sap.ui.define([
 	'sap/ui/mdc/valuehelp/base/Container',
 	'sap/ui/mdc/util/loadModules',
 	'sap/ui/thirdparty/jquery',
-	'sap/ui/core/library'
+	'sap/ui/core/library',
+	"sap/ui/core/Lib"
 ], function(
 	Container,
 	loadModules,
 	jQuery,
-	coreLibrary
+	coreLibrary,
+	Lib
 ) {
 	"use strict";
 
@@ -146,7 +148,7 @@ sap.ui.define([
 					customHeader: oValueStateHeader
 				}).addStyleClass("sapMdcValueHelpPopover").addStyleClass("sapMComboBoxBasePicker").addStyleClass("sapMComboBoxBasePicker-CTX"); // to have a ComboBox popup
 
-				this._oInvisibleText = new InvisibleText({text: sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc").getText("valuehelp.POPOVER_AVALIABLE_VALUES")}).toStatic();
+				this._oInvisibleText = new InvisibleText({text: Lib.getResourceBundleFor("sap.ui.mdc").getText("valuehelp.POPOVER_AVALIABLE_VALUES")}).toStatic();
 				oPopover.addAriaLabelledBy(this._oInvisibleText);
 
 				if (oValueStateHeader) {

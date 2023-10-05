@@ -8,14 +8,16 @@ sap.ui.define([
 	"sap/base/util/uid",
 	"sap/base/util/merge",
 	"sap/ui/rta/util/ServiceEventBus",
-	"sap/ui/thirdparty/URI"
+	"sap/ui/thirdparty/URI",
+	"sap/ui/core/Lib"
 ], function(
 	ManagedObject,
 	PostMessageBus,
 	uid,
 	merge,
 	ServiceEventBus,
-	URI
+	URI,
+	Lib
 ) {
 	"use strict";
 
@@ -188,7 +190,7 @@ sap.ui.define([
 					origin: this.getOrigin(),
 					channelId: CHANNEL_ID,
 					eventId: PostMessageBus.event.CONNECT,
-					data: sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta").getText("SERVICE_NAME")
+					data: Lib.getResourceBundleFor("sap.ui.rta").getText("SERVICE_NAME")
 				});
 			}, this);
 

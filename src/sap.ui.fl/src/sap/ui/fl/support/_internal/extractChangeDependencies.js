@@ -5,11 +5,13 @@
 sap.ui.define([
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/core/Element"
 ], function(
 	JsControlTreeModifier,
 	ManifestUtils,
-	jQuery
+	jQuery,
+	Element
 ) {
 	"use strict";
 
@@ -29,7 +31,7 @@ sap.ui.define([
 		var aComponentContainers = document.querySelector(".sapUiComponentContainer");
 		aComponentContainers = Array.isArray(aComponentContainers) ? aComponentContainers : [aComponentContainers];
 		aComponentContainers.some(function(oComponentContainerDomRef) {
-			var oComponentContainer = sap.ui.getCore().byId(oComponentContainerDomRef.id);
+			var oComponentContainer = Element.registry.get(oComponentContainerDomRef.id);
 			var oAppComponent = oComponentContainer && oComponentContainer.getComponentInstance();
 
 			if (oAppComponent && ManifestUtils.getFlexReferenceForControl(oAppComponent) === sComponentName) {
@@ -120,7 +122,7 @@ sap.ui.define([
 				aNotApplicableChanges: []
 			};
 
-			var oControl = sap.ui.getCore().byId(sControlId);
+			var oControl = Element.registry.get(sControlId);
 
 			if (oControl) {
 				mControlData.bPresent = true;

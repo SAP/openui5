@@ -17,7 +17,8 @@ sap.ui.define([
 	'./ResponsiveScale',
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/core/Configuration"
+	"sap/ui/core/Configuration",
+	"sap/ui/core/Lib"
 ],
 function(
 	Control,
@@ -34,7 +35,8 @@ function(
 	ResponsiveScale,
 	jQuery,
 	KeyCodes,
-	Configuration
+	Configuration,
+	Lib
 ) {
 		"use strict";
 
@@ -810,7 +812,7 @@ function(
 			// resize handler of the slider
 			this._parentResizeHandler = null;
 
-			this._oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+			this._oResourceBundle = Lib.getResourceBundleFor("sap.m");
 
 			// a reference to the SliderTooltipContainer
 			this._oTooltipContainer = null;

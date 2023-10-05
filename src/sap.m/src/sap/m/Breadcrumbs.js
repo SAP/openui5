@@ -19,7 +19,9 @@ sap.ui.define([
 	"sap/m/library",
 	"./BreadcrumbsRenderer",
 	'sap/ui/base/ManagedObject',
-	'sap/ui/core/InvisibleText'
+	'sap/ui/core/InvisibleText',
+	"sap/ui/core/Lib",
+	"sap/ui/core/Element"
 ], function(
 	Control,
 	Rem,
@@ -36,7 +38,9 @@ sap.ui.define([
 	library,
 	BreadcrumbsRenderer,
 	ManagedObject,
-	InvisibleText
+	InvisibleText,
+	Lib,
+	Element
 ) {
 	"use strict";
 
@@ -47,7 +51,7 @@ sap.ui.define([
 		SeparatorStyle = library.BreadcrumbsSeparatorStyle,
 
 		// shortcut for texts resource bundle
-		oResource = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+		oResource = Lib.getResourceBundleFor("sap.m");
 
 	/**
 	 * Constructor for a new <code>Breadcrumbs</code>.
@@ -358,7 +362,7 @@ sap.ui.define([
 	Breadcrumbs.prototype._destroyInvisibleTexts = function () {
 		var oControl;
 		this._aCachedInvisibleTexts.forEach(function (oData) {
-			oControl = sap.ui.getCore().byId(oData.controlId);
+			oControl = Element.registry.get(oData.controlId);
 
 			// remove reference to the invisible text on the sap.m.Link control
 			// check for control existence as it might have been destroyed already
@@ -452,7 +456,7 @@ sap.ui.define([
 			return;
 		}
 
-		oLink = sap.ui.getCore().byId(oSelectedItem.getKey());
+		oLink = Element.registry.get(oSelectedItem.getKey());
 
 		/* if it's not a link, then it must be only the current location text, we shouldn't do anything */
 		if (!(oLink instanceof Link)) {

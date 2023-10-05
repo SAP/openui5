@@ -11,8 +11,9 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/core/Core",
 	"sap/ui/mdc/enums/ChartItemRoleType",
-	"delegates/util/DelegateCache"
-], function(ChartDelegate, ODataMetaModelUtil, BooksFBDelegate, GridTableDelegate, FieldDisplay, OperatorName, Log, Core, ChartItemRoleType, DelegateCache) {
+	"delegates/util/DelegateCache",
+	"sap/ui/core/Element"
+], function(ChartDelegate, ODataMetaModelUtil, BooksFBDelegate, GridTableDelegate, FieldDisplay, OperatorName, Log, Core, ChartItemRoleType, DelegateCache, Element) {
 	"use strict";
 
 	var SampleChartDelegate = Object.assign({}, ChartDelegate);
@@ -76,7 +77,7 @@ sap.ui.define([
 			if (oPropertyInfo.groupable) {
 
 				return oModifier.createControl("sap.ui.mdc.chart.Item", mPropertyBag.appComponent, mPropertyBag.view, sId + "--GroupableItem--" + sPropertyName,{
-					name: oPropertyInfo.name,
+					propertyKey: oPropertyInfo.name,
 					label: oPropertyInfo.label,
 					type: "groupable",
 					role: sRole ? sRole : "category"
@@ -86,7 +87,7 @@ sap.ui.define([
 			if (oPropertyInfo.aggregatable) {
 
 				return oModifier.createControl("sap.ui.mdc.chart.Item", mPropertyBag.appComponent, mPropertyBag.view, sId + "--AggregatableItem--" + sPropertyName,{
-					name: oPropertyInfo.name,
+					propertyKey: oPropertyInfo.name,
 					label: oPropertyInfo.label,
 					type: "aggregatable",
 					role: sRole ? sRole : "axis1"
@@ -245,7 +246,7 @@ sap.ui.define([
 	SampleChartDelegate.updateBindingInfo = function(oChart, oBindingInfo) {
 		ChartDelegate.updateBindingInfo.apply(this, arguments);
 
-		var oFilterBar = Core.byId(oChart.getFilter());
+		var oFilterBar = Element.registry.get(oChart.getFilter());
 
 		if (oFilterBar) {
 			GridTableDelegate._updateSearch(oBindingInfo, oFilterBar);

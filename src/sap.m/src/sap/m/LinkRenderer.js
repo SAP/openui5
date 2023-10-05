@@ -8,9 +8,10 @@
 	 'sap/ui/core/AccessKeysEnablement',
 	 "sap/ui/util/defaultLinkTypes",
 	 './library',
-	 'sap/ui/core/Core'
-	],
-	function(Renderer, coreLibrary, AccessKeysEnablement, defaultLinkTypes, mobileLibrary, Core) {
+	 'sap/ui/core/Core',
+	 "sap/ui/core/Lib"
+ ],
+	function(Renderer, coreLibrary, AccessKeysEnablement, defaultLinkTypes, mobileLibrary, Core, Lib) {
 	"use strict";
 
 	// shortcut for sap.ui.core.TextDirection
@@ -34,7 +35,7 @@
 	var EmptyIndicatorMode = mobileLibrary.EmptyIndicatorMode;
 
 	// shortcut for library resource bundle
-	var oRb = Core.getLibraryResourceBundle("sap.m");
+	var oRb = Lib.getResourceBundleFor("sap.m");
 
 
 	/**

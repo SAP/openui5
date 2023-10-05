@@ -1,9 +1,17 @@
 /* global QUnit, sinon */
 sap.ui.define([
-	"sap/m/p13n/Engine", "../../QUnitUtils", "sap/ui/mdc/FilterBarDelegate", "sap/ui/mdc/FilterBar", "sap/ui/mdc/FilterField", "sap/ui/mdc/enums/OperatorName", "test-resources/sap/m/qunit/p13n/TestModificationHandler", "sap/ui/core/Core"
-], function (Engine, MDCQUnitUtils, FilterBarDelegate, FilterBar, FilterField, OperatorName, TestModificationHandler, oCore) {
+	"sap/m/p13n/Engine",
+	"../../QUnitUtils",
+	"sap/ui/mdc/FilterBarDelegate",
+	"sap/ui/mdc/FilterBar",
+	"sap/ui/mdc/FilterField",
+	"sap/ui/mdc/enums/OperatorName",
+	"test-resources/sap/m/qunit/p13n/TestModificationHandler",
+	"sap/ui/core/Core",
+	"sap/ui/core/Lib"
+], function(Engine, MDCQUnitUtils, FilterBarDelegate, FilterBar, FilterField, OperatorName, TestModificationHandler, oCore, Lib) {
 	"use strict";
-	const oResourceBundle = oCore.getLibraryResourceBundle("sap.ui.mdc");
+	const oResourceBundle = Lib.getResourceBundleFor("sap.ui.mdc");
 
 	QUnit.module("Engine API tests showUI FilterBar", {
 		setLiveMode: function(sController, bLiveMode) {

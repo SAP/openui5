@@ -10,22 +10,24 @@ sap.ui.define([
 	"sap/ui/model/type/Integer",
 	"sap/ui/model/type/Currency",
 	"sap/ui/model/odata/type/String",
-	"sap/ui/core/Core"
-], function (
-		ConditionsType,
-		Condition,
-		FilterOperatorUtil,
-		ConditionValidateException,
-		ConditionValidated,
-		OperatorName,
-		IntegerType,
-		CurrencyType,
-		StringType,
-		oCore
-	) {
+	"sap/ui/core/Core",
+	"sap/ui/core/Lib"
+], function(
+	ConditionsType,
+	Condition,
+	FilterOperatorUtil,
+	ConditionValidateException,
+	ConditionValidated,
+	OperatorName,
+	IntegerType,
+	CurrencyType,
+	StringType,
+	oCore,
+	Lib
+) {
 	"use strict";
 
-	const oResourceBundle = oCore.getLibraryResourceBundle("sap.ui.mdc");
+	const oResourceBundle = Lib.getResourceBundleFor("sap.ui.mdc");
 	let oConditionsType;
 	let oValueType;
 	let bAsyncCalled;

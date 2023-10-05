@@ -1,110 +1,24 @@
-/*global sinon, QUnit, lib */
+/*global sinon, QUnit*/
 sap.ui.define([
 	"sap/ui/core/Component",
 	"sap/ui/core/ShortcutHintsMixin",
 	"sap/ui/core/Fragment",
 	"sap/ui/Device",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/qunit/utils/nextUIUpdate",
+	"my/hints/lib/MyControl"
 ], function(
 	Component,
 	ShortcutHintsMixin,
 	Fragment,
 	Device,
-	nextUIUpdate
+	nextUIUpdate,
+	MyControl
 ) {
 	"use strict";
 
-	sap.ui.define("my/hints/Component", ["sap/ui/core/UIComponent"], function(UIComponent) {
-		return UIComponent.extend("my.hints.Component", {
-			metadata: {
-				manifest: {
-					"sap.app": {
-						"id": "my.hints"
-					},
-					"sap.ui5": {
-						"dependencies": {
-							"libs": {
-								"sap.ui.core": {},
-								"sap.m": {}
-							}
-						},
-						"commands": {
-							"Save": {
-								"shortcut": "Ctrl+S"
-							},
-							"Create": {
-								"shortcut": "Ctrl+D"
-							}
-						},
-						"rootView": {
-							"viewName": "my.hints.ShortcutHints",
-							"type": "XML",
-							"async": true
-						}
-					}
-				}
-			}
-		});
-	});
-
-	sap.ui.define("my/hints/ShortcutHints.controller", ["sap/ui/core/mvc/Controller"], function(Controller) {
-		return Controller.extend("my.hints.ShortcutHints", {
-			onSave: function() {},
-			onDelete: function() {}
-		});
-	});
-
-	sap.ui.define("lib/my/MyControl", ["sap/ui/core/Control"], function(Control) {
-		var MyControl = Control.extend("lib.my.MyControl", {
-			library: "lib.my",
-			metadata: {
-				events: {
-					myEvent: {}
-				}
-			},
-			renderer: {
-				apiVersion: 2,
-				render: function(oRm, oControl) {
-					oRm.openStart("div", oControl);
-					oRm.openEnd();
-
-					oRm.openStart("div", oControl.getId() + "-inner");
-					oRm.openEnd();
-					oRm.close("div");
-
-					oRm.close("div");
-				}
-			}
-		});
-
-		return MyControl;
-	});
-
-	var sView = '<mvc:View xmlns:my="lib.my" xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" xmlns="sap.m" controllerName="my.hints.ShortcutHints" displayBlock="true">'
-		+ '<App id="commands">'
-		+ '<Page id="page" title="Commands">'
-		+ ' <dependents>'
-		+ '  <core:CommandExecution id="CE_SAVE" command="Save" enabled="true" execute=".onSave" />'
-		+ ' </dependents>'
-		+ ' <Panel id="myPanel">'
-		+ '  <my:MyControl id="myControl" myEvent="cmd:MyCommand" />'
-		+ '  <my:MyControl id="myControl2" myEvent="cmd:Save" />'
-		+ '  <Button id="b1" icon="sap-icon://save" press="cmd:Save" />'
-		+ '  <Button id="b2" text="Save" tooltip="User Tooltip" press="cmd:Save" />'
-		+ '  <Button id="b3" icon="sap-icon://save" tooltip="User Tooltip" press="cmd:Save" />'
-		+ ' </Panel>'
-		+ '</Page>'
-		+ '</App>'
-		+ '</mvc:View>';
-
-	sap.ui.require.preload({
-		"my/hints/ShortcutHints.view.xml": sView
-	}, "my/hints/ShortcutHints-preload");
-
 	function waitForViewReady() {
 		return Component.create({
-			name: "my.hints",
-			manifest: false
+			name: "my.hints"
 		}).then(function(myComponent) {
 			return myComponent.getRootControl().loaded();
 		});
@@ -131,7 +45,7 @@ sap.ui.define([
 	});
 	QUnit.test("ShortcutHintsMixin instances is not created for mobile phone", function(assert){
 		// arrange
-		var oMyControl = new lib.my.MyControl({ myEvent: function() { } });
+		var oMyControl = new MyControl({ myEvent: function() { } });
 		var oSandbox = sinon.sandbox.create();
 
 		oSandbox.stub(Device.system, "desktop").value(false);
@@ -157,7 +71,7 @@ sap.ui.define([
 		//when the control receives config before the command execution
 		//event handler is attached
 		//in other words - when the config is added inside init
-		var oStub = sinon.stub(lib.my.MyControl.prototype, "init").callsFake(
+		var oStub = sinon.stub(MyControl.prototype, "init").callsFake(
 			function() {
 				ShortcutHintsMixin.addConfig(this, { event: "myEvent" }, this);
 			}
@@ -187,7 +101,7 @@ sap.ui.define([
 
 	QUnit.test("add config with an event that already has event handlers", function(assert) {
 		// arrange
-		var oMyControl = new lib.my.MyControl({ myEvent: function() { } });
+		var oMyControl = new MyControl({ myEvent: function() { } });
 
 		// act
 		ShortcutHintsMixin.addConfig(oMyControl, { event: "myEvent" }, oMyControl);
@@ -201,7 +115,7 @@ sap.ui.define([
 
 	QUnit.test("add config then add command with an event that already has event handlers", function(assert) {
 		// arrange
-		var oMyControl = new lib.my.MyControl({ myEvent: function() { } });
+		var oMyControl = new MyControl({ myEvent: function() { } });
 		var fnFakeCommandHandler = function() { };
 		fnFakeCommandHandler._sapui_commandName = "Save";
 
@@ -248,7 +162,7 @@ sap.ui.define([
 
 			Fragment.load({
 				type: "XML",
-				definition: '<my:MyControl xmlns:my="lib.my" id="' + oView.getId() + '--myControl" myEvent="cmd:MyCommand" />'
+				definition: '<my:MyControl xmlns:my="my.hints.lib" id="' + oView.getId() + '--myControl" myEvent="cmd:MyCommand" />'
 			}).then(function(oCtrl) {
 				oView.byId("myPanel").addContent(oCtrl);
 				ShortcutHintsMixin.addConfig(oCtrl, { event: "myEvent" }, oCtrl);

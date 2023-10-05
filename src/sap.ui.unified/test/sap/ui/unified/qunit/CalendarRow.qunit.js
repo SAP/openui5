@@ -13,7 +13,8 @@ sap.ui.define([
 	"sap/ui/Device",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Core",
-	"sap/ui/core/date/UI5Date"
+	"sap/ui/core/date/UI5Date",
+	"sap/ui/core/Element"
 ], function(
 	qutils,
 	CalendarLegendRenderer,
@@ -28,7 +29,8 @@ sap.ui.define([
 	Device,
 	jQuery,
 	oCore,
-	UI5Date
+	UI5Date,
+	Element
 ) {
 	"use strict";
 
@@ -315,7 +317,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Appointment", function(assert) {
-		var oAppointment = oCore.byId("App0");
+		var oAppointment = Element.registry.get("App0");
 		assert.equal(oAppointment.getKey(), "A0", "Appointment: key set");
 		assert.equal(oAppointment.getTitle(), "Appointment 0", "Appointment: Title set");
 		assert.equal(oAppointment.getText(), "Appointment of 5 minutes, 2 hour in past", "Appointment: text set");
@@ -570,7 +572,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Appointments - change properties", function(assert) {
-		var oAppointment = oCore.byId("App0");
+		var oAppointment = Element.registry.get("App0");
 		oAppointment.setKey("Ap0");
 		oAppointment.setTitle("App 0");
 		oAppointment.setText("App 0");
@@ -823,12 +825,12 @@ sap.ui.define([
 		qutils.triggerEvent("tap", "Row1-Group0");
 
 		assert.equal(iSelectedGroupAppointments, 7, "Selected Appointments in group");
-		assert.ok(oCore.byId("App1").getSelected(), "Appointment1: selected property set");
-		assert.ok(oCore.byId("App2").getSelected(), "Appointment1: selected property set");
-		assert.ok(oCore.byId("App3").getSelected(), "Appointment1: selected property set");
-		assert.ok(oCore.byId("App4").getSelected(), "Appointment1: selected property set");
-		assert.ok(oCore.byId("App5").getSelected(), "Appointment1: selected property set");
-		assert.ok(oCore.byId("App6").getSelected(), "Appointment1: selected property set");
+		assert.ok(Element.registry.get("App1").getSelected(), "Appointment1: selected property set");
+		assert.ok(Element.registry.get("App2").getSelected(), "Appointment1: selected property set");
+		assert.ok(Element.registry.get("App3").getSelected(), "Appointment1: selected property set");
+		assert.ok(Element.registry.get("App4").getSelected(), "Appointment1: selected property set");
+		assert.ok(Element.registry.get("App5").getSelected(), "Appointment1: selected property set");
+		assert.ok(Element.registry.get("App6").getSelected(), "Appointment1: selected property set");
 		assert.equal(sDomRefId, "Row1-Group0", "sDomRefId returns the right ID of the group appointment");
 	});
 
@@ -841,18 +843,18 @@ sap.ui.define([
 		qutils.triggerEvent("tap", "App1");
 		assert.equal(sSelectedAppointmentId, "App1", "Appointment 1: click fires select event");
 		assert.ok(!bMultiSelect, "Appointment 1: no multiple selection");
-		assert.ok(oCore.byId("App1").getSelected(), "Appointment1: selected property set");
+		assert.ok(Element.registry.get("App1").getSelected(), "Appointment1: selected property set");
 		assert.ok(jQuery("#App1").hasClass("sapUiCalendarAppSel"), "Appointment1: selected rendered");
 		sAriaLabel1 = jQuery("#App1").attr("aria-labelledby");
 		assert.ok(sAriaLabel1.indexOf(sSelectedTextId) > -1, "Appointment1: selected ARIA text is rendered");
 		assert.equal(sDomRefId, "App1", "sDomRefId returns the right ID of the appointment");
 
 		qutils.triggerEvent("tap", "App2-Title");
-		assert.ok(!oCore.byId("App1").getSelected(), "Appointment1: selected property not longer set");
+		assert.ok(!Element.registry.get("App1").getSelected(), "Appointment1: selected property not longer set");
 		assert.ok(!jQuery("#App1").hasClass("sapUiCalendarAppSel"), "Appointment1: selected not longer rendered");
 		assert.equal(sSelectedAppointmentId, "App2", "Appointment 2: click on title fires select event");
 		assert.ok(!bMultiSelect, "Appointment 2: no multiple selection");
-		assert.ok(oCore.byId("App2").getSelected(), "Appointment2: selected property set");
+		assert.ok(Element.registry.get("App2").getSelected(), "Appointment2: selected property set");
 		assert.ok(jQuery("#App2").hasClass("sapUiCalendarAppSel"), "Appointment2: selected rendered");
 		sAriaLabel2 = jQuery("#App2").attr("aria-labelledby");
 		assert.ok(sAriaLabel2.indexOf(sSelectedTextId) > -1, "Appointment2: selected ARIA text is rendered");
@@ -861,11 +863,11 @@ sap.ui.define([
 		assert.equal(sDomRefId, "App2", "sDomRefId returns the right ID of the appointment");
 
 		qutils.triggerEvent("tap", "App3-Text", {ctrlKey: true});
-		assert.ok(oCore.byId("App2").getSelected(), "Appointment2: selected still property set");
+		assert.ok(Element.registry.get("App2").getSelected(), "Appointment2: selected still property set");
 		assert.ok(jQuery("#App2").hasClass("sapUiCalendarAppSel"), "Appointment2: selected still rendered");
 		assert.equal(sSelectedAppointmentId, "App3", "Appointment 3: click on text fires select event");
 		assert.ok(bMultiSelect, "Appointment 3: multiple selection");
-		assert.ok(oCore.byId("App3").getSelected(), "Appointment3: selected property set");
+		assert.ok(Element.registry.get("App3").getSelected(), "Appointment3: selected property set");
 		assert.ok(jQuery("#App3").hasClass("sapUiCalendarAppSel"), "Appointment3: selected rendered");
 		sAriaLabel3 = jQuery("#App3").attr("aria-labelledby");
 		assert.ok(sAriaLabel3.indexOf(sSelectedTextId) > -1, "Appointment3: selected ARIA text is rendered");
@@ -878,9 +880,9 @@ sap.ui.define([
 		qutils.triggerEvent("tap", "App1");
 		assert.equal(sSelectedAppointmentId, "App1", "Appointment 1: click fires select event");
 		assert.ok(bMultiSelect, "Appointment 1: multiple selection");
-		assert.ok(oCore.byId("App1").getSelected(), "Appointment1: selected property set");
-		assert.ok(oCore.byId("App2").getSelected(), "Appointment2: selected property set");
-		assert.ok(oCore.byId("App3").getSelected(), "Appointment3: selected property set");
+		assert.ok(Element.registry.get("App1").getSelected(), "Appointment1: selected property set");
+		assert.ok(Element.registry.get("App2").getSelected(), "Appointment2: selected property set");
+		assert.ok(Element.registry.get("App3").getSelected(), "Appointment3: selected property set");
 		assert.ok(jQuery("#App1").hasClass("sapUiCalendarAppSel"), "Appointment1: selected rendered");
 		assert.ok(jQuery("#App2").hasClass("sapUiCalendarAppSel"), "Appointment2: selected rendered");
 		assert.ok(jQuery("#App3").hasClass("sapUiCalendarAppSel"), "Appointment3: selected rendered");
@@ -1034,7 +1036,7 @@ sap.ui.define([
 		qutils.triggerKeydown("App0", "ENTER");
 		assert.equal(sSelectedAppointmentId, "App0", "Appointment 0: ENTER fires select event");
 		assert.ok(!bMultiSelect, "Appointment 0: no multiple selection");
-		assert.ok(oCore.byId("App0").getSelected(), "Appointment0: selected property set");
+		assert.ok(Element.registry.get("App0").getSelected(), "Appointment0: selected property set");
 		assert.ok(jQuery("#App0").hasClass("sapUiCalendarAppSel"), "Appointment0: selected rendered");
 	});
 
@@ -1075,7 +1077,7 @@ sap.ui.define([
 	QUnit.module("functions");
 
 	QUnit.test("focusAppointment", function(assert) {
-		oRow1.focusAppointment(oCore.byId("App2"));
+		oRow1.focusAppointment(Element.registry.get("App2"));
 		assert.equal(document.activeElement.id, "App2", "Appointment2 focused");
 	});
 

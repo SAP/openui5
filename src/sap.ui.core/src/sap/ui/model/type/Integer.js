@@ -10,9 +10,9 @@ sap.ui.define([
 	"sap/ui/model/FormatException",
 	"sap/ui/model/ParseException",
 	"sap/ui/model/SimpleType",
-	"sap/ui/model/ValidateException"
-], function(each, isEmptyObject, NumberFormat, FormatException, ParseException, SimpleType,
-		ValidateException) {
+	"sap/ui/model/ValidateException",
+	"sap/ui/core/Lib"
+], function(each, isEmptyObject, NumberFormat, FormatException, ParseException, SimpleType, ValidateException, Lib) {
 	"use strict";
 
 	/**
@@ -74,14 +74,14 @@ sap.ui.define([
 			case "string":
 				iResult = this.oOutputFormat.parse(String(vValue));
 				if (isNaN(iResult)) {
-					oBundle = sap.ui.getCore().getLibraryResourceBundle();
+					oBundle = Lib.getResourceBundleFor("sap.ui.core");
 					throw new ParseException(oBundle.getText("EnterInt"));
 				}
 				break;
 			case "float":
 				iResult = Math.floor(vValue);
 				if (iResult != vValue) {
-					oBundle = sap.ui.getCore().getLibraryResourceBundle();
+					oBundle = Lib.getResourceBundleFor("sap.ui.core");
 					throw new ParseException(oBundle.getText("EnterInt"));
 				}
 				break;
@@ -99,7 +99,7 @@ sap.ui.define([
 
 	Integer.prototype.validateValue = function(vValue) {
 		if (this.oConstraints) {
-			var oBundle = sap.ui.getCore().getLibraryResourceBundle(),
+			var oBundle = Lib.getResourceBundleFor("sap.ui.core"),
 				aViolatedConstraints = [],
 				aMessages = [],
 				iValue = vValue,

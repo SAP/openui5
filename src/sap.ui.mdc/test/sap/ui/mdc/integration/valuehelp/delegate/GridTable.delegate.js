@@ -13,8 +13,8 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/mdc/table/Column",
 	"sap/m/Text",
-	'sap/ui/mdc/odata/v4/TypeMap'
-
+	'sap/ui/mdc/odata/v4/TypeMap',
+	"sap/ui/core/Element"
 ], function(
 	TableDelegate,
 	Core,
@@ -26,7 +26,8 @@ sap.ui.define([
 	Log,
 	Column,
 	Text,
-	ODataV4TypeMap
+	ODataV4TypeMap,
+	Element
 ) {
 	"use strict";
 
@@ -134,7 +135,7 @@ sap.ui.define([
 			oBindingInfo.model = oBindingInfo.model || oDelegatePayload.model;
 		}
 
-		const oFilterBar = Core.byId(oTable.getFilter());
+		const oFilterBar = Element.registry.get(oTable.getFilter());
 		// var bTableFilterEnabled = oTable.isFilteringEnabled();
 		let mConditions;
 		let oOuterFilterInfo;

@@ -4,10 +4,14 @@
 
 sap.ui.define([
 	"sap/ui/rta/plugin/Remove",
-	"sap/m/Button"
+	"sap/m/Button",
+	"sap/ui/core/Element",
+	"sap/ui/core/Lib"
 ], function(
 	Remove,
-	Button
+	Button,
+	Element,
+	Lib
 ) {
 	"use strict";
 
@@ -60,7 +64,7 @@ sap.ui.define([
 			});
 
 			var fnOnClick = function(oEvent) {
-				var oOverlay = sap.ui.getCore().byId(oEvent.currentTarget.id.replace("-DeleteIcon", ""));
+				var oOverlay = Element.registry.get(oEvent.currentTarget.id.replace("-DeleteIcon", ""));
 				onDeletePressed(oOverlay);
 				oEvent.stopPropagation();
 				oEvent.preventDefault();
@@ -99,7 +103,7 @@ sap.ui.define([
 
 		oOverlay._oDeleteButton = new Button(sId, {
 			icon: "sap-icon://less",
-			tooltip: sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta").getText("CTX_REMOVE"),
+			tooltip: Lib.getResourceBundleFor("sap.ui.rta").getText("CTX_REMOVE"),
 			enabled: bEnabled
 		}).placeAt(oHtmlIconOuter);
 		oHtmlIconWrapper.append(oHtmlIconOuter);

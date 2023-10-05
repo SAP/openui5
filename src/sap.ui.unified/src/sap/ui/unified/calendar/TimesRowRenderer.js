@@ -11,7 +11,8 @@ sap.ui.define([
 	"sap/ui/core/date/UI5Date",
 	'sap/ui/unified/library',
 	"sap/base/Log",
-	"sap/ui/base/Object"
+	"sap/ui/base/Object",
+	"sap/ui/core/Element"
 ],
 	function(
 		CalendarUtils,
@@ -22,7 +23,8 @@ sap.ui.define([
 		UI5Date,
 		library,
 		Log,
-		BaseObject
+		BaseObject,
+		Element
 	) {
 		"use strict";
 
@@ -202,7 +204,7 @@ sap.ui.define([
 
 		var sLegendId = oTimesRow.getLegend();
 		if (sLegendId) {
-			var oLegend = sap.ui.getCore().byId(sLegendId);
+			var oLegend = Element.registry.get(sLegendId);
 			if (oLegend) {
 				if (!(BaseObject.isA(oLegend, "sap.ui.unified.CalendarLegend"))) {
 					throw new Error(oLegend + " is not an sap.ui.unified.CalendarLegend. " + oTimesRow);

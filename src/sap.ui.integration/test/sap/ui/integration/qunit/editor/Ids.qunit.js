@@ -11,8 +11,9 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/events/KeyCodes",
-	"sap/base/i18n/ResourceBundle"
-], function (
+	"sap/base/i18n/ResourceBundle",
+	"sap/ui/core/Element"
+], function(
 	merge,
 	x,
 	Editor,
@@ -24,7 +25,8 @@ sap.ui.define([
 	Core,
 	QUnitUtils,
 	KeyCodes,
-	ResourceBundle
+	ResourceBundle,
+	Element
 ) {
 	"use strict";
 
@@ -141,7 +143,7 @@ sap.ui.define([
 					assert.equal(oField0.getAggregation("_field").getId(), sEditorId + "_string_control", "Field: control id");
 					assert.equal(oField0.getAggregation("_dynamicField").getId(), sEditorId + "_string_dynamic_control", "Field: dynamic control id");
 					assert.equal(oField0.getAggregation("_field")._getValueHelpIcon().getId(), sEditorId + "_string_control-vhi", "Field: control help button id");
-					assert.ok(Core.byId(sEditorId + "_string_control-vhi"), "Field: control help button exist");
+					assert.ok(Element.registry.get(sEditorId + "_string_control-vhi"), "Field: control help button exist");
 					assert.ok(oField0.getAssociation("_messageStrip"), sEditorId + "_strip", "MessageStrip: id");
 
 					var oLabel1 = this.oEditor.getAggregation("_formContent")[3];
@@ -319,7 +321,7 @@ sap.ui.define([
 					var sEditorId = this.oEditor.getId();
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.equal(oField._descriptionIcon.getId(), sEditorId + "_stringParameter_description_icon", "Description Icon: id");
-					assert.ok(Core.byId(oField._descriptionIcon.getId()), "Description Icon: exist");
+					assert.ok(Element.registry.get(oField._descriptionIcon.getId()), "Description Icon: exist");
 					resolve();
 				}.bind(this));
 			}.bind(this));
@@ -374,7 +376,7 @@ sap.ui.define([
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					var sMessageIcon = oField.getAssociation("_messageIcon");
 					assert.equal(sMessageIcon, sEditorId + "_string1_message_icon", "Message Icon: id");
-					assert.ok(Core.byId(sMessageIcon), "Message Icon: exist");
+					assert.ok(Element.registry.get(sMessageIcon), "Message Icon: exist");
 					resolve();
 				}.bind(this));
 			}.bind(this));

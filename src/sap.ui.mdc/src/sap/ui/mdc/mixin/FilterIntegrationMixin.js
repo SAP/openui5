@@ -5,8 +5,9 @@
 sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/base/Log",
-	"sap/ui/mdc/enums/ReasonMode"
-], function (Core, Log, ReasonMode) {
+	"sap/ui/mdc/enums/ReasonMode",
+	"sap/ui/core/Element"
+], function(Core, Log, ReasonMode, Element) {
 	"use strict";
 
 	/**
@@ -69,14 +70,14 @@ sap.ui.define([
 		if (sOldFilter !== sNewFilter) {
 			this._validateFilter(vFilter);
 
-			const oOldFilter = Core.byId(this.getFilter());
+			const oOldFilter = Element.registry.get(this.getFilter());
 			if (oOldFilter) {
 				deregisterFilter(this, oOldFilter);
 			}
 
 			this.setAssociation("filter", vFilter, true);
 
-			const oNewFilter = Core.byId(this.getFilter());
+			const oNewFilter = Element.registry.get(this.getFilter());
 			if (oNewFilter) {
 				registerFilter(this, oNewFilter);
 			}
@@ -174,7 +175,7 @@ sap.ui.define([
 	FilterIntegrationMixin._validateFilter = function(vFilter) {
 		_checkFISanity(this);
 
-		const oFilter = typeof vFilter === "object" ? vFilter : Core.byId(vFilter);
+		const oFilter = typeof vFilter === "object" ? vFilter : Element.registry.get(vFilter);
 		if (oFilter && !oFilter.isA(IFILTER)) {
 			throw new Error("\"" + vFilter + "\" is not valid for association \"filter\"."
 							+ " Please use an object that implements the \"" + IFILTER + "\" interface");
@@ -196,7 +197,7 @@ sap.ui.define([
 		//check for internal and external filtering before triggering a rebind
 		let pOuterFilterSearch;
 		let pInnerFilterSearch;
-		const oFilter = Core.byId(this.getFilter()), bInbuiltEnabled = this.isFilteringEnabled();
+		const oFilter = Element.registry.get(this.getFilter()), bInbuiltEnabled = this.isFilteringEnabled();
 
 		//check if there is any external/internal filter source
 		if (bInbuiltEnabled || oFilter) {

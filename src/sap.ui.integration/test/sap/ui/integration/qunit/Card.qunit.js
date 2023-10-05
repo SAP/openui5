@@ -27,9 +27,10 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/m/IllustratedMessageType",
 	"sap/m/IllustratedMessageSize",
-	"sap/ui/integration/formatters/IconFormatter"
+	"sap/ui/integration/formatters/IconFormatter",
+	"sap/ui/core/Lib"
 ],
-	function (
+	function(
 		Card,
 		Host,
 		BaseContent,
@@ -56,7 +57,8 @@ sap.ui.define([
 		JSONModel,
 		IllustratedMessageType,
 		IllustratedMessageSize,
-		IconFormatter
+		IconFormatter,
+		Lib
 	) {
 		"use strict";
 
@@ -2588,7 +2590,7 @@ sap.ui.define([
 
 		QUnit.module("Card Accessibility", {
 			beforeEach: function () {
-				this.oRb = Core.getLibraryResourceBundle("sap.f");
+				this.oRb = Lib.getResourceBundleFor("sap.f");
 				this.oCard = new Card("somecard", {
 					width: "400px",
 					height: "600px",
@@ -2724,7 +2726,7 @@ sap.ui.define([
 		QUnit.module("Error handling", {
 			beforeEach: function () {
 				this.oCard = new Card();
-				this.oRb = Core.getLibraryResourceBundle("sap.ui.integration");
+				this.oRb = Lib.getResourceBundleFor("sap.ui.integration");
 				this.oCard.placeAt(DOM_RENDER_LOCATION);
 			},
 			afterEach: function () {
@@ -2838,7 +2840,7 @@ sap.ui.define([
 		QUnit.module("No Data", {
 			beforeEach: function () {
 				this.oCard = new Card();
-				this.oRb = Core.getLibraryResourceBundle("sap.ui.integration");
+				this.oRb = Lib.getResourceBundleFor("sap.ui.integration");
 				this.oCard.placeAt(DOM_RENDER_LOCATION);
 			},
 			afterEach: function () {
@@ -4028,7 +4030,7 @@ sap.ui.define([
 
 			// Assert
 			oModel = oCard.getModel("i18n");
-			assert.strictEqual(oModel.getResourceBundle(), Core.getLibraryResourceBundle("sap.ui.integration"), "The i18n model of the card is correctly initialized.");
+			assert.strictEqual(oModel.getResourceBundle(), Lib.getResourceBundleFor("sap.ui.integration"), "The i18n model of the card is correctly initialized.");
 		});
 
 		QUnit.test("Integration library resource bundle is not enhanced", function (assert) {
@@ -4041,7 +4043,7 @@ sap.ui.define([
 				Core.applyChanges();
 
 				// Assert
-				var oResourceBundle = Core.getLibraryResourceBundle("sap.ui.integration");
+				var oResourceBundle = Lib.getResourceBundleFor("sap.ui.integration");
 				assert.ok(oResourceBundle.aCustomBundles.length === 0, "The resource bundle for integration library is not enhanced.");
 
 				done();

@@ -8,14 +8,16 @@ sap.ui.define([
 	'sap/ui/core/Control',
 	"sap/ui/core/theming/Parameters",
 	'sap/ui/core/Icon',
-	"./SideNavigationRenderer"
+	"./SideNavigationRenderer",
+	"sap/ui/core/Element"
 ],
 	function(
 		library,
 		Control,
 		Parameters,
 		Icon,
-		SideNavigationRenderer
+		SideNavigationRenderer,
+		Element
 	) {
 		'use strict';
 
@@ -303,7 +305,7 @@ sap.ui.define([
 			}
 
 			if (typeof selectedItem === 'string') {
-				listItemToSelect = sap.ui.getCore().byId(selectedItem);
+				listItemToSelect = Element.registry.get(selectedItem);
 			} else {
 				listItemToSelect = selectedItem;
 			}

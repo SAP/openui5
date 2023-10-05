@@ -10,9 +10,10 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	'sap/ui/Device',
 	"sap/base/Log",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/core/Element"
 ],
-	function(BaseObject, EventProvider, ManagedObjectObserver, Core, Device, Log, jQuery) {
+	function(BaseObject, EventProvider, ManagedObjectObserver, Core, Device, Log, jQuery, Element) {
 	"use strict";
 
 	var oEventProvider = new EventProvider(),
@@ -261,7 +262,7 @@ sap.ui.define([
 		}]);
 
 		var sCurrentViewId = this._getCurrentlyAdaptedTopViewId();
-		if (sCurrentViewId && Core.byId(sCurrentViewId)) {
+		if (sCurrentViewId && Element.registry.get(sCurrentViewId)) {
 			this._fireViewChange(sCurrentViewId, oAdaptOptions);
 		}
 	};
@@ -410,7 +411,7 @@ sap.ui.define([
 				oAdaptOptions: oAdaptOptions
 			}]);
 			sCurrentViewId = this._getCurrentlyAdaptedTopViewId();
-			if (sCurrentViewId && Core.byId(sCurrentViewId)) {
+			if (sCurrentViewId && Element.registry.get(sCurrentViewId)) {
 				this._fireViewChange(sCurrentViewId, oAdaptOptions);
 			}
 		}.bind(this);
@@ -441,7 +442,7 @@ sap.ui.define([
 				oAdaptOptions: oAdaptOptions
 			}]);
 			sCurrentViewId = this._getCurrentlyAdaptedTopViewId();
-			if (sCurrentViewId && Core.byId(sCurrentViewId)) {
+			if (sCurrentViewId && Element.registry.get(sCurrentViewId)) {
 				this._fireViewChange(sCurrentViewId, oAdaptOptions);
 			}
 		}.bind(this);
@@ -471,7 +472,7 @@ sap.ui.define([
 							oAdaptOptions: oAdaptOptions
 						}]);
 						sCurrentViewId = this._getCurrentlyAdaptedTopViewId();
-						if (sCurrentViewId && Core.byId(sCurrentViewId)) {
+						if (sCurrentViewId && Element.registry.get(sCurrentViewId)) {
 							this._fireViewChange(sCurrentViewId, oAdaptOptions);
 						}
 				}
@@ -581,7 +582,7 @@ sap.ui.define([
 	};
 
 	Fiori20Adapter._getTotalCachedInfoToMerge = function(sViewId) {
-		var oView = sap.ui.getCore().byId(sViewId),
+		var oView = Element.registry.get(sViewId),
 			oCachedViewInfo = this._getCachedViewInfoToMerge(sViewId),
 			isMasterView,
 			isDetailView,

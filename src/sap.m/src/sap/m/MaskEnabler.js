@@ -13,8 +13,10 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/m/MaskInputRule",
 	"sap/ui/core/Configuration",
-	"sap/ui/dom/jquery/cursorPos" // jQuery Plugin "cursorPos"
-], function(Control, InputBase, Device, coreLibrary, IconPool, KeyCodes, Log, jQuery, MaskInputRule, Configuration) {
+	"sap/ui/core/Lib",
+	// jQuery Plugin "cursorPos"
+	"sap/ui/dom/jquery/cursorPos"
+], function(Control, InputBase, Device, coreLibrary, IconPool, KeyCodes, Log, jQuery, MaskInputRule, Configuration, Lib) {
 	"use strict";
 
 	// shortcut for sap.ui.core.TextDirection
@@ -54,7 +56,7 @@ sap.ui.define([
 			// Skips setup of mask variables on every iteration when initializing default rules
 			this._bSkipSetupMaskVariables = null;
 
-			this._oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+			this._oRb = Lib.getResourceBundleFor("sap.m");
 
 			this._setDefaultRules();
 			this._setupMaskVariables();

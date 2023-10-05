@@ -14,7 +14,8 @@ sap.ui.define([
 	"sap/ui/mdc/enums/OperatorName",
 	"sap/ui/mdc/enums/ValueHelpSelectionType",
 	"sap/ui/mdc/filterbar/vh/FilterBar",
-	"sap/ui/mdc/FilterField", // to have it loaded when BasicSearch should be created
+	// to have it loaded when BasicSearch should be created
+	"sap/ui/mdc/FilterField",
 	"sap/ui/model/ParseException",
 	"sap/ui/model/FormatException",
 	"sap/ui/model/json/JSONModel",
@@ -33,44 +34,46 @@ sap.ui.define([
 	"sap/ui/core/library",
 	"sap/ui/core/Core",
 	"sap/m/p13n/Engine",
-	"test-resources/sap/ui/mdc/qunit/util/createAppEnvironment"
-], function (
-		qutils,
-		ValueHelpDelegate,
-		ValueHelpDelegateV4,
-		MTable,
-		Condition,
-		ConditionValidated,
-		OperatorName,
-		ValueHelpSelectionType,
-		FilterBar,
-		FilterField,
-		ParseException,
-		FormatException,
-		JSONModel,
-		Filter,
-		FilterType,
-		FilterOperator,
-		Sorter,
-		mLibrary,
-		Table,
-		Column,
-		ColumnListItem,
-		Label,
-		Text,
-		ScrollContainer,
-		KeyCodes,
-		coreLibrary,
-		oCore,
-		Engine,
-		createAppEnvironment
-	) {
+	"test-resources/sap/ui/mdc/qunit/util/createAppEnvironment",
+	"sap/ui/core/Lib"
+], function(
+	qutils,
+	ValueHelpDelegate,
+	ValueHelpDelegateV4,
+	MTable,
+	Condition,
+	ConditionValidated,
+	OperatorName,
+	ValueHelpSelectionType,
+	FilterBar,
+	FilterField,
+	ParseException,
+	FormatException,
+	JSONModel,
+	Filter,
+	FilterType,
+	FilterOperator,
+	Sorter,
+	mLibrary,
+	Table,
+	Column,
+	ColumnListItem,
+	Label,
+	Text,
+	ScrollContainer,
+	KeyCodes,
+	coreLibrary,
+	oCore,
+	Engine,
+	createAppEnvironment,
+	Lib
+) {
 	"use strict";
 
 	const ListMode = mLibrary.ListMode;
 
-	const oResourceBundle = oCore.getLibraryResourceBundle("sap.ui.mdc");
-	const oMResourceBundle = oCore.getLibraryResourceBundle("sap.m");
+	const oResourceBundle = Lib.getResourceBundleFor("sap.ui.mdc");
+	const oMResourceBundle = Lib.getResourceBundleFor("sap.m");
 
 	let oMTable;
 	let oModel;
@@ -1429,7 +1432,7 @@ sap.ui.define([
 		assert.ok(oAttributes, "Aria attributes returned for SingleSelect");
 		assert.deepEqual(oAttributes, oCheckAttributes, "returned attributes");
 
-		const oResourceBundleM = sap.ui.getCore().getLibraryResourceBundle("sap.m"); // sap.m is always loaded
+		const oResourceBundleM = Lib.getResourceBundleFor("sap.m"); // sap.m is always loaded
 
 		oCheckAttributes = {
 			contentId: oTable.getId(),

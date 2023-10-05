@@ -1,7 +1,8 @@
 sap.ui.define([
 	"sap/ui/core/mvc/Controller",
-	"sap/ui/core/Core"
-], function (Controller, oCore) {
+	"sap/ui/core/Core",
+	"sap/ui/core/Element"
+], function(Controller, oCore, Element) {
 	"use strict";
 
 	return Controller.extend("sap.m.sample.TitleWrapping.C", {
@@ -12,7 +13,7 @@ sap.ui.define([
 		},
 
 		onWrappingChange: function () {
-			var oTitle = oCore.byId(this.getView().getId() + "--WrappingTitle");
+			var oTitle = Element.registry.get(this.getView().getId() + "--WrappingTitle");
 			oTitle.setWrapping(!oTitle.getWrapping());
 		},
 

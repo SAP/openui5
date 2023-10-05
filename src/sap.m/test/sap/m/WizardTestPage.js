@@ -1,14 +1,5 @@
-sap.ui.require(["sap/m/Wizard", "sap/m/WizardStep", "sap/m/MessageToast",
-		"sap/m/Text", "sap/m/Label", "sap/m/Input", "sap/m/TextArea",
-		"sap/m/CheckBox", "sap/m/Select", "sap/m/StandardListItem",
-		"sap/m/Page", "sap/m/Button", "sap/m/Link", "sap/m/RadioButton",
-		"sap/m/RadioButtonGroup", "sap/m/VBox", "sap/m/Dialog", "sap/m/List",
-		"sap/m/SplitApp", "sap/ui/core/Item", "sap/ui/layout/form/SimpleForm", "sap/ui/Device",
-		"sap/ui/model/json/JSONModel"],
-	function(Wizard, WizardStep, MessageToast, Text, Label, Input,
-	         TextArea, CheckBox, Select, StandardListItem, Page, Button , Link,
-	         RadioButton, RadioButtonGroup, VBox, Dialog, List, SplitApp, Item,
-	         SimpleForm, Device, JSONModel) {
+sap.ui.require(["sap/m/Wizard", "sap/m/WizardStep", "sap/m/MessageToast", "sap/m/Text", "sap/m/Label", "sap/m/Input", "sap/m/TextArea", "sap/m/CheckBox", "sap/m/Select", "sap/m/StandardListItem", "sap/m/Page", "sap/m/Button", "sap/m/Link", "sap/m/RadioButton", "sap/m/RadioButtonGroup", "sap/m/VBox", "sap/m/Dialog", "sap/m/List", "sap/m/SplitApp", "sap/ui/core/Item", "sap/ui/layout/form/SimpleForm", "sap/ui/Device", "sap/ui/model/json/JSONModel", "sap/ui/core/Element"],
+	function(Wizard, WizardStep, MessageToast, Text, Label, Input, TextArea, CheckBox, Select, StandardListItem, Page, Button, Link, RadioButton, RadioButtonGroup, VBox, Dialog, List, SplitApp, Item, SimpleForm, Device, JSONModel, Element) {
 		"use strict";
 
 		var splitAppContainer = new SplitApp(),
@@ -19,11 +10,11 @@ sap.ui.require(["sap/m/Wizard", "sap/m/WizardStep", "sap/m/MessageToast",
 
 		(function () {
 			var checkStep4 = function() {
-				var selected1 = sap.ui.getCore().byId("cBox1").getSelected(),
-					selected2 = sap.ui.getCore().byId("cBox2").getSelected(),
-					selected3 = sap.ui.getCore().byId("cBox3").getSelected(),
-					selected4 = sap.ui.getCore().byId("cBox4").getSelected(),
-					selected5 = sap.ui.getCore().byId("cBox5").getSelected();
+				var selected1 = Element.registry.get("cBox1").getSelected(),
+					selected2 = Element.registry.get("cBox2").getSelected(),
+					selected3 = Element.registry.get("cBox3").getSelected(),
+					selected4 = Element.registry.get("cBox4").getSelected(),
+					selected5 = Element.registry.get("cBox5").getSelected();
 
 				if ( (selected1 && selected2 && !selected5) || (selected3 && !selected4) || (selected4 && selected2 && selected1 ) ) {
 					wizard.validateStep(step4);
@@ -69,7 +60,7 @@ sap.ui.require(["sap/m/Wizard", "sap/m/WizardStep", "sap/m/MessageToast",
 					new CheckBox("skip_details", {
 						text: "Skip details (Changing the selection on a later stage, will discard the wizard progress!)",
 						select: function (oEvent) {
-							var oStep = sap.ui.getCore().byId("linear-wiz-step1"),
+							var oStep = Element.registry.get("linear-wiz-step1"),
 								bSelected = oEvent.getParameter("selected");
 
 							oStep.setValidated(bSelected);
@@ -361,8 +352,8 @@ sap.ui.require(["sap/m/Wizard", "sap/m/WizardStep", "sap/m/MessageToast",
 				optional: true,
 				validated: false,
 				complete: function () {
-					var nextId = sap.ui.getCore().byId("step3Next").getSelectedButton().getText();
-					var nextStep = sap.ui.getCore().byId(nextId);
+					var nextId = Element.registry.get("step3Next").getSelectedButton().getText();
+					var nextStep = Element.registry.get(nextId);
 					step3.setNextStep(nextStep);
 				},
 				content: [
@@ -407,8 +398,8 @@ sap.ui.require(["sap/m/Wizard", "sap/m/WizardStep", "sap/m/MessageToast",
 				title : "User credentials",
 				id: "branch-wiz-step1",
 				complete : function() {
-					var nextId = sap.ui.getCore().byId("step1Next").getSelectedButton().getText();
-					var nextStep = sap.ui.getCore().byId(nextId);
+					var nextId = Element.registry.get("step1Next").getSelectedButton().getText();
+					var nextStep = Element.registry.get(nextId);
 					step1.setNextStep(nextStep);
 				},
 				subsequentSteps: [step2, step3],

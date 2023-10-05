@@ -4,8 +4,8 @@
 
 // Provides control sap.m.ValueStateHeader.
 sap.ui.define(
-	["./library", "sap/ui/core/library", "sap/ui/Device", "sap/ui/core/Core", "sap/ui/core/Control"],
-	function (library, coreLibrary, Device, Core, Control) {
+	["./library", "sap/ui/core/library", "sap/ui/Device", "sap/ui/core/Core", "sap/ui/core/Control", "sap/ui/core/Element"],
+	function(library, coreLibrary, Device, Core, Control, Element) {
 		"use strict";
 
 		var ValueState = coreLibrary.ValueState;
@@ -62,7 +62,7 @@ sap.ui.define(
 				apiVersion: 2,
 				render: function (oRM, oControl) {
 					var mapValueStateToClass = {
-						None: "",
+						None: "sapMValueStateHeaderNone",
 						Error: "sapMValueStateHeaderError",
 						Warning: "sapMValueStateHeaderWarning",
 						Success: "sapMValueStateHeaderSuccess",
@@ -110,7 +110,7 @@ sap.ui.define(
 		ValueStateHeader.prototype.setPopup = function (vPopup) {
 			var that = this;
 			var repositioned = false;
-			var oPopup = (typeof vPopup === "string") ? Core.byId(vPopup) : vPopup;
+			var oPopup = (typeof vPopup === "string") ? Element.registry.get(vPopup) : vPopup;
 
 			this.setAssociation("popup", oPopup);
 
@@ -133,7 +133,9 @@ sap.ui.define(
 
 					// schedule reposition after the list layout has been adjusted
 					setTimeout(function () {
-						oPopup._fnOrientationChange();
+						if (oPopup._getOpenByDomRef()) {
+							oPopup._fnOrientationChange();
+						}
 					}, 0);
 				}
 			};
@@ -142,7 +144,7 @@ sap.ui.define(
 		};
 
 		ValueStateHeader.prototype._getAssociatedPopupObject = function () {
-			return Core.byId(this.getPopup());
+			return Element.registry.get(this.getPopup());
 		};
 
 		ValueStateHeader.prototype.onAfterRendering = function () {
@@ -152,7 +154,10 @@ sap.ui.define(
 				// schedule reposition after header rendering
 				if (oPopup.isA("sap.m.Popover")) {
 					setTimeout(function () {
-						oPopup._fnOrientationChange();
+						if (oPopup._getOpenByDomRef()) {
+							oPopup._fnOrientationChange();
+							oPopup.oPopup._applyPosition();
+						}
 					}, 0);
 				}
 			}
@@ -160,4 +165,5 @@ sap.ui.define(
 
 		return ValueStateHeader;
 
-	}, true);
+	}
+);

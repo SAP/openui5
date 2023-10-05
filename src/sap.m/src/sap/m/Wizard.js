@@ -16,6 +16,8 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Configuration",
+	"sap/ui/core/Lib",
+	"sap/ui/core/Element",
 	"sap/ui/dom/jquery/Focusable"
 ], function(
 	library,
@@ -30,7 +32,9 @@ sap.ui.define([
 	CustomData,
 	Log,
 	jQuery,
-	Configuration
+	Configuration,
+	Lib,
+	Element
 ) {
 		"use strict";
 
@@ -252,7 +256,7 @@ sap.ui.define([
 			this._aStepPath = [];
 			this._bScrollLocked = false;
 			this._oScroller = this._initScrollEnablement();
-			this._oResourceBundle = Core.getLibraryResourceBundle("sap.m");
+			this._oResourceBundle = Lib.getResourceBundleFor("sap.m");
 			this._initProgressNavigator();
 			this._initResponsivePaddingsEnablement();
 			this._iNextButtonHeight = 0;
@@ -556,7 +560,7 @@ sap.ui.define([
 		 * @public
 		 */
 		Wizard.prototype.setCurrentStep = function (vStepId) {
-			var oStep = (typeof vStepId === "string") ? Core.byId(vStepId) : vStepId;
+			var oStep = (typeof vStepId === "string") ? Element.registry.get(vStepId) : vStepId;
 
 			if (!this.getEnableBranching()) {
 				this.setAssociation("currentStep", vStepId, true);
@@ -1234,7 +1238,7 @@ sap.ui.define([
 		 * @private
 		 */
 		Wizard.prototype._getCurrentStepInstance = function () {
-			return Core.byId(this.getCurrentStep());
+			return Element.registry.get(this.getCurrentStep());
 		};
 
 		/**

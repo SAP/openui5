@@ -15,7 +15,8 @@ sap.ui.define([
 	"sap/m/Image",
 	"sap/base/Log",
 	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/ui/core/Lib"
 ],
 function(
 	RtaQunitUtils,
@@ -32,7 +33,8 @@ function(
 	Image,
 	Log,
 	sinon,
-	oCore
+	oCore,
+	Lib
 ) {
 	"use strict";
 
@@ -99,7 +101,7 @@ function(
 			var done = assert.async();
 
 			this.oToolbar = new Fiori({
-				textResources: oCore.getLibraryResourceBundle("sap.ui.rta")
+				textResources: Lib.getResourceBundleFor("sap.ui.rta")
 			});
 			this.oToolbar.setModel(this.oToolbarControlsModel, "controls");
 
@@ -132,7 +134,7 @@ function(
 			var done = assert.async();
 
 			this.oToolbar = new Fiori({
-				textResources: oCore.getLibraryResourceBundle("sap.ui.rta")
+				textResources: Lib.getResourceBundleFor("sap.ui.rta")
 			});
 			this.oToolbar.setModel(this.oToolbarControlsModel, "controls");
 

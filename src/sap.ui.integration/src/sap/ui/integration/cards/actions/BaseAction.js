@@ -4,11 +4,13 @@
 sap.ui.define([
 	"sap/ui/base/ManagedObject",
 	"sap/ui/core/Core",
-	"sap/ui/integration/util/BindingResolver"
-], function (
+	"sap/ui/integration/util/BindingResolver",
+	"sap/ui/core/Element"
+], function(
 	ManagedObject,
 	Core,
-	BindingResolver
+	BindingResolver,
+	Element
 ) {
 	"use strict";
 
@@ -76,11 +78,11 @@ sap.ui.define([
 	};
 
 	BaseAction.prototype.getCardInstance = function () {
-		return Core.byId(this.getCard());
+		return Element.registry.get(this.getCard());
 	};
 
 	BaseAction.prototype.getSourceInstance = function () {
-		return Core.byId(this.getSource());
+		return Element.registry.get(this.getSource());
 	};
 
 	return BaseAction;

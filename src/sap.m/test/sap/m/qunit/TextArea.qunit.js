@@ -9,7 +9,9 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/core/library",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/dom/jquery/cursorPos" // provides jQuery.fn.cursorPos
+	"sap/ui/core/Lib",
+	// provides jQuery.fn.cursorPos
+	"sap/ui/dom/jquery/cursorPos"
 ], function(
 	qutils,
 	createAndAppendDiv,
@@ -19,7 +21,8 @@ sap.ui.define([
 	InputBase,
 	core,
 	coreLibrary,
-	jQuery
+	jQuery,
+	Lib
 ) {
 	"use strict";
 
@@ -532,7 +535,7 @@ sap.ui.define([
 					maxLength: 6,
 					showExceededText: true
 				}),
-				oBundle = core.getLibraryResourceBundle("sap.m"),
+				oBundle = Lib.getResourceBundleFor("sap.m"),
 				sMessageBundleKey = "TEXTAREA_CHARACTERS_EXCEEDED";
 
 
@@ -587,7 +590,7 @@ sap.ui.define([
 					maxLength: iMaxLength,
 					showExceededText: false
 				}),
-				oBundle = core.getLibraryResourceBundle("sap.m"),
+				oBundle = Lib.getResourceBundleFor("sap.m"),
 				sMessageBundleKey = "TEXTAREA_CHARACTERS";
 
 		// arrange

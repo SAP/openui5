@@ -12,7 +12,8 @@ sap.ui.define([
 	'sap/ui/events/KeyCodes',
 	'./SwitchRenderer',
 	"sap/base/assert",
-	"sap/ui/core/Configuration"
+	"sap/ui/core/Configuration",
+	"sap/ui/core/Lib"
 ],
 function(
 	library,
@@ -23,8 +24,9 @@ function(
 	KeyCodes,
 	SwitchRenderer,
 	assert,
-	Configuration
-	) {
+	Configuration,
+	Lib
+) {
 		"use strict";
 
 		// shortcut for sap.m.touch
@@ -185,7 +187,7 @@ function(
 		};
 
 		Switch.prototype.getInvisibleElementText = function(bState) {
-			var oBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+			var oBundle = Lib.getResourceBundleFor("sap.m");
 			var sText = "";
 
 			switch (this.getType()) {
@@ -239,7 +241,7 @@ function(
 		/* =========================================================== */
 
 		Switch.prototype.onBeforeRendering = function() {
-			var oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+			var oRb = Lib.getResourceBundleFor("sap.m");
 			this._sOn = this.getCustomTextOn() || oRb.getText("SWITCH_ON");
 			this._sOff = this.getCustomTextOff() || oRb.getText("SWITCH_OFF");
 		};
@@ -471,7 +473,7 @@ function(
 		/* =========================================================== */
 
 		Switch.prototype.getAccessibilityInfo = function() {
-			var oBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m"),
+			var oBundle = Lib.getResourceBundleFor("sap.m"),
 				bState = this.getState(),
 				sDesc = this.getInvisibleElementText(bState);
 

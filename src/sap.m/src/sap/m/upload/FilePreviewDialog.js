@@ -13,13 +13,13 @@ sap.ui.define([
 	"sap/m/IllustratedMessage",
 	"sap/m/IllustratedMessageType",
 	"sap/m/Carousel",
-	"sap/base/Log"
-], function (Core, Element, HTML, Button, Image, PDFViewer, Dialog,
-		IllustratedMessage, IllustratedMessageType, Carousel, Log) {
+	"sap/base/Log",
+	"sap/ui/core/Lib"
+], function(Core, Element, HTML, Button, Image, PDFViewer, Dialog, IllustratedMessage, IllustratedMessageType, Carousel, Log, Lib) {
 	"use strict";
 
 	// get resource translation bundle;
-	const oLibraryResourceBundle = Core.getLibraryResourceBundle("sap.m");
+	const oLibraryResourceBundle = Lib.getResourceBundleFor("sap.m");
 
 	/**
 	 * Media types that can be previewed.

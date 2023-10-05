@@ -5,18 +5,20 @@ sap.ui.define([
 	"sap/ui/rta/util/changeVisualization/commands/CombineVisualization",
 	"sap/ui/core/Core",
 	"sap/ui/dt/ElementUtil",
-	"sap/m/Button"
+	"sap/m/Button",
+	"sap/ui/core/Lib"
 ], function(
 	sinon,
 	CombineVisualization,
 	oCore,
 	ElementUtil,
-	Button
+	Button,
+	Lib
 ) {
 	"use strict";
 
 	var sandbox = sinon.createSandbox();
-	var oResourceBundle = oCore.getLibraryResourceBundle("sap.ui.rta");
+	var oResourceBundle = Lib.getResourceBundleFor("sap.ui.rta");
 
 	QUnit.module("Base tests", {
 		afterEach() {

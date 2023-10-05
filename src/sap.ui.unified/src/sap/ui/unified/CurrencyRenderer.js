@@ -3,8 +3,8 @@
  */
 
 // Provides default renderer for control sap.ui.unified.Menu
-sap.ui.define(["sap/m/library", "sap/ui/core/Core"],
-	function(mobileLibrary, Core) {
+sap.ui.define(["sap/m/library", "sap/ui/core/Core", "sap/ui/core/Lib"],
+	function(mobileLibrary, Core, Lib) {
 	"use strict";
 
 
@@ -23,7 +23,7 @@ sap.ui.define(["sap/m/library", "sap/ui/core/Core"],
 	var EmptyIndicatorMode = mobileLibrary.EmptyIndicatorMode;
 
 	// shortcut for library resource bundle
-	var oRb = Core.getLibraryResourceBundle("sap.m");
+	var oRb = Lib.getResourceBundleFor("sap.m");
 
 	/**
 	 * Renders the HTML for the given control, using the provided

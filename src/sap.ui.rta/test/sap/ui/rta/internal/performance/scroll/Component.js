@@ -8,7 +8,8 @@ sap.ui.define([
 	"sap/uxap/ObjectPageLayout",
 	"sap/uxap/ObjectPageSection",
 	"sap/uxap/ObjectPageSubSection",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/ui/core/Element"
 ], function(
 	DtPerformanceTestUtil,
 	RtaPerformanceTestUtil,
@@ -19,7 +20,8 @@ sap.ui.define([
 	ObjectPageLayout,
 	ObjectPageSection,
 	ObjectPageSubSection,
-	oCore
+	oCore,
+	Element
 ) {
 	"use strict";
 
@@ -29,7 +31,7 @@ sap.ui.define([
 		},
 
 		onAfterRendering() {
-			window.fnResolve(RtaPerformanceTestUtil.startRta(oCore.byId("opLayout")));
+			window.fnResolve(RtaPerformanceTestUtil.startRta(Element.registry.get("opLayout")));
 		},
 
 		createContent() {

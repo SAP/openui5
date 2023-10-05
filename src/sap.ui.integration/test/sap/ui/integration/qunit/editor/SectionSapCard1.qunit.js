@@ -14,8 +14,10 @@ sap.ui.define([
 	"sap/ui/core/util/MockServer",
 	"./jsons/withDesigntime/sap.card1/DataExtensionImpl",
 	"sap/ui/core/date/UI5Date",
-	"sap/ui/integration/formatters/IconFormatter"
-], function (
+	"sap/ui/integration/formatters/IconFormatter",
+	"sap/ui/core/Element",
+	"sap/ui/core/Lib"
+], function(
 	merge,
 	x,
 	Editor,
@@ -30,7 +32,9 @@ sap.ui.define([
 	MockServer,
 	DataExtensionImpl,
 	UI5Date,
-	IconFormatter
+	IconFormatter,
+	Element,
+	Lib
 ) {
 	"use strict";
 
@@ -1450,7 +1454,7 @@ sap.ui.define([
 						oOrderField.onfocusin();
 						Core.applyChanges();
 						var sMsgStripId = oOrderField.getAssociation("_messageStrip");
-						var oMsgStrip = Core.byId(sMsgStripId);
+						var oMsgStrip = Element.registry.get(sMsgStripId);
 						assert.equal(oMsgStrip.getDomRef().style.opacity, "1", "Message strip visible");
 						assert.equal(oMsgStrip.getType(), "Error", "Message strip Error");
 						assert.equal(oMsgStrip.getText(), "400: Please select a cutomer and an employee first", "Order Error Text");
@@ -1522,7 +1526,7 @@ sap.ui.define([
 							oOrderField.onfocusin();
 							Core.applyChanges();
 							var sMsgStripId = oOrderField.getAssociation("_messageStrip");
-							var oMsgStrip = Core.byId(sMsgStripId);
+							var oMsgStrip = Element.registry.get(sMsgStripId);
 							assert.equal(oMsgStrip.getDomRef().style.opacity, "1", "Message strip visible");
 							assert.equal(oMsgStrip.getType(), "Error", "Message strip Error");
 							assert.equal(oMsgStrip.getText(), "400: Please select a cutomer and an employee first", "Order Error Text");
@@ -1596,7 +1600,7 @@ sap.ui.define([
 							oOrderField.onfocusin();
 							Core.applyChanges();
 							var sMsgStripId = oOrderField.getAssociation("_messageStrip");
-							var oMsgStrip = Core.byId(sMsgStripId);
+							var oMsgStrip = Element.registry.get(sMsgStripId);
 							assert.equal(oMsgStrip.getDomRef().style.opacity, "1", "Message strip visible");
 							assert.equal(oMsgStrip.getType(), "Error", "Message strip Error");
 							assert.equal(oMsgStrip.getText(), "400: Please select a cutomer and an employee first", "Order Error Text");
@@ -1674,8 +1678,8 @@ sap.ui.define([
 							oOrderField.onfocusin();
 							Core.applyChanges();
 							var sMsgStripId = oOrderField.getAssociation("_messageStrip");
-							var oMsgStrip = Core.byId(sMsgStripId);
-							var oDefaultBundle = Core.getLibraryResourceBundle("sap.ui.integration");
+							var oMsgStrip = Element.registry.get(sMsgStripId);
+							var oDefaultBundle = Lib.getResourceBundleFor("sap.ui.integration");
 							assert.equal(oMsgStrip.getDomRef().style.opacity, "1", "Message strip visible");
 							assert.equal(oMsgStrip.getType(), "Error", "Message strip Error");
 							assert.equal(oDefaultBundle.getText("EDITOR_VAL_TEXTREQ"), oMsgStrip.getText(), "Order Error Text : required");
@@ -1758,7 +1762,7 @@ sap.ui.define([
 								oOrderField.onfocusin();
 								Core.applyChanges();
 								var sMsgStripId = oOrderField.getAssociation("_messageStrip");
-								var oMsgStrip = Core.byId(sMsgStripId);
+								var oMsgStrip = Element.registry.get(sMsgStripId);
 								assert.equal(oMsgStrip.getDomRef().style.opacity, "0", "Message strip not visible");
 								assert.equal(oProductField.getAggregation("_field").getItems().length, 2, "Field: Product lenght is OK");
 								oProductField.getAggregation("_field").focus();
@@ -1838,7 +1842,7 @@ sap.ui.define([
 								oOrderField.onfocusin();
 								Core.applyChanges();
 								var sMsgStripId = oOrderField.getAssociation("_messageStrip");
-								var oMsgStrip = Core.byId(sMsgStripId);
+								var oMsgStrip = Element.registry.get(sMsgStripId);
 								assert.equal(oMsgStrip.getDomRef().style.opacity, "0", "Message strip not visible");
 								assert.equal(oProductField.getAggregation("_field").getItems().length, 1, "Field: Product lenght is OK");
 								oProductField.getAggregation("_field").focus();

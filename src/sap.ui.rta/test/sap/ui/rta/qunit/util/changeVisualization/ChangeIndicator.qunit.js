@@ -10,7 +10,8 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/format/DateFormat",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/ui/core/Lib"
 ], function(
 	sinon,
 	QUnitUtils,
@@ -21,12 +22,13 @@ sap.ui.define([
 	Button,
 	JSONModel,
 	DateFormat,
-	oCore
+	oCore,
+	Lib
 ) {
 	"use strict";
 
 	var sandbox = sinon.createSandbox();
-	var oRtaResourceBundle = oCore.getLibraryResourceBundle("sap.ui.rta");
+	var oRtaResourceBundle = Lib.getResourceBundleFor("sap.ui.rta");
 
 	function createMockChange(sId, sAffectedElementId, sCommandName, sChangeCategory, mPayload) {
 		var oCreationDate = new Date();

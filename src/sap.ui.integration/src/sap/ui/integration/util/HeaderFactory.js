@@ -12,8 +12,9 @@ sap.ui.define([
 	"sap/ui/integration/cards/NumericHeader",
 	"sap/ui/integration/cards/Header",
 	"sap/ui/integration/util/Utils",
-	"sap/m/Button"
-], function (
+	"sap/m/Button",
+	"sap/ui/core/Lib"
+], function(
 	Core,
 	BaseFactory,
 	Log,
@@ -24,7 +25,8 @@ sap.ui.define([
 	NumericHeader,
 	Header,
 	Utils,
-	Button
+	Button,
+	Lib
 ) {
 	"use strict";
 
@@ -34,7 +36,7 @@ sap.ui.define([
 
 	var CardDisplayVariant = library.CardDisplayVariant;
 
-	var oResourceBundle = Core.getLibraryResourceBundle("sap.ui.integration");
+	var oResourceBundle = Lib.getResourceBundleFor("sap.ui.integration");
 
 	/**
 	 * Constructor for a new <code>HeaderFactory</code>.

@@ -10,9 +10,10 @@ sap.ui.define([
 	'sap/ui/core/IconPool',
 	'sap/ui/Device',
 	'./PanelRenderer',
-	'sap/m/Button'
+	'sap/m/Button',
+	"sap/ui/core/Lib"
 ],
-	function(library, Configuration, Control, IconPool, Device, PanelRenderer, Button) {
+	function(library, Configuration, Control, IconPool, Device, PanelRenderer, Button, Lib) {
 	"use strict";
 
 	// shortcut for sap.m.PanelAccessibleRole
@@ -344,7 +345,7 @@ sap.ui.define([
 	Panel.prototype._createExpandButton = function () {
 		var that = this,
 			sIconURI = this.getExpanded() ? IconPool.getIconURI("slim-arrow-down") : IconPool.getIconURI("slim-arrow-right"),
-			sTooltipBundleText = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("PANEL_ICON"),
+			sTooltipBundleText = Lib.getResourceBundleFor("sap.m").getText("PANEL_ICON"),
 			oButton;
 
 		if (!this.getHeaderToolbar()) {

@@ -4,10 +4,11 @@ sap.ui.define([
 	"sap/ui/Device",
 	"sap/ui/core/Core",
 	"sap/m/plugins/PasteProvider",
+	"sap/ui/core/Element",
 	"sap/ui/core/HTML",
 	"sap/ui/core/Icon",
 	"sap/m/Popover"
-], function(Table, Button, Device, Core, PasteProvider) {
+], function(Table, Button, Device, Core, PasteProvider, Element) {
 
 	"use strict";
 	/*global sinon, QUnit, ClipboardEvent, DataTransfer */
@@ -24,7 +25,7 @@ sap.ui.define([
 
 	function getPopover() {
 		var oPopoverDomRef = document.querySelector(".sapMPopover");
-		return oPopoverDomRef && Core.byId(oPopoverDomRef.id);
+		return oPopoverDomRef && Element.registry.get(oPopoverDomRef.id);
 	}
 
 	QUnit.test("Not Applicable", function(assert) {

@@ -20,8 +20,9 @@ sap.ui.require([
 	"sap/m/Button",
 	"sap/m/Image",
 	"sap/m/CheckBox",
-	"sap/m/MessageBox"
-	],
+	"sap/m/MessageBox",
+	"sap/ui/core/Element"
+],
 	function(
 		CoreLib,
 		Form,
@@ -44,12 +45,13 @@ sap.ui.require([
 		Button,
 		Image,
 		CheckBox,
-		MessageBox
-		) {
+		MessageBox,
+		Element
+	) {
 	"use strict";
 
 	var changeLayoutData = function(oEvent){
-		var oControl = sap.ui.getCore().byId("Sel_C5");
+		var oControl = Element.registry.get("Sel_C5");
 		var oLayoutData = oControl.getLayoutData();
 		if (!oLayoutData){
 			oLayoutData = new GridElementData({hCells: "3"});
@@ -64,7 +66,7 @@ sap.ui.require([
 	};
 
 	var deleteLayoutData = function(oEvent){
-		var oControl = sap.ui.getCore().byId("Sel_C5");
+		var oControl = Element.registry.get("Sel_C5");
 		var oLayoutData = oControl.getLayoutData();
 		if (oLayoutData){
 			oControl.setLayoutData(null);

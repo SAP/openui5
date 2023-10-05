@@ -293,6 +293,7 @@ sap.ui.define([
 	var Configuration = BaseObject.extend("sap.ui.core.Configuration", /** @lends sap.ui.core.Configuration.prototype */ {
 
 		constructor : function() {
+			BaseObject.call(this);
 			Log.error(
 				"Configuration is designed as a singleton and should not be created manually! " +
 				"Please require 'sap/ui/core/Configuration' instead and use the module export directly without using 'new'."
@@ -843,16 +844,6 @@ sap.ui.define([
 		},
 
 		/**
-		 * Whether dependency cache info files should be loaded instead of preload files.
-		 *
-		 * This is an experimental feature intended for HTTP/2 scenarios.
-		 * @private
-		 */
-		getDepCache : function() {
-			return BaseConfig.get({name: "sapUiXxDepCache", type: BaseConfig.Type.Boolean, external: true});
-		},
-
-		/**
 		 * Returns the URL from where the UI5 flexibility services are called;
 		 * if empty, the flexibility services are not called.
 		 *
@@ -1187,6 +1178,7 @@ sap.ui.define([
 	 */
 	var FormatSettings = BaseObject.extend("sap.ui.core.Configuration.FormatSettings", /** @lends sap.ui.core.Configuration.FormatSettings.prototype */ {
 		constructor : function() {
+			BaseObject.call(this);
 			this.mSettings = {};
 		},
 

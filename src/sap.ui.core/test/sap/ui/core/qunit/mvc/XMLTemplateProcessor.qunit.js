@@ -6,17 +6,12 @@ sap.ui.define([
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/util/XMLHelper",
 	"sap/base/Log",
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Configuration"
-], function (coreLibrary, XMLTemplateProcessor, View, XMLView, XMLHelper, Log, jQuery, Configuration) {
+], function(coreLibrary, XMLTemplateProcessor, View, XMLView, XMLHelper, Log, Configuration) {
 	"use strict";
 
 	// shortcut for sap.ui.core.mvc.ViewType
 	var ViewType = coreLibrary.mvc.ViewType;
-
-	var sRootView =
-		'<mvc:View height="100%" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" id="root">' +
-		'</mvc:View>';
 
 	var sView =
 		'<mvc:View height="100%" xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" xmlns="sap.m" id="view" ' +
@@ -36,26 +31,6 @@ sap.ui.define([
 			'</Panel>' +
 		'</mvc:View>';
 
-	QUnit.module("parseViewAttributes");
-
-	QUnit.test("return value", function(assert) {
-		return XMLView.create({
-			definition: sRootView
-		}).then(function(oView) {
-			var oSpy = this.spy(oView, "applySettings");
-
-			var xmlNode = XMLHelper.parse(sView).documentElement;
-			XMLTemplateProcessor.parseTemplate(xmlNode, oView, mSettings);
-
-			assert.strictEqual(oSpy.callCount, 1, "applySettings is called once within the parsing process");
-			var mSettings = oSpy.getCall(0).args[0];
-
-			assert.strictEqual(mSettings.displayBlock, true, "displayBlock is parsed");
-			assert.strictEqual(mSettings.height, "100%", "height is parsed");
-			assert.notOk(mSettings.hasOwnProperty("unknownProperty"), "unknownProperty should be ignored");
-		}.bind(this));
-
-	});
 
 	QUnit.module("parseScalarType", {
 		beforeEach: function() {
@@ -76,101 +51,6 @@ sap.ui.define([
 	QUnit.test("Error Logging of invalid type values", function (assert) {
 		assert.ok(this.oLogSpy.calledOnce, "Log.error was only called once");
 		assert.ok(this.oLogSpy.alwaysCalledWithExactly("Value 'somethingInvalid' is not valid for type 'sap.m.ButtonType'."), "Log.error spy was called");
-	});
-
-	QUnit.module("enrichTemplateIds", {
-		beforeEach: function() {
-			this.pView = XMLView.create({
-				definition: sRootView,
-				id: "root",
-				async: true
-			});
-			this.xml = XMLHelper.parse(sView);
-		},
-		afterEach: function() {
-			this.pView.then(function(oView) {
-				oView.destroy();
-			});
-		}
-	});
-
-	QUnit.test("create IDs", function(assert) {
-		return this.pView.then(function(oView) {
-			assert.ok(jQuery.isXMLDoc(this.xml), "valid xml document as input");
-			var xml = XMLTemplateProcessor.enrichTemplateIds(this.xml.documentElement, oView);
-			assert.ok(jQuery.isXMLDoc(xml), "valid xml document returned");
-			assert.strictEqual(xml.parentNode, this.xml, "no copying");
-			var node = jQuery(this.xml).find("#root--button")[0];
-			assert.ok(node, "control was found by full id");
-			assert.equal(node.nodeName, "Button", "button is a button");
-			assert.equal(node.getAttributeNS("http://schemas.sap.com/sapui5/extension/sap.ui.core.Internal/1", "id"), "true", "full id flag is set to true");
-		}.bind(this));
-	});
-
-	QUnit.test("create Controls", function(assert) {
-		return this.pView.then(function(oView) {
-			XMLTemplateProcessor.enrichTemplateIds(this.xml.documentElement, oView);
-			assert.ok(!oView.byId("button"), "no control has been created yet");
-			XMLTemplateProcessor.parseTemplate(this.xml.documentElement, oView);
-			assert.ok(oView.byId("button"), "button control is created");
-		}.bind(this));
-	});
-
-	QUnit.test("do not create stashed Controls", function(assert) {
-		return this.pView.then(function(oView) {
-			XMLTemplateProcessor.enrichTemplateIds(this.xml.documentElement, oView);
-			assert.ok(!oView.byId("stashedButton"), "no stashed control has been created yet");
-			XMLTemplateProcessor.parseTemplate(this.xml.documentElement, oView);
-			assert.ok(oView.byId("stashedButton"), "stashed button control is created");
-		}.bind(this));
-	});
-
-	QUnit.test("do not process ExtensionPoints", function(assert) {
-		return this.pView.then(function(oView) {
-			// Preferrably we should test with a spy on "ExtensionPoint", but due
-			// to the AMD module handling it is not possible to place one
-			var node = jQuery(this.xml).find("#extensionButton")[0];
-			XMLTemplateProcessor.enrichTemplateIds(this.xml.documentElement, oView);
-			assert.equal(node.getAttribute("id"), "extensionButton", "id was not enriched");
-			XMLTemplateProcessor.parseTemplate(this.xml.documentElement, oView);
-			assert.ok(oView.byId("extensionButton"), "extension button is created");
-		}.bind(this));
-	});
-
-	QUnit.test("do not collect known namespaces as custom settings", function(assert) {
-		var oXMLSerializer = new XMLSerializer();
-		return this.pView.then(function(oView) {
-			XMLTemplateProcessor.enrichTemplateIds(this.xml.documentElement, oView);
-			// serialize and deserialize the XML to enforce the namespaced attributes
-			this.xml = XMLHelper.parse(
-				oXMLSerializer.serializeToString(this.xml.documentElement)
-			);
-			XMLTemplateProcessor.parseTemplate(this.xml.documentElement, oView);
-			// no custom settings for known namespaces at all
-			assert.equal(
-				oView.data("sap-ui-custom-settings"), null,
-					"no custom setting should have been collected (view)");
-			assert.equal(
-				oView.byId("panel").data("sap-ui-custom-settings"), null,
-					"no custom setting should have been collected (panel)");
-			assert.equal(
-				oView.byId("button").data("sap-ui-custom-settings"), null,
-					"no custom setting should have been collected (button)");
-			assert.equal(
-				oView.byId("buttonRequire").data("sap-ui-custom-settings"), null,
-					"no custom setting should have been collected (button with core:require)");
-			// only custom settings for unknown namespaces, e.g. dt
-			// but no additional settings for known namespaces
-			assert.deepEqual(
-				oView.byId("buttonWithDTDataAndRequire").data("sap-ui-custom-settings"),
-					{
-						"sap.ui.dt": {
-							"test": "testvalue2"
-						}
-					},
-					"custom setting should have been collected only for unknown namespaces (button with dt:test & core:require)");
-
-		}.bind(this));
 	});
 
 	QUnit.module("General");

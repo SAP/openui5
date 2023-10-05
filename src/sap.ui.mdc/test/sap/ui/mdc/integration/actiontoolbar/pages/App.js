@@ -3,18 +3,19 @@
  */
 sap.ui.require([
 	"sap/ui/test/Opa5",
-    "sap/ui/test/matchers/Ancestor",
-    "sap/ui/test/matchers/PropertyStrictEquals",
-    "sap/ui/test/matchers/Properties",
-    "sap/ui/test/actions/Press",
-    "testutils/opa/actions/OpenContextMenu",
-    "testutils/opa/p13n/waitForP13nDialog",
-    "testutils/opa/p13n/Util"
-], function (Opa5, Ancestor, PropertyStrictEquals, Properties, Press, OpenContextMenu, waitForP13nDialog, Util) {
+	"sap/ui/test/matchers/Ancestor",
+	"sap/ui/test/matchers/PropertyStrictEquals",
+	"sap/ui/test/matchers/Properties",
+	"sap/ui/test/actions/Press",
+	"testutils/opa/actions/OpenContextMenu",
+	"testutils/opa/p13n/waitForP13nDialog",
+	"testutils/opa/p13n/Util",
+	"sap/ui/core/Lib"
+], function(Opa5, Ancestor, PropertyStrictEquals, Properties, Press, OpenContextMenu, waitForP13nDialog, Util, Lib) {
 
 	"use strict";
 
-    const oMDCBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
+    const oMDCBundle = Lib.getResourceBundleFor("sap.ui.mdc");
 
     const iChangeSelectedActions = function(oP13nDialog, aActions) {
         this.waitFor({

@@ -4,8 +4,9 @@ sap.ui.define([
 	"mdc/sample/delegate/JSONBaseDelegate",
 	"sap/ui/mdc/FilterField",
 	"sap/ui/core/Core",
-	"sap/ui/core/Fragment"
-], function (FilterBarDelegate, JSONPropertyInfo, JSONBaseDelegate, FilterField, Core, Fragment) {
+	"sap/ui/core/Fragment",
+	"sap/ui/core/Element"
+], function(FilterBarDelegate, JSONPropertyInfo, JSONBaseDelegate, FilterField, Core, Fragment, Element) {
 	"use strict";
 
 	const JSONFilterBarDelegate = Object.assign({}, FilterBarDelegate, JSONBaseDelegate);
@@ -27,7 +28,7 @@ sap.ui.define([
 	function _addFilterField(oProperty, oFilterBar) {
 		const sName = oProperty.name;
 		const sFilterFieldId = oFilterBar.getId() + "--filter--" + sName;
-		let oFilterField = Core.byId(sFilterFieldId);
+		let oFilterField = Element.registry.get(sFilterFieldId);
 		let pFilterField;
 
 		if (oFilterField) {

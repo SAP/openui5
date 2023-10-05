@@ -12,9 +12,11 @@ sap.ui.define([
 	'./TabStrip',
 	'./TabStripItem',
 	'./Button',
-	'sap/ui/Device'
+	'sap/ui/Device',
+	"sap/ui/core/Lib",
+	"sap/ui/core/Element"
 ],
-	function(library, Control, IconPool, ResponsivePaddingsEnablement, TabContainerRenderer, TabStrip, TabStripItem, Button, Device) {
+	function(library, Control, IconPool, ResponsivePaddingsEnablement, TabContainerRenderer, TabStrip, TabStripItem, Button, Device, Lib, Element) {
 		"use strict";
 
 		// shortcut for sap.m.ButtonType
@@ -245,7 +247,7 @@ sap.ui.define([
 		 */
 		TabContainer.prototype._getAddNewTabButton = function() {
 			var oControl = this.getAggregation("_addNewButton");
-			var oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+			var oRb = Lib.getResourceBundleFor("sap.m");
 
 			if (!oControl) {
 				oControl = new Button({
@@ -335,7 +337,7 @@ sap.ui.define([
 		TabContainer.prototype._getSelectedItemContent = function() {
 			var oTabStrip = this._getTabStrip(),
 				sSelectedItem = this.getSelectedItem(),
-				oSelectedItem = sap.ui.getCore().byId(sSelectedItem),
+				oSelectedItem = Element.registry.get(sSelectedItem),
 				oTabStripItem = this._toTabStripItem(oSelectedItem);
 
 			if (oTabStrip) {

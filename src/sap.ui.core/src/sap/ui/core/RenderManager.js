@@ -1994,11 +1994,11 @@ sap.ui.define([
 
 			var sPreserveMarker = candidate.getAttribute(ATTR_PRESERVE_MARKER);
 			if ( sPreserveMarker )  { // node is marked with the preserve marker
-
+				let oCandidateControl;
 				// before the re-rendering, UIArea moves all "to-be-preserved" nodes to the preserved area
 				// except the control dom nodes which must be moved to preserved area via control rendering cycle
 				if ( oControlBeforeRerender ) {
-					var oCandidateControl = Element.getElementById(sPreserveMarker);
+					oCandidateControl = Element.getElementById(sPreserveMarker);
 
 					// let the rendering cycle of the control handles the preserving
 					// but only when the control stack and the dom stack are in sync

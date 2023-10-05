@@ -7,13 +7,15 @@ sap.ui.define([
 	"./QuickAction",
 	"sap/m/ToggleButton",
 	"sap/m/library",
-	"sap/ui/core/library"
-], function (
+	"sap/ui/core/library",
+	"sap/ui/core/Lib"
+], function(
 	QuickActionItem,
 	QuickAction,
 	ToggleButton,
 	library,
-	CoreLibrary
+	CoreLibrary,
+	Lib
 ) {
 	"use strict";
 
@@ -77,12 +79,12 @@ sap.ui.define([
 	};
 
 	QuickSortItem.prototype._getLabel = function() {
-		var oBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+		var oBundle = Lib.getResourceBundleFor("sap.m");
 		return oBundle.getText("table.COLUMNMENU_QUICK_SORT", [this.getLabel()]);
 	};
 
 	QuickSortItem.prototype._createContent = function() {
-		var oBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+		var oBundle = Lib.getResourceBundleFor("sap.m");
 		return [
 			new ToggleButton({
 				text: oBundle.getText("table.COLUMNMENU_SORT_ASCENDING"),

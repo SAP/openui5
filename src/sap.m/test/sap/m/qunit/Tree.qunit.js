@@ -10,8 +10,10 @@ sap.ui.define([
 	"sap/m/StandardListItem",
 	"sap/m/Tree",
 	"sap/m/library",
-	"sap/ui/core/Core"
-], function(createAndAppendDiv, qutils, KeyCodes, JSONModel, Sorter, StandardTreeItem, StandardListItem, Tree, library, oCore) {
+	"sap/ui/core/Core",
+	"sap/ui/core/Element",
+	"sap/ui/core/Lib"
+], function(createAndAppendDiv, qutils, KeyCodes, JSONModel, Sorter, StandardTreeItem, StandardListItem, Tree, library, oCore, Element, Lib) {
 	"use strict";
 	createAndAppendDiv("content").style.height = "100%";
 
@@ -181,7 +183,7 @@ sap.ui.define([
 		assert.ok(document.getElementById(oTree.getItems()[1].getId()), "initial render of second node");
 		assert.ok(document.getElementById(oTree.getItems()[0].getId() + "-icon"), "icon is rendered");
 
-		var oImage = oCore.byId(oTree.getItems()[0].getId() + "-icon");
+		var oImage = Element.registry.get(oTree.getItems()[0].getId() + "-icon");
 		assert.strictEqual(oImage.getSrc(), IMAGE_PATH + "action.png", "icon source is correct");
 	});
 
@@ -199,7 +201,7 @@ sap.ui.define([
 		var oTree = this.oTree;
 		assert.equal(oTree.getDeepestLevel(), 0, "deepestLevel");
 
-		var oArrow = oCore.byId(oTree.getItems()[1].getId() + "-expander");
+		var oArrow = Element.registry.get(oTree.getItems()[1].getId() + "-expander");
 		oArrow.firePress();
 		oCore.applyChanges();
 
@@ -207,7 +209,7 @@ sap.ui.define([
 		assert.equal(oTree.getItems()[1].$().css("padding-left"), "0px", "padding");
 		assert.equal(oTree.getItems()[2].$().css("padding-left"), "24px", "padding");
 
-		oArrow = oCore.byId(oTree.getItems()[2].getId() + "-expander");
+		oArrow = Element.registry.get(oTree.getItems()[2].getId() + "-expander");
 		oArrow.firePress();
 		oCore.applyChanges();
 
@@ -216,7 +218,7 @@ sap.ui.define([
 		assert.equal(oTree.getItems()[2].$().css("padding-left"), "16px", "padding");
 		assert.equal(oTree.getItems()[3].$().css("padding-left"), "32px", "padding");
 
-		oArrow = oCore.byId(oTree.getItems()[3].getId() + "-expander");
+		oArrow = Element.registry.get(oTree.getItems()[3].getId() + "-expander");
 		oArrow.firePress();
 		oCore.applyChanges();
 
@@ -226,15 +228,15 @@ sap.ui.define([
 		assert.equal(oTree.getItems()[3].$().css("padding-left"), "16px", "padding");
 		assert.equal(oTree.getItems()[4].$().css("padding-left"), "24px", "padding");
 
-		oArrow = oCore.byId(oTree.getItems()[4].getId() + "-expander");
+		oArrow = Element.registry.get(oTree.getItems()[4].getId() + "-expander");
 		oArrow.firePress();
 		oCore.applyChanges();
 
-		oArrow = oCore.byId(oTree.getItems()[5].getId() + "-expander");
+		oArrow = Element.registry.get(oTree.getItems()[5].getId() + "-expander");
 		oArrow.firePress();
 		oCore.applyChanges();
 
-		oArrow = oCore.byId(oTree.getItems()[6].getId() + "-expander");
+		oArrow = Element.registry.get(oTree.getItems()[6].getId() + "-expander");
 		oArrow.firePress();
 		oCore.applyChanges();
 
@@ -252,7 +254,7 @@ sap.ui.define([
 		oCore.applyChanges();
 
 		//expand
-		oArrow = oCore.byId(oTree.getItems()[2].getId() + "-expander");
+		oArrow = Element.registry.get(oTree.getItems()[2].getId() + "-expander");
 		oArrow.firePress();
 		oCore.applyChanges();
 
@@ -366,7 +368,7 @@ sap.ui.define([
 		oTree.focus();
 		assert.strictEqual(oTree.getItems()[0].$().attr("aria-expanded"), "false", "aria-expanded is false");
 
-		var oArrow = oCore.byId(oTree.getItems()[0].getId() + "-expander");
+		var oArrow = Element.registry.get(oTree.getItems()[0].getId() + "-expander");
 		oArrow.firePress();
 		oCore.applyChanges();
 
@@ -392,7 +394,7 @@ sap.ui.define([
 		assert.strictEqual(oTree.getItems().length, 4, "four nodes before tree expanding");
 
 		oTree.focus();
-		var oArrow = oCore.byId(oTree.getItems()[0].getId() + "-expander");
+		var oArrow = Element.registry.get(oTree.getItems()[0].getId() + "-expander");
 		oArrow.firePress();
 		oCore.applyChanges();
 
@@ -406,7 +408,7 @@ sap.ui.define([
 
 	QUnit.test("Expand to level and tree item expander tooltip test", function(assert) {
 		var oTree = this.oTree;
-		var oBundle = oCore.getLibraryResourceBundle("sap.m");
+		var oBundle = Lib.getResourceBundleFor("sap.m");
 		assert.strictEqual(oTree.getItems()[0]._oExpanderControl.getTooltip(), oBundle.getText("TREE_ITEM_EXPAND_NODE"), "Tooltip is correctly set to the Expander control");
 		oTree.expandToLevel(3);
 		oCore.applyChanges();
@@ -448,7 +450,7 @@ sap.ui.define([
 	QUnit.test("isLeaf/isTopLevel/getExpanded", function(assert) {
 		var oTree = this.oTree;
 		oTree.focus();
-		var oArrow = oCore.byId(oTree.getItems()[0].getId() + "-expander");
+		var oArrow = Element.registry.get(oTree.getItems()[0].getId() + "-expander");
 		oArrow.firePress();
 		assert.ok(oTree.getItems()[1].getParentNode().getId(), oTree.getItems()[0].getId(), "parent node is found.");
 
@@ -459,7 +461,7 @@ sap.ui.define([
 		assert.ok(!oTree.getItems()[1].isTopLevel(), "second node is not root.");
 
 		oTree.focus();
-		var oArrow = oCore.byId(oTree.getItems()[0].getId() + "-expander");
+		var oArrow = Element.registry.get(oTree.getItems()[0].getId() + "-expander");
 		oArrow.firePress();
 		assert.ok(!oTree.getItems()[0].getExpanded(), "first node is not expanded");
 		assert.ok(!oTree.getItems()[1].getExpanded(), "second node is not expanded");

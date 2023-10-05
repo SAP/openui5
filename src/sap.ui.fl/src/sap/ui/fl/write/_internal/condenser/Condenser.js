@@ -20,7 +20,8 @@ sap.ui.define([
 	"sap/ui/fl/write/_internal/condenser/Utils",
 	"sap/ui/fl/Utils",
 	"sap/ui/performance/Measurement",
-	"sap/base/util/restricted/_isEqual"
+	"sap/base/util/restricted/_isEqual",
+	"sap/ui/core/Element"
 ], function(
 	each,
 	isPlainObject,
@@ -39,7 +40,8 @@ sap.ui.define([
 	CondenserUtils,
 	FlUtils,
 	Measurement,
-	_isEqual
+	_isEqual,
+	Element
 ) {
 	"use strict";
 
@@ -211,7 +213,7 @@ sap.ui.define([
 	 */
 	function getCondenserInfoFromChangeHandler(oAppComponent, oChange) {
 		var sControlId = JsControlTreeModifier.getControlIdBySelector(oChange.getSelector(), oAppComponent);
-		var oControl = Core.byId(sControlId);
+		var oControl = Element.registry.get(sControlId);
 		if (oControl) {
 			var mPropertyBag = {
 				modifier: JsControlTreeModifier,

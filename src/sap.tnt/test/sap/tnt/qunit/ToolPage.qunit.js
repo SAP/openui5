@@ -17,8 +17,9 @@ sap.ui.define([
 	'sap/tnt/SideNavigation',
 	'sap/tnt/NavigationList',
 	'sap/tnt/NavigationListItem',
-	'sap/ui/qunit/utils/waitForThemeApplied'
-], function (
+	'sap/ui/qunit/utils/waitForThemeApplied',
+	"sap/ui/core/Element"
+], function(
 	Core,
 	Device,
 	JSONModel,
@@ -36,7 +37,8 @@ sap.ui.define([
 	SideNavigation,
 	NavigationList,
 	NavigationListItem,
-	waitForThemeApplied
+	waitForThemeApplied,
+	Element
 ) {
 	'use strict';
 
@@ -524,7 +526,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Creation", function (assert) {
-		assert.ok(Core.byId(this.toolPage.getId()), "ToolPage is not created");
+		assert.ok(Element.registry.get(this.toolPage.getId()), "ToolPage is not created");
 	});
 
 	QUnit.test("contains elements and classes", function (assert) {

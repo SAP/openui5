@@ -3,8 +3,10 @@
  */
 
 sap.ui.define([
-	"sap/m/library"
-], function (library) {
+	"sap/m/library",
+	"sap/ui/core/Lib",
+	"sap/ui/core/Element"
+], function(library, Lib, Element) {
 	"use strict";
 
 	var WizardRenderer = {
@@ -19,7 +21,7 @@ sap.ui.define([
 	};
 
 	WizardRenderer.startWizard = function (oRm, oWizard) {
-		var sWizardLabelText = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("WIZARD_LABEL");
+		var sWizardLabelText = Lib.getResourceBundleFor("sap.m").getText("WIZARD_LABEL");
 
 		oRm.openStart("div", oWizard)
 			.class("sapMWizard")
@@ -76,7 +78,7 @@ sap.ui.define([
 
 
 		var fnCheckStepOrder = function (sSubsequentStepId, index, oRefStep) {
-			var oSubsequentStep = sap.ui.getCore().byId(sSubsequentStepId);
+			var oSubsequentStep = Element.registry.get(sSubsequentStepId);
 			if (aSteps.indexOf(oSubsequentStep) < aSteps.indexOf(oRefStep)) {
 				var iSubsequentStep = aSteps.indexOf(oSubsequentStep),
 					temp = aSteps[iSubsequentStep];

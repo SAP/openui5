@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(["sap/ui/core/Core", "sap/ui/core/library", "sap/ui/core/Renderer", "./ListItemBaseRenderer", "./ColumnListItemRenderer"],
-	function(Core, coreLibrary, Renderer, ListItemBaseRenderer, ColumnListItemRenderer) {
+sap.ui.define(["sap/ui/core/Core", "sap/ui/core/library", "sap/ui/core/Renderer", "./ListItemBaseRenderer", "./ColumnListItemRenderer", "sap/ui/core/Lib"],
+	function(Core, coreLibrary, Renderer, ListItemBaseRenderer, ColumnListItemRenderer, Lib) {
 	"use strict";
 
 
@@ -64,7 +64,7 @@ sap.ui.define(["sap/ui/core/Core", "sap/ui/core/library", "sap/ui/core/Renderer"
 
 		var oTable = oLI.getTable();
 		if (oTable) {
-			rm.attr("aria-roledescription", Core.getLibraryResourceBundle("sap.m").getText("TABLE_GROUP_ROW"));
+			rm.attr("aria-roledescription", Lib.getResourceBundleFor("sap.m").getText("TABLE_GROUP_ROW"));
 		}
 	};
 

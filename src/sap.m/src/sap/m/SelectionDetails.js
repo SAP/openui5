@@ -11,7 +11,8 @@ sap.ui.define([
 	'sap/ui/core/library',
 	'./SelectionDetailsRenderer',
 	'sap/base/util/uid',
-	"sap/ui/core/Configuration"
+	"sap/ui/core/Configuration",
+	"sap/ui/core/Lib"
 ],
 function(
 	library,
@@ -22,7 +23,8 @@ function(
 	CoreLibrary,
 	SelectionDetailsRenderer,
 	uid,
-	Configuration
+	Configuration,
+	Lib
 ) {
 	"use strict";
 
@@ -155,7 +157,7 @@ function(
 		// Indicates whether the labels are wrapped
 		this._bWrapLabels = false;
 
-		this._oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+		this._oRb = Lib.getResourceBundleFor("sap.m");
 		this.setAggregation("_button", new Button({
 			id: this.getId() + "-button",
 			type: library.ButtonType.Transparent,

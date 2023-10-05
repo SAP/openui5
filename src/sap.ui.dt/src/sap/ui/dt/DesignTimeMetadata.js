@@ -9,7 +9,8 @@ sap.ui.define([
 	"sap/ui/dt/DOMUtil",
 	"sap/base/util/merge",
 	"sap/base/util/ObjectPath",
-	"sap/base/util/includes"
+	"sap/base/util/includes",
+	"sap/ui/core/Lib"
 ],
 function(
 	jQuery,
@@ -18,7 +19,8 @@ function(
 	DOMUtil,
 	merge,
 	ObjectPath,
-	includes
+	includes,
+	Lib
 ) {
 	"use strict";
 
@@ -261,14 +263,14 @@ function(
 	};
 
 	DesignTimeMetadata.prototype._getTextFromLibrary = function(sLibraryName, sKey, aArgs) {
-		var oLibResourceBundle = sap.ui.getCore().getLibraryResourceBundle(`${sLibraryName}.designtime`);
+		var oLibResourceBundle = Lib.getResourceBundleFor(`${sLibraryName}.designtime`);
 		if (oLibResourceBundle && oLibResourceBundle.hasText(sKey)) {
 			return oLibResourceBundle.getText(sKey, aArgs);
 		}
 
 		// Fallback to old logic that tries to get the text from the libraries resource bundle
 		// TODO: remove the fallback after all libraries have introduced a library.designtime.js that will provide the resource bundle and texts
-		oLibResourceBundle = sap.ui.getCore().getLibraryResourceBundle(sLibraryName);
+		oLibResourceBundle = Lib.getResourceBundleFor(sLibraryName);
 		if (oLibResourceBundle && oLibResourceBundle.hasText(sKey)) {
 			return oLibResourceBundle.getText(sKey, aArgs);
 		}

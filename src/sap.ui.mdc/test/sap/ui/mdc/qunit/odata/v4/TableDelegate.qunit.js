@@ -24,7 +24,8 @@ sap.ui.define([
 	"sap/ui/mdc/enums/TableType",
 	"sap/ui/mdc/enums/ConditionValidated",
 	"sap/ui/mdc/enums/OperatorName",
-	"sap/ui/mdc/util/FilterUtil"
+	"sap/ui/mdc/util/FilterUtil",
+	"sap/ui/core/Lib"
 ], function(
 	TableQUnitUtils,
 	createAppEnvironment,
@@ -50,7 +51,8 @@ sap.ui.define([
 	TableType,
 	ConditionValidated,
 	OperatorName,
-	FilterUtil
+	FilterUtil,
+	Lib
 ) {
 	"use strict";
 
@@ -1573,7 +1575,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Sort restrictions", function(assert) {
-		const sMessage = Core.getLibraryResourceBundle("sap.ui.mdc").getText("table.PERSONALIZATION_DIALOG_SORT_RESTRICTION");
+		const sMessage = Lib.getResourceBundleFor("sap.ui.mdc").getText("table.PERSONALIZATION_DIALOG_SORT_RESTRICTION");
 
 		assert.deepEqual(this.oTable.validateState({
 			items: [{name: "Name"}, {name: "name_country"}]
@@ -1624,7 +1626,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Group restrictions", function(assert) {
-		const oResourceBundle = Core.getLibraryResourceBundle("sap.ui.mdc");
+		const oResourceBundle = Lib.getResourceBundleFor("sap.ui.mdc");
 
 		assert.deepEqual(this.oTable.validateState({
 			items: [{name: "Name"}, {name: "Country"}, {name: "name_country"}]
@@ -1667,7 +1669,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Column restrictions", function(assert) {
-		const oResourceBundle = Core.getLibraryResourceBundle("sap.ui.mdc");
+		const oResourceBundle = Lib.getResourceBundleFor("sap.ui.mdc");
 
 		assert.deepEqual(this.oTable.validateState({
 			items: [{name: "Name"}, {name: "Country"}, {name: "name_country"}]

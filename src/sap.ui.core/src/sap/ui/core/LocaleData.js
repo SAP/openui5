@@ -13,9 +13,9 @@ sap.ui.define([
 	"sap/base/util/LoaderExtensions",
 	"sap/ui/base/Object",
 	"sap/ui/core/Configuration",
-	"sap/ui/core/date/CalendarWeekNumbering"
-], function(CalendarType, Locale, assert, LanguageTag, Localization, extend, LoaderExtensions, BaseObject,
-		Configuration, CalendarWeekNumbering) {
+	"sap/ui/core/date/CalendarWeekNumbering",
+	"sap/ui/core/Lib"
+], function(CalendarType, Locale, assert, LanguageTag, Localization, extend, LoaderExtensions, BaseObject, Configuration, CalendarWeekNumbering, Lib) {
 	"use strict";
 
 	var rCIgnoreCase = /c/i,
@@ -55,8 +55,8 @@ sap.ui.define([
 	var LocaleData = BaseObject.extend("sap.ui.core.LocaleData", /** @lends sap.ui.core.LocaleData.prototype */ {
 
 		constructor: function(oLocale) {
-			this.oLocale = Locale._getCoreLocale(oLocale);
 			BaseObject.apply(this);
+			this.oLocale = Locale._getCoreLocale(oLocale);
 			var oDataLoaded = getData(this.oLocale);
 			this.mData = oDataLoaded.mData;
 			this.sCLDRLocaleId = oDataLoaded.sCLDRLocaleId;
@@ -1864,7 +1864,7 @@ sap.ui.define([
 		getCalendarWeek: function(sStyle, iWeekNumber) {
 			assert(sStyle == "wide" || sStyle == "narrow" , "sStyle must be wide or narrow");
 
-			var oMessageBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.core", this.oLocale.toString()),
+			var oMessageBundle = Lib.getResourceBundleFor("sap.ui.core", this.oLocale.toString()),
 				sKey = "date.week.calendarweek." + sStyle;
 
 			return oMessageBundle.getText(sKey, iWeekNumber ? [iWeekNumber] : undefined);

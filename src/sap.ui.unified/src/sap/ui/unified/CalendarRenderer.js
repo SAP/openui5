@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define([],
-	function() {
+sap.ui.define(["sap/ui/core/Lib"],
+	function(Lib) {
 	"use strict";
 
 
@@ -36,7 +36,7 @@ sap.ui.define([],
 			aMonths = oCal.getAggregation("month"),
 			sCurrentPicker = oCal.getProperty("_currentPicker"),
 			sWidth = oCal.getWidth(),
-			rb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified"),
+			rb = Lib.getResourceBundleFor("sap.ui.unified"),
 			mAccProps = {labelledby: {value: "", append: false}};
 
 		oRm.openStart("div", oCal);

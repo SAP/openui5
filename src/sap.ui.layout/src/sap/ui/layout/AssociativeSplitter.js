@@ -5,8 +5,9 @@
 sap.ui.define([
 	'./Splitter',
 	'./SplitterRenderer',
-	"sap/base/Log"
-], function(Splitter, SplitterRenderer, Log) {
+	"sap/base/Log",
+	"sap/ui/core/Element"
+], function(Splitter, SplitterRenderer, Log, Element) {
 	"use strict";
 
 	/**
@@ -90,7 +91,7 @@ sap.ui.define([
 		var aContentAreas = this.getContentAreas();
 
 		var aValidAssContentAreas = aAssociatedContentAreas.map(function (sId) {
-			return sap.ui.getCore().byId(sId);
+			return Element.registry.get(sId);
 		}).filter(function (oContent) { return oContent; });
 
 		return aContentAreas.concat(aValidAssContentAreas);

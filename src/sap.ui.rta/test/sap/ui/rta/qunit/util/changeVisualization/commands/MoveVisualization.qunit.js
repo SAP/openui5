@@ -2,13 +2,15 @@
 
 sap.ui.define([
 	"sap/ui/rta/util/changeVisualization/commands/MoveVisualization",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/ui/core/Lib"
 ], function(
 	MoveVisualization,
-	oCore
+	oCore,
+	Lib
 ) {
 	"use strict";
-	var oResourceBundle = oCore.getLibraryResourceBundle("sap.ui.rta");
+	var oResourceBundle = Lib.getResourceBundleFor("sap.ui.rta");
 
 	QUnit.module("Base tests", {
 		beforeEach() {

@@ -3,8 +3,9 @@ sap.ui.define([
 	"sap/ui/core/sample/common/Helper",
 	"sap/ui/test/actions/EnterText",
 	"sap/ui/test/actions/Press",
-	'sap/ui/test/Opa5'
-], function(coreLibrary, Helper, EnterText, Press, Opa5) {
+	'sap/ui/test/Opa5',
+	"sap/ui/core/Lib"
+], function(coreLibrary, Helper, EnterText, Press, Opa5, Lib) {
 	"use strict";
 
 	// shortcut for sap.ui.core.ValueState
@@ -203,7 +204,7 @@ sap.ui.define([
 					}
 					sValueState = sValueState || ValueState.None;
 					sValueStateText = sValueStateTextKey
-						? sap.ui.getCore().getLibraryResourceBundle()
+						? Lib.getResourceBundleFor("sap.ui.core")
 							.getText(sValueStateTextKey, aValueStateTextParameters)
 						: "";
 					this.waitFor({

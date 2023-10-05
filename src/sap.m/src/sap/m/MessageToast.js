@@ -408,7 +408,7 @@ sap.ui.define([
 		 * @public
 		 */
 		MessageToast.show = function(sMessage, mOptions) {
-			var oOpener = Core.byId(Core.getCurrentFocusedControlId()) || Element.closestTo(document.activeElement);
+			var oOpener = Element.registry.get(Core.getCurrentFocusedControlId()) || Element.closestTo(document.activeElement);
 			var oUI5Area = oOpener && oOpener.getUIArea && oOpener.getUIArea() || registry.all()['body'] || registry.all()['content'];
 			var oOpenerUI5Area = oOpener && oOpener.getUIArea  && oOpener.getUIArea();
 			var oAccSpan;

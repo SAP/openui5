@@ -24,7 +24,9 @@ sap.ui.define([
 	"sap/ui/core/library",
 	"sap/ui/events/F6Navigation",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/events/KeyCodes"
+	"sap/ui/events/KeyCodes",
+	"sap/ui/core/Lib",
+	"sap/ui/core/Element"
 ], function(
 	Device,
 	Control,
@@ -46,12 +48,14 @@ sap.ui.define([
 	coreLibrary,
 	F6Navigation,
 	jQuery,
-	KeyCodes
+	KeyCodes,
+	Lib,
+	Element
 ) {
 	"use strict";
 
 	// Resource Bundle
-	var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.f"),
+	var oResourceBundle = Lib.getResourceBundleFor("sap.f"),
 		InvisibleMessageMode = coreLibrary.InvisibleMessageMode,
 		SidePanelPosition = library.SidePanelPosition;
 
@@ -392,7 +396,7 @@ sap.ui.define([
 
 		if (typeof vItem === "string") {
 			sId = vItem;
-			oItem = Core.byId(vItem);
+			oItem = Element.registry.get(vItem);
 		} else if (vItem && vItem.isA("sap.f.SidePanelItem")) {
 			sId = vItem.getId();
 			oItem = vItem;
@@ -400,7 +404,7 @@ sap.ui.define([
 
 		if (!sId) {
 			// remove selected action item (if any) and collapse its side content
-			sSelectedItem && this._toggleItemSelection(Core.byId(sSelectedItem));
+			sSelectedItem && this._toggleItemSelection(Element.registry.get(sSelectedItem));
 		} else if (oItem && oItem.getEnabled() && sId !== sSelectedItem && sId !== this.getAggregation("_overflowItem").getId()) {
 			// select an action item and expand its side content
 			this._toggleItemSelection(oItem);
@@ -594,7 +598,7 @@ sap.ui.define([
 			return;
 		}
 
-		this._toggleItemSelection(Core.byId(oItemDom.id));
+		this._toggleItemSelection(Element.registry.get(oItemDom.id));
 	};
 
 	/**
@@ -684,13 +688,13 @@ sap.ui.define([
 
 	SidePanel.prototype._focusSideContent = function() {
 		// set focus to the last focused side content element, or to the Close Button
-		var oFocusControl = this._contentControlToFocus ? Core.byId(this._contentControlToFocus) : this.getAggregation("_closeButton");
+		var oFocusControl = this._contentControlToFocus ? Element.registry.get(this._contentControlToFocus) : this.getAggregation("_closeButton");
 
 		oFocusControl && oFocusControl.focus();
 	};
 
 	SidePanel.prototype._closeSideContent = function() {
-		var oSelectedItem = Core.byId(this.getSelectedItem()),
+		var oSelectedItem = Element.registry.get(this.getSelectedItem()),
 			bSkipPrevent = true;
 
 		// fire 'toggle' event for collapse if there is expanded action item
@@ -976,7 +980,7 @@ sap.ui.define([
 		// fire 'toggle' event for collapsed action item
 		if (oSelectedItem && (!bExpanded || bToggleDifferent)) {
 			bSkipPrevent = this._fireToggle({
-				item: bToggleDifferent ? Core.byId(oSelectedItem) : oItem,
+				item: bToggleDifferent ? Element.registry.get(oSelectedItem) : oItem,
 				expanded: false
 			});
 		}
@@ -1055,7 +1059,7 @@ sap.ui.define([
 	};
 
 	SidePanel.prototype._getSelectedItem = function() {
-		return Core.byId(this.getSelectedItem());
+		return Element.registry.get(this.getSelectedItem());
 	};
 
 	SidePanel.prototype._getSideContentHeaderTitle = function() {
