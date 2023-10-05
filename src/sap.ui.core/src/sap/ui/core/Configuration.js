@@ -833,6 +833,7 @@ sap.ui.define([
 		 *
 		 * @returns {string[]} array of base URLs
 		 * @public
+		 * @deprecated Since 1.120.0
 		 */
 		getAppCacheBuster : function() {
 			return BaseConfig.get({name: "sapUiAppCacheBuster", type: BaseConfig.Type.StringArray, external: true, freeze: true});
@@ -841,23 +842,12 @@ sap.ui.define([
 		/**
 		 * The loading mode (sync|async|batch) of the AppCacheBuster (sync is default)
 		 *
-		 * @returns {string} "sync" | "async"
+		 * @returns {string} "sync" | "async" | "batch"
 		 * @public
+		 * @deprecated Since 1.120.0
 		 */
 		getAppCacheBusterMode : function() {
 			return BaseConfig.get({name: "sapUiXxAppCacheBusterMode", type: BaseConfig.Type.String, defaultValue: "sync", external: true, freeze: true});
-		},
-
-		/**
-		 * Object defining the callback hooks for the AppCacheBuster like e.g.
-		 * <code>handleURL</code>, <code>onIndexLoad</code> or <code>onIndexLoaded</code>.
-		 *
-		 * @returns {object} object containing the callback functions for the AppCacheBuster
-		 * @private
-		 * @ui5-restricted
-		 */
-		getAppCacheBusterHooks : function() {
-			return BaseConfig.get({name: "sapUiXxAppCacheBusterHooks", type: BaseConfig.Type.Object, defaultValue: undefined, freeze: true});
 		},
 
 		/**

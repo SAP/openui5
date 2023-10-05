@@ -547,18 +547,29 @@ sap.ui.define([
 				}
 
 				// initializes the application cachebuster mechanism if configured
-				var aACBConfig = Configuration.getAppCacheBuster();
+				var aACBConfig = BaseConfig.get({
+					name: "sapUiAppCacheBuster",
+					type: BaseConfig.Type.StringArray,
+					external: true,
+					freeze: true
+				});
 				if (aACBConfig && aACBConfig.length > 0) {
 					if ( bAsync ) {
 						var iLoadACBTask = oSyncPoint2.startTask("require AppCachebuster");
 						sap.ui.require(["sap/ui/core/AppCacheBuster"], function(AppCacheBuster) {
-							AppCacheBuster.boot(oSyncPoint2);
+							AppCacheBuster.boot(oSyncPoint2, aACBConfig);
 							// finish the task only after ACB had a chance to create its own task(s)
 							oSyncPoint2.finishTask(iLoadACBTask);
 						});
-					} else {
+					}
+					/**
+					 * Sync path is deprecated
+					 *
+					 * @deprecated as of 1.120.0
+					 */
+					if (!bAsync) {
 						var AppCacheBuster = sap.ui.requireSync('sap/ui/core/AppCacheBuster'); // legacy-relevant: Synchronous path
-						AppCacheBuster.boot(oSyncPoint2);
+						AppCacheBuster.boot(oSyncPoint2, aACBConfig);
 					}
 				}
 
