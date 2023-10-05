@@ -72,7 +72,7 @@ sap.ui.define(['sap/ui/mdc/BaseDelegate', 'sap/ui/core/library'], function (Base
 	 * method might be called without the parameter <code>mPropertyBag</code>.
 	 *
 	 * @param {sap.ui.mdc.Control} oControl Instance of an <code>sap.ui.mdc.Control</code>
-	 * @param {sap.ui.core.Control} oItem The control instance that was removed
+	 * @param {sap.ui.core.Element} oItem The control instance that was removed
 	 * @param {Object} [mPropertyBag] Instance of property bag from SAPUI5 flexibility
 	 *
 	 * @returns {Promise} Promise that resolves with <code>true</code>, <code>false</code> to allow/prevent default behavior of the change
