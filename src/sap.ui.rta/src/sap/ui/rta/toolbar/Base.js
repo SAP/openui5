@@ -5,6 +5,7 @@
 sap.ui.define([
 	"sap/m/HBox",
 	"sap/ui/core/StaticArea",
+	"sap/ui/core/Lib",
 	"sap/ui/dt/util/ZIndexManager",
 	"sap/ui/model/resource/ResourceModel",
 	"sap/ui/rta/util/Animation",
@@ -12,6 +13,7 @@ sap.ui.define([
 ], function(
 	HBox,
 	StaticArea,
+	Lib,
 	ZIndexManager,
 	ResourceModel,
 	Animation,
@@ -97,7 +99,7 @@ sap.ui.define([
 	 */
 	Base.prototype.init = function(...aArgs) {
 		this._oResourceModel = new ResourceModel({
-			bundle: sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta")
+			bundle: Lib.getResourceBundleFor("sap.ui.rta")
 		});
 		HBox.prototype.init.apply(this, aArgs);
 		// Assign the model object to the SAPUI5 core using the name "i18n"
@@ -138,7 +140,7 @@ sap.ui.define([
 	Base.prototype.setTextResources = function(oTextResource) {
 		this.setProperty("textResources", oTextResource);
 		this._oResourceModel = new ResourceModel({
-			bundle: sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta")
+			bundle: Lib.getResourceBundleFor("sap.ui.rta")
 		});
 	};
 

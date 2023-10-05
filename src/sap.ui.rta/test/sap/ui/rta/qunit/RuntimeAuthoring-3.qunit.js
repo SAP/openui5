@@ -9,7 +9,7 @@ sap.ui.define([
 	"sap/ui/base/EventProvider",
 	"sap/ui/base/Event",
 	"sap/ui/base/ManagedObjectMetadata",
-	"sap/ui/core/Core",
+	"sap/ui/core/Lib",
 	"sap/ui/dt/DesignTime",
 	"sap/ui/dt/Overlay",
 	"sap/ui/dt/Util",
@@ -37,7 +37,7 @@ sap.ui.define([
 	EventProvider,
 	Event,
 	ManagedObjectMetadata,
-	oCore,
+	Lib,
 	DesignTime,
 	Overlay,
 	DtUtil,
@@ -60,7 +60,7 @@ sap.ui.define([
 	"use strict";
 
 	var sandbox = sinon.createSandbox();
-	var oTextResources = oCore.getLibraryResourceBundle("sap.ui.rta");
+	var oTextResources = Lib.getResourceBundleFor("sap.ui.rta");
 
 	var oComp = RtaQunitUtils.createAndStubAppComponent(sinon, "fixture.application", {
 		"sap.app": {

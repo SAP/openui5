@@ -7,6 +7,7 @@ sap.ui.define([
 	"sap/m/HBox",
 	"sap/m/VBox",
 	"sap/ui/core/Core",
+	"sap/ui/core/Lib",
 	"sap/ui/dt/DesignTime",
 	"sap/ui/dt/DesignTimeMetadata",
 	"sap/ui/dt/OverlayRegistry",
@@ -29,6 +30,7 @@ sap.ui.define([
 	HBox,
 	VBox,
 	Core,
+	Lib,
 	DesignTime,
 	DesignTimeMetadata,
 	OverlayRegistry,
@@ -48,7 +50,7 @@ sap.ui.define([
 	"use strict";
 
 	var sandbox = sinon.createSandbox();
-	var oRtaResourceBundle = Core.getLibraryResourceBundle("sap.ui.rta");
+	var oRtaResourceBundle = Lib.getResourceBundleFor("sap.ui.rta");
 	var oComp;
 	var oCompCont;
 	QUnit.config.fixture = null;

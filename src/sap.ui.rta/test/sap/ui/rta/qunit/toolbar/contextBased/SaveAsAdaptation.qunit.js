@@ -5,6 +5,7 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/core/Control",
 	"sap/ui/core/Fragment",
+	"sap/ui/core/Lib",
 	"sap/ui/core/ValueState",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
@@ -19,6 +20,7 @@ sap.ui.define([
 	Core,
 	Control,
 	Fragment,
+	Lib,
 	ValueState,
 	Layer,
 	ManifestUtils,
@@ -63,7 +65,7 @@ sap.ui.define([
 
 		var oToolbarControlsModel = RtaQunitUtils.createToolbarControlsModel();
 		var oToolbar = new Adaptation({
-			textResources: Core.getLibraryResourceBundle("sap.ui.rta"),
+			textResources: Lib.getResourceBundleFor("sap.ui.rta"),
 			rtaInformation: {
 				flexSettings: {
 					layer: Layer.CUSTOMER

@@ -3,7 +3,7 @@
 sap.ui.define([
 	"../../RtaQunitUtils",
 	"sap/m/MessageBox",
-	"sap/ui/core/Core",
+	"sap/ui/core/Lib",
 	"sap/ui/core/Control",
 	"sap/ui/core/Fragment",
 	"sap/ui/core/util/File",
@@ -15,7 +15,7 @@ sap.ui.define([
 ], function(
 	RtaQunitUtils,
 	MessageBox,
-	Core,
+	Lib,
 	Control,
 	Fragment,
 	FileUtil,
@@ -40,7 +40,7 @@ sap.ui.define([
 	QUnit.module("Given a Toolbar with a translation extension", {
 		beforeEach() {
 			this.oToolbar = new Adaptation({
-				textResources: Core.getLibraryResourceBundle("sap.ui.rta"),
+				textResources: Lib.getResourceBundleFor("sap.ui.rta"),
 				rtaInformation: {
 					flexSettings: {
 						layer: Layer.CUSTOMER

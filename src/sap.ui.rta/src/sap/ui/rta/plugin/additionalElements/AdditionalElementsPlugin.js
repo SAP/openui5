@@ -6,6 +6,7 @@ sap.ui.define([
 	"sap/base/util/each",
 	"sap/base/Log",
 	"sap/ui/core/IconPool",
+	"sap/ui/core/Lib",
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/dt/OverlayUtil",
 	"sap/ui/fl/write/api/FieldExtensibility",
@@ -20,6 +21,7 @@ sap.ui.define([
 	each,
 	Log,
 	IconPool,
+	Lib,
 	OverlayRegistry,
 	OverlayUtil,
 	FieldExtensibility,
@@ -113,7 +115,7 @@ sap.ui.define([
 			var oTextResources;
 
 			function getGenericText() {
-				oTextResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
+				oTextResources = Lib.getResourceBundleFor("sap.ui.rta");
 				return oTextResources.getText("CTX_ADD_ELEMENTS", [oTextResources.getText("MULTIPLE_CONTROL_NAME")]);
 			}
 
@@ -125,7 +127,7 @@ sap.ui.define([
 
 			// When a submenu is present, the text is always the same
 			if (bHasSubMenu) {
-				oTextResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
+				oTextResources = Lib.getResourceBundleFor("sap.ui.rta");
 				return oTextResources.getText("CTX_ADD_ELEMENTS_WITH_SUBMENU");
 			}
 			var mParents = AdditionalElementsUtils.getParents(bOverlayIsSibling, oOverlay, this);
@@ -264,7 +266,7 @@ sap.ui.define([
 				this.getDialog().setElements(aElementsPerAggregation);
 				if (sDisplayText) {
 					// Aggregation is part of title
-					var oTextResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
+					var oTextResources = Lib.getResourceBundleFor("sap.ui.rta");
 					var sDialogTitle = oTextResources.getText("HEADER_ADDITIONAL_ELEMENTS_WITH_AGGREGATION", [sDisplayText]);
 					this.getDialog().setTitle(sDialogTitle);
 				} else if (sAggregationName || sControlName) {

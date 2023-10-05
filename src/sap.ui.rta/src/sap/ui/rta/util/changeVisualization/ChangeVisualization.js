@@ -5,6 +5,7 @@
 sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/core/Fragment",
+	"sap/ui/core/Lib",
 	"sap/base/util/isEmptyObject",
 	"sap/base/util/restricted/_difference",
 	"sap/base/util/deepEqual",
@@ -24,6 +25,7 @@ sap.ui.define([
 ], function(
 	Core,
 	Fragment,
+	Lib,
 	isEmptyObject,
 	difference,
 	deepEqual,
@@ -116,7 +118,7 @@ sap.ui.define([
 
 			Control.prototype.constructor.apply(this, aArgs);
 
-			this._oTextBundle = Core.getLibraryResourceBundle("sap.ui.rta");
+			this._oTextBundle = Lib.getResourceBundleFor("sap.ui.rta");
 			this.setModel(new ResourceModel({
 				bundle: this._oTextBundle
 			}), "i18n");

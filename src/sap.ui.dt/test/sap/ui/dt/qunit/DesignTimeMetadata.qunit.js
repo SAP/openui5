@@ -4,6 +4,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/dt/DesignTimeMetadata",
 	"sap/ui/layout/form/SimpleForm",
+	"sap/ui/core/Lib",
 	"sap/ui/core/Title",
 	"sap/m/Button",
 	"sap/m/Label",
@@ -13,6 +14,7 @@ sap.ui.define([
 	sinon,
 	DesignTimeMetadata,
 	SimpleForm,
+	Lib,
 	Title,
 	Button,
 	Label,
@@ -150,7 +152,7 @@ sap.ui.define([
 				getText: sandbox.stub().returns("translated text"),
 				hasText: sandbox.stub().returns(true)
 			};
-			sandbox.stub(sap.ui.getCore(), "getLibraryResourceBundle").returns(oFakeLibBundle);
+			sandbox.stub(Lib, "getResourceBundleFor").returns(oFakeLibBundle);
 			assert.equal(this.oDesignTimeMetadata.getLibraryText(oFakeElement, "I18N_KEY"), "translated text", "then you get the text from the resource bundle of the corresponding library");
 		});
 
@@ -168,7 +170,7 @@ sap.ui.define([
 				getText: sandbox.stub().returns("translated text"),
 				hasText: sandbox.stub().withArgs("I18N_KEY").returns(true)
 			};
-			sandbox.stub(sap.ui.getCore(), "getLibraryResourceBundle").withArgs("fakeLibrary").returns(oFakeLibBundle);
+			sandbox.stub(Lib, "getResourceBundleFor").withArgs("fakeLibrary").returns(oFakeLibBundle);
 			assert.equal(this.oDesignTimeMetadata.getLibraryText(oFakeElement, "I18N_KEY"), "translated text", "then you get the text from the resource bundle of the library from the parent");
 		});
 

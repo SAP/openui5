@@ -8,8 +8,8 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/core/Component",
-	"sap/ui/core/Core",
 	"sap/ui/core/Element",
+	"sap/ui/core/Lib",
 	"sap/ui/fl/apply/_internal/appVariant/DescriptorChangeTypes",
 	"sap/ui/fl/apply/_internal/changes/Applier",
 	"sap/ui/fl/apply/_internal/changes/Reverter",
@@ -28,8 +28,8 @@ sap.ui.define([
 	Log,
 	JsControlTreeModifier,
 	Component,
-	Core,
 	Element,
+	Lib,
 	DescriptorChangeTypes,
 	Applier,
 	Reverter,
@@ -196,7 +196,7 @@ sap.ui.define([
 					change: mPropertyBag.change,
 					element: mPropertyBag.element
 				}).then(function() {
-					var oFlResourceBundle = Core.getLibraryResourceBundle("sap.ui.fl");
+					var oFlResourceBundle = Lib.getResourceBundleFor("sap.ui.fl");
 					var sDependentChangesFileNames = aDependentChanges.map(function(oChange) {
 						return oChange.getId();
 					}).join(", ");

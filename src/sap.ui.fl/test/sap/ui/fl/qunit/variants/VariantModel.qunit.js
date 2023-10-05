@@ -9,6 +9,7 @@ sap.ui.define([
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/core/BusyIndicator",
 	"sap/ui/core/ComponentContainer",
+	"sap/ui/core/Lib",
 	"sap/ui/core/Manifest",
 	"sap/ui/core/UIComponent",
 	"sap/ui/model/resource/ResourceModel",
@@ -41,6 +42,7 @@ sap.ui.define([
 	XMLView,
 	BusyIndicator,
 	ComponentContainer,
+	Lib,
 	Manifest,
 	UIComponent,
 	ResourceModel,
@@ -68,7 +70,7 @@ sap.ui.define([
 	"use strict";
 
 	var sandbox = sinon.createSandbox();
-	var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.fl");
+	var oResourceBundle = Lib.getResourceBundleFor("sap.ui.fl");
 	var sVMReference = "variantMgmtId1";
 	sinon.stub(LayerUtils, "getCurrentLayer").returns(Layer.CUSTOMER);
 	sinon.stub(BusyIndicator, "show");

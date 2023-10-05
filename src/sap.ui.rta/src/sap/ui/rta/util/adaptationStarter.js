@@ -4,25 +4,25 @@
 sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/core/Control",
+	"sap/ui/core/Lib",
 	"sap/ui/core/UIComponent",
 	"sap/ui/fl/write/api/FeaturesAPI",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
 	"sap/ui/rta/util/showMessageBox",
-	"sap/ui/rta/RuntimeAuthoring",
-	"sap/ui/core/Core"
+	"sap/ui/rta/RuntimeAuthoring"
 ], function(
 	Log,
 	Control,
+	Lib,
 	UIComponent,
 	FeaturesAPI,
 	PersistenceWriteAPI,
 	Layer,
 	FlexUtils,
 	showMessageBox,
-	RuntimeAuthoring,
-	Core
+	RuntimeAuthoring
 ) {
 	"use strict";
 
@@ -31,7 +31,7 @@ sap.ui.define([
 			return FeaturesAPI.isKeyUser()
 			.then(function(bIsKeyUser) {
 				if (!bIsKeyUser) {
-					var oRtaResourceBundle = Core.getLibraryResourceBundle("sap.ui.rta");
+					var oRtaResourceBundle = Lib.getResourceBundleFor("sap.ui.rta");
 					var oError = new Error(oRtaResourceBundle.getText("MSG_NO_KEY_USER_RIGHTS_ERROR_MESSAGE"));
 					oError.reason = "isKeyUser";
 					throw oError;
@@ -121,7 +121,7 @@ sap.ui.define([
 				PersistenceWriteAPI.getChangesWarning(mPropertyBag)
 				.then(function(oWarningMessage) {
 					if (oWarningMessage.showWarning) {
-						var oRtaResourceBundle = Core.getLibraryResourceBundle("sap.ui.rta");
+						var oRtaResourceBundle = Lib.getResourceBundleFor("sap.ui.rta");
 						var oMessageProps = oWarningMessage.warningType === "mixedChangesWarning"
 							? {
 								text: "MSG_ADAPTATION_STARTER_MIXED_CHANGES_WARNING",
@@ -149,7 +149,7 @@ sap.ui.define([
 				vError !== "Reload triggered"
 				&& !(FlexUtils.getUshellContainer() && vError.reason === "flexEnabled") // FLP Plugin already handles this error
 			) {
-				var oRtaResourceBundle = Core.getLibraryResourceBundle("sap.ui.rta");
+				var oRtaResourceBundle = Lib.getResourceBundleFor("sap.ui.rta");
 				showMessageBox(
 					oRtaResourceBundle.getText("MSG_GENERIC_ERROR_MESSAGE", [vError.message]),
 					{title: oRtaResourceBundle.getText("MSG_ADAPTATION_COULD_NOT_START")},

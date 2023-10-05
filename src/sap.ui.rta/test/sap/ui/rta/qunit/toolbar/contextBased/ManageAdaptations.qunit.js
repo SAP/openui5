@@ -6,6 +6,7 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/core/Control",
 	"sap/ui/core/Fragment",
+	"sap/ui/core/Lib",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/write/api/ContextBasedAdaptationsAPI",
@@ -20,6 +21,7 @@ sap.ui.define([
 	oCore,
 	Control,
 	Fragment,
+	Lib,
 	Layer,
 	ManifestUtils,
 	ContextBasedAdaptationsAPI,
@@ -32,7 +34,7 @@ sap.ui.define([
 	"use strict";
 
 	var sandbox = sinon.createSandbox();
-	var oRtaResourceBundle = oCore.getLibraryResourceBundle("sap.ui.rta");
+	var oRtaResourceBundle = Lib.getResourceBundleFor("sap.ui.rta");
 
 	function getControl(oToolbar, sControlID) {
 		return oToolbar.getControl(`manageAdaptationDialog--${sControlID}`);

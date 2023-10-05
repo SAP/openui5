@@ -1,6 +1,7 @@
 /* global QUnit */
 
 sap.ui.define([
+	"sap/ui/core/Lib",
 	"sap/ui/dt/DesignTime",
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/dt/Plugin",
@@ -9,6 +10,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/core/Core"
 ], function(
+	Lib,
 	DesignTime,
 	OverlayRegistry,
 	Plugin,
@@ -387,7 +389,7 @@ sap.ui.define([
 
 			assert.equal(
 				this.oPlugin._getMenuItems([this.oOverlay], {pluginId: "CTX_RENAME"})[0].text,
-				oCore.getLibraryResourceBundle("sap.ui.rta").getText("CTX_RENAME"),
+				Lib.getResourceBundleFor("sap.ui.rta").getText("CTX_RENAME"),
 				"then default text is returned in the menu item"
 			);
 		});
@@ -459,7 +461,7 @@ sap.ui.define([
 			var aMenuItems = this.oPlugin._getMenuItems([this.oOverlay], {pluginId: "CTX_RENAME"});
 			assert.equal(
 				aMenuItems[0].text,
-				oCore.getLibraryResourceBundle("sap.ui.rta").getText("CTX_RENAME"),
+				Lib.getResourceBundleFor("sap.ui.rta").getText("CTX_RENAME"),
 				"then the menu item from the responsible element is returned"
 			);
 			oResponsibleElement.destroy();
@@ -500,7 +502,7 @@ sap.ui.define([
 			var aMenuItems = this.oPlugin._getMenuItems([this.oOverlay], {pluginId: "CTX_RENAME"});
 			assert.equal(
 				aMenuItems[0].text,
-				oCore.getLibraryResourceBundle("sap.ui.rta").getText("CTX_RENAME"),
+				Lib.getResourceBundleFor("sap.ui.rta").getText("CTX_RENAME"),
 				"then the menu item from the responsible element is returned"
 			);
 			oResponsibleElement.destroy();

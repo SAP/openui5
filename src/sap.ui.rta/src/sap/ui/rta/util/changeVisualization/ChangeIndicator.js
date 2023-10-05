@@ -7,6 +7,7 @@ sap.ui.define([
 	"sap/ui/core/Control",
 	"sap/ui/core/Core",
 	"sap/ui/core/Fragment",
+	"sap/ui/core/Lib",
 	"sap/ui/core/StaticArea",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/fl/util/resolveBinding",
@@ -20,6 +21,7 @@ sap.ui.define([
 	Control,
 	Core,
 	Fragment,
+	Lib,
 	StaticArea,
 	KeyCodes,
 	resolveBinding,
@@ -248,7 +250,7 @@ sap.ui.define([
 	}
 
 	function formatChangesModelItem(sOverlayId, mChangeInformation) {
-		var oRtaResourceBundle = Core.getLibraryResourceBundle("sap.ui.rta");
+		var oRtaResourceBundle = Lib.getResourceBundleFor("sap.ui.rta");
 		var oTexts = getTexts(mChangeInformation, oRtaResourceBundle, sOverlayId);
 		var oDates = getDates(mChangeInformation, oRtaResourceBundle);
 
@@ -351,7 +353,7 @@ sap.ui.define([
 	};
 
 	ChangeIndicator.prototype.setChanges = function(aChanges) {
-		var oRtaResourceBundle = Core.getLibraryResourceBundle("sap.ui.rta");
+		var oRtaResourceBundle = Lib.getResourceBundleFor("sap.ui.rta");
 		this.setProperty("changes", aChanges);
 		this._oDetailModel.setData((aChanges || []).reverse().map(formatChangesModelItem.bind(this, this.getOverlayId())));
 		if (aChanges && aChanges.length === 1) {

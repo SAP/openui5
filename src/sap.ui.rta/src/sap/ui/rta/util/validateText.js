@@ -3,10 +3,10 @@
  */
 sap.ui.define([
 	"sap/ui/base/BindingParser",
-	"sap/ui/core/Core"
+	"sap/ui/core/Lib"
 ], function(
 	BindingParser,
-	Core
+	Lib
 ) {
 	"use strict";
 
@@ -16,7 +16,7 @@ sap.ui.define([
 			validatorFunction(sNewText) {
 				return sNewText !== sEmptyTextKey;
 			},
-			errorMessage: Core.getLibraryResourceBundle("sap.ui.rta").getText("RENAME_EMPTY_ERROR_TEXT")
+			errorMessage: Lib.getResourceBundleFor("sap.ui.rta").getText("RENAME_EMPTY_ERROR_TEXT")
 		}
 	};
 
@@ -34,7 +34,7 @@ sap.ui.define([
 		}
 
 		if (oBindingParserResult && typeof oBindingParserResult === "object" || bError) {
-			throw Error(sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta").getText("RENAME_BINDING_ERROR_TEXT"));
+			throw Error(Lib.getResourceBundleFor("sap.ui.rta").getText("RENAME_BINDING_ERROR_TEXT"));
 		}
 	}
 

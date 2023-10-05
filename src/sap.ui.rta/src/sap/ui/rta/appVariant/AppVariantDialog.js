@@ -17,6 +17,7 @@ sap.ui.define([
 	"sap/m/TileContent",
 	"sap/m/VBox",
 	"sap/ui/core/library",
+	"sap/ui/core/Lib",
 	"sap/ui/core/IconPool",
 	"sap/ui/core/Title",
 	"sap/ui/layout/form/SimpleForm",
@@ -27,8 +28,7 @@ sap.ui.define([
 	"sap/ui/rta/Utils",
 	// needs to be preloaded for the test to work
 	"sap/ui/layout/form/ResponsiveGridLayout"
-],
-function(
+], function(
 	Button,
 	Dialog,
 	DialogRenderer,
@@ -42,6 +42,7 @@ function(
 	TileContent,
 	VBox,
 	coreLibrary,
+	Lib,
 	IconPool,
 	Title,
 	SimpleForm,
@@ -58,7 +59,7 @@ function(
 
 	var {ValueState} = coreLibrary;
 
-	var oResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
+	var oResources = Lib.getResourceBundleFor("sap.ui.rta");
 	var oDataSet;
 	var oTitleLabel;
 	var oTitleInput;

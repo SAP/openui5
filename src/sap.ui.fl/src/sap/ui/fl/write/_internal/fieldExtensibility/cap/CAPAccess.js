@@ -3,9 +3,11 @@
  */
 
 sap.ui.define([
+	"sap/ui/core/Lib",
 	"sap/ui/fl/write/_internal/fieldExtensibility/ServiceValidation",
 	"sap/ui/fl/write/_internal/fieldExtensibility/cap/dialog/CustomFieldCAPDialog"
 ], function(
+	Lib,
 	ServiceValidation,
 	CustomFieldCAPDialog
 ) {
@@ -13,7 +15,7 @@ sap.ui.define([
 
 	var oCurrentControl = null;
 	var oCAPDialog = null;
-	var oTextBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.fl");
+	var oTextBundle = Lib.getResourceBundleFor("sap.ui.fl");
 
 	/**
 	 * @namespace sap.ui.fl.write._internal.fieldExtensibility.CAPAccess

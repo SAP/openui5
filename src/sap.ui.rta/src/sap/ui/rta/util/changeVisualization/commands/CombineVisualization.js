@@ -4,18 +4,20 @@
 
 sap.ui.define([
 	"sap/ui/core/Core",
+	"sap/ui/core/Lib",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/dt/ElementUtil",
 	"sap/ui/rta/util/changeVisualization/ChangeVisualizationUtils"
 ], function(
 	Core,
+	Lib,
 	JsControlTreeModifier,
 	ElementUtil,
 	ChangeVisualizationUtils
 ) {
 	"use strict";
 
-	var oRtaResourceBundle = Core.getLibraryResourceBundle("sap.ui.rta");
+	var oRtaResourceBundle = Lib.getResourceBundleFor("sap.ui.rta");
 
 	var CombineVisualization = {};
 

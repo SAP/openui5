@@ -2,13 +2,13 @@
 
 sap.ui.define([
 	"sap/ui/rta/util/changeVisualization/commands/RenameVisualization",
-	"sap/ui/core/Core"
+	"sap/ui/core/Lib"
 ], function(
 	RenameVisualization,
-	oCore
+	Lib
 ) {
 	"use strict";
-	var oResourceBundle = oCore.getLibraryResourceBundle("sap.ui.rta");
+	var oResourceBundle = Lib.getResourceBundleFor("sap.ui.rta");
 
 	QUnit.module("Base tests", {
 		beforeEach() {

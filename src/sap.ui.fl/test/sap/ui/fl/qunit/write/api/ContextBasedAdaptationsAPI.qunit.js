@@ -3,6 +3,7 @@ sap.ui.define([
 	"sap/base/util/deepClone",
 	"sap/base/util/LoaderExtensions",
 	"sap/ui/core/Control",
+	"sap/ui/core/Lib",
 	"sap/ui/core/Manifest",
 	"sap/ui/fl/apply/_internal/controlVariants/URLHandler",
 	"sap/ui/fl/apply/_internal/flexState/controlVariants/VariantManagementState",
@@ -28,6 +29,7 @@ sap.ui.define([
 	deepClone,
 	LoaderExtensions,
 	Control,
+	Lib,
 	Manifest,
 	URLHandler,
 	VariantManagementState,
@@ -1812,7 +1814,7 @@ sap.ui.define([
 
 	QUnit.module("When ContextBasedAdaptationsAPI.canMigrate and migrate are called", {
 		before() {
-			this.oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.fl");
+			this.oResourceBundle = Lib.getResourceBundleFor("sap.ui.fl");
 			var oManifestObj = {
 				"sap.app": {
 					id: "com.sap.test.app"

@@ -6,6 +6,7 @@ sap.ui.define([
 	"sap/m/MessageBox",
 	"sap/base/util/restricted/_omit",
 	"sap/base/util/isEmptyObject",
+	"sap/ui/core/Lib",
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/dt/Util",
 	"sap/ui/rta/plugin/Plugin",
@@ -16,6 +17,7 @@ sap.ui.define([
 	MessageBox,
 	_omit,
 	isEmptyObject,
+	Lib,
 	OverlayRegistry,
 	DtUtil,
 	Plugin,
@@ -138,7 +140,7 @@ sap.ui.define([
 			return;
 		}
 
-		var oLibraryBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
+		var oLibraryBundle = Lib.getResourceBundleFor("sap.ui.rta");
 		var oVariantManagementControl = oVariantManagementOverlay.getElement();
 		var mProperties;
 
@@ -175,7 +177,7 @@ sap.ui.define([
 
 		// If the variant was modified, user must choose whether to save changes before switching
 		if (oVariantManagementControl.getModified()) {
-			var oLibraryBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
+			var oLibraryBundle = Lib.getResourceBundleFor("sap.ui.rta");
 			var sTargetVariantId = mPropertyBag.eventItem.getParameters().item.getProperty("key");
 			MessageBox.warning(oLibraryBundle.getText("MSG_CHANGE_MODIFIED_VARIANT"), {
 				onClose: onDirtySwitchWarningClose.bind(this, oVariantManagementOverlay, sTargetVariantId),
@@ -252,7 +254,7 @@ sap.ui.define([
 
 	// ------ change content ------
 	function onWarningClose(oVariantManagementControl, sVariantId, sAction) {
-		var oLibraryBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
+		var oLibraryBundle = Lib.getResourceBundleFor("sap.ui.rta");
 		if (sAction === oLibraryBundle.getText("BTN_CREATE_NEW_VIEW")) {
 			saveAsNewVariant.call(this, [OverlayRegistry.getOverlay(oVariantManagementControl)], true)
 			.then(function(oReturn) {
@@ -267,7 +269,7 @@ sap.ui.define([
 	}
 
 	function changeContent(aOverlays) {
-		var oLibraryBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
+		var oLibraryBundle = Lib.getResourceBundleFor("sap.ui.rta");
 		var oElementOverlay = aOverlays[0];
 		var oControl = oElementOverlay.getElement();
 		var oAction = this.getAction(oElementOverlay);
@@ -324,7 +326,7 @@ sap.ui.define([
 				});
 			} else {
 				var sLayer = this.getCommandFactory().getFlexSettings().layer;
-				var oLibraryBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
+				var oLibraryBundle = Lib.getResourceBundleFor("sap.ui.rta");
 				var aVariants = getAllVariants(oElementOverlay);
 				var oCurrentVariant = aVariants.find(function(oVariant) {
 					return oVariant.getVariantId() === oVariantManagementControl.getPresentVariantId();

@@ -6,7 +6,7 @@ sap.ui.define([
 	"sap/m/MessageToast",
 	"sap/m/Page",
 	"sap/ui/core/ComponentContainer",
-	"sap/ui/core/Core",
+	"sap/ui/core/Lib",
 	"sap/ui/dt/plugin/TabHandling",
 	"sap/ui/dt/util/ZIndexManager",
 	"sap/ui/dt/DesignTime",
@@ -35,7 +35,7 @@ sap.ui.define([
 	MessageToast,
 	Page,
 	ComponentContainer,
-	Core,
+	Lib,
 	TabHandling,
 	ZIndexManager,
 	DesignTime,
@@ -62,7 +62,7 @@ sap.ui.define([
 	"use strict";
 
 	var sandbox = sinon.createSandbox();
-	var oTextResources = Core.getLibraryResourceBundle("sap.ui.rta");
+	var oTextResources = Lib.getResourceBundleFor("sap.ui.rta");
 	var oComp = RtaQunitUtils.createAndStubAppComponent(sinon, "someId", {
 		"sap.app": {
 			id: "someId"

@@ -2,13 +2,13 @@
 
 sap.ui.define([
 	"sap/ui/dt/ElementDesignTimeMetadata",
-	"sap/ui/core/Core",
+	"sap/ui/core/Lib",
 	"sap/ui/dt/ElementUtil",
 	"sap/ui/core/Element",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	ElementDesignTimeMetadata,
-	Core,
+	Lib,
 	ElementUtil,
 	Element,
 	sinon
@@ -162,7 +162,7 @@ sap.ui.define([
 				getText: sandbox.stub().returnsArg(0), // just return i18n keys
 				hasText: sandbox.stub().returns(false)
 			};
-			sandbox.stub(Core, "getLibraryResourceBundle").returns(oFakeLibBundle);
+			sandbox.stub(Lib, "getResourceBundleFor").returns(oFakeLibBundle);
 
 			assert.deepEqual(this.oElementDesignTimeMetadata.getAggregationDescription("testAggregation", oFakeElement), {
 				singular: "I18N_KEY_USER_FRIENDLY_CONTROL_NAME",
@@ -187,7 +187,7 @@ sap.ui.define([
 				getText: sandbox.stub().returnsArg(0), // just return i18n keys
 				hasText: sandbox.stub().returns(false)
 			};
-			sandbox.stub(Core, "getLibraryResourceBundle").returns(oFakeLibBundle);
+			sandbox.stub(Lib, "getResourceBundleFor").returns(oFakeLibBundle);
 
 			var mExpectedDisplayNames = {
 				singular: "I18N_KEY_USER_FRIENDLY_AGGREGATION_NAME",
@@ -226,7 +226,7 @@ sap.ui.define([
 				getText: sandbox.stub().returnsArg(0), // just return i18n keys
 				hasText: sandbox.stub().returns(false)
 			};
-			sandbox.stub(sap.ui.getCore(), "getLibraryResourceBundle").returns(oFakeLibBundle);
+			sandbox.stub(Lib, "getResourceBundleFor").returns(oFakeLibBundle);
 
 			assert.deepEqual(this.oElementDesignTimeMetadata.getName(oFakeElement), {
 				singular: "I18N_KEY_USER_FRIENDLY_CONTROL_NAME",

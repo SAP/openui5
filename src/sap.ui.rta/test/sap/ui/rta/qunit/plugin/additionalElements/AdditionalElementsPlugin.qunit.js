@@ -10,6 +10,7 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/m/Input",
 	"sap/ui/core/CustomData",
+	"sap/ui/core/Lib",
 	"sap/ui/dt/DesignTime",
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/dt/Util",
@@ -38,6 +39,7 @@ sap.ui.define([
 	Button,
 	Input,
 	CustomData,
+	Lib,
 	DesignTime,
 	OverlayRegistry,
 	DtUtil,
@@ -135,8 +137,8 @@ sap.ui.define([
 	QUnit.module("Context Menu Operations: Given a plugin whose dialog always close with OK", {
 		beforeEach(assert) {
 			registerControlsForChanges();
-			this.oRTATexts = oCore.getLibraryResourceBundle("sap.ui.rta");
-			var fnOriginalGetLibraryResourceBundle = oCore.getLibraryResourceBundle;
+			this.oRTATexts = Lib.getResourceBundleFor("sap.ui.rta");
+			var fnOriginalGetLibraryResourceBundle = Lib.getResourceBundleFor;
 			var oFakeLibBundle = {
 				getText: sandbox.stub().returnsArg(0),
 				hasText: sandbox.stub().returns(true)
@@ -954,8 +956,8 @@ sap.ui.define([
 		});
 
 		QUnit.test("when the control's dt metadata has addViaDelegate and a reveal actions", function(assert) {
-			var oOriginalRTATexts = oCore.getLibraryResourceBundle("sap.ui.rta");
-			var fnOriginalGetLibraryResourceBundle = oCore.getLibraryResourceBundle;
+			var oOriginalRTATexts = Lib.getResourceBundleFor("sap.ui.rta");
+			var fnOriginalGetLibraryResourceBundle = Lib.getResourceBundleFor;
 			var sAggregationName = "contentLeft";
 			var oFakeLibBundle = {
 				getText: sandbox.stub().returnsArg(0),
