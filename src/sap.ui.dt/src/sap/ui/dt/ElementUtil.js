@@ -79,7 +79,7 @@ sap.ui.define([
 	};
 
 	ElementUtil.fixComponentParent = function(oElement) {
-		if (BaseObject.isA(oElement, "sap.ui.core.UIComponent")) {
+		if (BaseObject.isObjectA(oElement, "sap.ui.core.UIComponent")) {
 			var oComponentContainer = oElement.oContainer;
 			if (oComponentContainer) {
 				return oComponentContainer.getParent();
@@ -90,7 +90,7 @@ sap.ui.define([
 	};
 
 	ElementUtil.fixComponentContainerElement = function(oElement) {
-		if (BaseObject.isA(oElement, "sap.ui.core.ComponentContainer")) {
+		if (BaseObject.isObjectA(oElement, "sap.ui.core.ComponentContainer")) {
 			// This happens when the compontentContainer has not been rendered yet
 			if (!oElement.getComponentInstance()) {
 				return undefined;
@@ -246,7 +246,7 @@ sap.ui.define([
 					this.getAggregation(oParent, sAggregationName).length > 0) {
 				return false;
 			}
-			return BaseObject.isA(oElement, sTypeOrInterface) || this.hasInterface(oElement, sTypeOrInterface);
+			return BaseObject.isObjectA(oElement, sTypeOrInterface) || this.hasInterface(oElement, sTypeOrInterface);
 		}
 	};
 
@@ -354,7 +354,7 @@ sap.ui.define([
 	};
 
 	ElementUtil.getParent = function(oElement) {
-		return BaseObject.isA(oElement, "sap.ui.core.Component")
+		return BaseObject.isObjectA(oElement, "sap.ui.core.Component")
 			? oElement.oContainer
 			: oElement.getParent();
 	};

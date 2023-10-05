@@ -1420,11 +1420,11 @@ function(
 		var aSelectedFilterItems = [], aFilterItems = this.getFilterItems(), aSubFilterItems, bMultiSelect = true, i = 0, j;
 
 		for (; i < aFilterItems.length; i++) {
-			if (BaseObject.isA(aFilterItems[i], "sap.m.ViewSettingsCustomItem")) {
+			if (BaseObject.isObjectA(aFilterItems[i], "sap.m.ViewSettingsCustomItem")) {
 				if (aFilterItems[i].getSelected()) {
 					aSelectedFilterItems.push(aFilterItems[i]);
 				}
-			} else if (BaseObject.isA(aFilterItems[i], "sap.m.ViewSettingsFilterItem")) {
+			} else if (BaseObject.isObjectA(aFilterItems[i], "sap.m.ViewSettingsFilterItem")) {
 				aSubFilterItems = aFilterItems[i].getItems();
 				bMultiSelect = aFilterItems[i].getMultiSelect();
 				for (j = 0; j < aSubFilterItems.length; j++) {
@@ -1467,13 +1467,13 @@ function(
 		} else { // standard & custom filters
 			for (; i < aFilterItems.length; i++) {
 				bSelectedFilters = false;
-				if (BaseObject.isA(aFilterItems[i], "sap.m.ViewSettingsCustomItem")) {
+				if (BaseObject.isObjectA(aFilterItems[i], "sap.m.ViewSettingsCustomItem")) {
 					// custom filter: add "filter name,"
 					if (aFilterItems[i].getSelected()) {
 						bSelectedFilters = true;
 						sFilterString += aFilterItems[i].getText() + ", ";
 					}
-				} else if (BaseObject.isA(aFilterItems[i], "sap.m.ViewSettingsFilterItem")) {
+				} else if (BaseObject.isObjectA(aFilterItems[i], "sap.m.ViewSettingsFilterItem")) {
 					// standard filter: add "filter name (sub filter 1 name, sub
 					// filter 2 name, ...), "
 					aSubFilterItems = aFilterItems[i].getItems();
@@ -1559,7 +1559,7 @@ function(
 
 		for (i = 0; i < aSelectedFilterItems.length; i++) {
 			oFilterItem = aSelectedFilterItems[i];
-			if (BaseObject.isA(oFilterItem, "sap.m.ViewSettingsCustomItem")) {
+			if (BaseObject.isObjectA(oFilterItem, "sap.m.ViewSettingsCustomItem")) {
 				sKey = oFilterItem.getKey();
 				oSelectedFilterKeys[sKey] = oFilterItem.getSelected();
 			} else {
@@ -1613,13 +1613,13 @@ function(
 			oFilterItem = null;
 			if (oSelectedFilterKeys.hasOwnProperty(sKey)) {
 				for (i = 0; i < aFilterItems.length; i++) {
-					if (BaseObject.isA(aFilterItems[i], "sap.m.ViewSettingsCustomItem")) {
+					if (BaseObject.isObjectA(aFilterItems[i], "sap.m.ViewSettingsCustomItem")) {
 						// just compare the key of this control
 						if (aFilterItems[i].getKey() === sKey) {
 							oFilterItem = aFilterItems[i];
 							aFilterItems[i].setProperty('selected', oSelectedFilterKeys[sKey], true);
 						}
-					} else if (BaseObject.isA(aFilterItems[i], "sap.m.ViewSettingsFilterItem")) {
+					} else if (BaseObject.isObjectA(aFilterItems[i], "sap.m.ViewSettingsFilterItem")) {
 						// find the sub filter item with the specified key
 						aSubFilterItems = aFilterItems[i].getItems();
 						bMultiSelect = aFilterItems[i].getMultiSelect();
@@ -1698,9 +1698,9 @@ function(
 						break;
 					}
 				}
-				if (BaseObject.isA(oParentItem, "sap.m.ViewSettingsCustomItem")) {
+				if (BaseObject.isObjectA(oParentItem, "sap.m.ViewSettingsCustomItem")) {
 					oParentItem.setProperty('selected', oSelectedFilterKeys[sParentKey], true);
-				} else if (BaseObject.isA(oParentItem, "sap.m.ViewSettingsFilterItem")) {
+				} else if (BaseObject.isObjectA(oParentItem, "sap.m.ViewSettingsFilterItem")) {
 					oSelectedSubFilterKeys = oSelectedFilterKeys[sParentKey];
 					aSubFilterItems = oParentItem.getItems();
 					bMultiSelect = oParentItem.getMultiSelect();
@@ -2163,7 +2163,7 @@ function(
 	 * @private
 	 */
 	ViewSettingsDialog.prototype._initFilterDetailItems = function(oItem) {
-		if (!(BaseObject.isA(oItem, "sap.m.ViewSettingsFilterItem"))) {
+		if (!(BaseObject.isObjectA(oItem, "sap.m.ViewSettingsFilterItem"))) {
 			return;
 		}
 
@@ -2984,11 +2984,11 @@ function(
 				// display filter title
 				this._setFilterDetailTitle(oItem);
 				// fill detail page
-				if (BaseObject.isA(oItem, "sap.m.ViewSettingsCustomItem")
+				if (BaseObject.isObjectA(oItem, "sap.m.ViewSettingsCustomItem")
 					&& oItem.getCustomControl()) {
 					this._clearPresetFilter();
 					this._getPage2().addContent(oItem.getCustomControl());
-				} else if (BaseObject.isA(oItem, "sap.m.ViewSettingsFilterItem")
+				} else if (BaseObject.isObjectA(oItem, "sap.m.ViewSettingsFilterItem")
 					&& oItem.getItems()) {
 					this._initFilterDetailItems(oItem);
 				}
@@ -3270,10 +3270,10 @@ function(
 			oItem = aListItems[i].data("item");
 			iFilterCount = 0;
 			if (oItem) {
-				if (BaseObject.isA(oItem, "sap.m.ViewSettingsCustomItem")) {
+				if (BaseObject.isObjectA(oItem, "sap.m.ViewSettingsCustomItem")) {
 					// for custom filter oItems the oItem is directly selected
 					iFilterCount = oItem.getFilterCount();
-				} else if (BaseObject.isA(oItem, "sap.m.ViewSettingsFilterItem")) {
+				} else if (BaseObject.isObjectA(oItem, "sap.m.ViewSettingsFilterItem")) {
 					// for filter oItems the oItem counter has to be calculated from
 					// the sub oItems
 					iFilterCount = 0;
@@ -3295,7 +3295,7 @@ function(
 
 		// reset all items to selected = false
 		for (; i < items.length; i++) {
-			if (BaseObject.isA(items[i], "sap.m.ViewSettingsFilterItem")) {
+			if (BaseObject.isObjectA(items[i], "sap.m.ViewSettingsFilterItem")) {
 				subItems = items[i].getItems();
 				for (j = 0; j < subItems.length; j++) {
 					subItems[j].setProperty('selected', false, true);
@@ -3432,7 +3432,7 @@ function(
 	 * @private
 	 */
 	function validateViewSettingsItem(oItem) {
-		return oItem && BaseObject.isA(oItem, "sap.m.ViewSettingsItem");
+		return oItem && BaseObject.isObjectA(oItem, "sap.m.ViewSettingsItem");
 	}
 
 	/* =========================================================== */

@@ -250,7 +250,7 @@ sap.ui.define([
 	PropertyHelper.prototype.getColumnExportSettings = function(oColumn) {
 		const aColumnExportSettings = [];
 
-		if (!BaseObject.isA(oColumn, "sap.ui.mdc.table.Column")) {
+		if (!BaseObject.isObjectA(oColumn, "sap.ui.mdc.table.Column")) {
 			return aColumnExportSettings;
 		}
 

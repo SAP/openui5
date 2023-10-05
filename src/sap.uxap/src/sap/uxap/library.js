@@ -302,7 +302,7 @@ sap.ui.define([
 		 */
 		getClosestOPL: function (oControl) {
 
-			while (oControl && !(BaseObject.isA(oControl, "sap.uxap.ObjectPageLayout"))) {
+			while (oControl && !(BaseObject.isObjectA(oControl, "sap.uxap.ObjectPageLayout"))) {
 				oControl = oControl.getParent();
 			}
 
