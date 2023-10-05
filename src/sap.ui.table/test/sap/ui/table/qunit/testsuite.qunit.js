@@ -34,8 +34,8 @@ sap.ui.define([
 				paths: {
 					"sap/ui/table/qunit": "test-resources/sap/ui/table/qunit/",
 					"sap/ui/core/qunit": "test-resources/sap/ui/core/qunit/",
-					"sap/ui/core/sample": "test-resources/sap/ui/core/demokit/sample",
-					"sap/ui/demo/mock": "test-resources/sap/ui/documentation/sdk/"
+					"sap/ui/demo/mock": "test-resources/sap/ui/documentation/sdk/",
+					"sap/ui/core/sample": "test-resources/sap/ui/core/demokit/sample/"
 				}
 			},
 			page: "test-resources/sap/ui/table/qunit/teststarter.qunit.html?test={name}",
@@ -315,6 +315,38 @@ sap.ui.define([
 				module: "./plugins/MultiSelectionPlugin.ODataV4.qunit",
 				ui5: {
 					// sap.ui.table.plugins.MultiSelectionPlugin requires sap.m modules
+					libs: ["sap.ui.table", "sap.m"]
+				}
+			},
+			"ODataV4Selection Flat": {
+				group: "Plugins",
+				module: "./plugins/ODataV4Selection.Flat.qunit",
+				ui5: {
+					// sap.ui.table.plugins.ODataV4Selection requires sap.m modules
+					libs: ["sap.ui.table", "sap.m"]
+				}
+			},
+			"ODataV4Selection Hierarchy": {
+				group: "Plugins",
+				module: "./plugins/ODataV4Selection.Hierarchy.qunit",
+				ui5: {
+					// sap.ui.table.plugins.ODataV4Selection requires sap.m modules
+					libs: ["sap.ui.table", "sap.m"]
+				}
+			},
+			"ODataV4Selection DataAggregation": {
+				group: "Plugins",
+				module: "./plugins/ODataV4Selection.DataAggregation.qunit",
+				ui5: {
+					// sap.ui.table.plugins.ODataV4Selection requires sap.m modules
+					libs: ["sap.ui.table", "sap.m"]
+				}
+			},
+			"ODataV4Selection with V4Aggregation plugin": {
+				group: "Plugins",
+				module: "./plugins/ODataV4Selection.V4Aggregation.qunit",
+				ui5: {
+					// sap.ui.table.plugins.ODataV4Selection requires sap.m modules
 					libs: ["sap.ui.table", "sap.m"]
 				}
 			},

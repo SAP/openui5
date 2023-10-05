@@ -43,6 +43,7 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/core/Element",
 	"sap/ui/core/Control",
+	"sap/ui/core/Icon",
 	"sap/ui/core/RenderManager",
 	"sap/ui/core/message/Message",
 	"sap/ui/core/util/PasteHelper",
@@ -93,6 +94,7 @@ sap.ui.define([
 	oCore,
 	Element,
 	Control,
+	Icon,
 	RenderManager,
 	Message,
 	PasteHelper,
@@ -5070,6 +5072,101 @@ sap.ui.define([
 		this.oTable.setSelectionMode(SelectionMode.MultiToggle);
 		assert.strictEqual(this.oTable.getSelectionMode(), SelectionMode.Single,
 			"The selection mode cannot be changed here, it is controlled by the plugin");
+	});
+
+	QUnit.test("#getRenderConfig", async function(assert) {
+		var sSelectAllTitleText = TableUtils.getResourceBundle().getText("TBL_SELECT_ALL");
+		var sDeselectAllTitleText = TableUtils.getResourceBundle().getText("TBL_DESELECT_ALL");
+		var Elem;
+
+		this.oTable.addDependent(this.oTestPlugin);
+		this.oTable.placeAt("qunit-fixture");
+
+		this.oTestPlugin.getRenderConfig = function() {
+			return {
+				headerSelector: {type: "none"}
+			};
+		};
+		this.oTable.invalidate();
+		await nextUIUpdate();
+		Elem = this.oTable.getDomRef("selall");
+		assert.ok(Elem.innerHTML.length === 0, "header selector is not rendered");
+
+		this.oTestPlugin.getRenderConfig = function() {
+			return {
+				headerSelector: {type: "clear", visible: true, enabled: false, selected: false}
+			};
+		};
+		this.oTable.invalidate();
+		await nextUIUpdate();
+		Elem = this.oTable.getDomRef("selall");
+		assert.ok(Elem.firstChild.classList.contains("sapUiTableSelectAllCheckBox"), "header selector is rendered");
+		assert.equal(Elem.getAttribute("title"), sDeselectAllTitleText, "Tooltip is correct");
+
+		this.oTestPlugin.getRenderConfig = function() {
+			return {
+				headerSelector: {type: "clear", visible: false, enabled: false, selected: false}
+			};
+		};
+		this.oTable.invalidate();
+		await nextUIUpdate();
+		Elem = this.oTable.getDomRef("selall");
+		assert.ok(Elem.innerHTML.length === 0, "header selector is not rendered");
+
+		this.oTestPlugin.getRenderConfig = function() {
+			return {
+				headerSelector: {type: "toggle", visible: true, enabled: true,	selected: false}
+			};
+		};
+		this.oTable.invalidate();
+		await nextUIUpdate();
+		Elem = this.oTable.getDomRef("selall");
+		assert.ok(Elem.firstChild.classList.contains("sapUiTableSelectAllCheckBox"), "header selector is rendered");
+		assert.equal(Elem.getAttribute("title"), sSelectAllTitleText, "Tooltip is correct");
+
+		this.oTestPlugin.getRenderConfig = function() {
+			return {
+				headerSelector: {type: "toggle", visible: true, enabled: true,	selected: true}
+			};
+		};
+		this.oTable.invalidate();
+		await nextUIUpdate();
+		Elem = this.oTable.getDomRef("selall");
+		assert.ok(Elem.firstChild.classList.contains("sapUiTableSelectAllCheckBox"), "header selector is rendered");
+		assert.equal(Elem.getAttribute("title"), sDeselectAllTitleText, "Tooltip is correct");
+
+		this.oTestPlugin.getRenderConfig = function() {
+			return {
+				headerSelector: {type: "clear", visible: true,	enabled: true, selected: false}
+			};
+		};
+		this.oTable.invalidate();
+		await nextUIUpdate();
+		Elem = this.oTable.getDomRef("selall");
+		assert.ok(Elem.firstChild.classList.contains("sapUiTableSelectAllCheckBox"), "header selector is rendered");
+		assert.equal(Elem.getAttribute("title"), sDeselectAllTitleText, "Tooltip is correct");
+
+		this.oTestPlugin.getRenderConfig = function() {
+			return {
+				headerSelector: {type: "clear", visible: false, enabled: true,	selected: false}
+			};
+		};
+		this.oTable.invalidate();
+		await nextUIUpdate();
+		Elem = this.oTable.getDomRef("selall");
+		assert.ok(Elem.innerHTML.length === 0, "header selector is not rendered");
+
+		this.oTestPlugin.getRenderConfig = function() {
+			return {
+				headerSelector: {type: "clear", icon: new Icon({src: "sap-icon://clear-all"}), visible: true, enabled: true, selected: false}
+			};
+		};
+		this.oTable.invalidate();
+		await nextUIUpdate();
+		Elem = this.oTable.getDomRef("selall");
+		assert.ok(Elem.firstChild.classList.contains("sapUiIcon"), "header selector icon is rendered");
+		assert.equal(Element.closestTo(this.oTable.getDomRef("selall").firstChild).getSrc(), "sap-icon://clear-all", "The icon source is correct");
+		assert.equal(Elem.getAttribute("title"), sDeselectAllTitleText, "Tooltip is correct");
 	});
 
 	QUnit.test("Selection API", function(assert) {
