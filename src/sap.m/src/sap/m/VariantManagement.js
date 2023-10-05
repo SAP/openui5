@@ -327,6 +327,16 @@ sap.ui.define([
 					group: "Misc",
 					defaultValue: true,
 					visibility: "hidden"
+				},
+
+				/**
+				 * Defines the standard variant key.
+				 */
+				_standardKey: {
+					type: "string",
+					group: "Misc",
+					defaultValue: "",
+					visibility: "hidden"
 				}
 			},
 			defaultAggregation: "items",
@@ -841,9 +851,31 @@ sap.ui.define([
 	};
 
 	VariantManagement.prototype.getStandardVariantKey = function() {
+		var sKey = this.getProperty("_standardKey");
+		if (!sKey) {
+			return this._getFirstVisibleVariant();
+		}
+
+		return sKey;
+	};
+
+
+	VariantManagement.prototype.setStandardVariantKey = function(sValue) {
+		this.setProperty("_standardKey", sValue);
+	};
+
+	VariantManagement.prototype._getFirstVisibleVariant = function() {
 		var aItems = this._getItems();
-		if (aItems && aItems[0]) {
-			return aItems[0].getKey();
+		for (var i = 0; i < aItems.length; i++) {
+			if (aItems[i].getVisible()) {
+				if (this.getSupportFavorites()) {
+					if (aItems[i].getFavorite()) {
+						return aItems[i].getKey();
+					}
+				} else {
+					return aItems[i].getKey();
+				}
+			}
 		}
 
 		return null;

@@ -708,6 +708,10 @@ sap.ui.define([
 		return this;
 	};
 
+	VariantManagement.prototype._setStandardVariantKey = function(sKey) {
+		this._oVM.setStandardVariantKey(sKey);
+	};
+
 	VariantManagement.prototype.openManagementDialog = function(bCreateAlways, sClass, oRolesComponentContainer) {
 		this._oVM.openManagementDialog(bCreateAlways, sClass, oRolesComponentContainer);
 	};
@@ -828,6 +832,7 @@ sap.ui.define([
 			oModel = this.getModel(sModelName);
 			if (oModel) {
 				sLocalId = this._getLocalId(oModel);
+
 				if (sLocalId) {
 					this.oContext = new Context(oModel, `/${sLocalId}`);
 					this.setBindingContext(this.oContext, sModelName);
@@ -875,6 +880,7 @@ sap.ui.define([
 					});
 
 					this._oVM.setPopoverTitle(this._oRb.getText("VARIANT_MANAGEMENT_VARIANTS"));
+					this._setStandardVariantKey(sLocalId);
 				}
 			}
 		}

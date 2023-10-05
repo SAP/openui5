@@ -47,12 +47,12 @@ sap.ui.define([
 		},
 
 		_checkCurrentVariant: function() {
-			var sKey = this._oVM.getSelectedKey();
-			var oItem = this._getItemByKey(sKey);
+			var sSelectedKey = this._oVM.getSelectedKey();
+			var oItem = this._getItemByKey(sSelectedKey);
 			if (!oItem) {
-				oItem = this._getFirstVisibleItem();
-				if (oItem) {
-					this._oVM.setSelectedKey(oItem.getKey());
+				var sKey = this._oVM.getStandardVariantKey();
+				if (sKey) {
+					this._oVM.setSelectedKey(sKey);
 				}
 			}
 		},
