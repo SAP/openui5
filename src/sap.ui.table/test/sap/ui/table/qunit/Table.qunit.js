@@ -4448,7 +4448,10 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Initialization", function(assert) {
+	/**
+	 * @deprecated As of version 1.119
+	 */
+	QUnit.test("Initialization (legacy)", function(assert) {
 		var oOtherTestPlugin = new (SelectionPlugin.extend("sap.ui.table.test.OtherTestSelectionPlugin"))();
 		var oTable = this.oTable;
 
@@ -4490,15 +4493,63 @@ sap.ui.define([
 		sinon.spy(Table.prototype, "_createLegacySelectionPlugin");
 		this.oTestPlugin = new this.TestSelectionPlugin(); // The old one was destroyed.
 		oTable = new Table({
-			plugins: [this.oTestPlugin]
+			plugins: [this.oTestPlugin],
+			dependents: [new this.TestSelectionPlugin()] // "plugins" aggregation should win.
 		});
 
-		assert.ok(oTable._getSelectionPlugin().isA("sap.ui.table.test.SelectionPlugin"),
-			"The selection plugin set to the table is used");
+		assert.strictEqual(oTable._getSelectionPlugin(), this.oTestPlugin, "The selection plugin set to the table is used");
 		assert.ok(oTable._hasSelectionPlugin(), "Table#_hasSelectionPlugin returns \"true\"");
 		assert.ok(Table.prototype._createLegacySelectionPlugin.notCalled, "No legacy selection plugin was created on init");
 
 		Table.prototype._createLegacySelectionPlugin.restore();
+	});
+
+	QUnit.test("Initialization", function(assert) {
+		var oOtherTestPlugin = new (SelectionPlugin.extend("sap.ui.table.test.OtherTestSelectionPlugin"))();
+		var oTable = this.oTable;
+
+		function expectLegacyPlugin() {
+			assert.ok(oTable._getSelectionPlugin().isA("sap.ui.table.plugins.SelectionModelSelection"), "The legacy selection plugin is used");
+			assert.strictEqual(oTable._hasSelectionPlugin(), false, "Table#_hasSelectionPlugin returns \"false\"");
+		}
+
+		function expectAppliedPlugin(oAppliedPlugin) {
+			assert.strictEqual(oTable._getSelectionPlugin(), oAppliedPlugin, "The applied selection plugin is used");
+			assert.strictEqual(oTable._hasSelectionPlugin(), true, "Table#_hasSelectionPlugin returns \"true\"");
+		}
+
+		expectLegacyPlugin();
+
+		oTable.addDependent(this.oTestPlugin);
+		expectAppliedPlugin(this.oTestPlugin);
+
+		oTable.removeDependent(this.oTestPlugin);
+		expectLegacyPlugin();
+
+		oTable.insertDependent(this.oTestPlugin, 0);
+		expectAppliedPlugin(this.oTestPlugin);
+
+		oTable.removeAllDependents();
+		expectLegacyPlugin();
+
+		oTable.addDependent(this.oTestPlugin);
+		oTable.addDependent(oOtherTestPlugin);
+		expectAppliedPlugin(this.oTestPlugin);
+		oTable.removeDependent(this.oTestPlugin);
+		expectAppliedPlugin(oOtherTestPlugin);
+		oTable.insertDependent(this.oTestPlugin, 0);
+		expectAppliedPlugin(this.oTestPlugin);
+
+		oTable.destroyDependents();
+		expectLegacyPlugin();
+
+		this.oTestPlugin = new this.TestSelectionPlugin(); // The old one was destroyed.
+		oTable = new Table({
+			dependents: [this.oTestPlugin]
+		});
+
+		assert.strictEqual(oTable._getSelectionPlugin(), this.oTestPlugin, "The selection plugin set to the table is used");
+		assert.ok(oTable._hasSelectionPlugin(), "Table#_hasSelectionPlugin returns \"true\"");
 	});
 
 	QUnit.test("Set selection mode", function(assert) {
@@ -4506,7 +4557,7 @@ sap.ui.define([
 		assert.strictEqual(this.oTable.getSelectionMode(), SelectionMode.Single,
 			"If the default selection plugin is used, the selection mode can be set");
 
-		this.oTable.addPlugin(this.oTestPlugin);
+		this.oTable.addDependent(this.oTestPlugin);
 		this.oTable.setSelectionMode(SelectionMode.MultiToggle);
 		assert.strictEqual(this.oTable.getSelectionMode(), SelectionMode.Single,
 			"The selection mode cannot be changed here, it is controlled by the plugin");
@@ -4535,7 +4586,7 @@ sap.ui.define([
 			}
 		}.bind(this));
 
-		this.oTable.addPlugin(this.oTestPlugin);
+		this.oTable.addDependent(this.oTestPlugin);
 		oSelectionPlugin = this.oTable._getSelectionPlugin();
 
 		aMethodNames.forEach(function(sMethodName) {
@@ -4666,6 +4717,15 @@ sap.ui.define([
 
 		oText.clone.restore();
 		oTableClone.destroy();
+	});
+
+	QUnit.test("findAggregatedObjects / findElements", function(assert) {
+		var oText = new Text("myHiddenDependentText");
+
+		this.oTable.addAggregation("_hiddenDependents", oText);
+
+		assert.ok(!this.oTable.findAggregatedObjects().includes(oText), "#findAggregatedObjects does not find hidden dependents");
+		assert.ok(!this.oTable.findElements().includes(oText), "#findElements does not find hidden dependents");
 	});
 
 	QUnit.module("Hooks", {

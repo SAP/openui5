@@ -8,6 +8,7 @@ sap.ui.define([
 	"../../util/loadModules",
 	"sap/m/ColumnPopoverSelectListItem",
 	"sap/m/MessageBox",
+	"sap/m/plugins/PluginBase",
 	"sap/ui/core/Item",
 	"sap/ui/core/Core",
 	"sap/ui/core/library",
@@ -22,6 +23,7 @@ sap.ui.define([
 	loadModules,
 	ColumnPopoverSelectListItem,
 	MessageBox,
+	PluginBase,
 	Item,
 	oCore,
 	coreLibrary,
@@ -112,7 +114,7 @@ sap.ui.define([
 				return TableDelegate.initializeSelection.call(this, oTable);
 			}
 
-			oTable._oTable.addPlugin(new ODataV4SelectionPlugin({
+			oTable._oTable.addDependent(new ODataV4SelectionPlugin({
 				limit: "{$sap.ui.mdc.Table#type>/selectionLimit}",
 				enableNotification: true,
 				hideHeaderSelector: "{= !${$sap.ui.mdc.Table#type>/showHeaderSelector} }",
@@ -138,18 +140,13 @@ sap.ui.define([
 	}
 
 	function setSelectedGridTableConditions (oTable, aContexts) {
-
-		const oODataV4SelectionPlugin = oTable._oTable.getPlugins().find(function(oPlugin) {
-			return oPlugin.isA("sap.ui.table.plugins.ODataV4Selection");
-		});
+		const oODataV4SelectionPlugin = PluginBase.getPlugin(oTable._oTable, "sap.ui.table.plugins.ODataV4Selection");
 
 		if (oODataV4SelectionPlugin) {
 			return oODataV4SelectionPlugin.setSelectedContexts(aContexts);
 		}
 
-		const oMultiSelectionPlugin = oTable._oTable.getPlugins().find(function(oPlugin) {
-			return oPlugin.isA("sap.ui.table.plugins.MultiSelectionPlugin");
-		});
+		const oMultiSelectionPlugin = PluginBase.getPlugin(oTable._oTable, "sap.ui.table.plugins.MultiSelectionPlugin");
 
 		if (oMultiSelectionPlugin) {
 			oMultiSelectionPlugin.clearSelection();
@@ -186,10 +183,7 @@ sap.ui.define([
 		}
 
 		if (oTable._isOfType(TableType.Table, true)) {
-			const oODataV4SelectionPlugin = oTable._oTable.getPlugins().find(function(oPlugin) {
-				return oPlugin.isA("sap.ui.table.plugins.ODataV4Selection");
-			});
-
+			const oODataV4SelectionPlugin = PluginBase.getPlugin(oTable._oTable, "sap.ui.table.plugins.ODataV4Selection");
 			return oODataV4SelectionPlugin ? oODataV4SelectionPlugin.getSelectedContexts() : [];
 		}
 
@@ -374,7 +368,8 @@ sap.ui.define([
 		// The information that there is a sort or filter change is lost, hence the GridTable does not clear the selection. The changes could
 		// affect the indices and make the current selection invalid. Therefore, the delegate has to clear the selection here.
 		if (oTable._bV4LegacySelectionEnabled && oTable._isOfType(TableType.Table)) {
-			const oInnerPlugin = oTable._oTable && oTable._oTable.getPlugins()[0] ? oTable._oTable.getPlugins()[0].oInnerSelectionPlugin : null;
+			const oMultiSelectionPlugin = PluginBase.getPlugin(oTable._oTable, "sap.ui.table.plugins.MultiSelectionPlugin");
+			const oInnerPlugin = oMultiSelectionPlugin ? oMultiSelectionPlugin.oInnerSelectionPlugin : null;
 
 			if (oInnerPlugin) {
 				oInnerPlugin._bInternalTrigger = true;

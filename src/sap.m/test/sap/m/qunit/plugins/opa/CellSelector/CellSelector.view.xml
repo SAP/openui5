@@ -12,10 +12,8 @@
 			rows="{path: '/ProductSet'}"
 			threshold="20"
 			enableBusyIndicator="true">
-			<plugins>
-				<plugins:MultiSelectionPlugin limit="100" enableNotification="true"/>
-			</plugins>
 			<dependents>
+				<plugins:MultiSelectionPlugin limit="100" enableNotification="true"/>
 				<m:plugins.CellSelector rangeLimit="100" />
 			</dependents>
 			<columns>

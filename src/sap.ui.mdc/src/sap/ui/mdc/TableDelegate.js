@@ -9,6 +9,7 @@
 sap.ui.define([
 	"./AggregationBaseDelegate",
 	"./util/loadModules",
+	"sap/m/plugins/PluginBase",
 	"sap/ui/model/Sorter",
 	"sap/ui/core/library",
 	"sap/ui/core/Core",
@@ -18,6 +19,7 @@ sap.ui.define([
 ], function(
 	AggregationBaseDelegate,
 	loadModules,
+	PluginBase,
 	Sorter,
 	coreLibrary,
 	Core,
@@ -351,7 +353,7 @@ sap.ui.define([
 				return Promise.reject("Destroyed");
 			}
 
-			oTable._oTable.addPlugin(new MultiSelectionPlugin({
+			oTable._oTable.addDependent(new MultiSelectionPlugin({
 				limit: "{$sap.ui.mdc.Table#type>/selectionLimit}",
 				enableNotification: true,
 				showHeaderSelector: "{$sap.ui.mdc.Table#type>/showHeaderSelector}",
@@ -425,9 +427,7 @@ sap.ui.define([
 
 		if (oTable._isOfType(TableType.Table, true)) {
 			const oGridTable = oTable._oTable;
-			const oMultiSelectionPlugin = oGridTable.getPlugins().find(function(oPlugin) {
-				return oPlugin.isA("sap.ui.table.plugins.MultiSelectionPlugin");
-			});
+			const oMultiSelectionPlugin = PluginBase.getPlugin(oGridTable, "sap.ui.table.plugins.MultiSelectionPlugin");
 
 			if (!oMultiSelectionPlugin) {
 				return [];
@@ -487,9 +487,7 @@ sap.ui.define([
 		}
 
 		if (oTable._isOfType(TableType.Table, true)) {
-			const oSelectionPlugin = oTable._oTable.getPlugins().find(function(oPlugin) {
-				return oPlugin.isA("sap.ui.table.plugins.SelectionPlugin");
-			});
+			const oSelectionPlugin = PluginBase.getPlugin(oTable._oTable, "sap.ui.table.plugins.SelectionPlugin");
 
 			if (oSelectionPlugin) {
 				oSelectionPlugin.clearSelection();

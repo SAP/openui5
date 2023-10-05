@@ -16,34 +16,28 @@ sap.ui.define([
 	"sap/ui/mdc/FilterBar",
 	"sap/m/Text",
 	"sap/m/Button",
-	'sap/m/MessageBox',
+	"sap/m/MessageBox",
 	"sap/ui/model/odata/v4/ODataListBinding",
-	"sap/ui/model/Sorter",
 	"sap/ui/model/Filter",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/base/Event",
-	"sap/ui/dom/containsOrEquals",
 	"sap/ui/Device",
-	"sap/m/VBox",
-	"sap/m/Link",
 	"sap/m/IllustratedMessage",
 	"sap/m/IllustratedMessageType",
 	"sap/ui/core/Control",
-	"sap/ui/core/Popup",
 	"sap/ui/core/library",
 	"sap/m/library",
 	"sap/ui/mdc/odata/TypeMap",
 	"test-resources/sap/m/qunit/p13n/TestModificationHandler",
 	"sap/ui/mdc/actiontoolbar/ActionToolbarAction",
 	"sap/m/plugins/CopyProvider",
-	"sap/m/plugins/PasteProvider",
 	"sap/m/plugins/CellSelector",
 	"../util/createAppEnvironment",
 	"sap/ui/fl/write/api/ControlPersonalizationWriteAPI",
+	"sap/m/plugins/PluginBase",
 	"sap/m/plugins/DataStateIndicator",
 	"sap/m/plugins/ColumnResizer",
 	"sap/ui/core/message/Message",
-	'sap/ui/core/Element',
 	"sap/ui/model/odata/v2/ODataModel",
 	"sap/ui/core/theming/Parameters",
 	"sap/ui/mdc/table/RowActionItem",
@@ -80,32 +74,26 @@ sap.ui.define([
 	Button,
 	MessageBox,
 	ODataListBinding,
-	Sorter,
 	Filter,
 	JSONModel,
 	UI5Event,
-	containsOrEquals,
 	Device,
-	VBox,
-	Link,
 	IllustratedMessage,
 	IllustratedMessageType,
 	Control,
-	Popup,
 	CoreLibrary,
 	MLibrary,
 	ODataTypeMap,
 	TestModificationHandler,
 	ActionToolbarAction,
 	CopyProvider,
-	PasteProvider,
 	CellSelector,
 	createAppEnvironment,
 	ControlPersonalizationWriteAPI,
+	PluginBase,
 	DataStateIndicator,
 	ColumnResizer,
 	Message,
-	Element,
 	ODataModel,
 	ThemeParameters,
 	RowActionItem,
@@ -1692,6 +1680,14 @@ sap.ui.define([
 	});
 
 	QUnit.test("Selection - GridTable", function(assert) {
+		const done = assert.async();
+		const oModel = new JSONModel({
+			testPath: [
+				{}, {}, {}, {}, {}
+			]
+		});
+		let oSelectionPlugin;
+
 		function selectItem(oRow, bUser, bNoRowSelector) {
 			if (bUser) {
 				if (bNoRowSelector) {
@@ -1701,17 +1697,8 @@ sap.ui.define([
 				}
 				return;
 			}
-			oRow.getParent().getPlugins()[0].setSelectedIndex(oRow.getIndex(), true);
+			oSelectionPlugin.setSelectedIndex(oRow.getIndex(), true);
 		}
-
-		const done = assert.async();
-
-		const oModel = new JSONModel();
-		oModel.setData({
-			testPath: [
-				{}, {}, {}, {}, {}
-			]
-		});
 
 		this.oTable.destroy();
 		this.oTable = new Table({
@@ -1736,9 +1723,10 @@ sap.ui.define([
 		this.oTable.initialized().then(function() {
 			this.oTable._oTable.attachEventOnce("rowsUpdated", function() {
 				const that = this;
-				const oSelectionPlugin = this.oTable._oTable.getPlugins()[0];
 				let iSelectionCount = -1;
 				let bRowPressFired = false;
+
+				oSelectionPlugin = PluginBase.getPlugin(this.oTable._oTable, "sap.ui.table.plugins.SelectionPlugin");
 
 				this.oTable.attachSelectionChange(function() {
 					iSelectionCount = this.oTable.getSelectedContexts().length;
@@ -1772,10 +1760,9 @@ sap.ui.define([
 						});
 
 						that.oTable.setSelectionMode("Single");
-						assert.equal(that.oTable._oTable.getPlugins().length, 1, "Plugin available");
-						assert.ok(that.oTable._oTable.getPlugins()[0].isA("sap.ui.table.plugins.MultiSelectionPlugin"), "Plugin is a MultiSelectionPlugin");
+						assert.ok(oSelectionPlugin.isA("sap.ui.table.plugins.MultiSelectionPlugin"), "Plugin is a MultiSelectionPlugin");
 						assert.equal(that.oTable.getSelectionMode(), "Single", "Selection Mode Single - MDCTable");
-						assert.equal(that.oTable._oTable.getPlugins()[0].getSelectionMode(), "Single", "Selection Mode Single - MultiSelectionPlugin");
+						assert.equal(oSelectionPlugin.getSelectionMode(), "Single", "Selection Mode Single - MultiSelectionPlugin");
 						assert.equal(that.oTable._oTable.getSelectionBehavior(), "RowSelector", "Selection Behavior RowSelector");
 						Core.applyChanges();
 
@@ -1809,7 +1796,7 @@ sap.ui.define([
 
 						that.oTable.setSelectionMode("SingleMaster");
 						assert.equal(that.oTable.getSelectionMode(), "SingleMaster", "Selection Mode Single - MDCTable");
-						assert.equal(that.oTable._oTable.getPlugins()[0].getSelectionMode(), "Single", "Selection Mode Single - MultiSelectionPlugin");
+						assert.equal(oSelectionPlugin.getSelectionMode(), "Single", "Selection Mode Single - MultiSelectionPlugin");
 						assert.equal(that.oTable._oTable.getSelectionBehavior(), "RowOnly", "Selection Behavior RowOnly");
 						Core.applyChanges();
 
@@ -1847,8 +1834,7 @@ sap.ui.define([
 						assert.equal(that.oTable._oTable.getSelectionMode(), "MultiToggle", "Selection Mode Multi - Inner Table");
 						assert.equal(that.oTable._oTable.getSelectionBehavior(), "RowSelector", "Selection Behavior RowSelector");
 						Core.applyChanges();
-						assert.equal(that.oTable._oTable.getPlugins().length, 1, "Plugin available");
-						assert.ok(that.oTable._oTable.getPlugins()[0].isA("sap.ui.table.plugins.MultiSelectionPlugin"), "Plugin is a MultiSelectionPlugin");
+						assert.ok(oSelectionPlugin.isA("sap.ui.table.plugins.MultiSelectionPlugin"), "Plugin is a MultiSelectionPlugin");
 
 						selectItem(that.oTable._oTable.getRows()[0], true);
 					});
@@ -1882,7 +1868,6 @@ sap.ui.define([
 					return new Promise(function(resolve) {
 						// Simulate enable notification scenario via selection over limit
 						that.oTable.setSelectionMode("Multi");
-						const oSelectionPlugin = that.oTable._oTable.getPlugins()[0];
 
 						// reduce limit to force trigger error
 						that.oTable.getType().setSelectionLimit(3);
@@ -2251,7 +2236,7 @@ sap.ui.define([
 	QUnit.test("MultiSelectionPlugin", function(assert) {
 		this.oTable.setType(new GridTableType());
 		return this.oTable.initialized().then(function() {
-			const oMultiSelectionPlugin = this.oTable._oTable.getPlugins()[0];
+			const oMultiSelectionPlugin = PluginBase.getPlugin(this.oTable._oTable, "sap.ui.table.plugins.MultiSelectionPlugin");
 			assert.ok(oMultiSelectionPlugin, "MultiSelectionPlugin is initialized");
 
 			assert.equal(oMultiSelectionPlugin.getLimit(), 200, "default selection limit is correct");
