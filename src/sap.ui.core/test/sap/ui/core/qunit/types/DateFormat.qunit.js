@@ -11,7 +11,13 @@ sap.ui.define([
 	"sap/ui/core/Configuration",
 	"sap/ui/core/Supportability",
 	"sap/ui/core/date/CalendarWeekNumbering",
-	"sap/ui/test/TestUtils"
+	"sap/ui/test/TestUtils",
+	// load all required calendars in advance
+	"sap/ui/core/date/Buddhist",
+	"sap/ui/core/date/Gregorian",
+	"sap/ui/core/date/Islamic",
+	"sap/ui/core/date/Japanese",
+	"sap/ui/core/date/Persian"
 ], function (Log, extend, DateFormat, Locale, LocaleData, UniversalDate, UI5Date, library, Configuration,
 	Supportability, CalendarWeekNumbering, TestUtils) {
 	"use strict";
