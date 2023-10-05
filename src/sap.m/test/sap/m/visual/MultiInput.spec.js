@@ -25,8 +25,10 @@ describe('sap.m.MultiInput', function() {
 
 	// MultiInput invalidated
 	it("should invalidate the MultiInput, so all MI elements are there", function () {
-		browser.executeScript('sap.ui.getCore().byId("dataBoundMultiInput").getTokens()[1].setText("Lorem ipsulum")').then(function () {
-			expect(takeScreenshot(element(by.id("dataBoundMultiInput")))).toLookAs("token-update-text");
+		browser.executeScript('document.getElementById("dataBoundMultiInput").scrollIntoView()').then(function() {
+			browser.executeScript('sap.ui.getCore().byId("dataBoundMultiInput").getTokens()[1].setText("Lorem ipsulum")').then(function() {
+				expect(takeScreenshot(element(by.id("dataBoundMultiInput")))).toLookAs("token-update-text");
+			});
 		});
 	});
 
@@ -72,55 +74,55 @@ describe('sap.m.MultiInput', function() {
 		});
 	});
 
-		// MultiInput with long suggestions and 100% popover width
-		it("Should visualize MultiInput with long suggestions and 100% popover width", function () {
-			var oMultiInput = element(by.id("mi-long-sugg-small-width"));
-			browser.executeScript("document.getElementById('mi-long-sugg-small-width').scrollIntoView()").then(function() {
-				oMultiInput.click();
-				browser.actions().sendKeys("S").perform();
+	// MultiInput with long suggestions and 100% popover width
+	it("Should visualize MultiInput with long suggestions and 100% popover width", function () {
+		var oMultiInput = element(by.id("mi-long-sugg-small-width"));
+		browser.executeScript("document.getElementById('mi-long-sugg-small-width').scrollIntoView()").then(function() {
+			oMultiInput.click();
+			browser.actions().sendKeys("S").perform();
 
-				expect(takeScreenshot()).toLookAs("suggestions_popover_margins");
+			expect(takeScreenshot()).toLookAs("suggestions_popover_margins");
 
-				browser.actions().sendKeys(protractor.Key.ESCAPE).perform();
-			});
+			browser.actions().sendKeys(protractor.Key.ESCAPE).perform();
 		});
+	});
 
-		// MultiInput with placeholder and nMore
-		it("Should visualize MultiInput placeholder when nMore was previously present", function () {
-			var oMultiInput = element(by.id("mi-placeholder"));
-			browser.executeScript("arguments[0].scrollIntoView()", oMultiInput).then(function () {
-				expect(takeScreenshot()).toLookAs("multiinput_nmore_initial");
+	// MultiInput with placeholder and nMore
+	it("Should visualize MultiInput placeholder when nMore was previously present", function () {
+		var oMultiInput = element(by.id("mi-placeholder"));
+		browser.executeScript("arguments[0].scrollIntoView()", oMultiInput).then(function () {
+			expect(takeScreenshot()).toLookAs("multiinput_nmore_initial");
 
-				browser.executeScript("sap.ui.getCore().byId('mi-placeholder').setTokens([])");
-				expect(takeScreenshot()).toLookAs("multiinput_placeholder");
+			browser.executeScript("sap.ui.getCore().byId('mi-placeholder').setTokens([])");
+			expect(takeScreenshot()).toLookAs("multiinput_placeholder");
 
-				oMultiInput.click();
-				expect(takeScreenshot()).toLookAs("multiinput_placeholder_focus");
+			oMultiInput.click();
+			expect(takeScreenshot()).toLookAs("multiinput_placeholder_focus");
 
-				element(by.id("mi-long-sugg-small-width")).click();
-				expect(takeScreenshot()).toLookAs("multiinput_placeholder_blur");
-			});
+			element(by.id("mi-long-sugg-small-width")).click();
+			expect(takeScreenshot()).toLookAs("multiinput_placeholder_blur");
 		});
+	});
 
-		it("Should visualize MultiInput with long suggestions", function () {
-			var oWrappingMultiInput = element(by.id("mi-wrapping"));
+	it("Should visualize MultiInput with long suggestions", function () {
+		var oWrappingMultiInput = element(by.id("mi-wrapping"));
 
-			browser.executeScript("document.getElementById('mi-wrapping').scrollIntoView()").then(function () {
-				oWrappingMultiInput.click();
+		browser.executeScript("document.getElementById('mi-wrapping').scrollIntoView()").then(function () {
+			oWrappingMultiInput.click();
 
-				// Should show wrapping suggestions
-				browser.actions().sendKeys("I").perform();
-				expect(takeScreenshot()).toLookAs("wrapping_suggestions_visible");
+			// Should show wrapping suggestions
+			browser.actions().sendKeys("I").perform();
+			expect(takeScreenshot()).toLookAs("wrapping_suggestions_visible");
 
-				// Should focus the first suggestion
-				browser.actions().sendKeys(protractor.Key.ARROW_DOWN).perform();
-				expect(takeScreenshot()).toLookAs("wrapping_first_suggestion_focused");
+			// Should focus the first suggestion
+			browser.actions().sendKeys(protractor.Key.ARROW_DOWN).perform();
+			expect(takeScreenshot()).toLookAs("wrapping_first_suggestion_focused");
 
-				// Should close the dropdown and clear the value
-				browser.actions().sendKeys(protractor.Key.ESCAPE).perform();
-				browser.actions().sendKeys(protractor.Key.BACK_SPACE).perform();
-			});
+			// Should close the dropdown and clear the value
+			browser.actions().sendKeys(protractor.Key.ESCAPE).perform();
+			browser.actions().sendKeys(protractor.Key.BACK_SPACE).perform();
 		});
+	});
 
 	// Suggestions' max-width should be 40rem
 	it("should limit the SuggestionsPopover max-width to 40rem", function() {
