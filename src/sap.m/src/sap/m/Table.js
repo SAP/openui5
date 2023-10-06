@@ -46,7 +46,7 @@ sap.ui.define([
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * The <code>sap.m.Table</code> control provides a set of sophisticated and convenience functions for responsive table design.
+	 * The <code>sap.m.Table</code> control provides a set of sophisticated and easy-to-use functions for responsive table design.
 	 *
 	 * To render the <code>sap.m.Table</code> control properly, the order of the <code>columns</code> aggregation should match with the order of the <code>cells</code> aggregation (<code>sap.m.ColumnListItem</code>).
 	 *
