@@ -135,7 +135,6 @@ To refer to another entity within the **API Reference**, you can use `{@link}` i
 | `module:full/module/name#method` | Refers to an instance method from a class that does not expose a global name | | |
 | `module:full/module/name.method` | Refers to a static method from a module that does not expose a global name | | |
 | `#method` | Refers to an instance method **within** a class | `#getHeader` | You must use this type of reference **within** an API that you are documenting, for example, within the SmartTable control documentation, if you want to link to a method that belongs to the control itself. |
-| `#method` | Refers to an instance method **within** a class | `#getHeader` | You must use this type of reference **within** an API that you are documenting, for example, within the SmartTable control documentation, if you want to link to a method that belongs to the control itself. |
 | `#.method` | Refers to a static method **within** a class | | |
 | `full.path.ClassName#event:name` | Refers to an event fired by an instance of a class | `sap.ui.comp.smarttable.SmartTable#event:beforeRebindTable` | |
 | `#event:name` | Refers to an event **within** a class | | |
