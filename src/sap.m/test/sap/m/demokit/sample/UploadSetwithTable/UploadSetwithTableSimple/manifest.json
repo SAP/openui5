@@ -1,13 +1,13 @@
 {
 	"sap.app": {
-		"id": "sap.m.sample.UploadSetTable",
+		"id": "sap.m.sample.UploadSetwithTableSimple",
 		"applicationVersion": {
 			"version": "1.0.0"
 		}
 	},
 	"sap.ui5": {
 		"rootView": {
-			"viewName": "sap.m.sample.UploadSetTable.Page",
+			"viewName": "sap.m.sample.UploadSetwithTable.UploadSetwithTableSimple.Page",
 			"type": "XML",
 			"async": true
 		},
@@ -22,11 +22,10 @@
 				"files": [
 					"Page.view.xml",
 					"Page.controller.js",
-					"items.json",
 					"manifest.json",
-					"FileUpload.fragment.xml",
-					"mockserver.js",
-					"menu.fragment.xml"
+					"test/items.json",
+					"test/mockserver.js",
+					"fragments/AddViaUrl.fragment.xml"
 				]
 			}
 		}

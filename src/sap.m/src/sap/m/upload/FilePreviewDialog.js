@@ -50,7 +50,10 @@ sap.ui.define([
    * @param {string} [sId] id for the new control, generated automatically if no id is given.
    * @param {object} [mSettings] Initial settings for the new control.
    * @constructor
-   * @private
+   * @public
+   * @experimental since 1.120
+   * @since 1.120
+   * @version ${version}
    * @extends sap.ui.core.Element
    * @name sap.m.upload.FilePreviewDialog
    */
