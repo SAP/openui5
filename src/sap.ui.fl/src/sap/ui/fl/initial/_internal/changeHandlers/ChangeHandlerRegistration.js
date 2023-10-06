@@ -3,7 +3,7 @@
 */
 
 sap.ui.define([
-	"sap/ui/core/Core",
+	"sap/ui/core/Lib",
 	"sap/ui/fl/initial/_internal/changeHandlers/ChangeHandlerStorage",
 	"sap/ui/fl/changeHandler/AddXML",
 	"sap/ui/fl/changeHandler/AddXMLAtExtensionPoint",
@@ -16,7 +16,7 @@ sap.ui.define([
 	"sap/ui/fl/changeHandler/UnhideControl",
 	"sap/ui/fl/changeHandler/UnstashControl"
 ], function(
-	Core,
+	Lib,
 	ChangeHandlerStorage,
 	AddXML,
 	AddXMLAtExtensionPoint,
@@ -89,8 +89,8 @@ sap.ui.define([
 		 * @returns {Promise} Returns an empty promise when all changeHandlers from all libraries are registered.
 		 */
 		getChangeHandlersOfLoadedLibsAndRegisterOnNewLoadedLibs() {
-			var oAlreadyLoadedLibraries = Core.getLoadedLibraries();
-			Core.attachLibraryChanged(handleLibraryRegistrationAfterFlexLibraryIsLoaded);
+			var oAlreadyLoadedLibraries = Lib.all();
+			Lib.attachLibraryChanged(handleLibraryRegistrationAfterFlexLibraryIsLoaded);
 			var aPromises = [];
 
 			Object.values(oAlreadyLoadedLibraries).forEach(function(oLibrary) {

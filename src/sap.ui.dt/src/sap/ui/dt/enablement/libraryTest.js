@@ -5,9 +5,11 @@
 /* global QUnit */
 
 sap.ui.define([
+	"sap/ui/core/Lib",
 	"sap/ui/model/resource/ResourceModel",
 	"sap/ui/model/json/JSONModel"
 ], function(
+	Lib,
 	ResourceModel,
 	JSONModel
 ) {
@@ -49,15 +51,14 @@ sap.ui.define([
 	 */
 	var LibraryTest = function(sTestLibrary) {
 		return new Promise(function(resolve) {
-			sap.ui.getCore().loadLibraries([sTestLibrary]).then(function() {
-				var oLibrary = sap.ui.getCore().getLoadedLibraries()[sTestLibrary];
+			Lib.load({name: sTestLibrary}).then(function(oLibrary) {
 				var aElements = oLibrary.controls.concat(oLibrary.elements);
 				sLibrary = sTestLibrary;
 				sap.ui.require(aElements.map(function(s) {
 					return s.replace(/\./g, "/");
 				}), function(...aArgs) {
 					// all controls are loaded, now all libs are loaded
-					var mLazyLibraries = sap.ui.getCore().getLoadedLibraries();
+					var mLazyLibraries = Lib.all();
 					try {
 						var oRuntimeResourceModel = new ResourceModel({
 							bundleUrl: sap.ui.require.toUrl(sTestLibrary, "messagebundle.properties"),
@@ -247,7 +248,7 @@ sap.ui.define([
 	};
 	function addTests() {
 		QUnit.test("Checking library.designtime.js", function(assert) {
-			var oLibrary = sap.ui.getCore().getLoadedLibraries()[sLibrary];
+			var oLibrary = Lib.all()[sLibrary];
 			if (oLibrary.designtime) {
 				var done = assert.async();
 				sap.ui.require([oLibrary.designtime], function(o) {

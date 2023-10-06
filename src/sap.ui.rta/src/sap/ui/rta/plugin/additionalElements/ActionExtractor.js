@@ -7,6 +7,7 @@ sap.ui.define([
 	"sap/base/util/merge",
 	"sap/base/Log",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
+	"sap/ui/core/Lib",
 	"sap/ui/dt/ElementUtil",
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/fl/apply/api/DelegateMediatorAPI",
@@ -17,6 +18,7 @@ sap.ui.define([
 	merge,
 	Log,
 	JsControlTreeModifier,
+	Lib,
 	ElementUtil,
 	OverlayRegistry,
 	DelegateMediatorAPI,
@@ -40,7 +42,7 @@ sap.ui.define([
 		var aLoadLibraryPromises = [];
 		var aRequiredLibraries = DelegateMediatorAPI.getKnownDefaultDelegateLibraries();
 		aRequiredLibraries.forEach(function(sLibrary) {
-			var oLoadLibraryPromise = sap.ui.getCore().loadLibrary(sLibrary, { async: true })
+			var oLoadLibraryPromise = Lib.load({name: sLibrary})
 			.then(function() {
 				return Promise.resolve(sLibrary);
 			})
