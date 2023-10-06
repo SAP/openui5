@@ -22,6 +22,7 @@ sap.ui.define([
 	'./UIArea',
 	'./Messaging',
 	'./StaticArea',
+	"sap/ui/core/Supportability",
 	"sap/ui/core/Theming",
 	"sap/base/Log",
 	"sap/ui/performance/Measurement",
@@ -57,6 +58,7 @@ sap.ui.define([
 		UIArea,
 		Messaging,
 		StaticArea,
+		Supportability,
 		Theming,
 		Log,
 		Measurement,
@@ -316,7 +318,7 @@ sap.ui.define([
 
 				// handle modules
 				var aModules = this.aModules = Configuration.getValue("modules");
-				if ( Configuration.getDebug() ) {
+				if ( Supportability.isDebugModeEnabled() ) {
 					// add debug module if configured
 					aModules.unshift("sap.ui.debug.DebugEnv");
 				}
@@ -480,29 +482,31 @@ sap.ui.define([
 					}
 
 					// initializes the application cachebuster mechanism if configured
-					var aACBConfig = Configuration.getAppCacheBuster();
+					var aACBConfig = BaseConfig.get({
+						name: "sapUiAppCacheBuster",
+						type: BaseConfig.Type.StringArray,
+						external: true,
+						freeze: true
+					});
 					if (aACBConfig && aACBConfig.length > 0) {
 						if ( bAsync ) {
 							var iLoadACBTask = oSyncPoint2.startTask("require AppCachebuster");
 							sap.ui.require(["sap/ui/core/AppCacheBuster"], function(AppCacheBuster) {
-								AppCacheBuster.boot(oSyncPoint2);
+								AppCacheBuster.boot(oSyncPoint2, aACBConfig);
 								// finish the task only after ACB had a chance to create its own task(s)
 								oSyncPoint2.finishTask(iLoadACBTask);
 							});
-						} else {
-							var AppCacheBuster = sap.ui.requireSync('sap/ui/core/AppCacheBuster'); // legacy-relevant: Synchronous path
-							AppCacheBuster.boot(oSyncPoint2);
 						}
 					}
 
 					// Initialize support info stack
-					if (Configuration.getSupportMode() !== null) {
+					if (Supportability.getSupportSettings() !== null) {
 						var iSupportInfoTask = oSyncPoint2.startTask("support info script");
 
 						var fnCallbackSupportBootstrapInfo = function(Support, Bootstrap) {
-							Support.initializeSupportMode(Configuration.getSupportMode(), bAsync);
+							Support.initializeSupportMode(Supportability.getSupportSettings(), bAsync);
 
-							Bootstrap.initSupportRules(Configuration.getSupportMode());
+							Bootstrap.initSupportRules(Supportability.getSupportSettings());
 
 							oSyncPoint2.finishTask(iSupportInfoTask);
 						};
@@ -526,11 +530,11 @@ sap.ui.define([
 					}
 
 					// Initialize test tools
-					if (Configuration.getTestRecorderMode() !== null) {
+					if (Supportability.getTestRecorderSettings() !== null) {
 						var iTestRecorderTask = oSyncPoint2.startTask("test recorder script");
 
 						var fnCallbackTestRecorder = function (Bootstrap) {
-							Bootstrap.init(Configuration.getTestRecorderMode());
+							Bootstrap.init(Supportability.getTestRecorderSettings());
 							oSyncPoint2.finishTask(iTestRecorderTask);
 						};
 

@@ -17,8 +17,7 @@ sap.ui.define([
 	'./ObjectNumber',
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Configuration",
-	"sap/m/ImageHelper",
-	"sap/ui/core/Lib"
+	"sap/m/ImageHelper"
 ],
 	function(
 		library,
@@ -30,12 +29,11 @@ sap.ui.define([
 		Text,
 		KeyCodes,
 		ObjectHeaderRenderer,
-		ObjectMarker,
-		ObjectNumber,
+    ObjectMarker,
+    ObjectNumber,
 		jQuery,
 		Configuration,
-		ImageHelper,
-		Lib
+		ImageHelper
 	) {
 		"use strict";
 
@@ -435,7 +433,7 @@ sap.ui.define([
 		 * @returns {Object} the resource bundle object
 		 */
 		ObjectHeader._getResourceBundle = function () {
-			return Lib.getResourceBundleFor("sap.m");
+			return sap.ui.getCore().getLibraryResourceBundle("sap.m");
 		};
 
 		ResponsivePaddingsEnablement.call(ObjectHeader.prototype, {

@@ -14,8 +14,7 @@ sap.ui.define([
 	"sap/ui/rta/util/validateFlexEnabled",
 	"sap/ui/rta/RuntimeAuthoring",
 	"sap/ui/thirdparty/sinon-4",
-	"test-resources/sap/ui/rta/qunit/RtaQunitUtils",
-	"sap/ui/core/Lib"
+	"test-resources/sap/ui/rta/qunit/RtaQunitUtils"
 ], function(
 	includes,
 	Log,
@@ -30,8 +29,7 @@ sap.ui.define([
 	validateFlexEnabled,
 	RuntimeAuthoring,
 	sinon,
-	RtaQunitUtils,
-	Lib
+	RtaQunitUtils
 ) {
 	"use strict";
 
@@ -70,7 +68,7 @@ sap.ui.define([
 	}
 
 	function getText(sTextKey) {
-		return Lib.getResourceBundleFor("sap.ui.rta").getText(sTextKey);
+		return oCore.getLibraryResourceBundle("sap.ui.rta").getText(sTextKey);
 	}
 
 	function createButtonWithUnstableId() {

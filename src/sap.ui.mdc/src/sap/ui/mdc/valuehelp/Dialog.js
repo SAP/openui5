@@ -14,8 +14,7 @@ sap.ui.define([
 	'sap/ui/mdc/enums/ValueHelpSelectionType',
 	'sap/base/strings/formatMessage',
 	'sap/ui/core/library',
-	'sap/ui/core/InvisibleMessage',
-	"sap/ui/core/Lib"
+	'sap/ui/core/InvisibleMessage'
 ], function(
 	Container,
 	DialogTab,
@@ -28,8 +27,7 @@ sap.ui.define([
 	ValueHelpSelectionType,
 	formatMessage,
 	coreLibrary,
-	InvisibleMessage,
-	Lib
+	InvisibleMessage
 ) {
 	"use strict";
 
@@ -45,9 +43,9 @@ sap.ui.define([
 	 */
 
 	// translation utils
-	let oMessageBundle = Lib.getResourceBundleFor("sap.ui.mdc");
+	let oMessageBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
 	sap.ui.getCore().attachLocalizationChanged(function() {
-		oMessageBundle = Lib.getResourceBundleFor("sap.ui.mdc");
+		oMessageBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
 	});
 
 	let MDialog, MLibrary, Button, ManagedObjectModel, IconTabBar, IconTabFilter;
@@ -235,7 +233,7 @@ sap.ui.define([
 					const ButtonType = MLibrary.ButtonType;
 
 					if (!this._oResourceBundle) {
-						this._oResourceBundle = Lib.getResourceBundleFor("sap.ui.mdc");
+						this._oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
 					}
 
 					this.oButtonOK = new Button(this.getId() + "-ok", {

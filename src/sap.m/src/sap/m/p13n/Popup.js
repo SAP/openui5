@@ -13,10 +13,8 @@ sap.ui.define([
 	"sap/m/p13n/Container",
 	"sap/m/p13n/AbstractContainerItem",
 	"sap/m/library",
-	"sap/ui/core/library",
-	"sap/ui/core/Element",
-	"sap/ui/core/Lib"
-], function(Control, Button, Bar, Title, MessageBox, Device, Dialog, ResponsivePopover, Container, AbstractContainerItem, mLibrary, coreLibrary, Element, Lib) {
+	"sap/ui/core/library"
+], function(Control, Button, Bar, Title, MessageBox, Device, Dialog, ResponsivePopover, Container, AbstractContainerItem, mLibrary, coreLibrary) {
 	"use strict";
 
 	//Shortcut to sap.m.P13nPopupMode
@@ -279,7 +277,7 @@ sap.ui.define([
 	 * @returns {sap.m.Button} The reset button instance
 	 */
 	Popup.prototype.getResetButton = function() {
-		return Element.registry.get(this.getId() + "-resetBtn");
+		return sap.ui.getCore().byId(this.getId() + "-resetBtn");
 	};
 
 	Popup.prototype._createContainer = function(mDialogSettings) {
@@ -318,7 +316,7 @@ sap.ui.define([
 	Popup.prototype._createDialog = function(mDialogSettings) {
 		var aPanels = this.getPanels();
 		var bUseContainer = aPanels.length > 1;
-		var oResourceBundle = Lib.getResourceBundleFor("sap.m");
+		var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 
 		var oInitialFocusedControl;
 		if (aPanels.length > 0) {
@@ -395,7 +393,7 @@ sap.ui.define([
 			});
 
 			oBar.addContentRight(new Button(this.getId() + "-resetBtn", {
-				text: Lib.getResourceBundleFor("sap.m").getText("p13n.POPUP_RESET"),
+				text: sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("p13n.POPUP_RESET"),
 				press: function(oEvt) {
 
 					var oDialog =  oEvt.getSource().getParent().getParent();

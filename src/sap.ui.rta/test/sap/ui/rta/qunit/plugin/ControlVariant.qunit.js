@@ -32,8 +32,7 @@ sap.ui.define([
 	"sap/uxap/ObjectPageSubSection",
 	"sap/ui/thirdparty/sinon-4",
 	"test-resources/sap/ui/fl/api/FlexTestAPI",
-	"test-resources/sap/ui/rta/qunit/RtaQunitUtils",
-	"sap/ui/core/Lib"
+	"test-resources/sap/ui/rta/qunit/RtaQunitUtils"
 ], function(
 	Button,
 	Dialog,
@@ -66,8 +65,7 @@ sap.ui.define([
 	ObjectPageSubSection,
 	sinon,
 	FlexTestAPI,
-	RtaQunitUtils,
-	Lib
+	RtaQunitUtils
 ) {
 	"use strict";
 
@@ -316,7 +314,7 @@ sap.ui.define([
 
 		QUnit.test("when the current variant has unsaved changes and a user switches to another variant - user chooses 'save'", function(assert) {
 			var fnDone = assert.async();
-			var oLibraryBundle = Lib.getResourceBundleFor("sap.ui.rta");
+			var oLibraryBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
 			sandbox.stub(this.oVariantManagementControl, "getModified").returns(true);
 
 			this.oControlVariantPlugin.attachElementModified(function(oEvent) {
@@ -342,7 +340,7 @@ sap.ui.define([
 
 		QUnit.test("when the current variant has unsaved changes and a user switches to another variant - user chooses 'discard'", function(assert) {
 			var fnDone = assert.async();
-			var oLibraryBundle = Lib.getResourceBundleFor("sap.ui.rta");
+			var oLibraryBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
 			sandbox.stub(this.oVariantManagementControl, "getModified").returns(true);
 
 			this.oControlVariantPlugin.attachElementModified(function(oEvent) {

@@ -11,9 +11,8 @@ sap.ui.define([
 	"sap/base/util/extend",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/model/odata/v4/ODataModel",
-	"sap/ui/test/TestUtils",
-	"sap/ui/core/Element"
-], function(JSONModel, Icon, Sorter, Table, Column, Label, ColumnListItem, oCore, extend, jQuery, ODataV4Model, TestUtils, Element) {
+	"sap/ui/test/TestUtils"
+], function(JSONModel, Icon, Sorter, Table, Column, Label, ColumnListItem, oCore, extend, jQuery, ODataV4Model, TestUtils) {
 	"use strict";
 
 
@@ -105,7 +104,7 @@ sap.ui.define([
 		sut.placeAt("qunit-fixture");
 		oCore.applyChanges();
 
-		var oTable = Element.registry.get("MergeDuplicates");
+		var oTable = oCore.byId("MergeDuplicates");
 		$MergedLabel = oTable.getItems()[3].getCells()[2].$();
 		$MergedIcon = oTable.getItems()[3].getCells()[0].$();
 
@@ -131,7 +130,7 @@ sap.ui.define([
 
 		sut._oGrowingDelegate.requestNewPage();
 		sut.done(function() {
-			var oTable = Element.registry.get("MergeDuplicates");
+			var oTable = oCore.byId("MergeDuplicates");
 			var $FirstLabelAfterGrowing = oTable.getItems()[5].getCells()[2].$();
 			var $FirstIconAfterGrowing =  oTable.getItems()[5].getCells()[0].$();
 
@@ -152,7 +151,7 @@ sap.ui.define([
 		sut.placeAt("qunit-fixture");
 		oCore.applyChanges();
 
-		var oTable = Element.registry.get("MergeDuplicates");
+		var oTable = oCore.byId("MergeDuplicates");
 		var labelBeforeHeader = "before";
 		var labelAfterHeader = "after";
 
@@ -188,7 +187,7 @@ sap.ui.define([
 		sut.setModel(new JSONModel(data));
 		oCore.applyChanges();
 
-		var oTable = Element.registry.get("MergeDuplicates");
+		var oTable = oCore.byId("MergeDuplicates");
 
 		//test for label value
 		var labelLastValue = oTable.getColumns()[2].getLastValue();
@@ -224,7 +223,7 @@ sap.ui.define([
 		sut.setModel(new JSONModel(data));
 		oCore.applyChanges();
 
-		var oTable = Element.registry.get("MergeDuplicates"),
+		var oTable = oCore.byId("MergeDuplicates"),
 			oFirstItem = oTable.getItems()[0],
 			oSecondItem = oTable.getItems()[1];
 

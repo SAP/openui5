@@ -21,9 +21,7 @@ sap.ui.define([
 	"./DynamicPageRenderer",
 	"sap/base/Log",
 	'sap/ui/dom/units/Rem',
-	"sap/ui/core/library",
-	"sap/ui/core/Lib",
-	"sap/ui/core/Element"
+	"sap/ui/core/library"
 ], function(
 	library,
 	Control,
@@ -42,9 +40,7 @@ sap.ui.define([
 	DynamicPageRenderer,
 	Log,
 	DomUnitsRem,
-	coreLibrary,
-	Lib,
-	Element
+	coreLibrary
 ) {
 	"use strict";
 
@@ -419,7 +415,7 @@ sap.ui.define([
 				this._adjustStickyContent();
 			}};
 
-		this._setAriaRoleDescription(Lib.getResourceBundleFor("sap.f").getText(DynamicPage.ARIA_ROLE_DESCRIPTION));
+		this._setAriaRoleDescription(Core.getLibraryResourceBundle("sap.f").getText(DynamicPage.ARIA_ROLE_DESCRIPTION));
 	};
 
 	DynamicPage.prototype.onBeforeRendering = function () {
@@ -569,7 +565,7 @@ sap.ui.define([
 			return this;
 		}
 
-		oOldStickySubheaderProvider = Element.registry.get(sOldStickySubheaderProviderId);
+		oOldStickySubheaderProvider = Core.byId(sOldStickySubheaderProviderId);
 
 		if (this._oStickySubheader && oOldStickySubheaderProvider) {
 			oOldStickySubheaderProvider._returnStickyContent();
@@ -1950,7 +1946,7 @@ sap.ui.define([
 			return;
 		}
 
-		oStickySubheaderProvider = Element.registry.get(sStickySubheaderProviderId);
+		oStickySubheaderProvider = Core.byId(sStickySubheaderProviderId);
 
 		if (!exists(oStickySubheaderProvider)) {
 			return;
@@ -2329,7 +2325,7 @@ sap.ui.define([
 			sStickySubheaderProviderId = this.getStickySubheaderProvider(),
 			bIsInInterface;
 
-		oStickySubheaderProvider = Element.registry.get(sStickySubheaderProviderId);
+		oStickySubheaderProvider = Core.byId(sStickySubheaderProviderId);
 
 		if (exists(oStickySubheaderProvider) && !this._bAlreadyAddedStickySubheaderAfterRenderingDelegate) {
 			bIsInInterface = oStickySubheaderProvider.getMetadata()
@@ -2406,7 +2402,7 @@ sap.ui.define([
 	 * @private
 	 */
 	DynamicPage.prototype._bStickySubheaderProviderExists = function() {
-		var oSticky = Element.registry.get(this.getStickySubheaderProvider());
+		var oSticky = Core.byId(this.getStickySubheaderProvider());
 		return !!oSticky && oSticky.isA("sap.f.IDynamicPageStickyContent");
 	};
 
@@ -2486,7 +2482,7 @@ sap.ui.define([
 		if (oFooter && !oFooter.getAriaLabelledBy().length) {
 			this._oInvisibleText = new InvisibleText({
 				id: oFooter.getId() + "-FooterActions-InvisibleText",
-				text: Lib.getResourceBundleFor("sap.f").getText(DynamicPage.ARIA_LABEL_TOOLBAR_FOOTER_ACTIONS)
+				text: Core.getLibraryResourceBundle("sap.f").getText(DynamicPage.ARIA_LABEL_TOOLBAR_FOOTER_ACTIONS)
 			}).toStatic();
 
 			oFooter.addAriaLabelledBy(this._oInvisibleText);

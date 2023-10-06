@@ -23,8 +23,7 @@ sap.ui.define([
 	"sap/ui/fl/write/_internal/Storage",
 	"sap/ui/fl/write/_internal/Versions",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/core/Lib"
+	"sap/ui/thirdparty/sinon-4"
 ], function(
 	deepClone,
 	LoaderExtensions,
@@ -49,8 +48,7 @@ sap.ui.define([
 	Storage,
 	Versions,
 	JSONModel,
-	sinon,
-	Lib
+	sinon
 ) {
 	"use strict";
 
@@ -1814,7 +1812,7 @@ sap.ui.define([
 
 	QUnit.module("When ContextBasedAdaptationsAPI.canMigrate and migrate are called", {
 		before() {
-			this.oResourceBundle = Lib.getResourceBundleFor("sap.ui.fl");
+			this.oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.fl");
 			var oManifestObj = {
 				"sap.app": {
 					id: "com.sap.test.app"

@@ -272,8 +272,7 @@ sap.ui.define([
 	 *
 	 * @param {int} iMaxConditions Only 1 condition allowed in <code>Field</code>
 	 * @returns {this} <code>this</code> to allow method chaining.
-	 * @private
-	 * @ui5-restricted sap.fe
+	 * @public
 	 * @deprecated Not supported, this property is not supported for the <code>Field</code>.
 	 * @ui5-not-supported
 	 */
@@ -668,8 +667,7 @@ sap.ui.define([
 	 *
 	 * @param {object[]} aConditions Conditions that are set
 	 * @returns {this} Reference to <code>this</code> to allow method chaining
-	 * @private
-	 * @ui5-restricted sap.fe
+	 * @public
 	 * @deprecated Not supported, use the <code>value</code> property and <code>additionalValue</code> property to bind the control.
 	 * @ui5-not-supported
 	 * @name sap.ui.mdc.Field#setConditions
@@ -683,8 +681,7 @@ sap.ui.define([
 	 * use the <code>value</code> and <code>additionalValue</code> properties instead.
 	 *
 	 * @returns {object[]} Conditions of the field
-	 * @private
-	 * @ui5-restricted sap.fe
+	 * @public
 	 * @deprecated Not supported, use the <code>value</code> property and <code>additionalValue</code> property to bind the control.
 	 * @ui5-not-supported
 	 * @name sap.ui.mdc.Field#getConditions
@@ -701,8 +698,7 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.base.ManagedObject.PropertyBindingInfo} oBindingInfo The binding information
 	 * @returns {this} Reference to <code>this</code> to allow method chaining
-	 * @private
-	 * @ui5-restricted sap.fe
+	 * @public
 	 * @deprecated Not supported, use the <code>value</code> property and <code>additionalValue</code> property to bind the control.
 	 * @ui5-not-supported
 	 * @name sap.ui.mdc.Field#bindConditions
@@ -716,8 +712,7 @@ sap.ui.define([
 	 * use the <code>value</code> and <code>additionalValue</code> properties instead.
 	 *
 	 * @returns {this} Reference to <code>this</code> to allow method chaining
-	 * @private
-	 * @ui5-restricted sap.fe
+	 * @public
 	 * @deprecated Not supported, use the <code>value</code> property and <code>additionalValue</code> property to bind the control.
 	 * @ui5-not-supported
 	 * @name sap.ui.mdc.Field#unbindConditions
@@ -732,10 +727,9 @@ sap.ui.define([
 	 * <b>Note:</b> If the <code>value</code> property is bound to a model using a type, this type is used.
 	 * In this case the value of the <code>dataType</code> property is ignored.
 	 *
-	 * @param {string} sDataType DataType that is set
+	 * @param {string|undefined} sDataType DataType that is set
 	 * @returns {this} Reference to <code>this</code> to allow method chaining
-	 * @private
-	 * @ui5-restricted sap.fe
+	 * @public
 	 * @deprecated Not supported, the type in the binding to the <code>value</code> property is used.
 	 * @ui5-not-supported
 	 * @name sap.ui.mdc.Field#setDataType
@@ -750,9 +744,8 @@ sap.ui.define([
 	 * <b>Note:</b> If the <code>value</code> property is bound to a model using a type, this type is used.
 	 * In this case the value of the <code>dataType</code> property is ignored.
 	 *
-	 * @returns {this} Value of property <code>dataType</code>
-	 * @private
-	 * @ui5-restricted sap.fe
+	 * @returns {string} Value of property <code>dataType</code>
+	 * @public
 	 * @deprecated Not supported, the type in the binding to the <code>value</code> property is used.
 	 * @ui5-not-supported
 	 * @name sap.ui.mdc.Field#getDataType
@@ -767,10 +760,9 @@ sap.ui.define([
 	 * <b>Note:</b> If the <code>value</code> property is bound to a model using a type, this type is used.
 	 * In this case the values of the <code>dataType</code> property and the <code>dataTypeConstraints</code> property are ignored.
 	 *
-	 * @param {string} oDataTypeConstraints Constraints that are set
+	 * @param {object|undefined} oDataTypeConstraints Constraints that are set
 	 * @returns {this} Reference to <code>this</code> to allow method chaining
-	 * @private
-	 * @ui5-restricted sap.fe
+	 * @public
 	 * @deprecated Not supported, the <code>Constraints</code> of the type in the binding to the <code>value</code> property is used.
 	 * @ui5-not-supported
 	 * @name sap.ui.mdc.Field#setDataTypeConstraints
@@ -785,9 +777,8 @@ sap.ui.define([
 	 * <b>Note:</b> If the <code>value</code> property is bound to a model using a type, this type is used.
 	 * In this case the values of the <code>dataType</code> property and the <code>dataTypeConstraints</code> property are ignored.
 	 *
-	 * @returns {this} Value of property <code>dataTypeConstraints</code>
-	 * @private
-	 * @ui5-restricted sap.fe
+	 * @returns {object} Value of property <code>dataTypeConstraints</code>
+	 * @public
 	 * @deprecated Not supported, the <code>Constraints</code> of the type in the binding to the <code>value</code> property is used.
 	 * @ui5-not-supported
 	 * @name sap.ui.mdc.Field#getDataTypeConstraints
@@ -802,10 +793,9 @@ sap.ui.define([
 	 * <b>Note:</b> If the <code>value</code> property is bound to a model using a type, this type is used.
 	 * In this case the values of the <code>dataType</code> property and the <code>dataTypeFormatOptions</code> property are ignored.
 	 *
-	 * @param {string} oDataTypeFormatOptions Format options that are set
+	 * @param {object|undefined} oDataTypeFormatOptions Format options that are set
 	 * @returns {this} Reference to <code>this</code> to allow method chaining
-	 * @private
-	 * @ui5-restricted sap.fe
+	 * @public
 	 * @deprecated Not supported, the <code>FormatOptions</code> of the type in the binding to the <code>value</code> property is used.
 	 * @ui5-not-supported
 	 * @name sap.ui.mdc.Field#setDataTypeFormatOptions
@@ -820,9 +810,8 @@ sap.ui.define([
 	 * <b>Note:</b> If the <code>value</code> property is bound to a model using a type, this type is used.
 	 * In this case the values of the <code>dataType</code> property and the <code>dataTypeFormatOptions</code> property are ignored.
 	 *
-	 * @returns {this} Value of property <code>dataTypeFormatOptions</code>
-	 * @private
-	 * @ui5-restricted sap.fe
+	 * @returns {object} Value of property <code>dataTypeFormatOptions</code>
+	 * @public
 	 * @deprecated Not supported, the <code>FormatOptions</code> of the type in the binding to the <code>value</code> property is used.
 	 * @ui5-not-supported
 	 * @name sap.ui.mdc.Field#getDataTypeFormatOptions

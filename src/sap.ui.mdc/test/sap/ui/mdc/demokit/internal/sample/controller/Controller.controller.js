@@ -9,9 +9,8 @@ sap.ui.define([
 	'sap/ui/core/Core',
 	"sap/ui/mdc/table/RowActionItem",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/mdc/enums/TableRowAction",
-	"sap/ui/core/Element"
-], function(Controller, ResponsiveTableType, RowSettings, Fragment, StateUtil, MessageBox, MessageToast, oCore, RowActionItem, JSONModel, TableRowAction, Element) {
+	"sap/ui/mdc/enums/TableRowAction"
+], function(Controller, ResponsiveTableType, RowSettings, Fragment, StateUtil, MessageBox, MessageToast, oCore, RowActionItem, JSONModel, TableRowAction) {
 	"use strict";
 
 	return Controller.extend("sap.ui.mdc.sample.controller.Controller", {
@@ -266,8 +265,8 @@ sap.ui.define([
 			const oTable = this.byId('mdcTable');
 			const vType = oTable.getType();
 			const bSelected = oEvent.getParameters().selected;
-			const oFEButtonSetting = Element.registry.get("fe-detailsButtonSetting");
-			const oMCBButtonSetting = Element.registry.get("mcb-detailsButtonSetting");
+			const oFEButtonSetting = oCore.byId("fe-detailsButtonSetting");
+			const oMCBButtonSetting = oCore.byId("mcb-detailsButtonSetting");
 
 			if (vType === "ResponsiveTable") {
 				oTable.setType(new ResponsiveTableType({

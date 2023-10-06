@@ -4,21 +4,19 @@
 
 // Provides control sap.uxap.BreadCrumbs.
 sap.ui.define([
-	"sap/m/Link",
-	"sap/m/Select",
-	"sap/ui/core/Control",
-	"sap/ui/core/ResizeHandler",
-	"sap/ui/core/delegate/ItemNavigation",
-	"sap/ui/core/Item",
-	"sap/ui/core/Icon",
-	"sap/ui/Device",
-	"./library",
-	"sap/ui/core/InvisibleText",
-	"sap/ui/util/openWindow",
-	"./BreadCrumbsRenderer",
-	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Element",
-	"sap/ui/core/Lib"
+    "sap/m/Link",
+    "sap/m/Select",
+    "sap/ui/core/Control",
+    "sap/ui/core/ResizeHandler",
+    "sap/ui/core/delegate/ItemNavigation",
+    "sap/ui/core/Item",
+    "sap/ui/core/Icon",
+    "sap/ui/Device",
+    "./library",
+    "sap/ui/core/InvisibleText",
+    "sap/ui/util/openWindow",
+    "./BreadCrumbsRenderer",
+    "sap/ui/thirdparty/jquery"
 ], function(
 	Link,
 	Select,
@@ -32,9 +30,7 @@ sap.ui.define([
 	InvisibleText,
 	openWindow,
 	BreadCrumbsRenderer,
-	jQuery,
-	Element,
-	Lib
+	jQuery
 ) {
 	"use strict";
 
@@ -238,7 +234,7 @@ sap.ui.define([
 	 */
 	BreadCrumbs.prototype._overflowSelectChangeHandler = function (oEvent) {
 		var oSelectedKey = oEvent.getParameter("selectedItem").getKey(),
-			oControl = Element.registry.get(oSelectedKey),
+			oControl = sap.ui.getCore().byId(oSelectedKey),
 			sLinkHref,
 			sLinkTarget;
 
@@ -404,7 +400,7 @@ sap.ui.define([
 	BreadCrumbs.prototype._getAriaLabelledBy = function () {
 		if (!this._oAriaLabelledBy) {
 			BreadCrumbs.prototype._oAriaLabelledBy = new InvisibleText({
-				text: Lib.getResourceBundleFor("sap.uxap").getText("BREADCRUMB_TRAIL_LABEL")
+				text: sap.ui.getCore().getLibraryResourceBundle("sap.uxap").getText("BREADCRUMB_TRAIL_LABEL")
 			}).toStatic();
 		}
 

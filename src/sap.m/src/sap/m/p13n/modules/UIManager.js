@@ -4,9 +4,8 @@
 
 sap.ui.define([
 	"sap/ui/base/Object",
-	"sap/base/Log",
-	"sap/ui/core/Lib"
-], function(BaseObject, Log, Lib) {
+	"sap/base/Log"
+], function (BaseObject, Log) {
 	"use strict";
 
 	var ERROR_INSTANCING = "UIManager: This class is a singleton and should not be used without an AdaptationProvider. Please use 'Engine.getInstance().uimanager' instead";
@@ -72,7 +71,7 @@ sap.ui.define([
 	 */
 	UIManager.prototype.show = function(oControl, vPanelKeys, mSettings) {
 		var aPanelKeys = vPanelKeys instanceof Array ? vPanelKeys : [vPanelKeys];
-		var oResourceBundle = Lib.getResourceBundleFor("sap.m");
+		var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 		var that = this;
 		mSettings = Object.assign({}, mSettings);
 

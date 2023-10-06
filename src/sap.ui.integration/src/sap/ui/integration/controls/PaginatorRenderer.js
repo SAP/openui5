@@ -6,12 +6,11 @@ sap.ui.define([
 	"sap/m/library",
 	"sap/ui/core/Core",
 	"sap/base/strings/capitalize",
-	"sap/ui/core/InvisibleRenderer",
-	"sap/ui/core/Lib"
-], function(mLibrary, Core, capitalize, InvisibleRenderer, Lib) {
+	"sap/ui/core/InvisibleRenderer"
+], function(mLibrary, Core, capitalize, InvisibleRenderer) {
 	"use strict";
 
-	var oResourceBundle = Lib.getResourceBundleFor("sap.m");
+	var oResourceBundle = Core.getLibraryResourceBundle("sap.m");
 
 	var _BULLETS_TO_NUMBERS_THRESHOLD = 5;
 

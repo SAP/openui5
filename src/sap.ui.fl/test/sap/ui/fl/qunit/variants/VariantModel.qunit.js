@@ -31,9 +31,7 @@ sap.ui.define([
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
 	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/core/Core",
-	"sap/ui/core/Lib",
-	"sap/ui/core/Element"
+	"sap/ui/core/Core"
 ], function(
 	_omit,
 	Log,
@@ -65,14 +63,12 @@ sap.ui.define([
 	Layer,
 	Utils,
 	sinon,
-	oCore,
-	Lib,
-	Element
+	oCore
 ) {
 	"use strict";
 
 	var sandbox = sinon.createSandbox();
-	var oResourceBundle = Lib.getResourceBundleFor("sap.ui.fl");
+	var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.fl");
 	var sVMReference = "variantMgmtId1";
 	sinon.stub(LayerUtils, "getCurrentLayer").returns(Layer.CUSTOMER);
 	sinon.stub(BusyIndicator, "show");
@@ -2716,7 +2712,7 @@ sap.ui.define([
 			var fnDone = assert.async();
 			var oCallListenerStub = sandbox.stub(this.oVariantModel, "callVariantSwitchListeners");
 			var sVMControlId = this.oComp.createId(this.sVMReference);
-			var oVMControl = Element.registry.get(sVMControlId);
+			var oVMControl = oCore.byId(sVMControlId);
 
 			oVMControl.attachEventOnce("select", function(oEvent) {
 				var sSelectedVariantReference = oEvent.getParameters().key;
@@ -2747,7 +2743,7 @@ sap.ui.define([
 			var fnDone = assert.async();
 			var oCallListenerStub = sandbox.stub(this.oVariantModel, "callVariantSwitchListeners");
 			var sVMControlId = this.oComp.createId(this.sVMReference);
-			var oVMControl = Element.registry.get(sVMControlId);
+			var oVMControl = oCore.byId(sVMControlId);
 
 			this.oVariantModel.oData[this.sVMReference].modified = true;
 			var aMockDirtyChanges = [
@@ -2794,7 +2790,7 @@ sap.ui.define([
 			var fnDone = assert.async();
 			var oCallListenerStub = sandbox.stub(this.oVariantModel, "callVariantSwitchListeners");
 			var sVMControlId = this.oComp.createId(this.sVMReference);
-			var oVMControl = Element.registry.get(sVMControlId);
+			var oVMControl = oCore.byId(sVMControlId);
 
 			var aMockDirtyChanges = [
 				FlexObjectFactory.createFromFileContent({fileName: "dirtyChange1"}),
@@ -2834,7 +2830,7 @@ sap.ui.define([
 		QUnit.test("when the control is switched to the same variant with unsaved personalization changes", function(assert) {
 			var fnDone = assert.async();
 			var sVMControlId = this.oComp.createId(this.sVMReference);
-			var oVMControl = Element.registry.get(sVMControlId);
+			var oVMControl = oCore.byId(sVMControlId);
 			var oCallListenerStub = sandbox.stub(this.oVariantModel, "callVariantSwitchListeners");
 
 			this.oVariantModel.oData[this.sVMReference].modified = true;
@@ -3126,7 +3122,7 @@ sap.ui.define([
 		QUnit.test("when 'attachVariantApplied' is called with executeOnSelectionForStandardDefault set, standard not being default and no flex change for apply automatically", function(assert) {
 			var sVMReference1 = "mockview--VariantManagement1";
 			var sVMControlId = `testComponent---${sVMReference1}`;
-			var oVMControl = Element.registry.get(sVMControlId);
+			var oVMControl = oCore.byId(sVMControlId);
 			oVMControl.setExecuteOnSelectionForStandardDefault(true);
 			var fnCallback1 = sandbox.stub();
 			var fnCallback2 = sandbox.stub();

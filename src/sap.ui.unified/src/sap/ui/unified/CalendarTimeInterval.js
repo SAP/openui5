@@ -25,8 +25,7 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/unified/DateRange",
 	"sap/ui/core/date/UI5Date",
-	"sap/ui/unified/Calendar",
-	"sap/ui/core/Lib"
+	"sap/ui/unified/Calendar"
 ], function(
 	Popover,
 	Core,
@@ -48,9 +47,8 @@ sap.ui.define([
 	deepEqual,
 	Log,
 	DateRange,
-	UI5Date,
-	Calendar,
-	Lib
+    UI5Date,
+	Calendar
 ) {
 	"use strict";
 
@@ -257,7 +255,7 @@ sap.ui.define([
 
 	CalendarTimeInterval.prototype._initializeHeader = function() {
 		var oHeader = new Header(this.getId() + "--Head"),
-			oResourceBundle = Lib.getResourceBundleFor("sap.m");
+			oResourceBundle = Core.getLibraryResourceBundle("sap.m");
 		oHeader.attachEvent("pressPrevious", this._handlePrevious, this);
 		oHeader.attachEvent("pressNext", this._handleNext, this);
 		this.setAggregation("header", oHeader);

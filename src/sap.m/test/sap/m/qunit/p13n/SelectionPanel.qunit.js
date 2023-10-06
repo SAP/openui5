@@ -7,10 +7,8 @@ sap.ui.define([
 	"sap/m/Input",
 	"sap/base/util/merge",
 	"sap/m/library",
-	"sap/ui/model/json/JSONModel",
-	"sap/ui/core/Lib",
-	"sap/ui/core/Element"
-], function(SelectionPanel, VBox, sinon, oCore, Input, merge, mLibrary, JSONModel, Lib, Element) {
+	"sap/ui/model/json/JSONModel"
+], function(SelectionPanel, VBox, sinon, oCore, Input, merge, mLibrary, JSONModel) {
 	"use strict";
 
 	// shortcut for sap.m.ListType
@@ -128,9 +126,9 @@ sap.ui.define([
 
 			//The second item has been set to active in the test data --> screen reader should announce this information
 			if (iIndex === 1) {
-				assert.equal(oInvisibleText.getText(), Lib.getResourceBundleFor("sap.m").getText("p13n.ACTIVESTATE_ACTIVE"), "No field is active, all items shall be announced as ACTIVE");
+				assert.equal(oInvisibleText.getText(), sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("p13n.ACTIVESTATE_ACTIVE"), "No field is active, all items shall be announced as ACTIVE");
 			} else {
-				assert.equal(oInvisibleText.getText(), Lib.getResourceBundleFor("sap.m").getText("p13n.ACTIVESTATE_INACTIVE"), "No field is active, all items shall be announced as INACTIVE");
+				assert.equal(oInvisibleText.getText(), sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("p13n.ACTIVESTATE_INACTIVE"), "No field is active, all items shall be announced as INACTIVE");
 			}
 		});
 
@@ -358,7 +356,7 @@ sap.ui.define([
 		//enable the feature
 		this.oSelectionPanel.setEnableCount(true);
 		this.oSelectionPanel._setPanelColumns(aColumns);//update the columns
-		var oRB = Lib.getResourceBundleFor("sap.m");
+		var oRB = oCore.getLibraryResourceBundle("sap.m");
 		sTextFirstColumn = this.oSelectionPanel._oListControl.getColumns()[0].getHeader().getText();
 
 		assert.equal(sTextFirstColumn, "Fields " + oRB.getText("p13n.HEADER_COUNT", [3, 6]), "The text has been enhanced with a count (3 are selected, 6 are available)");
@@ -382,7 +380,7 @@ sap.ui.define([
 		this.oSelectionPanel.setP13nData(aItems);
 
 		this.oSelectionPanel._selectTableItem(this.oSelectionPanel._oListControl.getItems()[0]);
-		var oRB = Lib.getResourceBundleFor("sap.m");
+		var oRB = oCore.getLibraryResourceBundle("sap.m");
 		var sTextFirstColumn = this.oSelectionPanel._oListControl.getColumns()[0].getHeader().getText();
 
 		//Note: this test serves to check that also filtered lists still "remember" the complete selection state
@@ -413,7 +411,7 @@ sap.ui.define([
 		//Reset the p13n data
 		this.oSelectionPanel.setP13nData(this.getTestData());
 
-		var oRB = Lib.getResourceBundleFor("sap.m");
+		var oRB = oCore.getLibraryResourceBundle("sap.m");
 		var sTextFirstColumn = this.oSelectionPanel._oListControl.getColumns()[0].getHeader().getText();
 
 		assert.equal(sTextFirstColumn, "Fields " + oRB.getText("p13n.HEADER_COUNT", [3, 6]), "3 are selected, 6 are available");
@@ -482,7 +480,7 @@ sap.ui.define([
 
 		aItems.forEach(function(oItem, iIndex){
 			var oLabel = oItem.getCells()[0].getItems()[0];
-			var sLabelFor = Element.registry.get(oLabel.getLabelFor()).getIdForLabel();
+			var sLabelFor = sap.ui.getCore().byId(oLabel.getLabelFor()).getIdForLabel();
 			var sKey = "key" + (iIndex + 1);
 			assert.equal(sLabelFor, "testAccInput" + sKey, "Label for assocation points to children element");
 		});

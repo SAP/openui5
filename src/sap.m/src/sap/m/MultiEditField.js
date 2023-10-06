@@ -1,7 +1,7 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(["./library", "sap/ui/core/Item", "sap/ui/core/Lib"], function(library, Item, Lib) {
+sap.ui.define(["./library", "sap/ui/core/Item"], function(library, Item) {
 	"use strict";
 
 	/**
@@ -113,7 +113,7 @@ sap.ui.define(["./library", "sap/ui/core/Item", "sap/ui/core/Lib"], function(lib
 
 	MultiEditField.prototype.init = function() {
 		if (!MultiEditField.prototype._oRb) {
-			MultiEditField.prototype._oRb = Lib.getResourceBundleFor("sap.m");
+			MultiEditField.prototype._oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 		}
 
 		var oKeepItem = new Item({

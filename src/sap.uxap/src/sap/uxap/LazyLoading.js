@@ -9,10 +9,9 @@ sap.ui.define([
 	"./ObjectPageSubSection",
 	"./library",
 	"sap/base/Log",
-	"sap/base/util/isEmptyObject",
-	"sap/ui/core/Element"
+	"sap/base/util/isEmptyObject"
 ],
-	function(jQuery, Device, BaseObject, ObjectPageSubSection, library, Log, isEmptyObject, Element) {
+	function(jQuery, Device, BaseObject, ObjectPageSubSection, library, Log, isEmptyObject) {
 		"use strict";
 
 		var LazyLoading = BaseObject.extend("sap.uxap._helpers.LazyLoading", {
@@ -136,7 +135,7 @@ sap.ui.define([
 		LazyLoading.prototype.doLazyLoading = function () {
 			var oHeightParams = this._oObjectPageLayout._getHeightRelatedParameters(),
 				bIconTabBar = this._oObjectPageLayout.getUseIconTabBar(),
-				oSelectedSection = Element.registry.get(this._oObjectPageLayout.getSelectedSection()),
+				oSelectedSection = sap.ui.getCore().byId(this._oObjectPageLayout.getSelectedSection()),
 				oSectionInfo = this._oObjectPageLayout._oSectionInfo,
 				iScrollTop,
 				iScrollPageBottom,
@@ -214,7 +213,7 @@ sap.ui.define([
 			//Load the subsections
 			jQuery.each(oSubSectionsToLoad, jQuery.proxy(function (idx, sSectionId) {
 				Log.debug("ObjectPageLayout :: lazyLoading", "connecting " + sSectionId);
-				Element.registry.get(sSectionId).connectToModels();
+				sap.ui.getCore().byId(sSectionId).connectToModels();
 				oSectionInfo[sSectionId].loaded = true;
 			}, this));
 
@@ -224,7 +223,7 @@ sap.ui.define([
 					// newly scrolled in view
 					Log.debug("ObjectPageLayout :: lazyLoading", "subSectionEnteredViewPort " + sSectionId);
 					this._oObjectPageLayout.fireEvent("subSectionEnteredViewPort", {
-						subSection: Element.registry.get(sSectionId)
+						subSection: sap.ui.getCore().byId(sSectionId)
 					});
 				}
 			}, this));

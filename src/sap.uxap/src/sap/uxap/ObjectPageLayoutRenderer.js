@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(["sap/ui/core/Lib"],
-	function(Lib) {
+sap.ui.define([],
+	function() {
 		"use strict";
 
 		/**
@@ -24,7 +24,7 @@ sap.ui.define(["sap/ui/core/Lib"],
 			var aSections,
 				oHeader = oControl.getHeaderTitle(),
 				oAnchorBar = null,
-				oRb = Lib.getResourceBundleFor("sap.uxap"),
+				oRb = sap.ui.getCore().getLibraryResourceBundle("sap.uxap"),
 				bIsHeaderContentVisible = oControl.getHeaderContent() && oControl.getHeaderContent().length > 0 && oControl.getShowHeaderContent(),
 				bIsTitleInHeaderContent = oControl.getShowTitleInHeaderContent() && oControl.getShowHeaderContent(),
 				bRenderHeaderContent = bIsHeaderContentVisible || bIsTitleInHeaderContent,

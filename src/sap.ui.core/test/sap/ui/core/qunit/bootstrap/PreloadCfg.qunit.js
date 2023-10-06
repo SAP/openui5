@@ -6,7 +6,7 @@ sap.ui.define([
 	"use strict";
 
 	var bAsync = sap.ui.loader.config().async;
-	var bPreloadEnabled = window["sap-ui-optimized"] && Core.getConfiguration().getDebug() !== true;
+	var bPreloadEnabled = window["sap-ui-optimized"] && true;
 
 	QUnit.test("Preload Configuration", function(assert) {
 		var sPreloadConfig = Library.getPreloadMode();

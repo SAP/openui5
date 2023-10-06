@@ -9,8 +9,7 @@ sap.ui.define([
 	"sap/ui/fl/initial/_internal/connectors/Utils",
 	"sap/ui/fl/write/_internal/connectors/Utils",
 	"sap/m/MessageBox",
-	"sap/ui/core/Core",
-	"sap/ui/core/Lib"
+	"sap/ui/core/Core"
 ], function(
 	sinon,
 	Version,
@@ -20,8 +19,7 @@ sap.ui.define([
 	InitialUtils,
 	WriteUtils,
 	MessageBox,
-	Core,
-	Lib
+	Core
 ) {
 	"use strict";
 
@@ -621,7 +619,7 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("when calling publish successfully", function(assert) {
-			var oResourceBundle = Lib.getResourceBundleFor("sap.ui.fl");
+			var oResourceBundle = Core.getLibraryResourceBundle("sap.ui.fl");
 			var mPropertyBag = {
 				layer: "CUSTOMER",
 				reference: "com.sap.test.app",

@@ -4,7 +4,7 @@
 
 // Provides control sap.uxap.ObjectPageSectionBase.
 sap.ui.define([
-	"sap/ui/core/InvisibleText",
+    "sap/ui/core/InvisibleText",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Control",
 	"sap/ui/core/library",
@@ -14,10 +14,9 @@ sap.ui.define([
 	"sap/ui/core/Configuration",
 	"sap/ui/layout/Grid",
 	"sap/ui/layout/GridData",
-	"sap/ui/core/Element",
 	// jQuery Plugin "firstFocusableDomRef"
 	"sap/ui/dom/jquery/Focusable"
-], function(InvisibleText, jQuery, Control, coreLibrary, library, Log, KeyCodes, Configuration, Grid, GridData, Element) {
+], function(InvisibleText, jQuery, Control, coreLibrary, library, Log, KeyCodes, Configuration, Grid, GridData) {
 	"use strict";
 
 	// shortcut for sap.ui.core.TitleLevel
@@ -378,7 +377,7 @@ sap.ui.define([
 			sLabel = this._getAriaLabelledByText();
 
 		if (oAriaLabelledBy) {
-			Element.registry.get(oAriaLabelledBy.getId()).setText(sLabel);
+			sap.ui.getCore().byId(oAriaLabelledBy.getId()).setText(sLabel);
 		}
 
 		return this;

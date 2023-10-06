@@ -123,7 +123,7 @@ sap.ui.define([
 				this.oComp.setModel(this.oVariantModel, ControlVariantApplyAPI.getVariantModelName());
 				this.oCompContainer.placeAt("qunit-fixture");
 
-				this.oObjectPageLayout = Element.registry.get("testComponent---mockview--ObjectPageLayout");
+				this.oObjectPageLayout = Core.byId("testComponent---mockview--ObjectPageLayout");
 				this.mMoveChangeData1 = {
 					selectorElement: this.oObjectPageLayout,
 					changeSpecificData: {
@@ -163,7 +163,7 @@ sap.ui.define([
 					}
 				};
 				this.mRenameChangeData1 = {
-					selectorElement: Element.registry.get("testComponent---mockview--ObjectPageSection1"),
+					selectorElement: Core.byId("testComponent---mockview--ObjectPageSection1"),
 					changeSpecificData: {
 						changeType: "rename",
 						renamedElement: {
@@ -173,7 +173,7 @@ sap.ui.define([
 					}
 				};
 				this.mRenameChangeData2 = {
-					selectorElement: Element.registry.get("testComponent---mockview--TextTitle1"),
+					selectorElement: Core.byId("testComponent---mockview--TextTitle1"),
 					changeSpecificData: {
 						changeType: "rename",
 						renamedElement: {
@@ -367,7 +367,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when calling 'add' with a change outside of a variant management control", function(assert) {
-			var oButton = Element.registry.get("testComponent---mockview--Button");
+			var oButton = Core.byId("testComponent---mockview--Button");
 			var oChangeData = {
 				selectorElement: oButton,
 				changeSpecificData: {
@@ -454,7 +454,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when calling 'add' with one transient change", function(assert) {
-			var oButton = Element.registry.get("testComponent---mockview--Button");
+			var oButton = Core.byId("testComponent---mockview--Button");
 			var oChangeData = {
 				selectorElement: oButton,
 				changeSpecificData: {
@@ -668,7 +668,7 @@ sap.ui.define([
 					component: this.oComp
 				}).placeAt("qunit-fixture");
 				this.mMoveChangeData1 = {
-					selectorElement: Element.registry.get("testComponent---mockview--ObjectPageLayout"),
+					selectorElement: Core.byId("testComponent---mockview--ObjectPageLayout"),
 					changeSpecificData: {
 						changeType: "moveControls",
 						movedElements: [{
@@ -687,7 +687,7 @@ sap.ui.define([
 					}
 				};
 				this.mMoveChangeData2 = {
-					selectorElement: Element.registry.get("testComponent---mockview--ObjectPageLayout"),
+					selectorElement: Core.byId("testComponent---mockview--ObjectPageLayout"),
 					changeSpecificData: {
 						changeType: "moveControls",
 						movedElements: [{
@@ -795,7 +795,7 @@ sap.ui.define([
 		},
 		afterEach() {
 			this.aControls.forEach(function(vControl) {
-				var oControl = vControl instanceof Element ? vControl : Element.registry.get(vControl.id);
+				var oControl = vControl instanceof Element ? vControl : Core.byId(vControl.id);
 				if (oControl) {
 					oControl.destroy();
 				}

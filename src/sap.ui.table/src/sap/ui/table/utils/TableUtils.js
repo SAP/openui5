@@ -18,9 +18,7 @@ sap.ui.define([
 	"sap/ui/model/ChangeReason",
 	"sap/ui/thirdparty/jquery",
 	"sap/base/util/restricted/_throttle",
-	"sap/base/Log",
-	"sap/ui/core/Element",
-	"sap/ui/core/Lib"
+	"sap/base/Log"
 ], function(
 	GroupingUtils,
 	ColumnUtils,
@@ -36,9 +34,7 @@ sap.ui.define([
 	ChangeReason,
 	jQuery,
 	throttle,
-	Log,
-	Element,
-	Lib
+	Log
 ) {
 	"use strict";
 
@@ -764,7 +760,7 @@ sap.ui.define([
 
 			if ($Cell.hasClass("sapUiTableDataCell")) {
 				sColumnId = $Cell.attr("data-sap-ui-colid");
-				oColumn = Element.registry.get(sColumnId);
+				oColumn = sap.ui.getCore().byId(sColumnId);
 
 				oCellInfo.type = TableUtils.CELLTYPE.DATACELL;
 				oCellInfo.rowIndex = parseInt($Cell.parent().attr("data-sap-ui-rowindex"));
@@ -801,7 +797,7 @@ sap.ui.define([
 
 			} else if ($Cell.hasClass("sapUiTablePseudoCell")) {
 				sColumnId = $Cell.attr("data-sap-ui-colid");
-				oColumn = Element.registry.get(sColumnId);
+				oColumn = sap.ui.getCore().byId(sColumnId);
 
 				oCellInfo.type = TableUtils.CELLTYPE.PSEUDO;
 				oCellInfo.rowIndex = -1;
@@ -1183,7 +1179,7 @@ sap.ui.define([
 				}
 			}
 
-			var vResult = Lib.getResourceBundleFor("sap.ui.table", mOptions.async === true);
+			var vResult = sap.ui.getCore().getLibraryResourceBundle("sap.ui.table", mOptions.async === true);
 
 			if (vResult instanceof Promise) {
 				vResult = vResult.then(function(oBundle) {

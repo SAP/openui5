@@ -18,9 +18,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/unified/DateRange",
 	"sap/ui/core/Configuration",
-	"sap/ui/core/date/UI5Date",
-	"sap/ui/core/Lib",
-	"sap/ui/core/Element"
+	"sap/ui/core/date/UI5Date"
 ], function(
 	Control,
 	LocaleData,
@@ -36,9 +34,7 @@ sap.ui.define([
 	jQuery,
 	DateRange,
 	Configuration,
-	UI5Date,
-	Lib,
-	Element
+	UI5Date
 ) {
 	"use strict";
 
@@ -198,7 +194,7 @@ sap.ui.define([
 
 		this._mouseMoveProxy = jQuery.proxy(this._handleMouseMove, this);
 
-		this._rb = Lib.getResourceBundleFor("sap.ui.unified");
+		this._rb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified");
 
 	};
 
@@ -220,7 +216,7 @@ sap.ui.define([
 
 	TimesRow.prototype.onsapfocusleave = function(oEvent){
 
-		if (!oEvent.relatedControlId || !containsOrEquals(this.getDomRef(), Element.registry.get(oEvent.relatedControlId).getFocusDomRef())) {
+		if (!oEvent.relatedControlId || !containsOrEquals(this.getDomRef(), sap.ui.getCore().byId(oEvent.relatedControlId).getFocusDomRef())) {
 			if (this._bMouseMove) {
 				_unbindMousemove.call(this, true);
 

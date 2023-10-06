@@ -1,6 +1,10 @@
 /*global QUnit */
-sap.ui.define(["sap/ui/core/Core", "sap/uxap/ObjectPageLayout", "sap/uxap/ObjectPageSection", "sap/ui/documentation/ObjectPageSubSection", "sap/ui/core/HTML", "sap/ui/core/Element"],
-    function(Core, ObjectPageLayout, ObjectPageSection, ObjectPageDemokitSubSection, HTML, Element) {
+sap.ui.define(["sap/ui/core/Core",
+    "sap/uxap/ObjectPageLayout",
+    "sap/uxap/ObjectPageSection",
+    "sap/ui/documentation/ObjectPageSubSection",
+    "sap/ui/core/HTML"],
+    function(Core, ObjectPageLayout, ObjectPageSection, ObjectPageDemokitSubSection, HTML) {
     "use strict";
 
     QUnit.module("Lifecycle");
@@ -25,12 +29,12 @@ sap.ui.define(["sap/ui/core/Core", "sap/uxap/ObjectPageLayout", "sap/uxap/Object
         Core.applyChanges();
 
         // Act
-        Element.registry.get("htmlContent").setContent("<div>content</div>");
+        Core.byId("htmlContent").setContent("<div>content</div>");
         Core.applyChanges();
 
         // Check
-        assert.notEqual(Element.registry.get("htmlContent").getDomRef(), null, "The content is rendered");
-        assert.equal(Element.registry.get("htmlContent").getDomRef().textContent, "content", "The correct output is rendered");
+        assert.notEqual(Core.byId("htmlContent").getDomRef(), null, "The content is rendered");
+        assert.equal(Core.byId("htmlContent").getDomRef().textContent, "content", "The correct output is rendered");
 
         // Cleanup
         page.destroy();

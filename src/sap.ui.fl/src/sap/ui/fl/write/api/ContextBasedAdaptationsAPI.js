@@ -18,8 +18,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexState/controlVariants/VariantManagementState",
 	"sap/ui/fl/write/_internal/Storage",
 	"sap/ui/fl/write/_internal/Versions",
-	"sap/ui/model/json/JSONModel",
-	"sap/ui/core/Lib"
+	"sap/ui/model/json/JSONModel"
 ], function(
 	Adaptations,
 	FeaturesAPI,
@@ -36,8 +35,7 @@ sap.ui.define([
 	VariantManagementState,
 	Storage,
 	Versions,
-	JSONModel,
-	Lib
+	JSONModel
 ) {
 	"use strict";
 
@@ -100,7 +98,7 @@ sap.ui.define([
 	 * @returns {Promise<sap.ui.model.json.JSONModel>} Model of adaptations enhanced with additional properties
 	 */
 	ContextBasedAdaptationsAPI.initialize = function(mPropertyBag) {
-		_oResourceBundle ||= Lib.getResourceBundleFor("sap.ui.fl");
+		_oResourceBundle ||= sap.ui.getCore().getLibraryResourceBundle("sap.ui.fl");
 		if (!mPropertyBag.layer) {
 			return Promise.reject("No layer was provided");
 		}

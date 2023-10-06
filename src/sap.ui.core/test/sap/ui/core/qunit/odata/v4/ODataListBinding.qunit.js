@@ -4367,11 +4367,12 @@ sap.ui.define([
 [undefined, false, true].forEach(function (bSuccess) {
 	[false, true].forEach(function (bCreated) { // the deleted context is created-persisted
 		[undefined, false, true].forEach(function (bExpanded) { // undefined -> no hierarchy
-			const sTitle = "delete: success=" + bSuccess + ", created=" + bCreated
-				+ ", expanded=" + bExpanded;
-			if (bCreated && bExpanded) {
-				return;
-			}
+			[false, true].forEach(function (bExpandFailure) {
+				const sTitle = "delete: success=" + bSuccess + ", created=" + bCreated
+					+ ", expanded=" + bExpanded + ", expandFailure=" + bExpandFailure;
+				if (bCreated && bExpanded || bExpandFailure && (bSuccess || !bExpanded)) {
+					return;
+				}
 
 		QUnit.test(sTitle, function (assert) {
 			var oBinding = this.bindList("/EMPLOYEES"),
@@ -4413,7 +4414,7 @@ sap.ui.define([
 			oContext1Mock.expects("isDeleted").atLeast(1).withExactArgs().returns(false);
 			oContext1Mock.expects("isExpanded").withExactArgs().returns(bExpanded);
 			oBindingMock.expects("collapse").exactly(bExpanded ? 1 : 0)
-				.withExactArgs(sinon.match.same(oContext1));
+				.withExactArgs(sinon.match.same(oContext1), true);
 			oBindingMock.expects("destroyPreviousContexts").never();
 			oContext1Mock.expects("resetKeepAlive").never();
 			oDeleteCall = oContext1Mock.expects("doDelete")
@@ -4443,8 +4444,11 @@ sap.ui.define([
 						.withExactArgs([sContext1Path]);
 					// expectations for catch
 					oBindingMock.expects("expand").exactly(!bSuccess && bExpanded ? 1 : 0)
-						.withExactArgs(sinon.match.same(oContext1));
-					oBindingMock.expects("_fireChange").exactly(bSuccess ? 0 : 1)
+						.withExactArgs(sinon.match.same(oContext1), true)
+						.returns(bExpandFailure
+							? SyncPromise.reject("~oExpandError~")
+							: SyncPromise.resolve());
+					oBindingMock.expects("_fireChange").exactly(bSuccess || bExpandFailure ? 0 : 1)
 						.withExactArgs({reason : ChangeReason.Add});
 
 					return oDeleteFromCachePromise;
@@ -4509,16 +4513,21 @@ sap.ui.define([
 			assert.strictEqual(oBinding.iDeletedContexts, 4);
 
 			return oPromise.then(function () {
-				assert.ok(bSuccess);
+				assert.ok(bSuccess && !bExpandFailure);
 				assert.strictEqual(oBinding.iDeletedContexts, 3);
 				assert.strictEqual(oContext1.iIndex, Context.VIRTUAL);
 			}, function (oError) {
-				assert.notOk(bSuccess);
-				assert.strictEqual(oError, "~oError~");
-				assert.strictEqual(oBinding.iDeletedContexts, 3);
-				sinon.assert.calledWithExactly(fnUndelete); // might be called twice
+				assert.ok(!bSuccess || bExpandFailure);
+				if (bExpandFailure) {
+					assert.strictEqual(oError, "~oExpandError~");
+				} else {
+					assert.strictEqual(oError, "~oError~");
+					assert.strictEqual(oBinding.iDeletedContexts, 3);
+					sinon.assert.calledWithExactly(fnUndelete); // might be called twice
+				}
 			});
 		});
+			});
 		});
 	});
 });

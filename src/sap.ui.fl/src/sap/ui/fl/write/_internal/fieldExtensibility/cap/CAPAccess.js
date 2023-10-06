@@ -4,18 +4,16 @@
 
 sap.ui.define([
 	"sap/ui/fl/write/_internal/fieldExtensibility/ServiceValidation",
-	"sap/ui/fl/write/_internal/fieldExtensibility/cap/dialog/CustomFieldCAPDialog",
-	"sap/ui/core/Lib"
+	"sap/ui/fl/write/_internal/fieldExtensibility/cap/dialog/CustomFieldCAPDialog"
 ], function(
 	ServiceValidation,
-	CustomFieldCAPDialog,
-	Lib
+	CustomFieldCAPDialog
 ) {
 	"use strict";
 
 	var oCurrentControl = null;
 	var oCAPDialog = null;
-	var oTextBundle = Lib.getResourceBundleFor("sap.ui.fl");
+	var oTextBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.fl");
 
 	/**
 	 * @namespace sap.ui.fl.write._internal.fieldExtensibility.CAPAccess

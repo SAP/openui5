@@ -13,9 +13,8 @@ sap.ui.define([
 	"sap/m/ListItemBase",
 	"sap/ui/core/Core",
 	"sap/ui/core/library",
-	"sap/ui/integration/util/BindingResolver",
-	"sap/ui/core/Lib"
-], function(
+	"sap/ui/integration/util/BindingResolver"
+], function (
 	library,
 	ListContentItemRenderer,
 	ObjectStatus,
@@ -26,8 +25,7 @@ sap.ui.define([
 	ListItemBase,
 	Core,
 	coreLibrary,
-	BindingResolver,
-	Lib
+	BindingResolver
 ) {
 	"use strict";
 
@@ -224,7 +222,7 @@ sap.ui.define([
 			sDescription = this.getDescription(),
 			aOutput = [],
 			sInfo = this.getInfo(),
-			oMBundle = Lib.getResourceBundleFor("sap.m");
+			oMBundle = Core.getLibraryResourceBundle("sap.m");
 
 		if (sTitle) {
 			aOutput.push(sTitle);

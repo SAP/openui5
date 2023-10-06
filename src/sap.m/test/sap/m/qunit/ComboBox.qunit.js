@@ -30,13 +30,9 @@ sap.ui.define([
 	"sap/ui/core/library",
 	"sap/ui/core/Core",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Lib",
-	"sap/ui/core/Element",
-	// provides jQuery.fn.getSelectedText
-	"sap/ui/dom/jquery/getSelectedText",
-	// provides jQuery.fn.cursorPos
-	"sap/ui/dom/jquery/cursorPos"
-], function(
+	"sap/ui/dom/jquery/getSelectedText", // provides jQuery.fn.getSelectedText
+	"sap/ui/dom/jquery/cursorPos" // provides jQuery.fn.cursorPos
+], function (
 	qutils,
 	CustomData,
 	ComboBox,
@@ -66,9 +62,7 @@ sap.ui.define([
 	ValueStateSupport,
 	coreLibrary,
 	oCore,
-	jQuery,
-	Lib,
-	Element
+	jQuery
 ) {
 	"use strict";
 
@@ -4738,7 +4732,7 @@ sap.ui.define([
 			assert.ok(oComboBox.getArrowIcon().getDomRef().classList.contains("sapUiIcon"), 'The arrow button has the CSS class sapUiIcon"');
 			assert.ok(oComboBox.getArrowIcon().hasStyleClass("sapMInputBaseIcon"), 'The arrow button has the CSS class sapMInputBaseIcon "');
 			assert.strictEqual(oComboBox.getArrowIcon().getNoTabStop(), true, "The arrow button is focusable, but it is not reachable via sequential keyboard navigation");
-			assert.strictEqual(oComboBox.getArrowIcon().getDomRef().getAttribute("aria-label"), Lib.getResourceBundleFor("sap.m").getText("COMBOBOX_BUTTON"));
+			assert.strictEqual(oComboBox.getArrowIcon().getDomRef().getAttribute("aria-label"), oCore.getLibraryResourceBundle("sap.m").getText("COMBOBOX_BUTTON"));
 
 			// cleanup
 			oComboBox.destroy();
@@ -4943,7 +4937,7 @@ sap.ui.define([
 			showClearIcon: true
 		});
 		var aEndIcons;
-		var sClearIconAltText = Lib.getResourceBundleFor("sap.m").getText("INPUT_CLEAR_ICON_ALT");
+		var sClearIconAltText = oCore.getLibraryResourceBundle("sap.m").getText("INPUT_CLEAR_ICON_ALT");
 
 		// Arrange
 		oComboBox.placeAt("content");
@@ -9946,7 +9940,7 @@ sap.ui.define([
 	QUnit.module("getAccessibilityInfo");
 
 	QUnit.test("getAccessibilityInfo", function (assert) {
-		var oRb = Lib.getResourceBundleFor("sap.m");
+		var oRb = oCore.getLibraryResourceBundle("sap.m");
 		var oComboBox = new ComboBox({
 			value: "Value",
 			tooltip: "Tooltip",
@@ -10029,12 +10023,12 @@ sap.ui.define([
 			items: [
 				oItem
 			]
-		}), oResourceBundle = Lib.getResourceBundleFor("sap.m").getText("COMBOBOX_AVAILABLE_OPTIONS");
+		}), oResourceBundle = oCore.getLibraryResourceBundle("sap.m").getText("COMBOBOX_AVAILABLE_OPTIONS");
 
 		oComboBox.placeAt("content");
 		oCore.applyChanges();
 
-		assert.equal(Element.registry.get(oComboBox.getPickerInvisibleTextId()).getText(), oResourceBundle, 'popup ariaLabelledBy is set');
+		assert.equal(oCore.byId(oComboBox.getPickerInvisibleTextId()).getText(), oResourceBundle, 'popup ariaLabelledBy is set');
 
 		oComboBox.destroy();
 	});
@@ -11499,7 +11493,7 @@ sap.ui.define([
 		var oGroupHeaderListItem, oInvisibleText,
 			oFocusDomRef = this.oComboBox.getFocusDomRef(),
 			oSeparatorItem = this.oComboBox._getList().getItems()[0],
-			oExpectedLabel = Lib.getResourceBundleFor("sap.m").getText("LIST_ITEM_GROUP_HEADER") + " " + oSeparatorItem.getTitle(),
+			oExpectedLabel = oCore.getLibraryResourceBundle("sap.m").getText("LIST_ITEM_GROUP_HEADER") + " " + oSeparatorItem.getTitle(),
 			sExpectedActiveDescendantId;
 
 		// arrange
@@ -11514,7 +11508,7 @@ sap.ui.define([
 		qutils.triggerKeydown(oFocusDomRef, KeyCodes.ARROW_UP);
 
 		oGroupHeaderListItem = this.oComboBox._getList().getItems()[0];
-		oInvisibleText = Element.registry.get(oGroupHeaderListItem.getAriaLabelledBy()[0]);
+		oInvisibleText = oCore.byId(oGroupHeaderListItem.getAriaLabelledBy()[0]);
 		sExpectedActiveDescendantId = oGroupHeaderListItem.getId();
 
 		// assert

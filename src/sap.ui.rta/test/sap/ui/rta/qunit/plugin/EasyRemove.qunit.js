@@ -14,8 +14,7 @@ sap.ui.define([
 	"sap/uxap/ObjectPageLayout",
 	"sap/uxap/ObjectPageSection",
 	"sap/uxap/ObjectPageSubSection",
-	"test-resources/sap/ui/rta/qunit/RtaQunitUtils",
-	"sap/ui/core/Element"
+	"test-resources/sap/ui/rta/qunit/RtaQunitUtils"
 ], function(
 	Button,
 	oCore,
@@ -30,8 +29,7 @@ sap.ui.define([
 	ObjectPageLayout,
 	ObjectPageSection,
 	ObjectPageSubSection,
-	RtaQunitUtils,
-	Element
+	RtaQunitUtils
 ) {
 	"use strict";
 	var sandbox = sinon.createSandbox();
@@ -98,13 +96,13 @@ sap.ui.define([
 				done();
 			});
 
-			var oDeleteButton = Element.registry.get(`${this.oSectionOverlay.getId()}-DeleteIcon`);
+			var oDeleteButton = oCore.byId(`${this.oSectionOverlay.getId()}-DeleteIcon`);
 			QUnitUtils.triggerEvent("tap", oDeleteButton.getDomRef());
 		});
 
 		QUnit.test("when an ObjectPageSection is rendered and one section gets removed", function(assert) {
-			var oDeleteButton = Element.registry.get(`${this.oSectionOverlay.getId()}-DeleteIcon`);
-			var oDeleteButton2 = Element.registry.get(`${this.oSectionOverlay2.getId()}-DeleteIcon`);
+			var oDeleteButton = oCore.byId(`${this.oSectionOverlay.getId()}-DeleteIcon`);
+			var oDeleteButton2 = oCore.byId(`${this.oSectionOverlay2.getId()}-DeleteIcon`);
 
 			assert.ok(oDeleteButton, "then the 1st Delete-Icon is displayed");
 			assert.ok(oDeleteButton.getEnabled(), "and enabled");
@@ -165,7 +163,7 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("when an ObjectPageSection is rendered and the EasyRemovePlugin is used", function(assert) {
-			var oDeleteButton = Element.registry.get(`${this.oSectionOverlay.getId()}-DeleteIcon`);
+			var oDeleteButton = oCore.byId(`${this.oSectionOverlay.getId()}-DeleteIcon`);
 			assert.notOk(oDeleteButton, "then the Delete-Icon is not displayed");
 		});
 	});

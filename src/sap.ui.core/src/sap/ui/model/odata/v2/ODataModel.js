@@ -402,11 +402,6 @@ sap.ui.define([
 			this.sUser = sUser;
 			this.sPassword = sPassword;
 
-			if (Configuration.getStatisticsEnabled()) {
-				// add statistics parameter to every request (supported only on Gateway servers)
-				this.aUrlParams.push("sap-statistics=true");
-			}
-
 			this.oHeaders = {};
 			this.setHeaders(mHeaders);
 
@@ -6366,8 +6361,7 @@ sap.ui.define([
 		} else {
 			delete this.mChangedEntities[sKey];
 		}
-		Messaging.removeMessages(this.getMessagesByEntity(sKey,
-			/*bExcludePersistent*/!bDeleteEntity));
+		Messaging.removeMessages(this.getMessagesByEntity(sKey, /*bExcludePersistent*/true));
 
 		return pMetaDataLoaded;
 	};

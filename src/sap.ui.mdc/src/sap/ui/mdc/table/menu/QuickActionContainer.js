@@ -14,8 +14,7 @@ sap.ui.define([
 	"sap/m/table/columnmenu/QuickTotalItem",
 	"sap/m/Button",
 	"sap/ui/core/Core",
-	"sap/ui/core/library",
-	"sap/ui/core/Element"
+	"sap/ui/core/library"
 ], function(
 	ResponsiveTableType,
 	PersonalizationUtils,
@@ -29,8 +28,7 @@ sap.ui.define([
 	QuickTotalItem,
 	Button,
 	Core,
-	CoreLibrary,
-	Element
+	CoreLibrary
 ) {
 	"use strict";
 
@@ -180,11 +178,11 @@ sap.ui.define([
 	};
 
 	QuickActionContainer.prototype.getTable = function() {
-		return Element.registry.get(this.getAssociation("table"));
+		return Core.byId(this.getAssociation("table"));
 	};
 
 	QuickActionContainer.prototype.getColumn = function() {
-		return Element.registry.get(this.getAssociation("column"));
+		return Core.byId(this.getAssociation("column"));
 	};
 
 	return QuickActionContainer;

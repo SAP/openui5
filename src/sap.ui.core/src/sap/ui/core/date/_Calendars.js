@@ -14,11 +14,10 @@ sap.ui.define([], function () {
 	 */
 	var _Calendars = {
 		get: function (sCalendarType) {
-			if (!mRegistry.has(sCalendarType)) {
-				sap.ui.requireSync("sap/ui/core/date/" + sCalendarType); // TODO: establish full async alternative
+			if (mRegistry.has(sCalendarType)) {
+				return mRegistry.get(sCalendarType);
 			}
-
-			return mRegistry.get(sCalendarType);
+			throw new TypeError("Load required calendar 'sap/ui/core/date/" + sCalendarType + "' in advance");
 		},
 		set: function (sCalendarType, CalendarClass) {
 			mRegistry.set(sCalendarType, CalendarClass);

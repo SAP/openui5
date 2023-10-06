@@ -3,11 +3,9 @@
  */
 
 sap.ui.define([
-	'sap/ui/core/Renderer',
-	'sap/ui/unified/CalendarRenderer',
-	"sap/ui/core/Lib"
-],
-	function(Renderer, CalendarRenderer, Lib) {
+		'sap/ui/core/Renderer',
+		'sap/ui/unified/CalendarRenderer'],
+	function(Renderer, CalendarRenderer) {
 		"use strict";
 
 
@@ -38,7 +36,7 @@ sap.ui.define([
 				sTooltip = oCal.getTooltip_AsString(),
 				aMonths = oCal.getAggregation("month"),
 				sWidth = oCal.getWidth(),
-				rb = Lib.getResourceBundleFor("sap.f"),
+				rb = sap.ui.getCore().getLibraryResourceBundle("sap.f"),
 				mAccProps = {labelledby: {value: "", append: false}};
 
 			oRm.openStart("div", oCal);

@@ -21,9 +21,7 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/core/Core",
-	"sap/ui/core/StaticArea",
-	"sap/ui/core/Lib",
-	"sap/ui/core/Element"
+	"sap/ui/core/StaticArea"
 ], function(
 	qutils,
 	createAndAppendDiv,
@@ -46,9 +44,7 @@ sap.ui.define([
 	Log,
 	KeyCodes,
 	oCore,
-	StaticArea,
-	Lib,
-	Element
+	StaticArea
 ) {
 	"use strict";
 
@@ -458,7 +454,7 @@ sap.ui.define([
 
 	QUnit.module("Initial Check", {
 		beforeEach : function () {
-			this.oResourceBundle = Lib.getResourceBundleFor("sap.m");
+			this.oResourceBundle = oCore.getLibraryResourceBundle("sap.m");
 			this.oVSD = new ViewSettingsDialog();
 			this.oVSD.placeAt("qunit-fixture");
 			oCore.applyChanges();
@@ -549,13 +545,13 @@ sap.ui.define([
 
 		// sort / group / preset filter
 		assert.strictEqual(this.oVSD.getSelectedSortItem(), this.oSelectedSortItem.getId(), "The selected sort item should be '" + this.oSelectedSortItem.getId() + "'");
-		assert.strictEqual(Element.registry.get(this.oVSD.getSelectedSortItem()).getSelected(), true, "The selected sort item should have the selected flag set to true");
+		assert.strictEqual(oCore.byId(this.oVSD.getSelectedSortItem()).getSelected(), true, "The selected sort item should have the selected flag set to true");
 		assert.strictEqual(this.oVSD.getSortDescending(), true, "sort descending should now be true");
 		assert.strictEqual(this.oVSD.getSelectedGroupItem(), this.oSelectedGroupItem.getId(), "The selected group item should be '" + this.oSelectedGroupItem.getId() + "'");
-		assert.strictEqual(Element.registry.get(this.oVSD.getSelectedGroupItem()).getSelected(), true, "The selected group item should have the selected flag set to true");
+		assert.strictEqual(oCore.byId(this.oVSD.getSelectedGroupItem()).getSelected(), true, "The selected group item should have the selected flag set to true");
 		assert.strictEqual(this.oVSD.getGroupDescending(), true, "group descending should now be true");
 		assert.strictEqual(this.oVSD.getSelectedPresetFilterItem(), this.oSelectedPresetFilterItem.getId(), "The selected preset filter item should be '" + this.oSelectedPresetFilterItem.getId() + "'");
-		assert.strictEqual(Element.registry.get(this.oVSD.getSelectedPresetFilterItem()).getSelected(), true, "The selected preset filter item should have the selected flag set to true");
+		assert.strictEqual(oCore.byId(this.oVSD.getSelectedPresetFilterItem()).getSelected(), true, "The selected preset filter item should have the selected flag set to true");
 		// filters
 		/* -------------------------------------- */
 		this.oVSD.setSelectedPresetFilterItem(null);
@@ -967,10 +963,10 @@ sap.ui.define([
 				// check if dialog is still in the previous state
 				assert.ok(true, "Event cancel was fired");
 				assert.strictEqual(this.getSelectedSortItem(), that.oSelectedSortItem.getId(), "The selected sort item should be '" + that.oSelectedSortItem.getId() + "'");
-				assert.strictEqual(Element.registry.get(this.getSelectedSortItem()).getSelected(), true, "The selected sort item should have the selected flag set to true");
+				assert.strictEqual(oCore.byId(this.getSelectedSortItem()).getSelected(), true, "The selected sort item should have the selected flag set to true");
 				assert.strictEqual(this.getSortDescending(), true, "sort descending should now be true");
 				assert.strictEqual(this.getSelectedGroupItem(), that.oSelectedGroupItem.getId(), "The selected group item should be '" + that.oSelectedGroupItem.getId() + "'");
-				assert.strictEqual(Element.registry.get(this.getSelectedGroupItem()).getSelected(), true, "The selected group item should have the selected flag set to true");
+				assert.strictEqual(oCore.byId(this.getSelectedGroupItem()).getSelected(), true, "The selected group item should have the selected flag set to true");
 				assert.strictEqual(this.getGroupDescending(), true, "group descending should now be true");
 				assert.deepEqual(that.oFilterState, this.getSelectedFilterCompoundKeys(), "The computed filter keys should have the same structure as the passed one");
 				this.detachCancel(fnChecks);
@@ -1004,10 +1000,10 @@ sap.ui.define([
 				// check if dialog is still in the previous state
 				assert.ok(true, "Event cancel was fired");
 				assert.strictEqual(this.getSelectedSortItem(), that.oSelectedSortItem.getId(), "The selected sort item should be '" + that.oSelectedSortItem.getId() + "'");
-				assert.strictEqual(Element.registry.get(this.getSelectedSortItem()).getSelected(), true, "The selected sort item should have the selected flag set to true");
+				assert.strictEqual(oCore.byId(this.getSelectedSortItem()).getSelected(), true, "The selected sort item should have the selected flag set to true");
 				assert.strictEqual(this.getSortDescending(), true, "sort descending should now be true");
 				assert.strictEqual(this.getSelectedGroupItem(), that.oSelectedGroupItem.getId(), "The selected group item should be '" + that.oSelectedGroupItem.getId() + "'");
-				assert.strictEqual(Element.registry.get(this.getSelectedGroupItem()).getSelected(), true, "The selected group item should have the selected flag set to true");
+				assert.strictEqual(oCore.byId(this.getSelectedGroupItem()).getSelected(), true, "The selected group item should have the selected flag set to true");
 				assert.strictEqual(this.getGroupDescending(), true, "group descending should now be true");
 				assert.deepEqual(that.oFilterState, this.getSelectedFilterCompoundKeys(), "The computed filter keys should have the same structure as the passed one");
 				this.detachCancel(fnChecks);
@@ -1148,7 +1144,7 @@ sap.ui.define([
 		//Check
 		assert.ok(fnOnConfirmUndefined.calledOnce, "Event handler is being called");
 		sSelectedGroupItem = this.oVSD.getSelectedGroupItem();
-		assert.equal(Element.registry.get(sSelectedGroupItem), this.oVSD._oGroupingNoneItem, "GroupingNoneItem is selected when setSelectedGroupItem is called without params");
+		assert.equal(oCore.byId(sSelectedGroupItem), this.oVSD._oGroupingNoneItem, "GroupingNoneItem is selected when setSelectedGroupItem is called without params");
 
 		clock.restore();
 	});
@@ -1166,7 +1162,7 @@ sap.ui.define([
 
 		//Check
 		sSelectedGroupItem = this.oVSD.getSelectedGroupItem();
-		assert.equal(Element.registry.get(sSelectedGroupItem), this.oVSD._oGroupingNoneItem, "GroupingNoneItem is selected when setSelectedGroupItem is called with empty string param");
+		assert.equal(oCore.byId(sSelectedGroupItem), this.oVSD._oGroupingNoneItem, "GroupingNoneItem is selected when setSelectedGroupItem is called with empty string param");
 
 		clock.restore();
 	});
@@ -2921,7 +2917,7 @@ sap.ui.define([
 	QUnit.test("Reset group items selection on cancel", function (assert) {
 		var delay = 1000,
 			done = assert.async(),
-			oResourceBundle = Lib.getResourceBundleFor("sap.m");
+			oResourceBundle = oCore.getLibraryResourceBundle("sap.m");
 
 		var aGroupItems = [
 			new ViewSettingsItem({
@@ -2943,13 +2939,13 @@ sap.ui.define([
 		this.oVSD.open();
 		oCore.applyChanges();
 
-		assert.strictEqual(Element.registry.get(this.oVSD.getSelectedGroupItem()).getText(),
+		assert.strictEqual(oCore.byId(this.oVSD.getSelectedGroupItem()).getText(),
 				oResourceBundle.getText("VIEWSETTINGS_NONE_ITEM"),
 				"Should have None button selected");
 
 		this.oVSD.setSelectedGroupItem(aGroupItems[0]);
 		oCore.applyChanges();
-		assert.notStrictEqual(Element.registry.get(this.oVSD.getSelectedGroupItem()).getText(),
+		assert.notStrictEqual(oCore.byId(this.oVSD.getSelectedGroupItem()).getText(),
 				oResourceBundle.getText("VIEWSETTINGS_NONE_ITEM"),
 				"Should have changed the selection");
 
@@ -2958,7 +2954,7 @@ sap.ui.define([
 
 		setTimeout(function () {
 			this.oVSD.open();
-			assert.strictEqual(Element.registry.get(this.oVSD.getSelectedGroupItem()).getText(),
+			assert.strictEqual(oCore.byId(this.oVSD.getSelectedGroupItem()).getText(),
 				oResourceBundle.getText("VIEWSETTINGS_NONE_ITEM"),
 				"Previous selection should have been reset");
 			done();
@@ -3206,7 +3202,7 @@ sap.ui.define([
 				assert.strictEqual(jQuery("#" + sSecondItemId).length, 1, 'Second item is rendered after model property change.');
 
 				assert.strictEqual(this.oVSD._getPage2().getCustomHeader().getContentMiddle()[0].getText(),
-						Lib.getResourceBundleFor("sap.m").getText("VIEWSETTINGS_TITLE_FILTERBY") + " Filter text B",
+						oCore.getLibraryResourceBundle("sap.m").getText("VIEWSETTINGS_TITLE_FILTERBY") + " Filter text B",
 						'Title correctly changed in the header.');
 
 				oSecondData[0].myItems.push({
@@ -3735,7 +3731,7 @@ sap.ui.define([
 
 	QUnit.module("Accessibility", {
 		beforeEach : function () {
-			this.oResourceBundle = Lib.getResourceBundleFor("sap.m");
+			this.oResourceBundle = oCore.getLibraryResourceBundle("sap.m");
 			this.oVSD = new ViewSettingsDialog();
 			this.bindAggregations(this.oVSD);
 
@@ -3898,7 +3894,7 @@ sap.ui.define([
 
 	QUnit.module("Reset Button", {
 		beforeEach : function () {
-			this.oResourceBundle = Lib.getResourceBundleFor("sap.m");
+			this.oResourceBundle = oCore.getLibraryResourceBundle("sap.m");
 			this.oVSD = new ViewSettingsDialog();
 			this.bindAggregations(this.oVSD);
 

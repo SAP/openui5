@@ -2,7 +2,7 @@
  * ${copyright}
  */
 //Provides class sap.ui.core.util.PasteHelper - a utility for converting and validating data pasted from clipboard.
-sap.ui.define(["sap/ui/core/Core", "sap/ui/model/ParseException", "sap/ui/model/ValidateException", "sap/base/Log", "sap/ui/core/Lib"], function(Core, ParseException, ValidateException, Log, Lib) {
+sap.ui.define([ "sap/ui/core/Core", "sap/ui/model/ParseException", "sap/ui/model/ValidateException", "sap/base/Log"], function(Core, ParseException, ValidateException, Log) {
 	"use strict";
 
 	/**
@@ -227,7 +227,7 @@ sap.ui.define(["sap/ui/core/Core", "sap/ui/model/ParseException", "sap/ui/model/
 			throw new Error("Missing parameter aColumnInfo"); //Check -  missing param standard exception?
 		}
 
-		var aErrors = [], aRowPromises = [], oBundle = Lib.getResourceBundleFor("sap.ui.core");
+		var aErrors = [], aRowPromises = [], oBundle = Core.getLibraryResourceBundle();
 		var fnParse = function(sCellData, oType) {
 			return oType.parseValue(sCellData, "string");
 		};

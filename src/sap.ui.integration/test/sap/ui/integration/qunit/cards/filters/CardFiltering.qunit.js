@@ -7,17 +7,15 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/qunit/QUnitUtils",
-	"sap/ui/core/date/UI5Date",
-	"sap/ui/core/Lib"
-], function(
+	"sap/ui/core/date/UI5Date"
+], function (
 	Card,
 	RequestDataProvider,
 	Host,
 	Core,
 	KeyCodes,
 	QUnitUtils,
-	UI5Date,
-	Lib
+	UI5Date
 ) {
 	"use strict";
 
@@ -495,7 +493,7 @@ sap.ui.define([
 		this.oCard.attachEvent("_ready", function () {
 			var oFilterBar = this.oCard.getAggregation("_filterBar");
 			var sErrorText = oFilterBar._getFilters()[0]._getErrorMessage().getItems()[1].getText();
-			var sExpectedErrorText = Lib.getResourceBundleFor("sap.ui.integration").getText("CARD_FILTER_DATA_LOAD_ERROR");
+			var sExpectedErrorText = Core.getLibraryResourceBundle("sap.ui.integration").getText("CARD_FILTER_DATA_LOAD_ERROR");
 
 			// Assert
 			assert.strictEqual(sErrorText, sExpectedErrorText, "Error message is correct");

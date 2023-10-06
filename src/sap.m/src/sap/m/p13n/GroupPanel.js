@@ -2,12 +2,8 @@
  * ${copyright}
  */
 sap.ui.define([
-	"./QueryPanel",
-	"sap/m/HBox",
-	"sap/m/CheckBox",
-	"sap/ui/layout/Grid",
-	"sap/ui/core/Lib"
-], function(QueryPanel, HBox, CheckBox, Grid, Lib) {
+	"./QueryPanel", "sap/m/HBox", "sap/m/CheckBox", "sap/ui/layout/Grid"
+], function (QueryPanel, HBox, CheckBox, Grid) {
 	"use strict";
 
 	/**
@@ -38,7 +34,7 @@ sap.ui.define([
 				 */
 				title: {
 					type: "string",
-					defaultValue: Lib.getResourceBundleFor("sap.m").getText("p13n.DEFAULT_TITLE_GROUP")
+					defaultValue: sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("p13n.DEFAULT_TITLE_GROUP")
 				},
 				/**
 				 * Toggles an additional checkbox in the group panel to define whether items are made visible.

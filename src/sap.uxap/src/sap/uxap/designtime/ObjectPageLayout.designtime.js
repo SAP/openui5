@@ -5,21 +5,17 @@
 // Provides the Design Time Metadata for the sap.uxap.ObjectPageLayout control
 sap.ui.define([
 	"sap/uxap/library",
-	"sap/ui/core/Core",
-	"sap/ui/core/Element",
-	"sap/ui/core/Lib"
+	"sap/ui/core/Core"
 ],
 function(
 	library,
-	Core,
-	Element,
-	Lib
+	Core
 ) {
 	"use strict";
 
 	function getSectionForAnchorBarButton (oAnchorButton) {
 		var sSectionId = oAnchorButton.data("sectionId");
-		return Element.registry.get(sSectionId);
+		return Core.byId(sSectionId);
 	}
 
 	function isHeaderInTitleArea(oPage) {
@@ -33,10 +29,10 @@ function(
 	return {
 		name : {
 			singular : function(){
-				return Lib.getResourceBundleFor("sap.uxap").getText("LAYOUT_CONTROL_NAME");
+				return sap.ui.getCore().getLibraryResourceBundle("sap.uxap").getText("LAYOUT_CONTROL_NAME");
 			},
 			plural : function(){
-				return Lib.getResourceBundleFor("sap.uxap").getText("LAYOUT_CONTROL_NAME_PLURAL");
+				return sap.ui.getCore().getLibraryResourceBundle("sap.uxap").getText("LAYOUT_CONTROL_NAME_PLURAL");
 			}
 		},
 		aggregations : {
@@ -46,19 +42,19 @@ function(
 				},
 				childNames : {
 					singular : function(){
-						return Lib.getResourceBundleFor("sap.uxap").getText("SECTION_CONTROL_NAME");
+						return sap.ui.getCore().getLibraryResourceBundle("sap.uxap").getText("SECTION_CONTROL_NAME");
 					},
 					plural : function(){
-						return Lib.getResourceBundleFor("sap.uxap").getText("SECTION_CONTROL_NAME_PLURAL");
+						return sap.ui.getCore().getLibraryResourceBundle("sap.uxap").getText("SECTION_CONTROL_NAME_PLURAL");
 					}
 				},
 				actions : {
 					move : "moveControls",
 					addIFrame: {
 						changeType: "addIFrame",
-						text: Lib.getResourceBundleFor("sap.uxap").getText("ADD_IFRAME_AS_SECTION"),
+						text: sap.ui.getCore().getLibraryResourceBundle("sap.uxap").getText("ADD_IFRAME_AS_SECTION"),
 						getCreatedContainerId : function(sNewControlID) {
-							var oObjectPageSection = Element.registry.get(sNewControlID);
+							var oObjectPageSection = sap.ui.getCore().byId(sNewControlID);
 							var oObjectPageLayout = oObjectPageSection.getParent();
 							var oAnchorBar = oObjectPageLayout.getAggregation("_anchorBar");
 							var oSectionButton;
@@ -102,10 +98,10 @@ function(
 								content : {
 									childNames : {
 										singular : function(){
-											return Lib.getResourceBundleFor("sap.uxap").getText("SECTION_CONTROL_NAME");
+											return sap.ui.getCore().getLibraryResourceBundle("sap.uxap").getText("SECTION_CONTROL_NAME");
 										},
 										plural : function(){
-											return Lib.getResourceBundleFor("sap.uxap").getText("SECTION_CONTROL_NAME_PLURAL");
+											return sap.ui.getCore().getLibraryResourceBundle("sap.uxap").getText("SECTION_CONTROL_NAME_PLURAL");
 										}
 									},
 									actions : {
@@ -148,7 +144,7 @@ function(
 				},
 				childNames : {
 					singular : function(){
-						return Lib.getResourceBundleFor("sap.uxap").getText("HEADER_CONTROL_NAME");
+						return sap.ui.getCore().getLibraryResourceBundle("sap.uxap").getText("HEADER_CONTROL_NAME");
 					}
 				},
 				actions : {
@@ -161,7 +157,7 @@ function(
 						}
 					},
 					addIFrame: {
-						text: Lib.getResourceBundleFor("sap.uxap").getText("ADD_IFRAME_IN_HEADER"),
+						text: sap.ui.getCore().getLibraryResourceBundle("sap.uxap").getText("ADD_IFRAME_IN_HEADER"),
 						changeType: "addIFrame"
 					},
 					remove : {

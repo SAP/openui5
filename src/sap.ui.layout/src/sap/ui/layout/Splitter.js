@@ -575,10 +575,9 @@ sap.ui.define([
 	/**
 	 * Resizes the contents after a bar has been moved
 	 *
-	 * @param {int} [iLeftContent] Number of the first (left) content that is resized
-	 * @param {number} [iPixels] Number of pixels to increase the first and decrease the second content
-	 * @param {boolean} [bFinal] Whether this is the final position (sets the size in the layoutData of the
-	 * content areas)
+	 * @param {int} iLeftContent Index of the first (left) content that is resized
+	 * @param {number} iPixels Number of pixels to increase the first and decrease the second content
+	 * @param {boolean} bFinal Whether this is the final position (sets the size in the layoutData of the content areas)
 	 */
 	Splitter.prototype._resizeContents = function(iLeftContent, iPixels, bFinal) {
 		if (isNaN(iPixels)) {
@@ -596,10 +595,15 @@ sap.ui.define([
 		var $Cnt1 = this.$("content-" + iLeftContent);
 		var $Cnt2 = this.$("content-" + (iLeftContent + 1));
 
-		var iNewSize1 = this._move.c1Size + iPixels;
-		var iNewSize2 = this._move.c2Size - iPixels;
-		var iMinSize1 = oLd1.getMinSize();
-		var iMinSize2 = oLd2.getMinSize();
+		var sMoveContentSize1 = parseFloat(this._move.c1Size).toFixed(5);
+		var sMoveContentSize2 = parseFloat(this._move.c2Size).toFixed(5);
+
+		var iNewSize1 = parseFloat(sMoveContentSize1) + iPixels;
+		var iNewSize2 = parseFloat(sMoveContentSize2) - iPixels;
+		var iMinSize1 = parseInt(oLd1.getMinSize());
+		var iMinSize2 = parseInt(oLd2.getMinSize());
+
+		var sFinalSize1, sFinalSize2;
 
 		// Adhere to size constraints
 		var iDiff;
@@ -616,24 +620,56 @@ sap.ui.define([
 		}
 
 		if (bFinal) {
+			// in this case widths of the areas are % from the available content width (bars excluded)
+			var iAvailableContentSize = this._calcAvailableContentSize();
+
 			// Resize finished, set layout data in content areas
 			if (sSize1 === "auto" && sSize2 !== "auto") {
 				// First pane has auto size - only change size of second pane
-				oLd2.setSize(iNewSize2 + "px");
+				sFinalSize2 = this._calcAreaSizeWithUnit(iNewSize2, iAvailableContentSize, oLd2._getSizeUnit());
+				oLd2.setSize(sFinalSize2);
+				oLd2._markModified();
 			} else if (sSize1 !== "auto" && sSize2 === "auto") {
 				// Second pane has auto size - only change size of first pane
-				oLd1.setSize(iNewSize1 + "px");
+				sFinalSize1 = this._calcAreaSizeWithUnit(iNewSize1, iAvailableContentSize, oLd1._getSizeUnit());
+				oLd1.setSize(sFinalSize1);
+				oLd1._markModified();
 			} else {
-				oLd1.setSize(iNewSize1 + "px");
-				oLd2.setSize(iNewSize2 + "px");
+				sFinalSize1 = this._calcAreaSizeWithUnit(iNewSize1, iAvailableContentSize, oLd1._getSizeUnit());
+				sFinalSize2 = this._calcAreaSizeWithUnit(iNewSize2, iAvailableContentSize, oLd2._getSizeUnit());
+
+				oLd1.setSize(sFinalSize1);
+				oLd2.setSize(sFinalSize2);
+				oLd1._markModified();
+				oLd2._markModified();
 			}
-		} else {
-			// Live-Resize, resize contents in Dom
-			$Cnt1.css(this._sizeType, iNewSize1 + "px");
-			$Cnt2.css(this._sizeType, iNewSize2 + "px");
+		} else { // Live-Resize, resize contents in Dom
+			// in this case widths of the areas are % from the total size (bars included)
+			var iTotalSplitterSize = this._getTotalSize();
+
+			sFinalSize1 = this._pxToPercent(iNewSize1, iTotalSplitterSize);
+			sFinalSize2 = this._pxToPercent(iNewSize2, iTotalSplitterSize);
+
+			$Cnt1.css(this._sizeType, sFinalSize1);
+			$Cnt2.css(this._sizeType, sFinalSize2);
 		}
 	};
 
+	Splitter.prototype._calcAreaSizeWithUnit = function (iPx, iAvailable, sUnit) {
+		if (sUnit === "px") {
+			return iPx + "px";
+		}
+
+		if (sUnit === "rem") {
+			return (iPx / iRemAsPixels) + "rem"; // TODO: use Rem class
+		}
+
+		return this._pxToPercent(iPx, iAvailable);
+	};
+
+	Splitter.prototype._pxToPercent = function (iPx, iFullSize) {
+		return (iPx * 100) / iFullSize + "%";
+	};
 
 	////////////////////////////////////////// Private Methods /////////////////////////////////////////
 
@@ -890,11 +926,19 @@ sap.ui.define([
 		}
 	};
 
+	/**
+	 * Calculates sizes of areas sized with "%".
+	 * If some "%" area would exceed the available space, its size is reduced.
+	 * @param {int[]} aPercentSizeIdx Areas that are sized with "%"
+	 * @param {int} iRemainingSize Remaining size to distribute the "%" areas
+	 * @returns {int} How much space is left after distributing the "%" areas
+	 */
 	Splitter.prototype._calcPercentBasedSizes = function (aPercentSizeIdx, iRemainingSize) {
 		var aContentAreas = this._getContentAreas(),
 			iAvailableContentSize = this._calcAvailableContentSize();
 
-		for (var i = 0; i < aPercentSizeIdx.length; ++i) {
+		// Step1: Distribute the % in the available size
+		for (let i = 0; i < aPercentSizeIdx.length; ++i) {
 			var idx = aPercentSizeIdx[i];
 			// Percent based value - deduct it from available size
 			var iAreaSize = parseFloat(aContentAreas[idx].getLayoutData().getSize()) / 100 * iAvailableContentSize;
@@ -906,6 +950,47 @@ sap.ui.define([
 
 			this._calculatedSizes[idx] = iAreaSize;
 			iRemainingSize -= iAreaSize;
+		}
+
+		// Step2: Check if the distributed % would violate the minSize constrains of the remaining "auto" areas
+		var iMinSizeOfAutoSizedAreas = aContentAreas
+			.filter(function (oArea) {
+				return oArea.getLayoutData().getSize() === "auto";
+			})
+			.reduce(function (iSum, oArea) {
+				return iSum + oArea.getLayoutData().getMinSize();
+			}, 0);
+
+		// calculated % exceed the available space - shrink areas if possible
+		if (iRemainingSize < iMinSizeOfAutoSizedAreas) {
+			var iNeededSize = Math.abs(iRemainingSize - iMinSizeOfAutoSizedAreas);
+
+			// shrink areas from right to left
+			for (var i = aPercentSizeIdx.length - 1; i >= 0; i--) {
+				var iIdx = aPercentSizeIdx[i],
+					oArea = aContentAreas[iIdx],
+					iCalculatedSize = this._calculatedSizes[iIdx],
+					oLD = oArea.getLayoutData();
+
+				if (oLD._isMarked()) {
+					var iNewSize = iCalculatedSize - iNeededSize;
+
+					if (iNewSize < oLD.getMinSize()) {
+						iNewSize = oLD.getMinSize();
+					}
+
+					this._calculatedSizes[iIdx] = iNewSize;
+
+					var iIncreasedSize = iCalculatedSize - iNewSize;
+					iNeededSize -= iIncreasedSize;
+					iRemainingSize += iIncreasedSize;
+				}
+
+				// already shrunk enough
+				if (iNeededSize <= 0) {
+					break;
+				}
+			}
 		}
 
 		return iRemainingSize;

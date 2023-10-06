@@ -5,14 +5,12 @@ sap.ui.define([
 	"./BaseAction",
 	"sap/m/Dialog",
 	"sap/ui/core/Core",
-	"sap/ui/core/Element",
 	// jQuery Plugin "firstFocusableDomRef", "lastFocusableDomRef"
 	"sap/ui/dom/jquery/Focusable"
-], function(
+], function (
 	BaseAction,
 	Dialog,
-	Core,
-	Element
+	Core
 ) {
 	"use strict";
 
@@ -32,7 +30,7 @@ sap.ui.define([
 			oChildCard;
 
 		if (oParameters._cardId) {
-			oChildCard = Element.registry.get(oParameters._cardId);
+			oChildCard = Core.byId(oParameters._cardId);
 		} else {
 			oChildCard = oParentCard._createChildCard(oParameters);
 		}

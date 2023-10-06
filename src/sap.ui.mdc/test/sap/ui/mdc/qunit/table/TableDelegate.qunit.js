@@ -22,8 +22,7 @@ sap.ui.define([
 	"sap/ui/mdc/enums/TableType",
 	"sap/ui/mdc/enums/ConditionValidated",
 	"sap/ui/mdc/enums/OperatorName",
-	"sap/ui/mdc/util/FilterUtil",
-	"sap/ui/core/Lib"
+	"sap/ui/mdc/util/FilterUtil"
 ], function(
 	TableQUnitUtils,
 	TableDelegate,
@@ -47,8 +46,7 @@ sap.ui.define([
 	TableType,
 	ConditionValidated,
 	OperatorName,
-	FilterUtil,
-	Lib
+	FilterUtil
 ) {
 	"use strict";
 
@@ -359,7 +357,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("validateState", function(assert) {
-		const oResourceBundle = Lib.getResourceBundleFor("sap.ui.mdc");
+		const oResourceBundle = Core.getLibraryResourceBundle("sap.ui.mdc");
 		const oState = {};
 		let oValidationState = this.oTable.validateState(oState, "Group");
 
@@ -442,7 +440,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("formatGroupHeader", function(assert) {
-		const oResourceBundle = Lib.getResourceBundleFor("sap.ui.mdc");
+		const oResourceBundle = Core.getLibraryResourceBundle("sap.ui.mdc");
 		const oContext = new Context();
 
 		sinon.stub(oContext, "getProperty").callsFake(function(sPath) {

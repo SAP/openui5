@@ -6,10 +6,9 @@ sap.ui.define([
 	'sap/m/Page',
 	'sap/m/Panel',
 	'sap/m/Button',
-	"sap/ui/core/Core",
-	"sap/ui/core/Element"
+	"sap/ui/core/Core"
 ],
-	function(UIComponent, Page, Panel, Button, oCore, Element) {
+	function(UIComponent, Page, Panel, Button, oCore) {
 	"use strict";
 
 	var Component = UIComponent.extend("samples.scrollcomp.Component", {
@@ -34,11 +33,11 @@ sap.ui.define([
 	};
 
 	Component.prototype.getTestControl = function(bInScrollContainer) {
-		return Element.registry.get(bInScrollContainer ? this._scrollContainerButton : this._noScrollContainerButton);
+		return oCore.byId(bInScrollContainer ? this._scrollContainerButton : this._noScrollContainerButton);
 	};
 
 	Component.prototype.getInnerScrollDelegate = function() {
-		return Element.registry.get(this._scrollContainer).getScrollDelegate();
+		return oCore.byId(this._scrollContainer).getScrollDelegate();
 	};
 
 	return Component;

@@ -3,8 +3,29 @@
  */
 
 // A core plugin that bundles debug features and connects with an embedding testsuite
-sap.ui.define('sap/ui/debug/DebugEnv', ['sap/ui/base/Interface', './ControlTree', './LogViewer', './PropertyList', "sap/base/Log", "sap/ui/thirdparty/jquery", "sap/ui/core/Configuration", 'sap/ui/core/Rendering'],
-	function(Interface, ControlTree, LogViewer, PropertyList, Log, jQuery, Configuration, Rendering) {
+sap.ui.define('sap/ui/debug/DebugEnv', [
+	"sap/base/config",
+	"sap/base/i18n/Localization",
+	"sap/ui/base/Interface",
+	"./ControlTree",
+	"./LogViewer",
+	"./PropertyList",
+	"sap/base/Log",
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/core/Supportability",
+	"sap/ui/core/Rendering"
+], function(
+	BaseConfig,
+	Localization,
+	Interface,
+	ControlTree,
+	LogViewer,
+	PropertyList,
+	Log,
+	jQuery,
+	Supportability,
+	Rendering
+) {
 	"use strict";
 
 
@@ -43,10 +64,10 @@ sap.ui.define('sap/ui/debug/DebugEnv', ['sap/ui/base/Interface', './ControlTree'
 			Log.info("Starting DebugEnv plugin (" + (this.bRunsEmbedded ? "embedded" : "testsuite") + ")");
 
 			// initialize only if running in testsuite or when debug views are not disabled via URL parameter
-			if (!this.bRunsEmbedded || oCore.getConfiguration().getInspect()) {
+			if (!this.bRunsEmbedded || Supportability.isControlInspectorEnabled()) {
 				this.init(bOnInit);
 			}
-			if (!this.bRunsEmbedded || oCore.getConfiguration().getTrace()) {
+			if (!this.bRunsEmbedded || BaseConfig.get({ name: "sapUiTrace", type: BaseConfig.Type.Boolean })) {
 				this.initLogger(Log, bOnInit);
 			}
 		} catch (oException) {
@@ -71,7 +92,7 @@ sap.ui.define('sap/ui/debug/DebugEnv', ['sap/ui/base/Interface', './ControlTree'
 		this.oControlTreeWindow = this.bRunsEmbedded ? this.oWindow : (top.document.getElementById("sap-ui-ControlTreeWindow") || top.frames["sap-ui-ControlTreeWindow"] || top);
 		this.oPropertyListWindow = this.bRunsEmbedded ? this.oWindow : (top.document.getElementById("sap-ui-PropertyListWindow") || top.frames["sap-ui-PropertyListWindow"] || top);
 
-		var bRtl = Configuration.getRTL();
+		var bRtl = Localization.getRTL();
 
 		/* TODO enable switch to testsuite
 		if ( this.bRunsEmbedded ) {

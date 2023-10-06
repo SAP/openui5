@@ -21,9 +21,7 @@ sap.ui.define([
 	"sap/base/util/isEmptyObject",
 	"sap/base/util/merge",
 	"sap/ui/core/InvisibleMessage",
-	"sap/ui/core/Lib",
-	// provides jQuery.fn.firstFocusableDomRef
-	"sap/ui/dom/jquery/Focusable"
+	"sap/ui/dom/jquery/Focusable" // provides jQuery.fn.firstFocusableDomRef
 ], function(
 	jQuery,
 	library,
@@ -41,8 +39,7 @@ sap.ui.define([
 	assert,
 	isEmptyObject,
 	merge,
-	InvisibleMessage,
-	Lib
+	InvisibleMessage
 ) {
 	"use strict";
 
@@ -2950,7 +2947,7 @@ sap.ui.define([
 	 * @returns {Object} the resource bundle object
 	 */
 	FlexibleColumnLayout._getResourceBundle = function () {
-		return Lib.getResourceBundleFor("sap.f");
+		return sap.ui.getCore().getLibraryResourceBundle("sap.f");
 	};
 
 

@@ -16,8 +16,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Core",
 	"sap/ui/unified/ColorPickerHelper",
-	"sap/ui/base/Object",
-	"sap/ui/core/Lib"
+	"sap/ui/base/Object"
 ], function(
 	ColorPicker,
 	ColorPickerDisplayMode,
@@ -34,8 +33,7 @@ sap.ui.define([
 	jQuery,
 	oCore,
 	ColorPickerHelper,
-	BaseObject,
-	Lib
+	BaseObject
 ) {
 	"use strict";
 
@@ -261,7 +259,7 @@ sap.ui.define([
 
 		QUnit.test("Root ARIA attributes", function (oAssert) {
 			var $colorPickerRef = this.oCP.$(),
-				sExpectedRoledescription = Lib.getResourceBundleFor("sap.ui.unified").getText("COLOR_PICKER_TITLE");
+				sExpectedRoledescription = oCore.getLibraryResourceBundle("sap.ui.unified").getText("COLOR_PICKER_TITLE");
 
 			oAssert.strictEqual($colorPickerRef.attr("role"), "group", "Color Picker has a 'group' role");
 			oAssert.strictEqual($colorPickerRef.attr("aria-roledescription"), sExpectedRoledescription, "roledescription contains control's name");
@@ -334,7 +332,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("Radio buttons tooltips", function (oAssert) {
-			var oRB = Lib.getResourceBundleFor("sap.ui.unified");
+			var oRB = oCore.getLibraryResourceBundle("sap.ui.unified");
 
 			// Assert
 			oAssert.strictEqual(this.oCP.oRbRGB.getTooltip(), oRB.getText("COLORPICKER_SELECT_RGB_TOOLTIP"),
@@ -447,7 +445,7 @@ sap.ui.define([
 			// Arrange
 			var oInput = new InputBase(),
 				sTooltipID = "COLORPICKER_HEX",
-				sTooltipResult = Lib.getResourceBundleFor("sap.ui.unified").getText(sTooltipID),
+				sTooltipResult = oCore.getLibraryResourceBundle("sap.ui.unified").getText(sTooltipID),
 				oLabel,
 				oUnitLabel,
 				oHL;

@@ -7,7 +7,9 @@ sap.ui.define([
 	"sap/ui/core/format/DateFormat",
 	"sap/m/ToolbarSpacer",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/date/UI5Date"
+	"sap/ui/core/date/UI5Date",
+	"sap/ui/model/type/Boolean",
+	"sap/ui/model/type/Integer"
 ], function(Log, Controller, JSONModel, Filter, FilterOperator, DateFormat, ToolbarSpacer, jQuery, UI5Date) {
 	"use strict";
 

@@ -4,13 +4,11 @@
 
 sap.ui.define([
 	'sap/m/Token',
-	'sap/ui/mdc/field/TokenDisplayRenderer',
-	"sap/ui/core/Lib"
-], function(
-	Token,
-	TokenDisplayRenderer,
-	Lib
-) {
+	'sap/ui/mdc/field/TokenDisplayRenderer'
+	], function(
+		Token,
+		TokenDisplayRenderer
+	) {
 	"use strict";
 
 	/**
@@ -50,7 +48,7 @@ sap.ui.define([
 		Token.prototype.init.apply(this, arguments);
 
 		if (!this._oResourceBundle) {
-			this._oResourceBundle = Lib.getResourceBundleFor("sap.ui.mdc");
+			this._oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
 		}
 		this.setProperty("_delimiter", this._oResourceBundle.getText("field.SEPARATOR").trim());
 	};

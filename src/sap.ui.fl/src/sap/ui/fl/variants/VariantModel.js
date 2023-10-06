@@ -27,9 +27,7 @@ sap.ui.define([
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/write/api/ContextBasedAdaptationsAPI",
-	"sap/ui/model/json/JSONModel",
-	"sap/ui/core/Lib",
-	"sap/ui/core/Element"
+	"sap/ui/model/json/JSONModel"
 ], function(
 	_omit,
 	_isEqual,
@@ -55,9 +53,7 @@ sap.ui.define([
 	Utils,
 	Settings,
 	ContextBasedAdaptationsAPI,
-	JSONModel,
-	Lib,
-	Element
+	JSONModel
 ) {
 	"use strict";
 
@@ -325,7 +321,7 @@ sap.ui.define([
 			this.oChangePersistence = this.oFlexController._oChangePersistence;
 			this.sFlexReference = ManifestUtils.getFlexReferenceForControl(mPropertyBag.appComponent);
 			this.oAppComponent = mPropertyBag.appComponent;
-			this._oResourceBundle = Lib.getResourceBundleFor("sap.ui.fl");
+			this._oResourceBundle = Core.getLibraryResourceBundle("sap.ui.fl");
 			this._oVariantSwitchPromise = Promise.resolve();
 			this._oVariantAppliedListeners = {};
 
@@ -494,7 +490,7 @@ sap.ui.define([
 	 * @returns {Promise} Promise that resolves after the sanity check
 	 */
 	VariantModel.prototype.attachVariantApplied = function(mPropertyBag) {
-		var oVariantManagementControl = Element.registry.get(mPropertyBag.vmControlId);
+		var oVariantManagementControl = Core.byId(mPropertyBag.vmControlId);
 		var sVMReference = this.getVariantManagementReferenceForControl(oVariantManagementControl);
 
 		return this.waitForVMControlInit(sVMReference).then(function(sVMReference, mPropertyBag) {
@@ -554,7 +550,7 @@ sap.ui.define([
 	};
 
 	VariantModel.prototype.detachVariantApplied = function(sVMControlId, sControlId) {
-		var sVMReference = this.getVariantManagementReferenceForControl(Element.registry.get(sVMControlId));
+		var sVMReference = this.getVariantManagementReferenceForControl(Core.byId(sVMControlId));
 		if (this._oVariantAppliedListeners[sVMReference]) {
 			delete this._oVariantAppliedListeners[sVMReference][sControlId];
 		}
@@ -598,7 +594,7 @@ sap.ui.define([
 		this.oChangePersistence.addChanges(aChanges, this.oAppComponent);
 		return aChanges.reduce(function(oPreviousPromise, oChange) {
 			return oPreviousPromise.then(function() {
-				var oControl = Element.registry.get(JsControlTreeModifier.getControlIdBySelector(oChange.getSelector(), this.oAppComponent));
+				var oControl = Core.byId(JsControlTreeModifier.getControlIdBySelector(oChange.getSelector(), this.oAppComponent));
 				return Applier.applyChangeOnControl(oChange, oControl, {
 					modifier: JsControlTreeModifier,
 					appComponent: this.oAppComponent,

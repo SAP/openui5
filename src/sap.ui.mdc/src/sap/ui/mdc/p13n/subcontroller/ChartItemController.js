@@ -3,12 +3,11 @@
  */
 
 sap.ui.define([
-    "./SelectionController",
-    "sap/ui/core/Lib"
-], function(BaseController, Lib) {
+    "./SelectionController"
+], function (BaseController) {
     "use strict";
 
-    const oResourceBundle = Lib.getResourceBundleFor("sap.ui.mdc");
+    const oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
 
     const ChartItemController = BaseController.extend("sap.ui.mdc.p13n.subcontroller.ChartItemController");
 

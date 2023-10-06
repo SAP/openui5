@@ -18,10 +18,9 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/core/Icon",
 	"sap/ui/Device",
-	"sap/ui/events/KeyCodes",
+    "sap/ui/events/KeyCodes",
 	"sap/ui/core/InvisibleMessage",
-	"sap/ui/core/Core",
-	"sap/ui/core/Lib"
+	"sap/ui/core/Core"
 ], function(
 	library,
 	CoreLibrary,
@@ -39,8 +38,7 @@ sap.ui.define([
 	Device,
 	KeyCodes,
 	InvisibleMessage,
-	oCore,
-	Lib
+	oCore
 ) {
 	"use strict";
 
@@ -358,7 +356,7 @@ sap.ui.define([
 	 * @private
 	 */
 	DynamicPageTitle._getResourceBundle = function () {
-		return Lib.getResourceBundleFor("sap.f");
+		return oCore.getLibraryResourceBundle("sap.f");
 	};
 
 	DynamicPageTitle.ARIA = {

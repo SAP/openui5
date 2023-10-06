@@ -22,8 +22,7 @@ sap.ui.define([
 	"sap/ui/rta/Utils",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4",
-	"test-resources/sap/ui/rta/qunit/RtaQunitUtils",
-	"sap/ui/core/Lib"
+	"test-resources/sap/ui/rta/qunit/RtaQunitUtils"
 ], function(
 	Button,
 	Label,
@@ -46,14 +45,13 @@ sap.ui.define([
 	Utils,
 	jQuery,
 	sinon,
-	RtaQunitUtils,
-	Lib
+	RtaQunitUtils
 ) {
 	"use strict";
 
 	var sandbox = sinon.createSandbox();
 
-	var oResourceBundle = Lib.getResourceBundleFor("sap.ui.rta");
+	var oResourceBundle = oCore.getLibraryResourceBundle("sap.ui.rta");
 
 	function triggerAndWaitForStartEdit(oPlugin, oOverlay) {
 		return new Promise(function(resolve) {

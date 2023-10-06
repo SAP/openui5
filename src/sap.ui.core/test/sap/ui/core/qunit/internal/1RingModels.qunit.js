@@ -32,6 +32,7 @@ sap.ui.require([
 		// ***************************************************************************************
 		// sap.ui.core.date.* - tests are contained in testsuite.i18.qunit.js
 		// ***************************************************************************************
+		"sap/ui/core/qunit/date/_Calendars.qunit",
 		"sap/ui/core/qunit/i18n/Buddhist.qunit",
 		"sap/ui/core/qunit/i18n/CalendarUtils.qunit",
 		"sap/ui/core/qunit/i18n/CalendarWeekNumbering.qunit",

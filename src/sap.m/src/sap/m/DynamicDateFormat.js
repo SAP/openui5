@@ -12,10 +12,9 @@ sap.ui.define([
 	"sap/base/util/deepExtend",
 	"sap/ui/unified/calendar/CalendarUtils",
 	"./library",
-	"sap/ui/core/Configuration",
-	"sap/ui/core/Lib"
+	"sap/ui/core/Configuration"
 ],
-	function(UI5Date, DateFormat, NumberFormat, Locale, LocaleData, deepExtend, CalendarUtils, library, Configuration, Lib) {
+	function(UI5Date, DateFormat, NumberFormat, Locale, LocaleData, deepExtend, CalendarUtils, library, Configuration) {
 		"use strict";
 
 		/**
@@ -34,7 +33,7 @@ sap.ui.define([
 			throw new Error();
 		};
 
-		var _resourceBundle = Lib.getResourceBundleFor("sap.m");
+		var _resourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 		var _staticParts = {};
 		var _dynamicParameterIndexes = {};
 		var aParameterTypesByStandardOptionKey = {
@@ -176,7 +175,7 @@ sap.ui.define([
 			oFormat._monthFormatter = DateFormat.getInstance(oFormat.oOriginalFormatOptions["month"]);
 			oFormat._yearFormatter = DateFormat.getInstance(oFormat.oOriginalFormatOptions["year"]);
 			oFormat._numberFormatter = NumberFormat.getInstance(oFormat.oOriginalFormatOptions["int"]);
-			oFormat._resourceBundle = Lib.getResourceBundleFor("sap.m");
+			oFormat._resourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 
 			return oFormat;
 		};

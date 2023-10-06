@@ -16,12 +16,11 @@ sap.ui.define([
 	"sap/m/Toolbar",
 	"sap/m/Label",
 	"sap/m/ToolbarSpacer",
-	"sap/m/Button",
-	"sap/ui/core/Lib"
-], function(jQuery, GenericTile, NumericContent, Table, Column, ColumnListItem, JSONModel, TileContent, TooltipBase, ResizeHandler, library, Mobile, oCore, Toolbar, Label, ToolbarSpacer, Button, Lib) {
+	"sap/m/Button"
+], function(jQuery, GenericTile, NumericContent, Table, Column, ColumnListItem, JSONModel, TileContent, TooltipBase, ResizeHandler, library, Mobile, oCore, Toolbar, Label, ToolbarSpacer, Button) {
 	"use strict";
 
-	var oResourceBundle = Lib.getResourceBundleFor("sap.m");
+	var oResourceBundle = oCore.getLibraryResourceBundle("sap.m");
 
 	// shortcut for sap.m.ValueColor
 	var ValueColor = library.ValueColor;

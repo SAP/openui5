@@ -1,18 +1,11 @@
 /* global QUnit */
 sap.ui.define([
-	"sap/ui/mdc/p13n/panels/ChartItemPanel",
-	"sap/ui/model/json/JSONModel",
-	"sap/m/VBox",
-	"sap/ui/thirdparty/sinon",
-	"sap/ui/test/actions/Press",
-	"sap/ui/core/Core",
-	"sap/ui/core/library",
-	"sap/ui/core/Lib"
-], function(ChartItemPanel, JSONModel, VBox, sinon, Press, oCore, coreLibrary, Lib) {
+	"sap/ui/mdc/p13n/panels/ChartItemPanel", "sap/ui/model/json/JSONModel", "sap/m/VBox", "sap/ui/thirdparty/sinon", "sap/ui/test/actions/Press", "sap/ui/core/Core", "sap/ui/core/library"
+], function (ChartItemPanel, JSONModel, VBox, sinon, Press, oCore, coreLibrary) {
 	"use strict";
 
 	const ValueState = coreLibrary.ValueState;
-	const MDCRb = Lib.getResourceBundleFor("sap.ui.mdc");
+	const MDCRb = oCore.getLibraryResourceBundle("sap.ui.mdc");
 
 	const oChartConfig = {
 		allowedLayoutOptions: ["axis1", "category", "series"], templateConfig: [{kind: "Dimension"},{kind: "Measure"}]

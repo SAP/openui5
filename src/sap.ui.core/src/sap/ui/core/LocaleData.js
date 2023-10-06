@@ -13,9 +13,9 @@ sap.ui.define([
 	"sap/base/util/LoaderExtensions",
 	"sap/ui/base/Object",
 	"sap/ui/core/Configuration",
-	"sap/ui/core/date/CalendarWeekNumbering",
-	"sap/ui/core/Lib"
-], function(CalendarType, Locale, assert, LanguageTag, Localization, extend, LoaderExtensions, BaseObject, Configuration, CalendarWeekNumbering, Lib) {
+	"sap/ui/core/date/CalendarWeekNumbering"
+], function(CalendarType, Locale, assert, LanguageTag, Localization, extend, LoaderExtensions, BaseObject,
+		Configuration, CalendarWeekNumbering) {
 	"use strict";
 
 	var rCIgnoreCase = /c/i,
@@ -120,15 +120,15 @@ sap.ui.define([
 		},
 
 		/**
-		 * Gets the locale specific language name for the given language tag.
+		 * Gets the locale-specific language name for the given language tag.
 		 *
-		 * {@link #getLanguages} returns only the languages contained in CLDR raw data which don't
-		 * contain the language names if they can be derived from the language and the script or the
-		 * territory. If there is no entry for the given language tag in the map of languages,
-		 * derive the language name from the used script or region.
+		 * The languages returned by {@link #getLanguages} from the CLDR raw data do not contain the
+		 * language names if they can be derived from the language and the script or the territory.
+		 * If the map of languages contains no entry for the given language tag, derive the language
+		 * name from the used script or region.
 		 *
 		 * @param {string} sLanguageTag
-		 *   The language tag identifier, for example "en", "en-US", "en_US", "zh-Hant", or "zh_Hant"
+		 *   The language tag, for example "en", "en-US", "en_US", "zh-Hant", or "zh_Hant"
 		 * @returns {string|undefined}
 		 *   The language name, or <code>undefined</code> if the name cannot be determined
 		 * @throws {TypeError} When the given language tag isn't valid
@@ -1864,7 +1864,7 @@ sap.ui.define([
 		getCalendarWeek: function(sStyle, iWeekNumber) {
 			assert(sStyle == "wide" || sStyle == "narrow" , "sStyle must be wide or narrow");
 
-			var oMessageBundle = Lib.getResourceBundleFor("sap.ui.core", this.oLocale.toString()),
+			var oMessageBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.core", this.oLocale.toString()),
 				sKey = "date.week.calendarweek." + sStyle;
 
 			return oMessageBundle.getText(sKey, iWeekNumber ? [iWeekNumber] : undefined);

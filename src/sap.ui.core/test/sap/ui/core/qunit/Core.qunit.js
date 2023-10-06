@@ -315,7 +315,7 @@ sap.ui.define([
 
 	QUnit.test("async: testGetLibraryResourceBundle", function(assert) {
 		var oSpy = this.spy(ResourceBundle, 'create'),
-			pBundle = Library.getResourceBundleFor("sap.ui.core", "en")/* LFUI5: For asynchronous loading, load the lib asynchronously and on promise resolution get the resource bundle. */;
+			pBundle = oCore.getLibraryResourceBundle("sap.ui.core", "en", true);
 
 		assert.ok(pBundle instanceof Promise, "a promise should be returned");
 
@@ -328,9 +328,9 @@ sap.ui.define([
 	});
 
 	QUnit.test("async: testGetLibraryResourceBundle with already loaded bundle", function(assert) {
-		return Library.getResourceBundleFor("sap.ui.core", "de")/* LFUI5: For asynchronous loading, load the lib asynchronously and on promise resolution get the resource bundle. */.then(function() {
+		return oCore.getLibraryResourceBundle("sap.ui.core", "de", true).then(function() {
 			var oSpy = this.spy(ResourceBundle, 'create'),
-				pBundle = Library.getResourceBundleFor("sap.ui.core", "de")/* LFUI5: For asynchronous loading, load the lib asynchronously and on promise resolution get the resource bundle. */;
+				pBundle = oCore.getLibraryResourceBundle("sap.ui.core", "de", true);
 
 			assert.ok(pBundle instanceof Promise, "a promise should be returned");
 
@@ -356,7 +356,7 @@ sap.ui.define([
 			}
 		});
 
-		var pBundle = Library.getResourceBundleFor("sap.test1", "de")/* LFUI5: For asynchronous loading, load the lib asynchronously and on promise resolution get the resource bundle. */;
+		var pBundle = oCore.getLibraryResourceBundle("sap.test1", "de", true);
 
 		assert.ok(pBundle instanceof Promise, "a promise should be returned");
 
@@ -386,7 +386,7 @@ sap.ui.define([
 		});
 
 		var oSpySapUiRequireToUrl = this.spy(sap.ui.require, 'toUrl'),
-			pBundle = Library.getResourceBundleFor("sap.test.i18ntrue", "de")/* LFUI5: For asynchronous loading, load the lib asynchronously and on promise resolution get the resource bundle. */,
+			pBundle = oCore.getLibraryResourceBundle("sap.test.i18ntrue", "de", true),
 			oSpyCall;
 
 		assert.ok(pBundle instanceof Promise, "a promise should be returned");
@@ -408,7 +408,7 @@ sap.ui.define([
 		this.stub(LoaderExtensions, 'loadResource').returns(undefined);
 
 		var oSpySapUiRequireToUrl = this.spy(sap.ui.require, 'toUrl'),
-			pBundle = Library.getResourceBundleFor("sap.test.i18nmissing", "fr")/* LFUI5: For asynchronous loading, load the lib asynchronously and on promise resolution get the resource bundle. */,
+			pBundle = oCore.getLibraryResourceBundle("sap.test.i18nmissing", "fr", true),
 			oSpyCall;
 
 		assert.ok(pBundle instanceof Promise, "a promise should be returned");
@@ -447,7 +447,7 @@ sap.ui.define([
 		});
 
 		var oSpySapUiRequireToUrl = this.spy(sap.ui.require, 'toUrl'),
-			pBundle = Library.getResourceBundleFor("sap.test.i18nstring", "en")/* LFUI5: For asynchronous loading, load the lib asynchronously and on promise resolution get the resource bundle. */,
+			pBundle = oCore.getLibraryResourceBundle("sap.test.i18nstring", "en", true),
 			oSpyCall;
 
 		assert.ok(pBundle instanceof Promise, "a promise should be returned");
@@ -502,7 +502,7 @@ sap.ui.define([
 		});
 
 		var oSpySapUiRequireToUrl = this.spy(sap.ui.require, 'toUrl'),
-			pBundle = Library.getResourceBundleFor("sap.test.i18nobject", "en")/* LFUI5: For asynchronous loading, load the lib asynchronously and on promise resolution get the resource bundle. */,
+			pBundle = oCore.getLibraryResourceBundle("sap.test.i18nobject", "en", true),
 			oSpyCall;
 
 		assert.ok(pBundle instanceof Promise, "a promise should be returned");
@@ -525,7 +525,7 @@ sap.ui.define([
 
 	QUnit.module("loadLibrary", {
 		beforeEach: function(assert) {
-			assert.notOk(Configuration.getDebug(), "debug mode must be deactivated to properly test library loading");
+			assert.notOk(false, "debug mode must be deactivated to properly test library loading");
 			this.oLibraryGetPreloadStub = this.stub(Library, "getPreloadMode").returns("sync");
 		},
 		afterEach: function(assert) {
@@ -681,8 +681,6 @@ sap.ui.define([
 
 		return VersionInfo.load().then(function(versioninfo) {
 			this.spy(privateLoaderAPI, 'loadJSResourceAsync');
-			this.spy(sap.ui, 'require');
-			this.spy(sap.ui, 'requireSync');
 
 			var vLib8 = oCore.loadLibraries(['testlibs.scenario14.lib8']);
 			assert.ok(vLib8 instanceof Promise, "async call to loadLibraries should return a promise");

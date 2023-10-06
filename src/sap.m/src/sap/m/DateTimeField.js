@@ -20,7 +20,6 @@ sap.ui.define([
 	"sap/ui/core/Configuration",
 	'sap/ui/core/date/UI5Date',
 	'sap/ui/unified/calendar/CalendarUtils',
-	"sap/ui/core/Lib",
 	// jQuery Plugin "cursorPos"
 	"sap/ui/dom/jquery/cursorPos"
 ], function(
@@ -39,8 +38,7 @@ sap.ui.define([
 	jQuery,
 	Configuration,
 	UI5Date,
-	CalendarUtils,
-	Lib
+	CalendarUtils
 ) {
 	"use strict";
 
@@ -641,7 +639,7 @@ sap.ui.define([
 		if (sValueState === ValueState.None) {
 			sText = "";
 		} else {
-			oResourceBundle = Lib.getResourceBundleFor("sap.ui.core");
+			oResourceBundle = Core.getLibraryResourceBundle("sap.ui.core");
 			sText = oResourceBundle.getText("VALUE_STATE_" + sValueState.toUpperCase());
 		}
 

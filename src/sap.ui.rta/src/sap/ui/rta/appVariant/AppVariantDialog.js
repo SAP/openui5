@@ -25,8 +25,6 @@ sap.ui.define([
 	"sap/ui/model/FilterOperator",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/rta/Utils",
-	"sap/ui/core/Lib",
-	"sap/ui/core/Element",
 	// needs to be preloaded for the test to work
 	"sap/ui/layout/form/ResponsiveGridLayout"
 ],
@@ -51,9 +49,7 @@ function(
 	Filter,
 	FilterOperator,
 	JSONModel,
-	RtaUtils,
-	Lib,
-	Element
+	RtaUtils
 ) {
 	"use strict";
 
@@ -62,7 +58,7 @@ function(
 
 	var {ValueState} = coreLibrary;
 
-	var oResources = Lib.getResourceBundleFor("sap.ui.rta");
+	var oResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
 	var oDataSet;
 	var oTitleLabel;
 	var oTitleInput;
@@ -175,7 +171,7 @@ function(
 			valueLiveUpdate: true,
 			placeholder: oResources.getText("SAVE_AS_DIALOG_PLACEHOLDER_TITLE_TEXT"),
 			liveChange() {
-				var oSaveButton = Element.registry.get("saveButton");
+				var oSaveButton = sap.ui.getCore().byId("saveButton");
 				if (this.getValue() === "") {
 					this.setValueState(ValueState.Error); // if the field is empty after change, it will go red
 					oSaveButton.setEnabled(false);

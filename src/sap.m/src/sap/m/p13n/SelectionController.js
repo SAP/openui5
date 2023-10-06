@@ -10,9 +10,8 @@ sap.ui.define([
 	'sap/m/p13n/SelectionPanel',
 	'sap/m/p13n/modules/xConfigAPI',
 	'sap/ui/core/Configuration',
-	'sap/ui/core/mvc/View',
-	"sap/ui/core/Lib"
-], function(diff, BaseObject, merge, deepEqual, SelectionPanel, xConfigAPI, Configuration, View, Lib) {
+	'sap/ui/core/mvc/View'
+], function (diff, BaseObject, merge, deepEqual, SelectionPanel, xConfigAPI, Configuration, View) {
 	"use strict";
 
 	/**
@@ -647,7 +646,7 @@ sap.ui.define([
 			this.sortP13nData("generic", mItemsGrouped[sGroupKey]);
 			aGroupedItems.push({
 				group: sGroupKey,
-				groupLabel: mItemsGrouped[sGroupKey][0].groupLabel || Lib.getResourceBundleFor("sap.m").getText("p13n.BASIC_DEFAULT_GROUP"),//Grouplabel might not be necessarily be propagated to every item
+				groupLabel: mItemsGrouped[sGroupKey][0].groupLabel || sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("p13n.BASIC_DEFAULT_GROUP"),//Grouplabel might not be necessarily be propagated to every item
 				groupVisible: true,
 				items: mItemsGrouped[sGroupKey]
 			});

@@ -8,10 +8,9 @@ sap.ui.define([
 	'sap/ui/Device',
 	'sap/ui/core/theming/Parameters',
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Configuration",
-	"sap/ui/core/Lib"
+	"sap/ui/core/Configuration"
 ],
-	function(library, Control, Device, Parameters, jQuery, Configuration, Lib) {
+	function(library, Control, Device, Parameters, jQuery, Configuration) {
 	"use strict";
 
 
@@ -147,7 +146,7 @@ sap.ui.define([
 			},
 
 			_renderLogo: function(rm, oHeader) {
-				var rb = Lib.getResourceBundleFor("sap.ui.unified"),
+				var rb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified"),
 					sLogoTooltip = rb.getText("SHELL_LOGO_TOOLTIP"),
 					sIco = oHeader._getLogo();
 

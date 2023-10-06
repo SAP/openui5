@@ -3,11 +3,9 @@
  */
 
 sap.ui.define([
-	"sap/ui/dt/OverlayRegistry",
-	"sap/ui/core/Lib"
+	"sap/ui/dt/OverlayRegistry"
 ], function(
-	OverlayRegistry,
-	Lib
+	OverlayRegistry
 ) {
 	"use strict";
 
@@ -98,7 +96,7 @@ sap.ui.define([
 			return _aNames;
 		}, []);
 
-		var oTextResources = Lib.getResourceBundleFor("sap.ui.rta");
+		var oTextResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
 
 		if (aNonDuplicateNames.length === 1) {
 			[sControlType] = aNonDuplicateNames;

@@ -10,8 +10,7 @@ sap.ui.define([
 	"sap/ui/rta/util/adaptationStarter",
 	"sap/ui/rta/RuntimeAuthoring",
 	"sap/ui/thirdparty/sinon-4",
-	"test-resources/sap/ui/rta/qunit/RtaQunitUtils",
-	"sap/ui/core/Lib"
+	"test-resources/sap/ui/rta/qunit/RtaQunitUtils"
 ], function(
 	Log,
 	MessageBox,
@@ -22,14 +21,13 @@ sap.ui.define([
 	adaptationStarter,
 	RuntimeAuthoring,
 	sinon,
-	RtaQunitUtils,
-	Lib
+	RtaQunitUtils
 ) {
 	"use strict";
 
 	var sandbox = sinon.createSandbox();
 	var oAppComponent = RtaQunitUtils.createAndStubAppComponent(sinon);
-	var oResourceBundle = Lib.getResourceBundleFor("sap.ui.rta");
+	var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
 
 	function setIsKeyUser(bIsKeyUser) {
 		sandbox.stub(FeaturesAPI, "isKeyUser").resolves(bIsKeyUser);

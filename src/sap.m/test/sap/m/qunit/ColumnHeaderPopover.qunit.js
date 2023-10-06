@@ -13,8 +13,7 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/m/Input",
 	"sap/m/MessageToast",
-	"sap/ui/core/Item",
-	"sap/ui/core/Lib"
+	"sap/ui/core/Item"
 ], function(
 	Core,
 	Element,
@@ -28,9 +27,7 @@ sap.ui.define([
 	Button,
 	Input,
 	MessageToast,
-	Item,
-	Lib
-) {
+	Item) {
 	"use strict";
 	createAndAppendDiv("content");
 
@@ -153,7 +150,7 @@ QUnit.test("Item render", function(assert){
 	// Set language to english to test te text of the close button
 	Core.getConfiguration().setLanguage("en-US");
 
-	var oRB = Lib.getResourceBundleFor("sap.m");
+	var oRB = Core.getLibraryResourceBundle("sap.m");
 	var sCloseText = oRB.getText("COLUMNHEADERPOPOVER_CLOSE_BUTTON");
 
 	assert.equal($buttons.length, 4, "Popover has four buttons");
@@ -261,7 +258,7 @@ QUnit.test("ColumnPopoverCustomItem", function(assert){
 
 	var oRBPopover = oPopover.getAggregation("_popover");
 	var oCustomButton1Dom = oRBPopover.$().find("button")[0];
-	var oCustomButton1 = Element.registry.get(oCustomButton1Dom.id);
+	var oCustomButton1 = Core.byId(oCustomButton1Dom.id);
 
 	assert.equal(oCustomButton1Dom.title, "custom", "property setting of text is correct");
 	assert.equal(oRBPopover.getContent()[1].getVisible(), false, "content of the first custom is not visible");
@@ -273,7 +270,7 @@ QUnit.test("ColumnPopoverCustomItem", function(assert){
 	assert.equal(oRBPopover.getContent()[1].getVisible(), true, "content of the first custom is visible after the first custom item is pressed");
 
 	var oCustomButton2Dom = oRBPopover.$().find("button")[2];
-	var oCustomButton2 = Element.registry.get(oCustomButton2Dom.id);
+	var oCustomButton2 = Core.byId(oCustomButton2Dom.id);
 	qutils.triggerEvent("tap", oCustomButton2.getId());
 	this.clock.tick(500);
 
@@ -336,8 +333,8 @@ QUnit.test("ColumnPopoverSortItem", function(assert){
 
 	var oSortButtonDom1 = oRBPopover.$().find("button")[3];
 	var oSortButtonDom2 = oRBPopover.$().find("button")[4];
-	var oSortButton1 = Element.registry.get(oSortButtonDom1.id);
-	var oSortButton2 = Element.registry.get(oSortButtonDom2.id);
+	var oSortButton1 = Core.byId(oSortButtonDom1.id);
+	var oSortButton2 = Core.byId(oSortButtonDom2.id);
 
 	assert.equal(oSortButtonDom1.title, "Sort", "two sort items are rendered");
 	assert.equal(oSortButtonDom2.title, "Sort", "two sort items are rendered");
@@ -358,7 +355,7 @@ QUnit.test("ColumnPopoverSortItem", function(assert){
 	assert.equal(oRBPopover.$().find("li").length, 2, "sort children are rendered");
 
 	var oSortItemDom = oRBPopover.$().find("li")[0];
-	var oSortItem = Element.registry.get(oSortItemDom.id);
+	var oSortItem = Core.byId(oSortItemDom.id);
 
 	qutils.triggerEvent("tap", oSortItem.getId());
 	this.clock.tick(500);

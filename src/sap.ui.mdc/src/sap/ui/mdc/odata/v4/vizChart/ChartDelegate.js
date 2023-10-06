@@ -20,10 +20,8 @@ sap.ui.define([
     "sap/ui/model/Filter",
     "sap/ui/mdc/chart/PropertyHelper",
     "sap/ui/thirdparty/jquery",
-    "sap/ui/mdc/enums/ChartItemRoleType",
-    "sap/ui/core/Lib",
-    "sap/ui/core/Element"
-], function(
+    "sap/ui/mdc/enums/ChartItemRoleType"
+], function (
     V4ChartDelegate,
     Core,
     Text,
@@ -41,9 +39,7 @@ sap.ui.define([
     Filter,
     PropertyHelper,
     jQuery,
-    ChartItemRoleType,
-    Lib,
-    Element
+    ChartItemRoleType
 ) {
     "use strict";
 
@@ -410,7 +406,7 @@ sap.ui.define([
         const oPanel = new ChartItemPanel(oArguments);
 
         if (oChart.getChartType() === "heatmap"){
-            const MDCRb = Lib.getResourceBundleFor("sap.ui.mdc");
+            const MDCRb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
             oPanel.setMessageStrip(new MessageStrip({text: MDCRb.getText("chart.PERSONALIZATION_DIALOG_MEASURE_WARNING"), type:"Warning"}));
         }
 
@@ -1105,8 +1101,8 @@ sap.ui.define([
      */
     ChartDelegate.getChartTypeInfo = function (oChart) {
           const sType = oChart.getChartType(),
-            oMDCResourceBundle = Lib.getResourceBundleFor("sap.ui.mdc"),
-            oChartResourceBundle = Lib.getResourceBundleFor("sap.chart.messages");
+            oMDCResourceBundle = Core.getLibraryResourceBundle("sap.ui.mdc"),
+            oChartResourceBundle = Core.getLibraryResourceBundle("sap.chart.messages");
 
         const mInfo = {
             icon: ChartTypeButton.mMatchingIcon[sType],
@@ -1133,7 +1129,7 @@ sap.ui.define([
 
         if (this._getChart(oChart)) {
             const aAvailableChartTypes = this._getChart(oChart).getAvailableChartTypes().available;
-            const oChartResourceBundle = Lib.getResourceBundleFor("sap.chart.messages");
+            const oChartResourceBundle = Core.getLibraryResourceBundle("sap.chart.messages");
 
             for (let i = 0; i < aAvailableChartTypes.length; i++) {
                 const sType = aAvailableChartTypes[i].chart;
@@ -1610,7 +1606,7 @@ sap.ui.define([
 	}
 
 	function createOuterFilters(oChart) {
-		const oFilter = Element.registry.get(oChart.getFilter());
+		const oFilter = Core.byId(oChart.getFilter());
 		const aFilters = [];
 
 		if (!oFilter) {
@@ -1633,7 +1629,7 @@ sap.ui.define([
 	}
 
 	function addSearchParameter(oChart, oBindingInfo) {
-		const oFilter = Element.registry.get(oChart.getFilter());
+		const oFilter = Core.byId(oChart.getFilter());
 		if (!oFilter) {
 			return;
 		}

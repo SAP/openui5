@@ -12,8 +12,7 @@ sap.ui.define([
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/fl/write/api/AppVariantWriteAPI",
 	"sap/ui/fl/write/api/ChangesWriteAPI",
-	"sap/ui/fl/write/_internal/connectors/LrepConnector",
-	"sap/ui/core/Lib"
+	"sap/ui/fl/write/_internal/connectors/LrepConnector"
 ], function(
 	FlexUtils,
 	MessageBox,
@@ -24,8 +23,7 @@ sap.ui.define([
 	PersistenceWriteAPI,
 	AppVariantWriteAPI,
 	ChangesWriteAPI,
-	LrepConnector,
-	Lib
+	LrepConnector
 ) {
 	"use strict";
 	var AppVariantUtils = {};
@@ -398,7 +396,7 @@ sap.ui.define([
 	};
 
 	AppVariantUtils.getTextResources = function() {
-		return Lib.getResourceBundleFor("sap.ui.rta");
+		return sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
 	};
 
 	AppVariantUtils.getText = function(sMessageKey, sText) {

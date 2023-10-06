@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define(['sap/ui/core/Renderer', './InputBaseRenderer', "sap/ui/core/Lib"], function(Renderer, InputBaseRenderer, Lib) {
+sap.ui.define(['sap/ui/core/Renderer', './InputBaseRenderer'], function(Renderer, InputBaseRenderer) {
 	"use strict";
 
 	/**
@@ -21,7 +21,7 @@ sap.ui.define(['sap/ui/core/Renderer', './InputBaseRenderer', "sap/ui/core/Lib"]
 	 * @returns {Object}
 	 */
 	MaskInputRenderer.getAccessibilityState = function (oControl) {
-		var oResourceBundle = Lib.getResourceBundleFor("sap.m"),
+		var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m"),
 			sCustomRole = oResourceBundle.getText("MASKINPUT_ROLE_DESCRIPTION"),
 			mAccessibilityState = InputBaseRenderer.getAccessibilityState.apply(this, arguments);
 

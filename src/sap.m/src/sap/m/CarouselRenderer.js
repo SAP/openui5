@@ -6,9 +6,8 @@ sap.ui.define([
 	"sap/m/library",
 	"sap/base/strings/capitalize",
 	"sap/ui/core/Core",
-	"sap/ui/Device",
-	"sap/ui/core/Lib"
-], function(library, capitalize, Core, Device, Lib) {
+	"sap/ui/Device"
+], function (library, capitalize, Core, Device) {
 	"use strict";
 
 	// shortcut for sap.m.CarouselArrowsPlacement
@@ -17,7 +16,7 @@ sap.ui.define([
 	// shortcut for sap.m.PlacementType
 	var PlacementType = library.PlacementType;
 
-	var oResourceBundle = Lib.getResourceBundleFor("sap.m");
+	var oResourceBundle = Core.getLibraryResourceBundle("sap.m");
 
 	/**
 	 * Carousel renderer.

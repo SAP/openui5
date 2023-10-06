@@ -23,10 +23,8 @@ sap.ui.define([
 	"sap/ui/layout/BlockLayoutRow",
 	"sap/ui/layout/form/SimpleForm",
 	"sap/ui/layout/library",
-	"sap/ui/core/Element",
-	// provides form layout
-	"sap/ui/layout/form/ResponsiveGridLayout"
-], function(App, Button, CheckBox, Input, Label, mobileLibrary, Link, List, Page, Select, SplitApp, StandardListItem, Text, TextArea, oCore, Icon, Item, Title, Device, BlockLayout, BlockLayoutCell, BlockLayoutRow, SimpleForm, layoutLibrary, Element) {
+	"sap/ui/layout/form/ResponsiveGridLayout" // provides form layout
+], function(App, Button, CheckBox, Input, Label, mobileLibrary, Link, List, Page, Select, SplitApp, StandardListItem, Text, TextArea, oCore, Icon, Item, Title, Device, BlockLayout, BlockLayoutCell, BlockLayoutRow, SimpleForm, layoutLibrary) {
 	"use strict";
 
 	var BackgroundDesign = layoutLibrary.BackgroundDesign;
@@ -199,7 +197,7 @@ sap.ui.define([
 			title: sBackground + " BlockLayout",
 			showNavButton: Device.system.phone,
 			navButtonPress: function () {
-				Element.registry.get("block-layout-demo").backDetail();
+				oCore.byId("block-layout-demo").backDetail();
 			},
 			content: [oBlockLayout]
 		});
@@ -211,7 +209,7 @@ sap.ui.define([
 			title: sBackground + " BlockLayout",
 			type: "Active",
 			press: function () {
-				Element.registry.get("block-layout-demo").toDetail("area-" + sBackground.toLowerCase());
+				oCore.byId("block-layout-demo").toDetail("area-" + sBackground.toLowerCase());
 			}
 		});
 	};

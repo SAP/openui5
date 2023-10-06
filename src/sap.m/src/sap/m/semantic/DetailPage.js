@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define(["sap/m/semantic/ShareMenuPage", "sap/m/semantic/SemanticConfiguration", "sap/m/semantic/SemanticPageRenderer", "sap/m/library", "sap/ui/core/Lib"], function(ShareMenuPage, SemanticConfiguration, SemanticPageRenderer, library, Lib) {
+sap.ui.define(["sap/m/semantic/ShareMenuPage", "sap/m/semantic/SemanticConfiguration", "sap/m/semantic/SemanticPageRenderer", "sap/m/library"], function(ShareMenuPage, SemanticConfiguration, SemanticPageRenderer, library) {
 	"use strict";
 
 
@@ -212,7 +212,7 @@ sap.ui.define(["sap/m/semantic/ShareMenuPage", "sap/m/semantic/SemanticConfigura
 	DetailPage.prototype.init = function () {
 
 		ShareMenuPage.prototype.init.call(this);
-		this._getPage().getLandmarkInfo().setRootLabel(Lib.getResourceBundleFor("sap.m").getText("SEMANTIC_DETAIL_PAGE_TITLE"));
+		this._getPage().getLandmarkInfo().setRootLabel(sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("SEMANTIC_DETAIL_PAGE_TITLE"));
 	};
 
 	/*

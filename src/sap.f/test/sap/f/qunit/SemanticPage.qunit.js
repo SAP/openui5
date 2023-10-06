@@ -15,10 +15,9 @@ sap.ui.define([
 	"sap/m/Text",
 	"sap/m/VBox",
 	"sap/ui/Device",
-	"sap/f/semantic/SemanticPage",
-	"sap/ui/core/Lib"
+	"sap/f/semantic/SemanticPage"
 ],
-function(
+function (
 	SemanticUtil,
 	Button,
 	$,
@@ -34,8 +33,7 @@ function(
 	Text,
 	VBox,
 	Device,
-	SemanticPage,
-	Lib
+	SemanticPage
 ) {
 	"use strict";
 
@@ -1231,7 +1229,7 @@ function(
 		// Arrange
 		var oSemanticPage = oFactory.getSemanticPage(),
 			oDynamicPage = oSemanticPage._getPage(),
-			sExpectedRoleDescription = Lib.getResourceBundleFor("sap.f")
+			sExpectedRoleDescription = Core.getLibraryResourceBundle("sap.f")
 				.getText(oSemanticPage.constructor.ARIA_ROLE_DESCRIPTION);
 
 		// Act

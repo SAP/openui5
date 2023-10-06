@@ -1,7 +1,7 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(["sap/ui/base/ManagedObject", "sap/ui/core/Element"], function(ManagedObject, Element) {
+sap.ui.define(["sap/ui/base/ManagedObject"], function(ManagedObject) {
 	"use strict";
 
 	/**
@@ -52,7 +52,7 @@ sap.ui.define(["sap/ui/base/ManagedObject", "sap/ui/core/Element"], function(Man
 	 */
 	BaseCommand.prototype.getElement = function() {
 		var sId = this.getAssociation("element");
-		return Element.registry.get(sId);
+		return sap.ui.getCore().byId(sId);
 	};
 
 	/**

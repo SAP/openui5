@@ -3,13 +3,12 @@
  */
 
 sap.ui.define([
-	"sap/ui/core/mvc/Controller",
-	"sap/ui/model/json/JSONModel",
-	"sap/ui/core/Fragment",
-	"sap/ui/model/resource/ResourceModel",
-	"sap/ui/core/Core",
-	"sap/ui/core/Element"
-], function(Controller, JSONModel, Fragment, ResourceModel, Core, Element) {
+		"sap/ui/core/mvc/Controller",
+		"sap/ui/model/json/JSONModel",
+		"sap/ui/core/Fragment",
+		"sap/ui/model/resource/ResourceModel",
+		"sap/ui/core/Core"
+	], function (Controller, JSONModel, Fragment, ResourceModel, Core) {
 		"use strict";
 
 		return Controller.extend("sap.ui.documentation.sdk.cookieSettingsDialog.controller.CookieSettingsDialog", {
@@ -58,7 +57,7 @@ sap.ui.define([
 
 
 				oDialog.attachAfterOpen(function() {
-					Element.registry.get("btnSetPreferences").focus();
+					Core.byId("btnSetPreferences").focus();
 				});
 
 
@@ -89,7 +88,7 @@ sap.ui.define([
 			},
 
 			onSaveCookies: function() {
-				var bHasConsentRequiredCookies = Element.registry.get("requiredCookiesSwitch").getState();
+				var bHasConsentRequiredCookies = Core.byId("requiredCookiesSwitch").getState();
 
 				this._saveCookiePreference(this._oCookieNames.ALLOW_REQUIRED_COOKIES, bHasConsentRequiredCookies);
 
@@ -100,7 +99,7 @@ sap.ui.define([
 				this._oModel.setProperty("/showCookieDetails", true);
 				this._oCookieSettingsDialog.addStyleClass("cookiesDetailedView");
 
-				this._focusButton(Element.registry.get("btnSavePreferences"));
+				this._focusButton(Core.byId("btnSavePreferences"));
 			},
 
 			onCancelPress: function() {
@@ -119,12 +118,12 @@ sap.ui.define([
 				this._oModel.setProperty("/showCookieDetails", false);
 				this._oCookieSettingsDialog.removeStyleClass("cookiesDetailedView");
 
-				this._focusButton(Element.registry.get("btnSetPreferences"));
+				this._focusButton(Core.byId("btnSetPreferences"));
 			},
 
 			onCancelEditCookies: function() {
 				this._oCookieSettingsDialog.close();
-				Element.registry.get("requiredCookiesSwitch").setState(this._oCookiesUtil.getCookieValue(this._oCookieNames.ALLOW_REQUIRED_COOKIES) === "1");
+				Core.byId("requiredCookiesSwitch").setState(this._oCookiesUtil.getCookieValue(this._oCookieNames.ALLOW_REQUIRED_COOKIES) === "1");
 			},
 
 			_saveCookiePreference: function(sCookieName, bEnable) {

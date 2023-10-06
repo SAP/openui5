@@ -9,9 +9,9 @@ sap.ui.define([
 	"sap/ui/model/ParseException",
 	"sap/ui/model/ValidateException",
 	"sap/ui/model/odata/ODataUtils",
-	"sap/ui/model/odata/type/ODataType",
-	"sap/ui/core/Lib"
-], function(Log, NumberFormat, FormatException, ParseException, ValidateException, BaseODataUtils, ODataType, Lib) {
+	"sap/ui/model/odata/type/ODataType"
+], function (Log, NumberFormat, FormatException, ParseException, ValidateException, BaseODataUtils,
+		ODataType) {
 	"use strict";
 
 	var rDecimal = /^[-+]?(\d+)(?:\.(\d+))?$/,
@@ -40,7 +40,7 @@ sap.ui.define([
 	 *   the message
 	 */
 	function getText(sKey, aParams) {
-		return Lib.getResourceBundleFor("sap.ui.core").getText(sKey, aParams);
+		return sap.ui.getCore().getLibraryResourceBundle().getText(sKey, aParams);
 	}
 
 	/**
@@ -320,7 +320,7 @@ sap.ui.define([
 			case "string":
 				sResult = this.getFormat().parse(vValue);
 				if (!sResult) {
-					throw new ParseException(Lib.getResourceBundleFor("sap.ui.core")
+					throw new ParseException(sap.ui.getCore().getLibraryResourceBundle()
 						.getText("EnterNumber"));
 				}
 				// NumberFormat.parse does not remove trailing decimal zeroes and separator

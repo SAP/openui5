@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(["sap/ui/core/Configuration", "sap/ui/base/Object", "sap/ui/core/Lib"],
-	function(Configuration, BaseObject, Lib) {
+sap.ui.define(["sap/ui/core/Configuration", "sap/ui/base/Object"],
+	function(Configuration, BaseObject) {
 	"use strict";
 
 
@@ -27,7 +27,7 @@ sap.ui.define(["sap/ui/core/Configuration", "sap/ui/base/Object", "sap/ui/core/L
 		var sLanguage = Configuration.getLocale().getLanguage();
 		var sTooltip = oHead.getTooltip_AsString();
 		var sId = oHead.getId();
-		var oRB = Lib.getResourceBundleFor("sap.ui.unified");
+		var oRB = sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified");
 		var sLabelNext = oRB.getText("CALENDAR_BTN_NEXT");
 		var sLabelPrev = oRB.getText("CALENDAR_BTN_PREV");
 		var sLabelToday = oRB.getText("CALENDAR_BTN_TODAY");

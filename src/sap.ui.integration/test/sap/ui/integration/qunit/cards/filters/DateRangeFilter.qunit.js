@@ -8,9 +8,8 @@ sap.ui.define([
 	"sap/ui/integration/cards/filters/DateRangeFilter",
 	"sap/ui/integration/widgets/Card",
 	"sap/ui/qunit/QUnitUtils",
-	"sap/ui/core/date/UI5Date",
-	"sap/ui/core/Element"
-], function(
+	"sap/ui/core/date/UI5Date"
+], function (
 	DynamicDateRange,
 	Core,
 	coreLibrary,
@@ -18,8 +17,7 @@ sap.ui.define([
 	DateRangeFilter,
 	Card,
 	QUnitUtils,
-	UI5Date,
-	Element
+	UI5Date
 ) {
 	"use strict";
 
@@ -443,7 +441,7 @@ sap.ui.define([
 		var oDRF = new DateRangeFilter({
 			config: oConfig
 		});
-		var oLabel = Element.registry.get(oDRF.getField().getAriaLabelledBy()[0]);
+		var oLabel = Core.byId(oDRF.getField().getAriaLabelledBy()[0]);
 
 		// Assert
 		assert.ok(oLabel.getDomRef(), "Hidden label is created and added");

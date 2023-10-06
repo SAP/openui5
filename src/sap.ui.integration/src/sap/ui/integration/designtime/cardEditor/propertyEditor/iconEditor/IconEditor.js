@@ -12,9 +12,8 @@ sap.ui.define([
 	"sap/base/util/isPlainObject",
 	"sap/base/util/isEmptyObject",
 	"sap/base/util/restricted/_omit",
-	"sap/ui/core/IconPool",
-	"sap/ui/core/Element"
-], function(
+	"sap/ui/core/IconPool"
+], function (
 	BasePropertyEditor,
 	isValidBindingString,
 	Fragment,
@@ -25,8 +24,7 @@ sap.ui.define([
 	isPlainObject,
 	isEmptyObject,
 	_omit,
-	IconPool,
-	Element
+	IconPool
 ) {
 	"use strict";
 
@@ -400,7 +398,7 @@ sap.ui.define([
 	 * @private
 	 */
 	IconEditor.prototype._handleColorPickerChange = function (oEvent) {
-		var oInput = Element.registry.get(this._inputId);
+		var oInput = sap.ui.getCore().byId(this._inputId);
 		oInput.setValue(oEvent.getParameter("hex"));
 		oInput.setValueState("None");
 		this._inputId = "";

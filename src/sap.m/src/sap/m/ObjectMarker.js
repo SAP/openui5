@@ -14,8 +14,7 @@ sap.ui.define([
 	"sap/m/Text",
 	"sap/m/LinkRenderer",
 	"sap/m/Link",
-	"./ObjectMarkerRenderer",
-	"sap/ui/core/Lib"
+	"./ObjectMarkerRenderer"
 ], function(
 	Control,
 	Renderer,
@@ -27,8 +26,7 @@ sap.ui.define([
 	Text,
 	LinkRenderer,
 	Link,
-	ObjectMarkerRenderer,
-	Lib
+	ObjectMarkerRenderer
 ) {
 	"use strict";
 
@@ -452,7 +450,7 @@ sap.ui.define([
 	 * @private
 	 */
 	ObjectMarker.prototype._getMarkerText = function (oType, sType, sAdditionalInfo) {
-		var oRB = Lib.getResourceBundleFor("sap.m");
+		var oRB = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 
 		switch (sType) {
 			case "LockedBy":

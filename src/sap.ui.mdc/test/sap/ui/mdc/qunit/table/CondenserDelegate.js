@@ -3,14 +3,18 @@
  */
 
 sap.ui.define([
-    "sap/ui/mdc/TableDelegate",
+	"sap/ui/mdc/TableDelegate",
     "delegates/TableDelegateUtils",
     "sap/ui/mdc/table/Column",
     "sap/ui/core/util/reflection/JsControlTreeModifier",
     "sap/ui/fl/Utils",
-    "sap/ui/mdc/util/IdentifierUtil",
-    "sap/ui/core/Element"
-], function(TableDelegate, TableDelegateUtils, Column, JsControlTreeModifier, FlUtils, IdentifierUtil, Element) {
+    "sap/ui/mdc/util/IdentifierUtil"
+], function(TableDelegate,
+    TableDelegateUtils,
+    Column,
+    JsControlTreeModifier,
+    FlUtils,
+    IdentifierUtil) {
     "use strict";
 
     const CondenserTableDelegate = Object.assign({}, TableDelegate);
@@ -47,7 +51,7 @@ sap.ui.define([
 		let sViewId = mPropertyBag ? mPropertyBag.viewId : null;
 
 		let oColumn;
-		const oExistingColumn = Element.registry.get(sId);
+		const oExistingColumn = sap.ui.getCore().byId(sId);
 
 		if (oExistingColumn) {
 			return Promise.resolve(oExistingColumn);

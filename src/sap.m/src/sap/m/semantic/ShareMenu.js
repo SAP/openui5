@@ -20,10 +20,16 @@ sap.ui.define([
 	'sap/m/OverflowToolbarLayoutData',
 	'sap/ui/core/IconPool',
 	'sap/m/OverflowToolbarButton',
-	"sap/base/Log",
-	"sap/ui/core/Lib"
-],
-	function(BaseObject, ManagedObjectObserver, library, coreLibrary, Button, OverflowToolbarLayoutData, IconPool, OverflowToolbarButton, Log, Lib) {
+	"sap/base/Log"],
+	function(BaseObject,
+			 ManagedObjectObserver,
+			 library,
+			 coreLibrary,
+			 Button,
+			 OverflowToolbarLayoutData,
+			 IconPool,
+			 OverflowToolbarButton,
+			 Log) {
 	"use strict";
 
 	// shortcut for sap.m.OverflowToolbarPriority
@@ -399,7 +405,7 @@ sap.ui.define([
 			this._oShareMenuBtn = new Button(this._oActionSheet.getParent().getId() + "-shareButton", {
 				ariaHasPopup: AriaHasPopup.Menu,
 				icon: IconPool.getIconURI("action"),
-				tooltip: Lib.getResourceBundleFor("sap.m").getText("SEMANTIC_CONTROL_ACTION_SHARE"),
+				tooltip: sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("SEMANTIC_CONTROL_ACTION_SHARE"),
 				layoutData: new OverflowToolbarLayoutData({
 					priority: OverflowToolbarPriority.NeverOverflow
 				}),

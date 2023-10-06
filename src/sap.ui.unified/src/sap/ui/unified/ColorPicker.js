@@ -21,7 +21,6 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Configuration",
-	"sap/ui/core/Lib",
 	"sap/ui/Global"
 ], function(
 	Library,
@@ -40,8 +39,7 @@ sap.ui.define([
 	ColorPickerHelper,
 	Log,
 	jQuery,
-	Configuration,
-	Lib
+	Configuration
 ) {
 	"use strict";
 
@@ -348,7 +346,7 @@ sap.ui.define([
 		// get the background image of the slider
 		sBgSrc = sap.ui.require.toUrl("sap/ui/unified/img/ColorPicker/Alphaslider_BG.png"),
 		// get resource bundle
-		oRb = Lib.getResourceBundleFor("sap.ui.unified"),
+		oRb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified"),
 		// Constants object
 		CONSTANTS = {};
 

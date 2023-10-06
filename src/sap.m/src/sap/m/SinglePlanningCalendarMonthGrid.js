@@ -29,11 +29,9 @@ sap.ui.define([
 	"sap/ui/core/date/CalendarUtils",
 	"sap/ui/core/Configuration",
 	"sap/ui/core/date/UI5Date",
-	"sap/ui/unified/DateRange",
-	"sap/ui/core/Lib",
-	"sap/ui/core/Element"
-],
-	function(
+	"sap/ui/unified/DateRange"
+	],
+	function (
 		Control,
 		DateFormat,
 		CalendarDate,
@@ -59,9 +57,7 @@ sap.ui.define([
 		CalendarDateUtils,
 		Configuration,
 		UI5Date,
-		DateRange,
-		Lib,
-		Element
+		DateRange
 	) {
 		"use strict";
 
@@ -276,7 +272,7 @@ sap.ui.define([
 			this.setStartDate(UI5Date.getInstance());
 			this._configureAppointmentsDragAndDrop();
 
-			this._oUnifiedRB = Lib.getResourceBundleFor("sap.ui.unified");
+			this._oUnifiedRB = sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified");
 		};
 
 		SinglePlanningCalendarMonthGrid.prototype.exit = function() {
@@ -653,8 +649,8 @@ sap.ui.define([
 		};
 
 		SinglePlanningCalendarMonthGrid.prototype._getMoreLink = function(iAppointmentsCount, oCalendarDate, iCellIndex) {
-			var sMore = Lib
-					.getResourceBundleFor("sap.m")
+			var sMore = Core
+					.getLibraryResourceBundle("sap.m")
 					.getText("SPC_MORE_LINK", [iAppointmentsCount.toString()]),
 				oLink = new Link({
 					accessibleRole: LinkAccessibleRole.Button,
@@ -1049,22 +1045,22 @@ sap.ui.define([
 		});
 
 		SinglePlanningCalendarMonthGrid.prototype._getCellStartInfo = function(oStartDate) {
-			var sStartTime = Lib
-				.getResourceBundleFor("sap.ui.unified")
+			var sStartTime = Core
+				.getLibraryResourceBundle("sap.ui.unified")
 				.getText("CALENDAR_START_TIME");
 
 				return sStartTime + ": " + this._oFormatAriaFullDayCell.format(oStartDate) + "; ";
 		};
 
 		SinglePlanningCalendarMonthGrid.prototype._getAppointmentAnnouncementInfo = function(oAppointment) {
-			var oUnifiedRB = Lib.getResourceBundleFor("sap.ui.unified"),
+			var oUnifiedRB = Core.getLibraryResourceBundle("sap.ui.unified"),
 				sStartTime = oUnifiedRB.getText("CALENDAR_START_TIME"),
 				sEndTime = oUnifiedRB.getText("CALENDAR_END_TIME"),
 				sFormattedStartDate = this._oFormatAriaApp.format(oAppointment.getStartDate()),
 				sFormattedEndDate = this._oFormatAriaApp.format(oAppointment.getEndDate()),
 				sAppInfo = sStartTime + ": " + sFormattedStartDate + "; " + sEndTime + ": " + sFormattedEndDate;
 
-			return sAppInfo + "; " + PlanningCalendarLegend.findLegendItemForItem(Element.registry.get(this._sLegendId), oAppointment);
+			return sAppInfo + "; " + PlanningCalendarLegend.findLegendItemForItem(Core.byId(this._sLegendId), oAppointment);
 		};
 
 		SinglePlanningCalendarMonthGrid.prototype._getMaxAppointments = function() {

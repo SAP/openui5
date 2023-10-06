@@ -2,14 +2,12 @@
 sap.ui.define([
 	"sap/ui/core/Core",
 	"./DynamicPageUtil",
-	"sap/f/DynamicPage",
-	"sap/ui/core/Element"
+	"sap/f/DynamicPage"
 ],
-	function(
+	function (
 		Core,
 		DynamicPageUtil,
-		DynamicPage,
-		Element
+		DynamicPage
 	) {
 		"use strict";
 
@@ -534,7 +532,7 @@ sap.ui.define([
 					"when we have StickySubheaderProvider.");
 
 			// Act - Destroy the StickySubheaderProvider
-			Element.registry.get(this.oDynamicPage.getStickySubheaderProvider()).destroy();
+			Core.byId(this.oDynamicPage.getStickySubheaderProvider()).destroy();
 			oUtil.renderObject(this.oDynamicPage);
 
 			// Assert

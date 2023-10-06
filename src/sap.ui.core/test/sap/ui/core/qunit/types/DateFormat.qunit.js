@@ -9,10 +9,17 @@ sap.ui.define([
 	"sap/ui/core/date/UI5Date",
 	"sap/ui/core/library",
 	"sap/ui/core/Configuration",
+	"sap/ui/core/Supportability",
 	"sap/ui/core/date/CalendarWeekNumbering",
-	"sap/ui/test/TestUtils"
+	"sap/ui/test/TestUtils",
+	// load all required calendars in advance
+	"sap/ui/core/date/Buddhist",
+	"sap/ui/core/date/Gregorian",
+	"sap/ui/core/date/Islamic",
+	"sap/ui/core/date/Japanese",
+	"sap/ui/core/date/Persian"
 ], function (Log, extend, DateFormat, Locale, LocaleData, UniversalDate, UI5Date, library, Configuration,
-		CalendarWeekNumbering, TestUtils) {
+	Supportability, CalendarWeekNumbering, TestUtils) {
 	"use strict";
 
 	// shortcut for sap.ui.core.CalendarType
@@ -2511,7 +2518,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 		QUnit.test("origin info", function (assert) {
-			var oOriginInfoStub = this.stub(Configuration, "getOriginInfo").returns(true);
+			var oOriginInfoStub = this.stub(Supportability, "collectOriginInfo").returns(true);
 			var oOriginDate = DateFormat.getInstance(), sValue = oOriginDate.format(oDateTime), oInfo = sValue.originInfo;
 			assert.strictEqual(oInfo.source, "Common Locale Data Repository", "Origin Info: source");
 			assert.strictEqual(oInfo.locale, "en-US", "Origin Info: locale");

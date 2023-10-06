@@ -5,13 +5,11 @@
 sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/core/StaticArea",
-	"sap/ui/fl/Utils",
-	"sap/ui/core/Element"
+	"sap/ui/fl/Utils"
 ], function(
 	Core,
 	StaticArea,
-	Utils,
-	Element
+	Utils
 ) {
 	"use strict";
 
@@ -81,7 +79,7 @@ sap.ui.define([
 				aVMControlIds = getVariantManagementControlIds(oControl, bUseStaticArea);
 			}
 			var aAssociatedControlIds = aVMControlIds.reduce(function(aCurrentControlIds, sVMControlId) {
-				var oVMControl = Element.registry.get(sVMControlId);
+				var oVMControl = Core.byId(sVMControlId);
 				// there could be additional VMControl Ids that are not yet available
 				if (oVMControl) {
 					var aForControls = oVMControl.getFor();

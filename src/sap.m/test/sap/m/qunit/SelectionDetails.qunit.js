@@ -20,31 +20,10 @@ sap.ui.define([
 	"sap/ui/Device",
 	"sap/ui/base/ManagedObject",
 	"sap/ui/core/Control",
-	"sap/ui/core/Core",
-	"sap/ui/core/Element"
+	"sap/ui/core/Core"
 ], function(
-	jQuery,
-	NavContainer,
-	ResponsivePopover,
-	Page,
-	Toolbar,
-	OverflowToolbar,
-	ToolbarSpacer,
-	Button,
-	List,
-	ListBase,
-	StandardListItem,
-	FixFlex,
-	ScrollContainer,
-	Title,
-	SelectionDetails,
-	Item,
-	SelectionDetailsItem,
-	Device,
-	ManagedObject,
-	Control,
-	oCore,
-	Element
+	jQuery, NavContainer, ResponsivePopover, Page, Toolbar, OverflowToolbar, ToolbarSpacer, Button, List, ListBase, StandardListItem,
+	FixFlex, ScrollContainer, Title, SelectionDetails, Item, SelectionDetailsItem, Device, ManagedObject, Control, oCore
 ) {
 	"use strict";
 
@@ -778,7 +757,7 @@ sap.ui.define([
 
 		// Act
 		this.oSelectionDetails._handlePressLazy.apply(this.oSelectionDetails, aHandlePressLazyArgs);
-		var oList = Element.registry.get(this.oSelectionDetails.getId() + "-list");
+		var oList = oCore.byId(this.oSelectionDetails.getId() + "-list");
 
 		//Assert
 		assert.equal(oList.getAggregation("items").length, 1, "One list item has been added to the list");
@@ -793,7 +772,7 @@ sap.ui.define([
 		this.oSelectionDetails._handlePressLazy.apply(this.oSelectionDetails, aHandlePressLazyArgs);
 
 		//Assert
-		var oButton = Element.registry.get(this.oSelectionDetails.getId() + "-action-0");
+		var oButton = oCore.byId(this.oSelectionDetails.getId() + "-action-0");
 		assert.equal(oButton.getText(), sText, "Button has correct text");
 		assert.equal(oButton.getEnabled(), true, "Button has correct text");
 	});
@@ -806,7 +785,7 @@ sap.ui.define([
 		this.oSelectionDetails.addItem(oSelectionDetailsItem);
 		var oSpy = sinon.spy(this.oSelectionDetails, "_onActionPress");
 		this.oSelectionDetails._handlePressLazy.apply(this.oSelectionDetails, aHandlePressLazyArgs);
-		var oButton = Element.registry.get(oSelectionDetailsItem.getId() + "-action-0");
+		var oButton = oCore.byId(oSelectionDetailsItem.getId() + "-action-0");
 
 		// Act
 		this.oSelectionDetails._handlePressLazy.apply(this.oSelectionDetails, aHandlePressLazyArgs);
@@ -834,7 +813,7 @@ sap.ui.define([
 		// Act
 		this.oSelectionDetails.removeItem(oSelectionDetailsItem1);
 		this.oSelectionDetails._handlePressLazy.apply(this.oSelectionDetails, aHandlePressLazyArgs);
-		oButton = Element.registry.get(this.oSelectionDetails.getAggregation("items")[0].getId() + "-action-0");
+		oButton = oCore.byId(this.oSelectionDetails.getAggregation("items")[0].getId() + "-action-0");
 		oButton.firePress();
 
 		//Assert
@@ -851,7 +830,7 @@ sap.ui.define([
 		var oAction = new Item();
 		this.oSelectionDetails.addAction(oAction);
 		this.oSelectionDetails._handlePressLazy.apply(this.oSelectionDetails, aHandlePressLazyArgs);
-		var oButton = Element.registry.get(this.oSelectionDetails.getId() + "-action-0");
+		var oButton = oCore.byId(this.oSelectionDetails.getId() + "-action-0");
 		var oSpy = sinon.spy(this.oSelectionDetails, "fireActionPress");
 
 		// Act
@@ -886,7 +865,7 @@ sap.ui.define([
 		this.oSelectionDetails._handlePressLazy.apply(this.oSelectionDetails, aHandlePressLazyArgs);
 
 		// Assert
-		assert.equal(Element.registry.get(this.oSelectionDetails.getId() + "-actionGroup-0").getMetadata().getName(), "sap.m.StandardListItem", "The created item has the correct class.");
+		assert.equal(oCore.byId(this.oSelectionDetails.getId() + "-actionGroup-0").getMetadata().getName(), "sap.m.StandardListItem", "The created item has the correct class.");
 	});
 
 	QUnit.test("Press on the StandardListItem triggers action press event", function(assert) {
@@ -897,7 +876,7 @@ sap.ui.define([
 		this.oSelectionDetails.addItem(oSelectionDetailsItem);
 
 		this.oSelectionDetails._handlePressLazy.apply(this.oSelectionDetails, aHandlePressLazyArgs);
-		var oStandardListItem = Element.registry.get(this.oSelectionDetails.getId() + "-actionGroup-0");
+		var oStandardListItem = oCore.byId(this.oSelectionDetails.getId() + "-actionGroup-0");
 		var oSpy = sinon.spy(this.oSelectionDetails, "fireActionPress");
 
 		// Act

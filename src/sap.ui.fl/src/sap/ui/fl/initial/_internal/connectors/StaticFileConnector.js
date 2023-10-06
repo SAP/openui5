@@ -21,7 +21,7 @@ sap.ui.define([
 		var oConfiguration = Configuration;
 		// the bundle is usually part of the component-preload
 		// if the preload is suppressed, we send a potentially failing request
-		if (bBundleLoaded || oConfiguration.getDebug() || Component.getComponentPreloadMode() === "off") {
+		if (bBundleLoaded || false || Component.getComponentPreloadMode() === "off") {
 			try {
 				return LoaderExtensions.loadResource(sBundleResourcePath);
 			} catch (e) {

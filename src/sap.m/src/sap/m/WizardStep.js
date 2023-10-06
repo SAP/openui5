@@ -10,11 +10,9 @@ sap.ui.define([
 	"./Button",
 	"./TitlePropagationSupport",
 	"sap/base/Log",
-	"sap/ui/core/library",
-	"sap/ui/core/Lib",
-	"sap/ui/core/Element"
+	"sap/ui/core/library"
 ],
-	function(library, Control, InvisibleText, WizardStepRenderer, Button, TitlePropagationSupport, Log, coreLibrary, Lib, Element) {
+	function(library, Control, InvisibleText, WizardStepRenderer, Button, TitlePropagationSupport, Log, coreLibrary) {
 
 	"use strict";
 
@@ -141,7 +139,7 @@ sap.ui.define([
 	TitlePropagationSupport.call(WizardStep.prototype, "content", function () {return this.getId() + "-title";});
 
 	WizardStep.prototype.init = function () {
-		this._oResourceBundle = Lib.getResourceBundleFor("sap.m");
+		this._oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 		this._oNumberInvisibleText = new InvisibleText({id: this.getId() + "-NumberedTitle"}).toStatic();
 
 		this._createNextButton();
@@ -263,11 +261,11 @@ sap.ui.define([
 
 	WizardStep.prototype._getNextStepReference = function () {
 		if (this.getNextStep() !== null) {
-			return Element.registry.get(this.getNextStep());
+			return sap.ui.getCore().byId(this.getNextStep());
 		}
 
 		if (this.getSubsequentSteps().length === 1) {
-			return Element.registry.get(this.getSubsequentSteps()[0]);
+			return sap.ui.getCore().byId(this.getSubsequentSteps()[0]);
 		}
 
 		return null;

@@ -12,8 +12,7 @@ sap.ui.define([
 	"sap/ui/fl/util/IFrame",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
-	"sap/ui/rta/plugin/iframe/urlCleaner",
-	"sap/ui/core/Element"
+	"sap/ui/rta/plugin/iframe/urlCleaner"
 ], function(
 	Log,
 	Popover,
@@ -25,8 +24,7 @@ sap.ui.define([
 	IFrame,
 	Filter,
 	FilterOperator,
-	urlCleaner,
-	Element
+	urlCleaner
 ) {
 	"use strict";
 
@@ -90,9 +88,9 @@ sap.ui.define([
 			if (!isValidUrl(sURL)) {
 				return;
 			}
-			var oIFrame = Element.registry.get("sapUiRtaAddIFrameDialog_PreviewFrame");
+			var oIFrame = sap.ui.getCore().byId("sapUiRtaAddIFrameDialog_PreviewFrame");
 			// enable/disable expanding the Panel
-			var oPanel = Element.registry.get("sapUiRtaAddIFrameDialog_PreviewLinkPanel");
+			var oPanel = sap.ui.getCore().byId("sapUiRtaAddIFrameDialog_PreviewLinkPanel");
 			var oPanelButton = oPanel.getDependents()[0];
 			if (sURL) {
 				oPanelButton.setEnabled(true);
@@ -128,7 +126,7 @@ sap.ui.define([
 		 */
 		onLiveChange(oEvent) {
 			var oFilter = new Filter("label", FilterOperator.Contains, oEvent.getParameter("newValue"));
-			var oBinding = Element.registry.get("sapUiRtaAddIFrameDialog_ParameterTable").getBinding("items");
+			var oBinding = sap.ui.getCore().byId("sapUiRtaAddIFrameDialog_ParameterTable").getBinding("items");
 			oBinding.filter([oFilter]);
 		},
 
@@ -188,7 +186,7 @@ sap.ui.define([
 
 		onUrlChange() {
 			var sUrl = this._buildPreviewURL(this._buildReturnedURL());
-			var oUrlInput = Element.registry.get("sapUiRtaAddIFrameDialog_EditUrlTA");
+			var oUrlInput = sap.ui.getCore().byId("sapUiRtaAddIFrameDialog_EditUrlTA");
 			if (isValidUrl(sUrl)) {
 				oUrlInput.setValueState("None");
 			} else {
@@ -249,7 +247,7 @@ sap.ui.define([
 		 * @private
 		 */
 		_close(mSettings) {
-			var oAddIFrameDialog = Element.registry.get("sapUiRtaAddIFrameDialog");
+			var oAddIFrameDialog = sap.ui.getCore().byId("sapUiRtaAddIFrameDialog");
 			this._mSettings = mSettings;
 			oAddIFrameDialog.close();
 		},
@@ -347,7 +345,7 @@ sap.ui.define([
 			var oData = this._oJSONModel.getData();
 			_aNumericInputFields.some(function(sFieldName) {
 				if (oData[sFieldName].valueState === ValueState.Error) {
-					var oElement = Element.registry.get(oData[sFieldName].id);
+					var oElement = sap.ui.getCore().byId(oData[sFieldName].id);
 					oElement.focus();
 					return true;
 				}

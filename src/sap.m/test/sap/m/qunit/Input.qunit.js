@@ -33,10 +33,7 @@ sap.ui.define([
 	"sap/m/FormattedText",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Core",
-	"sap/ui/core/Element",
-	"sap/ui/core/Lib",
-	// provides jQuery.fn.zIndex
-	"sap/ui/dom/jquery/zIndex"
+	"sap/ui/dom/jquery/zIndex" // provides jQuery.fn.zIndex
 ], function(
 	qutils,
 	createAndAppendDiv,
@@ -70,9 +67,7 @@ sap.ui.define([
 	FilterOperator,
 	FormattedText,
 	jQuery,
-	oCore,
-	Element,
-	Lib
+	oCore
 ) {
 	"use strict";
 
@@ -145,12 +140,12 @@ sap.ui.define([
 
 	QUnit.module("Basic", {
 		beforeEach : function() {
-			i1 = Element.registry.get("i1");
-			i2 = Element.registry.get("i2");
-			i3 = Element.registry.get("i3");
-			i4 = Element.registry.get("i4");
-			i5 = Element.registry.get("i5");
-			i8 = Element.registry.get("i8");
+			i1 = oCore.byId("i1");
+			i2 = oCore.byId("i2");
+			i3 = oCore.byId("i3");
+			i4 = oCore.byId("i4");
+			i5 = oCore.byId("i5");
+			i8 = oCore.byId("i8");
 		},
 		afterEach : function() {
 			i1 = null;
@@ -410,7 +405,7 @@ sap.ui.define([
 
 		// Assert
 		assert.strictEqual(oValueHelpIcon.getAttribute("role"), "button", "The value help icon role attribute is correctly set to 'button'");
-		assert.strictEqual(oValueHelpIcon.getAttribute("aria-label"), Lib.getResourceBundleFor("sap.m").getText("INPUT_VALUEHELP_BUTTON"), "The value help icon aria-label attribute is correctly set");
+		assert.strictEqual(oValueHelpIcon.getAttribute("aria-label"), oCore.getLibraryResourceBundle("sap.m").getText("INPUT_VALUEHELP_BUTTON"), "The value help icon aria-label attribute is correctly set");
 
 		// Clean
 		oInput.destroy();
@@ -1295,7 +1290,7 @@ sap.ui.define([
 		assert.ok(oPopup.isOpen(), "Suggestion Popup is open now");
 
 		// set focus into the suggestion popup
-		var oLink = Element.registry.get("link-sInput-0");
+		var oLink = oCore.byId("link-sInput-0");
 		oLink.focus();
 		this.clock.tick(100);
 
@@ -1784,7 +1779,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Tabular Suggestions on Desktop", function(assert){
-		var oMessageBundle = Lib.getResourceBundleFor("sap.m");
+		var oMessageBundle = oCore.getLibraryResourceBundle("sap.m");
 
 		var oInput = new Input({
 			width: "100px",
@@ -2089,7 +2084,7 @@ sap.ui.define([
 				})
 			],
 			suggestionItemSelected: function (oEvent) {
-				var oSelectedRow = Element.registry.get(oEvent.getSource().getSelectedRow());
+				var oSelectedRow = sap.ui.getCore().byId(oEvent.getSource().getSelectedRow());
 
 				if (oSelectedRow) {
 					oInput.getModel().setData([
@@ -2348,7 +2343,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Tabular Suggestion on Phone", function(assert){
-		var oMessageBundle = Lib.getResourceBundleFor("sap.m");
+		var oMessageBundle = oCore.getLibraryResourceBundle("sap.m");
 
 		var oSystem = {
 				desktop: false,
@@ -4174,7 +4169,7 @@ sap.ui.define([
 		//Arrange
 		var oInput = new Input({value: "Value", tooltip: "Tooltip", placeholder: "Placeholder"}),
 			oInfo = oInput.getAccessibilityInfo(),
-			oRb = Lib.getResourceBundleFor("sap.m"),
+			oRb = oCore.getLibraryResourceBundle("sap.m"),
 			sEmptyDescriptionText = oRb.getText("INPUTBASE_VALUE_EMPTY");
 
 		// Assert
@@ -4287,7 +4282,7 @@ sap.ui.define([
 
 	QUnit.test("General - Input suggestions description", function(assert) {
 		// Arrange
-		var oMessageBundle = Lib.getResourceBundleFor("sap.m"),
+		var oMessageBundle = oCore.getLibraryResourceBundle("sap.m"),
 			oInput = new Input({
 				showSuggestion: true,
 				suggestionItems: [
@@ -7456,7 +7451,7 @@ sap.ui.define([
 
 	QUnit.test("If suggestions[tabular] hidden text is empty when there are no suggestions", function (assert) {
 		var oInput = new Input({ showSuggestion: true });
-		var oMessageBundle = Lib.getResourceBundleFor("sap.m");
+		var oMessageBundle = oCore.getLibraryResourceBundle("sap.m");
 
 		oInput.addSuggestionColumn(new Column({ header: new Label({text: "Text"}) }));
 		oInput.addSuggestionRow(new ColumnListItem({
@@ -7498,7 +7493,7 @@ sap.ui.define([
 
 		this.oInput = new Input({showSuggestion: true});
 		this.oLabel = new Label({text: "Label text", labelFor: this.oInput.getId()});
-		this.oRb = Lib.getResourceBundleFor("sap.m");
+		this.oRb = oCore.getLibraryResourceBundle("sap.m");
 
 		this.oInput._openSuggestionsPopover();
 		oCore.applyChanges();

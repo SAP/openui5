@@ -2,17 +2,15 @@
 
 sap.ui.define([
 	"sap/ui/core/Core",
-	"sap/ui/integration/controls/Paginator",
-	"sap/ui/core/Lib"
-], function(
+	"sap/ui/integration/controls/Paginator"
+], function (
 	Core,
-	Paginator,
-	Lib
+	Paginator
 ) {
 	"use strict";
 
 	var DOM_RENDER_LOCATION = "qunit-fixture";
-	var oResourceBundle = Lib.getResourceBundleFor("sap.m");
+	var oResourceBundle = Core.getLibraryResourceBundle("sap.m");
 
 	QUnit.module("API and Rendering", {
 		beforeEach: function () {
@@ -65,7 +63,7 @@ sap.ui.define([
 
 		var $numericIndicator = this.oPaginator.$().find(".sapMCrslNumeric span");
 		assert.strictEqual($numericIndicator.length, 1, "numeric indicator is rendered");
-		assert.strictEqual($numericIndicator.text(), Lib.getResourceBundleFor("sap.m").getText("CAROUSEL_PAGE_INDICATOR_TEXT", [2, 10]), "numeric indicator is correct");
+		assert.strictEqual($numericIndicator.text(), Core.getLibraryResourceBundle("sap.m").getText("CAROUSEL_PAGE_INDICATOR_TEXT", [2, 10]), "numeric indicator is correct");
 	});
 
 	QUnit.module("Interaction", {

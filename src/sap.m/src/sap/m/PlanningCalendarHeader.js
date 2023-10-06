@@ -26,8 +26,7 @@ sap.ui.define([
 	'sap/ui/core/InvisibleText',
 	'sap/ui/core/library',
 	'./PlanningCalendarHeaderRenderer',
-	'sap/ui/core/date/UI5Date',
-	"sap/ui/core/Lib"
+	'sap/ui/core/date/UI5Date'
 ],
 function(
 	Element,
@@ -52,8 +51,7 @@ function(
 	InvisibleText,
 	coreLibrary,
 	PlanningCalendarHeaderRenderer,
-	UI5Date,
-	Lib
+	UI5Date
 ) {
 	"use strict";
 
@@ -280,7 +278,7 @@ function(
 
 		var sOPHId = this.getId(),
 			sNavToolbarId = sOPHId + "-NavToolbar",
-			oRB = Lib.getResourceBundleFor("sap.m"),
+			oRB = sap.ui.getCore().getLibraryResourceBundle("sap.m"),
 			sCalendarType = this.getProperty("_primaryCalendarType"),
 			oPicker,
 			oCalendarPicker,

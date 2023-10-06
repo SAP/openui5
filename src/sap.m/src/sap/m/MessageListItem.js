@@ -9,10 +9,9 @@ sap.ui.define([
 	"./library",
 	'./StandardListItem',
 	'./Link',
-	"./MessageListItemRenderer",
-	"sap/ui/core/Lib"
+	"./MessageListItemRenderer"
 ],
-	function(coreLibrary, InvisibleText, library, StandardListItem, Link, MessageListItemRenderer, Lib) {
+	function (coreLibrary, InvisibleText, library, StandardListItem, Link, MessageListItemRenderer) {
 		"use strict";
 
 		// shortcut for sap.ui.core.MessageType
@@ -80,7 +79,7 @@ sap.ui.define([
 		};
 
 		MessageListItem.prototype._getLinkAriaDescribedBy = function () {
-			var sAccessibilityText = Lib.getResourceBundleFor("sap.m").getText("MESSAGE_VIEW_LINK_FOCUS_TEXT_" + this.getMessageType().toUpperCase());
+			var sAccessibilityText = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("MESSAGE_VIEW_LINK_FOCUS_TEXT_" + this.getMessageType().toUpperCase());
 
 			return new InvisibleText(this.getId() + "-link", {
 				text: sAccessibilityText

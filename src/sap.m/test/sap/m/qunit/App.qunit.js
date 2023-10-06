@@ -5,9 +5,8 @@ sap.ui.define([
 	"sap/m/Page",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/Device",
-	"sap/ui/core/Core",
-	"sap/ui/core/Element"
-], function(createAndAppendDiv, App, Page, jQuery, Device, Core, Element) {
+	"sap/ui/core/Core"
+], function(createAndAppendDiv, App, Page, jQuery, Device, Core) {
 	"use strict";
 
 	createAndAppendDiv("content");
@@ -71,11 +70,11 @@ sap.ui.define([
 	QUnit.test("destroy", function(assert) {
 		app.destroy();
 		assert.equal(document.getElementById("page1"), undefined, "Page 1 should not exist anymore in the DOM");
-		assert.ok(Element.registry.get("page1") === undefined, "Page 1 should not exist anymore as control");
+		assert.ok(Core.byId("page1") === undefined, "Page 1 should not exist anymore as control");
 		assert.equal(document.getElementById("page2"), undefined, "Page 2 should not exist anymore in the DOM");
-		assert.ok(Element.registry.get("page2") === undefined, "Page 2 should not exist anymore as control");
+		assert.ok(Core.byId("page2") === undefined, "Page 2 should not exist anymore as control");
 		assert.equal(document.getElementById("page3"), undefined, "Page 3 should not exist anymore in the DOM");
-		assert.ok(Element.registry.get("page3") === undefined, "Page 3 should not exist anymore as control");
+		assert.ok(Core.byId("page3") === undefined, "Page 3 should not exist anymore as control");
 	});
 
 

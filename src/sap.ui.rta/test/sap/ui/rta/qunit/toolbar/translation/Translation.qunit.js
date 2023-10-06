@@ -11,9 +11,7 @@ sap.ui.define([
 	"sap/ui/fl/write/api/TranslationAPI",
 	"sap/ui/rta/toolbar/Adaptation",
 	"sap/ui/rta/toolbar/translation/Translation",
-	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/core/Element",
-	"sap/ui/core/Lib"
+	"sap/ui/thirdparty/sinon-4"
 ], function(
 	RtaQunitUtils,
 	MessageBox,
@@ -25,26 +23,24 @@ sap.ui.define([
 	TranslationAPI,
 	Adaptation,
 	Translation,
-	sinon,
-	Element,
-	Lib
+	sinon
 ) {
 	"use strict";
 
 	var sandbox = sinon.createSandbox();
 
 	function getDownloadDialogControl(oToolbar, sId) {
-		return Element.registry.get(`${oToolbar.getId()}_download_translation_fragment--${sId}`);
+		return sap.ui.getCore().byId(`${oToolbar.getId()}_download_translation_fragment--${sId}`);
 	}
 
 	function getUploadDialogControl(oToolbar, sId) {
-		return Element.registry.get(`${oToolbar.getId()}_upload_translation_fragment--${sId}`);
+		return sap.ui.getCore().byId(`${oToolbar.getId()}_upload_translation_fragment--${sId}`);
 	}
 
 	QUnit.module("Given a Toolbar with a translation extension", {
 		beforeEach() {
 			this.oToolbar = new Adaptation({
-				textResources: Lib.getResourceBundleFor("sap.ui.rta"),
+				textResources: Core.getLibraryResourceBundle("sap.ui.rta"),
 				rtaInformation: {
 					flexSettings: {
 						layer: Layer.CUSTOMER

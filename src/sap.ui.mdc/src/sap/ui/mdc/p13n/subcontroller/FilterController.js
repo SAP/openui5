@@ -3,15 +3,8 @@
  */
 
 sap.ui.define([
-    'sap/ui/mdc/enums/ProcessingStrategy',
-    'sap/ui/mdc/condition/FilterOperatorUtil',
-    './SelectionController',
-    'sap/ui/mdc/p13n/P13nBuilder',
-    'sap/base/Log',
-    'sap/base/util/merge',
-    'sap/base/util/deepEqual',
-    "sap/ui/core/Lib"
-], function(ProcessingStrategy, FilterOperatorUtil, BaseController, P13nBuilder, Log, merge, deepEqual, Lib) {
+	'sap/ui/mdc/enums/ProcessingStrategy', 'sap/ui/mdc/condition/FilterOperatorUtil', './SelectionController', 'sap/ui/mdc/p13n/P13nBuilder', 'sap/base/Log', 'sap/base/util/merge', 'sap/base/util/deepEqual'
+], function (ProcessingStrategy, FilterOperatorUtil, BaseController, P13nBuilder, Log, merge, deepEqual) {
 	"use strict";
 
     const FilterController = BaseController.extend("sap.ui.mdc.p13n.subcontroller.FilterController", {
@@ -27,8 +20,8 @@ sap.ui.define([
 
     FilterController.prototype.getUISettings = function() {
         return {
-            title: Lib.getResourceBundleFor("sap.ui.mdc").getText("filter.PERSONALIZATION_DIALOG_TITLE"),
-            tabText: Lib.getResourceBundleFor("sap.ui.mdc").getText("p13nDialog.TAB_Filter"),
+            title: sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc").getText("filter.PERSONALIZATION_DIALOG_TITLE"),
+            tabText: sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc").getText("p13nDialog.TAB_Filter"),
             afterClose: function(oEvt) {
                 const oDialog = oEvt.getSource();
                 if (oDialog) {
@@ -116,7 +109,7 @@ sap.ui.define([
             oAdaptationFilterBar.setLiveMode(false);
             oAdaptationFilterBar.setProperty("_useFixedWidth", false);
             oAdaptationFilterBar.getTitle = function() {
-                return Lib.getResourceBundleFor("sap.ui.mdc").getText("filter.PERSONALIZATION_DIALOG_TITLE");
+                return sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc").getText("filter.PERSONALIZATION_DIALOG_TITLE");
             };
             this._oAdaptationFB = oAdaptationFilterBar;
             return oAdaptationFilterBar.createFilterFields().then(function(){

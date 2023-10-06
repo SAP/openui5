@@ -7,15 +7,13 @@ sap.ui.define([
 	"sap/base/security/encodeURL",
 	"sap/ui/core/Core",
 	"sap/ui/fl/Utils",
-	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Lib"
+	"sap/ui/thirdparty/jquery"
 ], function(
 	Log,
 	encodeURL,
 	Core,
 	FlexUtils,
-	jQuery,
-	Lib
+	jQuery
 ) {
 	"use strict";
 
@@ -381,7 +379,7 @@ sap.ui.define([
 	 * @returns {string} Translated text
 	 */
 	Utils.getText = function(sTextKey) {
-		return Lib.getResourceBundleFor("sap.ui.fl").getText(sTextKey);
+		return Core.getLibraryResourceBundle("sap.ui.fl").getText(sTextKey);
 	};
 
 	/**

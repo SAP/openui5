@@ -23,9 +23,7 @@ sap.ui.define([
 	'sap/ui/base/ManagedObjectObserver',
 	"sap/ui/core/date/UI5Date",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/date/CalendarWeekNumbering",
-	"sap/ui/core/Lib",
-	"sap/ui/core/Element"
+	"sap/ui/core/date/CalendarWeekNumbering"
 ],
 function(
 	library,
@@ -47,9 +45,7 @@ function(
 	ManagedObjectObserver,
 	UI5Date,
 	jQuery,
-	CalendarWeekNumbering,
-	Lib,
-	Element
+	CalendarWeekNumbering
 ) {
 	"use strict";
 
@@ -515,7 +511,7 @@ function(
 	SinglePlanningCalendar.prototype.init = function() {
 		var sOPCId = this.getId();
 
-		this._oRB = Lib.getResourceBundleFor("sap.m");
+		this._oRB = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 		this._oDefaultView = new SinglePlanningCalendarWeekView({
 			key: "DEFAULT_INNER_WEEK_VIEW_CREATED_FROM_CONTROL",
 			title: ""
@@ -921,7 +917,7 @@ function(
 	 * @private
 	 */
 	SinglePlanningCalendar.prototype._viewsObserverCallbackFunction = function (oChanges) {
-		Element.registry.get(oChanges.object.getId() + SEGMENTEDBUTTONITEM__SUFFIX).setText(oChanges.current);
+		sap.ui.getCore().byId(oChanges.object.getId() + SEGMENTEDBUTTONITEM__SUFFIX).setText(oChanges.current);
 	};
 
 	/**
@@ -1009,7 +1005,7 @@ function(
 		if (sLegend) {
 			this.getAggregation("_grid")._sLegendId = sLegend;
 			this.getAggregation("_mvgrid")._sLegendId = sLegend;
-			oLegend = Element.registry.get(sLegend);
+			oLegend = sap.ui.getCore().byId(sLegend);
 		}
 
 		if (oLegend) { //destroy of the associated legend should rerender the SPC
@@ -1152,7 +1148,7 @@ function(
 	SinglePlanningCalendar.prototype._getSelectedView = function () {
 		var oSelectedView,
 			aViews = this.getViews(),
-			sCurrentViewKey = Element.registry.get(this.getAssociation("selectedView")).getKey();
+			sCurrentViewKey = sap.ui.getCore().byId(this.getAssociation("selectedView")).getKey();
 
 		for (var i = 0; i < aViews.length; i++) {
 			if (sCurrentViewKey === aViews[i].getKey()) {

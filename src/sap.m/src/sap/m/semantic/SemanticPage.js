@@ -21,8 +21,7 @@ sap.ui.define([
 	'sap/m/library',
 	"./SemanticPageRenderer",
 	"sap/base/Log",
-	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Lib"
+	"sap/ui/thirdparty/jquery"
 ],
 function(
 	SegmentedContainer,
@@ -43,8 +42,7 @@ function(
 	library,
 	SemanticPageRenderer,
 	Log,
-	jQuery,
-	Lib
+	jQuery
 ) {
 	"use strict";
 
@@ -285,7 +283,7 @@ function(
 
 	// Static members
 	SemanticPage._getResourceBundle = function () {
-		return Lib.getResourceBundleFor("sap.m");
+		return sap.ui.getCore().getLibraryResourceBundle("sap.m");
 	};
 
 	SemanticPage.ARIA = {

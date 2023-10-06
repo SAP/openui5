@@ -14,8 +14,7 @@ sap.ui.define([
 	"./Button",
 	"sap/ui/core/date/UI5Date",
 	"./TimePickerInternalsRenderer",
-	"sap/ui/core/Configuration",
-	"sap/ui/core/Lib"
+	"sap/ui/core/Configuration"
 ],
 	function(
 		coreLibrary,
@@ -27,10 +26,9 @@ sap.ui.define([
 		Locale,
 		library,
 		Button,
-		UI5Date,
+        UI5Date,
 		TimePickerInternalsRenderer,
-		Configuration,
-		Lib
+		Configuration
 	) {
 		"use strict";
 
@@ -141,7 +139,7 @@ sap.ui.define([
 				aPeriods = oLocaleData.getDayPeriods("abbreviated"),
 				sDefaultDisplayFormat = oLocaleData.getTimePattern("medium");
 
-			this._oResourceBundle = Lib.getResourceBundleFor("sap.m");
+			this._oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 
 			this._sAM = aPeriods[0];
 			this._sPM = aPeriods[1];

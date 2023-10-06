@@ -9,8 +9,7 @@ sap.ui.define([
 	'sap/ui/core/Popup',
 	'./SliderTooltipContainerRenderer',
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Configuration",
-	"sap/ui/core/Element"
+	"sap/ui/core/Configuration"
 ],
 function(
 	Library,
@@ -19,8 +18,7 @@ function(
 	Popup,
 	SliderTooltipContainerRenderer,
 	jQuery,
-	Configuration,
-	Element
+	Configuration
 ) {
 		"use strict";
 
@@ -324,7 +322,7 @@ function(
 			var aAssociatedTooltips = this.getAssociation("associatedTooltips") || [];
 
 			return aAssociatedTooltips.map(function(sTooltipId) {
-				return Element.registry.get(sTooltipId);
+				return sap.ui.getCore().byId(sTooltipId);
 			});
 		};
 

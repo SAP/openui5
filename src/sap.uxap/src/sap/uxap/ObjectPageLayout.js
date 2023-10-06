@@ -32,9 +32,7 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	"sap/ui/dom/getFirstEditableInput",
 	'sap/ui/dom/units/Rem',
-	"sap/ui/base/Object",
-	"sap/ui/core/Lib",
-	"sap/ui/core/Element"
+	"sap/ui/base/Object"
 ], function(
 	jQuery,
 	ManagedObjectObserver,
@@ -64,9 +62,7 @@ sap.ui.define([
 	KeyCodes,
 	getFirstEditableInput,
 	DomUnitsRem,
-	BaseObject,
-	Lib,
-	Element
+	BaseObject
 ) {
 	"use strict";
 
@@ -631,7 +627,7 @@ sap.ui.define([
 	 * @returns {Object} the resource bundle object
 	 */
 	ObjectPageLayout._getLibraryResourceBundle = function () {
-		return Lib.getResourceBundleFor("sap.uxap");
+		return sap.ui.getCore().getLibraryResourceBundle("sap.uxap");
 	};
 
 	/*************************************************************************************
@@ -1808,7 +1804,7 @@ sap.ui.define([
 
 	ObjectPageLayout.prototype._checkSubSectionVisibilityChange = function () {
 		var bUseIconTabBar = this.getUseIconTabBar(),
-			oSelectedTabSection = bUseIconTabBar && Element.registry.get(this.getSelectedSection()),
+			oSelectedTabSection = bUseIconTabBar && sap.ui.getCore().byId(this.getSelectedSection()),
 			aSections = oSelectedTabSection ? [oSelectedTabSection] : this._getVisibleSections(),
 			oVisibleSubSections = {},
 			bIsVisibleSubSection;
@@ -2266,7 +2262,7 @@ sap.ui.define([
 	};
 
 	ObjectPageLayout.prototype.onAnchorBarTabPress = function (oEvent) {
-		var oSectionBase = Element.registry.get(oEvent.getParameter("sectionBaseId")),
+		var oSectionBase = sap.ui.getCore().byId(oEvent.getParameter("sectionBaseId")),
 			bIsSubSection = oSectionBase instanceof library.ObjectPageSubSection,
 			oSection,
 			oSubSection;
@@ -2942,7 +2938,7 @@ sap.ui.define([
 
 		// we use tabs => check if the section is a subSection of the current tab section
 		if (bUseIconTabBar && (oSectionBase.getParent().getId() === sSelectedSectionId)) {
-			oSelectedSection = Element.registry.get(sSelectedSectionId);
+			oSelectedSection = sap.ui.getCore().byId(sSelectedSectionId);
 			sFirstVisibleSubSection = this._getFirstVisibleSubSection(oSelectedSection);
 			return sFirstVisibleSubSection && (sFirstVisibleSubSection.getId() === sSectionBaseId);
 		}

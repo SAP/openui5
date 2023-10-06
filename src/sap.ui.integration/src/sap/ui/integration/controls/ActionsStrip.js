@@ -14,9 +14,8 @@ sap.ui.define([
 	"sap/m/OverflowToolbarButton",
 	"sap/m/OverflowToolbar",
 	"sap/m/OverflowToolbarLayoutData",
-	"sap/m/ToolbarSpacer",
-	"sap/ui/core/Element"
-], function(
+	"sap/m/ToolbarSpacer"
+], function (
 	library,
 	mLibrary,
 	Core,
@@ -28,8 +27,7 @@ sap.ui.define([
 	OverflowToolbarButton,
 	OverflowToolbar,
 	OverflowToolbarLayoutData,
-	ToolbarSpacer,
-	Element
+	ToolbarSpacer
 ) {
 	"use strict";
 
@@ -118,7 +116,7 @@ sap.ui.define([
 		}
 
 		var oToolbar = this._getToolbar(),
-			oCard = Element.registry.get(this.getCard()),
+			oCard = Core.byId(this.getCard()),
 			oActions = new CardActions({
 				card: oCard
 			}),

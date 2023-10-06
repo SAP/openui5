@@ -14,8 +14,7 @@ sap.ui.define([
 	"sap/m/IllustratedMessage",
 	"sap/m/SearchField",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/model/Filter",
-	"sap/ui/core/Lib"
+	"sap/ui/model/Filter"
 ], function(
 	Core,
 	ResponsivePopover,
@@ -29,8 +28,7 @@ sap.ui.define([
 	IllustratedMessage,
 	SearchField,
 	JSONModel,
-	Filter,
-	Lib
+	Filter
 ) {
 	"use strict";
 
@@ -75,7 +73,7 @@ sap.ui.define([
 	 */
 	DrillStackHandler.createDrillDownPopover = function(oChart) {
 		let oList = null;
-		const oRb = Lib.getResourceBundleFor("sap.ui.mdc");
+		const oRb = Core.getLibraryResourceBundle("sap.ui.mdc");
 
 		const oSearchField = new SearchField({
 			placeholder: oRb.getText("chart.CHART_DRILLDOWN_SEARCH"),

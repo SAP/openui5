@@ -10,9 +10,7 @@ sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/Device",
-	"sap/ui/core/Core",
-	"sap/ui/core/Lib",
-	"sap/ui/core/Element"
+	"sap/ui/core/Core"
 ], function(
 	library,
 	App,
@@ -24,9 +22,7 @@ sap.ui.define([
 	qutils,
 	createAndAppendDiv,
 	Device,
-	oCore,
-	Lib,
-	Element
+	oCore
 ) {
 	"use strict";
 
@@ -40,7 +36,7 @@ sap.ui.define([
 
 
 	var ButtonType = library.ButtonType;
-	var oResourceBundle = Lib.getResourceBundleFor("sap.m");
+	var oResourceBundle = oCore.getLibraryResourceBundle("sap.m");
 	var oActionSheet = new ActionSheet("actionsheet", {
 		showCancelButton: true,
 		buttons: [
@@ -89,11 +85,11 @@ sap.ui.define([
 		var done = assert.async();
 		oActionSheet.attachBeforeOpen(function onBeforeOpen() {
 			oActionSheet.detachBeforeOpen(onBeforeOpen);
-			assert.ok(Element.registry.get("actionsheet").$().css("visibility") !== "visible", "ActionSheet should be hidden before it's opened");
+			assert.ok(oCore.byId("actionsheet").$().css("visibility") !== "visible", "ActionSheet should be hidden before it's opened");
 		});
 		oActionSheet.attachAfterOpen(function onAfterOpen() {
 			oActionSheet.detachAfterOpen(onAfterOpen);
-			assert.equal(Element.registry.get("actionsheet").$().css("visibility"), "visible", "ActionSheet should be visible after it's opened");
+			assert.equal(oCore.byId("actionsheet").$().css("visibility"), "visible", "ActionSheet should be visible after it's opened");
 			done();
 		});
 	}
@@ -102,11 +98,11 @@ sap.ui.define([
 		var done = assert.async();
 		oActionSheet.attachBeforeClose(function onBeforeClose() {
 			oActionSheet.detachBeforeClose(onBeforeClose);
-			assert.equal(Element.registry.get("actionsheet").$().css("visibility"), "visible", "ActionSheet should be visible before it's closed");
+			assert.equal(oCore.byId("actionsheet").$().css("visibility"), "visible", "ActionSheet should be visible before it's closed");
 		});
 		oActionSheet.attachAfterClose(function onAfterClose() {
 			oActionSheet.detachAfterClose(onAfterClose);
-			assert.ok(Element.registry.get("actionsheet").$().css("visibility") !== "visible", "ActionSheet should be hidden after it's closed");
+			assert.ok(oCore.byId("actionsheet").$().css("visibility") !== "visible", "ActionSheet should be hidden after it's closed");
 			assert.ok(!oActionSheet.isOpen(), "ActionSheet is already closed");
 			done();
 		});
@@ -115,7 +111,7 @@ sap.ui.define([
 	QUnit.module("Initial Check");
 
 	QUnit.test("Initialization", function (assert) {
-		assert.ok(!Element.registry.get("actionsheet").$().length, "ActionSheet is not rendered before it's ever opened.");
+		assert.ok(!oCore.byId("actionsheet").$().length, "ActionSheet is not rendered before it's ever opened.");
 	});
 
 	QUnit.module("Open and Close - with Title and Cancel Button");
@@ -126,12 +122,12 @@ sap.ui.define([
 		assert.ok(oActionSheet.isOpen(), "ActionSheet is already open");
 
 		setTimeout(function () {
-			var $actionSheet = Element.registry.get("actionsheet").$(),
+			var $actionSheet = oCore.byId("actionsheet").$(),
 				$parentControl = !Device.system.phone ? $actionSheet.closest(".sapMActionSheetPopover") : $actionSheet.closest(".sapMActionSheetDialog"),
 				$header = $parentControl.children("header.sapMBar"),
 				$cancelButton = $actionSheet.children("button.sapMActionSheetCancelButton");
 			assert.expect(8);
-			assert.ok(Element.registry.get("actionsheet").$(), "ActionSheet is rendered after it's opened.");
+			assert.ok(oCore.byId("actionsheet").$(), "ActionSheet is rendered after it's opened.");
 			assert.ok($actionSheet.closest("#sap-ui-static")[0], "ActionSheet should be rendered inside the static uiArea.");
 			assert.ok($parentControl[0], "ActionSheet is wrapped either in Popover or Dialog");
 
@@ -163,12 +159,12 @@ sap.ui.define([
 		oButton.firePress();
 		assert.ok(oActionSheet.isOpen(), "ActionSheet is already open");
 		setTimeout(function () {
-			var $actionSheet = Element.registry.get("actionsheet").$(),
+			var $actionSheet = oCore.byId("actionsheet").$(),
 				$parentControl = !Device.system.phone ? $actionSheet.closest(".sapMActionSheetPopover") : $actionSheet.closest(".sapMActionSheetDialog"),
 				$header = $parentControl.children("header.sapMBar"),
 				$cancelButton = $actionSheet.children("button.sapMActionSheetCancelButton");
 			assert.expect(8);
-			assert.ok(Element.registry.get("actionsheet").$(), "ActionSheet is rendered after it's opened.");
+			assert.ok(oCore.byId("actionsheet").$(), "ActionSheet is rendered after it's opened.");
 			assert.ok($actionSheet.closest("#sap-ui-static")[0], "ActionSheet should be rendered inside the static uiArea.");
 			assert.ok($parentControl[0], "ActionSheet is wrapped either in Popover or Dialog");
 
@@ -197,12 +193,12 @@ sap.ui.define([
 		oButton.firePress();
 		assert.ok(oActionSheet.isOpen(), "ActionSheet is already open");
 		setTimeout(function () {
-			var $actionSheet = Element.registry.get("actionsheet").$(),
+			var $actionSheet = oCore.byId("actionsheet").$(),
 				$parentControl = !Device.system.phone ? $actionSheet.closest(".sapMActionSheetPopover") : $actionSheet.closest(".sapMActionSheetDialog"),
 				$header = $parentControl.children("div.sapMBar"),
 				$cancelButton = $actionSheet.children("button.sapMActionSheetCancelButton");
 			assert.expect(8);
-			assert.ok(Element.registry.get("actionsheet").$(), "ActionSheet is rendered after it's opened.");
+			assert.ok(oCore.byId("actionsheet").$(), "ActionSheet is rendered after it's opened.");
 			assert.ok($actionSheet.closest("#sap-ui-static")[0], "ActionSheet should be rendered inside the static uiArea.");
 			assert.ok($parentControl[0], "ActionSheet is wrapped either in Popover or Dialog");
 
@@ -231,12 +227,12 @@ sap.ui.define([
 		oButton.firePress();
 		assert.ok(oActionSheet.isOpen(), "ActionSheet is already open");
 		setTimeout(function () {
-			var $actionSheet = Element.registry.get("actionsheet").$(),
+			var $actionSheet = oCore.byId("actionsheet").$(),
 				$parentControl = !Device.system.phone ? $actionSheet.closest(".sapMActionSheetPopover") : $actionSheet.closest(".sapMActionSheetDialog"),
 				$header = $parentControl.children("div.sapMBar"),
 				$cancelButton = $actionSheet.children("button.sapMActionSheetCancelButton");
 			assert.expect(8);
-			assert.ok(Element.registry.get("actionsheet").$(), "ActionSheet is rendered after it's opened.");
+			assert.ok(oCore.byId("actionsheet").$(), "ActionSheet is rendered after it's opened.");
 			assert.ok($actionSheet.closest("#sap-ui-static")[0], "ActionSheet should be rendered inside the static uiArea.");
 			assert.ok($parentControl[0], "ActionSheet is wrapped either in Popover or Dialog");
 
@@ -310,7 +306,7 @@ sap.ui.define([
 		oButton.firePress();
 
 		setTimeout(function () {
-			assert.ok(Element.registry.get('asButton2').$().is(":focus"), 'The 2nd button should be focused');
+			assert.ok(oCore.byId('asButton2').$().is(":focus"), 'The 2nd button should be focused');
 
 			done();
 			oActionSheet.close();
@@ -435,17 +431,17 @@ sap.ui.define([
 		oButton.firePress();
 
 		setTimeout(function () {
-			Element.registry.get('oButton7').$().trigger("focus");
+			oCore.byId('oButton7').$().trigger("focus");
 
-			qutils.triggerKeydown(Element.registry.get('oButton7').$()[0], KeyCodes.PAGE_UP);
-			qutils.triggerKeyup(Element.registry.get('oButton7').$()[0], KeyCodes.PAGE_UP);
+			qutils.triggerKeydown(oCore.byId('oButton7').$()[0], KeyCodes.PAGE_UP);
+			qutils.triggerKeyup(oCore.byId('oButton7').$()[0], KeyCodes.PAGE_UP);
 
-			assert.ok(Element.registry.get('oButton2').$().is(":focus"), 'The 2nd button should be focused');
+			assert.ok(oCore.byId('oButton2').$().is(":focus"), 'The 2nd button should be focused');
 
-			qutils.triggerKeydown(Element.registry.get('oButton2').$()[0], KeyCodes.PAGE_UP);
-			qutils.triggerKeyup(Element.registry.get('oButton2').$()[0], KeyCodes.PAGE_UP);
+			qutils.triggerKeydown(oCore.byId('oButton2').$()[0], KeyCodes.PAGE_UP);
+			qutils.triggerKeyup(oCore.byId('oButton2').$()[0], KeyCodes.PAGE_UP);
 
-			assert.ok(Element.registry.get('oButton1').$().is(":focus"), 'The first button should be focused');
+			assert.ok(oCore.byId('oButton1').$().is(":focus"), 'The first button should be focused');
 			done();
 			oActionSheet.close();
 
@@ -515,13 +511,13 @@ sap.ui.define([
 		oButton.firePress();
 
 		setTimeout(function () {
-			qutils.triggerKeydown(Element.registry.get('oButton1').$()[0], KeyCodes.PAGE_DOWN);
-			qutils.triggerKeyup(Element.registry.get('oButton1').$()[0], KeyCodes.PAGE_DOWN);
+			qutils.triggerKeydown(oCore.byId('oButton1').$()[0], KeyCodes.PAGE_DOWN);
+			qutils.triggerKeyup(oCore.byId('oButton1').$()[0], KeyCodes.PAGE_DOWN);
 
-			assert.ok(Element.registry.get('oButton6').$().is(":focus"), 'The 6th button should be focused');
+			assert.ok(oCore.byId('oButton6').$().is(":focus"), 'The 6th button should be focused');
 
-			qutils.triggerKeydown(Element.registry.get('oButton6').$()[0], KeyCodes.PAGE_DOWN);
-			qutils.triggerKeyup(Element.registry.get('oButton6').$()[0], KeyCodes.PAGE_DOWN);
+			qutils.triggerKeydown(oCore.byId('oButton6').$()[0], KeyCodes.PAGE_DOWN);
+			qutils.triggerKeyup(oCore.byId('oButton6').$()[0], KeyCodes.PAGE_DOWN);
 			assert.ok(oActionSheet.$('cancelBtn').is(":focus"), 'The cancel button should be focused');
 			done();
 			oActionSheet.close();
@@ -589,15 +585,15 @@ sap.ui.define([
 		oButton.firePress();
 
 		setTimeout(function () {
-			qutils.triggerKeydown(Element.registry.get('oButton1').$()[0], KeyCodes.PAGE_DOWN);
-			qutils.triggerKeyup(Element.registry.get('oButton1').$()[0], KeyCodes.PAGE_DOWN);
+			qutils.triggerKeydown(oCore.byId('oButton1').$()[0], KeyCodes.PAGE_DOWN);
+			qutils.triggerKeyup(oCore.byId('oButton1').$()[0], KeyCodes.PAGE_DOWN);
 
-			assert.ok(Element.registry.get('oButton6').$().is(":focus"), 'The 6th button should be focused');
+			assert.ok(oCore.byId('oButton6').$().is(":focus"), 'The 6th button should be focused');
 
-			qutils.triggerKeydown(Element.registry.get('oButton6').$()[0], KeyCodes.PAGE_DOWN);
-			qutils.triggerKeyup(Element.registry.get('oButton6').$()[0], KeyCodes.PAGE_DOWN);
+			qutils.triggerKeydown(oCore.byId('oButton6').$()[0], KeyCodes.PAGE_DOWN);
+			qutils.triggerKeyup(oCore.byId('oButton6').$()[0], KeyCodes.PAGE_DOWN);
 
-			assert.ok(Element.registry.get('oButton7').$().is(":focus"), 'The 7th button should be focused');
+			assert.ok(oCore.byId('oButton7').$().is(":focus"), 'The 7th button should be focused');
 
 			done();
 			oActionSheet.close();
@@ -742,7 +738,7 @@ sap.ui.define([
 		oCore.applyChanges();
 		oButton.firePress();
 
-		sActualText = Element.registry.get(oActionSheet.getPopupHiddenLabelId()).getText();
+		sActualText = oCore.byId(oActionSheet.getPopupHiddenLabelId()).getText();
 
 		setTimeout(function () {
 			assert.equal(sActualText, sExpectedText, 'popup ariaLabelledBy is set');
@@ -788,7 +784,7 @@ sap.ui.define([
 		oCore.applyChanges();
 		oButton.firePress();
 
-		sActualText = Element.registry.get(oActionSheet.getPopupHiddenLabelId()).getText();
+		sActualText = oCore.byId(oActionSheet.getPopupHiddenLabelId()).getText();
 
 		setTimeout(function () {
 			assert.equal(sActualText, sExpectedText, 'popup ariaLabelledBy is set');
@@ -924,7 +920,7 @@ sap.ui.define([
 
 		setTimeout(function () {
 			var sInvisibleTextId = oASButton2.getAriaDescribedBy()[0],
-				oInvisibleText = Element.registry.get(sInvisibleTextId);
+				oInvisibleText = oCore.byId(sInvisibleTextId);
 
 			//Assert
 			assert.strictEqual(oActionSheet.indexOfAggregation("buttons", oASButton2), 1, "Inserted button should be correctly placed at the second place.");
@@ -963,8 +959,8 @@ sap.ui.define([
 		oButton.firePress();
 
 		setTimeout(function () {
-			var sInvisibleText = Element.registry.get('asButton1').getAriaDescribedBy()[0],
-				oInvisibleTextObj = Element.registry.get(sInvisibleText);
+			var sInvisibleText = oCore.byId('asButton1').getAriaDescribedBy()[0],
+				oInvisibleTextObj = oCore.byId(sInvisibleText);
 
 			assert.strictEqual(oInvisibleTextObj.getText(), oResourceBundle.getText('ACTIONSHEET_BUTTON_INDEX', [1, 1]), "Total amount of buttons should be 1");
 

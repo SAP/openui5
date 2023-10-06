@@ -9,9 +9,8 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Core",
-	"sap/ui/core/date/UI5Date",
-	"sap/ui/core/Lib"
-], function(MonthPicker, DateRange, CalendarDate, Device, KeyCodes, jQuery, oCore, UI5Date, Lib) {
+	"sap/ui/core/date/UI5Date"
+], function(MonthPicker, DateRange, CalendarDate, Device, KeyCodes, jQuery, oCore, UI5Date) {
 	"use strict";
 	(function () {
 
@@ -531,7 +530,7 @@ sap.ui.define([
 
 		QUnit.test("Control description", function (assert) {
 			// Arrange
-			var sControlDescription = Lib.getResourceBundleFor("sap.ui.unified").getText("MONTH_PICKER");
+			var sControlDescription = oCore.getLibraryResourceBundle("sap.ui.unified").getText("MONTH_PICKER");
 
 			// Assert
 			assert.strictEqual(this.oMP.$().attr("aria-roledescription"), sControlDescription , "Control description is added in aria-roledescription");

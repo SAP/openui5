@@ -26,10 +26,8 @@ sap.ui.define([
 	"sap/m/Toolbar",
 	"sap/ui/documentation/sdk/util/Resources",
 	'sap/base/util/LoaderExtensions',
-	"sap/ui/documentation/sdk/controller/util/ThemePicker",
-	"sap/ui/core/Lib",
-	"sap/ui/core/Element"
-], function(
+	"sap/ui/documentation/sdk/controller/util/ThemePicker"
+], function (
 	jQuery,
 	BaseController,
 	NewsInfo,
@@ -53,9 +51,7 @@ sap.ui.define([
 	Toolbar,
 	ResourcesUtil,
 	LoaderExtensions,
-	ThemePicker,
-	Lib,
-	Element
+	ThemePicker
 ) {
 	"use strict";
 
@@ -547,7 +543,7 @@ sap.ui.define([
 			});
 
 			okButton = new Button({
-				text: Lib.getResourceBundleFor("sap.m").getText("MSGBOX_OK"),
+				text: Core.getLibraryResourceBundle("sap.m").getText("MSGBOX_OK"),
 				press: function () {
 					handleDialogButtonPress();
 				}
@@ -603,7 +599,7 @@ sap.ui.define([
 				controller: this
 			}).then(function (oContent) {
 
-				var oShortList = Element.registry.get("shortList"),
+				var oShortList = Core.byId("shortList"),
 					oController = this,
 					sSearchQuery;
 
@@ -651,7 +647,7 @@ sap.ui.define([
 		},
 
 		getSearchPickerTitle: function (oContext) {
-			var getMessageBundle = Lib.getResourceBundleFor("sap.ui.documentation"),
+			var getMessageBundle = Core.getLibraryResourceBundle("sap.ui.documentation"),
 				sTitle;
 
 			switch (this.getModel("searchData").getProperty("/preferencedCategory")) {
@@ -872,7 +868,7 @@ sap.ui.define([
 					// connect dialog to the root view of this component (models, lifecycle)
 					this._oView.addDependent(oDialog);
 					this._oSettingsDialog = oDialog;
-					Element.registry.get("LanguageSelect").setSelectedKey(this._getSelectedLanguage());
+					Core.byId("LanguageSelect").setSelectedKey(this._getSelectedLanguage());
 					this._oSettingsDialog.open();
 				}.bind(this));
 			} else {
@@ -904,7 +900,7 @@ sap.ui.define([
 		 * @public
 		 */
 		handleSaveAppSettings: function () {
-			var sLanguage = Element.registry.get('LanguageSelect').getSelectedKey();
+			var sLanguage = Core.byId('LanguageSelect').getSelectedKey();
 
 			this._oSettingsDialog.close();
 
@@ -1117,7 +1113,7 @@ sap.ui.define([
 		onChangeVersionDialogSearch: function (oEvent) {
 			var sSearchedValue = oEvent.getParameter("newValue"),
 				oFilter = new Filter("version", FilterOperator.Contains, sSearchedValue),
-				oTree = Element.registry.get("versionList"),
+				oTree = Core.byId("versionList"),
 				oBinding = oTree.getBinding("items");
 
 			oBinding.filter([oFilter]);
@@ -1151,7 +1147,7 @@ sap.ui.define([
 		},
 
 		onVersionItemPress: function (oEvent) {
-			var oSelectedItem = Element.registry.get("versionList").getSelectedItem(),
+			var oSelectedItem = Core.byId("versionList").getSelectedItem(),
 				oCustomData = oSelectedItem.getCustomData()[0];
 
 			if (oCustomData && oCustomData.getKey() === "path") {

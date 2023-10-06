@@ -21,8 +21,7 @@ sap.ui.define("test-resources/sap/ui/table/Settings", [
 	"sap/ui/core/Popup",
 	"sap/ui/core/Title",
 	"sap/ui/layout/form/SimpleForm",
-	// layout used for SimpleForm
-	"sap/ui/layout/form/ResponsiveGridLayout",
+	"sap/ui/layout/form/ResponsiveGridLayout", // layout used for SimpleForm
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/table/Column",
 	"sap/ui/table/plugins/MultiSelectionPlugin",
@@ -37,8 +36,7 @@ sap.ui.define("test-resources/sap/ui/table/Settings", [
 	"sap/ui/unified/MenuItem",
 	"sap/ui/unified/MenuTextFieldItem",
 	"sap/m/plugins/CellSelector",
-	"sap/ui/core/date/UI5Date",
-	"sap/ui/core/Element"
+	"sap/ui/core/date/UI5Date"
 ], function(
 	Log,
 	deepExtend,
@@ -77,8 +75,7 @@ sap.ui.define("test-resources/sap/ui/table/Settings", [
 	UnifiedMenuItem,
 	MenuTextFieldItem,
 	CellSelector,
-	UI5Date,
-	Element
+	UI5Date
 ) {
 	"use strict";
 
@@ -562,28 +559,21 @@ sap.ui.define("test-resources/sap/ui/table/Settings", [
 					choice: {
 						NONE: {
 							text: "None",
-							action: function(oTable) {
-								oTable.destroyPlugins();
-							}
+							action: function(oTable) {}
 						},
 						MULTISELECTIONPLUGIN: {
 							text: "MultiSelection",
 							action: function(oTable) {
-								oTable.destroyPlugins();
 								var oPlugin = new MultiSelectionPlugin({
 									limit: 20,
 									enableNotification: true
 								});
-								oTable.addPlugin(oPlugin);
-								Element.registry.get("__select5").setSelectedKey(oPlugin.getSelectionMode().toUpperCase());
+								oCore.byId("__select5").setSelectedKey(oPlugin.getSelectionMode().toUpperCase());
 							}
 						},
 						ODATAV4SELECTION: {
 							text: "ODataV4Selection",
-							action: function(oTable) {
-								oTable.destroyPlugins();
-								oTable.addPlugin(new ODataV4Selection());
-							}
+							action: function(oTable) {}
 						}
 					}
 				},
@@ -807,7 +797,7 @@ sap.ui.define("test-resources/sap/ui/table/Settings", [
 								}
 							}).placeAt(oTable.getParent().getId(), "first");
 						} else {
-							Element.registry.get("HideOverlayButton").destroy();
+							oCore.byId("HideOverlayButton").destroy();
 						}
 					}
 				},
@@ -1306,11 +1296,11 @@ sap.ui.define("test-resources/sap/ui/table/Settings", [
 			change: function(oEvent) {
 				var sSettingsKey = oEvent.getParameter("selectedItem").getKey();
 				var sSettingsSnapshot = TABLESETTINGS.storedSettings[sSettingsKey];
-				var oDialog = Element.registry.get("settingsDialog");
+				var oDialog = oCore.byId("settingsDialog");
 
 				applySettingsSnapshot(TABLESETTINGS.table, sSettingsSnapshot);
 				saveAppliedSettingsKey(sSettingsKey);
-				Element.registry.get("settingsSelector").setSelectedKey(sSettingsKey); // Synchronize the select control on the main page.
+				oCore.byId("settingsSelector").setSelectedKey(sSettingsKey); // Synchronize the select control on the main page.
 
 				oDialog.removeAllContent();
 				oDialog.addContent(initForm(mActions));
@@ -1353,7 +1343,7 @@ sap.ui.define("test-resources/sap/ui/table/Settings", [
 									}
 
 									var sSelects = [
-										Element.registry.get("settingsSelector"),
+										oCore.byId("settingsSelector"),
 										oSettingsSelector
 									];
 
@@ -1402,7 +1392,7 @@ sap.ui.define("test-resources/sap/ui/table/Settings", [
 									}
 
 									var sSelects = [
-										Element.registry.get("settingsSelector"),
+										oCore.byId("settingsSelector"),
 										oSettingsSelector
 									];
 
@@ -1719,8 +1709,8 @@ sap.ui.define("test-resources/sap/ui/table/Settings", [
 			icon: "sap-icon://restart",
 			press: function() {
 				var mNewServiceSettings = {
-					url: Element.registry.get("TableSettings_ServiceUrl").getValue(),
-					collection: Element.registry.get("TableSettings_Collection").getValue()
+					url: oCore.byId("TableSettings_ServiceUrl").getValue(),
+					collection: oCore.byId("TableSettings_Collection").getValue()
 				};
 
 				mNewServiceSettings.defaultProxyUrl = "../../../../proxy/" + mNewServiceSettings.url.replace("://", "/");
@@ -1757,7 +1747,7 @@ sap.ui.define("test-resources/sap/ui/table/Settings", [
 		function changeSettings() {
 			var aData = oColumnSettingsModel.getData().columns;
 			for (var i = 0; i < aData.length; i++) {
-				var oColumn = Element.registry.get(aData[i].id);
+				var oColumn = oCore.byId(aData[i].id);
 				for (var item in mConfig) {
 					mConfig[item].action(oColumn, aData[i][item]);
 				}

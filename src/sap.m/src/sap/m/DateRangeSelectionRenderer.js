@@ -1,8 +1,8 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['sap/ui/core/Renderer', './DatePickerRenderer', "sap/ui/core/Lib"],
-	function(Renderer, DatePickerRenderer, Lib) {
+sap.ui.define(['sap/ui/core/Renderer', './DatePickerRenderer'],
+	function(Renderer, DatePickerRenderer) {
 	"use strict";
 
 
@@ -34,7 +34,7 @@ sap.ui.define(['sap/ui/core/Renderer', './DatePickerRenderer', "sap/ui/core/Lib"
 	DateRangeSelectionRenderer.getAccessibilityState = function(oDP) {
 		var mAccessibilityState = DatePickerRenderer.getAccessibilityState.apply(this, arguments);
 
-		mAccessibilityState["roledescription"] = Lib.getResourceBundleFor("sap.m").getText("ACC_CTR_TYPE_DATERANGEINPUT");
+		mAccessibilityState["roledescription"] = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_DATERANGEINPUT");
 
 		return mAccessibilityState;
 	};

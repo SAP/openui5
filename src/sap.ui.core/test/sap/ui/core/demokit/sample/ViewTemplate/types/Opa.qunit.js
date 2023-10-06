@@ -13,9 +13,8 @@ sap.ui.require([
 	"sap/ui/core/sample/ViewTemplate/types/pages/Main",
 	"sap/ui/test/opaQunit",
 	"sap/ui/test/TestUtils",
-	"sap/ui/core/Configuration",
-	"sap/ui/core/Lib"
-], function(Log, Core, library, UI5Date, DateFormat, Any, Main, opaTest, TestUtils, Configuration, Lib) {
+	"sap/ui/core/Configuration"
+], function(Log, Core, library, UI5Date, DateFormat, Any, Main, opaTest, TestUtils, Configuration) {
 	"use strict";
 
 	Core.ready().then(function () {
@@ -34,7 +33,7 @@ sap.ui.require([
 
 		//*****************************************************************************
 		opaTest("OData Types", function (Given, When, Then) {
-			var oBundle = Lib.getResourceBundleFor("sap.ui.core");
+			var oBundle = sap.ui.getCore().getLibraryResourceBundle();
 
 			When.onAnyPage.applySupportAssistant();
 

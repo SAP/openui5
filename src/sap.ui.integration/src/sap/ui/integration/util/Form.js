@@ -11,9 +11,8 @@ sap.ui.define([
 	"./BindingHelper",
 	"./BindingResolver",
 	"./DateRangeHelper",
-	"./Duration",
-	"sap/ui/core/Lib"
-], function(
+	"./Duration"
+], function (
 	ManagedObject,
 	coreLibrary,
 	Core,
@@ -23,8 +22,7 @@ sap.ui.define([
 	BindingHelper,
 	BindingResolver,
 	DateRangeHelper,
-	Duration,
-	Lib
+	Duration
 ) {
 	"use strict";
 
@@ -367,7 +365,7 @@ sap.ui.define([
 		if (oControl.isA("sap.m.DatePicker") && !oControl.isValidValue()) {
 			this._addMessageToControl(oControl, bShowValueState, {
 				type: ValueState.Error,
-				message: Lib.getResourceBundleFor("sap.ui.core").getText("VALUE_STATE_ERROR"),
+				message: Core.getLibraryResourceBundle("sap.ui.core").getText("VALUE_STATE_ERROR"),
 				bindingPath: "/" + oItem.id
 			});
 

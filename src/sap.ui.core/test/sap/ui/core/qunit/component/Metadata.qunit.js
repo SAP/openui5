@@ -501,13 +501,7 @@ sap.ui.define([
 						bFound = true;
 					}
 				}
-				// in case of debug mode is on the warning should be reported
-				// when it is turned off => no warning!
-				if (Configuration.getDebug()) {
-					assert.ok(bFound, "Warning has been reported!");
-				} else {
-					assert.ok(!bFound, "Warning has not been reported!");
-				}
+				assert.ok(!bFound, "Warning has not been reported!");
 				moduleTeardown.call(that);
 				sap.ui.require("sap/ui/test/v2version/Component").getMetadata()._bInitialized = false;
 				oDone();

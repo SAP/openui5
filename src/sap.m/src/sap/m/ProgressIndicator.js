@@ -14,22 +14,20 @@ sap.ui.define([
 	'./ProgressIndicatorRenderer',
 	"sap/base/Log",
 	"sap/m/Popover",
-	"sap/m/Text",
-	"sap/ui/core/Lib"
+	"sap/m/Text"
 ],
 	function(
-		library,
-		Control,
-		Device,
-		Icon,
-		ResizeHandler,
-		ValueStateSupport,
-		coreLibrary,
-		ProgressIndicatorRenderer,
-		Log,
-		Popover,
-		Text,
-		Lib
+	library,
+	Control,
+	Device,
+	Icon,
+	ResizeHandler,
+	ValueStateSupport,
+	coreLibrary,
+	ProgressIndicatorRenderer,
+	Log,
+	Popover,
+	Text
 	) {
 	"use strict";
 
@@ -416,7 +414,7 @@ sap.ui.define([
 	 * The object contains the accessibility information of <code>sap.m.ProgressIndicator</code>
 	 */
 	ProgressIndicator.prototype.getAccessibilityInfo = function() {
-		var oBundle = Lib.getResourceBundleFor("sap.m"),
+		var oBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m"),
 			sDisplayValue = this.getDisplayValue(),
 			sDescription = sDisplayValue ? sDisplayValue : oBundle.getText("ACC_CTR_STATE_PROGRESS", [this.getPercentValue()]);
 

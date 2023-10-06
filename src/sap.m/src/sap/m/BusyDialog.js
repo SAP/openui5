@@ -3,8 +3,24 @@
  */
 
 // Provides control sap.m.BusyDialog.
-sap.ui.define(['./library', 'sap/ui/core/Control', 'sap/m/Dialog', 'sap/m/BusyIndicator', 'sap/m/Label', 'sap/m/Button', "sap/base/Log", 'sap/ui/core/Core', 'sap/ui/core/InvisibleText', "sap/ui/core/Lib"],
-	function(library, Control, Dialog, BusyIndicator, Label, Button, Log, Core, InvisibleText, Lib) {
+sap.ui.define(['./library',
+		'sap/ui/core/Control',
+		'sap/m/Dialog',
+		'sap/m/BusyIndicator',
+		'sap/m/Label',
+		'sap/m/Button',
+		"sap/base/Log",
+		'sap/ui/core/Core',
+		'sap/ui/core/InvisibleText'],
+	function (library,
+			  Control,
+			  Dialog,
+			  BusyIndicator,
+			  Label,
+			  Button,
+			  Log,
+			  Core,
+			  InvisibleText) {
 		"use strict";
 
 		// shortcut for sap.m.TitleAlignment
@@ -531,7 +547,7 @@ sap.ui.define(['./library', 'sap/ui/core/Control', 'sap/m/Dialog', 'sap/m/BusyIn
 		 */
 		BusyDialog.prototype._getCancelButton = function () {
 			var cancelButtonText = this.getCancelButtonText();
-			cancelButtonText = cancelButtonText ? cancelButtonText : Lib.getResourceBundleFor("sap.m").getText("BUSYDIALOG_CANCELBUTTON_TEXT");
+			cancelButtonText = cancelButtonText ? cancelButtonText : Core.getLibraryResourceBundle("sap.m").getText("BUSYDIALOG_CANCELBUTTON_TEXT");
 
 			// eslint-disable-next-line no-return-assign
 			return this._cancelButton ? this._cancelButton : this._cancelButton = new Button(this.getId() + 'busyCancelBtn', {

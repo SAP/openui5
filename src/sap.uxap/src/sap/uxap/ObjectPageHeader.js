@@ -4,25 +4,23 @@
 
 // Provides control sap.uxap.ObjectPageHeader.
 sap.ui.define([
-	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Control",
-	"sap/ui/core/IconPool",
-	"sap/ui/core/CustomData",
-	"sap/ui/Device",
-	"sap/m/Breadcrumbs",
-	"./ObjectPageHeaderActionButton",
-	"sap/ui/core/ResizeHandler",
-	"sap/m/Button",
-	"sap/m/ActionSheet",
-	"./ObjectImageHelper",
-	"./ObjectPageHeaderContent",
-	"./library",
-	"sap/m/library",
-	"./ObjectPageHeaderRenderer",
-	"sap/ui/core/Lib",
-	"sap/ui/core/Element"
+    "sap/ui/thirdparty/jquery",
+    "sap/ui/core/Control",
+    "sap/ui/core/IconPool",
+    "sap/ui/core/CustomData",
+    "sap/ui/Device",
+    "sap/m/Breadcrumbs",
+    "./ObjectPageHeaderActionButton",
+    "sap/ui/core/ResizeHandler",
+    "sap/m/Button",
+    "sap/m/ActionSheet",
+    "./ObjectImageHelper",
+    "./ObjectPageHeaderContent",
+    "./library",
+    "sap/m/library",
+	"./ObjectPageHeaderRenderer"
 ], function(
-	jQuery,
+    jQuery,
 	Control,
 	IconPool,
 	CustomData,
@@ -36,9 +34,7 @@ sap.ui.define([
 	ObjectPageHeaderContent,
 	library,
 	mobileLibrary,
-	ObjectPageHeaderRenderer,
-	Lib,
-	Element
+	ObjectPageHeaderRenderer
 ) {
 	"use strict";
 
@@ -342,10 +338,10 @@ sap.ui.define([
 		this._bFirstRendering = true;
 
 		if (!this.oLibraryResourceBundle) {
-			this.oLibraryResourceBundle = Lib.getResourceBundleFor("sap.m"); // get resource translation bundle
+			this.oLibraryResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m"); // get resource translation bundle
 		}
 		if (!this.oLibraryResourceBundleOP) {
-			this.oLibraryResourceBundleOP = Lib.getResourceBundleFor("sap.uxap"); // get resource translation bundle
+			this.oLibraryResourceBundleOP = sap.ui.getCore().getLibraryResourceBundle("sap.uxap"); // get resource translation bundle
 		}
 
 		// Overflow button
@@ -754,7 +750,7 @@ sap.ui.define([
 
 	ObjectPageHeader.prototype._onSeeMoreContentSelect = function (oEvent) {
 		var oPressedButton = oEvent.getSource(),
-			oOriginalControl = Element.registry.get(oPressedButton.data("originalId"));
+			oOriginalControl = sap.ui.getCore().byId(oPressedButton.data("originalId"));
 
 		//forward press event
 		if (oOriginalControl.firePress) {

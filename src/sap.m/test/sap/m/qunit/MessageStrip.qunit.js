@@ -7,9 +7,8 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/qunit/QUnitUtils",
-	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Lib"
-], function(KeyCodes, MessageStrip, Link, FormattedText, Core, JSONModel, qutils, jQuery, Lib) {
+	"sap/ui/thirdparty/jquery"
+], function(KeyCodes, MessageStrip, Link, FormattedText, Core, JSONModel, qutils, jQuery) {
 	"use strict";
 
 
@@ -450,7 +449,7 @@ sap.ui.define([
 
 	QUnit.test("When we have a close button it should have an aria-labelledby attribute", function (assert) {
 		//Arrange
-		var oRb = Lib.getResourceBundleFor("sap.m");
+		var oRb = Core.getLibraryResourceBundle("sap.m");
 
 		var $oCloseButton = this.oMessageStrip.$().find(".sapMMsgStripCloseButton"),
 			$sCloseButtonLabelId = $oCloseButton.attr("aria-labelledby"),
@@ -491,7 +490,7 @@ sap.ui.define([
 
 	QUnit.test("When we have a close button it should indicate that it closes a message strip", function (assert) {
 		assert.strictEqual(jQuery(CLASS_CLOSE_BUTTON).attr('title'),
-			Lib.getResourceBundleFor("sap.m").getText("MESSAGE_STRIP_TITLE"),
+			Core.getLibraryResourceBundle("sap.m").getText("MESSAGE_STRIP_TITLE"),
 			"the title of the close button should be set to 'Close'");
 	});
 
@@ -524,7 +523,7 @@ sap.ui.define([
 
 	QUnit.test("Should render aria-roledescription attribute with the correct text", function(assert) {
 		// Arrange
-		var oResourceBundle = Lib.getResourceBundleFor("sap.m"),
+		var oResourceBundle = Core.getLibraryResourceBundle("sap.m"),
 			oMessageStrip = new MessageStrip({
 				text: "MessageStrip text message",
 				type: "Warning"

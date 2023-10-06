@@ -6,18 +6,16 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/ui/core/Core",
 	'sap/ui/core/library',
-	"sap/ui/core/InvisibleText",
-	"sap/ui/core/Lib"
+	"sap/ui/core/InvisibleText"
 ],
-function(
+function (
 	library,
 	jQuery,
 	IllustratedMessage,
 	Button,
 	Core,
 	coreLibrary,
-	InvisibleText,
-	Lib
+	InvisibleText
 ) {
 	"use strict";
 
@@ -294,7 +292,7 @@ function(
 
 	QUnit.test("_getResourceBundle", function (assert) {
 		// Assert
-		assert.strictEqual(this.oIllustratedMessage._getResourceBundle(), Lib.getResourceBundleFor("sap.m"),
+		assert.strictEqual(this.oIllustratedMessage._getResourceBundle(), Core.getLibraryResourceBundle("sap.m"),
 			"Internal getter _getResourceBundle is correctly returning the sap.m resource bundle");
 	});
 

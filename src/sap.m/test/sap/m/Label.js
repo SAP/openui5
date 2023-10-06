@@ -16,8 +16,7 @@ sap.ui.define([
 	"sap/ui/layout/form/SimpleForm",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/resource/ResourceModel",
-	"sap/ui/util/Mobile",
-	"sap/ui/core/Element"
+	"sap/ui/util/Mobile"
 ], function(
 	App,
 	Input,
@@ -36,8 +35,7 @@ sap.ui.define([
 	SimpleForm,
 	JSONModel,
 	ResourceModel,
-	Mobile,
-	Element
+	Mobile
 ) {
 	"use strict";
 
@@ -341,7 +339,7 @@ sap.ui.define([
 			new Label({text: "truncation + colon (resizing)", wrapping: true, wrappingType: "Normal", design: "Bold"}),
 			new Label({id: "labelToResize", text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi velit orci, sollicitudin nec cursus quis, pellentesque id neque", showColon: true}),
 			new Button({id: "resizeBtn", text: "resize upper label to 260px", press: function () {
-				Element.registry.get("labelToResize").setWidth("260px");
+				Core.byId("labelToResize").setWidth("260px");
 			}}),
 			new Label({text: "truncation + colon + asterisk", wrapping: true, wrappingType: "Normal", design: "Bold"}),
 			new Label({text: "{i18n>longLabel}", showColon: true, required: true, width: "100px"}),

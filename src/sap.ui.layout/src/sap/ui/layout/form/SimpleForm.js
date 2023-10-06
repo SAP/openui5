@@ -13,8 +13,7 @@ sap.ui.define([
 	'./FormLayout',
 	'./SimpleFormRenderer',
 	'sap/base/Log',
-	'sap/ui/thirdparty/jquery',
-	"sap/ui/core/Element"
+	'sap/ui/thirdparty/jquery'
 ], function(
 	Control,
 	ManagedObjectObserver,
@@ -25,8 +24,7 @@ sap.ui.define([
 	FormLayout,
 	SimpleFormRenderer,
 	Log,
-	jQuery,
-	Element
+	jQuery
 ) {
 	"use strict";
 
@@ -431,7 +429,7 @@ sap.ui.define([
 		_removeResize.call(this);
 
 		for (var i = 0; i < this._aLayouts.length; i++) {
-			var oLayout = Element.registry.get(this._aLayouts[i]);
+			var oLayout = sap.ui.getCore().byId(this._aLayouts[i]);
 			if (oLayout && oLayout.destroy) {
 				oLayout.destroy();
 			}
@@ -855,7 +853,7 @@ sap.ui.define([
 		if (this._aElements) {
 
 			if (typeof (vElement) == "string") { // ID of the element is given
-				vElement = Element.registry.get(vElement);
+				vElement = sap.ui.getCore().byId(vElement);
 			}
 
 			if (typeof (vElement) == "object") { // the element itself is given or has just been retrieved
@@ -1525,7 +1523,7 @@ sap.ui.define([
 			mSettings["label"] = oLabel;
 		} else {
 			sId = oFormContainer.getId() + "--FE-NoLabel"; // There can be only one FormElement without Label in a FomContainer (first one)
-			if (Element.registry.get(sId)) {
+			if (sap.ui.getCore().byId(sId)) {
 				// if ResponsiveLayout and ResponsiveFlowLayoutdata with Linebreak is used multiple FormElements without Label can exist
 				// as already deprecated just keep generatied ID in this very special case.
 				sId = undefined;

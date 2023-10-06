@@ -7,17 +7,14 @@ sap.ui.define([
 	"sap/ui/core/IconPool",
 	"sap/ui/core/InvisibleText",
 	"sap/ui/unified/library",
-	"sap/ui/unified/CalendarLegendRenderer",
-	"sap/ui/core/Lib"
-],
+	"sap/ui/unified/CalendarLegendRenderer"
+	],
 	function(
 		BaseContentRenderer,
 		IconPool,
 		InvisibleText,
 		unifiedLibrary,
-		CalendarLegendRenderer,
-		Lib
-	) {
+		CalendarLegendRenderer) {
 	"use strict";
 
 	var CalendarDayType = unifiedLibrary.CalendarDayType;
@@ -35,7 +32,7 @@ sap.ui.define([
 	 * @override
 	 */
 	CalendarContentRenderer.renderContent = function(oRm, oCalendarContent) {
-		var oRB = Lib.getResourceBundleFor("sap.ui.integration"),
+		var oRB = sap.ui.getCore().getLibraryResourceBundle("sap.ui.integration"),
 			sId = oCalendarContent.getId();
 
 		oRm.openStart("div", sId + "card-group");
@@ -83,7 +80,7 @@ sap.ui.define([
 	CalendarContentRenderer.renderAppointments = function(oRm, oCalendarContent) {
 		var aVisibleAppointments = oCalendarContent._getVisibleAppointments(),
 			oCurrentAppointment = oCalendarContent._getCurrentAppointment(),
-			oRB = Lib.getResourceBundleFor("sap.ui.integration");
+			oRB = sap.ui.getCore().getLibraryResourceBundle("sap.ui.integration");
 
 		oRm.openStart("div", oCalendarContent.getId() + "appointments-list");
 		oRm.attr("role", "list");
@@ -224,7 +221,7 @@ sap.ui.define([
 	// & end of the appointment. also for the type of the appointment
 	// and how it links to the types in displayed calendar legend
 	CalendarContentRenderer.renderAdditionalAriaLabel = function(oRm, oCalendarContent, oAppointment) {
-		var oRb = Lib.getResourceBundleFor("sap.ui.unified"),
+		var oRb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified"),
 			oFormatAria = oCalendarContent._oFormatAria,
 			sType = oAppointment.getType(),
 			aLegendItems = oCalendarContent._oLegend ? oCalendarContent._oLegend.getAppointmentItems() : [];

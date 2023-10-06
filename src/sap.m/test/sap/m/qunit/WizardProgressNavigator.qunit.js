@@ -5,9 +5,8 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/Device",
 	"sap/ui/core/InvisibleText",
-	"sap/ui/core/Core",
-	"sap/ui/core/Lib"
-], function(WizardProgressNavigator, JSONModel, Device, InvisibleText, oCore, Lib) {
+	"sap/ui/core/Core"
+], function(WizardProgressNavigator, JSONModel, Device, InvisibleText, oCore) {
 	"use strict";
 
 	QUnit.module("sap.m.WizardProgressNavigator API", {
@@ -383,7 +382,7 @@ sap.ui.define([
 			this.oBranchingProgressNavigator.placeAt("qunit-fixture");
 			oCore.applyChanges();
 
-			this.oResourceBundle = Lib.getResourceBundleFor("sap.m");
+			this.oResourceBundle = oCore.getLibraryResourceBundle("sap.m");
 		},
 		afterEach: function () {
 			this.oProgressNavigator.destroy();

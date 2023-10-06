@@ -25,9 +25,8 @@ sap.ui.define([
 	"sap/ui/support/supportRules/RuleSerializer",
 	"sap/ui/support/supportRules/Constants",
 	"sap/ui/support/supportRules/Storage",
-	"sap/ui/support/supportRules/util/EvalUtils",
-	"sap/ui/core/Element"
-], function(
+	"sap/ui/support/supportRules/util/EvalUtils"
+], function (
 	BaseController,
 	PresetsController,
 	SharedModel,
@@ -50,8 +49,7 @@ sap.ui.define([
 	RuleSerializer,
 	Constants,
 	Storage,
-	EvalUtils,
-	Element
+	EvalUtils
 ) {
 	"use strict";
 
@@ -353,7 +351,7 @@ sap.ui.define([
 			}
 
 			if (ctx.type === "components") {
-				var selectionContainer = Element.registry.get("componentsSelectionContainer"),
+				var selectionContainer = sap.ui.getCore().byId("componentsSelectionContainer"),
 					cbs = selectionContainer.getContent();
 
 				ctx.components = [];
@@ -511,7 +509,7 @@ sap.ui.define([
 		},
 
 		_hasSelectedComponent: function () {
-			var aAllComponentElements = Element.registry.get("componentsSelectionContainer").getContent();
+			var aAllComponentElements = sap.ui.getCore().byId("componentsSelectionContainer").getContent();
 			function isSelected(oComponent) {
 				return oComponent.getSelected();
 			}
@@ -545,7 +543,7 @@ sap.ui.define([
 					radioKey = source.getCustomData()[0].getValue(),
 					execScope = this.model.getProperty("/executionScopes")[radioKey];
 				if (radioKey === "components" && !this._hasSelectedComponent()) {
-					var aComponents = Element.registry.get("componentsSelectionContainer").getContent();
+					var aComponents = sap.ui.getCore().byId("componentsSelectionContainer").getContent();
 					if (aComponents.length > 0) {
 						aComponents[0].setSelected(true);
 						this.onScopeComponentSelect(null);
@@ -749,7 +747,7 @@ sap.ui.define([
 
 		goToCreateRule: function () {
 			var navCont = this.byId("rulesNavContainer");
-			navCont.to(Element.registry.get("rulesCreatePage"), "show");
+			navCont.to(sap.ui.getCore().byId("rulesCreatePage"), "show");
 		},
 
 		checkFunctionString: function (functionString) {
@@ -896,7 +894,7 @@ sap.ui.define([
 			this.model.setProperty("/editRuleSource", selectedRule);
 			this.model.setProperty("/editRule", deepExtend({}, selectedRule));
 			var navCont = this.byId("rulesNavContainer");
-			navCont.to(Element.registry.get("ruleUpdatePage"), "show");
+			navCont.to(sap.ui.getCore().byId("ruleUpdatePage"), "show");
 		},
 
 		deleteTemporaryRule: function (event) {

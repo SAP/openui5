@@ -31,9 +31,10 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/ui/base/Event",
 	"sap/ui/core/Core",
-	"sap/ui/core/Element",
-	"sap/ui/core/Lib"
-], function(Table, ToolbarSpacer, UploadSetwithTableRenderer, FileUploader, UploadSetToolbarPlaceholder, UploaderHttpRequestMethod, OverFlowToolbar, UploadSetwithTableItem, deepEqual, Log, Library, IllustratedMessageType, IllustratedMessage, IllustratedMessageSize, Uploader, DragDropInfo, DropInfo, DragInfo, FilePreviewDialog, Event, Dialog, Label, Input, MessageBox, Button, EventBase, Core, Element, Lib) {
+	"sap/ui/core/Element"
+], function (Table, ToolbarSpacer, UploadSetwithTableRenderer, FileUploader,
+    UploadSetToolbarPlaceholder, UploaderHttpRequestMethod, OverFlowToolbar, UploadSetwithTableItem, deepEqual, Log, Library, IllustratedMessageType,
+	IllustratedMessage, IllustratedMessageSize, Uploader, DragDropInfo, DropInfo, DragInfo, FilePreviewDialog, Event, Dialog, Label, Input, MessageBox, Button, EventBase, Core, Element) {
     "use strict";
 
 	/**
@@ -377,7 +378,7 @@ sap.ui.define([
 		this._setDragDropConfig();
         this._filesTobeUploaded = [];
 		this._filePreviewDialogControl = null;
-		this._oRb = Lib.getResourceBundleFor("sap.m");
+		this._oRb = Core.getLibraryResourceBundle("sap.m");
     };
 
 	UploadSetwithTable.prototype.onBeforeRendering = function() {

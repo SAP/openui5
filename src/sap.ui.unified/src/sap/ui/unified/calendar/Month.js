@@ -25,9 +25,7 @@ sap.ui.define([
 	"sap/ui/core/date/CalendarWeekNumbering",
 	"sap/ui/core/date/CalendarUtils",
 	'sap/ui/core/date/UI5Date',
-	"sap/base/Log",
-	"sap/ui/core/Lib",
-	"sap/ui/core/Element"
+	"sap/base/Log"
 ], function(
 	Control,
 	Device,
@@ -50,9 +48,7 @@ sap.ui.define([
 	CalendarWeekNumbering,
 	CalendarDateUtils,
 	UI5Date,
-	Log,
-	Lib,
-	Element
+	Log
 ) {
 	"use strict";
 
@@ -285,7 +281,7 @@ sap.ui.define([
 
 		this._bAlwaysShowSpecialDates = false;
 
-		this._oUnifiedRB = Lib.getResourceBundleFor("sap.ui.unified");
+		this._oUnifiedRB = sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified");
 	};
 
 	Month.prototype._getAriaRole = function(){
@@ -398,7 +394,7 @@ sap.ui.define([
 
 	Month.prototype.onsapfocusleave = function(oEvent){
 
-		if (!oEvent.relatedControlId || !containsOrEquals(this.getDomRef(), Element.registry.get(oEvent.relatedControlId).getFocusDomRef())) {
+		if (!oEvent.relatedControlId || !containsOrEquals(this.getDomRef(), sap.ui.getCore().byId(oEvent.relatedControlId).getFocusDomRef())) {
 			if (this._bMouseMove) {
 				this._unbindMousemove(true);
 

@@ -3,18 +3,16 @@
 sap.ui.define([
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/rta/util/changeVisualization/commands/CreateContainerVisualization",
-	"sap/ui/core/Core",
-	"sap/ui/core/Lib"
+	"sap/ui/core/Core"
 ], function(
 	sinon,
 	CreateContainerVisualization,
-	oCore,
-	Lib
+	oCore
 ) {
 	"use strict";
 
 	var sandbox = sinon.createSandbox();
-	var oResourceBundle = Lib.getResourceBundleFor("sap.ui.rta");
+	var oResourceBundle = oCore.getLibraryResourceBundle("sap.ui.rta");
 
 	QUnit.module("Base tests", {
 		afterEach() {

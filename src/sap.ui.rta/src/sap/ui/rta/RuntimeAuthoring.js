@@ -50,8 +50,7 @@ sap.ui.define([
 	"sap/ui/rta/util/ServiceEventBus",
 	"sap/ui/rta/util/validateFlexEnabled",
 	"sap/ui/rta/Utils",
-	"sap/ui/Device",
-	"sap/ui/core/Lib"
+	"sap/ui/Device"
 ], function(
 	capitalize,
 	isPlainObject,
@@ -99,8 +98,7 @@ sap.ui.define([
 	ServiceEventBus,
 	validateFlexEnabled,
 	Utils,
-	Device,
-	Lib
+	Device
 ) {
 	"use strict";
 
@@ -433,7 +431,7 @@ sap.ui.define([
 	};
 
 	RuntimeAuthoring.prototype._getTextResources = function() {
-		return Lib.getResourceBundleFor("sap.ui.rta");
+		return sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
 	};
 
 	/**
@@ -1061,7 +1059,7 @@ sap.ui.define([
 	function showTechnicalError(vError) {
 		BusyIndicator.hide();
 		var sErrorMessage = vError.userMessage || vError.stack || vError.message || vError.status || vError;
-		var oTextResources = Lib.getResourceBundleFor("sap.ui.rta");
+		var oTextResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
 		Log.error("Failed to transfer changes", sErrorMessage);
 		var sMsg = `${oTextResources.getText("MSG_LREP_TRANSFER_ERROR")}
 			${oTextResources.getText("MSG_ERROR_REASON", [sErrorMessage])}`;

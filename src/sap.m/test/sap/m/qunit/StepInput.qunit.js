@@ -16,8 +16,7 @@ sap.ui.define([
 	"sap/ui/layout/GridData",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/model/type/Float",
-	"sap/ui/core/Core",
-	"sap/ui/core/Lib"
+	"sap/ui/core/Core"
 ], function(
 	qutils,
 	createAndAppendDiv,
@@ -35,8 +34,7 @@ sap.ui.define([
 	GridData,
 	KeyCodes,
 	TypeFloat,
-	oCore,
-	Lib
+	oCore
 ) {
 	"use strict";
 
@@ -86,7 +84,7 @@ sap.ui.define([
 			"the picker aggregation holds an instance of an icon");
 
 		assert.notOk(oIncrementButton.getTooltip(), "increment button should not have a tooltip");
-		assert.strictEqual(oIncrementButton.getAlt(), Lib.getResourceBundleFor("sap.m").getText("STEP_INPUT_INCREASE_BTN") , "Increase icon alt is present");
+		assert.strictEqual(oIncrementButton.getAlt(), oCore.getLibraryResourceBundle("sap.m").getText("STEP_INPUT_INCREASE_BTN") , "Increase icon alt is present");
 
 		//act
 		oIncrementButton.firePress();
@@ -107,7 +105,7 @@ sap.ui.define([
 			"the step input _decrementButton aggregation holds an instance of an icon");
 
 		assert.notOk(oDecrementButton.getTooltip(), "decrement button should not have a tooltip");
-		assert.strictEqual(oDecrementButton.getAlt(), Lib.getResourceBundleFor("sap.m").getText("STEP_INPUT_DECREASE_BTN") , "Decrease icon alt is present");
+		assert.strictEqual(oDecrementButton.getAlt(), oCore.getLibraryResourceBundle("sap.m").getText("STEP_INPUT_DECREASE_BTN") , "Decrease icon alt is present");
 
 		//act
 		oDecrementButton.firePress();
@@ -2041,7 +2039,7 @@ sap.ui.define([
 		var oAccInfo = this.stepInput.getAccessibilityInfo();
 
 		// Assert
-		assert.strictEqual(oAccInfo.type, Lib.getResourceBundleFor("sap.m").getText("ACC_CTR_TYPE_STEPINPUT"), "Type correctly provided");
+		assert.strictEqual(oAccInfo.type, oCore.getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_STEPINPUT"), "Type correctly provided");
 		assert.strictEqual(oAccInfo.description, 4, "Value correctly provided");
 		assert.ok(oAccInfo.focusable, "Control is focusable");
 		assert.ok(oAccInfo.enabled, "Control is enabled");
@@ -2749,7 +2747,7 @@ sap.ui.define([
 
 		// assert
 		assert.strictEqual(this.stepInput._getInput().getValueState(), ValueState.Error, "value state is correct");
-		assert.strictEqual(this.stepInput._getInput().getValueStateText(), Lib.getResourceBundleFor("sap.ui.core").getText("EnterNumberMax", [iMax]), "value state text is correct");
+		assert.strictEqual(this.stepInput._getInput().getValueStateText(), sap.ui.getCore().getLibraryResourceBundle("sap.ui.core").getText("EnterNumberMax", [iMax]), "value state text is correct");
 	});
 
 	QUnit.test("_verifyValue prefers binding max constraint over max property setting", function(assert) {
@@ -2769,7 +2767,7 @@ sap.ui.define([
 		this.stepInput._verifyValue();
 
 		// assert
-		assert.strictEqual(this.stepInput._getInput().getValueStateText(), Lib.getResourceBundleFor("sap.ui.core").getText("EnterNumberMax", [iMax]), "value state text is correct");
+		assert.strictEqual(this.stepInput._getInput().getValueStateText(), sap.ui.getCore().getLibraryResourceBundle("sap.ui.core").getText("EnterNumberMax", [iMax]), "value state text is correct");
 	});
 
 	QUnit.test("If maximum or minimum binding constraint is set to 0, _getMin and _getMax return 0 too", function(assert) {

@@ -16,10 +16,8 @@ sap.ui.define([
 	"sap/m/Page",
 	"sap/m/TextArea",
 	"sap/m/library",
-	"sap/ui/core/mvc/XMLView",
-	"sap/ui/core/Element"
-],
-function(
+	"sap/ui/core/mvc/XMLView"],
+function (
 	jQuery,
 	Core,
 	ObjectPageLayout,
@@ -35,9 +33,7 @@ function(
 	Page,
 	TextArea,
 	mLib,
-	XMLView,
-	Element
-) {
+	XMLView) {
 
 	"use strict";
 
@@ -498,9 +494,9 @@ function(
 			setTimeout(function() {
 
 				var sSelectedButtonId = oPage.getAggregation("_anchorBar").getSelectedButton(),
-					oSelectedButton = Element.registry.get(sSelectedButtonId),
+					oSelectedButton = Core.byId(sSelectedButtonId),
 					sSelectedSectionId = oPage.getSelectedSection(),
-					oSelectedSection = Element.registry.get(sSelectedSectionId);
+					oSelectedSection = Core.byId(sSelectedSectionId);
 
 				assert.strictEqual(oSelectedButton.getText(), oSelectedSection.getTitle(), "section selection is preserved in the anchorBar");
 				done();
@@ -513,7 +509,7 @@ function(
 			iAnchorBarSelectionIndex = oExpected.iAnchorBarSelectionIndex,
 			oAnchorBar = oPage.getAggregation("_anchorBar"),
 			sSelectedBtnId = oAnchorBar.getSelectedButton(),
-			oSelectedButton = Element.registry.get(sSelectedBtnId),
+			oSelectedButton = Core.byId(sSelectedBtnId),
 			iSelectedBtnIndex = oAnchorBar.indexOfContent(oSelectedButton);
 
 		assert.strictEqual(oPage._bStickyAnchorBar, bSnapped, "header snapped state is correct");

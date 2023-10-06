@@ -6,9 +6,8 @@
 sap.ui.define([
 	"./library",
 	"sap/ui/core/Control",
-	"sap/ui/core/Core",
-	"sap/ui/core/Element"
-], function(library, Control, Core, Element) {
+	"sap/ui/core/Core"
+], function (library, Control, Core) {
 	"use strict";
 
 	/**
@@ -47,7 +46,7 @@ sap.ui.define([
 					.class("sapUiResponsiveSplitterPage")
 					.openEnd();
 
-				var oContent = Element.registry.get(oControl.getAssociation("content"));
+				var oContent = Core.byId(oControl.getAssociation("content"));
 
 				if (oContent) {
 					oRm.renderControl(oContent);
@@ -60,7 +59,7 @@ sap.ui.define([
 
 	ResponsiveSplitterPage.prototype.containsControl = function (sControlId) {
 
-		var oContent = Element.registry.get(this.getAssociation("content"));
+		var oContent = Core.byId(this.getAssociation("content"));
 
 		if (!oContent) {
 			return false;

@@ -2,9 +2,8 @@
 sap.ui.define([
 	"./PDFViewerTestUtils",
 	"sap/m/PDFViewerRenderer",
-	"sap/ui/core/Core",
-	"sap/ui/core/Element"
-], function(TestUtils, PDFViewerRenderer, oCore, Element) {
+	"sap/ui/core/Core"
+], function (TestUtils, PDFViewerRenderer, oCore) {
 	"use strict";
 
 	var oPDFViewer;
@@ -42,7 +41,7 @@ sap.ui.define([
 				var oToolbar = oPDFViewer.$("overflowToolbar");
 				assert.ok(oToolbar.length === 1, "PDF Viewer have to contain one overflow toolbar");
 
-				var oToolbarTitleSapUi5 =  Element.registry.get(oPDFViewer.getId() + "-overflowToolbar-title");
+				var oToolbarTitleSapUi5 =  oCore.byId(oPDFViewer.getId() + "-overflowToolbar-title");
 				assert.ok(oToolbarTitleSapUi5.getText() === sExpectedTitleText, "Title text in toolbar is shown");
 
 				var oButton = oPDFViewer.$("toolbarDownloadButton");

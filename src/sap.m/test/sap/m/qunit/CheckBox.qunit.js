@@ -10,9 +10,8 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/message/Message",
-	"sap/base/Log",
-	"sap/ui/core/Lib"
-], function(
+	"sap/base/Log"
+], function (
 	QUtils,
 	createAndAppendDiv,
 	CheckBox,
@@ -23,8 +22,7 @@ sap.ui.define([
 	Core,
 	JSONModel,
 	Message,
-	Log,
-	Lib
+	Log
 ) {
 	"use strict";
 
@@ -1229,8 +1227,8 @@ sap.ui.define([
 		var oInfo = oControl.getAccessibilityInfo();
 		assert.ok(!!oInfo, "getAccessibilityInfo returns a info object");
 		assert.strictEqual(oInfo.role, "checkbox", "AriaRole");
-		assert.strictEqual(oInfo.type, Lib.getResourceBundleFor("sap.m").getText("ACC_CTR_TYPE_CHECKBOX"), "Type");
-		assert.strictEqual(oInfo.description, "Text " + Lib.getResourceBundleFor("sap.m").getText("ACC_CTR_STATE_NOT_CHECKED"), "Description");
+		assert.strictEqual(oInfo.type, Core.getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_CHECKBOX"), "Type");
+		assert.strictEqual(oInfo.description, "Text " + Core.getLibraryResourceBundle("sap.m").getText("ACC_CTR_STATE_NOT_CHECKED"), "Description");
 		assert.strictEqual(oInfo.focusable, true, "Focusable");
 		assert.strictEqual(oInfo.enabled, true, "Enabled");
 		assert.strictEqual(oInfo.editable, true, "Editable");
@@ -1238,7 +1236,7 @@ sap.ui.define([
 		oControl.setEnabled(false);
 		oControl.setEditable(false);
 		oInfo = oControl.getAccessibilityInfo();
-		assert.strictEqual(oInfo.description, "Text " + Lib.getResourceBundleFor("sap.m").getText("ACC_CTR_STATE_CHECKED"), "Description");
+		assert.strictEqual(oInfo.description, "Text " + Core.getLibraryResourceBundle("sap.m").getText("ACC_CTR_STATE_CHECKED"), "Description");
 		assert.strictEqual(oInfo.focusable, false, "Focusable");
 		assert.strictEqual(oInfo.enabled, false, "Enabled");
 		assert.strictEqual(oInfo.editable, false, "Editable");
@@ -1270,7 +1268,7 @@ sap.ui.define([
 				target: "/selected",
 				processor: oModel
 			}),
-			sExpectedTooltipText = Lib.getResourceBundleFor("sap.ui.core").getText("VALUE_STATE_ERROR");
+			sExpectedTooltipText = Core.getLibraryResourceBundle("sap.ui.core").getText("VALUE_STATE_ERROR");
 
 		// act
 		this.oCheckBox.setModel(oModel);

@@ -12,8 +12,7 @@ sap.ui.define([
 	"sap/ui/core/InvisibleText",
 	"./WizardProgressNavigatorRenderer",
 	"./Button",
-	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Lib"
+	"sap/ui/thirdparty/jquery"
 ],
 function(
 	library,
@@ -25,8 +24,7 @@ function(
 	InvisibleText,
 	WizardProgressNavigatorRenderer,
 	Button,
-	jQuery,
-	Lib
+	jQuery
 ) {
 	"use strict";
 
@@ -123,7 +121,7 @@ function(
 		this._iActiveStep = 1;
 		this._aCachedSteps = [];
 		this._aStepOptionalIndication = [];
-		this._oResourceBundle = Lib.getResourceBundleFor("sap.m");
+		this._oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 		this._oActionSheet = new ActionSheet();
 		this._createStepNavigation();
 	};

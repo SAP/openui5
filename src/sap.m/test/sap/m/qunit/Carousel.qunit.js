@@ -16,9 +16,8 @@ sap.ui.define([
 	"sap/m/ResponsivePopover",
 	"sap/ui/core/Core",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/events/F6Navigation",
-	"sap/ui/core/Lib"
-], function(
+	"sap/ui/events/F6Navigation"
+], function (
 	jQuery,
 	qutils,
 	Carousel,
@@ -34,8 +33,7 @@ sap.ui.define([
 	ResponsivePopover,
 	Core,
 	JSONModel,
-	F6Navigation,
-	Lib
+	F6Navigation
 ) {
 	'use strict';
 
@@ -708,7 +706,7 @@ sap.ui.define([
 
 	QUnit.test("When 'pageChanged' event is fired the numeric value of the page indicator should change", function (assert) {
 		// Arrange
-		var sTextBetweenNumbers = Lib.getResourceBundleFor("sap.m").getText("CAROUSEL_PAGE_INDICATOR_TEXT", [2, 9]);
+		var sTextBetweenNumbers = Core.getLibraryResourceBundle("sap.m").getText("CAROUSEL_PAGE_INDICATOR_TEXT", [2, 9]);
 
 		// Assert
 		assert.strictEqual(document.getElementById("myCrsl-slide-number").innerHTML, sTextBetweenNumbers, "Page indicator should show '2 " + sTextBetweenNumbers + " 9'");
@@ -717,7 +715,7 @@ sap.ui.define([
 		this.oCarousel.next();
 
 		// Assert
-		sTextBetweenNumbers = Lib.getResourceBundleFor("sap.m").getText("CAROUSEL_PAGE_INDICATOR_TEXT", [3, 9]);
+		sTextBetweenNumbers = Core.getLibraryResourceBundle("sap.m").getText("CAROUSEL_PAGE_INDICATOR_TEXT", [3, 9]);
 		assert.strictEqual(document.getElementById("myCrsl-slide-number").innerHTML, sTextBetweenNumbers, "Page indicator should show '3 " + sTextBetweenNumbers + " 9'");
 	});
 
@@ -1849,7 +1847,7 @@ sap.ui.define([
 	QUnit.test("Page indicator text updates after keyboard navigation when multiple pages are displayed", function (assert) {
 		// arrange
 		var $pageIndicator = this.oCarousel.$("pageIndicator");
-		var rb = Lib.getResourceBundleFor("sap.m");
+		var rb = Core.getLibraryResourceBundle("sap.m");
 
 		// assert
 		assert.strictEqual($pageIndicator.text(), rb.getText("CAROUSEL_PAGE_INDICATOR_TEXT", [1, 7]), "Page indicator text should be correct");

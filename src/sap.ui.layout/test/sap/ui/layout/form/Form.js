@@ -40,9 +40,8 @@ sap.ui.require([
 	"sap/m/App",
 	"sap/m/Page",
 	"sap/m/Bar",
-	"sap/m/Switch",
-	"sap/ui/core/Element"
-],
+	"sap/m/Switch"
+	],
 	function(
 		CoreLib,
 		LayoutLib,
@@ -85,9 +84,8 @@ sap.ui.require([
 		App,
 		Page,
 		Bar,
-		Switch,
-		Element
-	) {
+		Switch
+		) {
 	"use strict";
 
 	var oButtonLayout = new SegmentedButton("MyLayout", {
@@ -260,7 +258,7 @@ sap.ui.require([
 						fields: [new ToggleButton({text: 'move container',
 													press: function(oEvent) {
 														var bPressed = oEvent.getParameter("pressed");
-														var oContainer = Element.registry.get("C1");
+														var oContainer = sap.ui.getCore().byId("C1");
 														oForm1.removeFormContainer(oContainer);
 														if (bPressed) {
 															oForm1.insertFormContainer(oContainer, 1);
@@ -274,8 +272,8 @@ sap.ui.require([
 											new ToggleButton({text: 'move element',
 												press: function(oEvent) {
 													var bPressed = oEvent.getParameter("pressed");
-													var oContainer = Element.registry.get("C1");
-													var oElement = Element.registry.get("F1C1E1");
+													var oContainer = sap.ui.getCore().byId("C1");
+													var oElement = sap.ui.getCore().byId("F1C1E1");
 													oContainer.removeFormElement(oElement);
 													if (bPressed) {
 														oContainer.insertFormElement(oElement, 1);
@@ -406,7 +404,7 @@ sap.ui.require([
 					content: [
 						new Button({icon: "sap-icon://slim-arrow-down",
 							press: function(oEvent) {
-								var oContainer = Element.registry.get("F2C2");
+								var oContainer = sap.ui.getCore().byId("F2C2");
 								if (oContainer.getExpanded()) {
 									oContainer.setExpanded(false);
 									oEvent.oSource.setIcon("sap-icon://slim-arrow-right");
@@ -464,7 +462,7 @@ sap.ui.require([
 								pressed: true,
 								press: function(oEvent) {
 									var bPressed = oEvent.getParameter("pressed");
-									var oContainer = Element.registry.get("F3C1");
+									var oContainer = sap.ui.getCore().byId("F3C1");
 									if (bPressed) {
 										oContainer.setTitle("Title");
 									} else {

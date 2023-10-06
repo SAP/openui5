@@ -20,8 +20,7 @@ sap.ui.define([
 	"sap/ui/rta/toolbar/versioning/Versioning",
 	"sap/ui/rta/Utils",
 	"sap/m/MessageBox",
-	"sap/ui/performance/Measurement",
-	"sap/ui/core/Element"
+	"sap/ui/performance/Measurement"
 ], function(
 	AdaptationRenderer,
 	Log,
@@ -40,8 +39,7 @@ sap.ui.define([
 	Versioning,
 	Utils,
 	MessageBox,
-	Measurement,
-	Element
+	Measurement
 ) {
 	"use strict";
 
@@ -475,10 +473,10 @@ sap.ui.define([
 	}
 
 	Adaptation.prototype.getControl = function(sName) {
-		var oControl = Element.registry.get(`${this.getId()}_fragment--sapUiRta_${sName}`);
+		var oControl = sap.ui.getCore().byId(`${this.getId()}_fragment--sapUiRta_${sName}`);
 		// Control is inside the ActionsMenu
 		if (!oControl && this._oActionsMenuFragment) {
-			oControl = Element.registry.get(this._oActionsMenuFragment.getId().replace("sapUiRta_actions", "sapUiRta_") + sName);
+			oControl = sap.ui.getCore().byId(this._oActionsMenuFragment.getId().replace("sapUiRta_actions", "sapUiRta_") + sName);
 		}
 		return oControl;
 	};

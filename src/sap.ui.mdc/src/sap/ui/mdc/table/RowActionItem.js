@@ -6,9 +6,8 @@ sap.ui.define([
 	'sap/ui/core/Element',
 	'sap/ui/core/IconPool',
 	'sap/ui/core/Core',
-	'sap/ui/mdc/enums/TableRowAction',
-	"sap/ui/core/Lib"
-], function(Element, IconPool, Core, TableRowAction, Lib) {
+	'sap/ui/mdc/enums/TableRowAction'
+], function(Element, IconPool, Core, TableRowAction) {
 	"use strict";
 
 	/**
@@ -91,7 +90,7 @@ sap.ui.define([
 		if (this.getText()) {
 			sText = this.getText();
 		} else {
-			const oResourceBundle = Lib.getResourceBundleFor("sap.ui.mdc");
+			const oResourceBundle = Core.getLibraryResourceBundle("sap.ui.mdc");
 			if (this.getType() === TableRowAction.Navigation) {
 				sText = oResourceBundle.getText("table.ROW_ACTION_ITEM_NAVIGATE");
 			}

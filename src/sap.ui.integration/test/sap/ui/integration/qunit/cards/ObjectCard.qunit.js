@@ -11,9 +11,8 @@ sap.ui.define([
 	"sap/ui/integration/cards/actions/CardActions",
 	"sap/ui/integration/util/RequestDataProvider",
 	"sap/ui/integration/util/DateRangeHelper",
-	"sap/ui/qunit/utils/MemoryLeakCheck",
-	"sap/ui/core/Lib"
-], function(
+	"sap/ui/qunit/utils/MemoryLeakCheck"
+], function (
 	Log,
 	mLibrary,
 	coreLibrary,
@@ -24,12 +23,11 @@ sap.ui.define([
 	CardActions,
 	RequestDataProvider,
 	DateRangeHelper,
-	MemoryLeakCheck,
-	Lib
+	MemoryLeakCheck
 ) {
 	"use strict";
 
-	var oResourceBundle = Lib.getResourceBundleFor("sap.ui.integration");
+	var oResourceBundle = Core.getLibraryResourceBundle("sap.ui.integration");
 
 	// shortcut for sap.m.AvatarSize
 	var AvatarSize = mLibrary.AvatarSize;
@@ -2777,7 +2775,7 @@ sap.ui.define([
 			assert.strictEqual(oTextArea2.getValueStateText(), "You should enter a valid e-mail.", "Text is correct");
 			assert.strictEqual(oTextArea3.getValueStateText(), "You should enter a valid path.", "Text is correct");
 			assert.strictEqual(oDateRange.getValueState(), ValueState.Error, "Control has an error");
-			assert.strictEqual(oDateRange.getValueStateText(), Lib.getResourceBundleFor("sap.ui.core").getText("VALUE_STATE_ERROR"), "Text is correct");
+			assert.strictEqual(oDateRange.getValueStateText(), Core.getLibraryResourceBundle("sap.ui.core").getText("VALUE_STATE_ERROR"), "Text is correct");
 
 			assert.deepEqual(oCard.getModel("messages").getData(),
 				{
@@ -2811,7 +2809,7 @@ sap.ui.define([
 						},
 						{
 							"bindingPath": "/dateRangeValue",
-							"message": Lib.getResourceBundleFor("sap.ui.core").getText("VALUE_STATE_ERROR"),
+							"message": Core.getLibraryResourceBundle("sap.ui.core").getText("VALUE_STATE_ERROR"),
 							"type": "Error"
 						}
 					]

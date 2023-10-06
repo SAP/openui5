@@ -4,9 +4,8 @@
 
 sap.ui.define([
 	"sap/ui/fl/changeHandler/HideControl",
-	"sap/ui/fl/changeHandler/UnhideControl",
-	"sap/ui/core/Element"
-], function(HideControl, UnhideControl, Element) {
+	"sap/ui/fl/changeHandler/UnhideControl"
+], function(HideControl, UnhideControl) {
 	"use strict";
 
 	/**
@@ -20,7 +19,7 @@ sap.ui.define([
 	return {
 		createChanges: function(aDeltaMItems) {
 			return aDeltaMItems.map(function(oDeltaMItem) {
-				const oControl = Element.registry.get(oDeltaMItem.id);
+				const oControl = sap.ui.getCore().byId(oDeltaMItem.id);
 				if (!oControl) {
 					throw new Error("Invalid 'id'. For the id " + oDeltaMItem.id + " no existing control could be found");
 				}

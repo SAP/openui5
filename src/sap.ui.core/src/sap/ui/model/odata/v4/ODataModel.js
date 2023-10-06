@@ -301,10 +301,6 @@ sap.ui.define([
 		mUriParameters = this.buildQueryOptions(oUri.query(true), false, true);
 		// BEWARE: these are shared across all bindings!
 		this.mUriParameters = mUriParameters;
-		if (Configuration.getStatisticsEnabled()) {
-			// Note: this way, "sap-statistics" is not sent within $batch
-			mUriParameters = Object.assign({"sap-statistics" : true}, mUriParameters);
-		}
 		this.sServiceUrl = oUri.query("").toString();
 		this.sGroupId = mParameters.groupId;
 		if (this.sGroupId === undefined) {

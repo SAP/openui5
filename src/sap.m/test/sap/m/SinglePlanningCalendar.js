@@ -27,8 +27,7 @@ sap.ui.define([
 	"sap/ui/unified/CalendarLegendItem",
 	"sap/ui/unified/DateTypeRange",
 	"sap/ui/unified/library",
-	"sap/ui/core/date/UI5Date",
-	"sap/ui/core/Element"
+	"sap/ui/core/date/UI5Date"
 ], function(
 	App,
 	Bar,
@@ -58,8 +57,7 @@ sap.ui.define([
 	CalendarLegendItem,
 	DateTypeRange,
 	unifiedLibrary,
-	UI5Date,
-	Element
+	UI5Date
 ) {
 	"use strict";
 
@@ -648,7 +646,7 @@ sap.ui.define([
 			new Button("resetScaleFactor",{
 				icon: "sap-icon://reset",
 				press: function() {
-					var oSPC = Element.registry.get("SinglePlanningCalendar");
+					var oSPC = sap.ui.getCore().byId("SinglePlanningCalendar");
 					oSPC.setScaleFactor(1);
 
 				}
@@ -656,7 +654,7 @@ sap.ui.define([
 			new Button("zoomIn",{
 				icon: "sap-icon://zoom-in",
 				press: function() {
-				var oSPC = Element.registry.get("SinglePlanningCalendar");
+				var oSPC = sap.ui.getCore().byId("SinglePlanningCalendar");
 				var iCurrentScaleFactor = oSPC.getScaleFactor();
 				oSPC.setScaleFactor(++iCurrentScaleFactor);
 				}
@@ -664,7 +662,7 @@ sap.ui.define([
 			new Button("zoomOut",{
 				icon: "sap-icon://zoom-out",
 				press: function() {
-					var oSPC = Element.registry.get("SinglePlanningCalendar");
+					var oSPC = sap.ui.getCore().byId("SinglePlanningCalendar");
 					var iCurrentScaleFactor = oSPC.getScaleFactor();
 					oSPC.setScaleFactor(--iCurrentScaleFactor);
 				}
@@ -672,14 +670,14 @@ sap.ui.define([
 			new ToggleButton("fullDay", {
 				text: "Full day",
 				press: function () {
-					var oSPC = Element.registry.get("SinglePlanningCalendar");
+					var oSPC = sap.ui.getCore().byId("SinglePlanningCalendar");
 					oSPC.setFullDay(!oSPC.getFullDay());
 				}
 			}),
 			new Button("overrideTime", {
 				text: "Override current time",
 				press: function () {
-					var oGrid = Element.registry.get("SinglePlanningCalendar").getAggregation("_grid");
+					var oGrid = sap.ui.getCore().byId("SinglePlanningCalendar").getAggregation("_grid");
 
 					oGrid._updateRowHeaderAndNowMarker = function () {
 						var oCurrentDate = UI5Date.getInstance(2018, 6, 8, 0, 30, 0, 0);

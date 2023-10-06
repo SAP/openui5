@@ -19,8 +19,7 @@ sap.ui.define([
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/write/_internal/Storage",
 	"sap/ui/fl/write/_internal/Versions",
-	"sap/ui/fl/write/api/Version",
-	"sap/ui/core/Element"
+	"sap/ui/fl/write/api/Version"
 ], function(
 	_omit,
 	_pick,
@@ -38,8 +37,7 @@ sap.ui.define([
 	Settings,
 	Storage,
 	Versions,
-	Version,
-	Element
+	Version
 ) {
 	"use strict";
 
@@ -272,7 +270,7 @@ sap.ui.define([
 		const aSVMControls = [];
 		if (mCompVariantsMap) {
 			Object.values(mCompVariantsMap).forEach(function(mMap) {
-				const oSVMControl = mMap.controlId && Element.registry.get(mMap.controlId);
+				const oSVMControl = mMap.controlId && Core.byId(mMap.controlId);
 				if (oSVMControl) {
 					aSVMControls.push(oSVMControl);
 				}

@@ -5,9 +5,8 @@
 sap.ui.define([
 	"./library",
 	"sap/ui/core/library",
-	"sap/ui/core/Core",
-	"sap/ui/core/Lib"
-], function(library, coreLibrary, oCore, Lib) {
+	"sap/ui/core/Core"
+], function(library, coreLibrary, oCore) {
 	"use strict";
 	//shortcut for sap.m.GenericTagDesign
 	var GenericTagDesign = library.GenericTagDesign,
@@ -30,7 +29,7 @@ sap.ui.define([
 
 	GenericTagRenderer.render = function(oRm, oControl) {
 		var aLabelledBy = this._getAriaLabelledBy(oControl),
-			oResourceBundle = Lib.getResourceBundleFor("sap.m"),
+			oResourceBundle = oCore.getLibraryResourceBundle("sap.m"),
 			sTooltip = oControl.getTooltip_AsString();
 
 		oRm.openStart("div", oControl);
@@ -126,7 +125,7 @@ sap.ui.define([
 	};
 
 	GenericTagRenderer._getGenericTagStatusText = function(oControl) {
-		var oResourceBundle = Lib.getResourceBundleFor("sap.m"),
+		var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m"),
 			sARIAStatusText;
 
 		switch (oControl.getStatus()) {

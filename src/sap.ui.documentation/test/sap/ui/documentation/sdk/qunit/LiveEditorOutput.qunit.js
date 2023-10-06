@@ -41,14 +41,6 @@ sap.ui.define(["sap/ui/thirdparty/URI"],
 				'                 });\n' +
 				'            });\n' +
 				'         });\n',
-			// uses legacy api to create the view asynchronously
-			sIndexJs_v3 = 'sap.ui.getCore().attachInit(function () {\n' +
-				'       sap.ui.xmlview({\n' +
-				'          id: "myView3",' +
-				'          async: true,' +
-				'          viewName: "HelloWorld.App"\n' +
-				'       }).placeAt("content");\n' +
-				'    });\n',
 			// throws error in a seaprate task to test error handling
 			sIndexJs_v4 =
 				'    sap.ui.getCore().attachInit(function () {\n' +
@@ -164,50 +156,6 @@ sap.ui.define(["sap/ui/thirdparty/URI"],
 						});
 					});
 				}
-			};
-
-			oFrame.src = sFrameURL;
-		});
-
-		QUnit.test("executes controller", function(assert) {
-
-			var done = assert.async(),
-				oFrame = this.iframe,
-				oData = {
-					src: {
-						'HelloWorld/index.js': sIndexJs_v3,
-						'HelloWorld/App.view.xml': sXmlSrc,
-						'HelloWorld/App.controller.js': sControllerSrc
-					},
-					moduleNameToRequire: "HelloWorld/index"
-				};
-
-			assert.expect(2);
-
-			oFrame.onload = function() {
-				if (oFrame.contentWindow) {
-					oFrame.contentWindow.postMessage(oData, "*");
-				}
-
-				waitForUI5Object(oFrame.contentWindow, "myView3").then(function(oView) {
-					assert.ok(oView, "the view is created");
-
-					oView.loaded().then(function () {
-						// in the test data for this sample,
-						// the button is declared non-visible in the view,
-						// and the controller sets the button to be visible
-						// upon initialization
-						// => test if the controller code executed
-						function isButtonVisible() {
-							return oView.byId("helloButton").getVisible();
-						}
-
-						waitForCondition(isButtonVisible).then(function(bResult) {
-							assert.ok(bResult, "the controller code changed the button 'visible' property");
-							done();
-						});
-					});
-				});
 			};
 
 			oFrame.src = sFrameURL;

@@ -5,13 +5,11 @@
 sap.ui.define([
 	"sap/ui/rta/plugin/additionalElements/AdditionalElementsPlugin",
 	"sap/ui/dt/OverlayRegistry",
-	"sap/m/Button",
-	"sap/ui/core/Lib"
+	"sap/m/Button"
 ], function(
 	AdditionalElementsPlugin,
 	OverlayRegistry,
-	Button,
-	Lib
+	Button
 ) {
 	"use strict";
 
@@ -159,7 +157,7 @@ sap.ui.define([
 	 */
 	EasyAdd.prototype._addButton = function(oOverlay, fnCallback, oOverlayDom, sControlName, bOverlayIsSibling) {
 		var bIsEditable = oOverlay.getEditableByPlugins().indexOf(this._retrievePluginName(bOverlayIsSibling)) > -1;
-		var oTextResources = Lib.getResourceBundleFor("sap.ui.rta");
+		var oTextResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
 
 		var sId = `${oOverlay.getId()}-AddButton`;
 		var oHtmlButtonOuter = document.createElement("div");

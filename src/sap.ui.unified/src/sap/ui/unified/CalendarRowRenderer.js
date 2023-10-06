@@ -11,23 +11,17 @@ sap.ui.define([
 	'sap/ui/core/InvisibleText',
 	"sap/ui/core/date/UI5Date",
 	'sap/base/Log',
-	"sap/ui/core/Element",
-	"sap/ui/core/Lib",
-	// required by RenderManager#icon
-	'sap/ui/core/IconPool'
-],
-	function(
+	'sap/ui/core/IconPool' // required by RenderManager#icon
+	],
+	function (
 		UniversalDate,
 		CalendarAppointment,
 		CalendarLegendRenderer,
 		Device,
 		library,
 		InvisibleText,
-		UI5Date,
-		Log,
-		Element,
-		Lib
-	) {
+        UI5Date,
+		Log) {
 		"use strict";
 
 
@@ -796,8 +790,8 @@ sap.ui.define([
 			oRm.openStart("div");
 			oRm.class("sapUiCalendarNoApps");
 			oRm.openEnd();
-			var oPCRow = Element.registry.get(oRow.getAssociation("row"));
-			sNoAppointments = oPCRow.getNoAppointmentsText() ? oPCRow.getNoAppointmentsText() : Lib.getResourceBundleFor("sap.m").getText("PLANNINGCALENDAR_ROW_NO_APPOINTMENTS");
+			var oPCRow = sap.ui.getCore().byId(oRow.getAssociation("row"));
+			sNoAppointments = oPCRow.getNoAppointmentsText() ? oPCRow.getNoAppointmentsText() : sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("PLANNINGCALENDAR_ROW_NO_APPOINTMENTS");
 			oRm.text(sNoAppointments);
 			oRm.close("div");
 		}
@@ -881,7 +875,7 @@ sap.ui.define([
 			sLegendId = oCalRow.getLegend();
 
 		if (sLegendId) {
-			oLegend = Element.registry.get(sLegendId);
+			oLegend = sap.ui.getCore().byId(sLegendId);
 			if (oLegend) {
 				aResult = oLegend.getItems();
 			} else {

@@ -6,10 +6,10 @@ sap.ui.define([
 	"sap/ui/core/Control",
 	"./ChartImplementationContainerRenderer",
 	"sap/ui/core/Core",
-	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Element"
+	"sap/ui/thirdparty/jquery"
 ],
-	function(Control, Renderer, Core, jQuery, Element) {
+	function (Control, Renderer, Core, jQuery
+	) {
 		"use strict";
 
 		/**
@@ -172,7 +172,7 @@ sap.ui.define([
 		};
 
 		ChartImplementationContainer.prototype._getChartNoDataForRenderer = function () {
-			return Element.registry.get(this.getChartNoDataContent());
+			return Core.byId(this.getChartNoDataContent());
 		};
 
 		ChartImplementationContainer.prototype._updateVisibilities = function () {
@@ -188,7 +188,7 @@ sap.ui.define([
 					this.getNoDataContent().setVisible(false);
 				}
 
-				Element.registry.get(this.getChartNoDataContent()).setVisible(bVisible);
+				Core.byId(this.getChartNoDataContent()).setVisible(bVisible);
 			} else if (this.getNoDataContent()) {
 				this.getNoDataContent().setVisible(bVisible);
 			}

@@ -5,9 +5,8 @@
 sap.ui.define([
 	'./Splitter',
 	'./SplitterRenderer',
-	"sap/base/Log",
-	"sap/ui/core/Element"
-], function(Splitter, SplitterRenderer, Log, Element) {
+	"sap/base/Log"
+], function(Splitter, SplitterRenderer, Log) {
 	"use strict";
 
 	/**
@@ -91,7 +90,7 @@ sap.ui.define([
 		var aContentAreas = this.getContentAreas();
 
 		var aValidAssContentAreas = aAssociatedContentAreas.map(function (sId) {
-			return Element.registry.get(sId);
+			return sap.ui.getCore().byId(sId);
 		}).filter(function (oContent) { return oContent; });
 
 		return aContentAreas.concat(aValidAssContentAreas);
@@ -119,95 +118,9 @@ sap.ui.define([
 		}
 	};
 
-	// Overriding sap.ui.layout.Splitter's calculation functions in order to make it responsive
-
 	/**
 	 * @override
-	 */
-	AssociativeSplitter.prototype._resizeContents = function (iLeftContent, iPixels, bFinal) {
-		var aContentAreas, oLd1, oLd2, sSize1,
-			sSize2, $Cnt1, $Cnt2, iNewSize1, iNewSize2,
-			iMinSize1, iMinSize2,
-			sFinalSize1, sFinalSize2, iDiff,
-			sMoveContentSize1 = parseFloat(this._move.c1Size).toFixed(5),
-			sMoveContentSize2 = parseFloat(this._move.c2Size).toFixed(5),
-			fMoveC1Size = parseFloat(sMoveContentSize1),
-			fMoveC2Size = parseFloat(sMoveContentSize2);
-
-		if (isNaN(iPixels)) {
-			Log.warning("Splitter: Received invalid resizing values - resize aborted.");
-			return;
-		}
-
-		aContentAreas = this._getContentAreas();
-		oLd1 = aContentAreas[iLeftContent].getLayoutData();
-		oLd2 = aContentAreas[iLeftContent + 1].getLayoutData();
-
-		sSize1 = oLd1.getSize();
-		sSize2 = oLd2.getSize();
-
-		$Cnt1 = this.$("content-" + iLeftContent);
-		$Cnt2 = this.$("content-" + (iLeftContent + 1));
-
-		iNewSize1 = fMoveC1Size + iPixels;
-		iNewSize2 = fMoveC2Size - iPixels;
-		iMinSize1 = parseInt(oLd1.getMinSize());
-		iMinSize2 = parseInt(oLd2.getMinSize());
-
-		// Adhere to size constraints
-		if (iNewSize1 < iMinSize1) {
-			iDiff = iMinSize1 - iNewSize1;
-			iPixels += iDiff;
-			iNewSize1 = iMinSize1;
-			iNewSize2 -= iDiff;
-		} else if (iNewSize2 < iMinSize2) {
-			iDiff = iMinSize2 - iNewSize2;
-			iPixels -= iDiff;
-			iNewSize2 = iMinSize2;
-			iNewSize1 -= iDiff;
-		}
-
-		if (bFinal) {
-			// in this case widths of the areas are % from the available content width (bars excluded)
-			var iAvailableContentSize = this._calcAvailableContentSize();
-
-			// Resize finished, set layout data in content areas
-			if (sSize1 === "auto" && sSize2 !== "auto") {
-				// First pane has auto size - only change size of second pane
-				sFinalSize2 = this._pxToPercent(iNewSize2, iAvailableContentSize);
-				oLd2.setSize(sFinalSize2);
-				oLd2._markModified();
-			} else if (sSize1 !== "auto" && sSize2 === "auto") {
-				// Second pane has auto size - only change size of first pane
-				sFinalSize1 = this._pxToPercent(iNewSize1, iAvailableContentSize);
-				oLd1.setSize(sFinalSize1);
-				oLd1._markModified();
-			} else {
-				sFinalSize1 = this._pxToPercent(iNewSize1, iAvailableContentSize);
-				sFinalSize2 = this._pxToPercent(iNewSize2, iAvailableContentSize);
-
-				oLd1.setSize(sFinalSize1);
-				oLd2.setSize(sFinalSize2);
-				oLd1._markModified();
-				oLd2._markModified();
-			}
-		} else { // Live-Resize, resize contents in Dom
-			// in this case widths of the areas are % from the total size (bars included)
-			var iTotalSplitterSize = this._getTotalSize();
-
-			sFinalSize1 = this._pxToPercent(iNewSize1, iTotalSplitterSize);
-			sFinalSize2 = this._pxToPercent(iNewSize2, iTotalSplitterSize);
-
-			$Cnt1.css(this._sizeType, sFinalSize1);
-			$Cnt2.css(this._sizeType, sFinalSize2);
-		}
-	};
-
-	/**
-	 * Upon bar resizing AssociativeSplitter sets layoutData's size to %.
-	 * This override is needed to check if such % would exceed the available space.
-	 * If so, the size is reduced.
-	 * @override
+	 * If there is single "%"-sized area after pagination, let it take the remaining size
 	 */
 	AssociativeSplitter.prototype._calcPercentBasedSizes = function (aPercentSizeIdx, iRemainingSize) {
 		var aContentAreas = this._getContentAreas(),
@@ -221,51 +134,7 @@ sap.ui.define([
 			iRemainingSize = Splitter.prototype._calcPercentBasedSizes.apply(this, arguments);
 		}
 
-		var iMinSizeOfAutoSizedAreas = aContentAreas
-			.filter(function (oArea) {
-				return oArea.getLayoutData().getSize() === "auto";
-			})
-			.reduce(function (iSum, oArea) {
-				return iSum + oArea.getLayoutData().getMinSize();
-			}, 0);
-
-		// calculated % exceed the available space - shrink areas if possible
-		if (iRemainingSize < iMinSizeOfAutoSizedAreas) {
-			var iNeededSize = Math.abs(iRemainingSize - iMinSizeOfAutoSizedAreas);
-
-			// shrink areas from right to left
-			for (var i = aPercentSizeIdx.length - 1; i >= 0; i--) {
-				var iIdx = aPercentSizeIdx[i],
-					oArea = aContentAreas[iIdx],
-					iCalculatedSize = this._calculatedSizes[iIdx],
-					oLD = oArea.getLayoutData();
-
-				if (oLD._isMarked()) {
-					var iNewSize = iCalculatedSize - iNeededSize;
-
-					if (iNewSize < oLD.getMinSize()) {
-						iNewSize = oLD.getMinSize();
-					}
-
-					this._calculatedSizes[iIdx] = iNewSize;
-
-					var iIncreasedSize = iCalculatedSize - iNewSize;
-					iNeededSize -= iIncreasedSize;
-					iRemainingSize += iIncreasedSize;
-				}
-
-				// already shrunk enough
-				if (iNeededSize <= 0) {
-					break;
-				}
-			}
-		}
-
 		return iRemainingSize;
-	};
-
-	AssociativeSplitter.prototype._pxToPercent = function (iPx, iFullSize) {
-		return (iPx * 100) / iFullSize + "%";
 	};
 
 	/**

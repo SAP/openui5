@@ -12,10 +12,9 @@ sap.ui.define([
 	'sap/m/ShellRenderer',
 	"sap/ui/util/Mobile",
 	"sap/base/Log",
-	"sap/ui/core/theming/Parameters",
-	"sap/ui/core/Lib"
+	"sap/ui/core/theming/Parameters"
 ],
-	function(library, Core, Control, coreLibrary, Image, ShellRenderer, Mobile, Log, ThemeParameters, Lib) {
+	function(library, Core, Control, coreLibrary, Image, ShellRenderer, Mobile, Log, ThemeParameters) {
 		"use strict";
 
 
@@ -267,7 +266,7 @@ sap.ui.define([
 			if (!this.oImg) {
 				this.oImg = new Image(this.getId() + "-logo", {
 					decorative: false,
-					alt: Lib.getResourceBundleFor("sap.m").getText("SHELL_ARIA_LOGO")
+					alt: sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("SHELL_ARIA_LOGO")
 				});
 
 				this.oImg.addStyleClass("sapMShellLogoImg");

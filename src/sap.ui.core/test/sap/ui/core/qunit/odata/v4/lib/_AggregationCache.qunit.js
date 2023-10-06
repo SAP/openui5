@@ -4186,102 +4186,113 @@ sap.ui.define([
 
 	//*********************************************************************************************
 [
-	{parentLeaf : false, parentExpand : true},
-	{parentLeaf : false, parentExpand : false, parentMoved : true},
-	{parentLeaf : true, parentExpand : false},
-	{noParent : true}
+	{success : false},
+	{success : true, parentLeaf : true},
+	{success : true, noParent : true}
 ].forEach(function (oFixture) {
-	QUnit.test(`_delete: leaf, ${JSON.stringify(oFixture)}`, function (assert) {
-		// Before the delete, the child is at 2 and the parent is at 1 (or missing) - hence the
-		// child's level index is 0 (or 2). When restoring, the level index is 3, and the parent
-		// possibly moved to index 6. So the child must be restored to 3 (no parent), 5 (parent
-		// still at 1) or 10 (parent moved to 6).
+	QUnit.test(`_delete: ${JSON.stringify(oFixture)}`, function (assert) {
+		var oCountExpectation, oRemoveExpectation;
+
 		const oCache = _AggregationCache.create(this.oRequestor, "Foo", "", {}, {
 			hierarchyQualifier : "X"
 		});
 		const fnCallback = sinon.spy();
-		const oLevelCache = {
-			_delete : mustBeMocked,
-			getValue : mustBeMocked
-		};
+		const iCallCount = oFixture.success ? 1 : 0;
+		const iIndex = oFixture.noParent ? 0 : 2;
 		const oParent = {
 			"@$ui5.node.isExpanded" : true
 		};
+		const oParentCache = {
+			getValue : mustBeMocked,
+			removeElement : mustBeMocked
+		};
 
+		oCache.aElements[iIndex] = "~oElement~";
 		if (!oFixture.noParent) {
 			oCache.aElements[1] = oParent;
 		}
-		oCache.aElements[2] = "~oElement~";
 		const oHelperMock = this.mock(_Helper);
 		oHelperMock.expects("getPrivateAnnotation").withExactArgs("~oElement~", "parent")
-			.returns(oLevelCache);
+			.returns(oParentCache);
 		oHelperMock.expects("getPrivateAnnotation").withExactArgs("~oElement~", "index")
-			.returns(oFixture.noParent ? 2 : 0);
-		const oLevelCacheMock = this.mock(oLevelCache);
-		const oDeleteExpectation = oLevelCacheMock.expects("_delete")
-			.withExactArgs("~groupLock~", "~editUrl~", oFixture.noParent ? "2" : "0",
-				"~etagEntity~", sinon.match.func)
+			.returns("~index~");
+		oHelperMock.expects("getPrivateAnnotation").withExactArgs("~oElement~", "predicate")
+			.returns("~predicate~");
+		this.mock(this.oRequestor).expects("request")
+			.withExactArgs("DELETE", "~editUrl~", "~groupLock~", {"If-Match" : "~oElement~"})
+			.callsFake(() => {
+				oRemoveExpectation = this.mock(oParentCache).expects("removeElement")
+					.exactly(iCallCount)
+					.withExactArgs(undefined, "~index~", "~predicate~", "");
+				oCountExpectation = this.mock(oParentCache).expects("getValue")
+					.exactly(oFixture.success && !oFixture.noParent ? 1 : 0)
+					.withExactArgs("$count").returns(oFixture.parentLeaf ? 0 : 5);
+				oHelperMock.expects("getPrivateAnnotation").exactly(oFixture.parentLeaf ? 1 : 0)
+					.withExactArgs(sinon.match.same(oParent), "predicate")
+					.returns("~parentPredicate~");
+				oHelperMock.expects("updateAll").exactly(oFixture.parentLeaf ? 1 : 0)
+					.withExactArgs(sinon.match.same(oCache.mChangeListeners), "~parentPredicate~",
+						sinon.match.same(oParent), {"@$ui5.node.isExpanded" : undefined});
+				this.mock(oCache).expects("shiftIndex").exactly(iCallCount)
+					.withExactArgs(iIndex, -1);
+				this.mock(oCache).expects("removeElement").exactly(iCallCount)
+					.withExactArgs(sinon.match.same(oCache.aElements), iIndex, "~predicate~", "");
+
+				return oFixture.success ? Promise.resolve() : Promise.reject("~error~");
+			});
+
+		// code under test
+		const oDeletePromise
+			= oCache._delete("~groupLock~", "~editUrl~", "" + iIndex, "n/a", fnCallback);
+
+		assert.ok(oDeletePromise.isPending(), "a SyncPromise");
+
+		return oDeletePromise.then(function () {
+			assert.ok(oFixture.success);
+			assert.strictEqual(fnCallback.callCount, 1);
+			assert.deepEqual(fnCallback.args[0], [iIndex, -1]);
+			assert.ok(oRemoveExpectation.calledBefore(oCountExpectation));
+			if (oFixture.parentLeaf) {
+				assert.notOk("@$ui5.node.isExpanded" in oParent);
+			}
+		}, function (oError) {
+			assert.notOk(oFixture.success);
+			assert.strictEqual(oError, "~error~");
+			assert.strictEqual(fnCallback.callCount, 0);
+		});
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("_delete: transient node", function (assert) {
+		const oCache = _AggregationCache.create(this.oRequestor, "Foo", "", {}, {
+			hierarchyQualifier : "X"
+		});
+		const oElement = {
+			"@$ui5.context.isTransient" : true
+		};
+		const oParentCache = {
+			_delete : mustBeMocked
+		};
+
+		oCache.aElements[2] = oElement;
+		const oHelperMock = this.mock(_Helper);
+		oHelperMock.expects("getPrivateAnnotation")
+			.withExactArgs(sinon.match.same(oElement), "parent")
+			.returns(oParentCache);
+		oHelperMock.expects("getPrivateAnnotation")
+			.withExactArgs(sinon.match.same(oElement), "index")
+			.returns(1);
+		this.mock(oParentCache).expects("_delete")
+			.withExactArgs("~groupLock~", "~editUrl~", "1")
 			.returns("~promise~");
 
 		assert.strictEqual(
 			// code under test
-			oCache._delete("~groupLock~", "~editUrl~", "2", "~etagEntity~", fnCallback),
-			"~promise~");
-
-		const oCacheMock = this.mock(oCache);
-		const oShiftExpectation1 = oCacheMock.expects("shiftIndex").withExactArgs(2, -1);
-		oHelperMock.expects("getPrivateAnnotation").withExactArgs("~oElement~", "predicate")
-			.returns("~predicate~");
-		const oRemoveExpectation = oCacheMock.expects("removeElement")
-			.withExactArgs(sinon.match.same(oCache.aElements), 2, "~predicate~", "");
-		oLevelCacheMock.expects("getValue").exactly(oFixture.noParent ? 0 : 1)
-			.withExactArgs("$count").returns(oFixture.parentLeaf ? 0 : 5);
-		oHelperMock.expects("getPrivateAnnotation").exactly(oFixture.parentLeaf ? 1 : 0)
-			.withExactArgs(sinon.match.same(oParent), "predicate").returns("~predicate~");
-		oHelperMock.expects("updateAll").exactly(oFixture.parentLeaf ? 1 : 0)
-			.withExactArgs(sinon.match.same(oCache.mChangeListeners), "~predicate~",
-				sinon.match.same(oParent), {"@$ui5.node.isExpanded" : undefined});
-
-		// code under test - callback deleting
-		oDeleteExpectation.firstCall.args[4](0, -1);
-
-		if (oFixture.parentMoved) {
-			delete oCache.aElements[1];
-			oCache.aElements[6] = oParent;
-		}
-		assert.ok(oShiftExpectation1.calledBefore(oRemoveExpectation));
-		assert.strictEqual(fnCallback.callCount, 1);
-		assert.deepEqual(fnCallback.args[0], [2, -1]);
-		if (oFixture.parentLeaf) {
-			assert.notOk("@$ui5.node.isExpanded" in oParent);
-		}
-
-		// parent index is 6 or 1, child index in level cache is 3 (from the callback)
-		let iExpectedIndex = oFixture.parentMoved ? 10 : 5;
-		if (oFixture.noParent) {
-			iExpectedIndex = 3;
-		}
-		const oRestoreExpectation = this.mock(oCache).expects("restoreElement")
-			.withExactArgs(sinon.match.same(oCache.aElements), iExpectedIndex, "~oElement~", "");
-		const oShiftExpectation2 = oCacheMock.expects("shiftIndex")
-			.withExactArgs(iExpectedIndex, 1);
-		oLevelCacheMock.expects("getValue").exactly(oFixture.noParent ? 0 : 1)
-			.withExactArgs("$count").returns(oFixture.parentExpand ? 1 : 5);
-		oHelperMock.expects("getPrivateAnnotation").exactly(oFixture.parentExpand ? 1 : 0)
-			.withExactArgs(sinon.match.same(oParent), "predicate").returns("~predicate~");
-		oHelperMock.expects("updateAll").exactly(oFixture.parentExpand ? 1 : 0)
-			.withExactArgs(sinon.match.same(oCache.mChangeListeners), "~predicate~",
-				sinon.match.same(oParent), {"@$ui5.node.isExpanded" : true});
-		oHelperMock.expects("setPrivateAnnotation").withExactArgs("~oElement~", "index", 3);
-
-		// code under test - callback reinserting
-		oDeleteExpectation.firstCall.args[4](3, 1);
-
-		assert.ok(oRestoreExpectation.calledBefore(oShiftExpectation2));
-		assert.strictEqual(fnCallback.callCount, 2);
-		assert.deepEqual(fnCallback.args[1], [iExpectedIndex, 1]);
+			oCache._delete("~groupLock~", "~editUrl~", "2"),
+			"~promise~"
+		);
 	});
-});
 
 	//*********************************************************************************************
 	QUnit.test("_delete: expandTo > 1", function (assert) {

@@ -129,15 +129,14 @@ sap.ui.define([
 	 *   The entity's edit URL to be used for the DELETE request
 	 * @param {string} sIndex
 	 *   The entity's index
-	 * @param {object} [oETagEntity]
-	 *   An entity with the ETag of the binding for which the deletion was requested. This is
-	 *   provided if the deletion is delegated from a context binding with empty path to a list
-	 *   binding
+	 * @param {object} [_oETagEntity]
+	 *   An entity with the ETag of the binding for which the deletion was requested. Not used and
+	 *   should always be undefined
 	 * @param {function(number,number):void} fnCallback
 	 *   A function which is called immediately when an entity has been deleted from the cache, or
 	 *   when it was re-inserted; the index of the entity and an offset (-1 for deletion, 1 for
 	 *   re-insertion) are passed as parameter
-	 * @returns {sap.ui.base.SyncPromise}
+	 * @returns {sap.ui.base.SyncPromise<void>}
 	 *   A promise which is resolved without a result in case of success, or rejected with an
 	 *   instance of <code>Error</code> in case of failure
 	 * @throws {Error} If the cache is shared, <code>this.oAggregation.expandTo > 1</code>, or
@@ -146,53 +145,46 @@ sap.ui.define([
 	 * @public
 	 */
 	// @override sap.ui.model.odata.v4.lib._Cache#_delete
-	_AggregationCache.prototype._delete = function (oGroupLock, sEditUrl, sIndex, oETagEntity,
+	_AggregationCache.prototype._delete = function (oGroupLock, sEditUrl, sIndex, _oETagEntity,
 			fnCallback) {
 		if (this.oAggregation.expandTo > 1) {
 			throw new Error("Unsupported expandTo: " + this.oAggregation.expandTo);
 		}
 
-		let iFlatIndex = parseInt(sIndex);
-		if (isNaN(iFlatIndex)) {
+		const iIndex = parseInt(sIndex);
+		if (isNaN(iIndex)) {
 			throw new Error(`Unsupported kept-alive entity: ${this.sResourcePath}${sIndex}`);
 		}
 
-		const oElement = this.aElements[iFlatIndex];
-		const oLevelCache = _Helper.getPrivateAnnotation(oElement, "parent");
-		const iLevelIndex = _Helper.getPrivateAnnotation(oElement, "index");
-		let iParentIndex = iFlatIndex - iLevelIndex - 1;
-		const oParent = this.aElements[iParentIndex];
-		return oLevelCache._delete(oGroupLock, sEditUrl, iLevelIndex.toString(), oETagEntity,
-			(iIndex, iOffset) => {
-				if (iOffset < 0) { // deleting
-					this.shiftIndex(iFlatIndex, iOffset);
-					this.removeElement(this.aElements, iFlatIndex,
-						_Helper.getPrivateAnnotation(oElement, "predicate"), "");
-					if (oParent && !oLevelCache.getValue("$count")) {
-						_Helper.updateAll(this.mChangeListeners,
-							_Helper.getPrivateAnnotation(oParent, "predicate"), oParent,
-							{"@$ui5.node.isExpanded" : undefined});
-						// _Helper.updateAll only sets it to undefined
-						delete oParent["@$ui5.node.isExpanded"];
-					}
-				} else { // reinserting
-					if (oParent) {
-						if (oParent !== this.aElements[iParentIndex]) { // parent moved
-							iParentIndex = this.aElements.indexOf(oParent);
-						}
-						if (oLevelCache.getValue("$count") === 1) {
-							_Helper.updateAll(this.mChangeListeners,
-								_Helper.getPrivateAnnotation(oParent, "predicate"), oParent,
-								{"@$ui5.node.isExpanded" : true});
-						}
-					}
-					iFlatIndex = iParentIndex + iIndex + 1;
-					this.restoreElement(this.aElements, iFlatIndex, oElement, "");
-					this.shiftIndex(iFlatIndex, iOffset);
-					_Helper.setPrivateAnnotation(oElement, "index", iIndex);
-				}
-				fnCallback(iFlatIndex, iOffset);
-			});
+		const oElement = this.aElements[iIndex];
+		const oParentCache = _Helper.getPrivateAnnotation(oElement, "parent");
+		const iIndexInParentCache = _Helper.getPrivateAnnotation(oElement, "index");
+		if (oElement["@$ui5.context.isTransient"]) {
+			// cancel the create (no callback function necessary)
+			return oParentCache._delete(oGroupLock, sEditUrl, "" + iIndexInParentCache);
+		}
+
+		const sPredicate = _Helper.getPrivateAnnotation(oElement, "predicate");
+		return SyncPromise.resolve(
+			this.oRequestor.request("DELETE", sEditUrl, oGroupLock, {"If-Match" : oElement})
+		).then(() => {
+			// remove in parent cache
+			oParentCache.removeElement(undefined, iIndexInParentCache, sPredicate, "");
+			if (iIndex && !oParentCache.getValue("$count")) {
+				// make parent a leaf (the direct predecessor; if index is 0, there is no parent)
+				const oParent = this.aElements[iIndex - 1];
+				_Helper.updateAll(this.mChangeListeners,
+					_Helper.getPrivateAnnotation(oParent, "predicate"), oParent,
+					{"@$ui5.node.isExpanded" : undefined});
+				// _Helper.updateAll only sets it to undefined
+				delete oParent["@$ui5.node.isExpanded"];
+			}
+			// remove in this cache
+			this.shiftIndex(iIndex, -1);
+			this.removeElement(this.aElements, iIndex, sPredicate, "");
+			// notify caller
+			fnCallback(iIndex, -1);
+		});
 	};
 
 	/**

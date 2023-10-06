@@ -14,7 +14,6 @@ sap.ui.define([
 	"sap/m/Text",
 	"sap/ui/core/Core",
 	"sap/ui/core/library",
-	"sap/ui/core/Lib",
 	"sap/ui/events/KeyCodes"
 ], function(
 	qutils,
@@ -30,8 +29,7 @@ sap.ui.define([
 	Link,
 	Text,
 	oCore,
-	coreLibrary,
-	Lib
+	coreLibrary
 ) {
 	"use strict";
 
@@ -40,7 +38,7 @@ sap.ui.define([
 		TextDirection = coreLibrary.TextDirection;
 
 	// shortcut for library resource bundle
-	var oRb = Lib.getResourceBundleFor("sap.m");
+	var oRb = oCore.getLibraryResourceBundle("sap.m");
 
 	createAndAppendDiv("objectAttributes");
 	createAndAppendDiv("objectAttributesWrap");

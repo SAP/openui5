@@ -34,7 +34,6 @@ sap.ui.define([
 	"sap/ui/core/date/UI5Date",
 	"sap/ui/core/date/CalendarWeekNumbering",
 	"sap/ui/core/Core",
-	"sap/ui/core/Lib",
 	"sap/ui/dom/jquery/cursorPos"
 ],
 	function(
@@ -66,8 +65,7 @@ sap.ui.define([
 		CalendarUtils,
 		UI5Date,
 		CalendarWeekNumbering,
-		Core,
-		Lib
+		Core
 	) {
 	"use strict";
 
@@ -75,7 +73,7 @@ sap.ui.define([
 	// shortcut for sap.ui.core.CalendarType
 	var CalendarType = coreLibrary.CalendarType;
 
-	var oResourceBundle = Lib.getResourceBundleFor("sap.m");
+	var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 
 	/**
 	 * Constructor for a new <code>DatePicker</code>.
@@ -1053,7 +1051,7 @@ sap.ui.define([
 		var sId = this.getLegend();
 		if (sId) {
 			var CalendarLegend = sap.ui.require("sap/ui/unified/CalendarLegend");
-			oLegend = Element.registry.get(sId);
+			oLegend = sap.ui.getCore().byId(sId);
 			if (oLegend && !(typeof CalendarLegend == "function" && oLegend instanceof CalendarLegend)) {
 				throw new Error(oLegend + " is not an sap.ui.unified.CalendarLegend. " + this);
 			}
@@ -1449,7 +1447,7 @@ sap.ui.define([
 		var oRenderer = this.getRenderer();
 		var oInfo = InputBase.prototype.getAccessibilityInfo.apply(this, arguments);
 		var sValue = this.getValue() || "";
-		var sRequired = this.getRequired() ? Lib.getResourceBundleFor("sap.m").getText("ELEMENT_REQUIRED") : '';
+		var sRequired = this.getRequired() ? Core.getLibraryResourceBundle("sap.m").getText("ELEMENT_REQUIRED") : '';
 
 		if (this._bValid) {
 			var oDate = this.getDateValue();

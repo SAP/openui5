@@ -14,10 +14,9 @@ sap.ui.define(
         "sap/ui/test/matchers/Matcher",
         "sap/ui/test/matchers/MatcherFactory",
         "sap/ui/test/pipelines/MatcherPipeline",
-        "sap/ui/test/pipelines/ActionPipeline",
-        "sap/ui/core/Lib"
+        "sap/ui/test/pipelines/ActionPipeline"
     ],
-    function(
+    function (
         mergeObjects,
         capitalize,
         Log,
@@ -28,8 +27,7 @@ sap.ui.define(
         Matcher,
         MatcherFactory,
         MatcherPipeline,
-        ActionPipeline,
-        Lib
+        ActionPipeline
     ) {
         "use strict";
 
@@ -990,7 +988,7 @@ sap.ui.define(
                     aParameters = Array.prototype.slice.call(arguments, 3);
                 }
                 return function (oControl) {
-                    var oResourceBundle = Lib.getResourceBundleFor(sLibrary),
+                    var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle(sLibrary),
                         sText = oResourceBundle.getText(sToken, aParameters),
                         oProperties = {};
 

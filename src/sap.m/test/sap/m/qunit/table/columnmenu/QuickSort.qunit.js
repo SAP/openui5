@@ -7,9 +7,8 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/m/library",
 	"sap/ui/core/Core",
-	"sap/ui/core/library",
-	"sap/ui/core/Lib"
-], function(QUnitUtils, Menu, QuickSort, QuickSortItem, Button, library, oCore, CoreLibrary, Lib) {
+	"sap/ui/core/library"
+], function (QUnitUtils, Menu, QuickSort, QuickSortItem, Button, library, oCore, CoreLibrary) {
 	"use strict";
 
 	QUnit.module("Basic", {
@@ -50,7 +49,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Label", function(assert) {
-		var oBundle = Lib.getResourceBundleFor("sap.m");
+		var oBundle = oCore.getLibraryResourceBundle("sap.m");
 		var sLabel = oBundle.getText("table.COLUMNMENU_QUICK_SORT", "A");
 		var aItems = this.oQuickSort.getItems();
 		assert.equal(aItems[0]._getLabel(aItems.length), sLabel, "QuickSort label of single item is correct.");
@@ -69,7 +68,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Content", function(assert) {
-		var oBundle = Lib.getResourceBundleFor("sap.m");
+		var oBundle = oCore.getLibraryResourceBundle("sap.m");
 		var aContent = this.oQuickSort.getEffectiveQuickActions()[0].getContent();
 		assert.ok(aContent, "The quick sort has content");
 

@@ -14,9 +14,7 @@ sap.ui.define([
 	"sap/m/MessageToast",
 	"sap/ui/fl/write/api/TranslationAPI",
 	"sap/ui/fl/Layer",
-	"sap/ui/core/util/File",
-	"sap/ui/core/Lib",
-	"sap/ui/core/Element"
+	"sap/ui/core/util/File"
 ], function(
 	Log,
 	ManagedObject,
@@ -27,15 +25,13 @@ sap.ui.define([
 	MessageToast,
 	TranslationAPI,
 	Layer,
-	FileUtil,
-	Lib,
-	Element
+	FileUtil
 ) {
 	"use strict";
 
 	function showError(vError) {
 		var sErrorMessage = vError.userMessage || vError.stack || vError.message || vError.status || vError;
-		var oTextResources = Lib.getResourceBundleFor("sap.ui.rta");
+		var oTextResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
 		Log.error(sErrorMessage);
 		var sMsg = `${oTextResources.getText("MSG_LREP_TRANSFER_ERROR")}\n${
 			 oTextResources.getText("MSG_ERROR_REASON", [sErrorMessage])}`;
@@ -134,7 +130,7 @@ sap.ui.define([
 					this._oUploadDialog.close();
 				}.bind(this),
 				formatUploadEnabled() {
-					var oFileUploader = Element.registry.get(`${sUploadId}--fileUploader`);
+					var oFileUploader = sap.ui.getCore().byId(`${sUploadId}--fileUploader`);
 					return oFileUploader.checkFileReadable();
 				},
 				saveFiles: function(oEvent) {
@@ -151,7 +147,7 @@ sap.ui.define([
 	};
 
 	function handleUploadPress(sUploadId) {
-		var oFileUploader = Element.registry.get(`${sUploadId}--fileUploader`);
+		var oFileUploader = sap.ui.getCore().byId(`${sUploadId}--fileUploader`);
 		oFileUploader.checkFileReadable().then(function() {
 			if (this._oTranslationModel.getProperty("/file")) {
 				var mPropertyBag = {
@@ -160,7 +156,7 @@ sap.ui.define([
 				};
 				mPropertyBag.payload.append("file", this._oTranslationModel.getProperty("/file"), oFileUploader.getValue());
 				return TranslationAPI.uploadTranslationTexts(mPropertyBag).then(function() {
-					var oTextResources = Lib.getResourceBundleFor("sap.ui.rta");
+					var oTextResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
 					var sMsg = oTextResources.getText("MSG_UPLOAD_TRANSLATION_SUCCESS");
 					MessageToast.show(sMsg, {
 						styleClass: Utils.getRtaStyleClassName()

@@ -22,8 +22,7 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/core/date/UI5Date",
-	"sap/ui/unified/DateRange",
-	"sap/ui/core/Element"
+	"sap/ui/unified/DateRange"
 ], function(
 	qutils,
 	jQuery,
@@ -47,8 +46,7 @@ sap.ui.define([
 	oCore,
 	createAndAppendDiv,
 	UI5Date,
-	DateRange,
-	Element
+	DateRange
 ) {
 	"use strict";
 	createAndAppendDiv("bigUiArea").style.width = "1024px";
@@ -406,7 +404,7 @@ sap.ui.define([
 		Core.applyChanges();
 
 		sCurrentPickerId = oSPC._getHeader().getAssociation("currentPicker");
-		oPicker = Element.registry.get(sCurrentPickerId);
+		oPicker = Core.byId(sCurrentPickerId);
 		oRow = oSPC.getAggregation("_grid").getAggregation("_columnHeaders");
 
 		// Act
@@ -422,7 +420,7 @@ sap.ui.define([
 		Core.applyChanges();
 
 		sCurrentPickerId = oSPC._getHeader().getAssociation("currentPicker");
-		oPicker = Element.registry.get(sCurrentPickerId);
+		oPicker = Core.byId(sCurrentPickerId);
 		oRow = oSPC.getAggregation("_grid").getAggregation("_columnHeaders");
 		oStartDate.setFullYear(2014, 11, 29);
 		oStartDate.setHours(0);
@@ -437,7 +435,7 @@ sap.ui.define([
 		Core.applyChanges();
 
 		sCurrentPickerId = oSPC._getHeader().getAssociation("currentPicker");
-		oPicker = Element.registry.get(sCurrentPickerId);
+		oPicker = Core.byId(sCurrentPickerId);
 
 		// Assert
 		assert.strictEqual(oPicker.getFirstDayOfWeek(), 3, "firstDayOfWeek in Month view propagated to picker");
@@ -449,7 +447,7 @@ sap.ui.define([
 		Core.applyChanges();
 
 		sCurrentPickerId = oSPC._getHeader().getAssociation("currentPicker");
-		oPicker = Element.registry.get(sCurrentPickerId);
+		oPicker = Core.byId(sCurrentPickerId);
 		oRow = oSPC.getAggregation("_grid").getAggregation("_columnHeaders");
 		oStartDate.setFullYear(2014, 11, 31);
 		oStartDate.setHours(0);
@@ -874,7 +872,7 @@ sap.ui.define([
 	QUnit.test("startDateChange: on next button press", function (assert) {
 		var oSPC = new SinglePlanningCalendar(),
 			oSPCHeader = oSPC._getHeader(),
-			iScrollDays = Element.registry.get(oSPC.getAssociation("selectedView")).getScrollEntityCount(),
+			iScrollDays = oCore.byId(oSPC.getAssociation("selectedView")).getScrollEntityCount(),
 			oInitialStartDate = oSPC.getStartDate(),
 			fnFireStartDateChange = this.spy(oSPC, "fireStartDateChange");
 
@@ -895,7 +893,7 @@ sap.ui.define([
 	QUnit.test("startDateChange: on previous button press", function (assert) {
 		var oSPC = new SinglePlanningCalendar(),
 			oSPCHeader = oSPC._getHeader(),
-			iScrollDays = Element.registry.get(oSPC.getAssociation("selectedView")).getScrollEntityCount(),
+			iScrollDays = oCore.byId(oSPC.getAssociation("selectedView")).getScrollEntityCount(),
 			oInitialStartDate = oSPC.getStartDate(),
 			fnFireStartDateChange = this.spy(oSPC, "fireStartDateChange");
 
@@ -1863,8 +1861,8 @@ sap.ui.define([
 			oSPC = new SinglePlanningCalendar(),
 			oHeader = oSPC._getHeader(),
 			sNavigationToolbarId = oHeader.getAggregation("_navigationToolbar").getId(),
-			oPreviousButton = Element.registry.get(sNavigationToolbarId + "-PrevBtn"),
-			oNextButton = Element.registry.get(sNavigationToolbarId + "-NextBtn"),
+			oPreviousButton = oCore.byId(sNavigationToolbarId + "-PrevBtn"),
+			oNextButton = oCore.byId(sNavigationToolbarId + "-NextBtn"),
 			sTodayButtonLabelId = InvisibleText.getStaticId("sap.m", "PCH_NAVIGATE_TO_TODAY"),
 			sPickerButtonLabelId = InvisibleText.getStaticId("sap.m", "PCH_SELECT_RANGE");
 

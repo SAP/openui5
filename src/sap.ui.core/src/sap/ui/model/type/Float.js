@@ -10,9 +10,9 @@ sap.ui.define([
 	"sap/ui/model/FormatException",
 	"sap/ui/model/ParseException",
 	"sap/ui/model/SimpleType",
-	"sap/ui/model/ValidateException",
-	"sap/ui/core/Lib"
-], function(each, isEmptyObject, NumberFormat, FormatException, ParseException, SimpleType, ValidateException, Lib) {
+	"sap/ui/model/ValidateException"
+], function(each, isEmptyObject, NumberFormat, FormatException, ParseException, SimpleType,
+		ValidateException) {
 	"use strict";
 
 	/**
@@ -78,7 +78,7 @@ sap.ui.define([
 			case "string":
 				fResult = this.oOutputFormat.parse(vValue);
 				if (isNaN(fResult)) {
-					oBundle = Lib.getResourceBundleFor("sap.ui.core");
+					oBundle = sap.ui.getCore().getLibraryResourceBundle();
 					throw new ParseException(oBundle.getText("Float.Invalid"));
 				}
 				break;
@@ -97,7 +97,7 @@ sap.ui.define([
 
 	Float.prototype.validateValue = function(vValue) {
 		if (this.oConstraints) {
-			var oBundle = Lib.getResourceBundleFor("sap.ui.core"),
+			var oBundle = sap.ui.getCore().getLibraryResourceBundle(),
 				aViolatedConstraints = [],
 				aMessages = [],
 				fValue = vValue,

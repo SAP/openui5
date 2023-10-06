@@ -10,9 +10,7 @@ sap.ui.define([
 	"sap/ui/core/library",
 	"sap/m/Link",
 	"sap/ui/core/message/Message",
-	"sap/ui/core/InvisibleText",
-	"sap/ui/core/Lib",
-	"sap/ui/core/Element"
+	"sap/ui/core/InvisibleText"
 ], function(
 	qutils,
 	MessageView,
@@ -24,9 +22,7 @@ sap.ui.define([
 	coreLibrary,
 	Link,
 	Message,
-	InvisibleText,
-	Lib,
-	Element
+	InvisibleText
 ) {
 	"use strict";
 
@@ -853,7 +849,7 @@ sap.ui.define([
 
 		Core.applyChanges();
 
-		oBundle = Lib.getResourceBundleFor("sap.m");
+		oBundle = Core.getLibraryResourceBundle("sap.m");
 		sContentAnnouncementLocation = oBundle.getText("MESSAGE_LIST_ITEM_FOCUS_TEXT_LOCATION_ERROR");
 		sContentAnnouncementDescription = oBundle.getText("MESSAGE_LIST_ITEM_FOCUS_TEXT_DESCRIPTION");
 
@@ -889,7 +885,7 @@ sap.ui.define([
 
 		Core.applyChanges();
 
-		oBundle = Lib.getResourceBundleFor("sap.m");
+		oBundle = Core.getLibraryResourceBundle("sap.m");
 		sContentAnnouncementLocation = oBundle.getText("MESSAGE_LIST_ITEM_FOCUS_TEXT_LOCATION_WARNING");
 		sContentAnnouncementDescription = oBundle.getText("MESSAGE_LIST_ITEM_FOCUS_TEXT_DESCRIPTION");
 
@@ -925,7 +921,7 @@ sap.ui.define([
 
 		Core.applyChanges();
 
-		oBundle = Lib.getResourceBundleFor("sap.m");
+		oBundle = Core.getLibraryResourceBundle("sap.m");
 		sContentAnnouncementLocation = oBundle.getText("MESSAGE_LIST_ITEM_FOCUS_TEXT_LOCATION_INFORMATION");
 		sContentAnnouncementDescription = oBundle.getText("MESSAGE_LIST_ITEM_FOCUS_TEXT_DESCRIPTION");
 
@@ -961,7 +957,7 @@ sap.ui.define([
 
 		Core.applyChanges();
 
-		oBundle = Lib.getResourceBundleFor("sap.m");
+		oBundle = Core.getLibraryResourceBundle("sap.m");
 		sContentAnnouncementLocation = oBundle.getText("MESSAGE_LIST_ITEM_FOCUS_TEXT_LOCATION_SUCCESS");
 		sContentAnnouncementDescription = oBundle.getText("MESSAGE_LIST_ITEM_FOCUS_TEXT_DESCRIPTION");
 
@@ -992,7 +988,7 @@ sap.ui.define([
 		var oFirstMessageItem = new MessageItem({
 			type: "Error"
 		});
-		var	oResourceBundle = Lib.getResourceBundleFor("sap.m");
+		var	oResourceBundle = Core.getLibraryResourceBundle("sap.m");
 
 		this.oMessageView.addItem(oFirstMessageItem);
 		this.oMessageView.placeAt("qunit-fixture");
@@ -1023,13 +1019,13 @@ sap.ui.define([
 				})
 			]
 		});
-		var	oResourceBundle = Lib.getResourceBundleFor("sap.m");
+		var	oResourceBundle = Core.getLibraryResourceBundle("sap.m");
 
 		oMessageView.placeAt("qunit-fixture");
 		Core.applyChanges();
 
 		var sInvisibleTextId = InvisibleText.getStaticId("sap.m", "MESSAGEVIEW_SEGMENTED_BTN_DESCRIPTION"),
-		oInvisibleText = Element.registry.get(sInvisibleTextId);
+		oInvisibleText = Core.byId(sInvisibleTextId);
 
 		//Assert
 		assert.strictEqual(oMessageView._oSegmentedButton._oItemNavigation.oDomRef.getAttribute("aria-labelledby"), sInvisibleTextId, "The aria-labelledby attribute is set correctly");

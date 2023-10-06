@@ -13,8 +13,7 @@ sap.ui.define([
 	"sap/ui/fl/initial/_internal/FlexInfoSession",
 	"sap/ui/core/BusyIndicator",
 	"sap/base/Log",
-	"sap/m/MessageBox",
-	"sap/ui/core/Lib"
+	"sap/m/MessageBox"
 ], function(
 	merge,
 	Layer,
@@ -26,8 +25,7 @@ sap.ui.define([
 	FlexInfoSession,
 	BusyIndicator,
 	Log,
-	MessageBox,
-	Lib
+	MessageBox
 ) {
 	"use strict";
 
@@ -153,7 +151,7 @@ sap.ui.define([
 			return WriteUtils.sendRequest(sVersionsUrl, "DELETE", mPropertyBag);
 		},
 		publish(mPropertyBag) {
-			var oResourceBundle = Lib.getResourceBundleFor("sap.ui.fl");
+			var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.fl");
 			var fnHandleAllErrors = function(oError) {
 				BusyIndicator.hide();
 				var sMessage = oResourceBundle.getText("MSG_CF_PUBLISH_ERROR", oError ? [oError.message || oError] : undefined);

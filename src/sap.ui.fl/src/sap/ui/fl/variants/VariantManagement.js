@@ -13,8 +13,7 @@ sap.ui.define([
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/core/Control",
 	"sap/ui/core/library",
-	"sap/base/Log",
-	"sap/ui/core/Lib"
+	"sap/base/Log"
 ], function(
 	Context,
 	Filter,
@@ -25,8 +24,7 @@ sap.ui.define([
 	flSettings,
 	Control,
 	coreLibrary,
-	Log,
-	Lib
+	Log
 ) {
 	"use strict";
 
@@ -324,7 +322,7 @@ sap.ui.define([
 		Control.prototype.init.apply(this); // Call base class
 
 		this.addStyleClass("sapUiFlVarMngmt"); // required for finding the control by RTA/FL
-		this._oRb = Lib.getResourceBundleFor("sap.ui.fl");
+		this._oRb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.fl");
 
 		this.setModelName(ControlVariantApplyAPI.getVariantModelName());
 
@@ -710,6 +708,10 @@ sap.ui.define([
 		return this;
 	};
 
+	VariantManagement.prototype._setStandardVariantKey = function(sKey) {
+		this._oVM.setStandardVariantKey(sKey);
+	};
+
 	VariantManagement.prototype.openManagementDialog = function(bCreateAlways, sClass, oRolesComponentContainer) {
 		this._oVM.openManagementDialog(bCreateAlways, sClass, oRolesComponentContainer);
 	};
@@ -830,6 +832,7 @@ sap.ui.define([
 			oModel = this.getModel(sModelName);
 			if (oModel) {
 				sLocalId = this._getLocalId(oModel);
+
 				if (sLocalId) {
 					this.oContext = new Context(oModel, `/${sLocalId}`);
 					this.setBindingContext(this.oContext, sModelName);
@@ -877,6 +880,7 @@ sap.ui.define([
 					});
 
 					this._oVM.setPopoverTitle(this._oRb.getText("VARIANT_MANAGEMENT_VARIANTS"));
+					this._setStandardVariantKey(sLocalId);
 				}
 			}
 		}

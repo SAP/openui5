@@ -11,9 +11,7 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Element",
-	// provides jQuery.fn.cursorPos
-	"sap/ui/dom/jquery/cursorPos"
+	"sap/ui/dom/jquery/cursorPos" // provides jQuery.fn.cursorPos
 ], function(
 	qutils,
 	createAndAppendDiv,
@@ -24,8 +22,7 @@ sap.ui.define([
 	InvisibleText,
 	Core,
 	KeyCodes,
-	jQuery,
-	Element
+	jQuery
 ) {
 	"use strict";
 
@@ -92,7 +89,7 @@ sap.ui.define([
 		assert.ok(!!jQuery(".sapMSuL:visible").length, "The suggestions list is visible");
 
 		var popupId = jQuery(".sapMSuL:visible").parents(".sapMPopup-CTX").attr("id");
-		var popup = Element.registry.get(popupId);
+		var popup = Core.byId(popupId);
 		assert.ok(!!popup, "popup exists");
 
 		assert.ok(popup.getDomRef().style.minWidth, 'popup min-width is set');

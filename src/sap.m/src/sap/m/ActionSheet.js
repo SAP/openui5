@@ -14,9 +14,7 @@ sap.ui.define([
 	'./ActionSheetRenderer',
 	'./Button',
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Configuration",
-	"sap/ui/core/Lib",
-	"sap/ui/core/Element"
+	"sap/ui/core/Configuration"
 ],
 	function(
 		Dialog,
@@ -29,9 +27,7 @@ sap.ui.define([
 		ActionSheetRenderer,
 		Button,
 		jQuery,
-		Configuration,
-		Lib,
-		Element
+		Configuration
 	) {
 	"use strict";
 
@@ -441,7 +437,7 @@ sap.ui.define([
 
 	ActionSheet.prototype._createCancelButton = function() {
 		if (!this._oCancelButton) {
-			var sCancelButtonText = (this.getCancelButtonText()) ? this.getCancelButtonText() : Lib.getResourceBundleFor("sap.m").getText("ACTIONSHEET_CANCELBUTTON_TEXT"),
+			var sCancelButtonText = (this.getCancelButtonText()) ? this.getCancelButtonText() : sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACTIONSHEET_CANCELBUTTON_TEXT"),
 				that = this;
 	//			var sButtonStyle = (Device.os.ios) ? ButtonType.Unstyled : ButtonType.Default;
 			this._oCancelButton = new Button(this.getId() + '-cancelBtn', {
@@ -521,7 +517,7 @@ sap.ui.define([
 
 	ActionSheet.prototype._removeAriaHiddenTexts = function(oButton) {
 		oButton.getAriaDescribedBy().forEach(function(sId) {
-			var oControl = Element.registry.get(sId);
+			var oControl = sap.ui.getCore().byId(sId);
 
 			if (oControl instanceof InvisibleText && sId.indexOf("actionSheetHiddenText") > -1) {
 				this.removeAggregation("_invisibleAriaTexts", oControl, false);

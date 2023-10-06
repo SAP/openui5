@@ -9,8 +9,7 @@ sap.ui.define([
 	"sap/ui/mdc/FilterField",
 	"sap/ui/mdc/util/FilterUtil",
 	"sap/ui/model/Filter",
-	"sap/ui/core/Core",
-	"sap/ui/core/Element"
+	"sap/ui/core/Core"
 ], function(
 	TableDelegateUtils,
 	TableDelegate,
@@ -18,8 +17,7 @@ sap.ui.define([
 	FilterField,
 	FilterUtil,
 	Filter,
-	Core,
-	Element
+	Core
 ) {
 	"use strict";
 
@@ -35,7 +33,7 @@ sap.ui.define([
 		oBindingInfo.path = oBindingInfo.path || oMetadataInfo.collectionPath || "/" + oMetadataInfo.collectionName;
 		oBindingInfo.model = oBindingInfo.model || oMetadataInfo.model;
 
-		var oFilter = Element.registry.get(oMDCTable.getFilter());
+		var oFilter = Core.byId(oMDCTable.getFilter());
 		var bFilterEnabled = oMDCTable.isFilteringEnabled();
 		var aFilters = [];
 		var oDataStateIndicator = oMDCTable.getDataStateIndicator();

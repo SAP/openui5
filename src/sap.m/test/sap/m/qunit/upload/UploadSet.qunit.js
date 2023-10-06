@@ -20,9 +20,8 @@ sap.ui.define([
 	"sap/ui/model/Sorter",
 	"sap/m/IllustratedMessageType",
 	"sap/ui/core/Core",
-	"sap/ui/base/Object",
-	"sap/ui/core/Element"
-], function(jQuery, UploadSet, UploadSetItem, UploadSetRenderer, Uploader, Toolbar, Label, ListItemBaseRenderer, Dialog, Device, MessageBox, JSONModel, TestUtils, oCore, DragAndDrop, EventBase, Library, Sorter, IllustratedMessageType, Core, BaseObject, Element) {
+	"sap/ui/base/Object"
+], function(jQuery, UploadSet, UploadSetItem, UploadSetRenderer, Uploader, Toolbar, Label, ListItemBaseRenderer, Dialog, Device, MessageBox, JSONModel, TestUtils, oCore, DragAndDrop, EventBase, Library, Sorter, IllustratedMessageType, Core, BaseObject) {
 	"use strict";
 
 	// shortcut for sap.m.ListMode
@@ -101,12 +100,12 @@ sap.ui.define([
 		// Act
 		oTerminateButton.firePress();
 		// Assert
-		var oDialog = Element.registry.get(this.oUploadSet.getId() + "-teminateDialog");
+		var oDialog = oCore.byId(this.oUploadSet.getId() + "-teminateDialog");
 		assert.ok(oDialog, "Terminate dialog should now be presented.");
 		assert.equal(oDialog.getButtons()[0].getType(), ButtonType.Emphasized, "First button is emphasized.");
 		oDialog.getButtons()[1].firePress();
 		oDialog.getButtons()[0].getParent().fireAfterClose();
-		oDialog = Element.registry.get(this.oUploadSet.getId() + "-teminateDialog");
+		oDialog = oCore.byId(this.oUploadSet.getId() + "-teminateDialog");
 		assert.notOk(oDialog, "Terminate dialog should now be closed.");
 	});
 
@@ -195,7 +194,7 @@ sap.ui.define([
 		oItem._getDeleteButton().firePress();
 
 		// Close the dialog
-		var oDialog = Element.registry.get(this.oUploadSet.getId() + "-deleteDialog");
+		var oDialog = oCore.byId(this.oUploadSet.getId() + "-deleteDialog");
 		assert.ok(oDialog, "Remove dialog should now be presented.");
 		oDialog.getButtons()[1].firePress();
 		oDialog.destroy();
@@ -208,7 +207,7 @@ sap.ui.define([
 		oItem._getDeleteButton().firePress();
 
 		// There should be no dialog
-		oDialog = Element.registry.get(this.oUploadSet.getId() + "-deleteDialog");
+		oDialog = oCore.byId(this.oUploadSet.getId() + "-deleteDialog");
 		assert.notOk(oDialog, "Remove dialog should not exist at this time.");
 	});
 
@@ -222,14 +221,14 @@ sap.ui.define([
 		oItem._getDeleteButton().firePress();
 
 		// Close the dialog
-		var oDialog = Element.registry.get(this.oUploadSet.getId() + "-deleteDialog");
+		var oDialog = oCore.byId(this.oUploadSet.getId() + "-deleteDialog");
 		assert.ok(oDialog, "Remove dialog should now be presented.");
 		oDialog.getButtons()[0].firePress();
 		oDialog.getButtons()[0].getParent().fireAfterClose();
 		oDialog.destroy();
 
 		// There should be no dialog
-		oDialog = Element.registry.get(this.oUploadSet.getId() + "-deleteDialog");
+		oDialog = oCore.byId(this.oUploadSet.getId() + "-deleteDialog");
 		assert.notOk(oDialog, "Remove dialog should not exist at this time.");
 	});
 
@@ -824,7 +823,7 @@ sap.ui.define([
 	QUnit.test("Edit with different event target", function(assert) {
 		// Arrange
 		var sEditButtonId = this.oUploadSet.getItems()[0].sId + "-editButton";
-		Element.registry.get(sEditButtonId).firePress();
+		oCore.byId(sEditButtonId).firePress();
 		oCore.applyChanges();
 
 		var oSpy = this.spy(UploadSet.prototype, "_handleItemEditConfirmation");
@@ -848,7 +847,7 @@ sap.ui.define([
 	QUnit.test("Cancel with different event target", function(assert) {
 		// Arrange
 		var sEditButtonId = this.oUploadSet.getItems()[1].sId + "-editButton";
-		Element.registry.get(sEditButtonId).firePress();
+		oCore.byId(sEditButtonId).firePress();
 		oCore.applyChanges();
 
 		var oSpy = this.spy(UploadSet.prototype, "_handleItemEditCancelation");
@@ -873,7 +872,7 @@ sap.ui.define([
 	QUnit.test("Test for nullable Queryselection check", function(assert) {
 		var sEditButtonId = this.oUploadSet.getItems()[1].sId + "-editButton";
 		var oItem = this.oUploadSet.getItems()[1];
-		Element.registry.get(sEditButtonId).firePress();
+		oCore.byId(sEditButtonId).firePress();
 		oCore.applyChanges();
 
 		var querySpy = this.spy(oItem._oListItem.getDomRef(), "querySelector");
@@ -906,7 +905,7 @@ sap.ui.define([
 		oItem._getDeleteButton().firePress();
 
 		// Close the dialog
-		var oDialog = Element.registry.get(this.oUploadSet.getId() + "-deleteDialog");
+		var oDialog = oCore.byId(this.oUploadSet.getId() + "-deleteDialog");
 		oDialog.getButtons()[1].firePress();
 		oDialog.destroy();
 

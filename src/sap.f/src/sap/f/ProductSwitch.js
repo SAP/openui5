@@ -9,17 +9,15 @@ sap.ui.define([
 	"sap/f/GridContainer",
 	"sap/f/GridContainerSettings",
 	"sap/f/ProductSwitchItem",
-	"sap/f/ProductSwitchRenderer",
-	"sap/ui/core/Element"
+	"sap/f/ProductSwitchRenderer"
 ],
-	function(
+	function (
 		Core,
 		Control,
 		GridContainer,
 		GridContainerSettings,
 		ProductSwitchItem,
-		ProductSwitchRenderer,
-		Element
+		ProductSwitchRenderer
 	) {
 		"use strict";
 		/**
@@ -177,7 +175,7 @@ sap.ui.define([
 
 		ProductSwitch.prototype.setSelectedItem = function (vItem) {
 			if (typeof vItem === "string") {
-				vItem = Element.registry.get(vItem);
+				vItem = Core.byId(vItem);
 			}
 
 			if (!(vItem instanceof ProductSwitchItem) && vItem !== null) {

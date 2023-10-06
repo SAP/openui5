@@ -62,7 +62,7 @@ sap.ui.define([
 			Element.apply(this, aArgs);
 
 			this._oManagedObjectModel = new ManagedObjectModel(
-				Element.registry.get(this.getObject()),
+				sap.ui.getCore().byId(this.getObject()),
 				this.getData()
 			);
 

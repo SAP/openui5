@@ -15,8 +15,7 @@ sap.ui.define([
 	'sap/ui/core/ResizeHandler',
 	'sap/ui/core/ListItem',
 	'sap/ui/core/IconPool',
-	'./SegmentedButtonRenderer',
-	"sap/ui/core/Element"
+	'./SegmentedButtonRenderer'
 ],
 function(
 	Library,
@@ -30,9 +29,8 @@ function(
 	ResizeHandler,
 	ListItem,
 	IconPool,
-	SegmentedButtonRenderer,
-	Element
-) {
+	SegmentedButtonRenderer
+	) {
 	"use strict";
 
 	// lazy dependency to sap/m/Image
@@ -814,7 +812,7 @@ function(
 	 * @override
 	 */
 	SegmentedButton.prototype.setSelectedItem = function (vItem) {
-		var oItem = typeof vItem === "string" && vItem !== "" ? Element.registry.get(vItem) : vItem,
+		var oItem = typeof vItem === "string" && vItem !== "" ? sap.ui.getCore().byId(vItem) : vItem,
 			oItemInstanceOfSegBtnItem = oItem instanceof SegmentedButtonItem,
 			vButton = oItemInstanceOfSegBtnItem ? oItem.oButton : vItem;
 

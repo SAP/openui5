@@ -7,15 +7,13 @@ sap.ui.define([
 	"sap/ui/mdc/util/FilterUtil",
 	"sap/ui/core/Core",
 	'sap/ui/core/date/UI5Date',
-	'sap/ui/model/FilterOperator',
-	"sap/ui/core/Element"
+	'sap/ui/model/FilterOperator'
 ], function(
 	TableDelegate,
 	FilterUtil,
 	Core,
 	UI5Date,
-	FilterOperator,
-	Element
+	FilterOperator
 ) {
 	"use strict";
 
@@ -47,7 +45,7 @@ sap.ui.define([
 	ODataTableDelegate.updateBindingInfo = function(oTable, oBindingInfo) {
 		TableDelegate.updateBindingInfo.apply(this, arguments);
 
-		var oFilterBar = Element.registry.get(oTable.getFilter());
+		var oFilterBar = Core.byId(oTable.getFilter());
 
 		if (oFilterBar) {
 			this._updateSearch(oBindingInfo, oFilterBar);

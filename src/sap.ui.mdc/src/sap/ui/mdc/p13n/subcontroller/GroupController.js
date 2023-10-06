@@ -2,11 +2,8 @@
  * ${copyright}
  */
 sap.ui.define([
-    "./SelectionController",
-    'sap/ui/mdc/p13n/P13nBuilder',
-    'sap/m/p13n/GroupPanel',
-    "sap/ui/core/Lib"
-], function(BaseController, P13nBuilder, GroupPanel, Lib) {
+    "./SelectionController", 'sap/ui/mdc/p13n/P13nBuilder', 'sap/m/p13n/GroupPanel'
+], function (BaseController, P13nBuilder, GroupPanel) {
     "use strict";
 
     const GroupController = BaseController.extend("sap.ui.mdc.p13n.subcontroller.GroupController");
@@ -17,8 +14,8 @@ sap.ui.define([
 
     GroupController.prototype.getUISettings = function () {
         return {
-            tabText: Lib.getResourceBundleFor("sap.ui.mdc").getText("p13nDialog.TAB_Group"),
-            title: Lib.getResourceBundleFor("sap.ui.mdc").getText("group.PERSONALIZATION_DIALOG_TITLE")
+            tabText: sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc").getText("p13nDialog.TAB_Group"),
+            title: sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc").getText("group.PERSONALIZATION_DIALOG_TITLE")
         };
     };
 

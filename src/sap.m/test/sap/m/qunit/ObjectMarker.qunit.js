@@ -10,8 +10,7 @@ sap.ui.define([
 	"sap/m/ColumnListItem",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Core",
-	"sap/ui/core/Lib"
+	"sap/ui/core/Core"
 ], function(
 	qutils,
 	ObjectMarker,
@@ -23,8 +22,7 @@ sap.ui.define([
 	ColumnListItem,
 	KeyCodes,
 	jQuery,
-	oCore,
-	Lib
+	oCore
 ) {
 	"use strict";
 
@@ -35,7 +33,7 @@ sap.ui.define([
 	var ObjectMarkerType = mobileLibrary.ObjectMarkerType;
 
 
-	var oRB = Lib.getResourceBundleFor("sap.m");
+	var oRB = oCore.getLibraryResourceBundle("sap.m");
 
 	QUnit.module("Rendering");
 

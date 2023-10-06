@@ -16,9 +16,7 @@ sap.ui.define([
 	'sap/ui/core/Locale',
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Configuration",
-	'sap/ui/core/date/UI5Date',
-	"sap/ui/core/Lib",
-	"sap/ui/core/Element"
+	'sap/ui/core/date/UI5Date'
 ],
 	function(
 		coreLibrary,
@@ -34,9 +32,7 @@ sap.ui.define([
 		Locale,
 		jQuery,
 		Configuration,
-		UI5Date,
-		Lib,
-		Element
+		UI5Date
 	) {
 		"use strict";
 
@@ -711,7 +707,7 @@ sap.ui.define([
 		 * @private
 		 */
 		TimePickerSliders.prototype._setupLists = function () {
-			var oRb = Lib.getResourceBundleFor("sap.m"),
+			var oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m"),
 				sLabelHours = oRb.getText("TIMEPICKER_LBL_HOURS"),
 				sLabelMinutes = oRb.getText("TIMEPICKER_LBL_MINUTES"),
 				sLabelSeconds = oRb.getText("TIMEPICKER_LBL_SECONDS"),
@@ -828,7 +824,7 @@ sap.ui.define([
 		 * @private
 		 */
 		TimePickerSliders.prototype._getHoursSlider = function () {
-			return Element.registry.get(this.getId() + "-listHours") || null;
+			return sap.ui.getCore().byId(this.getId() + "-listHours") || null;
 		};
 
 		/**
@@ -837,7 +833,7 @@ sap.ui.define([
 		 * @private
 		 */
 		TimePickerSliders.prototype._getMinutesSlider = function () {
-			return Element.registry.get(this.getId() + "-listMins") || null;
+			return sap.ui.getCore().byId(this.getId() + "-listMins") || null;
 		};
 
 		/**
@@ -846,7 +842,7 @@ sap.ui.define([
 		 * @private
 		 */
 		TimePickerSliders.prototype._getSecondsSlider = function () {
-			return Element.registry.get(this.getId() + "-listSecs") || null;
+			return sap.ui.getCore().byId(this.getId() + "-listSecs") || null;
 		};
 
 		/**
@@ -855,7 +851,7 @@ sap.ui.define([
 		 * @private
 		 */
 		TimePickerSliders.prototype._getFormatSlider = function () {
-			return Element.registry.get(this.getId() + "-listFormat") || null;
+			return sap.ui.getCore().byId(this.getId() + "-listFormat") || null;
 		};
 
 		/**

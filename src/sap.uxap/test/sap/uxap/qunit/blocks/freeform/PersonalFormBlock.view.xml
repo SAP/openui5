@@ -5,7 +5,7 @@
 
 	<forms:Form width="100%" editable="false">
 		<forms:layout>
-			<forms:GridLayout/>
+			<forms:ResponsiveGridLayout/>
 		</forms:layout>
 		<forms:formContainers>
 			<forms:FormContainer title="Phone Numbers">

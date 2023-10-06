@@ -4,12 +4,10 @@
 
 sap.ui.define([
 	"sap/ui/core/Core",
-	"test-resources/sap/ui/mdc/qunit/p13n/OpaTests/utility/Arrangement",
-	"sap/ui/core/Lib"
+	"test-resources/sap/ui/mdc/qunit/p13n/OpaTests/utility/Arrangement"
 ], function(
 	Core,
-	P13nArrangement,
-	Lib
+	P13nArrangement
 ) {
 	"use strict";
 
@@ -58,7 +56,7 @@ sap.ui.define([
 	};
 
 	Util.getTextFromResourceBundle = function(sLibraryName, sTextKey, aValues) {
-		return Lib.getResourceBundleFor(sLibraryName).getText(sTextKey, aValues);
+		return Core.getLibraryResourceBundle(sLibraryName).getText(sTextKey, aValues);
 	};
 
 	Util.P13nDialogInfo = P13nArrangement.P13nDialog;

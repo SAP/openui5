@@ -33,11 +33,13 @@ sap.ui.define([
 	"sap/ui/model/xml/XMLModel",
 	"sap/ui/test/TestUtils",
 	"sap/ui/thirdparty/datajs",
+	"sap/ui/util/XMLHelper"
 	// load Table resources upfront to avoid loading times > 1 second for the first test using Table
 	// "sap/ui/table/Table"
-	"sap/ui/util/XMLHelper",
-	"sap/ui/core/Lib"
-], function(Log, merge, uid, Input, Device, ManagedObjectObserver, SyncPromise, Configuration, Core, coreLibrary, Messaging, UI5Date, Message, Controller, View, Rendering, BindingMode, Filter, FilterOperator, FilterType, Model, Sorter, JSONModel, MessageModel, CountMode, MessageScope, Context, ODataModel, XMLModel, TestUtils, datajs, XMLHelper, Lib) {
+], function (Log, merge, uid, Input, Device, ManagedObjectObserver, SyncPromise, Configuration,
+		Core, coreLibrary, Messaging, UI5Date, Message, Controller, View, Rendering, BindingMode, Filter,
+		FilterOperator, FilterType, Model, Sorter, JSONModel, MessageModel, CountMode, MessageScope, Context,
+		ODataModel, XMLModel, TestUtils, datajs, XMLHelper) {
 	/*global QUnit, sinon*/
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0, quote-props: 0*/
 	"use strict";
@@ -2404,7 +2406,7 @@ sap.ui.define([
 	<Text text="{SalesOrderID}" />\
 </Table>';
 
-		this.mock(Lib.getResourceBundleFor("sap.ui.core")).expects("getText")
+		this.mock(Core.getLibraryResourceBundle()).expects("getText")
 			.atLeast(1)
 			.callsFake(function (sKey) {
 				return sKey;
@@ -2521,7 +2523,7 @@ sap.ui.define([
 	<Text text="{SalesOrderID}" />\
 </Table>';
 
-		this.mock(Lib.getResourceBundleFor("sap.ui.core")).expects("getText")
+		this.mock(Core.getLibraryResourceBundle()).expects("getText")
 			.atLeast(1)
 			.callsFake(function (sKey, aArgs) {
 				return sKey;
@@ -5449,7 +5451,7 @@ usePreliminaryContext : false}}">\
 			}).then(function () {
 				var oResetPromise;
 
-				if (bWithFailedPOST && bPersistTechnicalMessages && !bDeleteCreatedEntities) {
+				if (bWithFailedPOST && bPersistTechnicalMessages) {
 					that.expectMessages([{
 							code : "UF0",
 							fullTarget : "/SalesOrderSet('1')/ToLineItems('~key~')",

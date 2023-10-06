@@ -6,9 +6,8 @@ sap.ui.define([
 	"sap/m/Page",
 	"sap/m/App",
 	'sap/ui/qunit/QUnitUtils',
-	"sap/ui/qunit/utils/createAndAppendDiv",
-	"sap/ui/core/Element"
-], function(VariantItem, VariantManagement, ContextSharingAPI, Page, App, QUnitUtils, createAndAppendDiv, Element) {
+	"sap/ui/qunit/utils/createAndAppendDiv"
+], function(VariantItem, VariantManagement, ContextSharingAPI, Page, App, QUnitUtils, createAndAppendDiv) {
 	"use strict";
 
 	// prepare DOM
@@ -118,7 +117,7 @@ sap.ui.define([
 		this.oVM.addItem(new VariantItem({key: "2", title:"Two"}));
 		sap.ui.getCore().applyChanges();
 
-		var oTitle = Element.registry.get(this.oVM.getId() + "-text");
+		var oTitle = sap.ui.getCore().byId(this.oVM.getId() + "-text");
 		assert.ok(oTitle);
 		assert.equal(oTitle.getText(), "", "expected no text");
 
@@ -1680,7 +1679,7 @@ sap.ui.define([
 
 		this.oVM._oRolesDialog.attachAfterOpen(function() {
 
-			var oCancelButton = Element.registry.get(this.oVM.getId() + "-rolecancel");
+			var oCancelButton = sap.ui.getCore().byId(this.oVM.getId() + "-rolecancel");
 			assert.ok(oCancelButton, "cancel button of roles dialog existst");
 
 			var oTarget = oCancelButton.getFocusDomRef();

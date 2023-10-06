@@ -879,7 +879,7 @@ function(
 	 * @public
 	 */
 	ListBase.prototype.setSelectedItemById = function(sId, bSelect) {
-		var oListItem = Element.registry.get(sId);
+		var oListItem = Core.byId(sId);
 		return this.setSelectedItem(oListItem, bSelect);
 	};
 
@@ -2449,7 +2449,7 @@ function(
 
 		var bExecuteDefault = this.fireBeforeOpenContextMenu({
 			listItem: oLI,
-			column: Element.registry.get(jQuery(oEvent.target).closest(".sapMListTblCell", this.getNavigationRoot()).attr("data-sap-ui-column"))
+			column: Core.byId(jQuery(oEvent.target).closest(".sapMListTblCell", this.getNavigationRoot()).attr("data-sap-ui-column"))
 		});
 		if (bExecuteDefault) {
 			oEvent.setMarked();

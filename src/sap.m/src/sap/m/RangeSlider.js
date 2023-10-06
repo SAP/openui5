@@ -9,8 +9,7 @@ sap.ui.define([
     "./RangeSliderRenderer",
     "sap/ui/thirdparty/jquery",
     "sap/ui/events/KeyCodes",
-    "sap/ui/core/Configuration",
-    "sap/ui/core/Lib"
+    "sap/ui/core/Configuration"
 ],
     function(
         InvisibleText,
@@ -20,8 +19,7 @@ sap.ui.define([
         RangeSliderRenderer,
         jQuery,
         KeyCodes,
-        Configuration,
-        Lib
+        Configuration
     ) {
         "use strict";
 
@@ -117,7 +115,7 @@ sap.ui.define([
             // the initial focus range which should be used
             this._aInitialFocusRange = this.getRange();
 
-            this._oResourceBundle = Lib.getResourceBundleFor('sap.m');
+            this._oResourceBundle = sap.ui.getCore().getLibraryResourceBundle('sap.m');
 
             this._ariaUpdateDelay = [];
 

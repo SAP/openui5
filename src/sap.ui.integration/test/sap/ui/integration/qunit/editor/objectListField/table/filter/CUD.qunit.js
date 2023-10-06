@@ -8,9 +8,8 @@ sap.ui.define([
 	"sap/base/util/deepEqual",
 	"sap/ui/core/Core",
 	"sap/base/util/deepClone",
-	"qunit/designtime/EditorQunitUtils",
-	"sap/ui/core/Element"
-], function(
+	"qunit/designtime/EditorQunitUtils"
+], function (
 	x,
 	Editor,
 	Host,
@@ -19,8 +18,7 @@ sap.ui.define([
 	deepEqual,
 	Core,
 	deepClone,
-	EditorQunitUtils,
-	Element
+	EditorQunitUtils
 ) {
 	"use strict";
 
@@ -799,7 +797,7 @@ sap.ui.define([
 			return wait();
 		}).then(function () {
 			var sMessageBoxId = document.querySelector(".sapMMessageBox").id;
-			var oMessageBox = Element.registry.get(sMessageBoxId);
+			var oMessageBox = Core.byId(sMessageBoxId);
 			var oOKButton = oMessageBox._getToolbar().getContent()[1];
 			oOKButton.firePress();
 			return wait();

@@ -5,9 +5,8 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/mdc/p13n/StateUtil",
 	"test-resources/sap/ui/mdc/qunit/util/V4ServerHelper",
-	"sap/ui/model/odata/v4/ODataModel",
-	"sap/ui/core/Element"
-], function(Controller, Fragment, oCore, StateUtil, V4ServerHelper, ODataModel, Element) {
+	"sap/ui/model/odata/v4/ODataModel"
+], function(Controller, Fragment, oCore, StateUtil, V4ServerHelper, ODataModel) {
 	"use strict";
 	return Controller.extend("view.Main", {
 
@@ -59,10 +58,10 @@ sap.ui.define([
 		},
 
 		onRetrieveState: function(oEvent) {
-			const oControl =  Element.registry.get(oEvent.getSource().getId() == "tblRetrieve" ? "IDTableOfInternalSampleApp_01" : "IDFilterBar");
+			const oControl =  oCore.byId(oEvent.getSource().getId() == "tblRetrieve" ? "IDTableOfInternalSampleApp_01" : "IDFilterBar");
 			if (oControl) {
 				StateUtil.retrieveExternalState(oControl).then(function(oState) {
-					const oOutput = Element.registry.get("CEState");
+					const oOutput = oCore.byId("CEState");
 					if (oOutput) {
 						oOutput.setValue(JSON.stringify(oState, null, "  "));
 					}
@@ -71,8 +70,8 @@ sap.ui.define([
 		},
 
 		onApplyState: function(oEvt) {
-			const oControl =  Element.registry.get(oEvt.getSource().getId() == "tblApply" ? "IDTableOfInternalSampleApp_01" : "IDFilterBar");
-			const oCE = Element.registry.get("CEState");
+			const oControl =  oCore.byId(oEvt.getSource().getId() == "tblApply" ? "IDTableOfInternalSampleApp_01" : "IDFilterBar");
+			const oCE = oCore.byId("CEState");
 			let oState;
 			if (oCE) {
 				oState = JSON.parse(oCE.getValue());

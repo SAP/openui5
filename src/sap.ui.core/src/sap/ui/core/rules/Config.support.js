@@ -9,13 +9,16 @@ sap.ui.define([
 	"sap/ui/support/library",
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/core/Configuration",
-	"sap/ui/core/Lib"
+	"sap/ui/core/Lib",
+	"sap/ui/core/Supportability"
 ], function(
 	jQuery,
 	SupportLib,
 	XMLView,
 	Configuration,
 	Library
+,
+	Supportability
 ) {
 	"use strict";
 
@@ -57,7 +60,7 @@ sap.ui.define([
 
 	oPreloadAsyncCheck.check = function(oIssueManager, oCoreFacade) {
 		// Check for debug mode
-		var bIsDebug = Configuration.getDebug();
+		var bIsDebug = Supportability.isDebugModeEnabled();
 		if (bIsDebug) {
 			return;
 		}

@@ -3,39 +3,37 @@
  */
 
 sap.ui.define([
-	"sap/ui/core/Core",
-	"sap/ui/mdc/ActionToolbar",
-	"sap/m/OverflowToolbarRenderer",
-	"sap/m/OverflowToolbarButton",
-	"sap/m/OverflowToolbarToggleButton",
-	"sap/m/Title",
-	"sap/ui/mdc/chart/ChartTypeButton",
-	"./ChartSelectionDetails",
-	"sap/m/ToolbarSeparator",
-	"sap/m/OverflowToolbarLayoutData",
-	"sap/ui/core/library",
-	"sap/ui/Device",
-	"sap/ui/core/ShortcutHintsMixin",
-	"sap/ui/mdc/enums/ChartToolbarActionType",
-	"sap/ui/core/Lib"
-],
-    function(
-		Core,
-		ActionToolbar,
-		OverflowToolbarRenderer,
-		OverflowButton,
-		OverflowToggleButton,
-		Title,
-		ChartTypeButton,
-		ChartSelectionDetails,
-		ToolbarSeparator,
-		OverflowToolbarLayoutData,
-		coreLibrary,
-		Device,
-		ShortcutHintsMixin,
-		ChartToolbarActionType,
-		Lib
-	) {
+        "sap/ui/core/Core",
+        "sap/ui/mdc/ActionToolbar",
+        "sap/m/OverflowToolbarRenderer",
+        "sap/m/OverflowToolbarButton",
+        "sap/m/OverflowToolbarToggleButton",
+        "sap/m/Title",
+        "sap/ui/mdc/chart/ChartTypeButton",
+        "./ChartSelectionDetails",
+        "sap/m/ToolbarSeparator",
+        "sap/m/OverflowToolbarLayoutData",
+        "sap/ui/core/library",
+        "sap/ui/Device",
+        "sap/ui/core/ShortcutHintsMixin",
+        "sap/ui/mdc/enums/ChartToolbarActionType"
+    ],
+    function (
+        Core,
+        ActionToolbar,
+        OverflowToolbarRenderer,
+        OverflowButton,
+        OverflowToggleButton,
+        Title,
+        ChartTypeButton,
+        ChartSelectionDetails,
+        ToolbarSeparator,
+        OverflowToolbarLayoutData,
+        coreLibrary,
+        Device,
+        ShortcutHintsMixin,
+        ChartToolbarActionType
+    ) {
         "use strict";
 
 		// shortcut for sap.ui.core.aria.HasPopup
@@ -69,7 +67,7 @@ sap.ui.define([
             renderer: OverflowToolbarRenderer
         });
 
-        const MDCRb = Lib.getResourceBundleFor("sap.ui.mdc");
+        const MDCRb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
 
         /**
          * Initialises the MDC Chart Selection Details
@@ -214,13 +212,15 @@ sap.ui.define([
             }
 
             if (oChart._getTypeBtnActive()) {
-                this._oChartTypeBtn = new ChartTypeButton(oChart, {
+                this._oChartTypeBtn = new ChartTypeButton(this.getId() + "-btnChartType", {
+                    type: "Transparent",
+                    enabled: false,
                     ariaHasPopup: AriaHasPopup.ListBox,
                     layoutData: new OverflowToolbarLayoutData({
                         closeOverflowOnInteraction: false
-                    })
+                    }),
+                    chart: oChart
                 });
-                this._oChartTypeBtn.setEnabled(false);
                 this.addEnd(this._oChartTypeBtn);
                 this._chartInternalButtonsToEnable.push(this._oChartTypeBtn);
             }

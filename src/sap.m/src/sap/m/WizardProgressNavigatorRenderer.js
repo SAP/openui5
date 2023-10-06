@@ -4,12 +4,9 @@
 
 sap.ui.define([
 	"sap/ui/core/InvisibleText",
-	"sap/ui/core/IconPool",
-	"sap/ui/core/Lib"
-], function(
-	InvisibleText,
-	IconPool,
-	Lib
+	"sap/ui/core/IconPool"
+], function (
+	InvisibleText, IconPool
 ) {
 	"use strict";
 
@@ -47,7 +44,7 @@ sap.ui.define([
 			CLASSES: CLASSES,
 			ATTRIBUTES: ATTRIBUTES
 		},
-		oResourceBundle = Lib.getResourceBundleFor("sap.m");
+		oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 
 	WizardProgressNavigatorRenderer.render = function (oRm, oControl) {
 		this.startNavigator(oRm, oControl);

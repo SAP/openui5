@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define(["sap/ui/Device", "sap/ui/core/Configuration", "sap/ui/core/Lib"], function(Device, Configuration, Lib) {
+sap.ui.define(["sap/ui/Device", "sap/ui/core/Configuration"], function(Device, Configuration) {
 	"use strict";
 
 	/**
@@ -22,7 +22,7 @@ sap.ui.define(["sap/ui/Device", "sap/ui/core/Configuration", "sap/ui/core/Lib"],
 	TimePickerSlidersRenderer.render = function(oRM, oControl) {
 		var aSliders = oControl.getAggregation("_columns"),
 			sLabelText = oControl.getLabelText() || "",
-			oRb = Lib.getResourceBundleFor("sap.m"),
+			oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m"),
 			iSliderIndex,
 			bRtl = Configuration.getRTL();
 

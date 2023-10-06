@@ -12,10 +12,17 @@ sap.ui.define([
 	"sap/m/table/columnmenu/QuickAction",
 	"sap/m/Button",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Lib",
-	// jQuery Plugin "aria"
-	"sap/ui/dom/jquery/Aria"
-], function(PluginBase, Core, Element, InvisibleText, Device, ColumnPopoverActionItem, QuickAction, Button, jQuery, Lib) {
+	"sap/ui/dom/jquery/Aria" // jQuery Plugin "aria"
+], function(PluginBase,
+	Core,
+	Element,
+	InvisibleText,
+	Device,
+	ColumnPopoverActionItem,
+	QuickAction,
+	Button,
+	jQuery
+) {
 	"use strict";
 
 	/**
@@ -237,7 +244,7 @@ sap.ui.define([
 		this.getConfig("additionalColumnWidth", $Cells, $ClonedCells);
 		this._$Container.append($HiddenArea);
 		var iWidth = Math.round($HiddenArea.append($ClonedCells)[0].getBoundingClientRect().width);
-		var iDistanceX = iWidth - oSession.fCurrentColumnWidth;
+		var iDistanceX = bRTL ? oSession.fCurrentColumnWidth - iWidth : iWidth - oSession.fCurrentColumnWidth;
 		$HiddenArea.remove();
 
 		return iDistanceX;
@@ -350,6 +357,13 @@ sap.ui.define([
 			oSession.iMaxIncrease = oSession.iEmptySpace + oSession.fNextColumnWidth - this._getColumnMinWidth(oSession.oNextColumn);
 		} else {
 			oSession.iMaxIncrease = window.innerWidth;
+		}
+
+		if (bRTL) {
+			oSession.iMaxDecrease = this._getColumnMinWidth(oSession.oNextColumn) - oSession.fNextColumnWidth;
+			if (oSession.iEmptySpace != -1) {
+				oSession.iMaxIncrease = oSession.iEmptySpace + oSession.fCurrentColumnWidth - this._getColumnMinWidth(oSession.oCurrentColumn);
+			}
 		}
 	};
 
@@ -500,7 +514,7 @@ sap.ui.define([
 
 		return new QuickAction({
 			content: new Button({
-				text: Lib.getResourceBundleFor("sap.m").getText("table.COLUMNMENU_RESIZE"),
+				text: Core.getLibraryResourceBundle("sap.m").getText("table.COLUMNMENU_RESIZE"),
 				press: function() {
 					oColumnMenu.close();
 					this.startResizing(oColumn.getDomRef());
@@ -522,7 +536,7 @@ sap.ui.define([
 		}
 
 		return new ColumnPopoverActionItem({
-			text: Lib.getResourceBundleFor("sap.m").getText("COLUMNRESIZER_RESIZE_BUTTON"),
+			text: Core.getLibraryResourceBundle("sap.m").getText("COLUMNRESIZER_RESIZE_BUTTON"),
 			icon: "sap-icon://resize-horizontal",
 			press: this.startResizing.bind(this, oColumn.getDomRef())
 		});

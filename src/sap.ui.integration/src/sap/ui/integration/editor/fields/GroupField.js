@@ -7,16 +7,14 @@ sap.ui.define([
 	"sap/m/IconTabBar",
 	"sap/m/IconTabFilter",
 	"sap/m/MessageStrip",
-	"sap/ui/core/Core",
-	"sap/ui/core/Element"
-], function(
+	"sap/ui/core/Core"
+], function (
 	BaseField,
 	Panel,
 	IconTabBar,
 	IconTabFilter,
 	MessageStrip,
-	Core,
-	Element
+	Core
 ) {
 	"use strict";
 
@@ -72,7 +70,7 @@ sap.ui.define([
 							}
 							var oMessageStrip = oControl._level === "1" && this.getParent().getParent() ? this.getParent().getParent().getAggregation("_messageStrip") : this.getParent().getAggregation("_messageStrip");
 							if (oMessageStrip === null) {
-								oMessageStrip = Element.registry.get(this.getAssociation("_messageStrip"));
+								oMessageStrip = Core.byId(this.getAssociation("_messageStrip"));
 							}
 							oControl.addContent(oMessageStrip);
 							oControl.focus();
@@ -267,7 +265,7 @@ sap.ui.define([
 				//handle error message for fields
 				var tMessageStrip = this.getParent().getParent().getAggregation("_messageStrip");
 				if (tMessageStrip === null) {
-					tMessageStrip = Element.registry.get(this.getAssociation("_messageStrip"));
+					tMessageStrip = Core.byId(this.getAssociation("_messageStrip"));
 				}
 				aItems[n].addContent(tMessageStrip);
 			}
@@ -279,7 +277,7 @@ sap.ui.define([
 		var sErrorType = "None";
 		for (var i = 0; i < oControl._subItems.length; i++) {
 			var sSettingsPath = oControl._subItems[i].settingspath;
-			var oItem = Element.registry.get(oControl._subItems[i].itemId);
+			var oItem = Core.byId(oControl._subItems[i].itemId);
 			if (oModel.getProperty(sSettingsPath + "/hasError") === true && oItem.getVisible()) {
 				bHasError = true;
 				var sType = oModel.getProperty(sSettingsPath + "/errorType");
@@ -324,7 +322,7 @@ sap.ui.define([
 			});
 			expandBTN.setEnabled(false);
 			expandBTN.addStyleClass("errorBTN").addStyleClass("errorBTNDisabled");
-			var iMessageStrip = Element.registry.get(this.getParameterId() + "_strip");
+			var iMessageStrip = Core.byId(this.getParameterId() + "_strip");
 			expandBTN.addEventDelegate({
 				onmouseover: function() {
 					iMessageStrip.setVisible(true);

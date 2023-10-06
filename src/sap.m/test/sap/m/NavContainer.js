@@ -9,9 +9,8 @@ sap.ui.define([
 	"sap/m/FlexItemData",
 	"sap/m/Text",
 	"sap/ui/core/HTML",
-	"sap/base/Log",
-	"sap/ui/core/Element"
-], function(App, Page, Button, HBox, mobileLibrary, Label, Input, FlexItemData, MText, HTML, Log, Element) {
+	"sap/base/Log"
+], function(App, Page, Button, HBox, mobileLibrary, Label, Input, FlexItemData, MText, HTML, Log) {
 	"use strict";
 
 	// shortcut for sap.m.FlexAlignItems
@@ -70,7 +69,7 @@ sap.ui.define([
 			new Button({
 				text : "Slide to Page 2 AND transfer the value of the following Input field",
 				press : function() {
-					var value = Element.registry.get("p1input").getValue();
+					var value = sap.ui.getCore().byId("p1input").getValue();
 					app.to("page2", {payloadInfo:value});
 				}
 			}),
@@ -154,7 +153,7 @@ sap.ui.define([
 			if (evt.isBack) {
 				textToDisplay += ", from page 3: " + evt.backData.myBackPayload;
 			}
-			Element.registry.get("p2input").setValue(textToDisplay);
+			sap.ui.getCore().byId("p2input").setValue(textToDisplay);
 		},
 		onAfterHide: function(evt) {
 			Log.info("page 2 has been hidden (dir: " + evt.direction + ")");
@@ -170,7 +169,7 @@ sap.ui.define([
 		icon: "images/SAPUI5.jpg",
 		content : [
 			new Button({text : "Back to Page 2", press:function(){
-				app.back({myBackPayload:Element.registry.get("p3input").getValue()});
+				app.back({myBackPayload:sap.ui.getCore().byId("p3input").getValue()});
 			}}),
 			new HBox({
 				alignItems: FlexAlignItems.Center,

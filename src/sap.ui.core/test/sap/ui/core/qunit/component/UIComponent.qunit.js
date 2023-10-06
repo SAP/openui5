@@ -1029,8 +1029,8 @@ sap.ui.define([
 					manifest: "json"
 				},
 				constructor: function() {
-					assert.ok(logWarningSpy.calledWith('Can not preload module "sap/ui/model/odata/ODataModelNotExists". This will most probably cause an error once the module is used later on.'), "Model not found");
-					assert.ok(logWarningSpy.calledWith('Can not preload module "someRouterNotExists". This will most probably cause an error once the module is used later on.'), "Router not found");
+					assert.ok(logWarningSpy.calledWith("Cannot load module 'sap/ui/model/odata/ODataModelNotExists'. This will most probably cause an error once the module is used later on."), "Model not found");
+					assert.ok(logWarningSpy.calledWith("Cannot load module 'someRouterNotExists'. This will most probably cause an error once the module is used later on."), "Router not found");
 					UIComponent.apply(this, arguments);
 				}
 			});

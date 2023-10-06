@@ -13,9 +13,8 @@ sap.ui.define([
 	"sap/m/QuickViewGroupElement",
 	"sap/m/Button",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Element"
-], function(
+	"sap/ui/thirdparty/jquery"
+], function (
 	qutils,
 	JSONModel,
 	Core,
@@ -29,8 +28,7 @@ sap.ui.define([
 	QuickViewGroupElement,
 	Button,
 	KeyCodes,
-	jQuery,
-	Element
+	jQuery
 ) {
 	"use strict";
 
@@ -382,7 +380,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Testing if the QuickView is created", function (assert) {
-		assert.ok(Element.registry.get(this.oQuickView.getId()), "should render");
+		assert.ok(Core.byId(this.oQuickView.getId()), "should render");
 	});
 
 	QUnit.test("Test binding", function (assert) {
@@ -479,7 +477,7 @@ sap.ui.define([
 		this.clock.tick(500);
 		assert.ok(this.oQuickView._oPopover.isOpen(), "QuickView is already open");
 
-		assert.ok(Element.registry.get(this.oQuickView.getId()), "QuickView is rendered after it's opened.");
+		assert.ok(Core.byId(this.oQuickView.getId()), "QuickView is rendered after it's opened.");
 		assert.strictEqual(this.oQuickView._oPopover.$().is(':visible'), true, "QuickView is visible after it's opened.");
 
 		this.oQuickView._oPopover.close();

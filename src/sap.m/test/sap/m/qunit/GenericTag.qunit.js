@@ -10,9 +10,8 @@ sap.ui.define([
 	"sap/m/ToolbarSpacer",
 	"sap/m/OverflowToolbar",
 	"sap/ui/core/Core",
-	"sap/ui/core/InvisibleText",
-	"sap/ui/core/Lib"
-], function(GenericTag, GenericTagRenderer, library, ObjectNumber, coreLibrary, KeyCodes, qutils, ToolbarSpacer, OverflowToolbar, oCore, InvisibleText, Lib) {
+	"sap/ui/core/InvisibleText"
+], function(GenericTag, GenericTagRenderer, library, ObjectNumber, coreLibrary, KeyCodes, qutils, ToolbarSpacer, OverflowToolbar, oCore, InvisibleText) {
 	"use strict";
 
 	var GenericTagDesign = library.GenericTagDesign,
@@ -542,7 +541,7 @@ sap.ui.define([
 
 	QUnit.test("GenericTag has the correct roledescription", function(assert){
 		var sRole = "button",
-			oResourceBundle =  Lib.getResourceBundleFor("sap.m"),
+			oResourceBundle =  oCore.getLibraryResourceBundle("sap.m"),
 			sRoleDescription = oResourceBundle.getText("GENERICTAG_ROLEDESCRIPTION"),
 			$genericTag;
 		//act

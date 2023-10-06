@@ -20,8 +20,7 @@ sap.ui.define([
 	"sap/ui/core/library",
 	"sap/ui/core/Core",
 	"sap/ui/Device",
-	"sap/ui/model/type/Integer",
-	"sap/ui/core/Lib"
+	"sap/ui/model/type/Integer"
 ], function(
 	TableQUnitUtils,
 	qutils,
@@ -42,8 +41,7 @@ sap.ui.define([
 	CoreLibrary,
 	Core,
 	Device,
-	IntegerType,
-	Lib
+	IntegerType
 ) {
 	"use strict";
 
@@ -149,7 +147,7 @@ sap.ui.define([
 
 			var oQuickFilter = that.getQuickAction(oMenu, "QuickAction")[0];
 			var aQuickFilterContent = oQuickFilter.getContent();
-			var sQuickFilterLabel = Lib.getResourceBundleFor("sap.m").getText("table.COLUMNMENU_QUICK_FILTER", oColumn.getLabel().getText());
+			var sQuickFilterLabel = Core.getLibraryResourceBundle("sap.m").getText("table.COLUMNMENU_QUICK_FILTER", oColumn.getLabel().getText());
 			assert.strictEqual(oQuickFilter.getLabel(), sQuickFilterLabel, "Quick filter 'label'");
 			assert.equal(aQuickFilterContent.length, 1, "Quick filter content count");
 			assert.ok(aQuickFilterContent[0].isA("sap.m.Input"), "Quick filter content is a sap.m.Input");
@@ -175,7 +173,7 @@ sap.ui.define([
 
 			var oQuickFilter = that.getQuickAction(oMenu, "QuickAction")[0];
 			var aQuickFilterContent = oQuickFilter.getContent();
-			var sQuickFilterLabel = Lib.getResourceBundleFor("sap.m").getText("table.COLUMNMENU_QUICK_FILTER", oColumn.getLabel().getText());
+			var sQuickFilterLabel = Core.getLibraryResourceBundle("sap.m").getText("table.COLUMNMENU_QUICK_FILTER", oColumn.getLabel().getText());
 			assert.strictEqual(oQuickFilter.getLabel(), sQuickFilterLabel, "Quick filter 'label'");
 			assert.equal(aQuickFilterContent.length, 1, "Quick filter content count");
 			assert.ok(aQuickFilterContent[0].isA("sap.m.Input"), "Quick filter content is a sap.m.Input");
@@ -377,7 +375,7 @@ sap.ui.define([
 			var aContent = oQuickResize.getContent();
 
 			assert.strictEqual(oQuickResize.getLabel(), "", "label is empty");
-			assert.strictEqual(aContent[0].getText(), Lib.getResourceBundleFor("sap.m").getText("table.COLUMNMENU_RESIZE"), "button text is correct");
+			assert.strictEqual(aContent[0].getText(), Core.getLibraryResourceBundle("sap.m").getText("table.COLUMNMENU_RESIZE"), "button text is correct");
 
 			qutils.triggerMouseEvent(aContent[0].getId(), "mousedown", null, null, null, null, 0);
 			qutils.triggerMouseEvent(aContent[0].getId(), "click");

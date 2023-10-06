@@ -10,9 +10,8 @@ sap.ui.define([
 	"sap/m/VBox",
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/core/mvc/XMLView",
-	"sap/ui/model/json/JSONModel",
-	"sap/ui/core/Element"
-], function(App, Button, Label, mobileLibrary, MessageToast, Page, StepInput, Toolbar, VBox, Controller, XMLView, JSONModel, Element) {
+	"sap/ui/model/json/JSONModel"
+], function(App, Button, Label, mobileLibrary, MessageToast, Page, StepInput, Toolbar, VBox, Controller, XMLView, JSONModel) {
 	"use strict";
 
 	// shortcut for sap.m.StepInputStepModeType
@@ -158,7 +157,7 @@ sap.ui.define([
 				}),
 				new Button("change_step_input_width_btn", {
 					text: "change width",
-					press: fnGetChangePropertyValueFunction(Element.registry.get("visual_test_step_input"), "width", ['12rem', '100%', '130px'])
+					press: fnGetChangePropertyValueFunction(sap.ui.getCore().byId("visual_test_step_input"), "width", ['12rem', '100%', '130px'])
 				}),
 
 				oLabelSuccess,

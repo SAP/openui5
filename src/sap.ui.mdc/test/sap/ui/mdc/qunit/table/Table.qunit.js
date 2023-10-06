@@ -16,34 +16,28 @@ sap.ui.define([
 	"sap/ui/mdc/FilterBar",
 	"sap/m/Text",
 	"sap/m/Button",
-	'sap/m/MessageBox',
+	"sap/m/MessageBox",
 	"sap/ui/model/odata/v4/ODataListBinding",
-	"sap/ui/model/Sorter",
 	"sap/ui/model/Filter",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/base/Event",
-	"sap/ui/dom/containsOrEquals",
 	"sap/ui/Device",
-	"sap/m/VBox",
-	"sap/m/Link",
 	"sap/m/IllustratedMessage",
 	"sap/m/IllustratedMessageType",
 	"sap/ui/core/Control",
-	"sap/ui/core/Popup",
 	"sap/ui/core/library",
 	"sap/m/library",
 	"sap/ui/mdc/odata/TypeMap",
 	"test-resources/sap/m/qunit/p13n/TestModificationHandler",
 	"sap/ui/mdc/actiontoolbar/ActionToolbarAction",
 	"sap/m/plugins/CopyProvider",
-	"sap/m/plugins/PasteProvider",
 	"sap/m/plugins/CellSelector",
 	"../util/createAppEnvironment",
 	"sap/ui/fl/write/api/ControlPersonalizationWriteAPI",
+	"sap/m/plugins/PluginBase",
 	"sap/m/plugins/DataStateIndicator",
 	"sap/m/plugins/ColumnResizer",
 	"sap/ui/core/message/Message",
-	'sap/ui/core/Element',
 	"sap/ui/model/odata/v2/ODataModel",
 	"sap/ui/core/theming/Parameters",
 	"sap/ui/mdc/table/RowActionItem",
@@ -52,8 +46,7 @@ sap.ui.define([
 	"sap/ui/base/Event",
 	"sap/base/util/Deferred",
 	"sap/ui/base/ManagedObjectObserver",
-	// load used data types as in legacyFree UI5 they are not loaded automatically
-	"sap/ui/model/odata/type/String",
+	"sap/ui/model/odata/type/String", // load used data types as in legacyFree UI5 they are not loaded automatically
 	"sap/ui/model/odata/type/Byte",
 	"sap/ui/model/odata/type/Boolean",
 	"sap/ui/performance/trace/FESRHelper",
@@ -63,8 +56,7 @@ sap.ui.define([
 	"sap/ui/mdc/enums/ConditionValidated",
 	"sap/ui/mdc/enums/OperatorName",
 	"sap/m/Menu",
-	"sap/m/MenuItem",
-	"sap/ui/core/Lib"
+	"sap/m/MenuItem"
 ], function(
 	TableQUnitUtils,
 	QUtils,
@@ -82,32 +74,26 @@ sap.ui.define([
 	Button,
 	MessageBox,
 	ODataListBinding,
-	Sorter,
 	Filter,
 	JSONModel,
 	UI5Event,
-	containsOrEquals,
 	Device,
-	VBox,
-	Link,
 	IllustratedMessage,
 	IllustratedMessageType,
 	Control,
-	Popup,
 	CoreLibrary,
 	MLibrary,
 	ODataTypeMap,
 	TestModificationHandler,
 	ActionToolbarAction,
 	CopyProvider,
-	PasteProvider,
 	CellSelector,
 	createAppEnvironment,
 	ControlPersonalizationWriteAPI,
+	PluginBase,
 	DataStateIndicator,
 	ColumnResizer,
 	Message,
-	Element,
 	ODataModel,
 	ThemeParameters,
 	RowActionItem,
@@ -126,8 +112,7 @@ sap.ui.define([
 	ConditionValidated,
 	OperatorName,
 	Menu,
-	MenuItem,
-	Lib
+	MenuItem
 ) {
 	"use strict";
 
@@ -1695,6 +1680,14 @@ sap.ui.define([
 	});
 
 	QUnit.test("Selection - GridTable", function(assert) {
+		const done = assert.async();
+		const oModel = new JSONModel({
+			testPath: [
+				{}, {}, {}, {}, {}
+			]
+		});
+		let oSelectionPlugin;
+
 		function selectItem(oRow, bUser, bNoRowSelector) {
 			if (bUser) {
 				if (bNoRowSelector) {
@@ -1704,17 +1697,8 @@ sap.ui.define([
 				}
 				return;
 			}
-			oRow.getParent().getPlugins()[0].setSelectedIndex(oRow.getIndex(), true);
+			oSelectionPlugin.setSelectedIndex(oRow.getIndex(), true);
 		}
-
-		const done = assert.async();
-
-		const oModel = new JSONModel();
-		oModel.setData({
-			testPath: [
-				{}, {}, {}, {}, {}
-			]
-		});
 
 		this.oTable.destroy();
 		this.oTable = new Table({
@@ -1739,9 +1723,10 @@ sap.ui.define([
 		this.oTable.initialized().then(function() {
 			this.oTable._oTable.attachEventOnce("rowsUpdated", function() {
 				const that = this;
-				const oSelectionPlugin = this.oTable._oTable.getPlugins()[0];
 				let iSelectionCount = -1;
 				let bRowPressFired = false;
+
+				oSelectionPlugin = PluginBase.getPlugin(this.oTable._oTable, "sap.ui.table.plugins.SelectionPlugin");
 
 				this.oTable.attachSelectionChange(function() {
 					iSelectionCount = this.oTable.getSelectedContexts().length;
@@ -1775,10 +1760,9 @@ sap.ui.define([
 						});
 
 						that.oTable.setSelectionMode("Single");
-						assert.equal(that.oTable._oTable.getPlugins().length, 1, "Plugin available");
-						assert.ok(that.oTable._oTable.getPlugins()[0].isA("sap.ui.table.plugins.MultiSelectionPlugin"), "Plugin is a MultiSelectionPlugin");
+						assert.ok(oSelectionPlugin.isA("sap.ui.table.plugins.MultiSelectionPlugin"), "Plugin is a MultiSelectionPlugin");
 						assert.equal(that.oTable.getSelectionMode(), "Single", "Selection Mode Single - MDCTable");
-						assert.equal(that.oTable._oTable.getPlugins()[0].getSelectionMode(), "Single", "Selection Mode Single - MultiSelectionPlugin");
+						assert.equal(oSelectionPlugin.getSelectionMode(), "Single", "Selection Mode Single - MultiSelectionPlugin");
 						assert.equal(that.oTable._oTable.getSelectionBehavior(), "RowSelector", "Selection Behavior RowSelector");
 						Core.applyChanges();
 
@@ -1812,7 +1796,7 @@ sap.ui.define([
 
 						that.oTable.setSelectionMode("SingleMaster");
 						assert.equal(that.oTable.getSelectionMode(), "SingleMaster", "Selection Mode Single - MDCTable");
-						assert.equal(that.oTable._oTable.getPlugins()[0].getSelectionMode(), "Single", "Selection Mode Single - MultiSelectionPlugin");
+						assert.equal(oSelectionPlugin.getSelectionMode(), "Single", "Selection Mode Single - MultiSelectionPlugin");
 						assert.equal(that.oTable._oTable.getSelectionBehavior(), "RowOnly", "Selection Behavior RowOnly");
 						Core.applyChanges();
 
@@ -1850,8 +1834,7 @@ sap.ui.define([
 						assert.equal(that.oTable._oTable.getSelectionMode(), "MultiToggle", "Selection Mode Multi - Inner Table");
 						assert.equal(that.oTable._oTable.getSelectionBehavior(), "RowSelector", "Selection Behavior RowSelector");
 						Core.applyChanges();
-						assert.equal(that.oTable._oTable.getPlugins().length, 1, "Plugin available");
-						assert.ok(that.oTable._oTable.getPlugins()[0].isA("sap.ui.table.plugins.MultiSelectionPlugin"), "Plugin is a MultiSelectionPlugin");
+						assert.ok(oSelectionPlugin.isA("sap.ui.table.plugins.MultiSelectionPlugin"), "Plugin is a MultiSelectionPlugin");
 
 						selectItem(that.oTable._oTable.getRows()[0], true);
 					});
@@ -1885,7 +1868,6 @@ sap.ui.define([
 					return new Promise(function(resolve) {
 						// Simulate enable notification scenario via selection over limit
 						that.oTable.setSelectionMode("Multi");
-						const oSelectionPlugin = that.oTable._oTable.getPlugins()[0];
 
 						// reduce limit to force trigger error
 						that.oTable.getType().setSelectionLimit(3);
@@ -2254,7 +2236,7 @@ sap.ui.define([
 	QUnit.test("MultiSelectionPlugin", function(assert) {
 		this.oTable.setType(new GridTableType());
 		return this.oTable.initialized().then(function() {
-			const oMultiSelectionPlugin = this.oTable._oTable.getPlugins()[0];
+			const oMultiSelectionPlugin = PluginBase.getPlugin(this.oTable._oTable, "sap.ui.table.plugins.MultiSelectionPlugin");
 			assert.ok(oMultiSelectionPlugin, "MultiSelectionPlugin is initialized");
 
 			assert.equal(oMultiSelectionPlugin.getLimit(), 200, "default selection limit is correct");
@@ -2330,7 +2312,7 @@ sap.ui.define([
 			this.oTable.setFilter(new FilterBar());
 			return wait(0);
 		}.bind(this)).then(function() {
-			const oRb = Lib.getResourceBundleFor("sap.ui.mdc");
+			const oRb = Core.getLibraryResourceBundle("sap.ui.mdc");
 			assert.strictEqual(this.oTable._oTable.getNoData(), oRb.getText("table.NO_DATA_WITH_FILTERBAR"),
 				"'To start, set the relevant filters.' is displayed");
 		}.bind(this));
@@ -2344,7 +2326,7 @@ sap.ui.define([
 			this.oTable.setFilter(new FilterBar());
 			return wait(0);
 		}.bind(this)).then(function() {
-			const oRb = Lib.getResourceBundleFor("sap.ui.mdc");
+			const oRb = Core.getLibraryResourceBundle("sap.ui.mdc");
 			assert.strictEqual(this.oTable._oTable.getNoData().getTitle(), oRb.getText("table.NO_DATA_WITH_FILTERBAR"),
 				"'To start, set the relevant filters.' is displayed");
 			assert.strictEqual(this.oTable._oTable.getNoData().getIllustrationType(), IllustratedMessageType.SearchEarth);
@@ -2355,7 +2337,7 @@ sap.ui.define([
 		this.oTable.setAutoBindOnInit(false);
 
 		return this.oTable.initialized().then(function() {
-			const oRb = Lib.getResourceBundleFor("sap.ui.mdc");
+			const oRb = Core.getLibraryResourceBundle("sap.ui.mdc");
 			assert.strictEqual(this.oTable._oTable.getNoData(), oRb.getText("table.NO_DATA"), "'No data available' is displayed");
 		}.bind(this));
 	});
@@ -2365,7 +2347,7 @@ sap.ui.define([
 		this.oTable.setNoData(new IllustratedMessage());
 
 		return this.oTable.initialized().then(function() {
-			const oRb = Lib.getResourceBundleFor("sap.ui.mdc");
+			const oRb = Core.getLibraryResourceBundle("sap.ui.mdc");
 			assert.strictEqual(this.oTable._oTable.getNoData().getTitle(), oRb.getText("table.NO_DATA"), "'No data available' is displayed");
 			assert.strictEqual(this.oTable._oTable.getNoData().getIllustrationType(), IllustratedMessageType.EmptyList);
 		}.bind(this));
@@ -2375,7 +2357,7 @@ sap.ui.define([
 		this.oTable.setFilter(new FilterBar());
 
 		return TableQUnitUtils.waitForBindingInfo(this.oTable).then(function() {
-			const oRb = Lib.getResourceBundleFor("sap.ui.mdc");
+			const oRb = Core.getLibraryResourceBundle("sap.ui.mdc");
 			assert.strictEqual(this.oTable._oTable.getNoData(), oRb.getText("table.NO_DATA"),
 				"'No data available' is displayed");
 		}.bind(this));
@@ -2386,7 +2368,7 @@ sap.ui.define([
 		this.oTable.setFilter(new FilterBar());
 
 		return TableQUnitUtils.waitForBindingInfo(this.oTable).then(function() {
-			const oRb = Lib.getResourceBundleFor("sap.ui.mdc");
+			const oRb = Core.getLibraryResourceBundle("sap.ui.mdc");
 			assert.strictEqual(this.oTable._oTable.getNoData().getTitle(), oRb.getText("table.NO_DATA"),
 				"'No data available' is displayed");
 			assert.strictEqual(this.oTable._oTable.getNoData().getIllustrationType(), IllustratedMessageType.NoEntries);
@@ -2400,7 +2382,7 @@ sap.ui.define([
 		this.oTable.setFilter(oFilterBar);
 
 		return TableQUnitUtils.waitForBindingInfo(this.oTable).then(function() {
-			const oRb = Lib.getResourceBundleFor("sap.ui.mdc");
+			const oRb = Core.getLibraryResourceBundle("sap.ui.mdc");
 			assert.strictEqual(this.oTable._oTable.getNoData(), oRb.getText("table.NO_RESULTS"),
 				"'No data available. Try adjusting the filter settings.' is displayed");
 		}.bind(this));
@@ -2414,7 +2396,7 @@ sap.ui.define([
 		this.oTable.setNoData(new IllustratedMessage());
 
 		return TableQUnitUtils.waitForBindingInfo(this.oTable).then(function() {
-			const oRb = Lib.getResourceBundleFor("sap.ui.mdc");
+			const oRb = Core.getLibraryResourceBundle("sap.ui.mdc");
 			assert.strictEqual(this.oTable._oTable.getNoData().getTitle(), oRb.getText("table.NO_RESULTS_TITLE"),
 				"'No data available.' is displayed");
 			assert.strictEqual(this.oTable._oTable.getNoData().getDescription(), oRb.getText("table.NO_RESULTS_DESCRIPTION"),
@@ -2427,7 +2409,7 @@ sap.ui.define([
 		this.oTable.setFilterConditions({ key: [{ operator: OperatorName.EQ, values: ["Pr"] }] });
 
 		return TableQUnitUtils.waitForBindingInfo(this.oTable).then(function() {
-			const oRb = Lib.getResourceBundleFor("sap.ui.mdc");
+			const oRb = Core.getLibraryResourceBundle("sap.ui.mdc");
 			assert.strictEqual(this.oTable._oTable.getNoData(), oRb.getText("table.NO_DATA"), "'No data available'");
 		}.bind(this));
 	});
@@ -2437,14 +2419,14 @@ sap.ui.define([
 		this.oTable.setFilterConditions({ key: [{ operator: OperatorName.EQ, values: ["Pr"] }] });
 
 		return TableQUnitUtils.waitForBindingInfo(this.oTable).then(function() {
-			const oRb = Lib.getResourceBundleFor("sap.ui.mdc");
+			const oRb = Core.getLibraryResourceBundle("sap.ui.mdc");
 			assert.strictEqual(this.oTable._oTable.getNoData().getTitle(), oRb.getText("table.NO_DATA"), "'No data available'");
 		}.bind(this));
 	});
 
 	QUnit.test("noDataText - Table without FilterBar and internal filters and the table is bound", function(assert) {
 		return TableQUnitUtils.waitForBindingInfo(this.oTable).then(function() {
-			const oRb = Lib.getResourceBundleFor("sap.ui.mdc");
+			const oRb = Core.getLibraryResourceBundle("sap.ui.mdc");
 			assert.strictEqual(this.oTable._oTable.getNoData(), oRb.getText("table.NO_DATA"), "'No data available' is displayed");
 		}.bind(this));
 	});
@@ -2453,7 +2435,7 @@ sap.ui.define([
 		this.oTable.setNoData(new IllustratedMessage());
 
 		return TableQUnitUtils.waitForBindingInfo(this.oTable).then(function() {
-			const oRb = Lib.getResourceBundleFor("sap.ui.mdc");
+			const oRb = Core.getLibraryResourceBundle("sap.ui.mdc");
 			assert.strictEqual(this.oTable._oTable.getNoData().getTitle(), oRb.getText("table.NO_DATA"), "'No data available' is displayed");
 		}.bind(this));
 	});
@@ -2462,7 +2444,7 @@ sap.ui.define([
 		this.oTable.setFilter(new CustomFilterControl());
 
 		return TableQUnitUtils.waitForBindingInfo(this.oTable).then(function() {
-			const oRb = Lib.getResourceBundleFor("sap.ui.mdc");
+			const oRb = Core.getLibraryResourceBundle("sap.ui.mdc");
 			assert.strictEqual(this.oTable._oTable.getNoData(), oRb.getText("table.NO_DATA"), "'No data available' is displayed");
 		}.bind(this));
 	});
@@ -2472,7 +2454,7 @@ sap.ui.define([
 		this.oTable.setNoData(new IllustratedMessage());
 
 		return TableQUnitUtils.waitForBindingInfo(this.oTable).then(function() {
-			const oRb = Lib.getResourceBundleFor("sap.ui.mdc");
+			const oRb = Core.getLibraryResourceBundle("sap.ui.mdc");
 			assert.strictEqual(this.oTable._oTable.getNoData().getTitle(), oRb.getText("table.NO_DATA"),
 				"'No data available' is displayed");
 			assert.strictEqual(this.oTable._oTable.getNoData().getTitle(), oRb.getText("table.NO_DATA"),
@@ -2484,7 +2466,7 @@ sap.ui.define([
 		this.oTable.setFilter(new CustomFilterControl({customSearch: "found something?"}));
 
 		return TableQUnitUtils.waitForBindingInfo(this.oTable).then(function() {
-			const oRb = Lib.getResourceBundleFor("sap.ui.mdc");
+			const oRb = Core.getLibraryResourceBundle("sap.ui.mdc");
 			assert.strictEqual(this.oTable._oTable.getNoData(), oRb.getText("table.NO_RESULTS"),
 				"'No data available. Try adjusting the filter settings.' is displayed");
 		}.bind(this));
@@ -2495,7 +2477,7 @@ sap.ui.define([
 		this.oTable.setNoData(new IllustratedMessage());
 
 		return TableQUnitUtils.waitForBindingInfo(this.oTable).then(function() {
-			const oRb = Lib.getResourceBundleFor("sap.ui.mdc");
+			const oRb = Core.getLibraryResourceBundle("sap.ui.mdc");
 			assert.strictEqual(this.oTable._oTable.getNoData().getTitle(), oRb.getText("table.NO_RESULTS_TITLE"),
 				"'No data available.' is displayed");
 			assert.strictEqual(this.oTable._oTable.getNoData().getDescription(), oRb.getText("table.NO_RESULTS_DESCRIPTION"),
@@ -2639,7 +2621,7 @@ sap.ui.define([
 			assert.ok(fnGetColumnClipboardSettingsSpy.calledWith(oColumn), "Table#getColumnClipboardSettings uses PropertyHelper#getColumnClipboardSettings");
 			fnGetColumnClipboardSettingsSpy.restore();
 
-			const oCopyButton = Element.registry.get(this.oTable.getId() + "-copy");
+			const oCopyButton = Core.byId(this.oTable.getId() + "-copy");
 			assert.ok(oCopyButton, "Copy button is created");
 			assert.equal(this.oTable._oToolbar.indexOfEnd(oCopyButton), 0, "Copy button is added to the toolbar, as a first element of the end aggreagtion");
 		}.bind(this));
@@ -3115,7 +3097,7 @@ sap.ui.define([
 
 			return oExportHandler.catch(function() {
 				assert.ok(MessageBox.error.calledOnce, "MessageBox was called");
-				assert.ok(MessageBox.error.calledWith(Lib.getResourceBundleFor("sap.ui.mdc").getText("ERROR_MISSING_EXPORT_LIBRARY")), "Called with proper error message");
+				assert.ok(MessageBox.error.calledWith(Core.getLibraryResourceBundle("sap.ui.mdc").getText("ERROR_MISSING_EXPORT_LIBRARY")), "Called with proper error message");
 
 				oTable._loadExportLibrary().restore();
 				MessageBox.error.restore();
@@ -4583,7 +4565,7 @@ sap.ui.define([
 	aTestedTypes.forEach(function(sTableType) {
 		QUnit.test("Filter info bar with table type = " + sTableType + " (filter enabled)", function(assert) {
 			const that = this;
-			const oResourceBundle = Lib.getResourceBundleFor("sap.ui.mdc");
+			const oResourceBundle = Core.getLibraryResourceBundle("sap.ui.mdc");
 			const oListFormat = ListFormat.getInstance();
 
 			this.oTable.destroy();
@@ -5355,7 +5337,7 @@ sap.ui.define([
 	QUnit.test("Button creation", function(assert) {
 		return TableQUnitUtils.waitForBinding(this.oTable).then(function() {
 			const clock = sinon.useFakeTimers();
-			const oRb = Lib.getResourceBundleFor("sap.ui.mdc");
+			const oRb = Core.getLibraryResourceBundle("sap.ui.mdc");
 
 			assert.ok(this.oType._oShowDetailsButton, "button is created");
 			assert.notOk(this.oType._oShowDetailsButton.getVisible(), "button is hidden since there are no popins");
@@ -5624,7 +5606,7 @@ sap.ui.define([
 		}).then(function() {
 			const oMenu = oTable._oColumnHeaderMenu;
 			const oColumnResizerButton = oMenu._getAllEffectiveQuickActions().find(function(oQuickAction) {
-				return oQuickAction.getContent()[0].getText() === Lib.getResourceBundleFor("sap.m").getText("table.COLUMNMENU_RESIZE");
+				return oQuickAction.getContent()[0].getText() === Core.getLibraryResourceBundle("sap.m").getText("table.COLUMNMENU_RESIZE");
 			});
 			assert.ok(oColumnResizerButton, "Column resize button found in column menu");
 		}).finally(function() {

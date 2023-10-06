@@ -14,16 +14,14 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	"sap/m/library",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Lib",
-	"sap/ui/core/Element"
-], function(Core, qutils, createAndAppendDiv, Tokenizer, Token, Dialog, Label, MultiInput, Event, Device, KeyCodes, Library, JSONModel, jQuery, Lib, Element) {
+	"sap/ui/thirdparty/jquery"
+], function(Core, qutils, createAndAppendDiv, Tokenizer, Token, Dialog, Label, MultiInput, Event, Device, KeyCodes, Library, JSONModel, jQuery) {
 	"use strict";
 
 	createAndAppendDiv("content");
 
 
-	var oRb = Lib.getResourceBundleFor("sap.m"),
+	var oRb = Core.getLibraryResourceBundle("sap.m"),
 		TokenizerRenderMode = Library.TokenizerRenderMode;
 
 
@@ -308,7 +306,7 @@ sap.ui.define([
 		qutils.triggerKeydown(oTokenizerDomRef, KeyCodes.ARROW_LEFT);
 
 		// assert
-		assert.strictEqual(Element.registry.get("t6").getDomRef().id, document.activeElement.id,
+		assert.strictEqual(Core.byId("t6").getDomRef().id, document.activeElement.id,
 			"Token6 is selected.");
 
 		// act
@@ -443,7 +441,7 @@ sap.ui.define([
 		assert.ok(oTokenDeleteSpy.called, "Token Delete event should be called");
 
 		oItem = aItems[0];
-		oToken = Element.registry.get(oItem.data("tokenId"));
+		oToken = Core.byId(oItem.data("tokenId"));
 		assert.strictEqual(oItem.getTitle(), oToken.getText(), "The first item in the list should be the same as the Token" + oItem.getTitle());
 
 		// Cleanup
@@ -508,7 +506,7 @@ sap.ui.define([
 
 		aItems = oTokenizer._getTokensList().getItems();
 		oItem = aItems[0];
-		oToken = Element.registry.get(oItem.data("tokenId"));
+		oToken = Core.byId(oItem.data("tokenId"));
 		oFirstItemPressFiredSpy = this.spy(oToken, "firePress");
 
 		oTokenizer._handleListItemPress(oEvent);
@@ -851,7 +849,7 @@ sap.ui.define([
 
 	QUnit.test("Arrow_right", function(assert) {
 		// arrange
-		Element.registry.get("t1").focus();
+		Core.byId("t1").focus();
 
 		// act
 		qutils.triggerKeydown("t1", KeyCodes.ARROW_RIGHT);
@@ -880,7 +878,7 @@ sap.ui.define([
 			oSpy = this.spy(oTokenizer, "onsapnext"),
 			oEventArg;
 
-		Element.registry.get("t3").focus();
+		Core.byId("t3").focus();
 
 		// act
 		qutils.triggerKeydown("t", KeyCodes.ARROW_RIGHT);
@@ -897,7 +895,7 @@ sap.ui.define([
 
 	QUnit.test("Arrow_up", function(assert) {
 		// arrange
-		Element.registry.get("t1").focus();
+		Core.byId("t1").focus();
 
 		// act
 		qutils.triggerKeydown("t1", KeyCodes.ARROW_UP);
@@ -1684,7 +1682,7 @@ sap.ui.define([
 
 		var oRPO = oTokenizer.getTokensPopup();
 
-		assert.strictEqual(oRPO.getTitle(), Lib.getResourceBundleFor("sap.m").getText("COMBOBOX_PICKER_TITLE"), "Default title should be taken from Resource Bundle");
+		assert.strictEqual(oRPO.getTitle(), Core.getLibraryResourceBundle("sap.m").getText("COMBOBOX_PICKER_TITLE"), "Default title should be taken from Resource Bundle");
 
 		oTokenizer.destroy();
 	});

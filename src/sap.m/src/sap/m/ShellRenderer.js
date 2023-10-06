@@ -4,10 +4,9 @@
 
 sap.ui.define([
 	'sap/ui/core/library',
-	'sap/m/library',
-	"sap/ui/core/Lib"
+	'sap/m/library'
 ],
-function(coreLibrary, library, Lib) {
+function(coreLibrary, library) {
 	"use strict";
 
 
@@ -109,7 +108,7 @@ function(coreLibrary, library, Lib) {
 
 		// logout button
 		if (oControl.getShowLogout()) {
-			var rb = Lib.getResourceBundleFor("sap.m");
+			var rb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 			rm.openStart("a", oControl.getId() + "-logout");
 			rm.attr("tabindex", "0");
 			rm.attr("role", "button");

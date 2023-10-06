@@ -19,8 +19,7 @@ sap.ui.define([
 	"sap/m/Text",
 	"sap/ui/core/Core",
 	'sap/ui/mdc/condition/Condition',
-	'sap/ui/mdc/enums/ConditionValidated',
-	"sap/ui/core/Element"
+	'sap/ui/mdc/enums/ConditionValidated'
 ], function(
 	ODataV4ValueHelpDelegate,
 	MTable,
@@ -38,8 +37,7 @@ sap.ui.define([
 	Text,
 	Core,
 	Condition,
-	ConditionValidated,
-	Element
+	ConditionValidated
 ) {
 	"use strict";
 
@@ -173,13 +171,13 @@ sap.ui.define([
 	ValueHelpDelegate.getFilterConditions = function (oValueHelp, oContent, oConfig) {
 		const oConditions = ODataV4ValueHelpDelegate.getFilterConditions(arguments);
 
-		const oCountry = Element.registry.get("FB0-FF6");
+		const oCountry = Core.byId("FB0-FF6");
 		const aCountryConditions = oCountry && oCountry.getConditions();
 		if (aCountryConditions && aCountryConditions.length) {
 			oConditions["country_code"] = aCountryConditions;
 		}
 
-		const oRegion = Element.registry.get("FB0-FF7");
+		const oRegion = Core.byId("FB0-FF7");
 		const aRegionConditions = oRegion && oRegion.getConditions();
 		if (aRegionConditions && aRegionConditions.length) {
 			oConditions["region_code"] = aRegionConditions;

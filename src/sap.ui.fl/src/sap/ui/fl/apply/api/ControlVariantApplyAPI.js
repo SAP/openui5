@@ -130,7 +130,7 @@ sap.ui.define([
 			if (typeof mPropertyBag.element === "string") {
 				oElement = Component.get(mPropertyBag.element);
 				if (!(oElement instanceof Component)) {
-					oElement = Element.registry.get(mPropertyBag.element);
+					oElement = Core.byId(mPropertyBag.element);
 
 					if (!(oElement instanceof Element)) {
 						return logAndReject(Error("No valid component or control found for the provided ID"));
@@ -186,7 +186,7 @@ sap.ui.define([
 		 * @public
 		 */
 		attachVariantApplied(mPropertyBag) {
-			var oControl = mPropertyBag.selector.id && Element.registry.get(mPropertyBag.selector.id) || mPropertyBag.selector;
+			var oControl = mPropertyBag.selector.id && sap.ui.getCore().byId(mPropertyBag.selector.id) || mPropertyBag.selector;
 			var oAppComponent = Utils.getAppComponentForControl(oControl);
 
 			waitForVariantModel(oAppComponent).then(function(oVariantModel) {
@@ -209,7 +209,7 @@ sap.ui.define([
 		 * @public
 		 */
 		detachVariantApplied(mPropertyBag) {
-			var oControl = mPropertyBag.selector.id && Element.registry.get(mPropertyBag.selector.id) || mPropertyBag.selector;
+			var oControl = mPropertyBag.selector.id && sap.ui.getCore().byId(mPropertyBag.selector.id) || mPropertyBag.selector;
 			var oAppComponent = Utils.getAppComponentForControl(oControl);
 			waitForVariantModel(oAppComponent).then(function(oVariantModel) {
 				oVariantModel.detachVariantApplied(mPropertyBag.vmControlId, oControl.getId());

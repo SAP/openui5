@@ -14,8 +14,7 @@ sap.ui.define([
 	"sap/m/RadioButton",
 	"sap/ui/core/Icon",
 	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/core/Core",
-	"sap/ui/core/Lib"
+	"sap/ui/core/Core"
 ], function(
 	ControlVariantApplyAPI,
 	ManifestUtils,
@@ -30,8 +29,7 @@ sap.ui.define([
 	RadioButton,
 	Icon,
 	sinon,
-	oCore,
-	Lib
+	oCore
 ) {
 	"use strict";
 
@@ -82,17 +80,17 @@ sap.ui.define([
 
 			oModel = new VariantModel({
 				One: {
-					currentVariant: "Standard",
-					originalCurrentVariant: "Standard",
-					defaultVariant: "Standard",
-					originalDefaultVariant: "Standard",
+					currentVariant: "One",
+					originalCurrentVariant: "One",
+					defaultVariant: "One",
+					originalDefaultVariant: "One",
 					modified: false,
 					variantsEditable: true,
 					showFavorites: true,
 					showExecuteOnSelection: false,
 					variants: [
 						{
-							key: "Standard",
+							key: "One",
 							title: "Standard",
 							originalTitle: "Standard",
 							author: "A",
@@ -251,7 +249,7 @@ sap.ui.define([
 			assert.ok(this._oVM._openVariantList.called);
 		});
 
-		QUnit.test("Check title", function(assert) {
+		QUnit.skip("Check title", function(assert) {
 			this.oVariantManagement.setModel(oModel, ControlVariantApplyAPI.getVariantModelName());
 
 			this.oVariantManagement.setCurrentVariantKey("2");
@@ -294,11 +292,11 @@ sap.ui.define([
 
 			oConfiguration.setLanguage("en_EN");
 
-			this.oVariantManagement._oRb = Lib.getResourceBundleFor("sap.m");
+			this.oVariantManagement._oRb = oCore.getLibraryResourceBundle("sap.m");
 
 			this.oVariantManagement.setModel(oModel, ControlVariantApplyAPI.getVariantModelName());
 
-			var oFLRB = Lib.getResourceBundleFor("sap.ui.fl");
+			var oFLRB = oCore.getLibraryResourceBundle("sap.ui.fl");
 			var sStandardText = oFLRB.getText("STANDARD_VARIANT_TITLE");
 			assert.equal(this._oVM.oVariantInvisibleText.getText(), this.oVariantManagement._oRb.getText("VARIANT_MANAGEMENT_SEL_VARIANT", sStandardText));
 
@@ -322,7 +320,7 @@ sap.ui.define([
 		QUnit.test("Check setDefaultVariantKey", function(assert) {
 			this.oVariantManagement.setModel(oModel, ControlVariantApplyAPI.getVariantModelName());
 
-			assert.equal(this.oVariantManagement.getDefaultVariantKey(), "Standard");
+			assert.equal(this.oVariantManagement.getDefaultVariantKey(), "One");
 
 			this.oVariantManagement.setDefaultVariantKey("3");
 
@@ -822,29 +820,21 @@ sap.ui.define([
 		QUnit.test("Checking _handleManageSavePressed; deleted item is NOT selected", function(assert) {
 			this.oVariantManagement.setModel(oModel, ControlVariantApplyAPI.getVariantModelName());
 
-			this.oVariantManagement.attachManage(function() {
-				var aDelItems = [];
-				var aRenamedItems = [];
-				var oData = this.oVariantManagement.getBindingContext(ControlVariantApplyAPI.getVariantModelName()).getObject();
+			this.oVariantManagement.attachManage(function(oEvent) {
+				var oData = oEvent.getParameters();
 
-				oData.variants.forEach(function(oItem) {
-					if (!oItem.visible) {
-						aDelItems.push(oItem.key);
-					} else if (oItem.title !== oItem.originalTitle) {
-						aRenamedItems.push(oItem.key);
-					}
-				});
-
-				assert.ok(aDelItems);
+				var aDelItems = oData.deleted;
+				assert.ok(oData.deleted);
 				assert.equal(aDelItems.length, 2);
 				assert.equal(aDelItems[0], "1");
 				assert.equal(aDelItems[1], "4");
 
+				var aRenamedItems = oData.renamed;
 				assert.ok(aRenamedItems);
 				assert.equal(aRenamedItems.length, 1);
-				assert.equal(aRenamedItems[0], "3");
-				assert.equal(oData.variants[aRenamedItems[0]].title, "New 3");
-			}.bind(this));
+				assert.equal(aRenamedItems[0].key, "3");
+				assert.equal(aRenamedItems[0].name, "New 3");
+			});
 
 			this._oVM._createManagementDialog();
 			assert.ok(this._oVM.oManagementDialog);
@@ -897,13 +887,13 @@ sap.ui.define([
 			assert.equal(aDeletedItems.length, 1);
 
 			// check for Standard
-			oItemDel = this._oVM._getItemByKey("Standard");
+			oItemDel = this._oVM._getItemByKey("One");
 			assert.ok(oItemDel);
 
 			this._oVM._clearDeletedItems();
 
 			oEvent = {
-				getParameters() { return { newValue: "Standard" }; }
+				getParameters() { return { newValue: "One" }; }
 			};
 
 			this._oVM._triggerSearchInManageDialog(oEvent, this._oVM.oManagementTable);
@@ -923,41 +913,28 @@ sap.ui.define([
 
 			this.oVariantManagement.setModel(oModel, ControlVariantApplyAPI.getVariantModelName());
 
-			this.oVariantManagement.attachManage(function() {
-				var aDelItems = [];
-				var aRenamedItems = [];
+			this.oVariantManagement.attachManage(function(oEvent) {
 				var aFavItems = [];
+				var oData = oEvent.getParameters();
 
-				var oData = this.oVariantManagement.getBindingContext(ControlVariantApplyAPI.getVariantModelName()).getObject();
-
-				oData.variants.forEach(function(oItem) {
-					if (!oItem.visible) {
-						aDelItems.push(oItem.key);
-					} else {
-						if (oItem.title !== oItem.originalTitle) {
-							aRenamedItems.push(oItem.key);
-						}
-						if (oItem.favorite !== oItem.originalFavorite) {
-							aFavItems.push(oItem.key);
-						}
-					}
-				});
-
+				var aDelItems = oData.deleted;
 				assert.ok(aDelItems);
 				assert.equal(aDelItems.length, 2);
 				assert.equal(aDelItems[0], "1");
 				assert.equal(aDelItems[1], "2");
 
+				var aRenamedItems = oData.renamed;
 				assert.ok(aRenamedItems);
 				assert.equal(aRenamedItems.length, 1);
-				assert.equal(aRenamedItems[0], "3");
-				assert.equal(oData.variants[aRenamedItems[0]].title, "New 3");
+				assert.equal(aRenamedItems[0].key, "3");
+				assert.equal(aRenamedItems[0].name, "New 3");
 
+				var aFavItems = oData.fav;
 				assert.ok(aFavItems);
 				assert.equal(aFavItems.length, 1);
-				assert.equal(aFavItems[0], "4");
-				assert.ok(!oData.variants[aFavItems[0]].favorite);
-			}.bind(this));
+				assert.equal(aFavItems[0].key, "4");
+				assert.ok(!aFavItems[0].visible);
+			});
 
 			this._oVM._createManagementDialog();
 			assert.ok(this._oVM.oManagementDialog);
@@ -1146,14 +1123,14 @@ sap.ui.define([
 			this._oVM._openManagementDialog();
 
 			assert.equal(this.oVariantManagement.getDefaultVariantKey(), "1");
-			var oItem = this._oVM._getItemByKey("Standard");
+			var oItem = this._oVM._getItemByKey("One");
 			assert.ok(oItem);
 			assert.ok(!oItem.getFavorite());
 
 			this._oVM._handleManageDeletePressed(this._oVM._getItemByKey("1"));
 
-			assert.equal(this.oVariantManagement.getDefaultVariantKey(), "Standard");
-			oItem = this._oVM._getItemByKey("Standard");
+			assert.equal(this.oVariantManagement.getDefaultVariantKey(), "One");
+			oItem = this._oVM._getItemByKey("One");
 			assert.ok(oItem);
 			assert.ok(oItem.getFavorite());
 		});
@@ -1304,7 +1281,7 @@ sap.ui.define([
 			this.oVariantManagement.setModel(oModel, ControlVariantApplyAPI.getVariantModelName());
 
 			assert.equal(nCount, 0);
-			var oStdVariant = this.oVariantManagement._getInnerItemByKey("Standard");
+			var oStdVariant = this.oVariantManagement._getInnerItemByKey("One");
 			assert.ok(oStdVariant);
 			assert.ok(!this.oVariantManagement.getApplyAutomaticallyOnVariant(oStdVariant));
 

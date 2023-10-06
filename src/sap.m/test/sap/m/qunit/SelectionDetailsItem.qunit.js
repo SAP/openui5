@@ -4,9 +4,8 @@ sap.ui.define([
 	"sap/m/SelectionDetailsItemLine",
 	"sap/ui/core/Item",
 	"sap/m/library",
-	"sap/ui/core/Core",
-	"sap/ui/core/Element"
-], function(SelectionDetailsItem, SelectionDetailsItemLine, Item, library, oCore, Element) {
+	"sap/ui/core/Core"
+], function(SelectionDetailsItem, SelectionDetailsItemLine, Item, library, oCore) {
 	"use strict";
 
 	// shortcut for sap.m.SelectionDetailsActionLevel
@@ -216,7 +215,7 @@ sap.ui.define([
 		// Arrange
 		var sActionTypeExpected = "_actionPress",
 			oActionExpected = this.oItem.getAggregation("actions")[0],
-			oButton = Element.registry.get(this.oItem.getId() + "-action-0"),
+			oButton = oCore.byId(this.oItem.getId() + "-action-0"),
 			oSpy = sinon.spy(SelectionDetailsItem.prototype, "fireEvent");
 		// Act
 		oButton.firePress();

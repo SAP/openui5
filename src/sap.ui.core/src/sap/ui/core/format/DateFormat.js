@@ -13,13 +13,14 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/core/Locale",
 	"sap/ui/core/LocaleData",
+	"sap/ui/core/Supportability",
 	"sap/ui/core/date/CalendarUtils",
 	"sap/ui/core/date/CalendarWeekNumbering",
 	"sap/ui/core/date/UI5Date",
 	"sap/ui/core/date/UniversalDate",
-	"sap/ui/core/format/TimezoneUtil",
-	"sap/ui/core/Lib"
-], function(Log, formatMessage, deepEqual, extend, CalendarType, Configuration, Core, Locale, LocaleData, CalendarUtils, CalendarWeekNumbering, UI5Date, UniversalDate, TimezoneUtil, Lib) {
+	"sap/ui/core/format/TimezoneUtil"
+], function(Log, formatMessage, deepEqual, extend, CalendarType, Configuration, Core, Locale,
+		LocaleData, Supportability, CalendarUtils, CalendarWeekNumbering, UI5Date, UniversalDate, TimezoneUtil) {
 	"use strict";
 
 	/**
@@ -2286,7 +2287,7 @@ sap.ui.define([
 
 		sResult = aBuffer.join("");
 
-		if (Configuration.getOriginInfo()) {
+		if (Supportability.collectOriginInfo()) {
 			// String object is created on purpose and must not be a string literal
 			// eslint-disable-next-line no-new-wrappers
 			sResult = new String(sResult);
@@ -3420,7 +3421,7 @@ sap.ui.define([
 	 * @ui5-restricted sap.m
 	 */
 	DateFormat.prototype.getPlaceholderText = function() {
-		var oResourceBundle = Lib.getResourceBundleFor("sap.ui.core");
+		var oResourceBundle = Core.getLibraryResourceBundle();
 
 		return oResourceBundle.getText("date.placeholder", [this.format.apply(this, this.getSampleValue())]);
 	};

@@ -20,19 +20,17 @@ sap.ui.define([
 	"sap/m/library",
 	"sap/m/table/Util",
 	"sap/m/table/columnmenu/Menu",
-	'sap/m/MessageBox',
+	"sap/m/MessageBox",
+	"sap/m/plugins/PluginBase",
 	"sap/ui/core/Core",
 	"sap/ui/core/format/NumberFormat",
-	"sap/ui/core/Item",
 	"sap/ui/core/format/ListFormat",
 	"sap/ui/core/library",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/model/Sorter",
 	"sap/ui/model/base/ManagedObjectModel",
 	"sap/base/strings/capitalize",
 	"sap/base/util/deepEqual",
 	"sap/base/util/Deferred",
-	"sap/ui/core/InvisibleMessage",
 	"sap/ui/core/InvisibleText",
 	"sap/ui/mdc/p13n/subcontroller/ColumnController",
 	"sap/ui/mdc/p13n/subcontroller/SortController",
@@ -51,14 +49,9 @@ sap.ui.define([
 	"sap/ui/mdc/enums/TableSelectionMode",
 	"sap/ui/mdc/enums/TableP13nMode",
 	"sap/ui/mdc/enums/TableType",
-	"sap/ui/core/Element",
-	"sap/ui/core/Lib",
-	// load for availability
-	"sap/ui/mdc/enums/TableGrowingMode",
-	// load for availability
-	"sap/ui/mdc/enums/TableRowAction",
-	// load for availability
-	"sap/ui/mdc/enums/TableRowCountMode"
+	"sap/ui/mdc/enums/TableGrowingMode", // load for availability
+	"sap/ui/mdc/enums/TableRowAction", // load for availability
+	"sap/ui/mdc/enums/TableRowCountMode" // load for availability
 ], function(
 	Control,
 	ActionToolbar,
@@ -78,18 +71,16 @@ sap.ui.define([
 	MTableUtil,
 	ColumnMenu,
 	MessageBox,
+	PluginBase,
 	Core,
 	NumberFormat,
-	Item,
 	ListFormat,
 	coreLibrary,
 	KeyCodes,
-	Sorter,
 	ManagedObjectModel,
 	capitalize,
 	deepEqual,
 	Deferred,
-	InvisibleMessage,
 	InvisibleText,
 	ColumnController,
 	SortController,
@@ -107,9 +98,7 @@ sap.ui.define([
 	TableMultiSelectMode,
 	TableSelectionMode,
 	TableP13nMode,
-	TableType,
-	Element,
-	Lib
+	TableType
 ) {
 	"use strict";
 
@@ -981,7 +970,7 @@ sap.ui.define([
 
 	Table.prototype.setCopyProvider = function(oCopyProvider) {
 		this.setAggregation("copyProvider", oCopyProvider, true);
-		if (oCopyProvider && this._oToolbar && !Element.registry.get(this.getId() + "-copy")) {
+		if (oCopyProvider && this._oToolbar && !Core.byId(this.getId() + "-copy")) {
 			this._oToolbar.insertEnd(this._getCopyButton(), 0);
 		}
 		return this;
@@ -1464,7 +1453,7 @@ sap.ui.define([
 			const aPropertyLabels = aFilteredProperties.map(function(sPropertyName) {
 				return oPropertyHelper.hasProperty(sPropertyName) ? oPropertyHelper.getProperty(sPropertyName).label : "";
 			});
-			const oResourceBundle = Lib.getResourceBundleFor("sap.ui.mdc");
+			const oResourceBundle = Core.getLibraryResourceBundle("sap.ui.mdc");
 			const oListFormat = ListFormat.getInstance();
 
 			let sFilterText;
@@ -1508,7 +1497,7 @@ sap.ui.define([
 	function createFilterInfoBar(oTable) {
 		const sToolbarId = oTable.getId() + "-filterInfoBar";
 		let oFilterInfoToolbar = internal(oTable).oFilterInfoBar;
-		const oRb = Lib.getResourceBundleFor("sap.ui.mdc");
+		const oRb = Core.getLibraryResourceBundle("sap.ui.mdc");
 
 		if (oFilterInfoToolbar && !oFilterInfoToolbar.isDestroyed()) {
 			oFilterInfoToolbar.destroy();
@@ -1657,7 +1646,7 @@ sap.ui.define([
 			return;
 		}
 
-		const oRb = Lib.getResourceBundleFor("sap.ui.mdc");
+		const oRb = Core.getLibraryResourceBundle("sap.ui.mdc");
 		if (!this.isTableBound()) {
 			vNoData.setDescription(" ");
 			if (this.getFilter()) {
@@ -1690,7 +1679,7 @@ sap.ui.define([
 			return vNoData;
 		}
 
-		const oRb = Lib.getResourceBundleFor("sap.ui.mdc");
+		const oRb = Core.getLibraryResourceBundle("sap.ui.mdc");
 		if (!this.isTableBound()) {
 			return oRb.getText(this.getFilter() ? "table.NO_DATA_WITH_FILTERBAR" : "table.NO_DATA");
 		}
@@ -1992,7 +1981,7 @@ sap.ui.define([
 	 * @returns {string[]} The keys of the filtered properties.
 	 */
 	function getExternallyFilteredProperties(oTable) {
-		const oFilter = Element.registry.get(oTable.getFilter());
+		const oFilter = Core.byId(oTable.getFilter());
 		return oFilter ? getFilteredProperties(oFilter.getConditions()) : [];
 	}
 
@@ -2004,7 +1993,7 @@ sap.ui.define([
 	 * @return {boolean} Whether the table is filtered (internally or externally).
 	 */
 	function isFiltered(oTable) {
-		const oFilter = Element.registry.get(oTable.getFilter());
+		const oFilter = Core.byId(oTable.getFilter());
 		return getInternallyFilteredProperties(oTable).length > 0
 			   || getExternallyFilteredProperties(oTable).length > 0
 			   || oFilter && oFilter.getSearch() !== "";
@@ -2312,7 +2301,7 @@ sap.ui.define([
 			// If no columns exist, show message and return without exporting
 			if (!aSheetColumns || !aSheetColumns.length) {
 				sap.ui.require(["sap/m/MessageBox"], function(MessageBox) {
-					MessageBox.error(Lib.getResourceBundleFor("sap.ui.mdc").getText("table.NO_COLS_EXPORT"), {
+					MessageBox.error(Core.getLibraryResourceBundle("sap.ui.mdc").getText("table.NO_COLS_EXPORT"), {
 						styleClass: (this.$() && this.$().closest(".sapUiSizeCompact").length) ? "sapUiSizeCompact" : ""
 					});
 				}.bind(that));
@@ -2369,7 +2358,7 @@ sap.ui.define([
 			}).catch(function(vError) {
 				// If sap.ui.export is not loaded, show an error message and return without exporting
 				if (!sap.ui.getCore().getLoadedLibraries().hasOwnProperty("sap.ui.export")) {
-					MessageBox.error(Lib.getResourceBundleFor("sap.ui.mdc").getText("ERROR_MISSING_EXPORT_LIBRARY"));
+					MessageBox.error(Core.getLibraryResourceBundle("sap.ui.mdc").getText("ERROR_MISSING_EXPORT_LIBRARY"));
 				}
 
 				fnReject(vError);
@@ -3018,13 +3007,11 @@ sap.ui.define([
 		this._bV4LegacySelectionEnabled = true;
 
 		if (this._oTable && this._isOfType("Table", true)) {
-			const oV4SelectionPlugin = this._oTable.getPlugins().find(function(oPlugin) {
-				return oPlugin.isA("sap.ui.table.plugins.ODataV4Selection");
-			});
+			const oV4SelectionPlugin = PluginBase.getPlugin(this._oTable, "sap.ui.table.plugins.ODataV4Selection");
 
 			if (oV4SelectionPlugin) {
 				oV4SelectionPlugin.destroy();
-				this.getControlDelegate().initializeSelection(this);
+				return this.getControlDelegate().initializeSelection(this);
 			}
 		}
 	};

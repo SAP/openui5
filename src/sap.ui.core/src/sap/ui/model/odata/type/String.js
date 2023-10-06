@@ -6,9 +6,8 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/model/ValidateException",
 	"sap/ui/model/odata/type/ODataType",
-	"sap/ui/model/type/String",
-	"sap/ui/core/Lib"
-], function(Log, ValidateException, ODataType, StringType, Lib) {
+	"sap/ui/model/type/String"
+], function (Log, ValidateException, ODataType, StringType) {
 	"use strict";
 
 	var rDigitsOnly = /^\d+$/,
@@ -244,18 +243,18 @@ sap.ui.define([
 			throw new ValidateException("Illegal " + this.getName() + " value: " + sValue);
 		} else if (oConstraints.isDigitSequence) {
 			if (!sValue.match(rDigitsOnly)) {
-				throw new ValidateException(Lib.getResourceBundleFor("sap.ui.core")
+				throw new ValidateException(sap.ui.getCore().getLibraryResourceBundle()
 					.getText("EnterDigitsOnly"));
 			}
 			if (iMaxLength && sValue.length > iMaxLength) {
-				throw new ValidateException(Lib.getResourceBundleFor("sap.ui.core")
+				throw new ValidateException(sap.ui.getCore().getLibraryResourceBundle()
 					.getText("EnterMaximumOfDigits", [iMaxLength]));
 			}
 			return;
 		} else if (!iMaxLength || sValue.length <= iMaxLength) {
 			return;
 		}
-		throw new ValidateException(Lib.getResourceBundleFor("sap.ui.core").getText(
+		throw new ValidateException(sap.ui.getCore().getLibraryResourceBundle().getText(
 			iMaxLength ? "EnterTextMaxLength" : "EnterText", [iMaxLength]));
 	};
 

@@ -8,9 +8,8 @@ sap.ui.define([
 	"sap/ui/model/FormatException",
 	"sap/ui/model/ParseException",
 	"sap/ui/model/ValidateException",
-	"sap/ui/model/odata/type/ODataType",
-	"sap/ui/core/Lib"
-], function(Log, NumberFormat, FormatException, ParseException, ValidateException, ODataType, Lib) {
+	"sap/ui/model/odata/type/ODataType"
+], function (Log, NumberFormat, FormatException, ParseException, ValidateException, ODataType) {
 	"use strict";
 
 	/**
@@ -20,7 +19,7 @@ sap.ui.define([
 	 *   the locale-dependent error message
 	 */
 	function getErrorMessage() {
-		return Lib.getResourceBundleFor("sap.ui.core").getText("EnterNumber");
+		return sap.ui.getCore().getLibraryResourceBundle().getText("EnterNumber");
 	}
 
 	/**

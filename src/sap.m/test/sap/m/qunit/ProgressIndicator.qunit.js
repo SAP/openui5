@@ -5,9 +5,8 @@ sap.ui.define([
 	"sap/m/Page",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/library",
-	"sap/ui/core/Core",
-	"sap/ui/core/Lib"
-], function(createAndAppendDiv, ProgressIndicator, Page, jQuery, coreLibrary, Core, Lib) {
+	"sap/ui/core/Core"
+], function(createAndAppendDiv, ProgressIndicator, Page, jQuery, coreLibrary, Core) {
 	"use strict";
 
 	// shortcut for sap.ui.core.ValueState
@@ -385,15 +384,15 @@ sap.ui.define([
 		var oInfo = oControl.getAccessibilityInfo();
 		assert.ok(!!oInfo, "getAccessibilityInfo returns a info object");
 		assert.strictEqual(oInfo.role, "progressbar", "AriaRole");
-		assert.strictEqual(oInfo.type, Lib.getResourceBundleFor("sap.m").getText("ACC_CTR_TYPE_PROGRESS"), "Type");
-		assert.strictEqual(oInfo.description, Lib.getResourceBundleFor("sap.m").getText("ACC_CTR_STATE_PROGRESS", [50]), "Description");
+		assert.strictEqual(oInfo.type, Core.getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_PROGRESS"), "Type");
+		assert.strictEqual(oInfo.description, Core.getLibraryResourceBundle("sap.m").getText("ACC_CTR_STATE_PROGRESS", [50]), "Description");
 		assert.strictEqual(oInfo.focusable, true, "Focusable");
 		assert.strictEqual(oInfo.enabled, true, "Enabled");
 		assert.ok(oInfo.editable === undefined || oInfo.editable === null, "Editable");
 		oControl.setPercentValue(10);
 		oControl.setEnabled(false);
 		oInfo = oControl.getAccessibilityInfo();
-		assert.strictEqual(oInfo.description, Lib.getResourceBundleFor("sap.m").getText("ACC_CTR_STATE_PROGRESS", [10]), "Description");
+		assert.strictEqual(oInfo.description, Core.getLibraryResourceBundle("sap.m").getText("ACC_CTR_STATE_PROGRESS", [10]), "Description");
 		assert.strictEqual(oInfo.focusable, false, "Focusable");
 		assert.strictEqual(oInfo.enabled, false, "Enabled");
 		oControl.setDisplayValue(sDisplayValue);

@@ -860,7 +860,7 @@ sap.ui.define([
 			getCellInfo: function (oTable, oTarget) {
 				return {
 					rowIndex: Element.closestTo(oTarget, true).getIndex(),
-					colIndex: this.getVisibleColumns(oTable).indexOf(Element.registry.get(oTarget.getAttribute("data-sap-ui-colid")))
+					colIndex: this.getVisibleColumns(oTable).indexOf(Core.byId(oTarget.getAttribute("data-sap-ui-colid")))
 				};
 			},
 			/**

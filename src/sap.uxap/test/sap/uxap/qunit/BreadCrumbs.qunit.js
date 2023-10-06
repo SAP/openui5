@@ -10,10 +10,8 @@ sap.ui.define([
 	"sap/ui/core/Icon",
 	"sap/ui/core/Item",
 	"sap/m/Select",
-	"sap/ui/Device",
-	"sap/ui/core/Lib"
-],
-function($, KeyCodes, Core, QUtils, Link, Text, BreadCrumbs, Icon, Item, Select, Device, Lib) {
+	"sap/ui/Device"],
+function($, KeyCodes, Core, QUtils, Link, Text, BreadCrumbs, Icon, Item, Select, Device) {
 	"use strict";
 
 	var	oFactory = {
@@ -44,7 +42,7 @@ function($, KeyCodes, Core, QUtils, Link, Text, BreadCrumbs, Icon, Item, Select,
 				});
 			},
 			getResourceBundle: function () {
-				return Lib.getResourceBundleFor("sap.uxap");
+				return Core.getLibraryResourceBundle("sap.uxap");
 			}
 		},
 		helpers = {

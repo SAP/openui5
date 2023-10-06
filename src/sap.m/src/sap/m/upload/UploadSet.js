@@ -32,10 +32,10 @@ sap.ui.define([
 	"sap/ui/core/InvisibleText",
 	"sap/m/Menu",
 	"sap/m/MenuItem",
-	"sap/m/MenuButton",
-	"sap/ui/core/Lib",
-	"sap/ui/core/Element"
-], function(Control, KeyCodes, Log, deepEqual, MobileLibrary, Button, Dialog, List, MessageBox, OverflowToolbar, StandardListItem, Text, ToolbarSpacer, FileUploader, UploadSetItem, Uploader, Renderer, UploaderHttpRequestMethod, DragDropInfo, DropInfo, Library, UploadSetToolbarPlaceholder, IllustratedMessage, IllustratedMessageType, IllustratedMessageSize, Core, InvisibleText, Menu, MenuItem, MenuButton, Lib, Element) {
+	"sap/m/MenuButton"
+], function (Control, KeyCodes, Log, deepEqual, MobileLibrary, Button, Dialog, List, MessageBox, OverflowToolbar,
+			 StandardListItem, Text, ToolbarSpacer, FileUploader, UploadSetItem, Uploader, Renderer, UploaderHttpRequestMethod,
+			DragDropInfo, DropInfo, Library, UploadSetToolbarPlaceholder, IllustratedMessage,IllustratedMessageType, IllustratedMessageSize, Core, InvisibleText, Menu, MenuItem, MenuButton) {
 	"use strict";
 
 	// shortcut for sap.m.MenuButtonMode
@@ -507,7 +507,7 @@ sap.ui.define([
 	/* ================== */
 
 	UploadSet.prototype.init = function () {
-		this._oRb = Lib.getResourceBundleFor("sap.m");
+		this._oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 
 		this._oList = null;
 		this._oEditedItem = null;
@@ -649,7 +649,7 @@ sap.ui.define([
 		if (this._oEditedItem && this._oEditedItem._getFileNameEdit().$("inner")[0] === oEvent.target) {
 			oItem = this._oEditedItem;
 		} else if (oEvent.target) {
-			oListItem = Element.registry.get(oEvent.target.id);
+			oListItem = sap.ui.getCore().byId(oEvent.target.id);
 			if (oListItem) {
 				oItem = this._mListItemIdToItemMap[oListItem.getId()];
 			}

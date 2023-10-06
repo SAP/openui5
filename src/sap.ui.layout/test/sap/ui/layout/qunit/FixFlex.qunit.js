@@ -4,16 +4,13 @@ sap.ui.define([
 	'sap/ui/layout/FixFlex',
 	'sap/m/Button',
 	'sap/m/Label',
-	"sap/ui/core/Core",
-	"sap/ui/core/Element"
+	"sap/ui/core/Core"
 ], function(
 	jQuery,
 	FixFlex,
 	Button,
 	Label,
-	oCore,
-	Element
-) {
+	oCore) {
 	'use strict';
 
 	/* =========================================================== */
@@ -35,7 +32,7 @@ sap.ui.define([
 		});
 
 		// Act
-		var s1 = Element.registry.get(oFixFlex.getId());
+		var s1 = oCore.byId(oFixFlex.getId());
 
 		// Assert
 		assert.ok((s1 !== undefined) && (s1 != null), "FixFlex should be found");

@@ -3,12 +3,11 @@
  */
 
 sap.ui.define([
-	"sap/m/library",
-	"sap/ui/core/Lib"
-], function(library, Lib) {
+	"sap/m/library"
+], function (library) {
 	"use strict";
 
-	var oResourceBundle = Lib.getResourceBundleFor("sap.m");
+	var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 
 	var DeviationIndicator = library.DeviationIndicator,
 		LoadState = library.LoadState,

@@ -10,9 +10,8 @@ sap.ui.define([
 	"sap/m/Label",
 	"sap/m/Text",
 	"sap/ui/Device",
-	"sap/ui/core/Core",
-	"sap/ui/core/Lib"
-], function(qutils, FileUploader, unifiedLibrary, StaticArea, TooltipBase, InvisibleText, Label, Text, Device, oCore, Lib) {
+	"sap/ui/core/Core"
+], function(qutils, FileUploader, unifiedLibrary, StaticArea, TooltipBase, InvisibleText, Label, Text, Device, oCore) {
 	"use strict";
 
 	// shortcut for sap.ui.unified.FileUploaderHttpRequestMethod
@@ -1519,7 +1518,7 @@ sap.ui.define([
 	QUnit.test("Description for default FileUploader", function (assert) {
 		// Setup
 		var oFileUploader = new FileUploader("fu"),
-			oRB = Lib.getResourceBundleFor("sap.ui.unified");
+			oRB = oCore.getLibraryResourceBundle("sap.ui.unified");
 
 		oFileUploader.placeAt("qunit-fixture");
 		oCore.applyChanges();
@@ -1538,7 +1537,7 @@ sap.ui.define([
 				tooltip: "the-tooltip",
 				placeholder: "the-placeholder"
 			}),
-			oRB = Lib.getResourceBundleFor("sap.ui.unified");
+			oRB = oCore.getLibraryResourceBundle("sap.ui.unified");
 
 		oFileUploader.placeAt("qunit-fixture");
 		oCore.applyChanges();
@@ -1607,7 +1606,7 @@ sap.ui.define([
 		// Setup
 		var oLabel = new Label({ text: "Label", labelFor: "fu", required: true }),
 			oFileUploader = new FileUploader("fu"),
-			sRequiredText = Lib.getResourceBundleFor("sap.ui.unified").getText("FILEUPLOAD_REQUIRED");
+			sRequiredText = oCore.getLibraryResourceBundle("sap.ui.unified").getText("FILEUPLOAD_REQUIRED");
 
 		oLabel.placeAt("qunit-fixture");
 		oFileUploader.placeAt("qunit-fixture");

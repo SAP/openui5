@@ -3,9 +3,8 @@
  */
 
 sap.ui.define([
-	"sap/ui/core/Core",
-	"sap/ui/core/Lib"
-], function(Core, Lib) {
+	"sap/ui/core/Core"
+], function (Core) {
 	"use strict";
 
 	/**
@@ -17,7 +16,7 @@ sap.ui.define([
 	};
 
 	// load resource bundle
-	var oRB = Lib.getResourceBundleFor("sap.tnt");
+	var oRB = Core.getLibraryResourceBundle("sap.tnt");
 
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
@@ -43,6 +42,11 @@ sap.ui.define([
 		var sAriaLabel = control.getAriaLabel();
 
 		rm.openStart('div', control);
+
+		const width = control.getWidth();
+		if (width && isExpanded) {
+			rm.style("width", width);
+		}
 
 		rm.attr("role", 'navigation');
 		rm.attr('aria-roledescription', oRB.getText("SIDENAVIGATION_ROLE_DESCRIPTION"));

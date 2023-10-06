@@ -39,10 +39,8 @@ sap.ui.define([
 	"./Settings",
 	"sap/m/FlexItemData",
 	"sap/m/FlexBox",
-	"sap/m/Button",
-	"sap/ui/core/Lib",
-	"sap/ui/core/Element"
-], function(
+	"sap/m/Button"
+], function (
 	Control,
 	Core,
 	deepClone,
@@ -79,9 +77,7 @@ sap.ui.define([
 	Settings,
 	FlexItemData,
 	FlexBox,
-	Button,
-	Lib,
-	Element
+	Button
 ) {
 	"use strict";
 
@@ -113,7 +109,7 @@ sap.ui.define([
 	var REGEXP_TRANSLATABLE = /\{\{(?!parameters.)(?!destinations.)([^\}\}]+)\}\}/g,
 		REGEXP_PARAMETERS = /\{\{parameters\.([^\}\}]+)/g,
 		CONTEXT_TIMEOUT = 5000,
-		oResourceBundle = Lib.getResourceBundleFor("sap.ui.integration"),
+		oResourceBundle = Core.getLibraryResourceBundle("sap.ui.integration"),
 		MessageStripId = "_strip",
 		MODULE_PREFIX = "module:";
 
@@ -500,7 +496,7 @@ sap.ui.define([
 										aInfoHBox.addItem(oItem._descriptionIcon);
 										iInfoHBoxWidth += 0.9;
 									}
-									var oMessageIcon = Element.registry.get(oItem.getAssociation("_messageIcon"));
+									var oMessageIcon = Core.byId(oItem.getAssociation("_messageIcon"));
 									if (oItem.getAssociation("_messageIcon") && oMessageIcon) {
 										aInfoHBox.addItem(oMessageIcon);
 										iInfoHBoxWidth += 1.2;
@@ -866,7 +862,7 @@ sap.ui.define([
 	Editor.prototype.init = function () {
 		this._ready = false;
 		this._aFieldReadyPromise = [];
-		this._oResourceBundle = Lib.getResourceBundleFor("sap.ui.integration");
+		this._oResourceBundle = Core.getLibraryResourceBundle("sap.ui.integration");
 		this._appliedLayerManifestChanges = [];
 		this._currentLayerManifestChanges = {};
 		this._mDestinationDataProviders = {};
@@ -1105,7 +1101,7 @@ sap.ui.define([
 			return;
 		}
 
-		var oResourceBundle = Lib.getResourceBundleFor("sap.ui.integration");
+		var oResourceBundle = Core.getLibraryResourceBundle("sap.ui.integration");
 		var oResourceModel = new ResourceModel({
 			bundle: oResourceBundle
 		});
@@ -1277,7 +1273,7 @@ sap.ui.define([
 		if (!sHost) {
 			return null;
 		}
-		return Element.registry.get(sHost);
+		return Core.byId(sHost);
 	};
 
 	/**
@@ -3124,7 +3120,7 @@ sap.ui.define([
 		if (oPreview && oPreview.destroy) {
 			oPreview.destroy();
 		}
-		var oMessageStrip = Element.registry.get(MessageStripId);
+		var oMessageStrip = Core.byId(MessageStripId);
 		if (oMessageStrip) {
 			oMessageStrip.destroy();
 		}

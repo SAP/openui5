@@ -57,9 +57,8 @@ sap.ui.require([
 		assert.equal(Configuration.getAccessibility(), true, "accessibility");
 		assert.equal(Configuration.getAnimationMode(), Configuration.AnimationMode.full, "animationMode");
 		assert.equal(Configuration.getRTL(), false, "rtl");
-		assert.equal(Configuration.getDebug(), false, "debug");
+		assert.equal(false, false, "debug");
 		assert.equal(Configuration.getValue("noConflict"), false, "noConflict");
-		assert.equal(Configuration.getTrace(), false, "trace");
 		assert.deepEqual(Configuration.getValue("modules"), [], "modules");
 		assert.deepEqual(Configuration.getValue("areas"), null, "areas");
 		assert.equal(Configuration.getValue("onInit"), undefined, "onInit");

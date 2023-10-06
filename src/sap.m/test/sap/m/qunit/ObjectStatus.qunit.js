@@ -12,9 +12,7 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	"sap/ui/core/Core",
 	"sap/m/Label",
-	"sap/ui/core/Lib",
-	// side effect: provides jQuery.event.prototype.getMark
-	"sap/ui/events/jquery/EventExtension"
+	"sap/ui/events/jquery/EventExtension" // side effect: provides jQuery.event.prototype.getMark
 ], function(
 	qutils,
 	createAndAppendDiv,
@@ -27,8 +25,7 @@ sap.ui.define([
 	mobileLibrary,
 	KeyCodes,
 	oCore,
-	Label,
-	Lib
+	Label
 ) {
 	"use strict";
 
@@ -42,7 +39,7 @@ sap.ui.define([
 	var EmptyIndicatorMode = mobileLibrary.EmptyIndicatorMode;
 
 	// shortcut for library resource bundle
-	var oRb = Lib.getResourceBundleFor("sap.m");
+	var oRb = oCore.getLibraryResourceBundle("sap.m");
 
 	createAndAppendDiv("objectStatuses");
 
@@ -522,7 +519,7 @@ sap.ui.define([
 		//Assert
 		assert.strictEqual(
 			oObjectStatus.getDomRef().getAttribute("aria-roledescription"),
-			Lib.getResourceBundleFor("sap.m").getText("OBJECT_STATUS_ACTIVE"),
+			oCore.getLibraryResourceBundle("sap.m").getText("OBJECT_STATUS_ACTIVE"),
 			"Proper roledescription added");
 
 		//Cleanup
@@ -578,7 +575,7 @@ sap.ui.define([
 		oControl.setActive(true);
 		oControl.setText("test");
 		oInfo = oControl.getAccessibilityInfo();
-		assert.strictEqual(oInfo.description,  oControl.getText() + " " + Lib.getResourceBundleFor("sap.m").getText("OBJECT_STATUS_ACTIVE"), "Role-description is applied");
+		assert.strictEqual(oInfo.description,  oControl.getText() + " " + oCore.getLibraryResourceBundle("sap.m").getText("OBJECT_STATUS_ACTIVE"), "Role-description is applied");
 
 		oControl.destroy();
 	});
@@ -696,7 +693,7 @@ sap.ui.define([
 
 		// Assert
 		assert.strictEqual($oInternalIcon.attr("role"), "img", "Icon isn't decorative in icon-only ObjectStatus");
-		assert.strictEqual($oInternalIcon.attr("aria-label"), Lib.getResourceBundleFor("sap.m").getText("OBJECT_STATUS_ICON"),
+		assert.strictEqual($oInternalIcon.attr("aria-label"), oCore.getLibraryResourceBundle("sap.m").getText("OBJECT_STATUS_ICON"),
 			"Icon has alternative text in icon-only ObjectStatus");
 
 		// Cleanup

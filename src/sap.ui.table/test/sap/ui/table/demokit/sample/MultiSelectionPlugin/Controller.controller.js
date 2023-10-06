@@ -40,14 +40,9 @@ sap.ui.define([
 			oView.setModel(new JSONModel({
 				limit: 20,
 				showHeaderSelector: true,
-				selectionModes: aSelectionModes
+				selectionModes: aSelectionModes,
+				selectionMode: SelectionMode.MultiToggle
 			}), "config");
-		},
-
-		onSelectionModeChange: function(oEvent) {
-			var oTable = this.byId("table");
-			var oPlugin = oTable.getPlugins()[0];
-			oPlugin.setSelectionMode(oEvent.getParameter("selectedItem").getKey());
 		},
 
 		onSelectionChange: function(oEvent) {
@@ -75,7 +70,7 @@ sap.ui.define([
 
 			if (isNaN(iLimit) || iLimit < 0) {
 				var oTable = this.byId("table");
-				var oPlugin = oTable.getPlugins()[0];
+				var oPlugin = oTable.getDependents()[0];
 				var iCurrentLimit = oPlugin.getLimit();
 
 				oInput.setValue(iCurrentLimit);

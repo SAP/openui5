@@ -8,9 +8,8 @@ sap.ui.define([
 	"sap/ui/model/_Helper",
 	"sap/ui/model/CompositeType",
 	"sap/ui/model/FormatException",
-	"sap/ui/model/ParseException",
-	"sap/ui/core/Lib"
-], function(UI5Date, DateFormat, _Helper, CompositeType, FormatException, ParseException, Lib) {
+	"sap/ui/model/ParseException"
+], function (UI5Date, DateFormat, _Helper, CompositeType, FormatException, ParseException) {
 	"use strict";
 
 	var sDateOrTimeRequired = "For type 'object', at least one of the format options 'showDate' or"
@@ -90,7 +89,7 @@ sap.ui.define([
 				? "EnterDateTimeTimezone"
 				: "EnterDateTime";
 
-		return Lib.getResourceBundleFor("sap.ui.core")
+		return sap.ui.getCore().getLibraryResourceBundle()
 			.getText(sMessageKey, [this.formatValue([oDemoDateTime, "America/New_York"],
 				"string")]);
 	};

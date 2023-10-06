@@ -8,17 +8,15 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/core/Configuration",
 	"sap/base/util/fetch",
-	"sap/base/util/deepClone",
-	"sap/ui/core/Element"
-], function(
+	"sap/base/util/deepClone"
+], function (
 	DataProvider,
 	Log,
 	ODataUtils,
 	Core,
 	Configuration,
 	fetch,
-	deepClone,
-	Element
+	deepClone
 ) {
 	"use strict";
 
@@ -354,9 +352,9 @@ sap.ui.define([
 	 * @returns {Function} The function to use for HTTP fetch.
 	 */
 	RequestDataProvider.prototype._getFetchMethod = function (oRequestSettings) {
-		var oCard = Element.registry.get(this.getCard()),
+		var oCard = Core.byId(this.getCard()),
 			oExtension = oCard && oCard.getAggregation("_extension"),
-			oHost = Element.registry.get(this.getHost());
+			oHost = Core.byId(this.getHost());
 
 		if (oExtension) {
 			return function (sResource, mOptions) {
@@ -485,8 +483,8 @@ sap.ui.define([
 	 * @returns {object} The modified request
 	 */
 	RequestDataProvider.prototype._modifyRequestBeforeSent = function (oRequest, oSettings) {
-		var oCard = Element.registry.get(this.getCard()),
-			oHost = Element.registry.get(this.getHost());
+		var oCard = Core.byId(this.getCard()),
+			oHost = Core.byId(this.getHost());
 
 		if (!oHost) {
 			return oRequest;

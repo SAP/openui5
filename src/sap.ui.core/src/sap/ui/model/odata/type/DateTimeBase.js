@@ -10,9 +10,9 @@ sap.ui.define([
 	"sap/ui/model/FormatException",
 	"sap/ui/model/ParseException",
 	"sap/ui/model/ValidateException",
-	"sap/ui/model/odata/type/ODataType",
-	"sap/ui/core/Lib"
-], function(Log, extend, UI5Date, DateFormat, FormatException, ParseException, ValidateException, ODataType, Lib) {
+	"sap/ui/model/odata/type/ODataType"
+], function (Log, extend, UI5Date, DateFormat, FormatException, ParseException, ValidateException,
+		ODataType) {
 	"use strict";
 
 	/*
@@ -214,7 +214,7 @@ sap.ui.define([
 				? new Date(Date.UTC(iFullYear, 11, 31))
 				: UI5Date.getInstance(iFullYear, 11, 31, 23, 59, 58), // configured time zone
 			sText = isDateOnly(this) ? "EnterDate" : "EnterDateTime",
-			oResourceBundle = Lib.getResourceBundleFor("sap.ui.core");
+			oResourceBundle = sap.ui.getCore().getLibraryResourceBundle();
 
 		return oResourceBundle.getText(sText, [this.formatValue(oDate, "string")]);
 	};

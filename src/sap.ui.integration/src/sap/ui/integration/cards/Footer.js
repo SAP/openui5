@@ -7,16 +7,14 @@ sap.ui.define([
 	"sap/base/util/merge",
 	"sap/ui/integration/controls/ActionsStrip",
 	"sap/ui/integration/controls/Paginator",
-	"sap/ui/integration/util/BindingHelper",
-	"sap/ui/core/Element"
-], function(
+	"sap/ui/integration/util/BindingHelper"
+], function (
 	Control,
 	Core,
 	merge,
 	ActionsStrip,
 	Paginator,
-	BindingHelper,
-	Element
+	BindingHelper
 ) {
 	"use strict";
 
@@ -128,7 +126,7 @@ sap.ui.define([
 	 * @returns {sap.ui.integration.widgets.Card} The card instance.
 	 */
 	Footer.prototype.getCardInstance = function () {
-		return Element.registry.get(this.getCard());
+		return Core.byId(this.getCard());
 	};
 
 	Footer.prototype.setEnabled = function (bValue) {

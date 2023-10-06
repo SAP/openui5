@@ -3,12 +3,10 @@
  */
 sap.ui.define([
 	'sap/ui/core/library',
-	"sap/ui/core/Core",
-	"sap/ui/core/Lib"
+	"sap/ui/core/Core"
 ], function(
 	coreLibrary,
-	Core,
-	Lib
+	Core
 ) {
 	"use strict";
 
@@ -27,7 +25,7 @@ sap.ui.define([
 			this._oControl.addDelegate(this._controlDelegate, false, this);
 		}
 
-		this.oRb = Lib.getResourceBundleFor("sap.f");
+		this.oRb = Core.getLibraryResourceBundle("sap.f");
 	};
 
 	Accessibility.AriaHasPopup = {

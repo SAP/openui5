@@ -6,16 +6,14 @@ sap.ui.define([
 	"sap/ui/integration/cards/ListContent",
 	"sap/ui/integration/controls/ListContentItem",
 	"sap/ui/integration/controls/Microchart",
-	"sap/m/ObjectStatus",
-	"sap/ui/core/Lib"
-], function(
+	"sap/m/ObjectStatus"
+], function (
 	Core,
 	coreLibrary,
 	ListContent,
 	ListContentItem,
 	Microchart,
-	ObjectStatus,
-	Lib
+	ObjectStatus
 ) {
 	"use strict";
 
@@ -201,7 +199,7 @@ sap.ui.define([
 			sDescription = "Item description",
 			sInfo = "Item info",
 			sInfoState = ValueState.Error,
-			oMBundle = Lib.getResourceBundleFor("sap.m"),
+			oMBundle = Core.getLibraryResourceBundle("sap.m"),
 			sExpectedAnnouncement = sTitle + " . " + sDescription + " . " + sInfo + " . " + oMBundle.getText("LIST_ITEM_STATE_" + sInfoState.toUpperCase());
 		this.oLCI.setTitle(sTitle)
 			.setDescription(sDescription)

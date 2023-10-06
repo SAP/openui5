@@ -11,8 +11,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/layout/library",
 	"test-resources/sap/ui/rta/qunit/RtaQunitUtils",
-	"sap/ui/core/Core",
-	"sap/ui/core/Element"
+	"sap/ui/core/Core"
 ], function(
 	XMLView,
 	DesignTime,
@@ -24,8 +23,7 @@ sap.ui.define([
 	sinon,
 	layoutLibrary,
 	RtaQunitUtils,
-	oCore,
-	Element
+	oCore
 ) {
 	"use strict";
 
@@ -54,7 +52,7 @@ sap.ui.define([
 					oView = oCreatedView;
 					return oView.loaded();
 				}).then(function() {
-					oSimpleForm = Element.registry.get(oView.createId("SimpleForm0"));
+					oSimpleForm = oCore.byId(oView.createId("SimpleForm0"));
 					oSimpleForm.setLayout(oSimpleFormLayout);
 					oView.placeAt("qunit-fixture");
 
@@ -89,7 +87,7 @@ sap.ui.define([
 
 		QUnit.test("When removing Group1 and undoing the action", function(assert) {
 			var done = assert.async();
-			var oElementGroup1 = Element.registry.get(oComponent.createId("qunit-fixture--Group1"));
+			var oElementGroup1 = oCore.byId(oComponent.createId("qunit-fixture--Group1"));
 			var oElementOverlay = OverlayRegistry.getOverlay(oElementGroup1.getParent());
 
 			oRemove.attachElementModified(function(oEvent) {
@@ -98,7 +96,7 @@ sap.ui.define([
 				oCommand.execute()
 
 				.then(function() {
-					var oSimpleFormForm = Element.registry.get(oComponent.createId("qunit-fixture--SimpleForm0--Form"));
+					var oSimpleFormForm = oCore.byId(oComponent.createId("qunit-fixture--SimpleForm0--Form"));
 					var aFormContainers = oSimpleFormForm.getFormContainers();
 					var iPosition = aFormContainers.indexOf(oElementGroup1.getParent());
 					assert.equal(iPosition, -1, "and Group1 does not exist any more");
@@ -108,7 +106,7 @@ sap.ui.define([
 
 				.then(function() {
 					oCore.applyChanges();
-					var oSimpleFormForm = Element.registry.get(oComponent.createId("qunit-fixture--SimpleForm0--Form"));
+					var oSimpleFormForm = oCore.byId(oComponent.createId("qunit-fixture--SimpleForm0--Form"));
 					var aFormContainers = oSimpleFormForm.getFormContainers();
 					var iPositionAfterUndo = aFormContainers.indexOf(oElementGroup1.getParent());
 					assert.equal(iPositionAfterUndo, 1, "and after the undo the Group1 is back");
@@ -130,15 +128,15 @@ sap.ui.define([
 
 			for (var i = 0; i <= 3; i++) {
 				sID = `qunit-fixture--Group${i}`;
-				oElementGroup = Element.registry.get(oComponent.createId(sID));
+				oElementGroup = oCore.byId(oComponent.createId(sID));
 				oElementOverlay = OverlayRegistry.getOverlay(oElementGroup.getParent());
 				aElements.push(oElementOverlay);
 			}
-			oElementGroup = Element.registry.get(oComponent.createId("qunit-fixture--Group42"));
+			oElementGroup = oCore.byId(oComponent.createId("qunit-fixture--Group42"));
 			oElementOverlay = OverlayRegistry.getOverlay(oElementGroup.getParent());
 			aElements.push(oElementOverlay);
 
-			oSimpleFormForm = Element.registry.get(oComponent.createId("qunit-fixture--SimpleForm0--Form"));
+			oSimpleFormForm = oCore.byId(oComponent.createId("qunit-fixture--SimpleForm0--Form"));
 			aFormContainers = oSimpleFormForm.getFormContainers();
 			assert.equal(aFormContainers.length, 5, "There are 5 Groups before remove command");
 
@@ -148,7 +146,7 @@ sap.ui.define([
 				oCommand.execute()
 
 				.then(function() {
-					oSimpleFormForm = Element.registry.get(oComponent.createId("qunit-fixture--SimpleForm0--Form"));
+					oSimpleFormForm = oCore.byId(oComponent.createId("qunit-fixture--SimpleForm0--Form"));
 					aFormContainers = oSimpleFormForm.getFormContainers();
 					assert.equal(aFormContainers.length, 1, "and simpleform creates one group where the 5 groups were");
 				})
@@ -157,7 +155,7 @@ sap.ui.define([
 
 				.then(function() {
 					oCore.applyChanges();
-					oSimpleFormForm = Element.registry.get(oComponent.createId("qunit-fixture--SimpleForm0--Form"));
+					oSimpleFormForm = oCore.byId(oComponent.createId("qunit-fixture--SimpleForm0--Form"));
 					aFormContainers = oSimpleFormForm.getFormContainers();
 					assert.equal(aFormContainers.length, 5, "and after the undo only the original 5 groups are back");
 					done();

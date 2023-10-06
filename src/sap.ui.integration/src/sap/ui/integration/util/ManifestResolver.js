@@ -8,17 +8,15 @@ sap.ui.define([
 	"sap/ui/integration/util/Utils",
 	"sap/m/IllustratedMessageType",
 	"sap/m/IllustratedMessageSize",
-	"sap/base/Log",
-	"sap/ui/core/Lib"
-], function(
+	"sap/base/Log"
+], function (
 	Core,
 	BindingHelper,
 	BindingResolver,
 	Utils,
 	IllustratedMessageType,
 	IllustratedMessageSize,
-	Log,
-	Lib
+	Log
 ) {
 	"use strict";
 
@@ -153,7 +151,7 @@ sap.ui.define([
 	 */
 	ManifestResolver._handleCardSevereError = function (oCard, oError) {
 		var oManifest = oCard.getManifestEntry("/"),
-			oResourceBundle = Lib.getResourceBundleFor("sap.ui.integration");
+			oResourceBundle = Core.getLibraryResourceBundle("sap.ui.integration");
 
 		Log.error(oError, "sap.ui.integration.util.ManifestResolver");
 

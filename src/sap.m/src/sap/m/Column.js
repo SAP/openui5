@@ -572,7 +572,7 @@ sap.ui.define([
 	 * @private
 	 */
 	Column.prototype.getHeaderMenuInstance = function () {
-		return Element.registry.get(this.getHeaderMenu());
+		return Core.byId(this.getHeaderMenu());
 	};
 
 	Column.prototype.setHeader = function (oControl) {

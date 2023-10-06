@@ -4,13 +4,11 @@
 
 sap.ui.define([
 	"sap/ui/base/ManagedObject",
-	"sap/ui/dt/OverlayRegistry",
-	"sap/ui/core/Lib"
+	"sap/ui/dt/OverlayRegistry"
 ],
 function(
 	ManagedObject,
-	OverlayRegistry,
-	Lib
+	OverlayRegistry
 ) {
 	"use strict";
 	/**
@@ -315,7 +313,7 @@ function(
 			}
 			return oOverlay.getDesignTimeMetadata() ? oOverlay.getDesignTimeMetadata().getLibraryText(oElement, vName) : "";
 		}
-		return Lib.getResourceBundleFor("sap.ui.rta").getText(sPluginId);
+		return sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta").getText(sPluginId);
 	};
 
 	/**

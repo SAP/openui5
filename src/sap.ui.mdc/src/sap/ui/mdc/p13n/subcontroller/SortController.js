@@ -3,11 +3,8 @@
  */
 
 sap.ui.define([
-    "./SelectionController",
-    'sap/ui/mdc/p13n/P13nBuilder',
-    'sap/m/p13n/SortPanel',
-    "sap/ui/core/Lib"
-], function(BaseController, P13nBuilder, SortPanel, Lib) {
+	"./SelectionController",'sap/ui/mdc/p13n/P13nBuilder', 'sap/m/p13n/SortPanel'
+], function (BaseController, P13nBuilder, SortPanel) {
 	"use strict";
 
     const SortController = BaseController.extend("sap.ui.mdc.p13n.subcontroller.SortController", {
@@ -23,8 +20,8 @@ sap.ui.define([
 
     SortController.prototype.getUISettings = function() {
         return {
-            tabText: Lib.getResourceBundleFor("sap.ui.mdc").getText("p13nDialog.TAB_Sort"),
-            title: Lib.getResourceBundleFor("sap.ui.mdc").getText("sort.PERSONALIZATION_DIALOG_TITLE")
+            tabText: sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc").getText("p13nDialog.TAB_Sort"),
+            title: sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc").getText("sort.PERSONALIZATION_DIALOG_TITLE")
         };
     };
 

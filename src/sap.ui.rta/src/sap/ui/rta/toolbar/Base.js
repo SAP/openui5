@@ -8,18 +8,14 @@ sap.ui.define([
 	"sap/ui/dt/util/ZIndexManager",
 	"sap/ui/model/resource/ResourceModel",
 	"sap/ui/rta/util/Animation",
-	"./BaseRenderer",
-	"sap/ui/core/Lib",
-	"sap/ui/core/Element"
+	"./BaseRenderer"
 ], function(
 	HBox,
 	StaticArea,
 	ZIndexManager,
 	ResourceModel,
 	Animation,
-	BaseRenderer,
-	Lib,
-	Element
+	BaseRenderer
 ) {
 	"use strict";
 
@@ -101,7 +97,7 @@ sap.ui.define([
 	 */
 	Base.prototype.init = function(...aArgs) {
 		this._oResourceModel = new ResourceModel({
-			bundle: Lib.getResourceBundleFor("sap.ui.rta")
+			bundle: sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta")
 		});
 		HBox.prototype.init.apply(this, aArgs);
 		// Assign the model object to the SAPUI5 core using the name "i18n"
@@ -142,7 +138,7 @@ sap.ui.define([
 	Base.prototype.setTextResources = function(oTextResource) {
 		this.setProperty("textResources", oTextResource);
 		this._oResourceModel = new ResourceModel({
-			bundle: Lib.getResourceBundleFor("sap.ui.rta")
+			bundle: sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta")
 		});
 	};
 
@@ -254,7 +250,7 @@ sap.ui.define([
 	 * @public
 	 */
 	Base.prototype.getControl = function(sName) {
-		return Element.registry.get(`sapUiRta_${sName}`);
+		return sap.ui.getCore().byId(`sapUiRta_${sName}`);
 	};
 
 	/**

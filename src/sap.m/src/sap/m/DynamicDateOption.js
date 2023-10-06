@@ -13,9 +13,7 @@ sap.ui.define([
 	'sap/ui/unified/DateRange',
 	'sap/ui/unified/calendar/MonthPicker',
 	'sap/ui/unified/calendar/CustomMonthPicker',
-	'sap/ui/core/format/TimezoneUtil',
-	"sap/ui/core/Lib"
-],
+	'sap/ui/core/format/TimezoneUtil'],
 	function(
 		UI5Date,
 		Element,
@@ -26,9 +24,7 @@ sap.ui.define([
 		DateRange,
 		MonthPicker,
 		CustomMonthPicker,
-		TimezoneUtil,
-		Lib
-	) {
+		TimezoneUtil) {
 		"use strict";
 
 		/**
@@ -276,7 +272,7 @@ sap.ui.define([
 		 */
 		DynamicDateOption.prototype.getGroupHeader = function() {
 			var iGroup = (this.getGroup() > -1 && this.getGroup() < 7) ? this.getGroup() : 0;
-			return Lib.getResourceBundleFor("sap.m").getText("DDR_OPTIONS_GROUP_" + iGroup);
+			return sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("DDR_OPTIONS_GROUP_" + iGroup);
 		};
 
 		/**

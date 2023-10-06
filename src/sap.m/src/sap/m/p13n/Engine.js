@@ -1180,7 +1180,7 @@ sap.ui.define([
 			return true;
 		}
 
-		oControl = Element.registry.get(sControlId);
+		oControl = sap.ui.getCore().byId(sControlId);
 		while (oControl) {
 			if (oControl.getId() === sAncestorControlId) {
 				return true;
@@ -1207,7 +1207,7 @@ sap.ui.define([
 	 * @returns {sap.ui.core.Control} The control instance
 	 */
 	Engine.getControlInstance = function (vControl) {
-		return typeof vControl == "string" ? Element.registry.get(vControl) : vControl;
+		return typeof vControl == "string" ? sap.ui.getCore().byId(vControl) : vControl;
 	};
 
 	/**
@@ -1380,7 +1380,7 @@ sap.ui.define([
 		};
 
 		this._aRegistry.forEach(function (sKey) {
-			var oControl = Element.registry.get(sKey);
+			var oControl = sap.ui.getCore().byId(sKey);
 			oRegistry.controlRegistry[sKey] = _mRegistry.get(oControl);
 		});
 

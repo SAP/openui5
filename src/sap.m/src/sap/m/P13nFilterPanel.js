@@ -4,15 +4,8 @@
 
 // Provides control sap.m.P13nFilterPanel.
 sap.ui.define([
-	'./P13nConditionPanel',
-	'./P13nPanel',
-	'./library',
-	'sap/m/Panel',
-	'./P13nFilterItem',
-	'./P13nOperationsHelper',
-	'sap/m/P13nFilterPanelRenderer',
-	"sap/ui/core/Lib"
-], function(P13nConditionPanel, P13nPanel, library, Panel, P13nFilterItem, P13nOperationsHelper, P13nFilterPanelRenderer, Lib) {
+	'./P13nConditionPanel', './P13nPanel', './library', 'sap/m/Panel', './P13nFilterItem', './P13nOperationsHelper', 'sap/m/P13nFilterPanelRenderer'
+], function(P13nConditionPanel, P13nPanel, library, Panel, P13nFilterItem, P13nOperationsHelper, P13nFilterPanelRenderer) {
 	"use strict";
 
 	// shortcut for sap.m.P13nPanelType
@@ -401,12 +394,12 @@ sap.ui.define([
 
 	P13nFilterPanel.prototype.init = function() {
 		this.setType(P13nPanelType.filter);
-		this.setTitle(Lib.getResourceBundleFor("sap.m").getText("FILTERPANEL_TITLE"));
+		this.setTitle(sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("FILTERPANEL_TITLE"));
 
 		this._aKeyFields = [];
 
 		// init some resources
-		this._oRb = Lib.getResourceBundleFor("sap.m");
+		this._oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 
 		this._aIncludeOperations = {};
 		this._aExcludeOperations = {};

@@ -4,12 +4,10 @@
 
 sap.ui.define([
 	"sap/base/security/encodeURLParameters",
-	"sap/ui/core/Configuration",
-	"sap/ui/core/Lib"
+	"sap/ui/core/Configuration"
 ], function(
 	encodeURLParameters,
-	Configuration,
-	Lib
+	Configuration
 ) {
 	"use strict";
 
@@ -36,7 +34,7 @@ sap.ui.define([
 	 * @returns {string} Text value
 	 */
 	var _getTextFromResourceBundle = function(sTextKey) {
-		return Lib.getResourceBundleFor("sap.ui.fl").getText(sTextKey);
+		return sap.ui.getCore().getLibraryResourceBundle("sap.ui.fl").getText(sTextKey);
 	};
 
 	/**

@@ -3,9 +3,8 @@ sap.ui.define([
 	'sap/m/MessageStrip',
 	'sap/ui/core/InvisibleMessage',
 	'sap/ui/core/library',
-	"sap/ui/core/Core",
-	"sap/ui/core/Element"
-], function(Controller, MessageStrip, InvisibleMessage, library, oCore, Element) {
+	"sap/ui/core/Core"
+], function(Controller, MessageStrip, InvisibleMessage, library, oCore) {
 	"use strict";
 
 	var InvisibleMessageMode = library.InvisibleMessageMode;
@@ -15,7 +14,7 @@ sap.ui.define([
 			this.oInvisibleMessage = InvisibleMessage.getInstance();
 		},
 		showMsgStrip: function () {
-			var oMs = Element.registry.get("msgStrip");
+			var oMs = oCore.byId("msgStrip");
 
 			if (oMs) {
 				oMs.destroy();

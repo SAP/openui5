@@ -7,16 +7,15 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/m/Panel",
 	"sap/m/library",
-	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Lib"
-], function(Currency, JSONModel, VBox, Core, Panel, mobileLibrary, jQuery, Lib) {
+	"sap/ui/thirdparty/jquery"
+], function(Currency, JSONModel, VBox, Core, Panel, mobileLibrary, jQuery) {
 	"use strict";
 
 	// shortcut for sap.ui.core.TextDirection
 	var EmptyIndicatorMode = mobileLibrary.EmptyIndicatorMode;
 
 	// shortcut for library resource bundle
-	var oRb = Lib.getResourceBundleFor("sap.m");
+	var oRb = Core.getLibraryResourceBundle("sap.m");
 
 	QUnit.module("Control API", {
 		beforeEach : function () {

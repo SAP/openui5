@@ -20,9 +20,8 @@ sap.ui.require([
 	"sap/m/ToggleButton",
 	"sap/m/Button",
 	"sap/m/Image",
-	"sap/m/CheckBox",
-	"sap/ui/core/Element"
-],
+	"sap/m/CheckBox"
+	],
 	function(
 		CoreLib,
 		Form,
@@ -45,9 +44,8 @@ sap.ui.require([
 		ToggleButton,
 		Button,
 		Image,
-		CheckBox,
-		Element
-	) {
+		CheckBox
+		) {
 	"use strict";
 
 	// TODO: Fake iSematicFormContent on controls until it is official supported
@@ -61,7 +59,7 @@ sap.ui.require([
 	Input.prototype.isA = myTypeCheck;
 
 	var changeLayoutData = function(oEvent){
-		var oControl = Element.registry.get("Sel_C5");
+		var oControl = sap.ui.getCore().byId("Sel_C5");
 		var oLayoutData = oControl.getLayoutData();
 		if (!oLayoutData){
 			oLayoutData = new GridData({span: "L3 M3 S3"});
@@ -76,7 +74,7 @@ sap.ui.require([
 	};
 
 	var deleteLayoutData = function(oEvent){
-		var oControl = Element.registry.get("Sel_C5");
+		var oControl = sap.ui.getCore().byId("Sel_C5");
 		var oLayoutData = oControl.getLayoutData();
 		if (oLayoutData){
 			oControl.setLayoutData(null);
@@ -85,8 +83,8 @@ sap.ui.require([
 
 	var moveContainer = function(oEvent){
 
-		var oForm = Element.registry.get("F1");
-		var oContainer = Element.registry.get("C2");
+		var oForm = sap.ui.getCore().byId("F1");
+		var oContainer = sap.ui.getCore().byId("C2");
 		oForm.removeFormContainer(oContainer);
 		if (oEvent.getParameter("pressed")){
 			oForm.insertFormContainer(oContainer, 0);
@@ -98,7 +96,7 @@ sap.ui.require([
 
 	var newContainer = function(oEvent){
 
-		var oForm = Element.registry.get("F1");
+		var oForm = sap.ui.getCore().byId("F1");
 		if (oEvent.getParameter("pressed")){
 			oForm.addFormContainer(oNewContainer);
 		} else {
@@ -109,7 +107,7 @@ sap.ui.require([
 
 	var visibilityContainer = function(oEvent){
 
-		var oContainer = Element.registry.get("C6");
+		var oContainer = sap.ui.getCore().byId("C6");
 		if (oEvent.getParameter("pressed")){
 			oContainer.setVisible(false);
 		} else {
@@ -120,7 +118,7 @@ sap.ui.require([
 
 	var toggleAdjustLabelSpan = function(oEvent){
 
-		var oLayout = Element.registry.get("L1");
+		var oLayout = sap.ui.getCore().byId("L1");
 		if (oEvent.getParameter("pressed")){
 			oLayout.setAdjustLabelSpan(true);
 		} else {

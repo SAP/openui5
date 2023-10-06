@@ -5,9 +5,8 @@ sap.ui.define([
 	"sap/ui/test/actions/EnterText",
 	"cp/opa/test/env/integration/actions/SwatchColorPress",
 	"cp/opa/test/env/integration/matchers/SwatchColor",
-	"sap/ui/core/Core",
-	"sap/ui/core/Element"
-], function(Opa5, opaTest, Press, EnterText, SwatchColorPress, SwatchColor, oCore, Element) {
+	"sap/ui/core/Core"
+], function (Opa5, opaTest, Press, EnterText, SwatchColorPress, SwatchColor, oCore) {
 	"use strict";
 
 	var COMPONENT_VIEW_PREFFIX = "__component0---myHomeView--",
@@ -192,7 +191,7 @@ sap.ui.define([
 					autoWait: false,
 					viewName: "Home",
 					check: function () {
-						oComplexControlDefaultsColorPalettePopover = Element.registry.get(COMPLEX_CONTROLDEFAULTS_COLORPALETTEPOPOVER_ID);
+						oComplexControlDefaultsColorPalettePopover = oCore.byId(COMPLEX_CONTROLDEFAULTS_COLORPALETTEPOPOVER_ID);
 						//ComplexControlDefaultsColorPopoverPalette is rendered in UI area and visible
 						return oComplexControlDefaultsColorPalettePopover.$().length === 1 && oComplexControlDefaultsColorPalettePopover.$().is(":visible");
 					},
@@ -210,7 +209,7 @@ sap.ui.define([
 					autoWait: false,
 					viewName: "Home",
 					check: function () {
-						oComplexControlDefaultsColorPalettePopoverColorPicker = Element.registry.get(COMPLEX_CONTROLDEFAULTS_COLORPALETTEPOPOVER_COLORPICKER_ID);
+						oComplexControlDefaultsColorPalettePopoverColorPicker = oCore.byId(COMPLEX_CONTROLDEFAULTS_COLORPALETTEPOPOVER_COLORPICKER_ID);
 						//ComplexControlDefaultsColorPalettePopoverColorPicker is rendered in UI area and visible
 						return oComplexControlDefaultsColorPalettePopoverColorPicker.$().length === 1 && oComplexControlDefaultsColorPalettePopoverColorPicker.$().is(":visible");
 					},
@@ -227,7 +226,7 @@ sap.ui.define([
 				return this.waitFor({
 					autoWait: false,
 					check: function () {
-						oComplexControlDefaultsColorPalettePopover = Element.registry.get(COMPLEX_CONTROLDEFAULTS_COLORPALETTEPOPOVER_ID);
+						oComplexControlDefaultsColorPalettePopover = oCore.byId(COMPLEX_CONTROLDEFAULTS_COLORPALETTEPOPOVER_ID);
 						//ComplexControlDefaultsColorPopoverPalette is rendered in UI area and hidden
 						return oComplexControlDefaultsColorPalettePopover.$().length === 1 && oComplexControlDefaultsColorPalettePopover.$().is(":hidden");
 					},
@@ -283,7 +282,7 @@ sap.ui.define([
 			documentActiveSwatchShouldBe: function (sColorName) {
 				return this.waitFor({
 					success: function () {
-						var oComplexControlDefaultsColorPalettePopover = Element.registry.get(COMPLEX_CONTROLDEFAULTS_COLORPALETTEPOPOVER_ID),
+						var oComplexControlDefaultsColorPalettePopover = oCore.byId(COMPLEX_CONTROLDEFAULTS_COLORPALETTEPOPOVER_ID),
 							oColor = oComplexControlDefaultsColorPalettePopover.$().find('[data-sap-ui-color="' + sColorName + '"]').get(0);
 
 						Opa5.assert.strictEqual(document.activeElement, oColor, "Swatch with color: " + sColorName + " was focused");

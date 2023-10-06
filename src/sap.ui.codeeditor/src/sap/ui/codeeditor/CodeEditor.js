@@ -31,12 +31,11 @@ sap.ui.define([
 	"sap/ui/dom/includeStylesheet",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/codeeditor/js/ace/ace",
-	"sap/ui/core/Lib",
 	"sap/ui/codeeditor/js/ace/ext-language_tools",
 	"sap/ui/codeeditor/js/ace/ext-beautify",
 	"sap/ui/codeeditor/js/ace/mode-javascript",
 	"sap/ui/codeeditor/js/ace/mode-json"
-], function(
+], function (
 	library,
 	Core,
 	Control,
@@ -44,8 +43,7 @@ sap.ui.define([
 	ResizeHandler,
 	includeStylesheet,
 	jQuery,
-	ace,
-	Lib
+	ace
 ) {
 	"use strict";
 
@@ -185,7 +183,7 @@ sap.ui.define([
 					.style("height", oControl.getHeight())
 					.attr("data-sap-ui-syntaxhints", oControl.getSyntaxHints())
 					.attr("role", "application")
-					.attr("aria-roledescription", Lib.getResourceBundleFor("sap.ui.codeeditor").getText("CODEEDITOR_ROLE_DESCRIPTION"));
+					.attr("aria-roledescription", Core.getLibraryResourceBundle("sap.ui.codeeditor").getText("CODEEDITOR_ROLE_DESCRIPTION"));
 
 				var sTooltip = oControl.getTooltip_AsString();
 				if (sTooltip) {

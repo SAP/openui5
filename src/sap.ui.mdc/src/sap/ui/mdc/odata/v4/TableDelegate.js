@@ -8,6 +8,7 @@ sap.ui.define([
 	"../../util/loadModules",
 	"sap/m/ColumnPopoverSelectListItem",
 	"sap/m/MessageBox",
+	"sap/m/plugins/PluginBase",
 	"sap/ui/core/Item",
 	"sap/ui/core/Core",
 	"sap/ui/core/library",
@@ -15,14 +16,14 @@ sap.ui.define([
 	"sap/ui/base/ManagedObjectObserver",
 	'sap/ui/mdc/odata/v4/TypeMap',
 	'sap/ui/mdc/enums/TableP13nMode',
-	'sap/ui/mdc/enums/TableType',
-	"sap/ui/core/Lib"
+	'sap/ui/mdc/enums/TableType'
 ], function(
 	TableDelegate,
 	V4AnalyticsPropertyHelper,
 	loadModules,
 	ColumnPopoverSelectListItem,
 	MessageBox,
+	PluginBase,
 	Item,
 	oCore,
 	coreLibrary,
@@ -30,8 +31,7 @@ sap.ui.define([
 	ManagedObjectObserver,
 	ODataV4TypeMap,
 	TableP13nMode,
-	TableType,
-	Lib
+	TableType
 ) {
 	"use strict";
 
@@ -114,7 +114,7 @@ sap.ui.define([
 				return TableDelegate.initializeSelection.call(this, oTable);
 			}
 
-			oTable._oTable.addPlugin(new ODataV4SelectionPlugin({
+			oTable._oTable.addDependent(new ODataV4SelectionPlugin({
 				limit: "{$sap.ui.mdc.Table#type>/selectionLimit}",
 				enableNotification: true,
 				hideHeaderSelector: "{= !${$sap.ui.mdc.Table#type>/showHeaderSelector} }",
@@ -140,18 +140,13 @@ sap.ui.define([
 	}
 
 	function setSelectedGridTableConditions (oTable, aContexts) {
-
-		const oODataV4SelectionPlugin = oTable._oTable.getPlugins().find(function(oPlugin) {
-			return oPlugin.isA("sap.ui.table.plugins.ODataV4Selection");
-		});
+		const oODataV4SelectionPlugin = PluginBase.getPlugin(oTable._oTable, "sap.ui.table.plugins.ODataV4Selection");
 
 		if (oODataV4SelectionPlugin) {
 			return oODataV4SelectionPlugin.setSelectedContexts(aContexts);
 		}
 
-		const oMultiSelectionPlugin = oTable._oTable.getPlugins().find(function(oPlugin) {
-			return oPlugin.isA("sap.ui.table.plugins.MultiSelectionPlugin");
-		});
+		const oMultiSelectionPlugin = PluginBase.getPlugin(oTable._oTable, "sap.ui.table.plugins.MultiSelectionPlugin");
 
 		if (oMultiSelectionPlugin) {
 			oMultiSelectionPlugin.clearSelection();
@@ -188,10 +183,7 @@ sap.ui.define([
 		}
 
 		if (oTable._isOfType(TableType.Table, true)) {
-			const oODataV4SelectionPlugin = oTable._oTable.getPlugins().find(function(oPlugin) {
-				return oPlugin.isA("sap.ui.table.plugins.ODataV4Selection");
-			});
-
+			const oODataV4SelectionPlugin = PluginBase.getPlugin(oTable._oTable, "sap.ui.table.plugins.ODataV4Selection");
 			return oODataV4SelectionPlugin ? oODataV4SelectionPlugin.getSelectedContexts() : [];
 		}
 
@@ -219,7 +211,7 @@ sap.ui.define([
 			// Corresponding sort conditions are not applied.
 			return {
 				validation: coreLibrary.MessageType.Information,
-				message: Lib.getResourceBundleFor("sap.ui.mdc").getText("table.PERSONALIZATION_DIALOG_SORT_RESTRICTION")
+				message: oCore.getLibraryResourceBundle("sap.ui.mdc").getText("table.PERSONALIZATION_DIALOG_SORT_RESTRICTION")
 			};
 		}
 
@@ -227,7 +219,7 @@ sap.ui.define([
 	}
 
 	function validateGroupState(oTable, oState) {
-		const oResourceBundle = Lib.getResourceBundleFor("sap.ui.mdc");
+		const oResourceBundle = oCore.getLibraryResourceBundle("sap.ui.mdc");
 
 		if (oState.aggregations) {
 			const aAggregateProperties = Object.keys(oState.aggregations);
@@ -266,7 +258,7 @@ sap.ui.define([
 	}
 
 	function validateColumnState(oTable, oState) {
-		const oResourceBundle = Lib.getResourceBundleFor("sap.ui.mdc");
+		const oResourceBundle = oCore.getLibraryResourceBundle("sap.ui.mdc");
 		const aAggregateProperties = oState.aggregations && Object.keys(oState.aggregations);
 		let sMessage;
 
@@ -376,7 +368,8 @@ sap.ui.define([
 		// The information that there is a sort or filter change is lost, hence the GridTable does not clear the selection. The changes could
 		// affect the indices and make the current selection invalid. Therefore, the delegate has to clear the selection here.
 		if (oTable._bV4LegacySelectionEnabled && oTable._isOfType(TableType.Table)) {
-			const oInnerPlugin = oTable._oTable && oTable._oTable.getPlugins()[0] ? oTable._oTable.getPlugins()[0].oInnerSelectionPlugin : null;
+			const oMultiSelectionPlugin = PluginBase.getPlugin(oTable._oTable, "sap.ui.table.plugins.MultiSelectionPlugin");
+			const oInnerPlugin = oMultiSelectionPlugin ? oMultiSelectionPlugin.oInnerSelectionPlugin : null;
 
 			if (oInnerPlugin) {
 				oInnerPlugin._bInternalTrigger = true;
@@ -429,7 +422,7 @@ sap.ui.define([
 		if (oPopover) {
 			oPopover.getItems().forEach(function(oItem, iIndex, aItems) {
 				const sLabel = oItem.getLabel();
-				const oResourceBundle = Lib.getResourceBundleFor("sap.ui.mdc");
+				const oResourceBundle = oCore.getLibraryResourceBundle("sap.ui.mdc");
 
 				if (sLabel === oResourceBundle.getText("table.SETTINGS_GROUP") || sLabel === oResourceBundle.getText("table.SETTINGS_TOTALS")) {
 					aItems[iIndex].destroy();
@@ -553,7 +546,7 @@ sap.ui.define([
 		if (aGroupChildren.length > 0) {
 			return new ColumnPopoverSelectListItem({
 				items: aGroupChildren,
-				label: Lib.getResourceBundleFor("sap.ui.mdc").getText("table.SETTINGS_GROUP"),
+				label: oCore.getLibraryResourceBundle("sap.ui.mdc").getText("table.SETTINGS_GROUP"),
 				icon: "sap-icon://group-2",
 				action: [{
 					sName: "Group",
@@ -574,7 +567,7 @@ sap.ui.define([
 		if (aAggregateChildren.length > 0) {
 			return new ColumnPopoverSelectListItem({
 				items: aAggregateChildren,
-				label: Lib.getResourceBundleFor("sap.ui.mdc").getText("table.SETTINGS_TOTALS"),
+				label: oCore.getLibraryResourceBundle("sap.ui.mdc").getText("table.SETTINGS_TOTALS"),
 				icon: "sap-icon://sum",
 				action: [{
 					sName: "Aggregate",
@@ -599,7 +592,7 @@ sap.ui.define([
 		let bForcedAnalytics = false;
 
 		if (bForce) {
-			const oResourceBundle = Lib.getResourceBundleFor("sap.ui.mdc");
+			const oResourceBundle = oCore.getLibraryResourceBundle("sap.ui.mdc");
 			let sTitle;
 			let sMessage;
 			let sActionText;

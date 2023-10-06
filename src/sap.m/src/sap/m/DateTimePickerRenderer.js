@@ -6,17 +6,15 @@ sap.ui.define([
 	'./DatePickerRenderer',
 	'./DateTimeFieldRenderer',
 	'sap/ui/core/library',
-	'sap/ui/core/date/UI5Date',
-	"sap/ui/core/Lib"
+	'sap/ui/core/date/UI5Date'
 ],
 	function(
 		Renderer,
 		DatePickerRenderer,
 		DateTimeFieldRenderer,
 		coreLibrary,
-		UI5Date,
-		Lib
-	) {
+		UI5Date
+) {
 	"use strict";
 
 	/**
@@ -38,7 +36,7 @@ sap.ui.define([
 	DateTimePickerRenderer.getDescribedByAnnouncement = function(oDP) {
 
 		var sBaseAnnouncement = DateTimeFieldRenderer.getDescribedByAnnouncement.apply(this, arguments);
-		return Lib.getResourceBundleFor("sap.m").getText("DATETIMEPICKER_TYPE") + " " + sBaseAnnouncement;
+		return sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("DATETIMEPICKER_TYPE") + " " + sBaseAnnouncement;
 
 	};
 

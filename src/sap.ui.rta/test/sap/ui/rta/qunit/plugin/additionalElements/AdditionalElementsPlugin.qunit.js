@@ -27,9 +27,7 @@ sap.ui.define([
 	"sap/ui/rta/Utils",
 	"sap/ui/thirdparty/sinon-4",
 	"test-resources/sap/ui/rta/qunit/RtaQunitUtils",
-	"sap/ui/core/Core",
-	"sap/ui/core/Lib",
-	"sap/ui/core/Element"
+	"sap/ui/core/Core"
 ], function(
 	includes,
 	isEmptyObject,
@@ -57,9 +55,7 @@ sap.ui.define([
 	RTAUtils,
 	sinon,
 	RtaQunitUtils,
-	oCore,
-	Lib,
-	Element
+	oCore
 ) {
 	"use strict";
 
@@ -139,7 +135,7 @@ sap.ui.define([
 	QUnit.module("Context Menu Operations: Given a plugin whose dialog always close with OK", {
 		beforeEach(assert) {
 			registerControlsForChanges();
-			this.oRTATexts = Lib.getResourceBundleFor("sap.ui.rta");
+			this.oRTATexts = oCore.getLibraryResourceBundle("sap.ui.rta");
 			var fnOriginalGetLibraryResourceBundle = oCore.getLibraryResourceBundle;
 			var oFakeLibBundle = {
 				getText: sandbox.stub().returnsArg(0),
@@ -958,7 +954,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when the control's dt metadata has addViaDelegate and a reveal actions", function(assert) {
-			var oOriginalRTATexts = Lib.getResourceBundleFor("sap.ui.rta");
+			var oOriginalRTATexts = oCore.getLibraryResourceBundle("sap.ui.rta");
 			var fnOriginalGetLibraryResourceBundle = oCore.getLibraryResourceBundle;
 			var sAggregationName = "contentLeft";
 			var oFakeLibBundle = {
@@ -1597,7 +1593,7 @@ sap.ui.define([
 			.then(function() {
 				assert.ok(this.fnDialogOpen.calledOnce, "then the dialog was opened");
 				assert.ok(fnServiceUpToDateStub.notCalled, "up to date service is not called");
-				var oCustomFieldButton = Element.registry.get(`${this.oDialog.getId()}--` + `rta_customFieldButton`);
+				var oCustomFieldButton = oCore.byId(`${this.oDialog.getId()}--` + `rta_customFieldButton`);
 				assert.equal(oCustomFieldButton.getVisible(), false, "then the button to create custom fields is not shown");
 			}.bind(this));
 		});
@@ -1620,7 +1616,7 @@ sap.ui.define([
 			.then(function() {
 				assert.ok(this.fnDialogOpen.calledOnce, "then the dialog was opened");
 				assert.ok(fnServiceUpToDateStub.getCall(0).args[0], "addViaDelegate is dependent on up to date service, it should be called with a control");
-				var oCustomFieldButton = Element.registry.get(`${this.oDialog.getId()}--` + `rta_customFieldButton`);
+				var oCustomFieldButton = oCore.byId(`${this.oDialog.getId()}--` + `rta_customFieldButton`);
 				assert.equal(oCustomFieldButton.getVisible(), false, "the Button to create custom Fields is not shown");
 			}.bind(this));
 		});
@@ -1644,7 +1640,7 @@ sap.ui.define([
 
 			.then(function() {
 				assert.ok(this.fnDialogOpen.calledOnce, "then the dialog was opened");
-				var oCustomFieldButton = Element.registry.get(`${this.oDialog.getId()}--` + `rta_customFieldButton`);
+				var oCustomFieldButton = oCore.byId(`${this.oDialog.getId()}--` + `rta_customFieldButton`);
 				assert.equal(oCustomFieldButton.getVisible(), true, "the Button to create custom Fields is shown");
 			}.bind(this));
 		});
@@ -1716,7 +1712,7 @@ sap.ui.define([
 
 			.then(function() {
 				assert.ok(fnServiceUpToDateStub.getCall(0).args[0], "addViaDelegate is dependent on up to date service, it should be called with a control");
-				var oBCContainer = Element.registry.get(`${this.oDialog.getId()}--` + `rta_businessContextContainer`);
+				var oBCContainer = oCore.byId(`${this.oDialog.getId()}--` + `rta_businessContextContainer`);
 				assert.equal(this.oDialog.getCustomFieldEnabled(), true, "then in the dialog custom field is enabled");
 				assert.equal(oBCContainer.getVisible(), true, "then in the Business Context Container in the Dialog is visible");
 				assert.equal(oBCContainer.getContent().length > 1, true, "then in the Business Context Container shows Business Contexts");
@@ -1754,7 +1750,7 @@ sap.ui.define([
 
 				.then(function() {
 					assert.equal(this.oDialog.getCustomFieldEnabled(), true, "then in the dialog custom field is enabled");
-					var oBCContainer = Element.registry.get(`${this.oDialog.getId()}--` + `rta_businessContextContainer`);
+					var oBCContainer = oCore.byId(`${this.oDialog.getId()}--` + `rta_businessContextContainer`);
 					assert.equal(oBCContainer.getVisible(), true, "then in the Business Context Container in the Dialog is visible");
 					assert.equal(oBCContainer.getContent().length > 1, true, "then in the Business Context Container shows Business Contexts");
 					return this.oPlugin.showAvailableElements(false, sAggregationName, [oOverlay]);

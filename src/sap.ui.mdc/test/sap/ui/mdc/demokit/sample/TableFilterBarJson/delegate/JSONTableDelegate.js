@@ -6,19 +6,10 @@ sap.ui.define([
 	"sap/ui/model/FilterOperator",
 	"sap/ui/core/Core",
 	"mdc/sample/model/metadata/JSONPropertyInfo",
-	"mdc/sample/delegate/JSONBaseDelegate",
-	"sap/ui/core/Element"
-], function(
-	TableDelegate,
-	Column,
-	Text,
-	Filter,
-	FilterOperator,
-	Core,
-	JSONPropertyInfo,
-	JSONBaseDelegate,
-	Element
-) {
+	"mdc/sample/delegate/JSONBaseDelegate"
+], function (
+	TableDelegate, Column, Text, Filter, FilterOperator,
+	Core, JSONPropertyInfo, JSONBaseDelegate) {
 	"use strict";
 
 	const JSONTableDelegate = Object.assign({}, TableDelegate, JSONBaseDelegate);
@@ -35,7 +26,7 @@ sap.ui.define([
 	function _addColumn(oPropertyInfo, oTable) {
 		const sName = oPropertyInfo.name;
 		const sId = oTable.getId() + "---col-" + sName;
-		let oColumn = Element.registry.get(sId);
+		let oColumn = Core.byId(sId);
 		if (!oColumn) {
 			oColumn = new Column(sId, {
 				propertyKey: sName,
@@ -62,7 +53,7 @@ sap.ui.define([
 	};
 
 	JSONTableDelegate.getFilters = function(oTable) {
-		const aSearchFilters = _createSearchFilters(Element.registry.get(oTable.getFilter()).getSearch());
+		const aSearchFilters = _createSearchFilters(Core.byId(oTable.getFilter()).getSearch());
 		return TableDelegate.getFilters(oTable).concat(aSearchFilters);
 	};
 

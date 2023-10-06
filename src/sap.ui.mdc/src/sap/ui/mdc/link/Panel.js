@@ -24,9 +24,8 @@ sap.ui.define([
 	"sap/ui/mdc/mixin/AdaptationMixin",
 	"sap/ui/mdc/link/PanelItem",
 	"sap/ui/core/CustomData",
-	"./Factory",
-	"sap/ui/core/Lib"
-], function(Control, PanelRenderer, VerticalLayout, Log, HorizontalLayout, HBox, VBox, ImageContent, Link, Label, Text, Button, FlexItemData, JSONModel, BindingMode, ManagedObjectObserver, LinkPanelController, Engine, AdaptationMixin, PanelItem, CustomData, Factory, Lib) {
+	"./Factory"
+], function(Control, PanelRenderer, VerticalLayout, Log, HorizontalLayout, HBox, VBox, ImageContent, Link, Label, Text, Button, FlexItemData, JSONModel, BindingMode, ManagedObjectObserver, LinkPanelController, Engine, AdaptationMixin, PanelItem, CustomData, Factory) {
 	"use strict";
 
 	/**
@@ -159,7 +158,7 @@ sap.ui.define([
 		});
 	};
 
-	const oRB = Lib.getResourceBundleFor("sap.ui.mdc");
+	const oRB = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
 
 	Panel.prototype.applySettings = function() {
 		this._createContent();

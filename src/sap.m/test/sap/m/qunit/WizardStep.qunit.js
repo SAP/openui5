@@ -1,8 +1,8 @@
 /*global QUnit */
-sap.ui.define(["sap/m/WizardStep", "sap/ui/core/Core", "sap/ui/core/Lib"], function(WizardStep, oCore, Lib) {
+sap.ui.define(["sap/m/WizardStep", "sap/ui/core/Core"], function(WizardStep, oCore) {
 	"use strict";
 
-	var oRb = Lib.getResourceBundleFor("sap.m");
+	var oRb = oCore.getLibraryResourceBundle("sap.m");
 
 	QUnit.module("WizardStep API", {
 		beforeEach: function () {

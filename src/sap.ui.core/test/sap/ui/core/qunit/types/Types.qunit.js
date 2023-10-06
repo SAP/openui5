@@ -18,9 +18,12 @@ sap.ui.define([
 	"sap/ui/model/type/Time",
 	"sap/ui/model/type/TimeInterval",
 	"sap/ui/model/type/Unit",
-	"sap/ui/test/TestUtils",
-	"sap/ui/core/Lib"
-], function(Log, Configuration, UI5Date, NumberFormat, FormatException, ParseException, ValidateException, BooleanType, CurrencyType, DateTimeType, DateTimeIntervalType, FileSizeType, FloatType, IntegerType, StringType, TimeType, TimeIntervalType, UnitType, TestUtils, Lib) {
+	"sap/ui/test/TestUtils"
+], function (Log, Configuration, UI5Date, NumberFormat, FormatException, ParseException,
+		ValidateException, BooleanType, CurrencyType, DateTimeType, DateTimeIntervalType,
+		FileSizeType, FloatType, IntegerType, StringType, TimeType, TimeIntervalType, UnitType,
+		TestUtils
+) {
 	"use strict";
 
 	function checkValidateException(oEx) {
@@ -423,7 +426,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("currency parseValue with strict mode - CLDR (showMeasure=true)", function (assert) {
-		var oBundle = Lib.getResourceBundleFor("sap.ui.core");
+		var oBundle = sap.ui.getCore().getLibraryResourceBundle();
 		var currencyType = new CurrencyType({
 			strictParsing: true,
 			showMeasure: true
@@ -472,7 +475,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("currency parseValue with strict mode - CLDR (showMeasure=false)", function (assert) {
-		var oBundle = Lib.getResourceBundleFor("sap.ui.core");
+		var oBundle = sap.ui.getCore().getLibraryResourceBundle();
 		var currencyType = new CurrencyType({
 			strictParsing: true,
 			showMeasure: false
@@ -525,7 +528,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("currency parseValue with strict mode - Custom (showMeasure=true)", function (assert) {
-		var oBundle = Lib.getResourceBundleFor("sap.ui.core");
+		var oBundle = sap.ui.getCore().getLibraryResourceBundle();
 		var mCustomCurrencies = {
 			"BTC": {
 				"symbol": "Ƀ",
@@ -605,7 +608,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("currency parseValue with strict mode - Custom (showMeasure=false)", function (assert) {
-		var oBundle = Lib.getResourceBundleFor("sap.ui.core");
+		var oBundle = sap.ui.getCore().getLibraryResourceBundle();
 		var mCustomCurrencies = {
 			"BTC": {
 				"symbol": "Ƀ",
@@ -2105,7 +2108,7 @@ sap.ui.define([
 				//call super validateValue
 				UnitType.prototype.validateValue.apply(this, arguments);
 
-				var oBundle = Lib.getResourceBundleFor("sap.ui.core"),
+				var oBundle = sap.ui.getCore().getLibraryResourceBundle(),
 					aValues = vValue,
 					iValue;
 				if (this.oInputFormat) {
@@ -2385,7 +2388,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("unit parseValue with strict mode - CLDR (showMeasure=true)", function (assert) {
-		var oBundle = Lib.getResourceBundleFor("sap.ui.core");
+		var oBundle = sap.ui.getCore().getLibraryResourceBundle();
 		var unitType = new UnitType({
 			strictParsing: true,
 			showMeasure: true
@@ -2431,7 +2434,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("unit parseValue with strict mode - CLDR (showMeasure=false)", function (assert) {
-		var oBundle = Lib.getResourceBundleFor("sap.ui.core");
+		var oBundle = sap.ui.getCore().getLibraryResourceBundle();
 		var unitType = new UnitType({
 			strictParsing: true,
 			showMeasure: false
@@ -2477,7 +2480,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("unit parseValue with strict mode - Custom (showMeasure=true)", function (assert) {
-		var oBundle = Lib.getResourceBundleFor("sap.ui.core");
+		var oBundle = sap.ui.getCore().getLibraryResourceBundle();
 		var mCustomUnits = {
 			"zomb": {
 				"displayName": "ZOMBIES!!",
@@ -2546,7 +2549,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("unit parseValue with strict mode - Custom (showMeasure=false)", function (assert) {
-		var oBundle = Lib.getResourceBundleFor("sap.ui.core");
+		var oBundle = sap.ui.getCore().getLibraryResourceBundle();
 		var mCustomUnits = {
 			"zomb": {
 				"displayName": "ZOMBIES!!",

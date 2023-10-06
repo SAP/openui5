@@ -6,9 +6,8 @@ sap.ui.define([
 	"sap/m/Image",
 	"sap/m/Text",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/core/Core",
-	"sap/ui/core/Element"
-], function(createAndAppendDiv, CustomTreeItem, Tree, Image, Text, JSONModel, oCore, Element) {
+	"sap/ui/core/Core"
+], function(createAndAppendDiv, CustomTreeItem, Tree, Image, Text, JSONModel, oCore) {
 	"use strict";
 
 	createAndAppendDiv("content").style.height = "100%";
@@ -91,8 +90,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("CustomTreeItem rendered", function(assert) {
-		var $CustomTreeItem0 = Element.registry.get("__item0-__tree0-0").$();
-		var $CustomTreeItem1 = Element.registry.get("__item0-__tree0-1").$();
+		var $CustomTreeItem0 = oCore.byId("__item0-__tree0-0").$();
+		var $CustomTreeItem1 = oCore.byId("__item0-__tree0-1").$();
 		assert.ok($CustomTreeItem0.hasClass("sapMCTI"), "First CustomTreeItem rendered correctly.");
 		assert.ok($CustomTreeItem0.find(".sapMImg"), "Image control rendered correctly.");
 		assert.ok($CustomTreeItem0.find(".sapMText"), "Text control rendered correctly.");

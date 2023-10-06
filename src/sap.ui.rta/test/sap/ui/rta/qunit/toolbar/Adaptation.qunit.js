@@ -21,8 +21,7 @@ sap.ui.define([
 	"sap/ui/rta/util/ReloadManager",
 	"sap/ui/rta/Utils",
 	"sap/m/MessageBox",
-	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/core/Lib"
+	"sap/ui/thirdparty/sinon-4"
 ], function(
 	Button,
 	RtaQunitUtils,
@@ -44,8 +43,7 @@ sap.ui.define([
 	ReloadManager,
 	Utils,
 	MessageBox,
-	sinon,
-	Lib
+	sinon
 ) {
 	"use strict";
 
@@ -75,7 +73,7 @@ sap.ui.define([
 	QUnit.module("Given Versions Model binding & formatter", {
 		before() {
 			this.oToolbarControlsModel = RtaQunitUtils.createToolbarControlsModel();
-			this.oTextResources = Lib.getResourceBundleFor("sap.ui.rta");
+			this.oTextResources = Core.getLibraryResourceBundle("sap.ui.rta");
 		},
 		after() {
 			sandbox.restore();
@@ -142,7 +140,7 @@ sap.ui.define([
 
 	QUnit.module("Test Adaptation Model binding & formatter and save as", {
 		beforeEach() {
-			this.oTextResources = Lib.getResourceBundleFor("sap.ui.rta");
+			this.oTextResources = Core.getLibraryResourceBundle("sap.ui.rta");
 			sandbox.stub(BaseToolbar.prototype, "placeToContainer").callsFake(function() {
 				this.placeAt("qunit-fixture");
 			});
@@ -509,7 +507,7 @@ sap.ui.define([
 
 	QUnit.module("Given RTA and context-based adaptation is enabled and filled", {
 		beforeEach() {
-			this.oTextResources = Lib.getResourceBundleFor("sap.ui.rta");
+			this.oTextResources = Core.getLibraryResourceBundle("sap.ui.rta");
 			sandbox.stub(BaseToolbar.prototype, "placeToContainer").callsFake(function() {
 				this.placeAt("qunit-fixture");
 			});
@@ -590,7 +588,7 @@ sap.ui.define([
 	QUnit.module("Setting AppVariant properties", {
 		beforeEach() {
 			this.oToolbar = new Adaptation({
-				textResources: Lib.getResourceBundleFor("sap.ui.rta"),
+				textResources: Core.getLibraryResourceBundle("sap.ui.rta"),
 				rtaInformation: {
 					flexSettings: {
 						layer: Layer.CUSTOMER
@@ -691,7 +689,7 @@ sap.ui.define([
 	QUnit.module("Setting different modes", {
 		beforeEach() {
 			this.oToolbar = new Adaptation({
-				textResources: Lib.getResourceBundleFor("sap.ui.rta")
+				textResources: Core.getLibraryResourceBundle("sap.ui.rta")
 			});
 			this.oVersionsModel = new JSONModel({
 				versioningEnabled: true,
@@ -881,7 +879,7 @@ sap.ui.define([
 
 	QUnit.module("Different screen sizes and common buttons", {
 		beforeEach() {
-			this.oTextResources = Lib.getResourceBundleFor("sap.ui.rta");
+			this.oTextResources = Core.getLibraryResourceBundle("sap.ui.rta");
 			sandbox.stub(BaseToolbar.prototype, "placeToContainer").callsFake(function() {
 				this.placeAt("qunit-fixture");
 			});
@@ -1024,7 +1022,7 @@ sap.ui.define([
 
 	QUnit.module("Different screen sizes and common buttons with context-based adaptation enabled", {
 		beforeEach() {
-			this.oTextResources = Lib.getResourceBundleFor("sap.ui.rta");
+			this.oTextResources = Core.getLibraryResourceBundle("sap.ui.rta");
 			sandbox.stub(BaseToolbar.prototype, "placeToContainer").callsFake(function() {
 				this.placeAt("qunit-fixture");
 			});

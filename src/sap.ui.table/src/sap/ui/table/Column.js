@@ -17,7 +17,7 @@ sap.ui.define([
 	"sap/ui/model/Sorter",
 	"sap/ui/model/Type",
 	"sap/ui/model/type/String",
-	"sap/base/util/ObjectPath",
+	"sap/base/util/ObjectPath", // TODO: Remove in UI5 2.0
 	"sap/base/util/JSTokenizer",
 	"sap/base/Log"
 ], function(
@@ -34,7 +34,7 @@ sap.ui.define([
 	Sorter,
 	Type,
 	StringType,
-	ObjectPath,
+	ObjectPath, // TODO: Remove in UI5 2.0
 	JSTokenizer,
 	Log
 ) {
@@ -196,6 +196,10 @@ sap.ui.define([
 			 * Here the escaping is mandatory to avoid handling by the binding parser.
 			 * As an alternative, a function can be passed that takes over the conversion. This cannot be done in the
 			 * XMLView, use {@link #setFilterType} instead.
+			 *
+			 * <b>Note:</b> The usage of string-based type definitions without explicitly loading these types (<code>sap.ui.require</code>)
+			 * in the controller has been deprecated and might no longer work in future releases.
+			 * Please ensure that the types are requested correctly before setting this property.
 			 *
 			 * @since 1.9.2
 			 */
@@ -925,7 +929,13 @@ sap.ui.define([
 	 * @public
 	 *
 	 * @example <caption>Class name of a type.</caption>
+	 * // The usage of string-based type definitions without explicitly loading these types (<code>sap.ui.require</code>) in the controller has been deprecated and might no longer work in future releases.
+	 * // Please ensure that the types are requested correctly before setting this property.
 	 * oColumn.setFilterType("sap.ui.model.type.Date");
+	 *
+	 * @example <caption>Module path of a type.</caption>
+	 * // The type needs to be loaded in advance by the application.
+	 * oColumn.setFilterType("sap/ui/model/type/Date");
 	 *
 	 * @example <caption>Binding expression similar to the binding syntax.</caption>
 	 * // The escaping is mandatory to avoid handling by the binding parser.
@@ -944,11 +954,13 @@ sap.ui.define([
 				// similar to BindingParser allow to specify formatOptions and constraints for types
 				var mConfig = JSTokenizer.parseJS(vType);
 				if (typeof (mConfig.type) === "string") {
-					var fnType = ObjectPath.get(mConfig.type);
+					var fnType = sap.ui.require(mConfig.type.replaceAll(".", "/"));
+
 					oType = fnType && new fnType(mConfig.formatOptions, mConfig.constraints);
 				}
 			} catch (ex) {
-				var fnType = ObjectPath.get(vType);
+				var fnType = sap.ui.require(vType.replaceAll(".", "/"));
+
 				oType = fnType && new fnType();
 			}
 			// check for a valid type
@@ -1127,7 +1139,7 @@ sap.ui.define([
 	 * @private
 	 */
 	Column.prototype.getHeaderMenuInstance = function() {
-		return Element.registry.get(this.getHeaderMenu());
+		return Core.byId(this.getHeaderMenu());
 	};
 
 	function validateCellContentVisibilitySettings(mSettings) {

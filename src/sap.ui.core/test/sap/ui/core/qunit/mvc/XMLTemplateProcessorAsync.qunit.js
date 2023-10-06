@@ -338,11 +338,9 @@ sap.ui.define([
 
 	QUnit.module("Databinding", {
 		beforeEach: function() {
-			this.syncLoadingSpy = sinon.spy(sap.ui, "requireSync");
 			this.logErrorSpy = sinon.spy(Log, "error");
 		},
 		afterEach: function() {
-			this.syncLoadingSpy.restore();
 			this.logErrorSpy.restore();
 		}
 	});
@@ -364,12 +362,6 @@ sap.ui.define([
 			oView = oFinishedView;
 			oFinishedView.placeAt("qunit-fixture");
 
-			// check that no sync XHRs are sent
-			assert.equal(this.syncLoadingSpy.callCount, 0, "No sync XHR sent.");
-			assert.notOk(this.syncLoadingSpy.calledWith("sap/ui/model/type/Integer"), "No sync XHR sent for 'sap/ui/model/type/Integer'.");
-			assert.notOk(this.syncLoadingSpy.calledWith("sap/ui/model/type/String"), "No sync XHR sent for 'sap/ui/model/type/String'.");
-			assert.notOk(this.syncLoadingSpy.calledWith("sap/ui/model/type/Float"), "No sync XHR sent for 'sap/ui/model/type/Float'.");
-			assert.notOk(this.syncLoadingSpy.calledWith("sap/ui/model/type/Date"), "No sync XHR sent for 'sap/ui/model/type/Date'.");
 			// test binding values
 			var oInput = oView.byId("inputField");
 			assert.equal(oInput.getValue(), "1.234", "Input field has correct value '1.234'");

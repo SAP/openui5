@@ -4,9 +4,8 @@ sap.ui.define([
 	"sap/m/upload/UploadSetwithTableItem",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/Core",
-	"sap/m/upload/FilePreviewDialog",
-	"sap/ui/core/Element"
-], function(UploadSetwithTable, UploadSetwithTableItem, JSONModel, oCore, FilePreviewDialog, Element) {
+    "sap/m/upload/FilePreviewDialog"
+], function (UploadSetwithTable, UploadSetwithTableItem, JSONModel, oCore, FilePreviewDialog) {
 	"use strict";
 
 	function getData() {
@@ -49,7 +48,7 @@ sap.ui.define([
 
         this.oUploadSetwithTable.setPreviewDialog(associatedControl);
 
-        const oAssociatedControlRef = Element.registry.get(this.oUploadSetwithTable.getPreviewDialog());
+        const oAssociatedControlRef = oCore.byId(this.oUploadSetwithTable.getPreviewDialog());
 		//arrange
 		assert.ok(oAssociatedControlRef, "Instance created successfully");
 	});

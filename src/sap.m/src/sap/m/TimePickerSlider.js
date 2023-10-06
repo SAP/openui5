@@ -10,10 +10,9 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	"sap/m/Button",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Configuration",
-	"sap/ui/core/Lib"
+	"sap/ui/core/Configuration"
 ],
-	function(Control, TimePickerSliderRenderer, IconPool, Device, KeyCodes, Button, jQuery, Configuration, Lib) {
+	function(Control, TimePickerSliderRenderer, IconPool, Device, KeyCodes, Button, jQuery, Configuration) {
 		"use strict";
 
 		/**
@@ -1159,7 +1158,7 @@ sap.ui.define([
 
 		TimePickerSlider.prototype._initArrows = function() {
 			var that = this, oArrowUp, oArrowDown,
-				oRB = Lib.getResourceBundleFor("sap.m");
+				oRB = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 
 			oArrowUp = new Button({
 				icon: IconPool.getIconURI("slim-arrow-up"),

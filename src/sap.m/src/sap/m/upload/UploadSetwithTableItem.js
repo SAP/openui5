@@ -8,9 +8,8 @@ sap.ui.define([
 	"sap/ui/core/IconPool",
 	"sap/m/upload/UploadSetwithTableItemRenderer",
 	"sap/base/Log",
-	"sap/ui/core/Core",
-	"sap/ui/core/Lib"
-], function(ColumnListItem, IconPool, UploadSetwithTableItemRenderer, Log, Core, Lib) {
+	"sap/ui/core/Core"
+], function (ColumnListItem, IconPool, UploadSetwithTableItemRenderer, Log, Core) {
     "use strict";
 
 	/**
@@ -87,7 +86,7 @@ sap.ui.define([
 		this._bNameLengthRestricted = false;
 		this._bSizeRestricted = false;
 		this._bMediaTypeRestricted = false;
-		this._oRb = Lib.getResourceBundleFor("sap.m");
+		this._oRb = Core.getLibraryResourceBundle("sap.m");
     };
 
     UploadSetwithTableItem.prototype.onBeforeRendering = function () {

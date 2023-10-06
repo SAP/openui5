@@ -618,7 +618,7 @@ function(
 		var aRefLabels = LabelEnablement.getReferencingLabels(this);
 
 		aRefLabels.forEach(function(sLabelId) {
-			Element.registry.get(sLabelId).setProperty("highlightAccKeysRef", bHighlightAccKeysRef);
+			Core.byId(sLabelId).setProperty("highlightAccKeysRef", bHighlightAccKeysRef);
 		}, this);
 	};
 

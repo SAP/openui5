@@ -8,16 +8,14 @@ sap.ui.define([
 	"sap/ui/dt/Util",
 	"sap/base/util/uid",
 	"sap/ui/core/IconPool",
-	"sap/ui/rta/plugin/iframe/AddIFrameDialog",
-	"sap/ui/core/Lib"
+	"sap/ui/rta/plugin/iframe/AddIFrameDialog"
 ], function(
 	BaseCreate,
 	FlexUtils,
 	DtUtil,
 	uid,
 	IconPool,
-	AddIFrameDialog,
-	Lib
+	AddIFrameDialog
 ) {
 	"use strict";
 
@@ -154,7 +152,7 @@ sap.ui.define([
 	 */
 	AddIFrame.prototype.getMenuItems = async function(aElementOverlays) {
 		function getCommonProperties(sAggregationName) {
-			var oTextResources = Lib.getResourceBundleFor("sap.ui.rta");
+			var oTextResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
 			var sIFrameGroupText = oTextResources.getText("CTX_ADDIFRAME_GROUP");
 			return {
 				text: getCreateMenuItemText.bind(this, sAggregationName, "CTX_ADDIFRAME", oTextResources),

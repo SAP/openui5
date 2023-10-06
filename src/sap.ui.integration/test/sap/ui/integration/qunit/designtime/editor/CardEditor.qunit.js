@@ -14,9 +14,8 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	"sap/base/i18n/ResourceBundle",
 	"sap/ui/core/util/MockServer",
-	"./cards/DataExtensionImpl",
-	"sap/ui/core/Element"
-], function(
+	"./cards/DataExtensionImpl"
+], function (
 	merge,
 	x,
 	Editor,
@@ -31,8 +30,7 @@ sap.ui.define([
 	KeyCodes,
 	ResourceBundle,
 	MockServer,
-	DataExtensionImpl,
-	Element
+	DataExtensionImpl
 ) {
 	"use strict";
 
@@ -693,7 +691,7 @@ sap.ui.define([
 								oField1.onfocusin();
 								Core.applyChanges();
 								var sMsgStripId = oField1.getAssociation("_messageStrip");
-								var oMsgStrip = Element.registry.get(sMsgStripId);
+								var oMsgStrip = Core.byId(sMsgStripId);
 								assert.equal(oMsgStrip.getDomRef().style.opacity, "1", "Message strip visible");
 								assert.equal(oMsgStrip.getType(), "Error", "Message strip Error");
 								assert.equal(oMsgStrip.getText(), "The parameter is not allowed to edit", "Message text correct");

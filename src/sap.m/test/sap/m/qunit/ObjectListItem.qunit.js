@@ -11,8 +11,7 @@ sap.ui.define([
 	"sap/m/ObjectMarker",
 	"sap/m/library",
 	"sap/ui/base/ManagedObjectObserver",
-	"sap/ui/core/Core",
-	"sap/ui/core/Element"
+	"sap/ui/core/Core"
 ], function(
 	qutils,
 	createAndAppendDiv,
@@ -25,8 +24,7 @@ sap.ui.define([
 	ObjectMarker,
 	mobileLibrary,
 	ManagedObjectObserver,
-	oCore,
-	Element
+	oCore
 ) {
 	"use strict";
 
@@ -786,29 +784,29 @@ sap.ui.define([
 	QUnit.test("TestIconExit", function(assert) {
 
 		assert.ok(!(iconOLI === null), "iconOLI is not null");
-		assert.ok(Element.registry.get("iconOLI"), "Icon is found in UI5 Core");
-		assert.ok(Element.registry.get("iconOLI-Flagged"), "Flag icon is found in UI5 Core");
-		assert.ok(Element.registry.get("iconOLI-Favorite"), "Favorite icon is found in UI5 Core");
-		assert.ok(Element.registry.get("iconOLI-Locked"), "Locked icon is found in UI5 Core");
+		assert.ok(oCore.byId("iconOLI"), "Icon is found in UI5 Core");
+		assert.ok(oCore.byId("iconOLI-Flagged"), "Flag icon is found in UI5 Core");
+		assert.ok(oCore.byId("iconOLI-Favorite"), "Favorite icon is found in UI5 Core");
+		assert.ok(oCore.byId("iconOLI-Locked"), "Locked icon is found in UI5 Core");
 		iconOLI.destroy();
-		assert.ok(!Element.registry.get("iconOLI-Flagged"), "Flag icon removed from UI5 Core");
-		assert.ok(!Element.registry.get("iconOLI-Favorite"), "Favorite icon removed from UI5 Core");
-		assert.ok(!Element.registry.get("iconOLI-Locked"), "Locked icon removed from UI5 Core");
+		assert.ok(!oCore.byId("iconOLI-Flagged"), "Flag icon removed from UI5 Core");
+		assert.ok(!oCore.byId("iconOLI-Favorite"), "Favorite icon removed from UI5 Core");
+		assert.ok(!oCore.byId("iconOLI-Locked"), "Locked icon removed from UI5 Core");
 	});
 
 	QUnit.test("TestImageExit", function(assert) {
 
 		assert.ok(!(imageOLI === null), "imageOLI is not null");
-		assert.ok(Element.registry.get("imageOLI-img"), "Image is found in UI5 Core");
+		assert.ok(oCore.byId("imageOLI-img"), "Image is found in UI5 Core");
 		imageOLI.destroy();
-		assert.ok(!Element.registry.get("imageOLI-img"), "Image is removed from UI5 Core");
+		assert.ok(!oCore.byId("imageOLI-img"), "Image is removed from UI5 Core");
 	});
 
 	QUnit.test("TestTitleExit", function(assert) {
 
 		assert.ok(!(titleOLI === null), "titleOLI is not null");
-		assert.ok(Element.registry.get("titleOLI-titleText"), "Title text is found in UI5 Core");
+		assert.ok(oCore.byId("titleOLI-titleText"), "Title text is found in UI5 Core");
 		titleOLI.destroy();
-		assert.ok(!Element.registry.get("titleOLI-titleText"), "Title text is removed from UI5 Core");
+		assert.ok(!oCore.byId("titleOLI-titleText"), "Title text is removed from UI5 Core");
 	});
 });

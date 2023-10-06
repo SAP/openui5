@@ -7,9 +7,9 @@ sap.ui.define([
 	"sap/m/MessageToast",
 	"sap/ui/core/Core",
 	"sap/ui/unified/calendar/CalendarUtils",
-	"sap/ui/unified/calendar/CalendarDate",
-	"sap/ui/core/Element"
-], function(Controller, JSONModel, SkeletonCard, library, Host, MessageToast, oCore, CalendarUtils, CalendarDate, Element) {
+	"sap/ui/unified/calendar/CalendarDate"
+
+], function (Controller, JSONModel, SkeletonCard, library, Host, MessageToast, oCore, CalendarUtils, CalendarDate) {
 	"use strict";
 
 	var Submit = library.CardActionType.Submit;
@@ -88,8 +88,8 @@ sap.ui.define([
 
 		onChangeDate: function () {
 			var oCard = this.byId("demoCard"),
-				oChangeDateButton = Element.registry.get("cardsplayground---stateChangedEvent--dateChangeButton"),
-				oChangeDateButton2 = Element.registry.get("cardsplayground---stateChangedEvent--dateChangeButton2"),
+				oChangeDateButton = oCore.byId("cardsplayground---stateChangedEvent--dateChangeButton"),
+				oChangeDateButton2 = oCore.byId("cardsplayground---stateChangedEvent--dateChangeButton2"),
 				iFirstDateIndex = 13,
 				iSecondDateIndex = 18,
 				iSeptemberIndex = 8,
@@ -125,8 +125,8 @@ sap.ui.define([
 				sSeptemberName = "September",
 				sAugustName = "August",
 				oCard = this.byId("demoCard"),
-				oChangeMonthButton = Element.registry.get('cardsplayground---stateChangedEvent--monthChangeButton'),
-				oChangeMonthButton2 = Element.registry.get('cardsplayground---stateChangedEvent--monthChangeButton2'),
+				oChangeMonthButton = oCore.byId('cardsplayground---stateChangedEvent--monthChangeButton'),
+				oChangeMonthButton2 = oCore.byId('cardsplayground---stateChangedEvent--monthChangeButton2'),
 				sUnselectedMonthName;
 
 

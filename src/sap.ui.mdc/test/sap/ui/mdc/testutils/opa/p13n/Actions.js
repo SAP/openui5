@@ -17,8 +17,7 @@ sap.ui.define([
 	"./Util",
 	"sap/base/Log",
 	"sap/ui/core/Core",
-	"sap/ui/Device",
-	"sap/ui/core/Lib"
+	"sap/ui/Device"
 ], function(
 	Opa5,
 	Matcher,
@@ -34,12 +33,11 @@ sap.ui.define([
 	Util,
 	Log,
 	oCore,
-	Device,
-	Lib
+	Device
 ) {
 	"use strict";
 
-	var oMDCBundle = Lib.getResourceBundleFor("sap.ui.mdc");
+	var oMDCBundle = oCore.getLibraryResourceBundle("sap.ui.mdc");
 
 	var iOpenThePersonalizationDialog = function(oControl, oSettings) {
 		var sControlId = typeof oControl === "string" ? oControl : oControl.getId();

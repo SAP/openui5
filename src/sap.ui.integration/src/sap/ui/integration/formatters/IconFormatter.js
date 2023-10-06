@@ -4,9 +4,8 @@
 sap.ui.define([
 	"sap/ui/base/ManagedObject",
 	"sap/ui/core/Core",
-	"sap/ui/core/IconPool",
-	"sap/ui/core/Element"
-], function(ManagedObject, Core, IconPool, Element) {
+	"sap/ui/core/IconPool"
+], function (ManagedObject, Core, IconPool) {
 	"use strict";
 
 	/**
@@ -63,7 +62,7 @@ sap.ui.define([
 	};
 
 	IconFormatter.prototype._getCardInstance = function () {
-		return Element.registry.get(this.getCard());
+		return Core.byId(this.getCard());
 	};
 
 	return IconFormatter;

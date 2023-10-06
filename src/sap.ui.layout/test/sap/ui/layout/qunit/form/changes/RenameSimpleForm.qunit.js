@@ -10,8 +10,7 @@ sap.ui.define([
 	"sap/m/Input",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/Core",
-	"test-resources/sap/ui/fl/api/FlexTestAPI",
-	"sap/ui/core/Element"
+	"test-resources/sap/ui/fl/api/FlexTestAPI"
 ], function(
 	layoutLibrary,
 	RenameSimpleForm,
@@ -23,8 +22,7 @@ sap.ui.define([
 	Input,
 	JSONModel,
 	oCore,
-	FlexTestAPI,
-	Element
+	FlexTestAPI
 ) {
 	"use strict";
 
@@ -131,7 +129,7 @@ sap.ui.define([
 				var oExpectedChangeVizInfo = {
 					affectedControls: [
 						// as the FormElements in a SimpeForm don't get stable IDs, we have to cheat
-						Element.registry.get("component---Label0").getParent().getId()
+						oCore.byId("component---Label0").getParent().getId()
 					],
 					updateRequired: true,
 					descriptionPayload: {

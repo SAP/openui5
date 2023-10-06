@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['sap/ui/Device', "sap/ui/core/Lib"],
-	function(Device, Lib) {
+sap.ui.define(['sap/ui/Device'],
+	function (Device) {
 		"use strict";
 
 		/**
@@ -16,7 +16,7 @@ sap.ui.define(['sap/ui/Device', "sap/ui/core/Lib"],
 
 
 		// reference to the message bundle
-		var oLibraryResourceBundle = Lib.getResourceBundleFor("sap.m");
+		var oLibraryResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 
 		/**
 		 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.

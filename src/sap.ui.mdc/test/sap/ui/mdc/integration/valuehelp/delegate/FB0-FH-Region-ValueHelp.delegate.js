@@ -20,8 +20,7 @@ sap.ui.define([
 	'sap/ui/mdc/enums/OperatorName',
 	'sap/ui/mdc/p13n/StateUtil',
 	'sap/base/util/deepEqual',
-	'sap/ui/model/odata/v4/OPropertyKeyBinding',
-	"sap/ui/core/Element"
+	'sap/ui/model/odata/v4/OPropertyKeyBinding'
 ], function(
 	ODataV4ValueHelpDelegate,
 	MTable,
@@ -40,8 +39,7 @@ sap.ui.define([
 	OperatorName,
 	StateUtil,
 	deepEqual,
-	OPropertyKeyBinding,
-	Element
+	OPropertyKeyBinding
 ) {
 	"use strict";
 
@@ -198,7 +196,7 @@ sap.ui.define([
 
 		const oConditions = ODataV4ValueHelpDelegate.getFilterConditions(arguments);
 
-		const oCountry = Element.registry.get("FB0-FF6");
+		const oCountry = Core.byId("FB0-FF6");
 		const aCountryConditions = oCountry && oCountry.getConditions();
 		if (aCountryConditions && aCountryConditions.length) {
 			oConditions["country_code"] = aCountryConditions;
@@ -243,7 +241,7 @@ sap.ui.define([
 		}, []);
 
 		if (aAllConditionCountries && aAllConditionCountries.length) {
-			const oFilterBar = Element.registry.get("FB0");
+			const oFilterBar = Core.byId("FB0");
 			StateUtil.retrieveExternalState(oFilterBar).then(function (oState) {
 				aAllConditionCountries.forEach(function(sCountry) {
 					const bExists = oState.filter && oState.filter['countryOfOrigin_code'] && oState.filter['countryOfOrigin_code'].find(function (oCondition) {

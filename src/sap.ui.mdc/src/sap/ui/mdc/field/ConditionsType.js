@@ -14,8 +14,7 @@ sap.ui.define([
 	'sap/ui/model/ParseException',
 	'sap/ui/model/ValidateException',
 	'sap/base/util/merge',
-	'sap/ui/base/SyncPromise',
-	"sap/ui/core/Lib"
+	'sap/ui/base/SyncPromise'
 ],
 	function(
 		ConditionType,
@@ -28,9 +27,8 @@ sap.ui.define([
 		ParseException,
 		ValidateException,
 		merge,
-		SyncPromise,
-		Lib
-	) {
+		SyncPromise
+		) {
 	"use strict";
 
 
@@ -84,7 +82,7 @@ sap.ui.define([
 			oFormatOptions = _createFormatOptionsForConditionType(oFormatOptions);
 //			var oConstraints = merge({}, this.oConstraints);
 			this._oConditionType = new ConditionType(oFormatOptions, this.oConstraints);
-			this._oResourceBundle = Lib.getResourceBundleFor("sap.ui.mdc");
+			this._oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
 		}
 
 	});

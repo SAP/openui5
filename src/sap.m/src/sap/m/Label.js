@@ -10,8 +10,7 @@ sap.ui.define([
 	'sap/ui/core/LabelEnablement',
 	'sap/m/HyphenationSupport',
 	'sap/ui/core/library',
-	'./LabelRenderer',
-	"sap/ui/core/Element"
+	'./LabelRenderer'
 ],
 function(
 	library,
@@ -20,8 +19,7 @@ function(
 	LabelEnablement,
 	HyphenationSupport,
 	coreLibrary,
-	LabelRenderer,
-	Element
+	LabelRenderer
 ) {
 	"use strict";
 
@@ -225,10 +223,10 @@ function(
 			return;
 		}
 
-		var oLabeledControl = Element.registry.get(sLabelForId);
+		var oLabeledControl = Core.byId(sLabelForId);
 
 		if (oLabeledControl && oLabeledControl.isA("sap.m.Input") && oLabeledControl.getProperty("highlightAccKeysRef")) {
-			Element.registry.get(sLabelForId).setProperty("accesskey", (sText[0].toLowerCase()));
+			Core.byId(sLabelForId).setProperty("accesskey", (sText[0].toLowerCase()));
 		}
 	};
 
@@ -268,7 +266,7 @@ function(
 
 			// check that the label is for a control from the same toolbar
 			sLabelledControlId = oLabel.getLabelFor();
-			oLabelledControl = sLabelledControlId && Element.registry.get(sLabelledControlId);
+			oLabelledControl = sLabelledControlId && sap.ui.getCore().byId(sLabelledControlId);
 			if (!oLabelledControl || (oToolbar.indexOfContent(oLabelledControl) < 0)) {
 				return;
 			}

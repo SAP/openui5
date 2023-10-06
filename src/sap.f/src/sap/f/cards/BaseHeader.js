@@ -9,8 +9,7 @@ sap.ui.define([
 	"sap/ui/core/date/UniversalDate",
 	"sap/ui/core/library",
 	"sap/m/Text",
-	"./BaseHeaderRenderer",
-	"sap/ui/core/Lib"
+	"./BaseHeaderRenderer"
 ], function(
 	Control,
 	Core,
@@ -19,8 +18,7 @@ sap.ui.define([
 	UniversalDate,
 	coreLibrary,
 	Text,
-	BaseHeaderRenderer,
-	Lib
+	BaseHeaderRenderer
 ) {
 	"use strict";
 
@@ -122,7 +120,7 @@ sap.ui.define([
 	});
 
 	BaseHeader.prototype.init = function () {
-		this._oRb = Lib.getResourceBundleFor("sap.f");
+		this._oRb = Core.getLibraryResourceBundle("sap.f");
 
 		this._oToolbarDelegate = {
 			onfocusin: this._onToolbarFocusin,

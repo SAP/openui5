@@ -2,8 +2,8 @@
  * ${copyright}
  */
 // Provides control sap.m.TabStripItem.
-sap.ui.define(["./library", "sap/ui/core/Item", "sap/ui/base/ManagedObject", "sap/ui/core/IconPool", "./AccButton", "sap/m/ImageHelper", "sap/ui/core/Lib"],
-	function(library, Item, ManagedObject, IconPool, AccButton, ImageHelper, Lib) {
+sap.ui.define(["./library", "sap/ui/core/Item", "sap/ui/base/ManagedObject", "sap/ui/core/IconPool", "./AccButton", "sap/m/ImageHelper"],
+	function(library, Item, ManagedObject, IconPool, AccButton, ImageHelper) {
 		"use strict";
 
 		// shortcut for sap.m.ButtonType
@@ -208,7 +208,7 @@ sap.ui.define(["./library", "sap/ui/core/Item", "sap/ui/base/ManagedObject", "sa
 			var oButton = new AccButton({
 				type: ButtonType.Transparent,
 				icon: IconPool.getIconURI("decline"),
-				tooltip: Lib.getResourceBundleFor("sap.m").getText("TABSTRIP_ITEM_CLOSE_BTN"),
+				tooltip: sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("TABSTRIP_ITEM_CLOSE_BTN"),
 				tabIndex: "-1",
 				ariaHidden: "true"
 			}).addStyleClass(TabStripItem.CSS_CLASS_CLOSE_BUTTON);

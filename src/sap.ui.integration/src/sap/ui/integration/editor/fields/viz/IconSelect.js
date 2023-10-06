@@ -12,27 +12,13 @@ sap.ui.define([
 	"sap/base/util/deepClone",
 	"sap/ui/integration/formatters/IconFormatter",
 	"sap/m/Popover",
-	"sap/m/Image",
-	"sap/ui/core/Lib",
-	"sap/ui/core/Element"
-], function(
-	VizBase,
-	Select,
-	ListItem,
-	JSONModel,
-	IconPool,
-	merge,
-	Core,
-	deepClone,
-	IconFormatter,
-	Popover,
-	Image,
-	Lib,
-	Element
+	"sap/m/Image"
+], function (
+	VizBase, Select, ListItem, JSONModel, IconPool, merge, Core, deepClone, IconFormatter, Popover, Image
 ) {
 	"use strict";
 
-	var oResourceBundle = Lib.getResourceBundleFor("sap.ui.integration"),
+	var oResourceBundle = Core.getLibraryResourceBundle("sap.ui.integration"),
 		aDefaultIcons;
 
 	/**
@@ -126,7 +112,7 @@ sap.ui.define([
 
 	IconSelect.prototype.onInit = function () {
 		if (oResourceBundle && oResourceBundle.sLocale !== Core.getConfiguration().getLanguage()) {
-			oResourceBundle = Lib.getResourceBundleFor("sap.ui.integration");
+			oResourceBundle = Core.getLibraryResourceBundle("sap.ui.integration");
 		}
 		if (!aDefaultIcons) {
 			this._initDefaultIcons();
@@ -313,7 +299,7 @@ sap.ui.define([
 		var oIconDomRef = this._oControl.getDomRef("labelIcon");
 		if (oIconDomRef) {
 			var sCustomImage = this._oControl._customImage;
-			var oIcon = Element.registry.get(oIconDomRef.id);
+			var oIcon = Core.byId(oIconDomRef.id);
 			if (sCustomImage) {
 				oIconDomRef.style.backgroundImage = "url('" + sCustomImage + "')";
 				oIconDomRef.classList.add("sapMSelectListItemIconCustom");

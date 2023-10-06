@@ -6,9 +6,8 @@ sap.ui.define([
 	"sap/m/table/columnmenu/QuickTotalItem",
 	"sap/m/Button",
 	"sap/m/library",
-	"sap/ui/core/Core",
-	"sap/ui/core/Lib"
-], function(QUnitUtils, Menu, QuickTotal, QuickTotalItem, Button, library, Core, Lib) {
+	"sap/ui/core/Core"
+], function (QUnitUtils, Menu, QuickTotal, QuickTotalItem, Button, library, Core) {
 	"use strict";
 
 	QUnit.module("Basic", {
@@ -58,7 +57,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Label", function(assert) {
-		var oBundle = Lib.getResourceBundleFor("sap.m");
+		var oBundle = Core.getLibraryResourceBundle("sap.m");
 		var sLabel = oBundle.getText("table.COLUMNMENU_QUICK_TOTAL");
 		assert.equal(this.oQuickTotal.getLabel(), sLabel, "QuickTotal label is correct.");
 	});

@@ -15,8 +15,7 @@ sap.ui.define([
 	'sap/base/util/merge',
 	'sap/ui/mdc/enums/ValueHelpSelectionType',
 	'sap/base/Log',
-	'sap/ui/core/Element',
-	"sap/ui/core/Lib"
+	'sap/ui/core/Element'
 ], function(
 	FilterableListContent,
 	FilterConverter,
@@ -30,8 +29,7 @@ sap.ui.define([
 	merge,
 	ValueHelpSelectionType,
 	Log,
-	Element,
-	Lib
+	Element
 ) {
 	"use strict";
 
@@ -87,8 +85,8 @@ sap.ui.define([
 		});
 
 		this._addPromise("listBinding");
-		this._oResourceBundle = Lib.getResourceBundleFor("sap.ui.mdc");
-		this._oMResourceBundle = Lib.getResourceBundleFor("sap.m");
+		this._oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
+		this._oMResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 
 		this._iNavigateIndex = -1; // initially nothing is navigated
 		this._oFirstItemResult = {};
@@ -786,7 +784,7 @@ sap.ui.define([
 
 	function _getSAPMResourceBundle () {
 		if (!this._oResourceBundleM) {
-			this._oResourceBundleM = Lib.getResourceBundleFor("sap.m"); // sap.m is always loaded
+			this._oResourceBundleM = sap.ui.getCore().getLibraryResourceBundle("sap.m"); // sap.m is always loaded
 		}
 		return this._oResourceBundleM;
 	}

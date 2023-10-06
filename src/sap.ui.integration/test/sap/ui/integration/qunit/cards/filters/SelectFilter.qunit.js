@@ -3,13 +3,11 @@
 sap.ui.define([
 	"sap/ui/integration/cards/filters/SelectFilter",
 	"sap/ui/integration/widgets/Card",
-	"sap/ui/core/Core",
-	"sap/ui/core/Element"
-], function(
+	"sap/ui/core/Core"
+], function (
 	SelectFilter,
 	Card,
-	Core,
-	Element
+	Core
 ) {
 	"use strict";
 
@@ -147,7 +145,7 @@ sap.ui.define([
 		var oSF = new SelectFilter({
 			config: oConfig
 		});
-		var oLabel = Element.registry.get(oSF.getField().getAriaLabelledBy()[0]);
+		var oLabel = Core.byId(oSF.getField().getAriaLabelledBy()[0]);
 
 		// Assert
 		assert.ok(oLabel.getDomRef(), "Hidden label is created and added");

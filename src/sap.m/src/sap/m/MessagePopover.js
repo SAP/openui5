@@ -19,8 +19,7 @@ sap.ui.define([
 	"./MessagePopoverRenderer",
 	"sap/base/Log",
 	"sap/ui/base/ManagedObjectObserver",
-	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Lib"
+	"sap/ui/thirdparty/jquery"
 ],
 function(
 	Core,
@@ -38,8 +37,7 @@ function(
 	MessagePopoverRenderer,
 	Log,
 	ManagedObjectObserver,
-	jQuery,
-	Lib
+	jQuery
 ) {
 		"use strict";
 
@@ -350,7 +348,7 @@ function(
 			var oPopupControl;
 			this._oOpenByControl = null;
 
-			this._oResourceBundle = Lib.getResourceBundleFor("sap.m");
+			this._oResourceBundle = Core.getLibraryResourceBundle("sap.m");
 
 			this._oMessageView = this._initMessageView();
 

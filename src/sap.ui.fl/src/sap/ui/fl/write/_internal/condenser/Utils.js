@@ -4,12 +4,10 @@
 
 sap.ui.define([
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
-	"sap/ui/core/Core",
-	"sap/ui/core/Element"
+	"sap/ui/core/Core"
 ], function(
 	JsControlTreeModifier,
-	Core,
-	Element
+	Core
 ) {
 	"use strict";
 
@@ -61,7 +59,7 @@ sap.ui.define([
 	 * @returns {Promise<string[]>} Array of Ids wrapped in Promise
 	 */
 	Utils.getContainerElementIds = function(sContainerId, sAggregationName, aCustomAggregation, sAffectedControlIdProperty) {
-		var oContainer = Element.registry.get(sContainerId);
+		var oContainer = Core.byId(sContainerId);
 
 		return Promise.resolve(aCustomAggregation || JsControlTreeModifier.getAggregation(oContainer, sAggregationName))
 		.then(function(aContainerElements) {

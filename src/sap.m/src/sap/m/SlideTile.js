@@ -12,8 +12,7 @@ sap.ui.define([
 	"sap/ui/events/PseudoEvents",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Configuration",
-	"sap/ui/core/InvisibleText",
-	"sap/ui/core/Lib"
+	"sap/ui/core/InvisibleText"
 ],
 	function(
 		library,
@@ -25,8 +24,7 @@ sap.ui.define([
 		PseudoEvents,
 		jQuery,
 		Configuration,
-		InvisibleText,
-		Lib
+		InvisibleText
 	) {
 	"use strict";
 
@@ -139,7 +137,7 @@ sap.ui.define([
 	 * Init function for the control
 	 */
 	SlideTile.prototype.init = function () {
-		this._oRb = Lib.getResourceBundleFor("sap.m");
+		this._oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 		this.setAggregation("_pausePlayIcon", new Icon({
 			id: this.getId() + "-pause-play-icon",
 			src: "sap-icon://media-pause",

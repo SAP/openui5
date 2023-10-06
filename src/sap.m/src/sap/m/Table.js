@@ -1042,7 +1042,7 @@ sap.ui.define([
 	Table.prototype._setNoColumnsMessageAnnouncement = function (oTarget) {
 		if (!this.shouldRenderItems()) {
 			var oNoData = this.getNoData();
-			var sDescription = Library.getResourceBundleFor("sap.m").getText("TABLE_NO_COLUMNS");
+			var sDescription = Core.getLibraryResourceBundle("sap.m").getText("TABLE_NO_COLUMNS");
 			if (oNoData && typeof oNoData !== "string" && oNoData.isA("sap.m.IllustratedMessage")) {
 				sDescription = ListItemBase.getAccessibilityText(this.getAggregation("_noColumnsMessage"));
 			}

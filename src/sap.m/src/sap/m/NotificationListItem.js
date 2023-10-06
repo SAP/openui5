@@ -11,8 +11,7 @@ sap.ui.define([
 	'sap/m/Link',
 	'sap/m/Avatar',
 	"sap/ui/events/KeyCodes",
-	'./NotificationListItemRenderer',
-	"sap/ui/core/Lib"
+	'./NotificationListItemRenderer'
 ],
 function(
 	library,
@@ -23,12 +22,11 @@ function(
 	Link,
 	Avatar,
 	KeyCodes,
-	NotificationListItemRenderer,
-	Lib
-) {
+	NotificationListItemRenderer
+	) {
 	'use strict';
 
-	var RESOURCE_BUNDLE = Lib.getResourceBundleFor('sap.m'),
+	var RESOURCE_BUNDLE = Core.getLibraryResourceBundle('sap.m'),
 		EXPAND_TEXT = RESOURCE_BUNDLE.getText('NOTIFICATION_LIST_ITEM_SHOW_MORE'),
 		COLLAPSE_TEXT = RESOURCE_BUNDLE.getText('NOTIFICATION_LIST_ITEM_SHOW_LESS'),
 		READ_TEXT = RESOURCE_BUNDLE.getText('NOTIFICATION_LIST_ITEM_READ'),

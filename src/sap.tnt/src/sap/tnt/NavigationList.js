@@ -18,8 +18,7 @@ sap.ui.define([
 	"./NavigationListRenderer",
 	"sap/m/Menu",
 	"sap/m/MenuItem",
-	"sap/base/Log",
-	"sap/ui/core/Lib"
+	"sap/base/Log"
 ],
 	function(
 		jQuery,
@@ -36,8 +35,7 @@ sap.ui.define([
 		NavigationListRenderer,
 		Menu,
 		MenuItem,
-		Log,
-		Lib
+		Log
 	) {
 		"use strict";
 
@@ -258,7 +256,7 @@ sap.ui.define([
 			var overflowItem = this.getAggregation("_overflowItem");
 			if (!overflowItem) {
 				overflowItem = new NavigationListItem({
-					text: Lib.getResourceBundleFor("sap.tnt").getText("NAVIGATION_LIST_NAVIGATION_OVERFLOW"),
+					text: Core.getLibraryResourceBundle("sap.tnt").getText("NAVIGATION_LIST_NAVIGATION_OVERFLOW"),
 					icon: "sap-icon://overflow",
 					selectable: false,
 					select: this._overflowPress.bind(this)
@@ -502,7 +500,7 @@ sap.ui.define([
 				return null;
 			}
 
-			return Element.registry.get(selectedItem);
+			return sap.ui.getCore().byId(selectedItem);
 		};
 
 		/**
@@ -538,7 +536,7 @@ sap.ui.define([
 			this.setAssociation('selectedItem', selectedItem, true);
 
 			if (typeof selectedItem === 'string') {
-				navigationListItem = Element.registry.get(selectedItem);
+				navigationListItem = sap.ui.getCore().byId(selectedItem);
 			} else {
 				navigationListItem = selectedItem;
 			}

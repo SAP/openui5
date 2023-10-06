@@ -17,9 +17,8 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/core/Configuration",
 	"sap/ui/core/Control",
-	"sap/ui/core/library",
-	"sap/ui/core/Lib"
-], function(
+	"sap/ui/core/library"
+], function (
 	library,
 	Log,
 	Bar,
@@ -34,8 +33,7 @@ sap.ui.define([
 	Core,
 	Configuration,
 	Control,
-	coreLibrary,
-	Lib
+	coreLibrary
 ) {
 	"use strict";
 
@@ -181,7 +179,7 @@ sap.ui.define([
 			httpResponse: mSettings.httpResponse
 		});
 
-		if (sDetails && Configuration.getDebug()) {
+		if (sDetails && false) {
 			oBlockingMessage.setDetails(sDetails);
 		} else if (sDetails) {
 			Log.error(sDetails);
@@ -213,7 +211,7 @@ sap.ui.define([
 	};
 
 	BlockingMessage.prototype._getAdditionalContent = function () {
-		var oRb = Lib.getResourceBundleFor("sap.ui.integration");
+		var oRb = Core.getLibraryResourceBundle("sap.ui.integration");
 
 		return new Button({
 			text: oRb.getText("CARD_BUTTON_SHOW_MORE"),

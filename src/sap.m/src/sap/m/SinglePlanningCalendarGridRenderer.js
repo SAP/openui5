@@ -11,9 +11,8 @@ sap.ui.define([
 	'./PlanningCalendarLegend',
 	'sap/ui/unified/library',
 	'sap/ui/core/Configuration',
-	"sap/ui/core/date/UI5Date",
-	"sap/ui/core/Element"
-],
+	"sap/ui/core/date/UI5Date"
+	],
 	function(
 		CalendarDate,
 		CalendarUtils,
@@ -23,9 +22,8 @@ sap.ui.define([
 		PlanningCalendarLegend,
 		unifiedLibrary,
 		Configuration,
-		UI5Date,
-		Element
-	) {
+		UI5Date
+		) {
 		"use strict";
 
 		var iVerticalPaddingBetweenAppointments = 0.125;
@@ -93,7 +91,7 @@ sap.ui.define([
 				if (aDayTypes && aDayTypes[0]) {
 					oType = aDayTypes[0];
 					oRm.class("sapUiCalItem" + oType.type);
-					sLegendItemType = PlanningCalendarLegend.findLegendItemForItem(Element.registry.get(oControl._sLegendId), oType);
+					sLegendItemType = PlanningCalendarLegend.findLegendItemForItem(sap.ui.getCore().byId(oControl._sLegendId), oType);
 				}
 
 				oRm.class("sapMSpecialDaysInDayView");

@@ -13,8 +13,7 @@ sap.ui.define([
 	"sap/m/MessageToast",
 	"sap/ui/core/ListItem",
 	"sap/ui/fl/write/_internal/transport/Transports",
-	"sap/ui/core/library",
-	"sap/ui/core/Lib"
+	"sap/ui/core/library"
 ], function(
 	List,
 	InputListItem,
@@ -25,8 +24,7 @@ sap.ui.define([
 	MessageToast,
 	ListItem,
 	Transports,
-	coreLibrary,
-	Lib
+	coreLibrary
 ) {
 	"use strict";
 
@@ -104,7 +102,7 @@ sap.ui.define([
 		Dialog.prototype.init.apply(this);
 
 		// initialize dialog and create member variables.
-		this._oResources = Lib.getResourceBundleFor("sap.ui.fl");
+		this._oResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.fl");
 		this.setTitle(this._oResources.getText("TRANSPORT_DIALOG_TITLE"));
 
 		// add the content.
@@ -551,4 +549,4 @@ sap.ui.define([
 	};
 
 	return TransportDialog;
-});
+}, /* bExport= */ true);

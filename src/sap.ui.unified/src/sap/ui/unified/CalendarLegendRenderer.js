@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['sap/ui/core/InvisibleText', "sap/ui/core/Lib"],
-	function(InvisibleText, Lib) {
+sap.ui.define(['sap/ui/core/InvisibleText'],
+	function(InvisibleText) {
 	"use strict";
 
 	/**
@@ -230,7 +230,7 @@ sap.ui.define(['sap/ui/core/InvisibleText', "sap/ui/core/Lib"],
 		}
 
 		if (!CalendarLegendRenderer.typeARIATexts[sType]) {
-			rb = Lib.getResourceBundleFor("sap.ui.unified");
+			rb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified");
 			sText = rb.getText("LEGEND_UNNAMED_TYPE", parseInt(sType.slice(4)).toString());
 			CalendarLegendRenderer.typeARIATexts[sType] = new InvisibleText({ text: sText });
 			CalendarLegendRenderer.typeARIATexts[sType].toStatic();

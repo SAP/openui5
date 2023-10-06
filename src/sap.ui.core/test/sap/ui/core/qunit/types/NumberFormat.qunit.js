@@ -4,8 +4,9 @@ sap.ui.define([
 	"sap/ui/core/Locale",
 	"sap/ui/core/LocaleData",
 	"sap/base/Log",
-	"sap/ui/core/Configuration"
-], function (NumberFormat, Locale, LocaleData, Log, Configuration) {
+	"sap/ui/core/Configuration",
+	"sap/ui/core/Supportability"
+], function (NumberFormat, Locale, LocaleData, Log, Configuration, Supportability) {
 	"use strict";
 
 	/*eslint no-floating-decimal:0 */
@@ -3569,7 +3570,7 @@ sap.ui.define([
 	QUnit.module("General");
 
 	QUnit.test("origin info", function (assert) {
-		var oOriginInfoStub = this.stub(Configuration, "getOriginInfo").returns(true);
+		var oOriginInfoStub = this.stub(Supportability, "collectOriginInfo").returns(true);
 		var oOriginNumber = NumberFormat.getIntegerInstance(),
 			sValue = oOriginNumber.format(123),
 			oInfo = sValue.originInfo;

@@ -11,8 +11,8 @@ sap.ui.define([
 	"delegates/odata/v4/ODataMetaModelUtil",
 	"sap/ui/model/Filter",
 	"sap/base/Log",
-	'sap/ui/mdc/odata/v4/TypeMap',
-	"sap/ui/core/Element"
+	'sap/ui/mdc/odata/v4/TypeMap'
+
 ], function(
 	TableDelegate,
 	Core,
@@ -22,8 +22,7 @@ sap.ui.define([
 	ODataMetaModelUtil,
 	Filter,
 	Log,
-	ODataV4TypeMap,
-	Element
+	ODataV4TypeMap
 ) {
 	"use strict";
 
@@ -135,7 +134,7 @@ sap.ui.define([
 			oBindingInfo.parameters.$expand = "countryOfOrigin";
 		}
 
-		const oFilterBar = Element.registry.get(oTable.getFilter());
+		const oFilterBar = Core.byId(oTable.getFilter());
 		// var bTableFilterEnabled = oTable.isFilteringEnabled();
 		let mConditions;
 		let oOuterFilterInfo;

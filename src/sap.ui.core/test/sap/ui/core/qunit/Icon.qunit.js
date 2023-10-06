@@ -8,9 +8,8 @@ sap.ui.define([
 	"sap/ui/core/library",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/qunit/QUnitUtils",
-	"sap/ui/qunit/utils/nextUIUpdate",
-	"sap/ui/core/Lib"
-], function(Icon, IconPool, _IconRegistry, Log, Device, library, jQuery, qutils, nextUIUpdate, Lib) {
+	"sap/ui/qunit/utils/nextUIUpdate"
+], function(Icon, IconPool, _IconRegistry, Log, Device, library, jQuery, qutils, nextUIUpdate) {
 	"use strict";
 
 	// shortcut for type from sap.ui.core
@@ -518,7 +517,7 @@ sap.ui.define([
 		oIcon.setDecorative(false);
 		oInfo = oIcon.getAccessibilityInfo();
 		assert.strictEqual(oInfo.role, "img", "AriaRole");
-		assert.strictEqual(oInfo.type, Lib.getResourceBundleFor("sap.ui.core").getText("ACC_CTR_TYPE_IMAGE"), "Type");
+		assert.strictEqual(oInfo.type, sap.ui.getCore().getLibraryResourceBundle("sap.ui.core").getText("ACC_CTR_TYPE_IMAGE"), "Type");
 		assert.strictEqual(oInfo.description, "Alt", "Description");
 		assert.strictEqual(oInfo.focusable, false, "Focusable");
 		assert.ok(oInfo.enabled === undefined || oInfo.enabled === null, "Enabled");
@@ -527,7 +526,7 @@ sap.ui.define([
 		oIcon.attachPress(function(){});
 		oInfo = oIcon.getAccessibilityInfo();
 		assert.strictEqual(oInfo.role, "button", "AriaRole");
-		assert.strictEqual(oInfo.type, Lib.getResourceBundleFor("sap.ui.core").getText("ACC_CTR_TYPE_BUTTON"), "Type");
+		assert.strictEqual(oInfo.type, sap.ui.getCore().getLibraryResourceBundle("sap.ui.core").getText("ACC_CTR_TYPE_BUTTON"), "Type");
 		assert.strictEqual(oInfo.description, "Tooltip", "Description");
 		assert.strictEqual(oInfo.focusable, true, "Focusable");
 		oIcon.setTooltip("");

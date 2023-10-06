@@ -13,9 +13,8 @@ sap.ui.define([
 	"sap/m/library",
 	"sap/ui/core/ResizeHandler",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/core/Core",
-	"sap/ui/core/Lib"
-], function(library, Control, ItemNavigation, Rem, AvatarGroupRenderer, Button, mLibrary, ResizeHandler, KeyCodes, Core, Lib) {
+	"sap/ui/core/Core"
+], function(library, Control, ItemNavigation, Rem, AvatarGroupRenderer, Button, mLibrary, ResizeHandler, KeyCodes, Core) {
 	"use strict";
 
 	var AvatarGroupType = library.AvatarGroupType;
@@ -278,7 +277,7 @@ sap.ui.define([
 	};
 
 	AvatarGroup.prototype._getResourceBundle = function () {
-		return Lib.getResourceBundleFor("sap.f");
+		return sap.ui.getCore().getLibraryResourceBundle("sap.f");
 	};
 
 	AvatarGroup.prototype._updateAccState = function () {

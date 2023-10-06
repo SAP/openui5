@@ -10,17 +10,15 @@ sap.ui.define([
 	'./Button',
 	'./ResponsivePopover',
 	'./ColorPalette',
-	'./library',
-	"sap/ui/core/Lib"
-], function(
+	'./library'
+], function (
 	Control,
 	Device,
 	ColorPickerDisplayMode,
 	Button,
 	ResponsivePopover,
 	ColorPalette,
-	library,
-	Lib
+	library
 ) {
 		"use strict";
 
@@ -181,7 +179,7 @@ sap.ui.define([
 		});
 
 		// get resource translation bundle;
-		var oLibraryResourceBundle = Lib.getResourceBundleFor("sap.m");
+		var oLibraryResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 
 		/**
 		 * Keeps reference to all API properties and/or methods that are about to be forwarded to either a

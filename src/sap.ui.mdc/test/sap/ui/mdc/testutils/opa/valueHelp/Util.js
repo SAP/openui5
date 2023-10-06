@@ -2,12 +2,11 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/ui/core/Core",
-	"sap/ui/core/Lib"
-], function(oCore, Lib) {
+	"sap/ui/core/Core"
+], function(oCore) {
 	"use strict";
 
-	var oMDCBundle = Lib.getResourceBundleFor("sap.ui.mdc");
+	var oMDCBundle = oCore.getLibraryResourceBundle("sap.ui.mdc");
 
 	var Util = {
 

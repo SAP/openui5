@@ -10,8 +10,7 @@ sap.ui.define([
 	'./TreeRenderer',
 	"sap/base/Log",
 	"sap/base/assert",
-	"sap/ui/model/controlhelper/TreeBindingProxy",
-	"sap/ui/core/Lib"
+	"sap/ui/model/controlhelper/TreeBindingProxy"
 ],
 function(
 	ListBase,
@@ -20,8 +19,7 @@ function(
 	TreeRenderer,
 	Log,
 	assert,
-	TreeBindingProxy,
-	Lib
+	TreeBindingProxy
 ) {
 	"use strict";
 
@@ -349,7 +347,7 @@ function(
 	};
 
 	Tree.prototype.getAccessibilityType = function() {
-		return Lib.getResourceBundleFor("sap.m").getText("ACC_CTR_TYPE_TREE");
+		return sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_TREE");
 	};
 
 	Tree.prototype.getAccessbilityPosition = function(oItem) {

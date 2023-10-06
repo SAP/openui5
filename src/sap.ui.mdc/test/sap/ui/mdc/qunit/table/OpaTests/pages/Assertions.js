@@ -12,8 +12,7 @@ sap.ui.define([
 	"sap/ui/test/matchers/Properties",
 	"sap/ui/test/matchers/PropertyStrictEquals",
 	"sap/ui/test/matchers/Visible",
-	"sap/ui/mdc/enums/TableType",
-	"sap/ui/core/Lib"
+	"sap/ui/mdc/enums/TableType"
 ], function(
 	/** @type sap.ui.core.Core */ Core,
 	/** @type sap.ui.core.library */ CoreLibrary,
@@ -24,9 +23,7 @@ sap.ui.define([
 	/** @type sap.ui.test.matchers.Properties */ Properties,
 	/** @type sap.ui.test.matchers.PropertyStrictEquals */ PropertyStrictEquals,
 	/** @type sap.ui.test.matchers.Visible */ Visible,
-	/** @type sap.ui.mdc.enums.TableType */ TableType,
-	Lib
-) {
+	/** @type sap.ui.mdc.enums.TableType */ TableType) {
 	"use strict";
 
 	/**
@@ -469,7 +466,7 @@ sap.ui.define([
 				controlType: "sap.m.Dialog",
 				success: function(aDialogs) {
 					const oDialog = aDialogs[0];
-					const oResourceBundle = Lib.getResourceBundleFor("sap.ui.export");
+					const oResourceBundle = Core.getLibraryResourceBundle("sap.ui.export");
 					return this.waitFor({
 						autoWait: false,
 						controlType: "sap.m.Title",

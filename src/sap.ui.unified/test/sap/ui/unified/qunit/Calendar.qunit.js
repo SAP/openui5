@@ -21,8 +21,7 @@ sap.ui.define([
 	"sap/ui/unified/calendar/MonthRenderer",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Core",
-	"sap/ui/core/date/UI5Date",
-	"sap/ui/core/Element"
+	"sap/ui/core/date/UI5Date"
 ], function(
 	qutils,
 	Calendar,
@@ -44,9 +43,8 @@ sap.ui.define([
 	MonthRenderer,
 	jQuery,
 	oCore,
-	UI5Date,
-	Element
-) {
+	UI5Date
+	) {
 
 	"use strict";
 	// set language to en-US, since we have specific language strings tested
@@ -152,17 +150,17 @@ sap.ui.define([
 	});
 
 	QUnit.test("Week day orders", function(assert) {
-		var oMonthDomRef = Element.registry.get("Cal1").getAggregation("month")[0].getDomRef(),
+		var oMonthDomRef = oCore.byId("Cal1").getAggregation("month")[0].getDomRef(),
 			aWeekHeaders = oMonthDomRef.querySelectorAll(".sapUiCalWH:not(.sapUiCalDummy)");
 
 		assert.equal(aWeekHeaders.length, 7, "7 weekheaders rendered");
 		assert.equal(aWeekHeaders[0].textContent, "Sun", "Sunday is the first weekday for en-US");
 
-		oMonthDomRef = Element.registry.get("Cal2").getAggregation("month")[0].getDomRef();
+		oMonthDomRef = oCore.byId("Cal2").getAggregation("month")[0].getDomRef();
 		aWeekHeaders = oMonthDomRef.querySelectorAll(".sapUiCalWH:not(.sapUiCalDummy)");
 		assert.equal(aWeekHeaders[0].textContent, "Mo", "Monday is the first weekday for de-DE");
 
-		oMonthDomRef = Element.registry.get("Cal3").getAggregation("month")[0].getDomRef();
+		oMonthDomRef = oCore.byId("Cal3").getAggregation("month")[0].getDomRef();
 		aWeekHeaders = oMonthDomRef.querySelectorAll(".sapUiCalWH:not(.sapUiCalDummy)");
 		assert.equal(aWeekHeaders[0].textContent, "Di", "Thuesday is the first weekday for custom setting");
 
@@ -175,7 +173,7 @@ sap.ui.define([
 		this.oCal1.setCalendarWeekNumbering("ISO_8601");
 		oCore.applyChanges();
 
-		var oMonthDomRef = Element.registry.get("Cal1").getAggregation("month")[0].getDomRef(),
+		var oMonthDomRef = oCore.byId("Cal1").getAggregation("month")[0].getDomRef(),
 			aWeekHeaders = oMonthDomRef.querySelectorAll(".sapUiCalWH:not(.sapUiCalDummy)");
 
 		assert.equal(aWeekHeaders.length, 7, "7 weekheaders rendered");
@@ -184,7 +182,7 @@ sap.ui.define([
 		this.oCal2.setCalendarWeekNumbering("MiddleEastern");
 		this.oCal2.setLocale("en-US");
 		oCore.applyChanges();
-		oMonthDomRef = Element.registry.get("Cal2").getAggregation("month")[0].getDomRef();
+		oMonthDomRef = oCore.byId("Cal2").getAggregation("month")[0].getDomRef();
 		aWeekHeaders = oMonthDomRef.querySelectorAll(".sapUiCalWH:not(.sapUiCalDummy)");
 		assert.equal(aWeekHeaders[0].textContent, "Sat", "Saturday is the first weekday for MiddleEastern");
 
@@ -192,7 +190,7 @@ sap.ui.define([
 		this.oCal3.setLocale("en-US");
 		this.oCal3.setFirstDayOfWeek(-1);
 		oCore.applyChanges();
-		oMonthDomRef = Element.registry.get("Cal3").getAggregation("month")[0].getDomRef();
+		oMonthDomRef = oCore.byId("Cal3").getAggregation("month")[0].getDomRef();
 		aWeekHeaders = oMonthDomRef.querySelectorAll(".sapUiCalWH:not(.sapUiCalDummy)");
 		assert.equal(aWeekHeaders[0].textContent, "Sun", "Sunday is the first weekday for WesternTraditional");
 

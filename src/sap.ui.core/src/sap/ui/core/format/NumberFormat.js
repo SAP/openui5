@@ -7,13 +7,14 @@ sap.ui.define([
 	'sap/ui/base/Object',
 	'sap/ui/core/Locale',
 	'sap/ui/core/LocaleData',
+	'sap/ui/core/Supportability',
 	'sap/base/Log',
 	'sap/base/assert',
 	'sap/base/util/extend',
 	'sap/ui/core/Configuration'
 
 ],
-	function(BaseObject, Locale, LocaleData, Log, assert, extend, Configuration) {
+	function(BaseObject, Locale, LocaleData, Supportability, Log, assert, extend, Configuration) {
 	"use strict";
 
 
@@ -1656,7 +1657,7 @@ sap.ui.define([
 	};
 
 	NumberFormat.prototype._addOriginInfo = function(sResult) {
-		if (Configuration.getOriginInfo()) {
+		if (Supportability.collectOriginInfo()) {
 			// String object is created on purpose and must not be a string literal
 			// eslint-disable-next-line no-new-wrappers
 			sResult = new String(sResult);

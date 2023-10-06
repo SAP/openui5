@@ -14,8 +14,7 @@ sap.ui.define([
 	"sap/m/Text",
 	"sap/m/ToggleButton",
 	"sap/m/App",
-	"sap/ui/core/date/UI5Date",
-	"sap/ui/core/Element"
+	"sap/ui/core/date/UI5Date"
 ], function(
 	Bar,
 	Button,
@@ -32,8 +31,7 @@ sap.ui.define([
 	MText,
 	ToggleButton,
 	App,
-	UI5Date,
-	Element
+	UI5Date
 ) {
 	"use strict";
 
@@ -64,7 +62,7 @@ sap.ui.define([
 
 		iEvent++;
 
-		var oText = Element.registry.get("TextEvent");
+		var oText = oCore.byId("TextEvent");
 		oText.setText("Event " + iEvent + "\nId: " + oEvent.getSource().getId() + "\nFrom: " + sFrom + "\nTo: " + sTo + "\nvalid: " + bValid);
 		if (bValid) {
 			oDRS.setValueState(ValueState.None);
@@ -77,7 +75,7 @@ sap.ui.define([
 
 	function toggleSpecialDates(oEvent) {
 		var bPressed = oEvent.getParameter("pressed"),
-			oDRS = Element.registry.get("DRS2");
+			oDRS = oCore.byId("DRS2");
 
 		if (!DateTypeRange) {
 			oCore.loadLibrary("sap.ui.unified");
@@ -197,6 +195,6 @@ sap.ui.define([
 
 	function handleTimezoneButtonPress(e) {
 		Configuration.setTimezone(e.getSource().getText());
-		Element.registry.get("DRS12").setValue("");
+		oCore.byId("DRS12").setValue("");
 	}
 });

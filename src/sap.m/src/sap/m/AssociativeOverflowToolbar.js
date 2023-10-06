@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.m.AssociativeOverflowToolbar.
-sap.ui.define(['sap/base/Log', './OverflowToolbar', './OverflowToolbarRenderer', 'sap/ui/Device', "sap/ui/core/Element"],
-	function(Log, OverflowToolbar, OverflowToolbarRenderer, Device, Element) {
+sap.ui.define(['sap/base/Log', './OverflowToolbar', './OverflowToolbarRenderer', 'sap/ui/Device'],
+	function (Log, OverflowToolbar, OverflowToolbarRenderer, Device) {
 		"use strict";
 
 		/**
@@ -42,7 +42,7 @@ sap.ui.define(['sap/base/Log', './OverflowToolbar', './OverflowToolbarRenderer',
 			var aControls = [];
 
 			associativeArrayWithIds.forEach(function (controlId) {
-				var oControl = Element.registry.get(controlId);
+				var oControl = sap.ui.getCore().byId(controlId);
 				if (oControl) {
 					aControls.push(oControl);
 				}
@@ -113,13 +113,13 @@ sap.ui.define(['sap/base/Log', './OverflowToolbar', './OverflowToolbarRenderer',
 				case 'insertContent':
 					return this.insertContent(aArguments[0], aArguments[1]);
 				case 'removeContent':
-					return Element.registry.get(this.removeAssociation("content", aArguments[0], aArguments[1], aArguments[2])) || null;
+					return sap.ui.getCore().byId(this.removeAssociation("content", aArguments[0], aArguments[1], aArguments[2])) || null;
 				case 'destroyContent':
 					this.removeAllAssociation("content", aArguments[0]);
 					return this;
 				case 'removeAllContent':
 					return this.removeAllAssociation("content", aArguments[0]).map(function (controlId) {
-						return Element.registry.get(controlId);
+						return sap.ui.getCore().byId(controlId);
 					});
 				default:
 					return OverflowToolbar.prototype._callToolbarMethod.call(this, sFuncName, aArguments);

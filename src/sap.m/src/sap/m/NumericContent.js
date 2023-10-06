@@ -12,9 +12,8 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	"sap/base/util/deepEqual",
 	"sap/ui/core/Configuration",
-	"sap/ui/core/Lib",
 	"sap/ui/core/Core"
-], function(library, Control, IconPool, ResizeHandler, Image, NumericContentRenderer, KeyCodes, deepEqual, Configuration, Lib, Core) {
+], function(library, Control, IconPool, ResizeHandler, Image, NumericContentRenderer, KeyCodes, deepEqual, Configuration, Core) {
 	"use strict";
 
 	var LANG_MAP = { // keys are compared in lowercase
@@ -209,7 +208,7 @@ sap.ui.define([
 	/* --- Lifecycle methods --- */
 
 	NumericContent.prototype.init = function () {
-		this._rb = Lib.getResourceBundleFor("sap.m");
+		this._rb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 		this.setTooltip("{AltText}");
 		Core.ready(this._registerResizeHandler.bind(this));
 	};

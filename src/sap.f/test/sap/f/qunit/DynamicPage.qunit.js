@@ -21,11 +21,9 @@ sap.ui.define([
 	'sap/ui/core/Control',
 	'sap/ui/core/IntervalTrigger',
 	"sap/ui/qunit/QUnitUtils",
-	"sap/ui/events/KeyCodes",
-	"sap/ui/core/Element",
-	"sap/ui/core/Lib"
+	"sap/ui/events/KeyCodes"
 ],
-function(
+function (
 	$,
 	DynamicPageUtil,
 	DynamicPage,
@@ -47,9 +45,7 @@ function(
 	Control,
 	IntervalTrigger,
 	QUnitUtils,
-	KeyCodes,
-	Element,
-	Lib
+	KeyCodes
 ) {
 	"use strict";
 
@@ -3180,7 +3176,7 @@ function(
 
 	QUnit.test("Test flex-basis styles when areaShrinkRatio is set", function(assert) {
 		// arrange
-		var oTitle = Element.registry.get("comp---view--DynamicPageTitle"),
+		var oTitle = Core.byId("comp---view--DynamicPageTitle"),
 			oHeading = oTitle.$("left-inner"),
 			oContent = oTitle.$("content"),
 			oActions = oTitle.$("mainActions");
@@ -3316,7 +3312,7 @@ function(
 	QUnit.test("ARIA attributes", function(assert) {
 		// Arrange
 		var $oDynamicPage = this.oDynamicPage.$(),
-		    sExpectedRoleDescription = Lib.getResourceBundleFor("sap.f")
+		    sExpectedRoleDescription = Core.getLibraryResourceBundle("sap.f")
 			    .getText(DynamicPage.ARIA_ROLE_DESCRIPTION);
 
 		// Assert

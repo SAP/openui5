@@ -52,9 +52,7 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/m/List",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Lib",
-	// jQuery Plugin "control"
-	"sap/ui/dom/jquery/control"
+	"sap/ui/dom/jquery/control" // jQuery Plugin "control"
 ], function(
 	DateNavigation,
 	Control,
@@ -103,8 +101,7 @@ sap.ui.define([
 	deepEqual,
 	Log,
 	List,
-	jQuery,
-	Lib
+	jQuery
 ) {
 	"use strict";
 
@@ -738,7 +735,7 @@ sap.ui.define([
 		this.setAggregation("header", this._createHeader());
 		this._attachHeaderEvents();
 
-		this._oRB = Lib.getResourceBundleFor("sap.m");
+		this._oRB = Core.getLibraryResourceBundle("sap.m");
 
 		var sId = this.getId();
 		this._oIntervalTypeSelect = this._getHeader()._getOrCreateViewSwitch();
@@ -2023,7 +2020,7 @@ sap.ui.define([
 			return;
 		}
 		var sCurrentPickerId = this._getHeader().getAssociation("currentPicker"),
-			oPicker = Element.registry.get(sCurrentPickerId),
+			oPicker = Core.byId(sCurrentPickerId),
 			sViewKey = this.getViewKey(),
 			oDateNav = this._dateNav,
 			oPCStart = oDateNav.getStart(),
@@ -2187,7 +2184,7 @@ sap.ui.define([
 	PlanningCalendar.prototype._updatePickerSelection = function() {
 		var oRangeDates = this._getFirstAndLastRangeDate(),
 			sCurrentPickerId = this._getHeader().getAssociation("currentPicker"),
-			oPicker = Element.registry.get(sCurrentPickerId),
+			oPicker = Core.byId(sCurrentPickerId),
 			oSelectedRange;
 
 		oSelectedRange = new DateRange({
@@ -2627,7 +2624,7 @@ sap.ui.define([
 		this.setAssociation("legend", vLegend, true);
 
 		var aRows = this.getRows(),
-			oLegend = this.getLegend() && Element.registry.get(this.getLegend()),
+			oLegend = this.getLegend() && Core.byId(this.getLegend()),
 			oLegendDestroyObserver;
 
 		for (var i = 0; i < aRows.length; i++) {
@@ -3618,7 +3615,7 @@ sap.ui.define([
 		for (var i = 0; i < rows.length; i++) {
 			var aApps = getRowTimeline(rows[i]).aSelectedAppointments;
 			for (var j = 0; j < aApps.length; j++) {
-				var oApp = Element.registry.get(aApps[j]);
+				var oApp = Core.byId(aApps[j]);
 				if (oApp) {
 					oApp.setProperty("selected", false, true);
 					oApp.$().removeClass("sapUiCalendarAppSel");
@@ -3922,7 +3919,7 @@ sap.ui.define([
 			sLegendId = oTimeline.getLegend();
 
 		if (sLegendId) {
-			oLegend = Element.registry.get(sLegendId);
+			oLegend = Core.byId(sLegendId);
 			if (oLegend) {
 				aTypes = oLegend.getAppointmentItems ? oLegend.getAppointmentItems() : oLegend.getItems();
 			} else {
@@ -4247,7 +4244,7 @@ sap.ui.define([
 					fnAlignIndicator = function () {
 						var $Indicator = jQuery(oDragSession.getIndicator()),
 							oDropRects = oDragSession.getDropControl().getDomRef().getBoundingClientRect(),
-							oRowRects = Element.registry.get(sTargetElementId).getDomRef().getBoundingClientRect(),
+							oRowRects = Core.byId(sTargetElementId).getDomRef().getBoundingClientRect(),
 							iAppWidth = oDragSession.getDragControl().$().outerWidth(),
 							bRTL = Core.getConfiguration().getRTL(),
 							iAvailWidth = bRTL ? Math.ceil(oDropRects.right) - oRowRects.left : oRowRects.right - Math.ceil(oDropRects.left);
@@ -4437,7 +4434,7 @@ sap.ui.define([
 							$Indicator.addClass("sapUiDnDIndicatorHide");
 						},
 						oDropRects = oDragSession.getDropControl().getDomRef().getBoundingClientRect(),
-						oRowRects = Element.registry.get(sTargetElementId).getDomRef().getBoundingClientRect(),
+						oRowRects = Core.byId(sTargetElementId).getDomRef().getBoundingClientRect(),
 						mDraggedControlConfig = {
 							width: oDropRects.left + oDropRects.width - (oDragSession.getDragControl().$().position().left + oRowRects.left),
 							"z-index": 1,
@@ -4763,11 +4760,11 @@ sap.ui.define([
 	function getRow(oListItem) {
 		var sId = oListItem.getId();
 
-		return Element.registry.get(sId.substring(0, sId.indexOf(LISTITEM_SUFFIX)));
+		return Core.byId(sId.substring(0, sId.indexOf(LISTITEM_SUFFIX)));
 	}
 
 	function getListItem(oRow) {
-		return Element.registry.get(oRow.getId() + LISTITEM_SUFFIX);
+		return Core.byId(oRow.getId() + LISTITEM_SUFFIX);
 	}
 
 	function getRowHeader(oRow) {

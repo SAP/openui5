@@ -423,10 +423,6 @@ sap.ui.define([
 	 * @returns {Promise<Response>} A <code>Promise</code> that resolves to a <code>Response</code> object.
 	 */
 	Host.prototype.fetch = function (sResource, mOptions, mRequestSettings, oCard) {
-		if (Configuration.getStatisticsEnabled()) {
-			sResource = this._addStatisticsParameter(sResource);
-		}
-
 		if (this.bUseExperimentalCaching) {
 			this._addCacheHeaders(mOptions.headers, mRequestSettings);
 		}

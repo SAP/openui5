@@ -25,10 +25,7 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/model/Sorter",
 	"sap/m/library",
-	"sap/ui/core/Lib",
-	"sap/ui/core/Element",
-	// side effect: provides jQuery.Event.prototype.isMarked
-	"sap/ui/events/jquery/EventExtension"
+	"sap/ui/events/jquery/EventExtension" // side effect: provides jQuery.Event.prototype.isMarked
 ], function(
 	qutils,
 	createAndAppendDiv,
@@ -54,9 +51,7 @@ sap.ui.define([
 	InvisibleText,
 	Core,
 	Sorter,
-	Library,
-	Lib,
-	Element
+	Library
 ) {
 	"use strict";
 
@@ -66,7 +61,7 @@ sap.ui.define([
 	// shortcut for sap.ui.core.OpenState
 	var OpenState = coreLibrary.OpenState;
 
-	var oResourceBundle = Lib.getResourceBundleFor("sap.m");
+	var oResourceBundle = Core.getLibraryResourceBundle("sap.m");
 	var nPopoverAnimationTick = 300;
 	var TokenizerRenderMode = Library.TokenizerRenderMode;
 
@@ -2600,7 +2595,7 @@ sap.ui.define([
 	QUnit.test("Tokens information should be read out", function(assert) {
 		// arrange
 		var sInvisibleTextId = this.multiInput1.getAggregation("tokenizer").getTokensInfoId(),
-			oInvisibleText = Element.registry.get(sInvisibleTextId);
+			oInvisibleText = Core.byId(sInvisibleTextId);
 
 		// assert
 		assert.strictEqual(oInvisibleText.getText(), oResourceBundle.getText("TOKENIZER_ARIA_NO_TOKENS"), "'MultiInput no tokens' text is set.");

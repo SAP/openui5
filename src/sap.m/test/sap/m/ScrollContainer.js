@@ -9,9 +9,8 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/core/HTML",
 	"sap/ui/layout/HorizontalLayout",
-	"sap/ui/layout/VerticalLayout",
-	"sap/ui/core/Element"
-], function(App, Button, Image, Input, Label, Page, ScrollContainer, oCore, HTML, HorizontalLayout, VerticalLayout, Element) {
+	"sap/ui/layout/VerticalLayout"
+], function(App, Button, Image, Input, Label, Page, ScrollContainer, oCore, HTML, HorizontalLayout, VerticalLayout) {
 	"use strict";
 
 	var oApp = new App("myApp", {initialPage: "oPage1"});
@@ -148,9 +147,9 @@ sap.ui.define([
 					new Button({
 						text: "Scroll to div number",
 						press: function () {
-							var sValue = Element.registry.get("input").getValue();
+							var sValue = oCore.byId("input").getValue();
 							var oElement = document.getElementById("div-" + sValue);
-							Element.registry.get("oScrollContainer4").scrollToElement(oElement);
+							oCore.byId("oScrollContainer4").scrollToElement(oElement);
 							oElement.style.backgroundColor = "white";
 							oElement.style.border = "skyblue";
 						}
@@ -223,9 +222,9 @@ sap.ui.define([
 			}),
 			new Button({
 				text: "Scroll", press: function () {
-					var x = parseInt(Element.registry.get("xIn").getValue());
-					var t = parseInt(Element.registry.get("tIn").getValue());
-					Element.registry.get("oScrollContainer2").scrollTo(x, 0, t);
+					var x = parseInt(oCore.byId("xIn").getValue());
+					var t = parseInt(oCore.byId("tIn").getValue());
+					oCore.byId("oScrollContainer2").scrollTo(x, 0, t);
 				}
 			}),
 			new Button({
@@ -238,9 +237,9 @@ sap.ui.define([
 		]
 	});
 
-	Element.registry.get("oScrollContainer2").attachEvent("scrollEnd", function (evt) {
+	oCore.byId("oScrollContainer2").attachEvent("scrollEnd", function (evt) {
 		var x = evt.getParameter("x");
-		var oPage1 = Element.registry.get("oPage1");
+		var oPage1 = oCore.byId("oPage1");
 		var oHtml = new HTML({content: "<div>" + new Date().getTime() + ": Rerender on scrollEnd at x=" + x + "</div>"});
 		setTimeout(function () {
 			oPage1.addContent(oHtml);

@@ -27,9 +27,8 @@ sap.ui.define([
 	"sap/m/Panel",
 	"sap/m/Popover",
 	"sap/m/Select",
-	"sap/m/HBox",
-	"sap/ui/core/Element"
-], function(
+	"sap/m/HBox"
+], function (
 	BaseController,
 	Constants,
 	exploreNavigationModel,
@@ -58,8 +57,7 @@ sap.ui.define([
 	Panel,
 	Popover,
 	Select,
-	HBox,
-	Element
+	HBox
 ) {
 	"use strict";
 
@@ -235,13 +233,13 @@ sap.ui.define([
 		onSwitchEditorMode: function (oEvent) {
 			var selectedMode = oEvent.getParameter("selectedItem").getKey(),
 			sPreviewPosition = exploreSettingsModel.getProperty("/previewPosition");
-			var oPanel = Element.registry.get("conf_card_panel");
+			var oPanel = Core.byId("conf_card_panel");
 
 			var oEditor = this._getCardEditorControl();
 			if (oEditor) {
 				oEditor.destroy();
 			}
-			var mTextArea = Element.registry.get("show_manifest_changes_textarea");
+			var mTextArea = Core.byId("show_manifest_changes_textarea");
 			if (mTextArea) {
 				mTextArea.destroy();
 				exploreSettingsModel.getData().manifestChangesShowed = false;
@@ -283,7 +281,7 @@ sap.ui.define([
 		//In the translation mode, configuration card editor will be reloaded if user update the language
 		onSwitchLanguage: function (oEvent) {
 			var selectedLanguage = oEvent.getParameter("selectedItem").getKey();
-			var oPanel = Element.registry.get("conf_card_panel");
+			var oPanel = Core.byId("conf_card_panel");
 			var oEditor = this._getCardEditorControl();
 			if (oEditor) {
 				oEditor.destroy();
@@ -337,10 +335,10 @@ sap.ui.define([
 
 		onChangeBASEditor: function (oEvent) {
 			var sEditorType = exploreSettingsModel.getProperty("/editorType");
-			if (Element.registry.get("conf_card_panel")) {
-				Element.registry.get("conf_card_panel").destroy();
+			if (Core.byId("conf_card_panel")) {
+				Core.byId("conf_card_panel").destroy();
 			}
-			var mTextArea = Element.registry.get("show_manifest_changes_textarea");
+			var mTextArea = Core.byId("show_manifest_changes_textarea");
 			if (mTextArea) {
 				mTextArea.destroy();
 				exploreSettingsModel.getData().manifestChangesShowed = false;
@@ -359,10 +357,10 @@ sap.ui.define([
 
 		onChangeCardEditor: function(oEvent) {
 			var sEditorType = exploreSettingsModel.getProperty("/editorType");
-			if (Element.registry.get("conf_card_panel")) {
-				Element.registry.get("conf_card_panel").destroy();
+			if (Core.byId("conf_card_panel")) {
+				Core.byId("conf_card_panel").destroy();
 			}
-			var mTextArea = Element.registry.get("show_manifest_changes_textarea");
+			var mTextArea = Core.byId("show_manifest_changes_textarea");
 			if (mTextArea) {
 				mTextArea.destroy();
 				exploreSettingsModel.getData().manifestChangesShowed = false;
@@ -450,8 +448,8 @@ sap.ui.define([
 		},
 
 		showTextEditor: function() {
-			if (Element.registry.get("conf_card_panel")) {
-				Element.registry.get("conf_card_panel").destroy();
+			if (Core.byId("conf_card_panel")) {
+				Core.byId("conf_card_panel").destroy();
 			}
 
 			exploreSettingsModel.setProperty("/editorType", Constants.EDITOR_TYPE.TEXT);
@@ -742,7 +740,7 @@ sap.ui.define([
 		},
 
 		_getCardEditorControl: function() {
-			var oPanel = Element.registry.get("conf_card_panel"),
+			var oPanel = Core.byId("conf_card_panel"),
 			oPanelContent = oPanel.getContent(),
 			oCardEditor;
 			for (var i = 0; i < oPanelContent.length; i++) {
@@ -1293,9 +1291,9 @@ sap.ui.define([
 			}
 			//display a message strip
 			if (oConfigurationCardMFChangesforAdmin || oConfigurationCardMFChangesforContent) {
-				var oMessageStrip = Element.registry.get("msgstrip_manifest_change");
+				var oMessageStrip = Core.byId("msgstrip_manifest_change");
 				if (!oMessageStrip) {
-					var oPanel = Element.registry.get("conf_card_panel");
+					var oPanel = Core.byId("conf_card_panel");
 					oMessageStrip = new MessageStrip({
 						id: "msgstrip_manifest_change",
 						showIcon: true,
@@ -1316,8 +1314,8 @@ sap.ui.define([
 
 		onShowManifestChanges: function(oEvent) {
 			var manifestChangeShowed = exploreSettingsModel.getData().manifestChangesShowed,
-			oPage = Element.registry.get("container-cardExplorer---exploreSamples--editPage"),
-			oPanel = Element.registry.get("conf_card_panel");
+			oPage = Core.byId("container-cardExplorer---exploreSamples--editPage"),
+			oPanel = Core.byId("conf_card_panel");
 			if (!manifestChangeShowed) {
 				// var oPanel = Core.byId("conf_card_panel"),
 				var aChanges,
@@ -1346,7 +1344,7 @@ sap.ui.define([
 				exploreSettingsModel.getData().manifestChangesShowed = true;
 				exploreSettingsModel.refresh();
 			} else {
-				var mTextArea = Element.registry.get("show_manifest_changes_textarea");
+				var mTextArea = Core.byId("show_manifest_changes_textarea");
 				oPanel.setHeight("100%");
 				oPage.removeContent(mTextArea);
 				mTextArea.destroy();
@@ -1356,8 +1354,8 @@ sap.ui.define([
 		},
 
 		onResetCardEditor: function () {
-			var oPanel = Element.registry.get("conf_card_panel"),
-			oMSGStrip = Element.registry.get("msgstrip_manifest_change"),
+			var oPanel = Core.byId("conf_card_panel"),
+			oMSGStrip = Core.byId("msgstrip_manifest_change"),
 			oEditor = this._getCardEditorControl(),
 			sMode = oEditor.getMode(),
 			sPreviewPosition = exploreSettingsModel.getProperty("/previewPosition"),
@@ -1400,8 +1398,8 @@ sap.ui.define([
 			}.bind(this));
 
 			//destroy manifest changes textArea if exists
-			var mTextArea = Element.registry.get("show_manifest_changes_textarea"),
-			oPage = Element.registry.get("container-cardExplorer---exploreSamples--editPage");
+			var mTextArea = Core.byId("show_manifest_changes_textarea"),
+			oPage = Core.byId("container-cardExplorer---exploreSamples--editPage");
 			if (mTextArea) {
 				oPanel.setHeight("100%");
 				oPage.removeContent(mTextArea);

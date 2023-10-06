@@ -5,24 +5,30 @@ sap.ui.define([
 	"sap/ui/layout/SplitterLayoutData",
 	"sap/m/Button",
 	"sap/m/Panel",
+	"sap/m/ScrollContainer",
 	"sap/ui/core/library",
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/core/RenderManager",
 	"sap/ui/core/ResizeHandler",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/ui/dom/units/Rem"
 ], function (
 	Log,
 	Splitter,
 	SplitterLayoutData,
 	Button,
 	Panel,
+	ScrollContainer,
 	coreLibrary,
 	XMLView,
 	RenderManager,
 	ResizeHandler,
-	oCore
+	oCore,
+	Rem
 ) {
 	"use strict";
+
+	const DOM_RENDER_LOCATION = "qunit-fixture";
 
 	var Orientation = coreLibrary.Orientation;
 
@@ -105,7 +111,8 @@ sap.ui.define([
 			}
 		};
 		oSplitter.addDelegate(oDelegate);
-		oSplitter.rerender();
+		oSplitter.invalidate();
+		oCore.applyChanges();
 	});
 
 	QUnit.test("Absolute vertical sizing", function (assert) {
@@ -126,7 +133,8 @@ sap.ui.define([
 			}
 		};
 		oSplitter.addDelegate(oDelegate);
-		oSplitter.rerender();
+		oSplitter.invalidate();
+		oCore.applyChanges();
 	});
 
 	QUnit.test("Sizing with rems", function (assert) {
@@ -250,7 +258,8 @@ sap.ui.define([
 			}
 		};
 		oSplitter.addDelegate(oDelegate);
-		oSplitter.rerender();
+		oSplitter.invalidate();
+		oCore.applyChanges();
 	});
 
 	QUnit.test("Automatic vertical sizing ", function (assert) {
@@ -270,7 +279,52 @@ sap.ui.define([
 			}
 		};
 		oSplitter.addDelegate(oDelegate);
-		oSplitter.rerender();
+		oSplitter.invalidate();
+		oCore.applyChanges();
+	});
+
+	QUnit.module("% Area Sizes", {
+		beforeEach: function () {
+			this.oSplitter = new Splitter("splitter");
+			this.oContainer = new ScrollContainer({
+				content: this.oSplitter,
+				width: "400px",
+				height: "300px"
+			});
+			this.oContainer.placeAt(DOM_RENDER_LOCATION);
+			oCore.applyChanges();
+		},
+		afterEach: function () {
+			this.oContainer.destroy();
+			this.oSplitter = null;
+		}
+	});
+
+	QUnit.test("Content area with % size", function (assert) {
+		// Arrange
+		var oFirstContentItem = new Button({
+			layoutData: new SplitterLayoutData({
+				size: "25%"
+			})
+		});
+		this.oSplitter.addContentArea(oFirstContentItem);
+		this.oSplitter.addContentArea(new Button());
+
+		// Act
+		this.oSplitter.setWidth("400px");
+		this.oSplitter._recalculateSizes();
+
+		// Assert
+		var iExpectedSize = 25 * this.oSplitter._calcAvailableContentSize() / 100;
+		assert.strictEqual(this.oSplitter.getCalculatedSizes()[0], iExpectedSize, "Content area size should be exactly 25% of the available width (bars excluded)");
+
+		// Act
+		this.oContainer.setWidth("1000px");
+		oCore.applyChanges();
+
+		// Assert
+		iExpectedSize = 25 * this.oSplitter._calcAvailableContentSize() / 100;
+		assert.strictEqual( this.oSplitter.getCalculatedSizes()[0], iExpectedSize, "Content area size should be exactly 25% of the available width (bars excluded)");
 	});
 
 	QUnit.test("Single area with 100% size", function (assert) {
@@ -279,17 +333,11 @@ sap.ui.define([
 			text: "Content 2",
 			layoutData: new SplitterLayoutData({size: "100%"})
 		});
-		var oSplitter = new Splitter({
-			contentAreas: [oCont]
-		});
-		oSplitter.placeAt("qunit-fixture");
+		this.oSplitter.addContentArea(oCont);
 		oCore.applyChanges();
 
 		// Assert
-		assert.strictEqual(oCont.$().parent().width(), oSplitter.$().width(), "Content area should take all the available width when size is 100%");
-
-		// Clean up
-		oSplitter.destroy();
+		assert.strictEqual(oCont.$().parent().width(), this.oSplitter.$().width(), "Content area should take all the available width when size is 100%");
 	});
 
 	QUnit.module("Mixed Area Sizes", {
@@ -322,7 +370,8 @@ sap.ui.define([
 			}
 		};
 		oSplitter.addDelegate(oDelegate);
-		oSplitter.rerender();
+		oSplitter.invalidate();
+		oCore.applyChanges();
 	});
 
 	QUnit.test("Mixed vertical sizing", function (assert) {
@@ -348,9 +397,159 @@ sap.ui.define([
 			}
 		};
 		oSplitter.addDelegate(oDelegate);
-		oSplitter.rerender();
+		oSplitter.invalidate();
+		oCore.applyChanges();
 	});
 
+	QUnit.module("Responsiveness", {
+		beforeEach: function () {
+			this.oSplitter = new Splitter("splitter");
+			this.oContainer = new ScrollContainer({
+				content: this.oSplitter,
+				width: "400px",
+				height: "300px"
+			});
+			this.oContainer.placeAt(DOM_RENDER_LOCATION);
+			oCore.applyChanges();
+		},
+		afterEach: function () {
+			this.oContainer.destroy();
+			this.oSplitter = null;
+		}
+	});
+
+	QUnit.test("Sum of areas' width", function (assert) {
+		// Arrange
+		var iFirstContentAreaWidth, iSecondContentAreaWidth,
+			aCalculatedSizes,
+			iExpectedWidth = 500 - Rem.toPx(1); // 1rem is the size of the splitter bar;
+
+		this.oSplitter.addContentArea(new Button({
+			layoutData: new SplitterLayoutData({
+				size: "100px"
+			})
+		}));
+		this.oSplitter.addContentArea(new Button());
+
+		// Act
+		this.oContainer.setWidth("500px");
+		oCore.applyChanges();
+
+		aCalculatedSizes = this.oSplitter.getCalculatedSizes();
+		iFirstContentAreaWidth = aCalculatedSizes[0];
+		iSecondContentAreaWidth = aCalculatedSizes[1];
+
+		// Assert
+		assert.strictEqual(iFirstContentAreaWidth + iSecondContentAreaWidth, iExpectedWidth, "Sum of the widths of content areas should be equal to the size of the container minus the bar");
+	});
+
+	QUnit.test("Calculations should be done with 5 digit precision", function (assert) {
+		// Arrange
+		this.oSplitter.addContentArea(new Button());
+		this.oSplitter.addContentArea(new Button());
+		this.oSplitter._move.c1Size = 20.000000000000153;
+		this.oSplitter._move.c2Size = 599.9999999999998;
+
+		// Act
+		this.oSplitter._resizeContents(0, -20, true);
+
+		// Assert
+		// Before that fix this code would throw and exception and the test would fail.
+		assert.ok(true, "Resizing should be successful");
+	});
+
+	QUnit.test("Content area with minSize", function (assert) {
+		// Arrange
+		var aSizes;
+		this.oSplitter.addContentArea(new Button({
+			layoutData: new SplitterLayoutData({
+				minSize: 200
+			})
+		}));
+		this.oSplitter.addContentArea(new Button({
+			layoutData: new SplitterLayoutData({
+				minSize: 30
+			})
+		}));
+
+		// Act
+		this.oContainer.setWidth("300px");
+		oCore.applyChanges();
+
+		// Assert
+		aSizes = this.oSplitter.getCalculatedSizes();
+		assert.ok(aSizes[0] >= 200, "Content area should NOT get lower width than its 'minSize'.");
+		assert.ok(aSizes[1] >= 30, "Content area should NOT get lower width than its 'minSize'.");
+	});
+
+	QUnit.test("Calculation of % when they are more than available space, but set by app developer (should have truncation)", function (assert) {
+		// Arrange
+		var iTotalWidth = 1000;
+		this.oSplitter.setWidth(iTotalWidth + "px");
+		this.oSplitter.addContentArea(new Button({
+			layoutData: new SplitterLayoutData({
+				size: "auto",
+				minSize: 500
+			})
+		}));
+		this.oSplitter.addContentArea(new Button({
+			layoutData: new SplitterLayoutData({
+				size: "60%" // results in 600px
+			})
+		}));
+		oCore.applyChanges();
+		var aAreas = this.oSplitter._getContentAreas(),
+			iFirstAreaWidth = aAreas[0].$().parent().width(),
+			iSecondAreaWidth = aAreas[1].$().parent().width(),
+			iExpectedSecondAreaWidth = Math.floor(60 * this.oSplitter._calcAvailableContentSize() / 100); // 60%
+
+		// Assert
+		assert.strictEqual(iFirstAreaWidth, 500, "Area width is set to its minSize");
+		assert.strictEqual(iSecondAreaWidth, iExpectedSecondAreaWidth, "Area width is set to 60% of content size");
+		assert.ok(iFirstAreaWidth + iSecondAreaWidth >= iTotalWidth, "Calculated space exceeds available width. No correction applied.");
+	});
+
+	QUnit.test("Calculation of % when they are more than available space but set by Splitter (should NOT have truncation)", function (assert) {
+		// Arrange
+		var iTotalWidth = 1000,
+			iFirstAreaMinSize = 500;
+		this.oSplitter.setWidth(iTotalWidth + "px");
+		this.oSplitter.addContentArea(new Button({
+			layoutData: new SplitterLayoutData({
+				size: "90%",
+				minSize: iFirstAreaMinSize
+			})
+		}));
+		this.oSplitter.addContentArea(new Button());
+		oCore.applyChanges();
+		var $bar = this.oSplitter.$().children("#splitter-splitbar-0");
+
+		// Act - move the bar
+		this.oSplitter.onmousedown({
+			target: $bar[0],
+			pageX: $bar.position().left
+		});
+		this.oSplitter._onBarMoveEnd({
+			changedTouches: false,
+			pageX: 400
+		}); // used to deregister event listeners added onmousedown
+		this.oSplitter._resize();
+
+		var aAreas = this.oSplitter._getContentAreas(),
+			iFirstAreaWidth = aAreas[0].$().parent().width(),
+			iSecondAreaWidthBeforeParentShrink = aAreas[1].$().parent().width();
+
+		// Assert
+		assert.strictEqual(iFirstAreaWidth, iFirstAreaMinSize, "Area width is set to its minSize");
+
+		// Act - shrink the whole splitter
+		this.oSplitter.setWidth("600px");
+		oCore.applyChanges();
+		var iSecondAreaWidthAfterParentShrink = aAreas[1].$().parent().width();
+
+		assert.ok(iSecondAreaWidthAfterParentShrink < iSecondAreaWidthBeforeParentShrink, "Second area had shrunk");
+		assert.ok(iFirstAreaWidth + iSecondAreaWidthAfterParentShrink <= iTotalWidth, "Calculated space doesn't exceed available width. Correction applied.");
+	});
 
 	QUnit.module("General tests");
 
@@ -636,6 +835,29 @@ sap.ui.define([
 		assert.strictEqual(oStub.callCount, 1, "Touch on a splitter bar icon should trigger _onBarMoveStart");
 	});
 
+	QUnit.test("Resize event", function (assert) {
+		// Arrange
+		const done = assert.async();
+		const [oFirstContentArea, oSecondContentArea, oThirdContentArea] = this.oSplitter.getContentAreas();
+		oFirstContentArea.getLayoutData().setSize("100.2px");
+		oSecondContentArea.getLayoutData().setSize("100px");
+		oThirdContentArea.getLayoutData().setSize("100px");
+		this.oSplitter.triggerResize(true);
+
+		this.oSplitter.attachResize((oEvent) => {
+			// Assert
+
+			assert.deepEqual(oEvent.getParameter("oldSizes"), [100, 100, 100], "Old sizes are integers");
+			assert.deepEqual(oEvent.getParameter("newSizes"), [50, 50, 50], "New sizes are integers");
+			done();
+		});
+
+		// Act
+		oFirstContentArea.getLayoutData().setSize("50px");
+		oSecondContentArea.getLayoutData().setSize("50.5px");
+		oThirdContentArea.getLayoutData().setSize("50px");
+	});
+
 	QUnit.module("Resize Handling");
 
 	QUnit.test("Size calculation when splitter is located in the preserve area", function (assert) {
@@ -665,7 +887,8 @@ sap.ui.define([
 				done();
 			});
 
-			oXMLView.rerender();
+			oXMLView.invalidate();
+			oCore.applyChanges();
 		}.bind(this));
 	});
 

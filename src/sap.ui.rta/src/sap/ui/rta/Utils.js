@@ -18,9 +18,7 @@ sap.ui.define([
 	"sap/base/util/restricted/_omit",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/Fragment",
-	"sap/ui/core/Core",
-	"sap/ui/core/Lib",
-	"sap/ui/core/Element"
+	"sap/ui/core/Core"
 ],
 function(
 	FieldExtensibility,
@@ -38,9 +36,7 @@ function(
 	_omit,
 	JSONModel,
 	Fragment,
-	Core,
-	Lib,
-	Element
+	Core
 ) {
 	"use strict";
 
@@ -118,7 +114,7 @@ function(
 	 * @returns{Promise} The Promise which resolves when popup is closed (via Remove OR Cancel actions)
 	 */
 	Utils.openRemoveConfirmationDialog = function(oElement, sText) {
-		var oTextResources = Lib.getResourceBundleFor("sap.ui.rta");
+		var oTextResources = Core.getLibraryResourceBundle("sap.ui.rta");
 		var sTitle;
 		return new Promise(
 			function(resolve) {
@@ -211,7 +207,7 @@ function(
 	Utils.getOverlayInstanceForDom = function(oDomRef) {
 		var sId = oDomRef.getAttribute("id");
 		if (sId) {
-			return Element.registry.get(sId);
+			return Core.byId(sId);
 		}
 		return undefined;
 	};
@@ -224,7 +220,7 @@ function(
 	 */
 	Utils.getFocusedOverlay = function() {
 		if (document.activeElement) {
-			var oElement = Element.registry.get(document.activeElement.id);
+			var oElement = Core.byId(document.activeElement.id);
 			if (oElement && oElement.isA("sap.ui.dt.ElementOverlay")) {
 				return oElement;
 			}
@@ -485,7 +481,7 @@ function(
 	 * @returns{Promise} Promise displaying the message box; resolves when it is closed with the pressed button
 	 */
 	Utils.showMessageBox = function(sMessageType, sMessageKey, mPropertyBag) {
-		return Lib.getResourceBundleFor("sap.ui.rta")/* LFUI5: For asynchronous loading, load the lib asynchronously and on promise resolution get the resource bundle. */
+		return Core.getLibraryResourceBundle("sap.ui.rta", true)
 		.then(function(oResourceBundle) {
 			mPropertyBag ||= {};
 			var sMessage = oResourceBundle.getText(sMessageKey, mPropertyBag.error ? [mPropertyBag.error.userMessage || mPropertyBag.error.message || mPropertyBag.error] : undefined);

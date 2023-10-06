@@ -12,9 +12,7 @@ sap.ui.define([
 	'./NavContainerRenderer',
 	"sap/ui/thirdparty/jquery",
 	"sap/base/Log",
-	"sap/ui/core/Element",
-	// jQuery Plugin "firstFocusableDomRef"
-	"sap/ui/dom/jquery/Focusable"
+	"sap/ui/dom/jquery/Focusable" // jQuery Plugin "firstFocusableDomRef"
 ], function(
 	library,
 	Configuration,
@@ -23,8 +21,7 @@ sap.ui.define([
 	RenderManager,
 	NavContainerRenderer,
 	jQuery,
-	Log,
-	Element
+	Log
 ) {
 	"use strict";
 
@@ -455,7 +452,7 @@ sap.ui.define([
 	NavContainer.prototype._getActualInitialPage = function () {
 		var pageId = this.getInitialPage();
 		if (pageId) {
-			var page = Element.registry.get(pageId);
+			var page = sap.ui.getCore().byId(pageId);
 			if (page) {
 				return page;
 			} else {
@@ -1069,7 +1066,7 @@ sap.ui.define([
 					Log.error(this.toString() + ": Cannot navigate backToPage('" + sRequestedPageId + "') because target page was not found among the previous pages.");
 					return this;
 				}
-				oToPage = Element.registry.get(info.id);
+				oToPage = sap.ui.getCore().byId(info.id);
 				if (!oToPage) {
 					Log.error(this.toString() + ": Cannot navigate backToPage('" + sRequestedPageId + "') because target page does not exist anymore.");
 					return this;
@@ -1798,7 +1795,7 @@ sap.ui.define([
 		if (typeof (vPage) == "number") {
 			oPage = this.getPages()[vPage];
 		} else if (typeof (vPage) == "string") {
-			oPage = Element.registry.get(vPage);
+			oPage = sap.ui.getCore().byId(vPage);
 		} else {
 			oPage = vPage;
 		}

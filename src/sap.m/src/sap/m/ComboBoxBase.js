@@ -21,9 +21,7 @@ sap.ui.define([
 	"sap/m/inputUtils/highlightDOMElements",
 	"sap/m/inputUtils/ListHelpers",
 	"sap/ui/core/IconPool",
-	"sap/ui/core/Core",
-	"sap/ui/core/Lib",
-	"sap/ui/core/Element"
+	"sap/ui/core/Core"
 ],
 	function(
 		Input,
@@ -44,9 +42,7 @@ sap.ui.define([
 		highlightDOMElements,
 		ListHelpers,
 		IconPool,
-		Core,
-		Lib,
-		Element
+		Core
 	) {
 		"use strict";
 
@@ -546,7 +542,7 @@ sap.ui.define([
 
 		ComboBoxBase.prototype.init = function() {
 			ComboBoxTextField.prototype.init.apply(this, arguments);
-			this._oRb = Lib.getResourceBundleFor("sap.m");
+			this._oRb = Core.getLibraryResourceBundle("sap.m");
 
 			// sets the picker popup type
 			this.setPickerType(Device.system.phone ? "Dialog" : "Dropdown");
@@ -825,7 +821,7 @@ sap.ui.define([
 				return;
 			}
 
-			var oRelatedControl = Element.registry.get(oEvent.relatedControlId);
+			var oRelatedControl = sap.ui.getCore().byId(oEvent.relatedControlId);
 
 			// to prevent the change event from firing when the downward-facing arrow button is pressed
 			if (oRelatedControl === this) {

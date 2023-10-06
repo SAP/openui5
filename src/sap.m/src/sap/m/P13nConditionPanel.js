@@ -42,8 +42,7 @@ sap.ui.define([
 	'sap/base/Log',
 	'sap/ui/thirdparty/jquery',
 	'./P13nOperationsHelper',
-	'sap/m/P13nConditionPanelRenderer',
-	"sap/ui/core/Lib"
+	'sap/m/P13nConditionPanelRenderer'
 ], function(
 	library,
 	coreLibrary,
@@ -82,8 +81,7 @@ sap.ui.define([
 	Log,
 	jQuery,
 	P13nOperationsHelper,
-	P13nConditionPanelRenderer,
-	Lib
+	P13nConditionPanelRenderer
 ) {
 	"use strict";
 
@@ -711,7 +709,7 @@ sap.ui.define([
 	 */
 	P13nConditionPanel.prototype.init = function() {
 		// init some resources
-		this._oRb = Lib.getResourceBundleFor("sap.m");
+		this._oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 		this._sFromLabelText = this._oRb.getText("CONDITIONPANEL_LABELFROM");
 		this._sToLabelText = this._oRb.getText("CONDITIONPANEL_LABELTO");
 		this._sValueLabelText = this._oRb.getText("CONDITIONPANEL_LABELVALUE");
@@ -2736,7 +2734,7 @@ sap.ui.define([
 
 	// Replase $r params in operation by resource bundle text
 	(function() {
-		var _oRb = Lib.getResourceBundleFor("sap.m");
+		var _oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 		P13nConditionPanel._oConditionMap[P13nConditionOperation.Empty] = P13nConditionPanel._oConditionMap[P13nConditionOperation.Empty].replace("$r", _oRb.getText("CONDITIONPANEL_OPTIONEmpty"));
 	})();
 

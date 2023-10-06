@@ -9,8 +9,7 @@ sap.ui.define([
 	'sap/ui/model/FormatException',
 	'sap/ui/model/ParseException',
 	'sap/ui/model/ValidateException',
-	'sap/base/util/each',
-	"sap/ui/core/Lib"
+	'sap/base/util/each'
 ],
 	function(
 		DynamicDateUtil,
@@ -19,8 +18,7 @@ sap.ui.define([
 		FormatException,
 		ParseException,
 		ValidateException,
-		each,
-		Lib
+		each
 	) {
 		"use strict";
 
@@ -141,8 +139,8 @@ sap.ui.define([
 
 		DynamicDate.prototype.validateValue = function(oValue) {
 			if (this.oConstraints) {
-				var oBundle = Lib.getResourceBundleFor("sap.ui.core"),
-					oMBundle = Lib.getResourceBundleFor("sap.m"),
+				var oBundle = sap.ui.getCore().getLibraryResourceBundle(),
+					oMBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m"),
 					aViolatedConstraints = [],
 					aMessages = [],
 					oOption = DynamicDateUtil.getOption(oValue.operator),

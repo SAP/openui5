@@ -13,8 +13,7 @@ sap.ui.define([
 	'sap/ui/unified/calendar/CalendarDate',
 	'sap/ui/unified/calendar/CalendarUtils',
 	'./CalendarInCardRenderer',
-	"sap/ui/core/date/UI5Date",
-	"sap/ui/core/Lib"
+	"sap/ui/core/date/UI5Date"
 ], function(
 	Button,
 	Toolbar,
@@ -26,8 +25,7 @@ sap.ui.define([
 	CalendarDate,
 	CalendarUtils,
 	CalendarRenderer,
-	UI5Date,
-	Lib
+	UI5Date
 ) {
 	"use strict";
 
@@ -108,7 +106,7 @@ sap.ui.define([
 	 */
 	CalendarInCard.prototype._initializeHeader = function() {
 		var sNavToolbarId = this.getId() + "--Head",
-			oRB = Lib.getResourceBundleFor("sap.f"),
+			oRB = Core.getLibraryResourceBundle("sap.f"),
 			oPrevBtn = new Button(sNavToolbarId + "-PrevBtn", {
 				icon: IconPool.getIconURI('slim-arrow-left'),
 				tooltip: oRB.getText("CALENDAR_BTN_PREV"),

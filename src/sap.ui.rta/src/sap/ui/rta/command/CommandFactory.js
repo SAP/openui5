@@ -9,8 +9,7 @@ sap.ui.define([
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/dt/Util",
 	"sap/ui/fl/Utils",
-	"sap/ui/fl/Layer",
-	"sap/ui/core/Element"
+	"sap/ui/fl/Layer"
 ], function(
 	merge,
 	Log,
@@ -19,8 +18,7 @@ sap.ui.define([
 	OverlayRegistry,
 	DtUtil,
 	FlexUtils,
-	Layer,
-	Element
+	Layer
 ) {
 	"use strict";
 
@@ -54,7 +52,7 @@ sap.ui.define([
 	// For the Move Action the UI control is already moved while the corresponding object in the binding template is in the source position.
 	// Therefore we have to overwrite the index of the control in the stack with the source index (iIndex) to determine the needed template object.
 	function getTemplateElementId(vElementOrId, iIndex) {
-		var oElement = (typeof vElementOrId === "string") ? Element.registry.get(vElementOrId) : vElementOrId;
+		var oElement = (typeof vElementOrId === "string") ? sap.ui.getCore().byId(vElementOrId) : vElementOrId;
 		var oElementOverlay = OverlayRegistry.getOverlay(oElement);
 		if (oElementOverlay) {
 			var mBoundControl = ElementUtil.getAggregationInformation(oElement);
@@ -114,43 +112,43 @@ sap.ui.define([
 	}
 
 	function adjustSelectorForCommand(mSettings) {
-		mSettings.element = Element.registry.get(getTemplateElementId(mSettings.element));
+		mSettings.element = sap.ui.getCore().byId(getTemplateElementId(mSettings.element));
 		evaluateResult(mSettings.element);
 	}
 
 	function configureCreateContainerCommand(oElement, mSettings, oDesignTimeMetadata) {
-		var oNewAddedElement = mSettings.element || Element.registry.get(mSettings.element.id);
+		var oNewAddedElement = mSettings.element || sap.ui.getCore().byId(mSettings.element.id);
 		var oAction = oDesignTimeMetadata.getActionDataFromAggregations("createContainer", oNewAddedElement)[0];
 		return oAction;
 	}
 
 	function adjustCreateContainerCommand(mSettings) {
-		mSettings.element = Element.registry.get(getTemplateElementId(mSettings.element));
+		mSettings.element = sap.ui.getCore().byId(getTemplateElementId(mSettings.element));
 		evaluateResult(mSettings.element);
 		mSettings.parentId = getTemplateElementId(mSettings.parentId);
 		evaluateResult(mSettings.parentId);
 	}
 
 	function configureMoveCommand(oElement, mSettings, oDesignTimeMetadata) {
-		var oMovedElement = mSettings.movedElements[0].element || Element.registry.get(mSettings.movedElements[0].id);
+		var oMovedElement = mSettings.movedElements[0].element || sap.ui.getCore().byId(mSettings.movedElements[0].id);
 		var oAction = oDesignTimeMetadata.getAction("move", oMovedElement);
 		return oAction;
 	}
 
 	function adjustMoveCommand(mSettings) {
 		var aTemplateMovedElements = mSettings.movedElements.map(function(oMovedElement) {
-			var oMovedElementInTemplate = Element.registry.get(getTemplateElementId(oMovedElement.element, oMovedElement.sourceIndex));
+			var oMovedElementInTemplate = sap.ui.getCore().byId(getTemplateElementId(oMovedElement.element, oMovedElement.sourceIndex));
 			evaluateResult(oMovedElementInTemplate);
 			return oMovedElementInTemplate;
 		});
 		mSettings.movedElements.forEach(function(oMovedElement, index) {
 			oMovedElement.element = aTemplateMovedElements[index];
 		});
-		mSettings.element = Element.registry.get(getTemplateElementId(mSettings.element));
+		mSettings.element = sap.ui.getCore().byId(getTemplateElementId(mSettings.element));
 		evaluateResult(mSettings.element);
-		mSettings.source.parent = Element.registry.get(getTemplateElementId(mSettings.source.parent));
+		mSettings.source.parent = sap.ui.getCore().byId(getTemplateElementId(mSettings.source.parent));
 		evaluateResult(mSettings.source.parent);
-		mSettings.target.parent = Element.registry.get(getTemplateElementId(mSettings.target.parent));
+		mSettings.target.parent = sap.ui.getCore().byId(getTemplateElementId(mSettings.target.parent));
 		evaluateResult(mSettings.target.parent);
 	}
 
@@ -165,9 +163,9 @@ sap.ui.define([
 	}
 
 	function adjustRenameCommand(mSettings) {
-		mSettings.element = Element.registry.get(getTemplateElementId(mSettings.element));
+		mSettings.element = sap.ui.getCore().byId(getTemplateElementId(mSettings.element));
 		evaluateResult(mSettings.element);
-		mSettings.renamedElement = Element.registry.get(getTemplateElementId(mSettings.renamedElement));
+		mSettings.renamedElement = sap.ui.getCore().byId(getTemplateElementId(mSettings.renamedElement));
 		evaluateResult(mSettings.renamedElement);
 	}
 
@@ -183,9 +181,9 @@ sap.ui.define([
 	}
 
 	function adjustRemoveCommand(mSettings) {
-		mSettings.element = Element.registry.get(getTemplateElementId(mSettings.element));
+		mSettings.element = sap.ui.getCore().byId(getTemplateElementId(mSettings.element));
 		evaluateResult(mSettings.element);
-		mSettings.removedElement = Element.registry.get(getTemplateElementId(mSettings.removedElement));
+		mSettings.removedElement = sap.ui.getCore().byId(getTemplateElementId(mSettings.removedElement));
 		evaluateResult(mSettings.removedElement);
 	}
 
@@ -196,12 +194,12 @@ sap.ui.define([
 	}
 
 	function adjustCombineCommand(mSettings) {
-		mSettings.element = Element.registry.get(getTemplateElementId(mSettings.element));
+		mSettings.element = sap.ui.getCore().byId(getTemplateElementId(mSettings.element));
 		evaluateResult(mSettings.element);
-		mSettings.source = Element.registry.get(getTemplateElementId(mSettings.source));
+		mSettings.source = sap.ui.getCore().byId(getTemplateElementId(mSettings.source));
 		evaluateResult(mSettings.source);
 		var aTemplateCombineElements = mSettings.combineElements.map(function(oCombineField) {
-			oCombineField = Element.registry.get(getTemplateElementId(oCombineField));
+			oCombineField = sap.ui.getCore().byId(getTemplateElementId(oCombineField));
 			evaluateResult(oCombineField);
 			return oCombineField;
 		});
@@ -215,11 +213,11 @@ sap.ui.define([
 	}
 
 	function adjustSplitCommand(mSettings) {
-		mSettings.element = Element.registry.get(getTemplateElementId(mSettings.element));
+		mSettings.element = sap.ui.getCore().byId(getTemplateElementId(mSettings.element));
 		evaluateResult(mSettings.element);
-		mSettings.parentElement = Element.registry.get(getTemplateElementId(mSettings.parentElement));
+		mSettings.parentElement = sap.ui.getCore().byId(getTemplateElementId(mSettings.parentElement));
 		evaluateResult(mSettings.parentElement);
-		mSettings.source = Element.registry.get(getTemplateElementId(mSettings.source));
+		mSettings.source = sap.ui.getCore().byId(getTemplateElementId(mSettings.source));
 		evaluateResult(mSettings.source);
 	}
 
@@ -229,7 +227,7 @@ sap.ui.define([
 	}
 
 	function adjustAddPropertyCommand(mSettings) {
-		mSettings.element = Element.registry.get(getTemplateElementId(mSettings.element));
+		mSettings.element = sap.ui.getCore().byId(getTemplateElementId(mSettings.element));
 		evaluateResult(mSettings.element);
 		mSettings.parentId = getTemplateElementId(mSettings.parentId);
 		evaluateResult(mSettings.parentId);
@@ -242,14 +240,14 @@ sap.ui.define([
 	}
 
 	function adjustRevealCommand(mSettings) {
-		mSettings.element = Element.registry.get(getTemplateElementId(mSettings.element));
+		mSettings.element = sap.ui.getCore().byId(getTemplateElementId(mSettings.element));
 		evaluateResult(mSettings.element);
 		if (mSettings.revealedElementId) {
 			mSettings.revealedElementId = getTemplateElementId(mSettings.revealedElementId);
 			evaluateResult(mSettings.revealedElementId);
 		}
 		if (mSettings.directParent) {
-			mSettings.directParent = Element.registry.get(getTemplateElementId(mSettings.directParent));
+			mSettings.directParent = sap.ui.getCore().byId(getTemplateElementId(mSettings.directParent));
 			evaluateResult(mSettings.directParent);
 		}
 	}
@@ -563,4 +561,4 @@ sap.ui.define([
 	};
 
 	return CommandFactory;
-});
+}, /* bExport= */true);

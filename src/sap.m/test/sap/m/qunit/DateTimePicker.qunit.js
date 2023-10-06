@@ -18,9 +18,7 @@ sap.ui.define([
 	"sap/ui/unified/DateRange",
 	"sap/ui/core/Core",
 	"sap/ui/base/ManagedObjectObserver",
-	"sap/ui/core/date/UI5Date",
-	"sap/ui/core/Lib",
-	"sap/ui/core/Element"
+	"sap/ui/core/date/UI5Date"
 ], function(
 	qutils,
 	createAndAppendDiv,
@@ -40,9 +38,7 @@ sap.ui.define([
 	DateRange,
 	oCore,
 	ManagedObjectObserver,
-	UI5Date,
-	Lib,
-	Element
+	UI5Date
 ) {
 	"use strict";
 
@@ -283,7 +279,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("placeholder", function(assert) {
-		var sPlaceholderPrefix = Lib.getResourceBundleFor("sap.ui.core").getText("date.placeholder").split("{")[0];
+		var sPlaceholderPrefix = oCore.getLibraryResourceBundle("sap.ui.core").getText("date.placeholder").split("{")[0];
 		if (Device.support.input.placeholder) {
 			assert.ok(jQuery("#DTP1").find("input").attr("placeholder").includes(sPlaceholderPrefix) , "DTP1: placeholder");
 			assert.ok(jQuery("#DTP2").find("input").attr("placeholder").includes(sPlaceholderPrefix), "DTP2: placeholder");
@@ -540,7 +536,7 @@ sap.ui.define([
 			assert.ok(jQuery("#DTP3-cal")[0], "calendar rendered");
 			assert.ok(jQuery("#DTP3-cal").is(":visible"), "calendar is visible");
 
-			oClocks = Element.registry.get("DTP3-Clocks");
+			oClocks = oCore.byId("DTP3-Clocks");
 			assert.equal(oClocks.getAggregation("_buttons").length, 2 , "DTP3: number of rendered clocks");
 
 			aMonths = jQuery("#DTP3-cal-content").children(".sapUiCalMonthView");
@@ -596,7 +592,7 @@ sap.ui.define([
 			oButton = new Button({
 				icon: "sap-icon://appointment-2",
 				press: function() {
-					Element.registry.get("HDTP").openBy(this.getDomRef());
+					oCore.byId("HDTP").openBy(this.getDomRef());
 				}
 			}).placeAt("qunit-fixture");
 
@@ -607,7 +603,7 @@ sap.ui.define([
 		oCore.applyChanges();
 
 		// Assert
-		assert.ok(Element.registry.get(oDTP.getId() + "-cal"), oDTP.getId() + ": calender exists");
+		assert.ok(oCore.byId(oDTP.getId() + "-cal"), oDTP.getId() + ": calender exists");
 		assert.ok(oDTP._oPopup, oDTP.getId() + ": popup exists");
 		assert.ok(jQuery("#" + oDTP.getId() + "-cal")[0], "calendar rendered");
 		assert.ok(jQuery("#" + oDTP.getId() + "-cal").is(":visible"), "picker is visible");
@@ -648,7 +644,7 @@ sap.ui.define([
 		var oInfo = oInput.getAccessibilityInfo();
 		assert.ok(!!oInfo, "getAccessibilityInfo returns a info object");
 		assert.strictEqual(oInfo.role, oInput.getRenderer().getAriaRole(), "AriaRole");
-		assert.strictEqual(oInfo.type, Lib.getResourceBundleFor("sap.m").getText("ACC_CTR_TYPE_DATETIMEINPUT"), "Type");
+		assert.strictEqual(oInfo.type, oCore.getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_DATETIMEINPUT"), "Type");
 		assert.strictEqual(oInfo.description, "Value  Date and Time", "Description");
 		assert.strictEqual(oInfo.focusable, true, "Focusable");
 		assert.strictEqual(oInfo.enabled, true, "Enabled");

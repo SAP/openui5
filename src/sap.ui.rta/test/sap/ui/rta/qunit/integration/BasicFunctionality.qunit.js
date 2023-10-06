@@ -12,8 +12,7 @@ sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/core/Core",
-	"sap/ui/core/Element"
+	"sap/ui/core/Core"
 ], function(
 	RuntimeAuthoring,
 	Stack,
@@ -26,8 +25,7 @@ sap.ui.define([
 	QUnitUtils,
 	KeyCodes,
 	sinon,
-	oCore,
-	Element
+	oCore
 ) {
 	"use strict";
 
@@ -52,9 +50,9 @@ sap.ui.define([
 			return oComponentPromise;
 		},
 		beforeEach() {
-			this.oField = Element.registry.get("Comp1---idMain1--GeneralLedgerDocument.CompanyCode");
-			this.oGroup = Element.registry.get("Comp1---idMain1--Dates");
-			this.oForm = Element.registry.get("Comp1---idMain1--MainForm");
+			this.oField = oCore.byId("Comp1---idMain1--GeneralLedgerDocument.CompanyCode");
+			this.oGroup = oCore.byId("Comp1---idMain1--Dates");
+			this.oForm = oCore.byId("Comp1---idMain1--MainForm");
 
 			this.oCommandStack = new Stack();
 
@@ -181,7 +179,7 @@ sap.ui.define([
 			return RtaQunitUtils.clear()
 			.then(this.oRta.start.bind(this.oRta)).then(function() {
 				this.oRootControlOverlay = OverlayRegistry.getOverlay(oRootControl);
-				this.oElementOverlay = OverlayRegistry.getOverlay(Element.registry.get("Comp1---idMain1--GeneralLedgerDocument.CompanyCode"));
+				this.oElementOverlay = OverlayRegistry.getOverlay(oCore.byId("Comp1---idMain1--GeneralLedgerDocument.CompanyCode"));
 			}.bind(this));
 		},
 		afterEach() {
@@ -231,7 +229,7 @@ sap.ui.define([
 					assert.equal(this.fnUndoSpy.callCount, 0, "then _onUndo was not called");
 					QUnitUtils.triggerKeydown(document, KeyCodes.Y, false, false, true);
 					assert.equal(this.fnRedoSpy.callCount, 0, "then _onRedo was not called");
-					var oOkButton = Element.registry.get(`${oDialog.getId()}--` + `rta_addDialogOkButton`);
+					var oOkButton = oCore.byId(`${oDialog.getId()}--` + `rta_addDialogOkButton`);
 					QUnitUtils.triggerEvent("tap", oOkButton.getDomRef());
 					oCore.applyChanges();
 					done();

@@ -7,10 +7,8 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/core/util/MockServer",
-	"./jsons/withDesigntime/sap.card/DataExtensionImpl",
-	"sap/ui/core/Element",
-	"sap/ui/core/Lib"
-], function(
+	"./jsons/withDesigntime/sap.card/DataExtensionImpl"
+], function (
 	Editor,
 	Host,
 	sinon,
@@ -18,9 +16,7 @@ sap.ui.define([
 	Core,
 	QUnitUtils,
 	MockServer,
-	DataExtensionImpl,
-	Element,
-	Lib
+	DataExtensionImpl
 ) {
 	"use strict";
 
@@ -156,8 +152,8 @@ sap.ui.define([
 								// sometimes the focus in not in the test browser, need to call the onfocusin function hardly to set the message strip
 								oField1.onfocusin();
 								Core.applyChanges();
-								var oMsgStrip = Element.registry.get(oField1.getAssociation("_messageStrip"));
-								var oDefaultBundle = Lib.getResourceBundleFor("sap.ui.integration");
+								var oMsgStrip = Core.byId(oField1.getAssociation("_messageStrip"));
+								var oDefaultBundle = Core.getLibraryResourceBundle("sap.ui.integration");
 								assert.equal(oMsgStrip.getDomRef().style.opacity, "1", "Message strip visible");
 								assert.equal(oMsgStrip.getType(), "Error", "Message strip Error");
 								assert.equal(oDefaultBundle.getText("EDITOR_VAL_TEXTREQ"), oMsgStrip.getText(), "Default Required String Text");
@@ -191,7 +187,7 @@ sap.ui.define([
 							oField1.getAggregation("_field").focus();
 							// sometimes the focus in not in the test browser, need to call the onfocusin function hardly to set the message strip
 							oField1.onfocusin();
-							var oMsgStrip = Element.registry.get(oField1.getAssociation("_messageStrip"));
+							var oMsgStrip = Core.byId(oField1.getAssociation("_messageStrip"));
 							var oI18nBundle = oField1.getModel("i18n").getResourceBundle();
 							assert.equal(oMsgStrip.getDomRef().style.opacity, "0", "Message strip invisible");
 							oField1._settingsButton.focus();
@@ -319,8 +315,8 @@ sap.ui.define([
 								// sometimes the focus in not in the test browser, need to call the onfocusin function hardly to set the message strip
 								oField1.onfocusin();
 								Core.applyChanges();
-								var oMsgStrip = Element.registry.get(oField1.getAssociation("_messageStrip"));
-								var oDefaultBundle = Lib.getResourceBundleFor("sap.ui.integration");
+								var oMsgStrip = Core.byId(oField1.getAssociation("_messageStrip"));
+								var oDefaultBundle = Core.getLibraryResourceBundle("sap.ui.integration");
 								assert.equal(oMsgStrip.getDomRef().style.opacity, "1", "Message strip visible");
 								assert.equal(oMsgStrip.getType(), "Error", "Message strip Error");
 								assert.equal(oDefaultBundle.getText("EDITOR_VAL_MIN", [1]), oMsgStrip.getText(), "Default Min Number Text");
@@ -355,10 +351,10 @@ sap.ui.define([
 							// sometimes the focus in not in the test browser, need to call the onfocusin function hardly to set the message strip
 							oField1.onfocusin();
 							wait(500).then(function () {
-								var oMsgStrip = Element.registry.get(oField1.getAssociation("_messageStrip"));
+								var oMsgStrip = Core.byId(oField1.getAssociation("_messageStrip"));
 								assert.equal(oMsgStrip.getDomRef().style.opacity, "1", "Message strip visible");
 								assert.equal(oMsgStrip.getType(), "Error", "Message strip Error");
-								var oDefaultBundle = Lib.getResourceBundleFor("sap.ui.integration");
+								var oDefaultBundle = Core.getLibraryResourceBundle("sap.ui.integration");
 								assert.equal(oDefaultBundle.getText("EDITOR_VAL_MIN_E", [2]), oMsgStrip.getText(), "Default Exclusive Minimum Text");
 								oField1._settingsButton.focus();
 								oField1.getAggregation("_field").setValue("10");
@@ -369,7 +365,7 @@ sap.ui.define([
 									Core.applyChanges();
 									assert.equal(oMsgStrip.getDomRef().style.opacity, "1", "Message strip visible");
 									assert.equal(oMsgStrip.getType(), "Error", "Message strip Error");
-									var oDefaultBundle = Lib.getResourceBundleFor("sap.ui.integration");
+									var oDefaultBundle = Core.getLibraryResourceBundle("sap.ui.integration");
 									assert.equal(oDefaultBundle.getText("EDITOR_VAL_MAX_E", [10]), oMsgStrip.getText(), "Default Exclusive Maximum Text");
 									oField1._settingsButton.focus();
 									oField1.getAggregation("_field").setValue("5");
@@ -380,7 +376,7 @@ sap.ui.define([
 										Core.applyChanges();
 										assert.equal(oMsgStrip.getDomRef().style.opacity, "1", "Message strip visible");
 										assert.equal(oMsgStrip.getType(), "Error", "Message strip Error");
-										var oDefaultBundle = Lib.getResourceBundleFor("sap.ui.integration");
+										var oDefaultBundle = Core.getLibraryResourceBundle("sap.ui.integration");
 										assert.equal(oDefaultBundle.getText("EDITOR_VAL_MULTIPLE", [2]), oMsgStrip.getText(), "Default Multiple Of Text");
 										oField1._settingsButton.focus();
 										resolve();
@@ -397,7 +393,7 @@ sap.ui.define([
 								// sometimes the focus in not in the test browser, need to call the onfocusin function hardly to set the message strip
 								oField1.onfocusin();
 								Core.applyChanges();
-								var oMsgStrip = Element.registry.get(oField1.getAssociation("_messageStrip"));
+								var oMsgStrip = Core.byId(oField1.getAssociation("_messageStrip"));
 								var oI18nBundle = oField1.getModel("i18n").getResourceBundle();
 								assert.equal(oMsgStrip.getDomRef().style.opacity, "1", "Message strip visible");
 								assert.equal(oMsgStrip.getType(), "Warning", "Message strip Warning");
@@ -492,8 +488,8 @@ sap.ui.define([
 								// sometimes the focus in not in the test browser, need to call the onfocusin function hardly to set the message strip
 								oField1.onfocusin();
 								Core.applyChanges();
-								var oMsgStrip = Element.registry.get(oField1.getAssociation("_messageStrip"));
-								var oDefaultBundle = Lib.getResourceBundleFor("sap.ui.integration");
+								var oMsgStrip = Core.byId(oField1.getAssociation("_messageStrip"));
+								var oDefaultBundle = Core.getLibraryResourceBundle("sap.ui.integration");
 								assert.equal(oMsgStrip.getDomRef().style.opacity, "1", "Message strip visible");
 								assert.equal(oMsgStrip.getType(), "Error", "Message strip Error");
 								assert.equal(oDefaultBundle.getText("EDITOR_VAL_TEXTREQ"), oMsgStrip.getText(), "Default Required String Text");
@@ -584,8 +580,8 @@ sap.ui.define([
 								// sometimes the focus in not in the test browser, need to call the onfocusin function hardly to set the message strip
 								oField1.onfocusin();
 								Core.applyChanges();
-								var oMsgStrip = Element.registry.get(oField1.getAssociation("_messageStrip"));
-								var oDefaultBundle = Lib.getResourceBundleFor("sap.ui.integration");
+								var oMsgStrip = Core.byId(oField1.getAssociation("_messageStrip"));
+								var oDefaultBundle = Core.getLibraryResourceBundle("sap.ui.integration");
 								assert.equal(oMsgStrip.getDomRef().style.opacity, "1", "Message strip visible");
 								assert.equal(oMsgStrip.getType(), "Error", "Message strip Error");
 								assert.equal(oDefaultBundle.getText("EDITOR_VAL_TEXTREQ"), oMsgStrip.getText(), "Default Required String Text");
@@ -662,8 +658,8 @@ sap.ui.define([
 								// sometimes the focus in not in the test browser, need to call the onfocusin function hardly to set the message strip
 								oField1.onfocusin();
 								Core.applyChanges();
-								var oMsgStrip = Element.registry.get(oField1.getAssociation("_messageStrip"));
-								var oDefaultBundle = Lib.getResourceBundleFor("sap.ui.integration");
+								var oMsgStrip = Core.byId(oField1.getAssociation("_messageStrip"));
+								var oDefaultBundle = Core.getLibraryResourceBundle("sap.ui.integration");
 								assert.equal(oMsgStrip.getDomRef().style.opacity, "1", "Message strip visible");
 								assert.equal(oMsgStrip.getType(), "Error", "Message strip Error");
 								assert.equal(oDefaultBundle.getText("EDITOR_VAL_NUMBERREQ"), oMsgStrip.getText(), "Default Required Integer Text");
@@ -740,8 +736,8 @@ sap.ui.define([
 								// sometimes the focus in not in the test browser, need to call the onfocusin function hardly to set the message strip
 								oField1.onfocusin();
 								Core.applyChanges();
-								var oMsgStrip = Element.registry.get(oField1.getAssociation("_messageStrip"));
-								var oDefaultBundle = Lib.getResourceBundleFor("sap.ui.integration");
+								var oMsgStrip = Core.byId(oField1.getAssociation("_messageStrip"));
+								var oDefaultBundle = Core.getLibraryResourceBundle("sap.ui.integration");
 								assert.equal(oMsgStrip.getDomRef().style.opacity, "1", "Message strip visible");
 								assert.equal(oMsgStrip.getType(), "Error", "Message strip Error");
 								assert.equal(oDefaultBundle.getText("EDITOR_VAL_NUMBERREQ"), oMsgStrip.getText(), "Default Required Number Text");
@@ -841,8 +837,8 @@ sap.ui.define([
 							wait(1000).then(function () {
 								oMultiComboBox.focus();
 								Core.applyChanges();
-								var oMsgStrip = Element.registry.get(oField1.getAssociation("_messageStrip"));
-								var oDefaultBundle = Lib.getResourceBundleFor("sap.ui.integration");
+								var oMsgStrip = Core.byId(oField1.getAssociation("_messageStrip"));
+								var oDefaultBundle = Core.getLibraryResourceBundle("sap.ui.integration");
 								assert.equal(oMsgStrip.getDomRef().style.opacity, "1", "Message strip visible");
 								assert.equal(oMsgStrip.getType(), "Error", "Message strip Error");
 								assert.equal(oDefaultBundle.getText("EDITOR_VAL_LISTREQ"), oMsgStrip.getText(), "Default Required List Text");
@@ -935,8 +931,8 @@ sap.ui.define([
 							wait(1000).then(function () {
 								oMultiComboBox.focus();
 								Core.applyChanges();
-								var oMsgStrip = Element.registry.get(oField1.getAssociation("_messageStrip"));
-								var oDefaultBundle = Lib.getResourceBundleFor("sap.ui.integration");
+								var oMsgStrip = Core.byId(oField1.getAssociation("_messageStrip"));
+								var oDefaultBundle = Core.getLibraryResourceBundle("sap.ui.integration");
 								assert.equal(oMsgStrip.getDomRef().style.opacity, "1", "Message strip visible");
 								assert.equal(oMsgStrip.getType(), "Error", "Message strip Error");
 								assert.equal(oDefaultBundle.getText("EDITOR_VAL_LISTMINLENGTH", 2), oMsgStrip.getText(), "Default Min List Text");
@@ -1037,8 +1033,8 @@ sap.ui.define([
 							wait(1000).then(function () {
 								oMultiComboBox.focus();
 								Core.applyChanges();
-								var oMsgStrip = Element.registry.get(oField1.getAssociation("_messageStrip"));
-								var oDefaultBundle = Lib.getResourceBundleFor("sap.ui.integration");
+								var oMsgStrip = Core.byId(oField1.getAssociation("_messageStrip"));
+								var oDefaultBundle = Core.getLibraryResourceBundle("sap.ui.integration");
 								assert.equal(oMsgStrip.getDomRef().style.opacity, "1", "Message strip visible");
 								assert.equal(oMsgStrip.getType(), "Error", "Message strip Error");
 								assert.equal(oDefaultBundle.getText("EDITOR_VAL_LISTMINLENGTH", 2), oMsgStrip.getText(), "Default Min List Text");
@@ -1208,7 +1204,7 @@ sap.ui.define([
 							wait(1000).then(function () {
 								oMultiComboBox.focus();
 								Core.applyChanges();
-								var oMsgStrip = Element.registry.get(oField1.getAssociation("_messageStrip"));
+								var oMsgStrip = Core.byId(oField1.getAssociation("_messageStrip"));
 								assert.equal(oMsgStrip.getDomRef().style.opacity, "1", "Message strip visible");
 								assert.equal(oMsgStrip.getType(), "Error", "Message strip Error");
 								assert.equal(oMsgStrip.getText(), "The parameter is not allowed to edit", "Message text correct");
@@ -1315,7 +1311,7 @@ sap.ui.define([
 							wait(1000).then(function () {
 								oMultiComboBox.focus();
 								Core.applyChanges();
-								var oMsgStrip = Element.registry.get(oField1.getAssociation("_messageStrip"));
+								var oMsgStrip = Core.byId(oField1.getAssociation("_messageStrip"));
 								assert.equal(oMsgStrip.getDomRef().style.opacity, "1", "Message strip visible");
 								assert.equal(oMsgStrip.getType(), "Error", "Message strip Error");
 								assert.equal(oMsgStrip.getText(), "The parameter is not allowed to edit", "Message text correct");
@@ -1405,7 +1401,7 @@ sap.ui.define([
 							wait(1000).then(function () {
 								oMultiComboBox.focus();
 								Core.applyChanges();
-								var oMsgStrip = Element.registry.get(oField1.getAssociation("_messageStrip"));
+								var oMsgStrip = Core.byId(oField1.getAssociation("_messageStrip"));
 								assert.equal(oMsgStrip.getDomRef().style.opacity, "1", "Message strip visible");
 								assert.equal(oMsgStrip.getType(), "Error", "Message strip Error");
 								assert.equal(oMsgStrip.getText(), "Please select at least 2 items!", "Message text correct");
@@ -1510,7 +1506,7 @@ sap.ui.define([
 							wait(1000).then(function () {
 								oMultiComboBox.focus();
 								Core.applyChanges();
-								var oMsgStrip = Element.registry.get(oField1.getAssociation("_messageStrip"));
+								var oMsgStrip = Core.byId(oField1.getAssociation("_messageStrip"));
 								assert.equal(oMsgStrip.getDomRef().style.opacity, "0", "Message strip not visible");
 								oMultiComboBox.setSelectedKeys(["key1", "key2", "key3", "key4"]);
 								oField1._settingsButton.focus();
@@ -1621,7 +1617,7 @@ sap.ui.define([
 							wait(1000).then(function () {
 								oMultiComboBox.focus();
 								Core.applyChanges();
-								var oMsgStrip = Element.registry.get(oField1.getAssociation("_messageStrip"));
+								var oMsgStrip = Core.byId(oField1.getAssociation("_messageStrip"));
 								assert.equal(oMsgStrip.getDomRef().style.opacity, "1", "Message strip visible");
 								assert.equal(oMsgStrip.getType(), "Error", "Message strip Error");
 								assert.equal(oMsgStrip.getText(), "Please select items in key1,key3,key6", "Message text correct");
@@ -1734,7 +1730,7 @@ sap.ui.define([
 							wait(1000).then(function () {
 								oMultiComboBox.focus();
 								Core.applyChanges();
-								var oMsgStrip = Element.registry.get(oField1.getAssociation("_messageStrip"));
+								var oMsgStrip = Core.byId(oField1.getAssociation("_messageStrip"));
 								assert.equal(oMsgStrip.getDomRef().style.opacity, "1", "Message strip visible");
 								assert.equal(oMsgStrip.getType(), "Error", "Message strip Error");
 								assert.equal(oMsgStrip.getText(), "Please select items in key1,key3,key6", "Message text correct");
@@ -1845,7 +1841,7 @@ sap.ui.define([
 							wait(1000).then(function () {
 								oMultiComboBox.focus();
 								Core.applyChanges();
-								var oMsgStrip = Element.registry.get(oField1.getAssociation("_messageStrip"));
+								var oMsgStrip = Core.byId(oField1.getAssociation("_messageStrip"));
 								assert.equal(oMsgStrip.getDomRef().style.opacity, "1", "Message strip visible");
 								assert.equal(oMsgStrip.getType(), "Error", "Message strip Error");
 								assert.equal(oMsgStrip.getText(), "Please select items in key1,key3,key6", "Message text correct");

@@ -20,30 +20,28 @@ sap.ui.define([
 	"sap/base/strings/formatMessage",
 	"sap/base/util/merge",
 	"sap/m/library",
-	"sap/ui/core/Core",
-	"sap/ui/core/Lib"
-], function(
-	jQuery,
-	ValueHelpDelegate,
-	Dialog,
-	Content,
-	Condition,
-	ValueHelpSelectionType,
-	FieldDisplay,
-	OperatorName,
-	Icon,
-	JSONModel,
-	StringType,
-	Device,
-	formatMessage,
-	merge,
-	mLibrary,
-	oCore,
-	Lib
-) {
+	"sap/ui/core/Core"
+], function (
+		jQuery,
+		ValueHelpDelegate,
+		Dialog,
+		Content,
+		Condition,
+		ValueHelpSelectionType,
+		FieldDisplay,
+		OperatorName,
+		Icon,
+		JSONModel,
+		StringType,
+		Device,
+		formatMessage,
+		merge,
+		mLibrary,
+		oCore
+	) {
 	"use strict";
 
-	const oResourceBundle = Lib.getResourceBundleFor("sap.ui.mdc");
+	const oResourceBundle = oCore.getLibraryResourceBundle("sap.ui.mdc");
 
 	let oDialog;
 	const iDialogDuration = oCore.getConfiguration().getAnimationMode() === "none" ? 15 : 500;

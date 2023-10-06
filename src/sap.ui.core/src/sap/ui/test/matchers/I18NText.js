@@ -1,7 +1,7 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['sap/ui/test/matchers/Matcher', "sap/base/strings/capitalize", "sap/ui/core/Lib"], function(Matcher, capitalize, Lib) {
+sap.ui.define(['sap/ui/test/matchers/Matcher', "sap/base/strings/capitalize"], function (Matcher, capitalize) {
 	"use strict";
 
 	/**
@@ -116,7 +116,7 @@ sap.ui.define(['sap/ui/test/matchers/Matcher', "sap/base/strings/capitalize", "s
 			if (bUseLibraryBundle) {
 				var sLibraryName = oControl.getMetadata().getLibraryName();
 
-				oBundle = Lib.getResourceBundleFor(sLibraryName);
+				oBundle = sap.ui.getCore().getLibraryResourceBundle(sLibraryName);
 			} else {
 				oBundle = oModel.getResourceBundle();
 

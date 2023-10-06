@@ -3,14 +3,12 @@ sap.ui.define([
 	"sap/m/Menu",
 	"sap/m/MenuItem",
 	"sap/ui/core/Core",
-	"sap/m/Label",
-	"sap/ui/core/Element"
+	"sap/m/Label"
 ], function(
 	Menu,
 	MenuItem,
 	Core,
-	Label,
-	Element
+	Label
 ) {
 	"use strict";
 
@@ -50,7 +48,7 @@ sap.ui.define([
 		// prepare
 		var oDelegate = { onmouseover: function() { } };
 		var oMenuItem = new MenuItem({text: "test"});
-		var oSpyAddEventDelegate = this.spy(Element.registry.get(this.sut._getVisualControl()), "addEventDelegate");
+		var oSpyAddEventDelegate = this.spy(Core.byId(this.sut._getVisualControl()), "addEventDelegate");
 
 		// act
 		this.sut.addEventDelegate(oDelegate, oMenuItem);
@@ -62,7 +60,7 @@ sap.ui.define([
 	QUnit.test("removeEventDelegate", function(assert) {
 		// prepare
 		var oDelegate = { onmouseover: function() { } };
-		var oSpyRemoveEventDelegate = this.spy(Element.registry.get(this.sut._getVisualControl()), "removeEventDelegate");
+		var oSpyRemoveEventDelegate = this.spy(Core.byId(this.sut._getVisualControl()), "removeEventDelegate");
 		this.sut.addEventDelegate(oDelegate);
 
 		// act
@@ -74,7 +72,7 @@ sap.ui.define([
 
 	QUnit.test("setProperty", function (assert) {
 		// prepare
-		var oSpySetProperty = this.spy(Element.registry.get(this.sut._getVisualControl()), "setProperty"),
+		var oSpySetProperty = this.spy(Core.byId(this.sut._getVisualControl()), "setProperty"),
 			sPropertyKey = "text",
 			sPropertyValue = "new_mi_text";
 

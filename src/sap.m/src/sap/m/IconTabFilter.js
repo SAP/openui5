@@ -19,9 +19,8 @@ sap.ui.define([
 	"sap/m/ResponsivePopover",
 	"sap/m/IconTabBarSelectList",
 	"sap/m/BadgeEnabler",
-	"sap/m/ImageHelper",
-	"sap/ui/core/Lib"
-], function(
+	"sap/m/ImageHelper"
+], function (
 	library,
 	AccButton,
 	IconTabFilterExpandButtonBadge,
@@ -37,8 +36,7 @@ sap.ui.define([
 	ResponsivePopover,
 	IconTabBarSelectList,
 	BadgeEnabler,
-	ImageHelper,
-	Lib
+	ImageHelper
 ) {
 	"use strict";
 
@@ -198,7 +196,7 @@ sap.ui.define([
 	 *
 	 * @type {module:sap/base/i18n/ResourceBundle}
 	 */
-	var oResourceBundle = Lib.getResourceBundleFor("sap.m");
+	var oResourceBundle = Core.getLibraryResourceBundle("sap.m");
 
 	/**
 	 * Array of all available icon color CSS classes

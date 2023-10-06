@@ -21,7 +21,6 @@ sap.ui.define([
 	"sap/m/inputUtils/completeTextSelected",
 	"sap/ui/events/KeyCodes",
 	'sap/ui/core/InvisibleText',
-	"sap/ui/core/Lib",
 	// jQuery Plugin "cursorPos"
 	"sap/ui/dom/jquery/cursorPos"
 ],
@@ -42,8 +41,7 @@ function(
 	containsOrEquals,
 	completeTextSelected,
 	KeyCodes,
-	InvisibleText,
-	Lib
+	InvisibleText
 ) {
 	"use strict";
 
@@ -192,7 +190,7 @@ function(
 
 	EnabledPropagator.apply(MultiInput.prototype, [true]);
 
-	var oRb = Lib.getResourceBundleFor("sap.m");
+	var oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 
 	MultiInput.prototype.init = function () {
 		var that = this;
@@ -978,7 +976,7 @@ function(
 
 		if (oPopup && oPopup.isA("sap.m.Popover")) {
 			if (oEvent.relatedControlId) {
-				oRelatedControlDomRef = Element.registry.get(oEvent.relatedControlId).getFocusDomRef();
+				oRelatedControlDomRef = sap.ui.getCore().byId(oEvent.relatedControlId).getFocusDomRef();
 				bNewFocusIsInSuggestionPopup = containsOrEquals(oPopup.getFocusDomRef(), oRelatedControlDomRef);
 				bNewFocusIsInTokenizer = containsOrEquals(oTokenizer.getFocusDomRef(), oRelatedControlDomRef);
 
@@ -1382,7 +1380,7 @@ function(
 			return sDescriptionText;
 		} else {
 			// "Empty" or the description text should be set as acc description in case there are no tokens and no value.
-			return sDescriptionText ? sDescriptionText : Lib.getResourceBundleFor("sap.m").getText("INPUTBASE_VALUE_EMPTY");
+			return sDescriptionText ? sDescriptionText : sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("INPUTBASE_VALUE_EMPTY");
 		}
 	};
 

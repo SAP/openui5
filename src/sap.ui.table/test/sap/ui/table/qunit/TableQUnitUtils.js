@@ -306,16 +306,6 @@ sap.ui.define([
 			}
 		});
 
-		// TODO: Remove once the "plugins" aggregation is of type sap.ui.table.PluginBase
-		var fnOriginalValidateAggregation = TableClass.prototype.validateAggregation;
-		TableClass.prototype.validateAggregation = function(sAggregationName, oObject) {
-			if (sAggregationName === "plugins" && oObject.isA("sap.ui.table.test.HelperPlugin")) {
-				return oObject;
-			} else {
-				return fnOriginalValidateAggregation.apply(this, arguments);
-			}
-		};
-
 		// TODO: Remove this once CreationRow is removed.
 		var fnApplySettings = TableClass.prototype.applySettings;
 		TableClass.prototype.applySettings = function(mSettings) {
@@ -921,10 +911,10 @@ sap.ui.define([
 
 		var oHelperPlugin = new HelperPlugin();
 
-		if ("plugins" in mSettings) {
-			mSettings.plugins.push(oHelperPlugin);
+		if ("dependents" in mSettings) {
+			mSettings.dependents.push(oHelperPlugin);
 		} else {
-			mSettings.plugins = [oHelperPlugin];
+			mSettings.dependents = [oHelperPlugin];
 		}
 
 		var oTable = new TableClass(createTableSettings(TableClass, mSettings));

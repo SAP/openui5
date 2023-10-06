@@ -2,13 +2,11 @@
 
 sap.ui.define([
 	"sap/ui/rta/toolbar/FioriLike",
-	"sap/ui/core/Core",
-	"sap/ui/core/Lib"
+	"sap/ui/core/Core"
 ],
 function(
 	FioriLike,
-	oCore,
-	Lib
+	oCore
 ) {
 	"use strict";
 
@@ -16,7 +14,7 @@ function(
 		beforeEach() {
 			oCore.applyChanges();
 			this.oToolbar = new FioriLike({
-				textResources: Lib.getResourceBundleFor("sap.ui.rta")
+				textResources: oCore.getLibraryResourceBundle("sap.ui.rta")
 			});
 			return this.oToolbar.onFragmentLoaded();
 		},

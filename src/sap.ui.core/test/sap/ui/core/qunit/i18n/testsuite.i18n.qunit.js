@@ -15,6 +15,12 @@ sap.ui.define(function() {
 			}
 		},
 		tests: {
+			"_Calendars": {
+				module: "./../date/_Calendars.qunit",
+				coverage : {
+					only : "sap/ui/core/date/_Calendars"
+				}
+			},
 			"CalendarUtils": {
 				coverage : {
 					only : "sap/ui/core/date/CalendarUtils"

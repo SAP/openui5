@@ -28,9 +28,8 @@ sap.ui.require([
 	"sap/m/Image",
 	"sap/m/CheckBox",
 	"sap/m/SegmentedButton",
-	"sap/m/SegmentedButtonItem",
-	"sap/ui/core/Element"
-],
+	"sap/m/SegmentedButtonItem"
+	],
 	function(
 		CoreLib,
 		LayoutLib,
@@ -61,9 +60,8 @@ sap.ui.require([
 		Image,
 		CheckBox,
 		SegmentedButton,
-		SegmentedButtonItem,
-		Element
-	) {
+		SegmentedButtonItem
+		) {
 	"use strict";
 
 	// TODO: Fake iSematicFormContent on controls until it is official supported
@@ -78,32 +76,32 @@ sap.ui.require([
 
 	var toggleLayoutData = function(oEvent){
 		var oControl, oLayoutData;
-		var oButton = Element.registry.get("B1");
+		var oButton = sap.ui.getCore().byId("B1");
 		if (oEvent.getParameter("pressed")){
-			oControl = Element.registry.get("C14-L1");
+			oControl = sap.ui.getCore().byId("C14-L1");
 			oLayoutData = new ColumnElementData({cellsSmall: 2, cellsLarge: 12});
 			oControl.setLayoutData(oLayoutData);
-			oControl = Element.registry.get("C14-I2");
+			oControl = sap.ui.getCore().byId("C14-I2");
 			oLayoutData = new ColumnElementData({cellsSmall: 2, cellsLarge: 12});
 			oControl.setLayoutData(oLayoutData);
 			oButton.setEnabled(true);
 		} else {
-			oControl = Element.registry.get("C14-L1");
+			oControl = sap.ui.getCore().byId("C14-L1");
 			oControl.destroyLayoutData();
-			oControl = Element.registry.get("C14-I2");
+			oControl = sap.ui.getCore().byId("C14-I2");
 			oControl.destroyLayoutData();
 			oButton.setEnabled(false);
 		}
 	};
 
 	var changeLayoutData = function(oEvent){
-		var oControl = Element.registry.get("C14-L1");
+		var oControl = sap.ui.getCore().byId("C14-L1");
 		var oLayoutData = oControl.getLayoutData();
 		if (oLayoutData){
 			oLayoutData.setCellsSmall(4);
 			oLayoutData.setCellsLarge(2);
 		}
-		oControl = Element.registry.get("C14-I2");
+		oControl = sap.ui.getCore().byId("C14-I2");
 		oLayoutData = oControl.getLayoutData();
 		if (oLayoutData){
 			oLayoutData.setCellsSmall(4);
@@ -128,7 +126,7 @@ sap.ui.require([
 	};
 
 	var moveContainer = function(oEvent){
-		var oContainer = Element.registry.get("C12");
+		var oContainer = sap.ui.getCore().byId("C12");
 		oForm5.removeFormContainer(oContainer);
 		if (oEvent.getParameter("pressed")){
 			oForm5.insertFormContainer(oContainer, 0);
@@ -146,7 +144,7 @@ sap.ui.require([
 	};
 
 	var visibilityContainer = function(oEvent){
-		var oContainer = Element.registry.get("C13");
+		var oContainer = sap.ui.getCore().byId("C13");
 		if (oEvent.getParameter("pressed")){
 			oContainer.setVisible(false);
 		} else {
@@ -187,11 +185,11 @@ sap.ui.require([
 	};
 
 	var toggleContainerData = function(oEvent){
-		var oContainer1 = Element.registry.get("C1");
-		var oContainer3 = Element.registry.get("C3");
-		var oContainer4 = Element.registry.get("C4");
-		var oContainer9 = Element.registry.get("C9");
-		var oContainer11 = Element.registry.get("C11");
+		var oContainer1 = sap.ui.getCore().byId("C1");
+		var oContainer3 = sap.ui.getCore().byId("C3");
+		var oContainer4 = sap.ui.getCore().byId("C4");
+		var oContainer9 = sap.ui.getCore().byId("C9");
+		var oContainer11 = sap.ui.getCore().byId("C11");
 		if (oEvent.getParameter("pressed")){
 			oContainer1.destroyLayoutData();
 			oContainer3.destroyLayoutData();
@@ -208,7 +206,7 @@ sap.ui.require([
 	};
 
 	var toggleXLColumns = function(oEvent) {
-		var oLayout = Element.registry.get("L5");
+		var oLayout = sap.ui.getCore().byId("L5");
 		var oItem = oEvent.getParameter("item");
 		var iColumns = parseInt(oItem.getKey());
 		oLayout.setColumnsXL(iColumns);
@@ -216,7 +214,7 @@ sap.ui.require([
 
 	var toggleLayoutData2 = function(oEvent){
 		var oLayoutData;
-		var oContainer = Element.registry.get("C3");
+		var oContainer = sap.ui.getCore().byId("C3");
 		var aElements = oContainer.getFormElements();
 		var aFields;
 		if (oEvent.getParameter("pressed")){
@@ -774,7 +772,7 @@ sap.ui.require([
 				}),
 				new Button({text: "add field",
 					press: function(oEvent) {
-						var oFormContainer = Element.registry.get("C16");
+						var oFormContainer = sap.ui.getCore().byId("C16");
 						var iElements = oFormContainer.getFormElements().length +  1;
 						var oFormElement = new FormElement({
 							label: "Label" + iElements,

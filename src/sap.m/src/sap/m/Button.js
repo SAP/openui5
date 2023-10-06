@@ -20,8 +20,7 @@ sap.ui.define([
 	"sap/m/BadgeEnabler",
 	"sap/ui/core/InvisibleText",
 	"sap/base/Log",
-	"sap/m/Image",
-	"sap/ui/core/Lib"
+	"sap/m/Image"
 ], function(
 	library,
 	Core,
@@ -39,8 +38,7 @@ sap.ui.define([
 	BadgeEnabler,
 	InvisibleText,
 	Log,
-	Image,
-	Lib
+	Image
 ) {
 	"use strict";
 
@@ -362,7 +360,7 @@ sap.ui.define([
 	 * @private
 	 */
 	Button.prototype._updateBadgeInvisibleText = function(vValue) {
-		var oRb = Lib.getResourceBundleFor("sap.m"),
+		var oRb = Core.getLibraryResourceBundle("sap.m"),
 			sInvisibleTextValue,
 			iPlusPos;
 
@@ -940,7 +938,7 @@ sap.ui.define([
 
 		return {
 			role: sAccessibleRole === ButtonAccessibleRole.Default ? "button" : sAccessibleRole.toLowerCase(),
-			type: Lib.getResourceBundleFor("sap.m").getText("ACC_CTR_TYPE_BUTTON"),
+			type: Core.getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_BUTTON"),
 			description: sDesc,
 			focusable: this.getEnabled(),
 			enabled: this.getEnabled()

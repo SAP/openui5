@@ -3,9 +3,8 @@
  */
 
 sap.ui.define([
-	"sap/ui/core/Core",
-	"sap/ui/core/Lib"
-], function(Core, Lib) {
+	"sap/ui/core/Core"
+], function (Core) {
 	"use strict";
 
 	/**
@@ -27,7 +26,7 @@ sap.ui.define([
 			.class("sapMQuickViewCard")
 			.accessibilityState({
 				label: {
-					value: Lib.getResourceBundleFor("sap.m").getText("ARIA_ROLEDESCRIPTION_CARD"),
+					value: Core.getLibraryResourceBundle("sap.m").getText("ARIA_ROLEDESCRIPTION_CARD"),
 					append: true
 				}
 			});

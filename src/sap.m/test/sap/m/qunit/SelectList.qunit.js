@@ -13,8 +13,7 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/m/Select",
 	"sap/ui/model/Filter",
-	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Element"
+	"sap/ui/thirdparty/jquery"
 ], function(
 	qutils,
 	createAndAppendDiv,
@@ -29,8 +28,7 @@ sap.ui.define([
 	JSONModel,
 	Select,
 	Filter,
-	jQuery,
-	Element
+	jQuery
 ) {
 	"use strict";
 
@@ -3353,7 +3351,7 @@ sap.ui.define([
 
 		// assert
 		assert.strictEqual(aDomRefs.length, 1);
-		assert.ok(oEnabledItem === Element.registry.get(aDomRefs[0].id));
+		assert.ok(oEnabledItem === Core.byId(aDomRefs[0].id));
 
 		// cleanup
 		oSelectList.destroy();

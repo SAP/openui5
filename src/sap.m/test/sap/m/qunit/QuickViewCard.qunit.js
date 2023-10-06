@@ -10,8 +10,7 @@ sap.ui.define([
 	"sap/m/QuickViewPage",
 	"sap/m/QuickViewGroup",
 	"sap/m/QuickViewGroupElement",
-	"sap/ui/core/Core",
-	"sap/ui/core/Element"
+	"sap/ui/core/Core"
 ], function(
 	JSONModel,
 	mobileLibrary,
@@ -22,8 +21,7 @@ sap.ui.define([
 	QuickViewPage,
 	QuickViewGroup,
 	QuickViewGroupElement,
-	oCore,
-	Element
+	oCore
 ) {
 	"use strict";
 
@@ -294,7 +292,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Testing if the QuickView is created", function (assert) {
-		assert.ok(Element.registry.get(this.oQuickViewCard.getId()), "should render");
+		assert.ok(oCore.byId(this.oQuickViewCard.getId()), "should render");
 	});
 
 	QUnit.test("Test binding", function (assert) {

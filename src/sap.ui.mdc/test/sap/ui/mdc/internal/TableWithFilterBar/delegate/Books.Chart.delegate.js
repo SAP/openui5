@@ -11,9 +11,8 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/core/Core",
 	"sap/ui/mdc/enums/ChartItemRoleType",
-	"delegates/util/DelegateCache",
-	"sap/ui/core/Element"
-], function(ChartDelegate, ODataMetaModelUtil, BooksFBDelegate, GridTableDelegate, FieldDisplay, OperatorName, Log, Core, ChartItemRoleType, DelegateCache, Element) {
+	"delegates/util/DelegateCache"
+], function(ChartDelegate, ODataMetaModelUtil, BooksFBDelegate, GridTableDelegate, FieldDisplay, OperatorName, Log, Core, ChartItemRoleType, DelegateCache) {
 	"use strict";
 
 	var SampleChartDelegate = Object.assign({}, ChartDelegate);
@@ -246,7 +245,7 @@ sap.ui.define([
 	SampleChartDelegate.updateBindingInfo = function(oChart, oBindingInfo) {
 		ChartDelegate.updateBindingInfo.apply(this, arguments);
 
-		var oFilterBar = Element.registry.get(oChart.getFilter());
+		var oFilterBar = Core.byId(oChart.getFilter());
 
 		if (oFilterBar) {
 			GridTableDelegate._updateSearch(oBindingInfo, oFilterBar);

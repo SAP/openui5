@@ -2,14 +2,8 @@
  * ${copyright}
  */
 sap.ui.define([
-	"./QueryPanel",
-	"sap/m/Text",
-	"sap/m/SegmentedButton",
-	"sap/m/SegmentedButtonItem",
-	"sap/ui/layout/Grid",
-	"sap/ui/layout/GridData",
-	"sap/ui/core/Lib"
-], function(QueryPanel, Text, SegmentedButton, SegmentedButtonItem, Grid, GridData, Lib) {
+	"./QueryPanel", "sap/m/Text", "sap/m/SegmentedButton", "sap/m/SegmentedButtonItem", "sap/ui/layout/Grid", "sap/ui/layout/GridData"
+], function (QueryPanel, Text, SegmentedButton, SegmentedButtonItem, Grid, GridData) {
 	"use strict";
 
 	/**
@@ -41,7 +35,7 @@ sap.ui.define([
 				 */
 				 title: {
 					type: "string",
-					defaultValue: Lib.getResourceBundleFor("sap.m").getText("p13n.DEFAULT_TITLE_SORT")
+					defaultValue: sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("p13n.DEFAULT_TITLE_SORT")
 				}
 			},
 			library: "sap.m"

@@ -42,9 +42,7 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	'sap/base/Log',
 	"sap/ui/core/library",
-	"sap/m/library",
-	"sap/ui/core/Lib",
-	"sap/ui/core/Element"
+	"sap/m/library"
 ], function(
 	JSONModel,
 	ManagedObjectModel,
@@ -84,9 +82,7 @@ sap.ui.define([
 	KeyCodes,
 	Log,
 	coreLibrary,
-	mobileLibrary,
-	Lib,
-	Element
+	mobileLibrary
 ) {
 	"use strict";
 
@@ -331,6 +327,16 @@ sap.ui.define([
 					group: "Misc",
 					defaultValue: true,
 					visibility: "hidden"
+				},
+
+				/**
+				 * Defines the standard variant key.
+				 */
+				_standardKey: {
+					type: "string",
+					group: "Misc",
+					defaultValue: "",
+					visibility: "hidden"
 				}
 			},
 			defaultAggregation: "items",
@@ -503,7 +509,7 @@ sap.ui.define([
 	 */
 	VariantManagement.prototype.init = function() {
 
-		this._oRb = Lib.getResourceBundleFor("sap.m");
+		this._oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 
 
         this._oManagedObjectModel = new ManagedObjectModel(this);
@@ -845,9 +851,31 @@ sap.ui.define([
 	};
 
 	VariantManagement.prototype.getStandardVariantKey = function() {
+		var sKey = this.getProperty("_standardKey");
+		if (!sKey) {
+			return this._getFirstVisibleVariant();
+		}
+
+		return sKey;
+	};
+
+
+	VariantManagement.prototype.setStandardVariantKey = function(sValue) {
+		this.setProperty("_standardKey", sValue);
+	};
+
+	VariantManagement.prototype._getFirstVisibleVariant = function() {
 		var aItems = this._getItems();
-		if (aItems && aItems[0]) {
-			return aItems[0].getKey();
+		for (var i = 0; i < aItems.length; i++) {
+			if (aItems[i].getVisible()) {
+				if (this.getSupportFavorites()) {
+					if (aItems[i].getFavorite()) {
+						return aItems[i].getKey();
+					}
+				} else {
+					return aItems[i].getKey();
+				}
+			}
 		}
 
 		return null;
@@ -917,7 +945,7 @@ sap.ui.define([
 			if (nPos > 0) {
 				sId = sId.substring(0, nPos);
 			}
-			return Element.registry.get(sId);
+			return sap.ui.getCore().byId(sId);
 		}
 
 		return null;

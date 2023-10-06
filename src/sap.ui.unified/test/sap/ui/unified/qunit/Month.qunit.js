@@ -17,8 +17,7 @@ sap.ui.define([
 	"sap/ui/Device",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Core",
-	"sap/ui/core/date/UI5Date",
-	"sap/ui/core/Lib"
+	"sap/ui/core/date/UI5Date"
 ], function(
 	Month,
 	CalendarDate,
@@ -36,8 +35,7 @@ sap.ui.define([
 	Device,
 	jQuery,
 	oCore,
-	UI5Date,
-	Lib
+	UI5Date
 ) {
 	"use strict";
 
@@ -653,7 +651,7 @@ sap.ui.define([
 			oCore.applyChanges();
 
 			assert.strictEqual(document.getElementsByClassName("sapUiCalDummy")[0].getAttribute("aria-label"),
-				Lib.getResourceBundleFor("sap.ui.unified").getText("CALENDAR_WEEK"),
+				oCore.getLibraryResourceBundle("sap.ui.unified").getText("CALENDAR_WEEK"),
 				"Dummy cell's accessible name is provided in aria-label");
 		});
 

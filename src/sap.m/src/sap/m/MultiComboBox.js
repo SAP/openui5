@@ -35,7 +35,6 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	'sap/ui/core/InvisibleText',
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Lib",
 	// jQuery Plugin "cursorPos"
 	"sap/ui/dom/jquery/cursorPos"
 ],
@@ -71,8 +70,7 @@ function(
 	Log,
 	core,
 	InvisibleText,
-	jQuery,
-	Lib
+	jQuery
 ) {
 	"use strict";
 
@@ -735,7 +733,7 @@ function(
 	 */
 	MultiComboBox.prototype.onsapfocusleave = function(oEvent) {
 		var bTablet = this.isPlatformTablet(),
-			oControl = Element.registry.get(oEvent.relatedControlId),
+			oControl = core.byId(oEvent.relatedControlId),
 			oFocusDomRef = oControl && oControl.getFocusDomRef(),
 			sOldValue = this.getValue(),
 			oPicker = this.getPicker(),
@@ -1890,7 +1888,7 @@ function(
 			return null;
 		}
 
-		var oFocusedElement = Element.registry.get(document.activeElement.id);
+		var oFocusedElement = core.byId(document.activeElement.id);
 
 		if (this._getList()
 			&& containsOrEquals(this._getList().getFocusDomRef(), oFocusedElement.getFocusDomRef())) {
@@ -2060,7 +2058,7 @@ function(
 
 			onsapfocusleave: function(oEvent) {
 				var oPopup = this.getAggregation("picker");
-				var oControl = Element.registry.get(oEvent.relatedControlId);
+				var oControl = core.byId(oEvent.relatedControlId);
 
 				if (oPopup && oControl && deepEqual(oPopup.getFocusDomRef(), oControl.getFocusDomRef())) {
 
@@ -2820,7 +2818,7 @@ function(
 			}
 
 			if (typeof oItem === "string") {
-				oItem = Element.registry.get(oItem);
+				oItem = core.byId(oItem);
 			}
 
 			// Update and synchronize "selectedItems" association,
@@ -2849,7 +2847,7 @@ function(
 		}
 
 		if (typeof oItem === "string") {
-			oItem = Element.registry.get(oItem);
+			oItem = core.byId(oItem);
 		}
 
 		this.setSelection({
@@ -2877,7 +2875,7 @@ function(
 		}
 
 		if (typeof oItem === "string") {
-			oItem = Element.registry.get(oItem);
+			oItem = core.byId(oItem);
 		}
 
 		if (!this.isItemSelected(oItem)) {
@@ -3066,7 +3064,7 @@ function(
 		var aItems = [], aItemIds = this.getAssociation("selectedItems") || [];
 
 		aItemIds.forEach(function(sItemId) {
-			var oItem = Element.registry.get(sItemId);
+			var oItem = core.byId(sItemId);
 
 			if (oItem) {
 				aItems.push(oItem);
@@ -3351,7 +3349,7 @@ function(
 		this.setAggregation("tokenizer", this._oTokenizer);
 		this._aInitiallySelectedItems = [];
 
-		this._oRbC = Lib.getResourceBundleFor("sap.ui.core");
+		this._oRbC = core.getLibraryResourceBundle("sap.ui.core");
 
 		this._fillList();
 	};
@@ -3463,7 +3461,7 @@ function(
 		this.syncPickerContent();
 
 		var iItemToFocus, oItemToFocus,
-			oCurrentlyFocusedObject = Element.registry.get(document.activeElement.id),
+			oCurrentlyFocusedObject = core.byId(document.activeElement.id),
 			aSelectedItems = this.getSelectedItems(),
 			aSelectableItems = ListHelpers.getSelectableItems(this.getItems()),
 			oList = this._getList(),
@@ -3516,7 +3514,7 @@ function(
 		}).join(" ");
 
 		var oInfo = ComboBoxBase.prototype.getAccessibilityInfo.apply(this, arguments);
-		oInfo.type = Lib.getResourceBundleFor("sap.m").getText("ACC_CTR_TYPE_MULTICOMBO");
+		oInfo.type = core.getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_MULTICOMBO");
 		oInfo.description = (this.getValueDescriptionInfo() + " " + sText).trim();
 		return oInfo;
 	};
@@ -3532,7 +3530,7 @@ function(
 		if (this.getValue()) {
 			return this.getValue();
 		}
-		return this._hasTokens() ? "" : Lib.getResourceBundleFor("sap.m").getText("INPUTBASE_VALUE_EMPTY");
+		return this._hasTokens() ? "" : sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("INPUTBASE_VALUE_EMPTY");
 	};
 
 	/**

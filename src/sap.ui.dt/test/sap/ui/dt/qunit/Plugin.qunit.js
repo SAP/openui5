@@ -7,8 +7,7 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/ui/layout/VerticalLayout",
 	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/core/Core",
-	"sap/ui/core/Lib"
+	"sap/ui/core/Core"
 ], function(
 	DesignTime,
 	OverlayRegistry,
@@ -16,8 +15,7 @@ sap.ui.define([
 	Button,
 	VerticalLayout,
 	sinon,
-	oCore,
-	Lib
+	oCore
 ) {
 	"use strict";
 
@@ -389,7 +387,7 @@ sap.ui.define([
 
 			assert.equal(
 				this.oPlugin._getMenuItems([this.oOverlay], {pluginId: "CTX_RENAME"})[0].text,
-				Lib.getResourceBundleFor("sap.ui.rta").getText("CTX_RENAME"),
+				oCore.getLibraryResourceBundle("sap.ui.rta").getText("CTX_RENAME"),
 				"then default text is returned in the menu item"
 			);
 		});
@@ -461,7 +459,7 @@ sap.ui.define([
 			var aMenuItems = this.oPlugin._getMenuItems([this.oOverlay], {pluginId: "CTX_RENAME"});
 			assert.equal(
 				aMenuItems[0].text,
-				Lib.getResourceBundleFor("sap.ui.rta").getText("CTX_RENAME"),
+				oCore.getLibraryResourceBundle("sap.ui.rta").getText("CTX_RENAME"),
 				"then the menu item from the responsible element is returned"
 			);
 			oResponsibleElement.destroy();
@@ -502,7 +500,7 @@ sap.ui.define([
 			var aMenuItems = this.oPlugin._getMenuItems([this.oOverlay], {pluginId: "CTX_RENAME"});
 			assert.equal(
 				aMenuItems[0].text,
-				Lib.getResourceBundleFor("sap.ui.rta").getText("CTX_RENAME"),
+				oCore.getLibraryResourceBundle("sap.ui.rta").getText("CTX_RENAME"),
 				"then the menu item from the responsible element is returned"
 			);
 			oResponsibleElement.destroy();

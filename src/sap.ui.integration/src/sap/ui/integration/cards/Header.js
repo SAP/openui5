@@ -13,9 +13,8 @@ sap.ui.define([
 	"sap/ui/integration/util/BindingResolver",
 	"sap/ui/integration/util/LoadingProvider",
 	"sap/ui/integration/util/Utils",
-	"sap/ui/integration/formatters/IconFormatter",
-	"sap/ui/core/Element"
-], function(
+	"sap/ui/integration/formatters/IconFormatter"
+], function (
 	Core,
 	JSONModel,
 	merge,
@@ -27,8 +26,7 @@ sap.ui.define([
 	BindingResolver,
 	LoadingProvider,
 	Utils,
-	IconFormatter,
-	Element
+	IconFormatter
 ) {
 	"use strict";
 
@@ -353,7 +351,7 @@ sap.ui.define([
 	 * @returns {sap.ui.integration.widgets.Card} The card instance.
 	 */
 	Header.prototype.getCardInstance = function () {
-		return Element.registry.get(this.getCard());
+		return Core.byId(this.getCard());
 	};
 
 	Header.prototype._isDataProviderJson = function () {

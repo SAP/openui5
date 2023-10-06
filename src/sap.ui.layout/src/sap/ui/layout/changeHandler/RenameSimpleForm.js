@@ -4,12 +4,10 @@
 
 sap.ui.define([
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
-	"sap/base/Log",
-	"sap/ui/core/Element"
+	"sap/base/Log"
 ], function(
 	JsControlTreeModifier,
-	Log,
-	Element
+	Log
 ) {
 	"use strict";
 
@@ -107,7 +105,7 @@ sap.ui.define([
 		}
 
 		if (oSpecificChangeInfo.renamedElement && oSpecificChangeInfo.renamedElement.id) {
-			var oRenamedElement = Element.registry.get(oSpecificChangeInfo.renamedElement.id);
+			var oRenamedElement = sap.ui.getCore().byId(oSpecificChangeInfo.renamedElement.id);
 			var oStableRenamedElement;
 			if (oSpecificChangeInfo.changeType === "renameLabel") {
 				oStableRenamedElement = oRenamedElement.getLabel();

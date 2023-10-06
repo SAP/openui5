@@ -38,8 +38,7 @@ sap.ui.define([
 	"sap/m/MessageStrip",
 	"sap/m/HBox",
 	"sap/m/App",
-	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Element"
+	"sap/ui/thirdparty/jquery"
 ], function(
 	Toolbar,
 	OverflowToolbar,
@@ -80,8 +79,7 @@ sap.ui.define([
 	MessageStrip,
 	HBox,
 	App,
-	jQuery,
-	Element
+	jQuery
 ) {
 	"use strict";
 
@@ -121,7 +119,7 @@ sap.ui.define([
 				icon: "sap-icon://accept",
 				text: "Close",
 				press: function () {
-					Element.registry.get("otb0").closeOverflow();
+					sap.ui.getCore().byId("otb0").closeOverflow();
 				}
 			}),
 			new Button({
@@ -142,7 +140,7 @@ sap.ui.define([
 						icon: "sap-icon://accept",
 						text: "Close",
 						press: function () {
-							Element.registry.get("otb0").closeOverflow();
+							sap.ui.getCore().byId("otb0").closeOverflow();
 						}
 					}),
 					new Button({
@@ -1170,8 +1168,8 @@ sap.ui.define([
 	});
 	*/
 
-	Element.registry.get("sf1").attachSearch(function (oParams) {
-		Element.registry.get("hotelsLabel").setText(oParams.getParameter("query"));
+	sap.ui.getCore().byId("sf1").attachSearch(function (oParams) {
+		sap.ui.getCore().byId("hotelsLabel").setText(oParams.getParameter("query"));
 	});
 
 	oApp.addPage(oPage).placeAt("content");

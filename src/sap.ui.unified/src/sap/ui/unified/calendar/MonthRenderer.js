@@ -3,33 +3,28 @@
  */
 
 sap.ui.define([
-	'sap/ui/unified/calendar/CalendarUtils',
-	'sap/ui/unified/calendar/CalendarDate',
-	'sap/ui/unified/CalendarLegend',
-	'sap/ui/unified/CalendarLegendRenderer',
+    'sap/ui/unified/calendar/CalendarUtils',
+    'sap/ui/unified/calendar/CalendarDate',
+    'sap/ui/unified/CalendarLegend',
+    'sap/ui/unified/CalendarLegendRenderer',
 	'sap/ui/core/library',
-	'sap/ui/unified/library',
-	"sap/base/Log",
-	'sap/ui/core/InvisibleText',
-	'sap/ui/core/date/UI5Date',
-	"sap/ui/core/Configuration",
-	"sap/ui/core/Lib",
-	"sap/ui/core/Element"
+    'sap/ui/unified/library',
+    "sap/base/Log",
+    'sap/ui/core/InvisibleText',
+    'sap/ui/core/date/UI5Date',
+    "sap/ui/core/Configuration"
 ],
 	function(
-		CalendarUtils,
-		CalendarDate,
-		CalendarLegend,
-		CalendarLegendRenderer,
-		coreLibrary,
-		library,
-		Log,
-		InvisibleText,
-		UI5Date,
-		Configuration,
-		Lib,
-		Element
-	) {
+        CalendarUtils,
+        CalendarDate,
+        CalendarLegend,
+        CalendarLegendRenderer,
+        coreLibrary,
+        library,
+        Log,
+        InvisibleText,
+        UI5Date,
+        Configuration) {
 	"use strict";
 
 
@@ -58,7 +53,7 @@ sap.ui.define([
 
 		var oDate = this.getStartDate(oMonth),
 			sTooltip = oMonth.getTooltip_AsString(),
-			rb = Lib.getResourceBundleFor("sap.ui.unified"),
+			rb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified"),
 			sId = oMonth.getId(),
 			oAriaLabel = {value: "", append: true},
 			sDescribedBy = "",
@@ -328,7 +323,7 @@ sap.ui.define([
 		oRm.class("sapUiCalDummy");
 		oRm.style("visibility", bVisible ? "visible" : "hidden");
 		oRm.attr("role", sRole);
-		oRm.attr("aria-label", Lib.getResourceBundleFor("sap.ui.unified").getText("CALENDAR_WEEK"));
+		oRm.attr("aria-label", sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified").getText("CALENDAR_WEEK"));
 		oRm.openEnd();
 		oRm.close('div');
 	};
@@ -365,7 +360,7 @@ sap.ui.define([
 		sLegendId = oMonth.getLegend();
 		// getLegend may return string or array we should proceed only if the result is a string
 		if (sLegendId && typeof sLegendId === "string") {
-			oLegend = Element.registry.get(sLegendId);
+			oLegend = sap.ui.getCore().byId(sLegendId);
 			if (oLegend) {
 				if (!(oLegend instanceof CalendarLegend)) {
 					throw new Error(oLegend + " is not an sap.ui.unified.CalendarLegend. " + oMonth);
@@ -594,7 +589,7 @@ sap.ui.define([
 	 * @returns {string} sText The text for the non-working day from the bundle
 	 */
 	MonthRenderer._addNonWorkingDayText = function (mAccProps) {
-		var sText = Lib.getResourceBundleFor("sap.ui.unified").getText("LEGEND_NON_WORKING_DAY") + " ";
+		var sText = sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified").getText("LEGEND_NON_WORKING_DAY") + " ";
 		mAccProps["label"] += sText;
 		return sText;
 	};

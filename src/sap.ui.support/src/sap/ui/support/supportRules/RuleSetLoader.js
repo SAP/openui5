@@ -7,6 +7,7 @@ sap.ui.define([
 	"sap/base/util/extend",
 	"sap/base/util/ObjectPath",
 	"sap/ui/VersionInfo",
+	"sap/ui/core/Supportability",
 	"sap/ui/support/supportRules/RuleSet",
 	"sap/ui/support/supportRules/CommunicationBus",
 	"sap/ui/support/supportRules/WCBChannels",
@@ -14,13 +15,13 @@ sap.ui.define([
 	"sap/ui/support/supportRules/Constants",
 	"sap/ui/support/supportRules/util/EvalUtils",
 	"sap/ui/support/supportRules/util/Utils",
-	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Configuration"
+	"sap/ui/thirdparty/jquery"
 ], function (
 	Log,
 	extend,
 	ObjectPath,
 	VersionInfo,
+	Supportability,
 	RuleSet,
 	CommunicationBus,
 	channelNames,
@@ -28,8 +29,7 @@ sap.ui.define([
 	constants,
 	EvalUtils,
 	Utils,
-	jQuery,
-	Configuration
+	jQuery
 	) {
 		"use strict";
 
@@ -220,7 +220,7 @@ sap.ui.define([
 				iProgress = 0,
 				iRulesNumber = aLibNames.publicRules.length;
 
-			var supportModeConfig = Configuration.getSupportMode();
+			var supportModeConfig = Supportability.getSupportSettings();
 			var bSilentMode = supportModeConfig && supportModeConfig.indexOf("silent") > -1;
 
 			if (bHasInternalRules) {

@@ -14,9 +14,8 @@ sap.ui.define([
 	"test-resources/sap/ui/mdc/testutils/opa/p13n/waitForPanelInP13n",
 	"./actions/PressKey",
 	"sap/m/MessageBox",
-	"sap/ui/core/Core",
-	"sap/ui/core/Lib"
-], function(Opa5, Press, Properties, Ancestor, Descendant, EnterText, TestUtil, PropertyStrictEquals, waitForPanelInP13n, PressKey, MessageBox, oCore, Lib) {
+	"sap/ui/core/Core"
+], function (Opa5, Press, Properties, Ancestor, Descendant, EnterText, TestUtil, PropertyStrictEquals, waitForPanelInP13n, PressKey, MessageBox, oCore) {
 	"use strict";
 
 	function iPressResetInControl(sControl) {
@@ -25,7 +24,7 @@ sap.ui.define([
 			controlType: "sap.m.Button",
 			matchers: {
 				properties: {
-					text: Lib.getResourceBundleFor("sap.ui.mdc").getText("p13nDialog.RESET")
+					text: oCore.getLibraryResourceBundle("sap.ui.mdc").getText("p13nDialog.RESET")
 				},
 				ancestor: {
 					controlType: sControl
@@ -63,7 +62,7 @@ sap.ui.define([
 				controlType: "sap.m.Button",
 				matchers: {
 					properties: {
-						text: Lib.getResourceBundleFor("sap.m").getText("MSGBOX_OK")
+						text: oCore.getLibraryResourceBundle("sap.m").getText("MSGBOX_OK")
 					},
 					ancestor: {
 						controlType: "sap.m.Dialog",
@@ -85,7 +84,7 @@ sap.ui.define([
 				controlType: "sap.m.Button",
 				matchers: {
 					properties: {
-						text: Lib.getResourceBundleFor("sap.m").getText("MSGBOX_CANCEL")
+						text: oCore.getLibraryResourceBundle("sap.m").getText("MSGBOX_CANCEL")
 					},
 					ancestor: {
 						controlType: "sap.m.Dialog",
@@ -220,7 +219,7 @@ sap.ui.define([
 			const sKind = oSettings.kind;
 			const fSuccess = oSettings.success;
 
-			const MDCRb = Lib.getResourceBundleFor("sap.ui.mdc");
+			const MDCRb = oCore.getLibraryResourceBundle("sap.ui.mdc");
 			const sPlaceholderName = MDCRb.getText('chart.PERSONALIZATION_DIALOG_TEMPLATE_PLACEHOLDER');
 			const aMatchers = [];
 

@@ -1,19 +1,9 @@
 /* global QUnit,sinon */
 sap.ui.define([
-	"sap/m/p13n/Engine",
-	"../../QUnitUtils",
-	"sap/ui/mdc/Table",
-	"sap/ui/mdc/TableDelegate",
-	"sap/m/Button",
-	"sap/ui/mdc/table/Column",
-	"sap/ui/mdc/FilterField",
-	"sap/m/p13n/modification/FlexModificationHandler",
-	"test-resources/sap/m/qunit/p13n/TestModificationHandler",
-	"sap/ui/core/Core",
-	"sap/ui/core/Lib"
-], function(Engine, MDCQUnitUtils, Table, TableDelegate, Button, Column, FilterField, FlexModificationHandler, TestModificationHandler, oCore, Lib) {
+	"sap/m/p13n/Engine", "../../QUnitUtils", "sap/ui/mdc/Table", "sap/ui/mdc/TableDelegate", "sap/m/Button", "sap/ui/mdc/table/Column", "sap/ui/mdc/FilterField", "sap/m/p13n/modification/FlexModificationHandler", "test-resources/sap/m/qunit/p13n/TestModificationHandler", "sap/ui/core/Core"
+], function (Engine, MDCQUnitUtils, Table, TableDelegate, Button, Column, FilterField, FlexModificationHandler, TestModificationHandler, oCore) {
 	"use strict";
-	const oResourceBundle = Lib.getResourceBundleFor("sap.ui.mdc");
+	const oResourceBundle = oCore.getLibraryResourceBundle("sap.ui.mdc");
 
 	QUnit.module("Engine API tests showUI Table", {
 		beforeEach: function () {

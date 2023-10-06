@@ -16,9 +16,9 @@ sap.ui.define([
 	"sap/ui/Device",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Core",
-	"sap/ui/core/date/UI5Date",
-	"sap/ui/core/Element"
-], function(KeyCodes, qutils, CalendarDateInterval, CalendarType, Locale, LocaleData, DateFormat, DateRange, DateTypeRange, CalendarDate, CalendarWeekInterval, DatesRow, Device, jQuery, oCore, UI5Date, Element) {
+	"sap/ui/core/date/UI5Date"
+], function(KeyCodes, qutils, CalendarDateInterval, CalendarType, Locale, LocaleData, DateFormat, DateRange, DateTypeRange,
+	CalendarDate, CalendarWeekInterval, DatesRow, Device, jQuery, oCore, UI5Date) {
 	"use strict";
 
 	// set language to en-US, since we have specific language strings tested
@@ -60,7 +60,7 @@ sap.ui.define([
 		oCore.applyChanges();
 
 		// act
-		var $DatesRow = Element.registry.get("myCal2").getAggregation("month")[0].$();
+		var $DatesRow = oCore.byId("myCal2").getAggregation("month")[0].$();
 		var aWeekHeaders = $DatesRow.find(".sapUiCalWH");
 		var aDays = $DatesRow.find(".sapUiCalItem");
 
@@ -79,7 +79,7 @@ sap.ui.define([
 		oCore.applyChanges();
 
 		// act
-		var $DatesRow = Element.registry.get("myCal").getAggregation("month")[0].$();
+		var $DatesRow = oCore.byId("myCal").getAggregation("month")[0].$();
 		var aWeekHeaders = $DatesRow.find(".sapUiCalWH");
 		var aDays = $DatesRow.find(".sapUiCalItem");
 
@@ -97,7 +97,7 @@ sap.ui.define([
 		oCore.applyChanges();
 
 		// act
-		var $DatesRow = Element.registry.get("myCal").getAggregation("month")[0].$();
+		var $DatesRow = oCore.byId("myCal").getAggregation("month")[0].$();
 		var aWeekHeaders = $DatesRow.find(".sapUiCalWH");
 		var aDays = $DatesRow.find(".sapUiCalItem");
 
@@ -201,7 +201,7 @@ sap.ui.define([
 		iStartDateChanged = 0;
 		this.oCal.setStartDate(UI5Date.getInstance("2015", "2", "10"));
 		oCore.applyChanges();
-		var $DatesRow = Element.registry.get("myCal").getAggregation("month")[0].$();
+		var $DatesRow = oCore.byId("myCal").getAggregation("month")[0].$();
 		var aDays = $DatesRow.find(".sapUiCalItem");
 
 		// assert
@@ -218,7 +218,7 @@ sap.ui.define([
 		iStartDateChanged = 0;
 		this.oCal.focusDate(UI5Date.getInstance("2015", "2", "11"));
 		oCore.applyChanges();
-		var $DatesRow = Element.registry.get("myCal").getAggregation("month")[0].$();
+		var $DatesRow = oCore.byId("myCal").getAggregation("month")[0].$();
 		var aDays = $DatesRow.find(".sapUiCalItem");
 
 		// assert
@@ -265,7 +265,7 @@ sap.ui.define([
 		assert.equal(oFormatYyyymmdd.format(this.oCal.getStartDate()), "20150417", "Calendar: Start date property");
 
 		// act
-		var $DatesRow = Element.registry.get("myCal").getAggregation("month")[0].$();
+		var $DatesRow = oCore.byId("myCal").getAggregation("month")[0].$();
 		var aDays = $DatesRow.find(".sapUiCalItem");
 
 		// assert
@@ -442,7 +442,7 @@ sap.ui.define([
 		// act
 		qutils.triggerEvent("click", "myCal--Head-B1");
 		oCore.applyChanges();
-		var $MonthPicker = Element.registry.get("myCal").getAggregation("monthPicker").$();
+		var $MonthPicker = oCore.byId("myCal").getAggregation("monthPicker").$();
 		var aMonths = $MonthPicker.find(".sapUiCalItem");
 
 		// assert
@@ -463,7 +463,7 @@ sap.ui.define([
 		// act
 		qutils.triggerEvent("click", "myCal--Head-B1");
 		oCore.applyChanges();
-		var $MonthPicker = Element.registry.get("myCal").getAggregation("monthPicker").$();
+		var $MonthPicker = oCore.byId("myCal").getAggregation("monthPicker").$();
 		var aMonths = $MonthPicker.find(".sapUiCalItem");
 
 		// assert
@@ -479,7 +479,7 @@ sap.ui.define([
 		oCore.applyChanges();
 		qutils.triggerEvent("click", "myCal--Head-prev");
 		oCore.applyChanges();
-		var $MonthPicker = Element.registry.get("myCal").getAggregation("monthPicker").$();
+		var $MonthPicker = oCore.byId("myCal").getAggregation("monthPicker").$();
 		var aMonths = $MonthPicker.find(".sapUiCalItem");
 
 		// assert
@@ -500,7 +500,7 @@ sap.ui.define([
 		oCore.applyChanges();
 		qutils.triggerEvent("click", "myCal--Head-next");
 		oCore.applyChanges();
-		var $MonthPicker = Element.registry.get("myCal").getAggregation("monthPicker").$();
+		var $MonthPicker = oCore.byId("myCal").getAggregation("monthPicker").$();
 		var aMonths = $MonthPicker.find(".sapUiCalItem");
 
 		// assert
@@ -533,7 +533,7 @@ sap.ui.define([
 		qutils.triggerEvent("click", "myCal--Head-B1");
 		oCore.applyChanges();
 
-		$MonthPicker = Element.registry.get("myCal").getAggregation("monthPicker").$();
+		$MonthPicker = oCore.byId("myCal").getAggregation("monthPicker").$();
 		aMonths = $MonthPicker.find(".sapUiCalItem");
 
 		$Month = jQuery("#myCal--MP-m4");
@@ -601,7 +601,7 @@ sap.ui.define([
 		// act
 		qutils.triggerEvent("click", "myCal--Head-B2");
 		oCore.applyChanges();
-		var $YearPicker = Element.registry.get("myCal").getAggregation("yearPicker").$();
+		var $YearPicker = oCore.byId("myCal").getAggregation("yearPicker").$();
 		var aYears = $YearPicker.find(".sapUiCalItem");
 
 		// assert
@@ -620,7 +620,7 @@ sap.ui.define([
 		// act
 		qutils.triggerEvent("click", "myCal--Head-B2");
 		oCore.applyChanges();
-		var $YearPicker = Element.registry.get("myCal").getAggregation("yearPicker").$();
+		var $YearPicker = oCore.byId("myCal").getAggregation("yearPicker").$();
 		var aYears = $YearPicker.find(".sapUiCalItem");
 
 		// assert
@@ -635,7 +635,7 @@ sap.ui.define([
 		oCore.applyChanges();
 		qutils.triggerEvent("click", "myCal--Head-prev");
 		oCore.applyChanges();
-		var $YearPicker = Element.registry.get("myCal").getAggregation("yearPicker").$();
+		var $YearPicker = oCore.byId("myCal").getAggregation("yearPicker").$();
 		var aYears = $YearPicker.find(".sapUiCalItem");
 
 		// assert
@@ -655,7 +655,7 @@ sap.ui.define([
 		oCore.applyChanges();
 		qutils.triggerEvent("click", "myCal--Head-next");
 		oCore.applyChanges();
-		var $YearPicker = Element.registry.get("myCal").getAggregation("yearPicker").$();
+		var $YearPicker = oCore.byId("myCal").getAggregation("yearPicker").$();
 		var aYears = $YearPicker.find(".sapUiCalItem");
 
 		// assert
@@ -679,7 +679,7 @@ sap.ui.define([
 		// act
 		qutils.triggerEvent("click", "myCal--Head-B1");
 		oCore.applyChanges();
-		var $MonthPicker = Element.registry.get("myCal").getAggregation("monthPicker").$();
+		var $MonthPicker = oCore.byId("myCal").getAggregation("monthPicker").$();
 		var aMonths = $MonthPicker.find(".sapUiCalItem");
 
 		// assert
@@ -691,7 +691,7 @@ sap.ui.define([
 		// act
 		qutils.triggerEvent("click", "myCal--Head-B2");
 		oCore.applyChanges();
-		var $YearPicker = Element.registry.get("myCal").getAggregation("yearPicker").$();
+		var $YearPicker = oCore.byId("myCal").getAggregation("yearPicker").$();
 		var aYears = $YearPicker.find(".sapUiCalItem");
 
 		// assert
@@ -720,7 +720,7 @@ sap.ui.define([
 		// act
 		qutils.triggerEvent("click", "myCal--Head-B1");
 		oCore.applyChanges();
-		$MonthPicker = Element.registry.get("myCal").getAggregation("monthPicker").$();
+		$MonthPicker = oCore.byId("myCal").getAggregation("monthPicker").$();
 		aMonths = $MonthPicker.find(".sapUiCalItem");
 
 		// assert
@@ -732,7 +732,7 @@ sap.ui.define([
 		// act
 		qutils.triggerEvent("click", "myCal--Head-B2");
 		oCore.applyChanges();
-		$YearPicker = Element.registry.get("myCal").getAggregation("yearPicker").$();
+		$YearPicker = oCore.byId("myCal").getAggregation("yearPicker").$();
 		aYears = $YearPicker.find(".sapUiCalItem");
 
 		// assert
@@ -962,7 +962,7 @@ sap.ui.define([
 		qutils.triggerKeydown($Date[0], KeyCodes.ENTER, false, false, false);
 		oCore.applyChanges();
 
-		assert.equal(Element.registry.get("CalP").getStartDate().getDate(), 14, "start date is set correctly");
+		assert.equal(oCore.byId("CalP").getStartDate().getDate(), 14, "start date is set correctly");
 
 		assert.ok(jQuery("#CalP--Cal").get(0), "Calendar picker still rendered after closing");
 		assert.ok(!jQuery(jQuery("#CalP--Cal").get(0)).is(":visible"), "Calendar picker not visible after closing");
@@ -1002,7 +1002,7 @@ sap.ui.define([
 		qutils.triggerKeydown($Date[0], KeyCodes.ENTER, false, false, false);
 		oCore.applyChanges();
 
-		oCalStartDate = Element.registry.get("CalP").getStartDate();
+		oCalStartDate = oCore.byId("CalP").getStartDate();
 
 		assert.equal(oCalStartDate.getDate(), 14, "start date, date is set correctly");
 		assert.equal(oCalStartDate.getMonth(), 8, "start date, month is set correctly");
@@ -1019,7 +1019,7 @@ sap.ui.define([
 
 		assert.ok(jQuery(jQuery("#CalP--Cal").get(0)).is(":visible"), "Calendar picker visible");
 
-		qutils.triggerKeydown(Element.registry.get("CalP").getFocusDomRef(), KeyCodes.ESCAPE);
+		qutils.triggerKeydown(oCore.byId("CalP").getFocusDomRef(), KeyCodes.ESCAPE);
 		oCore.applyChanges();
 
 		assert.ok(!jQuery(jQuery("#CalP--Cal").get(0)).is(":visible"), "Calendar picker not visible after closing");
@@ -1060,7 +1060,7 @@ sap.ui.define([
 		assert.strictEqual(oCalPicker.getSelectedDates()[0].getStartDate().getDate(), 17, "start date is 17");
 		assert.strictEqual(oCalPicker.getSelectedDates()[0].getEndDate().getDate(), 23, "end date is 23");
 
-		qutils.triggerKeydown(Element.registry.get("CalP").getFocusDomRef(), KeyCodes.ESCAPE);
+		qutils.triggerKeydown(oCore.byId("CalP").getFocusDomRef(), KeyCodes.ESCAPE);
 	});
 
 	QUnit.test("Text of the direct navigation button is correct", function(assert) {
@@ -1136,7 +1136,7 @@ sap.ui.define([
 		assert.strictEqual(oCalPicker._oMaxDate.getYear(), 9999, "max year is set to 9999");
 
 		// close calendarPicker
-		qutils.triggerKeydown(Element.registry.get("CalP").getFocusDomRef(), KeyCodes.ESCAPE);
+		qutils.triggerKeydown(oCore.byId("CalP").getFocusDomRef(), KeyCodes.ESCAPE);
 		oCore.applyChanges();
 
 		// change the pickerPopup to false
@@ -1157,7 +1157,7 @@ sap.ui.define([
 		assert.strictEqual(oCalPicker._oMinDate.getYear(), 2015, "min year is set to 2015");
 		assert.strictEqual(oCalPicker._oMaxDate.getYear(), 2017, "max year is set to 2017");
 
-		qutils.triggerKeydown(Element.registry.get("CalP").getFocusDomRef(), KeyCodes.ESCAPE);
+		qutils.triggerKeydown(oCore.byId("CalP").getFocusDomRef(), KeyCodes.ESCAPE);
 	});
 
 	QUnit.test("Triggering button receives the focus on picker ESC", function(assert) {

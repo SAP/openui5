@@ -11,8 +11,7 @@ sap.ui.define([
 	"sap/base/util/ObjectPath",
 	"sap/base/util/deepClone",
 	"sap/ui/model/resource/ResourceModel",
-	"sap/ui/model/json/JSONModel",
-	"sap/ui/core/Lib"
+	"sap/ui/model/json/JSONModel"
 ], function(
 	ManagedObject,
 	Fragment,
@@ -21,12 +20,11 @@ sap.ui.define([
 	ObjectPath,
 	deepClone,
 	ResourceModel,
-	JSONModel,
-	Lib
+	JSONModel
 ) {
 	"use strict";
 
-	var oTextBundle = Lib.getResourceBundleFor("sap.ui.fl");
+	var oTextBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.fl");
 
 	function setupEditor(oDialog, oInitialJson, oCustomConfig) {
 		var oEditor = oDialog.getContent()[0];

@@ -12,8 +12,7 @@ sap.ui.define([
 	"sap/ui/model/base/ManagedObjectModel",
 	"sap/ui/core/Control",
 	"sap/ui/core/Core",
-	"sap/ui/mdc/enums/TableType",
-	"sap/ui/core/Element"
+	"sap/ui/mdc/enums/TableType"
 ], function(
 	GridTableType,
 	ResponsiveTableType,
@@ -24,8 +23,7 @@ sap.ui.define([
 	ManagedObjectModel,
 	Control,
 	Core,
-	TableType,
-	Element
+	TableType
 ) {
 	"use strict";
 
@@ -307,7 +305,7 @@ sap.ui.define([
 				oRm.openStart("div", oColumnHeaderLabel);
 				oRm.style("width", "100%");
 				oRm.openEnd();
-				oRm.renderControl(Element.registry.get(oColumnHeaderLabel.getColumn()));
+				oRm.renderControl(Core.byId(oColumnHeaderLabel.getColumn()));
 				oRm.close("div");
 			}
 		},

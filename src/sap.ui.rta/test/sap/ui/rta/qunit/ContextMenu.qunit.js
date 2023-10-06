@@ -17,8 +17,7 @@ sap.ui.define([
 	"sap/uxap/ObjectPageSection",
 	"sap/uxap/ObjectPageSubSection",
 	"sap/ui/qunit/QUnitUtils",
-	"sap/ui/core/Core",
-	"sap/ui/core/Element"
+	"sap/ui/core/Core"
 ], function(
 	RtaQunitUtils,
 	KeyCodes,
@@ -36,8 +35,7 @@ sap.ui.define([
 	ObjectPageSection,
 	ObjectPageSubSection,
 	QUnitUtils,
-	oCore,
-	Element
+	oCore
 ) {
 	"use strict";
 
@@ -62,16 +60,16 @@ sap.ui.define([
 	QUnit.module("Given RTA is started...", {
 		before(assert) {
 			var fnDone = assert.async();
-			this.oPage = Element.registry.get("Comp1---idMain1--mainPage");
-			this.oSmartForm = Element.registry.get("Comp1---idMain1--MainForm");
-			this.oGroup = Element.registry.get("Comp1---idMain1--GeneralLedgerDocument");
-			this.oBoundGroupElement = Element.registry.get("Comp1---idMain1--GeneralLedgerDocument.CompanyCode");
-			this.oAnotherBoundGroupElement = Element.registry.get("Comp1---idMain1--GeneralLedgerDocument.Name");
-			this.oUnBoundGroupElement = Element.registry.get("Comp1---idMain1--Victim");
-			this.oMultipleFieldTwoBoundGroupElements = Element.registry.get("Comp1---idMain1--Dates.BoundButton35");
-			this.oMultipleBoundFieldGroupElement = Element.registry.get("Comp1---idMain1--Dates.BoundButton35");
-			this.oFieldInGroupWithoutStableId = Element.registry.get("Comp1---idMain1--FieldInGroupWithoutStableId");
-			this.oSimpleFormWithTitles = Element.registry.get("Comp1---idMain1--SimpleForm");
+			this.oPage = oCore.byId("Comp1---idMain1--mainPage");
+			this.oSmartForm = oCore.byId("Comp1---idMain1--MainForm");
+			this.oGroup = oCore.byId("Comp1---idMain1--GeneralLedgerDocument");
+			this.oBoundGroupElement = oCore.byId("Comp1---idMain1--GeneralLedgerDocument.CompanyCode");
+			this.oAnotherBoundGroupElement = oCore.byId("Comp1---idMain1--GeneralLedgerDocument.Name");
+			this.oUnBoundGroupElement = oCore.byId("Comp1---idMain1--Victim");
+			this.oMultipleFieldTwoBoundGroupElements = oCore.byId("Comp1---idMain1--Dates.BoundButton35");
+			this.oMultipleBoundFieldGroupElement = oCore.byId("Comp1---idMain1--Dates.BoundButton35");
+			this.oFieldInGroupWithoutStableId = oCore.byId("Comp1---idMain1--FieldInGroupWithoutStableId");
+			this.oSimpleFormWithTitles = oCore.byId("Comp1---idMain1--SimpleForm");
 
 			this.oRta = new RuntimeAuthoring({
 				rootControl: oComp.getAggregation("rootControl"),
@@ -626,7 +624,7 @@ sap.ui.define([
 			//					Button
 			this.oMockedAppComponent = RtaQunitUtils.createAndStubAppComponent(sinon);
 
-			var oEmbeddedView = Element.registry.get("Comp1---idMain1");
+			var oEmbeddedView = oCore.byId("Comp1---idMain1");
 
 			var oSubSection = new ObjectPageSubSection({
 				id: oEmbeddedView.createId("subsection1"),
@@ -660,7 +658,7 @@ sap.ui.define([
 
 			this.oObjectPageSection3 = oObjectPageSection3;
 
-			var oEmbeddedPage = Element.registry.get("Comp1---idMain1--mainPage");
+			var oEmbeddedPage = oCore.byId("Comp1---idMain1--mainPage");
 
 			this.oObjectPageLayout = new ObjectPageLayout({
 				id: oEmbeddedView.createId("ObjectPageLayout"),
@@ -865,7 +863,7 @@ sap.ui.define([
 
 	QUnit.module("Given RTA is started for Object Page...", {
 		beforeEach() {
-			var oEmbeddedView = Element.registry.get("Comp1---idMain1");
+			var oEmbeddedView = oCore.byId("Comp1---idMain1");
 
 			this.oObjectPageSection1 = new ObjectPageSection({
 				title: "Section_1",
@@ -877,7 +875,7 @@ sap.ui.define([
 				visible: false
 			});
 
-			var oEmbeddedPage = Element.registry.get("Comp1---idMain1--mainPage");
+			var oEmbeddedPage = oCore.byId("Comp1---idMain1--mainPage");
 
 			this.oObjectPageLayout = new ObjectPageLayout({
 				id: oEmbeddedView.createId("ObjectPageLayout"),

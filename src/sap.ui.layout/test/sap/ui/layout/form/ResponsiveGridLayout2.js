@@ -5,9 +5,8 @@ sap.ui.require([
 	"sap/ui/layout/form/SemanticFormElement",
 	"sap/ui/layout/form/ResponsiveGridLayout",
 	"sap/m/Label",
-	"sap/m/Text",
-	"sap/ui/core/Element"
-],
+	"sap/m/Text"
+	],
 	function(
 		Form,
 		FormContainer,
@@ -15,9 +14,8 @@ sap.ui.require([
 		SemanticFormElement,
 		ResponsiveGridLayout,
 		Label,
-		Text,
-		Element
-	) {
+		Text
+		) {
 	"use strict";
 
 	var oLayout1 = new ResponsiveGridLayout("L1");
@@ -70,6 +68,6 @@ sap.ui.require([
 	});
 	oForm1.placeAt("content");
 
-	Element.registry.get("C1").setExpandable(true); // to check button is not created twice
+	sap.ui.getCore().byId("C1").setExpandable(true); // to check button is not created twice
 
 });

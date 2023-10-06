@@ -81,7 +81,7 @@ function (jQuery, Core, Element, IconPool, ObjectPageLayout, ObjectPageHeader, O
 	});
 
 	QUnit.test("Unsaved changes mark rendering", function (assert) {
-		this._oHeader = Element.registry.get("UxAP-ObjectPageHeader--header");
+		this._oHeader = Core.byId("UxAP-ObjectPageHeader--header");
 		this._oHeader.setMarkLocked(false);
 		Core.applyChanges();
 
@@ -108,7 +108,7 @@ function (jQuery, Core, Element, IconPool, ObjectPageLayout, ObjectPageHeader, O
 	});
 	QUnit.test("Updates when header invisible", function (assert) {
 		var oPage = this.oHeaderView.byId("ObjectPageLayout"),
-			oHeader = Element.registry.get("UxAP-ObjectPageHeader--header");
+			oHeader = Core.byId("UxAP-ObjectPageHeader--header");
 
 		oPage.setVisible(false);
 		oPage.setShowTitleInHeaderContent(true);
@@ -128,7 +128,7 @@ function (jQuery, Core, Element, IconPool, ObjectPageLayout, ObjectPageHeader, O
 
 	QUnit.test("Adapt layout of header clone", function (assert) {
 		var oPage = this.oHeaderView.byId("ObjectPageLayout"),
-			oHeader = Element.registry.get("UxAP-ObjectPageHeader--header"),
+			oHeader = Core.byId("UxAP-ObjectPageHeader--header"),
 			oSpy;
 
 		for (var i = 0; i < 10; i++) { // add actions
@@ -145,7 +145,7 @@ function (jQuery, Core, Element, IconPool, ObjectPageLayout, ObjectPageHeader, O
 	});
 
 	QUnit.test("titleSelectorTooltip aggregation validation", function (assert) {
-		var oHeader = Element.registry.get("UxAP-ObjectPageHeader--header"),
+		var oHeader = Core.byId("UxAP-ObjectPageHeader--header"),
 			oLibraryResourceBundleOP = oHeader.oLibraryResourceBundleOP,
 			oTitleArrowIconAggr = oHeader.getAggregation("_titleArrowIcon"),
 			oTitleArrowIconContAggr = oHeader.getAggregation("_titleArrowIconCont");
@@ -170,7 +170,7 @@ function (jQuery, Core, Element, IconPool, ObjectPageLayout, ObjectPageHeader, O
 	});
 
 	QUnit.test("Title text has constrained width", function (assert) {
-		var oHeader = Element.registry.get("UxAP-ObjectPageHeader--header"),
+		var oHeader = Core.byId("UxAP-ObjectPageHeader--header"),
 			aTitleTextParts,
 			iTitleTextParts,
 			$titleWrapper,
@@ -208,7 +208,7 @@ function (jQuery, Core, Element, IconPool, ObjectPageLayout, ObjectPageHeader, O
 				this.oHeaderView.placeAt("qunit-fixture");
 				Core.applyChanges();
 				this._oPage = this.oHeaderView.byId("ObjectPageLayout");
-				this._oHeader = Element.registry.get("UxAP-ObjectPageHeader--header");
+				this._oHeader = Core.byId("UxAP-ObjectPageHeader--header");
 				done();
 			}.bind(this));
 		},
@@ -548,7 +548,7 @@ function (jQuery, Core, Element, IconPool, ObjectPageLayout, ObjectPageHeader, O
 		oHeader.removeAllActions();
 		oHeader.addAction(new Button({text: "Button One"}))
 			.addAction(new Button("secondBtn" ,{text: "Button Two"}));
-		oSecondBtn = Element.registry.get("secondBtn");
+		oSecondBtn = Core.byId("secondBtn");
 
 		// act
 		oSecondBtn.setVisible(false);
@@ -755,7 +755,7 @@ function (jQuery, Core, Element, IconPool, ObjectPageLayout, ObjectPageHeader, O
 				this.oHeaderView = oView;
 				this.oHeaderView.placeAt("qunit-fixture");
 				Core.applyChanges();
-				this._oHeader = Element.registry.get("UxAP-ObjectPageHeader--header");
+				this._oHeader = Core.byId("UxAP-ObjectPageHeader--header");
 				done();
 			}.bind(this));
 		},
@@ -945,7 +945,7 @@ function (jQuery, Core, Element, IconPool, ObjectPageLayout, ObjectPageHeader, O
 			}).then(function (oView) {
 				this.oHeaderView = oView;
 				this.oHeaderView.placeAt("qunit-fixture");
-				this._oHeader = Element.registry.get("UxAP-ObjectPageHeader--header");
+				this._oHeader = Core.byId("UxAP-ObjectPageHeader--header");
 				this._oHeader.destroyBreadcrumbs();
 				Core.applyChanges();
 				done();

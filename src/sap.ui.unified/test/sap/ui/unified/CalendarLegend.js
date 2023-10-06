@@ -9,9 +9,8 @@ sap.ui.define([
 	"sap/ui/unified/CalendarLegendItem",
 	"sap/ui/unified/DateRange",
 	"sap/ui/unified/DateTypeRange",
-	"sap/ui/unified/library",
-	"sap/ui/core/Element"
-], function(MessageToast, oCore, DateFormat, ResponsiveFlowLayout, ResponsiveFlowLayoutData, Calendar, CalendarLegend, CalendarLegendItem, DateRange, DateTypeRange, unifiedLibrary, Element) {
+	"sap/ui/unified/library"
+], function(MessageToast, oCore, DateFormat, ResponsiveFlowLayout, ResponsiveFlowLayoutData, Calendar, CalendarLegend, CalendarLegendItem, DateRange, DateTypeRange, unifiedLibrary) {
 	"use strict";
 
 	var CalendarDayType = unifiedLibrary.CalendarDayType;
@@ -92,7 +91,7 @@ sap.ui.define([
 			type: sType,
 			tooltip: aSpecialDay[2]
 		});
-		Element.registry.get("Cal").addSpecialDate(specialDate);
+		oCore.byId("Cal").addSpecialDate(specialDate);
 		oLeg5.addItem(new CalendarLegendItem({
 			text: aSpecialDay[2]
 		}));
@@ -143,7 +142,7 @@ sap.ui.define([
 			type: sType,
 			tooltip: aSpecialDay[2]
 		});
-		Element.registry.get("Cal2").addSpecialDate(specialDate);
+		oCore.byId("Cal2").addSpecialDate(specialDate);
 		oLeg6.addItem(new CalendarLegendItem({
 			text: aSpecialDay[2]
 		}));

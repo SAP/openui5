@@ -4,17 +4,16 @@ sap.ui.define(
 		"sap/ui/test/opaQunit",
 		"sap/ui/test/Opa5",
 		"sap/ui/core/Core",
-		"sap/ui/core/Lib",
 		"./pages/contextBased/ManageAdaptationsDialog",
 		"./pages/contextBased/SaveContextBasedAdaptationDialog",
 		"./pages/contextVisibility/ContextsDialog",
 		"./pages/contextVisibility/ContextSharingVisibilityFragment",
 		"./pages/AppPage"
 	],
-	function(opaTest, Opa5, oCore, Lib) {
+	function(opaTest, Opa5, oCore) {
 		"use strict";
 
-		var oRtaResourceBundle = Lib.getResourceBundleFor("sap.ui.rta");
+		var oRtaResourceBundle = oCore.getLibraryResourceBundle("sap.ui.rta");
 
 		var arrangements = new Opa5({
 			iStartMyApp() {

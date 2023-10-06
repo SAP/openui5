@@ -15,8 +15,7 @@ sap.ui.define([
 	"./NumericInput",
 	"./StepInputRenderer",
 	"sap/ui/events/KeyCodes",
-	"sap/base/Log",
-	"sap/ui/core/Lib"
+	"sap/base/Log"
 ],
 function(
 	Control,
@@ -30,8 +29,7 @@ function(
 	NumericInput,
 	StepInputRenderer,
 	KeyCodes,
-	Log,
-	Lib
+	Log
 ) {
 		"use strict";
 
@@ -299,7 +297,7 @@ function(
 		});
 
 		// get resource translation bundle;
-		var oLibraryResourceBundle = Lib.getResourceBundleFor("sap.m");
+		var oLibraryResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 		StepInput.STEP_INPUT_INCREASE_BTN_TOOLTIP = oLibraryResourceBundle.getText("STEP_INPUT_INCREASE_BTN");
 		StepInput.STEP_INPUT_DECREASE_BTN_TOOLTIP = oLibraryResourceBundle.getText("STEP_INPUT_DECREASE_BTN");
 
@@ -727,7 +725,7 @@ function(
 			var min = this._getMin(),
 				max = this._getMax(),
 				value = this._parseNumber(this._getInput().getValue()),
-				oCoreMessageBundle = Lib.getResourceBundleFor("sap.ui.core"),
+				oCoreMessageBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.core"),
 				oBinding = this.getBinding("value"),
 				oBindingType = oBinding && oBinding.getType && oBinding.getType(),
 				sBindingConstraintMax = oBindingType && oBindingType.oConstraints && oBindingType.oConstraints.maximum,
@@ -1623,7 +1621,7 @@ function(
 
 		StepInput.prototype.getAccessibilityInfo = function() {
 			return {
-				type: Lib.getResourceBundleFor("sap.m").getText("ACC_CTR_TYPE_STEPINPUT"),
+				type: sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_STEPINPUT"),
 				description: this.getValue() || "",
 				focusable: this.getEnabled(),
 				enabled: this.getEnabled(),

@@ -10,8 +10,7 @@ sap.ui.define([
 	"sap/ui/model/FilterOperator",
 	"sap/ui/model/resource/ResourceModel",
 	"sap/ui/model/Sorter",
-	"sap/ui/rta/Utils",
-	"sap/ui/core/Element"
+	"sap/ui/rta/Utils"
 ], function(
 	ManagedObject,
 	Fragment,
@@ -21,8 +20,7 @@ sap.ui.define([
 	FilterOperator,
 	ResourceModel,
 	Sorter,
-	Utils,
-	Element
+	Utils
 ) {
 	"use strict";
 
@@ -95,7 +93,7 @@ sap.ui.define([
 
 			// retrieve List to set the sorting for the 'items' aggregation, since sap.ui.model.Sorter
 			// does not support binding to a model property...
-			this._oList = Element.registry.get(`${this.getId()}--rta_addElementsDialogList`);
+			this._oList = sap.ui.getCore().byId(`${this.getId()}--rta_addElementsDialogList`);
 			this._bDescendingSortOrder = false;
 		}.bind(this));
 	};

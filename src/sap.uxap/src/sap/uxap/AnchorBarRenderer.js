@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(["sap/m/ToolbarRenderer", "sap/ui/core/Renderer", "sap/m/BarInPageEnabler", "./library", "sap/ui/core/Lib"],
-	function(ToolbarRenderer, Renderer, BarInPageEnabler, library, Lib) {
+sap.ui.define(["sap/m/ToolbarRenderer", "sap/ui/core/Renderer", "sap/m/BarInPageEnabler", "./library"],
+	function (ToolbarRenderer, Renderer, BarInPageEnabler, library) {
 		"use strict";
 
 		/**
@@ -32,7 +32,7 @@ sap.ui.define(["sap/m/ToolbarRenderer", "sap/ui/core/Renderer", "sap/m/BarInPage
 				rm.openStart("div", oToolbar.getId() + "-scroll")
 					.attr("role", "listbox")
 					.attr("aria-describedby", oToolbar.getId() + "-desc")
-					.attr("aria-label", Lib.getResourceBundleFor("sap.uxap").getText("ANCHOR_BAR_ARIA_LABEL"))
+					.attr("aria-label", sap.ui.getCore().getLibraryResourceBundle("sap.uxap").getText("ANCHOR_BAR_ARIA_LABEL"))
 					.openEnd();
 
 				AnchorBarRenderer.renderBarItems(rm, oToolbar);
@@ -42,7 +42,7 @@ sap.ui.define(["sap/m/ToolbarRenderer", "sap/ui/core/Renderer", "sap/m/BarInPage
 				rm.openStart("span", oToolbar.getId() + "-desc")
 					.class("sapUiPseudoInvisibleText")
 					.openEnd();
-				rm.text(Lib.getResourceBundleFor("sap.uxap").getText("ANCHOR_BAR_ARIA_LABEL_DESC"));
+				rm.text(sap.ui.getCore().getLibraryResourceBundle("sap.uxap").getText("ANCHOR_BAR_ARIA_LABEL_DESC"));
 				rm.close("span");
 
 				rm.close("div");

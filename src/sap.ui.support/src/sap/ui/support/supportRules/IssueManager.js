@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(["sap/base/util/deepExtend", "sap/ui/base/Object", "sap/ui/support/library", "sap/ui/support/supportRules/Constants", "sap/ui/core/Element"],
-	function(deepExtend, BaseObject, library, constants, Element) {
+sap.ui.define(["sap/base/util/deepExtend", "sap/ui/base/Object", "sap/ui/support/library", "sap/ui/support/supportRules/Constants"],
+	function (deepExtend, BaseObject, library, constants) {
 		"use strict";
 		/**
 		 * Issues stored in the IssueManager.
@@ -18,7 +18,7 @@ sap.ui.define(["sap/base/util/deepExtend", "sap/ui/base/Object", "sap/ui/support
 		 * @returns {object} Converted Issue Object
 		 */
 		var _convertIssueToViewModel = function (oIssue) {
-			var element = Element.registry.get(oIssue.context.id),
+			var element = sap.ui.getCore().byId(oIssue.context.id),
 				className = "";
 
 			if (oIssue.context.id === "WEBPAGE") {

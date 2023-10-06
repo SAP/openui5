@@ -22,8 +22,7 @@ sap.ui.define([
 	'sap/m/BusyIndicator',
 	'sap/m/Bar',
 	'sap/m/Title',
-	'sap/base/Log',
-	"sap/ui/core/Lib"
+	'sap/base/Log'
 ],
 function(
 	jQuery,
@@ -44,8 +43,7 @@ function(
 	BusyIndicator,
 	Bar,
 	Title,
-	Log,
-	Lib
+	Log
 ) {
 	"use strict";
 
@@ -345,7 +343,7 @@ function(
 		this._bInitBusy = false;
 		this._bFirstRender = true;
 		this._bAfterCloseAttached = false;
-		this._oRb = Lib.getResourceBundleFor("sap.m");
+		this._oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 
 		// store a reference to the list for binding management
 		this._oList = new List(this.getId() + "-list", {

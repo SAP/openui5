@@ -16,9 +16,7 @@ sap.ui.define([
 	"sap/ui/dom/containsOrEquals",
 	"sap/base/Log",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Configuration",
-	"sap/ui/core/Lib",
-	"sap/ui/core/Element"
+	"sap/ui/core/Configuration"
 ],
 function(
 	library,
@@ -33,9 +31,7 @@ function(
 	containsOrEquals,
 	Log,
 	jQuery,
-	Configuration,
-	Lib,
-	Element
+	Configuration
 ) {
 	"use strict";
 
@@ -512,7 +508,7 @@ function(
 			}).toStatic().getId();
 		}
 
-		this._rb = Lib.getResourceBundleFor("sap.m");
+		this._rb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 
 		// Pages arrays: As we delegate the pages to internal navigation container we have to remember the pages
 		// in private member variables. By doing this we can return the right pages for master /detail aggregations.
@@ -629,13 +625,13 @@ function(
 			this._bMasterisOpen = false;
 		}
 
-		this._oMasterNav.setInitialPage(Element.registry.get(this.getInitialMaster()));
+		this._oMasterNav.setInitialPage(sap.ui.getCore().byId(this.getInitialMaster()));
 		this._oMasterNav.setDefaultTransitionName(this.getDefaultTransitionNameMaster());
 
 		this._updateMasterButtonTooltip();
 
 		if (!Device.system.phone) {
-			this._oDetailNav.setInitialPage(Element.registry.get(this.getInitialDetail()));
+			this._oDetailNav.setInitialPage(sap.ui.getCore().byId(this.getInitialDetail()));
 			this._updateMasterButtonText();
 		}
 

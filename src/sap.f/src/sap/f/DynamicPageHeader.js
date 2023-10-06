@@ -4,19 +4,18 @@
 
 // Provides control sap.f.DynamicPageHeader.
 sap.ui.define([
-	"./library",
-	"sap/ui/Device",
-	"sap/ui/core/Control",
+    "./library",
+    "sap/ui/Device",
+    "sap/ui/core/Control",
 	"sap/ui/core/library",
 	"sap/ui/core/IconPool",
 	"sap/ui/core/theming/Parameters",
-	"sap/m/ToggleButton",
-	"sap/m/Button",
-	"./DynamicPageHeaderRenderer",
-	"sap/ui/core/InvisibleMessage",
-	"sap/ui/core/Lib"
+    "sap/m/ToggleButton",
+    "sap/m/Button",
+    "./DynamicPageHeaderRenderer",
+	"sap/ui/core/InvisibleMessage"
 ], function(
-	library,
+    library,
 	Device,
 	Control,
 	CoreLibrary,
@@ -25,8 +24,7 @@ sap.ui.define([
 	ToggleButton,
 	Button,
 	DynamicPageHeaderRenderer,
-	InvisibleMessage,
-	Lib
+	InvisibleMessage
 ) {
 		"use strict";
 
@@ -119,7 +117,7 @@ sap.ui.define([
 		 * @returns {Object} the resource bundle object
 		 */
 		DynamicPageHeader._getResourceBundle = function () {
-			return Lib.getResourceBundleFor("sap.f");
+			return sap.ui.getCore().getLibraryResourceBundle("sap.f");
 		};
 
 		DynamicPageHeader.ARIA = {

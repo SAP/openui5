@@ -3,9 +3,12 @@
  */
 
 // Provides control sap.tnt.NavigationListItem.
-sap.ui.define(["sap/ui/thirdparty/jquery", "./library", 'sap/ui/core/Core', "sap/ui/core/Item", 'sap/ui/core/Icon', 'sap/ui/core/InvisibleText', 'sap/ui/core/Renderer', 'sap/ui/core/IconPool', "sap/ui/events/KeyCodes", "sap/ui/core/library", // jQuery Plugin "addAriaLabelledBy"
-"sap/ui/util/openWindow", "sap/ui/util/defaultLinkTypes", "sap/ui/core/Lib", "sap/ui/core/Element", "sap/ui/dom/jquery/Aria"],
-	function(jQuery, library, Core, Item, Icon, InvisibleText, Renderer, IconPool, KeyCodes, coreLibrary, openWindow, defaultLinkTypes, Lib, Element) {
+sap.ui.define(["sap/ui/thirdparty/jquery", "./library", 'sap/ui/core/Core', "sap/ui/core/Item", 'sap/ui/core/Icon',
+		'sap/ui/core/InvisibleText', 'sap/ui/core/Renderer', 'sap/ui/core/IconPool', "sap/ui/events/KeyCodes", "sap/ui/core/library",
+		// jQuery Plugin "addAriaLabelledBy"
+		"sap/ui/util/openWindow", "sap/ui/util/defaultLinkTypes", "sap/ui/dom/jquery/Aria"],
+	function(jQuery, library, Core, Item, Icon,
+			 InvisibleText, Renderer, IconPool, KeyCodes, coreLibrary, openWindow, defaultLinkTypes) {
 		"use strict";
 
 
@@ -127,9 +130,9 @@ sap.ui.define(["sap/ui/thirdparty/jquery", "./library", 'sap/ui/core/Core', "sap
 		 * @override
 		 */
 		NavigationListItem.prototype.init = function () {
-			this._resourceBundle = Lib.getResourceBundleFor("sap.ui.core");
-			this._resourceBundleMLib = Lib.getResourceBundleFor("sap.m");
-			this._resourceBundleTNTLib = Lib.getResourceBundleFor("sap.tnt");
+			this._resourceBundle = Core.getLibraryResourceBundle("sap.ui.core");
+			this._resourceBundleMLib = Core.getLibraryResourceBundle("sap.m");
+			this._resourceBundleTNTLib = Core.getLibraryResourceBundle("sap.tnt");
 		};
 
 		/**
@@ -323,7 +326,7 @@ sap.ui.define(["sap/ui/thirdparty/jquery", "./library", 'sap/ui/core/Core', "sap
 			var item = event.getParameter('item');
 
 			// get the real group item from the cloned one
-			item = Element.registry.get(item.getKey());
+			item = Core.byId(item.getKey());
 
 			item._selectItem(event);
 		};

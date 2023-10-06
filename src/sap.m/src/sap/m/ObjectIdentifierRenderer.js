@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['./library', 'sap/ui/core/Core', "sap/ui/core/Lib"],
-	function(library, Core, Lib) {
+sap.ui.define(['./library', 'sap/ui/core/Core'],
+	function(library, Core) {
 	"use strict";
 
 
@@ -19,7 +19,7 @@ sap.ui.define(['./library', 'sap/ui/core/Core', "sap/ui/core/Lib"],
 	var EmptyIndicatorMode = library.EmptyIndicatorMode;
 
 	// shortcut for library resource bundle
-	var oRb = Lib.getResourceBundleFor("sap.m");
+	var oRb = Core.getLibraryResourceBundle("sap.m");
 
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.

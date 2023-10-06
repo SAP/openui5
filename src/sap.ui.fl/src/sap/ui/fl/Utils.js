@@ -15,8 +15,7 @@ sap.ui.define([
 	"sap/ui/fl/Scenario",
 	"sap/ui/thirdparty/hasher",
 	"sap/ui/core/mvc/View",
-	"sap/ui/core/Configuration",
-	"sap/ui/core/Element"
+	"sap/ui/core/Configuration"
 ], function(
 	ObjectPath,
 	isPlainObject,
@@ -30,8 +29,7 @@ sap.ui.define([
 	Scenario,
 	hasher,
 	View,
-	Configuration,
-	Element
+	Configuration
 ) {
 	"use strict";
 
@@ -289,7 +287,7 @@ sap.ui.define([
 		 */
 		checkControlId(vControl, oAppComponent) {
 			if (!oAppComponent) {
-				vControl = vControl instanceof ManagedObject ? vControl : Element.registry.get(vControl);
+				vControl = vControl instanceof ManagedObject ? vControl : sap.ui.getCore().byId(vControl);
 				oAppComponent = Utils.getAppComponentForControl(vControl);
 			}
 			return BaseTreeModifier.checkControlId(vControl, oAppComponent);

@@ -88,7 +88,7 @@ sap.ui.define([
 			function(oEvent) {
 				var oElement = oEvent.getParameter("element"),
 					oValue = oEvent.getParameter('newValue'),
-					oInput = Element.registry.get("I2");
+					oInput = sap.ui.getCore().byId("I2");
 
 				oInput.setValue( "ParseError: Entered value: " + oValue);
 

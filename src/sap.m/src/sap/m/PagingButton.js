@@ -8,10 +8,9 @@ sap.ui.define([
 	'sap/ui/core/Control',
 	'sap/ui/core/IconPool',
 	'./PagingButtonRenderer',
-	"sap/base/Log",
-	"sap/ui/core/Lib"
+	"sap/base/Log"
 ],
-	function(Button, Control, IconPool, PagingButtonRenderer, Log, Lib) {
+	function(Button, Control, IconPool, PagingButtonRenderer, Log) {
 		"use strict";
 
 		/**
@@ -90,7 +89,7 @@ sap.ui.define([
 			renderer: PagingButtonRenderer
 		});
 
-		var resourceBundle = Lib.getResourceBundleFor("sap.m");
+		var resourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 
 		PagingButton.prototype.init = function () {
 			this._attachPressEvents();

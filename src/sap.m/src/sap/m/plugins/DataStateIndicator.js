@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(["./PluginBase", "sap/ui/core/Core", "sap/ui/base/ManagedObjectObserver", "sap/ui/core/Lib"],
-	function(PluginBase, Core, ManagedObjectObserver, Lib) {
+sap.ui.define(["./PluginBase", "sap/ui/core/Core", "sap/ui/base/ManagedObjectObserver"],
+	function(PluginBase, Core, ManagedObjectObserver) {
 	"use strict";
 
 	/**
@@ -465,7 +465,7 @@ sap.ui.define(["./PluginBase", "sap/ui/core/Core", "sap/ui/base/ManagedObjectObs
 		var oMetadata = this.getControl().getMetadata();
 		var sLibraryName = oMetadata.getLibraryName();
 		var sControlName = oMetadata.getName().split(".").pop().toUpperCase();
-		var oResourceBundle = Lib.getResourceBundleFor(sLibraryName);
+		var oResourceBundle = Core.getLibraryResourceBundle(sLibraryName);
 		var sControlBundleText = sControlName + "_" + sBundleText;
 
 		if (oResourceBundle.hasText(sControlBundleText)) {
@@ -476,7 +476,7 @@ sap.ui.define(["./PluginBase", "sap/ui/core/Core", "sap/ui/base/ManagedObjectObs
 			return oResourceBundle.getText(sBundleText);
 		}
 
-		return Lib.getResourceBundleFor("sap.m").getText(sBundleText);
+		return Core.getLibraryResourceBundle("sap.m").getText(sBundleText);
 	};
 
 	/**

@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/unified/calendar/CalendarDate', './MonthRenderer', "sap/ui/core/CalendarType", "sap/ui/core/Lib"],
-	function(Renderer, CalendarDate, MonthRenderer, CalendarType, Lib) {
+sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/unified/calendar/CalendarDate', './MonthRenderer', "sap/ui/core/CalendarType"],
+	function(Renderer, CalendarDate, MonthRenderer, CalendarType) {
 	"use strict";
 
 	/*
@@ -102,7 +102,7 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/unified/calendar/CalendarDate', '
 			aWeekNumbers;
 
 		if (oDatesRow.getShowWeekNumbers() && oDatesRow.getPrimaryCalendarType() === CalendarType.Gregorian) {
-			oResourceBundle = Lib.getResourceBundleFor("sap.ui.unified");
+			oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified");
 
 			oRm.openStart("div", oDatesRow.getId() + "-weeks");
 			oRm.class("sapUiCalRowWeekNumbers");

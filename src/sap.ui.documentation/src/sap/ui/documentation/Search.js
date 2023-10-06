@@ -3,13 +3,12 @@
  */
 sap.ui.define([
 	"sap/ui/core/Core",
-	"sap/ui/core/Control",
+    "sap/ui/core/Control",
 	"sap/ui/Device",
 	"sap/ui/thirdparty/jquery",
 	"sap/m/library",
-	"sap/m/Button",
-	"sap/m/SearchField",
-	"sap/ui/core/Lib"
+    "sap/m/Button",
+    "sap/m/SearchField"
 ], function(
 	Core,
 	Control,
@@ -17,8 +16,7 @@ sap.ui.define([
 	jQuery,
 	mobileLibrary,
 	Button,
-	SearchField,
-	Lib
+	SearchField
 ) {
     "use strict";
 		/**
@@ -215,7 +213,7 @@ sap.ui.define([
         Search.prototype._lazyLoadClosingButton = function(bSuppressInvalidate) {
             if (!this.getAggregation("_closingButton")) {
                 var oBtn = new Button(this.getId() + "-closingBtn", {
-                    text: Lib.getResourceBundleFor("sap.ui.documentation").getText("APP_SEARCH_FIELD_CLOSE"),
+                    text: Core.getLibraryResourceBundle("sap.ui.documentation").getText("APP_SEARCH_FIELD_CLOSE"),
                     type: mobileLibrary.ButtonType.Default,
                     press: function() {
                         this._minimizeSearchField().then(function() {
@@ -234,7 +232,7 @@ sap.ui.define([
         Search.prototype._lazyLoadSearchField = function(bSuppressInvalidate) {
             if (!this.getAggregation("_searchField")) {
                 var oSrch = new SearchField(this.getId() + "-searchField", {
-					placeholder: Lib.getResourceBundleFor("sap.ui.documentation").getText("APP_HEADER_SEARCH_FIELD_PLACEHOLDER"),
+					placeholder: Core.getLibraryResourceBundle("sap.ui.documentation").getText("APP_HEADER_SEARCH_FIELD_PLACEHOLDER"),
                     showSearchButton: true,
                     search: function(oEvent) {
                         var oParameters = oEvent.getParameters();

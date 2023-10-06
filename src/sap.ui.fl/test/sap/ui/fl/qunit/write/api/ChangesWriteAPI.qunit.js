@@ -22,8 +22,7 @@ sap.ui.define([
 	"sap/ui/fl/Utils",
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/core/Core",
-	"test-resources/sap/ui/rta/qunit/RtaQunitUtils",
-	"sap/ui/core/Lib"
+	"test-resources/sap/ui/rta/qunit/RtaQunitUtils"
 ], function(
 	Log,
 	View,
@@ -46,8 +45,7 @@ sap.ui.define([
 	FlexUtils,
 	sinon,
 	Core,
-	RtaQunitUtils,
-	Lib
+	RtaQunitUtils
 ) {
 	"use strict";
 
@@ -302,7 +300,7 @@ sap.ui.define([
 					}
 				}
 			];
-			var oFlResourceBundle = Lib.getResourceBundleFor("sap.ui.fl");
+			var oFlResourceBundle = Core.getLibraryResourceBundle("sap.ui.fl");
 
 			mockFlexController(mPropertyBag.element, {
 				getOpenDependentChangesForControl() {return aDependentChanges;}

@@ -17,37 +17,35 @@ sap.ui.define([
 	"sap/m/Breadcrumbs",
 	"sap/m/Link",
 	"sap/m/GenericTag",
-	"sap/ui/Device",
-	"sap/ui/core/Lib"
+	"sap/ui/Device"
 ],
-	function(
-		$,
-		Core,
-		DynamicPage,
-		DynamicPageTitle,
-		DynamicPageHeader,
-		Grid,
-		Panel,
-		MessageStrip,
-		IconTabBar,
-		IconTabFilter,
-		Button,
-		Title,
-		Label,
-		OverflowToolbar,
-		ToolbarSpacer,
-		Breadcrumbs,
-		Link,
-		GenericTag,
-		Device,
-		Lib
-	) {
+	function (
+	$,
+	Core,
+	DynamicPage,
+	DynamicPageTitle,
+	DynamicPageHeader,
+	Grid,
+	Panel,
+	MessageStrip,
+	IconTabBar,
+	IconTabFilter,
+	Button,
+	Title,
+	Label,
+	OverflowToolbar,
+	ToolbarSpacer,
+	Breadcrumbs,
+	Link,
+	GenericTag,
+	Device
+) {
 	"use strict";
 
 	var TESTS_DOM_CONTAINER = "qunit-fixture",
 	oFactory = {
 		getResourceBundle: function () {
-			return Lib.getResourceBundleFor("sap.f");
+			return Core.getLibraryResourceBundle("sap.f");
 		},
 		getDynamicPage: function () {
 			return new DynamicPage({

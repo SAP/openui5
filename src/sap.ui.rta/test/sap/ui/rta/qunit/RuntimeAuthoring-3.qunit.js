@@ -27,8 +27,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/Device",
-	"test-resources/sap/ui/rta/qunit/RtaQunitUtils",
-	"sap/ui/core/Lib"
+	"test-resources/sap/ui/rta/qunit/RtaQunitUtils"
 ], function(
 	isPlainObject,
 	Log,
@@ -56,13 +55,12 @@ sap.ui.define([
 	jQuery,
 	sinon,
 	Device,
-	RtaQunitUtils,
-	Lib
+	RtaQunitUtils
 ) {
 	"use strict";
 
 	var sandbox = sinon.createSandbox();
-	var oTextResources = Lib.getResourceBundleFor("sap.ui.rta");
+	var oTextResources = oCore.getLibraryResourceBundle("sap.ui.rta");
 
 	var oComp = RtaQunitUtils.createAndStubAppComponent(sinon, "fixture.application", {
 		"sap.app": {

@@ -15,8 +15,7 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/m/library",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Core",
-	"sap/ui/core/Lib"
+	"sap/ui/core/Core"
 ], function(
 	qutils,
 	createAndAppendDiv,
@@ -33,8 +32,7 @@ sap.ui.define([
 	Button,
 	mobileLibrary,
 	jQuery,
-	oCore,
-	Lib
+	oCore
 ) {
 	"use strict";
 
@@ -148,7 +146,7 @@ sap.ui.define([
 
 			assert.equal(jQuery( "div." + TabStripItem.CSS_CLASS_LABEL + ":contains(" + sName + ")").length, 1, 'Element with name "' + sName + '" is still in the DOM.');
 
-		var oMessageBundle = Lib.getResourceBundleFor("sap.m"),
+		var oMessageBundle = oCore.getLibraryResourceBundle("sap.m"),
 			oSelectDomRef = this.oTabContainer._getTabStrip().getAggregation('_select').getFocusDomRef();
 		assert.strictEqual(jQuery(oSelectDomRef).attr('title'),
 				oMessageBundle.getText("TABSTRIP_OPENED_TABS"),

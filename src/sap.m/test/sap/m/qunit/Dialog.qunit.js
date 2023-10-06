@@ -32,8 +32,7 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/events/KeyCodes",
 	"sap/m/Title",
-	"sap/ui/dom/units/Rem",
-	"sap/ui/core/Lib"
+	"sap/ui/dom/units/Rem"
 ], function(
 	qutils,
 	createAndAppendDiv,
@@ -66,8 +65,7 @@ sap.ui.define([
 	JSONModel,
 	KeyCodes,
 	Title,
-	Rem,
-	Lib
+	Rem
 ) {
 	"use strict";
 
@@ -330,7 +328,7 @@ sap.ui.define([
 		this.clock.tick(500);
 		this.dialog.$('cont').scrollTop(1000);
 		this.clock.tick(500);
-		Element.registry.get("lastSC").setVisible(true);
+		Core.byId("lastSC").setVisible(true);
 		this.dialog._onResize();
 
 		// assert
@@ -503,7 +501,7 @@ sap.ui.define([
 			oTitleDom = this.oDialog.getDomRef("title"),
 			oSubHeaderDom = $Dialog.children("header").children(".sapMDialogSubHeader")[0],
 			oIconDom = this.oDialog.getDomRef("icon"),
-			oSearchField = Element.registry.get("__field0").getFocusDomRef();
+			oSearchField = Core.byId("__field0").getFocusDomRef();
 		assert.ok(document.getElementById("dialog"), "dialog is rendered after it's opened.");
 		assert.ok($Dialog.closest("#sap-ui-static")[0], "dialog should be rendered inside the static uiArea.");
 		assert.ok(oSubHeaderDom, "Sub header should be rendered inside the dialog");
@@ -1451,7 +1449,7 @@ sap.ui.define([
 		var oDialogSuccess = new Dialog({
 			state: ValueState.Success
 		});
-		var rb = Lib.getResourceBundleFor("sap.m");
+		var rb = Core.getLibraryResourceBundle("sap.m");
 		var sValueState = rb.getText("LIST_ITEM_STATE_SUCCESS");
 
 		// Act
@@ -1710,7 +1708,7 @@ sap.ui.define([
 
 		// assert
 		var sRenderedRoleDescription = oDialog.$().find('header .sapMDialogTitleGroup').attr('aria-roledescription');
-		var oRb = Lib.getResourceBundleFor("sap.m");
+		var oRb = Core.getLibraryResourceBundle("sap.m");
 		var sExpectedRoleDescription = oRb.getText("DIALOG_HEADER_ARIA_ROLE_DESCRIPTION");
 		assert.ok(sRenderedRoleDescription, "The aria-roledescription attrbute is present on a draggable/resizable dialog");
 		assert.strictEqual(sRenderedRoleDescription, sExpectedRoleDescription, "Aria-roledescription text has the correct value");
@@ -1846,7 +1844,7 @@ sap.ui.define([
 
 		this.clock.tick(500);
 
-		Element.registry.get("txt").setVisible(false);
+		Core.byId("txt").setVisible(false);
 		Core.applyChanges();
 		oDialog._onResize();
 

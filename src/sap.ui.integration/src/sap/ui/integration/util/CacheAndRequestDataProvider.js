@@ -6,9 +6,8 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/core/Core",
 	"sap/base/util/deepExtend",
-	"sap/ui/core/date/UI5Date",
-	"sap/ui/core/Element"
-], function(RequestDataProvider, Log, Core, deepExtend, UI5Date, Element) {
+	"sap/ui/core/date/UI5Date"
+], function (RequestDataProvider, Log, Core, deepExtend, UI5Date) {
 	"use strict";
 
 	/**
@@ -63,11 +62,11 @@ sap.ui.define([
 	};
 
 	CacheAndRequestDataProvider.prototype.getHostInstance = function () {
-		return Element.registry.get(this.getHost());
+		return Core.byId(this.getHost());
 	};
 
 	CacheAndRequestDataProvider.prototype.getCardInstance = function () {
-		return Element.registry.get(this.getCard());
+		return Core.byId(this.getCard());
 	};
 
 	CacheAndRequestDataProvider.prototype.getCardInstanceHeader = function () {

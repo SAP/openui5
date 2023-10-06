@@ -2,14 +2,14 @@
  * ${copyright}
  */
 
-sap.ui.define(['sap/ui/core/Renderer', 'sap/m/TokenizerRenderer', 'sap/m/library', 'sap/ui/core/Core', "sap/ui/core/Lib"],
-	function(Renderer, TokenizerRenderer, mLibrary, Core, Lib) {
+sap.ui.define(['sap/ui/core/Renderer', 'sap/m/TokenizerRenderer', 'sap/m/library', 'sap/ui/core/Core'],
+	function(Renderer, TokenizerRenderer, mLibrary, Core) {
 	"use strict";
 
 	const EmptyIndicatorMode = mLibrary.EmptyIndicatorMode;
 
 	// shortcut for library resource bundle
-	const oRb = Lib.getResourceBundleFor("sap.m");
+	const oRb = Core.getLibraryResourceBundle("sap.m");
 
 	/**
 	 * TokenizerDisplay renderer.

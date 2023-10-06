@@ -7,16 +7,14 @@ sap.ui.define([
 	"sap/ui/base/ManagedObjectObserver",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/mdc/enums/TableType",
-	"sap/ui/core/Element"
+	"sap/ui/mdc/enums/TableType"
 ], function(
 	MDCQUnitUtils,
 	Core,
 	ManagedObjectObserver,
 	qutils,
 	KeyCodes,
-	TableType,
-	Element
+	TableType
 ) {
 	"use strict";
 
@@ -175,7 +173,7 @@ sap.ui.define([
 		return oTable.initialized().then(function() {
 			const oColumn = oTable._oTable.getColumns()[iColumnIndex];
 			const oColumnDomRef = oColumn.getDomRef();
-			const oMenu = Element.registry.get(oColumn.getHeaderMenu());
+			const oMenu = Core.byId(oColumn.getHeaderMenu());
 			const fnOpenBy = oMenu.openBy;
 
 			return new Promise(function(resolve) {

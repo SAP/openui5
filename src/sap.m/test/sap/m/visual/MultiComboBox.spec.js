@@ -173,12 +173,6 @@ describe('sap.m.MultiComboBox', function() {
 		oMultiComboBoxArrow.click();
 	});
 
-	//MultiComboBox Compact Mode
-	it("should select Compact mode", function(){
-		element(by.id("compactMode")).click();
-		expect(takeScreenshot()).toLookAs("compact_mode");
-	});
-
 	//MultiComboBox - Order of Tokens
 	it("Should visualize the tokens in the same order when picker is reopened", function(){
 		browser.executeScript('document.getElementById("multiComboBoxStrangeKeys").scrollIntoView()').then(function() {
@@ -215,5 +209,11 @@ describe('sap.m.MultiComboBox', function() {
 		browser.actions().sendKeys(protractor.Key.SPACE).perform();
 
 		expect(takeScreenshot()).toLookAs("long_vsh_text");
+	});
+
+	//MultiComboBox Compact Mode
+	it("should select Compact mode", function(){
+		element(by.id("compactMode")).click();
+		expect(takeScreenshot()).toLookAs("compact_mode");
 	});
 });

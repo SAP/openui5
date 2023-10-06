@@ -5,9 +5,8 @@
 sap.ui.define([
 	"sap/ui/base/Object",
 	"sap/m/p13n/PersistenceProvider",
-	"sap/ui/fl/apply/api/ControlVariantApplyAPI",
-	"sap/ui/core/Element"
-], function(BaseObject, PersistenceProvider, ControlVariantApplyAPI, Element) {
+	"sap/ui/fl/apply/api/ControlVariantApplyAPI"
+], function (BaseObject, PersistenceProvider, ControlVariantApplyAPI) {
 	"use strict";
 
 	var ERROR_INSTANCING = "DefaultProviderRegistry: This class is a singleton and should not be used without an AdaptationProvider. Please use 'Engine.getInstance().defaultProviderRegistry' instead";
@@ -73,7 +72,7 @@ sap.ui.define([
 			throw new Error("DefaultProviderRegistry: You must not change the modificationSettings for an already registered element");
 		}
 
-		var oElement = typeof vElement === "string" ? Element.registry.get(vElement) : vElement, sElementId = typeof vElement === "string" ? vElement : vElement.getId();
+		var oElement = typeof vElement === "string" ? sap.ui.getCore().byId(vElement) : vElement, sElementId = typeof vElement === "string" ? vElement : vElement.getId();
 		var oDefaultProvider = this._retrieveDefaultProvider(oElement, sPersistenceMode);
 
 		if (oDefaultProvider.getFor().indexOf(sElementId) === -1) {

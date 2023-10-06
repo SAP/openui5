@@ -3,53 +3,51 @@
  */
 
 sap.ui.define([
-	"sap/ui/core/Core",
-	"sap/ui/mdc/Control",
-	"./ChartRenderer",
-	"sap/base/Log",
-	"./chart/ChartToolbar",
-	"./chart/PropertyHelper",
-	"sap/ui/mdc/mixin/FilterIntegrationMixin",
-	"sap/ui/model/base/ManagedObjectModel",
-	"sap/ui/mdc/p13n/subcontroller/ChartItemController",
-	"sap/ui/mdc/p13n/subcontroller/FilterController",
-	"sap/ui/mdc/p13n/subcontroller/SortController",
-	"sap/ui/mdc/p13n/subcontroller/ChartTypeController",
-	"sap/ui/base/ManagedObjectObserver",
-	"sap/ui/mdc/chart/DrillBreadcrumbs",
-	"sap/ui/mdc/actiontoolbar/ActionToolbarAction",
-	"sap/ui/core/library",
-	"sap/ui/events/KeyCodes",
-	"sap/ui/mdc/util/InfoBar",
-	"sap/ui/core/format/ListFormat",
-	"sap/ui/mdc/enums/ProcessingStrategy",
-	"sap/ui/mdc/enums/ChartP13nMode",
-	"sap/ui/core/Lib"
-],
-    function(
-		Core,
-		Control,
-		ChartRenderer,
-		Log,
-		ChartToolbar,
-		PropertyHelper,
-		FilterIntegrationMixin,
-		ManagedObjectModel,
-		ChartItemController,
-		FilterController,
-		SortController,
-		ChartTypeController,
-		ManagedObjectObserver,
-		Breadcrumbs,
-		ActionToolbarAction,
-		coreLibrary,
-		KeyCodes,
-		InfoBar,
-		ListFormat,
-		ProcessingStrategy,
-		ChartP13nMode,
-		Lib
-	) {
+        "sap/ui/core/Core",
+        "sap/ui/mdc/Control",
+        "./ChartRenderer",
+        "sap/base/Log",
+        "./chart/ChartToolbar",
+        "./chart/PropertyHelper",
+        "sap/ui/mdc/mixin/FilterIntegrationMixin",
+        "sap/ui/model/base/ManagedObjectModel",
+        "sap/ui/mdc/p13n/subcontroller/ChartItemController",
+        "sap/ui/mdc/p13n/subcontroller/FilterController",
+        "sap/ui/mdc/p13n/subcontroller/SortController",
+        "sap/ui/mdc/p13n/subcontroller/ChartTypeController",
+        "sap/ui/base/ManagedObjectObserver",
+        "sap/ui/mdc/chart/DrillBreadcrumbs",
+        "sap/ui/mdc/actiontoolbar/ActionToolbarAction",
+        "sap/ui/core/library",
+        "sap/ui/events/KeyCodes",
+        "sap/ui/mdc/util/InfoBar",
+        "sap/ui/core/format/ListFormat",
+        "sap/ui/mdc/enums/ProcessingStrategy",
+        "sap/ui/mdc/enums/ChartP13nMode"
+    ],
+    function (
+        Core,
+        Control,
+        ChartRenderer,
+        Log,
+        ChartToolbar,
+        PropertyHelper,
+        FilterIntegrationMixin,
+        ManagedObjectModel,
+        ChartItemController,
+        FilterController,
+        SortController,
+        ChartTypeController,
+        ManagedObjectObserver,
+        Breadcrumbs,
+        ActionToolbarAction,
+        coreLibrary,
+        KeyCodes,
+        InfoBar,
+        ListFormat,
+        ProcessingStrategy,
+        ChartP13nMode
+    ) {
         "use strict";
 
         let DrillStackHandler;
@@ -408,7 +406,7 @@ sap.ui.define([
             renderer: ChartRenderer
         });
 
-        const MDCRb = Lib.getResourceBundleFor("sap.ui.mdc");
+        const MDCRb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
 
         /**
          * @borrows sap.ui.mdc.mixin.FilterIntegrationMixin.rebind as #rebind

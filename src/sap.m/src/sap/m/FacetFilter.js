@@ -38,7 +38,6 @@ sap.ui.define([
 	"sap/m/CheckBox",
 	"sap/m/Page",
 	'sap/ui/core/date/UI5Date',
-	"sap/ui/core/Lib",
 	// jQuery Plugin "scrollRightRTL"
 	"sap/ui/dom/jquery/scrollRightRTL",
 	// jQuery Plugin "scrollLeftRTL"
@@ -80,8 +79,7 @@ sap.ui.define([
 		StandardListItem,
 		CheckBox,
 		Page,
-		UI5Date,
-		Lib
+        UI5Date
 	) {
 	"use strict";
 
@@ -399,7 +397,7 @@ sap.ui.define([
 		if (this._displayedList) {
 
 			var oList = this._displayedList;
-			var oSearchField = Element.registry.get(oList.getAssociation("search"));
+			var oSearchField = sap.ui.getCore().byId(oList.getAssociation("search"));
 
 			// Always detach the handler at first regardless of bVal, otherwise multiple calls of this method will add
 			// a separate change handler to the search field.
@@ -499,7 +497,7 @@ sap.ui.define([
 		this._addTarget = null;
 		this._aRows = null; //save item level div
 
-		this._bundle = Lib.getResourceBundleFor("sap.m");
+		this._bundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 
 		this.data("sap-ui-fastnavgroup", "true", true); // Define group for F6 handling
 
@@ -557,7 +555,7 @@ sap.ui.define([
 
 		if (this._aOwnedLabels) {
 			this._aOwnedLabels.forEach(function (sId) {
-				oCtrl = Element.registry.get(sId);
+				oCtrl = sap.ui.getCore().byId(sId);
 				if (oCtrl) {
 					oCtrl.destroy();
 				}
@@ -693,12 +691,12 @@ sap.ui.define([
 			return;
 		}
 
-		oButton = Element.registry.get(oEvent.target.id);
+		oButton = sap.ui.getCore().byId(oEvent.target.id);
 		if (!oButton) {//not a UI5 object
 			return;
 		}
 
-		oList = Element.registry.get(oButton.getAssociation("list"));
+		oList = sap.ui.getCore().byId(oButton.getAssociation("list"));
 		// no deletion on button 'Add', "Reset"
 		if (!oList) {//We allow only buttons with attached list.
 			return;
@@ -1221,7 +1219,7 @@ sap.ui.define([
 		// Don't open if already open, otherwise the popover will display empty.
 		if (!oPopover.isOpen()) {
 
-			var oList = Element.registry.get(oControl.getAssociation("list"));
+			var oList = sap.ui.getCore().byId(oControl.getAssociation("list"));
 			assert(oList, "The facet filter button should be associated with a list.");
 
 			bIsListOpenDefaultPrevented = !oList.fireListOpen({});
