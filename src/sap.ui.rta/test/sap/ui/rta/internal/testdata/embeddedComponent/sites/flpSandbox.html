@@ -104,8 +104,12 @@
 		</script>
 
 		<script type="text/javascript">
-			sap.ui.getCore().attachInit(function() {
-				sap.ushell.Container.createRenderer().placeAt("content");
+			sap.ui.require(["sap/ui/core/Core"], (Core) => {
+				Core.ready().then(() => {
+					sap.ushell.Container.createRenderer(true).then(function(oRenderer){
+						oRenderer.placeAt("content");
+					});
+				})
 			});
 		</script>
 

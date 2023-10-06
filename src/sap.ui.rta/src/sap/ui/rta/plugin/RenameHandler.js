@@ -6,6 +6,7 @@
 sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/Device",
+	"sap/ui/core/EventBus",
 	"sap/ui/rta/plugin/Plugin",
 	"sap/ui/rta/util/validateText",
 	"sap/ui/dt/Overlay",
@@ -18,6 +19,7 @@ sap.ui.define([
 ], function(
 	jQuery,
 	Device,
+	EventBus,
 	Plugin,
 	validateText,
 	Overlay,
@@ -226,7 +228,7 @@ sap.ui.define([
 
 			// keep Overlay selected while renaming
 			mPropertyBag.overlay.setSelected(true);
-			sap.ui.getCore().getEventBus().publish("sap.ui.rta", mPropertyBag.pluginMethodName, {
+			EventBus.getInstance().publish("sap.ui.rta", mPropertyBag.pluginMethodName, {
 				overlay: mPropertyBag.overlay,
 				editableField: this._oEditableField
 			});
@@ -340,7 +342,7 @@ sap.ui.define([
 			delete this._fnGetControlText;
 			delete this._fnSetControlText;
 
-			sap.ui.getCore().getEventBus().publish("sap.ui.rta", sPluginMethodName, {
+			EventBus.getInstance().publish("sap.ui.rta", sPluginMethodName, {
 				overlay: oOverlay
 			});
 		},

@@ -8,6 +8,7 @@ sap.ui.define([
 	"sap/m/Label",
 	"sap/m/MessageBox",
 	"sap/ui/core/Control",
+	"sap/ui/core/EventBus",
 	"sap/ui/core/Lib",
 	"sap/ui/dt/DesignTime",
 	"sap/ui/dt/OverlayRegistry",
@@ -31,6 +32,7 @@ sap.ui.define([
 	Label,
 	MessageBox,
 	Control,
+	EventBus,
 	Lib,
 	DesignTime,
 	OverlayRegistry,
@@ -129,7 +131,7 @@ sap.ui.define([
 
 			var oBoundControl = oCore.byId("Comp1---idMain1--MainFormExpandable.GeneralLedgerDocument.ExpirationDate");
 
-			oCore.getEventBus().subscribe("sap.ui.core.UnrecoverableClientStateCorruption", "RequestReload", function() {
+			EventBus.getInstance().subscribe("sap.ui.core.UnrecoverableClientStateCorruption", "RequestReload", function() {
 				assert.ok(true, "then the UI refresh is requested");
 			});
 			return Utils.isServiceUpToDate(oBoundControl).then(function() {

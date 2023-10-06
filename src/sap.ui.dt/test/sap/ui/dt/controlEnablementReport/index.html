@@ -13,18 +13,21 @@
 				src="../../../../../resources/sap-ui-core.js">
 		</script>
 		<script>
-			sap.ui.getCore().attachInit(function () {
-				sap.ui.require([
-					'controlEnablementReport/LibraryScanner',
-					'sap/ui/core/util/Export',
-					'sap/ui/core/util/ExportTypeCSV'
-				], function (LibraryScanner, Export, ExportTypeCSV) {
+			sap.ui.require([
+				"controlEnablementReport/LibraryScanner",
+				"sap/ui/core/util/Export",
+				"sap/ui/core/util/ExportTypeCSV",
+				"sap/ui/core/Core"
+			], function(LibraryScanner, Export, ExportTypeCSV, Core) {
+				Core.ready().then(() => {
 					var aLibs = sap.ui.getVersionInfo().libraries.filter(function(sLib) {
-						if (sLib.name.indexOf("sap.ui.server") === -1 &&
-							sLib.name.indexOf("themelib_")  === -1 &&
+						if (
+							sLib.name.indexOf("sap.ui.server") === -1 &&
+							sLib.name.indexOf("themelib_") === -1 &&
 							sLib.name !== "sap.ui.core" &&
-							sLib.name !== "sap.ui.fl") {
-								return sLib;
+							sLib.name !== "sap.ui.fl"
+						) {
+							return sLib;
 						}
 					});
 
@@ -115,7 +118,7 @@
 
 								var oHeaderToolbar = new sap.m.Toolbar("toolbar", {
 									content : [
-	//									new sap.m.ToolbarSpacer("toolbar-spacer"),
+										// new sap.m.ToolbarSpacer("toolbar-spacer"),
 										new sap.m.Button("toolbar-export-button", {
 											text : "Export to Excel",
 											press : fnExportToExcel
@@ -156,7 +159,6 @@
 					});
 
 					oVLayout.placeAt("selection");
-
 				});
 			});
 		</script>

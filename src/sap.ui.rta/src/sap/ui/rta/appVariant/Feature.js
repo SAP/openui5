@@ -6,6 +6,7 @@ sap.ui.define([
 	"sap/ui/fl/Utils",
 	"sap/ui/rta/appVariant/AppVariantUtils",
 	"sap/ui/core/BusyIndicator",
+	"sap/ui/core/EventBus",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/write/_internal/appVariant/AppVariantFactory",
 	"sap/ui/fl/write/api/FeaturesAPI",
@@ -14,6 +15,7 @@ sap.ui.define([
 	FlexUtils,
 	AppVariantUtils,
 	BusyIndicator,
+	EventBus,
 	Settings,
 	AppVariantFactory,
 	FeaturesAPI,
@@ -86,7 +88,7 @@ sap.ui.define([
 		return Promise.resolve();
 	};
 
-	sap.ui.getCore().getEventBus().subscribe("sap.ui.rta.appVariant.manageApps.controller.ManageApps", "navigate", function() {
+	EventBus.getInstance().subscribe("sap.ui.rta.appVariant.manageApps.controller.ManageApps", "navigate", function() {
 		if (oAppVariantOverviewDialog) {
 			oAppVariantOverviewDialog.destroy();
 			oAppVariantOverviewDialog = null;

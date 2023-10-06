@@ -10,6 +10,7 @@ sap.ui.define([
 	"test-resources/sap/ui/fl/api/FlexTestAPI",
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/core/Core",
+	"sap/ui/core/EventBus",
 	"sap/ui/core/LabelEnablement"
 ], function(
 	RuntimeAuthoring,
@@ -21,6 +22,7 @@ sap.ui.define([
 	FlexTestAPI,
 	sinon,
 	oCore,
+	EventBus,
 	LabelEnablement
 ) {
 	"use strict";
@@ -107,7 +109,7 @@ sap.ui.define([
 			var oFieldOverlay = this.oCompanyCodeFieldOverlay.getDomRef();
 
 			return new Promise(function(fnResolve) {
-				oCore.getEventBus().subscribeOnce("sap.ui.rta", "plugin.Rename.startEdit", function(sChannel, sEvent, mParams) {
+				EventBus.getInstance().subscribeOnce("sap.ui.rta", "plugin.Rename.startEdit", function(sChannel, sEvent, mParams) {
 					if (mParams.overlay === this.oCompanyCodeFieldOverlay) {
 						var aEditableFields = Array.from(oFieldOverlay.querySelectorAll(".sapUiRtaEditableField"));
 
@@ -131,7 +133,7 @@ sap.ui.define([
 								}.bind(this));
 							}.bind(this)),
 							new Promise(function(fnResolveWhenRenamed) {
-								oCore.getEventBus().subscribeOnce("sap.ui.rta", "plugin.Rename.stopEdit",
+								EventBus.getInstance().subscribeOnce("sap.ui.rta", "plugin.Rename.stopEdit",
 									function(sChannel, sEvent, mParams) {
 										if (mParams.overlay === this.oCompanyCodeFieldOverlay) {
 											assert.strictEqual(document.activeElement, this.oCompanyCodeFieldOverlay.getDomRef(),
@@ -368,7 +370,7 @@ sap.ui.define([
 
 			var fnDone = assert.async();
 
-			oCore.getEventBus().subscribeOnce("sap.ui.rta", "plugin.Rename.startEdit", function(sChannel, sEvent, mParams) {
+			EventBus.getInstance().subscribeOnce("sap.ui.rta", "plugin.Rename.startEdit", function(sChannel, sEvent, mParams) {
 				if (mParams.overlay === this.oDatesGroupOverlay) {
 					var aEditableFields = Array.from(oGroupOverlay.querySelectorAll(".sapUiRtaEditableField"));
 
@@ -389,7 +391,7 @@ sap.ui.define([
 							}.bind(this));
 						}.bind(this)),
 						new Promise(function(fnResolveWhenRenamed) {
-							oCore.getEventBus().subscribeOnce("sap.ui.rta", "plugin.Rename.stopEdit", function(sChannel, sEvent, mParams) {
+							EventBus.getInstance().subscribeOnce("sap.ui.rta", "plugin.Rename.stopEdit", function(sChannel, sEvent, mParams) {
 								if (mParams.overlay === this.oDatesGroupOverlay) {
 									assert.strictEqual(
 										this.oDatesGroupOverlay.getDomRef(),

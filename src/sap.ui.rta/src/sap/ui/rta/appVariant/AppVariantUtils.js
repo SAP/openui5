@@ -7,6 +7,7 @@ sap.ui.define([
 	"sap/m/MessageBox",
 	"sap/ui/rta/Utils",
 	"sap/ui/core/BusyIndicator",
+	"sap/ui/core/EventBus",
 	"sap/ui/core/Lib",
 	"sap/base/util/uid",
 	"sap/base/Log",
@@ -19,6 +20,7 @@ sap.ui.define([
 	MessageBox,
 	RtaUtils,
 	BusyIndicator,
+	EventBus,
 	Lib,
 	uid,
 	Log,
@@ -537,7 +539,7 @@ sap.ui.define([
 	};
 
 	AppVariantUtils.closeOverviewDialog = function() {
-		sap.ui.getCore().getEventBus().publish("sap.ui.rta.appVariant.manageApps.controller.ManageApps", "navigate");
+		EventBus.getInstance().publish("sap.ui.rta.appVariant.manageApps.controller.ManageApps", "navigate");
 	};
 
 	/**

@@ -12,7 +12,8 @@ sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/ui/core/EventBus"
 ], function(
 	RuntimeAuthoring,
 	Stack,
@@ -25,7 +26,8 @@ sap.ui.define([
 	QUnitUtils,
 	KeyCodes,
 	sinon,
-	oCore
+	oCore,
+	EventBus
 ) {
 	"use strict";
 
@@ -239,7 +241,7 @@ sap.ui.define([
 
 		QUnit.test("during rename", function(assert) {
 			var fnDone = assert.async();
-			oCore.getEventBus().subscribeOnce("sap.ui.rta", "plugin.Rename.startEdit", function(sChannel, sEvent, mParams) {
+			EventBus.getInstance().subscribeOnce("sap.ui.rta", "plugin.Rename.startEdit", function(sChannel, sEvent, mParams) {
 				if (mParams.overlay === this.oElementOverlay) {
 					QUnitUtils.triggerKeydown(document, KeyCodes.Z, false, false, true);
 					assert.equal(this.fnUndoSpy.callCount, 0, "then _onUndo was not called");

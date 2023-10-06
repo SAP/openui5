@@ -3,13 +3,15 @@
  */
 sap.ui.require([
 	"sap/m/Shell",
-	"sap/ui/core/ComponentContainer"
+	"sap/ui/core/ComponentContainer",
+	"sap/ui/core/Core"
 ], function(
 	Shell,
-	ComponentContainer
+	ComponentContainer,
+	Core
 ) {
 	"use strict";
-	sap.ui.getCore().attachInit(function() {
+	Core.ready().then(() => {
 		new Shell({
 			app: new ComponentContainer({
 				height: "100%",
