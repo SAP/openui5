@@ -135,10 +135,28 @@ sap.ui.define([
 				}
 			}
 
+			var sTypedInText = $ActionDomRef.val();
+
+			if (($ActionDomRef[0].selectionStart !== $ActionDomRef[0].selectionEnd) &&
+				($ActionDomRef[0].selectionStart !== sTypedInText.length)) {
+				// get non selected value only
+				sTypedInText = sTypedInText.slice(0, $ActionDomRef[0].selectionStart);
+				// remove selection as a new value will be typed there
+				$ActionDomRef[0].setSelectionRange($ActionDomRef[0].selectionStart, $ActionDomRef[0].selectionStart);
+			}
+
 			// Trigger events for every keystroke - livechange controls
-			var sValueBuffer = this.getClearTextFirst() ? "" : $ActionDomRef.val();
+			var sValueBuffer = this.getClearTextFirst() ? "" : sTypedInText;
+			var iCursorPosition = oActionDomRef.selectionStart;
 			this.getText().split("").forEach(function (sChar) {
-				sValueBuffer += sChar;
+
+				if (iCursorPosition === 0 || iCursorPosition === null) {
+					sValueBuffer += sChar;
+				} else {
+					var sLeftPart = sValueBuffer.slice(0, iCursorPosition);
+					var sRightPart = sValueBuffer.slice(iCursorPosition);
+					sValueBuffer = sLeftPart + sChar + sRightPart;
+				}
 				// Change the domref and fire the mock 'keypress' and 'input' events
 				this.triggerCharacterInput(oActionDomRef, sChar, sValueBuffer, oControl);
 				oUtils.triggerEvent("input", oActionDomRef);
