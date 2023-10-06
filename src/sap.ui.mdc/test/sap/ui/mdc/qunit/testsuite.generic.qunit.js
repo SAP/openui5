@@ -19,6 +19,9 @@ sap.ui.define([
 			"sap.ui.mdc.Table": {
 				properties: {
 					delegate: GenericTestCollection.ExcludeReason.NotChangeableAfterInit
+				},
+				create: function(Class, mSettings) {
+					return (new Class(mSettings)).initialized();
 				}
 			},
 			"sap.ui.mdc.MultiValueField": {
