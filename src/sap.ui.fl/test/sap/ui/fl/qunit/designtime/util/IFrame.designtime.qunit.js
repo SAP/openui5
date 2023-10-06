@@ -30,7 +30,8 @@ sap.ui.define([
 					propertyName: "text",
 					selectorControlId: "labelId",
 					sourceControlId: "labelId"
-				}
+				},
+				useLegacyNavigation: false
 			});
 			this.oLabel = new Label("labelId", {text: "myInitialTitle"});
 			this.oIFrame.placeAt("qunit-fixture");
@@ -50,6 +51,7 @@ sap.ui.define([
 					frameHeight: "100",
 					frameHeightUnit: "vh",
 					frameUrl: "newUrl",
+					useLegacyNavigation: false,
 					title: "myNewTitle"
 				},
 				updateContent: {
@@ -69,6 +71,7 @@ sap.ui.define([
 					frameHeight: "100",
 					frameHeightUnit: "px",
 					frameUrl: "https://example.com",
+					useLegacyNavigation: false,
 					title: "myNewTitle"
 				},
 				renameContent: {
@@ -83,6 +86,7 @@ sap.ui.define([
 					frameHeight: "100",
 					frameHeightUnit: "px",
 					frameUrl: "https://example.com",
+					useLegacyNavigation: false,
 					title: "myInitialTitle"
 				},
 				updateContent: {
@@ -99,12 +103,31 @@ sap.ui.define([
 					frameHeight: "100",
 					frameHeightUnit: "%",
 					frameUrl: "https://example.com",
+					useLegacyNavigation: false,
 					title: "myInitialTitle"
 				},
 				updateContent: {
 					url: "https://example.com",
 					width: "100px",
 					height: "100%"
+				}
+			},
+			{
+				testTitle: "only useLegacyNavigation changed",
+				dialogReturn: {
+					frameWidth: "100",
+					frameWidthUnit: "px",
+					frameHeight: "100",
+					frameHeightUnit: "px",
+					frameUrl: "https://example.com",
+					useLegacyNavigation: true,
+					title: "myInitialTitle"
+				},
+				updateContent: {
+					url: "https://example.com",
+					width: "100px",
+					height: "100px",
+					useLegacyNavigation: true
 				}
 			},
 			{
@@ -115,6 +138,7 @@ sap.ui.define([
 					frameHeight: "100",
 					frameHeightUnit: "px",
 					frameUrl: "https://example.com",
+					useLegacyNavigation: false,
 					title: "myInitialTitle"
 				}
 			},

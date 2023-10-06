@@ -14,7 +14,8 @@ sap.ui.define([
 		url: "https://www.sap.com",
 		width: "myFancyWidth",
 		height: "myFancyHeight",
-		title: "Potato"
+		title: "Potato",
+		useLegacyNavigation: false
 	};
 
 	basicCommandTest({
