@@ -7720,7 +7720,7 @@ sap.ui.define([
 			assert.strictEqual(fnSpy.callCount, 1, "1st #fetchUI5Type");
 			assert.strictEqual(oType.getConstraints().maxLength, 40,
 				"Don't try this at home, kids!");
-			sap.ui.test.TestUtils.withNormalizedMessages(function () {
+			TestUtils.withNormalizedMessages(function () {
 				assert.throws(function () {
 					oType.validateValue("0123456789012345678901234567890123456789+");
 				}, /EnterTextMaxLength 40/);
@@ -7738,7 +7738,7 @@ sap.ui.define([
 			assert.strictEqual(fnSpy.callCount, 2, "2nd #fetchUI5Type");
 			assert.strictEqual(oType.getConstraints().maxLength, 16,
 				"Don't try this at home, kids!");
-			sap.ui.test.TestUtils.withNormalizedMessages(function () {
+			TestUtils.withNormalizedMessages(function () {
 				assert.throws(function () {
 					oType.validateValue("0123456789ABCDEF+");
 				}, /EnterTextMaxLength 16/);
