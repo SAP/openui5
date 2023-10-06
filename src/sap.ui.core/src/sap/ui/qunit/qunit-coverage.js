@@ -3,6 +3,12 @@
  */
 
 /*global jQuery, QUnit, URI, XMLHttpRequest, blanket, sap */// declare unusual global vars for JSLint/SAPUI5 validation
+/**
+ * @fileoverview
+ * @deprecated As of version 1.120, support for blanket-based instrumentation has been deprecated. As an alternative,
+ *    you might use the {@link https://github.com/SAP/ui5-tooling-extensions/tree/main/packages/middleware-code-coverage
+ *    @ui5/middleware-code-coverage}.
+ */
 (function() {
 	"use strict";
 
