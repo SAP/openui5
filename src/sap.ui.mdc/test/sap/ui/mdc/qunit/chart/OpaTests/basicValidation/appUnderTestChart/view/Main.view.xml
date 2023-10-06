@@ -23,13 +23,13 @@
 										\}
 									\}'
 								p13nMode="Item,Sort,Type"
-								autoBindOnInit="true" 
+								autoBindOnInit="true"
 								header="MDC: Chart Sample"
 								height="400px"
 								width="1000px">
 						<mdc:items>
-							<chart:Item id="dim1" type="groupable" name="language_code" role="category" label="Languages"/>
-							<chart:Item id="meas1" type="aggregatable" name="averagemetricsWords" role="axis1" label="Words (average)"/>
+							<chart:Item id="dim1" type="groupable" propertyKey="language_code" role="category" label="Languages"/>
+							<chart:Item id="meas1" type="aggregatable" propertyKey="averagemetricsWords" role="axis1" label="Words (average)"/>
 						</mdc:items>
 					</mdc:Chart>
 				</items>
