@@ -17,6 +17,7 @@ sap.ui.define([
 	"sap/ui/rta/util/BindingsExtractor",
 	"sap/base/util/restricted/_omit",
 	"sap/ui/model/json/JSONModel",
+	"sap/ui/core/Lib",
 	"sap/ui/core/Fragment",
 	"sap/ui/core/Core"
 ],
@@ -35,6 +36,7 @@ function(
 	BindingsExtractor,
 	_omit,
 	JSONModel,
+	Lib,
 	Fragment,
 	Core
 ) {
@@ -114,7 +116,7 @@ function(
 	 * @returns{Promise} The Promise which resolves when popup is closed (via Remove OR Cancel actions)
 	 */
 	Utils.openRemoveConfirmationDialog = function(oElement, sText) {
-		var oTextResources = Core.getLibraryResourceBundle("sap.ui.rta");
+		var oTextResources = Lib.getResourceBundleFor("sap.ui.rta");
 		var sTitle;
 		return new Promise(
 			function(resolve) {
@@ -481,30 +483,28 @@ function(
 	 * @returns{Promise} Promise displaying the message box; resolves when it is closed with the pressed button
 	 */
 	Utils.showMessageBox = function(sMessageType, sMessageKey, mPropertyBag) {
-		return Core.getLibraryResourceBundle("sap.ui.rta", true)
-		.then(function(oResourceBundle) {
-			mPropertyBag ||= {};
-			var sMessage = oResourceBundle.getText(sMessageKey, mPropertyBag.error ? [mPropertyBag.error.userMessage || mPropertyBag.error.message || mPropertyBag.error] : undefined);
-			var sTitle = mPropertyBag.titleKey && oResourceBundle.getText(mPropertyBag.titleKey);
-			var vActionTexts =
-				mPropertyBag.actionKeys &&
-				mPropertyBag.actionKeys.map(function(sActionKey) {
-					return oResourceBundle.getText(sActionKey);
-				});
-			var sEmphasizedAction = mPropertyBag.emphasizedActionKey ? oResourceBundle.getText(mPropertyBag.emphasizedActionKey) : undefined;
+		var oResourceBundle = Lib.getResourceBundleFor("sap.ui.rta");
+		mPropertyBag ||= {};
+		var sMessage = oResourceBundle.getText(sMessageKey, mPropertyBag.error ? [mPropertyBag.error.userMessage || mPropertyBag.error.message || mPropertyBag.error] : undefined);
+		var sTitle = mPropertyBag.titleKey && oResourceBundle.getText(mPropertyBag.titleKey);
+		var vActionTexts =
+			mPropertyBag.actionKeys &&
+			mPropertyBag.actionKeys.map(function(sActionKey) {
+				return oResourceBundle.getText(sActionKey);
+			});
+		var sEmphasizedAction = mPropertyBag.emphasizedActionKey ? oResourceBundle.getText(mPropertyBag.emphasizedActionKey) : undefined;
 
-			var bShowCancel = mPropertyBag.showCancel;
-			var mOptions = _omit(mPropertyBag, ["titleKey", "error", "actionKeys", "emphasizedAction", "emphasizedActionKey", "showCancel"]);
-			mOptions.title = sTitle;
-			mOptions.styleClass = Utils.getRtaStyleClassName();
-			mOptions.actions ||= vActionTexts;
-			mOptions.emphasizedAction = sEmphasizedAction || mPropertyBag.emphasizedAction;
-			if (bShowCancel) {
-				mOptions.actions.push(MessageBox.Action.CANCEL);
-			}
+		var bShowCancel = mPropertyBag.showCancel;
+		var mOptions = _omit(mPropertyBag, ["titleKey", "error", "actionKeys", "emphasizedAction", "emphasizedActionKey", "showCancel"]);
+		mOptions.title = sTitle;
+		mOptions.styleClass = Utils.getRtaStyleClassName();
+		mOptions.actions ||= vActionTexts;
+		mOptions.emphasizedAction = sEmphasizedAction || mPropertyBag.emphasizedAction;
+		if (bShowCancel) {
+			mOptions.actions.push(MessageBox.Action.CANCEL);
+		}
 
-			return messageBoxPromise(sMessageType, sMessage, mOptions);
-		});
+		return messageBoxPromise(sMessageType, sMessage, mOptions);
 	};
 
 	function messageBoxPromise(sMessageType, sMessage, mOptions) {

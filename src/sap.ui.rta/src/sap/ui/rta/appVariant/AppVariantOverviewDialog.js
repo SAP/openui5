@@ -5,6 +5,7 @@
 // Provides control sap.ui.rta.appVariant.AppVariantOverviewDialog.
 sap.ui.define([
 	"sap/ui/core/ComponentContainer",
+	"sap/ui/core/Lib",
 	"sap/m/Button",
 	"sap/m/Dialog",
 	"sap/m/DialogRenderer",
@@ -12,6 +13,7 @@ sap.ui.define([
 	"sap/ui/rta/Utils"
 ], function(
 	ComponentContainer,
+	Lib,
 	Button,
 	Dialog,
 	DialogRenderer,
@@ -37,7 +39,7 @@ sap.ui.define([
 		// eslint-disable-next-line object-shorthand
 		constructor: function(...aArgs) {
 			Dialog.prototype.constructor.apply(this, aArgs);
-			this._oTextResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
+			this._oTextResources = Lib.getResourceBundleFor("sap.ui.rta");
 
 			// Create manage apps component
 			this.oManageAppsComponent = new ManageAppsComponent("sap.ui.rta.appVariant.manageApps", {

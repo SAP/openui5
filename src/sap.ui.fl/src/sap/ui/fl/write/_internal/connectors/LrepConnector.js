@@ -4,6 +4,7 @@
 
 sap.ui.define([
 	"sap/base/util/merge",
+	"sap/ui/core/Lib",
 	"sap/ui/fl/write/connectors/BaseConnector",
 	"sap/ui/fl/initial/_internal/connectors/LrepConnector",
 	"sap/ui/fl/initial/_internal/connectors/Utils",
@@ -19,6 +20,7 @@ sap.ui.define([
 	"sap/base/util/restricted/_pick"
 ], function(
 	merge,
+	Lib,
 	BaseConnector,
 	InitialConnector,
 	InitialUtils,
@@ -263,7 +265,7 @@ sap.ui.define([
 		 * - "Error" in case of a problem
 		 */
 		publish(mPropertyBag) {
-			var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.fl");
+			var oResourceBundle = Lib.getResourceBundleFor("sap.ui.fl");
 
 			var fnHandleAllErrors = function(oError) {
 				BusyIndicator.hide();
@@ -704,7 +706,7 @@ sap.ui.define([
 				return WriteUtils.sendRequest(sVersionsUrl, "DELETE", oRequestOption);
 			},
 			publish(mPropertyBag) {
-				var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.fl");
+				var oResourceBundle = Lib.getResourceBundleFor("sap.ui.fl");
 
 				var fnHandleAllErrors = function(oError) {
 					BusyIndicator.hide();

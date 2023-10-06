@@ -6,7 +6,7 @@ sap.ui.define([
 	"sap/ui/test/actions/Drop",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/core/Core",
+	"sap/ui/core/Lib",
 	"test-resources/sap/ui/fl/api/FlexTestAPI"
 ], function(
 	Opa5,
@@ -16,7 +16,7 @@ sap.ui.define([
 	Drop,
 	QUnitUtils,
 	KeyCodes,
-	oCore,
+	Lib,
 	FlexTestAPI
 ) {
 	"use strict";
@@ -51,7 +51,7 @@ sap.ui.define([
 					});
 				},
 				iSwitchToVisualizationMode() {
-					var oRtaResourceBundle = oCore.getLibraryResourceBundle("sap.ui.rta");
+					var oRtaResourceBundle = Lib.getResourceBundleFor("sap.ui.rta");
 					var sButtonText = oRtaResourceBundle.getText("BTN_VISUALIZATION");
 					return this.waitFor({
 						controlType: "sap.m.Button",
@@ -63,7 +63,7 @@ sap.ui.define([
 					});
 				},
 				iSwitchToAdaptationMode() {
-					var oRtaResourceBundle = oCore.getLibraryResourceBundle("sap.ui.rta");
+					var oRtaResourceBundle = Lib.getResourceBundleFor("sap.ui.rta");
 					var sButtonText = oRtaResourceBundle.getText("BTN_ADAPTATION");
 					return this.waitFor({
 						autoWait: false,
@@ -180,7 +180,7 @@ sap.ui.define([
 					});
 				},
 				iClickOnAContextMenuEntryWithText(sText) {
-					var oResources = oCore.getLibraryResourceBundle("sap.ui.rta");
+					var oResources = Lib.getResourceBundleFor("sap.ui.rta");
 					return this.waitFor({
 						controlType: "sap.ui.unified.MenuItem",
 						matchers: new PropertyStrictEquals({
@@ -247,7 +247,7 @@ sap.ui.define([
 					});
 				},
 				iPressOK() {
-					var oResources = oCore.getLibraryResourceBundle("sap.ui.rta");
+					var oResources = Lib.getResourceBundleFor("sap.ui.rta");
 					return this.waitFor({
 						searchOpenDialogs: true,
 						controlType: "sap.m.Button",
@@ -260,7 +260,7 @@ sap.ui.define([
 					});
 				},
 				iExitRtaMode(bDontSaveOnExit, bNoChanges) {
-					var oResources = oCore.getLibraryResourceBundle("sap.ui.rta");
+					var oResources = Lib.getResourceBundleFor("sap.ui.rta");
 					return this.waitFor({
 						controlType: "sap.m.Button",
 						matchers(oButton) {
@@ -323,7 +323,7 @@ sap.ui.define([
 					});
 				},
 				iExitRtaPersonalizationMode() {
-					var oResources = oCore.getLibraryResourceBundle("sap.ui.rta");
+					var oResources = Lib.getResourceBundleFor("sap.ui.rta");
 					return this.waitFor({
 						controlType: "sap.m.Button",
 						matchers(oButton) {

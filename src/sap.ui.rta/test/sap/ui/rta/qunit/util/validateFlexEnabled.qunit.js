@@ -7,10 +7,10 @@ sap.ui.define([
 	"sap/m/MessageBox",
 	"sap/ui/core/ComponentContainer",
 	"sap/ui/core/Core",
+	"sap/ui/core/Lib",
 	"sap/ui/dt/Util",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/layout/VerticalLayout",
-	"sap/ui/model/json/JSONModel",
 	"sap/ui/rta/util/validateFlexEnabled",
 	"sap/ui/rta/RuntimeAuthoring",
 	"sap/ui/thirdparty/sinon-4",
@@ -22,10 +22,10 @@ sap.ui.define([
 	MessageBox,
 	ComponentContainer,
 	oCore,
+	Lib,
 	DtUtil,
 	Settings,
 	VerticalLayout,
-	JSONModel,
 	validateFlexEnabled,
 	RuntimeAuthoring,
 	sinon,
@@ -68,7 +68,7 @@ sap.ui.define([
 	}
 
 	function getText(sTextKey) {
-		return oCore.getLibraryResourceBundle("sap.ui.rta").getText(sTextKey);
+		return Lib.getResourceBundleFor("sap.ui.rta").getText(sTextKey);
 	}
 
 	function createButtonWithUnstableId() {

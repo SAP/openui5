@@ -3,6 +3,7 @@
  */
 
 sap.ui.define([
+	"sap/ui/core/Lib",
 	"sap/ui/rta/plugin/Plugin",
 	"sap/ui/dt/Util",
 	"sap/ui/fl/Utils",
@@ -12,6 +13,7 @@ sap.ui.define([
 	"sap/m/MessageToast",
 	"sap/ui/dt/OverlayRegistry"
 ], function(
+	Lib,
 	Plugin,
 	DtUtil,
 	FlUtils,
@@ -162,7 +164,7 @@ sap.ui.define([
 				command: oCompositeCommand
 			});
 			if (bHasVariant) {
-				var sMessage = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta").getText("MSG_LOCAL_RESET_VARIANT_SAVE");
+				var sMessage = Lib.getResourceBundleFor("sap.ui.rta").getText("MSG_LOCAL_RESET_VARIANT_SAVE");
 				MessageToast.show(sMessage, {
 					duration: 5000
 				});

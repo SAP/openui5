@@ -13,6 +13,7 @@ sap.ui.define([
 	"sap/ui/base/ManagedObject",
 	"sap/ui/core/BusyIndicator",
 	"sap/ui/core/Core",
+	"sap/ui/core/Lib",
 	"sap/ui/dt/DesignTime",
 	"sap/ui/dt/DOMUtil",
 	"sap/ui/dt/ElementUtil",
@@ -61,6 +62,7 @@ sap.ui.define([
 	ManagedObject,
 	BusyIndicator,
 	Core,
+	Lib,
 	DesignTime,
 	DOMUtil,
 	ElementUtil,
@@ -431,7 +433,7 @@ sap.ui.define([
 	};
 
 	RuntimeAuthoring.prototype._getTextResources = function() {
-		return sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
+		return Lib.getResourceBundleFor("sap.ui.rta");
 	};
 
 	/**
@@ -1059,7 +1061,7 @@ sap.ui.define([
 	function showTechnicalError(vError) {
 		BusyIndicator.hide();
 		var sErrorMessage = vError.userMessage || vError.stack || vError.message || vError.status || vError;
-		var oTextResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
+		var oTextResources = Lib.getResourceBundleFor("sap.ui.rta");
 		Log.error("Failed to transfer changes", sErrorMessage);
 		var sMsg = `${oTextResources.getText("MSG_LREP_TRANSFER_ERROR")}
 			${oTextResources.getText("MSG_ERROR_REASON", [sErrorMessage])}`;

@@ -4,6 +4,7 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/m/MessageBox",
 	"sap/ui/core/Control",
+	"sap/ui/core/Lib",
 	"sap/ui/fl/write/api/FeaturesAPI",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/fl/Utils",
@@ -15,6 +16,7 @@ sap.ui.define([
 	Log,
 	MessageBox,
 	Control,
+	Lib,
 	FeaturesAPI,
 	PersistenceWriteAPI,
 	FlexUtils,
@@ -27,7 +29,7 @@ sap.ui.define([
 
 	var sandbox = sinon.createSandbox();
 	var oAppComponent = RtaQunitUtils.createAndStubAppComponent(sinon);
-	var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
+	var oResourceBundle = Lib.getResourceBundleFor("sap.ui.rta");
 
 	function setIsKeyUser(bIsKeyUser) {
 		sandbox.stub(FeaturesAPI, "isKeyUser").resolves(bIsKeyUser);

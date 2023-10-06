@@ -3,10 +3,12 @@
  */
 
 sap.ui.define([
+	"sap/ui/core/Lib",
 	"sap/ui/rta/plugin/Plugin",
 	"sap/ui/fl/Utils",
 	"sap/ui/rta/Utils"
 ], function(
+	Lib,
 	Plugin,
 	FlexUtils,
 	RtaUtils
@@ -168,7 +170,7 @@ sap.ui.define([
 			return sText;
 		}
 		var sContainerTitle = oAggregationDescription.singular;
-		var oTextResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
+		var oTextResources = Lib.getResourceBundleFor("sap.ui.rta");
 		return oTextResources.getText(sText, [sContainerTitle]);
 	};
 

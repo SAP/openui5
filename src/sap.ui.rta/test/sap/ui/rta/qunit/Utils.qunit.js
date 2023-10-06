@@ -8,6 +8,7 @@ sap.ui.define([
 	"sap/m/Label",
 	"sap/m/MessageBox",
 	"sap/ui/core/Control",
+	"sap/ui/core/Lib",
 	"sap/ui/dt/DesignTime",
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/dt/OverlayUtil",
@@ -30,6 +31,7 @@ sap.ui.define([
 	Label,
 	MessageBox,
 	Control,
+	Lib,
 	DesignTime,
 	OverlayRegistry,
 	OverlayUtil,
@@ -650,10 +652,7 @@ sap.ui.define([
 			sandbox.stub(Utils, "getRtaStyleClassName").returns("RtaStyleClass");
 			this.oWarningStub = sandbox.stub(MessageBox, "warning");
 			this.oErrorStub = sandbox.stub(MessageBox, "error");
-			return oCore.getLibraryResourceBundle("sap.ui.rta", true)
-			.then(function(oBundle) {
-				this.oRtaMessageBundle = oBundle;
-			}.bind(this));
+			this.oRtaMessageBundle = Lib.getResourceBundleFor("sap.ui.rta");
 		},
 		afterEach() {
 			sandbox.restore();

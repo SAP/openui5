@@ -13,6 +13,7 @@ sap.ui.define([
 	"sap/m/Text",
 	"sap/m/RadioButton",
 	"sap/ui/core/Icon",
+	"sap/ui/core/Lib",
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/core/Core"
 ], function(
@@ -28,6 +29,7 @@ sap.ui.define([
 	Text,
 	RadioButton,
 	Icon,
+	Lib,
 	sinon,
 	oCore
 ) {
@@ -292,11 +294,11 @@ sap.ui.define([
 
 			oConfiguration.setLanguage("en_EN");
 
-			this.oVariantManagement._oRb = oCore.getLibraryResourceBundle("sap.m");
+			this.oVariantManagement._oRb = Lib.getResourceBundleFor("sap.m");
 
 			this.oVariantManagement.setModel(oModel, ControlVariantApplyAPI.getVariantModelName());
 
-			var oFLRB = oCore.getLibraryResourceBundle("sap.ui.fl");
+			var oFLRB = Lib.getResourceBundleFor("sap.ui.fl");
 			var sStandardText = oFLRB.getText("STANDARD_VARIANT_TITLE");
 			assert.equal(this._oVM.oVariantInvisibleText.getText(), this.oVariantManagement._oRb.getText("VARIANT_MANAGEMENT_SEL_VARIANT", sStandardText));
 

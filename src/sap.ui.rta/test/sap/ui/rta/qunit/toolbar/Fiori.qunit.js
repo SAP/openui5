@@ -3,6 +3,7 @@
 sap.ui.define([
 	"../RtaQunitUtils",
 	"sap/m/Button",
+	"sap/ui/core/Lib",
 	"sap/ui/fl/write/api/VersionsAPI",
 	"sap/ui/layout/VerticalLayout",
 	"sap/ui/model/json/JSONModel",
@@ -16,10 +17,10 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/core/Core"
-],
-function(
+], function(
 	RtaQunitUtils,
 	Button,
+	Lib,
 	VersionsAPI,
 	VerticalLayout,
 	JSONModel,
@@ -99,7 +100,7 @@ function(
 			var done = assert.async();
 
 			this.oToolbar = new Fiori({
-				textResources: oCore.getLibraryResourceBundle("sap.ui.rta")
+				textResources: Lib.getResourceBundleFor("sap.ui.rta")
 			});
 			this.oToolbar.setModel(this.oToolbarControlsModel, "controls");
 
@@ -132,7 +133,7 @@ function(
 			var done = assert.async();
 
 			this.oToolbar = new Fiori({
-				textResources: oCore.getLibraryResourceBundle("sap.ui.rta")
+				textResources: Lib.getResourceBundleFor("sap.ui.rta")
 			});
 			this.oToolbar.setModel(this.oToolbarControlsModel, "controls");
 

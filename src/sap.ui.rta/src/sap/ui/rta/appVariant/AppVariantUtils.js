@@ -7,6 +7,7 @@ sap.ui.define([
 	"sap/m/MessageBox",
 	"sap/ui/rta/Utils",
 	"sap/ui/core/BusyIndicator",
+	"sap/ui/core/Lib",
 	"sap/base/util/uid",
 	"sap/base/Log",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
@@ -18,6 +19,7 @@ sap.ui.define([
 	MessageBox,
 	RtaUtils,
 	BusyIndicator,
+	Lib,
 	uid,
 	Log,
 	PersistenceWriteAPI,
@@ -396,7 +398,7 @@ sap.ui.define([
 	};
 
 	AppVariantUtils.getTextResources = function() {
-		return sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
+		return Lib.getResourceBundleFor("sap.ui.rta");
 	};
 
 	AppVariantUtils.getText = function(sMessageKey, sText) {

@@ -14,6 +14,7 @@ sap.ui.define([
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/core/BusyIndicator",
 	"sap/ui/core/Core",
+	"sap/ui/core/Lib",
 	"sap/ui/fl/apply/_internal/changes/Applier",
 	"sap/ui/fl/apply/_internal/changes/Reverter",
 	"sap/ui/fl/apply/_internal/controlVariants/URLHandler",
@@ -40,6 +41,7 @@ sap.ui.define([
 	JsControlTreeModifier,
 	BusyIndicator,
 	Core,
+	Lib,
 	Applier,
 	Reverter,
 	URLHandler,
@@ -321,7 +323,7 @@ sap.ui.define([
 			this.oChangePersistence = this.oFlexController._oChangePersistence;
 			this.sFlexReference = ManifestUtils.getFlexReferenceForControl(mPropertyBag.appComponent);
 			this.oAppComponent = mPropertyBag.appComponent;
-			this._oResourceBundle = Core.getLibraryResourceBundle("sap.ui.fl");
+			this._oResourceBundle = Lib.getResourceBundleFor("sap.ui.fl");
 			this._oVariantSwitchPromise = Promise.resolve();
 			this._oVariantAppliedListeners = {};
 

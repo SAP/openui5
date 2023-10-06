@@ -8,6 +8,7 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/base/ManagedObject",
 	"sap/ui/core/Fragment",
+	"sap/ui/core/Lib",
 	"sap/ui/rta/Utils",
 	"sap/ui/model/json/JSONModel",
 	"sap/m/MessageBox",
@@ -19,6 +20,7 @@ sap.ui.define([
 	Log,
 	ManagedObject,
 	Fragment,
+	Lib,
 	Utils,
 	JSONModel,
 	MessageBox,
@@ -31,7 +33,7 @@ sap.ui.define([
 
 	function showError(vError) {
 		var sErrorMessage = vError.userMessage || vError.stack || vError.message || vError.status || vError;
-		var oTextResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
+		var oTextResources = Lib.getResourceBundleFor("sap.ui.rta");
 		Log.error(sErrorMessage);
 		var sMsg = `${oTextResources.getText("MSG_LREP_TRANSFER_ERROR")}\n${
 			 oTextResources.getText("MSG_ERROR_REASON", [sErrorMessage])}`;
@@ -156,7 +158,7 @@ sap.ui.define([
 				};
 				mPropertyBag.payload.append("file", this._oTranslationModel.getProperty("/file"), oFileUploader.getValue());
 				return TranslationAPI.uploadTranslationTexts(mPropertyBag).then(function() {
-					var oTextResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
+					var oTextResources = Lib.getResourceBundleFor("sap.ui.rta");
 					var sMsg = oTextResources.getText("MSG_UPLOAD_TRANSLATION_SUCCESS");
 					MessageToast.show(sMsg, {
 						styleClass: Utils.getRtaStyleClassName()

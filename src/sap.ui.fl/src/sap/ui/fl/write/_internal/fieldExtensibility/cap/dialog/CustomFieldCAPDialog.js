@@ -6,6 +6,7 @@
 sap.ui.define([
 	"sap/ui/base/ManagedObject",
 	"sap/ui/core/Fragment",
+	"sap/ui/core/Lib",
 	"sap/m/MessageToast",
 	"sap/ui/fl/write/_internal/fieldExtensibility/cap/editor/getEditorConfig",
 	"sap/base/util/ObjectPath",
@@ -15,6 +16,7 @@ sap.ui.define([
 ], function(
 	ManagedObject,
 	Fragment,
+	Lib,
 	MessageToast,
 	getEditorConfig,
 	ObjectPath,
@@ -24,7 +26,7 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var oTextBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.fl");
+	var oTextBundle = Lib.getResourceBundleFor("sap.ui.fl");
 
 	function setupEditor(oDialog, oInitialJson, oCustomConfig) {
 		var oEditor = oDialog.getContent()[0];
