@@ -2,7 +2,7 @@
 	{
 		"fileName": "id_1579610058534_40_moveControls",
 		"changeType": "moveControls",
-		"reference": "sap.ui.rta.test.Component",
+		"reference": "sap.ui.rta.test",
 		"content": {
 			"movedElements": [
 				{
@@ -40,7 +40,7 @@
 	{
 		"fileName": "id_1579610059606_41_moveControls",
 		"changeType": "moveControls",
-		"reference": "sap.ui.rta.test.Component",
+		"reference": "sap.ui.rta.test",
 		"content": {
 			"movedElements": [
 				{
@@ -78,7 +78,7 @@
 	{
 		"fileName": "id_1579610060878_42_moveControls",
 		"changeType": "moveControls",
-		"reference": "sap.ui.rta.test.Component",
+		"reference": "sap.ui.rta.test",
 		"content": {
 			"movedElements": [
 				{
@@ -116,7 +116,7 @@
 	{
 		"fileName": "id_1579610062247_43_moveControls",
 		"changeType": "moveControls",
-		"reference": "sap.ui.rta.test.Component",
+		"reference": "sap.ui.rta.test",
 		"content": {
 			"movedElements": [
 				{
@@ -154,7 +154,7 @@
 	{
 		"fileName": "id_1579610064790_44_moveControls",
 		"changeType": "moveControls",
-		"reference": "sap.ui.rta.test.Component",
+		"reference": "sap.ui.rta.test",
 		"content": {
 			"movedElements": [
 				{
@@ -192,7 +192,7 @@
 	{
 		"fileName": "id_1579610067407_45_moveControls",
 		"changeType": "moveControls",
-		"reference": "sap.ui.rta.test.Component",
+		"reference": "sap.ui.rta.test",
 		"content": {
 			"movedElements": [
 				{
@@ -230,7 +230,7 @@
 	{
 		"fileName": "id_1579610068549_46_moveControls",
 		"changeType": "moveControls",
-		"reference": "sap.ui.rta.test.Component",
+		"reference": "sap.ui.rta.test",
 		"content": {
 			"movedElements": [
 				{

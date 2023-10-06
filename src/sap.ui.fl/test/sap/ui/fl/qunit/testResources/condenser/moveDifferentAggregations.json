@@ -2,7 +2,7 @@
 	{
 		"fileName": "id_1590140302325_25_moveControls",
 		"changeType": "moveControls",
-		"reference": "sap.ui.rta.test.Component",
+		"reference": "sap.ui.rta.test",
 		"content": {
 			"movedElements": [
 				{
@@ -40,7 +40,7 @@
 	{
 		"fileName": "id_1590140302325_26_moveControls",
 		"changeType": "moveControls",
-		"reference": "sap.ui.rta.test.Component",
+		"reference": "sap.ui.rta.test",
 		"content": {
 			"movedElements": [
 				{
@@ -78,7 +78,7 @@
 	{
 		"fileName": "id_1590140302325_27_moveControls",
 		"changeType": "moveControls",
-		"reference": "sap.ui.rta.test.Component",
+		"reference": "sap.ui.rta.test",
 		"content": {
 			"movedElements": [
 				{
@@ -116,7 +116,7 @@
 	{
 		"fileName": "id_1590140302325_28_moveControls",
 		"changeType": "moveControls",
-		"reference": "sap.ui.rta.test.Component",
+		"reference": "sap.ui.rta.test",
 		"content": {
 			"movedElements": [
 				{
@@ -154,7 +154,7 @@
 	{
 		"fileName": "id_1590140302325_29_moveControls",
 		"changeType": "moveControls",
-		"reference": "sap.ui.rta.test.Component",
+		"reference": "sap.ui.rta.test",
 		"content": {
 			"movedElements": [
 				{
@@ -192,7 +192,7 @@
 	{
 		"fileName": "id_1590140302325_30_moveControls",
 		"changeType": "moveControls",
-		"reference": "sap.ui.rta.test.Component",
+		"reference": "sap.ui.rta.test",
 		"content": {
 			"movedElements": [
 				{
@@ -230,7 +230,7 @@
 	{
 		"fileName": "id_1590140302325_31_moveControls",
 		"changeType": "moveControls",
-		"reference": "sap.ui.rta.test.Component",
+		"reference": "sap.ui.rta.test",
 		"content": {
 			"movedElements": [
 				{
@@ -268,7 +268,7 @@
 	{
 		"fileName": "id_1590140302325_32_moveControls",
 		"changeType": "moveControls",
-		"reference": "sap.ui.rta.test.Component",
+		"reference": "sap.ui.rta.test",
 		"content": {
 			"movedElements": [
 				{
@@ -306,7 +306,7 @@
 	{
 		"fileName": "id_1590140302325_33_moveControls",
 		"changeType": "moveControls",
-		"reference": "sap.ui.rta.test.Component",
+		"reference": "sap.ui.rta.test",
 		"content": {
 			"movedElements": [
 				{

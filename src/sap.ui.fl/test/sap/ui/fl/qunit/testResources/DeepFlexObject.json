@@ -3,7 +3,7 @@
 		"fileType": "change",
 		"changeType": "updateVariant",
 		"moduleName": "",
-		"reference": "ui.s2p.mm.poitem.monitors1.Component",
+		"reference": "ui.s2p.mm.poitem.monitors1",
 		"packageName": "",
 		"content": {
 				"variantContent": {

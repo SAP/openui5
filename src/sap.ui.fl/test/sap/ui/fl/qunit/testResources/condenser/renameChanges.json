@@ -2,7 +2,7 @@
 	{
 		"fileName": "id_1576490260883_39_renameField",
 		"changeType": "renameField",
-		"reference": "sap.ui.rta.test.Component",
+		"reference": "sap.ui.rta.test",
 		"content": {
 			"originalControlType": "sap.ui.comp.smartform.GroupElement"
 		},
@@ -22,7 +22,7 @@
 	{
 		"fileName": "id_1576490267699_40_renameField",
 		"changeType": "renameField",
-		"reference": "sap.ui.rta.test.Component",
+		"reference": "sap.ui.rta.test",
 		"content": {
 			"originalControlType": "sap.ui.comp.smartform.GroupElement"
 		},
@@ -42,7 +42,7 @@
 	{
 		"fileName": "id_1576490271933_41_renameField",
 		"changeType": "renameField",
-		"reference": "sap.ui.rta.test.Component",
+		"reference": "sap.ui.rta.test",
 		"content": {
 			"originalControlType": "sap.ui.comp.smartform.GroupElement"
 		},
@@ -62,7 +62,7 @@
 	{
 		"fileName": "id_1576490280160_42_renameField",
 		"changeType": "renameField",
-		"reference": "sap.ui.rta.test.Component",
+		"reference": "sap.ui.rta.test",
 		"content": {
 			"originalControlType": "sap.ui.comp.smartform.GroupElement"
 		},
@@ -82,7 +82,7 @@
 	{
 		"fileName": "id_2_propertyChange",
 		"changeType": "propertyChange",
-		"reference": "sap.ui.rta.test.Component",
+		"reference": "sap.ui.rta.test",
 		"content": {
 			"property": "fieldLabel",
 			"newValue": "DNumber"
@@ -97,7 +97,7 @@
 	{
 		"fileName": "id_1576490291953_44_propertyChange",
 		"changeType": "propertyChange",
-		"reference": "sap.ui.rta.test.Component",
+		"reference": "sap.ui.rta.test",
 		"content": {
 			"property": "fieldLabel",
 			"newValue": "CCode"
@@ -112,7 +112,7 @@
 	{
 		"fileName": "id_1576490301337_45_renameField",
 		"changeType": "renameField",
-		"reference": "sap.ui.rta.test.Component",
+		"reference": "sap.ui.rta.test",
 		"content": {
 			"originalControlType": "sap.ui.comp.smartform.GroupElement"
 		},
@@ -132,7 +132,7 @@
 	{
 		"fileName": "id_1576490309078_46_renameField",
 		"changeType": "renameField",
-		"reference": "sap.ui.rta.test.Component",
+		"reference": "sap.ui.rta.test",
 		"content": {
 			"originalControlType": "sap.ui.comp.smartform.GroupElement"
 		},
@@ -152,7 +152,7 @@
 	{
 		"fileName": "id_1576490317689_47_renameField",
 		"changeType": "renameField",
-		"reference": "sap.ui.rta.test.Component",
+		"reference": "sap.ui.rta.test",
 		"content": {
 			"originalControlType": "sap.ui.comp.smartform.GroupElement"
 		},
