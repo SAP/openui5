@@ -122,12 +122,16 @@ sap.ui.define([
 			} // else: do not spam the output ;-)
 		}
 
-		function visitElements(aElements, bSkipByPredicate = false, iLevelOffset = 0) {
+		function visitElements(aElements, bSkipByPredicate = false, iLevelOffset = 0,
+				iIndexOffset = 0) {
 			aElements.forEach((oElement) => {
-				const iIndex = _Helper.getPrivateAnnotation(oElement, "index");
+				let iIndex = _Helper.getPrivateAnnotation(oElement, "index");
 				// Note: "@$ui5.node.level" is outdated after #move!
 				const iLevel = oElement["@$ui5.node.level"] + iLevelOffset;
 				const oParent = aParentByLevel[iLevel];
+				if (oParent === aParentByLevel[0]) {
+					iIndex += iIndexOffset;
+				}
 				const bPlaceholder = _Helper.hasPrivateAnnotation(oElement, "placeholder");
 
 				if (oParent) {
@@ -164,7 +168,8 @@ sap.ui.define([
 
 				const aSpliced = _Helper.getPrivateAnnotation(oElement, "spliced");
 				if (aSpliced) {
-					visitElements(aSpliced, true, iLevel + 1 - aSpliced[0]["@$ui5.node.level"]);
+					visitElements(aSpliced, true, iLevel + 1 - aSpliced[0]["@$ui5.node.level"],
+						iIndex + 1 - _Helper.getPrivateAnnotation(aSpliced[0], "index"));
 				}
 			});
 		}
@@ -25876,10 +25881,16 @@ sap.ui.define([
 	// Additionally ODLB#getDownloadUrl is tested w/ sort.
 	// JIRA: CPOUI5ODATAV4-1920
 	// BCP: 2370011296
+	//
+	// While the root node 0 (Alpha) is still collapsed, a new root 9 (Aleph) is created; a side
+	// effect for all rows turns spliced nodes into placeholders, then 0 (Alpha) is expanded again
+	// and we scroll down to check that placeholders still cause proper requests w.r.t. indices.
+	// JIRA: CPOUI5ODATAV4-2355
 	QUnit.test("Recursive Hierarchy: expand to 2, collapse & expand root etc.", function (assert) {
 		var oCollapsed,
 			oListBinding,
 			oModel = this.createTeaBusiModel({autoExpandSelect : true}),
+			oNewRoot,
 			oRoot,
 			oTable,
 			sView = '\
@@ -25903,6 +25914,16 @@ sap.ui.define([
 </t:Table>',
 			that = this;
 
+		// 9 Aleph (created later)
+		// 0 Alpha
+		//   1 Beta (initially collapsed)
+		//     1.1 Gamma
+		//     1.2 Zeta
+		//   2 Kappa
+		//   3 Lambda
+		//   4 Mu
+		//   5 Xi
+		// ...
 		this.expectRequest({
 				batchNo : 1,
 				url : "EMPLOYEES/$count"
@@ -26216,6 +26237,150 @@ sap.ui.define([
 				["", "", "", "", "", ""],
 				["", "", "", "", "", ""]
 			]);
+
+			that.expectRequest({
+					method : "POST",
+					url : "EMPLOYEES",
+					payload : {
+						// not needed: "EMPLOYEE_2_MANAGER@odata.bind" : null,
+						AGE : 99,
+						Name : "Aleph"
+					}
+				}, {
+					AGE : 99,
+					ID : "9",
+					MANAGER_ID : null,
+					Name : "Aleph: ℵ" // side effect
+				});
+
+			// code under test (JIRA: CPOUI5ODATAV4-2355)
+			oNewRoot = oListBinding.create({AGE : 99, Name : "Aleph"}, /*bSkipRefresh*/true);
+
+			assert.strictEqual(oNewRoot.getIndex(), 0);
+
+			return Promise.all([
+				oNewRoot.created(),
+				that.waitForChanges(assert, "create new root")
+			]);
+		}).then(function () {
+			checkTable("new root created", assert, oTable, [
+				"/EMPLOYEES('9')",
+				"/EMPLOYEES('0')"
+			], [
+				[undefined, 1, "9", "", "Aleph: ℵ", 99],
+				[false, 1, "0", "", "Alpha", 60],
+				["", "", "", "", "", ""]
+			]);
+			assert.strictEqual(oNewRoot.isTransient(), false, "created persisted");
+
+			that.expectRequest("EMPLOYEES?$select=AGE,ID"
+					+ "&$filter=ID eq '9' or ID eq '0'&$top=2", {
+					value : [{
+						AGE : 199,
+						ID : "9"
+					}, {
+						AGE : 160,
+						ID : "0"
+					}]
+				});
+
+			return Promise.all([
+				// code under test
+				oListBinding.getHeaderContext().requestSideEffects(["AGE"]),
+				that.waitForChanges(assert, "side effect: AGE for all rows")
+			]);
+		}).then(function () {
+			checkTable("after side effect: AGE for all rows", assert, oTable, [
+				"/EMPLOYEES('9')",
+				"/EMPLOYEES('0')"
+			], [
+				[undefined, 1, "9", "", "Aleph: ℵ", 199],
+				[false, 1, "0", "", "Alpha", 160],
+				["", "", "", "", "", ""]
+			]);
+
+			that.expectRequest("EMPLOYEES?$apply=orderby(AGE desc)"
+					+ "/com.sap.vocabularies.Hierarchy.v1.TopLevels(HierarchyNodes=$root/EMPLOYEES"
+						+ ",HierarchyQualifier='OrgChart',NodeProperty='ID',Levels=2)"
+					+ "&$select=AGE,DescendantCount,DistanceFromRoot,DrillState,ID,MANAGER_ID,Name"
+					+ "&$filter=not (ID eq '9')&$skip=1&$top=1", {
+					value : [{
+						AGE : 155,
+						DescendantCount : "0", // Edm.Int64
+						DistanceFromRoot : "1", // Edm.Int64
+						DrillState : "collapsed", // Note: overridden by client-side tree state!
+						ID : "1",
+						MANAGER_ID : "0",
+						Name : "Beta"
+					}]
+				});
+
+			// code under test
+			oRoot.expand();
+
+			return that.waitForChanges(assert, "expand 0 (Alpha) again");
+		}).then(function () {
+			checkTable("after expand 0 (Alpha) again", assert, oTable, [
+				"/EMPLOYEES('9')",
+				"/EMPLOYEES('0')",
+				"/EMPLOYEES('1')"
+			], [
+				[undefined, 1, "9", "", "Aleph: ℵ", 199],
+				[true, 1, "0", "", "Alpha", 160],
+				[true, 2, "1", "0", "Beta", 155]
+			], 9);
+
+			that.expectRequest("EMPLOYEES"
+					+ "?$apply=descendants($root/EMPLOYEES,OrgChart,ID,filter(ID eq '1'),1)"
+					+ "/orderby(AGE desc)"
+					+ "&$select=AGE,DrillState,ID,MANAGER_ID,Name&$skip=0&$top=2", {
+					value : [{
+						AGE : 141,
+						DrillState : "collapsed",
+						ID : "1.1",
+						MANAGER_ID : "1",
+						Name : "Gamma"
+					}, {
+						AGE : 142,
+						DrillState : "collapsed",
+						ID : "1.2",
+						MANAGER_ID : "1",
+						Name : "Zeta"
+					}]
+				})
+				.expectRequest("EMPLOYEES?$apply=orderby(AGE desc)"
+					+ "/com.sap.vocabularies.Hierarchy.v1.TopLevels(HierarchyNodes=$root/EMPLOYEES"
+						+ ",HierarchyQualifier='OrgChart',NodeProperty='ID',Levels=2)"
+					+ "&$select=AGE,DescendantCount,DistanceFromRoot,DrillState,ID,MANAGER_ID,Name"
+					+ "&$filter=not (ID eq '9')&$skip=2&$top=1", {
+					value : [{
+						AGE : 166,
+						DescendantCount : "0",
+						DistanceFromRoot : "1",
+						DrillState : "leaf",
+						ID : "2",
+						MANAGER_ID : "0",
+						Name : "Kappa: κ"
+					}]
+				});
+
+			// code under test
+			oTable.setFirstVisibleRow(3);
+
+			return that.waitForChanges(assert, "scroll down");
+		}).then(function () {
+			checkTable("after scroll down", assert, oTable, [
+				"/EMPLOYEES('9')",
+				"/EMPLOYEES('0')",
+				"/EMPLOYEES('1')",
+				"/EMPLOYEES('1.1')",
+				"/EMPLOYEES('1.2')",
+				"/EMPLOYEES('2')"
+			], [
+				[false, 3, "1.1", "1", "Gamma", 141],
+				[false, 3, "1.2", "1", "Zeta", 142],
+				[undefined, 2, "2", "0", "Kappa: κ", 166]
+			], 9);
 		});
 	});
 
@@ -26495,10 +26660,16 @@ sap.ui.define([
 	// initially expanded nodes 1 (Beta) and 0 (Alpha). See that an additional root node becomes
 	// visible!
 	// JIRA: CPOUI5ODATAV4-1743
+	//
+	// While the root node 0 (Alpha) is still collapsed, a new root (Beth) is created; a side effect
+	// for all rows turns spliced nodes into placeholders, then 0 (Alpha) is expanded again to check
+	// that placeholders still cause proper requests w.r.t. indices.
+	// JIRA: CPOUI5ODATAV4-2355
 	QUnit.test("Recursive Hierarchy: collapse nested initially expanded nodes", function (assert) {
 		var oAlpha,
 			oBeta,
 			oModel = this.createTeaBusiModel({autoExpandSelect : true}),
+			oNewRoot,
 			oTable,
 			sView = '\
 <t:Table id="table" rows="{path : \'/EMPLOYEES\',\
@@ -26517,6 +26688,7 @@ sap.ui.define([
 </t:Table>',
 			that = this;
 
+		// B Beth (created later)
 		// 0 Alpha
 		//   1 Beta
 		//     1.1 Gamma
@@ -26660,7 +26832,7 @@ sap.ui.define([
 
 			return that.waitForChanges(assert, "collapse 0 (Alpha)");
 		}).then(function () {
-			checkTable("after collapse 0 (Alpha) ", assert, oTable, [
+			checkTable("after collapse 0 (Alpha)", assert, oTable, [
 				"/EMPLOYEES('0')",
 				"/EMPLOYEES('9')"
 			], [
@@ -26675,6 +26847,136 @@ sap.ui.define([
 			// code under test
 			assert.strictEqual(oAlpha.isAncestorOf(oAleph), false, "JIRA: CPOUI5ODATAV4-2337");
 			assert.strictEqual(oAleph.isAncestorOf(oAlpha), false, "JIRA: CPOUI5ODATAV4-2337");
+
+			that.expectRequest({
+					method : "POST",
+					url : "EMPLOYEES",
+					payload : {
+						// not needed: "EMPLOYEE_2_MANAGER@odata.bind" : null,
+						Name : "Beth"
+					}
+				}, {
+					AGE : 70,
+					ID : "B",
+					MANAGER_ID : null,
+					Name : "Beth, not Beta" // side effect
+				});
+
+			// code under test (JIRA: CPOUI5ODATAV4-2355)
+			oNewRoot = oAlpha.getBinding().create({Name : "Beth"}, /*bSkipRefresh*/true);
+
+			assert.strictEqual(oNewRoot.getIndex(), 0);
+
+			return Promise.all([
+				oNewRoot.created(),
+				that.waitForChanges(assert, "create new root")
+			]);
+		}).then(function () {
+			checkTable("after create new root", assert, oTable, [
+				"/EMPLOYEES('B')",
+				"/EMPLOYEES('0')",
+				"/EMPLOYEES('9')"
+			], [
+				[undefined, 1, "B", "", "Beth, not Beta", 70],
+				[false, 1, "0", "", "Alpha", 60],
+				[undefined, 1, "9", "", "Aleph", 69],
+				["", "", "", "", "", ""],
+				["", "", "", "", "", ""]
+			]);
+			assert.strictEqual(oNewRoot.isTransient(), false, "created persisted");
+
+			that.expectRequest("EMPLOYEES?$select=AGE,ID"
+					+ "&$filter=ID eq 'B' or ID eq '0' or ID eq '9'&$top=3", {
+					value : [{
+						AGE : 170,
+						ID : "B"
+					}, {
+						AGE : 160,
+						ID : "0"
+					}, {
+						AGE : 169,
+						ID : "9"
+					}]
+				});
+
+			return Promise.all([
+				// code under test
+				oAlpha.getBinding().getHeaderContext().requestSideEffects(["AGE"]),
+				that.waitForChanges(assert, "side effect: AGE for all rows")
+			]);
+		}).then(function () {
+			checkTable("after side effect: AGE for all rows", assert, oTable, [
+				"/EMPLOYEES('B')",
+				"/EMPLOYEES('0')",
+				"/EMPLOYEES('9')"
+			], [
+				[undefined, 1, "B", "", "Beth, not Beta", 170],
+				[false, 1, "0", "", "Alpha", 160],
+				[undefined, 1, "9", "", "Aleph", 169],
+				["", "", "", "", "", ""],
+				["", "", "", "", "", ""]
+			]);
+
+			that.expectRequest({batchNo : 6,
+					url : "EMPLOYEES?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels("
+						+ "HierarchyNodes=$root/EMPLOYEES,HierarchyQualifier='OrgChart'"
+						+ ",NodeProperty='ID',Levels=3)"
+					+ "&$select=AGE,DescendantCount,DistanceFromRoot,DrillState,ID,MANAGER_ID,Name"
+					+ "&$filter=not (ID eq 'B')&$skip=1&$top=1"}, {
+					value : [{
+						AGE : 155,
+						DescendantCount : "2",
+						DistanceFromRoot : "1",
+						DrillState : "expanded", // Note: overridden by client-side tree state!
+						ID : "1",
+						MANAGER_ID : "0",
+						Name : "Beta"
+					}]
+				})
+				.expectRequest({batchNo : 6,
+					url : "EMPLOYEES?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels("
+						+ "HierarchyNodes=$root/EMPLOYEES,HierarchyQualifier='OrgChart'"
+						+ ",NodeProperty='ID',Levels=3)"
+					+ "&$select=AGE,DescendantCount,DistanceFromRoot,DrillState,ID,MANAGER_ID,Name"
+					+ "&$filter=not (ID eq 'B')&$skip=4&$top=2"}, {
+					value : [{
+						AGE : 156,
+						DescendantCount : "0",
+						DistanceFromRoot : "1",
+						DrillState : "leaf",
+						ID : "2",
+						MANAGER_ID : "0",
+						Name : "Kappa"
+					}, {
+						AGE : 157,
+						DescendantCount : "0",
+						DistanceFromRoot : "1",
+						DrillState : "leaf",
+						ID : "3",
+						MANAGER_ID : "0",
+						Name : "Lambda"
+					}]
+				});
+
+			// code under test
+			oAlpha.expand();
+
+			return that.waitForChanges(assert, "expand 0 (Alpha)");
+		}).then(function () {
+			checkTable("after expand 0 (Alpha)", assert, oTable, [
+				"/EMPLOYEES('B')",
+				"/EMPLOYEES('0')",
+				"/EMPLOYEES('1')",
+				"/EMPLOYEES('2')",
+				"/EMPLOYEES('3')",
+				"/EMPLOYEES('9')"
+			], [
+				[undefined, 1, "B", "", "Beth, not Beta", 170],
+				[true, 1, "0", "", "Alpha", 160],
+				[false, 2, "1", "0", "Beta", 155],
+				[undefined, 2, "2", "0", "Kappa", 156],
+				[undefined, 2, "3", "0", "Lambda", 157]
+			], 10);
 		});
 	});
 
@@ -28196,8 +28498,11 @@ sap.ui.define([
 	// Move "Beta" so that "Gamma" becomes its parent (no change to context's index, but a persisted
 	// node (again) becomes "created persisted"). Observe property change events for "@odata.etag".
 	// JIRA: CPOUI5ODATAV4-2226
+	//
+	// Create a new root via "@$ui5.node.parent" : null (JIRA: CPOUI5ODATAV4-2355)
 	QUnit.test("Recursive Hierarchy: create new children, move 'em", function (assert) {
-		var oBeta, oBetaCreated, oGamma, oGammaCreated, oListBinding, fnRespond, oRoot, oTable;
+		var oBeta, oBetaCreated, oGamma, oGammaCreated, oListBinding, oNewRoot, fnRespond, oRoot,
+			oTable;
 
 		const oModel = this.createSpecialCasesModel({autoExpandSelect : true});
 		const sFriend = "/Artists(ArtistID='99',IsActiveEntity=false)/_Friend";
@@ -28251,11 +28556,6 @@ sap.ui.define([
 				["", "", "", "", ""]
 			]);
 			assert.strictEqual(oRoot.getIndex(), 0);
-
-			assert.throws(function () {
-				// code under test (missing "@$ui5.node.parent")
-				oListBinding.create({}, /*bSkipRefresh*/true);
-			}); // TypeError: Cannot read properties of undefined (reading 'getCanonicalPath')
 
 			// code under test (JIRA: CPOUI5ODATAV4-2272)
 			const oLostChild = oListBinding.create({
@@ -28678,6 +28978,49 @@ sap.ui.define([
 			assert.ok(oBeta.created() instanceof Promise);
 
 			return oBeta.created(); // to prove that it's not rejected
+		}).then(function () {
+			that.expectChange("etag", [undefined, "etag0.1", "etag2.3"])
+				.expectChange("name", ["Aleph", "Alpha #1", "Gamma #1"])
+				.expectRequest({
+					method : "POST",
+					url : sFriend.slice(1),
+					payload : {
+						// not needed: "BestFriend@odata.bind" : null,
+						Name : "Aleph"
+					}
+				}, {
+					"@odata.etag" : "etag9.0",
+					ArtistID : "9",
+					IsActiveEntity : false,
+					Name : "Aleph: ℵ" // side effect
+				})
+				.expectChange("etag", ["etag9.0"])
+				.expectChange("name", ["Aleph: ℵ"]);
+
+			// code under test (JIRA: CPOUI5ODATAV4-2355)
+			oNewRoot = oListBinding.create({
+				"@$ui5.node.parent" : null,
+				Name : "Aleph"
+			}, /*bSkipRefresh*/true);
+
+			assert.strictEqual(oNewRoot.getIndex(), 0);
+
+			return Promise.all([
+				oNewRoot.created(),
+				that.waitForChanges(assert, "create new root")
+			]);
+		}).then(function () {
+			checkTable("after create new root", assert, oTable, [
+				sFriend + "(ArtistID='9',IsActiveEntity=false)",
+				sFriend + "(ArtistID='0',IsActiveEntity=false)",
+				sFriend + "(ArtistID='2',IsActiveEntity=false)",
+				sFriend + "(ArtistID='1',IsActiveEntity=false)"
+			], [
+				[false, undefined, 1, "etag9.0", "Aleph: ℵ"],
+				[undefined, true, 1, "etag0.1", "Alpha #1"],
+				[undefined, true, 2, "etag2.3", "Gamma #1"]
+			]);
+			assert.strictEqual(oNewRoot.isTransient(), false, "created persisted");
 		});
 	});
 

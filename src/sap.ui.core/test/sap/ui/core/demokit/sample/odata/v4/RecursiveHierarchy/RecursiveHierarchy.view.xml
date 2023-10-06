@@ -15,6 +15,7 @@
 			<m:Toolbar design="Transparent" class="sapMTBHeader-CTX">
 				<m:Title id="title" level="H1" text="Organizational Chart"/>
 				<m:ToolbarSpacer/>
+				<m:Button icon="sap-icon://create" press=".onCreateRoot" tooltip="Create New Root"/>
 				<m:Button icon="sap-icon://synchronize" id="synchronize" press="onSynchronize"
 					tooltip="Synchronize"/>
 			</m:Toolbar>
@@ -31,11 +32,11 @@
 		<Column width="4em">
 			<template>
 				<m:Button enabled="{= %{@$ui5.node.isExpanded} !== undefined}"
-					id="expand"
 					icon="{= %{@$ui5.node.isExpanded} === true
 						? 'sap-icon://collapse'
 						: (%{@$ui5.node.isExpanded} === false
 							? 'sap-icon://expand' : 'sap-icon://e-care')}"
+					id="expand"
 					press=".onToggleExpand"
 					tooltip="{= %{@$ui5.node.isExpanded} === true
 						? 'Collapse'
@@ -69,13 +70,13 @@
 		</Column>
 		<Column width="4em">
 			<template>
-				<m:Button enabled="{= %{@$ui5.node.isExpanded} !== false}" id="create"
-					icon="sap-icon://create" press=".onCreate" tooltip="Create New Child"/>
+				<m:Button enabled="{= %{@$ui5.node.isExpanded} !== false}" icon="sap-icon://create"
+					id="create" press=".onCreate" tooltip="Create New Child"/>
 			</template>
 		</Column>
 		<Column width="4em">
 			<template>
-				<m:Button id="move" icon="sap-icon://move" press=".onMove" tooltip="Move"/>
+				<m:Button icon="sap-icon://move" id="move" press=".onMove" tooltip="Move"/>
 			</template>
 		</Column>
 	</Table>
@@ -89,6 +90,8 @@
 			<m:Toolbar design="Transparent" class="sapMTBHeader-CTX">
 				<m:Title id="treeTitle" level="H1" text="Organizational Chart - TreeTable"/>
 				<m:ToolbarSpacer/>
+				<m:Button icon="sap-icon://create" press=".onCreateRootInTreeTable"
+					tooltip="Create New Root"/>
 				<m:Button icon="sap-icon://synchronize" id="synchronizeTreeTable"
 					press="onSynchronizeTreeTable" tooltip="SynchronizeTreeTable"/>
 			</m:Toolbar>
@@ -128,13 +131,13 @@
 		</Column>
 		<Column width="4em">
 			<template>
-				<m:Button enabled="{= %{@$ui5.node.isExpanded} !== false}" id="createInTreeTable"
-					icon="sap-icon://create" press=".onCreate" tooltip="Create New Child"/>
+				<m:Button enabled="{= %{@$ui5.node.isExpanded} !== false}" icon="sap-icon://create"
+					id="createInTreeTable" press=".onCreate" tooltip="Create New Child"/>
 			</template>
 		</Column>
 		<Column width="4em">
 			<template>
-				<m:Button id="moveInTreeTable" icon="sap-icon://move" press=".onMove"
+				<m:Button icon="sap-icon://move" id="moveInTreeTable" press=".onMove"
 					tooltip="Move"/>
 			</template>
 		</Column>

@@ -587,7 +587,7 @@ sap.ui.define([
 						try {
 							oResponse.buildResponse(oMatch.match, oResponse, oRequest);
 						} catch (oError) {
-							oResponse = error(500, oRequest, oError.message);
+							oResponse = error(500, oRequest, oError.stack);
 						}
 					}
 					if (oMatch.responses.length > 1) {

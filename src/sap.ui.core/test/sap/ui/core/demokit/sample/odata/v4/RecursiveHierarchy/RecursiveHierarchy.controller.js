@@ -21,6 +21,28 @@ sap.ui.define([
 			}
 		},
 
+		onCreateRoot : async function () {
+			try {
+				await this.byId("table").getBinding("rows").create({
+						// "@$ui5.node.parent" : null
+					}, /*bSkipRefresh*/true);
+			} catch (oError) {
+				MessageBox.alert(oError.message, {icon : MessageBox.Icon.ERROR,
+					title : "Error"});
+			}
+		},
+
+		onCreateRootInTreeTable : async function () {
+			try {
+				await this.byId("treeTable").getBinding("rows").create({
+						"@$ui5.node.parent" : null
+					}, /*bSkipRefresh*/true);
+			} catch (oError) {
+				MessageBox.alert(oError.message, {icon : MessageBox.Icon.ERROR,
+					title : "Error"});
+			}
+		},
+
 		onInit : function () {
 			const oUriParameters = new URLSearchParams(window.location.search);
 			const sExpandTo = TestUtils.retrieveData( // controlled by OPA
