@@ -349,7 +349,10 @@ sap.ui.define([
 	 */
 	jQuery.sap.now = now;
 
-	// Reads the value for the given key from the localStorage or writes a new value to it.
+	/**
+	 * Reads the value for the given key from the localStorage or writes a new value to it.
+	 * @deprecated Since 1.120
+	 */
 	var fnMakeLocalStorageAccessor = function(key, type, callback) {
 		return function(value) {
 			try {
@@ -369,6 +372,9 @@ sap.ui.define([
 		};
 	};
 
+	/**
+	 * @deprecated Since 1.120
+	 */
 	jQuery.sap.debug = fnMakeLocalStorageAccessor.call(this, 'sap-ui-debug', '', function(vDebugInfo) {
 		/*eslint-disable no-alert */
 		alert("Usage of debug sources is " + (vDebugInfo ? "on" : "off") + " now.\nFor the change to take effect, you need to reload the page.");
