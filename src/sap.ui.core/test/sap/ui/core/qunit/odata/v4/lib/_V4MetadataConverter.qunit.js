@@ -2,12 +2,12 @@
  * ${copyright}
  */
 sap.ui.define([
-	"jquery.sap.global",
 	"sap/base/Log",
 	"sap/ui/model/odata/v4/lib/_V4MetadataConverter",
 	"sap/ui/test/TestUtils",
-	"sap/ui/util/XMLHelper"
-], function (jQuery, Log, _V4MetadataConverter, TestUtils, XMLHelper) {
+	"sap/ui/util/XMLHelper",
+	"sap/ui/thirdparty/jquery"
+], function (Log, _V4MetadataConverter, TestUtils, XMLHelper, jQuery) {
 	"use strict";
 
 	var sEdmx = '<edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx"'
