@@ -1009,6 +1009,25 @@ sap.ui.define([
 	};
 
 	/**
+	 * Tells whether this node is an ancestor of (or the same as) the given node (in case of a
+	 * recursive hierarchy, see {@link sap.ui.model.odata.v4.ODataListBinding#setAggregation}).
+	 *
+	 * @param {sap.ui.model.odata.v4.Context} oNode - Some node which may be a descendant
+	 * @returns {boolean} Whether the assumed ancestor relation holds
+	 * @throws {Error} If either context does not represent a node in a recursive hierarchy
+	 *   according to the hierarchy's current {@link #isExpanded expanded state}
+	 *
+	 * @public
+	 * @since 1.120.0
+	 */
+	Context.prototype.isAncestorOf = function (oNode) {
+		if (!this.oBinding.isAncestorOf) {
+			throw new Error("Missing recursive hierarchy");
+		}
+		return this.oBinding.isAncestorOf(this, oNode);
+	};
+
+	/**
 	 * Returns whether this context is deleted. It becomes <code>true</code> immediately after
 	 * calling {@link #delete}, even while the request is waiting for
 	 * {@link sap.ui.model.odata.v4.ODataModel#submitBatch submitBatch} or is in process. It becomes
@@ -1141,7 +1160,8 @@ sap.ui.define([
 
 	/**
 	 * Moves this node to the given parent (in case of a recursive hierarchy, see
-	 * {@link #setAggregation}, where <code>oAggregation.expandTo</code> must be one). No other
+	 * {@link sap.ui.model.odata.v4.ODataListBinding#setAggregation}, where
+	 * <code>oAggregation.expandTo</code> must be one). No other
 	 * {@link sap.ui.model.odata.v4.ODataListBinding#create creation}, {@link #delete deletion}, or
 	 * move must be pending, and no other modification (including collapse of some ancestor node)
 	 * must happen while this move is pending!

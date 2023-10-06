@@ -2011,6 +2011,29 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("isAncestorOf", function (assert) {
+		const oBinding = {
+			isAncestorOf : mustBeMocked
+		};
+		const oContext = Context.create({/*oModel*/}, oBinding, "/EMPLOYEES('42')");
+		this.mock(oBinding).expects("isAncestorOf")
+			.withExactArgs(sinon.match.same(oContext), "~oNode~").returns("~result~");
+
+		// code under test
+		assert.strictEqual(oContext.isAncestorOf("~oNode~"), "~result~");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("isAncestorOf: wrong binding", function (assert) {
+		const oContext = Context.create({/*oModel*/}, {/*oBinding*/}, "/EMPLOYEES('42')");
+
+		assert.throws(function () {
+			// code under test
+			oContext.isAncestorOf();
+		}, new Error("Missing recursive hierarchy"));
+	});
+
+	//*********************************************************************************************
 	QUnit.test("move", function (assert) {
 		const oBinding = {
 			move : mustBeMocked

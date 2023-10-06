@@ -312,32 +312,56 @@ sap.ui.define([
 	 * @see #expand
 	 */
 	_AggregationCache.prototype.collapse = function (sGroupNodePath) {
-		var oCollapsed,
-			iCount = 0,
-			iDescendants,
-			aElements = this.aElements,
-			oGroupNode = this.getValue(sGroupNodePath),
-			iGroupNodeLevel = oGroupNode["@$ui5.node.level"],
-			iIndex = aElements.indexOf(oGroupNode),
-			i = iIndex + 1;
-
-		function collapse(j) {
-			delete aElements.$byPredicate[_Helper.getPrivateAnnotation(aElements[j], "predicate")];
-			delete aElements.$byPredicate[
-				_Helper.getPrivateAnnotation(aElements[j], "transientPredicate")];
-			iCount += 1;
-		}
-
-		oCollapsed = _AggregationHelper.getCollapsedObject(oGroupNode);
+		const oGroupNode = this.getValue(sGroupNodePath);
+		const oCollapsed = _AggregationHelper.getCollapsedObject(oGroupNode);
 		_Helper.updateAll(this.mChangeListeners, sGroupNodePath, oGroupNode, oCollapsed);
 
-		iDescendants = _Helper.getPrivateAnnotation(oGroupNode, "descendants");
+		const aElements = this.aElements;
+		const iIndex = aElements.indexOf(oGroupNode);
+		let iCount = this.countDescendants(oGroupNode, iIndex);
+		if (this.oAggregation.subtotalsAtBottomOnly !== undefined
+				// Note: there is at least one key for "@$ui5.node.isExpanded"; there are more keys
+				// if and only if subtotals are actually being requested and (also) shown at the
+				// bottom
+				&& Object.keys(oCollapsed).length > 1) {
+			iCount += 1; // collapse subtotals at bottom
+		}
+
+		for (let i = iIndex + 1; i < iIndex + 1 + iCount; i += 1) {
+			delete aElements.$byPredicate[_Helper.getPrivateAnnotation(aElements[i], "predicate")];
+			delete aElements.$byPredicate[
+				_Helper.getPrivateAnnotation(aElements[i], "transientPredicate")];
+		}
+		_Helper.setPrivateAnnotation(oGroupNode, "spliced", aElements.splice(iIndex + 1, iCount));
+		aElements.$count -= iCount;
+
+		return iCount;
+	};
+
+	/**
+	 * Virtually collapses the given group node at the given index, counting the number of
+	 * descendant nodes that would be affected.
+	 *
+	 * @param {object} oGroupNode - An expanded(!) group node
+	 * @param {number} iIndex - Its index
+	 * @returns {number} The number of descendant nodes that would be affected
+	 *
+	 * @private
+	 * @see #collapse
+	 * @see #isAncestorOf
+	 */
+	_AggregationCache.prototype.countDescendants = function (oGroupNode, iIndex) {
+		var i;
+
+		let iGroupNodeLevel = oGroupNode["@$ui5.node.level"];
+		let iDescendants = _Helper.getPrivateAnnotation(oGroupNode, "descendants");
 		if (iDescendants) { // => this.oAggregation.expandTo > 1
 			// Note: "descendants" refers to LimitedDescendantCountProperty and counts descendants
 			// within "top pyramid" only!
 			iGroupNodeLevel = this.oAggregation.expandTo;
 		}
-		while (i < aElements.length) {
+		const aElements = this.aElements;
+		for (i = iIndex + 1; i < aElements.length; i += 1) {
 			if (aElements[i]["@$ui5.node.level"] <= iGroupNodeLevel) {
 				// Note: level 0 or 1 is used for initial placeholders of 1st level cache!
 				if (!iDescendants) {
@@ -349,20 +373,9 @@ sap.ui.define([
 					iDescendants -= _Helper.getPrivateAnnotation(aElements[i], "descendants") || 0;
 				}
 			}
-			collapse(i);
-			i += 1;
 		}
-		if (this.oAggregation.subtotalsAtBottomOnly !== undefined
-				// Note: there is at least one key for "@$ui5.node.isExpanded"; there are more keys
-				// if and only if subtotals are actually being requested and (also) shown at the
-				// bottom
-				&& Object.keys(oCollapsed).length > 1) {
-			collapse(i); // collapse subtotals at bottom
-		}
-		_Helper.setPrivateAnnotation(oGroupNode, "spliced", aElements.splice(iIndex + 1, iCount));
-		aElements.$count -= iCount;
 
-		return iCount;
+		return i - (iIndex + 1);
 	};
 
 	/**
@@ -780,6 +793,31 @@ sap.ui.define([
 			return oSyncPromise.getResult();
 		}
 		oSyncPromise.caught();
+	};
+
+	/**
+	 * Tells whether the first given node is an ancestor of (or the same as) the second given node
+	 * (in case of a recursive hierarchy).
+	 *
+	 * @param {number} iAncestor - Index of some node which may be an ancestor
+	 * @param {number} iDescendant - Index of some node which may be a descendant
+	 * @returns {boolean} Whether the assumed ancestor relation holds
+	 *
+	 * @public
+	 */
+	_AggregationCache.prototype.isAncestorOf = function (iAncestor, iDescendant) {
+		if (iDescendant === iAncestor) { // "or the same as"
+			return true;
+		}
+		if (iDescendant < iAncestor
+			|| !this.aElements[iAncestor]["@$ui5.node.isExpanded"]
+			|| this.aElements[iAncestor]["@$ui5.node.level"]
+				>= this.aElements[iDescendant]["@$ui5.node.level"]) { // impossible
+			return false;
+		}
+
+		return iDescendant
+			<= iAncestor + this.countDescendants(this.aElements[iAncestor], iAncestor);
 	};
 
 	/**
@@ -1380,7 +1418,7 @@ sap.ui.define([
 	/**
 	 * Turns the given element, which has the given predicate, into a placeholder which keeps all
 	 * private annotations plus the hierarchy node value. The original element is removed from its
-	 * corresponding cache and must not be used any longer. Created persisted elements loose their
+	 * corresponding cache and must not be used any longer. Created persisted elements lose their
 	 * special treatment!
 	 *
 	 * @param {object} oElement - An element

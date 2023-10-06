@@ -2970,6 +2970,31 @@ sap.ui.define([
 	};
 
 	/**
+	 * Tells whether the first given node is an ancestor of (or the same as) the second given node
+	 * (in case of a recursive hierarchy).
+	 *
+	 * @param {sap.ui.model.odata.v4.Context} oAncestor - Some node which may be an ancestor
+	 * @param {sap.ui.model.odata.v4.Context} oDescendant - Some node which may be a descendant
+	 * @returns {boolean} Whether the assumed ancestor relation holds
+	 * @throws {Error} If either context does not represent a node in a recursive hierarchy
+	 *   according to its current expansion state
+	 *
+	 * @private
+	 */
+	ODataListBinding.prototype.isAncestorOf = function (oAncestor, oDescendant) {
+		if (!this.mParameters.$$aggregation || !this.mParameters.$$aggregation.hierarchyQualifier) {
+			throw new Error("Missing recursive hierarchy");
+		}
+		[oAncestor, oDescendant].forEach((oNode) => {
+			if (this.aContexts[oNode.iIndex] !== oNode) {
+				throw new Error("Not currently part of a recursive hierarchy: " + oNode);
+			}
+		});
+
+		return this.oCache.isAncestorOf(oAncestor.iIndex, oDescendant.iIndex);
+	};
+
+	/**
 	 * Returns whether the overall position of created entries is at the end of the list; this is
 	 * determined by the first call to {@link #create}.
 	 *

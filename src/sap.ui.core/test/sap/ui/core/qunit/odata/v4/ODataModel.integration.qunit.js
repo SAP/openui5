@@ -21048,6 +21048,11 @@ sap.ui.define([
 					groupLevels : ["LifecycleStatus"]
 				}
 			});
+
+			assert.throws(function () {
+				// code under test (JIRA: CPOUI5ODATAV4-2337)
+				oListBinding.getHeaderContext().isAncestorOf(/*don't care*/);
+			}, new Error("Missing recursive hierarchy"));
 		});
 	});
 
@@ -24899,6 +24904,17 @@ sap.ui.define([
 			assert.strictEqual(oListBinding.getDownloadUrl(), sExpectedDownloadUrl,
 				"JIRA: CPOUI5ODATAV4-1920, CPOUI5ODATAV4-2275");
 
+			assert.throws(function () {
+				// code under test (JIRA: CPOUI5ODATAV4-2337)
+				oHeaderContext.isAncestorOf(oRoot);
+			}, new Error("Not currently part of a recursive hierarchy: /Artists"));
+			assert.throws(function () {
+				// code under test (JIRA: CPOUI5ODATAV4-2337)
+				oRoot.isAncestorOf(oHeaderContext);
+			}, new Error("Not currently part of a recursive hierarchy: /Artists"));
+			// code under test
+			assert.strictEqual(oRoot.isAncestorOf(oRoot), true, "JIRA: CPOUI5ODATAV4-2337");
+
 			checkTable("root is leaf", assert, oTable, [
 				"/Artists(ArtistID='0',IsActiveEntity=true)"
 			], [
@@ -26654,6 +26670,11 @@ sap.ui.define([
 				["", "", "", "", "", ""],
 				["", "", "", "", "", ""]
 			], 2);
+			const oAleph = oTable.getRows()[1].getBindingContext();
+
+			// code under test
+			assert.strictEqual(oAlpha.isAncestorOf(oAleph), false, "JIRA: CPOUI5ODATAV4-2337");
+			assert.strictEqual(oAleph.isAncestorOf(oAlpha), false, "JIRA: CPOUI5ODATAV4-2337");
 		});
 	});
 
@@ -28986,6 +29007,11 @@ sap.ui.define([
 			[undefined, 4, "1.2", "1", "Zeta", 42],
 			[undefined, 3, "3", "0", "Lambda", 57]
 		]);
+
+		// code under test
+		assert.strictEqual(oBeta.isAncestorOf(oKappa), true, "JIRA: CPOUI5ODATAV4-2337");
+		assert.strictEqual(oOmega.isAncestorOf(oKappa), true, "JIRA: CPOUI5ODATAV4-2337");
+		assert.strictEqual(oKappa.isAncestorOf(oOmega), false, "JIRA: CPOUI5ODATAV4-2337");
 	});
 	});
 });
