@@ -36,6 +36,7 @@ sap.ui.define([
 	"sap/ui/core/Messaging",
 	"sap/ui/core/message/Message",
 	"sap/ui/core/message/MessageParser",
+	"sap/ui/core/Supportability",
 	"sap/ui/model/_Helper",
 	"sap/ui/model/BindingMode",
 	"sap/ui/model/Context",
@@ -56,9 +57,10 @@ sap.ui.define([
 ], function(_CreatedContextsCache, Context, ODataAnnotations, ODataContextBinding, ODataListBinding,
 		ODataTreeBinding, assert, Log, encodeURL, deepEqual, deepExtend, each, extend,
 		isEmptyObject, isPlainObject, merge, uid, UriParameters, SyncPromise, Configuration,
-		coreLibrary, Messaging, Message, MessageParser, _Helper, BindingMode, BaseContext, FilterProcessor,
-		Model, CountMode, MessageScope, ODataMetadata, ODataMetaModel, ODataMessageParser,
-		ODataPropertyBinding, ODataUtils, OperationMode, UpdateMethod, OData, URI, isCrossOriginURL
+		coreLibrary, Messaging, Message, MessageParser, Supportability,  _Helper, BindingMode,
+		BaseContext, FilterProcessor, Model, CountMode, MessageScope, ODataMetadata, ODataMetaModel,
+		ODataMessageParser,	ODataPropertyBinding, ODataUtils, OperationMode, UpdateMethod, OData,
+		URI, isCrossOriginURL
 ) {
 
 	"use strict";
@@ -403,7 +405,7 @@ sap.ui.define([
 			this.sUser = sUser;
 			this.sPassword = sPassword;
 
-			if (Configuration.getStatisticsEnabled()) {
+			if (Supportability.isStatisticsEnabled()) {
 				// add statistics parameter to every request (supported only on Gateway servers)
 				this.aUrlParams.push("sap-statistics=true");
 			}

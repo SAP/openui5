@@ -37,6 +37,7 @@ sap.ui.define([
 	"sap/ui/core/library",
 	"sap/ui/core/Messaging",
 	"sap/ui/core/Rendering",
+	"sap/ui/core/Supportability",
 	"sap/ui/core/cache/CacheManager",
 	"sap/ui/core/message/Message",
 	"sap/ui/model/BindingMode",
@@ -46,8 +47,8 @@ sap.ui.define([
 	"sap/ui/thirdparty/URI"
 ], function (ODataContextBinding, ODataListBinding, ODataMetaModel, ODataPropertyBinding,
 		SubmitMode, _GroupLock, _Helper, _MetadataRequestor, _Parser, _Requestor, assert, Log,
-		SyncPromise, Configuration, coreLibrary, Messaging, Rendering, CacheManager, Message,
-		BindingMode, BaseContext, Model, OperationMode, URI) {
+		SyncPromise, Configuration, coreLibrary, Messaging, Rendering, Supportability,
+		CacheManager, Message, BindingMode, BaseContext, Model, OperationMode, URI) {
 	"use strict";
 
 	var sClassName = "sap.ui.model.odata.v4.ODataModel",
@@ -301,7 +302,7 @@ sap.ui.define([
 		mUriParameters = this.buildQueryOptions(oUri.query(true), false, true);
 		// BEWARE: these are shared across all bindings!
 		this.mUriParameters = mUriParameters;
-		if (Configuration.getStatisticsEnabled()) {
+		if (Supportability.isStatisticsEnabled()) {
 			// Note: this way, "sap-statistics" is not sent within $batch
 			mUriParameters = Object.assign({"sap-statistics" : true}, mUriParameters);
 		}
