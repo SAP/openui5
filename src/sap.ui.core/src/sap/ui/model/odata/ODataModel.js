@@ -29,6 +29,7 @@ sap.ui.define([
 	"sap/base/util/merge",
 	"sap/base/util/uid",
 	"sap/ui/core/Configuration",
+	"sap/ui/core/Supportability",
 	"sap/ui/model/BindingMode",
 	"sap/ui/model/Context",
 	"sap/ui/model/FilterProcessor",
@@ -39,8 +40,8 @@ sap.ui.define([
 	"sap/ui/thirdparty/URI"
 ], function(CountMode, ODataContextBinding, ODataListBinding, ODataMetadata, ODataPropertyBinding,
 		ODataTreeBinding, ODataUtils, assert, Log, encodeURL, each, extend, isEmptyObject,
-		isPlainObject, merge, uid, Configuration, BindingMode, Context, FilterProcessor, Model,
-		ODataAnnotations, ODataMetaModel, OData, URI) {
+		isPlainObject, merge, uid, Configuration, Supportability, BindingMode, Context,
+		FilterProcessor, Model, ODataAnnotations, ODataMetaModel, OData, URI) {
 	"use strict";
 
 	/**
@@ -167,7 +168,7 @@ sap.ui.define([
 				}
 			}
 
-			if (Configuration.getStatisticsEnabled()) {
+			if (Supportability.isStatisticsEnabled()) {
 				// add statistics parameter to every request (supported only on Gateway servers)
 				this.aUrlParams.push("sap-statistics=true");
 			}
