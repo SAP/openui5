@@ -179,7 +179,7 @@ sap.ui.define([
 			httpResponse: mSettings.httpResponse
 		});
 
-		if (sDetails && false) {
+		if (sDetails && Configuration.getDebug()) {
 			oBlockingMessage.setDetails(sDetails);
 		} else if (sDetails) {
 			Log.error(sDetails);

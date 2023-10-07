@@ -15,7 +15,7 @@
 	controllerName="applicationUnderTestMDCChart.controller.ChartNew">
 		<VBox>
 			<Text text="This is a test to see if the view is loaded!" />
-		
+
 			<mdc:Chart id="bookChart" autoBindOnInit="true" noDataText="This is a test noData text" p13nMode="Item,Sort,Type" delegate='\{
 				"name": "delegates/odata/v4/vizChart/ChartDelegate",
 				"payload": \{
@@ -57,7 +57,7 @@
 			<mdc:variant>
 				<variants:VariantManagement id="variantManagementChart" for="bookChart" class="sapUiTinyMarginBottom"/>
 			</mdc:variant>
-			
+
 			<mdc:selectionDetailsActions>
 				<mdcc:SelectionDetailsActions>
 					<mdcc:detailsItemActions>
@@ -80,12 +80,12 @@
 			</mdc:selectionDetailsActions>
 
 			<mdc:items>
-				<mdcc:Item id="dim1" type="groupable" name="language_code" role="category" label="Languages"/>
-				<mdcc:Item id="meas1" type="aggregatable" name="averagemetricsWords" role="axis1" label="Words (average)"/>
+				<mdcc:Item id="dim1" type="groupable" propertyKey="language_code" role="category" label="Languages"/>
+				<mdcc:Item id="meas1" type="aggregatable" propertyKey="averagemetricsWords" role="axis1" label="Words (average)"/>
 			</mdc:items>
 		</mdc:Chart>
 
 		</VBox>
 
-		
+
 </mvc:View>

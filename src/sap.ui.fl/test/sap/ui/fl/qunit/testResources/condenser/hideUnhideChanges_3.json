@@ -2,7 +2,7 @@
 	{
 		"fileName": "id_1576499657864_42_hideControl",
 		"changeType": "hideControl",
-		"reference": "sap.ui.rta.test.Component",
+		"reference": "sap.ui.rta.test",
 		"selector": {
 			"id": "idMain1--GeneralLedgerDocument.Name",
 			"idIsLocal": true
@@ -12,7 +12,7 @@
 	{
 		"fileName": "id_1576499660689_44_hideControl",
 		"changeType": "hideControl",
-		"reference": "sap.ui.rta.test.Component",
+		"reference": "sap.ui.rta.test",
 		"selector": {
 			"id": "idMain1--Victim",
 			"idIsLocal": true
@@ -22,7 +22,7 @@
 	{
 		"fileName": "id_1576499675228_47_unhideControl",
 		"changeType": "unhideControl",
-		"reference": "sap.ui.rta.test.Component",
+		"reference": "sap.ui.rta.test",
 		"selector": {
 			"id": "idMain1--Victim",
 			"idIsLocal": true
@@ -32,7 +32,7 @@
 	{
 		"fileName": "id_1576499688032_50_unhideControl",
 		"changeType": "unhideControl",
-		"reference": "sap.ui.rta.test.Component",
+		"reference": "sap.ui.rta.test",
 		"selector": {
 			"id": "idMain1--GeneralLedgerDocument.Name",
 			"idIsLocal": true
@@ -42,7 +42,7 @@
 	{
 		"fileName": "id_1576499693095_56_hideControl",
 		"changeType": "hideControl",
-		"reference": "sap.ui.rta.test.Component",
+		"reference": "sap.ui.rta.test",
 		"selector": {
 			"id": "idMain1--GeneralLedgerDocument.CompanyCode",
 			"idIsLocal": true
@@ -52,7 +52,7 @@
 	{
 		"fileName": "id_1576499695675_58_hideControl",
 		"changeType": "hideControl",
-		"reference": "sap.ui.rta.test.Component",
+		"reference": "sap.ui.rta.test",
 		"selector": {
 			"id": "idMain1--Victim",
 			"idIsLocal": true
@@ -62,7 +62,7 @@
 	{
 		"fileName": "id_1576499706216_60_unhideControl",
 		"changeType": "unhideControl",
-		"reference": "sap.ui.rta.test.Component",
+		"reference": "sap.ui.rta.test",
 		"selector": {
 			"id": "idMain1--GeneralLedgerDocument.CompanyCode",
 			"idIsLocal": true
@@ -72,7 +72,7 @@
 	{
 		"fileName": "id_1576499733800_66_hideControl",
 		"changeType": "hideControl",
-		"reference": "sap.ui.rta.test.Component",
+		"reference": "sap.ui.rta.test",
 		"selector": {
 			"id": "idMain1--GeneralLedgerDocument.Name",
 			"idIsLocal": true
@@ -82,7 +82,7 @@
 	{
 		"fileName": "id_1576499768370_68_unhideControl",
 		"changeType": "unhideControl",
-		"reference": "sap.ui.rta.test.Component",
+		"reference": "sap.ui.rta.test",
 		"selector": {
 			"id": "idMain1--GeneralLedgerDocument.Name",
 			"idIsLocal": true
@@ -92,7 +92,7 @@
 	{
 		"fileName": "id_1576499822704_74_hideControl",
 		"changeType": "hideControl",
-		"reference": "sap.ui.rta.test.Component",
+		"reference": "sap.ui.rta.test",
 		"selector": {
 			"id": "idMain1--GeneralLedgerDocument.CompanyCode",
 			"idIsLocal": true
@@ -102,7 +102,7 @@
 	{
 		"fileName": "id_1576499832239_76_unhideControl",
 		"changeType": "unhideControl",
-		"reference": "sap.ui.rta.test.Component",
+		"reference": "sap.ui.rta.test",
 		"selector": {
 			"id": "idMain1--GeneralLedgerDocument.CompanyCode",
 			"idIsLocal": true

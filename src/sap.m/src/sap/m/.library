@@ -101,6 +101,10 @@
                 <module>sap/m/upload/UploadSet</module>
                 <module>sap/m/upload/UploadSetItem</module>
                 <module>sap/m/upload/UploadSetToolbarPlaceholder</module>
+                <module>sap/m/upload/UploadSetwithTable</module>
+                <module>sap/m/upload/UploadSetwithTableItem</module>
+                <module>sap/m/upload/UploaderTableItem</module>
+                <module>sap/m/upload/FilePreviewDialog</module>
             </modules>
         </component>
         <component>

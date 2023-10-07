@@ -4,6 +4,7 @@ sap.ui.define([
 	"sap/ui/rta/plugin/iframe/AddIFrameDialog",
 	"sap/base/util/isEmptyObject",
 	"sap/ui/core/library",
+	"sap/ui/core/Lib",
 	"sap/ui/rta/plugin/iframe/AddIFrameDialogController",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/core/Core",
@@ -13,6 +14,7 @@ sap.ui.define([
 	AddIFrameDialog,
 	isEmptyObject,
 	coreLibrary,
+	Lib,
 	AddIFrameDialogController,
 	QUnitUtils,
 	oCore,
@@ -24,7 +26,7 @@ sap.ui.define([
 	// shortcut for sap.ui.core.ValueState
 	var {ValueState} = coreLibrary;
 
-	var oTextResources = oCore.getLibraryResourceBundle("sap.ui.rta");
+	var oTextResources = Lib.getResourceBundleFor("sap.ui.rta");
 	var aTextInputFields = ["frameUrl"];
 	var aNumericInputFields = ["frameWidth", "frameHeight"];
 	var aUnitsOfWidthMeasure = [{

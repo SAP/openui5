@@ -7,6 +7,7 @@ sap.ui.define([
 	"sap/ui/core/Fragment",
 	"sap/ui/core/library",
 	"sap/ui/core/Core",
+	"sap/ui/core/Lib",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/rta/Utils",
 	"sap/ui/rta/plugin/iframe/AddIFrameDialogController",
@@ -17,6 +18,7 @@ sap.ui.define([
 	Fragment,
 	coreLibrary,
 	Core,
+	Lib,
 	JSONModel,
 	RtaUtils,
 	AddIFrameDialogController,
@@ -26,7 +28,7 @@ sap.ui.define([
 
 	// shortcut for sap.ui.core.ValueState
 	var {ValueState} = coreLibrary;
-	var _oTextResources = Core.getLibraryResourceBundle("sap.ui.rta");
+	var _oTextResources = Lib.getResourceBundleFor("sap.ui.rta");
 	var _sDocumentationURL = "https://help.sap.com/docs/search?q=Embedding%20Content%20%28Object%20Pages%29";
 	var _sDocumentationHTML = `${_oTextResources.getText("IFRAME_ADDIFRAME_DIALOG_URL_WARNING_TEXT")} (` + `<a href=${_sDocumentationURL}>${_oTextResources.getText("IFRAME_ADDIFRAME_DIALOG_URL_WARNING_LINKTEXT")}</a>` + `)`;
 	var _mText = {

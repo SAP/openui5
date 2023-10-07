@@ -15,6 +15,7 @@ sap.ui.define([
 	"sap/ui/core/library",
 	"sap/ui/core/theming/Parameters",
 	"sap/ui/core/Icon",
+	"sap/ui/core/Lib",
 	"sap/ui/model/ChangeReason",
 	"sap/ui/thirdparty/jquery",
 	"sap/base/util/restricted/_throttle",
@@ -31,6 +32,7 @@ sap.ui.define([
 	coreLibrary,
 	ThemeParameters,
 	Icon,
+	Lib,
 	ChangeReason,
 	jQuery,
 	throttle,
@@ -1179,15 +1181,12 @@ sap.ui.define([
 				}
 			}
 
-			var vResult = sap.ui.getCore().getLibraryResourceBundle("sap.ui.table", mOptions.async === true);
+			var vResult = Lib.getResourceBundleFor("sap.ui.table");
 
-			if (vResult instanceof Promise) {
-				vResult = vResult.then(function(oBundle) {
-					oResourceBundle = oBundle;
-					return oResourceBundle;
-				});
-			} else {
-				oResourceBundle = vResult;
+			oResourceBundle = vResult;
+
+			if (mOptions.async === true) {
+				vResult = Promise.resolve(oResourceBundle);
 			}
 
 			return vResult;

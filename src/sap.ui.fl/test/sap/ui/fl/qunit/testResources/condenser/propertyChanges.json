@@ -2,7 +2,7 @@
 	{
 		"fileName": "id_1575964813623_132_propertyChange",
 		"changeType": "propertyChange",
-		"reference": "sap.ui.rta.test.Component",
+		"reference": "sap.ui.rta.test",
 		"layer": "VENDOR",
 		"content": {
 			"property": "useHorizontalLayout",
@@ -18,7 +18,7 @@
 	{
 		"fileName": "id_1575964813623_132_propertyChange",
 		"changeType": "propertyChange",
-		"reference": "sap.ui.rta.test.Component",
+		"reference": "sap.ui.rta.test",
 		"layer": "VENDOR",
 		"content": {
 			"property": "useHorizontalLayout",
@@ -34,7 +34,7 @@
 	{
 		"fileName": "id_1479218968907_101_propertyChange",
 		"changeType": "propertyChange",
-		"reference": "sap.ui.rta.test.Component",
+		"reference": "sap.ui.rta.test",
 		"layer": "VENDOR",
 		"content": {
 			"property": "elementForLabel",
@@ -49,7 +49,7 @@
 	{
 		"fileName": "id_1479219043003_105_propertyChange",
 		"changeType": "propertyChange",
-		"reference": "sap.ui.rta.test.Component",
+		"reference": "sap.ui.rta.test",
 		"layer": "VENDOR",
 		"content": {
 			"property": "elementForLabel",
@@ -64,7 +64,7 @@
 	{
 		"fileName": "id_1491823781561_91_propertyChange",
 		"changeType": "propertyChange",
-		"reference": "sap.ui.rta.test.Component",
+		"reference": "sap.ui.rta.test",
 		"layer": "VENDOR",
 		"content": {
 			"property": "elementForLabel",
@@ -79,7 +79,7 @@
 	{
 		"fileName": "id_1493382638641_97_propertyChange",
 		"changeType": "propertyChange",
-		"reference": "sap.ui.rta.test.Component",
+		"reference": "sap.ui.rta.test",
 		"layer": "VENDOR",
 		"content": {
 			"property": "label",
@@ -95,7 +95,7 @@
 	{
 		"fileName": "id_1493382638641_97_propertyChange",
 		"changeType": "propertyChange",
-		"reference": "sap.ui.rta.test.Component",
+		"reference": "sap.ui.rta.test",
 		"layer": "VENDOR",
 		"content": {
 			"property": "label",
@@ -111,7 +111,7 @@
 	{
 		"fileName": "id_1493382638641_97_propertyChange",
 		"changeType": "propertyChange",
-		"reference": "sap.ui.rta.test.Component",
+		"reference": "sap.ui.rta.test",
 		"layer": "VENDOR",
 		"content": {
 			"property": "label",
@@ -127,7 +127,7 @@
 	{
 		"fileName": "id_1493382638641_97_propertyChange",
 		"changeType": "propertyChange",
-		"reference": "sap.ui.rta.test.Component",
+		"reference": "sap.ui.rta.test",
 		"layer": "VENDOR",
 		"content": {
 			"property": "label",
@@ -143,7 +143,7 @@
 	{
 		"fileName": "id_1493382638641_97_propertyChange",
 		"changeType": "propertyChange",
-		"reference": "sap.ui.rta.test.Component",
+		"reference": "sap.ui.rta.test",
 		"layer": "VENDOR",
 		"content": {
 			"property": "label",

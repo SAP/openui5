@@ -3,6 +3,7 @@
  */
 
 sap.ui.define([
+	"sap/ui/core/Lib",
 	"sap/ui/fl/write/api/Adaptations",
 	"sap/ui/fl/write/api/FeaturesAPI",
 	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
@@ -20,6 +21,7 @@ sap.ui.define([
 	"sap/ui/fl/write/_internal/Versions",
 	"sap/ui/model/json/JSONModel"
 ], function(
+	Lib,
 	Adaptations,
 	FeaturesAPI,
 	FlexObjectFactory,
@@ -98,7 +100,7 @@ sap.ui.define([
 	 * @returns {Promise<sap.ui.model.json.JSONModel>} Model of adaptations enhanced with additional properties
 	 */
 	ContextBasedAdaptationsAPI.initialize = function(mPropertyBag) {
-		_oResourceBundle ||= sap.ui.getCore().getLibraryResourceBundle("sap.ui.fl");
+		_oResourceBundle ||= Lib.getResourceBundleFor("sap.ui.fl");
 		if (!mPropertyBag.layer) {
 			return Promise.reject("No layer was provided");
 		}

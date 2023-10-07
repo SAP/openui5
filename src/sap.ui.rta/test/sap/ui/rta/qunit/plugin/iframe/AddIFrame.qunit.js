@@ -3,6 +3,7 @@
 sap.ui.define([
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/core/IconPool",
+	"sap/ui/core/Lib",
 	"sap/ui/fl/Utils",
 	"sap/ui/layout/VerticalLayout",
 	"sap/ui/dt/DesignTime",
@@ -24,6 +25,7 @@ sap.ui.define([
 ], function(
 	XMLView,
 	IconPool,
+	Lib,
 	Utils,
 	VerticalLayout,
 	DesignTime,
@@ -128,7 +130,7 @@ sap.ui.define([
 			const oRegisterFontSpy = sandbox.spy(IconPool, "registerFont");
 			const oFontLoadedSpy = sandbox.spy(IconPool, "fontLoaded");
 
-			const oRtaTextResources = oCore.getLibraryResourceBundle("sap.ui.rta");
+			const oRtaTextResources = Lib.getResourceBundleFor("sap.ui.rta");
 			sandbox.stub(oRtaTextResources, "getText")
 			.withArgs("CTX_ADDIFRAME", ["as foo"]).returns(sExpectedSectionText)
 			.withArgs("CTX_ADDIFRAME", ["as bar"]).returns(sExpectedHeaderText);
@@ -243,7 +245,7 @@ sap.ui.define([
 			});
 
 			const sExpectedText = "Section text";
-			const oRtaTextResources = oCore.getLibraryResourceBundle("sap.ui.rta");
+			const oRtaTextResources = Lib.getResourceBundleFor("sap.ui.rta");
 			sandbox.stub(oRtaTextResources, "getText").withArgs("CTX_ADDIFRAME", [sText]).returns(sExpectedText);
 
 			this.oButtonOverlay.setDesignTimeMetadata({

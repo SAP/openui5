@@ -7,6 +7,7 @@ sap.ui.define([
 	"sap/m/MessageBox",
 	"sap/m/Page",
 	"sap/ui/core/Core",
+	"sap/ui/core/Lib",
 	"sap/ui/dt/plugin/ToolHooks",
 	"sap/ui/dt/DesignTime",
 	"sap/ui/dt/ElementOverlay",
@@ -40,6 +41,7 @@ sap.ui.define([
 	MessageBox,
 	Page,
 	oCore,
+	Lib,
 	ToolHooksPlugin,
 	DesignTime,
 	ElementOverlay,
@@ -314,7 +316,7 @@ sap.ui.define([
 
 		QUnit.test("when the current variant has unsaved changes and a user switches to another variant - user chooses 'save'", function(assert) {
 			var fnDone = assert.async();
-			var oLibraryBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
+			var oLibraryBundle = Lib.getResourceBundleFor("sap.ui.rta");
 			sandbox.stub(this.oVariantManagementControl, "getModified").returns(true);
 
 			this.oControlVariantPlugin.attachElementModified(function(oEvent) {
@@ -340,7 +342,7 @@ sap.ui.define([
 
 		QUnit.test("when the current variant has unsaved changes and a user switches to another variant - user chooses 'discard'", function(assert) {
 			var fnDone = assert.async();
-			var oLibraryBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
+			var oLibraryBundle = Lib.getResourceBundleFor("sap.ui.rta");
 			sandbox.stub(this.oVariantManagementControl, "getModified").returns(true);
 
 			this.oControlVariantPlugin.attachElementModified(function(oEvent) {

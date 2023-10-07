@@ -12,6 +12,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/api/ControlVariantApplyAPI",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/core/Control",
+	"sap/ui/core/Lib",
 	"sap/ui/core/library",
 	"sap/base/Log"
 ], function(
@@ -23,6 +24,7 @@ sap.ui.define([
 	ControlVariantApplyAPI,
 	flSettings,
 	Control,
+	Lib,
 	coreLibrary,
 	Log
 ) {
@@ -322,7 +324,7 @@ sap.ui.define([
 		Control.prototype.init.apply(this); // Call base class
 
 		this.addStyleClass("sapUiFlVarMngmt"); // required for finding the control by RTA/FL
-		this._oRb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.fl");
+		this._oRb = Lib.getResourceBundleFor("sap.ui.fl");
 
 		this.setModelName(ControlVariantApplyAPI.getVariantModelName());
 

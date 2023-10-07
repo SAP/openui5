@@ -4,6 +4,7 @@
 
 sap.ui.define([
 	"sap/base/util/merge",
+	"sap/ui/core/Lib",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/write/_internal/connectors/BackendConnector",
 	"sap/ui/fl/initial/_internal/connectors/KeyUserConnector",
@@ -16,6 +17,7 @@ sap.ui.define([
 	"sap/m/MessageBox"
 ], function(
 	merge,
+	Lib,
 	Layer,
 	BackendConnector,
 	InitialConnector,
@@ -151,7 +153,7 @@ sap.ui.define([
 			return WriteUtils.sendRequest(sVersionsUrl, "DELETE", mPropertyBag);
 		},
 		publish(mPropertyBag) {
-			var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.fl");
+			var oResourceBundle = Lib.getResourceBundleFor("sap.ui.fl");
 			var fnHandleAllErrors = function(oError) {
 				BusyIndicator.hide();
 				var sMessage = oResourceBundle.getText("MSG_CF_PUBLISH_ERROR", oError ? [oError.message || oError] : undefined);

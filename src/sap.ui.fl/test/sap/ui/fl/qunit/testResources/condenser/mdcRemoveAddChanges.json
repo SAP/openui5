@@ -2,7 +2,7 @@
 	{
 		"fileName": "id_01_addColumn",
 		"changeType": "addColumn",
-		"reference": "test.Component",
+		"reference": "test",
 		"content": {
 			"name": "column3",
 			"index": 1
@@ -17,7 +17,7 @@
 	{
 		"fileName": "id_02_addColumn",
 		"changeType": "addColumn",
-		"reference": "test.Component",
+		"reference": "test",
 		"content": {
 			"name": "column4",
 			"index": 4
@@ -31,7 +31,7 @@
 	},{
 		"fileName": "id_01_removeColumn",
 		"changeType": "removeColumn",
-		"reference": "test.Component",
+		"reference": "test",
 		"content": {
 			"name": "column0",
 			"id": "mdcTable--column0"
@@ -45,7 +45,7 @@
 	},{
 		"fileName": "id_02_removeColumn",
 		"changeType": "removeColumn",
-		"reference": "test.Component",
+		"reference": "test",
 		"content": {
 			"name": "column1",
 			"id": "mdcTable--column1"

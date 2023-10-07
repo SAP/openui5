@@ -11,7 +11,7 @@ sap.ui.define([
 	"sap/ui/integration/Host",
 	"sap/ui/integration/Extension",
 	"sap/ui/integration/library",
-	"sap/ui/core/Configuration"
+	"sap/ui/core/Supportability"
 ], function (
 	Core,
 	DataProviderFactory,
@@ -23,7 +23,7 @@ sap.ui.define([
 	Host,
 	Extension,
 	integrationLibrary,
-	Configuration
+	Supportability
 ) {
 	"use strict";
 
@@ -1069,7 +1069,7 @@ sap.ui.define([
 				}
 			}),
 			oHost = new Host(),
-			fnStubStatisticsEnabled = sinon.stub(Configuration, "getStatisticsEnabled").callsFake(function () {
+			fnStubStatisticsEnabled = sinon.stub(Supportability, "isStatisticsEnabled").callsFake(function () {
 				return true;
 			});
 

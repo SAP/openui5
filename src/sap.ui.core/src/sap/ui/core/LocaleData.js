@@ -173,19 +173,31 @@ sap.ui.define([
 		},
 
 		/**
-		 * Get locale specific language names.
+		 * Gets locale-specific language names, as available in the CLDR raw data.
 		 *
-		 * @returns {Object<string, string>} map of locale specific language names
+		 * To avoid redundancies, with CLDR version 43 only language names are contained which cannot be derived from
+		 * the language and the script or the territory. If a language tag is not contained in the map, use
+		 * {@link #getLanguageName} to get the derived locale-specific language name for that language tag.
+		 *
+		 * @returns {Object<string, string>} Maps a language tag to the locale-specific language name
+		 *
 		 * @public
 		 */
 		getLanguages: function() {
-			return this._get("languages");
+			const oLanguages = this._get("languages");
+
+			return oLanguages;
 		},
 
 		/**
-		 * Get locale specific script names.
+		 * Gets locale-specific script names, as available in the CLDR raw data.
 		 *
-		 * @returns {Object.<string, string>} map of locale specific script names
+		 * To avoid redundancies, with CLDR version 43 only scripts are contained for which the language-specific name
+		 * is different from the script key. If a script key is not contained in the map, use the script key as script
+		 * name.
+		 *
+		 * @returns {Object<string, string>} Maps a script key to the locale-specific script name
+		 *
 		 * @public
 		 */
 		getScripts: function() {
@@ -193,9 +205,13 @@ sap.ui.define([
 		},
 
 		/**
-		 * Get locale specific territory names.
+		 * Gets locale-specific territory names, as available in the CLDR raw data.
 		 *
-		 * @returns {Object.<string, string>} map of locale specific territory names
+		 * To avoid redundancies, with CLDR version 43 only territories are contained for which the language-specific
+		 * name is different from the territory key.
+		 *
+		 * @returns {Object<string, string>} Maps a territory key to the locale-specific territory name
+		 *
 		 * @public
 		 */
 		getTerritories: function() {
@@ -1364,7 +1380,7 @@ sap.ui.define([
 		 * Returns the currency symbols available for this locale.
 		 * Currency symbols get accumulated by custom currency symbols.
 		 *
-		 * @returns {Object.<string, string>} the map of all currency symbols available in this locale, e.g.
+		 * @returns {Object<string, string>} the map of all currency symbols available in this locale, e.g.
 		 * {
 		 *     "AUD": "A$",
 		 *     "BRL": "R$",

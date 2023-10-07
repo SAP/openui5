@@ -5,6 +5,7 @@ sap.ui.define([
 	"sap/m/Label",
 	"sap/m/ScrollContainer",
 	"sap/ui/core/Core",
+	"sap/ui/core/Lib",
 	"sap/ui/core/Title",
 	"sap/ui/dt/DesignTime",
 	"sap/ui/dt/OverlayRegistry",
@@ -28,6 +29,7 @@ sap.ui.define([
 	Label,
 	ScrollContainer,
 	oCore,
+	Lib,
 	Title,
 	DesignTime,
 	OverlayRegistry,
@@ -51,7 +53,7 @@ sap.ui.define([
 
 	var sandbox = sinon.createSandbox();
 
-	var oResourceBundle = oCore.getLibraryResourceBundle("sap.ui.rta");
+	var oResourceBundle = Lib.getResourceBundleFor("sap.ui.rta");
 
 	function triggerAndWaitForStartEdit(oPlugin, oOverlay) {
 		return new Promise(function(resolve) {

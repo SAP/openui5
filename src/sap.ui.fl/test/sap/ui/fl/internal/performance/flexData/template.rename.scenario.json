@@ -4,7 +4,7 @@
 			"fileName": "id_1504764957625_7_rename",
 			"fileType": "change",
 			"changeType": "rename",
-			"reference": "rta.performance.Component",
+			"reference": "rta.performance",
 			"packageName": "$TMP",
 			"content": {
 				"originalControlType": "sap.m.Label"

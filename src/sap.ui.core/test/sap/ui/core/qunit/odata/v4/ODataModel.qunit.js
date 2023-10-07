@@ -6,6 +6,7 @@ sap.ui.define([
 	"sap/ui/base/SyncPromise",
 	"sap/ui/core/Configuration",
 	"sap/ui/core/Rendering",
+	"sap/ui/core/Supportability",
 	"sap/ui/core/cache/CacheManager",
 	"sap/ui/core/message/Message",
 	"sap/ui/core/Messaging",
@@ -24,9 +25,10 @@ sap.ui.define([
 	"sap/ui/model/odata/v4/lib/_Requestor",
 	"sap/ui/core/library",
 	"sap/ui/test/TestUtils"
-], function (Log, SyncPromise, Configuration, Rendering, CacheManager, Message, Messaging, Binding,
-		BindingMode, BaseContext, Model, OperationMode, Context, ODataMetaModel, ODataModel,
-		SubmitMode, _Helper, _MetadataRequestor, _Parser, _Requestor, library, TestUtils) {
+], function (Log, SyncPromise, Configuration, Rendering, Supportability, CacheManager, Message,
+		Messaging, Binding, BindingMode, BaseContext, Model, OperationMode, Context,
+		ODataMetaModel, ODataModel, SubmitMode, _Helper, _MetadataRequestor, _Parser, _Requestor,
+		library, TestUtils) {
 	"use strict";
 
 	var sClassName = "sap.ui.model.odata.v4.ODataModel",
@@ -111,7 +113,7 @@ sap.ui.define([
 
 			this.mock(ODataModel.prototype).expects("buildQueryOptions")
 				.withExactArgs({}, false, true).returns({"sap-client" : "279"});
-			this.mock(Configuration).expects("getStatisticsEnabled")
+			this.mock(Supportability).expects("isStatisticsEnabled")
 				.withExactArgs().returns(bStatistics);
 			this.mock(_MetadataRequestor).expects("create")
 				.withExactArgs({"Accept-Language" : "ab-CD"}, "4.0", undefined, bStatistics
@@ -484,7 +486,7 @@ sap.ui.define([
 				},
 				fnSubmitAuto = function () {};
 
-			this.mock(Configuration).expects("getStatisticsEnabled")
+			this.mock(Supportability).expects("isStatisticsEnabled")
 				.withExactArgs().returns(bStatistics);
 			oExpectedCreate
 				.withExactArgs(sServiceUrl, {

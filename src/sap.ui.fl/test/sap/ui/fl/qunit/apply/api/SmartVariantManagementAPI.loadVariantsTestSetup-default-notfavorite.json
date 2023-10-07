@@ -5,7 +5,7 @@
       "fileType":"change",
       "changeType":"standardVariant",
       "layer":"USER",
-      "reference":"sap.ui.demoapps.rta.fiorielements.Component",
+      "reference":"sap.ui.demoapps.rta.fiorielements",
       "selector":  {
         "persistencyKey":"variantManagement1"
       },
@@ -70,7 +70,7 @@
       "fileType": "change",
       "changeType": "updateVariant",
       "moduleName": "",
-      "reference": "sap.ui.demoapps.rta.fiorielements.Component",
+      "reference": "sap.ui.demoapps.rta.fiorielements",
       "packageName": "",
       "content": {
         "key": "variant_1",

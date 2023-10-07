@@ -2654,7 +2654,7 @@ sap.ui.define([
 
 	/**
 	 * Drops the element with the given index and predicate from this cache's collection, so that it
-	 * will be read again from the server later on. Created persisted elements loose their special
+	 * will be read again from the server later on. Created persisted elements lose their special
 	 * treatment!
 	 *
 	 * @param {number} iIndex - An index

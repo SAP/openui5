@@ -2,7 +2,7 @@
 	{
 		"fileName": "id_00_addSort",
 		"changeType": "addSort",
-		"reference": "test.Component",
+		"reference": "test",
 		"content": {
 			"index": 0,
 			"descending": false,
@@ -17,7 +17,7 @@
 	},{
 		"fileName": "id_00_addGroup",
 		"changeType": "addGroup",
-		"reference": "test.Component",
+		"reference": "test",
 		"content": {
 			"index": 0,
 			"name": "group0"
@@ -32,7 +32,7 @@
 	{
 		"fileName": "id_01_addSort",
 		"changeType": "addSort",
-		"reference": "test.Component",
+		"reference": "test",
 		"content": {
 			"index": 1,
 			"descending": false,
@@ -48,7 +48,7 @@
 	{
 		"fileName": "id_02_removeSort",
 		"changeType": "removeSort",
-		"reference": "test.Component",
+		"reference": "test",
 		"content": {
 			"index": 1,
 			"descending": false,
@@ -64,7 +64,7 @@
 	{
 		"fileName": "id_03_addSort",
 		"changeType": "addSort",
-		"reference": "test.Component",
+		"reference": "test",
 		"content": {
 			"index": 1,
 			"descending": true,
@@ -80,7 +80,7 @@
 	{
 		"fileName": "id_04_moveSort",
 		"changeType": "moveSort",
-		"reference": "test.Component",
+		"reference": "test",
 		"content": {
 			"index": 0,
 			"name": "sorter1"
@@ -95,7 +95,7 @@
 	{
 		"fileName": "id_05_moveSort",
 		"changeType": "moveSort",
-		"reference": "test.Component",
+		"reference": "test",
 		"content": {
 			"index": 0,
 			"name": "sorter0"
@@ -110,7 +110,7 @@
 	{
 		"fileName": "id_06_removeSort",
 		"changeType": "removeSort",
-		"reference": "test.Component",
+		"reference": "test",
 		"content": {
 			"index": 0,
 			"descending": false,
@@ -126,7 +126,7 @@
 	{
 		"fileName": "id_07_addSort",
 		"changeType": "addSort",
-		"reference": "test.Component",
+		"reference": "test",
 		"content": {
 			"index": 1,
 			"descending": false,
@@ -142,7 +142,7 @@
 	{
 		"fileName": "id_08_moveSort",
 		"changeType": "moveSort",
-		"reference": "test.Component",
+		"reference": "test",
 		"content": {
 			"index": 0,
 			"name": "sorter2"

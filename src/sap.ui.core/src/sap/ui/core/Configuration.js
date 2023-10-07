@@ -676,6 +676,15 @@ sap.ui.define([
 		},
 
 		/**
+		 * Returns whether the page runs in full debug mode.
+		 * @returns {boolean} Whether the page runs in full debug mode
+		 * @public
+		 * @function
+		 * @deprecated As of version 1.120.
+		 */
+		getDebug : Supportability.isDebugModeEnabled,
+
+		/**
 		 * Returns whether there should be an exception on any duplicate element IDs.
 		 * @return {boolean} whether there should be an exception on any duplicate element IDs
 		 * @public

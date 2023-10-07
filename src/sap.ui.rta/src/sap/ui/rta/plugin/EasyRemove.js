@@ -3,9 +3,11 @@
  */
 
 sap.ui.define([
+	"sap/ui/core/Lib",
 	"sap/ui/rta/plugin/Remove",
 	"sap/m/Button"
 ], function(
+	Lib,
 	Remove,
 	Button
 ) {
@@ -99,7 +101,7 @@ sap.ui.define([
 
 		oOverlay._oDeleteButton = new Button(sId, {
 			icon: "sap-icon://less",
-			tooltip: sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta").getText("CTX_REMOVE"),
+			tooltip: Lib.getResourceBundleFor("sap.ui.rta").getText("CTX_REMOVE"),
 			enabled: bEnabled
 		}).placeAt(oHtmlIconOuter);
 		oHtmlIconWrapper.append(oHtmlIconOuter);

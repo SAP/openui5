@@ -15,6 +15,7 @@ sap.ui.define([
 	"sap/ui/core/Configuration",
 	"sap/ui/core/Messaging",
 	"sap/ui/core/Rendering",
+	"sap/ui/core/Supportability",
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/core/mvc/View",
 	"sap/ui/model/ChangeReason",
@@ -36,10 +37,10 @@ sap.ui.define([
 	// load Table resources upfront to avoid loading times > 1 second for the first test using Table
 	"sap/ui/table/Table"
 ], function (Log, uid, ColumnListItem, CustomListItem, FlexBox, _MessageStrip, Text,
-		Device, EventProvider, SyncPromise, Configuration, Messaging, Rendering, Controller, View,
-		ChangeReason, Filter, FilterOperator, FilterType, Sorter, OperationMode, AnnotationHelper,
-		ODataListBinding, ODataMetaModel, ODataModel, ODataPropertyBinding, ValueListType, _Helper,
-		Security, TestUtils, XMLHelper) {
+		Device, EventProvider, SyncPromise, Configuration, Messaging, Rendering, Supportability,
+		Controller, View, ChangeReason, Filter, FilterOperator, FilterType, Sorter, OperationMode,
+		AnnotationHelper, ODataListBinding, ODataMetaModel, ODataModel, ODataPropertyBinding,
+		ValueListType, _Helper, Security, TestUtils, XMLHelper) {
 	/*eslint no-sparse-arrays: 0, "max-len": ["error", {"code": 100,
 		"ignorePattern": "/sap/opu/odata4/|\" :$|\" : \\{$|\\{meta>"}], */
 	"use strict";
@@ -2333,7 +2334,7 @@ sap.ui.define([
 			dRetryAfter = new Date(),
 			sView = '<Text text="{/EMPLOYEES(\'1\')/ID}"/>';
 
-		this.mock(Configuration).expects("getStatisticsEnabled").withExactArgs()
+		this.mock(Supportability).expects("isStatisticsEnabled").withExactArgs()
 			.returns(true);
 		oModel = this.createModel("/sap/statistics/", {groupId : "$direct"}, {
 			"/sap/statistics/$metadata?sap-statistics=true"
@@ -2396,7 +2397,7 @@ sap.ui.define([
 	QUnit.test("sap-statistics for $batch", function (assert) {
 		var oModel;
 
-		this.mock(Configuration).expects("getStatisticsEnabled").withExactArgs().returns(true);
+		this.mock(Supportability).expects("isStatisticsEnabled").withExactArgs().returns(true);
 		oModel = this.createModel("/sap/statistics/", {earlyRequests : true}, {
 			"HEAD /sap/statistics/?sap-statistics=true" : {},
 			"/sap/statistics/$metadata?sap-statistics=true"
@@ -7719,7 +7720,7 @@ sap.ui.define([
 			assert.strictEqual(fnSpy.callCount, 1, "1st #fetchUI5Type");
 			assert.strictEqual(oType.getConstraints().maxLength, 40,
 				"Don't try this at home, kids!");
-			sap.ui.test.TestUtils.withNormalizedMessages(function () {
+			TestUtils.withNormalizedMessages(function () {
 				assert.throws(function () {
 					oType.validateValue("0123456789012345678901234567890123456789+");
 				}, /EnterTextMaxLength 40/);
@@ -7737,7 +7738,7 @@ sap.ui.define([
 			assert.strictEqual(fnSpy.callCount, 2, "2nd #fetchUI5Type");
 			assert.strictEqual(oType.getConstraints().maxLength, 16,
 				"Don't try this at home, kids!");
-			sap.ui.test.TestUtils.withNormalizedMessages(function () {
+			TestUtils.withNormalizedMessages(function () {
 				assert.throws(function () {
 					oType.validateValue("0123456789ABCDEF+");
 				}, /EnterTextMaxLength 16/);
@@ -21047,6 +21048,11 @@ sap.ui.define([
 					groupLevels : ["LifecycleStatus"]
 				}
 			});
+
+			assert.throws(function () {
+				// code under test (JIRA: CPOUI5ODATAV4-2337)
+				oListBinding.getHeaderContext().isAncestorOf(/*don't care*/);
+			}, new Error("Missing recursive hierarchy"));
 		});
 	});
 
@@ -24898,6 +24904,17 @@ sap.ui.define([
 			assert.strictEqual(oListBinding.getDownloadUrl(), sExpectedDownloadUrl,
 				"JIRA: CPOUI5ODATAV4-1920, CPOUI5ODATAV4-2275");
 
+			assert.throws(function () {
+				// code under test (JIRA: CPOUI5ODATAV4-2337)
+				oHeaderContext.isAncestorOf(oRoot);
+			}, new Error("Not currently part of a recursive hierarchy: /Artists"));
+			assert.throws(function () {
+				// code under test (JIRA: CPOUI5ODATAV4-2337)
+				oRoot.isAncestorOf(oHeaderContext);
+			}, new Error("Not currently part of a recursive hierarchy: /Artists"));
+			// code under test
+			assert.strictEqual(oRoot.isAncestorOf(oRoot), true, "JIRA: CPOUI5ODATAV4-2337");
+
 			checkTable("root is leaf", assert, oTable, [
 				"/Artists(ArtistID='0',IsActiveEntity=true)"
 			], [
@@ -26653,6 +26670,11 @@ sap.ui.define([
 				["", "", "", "", "", ""],
 				["", "", "", "", "", ""]
 			], 2);
+			const oAleph = oTable.getRows()[1].getBindingContext();
+
+			// code under test
+			assert.strictEqual(oAlpha.isAncestorOf(oAleph), false, "JIRA: CPOUI5ODATAV4-2337");
+			assert.strictEqual(oAleph.isAncestorOf(oAlpha), false, "JIRA: CPOUI5ODATAV4-2337");
 		});
 	});
 
@@ -28985,6 +29007,11 @@ sap.ui.define([
 			[undefined, 4, "1.2", "1", "Zeta", 42],
 			[undefined, 3, "3", "0", "Lambda", 57]
 		]);
+
+		// code under test
+		assert.strictEqual(oBeta.isAncestorOf(oKappa), true, "JIRA: CPOUI5ODATAV4-2337");
+		assert.strictEqual(oOmega.isAncestorOf(oKappa), true, "JIRA: CPOUI5ODATAV4-2337");
+		assert.strictEqual(oKappa.isAncestorOf(oOmega), false, "JIRA: CPOUI5ODATAV4-2337");
 	});
 	});
 });

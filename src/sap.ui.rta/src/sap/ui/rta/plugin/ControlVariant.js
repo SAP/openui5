@@ -3,6 +3,7 @@
  */
 
 sap.ui.define([
+	"sap/ui/core/Lib",
 	"sap/ui/rta/plugin/Plugin",
 	"sap/ui/rta/plugin/RenameHandler",
 	"sap/ui/rta/Utils",
@@ -19,6 +20,7 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/m/MessageBox"
 ], function(
+	Lib,
 	Plugin,
 	RenameHandler,
 	Utils,
@@ -371,7 +373,7 @@ sap.ui.define([
 	 */
 	ControlVariant.prototype.switchVariant = function(oTargetOverlay, sNewVariantReference, sCurrentVariantReference) {
 		var oTargetElement = oTargetOverlay.getElement();
-		var oLibraryBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
+		var oLibraryBundle = Lib.getResourceBundleFor("sap.ui.rta");
 
 		function onDirtySwitchWarningClose(sAction) {
 			if (sAction === MessageBox.Action.CANCEL) {
@@ -615,7 +617,7 @@ sap.ui.define([
 		if (this.isRenameAvailable(oElementOverlay)) {
 			aMenuItems.push({
 				id: "CTX_VARIANT_SET_TITLE",
-				text: sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta").getText("CTX_RENAME"),
+				text: Lib.getResourceBundleFor("sap.ui.rta").getText("CTX_RENAME"),
 				handler: this.renameVariant.bind(this),
 				enabled: this.isRenameEnabled.bind(this),
 				rank: 210,
@@ -626,7 +628,7 @@ sap.ui.define([
 		if (this.isVariantSaveAvailable(oElementOverlay)) {
 			aMenuItems.push({
 				id: "CTX_VARIANT_SAVE",
-				text: sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta").getText("CTX_VARIANT_SAVE"),
+				text: Lib.getResourceBundleFor("sap.ui.rta").getText("CTX_VARIANT_SAVE"),
 				handler: this.createSaveCommand.bind(this),
 				enabled: this.isVariantSaveEnabled.bind(this),
 				rank: 220,
@@ -637,7 +639,7 @@ sap.ui.define([
 		if (this.isVariantSaveAsAvailable(oElementOverlay)) {
 			aMenuItems.push({
 				id: "CTX_VARIANT_SAVEAS",
-				text: sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta").getText("CTX_VARIANT_SAVEAS"),
+				text: Lib.getResourceBundleFor("sap.ui.rta").getText("CTX_VARIANT_SAVEAS"),
 				handler: this.createSaveAsCommand.bind(this),
 				enabled: this.isVariantSaveAsEnabled.bind(this),
 				rank: 225,
@@ -648,7 +650,7 @@ sap.ui.define([
 		if (this.isVariantConfigureAvailable(oElementOverlay)) {
 			aMenuItems.push({
 				id: "CTX_VARIANT_MANAGE",
-				text: sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta").getText("CTX_VARIANT_MANAGE"),
+				text: Lib.getResourceBundleFor("sap.ui.rta").getText("CTX_VARIANT_MANAGE"),
 				handler: this.configureVariants.bind(this),
 				enabled: this.isVariantConfigureEnabled.bind(this),
 				startSection: true,
@@ -677,7 +679,7 @@ sap.ui.define([
 
 			aMenuItems.push({
 				id: "CTX_VARIANT_SWITCH_SUBMENU",
-				text: sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta").getText("CTX_VARIANT_SWITCH"),
+				text: Lib.getResourceBundleFor("sap.ui.rta").getText("CTX_VARIANT_SWITCH"),
 				handler: function(aElementOverlays, mPropertyBag) {
 					var sNewVariantKey = mPropertyBag.eventItem.getParameters().item.getProperty("key");
 					var oTargetOverlay = aElementOverlays[0];

@@ -19,7 +19,7 @@ sap.ui.require([
 			assert.equal(Configuration.getAccessibility(), true, "accessibility");
 			assert.equal(Configuration.getAnimationMode(), Configuration.AnimationMode.minimal, "animation mode set to 'minimal'");
 			assert.equal(Configuration.getRTL(), true, "rtl");
-			assert.equal(false, true, "debug");
+			assert.equal(Configuration.getDebug(), true, "debug");
 			assert.equal(Configuration.getValue("noConflict"), true, "noConflict");
 			// Note: libs and modules cannot be checked in that simple way, see below
 			assert.equal(Configuration.getValue("areas"), "area-51", "areas");

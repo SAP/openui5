@@ -1844,6 +1844,10 @@ sap.ui.define([
 	 * @since 1.120.0
 	 */
 	Library.getPreloadMode = function() {
+		// if debug sources are requested, then the preload feature must be deactivated
+		if (Configuration.getDebug() === true) {
+			return "";
+		}
 		// determine preload mode (e.g. resolve default or auto)
 		let sPreloadMode = BaseConfig.get({
 			name: "sapUiPreload",

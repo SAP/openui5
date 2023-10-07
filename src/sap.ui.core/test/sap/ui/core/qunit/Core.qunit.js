@@ -525,7 +525,7 @@ sap.ui.define([
 
 	QUnit.module("loadLibrary", {
 		beforeEach: function(assert) {
-			assert.notOk(false, "debug mode must be deactivated to properly test library loading");
+			assert.notOk(Configuration.getDebug(), "debug mode must be deactivated to properly test library loading");
 			this.oLibraryGetPreloadStub = this.stub(Library, "getPreloadMode").returns("sync");
 		},
 		afterEach: function(assert) {

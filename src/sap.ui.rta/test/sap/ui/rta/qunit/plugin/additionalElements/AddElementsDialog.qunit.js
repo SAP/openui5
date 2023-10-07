@@ -4,17 +4,19 @@ sap.ui.define([
 	"sap/ui/fl/write/api/FieldExtensibility",
 	"sap/ui/rta/plugin/additionalElements/AddElementsDialog",
 	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/ui/core/Lib"
 ], function(
 	FieldExtensibility,
 	AddElementsDialog,
 	sinon,
-	oCore
+	oCore,
+	Lib
 ) {
 	"use strict";
 
 	var sandbox = sinon.createSandbox();
-	var oTextResources = oCore.getLibraryResourceBundle("sap.ui.rta");
+	var oTextResources = Lib.getResourceBundleFor("sap.ui.rta");
 
 	function createDialog() {
 		var aElements = [

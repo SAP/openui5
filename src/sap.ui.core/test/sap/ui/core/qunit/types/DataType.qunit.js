@@ -348,8 +348,11 @@ sap.ui.define([
 		assert.ok(oErrorSpy.calledWith(sinon.match(/data type/).and(sinon.match(/could not be found/))), "access to non-existing type should produce an error message in the log");
 		assert.ok(!oWarningSpy.called, "no warnings should be produced");
 
-		assert.strictEqual(DataType.getType("toString"), DataType.getType("any"), "'toString' should not resolve to something");
-		assert.strictEqual(DataType.getType("hasOwnProperty"), DataType.getType("any"), "'hasOwnProperty' should not resolve to something");
+		// eslint-disable-next-line no-undef-init, prefer-const
+		let expectedType = undefined;
+
+		assert.strictEqual(DataType.getType("toString"), expectedType, "'toString' should not resolve to something");
+		assert.strictEqual(DataType.getType("hasOwnProperty"), expectedType, "'hasOwnProperty' should not resolve to something");
 	});
 
 

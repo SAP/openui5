@@ -12,6 +12,7 @@ sap.ui.define([
 	"sap/m/Input",
 	"sap/m/MessageToast",
 	"sap/ui/core/ListItem",
+	"sap/ui/core/Lib",
 	"sap/ui/fl/write/_internal/transport/Transports",
 	"sap/ui/core/library"
 ], function(
@@ -23,6 +24,7 @@ sap.ui.define([
 	Input,
 	MessageToast,
 	ListItem,
+	Lib,
 	Transports,
 	coreLibrary
 ) {
@@ -102,7 +104,7 @@ sap.ui.define([
 		Dialog.prototype.init.apply(this);
 
 		// initialize dialog and create member variables.
-		this._oResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.fl");
+		this._oResources = Lib.getResourceBundleFor("sap.ui.fl");
 		this.setTitle(this._oResources.getText("TRANSPORT_DIALOG_TITLE"));
 
 		// add the content.
