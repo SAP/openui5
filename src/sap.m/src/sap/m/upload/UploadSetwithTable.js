@@ -475,6 +475,8 @@ sap.ui.define([
 
 	UploadSetwithTable.prototype.setUploadButtonInvisible = function (bUploadButtonInvisible) {
 		if (bUploadButtonInvisible !== this.getUploadButtonInvisible()) {
+			var bVisible = !bUploadButtonInvisible;
+			this.getDefaultFileUploader().setVisible(bVisible);
 			this.setProperty("uploadButtonInvisible", bUploadButtonInvisible, true);
 		}
 		return this;
@@ -492,14 +494,6 @@ sap.ui.define([
 		if (bEnable !== this.getUploadEnabled()) {
 			this.getDefaultFileUploader().setEnabled(bEnable);
 			this.setProperty("uploadEnabled", bEnable, false);
-		}
-		return this;
-	};
-
-	UploadSetwithTable.prototype.setMultiple = function (bMultiple) {
-		if (this.getMultiple() !== bMultiple) {
-			this.setProperty("multiple", bMultiple);
-			this.getDefaultFileUploader().setMultiple(bMultiple);
 		}
 		return this;
 	};
