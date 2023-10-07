@@ -29,7 +29,7 @@ sap.ui.define([
 				var aSelectionPlugins = oTable.getDependents().filter((oPlugin) => oPlugin.isA("sap.ui.table.plugins.SelectionPlugin"));
 
 				/**
-				 * @deprecated As of version 1.119
+				 * @deprecated As of version 1.120
 				 */
 				aSelectionPlugins.concat(oTable.getPlugins());
 

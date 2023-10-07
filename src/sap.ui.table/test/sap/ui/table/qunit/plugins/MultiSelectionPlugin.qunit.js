@@ -91,11 +91,11 @@ sap.ui.define([
 	QUnit.test("Add to and remove from table", function(assert) {
 		var oMultiSelectionPlugin = new MultiSelectionPlugin();
 
-		this.oTable.addPlugin(oMultiSelectionPlugin);
+		this.oTable.addDependent(oMultiSelectionPlugin);
 		assert.notEqual(oMultiSelectionPlugin.oInnerSelectionPlugin, null, "The MultiSelectionPlugin has an internal default selection plugin");
 		assert.notEqual(oMultiSelectionPlugin.oDeselectAllIcon, null, "The MultiSelectionPlugin has an delete icon");
 
-		this.oTable.removePlugin(oMultiSelectionPlugin);
+		this.oTable.removeDependent(oMultiSelectionPlugin);
 		assert.strictEqual(oMultiSelectionPlugin.oInnerSelectionPlugin, null, "The MultiSelectionPlugin has no internal default selection plugin");
 		assert.notEqual(oMultiSelectionPlugin.oDeselectAllIcon, null, "The MultiSelectionPlugin has an delete icon");
 	});
@@ -103,7 +103,7 @@ sap.ui.define([
 	QUnit.test("Destruction", function(assert) {
 		var oMultiSelectionPlugin = new MultiSelectionPlugin();
 
-		this.oTable.addPlugin(oMultiSelectionPlugin);
+		this.oTable.addDependent(oMultiSelectionPlugin);
 
 		var oInternalPluginDestroySpy = sinon.spy(oMultiSelectionPlugin.oInnerSelectionPlugin, "destroy");
 		var oDeselectAllIconDestroySpy = sinon.spy(oMultiSelectionPlugin.oDeselectAllIcon, "destroy");
@@ -125,7 +125,7 @@ sap.ui.define([
 			}
 		}, "Not assigned to a table");
 
-		this.oTable.addPlugin(oMultiSelectionPlugin);
+		this.oTable.addDependent(oMultiSelectionPlugin);
 
 		this.assertRenderConfig(assert, oMultiSelectionPlugin.getRenderConfig(), {
 			headerSelector: {
@@ -244,7 +244,7 @@ sap.ui.define([
 		oMultiSelectionPlugin.setSelected(this.oTable.getRows()[0], true);
 		assert.deepEqual(oMultiSelectionPlugin.getSelectedIndices(), [], "Select a row when not assigned to a table");
 
-		that.oTable.addPlugin(oMultiSelectionPlugin);
+		that.oTable.addDependent(oMultiSelectionPlugin);
 		oMultiSelectionPlugin.setSelected(that.oTable.getRows()[0], true);
 
 		return waitForSelectionChange().then(function() {
@@ -274,7 +274,7 @@ sap.ui.define([
 		beforeEach: function() {
 			this.oMockServer = startMockServer();
 			this.oTable = TableQUnitUtils.createTable({
-				plugins: [
+				dependents: [
 					new MultiSelectionPlugin()
 				]
 			});
@@ -325,7 +325,7 @@ sap.ui.define([
 		this.oTable.destroy();
 		this.oTable = TableQUnitUtils.createTable({
 			rows: {path: "/"},
-			plugins: [
+			dependents: [
 				oMultiSelectionPlugin
 			],
 			models: TableQUnitUtils.createJSONModelWithEmptyRows(10)
@@ -353,7 +353,7 @@ sap.ui.define([
 		beforeEach: function() {
 			this.oMockServer = startMockServer();
 			this.oTable = TableQUnitUtils.createTable({
-				plugins: [
+				dependents: [
 					new MultiSelectionPlugin()
 				],
 				rows: {
@@ -419,8 +419,8 @@ sap.ui.define([
 	QUnit.test("Change SelectionMode", function(assert) {
 		assert.equal(this.oTable._getSelectionPlugin().getSelectionMode(), SelectionMode.MultiToggle, "SelectionMode is correctly initialized");
 
-		this.oTable.removeAllPlugins();
-		this.oTable.addPlugin(new MultiSelectionPlugin({
+		this.oTable.removeAllDependents();
+		this.oTable.addDependent(new MultiSelectionPlugin({
 			selectionMode: "Single"
 		}));
 		assert.equal(this.oTable._getSelectionPlugin().getSelectionMode(), SelectionMode.Single, "SelectionMode is correctly initialized");

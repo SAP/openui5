@@ -512,7 +512,7 @@ sap.ui.define([
 			 * </ul>
 			 *
 			 * @since 1.64
-			 * @deprecated As of version 1.119. Please add plugins to the <code>dependents</code> aggregation instead.
+			 * @deprecated As of version 1.120. Please add plugins to the <code>dependents</code> aggregation instead.
 			 */
 			plugins: {type: "sap.ui.table.plugins.SelectionPlugin", multiple: true, singularName: "plugin", deprecated: true},
 
@@ -1050,7 +1050,7 @@ sap.ui.define([
 			var mEarlySettings = {};
 
 			/**
-			 * @deprecated As of version 1.119
+			 * @deprecated As of version 1.120
 			 */
 			aEarlySettings.push("plugins");
 
@@ -4139,7 +4139,7 @@ sap.ui.define([
 		var aSelectionPlugins = oTable.getDependents().filter((oPlugin) => oPlugin.isA("sap.ui.table.plugins.SelectionPlugin"));
 
 		/**
-		 * @deprecated As of version 1.119
+		 * @deprecated As of version 1.120
 		 */
 		aSelectionPlugins.unshift(...oTable.getPlugins());
 
