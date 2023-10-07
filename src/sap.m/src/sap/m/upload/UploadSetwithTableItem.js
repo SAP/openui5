@@ -173,13 +173,8 @@ sap.ui.define([
 
 	UploadSetwithTableItem._getIconByMimeType = function(sMimeType, fileName) {
 
-		var mimeTypeForImages = ["image/png", "image/tiff", "image/bmp", "image/jpeg", "image/gif"];
-
 		if (sMimeType) {
-			if (mimeTypeForImages.indexOf(sMimeType) === -1) {
-				return IconPool.getIconForMimeType(sMimeType);
-			}
-			return UploadSetwithTableItem._getIconByFileType(fileName);
+			return IconPool.getIconForMimeType(sMimeType);
 		} else {
 			return UploadSetwithTableItem._getIconByFileType(fileName);
 		}
