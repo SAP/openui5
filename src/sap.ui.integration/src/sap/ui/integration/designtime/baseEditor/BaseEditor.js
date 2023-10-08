@@ -98,19 +98,27 @@ sap.ui.define([
 	 *             "role": {
 	 *                 "label": "Role",
 	 *                 "path": "role",
-	 *                 "type": "enum",
-	 *                 "enum": ["Developer", "Key User", "End User"]
+	 *                 "type": "select",
+	 *                 "items": [
+	 *                     { "key": "Developer" },
+	 *                     { "key": "Key User" },
+	 *                     { "key": "End User" }
+	 *                 ]
 	 *             },
 	 *             "department": {
 	 *                 "label": "Department",
 	 *                 "path": "department",
-	 *                 "type": "enum",
-	 *                 "enum": ["Sales", "HR", "Development"],
+	 *                 "type": "select",
+	 *                 "items": [
+	 *                     { "key": "Sales" },
+	 *                     { "key": "HR" },
+	 *                     { "key": "Development" }
+	 *                 ]
 	 *                 "visible": "{= ${context>/role} === 'Key User'}"
 	 *             }
 	 *         },
 	 *         "propertyEditors": {
-	 *             "enum" : "sap/ui/integration/designtime/baseEditor/propertyEditors/enumStringEditor/EnumStringEditor",
+	 *             "select": "sap/ui/integration/designtime/baseEditor/propertyEditor/selectEditor/SelectEditor",
 	 *             "string" : "sap/ui/integration/designtime/baseEditor/propertyEditors/stringEditor/StringEditor"
 	 *         }
 	 *     });

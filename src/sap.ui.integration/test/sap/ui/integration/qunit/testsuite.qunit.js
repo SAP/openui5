@@ -502,6 +502,9 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+			/**
+			 * @deprecated as of version 1.81
+			 */
 			"designtime/baseEditor/propertyEditor/enumStringEditor/EnumStringEditor": {
 				group: "Base DesignTime Editor",
 				coverage: {
