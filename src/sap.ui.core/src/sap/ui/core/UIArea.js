@@ -329,9 +329,6 @@ sap.ui.define([
 	 * content control (if not empty) will be set to this UIArea and finally, the UIArea will
 	 * be marked for re-rendering.
 	 *
-	 * The real re-rendering happens whenever the re-rendering is called. Either implicitly
-	 * at the end of any control event or by calling sap.ui.getCore().applyChanges().
-	 *
 	 * @param {sap.ui.base.Interface | sap.ui.core.Control} oRootControl
 	 *            the Control that should be the Root for this <code>UIArea</code>.
 	 * @public
