@@ -593,7 +593,7 @@ sap.ui.define([
 				// Alternative: add locale as query:
 				// url: oUrl.prefix + oUrl.suffix + '?' + (oUrl.query ? oUrl.query + "&" : "") + "locale=" + sLocale + (oUrl.hash ? "#" + oUrl.hash : ""),
 				mHeaders = {
-					"Accept-Language": convertLocaleToBCP47(sLocale) || ""
+					"Accept-Language": convertLocaleToBCP47(sLocale) || "*"
 				};
 			} else {
 				sUrl = oUrl.prefix + (sLocale ? "_" + sLocale : "") + oUrl.suffix;
