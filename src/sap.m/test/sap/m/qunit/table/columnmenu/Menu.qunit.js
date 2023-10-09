@@ -238,6 +238,25 @@ sap.ui.define([
 		assert.ok(oDestroyItemContainerSpy.calledOnce);
 	});
 
+	QUnit.test("QuickActionContainer and ItemContainer are destroyed before the popover opens", function(assert) {
+		this.createMenu(true, true, true, true);
+		this.oColumnMenu.openBy(this.oButton);
+		assert.ok(this.oColumnMenu._oQuickActionContainer);
+		assert.ok(this.oColumnMenu._oItemsContainer);
+
+		var oDestroyQuickActionContainerSpy = sinon.spy(this.oColumnMenu._oQuickActionContainer, "destroy");
+		var oDestroyItemContainerSpy = sinon.spy(this.oColumnMenu._oItemsContainer, "destroy");
+		this.oColumnMenu._oPopover.close();
+
+		assert.ok(oDestroyQuickActionContainerSpy.notCalled);
+		assert.ok(oDestroyItemContainerSpy.notCalled);
+
+		this.clock.tick(500);
+		this.oColumnMenu.openBy(this.oButton);
+		assert.ok(oDestroyQuickActionContainerSpy.calledOnce);
+		assert.ok(oDestroyItemContainerSpy.calledOnce);
+	});
+
 	QUnit.test("Check hidden header and footer in default view", function (assert) {
 		this.createMenu(false);
 		this.oColumnMenu.openBy(this.oButton);
