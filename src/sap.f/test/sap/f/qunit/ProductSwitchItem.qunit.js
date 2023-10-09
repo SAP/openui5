@@ -1,6 +1,6 @@
 /*global QUnit*/
-sap.ui.define(["sap/ui/core/Core", "sap/f/ProductSwitchItem"],
-	function (Core, ProductSwitchItem) {
+sap.ui.define(["sap/f/ProductSwitchItem", "sap/ui/qunit/utils/nextUIUpdate"],
+	function (ProductSwitchItem, nextUIUpdate) {
 		"use strict";
 
 		var TESTS_DOM_CONTAINER = "qunit-fixture",
@@ -11,10 +11,10 @@ sap.ui.define(["sap/ui/core/Core", "sap/f/ProductSwitchItem"],
 			};
 
 		QUnit.module("ProductSwitchItem - API ", {
-			beforeEach: function () {
+			beforeEach: async function () {
 				this.oProductSwitchItem = oUtil.getProductSwitchItem();
 				this.oProductSwitchItem.placeAt(TESTS_DOM_CONTAINER);
-				Core.applyChanges();
+				await nextUIUpdate();
 			},
 			afterEach: function () {
 				this.oProductSwitchItem.destroy();
@@ -26,85 +26,85 @@ sap.ui.define(["sap/ui/core/Core", "sap/f/ProductSwitchItem"],
 			assert.ok(this.oProductSwitchItem, "The ProductSwitchitem is instantiated successfully");
 		});
 
-		QUnit.test("src property", function (assert) {
+		QUnit.test("src property", async function (assert) {
 			assert.strictEqual(this.oProductSwitchItem.getSrc(), "", "Default value is set");
 
 			this.oProductSwitchItem.setSrc("sap-icon://home");
-			Core.applyChanges();
+			await nextUIUpdate();
 
 			assert.strictEqual(this.oProductSwitchItem.getSrc(), "sap-icon://home", "Value of the src property is successfully changed");
 			assert.strictEqual(this.oProductSwitchItem._getIcon().getSrc(), this.oProductSwitchItem.getSrc(), "Src value is successfully forwarded to the internal aggregation");
 
 			this.oProductSwitchItem.setSrc(null);
-			Core.applyChanges();
+			await nextUIUpdate();
 
 			assert.strictEqual(this.oProductSwitchItem.getSrc(), "", "Value of the src property is successfully reset");
 			assert.strictEqual(this.oProductSwitchItem._getIcon().getSrc(), "", "Src value is successfully forwarded to the internal aggregation");
 		});
 
-		QUnit.test("title property", function (assert) {
+		QUnit.test("title property", async function (assert) {
 			assert.strictEqual(this.oProductSwitchItem.getTitle(), "", "Default value is set");
 
 			this.oProductSwitchItem.setTitle("Test title");
-			Core.applyChanges();
+			await nextUIUpdate();
 
 			assert.strictEqual(this.oProductSwitchItem.getTitle(), "Test title", "Value of the title property is changed");
 			assert.strictEqual(this.oProductSwitchItem._getTitle().getText(), this.oProductSwitchItem.getTitle(), "Title value is successfully forwarded to the internal aggregation");
 
 			this.oProductSwitchItem.setSubTitle("Test subtitle");
-			Core.applyChanges();
+			await nextUIUpdate();
 
 			assert.strictEqual(this.oProductSwitchItem._getTitle().getMaxLines(), 1, "Value of maxLines property of the internal aggregation _title is 1");
 
 			this.oProductSwitchItem.setTitle(null);
 			this.oProductSwitchItem.setSubTitle(null);
-			Core.applyChanges();
+			await nextUIUpdate();
 
 			assert.strictEqual(this.oProductSwitchItem.getTitle(), "", "Value of the title property is successfully reset");
 			assert.strictEqual(this.oProductSwitchItem._getTitle().getText(), this.oProductSwitchItem.getTitle(), "Title value is successfully forwarded to the internal aggregation.");
 			assert.strictEqual(this.oProductSwitchItem._getTitle().getMaxLines(), 2, "Value of maxLines property of the internal aggregation _title is 2");
 		});
 
-		QUnit.test("subTitle property", function (assert) {
+		QUnit.test("subTitle property", async function (assert) {
 			assert.strictEqual(this.oProductSwitchItem.getSubTitle(), "", "Default value is set");
 
 			this.oProductSwitchItem.setSubTitle("Test subtitle");
-			Core.applyChanges();
+			await nextUIUpdate();
 
 			assert.strictEqual(this.oProductSwitchItem.getSubTitle(), "Test subtitle", "Value of the subTitle propert is changed");
 			assert.strictEqual(this.oProductSwitchItem._getTitle().getMaxLines(), 1, "Value of maxLines property of the internal aggregation _title is 1");
 
 			this.oProductSwitchItem.setSubTitle(null);
-			Core.applyChanges();
+			await nextUIUpdate();
 
 			assert.strictEqual(this.oProductSwitchItem.getSubTitle(), "", "Value of the subTitle property is successfully reset");
 			assert.strictEqual(this.oProductSwitchItem._getTitle().getMaxLines(), 2, "Value of maxLines property of the internal aggregation _title is 2");
 		});
 
-		QUnit.test("targetSrc property", function (assert) {
+		QUnit.test("targetSrc property", async function (assert) {
 			assert.strictEqual(this.oProductSwitchItem.getTargetSrc(), "", "Default value is set");
 
 			this.oProductSwitchItem.setTargetSrc("https://testlink.com");
-			Core.applyChanges();
+			await nextUIUpdate();
 
 			assert.strictEqual(this.oProductSwitchItem.getTargetSrc(), "https://testlink.com", "Default value is successfully changed");
 
 			this.oProductSwitchItem.setTargetSrc(null);
-			Core.applyChanges();
+			await nextUIUpdate();
 
 			assert.strictEqual(this.oProductSwitchItem.getTargetSrc(), "", "Value of the targetSrc property is successfully reset");
 		});
 
-		QUnit.test("target property", function (assert) {
+		QUnit.test("target property", async function (assert) {
 			assert.strictEqual(this.oProductSwitchItem.getTarget(), "", "Default value is set");
 
 			this.oProductSwitchItem.setTarget("_blank");
-			Core.applyChanges();
+			await nextUIUpdate();
 
 			assert.strictEqual(this.oProductSwitchItem.getTarget(), "_blank", "Default value is successfully changed");
 
 			this.oProductSwitchItem.setTarget(null);
-			Core.applyChanges();
+			await nextUIUpdate();
 
 			assert.strictEqual(this.oProductSwitchItem.getTarget(), "", "Value of the target property is successfully reset");
 		});
@@ -120,10 +120,10 @@ sap.ui.define(["sap/ui/core/Core", "sap/f/ProductSwitchItem"],
 		});
 
 		QUnit.module("ProductSwitchItem - Renderer ", {
-			beforeEach: function () {
+			beforeEach: async function () {
 				this.oProductSwitchItem = oUtil.getProductSwitchItem();
 				this.oProductSwitchItem.placeAt(TESTS_DOM_CONTAINER);
-				Core.applyChanges();
+				await nextUIUpdate();
 			},
 			afterEach: function () {
 				this.oProductSwitchItem.destroy();
@@ -137,10 +137,10 @@ sap.ui.define(["sap/ui/core/Core", "sap/f/ProductSwitchItem"],
 		});
 
 		QUnit.module("ProductSwitchItem - Accessibility", {
-			beforeEach: function () {
+			beforeEach: async function () {
 				this.oProductSwitchItem = oUtil.getProductSwitchItem();
 				this.oProductSwitchItem.placeAt(TESTS_DOM_CONTAINER);
-				Core.applyChanges();
+				await nextUIUpdate();
 			},
 			afterEach: function () {
 				this.oProductSwitchItem.destroy();
@@ -154,14 +154,14 @@ sap.ui.define(["sap/ui/core/Core", "sap/f/ProductSwitchItem"],
 			assert.equal($ProductSwitchItem.attr("role"), "menuitemradio", "Role menuitem is set on the ProductSwitch item");
 		});
 
-		QUnit.test("Tooltip", function (assert) {
+		QUnit.test("Tooltip", async function (assert) {
 			// Arrange
 			var $ProductSwitchItem = this.oProductSwitchItem.$(),
 				sTooltip = "Tooltip";
 
 			// Act
 			this.oProductSwitchItem.setTooltip(sTooltip);
-			Core.applyChanges();
+			await nextUIUpdate();
 
 			// Assert
 			assert.strictEqual($ProductSwitchItem.attr("title"), sTooltip, "Tooltip is set");

@@ -3,13 +3,13 @@
 sap.ui.define([
 	"sap/f/GridContainer",
 	"sap/f/GridContainerUtils",
-	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/m/Text"
 ],
 function (
 	GridContainer,
 	GridContainerUtils,
-	Core,
+	nextUIUpdate,
 	Text
 ) {
 	"use strict";
@@ -30,13 +30,13 @@ function (
 
 	QUnit.module("Methods");
 
-	QUnit.test("#_isBelow", function (assert) {
+	QUnit.test("#_isBelow", async function (assert) {
 		// arrange
 		var oElemAbove = new Text(),
 			oElemBelow = createDiv(100, 0);
 
 		oElemAbove.placeAt(DOM_RENDER_LOCATION);
-		Core.applyChanges();
+		await nextUIUpdate();
 		oElemAbove.$().css({
 			top: 0,
 			position: "absolute"
@@ -51,13 +51,13 @@ function (
 		DOM_RENDER_LOCATION.removeChild(oElemBelow);
 	});
 
-	QUnit.test("#_isAbove", function (assert) {
+	QUnit.test("#_isAbove", async function (assert) {
 		// arrange
 		var oElemAbove = new Text(),
 			oElemBelow = createDiv(0, 0);
 
 		oElemAbove.placeAt(DOM_RENDER_LOCATION);
-		Core.applyChanges();
+		await nextUIUpdate();
 		oElemAbove.$().css({
 			top: 100,
 			position: "absolute"
@@ -72,7 +72,7 @@ function (
 		DOM_RENDER_LOCATION.removeChild(oElemBelow);
 	});
 
-	QUnit.test("#_findClosest", function (assert) {
+	QUnit.test("#_findClosest", async function (assert) {
 		// (x, y) coordinates
 		// (0,   0) (100,   0) (200,   0) (300,   0) (400,   0) (500,   0)
 		// (0, 100) (100, 100) (200, 100) (300, 100) (400, 100) (500, 100)
@@ -92,7 +92,7 @@ function (
 			oCurrItem.placeAt(DOM_RENDER_LOCATION);
 			aItems.push(oCurrItem);
 		}
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		for (i = 0; i < aItems.length; i++) {
 			aItems[i].$().css({
@@ -123,7 +123,7 @@ function (
 	});
 
 	QUnit.module("Finding drop targets", {
-		beforeEach: function () {
+		beforeEach: async function () {
 			this.oGrid1 = new GridContainer({
 				items: [new Text()]
 			});
@@ -137,7 +137,7 @@ function (
 			this.oGrid1.placeAt(DOM_RENDER_LOCATION);
 			this.oGrid2.placeAt(DOM_RENDER_LOCATION);
 			this.oGrid3.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function () {
 			this.oGrid1.destroy();

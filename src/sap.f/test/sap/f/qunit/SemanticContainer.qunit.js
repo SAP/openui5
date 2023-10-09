@@ -2,12 +2,12 @@
 sap.ui.define([
 	"sap/ui/core/library",
 	"./SemanticUtil",
-	"sap/ui/core/Core"
+	"sap/ui/qunit/utils/nextUIUpdate"
 ],
 function (
 	coreLibrary,
 	SemanticUtil,
-	oCore
+	nextUIUpdate
 ) {
 	"use strict";
 
@@ -840,13 +840,13 @@ function (
 		}
 	});
 
-	QUnit.test("Aria attributes", function (assert) {
+	QUnit.test("Aria attributes", async function (assert) {
 		// arrange
 		var oShareMenuBtn = this.oSemanticShareMenu._getShareMenuButton();
 
 		// arrange
 		oShareMenuBtn.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.equal(oShareMenuBtn.getAriaHasPopup(), AriaHasPopup.Menu, "aria-haspopup is as expected");

@@ -8,6 +8,7 @@ sap.ui.define([
 	"sap/m/GenericTile",
 	"sap/ui/core/Core",
 	"sap/ui/events/KeyCodes",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery"
 ], function (
 	GridItemNavigation,
@@ -17,6 +18,7 @@ sap.ui.define([
 	GenericTile,
 	Core,
 	KeyCodes,
+	nextUIUpdate,
 	jQuery
 ) {
 	"use strict";
@@ -26,7 +28,7 @@ sap.ui.define([
 	const EMPTY_CELL = GridNavigationMatrix.EMPTY_CELL;
 
 	QUnit.module("Events", {
-		beforeEach: function () {
+		beforeEach: async function () {
 			this.oGrid = new GridContainer({
 				items: [
 					new GenericTile({ header: "Tile 1" }),
@@ -34,7 +36,7 @@ sap.ui.define([
 				]
 			});
 			this.oGrid.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function () {
 			this.oGrid.destroy();

@@ -2,11 +2,11 @@
 
 sap.ui.define([
 	"sap/f/AvatarGroupItem",
-	"sap/ui/core/Core"
+	"sap/ui/qunit/utils/nextUIUpdate"
 ],
 function (
 	AvatarGroupItem,
-	Core
+	nextUIUpdate
 ) {
 	"use strict";
 
@@ -19,14 +19,14 @@ function (
 		return new AvatarGroupItem(sId, oProps);
 	}
 
-	function setupFunction() {
+	async function setupFunction() {
 		this.oAvatarGroupItem = createAvatarGroupItem({
 			initials: "BD",
 			src: "src",
 			fallbackIcon: "icon"
 		});
 		this.oAvatarGroupItem.placeAt(DOM_RENDER_LOCATION);
-		Core.applyChanges();
+		await nextUIUpdate();
 	}
 
 	function teardownFunction() {
@@ -35,14 +35,14 @@ function (
 
 	QUnit.module("Basic Rendering");
 
-	QUnit.test("Rendering", function (assert) {
+	QUnit.test("Rendering", async function (assert) {
 		// Arrange
 		var oAvatarGroupItem = createAvatarGroupItem(),
 			$oDomRef;
 
 		// Act
 		oAvatarGroupItem.placeAt(DOM_RENDER_LOCATION);
-		Core.applyChanges();
+		await nextUIUpdate();
 		$oDomRef = oAvatarGroupItem.$();
 
 		// Assert
@@ -53,7 +53,7 @@ function (
 		// Act
 		oAvatarGroupItem._setGroupType("Individual");
 		oAvatarGroupItem._setInteractive(true);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.strictEqual($oDomRef.attr("tabindex"), "0", "The AvatarGroupItem has tabindex=0 when it is in Individual mode");
@@ -61,7 +61,7 @@ function (
 		// Act
 		oAvatarGroupItem._setGroupType("Individual");
 		oAvatarGroupItem._setInteractive(false);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.strictEqual($oDomRef.attr("tabindex"), undefined, "The AvatarGroupItem has no tabindex when it is in Individual mode and is not interactive");
@@ -75,7 +75,7 @@ function (
 		afterEach: teardownFunction
 	});
 
-	QUnit.test("setSrc", function (assert) {
+	QUnit.test("setSrc", async function (assert) {
 		// Arrange
 		var sNewSrc = "newSrc",
 			oAvatar = this.oAvatarGroupItem._getAvatar();
@@ -85,13 +85,13 @@ function (
 
 		// Act
 		this.oAvatarGroupItem.setSrc(sNewSrc);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.strictEqual(oAvatar.getSrc(), sNewSrc, "src of Avatar is changed correctly");
 	});
 
-	QUnit.test("setInitials", function (assert) {
+	QUnit.test("setInitials", async function (assert) {
 		// Arrange
 		var sNewInitials = "GR",
 			oAvatar = this.oAvatarGroupItem._getAvatar();
@@ -101,13 +101,13 @@ function (
 
 		// Act
 		this.oAvatarGroupItem.setInitials(sNewInitials);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.strictEqual(oAvatar.getInitials(), sNewInitials, "initials of Avatar is changed correctly");
 	});
 
-	QUnit.test("setFallbackIcon", function (assert) {
+	QUnit.test("setFallbackIcon", async function (assert) {
 		// Arrange
 		var sNewFallbackIcon = "newIcon",
 			oAvatar = this.oAvatarGroupItem._getAvatar();
@@ -117,18 +117,18 @@ function (
 
 		// Act
 		this.oAvatarGroupItem.setFallbackIcon(sNewFallbackIcon);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.strictEqual(oAvatar.getFallbackIcon(), sNewFallbackIcon, "fallbackIcon of Avatar is changed correctly");
 	});
 
 
-	QUnit.test("Avatar Group Item tooltip", function (assert) {
+	QUnit.test("Avatar Group Item tooltip", async function (assert) {
 		// Arrange
 
 		this.oAvatarGroupItem.setTooltip("New Tooltip");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.strictEqual(this.oAvatarGroupItem.$().attr("title"), "New Tooltip", "Avatar tooltip was correctly attached tp AvatarGroupItem");

@@ -1,5 +1,4 @@
 sap.ui.define([
-	"sap/ui/core/Core",
 	"sap/f/semantic/AddAction",
 	"sap/f/semantic/CloseAction",
 	"sap/f/semantic/CopyAction",
@@ -32,10 +31,10 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/m/Title",
 	"sap/m/Breadcrumbs",
-	"sap/m/Link"
+	"sap/m/Link",
+	"sap/ui/qunit/utils/nextUIUpdate"
 ],
 function (
-	oCore,
 	AddAction,
 	CloseAction,
 	CopyAction,
@@ -68,7 +67,8 @@ function (
 	Button,
 	Title,
 	Breadcrumbs,
-	Link
+	Link,
+	nextUIUpdate
 ) {
 	"use strict";
 
@@ -236,9 +236,9 @@ function (
 		return {
 			oFactory : oFactory,
 			oUtil : {
-				renderObject: function (oObject) {
+				renderObject: async function (oObject) {
 					oObject.placeAt(TESTS_DOM_CONTAINER);
-					oCore.applyChanges();
+					await nextUIUpdate();
 					return oObject;
 				}
 			}
