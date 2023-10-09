@@ -108,13 +108,6 @@
 				]
 			},
 			{
-				"id": "sap.ui.core.XMLComposite",
-				"name": "XML Composite Control",
-				"category": "Display",
-				"since": "1.56",
-				"samples": []
-			},
-			{
 				"id": "sap.ui.core.mvc.XMLView",
 				"name": "XMLView",
 				"category": "Display",

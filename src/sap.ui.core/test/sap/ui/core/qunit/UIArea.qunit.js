@@ -4,7 +4,6 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/core/Control",
 	"sap/ui/core/Element",
-	"sap/ui/core/Core",
 	"sap/ui/core/HTML",
 	"sap/ui/core/UIArea",
 	"sap/ui/qunit/utils/createAndAppendDiv",
@@ -12,7 +11,7 @@ sap.ui.define([
 	"sap/ui/testlib/TestButton",
 	"sap/ui/test/actions/Press",
 	"sap/ui/thirdparty/jquery"
-], function(Log, Control, Element, oCore, HTML, UIArea, createAndAppendDiv, nextUIUpdate, TestButton, Press, jQuery) {
+], function(Log, Control, Element, HTML, UIArea, createAndAppendDiv, nextUIUpdate, TestButton, Press, jQuery) {
 	"use strict";
 
 	createAndAppendDiv("uiArea1");
@@ -369,7 +368,7 @@ sap.ui.define([
 		before: function() {
 			this.oRenderingSpy = sinon.spy(Control.prototype, "onBeforeRendering");
 		},
-		beforeEach: function () {
+		beforeEach: async function () {
 			this.oGrandChild1 = new TestControl({ header: "GrandChild1" });
 			this.oGrandChild2 = new TestControl({ header: "GrandChild2" });
 			this.oChild1 = new TestControl({ header: "Child1", items: this.oGrandChild1 });
@@ -379,7 +378,7 @@ sap.ui.define([
 				items: [this.oChild1, this.oChild2]
 			});
 			this.oParent.placeAt("uiArea1");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			this.oRenderingSpy.reset();
 			this.oUiArea = this.oParent.getUIArea();
@@ -411,75 +410,75 @@ sap.ui.define([
 		assert.strictEqual(this.oUiArea.suppressInvalidationFor(this.oParent), false, "Invalidation was already suppressed");
 	});
 
-	QUnit.test("Invalidate all children", function(assert) {
+	QUnit.test("Invalidate all children", async function(assert) {
 		this.oUiArea.suppressInvalidationFor(this.oParent);
 		this.oUiArea.suppressInvalidationFor(this.oParent);
 		this.oParent.findElements(true, function(oElement) {
 			oElement.invalidate();
 		});
 		this.oParent.invalidate();
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.equal(this.oRenderingSpy.callCount, 0);
 
 		this.oUiArea.resumeInvalidationFor(this.oParent);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.equal(this.oRenderingSpy.callCount, 5);
 	});
 
-	QUnit.test("Invalidate a single leaf control", function(assert) {
+	QUnit.test("Invalidate a single leaf control", async function(assert) {
 		this.oUiArea.suppressInvalidationFor(this.oParent);
 		this.oGrandChild1.invalidate();
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.equal(this.oRenderingSpy.callCount, 0);
 
 		this.oUiArea.resumeInvalidationFor(this.oParent);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.equal(this.oRenderingSpy.callCount, 1);
 	});
 
-	QUnit.test("Suppress invalidation for different roots", function(assert) {
+	QUnit.test("Suppress invalidation for different roots", async function(assert) {
 		var oCloneParent = this.oParent.clone();
 		oCloneParent.placeAt("uiArea1");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		this.oRenderingSpy.reset();
 
 		this.oUiArea.suppressInvalidationFor(this.oParent);
 		this.oUiArea.suppressInvalidationFor(oCloneParent);
 
 		this.oChild1.invalidate();
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.equal(this.oRenderingSpy.callCount, 0);
 
 		oCloneParent.getItems()[0].invalidate();
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.equal(this.oRenderingSpy.callCount, 0);
 
 		this.oUiArea.resumeInvalidationFor(this.oParent);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.equal(this.oRenderingSpy.callCount, 2);
 		this.oRenderingSpy.reset();
 
 		this.oUiArea.resumeInvalidationFor(oCloneParent);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.equal(this.oRenderingSpy.callCount, 2);
 		oCloneParent.destroy("uiArea1");
 	});
 
-	QUnit.test("parent rendering", function(assert) {
+	QUnit.test("parent rendering", async function(assert) {
 		this.oUiArea.suppressInvalidationFor(this.oChild1);
 		this.oGrandChild1.invalidate();
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.equal(this.oRenderingSpy.callCount, 0);
 
 		this.oParent.invalidate();
-		oCore.applyChanges();
+		await nextUIUpdate();
 		this.oRenderingSpy.reset();
 		this.oUiArea.resumeInvalidationFor(this.oChild1);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.equal(this.oRenderingSpy.callCount, 0);
 	});
 
-	QUnit.test("bookkeeping cleanup", function(assert) {
+	QUnit.test("bookkeeping cleanup", async function(assert) {
 		this.oUiArea.suppressInvalidationFor(this.oParent);
 		this.oParent.invalidate();
 		this.oGrandChild1.invalidate();
@@ -487,65 +486,65 @@ sap.ui.define([
 		this.oGrandChild1.invalidate();
 		this.oUiArea.suppressInvalidationFor(this.oGrandChild1);
 		this.oGrandChild1.invalidate();
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.equal(this.oRenderingSpy.callCount, 0);
 
 		this.oUiArea.resumeInvalidationFor(this.oParent);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.ok(this.oRenderingSpy.called);
 		this.oRenderingSpy.reset();
 
 		this.oUiArea.resumeInvalidationFor(this.oChild1);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.equal(this.oRenderingSpy.callCount, 0);
 
 		this.oUiArea.resumeInvalidationFor(this.oGrandChild1);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.equal(this.oRenderingSpy.callCount, 0);
 	});
 
-	QUnit.test("nested suppressed controls - the child resumes invalidation before the parent", function(assert) {
+	QUnit.test("nested suppressed controls - the child resumes invalidation before the parent", async function(assert) {
 		this.oDeepestChild1 = new TestControl({ header: "DeepestChild1" });
 		this.oGrandChild1.addItem(this.oDeepestChild1);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		this.oRenderingSpy.reset();
 
 		this.oUiArea.suppressInvalidationFor(this.oParent);
 		this.oUiArea.suppressInvalidationFor(this.oGrandChild1);
 		this.oDeepestChild1.invalidate();
 		this.oChild1.invalidate();
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.equal(this.oRenderingSpy.callCount, 0);
 
 		this.oUiArea.resumeInvalidationFor(this.oGrandChild1);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.equal(this.oRenderingSpy.callCount, 0);
 
 		this.oUiArea.resumeInvalidationFor(this.oParent);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.equal(this.oRenderingSpy.callCount, 3);
 	});
 
-	QUnit.test("nested suppressed controls - the parent resumes invalidation before the child", function(assert) {
+	QUnit.test("nested suppressed controls - the parent resumes invalidation before the child", async function(assert) {
 		this.oDeepestChild1 = new TestControl({ header: "DeepestChild1" });
 		this.oGrandChild1.addItem(this.oDeepestChild1);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		this.oRenderingSpy.reset();
 
 		this.oUiArea.suppressInvalidationFor(this.oParent);
 		this.oUiArea.suppressInvalidationFor(this.oGrandChild1);
 		this.oDeepestChild1.invalidate();
 		this.oChild1.invalidate();
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.equal(this.oRenderingSpy.callCount, 0);
 
 		this.oUiArea.resumeInvalidationFor(this.oParent);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.equal(this.oRenderingSpy.callCount, 3);
 		this.oRenderingSpy.reset();
 
 		this.oUiArea.resumeInvalidationFor(this.oGrandChild1);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.equal(this.oRenderingSpy.callCount, 0);
 	});
 });
