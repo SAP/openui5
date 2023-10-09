@@ -900,7 +900,7 @@ function (
 		}
 	});
 
-	QUnit.test("ResizeHandler's suspend method is not called for pinned columns", function (assert) {
+	QUnit.test("ResizeHandler's suspend method is called for pinned columns", function (assert) {
 		// Arrange
 		var oSpySuspendHandler = this.spy(ResizeHandler, "suspend");
 
@@ -910,7 +910,7 @@ function (
 		this.oFCL._resizeColumns();
 
 		// Assert
-		assert.ok(oSpySuspendHandler.notCalled, "does not suspend resizeHandler for pinned columns");
+		assert.ok(oSpySuspendHandler.called, "suspend resizeHandler for pinned column too (all columns have ResizeHandlers suspended, when animations are on");
 	});
 
 	QUnit.test("Suspending and resuming ResizeHandler upon column layout change", function (assert) {
@@ -981,6 +981,23 @@ function (
 		// Returning from a fullscreen layout
 		assert.strictEqual(this.oFCL._shouldRevealColumn("mid", LT.TwoColumnsBeginExpanded, LT.MidColumnFullScreen),
 			false, "No pinning should be done when closing a fullscreen layout");
+
+		// Going from fullscreen to another fullscreen
+		assert.strictEqual(this.oFCL._shouldRevealColumn("mid", LT.MidColumnFullScreen, LT.OneColumn),
+		true, "Second column should be pinned when going from OneColumn fullscreen to TwoColumn fullscreen");
+
+		// Going back from fullscreen to another fullscreen
+		assert.strictEqual(this.oFCL._shouldRevealColumn("begin", LT.OneColumn, LT.MidColumnFullScreen),
+		true, "First column should be pinned when going from TwoColumn fullscreen to OneColumn fullscreen");
+
+		// Going from fullscreen to another fullscreen
+		assert.strictEqual(this.oFCL._shouldRevealColumn("end", LT.EndColumnFullScreen, LT.MidColumnFullScreen),
+		true, "Third column should be pinned when going from TwoColumn fullscreen to ThreeColumn fullscreen");
+
+
+		// Going back from fullscreen to another fullscreen
+		assert.strictEqual(this.oFCL._shouldRevealColumn("mid", LT.MidColumnFullScreen, LT.EndColumnFullScreen),
+		true, "Second column should be pinned when going from ThreeColumn fullscreen to TwoColumn fullscreen");
 	});
 
 	QUnit.test("_shouldConcealColumn", function (assert) {
@@ -1002,6 +1019,23 @@ function (
 		// Returning from a fullscreen layout
 		assert.strictEqual(this.oFCL._shouldConcealColumn("mid", LT.TwoColumnsBeginExpanded, LT.MidColumnFullScreen),
 			false, "No pinning should be done when closing a fullscreen layout");
+
+		// Going from fullscreen to another fullscreen
+		assert.strictEqual(this.oFCL._shouldConcealColumn("begin", LT.MidColumnFullScreen, LT.OneColumn),
+		true, "First column should be pinned when going from OneColumn fullscreen to TwoColumn fullscreen");
+
+		// Going back from fullscreen to another fullscreen
+		assert.strictEqual(this.oFCL._shouldConcealColumn("mid", LT.OneColumn, LT.MidColumnFullScreen),
+		true, "Second column should be pinned when going back from TwpColumn fullscreen to OneColumn fullscreen");
+
+		// Going from fullscreen to another fullscreen
+		assert.strictEqual(this.oFCL._shouldConcealColumn("mid", LT.EndColumnFullScreen, LT.MidColumnFullScreen),
+		true, "Second column should be pinned when going from TwoColumn fullscreen to ThreeColumn fullscreen");
+
+
+		// Going back from fullscreen to another fullscreen
+		assert.strictEqual(this.oFCL._shouldConcealColumn("end", LT.MidColumnFullScreen, LT.EndColumnFullScreen),
+		true, "Third column should be pinned when going back from ThreeColumn fullscreen to TwoColumn fullscreen");
 	});
 
 	QUnit.test("Conceal effect layout changes", function(assert) {
@@ -1492,7 +1526,7 @@ function (
 	});
 
 	QUnit.test("columnResize event is fired after resize of all animated columns", function (assert) {
-		assert.expect(3);
+		assert.expect(4);
 		// setup
 		var fnDone = assert.async(),
 			oResizeFunctionSpy = this.spy(ResizeHandler, "resume"),
@@ -1502,9 +1536,10 @@ function (
 				if (iEventsCount == 3) {
 					this.oFCL.detachColumnResize(fnCallback);
 					// assert
-					assert.equal(oResizeFunctionSpy.callCount, 2, "ResizeHandler.resume is called for all columns");
+					assert.equal(oResizeFunctionSpy.callCount, 3, "ResizeHandler.resume is called for all columns");
 					assert.ok(oResizeFunctionSpy.withArgs(this.oFCL._$columns['begin'].get(0)).calledOnce);
 					assert.ok(oResizeFunctionSpy.withArgs(this.oFCL._$columns['mid'].get(0)).calledOnce);
+					assert.ok(oResizeFunctionSpy.withArgs(this.oFCL._$columns['end'].get(0)).calledOnce);
 					fnDone();
 				}
 			}.bind(this);

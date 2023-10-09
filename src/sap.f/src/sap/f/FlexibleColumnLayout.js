@@ -1288,11 +1288,11 @@ sap.ui.define([
 			sNewWidth = convertPxToCSSSizeString(iNewWidth, this._getControlWidth(), oColumnConfig.shouldInsetColumn),
 			bAutoSize = oColumnConfig.autoSize,
 			bAnimationsEnabled = oColumnConfig.hasAnimations,
-			bPinned = oColumnConfig.shouldRevealColumn || oColumnConfig.shouldConcealColumn,
+			bHidden = !iNewWidth,
 			bResizeColumnWithAnimation = this._canResizeColumnWithAnimation(sColumn, oColumnConfig),
-			bSuspendResizeHandler = bAnimationsEnabled && (bResizeColumnWithAnimation || bAutoSize) && !bPinned,
+			bSuspendResizeHandler = bAnimationsEnabled,
 			fnAfterResizeCallback = this._afterColumnResize.bind(this, sColumn, merge(oColumnConfig, {
-				resumeResizeHandler: bSuspendResizeHandler // toggle back after resize
+				resumeResizeHandler: bSuspendResizeHandler && !bHidden // toggle back after resize
 			})),
 			fnResizeErrorCallback = function() {
 				ResizeHandler.resume(oColumnDomRef);
@@ -1331,10 +1331,10 @@ sap.ui.define([
 			}
 
 			// For tablet and desktop - notify child controls to render with reduced container size, if they need to
-			if (oColumnConfig.updateContextualSettings && !Device.system.phone) {
+			if (oColumnConfig.updateContextualSettings && !Device.system.phone && iNewWidth) {
 				this._updateColumnContextualSettings(sColumn, iNewWidth);
 			}
-			if (oColumnConfig.updateMediaCSSClases && !Device.system.phone) {
+			if (oColumnConfig.updateMediaCSSClases && !Device.system.phone && iNewWidth) {
 				this._updateColumnCSSClasses(sColumn, iNewWidth);
 			}
 	};
@@ -1359,6 +1359,9 @@ sap.ui.define([
 			iNewWidth = oOptions.width,
 			bShouldRestoreFocus = oOptions.shouldRestoreFocus;
 
+		//BCP: 1980006195
+		oColumn.toggleClass("sapFFCLColumnHidden", iNewWidth === 0);
+
 		if (bShouldRevealColumn || bShouldConcealColumn ) {
 			oColumn[0].querySelector(".sapFFCLColumnContent").style.width = "";
 		}
@@ -1369,9 +1372,6 @@ sap.ui.define([
 			// The column does not show anything anymore, so we can remove the active class
 			oColumn.removeClass("sapFFCLColumnActive");
 		}
-
-		//BCP: 1980006195
-		oColumn.toggleClass("sapFFCLColumnHidden", iNewWidth === 0);
 
 		if (oOptions.resumeResizeHandler) {
 			ResizeHandler.resume(oColumn[0]);
@@ -1391,13 +1391,13 @@ sap.ui.define([
 				oColumn = this._$columns[sColumn],
 				oColumnDomRef = oColumn[0];
 
-			oColumn.toggleClass(FlexibleColumnLayout.PINNED_COLUMN_CLASS_NAME, bShouldPin);
-
 			if (bShouldRevealColumn) {
-				oColumnDomRef.querySelector(".sapFFCLColumnContent").style.width = convertPxToCSSSizeString(oColumnWidths[sColumn], this._getControlWidth());
+				oColumnDomRef.querySelector(".sapFFCLColumnContent").style.width = oColumnWidths[sColumn] + "px";
 			} else if (bShouldConcealColumn) {
 				oColumnDomRef.querySelector(".sapFFCLColumnContent").style.width = oColumnDomRef.offsetWidth + "px";
 			}
+
+			oColumn.toggleClass(FlexibleColumnLayout.PINNED_COLUMN_CLASS_NAME, bShouldPin);
 
 		}, this);
 	};
@@ -2121,12 +2121,19 @@ sap.ui.define([
 		var iVisibleColumnsCount = this._getMaxColumnsCountForLayout(sLayout, FlexibleColumnLayout.DESKTOP_BREAKPOINT),
 			sLastVisibleColumn = this._getLastVisibleColumnForLayout(sLayout),
 			bIsLastColumn = sColumn === sLastVisibleColumn,
+			sPreviousLastVisibleColumn = this._getLastVisibleColumnForLayout(sPreviousLayout),
 			iPreviousVisibleColumnsCount = this._getMaxColumnsCountForLayout(sPreviousLayout, FlexibleColumnLayout.DESKTOP_BREAKPOINT),
-			bWasFullScreen = (sPreviousLayout === LT.MidColumnFullScreen || sPreviousLayout === LT.EndColumnFullScreen);
+			bWasFullScreen = this._isFullScreenLayout(sPreviousLayout),
+			bIsFullscreen = this._isFullScreenLayout(sLayout);
 
-		return (iVisibleColumnsCount > iPreviousVisibleColumnsCount) &&
+		return ((iVisibleColumnsCount > iPreviousVisibleColumnsCount) &&
 			!bWasFullScreen &&
-			bIsLastColumn;
+			bIsLastColumn
+			|| (bWasFullScreen && bIsFullscreen && sPreviousLastVisibleColumn !== sColumn && bIsLastColumn));
+	};
+
+	FlexibleColumnLayout.prototype._isFullScreenLayout = function (sLayout) {
+		return sLayout === LT.OneColumn || sLayout === LT.MidColumnFullScreen || sLayout === LT.EndColumnFullScreen;
 	};
 
 	FlexibleColumnLayout.prototype._isInteractivelyResizedColumn = function (sColumn) {
@@ -2153,12 +2160,15 @@ sap.ui.define([
 		var iVisibleColumnsCount = this._getMaxColumnsCountForLayout(sLayout, FlexibleColumnLayout.DESKTOP_BREAKPOINT),
 			iPreviousVisibleColumnsCount = this._getMaxColumnsCountForLayout(sPreviousLayout, FlexibleColumnLayout.DESKTOP_BREAKPOINT),
 			sPreviousLastVisibleColumn = this._getLastVisibleColumnForLayout(sPreviousLayout),
-			bWasFullScreen = (sPreviousLayout === LT.MidColumnFullScreen || sPreviousLayout === LT.EndColumnFullScreen);
+			sLastVisibleColumn = this._getLastVisibleColumnForLayout(sLayout),
+			bWasFullScreen = this._isFullScreenLayout(sPreviousLayout),
+			bIsFullscreen = this._isFullScreenLayout(sLayout);
 
-		return (iVisibleColumnsCount < iPreviousVisibleColumnsCount
+		return ((iVisibleColumnsCount < iPreviousVisibleColumnsCount
 			&& sColumn === sPreviousLastVisibleColumn
 			&& !bWasFullScreen
-			&& this._getColumnSizeForLayout(sColumn, sLayout) === 0);
+			&& this._getColumnSizeForLayout(sColumn, sLayout) === 0)
+			|| (bWasFullScreen && bIsFullscreen && sColumn !== sLastVisibleColumn && sPreviousLastVisibleColumn === sColumn));
 	};
 
 	/**
