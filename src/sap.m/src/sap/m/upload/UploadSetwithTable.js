@@ -8,7 +8,6 @@ sap.ui.define([
 	"sap/m/ToolbarSpacer",
 	"sap/m/upload/UploadSetwithTableRenderer",
 	"sap/ui/unified/FileUploader",
-	"sap/m/upload/UploadSetToolbarPlaceholder",
 	"sap/m/upload/UploaderHttpRequestMethod",
 	"sap/m/OverflowToolbar",
 	"sap/m/upload/UploadSetwithTableItem",
@@ -21,7 +20,6 @@ sap.ui.define([
 	"sap/m/upload/UploaderTableItem",
 	"sap/ui/core/dnd/DragDropInfo",
 	"sap/ui/core/dnd/DropInfo",
-	"sap/ui/core/dnd/DragInfo",
 	"sap/m/upload/FilePreviewDialog",
 	"sap/ui/base/Event",
 	"sap/m/Dialog",
@@ -29,13 +27,19 @@ sap.ui.define([
 	"sap/m/Input",
 	"sap/m/MessageBox",
 	"sap/m/Button",
-	"sap/ui/base/Event",
 	"sap/ui/core/Core",
+	"sap/ui/fl/variants/VariantManagement",
+	"sap/m/upload/p13n/PersManager",
+	"sap/m/upload/p13n/mediator/ColumnsMediator",
+	"sap/m/upload/p13n/mediator/SortMediator",
+	"sap/m/upload/p13n/mediator/GroupMediator",
+	"sap/m/upload/p13n/mediator/FilterMediator",
+	"sap/ui/core/mvc/XMLView",
 	"sap/ui/core/Element"
-], function (Table, ToolbarSpacer, UploadSetwithTableRenderer, FileUploader,
-    UploadSetToolbarPlaceholder, UploaderHttpRequestMethod, OverFlowToolbar, UploadSetwithTableItem, deepEqual, Log, Library, IllustratedMessageType,
-	IllustratedMessage, IllustratedMessageSize, Uploader, DragDropInfo, DropInfo, DragInfo, FilePreviewDialog, Event, Dialog, Label, Input, MessageBox, Button, EventBase, Core, Element) {
-    "use strict";
+	], function (Table, ToolbarSpacer, UploadSetwithTableRenderer, FileUploader, UploaderHttpRequestMethod, OverFlowToolbar, UploadSetwithTableItem, deepEqual, Log, Library, IllustratedMessageType,
+	IllustratedMessage, IllustratedMessageSize, Uploader, DragDropInfo, DropInfo, FilePreviewDialog, EventBase, Dialog, Label, Input, MessageBox, Button, Core, VariantManagement, PersManager,
+	ColumnsMediator, SortMediator, GroupMediator, FilterMediator, View, Element) {
+	"use strict";
 
 	/**
 	 * Constructor for a new UploadSetwithTable.
@@ -137,9 +141,13 @@ sap.ui.define([
 				/**
 				 * Determines which illustration type is displayed when the control holds no data.
 				 */
-				noDataIllustrationType: {type: "sap.m.IllustratedMessageType", group: "Appearance", defaultValue: IllustratedMessageType.UploadCollection}
-            },
-            aggregations: {
+				noDataIllustrationType: {type: "sap.m.IllustratedMessageType", group: "Appearance", defaultValue: IllustratedMessageType.UploadCollection},
+				/**
+				 * If set to true, the variant management gets enabled.
+				 */
+				enableVariantManagement: {type: "boolean", defaultValue: false}
+				},
+				aggregations: {
 				/**
 				 * Defines the uploader to be used. If not specified, the default implementation is used.
 				 */
@@ -362,18 +370,20 @@ sap.ui.define([
 	});
 
 	var UploadState = Library.UploadState;
+	var UploadSetwithTableActionPlaceHolder = Library.UploadSetwithTableActionPlaceHolder;
 
 	/* ================== */
 	/* Lifecycle handling */
 	/* ================== */
 
     UploadSetwithTable.prototype.init = function () {
-        Table.prototype.init.call(this);
+		Table.prototype.init.call(this);
 		this._setDragDropConfig();
-        this._filesTobeUploaded = [];
+		this._filesTobeUploaded = [];
 		this._filePreviewDialogControl = null;
 		this._oRb = Core.getLibraryResourceBundle("sap.m");
-    };
+		this._bPersoRegistered = false;
+	};
 
 	UploadSetwithTable.prototype.onBeforeRendering = function() {
 		Table.prototype.onBeforeRendering.call(this);
@@ -382,6 +392,15 @@ sap.ui.define([
 
 	UploadSetwithTable.prototype.onAfterRendering = function() {
 		Table.prototype.onAfterRendering.call(this);
+		if (!this._bPersoRegistered){
+			PersManager.getInstance().register(this, { mediators: {
+				columns: new ColumnsMediator({control: this, targetAggregation: "columns", p13nMetadataTarget: "columns"}),
+				sort: new SortMediator({control: this, targetAggregation: "sortConditions", p13nMetadataTarget: "sort"}),
+				group: new GroupMediator({control: this, targetAggregation: "groupConditions", p13nMetadataTarget: "group"}),
+				filter: new FilterMediator({control: this, targetAggregation: "filterConditions", p13nMetadataTarget: "filter"})
+			}});
+			this._bPersoRegistered = true;
+		}
 	};
 
 	UploadSetwithTable.prototype.exit = function () {
@@ -398,33 +417,135 @@ sap.ui.define([
 			this._illustratedMessage.destroy();
 			this._illustratedMessage = null;
 		}
+		this._bPersoRegistered = false;
+		PersManager.getInstance().deregister(this);
 	};
 
-    /* ===================== */
-	/* Overriden API methods */
-	/* ===================== */
+	/* ====================== */
+	/* Overridden API methods */
+	/* ====================== */
 
     UploadSetwithTable.prototype.getHeaderToolbar = function () {
 		if (!this._oToolbar) {
 			this._oToolbar = this.getAggregation("headerToolbar");
 			if (!this._oToolbar) {
+				const aToolbarContent = [new ToolbarSpacer(), this.getDefaultFileUploader(), this._getPersonalizationControl()];
+				if (this.getEnableVariantManagement()) {
+					aToolbarContent.unshift(this._getVariantManagementControl());
+				}
 				this._oToolbar = new OverFlowToolbar(this.getId() + "-toolbar", {
-					content: [new ToolbarSpacer(), this.getDefaultFileUploader()]
+					content: aToolbarContent
 				});
-				this._iFileUploaderPH = 2;
 				this.addDependent(this._oToolbar);
 			} else {
-				this._iFileUploaderPH = this._getFileUploaderPlaceHolderPosition(this._oToolbar);
-				if (this._oToolbar && this._iFileUploaderPH > -1) {
-					this._setFileUploaderInToolbar(this.getDefaultFileUploader());
+				const iFileUploaderPH = this._getPlaceholderPosition(this._oToolbar, UploadSetwithTableActionPlaceHolder.UploadButtonPlaceholder);
+				if (this._oToolbar && iFileUploaderPH > -1) {
+					this._setControlInToolbar(iFileUploaderPH, this.getDefaultFileUploader());
 				} else if (this._oToolbar) {
-					// fallback position to add file uploader control if UploadSetToolbarPlaceHolder instance not found
+					// fallback position to add file uploader control if UploadSetwithTableActionPlaceHolder.UploadButtonPlaceholder instance not found
 					this._oToolbar.addContent(this.getDefaultFileUploader());
+				}
+
+				const iPersonalizationPH = this._getPlaceholderPosition(this._oToolbar, UploadSetwithTableActionPlaceHolder.PersonalizationSettingsPlaceholder);
+				if (this._oToolbar && iPersonalizationPH > -1) {
+					this._setControlInToolbar(iPersonalizationPH, this._getPersonalizationControl());
+				} else if (this._oToolbar) {
+					// fallback position to add file uploader control if UploadSetwithTableActionPlaceHolder.PersonalizationSettingsPlaceholder instance not found
+					this._oToolbar.addContent(this._getPersonalizationControl());
+				}
+
+				if (this.getEnableVariantManagement()) {
+					const iVmPH = this._getPlaceholderPosition(this._oToolbar, UploadSetwithTableActionPlaceHolder.VariantManagementPlaceholder);
+					if (iVmPH > -1) {
+						this._setControlInToolbar(iVmPH, this._getVariantManagementControl());
+					} else {
+						this._oToolbar.insertContent(this._getVariantManagementControl(), 0);
+					}
 				}
 			}
 		}
-
 		return this._oToolbar;
+	};
+
+	/**
+	 * Returns the button that is used to open p13n dialog.
+	 * @private
+	 * @returns {sap.m.Button} button.
+	 */
+	UploadSetwithTable.prototype._getPersonalizationControl = function () {
+		return new Button({
+			icon: "sap-icon://action-settings",
+			press: function () {
+				PersManager.getInstance().show(this, ["columns", "sort", "group", "filter"]);
+			}.bind(this)
+		});
+	};
+
+	/**
+	 * Returns variant management control.
+	 * @private
+	 * @returns {sap.ui.fl.variants.VariantManagement} control.
+	 */
+	UploadSetwithTable.prototype._getVariantManagementControl = function () {
+		if (!this._oVariantManagement) {
+			this._oVariantManagement = new VariantManagement({
+				"id": this.getId() + "-variantManagement",
+				"for": [
+					this//container
+				 ]
+			});
+		}
+		return this._oVariantManagement;
+	};
+
+	UploadSetwithTable.prototype.getView = function () {
+		return this.getControlOfType(this, View);
+	};
+
+	UploadSetwithTable.prototype.getControlOfType = function (oControl, oType) {
+		if (oControl instanceof oType) {
+			return oControl;
+		}
+		if (oControl && typeof oControl["getParent" === "function"]) {
+			return this.getControlOfType(oControl.getParent(), oType);
+		}
+		return undefined;
+	};
+
+	/**
+	 * Collects and return p13n metadata from UploadSetwithTable column for p13n dialog panels.
+	 * @private
+	 * @returns {object} object with data for p13n panels.
+	 */
+	UploadSetwithTable.prototype._getP13nMetadata = function () {
+		if (!this._p13nMetadata) {
+			const oView = this.getView(),
+				aInitMetadata = this.getColumns().map(function(entry) {
+				return {
+					key: oView ? oView.getLocalId(entry.getId()) : entry.getId(),
+					label: entry.getColumnPersonalizationText(),
+					path: entry.getPath(),
+					visible: entry.getVisible(),
+					sortable: entry.getSortable(),
+					groupable: entry.getGroupable(),
+					filterable: entry.getFilterable()
+				};
+			});
+			this._p13nMetadata = {columns: [], sort: [], group: [], filter: []};
+			aInitMetadata.forEach((entry) => {
+				this._p13nMetadata.columns.push({key: entry.key, label: entry.label});
+				if (entry.sortable && entry.path) {
+					this._p13nMetadata.sort.push({key: entry.key, label: entry.label, path: entry.path});
+				}
+				if (entry.groupable && entry.path) {
+					this._p13nMetadata.group.push({key: entry.key, label: entry.label, path: entry.path});
+				}
+				if (entry.filterable && entry.path) {
+					this._p13nMetadata.filter.push({key: entry.key, label: entry.label, path: entry.path});
+				}
+			});
+		}
+		return this._p13nMetadata;
 	};
 
 	UploadSetwithTable.prototype.setFileTypes = function (aNewTypes) {
@@ -671,15 +792,15 @@ sap.ui.define([
 	/* Private methods */
 	/* ============== */
 
-    UploadSetwithTable.prototype._setFileUploaderInToolbar = function(fileUploader) {
-        this._oToolbar.getContent()[this._iFileUploaderPH].setVisible(false);
-		this._oToolbar.insertContent(fileUploader, this._iFileUploaderPH);
+	UploadSetwithTable.prototype._setControlInToolbar = function(iIndex, control) {
+		this._oToolbar.getContent()[iIndex].setVisible(false);
+		this._oToolbar.insertContent(control, iIndex);
 	};
 
-    UploadSetwithTable.prototype._getFileUploaderPlaceHolderPosition = function(toolbar) {
-        for (var i = 0; i < toolbar.getContent().length; i++) {
-            if (toolbar.getContent()[i] instanceof UploadSetToolbarPlaceholder) {
-                return i;
+	UploadSetwithTable.prototype._getPlaceholderPosition = function(toolbar, placeholderType) {
+		for (var i = 0; i < toolbar.getContent().length; i++) {
+			if (toolbar.getContent()[i].isA("sap.m.upload.ActionsPlaceholder") && toolbar.getContent()[i].getPlaceholderFor() === placeholderType) {
+				return i;
 			}
 		}
 		return -1;
@@ -699,9 +820,9 @@ sap.ui.define([
 			}
 			this._processSelectedFileObjects(oFiles);
 		}
-    };
+	};
 
-    UploadSetwithTable.prototype._processSelectedFileObjects = function (oFiles) {
+	UploadSetwithTable.prototype._processSelectedFileObjects = function (oFiles) {
 		var aFiles = [];
 
 		// Need to explicitly copy the file list, FileUploader deliberately resets its form completely

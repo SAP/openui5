@@ -1,0 +1,19 @@
+<!-- Fragment.fragment.xml -->
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:form="sap.ui.layout.form" templateShareable="false" class="sapUiTinyMarginTop">
+  <Dialog id="addViaUrlDialog" title="Add URL" contentWidth="28rem" contentHeight="15rem" class="sapUiSmallMargin">
+    <content>
+      <form:SimpleForm editable="true" id="addViaUrlSimpleform">
+                <Label id="urlInputLabel" text="URL" required="true"/>
+                <Input id="urlInput"/>
+                <Label id="nameInputLabel" text="Name"  required="true"/>
+                <Input id="nameInput"/>
+      </form:SimpleForm>
+    </content>
+    <beginButton>
+      <Button id="addDocumentBtn" text="Add" type="Emphasized" press=".handleAddViaUrl" />
+    </beginButton>
+    <endButton>
+      <Button text="Cancel" press=".closeAddViaUrlFragment" />
+    </endButton>
+  </Dialog>
+</core:FragmentDefinition>
