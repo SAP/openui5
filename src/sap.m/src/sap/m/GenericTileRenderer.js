@@ -46,6 +46,7 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS", "sap/ui/core/Conf
 		var isHalfFrame = frameType === frameTypes.OneByHalf || frameType === frameTypes.TwoByHalf;
 		var sBGColor = oControl._sBGColor;
 		var bIsIconModeOneByOne = oControl._isIconMode() && frameType === frameTypes.OneByOne;
+		var aLinkTileContent = oControl.getLinkTileContents();
 
 		// Render a link when URL is provided, not in action scope and the state is enabled
 		var bRenderLink = oControl.getUrl() && (!oControl._isInActionScope() || oControl.getMode() === GenericTileMode.IconMode) && sState !== LoadState.Disabled && !oControl._isNavigateActionEnabled() && !oControl._isActionMode();
@@ -156,6 +157,9 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS", "sap/ui/core/Conf
 		var iLength = aTileContent.length;
 		if (this._isNewsContentPresent(aTileContent,iLength)){
 			oRm.class("sapMGTNewsContent");
+		}
+		if (aLinkTileContent.length > 0) {
+			oRm.class("sapMGTLinkTileContent");
 		}
 		oRm.openEnd();
 		if (sTooltipText) {
@@ -375,6 +379,13 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS", "sap/ui/core/Conf
 					}
 				}
 				oRm.openEnd();
+				if (aLinkTileContent.length > 0) {
+					oRm.openStart("div", oControl.getId() + "-linkTileContent").class("sapMGTLinkTileContentWrapper").openEnd();
+					for (var i = 0; i < aLinkTileContent.length; i++) {
+						oRm.renderControl(aLinkTileContent[i].getLinkTileContentInstance());
+					}
+					oRm.close("div");
+				}
 				for (var i = 0; i < iLength; i++) {
 					oRm.renderControl(aTileContent[i]);
 				}
