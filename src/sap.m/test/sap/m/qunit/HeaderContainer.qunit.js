@@ -1460,7 +1460,7 @@ sap.ui.define([
 	QUnit.module("HeaderContainer with RTL", {
 		beforeEach: function () {
 		Configuration.setRTL(true);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		this.initializeMobileView(320);
 		this.oHeaderContainer = new HeaderContainer({
 			gridLayout: true,
@@ -1478,7 +1478,7 @@ sap.ui.define([
 				this.resetMobileView();
 			}
 			Configuration.setRTL(false);
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		initializeMobileView: function(iScreenWidth) {
 			this.initialScreenWidth = Device.resize.width;
