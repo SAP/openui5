@@ -76,19 +76,19 @@ sap.ui.define([
 
 		var currentVersion = jQuery.sap.Version(config.getVersion().getMajor(), config.getVersion().getMinor()).toString();
 
-		checkCompat({"sapUiCompatversionXxTest2" : "1.16.0"}, "Feature Default Only (+ Undef. Feature)", "1.14", "1.15");
+		checkCompat({"sapUiCompatVersionXxTest2" : "1.16.0"}, "Feature Default Only (+ Undef. Feature)", "1.14", "1.15");
 
-		checkCompat({"sapUiCompatversion" : "1.16.0"}, "Global Only", "1.16", "1.16");
-		checkCompat({"sapUiCompatversion" : "edge"}, "Global Only (Edge)", currentVersion, currentVersion);
-		checkCompat({"sapUiCompatversion" : "1.12.1"}, "Global Only (<1.14)", "1.12", "1.12");
+		checkCompat({"sapUiCompatVersion" : "1.16.0"}, "Global Only", "1.16", "1.16");
+		checkCompat({"sapUiCompatVersion" : "edge"}, "Global Only (Edge)", currentVersion, currentVersion);
+		checkCompat({"sapUiCompatVersion" : "1.12.1"}, "Global Only (<1.14)", "1.12", "1.12");
 
-		checkCompat({"sapUiCompatversionXxTest" : "1.16"}, "Feature Only", "1.14", "1.16");
-		checkCompat({"sapUiCompatversionXxTest" : "edge"}, "Feature Only (Edge)", "1.14", currentVersion);
-		checkCompat({"sapUiCompatversionXxTest" : "1.10"}, "Feature Only (<1.14)", "1.14", "1.10");
+		checkCompat({"sapUiCompatVersionXxTest" : "1.16"}, "Feature Only", "1.14", "1.16");
+		checkCompat({"sapUiCompatVersionXxTest" : "edge"}, "Feature Only (Edge)", "1.14", currentVersion);
+		checkCompat({"sapUiCompatVersionXxTest" : "1.10"}, "Feature Only (<1.14)", "1.14", "1.10");
 
-		checkCompat({"sapUiCompatversionXxTest" : "1.17", "sapUiCompatversion" : "1.16"}, "Global + Feature", "1.16", "1.17");
-		checkCompat({"sapUiCompatversionXxTest" : "edge", "sapUiCompatversion" : "1.16"}, "Global + Feature (Edge)", "1.16", currentVersion);
-		checkCompat({"sapUiCompatversionXxTest" : "1.17", "sapUiCompatversion" : "edge"}, "Global (Edge) + Feature", currentVersion, "1.17");
+		checkCompat({"sapUiCompatVersionXxTest" : "1.17", "sapUiCompatVersion" : "1.16"}, "Global + Feature", "1.16", "1.17");
+		checkCompat({"sapUiCompatVersionXxTest" : "edge", "sapUiCompatVersion" : "1.16"}, "Global + Feature (Edge)", "1.16", currentVersion);
+		checkCompat({"sapUiCompatVersionXxTest" : "1.17", "sapUiCompatVersion" : "edge"}, "Global (Edge) + Feature", currentVersion, "1.17");
 
 		oGlobalConfigStub.reset();
 	});

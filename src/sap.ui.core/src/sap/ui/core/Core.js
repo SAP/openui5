@@ -10,6 +10,7 @@ sap.ui.define([
 	'sap/ui/base/Interface',
 	'sap/ui/base/Object',
 	'sap/ui/base/ManagedObject',
+	"sap/ui/base/syncXHRFix",
 	'./AnimationMode',
 	'./Component',
 	'./Configuration',
@@ -22,7 +23,9 @@ sap.ui.define([
 	'./UIArea',
 	'./Messaging',
 	'./StaticArea',
+	"sap/ui/core/support/Hotkeys",
 	"sap/ui/core/Supportability",
+	"sap/ui/test/RecorderHotkeyListener",
 	"sap/ui/core/Theming",
 	"sap/base/Log",
 	"sap/ui/performance/Measurement",
@@ -32,12 +35,18 @@ sap.ui.define([
 	"sap/base/util/Deferred",
 	"sap/base/util/deepEqual",
 	"sap/base/util/ObjectPath",
+	"sap/base/util/Version",
 	'sap/ui/performance/trace/initTraces',
 	'sap/base/util/isEmptyObject',
 	'sap/base/util/each',
 	'sap/ui/VersionInfo',
 	'sap/base/config',
 	'sap/base/Event',
+	"sap/ui/dom/getComputedStyleFix",
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/thirdparty/jqueryui/jquery-ui-position",
+	"sap/ui/thirdparty/URI", // side effect: make global URI available
+	"sap/ui/events/PasteEventFix", // side effect: activates paste event fix
 	'sap/ui/events/jquery/EventSimulation'
 ],
 	function(
@@ -47,6 +56,7 @@ sap.ui.define([
 		Interface,
 		BaseObject,
 		ManagedObject,
+		syncXHRFix,
 		AnimationMode,
 		Component,
 		Configuration,
@@ -59,7 +69,9 @@ sap.ui.define([
 		UIArea,
 		Messaging,
 		StaticArea,
+		Hotkeys,
 		Supportability,
+		RecorderHotkeyListener,
 		Theming,
 		Log,
 		Measurement,
@@ -69,18 +81,54 @@ sap.ui.define([
 		Deferred,
 		deepEqual,
 		ObjectPath,
+		Version,
 		initTraces,
 		isEmptyObject,
 		each,
 		VersionInfo,
 		BaseConfig,
-		BaseEvent
-		/* ,EventSimulation */
+		BaseEvent,
+		getComputedStyleFix
+		/* ,jQuery, jquery-ui-position, URI, PasteEventFix, PasteEventFix, EventSimulation */
 	) {
 
 	"use strict";
 
 	var oCore;
+
+	// getComputedStyle polyfill + syncXHR fix for firefox
+	if ( Device.browser.firefox ) {
+		getComputedStyleFix();
+		syncXHRFix();
+	}
+
+	if (BaseConfig.get({
+		name: "sapUiNoConflict",
+		type: BaseConfig.Type.Boolean,
+		freeze: true
+	})){
+		jQuery.noConflict();
+	}
+
+
+	const oJQVersion = Version(jQuery.fn.jquery);
+	if ( oJQVersion.compareTo("3.6.0") != 0 ) {
+		// if the loaded jQuery version isn't SAPUI5's default version -> notify
+		// the application
+		Log.warning("SAPUI5's default jQuery version is 3.6.0; current version is " + jQuery.fn.jquery + ". Please note that we only support version 3.6.0.");
+	}
+
+	sap.ui.loader._.logger = Log.getLogger("sap.ui.ModuleSystem",
+		BaseConfig.get({
+			name: "sapUiXxDebugModuleLoading",
+			type: BaseConfig.Type.Boolean,
+			external: true,
+			freeze: true
+		}) ? Log.Level.DEBUG : Math.min(Log.getLevel(), Log.Level.INFO));
+
+	//init Hotkeys for support tools
+	Hotkeys.init();
+	RecorderHotkeyListener.init();
 
 	/**
 	 * when the Core module has been executed before, don't execute it again

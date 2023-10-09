@@ -3,52 +3,54 @@
  */
 
 /**
- * Provides base functionality of the SAP jQuery plugin as extension of the jQuery framework.<br/>
- * See also <a href="http://api.jquery.com/jQuery/">jQuery</a> for details.<br/>
- * Although these functions appear as static ones, they are meant to be used on jQuery instances.<br/>
- * If not stated differently, the functions follow the fluent interface paradigm and return the jQuery instance for chaining of statements.
- *
- * Example for usage of an instance method:
- * <pre>
- *   var oRect = jQuery("#myDiv").rect();
- *   alert("Top Position: " + oRect.top);
- * </pre>
- *
- * @namespace jQuery
- * @public
+ * @fileoverview
+ * @deprecated As of version 1.120.0
  */
 sap.ui.define([
 	// new sap/base/* modules
 	"sap/base/util/now", "sap/base/util/Version", "sap/base/assert", "sap/base/Log",
 
 	// new sap/ui/* modules
-	"sap/ui/dom/getComputedStyleFix", "sap/ui/dom/includeScript",
-	"sap/ui/dom/includeStylesheet", "sap/ui/core/support/Hotkeys", "sap/ui/test/RecorderHotkeyListener",
+	"sap/ui/dom/includeScript",
+	"sap/ui/dom/includeStylesheet",
 	"sap/ui/security/FrameOptions", "sap/ui/performance/Measurement", "sap/ui/performance/trace/Interaction",
-	"sap/ui/base/syncXHRFix", "sap/base/util/LoaderExtensions",
+	"sap/base/util/LoaderExtensions",
 
 	// former sap-ui-core.js dependencies
 	"sap/ui/Device",
-	"sap/base/config",
+	"sap/ui/core/Configuration",
 
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/thirdparty/jqueryui/jquery-ui-position",
 	"ui5loader-autoconfig",
-	"jquery.sap.stubs",
-	"sap/ui/thirdparty/URI", // side effect: make global URI available
-	"sap/ui/events/PasteEventFix" // side effect: activates paste event fix
+	"jquery.sap.stubs"
 ], function(now, Version, assert, Log,
 
-	getComputedStyleFix, includeScript,
-	includeStylesheet, SupportHotkeys, TestRecorderHotkeyListener,
+	includeScript,
+	includeStylesheet,
 	FrameOptions, Measurement, Interaction,
-	syncXHRFix, LoaderExtensions,
+	LoaderExtensions,
 
 	Device,
-	BaseConfig,
+	Configuration,
 
-	jQuery /*, jqueryUiPosition, ui5loaderAutoconfig, jquerySapStubs, URI, PasteEventFix */) {
+	jQuery /* , ui5loaderAutoconfig, jquerySapStubs */) {
 	"use strict";
+
+	/**
+ 	 * Provides base functionality of the SAP jQuery plugin as extension of the jQuery framework.<br/>
+	 * See also <a href="http://api.jquery.com/jQuery/">jQuery</a> for details.<br/>
+	 * Although these functions appear as static ones, they are meant to be used on jQuery instances.<br/>
+	 * If not stated differently, the functions follow the fluent interface paradigm and return the jQuery instance for chaining of statements.
+	 *
+	 * Example for usage of an instance method:
+	 * <pre>
+	 *   var oRect = jQuery("#myDiv").rect();
+	 *   alert("Top Position: " + oRect.top);
+	 * </pre>
+	 *
+	 * @namespace jQuery
+	 * @public
+	 */
 
 	if ( !jQuery ) {
 		throw new Error("Loading of jQuery failed");
@@ -61,8 +63,6 @@ sap.ui.define([
 	}
 
 	var _ui5loader = ui5loader._;
-
-	var oJQVersion = Version(jQuery.fn.jquery);
 
 	(function() {
 		/**
@@ -163,43 +163,6 @@ sap.ui.define([
 		 */
 		jQuery.support.hasFlexBoxSupport = true;
 	}());
-
-	// getComputedStyle polyfill for firefox
-	if ( Device.browser.firefox ) {
-		getComputedStyleFix();
-	}
-
-	// XHR proxy for Firefox
-	if ( Device.browser.firefox && window.Proxy ) {
-		syncXHRFix();
-	}
-
-	// Normalize configuration to stay compatible
-	// Previously the sap/ui/core/_ConfigurationProvider code (incl. normalization)
-	// was executed here. Since we moved the coding to an own module which is
-	// a dependency of sap/ui/core/Configuration it's possible, that someone requires
-	// the configuration and normalizes the window['sap-ui-config'] object at an
-	// earlier point in time. To avoid, that someone adds configuration parameters
-	// to the window object inbetween normalization done by _ConfigurationProvider
-	// and the usage within jquery.sap.global we normalize here again.
-	var oCfg = window["sap-ui-config"];
-	for (var sKey in oCfg) {
-		var vValue = oCfg[sKey];
-		var sLowerCaseKey = sKey.toLowerCase();
-		if ( !oCfg.hasOwnProperty(sLowerCaseKey) ) {
-			oCfg[sLowerCaseKey] = vValue;
-			delete oCfg[sKey];
-		}
-	}
-
-	// check whether noConflict must be used...
-	if (BaseConfig.get({
-			name: "sapUiNoConflict",
-			type: BaseConfig.Type.Boolean,
-			freeze: true
-		})) {
-		jQuery.noConflict();
-	}
 
 	/**
 	 * Root Namespace for the jQuery plug-in provided by SAP SE.
@@ -1304,20 +1267,11 @@ sap.ui.define([
 
 	// ---------------------- require/declare --------------------------------------------------------
 
-	var getModuleSystemInfo = (function() {
-
-		/**
-		 * Local logger for messages related to module loading.
-		 *
-		 * By default, the log level is the same as for the standard log, but not higher than <code>INFO</code>.
-		 * With the experimental config option <code>xx-debugModuleLoading</code>, it can be raised to <code>DEBUG</code>.
-		 * @private
-		 */
-		var oLog = _ui5loader.logger = Log.getLogger("sap.ui.ModuleSystem",
-				BaseConfig.get({name: "sapUiXxDebugModuleLoading", type: BaseConfig.Type.Boolean, external: true, freeze: true}) ? Log.Level.DEBUG : Math.min(Log.getLevel(), Log.Level.INFO)
-			),
-
-			mKnownSubtypes = LoaderExtensions.getKnownSubtypes(),
+	/**
+	 * @deprecated As of Version 1.120.0
+	 */
+	(function() {
+		var mKnownSubtypes = LoaderExtensions.getKnownSubtypes(),
 
 			rSubTypes;
 
@@ -1328,7 +1282,6 @@ sap.ui.define([
 				sSub = (sSub ? sSub + "|" : "") + "(?:(?:" + mKnownSubtypes[sType].join("\\.|") + "\\.)?" + sType + ")";
 			}
 			sSub = "\\.(?:" + sSub + "|[^./]+)$";
-			oLog.debug("constructed regexp for file sub-types :" + sSub);
 			rSubTypes = new RegExp(sSub);
 		}());
 
@@ -1596,13 +1549,6 @@ sap.ui.define([
 		 */
 		jQuery.sap.getAllDeclaredModules = LoaderExtensions.getAllRequiredModules;
 
-		var mUrlPrefixes = _ui5loader.getUrlPrefixes();
-		// dump the URL prefixes
-		oLog.info("URL prefixes set to:");
-		for (var n in mUrlPrefixes) {
-			oLog.info("  " + (n ? "'" + n + "'" : "(default)") + " : " + mUrlPrefixes[n]);
-		}
-
 		/**
 		 * Declares a module as existing.
 		 *
@@ -1867,13 +1813,6 @@ sap.ui.define([
 		 */
 		jQuery.sap._loadJSResourceAsync = _ui5loader.loadJSResourceAsync;
 
-		return function() {
-			return {
-				modules : _ui5loader.getAllModules(),
-				prefixes : _ui5loader.getUrlPrefixes()
-			};
-		};
-
 	}());
 
 	// --------------------- script and stylesheet handling --------------------------------------------------
@@ -1946,19 +1885,7 @@ sap.ui.define([
 
 	// --------------------- support hooks ---------------------------------------------------------
 
-	// TODO should be in core, but then the 'callback' could not be implemented
-	if ( !BaseConfig.get({name: "sapUiProductive", type: BaseConfig.Type.Boolean, freeze: true}) ) {
-		SupportHotkeys.init(getModuleSystemInfo);
-		TestRecorderHotkeyListener.init(getModuleSystemInfo);
-	}
-
 	// -----------------------------------------------------------------------
-
-	if ( oJQVersion.compareTo("3.6.0") != 0 ) {
-		// if the loaded jQuery version isn't SAPUI5's default version -> notify
-		// the application
-		Log.warning("SAPUI5's default jQuery version is 3.6.0; current version is " + jQuery.fn.jquery + ". Please note that we only support version 3.6.0.");
-	}
 
 	// --------------------- frame protection -------------------------------------------------------
 
