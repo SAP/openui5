@@ -19,6 +19,7 @@ sap.ui.define([
 	"sap/ui/table/rowmodes/Auto",
 	"sap/ui/table/utils/TableUtils",
 	"sap/ui/table/library",
+	"sap/ui/table/plugins/PluginBase",
 	"sap/ui/table/plugins/SelectionPlugin",
 	"sap/ui/core/library",
 	"sap/ui/core/Control",
@@ -66,6 +67,7 @@ sap.ui.define([
 	AutoRowMode,
 	TableUtils,
 	library,
+	PluginBase,
 	SelectionPlugin,
 	CoreLibrary,
 	Control,
@@ -1601,7 +1603,7 @@ sap.ui.define([
 		assert.equal(oTable.getComputedFixedColumnCount(), 3, "Computed Fixed column count correct");
 	});
 
-	QUnit.module("API assertions", {
+	QUnit.module("API", {
 		beforeEach: function() {
 			createTable({
 				rowMode: new FixedRowMode({
@@ -1770,6 +1772,52 @@ sap.ui.define([
 		assert.strictEqual(oTable.getContextByIndex(-1), null, "Negative index");
 
 		oTable.getBinding.restore();
+	});
+
+	/**
+	 * @deprecated As of version 1.120
+	 */
+	QUnit.test("#getPlugin", function(assert) {
+		const TestPlugin = PluginBase.extend("sap.ui.table.plugins.test.TestPlugin");
+		const TestPluginSubclass = TestPlugin.extend("sap.ui.table.plugins.test.TestPluginSubclass");
+		const oRelevantPlugin = new TestPluginSubclass();
+
+		oTable.addDependent(new Text());
+		oTable.addDependent(oRelevantPlugin);
+		oTable.addDependent(new TestPlugin());
+
+		assert.throws(() => {
+			oTable.getPlugin();
+		}, new Error("This method can only be used to get plugins of the sap.ui.table library"));
+
+		assert.throws(() => {
+			oTable.getPlugin("sap.ui.table.Table");
+		}, new Error("This method can only be used to get plugins of the sap.ui.table library"));
+
+		assert.equal(oTable.getPlugin("sap.ui.table.plugins.test.TestPlugin"), oRelevantPlugin,
+			"Returns the first plugin in the dependents aggregation that is of the given type");
+
+		assert.strictEqual(oTable.getPlugin("sap.ui.table.plugins.UnknownPlugin"), undefined,
+			"Returns undefined if there is no plugin of the given type");
+	});
+
+	/**
+	 * @deprecated As of version 1.120
+	 */
+	QUnit.test("#getPlugin (plugins aggregation)", function(assert) {
+		const TestPlugin = SelectionPlugin.extend("sap.ui.table.plugins.test.TestSelectionPlugin");
+		const TestPluginSubclass = TestPlugin.extend("sap.ui.table.plugins.test.TestSelectionPluginSubclass");
+		const oRelevantPlugin = new TestPluginSubclass();
+
+		oTable.addPlugin(oRelevantPlugin);
+		oTable.addPlugin(new TestPlugin());
+
+		assert.equal(oTable.getPlugin("sap.ui.table.plugins.test.TestSelectionPlugin"), oRelevantPlugin,
+			"Returns the first plugin in the plugins aggregation that is of the given type");
+
+		oTable.addDependent(new TestPlugin());
+		assert.equal(oTable.getPlugin("sap.ui.table.plugins.test.TestSelectionPlugin"), oTable.getDependents()[0],
+			"The depdendents aggregation has precedence");
 	});
 
 	QUnit.module("Fixed rows and columns", {
