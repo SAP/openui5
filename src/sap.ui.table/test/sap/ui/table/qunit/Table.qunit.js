@@ -4449,7 +4449,7 @@ sap.ui.define([
 	});
 
 	/**
-	 * @deprecated As of version 1.119
+	 * @deprecated As of version 1.120
 	 */
 	QUnit.test("Initialization (legacy)", function(assert) {
 		var oOtherTestPlugin = new (SelectionPlugin.extend("sap.ui.table.test.OtherTestSelectionPlugin"))();
