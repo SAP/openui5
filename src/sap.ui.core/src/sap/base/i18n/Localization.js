@@ -434,9 +434,9 @@ sap.ui.define([
 		setLanguage : function (sLanguage, sSAPLogonLanguage) {
 			const oLanguageTag = createLanguageTag(sLanguage),
 				bOldRTL = Localization.getRTL();
-			check(oLanguageTag, "Configuration.setLanguage: sLanguage must be a valid BCP47 language tag");
+			check(oLanguageTag, "Localization.setLanguage: sLanguage must be a valid BCP47 language tag");
 			check(sSAPLogonLanguage == null || (typeof sSAPLogonLanguage === 'string' && /^[A-Z0-9]{2,2}$/i.test(sSAPLogonLanguage)),
-				"Configuration.setLanguage: sSAPLogonLanguage must be null or be a string of length 2, consisting of digits and latin characters only");
+				"Localization.setLanguage: sSAPLogonLanguage must be null or be a string of length 2, consisting of digits and latin characters only");
 
 			sSAPLogonLanguage = sSAPLogonLanguage || "";
 			if ( oLanguageTag.toString() != Localization.getLanguageTag().toString() ||
@@ -502,7 +502,7 @@ sap.ui.define([
 		 */
 		setTimezone : function (sTimezone) {
 			check(sTimezone == null || typeof sTimezone === 'string',
-				"Configuration.setTimezone: sTimezone must be null or be a string");
+				"Localization.setTimezone: sTimezone must be null or be a string");
 
 			const sCurrentTimezone = Localization.getTimezone();
 			sTimezone = sTimezone === null || !checkTimezone(sTimezone) ? undefined : sTimezone;

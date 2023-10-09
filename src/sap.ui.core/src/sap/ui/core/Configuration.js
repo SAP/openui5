@@ -1450,23 +1450,23 @@ sap.ui.define([
 		getCustomUnits: Formatting.getCustomUnits,
 
 		setCustomUnits: function() {
-			Formatting.setCustomUnits.apply(FormatSettings, arguments);
-			return FormatSettings;
+			Formatting.setCustomUnits.apply(Formatting, arguments);
+			return this;
 		},
 
 		addCustomUnits: function() {
-			Formatting.addCustomUnits.apply(FormatSettings, arguments);
-			return FormatSettings;
+			Formatting.addCustomUnits.apply(Formatting, arguments);
+			return this;
 		},
 
 		setUnitMappings: function() {
-			Formatting.setUnitMappings.apply(FormatSettings, arguments);
-			return FormatSettings;
+			Formatting.setUnitMappings.apply(Formatting, arguments);
+			return this;
 		},
 
 		addUnitMappings: function() {
-			Formatting.addUnitMappings.apply(FormatSettings, arguments);
-			return FormatSettings;
+			Formatting.addUnitMappings.apply(Formatting, arguments);
+			return this;
 		},
 
 		getUnitMappings: Formatting.getUnitMappings,
@@ -1493,8 +1493,8 @@ sap.ui.define([
 		 * @function
 		 */
 		setDatePattern : function() {
-			Formatting.setDatePattern.apply(FormatSettings, arguments);
-			return FormatSettings;
+			Formatting.setDatePattern.apply(Formatting, arguments);
+			return this;
 		},
 
 		getTimePattern : Formatting.getTimePattern,
@@ -1519,8 +1519,8 @@ sap.ui.define([
 		 * @function
 		 */
 		setTimePattern : function() {
-			Formatting.setTimePattern.apply(FormatSettings, arguments);
-			return FormatSettings;
+			Formatting.setTimePattern.apply(Formatting, arguments);
+			return this;
 		},
 
 		getNumberSymbol : Formatting.getNumberSymbol,
@@ -1546,20 +1546,20 @@ sap.ui.define([
 		 * @function
 		 */
 		setNumberSymbol : function() {
-			Formatting.setNumberSymbol.apply(FormatSettings, arguments);
-			return FormatSettings;
+			Formatting.setNumberSymbol.apply(Formatting, arguments);
+			return this;
 		},
 
 		getCustomCurrencies : Formatting.getCustomCurrencies,
 
 		setCustomCurrencies : function() {
-			Formatting.setCustomCurrencies.apply(FormatSettings, arguments);
-			return FormatSettings;
+			Formatting.setCustomCurrencies.apply(Formatting, arguments);
+			return this;
 		},
 
 		addCustomCurrencies: function() {
-			Formatting.addCustomCurrencies.apply(FormatSettings, arguments);
-			return FormatSettings;
+			Formatting.addCustomCurrencies.apply(Formatting, arguments);
+			return this;
 		},
 
 		/**
@@ -1586,7 +1586,7 @@ sap.ui.define([
 		setFirstDayOfWeek : function(iValue) {
 			check(typeof iValue == "number" && iValue >= 0 && iValue <= 6, "iValue must be an integer value between 0 and 6");
 			Formatting._set("weekData-firstDay", iValue);
-			return FormatSettings;
+			return this;
 		},
 
 		_setDayPeriods: Formatting._setDayPeriods,
@@ -1611,8 +1611,8 @@ sap.ui.define([
 		 * @function
 		 */
 		setLegacyDateFormat : function() {
-			Formatting.setLegacyDateFormat.apply(FormatSettings, arguments);
-			return FormatSettings;
+			Formatting.setLegacyDateFormat.apply(Formatting, arguments);
+			return this;
 		},
 
 		getLegacyTimeFormat : Formatting.getLegacyTimeFormat,
@@ -1636,8 +1636,8 @@ sap.ui.define([
 		 * @function
 		 */
 		setLegacyTimeFormat : function() {
-			Formatting.setLegacyTimeFormat.apply(FormatSettings, arguments);
-			return FormatSettings;
+			Formatting.setLegacyTimeFormat.apply(Formatting, arguments);
+			return this;
 		},
 
 		getLegacyNumberFormat : Formatting.getLegacyNumberFormat,
@@ -1660,20 +1660,20 @@ sap.ui.define([
 		 * @function
 		 */
 		setLegacyNumberFormat : function() {
-			Formatting.setLegacyNumberFormat.apply(FormatSettings, arguments);
-			return FormatSettings;
+			Formatting.setLegacyNumberFormat.apply(Formatting, arguments);
+			return this;
 		},
 
 		setLegacyDateCalendarCustomizing : function() {
-			Formatting.setLegacyDateCalendarCustomizing.apply(FormatSettings, arguments);
-			return FormatSettings;
+			Formatting.setLegacyDateCalendarCustomizing.apply(Formatting, arguments);
+			return this;
 		},
 
 		getLegacyDateCalendarCustomizing : Formatting.getLegacyDateCalendarCustomizing,
 
 		setTrailingCurrencyCode : function() {
-			Formatting.setTrailingCurrencyCode.apply(FormatSettings, arguments);
-			return FormatSettings;
+			Formatting.setTrailingCurrencyCode.apply(Formatting, arguments);
+			return this;
 		},
 
 		getTrailingCurrencyCode : Formatting.getTrailingCurrencyCode,
