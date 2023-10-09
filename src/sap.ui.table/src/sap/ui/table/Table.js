@@ -4462,5 +4462,32 @@ sap.ui.define([
 		return excludeHiddenDepdendents(this, Control.prototype.findElements.apply(this, arguments));
 	};
 
+	/**
+	 * Returns the first applied plugin for the given plugin type.
+	 *
+	 * @param {string} sType The full class name of the plugin
+	 * @returns {sap.ui.table.plugins.SelectionPlugin|undefined} The found plugin instance, or <code>undefined</code> if not found
+	 * @throws {Error} If the type to search for is not in <code>sap.ui.table.plugins</code>
+	 * @private
+	 * @deprecated As of version 1.120
+	 */
+	Table.prototype.getPlugin = function(sType) {
+		if (!sType || !sType.startsWith("sap.ui.table.plugins.")) {
+			throw new Error("This method can only be used to get plugins of the sap.ui.table library");
+		}
+
+		var oFoundPlugin = this.getDependents().find((oDependent) => {
+			return oDependent.isA(sType);
+		});
+
+		if (!oFoundPlugin) {
+			oFoundPlugin = this.getPlugins().find((oPlugin) => {
+				return oPlugin.isA(sType);
+			});
+		}
+
+		return oFoundPlugin;
+	};
+
 	return Table;
 });
