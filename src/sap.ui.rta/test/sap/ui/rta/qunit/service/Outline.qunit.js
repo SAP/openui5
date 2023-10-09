@@ -5,6 +5,7 @@ QUnit.dump.maxDepth = 50;
 sap.ui.define([
 	"sap/m/Button",
 	"sap/m/Page",
+	"sap/ui/base/DesignTime",
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/core/ComponentContainer",
@@ -29,6 +30,7 @@ sap.ui.define([
 ], function(
 	Button,
 	Page,
+	DesignTimeConfig,
 	Controller,
 	XMLView,
 	ComponentContainer,
@@ -672,8 +674,8 @@ sap.ui.define([
 	}
 
 	function beforeEachExtensionPoint(sXmlView, oController) {
-		sandbox.stub(oCore.getConfiguration(), "getDesignMode").returns(true);
-		sandbox.stub(oCore.getConfiguration(), "getSuppressDeactivationOfControllerCode").returns(true);
+		sandbox.stub(DesignTimeConfig, "isDesignModeEnabled").returns(true);
+		sandbox.stub(DesignTimeConfig, "isControllerCodeDeactivationSuppressed").returns(true);
 		this.oComponent = _createComponent();
 		return _createAsyncView("myView", sXmlView, this.oComponent, oController)
 		.then(function(oXmlView) {

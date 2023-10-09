@@ -5,13 +5,13 @@
 // Provides an abstraction for BindingInfos
 sap.ui.define([
 	"sap/base/config",
-	"sap/ui/core/Configuration",
+	"sap/ui/base/DesignTime",
 	"sap/ui/core/getCompatibilityVersion",
 	"sap/ui/base/BindingParser",
 	"sap/ui/model/BindingMode",
 	"sap/base/Log"
 ],
-	function(BaseConfig, Configuration, getCompatibilityVersion, BindingParser, BindingMode) {
+	function(BaseConfig, DesignTime, getCompatibilityVersion, BindingParser, BindingMode) {
 	"use strict";
 
 	// Marker to not 'forget' ui5Objects
@@ -203,7 +203,7 @@ sap.ui.define([
 				 * @deprecated As of Version 1.119
 				 */
 				this.oParser = getBindingSyntax() === "simple" ? BindingParser.simpleParser : BindingParser.complexParser;
-				if ( Configuration.getDesignMode() == true ) {
+				if (DesignTime.isDesignModeEnabled() == true) {
 					BindingParser._keepBindingStrings = true;
 				}
 			}

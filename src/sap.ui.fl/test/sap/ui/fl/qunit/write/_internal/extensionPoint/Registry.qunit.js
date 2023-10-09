@@ -1,5 +1,6 @@
 /* global QUnit */
 sap.ui.define([
+	"sap/ui/base/DesignTime",
 	"sap/ui/core/Component",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/fl/apply/_internal/extensionPoint/Processor",
@@ -11,6 +12,7 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/core/Element"
 ], function(
+	DesignTime,
 	Component,
 	JsControlTreeModifier,
 	Processor,
@@ -97,7 +99,7 @@ sap.ui.define([
 		QUnit.test("when calling function 'clear'", function(assert) {
 			var oObserverDisconnectSpy = sandbox.spy(ManagedObjectObserver.prototype, "disconnect");
 			var oObserverDestroySpy = sandbox.spy(ManagedObjectObserver.prototype, "destroy");
-			sandbox.stub(oCore.getConfiguration(), "getDesignMode").returns(true);
+			sandbox.stub(DesignTime, "isDesignModeEnabled").returns(true);
 			var mExtensionPoint = _createAndRegisterExtensionPoint(this.oXMLView, sExtensionPointName2, this.oPanel, "content", 0);
 			assert.equal(ExtensionPointRegistry.getExtensionPointInfoByParentId(this.oPanel.getId()).length, 1,
 				"then after registration one item is registered by parent");
@@ -112,7 +114,7 @@ sap.ui.define([
 				"then after exit the registration map for viewId is empty");
 		});
 		QUnit.test("given the extensionpoint is the single node in aggregation when calling 'registerExtensionPoint'", function(assert) {
-			sandbox.stub(oCore.getConfiguration(), "getDesignMode").returns(true);
+			sandbox.stub(DesignTime, "isDesignModeEnabled").returns(true);
 			var oObserverObserveSpy = sandbox.spy(ManagedObjectObserver.prototype, "observe");
 			var mExtensionPoint = _createAndRegisterExtensionPoint(this.oXMLView, sExtensionPointName5, this.oHBoxWithSingleEP, "items", 0);
 			assert.equal(ExtensionPointRegistry.getExtensionPointInfoByParentId(this.oHBoxWithSingleEP.getId()).length, 1,
@@ -122,7 +124,7 @@ sap.ui.define([
 			assert.equal(oObserverObserveSpy.callCount, 1, "then after registration one observer is registered");
 		});
 		QUnit.test("given the extensionpoint in an aggregation with cardinality '0..1'", function(assert) {
-			sandbox.stub(oCore.getConfiguration(), "getDesignMode").returns(true);
+			sandbox.stub(DesignTime, "isDesignModeEnabled").returns(true);
 			var oObserverObserveSpy = sandbox.spy(ManagedObjectObserver.prototype, "observe");
 			var oLabel1 = new Label("newLabel1");
 			sandbox.stub(JsControlTreeModifier, "getAggregation").returns(oLabel1);
@@ -134,7 +136,7 @@ sap.ui.define([
 			oLabel1.destroy();
 		});
 		QUnit.test("given a control containing two extension points in an aggregation", function(assert) {
-			sandbox.stub(oCore.getConfiguration(), "getDesignMode").returns(true);
+			sandbox.stub(DesignTime, "isDesignModeEnabled").returns(true);
 			var mExtensionPointInfo2 = _createAndRegisterExtensionPoint(this.oXMLView, sExtensionPointName2, this.oPanel, "content", 0);
 			_createAndRegisterExtensionPoint(this.oXMLView, sExtensionPointName3, this.oPanel, "content", 1);
 			var sParentId = mExtensionPointInfo2.targetControl.getId();
@@ -168,7 +170,7 @@ sap.ui.define([
 			oLabel2.destroy();
 		});
 		QUnit.test("given a control containing two extension points in two aggregations", function(assert) {
-			sandbox.stub(oCore.getConfiguration(), "getDesignMode").returns(true);
+			sandbox.stub(DesignTime, "isDesignModeEnabled").returns(true);
 			var mExtensionPointInfo1 = _createAndRegisterExtensionPoint(this.oXMLView, sExtensionPointName1, this.oHBox, "items", 1);
 			var mExtensionPointInfo4 = _createAndRegisterExtensionPoint(this.oXMLView, sExtensionPointName4, this.oHBox, "dependents", 1);
 			var sParentId = mExtensionPointInfo1.targetControl.getId();
@@ -406,7 +408,7 @@ sap.ui.define([
 	 */
 	QUnit.module("Given an extensionPoint.Registry instantiated by the fl extensionPoint.Processor", {
 		async beforeEach() {
-			sandbox.stub(oCore.getConfiguration(), "getDesignMode").returns(true);
+			sandbox.stub(DesignTime, "isDesignModeEnabled").returns(true);
 
 			var sXmlString =
 				'<mvc:View id="myView" xmlns:mvc="sap.ui.core.mvc"  xmlns:core="sap.ui.core" xmlns="sap.m">' +

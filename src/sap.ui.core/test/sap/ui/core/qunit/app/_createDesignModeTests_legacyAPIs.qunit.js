@@ -1,8 +1,8 @@
 /*global QUnit sinon*/
 sap.ui.define([
 	"sap/base/config",
-	"sap/ui/core/Configuration"
-], function (BaseConfiguration, Configuration) {
+	"sap/ui/base/DesignTime"
+], function (BaseConfiguration, DesignTime) {
 	"use strict";
 
 	return function _createDesignModeTests(ViewClass) {
@@ -31,10 +31,9 @@ sap.ui.define([
 		QUnit.test("Configuration Accessors", function (assert) {
 			assert.expect(3);
 
-			var oConfig = Configuration;
-			assert.equal(oConfig.getDesignMode(), true, "Design Mode is on");
-			assert.equal(oConfig.getSuppressDeactivationOfControllerCode(), false, "SuppressDeactivationOfControllerCode is false");
-			assert.equal(oConfig.getControllerCodeDeactivated(), true, "getControllerCodeDeactivated is true");
+			assert.equal(DesignTime.isDesignModeEnabled(), true, "Design Mode is on");
+			assert.equal(DesignTime.isControllerCodeDeactivationSuppressed(), false, "SuppressDeactivationOfControllerCode is false");
+			assert.equal(DesignTime.isControllerCodeDeactivated(), true, "isControllerCodeDeactivated is true");
 		});
 
 		QUnit.test("Create a XMLView instance and check controller methods are replaced by empty ones", function (assert) {
@@ -66,10 +65,9 @@ sap.ui.define([
 		QUnit.test("Configuration Accessors", function (assert) {
 			assert.expect(3);
 
-			var oConfig = Configuration;
-			assert.equal(oConfig.getDesignMode(), true, "Design Mode is on");
-			assert.equal(oConfig.getSuppressDeactivationOfControllerCode(), true, "SuppressDeactivationOfControllerCode is true");
-			assert.equal(oConfig.getControllerCodeDeactivated(), false, "getControllerCodeDeactivated is false");
+			assert.equal(DesignTime.isDesignModeEnabled(), true, "Design Mode is on");
+			assert.equal(DesignTime.isControllerCodeDeactivationSuppressed(), true, "SuppressDeactivationOfControllerCode is true");
+			assert.equal(DesignTime.isControllerCodeDeactivated(), false, "isControllerCodeDeactivated is false");
 		});
 
 		QUnit.test("Create an XMLView instance and check controller methods are not replaced by empty ones", function(assert){

@@ -6,9 +6,9 @@ sap.ui.define([
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/util/XMLHelper",
 	"sap/base/Log",
-	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Configuration"
-], function (coreLibrary, XMLTemplateProcessor, View, XMLView, XMLHelper, Log, jQuery, Configuration) {
+	"sap/ui/base/DesignTime",
+	"sap/ui/thirdparty/jquery"
+], function (coreLibrary, XMLTemplateProcessor, View, XMLView, XMLHelper, Log, DesignTime, jQuery) {
 	"use strict";
 
 	// shortcut for sap.ui.core.mvc.ViewType
@@ -299,15 +299,15 @@ sap.ui.define([
 	 * @deprecated As of version 1.110
 	 */
 	QUnit.test("on design mode create Controls and fragment with correct declarativeSourceInfo (legacy factory API)", function (assert) {
-		var fnOrigGetDesignMode = Configuration.getDesignMode;
-		Configuration.getDesignMode = function () {
+		var fnOrigIsDesignModeEnabled = DesignTime.isDesignModeEnabled;
+		DesignTime.isDesignModeEnabled = function () {
 			return true;
 		};
 		var oView = sap.ui.view({
 			viewName: "my.View",
 			type: ViewType.XML
 		});
-		Configuration.getDesignMode = fnOrigGetDesignMode;
+		DesignTime.isDesignModeEnabled = fnOrigIsDesignModeEnabled;
 		return oView.loaded().then(function () {
 			var oButton = oView.byId("button");
 			assert.ok(oButton, "button control is created");
@@ -324,8 +324,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("on design mode create Controls and fragment with correct declarativeSourceInfo", function (assert) {
-		var fnOrigGetDesignMode = Configuration.getDesignMode;
-		Configuration.getDesignMode = function () {
+		var fnOrigIsDesignModeEnabled = DesignTime.isDesignModeEnabled;
+		DesignTime.isDesignModeEnabled = function () {
 			return true;
 		};
 
@@ -333,7 +333,7 @@ sap.ui.define([
 			viewName: "my.View",
 			type: ViewType.XML
 		}).then(function(oView) {
-			Configuration.getDesignMode = fnOrigGetDesignMode;
+			DesignTime.isDesignModeEnabled = fnOrigIsDesignModeEnabled;
 
 			var oButton = oView.byId("button");
 			assert.ok(oButton, "button control is created");

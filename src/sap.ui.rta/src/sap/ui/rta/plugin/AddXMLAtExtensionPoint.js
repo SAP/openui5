@@ -9,7 +9,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/write/api/ExtensionPointRegistryAPI",
 	"sap/base/util/values",
-	"sap/ui/core/Configuration"
+	"sap/ui/base/DesignTime"
 ], function(
 	Plugin,
 	DtUtil,
@@ -17,7 +17,7 @@ sap.ui.define([
 	ManifestUtils,
 	ExtensionPointRegistryAPI,
 	values,
-	Configuration
+	DesignTime
 ) {
 	"use strict";
 
@@ -80,7 +80,7 @@ sap.ui.define([
 	}
 
 	function isDesignMode() {
-		return Configuration.getDesignMode();
+		return DesignTime.isDesignModeEnabled();
 	}
 
 	AddXMLAtExtensionPoint.prototype.bAppDescriptorCommandAlreadyAvailable = false;
