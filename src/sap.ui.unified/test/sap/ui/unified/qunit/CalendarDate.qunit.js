@@ -4,7 +4,11 @@ sap.ui.define([
 	"sap/ui/unified/calendar/CalendarDate",
 	"sap/ui/core/CalendarType",
 	"sap/ui/core/Core",
-	"sap/ui/core/date/UI5Date"
+	"sap/ui/core/date/UI5Date",
+	// load all required calendars in advance
+	"sap/ui/core/date/Gregorian",
+	"sap/ui/core/date/Islamic",
+	"sap/ui/core/date/Japanese"
 ], function(CalendarDate, CalendarType, oCore, UI5Date) {
 	"use strict";
 

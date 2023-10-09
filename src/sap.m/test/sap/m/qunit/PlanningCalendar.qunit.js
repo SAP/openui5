@@ -28,7 +28,9 @@ sap.ui.define([
 	"sap/base/util/deepEqual",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/core/Locale",
-	"sap/ui/core/date/UI5Date"
+	"sap/ui/core/date/UI5Date",
+	// load all required calendars in advance
+	"sap/ui/core/date/Islamic"
 ], function(
 	qutils,
 	createAndAppendDiv,
