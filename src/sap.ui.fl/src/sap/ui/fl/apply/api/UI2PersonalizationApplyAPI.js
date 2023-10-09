@@ -37,21 +37,20 @@ sap.ui.define([
 		 * @private
 	 	 * @ui5-restricted
 		 */
-		load(mPropertyBag) {
+		async load(mPropertyBag) {
 			mPropertyBag.reference = ManifestUtils.getFlexReferenceForSelector(mPropertyBag.selector);
 
 			if (
 				!mPropertyBag.reference
 				|| !mPropertyBag.containerKey
 			) {
-				return Promise.reject(new Error("not all mandatory properties were provided for the loading of the personalization"));
+				throw new Error("not all mandatory properties were provided for the loading of the personalization");
 			}
 
-			return FlexState.initialize({
+			await FlexState.initialize({
 				componentId: mPropertyBag.selector.getId()
-			}).then(function() {
-				return UI2PersonalizationState.getPersonalization(mPropertyBag.reference, mPropertyBag.containerKey, mPropertyBag.itemName);
 			});
+			return UI2PersonalizationState.getPersonalization(mPropertyBag.reference, mPropertyBag.containerKey, mPropertyBag.itemName);
 		}
 	};
 

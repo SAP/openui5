@@ -3,11 +3,9 @@
  */
 
 sap.ui.define([
-	"sap/ui/fl/apply/_internal/flexState/FlexState",
-	"sap/ui/fl/write/_internal/connectors/LrepConnector"
+	"sap/ui/fl/apply/_internal/flexState/FlexState"
 ], function(
-	FlexState,
-	LrepConnector
+	FlexState
 ) {
 	"use strict";
 
@@ -46,76 +44,6 @@ sap.ui.define([
 		return oUI2Personalization[sContainerKey].filter(function(oEntry) {
 			return oEntry.itemName === sItemName;
 		})[0];
-	};
-
-	/**
-	 * Stores a personalization object for an application under a given key pair.
-	 *
-	 * @param {object} oPersonalization - Object with information about the personalization
-	 * @param {string} oPersonalization.reference - Reference of the application for which the personalization should be stored
-	 * @param {string} oPersonalization.containerKey - Key of the container in which the personalization should stored
-	 * @param {string} oPersonalization.itemName - Name under which the personalization should be stored
-	 * @param {string} oPersonalization.content - Personalization content to be stored
-	 * @returns {Promise} Promise resolving with the object stored under the passed container key and item name,
-	 * or undefined in case no entry was stored for these
-	 */
-	UI2PersonalizationState.setPersonalization = function(oPersonalization) {
-		if (
-			!oPersonalization
-			|| !oPersonalization.reference
-			|| !oPersonalization.containerKey
-			|| !oPersonalization.itemName
-			|| !oPersonalization.content
-		) {
-			return Promise.reject("not all mandatory properties were provided for the storage of the personalization");
-		}
-
-		return LrepConnector.ui2Personalization.create({
-			flexObjects: oPersonalization
-		})
-		.then(function(oPersonalizationResult) {
-			const oPersonalizationSubsection = FlexState.getUI2Personalization(oPersonalizationResult.response.reference);
-			oPersonalizationSubsection[oPersonalizationResult.response.containerKey] ||= [];
-			oPersonalizationSubsection[oPersonalizationResult.response.containerKey].push(oPersonalizationResult.response);
-			FlexState.updateStorageResponse(oPersonalizationResult.response.reference, [{
-				type: "ui2",
-				newData: oPersonalizationSubsection
-			}]);
-		});
-	};
-
-	/**
-	 * Deletes the personalization for a given reference
-	 *
-	 * @param {string} sReference - Reference of the application for which the personalization should be deleted
-	 * @param {string} sContainerKey - Key of the container for which the personalization should be deleted
-	 * @param {string} sItemName - Name under which the personalization should be deleted
-	 * @returns {Promise} Promise resolving in case the deletion request was successful
-	 */
-	UI2PersonalizationState.deletePersonalization = function(sReference, sContainerKey, sItemName) {
-		if (
-			!sReference
-			|| !sContainerKey
-			|| !sItemName
-		) {
-			return Promise.reject("not all mandatory properties were provided for the storage of the personalization");
-		}
-
-		return LrepConnector.ui2Personalization.remove({
-			reference: sReference,
-			containerKey: sContainerKey,
-			itemName: sItemName
-		}).then(function() {
-			const oUI2Personalization = FlexState.getUI2Personalization(sReference);
-			const aItems = oUI2Personalization[sContainerKey];
-			const oToBeDeletedItem = UI2PersonalizationState.getPersonalization(sReference, sContainerKey, sItemName);
-			const nIndexOfItem = aItems.indexOf(oToBeDeletedItem);
-			aItems.splice(nIndexOfItem, 1);
-			FlexState.updateStorageResponse(sReference, [{
-				type: "ui2",
-				newData: oUI2Personalization
-			}]);
-		});
 	};
 
 	return UI2PersonalizationState;
