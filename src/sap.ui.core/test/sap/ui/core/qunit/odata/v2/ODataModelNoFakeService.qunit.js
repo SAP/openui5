@@ -6632,7 +6632,7 @@ sap.ui.define([
 				.withExactArgs("~oAbortedError");
 		}
 		oModelMock.expects("getMessagesByEntity")
-			.withExactArgs("~sKey", !bDeleteEntity)
+			.withExactArgs("~sKey", true)
 			.returns("~aMessages");
 		oMessageManagerMock.expects("removeMessages").withExactArgs("~aMessages");
 
@@ -6689,7 +6689,7 @@ sap.ui.define([
 			.withExactArgs(sinon.match.same(oContext));
 		this.mock(oModel).expects("_removeEntity").withExactArgs("~sKey");
 		this.mock(oModel).expects("getMessagesByEntity")
-			.withExactArgs("~sKey", false)
+			.withExactArgs("~sKey", true)
 			.returns("~aMessages");
 		this.mock(sap.ui.getCore().getMessageManager()).expects("removeMessages")
 			.withExactArgs("~aMessages");
