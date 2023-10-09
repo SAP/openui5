@@ -2,7 +2,6 @@
  * ${copyright}
  */
 sap.ui.define([
-	"jquery.sap.global",
 	"sap/base/Log",
 	"sap/ui/base/SyncPromise",
 	"sap/ui/core/cache/CacheManager",
@@ -11,9 +10,10 @@ sap.ui.define([
 	"sap/ui/model/odata/v4/lib/_Helper",
 	"sap/ui/model/odata/v4/lib/_Requestor",
 	"sap/ui/security/Security",
-	"sap/ui/test/TestUtils"
-], function (jQuery, Log, SyncPromise, CacheManager, _Batch, _GroupLock, _Helper, _Requestor,
-	Security, TestUtils) {
+	"sap/ui/test/TestUtils",
+	"sap/ui/thirdparty/jquery"
+], function (Log, SyncPromise, CacheManager, _Batch, _GroupLock, _Helper, _Requestor, Security,
+	TestUtils, jQuery) {
 	"use strict";
 
 	var sClassName = "sap.ui.model.odata.v4.lib._Requestor",

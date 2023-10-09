@@ -2,9 +2,8 @@
 sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/test/_LogCollector",
-	"sap/ui/test/_OpaLogger",
-	"jquery.sap.global"
-], function (Log, _LogCollector, _OpaLogger, $) {
+	"sap/ui/test/_OpaLogger"
+], function (Log, _LogCollector, _OpaLogger) {
 	"use strict";
 
 	QUnit.module("_LogCollector - singleton");
@@ -83,12 +82,21 @@ sap.ui.define([
 		 * @deprecated since 1.58
 		 */
 		QUnit.test("Should only collect logs with the right component (legacy APIs)", function (assert) {
-			var oIgnoredLogger = _OpaLogger.getLogger("someComponent");
-			oIgnoredLogger.error(sLogMessage, sLogDetails);
-			oIgnoredLogger.debug(sLogMessage, sLogDetails);
-			$.sap.log.debug(sLogMessage, sLogDetails);
-			$.sap.log.error(sLogMessage, sLogDetails);
-			assert.strictEqual(oInstance.getAndClearLog(), "", "Log should be empty");
+			const done = assert.async();
+			sap.ui.require([
+				"jquery.sap.global"
+			], function($) {
+				var oIgnoredLogger = _OpaLogger.getLogger("someComponent");
+				oIgnoredLogger.error(sLogMessage, sLogDetails);
+				oIgnoredLogger.debug(sLogMessage, sLogDetails);
+				$.sap.log.debug(sLogMessage, sLogDetails);
+				$.sap.log.error(sLogMessage, sLogDetails);
+				assert.strictEqual(oInstance.getAndClearLog(), "", "Log should be empty");
+				done();
+			}, function(err) {
+				assert.notOk(err, "loading jquery.sap.global. failed");
+				done();
+			});
 		});
 
 		QUnit.test("Should guard against memory leaking", function (assert) {
