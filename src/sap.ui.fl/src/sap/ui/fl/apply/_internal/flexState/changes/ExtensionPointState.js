@@ -6,17 +6,27 @@ sap.ui.define([
 	"sap/base/util/restricted/_omit",
 	"sap/base/util/merge",
 	"sap/base/Log",
+	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/fl/apply/_internal/changes/Utils",
-	"sap/ui/fl/write/api/ChangesWriteAPI",
-	"sap/ui/fl/ChangePersistenceFactory"
-], function(
+	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
+	"sap/ui/fl/apply/_internal/flexObjects/States",
+	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
+	"sap/ui/fl/initial/_internal/changeHandlers/ChangeHandlerStorage",
+	"sap/ui/fl/ChangePersistenceFactory",
+	"sap/ui/fl/Utils"
+], (
 	_omit,
 	merge,
 	Log,
+	JsControlTreeModifier,
 	ChangesUtils,
-	ChangesWriteAPI,
-	ChangePersistenceFactory
-) {
+	FlexObjectFactory,
+	FlexObjectStates,
+	ManifestUtils,
+	ChangeHandlerStorage,
+	ChangePersistenceFactory,
+	Utils
+) => {
 	"use strict";
 
 	/**
@@ -29,7 +39,7 @@ sap.ui.define([
 	 * @private
 	 * @ui5-restricted
 	 */
-	var ExtensionPointState = {};
+	const ExtensionPointState = {};
 
 	function isChangeValidForExtensionPoint(mPropertyBag, oChange) {
 		if (oChange.getSelector().name !== mPropertyBag.extensionPointName) {
@@ -40,7 +50,7 @@ sap.ui.define([
 
 	function isValidForRuntimeOnlyChanges(oChange, mExtensionPointInfo) {
 		if (mExtensionPointInfo.fragmentId) {
-			var oExtensionPointFromChange = oChange.getExtensionPointInfo && oChange.getExtensionPointInfo();
+			const oExtensionPointFromChange = oChange.getExtensionPointInfo && oChange.getExtensionPointInfo();
 			if (oExtensionPointFromChange) {
 				return mExtensionPointInfo.fragmentId !== oExtensionPointFromChange.fragmentId;
 			}
@@ -50,14 +60,14 @@ sap.ui.define([
 	}
 
 	function replaceChangeSelector(oChange, oExtensionPoint, bOriginalSelectorNeedsToBeAdjusted) {
-		var mSelector = oChange.getSelector();
+		let mSelector = oChange.getSelector();
 		if (oExtensionPoint.closestAggregationBindingCarrier && oExtensionPoint.closestAggregationBinding) {
 			// processing for extension points positioned into an aggregation template
 			mSelector = merge(mSelector, {
 				id: oExtensionPoint.closestAggregationBindingCarrier,
 				idIsLocal: false
 			});
-			var mOriginalSelector = {
+			const mOriginalSelector = {
 				id: oExtensionPoint.targetControl.getId(),
 				idIsLocal: false
 			};
@@ -74,6 +84,45 @@ sap.ui.define([
 			});
 		}
 		oChange.setSelector(mSelector);
+	}
+
+	function createAndCompleteFlexObjectWithChangeHandlerInfo(mPropertyBag) {
+		const oFlexObject = FlexObjectFactory.createUIChange(mPropertyBag.changeSpecificData);
+		return ChangeHandlerStorage.getChangeHandler(
+			oFlexObject.getChangeType(),
+			mPropertyBag.controlType,
+			mPropertyBag.selector,
+			JsControlTreeModifier,
+			oFlexObject.getLayer()
+		)
+		.then((oChangeHandler) => {
+			return oChangeHandler.completeChangeContent(oFlexObject, mPropertyBag.changeSpecificData, {
+				modifier: JsControlTreeModifier,
+				appComponent: mPropertyBag.appComponent,
+				view: Utils.getViewForControl(mPropertyBag.selector)
+			});
+		})
+		.then(() => {
+			// completeChangeContent changes the content and might make it dirty
+			oFlexObject.setState(FlexObjectStates.LifecycleState.NEW);
+			return oFlexObject;
+		});
+	}
+
+	function createAdditionalChange(mPropertyBag) {
+		if (mPropertyBag.selector.name && mPropertyBag.selector.view) {
+			const oAppComponent = Utils.getAppComponentForSelector(mPropertyBag.selector.view);
+			const sReference = mPropertyBag.selector.appId || ManifestUtils.getFlexReferenceForControl(oAppComponent);
+			mPropertyBag.appComponent = oAppComponent;
+			mPropertyBag.changeSpecificData.reference = sReference;
+
+			mPropertyBag.changeSpecificData.selector = {
+				name: mPropertyBag.selector.name,
+				viewSelector: JsControlTreeModifier.getSelector(mPropertyBag.selector.view.getId(), oAppComponent)
+			};
+			return createAndCompleteFlexObjectWithChangeHandlerInfo(mPropertyBag);
+		}
+		return undefined;
 	}
 
 	/**
@@ -116,11 +165,11 @@ sap.ui.define([
 	 */
 	ExtensionPointState.enhanceExtensionPointChanges = function(mPropertyBag, mExtensionPointInfo) {
 		mPropertyBag.extensionPointName = mExtensionPointInfo.name;
-		var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForControl(mExtensionPointInfo.targetControl);
+		const oChangePersistence = ChangePersistenceFactory.getChangePersistenceForControl(mExtensionPointInfo.targetControl);
 
 		return ExtensionPointState.getChangesForExtensionPoint(oChangePersistence, mPropertyBag)
 		.then(function(aChanges) {
-			var aPromises = [];
+			const aPromises = [];
 			aChanges.forEach(function(oChange) {
 				// Only continue process if the change has not been applied, such as in case of XMLPreprocessing of an async view
 				if (oChange.isInInitialState() && !(oChange.getExtensionPointInfo && oChange.getExtensionPointInfo())) {
@@ -137,30 +186,38 @@ sap.ui.define([
 				} else if (isValidForRuntimeOnlyChanges(oChange, mExtensionPointInfo)) {
 					// Change is applied but we need to create additional runtime only changes
 					// in case of duplicate extension points with different fragment id (fragment as template)
-					var oChangeFileContent = oChange.convertToFileContent();
-					var oChangeContent = oChange.getContent();
-					var mChangeSpecificData = _omit(oChangeFileContent, ["dependentSelector", "fileName", "selector", "content"]);
+					const oChangeFileContent = oChange.convertToFileContent();
+					const oChangeContent = oChange.getContent();
+					const mChangeSpecificData = _omit(oChangeFileContent, [
+						"dependentSelector",
+						"fileName",
+						"selector",
+						"content",
+						"adaptationId"
+					]);
 					Object.keys(oChangeContent).forEach(function(sKey) {
 						mChangeSpecificData[sKey] = oChangeContent[sKey];
 					});
 					mChangeSpecificData.support.sourceChangeFileName = oChange.getId() || "";
-					aPromises.push(ChangesWriteAPI.create({
-						changeSpecificData: mChangeSpecificData,
-						selector: {
-							view: mExtensionPointInfo.view,
-							name: mExtensionPointInfo.name
-						}
-					})
-					.then(function(oRuntimeOnlyChange) {
-						// Set correct selector from extension point targetControl's ID
-						replaceChangeSelector(oRuntimeOnlyChange, mExtensionPointInfo, true);
-						oRuntimeOnlyChange.setExtensionPointInfo(mExtensionPointInfo);
-						var oFlexObjectMetadata = oRuntimeOnlyChange.getFlexObjectMetadata();
-						oFlexObjectMetadata.moduleName = oChange.getFlexObjectMetadata().moduleName;
-						oRuntimeOnlyChange.setFlexObjectMetadata(oFlexObjectMetadata);
-						oRuntimeOnlyChange.setCreation(oChange.getCreation());
-						oChangePersistence.addChangeAndUpdateDependencies(mPropertyBag.appComponent, oRuntimeOnlyChange, oChange);
-					})
+					aPromises.push(
+						createAdditionalChange({
+							changeSpecificData: mChangeSpecificData,
+							selector: {
+								view: mExtensionPointInfo.view,
+								name: mExtensionPointInfo.name
+							}
+						})
+						.then(function(oRuntimeOnlyChange) {
+							// Set correct selector from extension point targetControl's ID
+							replaceChangeSelector(oRuntimeOnlyChange, mExtensionPointInfo, true);
+							oRuntimeOnlyChange.setExtensionPointInfo(mExtensionPointInfo);
+							const oFlexObjectMetadata = oRuntimeOnlyChange.getFlexObjectMetadata();
+							oFlexObjectMetadata.moduleName = oChange.getFlexObjectMetadata().moduleName;
+							oRuntimeOnlyChange.setFlexObjectMetadata(oFlexObjectMetadata);
+							oRuntimeOnlyChange.setCreation(oChange.getCreation());
+							oChangePersistence.addChangeAndUpdateDependencies(mPropertyBag.appComponent, oRuntimeOnlyChange, oChange);
+							aPromises.push(oRuntimeOnlyChange);
+						})
 					);
 				}
 			});

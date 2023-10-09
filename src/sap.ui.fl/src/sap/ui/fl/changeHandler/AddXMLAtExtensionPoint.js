@@ -69,7 +69,8 @@ sap.ui.define([
 					 }'). Multiple Extension-points with the same name in one view are not supported!`);
 			}
 			(mExtensionPointInfo.defaultContent || []).forEach(function(vControl) {
-				// Remove default implementation of extension points in async apply (xml-preprocessing) and create (via action handler) scenarios
+				// Remove default implementation of extension points in async apply (xml-preprocessing)
+				// and create (via action handler) scenarios
 				if (vControl) {
 					oModifier.destroy(vControl);
 				}
