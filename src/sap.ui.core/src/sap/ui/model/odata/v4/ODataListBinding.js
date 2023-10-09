@@ -2821,6 +2821,46 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns the parent node of a given child node (in case of a recursive hierarchy, see
+	 * {@link sap.ui.model.odata.v4.ODataListBinding#setAggregation}, where
+	 * <code>oAggregation.expandTo</code> must be one).
+	 *
+	 * @param {sap.ui.model.odata.v4.Context} oNode
+	 *   Some node which could have a parent
+	 * @returns {sap.ui.model.odata.v4.Context|null}
+	 *   The parent node, or <code>null</code> if the given node is a root and thus has no parent
+	* @throws {Error} If
+	 *   <ul>
+	 *     <li> the given node is not part of a recursive hierarchy,
+	 *     <li> <code>oAggregation.expandTo</code> is greater than one.
+	 *    </ul>
+	 *
+	 * @private
+	 */
+	ODataListBinding.prototype.getParent = function (oNode) {
+		const oAggregation = this.mParameters.$$aggregation;
+
+		if (!oAggregation || !oAggregation.hierarchyQualifier) {
+			throw new Error("Missing recursive hierarchy");
+		}
+		if (oAggregation.expandTo > 1) {
+			throw new Error("Unsupported $$aggregation.expandTo: " + oAggregation.expandTo);
+		}
+		if (this.aContexts[oNode.iIndex] !== oNode) {
+			throw new Error("Not currently part of a recursive hierarchy: " + oNode);
+		}
+		const iLevel = oNode.getProperty("@$ui5.node.level");
+		if (iLevel <= 1) {
+			return null; // a root has no parent
+		}
+		for (let i = oNode.iIndex - 1; i >= 0; i -= 1) {
+			if (this.aContexts[i] && this.aContexts[i].getProperty("@$ui5.node.level") < iLevel) {
+				return this.aContexts[i];
+			}
+		}
+	};
+
+	/**
 	 * Returns the query options of the binding.
 	 *
 	 * @param {boolean} [bWithSystemQueryOptions]

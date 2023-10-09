@@ -868,6 +868,29 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns the parent node (in case of a recursive hierarchy, see
+	 * {@link #setAggregation}, where <code>oAggregation.expandTo</code> must be one).
+	 *
+	 * @returns {sap.ui.model.odata.v4.Context|null}
+	 *   The parent node, or <code>null</code> if this node is a root and thus has no parent
+	 * @throws {Error} If
+	 *   <ul>
+	 *     <li> this is not a list binding's context,
+	 *     <li> this is not part of a recursive hierarchy,
+	 *     <li> <code>oAggregation.expandTo</code> is greater than one.
+	 *    </ul>
+	 *
+	 * @experimental As of version 1.120.0
+	 * @public
+	 */
+	Context.prototype.getParent = function () {
+		if (!this.oBinding.getParent) {
+			throw new Error("Not a list binding's context: " + this);
+		}
+		return this.oBinding.getParent(this);
+	};
+
+	/**
 	 * Returns the property value for the given path relative to this context. The path is expected
 	 * to point to a structural property with primitive type. Returns <code>undefined</code>
 	 * if the data is not (yet) available; no request is triggered. Use {@link #requestProperty}
@@ -1903,7 +1926,7 @@ sap.ui.define([
 		var that = this;
 
 		if (this.isTransient() || bKeepAlive && this.isDeleted()) {
-			throw new Error("Unsupported context " + this);
+			throw new Error("Unsupported context: " + this);
 		}
 		_Helper.getPredicateIndex(this.sPath);
 		this.oBinding.checkKeepAlive(this, bKeepAlive);
