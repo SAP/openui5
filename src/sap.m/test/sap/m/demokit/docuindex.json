@@ -1414,7 +1414,6 @@
 			"sap.m.sample.TableScrollToIndex",
 			"sap.m.sample.TableVerticalAlignment",
 			"sap.m.sample.TableViewSettingsDialog",
-			"sap.m.sample.TableExport",
 			"sap.m.sample.TableOutdated",
 			"sap.m.sample.TableEditable",
 			"sap.m.sample.TableAlternateRowColors",
@@ -1753,7 +1752,7 @@
 		{
 			"id": "sap.m.VariantManagement",
 			"name": "Variant Management",
-		  	"category": "Action",			
+		  	"category": "Action",
 			"description": "This sample demonstrates the variant management control UI5.",
 			"since": "1.120",
 			"samples": [
@@ -3150,11 +3149,6 @@
 		  "id": "sap.m.sample.TableBreadcrumb",
 		  "name": "Table - Breadcrumb",
 		  "description": "With an InfoToolbar and some crumb logic you can navigate simple hierarchies with a breadcrumb table approach."
-		},
-		{
-		  "id": "sap.m.sample.TableExport",
-		  "name": "Table - Export",
-		  "description": "The table control provides export capabilities for downloading your data as a csv file. However, for huge tables, it is recommended that you provide an export mechanism on the server side."
 		},
 		{
 		  "id": "sap.m.sample.TableEditable",
