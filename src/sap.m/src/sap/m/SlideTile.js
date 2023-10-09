@@ -12,7 +12,8 @@ sap.ui.define([
 	"sap/ui/events/PseudoEvents",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Configuration",
-	"sap/ui/core/InvisibleText"
+	"sap/ui/core/InvisibleText",
+	"sap/ui/core/Lib"
 ],
 	function(
 		library,
@@ -24,7 +25,8 @@ sap.ui.define([
 		PseudoEvents,
 		jQuery,
 		Configuration,
-		InvisibleText
+		InvisibleText,
+		CoreLib
 	) {
 	"use strict";
 
@@ -137,7 +139,7 @@ sap.ui.define([
 	 * Init function for the control
 	 */
 	SlideTile.prototype.init = function () {
-		this._oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+		this._oRb = CoreLib.getResourceBundleFor("sap.m");
 		this.setAggregation("_pausePlayIcon", new Icon({
 			id: this.getId() + "-pause-play-icon",
 			src: "sap-icon://media-pause",
@@ -722,12 +724,8 @@ sap.ui.define([
 			this.$().removeClass(this._sFrameType);
 		}
 
-		if (this._sSize) {
-			this.$().removeClass(this._sSize);
-		}
-		this.$().addClass(oTile.getFrameType()).addClass(oTile.getSize());
+		this.$().addClass(oTile.getFrameType());
 		this._sFrameType = oTile.getFrameType();
-		this._sSize = oTile.getSize();
 	};
 
 	/**

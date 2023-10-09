@@ -17,7 +17,8 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/type/Integer",
 	"sap/ui/util/Mobile",
-	"sap/ui/ux3/QuickView"
+	"sap/ui/ux3/QuickView",
+	"sap/ui/base/ManagedObject"
 ], function(
 	App,
 	FeedContent,
@@ -37,7 +38,8 @@ sap.ui.define([
 	JSONModel,
 	Integer,
 	Mobile,
-	QuickView
+	QuickView,
+	ManagedObject
 ) {
 	"use strict";
 
@@ -79,7 +81,7 @@ sap.ui.define([
 	};
 
 	var oConfModel = new JSONModel(oConfData);
-	sap.ui.getCore().setModel(oConfModel);
+	ManagedObject.setModel(oConfModel);
 
 	var fnPress = function(oEvent) {
 		MessageToast.show("The feed content is pressed.");

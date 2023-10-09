@@ -14,10 +14,11 @@ sap.ui.define([
 	"sap/base/security/sanitizeHTML",
 	"sap/m/Avatar",
 	"sap/m/AvatarShape",
-	"sap/m/AvatarSize"
+	"sap/m/AvatarSize",
+	"sap/ui/core/Lib"
 ],
 	function(library, Control, IconPool, TextArea, Button, FeedInputRenderer, jQuery, URLListValidator, sanitizeHTML0, Avatar,
-		AvatarShape, AvatarSize) {
+		AvatarShape, AvatarSize, CoreLib) {
 	"use strict";
 
 	// shortcut for sap.m.ButtonType
@@ -318,7 +319,7 @@ sap.ui.define([
 	 */
 	FeedInput.prototype.init = function () {
 		// override text defaults
-		var oBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+		var oBundle = CoreLib.getResourceBundleFor("sap.m");
 		this.setProperty("placeholder", oBundle.getText("FEEDINPUT_PLACEHOLDER"), true);
 		this.setProperty("buttonTooltip", oBundle.getText("FEEDINPUT_SUBMIT"), true);
 	};

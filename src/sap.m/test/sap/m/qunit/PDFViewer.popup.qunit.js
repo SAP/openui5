@@ -113,7 +113,7 @@ sap.ui.define([
 
 		var oOptions = {
 			"source": "test-resources/sap/m/qunit/pdfviewer/sample-file.pdf",
-			"popupHeaderTitle": "Custom header title",
+			"title": "Custom header title",
 			"loaded": function () {
 				assert.ok(true, "'Load' event fired.");
 
