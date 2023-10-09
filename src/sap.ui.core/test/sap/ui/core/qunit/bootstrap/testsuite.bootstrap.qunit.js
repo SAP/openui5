@@ -20,7 +20,7 @@ sap.ui.define(function() {
 			}
 		},
 		tests: {
-			/*
+			/**
 			 * @deprecated As of version 1.120
 			 *
 			 * DebugMode.qunit.html is still an HTML page of its own as the debug mode code

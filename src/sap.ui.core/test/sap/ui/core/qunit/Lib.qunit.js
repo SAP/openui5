@@ -1,5 +1,5 @@
 /*global QUnit sinon*/
-sap.ui.require([
+sap.ui.define([
 	"sap/ui/core/Lib",
 	"sap/base/util/ObjectPath",
 	"sap/ui/core/theming/ThemeManager",
