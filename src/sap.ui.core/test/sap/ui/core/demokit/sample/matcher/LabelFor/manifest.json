@@ -1,17 +1,8 @@
 {
 	"sap.app": {
-		"id": "sap.ui.core.sample.matcher.LabelFor",
-		"applicationVersion": {
-			"version": "1.0.0"
-		}
+		"id": "sap.ui.core.sample.matcher.LabelFor"
 	},
 	"sap.ui5": {
-		"dependencies": {
-			"libs": {
-				"sap.m": {},
-				"sap.ui.core": {}
-			}
-		},
 		"config": {
 			"sample": {
 				"iframe": "Opa.html?opaExecutionDelay=700",
@@ -25,7 +16,8 @@
 					"webapp/index.html",
 					"webapp/Component.js",
 					"webapp/manifest.json",
-					"manifest.json"
+					"ui5.yaml",
+					"package.json"
 				]
 			}
 		}

@@ -7,6 +7,7 @@ framework:
   version: "1.121.0-SNAPSHOT" #MainVersion#
   libraries:
     - name: sap.m
+    - name: sap.tnt
     - name: sap.ui.layout
     - name: sap.ui.core
     - name: themelib_sap_horizon
