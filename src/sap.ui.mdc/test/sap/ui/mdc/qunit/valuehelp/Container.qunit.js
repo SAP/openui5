@@ -104,7 +104,8 @@ sap.ui.define([
 			contentId: null,
 			ariaHasPopup: "listbox",
 			role: "combobox",
-			roleDescription: null
+			roleDescription: null,
+			valueHelpEnabled: false
 		};
 		const oAttributes = oContainer.getAriaAttributes();
 		assert.ok(oAttributes, "Aria attributes returned");

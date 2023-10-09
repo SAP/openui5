@@ -1423,7 +1423,8 @@ sap.ui.define([
 		let oCheckAttributes = {
 			contentId: oTable.getId(),
 			ariaHasPopup: "listbox",
-			roleDescription: null
+			roleDescription: null,
+			valueHelpEnabled: false
 		};
 		let oAttributes = oMTable.getAriaAttributes(1);
 		assert.ok(oAttributes, "Aria attributes returned for SingleSelect");
@@ -1434,7 +1435,8 @@ sap.ui.define([
 		oCheckAttributes = {
 			contentId: oTable.getId(),
 			ariaHasPopup: "listbox",
-			roleDescription: oResourceBundleM.getText("MULTICOMBOBOX_ARIA_ROLE_DESCRIPTION")
+			roleDescription: oResourceBundleM.getText("MULTICOMBOBOX_ARIA_ROLE_DESCRIPTION"),
+			valueHelpEnabled: false
 		};
 		oAttributes = oMTable.getAriaAttributes(-1);
 		assert.ok(oAttributes, "Aria attributes returned for MultiSelect");
@@ -1444,7 +1446,8 @@ sap.ui.define([
 		oCheckAttributes = {
 			contentId: oTable.getId(),
 			ariaHasPopup: "listbox",
-			roleDescription: null
+			roleDescription: null,
+			valueHelpEnabled: false
 		};
 		oAttributes = oMTable.getAriaAttributes(-1);
 		assert.ok(oAttributes, "Aria attributes returned for MultiSelect with typeahead only");

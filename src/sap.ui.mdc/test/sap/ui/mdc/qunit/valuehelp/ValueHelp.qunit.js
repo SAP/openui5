@@ -134,7 +134,6 @@ sap.ui.define([
 		assert.notOk(oValueHelp.shouldOpenOnClick(), "shouldOpenOnClick");
 		assert.notOk(oValueHelp.shouldOpenOnFocus(), "shouldOpenOnFocus");
 		assert.notOk(oValueHelp.isFocusInHelp(), "isFocusInHelp");
-		assert.notOk(oValueHelp.valueHelpEnabled(), "valueHelpEnabled");
 
 	});
 
@@ -557,15 +556,6 @@ sap.ui.define([
 
 		sinon.stub(oContainer, "getUseAsValueHelp").returns(true);
 		assert.ok(oValueHelp.isFocusInHelp(), "returns value of container if used as valueHelp");
-
-	});
-
-	QUnit.test("valueHelpEnabled", function(assert) {
-
-		assert.notOk(oValueHelp.valueHelpEnabled(), "no value help if only typeahead");
-
-		sinon.stub(oContainer, "getUseAsValueHelp").returns(true);
-		assert.ok(oValueHelp.valueHelpEnabled(), "valueHelp enabled if Typeahead is enabled for valueHelp");
 
 	});
 
@@ -1032,7 +1022,8 @@ sap.ui.define([
 			contentId: "X",
 			ariaHasPopup: "dialog",
 			role: "combobox",
-			roleDescription: null
+			roleDescription: null,
+			valueHelpEnabled: true
 		});
 
 		let oAttributes = oValueHelp.getAriaAttributes();
@@ -1064,12 +1055,6 @@ sap.ui.define([
 
 		sinon.stub(oContainer, "isFocusInHelp").returns(true);
 		assert.ok(oValueHelp.isFocusInHelp(), "returns value of container");
-
-	});
-
-	QUnit.test("valueHelpEnabled", function(assert) {
-
-		assert.ok(oValueHelp.valueHelpEnabled(), "valueHelp enabled");
 
 	});
 

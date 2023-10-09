@@ -374,7 +374,7 @@ sap.ui.define([
 	 * @property {string} ariaHasPopup the value to be set in <code>aria-haspopup</code> attribute (for example "listbox")
 	 * @property {string} role value of the <code>role</code> attribute (for example "combobox")
 	 * @property {string} roleDescription value of the <code>aria-roledescription</code> attribute
-	 * @property {boolean} valueHelpEnabled value of the <code>valueHelpEnabled</code> attribute
+	 * @property {boolean} valueHelpEnabled If set a <code>valueHelpEnabled</code> text is announced
 	 * @private
 	 * @ui5-restricted sap.ui.mdc
 	 */
@@ -411,13 +411,14 @@ sap.ui.define([
 		const sHasPopup = (oTypeahead && oTypeaheadAttributes.ariaHasPopup) || (oDialog && oDialogAttributes.ariaHasPopup);// use from Typeahead. If no Typeahead use from Dialog
 		const sRole = (oTypeahead && oTypeaheadAttributes.role) || (oDialog && oDialogAttributes.role);// TODO: check Input for only typeahead case
 		const sRoleDescription = (oTypeahead && oTypeaheadAttributes.roleDescription) || (oDialog && oDialogAttributes.roleDescription);
+		const bValueHelpEnabled = !!oDialog && oDialogAttributes.valueHelpEnabled; // a pure typeahead is not a value help
 
 		return {
 			contentId: sContentId,
 			ariaHasPopup: sHasPopup,
 			role: sRole,
 			roleDescription: sRoleDescription,
-			valueHelpEnabled: this.valueHelpEnabled()
+			valueHelpEnabled: bValueHelpEnabled
 		};
 
 	};
@@ -863,26 +864,6 @@ sap.ui.define([
 	};
 
 	ValueHelp.prototype.getDataType = function() { // should only be of interest for content in the future, maybe provide such infos in an abstract way? (interface?)
-
-	};
-
-	/**
-	 * If only typeahead is enabled the field should not show a value help icon or open the value help using F4.
-	 *
-	 * @returns {boolean} <code>true</code> if value help is enabled, <code>false</code> if only typeahead is enabled
-	 * @private
-	 * @ui5-restricted sap.ui.mdc.field.FieldBase
-	 */
-	ValueHelp.prototype.valueHelpEnabled = function() {
-
-		const oTypeahead = this.getTypeahead();
-		const oDialog = this.getDialog();
-
-		if (oDialog) {
-			return true;
-		} else {
-			return !!oTypeahead && oTypeahead.getUseAsValueHelp();
-		}
 
 	};
 

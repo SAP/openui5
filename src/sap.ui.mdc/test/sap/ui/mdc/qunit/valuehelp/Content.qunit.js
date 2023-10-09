@@ -273,7 +273,8 @@ sap.ui.define([
 		const oCheckAttributes = {
 			contentId: null,
 			ariaHasPopup: "listbox",
-			roleDescription: null
+			roleDescription: null,
+			valueHelpEnabled: false
 		};
 		const oAttributes = oContent.getAriaAttributes();
 		assert.ok(oAttributes, "Aria attributes returned");

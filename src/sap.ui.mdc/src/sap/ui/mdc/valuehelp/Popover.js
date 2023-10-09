@@ -378,7 +378,8 @@ sap.ui.define([
 				contentId: oContentAttributes.contentId,
 				ariaHasPopup: oContentAttributes.ariaHasPopup,
 				role: this.isDialog() ? "combobox" : null, // Popover is a ComboBox, but only if used as valuehelp, only typeahead has no role (see sap.m.Input)
-				roleDescription: oContentAttributes.roleDescription // for multiselect-mTable it needs to be set
+				roleDescription: oContentAttributes.roleDescription, // for multiselect-mTable it needs to be set
+				valueHelpEnabled: oContentAttributes.valueHelpEnabled
 			};
 		}
 

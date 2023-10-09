@@ -607,7 +607,8 @@ sap.ui.define([
 		return { // return default values, but needs to be implemented by specific content
 			contentId: null,
 			ariaHasPopup: "listbox",
-			roleDescription: null
+			roleDescription: null,
+			valueHelpEnabled: false
 		};
 
 	};
