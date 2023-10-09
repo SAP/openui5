@@ -15,11 +15,12 @@ sap.ui.define([
 	/**
 	 * Constructor for a new UploadSetwithTableItem.
 	 *
-	 * @param {string} [sId] ID for the new control, will be generated automatically if no ID is provided.
+	 * @param {string} [sId] Id for the new control, it is generated automatically if no ID is provided.
 	 * @param {object} [mSettings] Initial settings for the new control.
 	 * @class
 	 * <code>sap.m.UploadSetwithTableItem</code> represents one item to be uploaded using the {@link sap.m.upload.UploadSetwithTable UploadSetwithTable} control. This control can be used with the cells aggregation to create rows for the {@link sap.m.upload.UploadSetwithTable UploadSetwithTable} control. The columns aggregation of the sap.m.upload.UploadSetwithTable should match with the cells aggregation.
-	 * Note: This control should only be used within the {@link sap.m.upload.UploadSetwithTable UploadSetwithTable} control. The inherited counter property of sap.m.ListItemBase is not supported.
+	 *
+	 * <b>Note:</b> This control should only be used within the {@link sap.m.upload.UploadSetwithTable UploadSetwithTable} control. The inherited counter property of sap.m.ListItemBase is not supported.
 	 * @extends sap.m.ColumnListItem
 	 * @author SAP SE
 	 * @constructor
