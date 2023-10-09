@@ -7,6 +7,7 @@ sap.ui.define([
 	"sap/m/MessageBox",
 	"sap/m/Page",
 	"sap/ui/core/Core",
+	"sap/ui/core/EventBus",
 	"sap/ui/core/Lib",
 	"sap/ui/dt/plugin/ToolHooks",
 	"sap/ui/dt/DesignTime",
@@ -41,6 +42,7 @@ sap.ui.define([
 	MessageBox,
 	Page,
 	oCore,
+	EventBus,
 	Lib,
 	ToolHooksPlugin,
 	DesignTime,
@@ -368,7 +370,7 @@ sap.ui.define([
 			var done = assert.async();
 			var done2 = assert.async();
 
-			oCore.getEventBus().subscribeOnce("sap.ui.rta", "plugin.ControlVariant.startEdit", function() {
+			EventBus.getInstance().subscribeOnce("sap.ui.rta", "plugin.ControlVariant.startEdit", function() {
 				assert.strictEqual(this.oVariantManagementOverlay.getSelected(), true, "then the overlay is still selected");
 				this.oControlVariantPlugin._oEditableControlDomRef.textContent = "Test";
 				this.oControlVariantPlugin._oEditableField.textContent = this.oControlVariantPlugin._oEditableControlDomRef.textContent;

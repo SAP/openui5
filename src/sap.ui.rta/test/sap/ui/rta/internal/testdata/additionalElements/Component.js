@@ -7,7 +7,7 @@ sap.ui.define([
 	"sap/m/MessageBox",
 	"sap/ui/core/mvc/XMLView",
 	"sap/base/util/ObjectPath",
-	"sap/ui/core/Core"
+	"sap/ui/core/EventBus"
 ], function(
 	UIComponent,
 	ABAPAccess,
@@ -17,7 +17,7 @@ sap.ui.define([
 	MessageBox,
 	XMLView,
 	ObjectPath,
-	oCore
+	EventBus
 ) {
 	"use strict";
 
@@ -98,7 +98,7 @@ sap.ui.define([
 				});
 			}
 
-			oCore.getEventBus().subscribe("sap.ui.core.UnrecoverableClientStateCorruption", "RequestReload", function() {
+			EventBus.getInstance().subscribe("sap.ui.core.UnrecoverableClientStateCorruption", "RequestReload", function() {
 				MessageBox.warning("Service Outdated, Please restart the UI - In real world other dialog will come up, that can restart the UI");
 			});
 		}

@@ -20,16 +20,18 @@
 				window.fnResolve = fnResolve;
 			});
 
-			sap.ui.getCore().attachInit(function() {
-				sap.ui.require([
-					"dt/performance/PerformanceTestUtil",
-					"sap/m/Panel",
-					"sap/m/Button"
-				], function(
-					PerformanceTestUtil,
-					Panel,
-					Button
-				){
+			sap.ui.require([
+				"dt/performance/PerformanceTestUtil",
+				"sap/m/Panel",
+				"sap/m/Button",
+				"sap/ui/core/Core"
+			], function(
+				PerformanceTestUtil,
+				Panel,
+				Button,
+				Core
+			) {
+				Core.ready().then(() => {
 					var oPanel = new Panel("Panel", {
 						width: "2000px",
 						height: "2000px"
@@ -37,7 +39,7 @@
 					oPanel.placeAt("content");
 					var oLastElement = new Button("button", {text: "sampleButton"});
 					PerformanceTestUtil.createNestedPanels(oPanel, "content", 50, oLastElement);
-					sap.ui.getCore().applyChanges();
+					Core.applyChanges();
 					fnResolve(PerformanceTestUtil.startDesignTime(oPanel, "button"));
 				});
 			});

@@ -20,18 +20,20 @@
 				window.fnResolve = fnResolve;
 			});
 
-			sap.ui.getCore().attachInit(function() {
-				sap.ui.require([
-					"dt/performance/PerformanceTestUtil",
-					"sap/ui/dt/Util",
-					"sap/m/Panel",
-					"sap/ui/layout/VerticalLayout"
-				], function(
-					PerformanceTestUtil,
-					Util,
-					Panel,
-					VerticalLayout
-				){
+			sap.ui.require([
+				"dt/performance/PerformanceTestUtil",
+				"sap/m/Panel",
+				"sap/ui/core/Core",
+				"sap/ui/dt/Util",
+				"sap/ui/layout/VerticalLayout"
+			], function(
+				PerformanceTestUtil,
+				Panel,
+				Core,
+				Util,
+				VerticalLayout
+			) {
+				Core.ready().then(() => {
 					var oSourcePanel = new Panel("SourcePanel");
 					var oTargetPanel = new Panel("TargetPanel");
 					var oLayout = new VerticalLayout("Layout", {

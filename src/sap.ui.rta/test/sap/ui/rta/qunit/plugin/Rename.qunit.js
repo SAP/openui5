@@ -5,6 +5,7 @@ sap.ui.define([
 	"sap/m/Label",
 	"sap/m/ScrollContainer",
 	"sap/ui/core/Core",
+	"sap/ui/core/EventBus",
 	"sap/ui/core/Lib",
 	"sap/ui/core/Title",
 	"sap/ui/dt/DesignTime",
@@ -29,6 +30,7 @@ sap.ui.define([
 	Label,
 	ScrollContainer,
 	oCore,
+	EventBus,
 	Lib,
 	Title,
 	DesignTime,
@@ -57,7 +59,7 @@ sap.ui.define([
 
 	function triggerAndWaitForStartEdit(oPlugin, oOverlay) {
 		return new Promise(function(resolve) {
-			oCore.getEventBus().subscribeOnce("sap.ui.rta", "plugin.Rename.startEdit", function() {
+			EventBus.getInstance().subscribeOnce("sap.ui.rta", "plugin.Rename.startEdit", function() {
 				resolve();
 			});
 			oPlugin.startEdit(oOverlay);
@@ -66,7 +68,7 @@ sap.ui.define([
 
 	function triggerAndWaitForStopEdit(oPlugin) {
 		return new Promise(function(resolve) {
-			oCore.getEventBus().subscribeOnce("sap.ui.rta", "plugin.Rename.stopEdit", function() {
+			EventBus.getInstance().subscribeOnce("sap.ui.rta", "plugin.Rename.stopEdit", function() {
 				resolve();
 			});
 			triggerEventOnEditableField(oPlugin, KeyCodes.ENTER);
