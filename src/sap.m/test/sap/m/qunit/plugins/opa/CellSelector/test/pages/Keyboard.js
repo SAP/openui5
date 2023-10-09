@@ -91,6 +91,14 @@ sap.ui.define([
 							Opa5.getUtils().triggerKeyup(oFocus, KeyCodes.SPACE, false, false, true);
 						}
 					});
+				},
+				iSelectInnerControl: function() {
+					Util.waitForTable.call(this, {
+						success: function(oTable) {
+							var oFocus = Util.getFocusedElement(oTable);
+							Opa5.getUtils().triggerKeydown(oFocus, KeyCodes.F2, false, false, false);
+						}
+					});
 				}
 			}
 		}
