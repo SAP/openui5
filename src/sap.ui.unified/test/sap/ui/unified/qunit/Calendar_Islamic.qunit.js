@@ -9,7 +9,10 @@ sap.ui.define([
 	"sap/ui/core/LocaleData",
 	"sap/ui/unified/DateRange",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+    // load all required calendars in advance
+	"sap/ui/core/date/Gregorian",
+	"sap/ui/core/date/Islamic"
 ], function(Calendar, CalendarType, UniversalDate, DateFormat, Locale, LocaleData, DateRange, jQuery, oCore) {
 	"use strict";
 
