@@ -70,7 +70,8 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	"sap/ui/core/Core",
 	"sap/ui/core/date/UI5Date",
-	'./FieldBaseDelegateODataDefaultTypes'
+	"sap/ui/core/date/Japanese",
+	"./FieldBaseDelegateODataDefaultTypes"
 ], function(
 	jQuery,
 	qutils,
@@ -139,6 +140,7 @@ sap.ui.define([
 	KeyCodes,
 	oCore,
 	UI5Date,
+	Japanese,
 	FieldBaseDelegateODataDefaultTypes
 ) {
 	"use strict";
