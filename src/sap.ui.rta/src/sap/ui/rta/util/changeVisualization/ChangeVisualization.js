@@ -4,6 +4,7 @@
 
 sap.ui.define([
 	"sap/ui/core/Core",
+	"sap/ui/core/Element",
 	"sap/ui/core/Fragment",
 	"sap/ui/core/Lib",
 	"sap/base/util/isEmptyObject",
@@ -24,6 +25,7 @@ sap.ui.define([
 	"sap/ui/rta/util/changeVisualization/ChangeStates"
 ], function(
 	Core,
+	Element,
 	Fragment,
 	Lib,
 	isEmptyObject,
@@ -328,7 +330,7 @@ sap.ui.define([
 
 	ChangeVisualization.prototype.openChangeCategorySelectionPopover = function(oEvent) {
 		// Event bubbled through the toolbar, get original source
-		this._oToolbarButton ||= Core.byId(oEvent.getParameter("id"));
+		this._oToolbarButton ||= Element.getElementById(oEvent.getParameter("id"));
 		var oPopover = this.getPopover();
 
 		if (!oPopover) {
@@ -605,7 +607,7 @@ sap.ui.define([
 				oIndicator.attachBrowserEvent("focusout", onIndicatorInteraction.bind(this, false));
 				oIndicator.attachDetailPopoverOpened(onDetailPopoverOpened.bind(this));
 
-				var oOverlay = Core.byId(oIndicator.getOverlayId());
+				var oOverlay = Element.getElementById(oIndicator.getOverlayId());
 				// De-selection of connected overlays must happen when the hover/focus leaves the overlay
 				oOverlay.attachBrowserEvent("mouseout", onIndicatorInteraction.bind(this, false));
 				oOverlay.attachBrowserEvent("focusout", onIndicatorInteraction.bind(this, false));

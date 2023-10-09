@@ -160,7 +160,7 @@ sap.ui.define([
 				new FormContainer("group2")
 			]
 		});
-		this.oFormContainer1 = Core.byId("group1");
+		this.oFormContainer1 = Element.getElementById("group1");
 	};
 
 	var fnDestroyForm = function() {
@@ -330,7 +330,7 @@ sap.ui.define([
 	}, function() {
 		QUnit.test("when fixComponentContainerElement() is called with a ComponentContainer with a Component", function(assert) {
 			this.oCompContainer.setComponent(this.oComponent);
-			var oRootControl = Core.byId("Root");
+			var oRootControl = Element.getElementById("Root");
 			assert.equal(
 				ElementUtil.fixComponentContainerElement(this.oCompContainer),
 				oRootControl,

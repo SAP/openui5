@@ -5,7 +5,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/controlVariants/URLHandler",
 	"fl/performance/utils/FlexPerformanceTestUtil",
 	"sap/ui/core/mvc/XMLView",
-	"sap/ui/core/Core"
+	"sap/ui/core/Element"
 ], function(
 	App,
 	UIComponent,
@@ -13,7 +13,7 @@ sap.ui.define([
 	URLHandler,
 	FlexPerformanceTestUtil,
 	XMLView,
-	oCore
+	Element
 ) {
 	"use strict";
 
@@ -61,7 +61,7 @@ sap.ui.define([
 							break;
 						default:
 					}
-					var oControlToBeChanged = oCore.byId(sControlToBeChanged);
+					var oControlToBeChanged = Element.getElementById(sControlToBeChanged);
 					return FlexPerformanceTestUtil.waitForChangesAndWriteData(oControlToBeChanged);
 				});
 			}

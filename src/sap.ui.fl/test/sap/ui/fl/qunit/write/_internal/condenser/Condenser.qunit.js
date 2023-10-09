@@ -5,6 +5,7 @@ sap.ui.define([
 	"rta/qunit/RtaQunitUtils",
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
+	"sap/ui/core/Element",
 	"delegates/TableDelegate",
 	"sap/ui/fl/apply/_internal/changes/Applier",
 	"sap/ui/fl/apply/_internal/changes/Reverter",
@@ -20,6 +21,7 @@ sap.ui.define([
 	RtaQunitUtils,
 	XMLView,
 	JsControlTreeModifier,
+	Element,
 	TableDelegate,
 	Applier,
 	Reverter,
@@ -978,7 +980,7 @@ sap.ui.define([
 		afterEach(assert) {
 			return revertMultipleChanges(this.aChanges).then(function() {
 				assert.ok(true, "after the test, the Initial UI is shown again");
-				var oTable = sap.ui.getCore().byId("view--mdcTable");
+				var oTable = Element.getElementById("view--mdcTable");
 				var aColumns = oTable.getColumns();
 				assert.strictEqual(aColumns.length, 3, `Expected number of MDC columns: ${3}`);
 				assert.strictEqual(aColumns[0].getId(), "view--mdcTable--column0", `${sValueMsg}column0`);
@@ -1011,7 +1013,7 @@ sap.ui.define([
 			return loadApplyCondenseChanges.call(this, "mdcMoveRemoveChanges.json", 6, 1, assert)
 			.then(revertAndApplyNew.bind(this))
 			.then(function() {
-				var oTable = sap.ui.getCore().byId("view--mdcTable");
+				var oTable = Element.getElementById("view--mdcTable");
 				var aColumns = oTable.getColumns();
 				assert.strictEqual(aColumns.length, 2, `Expected number of MDC columns: ${2}`);
 				assert.strictEqual(aColumns[0].getId(), "view--mdcTable--column0", `${sValueMsg}column0`);
@@ -1029,7 +1031,7 @@ sap.ui.define([
 			return loadApplyCondenseChanges.call(this, "mdcRemoveAddChanges.json", 4, 4, assert)
 			.then(revertAndApplyNew.bind(this))
 			.then(function() {
-				var oTable = sap.ui.getCore().byId("view--mdcTable");
+				var oTable = Element.getElementById("view--mdcTable");
 				var aColumns = oTable.getColumns();
 				assert.strictEqual(aColumns.length, 3, `Expected number of MDC columns: ${3}`);
 				assert.strictEqual(aColumns[0].getId(), "view--mdcTable--column3", `${sValueMsg}column3`);
@@ -1048,7 +1050,7 @@ sap.ui.define([
 					assert.strictEqual(aRemainingChanges[0].getChangeType(), "addGroup", "the remaining changes are of type addSort and addGroup");
 					assert.strictEqual(aRemainingChanges[1].getChangeType(), "addSort", "the remaining changes are of type addSort and addGroup");
 					assert.strictEqual(aRemainingChanges[2].getChangeType(), "addSort", "the remaining changes are of type addSort and addGroup");
-					var aSorters = sap.ui.getCore().byId("view--mdcTable").getSortConditions().sorters;
+					var aSorters = Element.getElementById("view--mdcTable").getSortConditions().sorters;
 					assert.deepEqual(aSorters[0], {
 						name: "sorter2",
 						descending: false

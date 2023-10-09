@@ -16,6 +16,7 @@ sap.ui.define([
 	"sap/m/TextArea",
 	"sap/m/TileContent",
 	"sap/m/VBox",
+	"sap/ui/core/Element",
 	"sap/ui/core/library",
 	"sap/ui/core/Lib",
 	"sap/ui/core/IconPool",
@@ -41,6 +42,7 @@ sap.ui.define([
 	TextArea,
 	TileContent,
 	VBox,
+	Element,
 	coreLibrary,
 	Lib,
 	IconPool,
@@ -172,7 +174,7 @@ sap.ui.define([
 			valueLiveUpdate: true,
 			placeholder: oResources.getText("SAVE_AS_DIALOG_PLACEHOLDER_TITLE_TEXT"),
 			liveChange() {
-				var oSaveButton = sap.ui.getCore().byId("saveButton");
+				var oSaveButton = Element.getElementById("saveButton");
 				if (this.getValue() === "") {
 					this.setValueState(ValueState.Error); // if the field is empty after change, it will go red
 					oSaveButton.setEnabled(false);

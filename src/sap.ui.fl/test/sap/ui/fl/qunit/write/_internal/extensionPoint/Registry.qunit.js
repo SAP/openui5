@@ -8,7 +8,8 @@ sap.ui.define([
 	"sap/ui/core/mvc/XMLView",
 	"sap/m/Label",
 	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/ui/core/Element"
 ], function(
 	Component,
 	JsControlTreeModifier,
@@ -18,7 +19,8 @@ sap.ui.define([
 	XMLView,
 	Label,
 	sinon,
-	oCore
+	oCore,
+	Element
 ) {
 	"use strict";
 
@@ -437,8 +439,8 @@ sap.ui.define([
 			});
 
 			return this.oComponent.runAsOwner(async () => {
-				if (sap.ui.getCore().byId("myView")) {
-					sap.ui.getCore().byId("myView").destroy();
+				if (Element.getElementById("myView")) {
+					Element.getElementById("myView").destroy();
 				}
 				this.oXMLView = await XMLView.create({
 					id: "myView",
@@ -486,7 +488,7 @@ sap.ui.define([
 			assert.deepEqual(mExtensionPointInfo1.targetControl, this.oHBox, "then parameter 'targetControl' is correct");
 			assert.equal(mExtensionPointInfo1.aggregationName, "items", "then parameter 'aggregationName' is correct");
 			assert.equal(mExtensionPointInfo1.index, 1, "then parameter 'index' is correct");
-			assert.deepEqual(mExtensionPointInfo1.defaultContent, [oCore.byId("myView--defaultFragment--defaultButton")],
+			assert.deepEqual(mExtensionPointInfo1.defaultContent, [Element.getElementById("myView--defaultFragment--defaultButton")],
 				"then parameter 'defaultAggregation' is correct");
 		});
 	});

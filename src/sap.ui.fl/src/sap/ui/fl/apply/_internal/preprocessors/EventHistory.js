@@ -51,7 +51,7 @@ sap.ui.define(["sap/ui/core/EventBus"], function(EventBus) {
 		var oEvent = {
 			channelId: sChannelId,
 			eventId: sEventId,
-			parameters: mParameters.getId() // we only need the id. In unified.shell sap.ui.getCore().byId(vControl); will be used.
+			parameters: mParameters.getId() // we only need the id. In unified.shell Element.getElementById(vControl); will be used.
 		};
 
 		if (EventHistory._oHistory[sEventId]) {

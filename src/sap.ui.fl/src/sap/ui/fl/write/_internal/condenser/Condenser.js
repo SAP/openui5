@@ -8,7 +8,7 @@ sap.ui.define([
 	"sap/base/util/ObjectPath",
 	"sap/base/Log",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
-	"sap/ui/core/Core",
+	"sap/ui/core/Element",
 	"sap/ui/fl/changeHandler/condenser/Classification",
 	"sap/ui/fl/apply/_internal/changes/Utils",
 	"sap/ui/fl/apply/_internal/flexObjects/UIChange",
@@ -27,7 +27,7 @@ sap.ui.define([
 	ObjectPath,
 	Log,
 	JsControlTreeModifier,
-	Core,
+	Element,
 	CondenserClassification,
 	ChangesUtils,
 	UIChange,
@@ -211,7 +211,7 @@ sap.ui.define([
 	 */
 	function getCondenserInfoFromChangeHandler(oAppComponent, oChange) {
 		var sControlId = JsControlTreeModifier.getControlIdBySelector(oChange.getSelector(), oAppComponent);
-		var oControl = Core.byId(sControlId);
+		var oControl = Element.getElementById(sControlId);
 		if (oControl) {
 			var mPropertyBag = {
 				modifier: JsControlTreeModifier,

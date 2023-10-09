@@ -7,6 +7,7 @@
 sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/base/ManagedObject",
+	"sap/ui/core/Element",
 	"sap/ui/core/Fragment",
 	"sap/ui/core/Lib",
 	"sap/ui/rta/Utils",
@@ -19,6 +20,7 @@ sap.ui.define([
 ], function(
 	Log,
 	ManagedObject,
+	Element,
 	Fragment,
 	Lib,
 	Utils,
@@ -132,7 +134,7 @@ sap.ui.define([
 					this._oUploadDialog.close();
 				}.bind(this),
 				formatUploadEnabled() {
-					var oFileUploader = sap.ui.getCore().byId(`${sUploadId}--fileUploader`);
+					var oFileUploader = Element.getElementById(`${sUploadId}--fileUploader`);
 					return oFileUploader.checkFileReadable();
 				},
 				saveFiles: function(oEvent) {
@@ -149,7 +151,7 @@ sap.ui.define([
 	};
 
 	function handleUploadPress(sUploadId) {
-		var oFileUploader = sap.ui.getCore().byId(`${sUploadId}--fileUploader`);
+		var oFileUploader = Element.getElementById(`${sUploadId}--fileUploader`);
 		oFileUploader.checkFileReadable().then(function() {
 			if (this._oTranslationModel.getProperty("/file")) {
 				var mPropertyBag = {

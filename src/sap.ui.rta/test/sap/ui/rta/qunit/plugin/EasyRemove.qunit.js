@@ -3,6 +3,7 @@
 sap.ui.define([
 	"sap/m/Button",
 	"sap/ui/core/Core",
+	"sap/ui/core/Element",
 	"sap/ui/dt/DesignTime",
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/fl/write/api/ChangesWriteAPI",
@@ -18,6 +19,7 @@ sap.ui.define([
 ], function(
 	Button,
 	oCore,
+	Element,
 	DesignTime,
 	OverlayRegistry,
 	ChangesWriteAPI,
@@ -96,13 +98,13 @@ sap.ui.define([
 				done();
 			});
 
-			var oDeleteButton = oCore.byId(`${this.oSectionOverlay.getId()}-DeleteIcon`);
+			var oDeleteButton = Element.getElementById(`${this.oSectionOverlay.getId()}-DeleteIcon`);
 			QUnitUtils.triggerEvent("tap", oDeleteButton.getDomRef());
 		});
 
 		QUnit.test("when an ObjectPageSection is rendered and one section gets removed", function(assert) {
-			var oDeleteButton = oCore.byId(`${this.oSectionOverlay.getId()}-DeleteIcon`);
-			var oDeleteButton2 = oCore.byId(`${this.oSectionOverlay2.getId()}-DeleteIcon`);
+			var oDeleteButton = Element.getElementById(`${this.oSectionOverlay.getId()}-DeleteIcon`);
+			var oDeleteButton2 = Element.getElementById(`${this.oSectionOverlay2.getId()}-DeleteIcon`);
 
 			assert.ok(oDeleteButton, "then the 1st Delete-Icon is displayed");
 			assert.ok(oDeleteButton.getEnabled(), "and enabled");
@@ -163,7 +165,7 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("when an ObjectPageSection is rendered and the EasyRemovePlugin is used", function(assert) {
-			var oDeleteButton = oCore.byId(`${this.oSectionOverlay.getId()}-DeleteIcon`);
+			var oDeleteButton = Element.getElementById(`${this.oSectionOverlay.getId()}-DeleteIcon`);
 			assert.notOk(oDeleteButton, "then the Delete-Icon is not displayed");
 		});
 	});

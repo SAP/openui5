@@ -6,6 +6,7 @@ sap.ui.define([
 	"sap/base/util/values",
 	"sap/base/Log",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
+	"sap/ui/core/Element",
 	"sap/ui/fl/apply/api/ControlVariantApplyAPI",
 	"sap/ui/fl/write/api/ChangesWriteAPI",
 	"sap/ui/fl/Utils",
@@ -16,6 +17,7 @@ sap.ui.define([
 	objectValues,
 	Log,
 	JsControlTreeModifier,
+	Element,
 	ControlVariantApplyAPI,
 	ChangesWriteAPI,
 	FlUtils,
@@ -104,7 +106,7 @@ sap.ui.define([
 			oSelector = {
 				id: mFlexSettings.templateSelector,
 				appComponent: this.getAppComponent(),
-				controlType: FlUtils.getControlType(sap.ui.getCore().byId(mFlexSettings.templateSelector))
+				controlType: FlUtils.getControlType(Element.getElementById(mFlexSettings.templateSelector))
 			};
 			this.setSelector(oSelector);
 		} else if (!this.getSelector() && this.getElement()) {
@@ -263,7 +265,7 @@ sap.ui.define([
 			return {
 				id: mFlexSettings.originalSelector,
 				appComponent: this.getAppComponent(),
-				controlType: FlUtils.getControlType(sap.ui.getCore().byId(mFlexSettings.originalSelector))
+				controlType: FlUtils.getControlType(Element.getElementById(mFlexSettings.originalSelector))
 			};
 		}
 		return this.getElement() || this.getSelector();

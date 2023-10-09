@@ -8,6 +8,7 @@ sap.ui.define([
 	"sap/ui/rta/plugin/iframe/AddIFrameDialogController",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/core/Core",
+	"sap/ui/core/Element",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/model/json/JSONModel"
 ], function(
@@ -18,6 +19,7 @@ sap.ui.define([
 	AddIFrameDialogController,
 	QUnitUtils,
 	oCore,
+	Element,
 	KeyCodes,
 	JSONModel
 ) {
@@ -171,7 +173,7 @@ sap.ui.define([
 	}
 
 	function clickOnButton(sId) {
-		var oButton = oCore.byId(sId);
+		var oButton = Element.getElementById(sId);
 		QUnitUtils.triggerEvent("tap", oButton.getDomRef());
 	}
 
@@ -184,7 +186,7 @@ sap.ui.define([
 	}
 
 	function updateSaveButtonEnablement(bEnabled) {
-		oCore.byId("sapUiRtaAddIFrameDialogSaveButton").setEnabled(bEnabled);
+		Element.getElementById("sapUiRtaAddIFrameDialogSaveButton").setEnabled(bEnabled);
 		oCore.applyChanges();
 	}
 
@@ -306,7 +308,7 @@ sap.ui.define([
 				const sUrl = "https://example.com/{Product_Category}";
 				this.oAddIFrameDialog._oJSONModel.setProperty("/frameUrl/value", sUrl);
 				this.oAddIFrameDialog._oController.onShowPreview();
-				const oIFrame = oCore.byId("sapUiRtaAddIFrameDialog_PreviewFrame");
+				const oIFrame = Element.getElementById("sapUiRtaAddIFrameDialog_PreviewFrame");
 				assert.strictEqual(
 					oIFrame.getUrl(),
 					"https://example.com/Ice%20Cream",
@@ -345,9 +347,9 @@ sap.ui.define([
 			this.oAddIFrameDialog.attachOpened(function() {
 				var oData = this.oAddIFrameDialog._oJSONModel.getData();
 				var bEnabled = !!oData.frameUrl.value;
-				assert.strictEqual(oCore.byId("sapUiRtaAddIFrameDialogSaveButton").getEnabled(), false, "Initial state is disabled");
+				assert.strictEqual(Element.getElementById("sapUiRtaAddIFrameDialogSaveButton").getEnabled(), false, "Initial state is disabled");
 				assert.strictEqual(
-					oCore.byId("sapUiRtaAddIFrameDialogSaveButton").getEnabled(),
+					Element.getElementById("sapUiRtaAddIFrameDialogSaveButton").getEnabled(),
 					bEnabled,
 					"Initial state of URL-Textarea is empty"
 				);
@@ -355,7 +357,7 @@ sap.ui.define([
 				bEnabled = !!oData.frameUrl.value;
 				updateSaveButtonEnablement(!!oData.frameUrl.value);
 				assert.strictEqual(
-					oCore.byId("sapUiRtaAddIFrameDialogSaveButton").getEnabled(),
+					Element.getElementById("sapUiRtaAddIFrameDialogSaveButton").getEnabled(),
 					bEnabled,
 					"Button is enabled wheen URL-Textarea is not empty"
 				);
@@ -366,9 +368,9 @@ sap.ui.define([
 
 		QUnit.test("when the useLegacyNavigation switch is toggled", function(assert) {
 			this.oAddIFrameDialog.attachOpened(() => {
-				const oPreviewButton = oCore.byId("sapUiRtaAddIFrameDialog_PreviewButton");
+				const oPreviewButton = Element.getElementById("sapUiRtaAddIFrameDialog_PreviewButton");
 				assert.notOk(oPreviewButton.getEnabled(), "then the preview button is disabled by default");
-				const oSwitch = oCore.byId("sapUiRtaAddIFrameDialog_UseLegacyNavigationToggle");
+				const oSwitch = Element.getElementById("sapUiRtaAddIFrameDialog_UseLegacyNavigationToggle");
 				oSwitch.focus();
 				QUnitUtils.triggerKeyup(oSwitch.getDomRef(), KeyCodes.SPACE);
 				this.oAddIFrameDialog._oController._oJSONModel.refresh();
@@ -383,8 +385,8 @@ sap.ui.define([
 
 		QUnit.test("when an url is entered", function(assert) {
 			this.oAddIFrameDialog.attachOpened(() => {
-				const oUrlTextArea = oCore.byId("sapUiRtaAddIFrameDialog_EditUrlTA");
-				const oPreviewButton = oCore.byId("sapUiRtaAddIFrameDialog_PreviewButton");
+				const oUrlTextArea = Element.getElementById("sapUiRtaAddIFrameDialog_EditUrlTA");
+				const oPreviewButton = Element.getElementById("sapUiRtaAddIFrameDialog_PreviewButton");
 				assert.notOk(oPreviewButton.getEnabled(), "then the preview button is disabled before anything is entered");
 				oUrlTextArea.setValue("someUrl");
 				QUnitUtils.triggerEvent("input", oUrlTextArea.getFocusDomRef());
@@ -400,7 +402,7 @@ sap.ui.define([
 
 		QUnit.test("when a forbidden url is entered", function(assert) {
 			this.oAddIFrameDialog.attachOpened(function() {
-				var oUrlTextArea = oCore.byId("sapUiRtaAddIFrameDialog_EditUrlTA");
+				var oUrlTextArea = Element.getElementById("sapUiRtaAddIFrameDialog_EditUrlTA");
 				// eslint-disable-next-line no-script-url
 				oUrlTextArea.setValue("javascript:someJs");
 				QUnitUtils.triggerEvent("input", oUrlTextArea.getFocusDomRef());
@@ -421,7 +423,7 @@ sap.ui.define([
 
 		QUnit.test("when a url with bindings is entered", function(assert) {
 			this.oAddIFrameDialog.attachOpened(function() {
-				var oUrlTextArea = oCore.byId("sapUiRtaAddIFrameDialog_EditUrlTA");
+				var oUrlTextArea = Element.getElementById("sapUiRtaAddIFrameDialog_EditUrlTA");
 				oUrlTextArea.setValue("https://example.com/{productCategory}");
 				QUnitUtils.triggerEvent("input", oUrlTextArea.getFocusDomRef());
 				oCore.applyChanges();
@@ -492,7 +494,7 @@ sap.ui.define([
 
 		QUnit.test("When existing settings contain % values for the section height", function(assert) {
 			this.oAddIFrameDialog.attachOpened(function() {
-				var oHeightValueArea = oCore.byId("sapUiRtaAddIFrameDialog_HeightInput");
+				var oHeightValueArea = Element.getElementById("sapUiRtaAddIFrameDialog_HeightInput");
 				oHeightValueArea.setValue("50");
 				QUnitUtils.triggerEvent("input", oHeightValueArea.getFocusDomRef());
 				oCore.applyChanges();

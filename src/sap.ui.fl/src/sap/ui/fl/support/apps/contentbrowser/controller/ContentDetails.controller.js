@@ -13,7 +13,8 @@ sap.ui.define([
 	"sap/ui/fl/Layer",
 	"sap/m/library",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/core/UIComponent"
+	"sap/ui/core/UIComponent",
+	"sap/ui/core/Element"
 ], function(
 	Controller,
 	Dialog,
@@ -25,7 +26,8 @@ sap.ui.define([
 	Layer,
 	mobileLibrary,
 	JSONModel,
-	UIComponent
+	UIComponent,
+	Element
 ) {
 	"use strict";
 
@@ -148,9 +150,8 @@ sap.ui.define([
 					return true;
 				}
 			}.bind(this));
-			var oCore = sap.ui.getCore();
 			var sIconTabBarId = this.getView().createId("contentDetailsIconTabBar");
-			var oIconTabBar = oCore.byId(sIconTabBarId);
+			var oIconTabBar = Element.getElementById(sIconTabBarId);
 			if (oIconTabBar) {
 				var oFirstIconTabBarItem = oIconTabBar.getItems()[0];
 				if (oIconTabBar.getSelectedKey() !== oFirstIconTabBarItem.getId()) {

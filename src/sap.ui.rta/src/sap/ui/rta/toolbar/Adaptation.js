@@ -6,6 +6,7 @@ sap.ui.define([
 	"./AdaptationRenderer",
 	"sap/base/Log",
 	"sap/ui/core/BusyIndicator",
+	"sap/ui/core/Element",
 	"sap/ui/core/Fragment",
 	"sap/ui/core/Popup",
 	"sap/ui/core/Core",
@@ -25,6 +26,7 @@ sap.ui.define([
 	AdaptationRenderer,
 	Log,
 	BusyIndicator,
+	Element,
 	Fragment,
 	Popup,
 	Core,
@@ -473,10 +475,10 @@ sap.ui.define([
 	}
 
 	Adaptation.prototype.getControl = function(sName) {
-		var oControl = sap.ui.getCore().byId(`${this.getId()}_fragment--sapUiRta_${sName}`);
+		var oControl = Element.getElementById(`${this.getId()}_fragment--sapUiRta_${sName}`);
 		// Control is inside the ActionsMenu
 		if (!oControl && this._oActionsMenuFragment) {
-			oControl = sap.ui.getCore().byId(this._oActionsMenuFragment.getId().replace("sapUiRta_actions", "sapUiRta_") + sName);
+			oControl = Element.getElementById(this._oActionsMenuFragment.getId().replace("sapUiRta_actions", "sapUiRta_") + sName);
 		}
 		return oControl;
 	};

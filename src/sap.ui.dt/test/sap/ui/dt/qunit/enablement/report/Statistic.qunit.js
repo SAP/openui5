@@ -2,16 +2,17 @@
 
 sap.ui.define([
 	"sap/ui/dt/enablement/report/Statistic",
-	"sap/ui/core/Core"
-],
-function(
+	"sap/ui/core/Core",
+	"sap/ui/core/Element"
+], function(
 	Statistic,
-	oCore
+	oCore,
+	Element
 ) {
 	"use strict";
 
 	var getValue = function(oControl, sStatus) {
-		return oCore.byId(`${oControl.getId()}--form-${sStatus}-value`).getText();
+		return Element.getElementById(`${oControl.getId()}--form-${sStatus}-value`).getText();
 	};
 
 	QUnit.module("Given that a statistic report is created", {

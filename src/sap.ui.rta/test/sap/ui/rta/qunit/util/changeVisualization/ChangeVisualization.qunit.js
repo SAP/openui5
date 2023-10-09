@@ -7,6 +7,7 @@ sap.ui.define([
 	"sap/m/HBox",
 	"sap/m/VBox",
 	"sap/ui/core/Core",
+	"sap/ui/core/Element",
 	"sap/ui/core/Lib",
 	"sap/ui/dt/DesignTime",
 	"sap/ui/dt/DesignTimeMetadata",
@@ -30,6 +31,7 @@ sap.ui.define([
 	HBox,
 	VBox,
 	Core,
+	Element,
 	Lib,
 	DesignTime,
 	DesignTimeMetadata,
@@ -195,7 +197,7 @@ sap.ui.define([
 	function collectIndicatorReferences() {
 		// Get all visible change indicator elements on the screen
 		return Array.from(document.getElementsByClassName("sapUiRtaChangeIndicator")).map(function(oDomRef) {
-			return Core.byId(oDomRef.id);
+			return Element.getElementById(oDomRef.id);
 		});
 	}
 
@@ -782,7 +784,7 @@ sap.ui.define([
 				// Simulate a change of the overlay id, e.g. because a change handler recreated the element
 				// during undo/redo
 				this.oRta.setMode("adaptation");
-				var oElement = Core.byId(sElementId);
+				var oElement = Element.getElementById(sElementId);
 				var oParent = oElement.getParent();
 				var {sParentAggregationName} = oElement;
 				oElement.destroy();
@@ -822,7 +824,7 @@ sap.ui.define([
 			var sElementId = "Comp1---idMain1--Dates";
 			var oRelevantContainer = OverlayRegistry.getOverlay(sElementId).getRelevantContainer();
 			var oRelevantContainerOverlay = OverlayRegistry.getOverlay(oRelevantContainer);
-			var oParent = Core.byId(sElementId).getParent();
+			var oParent = Element.getElementById(sElementId).getParent();
 
 			// The selector for the change is the parent element
 			prepareChanges(
@@ -889,7 +891,7 @@ sap.ui.define([
 				[oChangeIndicator] = collectIndicatorReferences().filter(function(oIndicator) {
 					return oIndicator.mProperties.selectorId === "Comp1---idMain1--lb2";
 				});
-				oOverlay = Core.byId(oChangeIndicator.getOverlayId()).getDomRef();
+				oOverlay = Element.getElementById(oChangeIndicator.getOverlayId()).getDomRef();
 				var oCreatePopoverPromise = waitForMethodCall(oChangeIndicator, "setAggregation");
 				QUnitUtils.triggerEvent("click", oOverlay);
 				return oCreatePopoverPromise;
@@ -1016,7 +1018,7 @@ sap.ui.define([
 				{
 					getChangeVisualizationInfo(oChange) {
 						return {
-							dependentControls: [Core.byId("Comp1---idMain1--rb2")], // Test if vis can handle elements
+							dependentControls: [Element.getElementById("Comp1---idMain1--rb2")], // Test if vis can handle elements
 							affectedControls: [oChange.getSelector()] // Test if vis can handle IDs
 						};
 					}
@@ -1113,7 +1115,7 @@ sap.ui.define([
 				});
 			}.bind(this));
 
-			var oPage = Core.byId("Comp1---idMain1--mainPage");
+			var oPage = Element.getElementById("Comp1---idMain1--mainPage");
 			oPage.insertAggregation("content", oHorizontalLayout, 0);
 			Core.applyChanges();
 		});
@@ -1255,7 +1257,7 @@ sap.ui.define([
 			.then(function() {
 				[oChangeIndicator] = collectIndicatorReferences();
 				var oChangeIndicatorElement = oChangeIndicator.getDomRef();
-				var oOverlay = Core.byId(oChangeIndicator.getOverlayId());
+				var oOverlay = Element.getElementById(oChangeIndicator.getOverlayId());
 
 				function checkOnClass() {
 					assert.ok(
@@ -1303,8 +1305,8 @@ sap.ui.define([
 				var oHoveredIndicator = aChangeIndicators[0];
 				var oRelatedIndicator = aChangeIndicators[1];
 				var oHoveredIndicatorElement = oHoveredIndicator.getDomRef();
-				var oHoveredOverlay = Core.byId(oHoveredIndicator.getOverlayId());
-				var oRelatedIndicatorOverlay = Core.byId(oRelatedIndicator.getOverlayId());
+				var oHoveredOverlay = Element.getElementById(oHoveredIndicator.getOverlayId());
+				var oRelatedIndicatorOverlay = Element.getElementById(oRelatedIndicator.getOverlayId());
 
 				function checkOnClasses() {
 					assert.ok(

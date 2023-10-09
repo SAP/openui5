@@ -4,6 +4,7 @@ sap.ui.define([
 	"../../RtaQunitUtils",
 	"sap/ui/core/Core",
 	"sap/ui/core/Control",
+	"sap/ui/core/Element",
 	"sap/ui/core/Fragment",
 	"sap/ui/core/Lib",
 	"sap/ui/core/ValueState",
@@ -19,6 +20,7 @@ sap.ui.define([
 	RtaQunitUtils,
 	Core,
 	Control,
+	Element,
 	Fragment,
 	Lib,
 	ValueState,
@@ -40,7 +42,7 @@ sap.ui.define([
 	}
 
 	function getControl(sId) {
-		return Core.byId(sId);
+		return Element.getElementById(sId);
 	}
 
 	function initializeToolbar() {
@@ -117,7 +119,7 @@ sap.ui.define([
 			QUnit.test("and save as adaptation dialog is visible", function(assert) {
 				assert.strictEqual(this.oFragmentLoadSpy.callCount, 1, "the fragment was loaded");
 				assert.ok(this.oDialog.isOpen(), "the dialog is opened");
-				var oContextsList = Core.byId("contextSharing---ContextVisibility--selectedContextsList");
+				var oContextsList = Element.getElementById("contextSharing---ContextVisibility--selectedContextsList");
 				assert.ok(oContextsList.getHeaderToolbar().getContent()[0].getRequired(), "the label for context roles has an asterisk");
 				var oEmptyRolesText = this.oSaveAsAdaptation._oContextComponentInstance.getRootControl().getController().oI18n.getText("NO_SELECTED_ROLES_WITH_ADVICE");
 				assert.strictEqual(oContextsList.getNoDataText(), oEmptyRolesText, "the correct text for no roles selected will be displayed");
@@ -186,7 +188,7 @@ sap.ui.define([
 			}
 		}, function() {
 			QUnit.test("and the save as adaptations dialog is visible and correctly formatted", function(assert) {
-				var oContextsList = sap.ui.getCore().byId("contextSharing---ContextVisibility--selectedContextsList");
+				var oContextsList = Element.getElementById("contextSharing---ContextVisibility--selectedContextsList");
 				assert.strictEqual(this.oFragmentLoadSpy.callCount, 1, "the fragment was loaded");
 				assert.ok(this.oDialog.isOpen(), "the dialog is opened");
 				assert.ok(oContextsList.getHeaderToolbar().getContent()[0].getRequired(), "the label for context roles has an asterisk");
@@ -196,7 +198,7 @@ sap.ui.define([
 			QUnit.test("and the mandatory data is entered", function(assert) {
 				var oSaveButton = getToolbarRelatedControl(this.oToolbar, "saveAdaptation-saveButton");
 				var oTitleInput = getToolbarRelatedControl(this.oToolbar, "saveAdaptation-title-input");
-				var oContextsList = sap.ui.getCore().byId("contextSharing---ContextVisibility--selectedContextsList");
+				var oContextsList = Element.getElementById("contextSharing---ContextVisibility--selectedContextsList");
 				var oContextVisibility = getControl("contextSharingContainer");
 				var oPrioritySelect = getToolbarRelatedControl(this.oToolbar, "saveAdaptation-rank-select");
 				var contextVisibilityComponent = getControl("contextSharingContainer");
@@ -273,7 +275,7 @@ sap.ui.define([
 				var oContextVisibility = getControl("contextSharingContainer");
 				var oPrioritySelect = getToolbarRelatedControl(this.oToolbar, "saveAdaptation-rank-select");
 				var contextVisibilityComponent = getControl("contextSharingContainer");
-				var oContextsList = sap.ui.getCore().byId("contextSharing---ContextVisibility--selectedContextsList");
+				var oContextsList = Element.getElementById("contextSharing---ContextVisibility--selectedContextsList");
 				var aRemoveRoles = getControl("contextSharing---ContextVisibility--removeAllButton");
 				assert.ok(oContextVisibility.getVisible(), "context visibility container is visible");
 				oTitleInput.setValue("first context-based adaptation");
@@ -300,7 +302,7 @@ sap.ui.define([
 				var oContextVisibility = getControl("contextSharingContainer");
 				var oPrioritySelect = getToolbarRelatedControl(this.oToolbar, "saveAdaptation-rank-select");
 				var contextVisibilityComponent = getControl("contextSharingContainer");
-				var oContextsList = sap.ui.getCore().byId("contextSharing---ContextVisibility--selectedContextsList");
+				var oContextsList = Element.getElementById("contextSharing---ContextVisibility--selectedContextsList");
 				assert.ok(oContextVisibility.getVisible(), "context visibility container is visible");
 				oPrioritySelect.setSelectedItem(oPrioritySelect.getItemAt(2));
 				oPrioritySelect.fireChange({selectedItem: oPrioritySelect.getItemAt(2)});
@@ -399,7 +401,7 @@ sap.ui.define([
 			QUnit.test("and the edit adaptation dialog is visible, correctly formatted and filled with data", function(assert) {
 				assert.strictEqual(this.oFragmentLoadSpy.callCount, 1, "the fragment was loaded");
 				assert.ok(this.oDialog.isOpen(), "the dialog is opened");
-				var oContextsList = sap.ui.getCore().byId("contextSharing---ContextVisibility--selectedContextsList");
+				var oContextsList = Element.getElementById("contextSharing---ContextVisibility--selectedContextsList");
 				assert.ok(oContextsList.getHeaderToolbar().getContent()[0].getRequired(), "the label for context roles has an asterisk");
 				var oEmptyRolesText = this.oSaveAsAdaptation._oContextComponentInstance.getRootControl().getController().oI18n.getText("NO_SELECTED_ROLES_WITH_ADVICE");
 				assert.strictEqual(oContextsList.getNoDataText(), oEmptyRolesText, "the correct text for no roles selected will be displayed");
@@ -436,7 +438,7 @@ sap.ui.define([
 			});
 
 			QUnit.test("and context roles are changed", function(assert) {
-				var oContextsList = sap.ui.getCore().byId("contextSharing---ContextVisibility--selectedContextsList");
+				var oContextsList = Element.getElementById("contextSharing---ContextVisibility--selectedContextsList");
 				var oSaveButton = getToolbarRelatedControl(this.oToolbar, "saveAdaptation-saveButton");
 				var contextVisibilityComponent = getControl("contextSharingContainer");
 				contextVisibilityComponent.getComponentInstance().setSelectedContexts({role: ["Role 1", "Role 2"]});
@@ -503,7 +505,7 @@ sap.ui.define([
 				var oTitleInput = getToolbarRelatedControl(this.oToolbar, "saveAdaptation-title-input");
 				var oContextVisibility = getControl("contextSharingContainer");
 				var contextVisibilityComponent = getControl("contextSharingContainer");
-				var oContextsList = sap.ui.getCore().byId("contextSharing---ContextVisibility--selectedContextsList");
+				var oContextsList = Element.getElementById("contextSharing---ContextVisibility--selectedContextsList");
 				var aRemoveRoles = getControl("contextSharing---ContextVisibility--removeAllButton");
 				assert.ok(oContextVisibility.getVisible(), "context visibility container is visible");
 

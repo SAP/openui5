@@ -5,6 +5,7 @@ sap.ui.define([
 	"sap/m/Page",
 	"sap/ui/core/ComponentContainer",
 	"sap/ui/core/Core",
+	"sap/ui/core/Element",
 	"sap/ui/dt/ElementOverlay",
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
@@ -21,6 +22,7 @@ sap.ui.define([
 	Page,
 	ComponentContainer,
 	Core,
+	Element,
 	ElementOverlay,
 	OverlayRegistry,
 	JsControlTreeModifier,
@@ -134,7 +136,7 @@ sap.ui.define([
 
 			ChangesWriteAPI.getChangeHandler({
 				changeType: "rename",
-				element: Core.byId("button1"),
+				element: Element.getElementById("button1"),
 				modifier: JsControlTreeModifier,
 				layer: "CUSTOMER"
 			}).then(function(oChangeHandler) {

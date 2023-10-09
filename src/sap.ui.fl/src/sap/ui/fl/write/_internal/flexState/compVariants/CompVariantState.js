@@ -6,6 +6,7 @@ sap.ui.define([
 	"sap/base/util/restricted/_omit",
 	"sap/base/util/restricted/_pick",
 	"sap/ui/core/Core",
+	"sap/ui/core/Element",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/apply/_internal/flexObjects/CompVariant",
@@ -24,6 +25,7 @@ sap.ui.define([
 	_omit,
 	_pick,
 	Core,
+	Element,
 	Layer,
 	Utils,
 	CompVariant,
@@ -270,7 +272,7 @@ sap.ui.define([
 		const aSVMControls = [];
 		if (mCompVariantsMap) {
 			Object.values(mCompVariantsMap).forEach(function(mMap) {
-				const oSVMControl = mMap.controlId && Core.byId(mMap.controlId);
+				const oSVMControl = mMap.controlId && Element.getElementById(mMap.controlId);
 				if (oSVMControl) {
 					aSVMControls.push(oSVMControl);
 				}
