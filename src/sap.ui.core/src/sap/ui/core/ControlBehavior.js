@@ -7,14 +7,15 @@ sap.ui.define([
 	"sap/base/config",
 	"sap/base/Eventing",
 	"sap/ui/core/AnimationMode"
-], function(
+], (
 	BaseConfig,
 	Eventing,
 	AnimationMode
-) {
+) => {
 	"use strict";
 
-	var oWritableConfig = BaseConfig.getWritableInstance();
+	const oWritableConfig = BaseConfig.getWritableInstance();
+	const oEventing = new Eventing();
 
 	/**
 	 * Provides control behavior relevant configuration options
@@ -23,22 +24,28 @@ sap.ui.define([
 	 * @alias module:sap/ui/core/ControlBehavior
 	 * @private
 	 * @ui5-restricted sap.ui.core
-	 * @mixes module:sap/base/Eventing
-	 * @borrows module:sap/base/Eventing.attachEvent as attachEvent
-	 * @borrows module:sap/base/Eventing.attachEventOnce as attachEventOnce
-	 * @borrows module:sap/base/Eventing.detachEvent as detachEvent
-	 * @borrows module:sap/base/Eventing.fireEvent as fireEvent
-	 * @borrows module:sap/base/Eventing.hasListeners as hasListeners
-	 * @borrows module:sap/base/Eventing.getEventingParent as getEventingParent
+	 * @since 1.116.0
 	 */
-	var ControlBehavior = {
+	const ControlBehavior = {
 		/**
 		 * The <code>change</code> event is fired, when the configuration options are changed.
 		 *
 		 * @name module:sap/ui/core/ControlBehavior.change
 		 * @event
+		 * @type {module:sap/ui/core/ControlBehavior$ChangeEvent}
 		 * @private
 		 * @ui5-restricted sap.ui.core
+		 * @since 1.116.0
+		 */
+
+		/**
+		 * The theme scoping change Event.
+		 *
+		 * @typedef {Object<string,string>} module:sap/ui/core/ControlBehavior$ChangeEvent
+		 * @property {string} animationMode Whether the animation mode should be active or not.
+		 * @private
+		 * @ui5-restricted sap.ui.core.theming.ThemeManager
+		 * @since 1.116.0
 		 */
 
 		/**
@@ -49,33 +56,36 @@ sap.ui.define([
 		 * <code>oListener</code> if specified, otherwise it will be bound to this
 		 * <code>sap.ui.core.ControlBehavior</code> itself.
 		 *
-		 * @param {function} fnFunction
+		 * @param {function(module:sap/ui/core/ControlBehavior$ChangeEvent)} fnFunction
 		 *   The function to be called when the event occurs
 		 * @private
 		 * @ui5-restricted sap.ui.core
+		 * @since 1.116.0
 		 */
-		attachChange: function(fnFunction) {
-			ControlBehavior.attachEvent("change", fnFunction);
+		attachChange: (fnFunction) => {
+			oEventing.attachEvent("change", fnFunction);
 		},
 
 		/**
 		 * Detaches event handler <code>fnFunction</code> from the {@link #event:change change} event of
 		 * this <code>sap.ui.core.ControlBehavior</code>.
 		 *
-		 * @param {function} fnFunction Function to be called when the event occurs
+		 * @param {function(module:sap/ui/core/ControlBehavior$ChangeEvent)} fnFunction Function to be called when the event occurs
 		 * @private
 		 * @ui5-restricted sap.ui.core
+		 * @since 1.116.0
 		 */
-		detachChange: function(fnFunction) {
-			ControlBehavior.detachEvent("change", fnFunction);
+		detachChange: (fnFunction) => {
+			oEventing.detachEvent("change", fnFunction);
 		},
 
 		/**
 		 * Returns whether the accessibility mode is enabled or not.
 		 * @return {boolean} whether the accessibility mode is enabled or not
 		 * @public
+		 * @since 1.116.0
 		 */
-		isAccessibilityEnabled: function() {
+		isAccessibilityEnabled: () => {
 			return oWritableConfig.get({
 				name: "sapUiAccessibility",
 				type: BaseConfig.Type.Boolean,
@@ -89,15 +99,16 @@ sap.ui.define([
 		 *
 		 * @return {module:sap/ui/core/AnimationMode} The current animationMode
 		 * @public
+		 * @since 1.116.0
 		 */
-		getAnimationMode: function() {
-			var sAnimationMode = oWritableConfig.get({
+		getAnimationMode: () => {
+			let sAnimationMode = oWritableConfig.get({
 				name: "sapUiAnimationMode",
 				type: AnimationMode,
 				defaultValue: undefined,
 				external: true
 			});
-			var bAnimation = oWritableConfig.get({
+			const bAnimation = oWritableConfig.get({
 				name: "sapUiAnimation",
 				type: BaseConfig.Type.Boolean,
 				defaultValue: true,
@@ -126,11 +137,12 @@ sap.ui.define([
 		 * @param {module:sap/ui/core/AnimationMode} sAnimationMode A valid animation mode
 		 * @throws {Error} If the provided <code>sAnimationMode</code> does not exist, an error is thrown
 		 * @public
+		 * @since 1.116.0
 		 */
-		setAnimationMode: function(sAnimationMode) {
+		setAnimationMode: (sAnimationMode) => {
 			BaseConfig._.checkEnum(AnimationMode, sAnimationMode, "animationMode");
 
-			var sOldAnimationMode = oWritableConfig.get({
+			const sOldAnimationMode = oWritableConfig.get({
 				name: "sapUiAnimationMode",
 				type: AnimationMode,
 				defaultValue: undefined,
@@ -146,10 +158,8 @@ sap.ui.define([
 	};
 
 	function fireChange(mChanges) {
-		ControlBehavior.fireEvent("change", mChanges);
+		oEventing.fireEvent("change", mChanges);
 	}
-
-	Eventing.apply(ControlBehavior);
 
 	return ControlBehavior;
 });
