@@ -646,19 +646,20 @@ sap.ui.define([
 
 		QUnit.module("sap.ui.unified._ColorPickerBox", {
 			beforeEach: function () {
-				this.oCPBox = new sap.ui.unified._ColorPickerBox();
+				this.oCP = new ColorPicker();
+				this.oCP.placeAt("qunit-fixture");
+				applyChanges();
+				this.oCPBox = this.oCP.oCPBox;
 			},
 			afterEach: function () {
+				this.oCP.destroy();
+				this.oCP = null;
 				this.oCPBox.destroy();
 				this.oCPBox = null;
 			}
 		});
 
 		QUnit.test("rendering", function (oAssert) {
-			// Act
-			this.oCPBox.placeAt("qunit-fixture");
-			applyChanges();
-
 			// Assert
 			oAssert.ok(this.oCPBox.getDomRef(), "Control is rendered");
 		});
@@ -668,10 +669,6 @@ sap.ui.define([
 			var iWidth,
 				oOffset,
 				oHandle;
-
-			// Act
-			this.oCPBox.placeAt("qunit-fixture");
-			applyChanges();
 
 			// Assert - getWidth
 			iWidth = this.oCPBox.getWidth();
@@ -723,8 +720,6 @@ sap.ui.define([
 					"The returned event has a parameter 'size' and it's a number");
 				fnDone();
 			});
-			this.oCPBox.placeAt("qunit-fixture");
-			applyChanges();
 
 			// Act - change width so event will be fired
 			this.oCPBox.$().width("500px");
