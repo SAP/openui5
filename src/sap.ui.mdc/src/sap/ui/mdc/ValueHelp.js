@@ -227,7 +227,11 @@ sap.ui.define([
 						/**
 						 * The container which was opened
 						 */
-						container: {type: "sap.ui.mdc.valuehelp.base.Container"}
+						container: {type: "sap.ui.mdc.valuehelp.base.Container"},
+						/**
+						 * ID of the initially selected item
+						 */
+						itemId: { type: "string" }
 					}
 				},
 
@@ -255,7 +259,30 @@ sap.ui.define([
 				/**
 				 * This event is fired if the user wants to switch from typeahead to value help.
 				 */
-				switchToValueHelp: {}
+				switchToValueHelp: {},
+				/**
+				 * This event is fired after a suggested item was found for a typeahead
+				 * @since 1.120.0
+				 */
+				typeaheadSuggested: {
+					parameters: {
+						/**
+						 * Suggested condition.
+						 *
+						 * <b>Note:</b> A condition must have the structure of {@link sap.ui.mdc.condition.ConditionObject ConditionObject}.
+						 */
+						condition: { type: "object" },
+						/**
+						 * Used filter value.
+						 * (As the event might fired asynchronously and the current user input might have changed.)
+						 */
+						filterValue: { type: "string" },
+						/**
+						 * ID of the suggested item. (This is needed to set the corresponding aria-attribute)
+						 */
+						itemId: { type: "string" }
+					}
+				}
 			},
 			defaultProperty: "filterValue"
 		}
@@ -375,6 +402,7 @@ sap.ui.define([
 	 * @property {string} role value of the <code>role</code> attribute (for example "combobox")
 	 * @property {string} roleDescription value of the <code>aria-roledescription</code> attribute
 	 * @property {boolean} valueHelpEnabled If set a <code>valueHelpEnabled</code> text is announced
+	 * @property {string} autocomplete value of the <code>aria-autocomplete</code> attribute
 	 * @private
 	 * @ui5-restricted sap.ui.mdc
 	 */
@@ -412,13 +440,15 @@ sap.ui.define([
 		const sRole = (oTypeahead && oTypeaheadAttributes.role) || (oDialog && oDialogAttributes.role);// TODO: check Input for only typeahead case
 		const sRoleDescription = (oTypeahead && oTypeaheadAttributes.roleDescription) || (oDialog && oDialogAttributes.roleDescription);
 		const bValueHelpEnabled = !!oDialog && oDialogAttributes.valueHelpEnabled; // a pure typeahead is not a value help
+		const sAutocomplete = (oTypeahead && oTypeaheadAttributes.autocomplete) || (oDialog && oDialogAttributes.autocomplete);
 
 		return {
 			contentId: sContentId,
 			ariaHasPopup: sHasPopup,
 			role: sRole,
 			roleDescription: sRoleDescription,
-			valueHelpEnabled: bValueHelpEnabled
+			valueHelpEnabled: bValueHelpEnabled,
+			autocomplete: sAutocomplete
 		};
 
 	};
@@ -880,6 +910,14 @@ sap.ui.define([
 		this.fireNavigated({condition: oCondition, itemId: oEvent.getParameter("itemId"), leaveFocus: oEvent.getParameter("leaveFocus")});
 	}
 
+	function _handleTypeaheadSuggested(oEvent) {
+
+		const oCondition = oEvent.getParameter("condition");
+		const sFilterValue = oEvent.getParameter("filterValue");
+		const sItemId = oEvent.getParameter("itemId");
+		this.fireTypeaheadSuggested({condition: oCondition, filterValue: sFilterValue, itemId: sItemId});
+	}
+
 	function _handleSelect(oEvent) {
 
 
@@ -955,7 +993,7 @@ sap.ui.define([
 	}
 
 	function _handleOpened(oEvent) {
-		this.fireOpened({container: oEvent.getSource()});
+		this.fireOpened({container: oEvent.getSource(), itemId: oEvent.getParameter("itemId")});
 	}
 
 	function _handleClosed(oEvent) {
@@ -984,6 +1022,10 @@ sap.ui.define([
 
 			if (oContainer.attachNavigated) {
 				fnEvent("navigated", _handleNavigated, this);
+			}
+
+			if (oContainer.attachTypeaheadSuggested) {
+				fnEvent("typeaheadSuggested", _handleTypeaheadSuggested, this);
 			}
 
 			if (bAdded) {

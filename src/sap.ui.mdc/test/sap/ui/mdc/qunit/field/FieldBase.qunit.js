@@ -5003,7 +5003,7 @@ sap.ui.define([
 		});
 		oVHIcon.firePress();
 		sinon.stub(oValueHelp, "isOpen").returns(true);
-		oValueHelp.fireOpened();
+		oValueHelp.fireOpened({itemId: "myItem"});
 		oCore.applyChanges();
 		assert.equal($FocusDomRef.attr("role"), "combobox", "Open: Role Combobox set");
 		assert.equal($FocusDomRef.attr("aria-roledescription"), "RoleDescription", "Open: Role Description set - from ValueHelp");
@@ -5074,11 +5074,11 @@ sap.ui.define([
 		});
 		oVHIcon.firePress();
 		sinon.stub(oValueHelp, "isOpen").returns(true);
-		oValueHelp.fireOpened();
+		oValueHelp.fireOpened({itemId: "myItem"});
 		oCore.applyChanges();
 		assert.equal($FocusDomRef.attr("aria-expanded"), "true", "Open: aria-expanded set to true");
 		assert.equal($FocusDomRef.attr("aria-controls"), "Test", "Open: aria-controls set");
-		assert.notOk($FocusDomRef.attr("aria-activedescendant"), "Open: aria-activedescendant not set");
+		assert.equal($FocusDomRef.attr("aria-activedescendant"), "myItem", "Open: aria-activedescendant set");
 
 		oValueHelp.close();
 		oValueHelp.fireClosed();
@@ -5181,6 +5181,106 @@ sap.ui.define([
 
 						oValueHelp.close();
 						setTimeout(function() { // to wait for Promises and close
+							fnDone();
+						}, 400);
+					}, 400);
+				}, 400);
+			}, 400);
+		}, 400);
+
+	});
+
+	QUnit.test("Autocomplete", function(assert) {
+
+		const oValueHelp = oCore.byId(oField.getValueHelp());
+
+		const fnDone = assert.async();
+		oField.focus(); // as ValueHelp is connected with focus
+		let aContent = oField.getAggregation("_content");
+		let oContent = aContent && aContent.length > 0 && aContent[0];
+		oContent._$input.val("I");
+		oContent.fireLiveChange({ value: "I" });
+
+		setTimeout(function() { // to wait for Promises and opening
+			let oCondition = Condition.createItemCondition("I1", "Item1");
+			oValueHelp.fireTypeaheadSuggested({condition: oCondition, filterValue: "I", itemId: "myItem"});
+			assert.equal(oContent._$input.val(), "Item1", "Output text");
+			assert.equal(oContent._$input.cursorPos(), 1, "CursorPosition");
+			assert.equal(oContent.getFocusDomRef().selectionStart, 1, "Selection start");
+			assert.equal(oContent.getFocusDomRef().selectionEnd, 5, "Selection end");
+			const oAriaAttributes = oField.getProperty("_ariaAttributes");
+			assert.equal(oAriaAttributes.aria.activedescendant, "myItem", "Aria-activedescendant");
+
+			oField.setDisplay(FieldDisplay.Value); // destroys and creates new content
+			oCore.applyChanges();
+			aContent = oField.getAggregation("_content");
+			oContent = aContent && aContent.length > 0 && aContent[0];
+			oContent.focus();
+			oContent._$input.val("I");
+			oContent.fireLiveChange({ value: "I" });
+
+			setTimeout(function() { // to wait for Promises and opening
+				oValueHelp.fireTypeaheadSuggested({condition: oCondition, filterValue: "I", itemId: "myItem"});
+				assert.equal(oContent._$input.val(), "I1", "Output text");
+				assert.equal(oContent._$input.cursorPos(), 1, "CursorPosition");
+				assert.equal(oContent.getFocusDomRef().selectionStart, 1, "Selection start");
+				assert.equal(oContent.getFocusDomRef().selectionEnd, 2, "Selection end");
+
+				oField.setDisplay(FieldDisplay.DescriptionValue); // destroys and creates new content
+				oCore.applyChanges();
+				aContent = oField.getAggregation("_content");
+				oContent = aContent && aContent.length > 0 && aContent[0];
+				oContent.focus();
+				oContent._$input.val("I");
+				oContent.fireLiveChange({ value: "I" });
+
+				setTimeout(function() { // to wait for Promises and opening
+					oValueHelp.fireTypeaheadSuggested({condition: oCondition, filterValue: "I", itemId: "myItem"});
+					assert.equal(oContent._$input.val(), "Item1", "Output text");
+					assert.equal(oContent._$input.cursorPos(), 1, "CursorPosition");
+					assert.equal(oContent.getFocusDomRef().selectionStart, 1, "Selection start");
+					assert.equal(oContent.getFocusDomRef().selectionEnd, 5, "Selection end");
+
+					oCondition = Condition.createItemCondition("I1", "myItem1");
+					oValueHelp.fireTypeaheadSuggested({condition: oCondition, filterValue: "I", itemId: "myItem"});
+					assert.equal(oContent._$input.val(), "I1", "Output text");
+					assert.equal(oContent._$input.cursorPos(), 1, "CursorPosition");
+					assert.equal(oContent.getFocusDomRef().selectionStart, 1, "Selection start");
+					assert.equal(oContent.getFocusDomRef().selectionEnd, 2, "Selection end");
+
+					oField.setDisplay(FieldDisplay.ValueDescription); // destroys and creates new content
+					oCore.applyChanges();
+					aContent = oField.getAggregation("_content");
+					oContent = aContent && aContent.length > 0 && aContent[0];
+					oContent.focus();
+					oContent._$input.val("I");
+					oContent.fireLiveChange({ value: "I" });
+
+					setTimeout(function() { // to wait for Promises and opening
+						oCondition = Condition.createItemCondition("I1", "Item1");
+						oValueHelp.fireTypeaheadSuggested({condition: oCondition, filterValue: "I", itemId: "myItem"});
+						assert.equal(oContent._$input.val(), "I1", "Output text");
+						assert.equal(oContent._$input.cursorPos(), 1, "CursorPosition");
+						assert.equal(oContent.getFocusDomRef().selectionStart, 1, "Selection start");
+						assert.equal(oContent.getFocusDomRef().selectionEnd, 2, "Selection end");
+
+						oContent._$input.val("It");
+						oContent.fireLiveChange({ value: "It" });
+
+						setTimeout(function() { // to wait for Promises and opening
+							oValueHelp.fireTypeaheadSuggested({condition: oCondition, filterValue: "I", itemId: "myItem"}); // outdated FilterValue
+							assert.equal(oContent._$input.val(), "It", "Output text");
+							assert.equal(oContent._$input.cursorPos(), 2, "CursorPosition");
+							assert.equal(oContent.getFocusDomRef().selectionStart, 2, "Selection start");
+							assert.equal(oContent.getFocusDomRef().selectionEnd, 2, "Selection end");
+
+							oValueHelp.fireTypeaheadSuggested({condition: oCondition, filterValue: "It", itemId: "myItem"}); // now description must be used
+							assert.equal(oContent._$input.val(), "Item1", "Output text");
+							assert.equal(oContent._$input.cursorPos(), 2, "CursorPosition");
+							assert.equal(oContent.getFocusDomRef().selectionStart, 2, "Selection start");
+							assert.equal(oContent.getFocusDomRef().selectionEnd, 5, "Selection end");
+
+							oValueHelp.close(); // to be sure
 							fnDone();
 						}, 400);
 					}, 400);

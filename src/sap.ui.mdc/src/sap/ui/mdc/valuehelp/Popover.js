@@ -291,15 +291,19 @@ sap.ui.define([
 
 	};
 
-	Popover.prototype.handleOpened = function () {
-		Container.prototype.handleOpened.apply(this, arguments);
+	Popover.prototype.handleOpened = function (oEvent) {
+
+		this._resolvePromise("open");
 
 		const oContent = this._getContent();
+		let sItemId;
 
 		if (oContent) {
 			oContent.onContainerOpen();
-			oContent.onShow(true);
+			sItemId = oContent.onShow(true);
 		}
+
+		this.fireOpened({itemId: sItemId});
 
 	};
 
@@ -379,7 +383,8 @@ sap.ui.define([
 				ariaHasPopup: oContentAttributes.ariaHasPopup,
 				role: this.isDialog() ? "combobox" : null, // Popover is a ComboBox, but only if used as valuehelp, only typeahead has no role (see sap.m.Input)
 				roleDescription: oContentAttributes.roleDescription, // for multiselect-mTable it needs to be set
-				valueHelpEnabled: oContentAttributes.valueHelpEnabled
+				valueHelpEnabled: oContentAttributes.valueHelpEnabled,
+				autocomplete: oContentAttributes.autocomplete
 			};
 		}
 

@@ -223,6 +223,7 @@ sap.ui.define([
 					result: this.getItemFromContext(oBindingContext),
 					filterValue: this.getFilterValue()
 				};
+				_fireTypeahedSuggested.call(this, oBindingContext);
 			});
 			return oLatestApplyFiltersPromise && oLatestApplyFiltersPromise.getInternalPromise(); // re-fetching the applyFilters promise, in case filterValue was changed during the filtering and a parallel run was triggered
 		}.bind(this));
@@ -306,6 +307,7 @@ sap.ui.define([
 			const oSelectedItem = this._iNavigateIndex >= 0 ? oTable.getItems()[this._iNavigateIndex] : oTable.getSelectedItem();
 			if (oSelectedItem) {
 				this._handleScrolling(oSelectedItem);
+				return oSelectedItem.getId();
 			} else {
 				this._bScrollToSelectedItem = true;
 			}
@@ -785,7 +787,8 @@ sap.ui.define([
 			contentId: oTable && oTable.getId(), // if open, table should be there; if closed, not needed
 			ariaHasPopup: "listbox",
 			roleDescription: sRoleDescription,
-			valueHelpEnabled: !bIsTypeahead // a dropdown on a popover is not seen as value help
+			valueHelpEnabled: !bIsTypeahead, // a dropdown on a popover is not seen as value help
+			autocomplete: this.getUseFirstMatch() ? "both" : "none" // first match is used for autocomplete
 		};
 	};
 
@@ -966,6 +969,28 @@ sap.ui.define([
 
 		return aListBindingContexts;
 	};
+
+	function _fireTypeahedSuggested(oBindingContext) {
+
+		if (!this.getUseFirstMatch() || !this._oFirstItemResult || !this._oFirstItemResult.result || !this._oFirstItemResult.filterValue) {
+			return;
+		}
+
+		const oCondition = this.createCondition(this._oFirstItemResult.result.key, this._oFirstItemResult.result.description, this._oFirstItemResult.result.payload);
+		const aItems = this._oTable.getItems();
+		let sItemId;
+
+		for (let i = 0; i < aItems.length; i++) {
+			const oItem = aItems[i];
+			if (this._getListItemBindingContext(oItem) === oBindingContext) {
+				sItemId = oItem.getId();
+				break;
+			}
+		}
+
+		this.fireTypeaheadSuggested({condition: oCondition, filterValue: this._oFirstItemResult.filterValue, itemId: sItemId});
+
+	}
 
 	return MTable;
 });

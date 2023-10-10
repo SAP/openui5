@@ -373,7 +373,8 @@ sap.ui.define([
 			contentId: "C1-DCP",
 			ariaHasPopup: "dialog",
 			roleDescription: null,
-			valueHelpEnabled: true
+			valueHelpEnabled: true,
+			autocomplete: "none"
 		};
 		const oAttributes = oConditions.getAriaAttributes();
 		assert.ok(oAttributes, "Aria attributes returned");

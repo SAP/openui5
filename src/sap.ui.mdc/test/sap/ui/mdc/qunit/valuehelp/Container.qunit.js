@@ -105,7 +105,8 @@ sap.ui.define([
 			ariaHasPopup: "listbox",
 			role: "combobox",
 			roleDescription: null,
-			valueHelpEnabled: false
+			valueHelpEnabled: false,
+			autocomplete: "none"
 		};
 		const oAttributes = oContainer.getAriaAttributes();
 		assert.ok(oAttributes, "Aria attributes returned");
@@ -433,6 +434,31 @@ sap.ui.define([
 				fnDone();
 			});
 		}
+
+	});
+
+	QUnit.test("typeaheadSuggested event", function(assert) {
+
+		let iTypeaheadSuggested = 0;
+		let oCondition;
+		let sFilterValue;
+		let sItemId;
+		oContainer.attachEvent("typeaheadSuggested", function(oEvent) {
+			iTypeaheadSuggested++;
+			oCondition = oEvent.getParameter("condition");
+			sFilterValue = oEvent.getParameter("filterValue");
+			sItemId = oEvent.getParameter("itemId");
+		});
+
+		// add
+		const oContent = new Content("Content1");
+		oContainer.addContent(oContent);
+		oContainer.openContainer(); // just fake opening as only bound if open
+		oContent.fireTypeaheadSuggested({condition: Condition.createItemCondition("X", "Text"), filterValue: "T", itemId:"X"});
+		assert.equal(iTypeaheadSuggested, 1, "typeaheadSuggested event fired");
+		assert.deepEqual(oCondition, Condition.createItemCondition("X", "Text"), "typeaheadSuggested event condition");
+		assert.equal(sFilterValue, "T", "typeaheadSuggested event filterValue");
+		assert.equal(sItemId, "X", "typeaheadSuggested event itemId");
 
 	});
 
