@@ -306,7 +306,7 @@ sap.ui.define([
 				}
 			}
 
-			var fnTypeClass, oContext, oBinding, aBindings = [];
+			var oContext, oBinding, aBindings = [];
 			oBindingInfo.parts.forEach(function(oPart) {
 				var oModel;
 				if (oPart.model === "$parameters") {
@@ -321,13 +321,6 @@ sap.ui.define([
 				}
 
 				oType = oPart.type;
-				if (typeof oType == "string") {
-					fnTypeClass = ObjectPath.get(oType);
-					if (typeof fnTypeClass !== "function") {
-						throw new Error("Cannot find type \"" + oType + "\" used for binding \"" + oPart.path + "\"!");
-					}
-					oType = new fnTypeClass(oPart.formatOptions, oPart.constraints);
-				}
 
 				oBinding = oModel.bindProperty(oPart.path, oContext, oBindingInfo.parameters);
 				oBinding.setType(oType /* type that is able to parse etc. */, oPart.targetType /* string, boolean, etc. */ || "any");
@@ -340,10 +333,7 @@ sap.ui.define([
 			if (aBindings.length > 1 || ( oBindingInfo.formatter && oBindingInfo.formatter.textFragments )) {
 				// Create type instance if needed
 				oType = oBindingInfo.type;
-				if (typeof oType == "string") {
-					fnTypeClass = ObjectPath.get(oType);
-					oType = new fnTypeClass(oBindingInfo.formatOptions, oBindingInfo.constraints);
-				}
+
 				oBinding = new CompositeBinding(aBindings, oBindingInfo.useRawValues, oBindingInfo.useInternalValues);
 				oBinding.setType(oType /* type that is able to parse etc. */, oPart.targetType /* string, boolean, etc. */ || "any");
 				oBinding.setBindingMode(BindingMode.OneTime);
