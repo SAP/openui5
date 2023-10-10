@@ -16,11 +16,17 @@ sap.ui.define([
 					sFilterBase : "/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/",
 					mFixture : {},
 					aRegExps : [{
+						regExp : /^DELETE \/sap\/opu\/odata4\/IWBEP\/TEA\/default\/IWBEP\/TEA_BUSI\/0001\/EMPLOYEES\('([^']*)'\)$/,
+						response : {buildResponse : buildDeleteResponse, code : 204}
+					}, {
 						regExp : /^GET [\w\/.]+\$metadata[\w?&\-=]+sap-language=..$/,
 						response : {source : "metadata.xml"}
 					}, {
 						regExp : /^GET \/sap\/opu\/odata4\/IWBEP\/TEA\/default\/IWBEP\/TEA_BUSI\/0001\/EMPLOYEES\?(.*)$/,
-						response : {buildResponse : buildGetResponse}
+						response : {buildResponse : buildGetCollectionResponse}
+					}, {
+						regExp : /^GET \/sap\/opu\/odata4\/IWBEP\/TEA\/default\/IWBEP\/TEA_BUSI\/0001\/EMPLOYEES\('([^']*)'\)\?(.*)$/,
+						response : {buildResponse : buildGetSingleResponse}
 					}, {
 						regExp : /^PATCH \/sap\/opu\/odata4\/IWBEP\/TEA\/default\/IWBEP\/TEA_BUSI\/0001\/EMPLOYEES\('([^']*)'\)$/,
 						response : {buildResponse : buildPatchResponse, code : 204}
@@ -210,17 +216,58 @@ sap.ui.define([
 	reset();
 
 	/**
+	 * Adjust the DescendantCount of the node with given ID (and all of its ancestors) by the
+	 * given difference.
+	 *
+	 * @param {string} sId - A node ID
+	 * @param {number} iDiff - Some difference
+	 */
+	function adjustDescendantCount(sId, iDiff) {
+		mNodeById[sId].DescendantCount += iDiff;
+		sId = mNodeById[sId].MANAGER_ID;
+		if (sId) {
+			adjustDescendantCount(sId, iDiff);
+		}
+	}
+
+	/**
+	 * Builds a response for any DELETE request on a specific "EMPLOYEE" instance.
+	 *
+	 * @param {string[]} aMatches - The matches against the RegExp
+	 * @param {object} _oResponse - Response object to fill
+	 */
+	function buildDeleteResponse(aMatches, _oResponse) {
+		/**
+		 * Recursively visits all of the given node's descendants, deleting them in post order.
+		 *
+		 * @param {object} oNode - A node
+		 */
+		function visit(oNode) {
+			const sId = oNode.ID;
+			mChildrenByParentId[sId]?.forEach(visit);
+			delete mChildrenByParentId[sId];
+			delete mNodeById[sId];
+			delete mRevisionOfAgeById[sId];
+			aAllNodes.splice(aAllNodes.indexOf(oNode), 1);
+		}
+
+		const oNode = mNodeById[aMatches[1]];
+		visit(oNode);
+		if (oNode.MANAGER_ID) {
+			const aChildren = mChildrenByParentId[oNode.MANAGER_ID];
+			aChildren.splice(aChildren.indexOf(oNode), 1);
+			adjustDescendantCount(oNode.MANAGER_ID, -(oNode.DescendantCount + 1));
+		}
+	}
+
+	/**
 	 * Builds a response for any GET query on the "EMPLOYEES" collection.
 	 *
 	 * @param {string[]} aMatches - The matches against the RegExp
 	 * @param {object} oResponse - Response object to fill
 	 */
-	function buildGetResponse(aMatches, oResponse) {
-		const mQueryOptions = {};
-		for (const sName_Value of aMatches[1].split("&")) {
-			const [sName, ...aValues] = sName_Value.split("=");
-			mQueryOptions[sName] = aValues.join("=");
-		}
+	function buildGetCollectionResponse(aMatches, oResponse) {
+		const mQueryOptions = getQueryOptions(aMatches[1]);
 
 		if ("$apply" in mQueryOptions) {
 			if (mQueryOptions.$apply.includes("TopLevels")) {
@@ -254,20 +301,45 @@ sap.ui.define([
 			// ID%20eq%20'0'%20or%20ID%20eq%20'1'%20or%20ID%20eq%20'1.1'
 			const aIDs = mQueryOptions.$filter.split("%20or%20")
 				.map((sID_Predicate) => sID_Predicate.split("%20eq%20")[1].slice(1, -1));
-			if (mQueryOptions.$select.includes("MANAGER_ID")) {
+			if (mQueryOptions.$select.includes("MANAGER_ID")) { // side effect for all rows
 				iRevision += 1;
-			} else {
+			} else { // side effect for single row (after PATCH of Name)
 				if (aIDs.length !== 1) {
 					throw new Error("Unexpected ID filter length");
 				}
 				mRevisionOfAgeById[aIDs[0]] += 1;
 			}
-			const aRows = aIDs.map((sID) => mNodeById[sID]);
+			const aRows = aIDs.map((sId) => mNodeById[sId]);
 			selectCountSkipTop(aRows, mQueryOptions, oResponse);
 			return;
 		}
 
 		selectCountSkipTop(aAllNodes, mQueryOptions, oResponse);
+	}
+
+	/**
+	 * Builds a response for any GET request on a specific "EMPLOYEE" instance.
+	 *
+	 * @param {string[]} aMatches - The matches against the RegExp
+	 * @param {object} oResponse - Response object to fill
+	 */
+	function buildGetSingleResponse(aMatches, oResponse) {
+		// EMPLOYEES('B')?$select=AGE,DescendantCount,DistanceFromRoot,DrillState,ID,MANAGER_ID,Name
+		const aSelect = getQueryOptions(aMatches[2]).$select.split(",");
+		const select = (oNode) => { //TODO share w/ selectCountSkipTop?
+			const oResult = {};
+			for (const sSelect of aSelect) {
+				oResult[sSelect] = oNode[sSelect];
+			}
+			return oResult;
+		};
+		const oNode = select(mNodeById[aMatches[1]]);
+		// RAP would not respond w/ DescendantCount,DistanceFromRoot,DrillState!
+		delete oNode.DescendantCount;
+		delete oNode.DistanceFromRoot;
+		delete oNode.DrillState;
+		// Note: bSkipCopy due to select
+		oResponse.message = JSON.stringify(SandboxModel.update([oNode], true)[0]);
 	}
 
 	/**
@@ -278,21 +350,6 @@ sap.ui.define([
 	 * @param {object} oRequest - Request object to get PATCH body from
 	 */
 	function buildPatchResponse(aMatches, _oResponse, oRequest) {
-		/**
-		 * Adjust the DescendantCount of the node with given ID (and all of its ancestors) by the
-		 * given difference.
-		 *
-		 * @param {string} sId - A node ID
-		 * @param {number} iDiff - Some difference
-		 */
-		function adjustDescendantCount(sId, iDiff) {
-			mNodeById[sId].DescendantCount += iDiff;
-			sId = mNodeById[sId].MANAGER_ID;
-			if (sId) {
-				adjustDescendantCount(sId, iDiff);
-			}
-		}
-
 		/**
 		 * Adjust the DistanceFromRoot of the given node (and all of its descendants) by the given
 		 * difference.
@@ -418,9 +475,26 @@ sap.ui.define([
 		if (sParentId) {
 			// Note: server's insert position must not affect UI (until refresh!)
 			mChildrenByParentId[sParentId].push(oNewChild);
+			adjustDescendantCount(sParentId, +1);
 		}
 
 		oResponse.message = JSON.stringify(SandboxModel.update([oNewChild])[0]);
+	}
+
+	/**
+	 * Gets the query options as a map from the given URL query part.
+	 *
+	 * @param {string} sQuery - Query part of a URL
+	 * @returns {Object<string,string>} Map of query options
+	 */
+	function getQueryOptions(sQuery) {
+		const mQueryOptions = {};
+		for (const sName_Value of sQuery.split("&")) {
+			const [sName, ...aValues] = sName_Value.split("=");
+			mQueryOptions[sName] = aValues.join("=");
+		}
+
+		return mQueryOptions;
 	}
 
 	/**
@@ -448,6 +522,7 @@ sap.ui.define([
 		}
 		const iSkip = "$skip" in mQueryOptions ? parseInt(mQueryOptions.$skip) : 0;
 		const iTop = "$top" in mQueryOptions ? parseInt(mQueryOptions.$top) : Infinity;
+		// Note: bSkipCopy due to select
 		oMessage.value = SandboxModel.update(aRows.slice(iSkip, iSkip + iTop).map(select), true);
 		oResponse.message = JSON.stringify(oMessage);
 	}

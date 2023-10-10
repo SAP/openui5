@@ -469,31 +469,30 @@ sap.ui.define([
 	 *   A promise which is resolved with the created entity when the POST request has been
 	 *   successfully sent and the entity has been marked as non-transient
 	 * @throws {Error}
-	 *   If <code>this.oAggregation.expandTo > 1</code> (except for new root),
-	 *   <code>bAtEndOfCreated</code> is set, or the parent is collapsed
+	 *   If <code>bAtEndOfCreated</code> is set or the parent is collapsed
 	 *
 	 * @public
 	 */
 	// @override sap.ui.model.odata.v4.lib._Cache#create
 	_AggregationCache.prototype.create = function (oGroupLock, oPostPathPromise, sPath,
 			sTransientPredicate, oEntityData, bAtEndOfCreated, fnErrorCallback, fnSubmitCallback) {
-		const sParentPath = oEntityData["@$ui5.node.parent"];
-		if (sParentPath && this.oAggregation.expandTo > 1) {
-			throw new Error("Unsupported expandTo: " + this.oAggregation.expandTo);
-		}
 		if (bAtEndOfCreated) {
 			throw new Error("Unsupported bAtEndOfCreated");
 		}
 
-		const aElements = this.aElements;
+		const sParentPath = oEntityData["@$ui5.node.parent"];
+		delete oEntityData["@$ui5.node.parent"];
 		const sParentPredicate = sParentPath?.slice(sParentPath.indexOf("("));
+		const aElements = this.aElements;
 		const oParentNode = aElements.$byPredicate[sParentPredicate];
 		if (oParentNode?.["@$ui5.node.isExpanded"] === false) {
 			throw new Error("Unsupported collapsed parent: " + sParentPath);
 		}
-		const iIndex = aElements.indexOf(oParentNode) + 1; // 0 w/o oParentNode :-)
 
-		let oCache = oParentNode
+		const iLevel = oParentNode
+			? oParentNode["@$ui5.node.level"] + 1
+			: 1;
+		let oCache = iLevel > (this.oAggregation.expandTo || 1)
 			? _Helper.getPrivateAnnotation(oParentNode, "cache")
 			: this.oFirstLevel;
 		if (!oCache) {
@@ -504,32 +503,37 @@ sap.ui.define([
 				{"@$ui5.node.isExpanded" : true}); // not a leaf anymore
 		}
 
-		delete oEntityData["@$ui5.node.parent"];
+		const iIndex = aElements.indexOf(oParentNode) + 1; // 0 w/o oParentNode :-)
 		const oPromise = oCache.create(oGroupLock, oPostPathPromise, sPath, sTransientPredicate,
-			oEntityData, bAtEndOfCreated, fnErrorCallback, fnSubmitCallback, function onCancel() {
+			oEntityData, bAtEndOfCreated, fnErrorCallback, fnSubmitCallback, /*onCancel*/() => {
+				if (oCache === this.oFirstLevel) {
+					this.adjustDescendantCount(oEntityData, iIndex, -1);
+				}
 				aElements.$count -= 1;
 				delete aElements.$byPredicate[
 					_Helper.getPrivateAnnotation(oEntityData, "transientPredicate")];
-				aElements.splice(aElements.indexOf(oEntityData), 1);
+				aElements.splice(iIndex, 1);
 			});
 
-		if (sParentPath) {
-			// add @odata.bind to POST body only
+		if (sParentPath) { // add @odata.bind to POST body only
 			_Helper.getPrivateAnnotation(oEntityData, "postBody")
 				[this.oAggregation.$ParentNavigationProperty + "@odata.bind"]
 					= _Helper.makeRelativeUrl("/" + sParentPath, "/" + this.sResourcePath);
 		}
-		oEntityData["@$ui5.node.level"] = oParentNode
-			? oParentNode["@$ui5.node.level"] + 1
-			: 1;
+		oEntityData["@$ui5.node.level"] = iLevel; // do not send via POST!
 
 		aElements.splice(iIndex, 0, null); // create a gap
 		this.addElements(oEntityData, iIndex, oCache); // $skip index is undefined!
 		aElements.$count += 1;
+		if (oCache === this.oFirstLevel) {
+			this.adjustDescendantCount(oEntityData, iIndex, +1);
+		}
 
 		return oPromise.then(function () {
 			aElements.$byPredicate[_Helper.getPrivateAnnotation(oEntityData, "predicate")]
 				= oEntityData;
+			// Note: #calculateKeyPredicateRH doesn't know better :-(
+			oEntityData["@$ui5.node.level"] = iLevel;
 
 			return oEntityData;
 		});
@@ -639,14 +643,21 @@ sap.ui.define([
 
 				oElement["@$ui5.node.level"] += iLevelDiff;
 				if (_Helper.getPrivateAnnotation(oElement, "parent") === that.oFirstLevel) {
-					_Helper.setPrivateAnnotation(oElement, "index",
-						_Helper.getPrivateAnnotation(oElement, "index") + iIndexDiff);
+					const iIndex = _Helper.getPrivateAnnotation(oElement, "index");
+					if (iIndex !== undefined) {
+						_Helper.setPrivateAnnotation(oElement, "index", iIndex + iIndexDiff);
+					}
 				}
 				if (!_Helper.hasPrivateAnnotation(oElement, "placeholder")) {
 					if (aSpliced.$stale) {
 						that.turnIntoPlaceholder(oElement, sPredicate);
 					} else {
 						that.aElements.$byPredicate[sPredicate] = oElement;
+						const sTransientPredicate
+							= _Helper.getPrivateAnnotation(oElement, "transientPredicate");
+						if (sTransientPredicate) {
+							that.aElements.$byPredicate[sTransientPredicate] = oElement;
+						}
 						if (_Helper.hasPrivateAnnotation(oElement, "expanding")) {
 							_Helper.deletePrivateAnnotation(oElement, "expanding");
 							iCount += that.expand(_GroupLock.$cached, oElement).getResult();
