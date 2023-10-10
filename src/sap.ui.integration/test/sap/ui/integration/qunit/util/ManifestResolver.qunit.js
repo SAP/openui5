@@ -384,8 +384,9 @@ sap.ui.define([
 				var oExpectedResult = {
 					"message": {
 						"type": "error",
-						"title": oResourceBundle.getText("CARD_ERROR_OCCURED"),
-						"description": "Card sap.app/id entry in the manifest is mandatory There must be a 'sap.card' section in the manifest.",
+						"title": oResourceBundle.getText("CARD_ERROR_CONFIGURATION_TITLE"),
+						"description": oResourceBundle.getText("CARD_ERROR_CONFIGURATION_DESCRIPTION"),
+						"details": "Card sap.app/id entry in the manifest is mandatory There must be a 'sap.card' section in the manifest.",
 						"illustrationType": "sapIllus-SimpleError",
 						"illustrationSize": "Spot"
 					}
