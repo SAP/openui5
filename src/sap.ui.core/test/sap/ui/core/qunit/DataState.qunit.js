@@ -102,8 +102,8 @@ sap.ui.define([
 	//*********************************************************************************************
 [
 	{controlMessages : ["aControlMessages"], modelMessages : ["aModelMessages"]},
-	{controlMessages : ["aControlMessages"], modelMessages : undefined},
-	{controlMessages : undefined, modelMessages : ["aModelMessages"]}
+	{controlMessages : ["aControlMessages"], modelMessages : []},
+	{controlMessages : [], modelMessages : ["aModelMessages"]}
 ].forEach(function (oFixture, i) {
 	QUnit.test("getMessagesForProperties, " + i, function(assert) {
 		var aConcatCalls,
@@ -137,8 +137,8 @@ sap.ui.define([
 	QUnit.test("getMessagesForProperties, no messages", function(assert) {
 		var oConcatSpy = this.spy(Array.prototype, "concat"),
 			mProperties = {
-				controlMessages : undefined,
-				modelMessages : undefined
+				controlMessages : [],
+				modelMessages : []
 			},
 			oSortSpy = this.spy(Array.prototype, "sort");
 
