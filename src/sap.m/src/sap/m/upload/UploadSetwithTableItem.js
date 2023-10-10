@@ -87,6 +87,7 @@ sap.ui.define([
 		this._bSizeRestricted = false;
 		this._bMediaTypeRestricted = false;
 		this._oRb = Core.getLibraryResourceBundle("sap.m");
+		this._oCloudFileInfo = null;
     };
 
     UploadSetwithTableItem.prototype.onBeforeRendering = function () {
@@ -166,6 +167,15 @@ sap.ui.define([
 	 */
 	UploadSetwithTableItem.prototype.isRestricted = function () {
 		return this._isRestricted();
+	};
+
+	/**
+	 * Returns the details of the file selected from the CloudFilePicker control.
+	 * @returns {sap.suite.ui.commons.CloudFileInfo} oCloudFileInfo Specifies the details of the file selected from the cloudFilePicker control.
+	 * @public
+	 */
+	UploadSetwithTableItem.prototype.getCloudFileInfo = function() {
+		return this._oCloudFileInfo;
 	};
 
 	/* =============== */
@@ -316,6 +326,14 @@ sap.ui.define([
 
 	UploadSetwithTableItem.prototype._isRestricted = function () {
 		return this._bFileTypeRestricted || this._bNameLengthRestricted || this._bSizeRestricted || this._bMediaTypeRestricted;
+	};
+
+	/**
+	 * @param {suite.ui.commons.CloudFileInfo} oCloudFileInfo info the file selected from the CloudFilePicker control.
+	 * @private
+	 */
+	UploadSetwithTableItem.prototype._setCloudFileInfo = function(oCloudFileInfo) {
+		this._oCloudFileInfo = oCloudFileInfo;
 	};
 
     UploadSetwithTableItem.IMAGE_FILE_ICON = "sap-icon://card";
