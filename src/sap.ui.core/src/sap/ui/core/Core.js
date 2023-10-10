@@ -1215,7 +1215,7 @@ sap.ui.define([
 		var body = document.body;
 
 		//Add ARIA role 'application'
-		if (Configuration.getAccessibility() && Configuration.getAutoAriaBodyRole() && !body.getAttribute("role")) {
+		if (ControlBehavior.isAccessibilityEnabled() && Configuration.getAutoAriaBodyRole() && !body.getAttribute("role")) {
 			body.setAttribute("role", "application");
 		}
 	};

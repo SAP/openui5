@@ -282,7 +282,6 @@ sap.ui.define([
 	 *
 	 * @borrows module:sap/base/i18n/Localization.getLanguagesDeliveredWithCore as getLanguagesDeliveredWithCore
 	 * @borrows module:sap/base/i18n/Localization.getSupportedLanguages as getSupportedLanguages
-	 * @borrows module:sap/ui/core/ControlBehavior.isAccessibilityEnabled as getAccessibility
 	 * @borrows module:sap/ui/core/getCompatibilityVersion as getCompatibilityVersion
 	 */
 	var Configuration = BaseObject.extend("sap.ui.core.Configuration", /** @lends sap.ui.core.Configuration.prototype */ {
@@ -724,6 +723,14 @@ sap.ui.define([
 
 		getSupportedLanguages : Localization.getSupportedLanguages,
 
+		/**
+		 * Returns whether the accessibility mode is enabled or not.
+		 * @return {boolean} whether the accessibility mode is enabled or not
+		 * @public
+		 * @since 1.120
+		 * @function
+		 * @deprecated As of Version 1.120: Please use {@link module:sap/ui/core/ControlBehavior.isAccessibilityEnabled} instead.
+		 */
 		getAccessibility : ControlBehavior.isAccessibilityEnabled,
 
 		/**
@@ -756,6 +763,7 @@ sap.ui.define([
 		 * @since 1.50.0
 		 * @function
 		 * @public
+		 * @deprecated As of Version 1.120: Please use {@link module:sap/ui/core/ControlBehavior.getAnimationMode} instead.
 		 */
 		getAnimationMode : ControlBehavior.getAnimationMode,
 
@@ -773,6 +781,7 @@ sap.ui.define([
 		 * @since 1.50.0
 		 * @function
 		 * @public
+		 * @deprecated As of Version 1.120: Please use {@link module:sap/ui/core/ControlBehavior.setAnimationMode} instead.
 		 */
 		setAnimationMode : ControlBehavior.setAnimationMode,
 

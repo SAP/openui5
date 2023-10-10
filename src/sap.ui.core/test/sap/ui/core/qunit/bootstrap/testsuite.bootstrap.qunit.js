@@ -347,6 +347,10 @@ sap.ui.define(function() {
 				},
 				beforeBootstrap: "./CalendarClassLoadingWithCustomBootTask.beforeBootstrap.qunit"
 			},
+			"ControlBehavior": {
+				title: "Test Page for ControlBehavior",
+				group: "Configuration"
+			},
 			"Configuration": {
 				autostart: false,
 				group: "Configuration",
