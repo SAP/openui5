@@ -151,7 +151,7 @@ sap.ui.define([
 			throw new Error("Unsupported expandTo: " + this.oAggregation.expandTo);
 		}
 
-		const iIndex = parseInt(sIndex);
+		let iIndex = parseInt(sIndex);
 		if (isNaN(iIndex)) {
 			throw new Error(`Unsupported kept-alive entity: ${this.sResourcePath}${sIndex}`);
 		}
@@ -168,6 +168,8 @@ sap.ui.define([
 		return SyncPromise.resolve(
 			this.oRequestor.request("DELETE", sEditUrl, oGroupLock, {"If-Match" : oElement})
 		).then(() => {
+			// the element might have moved due to parallel insert/delete
+			iIndex = _Cache.getElementIndex(this.aElements, sPredicate, iIndex);
 			// remove in parent cache
 			oParentCache.removeElement(undefined, iIndexInParentCache, sPredicate, "");
 			if (iIndex && !oParentCache.getValue("$count")) {
