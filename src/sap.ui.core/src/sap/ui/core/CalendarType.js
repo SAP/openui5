@@ -17,6 +17,7 @@ sap.ui.define([
 	 * @enum {string}
 	 * @name sap.ui.core.CalendarType
 	 * @public
+	 * @deprecated As of Version 1.120. Please use {@link module:sap/base/18n/date/CalendarType} instead.
 	 * @borrows module:sap/base/i18n/date/CalendarType.Gregorian as Gregorian
 	 * @borrows module:sap/base/i18n/date/CalendarType.Islamic as Islamic
 	 * @borrows module:sap/base/i18n/date/CalendarType.Japanese as Japanese

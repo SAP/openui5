@@ -576,6 +576,8 @@ sap.ui.define([
 		 * @return {sap.ui.core.CalendarType} the current calendar type, e.g. <code>Gregorian</code>
 		 * @since 1.28.6
 		 * @function
+		 * @public
+		 * @deprecated As of Version 1.120. Please use {@link module:sap/base/i18n/Formatting.getCalendarType} instead.
 		 */
 		getCalendarType: Formatting.getCalendarType,
 
@@ -587,6 +589,7 @@ sap.ui.define([
 		 * @function
 		 * @public
 		 * @since 1.113.0
+		 * @deprecated As of Version 1.120. Please use {@link module:sap/base/i18n/Formatting.getCalendarWeekNumbering} instead.
 		 */
 		getCalendarWeekNumbering: Formatting.getCalendarWeekNumbering,
 
@@ -651,6 +654,7 @@ sap.ui.define([
 		 * @return {this} <code>this</code> to allow method chaining
 		 * @public
 		 * @since 1.28.6
+		 * @deprecated As of Version 1.120. Please use {@link module:sap/base/i18n/Formatting.setCalendarType} instead.
 		 */
 		setCalendarType : function(sCalendarType) {
 			Formatting.setCalendarType.apply(Formatting, arguments);
@@ -671,6 +675,7 @@ sap.ui.define([
 		 *
 		 * @public
 		 * @since 1.113.0
+		 * @deprecated As of Version 1.120. Please use {@link module:sap/base/i18n/Formatting.setCalendarWeekNumbering} instead.
 		 */
 		setCalendarWeekNumbering: function(sCalendarWeekNumbering) {
 			Formatting.setCalendarWeekNumbering.apply(Formatting, arguments);
@@ -683,6 +688,7 @@ sap.ui.define([
 		 *
 		 * @return {string} the format locale string with language and country code
 		 * @public
+		 * @deprecated As of Version 1.120. Please use {@link module:sap/base/i18n/Formatting.getLanguageTag} instead.
 		 */
 		getFormatLocale : function() {
 			return Formatting.getLanguageTag().toString();
@@ -712,6 +718,7 @@ sap.ui.define([
 		 *   components (compatibility with Java Locale IDs)
 		 * @return {this} <code>this</code> to allow method chaining
 		 * @public
+		 * @deprecated As of Version 1.120. Please use {@link module:sap/base/i18n/Formatting.setLanguageTag} instead.
 		 * @throws {Error} When <code>sFormatLocale</code> is given, but is not a valid BCP47 language
 		 *   tag or Java locale identifier
 		 */
@@ -994,6 +1001,7 @@ sap.ui.define([
 		 *
 		 * @returns {sap.ui.core.Configuration.FormatSettings} A FormatSettings object.
 		 * @public
+		 * @deprecated As of Version 1.120. Please use {@link module:sap/base/i18n/Formatting} instead.
 		 */
 		getFormatSettings : function() {
 			return oFormatSettings;
@@ -1158,6 +1166,7 @@ sap.ui.define([
 		 * @returns {this} Returns <code>this</code> to allow method chaining
 		 * @public
 		 * @since 1.38.6
+		 * @deprecated As of Version 1.120
 		 */
 		applySettings: function(mSettings) {
 
@@ -1326,6 +1335,7 @@ sap.ui.define([
 	 * @alias sap.ui.core.Configuration.FormatSettings
 	 * @extends sap.ui.base.Object
 	 * @public
+	 * @deprecated As of Version 1.120. Please use {@link module:sap/base/i18n/Formatting} instead.
 	 * @borrows module:sap/base/i18n/Formatting.getCustomUnits as #getCustomUnits
 	 * @borrows module:sap/base/i18n/Formatting.setCustomUnits as #setCustomUnits
 	 * @borrows module:sap/base/i18n/Formatting.addCustomUnits as #addCustomUnits
@@ -1367,6 +1377,7 @@ sap.ui.define([
 		 *
 		 * @return {sap.ui.core.Locale} the format locale
 		 * @public
+		 * @deprecated As of Version 1.120. Please use {@link module:sap/base/i18n/Formatting.getLanguageTag} instead.
 		 */
 		getFormatLocale : function() {
 			var oLocale = Formatting.getLanguageTag();
@@ -1609,6 +1620,9 @@ sap.ui.define([
 		getCustomLocaleData : Formatting.getCustomLocaleData
 	});
 
+	/**
+	 * @deprecated As of Version 1.120
+	 */
 	oFormatSettings = new FormatSettings(this);
 
 	//enable Eventing

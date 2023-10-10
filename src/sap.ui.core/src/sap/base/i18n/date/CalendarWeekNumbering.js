@@ -15,9 +15,9 @@ sap.ui.define([], function() {
 	 * </ul>
 	 *
 	 * @enum {string}
-	 * @private
-	 * @ui5-restricted sap.ui.core sap/base/i18n
+	 * @public
 	 * @alias module:sap/base/i18n/date/CalendarWeekNumbering
+	 * @since 1.120
 	 */
 	var CalendarWeekNumbering = {
 
