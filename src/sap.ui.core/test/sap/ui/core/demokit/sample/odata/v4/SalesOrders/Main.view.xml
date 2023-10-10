@@ -110,7 +110,7 @@
 			</dependents>
 		</Toolbar>
 		<!-- Note: 'BuyerID' is selected below because it is used when creating new entries -->
-		<Table growing="true" growingThreshold="5" id="SalesOrderList"
+		<Table growing="true" growingThreshold="5" id="SalesOrderList" rememberSelections="false"
 			items="{
 					path : '/SalesOrderList',
 					filters : [
@@ -329,6 +329,7 @@
 								<Table id="SO_2_SCHDL" items="{path : 'SO_2_SCHDL',
 											parameters : {$$ownRequest : true}}"
 										mode="MultiSelect"
+										rememberSelections="false"
 										selectionChange="onSalesOrderScheduleSelect">
 									<columns>
 										<Column>
@@ -378,7 +379,7 @@
 				<Label text="Postal Code"/>
 				<Input id="PostalCode::detail" value="{SO_2_BP/Address/PostalCode}"/>
 			</form:SimpleForm>
-			<Table id="SO_2_SOITEM"
+			<Table id="SO_2_SOITEM" rememberSelections="false"
 				items="{
 						events : {
 							dataReceived : '.onDataEvents',
