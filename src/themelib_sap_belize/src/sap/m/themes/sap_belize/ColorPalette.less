@@ -2,6 +2,9 @@
 	&:after {
 		border-color: @sapUiContentFocusColor;
 	}
+	&:active:after {
+		border-color: @sapUiContentContrastFocusColor;
+	}
 }
 
 .sap-desktop .sapContrast,
@@ -9,7 +12,6 @@
 	.sapMColorPalette .sapMBtn {
 		&:focus:after {
 			border-color: @sapUiContentFocusColor;
-
 		}
 		&:active,
 		> .sapMBtnActive,

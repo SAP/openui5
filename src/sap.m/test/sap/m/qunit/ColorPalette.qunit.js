@@ -602,6 +602,8 @@ sap.ui.define([
 					oTarget = document.createElement("DIV");
 				oTarget.classList.add("sapMColorPaletteSquare");
 				oTarget.setAttribute("data-sap-ui-color", sSelectedColor);
+				oTarget.classList.add("sapMColorPaletteContent");
+				oTarget.setAttribute("data-sap-ui-region", "");
 
 				this.oCP = new ColorPalette();
 				this.sSelectedColor = sSelectedColor;
@@ -622,6 +624,7 @@ sap.ui.define([
 				// Assert
 				assert.equal(fnFireColorSelectSpy.callCount, 1, "_fireColorSelect should be called onkeyup when 'space' key is used");
 				assert.equal(fnFireColorSelectSpy.getCall(0).args[0], this.sSelectedColor, "The selected color should be the same on the target element");
+				assert.equal(this.oCP.getSelectedColor(), this.sSelectedColor, "The selectedColor property is properly updated.");
 
 				// Cleanup
 				fnFireColorSelectSpy.restore();
@@ -639,6 +642,7 @@ sap.ui.define([
 				// Assert
 				assert.equal(fnFireColorSelectSpy.callCount, 1, "_fireColorSelect should be called onkeydown when 'enter' key is used");
 				assert.equal(fnFireColorSelectSpy.getCall(0).args[0], this.sSelectedColor, "The selected color should be the same on the target element");
+				assert.equal(this.oCP.getSelectedColor(), this.sSelectedColor, "The selectedColor property is properly updated.");
 
 				// Cleanup
 				fnFireColorSelectSpy.restore();
@@ -1583,6 +1587,26 @@ sap.ui.define([
 			// Cleanup
 			oCP.destroy();
 		});
+
+		QUnit.test("Property <setSelectedColor> - selectedColor will be set to any color given", function (assert) {
+			// Prepare
+			var oCP = new ColorPalette(),
+				aColors = ["white", "#87de7a"],
+				sSelectedColor = "rgb(224, 121, 200)",
+				oSpySetProperty = this.spy(oCP, "setProperty");
+
+			oCP.setColors(aColors);
+
+			// Act
+			oCP.setSelectedColor(sSelectedColor);
+
+			// Assert
+			assert.equal(oSpySetProperty.callCount, 2, ".. should call setProperty");
+			assert.deepEqual(oSpySetProperty.getCall(1).args, ["selectedColor", sSelectedColor], ".. with the given color (even if it's not in the palette)");
+
+			// Cleanup
+			oCP.destroy();
+		});
 	});
 
 
@@ -2075,11 +2099,14 @@ sap.ui.define([
 				// Prepare
 				var oCP = new ColorPalette();
 
+				assert.strictEqual(oCP.getSelectedColor(), "", "There should be no selected color initially");
+
 				// Act
 				oCP._fireColorSelect("red", false, {});
 
 				// Assert
-				assert.strictEqual(oCP._getRecentColors().length,1,"The color is pushed into the recent colors array");
+				assert.strictEqual(oCP._getRecentColors().length, 1, "The color is pushed into the recent colors array");
+				assert.strictEqual(oCP.getSelectedColor(), "red", "The selected color is red");
 
 				// Cleanup
 				oCP.destroy();
@@ -2090,6 +2117,8 @@ sap.ui.define([
 				var oCP = new ColorPalette(),
 					aTestArray = ["blue", "pink", "red"];
 
+				assert.strictEqual(oCP.getSelectedColor(), "", "There should be no selected color initially");
+
 				// Act
 				oCP._fireColorSelect("red", false, {});
 				oCP._fireColorSelect("blue", false, {});
@@ -2098,6 +2127,7 @@ sap.ui.define([
 
 				// Assert
 				assert.deepEqual(oCP._getRecentColors(), aTestArray, "The color is pushed into the recent colors array");
+				assert.strictEqual(oCP.getSelectedColor(), "blue", "The last selected color is blue");
 
 				// Cleanup
 				oCP.destroy();
@@ -2107,6 +2137,8 @@ sap.ui.define([
 				// Prepare
 				var oCP = new ColorPalette(),
 					aTestArray = ["black", "green", "purple","pink","blue"];
+
+				assert.strictEqual(oCP.getSelectedColor(), "", "There should be no selected color initially");
 
 				// Act
 				oCP._fireColorSelect("red", false, {});
@@ -2118,6 +2150,7 @@ sap.ui.define([
 
 				// Assert
 				assert.deepEqual(oCP._getRecentColors(), aTestArray, "The color is pushed into the recent colors array and the last one is popped");
+				assert.strictEqual(oCP.getSelectedColor(), "black", "The last selected color is black");
 
 				// Cleanup
 				oCP.destroy();

@@ -30,6 +30,10 @@ sap.ui.define([
 			if (this.oColorPaletteDisplayMode) {
 				this.oColorPaletteDisplayMode.destroy();
 			}
+
+			if (this.oColorPalettePopoverSelectedColor) {
+				this.oColorPalettePopoverSelectedColor.destroy();
+			}
 		},
 
 		/**
@@ -99,6 +103,26 @@ sap.ui.define([
 			}
 
 			this.oColorPalettePopoverMin.openBy(oEvent.getSource());
+		},
+
+		/**
+		 * Opens a <code>ColorPalette</code> in a responsive popover, where:
+		 *  - "Recent Colors" section is not displayed
+		 *  - there is no "More Colors.." button
+		 *  - a color is selected by default
+		 * @param oEvent
+		 */
+		openSelectedColorSample: function (oEvent) {
+			if (!this.oColorPalettePopoverSelectedColor) {
+				this.oColorPalettePopoverSelectedColor = new ColorPalettePopover("oColorPaletteSelectedColor", {
+					colors: ["lightgray", "lightblue", "cornflowerblue", "darkslateblue"],
+					selectedColor: "lightblue",
+					showRecentColorsSection: false,
+					showMoreColorsButton: false
+				});
+			}
+
+			this.oColorPalettePopoverSelectedColor.openBy(oEvent.getSource());
 		},
 
 		/**
