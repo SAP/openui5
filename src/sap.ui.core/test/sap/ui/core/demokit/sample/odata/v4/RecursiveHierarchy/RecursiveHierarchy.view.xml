@@ -76,7 +76,17 @@
 		</Column>
 		<Column width="4em">
 			<template>
+				<m:Button id="cut" icon="sap-icon://scissors" press=".onCut" tooltip="Cut"/>
+			</template>
+		</Column>
+		<Column width="4em">
+			<template>
 				<m:Button icon="sap-icon://move" id="move" press=".onMove" tooltip="Move"/>
+			</template>
+		</Column>
+		<Column width="4em">
+			<template>
+				<m:Button id="delete" icon="sap-icon://delete" press=".onDelete" tooltip="Delete"/>
 			</template>
 		</Column>
 	</Table>
@@ -137,8 +147,20 @@
 		</Column>
 		<Column width="4em">
 			<template>
+				<m:Button id="cutInTreeTable" icon="sap-icon://scissors" press=".onCut"
+					tooltip="Cut"/>
+			</template>
+		</Column>
+		<Column width="4em">
+			<template>
 				<m:Button icon="sap-icon://move" id="moveInTreeTable" press=".onMove"
 					tooltip="Move"/>
+			</template>
+		</Column>
+		<Column width="4em">
+			<template>
+				<m:Button id="deleteInTreeTable" icon="sap-icon://delete" press=".onDelete"
+					tooltip="Delete"/>
 			</template>
 		</Column>
 	</TreeTable>
