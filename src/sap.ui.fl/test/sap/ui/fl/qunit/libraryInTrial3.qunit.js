@@ -2,12 +2,12 @@
 
 sap.ui.define([
 	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/fl/Utils",
-	"sap/ui/core/Core"
+	"sap/ui/fl/initial/_internal/config",
+	"sap/ui/fl/Utils"
 ], function(
 	sinon,
-	Utils,
-	oCore
+	config,
+	Utils
 ) {
 	"use strict";
 
@@ -15,7 +15,7 @@ sap.ui.define([
 
 	QUnit.module("sap.ui.fl.library", {
 		beforeEach() {
-			this.oSetConfigurationtub = sandbox.stub(oCore.getConfiguration(), "setFlexibilityServices");
+			this.oSetConfigurationtub = sandbox.stub(config, "setFlexibilityServices");
 		},
 		afterEach() {
 			sandbox.restore();

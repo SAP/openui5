@@ -11,7 +11,7 @@ sap.ui.define([
 	"sap/ui/test/opaQunit",
 	"sap/ui/test/Opa5",
 	"sap/m/Label",
-	"./testHarnessTests"
+	"gherkin/testHarnessTests"
 ], function(opa5TestHarness, StepDefinitions, opaTest, Opa5, Label, testHarnessTests) {
 	'use strict';
 

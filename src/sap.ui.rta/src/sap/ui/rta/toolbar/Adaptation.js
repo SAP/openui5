@@ -10,6 +10,7 @@ sap.ui.define([
 	"sap/ui/core/Fragment",
 	"sap/ui/core/Popup",
 	"sap/ui/core/Core",
+	"sap/ui/fl/initial/_internal/config",
 	"sap/ui/fl/write/api/ContextBasedAdaptationsAPI",
 	"sap/ui/fl/write/api/Version",
 	"sap/ui/model/json/JSONModel",
@@ -30,6 +31,7 @@ sap.ui.define([
 	Fragment,
 	Popup,
 	Core,
+	config,
 	ContextBasedAdaptationsAPI,
 	Version,
 	JSONModel,
@@ -495,7 +497,7 @@ sap.ui.define([
 
 	Adaptation.prototype.showFeedbackForm = function() {
 		// Get Connector Type
-		var sConnector = Core.getConfiguration().getFlexibilityServices()[0].connector;
+		var sConnector = config.getFlexibilityServices()[0].connector;
 
 		// Set URL
 		var sURLPart1 = "https://sapinsights.eu.qualtrics.com/jfe/form/";

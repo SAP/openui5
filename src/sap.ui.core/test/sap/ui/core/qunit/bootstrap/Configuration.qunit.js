@@ -3,6 +3,7 @@ sap.ui.define([
 	'sap/ui/core/CalendarType',
 	'sap/ui/core/Configuration',
 	'sap/ui/core/Core',
+	'sap/ui/core/Lib',
 	'sap/ui/core/date/CalendarWeekNumbering',
 	'sap/ui/core/format/TimezoneUtil',
 	'sap/ui/core/Theming',
@@ -13,7 +14,7 @@ sap.ui.define([
 	'../routing/HistoryUtils',
 	'sap/ui/base/config/URLConfigurationProvider',
 	'sap/ui/core/LocaleData' // only used indirectly via Configuration.getCalendarType
-], function(CalendarType, Configuration, Core, CalendarWeekNumbering, TimezoneUtil, Theming, Security, BaseConfig, Log,
+], function(CalendarType, Configuration, Core, Library, CalendarWeekNumbering, TimezoneUtil, Theming, Security, BaseConfig, Log,
 		GlobalConfigurationProvider, HistoryUtils, URLConfigurationProvider/*, LocaleData*/) {
 	"use strict";
 
@@ -69,7 +70,7 @@ sap.ui.define([
 
 	QUnit.test("Settings", function(assert) {
 		assert.equal(Theming.getTheme(), "SapSampleTheme2", "tag config should override global config");
-		assert.deepEqual(Configuration.getValue("modules"), ["sap.ui.core.library"], "Module List in configuration matches configured modules/libraries");
+		assert.ok(Library.all()["sap.ui.core"], "Core library loaded");
 	});
 
 	QUnit.test("jQuery and $", function(assert) {
@@ -885,106 +886,63 @@ sap.ui.define([
 		assert.equal(getHtmlAttribute("data-sap-ui-animation-mode"), AnimationMode.full, "Default animation mode should stay the same.");
 	});
 
-	QUnit.module("Flexibility Services & Connectors", {
-		afterEach: function () {
-			delete window["sap-ui-config"]["flexibilityservices"];
-		}
-	});
+	QUnit.module("Flexibility Services & Connectors");
 
 	QUnit.test("Get the Flexibility Services", function(assert) {
-		Configuration.setCore();
 		var sFlexibilityService = Configuration.getFlexibilityServices();
-		assert.deepEqual(sFlexibilityService, [{layers: ["ALL"], connector: "LrepConnector", url: "/sap/bc/lrep"}]);
+		assert.deepEqual(sFlexibilityService, [{connector: "LrepConnector", url: "/sap/bc/lrep"}]);
 	});
 
 	QUnit.test("Get the Flexibility Services - set to an empty string", function(assert) {
-		window["sap-ui-config"]["flexibilityservices"] = "";
-
+		BaseConfig._.invalidate();
+		var oStub = sinon.stub(GlobalConfigurationProvider, "get");
+		oStub.callsFake(function(sKey) {
+			if (sKey === "sapUiFlexibilityServices") {
+				return "";
+			} else {
+				return oStub.wrappedMethod.call(this, sKey);
+			}
+		}.bind(this));
 		Configuration.setCore();
 		var sFlexibilityService = Configuration.getFlexibilityServices();
 		assert.deepEqual(sFlexibilityService, []);
+		oStub.restore();
 	});
 
 	QUnit.test("Get the Flexibility Services - set to an empty array", function(assert) {
-		window["sap-ui-config"]["flexibilityservices"] = "[]";
-
-		Configuration.setCore();
+		BaseConfig._.invalidate();
+		var oStub = sinon.stub(GlobalConfigurationProvider, "get");
+		oStub.callsFake(function(sKey) {
+			if (sKey === "sapUiFlexibilityServices") {
+				return "[]";
+			} else {
+				return oStub.wrappedMethod.call(this, sKey);
+			}
+		}.bind(this));
 		var sFlexibilityService = Configuration.getFlexibilityServices();
 		assert.deepEqual(sFlexibilityService, []);
+		oStub.restore();
 	});
 
 	QUnit.test("Get the Flexibility Services - set to multiple objects", function(assert) {
+		BaseConfig._.invalidate();
 		var oFirstConfigObject = {'layers': ['CUSTOMER'], 'connector': 'KeyUserConnector', 'url': '/flex/keyUser'};
 		var oSecondConfigObject = {'layers': ['USER'], 'connector': 'PersonalizationConnector', 'url': '/sap/bc/lrep'};
 		var aConfig = [oFirstConfigObject, oSecondConfigObject];
 		var sConfigString = JSON.stringify(aConfig);
 
-		window["sap-ui-config"]["flexibilityservices"] = sConfigString;
+		var oStub = sinon.stub(GlobalConfigurationProvider, "get");
+		oStub.callsFake(function(sKey) {
+			if (sKey === "sapUiFlexibilityServices") {
+				return sConfigString;
+			} else {
+				return oStub.wrappedMethod.call(this, sKey);
+			}
+		}.bind(this));
 
-		Configuration.setCore();
 		var sFlexibilityService = Configuration.getFlexibilityServices();
 		assert.deepEqual(sFlexibilityService, aConfig);
-	});
-
-	function _getNumberOfFlModules(oCfg) {
-		return oCfg.getValue("modules").filter(function(sModule) {
-			return sModule === "sap.ui.fl.library";
-		}).length;
-	}
-
-	QUnit.test("Set flexibilityServices enforces the loading of sap.ui.fl", function(assert) {
-		window["sap-ui-config"]["flexibilityservices"] = '[{"connector": "KeyUser", "url": "/some/url", laverFilters: []}]';
-
-		Configuration.setCore();
-		assert.equal(_getNumberOfFlModules(Configuration), 1);
-	});
-
-	QUnit.test("Set flexibilityServices URL enforces the loading of sap.ui.fl", function(assert) {
-		var sEncodedConfig = encodeURI('[{"connector":"KeyUser","url": "/some/url","laverFilters":[]}]');
-		browserUrl.change(location.origin + "?sap-ui-flexibilityServices="  + sEncodedConfig);
-
-		try {
-			Configuration.setCore();
-			assert.equal(_getNumberOfFlModules(Configuration), 1);
-		} finally {
-			browserUrl.reset();
-		}
-	});
-
-	QUnit.test("Set flexibilityServices URL but setting the loading to async does NOT enforces the loading of sap.ui.fl", function(assert) {
-		var sEncodedConfig = encodeURI('[{"connector":"KeyUser","url": "/some/url","laverFilters":[]}]');
-		browserUrl.change(location.origin + "?sap-ui-xx-skipAutomaticFlLibLoading=true&sap-ui-flexibilityServices=" + sEncodedConfig);
-
-		try {
-			Configuration.setCore();
-			assert.equal(_getNumberOfFlModules(Configuration), 0);
-		} finally {
-			browserUrl.reset();
-		}
-	});
-
-	QUnit.test("Default flexibilityServices does NOT enforces the loading of sap.ui.fl", function(assert) {
-		Configuration.setCore();
-		assert.equal(_getNumberOfFlModules(Configuration), 0);
-	});
-
-	QUnit.test("Cleared flexibilityServices does NOT enforces the loading of sap.ui.fl", function(assert) {
-		Configuration.setCore();
-		assert.equal(_getNumberOfFlModules(Configuration), 0);
-	});
-
-	QUnit.test("Set flexibilityServices does NOT add the loading of sap.ui.fl an additional time if it is already set", function(assert) {
-		window["sap-ui-config"]["flexibilityservices"] = "";
-		window["sap-ui-config"]["libs"] = 'sap.ui.fl';
-		Configuration.setCore();
-		assert.equal(_getNumberOfFlModules(Configuration), 1);
-	});
-
-	QUnit.test("Cleared flexibilityServices does NOT remove the loading of sap.ui.fl if it is set", function(assert) {
-		window["sap-ui-config"]["flexibilityservices"] = "";
-		window["sap-ui-config"]["libs"] = 'sap.ui.fl';
-		Configuration.setCore();
-		assert.equal(_getNumberOfFlModules(Configuration), 1);
+		oStub.restore();
 	});
 
 	QUnit.module("ThemeRoot Validation");

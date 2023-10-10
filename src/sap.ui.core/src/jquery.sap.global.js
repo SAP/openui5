@@ -29,7 +29,6 @@ sap.ui.define([
 
 	// former sap-ui-core.js dependencies
 	"sap/ui/Device",
-	"sap/ui/core/Configuration",
 	"sap/base/config",
 
 	"sap/ui/thirdparty/jquery",
@@ -46,7 +45,6 @@ sap.ui.define([
 	syncXHRFix, LoaderExtensions,
 
 	Device,
-	Configuration,
 	BaseConfig,
 
 	jQuery /*, jqueryUiPosition, ui5loaderAutoconfig, jquerySapStubs, URI, PasteEventFix */) {
@@ -917,7 +915,7 @@ sap.ui.define([
 			iEndCreate = isNaN(iNoCreates) ? 0 : l - iNoCreates,
 			i;
 
-		if ( Configuration.getSyncCallBehavior() && oContext === window ) {
+		if ( sap.ui.loader._.getSyncCallBehavior() && oContext === window ) {
 			Log.error("[nosync] getObject called to retrieve global name '" + sName + "'");
 		}
 

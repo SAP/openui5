@@ -25,12 +25,11 @@
 
 sap.ui.define([
 	'sap/ui/VersionInfo',
-	'sap/ui/core/Configuration',
 	'sap/base/Log',
 	'sap/base/assert',
 	'sap/base/util/ObjectPath'
 ],
-	function(VersionInfo, Configuration, Log, assert, ObjectPath) {
+	function(VersionInfo, Log, assert, ObjectPath) {
 	"use strict";
 
 	// Register to the OpenAjax Hub if it exists
@@ -79,7 +78,7 @@ sap.ui.define([
 		buildinfo : { lastchange : "", buildtime : "${buildtime}" }
 	});
 
-	var syncCallBehavior = Configuration.getSyncCallBehavior();
+	var syncCallBehavior = sap.ui.loader._.getSyncCallBehavior();
 
 	/**
 	 * Loads the version info file (resources/sap-ui-version.json) and returns

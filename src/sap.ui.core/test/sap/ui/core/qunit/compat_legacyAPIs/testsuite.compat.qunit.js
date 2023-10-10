@@ -99,10 +99,7 @@ sap.ui.define(function() {
 				page: "test-resources/sap/ui/core/qunit/compat_legacyAPIs/jquery.sap.stubs.qunit.html?sap-ui-async=true&test-mode=stub-replacement&chunk=3"
 			},
 			"jquery-compat": {
-				title: "Compatibility Layer for jQuery 3",
-				ui5: {
-					loglevel: "warning"
-				}
+				page: "test-resources/sap/ui/core/qunit/compat_legacyAPIs/jquery-compat.qunit.html?sap-ui-log-level=warning"
 			},
 			"jQueryCompatExcludeInBootstrap": {
 				page: "test-resources/sap/ui/core/qunit/compat_legacyAPIs/ExcludeJQueryCompatInBootstrap.qunit.html",

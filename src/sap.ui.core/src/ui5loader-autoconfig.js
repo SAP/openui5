@@ -119,6 +119,7 @@
 					});
 
 					xhr.send(null);
+					globalThis["sap-ui-config"].__loaded = true;
 
 				} catch (error) {
 					ui5loader._.logger.error("Loading externalized bootstrap configuration from \"" + url + "\" failed! Reason: " + error + "!");
@@ -227,7 +228,12 @@
 			get: get,
 			set: set,
 			freeze: freeze,
-			setConfiguration: setConfiguration
+			setConfiguration: setConfiguration,
+			_: {
+				configLoaded() {
+					return !!globalThis["sap-ui-config"].__loaded;
+				}
+			}
 		};
 
 		createConfig();
@@ -744,8 +750,7 @@
 	// configuration via window['sap-ui-config'] always overrides an auto detected base URL
 	var mResourceRoots = BaseConfig.get({
 		name: "sapUiResourceRoots",
-		type: BaseConfig.Type.Object,
-		freeze: true
+		type: BaseConfig.Type.Object
 	});
 	if (typeof mResourceRoots[''] === 'string' ) {
 		sBaseUrl = mResourceRoots[''];
@@ -948,6 +953,30 @@
 		freeze: true
 	});
 
+	//calculate syncCallBehavior
+	let syncCallBehavior = 0; // ignore
+	const sNoSync = BaseConfig.get({
+		name: "sapUiXxNoSync",
+		type: BaseConfig.Type.String,
+		external: true,
+		freeze: true
+	});
+	if (sNoSync === 'warn') {
+		syncCallBehavior = 1;
+	} else if (/^(true|x)$/i.test(sNoSync)) {
+		syncCallBehavior = 2;
+	}
+
+	const GlobalConfigurationProvider = sap.ui.require("sap/base/config/GlobalConfigurationProvider");
+	if ( syncCallBehavior && GlobalConfigurationProvider._.configLoaded()) {
+		const sMessage = "[nosync]: configuration loaded via sync XHR";
+		if (syncCallBehavior === 1) {
+			ui5loader._.logger.warning(sMessage);
+		} else {
+			ui5loader._.logger.error(sMessage);
+		}
+	}
+
 	ui5loader.config({
 		baseUrl: sBaseUrl,
 
@@ -974,6 +1003,8 @@
 				'esprima': 'sap/ui/documentation/sdk/thirdparty/esprima'
 			}
 		},
+
+		reportSyncCalls: syncCallBehavior,
 
 		shim: {
 			'sap/ui/thirdparty/bignumber': {

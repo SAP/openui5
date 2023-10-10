@@ -1,5 +1,5 @@
 /* global QUnit */
-sap.ui.define(["sap/ui/core/Theming"], function(Theming) {
+sap.ui.require(["sap/ui/core/Theming"], function(Theming) {
 	"use strict";
 	QUnit.module("Basic");
 

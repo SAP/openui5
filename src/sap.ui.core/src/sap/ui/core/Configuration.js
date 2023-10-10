@@ -10,7 +10,6 @@ sap.ui.define([
 	'./ControlBehavior',
 	'./Locale',
 	"./format/TimezoneUtil",
-	"sap/ui/core/_ConfigurationProvider",
 	"sap/ui/core/getCompatibilityVersion",
 	"sap/ui/core/date/CalendarWeekNumbering",
 	"sap/ui/core/Supportability",
@@ -32,7 +31,6 @@ sap.ui.define([
 		ControlBehavior,
 		Locale,
 		TimezoneUtil,
-		_ConfigurationProvider,
 		getCompatibilityVersion,
 		CalendarWeekNumbering,
 		Supportability,
@@ -319,13 +317,6 @@ sap.ui.define([
 			}
 		}
 
-		// if libs are configured, convert them to modules and prepend them to the existing modules list
-		if ( oCfg.libs ) {
-			config.modules = oCfg.libs.split(",").map(function(lib) {
-				return lib.trim() + ".library";
-			}).concat(config.modules);
-		}
-
 		var oUriParams;
 
 		// apply the settings from the url (only if not blocked by app configuration)
@@ -362,35 +353,10 @@ sap.ui.define([
 
 		config['xx-fiori2Adaptation'] = vAdaptations;
 
-		// in case the flexibilityServices configuration was set to a non-empty, non-default value, sap.ui.fl becomes mandatory
-		// if not overruled by xx-skipAutomaticFlLibLoading
-		if (config.flexibilityServices
-				&& config.flexibilityServices !== M_SETTINGS.flexibilityServices.defaultValue
-				&& !config['xx-skipAutomaticFlLibLoading']
-				&& config.modules.indexOf("sap.ui.fl.library") == -1) {
-			config.modules.push("sap.ui.fl.library");
-		}
-
 		// log  all non default value
 		for (var n in M_SETTINGS) {
 			if ( config[n] !== M_SETTINGS[n].defaultValue ) {
 				Log.info("  " + n + " = " + config[n]);
-			}
-		}
-
-		// The following code can't be done in the _ConfigurationProvider
-		// because of cyclic dependency
-		var syncCallBehavior = Configuration.getSyncCallBehavior();
-		sap.ui.loader.config({
-			reportSyncCalls: syncCallBehavior
-		});
-
-		if ( syncCallBehavior && oCfg.__loaded ) {
-			var sMessage = "[nosync]: configuration loaded via sync XHR";
-			if (syncCallBehavior === 1) {
-				Log.warning(sMessage);
-			} else {
-				Log.error(sMessage);
 			}
 		}
 	}
@@ -980,30 +946,6 @@ sap.ui.define([
 		},
 
 		/**
-		 * Currently active syncCallBehavior
-		 *
-		 * @returns {int} syncCallBehavior
-		 * @private
-		 * @ui5-restricted sap.ui.core
-		 * @since 1.106.0
-		 */
-		getSyncCallBehavior : function() {
-			var syncCallBehavior = 0; // ignore
-			var sNoSync = BaseConfig.get({
-				name: "sapUiXxNoSync",
-				type: BaseConfig.Type.String,
-				external: true,
-				freeze: true
-			});
-			if (sNoSync === 'warn') {
-				syncCallBehavior = 1;
-			} else if (/^(true|x)$/i.test(sNoSync)) {
-				syncCallBehavior = 2;
-			}
-			return syncCallBehavior;
-		},
-
-		/**
 		 * Flag whether a Component should load the manifest first.
 		 *
 		 * @returns {boolean} true if a Component should load the manifest first
@@ -1022,43 +964,36 @@ sap.ui.define([
 		 * @returns {object[]} Flexibility services configuration
 		 * @public
 		 * @since 1.60.0
+		 * @deprecated As of Version 1.120.0
 		 */
 		getFlexibilityServices : function() {
-			var vFlexibilityServices = Configuration.getValue("flexibilityServices") || [];
-
-			if (typeof vFlexibilityServices === 'string') {
-				if (vFlexibilityServices[0] === "/") {
-					vFlexibilityServices = [{
-						url : vFlexibilityServices,
-						layers : ["ALL"],
-						connector : "LrepConnector"
-					}];
-				} else {
-					vFlexibilityServices = JSON.parse(vFlexibilityServices);
-				}
+			var FlexConfig = sap.ui.require("sap/ui/fl/initial/_internal/config");
+			var vFlexibilityServices;
+			if (FlexConfig) {
+				vFlexibilityServices = FlexConfig.getFlexibilityServices();
+			} else {
+				const aDefaultValue = [{
+					url: "/sap/bc/lrep",
+					connector: "LrepConnector"
+				}];
+				vFlexibilityServices = BaseConfig.get({
+					name: "sapUiFlexibilityServices",
+					type: (value) => {
+						if (value && typeof value === "string") {
+							if (value[0] === "/") {
+								aDefaultValue[0].url = value;
+								value = aDefaultValue;
+							} else {
+								value = JSON.parse(value);
+							}
+						}
+						return value || [];
+					},
+					defaultValue: aDefaultValue,
+					external: true
+				});
 			}
-			config.flexibilityServices = vFlexibilityServices;
-
-			return config.flexibilityServices;
-		},
-
-		/**
-		 * Sets the UI5 flexibility services configuration.
-		 *
-		 * @param {object[]} aFlexibilityServices Connector configuration
-		 * @param {string} [aFlexibilityServices.connector] Name of the connector
-		 * @param {string} [aFlexibilityServices.applyConnector] Name of the full module name of the custom apply connector
-		 * @param {string} [aFlexibilityServices.writeConnector] Name of the full module name of the custom write connector
-		 * @param {boolean} [aFlexibilityServices.custom=false] Flag to identify the connector as custom or fl owned
-		 * @param {string} [aFlexibilityServices.url] Url for requests sent by the connector
-		 * @param {string} [aFlexibilityServices.path] Path for loading data in the ObjectPath connector
-		 * @param {sap.ui.fl.Layer[]} [aFlexibilityServices.layers] List of layers in which the connector is allowed to write
-		 * @private
-		 * @ui5-restricted sap.ui.fl, other ui5 bootstrapping tools
-		 * @since 1.73.0
-		 */
-		setFlexibilityServices: function (aFlexibilityServices) {
-			config.flexibilityServices = aFlexibilityServices.slice();
+			return vFlexibilityServices;
 		},
 
 		/**

@@ -35,9 +35,7 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 			 */
 			"jquery.sap.logger": {
 				group: "jQuery plugins",
-				ui5: {
-					logLevel: "WARNING"
-				}
+				page: "test-resources/sap/ui/core/qunit/util/jquery.sap.logger.qunit.html?sap-ui-log-level=warning"
 			},
 			/**
 			 * @deprecated since 1.58
