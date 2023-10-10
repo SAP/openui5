@@ -20816,6 +20816,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			checkServiceCache(["token0", "token1"]);
 		}).finally(clearCaches);
 	});
+
 	//*********************************************************************************************
 	// Scenario: For a table where transient entries have messages, the filter returned by requestFilterForMessages does
 	// not refer to these entries. For the BCP incident, check the case no item loaded from the backend has a message:
@@ -20881,6 +20882,102 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			]);
 		}).then((aResults) => {
 			assert.strictEqual(aResults[0], null, "no message filter, only transient item has message");
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: The data state of a control in a table needs to be reevaluated if the row context changes but the
+	// value of the property binding does not change.
+	// JIRA: CPOUI5MODELS-1421
+	QUnit.test("Filter table with messages, every line has the correct data state", function (assert) {
+		let oRowsBinding, oTable;
+		const oModel = createSalesOrdersModel({preliminaryContext : true});
+		const oResponseMessage = this.createResponseMessage("(SalesOrderID='1',ItemPosition='20')/Note",
+			"~errorMessage");
+		const sView = '\
+<t:Table id="table" rows="{/SalesOrderSet(\'1\')/ToLineItems}" visibleRowCount="3">\
+	<Input id="note" value="{Note}" />\
+</t:Table>';
+
+		this.expectHeadRequest()
+			.expectRequest({
+				requestUri : "SalesOrderSet('1')/ToLineItems?$skip=0&$top=103"
+			}, {
+				results : [{
+					__metadata : {
+						uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10')"
+					},
+					Note : "Bar",
+					ItemPosition : "10",
+					SalesOrderID : "1"
+				}, {
+					__metadata : {
+						uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='20')"
+					},
+					Note : "Baz",
+					ItemPosition : "20",
+					SalesOrderID : "1"
+				}, {
+					__metadata : {
+						uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='30')"
+					},
+					Note : "Baz", // same value as for 20
+					ItemPosition : "30",
+					SalesOrderID : "1"
+				}]
+			}, {
+				"sap-message" : getMessageHeader(oResponseMessage)
+			})
+			.expectValue("note", ["Bar", "Baz", "Baz"])
+			.expectMessage(oResponseMessage, "/SalesOrderLineItemSet", "/SalesOrderSet('1')/ToLineItems");
+
+		return this.createView(assert, sView, oModel).then(() => {
+			oTable = this.oView.byId("table");
+			oRowsBinding = oTable.getBinding("rows");
+
+			this.expectValueState(oTable.getRows()[0].getCells()[0], "None", "")
+				.expectValueState(oTable.getRows()[1].getCells()[0], "Error", "~errorMessage")
+				.expectValueState(oTable.getRows()[2].getCells()[0], "None", "");
+
+			return this.waitForChanges(assert);
+		}).then(() => {
+			this.expectRequest({
+					requestUri : "SalesOrderSet('1')/ToLineItems?$skip=0&$top=103&$filter=ItemPosition gt '10'"
+				}, {
+					results : [{
+						__metadata : {
+							uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='20')"
+						},
+						Note : "Baz",
+						ItemPosition : "20",
+						SalesOrderID : "1"
+					}, {
+						__metadata : {
+							uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='30')"
+						},
+						Note : "Baz", // same value as for 20
+						ItemPosition : "30",
+						SalesOrderID : "1"
+					}]
+				}, {
+					"sap-message" : getMessageHeader(oResponseMessage)
+				})
+				.expectValue("note", "Baz", 0)
+				.expectValue("note", "", 2)
+				.expectMessage(oResponseMessage, "/SalesOrderLineItemSet", "/SalesOrderSet('1')/ToLineItems", true)
+				.expectValueState(oTable.getRows()[0].getCells()[0], "Error", "~errorMessage")
+				.expectValueState(oTable.getRows()[1].getCells()[0], "None", "")
+				.expectValueState(oTable.getRows()[2].getCells()[0], "None", "");
+
+			// filter out item 10
+			oRowsBinding.filter(new Filter({
+					path : "ItemPosition",
+					operator : FilterOperator.GT,
+					value1 : "10"
+				})
+			);
+
+			return this.waitForChanges(assert);
 		});
 	});
 });
