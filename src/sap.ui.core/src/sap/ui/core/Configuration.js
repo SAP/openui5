@@ -343,16 +343,6 @@ sap.ui.define([
 			}
 		}
 
-		//parse fiori 2 adaptation parameters
-		var vAdaptations = config['xx-fiori2Adaptation'];
-		if ( vAdaptations.length === 0 || (vAdaptations.length === 1 && vAdaptations[0] === 'false') ) {
-			vAdaptations = false;
-		} else if ( vAdaptations.length === 1 && vAdaptations[0] === 'true' ) {
-			vAdaptations = true;
-		}
-
-		config['xx-fiori2Adaptation'] = vAdaptations;
-
 		// log  all non default value
 		for (var n in M_SETTINGS) {
 			if ( config[n] !== M_SETTINGS[n].defaultValue ) {
@@ -789,9 +779,23 @@ sap.ui.define([
 		 * @return {boolean|string} false - no adaptation, true - full adaptation, comma-separated list - partial adaptation
 		 * Possible values: style, collapse, title, back, hierarchy
 		 * @public
+		 * @deprecated As of Version 1.120
 		 */
 		getFiori2Adaptation : function () {
-			return Configuration.getValue("xx-fiori2Adaptation");
+			var aAdaptations = BaseConfig.get({
+					name: "sapUiXxFiori2Adaptation",
+					type: BaseConfig.Type.StringArray,
+					external: true
+				}),
+				bAdaptationEnabled;
+			//parse fiori 2 adaptation parameters
+			if ( aAdaptations.length === 0 || (aAdaptations.length === 1 && aAdaptations[0] === 'false') ) {
+				bAdaptationEnabled = false;
+			} else if ( aAdaptations.length === 1 && aAdaptations[0] === 'true' ) {
+				bAdaptationEnabled = true;
+			}
+
+			return bAdaptationEnabled === undefined ? aAdaptations : bAdaptationEnabled;
 		},
 
 		/**
