@@ -175,5 +175,76 @@
         ]
       }
     ]
+  },
+  "1.114.10": {
+    "date": "October 2023",
+    "notes": [
+      {
+        "id": "9d75b9fdd0016b9a08bef88a500714f674168c8e",
+        "type": "FIX",
+        "text": " sap.m.Slider: Handles styles adjusted",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
+        "id": "b7ada71bdec1edcd83c9811f56c8134fe5bd7dd8",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus: apply horizon theme updates",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
+        "id": "f32908ef204a86c2863e8476620d5ebc6c612953",
+        "type": "FIX",
+        "text": " sap.m.Button: remove hover shadows",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
+        "id": "2e64d7da226355af4f0db119d2ee7b7c7c35a206",
+        "type": "FIX",
+        "text": " sap.m.InputBase: Focus border color changed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
+        "id": "94fb8f3f97de80d8624b01d91925886fa48f3e1b",
+        "type": "FIX",
+        "text": " sap.m.MessageStrip: Close button hover background fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
+        "id": "2cf8939132f734c14fc7c30d1512b27441651b50",
+        "type": "FIX",
+        "text": " sap.m.Page: Floating footer styles adjustments",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      }
+    ]
   }
 }

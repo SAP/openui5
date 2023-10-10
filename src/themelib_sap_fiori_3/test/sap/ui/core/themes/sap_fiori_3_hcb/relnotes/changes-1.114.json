@@ -120,5 +120,43 @@
         ]
       }
     ]
+  },
+  "1.114.10": {
+    "date": "October 2023",
+    "notes": [
+      {
+        "id": "b7ada71bdec1edcd83c9811f56c8134fe5bd7dd8",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus: apply horizon theme updates",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
+        "id": "f32908ef204a86c2863e8476620d5ebc6c612953",
+        "type": "FIX",
+        "text": " sap.m.Button: remove hover shadows",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
+        "id": "2cf8939132f734c14fc7c30d1512b27441651b50",
+        "type": "FIX",
+        "text": " sap.m.Page: Floating footer styles adjustments",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      }
+    ]
   }
 }

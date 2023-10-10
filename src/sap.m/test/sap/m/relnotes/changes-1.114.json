@@ -515,5 +515,69 @@
         ]
       }
     ]
+  },
+  "1.114.10": {
+    "date": "October 2023",
+    "notes": [
+      {
+        "id": "b7ada71bdec1edcd83c9811f56c8134fe5bd7dd8",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus: apply horizon theme updates",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
+        "id": "f32908ef204a86c2863e8476620d5ebc6c612953",
+        "type": "FIX",
+        "text": " sap.m.Button: remove hover shadows",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
+        "id": "e4a8ffe48338fffb774115f7456d5013ecad89a7",
+        "type": "FIX",
+        "text": " - sap.m.NumericContent",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500007160152023"
+          }
+        ]
+      },
+      {
+        "id": "7698e0e074cedb93f06ba80b6d894b5a5ff970a1",
+        "type": "FIX",
+        "text": " sap.m.InputBase: Value state box-shadow adjusted",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
+        "id": "a121153d132b42d0ddbc08a73fd0933efd4a627f",
+        "type": "FIX",
+        "text": " sap.m.Avatar: Delete active state for now",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380118028"
+          },
+          {
+            "type": "BCP",
+            "reference": "2380121540"
+          }
+        ]
+      }
+    ]
   }
 }

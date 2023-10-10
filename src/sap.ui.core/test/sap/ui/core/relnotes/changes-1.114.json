@@ -207,5 +207,32 @@
         ]
       }
     ]
+  },
+  "1.114.10": {
+    "date": "October 2023",
+    "notes": [
+      {
+        "id": "3bbbd8a0b67cfe7436c9b688ecae40a4d272ec74",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v2.ODataModel#resetChanges: do not remove persistent messages",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370086388"
+          }
+        ]
+      },
+      {
+        "id": "61b57164f077979c9c57c2f94e67482fc109aee4",
+        "type": "FEATURE",
+        "text": " Prepare for upcoming 'unload' event deprecation and deprecate APIs 'onWindowBeforeUnload', 'onWindowUnload' and 'onWindowError' in 'sap/ui/core/Component'",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      }
+    ]
   }
 }
