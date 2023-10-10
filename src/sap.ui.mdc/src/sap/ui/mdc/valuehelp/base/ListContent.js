@@ -47,7 +47,10 @@ sap.ui.define([
 				/**
 				 * If set, <code>getItemForValue</code> returns the first item that matches the text.
 				 *
-				 * This is the case if the text of the item starts with the text entered.
+				 * In the default implementation, this is the first item that matches the entered text. Which item is used can be determined
+				 * by implementing {@link sap.ui.mdc.ValueHelpDelegate#getFirstMatch}.
+				 *
+				 * The matching item is returned in the <code>typeaheadSuggested</code> event and used for the autocomplete feature in the connected field.
 				 */
 				 useFirstMatch: {
 					type: "boolean",
