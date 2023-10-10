@@ -314,6 +314,10 @@ sap.ui.define([
                     /**
                      * This aggregation describes actions that are added to the chart toolbar.<br>
                      * For more information, see {@link sap.ui.mdc.actiontoolbar.ActionToolbarAction}.
+                     * <b>Note:</b>
+				     * This aggregation is managed by the control, can only be populated during the definition in the XML view, and is not bindable.
+				     * Any changes of the initial aggregation content might result in undesired effects.
+				     * Changes of the aggregation have to be made with the {@link sap.ui.mdc.p13n.StateUtil StateUtil}.
                      */
                     actions: {
                         type: "sap.ui.core.Control",
@@ -1428,6 +1432,36 @@ sap.ui.define([
             }
 
         };
+
+        /**
+         * @name sap.ui.mdc.Chart#addAction
+         * @private
+         * @ui5-restricted sap.ui.mdc, sap.ui.fl
+         */
+
+        /**
+         * @name sap.ui.mdc.Chart#destroyActions
+         * @private
+         * @ui5-restricted sap.ui.mdc, sap.ui.fl
+         */
+
+        /**
+         * @name sap.ui.mdc.Chart#insertAction
+         * @private
+         * @ui5-restricted sap.ui.mdc, sap.ui.fl
+         */
+
+        /**
+         * @name sap.ui.mdc.Chart#removeAction
+         * @private
+         * @ui5-restricted sap.ui.mdc, sap.ui.fl
+         */
+
+        /**
+         * @name sap.ui.mdc.Chart#removeAllActions
+         * @private
+         * @ui5-restricted sap.ui.mdc, sap.ui.fl
+         */
 
         /**
          * @name sap.ui.mdc.Chart#addItem
