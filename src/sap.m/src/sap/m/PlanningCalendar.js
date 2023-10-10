@@ -825,6 +825,9 @@ sap.ui.define([
 						oRow = getRow(oRowHeader.getParent()),
 						sRowHeaderId = oRowHeader.getId();
 
+					/**
+					 * @deprecated As of version 1.119
+					 */
 					this.fireRowHeaderClick({headerId: sRowHeaderId, row: oRow});
 					this.fireRowHeaderPress({headerId: sRowHeaderId, row: oRow});
 				}.bind(this));
