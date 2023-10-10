@@ -12,8 +12,9 @@ sap.ui.define([
 	"sap/ui/core/util/MockServer",
 	"sap/ui/table/Column",
 	"sap/ui/table/rowmodes/Fixed",
-	"sap/m/Text"
-], function (Core, qutils, KeyCodes, CellSelector, GridTable, ODataModel, MockServer, GridColumn, GridFixedRowMode, Text) {
+	"sap/m/Text",
+	"sap/ui/core/dnd/DragDropInfo"
+], function (Core, qutils, KeyCodes, CellSelector, GridTable, ODataModel, MockServer, GridColumn, GridFixedRowMode, Text, DragDropInfo) {
 	"use strict";
 
 	function getCell(oTable, iRow, iCol) {
@@ -44,8 +45,7 @@ sap.ui.define([
 					new GridColumn({ template: new Text({text: "{Category}"}) })
 				],
 				rows: "{/Products}",
-				models: new ODataModel(sServiceURI, true),
-				dependents: this.oCellSelector
+				models: new ODataModel(sServiceURI, true)
 			}).placeAt("qunit-fixture");
 			Core.applyChanges();
 		},
@@ -56,6 +56,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("RangeLimit Property - getSelectionRange/getSelectedRowContexts APIs", function (assert) {
+		this.oTable.addDependent(this.oCellSelector);
 		var done = assert.async();
 
 		this.oTable.attachEventOnce("rowsUpdated", () => {
@@ -80,6 +81,39 @@ sap.ui.define([
 				oGetContextsSpy.restore();
 				done();
 			}));
+		});
+	});
+
+	QUnit.test("Drag compatibility", function(assert) {
+		var done = assert.async();
+		this.oTable.addDependent(this.oCellSelector);
+		assert.ok(this.oCellSelector.getEnabled(), "CellSelector is enabled");
+		assert.ok(this.oCellSelector.isActive(), "CellSelector is active");
+
+		this.oTable.removeDependent(this.oCellSelector);
+
+		const oConfig = new DragDropInfo({
+			sourceAggregation: "rows",
+			targetAggregation: "rows",
+			enabled: true
+		});
+		this.oTable.addDragDropConfig(oConfig);
+		this.oTable.addDependent(this.oCellSelector);
+		assert.ok(this.oCellSelector.isActive(), "CellSelector is active");
+		this.oTable.attachEventOnce("rowsUpdated", () => {
+			var oSelectCellsSpy = sinon.spy(this.oCellSelector, "_selectCells");
+			var oCell = getCell(this.oTable, 1, 0); // first cell of first row
+			qutils.triggerKeydown(oCell, KeyCodes.SPACE); // select first cell of first row
+			assert.equal(oSelectCellsSpy.callCount, 0, "No cells are selected");
+			assert.deepEqual(this.oCellSelector.getSelectionRange(), null);
+
+			oConfig.setEnabled(false);
+			qutils.triggerKeydown(oCell, KeyCodes.SPACE); // select first cell of first row
+			assert.equal(oSelectCellsSpy.callCount, 1, "Cells have been selected");
+			assert.deepEqual(this.oCellSelector.getSelectionRange(), {from: {rowIndex: 1, colIndex: 0}, to: {rowIndex: 1, colIndex: 0}});
+
+			oSelectCellsSpy.reset();
+			done();
 		});
 	});
 });
