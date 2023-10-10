@@ -3,6 +3,11 @@
     "date": "October 2023",
     "notes": [
       {
+        "id": "ac243da6dff169ef0a3ad88d89299e62179cfbfe",
+        "type": "FEATURE",
+        "text": " GridTable: filterType now requests string-based types via sap.ui.require"
+      },
+      {
         "id": "d73a742c9de5007efb19eff8f314a74fb8063d65",
         "type": "FEATURE",
         "text": " DataType, Library: Enable enum type registration without globals"

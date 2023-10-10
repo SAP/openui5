@@ -3,6 +3,28 @@
     "date": "October 2023",
     "notes": [
       {
+        "id": "776375fd969e8ceb03511fd70d82953c959d4ff2",
+        "type": "FIX",
+        "text": " MDC.Field: Prevent ValueHelp.shouldOpenOnFocus flow with programmatic focus",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380109591"
+          }
+        ]
+      },
+      {
+        "id": "5d637ff0b6b246b74f8d3d26b6e5e4c99f8bcd8f",
+        "type": "FIX",
+        "text": " MultiValueField: forward events to table",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370082827"
+          }
+        ]
+      },
+      {
         "id": "d73a742c9de5007efb19eff8f314a74fb8063d65",
         "type": "FEATURE",
         "text": " DataType, Library: Enable enum type registration without globals"

@@ -3,6 +3,11 @@
     "date": "October 2023",
     "notes": [
       {
+        "id": "5dbc5c41bfd2d5ef7a19beac7dff47b48e3383e7",
+        "type": "FIX",
+        "text": " Demo Kit: Opa tests verified"
+      },
+      {
         "id": "53c45e36ee80f5fb535c271ae62bbb2799896b5f",
         "type": "FIX",
         "text": " DemoKit: Version button visibility fixed"

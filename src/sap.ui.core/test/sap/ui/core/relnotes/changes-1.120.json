@@ -3,6 +3,53 @@
     "date": "October 2023",
     "notes": [
       {
+        "id": "55153ef81949f85a9e833a4f850eae3eef816a18",
+        "type": "FEATURE",
+        "text": " Introduce sap/base/i18n/Localization"
+      },
+      {
+        "id": "a479cb2cdc16c6bf99b491866b796960579fe086",
+        "type": "FIX",
+        "text": " ResourceBundle: Use Accept-Language: * for empty locale (\"\")",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370100866"
+          }
+        ]
+      },
+      {
+        "id": "9cfe7f978f9f1205f9b2579a523fe33cafe1883d",
+        "type": "FIX",
+        "text": " sap.ui.base.Metadata: Fix JSDoc return type of `getParent`"
+      },
+      {
+        "id": "e5bafc5485106319bb48989e633bd403fde348f7",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v2.ODataModel#resetChanges: do not remove peristent messages",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370086388"
+          }
+        ]
+      },
+      {
+        "id": "c2c46953a920cf8e5586c516698589d99b8cfa90",
+        "type": "FEATURE",
+        "text": " Deprecate APIs 'getAppCacheBuster' and 'getAppCacheBusterMode' on sap.ui.core.Configuration."
+      },
+      {
+        "id": "5f74dee3e5f7e214856f9cfd3521d98e45989403",
+        "type": "FEATURE",
+        "text": " Deprecate APIs 'getOriginInfo', 'getDebug', 'getInspect' and 'getStatisticsEnabled' on sap.ui.core.Configuration."
+      },
+      {
+        "id": "c51bfa9b3906454cf8b2eb5ffbd08639fb5f69e7",
+        "type": "FEATURE",
+        "text": " sap.ui.core.Configuration: deprecate getFileShareSupport"
+      },
+      {
         "id": "7d7dfa208d4b28eb7c99ee35e1237953d5a13be1",
         "type": "FEATURE",
         "text": " Deprecation of sap/ui/core/DeclarativeSupport"
@@ -32,6 +79,11 @@
         "id": "dbd7430219b051903847319296cd46af1889d66d",
         "type": "FEATURE",
         "text": " Move new security facade from sap/ui/core/Security.js to sap/ui/security/Security.js"
+      },
+      {
+        "id": "4c021aee0f606a168ce274d6e9c682147004f4e0",
+        "type": "FEATURE",
+        "text": " UIComponent: Deprecate usage of Routing classes via globals and establish alternative"
       },
       {
         "id": "fd123fc79d9f9627efb6edfc29d0c6508f8216b6",

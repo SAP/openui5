@@ -3,6 +3,33 @@
     "date": "October 2023",
     "notes": [
       {
+        "id": "bf4241bf775d2301f6faccfb27683c91a096ad14",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: Fire intervalSelect event date from another month",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370094258"
+          }
+        ]
+      },
+      {
+        "id": "9d90b44d13c6e48bfdc30c32b70cd7dacb51c80a",
+        "type": "FEATURE",
+        "text": "We've now introduced the linkTileContents aggregation that can render an icon and a link on the generic tile"
+      },
+      {
+        "id": "1a000459e4d3a46f77c8395d63e3679c524c3ff8",
+        "type": "FIX",
+        "text": " sap.m.MultiComboBox: Reposition ValueStateHeader when long text is set",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380052154"
+          }
+        ]
+      },
+      {
         "id": "53f5bc866d215dc83289f36176d10cc0427eaa60",
         "type": "FIX",
         "text": " sap.m.PlanningCalendar: DateNavigation now uses firstDayOfWeek",

@@ -3,6 +3,11 @@
     "date": "October 2023",
     "notes": [
       {
+        "id": "809177bdc3eb28d90645b8b836335e4c7694701d",
+        "type": "FEATURE",
+        "text": " sap.tnt.SideNavigation: Added \"width\" property"
+      },
+      {
         "id": "babd23a496c12c13f0495558a29ff2fb000adc69",
         "type": "FIX",
         "text": " sap.tnt.ToolHeader: Badge on Button for Compact content density is properly positioned now",

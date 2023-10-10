@@ -3,6 +3,17 @@
     "date": "October 2023",
     "notes": [
       {
+        "id": "4a1901b28db224100432095c871615e2011423b1",
+        "type": "FIX",
+        "text": " sap.ui/unified/CalendarDateInterval: fixed dates row disappearance",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500008608272023"
+          }
+        ]
+      },
+      {
         "id": "6fc8110c09777fff785b0b65eec071f48e412aac",
         "type": "FIX",
         "text": " sap.ui.unified.CalendarRow: Secure control load  when data is not loaded",
