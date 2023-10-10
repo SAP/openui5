@@ -29457,6 +29457,8 @@ sap.ui.define([
 		assert.strictEqual(oBeta.isAncestorOf(oKappa), true, "JIRA: CPOUI5ODATAV4-2337");
 		assert.strictEqual(oOmega.isAncestorOf(oKappa), true, "JIRA: CPOUI5ODATAV4-2337");
 		assert.strictEqual(oKappa.isAncestorOf(oOmega), false, "JIRA: CPOUI5ODATAV4-2337");
+
+		// code under test
 		assert.strictEqual(oKappa.getParent(), oBeta, "JIRA: CPOUI5ODATAV4-2323");
 		assert.strictEqual(oBeta.getParent(), oAlpha, "JIRA: CPOUI5ODATAV4-2323");
 		assert.strictEqual(oAlpha.getParent(), oOmega, "JIRA: CPOUI5ODATAV4-2323");
@@ -29464,6 +29466,188 @@ sap.ui.define([
 	});
 	});
 });
+
+	//*********************************************************************************************
+	// Scenario: Show the first level of a recursive hierarchy ("Alpha", "Omega"), expand "Alpha".
+	// Scroll to "Delta". Request side effects for the list binding. The parent node will not
+	// anymore have a context in the list binding.
+	// Determine the parent node of "Delta" with #getParent. It is not available at the moment.
+	// Try to request the parent node of "Alpha" and "Delta".
+	// JIRA: CPOUI5ODATAV4-2342
+	QUnit.test("get and request Parent after requestSideEffects", async function (assert) {
+		const oModel = this.createTeaBusiModel({autoExpandSelect : true});
+		const sView = `
+<t:Table id="table" rows="{path : '/EMPLOYEES',
+		parameters : {
+			$$aggregation : {hierarchyQualifier : 'OrgChart'}
+		}}" threshold="0" visibleRowCount="2">
+	<Text text="{= %{@$ui5.node.isExpanded} }"/>
+	<Text text="{= %{@$ui5.node.level} }"/>
+	<Text id="id" text="{ID}"/>
+	<Text text="{Name}"/>
+</t:Table>`;
+
+		// 0 Alpha
+		//   1 Beta
+		//   2 Gamma
+		//   3 Delta
+		//   4 Epsilon
+		// 9 Omega
+		this.expectRequest("EMPLOYEES?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels("
+					+ "HierarchyNodes=$root/EMPLOYEES,HierarchyQualifier='OrgChart'"
+					+ ",NodeProperty='ID',Levels=1)"
+				+ "&$select=DrillState,ID,Name&$count=true&$skip=0&$top=2", {
+				"@odata.count" : "2",
+				value : [{
+					DrillState : "collapsed",
+					ID : "0",
+					Name : "Alpha"
+				}, {
+					DrillState : "leaf",
+					ID : "9",
+					Name : "Omega"
+				}]
+			})
+			.expectChange("id", ["0", "9"]);
+
+		await this.createView(assert, sView, oModel);
+
+		const oTable = this.oView.byId("table");
+		checkTable("initial page", assert, oTable, [
+			"/EMPLOYEES('0')",
+			"/EMPLOYEES('9')"
+		], [
+			[false, 1, "0", "Alpha"],
+			[undefined, 1, "9", "Omega"]
+		]);
+		const oAlpha = oTable.getRows()[0].getBindingContext();
+
+		this.expectRequest("EMPLOYEES?$apply=descendants($root/EMPLOYEES,OrgChart,ID"
+					+ ",filter(ID eq '0'),1)"
+				+ "&$select=DrillState,ID,Name&$count=true&$skip=0&$top=2", {
+				"@odata.count" : "4",
+				value : [{
+					DrillState : "leaf",
+					ID : "1",
+					Name : "Beta"
+				}, {
+					DrillState : "leaf",
+					ID : "2",
+					Name : "Gamma"
+				}]
+			})
+			.expectChange("id", [, "1"]);
+
+		oAlpha.expand();
+
+		await this.waitForChanges(assert, "expand 0 (Alpha)");
+
+		checkTable("after expand 0 (Alpha)", assert, oTable, [
+			"/EMPLOYEES('0')",
+			"/EMPLOYEES('1')",
+			"/EMPLOYEES('2')",
+			"/EMPLOYEES('9')"
+		], [
+			[true, 1, "0", "Alpha"],
+			[undefined, 2, "1", "Beta"]
+		], 6);
+
+		this.expectRequest("EMPLOYEES?$apply=descendants($root/EMPLOYEES,OrgChart,ID"
+					+ ",filter(ID eq '0'),1)"
+				+ "&$select=DrillState,ID,Name&$skip=2&$top=2", {
+				value : [{
+					DrillState : "leaf",
+					ID : "3",
+					Name : "Delta"
+				}, {
+					DrillState : "leaf",
+					ID : "4",
+					Name : "Epsilon"
+				}]
+			})
+			.expectChange("id", [,,, "3", "4"]);
+
+		oTable.setFirstVisibleRow(3); // scroll to "Delta"
+
+		await this.waitForChanges(assert, "setFirstVisibleRow to 3 (Delta)");
+
+		checkTable("after setFirstVisibleRow", assert, oTable, [
+			"/EMPLOYEES('0')",
+			"/EMPLOYEES('1')",
+			"/EMPLOYEES('2')",
+			"/EMPLOYEES('3')",
+			"/EMPLOYEES('4')",
+			"/EMPLOYEES('9')"
+		], [
+			[undefined, 2, "3", "Delta"],
+			[undefined, 2, "4", "Epsilon"]
+		]);
+		const oDelta = oTable.getRows()[0].getBindingContext();
+
+		this.expectRequest("EMPLOYEES?$select=ID,Name&$filter=ID eq '3' or ID eq '4'"
+				+ "&$top=2", {
+				value : [{
+					DrillState : "leaf",
+					ID : "3",
+					Name : "Delta"
+				}, {
+					DrillState : "leaf",
+					ID : "4",
+					Name : "Epsilon"
+				}]
+			});
+
+		// code under test
+		assert.strictEqual(oAlpha.getParent(), null);
+		assert.strictEqual(await oAlpha.requestParent(), null);
+
+		await Promise.all([
+			oDelta.getBinding().getHeaderContext().requestSideEffects(["Name"]),
+			this.waitForChanges(assert, "request side effects for name")
+		]);
+
+		checkTable("after requestSideEffects", assert, oTable, [
+			"/EMPLOYEES('3')",
+			"/EMPLOYEES('4')"
+		], [
+			[undefined, 2, "3", "Delta"],
+			[undefined, 2, "4", "Epsilon"]
+		], 6);
+
+		// code under test
+		assert.strictEqual(oDelta.getParent(), undefined, "JIRA: CPOUI5ODATAV4-2323");
+
+		this.expectRequest("EMPLOYEES?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels("
+					+ "HierarchyNodes=$root/EMPLOYEES,HierarchyQualifier='OrgChart'"
+					+ ",NodeProperty='ID',Levels=1)"
+				+ "&$select=DrillState,ID,Name&$skip=0&$top=1", {
+				value : [{
+					DrillState : "collapsed",
+					ID : "0",
+					Name : "Alpha"
+				}]
+			})
+			.expectChange("id", ["0", "9"]);
+
+		// code under test
+		const oResult = await oDelta.requestParent();
+
+		assert.strictEqual(oAlpha.getModel(), undefined, "Alpha is destroyed");
+		assert.notStrictEqual(oResult, oAlpha);
+		assert.strictEqual(oResult.getPath(), oAlpha.getPath());
+		assert.strictEqual(oResult.iIndex, oAlpha.iIndex);
+		assert.strictEqual(oDelta.getParent(), oResult,
+			"#getParent and #requestParent must deliver the same context");
+
+		checkTable("after requestParent", assert, oTable, [
+			"/EMPLOYEES('0')",
+			"/EMPLOYEES('3')",
+			"/EMPLOYEES('4')"
+		], [
+			[undefined, 2, "3", "Delta"],
+			[undefined, 2, "4", "Epsilon"]
+		], 6);
+	});
 
 	//*********************************************************************************************
 	// Scenario: Show the single root node of a recursive hierarchy and expand it. Not all children

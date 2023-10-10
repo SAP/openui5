@@ -868,20 +868,21 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the parent node (in case of a recursive hierarchy, see
-	 * {@link #setAggregation}, where <code>oAggregation.expandTo</code> must be one).
+	 * Returns the parent node (in case of a recursive hierarchy, see {@link #setAggregation}, where
+	 * <code>oAggregation.expandTo</code> must be equal to one).
 	 *
 	 * @returns {sap.ui.model.odata.v4.Context|null}
-	 *   The parent node, or <code>null</code> if this node is a root and thus has no parent
+	 *   The parent node, or <code>null</code> if this node is a root node and thus has no parent
 	 * @throws {Error} If
 	 *   <ul>
-	 *     <li> this is not a list binding's context,
-	 *     <li> this is not part of a recursive hierarchy,
+	 *     <li> this context is not a list binding's context,
+	 *     <li> this context is not part of a recursive hierarchy,
 	 *     <li> <code>oAggregation.expandTo</code> is greater than one.
 	 *    </ul>
 	 *
 	 * @experimental As of version 1.120.0
 	 * @public
+	 * @see #requestParent
 	 */
 	Context.prototype.getParent = function () {
 		if (!this.oBinding.getParent) {
@@ -1387,6 +1388,34 @@ sap.ui.define([
 		this.oBinding.checkSuspended();
 
 		return Promise.resolve(this.fetchValue(sPath)).then(_Helper.publicClone);
+	};
+
+	/**
+	 * Requests the parent node (in case of a recursive hierarchy, see {@link #setAggregation},
+	 * where <code>oAggregation.expandTo</code> must be equal to one).
+	 *
+	 * @returns {Promise<sap.ui.model.odata.v4.Context|null>} A promise which:
+	 *   <ul>
+	 *     <li> Resolves if successful with either the parent node or <code>null</code> for a root
+	 *       node that has no parent</li>
+	 *     <li> Rejects with an <code>Error</code> instance otherwise</li>
+	 *   </ul>
+	 * @throws {Error} If
+	 *   <ul>
+	 *     <li> this context is not a list binding's context,
+	 *     <li> this context is not part of a recursive hierarchy,
+	 *     <li> <code>oAggregation.expandTo</code> is greater than one.
+	 *    </ul>
+	 *
+	 * @experimental As of version 1.120.0
+	 * @public
+	 * @see #getParent
+	 */
+	Context.prototype.requestParent = function () {
+		if (!this.oBinding.requestParent) {
+			throw new Error("Not a list binding's context: " + this);
+		}
+		return this.oBinding.requestParent(this);
 	};
 
 	/**

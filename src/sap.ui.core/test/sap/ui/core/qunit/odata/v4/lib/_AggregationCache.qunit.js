@@ -3177,6 +3177,53 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("getParentIndex", function (assert) {
+		const oCache = _AggregationCache.create(this.oRequestor, "~", "", {},
+			{hierarchyQualifier : "X"});
+
+		oCache.aElements[0] = {
+			"@$ui5.node.level" : 0
+		};
+		oCache.aElements[1] = {
+			"@$ui5.node.level" : 1
+		};
+		oCache.aElements[2] = {
+			"@$ui5.node.level" : 2
+		};
+		oCache.aElements[3] = {
+			"@$ui5.node.level" : 3
+		};
+		oCache.aElements[4] = {
+			"@$ui5.node.level" : 2
+		};
+
+		//code under test
+		assert.strictEqual(oCache.getParentIndex(0), -1);
+		assert.strictEqual(oCache.getParentIndex(1), -1);
+		assert.strictEqual(oCache.getParentIndex(2), 1);
+		assert.strictEqual(oCache.getParentIndex(3), 2);
+		assert.strictEqual(oCache.getParentIndex(4), 1);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getParentIndex: error state", function (assert) {
+		const oCache = _AggregationCache.create(this.oRequestor, "~", "", {},
+			{hierarchyQualifier : "X"});
+
+		oCache.aElements[0] = {
+			"@$ui5.node.level" : 3
+		};
+		oCache.aElements[1] = {
+			"@$ui5.node.level" : 2
+		};
+
+		assert.throws(function () {
+			// code under test
+			oCache.getParentIndex(1);
+		}, new Error("Unexpected error"));
+	});
+
+	//*********************************************************************************************
 [false, true].forEach(function (bCount) {
 	[undefined, "~group~"].forEach(function (sGroupId) {
 		var sTitle = "reset: $count = " + bCount + ", sGroupId = " + sGroupId;
