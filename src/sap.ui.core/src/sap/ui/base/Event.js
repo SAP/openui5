@@ -57,7 +57,7 @@ sap.ui.define(['./Object', "sap/base/assert"],
 	 */
 	Event.prototype.init = function(sId, oSource, oParameters) {
 		assert(typeof sId === "string", "Event.init: sId must be a string");
-		assert(BaseObject.isA(oSource, 'sap.ui.base.EventProvider'), "Event.init: oSource must be an EventProvider");
+		assert(BaseObject.isObjectA(oSource, 'sap.ui.base.EventProvider'), "Event.init: oSource must be an EventProvider");
 
 		this.sId = sId;
 		this.oSource = oSource;

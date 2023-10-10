@@ -1150,7 +1150,7 @@ sap.ui.define([
 				var oClass = ObjectPath.get(sApplication);
 				assert(oClass !== undefined, "The specified application \"" + sApplication + "\" could not be found!");
 				var oApplication = new oClass();
-				assert(BaseObject.isA(oApplication, 'sap.ui.app.Application'), "The specified application \"" + sApplication + "\" must be an instance of sap.ui.app.Application!");
+				assert(BaseObject.isObjectA(oApplication, 'sap.ui.app.Application'), "The specified application \"" + sApplication + "\" must be an instance of sap.ui.app.Application!");
 
 			}
 
@@ -1799,7 +1799,7 @@ sap.ui.define([
 
 	function placeControlAt(oDomRef, oControl) {
 		assert(typeof oDomRef === "string" || typeof oDomRef === "object", "oDomRef must be a string or object");
-		assert(oControl instanceof Interface || BaseObject.isA(oControl, "sap.ui.core.Control"), "oControl must be a Control or Interface");
+		assert(oControl instanceof Interface || BaseObject.isObjectA(oControl, "sap.ui.core.Control"), "oControl must be a Control or Interface");
 
 		if (oControl) {
 			oControl.placeAt(oDomRef, "only");
@@ -2575,7 +2575,7 @@ sap.ui.define([
 	 * @deprecated since 1.118. Please use {@link sap.ui.base.ManagedObject#setModel ManagedObject#setModel} instead.
 	 */
 	Core.prototype.setModel = function(oModel, sName) {
-		assert(oModel == null || BaseObject.isA(oModel, 'sap.ui.model.Model'), "oModel must be an instance of sap.ui.model.Model, null or undefined");
+		assert(oModel == null || BaseObject.isObjectA(oModel, 'sap.ui.model.Model'), "oModel must be an instance of sap.ui.model.Model, null or undefined");
 		assert(sName === undefined || (typeof sName === "string" && !/^(undefined|null)?$/.test(sName)), "sName must be a string or omitted");
 		var that = this,
 			oProperties;

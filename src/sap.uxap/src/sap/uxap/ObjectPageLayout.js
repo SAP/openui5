@@ -1858,7 +1858,7 @@ sap.ui.define([
 
 		var oSubsection;
 
-		if (BaseObject.isA(oSection, "sap.uxap.ObjectPageSubSection")) {
+		if (BaseObject.isObjectA(oSection, "sap.uxap.ObjectPageSubSection")) {
 			oSubsection = oSection;
 			oSection = oSection.getParent();
 		} else {

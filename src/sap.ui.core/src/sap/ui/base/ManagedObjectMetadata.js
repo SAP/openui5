@@ -1868,7 +1868,7 @@ function(
 	 */
 	function loadInstanceDesignTime(oInstance) {
 		var sInstanceSpecificModule =
-			BaseObject.isA(oInstance, "sap.ui.base.ManagedObject")
+			BaseObject.isObjectA(oInstance, "sap.ui.base.ManagedObject")
 			&& typeof oInstance.data === "function"
 			&& oInstance.data("sap-ui-custom-settings")
 			&& oInstance.data("sap-ui-custom-settings")["sap.ui.dt"]

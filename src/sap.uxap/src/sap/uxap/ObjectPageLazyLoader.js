@@ -60,7 +60,7 @@ sap.ui.define([
 	StashedControlSupport.mixInto(LazyLoader);
 
 	LazyLoader.prototype.setParent = function (oParent) {
-		if (!(oParent === null || BaseObject.isA(oParent, "sap.uxap.ObjectPageSubSection"))) {
+		if (!(oParent === null || BaseObject.isObjectA(oParent, "sap.uxap.ObjectPageSubSection"))) {
 			assert(false, "setParent(): oParent must be an instance of sap.uxap.ObjectPageSubSection or null");
 		}
 

@@ -68,7 +68,7 @@ sap.ui.define([
 		var aMovableTypes = this._getMovableTypes();
 
 		return aMovableTypes.some(function(sType) {
-			return BaseObject.isA(oElement, sType);
+			return BaseObject.isObjectA(oElement, sType);
 		});
 	};
 
