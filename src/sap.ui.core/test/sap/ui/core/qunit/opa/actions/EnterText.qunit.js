@@ -78,7 +78,8 @@ sap.ui.define([
 	},
 	{
 		Control: TimePicker,
-		textInControl: "2:00:00 AM",
+		// \u202f is a Narrow No-Break Space which has been introduced with CLDR version 43
+		textInControl: "2:00:00\u202fAM",
 		changeEvent: "change",
 		changeEventParameter: "value",
 		props: {
@@ -87,8 +88,8 @@ sap.ui.define([
 	},
 	{
 		Control: TimePicker,
-		textInControl: "3:00:00 AM",
-		textToEnter: "2:00:00 AM",
+		textInControl: "3:00:00\u202fAM",
+		textToEnter: "2:00:00\u202fAM", // user could also enter standard space instead of \u202f
 		changeEvent: "change",
 		changeEventParameter: "value",
 		clearTextFirst: true

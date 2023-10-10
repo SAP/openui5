@@ -46,11 +46,11 @@ sap.ui.define([
 		var oLocale = new Locale("en-US");
 		var oFormat = getCurrencyInstance({style: "long"}, oLocale);
 		assert.strictEqual(oFormat.format(123456.789, "EUR"), "123K" + "\xa0" + "EUR", "123456.789 EUR");
-		assert.strictEqual(oFormat.format(123456.789, "£"), "£123K", "£123456.789 - Not trailing because it's not a valid currency code.");
+		assert.strictEqual(oFormat.format(123456.789, "£"), "£\u00a0123K", "£123456.789 - Not trailing because it's not a valid currency code.");
 
 		oFormat = getCurrencyInstance({style: "short"}, oLocale);
 		assert.strictEqual(oFormat.format(123456.789, "EUR"), "123K" + "\xa0" + "EUR", "123456.789 EUR");
-		assert.strictEqual(oFormat.format(123456.789, "£"), "£123K", "£123456.789 - Not trailing because it's not a valid currency code.");
+		assert.strictEqual(oFormat.format(123456.789, "£"), "£\u00a0123K", "£123456.789 - Not trailing because it's not a valid currency code.");
 
 		oFormat = getCurrencyInstance({style: "standard"}, oLocale);
 		assert.strictEqual(oFormat.format(123456.789, "EUR"), "123,456.79" + "\xa0" + "EUR", "123456.789 EUR");
@@ -1523,7 +1523,8 @@ sap.ui.define([
 
 		// execution
 		var sFormatted = oFormat.format(iExpectedNumber);
-		assert.strictEqual(sFormatted, "‏50,000.00‎", "can be formatted '" + sFormatted + "' (contains RTL character)");
+		assert.strictEqual(sFormatted, "\u200f50,000.00\u00a0\u200f\u200e",
+			"can be formatted '" + sFormatted + "' (contains RTL character)");
 
 		var aParsed = oFormat.parse(sFormatted);
 		assert.deepEqual(aParsed, [50000, undefined], "should match input number " + iExpectedNumber);

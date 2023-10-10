@@ -28,7 +28,8 @@ sap.ui.define([
 	QUnit.test("Should return time if date from today", function(assert) {
 		var oDate = UI5Date.getInstance(2015, 2, 14, 12, 5, 0, 0);
 		var sFormattedDate = oFormatter.format(oDate);
-		assert.strictEqual(sFormattedDate, "12:05 PM");
+		// \u202f is a Narrow No-Break Space which has been introduced with CLDR version 43
+		assert.strictEqual(sFormattedDate, "12:05\u202fPM");
 	});
 
 	QUnit.test("Should return 'Yesterday' if date from yesterday", function(assert) {

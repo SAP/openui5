@@ -484,12 +484,13 @@ sap.ui.define([
 		let aContent = oFieldEdit.getAggregation("_content");
 		let oContent = aContent && aContent.length > 0 && aContent[0];
 		assert.ok(oContent instanceof TimePicker, "TimePicker rendered");
-		assert.equal(oContent.$("inner").val(), " 9:00:00 AM", "Value set on TimePicker control");
+		// \u202f is a Narrow No-Break Space which has been introduced with CLDR version 43
+		assert.equal(oContent.$("inner").val(), " 9:00:00\u202fAM", "Value set on TimePicker control");
 
 		aContent = oFieldDisplay.getAggregation("_content");
 		oContent = aContent && aContent.length > 0 && aContent[0];
 		assert.equal(oContent.getMetadata().getName(), "sap.m.Text", "sap.m.Text is used");
-		assert.equal(oContent.getText(), "9:00:00 AM", "Text set on Text control");
+		assert.equal(oContent.getText(), "9:00:00\u202fAM", "Text set on Text control");
 
 	});
 
@@ -504,12 +505,13 @@ sap.ui.define([
 		let aContent = oFieldEdit.getAggregation("_content");
 		let oContent = aContent && aContent.length > 0 && aContent[0];
 		assert.ok(oContent instanceof DateTimePicker, "DateTimePicker rendered");
-		assert.equal(oContent.$("inner").val(), "Nov 7, 2017, 1:01:24 PM", "Value set on DateTimePicker control");
+		// \u202f is a Narrow No-Break Space which has been introduced with CLDR version 43
+		assert.equal(oContent.$("inner").val(), "Nov 7, 2017, 1:01:24\u202fPM", "Value set on DateTimePicker control");
 
 		aContent = oFieldDisplay.getAggregation("_content");
 		oContent = aContent && aContent.length > 0 && aContent[0];
 		assert.equal(oContent.getMetadata().getName(), "sap.m.Text", "sap.m.Text is used");
-		assert.equal(oContent.getText(), "Nov 7, 2017, 1:01:24 PM", "Text set on Text control");
+		assert.equal(oContent.getText(), "Nov 7, 2017, 1:01:24\u202fPM", "Text set on Text control");
 
 	});
 

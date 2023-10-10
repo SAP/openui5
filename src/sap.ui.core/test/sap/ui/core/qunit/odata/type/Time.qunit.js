@@ -114,11 +114,11 @@ sap.ui.define([
 		assert.strictEqual(oType.formatValue(null, "foo"), null, "null");
 
 		assert.strictEqual(oType.formatValue(oTime, "any"), oTime, "null");
-		assert.strictEqual(oType.formatValue(oTime, "string"), "1:53:49 PM", "null");
+		assert.strictEqual(oType.formatValue(oTime, "string"), "1:53:49\u202FPM", "null");
 
 		this.mock(oType).expects("getPrimitiveType").withExactArgs("sap.ui.core.CSSSize")
 			.returns("string");
-		assert.strictEqual(oType.formatValue(oTime, "sap.ui.core.CSSSize"), "1:53:49 PM");
+		assert.strictEqual(oType.formatValue(oTime, "sap.ui.core.CSSSize"), "1:53:49\u202FPM");
 	});
 
 	//*********************************************************************************************
@@ -224,8 +224,7 @@ sap.ui.define([
 				assert.ok(false);
 			} catch (e) {
 				assert.ok(e instanceof ValidateException, "ValidateException: exception");
-				assert.strictEqual(e.message, "EnterTime 11:59:58 PM",
-					"ValidateException: message");
+				assert.strictEqual(e.message, "EnterTime 11:59:58\u202FPM", "ValidateException: message");
 			}
 		});
 	});

@@ -1,4 +1,3 @@
-/*global QUnit, sinon */
 sap.ui.define([
 	"sap/base/Log",
 	"sap/base/util/extend",
@@ -21,6 +20,8 @@ sap.ui.define([
 ], function (Log, extend, DateFormat, Locale, LocaleData, UniversalDate, UI5Date, library, Configuration,
 	Supportability, CalendarWeekNumbering, TestUtils) {
 	"use strict";
+	/* eslint-disable max-nested-callbacks */
+	/*global QUnit, sinon */
 
 	// shortcut for sap.ui.core.CalendarType
 	const CalendarType = library.CalendarType;
@@ -192,7 +193,7 @@ sap.ui.define([
 
 		assert.deepEqual(oFormat.intervalPatterns, [
 			"M/d/y'...'M/d/y",
-			"M/d/y – M/d/y",
+			"M/d/y\u2009\u2013\u2009M/d/y",
 			"M/d/y",
 			"M/d/y - M/d/y"
 		]);
@@ -258,31 +259,46 @@ sap.ui.define([
 
 		QUnit.test("format default date", function (assert) {
 			assert.strictEqual(oDefaultDate.format(oDateTime), "Sep 23, 2000", "default date");
-			assert.strictEqual(oDefaultDateTime.format(oDateTime), "Sep 23, 2000, 8:46:13 AM", "default datetime");
-			assert.strictEqual(oDefaultTime.format(oDateTime), "8:46:13 AM", "default time");
+			assert.strictEqual(oDefaultDateTime.format(oDateTime), "Sep 23, 2000, 8:46:13\u202fAM", "default datetime");
+			assert.strictEqual(oDefaultTime.format(oDateTime), "8:46:13\u202fAM", "default time");
 		});
 
 		QUnit.test("format default date UTC", function (assert) {
 			assert.strictEqual(oDefaultDate.format(oTZDateTime, true), "Sep 22, 2000", "default date UTC");
-			assert.strictEqual(oDefaultDateTime.format(oTZDateTime, true), "Sep 22, 2000, 10:16:13 PM", "default datetime UTC");
-			assert.strictEqual(oDefaultTime.format(oTZDateTime, true), "10:16:13 PM", "default time UTC");
+			assert.strictEqual(oDefaultDateTime.format(oTZDateTime, true), "Sep 22, 2000, 10:16:13\u202fPM",
+				"default datetime UTC");
+			assert.strictEqual(oDefaultTime.format(oTZDateTime, true), "10:16:13\u202fPM", "default time UTC");
 		});
 
 		QUnit.test("format date with given style", function (assert) {
-			assert.strictEqual(DateFormat.getDateInstance({ style: "short" }).format(oDateTime), "9/23/00", "short date");
-			assert.strictEqual(DateFormat.getDateInstance({ style: "medium" }).format(oDateTime), "Sep 23, 2000", "medium date");
-			assert.strictEqual(DateFormat.getDateInstance({ style: "long" }).format(oDateTime), "September 23, 2000", "long date");
-			assert.strictEqual(DateFormat.getDateInstance({ style: "full" }).format(oDateTime), "Saturday, September 23, 2000", "full date");
-			assert.strictEqual(DateFormat.getDateTimeInstance({ style: "short" }).format(oDateTime), "9/23/00, 8:46 AM", "short datetime");
-			assert.strictEqual(DateFormat.getDateTimeInstance({ style: "medium" }).format(oDateTime), "Sep 23, 2000, 8:46:13 AM", "medium datetime");
-			assert.strictEqual(DateFormat.getDateTimeInstance({ style: "long" }).format(oDateTime), "September 23, 2000 at 8:46:13 AM GMT+02:00", "long datetime");
-			assert.strictEqual(DateFormat.getDateTimeInstance({ style: "full" }).format(oDateTime), "Saturday, September 23, 2000 at 8:46:13 AM GMT+02:00", "full datetime");
-			assert.strictEqual(DateFormat.getDateTimeInstance({ style: "medium/short" }).format(oDateTime), "Sep 23, 2000, 8:46 AM", "medium/short datetime");
-			assert.strictEqual(DateFormat.getDateTimeInstance({ style: "long/medium" }).format(oDateTime), "September 23, 2000 at 8:46:13 AM", "long/medium datetime");
-			assert.strictEqual(DateFormat.getTimeInstance({ style: "short" }).format(oDateTime), "8:46 AM", "short time");
-			assert.strictEqual(DateFormat.getTimeInstance({ style: "medium" }).format(oDateTime), "8:46:13 AM", "medium time");
-			assert.strictEqual(DateFormat.getTimeInstance({ style: "long" }).format(oDateTime), "8:46:13 AM GMT+02:00", "long time");
-			assert.strictEqual(DateFormat.getTimeInstance({ style: "full" }).format(oDateTime), "8:46:13 AM GMT+02:00", "full time");
+			assert.strictEqual(DateFormat.getDateInstance({ style: "short" }).format(oDateTime),
+				"9/23/00", "short date");
+			assert.strictEqual(DateFormat.getDateInstance({ style: "medium" }).format(oDateTime),
+				"Sep 23, 2000", "medium date");
+			assert.strictEqual(DateFormat.getDateInstance({ style: "long" }).format(oDateTime),
+				"September 23, 2000", "long date");
+			assert.strictEqual(DateFormat.getDateInstance({ style: "full" }).format(oDateTime),
+				"Saturday, September 23, 2000", "full date");
+			assert.strictEqual(DateFormat.getDateTimeInstance({ style: "short" }).format(oDateTime),
+				"9/23/00, 8:46\u202fAM", "short datetime");
+			assert.strictEqual(DateFormat.getDateTimeInstance({ style: "medium" }).format(oDateTime),
+				"Sep 23, 2000, 8:46:13\u202fAM", "medium datetime");
+			assert.strictEqual(DateFormat.getDateTimeInstance({ style: "long" }).format(oDateTime),
+				"September 23, 2000, 8:46:13\u202fAM GMT+02:00", "long datetime");
+			assert.strictEqual(DateFormat.getDateTimeInstance({ style: "full" }).format(oDateTime),
+				"Saturday, September 23, 2000, 8:46:13\u202fAM GMT+02:00", "full datetime");
+			assert.strictEqual(DateFormat.getDateTimeInstance({ style: "medium/short" }).format(oDateTime),
+				"Sep 23, 2000, 8:46\u202fAM", "medium/short datetime");
+			assert.strictEqual(DateFormat.getDateTimeInstance({ style: "long/medium" }).format(oDateTime),
+				"September 23, 2000, 8:46:13\u202fAM", "long/medium datetime");
+			assert.strictEqual(DateFormat.getTimeInstance({ style: "short" }).format(oDateTime),
+				"8:46\u202fAM", "short time");
+			assert.strictEqual(DateFormat.getTimeInstance({ style: "medium" }).format(oDateTime),
+				"8:46:13\u202fAM", "medium time");
+			assert.strictEqual(DateFormat.getTimeInstance({ style: "long" }).format(oDateTime),
+				"8:46:13\u202fAM GMT+02:00", "long time");
+			assert.strictEqual(DateFormat.getTimeInstance({ style: "full" }).format(oDateTime),
+				"8:46:13\u202fAM GMT+02:00", "full time");
 		});
 
 		QUnit.test("format date for a specific locale", function (assert) {
@@ -1894,7 +1910,7 @@ sap.ui.define([
 	{pattern : "hh:mm aa", formatted : "07:37 priešpiet"},
 	{pattern : "hh:mm aaa", formatted : "07:37 priešpiet"},
 	{pattern : "hh:mm aaaa", formatted : "07:37 priešpiet"},
-	{pattern : "hh:mm aaaaa", formatted : "07:37 pr.\u00a0p."}
+	{pattern : "hh:mm aaaaa", formatted : "07:37 pr.\u202fp."}
 ].forEach(function (oFixture, i) {
 	QUnit.test("format/parse time with day period, narrow pattern differs #" + i,
 			function (assert) {
@@ -1933,9 +1949,11 @@ sap.ui.define([
 
 			var aCompare = [UI5Date.getInstance(2017, 3, 11), UI5Date.getInstance(2017, 3, 17)];
 
-			// the correct pattern is MMM d – d, y
-			assert.deepEqual(oIntervalFormat.parse("Apr 11–17, 2017"), aCompare, "string with missing spaces can also be parsed");
-			assert.deepEqual(oIntervalFormat.parse("Apr11–17,  2017"), aCompare, "string with missing spaces and redundant spaces can also be parsed");
+			// the correct pattern is MMM d\u2009\u2013\u2009d, y
+			assert.deepEqual(oIntervalFormat.parse("Apr 11\u201317, 2017"), aCompare,
+				"string with missing spaces can also be parsed");
+			assert.deepEqual(oIntervalFormat.parse("Apr11\u201317,  2017"), aCompare,
+				"string with missing spaces and redundant spaces can also be parsed");
 		});
 
 		/** TODO: Move to sap.ui.core.date.Gregorian
@@ -2719,19 +2737,33 @@ sap.ui.define([
 					scale: "auto",
 					data: [
 						{ unit: "second", diff: 0, results: ["now", "now", "now", "now"], description: "now" },
-						{ unit: "second", diff: 1, results: ["in 1 second", "in 1 second", "in 1 sec.", "in 1 sec."], description: "Now + 1 Second --> in 1 second" },
-						{ unit: "second", diff: -1, results: ["1 second ago", "1 second ago", "1 sec. ago", "1 sec. ago"], description: "Now - 1 Second --> 1 second ago" },
-						{ unit: "second", diff: 2, results: ["in 2 seconds", "in 2 seconds", "in 2 sec.", "in 2 sec."], description: "Now + 2 Seconds --> in 2 seconds" },
-						{ unit: "second", diff: -7, results: ["7 seconds ago", "7 seconds ago", "7 sec. ago", "7 sec. ago"], description: "Now + 2 Seconds --> in 2 seconds" },
-						{ unit: "second", diff: 61, results: ["in 1 minute", "in 1 minute", "in 1 min.", "in 1 min."], description: "Now + 61 Seconds --> in 1 minute", parseDiff: 1000 },
-						{ unit: "second", diff: 3601, results: ["in 1 hour", "in 1 hour", "in 1 hr.", "in 1 hr."], description: "Now + 3601 Seconds --> in 1 hour", parseDiff: 1000 },
-						{ unit: "minute", diff: 1, results: ["in 1 minute", "in 1 minute", "in 1 min.", "in 1 min."], description: "Now + 1 Minute --> in 1 minute" },
-						{ unit: "minute", diff: -1, results: ["1 minute ago", "1 minute ago", "1 min. ago", "1 min. ago"], description: "Now - 1 Minute --> 1 minute ago" },
-						{ unit: "minute", diff: 13, results: ["in 13 minutes", "in 13 minutes", "in 13 min.", "in 13 min."], description: "Now + 13 Minutes --> in 13 minutes" },
-						{ unit: "minute", diff: -54, results: ["54 minutes ago", "54 minutes ago", "54 min. ago", "54 min. ago"], description: "Now - 54 Minutes --> 54 minutes ago" },
-						{ unit: "minute", diff: 95, results: ["in 1 hour", "in 1 hour", "in 1 hr.", "in 1 hr."], description: "Now + 95 Minutes --> in 1 hour", parseDiff: 35 * 60 * 1000 },
-						{ unit: "hour", diff: 1, results: ["in 1 hour", "in 1 hour", "in 1 hr.", "in 1 hr."], description: "Now + 1 Hour --> in 1 hour" },
-						{ unit: "day", diff: -5, results: ["120 hours ago", "120 hours ago", "120 hr. ago", "120 hr. ago"], description: "Now - 5 Days --> 120 hours ago" }
+						{ unit: "second", diff: 1, results: ["in 1 second", "in 1 second", "in 1 sec.", "in 1s"],
+							description: "Now + 1 Second --> in 1 second" },
+						{ unit: "second", diff: -1, results: ["1 second ago", "1 second ago", "1 sec. ago", "1s ago"],
+							description: "Now - 1 Second --> 1 second ago" },
+						{ unit: "second", diff: 2, results: ["in 2 seconds", "in 2 seconds", "in 2 sec.", "in 2s"],
+							description: "Now + 2 Seconds --> in 2 seconds" },
+						{ unit: "second", diff: -7, results: ["7 seconds ago", "7 seconds ago", "7 sec. ago", "7s ago"],
+							description: "Now + 2 Seconds --> in 2 seconds" },
+						{ unit: "second", diff: 61, results: ["in 1 minute", "in 1 minute", "in 1 min.", "in 1m"],
+							description: "Now + 61 Seconds --> in 1 minute", parseDiff: 1000 },
+						{ unit: "second", diff: 3601, results: ["in 1 hour", "in 1 hour", "in 1 hr.", "in 1h"],
+							description: "Now + 3601 Seconds --> in 1 hour", parseDiff: 1000 },
+						{ unit: "minute", diff: 1, results: ["in 1 minute", "in 1 minute", "in 1 min.", "in 1m"],
+							description: "Now + 1 Minute --> in 1 minute" },
+						{ unit: "minute", diff: -1, results: ["1 minute ago", "1 minute ago", "1 min. ago", "1m ago"],
+							description: "Now - 1 Minute --> 1 minute ago" },
+						{ unit: "minute", diff: 13, results: ["in 13 minutes", "in 13 minutes", "in 13 min.", "in 13m"],
+							description: "Now + 13 Minutes --> in 13 minutes" },
+						{ unit: "minute", diff: -54,
+							results: ["54 minutes ago", "54 minutes ago", "54 min. ago", "54m ago"],
+							description: "Now - 54 Minutes --> 54 minutes ago" },
+						{ unit: "minute", diff: 95, results: ["in 1 hour", "in 1 hour", "in 1 hr.", "in 1h"],
+							description: "Now + 95 Minutes --> in 1 hour", parseDiff: 35 * 60 * 1000 },
+						{ unit: "hour", diff: 1, results: ["in 1 hour", "in 1 hour", "in 1 hr.", "in 1h"],
+							description: "Now + 1 Hour --> in 1 hour" },
+						{ unit: "day", diff: -5, results: ["120 hours ago", "120 hours ago", "120 hr. ago", "120h ago"],
+							description: "Now - 5 Days --> 120 hours ago" }
 					]
 				}, {
 					scale: "hour",
@@ -2740,9 +2772,12 @@ sap.ui.define([
 						{ unit: "second", diff: 1, results: ["this hour", "this hour", "this hour", "this hour"], description: "Now + 1 Second --> this hour", parseDiff: 1000 },
 						{ unit: "second", diff: -1, results: ["this hour", "this hour", "this hour", "this hour"], description: "Now - 1 Second --> this hour", parseDiff: -1000 },
 						{ unit: "minute", diff: 30, results: ["this hour", "this hour", "this hour", "this hour"], description: "Now + 30 Minutes --> this hour", parseDiff: 30 * 60 * 1000 },
-						{ unit: "minute", diff: -30, results: ["1 hour ago", "1 hour ago", "1 hr. ago", "1 hr. ago"], description: "Now - 30 Minutes --> 1 hour ago", parseDiff: 30 * 60 * 1000 },
-						{ unit: "hour", diff: 4, results: ["in 4 hours", "in 4 hours", "in 4 hr.", "in 4 hr."], description: "Now + 4 Hours --> in 4 hours" },
-						{ unit: "hour", diff: -10, results: ["10 hours ago", "10 hours ago", "10 hr. ago", "10 hr. ago"], description: "Now - 10 Hours --> 10 hours ago" }
+						{ unit: "minute", diff: -30, results: ["1 hour ago", "1 hour ago", "1 hr. ago", "1h ago"],
+							description: "Now - 30 Minutes --> 1 hour ago", parseDiff: 30 * 60 * 1000 },
+						{ unit: "hour", diff: 4, results: ["in 4 hours", "in 4 hours", "in 4 hr.", "in 4h"],
+							description: "Now + 4 Hours --> in 4 hours" },
+						{ unit: "hour", diff: -10, results: ["10 hours ago", "10 hours ago", "10 hr. ago", "10h ago"],
+							description: "Now - 10 Hours --> 10 hours ago" }
 					]
 				}, {
 					scale: "minute",
@@ -2750,18 +2785,27 @@ sap.ui.define([
 						{ unit: "second", diff: 0, results: ["this minute", "this minute", "this minute", "this minute"], description: "Now --> 0 minutes ago" },
 						{ unit: "second", diff: 1, results: ["this minute", "this minute", "this minute", "this minute"], description: "Now + 1 Second --> in 0 minutes", parseDiff: 1000 },
 						{ unit: "second", diff: -1, results: ["this minute", "this minute", "this minute", "this minute"], description: "Now - 1 Second --> 0 minutes ago", parseDiff: -1000 },
-						{ unit: "minute", diff: 30, results: ["in 30 minutes", "in 30 minutes", "in 30 min.", "in 30 min."], description: "Now + 30 Minutes --> in 30 minutes" },
-						{ unit: "minute", diff: -30, results: ["30 minutes ago", "30 minutes ago", "30 min. ago", "30 min. ago"], description: "Now - 30 Minutes --> 30 minutes ago" },
-						{ unit: "hour", diff: 1, results: ["in 60 minutes", "in 60 minutes", "in 60 min.", "in 60 min."], description: "Now + 4 Hours --> in 60 minutes" }
+						{ unit: "minute", diff: 30, results: ["in 30 minutes", "in 30 minutes", "in 30 min.", "in 30m"],
+							description: "Now + 30 Minutes --> in 30 minutes" },
+						{ unit: "minute", diff: -30,
+							results: ["30 minutes ago", "30 minutes ago", "30 min. ago", "30m ago"],
+							description: "Now - 30 Minutes --> 30 minutes ago" },
+						{ unit: "hour", diff: 1, results: ["in 60 minutes", "in 60 minutes", "in 60 min.", "in 60m"],
+							description: "Now + 4 Hours --> in 60 minutes" }
 					]
 				}, {
 					scale: "second",
 					data: [
 						{ unit: "second", diff: 0, results: ["now", "now", "now", "now"], description: "Now --> now" },
-						{ unit: "second", diff: 1, results: ["in 1 second", "in 1 second", "in 1 sec.", "in 1 sec."], description: "Now + 1 Second --> in 1 second" },
-						{ unit: "second", diff: -1, results: ["1 second ago", "1 second ago", "1 sec. ago", "1 sec. ago"], description: "Now - 1 Second --> 1 second ago" },
-						{ unit: "minute", diff: 1, results: ["in 60 seconds", "in 60 seconds", "in 60 sec.", "in 60 sec."], description: "Now + 1 Minute --> in 60 seconds" },
-						{ unit: "minute", diff: -1, results: ["60 seconds ago", "60 seconds ago", "60 sec. ago", "60 sec. ago"], description: "Now - 1 Minute --> 60 seconds ago" }
+						{ unit: "second", diff: 1, results: ["in 1 second", "in 1 second", "in 1 sec.", "in 1s"],
+							description: "Now + 1 Second --> in 1 second" },
+						{ unit: "second", diff: -1, results: ["1 second ago", "1 second ago", "1 sec. ago", "1s ago"],
+							description: "Now - 1 Second --> 1 second ago" },
+						{ unit: "minute", diff: 1, results: ["in 60 seconds", "in 60 seconds", "in 60 sec.", "in 60s"],
+							description: "Now + 1 Minute --> in 60 seconds" },
+						{ unit: "minute", diff: -1,
+							results: ["60 seconds ago", "60 seconds ago", "60 sec. ago", "60s ago"],
+							description: "Now - 1 Minute --> 60 seconds ago" }
 					]
 				}];
 
@@ -2791,27 +2835,47 @@ sap.ui.define([
 					data: [
 						{ unit: "second", diff: 0, results: ["today", "today", "today", "today"], description: "today" },
 						{ unit: "second", diff: 1, results: ["today", "today", "today", "today"], description: "Today + 1 Second --> today", parseDiff: 1000 },
-						{ unit: "second", diff: -86400, results: ["1 day ago", "1 day ago", "1 day ago", "1 day ago"], description: "Today - 86400 Seconds --> 1 day ago" },
-						{ unit: "minute", diff: 1440, results: ["in 1 day", "in 1 day", "in 1 day", "in 1 day"], description: "Today + 1440 Minutes --> in 1 day" },
-						{ unit: "hour", diff: 24, results: ["in 1 day", "in 1 day", "in 1 day", "in 1 day"], description: "Today + 24 Hours --> tomorrow" },
-						{ unit: "day", diff: 5, results: ["in 5 days", "in 5 days", "in 5 days", "in 5 days"], description: "Today + 5 Days --> in 5 days" },
-						{ unit: "day", diff: -5, results: ["5 days ago", "5 days ago", "5 days ago", "5 days ago"], description: "Today - 5 Days --> 5 days ago" },
-						{ unit: "day", diff: 8, results: ["in 1 week", "in 1 week", "in 1 wk.", "in 1 wk."], description: "Today + 8 Days --> in 1 week", parseDiff: 24 * 60 * 60 * 1000 },
-						{ unit: "day", diff: -8, results: ["1 week ago", "1 week ago", "1 wk. ago", "1 wk. ago"], description: "Today - 8 Days --> 1 week ago", parseDiff: -24 * 60 * 60 * 1000 },
-						{ unit: "day", diff: -32, results: ["1 month ago", "1 month ago", "1 mo. ago", "1 mo. ago"], description: "Today - 32 Days --> 1 month ago", parseDiff: -2 * 24 * 60 * 60 * 1000 },
-						{ unit: "month", diff: 1, results: ["in 1 month", "in 1 month", "in 1 mo.", "in 1 mo."], description: "Today + 1 Month --> in 1 month" },
-						{ unit: "month", diff: -1, results: ["1 month ago", "1 month ago", "1 mo. ago", "1 mo. ago"], description: "Today - 1 Month --> 1 month ago" },
-						{ unit: "month", diff: 13, results: ["in 1 year", "in 1 year", "in 1 yr.", "in 1 yr."], description: "Today + 13 Months --> in 1 year", parseDiff: (31 * 24 + that.dst) * 60 * 60 * 1000 },
-						{ unit: "month", diff: 26, results: ["in 2 years", "in 2 years", "in 2 yr.", "in 2 yr."], description: "Today + 26 Months --> in 2 years", parseDiff: (61 * 24 + that.dst) * 60 * 60 * 1000 },
-						{ unit: "day", diff: 90, results: ["in 1 quarter", "in 1 quarter", "in 1 qtr.", "in 1 qtr."], description: "Today + 90 Days", parseOnly: true, parseDiff: -2 * 24 * 60 * 60 * 1000 },
-						{ unit: "hour", diff: 24, results: ["in 24 hours", "in 24 hours", "in 24 hr.", "in 24 hr."], description: "Today + 1 Days", parseOnly: true },
-						{ unit: "hour", diff: 72, results: ["in 72 hours", "in 72 hours", "in 72 hr.", "in 72 hr."], description: "Today + 3 Days", parseOnly: true },
-						{ unit: "minute", diff: -4320, results: ["4320 minutes ago", "4320 minutes ago", "4320 min. ago", "4320 min. ago"], description: "Today - 3 Days", parseOnly: true }
+						{ unit: "second", diff: -86400, results: ["1 day ago", "1 day ago", "1 day ago", "1d ago"],
+							description: "Today - 86400 Seconds --> 1 day ago" },
+						{ unit: "minute", diff: 1440, results: ["in 1 day", "in 1 day", "in 1 day", "in 1d"],
+							description: "Today + 1440 Minutes --> in 1 day" },
+						{ unit: "hour", diff: 24, results: ["in 1 day", "in 1 day", "in 1 day", "in 1d"],
+							description: "Today + 24 Hours --> tomorrow" },
+						{ unit: "day", diff: 5, results: ["in 5 days", "in 5 days", "in 5 days", "in 5d"],
+							description: "Today + 5 Days --> in 5 days" },
+						{ unit: "day", diff: -5, results: ["5 days ago", "5 days ago", "5 days ago", "5d ago"],
+							description: "Today - 5 Days --> 5 days ago" },
+						{ unit: "day", diff: 8, results: ["in 1 week", "in 1 week", "in 1 wk.", "in 1w"],
+							description: "Today + 8 Days --> in 1 week", parseDiff: 24 * 60 * 60 * 1000 },
+						{ unit: "day", diff: -8, results: ["1 week ago", "1 week ago", "1 wk. ago", "1w ago"],
+							description: "Today - 8 Days --> 1 week ago", parseDiff: -24 * 60 * 60 * 1000 },
+						{ unit: "day", diff: -32, results: ["1 month ago", "1 month ago", "1 mo. ago", "1mo ago"],
+							description: "Today - 32 Days --> 1 month ago", parseDiff: -2 * 24 * 60 * 60 * 1000 },
+						{ unit: "month", diff: 1, results: ["in 1 month", "in 1 month", "in 1 mo.", "in 1mo"],
+							description: "Today + 1 Month --> in 1 month" },
+						{ unit: "month", diff: -1, results: ["1 month ago", "1 month ago", "1 mo. ago", "1mo ago"],
+							description: "Today - 1 Month --> 1 month ago" },
+						{ unit: "month", diff: 13, results: ["in 1 year", "in 1 year", "in 1 yr.", "in 1y"],
+							description: "Today + 13 Months --> in 1 year",
+							parseDiff: (31 * 24 + that.dst) * 60 * 60 * 1000 },
+						{ unit: "month", diff: 26, results: ["in 2 years", "in 2 years", "in 2 yr.", "in 2y"],
+							description: "Today + 26 Months --> in 2 years",
+							parseDiff: (61 * 24 + that.dst) * 60 * 60 * 1000 },
+						{ unit: "day", diff: 90, results: ["in 1 quarter", "in 1 quarter", "in 1 qtr.", "in 1q"],
+							description: "Today + 90 Days", parseOnly: true, parseDiff: -2 * 24 * 60 * 60 * 1000 },
+						{ unit: "hour", diff: 24, results: ["in 24 hours", "in 24 hours", "in 24 hr.", "in 24h"],
+							description: "Today + 1 Days", parseOnly: true },
+						{ unit: "hour", diff: 72, results: ["in 72 hours", "in 72 hours", "in 72 hr.", "in 72h"],
+							description: "Today + 3 Days", parseOnly: true },
+						{ unit: "minute", diff: -4320,
+							results: ["4320 minutes ago", "4320 minutes ago", "4320 min. ago", "4320m ago"],
+							description: "Today - 3 Days", parseOnly: true }
 					]
 				}, {
 					scale: "week",
 					data: [
-						{ unit: "day", diff: 13, results: ["in 2 weeks", "in 2 weeks", "in 2 wk.", "in 2 wk."], description: "Today + 13 Days --> in 2 weeks", parseDiff: (-1 * 24 * 60 * 60 * 1000) }
+						{ unit: "day", diff: 13, results: ["in 2 weeks", "in 2 weeks", "in 2 wk.", "in 2w"],
+							description: "Today + 13 Days --> in 2 weeks", parseDiff: (-1 * 24 * 60 * 60 * 1000) }
 					]
 				}
 				];
@@ -2841,30 +2905,57 @@ sap.ui.define([
 					scale: "auto",
 					data: [
 						{ unit: "second", diff: 0, results: ["now", "now", "now", "now"], description: "now" },
-						{ unit: "second", diff: 1, results: ["in 1 second", "in 1 second", "in 1 sec.", "in 1 sec."], description: "Now + 1 Second --> in 1 second" },
-						{ unit: "second", diff: -1, results: ["1 second ago", "1 second ago", "1 sec. ago", "1 sec. ago"], description: "Now - 1 Second --> 1 second ago" },
-						{ unit: "second", diff: 2, results: ["in 2 seconds", "in 2 seconds", "in 2 sec.", "in 2 sec."], description: "Now + 2 Second --> in 2 seconds" },
-						{ unit: "second", diff: -7, results: ["7 seconds ago", "7 seconds ago", "7 sec. ago", "7 sec. ago"], description: "Now - 7 Second --> 7 seconds ago" },
-						{ unit: "second", diff: 61, results: ["in 1 minute", "in 1 minute", "in 1 min.", "in 1 min."], description: "Now + 61 Seconds --> in 1 minute", parseDiff: 1000 },
-						{ unit: "second", diff: 3601, results: ["in 1 hour", "in 1 hour", "in 1 hr.", "in 1 hr."], description: "Now + 3601 Seconds --> in 1 hour", parseDiff: 1000 },
-						{ unit: "second", diff: -86401, results: ["1 day ago", "1 day ago", "1 day ago", "1 day ago"], description: "Today - 86401 Seconds --> 1 day ago", parseDiff: -1000 },
-						{ unit: "minute", diff: 1, results: ["in 1 minute", "in 1 minute", "in 1 min.", "in 1 min."], description: "Now + 1 Minute --> in 1 minute" },
-						{ unit: "minute", diff: -1, results: ["1 minute ago", "1 minute ago", "1 min. ago", "1 min. ago"], description: "Now - 1 Minute --> 1 minute ago" },
-						{ unit: "minute", diff: 13, results: ["in 13 minutes", "in 13 minutes", "in 13 min.", "in 13 min."], description: "Now + 13 Mintues --> in 13 minutes" },
-						{ unit: "minute", diff: -54, results: ["54 minutes ago", "54 minutes ago", "54 min. ago", "54 min. ago"], description: "Now - 54 Minutes --> 54 minutes ago" },
-						{ unit: "minute", diff: 95, results: ["in 1 hour", "in 1 hour", "in 1 hr.", "in 1 hr."], description: "Now + 95 Minutes --> in 1 hour", parseDiff: 35 * 60 * 1000 },
-						{ unit: "minute", diff: 1440, results: ["in 1 day", "in 1 day", "in 1 day", "in 1 day"], description: "Today + 1440 Minutes --> in 1 day" },
-						{ unit: "hour", diff: 1, results: ["in 1 hour", "in 1 hour", "in 1 hr.", "in 1 hr."], description: "Now + 1 Hour --> in 1 hour" },
-						{ unit: "day", diff: 5, results: ["in 5 days", "in 5 days", "in 5 days", "in 5 days"], description: "Today + 5 Days --> in 5 days" },
-						{ unit: "day", diff: -5, results: ["5 days ago", "5 days ago", "5 days ago", "5 days ago"], description: "Today - 5 Days --> 5 days ago" },
-						{ unit: "day", diff: 8, results: ["in 1 week", "in 1 week", "in 1 wk.", "in 1 wk."], description: "Today + 8 Days --> in 1 week", parseDiff: 24 * 60 * 60 * 1000 },
-						{ unit: "day", diff: -8, results: ["1 week ago", "1 week ago", "1 wk. ago", "1 wk. ago"], description: "Today - 8 Days --> 1 week ago", parseDiff: -24 * 60 * 60 * 1000 },
-						{ unit: "day", diff: -32, results: ["1 month ago", "1 month ago", "1 mo. ago", "1 mo. ago"], description: "Today - 32 Days --> 1 month ago", parseDiff: -2 * 24 * 60 * 60 * 1000 },
-						{ unit: "month", diff: 1, results: ["in 1 month", "in 1 month", "in 1 mo.", "in 1 mo."], description: "Today + 1 Month --> in 1 month" },
-						{ unit: "month", diff: -1, results: ["1 month ago", "1 month ago", "1 mo. ago", "1 mo. ago"], description: "Today - 1 Month --> 1 month" },
-						{ unit: "month", diff: 13, results: ["in 1 year", "in 1 year", "in 1 yr.", "in 1 yr."], description: "Today + 13 Months --> in 1 year", parseDiff: (31 * 24 + that.dst) * 60 * 60 * 1000 },
-						{ unit: "month", diff: 26, results: ["in 2 years", "in 2 years", "in 2 yr.", "in 2 yr."], description: "Today + 26 Months --> in 2 years", parseDiff: (61 * 24 + that.dst) * 60 * 60 * 1000 },
-						{ unit: "year", diff: 1, results: ["in 1 year", "in 1 year", "in 1 yr.", "in 1 yr."], description: "Today + 1 year --> in 1 year" }
+						{ unit: "second", diff: 1, results: ["in 1 second", "in 1 second", "in 1 sec.", "in 1s"],
+							description: "Now + 1 Second --> in 1 second" },
+						{ unit: "second", diff: -1, results: ["1 second ago", "1 second ago", "1 sec. ago", "1s ago"],
+							description: "Now - 1 Second --> 1 second ago" },
+						{ unit: "second", diff: 2, results: ["in 2 seconds", "in 2 seconds", "in 2 sec.", "in 2s"],
+							description: "Now + 2 Second --> in 2 seconds" },
+						{ unit: "second", diff: -7, results: ["7 seconds ago", "7 seconds ago", "7 sec. ago", "7s ago"],
+							description: "Now - 7 Second --> 7 seconds ago" },
+						{ unit: "second", diff: 61, results: ["in 1 minute", "in 1 minute", "in 1 min.", "in 1m"],
+							description: "Now + 61 Seconds --> in 1 minute", parseDiff: 1000 },
+						{ unit: "second", diff: 3601, results: ["in 1 hour", "in 1 hour", "in 1 hr.", "in 1h"],
+							description: "Now + 3601 Seconds --> in 1 hour", parseDiff: 1000 },
+						{ unit: "second", diff: -86401, results: ["1 day ago", "1 day ago", "1 day ago", "1d ago"],
+							description: "Today - 86401 Seconds --> 1 day ago", parseDiff: -1000 },
+						{ unit: "minute", diff: 1, results: ["in 1 minute", "in 1 minute", "in 1 min.", "in 1m"],
+							description: "Now + 1 Minute --> in 1 minute" },
+						{ unit: "minute", diff: -1, results: ["1 minute ago", "1 minute ago", "1 min. ago", "1m ago"],
+							description: "Now - 1 Minute --> 1 minute ago" },
+						{ unit: "minute", diff: 13, results: ["in 13 minutes", "in 13 minutes", "in 13 min.", "in 13m"],
+							description: "Now + 13 Mintues --> in 13 minutes" },
+						{ unit: "minute", diff: -54,
+							results: ["54 minutes ago", "54 minutes ago", "54 min. ago", "54m ago"],
+							description: "Now - 54 Minutes --> 54 minutes ago" },
+						{ unit: "minute", diff: 95, results: ["in 1 hour", "in 1 hour", "in 1 hr.", "in 1h"],
+							description: "Now + 95 Minutes --> in 1 hour", parseDiff: 35 * 60 * 1000 },
+						{ unit: "minute", diff: 1440, results: ["in 1 day", "in 1 day", "in 1 day", "in 1d"],
+							description: "Today + 1440 Minutes --> in 1 day" },
+						{ unit: "hour", diff: 1, results: ["in 1 hour", "in 1 hour", "in 1 hr.", "in 1h"],
+							description: "Now + 1 Hour --> in 1 hour" },
+						{ unit: "day", diff: 5, results: ["in 5 days", "in 5 days", "in 5 days", "in 5d"],
+							description: "Today + 5 Days --> in 5 days" },
+						{ unit: "day", diff: -5, results: ["5 days ago", "5 days ago", "5 days ago", "5d ago"],
+							description: "Today - 5 Days --> 5 days ago" },
+						{ unit: "day", diff: 8, results: ["in 1 week", "in 1 week", "in 1 wk.", "in 1w"],
+							description: "Today + 8 Days --> in 1 week", parseDiff: 24 * 60 * 60 * 1000 },
+						{ unit: "day", diff: -8, results: ["1 week ago", "1 week ago", "1 wk. ago", "1w ago"],
+							description: "Today - 8 Days --> 1 week ago", parseDiff: -24 * 60 * 60 * 1000 },
+						{ unit: "day", diff: -32, results: ["1 month ago", "1 month ago", "1 mo. ago", "1mo ago"],
+							description: "Today - 32 Days --> 1 month ago", parseDiff: -2 * 24 * 60 * 60 * 1000 },
+						{ unit: "month", diff: 1, results: ["in 1 month", "in 1 month", "in 1 mo.", "in 1mo"],
+							description: "Today + 1 Month --> in 1 month" },
+						{ unit: "month", diff: -1, results: ["1 month ago", "1 month ago", "1 mo. ago", "1mo ago"],
+							description: "Today - 1 Month --> 1 month" },
+						{ unit: "month", diff: 13, results: ["in 1 year", "in 1 year", "in 1 yr.", "in 1y"],
+							description: "Today + 13 Months --> in 1 year",
+							parseDiff: (31 * 24 + that.dst) * 60 * 60 * 1000 },
+						{ unit: "month", diff: 26, results: ["in 2 years", "in 2 years", "in 2 yr.", "in 2y"],
+							description: "Today + 26 Months --> in 2 years",
+							parseDiff: (61 * 24 + that.dst) * 60 * 60 * 1000 },
+						{ unit: "year", diff: 1, results: ["in 1 year", "in 1 year", "in 1 yr.", "in 1y"],
+							description: "Today + 1 year --> in 1 year" }
 					]
 				}];
 
@@ -2951,7 +3042,7 @@ sap.ui.define([
 			"12 ربيع الآخر 1422 هـ",
 			"12 ربيع الآخر 1422 هـ",
 			"12 ربيع الآخر 1422 هـ",
-			"12 ברביע ב׳ 1422 שנת היג׳רה"
+			"12 ברביע ב׳ 1422 הג׳רה"
 		];
 
 		QUnit.module("Islamic Date in other locales", {
@@ -3381,11 +3472,11 @@ sap.ui.define([
 			var startDate = UI5Date.getInstance(2019,1,15);
 
 			// no strictParsing
-			aParsedInterval = this.oIntervalFormat.parse("Feb 15, 2019 – Feb 1, 2018");
+			aParsedInterval = this.oIntervalFormat.parse("Feb 15, 2019 \u2013 Feb 1, 2018");
 			assert.deepEqual(aParsedInterval, [startDate, endDate], "Parsed array is returned.");
 
 			// strictParsing
-			aParsedInterval = oIntervalFormat.parse("Feb 1, 2019 – Feb 15, 2018");
+			aParsedInterval = oIntervalFormat.parse("Feb 1, 2019 \u2013 Feb 15, 2018");
 			assert.deepEqual(aParsedInterval, [null, null], "[null, null] returned.");
 		});
 
@@ -3560,7 +3651,7 @@ sap.ui.define([
 			var oDate1 = UI5Date.getInstance(oDate.getTime() + 2 * 24 * 3600 * 1000);
 			var sResult = oIntervalFormat.format([oDate, oDate1]);
 
-			assert.strictEqual(sResult, "11.–13. Apr. 2017");
+			assert.strictEqual(sResult, "11.\u201313. Apr. 2017");
 			assert.deepEqual(oIntervalFormat.parse(sResult), [oDate, oDate1]);
 		});
 
@@ -3579,28 +3670,28 @@ sap.ui.define([
 			oDate1 = UI5Date.getInstance(2019, 2, 1);
 			oDate2 = UI5Date.getInstance(2019, 3, 1);
 			sResult = oIntervalFormat.format([oDate1, oDate2]);
-			assert.strictEqual(sResult, "Mar 1 – Apr 1, 31 Heisei");
+			assert.strictEqual(sResult, "Mar 1\u2009\u2013\u2009Apr 1, 31 Heisei");
 			assert.deepEqual(oIntervalFormat.parse(sResult), [oDate1, oDate2]);
 
 			// Same era, different year
 			oDate1 = UI5Date.getInstance(2018, 3, 1);
 			oDate2 = UI5Date.getInstance(2019, 3, 1);
 			sResult = oIntervalFormat.format([oDate1, oDate2]);
-			assert.strictEqual(sResult, "Apr 1, 30 – Apr 1, 31 Heisei");
+			assert.strictEqual(sResult, "Apr 1, 30\u2009\u2013\u2009Apr 1, 31 Heisei");
 			assert.deepEqual(oIntervalFormat.parse(sResult), [oDate1, oDate2]);
 
 			// Different era
 			oDate1 = UI5Date.getInstance(2019, 3, 1);
 			oDate2 = UI5Date.getInstance(2019, 4, 1);
 			sResult = oIntervalFormat.format([oDate1, oDate2]);
-			assert.strictEqual(sResult, "Apr 1, 31 Heisei – May 1, 1 Reiwa");
+			assert.strictEqual(sResult, "Apr 1, 31 Heisei\u2009\u2013\u2009May 1, 1 Reiwa");
 			assert.deepEqual(oIntervalFormat.parse(sResult), [oDate1, oDate2]);
 
 			// Different era, same year
 			oDate1 = UI5Date.getInstance(1989, 4, 1);
 			oDate2 = UI5Date.getInstance(2019, 4, 1);
 			sResult = oIntervalFormat.format([oDate1, oDate2]);
-			assert.strictEqual(sResult, "May 1, 1 Heisei – May 1, 1 Reiwa");
+			assert.strictEqual(sResult, "May 1, 1 Heisei\u2009\u2013\u2009May 1, 1 Reiwa");
 			assert.deepEqual(oIntervalFormat.parse(sResult), [oDate1, oDate2]);
 
 		});
@@ -3693,14 +3784,15 @@ sap.ui.define([
 				format: "yMMMw"
 			});
 			sResult = oIntervalFormat.format([oDate, oDate1]);
-			assert.strictEqual(sResult, "Mar 2017 (week: 13) – Apr 2017 (week: 13)", "Two dates correctly formatted");
+			assert.strictEqual(sResult, "Mar 2017 (week: 13)\u2009\u2013\u2009Apr 2017 (week: 13)",
+				"Two dates correctly formatted");
 
 			oIntervalFormat = DateFormat.getDateInstance({
 				interval: true,
 				format: "yQ"
 			});
 			sResult = oIntervalFormat.format([oDate, oDate1]);
-			assert.strictEqual(sResult, "Q1 2017 – Q2 2017", "Two dates correctly formatted");
+			assert.strictEqual(sResult, "Q1 2017\u2009\u2013\u2009Q2 2017", "Two dates correctly formatted");
 
 			oDate = UniversalDate.getInstance(UI5Date.getInstance(2017, 3, 1));
 			oDate1 = UniversalDate.getInstance(UI5Date.getInstance(2017, 3, 13));
@@ -3720,7 +3812,7 @@ sap.ui.define([
 
 			var sResult = oIntervalFormat.format([oDate, oDate1]);
 
-			assert.strictEqual(sResult, "11.04.17 – 13.04.17");
+			assert.strictEqual(sResult, "11.04.17\u2009\u2013\u200913.04.17");
 			assert.deepEqual(oIntervalFormat.parse(sResult), [oDate, oDate1]);
 
 			oLocale = new Locale("de-DE");
@@ -3730,7 +3822,7 @@ sap.ui.define([
 			}, oLocale);
 
 			sResult = oIntervalFormat.format([oDate, oDate1]);
-			assert.strictEqual(sResult, "n. Chr. 2017 04 11 – n. Chr. 2017 04 13");
+			assert.strictEqual(sResult, "n. Chr. 2017 04 11\u2009\u2013\u2009n. Chr. 2017 04 13");
 			assert.deepEqual(oIntervalFormat.parse(sResult), [oDate, oDate1]);
 		});
 
@@ -3740,7 +3832,8 @@ sap.ui.define([
 
 			// default interval formatting
 			var oIntervalFormat = DateFormat.getDateInstance({ interval: true	});
-			assert.strictEqual(oIntervalFormat.format([oDate1, oDate2]), "Jan 24, 2019 – Jan 31, 2019", "Date interval returned");
+			assert.strictEqual(oIntervalFormat.format([oDate1, oDate2]), "Jan 24, 2019\u2009\u2013\u2009Jan 31, 2019",
+				"Date interval returned");
 			assert.strictEqual(oIntervalFormat.format([oDate1, null]), "", "Empty String returned");
 			assert.strictEqual(oIntervalFormat.format([oDate1, oDate1]), "Jan 24, 2019", "Single Date returned: Jan 24, 2019");
 			assert.deepEqual(oIntervalFormat.parse("Jan 24, 2019"), [oDate1, oDate1], "Array with two dates returned.");
@@ -3753,15 +3846,17 @@ sap.ui.define([
 			});
 
 			assert.strictEqual(oIntervalFormat.format([oDate1, null]), "Jan 24, 2019", "Single Date returned: Jan 24, 2019");
-			assert.strictEqual(oIntervalFormat.format([oDate1, oDate2]), "Jan 24, 2019 – Jan 31, 2019", "Date interval returned");
+			assert.strictEqual(oIntervalFormat.format([oDate1, oDate2]), "Jan 24, 2019\u2009\u2013\u2009Jan 31, 2019", "Date interval returned");
 			assert.strictEqual(oIntervalFormat.format([oDate1, null]), "Jan 24, 2019", "Single Date returned: Jan 24, 2019");
 			assert.strictEqual(oIntervalFormat.format([null, oDate1]), "", "Empty String returned.");
 			assert.strictEqual(oIntervalFormat.format([null, null]), "", "Empty String returned.");
 			assert.strictEqual(oIntervalFormat.format([oDate1, oDate1]), "Jan 24, 2019", "Single Date returned: Jan 24, 2019");
 
 			assert.deepEqual(oIntervalFormat.parse("Jan 24, 2019"), [oDate1, null], "Array with single Date and null returned.");
-			assert.deepEqual(oIntervalFormat.parse("Jan 24, 2019 – Jan 24, 2019"), [oDate1, null], "Array with two date objects is returned.");
-			assert.deepEqual(oIntervalFormat.parse("Jan 24, 2019 – Jan 31, 2019"), [oDate1, oDate2], "Array with two date objects is returned.");
+			assert.deepEqual(oIntervalFormat.parse("Jan 24, 2019 \u2013 Jan 24, 2019"), [oDate1, null],
+				"Array with two date objects is returned.");
+			assert.deepEqual(oIntervalFormat.parse("Jan 24, 2019 \u2013 Jan 31, 2019"), [oDate1, oDate2],
+				"Array with two date objects is returned.");
 		});
 
 		QUnit.test("am/pm", function (assert) {
@@ -3776,7 +3871,7 @@ sap.ui.define([
 			}, oLocale);
 
 			var sResult = oIntervalFormat.format([oDate, oDate1]);
-			assert.strictEqual(sResult, "9 AM – 1 PM");
+			assert.strictEqual(sResult, "9\u202fAM\u2009\u2013\u20091\u202fPM");
 			assert.deepEqual(oIntervalFormat.parse(sResult), [oDate, oDate1]);
 
 			oDate = UI5Date.getInstance(1970, 0, 1, 11, 0, 0);
@@ -3790,7 +3885,7 @@ sap.ui.define([
 			// optimised interval pattern only uses 'h'. 'K' is automatically converted
 			// to 'h'.
 			sResult = oIntervalFormat.format([oDate, oDate1]);
-			assert.strictEqual(sResult, "11 AM – 12 PM");
+			assert.strictEqual(sResult, "11\u202fAM\u2009\u2013\u200912\u202fPM");
 			assert.deepEqual(oIntervalFormat.parse(sResult), [oDate, oDate1]);
 
 			oDate = UI5Date.getInstance(1970, 0, 1, 10, 0, 0);
@@ -3804,7 +3899,7 @@ sap.ui.define([
 			// optimised interval pattern only uses 'h'. 'K' is automatically converted
 			// to 'h'.
 			sResult = oIntervalFormat.format([oDate, oDate1]);
-			assert.strictEqual(oIntervalFormat.format([oDate, oDate1]), "10 – 11 AM");
+			assert.strictEqual(oIntervalFormat.format([oDate, oDate1]), "10\u2009\u2013\u200911\u202fAM");
 			assert.deepEqual(oIntervalFormat.parse(sResult), [oDate, oDate1]);
 		});
 
@@ -3836,7 +3931,7 @@ sap.ui.define([
 			var oDate1 = UI5Date.getInstance(2017, 3, 11);
 			var oDate2 = UI5Date.getInstance(2017, 3, 12);
 			var sResult = oIntervalFormat.format([oDate1, oDate2]);
-			assert.strictEqual(sResult, "Apr 11 – 12, 2017", "Different dates are formatted correctly");
+			assert.strictEqual(sResult, "Apr 11\u2009\u2013\u200912, 2017", "Different dates are formatted correctly");
 
 			var sResult = oIntervalFormat.format([oDate1, oDate1]);
 			assert.strictEqual(sResult, "Apr 11, 2017", "Single Date if formatted correctly afterwards");
@@ -3871,7 +3966,7 @@ sap.ui.define([
 			var sResult1 = oIntervalFormat.format([oDate1, oDate2]);
 			var sResult2 = oIntervalFormat.format([oDate1, oDate3]);
 
-			assert.strictEqual(sResult1, "Q1 2017 – Q2 2017");
+			assert.strictEqual(sResult1, "Q1 2017\u2009\u2013\u2009Q2 2017");
 			assert.strictEqual(sResult2, "Q1 2017");
 		});
 
@@ -3889,7 +3984,7 @@ sap.ui.define([
 			var sResult1 = oIntervalFormat.format([oDate1, oDate2]);
 			var sResult2 = oIntervalFormat.format([oDate2, oDate3]);
 
-			assert.strictEqual(sResult1, "week 10 of 2017 – week 12 of 2017");
+			assert.strictEqual(sResult1, "week 10 of 2017\u2009\u2013\u2009week 12 of 2017");
 			assert.strictEqual(sResult2, "week 12 of 2017");
 		});
 
@@ -3923,17 +4018,22 @@ sap.ui.define([
 			var oDate1 = UI5Date.getInstance(2017, 3, 13);
 			var aCompare = [oDate, oDate1];
 
-			assert.deepEqual(oIntervalFormat.parse("4/11/17 – 4/13/17"), aCompare, "Parse fallback short style");
+			assert.deepEqual(oIntervalFormat.parse("4/11/17 \u2013 4/13/17"), aCompare, "Parse fallback short style");
 			assert.deepEqual(oIntervalFormat.parse("4/11/17 - 4/13/17"), aCompare, "Parse fallback short style with common connector");
-			assert.deepEqual(oIntervalFormat.parse("Apr 11, 2017 – Apr 13, 2017"), aCompare, "Parse fallback medium style");
+			assert.deepEqual(oIntervalFormat.parse("Apr 11, 2017 \u2013 Apr 13, 2017"), aCompare,
+				"Parse fallback medium style");
 			assert.deepEqual(oIntervalFormat.parse("Apr 11, 2017 - Apr 13, 2017"), aCompare, "Parse fallback medium style with common connector");
-			assert.deepEqual(oIntervalFormat.parse("2017-04-11 – 2017-04-13"), aCompare, "Parse fallback with pattern 'yyyy-MM-dd'");
+			assert.deepEqual(oIntervalFormat.parse("2017-04-11 \u2013 2017-04-13"), aCompare,
+				"Parse fallback with pattern 'yyyy-MM-dd'");
 			assert.deepEqual(oIntervalFormat.parse("2017-04-11 - 2017-04-13"), aCompare, "Parse fallback with pattern 'yyyy-MM-dd' and common connector");
-			assert.deepEqual(oIntervalFormat.parse("20170411 – 20170413"), aCompare, "Parse fallback with pattern 'yyyyMMdd'");
+			assert.deepEqual(oIntervalFormat.parse("20170411 \u2013 20170413"), aCompare,
+				"Parse fallback with pattern 'yyyyMMdd'");
 			assert.deepEqual(oIntervalFormat.parse("20170411 - 20170413"), aCompare, "Parse fallback with pattern 'yyyyMMdd' and common connector");
-			assert.deepEqual(oIntervalFormat.parse("041117 – 041317"), aCompare, "Parse fallback with no delimiter");
+			assert.deepEqual(oIntervalFormat.parse("041117 \u2013 041317"), aCompare,
+				"Parse fallback with no delimiter");
 			assert.deepEqual(oIntervalFormat.parse("041117 - 041317"), aCompare, "Parse fallback with no delimiter and common connector");
-			assert.deepEqual(oIntervalFormat.parse("04112017 – 04132017"), aCompare, "Parse fallback with no delimiter");
+			assert.deepEqual(oIntervalFormat.parse("04112017 \u2013 04132017"), aCompare,
+				"Parse fallback with no delimiter");
 			assert.deepEqual(oIntervalFormat.parse("04112017 - 04132017"), aCompare, "Parse fallback with no delimiter and common connector");
 		});
 
@@ -3947,17 +4047,23 @@ sap.ui.define([
 			var oDate1 = UI5Date.getInstance(2017, 3, 13);
 			var aCompare = [oDate, oDate1];
 
-			assert.deepEqual(oIntervalFormat.parse("11.04.17 – 13.04.17"), aCompare, "Parse fallback short style");
+			assert.deepEqual(oIntervalFormat.parse("11.04.17 \u2013 13.04.17"), aCompare,
+				"Parse fallback short style");
 			assert.deepEqual(oIntervalFormat.parse("11.04.17 - 13.04.17"), aCompare, "Parse fallback short style with common connector");
-			assert.deepEqual(oIntervalFormat.parse("11.04.2017 – 13.04.2017"), aCompare, "Parse fallback medium style");
+			assert.deepEqual(oIntervalFormat.parse("11.04.2017 \u2013 13.04.2017"), aCompare,
+				"Parse fallback medium style");
 			assert.deepEqual(oIntervalFormat.parse("11.04.2017 - 13.04.2017"), aCompare, "Parse fallback medium style with common connector");
-			assert.deepEqual(oIntervalFormat.parse("2017-04-11 – 2017-04-13"), aCompare, "Parse fallback with pattern 'yyyy-MM-dd'");
+			assert.deepEqual(oIntervalFormat.parse("2017-04-11 \u2013 2017-04-13"), aCompare,
+				"Parse fallback with pattern 'yyyy-MM-dd'");
 			assert.deepEqual(oIntervalFormat.parse("2017-04-11 - 2017-04-13"), aCompare, "Parse fallback with pattern 'yyyy-MM-dd' and common connector");
-			assert.deepEqual(oIntervalFormat.parse("20170411 – 20170413"), aCompare, "Parse fallback with pattern 'yyyyMMdd'");
+			assert.deepEqual(oIntervalFormat.parse("20170411 \u2013 20170413"), aCompare,
+				"Parse fallback with pattern 'yyyyMMdd'");
 			assert.deepEqual(oIntervalFormat.parse("20170411 - 20170413"), aCompare, "Parse fallback with pattern 'yyyyMMdd' and common connector");
-			assert.deepEqual(oIntervalFormat.parse("110417 – 130417"), aCompare, "Parse fallback with no delimiter");
+			assert.deepEqual(oIntervalFormat.parse("110417 \u2013 130417"), aCompare,
+				"Parse fallback with no delimiter");
 			assert.deepEqual(oIntervalFormat.parse("110417 - 130417"), aCompare, "Parse fallback with no delimiter and common connector");
-			assert.deepEqual(oIntervalFormat.parse("11042017 – 13042017"), aCompare, "Parse fallback with no delimiter");
+			assert.deepEqual(oIntervalFormat.parse("11042017 \u2013 13042017"), aCompare,
+				"Parse fallback with no delimiter");
 			assert.deepEqual(oIntervalFormat.parse("11042017 - 13042017"), aCompare, "Parse fallback with no delimiter and common connector");
 		});
 
@@ -4724,7 +4830,7 @@ sap.ui.define([
 		// code under test: format option 'format'
 		oFormat = DateFormat.createInstance({interval: true, intervalDelimiter: "_", format: "yM"}, oLocale, oInfo);
 
-		assert.strictEqual(oFormat.intervalPatterns[0], "M.y'_'M.y");
+		assert.strictEqual(oFormat.intervalPatterns[0], "MM/y'_'MM/y");
 
 		// code under test: format option 'pattern'
 		oFormat = DateFormat.createInstance({interval: true, intervalDelimiter: "_", pattern: "foo"}, oLocale, oInfo);
@@ -4828,12 +4934,12 @@ sap.ui.define([
 
 		// code under test: createInstance with format
 		oFormat = DateFormat.getDateTimeInstance({interval: true, format: "yMMMdhm"}, oLocale);
-		assert.strictEqual(oFormat.format([oDate0, oDate1]), "Jan 10, 2008, 9:15 – 11:45 AM");
+		assert.strictEqual(oFormat.format([oDate0, oDate1]), "Jan 10, 2008, 9:15\u2009\u2013\u200911:45\u202fAM");
 
 		// code under test: createInstance with format
 		oFormat = DateFormat.getDateTimeInstance({interval: true, format: "yMMMdhm", intervalDelimiter: "..."},
 			oLocale);
-		assert.strictEqual(oFormat.format([oDate0, oDate1]), "Jan 10, 2008, 9:15 AM...Jan 10, 2008, 11:45 AM");
+		assert.strictEqual(oFormat.format([oDate0, oDate1]), "Jan 10, 2008, 9:15\u202fAM...Jan 10, 2008, 11:45\u202fAM");
 	});
 
 	//*****************************************************************************************************************
@@ -4887,9 +4993,12 @@ sap.ui.define([
 	//*****************************************************************************************************************
 [
 	{method: "getDateInstance", result: "date.placeholder Dec 31, 2012"},
-	{method: "getDateTimeInstance", result: "date.placeholder Dec 31, 2012, 11:59:58 PM"},
-	{method: "getTimeInstance", result: "date.placeholder 11:59:58 PM"},
-	{method: "getDateTimeWithTimezoneInstance", result: "date.placeholder Dec 31, 2012, 11:59:58 PM Europe, Berlin"}
+	{method: "getDateTimeInstance", result: "date.placeholder Dec 31, 2012, 11:59:58\u202fPM"},
+	{method: "getTimeInstance", result: "date.placeholder 11:59:58\u202fPM"},
+	{
+		method: "getDateTimeWithTimezoneInstance",
+		result: "date.placeholder Dec 31, 2012, 11:59:58\u202fPM Europe, Berlin"
+	}
 ].forEach(function (oFixture) {
 	QUnit.test("getPlaceholderText: " + oFixture.method, function (assert) {
 		this.stub(UI5Date, "getInstance").onFirstCall().returns({getFullYear: function () {return 2012;}})
@@ -4904,9 +5013,12 @@ sap.ui.define([
 
 	//*****************************************************************************************************************
 [
-	{method: "getDateInstance", result: "date.placeholder Dec 22, 2012 – Dec 31, 2012"},
-	{method: "getDateTimeInstance", result: "date.placeholder Dec 22, 2012, 9:12:34 AM – Dec 31, 2012, 11:59:58 PM"},
-	{method: "getTimeInstance", result: "date.placeholder 9:12:34 AM – 11:59:58 PM"}
+	{method: "getDateInstance", result: "date.placeholder Dec 22, 2012\u2009\u2013\u2009Dec 31, 2012"},
+	{
+		method: "getDateTimeInstance",
+		result: "date.placeholder Dec 22, 2012, 9:12:34\u202fAM\u2009\u2013\u2009Dec 31, 2012, 11:59:58\u202fPM"
+	},
+	{method: "getTimeInstance", result: "date.placeholder 9:12:34\u202fAM\u2009\u2013\u200911:59:58\u202fPM"}
 ].forEach(function (oFixture) {
 	QUnit.test("getPlaceholderText, with interval: " + oFixture.method, function (assert) {
 		this.stub(UI5Date, "getInstance").onFirstCall().returns({getFullYear: function () {return 2012;}})

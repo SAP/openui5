@@ -181,16 +181,16 @@ sap.ui.define([
 		assert.strictEqual(oType.formatValue(null, "foo"), null);
 
 		assert.strictEqual(oType.formatValue(sValue, "any"), sValue);
-		assert.strictEqual(oType.formatValue(sValue, "string"), "1:53:49 PM");
+		assert.strictEqual(oType.formatValue(sValue, "string"), "1:53:49\u202FPM");
 
-		assert.strictEqual(oType.formatValue("13:53:49", "string"), "1:53:49 PM");
+		assert.strictEqual(oType.formatValue("13:53:49", "string"), "1:53:49\u202FPM");
 
 		assert.deepEqual(oType.formatValue("02:53:49", "object"), oDate, "Object");
 		assert.deepEqual(oType.formatValue(sValue, "object"), oDateWithMS, "Object with ms");
 
 		this.mock(oType).expects("getPrimitiveType").withExactArgs("sap.ui.core.CSSSize")
 			.returns("string");
-		assert.strictEqual(oType.formatValue(sValue, "sap.ui.core.CSSSize"), "1:53:49 PM");
+		assert.strictEqual(oType.formatValue(sValue, "sap.ui.core.CSSSize"), "1:53:49\u202FPM");
 	});
 
 	//*********************************************************************************************
@@ -323,7 +323,7 @@ sap.ui.define([
 			var oType = new TimeOfDay({}, {nullable : false});
 
 			assert.throws(oType.validateValue.bind(oType, null),
-				new ValidateException("EnterTime 11:59:58 PM"));
+				new ValidateException("EnterTime 11:59:58\u202FPM"));
 		});
 	});
 

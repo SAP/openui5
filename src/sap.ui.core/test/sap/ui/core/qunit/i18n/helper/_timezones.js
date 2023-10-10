@@ -97,6 +97,7 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 		"America/Cayman",
 		"America/Chicago",
 		"America/Chihuahua",
+		"America/Ciudad_Juarez",
 		"America/Costa_Rica",
 		"America/Creston",
 		"America/Cuiaba",
@@ -326,6 +327,9 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 		"Etc/GMT",
 		"Etc/GMT+0",
 		"Etc/GMT+1",
+		"Etc/GMT+10",
+		"Etc/GMT+11",
+		"Etc/GMT+12",
 		"Etc/GMT+2",
 		"Etc/GMT+3",
 		"Etc/GMT+4",
@@ -334,11 +338,13 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 		"Etc/GMT+7",
 		"Etc/GMT+8",
 		"Etc/GMT+9",
-		"Etc/GMT+10",
-		"Etc/GMT+11",
-		"Etc/GMT+12",
 		"Etc/GMT-0",
 		"Etc/GMT-1",
+		"Etc/GMT-10",
+		"Etc/GMT-11",
+		"Etc/GMT-12",
+		"Etc/GMT-13",
+		"Etc/GMT-14",
 		"Etc/GMT-2",
 		"Etc/GMT-3",
 		"Etc/GMT-4",
@@ -347,11 +353,6 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 		"Etc/GMT-7",
 		"Etc/GMT-8",
 		"Etc/GMT-9",
-		"Etc/GMT-10",
-		"Etc/GMT-11",
-		"Etc/GMT-12",
-		"Etc/GMT-13",
-		"Etc/GMT-14",
 		"Etc/GMT0",
 		"Etc/Greenwich",
 		"Etc/UTC",
@@ -936,7 +937,7 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 	];
 
 	/**
-	 * Version: tz 2022a (excluding backzone)
+	 * Version: tz 2023c (excluding backzone)
 	 * The IANA time zones are also available in a parsable format under:
 	 * https://github.com/eggert/tz
 	 *
@@ -1038,6 +1039,7 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 		"America/Cayman",
 		"America/Chicago",
 		"America/Chihuahua",
+		"America/Ciudad_Juarez",
 		"America/Coral_Harbour",
 		"America/Cordoba",
 		"America/Costa_Rica",
@@ -1392,6 +1394,7 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 		"Europe/Kaliningrad",
 		"Europe/Kiev",
 		"Europe/Kirov",
+		"Europe/Kyiv",
 		"Europe/Lisbon",
 		"Europe/Ljubljana",
 		"Europe/London",
@@ -1431,6 +1434,7 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 		"Europe/Zagreb",
 		"Europe/Zaporozhye",
 		"Europe/Zurich",
+		"Factory",
 		"GB",
 		"GB-Eire",
 		"GMT",

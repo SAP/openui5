@@ -73,8 +73,8 @@ sap.ui.define([
 				oDTP = oView.byId("picker1");
 				oDTP2 = oView.byId("picker2");
 
-				// assert
-				assert.equal(oDTP._$input.val(), "Jan 6, 2015, 2:25:21 AM", "picker1 has correct input value");
+				// assert; // \u202f is a Narrow No-Break Space which has been introduced with CLDR version 43
+				assert.equal(oDTP._$input.val(), "Jan 6, 2015, 2:25:21\u202fAM", "picker1 has correct input value");
 				assert.equal(oDTP.$("timezoneLabel").text(), "Americas, New York", "picker1 has correct timezone label");
 				assert.equal(oDTP2._$input.val(), "", "picker2 has correct input value");
 				assert.equal(oDTP2.$("timezoneLabel").text(), "Americas, New York", "picker2 has correct timezone label");

@@ -307,7 +307,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("After creating new timePicker, the format property is initialized with its default value", function(assert) {
-		assert.strictEqual(this.oTimePicker.getDisplayFormat(), "h:mm:ss a", "the default value is h:mm:ss a");
+		//\u202f is a Narrow No-Break Space which has been introduced with CLDR version 43
+		assert.strictEqual(this.oTimePicker.getDisplayFormat(), "h:mm:ss\u202fa", "the default value is h:mm:ss a");
 	});
 
 	QUnit.test("After changing the displayFormat property, the getDisplayFormat function returns the new value", function(assert) {
@@ -425,15 +426,15 @@ sap.ui.define([
 	});
 
 	QUnit.test("Default", function (assert) {
-		// Assert
-		assert.equal(this.oTimePicker._$input.val(), "10:11:12 AM", "Display format is correct");
+		// Assert; \u202f is a Narrow No-Break Space which has been introduced with CLDR version 43
+		assert.equal(this.oTimePicker._$input.val(), "10:11:12\u202fAM", "Display format is correct");
 	});
 
 	QUnit.test("Empty", function (assert) {
 		// Act
 		this.oTimePicker.setDisplayFormat();
-		// Assert
-		assert.equal(this.oTimePicker._$input.val(), "10:11:12 AM", "Display format is correct");
+		// Assert; \u202f is a Narrow No-Break Space which has been introduced with CLDR version 43
+		assert.equal(this.oTimePicker._$input.val(), "10:11:12\u202fAM", "Display format is correct");
 	});
 
 	QUnit.test("Custom", function (assert) {
@@ -460,15 +461,15 @@ sap.ui.define([
 	QUnit.test("short", function (assert) {
 		// Act
 		this.oTimePicker.setDisplayFormat("short");
-		// Assert
-		assert.equal(this.oTimePicker._$input.val(), "10:11 AM", "Display format is correct");
+		// Assert; \u202f is a Narrow No-Break Space which has been introduced with CLDR version 43
+		assert.equal(this.oTimePicker._$input.val(), "10:11\u202fAM", "Display format is correct");
 	});
 
 	QUnit.test("medium", function (assert) {
 		// Act
 		this.oTimePicker.setDisplayFormat("medium");
-		// Assert
-		assert.equal(this.oTimePicker._$input.val(), "10:11:12 AM", "Display format is correct");
+		// Assert; \u202f is a Narrow No-Break Space which has been introduced with CLDR version 43
+		assert.equal(this.oTimePicker._$input.val(), "10:11:12\u202fAM", "Display format is correct");
 	});
 
 	QUnit.module("Input formats, display formats and values", {
@@ -1249,13 +1250,13 @@ sap.ui.define([
 		tp.placeAt("qunit-fixture");
 		oCore.applyChanges();
 
-		//assert
-		assert.equal(tp.getValue(), "4:35 PM", "the value property is set in and formatted correctly");
+		//assert; \u202f is a Narrow No-Break Space which has been introduced with CLDR version 43
+		assert.equal(tp.getValue(), "4:35\u202fPM", "the value property is set in and formatted correctly");
 
 		//act
 		qutils.triggerEvent("focusin", tp.getDomRef());
-		//assert
-		assert.equal(tp._getInputValue(), " 4:35 PM", "the value property is formatted correctly (with leading space)");
+		//assert; \u202f is a Narrow No-Break Space which has been introduced with CLDR version 43
+		assert.equal(tp._getInputValue(), " 4:35\u202fPM", "the value property is formatted correctly (with leading space)");
 
 		//act
 		tp._openPicker();
@@ -1293,9 +1294,10 @@ sap.ui.define([
 			.placeAt("qunit-fixture");
 
 			oModelV2.attachRequestCompleted(function () {
-				assert.equal(view.byId("tp1")._$input.val(), "11:33:55 AM", "TP1 has coorect value!");
-				assert.equal(view.byId("tp2")._$input.val(), "11:33:55 AM", "TP2 has coorect value!");
-				assert.equal(view.byId("tp3")._$input.val(), "11:33 AM", "TP3 has coorect value!");
+				// \u202f is a Narrow No-Break Space which has been introduced with CLDR version 43
+				assert.equal(view.byId("tp1")._$input.val(), "11:33:55\u202fAM", "TP1 has coorect value!");
+				assert.equal(view.byId("tp2")._$input.val(), "11:33:55\u202fAM", "TP2 has coorect value!");
+				assert.equal(view.byId("tp3")._$input.val(), "11:33\u202fAM", "TP3 has coorect value!");
 				assert.equal(view.byId("tp4")._$input.val(), "11:33", "TP4 has coorect value!");
 				done();
 			});
@@ -1363,7 +1365,8 @@ sap.ui.define([
 		tp.setValue("10:55:13 AM");
 		var result = tp._getInputValue();
 
-		assert.strictEqual(result, "10:55:13 AM", "_getInputValue returns the correct time");
+		// \u202f is a Narrow No-Break Space which has been introduced with CLDR version 43
+		assert.strictEqual(result, "10:55:13\u202fAM", "_getInputValue returns the correct time");
 
 		tp.destroy();
 	});
@@ -1838,11 +1841,13 @@ sap.ui.define([
 	});
 
 	QUnit.test("allows input of valid time string - style short", function(assert) {
-		this.typeAndCheckValueForDisplayFormat("short", "1215a", "12:15 AM");
+		// \u202f is a Narrow No-Break Space which has been introduced with CLDR version 43
+		this.typeAndCheckValueForDisplayFormat("short", "1215a", "12:15\u202fAM");
 	});
 
 	QUnit.test("allows input of valid time string - style medium", function(assert) {
-		this.typeAndCheckValueForDisplayFormat("medium", "12159a", "12:15:09 AM");
+		// \u202f is a Narrow No-Break Space which has been introduced with CLDR version 43
+		this.typeAndCheckValueForDisplayFormat("medium", "12159a", "12:15:09\u202fAM");
 	});
 
 
@@ -2435,8 +2440,8 @@ sap.ui.define([
 		oTp.focus();
 		this.clock.tick(1000);
 
-		//assert
-		assert.equal(oTp._oTempValue.toString(), "--:--:-- --", "the mask is the correct one");
+		//assert; \u202f is a Narrow No-Break Space which has been introduced with CLDR version 43
+		assert.equal(oTp._oTempValue.toString(), "--:--:--\u202f--", "the mask is the correct one");
 
 	});
 

@@ -100,9 +100,9 @@ sap.ui.define([
 			oDateInterval = new DateInterval({format: "yMMMd"});
 
 		assert.strictEqual(oDateInterval.formatValue([oDate1, oDate2], "string"),
-			"Nov 6 \u2013 Dec 6, 2003", "dates can be formatted as interval");
+			"Nov 6\u2009\u2013\u2009Dec 6, 2003", "dates can be formatted as interval");
 		assert.strictEqual(oDateInterval.formatValue([UI5Date.getInstance(1970, 0, 1), oDate2], "string"),
-			"Jan 1, 1970 \u2013 Dec 6, 2003");
+			"Jan 1, 1970\u2009\u2013\u2009Dec 6, 2003");
 		checkFormatException(assert, oDateInterval, oDate1, "string",
 			"Cannot format date interval: " + oDate1 + " is expected as an Array but given the wrong format");
 		assert.strictEqual(oDateInterval.formatValue([oDate1], "string"), "", "format type with invalid parameter");
@@ -114,9 +114,9 @@ sap.ui.define([
 		oDateInterval = new DateInterval({format: "yMMMd", source: {pattern: "timestamp"}});
 
 		assert.strictEqual(oDateInterval.formatValue([oDate1.getTime(), oDate2.getTime()], "string"),
-			"Nov 6 \u2013 Dec 6, 2003", "timestamps can be formatted as interval");
+			"Nov 6\u2009\u2013\u2009Dec 6, 2003", "timestamps can be formatted as interval");
 		assert.strictEqual(oDateInterval.formatValue([String(oDate1.getTime()), oDate2.getTime()], "string"),
-			"Nov 6 \u2013 Dec 6, 2003", "timestamps can be formatted as interval");
+			"Nov 6\u2009\u2013\u2009Dec 6, 2003", "timestamps can be formatted as interval");
 		checkFormatException(assert, oDateInterval, ["a", "a"], "string",
 			"Cannot format date: a is not a valid Timestamp");
 

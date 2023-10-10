@@ -30,6 +30,7 @@ sap.ui.define([
 			"concentr-milligram-per-deciliter": "concentr-milligram-ofglucose-per-deciliter",
 			"concentr-part-per-million": "concentr-permillion",
 			"consumption-liter-per-100kilometers": "consumption-liter-per-100-kilometer",
+			"mass-metric-ton": "mass-tonne",
 			"pressure-millimeter-of-mercury": "pressure-millimeter-ofhg",
 			"pressure-pound-per-square-inch": "pressure-pound-force-per-square-inch",
 			"pressure-inch-hg": "pressure-inch-ofhg",

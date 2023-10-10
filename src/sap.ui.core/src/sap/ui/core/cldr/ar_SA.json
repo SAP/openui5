@@ -1,7 +1,7 @@
 {
 	"__license": "This file has been derived from Unicode Common Locale Data Repository (CLDR) files (http://cldr.unicode.org). See the copyright and permission notice in the Unicode-Data-Files-LICENSE.txt available at the same location as this file or visit http://www.unicode.org/copyright.html",
-	"__version": "41.0.0",
-	"__buildtime": "2022-12-19T09:41:25.319Z",
+	"__version": "43.0.0",
+	"__buildtime": "2023-09-28T11:39:07.908Z",
 	"languages": {
 		"aa": "الأفارية",
 		"ab": "الأبخازية",
@@ -21,6 +21,7 @@
 		"am": "الأمهرية",
 		"an": "الأراغونية",
 		"ang": "الإنجليزية القديمة",
+		"ann": "أوبلو",
 		"anp": "الأنجيكا",
 		"ar": "العربية",
 		"ar_001": "العربية الرسمية الحديثة",
@@ -33,6 +34,7 @@
 		"as": "الأسامية",
 		"asa": "الآسو",
 		"ast": "الأسترية",
+		"atj": "الأتيكاميكو",
 		"av": "الأوارية",
 		"awa": "الأوادية",
 		"ay": "الأيمارا",
@@ -92,13 +94,21 @@
 		"ckb": "السورانية الكردية",
 		"ckb_alt-menu": "الكردية، السورانية",
 		"ckb_alt-variant": "السورانية الكردية",
+		"clc": "تسيلكوتين",
 		"co": "الكورسيكية",
 		"cop": "القبطية",
 		"cr": "الكرى",
+		"crg": "الميتشيف",
 		"crh": "لغة تتار القرم",
+		"crj": "الكري الجنوب شرقية",
+		"crk": "البلينز-كري",
+		"crl": "الكري شمال الشرقية",
+		"crm": "الموس-كري",
+		"crr": "الألغونكوية كارولينا",
 		"crs": "الفرنسية الكريولية السيشيلية",
 		"cs": "التشيكية",
 		"csb": "الكاشبايان",
+		"csw": "السوامبي-كري",
 		"cu": "سلافية كنسية",
 		"cv": "التشوفاشي",
 		"cy": "الويلزية",
@@ -193,8 +203,10 @@
 		"hai": "الهيدا",
 		"hak": "الهاكا الصينية",
 		"haw": "لغة هاواي",
+		"hax": "هايدا الجنوبية",
 		"he": "العبرية",
 		"hi": "الهندية",
+		"hi_Latn-alt-variant": "الهنجليزية",
 		"hil": "الهيليجينون",
 		"hit": "الحثية",
 		"hmn": "الهمونجية",
@@ -205,6 +217,7 @@
 		"ht": "الكريولية الهايتية",
 		"hu": "الهنغارية",
 		"hup": "الهبا",
+		"hur": "الهالكوميليم",
 		"hy": "الأرمنية",
 		"hz": "الهيريرو",
 		"ia": "اللّغة الوسيطة",
@@ -215,6 +228,7 @@
 		"ig": "الإيجبو",
 		"ii": "السيتشيون يي",
 		"ik": "الإينبياك",
+		"ikt": "الإنكتيتوتية الكندية الغربية",
 		"ilo": "الإيلوكو",
 		"inh": "الإنجوشية",
 		"io": "الإيدو",
@@ -242,7 +256,7 @@
 		"kea": "كابوفيرديانو",
 		"kfo": "الكورو",
 		"kg": "الكونغو",
-		"kgp": "kgp",
+		"kgp": "الكاينغانغ",
 		"kha": "الكازية",
 		"kho": "الخوتانيز",
 		"khq": "كويرا تشيني",
@@ -273,6 +287,7 @@
 		"kut": "الكتيناي",
 		"kv": "الكومي",
 		"kw": "الكورنية",
+		"kwk": "الكواكوالا",
 		"ky": "القيرغيزية",
 		"la": "اللاتينية",
 		"lad": "اللادينو",
@@ -283,14 +298,16 @@
 		"lez": "الليزجية",
 		"lg": "الغاندا",
 		"li": "الليمبورغية",
-		"lij": "lij",
+		"lil": "الليلويتية",
 		"lkt": "لاكوتا",
+		"lmo": "اللومبردية",
 		"ln": "اللينجالا",
 		"lo": "اللاوو",
 		"lol": "منغولى",
 		"lou": "الكريولية اللويزيانية",
 		"loz": "اللوزي",
 		"lrc": "اللرية الشمالية",
+		"lsm": "الساميا",
 		"lt": "الليتوانية",
 		"lu": "اللوبا كاتانغا",
 		"lua": "اللبا-لؤلؤ",
@@ -325,6 +342,7 @@
 		"mn": "المنغولية",
 		"mnc": "المانشو",
 		"mni": "المانيبورية",
+		"moe": "إينو-ايمون",
 		"moh": "الموهوك",
 		"mos": "الموسي",
 		"mr": "الماراثية",
@@ -372,6 +390,11 @@
 		"nzi": "النزيما",
 		"oc": "الأوكسيتانية",
 		"oj": "الأوجيبوا",
+		"ojb": "أوجيبوا الشمالية الغربية",
+		"ojc": "أوجيبوا الوسطى",
+		"ojs": "الأوجي-كري",
+		"ojw": "الأوجيبوا الغربية",
+		"oka": "الأوكاناغانية",
 		"om": "الأورومية",
 		"or": "الأورية",
 		"os": "الأوسيتيك",
@@ -387,8 +410,10 @@
 		"peo": "الفارسية القديمة",
 		"phn": "الفينيقية",
 		"pi": "البالية",
+		"pis": "بيجين",
 		"pl": "البولندية",
 		"pon": "البوهنبيايان",
+		"pqm": "الماليزيت-باساماكودي",
 		"prg": "البروسياوية",
 		"pro": "البروفانسية القديمة",
 		"ps": "البشتو",
@@ -441,6 +466,7 @@
 		"sid": "السيدامو",
 		"sk": "السلوفاكية",
 		"sl": "السلوفانية",
+		"slh": "لوشوتسيد الجنوبية",
 		"sm": "الساموائية",
 		"sma": "سامي الجنوبية",
 		"smj": "اللول سامي",
@@ -457,6 +483,7 @@
 		"ss": "السواتي",
 		"ssy": "لغة الساهو",
 		"st": "السوتو الجنوبية",
+		"str": "سترايتس ساليش",
 		"su": "السوندانية",
 		"suk": "السوكوما",
 		"sus": "السوسو",
@@ -468,13 +495,16 @@
 		"syc": "سريانية تقليدية",
 		"syr": "السريانية",
 		"ta": "التاميلية",
+		"tce": "التوتشون الجنوبية",
 		"te": "التيلوجو",
 		"tem": "التيمن",
 		"teo": "تيسو",
 		"ter": "التيرينو",
 		"tet": "التيتم",
 		"tg": "الطاجيكية",
+		"tgx": "التاغيش",
 		"th": "التايلاندية",
+		"tht": "التالتان",
 		"ti": "التيغرينية",
 		"tig": "التيغرية",
 		"tiv": "التيف",
@@ -487,12 +517,14 @@
 		"tn": "التسوانية",
 		"to": "التونغية",
 		"tog": "تونجا - نياسا",
+		"tok": "التوكي-بونا",
 		"tpi": "التوك بيسين",
 		"tr": "التركية",
 		"trv": "لغة التاروكو",
 		"ts": "السونجا",
 		"tsi": "التسيمشيان",
 		"tt": "التترية",
+		"ttm": "التوتشون الشمالية",
 		"tum": "التامبوكا",
 		"tvl": "التوفالو",
 		"tw": "التوي",
@@ -532,7 +564,7 @@
 		"ybb": "يمبا",
 		"yi": "اليديشية",
 		"yo": "اليوروبا",
-		"yrl": "yrl",
+		"yrl": "النيينجاتو",
 		"yue": "الكَنْتُونية",
 		"yue_alt-menu": "الكَنْتُونية",
 		"za": "الزهيونج",
@@ -552,57 +584,40 @@
 		"zza": "زازا"
 	},
 	"scripts": {
-		"Adlm": "Adlm",
-		"Aghb": "Aghb",
-		"Ahom": "Ahom",
+		"Adlm": "أدلم",
 		"Arab": "العربية",
 		"Arab-alt-variant": "العربية الفارسية",
 		"Aran": "نستعليق",
-		"Armi": "Armi",
 		"Armn": "الأرمينية",
-		"Avst": "Avst",
 		"Bali": "البالية",
-		"Bamu": "Bamu",
-		"Bass": "Bass",
 		"Batk": "الباتاك",
 		"Beng": "البنغالية",
-		"Bhks": "Bhks",
 		"Blis": "رموز بليس",
 		"Bopo": "البوبوموفو",
 		"Brah": "الهندوسية",
 		"Brai": "البرايل",
 		"Bugi": "البجينيز",
 		"Buhd": "البهيدية",
-		"Cakm": "Cakm",
+		"Cakm": "شاكما",
 		"Cans": "مقاطع كندية أصلية موحدة",
 		"Cari": "الكارية",
 		"Cham": "التشامية",
 		"Cher": "الشيروكي",
-		"Chrs": "Chrs",
 		"Cirt": "السيرث",
 		"Copt": "القبطية",
-		"Cpmn": "Cpmn",
 		"Cprt": "القبرصية",
 		"Cyrl": "السيريلية",
 		"Cyrs": "السيريلية السلافية الكنسية القديمة",
 		"Deva": "الديفاناجاري",
-		"Diak": "Diak",
-		"Dogr": "Dogr",
 		"Dsrt": "الديسيريت",
-		"Dupl": "Dupl",
 		"Egyd": "الديموطيقية",
 		"Egyh": "الهيراطيقية",
 		"Egyp": "الهيروغليفية",
-		"Elba": "Elba",
-		"Elym": "Elym",
 		"Ethi": "الأثيوبية",
 		"Geok": "الأبجدية الجورجية - أسومتافرلي و نسخري",
 		"Geor": "الجورجية",
 		"Glag": "الجلاجوليتيك",
-		"Gong": "Gong",
-		"Gonm": "Gonm",
 		"Goth": "القوطية",
-		"Gran": "Gran",
 		"Grek": "اليونانية",
 		"Gujr": "التاغجراتية",
 		"Guru": "الجرمخي",
@@ -614,12 +629,9 @@
 		"Hans-alt-stand-alone": "الهان المبسطة",
 		"Hant": "التقليدية",
 		"Hant-alt-stand-alone": "الهان التقليدية",
-		"Hatr": "Hatr",
 		"Hebr": "العبرية",
 		"Hira": "الهيراجانا",
-		"Hluw": "Hluw",
 		"Hmng": "الباهوه همونج",
-		"Hmnp": "Hmnp",
 		"Hrkt": "أبجدية مقطعية يابانية",
 		"Hung": "المجرية القديمة",
 		"Inds": "اندس - هارابان",
@@ -629,14 +641,10 @@
 		"Jpan": "اليابانية",
 		"Kali": "الكياه لى",
 		"Kana": "الكتكانا",
-		"Kawi": "Kawi",
 		"Khar": "الخاروشتى",
 		"Khmr": "الخميرية",
-		"Khoj": "Khoj",
-		"Kits": "Kits",
 		"Knda": "الكانادا",
 		"Kore": "الكورية",
-		"Kthi": "Kthi",
 		"Lana": "الانا",
 		"Laoo": "اللاو",
 		"Latf": "اللاتينية - متغير فراكتر",
@@ -646,69 +654,35 @@
 		"Limb": "الليمبو",
 		"Lina": "الخطية أ",
 		"Linb": "الخطية ب",
-		"Lisu": "Lisu",
 		"Lyci": "الليسية",
 		"Lydi": "الليدية",
-		"Mahj": "Mahj",
-		"Maka": "Maka",
 		"Mand": "المانداينية",
-		"Mani": "Mani",
-		"Marc": "Marc",
 		"Maya": "المايا الهيروغليفية",
-		"Medf": "Medf",
-		"Mend": "Mend",
-		"Merc": "Merc",
 		"Mero": "الميرويتيك",
 		"Mlym": "الماليالام",
-		"Modi": "Modi",
 		"Mong": "المغولية",
 		"Moon": "مون",
-		"Mroo": "Mroo",
 		"Mtei": "ميتي ماييك",
-		"Mult": "Mult",
 		"Mymr": "الميانمار",
-		"Nagm": "Nagm",
-		"Nand": "Nand",
 		"Narb": "العربية الشمالية القديمة",
-		"Nbat": "Nbat",
-		"Newa": "Newa",
 		"Nkoo": "أنكو",
-		"Nshu": "Nshu",
 		"Ogam": "الأوجهام",
 		"Olck": "أول تشيكي",
 		"Orkh": "الأورخون",
 		"Orya": "الأوريا",
-		"Osge": "Osge",
 		"Osma": "الأوسمانيا",
-		"Ougr": "Ougr",
-		"Palm": "Palm",
-		"Pauc": "Pauc",
 		"Perm": "البيرميكية القديمة",
 		"Phag": "الفاجسبا",
-		"Phli": "Phli",
-		"Phlp": "Phlp",
 		"Phnx": "الفينيقية",
 		"Plrd": "الصوتيات الجماء",
-		"Prti": "Prti",
 		"Qaag": "زوجيي",
-		"Rjng": "Rjng",
-		"Rohg": "Rohg",
+		"Rohg": "الحنيفي",
 		"Roro": "رنجورنجو",
 		"Runr": "الروني",
-		"Samr": "Samr",
 		"Sara": "الساراتي",
 		"Sarb": "العربية الجنوبية القديمة",
-		"Saur": "Saur",
-		"Sgnw": "Sgnw",
 		"Shaw": "الشواني",
-		"Shrd": "Shrd",
-		"Sidd": "Sidd",
-		"Sind": "Sind",
 		"Sinh": "السينهالا",
-		"Sogd": "Sogd",
-		"Sogo": "Sogo",
-		"Sora": "Sora",
-		"Soyo": "Soyo",
 		"Sund": "السوندانية",
 		"Sylo": "السيلوتي ناغري",
 		"Syrc": "السريانية",
@@ -716,12 +690,9 @@
 		"Syrj": "السريانية الغربية",
 		"Syrn": "السريانية الشرقية",
 		"Tagb": "التاجبانوا",
-		"Takr": "Takr",
 		"Tale": "التاي لي",
 		"Talu": "التاى لى الجديد",
 		"Taml": "التاميلية",
-		"Tang": "Tang",
-		"Tavt": "Tavt",
 		"Telu": "التيلجو",
 		"Teng": "التينجوار",
 		"Tfng": "التيفيناغ",
@@ -729,20 +700,12 @@
 		"Thaa": "الثعنة",
 		"Thai": "التايلاندية",
 		"Tibt": "التبتية",
-		"Tirh": "Tirh",
-		"Tnsa": "Tnsa",
-		"Toto": "Toto",
 		"Ugar": "الأجاريتيكية",
 		"Vaii": "الفاي",
 		"Visp": "الكلام المرئي",
-		"Vith": "Vith",
-		"Wara": "Wara",
-		"Wcho": "Wcho",
 		"Xpeo": "الفارسية القديمة",
 		"Xsux": "الكتابة المسمارية الأكدية السومرية",
-		"Yezi": "Yezi",
 		"Yiii": "اليي",
-		"Zanb": "Zanb",
 		"Zinh": "الموروث",
 		"Zmth": "تدوين رياضي",
 		"Zsye": "إيموجي",
@@ -969,6 +932,7 @@
 		"NR": "ناورو",
 		"NU": "نيوي",
 		"NZ": "نيوزيلندا",
+		"NZ-alt-variant": "نيوزيلندا",
 		"OM": "عُمان",
 		"PA": "بنما",
 		"PE": "بيرو",
@@ -1028,6 +992,7 @@
 		"TN": "تونس",
 		"TO": "تونغا",
 		"TR": "تركيا",
+		"TR-alt-variant": "تركيا",
 		"TT": "ترينيداد وتوباغو",
 		"TV": "توفالو",
 		"TW": "تايوان",
@@ -1074,10 +1039,10 @@
 			"short": "h:mm a"
 		},
 		"dateTimeFormats": {
-			"full": "{1} في {0}",
-			"long": "{1} في {0}",
-			"medium": "{1}, {0}",
-			"short": "{1}, {0}",
+			"full": "{1}، {0}",
+			"long": "{1}، {0}",
+			"medium": "{1}، {0}",
+			"short": "{1}، {0}",
 			"availableFormats": {
 				"Bh": "h B",
 				"Bhm": "h:mm B",
@@ -1107,8 +1072,8 @@
 				"hmv": "h:mm a v",
 				"Hmv": "HH:mm v",
 				"M": "L",
-				"Md": "d/‏M",
-				"MEd": "E، d/‏M",
+				"Md": "d‏/M",
+				"MEd": "E، d‏/M",
 				"MMdd": "dd‏/MM",
 				"MMM": "LLL",
 				"MMMd": "d MMM",
@@ -1119,7 +1084,7 @@
 				"y": "y",
 				"yM": "M‏/y",
 				"yMd": "d‏/M‏/y",
-				"yMEd": "E، d/‏M/‏y",
+				"yMEd": "E، d‏/M‏/y",
 				"yMM": "MM‏/y",
 				"yMMM": "MMM y",
 				"yMMMd": "d MMM y",
@@ -1231,12 +1196,12 @@
 					"M": "M–M"
 				},
 				"Md": {
-					"d": "d-M – d-M",
-					"M": "M/d – M/d"
+					"d": "d‏/M – d‏/M",
+					"M": "d‏/M – d‏/M"
 				},
 				"MEd": {
-					"d": "E، d/‏M –‏ E، d/‏M",
-					"M": "E، d/‏M – E، d/‏M"
+					"d": "E، d‏/M – E، d‏/M",
+					"M": "E، d‏/M – E، d‏/M"
 				},
 				"MMM": {
 					"M": "MMM–MMM"
@@ -1616,10 +1581,10 @@
 			"short": "h:mm a"
 		},
 		"dateTimeFormats": {
-			"full": "{1} في {0}",
-			"long": "{1} في {0}",
-			"medium": "{1} في {0}",
-			"short": "{1} في {0}",
+			"full": "{1}، {0}",
+			"long": "{1}، {0}",
+			"medium": "{1}، {0}",
+			"short": "{1}, {0}",
 			"availableFormats": {
 				"Bh": "h B",
 				"Bhm": "h:mm B",
@@ -1645,8 +1610,8 @@
 				"hms": "h:mm:ss a",
 				"Hms": "HH:mm:ss",
 				"M": "L",
-				"Md": "d/‏M",
-				"MEd": "E، d/‏M",
+				"Md": "d‏/M",
+				"MEd": "E، d‏/M",
 				"MMM": "LLL",
 				"MMMd": "d MMM",
 				"MMMEd": "E، d MMM",
@@ -1656,7 +1621,7 @@
 				"yyyy": "y G",
 				"yyyyM": "M‏/y G",
 				"yyyyMd": "d‏/M‏/y G",
-				"yyyyMEd": "E، d/‏M/‏y G",
+				"yyyyMEd": "E، d‏/M‏/y G",
 				"yyyyMMM": "MMM y G",
 				"yyyyMMMd": "d MMM y G",
 				"yyyyMMMEd": "E، d MMM y G",
@@ -1765,12 +1730,12 @@
 					"M": "M–M"
 				},
 				"Md": {
-					"d": "d-M – d-M",
-					"M": "d-M – d-M"
+					"d": "d‏/M – d‏/M",
+					"M": "d‏/M – d‏/M"
 				},
 				"MEd": {
-					"d": "E، d/‏M –‏ E، d/‏M",
-					"M": "E، d/‏M – E، d/‏M"
+					"d": "E، d‏/M – E، d‏/M",
+					"M": "E، d‏/M – E، d‏/M"
 				},
 				"MMM": {
 					"M": "MMM–MMM"
@@ -2147,10 +2112,10 @@
 			"short": "h:mm a"
 		},
 		"dateTimeFormats": {
-			"full": "{1} في {0}",
-			"long": "{1} في {0}",
-			"medium": "{1} في {0}",
-			"short": "{1} في {0}",
+			"full": "{1}، {0}",
+			"long": "{1}، {0}",
+			"medium": "{1}، {0}",
+			"short": "{1}, {0}",
 			"availableFormats": {
 				"Bh": "h B",
 				"Bhm": "h:mm B",
@@ -2176,8 +2141,8 @@
 				"hms": "h:mm:ss a",
 				"Hms": "HH:mm:ss",
 				"M": "L",
-				"Md": "d/‏M",
-				"MEd": "E، d/‏M",
+				"Md": "d‏/M",
+				"MEd": "E، d‏/M",
 				"MMM": "LLL",
 				"MMMd": "d MMM",
 				"MMMEd": "E، d MMM",
@@ -2187,7 +2152,7 @@
 				"yyyy": "y G",
 				"yyyyM": "M‏/y G",
 				"yyyyMd": "d‏/M‏/y G",
-				"yyyyMEd": "E، d/‏M/‏y G",
+				"yyyyMEd": "E، d‏/M‏/y G",
 				"yyyyMMM": "MMM y G",
 				"yyyyMMMd": "d MMM y G",
 				"yyyyMMMEd": "E، d MMM y G",
@@ -2296,12 +2261,12 @@
 					"M": "M–M"
 				},
 				"Md": {
-					"d": "d-M – d-M",
-					"M": "d-M – d-M"
+					"d": "d‏/M – d‏/M",
+					"M": "d‏/M – d‏/M"
 				},
 				"MEd": {
-					"d": "E، d/‏M –‏ E، d/‏M",
-					"M": "E، d/‏M – E، d/‏M"
+					"d": "E، d‏/M – E، d‏/M",
+					"M": "E، d‏/M – E، d‏/M"
 				},
 				"MMM": {
 					"M": "MMM–MMM"
@@ -2698,10 +2663,10 @@
 			"short": "h:mm a"
 		},
 		"dateTimeFormats": {
-			"full": "{1} في {0}",
-			"long": "{1} في {0}",
-			"medium": "{1} في {0}",
-			"short": "{1} في {0}",
+			"full": "{1}، {0}",
+			"long": "{1}، {0}",
+			"medium": "{1}، {0}",
+			"short": "{1}, {0}",
 			"availableFormats": {
 				"Bh": "h B",
 				"Bhm": "h:mm B",
@@ -2727,8 +2692,8 @@
 				"hms": "h:mm:ss a",
 				"Hms": "HH:mm:ss",
 				"M": "L",
-				"Md": "d/‏M",
-				"MEd": "E، d/‏M",
+				"Md": "d‏/M",
+				"MEd": "E، d‏/M",
 				"MMM": "LLL",
 				"MMMd": "d MMM",
 				"MMMEd": "E، d MMM",
@@ -2738,7 +2703,7 @@
 				"yyyy": "y G",
 				"yyyyM": "M‏/y G",
 				"yyyyMd": "d‏/M‏/y G",
-				"yyyyMEd": "E، d/‏M/‏y G",
+				"yyyyMEd": "E، d‏/M‏/y G",
 				"yyyyMMM": "MMM y G",
 				"yyyyMMMd": "d MMM y G",
 				"yyyyMMMEd": "E، d MMM y G",
@@ -2847,12 +2812,12 @@
 					"M": "M–M"
 				},
 				"Md": {
-					"d": "d-M – d-M",
-					"M": "d-M – d-M"
+					"d": "d‏/M – d‏/M",
+					"M": "d‏/M – d‏/M"
 				},
 				"MEd": {
-					"d": "E، d/‏M –‏ E، d/‏M",
-					"M": "E، d/‏M – E، d/‏M"
+					"d": "E، d‏/M – E، d‏/M",
+					"M": "E، d‏/M – E، d‏/M"
 				},
 				"MMM": {
 					"M": "MMM–MMM"
@@ -3229,10 +3194,10 @@
 			"short": "h:mm a"
 		},
 		"dateTimeFormats": {
-			"full": "{1} في {0}",
-			"long": "{1} في {0}",
-			"medium": "{1} في {0}",
-			"short": "{1} في {0}",
+			"full": "{1}، {0}",
+			"long": "{1}، {0}",
+			"medium": "{1}، {0}",
+			"short": "{1}, {0}",
 			"availableFormats": {
 				"Bh": "h B",
 				"Bhm": "h:mm B",
@@ -3258,8 +3223,8 @@
 				"hms": "h:mm:ss a",
 				"Hms": "HH:mm:ss",
 				"M": "L",
-				"Md": "d/‏M",
-				"MEd": "E، d/‏M",
+				"Md": "d‏/M",
+				"MEd": "E، d‏/M",
 				"MMM": "LLL",
 				"MMMd": "d MMM",
 				"MMMEd": "E، d MMM",
@@ -3269,7 +3234,7 @@
 				"yyyy": "y G",
 				"yyyyM": "M‏/y G",
 				"yyyyMd": "d‏/M‏/y G",
-				"yyyyMEd": "E، d/‏M/‏y G",
+				"yyyyMEd": "E، d‏/M‏/y G",
 				"yyyyMMM": "MMM y G",
 				"yyyyMMMd": "d MMM y G",
 				"yyyyMMMEd": "E، d MMM y G",
@@ -3378,12 +3343,12 @@
 					"M": "M–M"
 				},
 				"Md": {
-					"d": "d-M – d-M",
-					"M": "d-M – d-M"
+					"d": "d‏/M – d‏/M",
+					"M": "d‏/M – d‏/M"
 				},
 				"MEd": {
-					"d": "E، d/‏M –‏ E، d/‏M",
-					"M": "E، d/‏M – E، d/‏M"
+					"d": "E، d‏/M – E، d‏/M",
+					"M": "E، d‏/M – E، d‏/M"
 				},
 				"MMM": {
 					"M": "MMM–MMM"
@@ -4373,6 +4338,7 @@
 			"Cayman": "كايمان",
 			"Chicago": "شيكاغو",
 			"Chihuahua": "تشيواوا",
+			"Ciudad_Juarez": "سيوداد خواريز",
 			"Costa_Rica": "كوستاريكا",
 			"Creston": "كريستون",
 			"Cuiaba": "كيابا",
@@ -4903,8 +4869,8 @@
 		"standard": "#,##0%"
 	},
 	"currencyFormat": {
-		"standard": "‫¤‎‬ #,##0.00",
-		"accounting": "‫¤‎‬#,##0.00;(‫¤‎‬#,##0.00)",
+		"standard": "‏#,##0.00 ‫¤‎‬;‏-#,##0.00 ‫¤‎‬",
+		"accounting": "؜#,##0.00‫¤‎‬;(؜#,##0.00‫¤‎‬)",
 		"currencySpacing": {
 			"beforeCurrency": {
 				"currencyMatch": "[[:^S:]&[:^Z:]]",
@@ -4917,8 +4883,8 @@
 				"insertBetween": " "
 			}
 		},
-		"sap-standard": "#,##0.00 ‪¤‬",
-		"sap-accounting": "#,##0.00‪¤‬;(#,##0.00‪¤‬)"
+		"sap-standard": "‏#,##0.00 ‪¤‬;‏-#,##0.00 ‪¤‬",
+		"sap-accounting": "؜#,##0.00‪¤‬;(؜#,##0.00‪¤‬)"
 	},
 	"miscPattern": {
 		"approximately": "~{0}",
@@ -5173,10 +5139,20 @@
 			},
 			"power2": {
 				"compoundUnitPattern1": "{0}²",
+				"compoundUnitPattern1-count-zero": "{0}²",
+				"compoundUnitPattern1-count-one": "{0}²",
+				"compoundUnitPattern1-count-two": "{0}²",
+				"compoundUnitPattern1-count-few": "{0}²",
+				"compoundUnitPattern1-count-many": "{0}²",
 				"compoundUnitPattern1-count-other": "{0}²"
 			},
 			"power3": {
 				"compoundUnitPattern1": "{0}³",
+				"compoundUnitPattern1-count-zero": "{0}³",
+				"compoundUnitPattern1-count-one": "{0}³",
+				"compoundUnitPattern1-count-two": "{0}³",
+				"compoundUnitPattern1-count-few": "{0}³",
+				"compoundUnitPattern1-count-many": "{0}³",
 				"compoundUnitPattern1-count-other": "{0}³"
 			},
 			"times": {
@@ -5405,6 +5381,11 @@
 			},
 			"concentr-permyriad": {
 				"displayName": "‱",
+				"unitPattern-count-zero": "{0}‱",
+				"unitPattern-count-one": "{0}‱",
+				"unitPattern-count-two": "{0}‱",
+				"unitPattern-count-few": "{0}‱",
+				"unitPattern-count-many": "{0}‱",
 				"unitPattern-count-other": "{0}‱"
 			},
 			"concentr-mole": {
@@ -5578,6 +5559,16 @@
 				"unitPattern-count-many": "{0} سنة",
 				"unitPattern-count-other": "{0} سنة",
 				"perUnitPattern": "{0}/سنة"
+			},
+			"duration-quarter": {
+				"displayName": "ربع سنوي",
+				"unitPattern-count-zero": "{0} ربع",
+				"unitPattern-count-one": "ربع",
+				"unitPattern-count-two": "ربعان",
+				"unitPattern-count-few": "{0} أرباع",
+				"unitPattern-count-many": "{0} ربعًا",
+				"unitPattern-count-other": "{0} ربع",
+				"perUnitPattern": "{0}/ربع سنوي"
 			},
 			"duration-month": {
 				"displayName": "شهور",
@@ -6157,7 +6148,7 @@
 				"unitPattern-count-many": "{0} ضياءً شمسيًا",
 				"unitPattern-count-other": "{0} ضياء شمسي"
 			},
-			"mass-metric-ton": {
+			"mass-tonne": {
 				"displayName": "ط.م",
 				"unitPattern-count-zero": "{0} ط.م",
 				"unitPattern-count-one": "{0} ط.م",
@@ -7002,41 +6993,56 @@
 	},
 	"eras-gregorian": {
 		"0": {
+			"_code": "gregory-inverse",
+			"_aliases": "bc bce",
 			"_end": "0-12-31"
 		},
 		"1": {
+			"_code": "gregory",
+			"_aliases": "ad ce",
 			"_start": "1-01-01"
 		}
 	},
 	"eras-islamic": {
 		"0": {
+			"_code": "islamic",
+			"_aliases": "ah",
 			"_start": "622-7-15"
 		}
 	},
 	"eras-persian": {
 		"0": {
+			"_code": "persian",
+			"_aliases": "ap",
 			"_start": "622-01-01"
 		}
 	},
 	"eras-buddhist": {
 		"0": {
+			"_code": "buddhist",
+			"_aliases": "be",
 			"_start": "-542-01-01"
 		}
 	},
 	"eras-japanese": {
 		"232": {
+			"_code": "meiji",
 			"_start": "1868-9-8"
 		},
 		"233": {
+			"_code": "taisho",
 			"_start": "1912-7-30"
 		},
 		"234": {
+			"_code": "showa",
 			"_start": "1926-12-25"
 		},
 		"235": {
+			"_code": "heisei",
 			"_start": "1989-1-8"
 		},
 		"236": {
+			"_code": "reiwa",
 			"_start": "2019-5-1"
 		}
 	},
