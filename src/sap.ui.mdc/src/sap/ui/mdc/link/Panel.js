@@ -348,12 +348,9 @@ sap.ui.define([
 		if (sHref.indexOf("#") === 0 && oContainer) {
 			// if we are inside a FLP -> navigate with CrossApplicationNavigation
 			if (!Panel.oNavigationPromise) {
-				Panel.oNavigationPromise = Factory.getServiceAsync("CrossApplicationNavigation").then(function (oCrossApplicationNavigation) {
-					oCrossApplicationNavigation.toExternal({
-						target: {
-							// navigate to href without #
-							shellHash: sHref.substring(1)
-						}
+				Panel.oNavigationPromise = Factory.getServiceAsync("Navigation").then(function (oNavigationService) {
+					oNavigationService.navigate({
+						target: { shellHash: sHref.substring(1) }
 					});
 					Panel.oNavigationPromise = undefined;
 				});

@@ -17,106 +17,95 @@ sap.ui.define([
 	 */
 	function FakeUShellConnector() {}
 
+	FakeUShellConnector.getURLParsing = function(oSetting) {
+		return {
+			parseShellHash: function(sIntent) {
+				// var sAction;
+				const fnFindAction = function(aLinks) {
+					const aLink = aLinks.filter(function(oLink) {
+						return oLink.intent === sIntent;
+					});
+					return aLink[0];
+				};
+				for ( const sSemanticObject in oSetting) {
+					const oLink = fnFindAction(oSetting[sSemanticObject].links);
+					if (oLink) {
+						return {
+							semanticObject: sSemanticObject,
+							action: oLink.action
+						};
+					}
+				}
+				return {
+					semanticObject: null,
+					action: null
+				};
+			}
+		};
+	};
+
+	FakeUShellConnector.getNavigationService = function(oSetting) {
+		return {
+			getHref: function(oTarget) {
+				if (!oTarget) {
+					return Promise.resolve(null);
+				}
+				return Promise.resolve(oTarget.target.shellHash);
+			},
+			getSemanticObjects: function() {
+				const aSemanticObjects = [];
+				for ( const sSemanticObject in oSetting) {
+					aSemanticObjects.push(sSemanticObject);
+				}
+				return Promise.resolve(aSemanticObjects);
+			},
+			getLinks: function(aParams) {
+				let aLinks = [];
+				if (!Array.isArray(aParams)) {
+					aLinks = oSetting[aParams.semanticObject] ? oSetting[aParams.semanticObject].links : [];
+				} else {
+					aParams.forEach(function(oParam) {
+						aLinks.push(oSetting[oParam.semanticObject] ? oSetting[oParam.semanticObject].links : []);
+					});
+				}
+				return Promise.resolve(aLinks);
+			}
+		};
+	};
+
 	FakeUShellConnector.enableFakeConnector = function(oSetting) {
-		if (FakeUShellConnector.getServiceReal) {
+		if (FakeUShellConnector.getServiceAsyncReal) {
 			return;
 		}
-		FakeUShellConnector.getServiceReal = Factory.getService;
-		Factory.getService = FakeUShellConnector._createFakeService(oSetting);
+		FakeUShellConnector.getServiceAsyncReal = Factory.getServiceAsync;
+		Factory.getServiceAsync = FakeUShellConnector._createFakeService(oSetting);
 	};
 
 	FakeUShellConnector.enableFakeConnectorForTesting = function(oSetting, mTestData) {
-		if (FakeUShellConnector.getServiceReal) {
+		if (FakeUShellConnector.getServiceAsyncReal) {
 			return;
 		}
-		FakeUShellConnector.getServiceReal = Factory.getService;
-		Factory.getService = FakeUShellConnector._createFakeService(oSetting, mTestData);
+		FakeUShellConnector.getServiceAsyncReal = Factory.getServiceAsync;
+		Factory.getServiceAsync = FakeUShellConnector._createFakeService(oSetting, mTestData);
 	};
 
 	FakeUShellConnector._createFakeService = function(oSetting, mTestData) {
 		return function(sServiceName) {
 			switch (sServiceName) {
-				case "CrossApplicationNavigation":
-					return {
-						hrefForExternal: function(oTarget, oComponent) {
-							if (mTestData) {
-								mTestData.hrefForExternal = mTestData.hrefForExternal || { calls: []};
-								mTestData.hrefForExternal.calls.push({
-									target: oTarget,
-									comp: oComponent
-								});
-							}
-							if (!oTarget) {
-								return null;
-							}
-							return oTarget.target.shellHash;
-						},
-						getDistinctSemanticObjects: function() {
-							const aSemanticObjects = [];
-							for ( const sSemanticObject in oSetting) {
-								aSemanticObjects.push(sSemanticObject);
-							}
-							const oDeferred = jQuery.Deferred();
-							setTimeout(function() {
-								oDeferred.resolve(aSemanticObjects);
-							}, 0);
-							return oDeferred.promise();
-						},
-						getLinks: function(aParams) {
-							let aLinks = [];
-							if (!Array.isArray(aParams)) {
-								oSetting[aParams.semanticObject] ? aLinks = oSetting[aParams.semanticObject].links : aLinks = [];
-							} else {
-								aParams.forEach(function(aParams_) {
-									oSetting[aParams_[0].semanticObject] ? aLinks.push([
-										oSetting[aParams_[0].semanticObject].links
-									]) : aLinks.push([
-										[]
-									]);
-								});
-							}
-							const oDeferred = jQuery.Deferred();
-							setTimeout(function() {
-								oDeferred.resolve(aLinks);
-							}, 0);
-							return oDeferred.promise();
-						}
-					};
 				case "URLParsing":
-					return {
-						parseShellHash: function(sIntent) {
-							// var sAction;
-							const fnFindAction = function(aLinks) {
-								const aLink = aLinks.filter(function(oLink) {
-									return oLink.intent === sIntent;
-								});
-								return aLink[0];
-							};
-							for ( const sSemanticObject in oSetting) {
-								const oLink = fnFindAction(oSetting[sSemanticObject].links);
-								if (oLink) {
-									return {
-										semanticObject: sSemanticObject,
-										action: oLink.action
-									};
-								}
-							}
-							return {
-								semanticObject: null,
-								action: null
-							};
-						}
-					};
+					return Promise.resolve(FakeUShellConnector.getURLParsing(oSetting, mTestData));
+				case "Navigation":
+					return Promise.resolve(FakeUShellConnector.getNavigationService(oSetting, mTestData));
 				default:
-					return FakeUShellConnector.getServiceReal(sServiceName);
+					return FakeUShellConnector.getServiceAsyncReal(sServiceName);
 			}
 		};
 	};
 
 	FakeUShellConnector.disableFakeConnector = function() {
-		if (FakeUShellConnector.getServiceReal) {
-			Factory.getService = FakeUShellConnector.getServiceReal;
-			FakeUShellConnector.getServiceReal = undefined;
+		if (FakeUShellConnector.getServiceAsyncReal) {
+			Factory.getServiceAsync = FakeUShellConnector.getServiceAsyncReal;
+			FakeUShellConnector.getServiceAsyncReal = undefined;
 		}
 	};
 
