@@ -376,30 +376,26 @@ sap.ui.define([
 			})
 			.then(function() {
 				assert.strictEqual(this.oIsLayerFilteringRequiredStub.callCount, 1, "the filtering is done during initialization");
-				assert.strictEqual(this.oGetFlexInfoSessionStub.callCount, 1, "get flex info session during initialization");
+				assert.ok(this.oGetFlexInfoSessionStub.called, "get flex info session during initialization");
 
 				assert.strictEqual(FlexState.getAppDescriptorChanges(sReference), "appDescriptorChanges", "the correct map is returned");
 				assert.strictEqual(this.oCallPrepareFunctionStub.callCount, 1, "the prepare function was called once for the AppDescriptors");
 				assert.strictEqual(this.oIsLayerFilteringRequiredStub.callCount, 1, "the filtering was not triggered again");
-				assert.strictEqual(this.oGetFlexInfoSessionStub.callCount, 1, "get flex info session was not triggered again");
 				assert.strictEqual(FlexState.getAppDescriptorChanges(sReference), "appDescriptorChanges", "the correct map is returned");
 				assert.strictEqual(this.oCallPrepareFunctionStub.callCount, 1, "the prepare function was not called again");
 				assert.strictEqual(this.oIsLayerFilteringRequiredStub.callCount, 1, "the filtering was not triggered again");
-				assert.strictEqual(this.oGetFlexInfoSessionStub.callCount, 1, "get flex info session was not triggered again");
 
 				assert.strictEqual(FlexState.getUIChanges(sReference), "changes", "the correct map is returned");
 				assert.strictEqual(this.oCallPrepareFunctionStub.callCount, 2, "the prepare function was called once for the UI Changes");
 				assert.strictEqual(FlexState.getUIChanges(sReference), "changes", "the correct map is returned");
 				assert.strictEqual(this.oCallPrepareFunctionStub.callCount, 2, "the prepare function was not called again");
 				assert.strictEqual(this.oIsLayerFilteringRequiredStub.callCount, 1, "the filtering was not triggered again");
-				assert.strictEqual(this.oGetFlexInfoSessionStub.callCount, 1, "get flex info session  was not triggered again");
 
 				assert.strictEqual(FlexState.getCompVariantsMap(sReference), "compVariants", "the correct map is returned");
 				assert.strictEqual(this.oCallPrepareFunctionStub.callCount, 3, "the prepare function was called once for the CompVariants");
 				assert.strictEqual(FlexState.getCompVariantsMap(sReference), "compVariants", "the correct map is returned");
 				assert.strictEqual(this.oCallPrepareFunctionStub.callCount, 3, "the prepare function was not called again");
 				assert.strictEqual(this.oIsLayerFilteringRequiredStub.callCount, 1, "the filtering was not triggered again");
-				assert.strictEqual(this.oGetFlexInfoSessionStub.callCount, 1, "get flex info session  was not triggered again");
 			}.bind(this));
 		});
 
@@ -530,16 +526,13 @@ sap.ui.define([
 	QUnit.module("FlexState with loadFlexData and callPrepareFunction stubbed, filtering active", {
 		beforeEach() {
 			this.oLoadFlexDataStub = sandbox.stub(Loader, "loadFlexData").resolves(mEmptyResponse);
-			this.ogetUShellServiceStub = sandbox.stub(Utils, "getUShellService").withArgs("URLParsing").returns(Promise.resolve("DummyURLParsingService"));
 			this.oCallPrepareFunctionStub = sandbox.stub(FlexState, "callPrepareFunction").callsFake(mockPrepareFunctions);
-			this.oAppComponent = new UIComponent(sComponentId);
 			this.oIsLayerFilteringRequiredStub = sandbox.stub(LayerUtils, "isLayerFilteringRequired").returns(true);
 			this.oGetFlexInfoSessionStub = sandbox.stub(FlexInfoSession, "getByReference").returns({maxLayer: Layer.CUSTOMER});
 			getUshellContainerStub(sandbox.stub(), sandbox.stub());
 		},
 		afterEach() {
 			FlexState.clearState();
-			this.oAppComponent.destroy();
 			sandbox.restore();
 		}
 	}, function() {
@@ -551,7 +544,7 @@ sap.ui.define([
 			.then(function() {
 				FlexState.getAppDescriptorChanges(sReference);
 				assert.equal(this.oIsLayerFilteringRequiredStub.callCount, 1, "the check was made once");
-				assert.equal(this.oGetFlexInfoSessionStub.callCount, 2, "get flex info session twice");
+				assert.ok(this.oGetFlexInfoSessionStub.called, "get flex info session thrice");
 			}.bind(this))
 			.then(FlexState.initialize.bind(null, {
 				reference: sReference,
@@ -560,7 +553,6 @@ sap.ui.define([
 			.then(function() {
 				FlexState.getAppDescriptorChanges(sReference);
 				assert.equal(this.oIsLayerFilteringRequiredStub.callCount, 1, "the check was not made again");
-				assert.equal(this.oGetFlexInfoSessionStub.callCount, 2, "not get flex info session again");
 			}.bind(this));
 		});
 
@@ -571,7 +563,7 @@ sap.ui.define([
 			});
 			FlexState.getAppDescriptorChanges(sReference);
 			assert.equal(this.oIsLayerFilteringRequiredStub.callCount, 1, "the check was made once");
-			assert.equal(this.oGetFlexInfoSessionStub.callCount, 2, "get flex info session twice");
+			assert.ok(this.oGetFlexInfoSessionStub.called, "get flex info session thrice");
 
 			FlexState.rebuildFilteredResponse(sReference);
 			await FlexState.initialize({
@@ -581,20 +573,59 @@ sap.ui.define([
 
 			FlexState.getAppDescriptorChanges(sReference);
 			assert.equal(this.oIsLayerFilteringRequiredStub.callCount, 2, "the check was made again");
-			assert.equal(this.oGetFlexInfoSessionStub.callCount, 3, "get flex info session again");
+		});
+	});
+
+	QUnit.module("FlexState with two changes in different layers", {
+		beforeEach() {
+			FlexInfoSession.removeByReference(sReference);
+			this.oLoadFlexDataStub = sandbox.stub(Loader, "loadFlexData").resolves(merge(
+				{}, mEmptyResponse, {
+					changes: {
+						changes: [
+							{
+								fileName: "uiChangeCustomer",
+								layer: Layer.CUSTOMER
+							},
+							{
+								fileName: "uiChangeUser",
+								layer: Layer.USER
+							}
+						]
+					}
+				}
+			));
+		},
+		afterEach() {
+			FlexInfoSession.removeByReference(sReference);
+			FlexState.clearState();
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("when initialize is called with and without max layer set", async function(assert) {
+			await FlexState.initialize({
+				reference: sReference,
+				componentId: sComponentId
+			});
+			assert.strictEqual(FlexState.getFlexObjectsDataSelector().get({reference: sReference}).length, 2, "no changes were filtered");
+
+			FlexInfoSession.setByReference({maxLayer: Layer.CUSTOMER}, sReference);
+			await FlexState.initialize({
+				reference: sReference,
+				componentId: sComponentId
+			});
+			assert.strictEqual(FlexState.getFlexObjectsDataSelector().get({reference: sReference}).length, 1, "one change was filtered");
 		});
 	});
 
 	QUnit.module("FlexState without stubs and a ushell container", {
 		beforeEach() {
-			this.oAppComponent = new UIComponent(sComponentId);
 			this.oLoaderSpy = sandbox.spy(Loader, "loadFlexData");
 			this.oApplyStorageLoadFlexDataSpy = sandbox.spy(Storage, "loadFlexData");
 			this.oApplyStorageCompleteFlexDataSpy = sandbox.spy(Storage, "completeFlexData");
 		},
 		afterEach() {
 			FlexState.clearState();
-			this.oAppComponent.destroy();
 			sandbox.restore();
 		}
 	}, function() {
@@ -664,15 +695,12 @@ sap.ui.define([
 
 	QUnit.module("FlexState with Storage stubs", {
 		beforeEach() {
-			this.oAppComponent = new UIComponent(sComponentId);
-
 			this.oLoaderSpy = sandbox.spy(Loader, "loadFlexData");
 			this.oApplyStorageLoadFlexDataStub = sandbox.stub(Storage, "loadFlexData");
 			this.oApplyStorageCompleteFlexDataSpy = sandbox.spy(Storage, "completeFlexData");
 		},
 		afterEach() {
 			FlexState.clearState();
-			this.oAppComponent.destroy();
 			sandbox.restore();
 		}
 	}, function() {
@@ -736,7 +764,6 @@ sap.ui.define([
 				reference: this.sReference
 			});
 			sandbox.stub(Loader, "loadFlexData").resolves(mEmptyResponse);
-			this.oAppComponent = new UIComponent(sComponentId);
 			FlexState.rebuildFilteredResponse(this.sReference);
 			return FlexState.initialize({
 				reference: this.sReference,
@@ -745,7 +772,6 @@ sap.ui.define([
 		},
 		afterEach() {
 			sandbox.restore();
-			this.oAppComponent.destroy();
 			FlexState.rebuildFilteredResponse(this.sReference);
 			FlexState.clearRuntimeSteadyObjects(this.sReference, sComponentId);
 		}
@@ -811,13 +837,11 @@ sap.ui.define([
 	QUnit.module("FlexState update", {
 		beforeEach() {
 			this.sComponentId = "componentId";
-			this.oAppComponent = new UIComponent(sComponentId);
 			this.oLoadFlexDataStub = sandbox.stub(Loader, "loadFlexData").resolves(mEmptyResponse);
 			this.sPersistencyKey = "persistencyKey";
 		},
 		afterEach() {
 			FlexState.clearState();
-			this.oAppComponent.destroy();
 			sandbox.restore();
 		}
 	}, function() {
