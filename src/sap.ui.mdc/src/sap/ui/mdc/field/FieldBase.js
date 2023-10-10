@@ -795,9 +795,27 @@ sap.ui.define([
 
 	};
 
+	/**
+	 * Sets the focus on the stored focus DOM reference.
+	 *
+	 * @param {object} [oFocusInfo={}] Options for setting the focus
+	 * @param {boolean} [oFocusInfo.preventScroll=false] @since 1.60 If set to <code>true</code>, the focused
+	 *   element won't be moved into the viewport if it's not completely visible before the focus is set
+	 * @param {any} [oFocusInfo.targetInfo] @since 1.98 Further control-specific setting of the focus target within the control
+	 * @param {boolean} [oFocusInfo.targetInfo.silent] @since 1.114 Suppresses typeahead opening
+	 * @public
+	 */
+	FieldBase.prototype.focus = function (oFocusInfo) {
+		this._oFocusInfo = oFocusInfo;
+		Control.prototype.focus.call(this, oFocusInfo);
+		delete this._oFocusInfo;
+	};
+
 	FieldBase.prototype.onfocusin = function(oEvent) {
 		_connectFieldhelp.call(this);
-		_setFocusTimer.call(this, oEvent);
+		if (!(this._oFocusInfo && this._oFocusInfo.targetInfo && this._oFocusInfo.targetInfo.silent)) {
+			_setFocusTimer.call(this, oEvent);
+		}
 	};
 
 	FieldBase.prototype.onsapfocusleave = function(oEvent) {
