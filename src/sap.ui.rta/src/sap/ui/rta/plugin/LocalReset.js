@@ -3,6 +3,7 @@
  */
 
 sap.ui.define([
+	"sap/ui/core/Element",
 	"sap/ui/core/Lib",
 	"sap/ui/rta/plugin/Plugin",
 	"sap/ui/dt/Util",
@@ -13,6 +14,7 @@ sap.ui.define([
 	"sap/m/MessageToast",
 	"sap/ui/dt/OverlayRegistry"
 ], function(
+	Element,
 	Lib,
 	Plugin,
 	DtUtil,
@@ -130,7 +132,7 @@ sap.ui.define([
 		var sCurrentVariant = getCurrentVariant(oVariantModel, sVariantManagementReference);
 		var bHasVariant = !!sCurrentVariant;
 		var oVariantManagementControl = bHasVariant
-			? oAppComponent.byId(sVariantManagementReference) || sap.ui.getCore().byId(sVariantManagementReference)
+			? oAppComponent.byId(sVariantManagementReference) || Element.getElementById(sVariantManagementReference)
 			: undefined;
 		var oCommandFactory = this.getCommandFactory();
 

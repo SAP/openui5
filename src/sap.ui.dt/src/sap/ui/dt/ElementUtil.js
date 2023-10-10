@@ -50,7 +50,7 @@ sap.ui.define([
 
 	ElementUtil.getElementInstance = function(vElement) {
 		if (typeof vElement === "string") {
-			var oElement = sap.ui.getCore().byId(vElement);
+			var oElement = Element.getElementById(vElement);
 			return oElement || Component.get(vElement);
 		}
 		return vElement;
@@ -75,7 +75,7 @@ sap.ui.define([
 
 	ElementUtil.getClosestElementForNode = function(oNode) {
 		var oClosestElement = oNode.closest("[data-sap-ui]");
-		return oClosestElement ? sap.ui.getCore().byId(oClosestElement.getAttribute("data-sap-ui")) : undefined;
+		return oClosestElement ? Element.getElementById(oClosestElement.getAttribute("data-sap-ui")) : undefined;
 	};
 
 	ElementUtil.fixComponentParent = function(oElement) {
@@ -406,7 +406,7 @@ sap.ui.define([
 		if (isPlainObject(mBoundControl) && mBoundControl.templateId) {
 			if (mBoundControl.stack.length > 1) {
 				var oResultControl;
-				var oAggregatedControl = sap.ui.getCore().byId(mBoundControl.templateId);
+				var oAggregatedControl = Element.getElementById(mBoundControl.templateId);
 				var sAggregation;
 				var iIndex;
 				for (var i = mBoundControl.stack.length - 2; i >= 0; i--) {

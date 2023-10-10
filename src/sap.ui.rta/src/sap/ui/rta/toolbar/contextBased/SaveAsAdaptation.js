@@ -7,6 +7,7 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/base/strings/formatMessage",
 	"sap/ui/core/BusyIndicator",
+	"sap/ui/core/Element",
 	"sap/ui/core/Fragment",
 	"sap/ui/core/library",
 	"sap/ui/fl/Layer",
@@ -20,6 +21,7 @@ sap.ui.define([
 	Log,
 	formatMessage,
 	BusyIndicator,
+	Element,
 	Fragment,
 	coreLibrary,
 	Layer,
@@ -261,7 +263,7 @@ sap.ui.define([
 			this._oContextComponentInstance = oContextSharingComponent.getComponentInstance();
 			this._oContextComponentInstance.resetSelectedContexts();
 			this._oAddAdaptationDialog.addContent(this._oContextComponent);
-			var oContextsList = sap.ui.getCore().byId("contextSharing---ContextVisibility--selectedContextsList");
+			var oContextsList = Element.getElementById("contextSharing---ContextVisibility--selectedContextsList");
 			oContextsList.attachUpdateFinished(onContextRoleChange.bind(this));
 			oContextsList.getHeaderToolbar().getContent()[0].setRequired(true);
 			this._oContextComponentInstance.setEmptyListTextWithAdvice();

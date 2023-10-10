@@ -4,6 +4,8 @@ sap.ui.define([
 	"sap/ui/fl/variants/context/controller/ContextVisibility.controller",
 	"sap/ui/fl/variants/context/Component",
 	"sap/ui/core/ComponentContainer",
+	"sap/ui/core/Core",
+	"sap/ui/core/Element",
 	"sap/ui/fl/write/_internal/Storage",
 	"sap/ui/fl/Layer",
 	"sap/base/util/restricted/_merge",
@@ -12,6 +14,8 @@ sap.ui.define([
 	ContextVisibilityController,
 	ContextVisibilityComponent,
 	ComponentContainer,
+	Core,
+	Element,
 	WriteStorage,
 	Layer,
 	_merge,
@@ -22,7 +26,6 @@ sap.ui.define([
 	var sandbox = sinon.createSandbox();
 
 	var sCompName = "test---ContextVisibility--";
-	var oCore = sap.ui.getCore();
 
 	function renderComponent(aSelectedRoles) {
 		this.oComp = new ContextVisibilityComponent("test");
@@ -30,26 +33,26 @@ sap.ui.define([
 		this.oComp.setSelectedContexts({role: aSelectedRoles});
 		this.oCompCont = new ComponentContainer({ component: this.oComp, id: "comp"});
 		this.oCompCont.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		Core.applyChanges();
 		this.oRootControl = this.oCompCont.getComponentInstance().getRootControl();
 		return this.oRootControl.loaded();
 	}
 
 	function setInitialControls() {
-		this.oVisibilityPanel = oCore.byId(`${sCompName}visibilityPanel`);
-		this.oVisibilityMessageStrip = oCore.byId(`${sCompName}visibilityMessageStrip`);
-		this.oSelectedRolesList = oCore.byId(`${sCompName}selectedContextsList`);
-		this.oAddBtn = oCore.byId(`${sCompName}addContextsButton`);
-		this.oRemoveAllBtn = oCore.byId(`${sCompName}removeAllButton`);
+		this.oVisibilityPanel = Element.getElementById(`${sCompName}visibilityPanel`);
+		this.oVisibilityMessageStrip = Element.getElementById(`${sCompName}visibilityMessageStrip`);
+		this.oSelectedRolesList = Element.getElementById(`${sCompName}selectedContextsList`);
+		this.oAddBtn = Element.getElementById(`${sCompName}addContextsButton`);
+		this.oRemoveAllBtn = Element.getElementById(`${sCompName}removeAllButton`);
 	}
 
 	function setTableSelectDialogControls() {
-		this.oSelectDialog = oCore.byId(`${sCompName}selectContexts`);
-		this.oDialog = oCore.byId(`${sCompName}selectContexts-dialog`);
-		this.oSearchField = oCore.byId(`${sCompName}selectContexts-searchField`);
-		this.oList = oCore.byId(`${sCompName}selectContexts-list`);
-		this.oConfirmBtn = oCore.byId(`${sCompName}selectContexts-ok`);
-		this.oMoreListItem = oCore.byId(`${sCompName}selectContexts-list-trigger`);
+		this.oSelectDialog = Element.getElementById(`${sCompName}selectContexts`);
+		this.oDialog = Element.getElementById(`${sCompName}selectContexts-dialog`);
+		this.oSearchField = Element.getElementById(`${sCompName}selectContexts-searchField`);
+		this.oList = Element.getElementById(`${sCompName}selectContexts-list`);
+		this.oConfirmBtn = Element.getElementById(`${sCompName}selectContexts-ok`);
+		this.oMoreListItem = Element.getElementById(`${sCompName}selectContexts-list-trigger`);
 	}
 
 	function hookAsyncEventHandler(oStub, fnCallback) {
@@ -182,7 +185,7 @@ sap.ui.define([
 
 			return renderComponent.call(this, ["Random Test ID", "REMOTE"]).then(function() {
 				setInitialControls.call(this);
-				oCore.applyChanges();
+				Core.applyChanges();
 			}.bind(this));
 		},
 		afterEach() {
@@ -219,7 +222,7 @@ sap.ui.define([
 
 				// unselect first item
 				aSelectedItems[0].setSelected(false);
-				oCore.applyChanges();
+				Core.applyChanges();
 
 				assert.equal(this.oDialog.isOpen(), true, "dialog is opened");
 				assert.equal(this.oSearchField.isActive(), true, "search field is active");
@@ -228,13 +231,13 @@ sap.ui.define([
 			};
 
 			var fnAsyncAssertions = function() {
-				oCore.applyChanges();
+				Core.applyChanges();
 				assert.equal(this.fnGetContextsStub.callCount, 2, "write storage was called twice");
 				assert.equal(this.oList.getItems().length, 1, "list contains searched entries");
 				this.oList.getItems()[0].setSelected(true);
-				oCore.applyChanges();
+				Core.applyChanges();
 				this.oConfirmBtn.firePress();
-				oCore.applyChanges();
+				Core.applyChanges();
 				fnDone();
 			};
 
@@ -259,7 +262,7 @@ sap.ui.define([
 
 			var fnAsyncAssertions = function() {
 				assert.equal(this.fnGetContextsStub.callCount, 2, "write storage was called twice");
-				oCore.applyChanges();
+				Core.applyChanges();
 				assert.equal(this.oList.getItems().length, 100, "list contains next entries");
 				fnDone();
 			};
@@ -282,7 +285,7 @@ sap.ui.define([
 				assert.equal(this.oList.getSelectedItems().length, 2, "two items are selected");
 
 				this.oSelectDialog.fireCancel();
-				oCore.applyChanges();
+				Core.applyChanges();
 				assert.equal(this.oSelectedRolesList.getItems().length, 2, "number of selected items did not change");
 				fnDone();
 			};
@@ -303,7 +306,7 @@ sap.ui.define([
 
 				assert.equal(this.oList.getSelectedItems().length, 2, "two items are selected");
 				this.oConfirmBtn.firePress();
-				oCore.applyChanges();
+				Core.applyChanges();
 				fnDone();
 			};
 
@@ -355,7 +358,7 @@ sap.ui.define([
 			var oRmvFirstRowBtn = this.oSelectedRolesList.getItems()[0].getDeleteControl();
 			assert.equal(oRmvFirstRowBtn.getVisible(), true, "remove first row button is visible");
 			oRmvFirstRowBtn.firePress();
-			oCore.applyChanges();
+			Core.applyChanges();
 			assert.equal(this.oSelectedRolesList.getItems().length, 1, "table contains 1 entry");
 			assert.equal(this.oVisibilityMessageStrip.getVisible(), false, "message strip is not visible");
 		});
@@ -367,14 +370,14 @@ sap.ui.define([
 			assert.equal(oRmvFirstRowBtn.getVisible(), true, "remove first row button is visible");
 			assert.equal(this.oSelectedRolesList.getVisible(), true, "select roles control is visible");
 			oRmvFirstRowBtn.firePress();
-			oCore.applyChanges();
+			Core.applyChanges();
 			assert.equal(this.oVisibilityMessageStrip.getVisible(), false, "message strip is not visible");
 			assert.equal(this.oSelectedRolesList.getItems().length, 1, "table contains 1 entry");
 			oRmvFirstRowBtn = this.oSelectedRolesList.getItems()[0].getDeleteControl();
 			assert.equal(oRmvFirstRowBtn.getVisible(), true, "remove first row button is visible");
 			assert.equal(this.oSelectedRolesList.getVisible(), true, "select roles control is visible");
 			oRmvFirstRowBtn.firePress();
-			oCore.applyChanges();
+			Core.applyChanges();
 			assert.equal(this.oVisibilityMessageStrip.getVisible(), true, "message strip is visible");
 			assert.equal(this.oSelectedRolesList.getItems().length, 0, "table contains no entries");
 			assert.equal(this.oSelectedRolesList.getVisible(), true, "select roles control is visible");

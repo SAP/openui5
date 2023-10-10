@@ -12,11 +12,11 @@ sap.ui.define([
 	"sap/ui/core/ComponentContainer",
 	"sap/ui/core/Component",
 	"sap/ui/core/Core",
+	"sap/ui/core/Element",
 	"sap/ui/core/UIArea",
 	"sap/ui/core/UIComponent",
 	"sap/ui/core/Popup",
 	"sap/ui/dt/util/ZIndexManager",
-	"sap/ui/dt/DesignTime",
 	"sap/ui/dt/Overlay",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
@@ -37,11 +37,11 @@ sap.ui.define([
 	ComponentContainer,
 	Component,
 	oCore,
+	Element,
 	UIArea,
 	UIComponent,
 	Popup,
 	ZIndexManager,
-	DesignTime,
 	Overlay,
 	FlSettings,
 	PersistenceWriteAPI,
@@ -702,7 +702,7 @@ sap.ui.define([
 				assert.ok(this.fnCreateDialogSpy.calledOn(this.oRta.getPopupManager()), "then '_createPopupOverlays' with the opened dialog");
 				this.oRta._oDesignTime.attachEventOnce("synced", function() {
 					assert.ok(findOverlay(this.oDialog, this.oRta._oDesignTime), "then overlay exists for root dialog element");
-					assert.ok(findOverlay(oCore.byId("formindialog"), this.oRta._oDesignTime), "then overlay exists for root dialog element");
+					assert.ok(findOverlay(Element.getElementById("formindialog"), this.oRta._oDesignTime), "then overlay exists for root dialog element");
 
 					this.oDialog.attachAfterClose(function() {
 						assert.notEqual(this.fnRemoveDialogInstanceSpy.callCount, 0, "then removeRootElement from DesignTime called at least once");

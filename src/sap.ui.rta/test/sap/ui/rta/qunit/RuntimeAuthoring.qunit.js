@@ -6,6 +6,7 @@ sap.ui.define([
 	"sap/m/MessageBox",
 	"sap/m/MessageToast",
 	"sap/ui/core/Core",
+	"sap/ui/core/Element",
 	"sap/ui/Device",
 	"sap/ui/dt/DesignTimeMetadata",
 	"sap/ui/dt/OverlayRegistry",
@@ -32,6 +33,7 @@ sap.ui.define([
 	MessageBox,
 	MessageToast,
 	oCore,
+	Element,
 	Device,
 	DesignTimeMetadata,
 	OverlayRegistry,
@@ -91,8 +93,8 @@ sap.ui.define([
 			sandbox.stub(ChangesWriteAPI, "getChangeHandler").resolves();
 
 			// Prepare elements an designtime
-			var oElement1 = oCore.byId("Comp1---idMain1--GeneralLedgerDocument.Name");
-			var oElement2 = oCore.byId("Comp1---idMain1--GeneralLedgerDocument.CompanyCode");
+			var oElement1 = Element.getElementById("Comp1---idMain1--GeneralLedgerDocument.Name");
+			var oElement2 = Element.getElementById("Comp1---idMain1--GeneralLedgerDocument.CompanyCode");
 			this.oGroupElementDesignTimeMetadata = new DesignTimeMetadata({
 				data: {
 					actions: {
@@ -192,7 +194,7 @@ sap.ui.define([
 			var done = assert.async();
 			var fnFireElementModifiedSpy = sandbox.spy(this.oRta.getPluginManager().getDefaultPlugins().createContainer, "fireElementModified");
 
-			var oSimpleForm = oCore.byId("Comp1---idMain1--SimpleForm");
+			var oSimpleForm = Element.getElementById("Comp1---idMain1--SimpleForm");
 			var oSimpleFormOverlay = OverlayRegistry.getOverlay(oSimpleForm.getAggregation("form").getId());
 
 			sandbox.stub(this.oRta.getPluginManager().getDefaultPlugins().rename, "startEdit").callsFake(function(oNewContainerOverlay) {
@@ -215,7 +217,7 @@ sap.ui.define([
 
 			var fnFireElementModifiedSpy = sinon.spy(this.oRta.getPluginManager().getDefaultPlugins().createContainer, "fireElementModified");
 
-			var oSmartForm = oCore.byId("Comp1---idMain1--MainForm");
+			var oSmartForm = Element.getElementById("Comp1---idMain1--MainForm");
 			var oSmartFormOverlay = OverlayRegistry.getOverlay(oSmartForm.getId());
 
 			sandbox.stub(this.oRta.getPlugins().rename, "startEdit").callsFake(function(oNewContainerOverlay) {
@@ -250,7 +252,7 @@ sap.ui.define([
 				);
 			});
 
-			var oSmartForm = oCore.byId("Comp1---idMain1--MainForm");
+			var oSmartForm = Element.getElementById("Comp1---idMain1--MainForm");
 			var oSmartFormOverlay = OverlayRegistry.getOverlay(oSmartForm);
 
 			var oCreateRenameCommandSpy = sandbox.spy(this.oRta.getPlugins().rename, "createRenameCommand");
@@ -270,7 +272,7 @@ sap.ui.define([
 			var done = assert.async();
 
 			// An existing empty Form is used for the test
-			var oForm = oCore.byId("Comp1---idMain1--MainForm1");
+			var oForm = Element.getElementById("Comp1---idMain1--MainForm1");
 			var oFormOverlay = OverlayRegistry.getOverlay(oForm.getId());
 
 			sandbox.stub(this.oRta.getPlugins().rename, "startEdit").callsFake(function(oNewContainerOverlay) {

@@ -3,13 +3,13 @@
  */
 
 sap.ui.define([
-	"sap/ui/core/Core",
+	"sap/ui/core/Element",
 	"sap/ui/core/Lib",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/dt/ElementUtil",
 	"sap/ui/rta/util/changeVisualization/ChangeVisualizationUtils"
 ], function(
-	Core,
+	Element,
 	Lib,
 	JsControlTreeModifier,
 	ElementUtil,
@@ -52,7 +52,7 @@ sap.ui.define([
 		var aOriginalSelectors = mPayload.originalSelectors;
 		var aLabels = aOriginalSelectors.map(function(oSelector) {
 			var sId = JsControlTreeModifier.getControlIdBySelector(oSelector, oAppComponent);
-			var oControl = Core.byId(sId);
+			var oControl = Element.getElementById(sId);
 			return oControl ? ElementUtil.getLabelForElement(oControl) : sId;
 		});
 		var aShortLabels = aLabels.map(ChangeVisualizationUtils.shortenString);

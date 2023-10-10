@@ -3,6 +3,7 @@
  */
 
 sap.ui.define([
+	"sap/ui/core/Element",
 	"sap/ui/core/Lib",
 	"sap/ui/rta/plugin/Plugin",
 	"sap/ui/rta/plugin/RenameHandler",
@@ -20,6 +21,7 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/m/MessageBox"
 ], function(
+	Element,
 	Lib,
 	Plugin,
 	RenameHandler,
@@ -134,7 +136,7 @@ sap.ui.define([
 			// Propagate variant management reference to all children overlays starting from the "for" association element as the root
 			aVariantManagementTargetElements.forEach(function(sVariantManagementTargetElement) {
 				var oVariantManagementTargetElement = sVariantManagementTargetElement instanceof ManagedObject
-					? sVariantManagementTargetElement : sap.ui.getCore().byId(sVariantManagementTargetElement);
+					? sVariantManagementTargetElement : Element.getElementById(sVariantManagementTargetElement);
 				var oVariantManagementTargetOverlay = OverlayRegistry.getOverlay(oVariantManagementTargetElement);
 				this._propagateVariantManagement(oVariantManagementTargetOverlay, sVariantManagementReference);
 			}.bind(this));

@@ -4,6 +4,7 @@
 
 sap.ui.define([
 	"sap/m/HBox",
+	"sap/ui/core/Element",
 	"sap/ui/core/StaticArea",
 	"sap/ui/core/Lib",
 	"sap/ui/dt/util/ZIndexManager",
@@ -12,6 +13,7 @@ sap.ui.define([
 	"./BaseRenderer"
 ], function(
 	HBox,
+	Element,
 	StaticArea,
 	Lib,
 	ZIndexManager,
@@ -252,7 +254,7 @@ sap.ui.define([
 	 * @public
 	 */
 	Base.prototype.getControl = function(sName) {
-		return sap.ui.getCore().byId(`sapUiRta_${sName}`);
+		return Element.getElementById(`sapUiRta_${sName}`);
 	};
 
 	/**

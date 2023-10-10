@@ -10,6 +10,7 @@ sap.ui.define([
 	"test-resources/sap/ui/fl/api/FlexTestAPI",
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/core/Core",
+	"sap/ui/core/Element",
 	"sap/ui/core/EventBus",
 	"sap/ui/core/LabelEnablement"
 ], function(
@@ -22,6 +23,7 @@ sap.ui.define([
 	FlexTestAPI,
 	sinon,
 	oCore,
+	Element,
 	EventBus,
 	LabelEnablement
 ) {
@@ -37,7 +39,7 @@ sap.ui.define([
 			return RtaQunitUtils.renderTestAppAtAsync("qunit-fixture")
 			.then(function(oCompContainer) {
 				oCompCont = oCompContainer;
-				oView = oCore.byId("Comp1---idMain1");
+				oView = Element.getElementById("Comp1---idMain1");
 				return oView.getController().isDataReady();
 			});
 		},
@@ -48,12 +50,12 @@ sap.ui.define([
 		},
 		beforeEach() {
 			return RtaQunitUtils.clear(oView, true).then(function() {
-				this.oVictim = oCore.byId("Comp1---idMain1--Victim");
-				this.oCompanyCodeField = oCore.byId("Comp1---idMain1--GeneralLedgerDocument.CompanyCode");
-				this.oBoundButton35Field = oCore.byId("Comp1---idMain1--Dates.BoundButton35");
-				this.oDatesGroup = oCore.byId("Comp1---idMain1--Dates");
-				this.oGeneralGroup = oCore.byId("Comp1---idMain1--GeneralLedgerDocument");
-				this.oForm = oCore.byId("Comp1---idMain1--MainForm");
+				this.oVictim = Element.getElementById("Comp1---idMain1--Victim");
+				this.oCompanyCodeField = Element.getElementById("Comp1---idMain1--GeneralLedgerDocument.CompanyCode");
+				this.oBoundButton35Field = Element.getElementById("Comp1---idMain1--Dates.BoundButton35");
+				this.oDatesGroup = Element.getElementById("Comp1---idMain1--Dates");
+				this.oGeneralGroup = Element.getElementById("Comp1---idMain1--GeneralLedgerDocument");
+				this.oForm = Element.getElementById("Comp1---idMain1--MainForm");
 
 				this.oRta = new RuntimeAuthoring({
 					rootControl: oCompCont.getComponentInstance().getAggregation("rootControl")
@@ -217,7 +219,7 @@ sap.ui.define([
 
 							// select the field in the list and close the dialog with OK
 							oFieldToAdd.selected = true;
-							var oOkButton = oCore.byId(`${oDialog.getId()}--rta_addDialogOkButton`);
+							var oOkButton = Element.getElementById(`${oDialog.getId()}--rta_addDialogOkButton`);
 							QUnitUtils.triggerEvent("tap", oOkButton.getDomRef());
 							oCore.applyChanges();
 						}.bind(this));
@@ -281,7 +283,7 @@ sap.ui.define([
 					// select the field in the list and close the dialog with OK
 					oFieldToAdd.focus();
 					QUnitUtils.triggerKeydown(oFieldToAdd.getDomRef(), KeyCodes.ENTER, false, false, false);
-					var oOkButton = oCore.byId(`${oDialog.getId()}--rta_addDialogOkButton`);
+					var oOkButton = Element.getElementById(`${oDialog.getId()}--rta_addDialogOkButton`);
 					QUnitUtils.triggerEvent("tap", oOkButton.getDomRef());
 					oCore.applyChanges();
 				}.bind(this));
@@ -430,7 +432,7 @@ sap.ui.define([
 			assert.strictEqual(iDirtyChangesCount, 0, "then there are no dirty changes in the flex persistence");
 
 			var fnDone = assert.async();
-			var oForm = oCore.byId("Comp1---idMain1--SimpleForm--Form");
+			var oForm = Element.getElementById("Comp1---idMain1--SimpleForm--Form");
 			var oFormContainer = oForm.getFormContainers()[0];
 			var oCommandStack = this.oRta.getCommandStack();
 			var oDialog = this.oRta.getPlugins().additionalElements.getDialog();
@@ -464,7 +466,7 @@ sap.ui.define([
 
 					// select the field in the list and close the dialog with OK
 					oFieldToAdd.selected = true;
-					var oOkButton = oCore.byId(`${oDialog.getId()}--rta_addDialogOkButton`);
+					var oOkButton = Element.getElementById(`${oDialog.getId()}--rta_addDialogOkButton`);
 					QUnitUtils.triggerEvent("tap", oOkButton.getDomRef());
 					oCore.applyChanges();
 				}.bind(this));
@@ -479,7 +481,7 @@ sap.ui.define([
 
 		QUnit.test("when making two dirty changes of the same type on a simple form field and switching from visualization to adaptation mode between the changes,", function(assert) {
 			var fnDone = assert.async();
-			var oForm = oCore.byId("Comp1---idMain1--SimpleForm--Form");
+			var oForm = Element.getElementById("Comp1---idMain1--SimpleForm--Form");
 			var oFormContainer = oForm.getFormContainers()[0];
 			var oFormField = oFormContainer.getFormElements()[0];
 			var oFormField2 = oFormContainer.getFormElements()[1];
@@ -574,7 +576,7 @@ sap.ui.define([
 
 		QUnit.test("when splitting a combined SmartForm GroupElement via context menu (expanded context menu) - split", function(assert) {
 			var fnDone = assert.async();
-			var oCombinedElement = oCore.byId("Comp1---idMain1--Dates.BoundButton35");
+			var oCombinedElement = Element.getElementById("Comp1---idMain1--Dates.BoundButton35");
 			var oCombinedElementOverlay = OverlayRegistry.getOverlay(oCombinedElement);
 
 			var iDirtyChangesCount = FlexTestAPI.getDirtyChanges({selector: oCombinedElement}).length;

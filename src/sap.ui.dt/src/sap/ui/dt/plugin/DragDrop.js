@@ -4,6 +4,7 @@
 
 sap.ui.define([
 	"sap/ui/base/Object",
+	"sap/ui/core/Element",
 	"sap/ui/dt/Plugin",
 	"sap/ui/dt/DOMUtil",
 	"sap/ui/dt/OverlayUtil",
@@ -12,6 +13,7 @@ sap.ui.define([
 	"sap/ui/Device"
 ], function(
 	BaseObject,
+	Element,
 	Plugin,
 	DOMUtil,
 	OverlayUtil,
@@ -342,7 +344,7 @@ sap.ui.define([
 	DragDrop.prototype._findTargetOverlayFromCoordinates = function(pageX, pageY) {
 		var oDomNode = document.elementFromPoint(pageX, pageY);
 
-		var oElement = oDomNode ? sap.ui.getCore().byId(oDomNode.id) : undefined;
+		var oElement = oDomNode ? Element.getElementById(oDomNode.id) : undefined;
 
 		return this._getTargetOverlay(oElement);
 	};

@@ -17,8 +17,9 @@
 				"controlEnablementReport/LibraryScanner",
 				"sap/ui/core/util/Export",
 				"sap/ui/core/util/ExportTypeCSV",
-				"sap/ui/core/Core"
-			], function(LibraryScanner, Export, ExportTypeCSV, Core) {
+				"sap/ui/core/Core",
+				"sap/ui/core/Element"
+			], function(LibraryScanner, Export, ExportTypeCSV, Core, Element) {
 				Core.ready().then(() => {
 					var aLibs = sap.ui.getVersionInfo().libraries.filter(function(sLib) {
 						if (
@@ -65,11 +66,11 @@
 							var oReport;
 							var aLibraries = oMultiComboBox.getSelectedKeys();
 
-							oStaticReport = sap.ui.getCore().byId("statistic");
+							oStaticReport = Element.getElementById("statistic");
 							if (oStaticReport) {
 								oStaticReport.destroy();
 							}
-							oReport = sap.ui.getCore().byId("table");
+							oReport = Element.getElementById("table");
 							if (oReport) {
 								oReport.destroy();
 							}

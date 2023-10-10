@@ -6,6 +6,7 @@
 sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/Device",
+	"sap/ui/core/Element",
 	"sap/ui/core/EventBus",
 	"sap/ui/rta/plugin/Plugin",
 	"sap/ui/rta/util/validateText",
@@ -19,6 +20,7 @@ sap.ui.define([
 ], function(
 	jQuery,
 	Device,
+	Element,
 	EventBus,
 	Plugin,
 	validateText,
@@ -440,7 +442,7 @@ sap.ui.define([
 		 * @private
 		 */
 		_onClick(oEvent) {
-			var oOverlay = sap.ui.getCore().byId(oEvent.currentTarget.id);
+			var oOverlay = Element.getElementById(oEvent.currentTarget.id);
 			if (this.isRenameEnabled([oOverlay]) && !oEvent.metaKey && !oEvent.ctrlKey && !oEvent.shiftKey) {
 				this.startEdit(oOverlay);
 				RenameHandler._preventDefault.call(this, oEvent);

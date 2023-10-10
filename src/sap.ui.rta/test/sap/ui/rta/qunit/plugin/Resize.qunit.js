@@ -16,6 +16,7 @@ sap.ui.define([
 	"sap/m/Text",
 	"sap/ui/layout/VerticalLayout",
 	"sap/ui/core/Core",
+	"sap/ui/core/Element",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	ChangesWriteAPI,
@@ -33,6 +34,7 @@ sap.ui.define([
 	Text,
 	VerticalLayout,
 	Core,
+	Element,
 	sinon
 ) {
 	"use strict";
@@ -545,10 +547,10 @@ sap.ui.define([
 		QUnit.test("when _createCommand is called with a handler in the DT Metadata... ", function(assert) {
 			var fnDone = assert.async();
 			var iNewWidth = this.oColumn0Overlay.getDomRef().offsetWidth - 10;
-			var oTable = Core.byId(this.oComponent.createId("myTable"));
-			var oColumn0 = Core.byId(this.oComponent.createId("column0"));
-			var oColumn1 = Core.byId(this.oComponent.createId("column1"));
-			var oColumn2 = Core.byId(this.oComponent.createId("column2"));
+			var oTable = Element.getElementById(this.oComponent.createId("myTable"));
+			var oColumn0 = Element.getElementById(this.oComponent.createId("column0"));
+			var oColumn1 = Element.getElementById(this.oComponent.createId("column1"));
+			var oColumn2 = Element.getElementById(this.oComponent.createId("column2"));
 
 			this.oColumn0Overlay.setDesignTimeMetadata({
 				actions: {

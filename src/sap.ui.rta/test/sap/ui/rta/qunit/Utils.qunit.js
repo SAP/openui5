@@ -23,7 +23,8 @@ sap.ui.define([
 	"sap/uxap/ObjectPageLayout",
 	"sap/uxap/ObjectPageSection",
 	"sap/uxap/ObjectPageSubSection",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/ui/core/Element"
 ], function(
 	RtaQunitUtils,
 	_omit,
@@ -47,7 +48,8 @@ sap.ui.define([
 	ObjectPageLayout,
 	ObjectPageSection,
 	ObjectPageSubSection,
-	oCore
+	oCore,
+	Element
 ) {
 	"use strict";
 
@@ -60,7 +62,7 @@ sap.ui.define([
 		before() {
 			this.oCompContPromise = RtaQunitUtils.renderRuntimeAuthoringAppAt("qunit-fixture");
 			return this.oCompContPromise.then(function() {
-				this.oView = oCore.byId("Comp1---idMain1");
+				this.oView = Element.getElementById("Comp1---idMain1");
 				this.oView.getModel().refresh(true);
 				oCore.applyChanges();
 				return this.oView.getModel().getMetaModel().loaded();
@@ -100,7 +102,7 @@ sap.ui.define([
 			var isServiceOutdatedStub = sandbox.stub(FieldExtensibility, "isServiceOutdated").resolves(false);
 			var oSetServiceValidStub = sandbox.stub(FieldExtensibility, "setServiceValid");
 
-			var oBoundControl = oCore.byId("Comp1---idMain1--MainFormExpandable.GeneralLedgerDocument.ExpirationDate");
+			var oBoundControl = Element.getElementById("Comp1---idMain1--MainFormExpandable.GeneralLedgerDocument.ExpirationDate");
 
 			return Utils.isServiceUpToDate(oBoundControl).then(function() {
 				assert.ok(true, "then the service is recognized as up to date");
@@ -112,7 +114,7 @@ sap.ui.define([
 		QUnit.test("Given extensibility enabled and a bound control without serviceurl on model when 'isServiceUpToDate' is called", function(assert) {
 			sandbox.stub(FieldExtensibility, "isExtensibilityEnabled").resolves(true);
 			var isServiceOutdatedStub = sandbox.stub(FieldExtensibility, "isServiceOutdated").resolves(false);
-			var oBoundControl = oCore.byId("Comp1---idMain1--MainFormExpandable.GeneralLedgerDocument.ExpirationDate");
+			var oBoundControl = Element.getElementById("Comp1---idMain1--MainFormExpandable.GeneralLedgerDocument.ExpirationDate");
 			var oBoundModel = oBoundControl.getModel();
 			var {sServiceUrl} = oBoundModel;
 			delete oBoundModel.sServiceUrl;
@@ -129,7 +131,7 @@ sap.ui.define([
 			sandbox.stub(FieldExtensibility, "isServiceOutdated").resolves(true);
 			var oSetServiceValidStub = sandbox.stub(FieldExtensibility, "setServiceValid");
 
-			var oBoundControl = oCore.byId("Comp1---idMain1--MainFormExpandable.GeneralLedgerDocument.ExpirationDate");
+			var oBoundControl = Element.getElementById("Comp1---idMain1--MainFormExpandable.GeneralLedgerDocument.ExpirationDate");
 
 			EventBus.getInstance().subscribe("sap.ui.core.UnrecoverableClientStateCorruption", "RequestReload", function() {
 				assert.ok(true, "then the UI refresh is requested");

@@ -5,7 +5,7 @@
 sap.ui.define([
 	"sap/ui/core/format/DateFormat",
 	"sap/ui/core/Control",
-	"sap/ui/core/Core",
+	"sap/ui/core/Element",
 	"sap/ui/core/Fragment",
 	"sap/ui/core/Lib",
 	"sap/ui/core/StaticArea",
@@ -19,7 +19,7 @@ sap.ui.define([
 ], function(
 	DateFormat,
 	Control,
-	Core,
+	Element,
 	Fragment,
 	Lib,
 	StaticArea,
@@ -171,7 +171,7 @@ sap.ui.define([
 
 	function centerVertically(oIndicator) {
 		var oIndicatorDomRef = oIndicator.getDomRef();
-		var iOverlayHeight = Core.byId(oIndicator.getOverlayId()).getDomRef().offsetHeight;
+		var iOverlayHeight = Element.getElementById(oIndicator.getOverlayId()).getDomRef().offsetHeight;
 		var iIndicatorHeight = oIndicatorDomRef.offsetHeight;
 		// the indicator should be centered only if the element has a small enough height to improve the design and visibility
 		if (iOverlayHeight < iIndicatorHeight * 5) {
@@ -182,7 +182,7 @@ sap.ui.define([
 	}
 
 	function getTexts(mChangeInformation, oRtaResourceBundle, sOverlayId) {
-		var oAffectedElement = Core.byId(mChangeInformation.affectedElementId);
+		var oAffectedElement = Element.getElementById(mChangeInformation.affectedElementId);
 		var mDescriptionPayload = Object.keys(mChangeInformation.descriptionPayload || {}).reduce(function(mDescriptionPayload, sKey) {
 			var vOriginalValue = mChangeInformation.descriptionPayload[sKey];
 			var bIsBinding = FlUtils.isBinding(vOriginalValue);
@@ -194,7 +194,7 @@ sap.ui.define([
 		}, {});
 
 		var mPropertyBag = { appComponent: FlUtils.getAppComponentForControl(oAffectedElement) };
-		var oOverlay = Core.byId(sOverlayId);
+		var oOverlay = Element.getElementById(sOverlayId);
 		var sElementLabel = oOverlay.getDesignTimeMetadata().getLabel(oAffectedElement);
 		var oCommandVisualization = getCommandVisualization(mChangeInformation);
 		var oDescription = oCommandVisualization && oCommandVisualization.getDescription(mDescriptionPayload, sElementLabel, mPropertyBag) || {};
@@ -275,7 +275,7 @@ sap.ui.define([
 	ChangeIndicator.prototype.setVisible = function(...aArgs) {
 		const [bVisible] = aArgs;
 		Control.prototype.setVisible.apply(this, aArgs);
-		var oOverlay = Core.byId(this.getOverlayId());
+		var oOverlay = Element.getElementById(this.getOverlayId());
 		// needed because the change indicator cleanup is only triggered on save and exit
 		if (oOverlay) {
 			if (bVisible && !this._bEventAttachedToElement) {
@@ -321,7 +321,7 @@ sap.ui.define([
 	};
 
 	ChangeIndicator.prototype.onAfterRendering = function() {
-		var oOverlay = Core.byId(this.getOverlayId());
+		var oOverlay = Element.getElementById(this.getOverlayId());
 		if (oOverlay) {
 			// Attach to the overlay
 			oOverlay.getDomRef().appendChild(this.getDomRef());
@@ -339,7 +339,7 @@ sap.ui.define([
 
 	ChangeIndicator.prototype.exit = function() {
 		var oDomRef = this.getDomRef();
-		var oOverlay = Core.byId(this.getOverlayId());
+		var oOverlay = Element.getElementById(this.getOverlayId());
 		if (oDomRef) {
 			oDomRef.parentNode.removeChild(oDomRef);
 		}
@@ -392,7 +392,7 @@ sap.ui.define([
 	};
 
 	ChangeIndicator.prototype._setHoverStyleClasses = function(bAdd) {
-		var oOverlay = Core.byId(this.getOverlayId());
+		var oOverlay = Element.getElementById(this.getOverlayId());
 		if (oOverlay.getMetadata().getName() !== "sap.ui.dt.ElementOverlay") {
 			return;
 		}
