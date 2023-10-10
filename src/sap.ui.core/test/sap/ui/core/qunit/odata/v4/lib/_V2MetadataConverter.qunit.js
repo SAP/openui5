@@ -2,13 +2,13 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/ui/thirdparty/jquery",
 	"sap/base/Log",
 	"sap/ui/model/odata/v4/lib/_Helper",
 	"sap/ui/model/odata/v4/lib/_V2MetadataConverter",
 	"sap/ui/test/TestUtils",
-	"sap/ui/util/XMLHelper"
-], function (jQuery, Log, _Helper, _V2MetadataConverter, TestUtils, XMLHelper) {
+	"sap/ui/util/XMLHelper",
+	"sap/ui/thirdparty/jquery"
+], function (Log, _Helper, _V2MetadataConverter, TestUtils, XMLHelper, jQuery) {
 	"use strict";
 
 	var sClassName = "sap.ui.model.odata.v4.lib._V2MetadataConverter",

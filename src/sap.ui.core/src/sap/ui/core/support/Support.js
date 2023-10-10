@@ -85,7 +85,7 @@ sap.ui.define([
 				case mTypes.TOOL:
 					this._oRemoteWindow = window.opener;
 					this._sRemoteOrigin = new URLSearchParams(window.location.search).get("sap-ui-xx-support-origin");
-					jQuery(window).on("unload", function(oEvent){
+					window.addEventListener("pagehide", () => {
 						that.sendEvent(mEvents.TEAR_DOWN);
 						Support.exitPlugins(that, true);
 					});

@@ -72,6 +72,43 @@
 			"state": "Disabled"
 		}
 	],
+	"linkTiles":[
+		{
+			"title": "Jessica Danielle Johnson",
+			"linkTileContents": [
+				{
+					"iconSrc": "sap-icon://action-settings",
+					"linkText": "SAP",
+					"linkHref": "http://www.sap.com"
+				},
+				{
+					"iconSrc": "sap-icon://action-settings",
+					"linkText": "SAP",
+					"linkHref": "http://www.sap.com"
+				},
+				{
+					"iconSrc": "sap-icon://action-settings",
+					"linkText": "SAP",
+					"linkHref": "http://www.sap.com"
+				},
+				{
+					"iconSrc": "sap-icon://action-settings",
+					"linkText": "SAP",
+					"linkHref": "http://www.sap.com"
+				},
+				{
+					"iconSrc": "sap-icon://action-settings",
+					"linkText": "SAP",
+					"linkHref": "http://www.sap.com"
+				},
+				{
+					"iconSrc": "sap-icon://action-settings",
+					"linkText": "SAP",
+					"linkHref": "http://www.sap.com"
+				}
+			]
+		}
+	],
 	"slideTile1": [
 		{
 			"backgroundImage": "test-resources/sap/m/demokit/sample/GenericTileLineMode/images/NewsImage2.png",

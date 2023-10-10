@@ -280,15 +280,8 @@ sap.ui.define([
 	 * @public
 	 * @alias sap.ui.core.Configuration
 	 *
-	 * @borrows module:sap/base/i18n/Localization.getSAPLogonLanguage as getSAPLogonLanguage
-	 * @borrows module:sap/base/i18n/Localization.getTimezone as getTimezone
-	 * @borrows module:sap/base/i18n/Localization.setLanguage as setLanguage
-	 * @borrows module:sap/base/i18n/Localization.getRTL as getRTL
-	 * @borrows module:sap/base/i18n/Localization.setRTL as setRTL
 	 * @borrows module:sap/base/i18n/Localization.getLanguagesDeliveredWithCore as getLanguagesDeliveredWithCore
 	 * @borrows module:sap/base/i18n/Localization.getSupportedLanguages as getSupportedLanguages
-	 * @borrows module:sap/ui/core/Theming.getTheme as getTheme
-	 * @borrows module:sap/ui/core/Theming.setTheme as setTheme
 	 * @borrows module:sap/ui/core/ControlBehavior.isAccessibilityEnabled as getAccessibility
 	 * @borrows module:sap/ui/core/getCompatibilityVersion as getCompatibilityVersion
 	 */
@@ -423,8 +416,23 @@ sap.ui.define([
 		},
 
 		getCompatibilityVersion : getCompatibilityVersion,
+
+		/**
+		 * Returns the theme name
+		 * @return {string} the theme name
+		 * @function
+		 * @public
+		 * @deprecated Since 1.119. Please use {@link module:sap/ui/core/Theming.getTheme} instead.
+		 */
 		getTheme : Theming.getTheme,
 
+		/**
+		 * Allows setting the theme name
+		 * @param {string} sTheme the theme name
+		 * @return {this} <code>this</code> to allow method chaining
+		 * @public
+		 * @deprecated Since 1.119. Please use {@link module:sap/ui/core/Theming.setTheme} instead.
+		 */
 		setTheme : function (sTheme) {
 			Theming.setTheme(sTheme);
 			return this;
@@ -461,10 +469,77 @@ sap.ui.define([
 		 * @return {string} Language string as configured
 		 * @function
 		 * @public
+		 * @deprecated Since 1.119. Please use {@link module:sap/base/i18n/Localization.getLanguage} instead.
 		 */
 		getLanguage :  Localization.getLanguage,
 
-		setLanguage : Localization.setLanguage,
+		/**
+		 * Sets a new language to be used from now on for language/region dependent
+		 * functionality (e.g. formatting, data types, translated texts, ...).
+		 *
+		 * When the language can't be interpreted as a BCP47 language (using the relaxed syntax
+		 * described in {@link #getLanguage}, an error will be thrown.
+		 *
+		 * When the language has changed, the Core will fire its
+		 * {@link sap.ui.core.Core#event:localizationChanged localizationChanged} event.
+		 *
+		 *
+		 * <h3>Restrictions</h3>
+		 *
+		 * The framework <strong>does not</strong> guarantee that already created, language
+		 * dependent objects will be updated by config call. It therefore remains best practice
+		 * for applications to switch the language early, e.g. before any language dependent
+		 * objects are created. Applications that need to support more dynamic changes of
+		 * the language should listen to the <code>localizationChanged</code> event and adapt
+		 * all language dependent objects that they use (e.g. by rebuilding their UI).
+		 *
+		 * Currently, the framework notifies the following objects about a change of the
+		 * localization settings before it fires the <code>localizationChanged</code> event:
+		 *
+		 * <ul>
+		 * <li>date and number data types that are used in property bindings or composite
+		 *     bindings in existing Elements, Controls, UIAreas or Components</li>
+		 * <li>ResourceModels currently assigned to the Core, a UIArea, Component,
+		 *     Element or Control</li>
+		 * <li>Elements or Controls that implement the <code>onlocalizationChanged</code> hook
+		 *     (note the lowercase 'l' in onlocalizationChanged)</li>
+		 * </ul>
+		 *
+		 * It furthermore derives the RTL mode from the new language, if no explicit RTL
+		 * mode has been set. If the RTL mode changes, the following additional actions will be taken:
+		 *
+		 * <ul>
+		 * <li>the URLs of already loaded library theme files will be changed</li>
+		 * <li>the <code>dir</code> attribute of the page will be changed to reflect the new mode.</li>
+		 * <li>all UIAreas will be invalidated (which results in a rendering of the whole UI5 UI)</li>
+		 * </ul>
+		 *
+		 * config method does not accept SAP language codes for <code>sLanguage</code>. Instead, a second
+		 * parameter <code>sSAPLogonLanguage</code> can be provided with an SAP language code corresponding
+		 * to the given language. A given value will be returned by the {@link #getSAPLogonLanguage} method.
+		 * It is up to the caller to provide a consistent pair of BCP47 language and SAP language code.
+		 * The SAP language code is only checked to be of length 2 and must consist of letters or digits only.
+		 *
+		 * <b>Note</b>: When using config method please take note of and respect the above mentioned restrictions.
+		 *
+		 * @param {string} sLanguage the new language as a BCP47 compliant language tag; case doesn't matter
+		 *   and underscores can be used instead of dashes to separate components (compatibility with Java Locale IDs)
+		 * @param {string} [sSAPLogonLanguage] SAP language code that corresponds to the <code>sLanguage</code>;
+		 *   if a value is specified, future calls to <code>getSAPLogonLanguage</code> will return that value;
+		 *   if no value is specified, the framework will use the ISO639 language part of <code>sLanguage</code>
+		 *   as SAP Logon language.
+		 * @throws {Error} When <code>sLanguage</code> can't be interpreted as a BCP47 language or when
+		 *   <code>sSAPLanguage</code> is given and can't be interpreted as SAP language code.
+		 *
+		 * @see http://scn.sap.com/docs/DOC-14377
+		 * @function
+		 * @public
+		 * @deprecated Since 1.119. Please use {@link module:sap/base/i18n/Localization.setLanguage} instead.
+		 */
+		setLanguage : function() {
+			Localization.setLanguage.apply(Localization, arguments);
+			return Configuration;
+		},
 
 		/**
 		 * Returns a BCP47-compliant language tag for the current language.
@@ -475,13 +550,35 @@ sap.ui.define([
 		 * e.g. sr-Latn (Serbian (Cyrillic)), he (Hebrew), yi (Yiddish)
 		 *
 		 * @returns {string} The language tag for the current language, conforming to BCP47
+		 * @function
 		 * @public
+		 * @deprecated Since 1.119. Please use {@link module:sap/base/i18n/Localization.getLanguageTag} instead.
 		 */
 		getLanguageTag : function () {
 			return Localization.getLanguageTag().toString();
 		},
 
+		/**
+		 * Returns an SAP logon language for the current language.
+		 *
+		 * It will be returned in uppercase.
+		 * e.g. "EN", "DE"
+		 *
+		 * @returns {string} The SAP logon language code for the current language
+		 * @function
+		 * @public
+		 * @deprecated Since 1.119. Please use {@link module:sap/base/i18n/Localization.getSAPLogonLanguage} instead.
+		 */
 		getSAPLogonLanguage : Localization.getSAPLogonLanguage,
+
+		/**
+		 * Retrieves the configured IANA timezone ID.
+		 *
+		 * @returns {string} The configured IANA timezone ID, e.g. "America/New_York"
+		 * @function
+		 * @public
+		 * @deprecated Since 1.119. Please use {@link module:sap/base/i18n/Localization.getTimezone} instead.
+		 */
 		getTimezone : Localization.getTimezone,
 
 		/**
@@ -504,8 +601,12 @@ sap.ui.define([
 		 * @public
 		 * @return {this} <code>this</code> to allow method chaining
 		 * @since 1.99.0
+		 * @deprecated Since 1.119. Please use {@link module:sap/base/i18n/Localization.setTimezone} instead.
 		 */
-		setTimezone : Localization.setTimezone,
+		setTimezone : function() {
+			Localization.setTimezone.apply(Localization, arguments);
+			return Configuration;
+		},
 
 		/**
 		 * Returns the calendar type which is being used in locale dependent functionality.
@@ -515,6 +616,7 @@ sap.ui.define([
 		 *
 		 * @return {sap.ui.core.CalendarType} the current calendar type, e.g. <code>Gregorian</code>
 		 * @since 1.28.6
+		 * @function
 		 */
 		getCalendarType: Formatting.getCalendarType,
 
@@ -529,8 +631,43 @@ sap.ui.define([
 		 */
 		getCalendarWeekNumbering: Formatting.getCalendarWeekNumbering,
 
+		/**
+		 * Returns whether the page uses the RTL text direction.
+		 *
+		 * If no mode has been explicitly set (neither <code>true</code> nor <code>false</code>),
+		 * the mode is derived from the current language setting.
+		 *
+		 * @returns {boolean} whether the page uses the RTL text direction
+		 * @function
+		 * @public
+		 * @deprecated Since 1.119. Please use {@link module:sap/base/i18n/Localization.getRTL} instead.
+		 */
 		getRTL :Localization.getRTL,
-		setRTL : Localization.setRTL,
+
+		/**
+		 * Sets the character orientation mode to be used from now on.
+		 *
+		 * Can either be set to a concrete value (true meaning right-to-left,
+		 * false meaning left-to-right) or to <code>null</code> which means that
+		 * the character orientation mode should be derived from the current
+		 * language (incl. region) setting.
+		 *
+		 * After changing the character orientation mode, the framework tries
+		 * to update localization specific parts of the UI. See the documentation of
+		 * {@link #setLanguage} for details and restrictions.
+		 *
+		 * <b>Note</b>: See documentation of {@link #setLanguage} for restrictions.
+		 *
+		 * @param {boolean|null} bRTL new character orientation mode or <code>null</code>
+		 * @returns {this} <code>this</code> to allow method chaining
+		 * @function
+		 * @public
+		 * @deprecated Since 1.119. Please use {@link module:sap/base/i18n/Localization.setRTL} instead.
+		 */
+		setRTL : function() {
+			Localization.setRTL.apply(Localization, arguments);
+			return Configuration;
+		},
 
 		/**
 		 * Returns a Locale object for the current language.
@@ -539,6 +676,7 @@ sap.ui.define([
 		 *
 		 * @return {sap.ui.core.Locale} The locale
 		 * @public
+		 * @deprecated Since 1.119. Please use {@link module:sap/base/i18n/Localization.getLanguageTag} instead.
 		 */
 		getLocale : function() {
 			var oLanguageTag = Localization.getLanguageTag();
@@ -639,13 +777,13 @@ sap.ui.define([
 		},
 
 		/**
-         * Returns the current animation mode.
-         *
-         * @return {sap.ui.core.Configuration.AnimationMode} The current animationMode
-         * @since 1.50.0
+		 * Returns the current animation mode.
+		 *
+		 * @return {sap.ui.core.Configuration.AnimationMode} The current animationMode
+		 * @since 1.50.0
 		 * @function
-         * @public
-         */
+		 * @public
+		 */
 		getAnimationMode : ControlBehavior.getAnimationMode,
 
 		/**
@@ -1079,10 +1217,27 @@ sap.ui.define([
 
 		_set: Formatting._set,
 		getCustomUnits: Formatting.getCustomUnits,
-		setCustomUnits: Formatting.setCustomUnits,
-		addCustomUnits: Formatting.addCustomUnits,
-		setUnitMappings: Formatting.setUnitMappings,
-		addUnitMappings: Formatting.addUnitMappings,
+
+		setCustomUnits: function() {
+			Formatting.setCustomUnits.apply(Formatting, arguments);
+			return this;
+		},
+
+		addCustomUnits: function() {
+			Formatting.addCustomUnits.apply(Formatting, arguments);
+			return this;
+		},
+
+		setUnitMappings: function() {
+			Formatting.setUnitMappings.apply(Formatting, arguments);
+			return this;
+		},
+
+		addUnitMappings: function() {
+			Formatting.addUnitMappings.apply(Formatting, arguments);
+			return this;
+		},
+
 		getUnitMappings: Formatting.getUnitMappings,
 		getDatePattern : Formatting.getDatePattern,
 
@@ -1105,7 +1260,10 @@ sap.ui.define([
 		 * @public
 		 * @function
 		 */
-		setDatePattern : Formatting.setDatePattern,
+		setDatePattern : function() {
+			Formatting.setDatePattern.apply(Formatting, arguments);
+			return this;
+		},
 
 		getTimePattern : Formatting.getTimePattern,
 
@@ -1128,7 +1286,10 @@ sap.ui.define([
 		 * @public
 		 * @function
 		 */
-		setTimePattern : Formatting.setTimePattern,
+		setTimePattern : function() {
+			Formatting.setTimePattern.apply(Formatting, arguments);
+			return this;
+		},
 
 		getNumberSymbol : Formatting.getNumberSymbol,
 
@@ -1152,11 +1313,23 @@ sap.ui.define([
 		 * @public
 		 * @function
 		 */
-		setNumberSymbol : Formatting.setNumberSymbol,
+		setNumberSymbol : function() {
+			Formatting.setNumberSymbol.apply(Formatting, arguments);
+			return this;
+		},
 
 		getCustomCurrencies : Formatting.getCustomCurrencies,
-		setCustomCurrencies : Formatting.setCustomCurrencies,
-		addCustomCurrencies: Formatting.addCustomCurrencies,
+
+		setCustomCurrencies : function() {
+			Formatting.setCustomCurrencies.apply(Formatting, arguments);
+			return this;
+		},
+
+		addCustomCurrencies: function() {
+			Formatting.addCustomCurrencies.apply(Formatting, arguments);
+			return this;
+		},
+
 		_setDayPeriods: Formatting._setDayPeriods,
 		getLegacyDateFormat : Formatting.getLegacyDateFormat,
 
@@ -1177,7 +1350,10 @@ sap.ui.define([
 		 * @public
 		 * @function
 		 */
-		setLegacyDateFormat : Formatting.setLegacyDateFormat,
+		setLegacyDateFormat : function() {
+			Formatting.setLegacyDateFormat.apply(Formatting, arguments);
+			return this;
+		},
 
 		getLegacyTimeFormat : Formatting.getLegacyTimeFormat,
 
@@ -1199,7 +1375,10 @@ sap.ui.define([
 		 * @public
 		 * @function
 		 */
-		setLegacyTimeFormat : Formatting.setLegacyTimeFormat,
+		setLegacyTimeFormat : function() {
+			Formatting.setLegacyTimeFormat.apply(Formatting, arguments);
+			return this;
+		},
 
 		getLegacyNumberFormat : Formatting.getLegacyNumberFormat,
 
@@ -1220,11 +1399,23 @@ sap.ui.define([
 		 * @public
 		 * @function
 		 */
-		setLegacyNumberFormat : Formatting.setLegacyNumberFormat,
+		setLegacyNumberFormat : function() {
+			Formatting.setLegacyNumberFormat.apply(Formatting, arguments);
+			return this;
+		},
 
-		setLegacyDateCalendarCustomizing : Formatting.setLegacyDateCalendarCustomizing,
+		setLegacyDateCalendarCustomizing : function() {
+			Formatting.setLegacyDateCalendarCustomizing.apply(Formatting, arguments);
+			return this;
+		},
+
 		getLegacyDateCalendarCustomizing : Formatting.getLegacyDateCalendarCustomizing,
-		setTrailingCurrencyCode : Formatting.setTrailingCurrencyCode,
+
+		setTrailingCurrencyCode : function() {
+			Formatting.setTrailingCurrencyCode.apply(Formatting, arguments);
+			return this;
+		},
+
 		getTrailingCurrencyCode : Formatting.getTrailingCurrencyCode,
 		getCustomLocaleData : Formatting.getCustomLocaleData
 	});

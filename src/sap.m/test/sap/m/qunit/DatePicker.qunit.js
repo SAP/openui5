@@ -31,7 +31,13 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Core",
 	"sap/ui/core/Element",
-	"sap/ui/core/date/UI5Date"
+	"sap/ui/core/date/UI5Date",
+	// load all required calendars in advance
+	"sap/ui/core/date/Buddhist",
+	"sap/ui/core/date/Gregorian",
+	"sap/ui/core/date/Islamic",
+	"sap/ui/core/date/Japanese",
+	"sap/ui/core/date/Persian"
 ], function(
 	qutils,
 	createAndAppendDiv,

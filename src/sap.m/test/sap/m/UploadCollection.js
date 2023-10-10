@@ -18,7 +18,8 @@ sap.ui.define([
 	"sap/m/Label",
 	"sap/m/App",
 	"sap/ui/util/Mobile",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/base/ManagedObject"
 ], function(
 	Log,
 	JSONModel,
@@ -39,7 +40,8 @@ sap.ui.define([
 	Label,
 	App,
 	Mobile,
-	jQuery
+	jQuery,
+	ManagedObject
 ) {
 	"use strict";
 
@@ -559,7 +561,7 @@ sap.ui.define([
 	oModel.setData(oData);
 
 	// set the model to the core
-	sap.ui.getCore().setModel(oModel);
+	ManagedObject.setModel(oModel);
 
 	var oFileTypesModel = new JSONModel();
 

@@ -424,7 +424,7 @@ sap.ui.define("test-resources/sap/ui/table/Settings", [
 						if (typeof vRowMode === "string") {
 							return vRowMode.toUpperCase() + "_ENUM";
 						} else {
-							return vRowMode.getMetadata().getName().split(".").pop().toUpperCase();
+							return vRowMode?.getMetadata().getName().split(".").pop().toUpperCase();
 						}
 					},
 					choice: (() => {
@@ -559,21 +559,28 @@ sap.ui.define("test-resources/sap/ui/table/Settings", [
 					choice: {
 						NONE: {
 							text: "None",
-							action: function(oTable) {}
+							action: function(oTable) {
+								oTable.destroyDependents();
+							}
 						},
 						MULTISELECTIONPLUGIN: {
 							text: "MultiSelection",
 							action: function(oTable) {
+								oTable.destroyDependents();
 								var oPlugin = new MultiSelectionPlugin({
 									limit: 20,
 									enableNotification: true
 								});
+								oTable.addDependent(oPlugin);
 								oCore.byId("__select5").setSelectedKey(oPlugin.getSelectionMode().toUpperCase());
 							}
 						},
 						ODATAV4SELECTION: {
 							text: "ODataV4Selection",
-							action: function(oTable) {}
+							action: function(oTable) {
+								oTable.destroyDependents();
+								oTable.addDependent(new ODataV4Selection());
+							}
 						}
 					}
 				},

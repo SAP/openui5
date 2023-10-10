@@ -6,14 +6,14 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/base/util/LoaderExtensions",
 	"sap/ui/core/Component",
-	"sap/ui/core/Configuration"
+	"sap/ui/core/Supportability"
 ], function(
 	sinon,
 	StaticFileConnector,
 	Log,
 	LoaderExtensions,
 	Component,
-	Configuration
+	Supportability
 ) {
 	"use strict";
 
@@ -94,7 +94,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("given debug is enabled", function(assert) {
-			sandbox.stub(Configuration, "getDebug").returns(true);
+			sandbox.stub(Supportability, "isDebugModeEnabled").returns(true);
 			var loadResourceStub = sandbox.stub(LoaderExtensions, "loadResource");
 
 			return StaticFileConnector.loadFlexData({reference: "test.app.not.preloaded", componentName: "test.app.not.preloaded"}).then(function() {

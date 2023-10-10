@@ -765,6 +765,28 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("getParent: throws error if not a list binding's context", function (assert) {
+		const oNode = Context.create({/*oModel*/}, {/*oBinding*/}, "/foo");
+
+		assert.throws(function () {
+			// code under test
+			oNode.getParent();
+		}, new Error("Not a list binding's context: " + oNode));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getParent", function (assert) {
+		const oBinding = {getParent : mustBeMocked};
+		const oNode = Context.create({/*oModel*/}, oBinding, "/foo");
+
+		this.mock(oBinding).expects("getParent").withExactArgs(sinon.match.same(oNode))
+			.returns("~oParentNode~");
+
+		// code under test
+		assert.strictEqual(oNode.getParent(), "~oParentNode~");
+	});
+
+	//*********************************************************************************************
 	QUnit.test("getProperty", function (assert) {
 		var oBinding = {
 				checkSuspended : function () {}
@@ -4101,7 +4123,7 @@ sap.ui.define([
 		assert.throws(function () {
 			// code under test
 			oContext.setKeepAlive(true);
-		}, new Error("Unsupported context " + oContext));
+		}, new Error("Unsupported context: " + oContext));
 
 		assert.strictEqual(oContext.isKeepAlive(), false);
 	});
@@ -4116,7 +4138,7 @@ sap.ui.define([
 		assert.throws(function () {
 			// code under test
 			oContext.setKeepAlive(true);
-		}, new Error("Unsupported context " + oContext));
+		}, new Error("Unsupported context: " + oContext));
 
 		assert.strictEqual(oContext.isKeepAlive(), false);
 	});

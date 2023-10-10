@@ -1,51 +1,49 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-    <meta charset="utf-8">
-    <script
-            id='sap-ui-bootstrap'
-            src='../../../../../../../../resources/sap-ui-core.js'
-            data-sap-ui-theme='sap_belize'
-            data-sap-ui-libs='sap.m'
-            data-sap-ui-compatVersion="edge"
-            data-sap-ui-preload="async"
-    >
-    </script>
+	<meta charset="utf-8">
+	<script
+		id='sap-ui-bootstrap'
+		src='../../../../../../../../resources/sap-ui-core.js'
+		data-sap-ui-theme='sap_belize'
+		data-sap-ui-libs='sap.m'
+		data-sap-ui-compatVersion="edge"
+		data-sap-ui-preload="async"
+	>
+	</script>
 
-    <script>
+	<script>
+		jQuery.sap.registerModulePath("sap.ui.fl.qunit.integration.async.testComponentWithView", "./");
 
-        var bAsync = true;
-
-        jQuery.sap.registerModulePath("sap.ui.fl.qunit.integration.async.testComponentWithView", "./");
-
-        sap.ui.getCore().attachInit(function () {
-            sap.ui.require([
-                "sap/ui/core/Component",
-                "sap/m/Shell",
-                "sap/ui/core/ComponentContainer"
-            ], function(Component, Shell, ComponentContainer){
-                Component.create({
-                    name: "sap.ui.fl.qunit.integration.async.testComponentWithView",
-                    id: "sap.ui.fl.qunit.integration.async.testComponentWithView",
-                    manifest: bAsync,
-                    componentData : {
-                        async : bAsync
-                    }
-                }).then(function (oComponent) {
-                    // initialize the UI component
-                    new Shell({
-                        app: new ComponentContainer({
-                            height : "100%",
-                            component : oComponent
-
-                        })
-                    }).placeAt("content");
-                });
-            })
-        });
-    </script>
-
+		sap.ui.require([
+			"sap/ui/core/Component",
+			"sap/m/Shell",
+			"sap/ui/core/ComponentContainer",
+			"sap/ui/core/Core"
+		], function (Component, Shell, ComponentContainer, Core) {
+			Core.ready().then(() => {
+				return Component.create({
+					name: "sap.ui.fl.qunit.integration.async.testComponentWithView",
+					id: "sap.ui.fl.qunit.integration.async.testComponentWithView",
+					manifest: true,
+					componentData: {
+						async: true
+					}
+				});
+			}).then(function(oComponent) {
+				// initialize the UI component
+				new Shell({
+					app: new ComponentContainer({
+						height: "100%",
+						component: oComponent
+					})
+				}).placeAt("content");
+			})
+		});
+	</script>
 </head>
+
 <body class='sapUiBody' id='content' style>
 </body>
 </html>

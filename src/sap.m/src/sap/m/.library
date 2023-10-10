@@ -74,6 +74,7 @@
                 <module>sap/m/CustomAttribute</module>
                 <module>sap/m/SlideTile</module>
                 <module>sap/m/GenericTile</module>
+                <module>sap/m/LinkTileContent</module>
                 <module>sap/m/TileContent</module>
                 <module>sap/m/FeedContent</module>
                 <module>sap/m/NewsContent</module>
@@ -105,6 +106,8 @@
                 <module>sap/m/upload/UploadSetwithTableItem</module>
                 <module>sap/m/upload/UploaderTableItem</module>
                 <module>sap/m/upload/FilePreviewDialog</module>
+                <module>sap/m/upload/Column</module>
+                <module>sap/m/upload/ActionsPlaceholder</module>
             </modules>
         </component>
         <component>

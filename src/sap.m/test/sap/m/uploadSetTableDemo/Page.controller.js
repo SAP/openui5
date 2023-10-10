@@ -14,17 +14,12 @@ sap.ui.define([
 	"sap/ui/core/library",
 	"sap/ui/core/Item",
 	"./GraphUtil",
-	"sap/m/p13n/Engine",
-	"sap/m/p13n/SelectionController",
-	"sap/m/p13n/SortController",
-	"sap/m/p13n/GroupController",
-	"sap/m/p13n/MetadataHelper",
-	"sap/ui/model/Sorter",
 	"sap/base/util/deepExtend",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
+	"sap/ui/model/Sorter",
 	"sap/ui/core/CustomData"
-], function(Controller, JSONModel, UploadSetwithTable, UploadSetwithTableItem, MessageBox, Fragment, MockServer, MessageToast, Dialog, Button, mobileLibrary, Text, coreLibrary, CoreItem, graphUtil, Engine, SelectionController, SortController, GroupController, MetadataHelper, Sorter, deepExtend, Filter, FilterOperator, CustomData) {
+], function(Controller, JSONModel, UploadSetwithTable, UploadSetwithTableItem, MessageBox, Fragment, MockServer, MessageToast, Dialog, Button, mobileLibrary, Text, coreLibrary, CoreItem, graphUtil, deepExtend, Filter, FilterOperator, Sorter, CustomData) {
 	"use strict";
 
 	return Controller.extend("sap.m.uploadSetTableDemo.Page", {
@@ -33,7 +28,7 @@ sap.ui.define([
 
 			var oModel = new JSONModel(sPath);
 			this.getView().setModel(oModel);
-			this.oUploadSetTable = this.byId("UploadSetTable");
+			this.oUploadSetTable = this.byId("UploadSetWithTable");
 
 			var oStatusData = this._getStatusEnum();
 			this.getView().setModel(new JSONModel(oStatusData),"Status");
@@ -49,7 +44,6 @@ sap.ui.define([
 			this.loadOverflowMenu();
 			this.oMockServer = new MockServer();
 			this.oMockServer.oModel = oModel;
-			this._registerForPersonalization();
 			this.getView().getModel().attachRequestCompleted(function(){
 				this._initializeGraph();
 			}.bind(this));
@@ -80,103 +74,13 @@ sap.ui.define([
 				this._oMenuFragment = oMenu;
 			}.bind(this));
 		},
-		_registerForPersonalization:function() {
-            var oUploadSetTable = this.oUploadSetTable;
-            var aMetaData = [{key: "fileName",label: "File Name",path:"fileName", sortable: true, groupable: false},
-                             {key: "id", label: "ID",path: "id", sortable: false, groupable: false},
-                             {key: "revision", label: "Revision", path: "revision", sortable: true, groupable: true},
-                             {key: "status", label: "Status", path: "status", sortable: true, groupable: true},
-                             {key: "fileSize", label: "File Size", path: "fileSize", sortable:false, groupable:false},
-                             {key: "lastModified", label: "Last Modified", path: "lastModifiedBy", sortable:true, groupable: true},
-                             {key: "actionButton", label: "Action Button", sortable: false,groupable: false}
-							 ];
 
-			this.oMetadataHelper = new MetadataHelper(aMetaData);
-            //Register for p13n
-            //Singleton instance of Engine
-            Engine.getInstance().register(oUploadSetTable, {
-                helper: this.oMetadataHelper,
-                controller: {
-                    Columns: new SelectionController({
-                        targetAggregation: "columns",
-                        control: oUploadSetTable
-                    }),
-                    Sorter: new SortController({
-                        control: oUploadSetTable
-                    }),
-                    Groups: new GroupController({
-                        control: oUploadSetTable
-                    })
-                }
-            });
-            //attaching state change for working on new states
-            Engine.getInstance().attachStateChange(this.handleStateChange.bind(this));
-
-        },
 		_getStatusEnum: function(){
 			return {
 				"statuses": ["In work", "Approved", "Rejected"]
 			 };
 		},
-        onPersoButtonPressed: function (oEvent) {
-            // personalization code
 
-            //var oUploadSetTable = this.oUploadSetTable;
-            //Singleton instance of Engine class
-            // Engine.getInstance().show(oUploadSetTable, ["Columns", "Sorter", "Groups"],{
-            //     contentHeight: "35rem",
-            //     contentWidth: "32rem",
-            //     source: oUploadSetTable
-            // });
-        },
-
-        handleStateChange: function(oEvent) {
-            var oState = oEvent.getParameter("state");
-            //If no state is present
-            if (!oState){
-                return;
-            }
-
-            var aSorter = [];
-
-            oState.Sorter.forEach(function(oSorter) {
-                if (typeof oSorter !== "object") {
-                    return;
-                }
-                aSorter.push(new Sorter(this.oMetadataHelper.getProperty(oSorter.key).path, oSorter.descending));
-            }.bind(this));
-
-            oState.Groups.forEach(function(oGroup) {
-				if (typeof oGroup !== "object") {
-                    return;
-                }
-                var oExistingSorter = aSorter.find(function(oSorter) {
-                    return oSorter.sPath === oGroup.key;
-                });
-                if (oExistingSorter){
-                    oExistingSorter.vGroup = true;
-                } else {
-                    aSorter.push(new Sorter(this.oMetadataHelper.getProperty(oGroup.key).path, false, true));
-                }
-            }.bind(this));
-            //Setting visibility of all cols as false
-            this.oUploadSetTable.getColumns().forEach(function(oCol) {
-                oCol.setVisible(false);
-            });
-
-            oState.Columns.forEach(function(oProp, iIndex) {
-                if (oProp && oProp.key) {
-                    var oCol = this.byId(oProp.key);
-                    //Setting visibilty of column to true based on personalization
-                    oCol.setVisible(true);
-					//Setting ordering of column based on personalization
-                    oCol.setOrder(iIndex);
-                }
-            }.bind(this));
-			//Sorting/Grouping the items based on the condition
-            this.oUploadSetTable.getBinding("items").sort(aSorter);
-            this.oUploadSetTable.invalidate();
-        },
 		getIconSrc: function(mediaType, thumbnailUrl) {
 			return UploadSetwithTable.getIconForFileType(mediaType, thumbnailUrl);
 		},
@@ -212,7 +116,7 @@ sap.ui.define([
 		},
 		// Download files handler
 		onDownloadFiles: function(oEvent) {
-			var oUploadSet = this.byId("UploadSetTable");
+			var oUploadSet = this.byId("UploadSetWithTable");
 			const oItems = oUploadSet.getSelectedItems();
 
 			oItems.forEach((oItem) => {oItem.download(true);});
@@ -251,7 +155,7 @@ sap.ui.define([
 		},
 		removeItem: function(oItem) {
 			var oModel = this.getView().getModel();
-			var oUploadSet = this.byId("UploadSetTable");
+			var oUploadSet = this.byId("UploadSetWithTable");
 			MessageBox.warning(
 				"Are you sure you want to remove the document" + " " + oItem.getFileName() + " " + "?",
 				{
@@ -397,13 +301,13 @@ sap.ui.define([
 			this.oItemsProcessor = [];
 		},
 		uploadFilesHandler: function() {
-			var oUploadSetTableInstance = this.byId("UploadSetTable");
+			var oUploadSetTableInstance = this.byId("UploadSetWithTable");
 
 			oUploadSetTableInstance.fileSelectionHandler();
 		},
 		itemValidationCallback: function(oItemInfo) {
 			const {oItem, iTotalItemsForUpload} = oItemInfo;
-			var oUploadSetTableInstance = this.byId("UploadSetTable");
+			var oUploadSetTableInstance = this.byId("UploadSetWithTable");
 			var oSelectedItems = oUploadSetTableInstance.getSelectedItems();
 			var oSelectedItemForUpdate = oSelectedItems.length === 1 ? oSelectedItems[0] : null;
 			if (oSelectedItemForUpdate && oSelectedItemForUpdate.getFileName() === "-" && iTotalItemsForUpload === 1) {
@@ -773,7 +677,7 @@ sap.ui.define([
 						sName = oValidateObject.name,
 						sUrl = oValidateObject.url,
 						sDocType = oValidateObject.docType,
-						oUploadSetTable = this.byId("UploadSetTable");
+						oUploadSetTable = this.byId("UploadSetWithTable");
 						var oBidningContextObject = oUploadSetTable.getSelectedItem().getBindingContext().getObject();
 						var oModel = this.getView().getModel();
 						var oData = oModel.getProperty("/items");
@@ -823,7 +727,7 @@ sap.ui.define([
 			if (!bHasError) {
 				setTimeout(function(){
 
-					var oUploadSetTableInstance = this.byId("UploadSetTable");
+					var oUploadSetTableInstance = this.byId("UploadSetWithTable");
 
 					let fnResolve, fnReject;
 					var oPromise = new Promise(function(resolve, reject) {
@@ -913,7 +817,7 @@ sap.ui.define([
 			this._addViaUrlFragment = null;
 		},
 		onEditUrl: function(oEvent) {
-			var oUploadSet = this.byId("UploadSetTable"),
+			var oUploadSet = this.byId("UploadSetWithTable"),
 			 oBidningContextObject = oUploadSet.getSelectedItems()[0].getBindingContext().getObject(),
 			 sUrl = oBidningContextObject.url,
 			 sName = oBidningContextObject.fileName,
@@ -928,7 +832,7 @@ sap.ui.define([
 			 this.openAddOrEditDialog();
 		},
 		onRenameDocument: function() {
-			var oUploadSet = this.byId("UploadSetTable");
+			var oUploadSet = this.byId("UploadSetWithTable");
 			// invoking public API on UploadSetTable
 			oUploadSet.renameItem(oUploadSet.getSelectedItems()[0]);
 		},
@@ -939,7 +843,7 @@ sap.ui.define([
 			MessageToast.show("Document Renamed.", {duration: 2000});
 		},
 		addEmptyDocument: function() {
-			var oUploadSetTableInstance = this.byId("UploadSetTable");
+			var oUploadSetTableInstance = this.byId("UploadSetWithTable");
 			var oData = this._documentWithoutFileFragment.getModel().getData();
 
 			let fnResolve, fnReject;
@@ -992,7 +896,7 @@ sap.ui.define([
 			this._oFilesTobeuploaded = [];
 		},
 		onRemoveButtonFromMenuDocumentHandler: function(oEvent) {
-			var oUploadSet = this.byId("UploadSetTable");
+			var oUploadSet = this.byId("UploadSetWithTable");
 			var aSelectedItems = oUploadSet && oUploadSet.getSelectedItems ? oUploadSet.getSelectedItems() : [];
 			if (aSelectedItems && aSelectedItems.length == 1) {
 				this.removeItem(aSelectedItems[0]);

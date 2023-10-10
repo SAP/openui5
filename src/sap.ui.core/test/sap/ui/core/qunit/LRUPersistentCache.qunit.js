@@ -1,5 +1,5 @@
 /* global QUnit */
-sap.ui.define(["sap/ui/Device", "sap/base/Log"], function(Device, Log) {
+sap.ui.define(["sap/ui/Device", "sap/base/Log", "sap/ui/Global"], function(Device, Log, Global) {
 	"use strict";
 	var oCache,
 		aSupportedEnv = [];
@@ -401,7 +401,7 @@ sap.ui.define(["sap/ui/Device", "sap/base/Log"], function(Device, Log) {
 				});
 
 				QUnit.test("Entries have ui5 version index equal to current ui5 version", function(assert) {
-					this.stub(sap.ui, "version").value("1.36.1");
+					this.stub(Global, "version").value("1.36.1");
 
 					return oCache.set("key1_1.36.1", "myValue").then(function() {
 						return oCache.set("key2_1.36.1", "myValue");
@@ -423,14 +423,14 @@ sap.ui.define(["sap/ui/Device", "sap/base/Log"], function(Device, Log) {
 
 				QUnit.test("Entries with different ui5 version than current does not exist", function(assert) {
 					var that = this,
-						stub = this.stub(sap.ui, "version").value("1.36.1");
+						stub = this.stub(Global, "version").value("1.36.1");
 
 					return oCache.set("key1_1.36.1", "myValue").then(function() {
 						return oCache.set("key2_1.36.1", "myValue");
 					}).then(function() {
 						//switch the version
 						stub.restore();
-						stub = that.stub(sap.ui, "version").value("1.36.2");
+						stub = that.stub(Global, "version").value("1.36.2");
 						return reInitCacheManager(oCache);
 					}).then(function() {
 						return verifyCacheEntries(null, ["key1_1.36.1", "key2_1.36.1"], assert);

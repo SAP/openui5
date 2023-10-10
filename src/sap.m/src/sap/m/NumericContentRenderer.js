@@ -3,11 +3,12 @@
  */
 
 sap.ui.define([
-	"sap/m/library"
-], function (library) {
+	"sap/m/library",
+	"sap/ui/core/Lib"
+], function (library, CoreLib) {
 	"use strict";
 
-	var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+	var oResourceBundle = CoreLib.getResourceBundleFor("sap.m");
 
 	var DeviationIndicator = library.DeviationIndicator,
 		LoadState = library.LoadState,
@@ -48,7 +49,7 @@ sap.ui.define([
 			oRm.class("sapMNCAnimation");
 		}
 		if (oControl.getWidth()) {
-			oRm.style("width", "Auto");
+			oRm.style("width", oControl.getWidth());
 
 		}
 		oRm.class("sapMNC");

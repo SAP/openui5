@@ -3,7 +3,7 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/test/_LogCollector",
 	"sap/ui/test/_OpaLogger"
-], function(Log, _LogCollector, _OpaLogger) {
+], function (Log, _LogCollector, _OpaLogger) {
 	"use strict";
 
 	QUnit.module("_LogCollector - singleton");

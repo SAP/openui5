@@ -1,15 +1,7 @@
 /*!
  * ${copyright}
  */
-
-/**
- * @namespace
- * @name sap.ui.core.theming
- * @public
- */
-
 sap.ui.define([
-	'sap/ui/core/Core',
 	'sap/ui/core/Configuration',
 	'sap/ui/core/Lib',
 	'sap/ui/core/Theming',
@@ -21,7 +13,7 @@ sap.ui.define([
 	'sap/ui/core/theming/ThemeManager',
 	'./ThemeHelper'
 ],
-	function(Core, Configuration, Library, Theming, URI, Element, Log, extend, syncFetch, ThemeManager, ThemeHelper) {
+	function(Configuration, Library, Theming, URI, Element, Log, extend, syncFetch, ThemeManager, ThemeHelper) {
 		"use strict";
 
 		var syncCallBehavior = Configuration.getSyncCallBehavior();
@@ -701,7 +693,7 @@ sap.ui.define([
 			if (bAsync && fnAsyncCallback && Object.keys(vResult).length !== aNames.length) {
 				if (!ThemeManager.themeLoaded) {
 					resolveWithParameter = function () {
-						ThemeManager.detachEvent("applied", resolveWithParameter);
+						ThemeManager._detachThemeApplied(resolveWithParameter);
 						var vParams = this.get({ // Don't pass callback again
 							name: vName.name,
 							scopeElement: vName.scopeElement
@@ -718,12 +710,12 @@ sap.ui.define([
 					// Check if identical callback is already registered and reregister with current parameters
 					iIndex = aCallbackRegistry.findIndex(findRegisteredCallback);
 					if (iIndex >= 0) {
-						ThemeManager.detachEvent("applied", aCallbackRegistry[iIndex].eventHandler);
+						ThemeManager._detachThemeApplied(aCallbackRegistry[iIndex].eventHandler);
 						aCallbackRegistry[iIndex].eventHandler = resolveWithParameter;
 					} else {
 						aCallbackRegistry.push({ callback: fnAsyncCallback, eventHandler: resolveWithParameter });
 					}
-					ThemeManager.attachEvent("applied", resolveWithParameter);
+					ThemeManager._attachThemeApplied(resolveWithParameter);
 					return undefined; // Don't return partial result in case we expect applied event.
 				} else {
 					Log.error("One or more parameters could not be found.", "sap.ui.core.theming.Parameters");

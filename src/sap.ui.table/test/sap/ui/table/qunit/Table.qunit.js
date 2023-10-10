@@ -15,6 +15,7 @@ sap.ui.define([
 	"sap/ui/table/rowmodes/Auto",
 	"sap/ui/table/utils/TableUtils",
 	"sap/ui/table/library",
+	"sap/ui/table/plugins/PluginBase",
 	"sap/ui/table/plugins/SelectionPlugin",
 	"sap/ui/core/library",
 	"sap/ui/core/Control",
@@ -60,6 +61,7 @@ sap.ui.define([
 	AutoRowMode,
 	TableUtils,
 	library,
+	PluginBase,
 	SelectionPlugin,
 	CoreLibrary,
 	Control,
@@ -1095,7 +1097,7 @@ sap.ui.define([
 		assert.equal(oTable.getComputedFixedColumnCount(), 3, "Computed Fixed column count correct");
 	});
 
-	QUnit.module("API assertions", {
+	QUnit.module("API", {
 		beforeEach: function() {
 			createTable({
 				rowMode: new FixedRowMode({

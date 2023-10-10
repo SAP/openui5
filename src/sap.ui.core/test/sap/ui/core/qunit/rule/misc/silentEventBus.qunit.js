@@ -3,9 +3,8 @@
 sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/core/EventBus",
-	"jquery.sap.global",
 	"test-resources/sap/ui/support/TestHelper"
-], function(Log, EventBus, jQuery, testRule) {
+], function(Log, EventBus, testRule) {
 	"use strict";
 
 	// the rules rely on a certain log level for analyzing issues

@@ -18,7 +18,9 @@ sap.ui.define([
 	"sap/ui/unified/DateRange",
 	"sap/ui/core/Core",
 	"sap/ui/base/ManagedObjectObserver",
-	"sap/ui/core/date/UI5Date"
+	"sap/ui/core/date/UI5Date",
+	// load all required calendars in advance
+	"sap/ui/core/date/Islamic"
 ], function(
 	qutils,
 	createAndAppendDiv,

@@ -19,9 +19,9 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/Lib",
 	"sap/ui/core/Fragment",
-	"sap/ui/core/Core"
-],
-function(
+	"sap/ui/core/Core",
+	"sap/ui/core/EventBus"
+], function(
 	FieldExtensibility,
 	FlexUtils,
 	Layer,
@@ -38,7 +38,8 @@ function(
 	JSONModel,
 	Lib,
 	Fragment,
-	Core
+	Core,
+	EventBus
 ) {
 	"use strict";
 
@@ -99,7 +100,7 @@ function(
 						if (bServiceOutdated) {
 							FieldExtensibility.setServiceValid(oModel.sServiceUrl);
 							// needs FLP to trigger UI restart popup
-							Core.getEventBus().publish("sap.ui.core.UnrecoverableClientStateCorruption", "RequestReload", {});
+							EventBus.getInstance().publish("sap.ui.core.UnrecoverableClientStateCorruption", "RequestReload", {});
 						}
 					});
 				}

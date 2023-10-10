@@ -1810,7 +1810,7 @@ sap.ui.define([
 	 *
 	 * @returns {boolean} Wether VersionedLibCss is enabled or not
 	 * @private
-	 * @ui-restricted sap.ui.core
+	 * @ui5-restricted sap.ui.core
 	 */
 	Library.getVersionedLibCss = function() {
 		return BaseConfig.get({

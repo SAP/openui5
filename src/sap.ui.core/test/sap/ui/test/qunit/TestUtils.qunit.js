@@ -2,10 +2,10 @@
  * ${copyright}
  */
 sap.ui.define([
-	"jquery.sap.global",
 	"sap/base/Log",
-	"sap/ui/test/TestUtils"
-], function(jQuery, Log, TestUtils) {
+	"sap/ui/test/TestUtils",
+	"sap/ui/thirdparty/jquery"
+], function(Log, TestUtils, jQuery) {
 	/*global QUnit */
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
 	"use strict";

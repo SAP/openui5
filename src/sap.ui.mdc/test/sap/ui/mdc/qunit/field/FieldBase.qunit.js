@@ -70,7 +70,8 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	"sap/ui/core/Core",
 	"sap/ui/core/date/UI5Date",
-	'./FieldBaseDelegateODataDefaultTypes'
+	"sap/ui/core/date/Japanese",
+	"./FieldBaseDelegateODataDefaultTypes"
 ], function(
 	jQuery,
 	qutils,
@@ -139,6 +140,7 @@ sap.ui.define([
 	KeyCodes,
 	oCore,
 	UI5Date,
+	Japanese,
 	FieldBaseDelegateODataDefaultTypes
 ) {
 	"use strict";
@@ -3434,7 +3436,29 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("shouldOpenOnClick - ValueHelp should open on click", function (assert) {
+	QUnit.test("FocusInfo.targetInfo.silent - ValueHelp should not open on focus", function (assert) {
+
+		const oValueHelp = oCore.byId(oField.getValueHelp());
+
+		sinon.stub(oValueHelp, "shouldOpenOnFocus").returns(true);
+		sinon.spy(oValueHelp, "toggleOpen");
+		sinon.stub(oValueHelp, "isOpen").callsFake(function() {
+			return this.toggleOpen.called;
+		});
+
+		oField.focus({targetInfo: {silent: true}});
+
+		return new Promise(function (resolve, reject) {
+			setTimeout(function () {
+				assert.notOk(oValueHelp.shouldOpenOnFocus.calledOnce, "shouldOpenOnFocus called once");
+				assert.notOk(oField._iFocusTimer, "FocusTimer not triggered");
+				assert.notOk(oValueHelp.toggleOpen.calledOnce, "open called once");
+				resolve();
+			},350);
+		});
+	});
+
+	QUnit.test("shouldOpenOnClick - FieldHelp should open on click", function (assert) {
 
 		const oValueHelp = oCore.byId(oField.getValueHelp());
 

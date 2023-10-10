@@ -553,6 +553,16 @@ sap.ui.define([
 				}
 			},
 
+			LinkTileContent: {
+				title: "QUnit Test Page for sap.m.LinkTileContent",
+				coverage: {
+					only: "//sap\/m\/LinkTileContent.*/"
+				},
+				ui5: {
+					language: "en"
+				}
+			},
+
 			"Generic Testsuite": {
 				page: "test-resources/sap/m/qunit/testsuite.generic.qunit.html"
 			},

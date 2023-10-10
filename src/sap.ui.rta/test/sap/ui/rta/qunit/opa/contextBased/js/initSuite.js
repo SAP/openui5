@@ -11,7 +11,7 @@ sap.ui.require([
 ) {
 	"use strict";
 
-	Core.ready(function() {
+	Core.ready().then(() => {
 		new App({
 			pages: [
 				new Page({

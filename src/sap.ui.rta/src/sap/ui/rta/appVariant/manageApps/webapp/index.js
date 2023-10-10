@@ -11,7 +11,7 @@ sap.ui.require([
 	Core
 ) {
 	"use strict";
-	Core.ready(function() {
+	Core.ready().then(() => {
 		new Shell({
 			app: new ComponentContainer({
 				height: "100%",

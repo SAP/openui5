@@ -5,10 +5,10 @@ sap.ui.define([
 	"sap/m/MessageBox",
 	"sap/m/Text",
 	"sap/ui/core/mvc/XMLView",
+	"sap/ui/core/mvc/Controller",
 	"sap/ui/unified/FileUploader",
-	"sap/ui/unified/FileUploaderParameter",
-	"sap/ui/core/mvc/Controller"
-], function(Log, Button, Label, MessageBox, Text, XMLView, FileUploader, FileUploaderParameter) {
+	"sap/ui/unified/FileUploaderParameter"
+], function(Log, Button, Label, MessageBox, Text, XMLView, Controller, FileUploader, FileUploaderParameter) {
 	"use strict";
 
 	var oFileUploader1 = new FileUploader("upload_1", {
@@ -346,7 +346,7 @@ sap.ui.define([
 	 * only with XML-Views.
 	 */
 	// simple controller for fup-test
-	sap.ui.controller("fup.controller", {
+	Controller.extend("fup.controller", {
 		handleTypeMissmatch: function(oEvent) {
 			return;
 		},

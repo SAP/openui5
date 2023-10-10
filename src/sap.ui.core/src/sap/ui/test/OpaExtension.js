@@ -94,9 +94,9 @@ sap.ui.define(['sap/ui/base/Object'],function(Ui5Object) {
          * <pre>
          *     <code>
          *      sap.ui.define([
-         *          'jquery.sap.global',
-         *          'sap/ui/test/OpaExtension'
-         *      ],function($, OpaExtension) {
+         *          'sap/ui/test/OpaExtension',
+         *          'sap/ui/thirdparty/jquery'
+         *      ],function(OpaExtension, $) {
          *          "use strict";
          *
          *          var customExtension = OpaExtension.extend("sap.ui.test.sample.CustomOpaExtension", {
