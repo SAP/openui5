@@ -559,7 +559,8 @@ sap.ui.define([
 		return { // return default values, but needs to be implemented by specific content
 			contentId: this.getId() + "-List", // as list might be created async, use fix ID
 			ariaHasPopup: "listbox",
-			roleDescription: null // no multi-selection
+			roleDescription: null, // no multi-selection
+			valueHelpEnabled: false // a dropdown on a popover is not seen as value help
 		};
 
 	};

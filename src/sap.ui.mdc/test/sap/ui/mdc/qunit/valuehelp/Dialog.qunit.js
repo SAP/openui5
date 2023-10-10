@@ -680,7 +680,8 @@ sap.ui.define([
 			contentId: null,
 			ariaHasPopup: "dialog",
 			role: null,
-			roleDescription: null
+			roleDescription: null,
+			valueHelpEnabled: true
 		};
 		const oAttributes = oDialog.getAriaAttributes();
 		assert.ok(oAttributes, "Aria attributes returned");

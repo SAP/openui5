@@ -733,7 +733,8 @@ sap.ui.define([
 			contentId: null,
 			ariaHasPopup: "listbox",
 			role: "combobox",
-			roleDescription: null
+			roleDescription: null,
+			valueHelpEnabled: false
 		};
 
 	};

@@ -784,7 +784,8 @@ sap.ui.define([
 		return { // return default values, but needs to be implemented by specific content
 			contentId: oTable && oTable.getId(), // if open, table should be there; if closed, not needed
 			ariaHasPopup: "listbox",
-			roleDescription: sRoleDescription
+			roleDescription: sRoleDescription,
+			valueHelpEnabled: !bIsTypeahead // a dropdown on a popover is not seen as value help
 		};
 	};
 

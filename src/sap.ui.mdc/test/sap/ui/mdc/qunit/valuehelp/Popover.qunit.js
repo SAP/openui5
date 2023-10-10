@@ -484,14 +484,16 @@ sap.ui.define([
 		sinon.stub(oContent, "getAriaAttributes").returns({
 			contentId: "X",
 			ariaHasPopup: "dialog",
-			roleDescription: "X"
+			roleDescription: "X",
+			valueHelpEnabled: true
 		});
 
 		const oCheckAttributes = {
 			contentId: "X",
 			ariaHasPopup: "dialog",
 			role: null,
-			roleDescription: "X"
+			roleDescription: "X",
+			valueHelpEnabled: true
 		};
 		let oAttributes = oPopover.getAriaAttributes();
 		assert.ok(oAttributes, "Aria attributes returned");
