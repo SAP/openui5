@@ -10807,8 +10807,10 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 	// Scenario: TreeTable#collapseAll for a table using ODataTreeBindingAdapter resets the number
 	// of levels expanded automatically in subsequent read requests to 0.
 	// BCP: 66039 / 2021
+	// Scenario: ODataTreeBinding#expandNodeToLevel expands all children up to the given level.
+	// JIRA: CPOUI5MODELS-1437
 	QUnit.test("ODataTreeBindingAdapter: collapseToLevel prevents auto expand of child nodes with"
-			+ " higher level", function (assert) {
+			+ " higher level and expandNodeToLevel works as expected", function (assert) {
 		var oModel = createSpecialCasesModel(),
 			oTable,
 			sView = '\
@@ -10913,6 +10915,32 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			oTable.setFirstVisibleRow(2);
 
 			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest(
+				"C_RSHMaintSchedSmltdOrdAndOp?$filter=OrderOperationRowID eq 'id-2' and OrderOperationRowLevel le 2",
+				{
+					results : [{
+						__metadata : {uri : "C_RSHMaintSchedSmltdOrdAndOp('id-2')"},
+						MaintenanceOrder : "2",
+						OrderOperationIsExpanded : "expanded",
+						OrderOperationRowID : "id-2",
+						OrderOperationRowLevel : 0
+					}, {
+						__metadata : {uri : "C_RSHMaintSchedSmltdOrdAndOp('id-2.0')"},
+						MaintenanceOrder : "2.0",
+						OrderOperationIsExpanded : "leaf",
+						OrderOperationParentRowID : "id-2",
+						OrderOperationRowID : "id-2.0",
+						OrderOperationRowLevel : 1
+					}]
+				})
+				.expectValue("maintenanceOrder", "2.0", 3);
+
+			return Promise.all([
+				// code under test
+				oTable.getBinding("rows").expandNodeToLevel(2, 2),
+				that.waitForChanges(assert)
+			]);
 		});
 	});
 

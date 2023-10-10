@@ -1056,7 +1056,7 @@ sap.ui.define([
 				if (oData.results.length > 0) {
 					var sParentKey = this.oModel.getKey(oData.results[0]);
 					this._updateNodeKey(oNode, sParentKey);
-					var mKeys = this._createKeyMap(oData.results);
+					var mKeys = this._createKeyMap(oData.results, true);
 					this._importCompleteKeysHierarchy(mKeys);
 				}
 
