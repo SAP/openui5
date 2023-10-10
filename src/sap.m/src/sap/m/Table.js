@@ -20,10 +20,11 @@ sap.ui.define([
 	"sap/ui/core/Icon",
 	"sap/m/table/Util",
 	"sap/ui/core/Lib",
+	"sap/base/Log",
     // jQuery custom selectors ":sapTabbable"
 	"sap/ui/dom/jquery/Selectors"
 ],
-	function(KeyCodes, Core, ControlBehavior, library, ListBase, ListItemBase, CheckBox, TableRenderer, BaseObject, ResizeHandler, PasteHelper, jQuery, ListBaseRenderer, Icon, Util, Library) {
+	function(KeyCodes, Core, ControlBehavior, library, ListBase, ListItemBase, CheckBox, TableRenderer, BaseObject, ResizeHandler, PasteHelper, jQuery, ListBaseRenderer, Icon, Util, Library, Log) {
 	"use strict";
 
 
@@ -54,6 +55,8 @@ sap.ui.define([
 	 * If such a conflict is detected, then the table prevents one column from moving to the pop-in.
 	 *
 	 * For mobile devices, the recommended limit of table rows is 100 (based on 4 columns) to assure proper performance. To improve initial rendering of large tables, use the <code>growing</code> feature.
+	 *
+	 * <b>Note:</b> In the <code>items</code> aggregation only items which implements the <code>sap.m.ITableItem</code> interface must be used.
 	 *
 	 * See section "{@link topic:5eb6f63e0cc547d0bdc934d3652fdc9b Creating Tables}" and "{@link topic:38855e06486f4910bfa6f4485f7c2bac Configuring Responsive Behavior of a Table}"
 	 * in the documentation for an introduction to <code>sap.m.Table</code> control.
@@ -1384,6 +1387,34 @@ sap.ui.define([
 
 		var iAriaRowCount = this.getAccessbilityPosition().setsize;
 		oNavigationRoot.setAttribute("aria-rowcount", iAriaRowCount);
+	};
+
+	/**
+	 * Checks whether the given value is of the proper type for the given aggregation name.
+	 * Logs an error if the given type does not belong to ListItemBase
+	 *
+	 * @param {string} sAggregationName the name of the aggregation
+	 * @param {sap.ui.base.ManagedObject|any} oObject the aggregated object or a primitive value
+	 * @param {boolean} bMultiple whether the caller assumes the aggregation to have cardinality 0..n
+	 * @return {sap.ui.base.ManagedObject|any} the passed object
+	 *
+	 */
+	Table.prototype.validateAggregation = function(sAggregationName, oObject, bMultiple) {
+		var oResult = ListBase.prototype.validateAggregation.apply(this, arguments);
+
+		/*
+         * @deprecated as of version 1.120
+        */
+		if (sAggregationName === "items" && !BaseObject.isA(oObject, "sap.m.ITableItem")) {
+			Log.error(oObject + " is not a valid items aggregation of " + this + ". Items aggregation in ResponsiveTable control only supports ITableItem.");
+			return oResult;
+		}
+
+		if (sAggregationName === "items" && !BaseObject.isA(oObject, "sap.m.ITableItem")) { // UI5 2.0
+			throw Error(oObject + " is not a valid items aggregation of " + this + ". Items aggregation in ResponsiveTable control only supports ITableItem.");
+		}
+
+		return oResult;
 	};
 
 	// items and groupHeader mapping is not required for the table control
