@@ -1,12 +1,12 @@
-li.sapTntNavLIItemSelected[id$="suppliersItem"] > div.sapTntNavLIItem {
+li.sapTntNLISelected[id$="suppliersItem"] > div.sapTntNLI {
 	background-color: antiquewhite;
 }
 
-li.sapTntNavLIItemSelected[id$="categoriesItem"] > div.sapTntNavLIItem {
+li.sapTntNLISelected[id$="categoriesItem"] > div.sapTntNLI {
 	background-color: aquamarine;
 }
 
-li.sapTntNavLIItemSelected[id$="productsItem"] > div.sapTntNavLIItem {
+li.sapTntNLISelected[id$="productsItem"] > div.sapTntNLI {
 	background-color: lightblue;
 }
 

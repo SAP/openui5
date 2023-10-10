@@ -13,6 +13,7 @@ sap.ui.define([
 			propertyName: "text",
 			translationTextType: "XTIT"
 		}),
-		"unhideControl": "default"
+		"unhideControl": "default",
+		"moveControls": "default"
 	};
 });

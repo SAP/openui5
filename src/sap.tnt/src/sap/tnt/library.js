@@ -39,11 +39,14 @@ sap.ui.define(["sap/ui/core/library", "sap/m/library"],
 			"sap.tnt.InfoLabel"
 		],
 		elements: [
-			"sap.tnt.NavigationListItem"
+			"sap.tnt.NavigationListItem",
+			"sap.tnt.NavigationListGroup"
 		],
 		extensions: {
 			flChangeHandlers: {
-				"sap.tnt.NavigationListItem": "sap/tnt/flexibility/NavigationListItem"
+				"sap.tnt.NavigationList": "sap/tnt/flexibility/NavigationList",
+				"sap.tnt.NavigationListItem": "sap/tnt/flexibility/NavigationListItem",
+				"sap.tnt.NavigationListGroup": "sap/tnt/flexibility/NavigationListGroup"
 			}
 		}
 	});

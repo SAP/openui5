@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-// Provides the Design Time Metadata for the sap.tnt.NavigationListItem control
+// Provides the design time metadata for the sap.tnt.NavigationListItem control
 sap.ui.define([],
 	function () {
 		"use strict";
@@ -15,12 +15,12 @@ sap.ui.define([],
 				rename: {
 					changeType: "rename",
 					domRef: function (oControl) {
-						return oControl.$().find(".sapTntNLText")[0];
+						return oControl.$().find(".sapTntNLGroupText")[0];
 					}
 				}
 			},
 			templates: {
-				create: "sap/tnt/designtime/NavigationListItem.create.fragment.xml"
+				create: "sap/tnt/designtime/NavigationListGroup.create.fragment.xml"
 			}
 		};
 	});
