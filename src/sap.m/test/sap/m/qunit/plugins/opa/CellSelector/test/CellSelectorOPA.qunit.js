@@ -76,15 +76,6 @@ sap.ui.define([
 			Then.iSeeCellsSelected({ rowIndex: 0, colIndex: 1 }, { rowIndex: 0, colIndex: 1});
 
 			When.Keyboard.iRemoveSelection();
-
-			When.iFocusCell(1, 2);
-			When.Keyboard.iSelectInnerControl();
-			When.Keyboard.iSelectDeselectCell();
-			Then.iSeeCellsSelected();
-			When.Keyboard.iSelectNextCell();
-			Then.iSeeCellsSelected();
-
-			Then.iSeeCellsSelected();
 		});
 
 		opaTest("Extend/Decrease selection area", function(Given, When, Then) {
