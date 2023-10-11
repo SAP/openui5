@@ -1281,6 +1281,7 @@ sap.ui.define([
 	 * @name sap.ui.core.Configuration.AnimationMode
 	 * @since 1.50.0
 	 * @public
+	 * @deprecated As of Version 1.120. Please use {@link module:sap/ui/core/AnimationMode} instead.
 	 */
 
 	/**
