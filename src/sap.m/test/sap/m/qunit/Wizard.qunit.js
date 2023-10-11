@@ -1,15 +1,15 @@
 /*global QUnit */
 sap.ui.define([
 	"sap/base/Log",
+	"sap/ui/base/DesignTime",
 	"sap/ui/core/Core",
 	"sap/m/Wizard",
 	"sap/m/WizardStep",
 	"sap/m/Button",
 	"sap/ui/base/ObjectPool",
 	"sap/m/library",
-	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Configuration"
-], function(Log, Core, Wizard, WizardStep, Button, ObjectPool, library, jQuery, Configuration) {
+	"sap/ui/thirdparty/jquery"
+], function(Log, DesignTime, Core, Wizard, WizardStep, Button, ObjectPool, library, jQuery) {
 	"use strict";
 
 	// shortcut for sap.m.PageBackgroundDesign
@@ -620,7 +620,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("insertStep should work when designMode is true", function (assert) {
-		this.stub(Configuration, "getDesignMode").returns(true);
+		this.stub(DesignTime, "isDesignModeEnabled").returns(true);
 		var oWizard = new Wizard();
 		var oFirstStep = new WizardStep({ title: "First" });
 		var oSecondStep = new WizardStep({ title: "Second" });
@@ -633,7 +633,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("removeStep should work when designMode is true", function (assert) {
-		this.stub(Configuration, "getDesignMode").returns(true);
+		this.stub(DesignTime, "isDesignModeEnabled").returns(true);
 		var oStep = new WizardStep({ title: "First" });
 		var oWizard = new Wizard({ steps: [oStep] });
 

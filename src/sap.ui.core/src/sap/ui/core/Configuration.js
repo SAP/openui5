@@ -10,6 +10,7 @@ sap.ui.define([
 	'./ControlBehavior',
 	'./Locale',
 	"./format/TimezoneUtil",
+	"sap/ui/base/DesignTime",
 	"sap/ui/core/getCompatibilityVersion",
 	"sap/ui/core/date/CalendarWeekNumbering",
 	"sap/ui/core/Supportability",
@@ -31,6 +32,7 @@ sap.ui.define([
 		ControlBehavior,
 		Locale,
 		TimezoneUtil,
+		DesignTime,
 		getCompatibilityVersion,
 		CalendarWeekNumbering,
 		Supportability,
@@ -855,15 +857,9 @@ sap.ui.define([
 		 * @since 1.13.2
 		 * @private
 		 * @ui5-restricted sap.ui.core.Core, sap.watt, com.sap.webide, sap.ui.fl, sap.ui.rta, sap.ui.comp, SAP Business Application Studio
+		 * @deprecated As of Version 1.120
 		 */
-		getDesignMode : function() {
-			return BaseConfig.get({
-				name: "sapUiXxDesignMode",
-				type: BaseConfig.Type.Boolean,
-				external: true,
-				freeze: true
-			});
-		},
+		getDesignMode : DesignTime.isDesignModeEnabled,
 
 		/**
 		 * Return whether the activation of the controller code is suppressed.
@@ -872,15 +868,9 @@ sap.ui.define([
 		 * @since 1.13.2
 		 * @private
 		 * @ui5-restricted sap.watt, com.sap.webide
+		 * @deprecated As of Version 1.120
 		 */
-		getSuppressDeactivationOfControllerCode : function() {
-			return BaseConfig.get({
-				name: "sapUiXxSuppressDeactivationOfControllerCode",
-				type: BaseConfig.Type.Boolean,
-				external: true,
-				freeze: true
-			});
-		},
+		getSuppressDeactivationOfControllerCode : DesignTime.isControllerCodeDeactivationSuppressed,
 
 		/**
 		 * Return whether the controller code is deactivated. During design mode the.
@@ -889,10 +879,9 @@ sap.ui.define([
 		 * @since 1.26.4
 		 * @private
 		 * @ui5-restricted sap.watt, com.sap.webide
+		 * @deprecated As of Version 1.120
 		 */
-		getControllerCodeDeactivated : function() {
-			return Configuration.getDesignMode() && !Configuration.getSuppressDeactivationOfControllerCode();
-		},
+		getControllerCodeDeactivated : DesignTime.isControllerCodeDeactivated,
 
 		/**
 		 * The name of the application to start or empty.

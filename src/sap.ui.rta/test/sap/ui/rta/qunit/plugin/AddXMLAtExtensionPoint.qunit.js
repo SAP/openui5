@@ -1,6 +1,7 @@
 /* global QUnit */
 
 sap.ui.define([
+	"sap/ui/base/DesignTime",
 	"sap/ui/core/Core",
 	"sap/ui/core/Component",
 	"sap/ui/core/mvc/XMLView",
@@ -15,6 +16,7 @@ sap.ui.define([
 	"sap/ui/rta/plugin/AddXMLAtExtensionPoint",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
+	DesignTimeConfig,
 	oCore,
 	Component,
 	XMLView,
@@ -119,7 +121,7 @@ sap.ui.define([
 	QUnit.module("Given an xmlView with extensionPoints and AddXMLAtExtensionPoint plugin without fragment handler function are created "
 	+ "and the DesignTime is started ", {
 		beforeEach() {
-			sandbox.stub(oCore.getConfiguration(), "getDesignMode").returns(true);
+			sandbox.stub(DesignTimeConfig, "isDesignModeEnabled").returns(true);
 			sandbox.stub(ManifestUtils, "isFlexExtensionPointHandlingEnabled").returns(true);
 			return createBeforeEach.call(this);
 		},
@@ -232,7 +234,7 @@ sap.ui.define([
 	QUnit.module("Given an xmlView with extensionPoints and AddXMLAtExtensionPoint plugin with initial fragment handler function is "
 	+ "created and the DesignTime is started ", {
 		beforeEach() {
-			sandbox.stub(oCore.getConfiguration(), "getDesignMode").returns(true);
+			sandbox.stub(DesignTimeConfig, "isDesignModeEnabled").returns(true);
 			this.sInitialFragmentPath = "sap/ui/.../fragment/fragmentName";
 			this.oFragmentHandlerStub = sandbox.stub().resolves({
 				extensionPointName: "EP1",

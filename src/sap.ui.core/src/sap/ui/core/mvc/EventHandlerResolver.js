@@ -14,7 +14,7 @@ sap.ui.define([
 	"sap/base/util/ObjectPath",
 	"sap/base/util/resolveReference",
 	"sap/base/Log",
-	"sap/ui/core/Configuration"
+	"sap/ui/base/DesignTime"
 ],
 	function(
 		BindingParser,
@@ -27,7 +27,7 @@ sap.ui.define([
 		ObjectPath,
 		resolveReference,
 		Log,
-		Configuration
+		DesignTime
 	) {
 		"use strict";
 
@@ -78,7 +78,7 @@ sap.ui.define([
 				var fnHandler, iStartBracket, sFunctionName;
 				sName = sName.trim();
 
-				if (Configuration.getControllerCodeDeactivated()) {
+				if (DesignTime.isControllerCodeDeactivated()) {
 					// When design mode is enabled, controller code is not loaded. That is why we stub the handler functions.
 					fnHandler = function() {};
 				} else {
