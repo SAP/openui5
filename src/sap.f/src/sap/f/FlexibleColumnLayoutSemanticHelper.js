@@ -396,9 +396,8 @@ sap.ui.define([
 	FlexibleColumnLayoutSemanticHelper.prototype._getUIStateForLayout = function (sLayout) {
 
 		var aSizes = this._oFCL._getColumnWidthDistributionForLayout(sLayout, true),
-			sColumnWidthDistribution = aSizes.join("/"),
 			iMaxColumnsCount = this._oFCL.getMaxColumnsCount(),
-			iVisibleColumnsCount = this._oFCL._getVisibleColumnsCount(sLayout);
+			sDefaultColumnWidthDistribution = this._oFCL._getDefaultColumnWidthDistributionForLayout(sLayout, iMaxColumnsCount);
 
 		return {
 			layout: sLayout,
@@ -407,7 +406,7 @@ sap.ui.define([
 			columnsVisibility: this._getColumnsVisibility(aSizes),
 			isFullScreen: this._getIsFullScreen(aSizes),
 			isLogicallyFullScreen: this._getIsLogicallyFullScreen(sLayout),
-			actionButtonsInfo: this._getActionButtonsInfo(sLayout, sColumnWidthDistribution, iMaxColumnsCount, iVisibleColumnsCount)
+			actionButtonsInfo: this._getActionButtonsInfo(sDefaultColumnWidthDistribution, iMaxColumnsCount)
 		};
 
 	};
@@ -440,7 +439,7 @@ sap.ui.define([
 		return [LT.OneColumn, LT.MidColumnFullScreen, LT.EndColumnFullScreen].indexOf(sLayout) !== -1;
 	};
 
-	FlexibleColumnLayoutSemanticHelper.prototype._getActionButtonsInfo = function (sLayout, sColumnWidthDistribution, iMaxColumnsCount, iVisibleColumnsCount) {
+	FlexibleColumnLayoutSemanticHelper.prototype._getActionButtonsInfo = function (sColumnWidthDistribution, iMaxColumnsCount) {
 
 		var oMidColumn = {
 				fullScreen: null,
@@ -469,15 +468,15 @@ sap.ui.define([
 
 		} else {
 
-			if (iVisibleColumnsCount > 1 && (sLayout === "TwoColumnsBeginExpanded" || sLayout === "TwoColumnsMidExpanded")) {
+			if (sColumnWidthDistribution === "67/33/0" || sColumnWidthDistribution === "33/67/0") {
 
 				oMidColumn.fullScreen = LT.MidColumnFullScreen;
 				oMidColumn.closeColumn = this._defaultLayoutType;
 
 			}
 
-				if ((iVisibleColumnsCount > 1
-					&& (sLayout === "ThreeColumnsMidExpanded" || sLayout === "ThreeColumnsEndExpanded"))) {
+			if (sColumnWidthDistribution === "25/50/25" || sColumnWidthDistribution === "25/25/50" || sColumnWidthDistribution === "0/67/33" || sColumnWidthDistribution === "0/33/67") {
+
 				oEndColumn.fullScreen = LT.EndColumnFullScreen;
 				oEndColumn.closeColumn = this._defaultTwoColumnLayoutType;
 
