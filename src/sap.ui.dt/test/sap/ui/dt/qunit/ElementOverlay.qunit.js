@@ -478,6 +478,13 @@ sap.ui.define([
 			this.oElementOverlay.setVisible(true);
 			assert.strictEqual(this.oElementOverlay.getDomRef().style.visibility, sPreviousVisibility, "then the visibility is reset to the original value");
 		});
+
+		QUnit.test("getAssociatedDomRef with the overlay having no designtime metadata", function(assert) {
+			sandbox.stub(this.oElementOverlay, "getDesignTimeMetadata");
+			const oElementUtilSpy = sandbox.spy(ElementUtil, "getDomRef");
+			const oDomRef = this.oElementOverlay.getAssociatedDomRef();
+			assert.strictEqual(oDomRef.get(0), oElementUtilSpy.lastCall.returnValue, "the domRef is found");
+		});
 	});
 
 	QUnit.module("Given that an Overlay is created for a control with an invisible domRef", {

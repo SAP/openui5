@@ -637,8 +637,8 @@ sap.ui.define([
 	 */
 	ElementOverlay.prototype.getAssociatedDomRef = function() {
 		var oDesignTimeMetadata = this.getDesignTimeMetadata();
-		var vDomRef = oDesignTimeMetadata.getDomRef();
-		var oDomRef = oDesignTimeMetadata.getAssociatedDomRef(this.getElement(), vDomRef);
+		var vDomRef = oDesignTimeMetadata?.getDomRef();
+		var oDomRef = oDesignTimeMetadata?.getAssociatedDomRef(this.getElement(), vDomRef);
 		oDomRef ||= ElementUtil.getDomRef(this.getElement());
 
 		if (oDomRef) {
