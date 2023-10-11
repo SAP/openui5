@@ -171,7 +171,7 @@ sap.ui.define([
 			// the element might have moved due to parallel insert/delete
 			iIndex = _Cache.getElementIndex(this.aElements, sPredicate, iIndex);
 			// remove in parent cache
-			oParentCache.removeElement(undefined, iIndexInParentCache, sPredicate, "");
+			oParentCache.removeElement(iIndexInParentCache, sPredicate);
 			if (iIndex && !oParentCache.getValue("$count")) {
 				// make parent a leaf (the direct predecessor; if index is 0, there is no parent)
 				const oParent = this.aElements[iIndex - 1];
@@ -183,7 +183,7 @@ sap.ui.define([
 			}
 			// remove in this cache
 			this.shiftIndex(iIndex, -1);
-			this.removeElement(this.aElements, iIndex, sPredicate, "");
+			this.removeElement(iIndex, sPredicate);
 			// notify caller
 			fnCallback(iIndex, -1);
 		});
@@ -919,8 +919,8 @@ sap.ui.define([
 
 			// remove original element from its cache's collection
 			const oOldParentCache = _Helper.getPrivateAnnotation(oChildNode, "parent");
-			oOldParentCache.removeElement(undefined,
-				_Helper.getPrivateAnnotation(oChildNode, "index"), sChildPredicate, "");
+			oOldParentCache.removeElement(_Helper.getPrivateAnnotation(oChildNode, "index"),
+				sChildPredicate);
 			if (oOldParentCache.getValue("$count") === 0) { // last child has gone
 				const oOldParent = this.aElements[iOldIndex - 1];
 				_Helper.updateAll(this.mChangeListeners,

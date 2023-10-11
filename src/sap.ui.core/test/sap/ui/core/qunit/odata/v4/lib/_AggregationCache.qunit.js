@@ -3727,8 +3727,7 @@ sap.ui.define([
 			.withExactArgs(sinon.match.same(oChildNode), "parent").returns(oOldParentCache);
 		oHelperMock.expects("getPrivateAnnotation")
 			.withExactArgs(sinon.match.same(oChildNode), "index").returns("~index~");
-		this.mock(oOldParentCache).expects("removeElement")
-			.withExactArgs(undefined, "~index~", "('23')", "");
+		this.mock(oOldParentCache).expects("removeElement").withExactArgs("~index~", "('23')");
 		this.mock(oOldParentCache).expects("getValue").withExactArgs("$count")
 			.returns(iOldSiblingCount);
 		oHelperMock.expects("getPrivateAnnotation").exactly(iOldSiblingCount ? 0 : 1)
@@ -4167,7 +4166,7 @@ sap.ui.define([
 					.returns(iMovedIndex);
 				oRemoveExpectation = this.mock(oParentCache).expects("removeElement")
 					.exactly(iCallCount)
-					.withExactArgs(undefined, "~index~", "~predicate~", "");
+					.withExactArgs("~index~", "~predicate~");
 				oCountExpectation = this.mock(oParentCache).expects("getValue")
 					.exactly(oFixture.success && !oFixture.noParent ? 1 : 0)
 					.withExactArgs("$count").returns(oFixture.parentLeaf ? 0 : 5);
@@ -4180,8 +4179,7 @@ sap.ui.define([
 				this.mock(oCache).expects("shiftIndex").exactly(iCallCount)
 					.withExactArgs(iMovedIndex, -1);
 				this.mock(oCache).expects("removeElement").exactly(iCallCount)
-					.withExactArgs(sinon.match.same(oCache.aElements), iMovedIndex, "~predicate~",
-						 "");
+					.withExactArgs(iMovedIndex, "~predicate~");
 
 				return oFixture.success ? Promise.resolve() : Promise.reject("~error~");
 			});
