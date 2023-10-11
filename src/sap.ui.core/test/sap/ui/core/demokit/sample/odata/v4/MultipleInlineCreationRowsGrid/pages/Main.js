@@ -5,12 +5,47 @@ sap.ui.define([
 	"sap/ui/core/sample/common/Helper",
 	"sap/ui/test/Opa5",
 	"sap/ui/test/actions/Press",
+	"sap/ui/test/matchers/Ancestor",
 	"sap/ui/test/matchers/Properties"
-], function (Helper, Opa5, Press, Properties) {
+
+], function (Helper, Opa5, Press, Ancestor, Properties) {
 	"use strict";
 	var sViewName = "sap.ui.core.sample.odata.v4.MultipleInlineCreationRowsGrid.Main";
 
 	Opa5.createPageObjects({
+		onAnyTable : {
+			assertions : {
+				checkMessageStrip : function (sTableId, sExpectedMessageType) {
+					this.waitFor({
+						controlType : "sap.m.Table",
+						id : sTableId,
+						success : function (oTable) {
+							this.waitFor({
+								controlType : "sap.m.MessageStrip",
+								matchers : new Ancestor(oTable),
+								success : function (aControls) {
+									var oMessageStrip = aControls[0];
+
+									if (oMessageStrip.getVisible()) {
+										Opa5.assert.strictEqual(oMessageStrip.getType(),
+											sExpectedMessageType,
+											"Message strip in table " + sTableId
+											+ " shows correct message type: "
+											+ sExpectedMessageType);
+									} else {
+										Opa5.assert.strictEqual(sExpectedMessageType, undefined,
+											"Message strip in table " + sTableId + " is invisible");
+									}
+								},
+								viewName : sViewName,
+								visible : false
+							});
+						},
+						viewName : sViewName
+					});
+				}
+			}
+		},
 		onTheListReport : {
 			actions : {
 				enterProductId : function (iRow, sId, bPressSave) {
@@ -125,6 +160,24 @@ sap.ui.define([
 				enterPartDescription : function (iRow, sId) {
 					Helper.changeInputValue(this, sViewName, /description/, sId, iRow);
 				},
+				toggleMessageFilter : function () {
+					this.waitFor({
+						controlType : "sap.m.Table",
+						id : "parts",
+						success : function (oTable) {
+							this.waitFor({
+								actions : new Press(),
+								matchers : new Ancestor(oTable),
+								controlType : "sap.m.Link",
+								success : function (aLinks) {
+									Opa5.assert.ok(true, "Link pressed: " + aLinks[0].getText());
+								},
+								viewName : sViewName
+							});
+						},
+						viewName : sViewName
+					});
+				},
 				pressCancel : function () {
 					Helper.pressButton(this, sViewName, "cancel");
 				},
@@ -150,6 +203,10 @@ sap.ui.define([
 				}
 			},
 			assertions : {
+				checkPartIDValueState : function (sValueState, iRow) {
+					Helper.checkValueState(this, sViewName, /partId-__clone/, sValueState,
+						undefined, false, iRow || 0);
+				},
 				checkPartsLength : function (iExpectedLength) {
 					this.waitFor({
 						controlType : "sap.ui.table.Table",
