@@ -2,8 +2,10 @@
  * ${copyright}
  */
 sap.ui.define([
+	"sap/ui/core/Lib",
 	"sap/ui/rta/command/AppDescriptorCommand"
 ], function(
+	Lib,
 	AppDescriptorCommand
 ) {
 	"use strict";
@@ -43,7 +45,7 @@ sap.ui.define([
 		if (this.getParameters().libraries) {
 			var aLibraries = Object.keys(this.getParameters().libraries);
 			aLibraries.forEach(function(sLibrary) {
-				aPromises.push(sap.ui.getCore().loadLibrary(sLibrary, true));
+				aPromises.push(Lib.load({name: sLibrary}));
 			});
 		}
 

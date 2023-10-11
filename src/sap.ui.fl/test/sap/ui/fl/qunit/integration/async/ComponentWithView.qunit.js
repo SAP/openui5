@@ -33,8 +33,6 @@ sap.ui.define([
 
 	var sandbox = sinon.createSandbox();
 
-	oCore.loadLibrary("sap.ui.fl"); // preload lib for the spy
-
 	var sAddedSimpleFormGroupId = "rootView--id-1504610195259-77";
 
 	QUnit.module("Creation of the first change without a registered propagationListener", {
