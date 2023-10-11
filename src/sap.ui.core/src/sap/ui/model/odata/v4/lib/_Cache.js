@@ -181,7 +181,7 @@ sap.ui.define([
 				}
 				if (vCacheData.$postBodyCollection) { // within a deep create
 					vCacheData.$postBodyCollection.splice(iIndex, 1);
-					that.removeElement(vCacheData, iIndex, sTransientPredicate, sParentPath);
+					that.removeElement(iIndex, sTransientPredicate, vCacheData, sParentPath);
 					fnCallback(iIndex, -1);
 					oError = new Error("Deleted from deep create");
 					oError.canceled = true;
@@ -202,7 +202,7 @@ sap.ui.define([
 			if (Array.isArray(vCacheData)) {
 				oDeleted = that.addDeleted(vCacheData, iIndex, sKeyPredicate, oGroupLock,
 					!!sTransientPredicate);
-				that.removeElement(vCacheData, iIndex, sKeyPredicate, sParentPath);
+				that.removeElement(iIndex, sKeyPredicate, vCacheData, sParentPath);
 			}
 			fnCallback(iIndex, -1);
 			if (oGroupLock) {
@@ -1625,12 +1625,12 @@ sap.ui.define([
 					throw new Error(
 						"Unexpected server response, more than one entity returned.");
 				} else if (aReadResult.length === 0) {
-					that.removeElement(aElements, iIndex, sPredicate, sPath);
+					that.removeElement(iIndex, sPredicate, aElements, sPath);
 					that.oRequestor.getModelInterface()
 						.reportStateMessages(that.sResourcePath, {}, [sPath + sPredicate]);
 					fnOnRemove(false);
 				} else if (bRemoveFromCollection) {
-					that.removeElement(aElements, iIndex, sPredicate, sPath);
+					that.removeElement(iIndex, sPredicate, aElements, sPath);
 					// element no longer in cache -> re-insert via replaceElement
 					that.replaceElement(aElements, undefined, sPredicate, aReadResult[0],
 						mTypeForMetaPath, sPath);
@@ -1663,14 +1663,14 @@ sap.ui.define([
 	 * <code>$byPredicate</code>, <code>$created</code> and <code>$count</code>, and a collection
 	 * cache's limit and number of active elements (if applicable).
 	 *
-	 * @param {object[]} [aElements]
-	 *   The array of elements, defaults to a collection cache's own elements
 	 * @param {number} [iIndex]
 	 *   The array index of the old element to be removed or <code>undefined</code> in case the
 	 *   element is a kept-alive element without an index
 	 * @param {string} sPredicate
 	 *   The key predicate of the old element to be removed
-	 * @param {string} sPath
+	 * @param {object[]} [aElements]
+	 *   The array of elements, defaults to a collection cache's own elements
+	 * @param {string} [sPath=""]
 	 *   The element collection's path within this cache (as used by change listeners), may be
 	 *   <code>""</code> (only in a CollectionCache)
 	 * @returns {number|undefined} The index at which the element actually was (it might have moved
@@ -1678,9 +1678,8 @@ sap.ui.define([
 	 *
 	 * @protected
 	 */
-	// eslint-disable-next-line default-param-last
-	_Cache.prototype.removeElement = function (aElements = this.aElements, iIndex, sPredicate,
-			sPath) {
+	_Cache.prototype.removeElement = function (iIndex, sPredicate, aElements = this.aElements,
+			sPath = "") {
 		var oElement = aElements.$byPredicate[sPredicate],
 			bDeleted = oElement["@$ui5.context.isDeleted"],
 			sTransientPredicate = _Helper.getPrivateAnnotation(oElement, "transientPredicate");
@@ -3310,7 +3309,7 @@ sap.ui.define([
 						oElement = that.aElements.$byPredicate[sPredicate];
 						if (_Helper.hasPrivateAnnotation(oElement, "transientPredicate")) {
 							// Note: iIndex unknown, use -1 instead
-							iIndex = that.removeElement(that.aElements, -1, sPredicate, "");
+							iIndex = that.removeElement(-1, sPredicate);
 						} else {
 							delete that.aElements.$byPredicate[sPredicate];
 						}
