@@ -178,18 +178,18 @@ sap.ui.define([
 	opaTest("4. unfavoure the KURenameVariant1, rename OpaVariant1 variant, change apply auto and save changes", function(Given, When, Then) {
 		// Act
 		When.onFlVariantManagement.iSetFavoriteVariant("KURenameVariant1", false);
-		When.onFlVariantManagement.iRenameVariant("OpaVariant1", "OpaRenameVariant1");
-		When.onFlVariantManagement.iApplyAutomaticallyVariant("OpaRenameVariant1", false);
+		When.onFlVariantManagement.iRenameVariant("OpaVariant1", "AOpaRenameVariant1");
+		When.onFlVariantManagement.iApplyAutomaticallyVariant("AOpaRenameVariant1", false);
 
 		// Assertion
-		Then.onFlVariantManagement.theOpenManageViewsDialogTitleShouldContain(["Standard", "KURenameVariant1", "OpaRenameVariant1"]);
+		Then.onFlVariantManagement.theOpenManageViewsDialogTitleShouldContain(["Standard", "KURenameVariant1", "AOpaRenameVariant1"]);
 
 		Then.onFlVariantManagement.theOpenManageViewsDialogFavoritesShouldContain([true, false, true]);
 		Then.onFlVariantManagement.theOpenManageViewsDialogApplyAutomaticallyShouldContain([false, false, false]);
 
 		When.onFlVariantManagement.iPressTheManageViewsSave(sFLVM_ID);
 
-		Then.onFlVariantManagement.theVariantShouldBeDisplayed(sFLVM_ID, "OpaRenameVariant1");
+		Then.onFlVariantManagement.theVariantShouldBeDisplayed(sFLVM_ID, "AOpaRenameVariant1");
 	});
 
 	opaTest("5. check the 'My Views'", function(Given, When, Then) {
@@ -198,7 +198,7 @@ sap.ui.define([
 		When.onFlVariantManagement.iOpenMyView(sFLVM_ID);
 
 		// Assertion
-		Then.onFlVariantManagement.theMyViewShouldContain(sFLVM_ID, ["Standard", "OpaRenameVariant1"]);
+		Then.onFlVariantManagement.theMyViewShouldContain(sFLVM_ID, ["Standard", "AOpaRenameVariant1"]);
 
 		When.onFlVariantManagement.iOpenMyView(sFLVM_ID); // closes
 	});
@@ -211,16 +211,16 @@ sap.ui.define([
 
 		// Assertion
 		Then.onFlVariantManagement.theOpenManageViewsDialog(sFLVM_ID);
-		Then.onFlVariantManagement.theOpenManageViewsDialogTitleShouldContain(["Standard", "KURenameVariant1", "OpaRenameVariant1"]);
-		Then.onFlVariantManagement.theOpenManageViewsDialogFavoritesShouldContain([true, false, true]);
+		Then.onFlVariantManagement.theOpenManageViewsDialogTitleShouldContain(["Standard", "AOpaRenameVariant1", "KURenameVariant1"]);
+		Then.onFlVariantManagement.theOpenManageViewsDialogFavoritesShouldContain([true, true, false]);
 		Then.onFlVariantManagement.theOpenManageViewsDialogApplyAutomaticallyShouldContain([false, false, false]);
-		Then.onFlVariantManagement.theOpenManageViewsDialogDefaultShouldBe("OpaRenameVariant1");
+		Then.onFlVariantManagement.theOpenManageViewsDialogDefaultShouldBe("AOpaRenameVariant1");
 	});
 
-	opaTest("7. remove OpaRenameVariant1 variant and save change", function(Given, When, Then) {
+	opaTest("7. remove AOpaRenameVariant1 variant and save change", function(Given, When, Then) {
 
 		// Act
-		When.onFlVariantManagement.iRemoveVariant("OpaRenameVariant1");
+		When.onFlVariantManagement.iRemoveVariant("AOpaRenameVariant1");
 
 		// Assertion
 		Then.onFlVariantManagement.theOpenManageViewsDialogTitleShouldContain(["Standard", "KURenameVariant1"]);
