@@ -452,9 +452,10 @@ sap.ui.define([
 
 			var oUploaderButton = this.getCloudFilePickerEnabled() && !this.getUploadButtonInvisible() ? this._getCloudFilePickerMenu() : this.getDefaultFileUploader();
 			var oCloudFilPickerButton = this.getCloudFilePickerEnabled() && this.getUploadButtonInvisible() ? this._getCloudFilePickerButton() : null;
+			var oPersonalizationSettingsButton = this.getEnableVariantManagement() ? this._getPersonalizationControl() : null;
 
 			if (!this._oToolbar) {
-				const aToolbarContent = [new ToolbarSpacer(), oUploaderButton, oCloudFilPickerButton ,this._getPersonalizationControl()];
+				const aToolbarContent = [new ToolbarSpacer(), oUploaderButton, oCloudFilPickerButton , oPersonalizationSettingsButton];
 				if (this.getEnableVariantManagement()) {
 					aToolbarContent.unshift(this._getVariantManagementControl());
 				}
@@ -484,7 +485,10 @@ sap.ui.define([
 					this._setControlInToolbar(iPersonalizationPH, this._getPersonalizationControl());
 				} else if (this._oToolbar) {
 					// fallback position to add file uploader control if UploadSetwithTableActionPlaceHolder.PersonalizationSettingsPlaceholder instance not found
-					this._oToolbar.addContent(this._getPersonalizationControl());
+					// add personalization settings button only if variant management is enabled and placeholder not provided by default.
+					if (this.getEnableVariantManagement()) {
+						this._oToolbar.addContent(this._getPersonalizationControl());
+					}
 				}
 
 				if (this.getEnableVariantManagement()) {
