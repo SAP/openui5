@@ -15,7 +15,7 @@
 
 		<Panel>
 			<w:Card
-				manifest="{cardsPlayground>/playgroundBaseUrl}/bundles/listBundle/manifest.json"
+				manifest="{cardsPlayground>/playgroundBaseUrl}/bundles/listbundle/manifest.json"
 				manifestReady=".onManifestReady"
 				width="400px"
 				class="sapUiSmallMargin" />
