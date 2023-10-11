@@ -22,6 +22,7 @@ sap.ui.define([
 		IFilterContainer.prototype.init.apply(this, arguments);
 		this.oLayout = new AlignedFlowLayout();
 	};
+
 	FilterContainer.prototype.exit = function() {
 		IFilterContainer.prototype.exit.apply(this, arguments);
 		if (this._oButtonsLayout){

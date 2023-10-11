@@ -69,7 +69,7 @@ sap.ui.define(
 								name: "sap/ui/mdc/filterbar/vh/FilterBarDelegate",
 								/**
 								 * Contains the mandatory information about the metamodel name <code>modelName</code> and the main data part in its <code>collectionName</code>.<br>
-								 * <b>Note:</b> Additional information relevant for the specific {@link sap.ui.mdc.FilterBarDelegate FilterBarDelegate} implementation might be included but is of no relevance for the filter bar itself.
+								 * <b>Note:</b> Additional information relevant for the specific {@link sap.ui.mdc.FilterBarDelegate FilterBarDelegate} implementation might be included but is of no relevance for the {@link sap.ui.mdc.FilterBar FilterBar} control itself.
 								 */
 								payload: {
 									modelName: undefined,
@@ -183,12 +183,12 @@ sap.ui.define(
 		};
 
 		/**
-		 * Sets the <code>CollectiveSearch</code> control
+		 * Sets the {@link sap.ui.mdc.filterbar.vh.CollectiveSearchSelect CollectiveSearchSelect} control.
 		 *
 		 * <b>Note:</b> This must only be done by the corresponding value help, not from outside.
 		 *
-		 * @param {sap.ui.mdc.filterbar.vh.CollectiveSearchSelect} oCollectiveSearch <code>CollectiveSearch</code> control
-		 * @returns {this} Reference to <code>this</code> to allow method chaining
+		 * @param {sap.ui.mdc.filterbar.vh.CollectiveSearchSelect} oCollectiveSearch Instance of the {@link sap.ui.mdc.filterbar.vh.CollectiveSearchSelect CollectiveSearchSelect} control
+		 * @returns {sap.ui.mdc.filterbar.vh.FilterBar} Reference to <code>this</code> to allow method chaining
 		 * @protected
 		 */
 		FilterBar.prototype.setCollectiveSearch = function (oCollectiveSearch) {
@@ -206,11 +206,11 @@ sap.ui.define(
 		};
 
 		/**
-		 * Gets the <code>CollectiveSearch</code> control
+		 * Gets the {@link sap.ui.mdc.filterbar.vh.CollectiveSearchSelect CollectiveSearchSelect} control
 		 *
 		 * <b>Note:</b> This must only be used by the corresponding value help, not from outside.
 		 *
-		 * @returns {sap.ui.mdc.filterbar.vh.CollectiveSearchSelect} <code>CollectiveSearch</code> control
+		 * @returns {sap.ui.mdc.filterbar.vh.CollectiveSearchSelect} Instance of the {@link sap.ui.mdc.filterbar.vh.CollectiveSearchSelect CollectiveSearchSelect} control
 		 * @protected
 		 */
 		FilterBar.prototype.getCollectiveSearch = function () {
@@ -218,11 +218,11 @@ sap.ui.define(
 		};
 
 		/**
-		 * Destroys the <code>CollectiveSearch</code> control.
+		 * Destroys the {@link sap.ui.mdc.filterbar.vh.CollectiveSearchSelect CollectiveSearchSelect} control.
 		 *
 		 * <b>Note:</b> This must only be used by the corresponding value help, not from outside.
 		 *
-		 * @returns {this} Reference to <code>this</code> to allow method chaining
+		 * @returns {this} {sap.ui.mdc.filterbar.vh.FilterBar}Reference to <code>this</code> to allow method chaining
 		 * @protected
 		 */
 		 FilterBar.prototype.destroyCollectiveSearch = function () {

@@ -29,9 +29,9 @@ sap.ui.define([
 			properties: {
 
 				/**
-				 * The title of the <code>CollectiveSearchSelect</code>.
+				 * The title of the <code>CollectiveSearchSelect</code> control.
 				 *
-				 * The title will be shown on the popover of the control on top of the List.
+				 * The <code>title</code> property will be shown on the popover of the control on top of the <code>List</code>.
 				 */
 				title: {
 					type: "string",
@@ -40,9 +40,9 @@ sap.ui.define([
 				},
 
 				/**
-				 * The key of the selected item of the <code>CollectiveSearchSelect</code>.
+				 * The key of the selected item of the <code>CollectiveSearchSelect</code> control.
 				 *
-				 * The selectedItemKey must be set to the initially selected item key.
+				 * The <code>selectedItemKey</code> property must be set to the initially selected item key.
 				 * When the user changes the selection, the property will change and reflect the key of the newly selected item.
 				 */
 				selectedItemKey: {

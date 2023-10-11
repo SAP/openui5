@@ -10,7 +10,7 @@ sap.ui.define([
 	"use strict";
 
 	/**
-	 * Constructor for a new filter bar property helper.
+	 * Constructor for a new {@link sap.ui.mdc.FilterBar FilterBar} control property helper.
 	 *
 	 * @param {object[]} aProperties
 	 *     The properties to process in this helper
@@ -18,7 +18,7 @@ sap.ui.define([
 	 *     A reference to an instance that will act as the parent of this helper
 	 *
 	 * @class
-	 * Filter bar property helper provide a consistent and standardized view on properties and their attributes.
+	 * The {@link sap.ui.mdc.FilterBar FilterBar} control property helper provides a consistent and standardized view of properties and their attributes.
 	 * Validates the given properties, sets default values, and provides utilities to work with these properties.
 	 * The utilities can only be used for properties that are known to the helper. Known properties are all those that are passed to the constructor.
 	 *
