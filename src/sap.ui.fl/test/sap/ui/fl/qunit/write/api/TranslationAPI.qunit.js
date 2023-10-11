@@ -7,7 +7,7 @@ sap.ui.define([
 	"sap/ui/fl/initial/_internal/connectors/Utils",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
-	"sap/ui/fl/initial/_internal/config",
+	"sap/ui/fl/initial/_internal/FlexConfiguration",
 	"sap/ui/fl/Utils",
 	"sap/ui/core/Control"
 ], function(
@@ -17,7 +17,7 @@ sap.ui.define([
 	InitialConnector,
 	FlexState,
 	ManifestUtils,
-	config,
+	FlexConfiguration,
 	FlUtils,
 	Control
 ) {
@@ -140,7 +140,7 @@ sap.ui.define([
 					"de-DE"
 				]
 			};
-			sandbox.stub(config, "getFlexibilityServices").returns([
+			sandbox.stub(FlexConfiguration, "getFlexibilityServices").returns([
 				{connector: "KeyUserConnector", layers: [Layer.CUSTOMER], url: "/flexKeyUser"}
 			]);
 
@@ -167,7 +167,7 @@ sap.ui.define([
 				selector: this.oControl,
 				layer: Layer.CUSTOMER
 			};
-			sandbox.stub(config, "getFlexibilityServices").returns([
+			sandbox.stub(FlexConfiguration, "getFlexibilityServices").returns([
 				{connector: "KeyUserConnector", layers: [Layer.CUSTOMER], url: "/flexKeyUser"}
 			]);
 
@@ -186,7 +186,7 @@ sap.ui.define([
 				layer: Layer.CUSTOMER,
 				payload: {}
 			};
-			sandbox.stub(config, "getFlexibilityServices").returns([
+			sandbox.stub(FlexConfiguration, "getFlexibilityServices").returns([
 				{connector: "KeyUserConnector", layers: [Layer.CUSTOMER], url: "/flexKeyUser"}
 			]);
 

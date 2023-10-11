@@ -742,7 +742,7 @@ sap.ui.define([
 		 * @deprecated As of Version 1.120
 		 */
 		getFlexibilityServices : function() {
-			var FlexConfig = sap.ui.require("sap/ui/fl/initial/_internal/config");
+			var FlexConfig = sap.ui.require("sap/ui/fl/initial/_internal/FlexConfiguration");
 			var vFlexibilityServices;
 			if (FlexConfig) {
 				vFlexibilityServices = FlexConfig.getFlexibilityServices();

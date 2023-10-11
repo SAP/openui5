@@ -3,14 +3,14 @@
 sap.ui.define([
 	"sap/ui/fl/write/api/FeaturesAPI",
 	"sap/ui/fl/registry/Settings",
-	"sap/ui/fl/initial/_internal/config",
+	"sap/ui/fl/initial/_internal/FlexConfiguration",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	FeaturesAPI,
 	Settings,
-	config,
+	FlexConfiguration,
 	Layer,
 	Utils,
 	sinon
@@ -167,7 +167,7 @@ sap.ui.define([
 			 * @deprecated Since version 1.108
 			 */
 			QUnit.test(`given isContextSharingEnabled is called for all existing layer in a${bValueToBeSet ? "n ABAP system" : " non ABAP system"}`, function(assert) {
-				sandbox.stub(config, "getFlexibilityServices").returns([
+				sandbox.stub(FlexConfiguration, "getFlexibilityServices").returns([
 					bValueToBeSet ? {connector: "LrepConnector"} : {connector: "NeoLrepConnector"}
 				]);
 				sandbox.stub(Settings, "getInstance").resolves({

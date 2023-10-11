@@ -3,16 +3,14 @@
  */
 
 sap.ui.define([
-	"sap/base/security/encodeURLParameters",
 	"sap/base/Log",
-	"sap/ui/fl/initial/_internal/config",
+	"sap/ui/fl/initial/_internal/FlexConfiguration",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/LayerUtils",
 	"sap/base/util/isEmptyObject"
 ], function(
-	encodeURLParameters,
 	Log,
-	config,
+	FlexConfiguration,
 	Layer,
 	LayerUtils,
 	isEmptyObject
@@ -134,7 +132,7 @@ sap.ui.define([
 		 * @returns {Promise<map[]>} Resolving with a list of maps for all configured connectors and their requested modules
 		 */
 		getConnectors(sNameSpace, bLoadConnectors) {
-			var aConfiguredConnectors = config.getFlexibilityServices();
+			var aConfiguredConnectors = FlexConfiguration.getFlexibilityServices();
 			var mConnectors = [];
 			if (bLoadConnectors) {
 				mConnectors = [STATIC_FILE_CONNECTOR_CONFIGURATION];

@@ -20,7 +20,7 @@ sap.ui.define([
 	"sap/ui/fl/ChangePersistenceFactory",
 	"sap/ui/fl/ChangePersistence",
 	"sap/ui/fl/FlexControllerFactory",
-	"sap/ui/fl/initial/_internal/config",
+	"sap/ui/fl/initial/_internal/FlexConfiguration",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
 	"sap/ui/thirdparty/sinon-4",
@@ -45,7 +45,7 @@ sap.ui.define([
 	ChangePersistenceFactory,
 	ChangePersistence,
 	FlexControllerFactory,
-	config,
+	FlexConfiguration,
 	Layer,
 	Utils,
 	sinon,
@@ -816,7 +816,7 @@ sap.ui.define([
 				selector: this.vSelector,
 				layer: Layer.CUSTOMER
 			};
-			sandbox.stub(config, "getFlexibilityServices").returns([
+			sandbox.stub(FlexConfiguration, "getFlexibilityServices").returns([
 				{connector: "KeyUserConnector", layers: [Layer.CUSTOMER], url: "sap.com"}
 			]);
 

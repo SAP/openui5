@@ -5,7 +5,7 @@ sap.ui.define([
 	"sap/ui/rta/qunit/RtaQunitUtils",
 	"sap/ui/core/Lib",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
-	"sap/ui/fl/initial/_internal/config",
+	"sap/ui/fl/apply/api/FlexRuntimeInfoAPI",
 	"sap/ui/fl/initial/api/Version",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/write/api/ContextBasedAdaptationsAPI",
@@ -29,7 +29,7 @@ sap.ui.define([
 	RtaQunitUtils,
 	Lib,
 	FlexState,
-	config,
+	FlexRuntimeInfoAPI,
 	Version,
 	Settings,
 	ContextBasedAdaptationsAPI,
@@ -812,7 +812,7 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("when being on a system with LocalStorageConnector", function(assert) {
-			sandbox.stub(config, "getFlexibilityServices").returns([
+			sandbox.stub(FlexRuntimeInfoAPI, "getConfiguredFlexServices").returns([
 				{connector: "LocalStorageConnector"}
 			]);
 			return createAndStartRTA.call(this).then(function() {
@@ -826,7 +826,7 @@ sap.ui.define([
 		QUnit.test("when being on a system with KeyUserConnector", function(assert) {
 			var sUrlSplit1 = "https:";
 			var sUrlSplit2 = "//example.com";
-			sandbox.stub(config, "getFlexibilityServices").returns([
+			sandbox.stub(FlexRuntimeInfoAPI, "getConfiguredFlexServices").returns([
 				{connector: "KeyUserConnector", url: sUrlSplit1 + sUrlSplit2}
 			]);
 			return createAndStartRTA.call(this)
@@ -860,7 +860,7 @@ sap.ui.define([
 		QUnit.test("when being on a system with LrepConnector", function(assert) {
 			var sUrlSplit1 = "https:";
 			var sUrlSplit2 = "//example.com";
-			sandbox.stub(config, "getFlexibilityServices").returns([
+			sandbox.stub(FlexRuntimeInfoAPI, "getConfiguredFlexServices").returns([
 				{ connector: "LrepConnector", url: sUrlSplit1 + sUrlSplit2}
 			]);
 			return createAndStartRTA.call(this)
