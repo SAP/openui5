@@ -95,11 +95,10 @@ sap.ui.define([
 
 	/**
 	 * Configuration for formatting specific parameters
-	 * @private
-	 * @ui5-restricted sap.ui.core
+	 * @public
 	 * @alias module:sap/base/i18n/Formatting
 	 * @namespace
-	 * @since 1.116.0
+	 * @since 1.120
 	 */
 	const Formatting = {
 		/**
@@ -109,9 +108,8 @@ sap.ui.define([
 		 * @name module:sap/base/i18n/Formatting.change
 		 * @event
 		 * @param {module:sap/base/i18n/Formatting$ChangeEvent} oEvent
-		 * @private
-		 * @ui5-restricted sap.ui.core
-		 * @since 1.116.0
+		 * @public
+		 * @since 1.120
 		 */
 
 		/**
@@ -201,8 +199,6 @@ sap.ui.define([
 		 * @property {object[]} [legacyDateCalendarCustomizing] The legacy date calendar customizing.
 		 * @property {object} [calendarWeekNumbering] The calendar week numbering.
 		 * @property {object} [calendarType] The calendar type.
-		 * @property {Object<string,string>} [units] The units.
-		 * @property {Object<string,string>} [unitMappings] The unit mapping.
 		 * @property {string} ["dateFormats-short"] The short date format.
 		 * @property {string} ["dateFormats-medium"] The medium date format.
 		 * @property {string} ["dateFormats-long"] The long date format.
@@ -216,12 +212,9 @@ sap.ui.define([
 		 * @property {string} ["symbols-latn-plusSign"] The latin symbols plusSign.
 		 * @property {string} ["symbols-latn-minusSign"] The latin symbols minusSign.
 		 * @property {Object<string,string>} [currency] The currency.
-		 * @property {string[]} ["dayPeriods-format-narrow"] The narrow day periods format.
 		 * @property {string[]} ["dayPeriods-format-abbreviated"] The abbreviated day periods format.
-		 * @property {string[]} ["dayPeriods-format-wide"] The wide day periods format.
-		 * @private
-		 * @ui5-restricted sap.ui.core
-		 * @since 1.118.0
+		 * @public
+		 * @since 1.120
 		 */
 
 		/**
@@ -230,11 +223,10 @@ sap.ui.define([
 		 *
 		 * @param {function(module:sap/base/i18n/Formatting$ChangeEvent)} fnFunction
 		 *   The function to be called when the event occurs
-		 * @private
-		 * @ui5-restricted sap.ui.core
-		 * @since 1.116.0
+		 * @public
+		 * @since 1.120
 		 */
-		attachChange: (fnFunction) => {
+		attachChange(fnFunction) {
 			oEventing.attachEvent("change", fnFunction);
 		},
 
@@ -243,11 +235,10 @@ sap.ui.define([
 		 * this <code>module:sap/base/i18n/Formatting</code>.
 		 *
 		 * @param {function(module:sap/base/i18n/Formatting$ChangeEvent)} fnFunction Function to be called when the event occurs
-		 * @private
-		 * @ui5-restricted sap.ui.core
-		 * @since 1.116.0
+		 * @public
+		 * @since 1.120
 		 */
-		detachChange: (fnFunction) => {
+		detachChange(fnFunction) {
 			oEventing.detachEvent("change", fnFunction);
 		},
 
@@ -264,9 +255,9 @@ sap.ui.define([
 		 *
 		 * @returns {module:sap/base/i18n/LanguageTag} the format LanguageTag
 		 * @public
-		 * @since 1.116.0
+		 * @since 1.120
 		 */
-		getLanguageTag : () => {
+		getLanguageTag() {
 			function fallback() {
 				let oLanguageTag = new LanguageTag(Localization.getLanguage());
 				// if any user settings have been defined, add the private use subtag "sapufmt"
@@ -318,9 +309,9 @@ sap.ui.define([
 		 * @throws {Error} When <code>sLanguageTag</code> is given, but is not a valid BCP47 language
 		 *   tag or Java locale identifier
 		 * @public
-		 * @since 1.116.0
+		 * @since 1.120
 		 */
-		setLanguageTag : (sLanguageTag) => {
+		setLanguageTag(sLanguageTag) {
 			const oLanguageTag = createLanguageTag(sLanguageTag);
 			check(sLanguageTag == null || typeof sLanguageTag === "string" && oLanguageTag, "sLanguageTag must be a BCP47 language tag or Java Locale id or null");
 			sLanguageTag = sLanguageTag === null ? undefined : sLanguageTag;
@@ -337,7 +328,7 @@ sap.ui.define([
 			}
 		},
 
-		_set : function(sKey, oValue) {
+		_set: function(sKey, oValue) {
 			BaseConfig._.invalidate();
 			const oOldValue = mSettings[sKey];
 			if ( oValue != null ) {
@@ -365,7 +356,7 @@ sap.ui.define([
 		 * @private
 		 * @since 1.116.0
 		 */
-		getCustomUnits: () => {
+		getCustomUnits() {
 			return mSettings["units"]?.["short"];
 		},
 
@@ -404,7 +395,7 @@ sap.ui.define([
 		 * @private
 		 * @since 1.116.0
 		 */
-		setCustomUnits: (mUnits) => {
+		setCustomUnits(mUnits) {
 			// add custom units, or remove the existing ones if none are given
 			let mUnitsshort = null;
 			if (mUnits) {
@@ -423,7 +414,7 @@ sap.ui.define([
 		 * @private
 		 * @since 1.116.0
 		 */
-		addCustomUnits: (mUnits) => {
+		addCustomUnits(mUnits) {
 			// add custom units, or remove the existing ones if none are given
 			const mExistingUnits = Formatting.getCustomUnits();
 			if (mExistingUnits){
@@ -448,9 +439,10 @@ sap.ui.define([
 		 * Note: It is possible to create multiple entries per unit key.
 		 * Call with <code>null</code> to delete unit mappings.
 		 * @param {object} mUnitMappings unit mappings
+		 * @private
 		 * @since 1.116.0
 		 */
-		setUnitMappings: (mUnitMappings) => {
+		setUnitMappings(mUnitMappings) {
 			Formatting._set("unitMappings", mUnitMappings);
 		},
 
@@ -462,7 +454,7 @@ sap.ui.define([
 		 * @private
 		 * @since 1.116.0
 		 */
-		addUnitMappings: (mUnitMappings) => {
+		addUnitMappings(mUnitMappings) {
 			// add custom units, or remove the existing ones if none are given
 			const mExistingUnits = Formatting.getUnitMappings();
 			if (mExistingUnits){
@@ -480,7 +472,7 @@ sap.ui.define([
 		 * @see {@link module:sap/base/i18n/Formatting.addUnitMappings}
 		 * @since 1.116.0
 		 */
-		getUnitMappings: () => {
+		getUnitMappings() {
 			return mSettings["unitMappings"];
 		},
 
@@ -489,9 +481,9 @@ sap.ui.define([
 		 * @param {"short"|"medium"|"long"|"full"} sStyle The date style (short, medium, long or full)
 		 * @returns {string} The resulting date pattern
 		 * @public
-		 * @since 1.116.0
+		 * @since 1.120
 		 */
-		getDatePattern : (sStyle) => {
+		getDatePattern(sStyle) {
 			assert(sStyle == "short" || sStyle == "medium" || sStyle == "long" || sStyle == "full", "sStyle must be short, medium, long or full");
 			return mSettings["dateFormats-" + sStyle];
 		},
@@ -512,9 +504,9 @@ sap.ui.define([
 		 * @param {"short"|"medium"|"long"|"full"} sStyle must be one of short, medium, long or full.
 		 * @param {string} sPattern the format pattern to be used in LDML syntax.
 		 * @public
-		 * @since 1.116.0
+		 * @since 1.120
 		 */
-		setDatePattern : (sStyle, sPattern) => {
+		setDatePattern(sStyle, sPattern) {
 			check(sStyle == "short" || sStyle == "medium" || sStyle == "long" || sStyle == "full", "sStyle must be short, medium, long or full");
 			Formatting._set("dateFormats-" + sStyle, sPattern);
 		},
@@ -524,9 +516,9 @@ sap.ui.define([
 		 * @param {"short"|"medium"|"long"|"full"} sStyle The time style (short, medium, long or full)
 		 * @returns {string} The resulting time pattern
 		 * @public
-		 * @since 1.116.0
+		 * @since 1.120
 		 */
-		getTimePattern : (sStyle) => {
+		getTimePattern(sStyle) {
 			assert(sStyle == "short" || sStyle == "medium" || sStyle == "long" || sStyle == "full", "sStyle must be short, medium, long or full");
 			return mSettings["timeFormats-" + sStyle];
 		},
@@ -548,9 +540,9 @@ sap.ui.define([
 		 * @param {"short"|"medium"|"long"|"full"} sStyle must be one of short, medium, long or full.
 		 * @param {string} sPattern the format pattern to be used in LDML syntax.
 		 * @public
-		 * @since 1.116.0
+		 * @since 1.120
 		 */
-		setTimePattern : (sStyle, sPattern) => {
+		setTimePattern(sStyle, sPattern) {
 			check(sStyle == "short" || sStyle == "medium" || sStyle == "long" || sStyle == "full", "sStyle must be short, medium, long or full");
 			Formatting._set("timeFormats-" + sStyle, sPattern);
 		},
@@ -568,9 +560,9 @@ sap.ui.define([
 		 *       <li>"minusSign": "-" (minus sign)</li>
 		 *     </ul>
 		 * @public
-		 * @since 1.116.0
+		 * @since 1.120
 		 */
-		getNumberSymbol : (sType) => {
+		getNumberSymbol(sType) {
 			assert(["group", "decimal", "plusSign", "minusSign"].includes(sType), "sType must be decimal, group, plusSign or minusSign");
 			return mSettings["symbols-latn-" + sType];
 		},
@@ -593,9 +585,9 @@ sap.ui.define([
 		 * @param {"group"|"decimal"|"plusSign"|"minusSign"} sType the type of symbol
 		 * @param {string} sSymbol will be used to represent the given symbol type
 		 * @public
-		 * @since 1.116.0
+		 * @since 1.120
 		 */
-		setNumberSymbol : (sType, sSymbol) => {
+		setNumberSymbol(sType, sSymbol) {
 			check(["group", "decimal", "plusSign", "minusSign"].includes(sType), "sType must be decimal, group, plusSign or minusSign");
 			Formatting._set("symbols-latn-" + sType, sSymbol);
 		},
@@ -611,11 +603,11 @@ sap.ui.define([
 		 * </code>
 		 * @returns {object} the mapping between custom currencies and its digits
 		 * @public
-		 * @since 1.116.0
+		 * @since 1.120
 		 * @see {@link module:sap/base/i18n/Formatting.setCustomCurrencies}
 		 * @see {@link module:sap/base/i18n/Formatting.addCustomCurrencies}
 		 */
-		getCustomCurrencies : () => {
+		getCustomCurrencies() {
 			return mSettings["currency"];
 		},
 
@@ -650,11 +642,11 @@ sap.ui.define([
 		 * Custom currencies must not only consist of digits but contain at least one non-digit character, e.g. "a",
 		 * so that the measure part can be distinguished from the number part.
 		 * @public
-		 * @since 1.116.0
+		 * @since 1.120
 		 * @param {object} mCurrencies currency map which is set
 		 * @see {@link module:sap/base/i18n/Formatting.addCustomCurrencies}
 		 */
-		setCustomCurrencies : (mCurrencies) => {
+		setCustomCurrencies(mCurrencies) {
 			check(typeof mCurrencies === "object" || mCurrencies == null, "mCurrencyDigits must be an object");
 			Object.keys(mCurrencies || {}).forEach(function(sCurrencyDigit) {
 				check(typeof sCurrencyDigit === "string");
@@ -674,11 +666,11 @@ sap.ui.define([
 		 * </code>
 		 *
 		 * @public
-		 * @since 1.116.0
+		 * @since 1.120
 		 * @param {object} mCurrencies adds to the currency map
 		 * @see {@link module:sap/base/i18n/Formatting.setCustomCurrencies}
 		 */
-		addCustomCurrencies: (mCurrencies) => {
+		addCustomCurrencies(mCurrencies) {
 			// add custom units, or remove the existing ones if none are given
 			const mExistingCurrencies = Formatting.getCustomCurrencies();
 			if (mExistingCurrencies){
@@ -687,7 +679,7 @@ sap.ui.define([
 			Formatting.setCustomCurrencies(mCurrencies);
 		},
 
-		_setDayPeriods : (sWidth, aTexts) => {
+		_setDayPeriods(sWidth, aTexts) {
 			assert(sWidth == "narrow" || sWidth == "abbreviated" || sWidth == "wide", "sWidth must be narrow, abbreviated or wide");
 			Formatting._set("dayPeriods-format-" + sWidth, aTexts);
 		},
@@ -698,9 +690,9 @@ sap.ui.define([
 		 * @returns {"1"|"2"|"3"|"4"|"5"|"6"|"7"|"8"|"9"|"A"|"B"|"C"|undefined} ID of the ABAP date format,
 		 *   if not set or set to <code>""</code>, <code>undefined</code> will be returned
 		 * @public
-		 * @since 1.116.0
+		 * @since 1.120
 		 */
-		getLegacyDateFormat : () => {
+		getLegacyDateFormat() {
 			const sLegacyDateFormat = oWritableConfig.get({
 				name: "sapUiLegacyDateFormat",
 				type: BaseConfig.Type.String,
@@ -724,9 +716,9 @@ sap.ui.define([
 		 *   <code>""</code> will reset the date patterns for 'short' and 'medium' style to the
 		 *   locale-specific ones.
 		 * @public
-		 * @since 1.116.0
+		 * @since 1.120
 		 */
-		setLegacyDateFormat : (sFormatId) => {
+		setLegacyDateFormat(sFormatId) {
 			sFormatId = sFormatId ? String(sFormatId).toUpperCase() : "";
 			check(M_ABAP_DATE_FORMAT_PATTERN.hasOwnProperty(sFormatId), "sFormatId must be one of ['1','2','3','4','5','6','7','8','9','A','B','C'] or empty");
 			const bFireEvent = !mChanges;
@@ -749,9 +741,9 @@ sap.ui.define([
 		 * @returns {"0"|"1"|"2"|"3"|"4"|undefined} ID of the ABAP date format,
 		 *   if not set or set to <code>""</code>, <code>undefined</code> will be returned
 		 * @public
-		 * @since 1.116.0
+		 * @since 1.120
 		 */
-		getLegacyTimeFormat : () => {
+		getLegacyTimeFormat() {
 			const sLegacyTimeFormat = oWritableConfig.get({
 				name: "sapUiLegacyTimeFormat",
 				type: BaseConfig.Type.String,
@@ -776,9 +768,9 @@ sap.ui.define([
 		 *   <code>""</code> will reset the time patterns for 'short' and 'medium' style and the day
 		 *   period texts to the locale-specific ones.
 		 * @public
-		 * @since 1.116.0
+		 * @since 1.120
 		 */
-		setLegacyTimeFormat : (sFormatId) => {
+		setLegacyTimeFormat(sFormatId) {
 			sFormatId = sFormatId || "";
 			check(M_ABAP_TIME_FORMAT_PATTERN.hasOwnProperty(sFormatId), "sFormatId must be one of ['0','1','2','3','4'] or empty");
 			const bFireEvent = !mChanges;
@@ -802,9 +794,9 @@ sap.ui.define([
 		 * @returns {" "|"X"|"Y"|undefined} ID of the ABAP number format,
 		 *   if not set or set to <code>""</code>, <code>undefined</code> will be returned
 		 * @public
-		 * @since 1.116.0
+		 * @since 1.120
 		 */
-		getLegacyNumberFormat : () => {
+		getLegacyNumberFormat() {
 			const sLegacyNumberFormat = oWritableConfig.get({
 				name: "sapUiLegacyNumberFormat",
 				type: BaseConfig.Type.String,
@@ -828,9 +820,9 @@ sap.ui.define([
 		 *   <code>""</code> will reset the 'group' and 'decimal' symbols to the locale-specific
 		 *   ones.
 		 * @public
-		 * @since 1.116.0
+		 * @since 1.120
 		 */
-		setLegacyNumberFormat : (sFormatId) => {
+		setLegacyNumberFormat(sFormatId) {
 			sFormatId = sFormatId ? sFormatId.toUpperCase() : "";
 			check(M_ABAP_NUMBER_FORMAT_SYMBOLS.hasOwnProperty(sFormatId), "sFormatId must be one of [' ','X','Y'] or empty");
 			const bFireEvent = !mChanges;
@@ -855,9 +847,9 @@ sap.ui.define([
 		 * @param {string} aMappings[].islamicMonthStart The Islamic date
 		 * @param {string} aMappings[].gregDate The corresponding Gregorian date
 		 * @public
-		 * @since 1.116.0
+		 * @since 1.120
 		 */
-		setLegacyDateCalendarCustomizing : (aMappings) => {
+		setLegacyDateCalendarCustomizing(aMappings) {
 			check(Array.isArray(aMappings), "aMappings must be an Array");
 			const bFireEvent = !mChanges;
 			mChanges ??= {};
@@ -872,9 +864,9 @@ sap.ui.define([
 		 *
 		 * @returns {object[]} Returns an array contains the customizing data. Each element in the array has properties: dateFormat, islamicMonthStart, gregDate. For details, please see {@link #setLegacyDateCalendarCustomizing}
 		 * @public
-		 * @since 1.116.0
+		 * @since 1.120
 		 */
-		getLegacyDateCalendarCustomizing : () => {
+		getLegacyDateCalendarCustomizing() {
 			let aLegacyDateCalendarCustomizing = Formatting.aLegacyDateCalendarCustomizing;
 			if (aLegacyDateCalendarCustomizing) {
 				aLegacyDateCalendarCustomizing = aLegacyDateCalendarCustomizing.slice();
@@ -894,11 +886,10 @@ sap.ui.define([
 		 * with this setting unless overwritten on instance level.
 		 *
 		 * @param {boolean} bTrailingCurrencyCode Whether currency codes shall always be placed after the numeric value
-		 * @since 1.75.0
 		 * @public
-		 * @since 1.116.0
+		 * @since 1.120
 		 */
-		setTrailingCurrencyCode : (bTrailingCurrencyCode) => {
+		setTrailingCurrencyCode(bTrailingCurrencyCode) {
 			check(typeof bTrailingCurrencyCode === "boolean", "bTrailingCurrencyCode must be a boolean");
 			oWritableConfig.set("sapUiTrailingCurrencyCode", bTrailingCurrencyCode);
 		},
@@ -907,11 +898,10 @@ sap.ui.define([
 		 * Returns current trailingCurrencyCode configuration for new NumberFormatter instances
 		 *
 		 * @return {boolean} Whether currency codes shall always be placed after the numeric value
-		 * @since 1.75.0
 		 * @public
-		 * @since 1.116.0
+		 * @since 1.120
 		 */
-		getTrailingCurrencyCode : () => {
+		getTrailingCurrencyCode() {
 			return oWritableConfig.get({
 				name: "sapUiTrailingCurrencyCode",
 				type: BaseConfig.Type.Boolean,
@@ -928,7 +918,7 @@ sap.ui.define([
 		 * @private
 		 * @since 1.116.0
 		 */
-		getCustomLocaleData : () => {
+		getCustomLocaleData() {
 			return mSettings;
 		},
 
@@ -939,9 +929,9 @@ sap.ui.define([
 		 * @returns {module:sap/base/i18n/date/CalendarWeekNumbering} The calendar week numbering algorithm
 		 *
 		 * @public
-		 * @since 1.116.0
+		 * @since 1.120
 		 */
-		getCalendarWeekNumbering: () => {
+		getCalendarWeekNumbering() {
 			let oCalendarWeekNumbering = CalendarWeekNumbering.Default;
 
 			try {
@@ -968,9 +958,9 @@ sap.ui.define([
 		 *   defined in {@link module:sap/base/i18n/date/CalendarWeekNumbering}
 		 *
 		 * @public
-		 * @since 1.116.0
+		 * @since 1.120
 		 */
-		setCalendarWeekNumbering: (sCalendarWeekNumbering) => {
+		setCalendarWeekNumbering(sCalendarWeekNumbering) {
 			BaseConfig._.checkEnum(CalendarWeekNumbering, sCalendarWeekNumbering, "calendarWeekNumbering");
 			const sCurrentWeekNumbering = oWritableConfig.get({
 				name: "sapUiCalendarWeekNumbering",
@@ -996,9 +986,10 @@ sap.ui.define([
 		 * Otherwise, the calendar type is determined by checking the format settings and current locale.
 		 *
 		 * @returns {module:sap/base/i18n/date/CalendarType} the current calendar type, e.g. <code>Gregorian</code>
-		 * @since 1.116.0
+		 * @public
+		 * @since 1.120
 		 */
-		getCalendarType: () => {
+		getCalendarType() {
 			let sName,
 				sCalendarType = oWritableConfig.get({
 					name: "sapUiCalendarType",
@@ -1048,9 +1039,9 @@ sap.ui.define([
 		 * @param {module:sap/base/i18n/date/CalendarType|null} sCalendarType the new calendar type. Set it with null to clear the calendar type
 		 *   and the calendar type is calculated based on the format settings and current locale.
 		 * @public
-		 * @since 1.116.0
+		 * @since 1.120
 		 */
-		setCalendarType : (sCalendarType) => {
+		setCalendarType(sCalendarType) {
 			const sOldCalendarType = Formatting.getCalendarType();
 			oWritableConfig.set("sapUiCalendarType", sCalendarType);
 			const sCurrentCalendarType = Formatting.getCalendarType();
