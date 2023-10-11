@@ -40,7 +40,10 @@ sap.ui.define([
 			oElement["@$ui5.node.isExpanded"] = undefined;
 			oPlaceholder["@$ui5.node.isExpanded"] = undefined;
 		}
-		this.mock(_Helper).expects("copyPrivateAnnotation")
+		const oHelperMock = this.mock(_Helper);
+		oHelperMock.expects("copyPrivateAnnotation")
+			.withExactArgs(sinon.match.same(oPlaceholder), "cache", sinon.match.same(oElement));
+		oHelperMock.expects("copyPrivateAnnotation")
 			.withExactArgs(sinon.match.same(oPlaceholder), "spliced", sinon.match.same(oElement));
 
 		// code under test
@@ -64,7 +67,10 @@ sap.ui.define([
 			oPlaceholder = _AggregationHelper.createPlaceholder(0, 42, oCache);
 
 		this.mock(_AggregationHelper).expects("checkNodeProperty").never();
-		this.mock(_Helper).expects("copyPrivateAnnotation")
+		const oHelperMock = this.mock(_Helper);
+		oHelperMock.expects("copyPrivateAnnotation")
+			.withExactArgs(sinon.match.same(oPlaceholder), "cache", sinon.match.same(oElement));
+		oHelperMock.expects("copyPrivateAnnotation")
 			.withExactArgs(sinon.match.same(oPlaceholder), "spliced", sinon.match.same(oElement));
 
 		// code under test
@@ -82,7 +88,10 @@ sap.ui.define([
 
 		this.mock(_AggregationHelper).expects("checkNodeProperty").never();
 		assert.notOk("@$ui5.node.isExpanded" in oPlaceholder);
-		this.mock(_Helper).expects("copyPrivateAnnotation").thrice()
+		const oHelperMock = this.mock(_Helper);
+		oHelperMock.expects("copyPrivateAnnotation").thrice()
+			.withExactArgs(sinon.match.same(oPlaceholder), "cache", sinon.match.same(oElement));
+		oHelperMock.expects("copyPrivateAnnotation").thrice()
 			.withExactArgs(sinon.match.same(oPlaceholder), "spliced", sinon.match.same(oElement));
 
 		// code under test
