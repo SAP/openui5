@@ -28181,6 +28181,102 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
+	// Scenario: Delete multiple nodes in a recursive hierarchy
+	// JIRA: CPOUI5ODATAV4-2302
+	QUnit.test("Recursive Hierarchy: delete multiple nodes", async function (assert) {
+		const oModel = this.createTeaBusiModel({autoExpandSelect : true});
+		const sView = `
+<Table id="table" items="{path : '/EMPLOYEES',
+		parameters : {
+			$$aggregation : {
+				hierarchyQualifier : 'OrgChart'
+			}
+		}}">
+	<Text text="{= %{@$ui5.node.isExpanded} }"/>
+	<Text text="{= %{@$ui5.node.level} }"/>
+	<Text text="{ID}"/>
+	<Text text="{MANAGER_ID}"/>
+	<Text text="{Name}"/>
+</Table>`;
+
+		// 0 Alpha
+		//   1 Beta (deleted)
+		//   2 Gamma (deleted)
+		//   3 Delta
+		this.expectRequest("EMPLOYEES?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels"
+				+ "(HierarchyNodes=$root/EMPLOYEES,HierarchyQualifier='OrgChart',NodeProperty='ID'"
+				+ ",Levels=1)"
+				+ "&$select=DrillState,ID,MANAGER_ID,Name&$count=true&$skip=0&$top=100", {
+				"@odata.count" : "1",
+				value : [{
+					DrillState : "collapsed",
+					ID : "0",
+					MANAGER_ID : null,
+					Name : "Alpha"
+				}]
+			});
+
+		await this.createView(assert, sView, oModel);
+
+		this.expectRequest("EMPLOYEES"
+				+ "?$apply=descendants($root/EMPLOYEES,OrgChart,ID,filter(ID eq '0'),1)"
+				+ "&$select=DrillState,ID,MANAGER_ID,Name&$count=true&$skip=0&$top=100", {
+				"@odata.count" : "3",
+				value : [{
+					DrillState : "leaf",
+					ID : "1",
+					MANAGER_ID : "0",
+					Name : "Beta"
+				}, {
+					DrillState : "leaf",
+					ID : "2",
+					MANAGER_ID : "0",
+					Name : "Gamma"
+				}, {
+					DrillState : "leaf",
+					ID : "3",
+					MANAGER_ID : "0",
+					Name : "Delta"
+				}]
+			});
+
+		const oTable = this.oView.byId("table");
+		oTable.getItems()[0].getBindingContext().expand();
+
+		await this.waitForChanges(assert, "expand Alpha");
+
+		checkTable("after expand Alpha", assert, oTable, [
+			"/EMPLOYEES('0')",
+			"/EMPLOYEES('1')",
+			"/EMPLOYEES('2')",
+			"/EMPLOYEES('3')"
+		], [
+			[true, 1, "0", "", "Alpha"],
+			[undefined, 2, "1", "0", "Beta"],
+			[undefined, 2, "2", "0", "Gamma"],
+			[undefined, 2, "3", "0", "Delta"]
+		]);
+
+		this.expectRequest("DELETE EMPLOYEES('1')")
+			.expectRequest("DELETE EMPLOYEES('2')");
+
+		await Promise.all([
+			// code under test
+			oTable.getItems()[1].getBindingContext().delete(),
+			oTable.getItems()[2].getBindingContext().delete(),
+			this.waitForChanges(assert, "delete Beta and Gamma")
+		]);
+
+		checkTable("after delete", assert, oTable, [
+			"/EMPLOYEES('0')",
+			"/EMPLOYEES('3')"
+		], [
+			[true, 1, "0", "", "Alpha"],
+			[undefined, 2, "3", "0", "Delta"]
+		]);
+	});
+
+	//*********************************************************************************************
 	// Scenario: Show the single root node of a recursive hierarchy, which happens to be a leaf.
 	// Create two new child nodes ("Beta", "Gamma") underneath.
 	// Note: The "_Friend" navigation property is misused in order to have an artist play the role

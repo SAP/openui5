@@ -4139,6 +4139,7 @@ sap.ui.define([
 		const fnCallback = sinon.spy();
 		const iCallCount = oFixture.success ? 1 : 0;
 		const iIndex = oFixture.noParent ? 0 : 2;
+		const iMovedIndex = oFixture.noParent ? 0 : 4;
 		const oParent = {
 			"@$ui5.node.isExpanded" : true
 		};
@@ -4149,7 +4150,7 @@ sap.ui.define([
 
 		oCache.aElements[iIndex] = "~oElement~";
 		if (!oFixture.noParent) {
-			oCache.aElements[1] = oParent;
+			oCache.aElements[iMovedIndex - 1] = oParent;
 		}
 		const oHelperMock = this.mock(_Helper);
 		oHelperMock.expects("getPrivateAnnotation").withExactArgs("~oElement~", "parent")
@@ -4161,6 +4162,9 @@ sap.ui.define([
 		this.mock(this.oRequestor).expects("request")
 			.withExactArgs("DELETE", "~editUrl~", "~groupLock~", {"If-Match" : "~oElement~"})
 			.callsFake(() => {
+				this.mock(_Cache).expects("getElementIndex").exactly(iCallCount)
+					.withExactArgs(sinon.match.same(oCache.aElements), "~predicate~", iIndex)
+					.returns(iMovedIndex);
 				oRemoveExpectation = this.mock(oParentCache).expects("removeElement")
 					.exactly(iCallCount)
 					.withExactArgs(undefined, "~index~", "~predicate~", "");
@@ -4174,9 +4178,10 @@ sap.ui.define([
 					.withExactArgs(sinon.match.same(oCache.mChangeListeners), "~parentPredicate~",
 						sinon.match.same(oParent), {"@$ui5.node.isExpanded" : undefined});
 				this.mock(oCache).expects("shiftIndex").exactly(iCallCount)
-					.withExactArgs(iIndex, -1);
+					.withExactArgs(iMovedIndex, -1);
 				this.mock(oCache).expects("removeElement").exactly(iCallCount)
-					.withExactArgs(sinon.match.same(oCache.aElements), iIndex, "~predicate~", "");
+					.withExactArgs(sinon.match.same(oCache.aElements), iMovedIndex, "~predicate~",
+						 "");
 
 				return oFixture.success ? Promise.resolve() : Promise.reject("~error~");
 			});
@@ -4190,7 +4195,7 @@ sap.ui.define([
 		return oDeletePromise.then(function () {
 			assert.ok(oFixture.success);
 			assert.strictEqual(fnCallback.callCount, 1);
-			assert.deepEqual(fnCallback.args[0], [iIndex, -1]);
+			assert.deepEqual(fnCallback.args[0], [iMovedIndex, -1]);
 			assert.ok(oRemoveExpectation.calledBefore(oCountExpectation));
 			if (oFixture.parentLeaf) {
 				assert.notOk("@$ui5.node.isExpanded" in oParent);
