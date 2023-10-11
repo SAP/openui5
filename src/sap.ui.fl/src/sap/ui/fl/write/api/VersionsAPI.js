@@ -6,19 +6,19 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/initial/_internal/FlexInfoSession",
+	"sap/ui/fl/initial/api/Version",
 	"sap/ui/fl/write/_internal/Versions",
 	"sap/ui/fl/write/api/ContextBasedAdaptationsAPI",
 	"sap/ui/fl/write/api/FeaturesAPI",
-	"sap/ui/fl/write/api/Version",
 	"sap/ui/fl/Utils"
 ], function(
 	FlexState,
 	ManifestUtils,
 	FlexInfoSession,
+	Version,
 	Versions,
 	ContextBasedAdaptationsAPI,
 	FeaturesAPI,
-	Version,
 	Utils
 ) {
 	"use strict";
