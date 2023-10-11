@@ -8,7 +8,8 @@ sap.ui.define([
 	"sap/ui/layout/form/FormContainer",
 	"sap/m/Button",
 	"sap/ui/layout/VerticalLayout",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/ui/core/Element"
 ], function(
 	ElementMover,
 	OverlayRegistry,
@@ -17,7 +18,8 @@ sap.ui.define([
 	FormContainer,
 	Button,
 	VerticalLayout,
-	oCore
+	oCore,
+	Element
 ) {
 	"use strict";
 
@@ -30,8 +32,8 @@ sap.ui.define([
 				]
 			});
 
-			this.oGroup1 = oCore.byId("group1");
-			this.oGroup2 = oCore.byId("group2");
+			this.oGroup1 = Element.getElementById("group1");
+			this.oGroup2 = Element.getElementById("group2");
 			this.oElementMover = new ElementMover();
 
 			this.oForm1.placeAt("qunit-fixture");

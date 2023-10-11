@@ -12,7 +12,6 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/base/ManagedObject",
 	"sap/ui/core/BusyIndicator",
-	"sap/ui/core/Core",
 	"sap/ui/core/Lib",
 	"sap/ui/dt/DesignTime",
 	"sap/ui/dt/DOMUtil",
@@ -30,6 +29,7 @@ sap.ui.define([
 	"sap/ui/fl/write/api/ReloadInfoAPI",
 	"sap/ui/fl/write/api/VersionsAPI",
 	"sap/ui/fl/write/api/TranslationAPI",
+	"sap/ui/fl/initial/_internal/config",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/Utils",
@@ -61,7 +61,6 @@ sap.ui.define([
 	jQuery,
 	ManagedObject,
 	BusyIndicator,
-	Core,
 	Lib,
 	DesignTime,
 	DOMUtil,
@@ -79,6 +78,7 @@ sap.ui.define([
 	ReloadInfoAPI,
 	VersionsAPI,
 	TranslationAPI,
+	config,
 	Layer,
 	Settings,
 	FlexUtils,
@@ -1536,7 +1536,7 @@ sap.ui.define([
 				var bVisualizationButtonVisible;
 				bVisualizationButtonVisible = !oUriParameters.has("fiori-tools-rta-mode")
 					|| oUriParameters.get("fiori-tools-rta-mode") === "false";
-				var bFeedbackButtonVisible = Core.getConfiguration().getFlexibilityServices().some(function(oFlexibilityService) {
+				var bFeedbackButtonVisible = config.getFlexibilityServices().some(function(oFlexibilityService) {
 					return oFlexibilityService.connector !== "LocalStorageConnector";
 				});
 				this.bPersistedDataTranslatable = false;

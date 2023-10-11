@@ -36,7 +36,6 @@ sap.ui.define([
  "sap/base/util/LoaderExtensions",
  // former sap-ui-core.js dependencies
  "sap/ui/Device",
- "sap/ui/core/Configuration",
  "sap/base/config",
  "sap/ui/thirdparty/jquery",
  "sap/ui/thirdparty/jqueryui/jquery-ui-position",
@@ -53,7 +52,6 @@ sap.ui.define([
 	syncXHRFix, LoaderExtensions,
 
 	Device,
-	Configuration,
 	BaseConfig,
 
 	jQuery /*, jqueryUiPosition, ui5loaderAutoconfig, jquerySapStubs, URI, PasteEventFix */) {

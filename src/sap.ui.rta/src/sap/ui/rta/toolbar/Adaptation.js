@@ -6,9 +6,11 @@ sap.ui.define([
 	"./AdaptationRenderer",
 	"sap/base/Log",
 	"sap/ui/core/BusyIndicator",
+	"sap/ui/core/Element",
 	"sap/ui/core/Fragment",
 	"sap/ui/core/Popup",
 	"sap/ui/core/Core",
+	"sap/ui/fl/initial/_internal/config",
 	"sap/ui/fl/write/api/ContextBasedAdaptationsAPI",
 	"sap/ui/fl/write/api/Version",
 	"sap/ui/model/json/JSONModel",
@@ -25,9 +27,11 @@ sap.ui.define([
 	AdaptationRenderer,
 	Log,
 	BusyIndicator,
+	Element,
 	Fragment,
 	Popup,
 	Core,
+	config,
 	ContextBasedAdaptationsAPI,
 	Version,
 	JSONModel,
@@ -473,10 +477,10 @@ sap.ui.define([
 	}
 
 	Adaptation.prototype.getControl = function(sName) {
-		var oControl = sap.ui.getCore().byId(`${this.getId()}_fragment--sapUiRta_${sName}`);
+		var oControl = Element.getElementById(`${this.getId()}_fragment--sapUiRta_${sName}`);
 		// Control is inside the ActionsMenu
 		if (!oControl && this._oActionsMenuFragment) {
-			oControl = sap.ui.getCore().byId(this._oActionsMenuFragment.getId().replace("sapUiRta_actions", "sapUiRta_") + sName);
+			oControl = Element.getElementById(this._oActionsMenuFragment.getId().replace("sapUiRta_actions", "sapUiRta_") + sName);
 		}
 		return oControl;
 	};
@@ -493,7 +497,7 @@ sap.ui.define([
 
 	Adaptation.prototype.showFeedbackForm = function() {
 		// Get Connector Type
-		var sConnector = Core.getConfiguration().getFlexibilityServices()[0].connector;
+		var sConnector = config.getFlexibilityServices()[0].connector;
 
 		// Set URL
 		var sURLPart1 = "https://sapinsights.eu.qualtrics.com/jfe/form/";

@@ -9,7 +9,7 @@ sap.ui.define([
 	"sap/ui/test/gherkin/qUnitTestHarness",
 	"sap/ui/test/gherkin/StepDefinitions",
 	"sap/m/Label",
-	"./testHarnessTests"
+	"gherkin/testHarnessTests"
 ], function(qUnitTestHarness, StepDefinitions, Label, testHarnessTests) {
 	'use strict';
 

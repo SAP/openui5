@@ -387,7 +387,7 @@ sap.ui.define([
 				if (typeof vControlOrId == "string") {
 					this.attr("id", vControlOrId);
 				} else {
-					assert(vControlOrId && BaseObject.isA(vControlOrId, 'sap.ui.core.Element'), "vControlOrId must be an sap.ui.core.Element");
+					assert(vControlOrId && BaseObject.isObjectA(vControlOrId, 'sap.ui.core.Element'), "vControlOrId must be an sap.ui.core.Element");
 
 					this.attr("id", vControlOrId.getId());
 					renderElementData(this, vControlOrId);
@@ -812,7 +812,7 @@ sap.ui.define([
 		 * @since 1.22.9
 		 */
 		this.cleanupControlWithoutRendering = function(oControl) {
-			assert(!oControl || BaseObject.isA(oControl, 'sap.ui.core.Control'), "oControl must be an sap.ui.core.Control or empty");
+			assert(!oControl || BaseObject.isObjectA(oControl, 'sap.ui.core.Control'), "oControl must be an sap.ui.core.Control or empty");
 			if (!oControl) {
 				return;
 			}
@@ -952,7 +952,7 @@ sap.ui.define([
 		 * @public
 		 */
 		this.renderControl = function(oControl) {
-			assert(!oControl || BaseObject.isA(oControl, 'sap.ui.core.Control'), "oControl must be an sap.ui.core.Control or empty");
+			assert(!oControl || BaseObject.isObjectA(oControl, 'sap.ui.core.Control'), "oControl must be an sap.ui.core.Control or empty");
 			if (!oControl) {
 				return this;
 			}
@@ -1289,7 +1289,7 @@ sap.ui.define([
 		 * @public
 		 */
 		this.render = function(oControl, oTargetDomNode) {
-			assert(oControl && BaseObject.isA(oControl, 'sap.ui.core.Control'), "oControl must be a control");
+			assert(oControl && BaseObject.isObjectA(oControl, 'sap.ui.core.Control'), "oControl must be a control");
 			assert(typeof oTargetDomNode === "object" && oTargetDomNode.ownerDocument == document, "oTargetDomNode must be a DOM element");
 			if ( bLocked ) {
 				Log.error("Render must not be called within Before or After Rendering Phase. Call ignored.", null, this);
@@ -1490,7 +1490,7 @@ sap.ui.define([
 			return this;
 		}
 
-		if (arguments.length == 1 && !(BaseObject.isA(oElement, 'sap.ui.core.Element'))) {
+		if (arguments.length == 1 && !(BaseObject.isObjectA(oElement, 'sap.ui.core.Element'))) {
 			mProps = oElement;
 			oElement = null;
 		}
@@ -1570,7 +1570,7 @@ sap.ui.define([
 		}
 
 		// allow parent (e.g. FormElement) to overwrite or enhance aria attributes
-		if (BaseObject.isA(oElement, 'sap.ui.core.Element')) {
+		if (BaseObject.isObjectA(oElement, 'sap.ui.core.Element')) {
 			var oParent = oElement.getParent();
 			if (oParent && oParent.enhanceAccessibilityState) {
 				var mOldAriaProps = Object.assign({}, mAriaProps);
@@ -1581,7 +1581,7 @@ sap.ui.define([
 				if (mAriaProps.canSkipRendering == false
 					|| (
 						mAriaProps.canSkipRendering == undefined
-						&& BaseObject.isA(oElement, "sap.ui.core.Control")
+						&& BaseObject.isObjectA(oElement, "sap.ui.core.Control")
 						&& RenderManager.canSkipRendering(oElement)
 						&& JSON.stringify(mOldAriaProps) != JSON.stringify(mAriaProps)
 					)
@@ -1752,7 +1752,7 @@ sap.ui.define([
 	 * @public
 	 */
 	RenderManager.prototype.getRenderer = function(oControl) {
-		assert(oControl && BaseObject.isA(oControl, 'sap.ui.core.Control'), "oControl must be an sap.ui.core.Control");
+		assert(oControl && BaseObject.isObjectA(oControl, 'sap.ui.core.Control'), "oControl must be an sap.ui.core.Control");
 		return RenderManager.getRenderer(oControl);
 	};
 
@@ -1808,7 +1808,7 @@ sap.ui.define([
 	 * @public
 	 */
 	RenderManager.getRenderer = function(oControl) {
-		assert(oControl && BaseObject.isA(oControl, 'sap.ui.core.Control'), "oControl must be an sap.ui.core.Control");
+		assert(oControl && BaseObject.isObjectA(oControl, 'sap.ui.core.Control'), "oControl must be an sap.ui.core.Control");
 
 		return oControl.getMetadata().getRenderer();
 	};
@@ -2201,7 +2201,7 @@ sap.ui.define([
 		var sId = oElement.getId();
 		oRm.attr("data-sap-ui", sId);
 
-		if (BaseObject.isA(oElement, "sap.ui.core.Control") && !RenderManager.canSkipRendering(oElement)) {
+		if (BaseObject.isObjectA(oElement, "sap.ui.core.Control") && !RenderManager.canSkipRendering(oElement)) {
 			oRm.attr(ATTR_DO_NOT_SKIP_RENDERING_MARKER, "");
 		}
 

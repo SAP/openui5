@@ -7,19 +7,14 @@ sap.ui.define([
 	'sap/ui/core/Popup',
 	'sap/ui/core/library',
 	'sap/ui/core/Control',
+	'sap/ui/core/Element',
 	'sap/ui/Device',
-	'sap/ui/core/Core',
 	"sap/base/Log",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Configuration",
-	"sap/ui/core/Element",
-	"sap/ui/core/UIArea"
+	"sap/ui/core/Configuration"
 ],
-	function(InstanceManager, Popup, coreLibrary, Control, Device, Core, Log, jQuery, Configuration, Element, UIArea) {
+	function(InstanceManager, Popup, coreLibrary, Control, Element, Device, Log, jQuery, Configuration) {
 		"use strict";
-
-		// shortcut for sap.ui.core.UIArea.registry
-		var registry = UIArea.registry;
 
 		// shortcut for sap.ui.core.Dock
 		var Dock = coreLibrary.Dock;
@@ -408,9 +403,7 @@ sap.ui.define([
 		 * @public
 		 */
 		MessageToast.show = function(sMessage, mOptions) {
-			var oOpener = Core.byId(Core.getCurrentFocusedControlId()) || Element.closestTo(document.activeElement);
-			var oUI5Area = oOpener && oOpener.getUIArea && oOpener.getUIArea() || registry.all()['body'] || registry.all()['content'];
-			var oOpenerUI5Area = oOpener && oOpener.getUIArea  && oOpener.getUIArea();
+			var oOpener = Element.closestTo(document.activeElement);
 			var oAccSpan;
 			var that = MessageToast,
 				mSettings = jQuery.extend({}, MessageToast._mSettings, { message: sMessage }),
@@ -421,12 +414,6 @@ sap.ui.define([
 				iMouseLeaveTimeoutId;
 
 			MessageToast._mSettings.opener = oOpener;
-
-			// Find the uppper-most parent to attach the keyboard shortcut as we need to be
-			// able to open the message no matter where the focus is currently
-			if (!this._oRootNode || (this._oRootNode && oOpenerUI5Area && oOpenerUI5Area.getRootNode() !== this._oRootNode)) {
-				this._oRootNode = oUI5Area ? oUI5Area.getRootNode() : null;
-			}
 
 			mOptions = normalizeOptions(mOptions);
 
@@ -480,13 +467,7 @@ sap.ui.define([
 			oAccSpan.setAttribute("class", "sapMMessageToastHiddenFocusable");
 
 			oPopup.getContent().prepend(oAccSpan);
-
-			if (this._oRootNode) {
-				this._oRootNode.removeEventListener("keydown", that._fnKeyDown.bind(that));
-				this._oRootNode.addEventListener("keydown", that._fnKeyDown.bind(that));
-
-				oAccSpan.addEventListener("keydown", handleKbdClose.bind(this));
-			}
+			oAccSpan.addEventListener("keydown", handleKbdClose.bind(this));
 
 			// opens the popup's content at the position specified via #setPosition
 			oPopup.open();

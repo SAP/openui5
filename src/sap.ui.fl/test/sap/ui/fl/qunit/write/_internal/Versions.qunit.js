@@ -7,6 +7,7 @@ sap.ui.define([
 	"sap/ui/fl/write/api/Version",
 	"sap/ui/fl/write/api/VersionsAPI",
 	"sap/ui/fl/write/api/FeaturesAPI",
+	"sap/ui/fl/initial/_internal/config",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/registry/Settings",
@@ -17,8 +18,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/ChangePersistenceFactory",
-	"sap/ui/core/Control",
-	"sap/ui/core/Core"
+	"sap/ui/core/Control"
 ], function(
 	sinon,
 	JSONModel,
@@ -26,6 +26,7 @@ sap.ui.define([
 	Version,
 	VersionsAPI,
 	FeaturesAPI,
+	config,
 	Layer,
 	Utils,
 	Settings,
@@ -36,8 +37,7 @@ sap.ui.define([
 	ManifestUtils,
 	FlexState,
 	ChangePersistenceFactory,
-	Control,
-	oCore
+	Control
 ) {
 	"use strict";
 
@@ -214,7 +214,7 @@ sap.ui.define([
 	QUnit.module("Calling the Storage: Given Versions.initialize is called", {
 		beforeEach() {
 			setVersioningEnabled({CUSTOMER: true});
-			sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([
+			sandbox.stub(config, "getFlexibilityServices").returns([
 				{connector: "KeyUserConnector", layers: [Layer.CUSTOMER], url: "/flexKeyUser"}
 			]);
 			this.oAppComponent = {
@@ -317,7 +317,6 @@ sap.ui.define([
 			sandbox.stub(Utils, "getAppComponentForControl").returns(this.oAppComponent);
 			sandbox.stub(FeaturesAPI, "isPublishAvailable").returns(true);
 			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns("com.sap.app");
-			sandbox.stub(FlexState, "clearAndInitialize").resolves([]);
 
 			return Versions.initialize(mPropertyBag)
 			.then(function(oModel) {
@@ -410,7 +409,7 @@ sap.ui.define([
 		},
 		beforeEach() {
 			setVersioningEnabled({CUSTOMER: true});
-			sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([
+			sandbox.stub(config, "getFlexibilityServices").returns([
 				{connector: "KeyUserConnector", layers: [Layer.CUSTOMER], url: "/flexKeyUser"}
 			]);
 		},
@@ -659,7 +658,7 @@ sap.ui.define([
 		},
 		beforeEach() {
 			setVersioningEnabled({CUSTOMER: true});
-			sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([
+			sandbox.stub(config, "getFlexibilityServices").returns([
 				{connector: "KeyUserConnector", layers: [Layer.CUSTOMER], url: "/flexKeyUser"}
 			]);
 		},
@@ -934,7 +933,7 @@ sap.ui.define([
 		},
 		beforeEach() {
 			setVersioningEnabled({CUSTOMER: true});
-			sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([
+			sandbox.stub(config, "getFlexibilityServices").returns([
 				{connector: "LrepConnector", layers: ["ALL"], url: "/sap/bc/lrep"}
 			]);
 		},
@@ -1020,7 +1019,7 @@ sap.ui.define([
 		},
 		beforeEach() {
 			setVersioningEnabled({CUSTOMER: true});
-			sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([
+			sandbox.stub(config, "getFlexibilityServices").returns([
 				{connector: "LrepConnector", layers: ["ALL"], url: "/sap/bc/lrep"}
 			]);
 		},
@@ -1123,7 +1122,7 @@ sap.ui.define([
 			this.sReference = "com.sap.app";
 		},
 		beforeEach() {
-			sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([
+			sandbox.stub(config, "getFlexibilityServices").returns([
 				{connector: "LrepConnector", layers: ["ALL"], url: "/sap/bc/lrep"}
 			]);
 			this.oStorageLoadVersionsStub = sandbox.stub(Storage.versions, "load");

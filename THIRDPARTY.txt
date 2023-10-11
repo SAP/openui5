@@ -164,7 +164,7 @@ License: Apache-2.0
 License Text: https://github.com/SAP/openui5/blob/master/LICENSES/Apache-2.0.txt
 Contained in: src/sap.ui.core/src/sap/ui/thirdparty/caja-html-sanitizer.js
 
-Component: Unicode Common Locale Data Repository, version: 41
+Component: Unicode Common Locale Data Repository, version: 43
 Copyright: 1991-2014 Unicode, Inc.
 License: Unicode-DFS-2015
 License Text: https://github.com/SAP/openui5/blob/master/LICENSES/Unicode-DFS-2015.txt
@@ -319,7 +319,7 @@ License: ISC
 License Text: https://github.com/SAP/openui5/blob/master/LICENSES/ISC.txt
 Contained in: src/sap.ui.core/src/sap/ui/core/cache/LRUPersistentCache.js
 
-Component: Time Zone Database, version: 2022a
+Component: Time Zone Database, version: 2023c
 Copyright: Arthur David Olson, Paul Eggert and other contributors
 License: LicenseRef-tzdata-PublicDomain
 License Text: https://github.com/SAP/openui5/blob/master/LICENSES/LicenseRef-tzdata-PublicDomain.txt

@@ -1100,7 +1100,7 @@ sap.ui.define([
 	};
 
 	Table.prototype.getFocusDomRef = function() {
-		var bHasMessage = this._oFocusInfo && this._oFocusInfo.targetInfo && BaseObject.isA(this._oFocusInfo.targetInfo, "sap.ui.core.message.Message");
+		var bHasMessage = this._oFocusInfo && this._oFocusInfo.targetInfo && BaseObject.isObjectA(this._oFocusInfo.targetInfo, "sap.ui.core.message.Message");
 
 		if (bHasMessage) {
 			var $TblHeader = this.$("tblHeader");

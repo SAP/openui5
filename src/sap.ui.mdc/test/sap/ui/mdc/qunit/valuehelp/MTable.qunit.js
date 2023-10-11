@@ -391,6 +391,17 @@ sap.ui.define([
 
 	QUnit.test("Filtering using $search", function(assert) {
 
+		let iTypeaheadSuggested = 0;
+		let oCondition;
+		let sFilterValue;
+		let sItemId;
+		oMTable.attachEvent("typeaheadSuggested", function(oEvent) {
+			iTypeaheadSuggested++;
+			oCondition = oEvent.getParameter("condition");
+			sFilterValue = oEvent.getParameter("filterValue");
+			sItemId = oEvent.getParameter("itemId");
+		});
+
 		sinon.stub(oContainer, "getValueHelpDelegate").returns(ValueHelpDelegateV4);
 		sinon.spy(ValueHelpDelegateV4, "updateBinding"); //test V4 logic
 
@@ -408,8 +419,22 @@ sap.ui.define([
 		assert.ok(oListBinding.changeParameters.calledWith({$search: "X"}), "ListBinding.changeParameters called with search string");
 		assert.notOk(oListBinding.isSuspended(), "ListBinding is resumed");
 
-		oContainer.getValueHelpDelegate.restore();
-		ValueHelpDelegateV4.updateBinding.restore();
+		const fnDone = assert.async();
+		setTimeout( function(){ // as waiting for Promise
+			// as JSOM-Model does not support $search all items are returned, but test for first of result
+			const oTable = oMTable.getTable();
+			const aItems = oTable.getItems();
+			assert.equal(iTypeaheadSuggested, 1, "typeaheadSuggested event fired");
+			assert.deepEqual(oCondition, Condition.createItemCondition("I1", "Item 1"), "typeaheadSuggested event condition");
+			assert.equal(sFilterValue, "X", "typeaheadSuggested event filterValue");
+			assert.equal(sItemId, aItems[0].getId(), "typeaheadSuggested event itemId");
+			assert.ok(aItems[0].hasStyleClass("sapMLIBSelected"), "Item shown as selected");
+			assert.notOk(aItems[0].getSelected(), "Item not really selected");
+
+			oContainer.getValueHelpDelegate.restore();
+			ValueHelpDelegateV4.updateBinding.restore();
+			fnDone();
+		}, 0);
 
 	});
 
@@ -1423,7 +1448,9 @@ sap.ui.define([
 		let oCheckAttributes = {
 			contentId: oTable.getId(),
 			ariaHasPopup: "listbox",
-			roleDescription: null
+			roleDescription: null,
+			valueHelpEnabled: false,
+			autocomplete: "both"
 		};
 		let oAttributes = oMTable.getAriaAttributes(1);
 		assert.ok(oAttributes, "Aria attributes returned for SingleSelect");
@@ -1434,17 +1461,22 @@ sap.ui.define([
 		oCheckAttributes = {
 			contentId: oTable.getId(),
 			ariaHasPopup: "listbox",
-			roleDescription: oResourceBundleM.getText("MULTICOMBOBOX_ARIA_ROLE_DESCRIPTION")
+			roleDescription: oResourceBundleM.getText("MULTICOMBOBOX_ARIA_ROLE_DESCRIPTION"),
+			valueHelpEnabled: false,
+			autocomplete: "both"
 		};
 		oAttributes = oMTable.getAriaAttributes(-1);
 		assert.ok(oAttributes, "Aria attributes returned for MultiSelect");
 		assert.deepEqual(oAttributes, oCheckAttributes, "returned attributes");
 
 		oMTable.setUseAsValueHelp(false);
+		oMTable.setUseFirstMatch(false);
 		oCheckAttributes = {
 			contentId: oTable.getId(),
 			ariaHasPopup: "listbox",
-			roleDescription: null
+			roleDescription: null,
+			valueHelpEnabled: false,
+			autocomplete: "none"
 		};
 		oAttributes = oMTable.getAriaAttributes(-1);
 		assert.ok(oAttributes, "Aria attributes returned for MultiSelect with typeahead only");

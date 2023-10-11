@@ -379,7 +379,7 @@ sap.ui.define([
 		 * @returns {boolean} Whether this object is an instance of the given type or of any of the given types.
 		 */
 		isA: function(oObject, vTypeName) {
-			return BaseObject.isA(oObject, vTypeName);
+			return BaseObject.isObjectA(oObject, vTypeName);
 		},
 
 		/**

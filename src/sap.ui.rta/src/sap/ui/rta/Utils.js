@@ -19,7 +19,7 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/Lib",
 	"sap/ui/core/Fragment",
-	"sap/ui/core/Core",
+	"sap/ui/core/Element",
 	"sap/ui/core/EventBus"
 ], function(
 	FieldExtensibility,
@@ -38,7 +38,7 @@ sap.ui.define([
 	JSONModel,
 	Lib,
 	Fragment,
-	Core,
+	Element,
 	EventBus
 ) {
 	"use strict";
@@ -210,7 +210,7 @@ sap.ui.define([
 	Utils.getOverlayInstanceForDom = function(oDomRef) {
 		var sId = oDomRef.getAttribute("id");
 		if (sId) {
-			return Core.byId(sId);
+			return Element.getElementById(sId);
 		}
 		return undefined;
 	};
@@ -223,7 +223,7 @@ sap.ui.define([
 	 */
 	Utils.getFocusedOverlay = function() {
 		if (document.activeElement) {
-			var oElement = Core.byId(document.activeElement.id);
+			var oElement = Element.getElementById(document.activeElement.id);
 			if (oElement && oElement.isA("sap.ui.dt.ElementOverlay")) {
 				return oElement;
 			}

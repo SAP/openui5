@@ -14,7 +14,8 @@ sap.ui.define([
 	"sap/ui/mdc/valuehelp/content/Bool",
 	"sap/ui/mdc/valuehelp/content/Conditions",
 	"sap/ui/mdc/field/FieldInfoBase",
-	"delegates/odata/v4/FieldBaseDelegate", // to test V4 logic too
+	// to test V4 logic too
+	"delegates/odata/v4/FieldBaseDelegate",
 	"delegates/odata/v4/ValueHelpDelegate",
 	"sap/ui/mdc/field/FieldInput",
 	"sap/ui/mdc/field/FieldMultiInput",
@@ -71,7 +72,9 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/core/date/UI5Date",
 	"sap/ui/core/date/Japanese",
-	"./FieldBaseDelegateODataDefaultTypes"
+	"./FieldBaseDelegateODataDefaultTypes",
+	/* jQuery Plugin "cursorPos"*/
+	"sap/ui/dom/jquery/cursorPos"
 ], function(
 	jQuery,
 	qutils,
@@ -1396,12 +1399,13 @@ sap.ui.define([
 			let oContent = aContent && aContent.length > 0 && aContent[0];
 			assert.ok(oContent instanceof TimePicker, "TimePicker rendered");
 			assert.equal(oContent.getValue(), "19:00:00", "Value set on TimePicker control");
-			assert.equal(jQuery(oContent.getFocusDomRef()).val(), " 7:00:00 PM", "Value shown on TimePicker control");
+			// \u202f is a Narrow No-Break Space which has been introduced with CLDR version 43
+			assert.equal(jQuery(oContent.getFocusDomRef()).val(), " 7:00:00\u202fPM", "Value shown on TimePicker control");
 
 			aContent = oFieldDisplay.getAggregation("_content");
 			oContent = aContent && aContent.length > 0 && aContent[0];
 			assert.equal(oContent.getMetadata().getName(), "sap.m.Text", "sap.m.Text is used");
-			assert.equal(oContent.getText(), "=7:00:00 PM", "Text set on Text control");
+			assert.equal(oContent.getText(), "=7:00:00\u202fPM", "Text set on Text control");
 			fnDone();
 		}, 0);
 
@@ -1430,7 +1434,8 @@ sap.ui.define([
 				aContent = oFieldDisplay.getAggregation("_content");
 				oContent = aContent && aContent.length > 0 && aContent[0];
 				assert.equal(oContent.getMetadata().getName(), "sap.m.Text", "sap.m.Text is used");
-				assert.equal(oContent.getText(), "=Nov 7, 2017, 1:01:24 PM", "Text set on Text control");
+				// \u202f is a Narrow No-Break Space which has been introduced with CLDR version 43
+				assert.equal(oContent.getText(), "=Nov 7, 2017, 1:01:24\u202fPM", "Text set on Text control");
 				fnDone();
 			}, 0);
 		});
@@ -5003,7 +5008,7 @@ sap.ui.define([
 		});
 		oVHIcon.firePress();
 		sinon.stub(oValueHelp, "isOpen").returns(true);
-		oValueHelp.fireOpened();
+		oValueHelp.fireOpened({itemId: "myItem"});
 		oCore.applyChanges();
 		assert.equal($FocusDomRef.attr("role"), "combobox", "Open: Role Combobox set");
 		assert.equal($FocusDomRef.attr("aria-roledescription"), "RoleDescription", "Open: Role Description set - from ValueHelp");
@@ -5074,11 +5079,11 @@ sap.ui.define([
 		});
 		oVHIcon.firePress();
 		sinon.stub(oValueHelp, "isOpen").returns(true);
-		oValueHelp.fireOpened();
+		oValueHelp.fireOpened({itemId: "myItem"});
 		oCore.applyChanges();
 		assert.equal($FocusDomRef.attr("aria-expanded"), "true", "Open: aria-expanded set to true");
 		assert.equal($FocusDomRef.attr("aria-controls"), "Test", "Open: aria-controls set");
-		assert.notOk($FocusDomRef.attr("aria-activedescendant"), "Open: aria-activedescendant not set");
+		assert.equal($FocusDomRef.attr("aria-activedescendant"), "myItem", "Open: aria-activedescendant set");
 
 		oValueHelp.close();
 		oValueHelp.fireClosed();
@@ -5181,6 +5186,113 @@ sap.ui.define([
 
 						oValueHelp.close();
 						setTimeout(function() { // to wait for Promises and close
+							fnDone();
+						}, 400);
+					}, 400);
+				}, 400);
+			}, 400);
+		}, 400);
+
+	});
+
+	QUnit.test("Autocomplete", function(assert) {
+
+		const oValueHelp = oCore.byId(oField.getValueHelp());
+
+		const fnDone = assert.async();
+		oField.focus(); // as ValueHelp is connected with focus
+		let aContent = oField.getAggregation("_content");
+		let oContent = aContent && aContent.length > 0 && aContent[0];
+		oContent._$input.val("I");
+		oContent.fireLiveChange({ value: "I" });
+
+		setTimeout(function() { // to wait for Promises and opening
+			let oCondition = Condition.createItemCondition("I1", "Item1");
+			oValueHelp.fireTypeaheadSuggested({condition: oCondition, filterValue: "I", itemId: "myItem"});
+			assert.equal(oContent._$input.val(), "Item1", "Output text");
+			// jQuery Plugin "cursorPos"
+			assert.equal(oContent._$input.cursorPos(), 1, "CursorPosition");
+			assert.equal(oContent.getFocusDomRef().selectionStart, 1, "Selection start");
+			assert.equal(oContent.getFocusDomRef().selectionEnd, 5, "Selection end");
+			const oAriaAttributes = oField.getProperty("_ariaAttributes");
+			assert.equal(oAriaAttributes.aria.activedescendant, "myItem", "Aria-activedescendant");
+
+			oField.setDisplay(FieldDisplay.Value); // destroys and creates new content
+			oCore.applyChanges();
+			aContent = oField.getAggregation("_content");
+			oContent = aContent && aContent.length > 0 && aContent[0];
+			oContent.focus();
+			oContent._$input.val("I");
+			oContent.fireLiveChange({ value: "I" });
+
+			setTimeout(function() { // to wait for Promises and opening
+				oValueHelp.fireTypeaheadSuggested({condition: oCondition, filterValue: "I", itemId: "myItem"});
+				assert.equal(oContent._$input.val(), "I1", "Output text");
+				// jQuery Plugin "cursorPos"
+				assert.equal(oContent._$input.cursorPos(), 1, "CursorPosition");
+				assert.equal(oContent.getFocusDomRef().selectionStart, 1, "Selection start");
+				assert.equal(oContent.getFocusDomRef().selectionEnd, 2, "Selection end");
+
+				oField.setDisplay(FieldDisplay.DescriptionValue); // destroys and creates new content
+				oCore.applyChanges();
+				aContent = oField.getAggregation("_content");
+				oContent = aContent && aContent.length > 0 && aContent[0];
+				oContent.focus();
+				oContent._$input.val("I");
+				oContent.fireLiveChange({ value: "I" });
+
+				setTimeout(function() { // to wait for Promises and opening
+					oValueHelp.fireTypeaheadSuggested({condition: oCondition, filterValue: "I", itemId: "myItem"});
+					assert.equal(oContent._$input.val(), "Item1", "Output text");
+					// jQuery Plugin "cursorPos"
+					assert.equal(oContent._$input.cursorPos(), 1, "CursorPosition");
+					assert.equal(oContent.getFocusDomRef().selectionStart, 1, "Selection start");
+					assert.equal(oContent.getFocusDomRef().selectionEnd, 5, "Selection end");
+
+					oCondition = Condition.createItemCondition("I1", "myItem1");
+					oValueHelp.fireTypeaheadSuggested({condition: oCondition, filterValue: "I", itemId: "myItem"});
+					assert.equal(oContent._$input.val(), "I1", "Output text");
+					// jQuery Plugin "cursorPos"
+					assert.equal(oContent._$input.cursorPos(), 1, "CursorPosition");
+					assert.equal(oContent.getFocusDomRef().selectionStart, 1, "Selection start");
+					assert.equal(oContent.getFocusDomRef().selectionEnd, 2, "Selection end");
+
+					oField.setDisplay(FieldDisplay.ValueDescription); // destroys and creates new content
+					oCore.applyChanges();
+					aContent = oField.getAggregation("_content");
+					oContent = aContent && aContent.length > 0 && aContent[0];
+					oContent.focus();
+					oContent._$input.val("I");
+					oContent.fireLiveChange({ value: "I" });
+
+					setTimeout(function() { // to wait for Promises and opening
+						oCondition = Condition.createItemCondition("I1", "Item1");
+						oValueHelp.fireTypeaheadSuggested({condition: oCondition, filterValue: "I", itemId: "myItem"});
+						assert.equal(oContent._$input.val(), "I1", "Output text");
+						// jQuery Plugin "cursorPos"
+						assert.equal(oContent._$input.cursorPos(), 1, "CursorPosition");
+						assert.equal(oContent.getFocusDomRef().selectionStart, 1, "Selection start");
+						assert.equal(oContent.getFocusDomRef().selectionEnd, 2, "Selection end");
+
+						oContent._$input.val("It");
+						oContent.fireLiveChange({ value: "It" });
+
+						setTimeout(function() { // to wait for Promises and opening
+							oValueHelp.fireTypeaheadSuggested({condition: oCondition, filterValue: "I", itemId: "myItem"}); // outdated FilterValue
+							assert.equal(oContent._$input.val(), "It", "Output text");
+							// jQuery Plugin "cursorPos"
+							assert.equal(oContent._$input.cursorPos(), 2, "CursorPosition");
+							assert.equal(oContent.getFocusDomRef().selectionStart, 2, "Selection start");
+							assert.equal(oContent.getFocusDomRef().selectionEnd, 2, "Selection end");
+
+							oValueHelp.fireTypeaheadSuggested({condition: oCondition, filterValue: "It", itemId: "myItem"}); // now description must be used
+							assert.equal(oContent._$input.val(), "Item1", "Output text");
+							// jQuery Plugin "cursorPos"
+							assert.equal(oContent._$input.cursorPos(), 2, "CursorPosition");
+							assert.equal(oContent.getFocusDomRef().selectionStart, 2, "Selection start");
+							assert.equal(oContent.getFocusDomRef().selectionEnd, 5, "Selection end");
+
+							oValueHelp.close(); // to be sure
 							fnDone();
 						}, 400);
 					}, 400);

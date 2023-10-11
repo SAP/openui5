@@ -36,9 +36,6 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	// shortcut for sap.m.AvatarSize
-	var AvatarSize = mLibrary.AvatarSize;
-
 	// shortcut for sap.m.AvatarColor
 	var AvatarColor = mLibrary.AvatarColor;
 
@@ -325,13 +322,9 @@ sap.ui.define([
 			mSettings.iconInitials = mItem.icon.initials || mItem.icon.text;
 			mSettings.iconVisible = mItem.icon.visible;
 
-			if (ListContentItem.getLinesCount(mItem, this) === 1) {
-				mSettings.iconSize = AvatarSize.XS;
-			} else {
-				mSettings.iconSize = AvatarSize.S;
+			if (mItem.icon.size) {
+				mSettings.iconSize = mItem.icon.size;
 			}
-
-			mSettings.iconSize = mItem.icon.size || mSettings.iconSize;
 			mSettings.iconBackgroundColor = mItem.icon.backgroundColor || (mSettings.iconInitials ? undefined : AvatarColor.Transparent);
 		}
 

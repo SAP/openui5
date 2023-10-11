@@ -128,22 +128,22 @@ sap.ui.define([
 
 	QUnit.module("Base Class Functions");
 
-	QUnit.test("isA static function", function(assert) {
+	QUnit.test("isObjectA static function", function(assert) {
 		var oIcon = new Icon();
-		assert.strictEqual(BaseObject.isA(oIcon, "sap.ui.core.Icon"), true, "self test: instance is a sap.ui.core.Icon");
-		assert.strictEqual(BaseObject.isA(oIcon, "sap.ui.base.ManagedObject"), true, "inheritance: instance is a ManagedObject");
-		assert.strictEqual(BaseObject.isA(oIcon, "sap.ui.base.Object"), true, "inheritance: instance is a BaseObject");
-		assert.strictEqual(BaseObject.isA(oIcon, [
+		assert.strictEqual(BaseObject.isObjectA(oIcon, "sap.ui.core.Icon"), true, "self test: instance is a sap.ui.core.Icon");
+		assert.strictEqual(BaseObject.isObjectA(oIcon, "sap.ui.base.ManagedObject"), true, "inheritance: instance is a ManagedObject");
+		assert.strictEqual(BaseObject.isObjectA(oIcon, "sap.ui.base.Object"), true, "inheritance: instance is a BaseObject");
+		assert.strictEqual(BaseObject.isObjectA(oIcon, [
 			"sap.ui.base.Object",
 			"sap.test.rainbow"
 		]), true, "multiple: instance is a 'sap.test.rainbow' (doesn't exist) or BaseObject");
 
-		assert.strictEqual(BaseObject.isA(oIcon, "sap.ui.core.HTML"), false, "Icon is not HTML");
-		assert.strictEqual(BaseObject.isA(oIcon, null), false, "null check");
-		assert.strictEqual(BaseObject.isA(oIcon, ""), false, "'' check");
-		assert.strictEqual(BaseObject.isA(oIcon), false, "undefined check");
-		assert.strictEqual(BaseObject.isA(oIcon), false, "undefined check");
-		assert.strictEqual(BaseObject.isA(oIcon, [
+		assert.strictEqual(BaseObject.isObjectA(oIcon, "sap.ui.core.HTML"), false, "Icon is not HTML");
+		assert.strictEqual(BaseObject.isObjectA(oIcon, null), false, "null check");
+		assert.strictEqual(BaseObject.isObjectA(oIcon, ""), false, "'' check");
+		assert.strictEqual(BaseObject.isObjectA(oIcon), false, "undefined check");
+		assert.strictEqual(BaseObject.isObjectA(oIcon), false, "undefined check");
+		assert.strictEqual(BaseObject.isObjectA(oIcon, [
 			"sap.test.pony",
 			"sap.test.rainbow"
 		]), false, "multiple: instance is not 'sap.test.pony' or 'sap.test.rainbow'");
@@ -153,11 +153,11 @@ sap.ui.define([
 			assert.ok(false, "Custom 'isA' method should not be called");
 		};
 		var oMyObject = new MyClass();
-		assert.strictEqual(BaseObject.isA(oMyObject, "sap.ui.base.Object"), false, "MyClass is not BaseObject");
-		assert.strictEqual(BaseObject.isA({}, "sap.ui.base.Object"), false, "Plain Object is not BaseObject");
-		assert.strictEqual(BaseObject.isA(null, "sap.ui.base.Object"), false, "null is not BaseObject");
-		assert.strictEqual(BaseObject.isA(undefined, "sap.ui.base.Object"), false, "undefined is not BaseObject");
-		assert.strictEqual(BaseObject.isA(NaN, "sap.ui.base.Object"), false, "NaN is not BaseObject");
-		assert.strictEqual(BaseObject.isA("", "sap.ui.base.Object"), false, "Empty string is not BaseObject");
+		assert.strictEqual(BaseObject.isObjectA(oMyObject, "sap.ui.base.Object"), false, "MyClass is not BaseObject");
+		assert.strictEqual(BaseObject.isObjectA({}, "sap.ui.base.Object"), false, "Plain Object is not BaseObject");
+		assert.strictEqual(BaseObject.isObjectA(null, "sap.ui.base.Object"), false, "null is not BaseObject");
+		assert.strictEqual(BaseObject.isObjectA(undefined, "sap.ui.base.Object"), false, "undefined is not BaseObject");
+		assert.strictEqual(BaseObject.isObjectA(NaN, "sap.ui.base.Object"), false, "NaN is not BaseObject");
+		assert.strictEqual(BaseObject.isObjectA("", "sap.ui.base.Object"), false, "Empty string is not BaseObject");
 	});
 });

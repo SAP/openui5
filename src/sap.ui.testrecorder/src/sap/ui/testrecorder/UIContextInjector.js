@@ -366,7 +366,7 @@ sap.ui.define([
 				}
 			});
 		}
-		if (window["sap-ui-config"].language) {
+		if (window["sap-ui-config"]?.language) {
 			window.communicationWindows.testRecorder["sap-ui-config"] = window.communicationWindows.testRecorder["sap-ui-config"] || {};
 			window.communicationWindows.testRecorder["sap-ui-config"].language = window["sap-ui-config"].language;
 		}

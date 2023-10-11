@@ -1148,8 +1148,8 @@ sap.ui.define([
 				var oSut = view.byId("drs_odata");
 
 				//Assert
-				//char code 8211 is a dash
-				assert.equal(oSut._$input.val(), "Sat, 12/23/2017 " + String.fromCharCode(8211) + " Mon, 1/1/2018", oSut._$input.val() + " is correct");
+				//char code \u2009 is a thin space (introduced with CLDR version 43), \u2013 is a dash
+				assert.equal(oSut._$input.val(), "Sat, 12/23/2017\u2009\u2013\u2009Mon, 1/1/2018", oSut._$input.val() + " is correct");
 				assert.equal(oSut.getDateValue().toString(), oDateLocalDate.toString(), "dateValue should be always a local date");
 				assert.equal(oSut.getSecondDateValue().toString(), oDate2Localdate.toString(), "secondDateValue should be always a local date");
 				done();
@@ -1300,8 +1300,8 @@ sap.ui.define([
 			}),
 			oNormalizeResult,
 			aParseResult,
-			sDash = String.fromCharCode(8211), // Dash character (separator)
-			sDateRange = "Nov 10, 2022 " + sDash + " Nov 15, 2022";
+			//char code \u2009 is a thin space (introduced with CLDR version 43), \u2013 is a dash
+			sDateRange = "Nov 10, 2022\u2009\u2013\u2009Nov 15, 2022";
 
 		oDRS.setModel(oModel);
 		oDRS.placeAt('qunit-fixture');

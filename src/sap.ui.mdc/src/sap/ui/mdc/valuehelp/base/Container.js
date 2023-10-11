@@ -105,7 +105,14 @@ sap.ui.define([
 				/**
 				 * This event is fired if the value help is opened.
 				 */
-				opened: {},
+				opened: {
+					parameters: {
+						/**
+						 * ID of the initially selected item
+						 */
+						itemId: { type: "string" }
+					}
+				},
 				/**
 				 * This event is fired if the value help is closed.
 				 */
@@ -149,6 +156,29 @@ sap.ui.define([
 						 */
 						itemId: { type: "string" }
 					}
+				},
+				/**
+				 * This event is fired after a suggested item was found for a typeahead
+				 * @since 1.120.0
+				 */
+				typeaheadSuggested: {
+					parameters: {
+						/**
+						 * Suggested condition.
+						 *
+						 * <b>Note:</b> A condition must have the structure of {@link sap.ui.mdc.condition.ConditionObject ConditionObject}.
+						 */
+						condition: { type: "object" },
+						/**
+						 * Used filter value.
+						 * (As the event might fired asynchronously and the current user input might have cahnged.)
+						 */
+						filterValue: { type: "string" },
+						/**
+						 * ID of the suggested item. (This is needed to set the corresponding aria-attribute)
+						 */
+						itemId: { type: "string" }
+					}
 				}
 			}
 		}
@@ -184,14 +214,7 @@ sap.ui.define([
 	 */
 	Container.prototype.bindContentToContainer = function (oContent) {
 		if (oContent && !oContent._bContentBound) { // to prevent multiple event handlers
-			oContent.bindProperty("filterValue", { path: "/filterValue", model: "$valueHelp", mode: BindingMode.OneWay}); // inherit from ValueHelp
-			const oBindingOptions = { path: "/conditions", model: "$valueHelp", mode: BindingMode.OneWay};
-			if (oContent._formatConditions) {
-				oBindingOptions.formatter = oContent._formatConditions.bind(oContent);
-			}
-			oContent.bindProperty("config", { path: "/_config", model: "$valueHelp", mode: BindingMode.OneWay}); // inherit from ValueHelp
-			oContent.bindProperty("conditions", oBindingOptions); // inherit from ValueHelp
-
+			// aatach events before binding as updation of properties might lead to an event
 			oContent.attachConfirm(this.handleConfirmed, this);
 			oContent.attachCancel(this.handleCanceled, this);
 			oContent.attachSelect(this.handleSelect, this);
@@ -200,9 +223,21 @@ sap.ui.define([
 				oContent.attachNavigated(this.handleNavigated, this);
 			}
 
+			if (oContent.attachTypeaheadSuggested) {
+				oContent.attachTypeaheadSuggested(this.handleTypeaheadSuggested, this);
+			}
+
 			if (oContent.attachRequestSwitchToDialog) {
 				oContent.attachRequestSwitchToDialog(this.handleRequestSwitchToDialog, this);
 			}
+
+			oContent.bindProperty("filterValue", { path: "/filterValue", model: "$valueHelp", mode: BindingMode.OneWay}); // inherit from ValueHelp
+			const oBindingOptions = { path: "/conditions", model: "$valueHelp", mode: BindingMode.OneWay};
+			if (oContent._formatConditions) {
+				oBindingOptions.formatter = oContent._formatConditions.bind(oContent);
+			}
+			oContent.bindProperty("config", { path: "/_config", model: "$valueHelp", mode: BindingMode.OneWay}); // inherit from ValueHelp
+			oContent.bindProperty("conditions", oBindingOptions); // inherit from ValueHelp
 			oContent._bContentBound = true;
 		}
 	};
@@ -225,6 +260,10 @@ sap.ui.define([
 				oContent.detachNavigated(this.handleNavigated, this);
 			}
 
+			if (oContent.detachTypeaheadSuggested) {
+				oContent.detachTypeaheadSuggested(this.handleTypeaheadSuggested, this);
+			}
+
 			if (oContent.detachRequestSwitchToDialog) {
 				oContent.detachRequestSwitchToDialog(this.handleRequestSwitchToDialog, this);
 			}
@@ -233,7 +272,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Handles the <code>requestSwitchToDialog</code> event of the content.
+	 * Handles the <code>navigated</code> event of the content.
 	 * @param {sap.ui.base.Event} oEvent event
 	 * @protected
 	 */
@@ -242,7 +281,16 @@ sap.ui.define([
 	};
 
 	/**
-	 * Handles the <code>navigated</code> event of the content.
+	 * Handles the <code>typeaheadSuggested</code> event of the content.
+	 * @param {sap.ui.base.Event} oEvent event
+	 * @protected
+	 */
+	Container.prototype.handleTypeaheadSuggested = function (oEvent) {
+		this.fireTypeaheadSuggested(oEvent.mParameters);
+	};
+
+	/**
+	 * Handles the <code>requestSwitchToDialog</code> event of the content.
 	 * @param {sap.ui.base.Event} oEvent event
 	 * @protected
 	 */
@@ -733,7 +781,9 @@ sap.ui.define([
 			contentId: null,
 			ariaHasPopup: "listbox",
 			role: "combobox",
-			roleDescription: null
+			roleDescription: null,
+			valueHelpEnabled: false,
+			autocomplete: "none"
 		};
 
 	};

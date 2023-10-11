@@ -68,6 +68,17 @@ sap.ui.define([
 		bNavigateLeaveFocus = oEvent.getParameter("leaveFocus");
 	};
 
+	let iTypeaheadSuggested = 0;
+	let oTypeaheadCondition;
+	let sTypeaheadFilterValue;
+	let sTypeaheadItemId;
+	const _myTypeaheadHandler = function(oEvent) {
+		iTypeaheadSuggested++;
+		oTypeaheadCondition = oEvent.getParameter("condition");
+		sTypeaheadFilterValue = oEvent.getParameter("filterValue");
+		sTypeaheadItemId = oEvent.getParameter("itemId");
+	};
+
 	let iClosed;
 	const _myClosedHandler = function(oEvent) {
 		iClosed++;
@@ -110,7 +121,11 @@ sap.ui.define([
 		oNavigateCondition = undefined;
 		sNavigateItemId = undefined;
 		bNavigateLeaveFocus = undefined;
-		iClosed = 0;
+		iTypeaheadSuggested = 0;
+		oTypeaheadCondition = undefined;
+		sTypeaheadFilterValue = undefined;
+		sTypeaheadItemId = undefined;
+			iClosed = 0;
 		if (oModel) {
 			oModel.destroy();
 			oModel = undefined;
@@ -134,7 +149,6 @@ sap.ui.define([
 		assert.notOk(oValueHelp.shouldOpenOnClick(), "shouldOpenOnClick");
 		assert.notOk(oValueHelp.shouldOpenOnFocus(), "shouldOpenOnFocus");
 		assert.notOk(oValueHelp.isFocusInHelp(), "isFocusInHelp");
-		assert.notOk(oValueHelp.valueHelpEnabled(), "valueHelpEnabled");
 
 	});
 
@@ -197,7 +211,8 @@ sap.ui.define([
 			ariaHasPopup: null,
 			role: null,
 			roleDescription: null,
-			valueHelpEnabled: false
+			valueHelpEnabled: false,
+			autocomplete: null
 		};
 		const oAttributes = oValueHelp.getAriaAttributes();
 		assert.ok(oAttributes, "Aria attributes returned");
@@ -223,6 +238,7 @@ sap.ui.define([
 				delegate: {name: "sap/ui/mdc/ValueHelpDelegate", payload: {x: "X"}},
 				disconnect: _myDisconnectHandler,
 				navigated: _myNavigateHandler,
+				typeaheadSuggested: _myTypeaheadHandler,
 				select: _mySelectHandler,
 				closed: _myClosedHandler
 			});
@@ -262,9 +278,10 @@ sap.ui.define([
 		setTimeout(function() { // Delegate is called async
 			assert.ok(oContainer.open.called, "Container open called for typeahead opening");
 			assert.ok(ValueHelpDelegate.retrieveContent.called, "ValueHelpDelegate.retrieveContent called for typeahead opening");
-			oContainer.handleOpened();
+			oContainer.fireOpened({itemId: "MyItem"});
 			assert.ok(oValueHelp.fireOpened.called, "ValueHelp opened event fired for typeahead opening");
 			assert.equal(oValueHelp.fireOpened.lastCall.args[0].container, oContainer, "ValueHelp opened event carries correct container");
+			assert.equal(oValueHelp.fireOpened.lastCall.args[0].itemId, "MyItem", "ValueHelp opened event carries itemId");
 
 			ValueHelpDelegate.retrieveContent.restore();
 			oValueHelp.fireOpen.restore();
@@ -514,7 +531,8 @@ sap.ui.define([
 			ariaHasPopup: "listbox",
 			role: "combobox",
 			roleDescription: null,
-			valueHelpEnabled: false
+			valueHelpEnabled: false,
+			autocomplete: "none"
 		};
 		let oAttributes = oValueHelp.getAriaAttributes();
 		assert.ok(oAttributes, "Aria attributes returned");
@@ -557,15 +575,6 @@ sap.ui.define([
 
 		sinon.stub(oContainer, "getUseAsValueHelp").returns(true);
 		assert.ok(oValueHelp.isFocusInHelp(), "returns value of container if used as valueHelp");
-
-	});
-
-	QUnit.test("valueHelpEnabled", function(assert) {
-
-		assert.notOk(oValueHelp.valueHelpEnabled(), "no value help if only typeahead");
-
-		sinon.stub(oContainer, "getUseAsValueHelp").returns(true);
-		assert.ok(oValueHelp.valueHelpEnabled(), "valueHelp enabled if Typeahead is enabled for valueHelp");
 
 	});
 
@@ -626,6 +635,18 @@ sap.ui.define([
 		assert.deepEqual(oNavigateCondition, oCondition, "Navigated condition");
 		assert.equal(sNavigateItemId, "I1", "Navigated itemId");
 		assert.ok(bNavigateLeaveFocus, "Navigated leaveFocus");
+
+	});
+
+	QUnit.test("typeahedSuggested event", function(assert) {
+
+		const oCondition = Condition.createItemCondition("kéy", "Description");
+		oContainer.fireTypeaheadSuggested({condition: oCondition, filterValue: "k", itemId: "I1"});
+
+		assert.equal(iTypeaheadSuggested, 1, "TypeahedSuggested Event fired");
+		assert.deepEqual(oTypeaheadCondition, oCondition, "Typeahead condition");
+		assert.equal(sTypeaheadFilterValue, "k", "Typeahead filterValue");
+		assert.equal(sTypeaheadItemId, "I1", "Typeahead itemId");
 
 	});
 
@@ -1025,14 +1046,17 @@ sap.ui.define([
 			ariaHasPopup: "dialog",
 			role: "combobox",
 			roleDescription: null,
-			valueHelpEnabled: true
+			valueHelpEnabled: true,
+			autocomplete: "none"
 		};
 
 		sinon.stub(oContainer, "getAriaAttributes").returns({
 			contentId: "X",
 			ariaHasPopup: "dialog",
 			role: "combobox",
-			roleDescription: null
+			roleDescription: null,
+			valueHelpEnabled: true,
+			autocomplete: "none"
 		});
 
 		let oAttributes = oValueHelp.getAriaAttributes();
@@ -1064,12 +1088,6 @@ sap.ui.define([
 
 		sinon.stub(oContainer, "isFocusInHelp").returns(true);
 		assert.ok(oValueHelp.isFocusInHelp(), "returns value of container");
-
-	});
-
-	QUnit.test("valueHelpEnabled", function(assert) {
-
-		assert.ok(oValueHelp.valueHelpEnabled(), "valueHelp enabled");
 
 	});
 

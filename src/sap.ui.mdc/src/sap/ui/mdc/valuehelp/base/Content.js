@@ -190,6 +190,29 @@ sap.ui.define([
 						 */
 						itemId: { type: "string" }
 					}
+				},
+				/**
+				 * This event is fired after a suggested item was found for a typeahead
+				 * @since 1.120.0
+				 */
+				typeaheadSuggested: {
+					parameters: {
+						/**
+						 * Suggested condition.
+						 *
+						 * <b>Note:</b> A condition must have the structure of {@link sap.ui.mdc.condition.ConditionObject ConditionObject}.
+						 */
+						condition: { type: "object" },
+						/**
+						 * Used filter value.
+						 * (As the event might fired asynchronously and the current user input might have cahnged.)
+						 */
+						filterValue: { type: "string" },
+						/**
+						 * ID of the suggested item. (This is needed to set the corresponding aria-attribute)
+						 */
+						itemId: { type: "string" }
+					}
 				}
 			}
 		}
@@ -274,6 +297,7 @@ sap.ui.define([
 	 * Called if the content will be shown.
 	 *
 	 * @param {boolean} bInitial Indicates, if the content is shown for the first time since it's container opened.
+	 * @returns {string} Item ID. ID of the initial selected item if it belongs to the value of the field.
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.valuehelp.base.Container
 	 */
@@ -607,7 +631,9 @@ sap.ui.define([
 		return { // return default values, but needs to be implemented by specific content
 			contentId: null,
 			ariaHasPopup: "listbox",
-			roleDescription: null
+			roleDescription: null,
+			valueHelpEnabled: false,
+			autocomplete: "none"
 		};
 
 	};

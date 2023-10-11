@@ -888,7 +888,7 @@ sap.ui.define([
 	 */
 	ElementOverlay.prototype.getParentAggregationOverlay = function() {
 		var oParentAggregationOverlay = this.getParent();
-		return BaseObject.isA(oParentAggregationOverlay, "sap.ui.dt.AggregationOverlay") ? oParentAggregationOverlay : null;
+		return BaseObject.isObjectA(oParentAggregationOverlay, "sap.ui.dt.AggregationOverlay") ? oParentAggregationOverlay : null;
 	};
 
 	/**

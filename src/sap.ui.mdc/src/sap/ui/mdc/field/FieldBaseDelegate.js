@@ -7,9 +7,19 @@
 // ---------------------------------------------------------------------------------------
 
 sap.ui.define([
-	'sap/ui/mdc/BaseDelegate', 'sap/ui/mdc/DefaultTypeMap', 'sap/ui/model/FormatException', 'sap/ui/mdc/condition/Condition', 'sap/ui/mdc/enums/ConditionValidated'
+	'sap/ui/mdc/BaseDelegate',
+	'sap/ui/mdc/DefaultTypeMap',
+	'sap/ui/model/FormatException',
+	'sap/ui/mdc/condition/Condition',
+	'sap/ui/mdc/enums/ConditionValidated',
+	'sap/ui/mdc/enums/FieldDisplay'
 ], function(
-	BaseDelegate, DefaultTypeMap, FormatException, Condition, ConditionValidated
+	BaseDelegate,
+	DefaultTypeMap,
+	FormatException,
+	Condition,
+	ConditionValidated,
+	FieldDisplay
 ) {
 	"use strict";
 
@@ -173,6 +183,84 @@ sap.ui.define([
 			control: oControl
 		};
 		return oValueHelp && oValueHelp.getItemForValue(oConfig);
+
+	};
+
+	/**
+	 * Determines the text and selection for autocomplete
+	 *
+	 * This function is called while typeahead into a {@link sap.ui.mdc.Field Field} or {@link sap.ui.mdc.FilterField FilterField} control.
+	 *
+	 * @param {sap.ui.mdc.field.FieldBase} oField <code>Field</code> control instance
+	 * @param {sap.ui.mdc.condition.ConditionObject} oCondition Condition
+	 * @param {string} sCurrentText Currently typed text. (Could be changed while the typeahed result is returned asynchronously.)
+	 * @param {string} sUsedText Text used to determine condition
+	 * @param {sap.ui.model.Type} oType Type of the value
+	 * @param {sap.ui.model.Type} oAdditionalType Type of the description
+	 * @returns {object} Object containing <code>text</code>, <code>selectionStart</code> and <code>selectionEnd</code>.
+	 * @since: 1.120.0
+	 * @public
+	 */
+	FieldBaseDelegate.getAutocomplete = function(oField, oCondition, sCurrentText, sUsedText, oType, oAdditionalType) {
+
+		if (sCurrentText !== sUsedText) {
+			// user changed text after typeahead was determined, so result might be wrong
+			return null;
+		}
+
+		const sDisplay = oField.getDisplay();
+		let sKey;
+		let sDescription;
+		let sOutput;
+		let iStart;
+		let iEnd;
+
+		// get output texts
+		if (oType) {
+			sKey = oType.formatValue(oCondition.values[0], "string");
+		} else {
+			sKey = oCondition.values[0];
+		}
+
+		if (oAdditionalType) {
+			sDescription = oAdditionalType.formatValue(oCondition.values[1], "string");
+		} else {
+			sDescription = oCondition.values[1];
+		}
+
+		// check if key or description match
+		const bKeyMatch = sKey.startsWith(sCurrentText);
+		const bDesctiptionMatch = sDescription.startsWith(sCurrentText);
+
+		if (sDisplay === FieldDisplay.Value) {
+			if (bKeyMatch) {
+				sOutput = sKey;
+			}
+		} else if (sDisplay === FieldDisplay.Description) {
+			if (bDesctiptionMatch) {
+				sOutput = sDescription;
+			}
+		} else if (sDisplay === FieldDisplay.ValueDescription) {
+			if (bKeyMatch) {
+				sOutput = sKey;
+			} else if (bDesctiptionMatch) {
+				sOutput = sDescription;
+			}
+		} else if (sDisplay === FieldDisplay.DescriptionValue) {
+			if (bDesctiptionMatch) {
+				sOutput = sDescription;
+			} else if (bKeyMatch) {
+				sOutput = sKey;
+			}
+		}
+
+		if (sOutput) {
+			iStart = sCurrentText.length;
+			iEnd = sOutput.length;
+			return {text: sOutput, selectionStart: iStart, selectionEnd: iEnd};
+		}
+
+		return null;
 
 	};
 

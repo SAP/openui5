@@ -84,7 +84,7 @@ sap.ui.define([
 	 * @private
 	 */
 	ResizeHandler.prototype.attachListener = function(oRef, fnHandler){
-		var bIsControl = BaseObject.isA(oRef, 'sap.ui.core.Control'),
+		var bIsControl = BaseObject.isObjectA(oRef, 'sap.ui.core.Control'),
 			bIsJQuery = oRef instanceof jQuery, // actually, jQuery objects are not allowed as oRef, as per the API documentation. But this happens in the wild.
 			oDom = bIsControl ? oRef.getDomRef() : oRef,
 			iWidth = oDom ? oDom.offsetWidth : 0,

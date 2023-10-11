@@ -372,7 +372,9 @@ sap.ui.define([
 		const oCheckAttributes = {
 			contentId: "C1-DCP",
 			ariaHasPopup: "dialog",
-			roleDescription: null
+			roleDescription: null,
+			valueHelpEnabled: true,
+			autocomplete: "none"
 		};
 		const oAttributes = oConditions.getAriaAttributes();
 		assert.ok(oAttributes, "Aria attributes returned");

@@ -854,7 +854,9 @@ sap.ui.define([
 			contentId: null, // as in Dialog case focus is not in field, it is not needed
 			ariaHasPopup: "dialog",
 			role: null, // TODO: use "combobox" role here? But Input and MultiInput don't set a role if valueHelp is available
-			roleDescription: null // TODO: is it needed in multiselect case?
+			roleDescription: null, // TODO: is it needed in multiselect case?
+			valueHelpEnabled: true,
+			autocomplete: "none" // Dialog cannot have an autocomplete
 		};
 	};
 

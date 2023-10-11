@@ -6,9 +6,10 @@ sap.ui.define([
 	"sap/m/MessageBox",
 	"./test/mockserver",
 	"sap/m/MessageToast",
+	"sap/ui/core/Item",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator"
-], function (Controller, JSONModel, UploadSetwithTable, UploadSetwithTableItem, MessageBox, MockServer, MessageToast,CoreItem, Filter, FilterOperator)  {
+], function (Controller, JSONModel, UploadSetwithTable, UploadSetwithTableItem, MessageBox, MockServer, MessageToast, CoreItem, Filter, FilterOperator)  {
 	"use strict";
 
 	return Controller.extend("sap.m.sample.UploadSetwithTableFilePreview.Page", {

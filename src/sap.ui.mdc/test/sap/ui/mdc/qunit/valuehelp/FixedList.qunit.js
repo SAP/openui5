@@ -103,7 +103,7 @@ sap.ui.define([
 		if (oContent) {
 			const fnDone = assert.async();
 			oContent.then(function(oContent) {
-				oFixedList.onShow(); // to update selection and scroll
+				const sItemId = oFixedList.onShow(); // to update selection and scroll
 				assert.ok(oContent, "Content returned");
 				assert.ok(oContent.isA("sap.m.List"), "Content is sap.m.List");
 				assert.equal(oFixedList.getDisplayContent(), oContent, "sap.m.List stored in displayContent");
@@ -131,6 +131,7 @@ sap.ui.define([
 				assert.equal(oItem.getValue(), whitespaceReplacer("Item   2"), "Item1 value");
 				assert.ok(oItem.getSelected(), "Item1 selected");
 				assert.ok(oItem.hasStyleClass("sapMComboBoxNonInteractiveItem"), "Item1 has style class sapMComboBoxNonInteractiveItem");
+				assert.equal(sItemId, oItem.getId(), "OnShow returns selected itemId");
 				oItem = oContent.getItems()[2];
 				assert.ok(oItem.isA("sap.m.DisplayListItem"), "Item2 is DisplayListItem");
 				assert.equal(oItem.getType(), mLibrary.ListType.Active, "Item2 type");
@@ -217,6 +218,11 @@ sap.ui.define([
 
 	QUnit.test("Filtering", function(assert) {
 
+		let iTypeaheadSuggested = 0;
+		oFixedList.attachEvent("typeaheadSuggested", function(oEvent) {
+			iTypeaheadSuggested++;
+		});
+
 		oFixedList.setFilterValue("i");
 		const oContent = oFixedList.getContent();
 
@@ -238,6 +244,8 @@ sap.ui.define([
 				assert.equal(oItem.getLabel(), "item 3", "Item0 label");
 				assert.equal(oItem.getValue(), "My Item 3", "Item0 value");
 
+				assert.equal(iTypeaheadSuggested, 0, "typeaheadSuggested event not fired");
+
 				fnDone();
 			}).catch(function(oError) {
 				assert.notOk(true, "Promise Catch called: " + oError);
@@ -249,10 +257,21 @@ sap.ui.define([
 
 	QUnit.test("Filtering without hiding", function(assert) {
 
-		oFixedList.setFilterValue("i");
-		oFixedList.setConditions([]);
+		let iTypeaheadSuggested = 0;
+		let oCondition;
+		let sFilterValue;
+		let sItemId;
+		oFixedList.attachEvent("typeaheadSuggested", function(oEvent) {
+			iTypeaheadSuggested++;
+			oCondition = oEvent.getParameter("condition");
+			sFilterValue = oEvent.getParameter("filterValue");
+			sItemId = oEvent.getParameter("itemId");
+		});
+
 		oFixedList.setUseFirstMatch(true);
 		oFixedList.setFilterList(false);
+		oFixedList.setConditions([]);
+		oFixedList.setFilterValue("i");
 		const oContent = oFixedList.getContent();
 
 		if (oContent) {
@@ -272,6 +291,22 @@ sap.ui.define([
 				assert.equal(oItem.getLabel(), "item 3", "Item2 label");
 				assert.equal(oItem.getValue(), "My Item 3", "Item2 value");
 				assert.notOk(oItem.getSelected(), "Item2 not selected");
+
+				oItem = oContent.getItems()[0];
+				assert.equal(iTypeaheadSuggested, 1, "typeaheadSuggested event fired");
+				assert.deepEqual(oCondition, Condition.createItemCondition("I1", "Item 1"), "typeaheadSuggested event condition");
+				assert.equal(sFilterValue, "i", "typeaheadSuggested event filterValue");
+				assert.equal(sItemId, oItem.getId(), "typeaheadSuggested event itemId");
+
+				iTypeaheadSuggested = 0;
+				oFixedList.setFilterValue("M");
+				assert.notOk(oItem.getSelected(), "Item0 not selected");
+				oItem = oContent.getItems()[1];
+				assert.ok(oItem.getSelected(), "Item1 selected");
+				assert.equal(iTypeaheadSuggested, 1, "typeaheadSuggested event fired");
+				assert.deepEqual(oCondition, Condition.createItemCondition("I2", "My Item   2"), "typeaheadSuggested event condition");
+				assert.equal(sFilterValue, "M", "typeaheadSuggested event filterValue");
+				assert.equal(sItemId, oItem.getId(), "typeaheadSuggested event itemId");
 
 				fnDone();
 			}).catch(function(oError) {
@@ -766,10 +801,17 @@ sap.ui.define([
 		const oCheckAttributes = {
 			contentId: "FL1-List",
 			ariaHasPopup: "listbox",
-			roleDescription: null
+			roleDescription: null,
+			valueHelpEnabled: false,
+			autocomplete: "both"
 		};
-		const oAttributes = oFixedList.getAriaAttributes();
+		let oAttributes = oFixedList.getAriaAttributes();
 		assert.ok(oAttributes, "Aria attributes returned");
+		assert.deepEqual(oAttributes, oCheckAttributes, "returned attributes");
+
+		oFixedList.setUseFirstMatch(false);
+		oCheckAttributes.autocomplete = "none";
+		oAttributes = oFixedList.getAriaAttributes();
 		assert.deepEqual(oAttributes, oCheckAttributes, "returned attributes");
 
 	});

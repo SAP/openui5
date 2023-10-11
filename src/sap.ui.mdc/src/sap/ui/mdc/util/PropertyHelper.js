@@ -559,7 +559,7 @@ sap.ui.define([
 		constructor: function(aProperties, oParent, mAdditionalAttributes) {
 			BaseObject.call(this);
 
-			if (oParent && !BaseObject.isA(oParent, "sap.ui.base.ManagedObject")) {
+			if (oParent && !BaseObject.isObjectA(oParent, "sap.ui.base.ManagedObject")) {
 				throw new Error("The type of the parent is invalid.");
 			}
 

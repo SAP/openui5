@@ -220,6 +220,9 @@ sap.ui.define([
 	};
 
 	CellSelector.prototype.onsapspace = function (oEvent) {
+		if (!this._isSelectableCell(oEvent.target)) {
+			return;
+		}
 		this._startSelection(oEvent, false);
 	};
 
@@ -240,7 +243,7 @@ sap.ui.define([
 	};
 
 	CellSelector.prototype._onsaparrowmodifiers = function(oEvent, sDirectionType, iRowDiff, iColDiff) {
-		if (oEvent.isMarked() || !oEvent.shiftKey) {
+		if (oEvent.isMarked() || !oEvent.shiftKey || !this._isSelectableCell(oEvent.target)) {
 			return;
 		}
 
@@ -488,7 +491,11 @@ sap.ui.define([
 	 * @returns {HTMLELement|null}
 	 */
 	 CellSelector.prototype._getSelectableCell = function (oDomRef) {
-		return oDomRef && oDomRef.closest(this.getConfig("selectableCells"));
+		return oDomRef?.closest(`.${this.getConfig("selectableCells")}`);
+	};
+
+	CellSelector.prototype._isSelectableCell = function(oDomRef) {
+		return oDomRef?.classList.contains(this.getConfig("selectableCells"));
 	};
 
 	CellSelector.prototype._inSelection = function(oTarget) {
@@ -789,7 +796,7 @@ sap.ui.define([
 
 	PluginBase.setConfigs({
 		"sap.ui.table.Table": {
-			selectableCells: ".sapUiTableDataCell",
+			selectableCells: "sapUiTableDataCell",
 			scrollArea: "sapUiTableCtrlScr",
 			scrollEvent: "_rowsUpdated",
 			/**
@@ -831,7 +838,7 @@ sap.ui.define([
 					var oColumn = this.getVisibleColumns(oTable)[mPosition.colIndex];
 					var oCell = oColumn && oRow.getCells()[mPosition.colIndex];
 					if (oCell) {
-						return oCell.$().closest(this.selectableCells)[0];
+						return oCell.$().closest(`.${this.selectableCells}`)[0];
 					}
 				} else if (bRange) {
 					if (aRows[0].getIndex() > mPosition.rowIndex) {
@@ -839,14 +846,14 @@ sap.ui.define([
 						var oColumn = this.getVisibleColumns(oTable)[mPosition.colIndex];
 						var oCell = oColumn && oRow.getCells()[mPosition.colIndex];
 						if (oCell) {
-							return oCell.$().closest(this.selectableCells)[0];
+							return oCell.$().closest(`.${this.selectableCells}`)[0];
 						}
 					} else if (aRows[aRows.length - 1].getIndex() < mPosition.rowIndex) {
 						oRow = aRows[aRows.length - 1];
 						var oColumn = this.getVisibleColumns(oTable)[mPosition.colIndex];
 						var oCell = oColumn && oRow.getCells()[mPosition.colIndex];
 						if (oCell) {
-							return oCell.$().closest(this.selectableCells)[0];
+							return oCell.$().closest(`.${this.selectableCells}`)[0];
 						}
 					}
 				}

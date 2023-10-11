@@ -13,6 +13,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexObjects/States",
 	"sap/ui/fl/apply/api/ControlVariantApplyAPI",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
+	"sap/ui/core/Element",
 	"sap/base/Log"
 ], function(
 	Utils,
@@ -25,6 +26,7 @@ sap.ui.define([
 	States,
 	ControlVariantApplyAPI,
 	JsControlTreeModifier,
+	Element,
 	Log
 ) {
 	"use strict";
@@ -165,7 +167,7 @@ sap.ui.define([
 		}
 
 		mPropertyBag.changeTypes ||= [];
-		var oControl = mPropertyBag.selector.id && sap.ui.getCore().byId(mPropertyBag.selector.id) || mPropertyBag.selector;
+		var oControl = mPropertyBag.selector.id && Element.getElementById(mPropertyBag.selector.id) || mPropertyBag.selector;
 		var mChangesMap = this._oChangePersistence.getChangesMapForComponent();
 		var aPromises = [];
 		var mDependencies = Object.assign({}, mChangesMap.mDependencies);

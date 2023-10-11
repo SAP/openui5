@@ -100,7 +100,7 @@ sap.ui.define([
 	 * @param {sap.ui.model.Context} oContext The context
 	 */
 	ODataPropertyBinding.prototype.setContext = function(oContext) {
-		var bForceUpdate,
+		var oDataState, bForceUpdate,
 			oOldContext = this.oContext;
 
 		if (oContext && oContext.isPreliminary && oContext.isPreliminary()) {
@@ -110,8 +110,9 @@ sap.ui.define([
 		if (Context.hasChanged(this.oContext, oContext)) {
 			this.oContext = oContext;
 			if (this.isRelative()) {
+				oDataState = this.getDataState();
 				bForceUpdate = !!(oOldContext !== oContext
-					&& this.getDataState().getControlMessages().length);
+					&& (oDataState.getControlMessages().length || oDataState.getModelMessages().length));
 				this.checkUpdate(bForceUpdate);
 			}
 		}

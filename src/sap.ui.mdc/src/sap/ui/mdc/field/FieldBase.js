@@ -29,7 +29,8 @@ sap.ui.define([
 	'sap/ui/model/ParseException',
 	'sap/ui/model/ValidateException',
 	'sap/ui/model/base/ManagedObjectModel',
-	'sap/ui/base/ManagedObjectObserver'
+	'sap/ui/base/ManagedObjectObserver',
+	'sap/ui/events/KeyCodes'
 ], function(
 	Control,
 	BaseType,
@@ -58,7 +59,8 @@ sap.ui.define([
 	ParseException,
 	ValidateException,
 	ManagedObjectModel,
-	ManagedObjectObserver
+	ManagedObjectObserver,
+	KeyCodes
 ) {
 	"use strict";
 
@@ -542,6 +544,7 @@ sap.ui.define([
 		onsappagedown: _handleKeybordEvent,
 
 		onsapbackspace: _handleKeybordEvent,
+		onkeydown: _handleKeybordEvent,
 		onchange: _handleContentOnchange,
 		onsapfocusleave: _handleContentOnsapfocusleave,
 		onpaste: _handlePaste
@@ -795,9 +798,8 @@ sap.ui.define([
 		const iIndex = aFieldGroupIds.indexOf(this.getId());
 		if (iIndex > -1) { //own FieldGroup left
 			if (this._bPendingChange) {
-				const oFocusedElement = document.activeElement;
 				const oValueHelp = _getValueHelp.call(this);
-				if (!(oFocusedElement && oValueHelp && containsOrEquals(oValueHelp.getDomRef(), oFocusedElement))) {
+				if (!(oValueHelp && _isFocused.call(oValueHelp))) {
 					const oPromise = _getAsyncPromise.call(this);
 
 					if (oPromise) {
@@ -1630,6 +1632,9 @@ sap.ui.define([
 				oAttributes.aria["expanded"] = "false"; // only allowed for combobox, listbox...
 			}
 			oAttributes["valueHelpEnabled"] = oAriaAttributes.valueHelpEnabled;
+			if (oAriaAttributes.autocomplete && oAriaAttributes.autocomplete !== "none") { // if no autocomplete attribute must not be set
+				oAttributes.aria["autocomplete"] = oAriaAttributes.autocomplete;
+			}
 		}
 
 		this.setProperty("_ariaAttributes", oAttributes, true);
@@ -2061,6 +2066,15 @@ sap.ui.define([
 				case "sappagedown":
 					bPrevent = oValueHelp.isNavigationEnabled(10);
 					break;
+				case "sapbackspace":
+					bPrevent = oValueHelp.isOpen();
+					this._bPreventAutocomplete = true;
+					break;
+				case "keydown":
+					if (oEvent.which !== KeyCodes.BACKSPACE && oEvent.which !== KeyCodes.DELETE) {
+						this._bPreventAutocomplete = false;
+					}
+					break;
 				default:
 					bPrevent = oValueHelp.isOpen();
 					break;
@@ -2413,6 +2427,9 @@ sap.ui.define([
 		if (this._oNavigateCondition) {
 			this._oNavigateCondition = undefined; // navigation now finished
 			this.getContentFactory().updateConditionType();
+			if (oSource.selectText && oSource.getDOMValue) {
+				oSource.selectText(oSource.getDOMValue().length, oSource.getDOMValue().length); // deselect highlighting
+			}
 		}
 
 		if (oChange.resolve) {
@@ -2509,14 +2526,13 @@ sap.ui.define([
 							}
 
 							const _handleTypeahead = function () {
-								const oFocusedElement = document.activeElement;
-								if (oFocusedElement && (containsOrEquals(this.getDomRef(), oFocusedElement))) { // only if still connected and focussed
+								if (_isFocused.call(this)) { // only if still connected and focussed
 									const bIsFHOpen = oValueHelp.isOpen();
-									oValueHelp.setFilterValue(this._sFilterValue);
 									if (this.getMaxConditionsForHelp() === 1 && oValueHelp.getConditions().length > 0) {
 										// While single-suggestion no item is selected
 										oValueHelp.setConditions([]);
 									}
+									oValueHelp.setFilterValue(this._sFilterValue);
 									if (!bIsFHOpen) {
 										/*
 											sap.ui.mdc.ValueHelp can only be "asked" to open a typeahead by a connected control.
@@ -2527,7 +2543,7 @@ sap.ui.define([
 									} else {
 										_setShowValueStateMessage.call(this, false);
 									}
-									_setAriaAttributes.call(this, bIsFHOpen); // change open state for aria only if really opened or closed (_handleValueHelpOpened/_handleValueHelpAfterClose)
+									// _setAriaAttributes.call(this, bIsFHOpen); // change open state for aria only if really opened or closed (_handleValueHelpOpened/_handleValueHelpAfterClose)
 									delete this._vLiveChangeValue;
 								}
 							}.bind(this);
@@ -2547,8 +2563,7 @@ sap.ui.define([
 					if (vOpenByTyping instanceof Promise) {
 						vOpenByTyping.then(function(bOpenByTyping) {
 							// trigger open after Promise resolved
-							const oFocusedElement = document.activeElement;
-							if (oFocusedElement && (containsOrEquals(this.getDomRef(), oFocusedElement)) && this._fnLiveChangeTimer) { // if destroyed this._fnLiveChangeTimer is removed
+							if (_isFocused.call(this) && this._fnLiveChangeTimer) { // if destroyed this._fnLiveChangeTimer is removed
 								this._fnLiveChangeTimer(); // if resolved while initial debounce-time frame, it will not triggered twice
 							}
 							this._bOpenByTyping = bOpenByTyping;
@@ -3002,6 +3017,49 @@ sap.ui.define([
 
 	}
 
+	function _handleValueHelpTypeaheadSuggested(oEvent) {
+
+		const oCondition = oEvent.getParameter("condition");
+		const sFilterValue = oEvent.getParameter("filterValue");
+		const sItemId = oEvent.getParameter("itemId");
+		const oContent = this.getControlForSuggestion();
+		const oOperator = FilterOperatorUtil.getEQOperator(this.getSupportedOperators()); /// use EQ operator of Field (might be different one)
+
+		if (_isFocused.call(this) && oContent && oContent.setDOMValue && oContent.selectText && !this._bPreventAutocomplete && (!oContent.isComposingCharacter || !oContent.isComposingCharacter())) { // Autocomplete only possible if content supports it
+			const oContentFactory = this.getContentFactory();
+			const oDelegate = this.getControlDelegate(); // on typeahead it must be initialized
+			const oAutocomplete = oDelegate.getAutocomplete(this, oCondition, this._sFilterValue, sFilterValue, oContentFactory.getDataType(), oContentFactory.getAdditionalDataType());
+
+			if (oAutocomplete && oAutocomplete.text) { // only if something returned
+				this._oNavigateCondition = merge({}, oCondition); // to keep Payload
+				this._oNavigateCondition.operator = oOperator.name;
+
+				if (oContentFactory.isMeasure()) {
+					const aConditions = this.getConditions();
+					// use number of first condition. In Multicase all conditions must be updated in change event
+					if (aConditions.length > 0) {
+						this._oNavigateCondition.operator = aConditions[0].operator;
+						this._oNavigateCondition.values[0] = [aConditions[0].values[0][0], oCondition.values[0]];
+						if (aConditions[0].operator === OperatorName.BT) {
+							this._oNavigateCondition.values[1] = [aConditions[0].values[1][0], this._oNavigateCondition.values[0][1]];
+						} else if (this._oNavigateCondition.values.length > 1) {
+							this._oNavigateCondition.values.splice(1);
+						}
+					} else {
+						this._oNavigateCondition.values = [[null, oCondition.values[0]]];
+					}
+				}
+
+				oContent.setDOMValue(oAutocomplete.text);
+				oContent.selectText(oAutocomplete.selectionStart, oAutocomplete.selectionEnd);
+
+				oContentFactory.updateConditionType();
+				_setAriaAttributes.call(this, true, sItemId); // TODO: check if still open?
+			}
+		}
+
+	}
+
 	function _handleValueHelpAfterClose(oEvent) {
 
 		const oContent = this.getControlForSuggestion();
@@ -3029,7 +3087,11 @@ sap.ui.define([
 
 	function _handleValueHelpOpened(oEvent) {
 
-		_setAriaAttributes.call(this, true);
+		let sItemId;
+		if (this.getMaxConditionsForHelp() === 1 || this._sFilterValue) { // set aria-activedescendant only in singleValue or typeahead
+			sItemId = oEvent.getParameter("itemId");
+		}
+		_setAriaAttributes.call(this, true, sItemId);
 		_setShowValueStateMessage.call(this, false);
 
 		// close ValueState message on opening, because opened is sometimes very delayed what would lead to strange effect
@@ -3083,6 +3145,7 @@ sap.ui.define([
 			oValueHelp.detachEvent("switchToValueHelp", _handleFieldSwitchToValueHelp, this);
 			oValueHelp.detachEvent("closed", _handleValueHelpAfterClose, this);
 			oValueHelp.detachEvent("opened", _handleValueHelpOpened, this);
+			oValueHelp.detachEvent("typeaheadSuggested", _handleValueHelpTypeaheadSuggested, this);
 		this._bConnected = false;
 		}
 
@@ -3126,6 +3189,7 @@ sap.ui.define([
 				oValueHelp.attachEvent("switchToValueHelp", _handleFieldSwitchToValueHelp, this);
 				oValueHelp.attachEvent("closed", _handleValueHelpAfterClose, this);
 				oValueHelp.attachEvent("opened", _handleValueHelpOpened, this);
+				oValueHelp.attachEvent("typeaheadSuggested", _handleValueHelpTypeaheadSuggested, this);
 				const aConditions = this.getConditions();
 				_setConditionsOnValueHelp.call(this, aConditions, oValueHelp);
 
@@ -3152,6 +3216,9 @@ sap.ui.define([
 					oEvent.stopImmediatePropagation(true); // to prevent focusleave on content
 					if (oContent.bValueHelpRequested) {
 						oContent.bValueHelpRequested = false; // to enable change-event after closing value help
+					}
+					if (this._sFilterValue) { // remove Autocomplete as selection is not shown if focus goes to ValueHelp
+						oContent.setDOMValue(this._sFilterValue);
 					}
 				} else {
 					oValueHelp.skipOpening();
@@ -3340,14 +3407,10 @@ sap.ui.define([
 
 	function _asyncParsingCall(oPromise) {
 
-		// close ValueHelp to prevent action on it during parsing (only if still focused, otherwise let autoclose do its work)
+		// close FieldHelp to prevent action on it during parsing (only if still focused, otherwise let autoclose do its work)
 		const oValueHelp = _getValueHelp.call(this);
-		if (oValueHelp && oValueHelp.isOpen()) {
-			const oFocusedElement = document.activeElement;
-			if (oFocusedElement
-				&& (containsOrEquals(this.getDomRef(), oFocusedElement) || containsOrEquals(oValueHelp.getDomRef(), oFocusedElement))) {
-				oValueHelp.close();
-			}
+		if (oValueHelp && oValueHelp.isOpen() && (_isFocused.call(this) || _isFocused.call(oValueHelp))) {
+			oValueHelp.close();
 		}
 
 		// as async parsing can be called again while one is still running we have to map the promises to resolve the right one.
@@ -3584,6 +3647,13 @@ sap.ui.define([
 		return null;
 
 	};
+
+	function _isFocused() {
+
+		const oFocusedElement = document.activeElement;
+		return (oFocusedElement && (containsOrEquals(this.getDomRef(), oFocusedElement)));
+
+	}
 
 	return FieldBase;
 

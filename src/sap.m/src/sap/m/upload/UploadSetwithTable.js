@@ -44,10 +44,14 @@ sap.ui.define([
 	/**
 	 * Constructor for a new UploadSetwithTable.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given.
+	 * @param {string} [sId] Id for the new control, it is generated automatically if no id is provided.
 	 * @param {object} [mSettings] Initial settings for the new control.
 	 * @class This control allows you to upload one or more files from your device, such as desktop, tablet or phone, and attach them to your application in a responsive tabular manner.<br>
 	 * This control builds on the {@link sap.m.upload.UploadSet UploadSet} control. Provides flexibility to tailor the design of the table including columns, cells and the content to suit specific requirements.
+	 *
+	 * To render the <code> sap.m.upload.UploadSetwithTable </code>control properly, the order of the columns aggregation should match the order of the cells aggregation (sap.m.upload.UploadSetwithTableItem).
+	 *
+	 * <b>Note:</b> Control recommends to use <code> sap.m.upload.Column </code> with the columns aggregation. <code>sap.m.upload.Column</code> control is built on <code> sap.m.Column </code> ({@link sap.m.Column Column}) control and provides ability to define personalization specific properties for column and is essential to setup personalization for the <code>sap.m.upload.UploadSetwithTable</code> control.
 	 * @extends sap.m.Table
 	 * @author SAP SE
 	 * @constructor
@@ -155,11 +159,7 @@ sap.ui.define([
 				/**
 				 * Header fields to be included in the header section of an XHR request.
 				 */
-				headerFields: {type: "sap.ui.core.Item", multiple: true, singularName: "headerField"},
-				/**
-				 * Additional buttons can be added to the footer of file preview dialog
-				 */
-				additionalFooterButtons: {type: "sap.m.Button", multiple: true}
+				headerFields: {type: "sap.ui.core.Item", multiple: true, singularName: "headerField"}
 			},
 			associations: {
 				/**
@@ -1138,7 +1138,7 @@ sap.ui.define([
 			this.setPreviewDialog(oAssociatedPreviewDialog);
 		}
 		this._filePreviewDialogControl = Element.getElementById(this.getPreviewDialog());
-		// var aitems = this.getAdditionalFooterButtons();
+
 		if (this._filePreviewDialogControl) {
 			this._filePreviewDialogControl._previewItem = oItem;
 			this._filePreviewDialogControl._items = this.getItems();

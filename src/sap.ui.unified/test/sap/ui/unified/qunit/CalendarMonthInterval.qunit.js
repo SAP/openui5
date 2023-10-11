@@ -100,7 +100,8 @@ sap.ui.define([
 	QUnit.test("Header", function(assert) {
 		assert.ok(!jQuery("#Cal1--Head-B1").get(0), "Calendar1: Header button 1 not shown");
 		assert.ok(jQuery("#Cal1--Head-B2").get(0), "Calendar1: year button shown");
-		assert.equal(jQuery("#Cal2--Head-B2").text(), "2015 – 2017", "Calendar2: year 2015 - 2017 shown");
+		// \u2009 is a thin space (both introduced with CLDR version 43), \u2013 is a dash
+		assert.equal(jQuery("#Cal2--Head-B2").text(), "2015\u2009\u2013\u20092017", "Calendar2: year 2015 - 2017 shown");
 	});
 
 	QUnit.test("width", function(assert) {
@@ -333,7 +334,8 @@ sap.ui.define([
 		qutils.triggerKeydown($NewYear.get(0), KeyCodes.ENTER, false, false, false);
 		oCore.applyChanges();
 		assert.ok(!jQuery(jQuery("#Cal1--YP").get(0)).is(":visible"), "Calendar1: Year picker not visible after selecting year");
-		assert.equal(jQuery("#Cal1--Head-B2").text(), "2013 – 2014", "Calendar1: year 2013 - 2014 shown");
+		// \u2009 is a thin space (both introduced with CLDR version 43), \u2013 is a dash
+		assert.equal(jQuery("#Cal1--Head-B2").text(), "2013\u2009\u2013\u20092014", "Calendar1: year 2013 - 2014 shown");
 		var $MonthsRow = oCore.byId("Cal1").getAggregation("monthsRow").$();
 		var aMonths = $MonthsRow.find(".sapUiCalItem");
 		assert.equal(jQuery(aMonths[0]).attr("data-sap-month"), "20130301", "Calendar1: new start month");

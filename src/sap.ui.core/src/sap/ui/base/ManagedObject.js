@@ -1209,7 +1209,7 @@ sap.ui.define([
 			if ( typeof mSettings.models !== "object" ) {
 				throw new Error("models must be a simple object");
 			}
-			if ( BaseObject.isA(mSettings.models, "sap.ui.model.Model") ) {
+			if ( BaseObject.isObjectA(mSettings.models, "sap.ui.model.Model") ) {
 				this.setModel(mSettings.models);
 			} else {
 				for (sKey in mSettings.models ) {
@@ -1223,7 +1223,7 @@ sap.ui.define([
 				throw new Error("bindingContexts must be a simple object");
 			}
 			var oBindingContexts = mSettings.bindingContexts;
-			if ( BaseObject.isA(oBindingContexts, "sap.ui.model.Context")) {
+			if ( BaseObject.isObjectA(oBindingContexts, "sap.ui.model.Context")) {
 				this.setBindingContext(mSettings.bindingContexts);
 			} else {
 				for (sKey in mSettings.bindingContexts ) {
@@ -1961,7 +1961,7 @@ sap.ui.define([
 			return oObject;
 		}
 
-		if ( BaseObject.isA(oObject, oAggregation.type) ) {
+		if ( BaseObject.isObjectA(oObject, oAggregation.type) ) {
 			return oObject;
 		}
 
@@ -3357,7 +3357,7 @@ sap.ui.define([
 			oBindingInfo = {
 				parts: [ {
 					path: oBindingInfo,
-					type: BaseObject.isA(_vFormat, "sap.ui.model.Type") ? _vFormat : undefined,
+					type: BaseObject.isObjectA(_vFormat, "sap.ui.model.Type") ? _vFormat : undefined,
 					mode: _sMode
 				} ],
 				formatter: typeof _vFormat === 'function' ? _vFormat : undefined
@@ -4040,7 +4040,7 @@ sap.ui.define([
 	 * @public
 	 */
 	ManagedObject.prototype.setModel = function(oModel, sName) {
-		assert(oModel == null || BaseObject.isA(oModel, "sap.ui.model.Model"), "oModel must be an instance of sap.ui.model.Model, null or undefined");
+		assert(oModel == null || BaseObject.isObjectA(oModel, "sap.ui.model.Model"), "oModel must be an instance of sap.ui.model.Model, null or undefined");
 		assert(sName === undefined || (typeof sName === "string" && !/^(undefined|null)?$/.test(sName)), "sName must be a string or omitted");
 		if (!oModel && this.oModels[sName]) {
 			delete this.oModels[sName];

@@ -163,6 +163,24 @@ sap.ui.define([
 		renderer: ListContentItemRenderer
 	});
 
+	/**
+	 * Called on before rendering of the control.
+	 * @private
+	 */
+	ListContentItem.prototype.onBeforeRendering = function () {
+		ListItemBase.prototype.onBeforeRendering.apply(this, arguments);
+
+		if (this.isPropertyInitial("iconSize")) {
+			if (this.getLinesCount() === 1){
+				this._getAvatar().setDisplaySize(AvatarSize.XS);
+			} else {
+				this._getAvatar().setDisplaySize(AvatarSize.S);
+			}
+		} else {
+			this._getAvatar().setDisplaySize(this.getIconSize());
+		}
+	};
+
 	ListContentItem.getLinesCount = function (oConfiguration, oContent) {
 		let iLines = 1; // at least 1 line for the mandatory title
 		const oResolvedConfig = BindingResolver.resolveValue(oConfiguration, oContent);
@@ -258,7 +276,6 @@ sap.ui.define([
 			.setDisplayShape(this.getIconDisplayShape())
 			.setTooltip(this.getIconAlt())
 			.setInitials(this.getIconInitials())
-			.setDisplaySize(this.getIconSize())
 			.setBackgroundColor(this.getIconBackgroundColor())
 			.setVisible(this.getIconVisible());
 

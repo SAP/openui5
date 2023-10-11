@@ -5,6 +5,7 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/core/UIComponent",
 	"sap/ui/events/KeyCodes",
+	"sap/ui/fl/initial/_internal/config",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
@@ -23,6 +24,7 @@ sap.ui.define([
 	Core,
 	UIComponent,
 	KeyCodes,
+	config,
 	Layer,
 	flUtils,
 	FlexObjectFactory,
@@ -112,7 +114,7 @@ sap.ui.define([
 
 	RtaQunitUtils.renderTestAppAtAsync = function(sDomId) {
 		disableRtaRestart();
-		Core.getConfiguration().setFlexibilityServices([{
+		config.setFlexibilityServices([{
 			connector: "SessionStorageConnector"
 		}]);
 

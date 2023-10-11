@@ -11,6 +11,7 @@ sap.ui.define([
 	"sap/ui/core/Component",
 	"sap/ui/core/ComponentContainer",
 	"sap/ui/core/Core",
+	"sap/ui/core/Element",
 	"sap/ui/dt/plugin/ElementMover",
 	"sap/ui/dt/DesignTime",
 	"sap/ui/dt/ElementDesignTimeMetadata",
@@ -23,7 +24,6 @@ sap.ui.define([
 	"sap/ui/rta/command/CommandFactory",
 	"sap/ui/rta/plugin/DragDrop",
 	"sap/ui/thirdparty/sinon-4"
-
 ], function(
 	Button,
 	Bar,
@@ -35,6 +35,7 @@ sap.ui.define([
 	Component,
 	ComponentContainer,
 	Core,
+	Element,
 	DtElementMover,
 	DesignTime,
 	ElementDesignTimeMetadata,
@@ -113,7 +114,7 @@ sap.ui.define([
 				return oComponent.oView;
 			}.bind(this))
 			.then(function() {
-				this.oView = Core.byId("Comp1---idMain1");
+				this.oView = Element.getElementById("Comp1---idMain1");
 				return this.oView.getController().isDataReady();
 			}.bind(this));
 		},
@@ -271,9 +272,9 @@ sap.ui.define([
 			this.oDesignTime.attachEventOnce("synced", function() {
 				Core.applyChanges();
 
-				this.oGroup1 = Core.byId("group1");
-				this.oGroup2 = Core.byId("group2");
-				[, this.oGroup3] = Core.byId("form1").getGroups();
+				this.oGroup1 = Element.getElementById("group1");
+				this.oGroup2 = Element.getElementById("group2");
+				[, this.oGroup3] = Element.getElementById("form1").getGroups();
 
 				this.oGroup1AggrOverlay = OverlayRegistry.getOverlay(this.oGroup1).getAggregationOverlay("formElements");
 				this.oGroup2AggrOverlay = OverlayRegistry.getOverlay(this.oGroup2).getAggregationOverlay("formElements");

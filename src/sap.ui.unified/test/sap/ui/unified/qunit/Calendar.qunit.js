@@ -612,8 +612,9 @@ sap.ui.define([
 
 		// Assert
 		assert.strictEqual($yearRanges.length, 4, "Correct number of year ranges are displayed");
-		assert.strictEqual($yearRanges[0].innerText, "947 Reiwa – 966 Reiwa", "Correct first year range is displayed");
-		assert.strictEqual(document.activeElement.innerText, "987 Reiwa – 1006 Reiwa", "Correct year range is displayed and focused");
+		// \u2009 is a thin space (both introduced with CLDR version 43), \u2013 is a dash
+		assert.strictEqual($yearRanges[0].innerText, "947 Reiwa\u2009\u2013\u2009966 Reiwa", "Correct first year range is displayed");
+		assert.strictEqual(document.activeElement.innerText, "987 Reiwa\u2009\u2013\u20091006 Reiwa", "Correct year range is displayed and focused");
 
 		// Clean
 		oCal.destroy();
@@ -630,7 +631,8 @@ sap.ui.define([
 		assert.equal(jQuery(jQuery(aDays[0]).children(".sapUiCalItemText")[0]).text(), "27", "Calendar2: first displayed day - text");
 		assert.equal(jQuery(jQuery(aDays[0]).children(".sapUiCalItemSecText")[0]).text(), "20", "Calendar2: first displayed day - secondary text");
 		assert.equal(jQuery(jQuery("#Cal2--Head-B1").children(".sapUiCalHeadBText")[0]).text(), "Januar", "Januar shown");
-		assert.equal(jQuery(jQuery("#Cal2--Head-B1").children(".sapUiCalHeadBAddText")[0]).text(), "Muh. – Saf.", "Muh. - Saf. shown");
+		// \u2009 is a thin space (both introduced with CLDR version 43), \u2013 is a dash
+		assert.equal(jQuery(jQuery("#Cal2--Head-B1").children(".sapUiCalHeadBAddText")[0]).text(), "Muh.\u2009\u2013\u2009Saf.", "Muh. - Saf. shown");
 		assert.equal(jQuery(jQuery("#Cal2--Head-B2").children(".sapUiCalHeadBText")[0]).text(), "2011", "year 2011 shown");
 		assert.equal(jQuery(jQuery("#Cal2--Head-B2").children(".sapUiCalHeadBAddText")[0]).text(), "1432 AH", "year 1432 shown");
 
@@ -1281,7 +1283,8 @@ sap.ui.define([
 
 		// Assert
 		assert.ok($NextArrowButton.hasClass("sapUiCalDsbl"), "Header next button is disabled");
-		assert.strictEqual($yearRanges[$yearRanges.length - 1].innerText, "9980 – 9999", "Correct year range is displayed and focused");
+		// \u2009 is a thin space (both introduced with CLDR version 43), \u2013 is a dash
+		assert.strictEqual($yearRanges[$yearRanges.length - 1].innerText, "9980\u2009\u2013\u20099999", "Correct year range is displayed and focused");
 
 		// Clean
 		oCal.destroy();
@@ -1311,7 +1314,8 @@ sap.ui.define([
 
 		// Assert
 		assert.ok($prevArrowButton.hasClass("sapUiCalDsbl"), "Header previous button is disabled");
-		assert.strictEqual($yearRanges[0].innerText, "0001 – 0020", "Correct year range is displayed and focused");
+		// \u2009 is a thin space (both introduced with CLDR version 43), \u2013 is a dash
+		assert.strictEqual($yearRanges[0].innerText, "0001\u2009\u2013\u20090020", "Correct year range is displayed and focused");
 
 		// Clean
 		oCal.destroy();

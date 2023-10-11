@@ -6,7 +6,7 @@ sap.ui.define([
 	"sap/ui/base/ManagedObject",
 	"sap/ui/core/Fragment",
 	"sap/ui/core/library",
-	"sap/ui/core/Core",
+	"sap/ui/core/Element",
 	"sap/ui/core/Lib",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/rta/Utils",
@@ -17,7 +17,7 @@ sap.ui.define([
 	ManagedObject,
 	Fragment,
 	coreLibrary,
-	Core,
+	Element,
 	Lib,
 	JSONModel,
 	RtaUtils,
@@ -226,7 +226,7 @@ sap.ui.define([
 	 * @private
 	 */
 	AddIFrameDialog.prototype._disablePanelExpand = function() {
-		var oPanelButton = Core.byId("sapUiRtaAddIFrameDialog_PreviewLinkPanel").getDependents()[0];
+		var oPanelButton = Element.getElementById("sapUiRtaAddIFrameDialog_PreviewLinkPanel").getDependents()[0];
 		if (oPanelButton) {
 			oPanelButton.setEnabled(false);
 		}

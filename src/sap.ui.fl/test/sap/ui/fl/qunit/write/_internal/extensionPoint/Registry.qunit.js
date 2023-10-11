@@ -8,7 +8,8 @@ sap.ui.define([
 	"sap/ui/core/mvc/XMLView",
 	"sap/m/Label",
 	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/ui/core/Element"
 ], function(
 	Component,
 	JsControlTreeModifier,
@@ -18,7 +19,8 @@ sap.ui.define([
 	XMLView,
 	Label,
 	sinon,
-	oCore
+	oCore,
+	Element
 ) {
 	"use strict";
 

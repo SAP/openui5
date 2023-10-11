@@ -3,10 +3,12 @@
  */
 
 sap.ui.define([
+	"sap/ui/core/Element",
 	"sap/ui/core/Lib",
 	"sap/ui/rta/plugin/Remove",
 	"sap/m/Button"
 ], function(
+	Element,
 	Lib,
 	Remove,
 	Button
@@ -62,7 +64,7 @@ sap.ui.define([
 			});
 
 			var fnOnClick = function(oEvent) {
-				var oOverlay = sap.ui.getCore().byId(oEvent.currentTarget.id.replace("-DeleteIcon", ""));
+				var oOverlay = Element.getElementById(oEvent.currentTarget.id.replace("-DeleteIcon", ""));
 				onDeletePressed(oOverlay);
 				oEvent.stopPropagation();
 				oEvent.preventDefault();

@@ -1,7 +1,7 @@
 {
 	"__license": "This file has been derived from Unicode Common Locale Data Repository (CLDR) files (http://cldr.unicode.org). See the copyright and permission notice in the Unicode-Data-Files-LICENSE.txt available at the same location as this file or visit http://www.unicode.org/copyright.html",
-	"__version": "41.0.0",
-	"__buildtime": "2022-12-19T09:41:25.319Z",
+	"__version": "43.0.0",
+	"__buildtime": "2023-09-28T11:39:07.908Z",
 	"languages": {
 		"aa": "阿法文",
 		"ab": "阿布哈茲文",
@@ -24,6 +24,7 @@
 		"am": "阿姆哈拉文",
 		"an": "阿拉貢文",
 		"ang": "古英文",
+		"ann": "奧博洛語",
 		"anp": "昂加文",
 		"ar": "阿拉伯文",
 		"ar_001": "現代標準阿拉伯文",
@@ -41,6 +42,7 @@
 		"asa": "阿蘇文",
 		"ase": "美國手語",
 		"ast": "阿斯圖里亞文",
+		"atj": "阿提卡梅克語",
 		"av": "阿瓦爾文",
 		"avk": "科塔瓦文",
 		"awa": "阿瓦文",
@@ -109,14 +111,22 @@
 		"ckb": "中庫德文",
 		"ckb_alt-menu": "中庫德文",
 		"ckb_alt-variant": "庫德文（索拉尼）",
+		"clc": "齊爾柯廷語",
 		"co": "科西嘉文",
 		"cop": "科普特文",
 		"cps": "卡皮茲文",
 		"cr": "克里文",
+		"crg": "米奇夫語",
 		"crh": "土耳其文（克里米亞半島）",
+		"crj": "東南克里語",
+		"crk": "平原克里語",
+		"crl": "北部東克里語",
+		"crm": "穆斯克里文",
+		"crr": "卡羅萊納阿爾岡昆語",
 		"crs": "塞席爾克里奧爾法文",
 		"cs": "捷克文",
 		"csb": "卡舒布文",
+		"csw": "沼澤克里語",
 		"cu": "宗教斯拉夫文",
 		"cv": "楚瓦什文",
 		"cy": "威爾斯文",
@@ -125,7 +135,6 @@
 		"dar": "達爾格瓦文",
 		"dav": "台塔文",
 		"de": "德文",
-		"de_AT": "德文（奧地利）",
 		"de_CH": "高地德文（瑞士）",
 		"del": "德拉瓦文",
 		"den": "斯拉夫",
@@ -151,25 +160,15 @@
 		"el": "希臘文",
 		"elx": "埃蘭文",
 		"en": "英文",
-		"en_AU": "英文（澳洲）",
-		"en_CA": "英文（加拿大）",
-		"en_GB": "英文（英國）",
-		"en_GB-alt-short": "英文（英國）",
-		"en_US": "英文（美國）",
-		"en_US-alt-short": "英文（美國）",
 		"enm": "中古英文",
 		"eo": "世界文",
 		"es": "西班牙文",
-		"es_419": "西班牙文（拉丁美洲）",
-		"es_ES": "西班牙文（西班牙）",
-		"es_MX": "西班牙文（墨西哥）",
 		"esu": "中尤皮克文",
 		"et": "愛沙尼亞文",
 		"eu": "巴斯克文",
 		"ewo": "依汪都文",
 		"ext": "埃斯特雷馬杜拉文",
 		"fa": "波斯文",
-		"fa_AF": "波斯文（阿富汗）",
 		"fan": "芳族文",
 		"fat": "芳蒂文",
 		"ff": "富拉文",
@@ -180,8 +179,6 @@
 		"fo": "法羅文",
 		"fon": "豐文",
 		"fr": "法文",
-		"fr_CA": "法文（加拿大）",
-		"fr_CH": "法文（瑞士）",
 		"frc": "卡真法文",
 		"frm": "中古法文",
 		"fro": "古法文",
@@ -222,8 +219,11 @@
 		"hai": "海達文",
 		"hak": "客家話",
 		"haw": "夏威夷文",
+		"hax": "南海達語",
 		"he": "希伯來文",
 		"hi": "印地文",
+		"hi_Latn": "印地語（拉丁文）",
+		"hi_Latn-alt-variant": "印地語",
 		"hif": "斐濟印地文",
 		"hil": "希利蓋農文",
 		"hit": "赫梯文",
@@ -235,6 +235,7 @@
 		"ht": "海地文",
 		"hu": "匈牙利文",
 		"hup": "胡帕文",
+		"hur": "哈爾魁梅林語",
 		"hy": "亞美尼亞文",
 		"hz": "赫雷羅文",
 		"ia": "國際文",
@@ -245,6 +246,7 @@
 		"ig": "伊布文",
 		"ii": "四川彝文",
 		"ik": "依奴皮維克文",
+		"ikt": "西加拿大因紐特語",
 		"ilo": "伊洛闊文",
 		"inh": "印古什文",
 		"io": "伊多文",
@@ -311,6 +313,7 @@
 		"kut": "庫特奈文",
 		"kv": "科米文",
 		"kw": "康瓦耳文",
+		"kwk": "誇誇嘉誇語",
 		"ky": "吉爾吉斯文",
 		"la": "拉丁文",
 		"lad": "拉迪諾文",
@@ -323,6 +326,7 @@
 		"lg": "干達文",
 		"li": "林堡文",
 		"lij": "利古里亞文",
+		"lil": "利洛威特文",
 		"liv": "利伏尼亞文",
 		"lkt": "拉科塔文",
 		"lmo": "倫巴底文",
@@ -332,6 +336,7 @@
 		"lou": "路易斯安那克里奧爾文",
 		"loz": "洛齊文",
 		"lrc": "北盧爾文",
+		"lsm": "薩米亞文",
 		"lt": "立陶宛文",
 		"ltg": "拉特加萊文",
 		"lu": "魯巴加丹加文",
@@ -370,6 +375,7 @@
 		"mn": "蒙古文",
 		"mnc": "滿族文",
 		"mni": "曼尼普爾文",
+		"moe": "因紐艾蒙語",
 		"moh": "莫霍克文",
 		"mos": "莫西文",
 		"mr": "馬拉地文",
@@ -413,7 +419,7 @@
 		"nr": "南地畢列文",
 		"nso": "北索托文",
 		"nus": "努埃爾文",
-		"nv": "納瓦霍文",
+		"nv": "納瓦荷文",
 		"nwc": "古尼瓦爾文",
 		"ny": "尼揚賈文",
 		"nym": "尼揚韋齊文",
@@ -422,6 +428,11 @@
 		"nzi": "尼茲馬文",
 		"oc": "奧克西坦文",
 		"oj": "奧杰布瓦文",
+		"ojb": "西北奧吉布瓦語",
+		"ojc": "中央奧吉布瓦語",
+		"ojs": "奧吉克里語",
+		"ojw": "西奧吉布瓦語",
+		"oka": "奧卡諾根語",
 		"om": "奧羅莫文",
 		"or": "歐迪亞文",
 		"os": "奧塞提文",
@@ -441,16 +452,16 @@
 		"pfl": "普法爾茨德文",
 		"phn": "腓尼基文",
 		"pi": "巴利文",
+		"pis": "皮金語",
 		"pl": "波蘭文",
 		"pms": "皮埃蒙特文",
 		"pnt": "旁狄希臘文",
 		"pon": "波那貝文",
+		"pqm": "馬里希特帕薩瑪奎迪文",
 		"prg": "普魯士文",
 		"pro": "古普羅旺斯文",
 		"ps": "普什圖文",
 		"pt": "葡萄牙文",
-		"pt_BR": "葡萄牙文（巴西）",
-		"pt_PT": "葡萄牙文（葡萄牙）",
 		"qu": "蓋楚瓦文",
 		"quc": "基切文",
 		"qug": "欽博拉索海蘭蓋丘亞文",
@@ -506,6 +517,7 @@
 		"sid": "希達摩文",
 		"sk": "斯洛伐克文",
 		"sl": "斯洛維尼亞文",
+		"slh": "南盧紹錫德語",
 		"sli": "下西利西亞文",
 		"sly": "塞拉亞文",
 		"sm": "薩摩亞文",
@@ -525,6 +537,7 @@
 		"ssy": "薩霍文",
 		"st": "塞索托文",
 		"stq": "沙特菲士蘭文",
+		"str": "海峽薩利希語",
 		"su": "巽他文",
 		"suk": "蘇庫馬文",
 		"sus": "蘇蘇文",
@@ -537,6 +550,7 @@
 		"syr": "敘利亞文",
 		"szl": "西利西亞文",
 		"ta": "坦米爾文",
+		"tce": "南塔穹語",
 		"tcy": "圖盧文",
 		"te": "泰盧固文",
 		"tem": "提姆文",
@@ -544,7 +558,9 @@
 		"ter": "泰雷諾文",
 		"tet": "泰頓文",
 		"tg": "塔吉克文",
+		"tgx": "塔吉什語",
 		"th": "泰文",
+		"tht": "塔爾坦語",
 		"ti": "提格利尼亞文",
 		"tig": "蒂格雷文",
 		"tiv": "提夫文",
@@ -559,6 +575,7 @@
 		"tn": "塞茲瓦納文",
 		"to": "東加文",
 		"tog": "東加文（尼亞薩）",
+		"tok": "道本語",
 		"tpi": "托比辛文",
 		"tr": "土耳其文",
 		"tru": "圖羅尤文",
@@ -567,6 +584,7 @@
 		"tsd": "特薩克尼恩文",
 		"tsi": "欽西安文",
 		"tt": "韃靼文",
+		"ttm": "北塔穹語",
 		"ttt": "穆斯林塔特文",
 		"tum": "圖姆布卡文",
 		"tvl": "吐瓦魯文",
@@ -637,7 +655,7 @@
 		"Afak": "阿法卡文字",
 		"Aghb": "高加索阿爾巴尼亞文",
 		"Ahom": "阿洪姆文",
-		"Arab": "阿拉伯文",
+		"Arab": "阿拉伯字母",
 		"Arab-alt-variant": "波斯阿拉伯文字",
 		"Aran": "波斯體",
 		"Armi": "皇室亞美尼亞文",
@@ -660,32 +678,26 @@
 		"Cari": "卡里亞文",
 		"Cham": "占文",
 		"Cher": "柴羅基文",
-		"Chrs": "Chrs",
 		"Cirt": "色斯文",
 		"Copt": "科普特文",
-		"Cpmn": "Cpmn",
 		"Cprt": "塞浦路斯文",
-		"Cyrl": "斯拉夫文",
+		"Cyrl": "西里爾文字",
 		"Cyrs": "西里爾文（古教會斯拉夫文變體）",
 		"Deva": "天城文",
-		"Diak": "Diak",
-		"Dogr": "Dogr",
 		"Dsrt": "德瑟雷特文",
 		"Dupl": "杜普洛伊速記",
 		"Egyd": "古埃及世俗體",
 		"Egyh": "古埃及僧侶體",
 		"Egyp": "古埃及象形文字",
 		"Elba": "愛爾巴桑文",
-		"Elym": "Elym",
 		"Ethi": "衣索比亞文",
 		"Geok": "喬治亞語系（阿索他路里和努斯克胡里文）",
 		"Geor": "喬治亞文",
 		"Glag": "格拉哥里文",
-		"Gong": "Gong",
 		"Gonm": "岡德文",
 		"Goth": "歌德文",
 		"Gran": "格蘭他文字",
-		"Grek": "希臘文",
+		"Grek": "希臘字母",
 		"Gujr": "古吉拉特文",
 		"Guru": "古魯穆奇文",
 		"Hanb": "標上注音符號的漢字",
@@ -701,7 +713,6 @@
 		"Hira": "平假名",
 		"Hluw": "安那托利亞象形文字",
 		"Hmng": "楊松錄苗文",
-		"Hmnp": "Hmnp",
 		"Hrkt": "片假名或平假名",
 		"Hung": "古匈牙利文",
 		"Inds": "印度河流域（哈拉帕文）",
@@ -712,11 +723,9 @@
 		"Jurc": "女真文字",
 		"Kali": "克耶李文",
 		"Kana": "片假名",
-		"Kawi": "Kawi",
 		"Khar": "卡羅須提文",
 		"Khmr": "高棉文",
 		"Khoj": "克吉奇文字",
-		"Kits": "Kits",
 		"Knda": "坎那達文",
 		"Kore": "韓文",
 		"Kpel": "克培列文",
@@ -735,12 +744,10 @@
 		"Lyci": "呂西亞語",
 		"Lydi": "里底亞語",
 		"Mahj": "印地文",
-		"Maka": "Maka",
 		"Mand": "曼底安文",
 		"Mani": "摩尼教文",
 		"Marc": "藏文",
 		"Maya": "瑪雅象形文字",
-		"Medf": "Medf",
 		"Mend": "門德文",
 		"Merc": "麥羅埃文（曲線字體）",
 		"Mero": "麥羅埃文",
@@ -752,8 +759,6 @@
 		"Mtei": "曼尼普爾文",
 		"Mult": "木爾坦文",
 		"Mymr": "緬甸文",
-		"Nagm": "Nagm",
-		"Nand": "Nand",
 		"Narb": "古北阿拉伯文",
 		"Nbat": "納巴泰文字",
 		"Newa": "Vote 尼瓦爾文",
@@ -766,7 +771,6 @@
 		"Orya": "歐迪亞文",
 		"Osge": "歐塞奇文",
 		"Osma": "歐斯曼亞文",
-		"Ougr": "Ougr",
 		"Palm": "帕米瑞拉文字",
 		"Pauc": "鮑欽豪文",
 		"Perm": "古彼爾姆諸文",
@@ -779,7 +783,7 @@
 		"Prti": "帕提亞文（碑銘體）",
 		"Qaag": "佐基文",
 		"Rjng": "拉讓文",
-		"Rohg": "Rohg",
+		"Rohg": "哈乃斐羅興亞文",
 		"Roro": "朗格朗格象形文",
 		"Runr": "古北歐文字",
 		"Samr": "撒馬利亞文",
@@ -792,13 +796,11 @@
 		"Sidd": "悉曇文字",
 		"Sind": "信德文",
 		"Sinh": "錫蘭文",
-		"Sogd": "Sogd",
-		"Sogo": "Sogo",
 		"Sora": "索朗桑朋文字",
 		"Soyo": "索永布文字",
 		"Sund": "巽他文",
 		"Sylo": "希洛弟納格里文",
-		"Syrc": "敍利亞文",
+		"Syrc": "敘利亞文",
 		"Syre": "敘利亞文（福音體文字變體）",
 		"Syrj": "敘利亞文（西方文字變體）",
 		"Syrn": "敘利亞文（東方文字變體）",
@@ -817,18 +819,13 @@
 		"Thai": "泰文",
 		"Tibt": "西藏文",
 		"Tirh": "邁蒂利文",
-		"Tnsa": "Tnsa",
-		"Toto": "Toto",
 		"Ugar": "烏加列文",
 		"Vaii": "瓦依文",
 		"Visp": "視覺語音文字",
-		"Vith": "Vith",
 		"Wara": "瓦郎奇蒂文字",
-		"Wcho": "Wcho",
 		"Wole": "沃雷艾文",
 		"Xpeo": "古波斯文",
 		"Xsux": "蘇米魯亞甲文楔形文字",
-		"Yezi": "Yezi",
 		"Yiii": "彞文",
 		"Zanb": "札那巴札爾文字",
 		"Zinh": "繼承文字（Unicode）",
@@ -1057,6 +1054,7 @@
 		"NR": "諾魯",
 		"NU": "紐埃島",
 		"NZ": "紐西蘭",
+		"NZ-alt-variant": "紐西蘭",
 		"OM": "阿曼",
 		"PA": "巴拿馬",
 		"PE": "秘魯",
@@ -1116,6 +1114,7 @@
 		"TN": "突尼西亞",
 		"TO": "東加",
 		"TR": "土耳其",
+		"TR-alt-variant": "土耳其",
 		"TT": "千里達及托巴哥",
 		"TV": "吐瓦魯",
 		"TW": "台灣",
@@ -1232,7 +1231,7 @@
 				"Year": "{1} {0}"
 			},
 			"intervalFormats": {
-				"intervalFormatFallback": "{0} – {1}",
+				"intervalFormatFallback": "{0} – {1}",
 				"Bh": {
 					"B": "Bh時 – Bh時",
 					"h": "Bh–h時"
@@ -1770,7 +1769,7 @@
 				"Year": "{1} {0}"
 			},
 			"intervalFormats": {
-				"intervalFormatFallback": "{0} – {1}",
+				"intervalFormatFallback": "{0} – {1}",
 				"Bh": {
 					"B": "h B – h B",
 					"h": "h–h B"
@@ -2305,7 +2304,7 @@
 				"Year": "{1} {0}"
 			},
 			"intervalFormats": {
-				"intervalFormatFallback": "{0} – {1}",
+				"intervalFormatFallback": "{0} – {1}",
 				"Bh": {
 					"B": "h B – h B",
 					"h": "h–h B"
@@ -2860,7 +2859,7 @@
 				"Year": "{1} {0}"
 			},
 			"intervalFormats": {
-				"intervalFormatFallback": "{0} – {1}",
+				"intervalFormatFallback": "{0} – {1}",
 				"Bh": {
 					"B": "h B – h B",
 					"h": "h–h B"
@@ -3395,7 +3394,7 @@
 				"Year": "{1} {0}"
 			},
 			"intervalFormats": {
-				"intervalFormatFallback": "{0} – {1}",
+				"intervalFormatFallback": "{0} – {1}",
 				"Bh": {
 					"B": "h B – h B",
 					"h": "h–h B"
@@ -4241,6 +4240,7 @@
 			"Cayman": "開曼群島",
 			"Chicago": "芝加哥",
 			"Chihuahua": "奇華華",
+			"Ciudad_Juarez": "華雷斯",
 			"Costa_Rica": "哥斯大黎加",
 			"Creston": "克雷斯頓",
 			"Cuiaba": "古雅巴",
@@ -4585,7 +4585,7 @@
 			"Guadalcanal": "瓜達康納爾島",
 			"Guam": "關島",
 			"Honolulu": "檀香山",
-			"Kanton": "Kanton",
+			"Kanton": "坎頓島",
 			"Kiritimati": "基里地馬地島",
 			"Kosrae": "科斯瑞",
 			"Kwajalein": "瓜加林島",
@@ -5030,6 +5030,11 @@
 				"unitPattern-count-other": "{0} 年",
 				"perUnitPattern": "{0}/年"
 			},
+			"duration-quarter": {
+				"displayName": "刻",
+				"unitPattern-count-other": "{0} 刻",
+				"perUnitPattern": "{0}/刻"
+			},
 			"duration-month": {
 				"displayName": "月",
 				"unitPattern-count-other": "{0} 個月",
@@ -5180,6 +5185,10 @@
 				"displayName": "dpi",
 				"unitPattern-count-other": "{0} dpi"
 			},
+			"graphics-dot": {
+				"displayName": "px",
+				"unitPattern-count-other": "{0} px"
+			},
 			"length-earth-radius": {
 				"displayName": "R⊕",
 				"unitPattern-count-other": "{0} R⊕"
@@ -5289,7 +5298,7 @@
 				"displayName": "L☉",
 				"unitPattern-count-other": "{0} L☉"
 			},
-			"mass-metric-ton": {
+			"mass-tonne": {
 				"displayName": "公噸",
 				"unitPattern-count-other": "{0} 公噸"
 			},
@@ -5693,41 +5702,56 @@
 	},
 	"eras-gregorian": {
 		"0": {
+			"_code": "gregory-inverse",
+			"_aliases": "bc bce",
 			"_end": "0-12-31"
 		},
 		"1": {
+			"_code": "gregory",
+			"_aliases": "ad ce",
 			"_start": "1-01-01"
 		}
 	},
 	"eras-islamic": {
 		"0": {
+			"_code": "islamic",
+			"_aliases": "ah",
 			"_start": "622-7-15"
 		}
 	},
 	"eras-persian": {
 		"0": {
+			"_code": "persian",
+			"_aliases": "ap",
 			"_start": "622-01-01"
 		}
 	},
 	"eras-buddhist": {
 		"0": {
+			"_code": "buddhist",
+			"_aliases": "be",
 			"_start": "-542-01-01"
 		}
 	},
 	"eras-japanese": {
 		"232": {
+			"_code": "meiji",
 			"_start": "1868-9-8"
 		},
 		"233": {
+			"_code": "taisho",
 			"_start": "1912-7-30"
 		},
 		"234": {
+			"_code": "showa",
 			"_start": "1926-12-25"
 		},
 		"235": {
+			"_code": "heisei",
 			"_start": "1989-1-8"
 		},
 		"236": {
+			"_code": "reiwa",
 			"_start": "2019-5-1"
 		}
 	},

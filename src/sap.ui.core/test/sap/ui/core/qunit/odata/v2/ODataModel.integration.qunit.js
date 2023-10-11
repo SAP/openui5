@@ -5039,7 +5039,7 @@ usePreliminaryContext : false}}">\
 				}]
 			})
 			.expectValue("connectionID", ["10"])
-			.expectValue("flightDate", ["5/30/15, 1:47 PM"])
+			.expectValue("flightDate", ["5/30/15, 1:47\u202FPM"])
 			.expectMessage(oFlight10PriceError, "/FlightCollection",
 				"/CarrierCollection('1')/carrierFlights")
 			.expectMessage(oFlight20PriceWarning, "/FlightCollection",
@@ -5056,7 +5056,7 @@ usePreliminaryContext : false}}">\
 			});
 		}).then(function (oFilter) {
 			that.expectValue("connectionID", ["20"])
-				.expectValue("flightDate", ["6/30/15, 1:47 PM"]);
+				.expectValue("flightDate", ["6/30/15, 1:47\u202FPM"]);
 
 			oItemsBinding.filter(oFilter);
 
@@ -8172,11 +8172,11 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				ID : "1",
 				TimezoneID : "America/New_York"
 			}, {"sap-message" : getMessageHeader(oDateWarning)})
-			.expectValue("dateAndTime", "Jan 17, 2022, 4:54:48 AM")
+			.expectValue("dateAndTime", "Jan 17, 2022, 4:54:48\u202FAM")
 			.expectValue("date", "Jan 17, 2022")
-			.expectValue("time", "4:54:48 AM")
+			.expectValue("time", "4:54:48\u202FAM")
 			.expectValue("timezone", "Americas, New York")
-			.expectValue("default", "Jan 17, 2022, 4:54:48 AM Americas, New York")
+			.expectValue("default", "Jan 17, 2022, 4:54:48\u202FAM Americas, New York")
 			.expectMessage(oDateWarning, "/DateTimeWithTimezoneSet('1')/")
 			.expectValueState("dateAndTime", "Warning", "Foo")
 			.expectValueState("date", "Warning", "Foo")
@@ -19621,7 +19621,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				]
 			})
 			.expectValue("SalesOrderID", ["1", "2"])
-			.expectValue("CreatedAt", ["Jan 25, 2023, 12:00:00 AM", "Jan 29, 2023, 11:00:00 PM"]);
+			.expectValue("CreatedAt", ["Jan 25, 2023, 12:00:00\u202FAM", "Jan 29, 2023, 11:00:00\u202FPM"]);
 
 		return this.createView(assert, sView, mModels).then(function () {
 			that.oView.byId("DateRangeSelection").setValue("Jan 30, 2023 - Jan 31, 2023");
@@ -19629,7 +19629,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			return that.waitForChanges(assert);
 		}).then(function () {
 			that.expectValue("SalesOrderID", ["3"])
-				.expectValue("CreatedAt", ["Jan 31, 2023, 11:00:00 PM"]);
+				.expectValue("CreatedAt", ["Jan 31, 2023, 11:00:00\u202FPM"]);
 
 			// code under test
 			that.oView.byId("Table").getBinding("items").filter(new Filter({
@@ -20356,6 +20356,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			checkServiceCache(["token0", "token1"]);
 		}).finally(clearCaches);
 	});
+
 	//*********************************************************************************************
 	// Scenario: For a table where transient entries have messages, the filter returned by requestFilterForMessages does
 	// not refer to these entries. For the BCP incident, check the case no item loaded from the backend has a message:
@@ -20421,6 +20422,102 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			]);
 		}).then((aResults) => {
 			assert.strictEqual(aResults[0], null, "no message filter, only transient item has message");
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: The data state of a control in a table needs to be reevaluated if the row context changes but the
+	// value of the property binding does not change.
+	// JIRA: CPOUI5MODELS-1421
+	QUnit.test("Filter table with messages, every line has the correct data state", function (assert) {
+		let oRowsBinding, oTable;
+		const oModel = createSalesOrdersModel({preliminaryContext : true});
+		const oResponseMessage = this.createResponseMessage("(SalesOrderID='1',ItemPosition='20')/Note",
+			"~errorMessage");
+		const sView = '\
+<t:Table id="table" rows="{/SalesOrderSet(\'1\')/ToLineItems}" visibleRowCount="3">\
+	<Input id="note" value="{Note}" />\
+</t:Table>';
+
+		this.expectHeadRequest()
+			.expectRequest({
+				requestUri : "SalesOrderSet('1')/ToLineItems?$skip=0&$top=103"
+			}, {
+				results : [{
+					__metadata : {
+						uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10')"
+					},
+					Note : "Bar",
+					ItemPosition : "10",
+					SalesOrderID : "1"
+				}, {
+					__metadata : {
+						uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='20')"
+					},
+					Note : "Baz",
+					ItemPosition : "20",
+					SalesOrderID : "1"
+				}, {
+					__metadata : {
+						uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='30')"
+					},
+					Note : "Baz", // same value as for 20
+					ItemPosition : "30",
+					SalesOrderID : "1"
+				}]
+			}, {
+				"sap-message" : getMessageHeader(oResponseMessage)
+			})
+			.expectValue("note", ["Bar", "Baz", "Baz"])
+			.expectMessage(oResponseMessage, "/SalesOrderLineItemSet", "/SalesOrderSet('1')/ToLineItems");
+
+		return this.createView(assert, sView, oModel).then(() => {
+			oTable = this.oView.byId("table");
+			oRowsBinding = oTable.getBinding("rows");
+
+			this.expectValueState(oTable.getRows()[0].getCells()[0], "None", "")
+				.expectValueState(oTable.getRows()[1].getCells()[0], "Error", "~errorMessage")
+				.expectValueState(oTable.getRows()[2].getCells()[0], "None", "");
+
+			return this.waitForChanges(assert);
+		}).then(() => {
+			this.expectRequest({
+					requestUri : "SalesOrderSet('1')/ToLineItems?$skip=0&$top=103&$filter=ItemPosition gt '10'"
+				}, {
+					results : [{
+						__metadata : {
+							uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='20')"
+						},
+						Note : "Baz",
+						ItemPosition : "20",
+						SalesOrderID : "1"
+					}, {
+						__metadata : {
+							uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='30')"
+						},
+						Note : "Baz", // same value as for 20
+						ItemPosition : "30",
+						SalesOrderID : "1"
+					}]
+				}, {
+					"sap-message" : getMessageHeader(oResponseMessage)
+				})
+				.expectValue("note", "Baz", 0)
+				.expectValue("note", "", 2)
+				.expectMessage(oResponseMessage, "/SalesOrderLineItemSet", "/SalesOrderSet('1')/ToLineItems", true)
+				.expectValueState(oTable.getRows()[0].getCells()[0], "Error", "~errorMessage")
+				.expectValueState(oTable.getRows()[1].getCells()[0], "None", "")
+				.expectValueState(oTable.getRows()[2].getCells()[0], "None", "");
+
+			// filter out item 10
+			oRowsBinding.filter(new Filter({
+					path : "ItemPosition",
+					operator : FilterOperator.GT,
+					value1 : "10"
+				})
+			);
+
+			return this.waitForChanges(assert);
 		});
 	});
 });

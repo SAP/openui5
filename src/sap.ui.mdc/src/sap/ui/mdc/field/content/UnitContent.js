@@ -126,6 +126,7 @@ sap.ui.define([
 				ariaDescribedBy: [sInvisibleTextId],
 				tokens: { path: "$field>/conditions", template: oToken, filters: [oFilter] },
 				dependents: [oToken], // to destroy it if MultiInput is destroyed
+				autocomplete: false,
 				change: oContentFactory.getHandleContentChange(),
 				liveChange: oContentFactory.getHandleContentLiveChange(),
 				tokenUpdate: oContentFactory.getHandleTokenUpdate()

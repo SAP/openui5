@@ -10,6 +10,7 @@ sap.ui.define([
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/write/api/Version",
 	"sap/ui/fl/write/api/VersionsAPI",
+	"sap/ui/fl/initial/_internal/config",
 	"sap/ui/fl/Layer",
 	"sap/ui/layout/VerticalLayout",
 	"sap/ui/model/json/JSONModel",
@@ -33,6 +34,7 @@ sap.ui.define([
 	Settings,
 	Version,
 	VersionsAPI,
+	config,
 	Layer,
 	VerticalLayout,
 	JSONModel,
@@ -810,7 +812,7 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("when being on a system with LocalStorageConnector", function(assert) {
-			sandbox.stub(Core.getConfiguration(), "getFlexibilityServices").returns([
+			sandbox.stub(config, "getFlexibilityServices").returns([
 				{connector: "LocalStorageConnector"}
 			]);
 			return createAndStartRTA.call(this).then(function() {
@@ -824,7 +826,7 @@ sap.ui.define([
 		QUnit.test("when being on a system with KeyUserConnector", function(assert) {
 			var sUrlSplit1 = "https:";
 			var sUrlSplit2 = "//example.com";
-			sandbox.stub(Core.getConfiguration(), "getFlexibilityServices").returns([
+			sandbox.stub(config, "getFlexibilityServices").returns([
 				{connector: "KeyUserConnector", url: sUrlSplit1 + sUrlSplit2}
 			]);
 			return createAndStartRTA.call(this)
@@ -857,7 +859,7 @@ sap.ui.define([
 		QUnit.test("when being on a system with LrepConnector", function(assert) {
 			var sUrlSplit1 = "https:";
 			var sUrlSplit2 = "//example.com";
-			sandbox.stub(Core.getConfiguration(), "getFlexibilityServices").returns([
+			sandbox.stub(config, "getFlexibilityServices").returns([
 				{ connector: "LrepConnector", url: sUrlSplit1 + sUrlSplit2}
 			]);
 			return createAndStartRTA.call(this)

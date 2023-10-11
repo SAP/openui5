@@ -1310,7 +1310,8 @@ QUnit.test("_oFormatAria start/end format for 12-hour clocks", function (assert)
 
 	var oCalendarRow = new CalendarRow(),
 		oMockedDate = UI5Date.getInstance(2019, 7, 5, 15),
-		sExpectedResult = "Monday 05/08/2019 at 3:00:00 PM";
+		// \u202f is a Narrow No-Break Space which has been introduced with CLDR version 43
+		sExpectedResult = "Monday 05/08/2019 at 3:00:00\u202fPM";
 
 	// Assert
 	assert.strictEqual(oCalendarRow._oFormatAria.format(oMockedDate), sExpectedResult, "Cell's start/end info is properly formatted");

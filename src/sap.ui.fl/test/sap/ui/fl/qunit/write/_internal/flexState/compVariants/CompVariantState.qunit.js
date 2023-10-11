@@ -2,7 +2,7 @@
 
 sap.ui.define([
 	"sap/ui/core/Control",
-	"sap/ui/core/Core",
+	"sap/ui/core/Element",
 	"sap/ui/core/UIComponent",
 	"sap/ui/fl/apply/_internal/flexObjects/CompVariant",
 	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
@@ -25,7 +25,7 @@ sap.ui.define([
 	"test-resources/sap/ui/fl/qunit/FlQUnitUtils"
 ], function(
 	Control,
-	Core,
+	Element,
 	UIComponent,
 	CompVariant,
 	FlexObjectFactory,
@@ -564,7 +564,7 @@ sap.ui.define([
 				}
 			});
 
-			sandbox.stub(Core, "byId").returns({
+			sandbox.stub(Element, "getElementById").returns({
 				setModified(bSet) {
 					if (!bSet) {
 						iSetModifiedFalseCalls++;

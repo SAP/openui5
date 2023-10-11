@@ -1114,7 +1114,7 @@ function(
 		TabStrip.prototype._createSelectItemFromTabStripItem = function (oTabStripItem) {
 			var oSelectItem;
 
-			if (!oTabStripItem && !(BaseObject.isA(oTabStripItem, "sap.m.TabContainerItem"))) {
+			if (!oTabStripItem && !(BaseObject.isObjectA(oTabStripItem, "sap.m.TabContainerItem"))) {
 				Log.error('Expecting instance of "sap.m.TabContainerItem": instead of ' + oTabStripItem + ' given.');
 				return;
 			}

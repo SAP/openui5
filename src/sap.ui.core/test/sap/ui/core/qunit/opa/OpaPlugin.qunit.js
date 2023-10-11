@@ -736,6 +736,22 @@ sap.ui.define([
 		this.oDialog.open();
 	});
 
+	QUnit.test("Should skip matching view when no viewId or viewName in options", function (assert) {
+		var fnStart = assert.async(),
+			fnMatchViewSpy = sinon.spy(this.oPlugin, "_getMatchingView");
+		this.oDialog.attachAfterOpen(function () {
+			this.oPlugin.getMatchingControls({
+				searchOpenDialogs: true,
+				id: "OKButton"
+			});
+
+			assert.ok(fnMatchViewSpy.notCalled, "No view matching");
+			fnStart();
+		}, this);
+
+		this.oDialog.open();
+	});
+
 	QUnit.module("OpaPlugin - controls in an open dialog with view parent", {
 		beforeEach: function (assert) {
 			var sViewContent = [

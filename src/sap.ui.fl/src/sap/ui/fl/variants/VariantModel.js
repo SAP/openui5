@@ -13,7 +13,7 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/core/BusyIndicator",
-	"sap/ui/core/Core",
+	"sap/ui/core/Element",
 	"sap/ui/core/Lib",
 	"sap/ui/fl/apply/_internal/changes/Applier",
 	"sap/ui/fl/apply/_internal/changes/Reverter",
@@ -40,7 +40,7 @@ sap.ui.define([
 	Log,
 	JsControlTreeModifier,
 	BusyIndicator,
-	Core,
+	Element,
 	Lib,
 	Applier,
 	Reverter,
@@ -492,7 +492,7 @@ sap.ui.define([
 	 * @returns {Promise} Promise that resolves after the sanity check
 	 */
 	VariantModel.prototype.attachVariantApplied = function(mPropertyBag) {
-		var oVariantManagementControl = Core.byId(mPropertyBag.vmControlId);
+		var oVariantManagementControl = Element.getElementById(mPropertyBag.vmControlId);
 		var sVMReference = this.getVariantManagementReferenceForControl(oVariantManagementControl);
 
 		return this.waitForVMControlInit(sVMReference).then(function(sVMReference, mPropertyBag) {
@@ -552,7 +552,7 @@ sap.ui.define([
 	};
 
 	VariantModel.prototype.detachVariantApplied = function(sVMControlId, sControlId) {
-		var sVMReference = this.getVariantManagementReferenceForControl(Core.byId(sVMControlId));
+		var sVMReference = this.getVariantManagementReferenceForControl(Element.getElementById(sVMControlId));
 		if (this._oVariantAppliedListeners[sVMReference]) {
 			delete this._oVariantAppliedListeners[sVMReference][sControlId];
 		}
@@ -596,7 +596,7 @@ sap.ui.define([
 		this.oChangePersistence.addChanges(aChanges, this.oAppComponent);
 		return aChanges.reduce(function(oPreviousPromise, oChange) {
 			return oPreviousPromise.then(function() {
-				var oControl = Core.byId(JsControlTreeModifier.getControlIdBySelector(oChange.getSelector(), this.oAppComponent));
+				var oControl = Element.getElementById(JsControlTreeModifier.getControlIdBySelector(oChange.getSelector(), this.oAppComponent));
 				return Applier.applyChangeOnControl(oChange, oControl, {
 					modifier: JsControlTreeModifier,
 					appComponent: this.oAppComponent,

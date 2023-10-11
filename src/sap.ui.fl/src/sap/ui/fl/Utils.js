@@ -12,6 +12,8 @@ sap.ui.define([
 	"sap/ui/base/ManagedObject",
 	"sap/ui/core/util/reflection/BaseTreeModifier",
 	"sap/ui/core/Component",
+	"sap/ui/core/Element",
+	"sap/ui/fl/initial/_internal/config",
 	"sap/ui/fl/Scenario",
 	"sap/ui/thirdparty/hasher",
 	"sap/ui/core/mvc/View",
@@ -26,6 +28,8 @@ sap.ui.define([
 	ManagedObject,
 	BaseTreeModifier,
 	Component,
+	Element,
+	config,
 	Scenario,
 	hasher,
 	View,
@@ -241,7 +245,7 @@ sap.ui.define([
 		},
 
 		getLrepUrl() {
-			const aFlexibilityServices = Configuration.getFlexibilityServices();
+			const aFlexibilityServices = config.getFlexibilityServices();
 			const oLrepConfiguration = aFlexibilityServices.find((oServiceConfig) => oServiceConfig.connector === "LrepConnector");
 			return oLrepConfiguration?.url || "";
 		},
@@ -287,7 +291,7 @@ sap.ui.define([
 		 */
 		checkControlId(vControl, oAppComponent) {
 			if (!oAppComponent) {
-				vControl = vControl instanceof ManagedObject ? vControl : sap.ui.getCore().byId(vControl);
+				vControl = vControl instanceof ManagedObject ? vControl : Element.getElementById(vControl);
 				oAppComponent = Utils.getAppComponentForControl(vControl);
 			}
 			return BaseTreeModifier.checkControlId(vControl, oAppComponent);

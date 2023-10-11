@@ -3,7 +3,7 @@
  */
 
 sap.ui.define([
-	"sap/ui/fl/apply/_internal/flexState/UI2Personalization/UI2PersonalizationState",
+	"sap/ui/fl/write/_internal/flexState/UI2Personalization/UI2PersonalizationState",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/base/util/restricted/_omit"
@@ -34,13 +34,12 @@ sap.ui.define([
 		 * @param {string} mPropertyBag.content The personalization content to be stored
 		 * @param {string} mPropertyBag.category The item category with which the personalization should be stored
 		 * @param {string} mPropertyBag.containerCategory The container category with which the personalization should be stored
-		 * @returns {Promise} Promise resolving with the object stored under the passed container key and item name,
-		 * or undefined in case no entry was stored for these
+		 * @returns {Promise} Promise resolving if the object is stored successfully
 		 *
 		 * @private
 		 * @ui5-restricted
 		 */
-		create(mPropertyBag) {
+		async create(mPropertyBag) {
 			mPropertyBag.reference = ManifestUtils.getFlexReferenceForSelector(mPropertyBag.selector);
 
 			if (
@@ -51,14 +50,13 @@ sap.ui.define([
 				|| !mPropertyBag.category
 				|| !mPropertyBag.containerCategory
 			) {
-				return Promise.reject(new Error("not all mandatory properties were provided for the storage of the personalization"));
+				throw new Error("not all mandatory properties were provided for the storage of the personalization");
 			}
 
-			return FlexState.initialize({
+			await FlexState.initialize({
 				componentId: mPropertyBag.selector.getId()
-			}).then(function() {
-				return UI2PersonalizationState.setPersonalization(_omit(mPropertyBag, ["selector"]));
 			});
+			await UI2PersonalizationState.setPersonalization(_omit(mPropertyBag, ["selector"]));
 		},
 
 		/**
@@ -74,7 +72,7 @@ sap.ui.define([
 		 * @private
 		 * @ui5-restricted
 		 */
-		deletePersonalization(mPropertyBag) {
+		async deletePersonalization(mPropertyBag) {
 			mPropertyBag.reference = ManifestUtils.getFlexReferenceForSelector(mPropertyBag.selector);
 
 			if (
@@ -82,14 +80,17 @@ sap.ui.define([
 				|| !mPropertyBag.containerKey
 				|| !mPropertyBag.itemName
 			) {
-				return Promise.reject(new Error("not all mandatory properties were provided for the deletion of the personalization"));
+				throw new Error("not all mandatory properties were provided for the deletion of the personalization");
 			}
 
-			return FlexState.initialize({
+			await FlexState.initialize({
 				componentId: mPropertyBag.selector.getId()
-			}).then(function() {
-				return UI2PersonalizationState.deletePersonalization(mPropertyBag.reference, mPropertyBag.containerKey, mPropertyBag.itemName);
 			});
+			await UI2PersonalizationState.deletePersonalization(
+				mPropertyBag.reference,
+				mPropertyBag.containerKey,
+				mPropertyBag.itemName
+			);
 		}
 	};
 

@@ -290,7 +290,8 @@ sap.ui.define([
 		oFormatSettings.setLegacyTimeFormat("0");
 		assert.equal(oLocaleData.getTimePattern("short"), "HH:mm", "short pattern should be the one defined in format settings");
 		assert.equal(oLocaleData.getTimePattern("medium"), "HH:mm:ss", "medium pattern should be the one defined in format settings");
-		assert.equal(oLocaleData.getTimePattern("short", CalendarType.Islamic), "h:mm a", "short pattern for Islamic calendar type should be fetched from locale data");
+		assert.equal(oLocaleData.getTimePattern("short", CalendarType.Islamic), "h:mm\u202fa",
+			"short pattern for Islamic calendar type should be fetched from locale data");
 
 		oFormatSettings.setLegacyDateFormat("A");
 		assert.equal(oLocaleData.getDatePattern("short"), "yyyy/MM/dd", "short pattern should be the one defined in format settings");

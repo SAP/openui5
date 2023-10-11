@@ -207,7 +207,9 @@ sap.ui.define([
 		return { // return default values, but needs to be implemented by specific content
 			contentId: this.getId() + "-DCP", // as DefineConditionPanel might be created async, use fix ID
 			ariaHasPopup: "dialog",
-			roleDescription: null // no multi-selection
+			roleDescription: null, // no multi-selection
+			valueHelpEnabled: true, // is a kind of valueHelp even on popover
+			autocomplete: "none"
 		};
 
 	};

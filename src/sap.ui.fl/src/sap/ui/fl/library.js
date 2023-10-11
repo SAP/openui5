@@ -4,21 +4,21 @@
 
 sap.ui.define([
 	"sap/ui/fl/apply/_internal/preprocessors/RegistrationDelegator",
+	"sap/ui/fl/initial/_internal/config",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Scenario",
 	"sap/ui/fl/changeHandler/condenser/Classification",
-	"sap/ui/core/Configuration",
 	// library dependencies
 	"sap/ui/core/library",
 	"sap/m/library"
 ], function(
 	RegistrationDelegator,
+	config,
 	Utils,
 	Layer,
 	Scenario,
-	CondenserClassification,
-	Configuration
+	CondenserClassification
 ) {
  "use strict";
 
@@ -495,7 +495,7 @@ sap.ui.define([
  }
 
  if (_isTrialSystem()) {
-	 Configuration.setFlexibilityServices([{
+	 config.setFlexibilityServices([{
 		 connector: "LrepConnector",
 		 url: "/sap/bc/lrep",
 		 layers: []

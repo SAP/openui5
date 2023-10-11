@@ -877,12 +877,18 @@ sap.ui.define([
 					"data": {
 						"json": [{
 							"Name": "Notebook Basic 15",
-							"Description": "Notebook Basic 15 with 2,80 GHz quad core, 15\" LCD, 4 GB DDR3 RAM, 500 GB Hard Disc, Windows 8 Pro"
+							"Description": "Notebook Basic 15 with 2,80 GHz quad core, 15\" LCD, 4 GB DDR3 RAM, 500 GB Hard Disc, Windows 8 Pro",
+							"Icon": "./images/Nonexistent.png"
 						}]
 					},
 					"item": {
 						"title": "{Name}",
-						"description": "{Description}"
+						"description": "{Description}",
+						"icon": {
+							"src": "{Icon}",
+							"shape": "Circle",
+							"alt": "Human image"
+						}
 					}
 				}
 			}
@@ -897,6 +903,8 @@ sap.ui.define([
 			// Assert
 			assert.equal(oListItem.getDescription(), oItem.Description, "Item description should be set.");
 			assert.equal(oListItem.getTitle(), oItem.Name, "Item title should be set.");
+			assert.strictEqual(oListItem._getAvatar().getDisplaySize(), "S", "Item avatar should be set and to be with the correct size");
+
 			done();
 		}.bind(this));
 

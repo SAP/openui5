@@ -303,7 +303,7 @@ sap.ui.define([
 		 * @public
 		 */
 		Message.prototype.setMessageProcessor = function(oMessageProcessor) {
-			if (BaseObject.isA(oMessageProcessor, "sap.ui.core.message.MessageProcessor")) {
+			if (BaseObject.isObjectA(oMessageProcessor, "sap.ui.core.message.MessageProcessor")) {
 				this.processor = oMessageProcessor;
 			} else {
 				Log.error("oMessageProcessor must be an instance of 'sap.ui.core.message.MessageProcessor'");

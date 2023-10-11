@@ -27,24 +27,24 @@ sap.ui.define([
 		var oDate = UI5Date.getInstance("2021-10-13T13:22:33Z");
 
 		oDateFormat = DateFormat.getDateTimeInstance({});
-		assert.strictEqual(oDateFormat.format(oDate, "America/New_York"), "Oct 13, 2021, 1:22:33 PM",
+		assert.strictEqual(oDateFormat.format(oDate, "America/New_York"), "Oct 13, 2021, 1:22:33\u202FPM",
 			"showTimezone parameter is ignored and bUTC parameter is truthy.");
 
 		oDateFormat = DateFormat.getDateTimeInstance({showTimezone: false});
-		assert.strictEqual(oDateFormat.format(oDate, "America/New_York"), "Oct 13, 2021, 1:22:33 PM",
+		assert.strictEqual(oDateFormat.format(oDate, "America/New_York"), "Oct 13, 2021, 1:22:33\u202FPM",
 			"showTimezone parameter is ignored and bUTC parameter is truthy..");
 
 		oDateFormat = DateFormat.getDateTimeInstance({
 			showDate: false,
 			showTime: false
 		});
-		assert.strictEqual(oDateFormat.format(oDate, "America/New_York"), "Oct 13, 2021, 1:22:33 PM",
+		assert.strictEqual(oDateFormat.format(oDate, "America/New_York"), "Oct 13, 2021, 1:22:33\u202FPM",
 			"showTimezone parameter is ignored and bUTC parameter is truthy.");
 
 		oDateFormat = DateFormat.getDateTimeInstance({
 			showDate: false
 		});
-		assert.strictEqual(oDateFormat.format(oDate, "America/New_York"), "Oct 13, 2021, 1:22:33 PM",
+		assert.strictEqual(oDateFormat.format(oDate, "America/New_York"), "Oct 13, 2021, 1:22:33\u202FPM",
 			"showTimezone parameter is ignored and bUTC parameter is truthy.");
 	});
 
@@ -82,23 +82,23 @@ sap.ui.define([
 
 		oDateFormat = DateFormat.getDateTimeWithTimezoneInstance({});
 		assert.strictEqual(oDateFormat.format(oDateEDT, "America/New_York"),
-			"Oct 13, 2021, 9:22:33 AM Americas, New York", "date was converted and timezone name was added.");
+			"Oct 13, 2021, 9:22:33\u202FAM Americas, New York", "date was converted and timezone name was added.");
 
 		// style medium/short
 		oDateFormat = DateFormat.getDateTimeWithTimezoneInstance({style: "medium/short"});
 		assert.strictEqual(oDateFormat.format(oDateEDT, "America/New_York"),
-			"Oct 13, 2021, 9:22 AM Americas, New York",
+			"Oct 13, 2021, 9:22\u202FAM Americas, New York",
 			"date medium and time short were converted and timezone name was added.");
 
 		// style short/medium
 		oDateFormat = DateFormat.getDateTimeWithTimezoneInstance({style: "short/medium"});
 		assert.strictEqual(oDateFormat.format(oDateEDT, "America/New_York"),
-			"10/13/21, 9:22:33 AM Americas, New York",
+			"10/13/21, 9:22:33\u202FAM Americas, New York",
 			"date short and time medium were converted and timezone name was added.");
 
 		oDateFormat = DateFormat.getDateTimeWithTimezoneInstance({showTimezone: false});
 		assert.strictEqual(oDateFormat.format(oDateEDT, "America/New_York"),
-			"Oct 13, 2021, 9:22:33 AM", "date was converted and timezone name isn't shown.");
+			"Oct 13, 2021, 9:22:33\u202FAM", "date was converted and timezone name isn't shown.");
 
 		oDateFormat = DateFormat.getDateTimeWithTimezoneInstance({
 			showDate: false,
@@ -114,12 +114,12 @@ sap.ui.define([
 		// Timezone difference UTC-4 (Eastern Daylight Time - EDT), UTC Zulu, EDT Eastern Daylight Time
 		var oDateEDT = UI5Date.getInstance("2021-10-13T02:22:33Z");
 		assert.strictEqual(oDateFormat.format(oDateEDT, "America/New_York"),
-			"Oct 12, 2021, 10:22:33 PM Americas, New York", "date was converted and timezone name was added.");
+			"Oct 12, 2021, 10:22:33\u202FPM Americas, New York", "date was converted and timezone name was added.");
 
 		// Timezone difference UTC-5 (Eastern Standard Time - EST), UTC Zulu, EST Eastern Standard Time
 		var oDateEST = UI5Date.getInstance("2021-11-13T13:22:33Z");
 		assert.strictEqual(oDateFormat.format(oDateEST, "America/New_York"),
-			"Nov 13, 2021, 8:22:33 AM Americas, New York", "date was converted and timezone name was added.");
+			"Nov 13, 2021, 8:22:33\u202FAM Americas, New York", "date was converted and timezone name was added.");
 	});
 
 	QUnit.test("Custom format 'yMMMhVV'", function (assert) {
@@ -128,16 +128,19 @@ sap.ui.define([
 		// Timezone difference UTC-5 (Eastern Standard Time - EST), UTC Zulu
 		var oDateEST = UI5Date.getInstance("2021-11-13T13:22:33Z");
 		assert.strictEqual(oDateFormat.format(oDateEST, "America/New_York"),
-			"Nov 2021, 8 AM Americas, New York", "New timezone should be be applied.");
+			"Nov 2021, 8\u202FAM Americas, New York", "New timezone should be be applied.");
 	});
 
 	QUnit.test("Timezone parameter is empty string, null or undefined", function (assert) {
 		var oDateTimeWithTimezoneFormat = DateFormat.getDateTimeWithTimezoneInstance();
 		var oDateEDT = UI5Date.getInstance("2021-10-13T13:22:33Z");
 
-		assert.strictEqual(oDateTimeWithTimezoneFormat.format(oDateEDT, ""), "Oct 13, 2021, 3:22:33 PM Europe, Berlin", "default to Europe, Berlin");
-		assert.strictEqual(oDateTimeWithTimezoneFormat.format(oDateEDT, null), "Oct 13, 2021, 3:22:33 PM Europe, Berlin", "default to Europe, Berlin");
-		assert.strictEqual(oDateTimeWithTimezoneFormat.format(oDateEDT, undefined), "Oct 13, 2021, 3:22:33 PM Europe, Berlin", "default to Europe, Berlin");
+		assert.strictEqual(oDateTimeWithTimezoneFormat.format(oDateEDT, ""),
+			"Oct 13, 2021, 3:22:33\u202FPM Europe, Berlin", "default to Europe, Berlin");
+		assert.strictEqual(oDateTimeWithTimezoneFormat.format(oDateEDT, null),
+			"Oct 13, 2021, 3:22:33\u202FPM Europe, Berlin", "default to Europe, Berlin");
+		assert.strictEqual(oDateTimeWithTimezoneFormat.format(oDateEDT, undefined),
+			"Oct 13, 2021, 3:22:33\u202FPM Europe, Berlin", "default to Europe, Berlin");
 	});
 
 	QUnit.module("DateTimeWithTimezone format de-DE", {
@@ -914,7 +917,7 @@ sap.ui.define([
 
 		var sFormatted = oDateFormat.format(oDate, "Etc/GMT+3");
 		// offset is negative (GMT-03:00) while IANA timezone ID is positive (Etc/GMT+3)
-		assert.strictEqual(sFormatted, "3. Oktober 2021 um 23:22:33 GMT-03:00 Etc/GMT+3");
+		assert.strictEqual(sFormatted, "3. Oktober 2021, 23:22:33 GMT-03:00 Etc/GMT+3");
 		var oParsed = oDateFormat.parse(sFormatted, "Etc/GMT+3");
 		assert.deepEqual(oParsed, [oDate, "Etc/GMT+3"], "parsed date and timezone match for IANA timezone ID 'Etc/GMT+3'");
 
@@ -1044,7 +1047,7 @@ sap.ui.define([
 		var oDateEDT = UI5Date.getInstance("2021-10-13T02:22:33Z");
 		sFormatted = oDateFormat.format(oDateEDT, "America/New_York");
 		assert.strictEqual(sFormatted,
-			"10:22:33 PM Americas, New York", "date was converted and timezone name was added.");
+			"10:22:33\u202FPM Americas, New York", "date was converted and timezone name was added.");
 		assert.throws(function () {
 			oDateFormat.parse(sFormatted, "America/New_York");
 		}, new TypeError("The input can only be parsed back to date if both date and time are supplied."));
@@ -1053,7 +1056,7 @@ sap.ui.define([
 		var oDateEST = UI5Date.getInstance("2021-11-13T13:22:33Z");
 		sFormatted = oDateFormat.format(oDateEST, "America/New_York");
 		assert.strictEqual(sFormatted,
-			"8:22:33 AM Americas, New York", "date was converted and timezone name was added.");
+			"8:22:33\u202FAM Americas, New York", "date was converted and timezone name was added.");
 		assert.throws(function () {
 			oDateFormat.parse(sFormatted, "America/New_York");
 		}, new TypeError("The input can only be parsed back to date if both date and time are supplied."));
@@ -1164,9 +1167,9 @@ sap.ui.define([
 	QUnit.test("Fallback instances patterns (backward compatible case)", function (assert) {
 		var oDateFormat = DateFormat.getDateTimeWithTimezoneInstance({});
 		assert.strictEqual(oDateFormat.aFallbackFormats.length, 4, "Should contain 4 instances.");
-		assert.strictEqual(oDateFormat.aFallbackFormats[0].oFormatOptions.pattern, "M/d/yy, h:mm a VV",
+		assert.strictEqual(oDateFormat.aFallbackFormats[0].oFormatOptions.pattern, "M/d/yy, h:mm\u202Fa VV",
 			"Short pattern should contain timezone symbol.");
-		assert.strictEqual(oDateFormat.aFallbackFormats[1].oFormatOptions.pattern, "MMM d, y, h:mm:ss a VV",
+		assert.strictEqual(oDateFormat.aFallbackFormats[1].oFormatOptions.pattern, "MMM d, y, h:mm:ss\u202Fa VV",
 			"Medium pattern should contain timezone symbol.");
 		assert.strictEqual(oDateFormat.aFallbackFormats[2].oFormatOptions.pattern, "yyyy-MM-dd'T'HH:mm:ss VV",
 			"Default pattern should contain timezone symbol.");
@@ -1189,9 +1192,9 @@ sap.ui.define([
 
 		oDateFormat = DateFormat.getDateTimeWithTimezoneInstance({showTimezone: false});
 		assert.strictEqual(oDateFormat.aFallbackFormats.length, 4, "Should contain 4 instances.");
-		assert.strictEqual(oDateFormat.aFallbackFormats[0].oFormatOptions.pattern, "M/d/yy, h:mm a",
+		assert.strictEqual(oDateFormat.aFallbackFormats[0].oFormatOptions.pattern, "M/d/yy, h:mm\u202Fa",
 			"Short pattern should not contain timezone symbol.");
-		assert.strictEqual(oDateFormat.aFallbackFormats[1].oFormatOptions.pattern, "MMM d, y, h:mm:ss a",
+		assert.strictEqual(oDateFormat.aFallbackFormats[1].oFormatOptions.pattern, "MMM d, y, h:mm:ss\u202Fa",
 			"Medium pattern should not contain timezone symbol.");
 		assert.strictEqual(oDateFormat.aFallbackFormats[2].oFormatOptions.pattern, "yyyy-MM-dd'T'HH:mm:ss",
 			"Default pattern should not contain timezone symbol.");
@@ -1209,8 +1212,8 @@ sap.ui.define([
 		// Date, time and timezone (default)
 		var oDateFormat = DateFormat.getDateTimeWithTimezoneInstance({});
 		assert.deepEqual(extractPatterns(oDateFormat.aFallbackFormats), [
-			"M/d/yy, h:mm a VV",
-			"MMM d, y, h:mm:ss a VV",
+			"M/d/yy, h:mm\u202Fa VV",
+			"MMM d, y, h:mm:ss\u202Fa VV",
 			"yyyy-MM-dd'T'HH:mm:ss VV",
 			"yyyyMMdd HHmmss VV"
 		], "Date, time and timezone fallback patterns should match");
@@ -1230,8 +1233,8 @@ sap.ui.define([
 		// Date and time only
 		oDateFormat = DateFormat.getDateTimeWithTimezoneInstance({showTimezone: false});
 		assert.deepEqual(extractPatterns(oDateFormat.aFallbackFormats), [
-			"M/d/yy, h:mm a",
-			"MMM d, y, h:mm:ss a",
+			"M/d/yy, h:mm\u202Fa",
+			"MMM d, y, h:mm:ss\u202Fa",
 			"yyyy-MM-dd'T'HH:mm:ss",
 			"yyyyMMdd HHmmss"
 		], "Date and time only fallback patterns should match");
@@ -1261,8 +1264,8 @@ sap.ui.define([
 		// Time only
 		oDateFormat = DateFormat.getDateTimeWithTimezoneInstance({showDate: false, showTimezone: false});
 		assert.deepEqual(extractPatterns(oDateFormat.aFallbackFormats), [
-			"h:mm a",
-			"h:mm:ss a",
+			"h:mm\u202Fa",
+			"h:mm:ss\u202Fa",
 			"HH:mm:ss",
 			"HHmmss"
 		], "Time only fallback patterns should match");
@@ -1270,8 +1273,8 @@ sap.ui.define([
 		// Time with timezone
 		oDateFormat = DateFormat.getDateTimeWithTimezoneInstance({showDate: false});
 		assert.deepEqual(extractPatterns(oDateFormat.aFallbackFormats), [
-			"h:mm a VV",
-			"h:mm:ss a VV",
+			"h:mm\u202Fa VV",
+			"h:mm:ss\u202Fa VV",
 			"HH:mm:ss VV",
 			"HHmmss VV"
 		], "Time with timezone fallback patterns should match");
