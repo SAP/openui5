@@ -39,6 +39,7 @@ sap.ui.define([
 	 * @since 0.11.0
 	 * @namespace
 	 * @public
+	 * @deprecated as of version 1.120. Use {@link module:sap/ui/util/Storage sap/ui/util/Storage} instead.
 	 *
 	 * @borrows jQuery.sap.storage.Storage#get as get
 	 * @borrows jQuery.sap.storage.Storage#put as put
@@ -99,6 +100,7 @@ sap.ui.define([
 	 * @since 0.11.0
 	 * @public
 	 * @name jQuery.sap.storage.Storage
+	 * @deprecated as of version 1.120. Use {@link module:sap/ui/util/Storage sap/ui/util/Storage} instead.
 	 */
 	jQuery.sap.storage.Storage = Storage;
 
@@ -201,6 +203,7 @@ sap.ui.define([
 	 * @public
 	 * @version ${version}
 	 * @since 0.11.0
+	 * @deprecated as of version 1.120. Use {@link module:sap/ui/util/Storage.Type sap/ui/util/Storage.Type} instead.
 	 */
 	jQuery.sap.storage.Type = Storage.Type;
 

@@ -269,6 +269,8 @@ sap.ui.define([
 	 * @since 0.9.0
 	 * @name jQuery.sap.util.UriParameters
 	 * @public
+	 * @deprecated as of version 1.120. See deprecation notes of {@link module:sap/base/util/UriParameters sap/base/util/UriParameters}
+	 * on how to migrate to URL web standard classes <code>URLSearchParams</code> / <code>URL</code>.
 	 */
 
 	/**
@@ -311,8 +313,8 @@ sap.ui.define([
 	 * @public
 	 * @param {string} sUri Uri to determine the parameters for
 	 * @return {jQuery.sap.util.UriParameters} A new URI parameters instance
-	 * @deprecated As of 1.68, use {@link module:sap/base/util/UriParameters.fromQuery UriParameters.fromQuery}
-	 *    or {@link module:sap/base/util/UriParameters.fromURL UriParameters.fromURL} instead.
+	 * @deprecated as of version 1.68. See deprecation notes of {@link module:sap/base/util/UriParameters sap/base/util/UriParameters}
+	 * on how to migrate to URL web standard classes <code>URLSearchParams</code> / <code>URL</code>.
 	 */
 	jQuery.sap.getUriParameters = function getUriParameters(sUri) {
 		return UriParameters.fromURL(sUri || window.location.href);
