@@ -92,7 +92,8 @@ sap.ui.define([
 						"my.connectors": "./test-resources/sap/ui/fl/qunit/testConnectors/",
 						"test.app": "./test-resources/sap/ui/fl/qunit/testResources/"
 					},
-					flexibilityServices: '[{"connector": "JsObjectConnector", "layers": ["ALL"]},{"connector": "LrepConnector", "layers": ["ALL"], "url": "someURL"}]'
+					flexibilityServices: '[{"connector": "JsObjectConnector", "layers": ["ALL"]},'
+						+ '{"connector": "LrepConnector", "layers": ["ALL"], "url": "someURL"}]'
 				},
 				coverage: {
 					only: ["sap/ui/fl/initial/_internal/Storage"]
@@ -144,7 +145,25 @@ sap.ui.define([
 					only: ["sap/ui/fl/apply/api/UI2PersonalizationApplyAPI"]
 				}
 			},
+			"apply/api/ExtensionPointRegistryAPI": {
+				group: "Apply API",
+				coverage: {
+					only: ["sap/ui/fl/apply/api/ExtensionPointRegistryAPI"]
+				}
+			},
 
+			"apply/_internal/extensionPoint/Registry": {
+				group: "Apply Internal",
+				coverage: {
+					only: ["sap/ui/fl/apply/_internal/extensionPoint/Registry"]
+				},
+				ui5: {
+					resourceroots: {
+						testComponent: "test-resources/sap/ui/fl/qunit/testComponent",
+						"sap/ui/fl/qunit/extensionPoint": "test-resources/sap/ui/fl/qunit/apply/_internal/extensionPoint"
+					}
+				}
+			},
 			"apply/_internal/changes/Applier": {
 				group: "Apply Internal",
 				coverage: {
@@ -196,7 +215,11 @@ sap.ui.define([
 			"apply/_internal/changes/descriptor/app/ChangeInbound": {
 				group: "Apply Internal - Descriptor Change Merger",
 				coverage: {
-					only: ["sap/ui/fl/apply/_internal/changes/descriptor/app/ChangeInbound", "sap/ui/fl/util/DescriptorChangeCheck", "sap/ui/fl/util/changePropertyValueByPath"]
+					only: [
+						"sap/ui/fl/apply/_internal/changes/descriptor/app/ChangeInbound",
+						"sap/ui/fl/util/DescriptorChangeCheck",
+						"sap/ui/fl/util/changePropertyValueByPath"
+					]
 				}
 			},
 			"apply/_internal/changes/descriptor/app/AddNewInbound": {
@@ -226,7 +249,11 @@ sap.ui.define([
 			"apply/_internal/changes/descriptor/app/ChangeDataSource": {
 				group: "Apply Internal - Descriptor Change Merger",
 				coverage: {
-					only: ["sap/ui/fl/apply/_internal/changes/descriptor/app/ChangeDataSource", "sap/ui/fl/util/DescriptorChangeCheck", "sap/ui/fl/util/changePropertyValueByPath"]
+					only: [
+						"sap/ui/fl/apply/_internal/changes/descriptor/app/ChangeDataSource",
+						"sap/ui/fl/util/DescriptorChangeCheck",
+						"sap/ui/fl/util/changePropertyValueByPath"
+					]
 				}
 			},
 			"apply/_internal/changes/descriptor/app/SetTitle": {
@@ -563,12 +590,6 @@ sap.ui.define([
 					flexibilityServices: '[{"connector": "SessionStorageConnector"}]'
 				}
 			},
-			"write/api/ExtensionPointRegistryAPI": {
-				group: "Write API",
-				coverage: {
-					only: ["sap/ui/fl/write/api/ExtensionPointRegistryAPI"]
-				}
-			},
 			"write/api/FeaturesAPI": {
 				group: "Write API",
 				coverage: {
@@ -728,18 +749,6 @@ sap.ui.define([
 				group: "Write Internal",
 				coverage: {
 					only: ["sap/ui/fl/write/_internal/delegates/ODataV4ReadDelegate"]
-				}
-			},
-			"write/_internal/extensionPoint/Registry": {
-				group: "Write Internal",
-				coverage: {
-					only: ["sap/ui/fl/write/_internal/extensionPoint/Registry"]
-				},
-				ui5: {
-					resourceroots: {
-						testComponent: "test-resources/sap/ui/fl/qunit/testComponent",
-						"sap/ui/fl/qunit/extensionPoint": "test-resources/sap/ui/fl/qunit/apply/_internal/extensionPoint"
-					}
 				}
 			},
 			"write/_internal/extensionPoint/Processor": {
@@ -1352,7 +1361,8 @@ sap.ui.define([
 			}
 		});
 	} else {
-		Log.info("sap.ui.comp not available", "enabling tests are skipped, ensure sap.ui.comp from sapui5.runtime is loaded to execute them");
+		Log.info("sap.ui.comp not available",
+			"enabling tests are skipped, ensure sap.ui.comp from sapui5.runtime is loaded to execute them");
 	}
 
 	return mConfig;

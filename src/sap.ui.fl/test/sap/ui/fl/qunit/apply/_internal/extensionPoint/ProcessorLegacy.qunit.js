@@ -4,8 +4,8 @@ sap.ui.define([
 	"sap/ui/core/Component",
 	"sap/ui/core/ComponentContainer",
 	"sap/ui/core/ExtensionPoint",
-	"sap/ui/fl/write/_internal/extensionPoint/Registry",
 	"sap/ui/fl/apply/_internal/extensionPoint/Processor",
+	"sap/ui/fl/apply/_internal/extensionPoint/Registry",
 	"sap/ui/fl/ChangePersistenceFactory",
 	"sap/ui/fl/changeHandler/AddXMLAtExtensionPoint",
 	"sap/ui/thirdparty/sinon-4",
@@ -14,8 +14,8 @@ sap.ui.define([
 	Component,
 	ComponentContainer,
 	ExtensionPoint,
-	ExtensionPointRegistry,
 	ExtensionPointProcessor,
+	ExtensionPointRegistry,
 	ChangePersistenceFactory,
 	AddXMLAtExtensionPoint,
 	sinon,
@@ -163,12 +163,6 @@ sap.ui.define([
 			var sTemplatePrefix = `${sReference}---mainView--${sView}--fragmentWithExtensionPoint3--`;
 			assert.strictEqual(aTableCells[0].getId(), `${sTemplatePrefix}customListCellContent-${sTemplatePrefix}customTable-0`, "table item is in correct order"); // Main
 			assert.strictEqual(aTableCells[1].getId(), `${sCellPrefix}EP5_FRAGMENT_TEXT_ID-${sTemplatePrefix}customTable-0`, "table item is in correct order"); // Main
-
-			// var aTableItems = oView.byId(sView).byId("fragmentWithExtensionPoint3--customTable").getItems();
-			// assert.strictEqual(aTableItems.length, 2, "ExtensionPoint content added to" + sView + " view into aggregation binding template");
-			// var sTemplatePrefix = sReference + "---mainView--" + sView + "--fragmentWithExtensionPoint3--customListItemTemplate-";
-			// assert.strictEqual(aTableItems[0].getId(), sTemplatePrefix + sReference + "---mainView--" + sView + "--fragmentWithExtensionPoint3--customTable-0", "table item is in correct order"); // Main
-			// assert.strictEqual(aTableItems[1].getId(), sTemplatePrefix + sReference + "---mainView--" + sView + "--fragmentWithExtensionPoint3--customTable-1", "table item is in correct order"); // Main
 		};
 
 		var checkChangesContent = function(sReference) {
@@ -203,24 +197,41 @@ sap.ui.define([
 				sReference = "sap.ui.fl.qunit.extensionPoint.testAppLegacy";
 			}
 
-			assert.equal(oSpyAddXMLAtExtensionPointApply.getCall(0).args[0].getId(), `${sReference}_EP5_sync_VENDOR_addXMLAtExtensionPoint`, "first change applied with correct order");
-			assert.equal(oSpyAddXMLAtExtensionPointApply.getCall(1).args[0].getId(), `${sReference}_EP1_sync_VENDOR_addXMLAtExtensionPoint`, "second change applied with correct order");
-			assert.equal(oSpyAddXMLAtExtensionPointApply.getCall(2).args[0].getId(), `${sReference}_EP3_sync_VENDOR_addXMLAtExtensionPoint`, "third change applied with correct order");
-			assert.equal(oSpyAddXMLAtExtensionPointApply.getCall(3).args[0].getId(), `${sReference}_EP4_sync_VENDOR_addXMLAtExtensionPoint`, "fourth change applied with correct order");
-			assert.equal(oSpyAddXMLAtExtensionPointApply.getCall(4).args[0].getSupportInformation().sourceChangeFileName, `${sReference}_EP4_sync_VENDOR_addXMLAtExtensionPoint`, "fifth change applied with correct order");
-			assert.equal(oSpyAddXMLAtExtensionPointApply.getCall(5).args[0].getId(), `${sReference}_EP8_inner_sync_VENDOR_addXMLAtExtensionPoint`, "sixth change applied with correct order");
-			assert.equal(oSpyAddXMLAtExtensionPointApply.getCall(6).args[0].getId(), `${sReference}_EP10_inner_sync_VENDOR_addXMLAtExtensionPoint`, "seventh change applied with correct order");
-			assert.equal(oSpyAddXMLAtExtensionPointApply.getCall(7).args[0].getId(), `${sReference}_EP1_sync_CUSTOMER_BASE_addXMLAtExtensionPoint`, "eight change applied with correct order");
+			assert.equal(oSpyAddXMLAtExtensionPointApply.getCall(0).args[0].getId(),
+				`${sReference}_EP5_sync_VENDOR_addXMLAtExtensionPoint`, "first change applied with correct order");
+			assert.equal(oSpyAddXMLAtExtensionPointApply.getCall(1).args[0].getId(),
+				`${sReference}_EP1_sync_VENDOR_addXMLAtExtensionPoint`, "second change applied with correct order");
+			assert.equal(oSpyAddXMLAtExtensionPointApply.getCall(2).args[0].getId(),
+				`${sReference}_EP3_sync_VENDOR_addXMLAtExtensionPoint`, "third change applied with correct order");
+			assert.equal(oSpyAddXMLAtExtensionPointApply.getCall(3).args[0].getId(),
+				`${sReference}_EP4_sync_VENDOR_addXMLAtExtensionPoint`, "fourth change applied with correct order");
+			assert.equal(oSpyAddXMLAtExtensionPointApply.getCall(4).args[0].getSupportInformation().sourceChangeFileName,
+				`${sReference}_EP4_sync_VENDOR_addXMLAtExtensionPoint`, "fifth change applied with correct order");
+			assert.equal(oSpyAddXMLAtExtensionPointApply.getCall(5).args[0].getId(),
+				`${sReference}_EP8_inner_sync_VENDOR_addXMLAtExtensionPoint`, "sixth change applied with correct order");
+			assert.equal(oSpyAddXMLAtExtensionPointApply.getCall(6).args[0].getId(),
+				`${sReference}_EP10_inner_sync_VENDOR_addXMLAtExtensionPoint`, "seventh change applied with correct order");
+			assert.equal(oSpyAddXMLAtExtensionPointApply.getCall(7).args[0].getId(),
+				`${sReference}_EP1_sync_CUSTOMER_BASE_addXMLAtExtensionPoint`, "eight change applied with correct order");
 
-			// 'wrong' order due to xml applying of the EP changes in the view directly, the fragment changes come afterwards - not a EP problem but a general one
-			assert.equal(oSpyAddXMLAtExtensionPointApply.getCall(8).args[0].getId(), `${sReference}_EP1_async_VENDOR_addXMLAtExtensionPoint`, "ninth change applied with correct order");
-			assert.equal(oSpyAddXMLAtExtensionPointApply.getCall(9).args[0].getId(), `${sReference}_EP3_async_VENDOR_addXMLAtExtensionPoint`, "tenth change applied with correct order");
-			assert.equal(oSpyAddXMLAtExtensionPointApply.getCall(10).args[0].getId(), `${sReference}_EP1_async_CUSTOMER_BASE_addXMLAtExtensionPoint`, "eleventh change applied with correct order");
-			assert.equal(oSpyAddXMLAtExtensionPointApply.getCall(11).args[0].getId(), `${sReference}_EP5_async_VENDOR_addXMLAtExtensionPoint`, "twelfth change applied with correct order");
-			assert.equal(oSpyAddXMLAtExtensionPointApply.getCall(12).args[0].getId(), `${sReference}_EP4_async_VENDOR_addXMLAtExtensionPoint`, "thirteenth change applied with correct order");
-			assert.equal(oSpyAddXMLAtExtensionPointApply.getCall(13).args[0].getSupportInformation().sourceChangeFileName, `${sReference}_EP4_async_VENDOR_addXMLAtExtensionPoint`, "fourteenth change applied with correct order");
-			assert.equal(oSpyAddXMLAtExtensionPointApply.getCall(14).args[0].getId(), `${sReference}_EP8_inner_async_VENDOR_addXMLAtExtensionPoint`, "fifteenth change applied with correct order");
-			assert.equal(oSpyAddXMLAtExtensionPointApply.getCall(15).args[0].getId(), `${sReference}_EP10_inner_async_VENDOR_addXMLAtExtensionPoint`, "sixteenth change applied with correct order");
+			// 'wrong' order due to xml applying of the EP changes in the view directly,
+			// the fragment changes come afterwards - not a EP problem but a general one
+			assert.equal(oSpyAddXMLAtExtensionPointApply.getCall(8).args[0].getId(),
+				`${sReference}_EP1_async_VENDOR_addXMLAtExtensionPoint`, "ninth change applied with correct order");
+			assert.equal(oSpyAddXMLAtExtensionPointApply.getCall(9).args[0].getId(),
+				`${sReference}_EP3_async_VENDOR_addXMLAtExtensionPoint`, "tenth change applied with correct order");
+			assert.equal(oSpyAddXMLAtExtensionPointApply.getCall(10).args[0].getId(),
+				`${sReference}_EP1_async_CUSTOMER_BASE_addXMLAtExtensionPoint`, "eleventh change applied with correct order");
+			assert.equal(oSpyAddXMLAtExtensionPointApply.getCall(11).args[0].getId(),
+				`${sReference}_EP5_async_VENDOR_addXMLAtExtensionPoint`, "twelfth change applied with correct order");
+			assert.equal(oSpyAddXMLAtExtensionPointApply.getCall(12).args[0].getId(),
+				`${sReference}_EP4_async_VENDOR_addXMLAtExtensionPoint`, "thirteenth change applied with correct order");
+			assert.equal(oSpyAddXMLAtExtensionPointApply.getCall(13).args[0].getSupportInformation().sourceChangeFileName,
+				`${sReference}_EP4_async_VENDOR_addXMLAtExtensionPoint`, "fourteenth change applied with correct order");
+			assert.equal(oSpyAddXMLAtExtensionPointApply.getCall(14).args[0].getId(),
+				`${sReference}_EP8_inner_async_VENDOR_addXMLAtExtensionPoint`, "fifteenth change applied with correct order");
+			assert.equal(oSpyAddXMLAtExtensionPointApply.getCall(15).args[0].getId(),
+				`${sReference}_EP10_inner_async_VENDOR_addXMLAtExtensionPoint`, "sixteenth change applied with correct order");
 		};
 
 		var fnAssert = function() {
@@ -229,8 +240,10 @@ sap.ui.define([
 			checkView("sync");
 			checkView("async");
 			checkChangesContent(sReference);
-			assert.equal(oSpyApplyExtensionPoint.callCount, 14, "number of applyExtensionPoint called correct");
-			assert.equal(oSpyRegisterExtensionPoint.callCount, 22, "number of registerExtensionPoint called correct in the ExtensionPointRegistry");
+			assert.equal(oSpyApplyExtensionPoint.callCount, 14,
+				"number of applyExtensionPoint called correct");
+			assert.equal(oSpyRegisterExtensionPoint.callCount, 22,
+				"number of registerExtensionPoint called correct in the ExtensionPointRegistry");
 			checkApplyOrder(bSync);
 
 			done();

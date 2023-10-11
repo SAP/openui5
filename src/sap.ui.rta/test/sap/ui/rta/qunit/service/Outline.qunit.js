@@ -12,8 +12,8 @@ sap.ui.define([
 	"sap/ui/core/UIComponent",
 	"sap/ui/dt/DesignTime",
 	"sap/ui/dt/OverlayRegistry",
-	"sap/ui/fl/write/_internal/extensionPoint/Registry",
-	"sap/ui/fl/write/api/ExtensionPointRegistryAPI",
+	"sap/ui/fl/apply/_internal/extensionPoint/Registry",
+	"sap/ui/fl/apply/api/ExtensionPointRegistryAPI",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/layout/VerticalLayout",
 	"sap/ui/model/json/JSONModel",
@@ -160,6 +160,7 @@ sap.ui.define([
 				if (oLayout === this.oLayout) {
 					return "Vertical Layout Label";
 				}
+				return undefined;
 			}.bind(this);
 
 			sandbox.stub(DesignTime.prototype, "getDesignTimeMetadataFor")

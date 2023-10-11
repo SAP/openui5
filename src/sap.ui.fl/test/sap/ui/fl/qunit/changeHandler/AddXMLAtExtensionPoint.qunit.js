@@ -7,8 +7,8 @@ sap.ui.define([
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/core/util/reflection/XmlTreeModifier",
 	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
+	"sap/ui/fl/apply/api/ExtensionPointRegistryAPI",
 	"sap/ui/fl/changeHandler/AddXMLAtExtensionPoint",
-	"sap/ui/fl/write/api/ExtensionPointRegistryAPI",
 	"sap/ui/util/XMLHelper",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
@@ -18,8 +18,8 @@ sap.ui.define([
 	JsControlTreeModifier,
 	XmlTreeModifier,
 	FlexObjectFactory,
-	AddXMLAtExtensionPoint,
 	ExtensionPointRegistryAPI,
+	AddXMLAtExtensionPoint,
 	XMLHelper,
 	sinon
 ) {

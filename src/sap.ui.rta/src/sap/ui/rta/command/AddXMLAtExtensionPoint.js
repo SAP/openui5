@@ -4,14 +4,14 @@
 sap.ui.define([
 	"sap/ui/rta/command/FlexCommand",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
+	"sap/ui/fl/apply/api/ExtensionPointRegistryAPI",
 	"sap/ui/fl/write/api/ChangesWriteAPI",
-	"sap/ui/fl/write/api/ExtensionPointRegistryAPI",
 	"sap/ui/fl/Utils"
 ], function(
 	FlexCommand,
 	JsControlTreeModifier,
-	ChangesWriteAPI,
 	ExtensionPointRegistryAPI,
+	ChangesWriteAPI,
 	Utils
 ) {
 	"use strict";

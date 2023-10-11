@@ -1,7 +1,7 @@
 /* global QUnit */
 sap.ui.define([
-	"sap/ui/fl/write/_internal/extensionPoint/Registry",
-	"sap/ui/fl/write/api/ExtensionPointRegistryAPI",
+	"sap/ui/fl/apply/_internal/extensionPoint/Registry",
+	"sap/ui/fl/apply/api/ExtensionPointRegistryAPI",
 	"sap/m/HBox",
 	"sap/m/Panel",
 	"sap/ui/thirdparty/sinon-4"
