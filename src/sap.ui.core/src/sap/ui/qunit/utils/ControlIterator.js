@@ -85,12 +85,27 @@ sap.ui.define(['sap/ui/core/Core', "sap/ui/VersionInfo"],
 		"sap.ui.comp.smartform.Group",
 		"sap.ui.comp.smartform.GroupElement",
 		"sap.ui.comp.valuehelpdialog.ValueHelpDialog",
+		/**
+		 * @deprecated since 1.108
+		 */
 		"sap.ui.core.mvc.HTMLView",
+		/**
+		 * @deprecated since 1.120
+		 */
 		"sap.ui.core.mvc.JSONView",
+		/**
+		 * @deprecated since 1.90
+		 */
 		"sap.ui.core.mvc.JSView",
+		/**
+		 * @deprecated since 1.56
+		 */
 		"sap.ui.core.mvc.TemplateView",
 		"sap.ui.core.mvc.View",
 		"sap.ui.core.mvc.XMLView",
+		/**
+		 * @deprecated since 1.56
+		 */
 		"sap.ui.core.tmpl.Template",
 		"sap.ui.core.UIComponent",
 		"sap.ui.core.util.Export",
@@ -150,12 +165,27 @@ sap.ui.define(['sap/ui/core/Core', "sap/ui/VersionInfo"],
 		"sap.ui.commons.Tab",
 		"sap.ui.comp.transport.TransportDialog",
 		"sap.ui.core.ComponentContainer",
+		/**
+		 * @deprecated since 1.108
+		 */
 		"sap.ui.core.mvc.HTMLView",
+		/**
+		 * @deprecated since 1.120
+		 */
 		"sap.ui.core.mvc.JSONView",
+		/**
+		 * @deprecated since 1.90
+		 */
 		"sap.ui.core.mvc.JSView",
+		/**
+		 * @deprecated since 1.56
+		 */
 		"sap.ui.core.mvc.TemplateView",
 		"sap.ui.core.mvc.View",
 		"sap.ui.core.mvc.XMLView",
+		/**
+		 * @deprecated since 1.56
+		 */
 		"sap.ui.core.XMLComposite",
 		"sap.ui.mdc.BaseControl", // should be abstract?
 		"sap.ui.mdc.odata.v4.microchart.MicroChart", //The control only runs in views with XML pre-processor. The test can't provide this environment

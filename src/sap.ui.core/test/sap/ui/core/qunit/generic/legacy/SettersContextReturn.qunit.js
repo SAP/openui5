@@ -31,10 +31,25 @@ sap.ui.define([
 		 */
 		"sap.ui.core": {
 			elements: {
+				/**
+				 * @deprecated since 1.56
+				 */
 				"sap.ui.core.XMLComposite" : NO_CREATE, // needs constructor arguments
+				/**
+				 * @deprecated since 1.108
+				 */
 				"sap.ui.core.mvc.HTMLView" : NO_CREATE, // needs constructor arguments
+				/**
+				 * @deprecated since 1.120
+				 */
 				"sap.ui.core.mvc.JSONView" : NO_CREATE, // needs constructor arguments
+				/**
+				 * @deprecated since 1.90
+				 */
 				"sap.ui.core.mvc.JSView" : NO_CREATE, // needs constructor arguments
+				/**
+				 * @deprecated since 1.56
+				 */
 				"sap.ui.core.mvc.TemplateView" : NO_CREATE, // needs constructor arguments
 				"sap.ui.core.mvc.View": NO_CREATE, // needs constructor arguments
 				"sap.ui.core.mvc.XMLView": NO_CREATE, // needs constructor arguments
