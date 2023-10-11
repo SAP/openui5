@@ -260,7 +260,9 @@ sap.ui.define([
 					checkDescription: true,
 					value: sFilterValue
 				});
-				oFirstMatchItem = _getItemFromContext.call(this, oContext);
+				if (oContext) {
+					oFirstMatchItem = _getItemFromContext.call(this, oContext);
+				}
 			}
 
 			const aListItems = oList.getItems();

@@ -638,13 +638,14 @@ sap.ui.define([
 			return _returnResult.call(this, oCondition, oMyException, iCallCount, false, oType);
 		};
 
-		const fnCheckForType = function(oType, vCheckValue, bOtherCheck) {
+		const fnCheckForType = function(oType, aCompositeTypes, vCheckValue, bOtherCheck) {
 			let vParsedValue;
 			try {
 				if (_isUnit(oType)) {
-					vParsedValue = oType.parseValue(vCheckValue, "string", oType._aCurrentValue);
-					oType.validateValue(vParsedValue);
-					vParsedValue = vParsedValue[1]; // use unit part
+					// for unit use part of composite type (as also useFirstMatch needs to be supported with incomplete keys)
+					const oUsedType = aCompositeTypes && aCompositeTypes.length > 1 ? aCompositeTypes[1] : _getDefaultType.call(this);
+					vParsedValue = oUsedType.parseValue(vCheckValue, "string");
+					oUsedType.validateValue(vParsedValue);
 				} else {
 					vParsedValue = oType.parseValue(vCheckValue, "string");
 					oType.validateValue(vParsedValue);
@@ -657,14 +658,14 @@ sap.ui.define([
 				vParsedValue = undefined;
 			}
 			return vParsedValue;
-		};
+		}.bind(this);
 
 		// check if is valid for key-type (if a key is determined use it, otherwise use checkValue)
-		const vCheckParsedValue = fnCheckForType(oType, vKey || vCheckValue, bCheckDescription);
+		const vCheckParsedValue = fnCheckForType(oType, _getCompositeTypes.call(this), vKey || vCheckValue, bCheckDescription);
 		bCheckKey = vCheckParsedValue !== undefined; // no check if cannot be parsed
 		// check if is valid for description-type (if a description is determined use it, otherwise use checkValue)
 		if (bCheckDescription) {
-			vCheckParsedDescription = fnCheckForType(oAdditionalType, vDescription || vCheckValue, bCheckKey);
+			vCheckParsedDescription = fnCheckForType(oAdditionalType, _getAdditionalCompositeTypes.call(this), vDescription || vCheckValue, bCheckKey);
 			bCheckDescription = vCheckParsedDescription !== undefined; // no check if cannot be parsed
 		}
 
