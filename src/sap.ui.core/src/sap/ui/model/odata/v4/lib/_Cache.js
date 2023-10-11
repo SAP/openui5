@@ -2036,7 +2036,7 @@ sap.ui.define([
 	/**
 	 * Updates this cache's query options if it has not yet sent a request.
 	 *
-	 * @param {object} [mQueryOptions]
+	 * @param {object} [mQueryOptions={}]
 	 *   The new query options
 	 * @param {boolean} [bForce]
 	 *   Forces an update even if a request has been already sent
@@ -2047,7 +2047,7 @@ sap.ui.define([
 	 * @see #getQueryOptions
 	 * @see #hasSentRequest
 	 */
-	_Cache.prototype.setQueryOptions = function (mQueryOptions, bForce) {
+	_Cache.prototype.setQueryOptions = function (mQueryOptions = {}, bForce = false) {
 		this.checkSharedRequest();
 		if (this.bSentRequest && !bForce) {
 			throw new Error("Cannot set query options: Cache has already sent a request");
@@ -3441,10 +3441,18 @@ sap.ui.define([
 
 		this.aReadRequests.push(oReadRequest);
 		this.bSentRequest = true;
+		// This must be a SyncPromise, but nevertheless asynchronous. Otherwise, the then/catch
+		// handler would be called synchronous and this.fill(oPromise, ...) would run afterwards and
+		// destroy the result.
 		oPromise = SyncPromise.all([
-			this.oRequestor.request("GET",
-				this.getResourcePathWithQuery(iStart, iEnd),
-				oGroupLock, undefined, undefined, fnDataRequested),
+			this.mQueryOptions.$filter === "false"
+				? Promise.resolve({
+					"@odata.count" : "0", // EDM.Int64
+					value : []
+				})
+				: this.oRequestor.request("GET",
+					this.getResourcePathWithQuery(iStart, iEnd),
+					oGroupLock, undefined, undefined, fnDataRequested),
 			this.fetchTypes()
 		]).then(function (aResult) {
 			var iFiltered;

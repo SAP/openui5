@@ -395,11 +395,15 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("c'tor: error case", function (assert) {
+	QUnit.test("c'tor: error cases", function (assert) {
 		assert.throws(function () {
 			// code under test
 			this.bindList("/EMPLOYEES", undefined, new Sorter("ID"));
 		}, new Error("Unsupported operation mode: undefined"));
+
+		assert.throws(() => {
+			this.bindList("/EMPLOYEES", undefined, undefined, Filter.NONE, {$$aggregation : {}});
+		}, new Error("Cannot combine Filter.NONE with $$aggregation"));
 	});
 
 	//*********************************************************************************************
@@ -412,6 +416,17 @@ sap.ui.define([
 			// code under test
 			oBinding.setAggregation({});
 		}, new Error("Cannot set $$aggregation due to pending changes"));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("setAggregation: Filter.NONE", function (assert) {
+		const oBinding = this.bindList("/EMPLOYEES", undefined, undefined, Filter.NONE,
+			{$$operationMode : OperationMode.Server});
+
+		assert.throws(function () {
+			// code under test
+			oBinding.setAggregation({});
+		}, new Error("Cannot combine Filter.NONE with $$aggregation"));
 	});
 
 	//*********************************************************************************************
@@ -3519,6 +3534,8 @@ sap.ui.define([
 				oHelperMock.expects("toArray").withExactArgs(sinon.match.same(oFilter))
 					.returns(aFilters);
 				oBindingMock.expects("checkTransient").withExactArgs();
+				this.mock(Filter).expects("checkFilterNone")
+					.withExactArgs(sinon.match.same(aFilters));
 				oHelperMock.expects("deepEqual").exactly(sFilterType === FilterType.Control ? 1 : 0)
 					.withExactArgs(sinon.match.same(aFilters), sinon.match.same(oBinding.aFilters))
 					.returns(false);
@@ -3585,6 +3602,7 @@ sap.ui.define([
 			this.mock(oBinding).expects("checkTransient").withExactArgs();
 			oHelperMock.expects("toArray").withExactArgs(sinon.match.same("~filter~"))
 				.returns(aFilters);
+			this.mock(Filter).expects("checkFilterNone").withExactArgs(sinon.match.same(aFilters));
 			oHelperMock.expects("deepEqual").withExactArgs(sinon.match.same(aFilters),
 					sinon.match.same(sFilterType === FilterType.Control
 						? oBinding.aFilters : oBinding.aApplicationFilters))
@@ -3653,6 +3671,14 @@ sap.ui.define([
 		assert.throws(function () {
 			oBinding.filter();
 		}, new Error("Operation mode has to be sap.ui.model.odata.OperationMode.Server"));
+
+		oBinding = this.bindList("/EMPLOYEES", undefined, undefined, undefined,
+			{$$operationMode : OperationMode.Server, $$aggregation : {}});
+
+		// code under test
+		assert.throws(function () {
+			oBinding.filter(Filter.NONE);
+		}, new Error("Cannot combine Filter.NONE with $$aggregation"));
 
 		oBinding = this.bindList("/EMPLOYEES", undefined, undefined, undefined,
 			{$$operationMode : OperationMode.Server});
@@ -6113,6 +6139,20 @@ sap.ui.define([
 		assert.deepEqual(
 			oBinding.fetchFilter(undefined, "GrossAmount ge 1000").getResult(),
 			["GrossAmount ge 1000"]);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("fetchFilter: Filter.NONE", function (assert) {
+		const oBinding = this.bindList("/SalesOrderList");
+
+		this.mock(FilterProcessor).expects("combineFilters")
+			.withExactArgs(sinon.match.same(oBinding.aFilters),
+				sinon.match.same(oBinding.aApplicationFilters))
+			.returns(Filter.NONE);
+
+		assert.deepEqual(
+			oBinding.fetchFilter("~oContext~", "~sStaticFilter~").getResult(),
+			["false"]);
 	});
 
 	//*********************************************************************************************
@@ -9071,6 +9111,7 @@ sap.ui.define([
 
 		this.mock(oBinding).expects("checkTransient").withExactArgs();
 		this.mock(oBinding).expects("isResolved").returns(true);
+		this.mock(oBinding).expects("hasFilterNone").returns(false);
 		oExpectation = this.mock(oBinding).expects("withCache").returns(oPromise);
 
 		// code under test
@@ -9082,6 +9123,18 @@ sap.ui.define([
 
 		// code under test - callback function
 		assert.strictEqual(oExpectation.args[0][0](oCache, "~path~"), "~url~");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("fetchDownloadUrl: Filter.NONE", function (assert) {
+		const oBinding = this.bindList("n/a");
+
+		this.mock(oBinding).expects("checkTransient").withExactArgs();
+		this.mock(oBinding).expects("isResolved").returns(true);
+		this.mock(oBinding).expects("hasFilterNone").returns(true);
+
+		// code under test
+		assert.strictEqual(oBinding.fetchDownloadUrl().getResult(), null);
 	});
 
 	//*********************************************************************************************
@@ -9584,6 +9637,14 @@ sap.ui.define([
 		getTargets : function () { return ["/TEAMS('2')/bar"]; }
 	}],
 	predicates : []
+}, {
+	callbackReturns : true,
+	messages : [{
+		getTargets : function () { return ["/TEAMS($uid=id-1-23)/foo"]; }
+	}, {
+		getTargets : function () { return ["/TEAMS($uid=id-1-42)/bar"]; }
+	}],
+	predicates : []
 }].forEach(function (oFixture) {
 	var sTitle = "requestFilterForMessages; messages: " + oFixture.messages.length
 		+ " predicates: " + oFixture.predicates
@@ -9627,8 +9688,10 @@ sap.ui.define([
 
 		// code under test
 		return oBinding.requestFilterForMessages(fnCallback).then(function (oFilter) {
-			if (oFixture.predicates.length === 0 || oFixture.callbackReturns === false) {
-				assert.strictEqual(oFilter, null);
+			if (oFixture.predicates.length === 0) {
+				assert.strictEqual(
+					oFilter,
+					oFixture.callbackReturns ? Filter.NONE : null);
 
 				return;
 			}
@@ -11393,6 +11456,27 @@ child nodes added=${iCount}, expandTo=${iExpandTo}, make root=${bMakeRoot}`;
 			// code under test
 			oBinding.checkDeepCreate();
 		}, new Error("Invalid path 'SO_2_SOITEM/SOITEM_2_SCHDL' in deep create"));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("hasFilterNone", function (assert) {
+		const oBinding = this.bindList("/SalesOrderList", undefined, undefined, undefined, {
+			$$operationMode : OperationMode.Server
+		});
+
+		// code under test
+		assert.strictEqual(oBinding.hasFilterNone(), false);
+
+		oBinding.filter(Filter.NONE);
+
+		// code under test
+		assert.strictEqual(oBinding.hasFilterNone(), true);
+
+		oBinding.filter(); // clear application filter
+		oBinding.filter(Filter.NONE, FilterType.Control);
+
+		// code under test
+		assert.strictEqual(oBinding.hasFilterNone(), true);
 	});
 
 	//*********************************************************************************************
