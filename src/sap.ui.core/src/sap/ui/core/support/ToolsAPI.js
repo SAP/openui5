@@ -4,7 +4,9 @@
 
 sap.ui.define([
 	"sap/ui/Global",
+	"sap/ui/core/AnimationMode",
 	"sap/ui/core/Configuration",
+	"sap/ui/core/ControlBehavior",
 	"sap/ui/core/Element",
 	"sap/ui/core/ElementMetadata",
 	"sap/ui/core/Supportability",
@@ -14,7 +16,9 @@ sap.ui.define([
 ],
 	function(
 		Global,
+		AnimationMode,
 		Configuration,
+		ControlBehavior,
 		Element,
 		ElementMetadata,
 		Supportability,
@@ -98,9 +102,9 @@ sap.ui.define([
 					theme: Theming.getTheme(),
 					language: Configuration.getLanguage(),
 					formatLocale: Configuration.getFormatLocale(),
-					accessibility: Configuration.getAccessibility(),
-					animation: (Configuration.getAnimationMode() !== Configuration.AnimationMode.minimal &&
-								Configuration.getAnimationMode() !== Configuration.AnimationMode.none),
+					accessibility: ControlBehavior.isAccessibilityEnabled(),
+					animation: (ControlBehavior.getAnimationMode() !== AnimationMode.minimal &&
+								ControlBehavior.getAnimationMode() !== AnimationMode.none),
 					rtl: Configuration.getRTL(),
 					debug: Supportability.isDebugModeEnabled(),
 					inspect: Supportability.isControlInspectorEnabled(),

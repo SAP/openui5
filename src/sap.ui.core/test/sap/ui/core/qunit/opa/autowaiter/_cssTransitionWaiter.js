@@ -9,11 +9,11 @@ sap.ui.define([
 	"sap/f/FlexibleColumnLayout",
 	"sap/m/Page",
 	"sap/base/strings/capitalize",
-	"sap/ui/core/Configuration",
+	"sap/ui/core/ControlBehavior",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/qunit/utils/nextUIUpdate"
 ], function (_LogCollector, _autoWaiter, _timeoutWaiter, _XHRWaiter, _promiseWaiter,
-		_navigationContainerWaiter, FlexibleColumnLayout, Page, capitalize, Configuration, jQuery, nextUIUpdate) {
+		_navigationContainerWaiter, FlexibleColumnLayout, Page, capitalize, ControlBehavior, jQuery, nextUIUpdate) {
 	"use strict";
 
 	var oLogCollector = _LogCollector.getInstance();
@@ -243,7 +243,7 @@ sap.ui.define([
 			this.oXHRWaiterStub.returns(false);
 			this.oPromiseWaiterStub.returns(false);
 			this.oNavigationContainerWaiterStub.returns(false);
-			Configuration.setAnimationMode("full");
+			ControlBehavior.setAnimationMode("full");
 
 			this.oFcl = new FlexibleColumnLayout({
 				beginColumnPages: [new Page()],
