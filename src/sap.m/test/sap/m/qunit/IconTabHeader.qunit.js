@@ -1277,4 +1277,42 @@ sap.ui.define([
 
 		oScrollContainer.destroy();
 	});
+
+	QUnit.module("In Tool Header", {
+		beforeEach: function () {
+			this.oITH = new IconTabHeader();
+			this.oITH.placeAt(DOM_RENDER_LOCATION);
+			Core.applyChanges();
+		},
+		afterEach: function () {
+			this.oITH.destroy();
+		}
+	});
+
+	QUnit.test("with sub tabs", function(assert) {
+		// Arrange
+		this.oITH.addItem(
+			new IconTabFilter({
+				icon: "sap-icon://instance",
+				key: "key1",
+				items: [
+					new IconTabFilter({text: "Filter 2-1"}),
+					new IconTabFilter({text: "Filter 2-2"}),
+					new IconTabFilter({text: "Filter 2-3"})
+				]
+			})
+		);
+
+		var oITH = this.oITH,
+			oSandBox = sinon.sandbox.create(),
+			fnStubConfig = function () {
+				oSandBox.stub(oITH, "_isInsideToolHeader").returns(true);
+			};
+
+		// Simulate that the IconTabHeader is inside ToolHeader
+		fnStubConfig();
+
+		assert.strictEqual(this.oITH._isUnselectable(this.oITH.getItems()[0]), true, "The IconTabFilter, that have sub items can't be selected by itself, only its sub-items can be selected (filter with one click area)");
+		oSandBox.restore();
+	});
 });
