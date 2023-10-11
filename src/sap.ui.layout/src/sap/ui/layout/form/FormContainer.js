@@ -188,18 +188,20 @@ sap.ui.define([
 
 	FormContainer.prototype.setToolbar = function(oToolbar) {
 
+		const oOldToolbar = this.getToolbar();
+
+		this.setAggregation("toolbar", oToolbar); // set Toolbar synchronously as later on only the design might be changed (set it first to check validity)
+
 		// for sap.m.Toolbar Auto-design must be set to transparent
 		if (this._oInitPromise) {
 			// module needs to be loaded -> create Button async
 			this._oInitPromise.then(function () {
 				delete this._oInitPromise; // not longer needed as resolved
-				oToolbar = FormHelper.setToolbar(oToolbar, this.getToolbar()); // Toolbar is only changes, so no late set is needed.
+				oToolbar = FormHelper.setToolbar(oToolbar, oOldToolbar); // Toolbar is only changes, so no late set is needed.
 			}.bind(this));
 		} else {
-			oToolbar = FormHelper.setToolbar(oToolbar, this.getToolbar());
+			oToolbar = FormHelper.setToolbar(oToolbar, oOldToolbar);
 		}
-
-		this.setAggregation("toolbar", oToolbar); // set Toolbar synchronously as later on only the design might be changed
 
 		return this;
 

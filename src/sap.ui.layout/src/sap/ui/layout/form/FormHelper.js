@@ -64,14 +64,17 @@ sap.ui.define([
 				oOldToolbar.setDesign(oOldToolbar.getDesign(), true);
 			}
 			if (oToolbar && oToolbar.setDesign) {
-				oToolbar.setDesign(this.Library.ToolbarDesign.Transparent, true);
+				const oProperty = oToolbar.getMetadata().getManagedProperty("design");
+				if (oProperty && oProperty.type === "sap.m.ToolbarDesign") { // as custom toolbar could have different types
+					oToolbar.setDesign(this.Library.ToolbarDesign.Transparent, true);
+				}
 			}
 			return oToolbar;
 		},
 		getToolbarTitle: function(oToolbar) {
 			// determine Title to point aria-label on this. As Fallback use the whole Toolbar
 			if (oToolbar) {
-				const aContent = oToolbar.getContent();
+				const aContent = oToolbar.getContent ? oToolbar.getContent() : []; // check for getContent because we don't know what kind of custom toolbars might be used.
 				for (let i = 0; i < aContent.length; i++) {
 					const oContent = aContent[i];
 					if (oContent.isA("sap.m.Title")) {
