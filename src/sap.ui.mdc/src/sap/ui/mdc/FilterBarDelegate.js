@@ -9,9 +9,10 @@
 sap.ui.define(["sap/ui/mdc/AggregationBaseDelegate", "sap/ui/mdc/enums/FilterBarValidationStatus"], function(AggregationBaseDelegate, FilterBarValidationStatus) {
 	"use strict";
 	/**
-	 * @class Base Delegate for {@link sap.ui.mdc.FilterBar FilterBar}. Extend this object in your project to use all functionalities of the {@link sap.ui.mdc.FilterBar FilterBar}.
+	 * Base Delegate for {@link sap.ui.mdc.FilterBar FilterBar}. Extend this object in your project to use all functionalities of the {@link sap.ui.mdc.FilterBar FilterBar}.
 	 * This class provides method calls, which are called by the <code>FilterBar</code> at specific operations and allows to overwrite an internal behaviour..
 	 *
+	 * @namespace
 	 * @author SAP SE
 	 * @public
 	 * @since 1.61.0
