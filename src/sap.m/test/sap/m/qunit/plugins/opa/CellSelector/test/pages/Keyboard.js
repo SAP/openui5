@@ -20,8 +20,21 @@ sap.ui.define([
 		}
 	};
 
+	function pressKey(sKey, oDomRef, bShift, bAlt, bCtrl) {
+		Opa5.getUtils().triggerKeydown(oDomRef, sKey, bShift, bAlt, bCtrl);
+		Opa5.getUtils().triggerKeyup(oDomRef, sKey, bShift, bAlt, bCtrl);
+	}
+
 	function navigate(sKey, oDomRef, bShift) {
-		Opa5.getUtils().triggerKeydown(oDomRef, sKey, bShift, false, false);
+		if (bShift) {
+			// Required as Range Selection is started only when SHIFT with onkeydown (see KeyboardDelegate)
+			Opa5.getUtils().triggerKeydown(oDomRef, KeyCodes.SHIFT);
+		}
+		pressKey(sKey, oDomRef, bShift, false, false);
+		if (bShift) {
+			// Required as Range Selection is started only when SHIFT with onkeydown (see KeyboardDelegate)
+			Opa5.getUtils().triggerKeyup(oDomRef, KeyCodes.SHIFT);
+		}
 	}
 
 	Opa5.createPageObjects({
@@ -36,7 +49,7 @@ sap.ui.define([
 					Util.waitForTable.call(this, {
 						success: function(oTable) {
 							var oFocus = Util.getFocusedElement(oTable);
-							Opa5.getUtils().triggerKeydown(oFocus, KeyCodes.SPACE);
+							pressKey(KeyCodes.SPACE, oFocus);
 						}
 					});
 				},
@@ -44,7 +57,7 @@ sap.ui.define([
 					Util.waitForTable.call(this, {
 						success: function(oTable) {
 							var oFocus = Util.getFocusedElement(oTable);
-							Opa5.getUtils().triggerKeydown(oFocus, KeyCodes.A, true, false, true);
+							pressKey(KeyCodes.A, oFocus, true, false, true);
 						}
 					});
 				},
@@ -80,7 +93,7 @@ sap.ui.define([
 					Util.waitForTable.call(this, {
 						success: function(oTable) {
 							var oFocus = Util.getFocusedElement(oTable);
-							Opa5.getUtils().triggerKeyup(oFocus, KeyCodes.SPACE, true);
+							pressKey(KeyCodes.SPACE, oFocus, true);
 						}
 					});
 				},
@@ -88,7 +101,7 @@ sap.ui.define([
 					Util.waitForTable.call(this, {
 						success: function(oTable) {
 							var oFocus = Util.getFocusedElement(oTable);
-							Opa5.getUtils().triggerKeyup(oFocus, KeyCodes.SPACE, false, false, true);
+							pressKey(KeyCodes.SPACE, oFocus, false, false, true);
 						}
 					});
 				},
