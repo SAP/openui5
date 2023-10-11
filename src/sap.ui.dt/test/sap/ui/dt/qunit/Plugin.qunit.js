@@ -8,7 +8,7 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/ui/layout/VerticalLayout",
 	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/core/Core"
+	"sap/ui/qunit/utils/nextUIUpdate"
 ], function(
 	Lib,
 	DesignTime,
@@ -17,7 +17,7 @@ sap.ui.define([
 	Button,
 	VerticalLayout,
 	sinon,
-	oCore
+	nextUIUpdate
 ) {
 	"use strict";
 
@@ -69,7 +69,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given that a Plugin is initialized with register methods", {
-		beforeEach(assert) {
+		async beforeEach(assert) {
 			var fnDone = assert.async();
 
 			this.oButton = new Button();
@@ -78,7 +78,7 @@ sap.ui.define([
 					this.oButton
 				]
 			}).placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			this.oDesignTime = new DesignTime({
 				rootElements: [this.oLayout]
@@ -116,7 +116,7 @@ sap.ui.define([
 				"register was called for all aggregation overlays"
 			);
 		});
-		QUnit.test("when the plugin is added to designTime and new controls are added to designTime as root control and inside the controls", function(assert) {
+		QUnit.test("when the plugin is added to designTime and new controls are added to designTime as root control and inside the controls", async function(assert) {
 			var fnDone = assert.async();
 
 			var oButton = new Button();
@@ -125,7 +125,7 @@ sap.ui.define([
 				content: oButton
 			});
 			oLayout.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			this.oDesignTime.addPlugin(this.oPlugin);
 			this.iRegisterElementOverlayCalls = 0;

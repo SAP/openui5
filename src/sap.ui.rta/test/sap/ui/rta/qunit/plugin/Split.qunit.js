@@ -9,7 +9,7 @@ sap.ui.define([
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/thirdparty/sinon-4",
 	"test-resources/sap/ui/rta/qunit/RtaQunitUtils",
-	"sap/ui/core/Core"
+	"sap/ui/qunit/utils/nextUIUpdate"
 ], function(
 	DesignTime,
 	CommandFactory,
@@ -19,7 +19,7 @@ sap.ui.define([
 	XMLView,
 	sinon,
 	RtaQunitUtils,
-	oCore
+	nextUIUpdate
 ) {
 	"use strict";
 
@@ -43,7 +43,7 @@ sap.ui.define([
 	};
 
 	QUnit.module("Given a designTime and split plugin are instantiated", {
-		beforeEach(assert) {
+		async beforeEach(assert) {
 			var fnDone = assert.async();
 			sandbox.stub(ChangesWriteAPI, "getChangeHandler").resolves();
 			this.oSplitPlugin = new SplitPlugin({
@@ -62,7 +62,7 @@ sap.ui.define([
 			});
 
 			this.oView.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			this.oButton1 = this.oView.byId("button1");
 			this.oButton2 = this.oView.byId("button2");

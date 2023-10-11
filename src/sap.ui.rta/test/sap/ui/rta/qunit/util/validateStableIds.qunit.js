@@ -10,7 +10,7 @@ sap.ui.define([
 	"sap/ui/core/mvc/XMLView",
 	"sap/base/util/LoaderExtensions",
 	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/core/Core"
+	"sap/ui/qunit/utils/nextUIUpdate"
 ], function(
 	validateStableIds,
 	UIComponent,
@@ -21,14 +21,14 @@ sap.ui.define([
 	XMLView,
 	LoaderExtensions,
 	sinon,
-	oCore
+	nextUIUpdate
 ) {
 	"use strict";
 
 	var sandbox = sinon.createSandbox();
 
 	QUnit.module("Freestyle application", {
-		beforeEach(assert) {
+		async beforeEach(assert) {
 			var fnDone = assert.async();
 			var CustomComponent = UIComponent.extend("sap.ui.rta.test.Component", {
 				createContent() {
@@ -59,7 +59,7 @@ sap.ui.define([
 			});
 
 			this.oComponentContainer.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			this.oDesignTime = new DesignTime({
 				rootElements: [
@@ -82,7 +82,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Fiori Elements Application with extension", {
-		beforeEach(assert) {
+		async beforeEach(assert) {
 			var fnDone = assert.async();
 			var CustomComponent = UIComponent.extend("sap.ui.dt.test.Component", {
 				createContent() {
@@ -167,7 +167,7 @@ sap.ui.define([
 			});
 
 			this.oComponentContainer.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			this.oDesignTime = new DesignTime({
 				rootElements: [

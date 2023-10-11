@@ -9,7 +9,6 @@ sap.ui.define([
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/core/ComponentContainer",
-	"sap/ui/core/Core",
 	"sap/ui/core/UIComponent",
 	"sap/ui/dt/DesignTime",
 	"sap/ui/dt/OverlayRegistry",
@@ -18,6 +17,7 @@ sap.ui.define([
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/layout/VerticalLayout",
 	"sap/ui/model/json/JSONModel",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/rta/command/CommandFactory",
 	"sap/ui/rta/plugin/Plugin",
 	"sap/ui/rta/util/ReloadManager",
@@ -34,7 +34,6 @@ sap.ui.define([
 	Controller,
 	XMLView,
 	ComponentContainer,
-	oCore,
 	UIComponent,
 	DesignTime,
 	OverlayRegistry,
@@ -43,6 +42,7 @@ sap.ui.define([
 	PersistenceWriteAPI,
 	VerticalLayout,
 	JSONModel,
+	nextUIUpdate,
 	CommandFactory,
 	Plugin,
 	ReloadManager,
@@ -58,7 +58,7 @@ sap.ui.define([
 	var sandbox = sinon.createSandbox();
 
 	QUnit.module("Given that RuntimeAuthoring and Outline service are created and get function is called", {
-		before(assert) {
+		async before(assert) {
 			QUnit.config.fixture = null;
 			var done = assert.async();
 			var MockComponent = UIComponent.extend("MockController", {
@@ -146,7 +146,7 @@ sap.ui.define([
 				height: "100%"
 			});
 			this.oComponentContainer.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			this.oRta = new RuntimeAuthoring({
 				showToolbars: false,
@@ -325,7 +325,7 @@ sap.ui.define([
 		before() {
 
 		},
-		beforeEach(assert) {
+		async beforeEach(assert) {
 			var done = assert.async();
 			var MockComponent = UIComponent.extend("MockController", {
 				metadata: {
@@ -387,7 +387,7 @@ sap.ui.define([
 				height: "100%"
 			});
 			this.oComponentContainer.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			this.oRta = new RuntimeAuthoring({
 				rootControl: this.oComp,
@@ -435,7 +435,7 @@ sap.ui.define([
 			this.oButton1.destroy();
 		});
 
-		QUnit.test("when an element is inserted into an already existing aggregation", function(assert) {
+		QUnit.test("when an element is inserted into an already existing aggregation", async function(assert) {
 			var done = assert.async();
 			assert.expect(2);
 			var oExpectedResponse1 = {
@@ -481,7 +481,7 @@ sap.ui.define([
 			}
 			this.oOutline.attachEvent("update", onUpdate, this);
 			this.oLayout.addContent(new Button("newButton")); // inserts new overlay
-			oCore.applyChanges();
+			await nextUIUpdate();
 		});
 
 		QUnit.test("when setEditable is called for an existing overlay", function(assert) {
@@ -601,7 +601,7 @@ sap.ui.define([
 			.then(function(oResponse) {
 				return oResponse.json();
 			})
-			.then(function(aExpectedOutlineData) {
+			.then(async function(aExpectedOutlineData) {
 				aExpectedOutlineData[1].elements[0].elements.splice(1, 1); // clean-up of unwanted element
 
 				// control editable property is initially false
@@ -617,7 +617,7 @@ sap.ui.define([
 					content: [new Button("button2")]
 				});
 				oOuterLayout.placeAt("qunit-fixture");
-				oCore.applyChanges();
+				await nextUIUpdate();
 
 				this.oRta._oDesignTime.addRootElement(oOuterLayout);
 				this.oOutline.attachEventOnce("update", function(aUpdates) {
@@ -678,10 +678,10 @@ sap.ui.define([
 		sandbox.stub(DesignTimeConfig, "isControllerCodeDeactivationSuppressed").returns(true);
 		this.oComponent = _createComponent();
 		return _createAsyncView("myView", sXmlView, this.oComponent, oController)
-		.then(function(oXmlView) {
+		.then(async function(oXmlView) {
 			this.oXmlView = oXmlView;
 			oXmlView.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 			return new RuntimeAuthoring({
 				showToolbars: false,
 				rootControl: this.oXmlView

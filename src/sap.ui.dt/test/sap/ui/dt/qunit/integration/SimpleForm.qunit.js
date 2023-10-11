@@ -8,7 +8,7 @@ sap.ui.define([
 	"sap/ui/dt/plugin/CutPaste",
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/layout/library",
-	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/core/Element",
 	// preload simple form layouts to avoid async requests during test execution
 	"sap/ui/layout/form/SimpleForm",
@@ -26,7 +26,7 @@ sap.ui.define([
 	CutPaste,
 	XMLView,
 	layoutLibrary,
-	oCore,
+	nextUIUpdate,
 	Element
 ) {
 	"use strict";
@@ -39,7 +39,7 @@ sap.ui.define([
 				var done = assert.async();
 
 				XMLView.create({id: "testView", viewName: "dt.view.TestSimpleForm"})
-				.then(function(oView) {
+				.then(async function(oView) {
 					this.oView = oView;
 					var oSimpleForm = Element.getElementById("testView--SimpleForm0");
 					/*
@@ -51,7 +51,7 @@ sap.ui.define([
 					oSimpleForm.setLayout(oSimpleFormLayout);
 					this.oView.placeAt("qunit-fixture");
 
-					oCore.applyChanges();
+					await nextUIUpdate();
 
 					var oTabHandlingPlugin = new TabHandling();
 					var oSelectionPlugin = new MouseSelection();

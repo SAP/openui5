@@ -2,7 +2,6 @@
 
 sap.ui.define([
 	"sap/ui/base/DesignTime",
-	"sap/ui/core/Core",
 	"sap/ui/core/Component",
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/dt/OverlayRegistry",
@@ -14,10 +13,10 @@ sap.ui.define([
 	"sap/ui/rta/command/CommandFactory",
 	"sap/ui/rta/command/CompositeCommand",
 	"sap/ui/rta/plugin/AddXMLAtExtensionPoint",
-	"sap/ui/thirdparty/sinon-4"
+	"sap/ui/thirdparty/sinon-4",
+	"sap/ui/qunit/utils/nextUIUpdate"
 ], function(
 	DesignTimeConfig,
-	oCore,
 	Component,
 	XMLView,
 	OverlayRegistry,
@@ -29,7 +28,8 @@ sap.ui.define([
 	CommandFactory,
 	CompositeCommand,
 	AddXMLAtExtensionPointPlugin,
-	sinon
+	sinon,
+	nextUIUpdate
 ) {
 	"use strict";
 
@@ -85,12 +85,12 @@ sap.ui.define([
 			this.oComponent = oComponent;
 			return createAsyncView("myView", oComponent);
 		}.bind(this))
-		.then(function(oXmlView) {
+		.then(async function(oXmlView) {
 			this.oXmlView = oXmlView;
 			[this.oPanel, this.oPanelWithoutId, this.oInvisiblePanel] = oXmlView.getContent();
 			[, this.oLabel] = this.oPanel.getContent();
 			oXmlView.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			this.oCommandFactory = new CommandFactory({
 				flexSettings: {

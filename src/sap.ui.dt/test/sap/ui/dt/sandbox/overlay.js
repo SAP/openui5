@@ -39,6 +39,4 @@ function(
 	new DesignTime({
 		rootElements: [oLayout]
 	});
-
-	sap.ui.getCore().applyChanges();
 });

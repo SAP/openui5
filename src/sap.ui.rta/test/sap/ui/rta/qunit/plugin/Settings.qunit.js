@@ -18,7 +18,7 @@ sap.ui.define([
 	"sap/ui/base/ManagedObject",
 	"sap/base/Log",
 	"test-resources/sap/ui/rta/qunit/RtaQunitUtils",
-	"sap/ui/core/Core"
+	"sap/ui/qunit/utils/nextUIUpdate"
 ], function(
 	sinon,
 	Button,
@@ -37,7 +37,7 @@ sap.ui.define([
 	ManagedObject,
 	BaseLog,
 	RtaQunitUtils,
-	oCore
+	nextUIUpdate
 ) {
 	"use strict";
 
@@ -64,7 +64,7 @@ sap.ui.define([
 	}
 
 	QUnit.module("Given a designTime and settings plugin are instantiated", {
-		beforeEach() {
+		async beforeEach() {
 			sandbox.stub(ChangesWriteAPI, "getChangeHandler").resolves();
 			sandbox.stub(ChangesWriteAPI, "create").resolves({
 				getSupportInformation() {
@@ -83,7 +83,7 @@ sap.ui.define([
 			this.oVerticalLayout = new VerticalLayout({
 				content: [this.oButton]
 			}).placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach() {
 			sandbox.restore();

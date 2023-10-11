@@ -30,7 +30,7 @@ sap.ui.define([
 	"sap/ui/webc/main/CheckBox",
 	"sap/ui/dt/qunit/TestUtil",
 	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/core/Core"
+	"sap/ui/qunit/utils/nextUIUpdate"
 ], function(
 	SimpleScrollControl,
 	Bar,
@@ -61,7 +61,7 @@ sap.ui.define([
 	WebComponentCheckBox,
 	TestUtil,
 	sinon,
-	oCore
+	nextUIUpdate
 ) {
 	"use strict";
 
@@ -86,13 +86,13 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given that an overlay is created for a control", {
-		beforeEach(assert) {
+		async beforeEach(assert) {
 			var fnDone = assert.async();
 			this.oButton = new Button({
 				text: "Button"
 			});
 			this.oButton.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			this.oElementOverlay = new ElementOverlay({
 				isRoot: true,
@@ -135,7 +135,7 @@ sap.ui.define([
 			this.oButton.setWidth("500px");
 		});
 
-		QUnit.test("when overlay is enabled/disabled", function(assert) {
+		QUnit.test("when overlay is enabled/disabled", async function(assert) {
 			var sWidth;
 			var fnGetWidth = function(oOverlay) {
 				return oOverlay.getDomRef().style.width;
@@ -144,7 +144,7 @@ sap.ui.define([
 			// Overlay enabled by default
 			sWidth = fnGetWidth(this.oElementOverlay);
 			this.oButton.setText("Lorem ipsum dolor sit amet...");
-			oCore.applyChanges();
+			await nextUIUpdate();
 			return this.oElementOverlay.applyStyles()
 			.then(function() {
 				assert.notStrictEqual(sWidth, fnGetWidth(this.oElementOverlay), "overlay changes its width");
@@ -229,18 +229,18 @@ sap.ui.define([
 			this.oButton.setParent(oLayout);
 		});
 
-		QUnit.test("elementModified event — insertAggregation", function(assert) {
+		QUnit.test("elementModified event — insertAggregation", async function(assert) {
 			var fnDone = assert.async();
 			var oLayout = new VerticalLayout();
 
 			oLayout.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			// eslint-disable-next-line no-new
 			new ElementOverlay({
 				isRoot: true,
 				element: oLayout,
-				init: function(oEvent) {
+				init: async function(oEvent) {
 					var oLayoutOverlay = oEvent.getSource();
 					var oSetRelevantSpy = sandbox.spy(oLayoutOverlay, "setRelevantOverlays");
 					oLayoutOverlay.placeInOverlayContainer();
@@ -256,7 +256,7 @@ sap.ui.define([
 					}, this);
 
 					oLayout.addContent(this.oButton);
-					oCore.applyChanges();
+					await nextUIUpdate();
 				}.bind(this)
 			});
 		});
@@ -488,11 +488,11 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given that an Overlay is created for a control with an invisible domRef", {
-		beforeEach(assert) {
+		async beforeEach(assert) {
 			var fnDone = assert.async();
 			this.oLabel = new Label();
 			this.oLabel.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 			this.oDesignTime = new DesignTime({
 				rootElements: [this.oLabel]
 			});
@@ -506,9 +506,9 @@ sap.ui.define([
 			this.oLabel.destroy();
 		}
 	}, function() {
-		QUnit.test("when the control's domRef is changed to visible...", function(assert) {
+		QUnit.test("when the control's domRef is changed to visible...", async function(assert) {
 			this.oLabel.setText("test");
-			oCore.applyChanges();
+			await nextUIUpdate();
 			return this.oOverlay.applyStyles()
 			.then(function() {
 				assert.ok(DOMUtil.isVisible(this.oOverlay.getDomRef()), "the overlay is also visible in DOM");
@@ -517,11 +517,11 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given that an Overlay is created for a control with a shadow root (e.g. web component)", {
-		beforeEach(assert) {
+		async beforeEach(assert) {
 			var fnDone = assert.async();
 			this.oCheckBox = new WebComponentCheckBox();
 			this.oCheckBox.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 			this.oDesignTime = new DesignTime({
 				rootElements: [this.oCheckBox]
 			});
@@ -535,7 +535,7 @@ sap.ui.define([
 			this.oCheckBox.destroy();
 		}
 	}, function() {
-		QUnit.test("when the control's text is modified...", function(assert) {
+		QUnit.test("when the control's text is modified...", async function(assert) {
 			var fnDone = assert.async();
 			sandbox.stub(this.oCheckboxOverlay, "applyStyles").callsFake(function() {
 				assert.ok(true, "applyStyles is called");
@@ -543,17 +543,17 @@ sap.ui.define([
 				return Promise.resolve();
 			});
 			this.oCheckBox.setText("This is a very long text");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		});
 	});
 
 	QUnit.module("Given that an Overlay is created for a layout with an invisible domRef", {
-		beforeEach(assert) {
+		async beforeEach(assert) {
 			var fnDone = assert.async();
 			this.oLabel = new Label({ text: "text" });
 			this.oVerticalLayout = new VerticalLayout({ content: [this.oLabel] });
 			this.oVerticalLayout.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 			this.oVerticalLayout.getDomRef().style.display = ("none");
 
 			this.oDesignTime = new DesignTime({
@@ -571,7 +571,7 @@ sap.ui.define([
 		}
 	}, function() {
 		// TODO: BUG - Invisible layout still has a rendered overlay
-		QUnit.test("when the layout's domRef is changed to visible...", function(assert) {
+		QUnit.test("when the layout's domRef is changed to visible...", async function(assert) {
 			var fnDone = assert.async();
 			assert.strictEqual(this.oLayoutOverlay.isVisible(), false, "the layout's overlay should not be in the DOM when the layout is invisible");
 			this.oLabelOverlay.attachEventOnce("geometryChanged", function() {
@@ -585,19 +585,19 @@ sap.ui.define([
 				}, this);
 			}, this);
 			this.oVerticalLayout.getDomRef().style.display = "block";
-			oCore.applyChanges();
+			await nextUIUpdate();
 		});
 	});
 
 	QUnit.module("Given that an Overlay is created for a layout with a visible domRef", {
-		beforeEach(assert) {
+		async beforeEach(assert) {
 			var fnDone = assert.async();
 			this.oLabel1 = new Label({ text: "text 1" });
 			this.oLabel2 = new Label({ text: "text 2" });
 			this.oInnerLayout = new VerticalLayout({ content: [this.oLabel2] });
 			this.oVerticalLayout = new HorizontalLayout({ content: [this.oInnerLayout, this.oLabel1] });
 			this.oVerticalLayout.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			this.oDesignTime = new DesignTime({
 				rootElements: [this.oVerticalLayout]
@@ -615,13 +615,13 @@ sap.ui.define([
 			this.oDesignTime.destroy();
 		}
 	}, function() {
-		QUnit.test("when the layout is switched to invisible and the back to visible...", function(assert) {
+		QUnit.test("when the layout is switched to invisible and the back to visible...", async function(assert) {
 			var fnDone = assert.async();
 
 			this.oVerticalLayout.setVisible(false);
-			oCore.applyChanges();
+			await nextUIUpdate();
 			this.oVerticalLayout.setVisible(true);
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			// timeout is needed to handle applyStyles
 			setTimeout(function() {
@@ -634,7 +634,7 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		QUnit.test("layout shifting: scenario 1", function(assert) {
+		QUnit.test("layout shifting: scenario 1", async function(assert) {
 			var fnDone = assert.async();
 
 			this.oDesignTime.attachEventOnce("synced", function() {
@@ -662,10 +662,10 @@ sap.ui.define([
 			}, this);
 
 			this.oLabel2.setText("42");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		});
 
-		QUnit.test("layout shifting: scenario 2", function(assert) {
+		QUnit.test("layout shifting: scenario 2", async function(assert) {
 			var fnDone = assert.async();
 
 			this.oDesignTime.attachEventOnce("synced", function() {
@@ -693,12 +693,12 @@ sap.ui.define([
 			}, this);
 
 			this.oLabel1.setText("42");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		});
 	});
 
 	QUnit.module("Given that an Overlay is created for a layout with child controls", {
-		beforeEach(assert) {
+		async beforeEach(assert) {
 			var fnDone = assert.async();
 			this.oButton1 = new Button({
 				text: "Button 1"
@@ -711,7 +711,7 @@ sap.ui.define([
 				content: [this.oVerticalLayout1, this.oVerticalLayout2]
 			});
 			this.oVerticalLayout.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			this.oDesignTime = new DesignTime({
 				rootElements: [this.oVerticalLayout]
@@ -733,21 +733,21 @@ sap.ui.define([
 			assert.ok(this.oOverlayButton1.getParent().getParent() === this.oOverlayLayout1, "then a button's overlay should be inside of the layout's overlay");
 		});
 
-		QUnit.test("when a control is moved from one layout to another", function(assert) {
+		QUnit.test("when a control is moved from one layout to another", async function(assert) {
 			this.oVerticalLayout2.addContent(this.oButton1);
-			oCore.applyChanges();
+			await nextUIUpdate();
 			// first parent is aggregation overlay, second parent is overlay control
 			assert.ok(this.oOverlayButton1.getParent().getParent() === this.oOverlayLayout2, "then the button's overlay should be inside the other layout's overlay");
 		});
 	});
 
 	QUnit.module("Given that an Overlay is created for a control with custom design time metadata", {
-		beforeEach(assert) {
+		async beforeEach(assert) {
 			this.oButton = new Button({
 				text: "Button"
 			});
 			this.oButton.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			this.oOverlay = new ElementOverlay({
 				element: this.oButton,
@@ -775,13 +775,13 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given that an Overlay is created for a control marked as ignored in the designtime Metadata", {
-		beforeEach(assert) {
+		async beforeEach(assert) {
 			var fnDone = assert.async();
 			this.oButton = new Button({
 				text: "Button"
 			});
 			this.oButton.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			this.oOverlay = new ElementOverlay({
 				isRoot: true,
@@ -813,7 +813,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given that an Overlay is created for two layouts with two child controls", {
-		beforeEach(assert) {
+		async beforeEach(assert) {
 			var fnDone = assert.async();
 			this.oButton1 = new Button({
 				text: "Button 1",
@@ -843,7 +843,7 @@ sap.ui.define([
 			this.oVerticalLayout1.placeAt("qunit-fixture");
 			this.oVerticalLayout2.placeAt("qunit-fixture");
 
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			this.oDesignTime = new DesignTime({
 				rootElements: [
@@ -894,7 +894,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given that an Overlay is created for a control in the content of a scrollable container", {
-		beforeEach(assert) {
+		async beforeEach(assert) {
 			var fnDone = assert.async();
 			this.oContainer = document.createElement("div");
 			this.oContainer.style.height = "400px";
@@ -914,7 +914,7 @@ sap.ui.define([
 				text: "Button"
 			});
 			this.oButton.placeAt("scroll-content");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			this.oDesignTime = new DesignTime({
 				rootElements: [this.oButton]
@@ -943,7 +943,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given a SimpleScrollControl with Overlays", {
-		beforeEach(assert) {
+		async beforeEach(assert) {
 			var fnDone = assert.async();
 
 			this.oSimpleScrollControl = new SimpleScrollControl("scrollControl");
@@ -962,7 +962,7 @@ sap.ui.define([
 			this.oVBox = new VBox({
 				items: [this.oSimpleScrollControl]
 			}).placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			this.oDesignTime = new DesignTime({
 				rootElements: [this.oVBox]
@@ -1062,14 +1062,14 @@ sap.ui.define([
 	});
 
 	QUnit.module("Postponed an aggregation overlay rendering", {
-		beforeEach(assert) {
+		async beforeEach(assert) {
 			var fnDone = assert.async();
 			this.oPanel = new Panel({
 				height: "300px",
 				width: "300px"
 			});
 			this.oPanel.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 			this.oDesignTime = new DesignTime({
 				designTimeMetadata: {
 					"sap.m.Panel": {
@@ -1094,7 +1094,7 @@ sap.ui.define([
 			this.oPanel.destroy();
 		}
 	}, function() {
-		QUnit.test("when a control is added to an empty aggregation", function(assert) {
+		QUnit.test("when a control is added to an empty aggregation", async function(assert) {
 			var fnDone = assert.async();
 			assert.ok(this.oPanelOverlay.isRendered());
 			assert.notOk(this.oContentAggregationOverlay.isRendered(), "then the aggregation overlay for an empty aggregation is not rendered");
@@ -1113,12 +1113,12 @@ sap.ui.define([
 				fnDone();
 			}, this);
 			this.oPanel.addContent(oButton);
-			oCore.applyChanges();
+			await nextUIUpdate();
 		});
 	});
 
 	QUnit.module("Aggregation sorting", {
-		beforeEach(assert) {
+		async beforeEach(assert) {
 			var fnDone = assert.async();
 			var fnDone2 = assert.async();
 
@@ -1151,7 +1151,7 @@ sap.ui.define([
 			this.oVBox = new VBox({
 				items: [this.oLayout]
 			}).placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			this.oDesignTime = new DesignTime({
 				rootElements: [this.oVBox]
@@ -1211,7 +1211,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given another SimpleScrollControl with Overlays and one scroll container aggregation is ignored", {
-		beforeEach(assert) {
+		async beforeEach(assert) {
 			var ScrollControl = SimpleScrollControl.extend("sap.ui.dt.test.controls.ScrollControl", {
 				metadata: {
 					designtime: {
@@ -1243,7 +1243,7 @@ sap.ui.define([
 			this.oVBox = new VBox({
 				items: [this.oScrollControl]
 			}).placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			this.oDesignTime = new DesignTime({
 				rootElements: [this.oVBox]
@@ -1267,7 +1267,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given a control with control domRef defined in dt-metadata", {
-		beforeEach(assert) {
+		async beforeEach(assert) {
 			var AnyControl = SimpleScrollControl.extend("sap.ui.dt.test.controls.AnyControl", {
 				metadata: {
 					designtime: {
@@ -1287,7 +1287,7 @@ sap.ui.define([
 			this.oVBox = new VBox({
 				items: [this.oAnyControl]
 			}).placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			this.oDesignTime = new DesignTime({
 				rootElements: [this.oVBox]
@@ -1310,7 +1310,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Scrollbar classes", function() {
-		QUnit.test("when one aggregation loses its scrolling, the scrollbar classes must not persist on the parent overlay (as the aggregation with scrollbar doesn't take the whole space inside the control)", function(assert) {
+		QUnit.test("when one aggregation loses its scrolling, the scrollbar classes must not persist on the parent overlay (as the aggregation with scrollbar doesn't take the whole space inside the control)", async function(assert) {
 			var ScrollControl = SimpleScrollControl.extend("sap.ui.dt.test.controls.ScrollControl", {
 				metadata: {
 					designtime: Object.assign(
@@ -1346,7 +1346,7 @@ sap.ui.define([
 			});
 
 			this.oScrollControl.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			var oContent1DOM = this.oScrollControl.getDomRef().querySelector("[id*='content1']");
 			oContent1DOM.style.height = "300px";
@@ -1380,7 +1380,7 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		QUnit.test("when the aggregation has a scrolling which takes the whole space of the control", function(assert) {
+		QUnit.test("when the aggregation has a scrolling which takes the whole space of the control", async function(assert) {
 			var ScrollControl = SimpleScrollControl.extend("sap.ui.dt.test.controls.ScrollControl", {
 				metadata: {
 					designtime: Object.assign(
@@ -1409,7 +1409,7 @@ sap.ui.define([
 			});
 
 			this.oScrollControl.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			var oContent1DOM = this.oScrollControl.getDomRef().querySelector("[id*='content1']");
 			oContent1DOM.style.height = "500px";
@@ -1441,7 +1441,7 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		QUnit.test("when scrollcontainer loses scrolling, then scrollbar classes have to be removed", function(assert) {
+		QUnit.test("when scrollcontainer loses scrolling, then scrollbar classes have to be removed", async function(assert) {
 			var fnDone = assert.async();
 			var oVerticalLayout = new VerticalLayout("layout", {
 				content: [
@@ -1466,13 +1466,13 @@ sap.ui.define([
 			});
 
 			oVerticalLayout.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			this.oDesignTime = new DesignTime({
 				rootElements: [oVerticalLayout]
 			});
 
-			this.oDesignTime.attachEventOnce("synced", function() {
+			this.oDesignTime.attachEventOnce("synced", async function() {
 				this.oScrollControlOverlay = OverlayRegistry.getOverlay(this.oScrollControl);
 				var mScrollSynchronizersMap = this.oScrollControlOverlay._oScrollbarSynchronizers;
 				var oScrollbarSynchronizer = mScrollSynchronizersMap.get(Array.from(mScrollSynchronizersMap.keys())[0]);
@@ -1495,11 +1495,11 @@ sap.ui.define([
 					}.bind(this));
 				}.bind(this));
 				this.oTextArea.setHeight("50px");
-				oCore.applyChanges();
+				await nextUIUpdate();
 			}.bind(this));
 		});
 
-		QUnit.test("when scrollcontainer is removed, the corresponding overlay must be hidden", function(assert) {
+		QUnit.test("when scrollcontainer is removed, the corresponding overlay must be hidden", async function(assert) {
 			var fnDone = assert.async();
 			var oVerticalLayout = new VerticalLayout("layout", {
 				content: [
@@ -1529,7 +1529,7 @@ sap.ui.define([
 			});
 
 			oVerticalLayout.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			this.oDesignTime = new DesignTime({
 				rootElements: [oVerticalLayout]
@@ -1537,7 +1537,7 @@ sap.ui.define([
 
 			this.oDesignTime.attachEventOnce("synced", function() {
 				// setTimeout is needed, because synced event doesn"t wait until all async processes are done
-				setTimeout(function() {
+				setTimeout(async function() {
 					this.oScrollControlOverlay = OverlayRegistry.getOverlay(this.oScrollControl);
 					var oScrollContainerOverlayDomRef = this.oScrollControlOverlay.getScrollContainerById(0).get(0);
 					assert.strictEqual(window.getComputedStyle(oScrollContainerOverlayDomRef).display, "block");
@@ -1548,12 +1548,12 @@ sap.ui.define([
 						fnDone();
 					}, this);
 					this.oScrollControl.setScrollcontainerEnabled(false);
-					oCore.applyChanges();
+					await nextUIUpdate();
 				}.bind(this));
 			}.bind(this));
 		});
 
-		QUnit.test("when applyStyles is running whith scrollcontainer exists and the synchroninzer is destroyed", function(assert) {
+		QUnit.test("when applyStyles is running whith scrollcontainer exists and the synchroninzer is destroyed", async function(assert) {
 			var fnDone = assert.async();
 			var oVerticalLayout = new VerticalLayout("layout", {
 				content: [
@@ -1583,13 +1583,13 @@ sap.ui.define([
 			});
 
 			oVerticalLayout.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			this.oDesignTime = new DesignTime({
 				rootElements: [oVerticalLayout]
 			});
 
-			this.oDesignTime.attachEventOnce("synced", function() {
+			this.oDesignTime.attachEventOnce("synced", async function() {
 				this.oScrollControlOverlay = OverlayRegistry.getOverlay(this.oScrollControl);
 				var oTextAreaOverlay = OverlayRegistry.getOverlay(this.oTextArea);
 				var oScrollContainerOverlayDomRef = this.oScrollControlOverlay.getScrollContainerById(0).get(0);
@@ -1607,13 +1607,13 @@ sap.ui.define([
 				this.oScrollControlOverlay._oScrollbarSynchronizers.forEach(function(oSynchronizer) {
 					oSynchronizer.destroy();
 				});
-				oCore.applyChanges();
+				await nextUIUpdate();
 			}.bind(this));
 		});
 	});
 
 	QUnit.module("Given that an Overlay is created when scrolling is present", {
-		beforeEach(assert) {
+		async beforeEach(assert) {
 			var fnDone = assert.async();
 			this.oButton = new Button({
 				text: "Button"
@@ -1633,7 +1633,7 @@ sap.ui.define([
 			});
 
 			this.oPanel.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 			this.oPanel.getDomRef().querySelector(".sapMPanelContent").scrollLeft = 20;
 			this.oPanel.getDomRef().querySelector(".sapMPanelContent").scrollTop = 50;
 
@@ -1724,9 +1724,9 @@ sap.ui.define([
 	});
 
 	QUnit.module("Highlighting on selection - Given a List with bound items and a List with unbound items", {
-		beforeEach(assert) {
+		async beforeEach(assert) {
 			var fnDone = assert.async();
-			this.oHorizontalLayout = TestUtil.createListWithBoundItems();
+			this.oHorizontalLayout = await TestUtil.createListWithBoundItems();
 			this.oDesignTime = new DesignTime({
 				rootElements: [this.oHorizontalLayout]
 			});
@@ -1788,7 +1788,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given a DynamicPage with scrolling", {
-		beforeEach(assert) {
+		async beforeEach(assert) {
 			var fnDone = assert.async();
 
 			function getDynamicPageTitle() {
@@ -1814,7 +1814,7 @@ sap.ui.define([
 			});
 
 			this.oDynamicPage.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			this.oDesignTime = new DesignTime({
 				rootElements: [this.oDynamicPage]

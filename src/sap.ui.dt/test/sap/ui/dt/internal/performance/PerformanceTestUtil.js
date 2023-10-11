@@ -15,7 +15,7 @@ sap.ui.define([
 	"sap/m/VBox",
 	"sap/base/Log",
 	"sap/base/util/restricted/_debounce",
-	"sap/ui/core/Core"
+	"sap/ui/qunit/utils/nextUIUpdate"
 ], function(
 	DesignTime,
 	TabHandling,
@@ -33,7 +33,7 @@ sap.ui.define([
 	VBox,
 	Log,
 	_debounce,
-	oCore
+	nextUIUpdate
 ) {
 	"use strict";
 
@@ -143,8 +143,8 @@ sap.ui.define([
 					resolve();
 				});
 				oDesignTime.addRootElement(oRootControl);
-			}).then(function() {
-				oCore.applyChanges();
+			}).then(async function() {
+				await nextUIUpdate();
 				document.getElementById("overlay-container").setAttribute("sap-ui-dt-loaded", "true");
 			});
 		},

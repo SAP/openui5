@@ -9,10 +9,9 @@ sap.ui.define([
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/layout/VerticalLayout",
 	"sap/ui/model/json/JSONModel",
-	"sap/m/List",
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/core/Core"
+	"sap/ui/qunit/utils/nextUIUpdate"
 ],
 function(
 	hasStableId,
@@ -23,10 +22,9 @@ function(
 	OverlayRegistry,
 	VerticalLayout,
 	JSONModel,
-	List,
 	XMLView,
 	sinon,
-	oCore
+	nextUIUpdate
 ) {
 	"use strict";
 
@@ -39,7 +37,7 @@ function(
 	});
 
 	QUnit.module("Control with unstable ID", {
-		beforeEach(assert) {
+		async beforeEach(assert) {
 			var fnDone = assert.async();
 
 			var FixtureComponent = UIComponent.extend("fixture.UIComponent", {
@@ -62,7 +60,7 @@ function(
 				component: this.oComponent
 			});
 			this.oComponentContainer.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			this.oDesignTime = new DesignTime({
 				rootElements: [
@@ -87,7 +85,7 @@ function(
 	});
 
 	QUnit.module("Control with stable ID", {
-		beforeEach(assert) {
+		async beforeEach(assert) {
 			var fnDone = assert.async();
 
 			var FixtureComponent = UIComponent.extend("fixture.UIComponent", {
@@ -110,7 +108,7 @@ function(
 				component: this.oComponent
 			});
 			this.oComponentContainer.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			this.oDesignTime = new DesignTime({
 				rootElements: [
@@ -139,7 +137,7 @@ function(
 	});
 
 	QUnit.module("Control in binding template (template has stable ID, control has stable ID)", {
-		beforeEach(assert) {
+		async beforeEach(assert) {
 			var fnDone = assert.async();
 			var oModel = new JSONModel([
 				{ text: "item1-bound" },
@@ -177,7 +175,7 @@ function(
 				component: this.oComponent
 			});
 			this.oComponentContainer.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			[this.oText1] = this.oView.byId("layout").getItems()[0].getContent();
 
@@ -204,7 +202,7 @@ function(
 	});
 
 	QUnit.module("Control in binding template (template has stable ID, control has unstable ID)", {
-		beforeEach(assert) {
+		async beforeEach(assert) {
 			var fnDone = assert.async();
 			var oModel = new JSONModel([
 				{ text: "item1-bound" },
@@ -242,7 +240,7 @@ function(
 				component: this.oComponent
 			});
 			this.oComponentContainer.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			[this.oText1] = this.oView.byId("layout").getItems()[0].getContent();
 
@@ -269,7 +267,7 @@ function(
 	});
 
 	QUnit.module("Control in binding template (template has unstable ID, control has stable ID)", {
-		beforeEach(assert) {
+		async beforeEach(assert) {
 			var fnDone = assert.async();
 			var oModel = new JSONModel([
 				{ text: "item1-bound" },
@@ -307,7 +305,7 @@ function(
 				component: this.oComponent
 			});
 			this.oComponentContainer.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			[this.oText1] = this.oView.byId("layout").getItems()[0].getContent();
 

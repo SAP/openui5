@@ -5,30 +5,26 @@
 sap.ui.define([
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/core/Core"
+	"sap/ui/qunit/utils/nextUIUpdate"
 ], function(
 	XMLView,
 	sinon,
-	oCore
+	nextUIUpdate
 ) {
 	"use strict";
-	function _renderComplexView() {
-		var oView;
-		return XMLView.create({
+	async function renderComplexView() {
+		const oViewInstance = await XMLView.create({
 			id: "idMain1",
 			viewName: "sap.ui.rta.test.additionalElements.ComplexTest"
-		}).then(function(oViewInstance) {
-			oView = oViewInstance;
-			oViewInstance.placeAt("qunit-fixture");
-			oCore.applyChanges();
-			return oViewInstance.getController().isDataReady();
-		}).then(function() {
-			return oView;
 		});
+		oViewInstance.placeAt("qunit-fixture");
+		await nextUIUpdate();
+		await oViewInstance.getController().isDataReady();
+		return oViewInstance;
 	}
 
 	function _setupSharedObjects() {
-		return _renderComplexView().then(function(oView) {
+		return renderComplexView().then(function(oView) {
 			var mShared = {
 				view: oView,
 				group: oView.byId("GroupEntityType01"),

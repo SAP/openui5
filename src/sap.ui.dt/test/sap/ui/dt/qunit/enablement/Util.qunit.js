@@ -5,22 +5,22 @@ sap.ui.define([
 	"sap/ui/dt/DesignTime",
 	"sap/m/Button",
 	"sap/ui/layout/VerticalLayout",
-	"sap/ui/core/Core"
+	"sap/ui/qunit/utils/nextUIUpdate"
 ],
 function(
 	EnablementUtil,
 	DesignTime,
 	Button,
 	VerticalLayout,
-	oCore
+	nextUIUpdate
 ) {
 	"use strict";
 
 	QUnit.module("Given that a sap.mButton is tested", {
-		beforeEach(assert) {
+		async beforeEach(assert) {
 			this.oButton = new Button({text: "my button"});
 			this.oButton.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			this.oDesignTime = new DesignTime({
 				rootElements: [this.oButton]
@@ -50,10 +50,10 @@ function(
 	});
 
 	QUnit.module("Given that a sap.ui.layout.VerticalLayout without content is tested", {
-		beforeEach(assert) {
+		async beforeEach(assert) {
 			this.oVerticalLayout = new VerticalLayout();
 			this.oVerticalLayout.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			this.oDesignTime = new DesignTime({
 				rootElements: [this.oVerticalLayout]
@@ -83,13 +83,13 @@ function(
 	});
 
 	QUnit.module("Given that a sap.ui.layout.VerticalLayout with content is tested", {
-		beforeEach(assert) {
+		async beforeEach(assert) {
 			this.oButton = new Button({text: "my button"});
 			this.oVerticalLayout = new VerticalLayout({
 				content: [this.oButton]
 			});
 			this.oVerticalLayout.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			this.oDesignTime = new DesignTime({
 				rootElements: [this.oVerticalLayout]

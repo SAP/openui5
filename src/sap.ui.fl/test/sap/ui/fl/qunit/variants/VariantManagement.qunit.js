@@ -15,7 +15,8 @@ sap.ui.define([
 	"sap/ui/core/Icon",
 	"sap/ui/core/Lib",
 	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate"
 ], function(
 	ControlVariantApplyAPI,
 	ManifestUtils,
@@ -31,7 +32,8 @@ sap.ui.define([
 	Icon,
 	Lib,
 	sinon,
-	oCore
+	Core,
+	nextUIUpdate
 ) {
 	"use strict";
 
@@ -239,11 +241,11 @@ sap.ui.define([
 			assert.ok(this._oVM._openVariantList.called);
 		});
 
-		QUnit.test("Check title", function(assert) {
+		QUnit.test("Check title", async function(assert) {
 			this.oVariantManagement.setModel(oModel, ControlVariantApplyAPI.getVariantModelName());
 
 			this.oVariantManagement.setCurrentVariantKey("2");
-			sap.ui.getCore().applyChanges();
+			await nextUIUpdate();
 
 			assert.equal(this.oVariantManagement.getTitle(), this._oVM.oVariantText);
 			assert.equal(this.oVariantManagement.getTitle().getText(), "Two");
@@ -255,7 +257,7 @@ sap.ui.define([
 			aItems[2].title = "Hugo";
 			oModel.getData().One.currentVariant = "2"; // one way binding!
 			oModel.checkUpdate(true);
-			sap.ui.getCore().applyChanges();
+			await nextUIUpdate();
 
 			assert.equal(this.oVariantManagement.getTitle().getText(), "Hugo");
 		});
@@ -279,7 +281,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("Check acc text", function(assert) {
-			var oConfiguration = oCore.getConfiguration();
+			var oConfiguration = Core.getConfiguration();
 			var sLanguage = oConfiguration.getLanguage();
 
 			oConfiguration.setLanguage("en_EN");
@@ -1199,7 +1201,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("Checking the sharing text", function(assert) {
-			var oConfiguration = oCore.getConfiguration();
+			var oConfiguration = Core.getConfiguration();
 			var sLanguage = oConfiguration.getLanguage();
 
 			oConfiguration.setLanguage("en_EN");

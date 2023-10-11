@@ -14,7 +14,7 @@ sap.ui.define([
 	"sap/ui/rta/Utils",
 	"sap/ui/thirdparty/sinon-4",
 	"test-resources/sap/ui/rta/qunit/RtaQunitUtils",
-	"sap/ui/core/Core"
+	"sap/ui/qunit/utils/nextUIUpdate"
 ], function(
 	Log,
 	Button,
@@ -29,7 +29,7 @@ sap.ui.define([
 	Utils,
 	sinon,
 	RtaQunitUtils,
-	oCore
+	nextUIUpdate
 ) {
 	"use strict";
 
@@ -37,7 +37,7 @@ sap.ui.define([
 	var oMockedAppComponent = RtaQunitUtils.createAndStubAppComponent(sinon);
 
 	QUnit.module("Given a designTime and remove plugin are instantiated", {
-		beforeEach(assert) {
+		async beforeEach(assert) {
 			var done = assert.async();
 			sandbox.stub(ChangesWriteAPI, "getChangeHandler").resolves();
 			this.oRemovePlugin = new RemovePlugin({
@@ -48,7 +48,7 @@ sap.ui.define([
 			this.oVerticalLayout = new VerticalLayout({
 				content: [this.oButton, this.oButton1]
 			}).placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			this.oDesignTime = new DesignTime({
 				rootElements: [this.oVerticalLayout],
@@ -458,7 +458,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given a designTime and a Layout with 3 Buttons in it, when _getElementToFocus is called...", {
-		beforeEach(assert) {
+		async beforeEach(assert) {
 			var done = assert.async();
 			sandbox.stub(ChangesWriteAPI, "getChangeHandler").resolves();
 			this.oButton1 = new Button("button1", {text: "Button1"});
@@ -467,7 +467,7 @@ sap.ui.define([
 			this.oVerticalLayout = new VerticalLayout({
 				content: [this.oButton1, this.oButton2, this.oButton3]
 			}).placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			this.oDesignTime = new DesignTime({
 				rootElements: [this.oVerticalLayout]

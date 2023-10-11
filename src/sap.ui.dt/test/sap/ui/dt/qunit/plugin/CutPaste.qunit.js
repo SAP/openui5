@@ -10,7 +10,7 @@ sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/core/Core"
+	"sap/ui/qunit/utils/nextUIUpdate"
 ],
 function(
 	Button,
@@ -22,7 +22,7 @@ function(
 	QUnitUtils,
 	KeyCodes,
 	sinon,
-	oCore
+	nextUIUpdate
 ) {
 	"use strict";
 
@@ -38,7 +38,7 @@ function(
 	}
 
 	QUnit.module("Given that a CutPaste is initialized", {
-		beforeEach(assert) {
+		async beforeEach(assert) {
 			// Test Setup:
 			// VerticalLayout
 			// 	 content
@@ -55,9 +55,9 @@ function(
 				]
 			});
 			this.oLayout.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
-			oCore.applyChanges();
+			await nextUIUpdate();
 			this.oCutPaste = new CutPaste({
 				movableTypes: [
 					"sap.m.Button"
@@ -75,8 +75,8 @@ function(
 				]
 			});
 
-			this.oDesignTime.attachEventOnce("synced", function() {
-				oCore.applyChanges();
+			this.oDesignTime.attachEventOnce("synced", async function() {
+				await nextUIUpdate();
 				this.oButtonOverlay = OverlayRegistry.getOverlay(this.oButton);
 				this.oButton2Overlay = OverlayRegistry.getOverlay(this.oButton2);
 				this.oButton3Overlay = OverlayRegistry.getOverlay(this.oButton3);

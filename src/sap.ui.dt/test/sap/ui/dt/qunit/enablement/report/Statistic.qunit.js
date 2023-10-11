@@ -2,11 +2,11 @@
 
 sap.ui.define([
 	"sap/ui/dt/enablement/report/Statistic",
-	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/core/Element"
 ], function(
 	Statistic,
-	oCore,
+	nextUIUpdate,
 	Element
 ) {
 	"use strict";
@@ -16,7 +16,7 @@ sap.ui.define([
 	};
 
 	QUnit.module("Given that a statistic report is created", {
-		beforeEach() {
+		async beforeEach() {
 			this.oResult = {
 				statistic: {
 					SUPPORTED: 10,
@@ -30,7 +30,7 @@ sap.ui.define([
 				data: this.oResult
 			});
 			this.oStatistic.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach() {
 			this.oStatistic.destroy();

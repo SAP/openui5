@@ -12,7 +12,7 @@ sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/core/Element",
 	"sap/ui/core/EventBus"
 ], function(
@@ -27,7 +27,7 @@ sap.ui.define([
 	QUnitUtils,
 	KeyCodes,
 	sinon,
-	oCore,
+	nextUIUpdate,
 	Element,
 	EventBus
 ) {
@@ -95,8 +95,8 @@ sap.ui.define([
 				return this.oCommandStack.pushAndExecute(oRemoveCommand);
 			}.bind(this))
 
-			.then(function() {
-				oCore.applyChanges();
+			.then(async function() {
+				await nextUIUpdate();
 				assert.strictEqual(this.oGroup.getVisible(), false, "then group is hidden...");
 				assert.strictEqual(this.oRta.canUndo(), true, "after any change undo is possible");
 				assert.strictEqual(this.oRta.canRedo(), false, "after any change no redo is possible");
@@ -105,8 +105,8 @@ sap.ui.define([
 
 			.then(this.oCommandStack.undo.bind(this.oCommandStack))
 
-			.then(function() {
-				oCore.applyChanges();
+			.then(async function() {
+				await nextUIUpdate();
 				assert.strictEqual(this.oGroup.getVisible(), true, "when the undo is called, then the group is visible again");
 				assert.strictEqual(this.oRta.canUndo(), false, "after reverting a change undo is not possible");
 				assert.strictEqual(this.oRta.canRedo(), true, "after reverting a change redo is possible");
@@ -114,8 +114,8 @@ sap.ui.define([
 
 			.then(this.oRta.redo.bind(this.oRta))
 
-			.then(function() {
-				oCore.applyChanges();
+			.then(async function() {
+				await nextUIUpdate();
 				assert.strictEqual(this.oGroup.getVisible(), false, "when the redo is called, then the group is not visible again");
 				assert.strictEqual(iFiredCounter, 3, "undoRedoStackModified event of RTA is fired 3 times");
 			}.bind(this))
@@ -218,24 +218,24 @@ sap.ui.define([
 			this.oElementOverlay.focus();
 			this.oElementOverlay.setSelected(true);
 
-			return RtaQunitUtils.openContextMenuWithKeyboard.call(this, this.oElementOverlay, sinon).then(function() {
+			return RtaQunitUtils.openContextMenuWithKeyboard.call(this, this.oElementOverlay, sinon).then(async function() {
 				var clock = sinon.useFakeTimers();
 				var oMenu = this.oRta.getPlugins().contextMenu.oContextMenuControl;
 				oMenu.getItems()[1].setEnabled(true);
 				QUnitUtils.triggerEvent("click", oMenu._getVisualParent().getItems()[1].getDomRef());
 				clock.tick(1000);
-				oCore.applyChanges();
+				await nextUIUpdate();
 				clock.restore();
 
 				var oDialog = this.oRta.getPlugins().additionalElements.getDialog();
-				oDialog.attachOpened(function() {
+				oDialog.attachOpened(async function() {
 					QUnitUtils.triggerKeydown(document, KeyCodes.Z, false, false, true);
 					assert.equal(this.fnUndoSpy.callCount, 0, "then _onUndo was not called");
 					QUnitUtils.triggerKeydown(document, KeyCodes.Y, false, false, true);
 					assert.equal(this.fnRedoSpy.callCount, 0, "then _onRedo was not called");
 					var oOkButton = Element.getElementById(`${oDialog.getId()}--` + `rta_addDialogOkButton`);
 					QUnitUtils.triggerEvent("tap", oOkButton.getDomRef());
-					oCore.applyChanges();
+					await nextUIUpdate();
 					done();
 				}.bind(this));
 			}.bind(this));
@@ -256,12 +256,12 @@ sap.ui.define([
 
 			this.oElementOverlay.focus();
 			this.oElementOverlay.setSelected(true);
-			return RtaQunitUtils.openContextMenuWithKeyboard.call(this, this.oElementOverlay, sinon).then(function() {
+			return RtaQunitUtils.openContextMenuWithKeyboard.call(this, this.oElementOverlay, sinon).then(async function() {
 				var clock = sinon.useFakeTimers();
 				var oMenu = this.oRta.getPlugins().contextMenu.oContextMenuControl;
 				QUnitUtils.triggerEvent("click", oMenu._getVisualParent().getItems()[0].getDomRef());
 				clock.tick(1000);
-				oCore.applyChanges();
+				await nextUIUpdate();
 				clock.restore();
 			}.bind(this));
 		});

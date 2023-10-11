@@ -11,7 +11,7 @@ sap.ui.define([
 	"sap/ui/dt/DesignTime",
 	"sap/m/Page",
 	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/core/Core"
+	"sap/ui/qunit/utils/nextUIUpdate"
 ],
 function(
 	Layer,
@@ -24,7 +24,7 @@ function(
 	DesignTime,
 	Page,
 	sinon,
-	oCore
+	nextUIUpdate
 ) {
 	"use strict";
 
@@ -126,7 +126,7 @@ function(
 
 	// Integration scenario to check _isPasteEditable
 	QUnit.module("Given a single layout with two elements", {
-		beforeEach(assert) {
+		async beforeEach(assert) {
 			var done = assert.async();
 
 			this.CutPastePlugin = new CutPastePlugin({
@@ -153,7 +153,7 @@ function(
 				content: [this.oVerticalLayout]
 			}).placeAt("qunit-fixture");
 
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			this.oDesignTime = new DesignTime({
 				rootElements: [this.oPage]
@@ -225,7 +225,7 @@ function(
 	});
 
 	QUnit.module("Given a single layout without stable id", {
-		beforeEach(assert) {
+		async beforeEach(assert) {
 			var done = assert.async();
 
 			this.CutPastePlugin = new CutPastePlugin({
@@ -247,7 +247,7 @@ function(
 				content: [this.oVerticalLayoutWoStableId]
 			}).placeAt("qunit-fixture");
 
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			this.oDesignTime = new DesignTime({
 				rootElements: [this.oPage]

@@ -1081,9 +1081,9 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		QUnit.test("when the visualization is started and there is a change on a control inside a template", function(assert) {
+		QUnit.test("when the visualization is started and there is a change on a control inside a template", async function(assert) {
 			var fnDone = assert.async();
-			var oHorizontalLayout = TestUtil.createListWithBoundItems();
+			var oHorizontalLayout = await TestUtil.createListWithBoundItems();
 			var sBoundListId = "boundlist";
 
 			var oMockChange = createMockChange("testRename", "rename", "boundlist");

@@ -3,7 +3,6 @@
 sap.ui.define([
 	"../../RtaQunitUtils",
 	"sap/m/MessageBox",
-	"sap/ui/core/Core",
 	"sap/ui/core/Control",
 	"sap/ui/core/Fragment",
 	"sap/ui/core/Lib",
@@ -11,6 +10,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/write/api/ContextBasedAdaptationsAPI",
 	"sap/ui/model/json/JSONModel",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/rta/toolbar/Adaptation",
 	"sap/ui/rta/toolbar/contextBased/ManageAdaptations",
 	"sap/ui/rta/Utils",
@@ -18,7 +18,6 @@ sap.ui.define([
 ], function(
 	RtaQunitUtils,
 	MessageBox,
-	oCore,
 	Control,
 	Fragment,
 	Lib,
@@ -26,6 +25,7 @@ sap.ui.define([
 	ManifestUtils,
 	ContextBasedAdaptationsAPI,
 	JSONModel,
+	nextUIUpdate,
 	Adaptation,
 	ManageAdaptations,
 	Utils,
@@ -44,7 +44,7 @@ sap.ui.define([
 		return oTableListItem.getCells()[1].getText();
 	}
 
-	function initializeToolbar() {
+	async function initializeToolbar() {
 		var oToolbarControlsModel = RtaQunitUtils.createToolbarControlsModel();
 		this.oRootControl = new Control();
 		var oToolbar = new Adaptation({
@@ -60,7 +60,7 @@ sap.ui.define([
 
 		oToolbar.animation = false;
 		oToolbar.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		return oToolbar;
 	}
 
@@ -78,11 +78,11 @@ sap.ui.define([
 
 	var DEFAULT_ADAPTATION = { id: "DEFAULT", type: "DEFAULT" };
 	QUnit.module("Given a Toolbar with enabled context-based adaptations feature", {
-		beforeEach() {
+		async beforeEach() {
 			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns("com.sap.test.app");
 			this.oModel = ContextBasedAdaptationsAPI.createModel([DEFAULT_ADAPTATION], DEFAULT_ADAPTATION, true);
 			sandbox.stub(ContextBasedAdaptationsAPI, "getAdaptationsModel").returns(this.oModel);
-			this.oToolbar = initializeToolbar.call(this);
+			this.oToolbar = await initializeToolbar.call(this);
 			this.oManageAdaptations = new ManageAdaptations({ toolbar: this.oToolbar });
 			this.oEvent = {
 				getSource: function() {

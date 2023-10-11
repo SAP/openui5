@@ -11,7 +11,7 @@ sap.ui.define([
 	"sap/m/Toolbar",
 	"sap/ui/layout/VerticalLayout",
 	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/core/Core"
+	"sap/ui/qunit/utils/nextUIUpdate"
 ], function(
 	MetadataPropagationUtil,
 	OverlayRegistry,
@@ -23,7 +23,7 @@ sap.ui.define([
 	Toolbar,
 	VerticalLayout,
 	sinon,
-	oCore
+	nextUIUpdate
 ) {
 	"use strict";
 
@@ -360,7 +360,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given complex test with only 'propagateRelevantContainer' as function in the designTimeMetadata", {
-		beforeEach(assert) {
+		async beforeEach(assert) {
 			var done = assert.async();
 			this.fnPropagateRelevantContainer = function() {
 				return true;
@@ -371,7 +371,7 @@ sap.ui.define([
 				content: [this.oButton]
 			}).placeAt("qunit-fixture");
 
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			this.oDesignTime = new DesignTime({
 				rootElements: [this.oPage],
@@ -401,7 +401,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given that a complex test has been created with different relevantContainer and metadata propagations", {
-		beforeEach(assert) {
+		async beforeEach(assert) {
 			// page				--> propagate relevant container for toolbar
 			//					--> propagate metadata for toolbar
 			//	verticalLayout 	--> propagate relevant container for buttons
@@ -434,7 +434,7 @@ sap.ui.define([
 				content: [this.oVerticalLayout, this.oButton3]
 			}).placeAt("qunit-fixture");
 
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			this.oDesignTime = new DesignTime({
 				rootElements: [this.oPage],
@@ -546,7 +546,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given a page with a vertical layout with toolbar, all containing propagateMetadata for button...", {
-		beforeEach(assert) {
+		async beforeEach(assert) {
 			// page				--> propagate metadata for buttons
 			//	verticalLayout 	--> propagate metadata for buttons
 			//		toolbar     --> propagate metadata for buttons
@@ -577,7 +577,7 @@ sap.ui.define([
 				content: [this.oVerticalLayout]
 			}).placeAt("qunit-fixture");
 
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			this.oDesignTime = new DesignTime({
 				rootElements: [this.oPage],

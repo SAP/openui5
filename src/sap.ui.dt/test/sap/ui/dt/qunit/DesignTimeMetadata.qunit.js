@@ -9,7 +9,7 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/m/Label",
 	"sap/m/Input",
-	"sap/ui/core/Core"
+	"sap/ui/qunit/utils/nextUIUpdate"
 ], function(
 	sinon,
 	DesignTimeMetadata,
@@ -19,7 +19,7 @@ sap.ui.define([
 	Button,
 	Label,
 	Input,
-	oCore
+	nextUIUpdate
 ) {
 	"use strict";
 
@@ -265,7 +265,7 @@ sap.ui.define([
 			});
 
 			this.oButton.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			return nextUIUpdate();
 		},
 		afterEach() {
 			this.oButton.destroy();
@@ -402,7 +402,7 @@ sap.ui.define([
 			});
 
 			this.oSimpleForm.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			return nextUIUpdate();
 		},
 		afterEach() {
 			this.oSimpleForm.destroy();

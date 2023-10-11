@@ -12,7 +12,7 @@ sap.ui.define([
 	"sap/m/MessageToast",
 	"sap/ui/thirdparty/sinon-4",
 	"test-resources/sap/ui/rta/qunit/RtaQunitUtils",
-	"sap/ui/core/Core"
+	"sap/ui/qunit/utils/nextUIUpdate"
 ], function(
 	LocalResetPlugin,
 	CommandFactory,
@@ -25,14 +25,14 @@ sap.ui.define([
 	MessageToast,
 	sinon,
 	RtaQunitUtils,
-	oCore
+	nextUIUpdate
 ) {
 	"use strict";
 
 	var sandbox = sinon.createSandbox();
 
 	QUnit.module("Given a designTime and localReset plugin are instantiated", {
-		beforeEach(assert) {
+		async beforeEach(assert) {
 			var done = assert.async();
 			this.oVariantModel = {
 				getCurrentVariantReference() {
@@ -51,7 +51,7 @@ sap.ui.define([
 				items: [this.oNestedForm]
 			});
 			this.oSimpleForm.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			this.oDesignTime = new DesignTime({
 				rootElements: [this.oSimpleForm],

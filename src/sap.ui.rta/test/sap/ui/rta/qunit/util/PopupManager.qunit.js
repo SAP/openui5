@@ -11,7 +11,6 @@ sap.ui.define([
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/core/ComponentContainer",
 	"sap/ui/core/Component",
-	"sap/ui/core/Core",
 	"sap/ui/core/Element",
 	"sap/ui/core/UIArea",
 	"sap/ui/core/UIComponent",
@@ -22,10 +21,11 @@ sap.ui.define([
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/fl/Utils",
 	"sap/ui/layout/form/Form",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/rta/RuntimeAuthoring",
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/dom/jquery/zIndex" // jQuery Plugin "zIndex"
-], function(
+], async function(
 	merge,
 	Button,
 	Dialog,
@@ -36,7 +36,6 @@ sap.ui.define([
 	XMLView,
 	ComponentContainer,
 	Component,
-	oCore,
 	Element,
 	UIArea,
 	UIComponent,
@@ -47,6 +46,7 @@ sap.ui.define([
 	PersistenceWriteAPI,
 	FlUtils,
 	Form,
+	nextUIUpdate,
 	RuntimeAuthoring,
 	sinon
 ) {
@@ -79,7 +79,7 @@ sap.ui.define([
 		component: oComp
 	});
 	oComponentContainer.placeAt("qunit-fixture");
-	oCore.applyChanges();
+	await nextUIUpdate();
 
 	function findOverlay(oElement, oDesignTime) {
 		var aOverlays = oDesignTime.getElementOverlays();
@@ -234,14 +234,14 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given RTA instance is initialized", {
-		beforeEach() {
+		async beforeEach() {
 			stubBefore(true/* bPersistenceAPI */);
 
 			// mock RTA instance
 			this.oRta = new RuntimeAuthoring({
 				rootControl: oComp.getAggregation("rootControl")
 			});
-			oCore.applyChanges();
+			await nextUIUpdate();
 			this.oOriginalInstanceManager = merge({}, InstanceManager);
 
 			// mock same app component dialog

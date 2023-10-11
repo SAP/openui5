@@ -30,12 +30,14 @@
 				sap.ui.require([
 					"dt/performance/PerformanceTestUtil",
 					"sap/ui/layout/VerticalLayout",
-					"sap/ui/layout/HorizontalLayout"
+					"sap/ui/layout/HorizontalLayout",
+					"sap/ui/qunit/utils/nextUIUpdate"
 				], function(
 					PerformanceTestUtil,
 					VerticalLayout,
-					HorizontalLayout
-				){
+					HorizontalLayout,
+					nextUIUpdate
+				) {
 					//create Vertical Layout
 					var oLayout1 = new VerticalLayout("Layout1");
 					PerformanceTestUtil.addMixedControlsTo(oLayout1, 1, 30, true /*visible*/);
@@ -78,9 +80,9 @@
 						content : [oContainerLayout1, oContainerLayout2, oContainerLayout3]
 					});
 					oHorizontalLayout.placeAt("content");
-					sap.ui.getCore().applyChanges();
-
-					PerformanceTestUtil.startDesignTime(oHorizontalLayout);
+					nextUIUpdate.then(() => {
+						PerformanceTestUtil.startDesignTime(oHorizontalLayout);
+					});
 				});
 
 			});

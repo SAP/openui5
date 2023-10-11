@@ -12,9 +12,8 @@ sap.ui.define([
 	"sap/m/Title",
 	"sap/m/Button",
 	"sap/ui/model/json/JSONModel",
-	"sap/base/Log",
 	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/core/Core"
+	"sap/ui/qunit/utils/nextUIUpdate"
 ], function(
 	DesignTime,
 	OverlayRegistry,
@@ -27,9 +26,8 @@ sap.ui.define([
 	Title,
 	Button,
 	JSONModel,
-	Log,
 	sinon,
-	oCore
+	nextUIUpdate
 ) {
 	"use strict";
 
@@ -42,7 +40,7 @@ sap.ui.define([
 		]);
 	}
 
-	function _createTable(oModel) {
+	async function createTable(oModel) {
 		var oTable = new Table({
 			extension: [
 				new Title({text: "Example Table"})
@@ -58,7 +56,7 @@ sap.ui.define([
 		}
 
 		oTable.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		oTable.addColumn(new Column({
 			label: new Label({text: "Last Name"}),
@@ -88,9 +86,9 @@ sap.ui.define([
 	}
 
 	QUnit.module("Given the sap.ui.table.Table is created", {
-		beforeEach() {
+		async beforeEach() {
 			this.oModel = _createJSONModel();
-			this.oTable = _createTable(this.oModel);
+			this.oTable = await createTable(this.oModel);
 		},
 		afterEach() {
 			this.oTable.destroy();
@@ -117,12 +115,12 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given that design time is created for a sap.ui.table.Table", {
-		beforeEach(assert) {
+		async beforeEach(assert) {
 			var done = assert.async();
 
-			this.oTable = _createTable();
+			this.oTable = await createTable();
 			[this.oColumn] = this.oTable.getColumns();
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			this.oDesignTime = new DesignTime({
 				rootElements: [this.oTable]
@@ -162,7 +160,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given that design time is created for a sap.ui.table.AnalyticalTable", {
-		beforeEach(assert) {
+		async beforeEach(assert) {
 			var done = assert.async();
 
 			this.oTable = new AnalyticalTable({
@@ -177,7 +175,7 @@ sap.ui.define([
 
 			this.oTable.placeAt("qunit-fixture");
 
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			this.oColumn = new AnalyticalColumn({
 				label: new Label({text: "Last Name"}),
@@ -210,8 +208,8 @@ sap.ui.define([
 				rootElements: [this.oTable]
 			});
 
-			this.oDesignTime.attachEventOnce("synced", function() {
-				oCore.applyChanges();
+			this.oDesignTime.attachEventOnce("synced", async function() {
+				await nextUIUpdate();
 				done();
 			});
 		},
