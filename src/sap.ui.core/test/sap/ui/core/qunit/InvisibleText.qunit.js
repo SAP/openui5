@@ -1,12 +1,13 @@
 /*global QUnit, sinon */
 sap.ui.define([
 	"sap/base/Log",
+	"sap/ui/core/Icon",
 	"sap/ui/core/InvisibleText",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Configuration",
 	"sap/ui/core/Element",
 	"sap/ui/qunit/utils/nextUIUpdate"
-], function(Log, InvisibleText, jQuery, Configuration, Element, nextUIUpdate) {
+], function(Log, Icon, InvisibleText, jQuery, Configuration, Element, nextUIUpdate) {
 	"use strict";
 
 	var oDIV = document.createElement("div");
@@ -44,6 +45,26 @@ sap.ui.define([
 		assert.equal(text.$().text(), "Hello2", "Text rendered correctly");
 		assert.equal(text.$().attr("aria-hidden"), "true", "aria-hidden=true is set");
 		assert.ok(text.$().hasClass("sapUiInvisibleText"), "Class sapUiInvisibleText is set");
+	});
+
+	QUnit.test("Destroy after Invisible Text is added to an aggregation", async function(assert) {
+		var icon = new Icon({
+			src: "sap-icon://accept"
+		});
+		icon.placeAt("content");
+		await nextUIUpdate();
+
+		var id = "destroyTesting";
+		var text = new InvisibleText({
+			text: "Hello", id
+		});
+		text.toStatic();
+		icon.addDependent(text);
+
+		text.destroy();
+
+		assert.notOk(document.querySelector(`[id*="${id}"]`), "No DOM that contains the id exists");
+		icon.destroy();
 	});
 
 	QUnit.test("Shared Instances", async function(assert) {
