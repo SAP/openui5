@@ -14,7 +14,7 @@ sap.ui.define([
 	"sap/ui/support/Bootstrap",
 	"sap/ui/support/RuleAnalyzer",
 	"test-resources/sap/ui/support/TestHelper",
-	"sap/ui/core/Core"
+	"sap/ui/qunit/utils/nextUIUpdate"
 ], function(
 	UIComponent,
 	ComponentContainer,
@@ -29,14 +29,14 @@ sap.ui.define([
 	Bootstrap,
 	RuleAnalyzer,
 	testRule,
-	oCore
+	nextUIUpdate
 ) {
 	"use strict";
 	/**
 	 * @deprecated Since version 1.54. Due to <code>sap.ui.dt.ElementOverlay.getAggregationOverlays</code> deprecation
 	 */
 	QUnit.module("Base functionality for app component's root view", {
-		beforeEach(assert) {
+		async beforeEach(assert) {
 			var fnDone = assert.async();
 			var CustomComponent = UIComponent.extend("sap.ui.dt.test.Component", {
 				createContent() {
@@ -66,7 +66,7 @@ sap.ui.define([
 			});
 
 			this.oComponentContainer.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			Bootstrap.initSupportRules(["true", "silent"], {
 				onReady: fnDone
@@ -85,7 +85,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Base functionality for popups", {
-		beforeEach(assert) {
+		async beforeEach(assert) {
 			var fnDone = assert.async();
 			var CustomComponent = UIComponent.extend("sap.ui.dt.test.Component", {
 				createContent() {
@@ -138,7 +138,7 @@ sap.ui.define([
 			});
 
 			this.oComponentContainer.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			this.oDialog.attachAfterOpen(function() {
 				this.oPopover.attachAfterOpen(function() {
@@ -192,7 +192,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Aggregation Binding via template", {
-		beforeEach(assert) {
+		async beforeEach(assert) {
 			var fnDone = assert.async();
 			var CustomComponent = UIComponent.extend("sap.ui.dt.test.Component", {
 				createContent() {
@@ -225,7 +225,7 @@ sap.ui.define([
 			});
 
 			this.oComponentContainer.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			Bootstrap.initSupportRules(["true", "silent"], {
 				onReady: fnDone
@@ -245,7 +245,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Aggregation Binding via factory function", {
-		beforeEach(assert) {
+		async beforeEach(assert) {
 			var fnDone = assert.async();
 			var CustomComponent = UIComponent.extend("sap.ui.dt.test.Component", {
 				createContent() {
@@ -283,7 +283,7 @@ sap.ui.define([
 			});
 
 			this.oComponentContainer.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			Bootstrap.initSupportRules(["true", "silent"], {
 				onReady: fnDone

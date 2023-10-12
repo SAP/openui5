@@ -8,7 +8,7 @@ sap.ui.define([
 	"sap/ui/fl/write/_internal/fieldExtensibility/ABAPAccess",
 	"sap/ui/fl/write/_internal/fieldExtensibility/ABAPExtensibilityVariantFactory",
 	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/core/Core"
+	"sap/ui/qunit/utils/nextUIUpdate"
 ], function(
 	Log,
 	XMLView,
@@ -17,7 +17,7 @@ sap.ui.define([
 	ABAPAccess,
 	ABAPExtensibilityVariantFactory,
 	sinon,
-	oCore
+	nextUIUpdate
 ) {
 	"use strict";
 
@@ -259,10 +259,10 @@ sap.ui.define([
 			return XMLView.create({
 				id: "idMain1",
 				viewName: "sap.ui.rta.test.additionalElements.ComplexTest"
-			}).then(function(oView) {
+			}).then(async function(oView) {
 				this.oView = oView;
 				this.oView.placeAt("qunit-fixture");
-				oCore.applyChanges();
+				await nextUIUpdate();
 				return this.oView.getController().isDataReady();
 			}.bind(this));
 		},

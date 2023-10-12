@@ -23,7 +23,7 @@ sap.ui.define([
 	"sap/uxap/ObjectPageLayout",
 	"sap/uxap/ObjectPageSection",
 	"sap/uxap/ObjectPageSubSection",
-	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/core/Element"
 ], function(
 	RtaQunitUtils,
@@ -48,7 +48,7 @@ sap.ui.define([
 	ObjectPageLayout,
 	ObjectPageSection,
 	ObjectPageSubSection,
-	oCore,
+	nextUIUpdate,
 	Element
 ) {
 	"use strict";
@@ -61,10 +61,10 @@ sap.ui.define([
 	QUnit.module("Given a test app...", {
 		before() {
 			this.oCompContPromise = RtaQunitUtils.renderRuntimeAuthoringAppAt("qunit-fixture");
-			return this.oCompContPromise.then(function() {
+			return this.oCompContPromise.then(async function() {
 				this.oView = Element.getElementById("Comp1---idMain1");
 				this.oView.getModel().refresh(true);
-				oCore.applyChanges();
+				await nextUIUpdate();
 				return this.oView.getModel().getMetaModel().loaded();
 			}.bind(this));
 		},
@@ -144,7 +144,7 @@ sap.ui.define([
 
 	// -------------------------- Tests that don't need the runtimeAuthoring page --------------------------
 	QUnit.module("Given that the ObjectPage with overlays is given...", {
-		beforeEach(assert) {
+		async beforeEach(assert) {
 			//	ObjectPageLayout
 			//		ObjectPageSection1
 			//			ObjectPageSubSection1
@@ -182,7 +182,7 @@ sap.ui.define([
 				sections: [this.oObjectPageSection1]
 			});
 			this.oObjectPageLayout.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			this.oDesignTime = new DesignTime({
 				rootElements: [
@@ -269,7 +269,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given an ObjectPageLayout with Overlays created, but all except for the button overlays are not selectable", {
-		beforeEach(assert) {
+		async beforeEach(assert) {
 			var fnDone = assert.async();
 
 			//		Layout0
@@ -309,7 +309,7 @@ sap.ui.define([
 			this.oLayout0 = new ObjectPageLayout("layout0", {
 				sections: [this.oSection0, this.oSection1]
 			}).placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			this.oDesignTime = new DesignTime({
 				rootElements: [this.oLayout0]

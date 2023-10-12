@@ -3,12 +3,12 @@
 sap.ui.define([
 	"sap/ui/dt/ControlObserver",
 	"sap/m/Button",
-	"sap/ui/core/Core"
+	"sap/ui/qunit/utils/nextUIUpdate"
 ],
 function(
 	ControlObserver,
 	Button,
-	oCore
+	nextUIUpdate
 ) {
 	"use strict";
 
@@ -19,7 +19,7 @@ function(
 				target: this.oButton
 			});
 			this.oButton.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			return nextUIUpdate();
 		},
 		afterEach() {
 			this.oControlObserver.destroy();

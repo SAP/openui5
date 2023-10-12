@@ -18,7 +18,7 @@ sap.ui.define([
 	"sap/ui/rta/plugin/CreateContainer",
 	"sap/ui/thirdparty/sinon-4",
 	"test-resources/sap/ui/rta/qunit/RtaQunitUtils",
-	"sap/ui/core/Core"
+	"sap/ui/qunit/utils/nextUIUpdate"
 ], function(
 	uid,
 	XMLView,
@@ -37,7 +37,7 @@ sap.ui.define([
 	CreateContainerPlugin,
 	sinon,
 	RtaQunitUtils,
-	oCore
+	nextUIUpdate
 ) {
 	"use strict";
 
@@ -55,7 +55,7 @@ sap.ui.define([
 	var sandbox = sinon.createSandbox();
 
 	QUnit.module("Given a designTime and createContainer plugin are instantiated for a Form", {
-		beforeEach(assert) {
+		async beforeEach(assert) {
 			this.oMockedAppComponent = RtaQunitUtils.createAndStubAppComponent(sandbox);
 			sandbox.stub(Utils, "getViewForControl").returns(oMockedViewWithStableId);
 			sandbox.stub(ChangesWriteAPI, "getChangeHandler").resolves();
@@ -77,7 +77,7 @@ sap.ui.define([
 				content: [this.oForm]
 			}).placeAt("qunit-fixture");
 
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			this.sNewControlID = oMockedViewWithStableId.createId(uid());
 			this.oNewFormContainerStub = new FormContainer(this.sNewControlID);
@@ -417,7 +417,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given a designTime and createContainer plugin are instantiated for a SimpleForm", {
-		beforeEach(assert) {
+		async beforeEach(assert) {
 			var done = assert.async();
 			this.oMockedAppComponent = RtaQunitUtils.createAndStubAppComponent(sandbox);
 			sandbox.stub(Utils, "getViewForControl").returns(oMockedViewWithStableId);
@@ -435,7 +435,7 @@ sap.ui.define([
 				content: [this.oSimpleForm]
 			}).placeAt("qunit-fixture");
 
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			this.oDesignTime = new DesignTime({
 				rootElements: [this.oVerticalLayout],

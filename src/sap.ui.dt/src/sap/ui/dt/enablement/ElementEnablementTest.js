@@ -197,7 +197,6 @@ sap.ui.define([
 				if (!this._bNoRenderer) {
 					try {
 						this._oElement.placeAt(this._getTestArea());
-						sap.ui.getCore().applyChanges();
 					} catch (oError) {
 						this._bErrorDuringRendering = true;
 					}

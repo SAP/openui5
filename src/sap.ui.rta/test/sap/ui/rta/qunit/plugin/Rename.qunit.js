@@ -4,7 +4,6 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/m/Label",
 	"sap/m/ScrollContainer",
-	"sap/ui/core/Core",
 	"sap/ui/core/EventBus",
 	"sap/ui/core/Lib",
 	"sap/ui/core/Title",
@@ -17,6 +16,7 @@ sap.ui.define([
 	"sap/ui/layout/form/FormLayout",
 	"sap/ui/layout/form/Form",
 	"sap/ui/layout/VerticalLayout",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/rta/command/CommandFactory",
 	"sap/ui/rta/plugin/Plugin",
 	"sap/ui/rta/plugin/RenameHandler",
@@ -29,7 +29,6 @@ sap.ui.define([
 	Button,
 	Label,
 	ScrollContainer,
-	oCore,
 	EventBus,
 	Lib,
 	Title,
@@ -42,6 +41,7 @@ sap.ui.define([
 	FormLayout,
 	Form,
 	VerticalLayout,
+	nextUIUpdate,
 	CommandFactory,
 	Plugin,
 	RenameHandler,
@@ -100,7 +100,7 @@ sap.ui.define([
 	}
 
 	QUnit.module("Given a designTime and rename plugin are instantiated using a form", {
-		beforeEach(assert) {
+		async beforeEach(assert) {
 			var done = assert.async();
 
 			sandbox.stub(ChangesWriteAPI, "getChangeHandler").resolves();
@@ -122,7 +122,7 @@ sap.ui.define([
 				content: [this.oForm]
 			}).placeAt("qunit-fixture");
 
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			this.oDesignTime = new DesignTime({
 				rootElements: [this.oForm],
@@ -339,7 +339,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given a designTime and rename plugin are instantiated using a VerticalLayout", {
-		beforeEach(assert) {
+		async beforeEach(assert) {
 			var done = assert.async();
 
 			this.oRenamePlugin = new RenamePlugin({
@@ -366,7 +366,7 @@ sap.ui.define([
 				content: [this.oButton, this.oLabel, this.oScrollContainer],
 				width: "200px"
 			}).placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			this.oDesignTime = new DesignTime({
 				rootElements: [this.oVerticalLayout],
@@ -385,7 +385,7 @@ sap.ui.define([
 				}
 			});
 
-			this.oDesignTime.attachEventOnce("synced", function() {
+			this.oDesignTime.attachEventOnce("synced", async function() {
 				this.oLayoutOverlay = OverlayRegistry.getOverlay(this.oVerticalLayout);
 				this.oButtonOverlay = OverlayRegistry.getOverlay(this.oButton);
 				this.oLabelOverlay = OverlayRegistry.getOverlay(this.oLabel);
@@ -393,7 +393,7 @@ sap.ui.define([
 				this.oScrollContainerOverlay = OverlayRegistry.getOverlay(this.oScrollContainer);
 				this.oLayoutOverlay.setSelectable(true);
 
-				oCore.applyChanges();
+				await nextUIUpdate();
 
 				done();
 			}.bind(this));

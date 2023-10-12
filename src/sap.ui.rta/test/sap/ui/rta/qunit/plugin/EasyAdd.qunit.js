@@ -14,7 +14,7 @@ sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/thirdparty/sinon-4",
 	"test-resources/sap/ui/rta/qunit/RtaQunitUtils",
-	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/core/Element"
 ], function(
 	DesignTime,
@@ -30,7 +30,7 @@ sap.ui.define([
 	QUnitUtils,
 	sinon,
 	RtaQunitUtils,
-	oCore,
+	nextUIUpdate,
 	Element
 ) {
 	"use strict";
@@ -39,7 +39,7 @@ sap.ui.define([
 	var oMockedAppComponent = RtaQunitUtils.createAndStubAppComponent(sinon);
 
 	QUnit.module("Given a designTime and EasyAdd plugin are instantiated", {
-		beforeEach(assert) {
+		async beforeEach(assert) {
 			var done = assert.async();
 
 			this.oEasyAddPlugin = new EasyAdd({
@@ -73,7 +73,7 @@ sap.ui.define([
 			this.oVBox = new VBox({
 				items: [this.oLayout]
 			}).placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			this.oDesignTime = new DesignTime({
 				rootElements: [this.oVBox],
@@ -153,10 +153,8 @@ sap.ui.define([
 				oVisibleStub.restore();
 				sandbox.stub(this.oSectionOverlay2, "isVisible").returns(false);
 				this.oSection2.setVisible(false);
-				oCore.applyChanges();
 			}.bind(this));
 			this.oSection2.setVisible(true);
-			oCore.applyChanges();
 		});
 
 		QUnit.test("when the overlay for the section and layout get deregistered", function(assert) {
@@ -180,7 +178,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given a designTime and EasyAdd plugin are instantiated", {
-		beforeEach(assert) {
+		async beforeEach(assert) {
 			var done = assert.async();
 
 			this.oEasyAddPlugin = new EasyAdd({
@@ -191,7 +189,7 @@ sap.ui.define([
 			this.oVBox = new VBox({
 				items: [this.oLayout]
 			}).placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			this.oDesignTime = new DesignTime({
 				rootElements: [this.oVBox],
@@ -217,7 +215,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given a designTime and AddPlugin plugin are instantiated with a OP without stableID", {
-		beforeEach(assert) {
+		async beforeEach(assert) {
 			var done = assert.async();
 
 			this.oEasyAddPlugin = new EasyAdd({
@@ -233,7 +231,7 @@ sap.ui.define([
 			this.oLayout = new ObjectPageLayout("layout", {
 				sections: [this.oSection]
 			}).placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			this.oDesignTime = new DesignTime({
 				rootElements: [this.oLayout],

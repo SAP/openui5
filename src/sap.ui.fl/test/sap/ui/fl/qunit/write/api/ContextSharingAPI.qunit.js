@@ -5,7 +5,7 @@ sap.ui.define([
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/write/_internal/Storage",
 	"sap/ui/fl/registry/Settings",
-	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	ContextBasedAdaptationsAPI,
@@ -13,17 +13,17 @@ sap.ui.define([
 	Layer,
 	WriteStorage,
 	Settings,
-	oCore,
+	nextUIUpdate,
 	sinon
 ) {
 	"use strict";
 
 	var sandbox = sinon.createSandbox();
 
-	function renderComponentContainer(oCompContainer) {
+	async function renderComponentContainer(oCompContainer) {
 		this.oCompCont = oCompContainer;
 		this.oCompCont.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		return this.oCompCont.getComponentInstance().getRootControl().loaded();
 	}
 

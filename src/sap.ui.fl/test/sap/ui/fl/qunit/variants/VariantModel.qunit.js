@@ -33,7 +33,7 @@ sap.ui.define([
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
 	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/core/Element"
 ], function(
 	_omit,
@@ -68,7 +68,7 @@ sap.ui.define([
 	Layer,
 	Utils,
 	sinon,
-	oCore,
+	nextUIUpdate,
 	Element
 ) {
 	"use strict";
@@ -2677,7 +2677,7 @@ sap.ui.define([
 					appComponent: this.oComp
 				});
 				return this.oVariantModel.initialize();
-			}.bind(this)).then(function() {
+			}.bind(this)).then(async function() {
 				this.oComp.setModel(this.oVariantModel, ControlVariantApplyAPI.getVariantModelName());
 				this.sVMReference = "mockview--VariantManagement1";
 
@@ -2720,7 +2720,7 @@ sap.ui.define([
 				this.oCompContainer = new ComponentContainer("ComponentContainer", {
 					component: this.oComp
 				}).placeAt("qunit-fixture");
-				oCore.applyChanges();
+				await nextUIUpdate();
 			}.bind(this));
 		},
 		afterEach() {

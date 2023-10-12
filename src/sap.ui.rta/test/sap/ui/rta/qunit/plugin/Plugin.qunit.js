@@ -22,7 +22,7 @@ sap.ui.define([
 	"sap/ui/rta/plugin/Rename",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/core/Core"
+	"sap/ui/qunit/utils/nextUIUpdate"
 ], function(
 	Button,
 	Label,
@@ -45,7 +45,7 @@ sap.ui.define([
 	Rename,
 	JSONModel,
 	sinon,
-	oCore
+	nextUIUpdate
 ) {
 	"use strict";
 
@@ -97,7 +97,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given the Plugin is initialized with move registered for a control", {
-		beforeEach(assert) {
+		async beforeEach(assert) {
 			var done = assert.async();
 
 			this.oButton = new Button();
@@ -107,7 +107,7 @@ sap.ui.define([
 				]
 			}).placeAt("qunit-fixture");
 
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			this.oDesignTime = new DesignTime({
 				rootElements: [this.oLayout]
@@ -294,7 +294,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given the Designtime is initialized with 2 Plugins with _isEditable not stubbed", {
-		beforeEach(assert) {
+		async beforeEach(assert) {
 			var done = assert.async();
 
 			this.oButton = new Button("button");
@@ -304,7 +304,7 @@ sap.ui.define([
 				]
 			}).placeAt("qunit-fixture");
 
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			this.oCheckControlIdSpy = sandbox.spy(FlexUtils, "checkControlId");
 
@@ -343,7 +343,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given the Designtime is initialized with 2 Plugins with _isEditable stubbed asynchronous", {
-		beforeEach(assert) {
+		async beforeEach(assert) {
 			var done = assert.async();
 			var oModel = new JSONModel([{text: "item1"}, {text: "item2"}, {text: "item3"}]);
 			this.oCustomListItemTemplate = new CustomListItem("boundListItem", {content: [new Button("boundListItem-btn", {text: "{text}"})]});
@@ -363,7 +363,7 @@ sap.ui.define([
 					this.oBoundList
 				]
 			}).placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			var oCommandFactory = new CommandFactory();
 			this.oRenamePlugin = new Rename({
@@ -555,7 +555,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given the Plugin is initialized", {
-		beforeEach(assert) {
+		async beforeEach(assert) {
 			this.oGroup = new FormContainer("group");
 			this.oForm = new Form("Form", {
 				formContainers: [this.oGroup]
@@ -563,7 +563,7 @@ sap.ui.define([
 
 			this.oCheckControlIdSpy = sandbox.spy(FlexUtils, "checkControlId");
 
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			this.oPlugin = new Plugin({
 				commandFactory: new CommandFactory()
@@ -639,7 +639,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given the Plugin is initialized.", {
-		beforeEach() {
+		async beforeEach() {
 			this.oTitle0 = new Title({id: "Title0"});
 			this.oLabel0 = new Label({id: "Label0"});
 			this.oInput0 = new Input({id: "Input0"});
@@ -653,7 +653,7 @@ sap.ui.define([
 				content: [this.oSimpleForm]
 			}).placeAt("qunit-fixture");
 
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			this.oForm = this.oSimpleForm.getAggregation("form");
 			[this.oFormContainer] = this.oSimpleForm.getAggregation("form").getAggregation("formContainers");
@@ -766,7 +766,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given this the Plugin is initialized.", {
-		beforeEach(assert) {
+		async beforeEach(assert) {
 			this.oTitle0 = new Title();
 			this.oLabel0 = new Label();
 			this.oInput0 = new Input();
@@ -780,7 +780,7 @@ sap.ui.define([
 				content: [this.oSimpleForm]
 			}).placeAt("qunit-fixture");
 
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			[this.oFormContainer] = this.oSimpleForm.getAggregation("form").getAggregation("formContainers");
 

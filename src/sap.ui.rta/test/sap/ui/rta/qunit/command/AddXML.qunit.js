@@ -16,7 +16,7 @@ sap.ui.define([
 	"sap/m/CustomListItem",
 	"test-resources/sap/ui/rta/qunit/RtaQunitUtils",
 	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/core/Core"
+	"sap/ui/qunit/utils/nextUIUpdate"
 ], function(
 	CommandFactory,
 	AddXML,
@@ -33,7 +33,7 @@ sap.ui.define([
 	CustomListItem,
 	RtaQunitUtils,
 	sinon,
-	oCore
+	nextUIUpdate
 ) {
 	"use strict";
 	var sandbox = sinon.createSandbox();
@@ -207,7 +207,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given an AddXML command for a bound control,", {
-		beforeEach(assert) {
+		async beforeEach(assert) {
 			var done = assert.async();
 
 			this.oComponent = RtaQunitUtils.createAndStubAppComponent(sandbox);
@@ -228,7 +228,7 @@ sap.ui.define([
 				}
 			}).setModel(oModel);
 			this.oList.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			sandbox.stub(ChangesWriteAPI, "getChangeHandler").resolves();
 			this.oDesignTime = new DesignTime({

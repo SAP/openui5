@@ -9,7 +9,7 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/core/Core"
+	"sap/ui/qunit/utils/nextUIUpdate"
 ],
 function(
 	RuntimeAuthoring,
@@ -20,14 +20,14 @@ function(
 	Button,
 	OverlayRegistry,
 	sinon,
-	oCore
+	nextUIUpdate
 ) {
 	"use strict";
 
 	var sandbox = sinon.createSandbox();
 
 	QUnit.module("basic functionality", {
-		before() {
+		async before() {
 			QUnit.config.fixture = null;
 			var FixtureComponent = UIComponent.extend("fixture.UIComponent", {
 				metadata: {
@@ -54,7 +54,7 @@ function(
 				component: this.oComponent
 			});
 			this.oComponentContainer.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			sandbox.stub(BasePlugin.prototype, "hasChangeHandler").resolves(true);
 		},

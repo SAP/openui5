@@ -6,11 +6,11 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/m/MessageBox",
 	"sap/ui/core/ComponentContainer",
-	"sap/ui/core/Core",
 	"sap/ui/core/Lib",
 	"sap/ui/dt/Util",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/layout/VerticalLayout",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/rta/util/validateFlexEnabled",
 	"sap/ui/rta/RuntimeAuthoring",
 	"sap/ui/thirdparty/sinon-4",
@@ -21,11 +21,11 @@ sap.ui.define([
 	Button,
 	MessageBox,
 	ComponentContainer,
-	oCore,
 	Lib,
 	DtUtil,
 	Settings,
 	VerticalLayout,
+	nextUIUpdate,
 	validateFlexEnabled,
 	RuntimeAuthoring,
 	sinon,
@@ -93,13 +93,13 @@ sap.ui.define([
 	}
 
 	QUnit.module("flexEnabled set to `true` and there is unstable control when RTA is started", {
-		beforeEach() {
+		async beforeEach() {
 			this.oComponent = getMockedComponent(true, true);
 
 			this.oComponentContainer = new ComponentContainer("CompCont1", {
 				component: this.oComponent
 			}).placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			stubMessageBoxAndLog();
 
@@ -204,13 +204,13 @@ sap.ui.define([
 	});
 
 	QUnit.module("flexEnabled set to `true` and there are no unstable controls", {
-		beforeEach() {
+		async beforeEach() {
 			this.oComponent = this.oComponent = getMockedComponent(true, false);
 
 			this.oComponentContainer = new ComponentContainer("CompCont1", {
 				component: this.oComponent
 			}).placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			stubMessageBoxAndLog();
 
@@ -296,13 +296,13 @@ sap.ui.define([
 	});
 
 	QUnit.module("flexEnabled is not set and there is an unstable control", {
-		beforeEach() {
+		async beforeEach() {
 			this.oComponent = this.oComponent = getMockedComponent(false, false);
 
 			this.oComponentContainer = new ComponentContainer("CompCont1", {
 				component: this.oComponent
 			}).placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			stubMessageBoxAndLog();
 

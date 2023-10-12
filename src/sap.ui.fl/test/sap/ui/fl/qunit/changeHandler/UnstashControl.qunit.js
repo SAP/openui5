@@ -9,7 +9,7 @@ sap.ui.define([
 	"sap/ui/fl/changeHandler/UnstashControl",
 	"sap/uxap/ObjectPageLayout",
 	"sap/uxap/ObjectPageSection",
-	"sap/ui/core/Core"
+	"sap/ui/qunit/utils/nextUIUpdate"
 ], function(
 	XMLView,
 	JsControlTreeModifier,
@@ -19,14 +19,14 @@ sap.ui.define([
 	UnstashControlChangeHandler,
 	ObjectPageLayout,
 	ObjectPageSection,
-	oCore
+	nextUIUpdate
 ) {
 	"use strict";
 
 	var oMockUIComponent = new UIComponent("mockComponent");
 
 	QUnit.module("sap.ui.fl.changeHandler.UnstashControl", {
-		beforeEach() {
+		async beforeEach() {
 			this.oChangeHandler = UnstashControlChangeHandler;
 			var oChangeJson = {
 				selector: {
@@ -81,7 +81,7 @@ sap.ui.define([
 				this.oXmlObjectPageSection4
 			] = this.oXmlLayout.childNodes[0].childNodes;
 
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach() {
 			this.oChange = null;

@@ -4,12 +4,12 @@ sap.ui.define([
 	"sap/ui/dt/DOMUtil",
 	"sap/m/Button",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Core"
+	"sap/ui/qunit/utils/nextUIUpdate"
 ], function(
 	DOMUtil,
 	Button,
 	jQuery,
-	oCore
+	nextUIUpdate
 ) {
 	"use strict";
 
@@ -128,7 +128,7 @@ sap.ui.define([
 
 			this.oButton.placeAt("qunit-fixture");
 			// Render Controls
-			oCore.applyChanges();
+			return nextUIUpdate();
 		},
 		afterEach() {
 			this.oButton.destroy();

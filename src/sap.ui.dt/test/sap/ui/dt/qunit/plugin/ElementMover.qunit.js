@@ -8,7 +8,7 @@ sap.ui.define([
 	"sap/ui/layout/form/FormContainer",
 	"sap/m/Button",
 	"sap/ui/layout/VerticalLayout",
-	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/core/Element"
 ], function(
 	ElementMover,
@@ -18,13 +18,13 @@ sap.ui.define([
 	FormContainer,
 	Button,
 	VerticalLayout,
-	oCore,
+	nextUIUpdate,
 	Element
 ) {
 	"use strict";
 
 	QUnit.module("Given smartform groups and groupElements", {
-		beforeEach() {
+		async beforeEach() {
 			this.oForm1 = new Form("form1", {
 				formContainers: [
 					new FormContainer("group1"),
@@ -37,7 +37,7 @@ sap.ui.define([
 			this.oElementMover = new ElementMover();
 
 			this.oForm1.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach() {
 			this.oElementMover.destroy();
@@ -126,7 +126,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given verticalLayout, buttons and associated overlays", {
-		beforeEach(assert) {
+		async beforeEach(assert) {
 			this.oElementMover = new ElementMover();
 			this.oButton1 = new Button("button1");
 			this.oButton2 = new Button("button2");
@@ -139,7 +139,7 @@ sap.ui.define([
 				]
 			}).placeAt("qunit-fixture");
 
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			this.oDesignTime = new DesignTime({
 				rootElements: [this.oVerticalLayout]

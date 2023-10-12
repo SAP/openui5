@@ -16,7 +16,7 @@ sap.ui.define([
 	"sap/m/Image",
 	"sap/base/Log",
 	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/core/Core"
+	"sap/ui/qunit/utils/nextUIUpdate"
 ], function(
 	RtaQunitUtils,
 	Button,
@@ -33,7 +33,7 @@ sap.ui.define([
 	Image,
 	Log,
 	sinon,
-	oCore
+	nextUIUpdate
 ) {
 	"use strict";
 
@@ -84,8 +84,8 @@ sap.ui.define([
 	}
 
 	QUnit.module("Basic functionality", {
-		beforeEach(assert) {
-			oCore.applyChanges();
+		async beforeEach(assert) {
+			await nextUIUpdate();
 
 			this.oToolbarControlsModel = RtaQunitUtils.createToolbarControlsModel();
 
@@ -175,9 +175,9 @@ sap.ui.define([
 			}
 		});
 		return this.oRta.start()
-		.then(function() {
+		.then(async function() {
 			this.oToolbar = this.oRta.getToolbar();
-			oCore.applyChanges();
+			await nextUIUpdate();
 		}.bind(this));
 	}
 
