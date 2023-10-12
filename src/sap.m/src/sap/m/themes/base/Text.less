@@ -115,10 +115,13 @@ html[data-sap-ui-browser="sf10"] {
 }
 
 /* Compact size */
-.sapUiSizeCompact .sapUiFormEdit .sapMText {
+.sapUiSizeCompact .sapUiFormEdit .sapMText{
 	min-height: 2rem; /* for empty text */
 	padding-top: 0.3125rem;
 	padding-bottom: 0.3125rem;
+}
+html[data-sap-ui-browser^="cr"] .sapUiSizeCompact .sapUiFormEdit .sapMText {
+	line-height: 1.375rem;
 }
 
 /* Condensed size / Table Specifics */
