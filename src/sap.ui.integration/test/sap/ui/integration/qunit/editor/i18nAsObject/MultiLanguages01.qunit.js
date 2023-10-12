@@ -243,7 +243,8 @@ sap.ui.define([
 						assert.equal(oValueHelpIcon1.getSrc(), "sap-icon://translate", "oField1: Input value help icon src");
 						oValueHelpIcon1.firePress();
 						oValueHelpIcon1.focus();
-						wait().then(function () {
+						Core.applyChanges();
+						wait(2000).then(function () {
 							var oTranslationPopover1 = oField1._oTranslationPopover;
 							var aHeaderItems1 = oTranslationPopover1.getCustomHeader().getItems();
 							assert.equal(aHeaderItems1[0].getText(), that.oEditor._oResourceBundle.getText("EDITOR_FIELD_TRANSLATION_LIST_POPOVER_TITLE"), "oTranslationPopover1 Header: Title");
@@ -273,6 +274,7 @@ sap.ui.define([
 							assert.equal(oValueHelpIcon3.getSrc(), "sap-icon://translate", "oField3: Input value help icon src");
 							oValueHelpIcon3.firePress();
 							oValueHelpIcon3.focus();
+							Core.applyChanges();
 							wait().then(function () {
 								var oTranslationPopover3 = oField3._oTranslationPopover;
 								var aHeaderItems3 = oTranslationPopover3.getCustomHeader().getItems();
@@ -295,6 +297,7 @@ sap.ui.define([
 								assert.equal(oValueHelpIcon4.getSrc(), "sap-icon://translate", "oField4: Input value help icon src");
 								oValueHelpIcon4.firePress();
 								oValueHelpIcon4.focus();
+								Core.applyChanges();
 								wait().then(function () {
 									var oTranslationPopover4 = oField4._oTranslationPopover;
 									var aHeaderItems4 = oTranslationPopover4.getCustomHeader().getItems();
@@ -378,7 +381,8 @@ sap.ui.define([
 						assert.equal(oValueHelpIcon1.getSrc(), "sap-icon://translate", "oField1: Input value help icon src");
 						oValueHelpIcon1.firePress();
 						oValueHelpIcon1.focus();
-						wait().then(function () {
+						Core.applyChanges();
+						wait(2000).then(function () {
 							var oTranslationPopover1 = oField1._oTranslationPopover;
 							var aHeaderItems1 = oTranslationPopover1.getCustomHeader().getItems();
 							assert.equal(aHeaderItems1[0].getText(), that.oEditor._oResourceBundle.getText("EDITOR_FIELD_TRANSLATION_LIST_POPOVER_TITLE"), "oTranslationPopover1 Header: Title");
@@ -408,6 +412,7 @@ sap.ui.define([
 							assert.equal(oValueHelpIcon3.getSrc(), "sap-icon://translate", "oField3: Input value help icon src");
 							oValueHelpIcon3.firePress();
 							oValueHelpIcon3.focus();
+							Core.applyChanges();
 							wait().then(function () {
 								var oTranslationPopover3 = oField3._oTranslationPopover;
 								var aHeaderItems3 = oTranslationPopover3.getCustomHeader().getItems();
@@ -430,6 +435,7 @@ sap.ui.define([
 								assert.equal(oValueHelpIcon4.getSrc(), "sap-icon://translate", "oField4: Input value help icon src");
 								oValueHelpIcon4.firePress();
 								oValueHelpIcon4.focus();
+								Core.applyChanges();
 								wait().then(function () {
 									var oTranslationPopover4 = oField4._oTranslationPopover;
 									var aHeaderItems4 = oTranslationPopover4.getCustomHeader().getItems();
@@ -512,7 +518,8 @@ sap.ui.define([
 						assert.equal(oValueHelpIcon1.getSrc(), "sap-icon://translate", "oField1: Input value help icon src");
 						oValueHelpIcon1.firePress();
 						oValueHelpIcon1.focus();
-						wait().then(function () {
+						Core.applyChanges();
+						wait(2000).then(function () {
 							var oTranslationPopover1 = oField1._oTranslationPopover;
 							var aHeaderItems1 = oTranslationPopover1.getCustomHeader().getItems();
 							assert.equal(aHeaderItems1[0].getText(), that.oEditor._oResourceBundle.getText("EDITOR_FIELD_TRANSLATION_LIST_POPOVER_TITLE"), "oTranslationPopover1 Header: Title");
@@ -542,6 +549,7 @@ sap.ui.define([
 							assert.equal(oValueHelpIcon3.getSrc(), "sap-icon://translate", "oField3: Input value help icon src");
 							oValueHelpIcon3.firePress();
 							oValueHelpIcon3.focus();
+							Core.applyChanges();
 							wait().then(function () {
 								var oTranslationPopover3 = oField3._oTranslationPopover;
 								var aHeaderItems3 = oTranslationPopover3.getCustomHeader().getItems();
@@ -564,6 +572,7 @@ sap.ui.define([
 								assert.equal(oValueHelpIcon4.getSrc(), "sap-icon://translate", "oField4: Input value help icon src");
 								oValueHelpIcon4.firePress();
 								oValueHelpIcon4.focus();
+								Core.applyChanges();
 								wait().then(function () {
 									var oTranslationPopover4 = oField4._oTranslationPopover;
 									var aHeaderItems4 = oTranslationPopover4.getCustomHeader().getItems();
