@@ -120,6 +120,8 @@ sap.ui.define([
 	};
 
 	MultiSelectionPlugin.prototype.exit = function() {
+		SelectionPlugin.prototype.exit.apply(this, arguments);
+
 		if (this.oDeselectAllIcon) {
 			this.oDeselectAllIcon.destroy();
 			this.oDeselectAllIcon = null;
