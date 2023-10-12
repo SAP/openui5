@@ -19,7 +19,7 @@
 		<VBox id="cardContainer" renderType="Bare" class="sapUiTinyMargin" width="300px" height="400px">
 			<w:Card
 				id="card"
-				manifest="{cardsPlayground>/playgroundBaseUrl}/bundles/listBundle/manifest.json"
+				manifest="{cardsPlayground>/playgroundBaseUrl}/bundles/listbundle/manifest.json"
 				baseUrl="{cardsPlayground>/playgroundBaseUrl}"
 				width="100%"
 				height="100%"
