@@ -257,7 +257,7 @@ sap.ui.define([
 		var oSapMResourceBundle = oCore.getLibraryResourceBundle("sap.m");
 		var oFilterField = this._oQuickFilter.getContent()[0];
 
-		this._oQuickFilter.setLabel(oSapMResourceBundle.getText("table.COLUMNMENU_QUICK_FILTER", TableUtils.Column.getHeaderText(oColumn)));
+		this._oQuickFilter.setLabel(oSapMResourceBundle.getText("table.COLUMNMENU_QUICK_FILTER", [TableUtils.Column.getHeaderText(oColumn)]));
 		oFilterField.setValue(oColumn.getFilterValue());
 		oFilterField.setValueState(oColumn._getFilterState());
 	};

@@ -196,6 +196,10 @@ sap.ui.define([
 		}
 		this._initQuickActionContainer();
 
+		if (this._oItemsContainer) {
+			this._oItemsContainer.destroy();
+			this._oItemsContainer = null;
+		}
 		this._initItemsContainer();
 
 		if (!this.getParent()) {
