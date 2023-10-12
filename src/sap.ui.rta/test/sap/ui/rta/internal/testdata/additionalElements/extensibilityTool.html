@@ -22,10 +22,11 @@
 
 			function markInvalid(){
 				sap.ui.require([
-					"sap/ui/fl/write/_internal/fieldExtensibility/ABAPAccess"
-				], function(ABAPAccess) {
-					sap.ushell = Object.assign({}, sap.ushell, {
-						Container : {
+					"sap/ui/fl/write/_internal/fieldExtensibility/ABAPAccess",
+					"sap/ui/fl/Utils"
+				], function(ABAPAccess, Utils) {
+					Utils.getUshellContainer = function() {
+						return {
 							getLogonSystem : function(){
 								return {
 									getName: function() {
@@ -37,7 +38,7 @@
 								};
 							}
 						}
-					});
+					}
 					ABAPAccess.setServiceInvalid("/destinations/E91/sap/opu/odata/SAP/AdditionalElementsTest/");
 
 					document.getElementById("button1").textContent = "Simulation Done. You can close this page now.";

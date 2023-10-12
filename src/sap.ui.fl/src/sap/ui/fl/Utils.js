@@ -3,7 +3,6 @@
  */
 
 sap.ui.define([
-	"sap/base/util/ObjectPath",
 	"sap/base/util/isPlainObject",
 	"sap/base/util/uid",
 	"sap/base/util/restricted/_isEqual",
@@ -19,7 +18,6 @@ sap.ui.define([
 	"sap/ui/core/mvc/View",
 	"sap/ui/core/Configuration"
 ], function(
-	ObjectPath,
 	isPlainObject,
 	uid,
 	isEqual,
@@ -329,8 +327,11 @@ sap.ui.define([
 		 * @returns {object|undefined} Returns UShell container object if available or undefined
 		 */
 		getUshellContainer() {
-			// TODO wait until  FLP does offer anything
-			return ObjectPath.get("sap.ushell.Container");
+			const oContainer = sap.ui.require("sap/ushell/Container");
+			if (oContainer && (oContainer.ready().state() === "resolved")) {
+				return oContainer;
+			}
+			return undefined;
 		},
 
 		createDefaultFileName(sNameAddition) {

@@ -17,7 +17,8 @@ sap.ui.define([
 	"sap/ui/core/Manifest",
 	"sap/ui/core/mvc/View",
 	"sap/base/util/restricted/_omit",
-	"sap/ui/thirdparty/sinon-4"
+	"sap/ui/thirdparty/sinon-4",
+	"test-resources/sap/ui/fl/qunit/FlQUnitUtils"
 ], function(
 	FlVariant,
 	UIChange,
@@ -35,7 +36,8 @@ sap.ui.define([
 	Manifest,
 	View,
 	_omit,
-	sinon
+	sinon,
+	FlQUnitUtils
 ) {
 	"use strict";
 
@@ -1118,6 +1120,52 @@ sap.ui.define([
 			sandbox.stub(Utils, "hasParameterAndValue").returns(true);
 			var bResult = Utils.handleUrlParameters(sUrl, this.sParameterName, this.sParameterValue);
 			assert.equal(bResult, `?${this.sAnotherParameter}&${this.sAnotherParameter}`, "no change in the url");
+		});
+	});
+
+	QUnit.module("Utils.getUShellContainer", {
+		beforeEach() {
+		},
+		afterEach() {
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("when ushell is not loaded", function(assert) {
+			assert.notOk(Utils.getUshellContainer(), "then no container is returned");
+		});
+		QUnit.test("when ushell loaded but not yet bootstrapped", function(assert) {
+			FlQUnitUtils.stubSapUiRequire(sandbox, [
+				{
+					name: "sap/ushell/Container",
+					stub: {
+						ready() {
+							return {
+								state() {
+									return "pending";
+								}
+							};
+						}
+					}
+				}
+			]);
+			assert.notOk(Utils.getUshellContainer(), "then no container is returned");
+		});
+		QUnit.test("when ushell loaded and bootstrapped", function(assert) {
+			FlQUnitUtils.stubSapUiRequire(sandbox, [
+				{
+					name: "sap/ushell/Container",
+					stub: {
+						ready() {
+							return {
+								state() {
+									return "resolved";
+								}
+							};
+						}
+					}
+				}
+			]);
+			assert.ok(Utils.getUshellContainer(), "then container is returned");
 		});
 	});
 

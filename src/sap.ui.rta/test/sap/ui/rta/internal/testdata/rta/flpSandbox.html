@@ -108,7 +108,7 @@
 		<script type="text/javascript">
 			sap.ui.require(["sap/ui/core/Core"], (Core) => {
 				Core.ready().then(() => {
-					sap.ushell.Container.createRenderer(true).then(function(oRenderer){
+					sap.ui.require("sap/ushell/Container").createRenderer(true).then(function(oRenderer){
 						oRenderer.placeAt("content");
 					});
 				})
