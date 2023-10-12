@@ -67,7 +67,12 @@ sap.ui.define(['../util/EnvHelper', "sap/base/util/merge"], function(EnvHelper, 
 			},
 			"FieldInfo": {
 				module: "./FieldInfo.qunit",
-				sinon: false
+				sinon: false,
+				loader: {
+					paths: {
+						"testutils/other": "test-resources/sap/ui/mdc/testutils/other"
+					}
+				}
 			},
 			"FilterField": {
 				module: "./FilterField.qunit",
