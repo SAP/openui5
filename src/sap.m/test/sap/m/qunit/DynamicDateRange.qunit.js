@@ -1245,4 +1245,40 @@ sap.ui.define([
 		assert.strictEqual(oIcon.getAlt(), oCore.getLibraryResourceBundle("sap.m").getText("INPUT_VALUEHELP_BUTTON") , "icon alt is present");
 	});
 
+	QUnit.test("ValueHelp responsive popover cancels bubbling of internal validation errors", function(assert) {
+		var validationErrorHandler = {
+				handler: function(){}
+			},
+			validationErrorSpy = this.spy(validationErrorHandler, "handler"),
+			oLastMinutes,
+			oInnerInput,
+			oPopup,
+			fnDone = assert.async();
+
+		// act
+		this.ddr.attachValidationError(validationErrorHandler.handler);
+		this.ddr.open();
+		oCore.applyChanges();
+		oPopup = this.ddr._oPopup;
+
+		oPopup.attachAfterClose(function() {
+			// assert - check if the validation handler's bubbling is cancelled by the responsive popover
+			assert.ok(validationErrorSpy.notCalled, "Validation Error Handler is not called when there is validation error in an option");
+			fnDone();
+		});
+
+		// open LASTDAYS option
+		oLastMinutes =  oCore.byId(this.ddr.getId() + '-option-LASTDAYS');
+		oLastMinutes.firePress();
+		oCore.applyChanges();
+
+		// simulate entering of 0
+		oInnerInput = oCore.byId(document.querySelector(".sapMStepInput").id);
+		oInnerInput.setValue(0);
+		oInnerInput._verifyValue();
+		oCore.applyChanges();
+
+		// close the DDR option
+		this.ddr._oPopup.close();
+	});
 });
