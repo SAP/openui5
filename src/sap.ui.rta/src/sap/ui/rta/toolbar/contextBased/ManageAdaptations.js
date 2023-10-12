@@ -4,29 +4,28 @@
 
 // Provides control sap.ui.rta.toolbar.contextBased.ManageAdaptationsDialog
 sap.ui.define([
-	"sap/base/Log",
+	"sap/base/i18n/Localization",
 	"sap/base/util/restricted/_isEqual",
+	"sap/base/Log",
 	"sap/ui/base/ManagedObject",
 	"sap/ui/core/Fragment",
 	"sap/ui/fl/write/api/ContextBasedAdaptationsAPI",
 	"sap/m/ColumnListItem",
 	"sap/ui/rta/Utils",
-	"sap/ui/rta/toolbar/contextBased/SaveAsAdaptation",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/date/UI5Date",
 	"sap/ui/performance/Measurement"
-],
-function(
-	Log,
+], function(
+	Localization,
 	_isEqual,
+	Log,
 	ManagedObject,
 	Fragment,
 	ContextBasedAdaptationsAPI,
 	ColumnListItem,
 	Utils,
-	SaveAsAdaptation,
 	Filter,
 	FilterOperator,
 	JSONModel,
@@ -144,7 +143,7 @@ function(
 			hour: "numeric",
 			minute: "numeric"
 		};
-		var sLanguage = sap.ui.getCore().getConfiguration().getLanguage();
+		var sLanguage = Localization.getLanguage();
 		return `${sModifiedBy}\n${oUi5Date.toLocaleTimeString(sLanguage, oOptions)}`;
 	}
 

@@ -1,6 +1,7 @@
 /* global QUnit */
 
 sap.ui.define([
+	"sap/base/i18n/Localization",
 	"sap/ui/fl/apply/api/ControlVariantApplyAPI",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/variants/VariantManagement",
@@ -15,9 +16,9 @@ sap.ui.define([
 	"sap/ui/core/Icon",
 	"sap/ui/core/Lib",
 	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/core/Core",
 	"sap/ui/qunit/utils/nextUIUpdate"
 ], function(
+	Localization,
 	ControlVariantApplyAPI,
 	ManifestUtils,
 	VariantManagement,
@@ -32,7 +33,6 @@ sap.ui.define([
 	Icon,
 	Lib,
 	sinon,
-	Core,
 	nextUIUpdate
 ) {
 	"use strict";
@@ -281,10 +281,9 @@ sap.ui.define([
 		});
 
 		QUnit.test("Check acc text", function(assert) {
-			var oConfiguration = Core.getConfiguration();
-			var sLanguage = oConfiguration.getLanguage();
+			var sLanguage = Localization.getLanguage();
 
-			oConfiguration.setLanguage("en_EN");
+			Localization.setLanguage("en_EN");
 
 			this.oVariantManagement._oRb = Lib.getResourceBundleFor("sap.m");
 
@@ -297,7 +296,7 @@ sap.ui.define([
 			this.oVariantManagement.setCurrentVariantKey("2");
 			assert.equal(this._oVM.oVariantInvisibleText.getText(), this.oVariantManagement._oRb.getText("VARIANT_MANAGEMENT_SEL_VARIANT", "Two"));
 
-			oConfiguration.setLanguage(sLanguage);
+			Localization.setLanguage(sLanguage);
 		});
 
 		QUnit.test("Check 'initialized' event", function(assert) {
@@ -1201,10 +1200,9 @@ sap.ui.define([
 		});
 
 		QUnit.test("Checking the sharing text", function(assert) {
-			var oConfiguration = Core.getConfiguration();
-			var sLanguage = oConfiguration.getLanguage();
+			var sLanguage = Localization.getLanguage();
 
-			oConfiguration.setLanguage("en_EN");
+			Localization.setLanguage("en_EN");
 
 			this.oVariantManagement.setModel(oModel, ControlVariantApplyAPI.getVariantModelName());
 
@@ -1224,7 +1222,7 @@ sap.ui.define([
 			assert.ok(aCells[2].isA("sap.m.Text"));
 			assert.equal(aCells[2].getText(), "Private");
 
-			oConfiguration.setLanguage(sLanguage);
+			Localization.setLanguage(sLanguage);
 		});
 
 		QUnit.test("Checking the apply automatic text for standard", function(assert) {

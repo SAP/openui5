@@ -3,19 +3,19 @@
  */
 
 sap.ui.define([
+	"sap/base/i18n/Localization",
 	"sap/ui/rta/plugin/Plugin",
 	"sap/ui/dt/Overlay",
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/dt/util/ZIndexManager",
-	"sap/ui/dt/Util",
-	"sap/ui/core/Core"
+	"sap/ui/dt/Util"
 ], function(
+	Localization,
 	Plugin,
 	Overlay,
 	OverlayRegistry,
 	ZIndexManager,
-	DtUtil,
-	Core
+	DtUtil
 ) {
 	"use strict";
 
@@ -50,7 +50,7 @@ sap.ui.define([
 	var FULL_SCREEN_DIV_CLASS_NAME = "sapUiRtaFullScreenDiv";
 	var MINIMUM_WIDTH = 15; // px
 
-	var bRTL = Core.getConfiguration().getRTL();
+	var bRTL = Localization.getRTL();
 	var iDirectionFactor = bRTL ? -1 : 1;
 	var sBeginDirection = bRTL ? "right" : "left";
 	var iKeyboardStep = 15 * iDirectionFactor; // px
