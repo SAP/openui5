@@ -187,7 +187,9 @@
 											"inParameters": [ \{"contentId":"container-v4demo---bookdetails--genreDialog", "source":"classification_code", "target":"classification_code"\},
 															\{"contentId":"container-v4demo---bookdetails--genreTypeAhead", "source":"classification_code", "target":"classification_code"\}
 															],
-											"outParameters": [\{"source": "classification_code", "target": "classification_code", "mode":"Always"\}
+											"outParameters": [\{"source": "classification_code", "target": "classification_code", "mode":"Always"\},
+															\{"targetFieldId": "container-v4demo---bookdetails--fSubGenre", "mode":"Clear"\},
+															\{"target": "detailgenre_code", "mode":"Clear"\}
 															],
 											"payloadInfos": [ \{"contentId":"container-v4demo---bookdetails--genreDialog", "path":["classification_code"]\},
 															\{"contentId":"container-v4demo---bookdetails--genreTypeAhead", "path":["classification_code"]\}
@@ -265,7 +267,8 @@
 															\{"contentId":"container-v4demo---bookdetails--gsubGenreTypeAhead", "source":"classification_code", "target":"classification_code"\}
 															],
 											"outParameters": [\{"source": "genre_code", "targetFieldId": "container-v4demo---bookdetails--fGenre", "mode":"Always"\},
-															\{"source": "classification_code", "target": "classification_code", "mode":"Always"\}
+															\{"source": "classification_code", "target": "classification_code", "mode":"Always"\},
+															\{"target": "detailgenre_code", "mode":"Clear"\}
 															],
 											"payloadInfos": [ \{"contentId":"container-v4demo---bookdetails--subGenreDialog", "path":["classification_code", "genre_code"]\},
 															\{"contentId":"container-v4demo---bookdetails--subGenreTypeAhead", "path":["classification_code", "genre_code"]\}
