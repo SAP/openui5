@@ -3,7 +3,7 @@
 sap.ui.define([
 	"rta/qunit/RtaQunitUtils",
 	"sap/base/Log",
-	"sap/ui/core/Core",
+	"sap/ui/core/Lib",
 	"sap/ui/fl/apply/_internal/changes/descriptor/Applier",
 	"sap/ui/fl/apply/_internal/changes/descriptor/ApplyStrategyFactory",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
@@ -18,7 +18,7 @@ sap.ui.define([
 ], function(
 	RtaQunitUtils,
 	Log,
-	Core,
+	Lib,
 	AppDescriptorApplier,
 	ApplyStrategyFactory,
 	FlexState,
@@ -336,7 +336,7 @@ sap.ui.define([
 				}
 			};
 
-			this.oLoadLibStub = sandbox.stub(Core, "loadLibrary").resolves();
+			this.oLoadLibStub = sandbox.stub(Lib, "load").resolves();
 		},
 		afterEach() {
 			window.sessionStorage.removeItem("sap.ui.rta.restart.CUSTOMER");

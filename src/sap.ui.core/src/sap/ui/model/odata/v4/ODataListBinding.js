@@ -777,6 +777,9 @@ sap.ui.define([
 	 * <code>bAtEnd</code> and <code>bInactive</code> must not be set. No other creation or
 	 * {@link sap.ui.model.odata.v4.Context#move move} must be pending, and no other modification
 	 * (including collapse of some ancestor node) must happen while this creation is pending!
+	 * Creating a new root works the same way with <code>oInitialData["@$ui5.node.parent"]</code>
+	 * being <code>null</code> or absent; <code>oAggregation.expandTo</code> does not matter then
+	 * (@experimental as of version 1.120.0).
 	 *
 	 * @param {Object<any>} [oInitialData={}]
 	 *   The initial data for the created entity
@@ -838,14 +841,13 @@ sap.ui.define([
 	 */
 	ODataListBinding.prototype.create = function (oInitialData, bSkipRefresh, bAtEnd, bInactive) {
 		var oAggregation = this.mParameters.$$aggregation,
-			iChildIndex,
+			iChildIndex, // used only in case of recursive hierarchy
 			oContext,
 			oCreatePathPromise = this.fetchResourcePath(),
 			oCreatePromise,
 			oEntityData,
 			sGroupId = this.getUpdateGroupId(),
 			oGroupLock,
-			oParentContext,
 			sResolvedPath = this.getResolvedPath(),
 			sTransientPredicate = "($uid=" + _Helper.uid() + ")",
 			sTransientPath = sResolvedPath + sTransientPredicate,
@@ -891,24 +893,28 @@ sap.ui.define([
 		// remove any property starting with "@$ui5."
 		oEntityData = _Helper.publicClone(oInitialData, true) || {};
 		if (oAggregation) {
-			if (oAggregation.expandTo > 1) {
-				throw new Error("Unsupported $$aggregation.expandTo: " + oAggregation.expandTo);
-			}
 			if (!bSkipRefresh) {
 				throw new Error("Missing bSkipRefresh");
 			}
 			if (arguments.length > 2) {
 				throw new Error("Only the parameters oInitialData and bSkipRefresh are supported");
 			}
-			oParentContext = oInitialData["@$ui5.node.parent"];
-			iChildIndex = this.aContexts.indexOf(oParentContext) + 1;
-			if (iChildIndex <= 0) {
-				throw new Error("Invalid parent context: " + oParentContext);
+			const oParentContext = oInitialData?.["@$ui5.node.parent"];
+			if (oParentContext) {
+				if (oAggregation.expandTo > 1) {
+					throw new Error("Unsupported $$aggregation.expandTo: " + oAggregation.expandTo);
+				}
+				iChildIndex = this.aContexts.indexOf(oParentContext) + 1;
+				if (iChildIndex <= 0) {
+					throw new Error("Invalid parent context: " + oParentContext);
+				}
+				if (oParentContext.isExpanded() === false) {
+					throw new Error("Unsupported collapsed parent: " + oParentContext);
+				}
+				oEntityData["@$ui5.node.parent"] = oParentContext.getCanonicalPath().slice(1);
+			} else {
+				iChildIndex = 0;
 			}
-			if (oParentContext.isExpanded() === false) {
-				throw new Error("Unsupported collapsed parent: " + oParentContext);
-			}
-			oEntityData["@$ui5.node.parent"] = oParentContext.getCanonicalPath().slice(1);
 		} else {
 			this.iCreatedContexts += 1;
 		}
@@ -968,8 +974,7 @@ sap.ui.define([
 		});
 
 		oContext = Context.create(this.oModel, this, sTransientPath,
-			oParentContext ? iChildIndex : -this.iCreatedContexts,
-			oCreatePromise, bInactive);
+			iChildIndex ?? -this.iCreatedContexts, oCreatePromise, bInactive);
 		if (this.isTransient()) {
 			oContext.created().catch(this.oModel.getReporter());
 		}
@@ -981,7 +986,7 @@ sap.ui.define([
 			} // else: context already destroyed
 		});
 
-		if (oParentContext) {
+		if (iChildIndex !== undefined) {
 			this.aContexts.splice(iChildIndex, 0, oContext);
 			for (i = this.aContexts.length - 1; i > iChildIndex; i -= 1) {
 				if (this.aContexts[i]) {

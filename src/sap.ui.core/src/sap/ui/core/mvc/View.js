@@ -10,8 +10,8 @@ sap.ui.define([
 	"sap/base/util/isEmptyObject",
 	"sap/base/util/merge",
 	"sap/ui/base/ManagedObject",
-	"sap/ui/core/Configuration",
 	"sap/ui/core/Control",
+	"sap/ui/base/DesignTime",
 	"sap/ui/core/Element",
 	"./Controller",
 	"./ViewRenderer",
@@ -24,8 +24,8 @@ sap.ui.define([
 		isEmptyObject,
 		merge,
 		ManagedObject,
-		Configuration,
 		Control,
+		DesignTime,
 		Element,
 		Controller,
 		ViewRenderer,
@@ -440,7 +440,7 @@ sap.ui.define([
 			oController.oView = oThis;
 		};
 
-		if (!Configuration.getControllerCodeDeactivated()) {
+		if (!DesignTime.isControllerCodeDeactivated()) {
 			// only set when used internally
 			var oController = mSettings.controller,
 				sName = oController && typeof oController.getMetadata === "function" && oController.getMetadata().getName();

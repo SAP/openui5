@@ -7,19 +7,46 @@ sap.ui.define([
 	"sap/ui/core/ListItem",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/IconPool",
+	"sap/ui/core/_IconRegistry",
 	"sap/base/util/merge",
 	"sap/ui/core/Core",
 	"sap/base/util/deepClone",
+	"sap/base/util/deepEqual",
 	"sap/ui/integration/formatters/IconFormatter",
 	"sap/m/Popover",
-	"sap/m/Image"
+	"sap/m/Image",
+	"sap/m/OverflowToolbar",
+	"sap/m/ToolbarSpacer",
+	"sap/m/Text",
+	"sap/m/CheckBox",
+	"sap/m/SegmentedButton",
+	"sap/m/SegmentedButtonItem"
 ], function (
-	VizBase, Select, ListItem, JSONModel, IconPool, merge, Core, deepClone, IconFormatter, Popover, Image
+	VizBase,
+	Select,
+	ListItem,
+	JSONModel,
+	IconPool,
+	_IconRegistry,
+	merge,
+	Core,
+	deepClone,
+	deepEqual,
+	IconFormatter,
+	Popover,
+	Image,
+	OverflowToolbar,
+	ToolbarSpacer,
+	Text,
+	CheckBox,
+	SegmentedButton,
+	SegmentedButtonItem
 ) {
 	"use strict";
 
 	var oResourceBundle = Core.getLibraryResourceBundle("sap.ui.integration"),
-		aDefaultIcons;
+		aDefaultIcons,
+		oLoadDefaultIconPromise;
 
 	/**
 	 * @class
@@ -77,8 +104,68 @@ sap.ui.define([
 				icon: "sap-icon://" + s,
 				key: "sap-icon://" + s,
 				text: text,
+				additionalText: "sap-icon://" + s,
 				tooltip: text,
-				enabled: true
+				enabled: true,
+				type: "UI5"
+			});
+		});
+
+		var mFontRegistry = _IconRegistry.getFontRegistry();
+		if (!mFontRegistry["SAP-icons-TNT"]) {
+			// register TNT icons
+			IconPool.registerFont({
+				fontFamily: "SAP-icons-TNT",
+				collectionName: "SAP-icons-TNT",
+				fontURI: sap.ui.require.toUrl("sap/tnt/themes/base/fonts")
+			});
+		}
+		if (!mFontRegistry["BusinessSuiteInAppSymbols"]) {
+			// register Business Suite Icons
+			IconPool.registerFont({
+				fontFamily: "BusinessSuiteInAppSymbols",
+				collectionName: "BusinessSuiteInAppSymbols",
+				fontURI: sap.ui.require.toUrl("sap/ushell/themes/base/fonts/")
+			});
+		}
+		oLoadDefaultIconPromise = Promise.all([IconPool.fontLoaded("SAP-icons-TNT"), IconPool.fontLoaded("BusinessSuiteInAppSymbols")]).then(function () {
+			aIconNames = IconPool.getIconNames("SAP-icons-TNT");
+			// filter out names which contains blank or UpperCase characters
+			aIconNames = aIconNames.filter(function (s) {
+				var strCode = s.substring(0, 1).charCodeAt();
+				return s.indexOf(" ") < 0 && strCode >= 97 && strCode <= 122;
+			});
+			aIconNames.sort();
+			aIconNames.filter(function (s) {
+				var text = IconPool.getIconInfo(s, "SAP-icons-TNT").text || ("-" + s).replace(/-(.)/ig, function (sMatch, sChar) {
+					return " " + sChar.toUpperCase();
+				}).substring(1);
+				aDefaultIcons.push({
+					icon: "sap-icon://SAP-icons-TNT/" + s,
+					key: "sap-icon://SAP-icons-TNT/" + s,
+					text: text,
+					additionalText: "sap-icon://SAP-icons-TNT/" + s,
+					tooltip: text,
+					enabled: true,
+					type: "SAP-icons-TNT"
+				});
+			});
+
+			aIconNames = IconPool.getIconNames("BusinessSuiteInAppSymbols");
+			aIconNames.sort();
+			aIconNames.filter(function (s) {
+				var text = IconPool.getIconInfo(s, "BusinessSuiteInAppSymbols").text || ("-" + s).replace(/-(.)/ig, function (sMatch, sChar) {
+					return " " + sChar.toUpperCase();
+				}).substring(1);
+				aDefaultIcons.push({
+					icon: "sap-icon://BusinessSuiteInAppSymbols/" + s,
+					key: "sap-icon://BusinessSuiteInAppSymbols/" + s,
+					text: text,
+					additionalText: "sap-icon://BusinessSuiteInAppSymbols/" + s,
+					tooltip: text,
+					enabled: true,
+					type: "BusinessSuiteInAppSymbols"
+				});
 			});
 		});
 	};
@@ -89,43 +176,89 @@ sap.ui.define([
 			text: oResourceBundle.getText("EDITOR_ICON_NONE"),
 			tooltip: "",
 			key: IconFormatter.SRC_FOR_HIDDEN_ICON,
-			enabled: true
+			enabled: true,
+			type: "Action"
 		}, {
 			icon: "sap-icon://upload",
 			text: oResourceBundle.getText("EDITOR_ICON_CHOOSE"),
 			tooltip: "",
 			key: "file",
-			enabled: true
+			enabled: true,
+			type: "Action"
 		}, {
 			icon: "sap-icon://download",
 			text: oResourceBundle.getText("EDITOR_ICON_SELECTED"),
 			tooltip: "",
 			key: "selected",
-			enabled: false
+			enabled: false,
+			type: "Action"
 		}];
-		if (this.getAllowDefaultIcons()) {
-			aIcons = aIcons.concat(deepClone(aDefaultIcons, 500));
-		}
 		this._oIconModel = new JSONModel(aIcons);
 		this._oIconModel.setSizeLimit(aIcons.length);
+	};
+
+	IconSelect.prototype._initConfigModel = function () {
+		var oConfig = {
+			"icons": {
+				"layout": "Grid",
+				"types": {
+					"Action": true,
+					"UI5": true,
+					"SAP-icons-TNT": true,
+					"BusinessSuiteInAppSymbols": true
+				}
+			}
+		};
+		this._oConfigModel = new JSONModel(oConfig);
 	};
 
 	IconSelect.prototype.onInit = function () {
 		if (oResourceBundle && oResourceBundle.sLocale !== Core.getConfiguration().getLanguage()) {
 			oResourceBundle = Core.getLibraryResourceBundle("sap.ui.integration");
 		}
+		if (!this._oIconModel) {
+			this._initIconModel();
+		}
 		if (!aDefaultIcons) {
 			this._initDefaultIcons();
 		}
-		if (!this._oIconModel) {
-			this._initIconModel();
+		if (oLoadDefaultIconPromise) {
+			oLoadDefaultIconPromise.then(function () {
+				if (this.getAllowDefaultIcons()) {
+					var aIcons = this._oIconModel.getData();
+					aIcons = aIcons.concat(deepClone(aDefaultIcons, 500));
+					this._oIconModel.setData(aIcons);
+					this._oIconModel.setSizeLimit(aIcons.length);
+					this._oIconModel.checkUpdate(true);
+					this._oControl && this._oControl.setSelectedKey(this.getValue());
+				}
+				oLoadDefaultIconPromise = undefined;
+			}.bind(this));
+		} else if (this.getAllowDefaultIcons()) {
+			var aIcons = this._oIconModel.getData();
+			aIcons = aIcons.concat(deepClone(aDefaultIcons, 500));
+			this._oIconModel.setData(aIcons);
+			this._oIconModel.setSizeLimit(aIcons.length);
+		}
+		if (!this._oConfigModel) {
+			this._initConfigModel();
 		}
 		var oItem = new ListItem({
 			icon: "{iconlist>icon}",
 			text: "{iconlist>text}",
 			tooltip: "{iconlist>tooltip}",
 			key: "{iconlist>key}",
-			enabled: "{iconlist>enabled}"
+			additionalText: "{iconlist>additionalText}",
+			enabled: {
+				parts: [
+					'config>/icons/types',
+					"iconlist>type",
+					"iconlist>enabled"
+				],
+				formatter: function (oTypes, sType, bEnabled) {
+					return bEnabled && oTypes[sType];
+				}
+			}
 		});
 
 		this._oFileUpload = document.createElement("INPUT");
@@ -155,14 +288,79 @@ sap.ui.define([
 			}.bind(this)
 		});
 		this._oControl.setModel(this._oIconModel, "iconlist");
+		this._oControl.setModel(this._oConfigModel, "config");
 
 		//add style class and height on open
 		this._oControl._fnOpen = this._oControl.open;
 		if (this.getAllowDefaultIcons()) {
+			var that = this;
 			this._oControl.open = function () {
 				this._fnOpen && this._fnOpen.apply(this, arguments);
-				this.getPicker().addStyleClass("sapUiIntegrationIconSelectList");
-				this.getPicker().setContentHeight("400px");
+				that._oPicker = this.getPicker();
+				// currently do not show the footer which contains icon type filter checkboxs
+				var bShowFooter = false;
+				if (!that._oPicker.getFooter() && bShowFooter) {
+					var oOverflowToolbar = new OverflowToolbar({
+						content: [
+							new SegmentedButton({
+								selectedKey: "{config>/icons/layout}",
+								items: [
+									new SegmentedButtonItem({
+										icon: "sap-icon://grid",
+										tooltip: "Grid View",
+										key: "Grid"
+									}),
+									new SegmentedButtonItem({
+										icon: "sap-icon://list",
+										tooltip: "Details View",
+										key: "Details"
+									})
+								],
+								select: function (oEvent) {
+									var oControl = oEvent.getSource();
+									var sSelectedKey = oControl.getSelectedKey();
+									if (sSelectedKey === "Grid") {
+										this._oPicker.addStyleClass("sapUiIntegrationIconSelectList");
+										this._oControl.setShowSecondaryValues(false);
+									} else if (sSelectedKey === "Details") {
+										this._oPicker.removeStyleClass("sapUiIntegrationIconSelectList");
+										this._oControl.setShowSecondaryValues(true);
+									}
+								}.bind(that)
+							}),
+							new ToolbarSpacer(),
+							new Text({
+								text: "Icon Types:"
+							}),
+							new CheckBox({
+								selected: "{config>/icons/types/UI5}",
+								text: "UI5",
+								select: that.onIconTypeChanged.bind(that)
+							}),
+							new CheckBox({
+								selected: "{config>/icons/types/SAP-icons-TNT}",
+								text: "Fiori",
+								select: that.onIconTypeChanged.bind(that)
+							}),
+							new CheckBox({
+								selected: "{config>/icons/types/BusinessSuiteInAppSymbols}",
+								text: "Business Suite",
+								select: that.onIconTypeChanged.bind(that)
+							})
+						]
+					});
+					that._oPicker.setFooter(oOverflowToolbar);
+				}
+
+				if (!deepEqual(that._oConfigModel.getProperty("/icons/types"), {
+					"Action": true,
+					"UI5": false,
+					"SAP-icons-TNT": false,
+					"BusinessSuiteInAppSymbols": false
+				})) {
+					that._oPicker.addStyleClass("sapUiIntegrationIconSelectList");
+					that._oPicker.setContentHeight("400px");
+				}
 			};
 		}
 
@@ -235,6 +433,29 @@ sap.ui.define([
 		oRm.class("sapUiIntegrationIconSelect");
 		if (this._oControl && this._oControl.getWidth) {
 			oRm.style("width", this._oControl.getWidth());
+		}
+	};
+
+	IconSelect.prototype.onIconTypeChanged = function (oEvent) {
+		this._oConfigModel.checkUpdate(true);
+		var oIconTypes = this._oConfigModel.getProperty("/icons/types");
+		if (deepEqual(oIconTypes, {
+			"Action": true,
+			"UI5": false,
+			"SAP-icons-TNT": false,
+			"BusinessSuiteInAppSymbols": false
+		})) {
+			this._oPicker.setContentHeight("");
+		} else {
+			this._oPicker.setContentHeight("400px");
+		}
+		var sValue = this.getValue();
+		if (sValue && sValue.indexOf("data:image/") === 0) {
+			this._oControl._customImage = sValue;
+			this._oIconModel.setProperty("/2/enabled", true);
+			this._oControl.setSelectedKey("selected");
+		} else {
+			this._oControl.setSelectedKey(sValue);
 		}
 	};
 
@@ -329,11 +550,19 @@ sap.ui.define([
 			if (bAllowDefaultIcons) {
 				//add default icons
 				aIcons = aIcons.concat(deepClone(aDefaultIcons, 500));
+				var oIconTypes = this._oConfigModel.getProperty("/icons/types");
 				//add style class and height on open
 				this._oControl.open = function () {
 					this._fnOpen && this._fnOpen.apply(this, arguments);
-					this.getPicker().addStyleClass("sapUiIntegrationIconSelectList");
-					this.getPicker().setContentHeight("400px");
+					if (!deepEqual(oIconTypes, {
+						"Action": true,
+						"UI5": false,
+						"SAP-icons-TNT": false,
+						"BusinessSuiteInAppSymbols": false
+					})) {
+						this._oPicker.addStyleClass("sapUiIntegrationIconSelectList");
+						this._oPicker.setContentHeight("400px");
+					}
 				};
 			} else {
 				//remove default icons

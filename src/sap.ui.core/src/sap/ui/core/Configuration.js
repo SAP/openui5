@@ -10,6 +10,7 @@ sap.ui.define([
 	'./ControlBehavior',
 	'./Locale',
 	"./format/TimezoneUtil",
+	"sap/ui/base/DesignTime",
 	"sap/ui/core/getCompatibilityVersion",
 	"sap/ui/core/date/CalendarWeekNumbering",
 	"sap/ui/core/Supportability",
@@ -31,6 +32,7 @@ sap.ui.define([
 		ControlBehavior,
 		Locale,
 		TimezoneUtil,
+		DesignTime,
 		getCompatibilityVersion,
 		CalendarWeekNumbering,
 		Supportability,
@@ -280,7 +282,6 @@ sap.ui.define([
 	 *
 	 * @borrows module:sap/base/i18n/Localization.getLanguagesDeliveredWithCore as getLanguagesDeliveredWithCore
 	 * @borrows module:sap/base/i18n/Localization.getSupportedLanguages as getSupportedLanguages
-	 * @borrows module:sap/ui/core/ControlBehavior.isAccessibilityEnabled as getAccessibility
 	 * @borrows module:sap/ui/core/getCompatibilityVersion as getCompatibilityVersion
 	 */
 	var Configuration = BaseObject.extend("sap.ui.core.Configuration", /** @lends sap.ui.core.Configuration.prototype */ {
@@ -573,6 +574,8 @@ sap.ui.define([
 		 * @return {sap.ui.core.CalendarType} the current calendar type, e.g. <code>Gregorian</code>
 		 * @since 1.28.6
 		 * @function
+		 * @public
+		 * @deprecated As of Version 1.120. Please use {@link module:sap/base/i18n/Formatting.getCalendarType} instead.
 		 */
 		getCalendarType: Formatting.getCalendarType,
 
@@ -584,6 +587,7 @@ sap.ui.define([
 		 * @function
 		 * @public
 		 * @since 1.113.0
+		 * @deprecated As of Version 1.120. Please use {@link module:sap/base/i18n/Formatting.getCalendarWeekNumbering} instead.
 		 */
 		getCalendarWeekNumbering: Formatting.getCalendarWeekNumbering,
 
@@ -648,6 +652,7 @@ sap.ui.define([
 		 * @return {this} <code>this</code> to allow method chaining
 		 * @public
 		 * @since 1.28.6
+		 * @deprecated As of Version 1.120. Please use {@link module:sap/base/i18n/Formatting.setCalendarType} instead.
 		 */
 		setCalendarType : function(sCalendarType) {
 			Formatting.setCalendarType.apply(Formatting, arguments);
@@ -668,6 +673,7 @@ sap.ui.define([
 		 *
 		 * @public
 		 * @since 1.113.0
+		 * @deprecated As of Version 1.120. Please use {@link module:sap/base/i18n/Formatting.setCalendarWeekNumbering} instead.
 		 */
 		setCalendarWeekNumbering: function(sCalendarWeekNumbering) {
 			Formatting.setCalendarWeekNumbering.apply(Formatting, arguments);
@@ -680,6 +686,7 @@ sap.ui.define([
 		 *
 		 * @return {string} the format locale string with language and country code
 		 * @public
+		 * @deprecated As of Version 1.120. Please use {@link module:sap/base/i18n/Formatting.getLanguageTag} instead.
 		 */
 		getFormatLocale : function() {
 			return Formatting.getLanguageTag().toString();
@@ -709,6 +716,7 @@ sap.ui.define([
 		 *   components (compatibility with Java Locale IDs)
 		 * @return {this} <code>this</code> to allow method chaining
 		 * @public
+		 * @deprecated As of Version 1.120. Please use {@link module:sap/base/i18n/Formatting.setLanguageTag} instead.
 		 * @throws {Error} When <code>sFormatLocale</code> is given, but is not a valid BCP47 language
 		 *   tag or Java locale identifier
 		 */
@@ -719,6 +727,15 @@ sap.ui.define([
 
 		getLanguagesDeliveredWithCore : Localization.getLanguagesDeliveredWithCore,
 		getSupportedLanguages : Localization.getSupportedLanguages,
+
+		/**
+		 * Returns whether the accessibility mode is enabled or not.
+		 * @return {boolean} whether the accessibility mode is enabled or not
+		 * @public
+		 * @since 1.120
+		 * @function
+		 * @deprecated As of Version 1.120: Please use {@link module:sap/ui/core/ControlBehavior.isAccessibilityEnabled} instead.
+		 */
 		getAccessibility : ControlBehavior.isAccessibilityEnabled,
 
 		/**
@@ -739,6 +756,7 @@ sap.ui.define([
 		 * @since 1.50.0
 		 * @function
 		 * @public
+		 * @deprecated As of Version 1.120: Please use {@link module:sap/ui/core/ControlBehavior.getAnimationMode} instead.
 		 */
 		getAnimationMode : ControlBehavior.getAnimationMode,
 
@@ -756,8 +774,18 @@ sap.ui.define([
 		 * @since 1.50.0
 		 * @function
 		 * @public
+		 * @deprecated As of Version 1.120: Please use {@link module:sap/ui/core/ControlBehavior.setAnimationMode} instead.
 		 */
 		setAnimationMode : ControlBehavior.setAnimationMode,
+
+		/**
+		 * Returns whether the page runs in full debug mode.
+		 * @returns {boolean} Whether the page runs in full debug mode
+		 * @public
+		 * @function
+		 * @deprecated As of version 1.120.
+		 */
+		getDebug : Supportability.isDebugModeEnabled,
 
 		/**
 		 * Returns whether there should be an exception on any duplicate element IDs.
@@ -766,52 +794,6 @@ sap.ui.define([
 		 */
 		getNoDuplicateIds : function () {
 			return BaseConfig.get({ name: "sapUiNoDuplicateIds", type: BaseConfig.Type.Boolean, defaultValue: true, external: true });
-		},
-
-		/**
-		 * Return whether the design mode is active or not.
-		 *
-		 * @returns {boolean} whether the design mode is active or not.
-		 * @since 1.13.2
-		 * @private
-		 * @ui5-restricted sap.ui.core.Core, sap.watt, com.sap.webide, sap.ui.fl, sap.ui.rta, sap.ui.comp, SAP Business Application Studio
-		 */
-		getDesignMode : function() {
-			return BaseConfig.get({
-				name: "sapUiXxDesignMode",
-				type: BaseConfig.Type.Boolean,
-				external: true,
-				freeze: true
-			});
-		},
-
-		/**
-		 * Return whether the activation of the controller code is suppressed.
-		 *
-		 * @returns {boolean} whether the activation of the controller code is suppressed or not
-		 * @since 1.13.2
-		 * @private
-		 * @ui5-restricted sap.watt, com.sap.webide
-		 */
-		getSuppressDeactivationOfControllerCode : function() {
-			return BaseConfig.get({
-				name: "sapUiXxSuppressDeactivationOfControllerCode",
-				type: BaseConfig.Type.Boolean,
-				external: true,
-				freeze: true
-			});
-		},
-
-		/**
-		 * Return whether the controller code is deactivated. During design mode the.
-		 *
-		 * @returns {boolean} whether the activation of the controller code is suppressed or not
-		 * @since 1.26.4
-		 * @private
-		 * @ui5-restricted sap.watt, com.sap.webide
-		 */
-		getControllerCodeDeactivated : function() {
-			return Configuration.getDesignMode() && !Configuration.getSuppressDeactivationOfControllerCode();
 		},
 
 		/**
@@ -830,10 +812,25 @@ sap.ui.define([
 		 *
 		 * @returns {sap.ui.core.Configuration.FormatSettings} A FormatSettings object.
 		 * @public
+		 * @deprecated As of Version 1.120. Please use {@link module:sap/base/i18n/Formatting} instead.
 		 */
 		getFormatSettings : function() {
 			return oFormatSettings;
 		},
+
+		/**
+		 * Flag if statistics are requested.
+		 *
+		 * Flag set by TechnicalInfo Popup will also be checked.
+		 * So its active if set by URL parameter or manually via TechnicalInfo.
+		 *
+		 * @returns {boolean} Whether statistics are enabled
+		 * @public
+		 * @since 1.106.0
+		 * @function
+		 * @deprecated As of Version 1.120.
+		 */
+		getStatisticsEnabled : Supportability.isStatisticsEnabled,
 
 		/**
 		 * Applies multiple changes to the configuration at once.
@@ -867,6 +864,7 @@ sap.ui.define([
 		 * @returns {this} Returns <code>this</code> to allow method chaining
 		 * @public
 		 * @since 1.38.6
+		 * @deprecated As of Version 1.120
 		 */
 		applySettings: function(mSettings) {
 
@@ -972,6 +970,7 @@ sap.ui.define([
 	 * @name sap.ui.core.Configuration.AnimationMode
 	 * @since 1.50.0
 	 * @public
+	 * @deprecated As of Version 1.120. Please use {@link module:sap/ui/core/AnimationMode} instead.
 	 */
 
 	/**
@@ -1035,6 +1034,7 @@ sap.ui.define([
 	 * @alias sap.ui.core.Configuration.FormatSettings
 	 * @extends sap.ui.base.Object
 	 * @public
+	 * @deprecated As of Version 1.120. Please use {@link module:sap/base/i18n/Formatting} instead.
 	 * @borrows module:sap/base/i18n/Formatting.getCustomUnits as #getCustomUnits
 	 * @borrows module:sap/base/i18n/Formatting.setCustomUnits as #setCustomUnits
 	 * @borrows module:sap/base/i18n/Formatting.addCustomUnits as #addCustomUnits
@@ -1076,6 +1076,7 @@ sap.ui.define([
 		 *
 		 * @return {sap.ui.core.Locale} the format locale
 		 * @public
+		 * @deprecated As of Version 1.120. Please use {@link module:sap/base/i18n/Formatting.getLanguageTag} instead.
 		 */
 		getFormatLocale : function() {
 			var oLocale = Formatting.getLanguageTag();

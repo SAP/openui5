@@ -374,15 +374,15 @@ sap.ui.define([
 		// {"EMPLOYEE_2_MANAGER@odata.bind" : "EMPLOYEES('0')"}
 		const oBody = JSON.parse(oRequest.requestBody);
 		const sParentId = oBody["EMPLOYEE_2_MANAGER@odata.bind"]
-			.slice(11, -2);
+			?.slice(11, -2);
 		const oParent = mNodeById[sParentId];
 		const oNewChild = { // same order of keys than for "old" nodes ;-)
 			AGE : 0, // see below
 			ID : "", // see below
 			Name : "", // Q: Derive default from parent's Name? A: No, it's editable!
-			DistanceFromRoot : oParent.DistanceFromRoot + 1,
+			DistanceFromRoot : oParent ? oParent.DistanceFromRoot + 1 : 0,
 			DrillState : "leaf",
-			MANAGER_ID : sParentId,
+			MANAGER_ID : sParentId ?? null,
 			DescendantCount : 0
 		};
 
@@ -398,11 +398,15 @@ sap.ui.define([
 			} else { // sParentId === "0"
 				oNewChild.ID = "" + (parseInt(sLastChildID) + 1);
 			}
-		} else { // parent not a leaf anymore
+		} else if (sParentId) { // parent not a leaf anymore
 			oParent.DrillState = "collapsed"; // @see #reset
 			mChildrenByParentId[sParentId] = [];
 			oNewChild.AGE = oParent.AGE - 1;
 			oNewChild.ID = sParentId + ".1";
+		} else { // new root
+			const iRootCount = aAllNodes.filter((oNode) => oNode.MANAGER_ID === null).length;
+			oNewChild.AGE = 60 + iRootCount;
+			oNewChild.ID = "0ABCDEFGHIJKLMNOPQRSTUVWXYZ"[iRootCount];
 		}
 
 		if (oNewChild.ID in mNodeById) {
@@ -411,8 +415,10 @@ sap.ui.define([
 		aAllNodes.push(oNewChild); //TODO not good enough once we need "refresh"
 		mNodeById[oNewChild.ID] = oNewChild;
 		mRevisionOfAgeById[oNewChild.ID] = 0;
-		// Note: server's insert position must not affect UI (until refresh!)
-		mChildrenByParentId[sParentId].push(oNewChild);
+		if (sParentId) {
+			// Note: server's insert position must not affect UI (until refresh!)
+			mChildrenByParentId[sParentId].push(oNewChild);
+		}
 
 		oResponse.message = JSON.stringify(SandboxModel.update([oNewChild])[0]);
 	}

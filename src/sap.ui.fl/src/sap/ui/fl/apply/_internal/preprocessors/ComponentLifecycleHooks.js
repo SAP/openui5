@@ -4,6 +4,7 @@
 
 sap.ui.define([
 	"sap/base/Log",
+	"sap/ui/core/Lib",
 	"sap/ui/fl/apply/_internal/changes/descriptor/Applier",
 	"sap/ui/fl/apply/_internal/changes/descriptor/ApplyStrategyFactory",
 	"sap/ui/fl/apply/_internal/changes/Applier",
@@ -18,6 +19,7 @@ sap.ui.define([
 	"sap/ui/performance/Measurement"
 ], function(
 	Log,
+	Lib,
 	AppDescriptorApplier,
 	ApplyStrategyFactory,
 	ChangesApplier,
@@ -76,7 +78,7 @@ sap.ui.define([
 
 			return new Promise(function(resolve, reject) {
 				Promise.all([
-					sap.ui.getCore().loadLibrary("sap.ui.rta", {async: true}),
+					Lib.load({name: "sap.ui.rta"}),
 					oComponent.rootControlLoaded()
 				])
 				.then(function() {

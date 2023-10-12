@@ -167,6 +167,7 @@ sap.ui.define([
 				_AggregationHelper.checkNodeProperty(oPlaceholder, oElement, sNodeProperty);
 			}
 
+			_Helper.copyPrivateAnnotation(oPlaceholder, "cache", oElement);
 			_Helper.copyPrivateAnnotation(oPlaceholder, "spliced", oElement);
 			if (_Helper.getPrivateAnnotation(oPlaceholder, "placeholder") === 1) {
 				if ((oPlaceholder["@$ui5.node.isExpanded"] === undefined)

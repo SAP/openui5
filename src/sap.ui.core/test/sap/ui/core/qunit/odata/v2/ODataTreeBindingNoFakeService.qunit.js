@@ -94,7 +94,6 @@ sap.ui.define([
 		assert.strictEqual(oBinding.bUsePreliminaryContext, "bUsePreliminaryContext");
 	});
 
-
 	//*********************************************************************************************
 	QUnit.test("constructor: with single Filter object", function (assert) {
 		var oApplicationFilter = new Filter("propertyPath", "GE", "foo"),
@@ -1236,5 +1235,61 @@ sap.ui.define([
 		// code under test
 		assert.deepEqual(oBinding.getFilterInfo(), null);
 		assert.deepEqual(oBinding.aApplicationFilters, []);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_loadSubTree: calls _importCompleteKeysHierarchy", function (assert) {
+		var oLoadSubTreePromise, oReadExpectation,
+			oBinding = {
+				bHasTreeAnnotations: true,
+				oModel: {
+					callAfterUpdate: function () {},
+					getKey: function () {},
+					read: function () {}
+				},
+				mRequestHandles: {},
+				bSkipDataEvents: true,
+				aSorters: "~aSorters",
+				_createKeyMap: function () {},
+				_importCompleteKeysHierarchy: function () {},
+				_updateNodeKey: function () {},
+				getResolvedPath: function () {}
+			},
+			oBindingMock = this.mock(oBinding),
+			oData = {results: ["~oData"]},
+			oModelMock = this.mock(oBinding.oModel),
+			aParams = ["~sTreeBindingParams"];
+
+		oBindingMock.expects("getResolvedPath").withExactArgs().returns("~sAbsolutePath");
+		oReadExpectation = oModelMock.expects("read")
+			.withExactArgs("~sAbsolutePath", {
+				error: sinon.match.func,
+				groupId: undefined,
+				sorters: "~aSorters",
+				success: sinon.match.func,
+				urlParameters: sinon.match.same(aParams)
+			})
+			.returns("~oReadHandle");
+
+		// code under test
+		oLoadSubTreePromise = ODataTreeBinding.prototype._loadSubTree.call(oBinding, "~oNode", aParams);
+
+		assert.deepEqual(oBinding.mRequestHandles, {"loadSubTree-~sTreeBindingParams": "~oReadHandle"});
+
+		oModelMock.expects("getKey").withExactArgs("~oData").returns("~sParentKey");
+		oBindingMock.expects("_updateNodeKey").withExactArgs("~oNode", "~sParentKey");
+		oBindingMock.expects("_createKeyMap").withExactArgs(sinon.match.same(oData.results), true).returns("~mKeys");
+		oBindingMock.expects("_importCompleteKeysHierarchy").withExactArgs("~mKeys");
+		oModelMock.expects("callAfterUpdate").withExactArgs(sinon.match.func);
+
+		// code under test
+		oReadExpectation.args[0][1].success(oData);
+
+		assert.deepEqual(oBinding.mRequestHandles, {});
+		assert.deepEqual(oBinding.bNeedsUpdate, true);
+
+		return oLoadSubTreePromise.then(function (oData0) {
+			assert.strictEqual(oData0, oData);
+		});
 	});
 });

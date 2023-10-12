@@ -1239,6 +1239,81 @@ function (
 		Core.applyChanges();
 	});
 
+	QUnit.test("SemanticHelper provides correct default action buttons info", function (assert) {
+		var sId = "myFCL",
+			oFCL,
+			defaultButtonsConfig = {
+				midColumn: {
+					closeColumn: null, exitFullScreen: null, fullScreen: null
+				},
+				endColumn: {
+					closeColumn: null, exitFullScreen: null, fullScreen: null
+				}
+			},
+			oExpectedButtonsInfo = {
+				[LT.OneColumn]: defaultButtonsConfig,
+				[LT.TwoColumnsBeginExpanded]: Object.assign({}, defaultButtonsConfig, {
+					midColumn: {
+						closeColumn: "OneColumn", fullScreen: "MidColumnFullScreen", exitFullScreen: null
+					}
+				}),
+				[LT.TwoColumnsMidExpanded]: Object.assign({}, defaultButtonsConfig, {
+					midColumn: {
+						closeColumn: "OneColumn", fullScreen: "MidColumnFullScreen", exitFullScreen: null
+					}
+				}),
+				[LT.ThreeColumnsBeginExpandedEndHidden]: Object.assign({}, defaultButtonsConfig, {
+					midColumn: {
+						closeColumn: "OneColumn", fullScreen: "MidColumnFullScreen", exitFullScreen: null
+					}
+				}),
+				[LT.ThreeColumnsMidExpandedEndHidden]: Object.assign({}, defaultButtonsConfig, {
+					midColumn: {
+						closeColumn: "OneColumn", fullScreen: "MidColumnFullScreen", exitFullScreen: null
+					}
+				}),
+				[LT.ThreeColumnsMidExpanded]: Object.assign({}, defaultButtonsConfig, {
+					endColumn: {
+						closeColumn: "TwoColumnsMidExpanded", fullScreen: "EndColumnFullScreen", exitFullScreen: null
+					}
+				}),
+				[LT.ThreeColumnsEndExpanded]: Object.assign({}, defaultButtonsConfig, {
+					endColumn: {
+						closeColumn: "TwoColumnsMidExpanded", fullScreen: "EndColumnFullScreen", exitFullScreen: null
+					}
+				}),
+				[LT.MidColumnFullScreen]: Object.assign({}, defaultButtonsConfig, {
+					midColumn: {
+						closeColumn: "OneColumn", exitFullScreen: "TwoColumnsMidExpanded", fullScreen: null
+					}
+				}),
+				[LT.EndColumnFullScreen]: Object.assign({}, defaultButtonsConfig, {
+					endColumn: {
+						closeColumn: "TwoColumnsMidExpanded", exitFullScreen: "ThreeColumnsMidExpanded", fullScreen: null
+					}
+				})
+			};
+
+		// setup
+		oFCL = new FlexibleColumnLayout(sId);
+
+		// act
+		var oHelper = FlexibleColumnLayoutSemanticHelper.getInstanceFor(oFCL, {
+			defaultThreeColumnLayoutType: "ThreeColumnsMidExpanded",
+			defaultTwoColumnLayoutType: "TwoColumnsMidExpanded"
+		});
+
+		// assert
+		Object.keys(library.LayoutType).forEach(function(sLayoutType) {
+			var oButtonsInfo = oHelper._getUIStateForLayout(sLayoutType).actionButtonsInfo;
+			assert.propEqual(oButtonsInfo, oExpectedButtonsInfo[sLayoutType]);
+		});
+
+		// act again
+		oFCL.destroy();
+
+	});
+
 	QUnit.module("Private API", {
 		afterEach: function () {
 			this.oFCL.destroy();

@@ -23,7 +23,7 @@ sap.ui.define([
 	'sap/base/util/JSTokenizer',
 	'sap/base/util/each',
 	'sap/base/util/isEmptyObject',
-	'sap/ui/core/Configuration',
+	'sap/ui/base/DesignTime',
 	'sap/ui/core/Lib'
 ],
 function(
@@ -45,7 +45,7 @@ function(
 	JSTokenizer,
 	each,
 	isEmptyObject,
-	Configuration,
+	DesignTime,
 	Library
 ) {
 	"use strict";
@@ -611,7 +611,7 @@ function(
 		Log.debug("XML processing mode is " + (oView._sProcessingMode || "default") + ".", "", "XMLTemplateProcessor");
 		Log.debug("XML will be processed " + (bAsync ? "asynchronously" : "synchronously") + ".", "", "XMLTemplateProcessor");
 
-		var bDesignMode = Configuration.getDesignMode();
+		var bDesignMode = DesignTime.isDesignModeEnabled();
 		if (bDesignMode) {
 			oView._sapui_declarativeSourceInfo = {
 				// the node representing the current control

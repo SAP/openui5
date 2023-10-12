@@ -1,6 +1,7 @@
 /*global QUnit */
 sap.ui.define([
 	"sap/base/Log",
+	"sap/ui/base/DesignTime",
 	"sap/ui/core/Core",
 	"sap/m/Wizard",
 	"sap/m/WizardStep",
@@ -8,9 +9,8 @@ sap.ui.define([
 	"sap/ui/base/ObjectPool",
 	"sap/m/library",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Configuration",
 	"sap/ui/core/library"
-], function(Log, Core, Wizard, WizardStep, Button, ObjectPool, library, jQuery, Configuration, coreLibrary) {
+], function(Log, DesignTime, Core, Wizard, WizardStep, Button, ObjectPool, library, jQuery, coreLibrary) {
 	"use strict";
 
 	// shortcut for sap.ui.core.TitleLevel
@@ -624,7 +624,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("insertStep should work when designMode is true", function (assert) {
-		this.stub(Configuration, "getDesignMode").returns(true);
+		this.stub(DesignTime, "isDesignModeEnabled").returns(true);
 		var oWizard = new Wizard();
 		var oFirstStep = new WizardStep({ title: "First" });
 		var oSecondStep = new WizardStep({ title: "Second" });
@@ -637,7 +637,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("removeStep should work when designMode is true", function (assert) {
-		this.stub(Configuration, "getDesignMode").returns(true);
+		this.stub(DesignTime, "isDesignModeEnabled").returns(true);
 		var oStep = new WizardStep({ title: "First" });
 		var oWizard = new Wizard({ steps: [oStep] });
 

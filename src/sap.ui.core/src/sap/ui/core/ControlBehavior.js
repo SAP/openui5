@@ -22,9 +22,8 @@ sap.ui.define([
 	 *
 	 * @namespace
 	 * @alias module:sap/ui/core/ControlBehavior
-	 * @private
-	 * @ui5-restricted sap.ui.core
-	 * @since 1.116.0
+	 * @public
+	 * @since 1.120
 	 */
 	const ControlBehavior = {
 		/**
@@ -83,7 +82,7 @@ sap.ui.define([
 		 * Returns whether the accessibility mode is enabled or not.
 		 * @return {boolean} whether the accessibility mode is enabled or not
 		 * @public
-		 * @since 1.116.0
+		 * @since 1.120
 		 */
 		isAccessibilityEnabled: () => {
 			return oWritableConfig.get({
@@ -99,7 +98,7 @@ sap.ui.define([
 		 *
 		 * @return {module:sap/ui/core/AnimationMode} The current animationMode
 		 * @public
-		 * @since 1.116.0
+		 * @since 1.120
 		 */
 		getAnimationMode: () => {
 			let sAnimationMode = oWritableConfig.get({
@@ -137,7 +136,7 @@ sap.ui.define([
 		 * @param {module:sap/ui/core/AnimationMode} sAnimationMode A valid animation mode
 		 * @throws {Error} If the provided <code>sAnimationMode</code> does not exist, an error is thrown
 		 * @public
-		 * @since 1.116.0
+		 * @since 1.120
 		 */
 		setAnimationMode: (sAnimationMode) => {
 			BaseConfig._.checkEnum(AnimationMode, sAnimationMode, "animationMode");

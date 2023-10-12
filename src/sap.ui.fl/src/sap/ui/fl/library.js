@@ -3,6 +3,7 @@
  */
 
 sap.ui.define([
+	"sap/ui/core/Lib",
 	"sap/ui/fl/apply/_internal/preprocessors/RegistrationDelegator",
 	"sap/ui/fl/initial/_internal/config",
 	"sap/ui/fl/Utils",
@@ -13,6 +14,7 @@ sap.ui.define([
 	"sap/ui/core/library",
 	"sap/m/library"
 ], function(
+	Lib,
 	RegistrationDelegator,
 	config,
 	Utils,
@@ -460,7 +462,7 @@ sap.ui.define([
   * @public
   * @version ${version}
   */
- var thisLib = sap.ui.getCore().initLibrary({
+ var thisLib = Lib.init({
 	 name: "sap.ui.fl",
 	 version: "${version}",
 	 controls: [

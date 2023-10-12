@@ -1146,7 +1146,7 @@ sap.ui.define([
 	 * @returns {object} A map that contains the initialized libraries. Each library is saved in the map under its name
 	 *  as key.
 	 * @private
-	 * @ui5-restricted sap.ui.core, sap.ui.support
+	 * @ui5-restricted sap.ui.core, sap.ui.support, sap.ui.fl, sap.ui.dt
 	 */
 	Library.all = function() {
 		// return only libraries that are initialized (settings enhanced)

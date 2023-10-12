@@ -1037,14 +1037,15 @@ sap.ui.define([
 				aFullTargets : ["~parentEntity~", "~deepPath~(~keyPredicate~)/B"],
 				message : "in"
 			}]
-		}, { // BCP 2370088390: only messages on transient entries (filter null expected)
+		}, { // BCP 2370088390: only messages for transient entries (Filter.NONE expected)
 			aCreatedContextDeepPaths : ["~deepPath~(~uid0~)", "~deepPath~(~uid1~)", "~deepPath~(~uid2~)"],
 			aFilterForPredicate : [],
 			aMessages : [
 				{aFullTargets : ["~deepPath~(~uid0~)"], message : "in"},
 				{aFullTargets : ["~deepPath~(~uid1~)/property"], message : "in"}
-			]
-		}, { // BCP 2370088390: messages on both persistent and transient entries (filter w/o transient expected)
+			],
+			bFilterNoneExpected : true
+		}, { // BCP 2370088390: messages for both persistent and transient entries (filter w/o transient expected)
 			aCreatedContextDeepPaths : ["~deepPath~(~uid0~)", "~deepPath~(~uid1~)", "~deepPath~(~uid2~)"],
 			aFilterForPredicate : ["(~keyPredicate~)"],
 			aMessages : [
@@ -1063,7 +1064,7 @@ sap.ui.define([
 				aCreatedContexts = (oFixture.aCreatedContextDeepPaths || [])
 					.map((sDeepPath) => ({ getDeepPath() {return sDeepPath;} })),
 				aFilterForPredicate = oFixture.aFilterForPredicate,
-				aFilters = [],
+				aFilters = oFixture.bFilterNoneExpected ? [Filter.NONE] : [],
 				aMessages = oFixture.aMessages,
 				oModel = {getMessagesByPath : function () {}},
 				oBinding = {
@@ -2454,31 +2455,37 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("getContexts: do not load data in case of transient parent", function (assert) {
-		var oBinding = {
-				bLengthFinal : true,
-				bRefresh : true,
-				_fireChange : function () {},
-				_getContexts : function () {},
-				_hasTransientParentContext : function () {},
-				_updateLastStartAndLength : function () {},
-				isFirstCreateAtEnd : function () {}
-				// never called: loadData : function () {}
-			},
-			aContexts = ["~transientContext0"],
-			aResultContexts;
+	[false, true].forEach((bFilterNone) => {
+		QUnit.test("getContexts: do not load data: " + bFilterNone ? "Filter.NONE" : "transient parent", function (assert) {
+			var oBinding = {
+					oCombinedFilter : bFilterNone ? Filter.NONE : undefined,
+					bLengthFinal : true,
+					bRefresh : true,
+					_fireChange : function () {},
+					_getContexts : function () {},
+					_hasTransientParentContext : function () {},
+					_updateLastStartAndLength : function () {},
+					isFirstCreateAtEnd : function () {}
+					// never called: loadData : function () {}
+				},
+				aContexts = ["~transientContext0"],
+				aResultContexts;
 
-		this.mock(oBinding).expects("_updateLastStartAndLength")
-			.withExactArgs(0, 2, undefined, undefined);
-		this.mock(oBinding).expects("_getContexts").withExactArgs(0, 2).returns(aContexts);
-		this.mock(oBinding).expects("_hasTransientParentContext").withExactArgs().returns(true);
-		this.mock(oBinding).expects("isFirstCreateAtEnd").withExactArgs().returns(false);
-		this.mock(oBinding).expects("_fireChange").withExactArgs({reason : ChangeReason.Change});
+			this.mock(oBinding).expects("_updateLastStartAndLength")
+				.withExactArgs(0, 2, undefined, undefined);
+			this.mock(oBinding).expects("_getContexts").withExactArgs(0, 2).returns(aContexts);
+			this.mock(oBinding).expects("_hasTransientParentContext")
+				.withExactArgs()
+				.exactly(bFilterNone ? 0 : 1)
+				.returns(true);
+			this.mock(oBinding).expects("isFirstCreateAtEnd").withExactArgs().returns(false);
+			this.mock(oBinding).expects("_fireChange").withExactArgs({reason : ChangeReason.Change});
 
-		// code under test
-		aResultContexts = ODataListBinding.prototype.getContexts.call(oBinding, 0, 2);
+			// code under test
+			aResultContexts = ODataListBinding.prototype.getContexts.call(oBinding, 0, 2);
 
-		assert.strictEqual(aResultContexts, aContexts);
+			assert.strictEqual(aResultContexts, aContexts);
+		});
 	});
 
 	//*********************************************************************************************
@@ -3281,45 +3288,48 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("filter: removes persisted created entries", function (assert) {
-		var oRemoveExpectation, oResetDataExpectation,
-			aApplicationFilters = [],
-			oBinding = {
-				aApplicationFilters : aApplicationFilters,
-				bInitial : false,
-				oModel : {checkFilterOperation : function () {}},
-				_fireRefresh : function () {},
-				_removePersistedCreatedContexts : function () {},
-				addComparators : function () {},
-				abortPendingRequest : function () {},
-				createFilterParams : function () {},
-				resetData : function () {},
-				useClientMode : function () {}
-			},
-			oBindingMock = this.mock(oBinding),
-			aFilters = [];
+	[false, true].forEach((bFilterNone) => {
+		QUnit.test("filter: removes persisted created entries, with Filter.NONE: " + bFilterNone, function (assert) {
+			var oRemoveExpectation, oResetDataExpectation,
+				aApplicationFilters = [],
+				oBinding = {
+					aApplicationFilters : aApplicationFilters,
+					bInitial : false,
+					oModel : {checkFilterOperation : function () {}},
+					_fireRefresh : function () {},
+					_removePersistedCreatedContexts : function () {},
+					addComparators : function () {},
+					abortPendingRequest : function () {},
+					createFilterParams : function () {},
+					resetData : function () {},
+					useClientMode : function () {}
+				},
+				oBindingMock = this.mock(oBinding),
+				aFilters = bFilterNone ? [Filter.NONE] : [];
 
-		this.mock(oBinding.oModel).expects("checkFilterOperation")
-			.withExactArgs(sinon.match.same(aFilters));
-		this.mock(FilterProcessor).expects("combineFilters")
-			.withExactArgs(sinon.match.same(aFilters), sinon.match.same(aApplicationFilters))
-			.returns("~oCombinedFilter");
-		oBindingMock.expects("useClientMode").withExactArgs().twice().returns(false);
-		oBindingMock.expects("createFilterParams").withExactArgs("~oCombinedFilter");
-		oBindingMock.expects("addComparators").withExactArgs(sinon.match.same(aFilters));
-		oBindingMock.expects("addComparators").withExactArgs(sinon.match.same(aApplicationFilters));
-		oRemoveExpectation = oBindingMock.expects("_removePersistedCreatedContexts")
-			.withExactArgs();
-		oResetDataExpectation = oBindingMock.expects("resetData").withExactArgs();
-		oBindingMock.expects("abortPendingRequest").withExactArgs(true);
-		oBindingMock.expects("_fireRefresh").withExactArgs({reason : ChangeReason.Filter});
+			this.mock(oBinding.oModel).expects("checkFilterOperation")
+				.withExactArgs(sinon.match.same(aFilters));
+			this.mock(FilterProcessor).expects("combineFilters")
+				.withExactArgs(sinon.match.same(aFilters), sinon.match.same(aApplicationFilters))
+				.returns(bFilterNone ? Filter.NONE : "~oCombinedFilter");
+			oBindingMock.expects("useClientMode").withExactArgs().twice().returns(false);
+			oBindingMock.expects("createFilterParams").exactly(bFilterNone ? 0 : 1).withExactArgs("~oCombinedFilter");
+			oBindingMock.expects("addComparators").exactly(bFilterNone ? 0 : 1).withExactArgs(sinon.match.same(aFilters));
+			oBindingMock.expects("addComparators").exactly(bFilterNone ? 0 : 1)
+				.withExactArgs(sinon.match.same(aApplicationFilters));
+			oRemoveExpectation = oBindingMock.expects("_removePersistedCreatedContexts")
+				.withExactArgs();
+			oResetDataExpectation = oBindingMock.expects("resetData").withExactArgs();
+			oBindingMock.expects("abortPendingRequest").withExactArgs(true);
+			oBindingMock.expects("_fireRefresh").withExactArgs({reason : ChangeReason.Filter});
 
-		// code under test
-		assert.strictEqual(ODataListBinding.prototype.filter.call(oBinding, aFilters), oBinding);
+			// code under test
+			assert.strictEqual(ODataListBinding.prototype.filter.call(oBinding, aFilters), oBinding);
 
-		assert.strictEqual(oBinding.aFilters, aFilters);
-		assert.strictEqual(oBinding.oCombinedFilter, "~oCombinedFilter");
-		assert.ok(oResetDataExpectation.calledImmediatelyAfter(oRemoveExpectation));
+			assert.strictEqual(oBinding.aFilters, aFilters);
+			assert.strictEqual(oBinding.oCombinedFilter, bFilterNone ? Filter.NONE : "~oCombinedFilter");
+			assert.ok(oResetDataExpectation.calledImmediatelyAfter(oRemoveExpectation));
+		});
 	});
 
 	//*********************************************************************************************
@@ -3559,15 +3569,22 @@ sap.ui.define([
 		bResolved : true,
 		bResult : false,
 		bTransient : false
+	}, {
+		filterNone : Filter.NONE,
+		bResolved : undefined,
+		bResult : true,
+		bTransient : undefined
 	}].forEach(function (oFixture, i) {
 		QUnit.test("resetData: set bLengthFinal #" + i, function (assert) {
 			var oBinding = {
+					oCombinedFilter : oFixture.filterNone,
 					_hasTransientParentContext : function () {},
 					isResolved : function () {}
 				};
 
 			this.mock(oBinding).expects("_hasTransientParentContext")
 				.withExactArgs()
+				.exactly(oFixture.bTransient === undefined ? 0 : 1)
 				.returns(oFixture.bTransient);
 			this.mock(oBinding).expects("isResolved")
 				.withExactArgs()

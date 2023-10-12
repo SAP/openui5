@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['sap/ui/base/EventProvider', './XMLViewSerializer', "sap/base/assert", "sap/ui/core/Configuration"],
-	function(EventProvider, XMLViewSerializer, assert, Configuration) {
+sap.ui.define(['sap/ui/base/EventProvider', './XMLViewSerializer', "sap/base/assert", "sap/ui/base/DesignTime"],
+	function(EventProvider, XMLViewSerializer, assert, DesignTime) {
 		"use strict";
 
 
@@ -142,7 +142,7 @@ sap.ui.define(['sap/ui/base/EventProvider', './XMLViewSerializer', "sap/base/ass
 
 					// double check that the function is on the controller
 					var oController = oView.getController();
-					if (oController[sHandlerName] || Configuration.getControllerCodeDeactivated()) {
+					if (oController[sHandlerName] || DesignTime.isControllerCodeDeactivated()) {
 						return sHandlerName;
 					}
 				}

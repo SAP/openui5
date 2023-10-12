@@ -994,12 +994,12 @@ sap.ui.define([
 		});
 
 		QUnit.test("when the control's dt metadata has a reveal and addViaDelegate and the default delegate is not available", function(assert) {
-			sandbox.stub(oCore, "loadLibrary").callsFake(function(...aArgs) {
-				const [sLibraryName] = aArgs;
-				if (includes(DelegateMediatorAPI.getKnownDefaultDelegateLibraries(), sLibraryName)) {
+			sandbox.stub(Lib, "load").callsFake(function(...aArgs) {
+				const [oLibrary] = aArgs;
+				if (includes(DelegateMediatorAPI.getKnownDefaultDelegateLibraries(), oLibrary.name)) {
 					return Promise.reject();
 				}
-				return oCore.loadLibrary.wrappedMethod.apply(this, aArgs);
+				return Lib.load.wrappedMethod.apply(this, aArgs);
 			});
 
 			return createOverlayWithAggregationActions.call(this, {
@@ -1026,12 +1026,12 @@ sap.ui.define([
 		});
 
 		QUnit.test("when the control's dt metadata has an instance-specific delegate and an unavailable default delegate", function(assert) {
-			sandbox.stub(oCore, "loadLibrary").callsFake(function(...aArgs) {
-				const [sLibraryName] = aArgs;
-				if (includes(DelegateMediatorAPI.getKnownDefaultDelegateLibraries(), sLibraryName)) {
+			sandbox.stub(Lib, "load").callsFake(function(...aArgs) {
+				const [oLibrary] = aArgs;
+				if (includes(DelegateMediatorAPI.getKnownDefaultDelegateLibraries(), oLibrary.name)) {
 					return Promise.reject();
 				}
-				return oCore.loadLibrary.wrappedMethod.apply(this, aArgs);
+				return Lib.load.wrappedMethod.apply(this, aArgs);
 			});
 
 			RtaQunitUtils.stubSapUiRequire(sandbox, [{

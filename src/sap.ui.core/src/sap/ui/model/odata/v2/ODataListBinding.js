@@ -345,7 +345,7 @@ sap.ui.define([
 		}
 
 		aContexts = this._getContexts(iStartIndex, iLength);
-		if (this._hasTransientParentContext()) {
+		if (this.oCombinedFilter === Filter.NONE || this._hasTransientParentContext()) {
 			// skip #loadData
 		} else if (this.useClientMode()) {
 			if (!this.aAllKeys && !this.bPendingRequest && this.oModel.getServiceMetadata()) {
@@ -1360,7 +1360,8 @@ sap.ui.define([
 		this.aKeys = [];
 		this.aAllKeys = null;
 		this.iLength = 0;
-		this.bLengthFinal = this._hasTransientParentContext() || !this.isResolved();
+		this.bLengthFinal = this.oCombinedFilter === Filter.NONE || this._hasTransientParentContext()
+			|| !this.isResolved();
 		this.sChangeReason = undefined;
 		this.bDataAvailable = false;
 		this.bLengthRequested = false;
@@ -1711,13 +1712,15 @@ sap.ui.define([
 		}
 		this.oCombinedFilter = FilterProcessor.combineFilters(this.aFilters, this.aApplicationFilters);
 
-		if (!this.useClientMode()) {
+		if (!this.useClientMode() && this.oCombinedFilter !== Filter.NONE) {
 			this.createFilterParams(this.oCombinedFilter);
 		}
 
 		if (!this.bInitial) {
-			this.addComparators(this.aFilters);
-			this.addComparators(this.aApplicationFilters);
+			if (this.oCombinedFilter !== Filter.NONE) {
+				this.addComparators(this.aFilters);
+				this.addComparators(this.aApplicationFilters);
+			}
 
 			if (this.useClientMode()) {
 				// apply clientside filters/sorters only if data is available
@@ -2005,6 +2008,7 @@ sap.ui.define([
 			aFilters = [],
 			aPredicateSet = new Set(),
 			sResolvedPath = this.getResolvedPath(),
+			bTransientMatched = false,
 			that = this;
 
 		function isNonTransientTarget(sFullTarget) {
@@ -2024,10 +2028,14 @@ sap.ui.define([
 			if (!fnFilter || fnFilter(oMessage)) {
 				// this.oModel.getMessagesByPath returns only messages with full target starting with deep path
 				oMessage.aFullTargets.forEach(function (sFullTarget) {
-					if (sFullTarget.startsWith(sDeepPath) && isNonTransientTarget(sFullTarget)) {
-						sPredicate = sFullTarget.slice(sDeepPath.length).split("/")[0];
-						if (sPredicate) {
-							aPredicateSet.add(sPredicate);
+					if (sFullTarget.startsWith(sDeepPath)) {
+						if (isNonTransientTarget(sFullTarget)) {
+							sPredicate = sFullTarget.slice(sDeepPath.length).split("/")[0];
+							if (sPredicate) {
+								aPredicateSet.add(sPredicate);
+							}
+						} else {
+							bTransientMatched = true;
 						}
 					}
 				});
@@ -2041,6 +2049,8 @@ sap.ui.define([
 			oFilter = aFilters[0];
 		} else if (aFilters.length > 1) {
 			oFilter = new Filter({filters : aFilters});
+		} else if (bTransientMatched) {
+			oFilter = Filter.NONE;
 		} // else oFilter = null
 
 		return Promise.resolve(oFilter);

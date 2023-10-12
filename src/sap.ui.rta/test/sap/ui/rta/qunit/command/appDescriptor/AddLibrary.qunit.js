@@ -6,7 +6,7 @@ sap.ui.define([
 	"sap/ui/fl/descriptorRelated/api/DescriptorChangeFactory",
 	"sap/ui/rta/command/CommandFactory",
 	"sap/m/Button",
-	"sap/ui/core/Core",
+	"sap/ui/core/Lib",
 	"sap/ui/thirdparty/sinon-4",
 	"test-resources/sap/ui/rta/qunit/RtaQunitUtils"
 ], function(
@@ -15,7 +15,7 @@ sap.ui.define([
 	DescriptorChangeFactory,
 	CommandFactory,
 	Button,
-	oCore,
+	Lib,
 	sinon,
 	RtaQunitUtils
 ) {
@@ -57,7 +57,7 @@ sap.ui.define([
 					oAddLibraryCommand.execute()
 					.then(function() {
 						assert.ok(
-							oCore.getLoadedLibraries()["sap.uxap"], "upon execution, 'sap.uxap' library is loaded");
+							Lib.all()["sap.uxap"], "upon execution, 'sap.uxap' library is loaded");
 						done();
 					});
 				}

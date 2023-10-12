@@ -159,6 +159,22 @@ sap.ui.define([
 		return this;
 	};
 
+	/**
+	 * Overridden version of the 'exit' method to explicit remove the DOM element when the control is rendered
+	 * in the static UIArea because the control's DOM can't be removed when its parent gets invalidated
+	 *
+	 * @private
+	 */
+	InvisibleText.prototype.exit = function() {
+		var oDomRef = this.getDomRef();
+		if (oDomRef && StaticArea.contains(oDomRef)) {
+			// when a InvisibleText is rendered in the static UIArea, it has to remove itself when getting
+			// destroyed because its potential parent can't remove it since it's not rendered within its
+			// parent
+			oDomRef.remove();
+		}
+	};
+
 	// map of text IDs
 	var mTextIds = Object.create(null);
 

@@ -7,10 +7,10 @@ sap.ui.define([
 	"sap/ui/test/autowaiter/_promiseWaiter",
 	"sap/m/ScrollContainer",
 	"sap/m/Panel",
-	"sap/ui/core/Configuration",
+	"sap/ui/core/ControlBehavior",
 	"sap/ui/qunit/utils/nextUIUpdate"
 ], function (_LogCollector, _autoWaiter, _timeoutWaiter, _XHRWaiter, _promiseWaiter,
-	ScrollContainer, Panel, Configuration, nextUIUpdate) {
+	ScrollContainer, Panel, ControlBehavior, nextUIUpdate) {
 	"use strict";
 
 	var oLogCollector = _LogCollector.getInstance();
@@ -23,7 +23,7 @@ sap.ui.define([
 			this.oTimeoutWaiterStub.returns(false);
 			this.oXHRWaiterStub.returns(false);
 			this.oPromiseWaiterStub.returns(false);
-			Configuration.setAnimationMode("full");
+			ControlBehavior.setAnimationMode("full");
 
 			this.oScrollContainer = new ScrollContainer({
 				content: [new Panel({ height: "2000px" })]

@@ -665,7 +665,12 @@ sap.ui.define([
 		 * Placeholder for upload button control.
 		 * @public
 		 */
-		UploadButtonPlaceholder : "UploadButtonPlaceholder"
+		UploadButtonPlaceholder : "UploadButtonPlaceholder",
+		/**
+		 * Placeholder for cloud file picker button.
+		 * @public
+		*/
+		CloudFilePickerButtonPlaceholder : "CloudFilePickerButtonPlaceholder"
 	};
 
 	 /**

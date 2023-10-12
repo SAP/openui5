@@ -180,19 +180,6 @@ sap.ui.define(['./util/EnvHelper', "sap/base/util/merge"], function (EnvHelper, 
 				sinon: true
 			},
 
-			"MemoryLeak": {
-				group: "Basic",
-				module: "./MemoryLeak.qunit",
-				qunit: {
-					// MemoryLeakCheck loads qunit-1
-					version: 1,
-					// make sure results are consistent/stable and the "statistics" test in the end is actually run in the end
-					reorder: false
-				},
-				// tests are added asynchronously, hence autostart is disabled and QUnit.start is called later
-				autostart: false
-			},
-
 			"EnforceSemanticRendering": {
 				title: "QUnit Page for Semantic Rendering Coverage"
 			},

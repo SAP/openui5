@@ -15,7 +15,7 @@ sap.ui.define([
 	"sap/base/util/restricted/_omit",
 	"sap/ui/core/mvc/View",
 	"sap/base/Log",
-	"sap/ui/core/Configuration"
+	"sap/ui/base/DesignTime"
 ], function(
 	OverlayRegistry,
 	ElementOverlay,
@@ -29,7 +29,7 @@ sap.ui.define([
 	_omit,
 	View,
 	Log,
-	Configuration
+	DesignTime
 ) {
 	"use strict";
 
@@ -183,7 +183,7 @@ sap.ui.define([
 		};
 
 		oOutline._enrichExtensionPointData = function(oData, oOverlay) {
-			var bIsDesignMode = Configuration.getDesignMode();
+			var bIsDesignMode = DesignTime.isDesignModeEnabled();
 			if (!bIsDesignMode) {
 				return undefined;
 			}

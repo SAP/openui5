@@ -6,13 +6,12 @@
  * Initialization Code and shared classes of library sap.ui.rta.
  */
 sap.ui.define([
-	"sap/ui/core/Core",
+	"sap/ui/core/Lib",
 	"sap/ui/core/library",
 	"sap/m/library",
 	"sap/ui/fl/library",
 	"sap/ui/dt/library"
-],
-function() {
+], function(Lib) {
 	"use strict";
 
 	/**
@@ -25,7 +24,7 @@ function() {
 	 * @since 1.50
 	 * @private
 	 */
-	var thisLib = sap.ui.getCore().initLibrary({
+	var thisLib = Lib.init({
 		name: "sap.ui.rta",
 		version: "${version}",
 		dependencies: ["sap.ui.core", "sap.m", "sap.ui.fl", "sap.ui.dt"],

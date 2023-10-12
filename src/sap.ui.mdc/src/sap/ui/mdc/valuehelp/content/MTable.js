@@ -343,7 +343,7 @@ sap.ui.define([
 					const ScrollContainer = aModules[3];
 					const ResourceModel = aModules[4];
 
-					if (!this._oContentLayout) {
+					if (!this._oContentLayout && !this.isDestroyed()) {
 
 						this._oFilterBarVBox = new VBox(this.getId() + "-FilterBarBox");
 						this._oFilterBarVBox.addStyleClass("sapMdcValueHelpPanelFilterbar");

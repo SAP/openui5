@@ -328,6 +328,64 @@ sap.ui.define([
 			When.Keyboard.iRemoveSelection();
 			Then.iSeeCellsSelected();
 
+			Given.iChangeRangeLimit(200);
+		});
+
+		opaTest("Row- and Cell Selection interaction", function(Given, When, Then) {
+			// No selection at all => cells should be selected
+			When.iFocusCell(1, 1);
+			When.Keyboard.iSelectNextCell(false, true);
+			When.Keyboard.iSelectNextCell(false, true);
+			Then.iSeeCellsSelected({ rowIndex: 1, colIndex: 1 }, { rowIndex: 3, colIndex: 1 });
+			Then.iSeeCellFocused({ rowIndex: 3, colIndex: 1 });
+
+			When.Keyboard.iSelectRows();
+			Then.iSeeCellsSelected();
+			Then.iSeeRowsSelected(1, 3);
+
+			// Focus row and try to extend row selection => row selection extends
+			When.iFocusCell(3, 1);
+			When.Keyboard.iSelectNextCell(false, true);
+
+			Then.iSeeCellFocused({ rowIndex: 4, colIndex: 1});
+			Then.iSeeCellsSelected();
+			Then.iSeeRowsSelected(1, 4);
+
+			// Focus selected row with a cell selection block and extend => cell selection extends
+			When.iFocusCell(4, 1);
+			When.Keyboard.iSelectDeselectCell();
+			When.Keyboard.iSelectNextCell(false, true);
+
+			Then.iSeeCellFocused({ rowIndex: 5, colIndex: 1 });
+			Then.iSeeCellsSelected({ rowIndex: 4, colIndex: 1 }, { rowIndex: 5, colIndex: 1 });
+			Then.iSeeRowsSelected(1, 4);
+
+			When.Keyboard.iSelectNextCell(false, false);
+			When.Keyboard.iSelectNextCell(false, false);
+			When.Keyboard.iSelectNextCell(false, false);
+
+			Then.iSeeCellFocused({ rowIndex: 2, colIndex: 1 });
+			Then.iSeeCellsSelected({ rowIndex: 2, colIndex: 1 }, { rowIndex: 4, colIndex: 1 });
+			Then.iSeeRowsSelected(1, 4);
+
+			// Focus selected row with cell selection block, but focus is outside of block => extend row selection
+			When.iFocusCell(4, 2);
+			When.Keyboard.iSelectNextCell(false, true);
+			When.Keyboard.iSelectNextCell(false, true);
+
+			Then.iSeeCellFocused({ rowIndex: 6, colIndex: 2 });
+			Then.iSeeCellsSelected({ rowIndex: 2, colIndex: 1 }, { rowIndex: 4, colIndex: 1 });
+			Then.iSeeRowsSelected(1, 6);
+
+			// Focus outside any selection => new selection block
+			When.iFocusCell(0, 0);
+			When.Keyboard.iSelectNextCell(false, true);
+			When.Keyboard.iSelectNextCell(false, true);
+
+			Then.iSeeCellFocused({ rowIndex: 2, colIndex: 0 });
+			Then.iSeeCellsSelected({ rowIndex: 0, colIndex: 0 }, { rowIndex: 2, colIndex: 0 });
+			Then.iSeeRowsSelected(1, 6);
+
 			Then.iTeardownMyApp();
 		});
 

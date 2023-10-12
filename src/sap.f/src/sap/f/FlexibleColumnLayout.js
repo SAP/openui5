@@ -2857,8 +2857,7 @@ sap.ui.define([
 	 * @ui5-restricted sap.f.FlexibleColumnLayoutSemanticHelper
 	 */
 	FlexibleColumnLayout.prototype._getColumnWidthDistributionForLayout = function (sLayout, bAsArray, iMaxColumnsCount) {
-		var oMap = {},
-			sColumnWidthDistribution = this._getLocalStorage(iMaxColumnsCount).get(sLayout),
+		var sColumnWidthDistribution = this._getLocalStorage(iMaxColumnsCount).get(sLayout),
 			vResult;
 
 		iMaxColumnsCount || (iMaxColumnsCount = this.getMaxColumnsCount());
@@ -2871,34 +2870,7 @@ sap.ui.define([
 			&& sColumnWidthDistribution) {
 			vResult = sColumnWidthDistribution;
 		} else {
-
-			// Layouts with the same distribution for all cases
-			oMap[LT.OneColumn] = "100/0/0";
-			oMap[LT.MidColumnFullScreen] = "0/100/0";
-			oMap[LT.EndColumnFullScreen] = "0/0/100";
-
-			if (iMaxColumnsCount === 1) {
-
-				// On 1 column, all have fullscreen mapping
-				oMap[LT.TwoColumnsBeginExpanded] = "0/100/0";
-				oMap[LT.TwoColumnsMidExpanded] = "0/100/0";
-				oMap[LT.ThreeColumnsMidExpanded] = "0/0/100";
-				oMap[LT.ThreeColumnsEndExpanded] = "0/0/100";
-				oMap[LT.ThreeColumnsMidExpandedEndHidden] = "0/0/100";
-				oMap[LT.ThreeColumnsBeginExpandedEndHidden] = "0/0/100";
-
-			} else {
-
-				// On 2 and 3 columns, the only difference is in the modes where all 3 columns are visible
-				oMap[LT.TwoColumnsBeginExpanded] = "67/33/0";
-				oMap[LT.TwoColumnsMidExpanded] = "33/67/0";
-				oMap[LT.ThreeColumnsMidExpanded] = iMaxColumnsCount === 2 ? "0/67/33" : "25/50/25";
-				oMap[LT.ThreeColumnsEndExpanded] = iMaxColumnsCount === 2 ? "0/33/67" : "25/25/50";
-				oMap[LT.ThreeColumnsMidExpandedEndHidden] = "33/67/0";
-				oMap[LT.ThreeColumnsBeginExpandedEndHidden] = "67/33/0";
-			}
-
-			vResult = oMap[sLayout];
+			vResult = this._getDefaultColumnWidthDistributionForLayout(sLayout, iMaxColumnsCount);
 		}
 
 		if (bAsArray) {
@@ -2908,6 +2880,44 @@ sap.ui.define([
 		}
 
 		return vResult;
+	};
+
+	/**
+	 * Returns a string, representing the default relative percentage sizes of the columns
+	 * for the given layout
+	 * @param {sap.f.LayoutType} sLayout the layout
+	 * @param {number} iMaxColumnsCount the maximun available number of columns
+	 * @returns {string} a representation in the format "begin/mid/end" (f.e. "33/67/0")
+	 */
+	FlexibleColumnLayout.prototype._getDefaultColumnWidthDistributionForLayout = function (sLayout, iMaxColumnsCount) {
+		var oMap = {};
+		// Layouts with the same distribution for all cases
+		oMap[LT.OneColumn] = "100/0/0";
+		oMap[LT.MidColumnFullScreen] = "0/100/0";
+		oMap[LT.EndColumnFullScreen] = "0/0/100";
+
+		if (iMaxColumnsCount === 1) {
+
+			// On 1 column, all have fullscreen mapping
+			oMap[LT.TwoColumnsBeginExpanded] = "0/100/0";
+			oMap[LT.TwoColumnsMidExpanded] = "0/100/0";
+			oMap[LT.ThreeColumnsMidExpanded] = "0/0/100";
+			oMap[LT.ThreeColumnsEndExpanded] = "0/0/100";
+			oMap[LT.ThreeColumnsMidExpandedEndHidden] = "0/0/100";
+			oMap[LT.ThreeColumnsBeginExpandedEndHidden] = "0/0/100";
+
+		} else {
+
+			// On 2 and 3 columns, the only difference is in the modes where all 3 columns are visible
+			oMap[LT.TwoColumnsBeginExpanded] = "67/33/0";
+			oMap[LT.TwoColumnsMidExpanded] = "33/67/0";
+			oMap[LT.ThreeColumnsMidExpanded] = iMaxColumnsCount === 2 ? "0/67/33" : "25/50/25";
+			oMap[LT.ThreeColumnsEndExpanded] = iMaxColumnsCount === 2 ? "0/33/67" : "25/25/50";
+			oMap[LT.ThreeColumnsMidExpandedEndHidden] = "33/67/0";
+			oMap[LT.ThreeColumnsBeginExpandedEndHidden] = "67/33/0";
+		}
+
+		return oMap[sLayout];
 	};
 
 	FlexibleColumnLayout.prototype._attachAfterColumnResizedOnce = function (sColumn, fnSuccessCallback, fnErrorCallback) {

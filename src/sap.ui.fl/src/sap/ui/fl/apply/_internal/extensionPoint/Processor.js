@@ -11,7 +11,7 @@ sap.ui.define([
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/base/SyncPromise",
 	"sap/base/util/merge",
-	"sap/ui/core/Configuration"
+	"sap/ui/base/DesignTime"
 ],
 function(
 	Applier,
@@ -21,7 +21,7 @@ function(
 	JsControlTreeModifier,
 	SyncPromise,
 	merge,
-	Configuration
+	DesignTime
 ) {
 	"use strict";
 
@@ -117,7 +117,7 @@ function(
 		oRegistryPromise: Promise.resolve(),
 
 		registerExtensionPoint(mExtensionPointInfo) {
-			if (Configuration.getDesignMode()) {
+			if (DesignTime.isDesignModeEnabled()) {
 				if (Processor.oExtensionPointRegistry) {
 					Processor.oExtensionPointRegistry.registerExtensionPoint(mExtensionPointInfo);
 					return SyncPromise.resolve();

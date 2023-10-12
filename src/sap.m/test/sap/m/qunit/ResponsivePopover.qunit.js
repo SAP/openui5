@@ -267,6 +267,21 @@ sap.ui.define([
 		assert.ok(this.oResponsivePopover.getEndButton(), "Should be executed without any errors");
 	});
 
+	QUnit.test("Add end button without begin button", function (assert) {
+		var oPopover = new ResponsivePopover();
+		// create footer
+		oPopover._createButtonFooter();
+		// spy
+		var oInserAggregationSpy = this.spy(oPopover._oFooter, "insertContent");
+
+		// act
+		oPopover.setEndButton(new Button());
+		oCore.applyChanges();
+
+		// assert
+		assert.strictEqual(oInserAggregationSpy.getCall(0).args[1], 1, "insert content should be called with position 1 for end button");
+	});
+
 	QUnit.test("Clone method", function(assert) {
 
 		// Act and Arrange

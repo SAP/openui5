@@ -9,8 +9,8 @@ sap.ui.define([
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Configuration"
-], function(Log, Button, Component, UIComponent, XMLTemplateProcessor, XMLProcessingMode, XMLView, JSONModel, jQuery, Configuration) {
+	"sap/ui/base/DesignTime"
+], function(Log, Button, Component, UIComponent, XMLTemplateProcessor, XMLProcessingMode, XMLView, JSONModel, jQuery, DesignTime) {
 	"use strict";
 
 	QUnit.module("enrichTemplateIdsPromise", {
@@ -104,8 +104,7 @@ sap.ui.define([
 		assert.expect(7);
 
 		// Arrange
-		var oConfig = Configuration;
-		this.stub(oConfig, "getDesignMode").returns(true);
+		this.stub(DesignTime, "isDesignModeEnabled").returns(true);
 
 		// Act
 		return XMLView.create({
@@ -132,8 +131,7 @@ sap.ui.define([
 		assert.expect(3);
 
 		// Arrange
-		var oConfig = Configuration;
-		this.stub(oConfig, "getDesignMode").returns(false);
+		this.stub(DesignTime, "isDesignModeEnabled").returns(false);
 
 		// Act
 		return XMLView.create({

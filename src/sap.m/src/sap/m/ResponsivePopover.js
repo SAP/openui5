@@ -633,8 +633,15 @@ sap.ui.define([
 				oOldButton = this[sGetterName](),
 				oFooter = this._createButtonFooter(),
 				sPrivateName = "_o" + this._firstLetterUpperCase(sPos) + "Button",
-				iIndex = (sPos.toLowerCase() === "begin" ? 0 : 1),
-				sOtherGetterName = (sPos.toLowerCase() === "begin" ? "getEndButton" : "getBeginButton");
+				sOtherGetterName = (sPos.toLowerCase() === "begin" ? "getEndButton" : "getBeginButton"),
+				iIndex;
+
+			if (sPos.toLowerCase() === "begin") {
+				iIndex = 0;
+			} else {
+				// place end button as first when no begin button is availble
+				iIndex = this.getBeginButton() ? 1 : 0;
+			}
 
 			if (oOldButton) {
 				oFooter.removeContent(oOldButton);

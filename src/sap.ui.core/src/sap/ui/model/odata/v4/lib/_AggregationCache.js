@@ -151,7 +151,7 @@ sap.ui.define([
 			throw new Error("Unsupported expandTo: " + this.oAggregation.expandTo);
 		}
 
-		const iIndex = parseInt(sIndex);
+		let iIndex = parseInt(sIndex);
 		if (isNaN(iIndex)) {
 			throw new Error(`Unsupported kept-alive entity: ${this.sResourcePath}${sIndex}`);
 		}
@@ -168,8 +168,10 @@ sap.ui.define([
 		return SyncPromise.resolve(
 			this.oRequestor.request("DELETE", sEditUrl, oGroupLock, {"If-Match" : oElement})
 		).then(() => {
+			// the element might have moved due to parallel insert/delete
+			iIndex = _Cache.getElementIndex(this.aElements, sPredicate, iIndex);
 			// remove in parent cache
-			oParentCache.removeElement(undefined, iIndexInParentCache, sPredicate, "");
+			oParentCache.removeElement(iIndexInParentCache, sPredicate);
 			if (iIndex && !oParentCache.getValue("$count")) {
 				// make parent a leaf (the direct predecessor; if index is 0, there is no parent)
 				const oParent = this.aElements[iIndex - 1];
@@ -181,7 +183,7 @@ sap.ui.define([
 			}
 			// remove in this cache
 			this.shiftIndex(iIndex, -1);
-			this.removeElement(this.aElements, iIndex, sPredicate, "");
+			this.removeElement(iIndex, sPredicate);
 			// notify caller
 			fnCallback(iIndex, -1);
 		});
@@ -393,7 +395,8 @@ sap.ui.define([
 	 *   A (temporary) key predicate for the transient entity: "($uid=...)"
 	 * @param {object} oEntityData
 	 *   The initial entity data, already cloned and cleaned of client-side annotations (except
-	 *   "@$ui5.node.parent" which contains the OData ID string needed for "...@odata.bind")
+	 *   "@$ui5.node.parent" which contains the optional OData ID string needed for
+	 *   "...@odata.bind")
 	 * @param {boolean} bAtEndOfCreated
 	 *   Whether the newly created entity should be inserted after previously created entities or at
 	 *   the front of the list.
@@ -406,15 +409,16 @@ sap.ui.define([
 	 *   A promise which is resolved with the created entity when the POST request has been
 	 *   successfully sent and the entity has been marked as non-transient
 	 * @throws {Error}
-	 *   If <code>this.oAggregation.expandTo > 1</code>, <code>bAtEndOfCreated</code> is set, or the
-	 *   parent is collapsed
+	 *   If <code>this.oAggregation.expandTo > 1</code> (except for new root),
+	 *   <code>bAtEndOfCreated</code> is set, or the parent is collapsed
 	 *
 	 * @public
 	 */
 	// @override sap.ui.model.odata.v4.lib._Cache#create
 	_AggregationCache.prototype.create = function (oGroupLock, oPostPathPromise, sPath,
 			sTransientPredicate, oEntityData, bAtEndOfCreated, fnErrorCallback, fnSubmitCallback) {
-		if (this.oAggregation.expandTo > 1) {
+		const sParentPath = oEntityData["@$ui5.node.parent"];
+		if (sParentPath && this.oAggregation.expandTo > 1) {
 			throw new Error("Unsupported expandTo: " + this.oAggregation.expandTo);
 		}
 		if (bAtEndOfCreated) {
@@ -422,15 +426,16 @@ sap.ui.define([
 		}
 
 		const aElements = this.aElements;
-		const sParentPath = oEntityData["@$ui5.node.parent"];
-		const sParentPredicate = sParentPath.slice(sParentPath.indexOf("("));
+		const sParentPredicate = sParentPath?.slice(sParentPath.indexOf("("));
 		const oParentNode = aElements.$byPredicate[sParentPredicate];
-		if (oParentNode["@$ui5.node.isExpanded"] === false) {
+		if (oParentNode?.["@$ui5.node.isExpanded"] === false) {
 			throw new Error("Unsupported collapsed parent: " + sParentPath);
 		}
-		const iIndex = aElements.indexOf(oParentNode) + 1;
+		const iIndex = aElements.indexOf(oParentNode) + 1; // 0 w/o oParentNode :-)
 
-		let oCache = _Helper.getPrivateAnnotation(oParentNode, "cache");
+		let oCache = oParentNode
+			? _Helper.getPrivateAnnotation(oParentNode, "cache")
+			: this.oFirstLevel;
 		if (!oCache) {
 			oCache = this.createGroupLevelCache(oParentNode);
 			oCache.setEmpty();
@@ -449,11 +454,15 @@ sap.ui.define([
 				aElements.splice(aElements.indexOf(oEntityData), 1);
 			}.bind(this));
 
-		// add @odata.bind to POST body only
-		_Helper.getPrivateAnnotation(oEntityData, "postBody")
-			[this.oAggregation.$ParentNavigationProperty + "@odata.bind"]
-				= _Helper.makeRelativeUrl("/" + sParentPath, "/" + this.sResourcePath);
-		oEntityData["@$ui5.node.level"] = oParentNode["@$ui5.node.level"] + 1;
+		if (sParentPath) {
+			// add @odata.bind to POST body only
+			_Helper.getPrivateAnnotation(oEntityData, "postBody")
+				[this.oAggregation.$ParentNavigationProperty + "@odata.bind"]
+					= _Helper.makeRelativeUrl("/" + sParentPath, "/" + this.sResourcePath);
+		}
+		oEntityData["@$ui5.node.level"] = oParentNode
+			? oParentNode["@$ui5.node.level"] + 1
+			: 1;
 
 		aElements.splice(iIndex, 0, null); // create a gap
 		this.addElements(oEntityData, iIndex, oCache, 0);
@@ -567,11 +576,17 @@ sap.ui.define([
 			this.aElements.$byPredicate = aOldElements.$byPredicate;
 			iCount = aSpliced.length;
 			this.aElements.$count = aOldElements.$count + iCount;
-			const iDiff = oGroupNode["@$ui5.node.level"] + 1 - aSpliced[0]["@$ui5.node.level"];
+			const iLevelDiff = oGroupNode["@$ui5.node.level"] + 1 - aSpliced[0]["@$ui5.node.level"];
+			const iIndexDiff = _Helper.getPrivateAnnotation(oGroupNode, "index") + 1
+				- _Helper.getPrivateAnnotation(aSpliced[0], "index");
 			aSpliced.forEach(function (oElement) {
 				var sPredicate = _Helper.getPrivateAnnotation(oElement, "predicate");
 
-				oElement["@$ui5.node.level"] += iDiff;
+				oElement["@$ui5.node.level"] += iLevelDiff;
+				if (_Helper.getPrivateAnnotation(oElement, "parent") === that.oFirstLevel) {
+					_Helper.setPrivateAnnotation(oElement, "index",
+						_Helper.getPrivateAnnotation(oElement, "index") + iIndexDiff);
+				}
 				if (!_Helper.hasPrivateAnnotation(oElement, "placeholder")) {
 					if (aSpliced.$stale) {
 						that.turnIntoPlaceholder(oElement, sPredicate);
@@ -917,8 +932,8 @@ sap.ui.define([
 
 			// remove original element from its cache's collection
 			const oOldParentCache = _Helper.getPrivateAnnotation(oChildNode, "parent");
-			oOldParentCache.removeElement(undefined,
-				_Helper.getPrivateAnnotation(oChildNode, "index"), sChildPredicate, "");
+			oOldParentCache.removeElement(_Helper.getPrivateAnnotation(oChildNode, "index"),
+				sChildPredicate);
 			if (oOldParentCache.getValue("$count") === 0) { // last child has gone
 				const oOldParent = this.aElements[iOldIndex - 1];
 				_Helper.updateAll(this.mChangeListeners,

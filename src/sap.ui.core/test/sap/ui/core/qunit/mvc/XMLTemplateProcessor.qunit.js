@@ -6,8 +6,8 @@ sap.ui.define([
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/util/XMLHelper",
 	"sap/base/Log",
-	"sap/ui/core/Configuration"
-], function(coreLibrary, XMLTemplateProcessor, View, XMLView, XMLHelper, Log, Configuration) {
+	"sap/ui/base/DesignTime"
+], function(coreLibrary, XMLTemplateProcessor, View, XMLView, XMLHelper, Log, DesignTime) {
 	"use strict";
 
 	// shortcut for sap.ui.core.mvc.ViewType
@@ -56,8 +56,8 @@ sap.ui.define([
 	QUnit.module("General");
 
 	QUnit.test("on design mode create Controls and fragment with correct declarativeSourceInfo", function (assert) {
-		var fnOrigGetDesignMode = Configuration.getDesignMode;
-		Configuration.getDesignMode = function () {
+		var fnOrigIsDesignModeEnabled = DesignTime.isDesignModeEnabled;
+		DesignTime.isDesignModeEnabled = function () {
 			return true;
 		};
 
@@ -65,7 +65,7 @@ sap.ui.define([
 			viewName: "my.View",
 			type: ViewType.XML
 		}).then(function(oView) {
-			Configuration.getDesignMode = fnOrigGetDesignMode;
+			DesignTime.isDesignModeEnabled = fnOrigIsDesignModeEnabled;
 
 			var oButton = oView.byId("button");
 			assert.ok(oButton, "button control is created");
