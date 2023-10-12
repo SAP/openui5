@@ -316,7 +316,7 @@ sap.ui.define([
 			defaultVariantName: mPropertyBag.defaultVariantId
 		};
 		// TODO: remove as soon as the development uses an IDE using rta which passes the correct parameter
-		mPropertyBag.layer = mPropertyBag.layer || new URLSearchParams(window.location.search).get("sap-ui-layer") || Layer.USER;
+		mPropertyBag.layer ||= new URLSearchParams(window.location.search).get("sap-ui-layer") || Layer.USER;
 
 		var mCompVariantsMap = FlexState.getCompVariantsMap(mPropertyBag.reference)._getOrCreate(mPropertyBag.persistencyKey);
 		var sChangeType = "defaultVariant";
