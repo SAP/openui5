@@ -203,14 +203,21 @@ sap.ui.define(["sap/ui/core/Renderer", "./SliderRenderer", "sap/ui/core/Invisibl
 	};
 
 	RangeSliderRenderer.applyTickmarkStyles = function(oRM, oSlider, iTickmarkIndex, iTickmarksToRender) {
-		var aRange = oSlider.getRange();
+		const findTickmark = (value, min, max, step) => {
+			return Math.floor((value - min) / step);
+		};
+		const min = oSlider.getMin();
+		const max = oSlider.getMax();
+		const step = oSlider.getStep();
+		const value = oSlider.getValue();
+		const endValue = oSlider.getValue2();
+		const startTickIndex = findTickmark(value, min, max, step);
+		const endTIckIndex = findTickmark(endValue, min, max, step);
+		const isWithinRange = (number, min, max) => {
+			return number >= Math.min(min, max) && number <= Math.max(min, max);
+		};
 
-		aRange[0] = parseInt(oSlider.toFixed(aRange[0], oSlider._iDecimalPrecision));
-		aRange[1] = parseInt(oSlider.toFixed(aRange[1], oSlider._iDecimalPrecision));
-
-		var bRender = (iTickmarkIndex >= aRange[0] && iTickmarkIndex <= aRange[1]) || (iTickmarkIndex <= aRange[0] && iTickmarkIndex >= aRange[1]);
-
-		oRM.attr("data-ui5-active-tickmark", bRender);
+		oRM.attr("data-ui5-active-tickmark", isWithinRange(iTickmarkIndex, startTickIndex, endTIckIndex));
 	};
 
 	RangeSliderRenderer.shouldRenderFirstActiveTickmark = function (oSlider) {

@@ -921,6 +921,26 @@ sap.ui.define([
 		oRangeSlider.destroy();
 	});
 
+	QUnit.test("Tickmarks in range should get data-ui5-active-tickmark=true", function(assert) {
+		var oRangeSlider = new RangeSlider({
+			showAdvancedTooltip: true,
+			enableTickmarks: true,
+			step: 5
+		}).placeAt(DOM_RENDER_LOCATION);
+		oCore.applyChanges();
+
+		qutils.triggerKeydown(oRangeSlider.getDomRef("handle2"), KeyCodes.ARROW_LEFT, true, false, false);
+		qutils.triggerKeydown(oRangeSlider.getDomRef("handle2"), KeyCodes.ARROW_LEFT, true, false, false);
+		oCore.applyChanges();
+
+		var aTickmarksDom = oRangeSlider.getDomRef().querySelectorAll(".sapMSliderTick");
+
+		assert.strictEqual(aTickmarksDom[aTickmarksDom.length - 1].getAttribute("data-ui5-active-tickmark"), "false", "Last tickmark should not be active");
+		assert.strictEqual(aTickmarksDom[aTickmarksDom.length - 2].getAttribute("data-ui5-active-tickmark"), "false", "the tickmark before the last should be active");
+
+		oRangeSlider.destroy();
+	});
+
 	QUnit.module("Integrations:");
 
 	QUnit.test("Model change from the outside", function (assert) {
