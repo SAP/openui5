@@ -876,6 +876,7 @@ sap.ui.define([
 			var oItem = new UploadSetwithTableItem({
 				uploadState: UploadState.Ready
 			});
+			oItem.setParent(this); // setting the parent as UploadSetwithTable for file validations
 			oItem._setFileObject(oFile);
 			oItem.setFileName(oFile.name);
 
@@ -934,10 +935,17 @@ sap.ui.define([
 		var bMediaRestricted = (!!aMediaTypes && (aMediaTypes.length > 0) && !!sMediaType && aMediaTypes.indexOf(sMediaType) === -1);
 		var bFileRestricted = (!!aFileTypes && (aFileTypes.length > 0) && !!sFileType && aFileTypes.indexOf(sFileType) === -1);
 
-        var oMismatchItem = {
-            fileType: sFileType,
-            mimeType: sMediaType
-        };
+		var parts = [new Blob([])];
+
+		var oFileMetaData = {
+			type: oItem.getParameter('fileType'),
+			webkitRelativePath: '',
+			name: oItem.getParameter('fileName')
+		};
+		var oFileObject = new File(parts, oItem.getParameter('fileName'), oFileMetaData);
+		var oMismatchItem = new UploadSetwithTableItem();
+		oMismatchItem._setFileObject(oFileObject);
+		oMismatchItem.setFileName(oFileObject.name);
 
 		if (bMediaRestricted){
 			this.fireMediaTypeMismatch({item: oMismatchItem});
@@ -947,11 +955,15 @@ sap.ui.define([
     };
 
     UploadSetwithTable.prototype._fireFilenameLengthExceed = function (oItem) {
-        this.fireFileNameLengthExceeded({item: oItem});
+		var oTargetItem = new UploadSetwithTableItem();
+		oTargetItem.setFileName(oItem.getParameter('fileName'));
+        this.fireFileNameLengthExceeded({item: oTargetItem});
     };
 
     UploadSetwithTable.prototype._fireFileSizeExceed = function (oItem) {
-        this.fireFileSizeExceeded({item: oItem});
+		var oTargetItem = new UploadSetwithTableItem();
+		oTargetItem.setFileName(oItem.getParameter('fileName'));
+        this.fireFileSizeExceeded({item: oTargetItem});
     };
 
 	UploadSetwithTable.prototype._onUploadStarted = function (oEvent) {
