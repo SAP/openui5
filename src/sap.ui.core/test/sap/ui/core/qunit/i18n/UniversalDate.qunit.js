@@ -32,6 +32,9 @@ sap.ui.define([
 	testParameter2[milliseconds] = "milliseconds";
 
 	QUnit.module("sap.ui.core.date.UniversalDate", {
+		before() {
+			this.__ignoreIsolatedCoverage__ = true;
+		},
 		beforeEach: function () {
 			Configuration.setLanguage("en-US");
 			this.oStubCalendarType = this.stub(Configuration, "getCalendarType");

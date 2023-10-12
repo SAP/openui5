@@ -10,6 +10,9 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.ClientPropertyBinding", {
+		before() {
+			this.__ignoreIsolatedCoverage__ = true;
+		},
 		beforeEach() {
 			this.oLogMock = this.mock(Log);
 			this.oLogMock.expects("error").never();

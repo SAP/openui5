@@ -11,6 +11,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.resource.ResourcePropertyBinding", {
 		before : function () {
+			this.__ignoreIsolatedCoverage__ = true;
 			Configuration.setLanguage("en-US");
 		},
 		beforeEach : function () {
