@@ -1138,12 +1138,8 @@ sap.ui.define([
 				{
 					name: "sap/ushell/Container",
 					stub: {
-						ready() {
-							return {
-								state() {
-									return "pending";
-								}
-							};
+						getLogonSystem() {
+							throw new Error("Container is not initialized!");
 						}
 					}
 				}
@@ -1155,12 +1151,8 @@ sap.ui.define([
 				{
 					name: "sap/ushell/Container",
 					stub: {
-						ready() {
-							return {
-								state() {
-									return "resolved";
-								}
-							};
+						getLogonSystem() {
+							return {};
 						}
 					}
 				}
