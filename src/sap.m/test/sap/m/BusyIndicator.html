@@ -66,10 +66,7 @@
 				size:'90px',
 				text:'90px sized busy indicator ...'
 			});
-
-			var busyCSS = new sap.m.BusyIndicator({
-				size: '30px'
-			});
+			var busyCSS = new sap.m.BusyIndicator(); // no value for "size" - we are using ths default one (16px)
 
 			var busyDialog1 = (busyDialog3) ? busyDialog3 : new sap.m.BusyDialog('busy1',{customIcon: 'images/synchronise_48.png'});
 
