@@ -3,6 +3,9 @@ sap.ui.define(['sap/ui/core/format/ListFormat', 'sap/ui/core/Locale', "sap/base/
 	"use strict";
 
 	QUnit.module("ListFormat", {
+		before() {
+			this.__ignoreIsolatedCoverage__ = true;
+		},
 		beforeEach: function () {
 			this.oLocale = new Locale("de-DE");
 			this.LogErrorSpy = this.spy(Log, "error");

@@ -81,6 +81,9 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.type.Boolean", {
+		before() {
+			this.__ignoreIsolatedCoverage__ = true;
+		},
 		beforeEach : function() {
 			Configuration.setLanguage("en-US");
 		},
@@ -122,6 +125,9 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.type.Currency", {
+		before() {
+			this.__ignoreIsolatedCoverage__ = true;
+		},
 		beforeEach : function() {
 			Configuration.setLanguage("en-US");
 		},
@@ -882,6 +888,9 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.type.FileSize", {
+		before() {
+			this.__ignoreIsolatedCoverage__ = true;
+		},
 		beforeEach : function() {
 			Configuration.setLanguage("en-US");
 		},
@@ -1058,6 +1067,9 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.type.Float", {
+		before() {
+			this.__ignoreIsolatedCoverage__ = true;
+		},
 		beforeEach : function() {
 			Configuration.setLanguage("en-US");
 		},
@@ -1266,6 +1278,9 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.type.Integer", {
+		before() {
+			this.__ignoreIsolatedCoverage__ = true;
+		},
 		beforeEach : function() {
 			Configuration.setLanguage("en-US");
 		},
@@ -1436,6 +1451,9 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.type.String", {
+		before() {
+			this.__ignoreIsolatedCoverage__ = true;
+		},
 		beforeEach : function() {
 			Configuration.setLanguage("en-US");
 		},
@@ -1727,6 +1745,9 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.type.Unit", {
+		before() {
+			this.__ignoreIsolatedCoverage__ = true;
+		},
 		beforeEach : function() {
 			Configuration.setLanguage("en-US");
 		},

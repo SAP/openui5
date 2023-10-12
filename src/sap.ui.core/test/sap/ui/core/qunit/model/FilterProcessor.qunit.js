@@ -6,7 +6,11 @@ sap.ui.define([
 ], function(FilterProcessor, Filter, FilterOperator) {
 	"use strict";
 
-	QUnit.module("sap.ui.model.FilterProcessor");
+	QUnit.module("sap.ui.model.FilterProcessor", {
+		before() {
+			this.__ignoreIsolatedCoverage__ = true;
+		}
+	});
 
 	QUnit.test("Contains", function(assert) {
 

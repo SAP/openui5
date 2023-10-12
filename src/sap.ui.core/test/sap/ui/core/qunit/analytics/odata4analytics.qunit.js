@@ -20,6 +20,9 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.analytics.odata4analytics", {
+		before() {
+			this.__ignoreIsolatedCoverage__ = true;
+		},
 		afterEach : function (assert) {
 			if (this.oModel) {
 				this.oModel.getODataModel().destroy();

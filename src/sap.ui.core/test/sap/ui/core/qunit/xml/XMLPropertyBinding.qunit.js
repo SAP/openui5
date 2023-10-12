@@ -36,6 +36,9 @@ sap.ui.define([
 		"</root>";
 
 	QUnit.module("sap.ui.model.xml.XMLPropertyBinding", {
+		before() {
+			this.__ignoreIsolatedCoverage__ = true;
+		},
 		beforeEach: function() {
 			this.oLogMock = this.mock(Log);
 			this.oLogMock.expects("error").never();

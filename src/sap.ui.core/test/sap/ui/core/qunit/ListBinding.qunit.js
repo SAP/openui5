@@ -91,6 +91,12 @@ sap.ui.define([
 		control.placeAt("content");
 	}
 
+	QUnit.module("sap.ui.model.ListBinding: Integrative Tests", {
+		before() {
+			this.__ignoreIsolatedCoverage__ = true;
+		}
+	});
+
 	QUnit.test("ListBinding with Template (classical)", function(assert) {
 		setup();
 		control.bindAggregation("items", "/teamMembers", new MyListItem({text:"{lastName}"}));
@@ -304,7 +310,11 @@ sap.ui.define([
 	});
 
 	//**********************************************************************************************
-	QUnit.module("Sorter");
+	QUnit.module("sap.ui.model.Sorter", {
+		before() {
+			this.__ignoreIsolatedCoverage__ = true;
+		}
+	});
 
 	QUnit.test("getGroupFunction", function(assert) {
 		var oSorter = new Sorter("myProperty", false);
@@ -317,6 +327,9 @@ sap.ui.define([
 	});
 
 	QUnit.module("detailedReason in change event", {
+		before() {
+			this.__ignoreIsolatedCoverage__ = true;
+		},
 		beforeEach: function() {
 			this.oList = new MyList({
 				items: {

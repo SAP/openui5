@@ -24,6 +24,9 @@ sap.ui.define([
 
 	//1. Instance related
 	QUnit.module("sap.ui.core.date.Persian", {
+		before() {
+			this.__ignoreIsolatedCoverage__ = true;
+		},
 		beforeEach: function () {
 			this.oLogMock = this.mock(Log);
 			this.oLogMock.expects("error").never();
