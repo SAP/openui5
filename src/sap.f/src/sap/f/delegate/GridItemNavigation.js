@@ -48,10 +48,8 @@ sap.ui.define([
 	GridItemNavigation.prototype.onfocusin = function (oEvent) {
 		ItemNavigation.prototype.onfocusin.call(this, oEvent);
 
-		const aMatrix = this._getGridInstance().getNavigationMatrix();
-
-		if (aMatrix && oEvent.target === this.oDomRef) {
-			this._mCurrentPosition = this._findPositionInMatrix(aMatrix, this.getItemDomRefs().indexOf(this.iFocusedIndex));
+		if (oEvent.target === this.oDomRef) {
+			this.resetFocusPosition();
 		}
 	};
 
@@ -98,6 +96,12 @@ sap.ui.define([
 		this._mCurrentPosition = null;
 	};
 
+	GridItemNavigation.prototype.setFocusPosition = function (mPosition) {
+		this._mCurrentPosition = mPosition;
+
+		Log.info("Grid matrix position: (" + this._mCurrentPosition.row + ", " + this._mCurrentPosition.column + ")");
+	};
+
 	GridItemNavigation.prototype.ontap = function () {
 		// reset focus position when navigation is performed without keyboard
 		this.resetFocusPosition();
@@ -123,10 +127,7 @@ sap.ui.define([
 		const oStartPosition = this._findPositionInMatrix(aMatrix, oCurrentItem);
 
 		if (!this._mCurrentPosition) {
-			this._mCurrentPosition = {
-				column: oStartPosition.column,
-				row: oStartPosition.row
-			};
+			this.setFocusPosition({ ...oStartPosition });
 		}
 
 		switch (oEvent.keyCode) {
@@ -178,9 +179,8 @@ sap.ui.define([
 			return;
 		}
 
-		this._mCurrentPosition = oNextItemPosition;
+		this.setFocusPosition(oNextItemPosition);
 		this.focusItem(this.getItemDomRefs().indexOf(oNextFocusItem), oEvent);
-		Log.info("Grid matrix position: (" + this._mCurrentPosition.row + ", " + this._mCurrentPosition.column + ")");
 	};
 
 	GridItemNavigation.prototype._moveFocusRight = function (oStartPosition, aMatrix, oCurrentItem, oEvent) {
@@ -203,9 +203,8 @@ sap.ui.define([
 			return;
 		}
 
-		this._mCurrentPosition = oStartPosition;
+		this.setFocusPosition(oStartPosition);
 		this.focusItem(this.getItemDomRefs().indexOf(oNextFocusItem), oEvent);
-		Log.info("Grid matrix position: (" + this._mCurrentPosition.row + ", " + this._mCurrentPosition.column + ")");
 	};
 
 	GridItemNavigation.prototype._moveFocusUp = function (oStartPosition, aMatrix, oCurrentItem, oEvent, iMinSkipRows = 1) {
@@ -238,9 +237,8 @@ sap.ui.define([
 			oNextItemPosition.row -= 1;
 		}
 
-		this._mCurrentPosition = oNextItemPosition;
+		this.setFocusPosition(oNextItemPosition);
 		this.focusItem(this.getItemDomRefs().indexOf(oNextFocusItem), oEvent);
-		Log.info("Grid matrix position: (" + this._mCurrentPosition.row + ", " + this._mCurrentPosition.column + ")");
 	};
 
 	GridItemNavigation.prototype._moveFocusLeft = function (oStartPosition, aMatrix, oCurrentItem, oEvent) {
@@ -268,9 +266,8 @@ sap.ui.define([
 			oStartPosition.column -= 1;
 		}
 
-		this._mCurrentPosition = oStartPosition;
+		this.setFocusPosition(oStartPosition);
 		this.focusItem(this.getItemDomRefs().indexOf(oNextFocusItem), oEvent);
-		Log.info("Grid matrix position: (" + this._mCurrentPosition.row + ", " + this._mCurrentPosition.column + ")");
 	};
 
 	GridItemNavigation.prototype._findPositionInMatrix = function (aMatrix, oItem) {
@@ -387,10 +384,10 @@ sap.ui.define([
 			return;
 		}
 
-		this._mCurrentPosition = {
+		this.setFocusPosition({
 			column: iColIndex,
 			row: iRowIndex
-		};
+		});
 
 		oCurrentItem.focus();
 	};
