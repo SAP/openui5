@@ -71,7 +71,7 @@ sap.ui.define([
 
 					const aSelection = oSelectionPlugin.getSelectedIndices();
 
-					if (!iStart || !iEnd) {
+					if (iStart === undefined || iEnd === undefined) {
 						Opa5.assert.equal(aSelection.length, 0, "No rows selected.");
 					}
 

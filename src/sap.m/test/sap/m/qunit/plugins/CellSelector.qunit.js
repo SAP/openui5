@@ -13,9 +13,28 @@ sap.ui.define([
 	"sap/ui/table/Column",
 	"sap/ui/table/rowmodes/Fixed",
 	"sap/m/Text",
-	"sap/ui/core/dnd/DragDropInfo"
-], function (Core, qutils, KeyCodes, CellSelector, GridTable, ODataModel, MockServer, GridColumn, GridFixedRowMode, Text, DragDropInfo) {
+	"sap/ui/core/dnd/DragDropInfo",
+	"sap/m/Dialog"
+], function (Core, qutils, KeyCodes, CellSelector, GridTable, ODataModel, MockServer, GridColumn, GridFixedRowMode, Text, DragDropInfo, Dialog) {
 	"use strict";
+
+	const sServiceURI = "/service/";
+
+	function createTable() {
+		return new GridTable({
+			threshold: 5,
+			rowMode: new GridFixedRowMode({
+				rowCount: 5
+			}),
+			columns: [
+				new GridColumn({ template: new Text({text: "{ProductId}"}) }),
+				new GridColumn({ template: new Text({text: "{Name}"}) }),
+				new GridColumn({ template: new Text({text: "{Category}"}) })
+			],
+			rows: "{/Products}",
+			models: new ODataModel(sServiceURI, true)
+		});
+	}
 
 	function getCell(oTable, iRow, iCol) {
 		var oRowInstance = oTable.getRows().find(function (oRow) {
@@ -28,25 +47,15 @@ sap.ui.define([
 
 	QUnit.module("API", {
 		beforeEach: function() {
-			var sServiceURI = "/service/";
 			this.oMockServer = new MockServer({ rootUri : sServiceURI });
 			this.oMockServer.simulate("test-resources/sap/m/qunit/data/metadata.xml", "test-resources/sap/m/qunit/data");
 			this.oMockServer.start();
 
 			this.oCellSelector = new CellSelector({ rangeLimit: 15 });
-			this.oTable = new GridTable({
-				threshold: 5,
-				rowMode: new GridFixedRowMode({
-					rowCount: 5
-				}),
-				columns: [
-					new GridColumn({ template: new Text({text: "{ProductId}"}) }),
-					new GridColumn({ template: new Text({text: "{Name}"}) }),
-					new GridColumn({ template: new Text({text: "{Category}"}) })
-				],
-				rows: "{/Products}",
-				models: new ODataModel(sServiceURI, true)
-			}).placeAt("qunit-fixture");
+			this.oTable = createTable();
+			this.oTable.addDependent(this.oCellSelector);
+			this.oTable.placeAt("qunit-fixture");
+
 			Core.applyChanges();
 		},
 		afterEach: function() {
@@ -115,5 +124,54 @@ sap.ui.define([
 			oSelectCellsSpy.reset();
 			done();
 		});
+	});
+
+	QUnit.module("Dialog Behavior", {
+		beforeEach: function() {
+			this.oMockServer = new MockServer({ rootUri : sServiceURI });
+			this.oMockServer.simulate("test-resources/sap/m/qunit/data/metadata.xml", "test-resources/sap/m/qunit/data");
+			this.oMockServer.start();
+
+			this.oCellSelector = new CellSelector({ rangeLimit: 15 });
+			this.oTable = createTable();
+			this.oTable.addDependent(this.oCellSelector);
+
+			this.oDialog = new Dialog({
+				title: "Table Dialog",
+				content: this.oTable
+			}).placeAt("qunit-fixture");
+
+			Core.applyChanges();
+		},
+		afterEach: function() {
+			this.oMockServer.destroy();
+			this.oTable.destroy();
+		}
+	});
+
+	QUnit.test("Escape Handling", function(assert) {
+		var clock = sinon.useFakeTimers();
+		this.oDialog.open();
+		clock.tick(500);
+		Core.applyChanges();
+
+		var oCell = getCell(this.oTable, 1, 0); // first cell of first row
+		qutils.triggerKeydown(oCell, KeyCodes.SPACE); // select first cell of first row
+		qutils.triggerKeyup(oCell, KeyCodes.SPACE); // select first cell of first row
+		assert.deepEqual(this.oCellSelector.getSelectionRange(), {from: {rowIndex: 1, colIndex: 0}, to: {rowIndex: 1, colIndex: 0}});
+
+		qutils.triggerKeydown(oCell, KeyCodes.ESCAPE);
+		qutils.triggerKeyup(oCell, KeyCodes.ESCAPE);
+		clock.tick(500);
+		Core.applyChanges();
+
+		assert.equal(this.oCellSelector.getSelectionRange(), null, "Selection is cleared");
+		assert.ok(this.oDialog.isOpen(), "Dialog is still open");
+
+		qutils.triggerKeydown(oCell, KeyCodes.ESCAPE);
+		clock.tick(500);
+		Core.applyChanges();
+
+		assert.notOk(this.oDialog.isOpen(), "Dialog is closed");
 	});
 });

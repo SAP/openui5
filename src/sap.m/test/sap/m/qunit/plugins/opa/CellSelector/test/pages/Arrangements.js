@@ -27,6 +27,19 @@ sap.ui.define([
 					oCellSelector.setRangeLimit(iLimit);
 				}
 			});
+		},
+		iChangeSelectAllState: function(bEnable) {
+			return Util.waitForTable.call(this, {
+				success: function(oTable) {
+					const oSelectionPlugin = Util.getSelectionPlugin(oTable);
+					if (oSelectionPlugin) {
+						const iLimit = bEnable ? 0 : 100;
+						oSelectionPlugin.setLimit(iLimit);
+					} else {
+						oTable.setEnableSelectAll(bEnable);
+					}
+				}
+			});
 		}
 	};
 });

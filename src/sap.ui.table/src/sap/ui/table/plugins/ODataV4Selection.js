@@ -190,16 +190,20 @@ sap.ui.define([
 	 * Selects all rows if not all are already selected, otherwise the selection is cleared.
 	 *
 	 * @param {sap.ui.table.plugins.ODataV4Selection} oPlugin The selection plugin.
+	 * @returns {boolean} The state of selection. true - all selected, false - all cleared, undefined - no action
 	 */
 	function toggleSelectAll(oPlugin) {
 		if (areAllRowsSelected(oPlugin)) {
 			oPlugin.clearSelection();
+			return false;
 		} else if (oPlugin._isLimitDisabled()) {
 			var oBinding = oPlugin.getTableBinding();
 			if (oBinding && oBinding.getLength()) {
 				select(oPlugin, 0, oBinding.getLength() - 1);
+				return true;
 			}
 		}
+		return undefined;
 	}
 
 	/**
@@ -241,13 +245,14 @@ sap.ui.define([
 		}
 	};
 
-	ODataV4Selection.prototype.onKeyboardShortcut = function(sType) {
+	ODataV4Selection.prototype.onKeyboardShortcut = function(sType, oEvent) {
 		if (sType === "toggle") {
-			if (this._isLimitDisabled()) {
-				toggleSelectAll(this);
+			if (this._isLimitDisabled() && toggleSelectAll(this) === false) {
+				oEvent?.setMarked("sapUiTableClearAll");
 			}
 		} else if (sType === "clear") {
 			this.clearSelection();
+			oEvent?.setMarked("sapUiTableClearAll");
 		}
 	};
 
