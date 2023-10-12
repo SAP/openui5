@@ -65,7 +65,7 @@ sap.ui.define([
 					bChangeBootstrap = oFile.name && (oFile.name === oData.iframe || oFile.name.split(".").pop() === "html");
 
 					if (oFile.name === "manifest.json") {
-						oManifestFile = oFile;
+						oManifestFile = JSON.parse(oFile.raw);
 						aPromises.push(this._addFileToZip({
 							name: this._formatWebAppPath(oFile.name),
 							url: sUrl,
@@ -103,7 +103,7 @@ sap.ui.define([
 							name: sIndexHTMLFileName,
 							url: TMPL_REF + "/" + (bHasManifest ? "indexevo.html.tmpl" : "index.html.tmpl"),
 							formatter: function(sIndexFile) {
-								return this._rewriteRelativeURLs(this._formatIndexHtmlFile(sIndexFile, oData), sIndexHTMLFileName);
+								return this._rewriteRelativeURLs(this._formatIndexHtmlFile(sIndexFile, oData, oManifestFile), sIndexHTMLFileName);
 							}.bind(this)
 						}, oZipFile, true));
 					}
@@ -220,7 +220,7 @@ sap.ui.define([
 			return JSON.stringify(oPackageFile, null, 2);
 		},
 
-		_formatUI5Yaml: function(sYamlFile, oData, sManifestFile) {
+		_formatUI5Yaml: function(sYamlFile, oData, oManifestFile) {
 			let sFormattedYamlFile = sYamlFile.replace(/{{SAMPLE_ID}}/g, this._formatNameToNpmSpec(oData.id));
 			const bIsOpenUI5 = this.getModel("versionData").getProperty("/isOpenUI5");
 			const sUI5Version = this.getModel("versionData").getProperty("/fullVersion");
@@ -231,8 +231,7 @@ sap.ui.define([
 				sFormattedYamlFile = sFormattedYamlFile.replace(/libraries:/g, "libraries:" + this._getSnapshotNote());
 			}
 
-			if (sManifestFile) {
-				const oManifestFile = JSON.parse(sManifestFile.raw);
+			if (oManifestFile) {
 				const oUi5Config = oManifestFile["sap.ui5"];
 				const oDependencies = oUi5Config && oUi5Config.dependencies;
 
@@ -254,9 +253,20 @@ sap.ui.define([
 			return sRawManifestFileJs.replace(new RegExp(/(\.\.\/)+/g), "./");
 		 },
 
-		_formatIndexHtmlFile: function (sFile, oData) {
-			return sFile.replace(/{{TITLE}}/g, oData.name)
+		_formatIndexHtmlFile: function (sFile, oData, oManifestFile) {
+			let sFormattedIndexHtml = sFile.replace(/{{TITLE}}/g, oData.name)
 				.replace(/{{SAMPLE_ID}}/g, oData.id);
+
+			if (oManifestFile) {
+				const oUi5Config = oManifestFile["sap.ui5"];
+				const oDependencies = oUi5Config && oUi5Config.dependencies;
+
+				// samples using sap.ui.fl get a local flex provider to store flex changes locally
+				if (oDependencies && oDependencies.libs && oDependencies.libs["sap.ui.fl"]) {
+					sFormattedIndexHtml = sFormattedIndexHtml.replace(/<script id="sap-ui-bootstrap"/g, "<script id=\"sap-ui-bootstrap\"\n\t\tdata-sap-ui-flexibilityServices='[{\"connector\": \"LocalStorageConnector\"}]'");
+				}
+			}
+			return sFormattedIndexHtml;
 		},
 
 		_formatIndexJsFile: function (sFile, oData) {
