@@ -2680,7 +2680,15 @@ sap.ui.define([
 
 	QUnit.test("CellSelector - rowPress event", function(assert) {
 		const oCellSelector = new CellSelector();
+		const oRemoveSelectionStub = sinon.spy(oCellSelector, "removeSelection");
 		this.oTable.addDependent(oCellSelector);
+
+		this.oTable.addColumn(new Column({
+			header: "Test",
+			template: new Text({
+				text: "Test"
+			})
+		}));
 
 		return this.oTable._fullyInitialized().then(() => {
 			assert.equal(this.oTable.getCellSelectorPluginOwner(), this.oTable._oTable, "The inner table is set as plugin owner for the CellSelector");
@@ -2688,19 +2696,25 @@ sap.ui.define([
 			assert.ok(oCellSelector.getEnabled(), "CellSelector Plugin is enabled");
 			assert.ok(oCellSelector.isActive(), "CellSelector is active");
 
-			this.oTable.removeDependent(oCellSelector);
+			oCellSelector._bSelecting = true;
+			const oEvent = { isMarked: () => false, keyCode: KeyCodes.A, shiftKey: true, ctrlKey: true, preventDefault: () => {} };
+			oCellSelector.onkeydown(oEvent);
+			assert.ok(oRemoveSelectionStub.calledOnce, "Cells are removed.");
+			assert.deepEqual(oCellSelector.getSelectionRange(), null);
+
 			this.oTable.attachRowPress(function() {});
 
 			return this.oTable._fullyInitialized().then(() => {
 				assert.ok(this.oTable.hasListeners("rowPress"), "Table has rowPress listener");
-				assert.throws(() => {
-					this.oTable.addDependent(oCellSelector);
-				},
-				Error(oCellSelector + " is not applicable to " + this.oTable._oTable),
-				"CellSelector cannot be activated when rowPress event is registered");
 				assert.equal(this.oTable.getCellSelectorPluginOwner(), this.oTable._oTable, "The inner table is set as plugin owner for the CellSelector");
-				assert.notOk(oCellSelector.isActive(), "CellSelector is not active");
+				assert.ok(oCellSelector.isActive(), "CellSelector is active");
+
+				oCellSelector.onkeydown(oEvent);
+				assert.ok(oRemoveSelectionStub.calledOnce, "removeSelection is not called again");
+				assert.deepEqual(oCellSelector.getSelectionRange(), null);
+
 				this.oTable.removeDependent(oCellSelector);
+				oRemoveSelectionStub.reset();
 			});
 		});
 	});

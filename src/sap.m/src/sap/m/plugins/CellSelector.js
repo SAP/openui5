@@ -67,7 +67,11 @@ sap.ui.define([
 				 * </ul>
 				 * In other cases, it is recommended to set the <code>rangeLimit</code> to at least double the value of the {@link sap.ui.table.Table#getThreshold threshold} property.
 				 */
-				rangeLimit: {type: "int", group: "Behavior", defaultValue: 200}
+				rangeLimit: {type: "int", group: "Behavior", defaultValue: 200},
+				/**
+				 * Indicates whether this plugin is active or not.
+				 */
+				enabled: {type: "boolean", defaultValue: true}
 			},
 			events: {}
 		}
@@ -87,10 +91,6 @@ sap.ui.define([
 	- Borders: Extend/reduce selection either horizontally or vertically.
 	- Edge: Extend/reduce selection freely.
 	*/
-
-	CellSelector.prototype.isApplicable = function() {
-		return PluginBase.prototype.isApplicable.apply(this, arguments) && this.getConfig("isApplicable", this.getControl());
-	};
 
 	CellSelector.prototype.onActivate = function (oControl) {
 		oControl.addDelegate(this, true, this);
@@ -243,7 +243,7 @@ sap.ui.define([
 	};
 
 	CellSelector.prototype._onsaparrowmodifiers = function(oEvent, sDirectionType, iRowDiff, iColDiff) {
-		if (oEvent.isMarked() || !oEvent.shiftKey || !this._isSelectableCell(oEvent.target)) {
+		if (!this._shouldBeHandled(oEvent) || !oEvent.shiftKey || !this._isSelectableCell(oEvent.target)) {
 			return;
 		}
 
@@ -293,7 +293,7 @@ sap.ui.define([
 	 * @param {sap.ui.base.Event} oEvent event instance
 	 */
 	CellSelector.prototype.onkeydown = function (oEvent) {
-		if (!this._bSelecting || oEvent.isMarked()) {
+		if (!this._bSelecting || !this._shouldBeHandled(oEvent)) {
 			return;
 		}
 
@@ -310,7 +310,7 @@ sap.ui.define([
 	 * @param {sap.ui.base.Event} oEvent event instance
 	 */
 	CellSelector.prototype.onkeyup = function(oEvent) {
-		if (oEvent.isMarked()) {
+		if (!this._shouldBeHandled(oEvent)) {
 			return;
 		}
 
@@ -340,7 +340,7 @@ sap.ui.define([
 	// Mouse Navigation
 
 	CellSelector.prototype.onmousedown = function(oEvent) {
-		if (oEvent.isMarked && oEvent.isMarked()) {
+		if (!this._shouldBeHandled(oEvent)) {
 			return;
 		}
 
@@ -514,7 +514,7 @@ sap.ui.define([
 	};
 
 	CellSelector.prototype._startSelection = function(oEvent, bMove) {
-		if (oEvent.isMarked && oEvent.isMarked()) {
+		if (!this._shouldBeHandled(oEvent)) {
 			return;
 		}
 
@@ -785,6 +785,11 @@ sap.ui.define([
 		};
 	};
 
+	CellSelector.prototype._shouldBeHandled = function(oEvent) {
+		// Handle if event is not marked and control is applicable
+		return !oEvent.isMarked?.() && this.getConfig("isSupported", this.getControl());
+	};
+
 	/**
 	 * Check if the given key combination applies to the event.
 	 * @param {sap.ui.base.Event} oEvent event instance
@@ -807,9 +812,9 @@ sap.ui.define([
 			 * @param {sap.ui.table.Table} oTable table instance
 			 * @returns {boolean} compatibility with cell selection
 			 */
-			isApplicable: function(oTable) {
+			isSupported: function(oTable) {
 				return !oTable.hasListeners("cellClick") && oTable.getSelectionBehavior() == "RowSelector"
-					&& !oTable.getDragDropConfig().some((oConfig) => oConfig.getSourceAggregation() == "rows");
+					&& !oTable.getDragDropConfig().some((oConfig) => oConfig.getSourceAggregation() == "rows" && oConfig.getEnabled());
 			},
 			/**
 			 * Get visible columns of the table.
