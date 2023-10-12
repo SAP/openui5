@@ -113,6 +113,10 @@ sap.ui.define([
 		assert.strictEqual(oMultiSelectionPlugin.oInnerSelectionPlugin, null, "The reference to the internal default selection plugin was cleared");
 		assert.ok(oDeselectAllIconDestroySpy.calledOnce, "The delete icon was destroyed");
 		assert.strictEqual(oMultiSelectionPlugin.oDeselectAllIcon, null, "The reference to the delete icon was cleared");
+
+		this.oTable.addDependent(new MultiSelectionPlugin());
+		this.oTable.destroyDependents();
+		assert.ok(this.oTable._getSelectionPlugin().isA("sap.ui.table.plugins.SelectionModelSelection"), "The table has a legacy selection plugin");
 	});
 
 	QUnit.test("#getRenderConfig", function(assert) {
