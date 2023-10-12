@@ -1,13 +1,9 @@
 /* global QUnit */
 
 sap.ui.define([
-	"sap/ui/fl/initial/_internal/changeHandlers/ChangeHandlerStorage",
 	"sap/ui/fl/FlexController",
 	"sap/ui/fl/Layer",
 	"sap/ui/core/Control",
-	"sap/ui/fl/write/api/Version",
-	"sap/ui/fl/Utils",
-	"sap/ui/fl/changeHandler/HideControl",
 	"sap/ui/fl/ChangePersistenceFactory",
 	"sap/ui/fl/apply/_internal/controlVariants/URLHandler",
 	"sap/ui/fl/apply/_internal/changes/Applier",
@@ -16,8 +12,8 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/changes/Reverter",
 	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
 	"sap/ui/fl/apply/_internal/flexObjects/States",
+	"sap/ui/fl/initial/api/Version",
 	"sap/ui/fl/write/_internal/Versions",
-	"sap/ui/fl/write/_internal/Storage",
 	"sap/ui/model/json/JSONModel",
 	"sap/base/Log",
 	"sap/base/util/deepClone",
@@ -28,13 +24,9 @@ sap.ui.define([
 	"sap/m/Label",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
-	ChangeHandlerStorage,
 	FlexController,
 	Layer,
 	Control,
-	Version,
-	Utils,
-	HideControl,
 	ChangePersistenceFactory,
 	URLHandler,
 	Applier,
@@ -43,8 +35,8 @@ sap.ui.define([
 	Reverter,
 	FlexObjectFactory,
 	States,
+	Version,
 	Versions,
-	Storage,
 	JSONModel,
 	Log,
 	deepClone,

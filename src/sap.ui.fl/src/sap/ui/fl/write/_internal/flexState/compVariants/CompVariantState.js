@@ -15,12 +15,12 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexObjects/RevertData",
 	"sap/ui/fl/apply/_internal/flexObjects/States",
 	"sap/ui/fl/apply/_internal/flexObjects/UpdatableChange",
-	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/apply/_internal/flexState/compVariants/CompVariantMerger",
+	"sap/ui/fl/apply/_internal/flexState/FlexState",
+	"sap/ui/fl/initial/api/Version",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/write/_internal/Storage",
-	"sap/ui/fl/write/_internal/Versions",
-	"sap/ui/fl/write/api/Version"
+	"sap/ui/fl/write/_internal/Versions"
 ], function(
 	_omit,
 	_pick,
@@ -34,12 +34,12 @@ sap.ui.define([
 	RevertData,
 	States,
 	UpdatableChange,
-	FlexState,
 	CompVariantMerger,
+	FlexState,
+	Version,
 	Settings,
 	Storage,
-	Versions,
-	Version
+	Versions
 ) {
 	"use strict";
 

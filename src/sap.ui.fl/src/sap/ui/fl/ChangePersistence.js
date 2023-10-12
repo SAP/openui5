@@ -17,12 +17,12 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexState/controlVariants/VariantManagementState",
 	"sap/ui/fl/apply/_internal/flexState/DataSelector",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
+	"sap/ui/fl/initial/api/Version",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/write/_internal/condenser/Condenser",
 	"sap/ui/fl/write/_internal/Storage",
-	"sap/ui/fl/write/api/Version",
-	"sap/ui/fl/LayerUtils",
 	"sap/ui/fl/Layer",
+	"sap/ui/fl/LayerUtils",
 	"sap/ui/fl/Utils",
 	"sap/ui/performance/Measurement"
 ], function(
@@ -40,12 +40,12 @@ sap.ui.define([
 	VariantManagementState,
 	DataSelector,
 	FlexState,
+	Version,
 	Settings,
 	Condenser,
 	Storage,
-	Version,
-	LayerUtils,
 	Layer,
+	LayerUtils,
 	Utils,
 	Measurement
 ) {
