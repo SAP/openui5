@@ -1,4 +1,4 @@
-/*global QUnit */
+/*global QUnit*/
 
 sap.ui.define([
 	"sap/f/GridList",
@@ -723,7 +723,21 @@ function (
 
 	QUnit.module("Navigation matrix", {
 		beforeEach: function () {
-			this.oGridList = new GridList();
+			this.oGridList = new GridList({
+				items: [
+					new GridListItem({
+						content: [
+							new Text({ text: "This is the content"}),
+							new Button({ text: "Button" })
+						]
+					}),
+					new GridListItem({
+						content: [
+							new Text({ text: "This is the content"})
+						]
+					})
+				]
+			});
 			this.oGridList.placeAt(DOM_RENDER_LOCATION);
 			Core.applyChanges();
 		},
@@ -738,5 +752,16 @@ function (
 
 		// Assert
 		assert.strictEqual(this.oGridList.getNavigationMatrix(), null, "'null' is returned when theme is not yet loaded");
+	});
+
+	QUnit.test("Matrix content if some items are not visible", function (assert) {
+		// Arrange
+		this.oGridList.getItems()[0].setVisible(false);
+
+		// Act
+		this.oGridList.$().trigger("focusin");
+
+		// Assert
+		assert.ok(this.oGridList.getNavigationMatrix()[0][0], "First element is not false.");
 	});
 });
