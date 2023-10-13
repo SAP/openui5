@@ -31,6 +31,9 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
     return c > 3 && r && Object.defineProperty(target, key, r), r;
   };
   var SideNavigation_1;
+
+  // Styles
+
   /**
    * @class
    *

@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/Integer", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/ui/webc/common/thirdparty/base/renderer/LitRenderer", "sap/ui/webc/common/thirdparty/base/util/PopupUtils", "sap/ui/webc/common/thirdparty/base/decorators/customElement", "sap/ui/webc/common/thirdparty/base/decorators/property", "./types/ToastPlacement", "./generated/templates/ToastTemplate.lit", "./generated/themes/Toast.css"], function (_exports, _Integer, _UI5Element, _LitRenderer, _PopupUtils, _customElement, _property, _ToastPlacement, _ToastTemplate, _Toast) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/Integer", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/ui/webc/common/thirdparty/base/renderer/LitRenderer", "sap/ui/webc/common/thirdparty/base/util/PopupUtils", "sap/ui/webc/common/thirdparty/base/Keys", "sap/ui/webc/common/thirdparty/base/Device", "sap/ui/webc/common/thirdparty/base/decorators/customElement", "sap/ui/webc/common/thirdparty/base/decorators/property", "./types/ToastPlacement", "./generated/templates/ToastTemplate.lit", "./generated/themes/Toast.css"], function (_exports, _Integer, _UI5Element, _LitRenderer, _PopupUtils, _Keys, _Device, _customElement, _property, _ToastPlacement, _ToastTemplate, _Toast) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -21,9 +21,36 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/Integer", "s
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
   };
+
+  // Template
+
+  // Styles
+
   // Constants
   const MIN_DURATION = 500;
   const MAX_DURATION = 1000;
+  const openedToasts = [];
+  let opener;
+  const handleGlobalKeydown = e => {
+    const isCtrl = e.metaKey || !(0, _Device.isMac)() && e.ctrlKey;
+    const isMKey = e.key.toLowerCase() === "m";
+    const isCombinationPressed = isCtrl && e.shiftKey && isMKey;
+    const hasOpenToast = openedToasts.length;
+    if (isCombinationPressed) {
+      e.preventDefault();
+      if (hasOpenToast) {
+        openedToasts[0].focusable = true;
+        if (openedToasts[0].focused) {
+          openedToasts[0].focused = false;
+          opener?.focus();
+        } else {
+          opener = document.activeElement;
+          openedToasts[0].focus();
+        }
+      }
+    }
+  };
+  document.addEventListener("keydown", handleGlobalKeydown);
   /**
    * @class
    *
@@ -88,6 +115,14 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/Integer", "s
         this._initiateOpening();
       }
     }
+    _onfocusin() {
+      if (this.focusable) {
+        this.focused = true;
+      }
+    }
+    _onfocusout() {
+      this.focused = false;
+    }
     /**
      * If the minimum duration is lower than 500ms, we force
      * it to be 500ms, as described in the documentation.
@@ -108,7 +143,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/Integer", "s
           // transition duration (animation).
           "transition-delay": this.open ? `${this.effectiveDuration - transitionDuration}ms` : "",
           // We alter the opacity property, in order to trigger transition
-          "opacity": this.open && !this.hover ? "0" : "",
+          "opacity": this.open && !this.hover && !this.focused ? "0" : "",
           "z-index": (0, _PopupUtils.getNextZIndex)()
         }
       };
@@ -117,20 +152,34 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/Integer", "s
       this.domRendered = true;
       requestAnimationFrame(() => {
         this.open = true;
+        openedToasts.pop();
+        openedToasts.push(this);
       });
     }
     _ontransitionend() {
-      if (this.hover) {
+      if (this.hover || this.focused) {
         return;
       }
       this.domRendered = false;
       this.open = false;
+      this.focusable = false;
+      this.focused = false;
+      openedToasts.pop();
     }
     _onmouseover() {
       this.hover = true;
     }
     _onmouseleave() {
       this.hover = false;
+    }
+    _onkeydown(e) {
+      if ((0, _Keys.isEscape)(e)) {
+        this.focused = false;
+        opener?.focus();
+      }
+    }
+    get _tabindex() {
+      return this.focused ? "0" : "-1";
     }
   };
   __decorate([(0, _property.default)({
@@ -150,6 +199,12 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/Integer", "s
   __decorate([(0, _property.default)({
     type: Boolean
   })], Toast.prototype, "domRendered", void 0);
+  __decorate([(0, _property.default)({
+    type: Boolean
+  })], Toast.prototype, "focusable", void 0);
+  __decorate([(0, _property.default)({
+    type: Boolean
+  })], Toast.prototype, "focused", void 0);
   Toast = __decorate([(0, _customElement.default)({
     tag: "ui5-toast",
     renderer: _LitRenderer.default,

@@ -158,7 +158,7 @@ sap.ui.define([
 				},
 
 				/**
-				 * Defines the HTML type of the component. Available options are: <code>Text</code>, <code>Email</code>, <code>Number</code>, <code>Password</code>, <code>Tel</code>, and <code>URL</code>. <br>
+				 * Defines the HTML type of the component. <br>
 				 * <br>
 				 * <b>Notes:</b>
 				 * <ul>
@@ -182,16 +182,7 @@ sap.ui.define([
 				},
 
 				/**
-				 * Defines the value state of the component. <br>
-				 * <br>
-				 * Available options are:
-				 * <ul>
-				 *     <li><code>None</code></li>
-				 *     <li><code>Error</code></li>
-				 *     <li><code>Warning</code></li>
-				 *     <li><code>Success</code></li>
-				 *     <li><code>Information</code></li>
-				 * </ul>
+				 * Defines the value state of the component.
 				 */
 				valueState: {
 					type: "sap.ui.core.ValueState",

@@ -23,6 +23,12 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/lit-html/static", "./Cu
       return _CustomElementsScopeUtils.getEffectiveScopingSuffixForTag;
     }
   });
+  Object.defineProperty(_exports, "getScopedVarName", {
+    enumerable: true,
+    get: function () {
+      return _CustomElementsScopeUtils.getScopedVarName;
+    }
+  });
   Object.defineProperty(_exports, "setCustomElementsScopingRules", {
     enumerable: true,
     get: function () {

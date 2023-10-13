@@ -31,6 +31,9 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
     return c > 3 && r && Object.defineProperty(target, key, r), r;
   };
   var TextArea_1;
+
+  // Styles
+
   /**
    * @class
    *
@@ -127,7 +130,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
     }
     _onfocusout(e) {
       const eTarget = e.relatedTarget;
-      const focusedOutToValueStateMessage = eTarget?.shadowRoot.querySelector(".ui5-valuestatemessage-root");
+      const focusedOutToValueStateMessage = eTarget?.shadowRoot?.querySelector(".ui5-valuestatemessage-root");
       this.focused = false;
       if (!focusedOutToValueStateMessage) {
         this._openValueStateMsgPopover = false;

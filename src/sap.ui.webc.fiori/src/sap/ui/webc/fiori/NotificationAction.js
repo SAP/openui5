@@ -46,17 +46,6 @@ sap.ui.define([
 
 				/**
 				 * Defines the action design.
-				 *
-				 * <br>
-				 * <br>
-				 * <b>Note:</b>
-				 * <ul>
-				 *     <li><code>Default</code></li>
-				 *     <li><code>Emphasized</code></li>
-				 *     <li><code>Positive</code></li>
-				 *     <li><code>Negative</code></li>
-				 *     <li><code>Transparent</code></li>
-				 * </ul>
 				 */
 				design: {
 					type: "sap.ui.webc.main.ButtonDesign",

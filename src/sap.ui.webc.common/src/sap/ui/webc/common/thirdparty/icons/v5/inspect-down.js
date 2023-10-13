@@ -6,7 +6,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
   });
   _exports.pathData = _exports.ltr = _exports.default = _exports.accData = void 0;
   const name = "inspect-down";
-  const pathData = "M51-6v435h435q11 0 18.5 7t7.5 18-7.5 18.5T486 480H26q-11 0-18.5-7.5T0 454V-6q0-11 7.5-18.5T26-32t18 7.5T51-6zm51-1q0-11 7.5-18t18.5-7h358q11 0 18.5 7T512-7v359q0 11-7.5 18t-18.5 7H128q-11 0-18.5-7t-7.5-18V-7zm358 333V19H153v307h307zM366 77q8-8 18-8t18 8q6 7 7 15.5t-3 16.5q-3 3-4 5l-59 58 59 59q8 8 8 18t-8 18-18 8-18-8l-59-58-59 58q-8 8-18 8t-18-8-8-18 8-18l59-59-59-58q-8-8-8-18.5t8-18.5 18-8 18 8l59 59z";
+  const pathData = "M486 0q11 0 18.5 7.5T512 26v332q0 11-7.5 18.5T486 384H154q-11 0-18.5-7.5T128 358V26q0-11 7.5-18.5T154 0h332zm0 461q11 0 18.5 7t7.5 18-7.5 18.5T486 512H26q-11 0-18.5-7.5T0 486V26Q0 15 7.5 7.5T26 0t18 7.5T51 26v435h435zM461 51H179v282h282V51zM250 288q-11 0-18.5-7.5T224 262q0-10 8-18l52-52-52-52q-8-8-8-18 0-11 7.5-18.5T250 96t18 7l52 53 52-53q7-7 18-7t18.5 7.5T416 122t-7 18l-53 52 53 52q7 7 7 18t-7.5 18.5T390 288q-10 0-18-8l-52-52-52 52q-8 8-18 8z";
   _exports.pathData = pathData;
   const ltr = false;
   _exports.ltr = ltr;

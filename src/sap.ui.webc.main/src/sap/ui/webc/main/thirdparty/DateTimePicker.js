@@ -31,6 +31,13 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/decorators/propert
     return c > 3 && r && Object.defineProperty(target, key, r), r;
   };
   var DateTimePicker_1;
+
+  // i18n texts
+
+  // Template
+
+  // Styles
+
   const PHONE_MODE_BREAKPOINT = 640; // px
   /**
    * @class
@@ -279,11 +286,11 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/decorators/propert
     /**
      * @override
      */
-    _modifyDateValue(amount, unit) {
+    _modifyDateValue(amount, unit, preserveDate) {
       if (!this.dateValue) {
         return;
       }
-      const modifiedDate = (0, _modifyDateBy.default)(_CalendarDate.default.fromLocalJSDate(this.dateValue), amount, unit, this._minDate, this._maxDate);
+      const modifiedDate = (0, _modifyDateBy.default)(_CalendarDate.default.fromLocalJSDate(this.dateValue), amount, unit, preserveDate, this._minDate, this._maxDate);
       const modifiedLocalDate = modifiedDate.toLocalJSDate();
       modifiedLocalDate.setHours(this.dateValue.getHours());
       modifiedLocalDate.setMinutes(this.dateValue.getMinutes());

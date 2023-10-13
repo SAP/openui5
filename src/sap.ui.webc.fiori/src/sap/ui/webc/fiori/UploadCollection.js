@@ -69,14 +69,7 @@ sap.ui.define([
 				 * Defines the mode of the <code>sap.ui.webc.fiori.UploadCollection</code>.
 				 *
 				 * <br>
-				 * <br>
-				 * <b>Note:</b>
-				 * <ul>
-				 *     <li><code>None</code></li>
-				 *     <li><code>SingleSelect</code></li>
-				 *     <li><code>MultiSelect</code></li>
-				 *     <li><code>Delete</code></li>
-				 * </ul>
+				 * <b>Note:</b> Mode "Delete" has no effect. The delete button is controlled by the <code>hideDeleteButton</code> property of UploadCollectionItem</li>
 				 */
 				mode: {
 					type: "sap.ui.webc.main.ListMode",
@@ -149,14 +142,12 @@ sap.ui.define([
 				},
 
 				/**
-				 * Fired when the Delete button of any item is pressed. <br>
-				 * <br>
-				 * <b>Note:</b> A Delete button is displayed on each item, when the <code>sap.ui.webc.fiori.UploadCollection</code> <code>mode</code> property is set to <code>Delete</code>.
+				 * Fired when the delete button of any item is pressed.
 				 */
 				itemDelete: {
 					parameters: {
 						/**
-						 * The <code>sap.ui.webc.fiori.UploadCollectionItem</code> which was renamed.
+						 * The <code>sap.ui.webc.fiori.UploadCollectionItem</code> which was deleted.
 						 */
 						item: {
 							type: "HTMLElement"

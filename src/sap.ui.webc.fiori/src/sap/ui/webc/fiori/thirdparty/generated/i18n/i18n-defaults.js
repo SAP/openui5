@@ -628,7 +628,7 @@ sap.ui.define(["exports"], function (_exports) {
   _exports.IM_TITLE_SURVEY = IM_TITLE_SURVEY;
   const IM_SUBTITLE_SURVEY = {
     key: "IM_SUBTITLE_SURVEY",
-    defaultText: "We want to hear what you think about SAP software. Share your feedback with us by taking our short survey. It will only take a few minutes."
+    defaultText: "We want to hear what you think about SAP software. Share your feedback with us by taking our short survey."
   };
   _exports.IM_SUBTITLE_SURVEY = IM_SUBTITLE_SURVEY;
   const DSC_SIDE_ARIA_LABEL = {

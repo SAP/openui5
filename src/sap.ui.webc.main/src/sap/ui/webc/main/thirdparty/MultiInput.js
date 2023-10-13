@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/decorators/property", "sap/ui/webc/common/thirdparty/base/decorators/slot", "sap/ui/webc/common/thirdparty/base/decorators/event", "sap/ui/webc/common/thirdparty/base/decorators/customElement", "sap/ui/webc/common/thirdparty/base/renderer/LitRenderer", "sap/ui/webc/common/thirdparty/base/Keys", "./generated/i18n/i18n-defaults", "./Input", "./generated/templates/MultiInputTemplate.lit", "./generated/themes/MultiInput.css", "./Token", "./Tokenizer", "./Icon", "sap/ui/webc/common/thirdparty/icons/value-help"], function (_exports, _property, _slot, _event, _customElement, _LitRenderer, _Keys, _i18nDefaults, _Input, _MultiInputTemplate, _MultiInput, _Token, _Tokenizer, _Icon, _valueHelp) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/decorators/property", "sap/ui/webc/common/thirdparty/base/decorators/slot", "sap/ui/webc/common/thirdparty/base/decorators/event", "sap/ui/webc/common/thirdparty/base/decorators/customElement", "sap/ui/webc/common/thirdparty/base/renderer/LitRenderer", "sap/ui/webc/common/thirdparty/base/Keys", "sap/ui/webc/common/thirdparty/base/CustomElementsScope", "./generated/i18n/i18n-defaults", "./Input", "./generated/templates/MultiInputTemplate.lit", "./generated/themes/MultiInput.css", "./Token", "./Tokenizer", "./Icon", "sap/ui/webc/common/thirdparty/icons/value-help"], function (_exports, _property, _slot, _event, _customElement, _LitRenderer, _Keys, _CustomElementsScope, _i18nDefaults, _Input, _MultiInputTemplate, _MultiInput, _Token, _Tokenizer, _Icon, _valueHelp) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -100,11 +100,15 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/decorators/propert
       target.focus();
     }
     _tokenizerFocusOut(e) {
-      if (!this.contains(e.relatedTarget)) {
+      const isFocusingMorePopover = e.relatedTarget === this.tokenizer.staticAreaItem;
+      if (!this.contains(e.relatedTarget) && !isFocusingMorePopover) {
         this.tokenizer._tokens.forEach(token => {
           token.selected = false;
         });
         this.tokenizer.scrollToStart();
+      }
+      if (e.relatedTarget === this.nativeInput) {
+        this.tokenizer.closeMorePopover();
       }
     }
     valueHelpMouseUp() {
@@ -116,11 +120,16 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/decorators/propert
       this.expandedTokenizer = true;
       this.focused = true;
       this.tokenizer.scrollToEnd();
+      this.tokenizer._getTokens().forEach(token => {
+        token.selected = false;
+      });
     }
     _onkeydown(e) {
       super._onkeydown(e);
       const target = e.target;
       const isHomeInBeginning = (0, _Keys.isHome)(e) && target.selectionStart === 0;
+      const isCtrl = e.metaKey || e.ctrlKey;
+      const tokens = this.tokens;
       if (isHomeInBeginning) {
         this._skipOpenSuggestions = true; // Prevent input focus when navigating through the tokens
         return this._focusFirstToken(e);
@@ -132,6 +141,10 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/decorators/propert
       this._skipOpenSuggestions = false;
       if ((0, _Keys.isShow)(e)) {
         this.valueHelpPress();
+      }
+      if (isCtrl && e.key.toLowerCase() === "i" && tokens.length > 0) {
+        e.preventDefault();
+        this.tokenizer.openMorePopover();
       }
     }
     _onTokenizerKeydown(e) {
@@ -165,6 +178,10 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/decorators/propert
           return cutResult;
         }
         return this.tokenizer._fillClipboard(_Tokenizer.ClipboardDataOperation.copy, selectedTokens);
+      }
+      if (isCtrl && e.key.toLowerCase() === "i" && tokens.length > 0) {
+        e.preventDefault();
+        this.tokenizer.openMorePopover();
       }
     }
     _handleLeft(e) {
@@ -213,7 +230,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/decorators/propert
     }
     onBeforeRendering() {
       super.onBeforeRendering();
-      this.style.setProperty("--_ui5-input-icons-count", `${this.iconsCount}`);
+      this.style.setProperty((0, _CustomElementsScope.getScopedVarName)("--_ui5-input-icons-count"), `${this.iconsCount}`);
       this.tokenizerAvailable = this.tokens && this.tokens.length > 0;
     }
     get iconsCount() {
@@ -253,6 +270,12 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/decorators/propert
     }
     get ariaRoleDescription() {
       return MultiInput_1.i18nBundle.getText(_i18nDefaults.MULTIINPUT_ROLEDESCRIPTION_TEXT);
+    }
+    get morePopoverOpener() {
+      if (this.tokens.length === 1 && this.tokens[0].isTruncatable) {
+        return this.tokens[0];
+      }
+      return this;
     }
   };
   __decorate([(0, _property.default)({

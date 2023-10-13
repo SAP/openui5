@@ -40,7 +40,7 @@ sap.ui.define(["exports", "./util/whenDOMReady", "./EventProvider", "./FontFace"
       (0, _ThemeRegistered.attachThemeRegistered)(onThemeRegistered);
       (0, _Runtimes.registerCurrentRuntime)();
       const openUI5Support = (0, _FeaturesRegistry.getFeature)("OpenUI5Support");
-      const isOpenUI5Loaded = openUI5Support ? openUI5Support.isLoaded() : false;
+      const isOpenUI5Loaded = openUI5Support ? openUI5Support.isOpenUI5Detected() : false;
       const f6Navigation = (0, _FeaturesRegistry.getFeature)("F6Navigation");
       if (openUI5Support) {
         await openUI5Support.init();

@@ -6,7 +6,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
   });
   _exports.pathData = _exports.ltr = _exports.default = _exports.accData = void 0;
   const name = "bookmark";
-  const pathData = "M363.5 0q36 0 60.5 24.5T448.5 85v396q0 8-4 14.5t-9 10.5q-8 5-16 5-5 0-13-4l-151-92-149 92q-8 4-14 4-7 0-15-5-14-9-14-25V85q0-36 22-60.5t58-24.5h220z";
+  const pathData = "M422 512q-9 0-14-4L256 402 104 508q-5 4-14 4-11 0-18.5-7.5T64 486V90q0-38 26-64t64-26h204q38 0 64 26t26 64v396q0 11-7.5 18.5T422 512z";
   _exports.pathData = pathData;
   const ltr = false;
   _exports.ltr = ltr;

@@ -77,18 +77,6 @@ sap.ui.define([
 				/**
 				 * Defines the placement of the component. <br>
 				 * <br>
-				 * Available options are:
-				 * <ul>
-				 *     <li><code>TopStart</code></li>
-				 *     <li><code>TopCenter</code></li>
-				 *     <li><code>TopEnd</code></li>
-				 *     <li><code>MiddleStart</code></li>
-				 *     <li><code>MiddleCenter</code></li>
-				 *     <li><code>MiddleEnd</code></li>
-				 *     <li><code>BottomStart</code></li>
-				 *     <li><code>BottomCenter</code></li>
-				 *     <li><code>BottomEnd</code></li>
-				 * </ul>
 				 */
 				placement: {
 					type: "sap.ui.webc.main.ToastPlacement",

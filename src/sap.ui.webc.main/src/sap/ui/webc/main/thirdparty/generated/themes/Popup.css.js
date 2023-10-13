@@ -13,7 +13,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/T
   const styleData = {
     packageName: "@ui5/webcomponents",
     fileName: "themes/Popup.css",
-    content: ":host {\n    min-width: 1px; /** So that it can always get focus **/\n    display: none;\n    position: fixed;\n}\n"
+    content: ":host{display:none;min-width:1px;position:fixed}"
   };
   var _default = styleData;
   _exports.default = _default;

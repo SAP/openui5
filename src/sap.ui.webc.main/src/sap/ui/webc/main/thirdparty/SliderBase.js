@@ -23,6 +23,9 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
     return c > 3 && r && Object.defineProperty(target, key, r), r;
   };
   var SliderBase_1;
+
+  // Styles
+
   /**
    * @class
    *
@@ -33,7 +36,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
    * @author SAP SE
    * @alias sap.ui.webc.main.SliderBase
    * @extends sap.ui.webc.base.UI5Element
-   * @tagname ui5-slider
    * @public
    */
   let SliderBase = SliderBase_1 = class SliderBase extends _UI5Element.default {

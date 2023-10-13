@@ -24,26 +24,14 @@
             ) {
 
                 var oColorPalettePopover0Button = new Button({
-                    text: "openPopover",
-                    click: function(oEvent) {
-                        console.log("Calling openPopover...");
-                        var result = oColorPalettePopover.openPopover();
-                        console.log("... openPopover returned: ", result);
-                    }
-                });
-                oColorPalettePopover0Button.placeAt("methodButtons");
-
-
-
-                var oColorPalettePopover1Button = new Button({
                     text: "showAt",
                     click: function(oEvent) {
                         console.log("Calling showAt...");
-                        var result = oColorPalettePopover.showAt(oColorPalettePopover1Button);
+                        var result = oColorPalettePopover.showAt(oColorPalettePopover0Button);
                         console.log("... showAt returned: ", result);
                     }
                 });
-                oColorPalettePopover1Button.placeAt("methodButtons");
+                oColorPalettePopover0Button.placeAt("methodButtons");
 
 
                 var oColorPalettePopover = new ColorPalettePopover({

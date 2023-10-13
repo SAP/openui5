@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/ui/webc/common/thirdparty/base/decorators/customElement", "sap/ui/webc/common/thirdparty/base/decorators/event", "sap/ui/webc/common/thirdparty/base/decorators/property", "sap/ui/webc/common/thirdparty/base/decorators/slot", "sap/ui/webc/common/thirdparty/base/renderer/LitRenderer", "sap/ui/webc/common/thirdparty/base/delegate/ResizeHandler", "sap/ui/webc/common/thirdparty/base/Render", "sap/ui/webc/common/thirdparty/base/animations/slideDown", "sap/ui/webc/common/thirdparty/base/animations/slideUp", "sap/ui/webc/common/thirdparty/base/types/Integer", "sap/ui/webc/common/thirdparty/base/types/AnimationMode", "sap/ui/webc/common/thirdparty/base/config/AnimationMode", "sap/ui/webc/common/thirdparty/base/delegate/ItemNavigation", "sap/ui/webc/common/thirdparty/base/Keys", "sap/ui/webc/common/thirdparty/base/MediaRange", "sap/ui/webc/common/thirdparty/base/i18nBundle", "sap/ui/webc/common/thirdparty/icons/slim-arrow-up", "sap/ui/webc/common/thirdparty/icons/slim-arrow-down", "./generated/i18n/i18n-defaults", "./Button", "./Icon", "./List", "./ResponsivePopover", "./types/TabContainerTabsPlacement", "./types/SemanticColor", "./types/TabContainerBackgroundDesign", "./types/TabLayout", "./types/TabsOverflowMode", "./generated/templates/TabContainerTemplate.lit", "./generated/templates/TabContainerPopoverTemplate.lit", "./generated/themes/TabContainer.css", "./generated/themes/ResponsivePopoverCommon.css"], function (_exports, _UI5Element, _customElement, _event, _property, _slot, _LitRenderer, _ResizeHandler, _Render, _slideDown, _slideUp, _Integer, _AnimationMode, _AnimationMode2, _ItemNavigation, _Keys, _MediaRange, _i18nBundle, _slimArrowUp, _slimArrowDown, _i18nDefaults, _Button, _Icon, _List, _ResponsivePopover, _TabContainerTabsPlacement, _SemanticColor, _TabContainerBackgroundDesign, _TabLayout, _TabsOverflowMode, _TabContainerTemplate, _TabContainerPopoverTemplate, _TabContainer, _ResponsivePopoverCommon) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/ui/webc/common/thirdparty/base/decorators/customElement", "sap/ui/webc/common/thirdparty/base/decorators/event", "sap/ui/webc/common/thirdparty/base/decorators/property", "sap/ui/webc/common/thirdparty/base/decorators/slot", "sap/ui/webc/common/thirdparty/base/renderer/LitRenderer", "sap/ui/webc/common/thirdparty/base/delegate/ResizeHandler", "sap/ui/webc/common/thirdparty/base/Render", "sap/ui/webc/common/thirdparty/base/animations/slideDown", "sap/ui/webc/common/thirdparty/base/animations/slideUp", "sap/ui/webc/common/thirdparty/base/types/Integer", "sap/ui/webc/common/thirdparty/base/types/AnimationMode", "sap/ui/webc/common/thirdparty/base/config/AnimationMode", "sap/ui/webc/common/thirdparty/base/delegate/ItemNavigation", "sap/ui/webc/common/thirdparty/base/Keys", "sap/ui/webc/common/thirdparty/base/MediaRange", "sap/ui/webc/common/thirdparty/base/i18nBundle", "sap/ui/webc/common/thirdparty/base/CustomElementsScope", "sap/ui/webc/common/thirdparty/icons/slim-arrow-up", "sap/ui/webc/common/thirdparty/icons/slim-arrow-down", "./generated/i18n/i18n-defaults", "./Button", "./Icon", "./List", "./ResponsivePopover", "./types/TabContainerTabsPlacement", "./types/SemanticColor", "./types/TabContainerBackgroundDesign", "./types/TabLayout", "./types/TabsOverflowMode", "./generated/templates/TabContainerTemplate.lit", "./generated/templates/TabContainerPopoverTemplate.lit", "./generated/themes/TabContainer.css", "./generated/themes/ResponsivePopoverCommon.css"], function (_exports, _UI5Element, _customElement, _event, _property, _slot, _LitRenderer, _ResizeHandler, _Render, _slideDown, _slideUp, _Integer, _AnimationMode, _AnimationMode2, _ItemNavigation, _Keys, _MediaRange, _i18nBundle, _CustomElementsScope, _slimArrowUp, _slimArrowDown, _i18nDefaults, _Button, _Icon, _List, _ResponsivePopover, _TabContainerTabsPlacement, _SemanticColor, _TabContainerBackgroundDesign, _TabLayout, _TabsOverflowMode, _TabContainerTemplate, _TabContainerPopoverTemplate, _TabContainer, _ResponsivePopoverCommon) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -40,6 +40,11 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
     return c > 3 && r && Object.defineProperty(target, key, r), r;
   };
   var TabContainer_1;
+
+  // Templates
+
+  // Styles
+
   const tabStyles = [];
   const staticAreaTabStyles = [];
   const PAGE_UP_DOWN_SIZE = 5;
@@ -218,9 +223,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       let button = e.target;
       let tabInstance = button.tab;
       if (tabInstance) {
-        tabInstance.focus({
-          focusVisible: true
-        });
+        tabInstance.focus();
       }
       if (e.type === "keydown" && !e.target._realTab.isSingleClickArea) {
         button = e.target.querySelectorAll(".ui5-tab-expand-button")[0];
@@ -304,9 +307,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       this.responsivePopover.close();
       await (0, _Render.renderFinished)();
       const selectedTopLevel = this._getRootTab(this._selectedTab);
-      selectedTopLevel.getTabInStripDomRef().focus({
-        focusVisible: true
-      });
+      selectedTopLevel.getTabInStripDomRef().focus();
     }
     /**
      * Returns all slotted tabs and their subTabs in a flattened array.
@@ -454,8 +455,8 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
           level += 1;
         }
         tab._style = {
-          "--_ui5-tab-indentation-level": level,
-          "--_ui5-tab-extra-indent": extraIndent ? 1 : null
+          [(0, _CustomElementsScope.getScopedVarName)("--_ui5-tab-indentation-level")]: level,
+          [(0, _CustomElementsScope.getScopedVarName)("--_ui5-tab-extra-indent")]: extraIndent ? 1 : null
         };
       });
     }

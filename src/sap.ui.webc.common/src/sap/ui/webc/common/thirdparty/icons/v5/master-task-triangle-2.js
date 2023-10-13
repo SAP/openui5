@@ -6,7 +6,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
   });
   _exports.pathData = _exports.ltr = _exports.default = _exports.accData = void 0;
   const name = "master-task-triangle-2";
-  const pathData = "M496.5 358q13 23 13 51 0 21-8.5 40t-23 33.5-34 22.5-40.5 8h-291q-22 0-41-8.5t-33-22.5T16 448.5 7.5 408q0-26 12-50l12-22q17 14 36.5 21.5t42.5 7.5q26 0 49-10t40-27 27-39.5 10-48.5q0-42-25.5-75t-63.5-44l18-34q14-26 38.5-40.5T258.5 32q29 0 53.5 14.5T350.5 87zm-386-40q-32 0-55-23t-23-55 23-55.5 55-23.5 55.5 23.5 23.5 55.5-23.5 55-55.5 23z";
+  const pathData = "M498 336q6 14 10 28t4 29q0 25-10 47t-26.5 38-39 25-46.5 9H122q-24 0-46.5-9.5t-39-25.5T10 439.5 0 394q0-16 4-30t11-28l14-30 24 13q29 15 59 15 26 0 49-10t40-27 27-40 10-49q0-37-20-68t-54-47l-27-12 16-25q17-26 44.5-41T257 0q34 0 63 16t43 46zm-386-48q-33 0-56.5-23.5T32 208t23.5-56.5T112 128t56.5 23.5T192 208t-23.5 56.5T112 288z";
   _exports.pathData = pathData;
   const ltr = false;
   _exports.ltr = ltr;

@@ -13,7 +13,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/T
   const styleData = {
     packageName: "@ui5/webcomponents-fiori",
     fileName: "themes/NotificationPrioIcon.css",
-    content: ".ui5-prio-icon {\n\tmin-width: 1rem;\n\tmin-height: 1rem;\n\tpadding-inline-end: 0.625rem;\n}\n\n.ui5-prio-icon--message-error {\n\tcolor: var(--sapNegativeElementColor);\n}\n\n.ui5-prio-icon--message-warning {\n\tcolor: var(--sapCriticalElementColor);\n}\n\n.ui5-prio-icon--message-success {\n\tcolor: var(--sapPositiveElementColor);\n}"
+    content: ".ui5-prio-icon{min-height:1rem;min-width:1rem;padding-inline-end:.625rem}.ui5-prio-icon--message-error{color:var(--sapNegativeElementColor)}.ui5-prio-icon--message-warning{color:var(--sapCriticalElementColor)}.ui5-prio-icon--message-success{color:var(--sapPositiveElementColor)}"
   };
   var _default = styleData;
   _exports.default = _default;

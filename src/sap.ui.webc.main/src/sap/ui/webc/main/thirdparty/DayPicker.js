@@ -27,6 +27,11 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/decorators/customE
     return c > 3 && r && Object.defineProperty(target, key, r), r;
   };
   var DayPicker_1;
+
+  // Template
+
+  // Styles
+
   const isBetween = (x, num1, num2) => x > Math.min(num1, num2) && x < Math.max(num1, num2);
   const DAYS_IN_WEEK = 7;
   /**
@@ -188,6 +193,10 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/decorators/customE
     onAfterRendering() {
       if (this._autoFocus && !this._hidden) {
         this.focus();
+      }
+      const focusedDay = this.shadowRoot.querySelector("[data-sap-focus-ref]");
+      if (focusedDay && document.activeElement !== focusedDay) {
+        focusedDay.focus();
       }
     }
     _onfocusin() {
@@ -360,13 +369,13 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/decorators/customE
       } else if ((0, _Keys.isSpace)(e) || (0, _Keys.isSpaceShift)(e)) {
         e.preventDefault();
       } else if ((0, _Keys.isLeft)(e)) {
-        this._modifyTimestampBy(-1, "day");
+        this._modifyTimestampBy(-1, "day", false);
       } else if ((0, _Keys.isRight)(e)) {
-        this._modifyTimestampBy(1, "day");
+        this._modifyTimestampBy(1, "day", false);
       } else if ((0, _Keys.isUp)(e)) {
-        this._modifyTimestampBy(-7, "day");
+        this._modifyTimestampBy(-7, "day", false);
       } else if ((0, _Keys.isDown)(e)) {
-        this._modifyTimestampBy(7, "day");
+        this._modifyTimestampBy(7, "day", false);
       } else if ((0, _Keys.isPageUp)(e)) {
         this._modifyTimestampBy(-1, "month");
       } else if ((0, _Keys.isPageDown)(e)) {
@@ -451,29 +460,28 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/decorators/customE
     }
     /**
      * Called by the Calendar component.
-     * <b>Note:</b> same as for "PageUp"
      * @protected
      */
     _showPreviousPage() {
-      this._modifyTimestampBy(-1, "month");
+      this._modifyTimestampBy(-1, "month", false);
     }
     /**
      * Called by the Calendar component.
-     * <b>Note:</b> same as for "PageDown"
      * @protected
      */
     _showNextPage() {
-      this._modifyTimestampBy(1, "month");
+      this._modifyTimestampBy(1, "month", false);
     }
     /**
      * Modifies the timestamp by a certain amount of days/months/years.
      * @param { number } amount
      * @param { string } unit
+     * @param { boolean } preserveDate whether to preserve the day of the month (f.e. 15th of March + 1 month = 15th of April)
      * @private
      */
-    _modifyTimestampBy(amount, unit) {
+    _modifyTimestampBy(amount, unit, preserveDate) {
       // Modify the current timestamp
-      this._safelyModifyTimestampBy(amount, unit);
+      this._safelyModifyTimestampBy(amount, unit, preserveDate);
       this._updateSecondTimestamp();
       // Notify the calendar to update its timestamp
       this.fireEvent("navigate", {

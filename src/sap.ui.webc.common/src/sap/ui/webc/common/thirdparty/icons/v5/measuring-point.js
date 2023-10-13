@@ -6,7 +6,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
   });
   _exports.pathData = _exports.ltr = _exports.default = _exports.accData = void 0;
   const name = "measuring-point";
-  const pathData = "M72 297q-7 0-10-2-16-6-16-24V166q0-18 16-24 4-2 11-2 9 0 18 7l52 53q8 8 8 19 0 10-8 18l-52 53q-7 7-19 7zM448 65q8 2 13 9.5t5 16.5q0 2-1 3v4l-25 99v232q0 21-15.5 36.5T387 481H256q-22 0-37-15.5T204 429V90q0-11 7.5-19t18.5-8 18.5 8 7.5 19v102h53q11 0 18.5 8t7.5 19-7.5 18.5T309 245h-53v26h53q11 0 18.5 7.5T335 297t-7.5 19-18.5 8h-53v26h53q11 0 18.5 7.5T335 376t-7.5 18.5T309 402h-53v27h131V192q0-2 1-3v-3q0-1 1-2l26-103q5-18 24-18 3 0 9 2z";
+  const pathData = "M454 89q11 0 18.5 7.5T480 115q0 3-2 9l-36 88v178q0 24-17 41t-40 17H282q-24 0-41-17t-17-41V90q0-11 7.5-18.5T250 64t18 7.5 7 18.5v70h51q11 0 18.5 7.5T352 186t-7.5 18-18.5 7h-51v13h51q11 0 18.5 7.5T352 250t-7.5 18-18.5 7h-51v26h51q11 0 18.5 7t7.5 18-7.5 18.5T326 352h-51v38q0 7 7 7h103q6 0 6-7V207q0-4 2-10l38-92q6-16 23-16zm-305 66q11 8 11 21t-11 21l-77 54q-7 5-14 5-11 0-18.5-7.5T32 230V122q0-11 7.5-18.5T58 96q7 0 14 5z";
   _exports.pathData = pathData;
   const ltr = false;
   _exports.ltr = ltr;

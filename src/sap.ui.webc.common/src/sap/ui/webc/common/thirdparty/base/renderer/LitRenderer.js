@@ -67,6 +67,8 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/lit-html/lit-html", "..
       return litStatic.unsafeStatic((tags || []).includes(tag) ? `${tag}-${suffix}` : tag);
     }
   };
+
+  // @ts-ignore style-map is a JS file
   _exports.scopeTag = scopeTag;
   var _default = litRender;
   _exports.default = _default;

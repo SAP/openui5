@@ -29,6 +29,9 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
     return c > 3 && r && Object.defineProperty(target, key, r), r;
   };
   var Panel_1;
+
+  // Styles
+
   /**
    * @class
    *
@@ -181,6 +184,9 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       return {
         headerBtn: {
           "ui5-panel-header-button-animated": !this.shouldNotAnimate()
+        },
+        stickyHeaderClass: {
+          "ui5-panel-heading-wrapper-sticky": this.stickyHeader
         }
       };
     }
@@ -268,6 +274,9 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
     defaultValue: _TitleLevel.default.H2
   })], Panel.prototype, "headerLevel", void 0);
   __decorate([(0, _property.default)()], Panel.prototype, "accessibleName", void 0);
+  __decorate([(0, _property.default)({
+    type: Boolean
+  })], Panel.prototype, "stickyHeader", void 0);
   __decorate([(0, _property.default)({
     type: Boolean
   })], Panel.prototype, "useAccessibleNameForToggleButton", void 0);

@@ -13,7 +13,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/T
   const styleData = {
     packageName: "@ui5/webcomponents",
     fileName: "themes/CustomListItem.css",
-    content: "\n:host(:not([hidden])) {\n\tdisplay: block;\n}\n\n:host {\n\tmin-height: var(--_ui5_list_item_base_height);\n\theight: auto;\n\tbox-sizing: border-box;\n}\n\n.ui5-li-root.ui5-custom-li-root {\n\tpointer-events: inherit;\n\tmin-height: inherit;\n}\n\n.ui5-li-root.ui5-custom-li-root .ui5-li-content {\n\tpointer-events: inherit;\n}\n\n[ui5-checkbox].ui5-li-singlesel-radiobtn,\n[ui5-radio-button].ui5-li-singlesel-radiobtn {\n\tdisplay: flex;\n\talign-items: center;\n}\n\n.ui5-li-root.ui5-custom-li-root,\n[ui5-checkbox].ui5-li-singlesel-radiobtn,\n[ui5-radio-button].ui5-li-singlesel-radiobtn {\n\tmin-width: var(--_ui5_custom_list_item_rb_min_width);\n}\n"
+    content: ":host(:not([hidden])){display:block}:host{box-sizing:border-box;height:auto;min-height:var(--_ui5-v1-18-0_list_item_base_height)}.ui5-li-root.ui5-custom-li-root{min-height:inherit;pointer-events:inherit}.ui5-li-root.ui5-custom-li-root .ui5-li-content{pointer-events:inherit}[ui5-checkbox].ui5-li-singlesel-radiobtn,[ui5-radio-button].ui5-li-singlesel-radiobtn{align-items:center;display:flex}.ui5-li-root.ui5-custom-li-root,[ui5-checkbox].ui5-li-singlesel-radiobtn,[ui5-radio-button].ui5-li-singlesel-radiobtn{min-width:var(--_ui5-v1-18-0_custom_list_item_rb_min_width)}"
   };
   var _default = styleData;
   _exports.default = _default;

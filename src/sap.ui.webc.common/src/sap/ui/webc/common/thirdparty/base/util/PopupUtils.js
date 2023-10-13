@@ -72,7 +72,7 @@ sap.ui.define(["exports", "../getSharedResource", "../FeaturesRegistry", "./getA
   _exports.getClosedPopupParent = getClosedPopupParent;
   const getNextZIndex = () => {
     const openUI5Support = (0, _FeaturesRegistry.getFeature)("OpenUI5Support");
-    if (openUI5Support && openUI5Support.isLoaded()) {
+    if (openUI5Support && openUI5Support.isOpenUI5Detected()) {
       // use OpenUI5 for getting z-index values, if loaded
       return openUI5Support.getNextZIndex();
     }

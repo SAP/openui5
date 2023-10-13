@@ -6,7 +6,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
   });
   _exports.pathData = _exports.ltr = _exports.default = _exports.accData = void 0;
   const name = "study-leave";
-  const pathData = "M512 207q0 6-2 9v106q0 11-6.5 17t-17.5 6q-10 0-16.5-6t-6.5-17v-78l-46 23v78q0 14-14 21l-138 69q-10 7-21 0l-139-69q-5-4-9.5-9T91 345v-81l-76-37q-5-3-9.5-8T1 207q0-15 14-21L246 70q11-8 21 0l231 116q5 3 9.5 8t4.5 13zm-143 85l-102 51q-10 7-21 0l-109-56v44l116 58 116-58v-39zm67-83l-181-90-180 90 180 90 123-62q2-2 4.5-3.5t4.5-1.5z";
+  const pathData = "M512 326q0 11-7.5 18.5T486 352t-18-7.5-7-18.5v-76l-45 23v75q0 15-13 23l-135 74q-4 3-12 3-6 0-12-3l-135-74q-13-8-13-23v-75l-82-42q-14-8-14-23t14-23L244 67q6-3 12-3t12 3l230 118q12 6 14 20v121zm-82-118l-174-90-174 90 174 90zm-65 91l-97 50q-6 3-12 3t-12-3l-97-50v34l109 60 109-60v-34z";
   _exports.pathData = pathData;
   const ltr = false;
   _exports.ltr = ltr;

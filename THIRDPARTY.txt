@@ -416,7 +416,7 @@ Contained in: src/sap.ui.integration/test/sap/ui/integration/demokit/cardExplore
 
 Library: sap.ui.webc.common:
 
-Component: UI5 Web Components, version: 1.5.0
+Component: UI5 Web Components, version: 1.18.0
 Copyright: SAP
 License: Apache-2.0
 License Text: https://github.com/SAP/openui5/blob/master/LICENSES/Apache-2.0.txt
@@ -436,13 +436,13 @@ Contained in: src/sap.ui.webc.common/src/sap/ui/webc/common/thirdparty/lit-html/
 
 Library: sap.ui.webc.fiori:
 
-Component: UI5 Web Components, version: 1.5.0
+Component: UI5 Web Components, version: 1.18.0
 Copyright: SAP
 License: Apache-2.0
 License Text: https://github.com/SAP/openui5/blob/master/LICENSES/Apache-2.0.txt
 Contained in: src/sap.ui.webc.fiori/src/sap/ui/webc/fiori/thirdparty/*.*
 
-Component: ZXing, version: 0.19.1
+Component: ZXing, version: 0.17.1
 Copyright: 2005 Sun Microsystems, Inc.; 2010-2014 University of Manchester; 2010-2015 Stian Soiland-Reyes; 2015 Peter Hull
 License: Apache-2.0
 License Text: https://github.com/SAP/openui5/blob/master/LICENSES/Apache-2.0.txt
@@ -451,7 +451,7 @@ Contained in: src/sap.ui.webc.fiori/src/sap/ui/webc/fiori/lib/zxing.js
 
 Library: sap.ui.webc.main:
 
-Component: UI5 Web Components, version: 1.5.0
+Component: UI5 Web Components, version: 1.18.0
 Copyright: SAP
 License: Apache-2.0
 License Text: https://github.com/SAP/openui5/blob/master/LICENSES/Apache-2.0.txt

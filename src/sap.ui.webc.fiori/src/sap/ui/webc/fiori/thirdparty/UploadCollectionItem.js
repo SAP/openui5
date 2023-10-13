@@ -31,6 +31,11 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/decorators/customE
     return c > 3 && r && Object.defineProperty(target, key, r), r;
   };
   var UploadCollectionItem_1;
+
+  // Template
+
+  // Styles
+
   /**
    * @class
    *
@@ -53,10 +58,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/decorators/customE
   let UploadCollectionItem = UploadCollectionItem_1 = class UploadCollectionItem extends _ListItem.default {
     static async onDefine() {
       [UploadCollectionItem_1.i18nFioriBundle] = await Promise.all([(0, _i18nBundle.getI18nBundle)("@ui5/webcomponents-fiori"), super.onDefine()]);
-    }
-    onBeforeRendering() {
-      // In the base class the item can become "actionable",
-      // that's why we are overriding this method.
     }
     /**
      * @override
@@ -143,6 +144,9 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/decorators/customE
         this._onTerminate();
       }
     }
+    _onDelete() {
+      this.fireEvent("_uci-delete");
+    }
     getFocusDomRef() {
       return this.getDomRef();
     }
@@ -163,20 +167,8 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/decorators/customE
     /**
      * @override
      */
-    get renderDeleteButton() {
+    get renderUploadCollectionDeleteButton() {
       return !this.hideDeleteButton;
-    }
-    /**
-     * @override
-     */
-    get placeSelectionElementAfter() {
-      return true;
-    }
-    /**
-     * @override
-     */
-    get placeSelectionElementBefore() {
-      return false;
     }
     get _fileNameWithoutExtension() {
       return this.fileName.substring(0, this.fileName.length - this._fileExtension.length);
@@ -317,7 +309,10 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/decorators/customE
    *
    * @event
    * @private
-   */, (0, _event.default)("_focus-requested")], UploadCollectionItem);
+   */, (0, _event.default)("_focus-requested")
+  /**
+   * @private
+   */, (0, _event.default)("_uci-delete")], UploadCollectionItem);
   UploadCollectionItem.define();
   var _default = UploadCollectionItem;
   _exports.default = _default;

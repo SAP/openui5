@@ -59,16 +59,6 @@ sap.ui.define([
 
 				/**
 				 * Defines the component's design.
-				 *
-				 * <br>
-				 * <br>
-				 * <b>Note:</b> Available options are:
-				 * <ul>
-				 *     <li><code>Header</code></li>
-				 *     <li><code>Subheader</code></li>
-				 *     <li><code>Footer</code></li>
-				 *     <li><code>FloatingFooter</code></li>
-				 * </ul>
 				 */
 				design: {
 					type: "sap.ui.webc.fiori.BarDesign",
@@ -87,7 +77,7 @@ sap.ui.define([
 			aggregations: {
 
 				/**
-				 * Defines the content at the end of the bar
+				 * Defines the content at the end of the bar.
 				 */
 				endContent: {
 					type: "sap.ui.core.Control",
@@ -96,7 +86,7 @@ sap.ui.define([
 				},
 
 				/**
-				 * Defines the content in the middle of the bar
+				 * Defines the content in the middle of the bar.
 				 */
 				middleContent: {
 					type: "sap.ui.core.Control",
@@ -104,7 +94,7 @@ sap.ui.define([
 				},
 
 				/**
-				 * Defines the content at the start of the bar
+				 * Defines the content at the start of the bar.
 				 */
 				startContent: {
 					type: "sap.ui.core.Control",

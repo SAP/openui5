@@ -1,10 +1,12 @@
-sap.ui.define(["exports"], function (_exports) {
+sap.ui.define(["exports", "./generated/VersionInfo"], function (_exports, _VersionInfo) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
     value: true
   });
-  _exports.shouldScopeCustomElement = _exports.setCustomElementsScopingSuffix = _exports.setCustomElementsScopingRules = _exports.getEffectiveScopingSuffixForTag = _exports.getCustomElementsScopingSuffix = _exports.getCustomElementsScopingRules = void 0;
+  _exports.shouldScopeCustomElement = _exports.setCustomElementsScopingSuffix = _exports.setCustomElementsScopingRules = _exports.getScopedVarName = _exports.getEffectiveScopingSuffixForTag = _exports.getCustomElementsScopingSuffix = _exports.getCustomElementsScopingRules = void 0;
+  _VersionInfo = _interopRequireDefault(_VersionInfo);
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
   let suf;
   let rulesObj = {
     include: [/^ui5-/],
@@ -98,5 +100,17 @@ sap.ui.define(["exports"], function (_exports) {
       return getCustomElementsScopingSuffix();
     }
   };
+  /**
+   * @public
+   * Used for getting a scoped name for a CSS variable using the same transformation used in the build
+   * @name the name of the css variable as written in the code
+   * @returns a variable name with the current version inserted as available at runtime
+   */
   _exports.getEffectiveScopingSuffixForTag = getEffectiveScopingSuffixForTag;
+  const getScopedVarName = name => {
+    const versionStr = `v${_VersionInfo.default.version.replaceAll(".", "-")}`;
+    const expr = /(--_?ui5)([^,:)\s]+)/g;
+    return name.replaceAll(expr, `$1-${versionStr}$2`);
+  };
+  _exports.getScopedVarName = getScopedVarName;
 });

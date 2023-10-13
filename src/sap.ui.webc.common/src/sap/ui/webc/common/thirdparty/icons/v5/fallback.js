@@ -6,7 +6,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
   });
   _exports.pathData = _exports.ltr = _exports.default = _exports.accData = void 0;
   const name = "fallback";
-  const pathData = "M487 225q-26 0-26-26v-51q0-25-26-25H256q-10 0-18-8l-43-44H77q-11 0-18.5 7.5T51 97v307q0 12 7.5 19t18.5 7h358q26 0 26-26v-25q0-33-22-55t-55-22H215l34 33q8 8 8 18t-8 18-18 8-18-8l-77-77q-8-8-8-18t8-18l77-77q8-8 18-8t18 8 8 18-8 18l-34 34h169q27 0 50.5 10t40.5 27 27 40.5 10 50.5v25q0 33-22 55t-55 22H77q-32 0-54.5-22T0 404V97q0-33 22.5-55T77 20h128q10 0 18 8l44 43h168q33 0 55 22.5t22 54.5v51q0 26-25 26z";
+  const pathData = "M422 480H90q-38 0-64-26T0 390V122q0-38 26-64t64-26h115q9 0 18 7l44 44h155q38 0 64 26t26 63v26q0 11-7.5 18.5T486 224t-18-7.5-7-18.5v-26q0-16-11-27t-28-11H256q-9 0-18-7l-44-44H90q-17 0-28 11t-11 28v268q0 17 11 28t28 11h332q17 0 28-11t11-28v-13q0-29-21-50t-50-21H214l34 34q8 8 8 18 0 11-7.5 18.5T230 384q-10 0-18-8l-77-76q-7-8-7-19t7-18l77-77q9-7 18-7 11 0 18.5 7.5T256 205q0 10-8 18l-32 32h174q26 0 48 9.5t38.5 26 26 39T512 377v13q0 38-26 64t-64 26z";
   _exports.pathData = pathData;
   const ltr = false;
   _exports.ltr = ltr;

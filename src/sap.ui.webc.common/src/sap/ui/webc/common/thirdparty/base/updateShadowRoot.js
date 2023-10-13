@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "./theming/getConstructableStyle", "./theming/getEffectiveStyle", "./theming/getEffectiveLinksHrefs", "./CSP"], function (_exports, _getConstructableStyle, _getEffectiveStyle, _getEffectiveLinksHrefs, _CSP) {
+sap.ui.define(["exports", "./theming/getConstructableStyle", "./theming/getEffectiveStyle", "./theming/getEffectiveLinksHrefs", "./CSP", "./Device"], function (_exports, _getConstructableStyle, _getEffectiveStyle, _getEffectiveLinksHrefs, _CSP, _Device) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -31,7 +31,7 @@ sap.ui.define(["exports", "./theming/getConstructableStyle", "./theming/getEffec
     }
     if ((0, _CSP.shouldUseLinks)()) {
       styleStrOrHrefsArr = (0, _getEffectiveLinksHrefs.default)(ctor, forStaticArea);
-    } else if (document.adoptedStyleSheets) {
+    } else if (document.adoptedStyleSheets && !(0, _Device.isSafari)()) {
       // Chrome
       shadowRoot.adoptedStyleSheets = (0, _getConstructableStyle.default)(ctor, forStaticArea);
     } else {

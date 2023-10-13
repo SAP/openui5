@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "../getSharedResource", "../assets-meta/IconCollectionsAlias", "../config/Icons", "../i18nBundle"], function (_exports, _getSharedResource, _IconCollectionsAlias, _Icons, _i18nBundle) {
+sap.ui.define(["exports", "../getSharedResource", "./util/IconCollectionsAlias", "./util/IconCollectionsByTheme", "./util/getIconCollectionByTheme", "../i18nBundle"], function (_exports, _getSharedResource, _IconCollectionsAlias, _IconCollectionsByTheme, _getIconCollectionByTheme, _i18nBundle) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -6,7 +6,9 @@ sap.ui.define(["exports", "../getSharedResource", "../assets-meta/IconCollection
   });
   _exports.registerIconLoader = _exports.registerIcon = _exports.getIconDataSync = _exports.getIconData = _exports.getIconAccessibleName = _exports._getRegisteredNames = void 0;
   _getSharedResource = _interopRequireDefault(_getSharedResource);
+  _getIconCollectionByTheme = _interopRequireDefault(_getIconCollectionByTheme);
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+  const DEFAULT_THEME_FAMILY = "legacy"; // includes sap_belize_* and sap_fiori_*
   const loaders = new Map();
   const registry = (0, _getSharedResource.default)("SVGIcons.registry", new Map());
   const iconCollectionPromises = (0, _getSharedResource.default)("SVGIcons.promises", new Map());
@@ -51,12 +53,9 @@ sap.ui.define(["exports", "../getSharedResource", "../assets-meta/IconCollection
     });
   };
   /**
-   * Processes the full icon name and splits it into - "name", "collection"
-   * to form the proper registry key ("collection/name") under which the icon is registered:
-   *
+   * Processes the full icon name and splits it into - "name", "collection".
    * - removes legacy protocol ("sap-icon://")
    * - resolves aliases (f.e "SAP-icons-TNT/actor" => "tnt/actor")
-   * - determines theme dependant icon collection (f.e "home" => "SAP-icons-v4/home" in Quartz | "SAP-icons-v5/home" in Horizon)
    *
    * @param { string } name
    * @return { object }
@@ -73,29 +72,27 @@ sap.ui.define(["exports", "../getSharedResource", "../assets-meta/IconCollection
     if (collection) {
       collection = (0, _IconCollectionsAlias.getIconCollectionByAlias)(collection);
     }
-    collection = (0, _Icons.getEffectiveIconCollection)(collection);
-    const registryKey = `${collection}/${name}`;
     return {
       name,
-      collection,
-      registryKey
+      collection
     };
   };
-  const getIconDataSync = name => {
+  const getIconDataSync = iconName => {
     const {
-      registryKey
-    } = processName(name);
-    return registry.get(registryKey);
+      name,
+      collection
+    } = processName(iconName);
+    return getRegisteredIconData(collection, name);
   };
   _exports.getIconDataSync = getIconDataSync;
-  const getIconData = async name => {
+  const getIconData = async iconName => {
     const {
-      collection,
-      registryKey
-    } = processName(name);
+      name,
+      collection
+    } = processName(iconName);
     let iconData = ICON_NOT_FOUND;
     try {
-      iconData = await _loadIconCollectionOnce(collection);
+      iconData = await _loadIconCollectionOnce((0, _getIconCollectionByTheme.default)(collection));
     } catch (error) {
       const e = error;
       console.error(e.message); /* eslint-disable-line */
@@ -104,10 +101,26 @@ sap.ui.define(["exports", "../getSharedResource", "../assets-meta/IconCollection
     if (iconData === ICON_NOT_FOUND) {
       return iconData;
     }
-    if (!registry.has(registryKey)) {
-      // not filled by another await. many getters will await on the same loader, but fill only once
+    const registeredIconData = getRegisteredIconData(collection, name);
+    if (registeredIconData) {
+      return registeredIconData;
+    }
+    // not filled by another await. many getters will await on the same loader, but fill only once
+    if (Array.isArray(iconData)) {
+      iconData.forEach(data => {
+        _fillRegistry(data);
+        (0, _IconCollectionsByTheme.registerIconCollectionForTheme)(collection, {
+          [data.themeFamily || DEFAULT_THEME_FAMILY]: data.collection
+        });
+      });
+    } else {
       _fillRegistry(iconData);
     }
+    return getRegisteredIconData(collection, name);
+  };
+  _exports.getIconData = getIconData;
+  const getRegisteredIconData = (collection, name) => {
+    const registryKey = `${(0, _getIconCollectionByTheme.default)(collection)}/${name}`;
     return registry.get(registryKey);
   };
   /**
@@ -117,7 +130,6 @@ sap.ui.define(["exports", "../getSharedResource", "../assets-meta/IconCollection
    * @param { string } name
    * @return { Promise }
    */
-  _exports.getIconData = getIconData;
   const getIconAccessibleName = async name => {
     if (!name) {
       return;

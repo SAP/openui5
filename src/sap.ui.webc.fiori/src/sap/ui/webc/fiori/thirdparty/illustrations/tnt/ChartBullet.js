@@ -28,10 +28,12 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
   const name = "ChartBullet";
   const set = "tnt";
+  const collection = "V4";
   (0, _Illustrations.registerIllustration)(name, {
     dialogSvg: _tntDialogChartBullet.default,
     sceneSvg: _tntSceneChartBullet.default,
     spotSvg: _tntSpotChartBullet.default,
-    set
+    set,
+    collection
   });
 });

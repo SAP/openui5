@@ -13,7 +13,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/T
   const styleData = {
     packageName: "@ui5/webcomponents",
     fileName: "themes/TableCell.css",
-    content: ":host {\n\tdisplay: table-cell;\n\tfont-family: \"72override\", var(--sapFontFamily);\n\tfont-size: 0.875rem;\n\theight: var(--ui5_table_row_height);\n\tbox-sizing: border-box;\n\tcolor: var(--sapContent_LabelColor);\n\tword-break: break-word;\n\tvertical-align: middle;\n}\n\ntd {\n\tdisplay: contents;\n}\n\n:host([popined]) {\n\tpadding-left: 0;\n\tpadding-top: .25rem;\n}\n\n:host([_popined-inline]) {\n\tpadding-top: 0;\n}\n\n::slotted([ui5-label]) {\n\tcolor: inherit;\n}"
+    content: ":host{box-sizing:border-box;color:var(--sapList_TextColor);display:table-cell;font-family:\"72override\",var(--sapFontFamily);font-size:.875rem;height:var(--ui5-v1-18-0_table_row_height);vertical-align:middle;word-break:break-word}td{display:contents}:host([popined]){padding-left:0;padding-top:.25rem}:host([_popined-inline]){padding-top:0}::slotted([ui5-label]){color:inherit}"
   };
   var _default = styleData;
   _exports.default = _default;

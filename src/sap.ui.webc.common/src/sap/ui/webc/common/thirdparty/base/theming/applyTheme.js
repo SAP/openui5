@@ -52,7 +52,7 @@ sap.ui.define([
             return extTheme;
         }
         const openUI5Support = (0, _FeaturesRegistry.getFeature)('OpenUI5Support');
-        if (openUI5Support) {
+        if (openUI5Support && openUI5Support.isOpenUI5Detected()) {
             const varsLoaded = openUI5Support.cssVariablesLoaded();
             if (varsLoaded) {
                 return {

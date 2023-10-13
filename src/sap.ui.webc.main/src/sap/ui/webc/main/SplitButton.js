@@ -79,20 +79,6 @@ sap.ui.define([
 
 				/**
 				 * Defines the component design.
-				 *
-				 * <br>
-				 * <br>
-				 * <b>The available values are:</b>
-				 *
-				 *
-				 * <ul>
-				 *     <li><code>Default</code></li>
-				 *     <li><code>Emphasized</code></li>
-				 *     <li><code>Positive</code></li>
-				 *     <li><code>Negative</code></li>
-				 *     <li><code>Transparent</code></li>
-				 *     <li><code>Attention</code></li>
-				 * </ul>
 				 */
 				design: {
 					type: "sap.ui.webc.main.ButtonDesign",

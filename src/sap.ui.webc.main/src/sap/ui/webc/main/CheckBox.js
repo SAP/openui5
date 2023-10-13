@@ -8,8 +8,8 @@ sap.ui.define([
 	"./library",
 	"sap/ui/core/EnabledPropagator",
 	"sap/ui/core/library",
-	"./thirdparty/CheckBox",
-	"./thirdparty/features/InputElementsFormSupport"
+	"./thirdparty/features/InputElementsFormSupport",
+	"./thirdparty/CheckBox"
 ], function(WebComponent, library, EnabledPropagator, coreLibrary) {
 	"use strict";
 
@@ -194,12 +194,7 @@ sap.ui.define([
 
 				/**
 				 * Defines whether the component text wraps when there is not enough space. <br>
-				 * <br>
-				 * Available options are:
-				 * <ul>
-				 *     <li><code>None</code> - The text will be truncated with an ellipsis.</li>
-				 *     <li><code>Normal</code> - The text will wrap. The words will not be broken based on hyphenation.</li>
-				 * </ul>
+				 * <b>Note:</b> for option "Normal" the text will wrap and the words will not be broken based on hyphenation.
 				 */
 				wrappingType: {
 					type: "sap.ui.webc.main.WrappingType",

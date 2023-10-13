@@ -6,7 +6,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
   });
   _exports.pathData = _exports.ltr = _exports.default = _exports.accData = void 0;
   const name = "sap-logo-shape";
-  const pathData = "M509.476 177q8 17-5 32l-227 231q-10 8-20 8h-227q-13 0-21-7.5t-8-20.5V189q0-13 8-21t21-8h454q8 0 15.5 4.5t9.5 12.5z";
+  const pathData = "M486 192q11 0 18.5 7.5T512 218t-9 19L273 441q-7 7-17 7H26q-11 0-18.5-7.5T0 422V218q0-11 7.5-18.5T26 192h460z";
   _exports.pathData = pathData;
   const ltr = true;
   _exports.ltr = ltr;

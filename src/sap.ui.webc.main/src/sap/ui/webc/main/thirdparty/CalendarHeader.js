@@ -24,6 +24,9 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
     return c > 3 && r && Object.defineProperty(target, key, r), r;
   };
   var CalendarHeader_1;
+
+  // Styles
+
   let CalendarHeader = CalendarHeader_1 = class CalendarHeader extends _UI5Element.default {
     static async onDefine() {
       CalendarHeader_1.i18nBundle = await (0, _i18nBundle.getI18nBundle)("@ui5/webcomponents");
@@ -40,10 +43,20 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       }
     }
     onPrevButtonClick(e) {
+      if (this.isPrevButtonDisabled) {
+        e.preventDefault();
+        return;
+      }
       this.fireEvent("previous-press", e);
+      e.preventDefault();
     }
     onNextButtonClick(e) {
+      if (this.isNextButtonDisabled) {
+        e.preventDefault();
+        return;
+      }
       this.fireEvent("next-press", e);
+      e.preventDefault();
     }
     onMonthButtonClick(e) {
       this.fireEvent("show-month-press", e);

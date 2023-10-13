@@ -6,7 +6,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
   });
   _exports.pathData = _exports.ltr = _exports.default = _exports.accData = void 0;
   const name = "tri-state";
-  const pathData = "M144 352h224V128H144v224zM416 0q35 0 57.5 22.5T496 80v320q0 34-22.5 57T416 480H96q-34 0-57-23t-23-57V80q0-35 23-57.5T96 0h320zm27 80q0-12-7.5-19.5T416 53H96q-12 0-19.5 7.5T69 80v320q0 12 7.5 19.5T96 427h320q12 0 19.5-7.5T443 400V80z";
+  const pathData = "M390 32q38 0 64 26t26 64v268q0 38-26 64t-64 26H122q-38 0-64-26t-26-64V122q0-38 26-64t64-26h268zm39 90q0-17-11-28t-28-11H122q-17 0-28 11t-11 28v268q0 17 11 28t28 11h268q17 0 28-11t11-28V122zm-77 38v192H160V160h192z";
   _exports.pathData = pathData;
   const ltr = false;
   _exports.ltr = ltr;

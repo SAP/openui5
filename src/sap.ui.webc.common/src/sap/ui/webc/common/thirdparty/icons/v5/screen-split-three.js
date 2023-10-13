@@ -6,7 +6,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
   });
   _exports.pathData = _exports.ltr = _exports.default = _exports.accData = void 0;
   const name = "screen-split-three";
-  const pathData = "M435 31q32 0 54.5 22.5T512 108v297q0 32-22.5 54T435 481H77q-32 0-54-22T1 405V108q0-32 22-54.5T77 31h358zM205 82v348h102V82H205zM52 405q0 25 25 25h77V82H77q-11 0-18 7.5T52 108v297zm409-297q0-11-7.5-18.5T435 82h-77v348h77q11 0 18.5-7t7.5-18V108z";
+  const pathData = "M422 32q38 0 64 26t26 64v268q0 38-26 64t-64 26H90q-38 0-64-26T0 390V122q0-38 26-64t64-26h332zM202 83v346h108V83H202zM51 390q0 17 11 28t28 11h60V83H90q-17 0-28 11t-11 28v268zm410-268q0-17-11-28t-28-11h-60v346h60q17 0 28-11t11-28V122z";
   _exports.pathData = pathData;
   const ltr = false;
   _exports.ltr = ltr;

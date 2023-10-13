@@ -103,29 +103,10 @@ sap.ui.define([
 				},
 
 				/**
-				 * Defines whether the overflow select list is displayed. <br>
-				 * <br>
-				 * The overflow select list represents a list, where all tabs are displayed so that it's easier for the user to select a specific tab.
-				 */
-				showOverflow: {
-					type: "boolean",
-					defaultValue: false
-				},
-
-				/**
 				 * Defines the alignment of the content and the <code>additionalText</code> of a tab.
 				 *
 				 * <br>
-				 * <br>
 				 * <b>Note:</b> The content and the <code>additionalText</code> would be displayed vertically by default, but when set to <code>Inline</code>, they would be displayed horizontally.
-				 *
-				 * <br>
-				 * <br>
-				 * Available options are:
-				 * <ul>
-				 *     <li><code>Standard</code></li>
-				 *     <li><code>Inline</code></li>
-				 * </ul>
 				 */
 				tabLayout: {
 					type: "sap.ui.webc.main.TabLayout",
@@ -136,16 +117,7 @@ sap.ui.define([
 				 * Defines the overflow mode of the header (the tab strip). If you have a large number of tabs, only the tabs that can fit on screen will be visible. All other tabs that can 't fit on the screen are available in an overflow tab "More".
 				 *
 				 * <br>
-				 * <br>
 				 * <b>Note:</b> Only one overflow at the end would be displayed by default, but when set to <code>StartAndEnd</code>, there will be two overflows on both ends, and tab order will not change on tab selection.
-				 *
-				 * <br>
-				 * <br>
-				 * Available options are:
-				 * <ul>
-				 *     <li><code>End</code></li>
-				 *     <li><code>StartAndEnd</code></li>
-				 * </ul>
 				 */
 				tabsOverflowMode: {
 					type: "sap.ui.webc.main.TabsOverflowMode",

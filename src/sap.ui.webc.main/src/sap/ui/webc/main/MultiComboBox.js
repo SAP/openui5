@@ -80,7 +80,8 @@ sap.ui.define([
 				 * Defines the accessible ARIA name of the component.
 				 */
 				accessibleName: {
-					type: "string"
+					type: "string",
+					defaultValue: ""
 				},
 
 				/**
@@ -160,13 +161,6 @@ sap.ui.define([
 				 * Defines the value state of the component. <br>
 				 * <br>
 				 * Available options are:
-				 * <ul>
-				 *     <li><code>None</code></li>
-				 *     <li><code>Error</code></li>
-				 *     <li><code>Warning</code></li>
-				 *     <li><code>Success</code></li>
-				 *     <li><code>Information</code></li>
-				 * </ul>
 				 */
 				valueState: {
 					type: "sap.ui.core.ValueState",

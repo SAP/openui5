@@ -6,7 +6,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
   });
   _exports.pathData = _exports.ltr = _exports.default = _exports.accData = void 0;
   const name = "sound-off";
-  const pathData = "M241 45q8 2 11.5 8.5T256 68v358q0 8-3.5 14.5T241 449q-6 3-11 3-9 0-17-8l-95-94H26q-11 0-18-7.5T1 324V171q0-26 25-26h92l95-94q7-8 18-8 4 0 10 2zm-36 85l-58 59q-8 7-18 7H52v102h77q8 0 18 8l58 59V130zm299 176q8 8 8 18t-8 18-18 8q-9 0-17-8l-59-59-59 59q-8 8-18 8t-18-8q-7-7-7-18t7-18l59-59-59-58q-7-8-7-18 0-11 7-18 8-8 18-8t18 8l59 59 59-59q8-8 17-8 10 0 18 8t8 18q0 8-8 18l-58 58z";
+  const pathData = "M262 64q11 0 18.5 7.5T288 90v332q0 11-7.5 18.5T262 448q-7 0-14-5l-128-91H26q-11 0-18.5-7.5T0 326V186q0-11 7.5-18.5T26 160h94l128-91q7-5 14-5zm-25 75l-94 67q-7 5-15 5H51v90h77q10 0 15 5l94 67V139zm268 172q7 7 7 17 0 11-7.5 18.5T486 354q-10 0-18-8l-51-53-53 55q-8 8-18 8-11 0-18.5-7.5T320 330q0-10 7-17l55-57-55-57q-7-7-7-17 0-11 7.5-18.5T346 156q10 0 18 8l53 55 51-53q8-8 18-8 11 0 18.5 7.5T512 184q0 10-7 17l-53 55z";
   _exports.pathData = pathData;
   const ltr = true;
   _exports.ltr = ltr;

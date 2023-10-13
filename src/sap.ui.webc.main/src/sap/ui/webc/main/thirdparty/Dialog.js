@@ -26,6 +26,11 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Device", "sap/ui/w
     return c > 3 && r && Object.defineProperty(target, key, r), r;
   };
   var Dialog_1;
+
+  // Template
+
+  // Styles
+
   /**
    * Defines the step size at which this component would change by when being dragged or resized with the keyboard.
    */
@@ -74,6 +79,10 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Device", "sap/ui/w
    * <li>content - Used to style the content of the component</li>
    * <li>footer - Used to style the footer of the component</li>
    * </ul>
+   * <b>Note:</b> When a <code>ui5-bar</code> is used in the header or in the footer, you should remove the default dialog's paddings.
+   * <br>
+   * For more information see the sample "Bar in Header/Footer".
+  
    *
    * <h3>ES6 Module Import</h3>
    *

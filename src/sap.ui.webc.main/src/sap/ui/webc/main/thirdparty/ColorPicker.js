@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/ui/webc/common/thirdparty/base/decorators/customElement", "sap/ui/webc/common/thirdparty/base/decorators/property", "sap/ui/webc/common/thirdparty/base/decorators/event", "sap/ui/webc/common/thirdparty/base/Keys", "sap/ui/webc/common/thirdparty/base/types/CSSColor", "sap/ui/webc/common/thirdparty/base/renderer/LitRenderer", "sap/ui/webc/common/thirdparty/base/types/Integer", "sap/ui/webc/common/thirdparty/base/types/Float", "sap/ui/webc/common/thirdparty/base/i18nBundle", "sap/ui/webc/common/thirdparty/base/util/ColorConversion", "./generated/templates/ColorPickerTemplate.lit", "./Input", "./Slider", "./Label", "./generated/i18n/i18n-defaults", "./generated/themes/ColorPicker.css"], function (_exports, _UI5Element, _customElement, _property, _event, _Keys, _CSSColor, _LitRenderer, _Integer, _Float, _i18nBundle, _ColorConversion, _ColorPickerTemplate, _Input, _Slider, _Label, _i18nDefaults, _ColorPicker) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/ui/webc/common/thirdparty/base/decorators/customElement", "sap/ui/webc/common/thirdparty/base/decorators/property", "sap/ui/webc/common/thirdparty/base/decorators/event", "sap/ui/webc/common/thirdparty/base/Keys", "sap/ui/webc/common/thirdparty/base/types/CSSColor", "sap/ui/webc/common/thirdparty/base/renderer/LitRenderer", "sap/ui/webc/common/thirdparty/base/types/Integer", "sap/ui/webc/common/thirdparty/base/types/Float", "sap/ui/webc/common/thirdparty/base/i18nBundle", "sap/ui/webc/common/thirdparty/base/CustomElementsScope", "sap/ui/webc/common/thirdparty/base/util/ColorConversion", "./generated/templates/ColorPickerTemplate.lit", "./Input", "./Slider", "./Label", "./generated/i18n/i18n-defaults", "./generated/themes/ColorPicker.css"], function (_exports, _UI5Element, _customElement, _property, _event, _Keys, _CSSColor, _LitRenderer, _Integer, _Float, _i18nBundle, _CustomElementsScope, _ColorConversion, _ColorPickerTemplate, _Input, _Slider, _Label, _i18nDefaults, _ColorPicker) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -27,6 +27,9 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
     return c > 3 && r && Object.defineProperty(target, key, r), r;
   };
   var ColorPicker_1;
+
+  // Styles
+
   const PICKER_POINTER_WIDTH = 6.5;
   /**
    * @class
@@ -86,7 +89,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       const tempColor = `rgba(${this._color.r}, ${this._color.g}, ${this._color.b}, 1)`;
       this._setHex();
       this._setValues();
-      this.style.setProperty("--ui5_Color_Picker_Progress_Container_Color", tempColor);
+      this.style.setProperty((0, _CustomElementsScope.getScopedVarName)("--ui5_Color_Picker_Progress_Container_Color"), tempColor);
     }
     _handleMouseDown(e) {
       this.mouseDown = true;

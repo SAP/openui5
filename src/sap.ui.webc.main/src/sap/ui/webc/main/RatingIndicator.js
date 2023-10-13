@@ -98,6 +98,14 @@ sap.ui.define([
 				},
 
 				/**
+				 * Defines whether the component is required.
+				 */
+				required: {
+					type: "boolean",
+					defaultValue: false
+				},
+
+				/**
 				 * The indicated value of the rating. <br>
 				 * <br>
 				 * <b>Note:</b> If you set a number which is not round, it would be shown as follows:
@@ -118,6 +126,21 @@ sap.ui.define([
 				width: {
 					type: "sap.ui.core.CSSSize",
 					mapping: "style"
+				}
+			},
+			associations: {
+
+				/**
+				 * Receives id(or many ids) of the controls that label this control.
+				 */
+				ariaLabelledBy: {
+					type: "sap.ui.core.Control",
+					multiple: true,
+					mapping: {
+						type: "property",
+						to: "accessibleNameRef",
+						formatter: "_getAriaLabelledByForRendering"
+					}
 				}
 			},
 			events: {

@@ -118,16 +118,9 @@ sap.ui.define([
 					}
 				}
 			},
-			getters: ["selectedItem", "selectedItems"]
+			getters: ["selectedItems"]
 		}
 	});
-
-	/**
-	 * Returns the currently selected item.
-	 * @public
-	 * @name sap.ui.webc.main.SegmentedButton#getSelectedItem
-	 * @function
-	 */
 
 	/**
 	 * Returns an array of the currently selected items.

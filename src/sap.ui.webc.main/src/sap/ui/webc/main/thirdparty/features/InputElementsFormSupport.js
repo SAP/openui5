@@ -5,6 +5,15 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/FeaturesRegistry"]
     value: true
   });
   _exports.default = void 0;
+  const findNearestFormElement = element => {
+    let currentElement = element.parentElement;
+    while (currentElement && currentElement.tagName.toLowerCase() !== "form") {
+      currentElement = currentElement.parentElement;
+    }
+    if (currentElement instanceof HTMLFormElement) {
+      return currentElement;
+    }
+  };
   class FormSupport {
     /**
      * Syncs the native input element, rendered into the component's light DOM,
@@ -77,17 +86,14 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/FeaturesRegistry"]
       }
     }
     static triggerFormSubmit(element) {
-      let currentElement = element.parentElement;
-      while (currentElement && currentElement.tagName.toLowerCase() !== "form") {
-        currentElement = currentElement.parentElement;
-      }
-      if (currentElement instanceof HTMLFormElement) {
-        if (!currentElement.checkValidity()) {
-          currentElement.reportValidity();
+      const formElement = findNearestFormElement(element);
+      if (formElement) {
+        if (!formElement.checkValidity()) {
+          formElement.reportValidity();
           return;
         }
         // eslint-disable-next-line no-undef
-        const submitPrevented = !currentElement.dispatchEvent(new SubmitEvent("submit", {
+        const submitPrevented = !formElement.dispatchEvent(new SubmitEvent("submit", {
           bubbles: true,
           cancelable: true,
           submitter: element
@@ -95,7 +101,13 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/FeaturesRegistry"]
         if (submitPrevented) {
           return;
         }
-        currentElement.submit();
+        formElement.submit();
+      }
+    }
+    static triggerFormReset(element) {
+      const formElement = findNearestFormElement(element);
+      if (formElement) {
+        formElement.reset();
       }
     }
   }

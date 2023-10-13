@@ -6,7 +6,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
   });
   _exports.pathData = _exports.ltr = _exports.default = _exports.accData = void 0;
   const name = "generate-shortcut";
-  const pathData = "M435 32q33 0 55 22t22 55v296q0 32-22 54.5T435 482h-76q-12 0-19-7.5t-7-18.5 7-18.5 19-7.5h76q26 0 26-25V186H52v219q0 25 25 25h77q11 0 18 7.5t7 18.5-7 18.5-18 7.5H77q-32 0-54.5-22.5T0 405V109q0-33 22.5-55T77 32h358zm26 102v-25q0-26-26-26H77q-25 0-25 26v25h409zM197 357q-8 8-18 8-9 0-17-8-8-7-8-18t8-18l76-77q7-7 18-7t18 7l77 77q8 8 8 18t-8 18-18 8-18-8l-33-33v143q0 11-7.5 18t-18.5 7q-26 0-26-25V324z";
+  const pathData = "M390 32q38 0 64 26t26 64v268q0 38-26 64t-64 26h-14q-11 0-18-7.5t-7-18.5 7-18 18-7h14q17 0 28-11t11-28V211H83v179q0 17 11 28t28 11h12q11 0 18.5 7t7.5 18-7.5 18.5T134 480h-12q-38 0-64-26t-26-64V122q0-38 26-64t64-26h268zm39 128v-38q0-17-11-28t-28-11H122q-17 0-28 11t-11 28v38h346zm-72 180q8 8 8 18 0 11-7.5 18.5T339 384q-10 0-18-8l-33-33v111q0 11-7.5 18.5T262 480t-18-7.5-7-18.5V343l-33 33q-8 8-18 8-11 0-18.5-7.5T160 358q0-10 8-18l76-77q9-7 18-7 10 0 19 7z";
   _exports.pathData = pathData;
   const ltr = false;
   _exports.ltr = ltr;

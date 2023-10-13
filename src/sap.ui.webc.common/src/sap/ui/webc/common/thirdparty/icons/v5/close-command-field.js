@@ -6,7 +6,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
   });
   _exports.pathData = _exports.ltr = _exports.default = _exports.accData = void 0;
   const name = "close-command-field";
-  const pathData = "M230 358q9 9 9 21 0 13-9 22-10 9-22 9-13 0-22-9L62 277q-9-9-9-21 0-13 9-22l124-124q9-9 22-9 12 0 22 9 9 9 9 22 0 12-9 21L127 256zm225 2q9 9 9 21 0 13-9 22-10 9-22 9-13 0-22-9L287 279q-9-9-9-22 0-12 9-21l124-124q10-10 22-10 10 0 22 10 9 9 9 21 0 13-9 22L352 257z";
+  const pathData = "M230 416q-10 0-17-7L72 274q-8-6-8-18 0-11 8-19l141-134q7-7 17-7 11 0 18.5 7.5T256 122q0 10-8 18L127 256l121 116q8 8 8 18 0 11-7.5 18.5T230 416zm192 0q-10 0-17-7L264 274q-8-6-8-18 0-11 8-19l141-134q7-7 17-7 11 0 18.5 7.5T448 122q0 10-8 18L319 256l121 116q8 8 8 18 0 11-7.5 18.5T422 416z";
   _exports.pathData = pathData;
   const ltr = false;
   _exports.ltr = ltr;
