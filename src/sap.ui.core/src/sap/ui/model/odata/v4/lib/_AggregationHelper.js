@@ -131,8 +131,9 @@ sap.ui.define([
 		 * @param {object} oElement - Any node or leaf element
 		 * @param {sap.ui.model.odata.v4.lib._CollectionCache} oCache
 		 *   The group level cache which the given element has been read from
-		 * @param {number} iIndex
-		 *   The index of the given element within the cache's collection
+		 * @param {number|undefined} [iIndex]
+		 *   The $skip index of the given element within the cache's collectionn, or
+		 *   <code>undefined</code> for created elements (where it is always unknown)
 		 * @param {string} [sNodeProperty]
 		 *   Optional property path to the hierarchy node value
 		 * @throws {Error}
@@ -612,7 +613,9 @@ sap.ui.define([
 		 * Creates a placeholder.
 		 *
 		 * @param {number} iLevel - The level
-		 * @param {number} iIndex - The index within the parent cache
+		 * @param {number|undefined} [iIndex]
+		 *   The $skip index within the parent cache's collection, or <code>undefined</code> for
+		 *   created elements (where it is always unknown)
 		 * @param {sap.ui.model.odata.v4.lib._CollectionCache} oParentCache - The parent cache
 		 * @returns {object} A placeholder object
 		 *

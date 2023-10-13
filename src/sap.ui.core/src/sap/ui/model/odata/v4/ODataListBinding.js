@@ -681,7 +681,9 @@ sap.ui.define([
 
 		if (iCount > 0) {
 			aContexts.splice(iModelIndex + 1, iCount).forEach(function (oContext) {
-				that.mPreviousContextsByPath[oContext.getPath()] = oContext;
+				if (!oContext.created()) {
+					that.mPreviousContextsByPath[oContext.getPath()] = oContext;
+				} // else: created (even persisted) is kept inside "context" annotation
 			});
 			for (i = iModelIndex + 1; i < aContexts.length; i += 1) {
 				if (aContexts[i]) {
@@ -1072,6 +1074,10 @@ sap.ui.define([
 					delete this.mPreviousContextsByPath[sContextPath];
 					oContext.iIndex = i$skipIndex;
 					oContext.checkUpdate();
+				} else if (_Helper.hasPrivateAnnotation(aResults[i], "context")) {
+					// created persisted contexts can be restored from their data, for example in
+					// case of Recursive Hierarchy maintenance
+					oContext = _Helper.getPrivateAnnotation(aResults[i], "context");
 				} else {
 					oContext = Context.create(oModel, this, sContextPath, i$skipIndex);
 				}
@@ -3119,6 +3125,19 @@ sap.ui.define([
 			),
 			that = this;
 
+		/**
+		 * Keeps and requests created contexts, destroys others.
+		 *
+		 * @param {sap.ui.model.odata.v4.Context} oContext0 - A context, maybe created
+		 */
+		function keepOrDestroy(oContext0) {
+			if (oContext0.created()) { // e.g. Recursive Hierarchy maintenance
+				aContexts.push(oContext0);
+			} else {
+				that.destroyLater(oContext0);
+			}
+		}
+
 		// add kept-alive contexts outside collection
 		Object.keys(this.mPreviousContextsByPath).forEach(function (sPath) {
 			var oContext = that.mPreviousContextsByPath[sPath];
@@ -3132,10 +3151,10 @@ sap.ui.define([
 		this.aContexts.slice(this.iCreatedContexts, this.iCurrentBegin)
 			.forEach(function (oContext0, i) {
 				delete that.aContexts[that.iCreatedContexts + i];
-				that.destroyLater(oContext0);
+				keepOrDestroy(oContext0);
 			});
 		if (this.aContexts.length > this.iCurrentEnd && this.iCurrentEnd >= this.iCreatedContexts) {
-			this.aContexts.slice(this.iCurrentEnd).forEach(that.destroyLater.bind(that));
+			this.aContexts.slice(this.iCurrentEnd).forEach(keepOrDestroy);
 			this.aContexts.length = this.iCurrentEnd;
 		}
 

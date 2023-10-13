@@ -4355,11 +4355,34 @@ sap.ui.define([
 
 		// code under test
 		oBinding.createContexts(0, [{
-			"@$ui5._" : {predicate : "('1')"}
+			"@$ui5._" : {context : "n/a", predicate : "('1')"}
 		}]);
 
 		assert.strictEqual(oBinding.aContexts[0], oCreatedContext);
 		assert.strictEqual(oCreatedContext.getModelIndex(), 0);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("createContexts: reuse created from 'context' annotation", function (assert) {
+		var oBinding = this.bindList("/EMPLOYEES"),
+			oCreatedContext = Context.create(this.oModel, oBinding, "/EMPLOYEES('1')", -1,
+				SyncPromise.resolve()),
+			oNewContext = {};
+
+		oBinding.mPreviousContextsByPath = {
+			"/EMPLOYEES('1')" : oCreatedContext
+		};
+
+		this.mock(Context).expects("create").never();
+		this.mock(this.oModel).expects("addPrerenderingTask")
+			.withExactArgs(sinon.match.func).callsArg(0);
+		this.mock(oCreatedContext).expects("destroy").withExactArgs();
+
+		oBinding.createContexts(0, [{
+			"@$ui5._" : {context : oNewContext, predicate : "('1')"}
+		}]);
+
+		assert.strictEqual(oBinding.aContexts[0], oNewContext);
 	});
 
 	//*********************************************************************************************
@@ -8441,45 +8464,55 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("keepOnlyVisibleContexts: destroy others", function (assert) {
+	QUnit.test("keepOnlyVisibleContexts: destroy others, unless created", function (assert) {
 		var oBinding = this.bindList("/Set"),
 			oBindingMock = this.mock(oBinding),
 			oCreatedContext0 = { // out
 				getProperty : function () {},
 				iIndex : -1
 			},
-			oContext0 = {iIndex : 0}, // to be destroyed
-			oContext1 = {iIndex : 1}, // to be destroyed
-			oContext2 = { // in
-				iIndex : 2
-			},
+			oContext0 = {iIndex : 0, created : mustBeMocked}, // to be destroyed
+			oContext1 = {iIndex : 1, created : mustBeMocked}, // NOT to be destroyed
+			oContext2 = {iIndex : 2, created : mustBeMocked}, // to be destroyed
 			oContext3 = { // in
 				iIndex : 3
 			},
-			oContext4 = {iIndex : 4}, // to be destroyed
-			oContext5 = {iIndex : 5}, // to be destroyed
+			oContext4 = { // in
+				iIndex : 4
+			},
+			oContext5 = {iIndex : 5, created : mustBeMocked}, // to be destroyed
+			oContext6 = {iIndex : 6, created : mustBeMocked}, // NOT to be destroyed
+			oContext7 = {iIndex : 7, created : mustBeMocked}, // to be destroyed
 			aResult;
 
 		oBinding.aContexts = [oCreatedContext0, oContext0, oContext1, oContext2, oContext3,
-			oContext4, oContext5];
+			oContext4, oContext5, oContext6, oContext7];
 		oBinding.iCreatedContexts = 1;
-		oBinding.iCurrentBegin = 3;
-		oBinding.iCurrentEnd = 5;
-		oBindingMock.expects("getCurrentContexts").withExactArgs().returns([oContext2, oContext3]);
+		oBinding.iCurrentBegin = 4;
+		oBinding.iCurrentEnd = 6;
+		oBindingMock.expects("getCurrentContexts").withExactArgs().returns([oContext3, oContext4]);
 		this.mock(oCreatedContext0).expects("getProperty")
 			.withExactArgs("@$ui5.context.isTransient").returns(true);
+		this.mock(oContext0).expects("created").withExactArgs().returns(undefined);
+		this.mock(oContext1).expects("created").withExactArgs().returns(Promise.resolve());
+		this.mock(oContext2).expects("created").withExactArgs().returns(undefined);
+		this.mock(oContext5).expects("created").withExactArgs().returns(undefined);
+		this.mock(oContext6).expects("created").withExactArgs().returns(Promise.resolve());
+		this.mock(oContext7).expects("created").withExactArgs().returns(undefined);
 		oBindingMock.expects("destroyLater").on(oBinding).withArgs(sinon.match.same(oContext0));
-		oBindingMock.expects("destroyLater").on(oBinding).withArgs(sinon.match.same(oContext1));
-		oBindingMock.expects("destroyLater").on(oBinding).withArgs(sinon.match.same(oContext4));
+		oBindingMock.expects("destroyLater").on(oBinding).withArgs(sinon.match.same(oContext2));
 		oBindingMock.expects("destroyLater").on(oBinding).withArgs(sinon.match.same(oContext5));
+		oBindingMock.expects("destroyLater").on(oBinding).withArgs(sinon.match.same(oContext7));
 
 		// code under test
 		aResult = oBinding.keepOnlyVisibleContexts();
 
-		assert.deepEqual(aResult, [oContext2, oContext3]);
-		assert.strictEqual(aResult[0], oContext2);
-		assert.strictEqual(aResult[1], oContext3);
-		assert.deepEqual(oBinding.aContexts, [oCreatedContext0,,, oContext2, oContext3]);
+		assert.deepEqual(aResult, [oContext3, oContext4, oContext1, oContext6]);
+		assert.strictEqual(aResult[0], oContext3);
+		assert.strictEqual(aResult[1], oContext4);
+		assert.strictEqual(aResult[2], oContext1);
+		assert.strictEqual(aResult[3], oContext6);
+		assert.deepEqual(oBinding.aContexts, [oCreatedContext0,,,, oContext3, oContext4]);
 	});
 
 	//*********************************************************************************************
@@ -9350,6 +9383,9 @@ sap.ui.define([
 		function createContextDummy(i) {
 			return {
 				iIndex : i,
+				created : function () { // every odd context looks "created"
+					return i % 2 ? Promise.resolve() : undefined;
+				},
 				getPath : function () {
 					return "/EMPLOYEES/" + i;
 				}
@@ -9398,7 +9434,7 @@ sap.ui.define([
 			});
 			assert.deepEqual(oBinding.mPreviousContextsByPath, {
 				"/EMPLOYEES/2" : aContextsBefore[2],
-				"/EMPLOYEES/3" : aContextsBefore[3],
+				// "/EMPLOYEES/3" : aContextsBefore[3], // "created" not inserted here!
 				"/EMPLOYEES/4" : aContextsBefore[4]
 			});
 		} else {

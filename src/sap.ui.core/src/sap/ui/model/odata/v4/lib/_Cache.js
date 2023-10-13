@@ -1429,9 +1429,11 @@ sap.ui.define([
 	 * @param {string} sPath
 	 *   The entity collection's path within this cache, may be <code>""</code>
 	 * @param {number} [iIndex]
-	 *   The array index of the entity to be refreshed
+	 *   The array index of the entity to be refreshed, <code>-1</code> if unknown (then a key
+	 *   predicate must be given)
 	 * @param {string} [sPredicate]
-	 *   The key predicate of the entity; only evaluated if <code>iIndex === undefined</code>
+	 *   The key predicate of the entity; only evaluated if <code>iIndex</code> is undefined or
+	 *   negative
 	 * @param {boolean} [bKeepAlive]
 	 *   Whether the entity is kept-alive
 	 * @param {boolean} [bWithMessages]
@@ -1441,7 +1443,7 @@ sap.ui.define([
 	 *   The function is called just before the back-end request is sent.
 	 *   If no back-end request is needed, the function is not called.
 	 * @returns {sap.ui.base.SyncPromise}
-	 *   A promise which resolves without a defined result when it is updated in the cache; it
+	 *   A promise which resolves with the refreshed entity after it was updated in the cache, and
 	 *   rejects with an error when no key predicate is known.
 	 * @throws {Error} If the cache is shared
 	 *
@@ -1462,7 +1464,7 @@ sap.ui.define([
 					_Helper.getQueryOptionsForPath(that.mQueryOptions, sPath)),
 				sReadUrl;
 
-			if (iIndex !== undefined) {
+			if (iIndex >= 0) {
 				sPredicate = _Helper.getPrivateAnnotation(aElements[iIndex], "predicate");
 			}
 			if (!sPredicate) { // Note: no need to give path here, error is wrapped by ODLB!
@@ -1499,6 +1501,8 @@ sap.ui.define([
 
 				that.replaceElement(aElements, iIndex, sPredicate, oElement, aResult[1], sPath,
 					bKeepReportedMessagesPath);
+
+				return oElement;
 			});
 		});
 	};
@@ -2667,11 +2671,15 @@ sap.ui.define([
 	 *
 	 * @param {number} iIndex - An index
 	 * @param {string} sPredicate - A key predicate
+	 * @param {boolean} [bIndexIsSkip] - Whether <code>iIndex</code> is a raw $skip index
 	 * @throws {Error} When the element with the given index is still transient
 	 *
 	 * @public
 	 */
-	_CollectionCache.prototype.drop = function (iIndex, sPredicate) {
+	_CollectionCache.prototype.drop = function (iIndex, sPredicate, bIndexIsSkip) {
+		if (bIndexIsSkip) {
+			iIndex += this.aElements.$created;
+		}
 		const oElement = this.aElements[iIndex];
 		if (oElement["@$ui5.context.isTransient"]) {
 			throw new Error("Must not drop a transient element");
@@ -3121,6 +3129,8 @@ sap.ui.define([
 	 * @param {function} [fnDataRequested]
 	 *   The function is called just before a back-end request is sent.
 	 *   If no back-end request is needed, the function is not called.
+	 * @param {boolean} [bIndexIsSkip]
+	 *   Whether <code>iIndex</code> is a raw $skip index
 	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise to be resolved with the requested range given as an OData response object (with
 	 *   "@odata.context" and the rows as an array in the property <code>value</code>, enhanced
@@ -3135,7 +3145,7 @@ sap.ui.define([
 	 * @see sap.ui.model.odata.v4.lib._Requestor#request
 	 */
 	_CollectionCache.prototype.read = function (iIndex, iLength, iPrefetchLength, oGroupLock,
-			fnDataRequested) {
+			fnDataRequested, bIndexIsSkip) {
 		var iCreatedPersisted = 0,
 			oElement,
 			aElementsRange,
@@ -3155,10 +3165,14 @@ sap.ui.define([
 
 		if (oPromise) {
 			return oPromise.then(function () {
-				return that.read(iIndex, iLength, iPrefetchLength, oGroupLock, fnDataRequested);
+				return that.read(iIndex, iLength, iPrefetchLength, oGroupLock, fnDataRequested,
+					bIndexIsSkip);
 			});
 		}
 
+		if (bIndexIsSkip) {
+			iIndex += this.aElements.$created;
+		}
 		for (i = 0; i < this.aElements.$created; i += 1) {
 			oElement = this.aElements[i];
 			if (_Helper.getPrivateAnnotation(oElement, "transient") === oGroupLock.getGroupId()) {
