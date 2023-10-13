@@ -535,7 +535,7 @@ sap.ui.define([
 			this.oCheckBox.destroy();
 		}
 	}, function() {
-		QUnit.test("when the control's text is modified...", async function(assert) {
+		QUnit.test("when the control's text is modified...", function(assert) {
 			var fnDone = assert.async();
 			sandbox.stub(this.oCheckboxOverlay, "applyStyles").callsFake(function() {
 				assert.ok(true, "applyStyles is called");
@@ -543,7 +543,6 @@ sap.ui.define([
 				return Promise.resolve();
 			});
 			this.oCheckBox.setText("This is a very long text");
-			await nextUIUpdate();
 		});
 	});
 
