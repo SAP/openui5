@@ -212,15 +212,21 @@ sap.ui.define([
 			 *   expression; this allows local annotation files to refer to a resource bundle for
 			 *   internationalization.
 			 *   <li> the dynamic "14.5.1 Comparison and Logical Operators": These are turned into
-			 *   expression bindings to perform the operations at run-time.
+			 *   expression bindings to perform the operations at run-time. It's strongly
+			 *   recommended to require the <code>sap.ui.model.odata.v4.ODataUtils</code> module in
+			 *   advance to avoid synchronous loading of this module.
 			 *   <li> the dynamic "14.5.3 Expression edm:Apply":
 			 *   <ul>
 			 *     <li> "14.5.3.1.1 Function odata.concat": This is turned into a data binding
 			 *     expression relative to an entity.
 			 *     <li> "14.5.3.1.2 Function odata.fillUriTemplate": This is turned into an
-			 *     expression binding to fill the template at run-time.
+			 *     expression binding to fill the template at run-time. It's strongly
+			 *     recommended to require the <code>sap.ui.thirdparty.URITemplate</code> module in
+			 *     advance to avoid synchronous loading of this module.
 			 *     <li> "14.5.3.1.3 Function odata.uriEncode": This is turned into an expression
-			 *     binding to encode the parameter at run-time.
+			 *     binding to encode the parameter at run-time. It's strongly recommended to require
+			 *     the <code>sap.ui.model.odata.ODataUtils</code> module in advance to avoid
+			 *     synchronous loading of this module.
 			 *     <li> Apply functions may be nested arbitrarily.
 			 *   </ul>
 			 *   <li> the dynamic "14.5.6 Expression edm:If": This is turned into an expression
