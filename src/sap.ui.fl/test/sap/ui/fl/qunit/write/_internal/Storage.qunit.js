@@ -1,6 +1,7 @@
 /* global QUnit */
 
 sap.ui.define([
+	"sap/base/util/merge",
 	"sap/ui/fl/initial/_internal/StorageUtils",
 	"sap/ui/fl/initial/_internal/connectors/KeyUserConnector",
 	"sap/ui/fl/initial/_internal/connectors/LrepConnector",
@@ -18,8 +19,10 @@ sap.ui.define([
 	"sap/ui/fl/write/api/FeaturesAPI",
 	"sap/ui/fl/initial/_internal/config",
 	"sap/ui/fl/Layer",
-	"sap/ui/thirdparty/sinon-4"
+	"sap/ui/thirdparty/sinon-4",
+	"sap/ui/VersionInfo"
 ], function(
+	merge,
 	StorageUtils,
 	InitialKeyUserConnector,
 	InitialLrepConnector,
@@ -37,7 +40,8 @@ sap.ui.define([
 	FeaturesAPI,
 	config,
 	Layer,
-	sinon
+	sinon,
+	VersionInfo
 ) {
 	"use strict";
 
@@ -58,6 +62,7 @@ sap.ui.define([
 
 	QUnit.module("Given Storage when write is called", {
 		beforeEach() {
+			sandbox.stub(VersionInfo, "load").resolves({version: "1234"});
 			InitialLrepConnector.xsrfToken = "123";
 			InitialKeyUserConnector.xsrfToken = "123";
 			InitialPersonalizationConnector.xsrfToken = "123";
@@ -71,7 +76,8 @@ sap.ui.define([
 	}, function() {
 		QUnit.test("and no is layer provided", function(assert) {
 			var mPropertyBag = {
-				reference: "reference"
+				reference: "reference",
+				flexObjects: []
 			};
 
 			return Storage.write(mPropertyBag).catch(function(sErrorMessage) {
@@ -80,11 +86,11 @@ sap.ui.define([
 		});
 
 		QUnit.test("then it fails in case no connector is available for the layer", function(assert) {
-			var oFlexObjects = [{}];
+			var aFlexObjects = [{}];
 
 			var mPropertyBag = {
 				layer: Layer.CUSTOMER,
-				flexObjects: oFlexObjects
+				flexObjects: aFlexObjects
 			};
 			sandbox.stub(config, "getFlexibilityServices").returns([
 				{connector: "LrepConnector", layers: [Layer.USER]}
@@ -97,11 +103,11 @@ sap.ui.define([
 		});
 
 		QUnit.test("then it fails in case multiple connectors are available for the layer", function(assert) {
-			var oFlexObjects = {};
+			var aFlexObjects = [{}];
 
 			var mPropertyBag = {
 				layer: Layer.VENDOR,
-				flexObjects: oFlexObjects
+				flexObjects: aFlexObjects
 			};
 			sandbox.stub(config, "getFlexibilityServices").returns([
 				{connector: "LrepConnector"},
@@ -116,11 +122,11 @@ sap.ui.define([
 		});
 
 		QUnit.test("then it calls write of the connector", function(assert) {
-			var oFlexObjects = {};
+			var aFlexObjects = [{}];
 
 			var mPropertyBag = {
 				layer: Layer.VENDOR,
-				flexObjects: oFlexObjects
+				flexObjects: aFlexObjects
 			};
 			var sUrl = "/some/url";
 			sandbox.stub(config, "getFlexibilityServices").returns([
@@ -133,7 +139,7 @@ sap.ui.define([
 				assert.strictEqual(oWriteStub.callCount, 1, "the write was triggered once");
 				var oWriteCallArgs = oWriteStub.getCall(0).args[0];
 				assert.strictEqual(oWriteCallArgs.url, sUrl, "the url was added to the property bag");
-				assert.strictEqual(oWriteCallArgs.flexObjects, oFlexObjects, "the flexObjects were passed in the property bag");
+				assert.strictEqual(oWriteCallArgs.flexObjects, aFlexObjects, "the flexObjects were passed in the property bag");
 			});
 		});
 
@@ -166,7 +172,7 @@ sap.ui.define([
 				assert.ok(oStubSendRequest.calledOnce, "sendRequest is called once");
 				assert.strictEqual(oSendRequestCallArgs[0], sExpectedUrl, "with correct url");
 				assert.strictEqual(oSendRequestCallArgs[1], sExpectedMethod, "with correct method");
-				assert.strictEqual(oSendRequestCallArgs[2].payload, "[{}]", "with correct payload");
+				assert.strictEqual(oSendRequestCallArgs[2].payload, "[{\"support\":{\"sapui5Version\":\"1234\"}}]", "with correct payload");
 				assert.strictEqual(oSendRequestCallArgs[2].contentType, "application/json; charset=utf-8", "with correct contentType");
 				assert.strictEqual(oSendRequestCallArgs[2].dataType, "json", "with correct dataType");
 			});
@@ -388,6 +394,7 @@ sap.ui.define([
 
 	QUnit.module("Given Storage when condense is called", {
 		beforeEach() {
+			sandbox.stub(VersionInfo, "load").resolves({version: "123"});
 			this.sLayer = Layer.CUSTOMER;
 		},
 		afterEach() {
@@ -429,7 +436,7 @@ sap.ui.define([
 					change: ["c0"]
 				},
 				create: {
-					change: [{c2: oCreatedChange}]
+					change: [{c2: merge(oCreatedChange, {support: {sapui5Version: "123"}})}]
 				}
 			};
 			var mPropertyBag = {
@@ -450,6 +457,7 @@ sap.ui.define([
 				var oWriteCallArgs = oWriteStub.getCall(0).args[0];
 				assert.strictEqual(oWriteCallArgs.url, sUrl, "the url was added to the property bag");
 				assert.propEqual(oWriteCallArgs.flexObjects, mCondenseExpected, "the flexObject was passed in the property bag");
+				assert.strictEqual(oResult.response[0].support.sapui5Version, "123", "the version was added");
 			});
 		});
 
@@ -460,7 +468,7 @@ sap.ui.define([
 				namespace: "a.name.space",
 				layer: this.sLayer,
 				create: {
-					change: [{c1: aAllChanges[1].convertToFileContent()}]
+					change: [{c1: merge(aAllChanges[1].convertToFileContent(), {support: {sapui5Version: "123"}})}]
 				}
 			};
 			var mPropertyBag = {
@@ -485,10 +493,10 @@ sap.ui.define([
 				create: {
 					change: [
 						{
-							c2: aAllChanges[2].convertToFileContent()
+							c2: merge(aAllChanges[2].convertToFileContent(), {support: {sapui5Version: "123"}})
 						},
 						{
-							c1: aAllChanges[1].convertToFileContent()
+							c1: merge(aAllChanges[1].convertToFileContent(), {support: {sapui5Version: "123"}})
 						}
 					]
 				}
@@ -514,16 +522,19 @@ sap.ui.define([
 
 		QUnit.test("and create and update changes are created by condenser in a certain order", function(assert) {
 			var aAllChanges = createChangesAndSetState(["delete", "select", "update", "update", "select"]);
+			const oSupportInformation = aAllChanges[1].getSupportInformation();
+			oSupportInformation.sapui5Version = "oldVersion";
+			aAllChanges[1].setSupportInformation(oSupportInformation);
 			var mCondenseExpected = {
 				namespace: "a.name.space",
 				layer: this.sLayer,
 				create: {
 					change: [
 						{
-							c4: aAllChanges[4].convertToFileContent()
+							c4: merge(aAllChanges[4].convertToFileContent(), {support: {sapui5Version: "123"}})
 						},
 						{
-							c1: aAllChanges[1].convertToFileContent()
+							c1: merge(aAllChanges[1].convertToFileContent(), {support: {sapui5Version: "oldVersion"}})
 						}
 					]
 				},
@@ -573,10 +584,10 @@ sap.ui.define([
 				create: {
 					change: [
 						{
-							c2: aAllChanges[2].convertToFileContent()
+							c2: merge(aAllChanges[2].convertToFileContent(), {support: {sapui5Version: "123"}})
 						},
 						{
-							c1: aAllChanges[1].convertToFileContent()
+							c1: merge(aAllChanges[1].convertToFileContent(), {support: {sapui5Version: "123"}})
 						}
 					]
 				},
@@ -718,7 +729,7 @@ sap.ui.define([
 				create: {
 					change: [
 						{
-							c3: aAllChanges[3].convertToFileContent()
+							c3: merge(aAllChanges[3].convertToFileContent(), {support: {sapui5Version: "123"}})
 						}
 					]
 				}
@@ -758,7 +769,7 @@ sap.ui.define([
 				create: {
 					change: [
 						{
-							c2: aAllChanges[2].convertToFileContent()
+							c2: merge(aAllChanges[2].convertToFileContent(), {support: {sapui5Version: "123"}})
 						}
 					]
 				}
@@ -786,7 +797,7 @@ sap.ui.define([
 				create: {
 					change: [
 						{
-							c0: aAllChanges[0].convertToFileContent()
+							c0: merge(aAllChanges[0].convertToFileContent(), {support: {sapui5Version: "123"}})
 						}
 					]
 				}
@@ -877,22 +888,22 @@ sap.ui.define([
 				create: {
 					change: [
 						{
-							c0: oChange0.convertToFileContent()
+							c0: merge(oChange0.convertToFileContent(), {support: {sapui5Version: "123"}})
 						}
 					],
 					ctrl_variant: [
 						{
-							newVariant: oVariant.convertToFileContent()
+							newVariant: merge(oVariant.convertToFileContent(), {support: {sapui5Version: "123"}})
 						}
 					],
 					ctrl_variant_change: [
 						{
-							c1: oChange1.convertToFileContent()
+							c1: merge(oChange1.convertToFileContent(), {support: {sapui5Version: "123"}})
 						}
 					],
 					ctrl_variant_management_change: [
 						{
-							c2: oChange2.convertToFileContent()
+							c2: merge(oChange2.convertToFileContent(), {support: {sapui5Version: "123"}})
 						}
 					]
 				}
