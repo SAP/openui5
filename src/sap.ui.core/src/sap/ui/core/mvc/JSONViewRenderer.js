@@ -12,6 +12,7 @@ sap.ui.define(['./ViewRenderer'],
 	 * JSONView renderer.
 	 * @namespace
 	 * @alias sap.ui.core.mvc.JSONViewRenderer
+	 * @deprecated Since version 1.120.
 	 */
 	var JSONViewRenderer = {
 		apiVersion: 2

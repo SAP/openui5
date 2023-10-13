@@ -894,6 +894,9 @@ sap.ui.define([
 					manifest: "json"
 				},
 				constructor: function() {
+					/**
+					 * @deprecated as of version 1.120
+					 */
 					assert.ok(requireSpy.calledWith(["sap/ui/core/mvc/JSONView"]), "JSONView type required");
 					assert.ok(requireSpy.calledWith(["sap/ui/model/resource/ResourceModel"]), "ResourceModel required");
 					assert.ok(requireSpy.calledWith(["sap/ui/core/routing/Router"]), "Router loaded");
@@ -904,6 +907,9 @@ sap.ui.define([
 					assert.ok(requireSpy.calledWith(["sap/ui/model/odata/v2/ODataModel"]), "ODataModel v2 required");
 					assert.ok(requireSpy.calledWith(["sap/ui/model/odata/v4/ODataModel"]), "ODataModel v4 required");
 
+					/**
+					 * @deprecated as of version 1.120
+					 */
 					assert.ok(sap.ui.require("sap/ui/core/mvc/JSONView"), "JSONView type loaded");
 					assert.ok(sap.ui.require("sap/ui/model/resource/ResourceModel"), "ResourceModel loaded");
 					assert.ok(sap.ui.require("sap/ui/core/routing/Router"), "Router loaded");

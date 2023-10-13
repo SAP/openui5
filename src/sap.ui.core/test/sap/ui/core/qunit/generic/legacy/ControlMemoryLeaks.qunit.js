@@ -67,13 +67,31 @@ sap.ui.define([
 		"sap.ui.commons.Accordion",
 		"sap.ui.core.ComponentContainer",
 		"sap.ui.core.UIComponent",
+		/**
+		 * @deprecated since 1.56
+		 */
 		"sap.ui.core.XMLComposite",
+		/**
+		 * @deprecated since 1.108
+		 */
 		"sap.ui.core.mvc.HTMLView",
+		/**
+		 * @deprecated since 1.120
+		 */
 		"sap.ui.core.mvc.JSONView",
+		/**
+		 * @deprecated since 1.90
+		 */
 		"sap.ui.core.mvc.JSView",
 		"sap.ui.core.mvc.XMLView",
+		/**
+		 * @deprecated since 1.56
+		 */
 		"sap.ui.core.mvc.TemplateView",
 		"sap.ui.core.mvc.View",
+		/**
+		 * @deprecated since 1.56
+		 */
 		"sap.ui.core.tmpl.Template",
 		"sap.m.internal.NumericInput",
 		"sap.m.DateTimeInput",  // setting an invalid type crashes and only leaks a picker control because of this

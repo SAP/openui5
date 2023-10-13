@@ -114,14 +114,20 @@ sap.ui.define([
 			 "sap.ui.core.LocalBusyIndicator",
 			 "sap.ui.core.ScrollBar",
 			 "sap.ui.core.TooltipBase",
+			 /** @deprecated since 1.88 */
 			 "sap.ui.core.XMLComposite",
+			 /** @deprecated since 1.108 */
 			 "sap.ui.core.mvc.HTMLView",
+			 /** @deprecated since 1.120 */
 			 "sap.ui.core.mvc.JSONView",
+			 /** @deprecated since 1.90 */
 			 "sap.ui.core.mvc.JSView",
+			 /** @deprecated since 1.56 */
 			 "sap.ui.core.mvc.TemplateView",
 			 "sap.ui.core.mvc.View",
 			 "sap.ui.core.mvc.XMLView",
 			 "sap.ui.core.tmpl.DOMElement",
+			 /** @deprecated since 1.56 */
 			 "sap.ui.core.tmpl.TemplateControl",
 			 "sap.ui.core.util.Export"
 		 ],
