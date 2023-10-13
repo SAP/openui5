@@ -50,17 +50,21 @@ sap.ui.define(["sap/base/util/ObjectPath"], function(ObjectPath) {
 	 * How <code>mVariables</code> are checked for resolving the path depends on
 	 * the syntax of the path:
 	 * <ul>
-	 * <li><i>absolute</i>: paths not starting with a dot ('.') are checked through
+	 * <li><i>absolute</i>: paths not starting with a dot ('.') are first checked through
 	 *     <code>mVariables</code>.</li>
-	 * <li><i>relative</i>: paths starting with a dot ('.') are only checked through the
-	 *     dot variable <code>mVariables["."]</code> and don't fallback to global scope
-	 *     <code>window</code>.</li>
+	 * <li><i>relative</i>: paths starting with a dot ('.') are only checked through the dot variable
+	 *     <code>mVariables["."]</code> and not the other variables in <code>mVariables</code>.</li>
 	 * <li><i>legacy</i>: when <code>mOptions.preferDotContext=true</code>, paths not starting
 	 *     with a dot ('.') are first checked through the dot Variable
 	 *     <code>mVariables["."]</code> and then - if nothing is found - through the other
-	 *     Variables in <code>mVariables</code> and eventually fallback to global scope
-	 *     <code>window</code>.</li>
+	 *     Variables in <code>mVariables</code>.</li>
 	 * </ul>
+	 *
+	 * For an absolute path, when nothing is found after resolving the value within <code>mVariables</code>,
+	 * <code>sap.ui.require</code> is called when <code>mOptions.useProbingRequire=true</code> to retrieve the
+	 * module export of the loaded module with the given <code>sPath</code> after replacing '.' with '/' in
+	 * the path. If the path can still not be resolved, the last fallback is taken to resolve
+	 * <code>sPath</code> within the global scope <code>window</code>.
 	 *
 	 * When the resolved value is a function, a context may be bound to it with the following
 	 * conditions:
@@ -94,6 +98,10 @@ sap.ui.define(["sap/base/util/ObjectPath"], function(ObjectPath) {
 	 *  mOptions.bindDotContext has no effect anymore.
 	 * @param {boolean} [mOptions.bindDotContext=true] When the resolved value is a function, whether the
 	 *  resolved function from a path which starts with a dot ('.') should be bound to the dot context
+	 * @param {boolean} [mOptions.useProbingRequire=false] When the value cannot be resolved by using the
+	 *  given <code>mVariables</code>, <code>mOptions.useProbingRequire=true</code> leads to a call of
+	 *  <code>sap.ui.require</code> to get the module export of the loaded module under the given
+	 *  <code>sPath</code> after replacing the '.' with '/'.
 	 * @returns {any} Returns the value located in the provided path, or <code>undefined</code> if the path
 	 *  does not exist completely.
 	 * @alias module:sap/base/util/resolveReference
@@ -128,21 +136,31 @@ sap.ui.define(["sap/base/util/ObjectPath"], function(ObjectPath) {
 		if (vRef === oNotFound) {
 			vRef = _resolve(aParts, mVariables, {
 				bindContext: mOptions.bindContext
-					// dot case: mOptions.bindDotContext determins whether context should be bound
+					// dot case: mOptions.bindDotContext determines whether context should be bound
 					// non dot case: bind context if sPath contains more than one segment
 					&& (bDotCase ? mOptions.bindDotContext : (aParts.length > 1)),
 				rootContext: bDotCase ? mVariables["."] : undefined
 			});
 		}
 
-		// resolve the path under global scope, only when it can't be resolved under mVariables
-		if (vRef === oNotFound) {
-			// fallback if no value could be found under the given sPath's first segment
-			// otherwise resolve under global namespace
-			vRef = ObjectPath.get(sPath);
+		if (!bDotCase) {
+			if (vRef === oNotFound && mOptions.useProbingRequire) {
+				vRef = sap.ui.require(sPath.replace(/\./g, "/"));
+
+				if (vRef === undefined) {
+					vRef = oNotFound;
+				}
+			}
+
+			// resolve the path under global scope, only when it can't be resolved under mVariables
+			if (vRef === oNotFound ) {
+				// fallback if no value could be found under the given sPath's first segment
+				// otherwise resolve under global namespace
+				vRef = ObjectPath.get(sPath);
+			}
 		}
 
-		return vRef;
+		return vRef === oNotFound ? undefined : vRef;
 	};
 
 	return resolveReference;
