@@ -3,7 +3,6 @@
  */
 
 sap.ui.define([
-	"sap/base/util/ObjectPath",
 	"sap/base/util/isPlainObject",
 	"sap/base/util/uid",
 	"sap/base/util/restricted/_isEqual",
@@ -19,7 +18,6 @@ sap.ui.define([
 	"sap/ui/core/mvc/View",
 	"sap/ui/core/Configuration"
 ], function(
-	ObjectPath,
 	isPlainObject,
 	uid,
 	isEqual,
@@ -57,6 +55,8 @@ sap.ui.define([
 			return oComponentData.startupParameters[sParameterName][0];
 		}
 	}
+
+	let _isUshellContainerInitialized = false;
 
 	/**
 	 * Provides utility functions for the SAPUI5 flexibility library
@@ -329,8 +329,17 @@ sap.ui.define([
 		 * @returns {object|undefined} Returns UShell container object if available or undefined
 		 */
 		getUshellContainer() {
-			// TODO wait until  FLP does offer anything
-			return ObjectPath.get("sap.ushell.Container");
+			const oContainer = sap.ui.require("sap/ushell/Container");
+			// Workaround to verify whether container is bootstrapped or not before FLP offer better solution
+			if (oContainer && !_isUshellContainerInitialized) {
+				try {
+					oContainer.getLogonSystem();
+					_isUshellContainerInitialized = true;
+				} catch (oError) {
+					return undefined;
+				}
+			}
+			return oContainer;
 		},
 
 		createDefaultFileName(sNameAddition) {

@@ -4,23 +4,22 @@ sap.ui.define([
 	"sap/ui/dt/ElementOverlay",
 	"sap/ui/dt/plugin/ToolHooks",
 	"sap/m/Button",
-	"sap/ui/core/Core"
-],
-function(
+	"sap/ui/qunit/utils/nextUIUpdate"
+], function(
 	ElementOverlay,
 	ToolHooks,
 	Button,
-	oCore
+	nextUIUpdate
 ) {
 	"use strict";
 
 	QUnit.module("Given an overlay and a ToolHooks plugin...", {
-		beforeEach(assert) {
+		async beforeEach(assert) {
 			this.oButton = new Button({
 				text: "Button"
 			});
 			this.oButton.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			this.oElementOverlay = new ElementOverlay({
 				isRoot: true,

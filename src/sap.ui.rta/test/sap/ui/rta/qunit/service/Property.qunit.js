@@ -7,12 +7,12 @@ sap.ui.define([
 	"sap/m/Page",
 	"sap/ui/core/ComponentContainer",
 	"sap/ui/core/Control",
-	"sap/ui/core/Core",
 	"sap/ui/core/UIComponent",
 	"sap/ui/dt/DesignTime",
 	"sap/ui/dt/ElementDesignTimeMetadata",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/layout/VerticalLayout",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/rta/util/ReloadManager",
 	"sap/ui/rta/RuntimeAuthoring",
 	"sap/ui/thirdparty/sinon-4"
@@ -22,12 +22,12 @@ sap.ui.define([
 	Page,
 	ComponentContainer,
 	Control,
-	oCore,
 	UIComponent,
 	DesignTime,
 	ElementDesignTimeMetadata,
 	PersistenceWriteAPI,
 	VerticalLayout,
+	nextUIUpdate,
 	ReloadManager,
 	RuntimeAuthoring,
 	sinon
@@ -38,7 +38,7 @@ sap.ui.define([
 
 	// TODO: split big monolithic test into simple parts - 1 feature = 1 test case, not all at once!
 	QUnit.module("Given that RuntimeAuthoring and Property service are created", {
-		before() {
+		async before() {
 			var MockComponent = UIComponent.extend("MockController", {
 				metadata: {
 					manifest: {
@@ -81,7 +81,7 @@ sap.ui.define([
 				component: this.oComp
 			});
 			this.oComponentContainer.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			this.oRta = new RuntimeAuthoring({
 				showToolbars: false,
@@ -461,7 +461,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("get()", function() {
-		QUnit.test("when control's bindings are not initialized", function(assert) {
+		QUnit.test("when control's bindings are not initialized", async function(assert) {
 			var oButton = new Button("button", {
 				visible: false,
 				text: "{i18n>ButtonName}"
@@ -494,7 +494,7 @@ sap.ui.define([
 			});
 			oComponentContainer.placeAt("qunit-fixture");
 
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			sandbox.stub(PersistenceWriteAPI, "getResetAndPublishInfoFromSession").returns({
 				isResetEnabled: true,

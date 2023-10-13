@@ -18,7 +18,7 @@ sap.ui.define([
 	"sap/ui/rta/plugin/Plugin",
 	"sap/ui/thirdparty/sinon-4",
 	"test-resources/sap/ui/rta/qunit/RtaQunitUtils",
-	"sap/ui/core/Core"
+	"sap/ui/qunit/utils/nextUIUpdate"
 ], function(
 	Bar,
 	Button,
@@ -37,7 +37,7 @@ sap.ui.define([
 	RTAPlugin,
 	sinon,
 	RtaQunitUtils,
-	oCore
+	nextUIUpdate
 ) {
 	"use strict";
 
@@ -52,7 +52,7 @@ sap.ui.define([
 	//          [oVisibleMiddleButton1, oVisibleMiddleButton2]
 	//      contentRight
 	// 			[oVisibleRightButton, oInvisibleRightButton]
-	function givenBarWithButtons() {
+	async function givenBarWithButtons() {
 		this.oVisibleLeftButton = new Button({id: "VisibleLeftButton", visible: true, text: "VisibleLeft"});
 		this.oInvisibleLeftButton = new Button({id: "InvisibleLeftButton", visible: false, text: "InvisibleLeft"});
 		this.oVisibleMiddleButton1 = new Button({id: "VisibleMiddleButton1", visible: true, text: "VisibleMiddle1"});
@@ -73,7 +73,7 @@ sap.ui.define([
 		});
 
 		this.oPseudoPublicParent.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 	}
 
 	QUnit.module("Given a control with multiple aggregations containing compatible hidden elements", {
@@ -271,7 +271,7 @@ sap.ui.define([
 	//					Button
 	//			ObjectPageSection - invisible
 	//			ObjectPageSection - visible
-	function givenObjectPageWithHeaderAndSections() {
+	async function givenObjectPageWithHeaderAndSections() {
 		this.oHeaderButton = new Button({id: "HeaderContentButton", text: "HeaderContentButton"});
 
 		this.oSubSection = new ObjectPageSubSection({
@@ -314,7 +314,7 @@ sap.ui.define([
 		});
 
 		this.oPage.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 	}
 
 	QUnit.module("Given an ObjectPage with headerContent and one hidden section", {

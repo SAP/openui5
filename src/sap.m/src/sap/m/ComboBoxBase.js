@@ -221,9 +221,10 @@ sap.ui.define([
 		 * - currenly typed value in the input field
 		 * - item to be matched
 		 * The function should return a Boolean value (true or false) which represents whether an item will be shown in the dropdown or not.
+		 * If no callback is provided, the control fallbacks to default filtering.
 		 *
 		 * @public
-		 * @param {function(string=, sap.ui.core.Item=, boolean=):boolean|undefined|function} fnFilter A callback function called when typing in a ComboBoxBase control or ancestor.
+		 * @param {function(string=, sap.ui.core.Item=):boolean} [fnFilter] A callback function called when typing in a ComboBoxBase control or ancestor.
 		 * @returns {this} <code>this</code> to allow method chaining.
 		 * @since 1.58
 		 */

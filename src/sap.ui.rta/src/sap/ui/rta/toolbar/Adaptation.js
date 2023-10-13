@@ -5,45 +5,45 @@
 sap.ui.define([
 	"./AdaptationRenderer",
 	"sap/base/Log",
+	"sap/m/MessageBox",
 	"sap/ui/core/BusyIndicator",
 	"sap/ui/core/Element",
 	"sap/ui/core/Fragment",
 	"sap/ui/core/Popup",
 	"sap/ui/core/Core",
 	"sap/ui/fl/initial/_internal/config",
+	"sap/ui/fl/initial/api/Version",
 	"sap/ui/fl/write/api/ContextBasedAdaptationsAPI",
-	"sap/ui/fl/write/api/Version",
 	"sap/ui/model/json/JSONModel",
+	"sap/ui/performance/Measurement",
 	"sap/ui/rta/appVariant/Feature",
 	"sap/ui/rta/toolbar/Base",
 	"sap/ui/rta/toolbar/contextBased/ManageAdaptations",
 	"sap/ui/rta/toolbar/contextBased/SaveAsAdaptation",
 	"sap/ui/rta/toolbar/translation/Translation",
 	"sap/ui/rta/toolbar/versioning/Versioning",
-	"sap/ui/rta/Utils",
-	"sap/m/MessageBox",
-	"sap/ui/performance/Measurement"
+	"sap/ui/rta/Utils"
 ], function(
 	AdaptationRenderer,
 	Log,
+	MessageBox,
 	BusyIndicator,
 	Element,
 	Fragment,
 	Popup,
 	Core,
 	config,
-	ContextBasedAdaptationsAPI,
 	Version,
+	ContextBasedAdaptationsAPI,
 	JSONModel,
+	Measurement,
 	AppVariantFeature,
 	Base,
 	ManageAdaptations,
 	SaveAsAdaptation,
 	Translation,
 	Versioning,
-	Utils,
-	MessageBox,
-	Measurement
+	Utils
 ) {
 	"use strict";
 

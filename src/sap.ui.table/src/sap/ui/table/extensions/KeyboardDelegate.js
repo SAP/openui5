@@ -1123,13 +1123,13 @@ sap.ui.define([
 			oEvent.preventDefault(); // Prevent full page text selection.
 
 			if (oCellInfo.isOfType(CellType.ANYCONTENTCELL | CellType.COLUMNROWHEADER) && sSelectionMode === SelectionMode.MultiToggle) {
-				oSelectionPlugin.onKeyboardShortcut("toggle");
+				oSelectionPlugin.onKeyboardShortcut("toggle", oEvent);
 			}
 
 		// Ctrl+Shift+A: Deselect all.
 		} else if (KeyboardDelegate._isKeyCombination(oEvent, KeyCodes.A, ModKey.CTRL + ModKey.SHIFT)) {
 			if (oCellInfo.isOfType(CellType.ANYCONTENTCELL | CellType.COLUMNROWHEADER)) {
-				oSelectionPlugin.onKeyboardShortcut("clear");
+				oSelectionPlugin.onKeyboardShortcut("clear", oEvent);
 			}
 
 		// F4: Enter the action mode.

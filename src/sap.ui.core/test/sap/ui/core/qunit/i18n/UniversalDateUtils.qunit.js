@@ -26,6 +26,9 @@ sap.ui.define([
 	};
 
 	QUnit.module("sap.ui.core.date.UniversalDateUtils", {
+		before() {
+			this.__ignoreIsolatedCoverage__ = true;
+		},
 		beforeEach: function () {
 			Configuration.setLanguage("en_US");
 		},

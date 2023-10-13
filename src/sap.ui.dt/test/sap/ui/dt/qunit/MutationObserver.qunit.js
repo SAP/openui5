@@ -4,7 +4,7 @@ sap.ui.define([
 	"sap/base/util/includes",
 	"sap/m/Button",
 	"sap/m/Panel",
-	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/core/StaticArea",
 	"sap/ui/dt/DesignTime",
 	"sap/ui/dt/MutationObserver",
@@ -16,7 +16,7 @@ sap.ui.define([
 	includes,
 	Button,
 	Panel,
-	oCore,
+	nextUIUpdate,
 	StaticArea,
 	DesignTime,
 	MutationObserver,
@@ -250,7 +250,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given a Vertical Layout with a scrollable Panel and another Vertical Layout with two scrollable panels for which DT is started...", {
-		beforeEach(assert) {
+		async beforeEach(assert) {
 			var aButtons0 = [20, 21, 22, 23, 24, 25].map(function(i) {
 				return new Button(`button${i}`);
 			});
@@ -298,7 +298,7 @@ sap.ui.define([
 				height: "1200px"
 			}).placeAt("qunit-fixture");
 
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			// Makes the area where DT will be active more prominent
 			jQuery(this.oVerticalLayoutRoot.getDomRef()).css("outline", "solid");
@@ -354,7 +354,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given a outer Panel and VerticalLayout inside containing inner Panel with Button...", {
-		beforeEach() {
+		async beforeEach() {
 			this.oButton = new Button("Button0");
 			this.oInnerPanel = new Panel({
 				id: "InnerPanel",
@@ -372,7 +372,7 @@ sap.ui.define([
 				content: [this.oVerticalLayoutInner]
 			}).placeAt("qunit-fixture");
 
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			// Makes the area where DT will be active more prominent
 			jQuery(this.oVerticalLayoutInner.getDomRef()).css("outline", "solid");
@@ -407,10 +407,10 @@ sap.ui.define([
 			this.oButton.setText("hallo");
 		});
 
-		QUnit.test("when outerPanel has a scrollbar and all Elements are registered for mutations and the button is modified", function(assert) {
+		QUnit.test("when outerPanel has a scrollbar and all Elements are registered for mutations and the button is modified", async function(assert) {
 			var fnDone = assert.async();
 			this.oOuterPanel.setHeight("150px");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			this.oMutationObserver.registerHandler(this.oOuterPanel.getId(), function() {
 				// First mutation is triggered by qunit
@@ -430,10 +430,10 @@ sap.ui.define([
 			this.oButton.setText("hallo");
 		});
 
-		QUnit.test("when outerPanel has a scrollbar, is registered and is modified", function(assert) {
+		QUnit.test("when outerPanel has a scrollbar, is registered and is modified", async function(assert) {
 			var fnDone = assert.async();
 			this.oOuterPanel.setHeight("150px");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			this.oMutationObserver.registerHandler(this.oOuterPanel.getId(), function() {
 				// First mutation is triggered by qunit
@@ -452,7 +452,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given two layouts as siblings...", {
-		beforeEach() {
+		async beforeEach() {
 			this.oButton0 = new Button("button0", { text: "button0-text" });
 			this.oButton1 = new Button("button1", { text: "button1-text" });
 
@@ -466,7 +466,7 @@ sap.ui.define([
 				content: [this.oButton1]
 			}).placeAt("qunit-fixture");
 
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			// Makes the area where DT will be active more prominent
 			jQuery(this.oVerticalLayout0.getDomRef()).css("outline", "solid");

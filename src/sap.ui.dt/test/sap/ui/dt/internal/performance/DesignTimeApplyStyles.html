@@ -24,14 +24,16 @@
 				"dt/performance/PerformanceTestUtil",
 				"sap/m/Panel",
 				"sap/m/Button",
-				"sap/ui/core/Core"
+				"sap/ui/core/Core",
+				"sap/ui/qunit/utils/nextUIUpdate"
 			], function(
 				PerformanceTestUtil,
 				Panel,
 				Button,
-				Core
+				Core,
+				nextUIUpdate
 			) {
-				Core.ready().then(() => {
+				Core.ready().then(async () => {
 					var oPanel = new Panel("Panel", {
 						width: "2000px",
 						height: "2000px"
@@ -39,7 +41,7 @@
 					oPanel.placeAt("content");
 					var oLastElement = new Button("button", {text: "sampleButton"});
 					PerformanceTestUtil.createNestedPanels(oPanel, "content", 50, oLastElement);
-					Core.applyChanges();
+					await nextUIUpdate();
 					fnResolve(PerformanceTestUtil.startDesignTime(oPanel, "button"));
 				});
 			});

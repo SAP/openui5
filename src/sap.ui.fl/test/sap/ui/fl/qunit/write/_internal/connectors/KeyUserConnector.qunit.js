@@ -1,25 +1,25 @@
 /* global QUnit */
 
 sap.ui.define([
+	"sap/m/MessageBox",
+	"sap/ui/core/Lib",
 	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/fl/write/api/Version",
-	"sap/ui/fl/Layer",
-	"sap/ui/fl/write/_internal/connectors/KeyUserConnector",
 	"sap/ui/fl/initial/_internal/connectors/KeyUserConnector",
 	"sap/ui/fl/initial/_internal/connectors/Utils",
+	"sap/ui/fl/initial/api/Version",
+	"sap/ui/fl/write/_internal/connectors/KeyUserConnector",
 	"sap/ui/fl/write/_internal/connectors/Utils",
-	"sap/m/MessageBox",
-	"sap/ui/core/Lib"
+	"sap/ui/fl/Layer"
 ], function(
+	MessageBox,
+	Lib,
 	sinon,
-	Version,
-	Layer,
-	KeyUserConnector,
 	InitialConnector,
 	InitialUtils,
+	Version,
+	KeyUserConnector,
 	WriteUtils,
-	MessageBox,
-	Lib
+	Layer
 ) {
 	"use strict";
 

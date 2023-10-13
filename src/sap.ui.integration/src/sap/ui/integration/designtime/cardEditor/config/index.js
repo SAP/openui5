@@ -171,8 +171,6 @@ sap.ui.define([
 			generateDataConfig(["content"], "content/", "content")
 		),
 		"propertyEditors": {
-			// base editors:
-			"enum": "sap/ui/integration/designtime/baseEditor/propertyEditor/enumStringEditor/EnumStringEditor",
 			"select": "sap/ui/integration/designtime/baseEditor/propertyEditor/selectEditor/SelectEditor",
 			"multiSelect": "sap/ui/integration/designtime/baseEditor/propertyEditor/multiSelectEditor/MultiSelectEditor",
 			"string": "sap/ui/integration/designtime/baseEditor/propertyEditor/stringEditor/StringEditor",
@@ -193,8 +191,10 @@ sap.ui.define([
 			"code": "sap/ui/integration/designtime/baseEditor/propertyEditor/codeEditor/CodeEditor",
 			"object": "sap/ui/integration/designtime/baseEditor/propertyEditor/codeEditor/CodeEditor",
 			"objectArray": "sap/ui/integration/designtime/baseEditor/propertyEditor/objectArrayEditor/ObjectArrayEditor",
+
 			// card editors
 			"icon": "sap/ui/integration/designtime/cardEditor/propertyEditor/iconEditor/IconEditor",
+
 			"complexMap": "sap/ui/integration/designtime/cardEditor/propertyEditor/complexMapEditor/ComplexMapEditor",
 			"destinations": "sap/ui/integration/designtime/cardEditor/propertyEditor/destinationsEditor/DestinationsEditor",
 			"filters": "sap/ui/integration/designtime/cardEditor/propertyEditor/filtersEditor/FiltersEditor"

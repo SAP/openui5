@@ -130,19 +130,22 @@ sap.ui.define([
 	};
 
 	function toggleSelectAll(oPlugin) {
-		var oTable = oPlugin.getTable();
+		var oTable = oPlugin.getTable(), bSelectAll;
 
 		// in order to fire the rowSelectionChanged event, the SourceRowIndex mus be set to -1
 		// to indicate that the selection was changed by user interaction
 		if (oPlugin.getSelectableCount() > oPlugin.getSelectedCount()) {
 			oTable._iSourceRowIndex = 0;
 			oPlugin.selectAll();
+			bSelectAll = true;
 		} else {
 			oTable._iSourceRowIndex = -1;
 			oPlugin.clearSelection();
+			bSelectAll = false;
 		}
 
 		oTable._iSourceRowIndex = undefined;
+		return bSelectAll;
 	}
 
 	/**
@@ -160,13 +163,15 @@ sap.ui.define([
 	 * This hook is called by the table when the "select all" keyboard shortcut is pressed.
 	 *
 	 * @param {string} sType Type of the keyboard shortcut.
+	 * @param {sap.ui.base.Event} oEvent The emitted event.
 	 * @private
 	 */
-	SelectionModelSelection.prototype.onKeyboardShortcut = function(sType) {
-		if (sType === "toggle") {
-			toggleSelectAll(this);
+	SelectionModelSelection.prototype.onKeyboardShortcut = function(sType, oEvent) {
+		if (sType === "toggle" && toggleSelectAll(this) === false) {
+			oEvent?.setMarked("sapUiTableClearAll");
 		} else if (sType === "clear") {
 			this.clearSelection();
+			oEvent?.setMarked("sapUiTableClearAll");
 		}
 	};
 

@@ -879,6 +879,14 @@ sap.ui.define([
 			oValueHelp.close();
 		}
 		this._sFilterValue = "";
+		if (this._oNavigateCondition) {
+			const oSource = oEvent.srcControl;
+			this._oNavigateCondition = undefined; // navigation now finished
+			this.getContentFactory().updateConditionType();
+			if (oSource.selectText && oSource.getDOMValue) {
+				oSource.selectText(oSource.getDOMValue().length, oSource.getDOMValue().length); // deselect highlighting
+			}
+		}
 
 	};
 
@@ -3027,14 +3035,26 @@ sap.ui.define([
 
 		if (_isFocused.call(this) && oContent && oContent.setDOMValue && oContent.selectText && !this._bPreventAutocomplete && (!oContent.isComposingCharacter || !oContent.isComposingCharacter())) { // Autocomplete only possible if content supports it
 			const oContentFactory = this.getContentFactory();
+			const bIsMeasure = oContentFactory.isMeasure();
 			const oDelegate = this.getControlDelegate(); // on typeahead it must be initialized
-			const oAutocomplete = oDelegate.getAutocomplete(this, oCondition, this._sFilterValue, sFilterValue, oContentFactory.getDataType(), oContentFactory.getAdditionalDataType());
+			let oDataType;
+
+			if (bIsMeasure) {
+				const aCompositeTypes = this.getContentFactory().getCompositeTypes();
+				if (aCompositeTypes && aCompositeTypes.length > 1) { // if no type is defined the default (String) will be used
+					oDataType = aCompositeTypes[1];
+				}
+			} else {
+				oDataType = oContentFactory.getDataType();
+			}
+
+			const oAutocomplete = oDelegate.getAutocomplete(this, oCondition, this._sFilterValue, sFilterValue, oDataType, oContentFactory.getAdditionalDataType());
 
 			if (oAutocomplete && oAutocomplete.text) { // only if something returned
 				this._oNavigateCondition = merge({}, oCondition); // to keep Payload
 				this._oNavigateCondition.operator = oOperator.name;
 
-				if (oContentFactory.isMeasure()) {
+				if (bIsMeasure) {
 					const aConditions = this.getConditions();
 					// use number of first condition. In Multicase all conditions must be updated in change event
 					if (aConditions.length > 0) {

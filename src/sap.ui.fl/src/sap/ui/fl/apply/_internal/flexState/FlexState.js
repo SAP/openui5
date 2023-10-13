@@ -157,8 +157,8 @@ sap.ui.define([
 
 	function enhancePropertyBag(mPropertyBag) {
 		var oComponent = Component.get(mPropertyBag.componentId);
-		mPropertyBag.componentData = mPropertyBag.componentData || (oComponent && oComponent.getComponentData()) || {};
-		mPropertyBag.manifest = mPropertyBag.manifest || mPropertyBag.rawManifest || (oComponent && oComponent.getManifestObject()) || {};
+		mPropertyBag.componentData ||= (oComponent && oComponent.getComponentData()) || {};
+		mPropertyBag.manifest ||= mPropertyBag.rawManifest || (oComponent && oComponent.getManifestObject()) || {};
 		mPropertyBag.reference ||= ManifestUtils.getFlexReference(mPropertyBag);
 		const oFlexInfoSession = FlexInfoSession.getByReference(mPropertyBag.reference);
 		mPropertyBag.version ||= oFlexInfoSession?.version;

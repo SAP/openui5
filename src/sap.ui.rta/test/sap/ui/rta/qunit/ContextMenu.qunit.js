@@ -17,7 +17,7 @@ sap.ui.define([
 	"sap/uxap/ObjectPageSection",
 	"sap/uxap/ObjectPageSubSection",
 	"sap/ui/qunit/QUnitUtils",
-	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/core/Element"
 ], function(
 	RtaQunitUtils,
@@ -36,7 +36,7 @@ sap.ui.define([
 	ObjectPageSection,
 	ObjectPageSubSection,
 	QUnitUtils,
-	oCore,
+	nextUIUpdate,
 	Element
 ) {
 	"use strict";
@@ -448,10 +448,10 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		QUnit.test("when context menu (context menu) is opened (via keyboard) for a sap.m.Page without title", function(assert) {
+		QUnit.test("when context menu (context menu) is opened (via keyboard) for a sap.m.Page without title", async function(assert) {
 			assert.expect(4);
 			this.oPage._headerTitle.destroy();
-			oCore.applyChanges();
+			await nextUIUpdate();
 			this.oPage._headerTitle = null;
 			var oPageOverlay = OverlayRegistry.getOverlay(this.oPage);
 			oPageOverlay.focus();
@@ -613,7 +613,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given RTA is started for Object Page...", {
-		before() {
+		async before() {
 			// View
 			// 	Page
 			// 		ObjectPageLayout
@@ -673,7 +673,7 @@ sap.ui.define([
 			oEmbeddedPage.addContent(this.oObjectPageLayout);
 			var clock = sinon.useFakeTimers();
 			clock.tick(1000);
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			this.oRta = new RuntimeAuthoring({
 				rootControl: this.oObjectPageLayout,
@@ -786,7 +786,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given RTA is started for Object Page without stable ids...", {
-		beforeEach() {
+		async beforeEach() {
 			this.oMockedAppComponent = RtaQunitUtils.createAndStubAppComponent(sandbox);
 
 			var oSubSection = new ObjectPageSubSection({
@@ -821,7 +821,7 @@ sap.ui.define([
 				]
 			});
 			this.oObjectPageLayout.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			this.oRta = new RuntimeAuthoring({
 				rootControl: this.oObjectPageLayout,
@@ -864,7 +864,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given RTA is started for Object Page...", {
-		beforeEach() {
+		async beforeEach() {
 			var oEmbeddedView = Element.getElementById("Comp1---idMain1");
 
 			this.oObjectPageSection1 = new ObjectPageSection({
@@ -892,7 +892,7 @@ sap.ui.define([
 			});
 			oPage.addContent(this.oObjectPageLayout);
 			oEmbeddedPage.addContent(oPage);
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			this.oRta = new RuntimeAuthoring({
 				rootControl: oPage,

@@ -378,10 +378,13 @@ sap.ui.define([
 		},
 		events: {
 			/**
-			 * fired when the row selection of the table has been changed (the event parameters can be used to determine
-			 * selection changes - to find out the selected rows you should better use the table selection API)
+			 * Fired if the row selection of the table has been changed.
 			 *
-			 * <b>Note:</b> If a selection plugin is applied to the table, this event won't be fired.
+			 * The event parameters can be used to determine selection changes. To find the selected rows, you should
+			 * use {@link sap.ui.table.Table#getSelectedIndices} or the related function of the used selection plugin
+			 * if it exists.
+			 *
+			 * <b>Note:</b> If a selection plugin is used with the table, this event won't be fired.
 			 */
 			rowSelectionChange: {
 				parameters: {

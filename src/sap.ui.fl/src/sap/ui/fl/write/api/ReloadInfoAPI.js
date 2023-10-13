@@ -3,27 +3,27 @@
  */
 
 sap.ui.define([
-	"sap/ui/fl/LayerUtils",
-	"sap/ui/fl/Layer",
-	"sap/ui/fl/Utils",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
-	"sap/ui/fl/write/api/Version",
-	"sap/ui/fl/write/api/VersionsAPI",
+	"sap/ui/fl/initial/_internal/FlexInfoSession",
+	"sap/ui/fl/initial/api/Version",
+	"sap/ui/fl/write/_internal/flexState/compVariants/CompVariantState",
 	"sap/ui/fl/write/api/FeaturesAPI",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
-	"sap/ui/fl/write/_internal/flexState/compVariants/CompVariantState",
-	"sap/ui/fl/initial/_internal/FlexInfoSession"
+	"sap/ui/fl/write/api/VersionsAPI",
+	"sap/ui/fl/Layer",
+	"sap/ui/fl/LayerUtils",
+	"sap/ui/fl/Utils"
 ], function(
-	LayerUtils,
-	Layer,
-	Utils,
 	ManifestUtils,
+	FlexInfoSession,
 	Version,
-	VersionsAPI,
+	CompVariantState,
 	FeaturesAPI,
 	PersistenceWriteAPI,
-	CompVariantState,
-	FlexInfoSession
+	VersionsAPI,
+	Layer,
+	LayerUtils,
+	Utils
 ) {
 	"use strict";
 

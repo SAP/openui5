@@ -2,20 +2,18 @@
 
 sap.ui.define([
 	"sap/ui/core/Manifest",
+	"sap/ui/fl/write/_internal/connectors/JsObjectConnector",
 	"sap/ui/fl/apply/_internal/flexState/Loader",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
-	"sap/ui/fl/write/_internal/connectors/JsObjectConnector",
 	"sap/ui/fl/initial/_internal/Storage",
-	"sap/ui/fl/Utils",
-	"sap/ui/fl/write/api/Version",
+	"sap/ui/fl/initial/api/Version",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	Manifest,
+	JsObjectConnector,
 	Loader,
 	ManifestUtils,
-	JsObjectConnector,
 	ApplyStorage,
-	Utils,
 	Version,
 	sinon
 ) {

@@ -120,6 +120,8 @@ sap.ui.define([
 	};
 
 	MultiSelectionPlugin.prototype.exit = function() {
+		SelectionPlugin.prototype.exit.apply(this, arguments);
+
 		if (this.oDeselectAllIcon) {
 			this.oDeselectAllIcon.destroy();
 			this.oDeselectAllIcon = null;
@@ -202,13 +204,14 @@ sap.ui.define([
 		}
 	};
 
-	MultiSelectionPlugin.prototype.onKeyboardShortcut = function(sType) {
+	MultiSelectionPlugin.prototype.onKeyboardShortcut = function(sType, oEvent) {
 		if (sType === "toggle") {
-			if (this._bLimitDisabled) {
-				toggleSelection(this);
+			if (this._bLimitDisabled && toggleSelection(this) === false) {
+				oEvent?.setMarked("sapUiTableClearAll");
 			}
 		} else if (sType === "clear") {
 			this.clearSelection();
+			oEvent?.setMarked("sapUiTableClearAll");
 		}
 	};
 
@@ -216,12 +219,15 @@ sap.ui.define([
 	 * If not all indices are selected, all indices are selected, otherwise the selection is removed.
 	 *
 	 * @param {sap.ui.table.plugins.MultiSelectionPlugin} oPlugin The plugin to toggle the selection on.
+	 * @returns {boolean} The selection state. true - all selected, false - all cleared
 	 */
 	function toggleSelection(oPlugin) {
 		if (oPlugin.getSelectableCount() > oPlugin.getSelectedCount()) {
 			oPlugin.selectAll();
+			return true;
 		} else {
 			oPlugin.clearSelection();
+			return false;
 		}
 	}
 

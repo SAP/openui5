@@ -11,6 +11,9 @@ sap.ui.define([
 	"use strict";
 
 	QUnit.module("sap.ui.model.message.MessageListBinding", {
+		before() {
+			this.__ignoreIsolatedCoverage__ = true;
+		},
 		afterEach: function() {
 			this.oLogMock = this.mock(Log);
 			this.oLogMock.expects("error").never();

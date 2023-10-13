@@ -14,7 +14,7 @@ sap.ui.define([
 	"sap/ui/layout/VerticalLayout",
 	"sap/m/VBox",
 	"sap/base/Log",
-	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/core/Element"
 ], function(
 	XmlPreprocessor,
@@ -32,7 +32,7 @@ sap.ui.define([
 	VerticalLayout,
 	VBox,
 	Log,
-	oCore,
+	nextUIUpdate,
 	Element
 ) {
 	"use strict";
@@ -71,7 +71,7 @@ sap.ui.define([
 		FlexPerformanceTestUtil.startMeasurement(sMassiveLabel);
 		var aControlsToBeChanged = [].concat(fnAddControls(sControlId));
 		return FlexRuntimeInfoAPI.waitForChanges({ selectors: aControlsToBeChanged })
-		.then(function() {
+		.then(async function() {
 			FlexPerformanceTestUtil.stopMeasurement(sMassiveLabel);
 			if (!_areAllChangesApplied()) {
 				var oLayout = Element.getElementById("idMain1--Layout");
@@ -79,7 +79,7 @@ sap.ui.define([
 				throw new Error("Not all changes were applied");
 			}
 			_writeData();
-			oCore.applyChanges();
+			await nextUIUpdate();
 		})
 		.catch(function(vError) {
 			Log.error(vError);

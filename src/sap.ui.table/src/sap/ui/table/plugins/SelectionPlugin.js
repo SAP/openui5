@@ -16,7 +16,8 @@ sap.ui.define([
 	 *
 	 * The following restrictions apply:
 	 * <ul>
-	 *  <li>Do not create subclasses of the SelectionPlugin. The API is subject to change.</li>
+	 *  <li>Do not create subclasses of the <code>SelectionPlugin</code>. The API is subject to change.
+	 * <b>Note:</b> Subclasses provided by the UI5 framework that are not explicitly marked as experimental or restricted in any other way can be used on a regular basis.</li>
 	 * </ul>
 	 *
 	 * @abstract
@@ -108,9 +109,10 @@ sap.ui.define([
 	 * TODO: Also provide the event object?
 	 *
 	 * @param {string} sType Type of the keyboard shortcut.
+	 * @param {sap.ui.base.Event} oEvent The emitted event.
 	 * @private
 	 */
-	SelectionPlugin.prototype.onKeyboardShortcut = function(sType) {};
+	SelectionPlugin.prototype.onKeyboardShortcut = function(sType, oEvent) {};
 
 	/**
 	 * Changes the selection state of a row.

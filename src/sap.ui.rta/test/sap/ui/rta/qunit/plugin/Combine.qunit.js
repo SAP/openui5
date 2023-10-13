@@ -15,7 +15,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/sinon-4",
 	"test-resources/sap/ui/rta/qunit/RtaQunitUtils",
 	"sap/ui/core/mvc/View",
-	"sap/ui/core/Core"
+	"sap/ui/qunit/utils/nextUIUpdate"
 ], function(
 	Button,
 	CheckBox,
@@ -31,7 +31,7 @@ sap.ui.define([
 	sinon,
 	RtaQunitUtils,
 	View,
-	oCore
+	nextUIUpdate
 ) {
 	"use strict";
 
@@ -117,7 +117,7 @@ sap.ui.define([
 	};
 
 	QUnit.module("Given a designTime and combine plugin are instantiated", {
-		beforeEach(assert) {
+		async beforeEach(assert) {
 			var done = assert.async();
 			sandbox.stub(ChangesWriteAPI, "getChangeHandler").resolves();
 			this.oCommandFactory = new CommandFactory();
@@ -164,7 +164,7 @@ sap.ui.define([
 				]
 			}).placeAt("qunit-fixture");
 
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			this.oDesignTime = new DesignTime({
 				rootElements: [this.oPanel, this.oPanel2, this.OverflowToolbar],

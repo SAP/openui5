@@ -51,6 +51,9 @@ sap.ui.define([
 	}
 
 	QUnit.module("sap.ui.model.xml.XMLModel", {
+		before() {
+			this.__ignoreIsolatedCoverage__ = true;
+		},
 		afterEach: function() {
 			cleanUp();
 		},

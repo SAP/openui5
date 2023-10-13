@@ -9,6 +9,9 @@ sap.ui.define([
 	var sDefaultLanguage = Configuration.getLanguage();
 
 	QUnit.module("sap.ui.model.Filter", {
+		before() {
+			this.__ignoreIsolatedCoverage__ = true;
+		},
 		beforeEach : function () {
 			Configuration.setLanguage("en-US");
 		},

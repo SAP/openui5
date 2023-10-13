@@ -11,7 +11,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/layout/library",
 	"test-resources/sap/ui/rta/qunit/RtaQunitUtils",
-	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/core/Element"
 ], function(
 	XMLView,
@@ -24,7 +24,7 @@ sap.ui.define([
 	sinon,
 	layoutLibrary,
 	RtaQunitUtils,
-	oCore,
+	nextUIUpdate,
 	Element
 ) {
 	"use strict";
@@ -53,12 +53,12 @@ sap.ui.define([
 				}).then(function(oCreatedView) {
 					oView = oCreatedView;
 					return oView.loaded();
-				}).then(function() {
+				}).then(async function() {
 					oSimpleForm = Element.getElementById(oView.createId("SimpleForm0"));
 					oSimpleForm.setLayout(oSimpleFormLayout);
 					oView.placeAt("qunit-fixture");
 
-					oCore.applyChanges();
+					await nextUIUpdate();
 
 					var oTabHandlingPlugin = new TabHandlingPlugin();
 					var oSelectionPlugin = new MouseSelectionPlugin();
@@ -106,8 +106,8 @@ sap.ui.define([
 
 				.then(oCommand.undo.bind(oCommand))
 
-				.then(function() {
-					oCore.applyChanges();
+				.then(async function() {
+					await nextUIUpdate();
 					var oSimpleFormForm = Element.getElementById(oComponent.createId("qunit-fixture--SimpleForm0--Form"));
 					var aFormContainers = oSimpleFormForm.getFormContainers();
 					var iPositionAfterUndo = aFormContainers.indexOf(oElementGroup1.getParent());
@@ -155,8 +155,8 @@ sap.ui.define([
 
 				.then(oCommand.undo.bind(oCommand))
 
-				.then(function() {
-					oCore.applyChanges();
+				.then(async function() {
+					await nextUIUpdate();
 					oSimpleFormForm = Element.getElementById(oComponent.createId("qunit-fixture--SimpleForm0--Form"));
 					aFormContainers = oSimpleFormForm.getFormContainers();
 					assert.equal(aFormContainers.length, 5, "and after the undo only the original 5 groups are back");

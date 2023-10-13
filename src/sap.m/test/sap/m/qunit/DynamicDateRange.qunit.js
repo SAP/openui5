@@ -13,6 +13,7 @@ sap.ui.define([
 	"sap/m/Label",
 	"sap/ui/Device",
 	"sap/ui/core/date/UI5Date",
+	"sap/ui/core/date/CalendarWeekNumbering",
 	"sap/ui/core/Configuration"
 ], function(
 	DynamicDateRange,
@@ -28,6 +29,7 @@ sap.ui.define([
 	Label,
 	Device,
 	UI5Date,
+	CalendarWeekNumbering,
 	Configuration
 ) {
 	"use strict";
@@ -1242,6 +1244,79 @@ sap.ui.define([
 		oDynamicDateRange.destroy();
 	});
 
+	QUnit.module("StandardDynamicDateOption first day of week / this week", {
+		beforeEach: function() {
+			this.ddr = new DynamicDateRange();
+			this.ddr.setStandardOptions([]);
+
+			this.ddr.addStandardOption("FIRSTDAYWEEK");
+			this.ddr.addStandardOption("THISWEEK");
+
+			this.ddr.placeAt("qunit-fixture");
+
+			oCore.applyChanges();
+		},
+		afterEach: function() {
+			this.ddr.destroy();
+		}
+	});
+
+	QUnit.test("Week options respect calendarWeekNumbering", function(assert) {
+		var sOriginalLocale = oCore.getConfiguration().getFormatLocale();
+
+		// test with "en" locale
+		testFirstDayOfWeek(this.ddr, "en", CalendarWeekNumbering.Default, 0);
+		testFirstDayOfWeek(this.ddr, "en", CalendarWeekNumbering.ISO_8601, 1);
+		testFirstDayOfWeek(this.ddr, "en", CalendarWeekNumbering.WesternTraditional, 0);
+		testFirstDayOfWeek(this.ddr, "en", CalendarWeekNumbering.MiddleEastern, 6);
+
+		// test with "en_GB" locale
+		testFirstDayOfWeek(this.ddr, "en_GB", CalendarWeekNumbering.Default, 1);
+		testFirstDayOfWeek(this.ddr, "en_GB", CalendarWeekNumbering.ISO_8601, 1);
+		testFirstDayOfWeek(this.ddr, "en_GB", CalendarWeekNumbering.WesternTraditional, 0);
+		testFirstDayOfWeek(this.ddr, "en_GB", CalendarWeekNumbering.MiddleEastern, 6);
+
+		// test with "bg" locale
+		testFirstDayOfWeek(this.ddr, "bg_BG", CalendarWeekNumbering.Default, 1);
+		testFirstDayOfWeek(this.ddr, "bg_BG", CalendarWeekNumbering.ISO_8601, 1);
+		testFirstDayOfWeek(this.ddr, "bg_BG", CalendarWeekNumbering.WesternTraditional, 0);
+		testFirstDayOfWeek(this.ddr, "bg_BG", CalendarWeekNumbering.MiddleEastern, 6);
+
+		// restore original locale
+		oCore.getConfiguration().setFormatLocale(sOriginalLocale);
+
+		// Tests the DDR control 'First Day Of Week' and 'This Week' options return values first day of week by setting specific locale and calendarWeekNumbering
+		function testFirstDayOfWeek(oDDR, sLocale, sCalendarWeekNumbering, iFirstDayOfWeek) {
+			var oFirstDayOfWeek,
+				oThisWeek,
+				aDates;
+
+			// arrange
+			oCore.getConfiguration().setFormatLocale(sLocale);
+			oDDR.setCalendarWeekNumbering(sCalendarWeekNumbering);
+			oDDR.open();
+			oCore.applyChanges();
+			oFirstDayOfWeek = oCore.byId(oDDR.getId() + '-option-FIRSTDAYWEEK');
+			oThisWeek = oCore.byId(oDDR.getId() + '-option-THISWEEK');
+
+			// act
+			oFirstDayOfWeek.firePress();
+			oCore.applyChanges();
+			aDates = oDDR.toDates(oDDR.getValue());
+
+			// assert
+			assert.strictEqual(aDates[0].getDay(), iFirstDayOfWeek, "FIRSTDAYWEEK: First day of week is proper for locale '" + sLocale + "' and calendarWeekNumbering '" + sCalendarWeekNumbering + "'");
+
+			// act
+			oThisWeek.firePress();
+			oCore.applyChanges();
+			aDates = oDDR.toDates(oDDR.getValue());
+
+			// assert
+			assert.strictEqual(aDates[0].getDay(), iFirstDayOfWeek, "THISWEEK: First day of week is proper for locale '" + sLocale + "' and calendarWeekNumbering '" + sCalendarWeekNumbering + "'");
+		}
+	});
+
 	QUnit.module("Clear Icon", {
 		beforeEach: function() {
 			this.oDDR = new DynamicDateRange({});
@@ -1288,7 +1363,8 @@ sap.ui.define([
 				id: 'myDDR',
 				value: {operator: 'DATE', values: [UI5Date.getInstance('2023-01-09T18:00:00')]},
 				calendarWeekNumbering: "MiddleEastern"
-			});
+			}),
+			sCalendarId;
 
 			oDRS.placeAt("qunit-fixture");
 			oCore.applyChanges();
@@ -1300,8 +1376,9 @@ sap.ui.define([
 
 			oDateOptionDomRef.firePress();
 			oCore.applyChanges();
-			var oMonthDomRef = oCore.byId("__calendar3").getAggregation("month")[0].getDomRef();
-			var aWeekHeaders = oMonthDomRef.querySelectorAll("#__calendar3 .sapUiCalWH:not(.sapUiCalDummy)");
+			sCalendarId = document.querySelector("#" + oDRS.getId() + "-RP-popover .sapUiCal").getAttribute("id");
+			var oMonthDomRef = oCore.byId(sCalendarId).getAggregation("month")[0].getDomRef();
+			var aWeekHeaders = oMonthDomRef.querySelectorAll("#" + sCalendarId + " .sapUiCalWH:not(.sapUiCalDummy)");
 
 			//Assert
 			assert.strictEqual(aWeekHeaders.length, 7, "7 weekheaders rendered");
@@ -1311,8 +1388,9 @@ sap.ui.define([
 			oCore.applyChanges();
 			oDateOptionDomRef.firePress();
 			oCore.applyChanges();
-			oMonthDomRef = oCore.byId("__calendar4").getAggregation("month")[0].getDomRef();
-			aWeekHeaders = oMonthDomRef.querySelectorAll("#__calendar4 .sapUiCalWH:not(.sapUiCalDummy)");
+			sCalendarId = document.querySelector("#" + oDRS.getId() + "-RP-popover .sapUiCal").getAttribute("id");
+			oMonthDomRef = oCore.byId(sCalendarId).getAggregation("month")[0].getDomRef();
+			aWeekHeaders = oMonthDomRef.querySelectorAll("#" + sCalendarId + " .sapUiCalWH:not(.sapUiCalDummy)");
 			//Assert
 			assert.equal(aWeekHeaders[0].textContent, "Mon", "Monday is the first weekday for ISO_8601");
 
@@ -1320,8 +1398,9 @@ sap.ui.define([
 			oCore.applyChanges();
 			oDateOptionDomRef.firePress();
 			oCore.applyChanges();
-			oMonthDomRef = oCore.byId("__calendar5").getAggregation("month")[0].getDomRef();
-			aWeekHeaders = oMonthDomRef.querySelectorAll("#__calendar5 .sapUiCalWH:not(.sapUiCalDummy)");
+			sCalendarId = document.querySelector("#" + oDRS.getId() + "-RP-popover .sapUiCal").getAttribute("id");
+			oMonthDomRef = oCore.byId(sCalendarId).getAggregation("month")[0].getDomRef();
+			aWeekHeaders = oMonthDomRef.querySelectorAll("#" + sCalendarId + " .sapUiCalWH:not(.sapUiCalDummy)");
 			//Assert
 			assert.equal(aWeekHeaders[0].textContent, "Sun", "Sunday is the first weekday for WesternTraditional");
 

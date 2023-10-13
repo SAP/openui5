@@ -847,7 +847,7 @@ sap.ui.define([
 		 */
 		DynamicDateRange.prototype.toDates = function(oValue) {
 			var sKey = oValue.operator;
-			return this.getOption(sKey).toDates(oValue);
+			return this.getOption(sKey).toDates(oValue, this.getCalendarWeekNumbering());
 		};
 
 		/**

@@ -250,6 +250,100 @@ sap.ui.define([
 			Then.iSeeCellsSelected();
 		});
 
+		opaTest("Removing Selection", function(Given, When, Then) {
+			function selectBlock() {
+				// Select single cell. Then extend.
+				When.iFocusCell(1, 1);
+				When.Keyboard.iSelectNextCell(true, oConfig.forward);
+				When.Keyboard.iSelectNextCell(true, oConfig.forward);
+				Then.iSeeCellsSelected({ rowIndex: 1, colIndex: 1 }, { rowIndex: 1, colIndex: 3 });
+				Then.iSeeCellFocused({ rowIndex: 1, colIndex: 3 });
+			}
+
+			function selectRows() {
+				When.iFocusCell(3, 3);
+				When.Keyboard.iSelectDeselectCell();
+				When.Keyboard.iSelectNextCell(false, true);
+
+				When.Keyboard.iSelectRows();
+				Then.iSeeCellsSelected();
+				Then.iSeeRowsSelected(3, 4);
+			}
+
+			// Using CTRL + SHIFT + A
+			selectBlock();
+			When.iFocusCell(3, 3);
+			When.Keyboard.iRemoveSelection();
+			Then.iSeeCellsSelected();
+
+			// Using ESC
+			selectBlock();
+			When.iFocusCell(3, 3);
+			When.Keyboard.iRemoveSelection(true);
+			Then.iSeeCellsSelected();
+
+			// Using CTRL + SHIFT + A => everything is cleared
+			selectRows();
+			selectBlock();
+			When.iFocusCell(0, 0);
+			When.Keyboard.iRemoveSelection();
+			Then.iSeeCellsSelected();
+			Then.iSeeRowsSelected();
+
+			// Using ESC => only cells are cleared
+			selectRows();
+			selectBlock();
+			When.iFocusCell(0, 0);
+			When.Keyboard.iRemoveSelection();
+			Then.iSeeCellsSelected();
+			Then.iSeeRowsSelected(3, 4);
+
+			// Trying to clear when focus is in input => nothing happens
+			selectBlock();
+			When.iFocusCell(1, 2);
+			When.Keyboard.iSelectInnerControl();
+			When.Keyboard.iRemoveSelection();
+			Then.iSeeCellsSelected({ rowIndex: 1, colIndex: 1 }, { rowIndex: 1, colIndex: 3 });
+
+			When.Keyboard.iRemoveSelection(true);
+			Then.iSeeCellsSelected({ rowIndex: 1, colIndex: 1 }, { rowIndex: 1, colIndex: 3 });
+
+			When.Keyboard.iSelectInnerControl();
+			When.Keyboard.iRemoveSelection(true);
+			Then.iSeeCellsSelected();
+
+			// Trying to clear with 2x CTRL + A with no Select All => nothing happens
+			selectBlock();
+			When.iFocusCell(1, 3);
+			When.Keyboard.iSelectAll();
+			Then.iSeeCellsSelected({ rowIndex: 1, colIndex: 1 }, { rowIndex: 1, colIndex: 3 });
+			Then.iSeeRowsSelected();
+
+			When.Keyboard.iSelectAll();
+			Then.iSeeCellsSelected({ rowIndex: 1, colIndex: 1 }, { rowIndex: 1, colIndex: 3 });
+			Then.iSeeRowsSelected();
+
+			When.Keyboard.iRemoveSelection(true);
+			Then.iSeeCellsSelected();
+
+			// Trying to clear with 2x CTRL + A with Select All => clears selection
+			Given.iChangeSelectAllState(true);
+
+			selectBlock();
+			When.iFocusCell(1, 1);
+			When.Keyboard.iSelectAll();
+			Then.iSeeCellsSelected({ rowIndex: 1, colIndex: 1 }, { rowIndex: 1, colIndex: 3 });
+			Then.iSeeRowsSelected(0, 114);
+
+			When.Keyboard.iSelectAll();
+			Then.iSeeCellsSelected();
+			Then.iSeeRowsSelected();
+
+			When.Keyboard.iRemoveSelection(true);
+			Then.iSeeCellsSelected();
+			Given.iChangeSelectAllState(false);
+		});
+
 		opaTest("Column Selection", function(Given, When, Then) {
 			let rangeLimit = 200; // Default range limit
 

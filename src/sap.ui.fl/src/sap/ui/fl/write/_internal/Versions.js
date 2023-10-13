@@ -3,19 +3,19 @@
  */
 
 sap.ui.define([
-	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/ChangePersistenceFactory",
-	"sap/ui/fl/write/_internal/Storage",
-	"sap/ui/fl/write/api/Version",
 	"sap/ui/fl/Utils",
+	"sap/ui/fl/initial/api/Version",
+	"sap/ui/fl/registry/Settings",
+	"sap/ui/fl/write/_internal/Storage",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/BindingMode"
 ], function(
-	Settings,
 	ChangePersistenceFactory,
-	Storage,
-	Version,
 	Utils,
+	Version,
+	Settings,
+	Storage,
 	JSONModel,
 	BindingMode
 ) {

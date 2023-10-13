@@ -9,7 +9,7 @@ sap.ui.define([
 	"sap/uxap/ObjectPageHeader",
 	"sap/m/Button",
 	"sap/m/VBox",
-	"sap/ui/core/Core"
+	"sap/ui/qunit/utils/nextUIUpdate"
 ],
 function(
 	DesignTime,
@@ -20,12 +20,12 @@ function(
 	ObjectPageHeader,
 	Button,
 	VBox,
-	oCore
+	nextUIUpdate
 ) {
 	"use strict";
 
 	QUnit.module("Basic functionality", {
-		beforeEach(assert) {
+		async beforeEach(assert) {
 			var fnDone = assert.async();
 
 			this.oButton = new Button({text: "foo"});
@@ -52,7 +52,7 @@ function(
 			this.oVBox = new VBox({
 				items: [this.oLayout]
 			}).placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			this.oDesignTime = new DesignTime({
 				rootElements: [this.oVBox]
@@ -66,7 +66,7 @@ function(
 			this.oVBox.destroy();
 		}
 	}, function() {
-		QUnit.test("invisible section", function(assert) {
+		QUnit.test("invisible section", async function(assert) {
 			var fnDone = assert.async();
 
 			OverlayRegistry.getOverlay(this.oSection).attachEventOnce("geometryChanged", function() {
@@ -82,7 +82,7 @@ function(
 			}, this);
 
 			this.oSection.setVisible(true);
-			oCore.applyChanges();
+			await nextUIUpdate();
 		});
 	});
 

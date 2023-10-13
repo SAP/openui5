@@ -27,6 +27,9 @@ sap.ui.define([
 	});
 
 	QUnit.module("sap.ui.model.StaticBinding", {
+		before() {
+			this.__ignoreIsolatedCoverage__ = true;
+		},
 		beforeEach: function() {
 			Configuration.setLanguage("en-US");
 			this.static = new StaticBinding("test");

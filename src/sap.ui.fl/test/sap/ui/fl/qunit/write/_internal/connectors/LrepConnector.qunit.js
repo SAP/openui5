@@ -1,33 +1,33 @@
 /* global QUnit */
 
 sap.ui.define([
+	"sap/m/MessageBox",
+	"sap/ui/core/BusyIndicator",
+	"sap/ui/core/Lib",
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
 	"sap/ui/fl/initial/_internal/connectors/LrepConnector",
-	"sap/ui/fl/write/_internal/connectors/LrepConnector",
 	"sap/ui/fl/initial/_internal/connectors/Utils",
+	"sap/ui/fl/initial/api/Version",
+	"sap/ui/fl/write/_internal/connectors/LrepConnector",
 	"sap/ui/fl/write/_internal/connectors/Utils",
 	"sap/ui/fl/write/_internal/transport/TransportSelection",
-	"sap/ui/fl/write/api/Version",
 	"sap/ui/fl/registry/Settings",
-	"sap/ui/fl/Layer",
-	"sap/m/MessageBox",
-	"sap/ui/core/BusyIndicator",
-	"sap/ui/core/Lib"
+	"sap/ui/fl/Layer"
 ], function(
+	MessageBox,
+	BusyIndicator,
+	Lib,
 	sinon,
 	FlexObjectFactory,
 	InitialLrepConnector,
-	WriteLrepConnector,
 	InitialUtils,
+	Version,
+	WriteLrepConnector,
 	WriteUtils,
 	TransportSelection,
-	Version,
 	Settings,
-	Layer,
-	MessageBox,
-	BusyIndicator,
-	Lib
+	Layer
 ) {
 	"use strict";
 

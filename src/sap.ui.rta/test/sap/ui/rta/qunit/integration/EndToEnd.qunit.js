@@ -9,7 +9,7 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	"test-resources/sap/ui/fl/api/FlexTestAPI",
 	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/core/Element",
 	"sap/ui/core/EventBus",
 	"sap/ui/core/LabelEnablement"
@@ -22,7 +22,7 @@ sap.ui.define([
 	KeyCodes,
 	FlexTestAPI,
 	sinon,
-	oCore,
+	nextUIUpdate,
 	Element,
 	EventBus,
 	LabelEnablement
@@ -175,20 +175,20 @@ sap.ui.define([
 
 					// open context menu dialog
 					this.oCompanyCodeFieldOverlay.setSelected(true);
-					RtaQunitUtils.openContextMenuWithKeyboard.call(this, this.oCompanyCodeFieldOverlay).then(function() {
+					RtaQunitUtils.openContextMenuWithKeyboard.call(this, this.oCompanyCodeFieldOverlay).then(async function() {
 						var oMenu = this.oRta.getPlugins().contextMenu.oContextMenuControl;
 						QUnitUtils.triggerEvent("click", oMenu._getVisualParent().getItems()[1].getDomRef());
-						oCore.applyChanges();
+						await nextUIUpdate();
 
-						oDialog.attachOpened(function() {
+						oDialog.attachOpened(async function() {
 							var oFieldToAdd = oDialog.getElements().filter(function(oField) {
 								return oField.type === "invisible";
 							})[0];
-							oCommandStack.attachModified(function() {
+							oCommandStack.attachModified(async function() {
 								var aCommands = oCommandStack.getAllExecutedCommands();
 								if (aCommands &&
 									aCommands.length === 3) {
-									oCore.applyChanges();
+									await nextUIUpdate();
 
 									var oGroupElements = this.oGeneralGroup.getGroupElements();
 									var iIndex = oGroupElements.indexOf(this.oCompanyCodeField) + 1;
@@ -221,7 +221,7 @@ sap.ui.define([
 							oFieldToAdd.selected = true;
 							var oOkButton = Element.getElementById(`${oDialog.getId()}--rta_addDialogOkButton`);
 							QUnitUtils.triggerEvent("tap", oOkButton.getDomRef());
-							oCore.applyChanges();
+							await nextUIUpdate();
 						}.bind(this));
 					}.bind(this));
 				}.bind(this), 2000);
@@ -244,8 +244,8 @@ sap.ui.define([
 			this.oCompanyCodeFieldOverlay.setSelected(true);
 
 			// open context menu (context menu) and select add field
-			RtaQunitUtils.openContextMenuWithKeyboard.call(this, this.oCompanyCodeFieldOverlay).then(function() {
-				oDialog.attachOpened(function() {
+			RtaQunitUtils.openContextMenuWithKeyboard.call(this, this.oCompanyCodeFieldOverlay).then(async function() {
+				oDialog.attachOpened(async function() {
 					var oFieldToAdd = oDialog._oList.getItems()[1];
 					var sFieldToAddText = oFieldToAdd.getContent()[0].getItems()[0].getText();
 
@@ -285,14 +285,14 @@ sap.ui.define([
 					QUnitUtils.triggerKeydown(oFieldToAdd.getDomRef(), KeyCodes.ENTER, false, false, false);
 					var oOkButton = Element.getElementById(`${oDialog.getId()}--rta_addDialogOkButton`);
 					QUnitUtils.triggerEvent("tap", oOkButton.getDomRef());
-					oCore.applyChanges();
+					await nextUIUpdate();
 				}.bind(this));
 
 				var oMenu = this.oRta.getPlugins().contextMenu.oContextMenuControl;
 				var oContextMenuItem = oMenu.getItems()[1];
 				assert.equal(oContextMenuItem.getText(), "Add: Field", "then the add field action button is available in the menu");
 				QUnitUtils.triggerEvent("click", oMenu._getVisualParent().getItems()[1].getDomRef());
-				oCore.applyChanges();
+				await nextUIUpdate();
 			}.bind(this));
 		});
 
@@ -440,16 +440,16 @@ sap.ui.define([
 			oFieldOverlay.focus();
 			oFieldOverlay.setSelected(true);
 			// open context menu (compact context menu)
-			RtaQunitUtils.openContextMenuWithKeyboard.call(this, oFieldOverlay).then(function() {
+			RtaQunitUtils.openContextMenuWithKeyboard.call(this, oFieldOverlay).then(async function() {
 				// wait for opening additional Elements dialog
-				oDialog.attachOpened(function() {
+				oDialog.attachOpened(async function() {
 					var oFieldToAdd = oDialog.getElements().filter(function(oField) {
 						return oField.type === "invisible";
 					})[0];
-					oCommandStack.attachModified(function() {
+					oCommandStack.attachModified(async function() {
 						var aCommands = oCommandStack.getAllExecutedCommands();
 						if (aCommands && aCommands.length === 1) {
-							oCore.applyChanges();
+							await nextUIUpdate();
 
 							iDirtyChangesCount = FlexTestAPI.getDirtyChanges({selector: this.oCompanyCodeField}).length;
 							assert.strictEqual(iDirtyChangesCount, 1, "then there are three dirty changes in the flex persistence");
@@ -468,14 +468,14 @@ sap.ui.define([
 					oFieldToAdd.selected = true;
 					var oOkButton = Element.getElementById(`${oDialog.getId()}--rta_addDialogOkButton`);
 					QUnitUtils.triggerEvent("tap", oOkButton.getDomRef());
-					oCore.applyChanges();
+					await nextUIUpdate();
 				}.bind(this));
 
 				var oMenu = this.oRta.getPlugins().contextMenu.oContextMenuControl;
 				var oContextMenuItem = oMenu.getItems()[1];
 				assert.equal(oContextMenuItem.getText(), "Add: Field", "then the add field action button is available in the menu");
 				QUnitUtils.triggerEvent("click", oMenu._getVisualParent().getItems()[1].getDomRef());
-				oCore.applyChanges();
+				await nextUIUpdate();
 			}.bind(this));
 		});
 
@@ -503,7 +503,7 @@ sap.ui.define([
 				);
 				this.oChangeVisualization = this.oRta.getChangeVisualization();
 				return startVisualization(this.oRta)
-				.then(function() {
+				.then(async function() {
 					var aVizModel = this.oRta.getToolbar().getModel("visualizationModel").getData().changeCategories;
 					assert.strictEqual(aVizModel[2].count, 1, "then one move change is registered");
 					// SimpleForm recreates all elements after cut&paste, thus we need to fetch them again
@@ -538,7 +538,7 @@ sap.ui.define([
 					});
 
 					this.oRta.setMode("adaptation");
-					oCore.applyChanges();
+					await nextUIUpdate();
 				}.bind(this));
 			}.bind(this);
 
@@ -583,8 +583,8 @@ sap.ui.define([
 			assert.strictEqual(iDirtyChangesCount, 0, "then there are no changes to publish in the flex persistence");
 
 			var oCommandStack = this.oRta.getCommandStack();
-			oCommandStack.attachCommandExecuted(function() {
-				oCore.applyChanges();
+			oCommandStack.attachCommandExecuted(async function() {
+				await nextUIUpdate();
 				iDirtyChangesCount = FlexTestAPI.getDirtyChanges({selector: oCombinedElement}).length;
 				assert.strictEqual(iDirtyChangesCount, 1, "then there is one dirty change in the flex persistence");
 				stubShowMessageBoxOnRtaClose(this.oRta);
@@ -601,13 +601,13 @@ sap.ui.define([
 			oCombinedElementOverlay.setSelected(true);
 
 			var {oContextMenuControl} = this.oRta.getPlugins().contextMenu;
-			this.oRta.getPlugins().contextMenu.attachEventOnce("openedContextMenu", function() {
+			this.oRta.getPlugins().contextMenu.attachEventOnce("openedContextMenu", async function() {
 				var oContextMenuItem = oContextMenuControl._getVisualParent().getItems().filter(function(oItem) {
 					return oItem.getText() === "Split";
 				})[0];
 				assert.ok(oContextMenuItem, "the the split action button is available in the menu");
 				QUnitUtils.triggerEvent("click", oContextMenuItem.getDomRef());
-				oCore.applyChanges();
+				await nextUIUpdate();
 			});
 			QUnitUtils.triggerKeyup(oCombinedElementOverlay.getDomRef(), KeyCodes.F10, true, false, false);
 		});

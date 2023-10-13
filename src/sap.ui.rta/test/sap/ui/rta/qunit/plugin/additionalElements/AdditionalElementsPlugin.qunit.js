@@ -20,6 +20,7 @@ sap.ui.define([
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/layout/VerticalLayout",
 	"sap/ui/model/json/JSONModel",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/rta/command/CommandFactory",
 	"sap/ui/rta/plugin/additionalElements/AdditionalElementsPlugin",
 	"sap/ui/rta/plugin/additionalElements/AdditionalElementsAnalyzer",
@@ -50,6 +51,7 @@ sap.ui.define([
 	Settings,
 	VerticalLayout,
 	JSONModel,
+	nextUIUpdate,
 	CommandFactory,
 	AdditionalElementsPlugin,
 	AdditionalElementsAnalyzer,
@@ -58,7 +60,7 @@ sap.ui.define([
 	RTAUtils,
 	sinon,
 	RtaQunitUtils,
-	oCore,
+	Core,
 	Element
 ) {
 	"use strict";
@@ -137,7 +139,7 @@ sap.ui.define([
 	var ON_IRRELEVANT = "IRRELEVANT";
 
 	QUnit.module("Context Menu Operations: Given a plugin whose dialog always close with OK", {
-		beforeEach(assert) {
+		async beforeEach(assert) {
 			registerControlsForChanges();
 			this.oRTATexts = Lib.getResourceBundleFor("sap.ui.rta");
 			var fnOriginalGetLibraryResourceBundle = Lib.getResourceBundleFor;
@@ -145,7 +147,7 @@ sap.ui.define([
 				getText: sandbox.stub().returnsArg(0),
 				hasText: sandbox.stub().returns(true)
 			};
-			sandbox.stub(oCore, "getLibraryResourceBundle").callsFake(function(...aArgs) {
+			sandbox.stub(Core, "getLibraryResourceBundle").callsFake(function(...aArgs) {
 				const [sLibraryName] = aArgs;
 				if (sLibraryName === "sap.ui.layout" || sLibraryName === "sap.m") {
 					return oFakeLibBundle;
@@ -153,7 +155,7 @@ sap.ui.define([
 				return fnOriginalGetLibraryResourceBundle.apply(this, aArgs);
 			});
 			sandbox.stub(RTAPlugin.prototype, "hasChangeHandler").resolves(true);
-			givenSomeBoundControls.call(this, assert);
+			await givenSomeBoundControls.call(this, assert);
 
 			givenThePluginWithOKClosingDialog.call(this);
 		},
@@ -426,9 +428,9 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given a plugin whose dialog always close with CANCEL", {
-		beforeEach(assert) {
+		async beforeEach(assert) {
 			registerControlsForChanges();
-			givenSomeBoundControls.call(this, assert);
+			await givenSomeBoundControls.call(this, assert);
 
 			givenThePluginWithCancelClosingDialog.call(this);
 		},
@@ -517,9 +519,9 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given a plugin whose dialog always close with OK", {
-		beforeEach(assert) {
+		async beforeEach(assert) {
 			registerControlsForChanges();
-			givenSomeBoundControls.call(this, assert);
+			await givenSomeBoundControls.call(this, assert);
 			sandbox.stub(RTAPlugin.prototype, "hasChangeHandler").resolves(true);
 
 			givenThePluginWithOKClosingDialog.call(this);
@@ -965,7 +967,7 @@ sap.ui.define([
 				getText: sandbox.stub().returnsArg(0),
 				hasText: sandbox.stub().returns(true)
 			};
-			sandbox.stub(oCore, "getLibraryResourceBundle").callsFake(function(...aArgs) {
+			sandbox.stub(Core, "getLibraryResourceBundle").callsFake(function(...aArgs) {
 				const [sLibraryName] = aArgs;
 				if (sLibraryName === "sap.ui.layout" || sLibraryName === "sap.m") {
 					return oFakeLibBundle;
@@ -1548,7 +1550,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given an app that is field extensible enabled...", {
-		beforeEach(assert) {
+		async beforeEach(assert) {
 			registerControlsForChanges();
 			this.STUB_EXTENSIBILITY_BUSINESS_CTXT = {
 				extensionData: [{BusinessContext: "some context", description: "some description"}], // BusinessContext API returns this structure
@@ -1571,7 +1573,7 @@ sap.ui.define([
 			this.STUB_EXTENSIBILITY_USHELL_URL = `someURLToCheckOurParameterPassing:${
 				 JSON.stringify(this.STUB_EXTENSIBILITY_USHELL_PARAMS)}`;
 
-			givenSomeBoundControls.call(this, assert);
+			await givenSomeBoundControls.call(this, assert);
 
 			givenThePluginWithOKClosingDialog.call(this);
 		},
@@ -1877,10 +1879,10 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given a Plugin and a DT with one control", {
-		beforeEach() {
+		async beforeEach() {
 			this.oButton = new Button("control1", {text: "foo"});
 			this.oButton.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 			givenThePluginWithOKClosingDialog.call(this);
 			return new Promise(function(resolve) {
 				this.oDesignTime = new DesignTime({
@@ -1922,7 +1924,7 @@ sap.ui.define([
 	//                                                    oControl (Bar)
 	//                 contentLeft                                        contentMiddle         contentRight
 	// [oSibling, <oUnsupportedInvisible>, <oInvisible1>, <oInvisible2>        EMPTY          oIrrelevantChild]
-	function givenSomeBoundControls() {
+	async function givenSomeBoundControls() {
 		this.oSibling = new Button({id: "Sibling", visible: true});
 		this.oUnsupportedInvisible = new Input({id: "UnsupportedInvisible", visible: false});
 		this.oInvisible1 = new Button({id: "Invisible1", visible: false});
@@ -1943,7 +1945,7 @@ sap.ui.define([
 		this.oPseudoPublicParent.setModel(new SomeModel());
 
 		this.oPseudoPublicParent.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// simulate analyzer returning some elements
 		this.fnEnhanceInvisibleElementsStub = sandbox.stub(AdditionalElementsAnalyzer, "enhanceInvisibleElements").resolves([
@@ -2163,8 +2165,8 @@ sap.ui.define([
 				resolve();
 			}.bind(this));
 		}.bind(this))
-		.then(function() {
-			oCore.applyChanges();
+		.then(async function() {
+			await nextUIUpdate();
 			this.oDesignTime.addPlugin(this.oPlugin);
 			switch (sOverlayType) {
 				case ON_SIBLING :

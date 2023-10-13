@@ -1,32 +1,32 @@
 /* global QUnit */
 
 sap.ui.define([
-	"sap/ui/fl/write/api/ContextBasedAdaptationsAPI",
-	"sap/ui/fl/write/api/Version",
-	"sap/ui/fl/write/api/VersionsAPI",
+	"sap/ui/core/Control",
+	"sap/ui/fl/apply/_internal/flexState/FlexState",
+	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
+	"sap/ui/fl/initial/_internal/FlexInfoSession",
+	"sap/ui/fl/initial/api/Version",
+	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/write/_internal/Versions",
 	"sap/ui/fl/write/_internal/Storage",
-	"sap/ui/fl/registry/Settings",
-	"sap/ui/fl/apply/_internal/flexState/FlexState",
-	"sap/ui/fl/initial/_internal/FlexInfoSession",
+	"sap/ui/fl/write/api/ContextBasedAdaptationsAPI",
+	"sap/ui/fl/write/api/VersionsAPI",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
-	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
-	"sap/ui/core/Control",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
-	ContextBasedAdaptationsAPI,
+	Control,
+	FlexState,
+	ManifestUtils,
+	FlexInfoSession,
 	Version,
-	VersionsAPI,
+	Settings,
 	Versions,
 	Storage,
-	Settings,
-	FlexState,
-	FlexInfoSession,
+	ContextBasedAdaptationsAPI,
+	VersionsAPI,
 	Layer,
 	Utils,
-	ManifestUtils,
-	Control,
 	sinon
 ) {
 	"use strict";

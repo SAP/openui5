@@ -716,9 +716,9 @@ sap.ui.define([
 	});
 
 	QUnit.module("getClosestBoundControl() - Given is a list with bounded items", {
-		beforeEach(assert) {
+		async beforeEach(assert) {
 			var fnDone = assert.async();
-			this.oHorizontalLayout = TestUtil.createListWithBoundItems();
+			this.oHorizontalLayout = await TestUtil.createListWithBoundItems();
 			this.oDesignTime = new DesignTime({
 				rootElements: [this.oHorizontalLayout]
 			});

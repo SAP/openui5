@@ -12,7 +12,7 @@
 			<OverflowToolbar style="Clear">
 				<Title text="Custom Toolbar with a header text" />
 				<ToolbarSpacer />
-				<Button text="Modify View" press="onPress"/>
+				<Button text="Toggle Modify View" press="onPress"/>
 			</OverflowToolbar>
 		</headerToolbar>
 				
@@ -28,12 +28,9 @@
 							selectedKey="2"
 							defaultKey="2"
 							showFooter="true"
-							popoverTitle="my Test">
+							popoverTitle="my Favorites">
 							<items>
 								<VariantItem key="Standard" title="Entry1"
-								    originalTitle="Entry1"
-								    originalFavorite="true"
-								    originalExecuteOnSelect="false"
 									author="B"
 									favorite="true"
 									visible="true"
@@ -42,10 +39,7 @@
 									changeable="false"
 									remove="false"
 									sharing="public" />
-								<VariantItem key="2" title="Entry2"
-								    originalTitle="Entry2"
-								    originalFavorite="true"
-								    originalExecuteOnSelect="false"								
+								<VariantItem key="2" title="Entry2"							
 									author="A"
 									favorite="true"
 									visible="true"
@@ -54,10 +48,7 @@
 									changeable="true"
 									remove="true"
 									sharing="private" />
-								<VariantItem key="3" title="Entry3"
-								    originalTitle="Entry3"
-								    originalFavorite="true"
-								    originalExecuteOnSelect="true"									
+								<VariantItem key="3" title="Entry3"								
 									author="A"
 									favorite="true"
 									visible="true"
@@ -66,10 +57,7 @@
 									changeable="true"
 									remove="true"
 									sharing="private" />
-								<VariantItem key="4" title="Entry4"
-								    originalTitle="Entry4"
-								    originalFavorite="falsde"
-								    originalExecuteOnSelect="true"									
+								<VariantItem key="4" title="Entry4"								
 									author="A"
 									favorite="false"
 									visible="true"

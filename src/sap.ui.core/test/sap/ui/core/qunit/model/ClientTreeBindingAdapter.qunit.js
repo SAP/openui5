@@ -164,6 +164,9 @@ sap.ui.define([
 	};
 
 	QUnit.module("ClientTreeBindingAdapter", {
+		before() {
+			this.__ignoreIsolatedCoverage__ = true;
+		},
 		beforeEach: function() {
 			oModel = new JSONModel();
 			oModel.setData(deepExtend({}, oData));
@@ -1136,6 +1139,9 @@ sap.ui.define([
 	};
 
 	QUnit.module("ClientTreeBindingAdapter - Model Data 2", {
+		before() {
+			this.__ignoreIsolatedCoverage__ = true;
+		},
 		beforeEach: function() {
 			oModel = new JSONModel();
 			oModel.setData(deepExtend({}, oData2));

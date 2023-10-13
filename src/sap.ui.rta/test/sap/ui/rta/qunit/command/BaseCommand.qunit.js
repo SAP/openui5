@@ -31,7 +31,7 @@ sap.ui.define([
 	"sap/ui/fl/LayerUtils",
 	"sap/ui/thirdparty/sinon-4",
 	"test-resources/sap/ui/rta/qunit/RtaQunitUtils",
-	"sap/ui/core/Core"
+	"sap/ui/qunit/utils/nextUIUpdate"
 ], function(
 	Button,
 	Input,
@@ -63,7 +63,7 @@ sap.ui.define([
 	flLayerUtils,
 	sinon,
 	RtaQunitUtils,
-	oCore
+	nextUIUpdate
 ) {
 	"use strict";
 
@@ -1140,7 +1140,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given a command factory and a bound control containing a template binding", {
-		beforeEach(assert) {
+		async beforeEach(assert) {
 			sandbox.stub(flUtils, "getComponentForControl").returns(oMockedAppComponent);
 
 			var done = assert.async();
@@ -1175,7 +1175,7 @@ sap.ui.define([
 			}).setModel(oModel);
 
 			this.oList.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			[this.oVBox31] = this.oList.getItems()[1].getContent()[0].getItems()[0].getItems();
 			[this.oText1, this.oText2] = this.oList.getItems()[1].getContent()[0].getItems()[0].getItems()[0].getItems();
@@ -1390,7 +1390,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given a command factory and a bound control containing multiple template bindings", {
-		beforeEach(assert) {
+		async beforeEach(assert) {
 			sandbox.stub(flUtils, "getComponentForControl").returns(oMockedAppComponent);
 			sandbox.stub(ChangesWriteAPI, "getChangeHandler").resolves();
 
@@ -1425,7 +1425,7 @@ sap.ui.define([
 			}).setModel(oModel);
 
 			this.oList.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			this.oDesignTime = new DesignTime({
 				rootElements: [this.oList]
@@ -1470,7 +1470,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given a command factory and a bound control containing an aggregation binding with a factory function", {
-		beforeEach(assert) {
+		async beforeEach(assert) {
 			sandbox.stub(flUtils, "getComponentForControl").returns(oMockedAppComponent);
 
 			var done = assert.async();
@@ -1506,7 +1506,7 @@ sap.ui.define([
 			});
 
 			this.oList.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			[this.oText1] = this.oList.getItems()[1].getContent()[0].getItems();
 			var oDesignTime = new DesignTime({

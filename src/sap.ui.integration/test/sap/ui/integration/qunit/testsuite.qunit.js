@@ -52,8 +52,10 @@ sap.ui.define([
 					'./CardDesigntime.qunit'
 				]
 			},
+
 			"CardCleanup": { },
 			"CardPagination": { },
+
 			"CardLoading": {
 				ui5: {
 					libs: ["sap.ui.integration"]
@@ -74,7 +76,9 @@ sap.ui.define([
 					'./loading/CardLoading.qunit'
 				]
 			},
+
 			"CardExtension": {},
+
 			"CardFormatters": {
 				module: [
 					"./formatters/CardFormatters.qunit",
@@ -85,9 +89,11 @@ sap.ui.define([
 					"./formatters/TextFormatter.qunit"
 				]
 			},
+
 			"CardHostAndExtension": {},
 			"CardMeasurements": {},
 			"CardReadyState": {},
+
 			"CardHost": {
 				coverage: {
 					only: [
@@ -96,7 +102,9 @@ sap.ui.define([
 					]
 				}
 			},
+
 			"CardDataHandling": {},
+
 			"CardDataHandlingWithMock": {
 				sinon: {
 					version: "1"
@@ -109,7 +117,9 @@ sap.ui.define([
 					]
 				}
 			},
+
 			"CardParameters": {},
+
 			"UI5InputText": {
 				coverage: {
 					only: ["sap/ui/integration/cards/adaptivecards/elements/UI5InputText"]
@@ -118,6 +128,7 @@ sap.ui.define([
 					'./cards/AdaptiveContent/UI5InputText.qunit'
 				]
 			},
+
 			"UI5InputNumber": {
 				coverage: {
 					only: ["sap/ui/integration/cards/adaptivecards/elements/UI5InputNumber"]
@@ -126,6 +137,7 @@ sap.ui.define([
 					'./cards/AdaptiveContent/UI5InputNumber.qunit'
 				]
 			},
+
 			"UI5InputToggle": {
 				coverage: {
 					only: ["sap/ui/integration/cards/adaptivecards/elements/UI5InputToggle"]
@@ -134,6 +146,7 @@ sap.ui.define([
 					'./cards/AdaptiveContent/UI5InputToggle.qunit'
 				]
 			},
+
 			"UI5InputDate": {
 				coverage: {
 					only: ["sap/ui/integration/cards/adaptivecards/elements/UI5InputDate"]
@@ -142,6 +155,7 @@ sap.ui.define([
 					'./cards/AdaptiveContent/UI5InputDate.qunit'
 				]
 			},
+
 			"UI5InputChoiceSet": {
 				coverage: {
 					only: ["sap/ui/integration/cards/adaptivecards/elements/UI5InputChoiceSet"]
@@ -150,6 +164,7 @@ sap.ui.define([
 					'./cards/AdaptiveContent/UI5InputChoiceSet.qunit'
 				]
 			},
+
 			"UI5InputTime": {
 				coverage: {
 					only: ["sap/ui/integration/cards/adaptivecards/elements/UI5InputTime"]
@@ -158,6 +173,7 @@ sap.ui.define([
 					'./cards/AdaptiveContent/UI5InputTime.qunit'
 				]
 			},
+
 			"ActionRender": {
 				coverage: {
 					only: ["sap/ui/integration/cards/adaptivecards/overwrites/ActionRender"]
@@ -166,17 +182,20 @@ sap.ui.define([
 					'./cards/AdaptiveContent/ActionRender.qunit'
 				]
 			},
+
 			"AdaptiveContentIntegration": {
 				title: "Opa test Page for sap.f.AdaptiveContent",
 				module: [
 					'./cards/AdaptiveContent/AdaptiveContentIntegration.opa.qunit'
 				]
 			},
+
 			"bindingFeatures/DateRange": {
 				coverage: {
 					only: ["sap/ui/integration/bindingFeatures/DateRange"]
 				}
 			},
+
 			"cardbundle/CardStaticResources": {},
 			"cards/BaseContent": {},
 			"cards/AdaptiveCard": {},
@@ -186,10 +205,13 @@ sap.ui.define([
 			"cards/ListCard": {},
 			"cards/TableCard": {},
 			"cards/ObjectCard": {},
+
 			"cards/TimelineCard": {
 				skip: !bSuiteUiCommonsAvailable
 			},
+
 			"cards/WebPageCard": {},
+
 			"cards/AnalyticsCloudContent": {
 				coverage: {
 					only: [
@@ -197,6 +219,7 @@ sap.ui.define([
 					]
 				}
 			},
+
 			"cards/BaseListContent": {
 				coverage: {
 					only: [
@@ -204,7 +227,9 @@ sap.ui.define([
 					]
 				}
 			},
+
 			"cards/Footer": {},
+
 			"cards/actions/CardActions": {
 				module: [
 					"./cards/actions/CardActions.qunit",
@@ -218,6 +243,7 @@ sap.ui.define([
 					]
 				}
 			},
+
 			"cards/filters/CardFiltering": {
 				module: [
 					"./cards/filters/CardFiltering.qunit",
@@ -233,8 +259,10 @@ sap.ui.define([
 					]
 				}
 			},
+
 			"controls/ActionsToolbar": {},
 			"controls/ActionsStrip": {},
+
 			"controls/BlockingMessage": {
 				coverage: {
 					only: [
@@ -243,10 +271,12 @@ sap.ui.define([
 					]
 				}
 			},
+
 			"controls/Paginator": {},
 			"controls/ListContentItem": {},
 			"controls/Microchart": {},
 			"controls/MicrochartLegend": {},
+
 			"customElements/CustomElements": {
 				ui5: {
 					libs: ["sap.ui.integration"]
@@ -257,21 +287,25 @@ sap.ui.define([
 					]
 				}
 			},
+
 			"util/BindingHelper": {
 				coverage: {
 					only: ["sap/ui/integration/util/BindingHelper"]
 				}
 			},
+
 			"util/JSONBindingHelper": {
 				coverage: {
 					only: ["sap/ui/integration/util/JSONBindingHelper"]
 				}
 			},
+
 			"util/BindingResolver": {
 				coverage: {
 					only: ["sap/ui/integration/util/BindingResolver"]
 				}
 			},
+
 			"util/CardManifest": {
 				coverage: {
 					only: [
@@ -279,6 +313,7 @@ sap.ui.define([
 					]
 				}
 			},
+
 			"util/CardMerger": {
 				coverage: {
 					only: [
@@ -287,6 +322,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"util/CardMergerWithObjectPropertyTranslations": {
 				coverage: {
 					only: [
@@ -295,6 +331,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"util/CardObserver": {
 				coverage: {
 					only: [
@@ -302,10 +339,12 @@ sap.ui.define([
 					]
 				}
 			},
+
 			"util/ContentFactory": {},
 			"util/ManifestResolver": {},
 			"util/SkeletonCard": {},
 			"util/loadCardEditor": {},
+
 			"model/ContextModel": {
 				coverage: {
 					only: [
@@ -313,6 +352,7 @@ sap.ui.define([
 					]
 				}
 			},
+
 			"model/ObservableModel": {
 				coverage: {
 					only: [
@@ -323,6 +363,7 @@ sap.ui.define([
 					useFakeTimers: true
 				}
 			},
+
 			"util/DataProvider": {
 				coverage: {
 					only: [
@@ -333,6 +374,7 @@ sap.ui.define([
 					]
 				}
 			},
+
 			"util/CacheAndRequestDataProvider": {
 				coverage: {
 					only: [
@@ -343,21 +385,25 @@ sap.ui.define([
 					useFakeTimers: true
 				}
 			},
+
 			"util/Destinations": {
 				coverage: {
 					only: ["sap/ui/integration/util/Destinations"]
 				}
 			},
+
 			"util/Duration": {
 				coverage: {
 					only: ["sap/ui/integration/util/Duration"]
 				}
 			},
+
 			"util/CsrfTokenHandler": {
 				coverage: {
 					only: ["sap/ui/integration/util/CsrfTokenHandler"]
 				}
 			},
+
 			"util/ServiceManager": {
 				coverage: {
 					only: [
@@ -365,6 +411,7 @@ sap.ui.define([
 					]
 				}
 			},
+
 			"util/Utils": {
 				coverage: {
 					only: [
@@ -375,6 +422,7 @@ sap.ui.define([
 					useFakeTimers: true
 				}
 			},
+
 			"designtime/baseEditor/integration/ReadyHandling": {
 				group: "Base DesignTime Editor",
 				coverage: {
@@ -384,6 +432,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"designtime/baseEditor/BaseEditor": {
 				group: "Base DesignTime Editor",
 				coverage: {
@@ -393,6 +442,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"designtime/baseEditor/propertyEditor/BasePropertyEditor": {
 				group: "Base DesignTime Editor",
 				coverage: {
@@ -402,6 +452,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"designtime/baseEditor/PropertyEditor": {
 				group: "Base DesignTime Editor",
 				coverage: {
@@ -411,6 +462,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"designtime/baseEditor/PropertyEditors": {
 				group: "Base DesignTime Editor",
 				coverage: {
@@ -420,6 +472,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"designtime/baseEditor/propertyEditor/stringEditor/StringEditor": {
 				group: "Base DesignTime Editor",
 				coverage: {
@@ -429,6 +482,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"designtime/baseEditor/propertyEditor/groupEditor/GroupEditor": {
 				group: "Base DesignTime Editor",
 				coverage: {
@@ -438,6 +492,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"designtime/baseEditor/propertyEditor/separatorEditor/SeparatorEditor": {
 				group: "Base DesignTime Editor",
 				coverage: {
@@ -447,6 +502,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"designtime/baseEditor/propertyEditor/booleanEditor/BooleanEditor": {
 				group: "Base DesignTime Editor",
 				coverage: {
@@ -456,6 +512,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"designtime/baseEditor/propertyEditor/numberEditor/NumberEditor": {
 				group: "Base DesignTime Editor",
 				coverage: {
@@ -465,6 +522,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"designtime/baseEditor/propertyEditor/integerEditor/IntegerEditor": {
 				group: "DesignTime Editor",
 				coverage: {
@@ -474,6 +532,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"designtime/baseEditor/propertyEditor/jsonEditor/JsonEditor": {
 				group: "Base DesignTime Editor",
 				coverage: {
@@ -483,6 +542,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"designtime/baseEditor/propertyEditor/codeEditor/CodeEditor": {
 				group: "Base DesignTime Editor",
 				coverage: {
@@ -492,6 +552,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"designtime/baseEditor/propertyEditor/arrayEditor/ArrayEditor": {
 				group: "Base DesignTime Editor",
 				coverage: {
@@ -501,15 +562,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
-			"designtime/baseEditor/propertyEditor/enumStringEditor/EnumStringEditor": {
-				group: "Base DesignTime Editor",
-				coverage: {
-					only: [
-						"sap/ui/integration/designtime/baseEditor/propertyEditor/enumStringEditor/EnumStringEditor"
-					]
-				},
-				sinon: false
-			},
+
 			"designtime/baseEditor/propertyEditor/selectEditor/SelectEditor": {
 				group: "Base DesignTime Editor",
 				coverage: {
@@ -519,6 +572,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"designtime/baseEditor/propertyEditor/mapEditor/MapEditor": {
 				group: "Base DesignTime Editor",
 				coverage: {
@@ -528,6 +582,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"designtime/baseEditor/propertyEditor/iconEditor/IconEditor": {
 				group: "Base DesignTime Editor",
 				coverage: {
@@ -537,6 +592,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"designtime/baseEditor/propertyEditor/dateEditor/DateEditor": {
 				group: "DesignTime Editor",
 				coverage: {
@@ -546,6 +602,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"designtime/baseEditor/propertyEditor/dateTimeEditor/DateTimeEditor": {
 				group: "DesignTime Editor",
 				coverage: {
@@ -555,6 +612,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"designtime/baseEditor/propertyEditor/listEditor/ListEditor": {
 				group: "DesignTime Editor",
 				coverage: {
@@ -564,6 +622,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"designtime/baseEditor/propertyEditor/PropertyEditorFactory": {
 				group: "Base DesignTime Editor",
 				coverage: {
@@ -573,6 +632,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"designtime/baseEditor/util/binding/resolveBinding": {
 				group: "Base DesignTime Editor",
 				coverage: {
@@ -582,6 +642,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"designtime/baseEditor/util/ObjectBinding": {
 				group: "Base DesignTime Editor",
 				coverage: {
@@ -591,6 +652,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"designtime/baseEditor/util/createPromise": {
 				group: "Base DesignTime Editor",
 				coverage: {
@@ -600,6 +662,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"designtime/baseEditor/util/escapeParameter": {
 				group: "Base DesignTime Editor",
 				coverage: {
@@ -609,6 +672,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"designtime/baseEditor/util/findClosestInstance": {
 				group: "Base DesignTime Editor",
 				coverage: {
@@ -618,6 +682,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"designtime/baseEditor/util/isValidBindingString": {
 				group: "DesignTime Editor",
 				coverage: {
@@ -627,6 +692,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"designtime/baseEditor/util/unset": {
 				group: "DesignTime Editor",
 				coverage: {
@@ -636,6 +702,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"designtime/baseEditor/util/hasTag": {
 				group: "DesignTime Editor",
 				coverage: {
@@ -645,6 +712,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"designtime/baseEditor/util/StylesheetManager": {
 				group: "DesignTime Editor",
 				coverage: {
@@ -659,6 +727,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"designtime/baseEditor/layout/Form": {
 				group: "DesignTime Editor",
 				coverage: {
@@ -668,6 +737,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"designtime/baseEditor/validator/ValidatorRegistry": {
 				group: "DesignTime Editor",
 				coverage: {
@@ -677,6 +747,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"designtime/baseEditor/validator/IsPatternMatch": {
 				group: "DesignTime Editor",
 				coverage: {
@@ -686,6 +757,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"designtime/cardEditor/CardEditor": {
 				group: "Card DesignTime Editor",
 				coverage: {
@@ -695,6 +767,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"designtime/cardEditor/BASEditor": {
 				group: "Card DesignTime Editor",
 				coverage: {
@@ -704,6 +777,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"designtime/cardEditor/propertyEditor/parametersEditor/ParametersEditor": {
 				group: "Card DesignTime Editor",
 				coverage: {
@@ -713,6 +787,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"designtime/cardEditor/propertyEditor/complexMapEditor/ComplexMapEditor": {
 				group: "Card DesignTime Editor",
 				coverage: {
@@ -722,6 +797,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"designtime/cardEditor/propertyEditor/destinationsEditor/DestinationsEditor": {
 				group: "Card DesignTime Editor",
 				coverage: {
@@ -731,6 +807,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"designtime/cardEditor/propertyEditor/filtersEditor/FiltersEditor": {
 				group: "Card DesignTime Editor",
 				coverage: {
@@ -740,6 +817,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"designtime/cardEditor/propertyEditor/iconEditor/IconEditor": {
 				group: "Card DesignTime Editor",
 				coverage: {
@@ -749,6 +827,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/NoDesigntime": {
 				group: "Runtime Editor",
 				coverage: {
@@ -758,6 +837,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/Basic": {
 				group: "Runtime Editor",
 				coverage: {
@@ -767,6 +847,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/Enhancement": {
 				group: "Runtime Editor",
 				coverage: {
@@ -776,6 +857,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/Ids": {
 				group: "Runtime Editor",
 				coverage: {
@@ -785,6 +867,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/Layout": {
 				group: "Runtime Editor",
 				coverage: {
@@ -794,6 +877,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/Settings": {
 				group: "Runtime Editor",
 				coverage: {
@@ -803,6 +887,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/objectField/propertyTranslation/simpleForm/typeKey/Basic": {
 				group: "Runtime Editor",
 				coverage: {
@@ -812,6 +897,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/objectField/propertyTranslation/simpleForm/typeKey/ChangesByAdminForAdminMode": {
 				group: "Runtime Editor",
 				coverage: {
@@ -821,6 +907,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/objectField/propertyTranslation/simpleForm/typeKey/ChangesByAdminForContentMode": {
 				group: "Runtime Editor",
 				coverage: {
@@ -830,6 +917,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/objectField/propertyTranslation/simpleForm/typeKey/ChangesByAdminForAllMode": {
 				group: "Runtime Editor",
 				coverage: {
@@ -839,6 +927,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/objectField/propertyTranslation/simpleForm/typeKey/ChangesByContentForContentMode": {
 				group: "Runtime Editor",
 				coverage: {
@@ -848,6 +937,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/objectField/propertyTranslation/simpleForm/typeKey/ChangesByContentForAllMode": {
 				group: "Runtime Editor",
 				coverage: {
@@ -857,6 +947,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/objectField/propertyTranslation/simpleForm/typeKey/ChangesByAdminAndContentForContentMode": {
 				group: "Runtime Editor",
 				coverage: {
@@ -866,6 +957,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/objectField/propertyTranslation/simpleForm/typeKey/ChangesByAdminAndContentForAllMode": {
 				group: "Runtime Editor",
 				coverage: {
@@ -875,6 +967,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/objectField/propertyTranslation/simpleForm/typeProperty/Basic": {
 				group: "Runtime Editor",
 				coverage: {
@@ -884,6 +977,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/objectField/propertyTranslation/simpleForm/typeProperty/I18nFormatAsValue": {
 				group: "Runtime Editor",
 				coverage: {
@@ -893,6 +987,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/objectField/propertyTranslation/simpleForm/typeProperty/NormalStringAsValue": {
 				group: "Runtime Editor",
 				coverage: {
@@ -902,6 +997,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/objectField/propertyTranslation/simpleForm/typeProperty/ChangesByAdminForAdminMode01": {
 				group: "Runtime Editor",
 				coverage: {
@@ -911,6 +1007,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/objectField/propertyTranslation/simpleForm/typeProperty/ChangesByAdminForAdminMode02": {
 				group: "Runtime Editor",
 				coverage: {
@@ -920,6 +1017,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/objectField/propertyTranslation/simpleForm/typeProperty/ChangesByAdminForContentMode01": {
 				group: "Runtime Editor",
 				coverage: {
@@ -929,6 +1027,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/objectField/propertyTranslation/simpleForm/typeProperty/ChangesByAdminForContentMode02": {
 				group: "Runtime Editor",
 				coverage: {
@@ -938,6 +1037,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/objectField/propertyTranslation/simpleForm/typeProperty/ChangesByAdminForAllMode01": {
 				group: "Runtime Editor",
 				coverage: {
@@ -947,6 +1047,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/objectField/propertyTranslation/simpleForm/typeProperty/ChangesByAdminForAllMode02": {
 				group: "Runtime Editor",
 				coverage: {
@@ -956,6 +1057,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/objectField/propertyTranslation/simpleForm/typeProperty/ChangesByContentForContentMode01": {
 				group: "Runtime Editor",
 				coverage: {
@@ -965,6 +1067,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/objectField/propertyTranslation/simpleForm/typeProperty/ChangesByContentForContentMode02": {
 				group: "Runtime Editor",
 				coverage: {
@@ -974,6 +1077,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/objectField/propertyTranslation/simpleForm/typeProperty/ChangesByContentForAllMode01": {
 				group: "Runtime Editor",
 				coverage: {
@@ -983,6 +1087,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/objectField/propertyTranslation/simpleForm/typeProperty/ChangesByContentForAllMode02": {
 				group: "Runtime Editor",
 				coverage: {
@@ -992,6 +1097,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/objectField/propertyTranslation/simpleForm/typeProperty/ChangesByAdminAndContentForContentMode01": {
 				group: "Runtime Editor",
 				coverage: {
@@ -1001,6 +1107,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/objectField/propertyTranslation/simpleForm/typeProperty/ChangesByAdminAndContentForContentMode02": {
 				group: "Runtime Editor",
 				coverage: {
@@ -1010,6 +1117,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/objectField/propertyTranslation/simpleForm/typeProperty/ChangesByAdminAndContentForAllMode01": {
 				group: "Runtime Editor",
 				coverage: {
@@ -1019,6 +1127,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/objectField/propertyTranslation/simpleForm/typeProperty/ChangesByAdminAndContentForAllMode02": {
 				group: "Runtime Editor",
 				coverage: {
@@ -1028,6 +1137,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/objectField/propertyTranslation/table/typeKey/Basic": {
 				group: "Runtime Editor",
 				coverage: {
@@ -1037,6 +1147,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/objectField/propertyTranslation/table/typeKey/ChangesByAdminForAdminMode01": {
 				group: "Runtime Editor",
 				coverage: {
@@ -1046,6 +1157,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/objectField/propertyTranslation/table/typeKey/ChangesByAdminForAdminMode02": {
 				group: "Runtime Editor",
 				coverage: {
@@ -1055,6 +1167,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/objectField/propertyTranslation/table/typeKey/ChangesByAdminForContentMode01": {
 				group: "Runtime Editor",
 				coverage: {
@@ -1064,6 +1177,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/objectField/propertyTranslation/table/typeKey/ChangesByAdminForContentMode02": {
 				group: "Runtime Editor",
 				coverage: {
@@ -1073,6 +1187,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/objectField/propertyTranslation/table/typeKey/ChangesByAdminForAllMode01": {
 				group: "Runtime Editor",
 				coverage: {
@@ -1082,6 +1197,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/objectField/propertyTranslation/table/typeKey/ChangesByAdminForAllMode02": {
 				group: "Runtime Editor",
 				coverage: {
@@ -1091,6 +1207,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/objectField/propertyTranslation/table/typeKey/ChangesByContentForContentMode01": {
 				group: "Runtime Editor",
 				coverage: {
@@ -1100,6 +1217,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/objectField/propertyTranslation/table/typeKey/ChangesByContentForContentMode02": {
 				group: "Runtime Editor",
 				coverage: {
@@ -1109,6 +1227,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/objectField/propertyTranslation/table/typeKey/ChangesByContentForAllMode01": {
 				group: "Runtime Editor",
 				coverage: {
@@ -1118,6 +1237,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/objectField/propertyTranslation/table/typeKey/ChangesByContentForAllMode02": {
 				group: "Runtime Editor",
 				coverage: {
@@ -1127,6 +1247,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/objectField/propertyTranslation/table/typeKey/ChangesByAdminAndContentForContentMode01": {
 				group: "Runtime Editor",
 				coverage: {
@@ -1136,6 +1257,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/objectField/propertyTranslation/table/typeKey/ChangesByAdminAndContentForContentMode02": {
 				group: "Runtime Editor",
 				coverage: {
@@ -1145,6 +1267,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/objectField/propertyTranslation/table/typeKey/ChangesByAdminAndContentForAllMode01": {
 				group: "Runtime Editor",
 				coverage: {
@@ -1154,6 +1277,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/objectField/propertyTranslation/table/typeKey/ChangesByAdminAndContentForAllMode02": {
 				group: "Runtime Editor",
 				coverage: {
@@ -1163,6 +1287,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/objectField/propertyTranslation/table/typeProperty/Basic": {
 				group: "Runtime Editor",
 				coverage: {
@@ -1172,6 +1297,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/objectField/propertyTranslation/table/typeProperty/I18nFormatAsValue": {
 				group: "Runtime Editor",
 				coverage: {
@@ -1181,6 +1307,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/objectField/propertyTranslation/table/typeProperty/NormalStringAsValue": {
 				group: "Runtime Editor",
 				coverage: {
@@ -1190,6 +1317,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/objectField/propertyTranslation/table/typeProperty/ChangesByAdminForAdminMode01": {
 				group: "Runtime Editor",
 				coverage: {
@@ -1199,6 +1327,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/objectField/propertyTranslation/table/typeProperty/ChangesByAdminForAdminMode02": {
 				group: "Runtime Editor",
 				coverage: {
@@ -1208,6 +1337,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/objectField/propertyTranslation/table/typeProperty/ChangesByAdminForContentMode01": {
 				group: "Runtime Editor",
 				coverage: {
@@ -1217,6 +1347,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/objectField/propertyTranslation/table/typeProperty/ChangesByAdminForContentMode02": {
 				group: "Runtime Editor",
 				coverage: {
@@ -1226,6 +1357,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/objectField/propertyTranslation/table/typeProperty/ChangesByAdminForAllMode01": {
 				group: "Runtime Editor",
 				coverage: {
@@ -1235,6 +1367,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/objectField/propertyTranslation/table/typeProperty/ChangesByAdminForAllMode02": {
 				group: "Runtime Editor",
 				coverage: {
@@ -1244,6 +1377,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/objectField/propertyTranslation/table/typeProperty/ChangesByContentForContentMode01": {
 				group: "Runtime Editor",
 				coverage: {
@@ -1253,6 +1387,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/objectField/propertyTranslation/table/typeProperty/ChangesByContentForContentMode02": {
 				group: "Runtime Editor",
 				coverage: {
@@ -1262,6 +1397,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/objectField/propertyTranslation/table/typeProperty/ChangesByContentForAllMode01": {
 				group: "Runtime Editor",
 				coverage: {
@@ -1271,6 +1407,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/objectField/propertyTranslation/table/typeProperty/ChangesByContentForAllMode02": {
 				group: "Runtime Editor",
 				coverage: {
@@ -1280,6 +1417,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/objectField/propertyTranslation/table/typeProperty/ChangesByAdminAndContentForContentMode01": {
 				group: "Runtime Editor",
 				coverage: {
@@ -1289,6 +1427,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/objectField/propertyTranslation/table/typeProperty/ChangesByAdminAndContentForContentMode02": {
 				group: "Runtime Editor",
 				coverage: {
@@ -1298,6 +1437,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/objectField/propertyTranslation/table/typeProperty/ChangesByAdminAndContentForAllMode01": {
 				group: "Runtime Editor",
 				coverage: {
@@ -1307,6 +1447,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/objectField/propertyTranslation/table/typeProperty/ChangesByAdminAndContentForAllMode02": {
 				group: "Runtime Editor",
 				coverage: {
@@ -1316,6 +1457,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/objectField/table/Basic": {
 				group: "Runtime Editor",
 				coverage: {
@@ -1325,6 +1467,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/objectField/table/Add": {
 				group: "Runtime Editor",
 				coverage: {
@@ -1334,6 +1477,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/objectField/table/UpdateAndDelete": {
 				group: "Runtime Editor",
 				coverage: {
@@ -1343,6 +1487,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/objectField/table/Filter": {
 				group: "Runtime Editor",
 				coverage: {
@@ -1352,6 +1497,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/objectField/table/FilterAndCUD": {
 				group: "Runtime Editor",
 				coverage: {
@@ -1361,6 +1507,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/objectField/table/PropertyTranslation": {
 				group: "Runtime Editor",
 				coverage: {
@@ -1370,6 +1517,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/objectField/TextAreaAndSimpleForm": {
 				group: "Runtime Editor",
 				coverage: {
@@ -1379,6 +1527,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/objectListField/TextArea": {
 				group: "Runtime Editor",
 				coverage: {
@@ -1388,6 +1537,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/objectListField/table/Basic": {
 				group: "Runtime Editor",
 				coverage: {
@@ -1397,6 +1547,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/objectListField/table/CUD": {
 				group: "Runtime Editor",
 				coverage: {
@@ -1406,6 +1557,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/objectListField/table/filter/Basic": {
 				group: "Runtime Editor",
 				coverage: {
@@ -1415,6 +1567,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/objectListField/table/filter/CUD": {
 				group: "Runtime Editor",
 				coverage: {
@@ -1424,6 +1577,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/objectListField/table/sort/Filter": {
 				group: "Runtime Editor",
 				coverage: {
@@ -1433,6 +1587,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/objectListField/table/sort/PropertiesDefinedOnly": {
 				group: "Runtime Editor",
 				coverage: {
@@ -1442,6 +1597,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/objectListField/table/sort/RequestValues": {
 				group: "Runtime Editor",
 				coverage: {
@@ -1451,6 +1607,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/objectListField/requestValues/Basic": {
 				group: "Runtime Editor",
 				coverage: {
@@ -1460,6 +1617,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/objectListField/requestValues/Add": {
 				group: "Runtime Editor",
 				coverage: {
@@ -1469,6 +1627,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/objectListField/requestValues/UpdateAndDelete": {
 				group: "Runtime Editor",
 				coverage: {
@@ -1478,6 +1637,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/objectListField/requestValues/Filter": {
 				group: "Runtime Editor",
 				coverage: {
@@ -1487,6 +1647,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/objectListField/requestValues/FilterAndCUD": {
 				group: "Runtime Editor",
 				coverage: {
@@ -1496,6 +1657,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/objectListField/propertyTranslation/table/typeKey/Basic": {
 				group: "Runtime Editor",
 				coverage: {
@@ -1505,6 +1667,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/objectListField/propertyTranslation/table/typeKey/Update": {
 				group: "Runtime Editor",
 				coverage: {
@@ -1514,6 +1677,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/objectListField/propertyTranslation/table/typeKey/ChangesByAdminForAdminMode01": {
 				group: "Runtime Editor",
 				coverage: {
@@ -1523,6 +1687,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/objectListField/propertyTranslation/table/typeKey/ChangesByAdminForAdminMode02": {
 				group: "Runtime Editor",
 				coverage: {
@@ -1532,6 +1697,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/objectListField/propertyTranslation/table/typeKey/ChangesByAdminForContentMode01": {
 				group: "Runtime Editor",
 				coverage: {
@@ -1541,6 +1707,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/objectListField/propertyTranslation/table/typeKey/ChangesByAdminForContentMode02": {
 				group: "Runtime Editor",
 				coverage: {
@@ -1550,6 +1717,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/objectListField/propertyTranslation/table/typeKey/ChangesByAdminForAllMode01": {
 				group: "Runtime Editor",
 				coverage: {
@@ -1559,6 +1727,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/objectListField/propertyTranslation/table/typeKey/ChangesByAdminForAllMode02": {
 				group: "Runtime Editor",
 				coverage: {
@@ -1568,6 +1737,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/objectListField/propertyTranslation/table/typeKey/ChangesByContentForContentMode01": {
 				group: "Runtime Editor",
 				coverage: {
@@ -1577,6 +1747,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/objectListField/propertyTranslation/table/typeKey/ChangesByContentForContentMode02": {
 				group: "Runtime Editor",
 				coverage: {
@@ -1586,6 +1757,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/objectListField/propertyTranslation/table/typeKey/ChangesByContentForAllMode01": {
 				group: "Runtime Editor",
 				coverage: {
@@ -1595,6 +1767,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/objectListField/propertyTranslation/table/typeKey/ChangesByContentForAllMode02": {
 				group: "Runtime Editor",
 				coverage: {
@@ -1604,6 +1777,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/objectListField/propertyTranslation/table/typeKey/ChangesByAdminAndContentForContentMode01": {
 				group: "Runtime Editor",
 				coverage: {
@@ -1613,6 +1787,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/objectListField/propertyTranslation/table/typeKey/ChangesByAdminAndContentForContentMode02": {
 				group: "Runtime Editor",
 				coverage: {
@@ -1622,6 +1797,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/objectListField/propertyTranslation/table/typeKey/ChangesByAdminAndContentForAllMode01": {
 				group: "Runtime Editor",
 				coverage: {
@@ -1631,6 +1807,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/objectListField/propertyTranslation/table/typeKey/ChangesByAdminAndContentForAllMode02": {
 				group: "Runtime Editor",
 				coverage: {
@@ -1640,6 +1817,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/objectListField/propertyTranslation/table/typeProperty/Basic": {
 				group: "Runtime Editor",
 				coverage: {
@@ -1649,6 +1827,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/objectListField/propertyTranslation/table/typeProperty/NormalStringAsValue": {
 				group: "Runtime Editor",
 				coverage: {
@@ -1658,6 +1837,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/objectListField/propertyTranslation/table/typeProperty/I18nFormatAsValue": {
 				group: "Runtime Editor",
 				coverage: {
@@ -1667,6 +1847,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/objectListField/propertyTranslation/table/typeProperty/ChangesByAdminForAdminMode01": {
 				group: "Runtime Editor",
 				coverage: {
@@ -1676,6 +1857,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/objectListField/propertyTranslation/table/typeProperty/ChangesByAdminForAdminMode02": {
 				group: "Runtime Editor",
 				coverage: {
@@ -1685,6 +1867,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/objectListField/propertyTranslation/table/typeProperty/ChangesByAdminForContentMode01": {
 				group: "Runtime Editor",
 				coverage: {
@@ -1694,6 +1877,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/objectListField/propertyTranslation/table/typeProperty/ChangesByAdminForContentMode02": {
 				group: "Runtime Editor",
 				coverage: {
@@ -1703,6 +1887,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/objectListField/propertyTranslation/table/typeProperty/ChangesByAdminForAllMode01": {
 				group: "Runtime Editor",
 				coverage: {
@@ -1712,6 +1897,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/objectListField/propertyTranslation/table/typeProperty/ChangesByAdminForAllMode02": {
 				group: "Runtime Editor",
 				coverage: {
@@ -1721,6 +1907,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/objectListField/propertyTranslation/table/typeProperty/ChangesByAdminAndContentForContentMode01": {
 				group: "Runtime Editor",
 				coverage: {
@@ -1730,6 +1917,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/objectListField/propertyTranslation/table/typeProperty/ChangesByAdminAndContentForContentMode02": {
 				group: "Runtime Editor",
 				coverage: {
@@ -1739,6 +1927,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/objectListField/propertyTranslation/table/typeProperty/ChangesByAdminAndContentForAllMode01": {
 				group: "Runtime Editor",
 				coverage: {
@@ -1748,6 +1937,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/objectListField/propertyTranslation/table/typeProperty/ChangesByAdminAndContentForAllMode02": {
 				group: "Runtime Editor",
 				coverage: {
@@ -1757,6 +1947,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/objectListField/propertyTranslation/table/typeProperty/ChangesByContentForContentMode01": {
 				group: "Runtime Editor",
 				coverage: {
@@ -1766,6 +1957,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/objectListField/propertyTranslation/table/typeProperty/ChangesByContentForContentMode02": {
 				group: "Runtime Editor",
 				coverage: {
@@ -1775,6 +1967,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/objectListField/propertyTranslation/table/typeProperty/ChangesByContentForAllMode01": {
 				group: "Runtime Editor",
 				coverage: {
@@ -1784,6 +1977,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/objectListField/propertyTranslation/table/typeProperty/ChangesByContentForAllMode02": {
 				group: "Runtime Editor",
 				coverage: {
@@ -1793,6 +1987,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/objectListField/propertyTranslation/table/typeProperty/differentParameters/ChangesByAdminForAdminMode": {
 				group: "Runtime Editor",
 				coverage: {
@@ -1802,6 +1997,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/objectListField/propertyTranslation/table/typeProperty/differentParameters/ChangesByAdminForContentMode": {
 				group: "Runtime Editor",
 				coverage: {
@@ -1811,6 +2007,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/objectListField/propertyTranslation/table/typeProperty/differentParameters/ChangesByAdminForAllMode": {
 				group: "Runtime Editor",
 				coverage: {
@@ -1820,6 +2017,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/objectListField/propertyTranslation/table/typeProperty/differentParameters/ChangesByContentForContentMode": {
 				group: "Runtime Editor",
 				coverage: {
@@ -1829,6 +2027,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/objectListField/propertyTranslation/table/typeProperty/differentParameters/ChangesByContentForAllMode": {
 				group: "Runtime Editor",
 				coverage: {
@@ -1838,6 +2037,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/objectListField/propertyTranslation/table/typeProperty/differentParameters/ChangesByAdminAndContentForContentMode": {
 				group: "Runtime Editor",
 				coverage: {
@@ -1847,6 +2047,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/objectListField/propertyTranslation/table/typeProperty/differentParameters/ChangesByAdminAndContentForAllMode": {
 				group: "Runtime Editor",
 				coverage: {
@@ -1856,6 +2057,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/RequestValues": {
 				group: "Runtime Editor",
 				coverage: {
@@ -1865,6 +2067,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/RequestValuesEnhancement": {
 				group: "Runtime Editor",
 				coverage: {
@@ -1874,6 +2077,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/Translation": {
 				group: "Runtime Editor",
 				coverage: {
@@ -1883,6 +2087,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/Validation": {
 				group: "Runtime Editor",
 				coverage: {
@@ -1892,6 +2097,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/SectionSapCard1": {
 				group: "Runtime Editor",
 				coverage: {
@@ -1901,6 +2107,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/SectionSapCard1Enhancement": {
 				group: "Runtime Editor",
 				coverage: {
@@ -1910,6 +2117,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/SectionTemp": {
 				group: "Runtime Editor",
 				coverage: {
@@ -1919,6 +2127,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/SectionTempEnhancement": {
 				group: "Runtime Editor",
 				coverage: {
@@ -1928,6 +2137,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/ParameterSyntax": {
 				group: "Runtime Editor",
 				coverage: {
@@ -1937,6 +2147,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/multiLanguagesOfValue/InitialWithNoChange01": {
 				group: "Runtime Editor",
 				coverage: {
@@ -1947,6 +2158,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/multiLanguagesOfValue/InitialWithNoChange02": {
 				group: "Runtime Editor",
 				coverage: {
@@ -1957,6 +2169,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/multiLanguagesOfValue/InitialWithErrorCondition01": {
 				group: "Runtime Editor",
 				coverage: {
@@ -1967,6 +2180,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/multiLanguagesOfValue/InitialWithErrorCondition02": {
 				group: "Runtime Editor",
 				coverage: {
@@ -1977,6 +2191,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/multiLanguagesOfValue/ChangeByAdminForAdminMode": {
 				group: "Runtime Editor",
 				coverage: {
@@ -1987,6 +2202,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/multiLanguagesOfValue/ChangeByAdminForContentMode": {
 				group: "Runtime Editor",
 				coverage: {
@@ -1997,6 +2213,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/multiLanguagesOfValue/ChangeByAdminForAllMode": {
 				group: "Runtime Editor",
 				coverage: {
@@ -2007,6 +2224,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/multiLanguagesOfValue/ChangeByAdminForTranslationMode01": {
 				group: "Runtime Editor",
 				coverage: {
@@ -2017,6 +2235,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/multiLanguagesOfValue/ChangeByAdminForTranslationMode02": {
 				group: "Runtime Editor",
 				coverage: {
@@ -2027,6 +2246,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/multiLanguagesOfValue/ChangeByContentForContentMode": {
 				group: "Runtime Editor",
 				coverage: {
@@ -2037,6 +2257,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/multiLanguagesOfValue/ChangeByContentForTranslationMode01": {
 				group: "Runtime Editor",
 				coverage: {
@@ -2047,6 +2268,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/multiLanguagesOfValue/ChangeByContentForTranslationMode02": {
 				group: "Runtime Editor",
 				coverage: {
@@ -2057,6 +2279,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/multiLanguagesOfValue/ChangeByContentForAllMode": {
 				group: "Runtime Editor",
 				coverage: {
@@ -2067,6 +2290,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/multiLanguagesOfValue/ChangeByTranslationForTranslationMode01": {
 				group: "Runtime Editor",
 				coverage: {
@@ -2077,6 +2301,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/multiLanguagesOfValue/ChangeByTranslationForTranslationMode02": {
 				group: "Runtime Editor",
 				coverage: {
@@ -2087,6 +2312,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/multiLanguagesOfValue/ChangeByTranslationForAllMode": {
 				group: "Runtime Editor",
 				coverage: {
@@ -2097,6 +2323,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/multiLanguagesOfValue/ChangeByAdminAndContentForContentMode": {
 				group: "Runtime Editor",
 				coverage: {
@@ -2107,6 +2334,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/multiLanguagesOfValue/ChangeByAdminAndContentForTranslationMode01": {
 				group: "Runtime Editor",
 				coverage: {
@@ -2117,6 +2345,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/multiLanguagesOfValue/ChangeByAdminAndContentForTranslationMode02": {
 				group: "Runtime Editor",
 				coverage: {
@@ -2127,6 +2356,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/multiLanguagesOfValue/ChangeByAdminAndContentForAllMode": {
 				group: "Runtime Editor",
 				coverage: {
@@ -2137,6 +2367,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/multiLanguagesOfValue/ChangeByAdminAndTranslationForTranslationMode01": {
 				group: "Runtime Editor",
 				coverage: {
@@ -2147,6 +2378,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/multiLanguagesOfValue/ChangeByAdminAndTranslationForTranslationMode02": {
 				group: "Runtime Editor",
 				coverage: {
@@ -2157,6 +2389,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/multiLanguagesOfValue/ChangeByAdminAndTranslationForAllMode": {
 				group: "Runtime Editor",
 				coverage: {
@@ -2167,6 +2400,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/multiLanguagesOfValue/ChangeByAdminAndContentAndTranslationForAllMode01": {
 				group: "Runtime Editor",
 				coverage: {
@@ -2177,6 +2411,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/multiLanguagesOfValue/ChangeByAdminAndContentAndTranslationForAllMode02": {
 				group: "Runtime Editor",
 				coverage: {
@@ -2187,6 +2422,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/multiLanguagesOfValue/ChangeByAdminAndContentAndTranslationForTranslationMode01": {
 				group: "Runtime Editor",
 				coverage: {
@@ -2197,6 +2433,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/multiLanguagesOfValue/ChangeByAdminAndContentAndTranslationForTranslationMode02": {
 				group: "Runtime Editor",
 				coverage: {
@@ -2207,6 +2444,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/multiLanguagesOfValue/ChangeByContentAndTranslationForTranslationMode01": {
 				group: "Runtime Editor",
 				coverage: {
@@ -2217,6 +2455,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/multiLanguagesOfValue/ChangeByContentAndTranslationForTranslationMode02": {
 				group: "Runtime Editor",
 				coverage: {
@@ -2227,6 +2466,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/multiLanguagesOfValue/ChangeByContentAndTranslationForAllMode": {
 				group: "Runtime Editor",
 				coverage: {
@@ -2237,6 +2477,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/multiLanguagesOfValue/BCChangeByAdminForAdminMode": {
 				group: "Runtime Editor",
 				coverage: {
@@ -2247,6 +2488,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/multiLanguagesOfValue/BCChangeByAdminForContentMode": {
 				group: "Runtime Editor",
 				coverage: {
@@ -2257,6 +2499,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/multiLanguagesOfValue/BCChangeByAdminForAllMode": {
 				group: "Runtime Editor",
 				coverage: {
@@ -2267,6 +2510,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/multiLanguagesOfValue/BCChangeByAdminForTranslationMode01": {
 				group: "Runtime Editor",
 				coverage: {
@@ -2277,6 +2521,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/multiLanguagesOfValue/BCChangeByAdminForTranslationMode02": {
 				group: "Runtime Editor",
 				coverage: {
@@ -2287,6 +2532,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/multiLanguagesOfValue/BCChangeByContentForContentAndAllModes": {
 				group: "Runtime Editor",
 				coverage: {
@@ -2297,6 +2543,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/multiLanguagesOfValue/BCChangeByContentForTranslationMode": {
 				group: "Runtime Editor",
 				coverage: {
@@ -2307,6 +2554,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/multiLanguagesOfValue/BCChangeByAdminAndContentForContentAndAllMode": {
 				group: "Runtime Editor",
 				coverage: {
@@ -2317,6 +2565,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/multiLanguagesOfValue/BCChangeByAdminAndContentForTranslationMode01": {
 				group: "Runtime Editor",
 				coverage: {
@@ -2327,6 +2576,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/multiLanguagesOfValue/BCChangeByAdminAndContentForTranslationMode02": {
 				group: "Runtime Editor",
 				coverage: {
@@ -2337,6 +2587,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/multiLanguagesOfValue/BCChangeByAdminAndContentAndTranslationForTranslationMode01": {
 				group: "Runtime Editor",
 				coverage: {
@@ -2347,6 +2598,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/multiLanguagesOfValue/BCChangeByAdminAndContentAndTranslationForTranslationMode02": {
 				group: "Runtime Editor",
 				coverage: {
@@ -2357,6 +2609,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/multiLanguagesOfValue/BCChangeByAdminAndContentAndTranslationForAllMode": {
 				group: "Runtime Editor",
 				coverage: {
@@ -2367,6 +2620,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/multiLanguagesOfValue/BCChangeByAdminAndTranslationForTranslationMode01": {
 				group: "Runtime Editor",
 				coverage: {
@@ -2377,6 +2631,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/multiLanguagesOfValue/BCChangeByAdminAndTranslationForTranslationMode02": {
 				group: "Runtime Editor",
 				coverage: {
@@ -2387,6 +2642,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/multiLanguagesOfValue/BCChangeByAdminAndTranslationForAllMode": {
 				group: "Runtime Editor",
 				coverage: {
@@ -2397,6 +2653,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/multiLanguagesOfValue/BCChangeByContentAndTranslationForTranslationMode01": {
 				group: "Runtime Editor",
 				coverage: {
@@ -2407,6 +2664,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/multiLanguagesOfValue/BCChangeByContentAndTranslationForTranslationMode02": {
 				group: "Runtime Editor",
 				coverage: {
@@ -2417,6 +2675,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/multiLanguagesOfValue/BCChangeByContentAndTranslationForAllMode": {
 				group: "Runtime Editor",
 				coverage: {
@@ -2427,6 +2686,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/i18nAsObject/Basic": {
 				group: "Runtime Editor",
 				coverage: {
@@ -2436,6 +2696,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/i18nAsObject/Negative": {
 				group: "Runtime Editor",
 				coverage: {
@@ -2445,6 +2706,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/i18nAsObject/MultiLanguages01": {
 				group: "Runtime Editor",
 				coverage: {
@@ -2454,6 +2716,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"editor/i18nAsObject/MultiLanguages02": {
 				group: "Runtime Editor",
 				coverage: {
@@ -2463,6 +2726,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"designtime/editor/CardEditor": {
 				group: "Runtime Editor for Card",
 				coverage: {
@@ -2473,6 +2737,7 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+
 			"Generic Testsuite": {
 				page: "test-resources/sap/ui/integration/qunit/testsuite.generic.qunit.html"
 			}

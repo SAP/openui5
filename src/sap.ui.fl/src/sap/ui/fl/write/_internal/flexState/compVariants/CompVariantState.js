@@ -15,12 +15,12 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexObjects/RevertData",
 	"sap/ui/fl/apply/_internal/flexObjects/States",
 	"sap/ui/fl/apply/_internal/flexObjects/UpdatableChange",
-	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/apply/_internal/flexState/compVariants/CompVariantMerger",
+	"sap/ui/fl/apply/_internal/flexState/FlexState",
+	"sap/ui/fl/initial/api/Version",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/write/_internal/Storage",
-	"sap/ui/fl/write/_internal/Versions",
-	"sap/ui/fl/write/api/Version"
+	"sap/ui/fl/write/_internal/Versions"
 ], function(
 	_omit,
 	_pick,
@@ -34,12 +34,12 @@ sap.ui.define([
 	RevertData,
 	States,
 	UpdatableChange,
-	FlexState,
 	CompVariantMerger,
+	FlexState,
+	Version,
 	Settings,
 	Storage,
-	Versions,
-	Version
+	Versions
 ) {
 	"use strict";
 
@@ -316,7 +316,7 @@ sap.ui.define([
 			defaultVariantName: mPropertyBag.defaultVariantId
 		};
 		// TODO: remove as soon as the development uses an IDE using rta which passes the correct parameter
-		mPropertyBag.layer = mPropertyBag.layer || new URLSearchParams(window.location.search).get("sap-ui-layer") || Layer.USER;
+		mPropertyBag.layer ||= new URLSearchParams(window.location.search).get("sap-ui-layer") || Layer.USER;
 
 		var mCompVariantsMap = FlexState.getCompVariantsMap(mPropertyBag.reference)._getOrCreate(mPropertyBag.persistencyKey);
 		var sChangeType = "defaultVariant";

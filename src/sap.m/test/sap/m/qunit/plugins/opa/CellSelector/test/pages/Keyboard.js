@@ -53,11 +53,15 @@ sap.ui.define([
 						}
 					});
 				},
-				iRemoveSelection: function() {
+				iRemoveSelection: function(bOnlyCells) {
 					Util.waitForTable.call(this, {
 						success: function(oTable) {
 							var oFocus = Util.getFocusedElement(oTable);
-							pressKey(KeyCodes.A, oFocus, true, false, true);
+							if (bOnlyCells) {
+								Opa5.getUtils().triggerKeydown(oFocus, KeyCodes.ESCAPE, false, false, false);
+							} else {
+								Opa5.getUtils().triggerKeydown(oFocus, KeyCodes.A, true, false, true);
+							}
 						}
 					});
 				},
@@ -110,6 +114,14 @@ sap.ui.define([
 						success: function(oTable) {
 							var oFocus = Util.getFocusedElement(oTable);
 							Opa5.getUtils().triggerKeydown(oFocus, KeyCodes.F2, false, false, false);
+						}
+					});
+				},
+				iSelectAll: function() {
+					Util.waitForTable.call(this, {
+						success: function(oTable) {
+							var oFocus = Util.getFocusedElement(oTable);
+							Opa5.getUtils().triggerKeydown(oFocus, KeyCodes.A, false, false, true);
 						}
 					});
 				}

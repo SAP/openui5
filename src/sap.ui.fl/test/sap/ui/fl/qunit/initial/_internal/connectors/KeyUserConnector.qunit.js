@@ -1,14 +1,14 @@
 /* global QUnit */
 
 sap.ui.define([
-	"sap/ui/fl/write/api/Version",
-	"sap/ui/fl/initial/_internal/connectors/Utils",
 	"sap/ui/fl/initial/_internal/connectors/KeyUserConnector",
+	"sap/ui/fl/initial/_internal/connectors/Utils",
+	"sap/ui/fl/initial/api/Version",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
-	Version,
-	Utils,
 	KeyUserConnector,
+	Utils,
+	Version,
 	sinon
 ) {
 	"use strict";

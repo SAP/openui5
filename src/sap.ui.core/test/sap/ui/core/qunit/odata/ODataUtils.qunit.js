@@ -16,7 +16,11 @@ sap.ui.define([
 	}
 
 	//*********************************************************************************************
-	QUnit.module("sap.ui.model.odata.ODataUtils");
+	QUnit.module("sap.ui.model.odata.ODataUtils", {
+		before() {
+			this.__ignoreIsolatedCoverage__ = true;
+		}
+	});
 
 	//*********************************************************************************************
 	QUnit.test("formatValue", function(assert) {

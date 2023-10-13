@@ -98,6 +98,45 @@ sap.ui.define([
 		};
 	}
 
+	function getNavigationService() {
+		return {
+			getHref(oTarget) {
+				if (!oTarget || !oTarget.target || !oTarget.target.shellHash) {
+					return Promise.resolve(null);
+				}
+				return Promise.resolve(oTarget.target.shellHash);
+			},
+			getSemanticObjects() {
+				var aSemanticObjects = [];
+				for (var sSemanticObject in mSetting) {
+					aSemanticObjects.push(sSemanticObject);
+				}
+				return Promise.resolve(aSemanticObjects);
+			},
+			getLinks(aParams) {
+				var aLinks = [];
+				if (!Array.isArray(aParams)) {
+					if (mSetting[aParams.semanticObject]) {
+						aLinks = mSetting[aParams.semanticObject].links;
+					} else {
+						aLinks = [];
+					}
+				} else {
+					aParams.forEach(function(aParams_) {
+						if (mSetting[aParams_[0].semanticObject]) {
+							aLinks.push([
+								mSetting[aParams_[0].semanticObject].links
+							]);
+						} else {
+							aLinks.push([[]]);
+						}
+					});
+				}
+				return Promise.resolve(aLinks);
+			}
+		};
+	}
+
 	SmartLinkUtil.mockUShellServices = function() {
 		Factory.getService = function(sServiceName, bAsync) {
 			switch (sServiceName) {
@@ -105,6 +144,8 @@ sap.ui.define([
 					return bAsync ? Promise.resolve(getCrossApplicationNavigationService()) : getCrossApplicationNavigationService();
 				case "URLParsing":
 					return bAsync ? Promise.resolve(getURLParsingService()) : getURLParsingService();
+				case "Navigation":
+					return bAsync ? Promise.resolve(getNavigationService()) : getNavigationService();
 				default:
 					return SmartLinkUtil.getServiceReal(sServiceName, bAsync);
 			}

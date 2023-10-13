@@ -21,7 +21,7 @@ sap.ui.define([
 	"sap/base/util/uid",
 	"sap/m/Button",
 	"test-resources/sap/ui/rta/qunit/RtaQunitUtils",
-	"sap/ui/core/Core"
+	"sap/ui/qunit/utils/nextUIUpdate"
 ], function(
 	XMLView,
 	IconPool,
@@ -43,7 +43,7 @@ sap.ui.define([
 	uid,
 	Button,
 	RtaQunitUtils,
-	oCore
+	nextUIUpdate
 ) {
 	"use strict";
 
@@ -62,7 +62,7 @@ sap.ui.define([
 	const sandbox = sinon.createSandbox();
 
 	QUnit.module("Given a designTime and addIFrame plugin are instantiated for an ObjectPageLayout", {
-		beforeEach(assert) {
+		async beforeEach(assert) {
 			const done = assert.async();
 			this.oMockedAppComponent = RtaQunitUtils.createAndStubAppComponent(sandbox);
 			sandbox.stub(Utils, "getViewForControl").returns(oMockedViewWithStableId);
@@ -104,7 +104,7 @@ sap.ui.define([
 				plugins: [this.oAddIFrame]
 			});
 
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			this.oDesignTime.attachEventOnce("synced", function() {
 				this.oLayoutOverlay = OverlayRegistry.getOverlay(this.oVerticalLayout);

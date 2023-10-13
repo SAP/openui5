@@ -7,7 +7,7 @@ sap.ui.define([
 	"sap/ui/rta/toolbar/Base",
 	"sap/ui/rta/util/Animation",
 	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/core/Core"
+	"sap/ui/qunit/utils/nextUIUpdate"
 ], function(
 	Button,
 	ManagedObject,
@@ -15,7 +15,7 @@ sap.ui.define([
 	BaseToolbar,
 	Animation,
 	sinon,
-	oCore
+	nextUIUpdate
 ) {
 	"use strict";
 
@@ -44,16 +44,14 @@ sap.ui.define([
 			assert.strictEqual(this.oToolbar.getDomRef(), null, "Toolbar is not rendered");
 		});
 
-		QUnit.test("show() method", function(assert) {
+		QUnit.test("show() method", async function(assert) {
 			var oPromise = this.oToolbar.show();
 
 			assert.ok(oPromise instanceof Promise, "show() method returns Promise");
 
-			return oPromise.then(function() {
-				oCore.applyChanges();
-				assert.ok(this.oToolbar.getDomRef() instanceof HTMLElement, "Toolbar is rendered");
-				assert.ok(isVisible(this.oToolbar.getDomRef()), true, "Toolbar is visible");
-			}.bind(this));
+			await nextUIUpdate();
+			assert.ok(this.oToolbar.getDomRef() instanceof HTMLElement, "Toolbar is rendered");
+			assert.ok(isVisible(this.oToolbar.getDomRef()), true, "Toolbar is visible");
 		});
 
 		QUnit.test("hide() method", function(assert) {
@@ -61,8 +59,8 @@ sap.ui.define([
 
 			assert.ok(oPromise instanceof Promise, "hide() method returns Promise");
 
-			return oPromise.then(function() {
-				oCore.applyChanges();
+			return oPromise.then(async function() {
+				await nextUIUpdate();
 				assert.strictEqual(this.oToolbar.getDomRef(), null, "Toolbar is not rendered");
 			}.bind(this));
 		});
@@ -72,20 +70,20 @@ sap.ui.define([
 
 			assert.ok(oPromise instanceof Promise, "hide() method returns Promise");
 
-			return oPromise.then(function() {
-				oCore.applyChanges();
+			return oPromise.then(async function() {
+				await nextUIUpdate();
 				assert.strictEqual(this.oToolbar.getDomRef(), null, "Toolbar is not rendered");
 			}.bind(this));
 		});
 
 		QUnit.test("show()/hide() combination", function(assert) {
-			return this.oToolbar.show().then(function() {
-				oCore.applyChanges();
+			return this.oToolbar.show().then(async function() {
+				await nextUIUpdate();
 				assert.ok(this.oToolbar.getDomRef() instanceof HTMLElement, "Toolbar is rendered");
 				assert.ok(isVisible(this.oToolbar.getDomRef()), true, "Toolbar is visible");
 
-				return this.oToolbar.hide().then(function() {
-					oCore.applyChanges();
+				return this.oToolbar.hide().then(async function() {
+					await nextUIUpdate();
 					assert.strictEqual(this.oToolbar.getDomRef(), null, "Toolbar is not rendered");
 				}.bind(this));
 			}.bind(this));
@@ -94,8 +92,8 @@ sap.ui.define([
 		QUnit.test("when the page is scrolled", function(assert) {
 			var fnDone = assert.async();
 			var oPromise = this.oToolbar.show();
-			return oPromise.then(function() {
-				oCore.applyChanges();
+			return oPromise.then(async function() {
+				await nextUIUpdate();
 				document.body.style.height = "1400px";
 				var sClassname = "sapUiRtaToolbar_scrolling";
 				var oObserver = new MutationObserver(function(aMutations) {
@@ -117,13 +115,13 @@ sap.ui.define([
 		});
 
 		QUnit.test("setZIndex() method", function(assert) {
-			return this.oToolbar.show().then(function() {
+			return this.oToolbar.show().then(async function() {
 				var iInitialZIndex = parseInt(getComputedStyle(this.oToolbar.getDomRef())["z-index"]);
 				assert.strictEqual(this.oToolbar.getZIndex(), iInitialZIndex, "z-index is rendered properly");
 
 				var iZIndex = iInitialZIndex + 1;
 				this.oToolbar.setZIndex(iZIndex);
-				oCore.applyChanges();
+				await nextUIUpdate();
 				assert.strictEqual(parseInt(getComputedStyle(this.oToolbar.getDomRef())["z-index"]), iZIndex, "z-index is updated properly");
 			}.bind(this));
 		});

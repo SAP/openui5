@@ -9,8 +9,8 @@ sap.ui.define([
 	"sap/ui/core/mvc/XMLView",
 	"sap/m/Label",
 	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/core/Core",
-	"sap/ui/core/Element"
+	"sap/ui/core/Element",
+	"sap/ui/qunit/utils/nextUIUpdate"
 ], function(
 	DesignTime,
 	Component,
@@ -21,8 +21,8 @@ sap.ui.define([
 	XMLView,
 	Label,
 	sinon,
-	oCore,
-	Element
+	Element,
+	nextUIUpdate
 ) {
 	"use strict";
 
