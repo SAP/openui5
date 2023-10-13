@@ -75,22 +75,6 @@ sap.ui.define([
 
     };
 
-    ChartDelegate.toggleLegend = function () {
-
-    };
-
-    ChartDelegate.getLegendState = function () {
-
-    };
-
-    ChartDelegate.getPersonalizationInfo = function () {
-
-    };
-
-    ChartDelegate.getSortInfo = function () {
-
-    };
-
     ChartDelegate.getAvailableChartTypes = function(){
         return [];
     };
@@ -131,11 +115,6 @@ sap.ui.define([
         return {};
     };
 
-    //TODO: Check for setDrillStackInfo
-    ChartDelegate.getDrillStackInfo = function () {
-
-    };
-
     /**
      * Creates the inner dataset for the inner chart
      */
@@ -144,17 +123,8 @@ sap.ui.define([
         //Nothing to test
     };
 
-    ChartDelegate.fillInnerVisibleProperties = function (aMDCItems) {
-       //Nothing to test
-    };
 
-    ChartDelegate.createInnerDimensions = function (aGroupableProperties) {
 
-    };
-
-    ChartDelegate.createInnerMeasures = function (aAggregatableProperties, oPropertyHelper) {
-
-    };
 
     /**
      * Checks the binding of the table and rebinds it if required.
@@ -334,11 +304,7 @@ sap.ui.define([
         return [];
     };
 
-    ChartDelegate.adjustChartHeight = function() {
-        //Nothing to do here in the test delegate
-    };
-
-    ChartDelegate.changedNoDataStruct = function() {
+      ChartDelegate.changedNoDataStruct = function() {
         //Nothing to do here for test delegate
     };
 
