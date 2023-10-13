@@ -76,11 +76,19 @@ sap.ui.define(['./BarInPageEnabler'],
 	};
 
 	ToolbarRenderer.renderBarContent = function(rm, oToolbar) {
+		var oFirstVisibleControl = null;
+
 		if (oToolbar.getActive()) {
 			rm.renderControl(oToolbar._getActiveButton());
 		}
 		oToolbar.getContent().forEach(function(oControl) {
 			BarInPageEnabler.addChildClassTo(oControl, oToolbar);
+			if (!oFirstVisibleControl && oControl.getVisible()) {
+				oControl.addStyleClass("sapMBarChildFirstChild");
+				oFirstVisibleControl = oControl;
+			} else {
+				oControl.removeStyleClass("sapMBarChildFirstChild");
+			}
 			rm.renderControl(oControl);
 		});
 	};
