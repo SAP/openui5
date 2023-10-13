@@ -266,20 +266,57 @@ sap.ui.define([], function() {
 	};
 
 	/**
-	 * Retrieves the browser's local IANA timezone ID.
+	 * Map outdated IANA timezone IDs used in CLDR to correct and up-to-date IANA IDs as maintained in ABAP systems.
 	 *
-	 * @returns {string} The local IANA timezone ID of the browser, e.g <code>"Europe/Berlin"</code>
+	 * @private
+ 	 */
+	TimezoneUtils.mCLDR2ABAPTimezones = {
+		"America/Buenos_Aires": "America/Argentina/Buenos_Aires",
+		"America/Catamarca": "America/Argentina/Catamarca",
+		"America/Cordoba": "America/Argentina/Cordoba",
+		"America/Jujuy": "America/Argentina/Jujuy",
+		"America/Mendoza": "America/Argentina/Mendoza",
+		"America/Indianapolis": "America/Indiana/Indianapolis",
+		"America/Louisville": "America/Kentucky/Louisville",
+		"Africa/Asmera": "Africa/Asmara",
+		"Asia/Katmandu": "Asia/Kathmandu",
+		"Asia/Calcutta": "Asia/Kolkata",
+		"Atlantic/Faeroe": "Atlantic/Faroe",
+		"Pacific/Ponape": "Pacific/Pohnpei",
+		"Asia/Rangoon": "Asia/Yangon",
+		"Pacific/Truk": "Pacific/Chuuk",
+		"America/Godthab": "America/Nuuk",
+		"Asia/Saigon": "Asia/Ho_Chi_Minh",
+		"America/Coral_Harbour": "America/Atikokan"
+	};
+
+	/**
+	 * Retrieves the browser's local IANA timezone ID; if the browser's timezone ID is not the up-to-date IANA
+	 * timezone ID, the corresponding IANA timezone ID is returned.
+	 *
+	 * @returns {string} The local IANA timezone ID of the browser as up-to-date IANA timezone ID,
+	 *   e.g. <code>"Europe/Berlin"</code> or <code>"Asia/Kolkata"</code>
+	 *
 	 * @private
 	 * @ui5-restricted sap.ui.core.Configuration,sap.m.DateTimeField
 	 */
 	TimezoneUtils.getLocalTimezone = function() {
-		if (sLocalTimezone) {
-			return sLocalTimezone;
+		if (sLocalTimezone === "") { // timezone may be undefined, only value "" means empty cache
+			sLocalTimezone = new Intl.DateTimeFormat().resolvedOptions().timeZone;
+			sLocalTimezone = TimezoneUtils.mCLDR2ABAPTimezones[sLocalTimezone] || sLocalTimezone;
 		}
-		sLocalTimezone = new Intl.DateTimeFormat().resolvedOptions().timeZone;
+
 		return sLocalTimezone;
 	};
 
+	/**
+	 * Clears the cache for the browser's local IANA timezone ID.
+	 *
+	 * @private
+	 */
+	TimezoneUtils._clearLocalTimezoneCache = function () {
+		sLocalTimezone = "";
+	};
 
 	return TimezoneUtils;
 });
