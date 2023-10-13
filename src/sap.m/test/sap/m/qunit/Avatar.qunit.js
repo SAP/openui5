@@ -593,32 +593,36 @@ sap.ui.define([
 		afterEach: teardownFunction
 	});
 
-	// QUnit.test(".sapMAvatarPressed class is added where applicable", function (assert) {
-	// 	// Arrange
-	// 	var fnHandler = this.stub();
-	// 	this.oAvatar.attachPress(fnHandler);
+	QUnit.test(".sapMAvatarPressed class is added where applicable", function (assert) {
+		// Arrange
+		var fnHandler = this.stub(),
+		$oAvatar = this.oAvatar.$();
+		this.oAvatar.attachPress(fnHandler);
 
-	// 	// Act - Simulate press in order to add the new CSS class
-	// 	this.oAvatar._handlePress();
+		// Act
+		this.oAvatar.setActive(true);
+		oCore.applyChanges();
 
-	// 	// Assert
-	// 	assert.ok(this.oAvatar.hasStyleClass('sapMAvatarPressed'), ".sapMAvatarPressed class is added to the Avatar");
+		// Assert
+		assert.ok($oAvatar.hasClass('sapMAvatarPressed'), ".sapMAvatarPressed class is added to the Avatar");
 
-	// 	// Act - Simulate press in order to remove the new CSS class
-	// 	this.oAvatar._handlePress();
+		// Act
+		this.oAvatar.setActive(false);
+		oCore.applyChanges();
 
-	// 	// Assert
-	// 	assert.notOk(this.oAvatar.hasStyleClass('sapMAvatarPressed'), ".sapMAvatarPressed class is removed from the Avatar");
+		// Assert
+		assert.notOk($oAvatar.hasClass('sapMAvatarPressed'), ".sapMAvatarPressed class is removed from the Avatar");
 
-	// 	// Act - Remove the press handler
-	// 	this.oAvatar.detachPress(fnHandler);
+		// Act - Remove the press handler
+		this.oAvatar.detachPress(fnHandler);
 
-	// 	// Act - Simulate press in order to add the new CSS class
-	// 	this.oAvatar._handlePress();
+		// Act
+		this.oAvatar.setActive(true);
+		oCore.applyChanges();
 
-	// 	// Assert
-	// 	assert.notOk(this.oAvatar.hasStyleClass('sapMAvatarPressed'), ".sapMAvatarPressed class isn't added to the Avatar when there is no press handler");
-	// });
+		// Assert
+		assert.notOk($oAvatar.hasClass('sapMAvatarPressed'), ".sapMAvatarPressed class isn't added to the Avatar when there is no press handler");
+	});
 
 	QUnit.test("press isn't fired when 'enabled' is set to 'false'", function (assert) {
 		// arrange
