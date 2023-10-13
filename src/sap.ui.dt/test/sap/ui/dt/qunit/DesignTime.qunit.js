@@ -1573,7 +1573,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given that the DesignTime is created with hidden layout", {
-		async beforeEach(assert) {
+		beforeEach(assert) {
 			var fnDone = assert.async();
 			this.oButton1 = new Button({ text: "Button1" });
 			this.oLayout1 = new VerticalLayout({
@@ -1583,7 +1583,7 @@ sap.ui.define([
 				content: [this.oLayout1]
 			});
 			this.oLayoutOuter.placeAt("qunit-fixture");
-			await nextUIUpdate();
+			nextUIUpdate.runSync();
 
 			this.oDesignTime = new DesignTime({
 				designTimeMetadata: {
@@ -1604,6 +1604,8 @@ sap.ui.define([
 		},
 		afterEach() {
 			this.oDesignTime.destroy();
+			this.oLayout1.destroy();
+			this.oLayout2.destroy();
 			this.oLayoutOuter.destroy();
 		}
 	}, function() {
