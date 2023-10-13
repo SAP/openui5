@@ -5328,7 +5328,7 @@ usePreliminaryContext : false}}">\
 			that.expectRequest({
 					created : true,
 					data : {
-						__metadata :  {type : "GWSAMPLE_BASIC.SalesOrderLineItem"}
+						__metadata : {type : "GWSAMPLE_BASIC.SalesOrderLineItem"}
 					},
 					method : "POST",
 					requestUri : "SalesOrderSet('1')/ToLineItems"
@@ -19508,6 +19508,190 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			]);
 		}).then(function () {
 			assert.strictEqual(oBinding.isExpanded(0), true, "expanded state is restored");
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: All read requests of the ODataTreeBindingFlat, consider "transitionMessagesOnly" parameter.
+	// JIRA: CPOUI5MODELS-1437
+	QUnit.test("ODataTreeBindingFlat: transitionMessagesOnly", function (assert) {
+		const oModel = createHierarchyMaintenanceModel();
+		let oTable;
+		const sView = '\
+<t:TreeTable id="table"\
+		rows="{\
+			parameters: {countMode: \'Inline\', numberOfExpandedLevels: 1, transitionMessagesOnly: true},\
+			path: \'/ErhaOrder(\\\'1\\\')/to_Item\'\
+		}"\
+		visibleRowCount="4">\
+	<Text id="itemName" text="{ErhaOrderItemName}" />\
+</t:TreeTable>';
+
+		this.expectHeadRequest()
+			.expectRequest({ // triggered by ODataTreeBindingFlat#_requestServerIndexNodes
+				batchNo: 1,
+				headers: {"sap-messages": "transientOnly"},
+				requestUri: "ErhaOrder('1')/to_Item?$skip=0&$top=104&$inlinecount=allpages"
+					+ "&$filter=HierarchyDistanceFromRoot le 1"
+			}, {
+				__count: "4",
+				results: [{
+					__metadata: {uri: "ErhaOrderItem(ErhaOrder='1',ErhaOrderItem='0')"},
+					ErhaOrder: "1",
+					ErhaOrderItem: "0",
+					ErhaOrderItemName: "0",
+					HierarchyParentNode: "",
+					HierarchyDescendantCount: 0,
+					HierarchyDistanceFromRoot: 0,
+					HierarchyDrillState: "leaf",
+					HierarchyNode: "0",
+					HierarchyPreorderRank: 0,
+					HierarchySiblingRank: 0
+				}, {
+					__metadata: {uri: "ErhaOrderItem(ErhaOrder='1',ErhaOrderItem='1')"},
+					ErhaOrder: "1",
+					ErhaOrderItem: "1",
+					ErhaOrderItemName: "1",
+					HierarchyParentNode: "",
+					HierarchyDescendantCount: 2,
+					HierarchyDistanceFromRoot: 0,
+					HierarchyDrillState: "expanded",
+					HierarchyNode: "1",
+					HierarchyPreorderRank: 1,
+					HierarchySiblingRank: 1
+				}, {
+					__metadata: {uri: "ErhaOrderItem(ErhaOrder='1',ErhaOrderItem='1.0')"},
+					ErhaOrder: "1",
+					ErhaOrderItem: "1.0",
+					ErhaOrderItemName: "1.0",
+					HierarchyParentNode: "1",
+					HierarchyDescendantCount: 0,
+					HierarchyDistanceFromRoot: 1,
+					HierarchyDrillState: "collapsed",
+					HierarchyNode: "1.0",
+					HierarchyPreorderRank: 2,
+					HierarchySiblingRank: 0
+				}, {
+					__metadata: {uri: "ErhaOrderItem(ErhaOrder='1',ErhaOrderItem='1.1')"},
+					ErhaOrder: "1",
+					ErhaOrderItem: "1.1",
+					ErhaOrderItemName: "1.1",
+					HierarchyParentNode: "1",
+					HierarchyDescendantCount: 0,
+					HierarchyDistanceFromRoot: 1,
+					HierarchyDrillState: "leaf",
+					HierarchyNode: "1.1",
+					HierarchyPreorderRank: 3,
+					HierarchySiblingRank: 1
+				}]
+			});
+
+		return this.createView(assert, sView, oModel).then(() => {
+			oTable = this.oView.byId("table");
+
+			// don't use expectValue to avoid timing issues causing flaky tests
+			assert.deepEqual(getTableContent(oTable), [["0"], ["1"], ["1.0"], ["1.1"]]);
+
+			this.expectRequest({ // triggered by ODataTreeBindingFlat#_requestChildren
+					batchNo: 2,
+					headers: {"sap-messages": "transientOnly"},
+					requestUri: "ErhaOrder('1')/to_Item?$skip=0&$top=104&$inlinecount=allpages"
+						+ "&$filter=HierarchyParentNode eq '1.0'"
+				}, {
+					__count: "1",
+					results: [{
+						__metadata: {uri: "ErhaOrderItem(ErhaOrder='1',ErhaOrderItem='1.0.0')"},
+						ErhaOrder: "1",
+						ErhaOrderItem: "1.0.0",
+						ErhaOrderItemName: "1.0.0",
+						HierarchyParentNode: "1.0",
+						HierarchyDescendantCount: 0,
+						HierarchyDistanceFromRoot: 2,
+						HierarchyDrillState: "leaf",
+						HierarchyNode: "1.0.0",
+						HierarchyPreorderRank: 0,
+						HierarchySiblingRank: 0
+					}]
+				});
+
+			// code under test
+			oTable.expand(2);
+
+			return this.waitForChanges(assert, "expand node '1.0'");
+		}).then(() => {
+			assert.deepEqual(getTableContent(oTable), [["0"], ["1"], ["1.0"], ["1.0.0"]]);
+
+			// code under test
+			oTable.collapse(1);
+
+			return this.waitForChanges(assert, "collapse node '1'");
+		}).then(() => {
+			assert.deepEqual(getTableContent(oTable), [["0"], ["1"], [""], [""]]);
+
+			this.expectRequest({ // triggered by ODataTreeBindingFlat#_requestSubTree
+				batchNo: 3,
+				headers: {"sap-messages": "transientOnly"},
+				requestUri: "ErhaOrder('1')/to_Item?$filter=HierarchyNode eq '1' and HierarchyDistanceFromRoot le 2"
+			}, {
+				__count: "3",
+				results: [{
+					__metadata: {uri: "ErhaOrderItem(ErhaOrder='1',ErhaOrderItem='1')"},
+					ErhaOrder: "1",
+					ErhaOrderItem: "1",
+					ErhaOrderItemName: "1",
+					HierarchyParentNode: "",
+					HierarchyDescendantCount: 3,
+					HierarchyDistanceFromRoot: 0,
+					HierarchyDrillState: "expanded",
+					HierarchyNode: "1",
+					HierarchyPreorderRank: 1,
+					HierarchySiblingRank: 1
+				}, {
+					__metadata: {uri: "ErhaOrderItem(ErhaOrder='1',ErhaOrderItem='1.0')"},
+					ErhaOrder: "1",
+					ErhaOrderItem: "1.0",
+					ErhaOrderItemName: "1.0",
+					HierarchyParentNode: "1",
+					HierarchyDescendantCount: 1,
+					HierarchyDistanceFromRoot: 1,
+					HierarchyDrillState: "expanded",
+					HierarchyNode: "1.0",
+					HierarchyPreorderRank: 2,
+					HierarchySiblingRank: 0
+				}, {
+					__metadata: {uri: "ErhaOrderItem(ErhaOrder='1',ErhaOrderItem='1.0.0')"},
+					ErhaOrder: "1",
+					ErhaOrderItem: "1.0.0",
+					ErhaOrderItemName: "1.0.0",
+					HierarchyParentNode: "1.0",
+					HierarchyDescendantCount: 0,
+					HierarchyDistanceFromRoot: 2,
+					HierarchyDrillState: "leaf",
+					HierarchyNode: "1.0.0",
+					HierarchyPreorderRank: 0,
+					HierarchySiblingRank: 0
+				}, {
+					__metadata: {uri: "ErhaOrderItem(ErhaOrder='1',ErhaOrderItem='1.1')"},
+					ErhaOrder: "1",
+					ErhaOrderItem: "1.1",
+					ErhaOrderItemName: "1.1",
+					HierarchyParentNode: "1",
+					HierarchyDescendantCount: 0,
+					HierarchyDistanceFromRoot: 1,
+					HierarchyDrillState: "leaf",
+					HierarchyNode: "1.1",
+					HierarchyPreorderRank: 3,
+					HierarchySiblingRank: 1
+				}]
+			});
+
+			return Promise.all([
+				// code under test
+				oTable.getBinding("rows").expandNodeToLevel(1, 2),
+				this.waitForChanges(assert, "expand node '1' to level 2")
+			]);
+		}).then(() => {
+			assert.deepEqual(getTableContent(oTable), [["0"], ["1"], ["1.0"], ["1.0.0"]]);
 		});
 	});
 

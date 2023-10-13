@@ -545,10 +545,12 @@ sap.ui.define([
 		var oBinding = {
 				oModel : {read : function () {}},
 				mRequestHandles : {},
+				_getHeaders() {},
 				getResolvedPath : function () {}
 			};
 
 		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("~resolvedPath");
+		this.mock(oBinding).expects("_getHeaders").withExactArgs().returns("~headers");
 		this.mock(oBinding.oModel).expects("read")
 			.withExactArgs("~resolvedPath", sinon.match.object.and(sinon.match.has("groupId"))
 				.and(sinon.match.has("success")).and(sinon.match.has("error")))
@@ -735,6 +737,7 @@ sap.ui.define([
 			oBinding = {
 				sGroupId : "~sGroupId",
 				oModel : oModel,
+				_getHeaders() {},
 				_getNavPath : function () {},
 				_processODataObject : function () {},
 				getPath : function () {},
@@ -747,8 +750,9 @@ sap.ui.define([
 			};
 
 		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("~resolvedPath");
+		this.mock(oBinding).expects("_getHeaders").withExactArgs().returns("~headers");
 		oExpectation = this.mock(oModel).expects("read").withExactArgs("~resolvedPath", {
-			error : sinon.match.func, groupId : "~sGroupId", headers : undefined, success : sinon.match.func
+			error : sinon.match.func, groupId : "~sGroupId", headers : "~headers", success : sinon.match.func
 		}).returns("~readHandle");
 
 		// code under test
@@ -785,7 +789,7 @@ sap.ui.define([
 				oModel : oModel,
 				oRootContext : "~oldRootContext",
 				mRequestHandles : {},
-				bTransitionMessagesOnly : false,
+				_getHeaders() {},
 				fireDataReceived : function () {},
 				getResolvedPath : function () {}
 			},
@@ -793,8 +797,9 @@ sap.ui.define([
 			oExpectation;
 
 		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("~resolvedPath");
+		this.mock(oBinding).expects("_getHeaders").withExactArgs().returns("~headers");
 		oExpectation = this.mock(oModel).expects("read").withExactArgs("~resolvedPath", {
-			error : sinon.match.func, groupId : "~sGroupId", headers : undefined, success : sinon.match.func
+			error : sinon.match.func, groupId : "~sGroupId", headers : "~headers", success : sinon.match.func
 		}).returns("~readHandle");
 
 		// code under test
@@ -810,31 +815,6 @@ sap.ui.define([
 		assert.strictEqual(oBinding.bNeedsUpdate, true);
 		assert.strictEqual(oBinding.oRootContext, "~oldRootContext"); //TODO: not modified, why?
 		assert.notOk(oBinding.mRequestHandles.hasOwnProperty("~sRequestKey"));
-	});
-
-	//*********************************************************************************************
-	QUnit.test("_loadSingleRootNodeByNavigationProperties: transitionMessagesOnly=true", function (assert) {
-		const oBinding = {
-			oModel: {
-				read() {}
-			},
-			mRequestHandles: {},
-			bTransitionMessagesOnly: true,
-			getResolvedPath() {}
-		};
-		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("~sAbsolutePath");
-		this.mock(oBinding.oModel).expects("read")
-			.withExactArgs("~sAbsolutePath", {
-				error: sinon.match.func,
-				groupId: undefined,
-				headers: {"sap-messages": "transientOnly"},
-				success: sinon.match.func
-			}).returns("~oReadHandle");
-
-		// code under test
-		ODataTreeBinding.prototype._loadSingleRootNodeByNavigationProperties.call(oBinding, "~sNodeId", "~sRequestKey");
-
-		assert.deepEqual(oBinding.mRequestHandles, {"~sRequestKey": "~oReadHandle"});
 	});
 
 	//*********************************************************************************************
@@ -1126,14 +1106,16 @@ sap.ui.define([
 				bSkipDataEvents : true,
 				aSorters : "~sorters",
 				iTotalCollectionCount : "~count",
+				_getHeaders() {},
 				getResolvedPath : function () {}
 			},
 			aUrlParams = ["~custom"];
 
 		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("~resolvedPath");
+		this.mock(oBinding).expects("_getHeaders").withExactArgs().returns("~headers");
 		this.mock(oBinding.oModel).expects("read")
 			.withExactArgs("~resolvedPath", {
-				headers : undefined,
+				headers : "~headers",
 				urlParameters : sinon.match.same(aUrlParams)
 					.and(sinon.match(["~custom", "$top=~count"])),
 				success : sinon.match.func,
@@ -1159,14 +1141,16 @@ sap.ui.define([
 				bSkipDataEvents : true,
 				aSorters : "~sorters",
 				iTotalCollectionCount : vTotalCollectionCount,
+				_getHeaders() {},
 				getResolvedPath : function () {}
 			},
 			aUrlParams = ["~custom"];
 
 		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("~resolvedPath");
+		this.mock(oBinding).expects("_getHeaders").withExactArgs().returns("~headers");
 		this.mock(oBinding.oModel).expects("read")
 			.withExactArgs("~resolvedPath", {
-				headers : undefined,
+				headers : "~headers",
 				urlParameters : sinon.match.same(aUrlParams)
 					.and(sinon.match(["~custom"])),
 				success : sinon.match.func,
@@ -1179,35 +1163,6 @@ sap.ui.define([
 		ODataTreeBinding.prototype._loadCompleteTreeWithAnnotations.call(oBinding, aUrlParams);
 	});
 });
-
-	//*********************************************************************************************
-	QUnit.test("_loadCompleteTreeWithAnnotations: transitionMessagesOnly=true", function (assert) {
-		const oBinding = {
-			oModel: {
-				read() {}
-			},
-			mRequestHandles: {},
-			bSkipDataEvents: true,
-			bTransitionMessagesOnly: true,
-			getResolvedPath() {}
-		};
-		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("~sAbsolutePath");
-		this.mock(oBinding.oModel).expects("read")
-			.withExactArgs("~sAbsolutePath", {
-				error: sinon.match.func,
-				groupId: undefined, // not relevant for this test
-				headers: {"sap-messages": "transientOnly"},
-				sorters: undefined, // not relevant for this test
-				success: sinon.match.func,
-				urlParameters: "~aURLParams"
-			}).returns("~oReadHandle");
-
-		// code under test
-		ODataTreeBinding.prototype._loadCompleteTreeWithAnnotations.call(oBinding, "~aURLParams");
-
-		assert.strictEqual(oBinding.bSkipDataEvents, false);
-		assert.deepEqual(oBinding.mRequestHandles, {[ODataTreeBinding.REQUEST_KEY_CLIENT]: "~oReadHandle"});
-	});
 
 	//*********************************************************************************************
 	QUnit.test("_isRefreshAfterChangeAllowed", function (assert) {
@@ -1313,8 +1268,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-[true, false].forEach((bTransitionMessagesOnly) => {
-	QUnit.test("_loadSubTree: success case; transitionMessagesOnly=" + bTransitionMessagesOnly, function (assert) {
+	QUnit.test("_loadSubTree: success case", function (assert) {
 		var oLoadSubTreePromise, oReadExpectation,
 			oBinding = {
 				bHasTreeAnnotations: true,
@@ -1326,8 +1280,8 @@ sap.ui.define([
 				mRequestHandles: {},
 				bSkipDataEvents: true,
 				aSorters: "~aSorters",
-				bTransitionMessagesOnly: bTransitionMessagesOnly,
 				_createKeyMap: function () {},
+				_getHeaders() {},
 				_importCompleteKeysHierarchy: function () {},
 				_updateNodeKey: function () {},
 				getResolvedPath: function () {}
@@ -1338,11 +1292,12 @@ sap.ui.define([
 			aParams = ["~sTreeBindingParams"];
 
 		oBindingMock.expects("getResolvedPath").withExactArgs().returns("~sAbsolutePath");
+		oBindingMock.expects("_getHeaders").withExactArgs().returns("~headers");
 		oReadExpectation = oModelMock.expects("read")
 			.withExactArgs("~sAbsolutePath", {
 				error: sinon.match.func,
 				groupId: undefined,
-				headers: bTransitionMessagesOnly ? {"sap-messages": "transientOnly"} : undefined,
+				headers: "~headers",
 				sorters: "~aSorters",
 				success: sinon.match.func,
 				urlParameters: sinon.match.same(aParams)
@@ -1370,11 +1325,9 @@ sap.ui.define([
 			assert.strictEqual(oData0, oData);
 		});
 	});
-});
 
 	//*********************************************************************************************
-[true, false].forEach((bTransitionMessagesOnly) => {
-	QUnit.test("_loadSubNodes: transitionMessagesOnly=" + bTransitionMessagesOnly, function (assert) {
+	QUnit.test("_loadSubNodes: calls _getHeaders", function (assert) {
 		const oBinding = {
 			oFinalLengths: {"~sNodeId": 5},
 			oModel: {
@@ -1382,13 +1335,14 @@ sap.ui.define([
 			},
 			mRequestHandles: {},
 			bSkipDataEvents: true,
-			bTransitionMessagesOnly: bTransitionMessagesOnly
+			_getHeaders() {}
 		};
+		this.mock(oBinding).expects("_getHeaders").withExactArgs().returns("~headers");
 		this.mock(oBinding.oModel).expects("read")
 			.withExactArgs("~sNodeId", {
 				error: sinon.match.func,
 				groupId: undefined, // not relevant for this test
-				headers: bTransitionMessagesOnly ? {"sap-messages": "transientOnly"} : undefined,
+				headers: "~headers",
 				sorters: undefined, // not relevant for this test
 				success: sinon.match.func,
 				urlParameters: "~aParams"
@@ -1402,11 +1356,9 @@ sap.ui.define([
 		assert.strictEqual(oBinding.bSkipDataEvents, false);
 		assert.deepEqual(oBinding.mRequestHandles, {"~sNodeId-undefined-undefined-undefined": "~oReadHandle"});
 	});
-});
 
 	//*********************************************************************************************
-[true, false].forEach((bTransitionMessagesOnly) => {
-	QUnit.test("_getCountForCollection: transitionMessagesOnly=" + bTransitionMessagesOnly, function () {
+	QUnit.test("_getCountForCollection: calls _getHeaders", function () {
 		const oBinding = {
 			sCountMode: CountMode.Inline,
 			bHasTreeAnnotations: true,
@@ -1414,15 +1366,16 @@ sap.ui.define([
 				read() {}
 			},
 			sOperationMode: OperationMode.Auto,
-			bTransitionMessagesOnly: bTransitionMessagesOnly,
+			_getHeaders() {},
 			getResolvedPath() {}
 		};
 		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("~sAbsolutePath");
+		this.mock(oBinding).expects("_getHeaders").withExactArgs().returns("~headers");
 		this.mock(oBinding.oModel).expects("read")
 			.withExactArgs("~sAbsolutePath", {
 				error: sinon.match.func,
 				groupId: undefined, // not relevant for this test
-				headers: bTransitionMessagesOnly ? {"sap-messages": "transientOnly"} : undefined,
+				headers: "~headers",
 				success: sinon.match.func,
 				urlParameters: ["$top=0", "$inlinecount=allpages"]
 			});
@@ -1430,13 +1383,9 @@ sap.ui.define([
 		// code under test
 		ODataTreeBinding.prototype._getCountForCollection.call(oBinding);
 	});
-});
 
 	//*********************************************************************************************
-[true, false].forEach((bTransitionMessagesOnly) => {
-	const sTitle = "_getCountForCollection: $count request has never 'sap-messages' header; transitionMessagesOnly="
-		+ bTransitionMessagesOnly;
-	QUnit.test(sTitle, function () {
+	QUnit.test("_getCountForCollection: don't call _getHeaders for $count request", function () {
 		const oBinding = {
 			sCountMode: CountMode.Request,
 			bHasTreeAnnotations: true,
@@ -1444,7 +1393,6 @@ sap.ui.define([
 				read() {}
 			},
 			sOperationMode: OperationMode.Auto,
-			bTransitionMessagesOnly: bTransitionMessagesOnly,
 			getResolvedPath() {}
 		};
 		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("~sAbsolutePath");
@@ -1460,18 +1408,13 @@ sap.ui.define([
 		// code under test
 		ODataTreeBinding.prototype._getCountForCollection.call(oBinding);
 	});
-});
 
 	//*********************************************************************************************
-[true, false].forEach((bTransitionMessagesOnly) => {
-	const sTitle = "_getCountForNodeId: $count request has never 'sap-messages' header; transitionMessagesOnly="
-		+ bTransitionMessagesOnly;
-	QUnit.test(sTitle, function () {
+	QUnit.test("_getCountForNodeId: don't call _getHeaders for $count request", function () {
 		const oBinding = {
 			oModel: {
 				read() {}
 			},
-			bTransitionMessagesOnly: bTransitionMessagesOnly,
 			getFilterParams() {}
 		};
 		this.mock(oBinding).expects("getFilterParams").withExactArgs().returns(undefined);
@@ -1486,6 +1429,20 @@ sap.ui.define([
 
 		// code under test
 		ODataTreeBinding.prototype._getCountForNodeId.call(oBinding, "~sNodeId");
+	});
+
+	//*********************************************************************************************
+[
+	{bTransitionMessagesOnly: true, result: {"sap-messages": "transientOnly"}},
+	{bTransitionMessagesOnly: false, result: undefined}
+].forEach((oFixture) => {
+	QUnit.test("_getHeaders: bTransitionMessagesOnly=" + oFixture.bTransitionMessagesOnly, function (assert) {
+		const oBinding = {
+			bTransitionMessagesOnly: oFixture.bTransitionMessagesOnly
+		};
+
+		// code under test
+		assert.deepEqual(ODataTreeBinding.prototype._getHeaders.call(oBinding), oFixture.result);
 	});
 });
 });

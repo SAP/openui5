@@ -212,6 +212,18 @@ sap.ui.define([
 	};
 
 	/**
+	 * Gets the request headers for a read request.
+	 *
+	 * @returns {Object<string, string>|undefined}
+	 *   The request headers for a read request, or <code>undefined</code> if no headers are required
+	 *
+	 * @private
+	 */
+	ODataTreeBinding.prototype._getHeaders = function () {
+		return this.bTransitionMessagesOnly ? {"sap-messages": "transientOnly"} : undefined;
+	};
+
+	/**
 	 * Builds a node filter string.
 	 * mParams.id holds the ID value for filtering on the hierarchy node.
 	 *
@@ -263,7 +275,7 @@ sap.ui.define([
 		if (sAbsolutePath) {
 			this.mRequestHandles[sRequestKey] = this.oModel.read(sAbsolutePath, {
 				groupId: sGroupId,
-				headers: this.bTransitionMessagesOnly ? {"sap-messages": "transientOnly"} : undefined,
+				headers: this._getHeaders(),
 				success: function (oData) {
 					var sNavPath = that._getNavPath(that.getPath());
 
@@ -836,7 +848,7 @@ sap.ui.define([
 		} else if (this.sCountMode == CountMode.Inline || this.sCountMode == CountMode.InlineRepeat) {
 			aParams.push("$top=0");
 			aParams.push("$inlinecount=allpages");
-			oHeaders = this.bTransitionMessagesOnly ? {"sap-messages": "transientOnly"} : undefined;
+			oHeaders = this._getHeaders();
 		}
 
 		// send the counting request
@@ -1107,7 +1119,7 @@ sap.ui.define([
 			if (sAbsolutePath) {
 				sGroupId = this.sRefreshGroupId ? this.sRefreshGroupId : this.sGroupId;
 				this.mRequestHandles[sRequestKey] = this.oModel.read(sAbsolutePath, {
-					headers: this.bTransitionMessagesOnly ? {"sap-messages": "transientOnly"} : undefined,
+					headers: this._getHeaders(),
 					urlParameters: aParams,
 					success: fnSuccess,
 					error: fnError,
@@ -1278,7 +1290,7 @@ sap.ui.define([
 			if (sAbsolutePath) {
 				sGroupId = this.sRefreshGroupId ? this.sRefreshGroupId : this.sGroupId;
 				this.mRequestHandles[sRequestKey] = this.oModel.read(sAbsolutePath, {
-					headers: this.bTransitionMessagesOnly ? {"sap-messages": "transientOnly"} : undefined,
+					headers: this._getHeaders(),
 					urlParameters: aParams,
 					success: fnSuccess,
 					error: fnError,
@@ -1414,7 +1426,7 @@ sap.ui.define([
 				aURLParams.push("$top=" + this.iTotalCollectionCount);
 			}
 			this.mRequestHandles[sRequestKey] = this.oModel.read(sAbsolutePath, {
-				headers: this.bTransitionMessagesOnly ? {"sap-messages": "transientOnly"} : undefined,
+				headers: this._getHeaders(),
 				urlParameters: aURLParams,
 				success: fnSuccess,
 				error: fnError,
