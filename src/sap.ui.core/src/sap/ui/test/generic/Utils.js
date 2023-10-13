@@ -221,7 +221,7 @@ sap.ui.define([
 						case "sap.ui.core.Toolbar":
 							// Toolbar is interface - Special treatment because of legacy coding in old
 							// DuplicateIdCheck qunit
-							sAggregationType = "sap.m.Bar";
+							sAggregationType = "sap.m.Toolbar";
 							break;
 						default:
 							sAggregationType = oAggregation.type;
