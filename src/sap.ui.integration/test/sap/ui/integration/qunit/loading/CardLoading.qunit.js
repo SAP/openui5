@@ -13,7 +13,8 @@ sap.ui.define([
 		"sap/ui/base/Event",
 		"sap/ui/core/UIComponent",
 		"sap/ui/integration/library",
-		"sap/ui/thirdparty/jquery"
+		"sap/ui/thirdparty/jquery",
+		"sap/ui/integration/library"
 	],
 	function (
 		Log,
@@ -28,7 +29,8 @@ sap.ui.define([
 		Event,
 		UIComponent,
 		integrationLibrary,
-		jQuery
+		jQuery,
+		library
 	) {
 		"use strict";
 
@@ -2050,6 +2052,132 @@ sap.ui.define([
 			});
 
 			oCard.setManifest(oManifest_List_MinItems_Grouping);
+		});
+
+		QUnit.test("List Card in 'Abstract' preview mode - icon and title", function (assert) {
+			// Arrange
+			var done = assert.async();
+
+			this.oCard.attachEventOnce("_ready", function () {
+				Core.applyChanges();
+
+				// Assert
+				assert.strictEqual(this.oCard.getDomRef().getElementsByClassName("sapFCardListPlaceholderImg").length, 5, "there are 5 image placeholders rendered");
+				assert.strictEqual(this.oCard.getDomRef().getElementsByClassName("sapFCardListPlaceholderRow").length, 5, "there are 5 row placeholders rendered");
+				assert.strictEqual(this.oCard.getDomRef().getElementsByClassName("sapFCardListPlaceholderItem").length, 5, "there are 3 lines rendered");
+
+				done();
+			}.bind(this));
+
+			// Act
+			this.oCard.setPreviewMode(library.CardPreviewMode.Abstract);
+			this.oCard.setManifest({
+				"sap.app": {
+					"id": "test.card.previewModeList",
+					"type": "card"
+				},
+				"sap.card": {
+					"type": "List",
+					"data": {
+						"json": {
+							"title": "List Card",
+							"items": []
+						},
+						"mockData": {
+							"json": {
+								"title": "List Card with Mocked Data",
+								"items": [
+									{
+										"title": "item1"
+									},
+									{
+										"title": "item2"
+									}
+								]
+							}
+						}
+					},
+					"header": {
+						"title": "{title}"
+					},
+					"content": {
+						"maxItems": 5,
+						"data": {
+							"path": "/items"
+						},
+						"item": {
+							"title": "{title}",
+							"icon": {
+								"src": "{icon}"
+							},
+							"highlight": "{state}",
+							"description": "{state}",
+							"info": {
+								"value": "{info}",
+								"state": "{infoState}"
+							}
+						}
+					}
+				}
+			});
+		});
+
+		QUnit.test("List Card in 'Abstract' preview mode - icon, title and actionsStrip", function (assert) {
+			// Arrange
+			var done = assert.async();
+
+			this.oCard.attachEventOnce("_ready", function () {
+				Core.applyChanges();
+
+				// Assert
+				assert.strictEqual(this.oCard.getDomRef().getElementsByClassName("sapFCardListPlaceholderImg").length, 3, "there are 3 image placeholders rendered");
+				assert.strictEqual(this.oCard.getDomRef().getElementsByClassName("sapFCardListPlaceholderRow").length, 6, "there are 6 row placeholders rendered");
+				assert.strictEqual(this.oCard.getDomRef().getElementsByClassName("sapFCardListPlaceholderItem").length, 3, "there are 3 lines rendered");
+
+				done();
+			}.bind(this));
+
+			// Act
+			this.oCard.setPreviewMode(library.CardPreviewMode.Abstract);
+			this.oCard.setManifest({
+				"sap.app": {
+					"id": "test.card.previewModeList2",
+					"type": "card"
+				},
+				"sap.card": {
+					"type": "List",
+					"data": {
+						"request": {
+							"url": "./cardcontent/cost.json"
+						}
+					},
+					"header": {
+						"title": "{title}"
+					},
+					"content": {
+						"maxItems": 3,
+						"data": {
+							"path": "/milk"
+						},
+						"item": {
+							"title": "{Store Name}",
+							"icon": {
+								"src": "{icon}"
+							},
+							"highlight": "{state}",
+							"description": "{state}",
+							"actionsStrip": [{
+								"text": "{Revenue}"
+							}]
+						}
+					},
+					"footer": {
+						"actionsStrip": [{
+							"text": "{milk/0/Revenue}"
+						}]
+					}
+				}
+			});
 		});
 
 		QUnit.module("Card Loading Placeholder API", {

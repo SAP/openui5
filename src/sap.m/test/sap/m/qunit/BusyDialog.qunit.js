@@ -512,7 +512,6 @@ sap.ui.define([
 		var invText = InvisibleText.getStaticId("sap.m", "BUSYDIALOG_TITLE");
 		this.oBusyDialog.setText('Loading...');
 		this.oBusyDialog.open();
-		//debugger
 
 		assert.strictEqual(this.oBusyDialog._oDialog.getAriaLabelledBy()[0], invText, 'Should be the same as ariaLabelledBy in the dialog.');
 	});

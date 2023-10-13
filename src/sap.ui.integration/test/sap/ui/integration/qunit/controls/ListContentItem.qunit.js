@@ -123,7 +123,7 @@ sap.ui.define([
 		oLCI.destroy();
 	});
 
-	QUnit.test("Lines count for renderer", function (assert) {
+	QUnit.test("Lines count for renderer - attributes", function (assert) {
 		// arrange
 		const oContent = new ListContent();
 
@@ -150,6 +150,14 @@ sap.ui.define([
 
 			}
 		};
+
+		// assert
+		assert.strictEqual(ListContentItem.getLinesCount(oSample1, oContent), 5, "Lines count for sample 1 are as expected.");
+	});
+
+	QUnit.test("Lines count for renderer attributes 2", function (assert) {
+		// arrange
+		const oContent = new ListContent();
 
 		const oSample2 = {
 			title: "This is title",
@@ -180,8 +188,29 @@ sap.ui.define([
 		};
 
 		// assert
-		assert.strictEqual(ListContentItem.getLinesCount(oSample1, oContent), 5, "Lines count for sample 1 are as expected.");
 		assert.strictEqual(ListContentItem.getLinesCount(oSample2, oContent), 2, "Lines count for sample 2 are as expected.");
+	});
+
+	QUnit.test("Lines count for renderer - attributes 3", function (assert) {
+		// arrange
+		const oContent = new ListContent();
+
+		const oSample1 = {
+			title: "This is title",
+			attributes: [
+				{
+					value: "test 1",
+					visible: true
+				},
+				{
+					value: "test 2",
+					visible: false
+				}
+			]
+		};
+
+		// assert
+		assert.strictEqual(ListContentItem.getLinesCount(oSample1, oContent), 2, "Lines count for sample 1 are as expected.");
 	});
 
 	QUnit.module("Accessibility", {
