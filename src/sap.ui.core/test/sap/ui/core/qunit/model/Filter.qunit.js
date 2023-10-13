@@ -759,4 +759,19 @@ sap.ui.define([
 		assert.strictEqual(typeof Filter.NONE.getTest(), "function");
 		assert.strictEqual(Filter.NONE.getTest()(), false);
 	});
+
+	//*********************************************************************************************
+[
+	{filters : [{}, Filter.NONE]},
+	[{}, Filter.NONE],
+	{condition : Filter.NONE}
+].forEach((oFixture, i) => {
+	QUnit.test("Filter.NONE passed to constructor, " + i, function(assert) {
+		assert.throws(() => {
+			// code under test
+			new Filter(oFixture);
+		}, new Error("Filter.NONE not allowed "
+			+ (oFixture.condition ? "as condition" : "in multiple filter")));
+	});
+});
 });
