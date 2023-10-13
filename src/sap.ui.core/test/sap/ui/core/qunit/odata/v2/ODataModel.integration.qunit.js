@@ -781,6 +781,8 @@ sap.ui.define([
 			 * @param {object} oHandler The request handler object
 			 * @param {object} oHttpClient The HttpClient object
 			 * @param {object} oMetadata The metadata object
+			 * @returns {object}
+			 *   An object with a property <code>abort</code>, containing a function to abort the request
 			 */
 			function checkRequest(oRequest, fnSuccess, fnError, oHandler, oHttpClient, oMetadata) {
 				if (oRequest.requestUri.includes("$batch")) {
@@ -1115,7 +1117,7 @@ sap.ui.define([
 				// esp. for the table.Table this is essential.
 				that.oView.placeAt("qunit-fixture");
 
-				return that.waitForChanges(assert);
+				return that.waitForChanges(assert, "create view");
 			});
 		},
 
@@ -1699,15 +1701,17 @@ sap.ui.define([
 		 * states.
 		 *
 		 * @param {object} assert The QUnit assert object
-		 * @param {number} [iTimeout=3000] The timeout time in milliseconds
+		 * @param {string} [sTitle] Title for this section of a test
+		 * @param {number} [iWaitTimeout=3000] The timeout time in milliseconds
 		 * @returns {Promise} A promise that is resolved when all requests have been responded,
 		 *   all expected values for controls have been set, all expected messages and all value
 		 *   states have been checked
 		 */
-		waitForChanges : function (assert, iTimeout) {
+		waitForChanges : function (assert, sTitle, iWaitTimeout) {
 			var oPromise,
 				that = this;
 
+			iWaitTimeout = iWaitTimeout || 3000;
 			oPromise = new SyncPromise(function (resolve) {
 				that.resolve = resolve;
 				// After three seconds everything should have run through
@@ -1715,11 +1719,11 @@ sap.ui.define([
 				setTimeout(function () {
 					if (oPromise.isPending()) {
 						assert.ok(false, "Timeout in waitForChanges");
-						resolve();
+						resolve(true);
 					}
-				}, iTimeout || 3000);
+				}, iWaitTimeout);
 				that.checkFinish(assert);
-			}).then(function () {
+			}).then(function (bTimeout) {
 				var sControlId, aExpectedValuesPerRow, i, j;
 
 				// Report missing requests
@@ -1745,8 +1749,8 @@ sap.ui.define([
 					}
 				}
 				that.checkMessages(assert);
-				return that.aValueStates.length === 0
-					? undefined
+				return (that.aValueStates.length === 0
+					? SyncPromise.resolve()
 					// Checks the controls' value state after waiting some time for the control to
 					// set it.
 					: resolveLater(function () {
@@ -1762,6 +1766,9 @@ sap.ui.define([
 									+ oControl.getValueStateText());
 						});
 						that.aValueStates = [];
+					})).then(() => {
+						assert.ok(!bTimeout, "waitForChanges(" + (sTitle || "") + "): "
+							+ (bTimeout ? "Timeout (" + iWaitTimeout + " ms)" : "Done"));
 					});
 			});
 
@@ -11026,7 +11033,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			// code under test
 			oTable.collapseAll();
 
-			return this.waitForChanges(assert);
+			return this.waitForChanges(assert, "collapse all nodes");
 		}).then(() => {
 			assert.deepEqual(getTableContent(oTable), [["0"], ["1"]]);
 
@@ -11052,7 +11059,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			// code under test
 			oTable.setFirstVisibleRow(2);
 
-			return this.waitForChanges(assert);
+			return this.waitForChanges(assert, "scroll down");
 		}).then(() => {
 			assert.deepEqual(getTableContent(oTable), [["2"], ["3"]]);
 
@@ -11080,7 +11087,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			return Promise.all([
 				// code under test
 				oTable.getBinding("rows").expandNodeToLevel(2, 2),
-				this.waitForChanges(assert)
+				this.waitForChanges(assert, "expand node to level 2")
 			]);
 		}).then(() => {
 			assert.deepEqual(getTableContent(oTable), [["2"], ["2.0"]]);
@@ -11088,7 +11095,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			// code under test
 			oTable.setFirstVisibleRow(0);
 
-			return this.waitForChanges(assert);
+			return this.waitForChanges(assert, "scroll up again");
 		}).then(() => {
 			assert.deepEqual(getTableContent(oTable), [["0"], ["1"]]);
 		});
