@@ -1271,7 +1271,7 @@ sap.ui.define([
 
 			var aItems = this.oVM.oManagementTable.getItems();
 			assert.ok(aItems, "items in the management table exists");
-			assert.equal(aItems.length, 4,  "expected count of items in the management table exists");
+			assert.equal(aItems.length, 0,  "cancel unbinds the items");
 
 		}.bind(this));
 

@@ -770,9 +770,6 @@ sap.ui.define([
 
 			this._oVM._handleManageCancelPressed();
 			assert.ok(oItemDel.getVisible());
-			oListItem = this._oVM._getRowForKey(sItemKey);
-			assert.ok(oListItem, "manage table item exists");
-			assert.ok(oListItem.getVisible(), "manage table item is visible");
 
 			this._oVM._openManagementDialog();
 			aRows = this._oVM._getItems();
