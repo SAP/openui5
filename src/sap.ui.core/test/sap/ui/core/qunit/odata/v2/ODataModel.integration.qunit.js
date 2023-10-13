@@ -10944,6 +10944,156 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 		});
 	});
 
+	//*********************************************************************************************
+	// Scenario: All read requests of the tree binding except $count requests, consider "transitionMessagesOnly"
+	// parameter.
+	// JIRA: CPOUI5MODELS-1437
+	QUnit.test("ODataTreeBinding: transtionMessagesOnly", function (assert) {
+		const oModel = createSpecialCasesModel();
+		let oTable;
+		const sView = '\
+<t:TreeTable id="table"\
+		rows="{\
+			parameters: {\
+				countMode : \'Request\',\
+				numberOfExpandedLevels: 1,\
+				transitionMessagesOnly: true,\
+				treeAnnotationProperties: {\
+					hierarchyDrillStateFor: \'OrderOperationIsExpanded\',\
+					hierarchyLevelFor: \'OrderOperationRowLevel\',\
+					hierarchyNodeFor: \'OrderOperationRowID\',\
+					hierarchyParentNodeFor: \'OrderOperationParentRowID\'\
+				}\
+			},\
+			path: \'/C_RSHMaintSchedSmltdOrdAndOp\'\
+		}"\
+		threshold="0"\
+		visibleRowCount="2">\
+	<Text id="maintenanceOrder" text="{MaintenanceOrder}" />\
+</t:TreeTable>';
+
+		this.expectHeadRequest()
+			// triggered by ODataTreeBinding#_getCountForNodeId
+			.expectRequest("C_RSHMaintSchedSmltdOrdAndOp/$count?$filter=OrderOperationRowLevel eq 0", "273")
+			.expectRequest({ // triggered by ODataTreeBinding#_loadSubNodes
+					headers: {"sap-messages": "transientOnly"},
+					requestUri: "C_RSHMaintSchedSmltdOrdAndOp?$filter=OrderOperationRowLevel eq 0&$skip=0&$top=2"
+				}, {
+					results: [{
+						__metadata: {uri: "C_RSHMaintSchedSmltdOrdAndOp('id-0')"},
+						MaintenanceOrder: "0",
+						OrderOperationIsExpanded: "collapsed",
+						OrderOperationRowID: "id-0",
+						OrderOperationRowLevel: 0
+					}, {
+						__metadata: {uri: "C_RSHMaintSchedSmltdOrdAndOp('id-1')"},
+						MaintenanceOrder: "1",
+						OrderOperationIsExpanded: "leaf",
+						OrderOperationRowID: "id-1",
+						OrderOperationRowLevel: 0
+					}]
+				})
+			// triggered by ODataTreeBinding#_getCountForNodeId
+			.expectRequest("C_RSHMaintSchedSmltdOrdAndOp/$count?$filter=OrderOperationParentRowID eq 'id-0'", "5")
+			.expectRequest({ // triggered by ODataTreeBinding#_loadSubNodes
+					headers: {"sap-messages": "transientOnly"},
+					requestUri: "C_RSHMaintSchedSmltdOrdAndOp?$filter=OrderOperationParentRowID eq 'id-0'"
+						+ "&$skip=0&$top=2"
+				}, {
+					results: [{
+						__metadata: {uri: "C_RSHMaintSchedSmltdOrdAndOp('id-0.0')"},
+						MaintenanceOrder: "0.0",
+						OrderOperationIsExpanded: "leaf",
+						OrderOperationParentRowID: "id-0",
+						OrderOperationRowID: "id-0.0",
+						OrderOperationRowLevel: 1
+					}, {
+						__metadata: {uri: "C_RSHMaintSchedSmltdOrdAndOp('id-0.1')"},
+						MaintenanceOrder: "0.1",
+						OrderOperationIsExpanded: "leaf",
+						OrderOperationParentRowID: "id-0",
+						OrderOperationRowID: "id-0.1",
+						OrderOperationRowLevel: 1
+					}]
+				});
+
+		return this.createView(assert, sView, oModel).then(() => {
+			oTable = this.oView.byId("table");
+
+			// don't use expectValue to avoid timing issues causing flaky tests
+			assert.deepEqual(getTableContent(oTable), [["0"], ["0.0"]]);
+
+			// code under test
+			oTable.collapseAll();
+
+			return this.waitForChanges(assert);
+		}).then(() => {
+			assert.deepEqual(getTableContent(oTable), [["0"], ["1"]]);
+
+			this.expectRequest({ // triggered by ODataTreeBinding#_loadSubNodes
+					headers: {"sap-messages": "transientOnly"},
+					requestUri: "C_RSHMaintSchedSmltdOrdAndOp?$filter=OrderOperationRowLevel eq 0&$skip=2&$top=4"
+				}, {
+					results: [{
+						__metadata: {uri: "C_RSHMaintSchedSmltdOrdAndOp('id-2')"},
+						MaintenanceOrder: "2",
+						OrderOperationIsExpanded: "collapsed",
+						OrderOperationRowID: "id-2",
+						OrderOperationRowLevel: 0
+					}, {
+						__metadata: {uri: "C_RSHMaintSchedSmltdOrdAndOp('id-3')"},
+						MaintenanceOrder: "3",
+						OrderOperationIsExpanded: "leaf",
+						OrderOperationRowID: "id-3",
+						OrderOperationRowLevel: 0
+					}]
+				});
+
+			// code under test
+			oTable.setFirstVisibleRow(2);
+
+			return this.waitForChanges(assert);
+		}).then(() => {
+			assert.deepEqual(getTableContent(oTable), [["2"], ["3"]]);
+
+			this.expectRequest({ // triggered by ODataTreeBinding#_loadSubTree
+					headers: {"sap-messages": "transientOnly"},
+					requestUri: "C_RSHMaintSchedSmltdOrdAndOp?"
+						+ "$filter=OrderOperationRowID eq 'id-2' and OrderOperationRowLevel le 2"
+				}, {
+					results: [{
+						__metadata: {uri: "C_RSHMaintSchedSmltdOrdAndOp('id-2')"},
+						MaintenanceOrder: "2",
+						OrderOperationIsExpanded: "expanded",
+						OrderOperationRowID: "id-2",
+						OrderOperationRowLevel: 0
+					}, {
+						__metadata: {uri: "C_RSHMaintSchedSmltdOrdAndOp('id-2.0')"},
+						MaintenanceOrder: "2.0",
+						OrderOperationIsExpanded: "leaf",
+						OrderOperationParentRowID: "id-2",
+						OrderOperationRowID: "id-2.0",
+						OrderOperationRowLevel: 1
+					}]
+				});
+
+			return Promise.all([
+				// code under test
+				oTable.getBinding("rows").expandNodeToLevel(2, 2),
+				this.waitForChanges(assert)
+			]);
+		}).then(() => {
+			assert.deepEqual(getTableContent(oTable), [["2"], ["2.0"]]);
+
+			// code under test
+			oTable.setFirstVisibleRow(0);
+
+			return this.waitForChanges(assert);
+		}).then(() => {
+			assert.deepEqual(getTableContent(oTable), [["0"], ["1"]]);
+		});
+	});
+
 	/** @deprecated As of version 1.102.0, reason OperationMode.Auto */
 	//*********************************************************************************************
 	// Scenario: If operation mode auto and a threshold is set as binding parameter and a count
