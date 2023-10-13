@@ -3059,14 +3059,14 @@ sap.ui.define([
 	thisLib.MenuButtonMode = {
 
 		/**
-		 * Default regular type (Menu button appears as a regular button, pressing opens a menu)
+		 * Default Regular type - MenuButton appears as a regular button, pressing it opens a menu.
 		 * @public
 		 */
 		Regular: "Regular",
 
 		/**
-		 * Split type (Menu button appears as a split button, pressing fires the default action a menu,
-		 * pressing the arrow part opens a menu)
+		 * Split type - MenuButton appears as a split button separated into two areas: the text and the arrow button. Pressing the
+		 * text area fires the default (or last) action, pressing the arrow part opens a menu.
 		 * @public
 		 */
 		Split: "Split"
