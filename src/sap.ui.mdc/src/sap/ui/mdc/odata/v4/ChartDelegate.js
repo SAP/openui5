@@ -11,11 +11,11 @@ sap.ui.define([
 ) {
     "use strict";
     /**
-	 * @class Delegate class for {@link sap.ui.mdc.Chart Chart} and ODataV4.<br>
+	 * Delegate class for {@link sap.ui.mdc.Chart Chart} and ODataV4.<br>
 	 * This class provides method calls, which are called by the <code>Chart</code> at specific operations and allows to overwrite an internal behaviour.
 	 *
-	 * @author SAP SE
 	 * @namespace
+	 * @author SAP SE
 	 * @alias module:sap/ui/mdc/odata/v4/ChartDelegate
 	 * @extends module:sap/ui/mdc/ChartDelegate
 	 * @since 1.88
