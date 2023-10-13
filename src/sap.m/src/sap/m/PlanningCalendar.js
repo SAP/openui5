@@ -29,6 +29,7 @@ sap.ui.define([
 	'sap/ui/core/dnd/DropInfo',
 	'sap/ui/core/dnd/DragDropInfo',
 	'sap/ui/core/format/DateFormat',
+	'sap/ui/core/date/CalendarUtils',
 	'sap/m/Toolbar',
 	'sap/m/Table',
 	'sap/m/Column',
@@ -71,6 +72,7 @@ sap.ui.define([
 	DropInfo,
 	DragDropInfo,
 	DateFormat,
+	CalendarDateUtils,
 	Toolbar,
 	Table,
 	Column,
@@ -1849,7 +1851,21 @@ sap.ui.define([
 			}.bind(this));
 		}
 
-		return this.setProperty("firstDayOfWeek", iFirstDayOfWeek);
+		this.setProperty("firstDayOfWeek", iFirstDayOfWeek);
+		this._updateWeekConfiguration();
+
+		return this;
+	};
+
+	PlanningCalendar.prototype._updateWeekConfiguration = function() {
+		var iFirstDayOfWeek = this.getFirstDayOfWeek(),
+			oWeekConfiguration = CalendarDateUtils.getWeekConfigurationValues();
+
+		if (iFirstDayOfWeek > -1 ) {
+			oWeekConfiguration.firstDayOfWeek = iFirstDayOfWeek;
+		}
+
+		this._dateNav.setWeekConfiguration(oWeekConfiguration);
 	};
 
 	PlanningCalendar.prototype._handleFocus = function (oEvent) {
