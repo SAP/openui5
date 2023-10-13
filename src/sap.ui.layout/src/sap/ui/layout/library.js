@@ -771,6 +771,9 @@ sap.ui.define([
 	DataType.getType('int')
 	);
 
+	/**
+	 * @deprecated As of version 1.120
+	 */
 	if (!thisLib.GridHelper) {
 		thisLib.GridHelper = {
 			getLibrarySpecificClass: function () {
