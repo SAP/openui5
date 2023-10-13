@@ -2,7 +2,7 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 function (UIComponent) {
 	"use strict";
 
-	return UIComponent.extend("sap.m.sample.AvatarValueState.Component", {
+	return UIComponent.extend("sap.m.sample.AvatarActiveState.Component", {
 		metadata: {
 			manifest: "json"
 		}
