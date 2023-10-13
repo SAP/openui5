@@ -163,7 +163,8 @@
 		"samples": [
 			"sap.m.sample.Avatar",
 			"sap.m.sample.AvatarWithAffordance",
-			"sap.m.sample.AvatarValueState"
+			"sap.m.sample.AvatarValueState",
+			"sap.m.sample.AvatarActiveState"
 			]
 		},
 		{
@@ -1713,6 +1714,11 @@
 		  "id": "sap.m.sample.AvatarValueState",
 		  "name": "Avatar with badgeValueState",
 		  "description": "This sample demonstrates different badge value states of the Avatar."
+		},
+		{
+			"id": "sap.m.sample.AvatarActiveState",
+			"name": "Avatar with toggling of Active state",
+			"description": "This sample demonstrates toggling of Avatar Active state, when a User menu is opened/closed."
 		},
 		{
 		  "id": "sap.m.sample.NewsContent",
