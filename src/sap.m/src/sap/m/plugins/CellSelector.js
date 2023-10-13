@@ -804,7 +804,7 @@ sap.ui.define([
 			 */
 			isSupported: function(oTable) {
 				return !oTable.hasListeners("cellClick") && oTable.getSelectionBehavior() == "RowSelector"
-					&& !oTable.getDragDropConfig().some((oConfig) => oConfig.getSourceAggregation() == "rows" && oConfig.getEnabled());
+					&& !oTable.getDragDropConfig().some((oConfig) => oConfig.getSourceAggregation?.() == "rows" && oConfig.getEnabled());
 			},
 			/**
 			 * Get visible columns of the table.
