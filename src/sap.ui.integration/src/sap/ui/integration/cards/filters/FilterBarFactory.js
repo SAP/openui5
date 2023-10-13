@@ -5,6 +5,7 @@ sap.ui.define([
 	"./FilterBar",
 	"./SearchFilter",
 	"./SelectFilter",
+	"./ComboBoxFilter",
 	"./DateRangeFilter",
 	"sap/ui/base/Object",
 	"sap/m/library",
@@ -14,6 +15,7 @@ sap.ui.define([
 	FilterBar,
 	SearchFilter,
 	SelectFilter,
+	ComboBoxFilter,
 	DateRangeFilter,
 	BaseObject,
 	mLibrary,
@@ -154,6 +156,8 @@ sap.ui.define([
 				return DateRangeFilter;
 			case "search":
 				return SearchFilter;
+			case "combobox":
+				return ComboBoxFilter;
 			default:
 				return undefined;
 		}

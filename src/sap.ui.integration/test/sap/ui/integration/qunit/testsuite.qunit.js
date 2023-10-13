@@ -225,7 +225,8 @@ sap.ui.define([
 					"./cards/filters/DateRangeFilter.qunit",
 					"./cards/filters/FilterBarFactory.qunit",
 					"./cards/filters/SearchFilter.qunit",
-					"./cards/filters/SelectFilter.qunit"
+					"./cards/filters/SelectFilter.qunit",
+					"./cards/filters/ComboBoxFilter.qunit"
 				],
 				coverage: {
 					only: [

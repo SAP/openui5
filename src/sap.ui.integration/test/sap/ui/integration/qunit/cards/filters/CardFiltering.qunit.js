@@ -393,6 +393,45 @@ sap.ui.define([
 		oCard.placeAt(DOM_RENDER_LOCATION);
 	});
 
+	QUnit.test("stateChange event is fired for ComboBox filter", function (assert) {
+		// Arrange
+		var done = assert.async(),
+			oCard = this.oCard,
+			oHost = new Host();
+
+		assert.expect(2);
+
+		oCard.setHost(oHost);
+
+		oCard.attachEvent("_ready", function () {
+			var oFilterBar = this.oCard.getAggregation("_filterBar"),
+				oComboBox = oFilterBar._getFilters()[0]._getComboBox();
+			oCard.attachEventOnce("stateChanged", function () {
+				assert.ok(true, "stateChanged is called after ComboBox filter change");
+			});
+
+			oHost.attachEventOnce("cardStateChanged", function () {
+				assert.ok(true, "cardStateChanged for host is called after ComboBox filter change");
+
+				oHost.destroy();
+				done();
+			});
+
+			// Act - select filter
+			oComboBox.onSelectionChange({
+				getParameter: function () {
+					return oComboBox.getItems()[0];
+				}
+			});
+			Core.applyChanges();
+
+		}.bind(this));
+
+		// Act
+		oCard.setManifest("test-resources/sap/ui/integration/qunit/manifests/combo_box_filter.json");
+		oCard.placeAt(DOM_RENDER_LOCATION);
+	});
+
 	QUnit.module("Visibility of filters", {
 		beforeEach: function () {
 			this.oCard = new Card({
@@ -472,7 +511,7 @@ sap.ui.define([
 
 			// Assert
 			var oFilterBar = this.oCard.getAggregation("_filterBar");
-			assert.strictEqual(oFilterBar._getFilters().length, 1, "The filter bar has 1 filter");
+			assert.strictEqual(oFilterBar._getFilters().length, 1, "The filter bar has 2 filters");
 
 			var oFilter = oFilterBar._getFilters()[0];
 			assert.strictEqual(oFilter._getSelect().getSelectedKey(), "available", "property binding works");

@@ -148,6 +148,12 @@ sap.ui.define([
 				icon: 'sap-icon://filter',
 				items: [
 					{
+						title: 'ComboBox',
+						target: 'learnDetail',
+						key: 'comboBox',
+						experimental: true
+					},
+					{
 						title: 'DateRange',
 						target: 'learnDetail',
 						key: 'dateRange',
