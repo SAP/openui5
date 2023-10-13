@@ -276,6 +276,17 @@ sap.ui.define([
                     },
 
                     /**
+                     * Defines style of the header.
+                     * For more information, see {@link sap.m.Title#setTitleStyle}.
+                     * @since 1.120
+                     */
+                    headerStyle: {
+                        type: "sap.ui.core.TitleLevel",
+                        group: "Appearance"
+                        // defaultValue : TitleLevel.Auto
+                    },
+
+                    /**
                      * Determines whether the header text is shown in the chart. Regardless of its value, the given header text is used to label the chart
                      * correctly for accessibility purposes.
                      *
@@ -1153,14 +1164,6 @@ sap.ui.define([
             return this;
         };
 
-        Chart.prototype.setHeaderVisible = function(bVisible) {
-            this.setProperty("headerVisible", bVisible, true);
-            if (this.getAggregation("_toolbar")) {
-                this.getAggregation("_toolbar").setHeaderVisible(bVisible);
-            }
-            return this;
-        };
-
         /**
          * Gets the managed object model.
          * @returns {sap.ui.model.base.ManagedObjectModel} the managed object model
@@ -1327,7 +1330,6 @@ sap.ui.define([
                 this.getAggregation("_toolbar").addVariantManagement(oControl);
             }
 
-
             return this;
         };
 
@@ -1358,12 +1360,43 @@ sap.ui.define([
             return Control.prototype.addAggregation.apply(this, ["actions", oControl]);
         };
 
+        Chart.prototype.setHeader = function(sHeader) {
+            this.setProperty("header", sHeader);
+
+            if (this.getAggregation("_toolbar")) {
+                this.getAggregation("_toolbar")._setHeader(sHeader);
+            }
+
+            return this;
+        };
+
         Chart.prototype.setHeaderLevel = function(sHeaderLevel) {
+            this.setProperty("headerLevel", sHeaderLevel);
+
             if (this.getAggregation("_toolbar")) {
                 this.getAggregation("_toolbar")._setHeaderLevel(sHeaderLevel);
             }
 
-            this.setProperty("headerLevel", sHeaderLevel);
+            return this;
+        };
+
+        Chart.prototype.setHeaderStyle = function(sHeaderStyle) {
+            this.setProperty("headerStyle", sHeaderStyle);
+
+            if (this.getAggregation("_toolbar")) {
+                this.getAggregation("_toolbar")._setHeaderStyle(sHeaderStyle);
+            }
+
+            return this;
+        };
+
+        Chart.prototype.setHeaderVisible = function(bVisible) {
+            this.setProperty("headerVisible", bVisible, true);
+
+            if (this.getAggregation("_toolbar")) {
+                this.getAggregation("_toolbar")._setHeaderVisible(bVisible);
+            }
+
             return this;
         };
 

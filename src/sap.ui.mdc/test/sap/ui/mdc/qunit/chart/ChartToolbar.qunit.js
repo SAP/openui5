@@ -217,13 +217,13 @@ function(
 			const oToolbar = this.oMDCChart._getToolbar();
 
 			//Check initial title visibility
-			assert.equal(oToolbar._oTitle.getWidth(), "", "No title width set initially");
+			assert.ok(oToolbar._oTitle.getVisible(), "Title is visible");
 
-			oToolbar.setHeaderVisible(false);
-			assert.equal(oToolbar._oTitle.getWidth(), "0px", "Title width set to 0");
+			oToolbar._setHeaderVisible(false);
+			assert.notOk(oToolbar._oTitle.getVisible(), "Title is not visible");
 
-			oToolbar.setHeaderVisible(true);
-			assert.equal(oToolbar._oTitle.getWidth(), "", "Title width not defined");
+			oToolbar._setHeaderVisible(true);
+			assert.ok(oToolbar._oTitle.getVisible(), "Title is visible");
 
 			done();
 		}.bind(this));
