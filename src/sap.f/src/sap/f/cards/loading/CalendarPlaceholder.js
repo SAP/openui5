@@ -39,6 +39,13 @@ sap.ui.define([
 				/**
 				 * Item template form the list.
 				 */
+				item: {
+					type: "any"
+				},
+
+				/**
+				 * Legend item template form the list.
+				 */
 				legendItem: {
 					type: "any"
 				}

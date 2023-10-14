@@ -25,6 +25,9 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
     return c > 3 && r && Object.defineProperty(target, key, r), r;
   };
   var Timeline_1;
+
+  // Styles
+
   const SHORT_LINE_WIDTH = "ShortLineWidth";
   const LARGE_LINE_WIDTH = "LargeLineWidth";
   /**

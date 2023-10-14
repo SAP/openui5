@@ -183,8 +183,7 @@ sap.ui.define([
 		 *   <code>undefined</code>, '$auto', '$direct' or an application group ID.
 		 * @param {boolean} [mParameters.withCredentials]
 		 *   Whether the XMLHttpRequest is called with <code>withCredentials</code>, so that user
-		 *   credentials are included in cross-origin requests by the browser (@experimental as of
-		 *   Version 1.117.0)
+		 *   credentials are included in cross-origin requests by the browser (since 1.120.0)
 		 * @throws {Error} If an unsupported synchronization mode is given, if the given service
 		 *   root URL does not end with a forward slash, if an unsupported parameter is given, if
 		 *   OData system query options or parameter aliases are specified as parameters, if an

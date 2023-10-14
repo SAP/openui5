@@ -6,7 +6,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
   });
   _exports.pathData = _exports.ltr = _exports.default = _exports.accData = void 0;
   const name = "clear-filter";
-  const pathData = "M407 111q3 4 3 10 0 8-6 16L282 308v94q0 15-15 23l-103 51q-4 3-11 3-8 0-14-3-13-8-13-23V308L4 137q-3-5-3-13 0-3 .5-6.5T4 111q8-13 23-13h357q15 0 23 13zm-72 38H75l100 138v2q1 1 1 2 4 8 4 12v112l51-26v-86q0-8 5-16zm169 289q8 8 8 18 0 8-8 18-7 7-18 7t-18-7l-33-34-33 34q-7 7-18 7t-18-7q-8-10-8-18 0-10 8-18l33-33-33-34q-8-8-8-17 0-10 8-18t18-8 18 8l33 33 33-33q8-8 18-8t18 8 8 18q0 9-8 17l-33 34z";
+  const pathData = "M358 0q11 0 18.5 7.5T384 26q0 8-5 15L256 199v105q0 13-11 21l-77 54q-7 5-14 5-11 0-18.5-7.5T128 358V199L5 41q-5-7-5-15Q0 15 7.5 7.5T26 0h332zm-52 51H78l96 124q5 7 5 16v118l26-18V191q0-9 5-16zm199 417q7 7 7 18t-7.5 18.5T486 512t-18-7l-36-37-36 37q-7 7-18 7t-18.5-7.5T352 486q0-10 8-18l36-36-36-36q-8-8-8-18 0-11 7.5-18.5T378 352t18 7l36 37 36-37q7-7 18-7t18.5 7.5T512 378t-7 18l-37 36z";
   _exports.pathData = pathData;
   const ltr = false;
   _exports.ltr = ltr;

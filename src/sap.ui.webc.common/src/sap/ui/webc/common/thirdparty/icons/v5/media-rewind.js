@@ -6,7 +6,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
   });
   _exports.pathData = _exports.ltr = _exports.default = _exports.accData = void 0;
   const name = "media-rewind";
-  const pathData = "M216 441L9 276q-9-8-9-20 0-14 9-21L216 70q5-5 12.5-6t14.5 3q15 7 15 23v331q0 16-15 23-6 3-11 3-10 0-16-6zM69 254l139 111V142zm401 187L267 276q-9-8-9-21t9-20L470 69q14-10 27-3 15 7 15 23v332q0 16-15 24-6 2-11 2-8 0-16-6zM324 259l136 111V148z";
+  const pathData = "M10 276q-10-8-10-20t10-20L214 70q8-6 16-6 11 0 18.5 7.5T256 90v332q0 11-7.5 18.5T230 448q-8 0-16-6zm256 0q-10-8-10-20t10-20L470 70q8-6 16-6 11 0 18.5 7.5T512 90v332q0 11-7.5 18.5T486 448q-8 0-16-6zM66 256l139 113V143zm256 0l139 113V143z";
   _exports.pathData = pathData;
   const ltr = true;
   _exports.ltr = ltr;

@@ -13,7 +13,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/T
   const styleData = {
     packageName: "@ui5/webcomponents",
     fileName: "themes/BreadcrumbsPopover.css",
-    content: ".ui5-breadcrumbs-popover::part(content) {\r\n    padding: 0;\r\n}\r\n\r\n.ui5-breadcrumbs-popover-footer {\r\n    display: flex;\r\n    justify-content: flex-end;\r\n    width: 100%;\r\n    padding-right: 0.5rem;\r\n\talign-items: center;\r\n}\r\n"
+    content: ".ui5-breadcrumbs-popover::part(content){padding:0}.ui5-breadcrumbs-popover-footer{align-items:center;display:flex;justify-content:flex-end;padding-right:.5rem;width:100%}"
   };
   var _default = styleData;
   _exports.default = _default;

@@ -35,6 +35,13 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
     return c > 3 && r && Object.defineProperty(target, key, r), r;
   };
   var List_1;
+
+  // Template
+
+  // Styles
+
+  // Texts
+
   const INFINITE_SCROLL_DEBOUNCE_RATE = 250; // ms
   const PAGE_UP_DOWN_SIZE = 10;
   /**
@@ -511,9 +518,13 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
     }
     // This is applicable to NotificationListItem
     onItemClose(e) {
-      this.fireEvent("item-close", {
-        item: e.detail.item
-      });
+      const target = e.target;
+      const shouldFireItemClose = target?.hasAttribute("ui5-li-notification") || target?.hasAttribute("ui5-li-notification-group");
+      if (shouldFireItemClose) {
+        this.fireEvent("item-close", {
+          item: e.detail?.item
+        });
+      }
     }
     onItemToggle(e) {
       this.fireEvent("item-toggle", {

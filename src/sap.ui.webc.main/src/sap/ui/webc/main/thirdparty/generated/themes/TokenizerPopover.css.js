@@ -13,7 +13,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/T
   const styleData = {
     packageName: "@ui5/webcomponents",
     fileName: "themes/TokenizerPopover.css",
-    content: "[ui5-responsive-popover]::part(header),\n[ui5-responsive-popover]::part(content) {\n\tpadding: 0;\n}\n"
+    content: "[ui5-responsive-popover]::part(content),[ui5-responsive-popover]::part(header){padding:0}#ui5-tokenizer-dialog-confirm-btn{height:100%;min-width:4rem}[ui5-responsive-popover]{margin-top:var(--_ui5-v1-18-0_tokenizer-popover_offset);margin-inline-start:calc(var(--_ui5-v1-18-0_tokenizer_padding)*-1)}"
   };
   var _default = styleData;
   _exports.default = _default;

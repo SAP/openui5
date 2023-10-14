@@ -6,7 +6,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
   });
   _exports.pathData = _exports.ltr = _exports.default = _exports.accData = void 0;
   const name = "iphone-2";
-  const pathData = "M435 64q33 0 55 22t22 55v240q-4 29-26 48t-51 19H78q-33 0-55-22.5T1 371V141q0-33 22-55t55-22h357zm0 333q12 0 19-7.5t7-18.5V141q0-26-26-26H78q-26 0-26 26v230q0 11 7 18.5t19 7.5h357z";
+  const pathData = "M0 346V166q0-29 22.5-49.5T77 96h358q32 0 54.5 20.5T512 166v180q0 29-22.5 49.5T435 416H77q-32 0-54.5-20.5T0 346zm461-180q0-8-7.5-13.5T435 147H77q-11 0-18.5 5.5T51 166v180q0 8 7.5 13.5T77 365h358q11 0 18.5-5.5T461 346V166z";
   _exports.pathData = pathData;
   const ltr = false;
   _exports.ltr = ltr;

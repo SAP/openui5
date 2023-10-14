@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/ui/webc/common/thirdparty/base/decorators/customElement", "sap/ui/webc/common/thirdparty/base/decorators/property", "sap/ui/webc/common/thirdparty/base/decorators/event", "sap/ui/webc/common/thirdparty/base/decorators/slot", "sap/ui/webc/common/thirdparty/base/delegate/ItemNavigation", "sap/ui/webc/common/thirdparty/base/renderer/LitRenderer", "sap/ui/webc/common/thirdparty/base/i18nBundle", "sap/ui/webc/common/thirdparty/base/delegate/ResizeHandler", "sap/ui/webc/common/thirdparty/base/Render", "sap/ui/webc/common/thirdparty/base/Keys", "./generated/i18n/i18n-defaults", "./SegmentedButtonItem", "./types/SegmentedButtonMode", "./generated/templates/SegmentedButtonTemplate.lit", "./generated/themes/SegmentedButton.css"], function (_exports, _UI5Element, _customElement, _property, _event, _slot, _ItemNavigation, _LitRenderer, _i18nBundle, _ResizeHandler, _Render, _Keys, _i18nDefaults, _SegmentedButtonItem, _SegmentedButtonMode, _SegmentedButtonTemplate, _SegmentedButton) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/ui/webc/common/thirdparty/base/decorators/customElement", "sap/ui/webc/common/thirdparty/base/decorators/property", "sap/ui/webc/common/thirdparty/base/decorators/event", "sap/ui/webc/common/thirdparty/base/decorators/slot", "sap/ui/webc/common/thirdparty/base/delegate/ItemNavigation", "sap/ui/webc/common/thirdparty/base/renderer/LitRenderer", "sap/ui/webc/common/thirdparty/base/i18nBundle", "sap/ui/webc/common/thirdparty/base/CustomElementsScope", "sap/ui/webc/common/thirdparty/base/Keys", "./generated/i18n/i18n-defaults", "./SegmentedButtonItem", "./types/SegmentedButtonMode", "./generated/templates/SegmentedButtonTemplate.lit", "./generated/themes/SegmentedButton.css"], function (_exports, _UI5Element, _customElement, _property, _event, _slot, _ItemNavigation, _LitRenderer, _i18nBundle, _CustomElementsScope, _Keys, _i18nDefaults, _SegmentedButtonItem, _SegmentedButtonMode, _SegmentedButtonTemplate, _SegmentedButton) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -12,7 +12,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
   _slot = _interopRequireDefault(_slot);
   _ItemNavigation = _interopRequireDefault(_ItemNavigation);
   _LitRenderer = _interopRequireDefault(_LitRenderer);
-  _ResizeHandler = _interopRequireDefault(_ResizeHandler);
   _SegmentedButtonItem = _interopRequireDefault(_SegmentedButtonItem);
   _SegmentedButtonMode = _interopRequireDefault(_SegmentedButtonMode);
   _SegmentedButtonTemplate = _interopRequireDefault(_SegmentedButtonTemplate);
@@ -26,6 +25,11 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
     return c > 3 && r && Object.defineProperty(target, key, r), r;
   };
   var SegmentedButton_1;
+
+  // Template
+
+  // Styles
+
   /**
    * @class
    *
@@ -59,18 +63,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       this._itemNavigation = new _ItemNavigation.default(this, {
         getItemsCallback: () => this.getSlottedNodes("items")
       });
-      this.absoluteWidthSet = false; // true when component width is set to absolute
-      this.percentageWidthSet = false; // true when component width is set to 100%
       this.hasPreviouslyFocusedItem = false;
-      this._handleResizeBound = this._doLayout.bind(this);
-    }
-    onEnterDOM() {
-      _ResizeHandler.default.register(this.parentNode, this._handleResizeBound);
-    }
-    onExitDOM() {
-      if (this.parentNode) {
-        _ResizeHandler.default.deregister(this.parentNode, this._handleResizeBound);
-      }
     }
     onBeforeRendering() {
       const items = this.getSlottedNodes("items");
@@ -79,23 +72,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         item.sizeOfSet = arr.length;
       });
       this.normalizeSelection();
-    }
-    async onAfterRendering() {
-      await this._doLayout();
-    }
-    prepareToMeasureItems() {
-      this.style.width = "";
-      this.items.forEach(item => {
-        item.style.width = "";
-      });
-    }
-    async measureItemsWidth() {
-      await (0, _Render.renderFinished)();
-      this.prepareToMeasureItems();
-      this.widths = this.items.map(item => {
-        // 1 is added because for width 100.44px the offsetWidth property is 100px and not 101px
-        return item.offsetWidth + 1;
-      });
+      this.style.setProperty((0, _CustomElementsScope.getScopedVarName)("--_ui5_segmented_btn_items_count"), `${items.length}`);
     }
     normalizeSelection() {
       switch (this.mode) {
@@ -180,24 +157,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         this.selectedItems[0].focus();
         this._itemNavigation.setCurrentItem(this.selectedItems[0]);
         this.hasPreviouslyFocusedItem = true;
-      }
-    }
-    async _doLayout() {
-      const itemsHaveWidth = this.widths && this.widths.some(itemWidth => itemWidth > 2); // 2 pixels added for rounding
-      if (!itemsHaveWidth) {
-        await this.measureItemsWidth();
-      }
-      const parentWidth = this.parentNode ? this.parentNode.offsetWidth : 0;
-      if (!this.style.width || this.percentageWidthSet) {
-        this.style.width = `${Math.max(...this.widths) * this.items.length}px`;
-        this.absoluteWidthSet = true;
-      }
-      this.items.forEach(item => {
-        item.style.width = "100%";
-      });
-      if (parentWidth <= this.offsetWidth && this.absoluteWidthSet) {
-        this.style.width = "100%";
-        this.percentageWidthSet = true;
       }
     }
     /**

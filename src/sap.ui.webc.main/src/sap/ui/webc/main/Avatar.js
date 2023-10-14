@@ -6,8 +6,9 @@
 sap.ui.define([
 	"sap/ui/core/webc/WebComponent",
 	"./library",
+	"sap/ui/core/EnabledPropagator",
 	"./thirdparty/Avatar"
-], function(WebComponent, library) {
+], function(WebComponent, library, EnabledPropagator) {
 	"use strict";
 
 	var AvatarColorScheme = library.AvatarColorScheme;
@@ -91,6 +92,42 @@ sap.ui.define([
 				},
 
 				/**
+				 * Defines whether the control is enabled. A disabled control can't be interacted with, and it is not in the tab chain.
+				 */
+				enabled: {
+					type: "boolean",
+					defaultValue: true,
+					mapping: {
+						type: "property",
+						to: "disabled",
+						formatter: "_mapEnabled"
+					}
+				},
+
+				/**
+				 * Defines the name of the fallback icon, which should be displayed in the following cases:
+				 * <ul>
+				 *     <li>If the initials are not valid (more than 3 letters, unsupported languages or empty initials).</li>
+				 *     <li>If there are three initials and they do not fit in the shape (e.g. WWW for some of the sizes).</li>
+				 *     <li>If the image src is wrong.</li>
+				 * </ul>
+				 *
+				 * <br>
+				 * <b>Note:</b> If not set, a default fallback icon "employee" is displayed. <br>
+				 * <b>Note:</b> You should import the desired icon first, then use its name as "fallback-icon". <br>
+				 * <br>
+				 * import "@ui5/webcomponents-icons/dist/{icon_name}.js" <br>
+				 * <pre>&lt;ui5-avatar fallback-icon="alert"></pre> <br>
+				 *
+				 *
+				 * See all the available icons in the {@link demo:sap/m/demokit/iconExplorer/webapp/index.html Icon Explorer}.
+				 */
+				fallbackIcon: {
+					type: "string",
+					defaultValue: ""
+				},
+
+				/**
 				 * Defines the name of the UI5 Icon, that will be displayed. <br>
 				 * <b>Note:</b> If <code>image</code> slot is provided, the property will be ignored. <br>
 				 * <b>Note:</b> You should import the desired icon first, then use its name as "icon". <br>
@@ -116,7 +153,7 @@ sap.ui.define([
 				},
 
 				/**
-				 * Defines if the avatar is interactive (focusable and pressable).
+				 * Defines if the avatar is interactive (focusable and pressable). <b>Note:</b> This property won't have effect if the <code>disabled</code> property is set to <code>true</code>.
 				 */
 				interactive: {
 					type: "boolean",
@@ -198,6 +235,8 @@ sap.ui.define([
 			designtime: "sap/ui/webc/main/designtime/Avatar.designtime"
 		}
 	});
+
+	EnabledPropagator.call(Avatar.prototype);
 
 	/* CUSTOM CODE START */
 	/* CUSTOM CODE END */

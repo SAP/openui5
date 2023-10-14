@@ -4,7 +4,7 @@ sap.ui.define(["exports"], function (_exports) {
   Object.defineProperty(_exports, "__esModule", {
     value: true
   });
-  _exports.isUpShiftCtrl = _exports.isUpShift = _exports.isUpCtrl = _exports.isUpAlt = _exports.isUp = _exports.isTabPrevious = _exports.isTabNext = _exports.isSpaceShift = _exports.isSpaceCtrl = _exports.isSpace = _exports.isShow = _exports.isShift = _exports.isRightShiftCtrl = _exports.isRightShift = _exports.isRightCtrl = _exports.isRight = _exports.isPlus = _exports.isPageUpShiftCtrl = _exports.isPageUpShift = _exports.isPageUpAlt = _exports.isPageUp = _exports.isPageDownShiftCtrl = _exports.isPageDownShift = _exports.isPageDownAlt = _exports.isPageDown = _exports.isMinus = _exports.isLeftShiftCtrl = _exports.isLeftShift = _exports.isLeftCtrl = _exports.isLeft = _exports.isInsertShift = _exports.isInsertCtrl = _exports.isHomeShift = _exports.isHomeCtrl = _exports.isHome = _exports.isF7 = _exports.isF6Previous = _exports.isF6Next = _exports.isF4Shift = _exports.isF4 = _exports.isEscape = _exports.isEnterShift = _exports.isEnter = _exports.isEndShift = _exports.isEndCtrl = _exports.isEnd = _exports.isDownShiftCtrl = _exports.isDownShift = _exports.isDownCtrl = _exports.isDownAlt = _exports.isDown = _exports.isDeleteShift = _exports.isDelete = _exports.isCtrlV = _exports.isCtrlA = _exports.isBackSpace = void 0;
+  _exports.isUpShiftCtrl = _exports.isUpShift = _exports.isUpCtrl = _exports.isUpAlt = _exports.isUp = _exports.isTabPrevious = _exports.isTabNext = _exports.isSpaceShift = _exports.isSpaceCtrl = _exports.isSpace = _exports.isShow = _exports.isShift = _exports.isRightShiftCtrl = _exports.isRightShift = _exports.isRightCtrl = _exports.isRight = _exports.isPlus = _exports.isPageUpShiftCtrl = _exports.isPageUpShift = _exports.isPageUpAlt = _exports.isPageUp = _exports.isPageDownShiftCtrl = _exports.isPageDownShift = _exports.isPageDownAlt = _exports.isPageDown = _exports.isNumber = _exports.isMinus = _exports.isLeftShiftCtrl = _exports.isLeftShift = _exports.isLeftCtrl = _exports.isLeft = _exports.isKeyP = _exports.isKeyA = _exports.isInsertShift = _exports.isInsertCtrl = _exports.isHomeShift = _exports.isHomeCtrl = _exports.isHome = _exports.isF7 = _exports.isF6Previous = _exports.isF6Next = _exports.isF4Shift = _exports.isF4 = _exports.isEscape = _exports.isEnterShift = _exports.isEnter = _exports.isEndShift = _exports.isEndCtrl = _exports.isEnd = _exports.isDownShiftCtrl = _exports.isDownShift = _exports.isDownCtrl = _exports.isDownAlt = _exports.isDown = _exports.isDeleteShift = _exports.isDelete = _exports.isCtrlV = _exports.isCtrlA = _exports.isColon = _exports.isBackSpace = void 0;
   var KeyCodes;
   (function (KeyCodes) {
     KeyCodes[KeyCodes["BACKSPACE"] = 8] = "BACKSPACE";
@@ -97,7 +97,7 @@ sap.ui.define(["exports"], function (_exports) {
     KeyCodes[KeyCodes["F12"] = 123] = "F12";
     KeyCodes[KeyCodes["NUM_LOCK"] = 144] = "NUM_LOCK";
     KeyCodes[KeyCodes["SCROLL_LOCK"] = 145] = "SCROLL_LOCK";
-    KeyCodes[KeyCodes["OPEN_BRACKET"] = 186] = "OPEN_BRACKET";
+    KeyCodes[KeyCodes["COLON"] = 186] = "COLON";
     KeyCodes[KeyCodes["PLUS"] = 187] = "PLUS";
     KeyCodes[KeyCodes["COMMA"] = 188] = "COMMA";
     KeyCodes[KeyCodes["SLASH"] = 189] = "SLASH";
@@ -232,7 +232,15 @@ sap.ui.define(["exports"], function (_exports) {
   _exports.isCtrlA = isCtrlA;
   const isCtrlV = event => (event.key === "V" || event.key === "v" || event.which === KeyCodes.V) && checkModifierKeys(event, true, false, false);
   _exports.isCtrlV = isCtrlV;
+  const isKeyA = event => (event.key === "A" || event.key === "a" || event.which === KeyCodes.A) && checkModifierKeys(event, false, false, false);
+  _exports.isKeyA = isKeyA;
+  const isKeyP = event => (event.key === "P" || event.key === "p" || event.which === KeyCodes.P) && checkModifierKeys(event, false, false, false);
+  _exports.isKeyP = isKeyP;
   const hasModifierKeys = event => event.shiftKey || event.altKey || getCtrlKey(event);
   const getCtrlKey = event => !!(event.metaKey || event.ctrlKey); // double negation doesn't have effect on boolean but ensures null and undefined are equivalent to false.
   const checkModifierKeys = (event, bCtrlKey, bAltKey, bShiftKey) => event.shiftKey === bShiftKey && event.altKey === bAltKey && getCtrlKey(event) === bCtrlKey;
+  const isNumber = event => (event.key ? "0123456789".indexOf(event.key) !== -1 : event.keyCode >= KeyCodes.DIGIT_0 && event.keyCode <= KeyCodes.DIGIT_9) && checkModifierKeys(event, false, false, false);
+  _exports.isNumber = isNumber;
+  const isColon = event => (event.key ? event.key === ":" : event.keyCode === KeyCodes.COLON) && checkModifierKeys(event, false, false, true);
+  _exports.isColon = isColon;
 });

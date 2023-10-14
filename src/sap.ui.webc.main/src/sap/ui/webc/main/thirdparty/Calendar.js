@@ -35,6 +35,13 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/decorators/customE
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
   };
+
+  // Default calendar for bundling
+
+  // Template
+
+  // Styles
+
   /**
    * @class
    *
@@ -210,7 +217,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/decorators/customE
       } else {
         this._headerYearButtonText = String(yearFormat.format(this._localDate, true));
       }
-      this.secondaryCalendarType && this._setSecondaryCalendarTypeButtonText();
+      this._secondaryCalendarType && this._setSecondaryCalendarTypeButtonText();
     }
     /**
      * The user clicked the "month" button in the header
@@ -247,31 +254,31 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/decorators/customE
     _setSecondaryCalendarTypeButtonText() {
       const yearFormatSecType = _DateFormat.default.getDateInstance({
         format: "y",
-        calendarType: this.secondaryCalendarType
+        calendarType: this._secondaryCalendarType
       });
       if (this._currentPicker === "year") {
         const rangeStart = new _CalendarDate.default(this._calendarDate, this._primaryCalendarType);
         const rangeEnd = new _CalendarDate.default(this._calendarDate, this._primaryCalendarType);
         rangeStart.setYear(this._currentPickerDOM._firstYear);
         rangeEnd.setYear(this._currentPickerDOM._lastYear);
-        const rangeStartSecType = (0, _transformDateToSecondaryType.default)(this.primaryCalendarType, this.secondaryCalendarType, rangeStart.valueOf() / 1000, true).firstDate;
-        const rangeEndSecType = (0, _transformDateToSecondaryType.default)(this.primaryCalendarType, this.secondaryCalendarType, rangeEnd.valueOf() / 1000, true).lastDate;
+        const rangeStartSecType = (0, _transformDateToSecondaryType.default)(this.primaryCalendarType, this._secondaryCalendarType, rangeStart.valueOf() / 1000, true).firstDate;
+        const rangeEndSecType = (0, _transformDateToSecondaryType.default)(this.primaryCalendarType, this._secondaryCalendarType, rangeEnd.valueOf() / 1000, true).lastDate;
         this._headerYearButtonTextSecType = `${yearFormatSecType.format(rangeStartSecType.toLocalJSDate(), true)} - ${yearFormatSecType.format(rangeEndSecType.toLocalJSDate(), true)}`;
       } else {
         this._headerYearButtonTextSecType = String(yearFormatSecType.format(this._localDate, true));
       }
     }
     get secondaryCalendarTypeButtonText() {
-      if (!this.secondaryCalendarType) {
+      if (!this._secondaryCalendarType) {
         return;
       }
       const localDate = new Date(this._timestamp * 1000);
       const secondYearFormat = _DateFormat.default.getDateInstance({
         format: "y",
-        calendarType: this.secondaryCalendarType
+        calendarType: this._secondaryCalendarType
       });
-      const dateInSecType = (0, _transformDateToSecondaryType.default)(this._primaryCalendarType, this.secondaryCalendarType, this._timestamp);
-      const secondMonthInfo = (0, _convertMonthNumbersToMonthNames.default)(dateInSecType.firstDate.getMonth(), dateInSecType.lastDate.getMonth(), this.secondaryCalendarType);
+      const dateInSecType = (0, _transformDateToSecondaryType.default)(this._primaryCalendarType, this._secondaryCalendarType, this._timestamp);
+      const secondMonthInfo = (0, _convertMonthNumbersToMonthNames.default)(dateInSecType.firstDate.getMonth(), dateInSecType.lastDate.getMonth(), this._secondaryCalendarType);
       const secondYearText = secondYearFormat.format(localDate, true);
       return {
         yearButtonText: secondYearText,

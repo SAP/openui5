@@ -63,16 +63,11 @@ sap.ui.define([
 		"sap.ui.commons.SearchFieldCB",
 		"sap.ui.commons.Accordion",
 		"sap.ui.core.ComponentContainer",
-		"sap.ui.core.XMLComposite",
 		"sap.ui.core.UIComponent",
-		"sap.ui.core.mvc.HTMLView",
-		"sap.ui.core.mvc.JSONView",
-		"sap.ui.core.mvc.JSView",
 		"sap.ui.core.mvc.XMLView",
-		"sap.ui.core.mvc.TemplateView",
 		"sap.ui.core.mvc.View",
-		"sap.ui.core.tmpl.Template",
-		"sap.m.DateTimeInput", // setting an invalid type crashes and only leaks a picker control because of this
+		// setting an invalid type crashes and only leaks a picker control because of this
+		"sap.m.DateTimeInput",
 		"sap.m.FacetFilterItem",
 		"sap.m.IconTabBarSelectList",
 		"sap.m.LightBox",
@@ -82,14 +77,17 @@ sap.ui.define([
 		"sap.m.QuickViewPage",
 		"sap.m.PlanningCalendar",
 		"sap.f.PlanningCalendarInCard",
-		"sap.m.SelectionDetailsListItem", // not prepared to be used standalone
+		// not prepared to be used standalone
+		"sap.m.SelectionDetailsListItem",
 		"sap.m.TimePickerSlider",
 		"sap.m.TimePickerSliders",
 		"sap.m.Wizard",
 		"sap.tnt.NavigationList",
 		"sap.ui.layout.BlockLayoutRow",
-		"sap.ui.layout.form.ResponsiveGridLayoutPanel", // control not for stand alone usage. Only inside ResponsiveGridLayout
-		"sap.ui.layout.form.ResponsiveLayoutPanel", // control not for stand alone usage. Only inside ResponsiveLayout
+		// control not for stand alone usage. Only inside ResponsiveGridLayout
+		"sap.ui.layout.form.ResponsiveGridLayoutPanel",
+		// control not for stand alone usage. Only inside ResponsiveLayout
+		"sap.ui.layout.form.ResponsiveLayoutPanel",
 		"sap.ui.suite.TaskCircle",
 		"sap.ui.unified.calendar.TimesRow",
 		"sap.ui.unified.CalendarTimeInterval",
@@ -103,7 +101,8 @@ sap.ui.define([
 		"sap.ui.comp.navpopover.SmartLink",
 		"sap.ui.comp.navpopover.SemanticObjectController",
 		"sap.ui.comp.valuehelpdialog.ValueHelpDialog",
-		"sap.ui.mdc.Chart", // destruction fails
+		// destruction fails
+		"sap.ui.mdc.Chart",
 		"sap.chart.Chart",
 		"sap.makit.Chart",
 		"sap.makit.CombinationChart",
@@ -125,7 +124,8 @@ sap.ui.define([
 		"sap.viz.ui5.controls.common.BaseControl",
 		"sap.viz.ui5.controls.VizRangeSlider",
 		"sap.viz.ui5.core.BaseChart",
-		"sap.viz.ui5.VizContainer" // fails when "vizProperties" is set to a primitive value and also for some other property
+		// fails when "vizProperties" is set to a primitive value and also for some other property
+		"sap.viz.ui5.VizContainer"
 	];
 
 	/*

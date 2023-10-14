@@ -9,22 +9,11 @@ sap.ui.define([
 			"sap.ui.core.ComponentContainer": {
 				create: false
 			},
+
 			"sap.ui.core.UIComponent": {
 				create: false
 			},
-			"sap.ui.core.XMLComposite": {
-				create: false
-			},
-			"sap.ui.core.mvc.HTMLView": {
-				create: false,
-				apiVersion: 1
-			},
-			"sap.ui.core.mvc.JSONView": {
-				create: false
-			},
-			"sap.ui.core.mvc.JSView": {
-				create: false
-			},
+
 			"sap.ui.core.mvc.XMLView": {
 				create: function (XMLView, mParameters) {
 					var mParams = mParameters || {};
@@ -34,20 +23,13 @@ sap.ui.define([
 					return XMLView.create(mParams);
 				}
 			},
-			"sap.ui.core.mvc.TemplateView": {
-				create: false
-			},
+
 			"sap.ui.core.mvc.XMLAfterRenderingNotifier": {
 				moduleName: "sap/ui/core/mvc/XMLView"
 			},
+
 			"sap.ui.core.mvc.View": {
 				create: false
-			},
-			"sap.ui.core.tmpl.Template": {
-				create: false
-			},
-			"sap.ui.core.tmpl.TemplateControl": {
-				apiVersion: 1
 			}
 		}
 	});

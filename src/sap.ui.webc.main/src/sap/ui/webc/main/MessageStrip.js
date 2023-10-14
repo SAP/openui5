@@ -47,9 +47,7 @@ sap.ui.define([
 			properties: {
 
 				/**
-				 * Defines the component type. <br>
-				 * <br>
-				 * <b>Note:</b> Available options are <code>"Information"</code>, <code>"Positive"</code>, <code>"Negative"</code>, and <code>"Warning"</code>.
+				 * Defines the component type.
 				 */
 				design: {
 					type: "sap.ui.webc.main.MessageStripDesign",

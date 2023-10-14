@@ -23,6 +23,11 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
     return c > 3 && r && Object.defineProperty(target, key, r), r;
   };
   var Link_1;
+
+  // Template
+
+  // Styles
+
   /**
    * @class
    *
@@ -157,6 +162,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
   __decorate([(0, _property.default)({
     type: Boolean
   })], Link.prototype, "disabled", void 0);
+  __decorate([(0, _property.default)()], Link.prototype, "title", void 0);
   __decorate([(0, _property.default)()], Link.prototype, "href", void 0);
   __decorate([(0, _property.default)()], Link.prototype, "target", void 0);
   __decorate([(0, _property.default)({

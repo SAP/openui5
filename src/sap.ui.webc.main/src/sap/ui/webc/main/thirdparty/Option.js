@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/ui/webc/common/thirdparty/base/decorators/customElement", "sap/ui/webc/common/thirdparty/base/decorators/property"], function (_exports, _UI5Element, _customElement, _property) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/ui/webc/common/thirdparty/base/decorators/customElement", "sap/ui/webc/common/thirdparty/base/decorators/slot", "sap/ui/webc/common/thirdparty/base/decorators/property"], function (_exports, _UI5Element, _customElement, _slot, _property) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -7,6 +7,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
   _exports.default = void 0;
   _UI5Element = _interopRequireDefault(_UI5Element);
   _customElement = _interopRequireDefault(_customElement);
+  _slot = _interopRequireDefault(_slot);
   _property = _interopRequireDefault(_property);
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
   var __decorate = void 0 && (void 0).__decorate || function (decorators, target, key, desc) {
@@ -27,21 +28,12 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
    * @author SAP SE
    * @alias sap.ui.webc.main.Option
    * @extends sap.ui.webc.base.UI5Element
+   * @abstract
    * @tagname ui5-option
    * @implements sap.ui.webc.main.ISelectOption
    * @public
    */
   let Option = class Option extends _UI5Element.default {
-    /**
-     * Defines the text of the component.
-     * <br><br>
-     * <b>Note:</b> Although this slot accepts HTML Elements, it is strongly recommended that you only use text in order to preserve the intended design.
-     *
-     * @type {Node[]}
-     * @name sap.ui.webc.main.Option.prototype.default
-     * @slot
-     * @public
-     */
     get stableDomRef() {
       return this.getAttribute("stable-dom-ref") || `${this._id}-stable-dom-ref`;
     }
@@ -61,6 +53,11 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
   __decorate([(0, _property.default)({
     type: Boolean
   })], Option.prototype, "_focused", void 0);
+  __decorate([(0, _slot.default)({
+    type: Node,
+    "default": true,
+    invalidateOnChildChange: true
+  })], Option.prototype, "text", void 0);
   Option = __decorate([(0, _customElement.default)("ui5-option")], Option);
   Option.define();
   var _default = Option;

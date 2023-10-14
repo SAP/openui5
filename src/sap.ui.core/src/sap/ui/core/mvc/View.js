@@ -1013,7 +1013,7 @@ sap.ui.define([
 	 * See also the API references for the specific view factories:
 	 * <ul>
 	 * <li>{@link sap.ui.core.mvc.XMLView.create}</li>
-	 * <li>{@link sap.ui.core.mvc.JSONView.create}</li>
+	 * <li>{@link sap.ui.core.mvc.JSONView.create} (deprecated)</li>
 	 * <li>{@link sap.ui.core.mvc.HTMLView.create} (deprecated)</li>
 	 * </ul>
 	 *
@@ -1195,11 +1195,14 @@ sap.ui.define([
 		}
 		if (!oViewSettings.type) {
 			throw new Error("No view type specified.");
-		} else if (oViewSettings.type === ViewType.JSON) {
-			sViewClass = 'sap/ui/core/mvc/JSONView';
-		} else if (oViewSettings.type === ViewType.XML) {
-			sViewClass = 'sap/ui/core/mvc/XMLView';
-		} else { // unknown view type
+		}
+
+		if (oViewSettings.type === ViewType.XML) {
+			return 'sap/ui/core/mvc/XMLView';
+		}
+
+		// unknown view type
+		if (!sViewClass) {
 			throw new Error("Unknown view type " + oViewSettings.type + " specified.");
 		}
 
@@ -1325,7 +1328,7 @@ sap.ui.define([
 	/**
 	 * A method to be implemented by typed <code>View</code>s, returning the view UI.
 	 *
-	 * While for declarative view types like <code>XMLView</code> or <code>JSONView</code> the user interface definition
+	 * While for declarative view types like <code>XMLView</code> or <code>JSONView</code> (deprecated) the user interface definition
 	 * is declared in a separate file, <code>View</code>s programmatically constructs the UI. This happens in the
 	 * <code>createContent</code> method, which every <code>View</code> needs to implement. The view implementation
 	 * can construct the complete UI in this method, or only return the root control and create the remainder of the UI

@@ -13,7 +13,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/T
   const styleData = {
     packageName: "@ui5/webcomponents",
     fileName: "themes/DatePickerPopover.css",
-    content: "[ui5-calendar] {\n\twidth: 100%;\n\tdisplay: flex;\n\tjustify-content: center;\n}\n\n[ui5-responsive-popover]::part(content) {\n    padding: 0;\n}\n"
+    content: "[ui5-calendar]{display:flex;justify-content:center;width:100%}[ui5-responsive-popover]::part(content){padding:0}"
   };
   var _default = styleData;
   _exports.default = _default;

@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/ui/webc/common/thirdparty/base/decorators/customElement", "sap/ui/webc/common/thirdparty/base/decorators/property", "sap/ui/webc/common/thirdparty/base/decorators/event", "sap/ui/webc/common/thirdparty/base/decorators/slot", "sap/ui/webc/common/thirdparty/base/renderer/LitRenderer", "sap/ui/webc/common/thirdparty/base/Keys", "sap/ui/webc/common/thirdparty/base/util/InvisibleMessage", "sap/ui/webc/common/thirdparty/base/FeaturesRegistry", "sap/ui/webc/common/thirdparty/base/util/AriaLabelHelper", "sap/ui/webc/common/thirdparty/base/types/ValueState", "sap/ui/webc/common/thirdparty/icons/slim-arrow-down", "sap/ui/webc/common/thirdparty/icons/error", "sap/ui/webc/common/thirdparty/icons/alert", "sap/ui/webc/common/thirdparty/icons/sys-enter-2", "sap/ui/webc/common/thirdparty/icons/information", "sap/ui/webc/common/thirdparty/base/Device", "sap/ui/webc/common/thirdparty/base/i18nBundle", "sap/ui/webc/common/thirdparty/icons/decline", "sap/ui/webc/common/thirdparty/base/types/Integer", "sap/ui/webc/common/thirdparty/base/types/InvisibleMessageMode", "./List", "./generated/i18n/i18n-defaults", "./Option", "./Label", "./ResponsivePopover", "./Popover", "./StandardListItem", "./Icon", "./Button", "./generated/templates/SelectTemplate.lit", "./generated/templates/SelectPopoverTemplate.lit", "./generated/themes/Select.css", "./generated/themes/ResponsivePopoverCommon.css", "./generated/themes/ValueStateMessage.css", "./generated/themes/SelectPopover.css"], function (_exports, _UI5Element, _customElement, _property, _event, _slot, _LitRenderer, _Keys, _InvisibleMessage, _FeaturesRegistry, _AriaLabelHelper, _ValueState, _slimArrowDown, _error, _alert, _sysEnter, _information, _Device, _i18nBundle, _decline, _Integer, _InvisibleMessageMode, _List, _i18nDefaults, _Option, _Label, _ResponsivePopover, _Popover, _StandardListItem, _Icon, _Button, _SelectTemplate, _SelectPopoverTemplate, _Select, _ResponsivePopoverCommon, _ValueStateMessage, _SelectPopover) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/ui/webc/common/thirdparty/base/decorators/customElement", "sap/ui/webc/common/thirdparty/base/decorators/property", "sap/ui/webc/common/thirdparty/base/decorators/event", "sap/ui/webc/common/thirdparty/base/decorators/slot", "sap/ui/webc/common/thirdparty/base/renderer/LitRenderer", "sap/ui/webc/common/thirdparty/base/connectToComponent", "sap/ui/webc/common/thirdparty/base/Keys", "sap/ui/webc/common/thirdparty/base/types/DOMReference", "sap/ui/webc/common/thirdparty/base/util/InvisibleMessage", "sap/ui/webc/common/thirdparty/base/FeaturesRegistry", "sap/ui/webc/common/thirdparty/base/util/AriaLabelHelper", "sap/ui/webc/common/thirdparty/base/types/ValueState", "sap/ui/webc/common/thirdparty/icons/slim-arrow-down", "sap/ui/webc/common/thirdparty/icons/error", "sap/ui/webc/common/thirdparty/icons/alert", "sap/ui/webc/common/thirdparty/icons/sys-enter-2", "sap/ui/webc/common/thirdparty/icons/information", "sap/ui/webc/common/thirdparty/base/Device", "sap/ui/webc/common/thirdparty/base/i18nBundle", "sap/ui/webc/common/thirdparty/icons/decline", "sap/ui/webc/common/thirdparty/base/types/Integer", "sap/ui/webc/common/thirdparty/base/types/InvisibleMessageMode", "sap/ui/webc/common/thirdparty/base/CustomElementsScope", "./List", "./generated/i18n/i18n-defaults", "./Option", "./Label", "./ResponsivePopover", "./Popover", "./StandardListItem", "./Icon", "./Button", "./generated/templates/SelectTemplate.lit", "./generated/templates/SelectPopoverTemplate.lit", "./generated/themes/Select.css", "./generated/themes/ResponsivePopoverCommon.css", "./generated/themes/ValueStateMessage.css", "./generated/themes/SelectPopover.css"], function (_exports, _UI5Element, _customElement, _property, _event, _slot, _LitRenderer, _connectToComponent, _Keys, _DOMReference, _InvisibleMessage, _FeaturesRegistry, _AriaLabelHelper, _ValueState, _slimArrowDown, _error, _alert, _sysEnter, _information, _Device, _i18nBundle, _decline, _Integer, _InvisibleMessageMode, _CustomElementsScope, _List, _i18nDefaults, _Option, _Label, _ResponsivePopover, _Popover, _StandardListItem, _Icon, _Button, _SelectTemplate, _SelectPopoverTemplate, _Select, _ResponsivePopoverCommon, _ValueStateMessage, _SelectPopover) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -11,6 +11,8 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
   _event = _interopRequireDefault(_event);
   _slot = _interopRequireDefault(_slot);
   _LitRenderer = _interopRequireDefault(_LitRenderer);
+  _connectToComponent = _interopRequireDefault(_connectToComponent);
+  _DOMReference = _interopRequireDefault(_DOMReference);
   _InvisibleMessage = _interopRequireDefault(_InvisibleMessage);
   _ValueState = _interopRequireDefault(_ValueState);
   _Integer = _interopRequireDefault(_Integer);
@@ -38,12 +40,37 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
     return c > 3 && r && Object.defineProperty(target, key, r), r;
   };
   var Select_1;
+
+  // Templates
+
+  // Styles
+
   /**
    * @class
    *
    * <h3 class="comment-api-title">Overview</h3>
+   *
    * The <code>ui5-select</code> component is used to create a drop-down list.
-   * The items inside the <code>ui5-select</code> define the available options by using the <code>ui5-option</code> component.
+   *
+   * <h3>Usage</h3>
+   *
+   * There are two main usages of the <code>ui5-select></code>.
+   *
+   * 1. With Option (<code>ui5-option</code>) web component:
+   * <br>
+   * The available options of the Select are defined by using the Option component.
+   * The Option comes with predefined design and layout, including <code>icon</code>, <code>text</code> and <code>additional-text</code>.
+   * <br><br>
+   *
+   * 2. With SelectMenu (<code>ui5-select-menu</code>) and SelectMenuOption (<code>ui5-select-menu-option</code>) web components:
+   * <br>
+   * The SelectMenu can be used as alternative to define the Select's dropdown
+   * and can be used via the <code>menu</code> property of the Select to reference SelectMenu by its ID.
+   * The component gives the possibility to customize the Select's dropdown
+   * by slotting entirely custom options (via the SelectMenuOption component) and adding custom styles.
+   *
+   * <b>Note:</b> SelectMenu is a popover and placing it top-level in the HTML page is recommended,
+   * because some page styles (for example transitions) can misplace the SelectMenu.
    *
    * <h3>Keyboard Handling</h3>
    * The <code>ui5-select</code> provides advanced keyboard handling.
@@ -67,7 +94,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
    * @alias sap.ui.webc.main.Select
    * @extends sap.ui.webc.base.UI5Element
    * @tagname ui5-select
-   * @appenddocs sap.ui.webc.main.Option
+   * @appenddocs sap.ui.webc.main.Option sap.ui.webc.main.SelectMenu sap.ui.webc.main.SelectMenuOption
    * @public
    * @since 0.8.0
    */
@@ -75,16 +102,27 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
     constructor() {
       super();
       this._syncedOptions = [];
-      this._selectedIndex = -1;
       this._selectedIndexBeforeOpen = -1;
       this._escapePressed = false;
       this._lastSelectedOption = null;
       this._typedChars = "";
+      this._onMenuClick = this.onMenuClick.bind(this);
+      this._onMenuClose = this.onMenuClose.bind(this);
+      this._onMenuOpen = this.onMenuOpen.bind(this);
+      this._onMenuBeforeOpen = this.onMenuBeforeOpen.bind(this);
+      this._onMenuChange = this.onMenuChange.bind(this);
+      this._attachMenuListeners = this.attachMenuListeners.bind(this);
+      this._detachMenuListeners = this.detachMenuListeners.bind(this);
     }
     onBeforeRendering() {
-      this._syncSelection();
+      const menu = this._getSelectMenu();
+      if (menu) {
+        menu.value = this.value;
+      } else {
+        this._syncSelection();
+      }
       this._enableFormSupport();
-      this.style.setProperty("--_ui5-input-icons-count", `${this.iconsCount}`);
+      this.style.setProperty((0, _CustomElementsScope.getScopedVarName)("--_ui5-input-icons-count"), `${this.iconsCount}`);
     }
     onAfterRendering() {
       this.toggleValueStatePopover(this.shouldOpenValueStateMessagePopover);
@@ -102,6 +140,10 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       this.focused = false;
     }
     get _isPickerOpen() {
+      const menu = this._getSelectMenu();
+      if (menu) {
+        return menu.open;
+      }
       return !!this.responsivePopover && this.responsivePopover.opened;
     }
     async _respPopover() {
@@ -116,14 +158,53 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
      * @public
      */
     get selectedOption() {
-      return this._filteredItems.find(option => option.selected);
+      return this.selectOptions.find(option => option.selected);
+    }
+    onMenuClick(e) {
+      const optionIndex = e.detail.optionIndex;
+      this._handleSelectionChange(optionIndex);
+    }
+    onMenuBeforeOpen() {
+      this._beforeOpen();
+    }
+    onMenuOpen() {
+      this._afterOpen();
+    }
+    onMenuClose() {
+      this._afterClose();
+    }
+    onMenuChange(e) {
+      this._text = e.detail.text;
+      this._selectedIndex = e.detail.selectedIndex;
+    }
+    _toggleSelectMenu() {
+      const menu = this._getSelectMenu();
+      if (!menu) {
+        return;
+      }
+      if (menu.open) {
+        menu.close();
+      } else {
+        menu.showAt(this, this.offsetWidth);
+      }
+    }
+    onExitDOM() {
+      const menu = this._getSelectMenu();
+      if (menu) {
+        this._detachMenuListeners(menu);
+      }
     }
     async _toggleRespPopover() {
-      this._iconPressed = true;
-      this.responsivePopover = await this._respPopover();
       if (this.disabled) {
         return;
       }
+      this._iconPressed = true;
+      const menu = this._getSelectMenu();
+      if (menu) {
+        this._toggleSelectMenu();
+        return;
+      }
+      this.responsivePopover = await this._respPopover();
       if (this._isPickerOpen) {
         this.responsivePopover.close();
       } else {
@@ -183,6 +264,32 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       }
       this._syncedOptions = syncOpts;
     }
+    _getSelectMenu() {
+      return (0, _connectToComponent.default)({
+        host: this,
+        propName: "menu",
+        onConnect: this._attachMenuListeners,
+        onDisconnect: this._detachMenuListeners
+      });
+    }
+    attachMenuListeners(menu) {
+      menu.addEventListener("ui5-after-close", this._onMenuClose);
+      menu.addEventListener("ui5-after-open", this._onMenuOpen);
+      menu.addEventListener("ui5-before-open", this._onMenuBeforeOpen);
+      // @ts-ignore
+      menu.addEventListener("ui5-option-click", this._onMenuClick);
+      // @ts-ignore
+      menu.addEventListener("ui5-menu-change", this._onMenuChange);
+    }
+    detachMenuListeners(menu) {
+      menu.removeEventListener("ui5-after-close", this._onMenuClose);
+      menu.removeEventListener("ui5-after-open", this._onMenuOpen);
+      menu.removeEventListener("ui5-before-open", this._onMenuBeforeOpen);
+      // @ts-ignore
+      menu.removeEventListener("ui5-option-click", this._onMenuClick);
+      // @ts-ignore
+      menu.removeEventListener("ui5-menu-change", this._onMenuChange);
+    }
     _enableFormSupport() {
       const formSupport = (0, _FeaturesRegistry.getFeature)("FormSupport");
       if (formSupport) {
@@ -198,10 +305,14 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
 
     _onkeydown(e) {
       const isTab = (0, _Keys.isTabNext)(e) || (0, _Keys.isTabPrevious)(e);
-      if (isTab && this.responsivePopover && this.responsivePopover.opened) {
-        this.responsivePopover.close();
-      }
-      if ((0, _Keys.isShow)(e)) {
+      if (isTab && this._isPickerOpen) {
+        const menu = this._getSelectMenu();
+        if (menu) {
+          menu.close(false, false, true /* preventFocusRestore */);
+        } else {
+          this.responsivePopover.close();
+        }
+      } else if ((0, _Keys.isShow)(e)) {
         e.preventDefault();
         this._toggleRespPopover();
       } else if ((0, _Keys.isSpace)(e)) {
@@ -239,7 +350,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       const currentIndex = this._selectedIndex;
       const itemToSelect = this._searchNextItemByText(text);
       if (itemToSelect) {
-        const nextIndex = this._filteredItems.indexOf(itemToSelect);
+        const nextIndex = this.selectOptions.indexOf(itemToSelect);
         this._changeSelectedItem(this._selectedIndex, nextIndex);
         if (currentIndex !== this._selectedIndex) {
           this.itemSelectionAnnounce();
@@ -247,18 +358,18 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       }
     }
     _searchNextItemByText(text) {
-      let orderedOptions = this._filteredItems.slice(0);
+      let orderedOptions = this.selectOptions.slice(0);
       const optionsAfterSelected = orderedOptions.splice(this._selectedIndex + 1, orderedOptions.length - this._selectedIndex);
       const optionsBeforeSelected = orderedOptions.splice(0, orderedOptions.length - 1);
       orderedOptions = optionsAfterSelected.concat(optionsBeforeSelected);
-      return orderedOptions.find(option => (option.textContent || "").toLowerCase().startsWith(text));
+      return orderedOptions.find(option => (option.displayText || option.textContent || "").toLowerCase().startsWith(text));
     }
     _handleHomeKey(e) {
       e.preventDefault();
       this._changeSelectedItem(this._selectedIndex, 0);
     }
     _handleEndKey(e) {
-      const lastIndex = this._filteredItems.length - 1;
+      const lastIndex = this.selectOptions.length - 1;
       e.preventDefault();
       this._changeSelectedItem(this._selectedIndex, lastIndex);
     }
@@ -272,12 +383,17 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       }
     }
     _getSelectedItemIndex(item) {
-      return this._filteredItems.findIndex(option => `${option._id}-li` === item.id);
+      return this.selectOptions.findIndex(option => `${option._id}-li` === item.id);
     }
     _select(index) {
-      this._filteredItems[this._selectedIndex].selected = false;
+      this.selectOptions[this._selectedIndex].selected = false;
+      if (this._selectedIndex !== index) {
+        this.fireEvent("live-change", {
+          selectedOption: this.selectOptions[index]
+        });
+      }
       this._selectedIndex = index;
-      this._filteredItems[index].selected = true;
+      this.selectOptions[index].selected = true;
     }
     /**
      * The user clicked on an item from the list
@@ -304,6 +420,18 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       this._select(index);
       this._toggleRespPopover();
     }
+    _scrollSelectedItem() {
+      if (this._isPickerOpen) {
+        const itemRef = this._currentlySelectedOption?.getDomRef();
+        if (itemRef) {
+          itemRef.scrollIntoView({
+            behavior: "auto",
+            block: "nearest",
+            inline: "nearest"
+          });
+        }
+      }
+    }
     _handleArrowNavigation(e) {
       let nextIndex = -1;
       const currentIndex = this._selectedIndex;
@@ -320,21 +448,33 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         // The aria-activedescendents attribute can't be used,
         // because listitem elements are in different shadow dom
         this.itemSelectionAnnounce();
+        this._scrollSelectedItem();
       }
     }
     _changeSelectedItem(oldIndex, newIndex) {
-      const options = this._filteredItems;
-      options[oldIndex].selected = false;
-      options[oldIndex]._focused = false;
-      options[newIndex].selected = true;
-      options[newIndex]._focused = true;
+      const options = this.selectOptions;
+      const previousOption = options[oldIndex];
+      previousOption.selected = false;
+      previousOption._focused = false;
+      previousOption.focused = false;
+      const nextOption = options[newIndex];
+      nextOption.selected = true;
+      nextOption._focused = true;
+      nextOption.focused = true;
       this._selectedIndex = newIndex;
+      this.fireEvent("live-change", {
+        selectedOption: nextOption
+      });
       if (!this._isPickerOpen) {
         // arrow pressed on closed picker - do selection change
-        this._fireChangeEvent(options[newIndex]);
+        this._fireChangeEvent(nextOption);
       }
     }
     _getNextOptionIndex() {
+      const menu = this._getSelectMenu();
+      if (menu) {
+        return this._selectedIndex === menu.options.length - 1 ? this._selectedIndex : this._selectedIndex + 1;
+      }
       return this._selectedIndex === this.options.length - 1 ? this._selectedIndex : this._selectedIndex + 1;
     }
     _getPreviousOptionIndex() {
@@ -342,12 +482,13 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
     }
     _beforeOpen() {
       this._selectedIndexBeforeOpen = this._selectedIndex;
-      this._lastSelectedOption = this._filteredItems[this._selectedIndex];
+      this._lastSelectedOption = this.selectOptions[this._selectedIndex];
     }
     _afterOpen() {
       this.opened = true;
       this.fireEvent("open");
       this.itemSelectionAnnounce();
+      this._scrollSelectedItem();
     }
     _afterClose() {
       this.opened = false;
@@ -356,11 +497,21 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       if (this._escapePressed) {
         this._select(this._selectedIndexBeforeOpen);
         this._escapePressed = false;
-      } else if (this._lastSelectedOption !== this._filteredItems[this._selectedIndex]) {
-        this._fireChangeEvent(this._filteredItems[this._selectedIndex]);
-        this._lastSelectedOption = this._filteredItems[this._selectedIndex];
+      } else if (this._lastSelectedOption !== this.selectOptions[this._selectedIndex]) {
+        this._fireChangeEvent(this.selectOptions[this._selectedIndex]);
+        this._lastSelectedOption = this.selectOptions[this._selectedIndex];
       }
       this.fireEvent("close");
+    }
+    get selectOptions() {
+      const menu = this._getSelectMenu();
+      if (menu) {
+        return menu.options;
+      }
+      return this._filteredItems;
+    }
+    get hasCustomLabel() {
+      return !!this.label.length;
     }
     _fireChangeEvent(selectedOption) {
       const changePrevented = !this.fireEvent("change", {
@@ -418,7 +569,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       return Select_1.i18nBundle.getText(_i18nDefaults.INPUT_SUGGESTIONS_TITLE);
     }
     get _currentlySelectedOption() {
-      return this._filteredItems[this._selectedIndex];
+      return this.selectOptions[this._selectedIndex];
     }
     get _effectiveTabIndex() {
       return this.disabled || this.responsivePopover // Handles focus on Tab/Shift + Tab when the popover is opened
@@ -493,7 +644,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
     }
     itemSelectionAnnounce() {
       let text;
-      const optionsCount = this._filteredItems.length;
+      const optionsCount = this.selectOptions.length;
       const itemPositionText = Select_1.i18nBundle.getText(_i18nDefaults.LIST_ITEM_POSITION, this._selectedIndex + 1, optionsCount);
       if (this.focused && this._currentlySelectedOption) {
         text = `${this._currentlySelectedOption.textContent} ${this._isPickerOpen ? itemPositionText : ""}`;
@@ -528,6 +679,9 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
     }
   };
   __decorate([(0, _property.default)({
+    validator: _DOMReference.default
+  })], Select.prototype, "menu", void 0);
+  __decorate([(0, _property.default)({
     type: Boolean
   })], Select.prototype, "disabled", void 0);
   __decorate([(0, _property.default)()], Select.prototype, "name", void 0);
@@ -559,6 +713,11 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
   __decorate([(0, _property.default)({
     type: Boolean
   })], Select.prototype, "focused", void 0);
+  __decorate([(0, _property.default)({
+    validator: _Integer.default,
+    defaultValue: -1,
+    noAttribute: true
+  })], Select.prototype, "_selectedIndex", void 0);
   __decorate([(0, _slot.default)({
     "default": true,
     type: HTMLElement,
@@ -566,6 +725,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
   })], Select.prototype, "options", void 0);
   __decorate([(0, _slot.default)()], Select.prototype, "formSupport", void 0);
   __decorate([(0, _slot.default)()], Select.prototype, "valueStateMessage", void 0);
+  __decorate([(0, _slot.default)()], Select.prototype, "label", void 0);
   Select = Select_1 = __decorate([(0, _customElement.default)({
     tag: "ui5-select",
     languageAware: true,
@@ -586,6 +746,21 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
    */, (0, _event.default)("change", {
     detail: {
       selectedOption: {
+        type: HTMLElement
+      }
+    }
+  })
+  /**
+   * Fired when the user navigates through the options, but the selection is not finalized,
+   * or when pressing the ESC key to revert the current selection.
+   *
+   * @event sap.ui.webc.main.Select#live-change
+   * @param {HTMLElement} selectedOption the selected option.
+   * @public
+   * @since 1.17.0
+   */, (0, _event.default)("live-change", {
+    detail: {
+      option: {
         type: HTMLElement
       }
     }

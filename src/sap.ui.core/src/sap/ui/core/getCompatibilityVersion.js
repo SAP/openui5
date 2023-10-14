@@ -37,7 +37,7 @@ sap.ui.define([
 	 * @public
 	 */
 	const fnGetCompatibilityVersion = (sFeature) => {
-		const PARAM_CVERS = "sapUiCompatversion";
+		const PARAM_CVERS = "sapUiCompatVersion";
 		const DEFAULT_CVERS = BaseConfig.get({
 			name: PARAM_CVERS,
 			type: BaseConfig.Type.String

@@ -29,7 +29,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/renderer/LitRender
     return (0, _LitRenderer.html)`${!this.hideNoData ? block7.call(this, context, tags, suffix) : undefined}`;
   }
   function block7(context, tags, suffix) {
-    return (0, _LitRenderer.html)`<tr class="ui5-table-no-data-row-root"><td colspan="${(0, _LitRenderer.ifDefined)(this.visibleColumnsCount)}" role="cell"><div class="ui5-table-no-data-row"><span>${(0, _LitRenderer.ifDefined)(this.noDataText)}</span></div></td></tr>`;
+    return (0, _LitRenderer.html)`<tr class="ui5-table-no-data-row-root"><td colspan="${(0, _LitRenderer.ifDefined)(this.visibleColumnsCount)}" role="cell" style="width: 100%"><div class="ui5-table-no-data-row"><span>${(0, _LitRenderer.ifDefined)(this.noDataText)}</span></div></td></tr>`;
   }
   function block8(context, tags, suffix) {
     return (0, _LitRenderer.html)`<tr><td colspan="${(0, _LitRenderer.ifDefined)(this.visibleColumnsCount)}"><div growing-button><div id="${(0, _LitRenderer.ifDefined)(this._id)}-growingButton" tabindex="0" role="button" aria-labelledby="${(0, _LitRenderer.ifDefined)(this.loadMoreAriaLabelledBy)}" ?active="${this._loadMoreActive}" @click="${this._onLoadMoreClick}" @keydown="${this._onLoadMoreKeydown}" @keyup="${this._onLoadMoreKeyup}" growing-button-inner><span id="${(0, _LitRenderer.ifDefined)(this._id)}-growingButton-text" growing-button-text>${(0, _LitRenderer.ifDefined)(this._growingButtonText)}</span>${this.growingButtonSubtext ? block9.call(this, context, tags, suffix) : undefined}</div></div></td></tr>`;

@@ -155,14 +155,7 @@ sap.ui.define([
 				},
 
 				/**
-				 * Defines the mode of the component. <br>
-				 * <br>
-				 * Available options are:
-				 * <ul>
-				 *     <li><code>MultiSelect</code></li>
-				 *     <li><code>SingleSelect</code></li>
-				 *     <li><code>None</code></li>
-				 *     <ul>
+				 * Defines the mode of the component.
 				 */
 				mode: {
 					type: "sap.ui.webc.main.TableMode",

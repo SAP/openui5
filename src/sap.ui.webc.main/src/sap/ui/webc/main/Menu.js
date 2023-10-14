@@ -157,9 +157,10 @@ sap.ui.define([
 				},
 
 				/**
-				 * Fired when an item is being clicked.
+				 * Fired when an item is being clicked. <b>Note:</b> Since 1.17.0 the event is preventable, allowing the menu to remain open after an item is pressed.
 				 */
 				itemClick: {
+					allowPreventDefault: true,
 					parameters: {
 						/**
 						 * The currently clicked menu item.

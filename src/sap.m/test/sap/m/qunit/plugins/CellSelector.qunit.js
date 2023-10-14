@@ -14,8 +14,9 @@ sap.ui.define([
 	"sap/ui/table/rowmodes/Fixed",
 	"sap/m/Text",
 	"sap/ui/core/dnd/DragDropInfo",
+	"sap/ui/core/dnd/DropInfo",
 	"sap/m/Dialog"
-], function (Core, qutils, KeyCodes, CellSelector, GridTable, ODataModel, MockServer, GridColumn, GridFixedRowMode, Text, DragDropInfo, Dialog) {
+], function (Core, qutils, KeyCodes, CellSelector, GridTable, ODataModel, MockServer, GridColumn, GridFixedRowMode, Text, DragDropInfo, DropInfo, Dialog) {
 	"use strict";
 
 	const sServiceURI = "/service/";
@@ -121,7 +122,20 @@ sap.ui.define([
 			assert.equal(oSelectCellsSpy.callCount, 1, "Cells have been selected");
 			assert.deepEqual(this.oCellSelector.getSelectionRange(), {from: {rowIndex: 1, colIndex: 0}, to: {rowIndex: 1, colIndex: 0}});
 
+			this.oCellSelector.removeSelection();
+
 			oSelectCellsSpy.reset();
+
+			const oDropInfo = new DropInfo({
+				targetAggregation: "rows",
+				enabled: true
+			});
+			this.oTable.addDragDropConfig(oDropInfo);
+
+			qutils.triggerKeydown(oCell, KeyCodes.SPACE); // select first cell of first row
+			assert.equal(oSelectCellsSpy.callCount, 1, "Cells have been selected");
+			assert.deepEqual(this.oCellSelector.getSelectionRange(), {from: {rowIndex: 1, colIndex: 0}, to: {rowIndex: 1, colIndex: 0}});
+
 			done();
 		});
 	});

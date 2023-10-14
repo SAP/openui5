@@ -281,9 +281,7 @@ sap.ui.define(["exports", "../Keys", "../util/getActiveElement", "../types/Navig
     _focusCurrentItem() {
       const currentItem = this._getCurrentItem();
       if (currentItem) {
-        currentItem.focus({
-          focusVisible: true
-        });
+        currentItem.focus();
       }
     }
     _canNavigate() {
@@ -315,7 +313,7 @@ sap.ui.define(["exports", "../Keys", "../util/getActiveElement", "../types/Navig
         return;
       }
       if (currentItem.id) {
-        return currentItemDOMRef.querySelector(`#${currentItem.id}`);
+        return currentItemDOMRef.querySelector(`[id="${currentItem.id}"]`);
       }
     }
   }

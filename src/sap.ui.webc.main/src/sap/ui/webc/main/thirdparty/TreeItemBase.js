@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/decorators/property", "sap/ui/webc/common/thirdparty/base/decorators/customElement", "sap/ui/webc/common/thirdparty/base/decorators/slot", "sap/ui/webc/common/thirdparty/base/decorators/event", "sap/ui/webc/common/thirdparty/base/types/Integer", "sap/ui/webc/common/thirdparty/base/Keys", "sap/ui/webc/common/thirdparty/base/i18nBundle", "sap/ui/webc/common/thirdparty/base/types/ValueState", "./ListItem", "./Icon", "sap/ui/webc/common/thirdparty/icons/navigation-right-arrow", "sap/ui/webc/common/thirdparty/icons/navigation-down-arrow", "./generated/i18n/i18n-defaults", "./generated/templates/TreeItemBaseTemplate.lit", "./generated/themes/TreeItem.css", "./types/HasPopup"], function (_exports, _property, _customElement, _slot, _event, _Integer, _Keys, _i18nBundle, _ValueState, _ListItem, _Icon, _navigationRightArrow, _navigationDownArrow, _i18nDefaults, _TreeItemBaseTemplate, _TreeItem, _HasPopup) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/decorators/property", "sap/ui/webc/common/thirdparty/base/decorators/customElement", "sap/ui/webc/common/thirdparty/base/decorators/slot", "sap/ui/webc/common/thirdparty/base/decorators/event", "sap/ui/webc/common/thirdparty/base/types/Integer", "sap/ui/webc/common/thirdparty/base/Keys", "sap/ui/webc/common/thirdparty/base/i18nBundle", "sap/ui/webc/common/thirdparty/base/types/ValueState", "sap/ui/webc/common/thirdparty/base/CustomElementsScope", "./ListItem", "./Icon", "sap/ui/webc/common/thirdparty/icons/navigation-right-arrow", "sap/ui/webc/common/thirdparty/icons/navigation-down-arrow", "./generated/i18n/i18n-defaults", "./generated/templates/TreeItemBaseTemplate.lit", "./generated/themes/TreeItem.css", "./types/HasPopup"], function (_exports, _property, _customElement, _slot, _event, _Integer, _Keys, _i18nBundle, _ValueState, _CustomElementsScope, _ListItem, _Icon, _navigationRightArrow, _navigationDownArrow, _i18nDefaults, _TreeItemBaseTemplate, _TreeItem, _HasPopup) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -25,6 +25,11 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/decorators/propert
     return c > 3 && r && Object.defineProperty(target, key, r), r;
   };
   var TreeItemBase_1;
+
+  // Template
+
+  // Styles
+
   /**
    * A class to serve as a foundation
    * for the <code>TreeItem</code> and <code>TreeItemCustom</code> classes.
@@ -49,7 +54,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/decorators/propert
     get styles() {
       return {
         preContent: {
-          "padding-inline-start": `calc(var(--_ui5-tree-indent-step) * ${this.effectiveLevel})`
+          "padding-inline-start": `calc(var(${(0, _CustomElementsScope.getScopedVarName)("--_ui5-tree-indent-step")}) * ${this.effectiveLevel})`
         }
       };
     }

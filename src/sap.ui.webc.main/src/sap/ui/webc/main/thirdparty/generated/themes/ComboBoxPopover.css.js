@@ -13,7 +13,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/T
   const styleData = {
     packageName: "@ui5/webcomponents",
     fileName: "themes/ComboBoxPopover.css",
-    content: ".ui5-combobox-busy {\n\tposition: absolute;\n\tleft: 50%;\n\ttop: 50%;\n\ttransform: translate(-50%,-50%);\n\tz-index: 42;\n\twidth: 100%;\n\theight: 100%;\n\tdisplay: flex;\n\tjustify-content: center;\n\talign-items: center;\n\tpointer-events: all;\n}\n\n.ui5-combobox-busy:not([active]) {\n\tdisplay: none;\n}"
+    content: ".ui5-combobox-busy{align-items:center;display:flex;height:100%;justify-content:center;left:50%;pointer-events:all;position:absolute;top:50%;transform:translate(-50%,-50%);width:100%;z-index:42}.ui5-combobox-busy:not([active]){display:none}"
   };
   var _default = styleData;
   _exports.default = _default;

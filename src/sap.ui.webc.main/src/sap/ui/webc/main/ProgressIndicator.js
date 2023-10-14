@@ -47,6 +47,14 @@ sap.ui.define([
 			properties: {
 
 				/**
+				 * Defines the accessible ARIA name of the component.
+				 */
+				accessibleName: {
+					type: "string",
+					defaultValue: ""
+				},
+
+				/**
 				 * Specifies the text value to be displayed in the bar.
 				 *
 				 * <b>Note:</b>

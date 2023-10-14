@@ -112,7 +112,6 @@ sap.ui.define([
 		  "sap.ui.core.Icon",
 		  "sap.ui.core.InvisibleText",
 		  "sap.ui.core.TooltipBase",
-		  "sap.ui.core.mvc.JSONView",
 		  "sap.ui.core.mvc.View",
 		  "sap.ui.core.mvc.XMLView"
 		 ],

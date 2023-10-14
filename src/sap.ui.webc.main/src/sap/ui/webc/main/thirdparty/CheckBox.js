@@ -26,6 +26,11 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Device", "sap/ui/w
     return c > 3 && r && Object.defineProperty(target, key, r), r;
   };
   var CheckBox_1;
+
+  // Styles
+
+  // Template
+
   let isGlobalHandlerAttached = false;
   let activeCb;
   /**
@@ -104,7 +109,8 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Device", "sap/ui/w
       const formSupport = (0, _FeaturesRegistry.getFeature)("FormSupport");
       if (formSupport) {
         formSupport.syncNativeHiddenInput(this, (element, nativeInput) => {
-          nativeInput.disabled = element.disabled || !element.checked;
+          nativeInput.disabled = !!element.disabled;
+          nativeInput.checked = !!element.checked;
           nativeInput.value = element.checked ? "on" : "";
         });
       } else if (this.name) {

@@ -260,6 +260,53 @@ sap.ui.define([
 		});
 	});
 
+	opaTest("Should enter text over selection", function (oOpa) {
+		var fnSuggestTriggered = Opa5.assert.async();
+		this.oControl = new Input({
+			showSuggestion: true,
+			suggestionItems: [
+				new ListItem({ text: "One" }),
+				new ListItem({ text: "Two" }),
+				new ListItem({ text: "Test" })
+			]
+		});
+		this.oControl.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		var sTextInControl = "T";
+
+		this.oControl._bDoTypeAhead = true;
+
+		// Type T
+		oOpa.waitFor({
+			controlType: "sap.m.Input",
+			actions: new EnterText({
+				text: sTextInControl,
+				keepFocus: true,
+				clearTextFirst: false
+			})
+		});
+
+		// Type w
+		oOpa.waitFor({
+			controlType: "sap.m.Input",
+			actions: new EnterText({
+				text: "w",
+				keepFocus: true,
+				clearTextFirst: false
+			})
+		});
+
+		oOpa.waitFor({
+			controlType: "sap.m.StandardListItem",
+			success: function () {
+				// Two should be suggested
+				Opa5.assert.strictEqual(this.oControl.getFocusDomRef().value, "Two", "Selection is considered when typing");
+				fnSuggestTriggered();
+			}.bind(this)
+		});
+	});
+
 	QUnit.test("Should enter binding symbols", async function (assert) {
 		this.oControl = new Input();
 

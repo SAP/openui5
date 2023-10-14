@@ -6,7 +6,7 @@
 @_sap_m_Toolbar_ShrinkItem_MinWidth: 2.5rem;
 
 //we want the first visible element on the row to have specific padding-left value
-.sapMIBar.sapMTB .sapMBarChild{
+.sapMIBar.sapMTB .sapMBarChild {
 	margin-left: 0.25rem;
 }
 
@@ -14,7 +14,7 @@
 	margin: 0 0 0 0.5rem;
 }
 
-.sapMIBar.sapMTB .sapMBarChild:first-child {
+.sapMIBar.sapMTB .sapMBarChild.sapMBarChildFirstChild {
 	margin-left: 0;
 }
 
@@ -55,7 +55,7 @@
 }
 
 /* Info Toolbar Context */
-.sapMIBar.sapMTB.sapMTB-Info-CTX:not(.sapMTBActive) {
+.sapMIBar.sapMTB.sapMTB-Info-CTX {
 	padding: 0 1rem;
 }
 
@@ -95,16 +95,14 @@
 }
 
 /*** Toolbar inside of Form as Form- and Container- header ***/
-.sapUiFormContainerToolbar > .sapMTB.sapMIBar {
+.sapUiFormContainerToolbar > .sapMTB.sapMIBar:not(.sapMTBActive) {
 	border-bottom: none;
 	padding: 0;
 }
 
-.sapUiGridHeader > .sapMTB > .sapMBarChild:first-child,
-.sapUiGridTitle > th > .sapMTB > .sapMBarChild:first-child,
-.sapUiFormResLayout.sapUiFormToolbar > .sapMTB > .sapMBarChild:first-child,
-.sapUiRLContainer > .sapMTB > .sapMBarChild:first-child {
-	margin-left: 0;
+.sapUiFormCLContainer .sapMIBar.sapMTB .sapMBarChild:first-child,
+.sapUiRespGrid .sapMIBar .sapMBarChild:first-child {
+	margin-left: 0.25rem;
 }
 
 /* Solid Toolbar Context */

@@ -5,7 +5,7 @@ QUnit.config.autostart = false;
 sap.ui.define([
 	"sap/ui/mdc/Link",
 	"sap/ui/mdc/link/LinkItem",
-	"sap/ui/mdc/link/FakeFlpConnector",
+	"testutils/other/FakeFlpConnector",
 	"sap/base/Log"
 ], function(Link,
 	LinkItem,

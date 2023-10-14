@@ -24,6 +24,9 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/i18nBundle", "sap/
     return c > 3 && r && Object.defineProperty(target, key, r), r;
   };
   var ProductSwitch_1;
+
+  // Styles
+
   /**
    * @class
    * <h3 class="comment-api-title">Overview</h3>

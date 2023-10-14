@@ -34,6 +34,11 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/delegate/ItemNavig
     return c > 3 && r && Object.defineProperty(target, key, r), r;
   };
   var MediaGallery_1;
+
+  // Styles
+
+  // Template
+
   // The allowed number of thumbnail columns on each size
   // (relevant when <code>showAllThumbnails</code> is enabled)
   const COLUMNS_COUNT = {

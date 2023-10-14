@@ -67,16 +67,11 @@ sap.ui.define([
 		"sap.ui.commons.Accordion",
 		"sap.ui.core.ComponentContainer",
 		"sap.ui.core.UIComponent",
-		"sap.ui.core.XMLComposite",
-		"sap.ui.core.mvc.HTMLView",
-		"sap.ui.core.mvc.JSONView",
-		"sap.ui.core.mvc.JSView",
 		"sap.ui.core.mvc.XMLView",
-		"sap.ui.core.mvc.TemplateView",
 		"sap.ui.core.mvc.View",
-		"sap.ui.core.tmpl.Template",
 		"sap.m.internal.NumericInput",
-		"sap.m.DateTimeInput",  // setting an invalid type crashes and only leaks a picker control because of this
+		// setting an invalid type crashes and only leaks a picker control because of this
+		"sap.m.DateTimeInput",
 		"sap.m.FacetFilterItem",
 		"sap.m.IconTabBarSelectList",
 		"sap.m.LightBox",
@@ -86,8 +81,10 @@ sap.ui.define([
 		"sap.m.Wizard",
 		"sap.tnt.NavigationList",
 		"sap.ui.layout.BlockLayoutRow",
-		"sap.ui.layout.form.ResponsiveGridLayoutPanel", // control not for stand alone usage. Only inside ResponsiveGridLayout
-		"sap.ui.layout.form.ResponsiveLayoutPanel", // control not for stand alone usage. Only inside ResponsiveLayout
+		// control not for stand alone usage. Only inside ResponsiveGridLayout
+		"sap.ui.layout.form.ResponsiveGridLayoutPanel",
+		// control not for stand alone usage. Only inside ResponsiveLayout
+		"sap.ui.layout.form.ResponsiveLayoutPanel",
 		"sap.ui.suite.TaskCircle",
 		"sap.ui.ux3.ActionBar",
 		"sap.ui.ux3.ExactList.LB",
@@ -110,7 +107,8 @@ sap.ui.define([
 		"sap.viz.ui5.controls.common.BaseControl",
 		"sap.viz.ui5.controls.VizRangeSlider",
 		"sap.viz.ui5.core.BaseChart",
-		"sap.viz.ui5.VizContainer" // fails when "vizProperties" is set to a primitive value and also for some other property
+		// fails when "vizProperties" is set to a primitive value and also for some other property
+		"sap.viz.ui5.VizContainer"
 	];
 
 	/*

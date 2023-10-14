@@ -29,6 +29,11 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
     return c > 3 && r && Object.defineProperty(target, key, r), r;
   };
   var UploadCollection_1;
+
+  // Template
+
+  // Styles
+
   /**
    * @class
    *
@@ -107,7 +112,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
     }
     _onItemDelete(e) {
       this.fireEvent("item-delete", {
-        item: e.detail.item
+        item: e.target
       });
     }
     _onSelectionChange(e) {
@@ -201,12 +206,10 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
    * @native
    */, (0, _event.default)("drop")
   /**
-   * Fired when the Delete button of any item is pressed.
-   * <br><br>
-   * <b>Note:</b> A Delete button is displayed on each item,
-   * when the <code>ui5-upload-collection</code> <code>mode</code> property is set to <code>Delete</code>.
+   * Fired when the delete button of any item is pressed.
+   *
    * @event sap.ui.webc.fiori.UploadCollection#item-delete
-   * @param {HTMLElement} item The <code>ui5-upload-collection-item</code> which was renamed.
+   * @param {HTMLElement} item The <code>ui5-upload-collection-item</code> which was deleted.
    * @public
    */, (0, _event.default)("item-delete", {
     detail: {

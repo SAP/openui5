@@ -31,15 +31,17 @@ sap.ui.define([
 		 */
 		"sap.ui.core": {
 			elements: {
-				"sap.ui.core.XMLComposite" : NO_CREATE, // needs constructor arguments
-				"sap.ui.core.mvc.HTMLView" : NO_CREATE, // needs constructor arguments
-				"sap.ui.core.mvc.JSONView" : NO_CREATE, // needs constructor arguments
-				"sap.ui.core.mvc.JSView" : NO_CREATE, // needs constructor arguments
-				"sap.ui.core.mvc.TemplateView" : NO_CREATE, // needs constructor arguments
-				"sap.ui.core.mvc.View": NO_CREATE, // needs constructor arguments
-				"sap.ui.core.mvc.XMLView": NO_CREATE, // needs constructor arguments
-				"sap.ui.core.mvc.XMLAfterRenderingNotifier": NOT_A_MODULE, // not a module of its own
-				"sap.ui.core._StashedControl": NOT_A_MODULE // not a module of its own
+				// needs constructor arguments
+				"sap.ui.core.mvc.View": NO_CREATE,
+
+				// needs constructor arguments
+				"sap.ui.core.mvc.XMLView": NO_CREATE,
+
+				// not a module of its own
+				"sap.ui.core.mvc.XMLAfterRenderingNotifier": NOT_A_MODULE,
+
+				// not a module of its own
+				"sap.ui.core._StashedControl": NOT_A_MODULE
 			}
 		},
 		"sap.m": {

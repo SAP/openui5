@@ -57,7 +57,9 @@ sap.ui.define([
 				},
 
 				/**
-				 * Defines the item text.
+				 * Defines the item text. <br>
+				 * <br>
+				 * <b>Note:</b> The text is only displayed inside the overflow popover list view.
 				 */
 				text: {
 					type: "string",

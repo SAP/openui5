@@ -46,6 +46,9 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       const localeData = (0, _getCachedLocaleDataInstance.default)((0, _getLocale.default)());
       return this.primaryCalendarType || (0, _CalendarType.getCalendarType)() || localeData.getPreferredCalendarType();
     }
+    get _secondaryCalendarType() {
+      return this.secondaryCalendarType || (0, _CalendarType.getSecondaryCalendarType)();
+    }
     get _minDate() {
       let minDate;
       if (this.minDate) {

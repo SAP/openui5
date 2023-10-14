@@ -6,7 +6,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
   });
   _exports.pathData = _exports.ltr = _exports.default = _exports.accData = void 0;
   const name = "media-reverse";
-  const pathData = "M391.5 480q-8 0-15-4l-269-199q-11-6-11-21 0-13 11-21l269-198q13-8 26-2 14 8 14 23v397q0 15-14 23-6 2-11 2zm-227-224l202 148V108z";
+  const pathData = "M390 32q11 0 18.5 7.5T416 58v396q0 11-7.5 18.5T390 480q-7 0-15-5L106 277q-10-8-10-21t10-21L375 37q8-5 15-5zm-25 372V108L165 256z";
   _exports.pathData = pathData;
   const ltr = true;
   _exports.ltr = ltr;

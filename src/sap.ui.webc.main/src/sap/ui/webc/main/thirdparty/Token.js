@@ -23,6 +23,9 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
     return c > 3 && r && Object.defineProperty(target, key, r), r;
   };
   var Token_1;
+
+  // Styles
+
   /**
    * @class
    *
@@ -44,8 +47,10 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
    */
   let Token = Token_1 = class Token extends _UI5Element.default {
     _handleSelect() {
-      this.selected = !this.selected;
-      this.fireEvent("select");
+      if (!this.toBeDeleted) {
+        this.selected = !this.selected;
+        this.fireEvent("select");
+      }
     }
     _focusin() {
       this.focused = true;
@@ -53,10 +58,8 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
     _focusout() {
       this.focused = !this.focused;
     }
-    _mousedown() {
-      this.toBeDeleted = true;
-    }
     _delete() {
+      this.toBeDeleted = true;
       this.fireEvent("delete");
     }
     _keydown(e) {
@@ -86,6 +89,15 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       }
       return "decline";
     }
+    get textDom() {
+      return this.getDomRef()?.querySelector(".ui5-token--text");
+    }
+    get isTruncatable() {
+      if (!this.textDom) {
+        return false;
+      }
+      return Math.ceil(this.textDom.getBoundingClientRect().width) < Math.ceil(this.textDom.scrollWidth);
+    }
     static async onDefine() {
       Token_1.i18nBundle = await (0, _i18nBundle.getI18nBundle)("@ui5/webcomponents");
     }
@@ -100,6 +112,9 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
   __decorate([(0, _property.default)({
     type: Boolean
   })], Token.prototype, "overflows", void 0);
+  __decorate([(0, _property.default)({
+    type: Boolean
+  })], Token.prototype, "singleToken", void 0);
   __decorate([(0, _property.default)({
     type: Boolean
   })], Token.prototype, "focused", void 0);

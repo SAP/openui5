@@ -1,12 +1,22 @@
 /**
-* Copyright (c) 2012-2020 SAP SE or an SAP affiliate company and Theming Base Content contributors. Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
+* Copyright (c) 2012-2023 SAP SE or an SAP affiliate company and Theming Base Content contributors. Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
 *
-* Theming Engine 1.23050.0-20230523090303+e385b420d426b24bae1dee2743785a1448185388
-* data:{"Path": "Base.baseLib.sap_fiori_3_dark.css_variables", "PathPattern": "/%frameworkId%/%libId%/%themeId%/%fileId%.css", "Extends": ["sap_fiori_3","sap_base_fiori","baseTheme"], "Tags": ["Fiori_3","DarkColorScheme"], "FallbackThemeId": "sap_fiori_3", "Engine": {"Name": "theming-engine", "Version": "1.23050.0-20230523090303+e385b420d426b24bae1dee2743785a1448185388"}, "Version": { "Build": "11.4.2.20230525101226", "Source": "11.4.2"}}
+* Theming Engine 1.23061.0
+* data:{"Path": "Base.baseLib.sap_fiori_3_dark.css_variables", "PathPattern": "/%frameworkId%/%libId%/%themeId%/%fileId%.css", "Extends": ["sap_fiori_3","sap_base_fiori","baseTheme"], "Tags": ["Fiori_3","DarkColorScheme"], "FallbackThemeId": "sap_fiori_3", "Engine": {"Name": "theming-engine", "Version": "1.23061.0"}, "Version": { "Build": "11.6.8.20230911071338", "Source": "11.6.8"}}
 */
 
-.sapThemeMetaData-Base-baseLib{background-image: url('data:text/plain;utf-8,{"Path": "Base.baseLib.sap_fiori_3_dark.css_variables", "PathPattern": "/%frameworkId%/%libId%/%themeId%/%fileId%.css", "Extends": ["sap_fiori_3","sap_base_fiori","baseTheme"], "Tags": ["Fiori_3","DarkColorScheme"], "FallbackThemeId": "sap_fiori_3", "Engine": {"Name": "theming-engine", "Version": "1.23050.0-20230523090303+e385b420d426b24bae1dee2743785a1448185388"}, "Version": { "Build": "11.4.2.20230525101226", "Source": "11.4.2"}}');}
-:root{--sapThemeMetaData-Base-baseLib:{"Path": "Base.baseLib.sap_fiori_3_dark.css_variables", "PathPattern": "/%frameworkId%/%libId%/%themeId%/%fileId%.css", "Extends": ["sap_fiori_3","sap_base_fiori","baseTheme"], "Tags": ["Fiori_3","DarkColorScheme"], "FallbackThemeId": "sap_fiori_3", "Engine": {"Name": "theming-engine", "Version": "1.23050.0-20230523090303+e385b420d426b24bae1dee2743785a1448185388"}, "Version": { "Build": "11.4.2.20230525101226", "Source": "11.4.2"}};}
+.sapThemeMetaData-Base-baseLib{background-image: url('data:text/plain;utf-8,{"Path": "Base.baseLib.sap_fiori_3_dark.css_variables", "PathPattern": "/%frameworkId%/%libId%/%themeId%/%fileId%.css", "Extends": ["sap_fiori_3","sap_base_fiori","baseTheme"], "Tags": ["Fiori_3","DarkColorScheme"], "FallbackThemeId": "sap_fiori_3", "Engine": {"Name": "theming-engine", "Version": "1.23061.0"}, "Version": { "Build": "11.6.8.20230911071338", "Source": "11.6.8"}}');}
+:root{--sapThemeMetaData-Base-baseLib:{"Path": "Base.baseLib.sap_fiori_3_dark.css_variables", "PathPattern": "/%frameworkId%/%libId%/%themeId%/%fileId%.css", "Extends": ["sap_fiori_3","sap_base_fiori","baseTheme"], "Tags": ["Fiori_3","DarkColorScheme"], "FallbackThemeId": "sap_fiori_3", "Engine": {"Name": "theming-engine", "Version": "1.23061.0"}, "Version": { "Build": "11.6.8.20230911071338", "Source": "11.6.8"}};}
+
+/**
+* Base.baseLib.baseTheme.base (Version 11.6.8)
+*/
+
+
+/**
+* Base.baseLib.baseTheme.css_variables (Version 11.6.8)
+*/
+
 :root {
   --sapBrandColor: #91c8f6;
   --sapHighlightColor: #91c8f6;
@@ -528,7 +538,7 @@
   --sapList_SelectionBorderColor: #91c8f6;
   --sapList_Hover_SelectionBackground: #395369;
   --sapList_Background: #29313a;
-  --sapList_Hover_Background: #2f3943;
+  --sapList_Hover_Background: #222a31;
   --sapList_AlternatingBackground: #232931;
   --sapList_GroupHeaderBackground: #29313a;
   --sapList_GroupHeaderBorderColor: #64778e;
@@ -607,7 +617,7 @@
   --sapInfobar_NonInteractive_Background: #14181c;
   --sapInfobar_TextColor: #29313a;
   --sapObjectHeader_Background: #29313a;
-  --sapObjectHeader_Hover_Background: #2f3943;
+  --sapObjectHeader_Hover_Background: #222a31;
   --sapObjectHeader_BorderColor: #3a4552;
   --sapObjectHeader_Title_TextColor: #fafafa;
   --sapObjectHeader_Title_FontSize: 1.25rem;
@@ -924,3 +934,33 @@
 .background-image--sapShell_BackgroundImage {
   background-image: var(--sapShell_BackgroundImage);
 }
+
+/**
+* Base.baseLib.sap_base_fiori.base (Version 11.6.8)
+*/
+
+
+/**
+* Base.baseLib.sap_base_fiori.css_variables (Version 11.6.8)
+*/
+
+
+/**
+* Base.baseLib.sap_fiori_3.base (Version 11.6.8)
+*/
+
+
+/**
+* Base.baseLib.sap_fiori_3.css_variables (Version 11.6.8)
+*/
+
+
+/**
+* Base.baseLib.sap_fiori_3_dark.base (Version 11.6.8)
+*/
+
+
+/**
+* Base.baseLib.sap_fiori_3_dark.css_variables (Version 11.6.8)
+*/
+

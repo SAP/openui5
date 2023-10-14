@@ -6,7 +6,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
   });
   _exports.pathData = _exports.ltr = _exports.default = _exports.accData = void 0;
   const name = "calendar";
-  const pathData = "M410.5 51q32 0 54 22t22 55v307q0 32-22 54.5t-54 22.5h-308q-32 0-54-22.5t-22-54.5V128q0-33 22-55t54-22h52V25q0-25 25-25 26 0 26 25v26h102V25q0-25 26-25 25 0 25 25v26h52zm-308 51q-25 0-25 26v76h358v-76q0-26-25-26h-52v26q0 25-25 25-26 0-26-25v-26h-102v26q0 25-26 25-25 0-25-25v-26h-52zm308 358q25 0 25-25V256h-358v179q0 25 25 25h308z";
+  const pathData = "M390 64q38 0 64 26t26 64v268q0 38-26 64t-64 26H122q-38 0-64-26t-26-64V154q0-38 26-64t64-26h6V26q0-11 7.5-18.5T154 0t18 7.5 7 18.5v38h154V26q0-11 7-18.5T358 0t18.5 7.5T384 26v38h6zm-268 51q-17 0-28 11t-11 28v51h346v-51q0-17-11-28t-28-11h-6v19q0 11-7.5 18.5T358 160t-18-7.5-7-18.5v-19H179v19q0 11-7 18.5t-18 7.5-18.5-7.5T128 134v-19h-6zm268 346q17 0 28-11t11-28V256H83v166q0 17 11 28t28 11h268z";
   _exports.pathData = pathData;
   const ltr = true;
   _exports.ltr = ltr;

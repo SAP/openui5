@@ -85,24 +85,25 @@ sap.ui.define(['sap/ui/core/Core', "sap/ui/VersionInfo"],
 		"sap.ui.comp.smartform.Group",
 		"sap.ui.comp.smartform.GroupElement",
 		"sap.ui.comp.valuehelpdialog.ValueHelpDialog",
-		"sap.ui.core.mvc.HTMLView",
-		"sap.ui.core.mvc.JSONView",
-		"sap.ui.core.mvc.JSView",
-		"sap.ui.core.mvc.TemplateView",
 		"sap.ui.core.mvc.View",
 		"sap.ui.core.mvc.XMLView",
-		"sap.ui.core.tmpl.Template",
 		"sap.ui.core.UIComponent",
 		"sap.ui.core.util.Export",
 		"sap.ui.documentation.BorrowedList",
 		"sap.ui.documentation.LightTable",
-		"sap.ui.integration.cards.AnalyticalContent", // requires an associated card instance in onAfterRendering
-		"sap.ui.integration.cards.AnalyticsCloudContent", // requires an associated card instance in onAfterRendering
-		"sap.ui.integration.cards.CalendarContent", // requires a model in onBeforeRendering
+		// requires an associated card instance in onAfterRendering
+		"sap.ui.integration.cards.AnalyticalContent",
+		// requires an associated card instance in onAfterRendering
+		"sap.ui.integration.cards.AnalyticsCloudContent",
+		// requires a model in onBeforeRendering
+		"sap.ui.integration.cards.CalendarContent",
 		"sap.ui.layout.BlockLayoutRow",
-		"sap.ui.layout.form.ResponsiveGridLayoutPanel", // control not for stand alone usage. Only inside ResponsiveGridLayout
-		"sap.ui.layout.form.ResponsiveLayoutPanel", // control not for stand alone usage. Only inside ResponsiveLayout
-		"sap.ui.mdc.chart.ChartTypeButton", // requires a chart
+		// control not for stand alone usage. Only inside ResponsiveGridLayout
+		"sap.ui.layout.form.ResponsiveGridLayoutPanel",
+		// control not for stand alone usage. Only inside ResponsiveLayout
+		"sap.ui.layout.form.ResponsiveLayoutPanel",
+		// requires a chart
+		"sap.ui.mdc.chart.ChartTypeButton",
 		"sap.ui.richtexteditor.RichTextEditor",
 		"sap.ui.richtexteditor.ToolbarWrapper",
 		"sap.ui.rta.AddElementsDialog",
@@ -144,23 +145,24 @@ sap.ui.define(['sap/ui/core/Core', "sap/ui/VersionInfo"],
 
 	var aControlsThatCannotBeInstantiated = [
 		"sap.makit.Chart",
-		"sap.ui.commons.SearchField", // can be instantiated, but fails before rendering
-		"sap.ui.commons.SearchField.CB", // a MESS!
+		// can be instantiated, but fails before rendering
+		"sap.ui.commons.SearchField",
+		// a MESS!
+		"sap.ui.commons.SearchField.CB",
 		"sap.ui.commons.SearchFieldCB",
 		"sap.ui.commons.Tab",
 		"sap.ui.comp.transport.TransportDialog",
 		"sap.ui.core.ComponentContainer",
-		"sap.ui.core.mvc.HTMLView",
-		"sap.ui.core.mvc.JSONView",
-		"sap.ui.core.mvc.JSView",
-		"sap.ui.core.mvc.TemplateView",
 		"sap.ui.core.mvc.View",
 		"sap.ui.core.mvc.XMLView",
-		"sap.ui.core.XMLComposite",
-		"sap.ui.mdc.BaseControl", // should be abstract?
-		"sap.ui.mdc.odata.v4.microchart.MicroChart", //The control only runs in views with XML pre-processor. The test can't provide this environment
-		"sap.ui.mdc.ValueHelpDialog", //The control only runs in views with XML pre-processor. The test can't provide this environment
-		"sap.ui.mdc.XMLComposite", //The control only runs in views with XML pre-processor. The test can't provide this environment
+		// should be abstract?
+		"sap.ui.mdc.BaseControl",
+		//The control only runs in views with XML pre-processor. The test can't provide this environment
+		"sap.ui.mdc.odata.v4.microchart.MicroChart",
+		//The control only runs in views with XML pre-processor. The test can't provide this environment
+		"sap.ui.mdc.ValueHelpDialog",
+		//The control only runs in views with XML pre-processor. The test can't provide this environment
+		"sap.ui.mdc.XMLComposite",
 		"sap.ui.rta.AddElementsDialog",
 		"sap.ui.rta.ContextMenu"
 	];

@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/ui/webc/common/thirdparty/base/decorators/customElement", "sap/ui/webc/common/thirdparty/base/decorators/property", "sap/ui/webc/common/thirdparty/base/decorators/event", "sap/ui/webc/common/thirdparty/base/renderer/LitRenderer", "sap/ui/webc/common/thirdparty/base/Device", "sap/ui/webc/common/thirdparty/base/Keys", "sap/ui/webc/common/thirdparty/base/util/getEffectiveContentDensity", "sap/ui/webc/common/thirdparty/icons/navigation-up-arrow", "sap/ui/webc/common/thirdparty/icons/navigation-down-arrow", "sap/ui/webc/common/thirdparty/base/delegate/ScrollEnablement", "./generated/templates/WheelSliderTemplate.lit", "./Button", "./generated/themes/WheelSlider.css"], function (_exports, _UI5Element, _customElement, _property, _event, _LitRenderer, _Device, _Keys, _getEffectiveContentDensity, _navigationUpArrow, _navigationDownArrow, _ScrollEnablement, _WheelSliderTemplate, _Button, _WheelSlider) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/ui/webc/common/thirdparty/base/decorators/customElement", "sap/ui/webc/common/thirdparty/base/decorators/property", "sap/ui/webc/common/thirdparty/base/decorators/event", "sap/ui/webc/common/thirdparty/base/renderer/LitRenderer", "sap/ui/webc/common/thirdparty/base/Device", "sap/ui/webc/common/thirdparty/base/CustomElementsScope", "sap/ui/webc/common/thirdparty/base/Keys", "sap/ui/webc/common/thirdparty/base/util/getEffectiveContentDensity", "sap/ui/webc/common/thirdparty/icons/navigation-up-arrow", "sap/ui/webc/common/thirdparty/icons/navigation-down-arrow", "sap/ui/webc/common/thirdparty/base/delegate/ScrollEnablement", "./generated/templates/WheelSliderTemplate.lit", "./Button", "./generated/themes/WheelSlider.css"], function (_exports, _UI5Element, _customElement, _property, _event, _LitRenderer, _Device, _CustomElementsScope, _Keys, _getEffectiveContentDensity, _navigationUpArrow, _navigationDownArrow, _ScrollEnablement, _WheelSliderTemplate, _Button, _WheelSlider) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -23,6 +23,9 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
   };
+
+  // Styles
+
   const CELL_SIZE_COMPACT = 32;
   const CELL_SIZE_COZY = 46;
   /**
@@ -103,7 +106,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       const defaultSize = (0, _getEffectiveContentDensity.default)(document.body) === "compact" ? CELL_SIZE_COMPACT : CELL_SIZE_COZY;
       if (this.shadowRoot.querySelectorAll(".ui5-wheelslider-item").length) {
         const itemComputedStyle = getComputedStyle(this.shadowRoot.querySelector(".ui5-wheelslider-item"));
-        const itemHeightValue = itemComputedStyle.getPropertyValue("--_ui5_wheelslider_item_height");
+        const itemHeightValue = itemComputedStyle.getPropertyValue((0, _CustomElementsScope.getScopedVarName)("--_ui5_wheelslider_item_height"));
         const onlyDigitsValue = itemHeightValue.replace("px", "");
         return Number(onlyDigitsValue) || defaultSize;
       }

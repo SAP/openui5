@@ -80,7 +80,8 @@ sap.ui.define([
 				 * Defines the accessible ARIA name of the component.
 				 */
 				accessibleName: {
-					type: "string"
+					type: "string",
+					defaultValue: ""
 				},
 
 				/**
@@ -97,7 +98,7 @@ sap.ui.define([
 				},
 
 				/**
-				 * Defines the filter type of the component. Available options are: <code>StartsWithPerTerm</code>, <code>StartsWith</code>, <code>Contains</code> and <code>None</code>.
+				 * Defines the filter type of the component.
 				 */
 				filter: {
 					type: "sap.ui.webc.main.ComboBoxFilter",
@@ -147,16 +148,7 @@ sap.ui.define([
 				},
 
 				/**
-				 * Defines the value state of the component. <br>
-				 * <br>
-				 * Available options are:
-				 * <ul>
-				 *     <li><code>None</code></li>
-				 *     <li><code>Error</code></li>
-				 *     <li><code>Warning</code></li>
-				 *     <li><code>Success</code></li>
-				 *     <li><code>Information</code></li>
-				 * </ul>
+				 * Defines the value state of the component.
 				 */
 				valueState: {
 					type: "sap.ui.core.ValueState",

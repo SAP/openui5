@@ -6,7 +6,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
   });
   _exports.pathData = _exports.ltr = _exports.default = _exports.accData = void 0;
   const name = "add-document";
-  const pathData = "M474 77q25 0 25 25 0 26-25 26h-51v51q0 12-7.5 19t-18.5 7-18.5-7-7.5-19v-51h-51q-25 0-25-26 0-25 25-25h51V26q0-12 7.5-19T397 0t18.5 7 7.5 19v51h51zm-77 179q11 0 18.5 7t7.5 19v204q0 11-7.5 18.5T397 512H39q-11 0-18.5-7.5T13 486V179q0-10 8-18L174 8q8-8 18-8h51q26 0 26 26 0 25-26 25h-41l-10 10v67q0 21-15 36t-36 15H74l-10 10v272h307V282q0-12 7.5-19t18.5-7z";
+  const pathData = "M83 201v260h83q11 0 18.5 7t7.5 18-7.5 18.5T166 512H58q-11 0-18.5-7.5T32 486V192q0-10 6-17L181 9q6-9 19-9h190q11 0 18.5 7.5T416 26v172q0 11-7.5 18.5T390 224t-18-7.5-7-18.5V51H212l-20 24v66q0 21-15 36t-36 15H91zm371 173q11 0 18.5 7.5T480 400t-7.5 18.5T454 426h-60v60q0 11-7.5 18.5T368 512t-18.5-7.5T342 486v-60h-60q-11 0-18.5-7.5T256 400t7.5-18.5T282 374h60v-60q0-11 7.5-18.5T368 288t18.5 7.5T394 314v60h60z";
   _exports.pathData = pathData;
   const ltr = false;
   _exports.ltr = ltr;

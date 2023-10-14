@@ -14,7 +14,6 @@
 // The module ID argument is given because QUnitUtils.js often was included as a script Element in the past.
 // It is now recommended to use it via a module dependency (sap.ui.define).
 sap.ui.define('sap/ui/qunit/QUnitUtils', [
-	'jquery.sap.global',
 	'sap/base/util/ObjectPath',
 	'sap/ui/base/DataType',
 	'sap/ui/events/KeyCodes',
@@ -22,10 +21,10 @@ sap.ui.define('sap/ui/qunit/QUnitUtils', [
 	"sap/base/strings/capitalize",
 	"sap/base/Log",
 	"sap/ui/core/Element",
-	"sap/ui/dom/jquery/control" // jQuery Plugin "control"
+	// jQuery Plugin "control"
+	"sap/ui/dom/jquery/control"
 ],
 	function(
-		jQuery,
 		ObjectPath,
 		DataType,
 		KeyCodes,
@@ -93,7 +92,7 @@ sap.ui.define('sap/ui/qunit/QUnitUtils', [
 		// Otherwise, fake timers that are installed after jQuery don't work with jQuery animations
 		// as those animations internally use jQuery.now which then is a reference to the original,
 		// native Date.now.
-		jQuery.now = function() {
+		undefined/*jQuery*/.now = function() {
 			return Date.now();
 		};
 
@@ -121,37 +120,37 @@ sap.ui.define('sap/ui/qunit/QUnitUtils', [
 					QUnit.start();
 				}, iDelay);
 			} else {
-				jQuery(function() {
+				undefined/*jQuery*/(function() {
 					QUnit.start();
 				});
 			}
 		};
 
-		var fixOriginalEvent = jQuery.noop;
+		var fixOriginalEvent = undefined/*jQuery*/.noop;
 
 		try {
 
 			// check whether preventDefault throws an error for a dummy event
-			new jQuery.Event({type: "mousedown"}).preventDefault();
+			new undefined/*jQuery*/.Event({type: "mousedown"}).preventDefault();
 
 		} catch (e) {
 
 			// if so, we might be running on top of jQuery 2.2.0 or higher and we have to add the native Event methods to the 'originalEvent'
 			fixOriginalEvent = function(origEvent) {
 				if ( origEvent ) {
-					origEvent.preventDefault = origEvent.preventDefault || jQuery.noop;
-					origEvent.stopPropagation = origEvent.stopPropagation || jQuery.noop;
-					origEvent.stopImmediatePropagation = origEvent.stopImmediatePropagation || jQuery.noop;
+					origEvent.preventDefault = origEvent.preventDefault || undefined/*jQuery*/.noop;
+					origEvent.stopPropagation = origEvent.stopPropagation || undefined/*jQuery*/.noop;
+					origEvent.stopImmediatePropagation = origEvent.stopImmediatePropagation || undefined/*jQuery*/.noop;
 				}
 			};
 
-			var OrigjQEvent = jQuery.Event;
-			jQuery.Event = function(src, props) {
+			var OrigjQEvent = undefined/*jQuery*/.Event;
+			undefined/*jQuery*/.Event = function(src, props) {
 				var event = new OrigjQEvent(src, props);
 				fixOriginalEvent(event.originalEvent);
 				return event;
 			};
-			jQuery.Event.prototype = OrigjQEvent.prototype;
+			undefined/*jQuery*/.Event.prototype = OrigjQEvent.prototype;
 		}
 
 		/*
@@ -171,7 +170,7 @@ sap.ui.define('sap/ui/qunit/QUnitUtils', [
 		 */
 		function fakeEvent(sEventName, oTarget, oParams) {
 
-			var oEvent = jQuery.Event({type : sEventName});
+			var oEvent = undefined/*jQuery*/.Event({type : sEventName});
 			if ( oTarget != null ) {
 				oEvent.target = oTarget;
 			}
@@ -212,7 +211,7 @@ sap.ui.define('sap/ui/qunit/QUnitUtils', [
 
 			var oEvent = fakeEvent(sEventName, /* no target */ null, oParams);
 
-			jQuery(oTarget).trigger(oEvent);
+			undefined/*jQuery*/(oTarget).trigger(oEvent);
 
 		};
 
@@ -447,7 +446,7 @@ sap.ui.define('sap/ui/qunit/QUnitUtils', [
 			if (typeof (oInput) == "string") {
 				oInput = oInput ? document.getElementById(oInput) : null;
 			}
-			var $Input = jQuery(oInput);
+			var $Input = undefined/*jQuery*/(oInput);
 
 			if (typeof sValue !== "undefined") {
 				$Input.val(sValue);
@@ -552,11 +551,11 @@ sap.ui.define('sap/ui/qunit/QUnitUtils', [
 			'bold': 700
 		};
 
-		jQuery.fn.extend({
+		undefined/*jQuery*/.fn.extend({
 
 			_sapTest_dataEvents: function() {
 				var elem = this[0];
-				return elem ? jQuery._data(elem, "events") : null;
+				return elem ? undefined/*jQuery*/._data(elem, "events") : null;
 			},
 
 			_sapTest_cssFontWeight: function() {
@@ -612,7 +611,7 @@ sap.ui.define('sap/ui/qunit/QUnitUtils', [
 				if ( typeof sType === "string" ) {
 					mDefaultTestValues[sType] = ensureArray(aValues);
 				} else if ( typeof sType === "object" ) {
-					jQuery.extend(mDefaultTestValues, sType);
+					undefined/*jQuery*/.extend(mDefaultTestValues, sType);
 				}
 			};
 
@@ -629,7 +628,7 @@ sap.ui.define('sap/ui/qunit/QUnitUtils', [
 
 					try {
 						//TODO: global jquery call found
-						jQuery.sap.require(sType);
+						undefined/*jQuery*/.sap.require(sType);
 					} catch (e) {
 						//escape eslint check for empty block
 					}

@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "./StaticArea", "./updateShadowRoot", "./Render", "./util/getEffectiveContentDensity", "./CustomElementsScopeUtils", "./locale/getEffectiveDir", "./Runtimes"], function (_exports, _StaticArea, _updateShadowRoot, _Render, _getEffectiveContentDensity, _CustomElementsScopeUtils, _getEffectiveDir, _Runtimes) {
+sap.ui.define(["exports", "./StaticArea", "./updateShadowRoot", "./Render", "./util/getEffectiveContentDensity", "./CustomElementsScopeUtils", "./locale/getEffectiveDir"], function (_exports, _StaticArea, _updateShadowRoot, _Render, _getEffectiveContentDensity, _CustomElementsScopeUtils, _getEffectiveDir) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -73,8 +73,6 @@ sap.ui.define(["exports", "./StaticArea", "./updateShadowRoot", "./Render", "./u
       }
     }
     _updateAdditionalAttrs() {
-      this.setAttribute(`_ui5rt${(0, _Runtimes.getCurrentRuntimeIndex)()}`, "");
-      this.setAttribute("_ui5host", "");
       this.setAttribute(pureTagName, "");
       this.setAttribute(popupIntegrationAttr, "");
     }

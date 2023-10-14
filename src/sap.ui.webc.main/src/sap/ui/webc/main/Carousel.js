@@ -87,11 +87,9 @@ sap.ui.define([
 				 * <br>
 				 * Available options are:
 				 * <ul>
-				 *     <li><code>Content</code></li>
-				 *     <li><code>Navigation</code></li>
-				 * </ul> <br>
-				 * When set to "Content", the arrows are placed on the sides of the current page. <br>
-				 * When set to "Navigation", the arrows are placed on the sides of the page indicator.
+				 *     <li><code>Content</code> - the arrows are placed on the sides of the current page.</li>
+				 *     <li><code>Navigation</code> - the arrows are placed on the sides of the page indicator.</li>
+				 * </ul>
 				 */
 				arrowsPlacement: {
 					type: "sap.ui.webc.main.CarouselArrowsPlacement",

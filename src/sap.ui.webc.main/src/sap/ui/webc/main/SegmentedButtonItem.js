@@ -12,6 +12,7 @@ sap.ui.define([
 	"use strict";
 
 	var ButtonDesign = library.ButtonDesign;
+	var ButtonType = library.ButtonType;
 
 	/**
 	 * Constructor for a new <code>SegmentedButtonItem</code>.
@@ -149,6 +150,14 @@ sap.ui.define([
 					type: "string",
 					defaultValue: "",
 					mapping: "textContent"
+				},
+
+				/**
+				 * Defines whether the button has special form-related functionality.
+				 */
+				type: {
+					type: "sap.ui.webc.main.ButtonType",
+					defaultValue: ButtonType.Button
 				}
 			},
 			associations: {

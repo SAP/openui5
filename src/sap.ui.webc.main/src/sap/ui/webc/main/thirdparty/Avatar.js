@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/ui/webc/common/thirdparty/base/decorators/customElement", "sap/ui/webc/common/thirdparty/base/decorators/property", "sap/ui/webc/common/thirdparty/base/decorators/slot", "sap/ui/webc/common/thirdparty/base/decorators/event", "sap/ui/webc/common/thirdparty/base/renderer/LitRenderer", "sap/ui/webc/common/thirdparty/base/i18nBundle", "sap/ui/webc/common/thirdparty/base/delegate/ResizeHandler", "sap/ui/webc/common/thirdparty/base/Render", "sap/ui/webc/common/thirdparty/base/Keys", "./generated/templates/AvatarTemplate.lit", "./generated/i18n/i18n-defaults", "./generated/themes/Avatar.css", "./Icon", "./types/AvatarSize", "./types/AvatarShape", "./types/AvatarColorScheme", "sap/ui/webc/common/thirdparty/icons/employee"], function (_exports, _UI5Element, _customElement, _property, _slot, _event, _LitRenderer, _i18nBundle, _ResizeHandler, _Render, _Keys, _AvatarTemplate, _i18nDefaults, _Avatar, _Icon, _AvatarSize, _AvatarShape, _AvatarColorScheme, _employee) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/ui/webc/common/thirdparty/base/decorators/customElement", "sap/ui/webc/common/thirdparty/base/decorators/property", "sap/ui/webc/common/thirdparty/base/decorators/slot", "sap/ui/webc/common/thirdparty/base/decorators/event", "sap/ui/webc/common/thirdparty/base/renderer/LitRenderer", "sap/ui/webc/common/thirdparty/base/i18nBundle", "sap/ui/webc/common/thirdparty/base/delegate/ResizeHandler", "sap/ui/webc/common/thirdparty/base/Render", "sap/ui/webc/common/thirdparty/base/Keys", "./generated/templates/AvatarTemplate.lit", "./generated/i18n/i18n-defaults", "./generated/themes/Avatar.css", "./Icon", "./types/AvatarSize", "./types/AvatarShape", "./types/AvatarColorScheme", "sap/ui/webc/common/thirdparty/icons/employee", "sap/ui/webc/common/thirdparty/icons/alert"], function (_exports, _UI5Element, _customElement, _property, _slot, _event, _LitRenderer, _i18nBundle, _ResizeHandler, _Render, _Keys, _AvatarTemplate, _i18nDefaults, _Avatar, _Icon, _AvatarSize, _AvatarShape, _AvatarColorScheme, _employee, _alert) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -27,6 +27,13 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
     return c > 3 && r && Object.defineProperty(target, key, r), r;
   };
   var Avatar_1;
+
+  // Template
+
+  // Styles
+
+  // Icon
+
   /**
    * @class
    *
@@ -69,7 +76,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       Avatar_1.i18nBundle = await (0, _i18nBundle.getI18nBundle)("@ui5/webcomponents");
     }
     get tabindex() {
-      return this._tabIndex || (this.interactive ? "0" : "-1");
+      return this._tabIndex || (this._interactive ? "0" : "-1");
     }
     /**
      * Returns the effective avatar size.
@@ -94,10 +101,19 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       return this.getAttribute("color-scheme") || this._colorScheme;
     }
     get _role() {
-      return this.interactive ? "button" : undefined;
+      return this._interactive ? "button" : undefined;
     }
     get _ariaHasPopup() {
       return this._getAriaHasPopup();
+    }
+    get _fallbackIcon() {
+      if (this.fallbackIcon === "") {
+        this.fallbackIcon = "employee";
+      }
+      return this.fallbackIcon;
+    }
+    get _interactive() {
+      return this.interactive && !this.disabled;
     }
     get validInitials() {
       // initials should consist of only 1,2 or 3 latin letters
@@ -122,7 +138,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       return this.getDomRef().querySelector(".ui5-avatar-initials");
     }
     onBeforeRendering() {
-      this._onclick = this.interactive ? this._onClickHandler.bind(this) : undefined;
+      this._onclick = this._interactive ? this._onClickHandler.bind(this) : undefined;
     }
     async onAfterRendering() {
       await (0, _Render.renderFinished)();
@@ -160,14 +176,14 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
     _onClickHandler(e) {
       // prevent the native event and fire custom event to ensure the noConfict "ui5-click" is fired
       e.stopPropagation();
-      this.fireEvent("click");
+      this._fireClick();
     }
     _onkeydown(e) {
-      if (!this.interactive) {
+      if (!this._interactive) {
         return;
       }
       if ((0, _Keys.isEnter)(e)) {
-        this.fireEvent("click");
+        this._fireClick();
       }
       if ((0, _Keys.isSpace)(e)) {
         e.preventDefault(); // prevent scrolling
@@ -175,20 +191,24 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
     }
 
     _onkeyup(e) {
-      if (this.interactive && !e.shiftKey && (0, _Keys.isSpace)(e)) {
-        this.fireEvent("click");
+      if (this._interactive && !e.shiftKey && (0, _Keys.isSpace)(e)) {
+        this._fireClick();
       }
+    }
+    _fireClick() {
+      this.fireEvent("click");
+      this.pressed = !this.pressed;
     }
     _onfocusout() {
       this.focused = false;
     }
     _onfocusin() {
-      if (this.interactive) {
+      if (this._interactive) {
         this.focused = true;
       }
     }
     _getAriaHasPopup() {
-      if (!this.interactive || this.ariaHaspopup === "") {
+      if (!this._interactive || this.ariaHaspopup === "") {
         return;
       }
       return this.ariaHaspopup;
@@ -196,11 +216,18 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
   };
   __decorate([(0, _property.default)({
     type: Boolean
+  })], Avatar.prototype, "disabled", void 0);
+  __decorate([(0, _property.default)({
+    type: Boolean
   })], Avatar.prototype, "interactive", void 0);
   __decorate([(0, _property.default)({
     type: Boolean
   })], Avatar.prototype, "focused", void 0);
+  __decorate([(0, _property.default)({
+    type: Boolean
+  })], Avatar.prototype, "pressed", void 0);
   __decorate([(0, _property.default)()], Avatar.prototype, "icon", void 0);
+  __decorate([(0, _property.default)()], Avatar.prototype, "fallbackIcon", void 0);
   __decorate([(0, _property.default)()], Avatar.prototype, "initials", void 0);
   __decorate([(0, _property.default)({
     type: _AvatarShape.default,
@@ -245,7 +272,8 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
   })
   /**
   * Fired on mouseup, space and enter if avatar is interactive
-  *
+  * <b>Note:</b> The event will not be fired if the <code>disabled</code>
+  * property is set to <code>true</code>.
   * @event
   * @private
   * @since 1.0.0-rc.11

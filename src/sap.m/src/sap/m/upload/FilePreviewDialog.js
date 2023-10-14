@@ -122,6 +122,8 @@ sap.ui.define([
 					this._oDialog.removeAllContent();
 					this._oDialog.insertContent(this._oCarousel);
 				}
+				this.fireEvent("beforePreviewDialogOpen", {oDialog: this._oDialog});
+
 				this._oDialog.open();
 			}
 		},
@@ -258,8 +260,9 @@ sap.ui.define([
      	*/
 		_createCarousel: async function () {
 			const oPreviewItem = this._previewItem;
-			const aItems = !this.getShowCarouselArrows() ? [this._previewItem] : this._items;
+			let aItems = !this.getShowCarouselArrows() ? [this._previewItem] : this._items;
 			let sActivePageId = "";
+			aItems = aItems?.filter((oItem) => oItem?.isA("sap.m.upload.UploadSetwithTableItem"));
 			const aPagePromises = aItems.map(async (oItem) => {
 				const sMediaType = oItem.getMediaType();
 

@@ -47,12 +47,15 @@ sap.ui.define([
 				"sap.ui.webc.main.IMenuItem",
 				"sap.ui.webc.main.IMultiComboBoxItem",
 				"sap.ui.webc.main.ISegmentedButtonItem",
+				"sap.ui.webc.main.ISelectMenuOption",
 				"sap.ui.webc.main.ISelectOption",
 				"sap.ui.webc.main.ITab",
 				"sap.ui.webc.main.ITableCell",
 				"sap.ui.webc.main.ITableColumn",
 				"sap.ui.webc.main.ITableRow",
 				"sap.ui.webc.main.IToken",
+				"sap.ui.webc.main.IToolbarItem",
+				"sap.ui.webc.main.IToolbarSelectOption",
 				"sap.ui.webc.main.ITreeItem"
 			],
 			types: [
@@ -66,6 +69,7 @@ sap.ui.define([
 				"sap.ui.webc.main.BreadcrumbsSeparatorStyle",
 				"sap.ui.webc.main.BusyIndicatorSize",
 				"sap.ui.webc.main.ButtonDesign",
+				"sap.ui.webc.main.ButtonType",
 				"sap.ui.webc.main.CalendarSelectionMode",
 				"sap.ui.webc.main.CarouselArrowsPlacement",
 				"sap.ui.webc.main.CarouselPageIndicatorStyle",
@@ -97,6 +101,8 @@ sap.ui.define([
 				"sap.ui.webc.main.TabsOverflowMode",
 				"sap.ui.webc.main.TitleLevel",
 				"sap.ui.webc.main.ToastPlacement",
+				"sap.ui.webc.main.ToolbarAlign",
+				"sap.ui.webc.main.ToolbarItemOverflowBehavior",
 				"sap.ui.webc.main.WrappingType"
 			],
 			controls: [
@@ -150,6 +156,8 @@ sap.ui.define([
 				"sap.ui.webc.main.SegmentedButton",
 				"sap.ui.webc.main.SegmentedButtonItem",
 				"sap.ui.webc.main.Select",
+				"sap.ui.webc.main.SelectMenu",
+				"sap.ui.webc.main.SelectMenuOption",
 				"sap.ui.webc.main.Slider",
 				"sap.ui.webc.main.SplitButton",
 				"sap.ui.webc.main.StandardListItem",
@@ -171,6 +179,12 @@ sap.ui.define([
 				"sap.ui.webc.main.Toast",
 				"sap.ui.webc.main.ToggleButton",
 				"sap.ui.webc.main.Token",
+				"sap.ui.webc.main.Toolbar",
+				"sap.ui.webc.main.ToolbarButton",
+				"sap.ui.webc.main.ToolbarSelect",
+				"sap.ui.webc.main.ToolbarSelectOption",
+				"sap.ui.webc.main.ToolbarSeparator",
+				"sap.ui.webc.main.ToolbarSpacer",
 				"sap.ui.webc.main.Tree",
 				"sap.ui.webc.main.TreeItem",
 				"sap.ui.webc.main.TreeItemCustom"
@@ -392,6 +406,16 @@ sap.ui.define([
 		 */
 
 		/**
+		 * Interface for components that may be slotted inside <code>ui5-select-menu</code> as options
+		 *
+		 * @name sap.ui.webc.main.ISelectMenuOption
+		 * @interface
+		 * @public
+		 * @since 1.120.0
+		 * @experimental Since 1.120.0 This API is experimental and might change significantly.
+		 */
+
+		/**
 		 * Interface for components that may be slotted inside <code>ui5-select</code> as options
 		 *
 		 * @name sap.ui.webc.main.ISelectOption
@@ -449,6 +473,26 @@ sap.ui.define([
 		 * @public
 		 * @since 1.92.0
 		 * @experimental Since 1.92.0 This API is experimental and might change significantly.
+		 */
+
+		/**
+		 * Interface for toolbar items for the purpose of <code>ui5-toolbar</code>
+		 *
+		 * @name sap.ui.webc.main.IToolbarItem
+		 * @interface
+		 * @public
+		 * @since 1.120.0
+		 * @experimental Since 1.120.0 This API is experimental and might change significantly.
+		 */
+
+		/**
+		 * Interface for toolbar select items for the purpose of <code>ui5-toolbar-select</code>
+		 *
+		 * @name sap.ui.webc.main.IToolbarSelectOption
+		 * @interface
+		 * @public
+		 * @since 1.120.0
+		 * @experimental Since 1.120.0 This API is experimental and might change significantly.
 		 */
 
 		/**
@@ -830,6 +874,36 @@ sap.ui.define([
 			 * @public
 			 */
 			Transparent: "Transparent"
+		};
+
+
+		/**
+		 * Determines if the button has special form-related functionality.
+		 *
+		 * @enum {string}
+		 * @public
+		 * @since 1.120.0
+		 * @experimental Since 1.120.0 This API is experimental and might change significantly.
+		 */
+		thisLib.ButtonType = {
+
+			/**
+			 * The button does not do anything special when inside a form
+			 * @public
+			 */
+			Button: "Button",
+
+			/**
+			 * The button acts as a reset button (resets a form)
+			 * @public
+			 */
+			Reset: "Reset",
+
+			/**
+			 * The button acts as a submit button (submits a form)
+			 * @public
+			 */
+			Submit: "Submit"
 		};
 
 
@@ -1904,6 +1978,60 @@ sap.ui.define([
 			 * @public
 			 */
 			TopStart: "TopStart"
+		};
+
+
+		/**
+		 * Defines which direction the items of ui5-toolbar will be aligned.
+		 *
+		 * @enum {string}
+		 * @public
+		 * @since 1.120.0
+		 * @experimental Since 1.120.0 This API is experimental and might change significantly.
+		 */
+		thisLib.ToolbarAlign = {
+
+			/**
+			 * Toolbar items are situated at the <code>end</code> of the Toolbar
+			 * @public
+			 */
+			End: "End",
+
+			/**
+			 * Toolbar items are situated at the <code>start</code> of the Toolbar
+			 * @public
+			 */
+			Start: "Start"
+		};
+
+
+		/**
+		 * Defines the priority of the toolbar item to go inside overflow popover.
+		 *
+		 * @enum {string}
+		 * @public
+		 * @since 1.120.0
+		 * @experimental Since 1.120.0 This API is experimental and might change significantly.
+		 */
+		thisLib.ToolbarItemOverflowBehavior = {
+
+			/**
+			 *
+			 * @public
+			 */
+			AlwaysOverflow: "AlwaysOverflow",
+
+			/**
+			 * The item is presented inside the toolbar and goes in the popover, when there is not enough space.
+			 * @public
+			 */
+			Default: "Default",
+
+			/**
+			 * When set, the item will never go to the overflow popover.
+			 * @public
+			 */
+			NeverOverflow: "NeverOverflow"
 		};
 
 

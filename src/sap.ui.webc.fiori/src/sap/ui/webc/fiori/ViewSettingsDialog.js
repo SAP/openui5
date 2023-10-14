@@ -168,7 +168,19 @@ sap.ui.define([
 	});
 
 	/**
-	 * Sets a JavaScript object, as settings to the <code>sap.ui.webc.fiori.ViewSettingsDialog</code>. This method can be used after the dialog is initially open, as the dialog need to set its initial settings. The <code>sap.ui.webc.fiori.ViewSettingsDialog</code> throws an event called "before-open", this can be used as trigger point. The object should have the following format: <code> {sortOrder: "Ascending", sortBy: "Name", filters: [{"Filter 1": ["Some filter 1", "Some filter 2"]}, {"Filter 2": ["Some filter 4"]}]} </code>
+	 * Sets a JavaScript object, as settings to the <code>sap.ui.webc.fiori.ViewSettingsDialog</code>. This method can be used after the dialog is initially open, as the dialog needs to set its initial settings.<br>
+	 * The <code>sap.ui.webc.fiori.ViewSettingsDialog</code> throws an event called "before-open", which can be used as a trigger point.<br>
+	 * The object should have the following format:<br>
+	 * <pre>
+	 * {
+	 * 	sortOrder: "Ascending",
+	 * 	sortBy: "Name",
+	 * 	filters: [
+	 * 		{"Filter 1": ["Some filter 1", "Some filter 2"]},
+	 * 		{"Filter 2": ["Some filter 4"]},
+	 * 	]
+	 * }
+	 * </pre>
 	 * @param {object} settings predefined settings.
 	 * @public
 	 * @name sap.ui.webc.fiori.ViewSettingsDialog#setConfirmedSettings

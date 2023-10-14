@@ -4,7 +4,7 @@ sap.ui.define(["exports"], function (_exports) {
   Object.defineProperty(_exports, "__esModule", {
     value: true
   });
-  _exports.supportsTouch = _exports.isTablet = _exports.isSafari = _exports.isPhone = _exports.isIOS = _exports.isIE = _exports.isFirefox = _exports.isDesktop = _exports.isCombi = _exports.isChrome = _exports.isAndroid = void 0;
+  _exports.supportsTouch = _exports.isTablet = _exports.isSafari = _exports.isPhone = _exports.isMac = _exports.isIOS = _exports.isIE = _exports.isFirefox = _exports.isDesktop = _exports.isCombi = _exports.isChrome = _exports.isAndroid = void 0;
   const isSSR = typeof document === "undefined";
   const internals = {
     get userAgent() {
@@ -54,6 +54,12 @@ sap.ui.define(["exports"], function (_exports) {
         return false;
       }
       return navigator.platform.indexOf("Win") !== -1;
+    },
+    get macOS() {
+      if (isSSR) {
+        return false;
+      }
+      return !!navigator.userAgent.match(/Macintosh|Mac OS X/i);
     },
     get iOS() {
       if (isSSR) {
@@ -176,6 +182,10 @@ sap.ui.define(["exports"], function (_exports) {
     return internals.iOS;
   };
   _exports.isIOS = isIOS;
+  const isMac = () => {
+    return internals.macOS;
+  };
+  _exports.isMac = isMac;
   const isAndroid = () => {
     return internals.android || internals.androidPhone;
   };

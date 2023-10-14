@@ -2391,8 +2391,6 @@ sap.ui.define([
 	VariantManagement.prototype._handleManageCancelPressed = function() {
 
 		if (this._getDeletedItems().length > 0) {
-			this._bRebindRequired = true;
-
 			this._getDeletedItems().forEach(function(sKey) {
 				var oListItem = this._getRowForKey(sKey);
 				if (oListItem && !oListItem.getVisible()) {
@@ -2419,6 +2417,10 @@ sap.ui.define([
 		}
 
 		this._clearRenamedItems();
+
+		this._bRebindRequired = true;
+		this.oManagementTable.unbindItems();
+
 
 		if (this._oManagedObjectModel) {
 			this._oManagedObjectModel.checkUpdate();
@@ -2553,7 +2555,6 @@ sap.ui.define([
 
 		if (this._getDeletedItems().length > 0) {
 			this._bRebindRequired = true;
-
 			this._getDeletedItems().forEach(function(sKey) {
 				var oItem = this._getItemByKey(sKey);
 				if (oItem) {
@@ -2564,7 +2565,6 @@ sap.ui.define([
 
 		if (this._getRenamedItems().length > 0) {
 			this._bRebindRequired = true;
-
 			if (this._getRenamedItems().indexOf(this.getSelectedKey()) >= 0) {
 				var oBinding = this.oVariantText.getBinding("text");
 				if (oBinding) {

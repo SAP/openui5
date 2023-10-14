@@ -11,7 +11,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/renderer/LitRender
     return (0, _LitRenderer.html)`${this.domRendered ? block1.call(this, context, tags, suffix) : undefined} `;
   }
   function block1(context, tags, suffix) {
-    return (0, _LitRenderer.html)`<div class="ui5-toast-root" role="alert" style="${(0, _LitRenderer.styleMap)(this.styles.root)}" @mouseover="${this._onmouseover}" @mouseleave="${this._onmouseleave}" @transitionend="${this._ontransitionend}"><bdi><slot></slot></bdi></div>`;
+    return (0, _LitRenderer.html)`<div class="ui5-toast-root" role="alert" style="${(0, _LitRenderer.styleMap)(this.styles.root)}" tabindex="${(0, _LitRenderer.ifDefined)(this._tabindex)}" @focusin="${this._onfocusin}" @focusout="${this._onfocusout}" @keydown="${this._onkeydown}" @mouseover="${this._onmouseover}" @mouseleave="${this._onmouseleave}" @transitionend="${this._ontransitionend}"><bdi><slot></slot></bdi></div>`;
   }
   var _default = block0;
   _exports.default = _default;

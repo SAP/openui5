@@ -6,7 +6,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
   });
   _exports.pathData = _exports.ltr = _exports.default = _exports.accData = void 0;
   const name = "pie-chart";
-  const pathData = "M257-1q53 0 99.5 20T438 74t55 81.5 20 99.5-20 99.5-55 81.5-81.5 55-99.5 20-99.5-20T76 436t-55-81.5T1 255t20-99.5T76 74t81.5-55T257-1zm182 161q-23-45-64.5-73.5T282 53v166zM52 255q0 39 14 74t38 62 57 45 70 24V53q-37 4-70 21.5T104 119t-38 62-14 74zm230 202q38-5 70.5-22.5t57-44T448 329t14-74q0-12-2-23.5t-4-22.5l-174 64v184z";
+  const pathData = "M261 0q52 0 98 20t80 55 53.5 81.5T512 256t-20 100-55 81.5-81.5 54.5T255 512q-55 0-101.5-20.5T73 436t-53.5-80.5T0 259q0-54 21-101t57-82.5T161.5 20 261 0zm176 160q-24-46-67-74.5T275 52v172zM224 54q-37 6-69 24t-55 45-36 61-13 72 13 72 36 61 55 45 69 24V54zm51 406q40-4 74-21.5t59-44.5 39-62.5 14-75.5q0-26-6-48l-180 71v181z";
   _exports.pathData = pathData;
   const ltr = false;
   _exports.ltr = ltr;

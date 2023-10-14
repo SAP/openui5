@@ -55,7 +55,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
    * @allowPreventDefault
    * @param {HTMLElement} targetRef DOM ref of the clicked element
    * @public
-   * @native
    */, (0, _event.default)("click", {
     detail: {
       targetRef: {

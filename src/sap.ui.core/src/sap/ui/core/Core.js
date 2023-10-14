@@ -4,12 +4,12 @@
 
 // Provides the real core class sap.ui.core.Core of SAPUI5
 sap.ui.define([
-	'jquery.sap.global',
 	'sap/ui/Device',
 	'sap/ui/base/EventProvider',
 	'sap/ui/base/Interface',
 	'sap/ui/base/Object',
 	'sap/ui/base/ManagedObject',
+	"sap/ui/base/syncXHRFix",
 	'./AnimationMode',
 	'./Component',
 	'./Configuration',
@@ -22,7 +22,9 @@ sap.ui.define([
 	'./UIArea',
 	'./Messaging',
 	'./StaticArea',
+	"sap/ui/core/support/Hotkeys",
 	"sap/ui/core/Supportability",
+	"sap/ui/test/RecorderHotkeyListener",
 	"sap/ui/core/Theming",
 	"sap/base/Log",
 	"sap/ui/performance/Measurement",
@@ -32,21 +34,29 @@ sap.ui.define([
 	"sap/base/util/Deferred",
 	"sap/base/util/deepEqual",
 	"sap/base/util/ObjectPath",
+	"sap/base/util/Version",
 	'sap/ui/performance/trace/initTraces',
 	'sap/base/util/isEmptyObject',
 	'sap/base/util/each',
 	'sap/ui/VersionInfo',
 	'sap/base/config',
 	'sap/base/Event',
+	"sap/ui/dom/getComputedStyleFix",
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/thirdparty/jqueryui/jquery-ui-position",
+	// side effect: make global URI available
+	"sap/ui/thirdparty/URI",
+	// side effect: activates paste event fix
+	"sap/ui/events/PasteEventFix",
 	'sap/ui/events/jquery/EventSimulation'
 ],
 	function(
-		jQuery,
 		Device,
 		EventProvider,
 		Interface,
 		BaseObject,
 		ManagedObject,
+		syncXHRFix,
 		AnimationMode,
 		Component,
 		Configuration,
@@ -59,7 +69,9 @@ sap.ui.define([
 		UIArea,
 		Messaging,
 		StaticArea,
+		Hotkeys,
 		Supportability,
+		RecorderHotkeyListener,
 		Theming,
 		Log,
 		Measurement,
@@ -69,17 +81,53 @@ sap.ui.define([
 		Deferred,
 		deepEqual,
 		ObjectPath,
+		Version,
 		initTraces,
 		isEmptyObject,
 		each,
 		VersionInfo,
 		BaseConfig,
-		BaseEvent
-		/* ,EventSimulation */
+		BaseEvent,
+		getComputedStyleFix
+		/* ,jQuery, jquery-ui-position, URI, PasteEventFix, PasteEventFix, EventSimulation */
 	) {
 		"use strict";
 
 		var oCore;
+
+		// getComputedStyle polyfill + syncXHR fix for firefox
+		if ( Device.browser.firefox ) {
+			getComputedStyleFix();
+			syncXHRFix();
+		}
+
+		if (BaseConfig.get({
+			name: "sapUiNoConflict",
+			type: BaseConfig.Type.Boolean,
+			freeze: true
+		})){
+			undefined/*jQuery*/.noConflict();
+		}
+
+
+		const oJQVersion = Version(undefined/*jQuery*/.fn.jquery);
+		if ( oJQVersion.compareTo("3.6.0") != 0 ) {
+			// if the loaded jQuery version isn't SAPUI5's default version -> notify
+			// the application
+			Log.warning("SAPUI5's default jQuery version is 3.6.0; current version is " + undefined/*jQuery*/.fn.jquery + ". Please note that we only support version 3.6.0.");
+		}
+
+		sap.ui.loader._.logger = Log.getLogger("sap.ui.ModuleSystem",
+			BaseConfig.get({
+				name: "sapUiXxDebugModuleLoading",
+				type: BaseConfig.Type.Boolean,
+				external: true,
+				freeze: true
+			}) ? Log.Level.DEBUG : Math.min(Log.getLevel(), Log.Level.INFO));
+
+		//init Hotkeys for support tools
+		Hotkeys.init();
+		RecorderHotkeyListener.init();
 
 		// Initialize SAP Passport or FESR
 		initTraces();
@@ -768,8 +816,8 @@ sap.ui.define([
 				html.dataset.sapUiAnimationMode = sAnimationMode;
 				var bAnimation = (sAnimationMode !== AnimationMode.minimal && sAnimationMode !== AnimationMode.none);
 				html.dataset.sapUiAnimation = bAnimation ? "on" : "off";
-				if (typeof jQuery !== "undefined") {
-					jQuery.fx.off = !bAnimation;
+				if (typeof undefined/*jQuery*/ !== "undefined") {
+					undefined/*jQuery*/.fx.off = !bAnimation;
 				}
 			}
 			ControlBehavior.attachChange(function(oEvent) {
@@ -784,7 +832,9 @@ sap.ui.define([
 		 * Initializes the jQuery.support.useFlexBoxPolyfill property
 		 * @private
 		 */
-		Core.prototype._polyfillFlexbox = function() {};
+		Core.prototype._polyfillFlexbox = function() {
+			undefined/*jQuery*/.support.useFlexBoxPolyfill = false;
+		};
 
 		/**
 		 * Boots the core and injects the necessary CSS and JavaScript files for the library.
@@ -1703,7 +1753,7 @@ sap.ui.define([
 		 */
 		Core.prototype.fireLocalizationChanged = function(mChanges) {
 			var sEventId = Core.M_EVENTS.LocalizationChanged,
-				oBrowserEvent = jQuery.Event(sEventId, {changes : mChanges}),
+				oBrowserEvent = undefined/*jQuery*/.Event(sEventId, {changes : mChanges}),
 				fnAdapt = ManagedObject._handleLocalizationChange;
 
 			Log.info("localization settings changed: " + Object.keys(mChanges).join(","), null, "sap.ui.core.Core");

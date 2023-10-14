@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "./thirdparty/merge", "./Boot", "./UI5ElementMetadata", "./EventProvider", "./util/getSingletonElementInstance", "./StaticAreaItem", "./updateShadowRoot", "./IgnoreCustomElements", "./Render", "./CustomElementsRegistry", "./DOMObserver", "./config/NoConflict", "./locale/getEffectiveDir", "./util/StringHelper", "./util/isValidPropertyName", "./util/SlotsHelper", "./util/arraysAreEqual", "./locale/RTLAwareRegistry", "./theming/preloadLinks", "./renderer/executeTemplate", "./Runtimes"], function (_exports, _merge, _Boot, _UI5ElementMetadata, _EventProvider, _getSingletonElementInstance, _StaticAreaItem, _updateShadowRoot, _IgnoreCustomElements, _Render, _CustomElementsRegistry, _DOMObserver, _NoConflict, _getEffectiveDir, _StringHelper, _isValidPropertyName, _SlotsHelper, _arraysAreEqual, _RTLAwareRegistry, _preloadLinks, _executeTemplate, _Runtimes) {
+sap.ui.define(["exports", "./thirdparty/merge", "./Boot", "./UI5ElementMetadata", "./EventProvider", "./util/getSingletonElementInstance", "./StaticAreaItem", "./updateShadowRoot", "./IgnoreCustomElements", "./Render", "./CustomElementsRegistry", "./DOMObserver", "./config/NoConflict", "./locale/getEffectiveDir", "./util/StringHelper", "./util/isValidPropertyName", "./util/SlotsHelper", "./util/arraysAreEqual", "./locale/RTLAwareRegistry", "./theming/preloadLinks", "./renderer/executeTemplate"], function (_exports, _merge, _Boot, _UI5ElementMetadata, _EventProvider, _getSingletonElementInstance, _StaticAreaItem, _updateShadowRoot, _IgnoreCustomElements, _Render, _CustomElementsRegistry, _DOMObserver, _NoConflict, _getEffectiveDir, _StringHelper, _isValidPropertyName, _SlotsHelper, _arraysAreEqual, _RTLAwareRegistry, _preloadLinks, _executeTemplate) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -103,8 +103,6 @@ sap.ui.define(["exports", "./thirdparty/merge", "./Boot", "./UI5ElementMetadata"
      */
     async connectedCallback() {
       const ctor = this.constructor;
-      this.setAttribute(`_ui5rt${(0, _Runtimes.getCurrentRuntimeIndex)()}`, "");
-      this.setAttribute("_ui5host", "");
       this.setAttribute(ctor.getMetadata().getPureTag(), "");
       if (ctor.getMetadata().supportsF6FastNavigation()) {
         this.setAttribute("data-sap-ui-fastnavgroup", "true");

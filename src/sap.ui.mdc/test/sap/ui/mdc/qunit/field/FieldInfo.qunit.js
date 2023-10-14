@@ -6,7 +6,7 @@ sap.ui.define([
 	"sap/ui/mdc/enums/FieldEditMode",
 	"sap/ui/mdc/Field",
 	"sap/ui/core/util/MockServer",
-	"sap/ui/mdc/link/FakeFlpConnector",
+	"testutils/other/FakeFlpConnector",
 	"sap/ui/model/odata/v2/ODataModel",
 	"sap/ui/mdc/link/ContactDetails",
 	"sap/ui/mdc/link/LinkItem",

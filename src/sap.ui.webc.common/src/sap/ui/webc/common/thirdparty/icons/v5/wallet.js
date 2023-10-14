@@ -6,7 +6,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
   });
   _exports.pathData = _exports.ltr = _exports.default = _exports.accData = void 0;
   const name = "wallet";
-  const pathData = "M496 400q0 34-22.5 57T416 480H97q-35 0-57.5-23T17 400V80q0-34 22.5-57T97 0h319q35 0 57.5 23T496 80v320zm-426 0q0 12 7.5 19t19.5 7h319q12 0 19.5-7t7.5-19v-27H310q-34 0-57-22.5T230 293V187q0-35 23-57.5t57-22.5h133V80q0-12-7.5-19T416 54H97q-12 0-19.5 7T70 80v320zm240-240q-12 0-19.5 7.5T283 187v106q0 12 7.5 19.5T310 320h133V160H310zm53 40q17 0 28.5 11.5T403 240t-11.5 28.5T363 280t-28.5-11.5T323 240t11.5-28.5T363 200z";
+  const pathData = "M422 32q24 0 41 17t17 41v332q0 24-17 41t-41 17H90q-24 0-41-17t-17-41V90q0-24 17-41t41-17h332zm0 397q7 0 7-7v-38H282q-38 0-64-26t-26-64v-76q0-38 26-64t64-26h147V90q0-7-7-7H90q-7 0-7 7v332q0 7 7 7h332zm7-250H282q-17 0-28 11t-11 28v76q0 17 11 28t28 11h147V179zM320 288q-13 0-22.5-9.5T288 256t9.5-22.5T320 224t22.5 9.5T352 256t-9.5 22.5T320 288z";
   _exports.pathData = pathData;
   const ltr = false;
   _exports.ltr = ltr;

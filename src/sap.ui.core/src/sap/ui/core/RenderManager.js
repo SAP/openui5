@@ -1699,6 +1699,10 @@ sap.ui.define([
 			mAttributes.id = uid();
 		}
 
+		if (mAttributes.role === "presentation") {
+			mAttributes["aria-hidden"] = true;
+		}
+
 		if (bIconURI) {
 			sLabel = mAttributes.alt || mAttributes.title || oIconInfo.text || oIconInfo.name;
 			sInvTextId = mAttributes.id + "-label";

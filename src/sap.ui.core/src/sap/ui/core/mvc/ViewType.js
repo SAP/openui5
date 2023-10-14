@@ -19,12 +19,6 @@ sap.ui.define([], function () {
 	 */
 	var ViewType = {
 	 /**
-	  * JSON View
-	  * @public
-	  */
-	 JSON: "JSON",
-
-	 /**
 	  * XML view
 	  * @public
 	  */

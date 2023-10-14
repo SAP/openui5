@@ -1,5 +1,5 @@
 /*global QUnit sinon*/
-sap.ui.require([
+sap.ui.define([
 	"sap/ui/core/Lib",
 	"sap/base/util/ObjectPath",
 	"sap/ui/core/theming/ThemeManager",
@@ -66,10 +66,6 @@ sap.ui.require([
 		this.spy(sap.ui.loader._, 'loadJSResourceAsync');
 		this.spy(XMLHttpRequest.prototype, 'open');
 		this.spy(sap.ui, 'require');
-		/**
-		 * @deprecated As of version 1.120
-		 */
-		this.spy(sap.ui, 'requireSync');
 
 		// make lib3 already loaded
 		sap.ui.predefine('testlibs/scenario1/lib3/library', ["sap/ui/core/Lib"], function(Library) {
@@ -90,38 +86,22 @@ sap.ui.require([
 
 			checkLibNotInitialized('testlibs.scenario1.lib1');
 			sinon.assert.calledWith(sap.ui.loader._.loadJSResourceAsync, sinon.match(/scenario1\/lib1\/library-preload\.js$/));
-			/**
-			 * @deprecated As of version 1.120
-			 */
-			sinon.assert.neverCalledWith(sap.ui.requireSync, 'testlibs/scenario1/lib1/library');
 			sinon.assert.neverCalledWith(sap.ui.require, ['testlibs/scenario1/lib1/library']);
 
 			// lib3 should not be preloaded as its library.js has been (pre)loaded before
 			checkLibNotInitialized('testlibs.scenario1.lib3');
 			sinon.assert.neverCalledWith(sap.ui.loader._.loadJSResourceAsync, sinon.match(/scenario1\/lib3\/library-preload\.js$/));
-			/**
-			 * @deprecated As of version 1.120
-			 */
-			sinon.assert.neverCalledWith(sap.ui.requireSync, 'testlibs.scenario1.lib3.library');
 			sinon.assert.neverCalledWith(sap.ui.require, ['testlibs/scenario1/lib3/library']);
 
 			// lib4 and lib5 should have been preloaded
 			checkLibNotInitialized('testlibs.scenario1.lib4');
 			sinon.assert.calledWith(sap.ui.loader._.loadJSResourceAsync, sinon.match(/scenario1\/lib4\/library-preload\.js$/));
-			/**
-			 * @deprecated As of version 1.120
-			 */
-			sinon.assert.neverCalledWith(sap.ui.requireSync, 'testlibs.scenario1.lib4.library');
 			sinon.assert.neverCalledWith(sap.ui.require, ['testlibs/scenario1/lib4/library']);
 
 			// lib5 should load the json format as fallback
 			checkLibNotInitialized('testlibs.scenario1.lib5');
 			sinon.assert.calledWith(sap.ui.loader._.loadJSResourceAsync, sinon.match(/scenario1\/lib5\/library-preload\.js$/));
 			sinon.assert.calledWith(XMLHttpRequest.prototype.open, "GET", sinon.match(/scenario1\/lib5\/library-preload\.json$/));
-			/**
-			 * @deprecated As of version 1.120
-			 */
-			sinon.assert.neverCalledWith(sap.ui.requireSync, 'testlibs.scenario1.lib5.library');
 			sinon.assert.neverCalledWith(sap.ui.require, ['testlibs/scenario1/lib5/library']);
 		});
 	});
@@ -192,10 +172,6 @@ sap.ui.require([
 
 		this.spy(Library.prototype, '_preload');
 		this.spy(sap.ui, 'require');
-		/**
-		 * @deprecated As of version 1.120
-		 */
-		this.spy(sap.ui, 'requireSync');
 
 		// make lib3 already loaded
 		sap.ui.predefine('testlibs/scenario1/lib3/library', ["sap/ui/core/Lib"], function(Library) {
@@ -214,10 +190,6 @@ sap.ui.require([
 		return vResult.then(function(oLib1) {
 			checkLibInitialized('testlibs.scenario1.lib1');
 			sinon.assert.calledOn(Library.prototype._preload, oLib1, "Library.prototype.preload is called");
-			/**
-			 * @deprecated As of version 1.120
-			 */
-			sinon.assert.neverCalledWith(sap.ui.requireSync, 'testlibs/scenario1/lib1/library');
 			sinon.assert.calledWith(sap.ui.require, ['testlibs/scenario1/lib1/library']);
 
 			// lib3 should not be preloaded as its library.js has been (pre)loaded before

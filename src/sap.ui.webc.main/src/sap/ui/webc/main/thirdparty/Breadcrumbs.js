@@ -38,6 +38,11 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
     return c > 3 && r && Object.defineProperty(target, key, r), r;
   };
   var Breadcrumbs_1;
+
+  // Templates
+
+  // Styles
+
   /**
    * @class
    *
@@ -206,7 +211,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         // need to show the component that opens the overflow
         requiredWidth += this._dropdownArrowLinkWidth;
       }
-      while (requiredWidth > availableWidth && overflowSize < this._maxAllowedOverflowSize) {
+      while (requiredWidth >= availableWidth && overflowSize < this._maxAllowedOverflowSize) {
         const itemToOverflow = items[overflowSize];
         let itemWidth = 0;
         if (this._isItemVisible(itemToOverflow)) {

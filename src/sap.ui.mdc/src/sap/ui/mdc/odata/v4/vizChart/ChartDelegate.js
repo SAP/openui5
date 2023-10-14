@@ -52,11 +52,11 @@ sap.ui.define([
 	 */
 
     /**
-	 * @class Base Delegate for {@link sap.ui.mdc.Chart Chart}. Extend this object in your project to use all functionalities of the {@link sap.ui.mdc.Chart Chart}.<br>
+	 * Base Delegate for {@link sap.ui.mdc.Chart Chart}. Extend this object in your project to use all functionalities of the {@link sap.ui.mdc.Chart Chart}.<br>
 	 * This class provides method calls, which are called by the <code>Chart</code> at specific operations and allows to overwrite an internal behaviour.
 	 *
-	 * @author SAP SE
 	 * @namespace
+	 * @author SAP SE
 	 * @alias module:sap/ui/mdc/odata/v4/vizChart/ChartDelegate
 	 * @extends module:sap/ui/mdc/odata/v4/ChartDelegate
 	 * @since 1.88

@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/ui/webc/common/thirdparty/base/decorators/property", "sap/ui/webc/common/thirdparty/base/decorators/customElement", "sap/ui/webc/common/thirdparty/base/decorators/slot", "sap/ui/webc/common/thirdparty/base/decorators/event", "sap/ui/webc/common/thirdparty/base/renderer/LitRenderer", "sap/ui/webc/common/thirdparty/base/delegate/ResizeHandler", "sap/ui/webc/common/thirdparty/base/Device", "sap/ui/webc/common/thirdparty/base/types/ValueState", "sap/ui/webc/common/thirdparty/base/FeaturesRegistry", "sap/ui/webc/common/thirdparty/base/Keys", "sap/ui/webc/common/thirdparty/base/types/Integer", "sap/ui/webc/common/thirdparty/base/i18nBundle", "sap/ui/webc/common/thirdparty/base/util/AriaLabelHelper", "sap/ui/webc/common/thirdparty/base/util/Caret", "sap/ui/webc/common/thirdparty/base/util/getActiveElement", "sap/ui/webc/common/thirdparty/icons/decline", "sap/ui/webc/common/thirdparty/icons/not-editable", "sap/ui/webc/common/thirdparty/icons/error", "sap/ui/webc/common/thirdparty/icons/alert", "sap/ui/webc/common/thirdparty/icons/sys-enter-2", "sap/ui/webc/common/thirdparty/icons/information", "./types/InputType", "./Popover", "./Icon", "./generated/templates/InputTemplate.lit", "./generated/templates/InputPopoverTemplate.lit", "./Filters", "./generated/i18n/i18n-defaults", "./generated/themes/Input.css", "./generated/themes/ResponsivePopoverCommon.css", "./generated/themes/ValueStateMessage.css", "./generated/themes/Suggestions.css"], function (_exports, _UI5Element, _property, _customElement, _slot, _event, _LitRenderer, _ResizeHandler, _Device, _ValueState, _FeaturesRegistry, _Keys, _Integer, _i18nBundle, _AriaLabelHelper, _Caret, _getActiveElement, _decline, _notEditable, _error, _alert, _sysEnter, _information, _InputType, _Popover, _Icon, _InputTemplate, _InputPopoverTemplate, _Filters, _i18nDefaults, _Input, _ResponsivePopoverCommon, _ValueStateMessage, _Suggestions) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/ui/webc/common/thirdparty/base/decorators/property", "sap/ui/webc/common/thirdparty/base/decorators/customElement", "sap/ui/webc/common/thirdparty/base/decorators/slot", "sap/ui/webc/common/thirdparty/base/decorators/event", "sap/ui/webc/common/thirdparty/base/renderer/LitRenderer", "sap/ui/webc/common/thirdparty/base/delegate/ResizeHandler", "sap/ui/webc/common/thirdparty/base/CustomElementsScope", "sap/ui/webc/common/thirdparty/base/Device", "sap/ui/webc/common/thirdparty/base/types/ValueState", "sap/ui/webc/common/thirdparty/base/FeaturesRegistry", "sap/ui/webc/common/thirdparty/base/Keys", "sap/ui/webc/common/thirdparty/base/types/Integer", "sap/ui/webc/common/thirdparty/base/i18nBundle", "sap/ui/webc/common/thirdparty/base/util/AriaLabelHelper", "sap/ui/webc/common/thirdparty/base/util/Caret", "sap/ui/webc/common/thirdparty/base/util/getActiveElement", "sap/ui/webc/common/thirdparty/icons/decline", "sap/ui/webc/common/thirdparty/icons/not-editable", "sap/ui/webc/common/thirdparty/icons/error", "sap/ui/webc/common/thirdparty/icons/alert", "sap/ui/webc/common/thirdparty/icons/sys-enter-2", "sap/ui/webc/common/thirdparty/icons/information", "./types/InputType", "./Popover", "./Icon", "./generated/templates/InputTemplate.lit", "./generated/templates/InputPopoverTemplate.lit", "./Filters", "./generated/i18n/i18n-defaults", "./generated/themes/Input.css", "./generated/themes/ResponsivePopoverCommon.css", "./generated/themes/ValueStateMessage.css", "./generated/themes/Suggestions.css"], function (_exports, _UI5Element, _property, _customElement, _slot, _event, _LitRenderer, _ResizeHandler, _CustomElementsScope, _Device, _ValueState, _FeaturesRegistry, _Keys, _Integer, _i18nBundle, _AriaLabelHelper, _Caret, _getActiveElement, _decline, _notEditable, _error, _alert, _sysEnter, _information, _InputType, _Popover, _Icon, _InputTemplate, _InputPopoverTemplate, _Filters, _i18nDefaults, _Input, _ResponsivePopoverCommon, _ValueStateMessage, _Suggestions) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -33,6 +33,11 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
     return c > 3 && r && Object.defineProperty(target, key, r), r;
   };
   var Input_1;
+
+  // Templates
+
+  // Styles
+
   // all sementic events
   var INPUT_EVENTS;
   (function (INPUT_EVENTS) {
@@ -123,7 +128,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       // Indicates, if the user is typing. Gets reset once popup is closed
       this.isTyping = false;
       // Suggestions array initialization
-      this.suggestionsTexts = [];
+      this.suggestionObjects = [];
       this._handleResizeBound = this._handleResize.bind(this);
       this._keepInnerValue = false;
       this._focusedAfterClear = false;
@@ -142,10 +147,10 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       }
       if (this.showSuggestions) {
         this.enableSuggestions();
-        this.suggestionsTexts = this.Suggestions.defaultSlotProperties(this.typedInValue);
+        this.suggestionObjects = this.Suggestions.defaultSlotProperties(this.typedInValue);
       }
       this.effectiveShowClearIcon = this.showClearIcon && !!this.value && !this.readonly && !this.disabled;
-      this.style.setProperty("--_ui5-input-icons-count", `${this.iconsCount}`);
+      this.style.setProperty((0, _CustomElementsScope.getScopedVarName)("--_ui5-input-icons-count"), `${this.iconsCount}`);
       this.FormSupport = (0, _FeaturesRegistry.getFeature)("FormSupport");
       const hasItems = !!this.suggestionItems.length;
       const hasValue = !!this.value;
@@ -756,11 +761,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
     }
     announceSelectedItem() {
       const invisibleText = this.shadowRoot.querySelector(`#${this._id}-selectionText`);
-      if (this.Suggestions && this.Suggestions._isItemOnTarget()) {
-        invisibleText.textContent = this.itemSelectionAnnounce;
-      } else {
-        invisibleText.textContent = "";
-      }
+      invisibleText.textContent = this.itemSelectionAnnounce;
     }
     get _readonly() {
       return this.readonly && !this.disabled;
@@ -889,13 +890,14 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
     }
     get availableSuggestionsCount() {
       if (this.showSuggestions && (this.value || this.Suggestions.isOpened())) {
-        switch (this.suggestionsTexts.length) {
+        const nonGroupItems = this.suggestionObjects.filter(item => !item.groupItem);
+        switch (nonGroupItems.length) {
           case 0:
             return Input_1.i18nBundle.getText(_i18nDefaults.INPUT_SUGGESTIONS_NO_HIT);
           case 1:
             return Input_1.i18nBundle.getText(_i18nDefaults.INPUT_SUGGESTIONS_ONE_HIT);
           default:
-            return Input_1.i18nBundle.getText(_i18nDefaults.INPUT_SUGGESTIONS_MORE_HITS, this.suggestionsTexts.length);
+            return Input_1.i18nBundle.getText(_i18nDefaults.INPUT_SUGGESTIONS_MORE_HITS, nonGroupItems.length);
         }
       }
       return undefined;

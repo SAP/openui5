@@ -13,7 +13,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/T
   const styleData = {
     packageName: "@ui5/webcomponents",
     fileName: "themes/ResponsivePopover.css",
-    content: ":host {\n\t--_ui5_input_width: 100%;\n\tmin-width: 6.25rem;\n\tmin-height: 2rem;\n}\n\n:host([opened]) {\n\tdisplay: inline-block;\n}\n\n.ui5-responsive-popover-header {\n\theight: var(--_ui5-responsive_popover_header_height);\n\tdisplay: flex;\n\tjustify-content: space-between;\n\talign-items: center;\n\twidth:100%;\n}\n\n.ui5-responsive-popover-header-text {\n\twidth: calc(100% - var(--_ui5_button_base_min_width));\n}\n\n.ui5-responsive-popover-header-no-title {\n\tjustify-content: flex-end;\n}\n"
+    content: ":host{--_ui5-v1-18-0_input_width:100%;min-height:2rem;min-width:6.25rem}:host([opened]){display:inline-block}.ui5-responsive-popover-header{align-items:center;display:flex;height:var(--_ui5-v1-18-0-responsive_popover_header_height);justify-content:space-between;width:100%}.ui5-responsive-popover-header-text{width:calc(100% - var(--_ui5-v1-18-0_button_base_min_width))}.ui5-responsive-popover-header-no-title{justify-content:flex-end}"
   };
   var _default = styleData;
   _exports.default = _default;

@@ -781,6 +781,8 @@ sap.ui.define([
 			 * @param {object} oHandler The request handler object
 			 * @param {object} oHttpClient The HttpClient object
 			 * @param {object} oMetadata The metadata object
+			 * @returns {object}
+			 *   An object with a property <code>abort</code>, containing a function to abort the request
 			 */
 			function checkRequest(oRequest, fnSuccess, fnError, oHandler, oHttpClient, oMetadata) {
 				if (oRequest.requestUri.includes("$batch")) {
@@ -1115,7 +1117,7 @@ sap.ui.define([
 				// esp. for the table.Table this is essential.
 				that.oView.placeAt("qunit-fixture");
 
-				return that.waitForChanges(assert);
+				return that.waitForChanges(assert, "create view");
 			});
 		},
 
@@ -1699,15 +1701,17 @@ sap.ui.define([
 		 * states.
 		 *
 		 * @param {object} assert The QUnit assert object
-		 * @param {number} [iTimeout=3000] The timeout time in milliseconds
+		 * @param {string} [sTitle] Title for this section of a test
+		 * @param {number} [iWaitTimeout=3000] The timeout time in milliseconds
 		 * @returns {Promise} A promise that is resolved when all requests have been responded,
 		 *   all expected values for controls have been set, all expected messages and all value
 		 *   states have been checked
 		 */
-		waitForChanges : function (assert, iTimeout) {
+		waitForChanges : function (assert, sTitle, iWaitTimeout) {
 			var oPromise,
 				that = this;
 
+			iWaitTimeout = iWaitTimeout || 3000;
 			oPromise = new SyncPromise(function (resolve) {
 				that.resolve = resolve;
 				// After three seconds everything should have run through
@@ -1715,11 +1719,11 @@ sap.ui.define([
 				setTimeout(function () {
 					if (oPromise.isPending()) {
 						assert.ok(false, "Timeout in waitForChanges");
-						resolve();
+						resolve(true);
 					}
-				}, iTimeout || 3000);
+				}, iWaitTimeout);
 				that.checkFinish(assert);
-			}).then(function () {
+			}).then(function (bTimeout) {
 				var sControlId, aExpectedValuesPerRow, i, j;
 
 				// Report missing requests
@@ -1745,8 +1749,8 @@ sap.ui.define([
 					}
 				}
 				that.checkMessages(assert);
-				return that.aValueStates.length === 0
-					? undefined
+				return (that.aValueStates.length === 0
+					? SyncPromise.resolve()
 					// Checks the controls' value state after waiting some time for the control to
 					// set it.
 					: resolveLater(function () {
@@ -1762,6 +1766,9 @@ sap.ui.define([
 									+ oControl.getValueStateText());
 						});
 						that.aValueStates = [];
+					})).then(() => {
+						assert.ok(!bTimeout, "waitForChanges(" + (sTitle || "") + "): "
+							+ (bTimeout ? "Timeout (" + iWaitTimeout + " ms)" : "Done"));
 					});
 			});
 
@@ -10863,6 +10870,156 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				oTable.getBinding("rows").expandNodeToLevel(2, 2),
 				that.waitForChanges(assert)
 			]);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: All read requests of the tree binding except $count requests, consider "transitionMessagesOnly"
+	// parameter.
+	// JIRA: CPOUI5MODELS-1437
+	QUnit.test("ODataTreeBinding: transtionMessagesOnly", function (assert) {
+		const oModel = createSpecialCasesModel();
+		let oTable;
+		const sView = '\
+<t:TreeTable id="table"\
+		rows="{\
+			parameters: {\
+				countMode : \'Request\',\
+				numberOfExpandedLevels: 1,\
+				transitionMessagesOnly: true,\
+				treeAnnotationProperties: {\
+					hierarchyDrillStateFor: \'OrderOperationIsExpanded\',\
+					hierarchyLevelFor: \'OrderOperationRowLevel\',\
+					hierarchyNodeFor: \'OrderOperationRowID\',\
+					hierarchyParentNodeFor: \'OrderOperationParentRowID\'\
+				}\
+			},\
+			path: \'/C_RSHMaintSchedSmltdOrdAndOp\'\
+		}"\
+		threshold="0"\
+		visibleRowCount="2">\
+	<Text id="maintenanceOrder" text="{MaintenanceOrder}" />\
+</t:TreeTable>';
+
+		this.expectHeadRequest()
+			// triggered by ODataTreeBinding#_getCountForNodeId
+			.expectRequest("C_RSHMaintSchedSmltdOrdAndOp/$count?$filter=OrderOperationRowLevel eq 0", "273")
+			.expectRequest({ // triggered by ODataTreeBinding#_loadSubNodes
+					headers: {"sap-messages": "transientOnly"},
+					requestUri: "C_RSHMaintSchedSmltdOrdAndOp?$filter=OrderOperationRowLevel eq 0&$skip=0&$top=2"
+				}, {
+					results: [{
+						__metadata: {uri: "C_RSHMaintSchedSmltdOrdAndOp('id-0')"},
+						MaintenanceOrder: "0",
+						OrderOperationIsExpanded: "collapsed",
+						OrderOperationRowID: "id-0",
+						OrderOperationRowLevel: 0
+					}, {
+						__metadata: {uri: "C_RSHMaintSchedSmltdOrdAndOp('id-1')"},
+						MaintenanceOrder: "1",
+						OrderOperationIsExpanded: "leaf",
+						OrderOperationRowID: "id-1",
+						OrderOperationRowLevel: 0
+					}]
+				})
+			// triggered by ODataTreeBinding#_getCountForNodeId
+			.expectRequest("C_RSHMaintSchedSmltdOrdAndOp/$count?$filter=OrderOperationParentRowID eq 'id-0'", "5")
+			.expectRequest({ // triggered by ODataTreeBinding#_loadSubNodes
+					headers: {"sap-messages": "transientOnly"},
+					requestUri: "C_RSHMaintSchedSmltdOrdAndOp?$filter=OrderOperationParentRowID eq 'id-0'"
+						+ "&$skip=0&$top=2"
+				}, {
+					results: [{
+						__metadata: {uri: "C_RSHMaintSchedSmltdOrdAndOp('id-0.0')"},
+						MaintenanceOrder: "0.0",
+						OrderOperationIsExpanded: "leaf",
+						OrderOperationParentRowID: "id-0",
+						OrderOperationRowID: "id-0.0",
+						OrderOperationRowLevel: 1
+					}, {
+						__metadata: {uri: "C_RSHMaintSchedSmltdOrdAndOp('id-0.1')"},
+						MaintenanceOrder: "0.1",
+						OrderOperationIsExpanded: "leaf",
+						OrderOperationParentRowID: "id-0",
+						OrderOperationRowID: "id-0.1",
+						OrderOperationRowLevel: 1
+					}]
+				});
+
+		return this.createView(assert, sView, oModel).then(() => {
+			oTable = this.oView.byId("table");
+
+			// don't use expectValue to avoid timing issues causing flaky tests
+			assert.deepEqual(getTableContent(oTable), [["0"], ["0.0"]]);
+
+			// code under test
+			oTable.collapseAll();
+
+			return this.waitForChanges(assert, "collapse all nodes");
+		}).then(() => {
+			assert.deepEqual(getTableContent(oTable), [["0"], ["1"]]);
+
+			this.expectRequest({ // triggered by ODataTreeBinding#_loadSubNodes
+					headers: {"sap-messages": "transientOnly"},
+					requestUri: "C_RSHMaintSchedSmltdOrdAndOp?$filter=OrderOperationRowLevel eq 0&$skip=2&$top=4"
+				}, {
+					results: [{
+						__metadata: {uri: "C_RSHMaintSchedSmltdOrdAndOp('id-2')"},
+						MaintenanceOrder: "2",
+						OrderOperationIsExpanded: "collapsed",
+						OrderOperationRowID: "id-2",
+						OrderOperationRowLevel: 0
+					}, {
+						__metadata: {uri: "C_RSHMaintSchedSmltdOrdAndOp('id-3')"},
+						MaintenanceOrder: "3",
+						OrderOperationIsExpanded: "leaf",
+						OrderOperationRowID: "id-3",
+						OrderOperationRowLevel: 0
+					}]
+				});
+
+			// code under test
+			oTable.setFirstVisibleRow(2);
+
+			return this.waitForChanges(assert, "scroll down");
+		}).then(() => {
+			assert.deepEqual(getTableContent(oTable), [["2"], ["3"]]);
+
+			this.expectRequest({ // triggered by ODataTreeBinding#_loadSubTree
+					headers: {"sap-messages": "transientOnly"},
+					requestUri: "C_RSHMaintSchedSmltdOrdAndOp?"
+						+ "$filter=OrderOperationRowID eq 'id-2' and OrderOperationRowLevel le 2"
+				}, {
+					results: [{
+						__metadata: {uri: "C_RSHMaintSchedSmltdOrdAndOp('id-2')"},
+						MaintenanceOrder: "2",
+						OrderOperationIsExpanded: "expanded",
+						OrderOperationRowID: "id-2",
+						OrderOperationRowLevel: 0
+					}, {
+						__metadata: {uri: "C_RSHMaintSchedSmltdOrdAndOp('id-2.0')"},
+						MaintenanceOrder: "2.0",
+						OrderOperationIsExpanded: "leaf",
+						OrderOperationParentRowID: "id-2",
+						OrderOperationRowID: "id-2.0",
+						OrderOperationRowLevel: 1
+					}]
+				});
+
+			return Promise.all([
+				// code under test
+				oTable.getBinding("rows").expandNodeToLevel(2, 2),
+				this.waitForChanges(assert, "expand node to level 2")
+			]);
+		}).then(() => {
+			assert.deepEqual(getTableContent(oTable), [["2"], ["2.0"]]);
+
+			// code under test
+			oTable.setFirstVisibleRow(0);
+
+			return this.waitForChanges(assert, "scroll up again");
+		}).then(() => {
+			assert.deepEqual(getTableContent(oTable), [["0"], ["1"]]);
 		});
 	});
 

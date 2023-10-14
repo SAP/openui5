@@ -27,6 +27,11 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
     return c > 3 && r && Object.defineProperty(target, key, r), r;
   };
   var TimeSelection_1;
+
+  // default calendar for bundling
+
+  // Styles
+
   /**
    * @class
    *

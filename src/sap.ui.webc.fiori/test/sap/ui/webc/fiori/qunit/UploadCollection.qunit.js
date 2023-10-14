@@ -63,6 +63,13 @@ sap.ui.define([
 								}
 							})
 						],
+						deleteButton: new Button({
+							icon: "employee",
+							text: "Some text...",
+							click: function(oEvent) {
+								// console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+							}
+						}),
 						thumbnail: new Button({
 							icon: "employee",
 							text: "Some text...",
@@ -70,6 +77,9 @@ sap.ui.define([
 								// console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
 							}
 						}),
+						detailClick: function(oEvent) {
+							// console.log("Event detailClick fired for UploadCollectionItem with parameters: ", oEvent.getParameters());
+						},
 						fileNameClick: function(oEvent) {
 							// console.log("Event fileNameClick fired for UploadCollectionItem with parameters: ", oEvent.getParameters());
 						},
@@ -107,6 +117,13 @@ sap.ui.define([
 								}
 							})
 						],
+						deleteButton: new Button({
+							icon: "employee",
+							text: "Some text...",
+							click: function(oEvent) {
+								// console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+							}
+						}),
 						thumbnail: new Button({
 							icon: "employee",
 							text: "Some text...",
@@ -114,6 +131,9 @@ sap.ui.define([
 								// console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
 							}
 						}),
+						detailClick: function(oEvent) {
+							// console.log("Event detailClick fired for UploadCollectionItem with parameters: ", oEvent.getParameters());
+						},
 						fileNameClick: function(oEvent) {
 							// console.log("Event fileNameClick fired for UploadCollectionItem with parameters: ", oEvent.getParameters());
 						},
@@ -151,6 +171,13 @@ sap.ui.define([
 								}
 							})
 						],
+						deleteButton: new Button({
+							icon: "employee",
+							text: "Some text...",
+							click: function(oEvent) {
+								// console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+							}
+						}),
 						thumbnail: new Button({
 							icon: "employee",
 							text: "Some text...",
@@ -158,6 +185,9 @@ sap.ui.define([
 								// console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
 							}
 						}),
+						detailClick: function(oEvent) {
+							// console.log("Event detailClick fired for UploadCollectionItem with parameters: ", oEvent.getParameters());
+						},
 						fileNameClick: function(oEvent) {
 							// console.log("Event fileNameClick fired for UploadCollectionItem with parameters: ", oEvent.getParameters());
 						},

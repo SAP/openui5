@@ -213,6 +213,31 @@ sap.ui.define([
 		oTB.destroy();
 	});
 
+	QUnit.test("test sapMBarChildFirstChild class", function(assert) {
+		var oFirstControl = new Button({ text: "Button1" }),
+			oSecondControl = new Button({ text: "Button2" }),
+			oTB = createToolbar({
+			Toolbar : {
+				content : [oFirstControl, oSecondControl]
+			}
+		});
+
+		//Assert
+		assert.ok(oFirstControl.hasStyleClass("sapMBarChildFirstChild"), "First child has 'sapMBarChildFirstChild' class");
+		assert.notOk(oSecondControl.hasStyleClass("sapMBarChildFirstChild"), "Second child does not have 'sapMBarChildFirstChild' class");
+
+		//Act
+		oFirstControl.setVisible(false);
+		Core.applyChanges();
+
+		//Assert
+		assert.notOk(oFirstControl.hasStyleClass("sapMBarChildFirstChild"), "First child does not have 'sapMBarChildFirstChild' class");
+		assert.ok(oSecondControl.hasStyleClass("sapMBarChildFirstChild"), "Second child now has 'sapMBarChildFirstChild' class, as the first one is not visible");
+
+		//Cleanup
+		oTB.destroy();
+	});
+
 	QUnit.module("Accessiblity");
 
 	QUnit.test("getAccessibilityInfo method", function(assert) {

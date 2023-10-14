@@ -13,7 +13,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/T
   const styleData = {
     packageName: "@ui5/webcomponents",
     fileName: "themes/FormComponents.css",
-    content: ":host {\n\tvertical-align: middle;\n}"
+    content: ":host{vertical-align:middle}"
   };
   var _default = styleData;
   _exports.default = _default;

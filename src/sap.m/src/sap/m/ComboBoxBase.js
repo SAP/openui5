@@ -19,6 +19,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/m/inputUtils/forwardItemProperties",
 	"sap/m/inputUtils/highlightDOMElements",
+	"sap/m/inputUtils/highlightItemsWithContains",
 	"sap/m/inputUtils/ListHelpers",
 	"sap/ui/core/IconPool",
 	"sap/ui/core/Core"
@@ -40,6 +41,7 @@ sap.ui.define([
 		jQuery,
 		forwardItemProperties,
 		highlightDOMElements,
+		highlightItemsWithContains,
 		ListHelpers,
 		IconPool,
 		Core
@@ -255,7 +257,21 @@ sap.ui.define([
 
 			aListItemsDOM = this._getList().$().find('.sapMSLIInfo [id$=-infoText], .sapMSLITitleOnly [id$=-titleText]');
 
-			highlightDOMElements(aListItemsDOM, sValue);
+			if (this.useHighlightItemsWithContains()) {
+				highlightItemsWithContains(aListItemsDOM, sValue);
+			} else {
+				highlightDOMElements(aListItemsDOM, sValue);
+			}
+		};
+
+		/**
+		 * Handles highlighting of items after filtering.
+		 *
+		 * @protected
+		 * @ui5-restricted sap.ui.comp.smartfield.ComboBox
+		 */
+		ComboBoxBase.prototype.useHighlightItemsWithContains = function () {
+			return false;
 		};
 
 		/**
