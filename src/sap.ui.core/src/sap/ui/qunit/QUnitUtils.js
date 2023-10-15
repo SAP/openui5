@@ -14,85 +14,36 @@
 // The module ID argument is given because QUnitUtils.js often was included as a script Element in the past.
 // It is now recommended to use it via a module dependency (sap.ui.define).
 sap.ui.define('sap/ui/qunit/QUnitUtils', [
-	'sap/base/util/ObjectPath',
-	'sap/ui/base/DataType',
-	'sap/ui/events/KeyCodes',
+	"sap/base/Log",
 	"sap/base/strings/camelize",
 	"sap/base/strings/capitalize",
-	"sap/base/Log",
+	"sap/base/util/extend",
+	"sap/base/util/ObjectPath",
+	"sap/ui/base/DataType",
 	"sap/ui/core/Element",
-	// jQuery Plugin "control"
-	"sap/ui/dom/jquery/control"
+	"sap/ui/events/KeyCodes",
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/dom/jquery/control" // jQuery Plugin "control"
 ],
 	function(
-		ObjectPath,
-		DataType,
-		KeyCodes,
+		Log,
 		camelize,
 		capitalize,
-		Log,
-		Element
+		extend,
+		ObjectPath,
+		DataType,
+		Element,
+		KeyCodes,
+		jQuery
 	) {
 		"use strict";
-
-		if ( typeof QUnit !== 'undefined' ) {
-
-			// any version < 2.0 activates legacy support
-			// note that the strange negated condition properly handles NaN
-			var bLegacySupport = !(parseFloat(QUnit.version) >= 2.0);
-
-			// extract the URL parameters
-			var mParams = new URLSearchParams(window.location.search);
-
-			if ( bLegacySupport ) {
-			// TODO: Remove deprecated code once all projects adapted
-			QUnit.equals = window.equals = window.equal;
-			}
-
-			// Set a timeout for all tests, either to a value given via URL
-			// or - when no other value has been configured yet - to a static default
-			var sTimeout = mParams.get("sap-ui-qunittimeout");
-			if (sTimeout != null || !("testTimeout" in QUnit.config)) {
-				if (!sTimeout || isNaN(sTimeout)) {
-					sTimeout = "30000"; // 30s: default timeout of an individual QUnit test!
-				}
-				QUnit.config.testTimeout = parseInt(sTimeout);
-			}
-
-			if ( bLegacySupport ) {
-			// Do not reorder tests, as most of the tests depend on each other
-			QUnit.config.reorder = false;
-			}
-
-			// only when instrumentation is done on server-side blanket itself doesn't
-			// take care about rendering the report - in this case we do it manually
-			// when the URL parameter "coverage-report" is set to true or x
-			if (window["sap-ui-qunit-coverage"] !== "client" && /x|true/i.test(mParams.get("coverage-report"))) {
-				QUnit.done(function(failures, total) {
-					// only when coverage is available
-					if (window._$blanket) {
-						// we remove the QUnit object to avoid blanket to automatically
-						// trigger start on QUnit which leads to failures in qunit-reporter-junit
-						var QUnit = window.QUnit;
-						window.QUnit = undefined;
-						// load the blanket instance
-						sap.ui.requireSync("sap/ui/thirdparty/blanket"); // legacy-relevant
-						// restore the QUnit object
-						window.QUnit = QUnit;
-						// trigger blanket to display the coverage report
-						window.blanket.report({});
-					}
-				});
-			}
-
-		}
 
 		// Re-implement jQuery.now to always delegate to Date.now.
 		//
 		// Otherwise, fake timers that are installed after jQuery don't work with jQuery animations
 		// as those animations internally use jQuery.now which then is a reference to the original,
 		// native Date.now.
-		undefined/*jQuery*/.now = function() {
+		jQuery.now = function() {
 			return Date.now();
 		};
 
@@ -105,52 +56,33 @@ sap.ui.define('sap/ui/qunit/QUnitUtils', [
 		 */
 		var QUtils = {};
 
-		/**
-		 * Delays the start of the test until everything is rendered or - if given - for the specified milliseconds.
-		 * This function must be called before the first test function.
-		 *
-		 * @param {int} [iDelay] optional delay in milliseconds
-		 *
-		 * @public
-		 */
-		QUtils.delayTestStart = function(iDelay){
-			QUnit.config.autostart = false;
-			if (iDelay) {
-				window.setTimeout(function() {
-					QUnit.start();
-				}, iDelay);
-			} else {
-				undefined/*jQuery*/(function() {
-					QUnit.start();
-				});
-			}
-		};
+		var noop = function() {};
 
-		var fixOriginalEvent = undefined/*jQuery*/.noop;
+		var fixOriginalEvent = noop;
 
 		try {
 
 			// check whether preventDefault throws an error for a dummy event
-			new undefined/*jQuery*/.Event({type: "mousedown"}).preventDefault();
+			new jQuery.Event({type: "mousedown"}).preventDefault();
 
 		} catch (e) {
 
 			// if so, we might be running on top of jQuery 2.2.0 or higher and we have to add the native Event methods to the 'originalEvent'
 			fixOriginalEvent = function(origEvent) {
 				if ( origEvent ) {
-					origEvent.preventDefault = origEvent.preventDefault || undefined/*jQuery*/.noop;
-					origEvent.stopPropagation = origEvent.stopPropagation || undefined/*jQuery*/.noop;
-					origEvent.stopImmediatePropagation = origEvent.stopImmediatePropagation || undefined/*jQuery*/.noop;
+					origEvent.preventDefault = origEvent.preventDefault || noop;
+					origEvent.stopPropagation = origEvent.stopPropagation || noop;
+					origEvent.stopImmediatePropagation = origEvent.stopImmediatePropagation || noop;
 				}
 			};
 
-			var OrigjQEvent = undefined/*jQuery*/.Event;
-			undefined/*jQuery*/.Event = function(src, props) {
-				var event = new OrigjQEvent(src, props);
+			const OrigjQEvent = jQuery.Event;
+			jQuery.Event = function(src, props) {
+				const event = new OrigjQEvent(src, props);
 				fixOriginalEvent(event.originalEvent);
 				return event;
 			};
-			undefined/*jQuery*/.Event.prototype = OrigjQEvent.prototype;
+			jQuery.Event.prototype = OrigjQEvent.prototype;
 		}
 
 		/*
@@ -170,7 +102,7 @@ sap.ui.define('sap/ui/qunit/QUnitUtils', [
 		 */
 		function fakeEvent(sEventName, oTarget, oParams) {
 
-			var oEvent = undefined/*jQuery*/.Event({type : sEventName});
+			var oEvent = jQuery.Event({type : sEventName});
 			if ( oTarget != null ) {
 				oEvent.target = oTarget;
 			}
@@ -211,7 +143,7 @@ sap.ui.define('sap/ui/qunit/QUnitUtils', [
 
 			var oEvent = fakeEvent(sEventName, /* no target */ null, oParams);
 
-			undefined/*jQuery*/(oTarget).trigger(oEvent);
+			jQuery(oTarget).trigger(oEvent);
 
 		};
 
@@ -446,7 +378,7 @@ sap.ui.define('sap/ui/qunit/QUnitUtils', [
 			if (typeof (oInput) == "string") {
 				oInput = oInput ? document.getElementById(oInput) : null;
 			}
-			var $Input = undefined/*jQuery*/(oInput);
+			var $Input = jQuery(oInput);
 
 			if (typeof sValue !== "undefined") {
 				$Input.val(sValue);
@@ -546,25 +478,6 @@ sap.ui.define('sap/ui/qunit/QUnitUtils', [
 
 		// --------------------------------------------------------------------------------------------------
 
-		var FONT_WEIGHTS = {
-			'normal': 400,
-			'bold': 700
-		};
-
-		undefined/*jQuery*/.fn.extend({
-
-			_sapTest_dataEvents: function() {
-				var elem = this[0];
-				return elem ? undefined/*jQuery*/._data(elem, "events") : null;
-			},
-
-			_sapTest_cssFontWeight: function() {
-				var v = this.css("font-weight");
-				return v ? FONT_WEIGHTS[v] || v : v;
-			}
-		});
-
-
 		//************************************
 		//TODO: Check JS Doc starting here -> describe and check visibility for stuff in namespace sap.ui.test.qunit
 
@@ -611,7 +524,7 @@ sap.ui.define('sap/ui/qunit/QUnitUtils', [
 				if ( typeof sType === "string" ) {
 					mDefaultTestValues[sType] = ensureArray(aValues);
 				} else if ( typeof sType === "object" ) {
-					undefined/*jQuery*/.extend(mDefaultTestValues, sType);
+					extend(mDefaultTestValues, sType);
 				}
 			};
 
@@ -622,27 +535,16 @@ sap.ui.define('sap/ui/qunit/QUnitUtils', [
 			QUtils.createSettingsDomain = function(oClass, oPredefinedValues) {
 
 				function createValues(sType) {
-					if ( mDefaultTestValues[sType] ) {
-						return mDefaultTestValues[sType];
-					}
-
-					try {
-						//TODO: global jquery call found
-						undefined/*jQuery*/.sap.require(sType);
-					} catch (e) {
-						//escape eslint check for empty block
-					}
-					var oType = ObjectPath.get(sType);
-					if ( !(oType instanceof DataType) ) {
-						var r = [];
-						for (var n in oType) {
-							r.push(oType[n]);
+					if ( !mDefaultTestValues[sType] ) {
+						var oType = DataType.getType(sType);
+						var oEnumValues = oType && oType.isEnum() ? oType.getEnumValues() : undefined;
+						if (oEnumValues && !(oEnumValues instanceof DataType)) {
+							mDefaultTestValues[sType] = Object.keys(oEnumValues);
+						} else {
+							mDefaultTestValues[sType] = [];
 						}
-						mDefaultTestValues[sType] = r;
-						return r;
 					}
-					return [];
-
+					return mDefaultTestValues[sType];
 				}
 
 				oClass = new oClass().getMetadata().getClass(); // resolves proxy
@@ -1023,12 +925,9 @@ sap.ui.define('sap/ui/qunit/QUnitUtils', [
 				};
 			};
 
-		}());
+		})();
 
-		// export
-		// TODO: Get rid of the old namespace and adapt the existing tests accordingly
-		ObjectPath.set("sap.ui.test.qunit", QUtils);
-		window.qutils = QUtils;
-
+		// legacy global exports
+		/* -------------------------------------- */
 		return QUtils;
 	}, /* bExport= */ true);

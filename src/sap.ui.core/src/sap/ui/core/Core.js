@@ -4,92 +4,93 @@
 
 // Provides the real core class sap.ui.core.Core of SAPUI5
 sap.ui.define([
-	'sap/ui/Device',
-	'sap/ui/base/EventProvider',
-	'sap/ui/base/Interface',
-	'sap/ui/base/Object',
-	'sap/ui/base/ManagedObject',
-	"sap/ui/base/syncXHRFix",
-	'./AnimationMode',
-	'./Component',
-	'./Configuration',
-	'./Element',
-	'./ElementMetadata',
-	'./Lib',
-	'./Rendering',
-	'./RenderManager',
-	'./ControlBehavior',
-	'./UIArea',
-	'./Messaging',
-	'./StaticArea',
-	"sap/ui/core/support/Hotkeys",
-	"sap/ui/core/Supportability",
-	"sap/ui/test/RecorderHotkeyListener",
-	"sap/ui/core/Theming",
-	"sap/base/Log",
-	"sap/ui/performance/Measurement",
-	"sap/ui/security/FrameOptions",
-	"sap/ui/security/Security",
+	"./AnimationMode",
+	"./Component",
+	"./Configuration",
+	"./ControlBehavior",
+	"./Element",
+	"./ElementMetadata",
+	"./Lib",
+	"./Rendering",
+	"./RenderManager",
+	"./UIArea",
+	"./Messaging",
+	"./StaticArea",
+	"./Supportability",
+	"./Theming",
 	"sap/base/assert",
+	"sap/base/config",
+	"sap/base/Event",
+	"sap/base/Log",
 	"sap/base/util/Deferred",
-	"sap/base/util/deepEqual",
+	"sap/base/util/each",
+	"sap/base/util/isEmptyObject",
 	"sap/base/util/ObjectPath",
 	"sap/base/util/Version",
-	'sap/ui/performance/trace/initTraces',
-	'sap/base/util/isEmptyObject',
-	'sap/base/util/each',
-	'sap/ui/VersionInfo',
-	'sap/base/config',
-	'sap/base/Event',
+	"sap/ui/Device",
+	"sap/ui/VersionInfo",
+	"sap/ui/base/EventProvider",
+	"sap/ui/base/Interface",
+	"sap/ui/base/ManagedObject",
+	"sap/ui/base/Object",
+	"sap/ui/base/syncXHRFix",
+	"sap/ui/core/support/Hotkeys",
 	"sap/ui/dom/getComputedStyleFix",
+	"sap/ui/performance/Measurement",
+	"sap/ui/performance/trace/initTraces",
+	"sap/ui/security/FrameOptions",
+	"sap/ui/security/Security",
+	"sap/ui/test/RecorderHotkeyListener",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/thirdparty/jqueryui/jquery-ui-position",
-	// side effect: make global URI available
-	"sap/ui/thirdparty/URI",
 	// side effect: activates paste event fix
 	"sap/ui/events/PasteEventFix",
-	'sap/ui/events/jquery/EventSimulation'
+	// side effect: install event simulation
+	"sap/ui/events/jquery/EventSimulation",
+	// side effect: make global URI available
+	"sap/ui/thirdparty/URI",
+	// side effect: jQuery.fn.position
+	"sap/ui/thirdparty/jqueryui/jquery-ui-position"
 ],
 	function(
-		Device,
-		EventProvider,
-		Interface,
-		BaseObject,
-		ManagedObject,
-		syncXHRFix,
 		AnimationMode,
 		Component,
 		Configuration,
+		ControlBehavior,
 		Element,
 		ElementMetadata,
 		Library,
 		Rendering,
 		RenderManager,
-		ControlBehavior,
 		UIArea,
 		Messaging,
 		StaticArea,
-		Hotkeys,
 		Supportability,
-		RecorderHotkeyListener,
 		Theming,
-		Log,
-		Measurement,
-		FrameOptions,
-		Security,
 		assert,
-		Deferred,
-		deepEqual,
-		ObjectPath,
-		Version,
-		initTraces,
-		isEmptyObject,
-		each,
-		VersionInfo,
 		BaseConfig,
 		BaseEvent,
-		getComputedStyleFix
-		/* ,jQuery, jquery-ui-position, URI, PasteEventFix, PasteEventFix, EventSimulation */
+		Log,
+		Deferred,
+		each,
+		isEmptyObject,
+		ObjectPath,
+		Version,
+		Device,
+		VersionInfo,
+		EventProvider,
+		Interface,
+		ManagedObject,
+		BaseObject,
+		syncXHRFix,
+		Hotkeys,
+		getComputedStyleFix,
+		Measurement,
+		initTraces,
+		FrameOptions,
+		Security,
+		RecorderHotkeyListener,
+		jQuery
+		/* jQuery.sap, PasteEventFix, EventSimulation, URI, jquery-ui-position */
 	) {
 		"use strict";
 
@@ -106,15 +107,15 @@ sap.ui.define([
 			type: BaseConfig.Type.Boolean,
 			freeze: true
 		})){
-			undefined/*jQuery*/.noConflict();
+			jQuery.noConflict();
 		}
 
 
-		const oJQVersion = Version(undefined/*jQuery*/.fn.jquery);
+		const oJQVersion = Version(jQuery.fn.jquery);
 		if ( oJQVersion.compareTo("3.6.0") != 0 ) {
 			// if the loaded jQuery version isn't SAPUI5's default version -> notify
 			// the application
-			Log.warning("SAPUI5's default jQuery version is 3.6.0; current version is " + undefined/*jQuery*/.fn.jquery + ". Please note that we only support version 3.6.0.");
+			Log.warning("SAPUI5's default jQuery version is 3.6.0; current version is " + jQuery.fn.jquery + ". Please note that we only support version 3.6.0.");
 		}
 
 		sap.ui.loader._.logger = Log.getLogger("sap.ui.ModuleSystem",
@@ -816,8 +817,8 @@ sap.ui.define([
 				html.dataset.sapUiAnimationMode = sAnimationMode;
 				var bAnimation = (sAnimationMode !== AnimationMode.minimal && sAnimationMode !== AnimationMode.none);
 				html.dataset.sapUiAnimation = bAnimation ? "on" : "off";
-				if (typeof undefined/*jQuery*/ !== "undefined") {
-					undefined/*jQuery*/.fx.off = !bAnimation;
+				if (typeof jQuery !== "undefined") {
+					jQuery.fx.off = !bAnimation;
 				}
 			}
 			ControlBehavior.attachChange(function(oEvent) {
@@ -832,9 +833,7 @@ sap.ui.define([
 		 * Initializes the jQuery.support.useFlexBoxPolyfill property
 		 * @private
 		 */
-		Core.prototype._polyfillFlexbox = function() {
-			undefined/*jQuery*/.support.useFlexBoxPolyfill = false;
-		};
+		Core.prototype._polyfillFlexbox = function() {};
 
 		/**
 		 * Boots the core and injects the necessary CSS and JavaScript files for the library.
@@ -1753,7 +1752,7 @@ sap.ui.define([
 		 */
 		Core.prototype.fireLocalizationChanged = function(mChanges) {
 			var sEventId = Core.M_EVENTS.LocalizationChanged,
-				oBrowserEvent = undefined/*jQuery*/.Event(sEventId, {changes : mChanges}),
+				oBrowserEvent = jQuery.Event(sEventId, {changes : mChanges}),
 				fnAdapt = ManagedObject._handleLocalizationChange;
 
 			Log.info("localization settings changed: " + Object.keys(mChanges).join(","), null, "sap.ui.core.Core");
