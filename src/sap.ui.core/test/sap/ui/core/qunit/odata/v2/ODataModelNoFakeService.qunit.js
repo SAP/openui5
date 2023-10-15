@@ -1603,7 +1603,8 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
-	QUnit.test("_processSuccess: _updateChangedEntity is called correctly", function (assert) {
+[204, "204", 205, "205"].forEach(function (vStatusCode, i){
+	QUnit.test("_processSuccess: _updateChangedEntity is called correctly, #" + i, function (assert) {
 		var mEntityTypes = {},
 			oModel = {
 				oMetadata : {
@@ -1626,7 +1627,7 @@ sap.ui.define([
 				key : "key",
 				requestUri : "/service/path"
 			},
-			oResponse = {statusCode : 204};
+			oResponse = {statusCode : vStatusCode};
 
 		oModelMock.expects("_normalizePath").withExactArgs("/path").returns("normalizedPath");
 		this.mock(oModel.oMetadata).expects("_getEntityTypeByPath")
@@ -1657,6 +1658,7 @@ sap.ui.define([
 			/*fnSuccess*/ undefined, /*mGetEntities*/ {}, /*mChangeEntities*/ {}, mEntityTypes,
 			/*bBatch*/ false, "aRequests");
 	});
+});
 
 	//*********************************************************************************************
 [{
