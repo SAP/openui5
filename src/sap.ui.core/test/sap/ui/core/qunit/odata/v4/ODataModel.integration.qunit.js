@@ -489,7 +489,8 @@ sap.ui.define([
 		oDocument = XMLHelper.parse(
 			'<mvc:View xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc" xmlns:plugins="sap.m.plugins"'
 			+ ' xmlns:t="sap.ui.table" xmlns:trm="sap.ui.table.rowmodes"'
-			+ ' xmlns:template="http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1">'
+			+ ' xmlns:template="http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1"'
+			+ (sViewXML.startsWith(" template:require") ? "" : ">")
 			+ sViewXML
 			+ "</mvc:View>",
 			"application/xml"
@@ -6368,8 +6369,9 @@ sap.ui.define([
 	// JIRA: CPOUI5ODATAV4-121
 	testXMLTemplating("Operation parameters with sap.ui.model.odata.v4.AnnotationHelper.format",
 		"createTeaBusiModel",
-'<template:alias name="format" value="sap.ui.model.odata.v4.AnnotationHelper.format">\
-<template:alias name="value" value="sap.ui.model.odata.v4.AnnotationHelper.value">\
+' template:require="{\'AnnotationHelper\':\'sap/ui/model/odata/v4/AnnotationHelper\'}">\
+<template:alias name="format" value="AnnotationHelper.format">\
+<template:alias name="value" value="AnnotationHelper.value">\
 	<FlexBox id="form" binding="{/ChangeTeamBudgetByID(...)}">\
 		<FlexBox binding="{$Parameter}">\
 			<template:repeat list="{meta>/ChangeTeamBudgetByID/$Action/0/$Parameter}" var="param">\
@@ -6419,7 +6421,8 @@ sap.ui.define([
 	testXMLTemplating(
 		"Annotations on operations and parameters sap.ui.model.odata.v4.AnnotationHelper.format",
 		"createSpecialCasesModel",
-'<template:alias name="format" value="sap.ui.model.odata.v4.AnnotationHelper.format">\
+' template:require="{\'AnnotationHelper\':\'sap/ui/model/odata/v4/AnnotationHelper\'}">\
+<template:alias name="format" value="AnnotationHelper.format">\
 	<FlexBox binding="{special.cases.SendAutograph(...)}"\
 		visible="{meta>/Artists/special.cases.SendAutograph\
 @Org.OData.Core.V1.OperationAvailable@@format}">\
@@ -42651,7 +42654,8 @@ sap.ui.define([
 	// BCP: 2080062941
 	testXMLTemplating("BCP: 2080062941",
 		"createSpecialCasesModel",
-'<template:alias name="format" value="sap.ui.model.odata.v4.AnnotationHelper.format">\
+' template:require="{\'AnnotationHelper\':\'sap/ui/model/odata/v4/AnnotationHelper\'}">\
+<template:alias name="format" value="AnnotationHelper.format">\
 	<template:repeat \
 		list="{meta>/special.cases.EntityWithUnsupportedEdmTypes/@com.sap.vocabularies.UI.v1.SelectionFields}"\
 		var="field">\
@@ -43615,7 +43619,8 @@ sap.ui.define([
 	// JIRA: CPOUI5ODATAV4-104
 	testXMLTemplating("AnnotationHelper#value on properties",
 		"createSpecialCasesModel",
-		'<template:alias name="value" value="sap.ui.model.odata.v4.AnnotationHelper.value">\
+	' template:require="{\'AnnotationHelper\':\'sap/ui/model/odata/v4/AnnotationHelper\'}">\
+		<template:alias name="value" value="AnnotationHelper.value">\
 			<Input value="{meta>/Artists/Name@@value}"/>\
 			<Input value="{meta>/Artists/BestFriend/IsActiveEntity@@value}"/>\
 			<Input value="{meta>/Artists/Address/ZIP@@value}"/>\
@@ -43634,7 +43639,8 @@ sap.ui.define([
 	// JIRA: CPOUI5ODATAV4-104
 	testXMLTemplating("AnnotationHelper#value inside path object",
 		"createSpecialCasesModel",
-		'<template:alias name="value" value="sap.ui.model.odata.v4.AnnotationHelper.value">\
+	' template:require="{\'AnnotationHelper\':\'sap/ui/model/odata/v4/AnnotationHelper\'}">\
+		<template:alias name="value" value="AnnotationHelper.value">\
 			<Input value="{meta>/Artists/@com.sap.vocabularies.UI.v1.SelectionFields/0/$PropertyPath@@value}"/>\
 			<Input value="{meta>/Artists/@com.sap.vocabularies.UI.v1.SelectionFields/1/$PropertyPath@@value}"/>\
 			<Input value="{meta>/Artists/ArtistID@com.sap.vocabularies.Common.v1.Text/$Path@@value}"/>\
@@ -43655,7 +43661,8 @@ sap.ui.define([
 	// JIRA: CPOUI5ODATAV4-104
 	testXMLTemplating("AnnotationHelper#format on properties",
 		"createSpecialCasesModel",
-		'<template:alias name="format" value="sap.ui.model.odata.v4.AnnotationHelper.format">\
+	' template:require="{\'AnnotationHelper\':\'sap/ui/model/odata/v4/AnnotationHelper\'}">\
+		<template:alias name="format" value="AnnotationHelper.format">\
 			<Input value="{meta>/Artists/Name@@format}"/>\
 			<Input value="{meta>/Artists/BestFriend/IsActiveEntity@@format}"/>\
 			<Input value="{meta>/Artists/Address/ZIP@@format}"/>\
@@ -43679,7 +43686,8 @@ sap.ui.define([
 	// JIRA: CPOUI5ODATAV4-104
 	testXMLTemplating("AnnotationHelper#format inside path object",
 		"createSpecialCasesModel",
-		'<template:alias name="format" value="sap.ui.model.odata.v4.AnnotationHelper.format">\
+	' template:require="{\'AnnotationHelper\':\'sap/ui/model/odata/v4/AnnotationHelper\'}">\
+		<template:alias name="format" value="AnnotationHelper.format">\
 			<Input value="{meta>/Artists/@com.sap.vocabularies.UI.v1.SelectionFields/0/$PropertyPath@@format}"/>\
 			<Input value="{meta>/Artists/@com.sap.vocabularies.UI.v1.SelectionFields/1/$PropertyPath@@format}"/>\
 			<Input value="{meta>/Artists/ArtistID@com.sap.vocabularies.Common.v1.Text/$Path@@format}"/>\
