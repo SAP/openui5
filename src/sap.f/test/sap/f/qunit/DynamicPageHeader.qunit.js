@@ -269,7 +269,7 @@ function (
 		assert.strictEqual(oDynamicPageHeader.getBackgroundDesign(), "Translucent", "Should have backgroundDesign property = 'Translucent'");
 	});
 
-	QUnit.test("Sets icon to 'sap-icon://pushpin-on' when theme is 'Horizon'", function (assert) {
+	QUnit.test("Sets icon to 'sap-icon://pushpin-on' when theme is 'Horizon' and the pin button is toggled on", function (assert) {
 		// Arrange
 		var oHeader = this.oDynamicPage.getHeader(),
 			pinButton = oHeader._getPinButton();
@@ -303,8 +303,17 @@ function (
 		var done = assert.async();
 		this.applyTheme("sap_horizon", function () {
 
+			// Act
+			oHeader._togglePinButton(true);
+
 			// Assert
 			assert.strictEqual(pinButton.getIcon(), "sap-icon://pushpin-on", "Icon is set to 'sap-icon://pushpin-on'");
+
+			// Act
+			oHeader._togglePinButton(false);
+
+			// Assert
+			assert.strictEqual(pinButton.getIcon(), "sap-icon://pushpin-off", "Icon is set to 'sap-icon://pushpin-off'");
 
 			done();
 		});
