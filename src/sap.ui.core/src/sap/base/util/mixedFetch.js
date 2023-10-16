@@ -37,6 +37,7 @@ sap.ui.define([
 	 * @return {Promise<module:sap/base/util/SimpleResponse>|sap.ui.base.SyncPromise<module:sap/base/util/SimpleResponse>} Returns a Promise or SyncPromise resolving with a <code>SimpleResponse</code> object
 	 *
 	 * @alias module:sap/base/util/mixedFetch
+	 * @deprecated As of Version 1.120
 	 * @private
 	 * @ui5-restricted sap.ui.core, sap.ui.model
 	 */
