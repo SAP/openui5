@@ -4539,23 +4539,12 @@ sap.ui.define([
 				},
 				getContext: function () {
 					return oContext;
-				},
-				_restore: function () {
-					oNodeForContext.nodeState.removed = false;
-					var iNodeStateFound = that._aRemoved.indexOf(oNodeForContext);
-					if (iNodeStateFound != -1) {
-						that._aRemoved.splice(iNodeStateFound, 1);
-					}
-					// clear cache to make sure findNode etc. don't deliver wrong nodes (index is shifted due to adding)
-					this._aNodeCache = [];
-					that._cleanTreeStateMaps();
-					that._fireChange({reason: ChangeReason.Add});
 				}
 			};
 
 			return oContext;
 		} else {
-			Log.warning("ODataTreeBinding.removeContexts(): The given context is not part of the tree. Was it removed already?");
+			Log.warning("ODataTreeBinding.removeContext(): The given context is not part of the tree. Was it removed already?");
 		}
 
 		return undefined;
