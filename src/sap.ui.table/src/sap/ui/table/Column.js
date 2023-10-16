@@ -119,7 +119,7 @@ sap.ui.define([
 			 * Indicates if the column is sorted. This property only controls if a sort indicator is displayed in the
 			 * column header - it does not trigger the sort function. The column can be sorted using {@link sap.ui.table.Table#sort}.
 			 *
-			 * If this property is set to <code>true</code> and the <code>sortOrder</code> property is not set, <code>sortOrder</code> is
+			 * If this property is set to <code>true</code> and the <code>sortOrder</code> property is <code>None</code>, <code>sortOrder</code> is
 			 * automatically set to <code>Ascending</code>.
 			 * If this property is <code>true</code> and <code>sortOrder</code> is <code>None</code>, the sort indicator is not shown.
 			 *
