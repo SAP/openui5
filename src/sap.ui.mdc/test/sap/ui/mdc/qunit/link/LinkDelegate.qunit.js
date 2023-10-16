@@ -4,8 +4,9 @@ sap.ui.define([
     "sap/ui/mdc/LinkDelegate",
     "sap/ui/mdc/link/LinkItem",
     "sap/ui/mdc/Link",
-    "sap/ui/test/actions/Press"
-], function(QUnit, LinkDelegate, LinkItem, Link, Press) {
+    "sap/ui/test/actions/Press",
+	"sap/ui/mdc/enums/LinkType"
+], function(QUnit, LinkDelegate, LinkItem, Link, Press, LinkType) {
     "use strict";
 
     const aLinkItems = [
@@ -26,10 +27,10 @@ sap.ui.define([
 
         LinkDelegate.fetchLinkType().then(function(oLinkType) {
             const oDefaultInitialType = {
-                type: 2,
+                type: LinkType.Popover,
                 directLink: undefined
             };
-            assert.deepEqual(oLinkType.initialType, oDefaultInitialType, "initialType has type 2 and undefined direct link");
+            assert.deepEqual(oLinkType.initialType, oDefaultInitialType, "initialType has type 'Popover' and undefined direct link");
             assert.equal(oLinkType.runtimeType, null, "runtimeType is null");
             done();
         });
