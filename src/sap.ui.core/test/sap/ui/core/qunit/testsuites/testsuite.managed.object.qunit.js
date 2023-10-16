@@ -21,6 +21,9 @@ sap.ui.define(function() {
 			DuplicateIds: {
 				title: "sap.ui.core: Duplicate ID checks"
 			},
+			/**
+			 * @deprecated As of Version 1.120
+			 */
 			DuplicateIds_noError: {
 				title: "sap.ui.core: Duplicate ID checks (with errors disabled)",
 				ui5: {

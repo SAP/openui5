@@ -29,8 +29,10 @@ sap.ui.define([
 	"use strict";
 
 	const oEventing = new Eventing();
+	const oWritableConfig = BaseConfig.getWritableInstance();
 	const mSettings = {};
 	let mChanges;
+	let aLegacyDateCalendarCustomizing;
 
 	const M_ABAP_DATE_FORMAT_PATTERN = {
 		"" : {pattern: null},
@@ -66,7 +68,31 @@ sap.ui.define([
 
 	function check(bCondition, sMessage) {
 		if ( !bCondition ) {
-			throw new Error(sMessage);
+			throw new TypeError(sMessage);
+		}
+	}
+
+	function _set(sKey, oValue) {
+		// Invalidating the BaseConfig is necessary, because Formatting.getLanguageTag
+		// does defaulting depending on the mSettings. In case no specifc LaguageTag was
+		// set the default would become applied and cached. If the mSettings are changed
+		// inbetween the cache would not become invalidated because there is no direct
+		// change to the Configuration and therefore the cached value would be wrong.
+		BaseConfig._.invalidate();
+		const oOldValue = mSettings[sKey];
+		if (oValue != null) {
+			mSettings[sKey] = oValue;
+		} else {
+			delete mSettings[sKey];
+		}
+		// report a change only if old and new value differ (null/undefined are treated as the same value)
+		if ((oOldValue != null || oValue != null) && !deepEqual(oOldValue, oValue)) {
+			const bFireEvent = !mChanges;
+			mChanges ??= {};
+			mChanges[sKey] = oValue;
+			if (bFireEvent) {
+				fireChange();
+			}
 		}
 	}
 
@@ -90,8 +116,6 @@ sap.ui.define([
 		}
 		return oLanguageTag;
 	}
-
-	const oWritableConfig = BaseConfig.getWritableInstance();
 
 	/**
 	 * Configuration for formatting specific parameters
@@ -143,24 +167,24 @@ sap.ui.define([
 		 * <li><code>currency</code></li>
 		 * </ul>
 		 * </li>
-		 * <li>{@link module:sap/base/i18n/Formatting.setLegacyDateFormat Formatting.setLegacyDateFormat} (all parameters listed below):
+		 * <li>{@link module:sap/base/i18n/Formatting.setABAPDateFormat Formatting.setABAPDateFormat} (all parameters listed below):
 		 * <ul>
-		 * <li><code>legacyDateFormat</code></li>
+		 * <li><code>ABAPDateFormat</code></li>
 		 * <li><code>"dateFormats-short"</code></li>
 		 * <li><code>"dateFormats-medium"</code></li>
 		 * </ul>
 		 * </li>
-		 * <li>{@link module:sap/base/i18n/Formatting.setLegacyTimeFormat Formatting.setLegacyTimeFormat} (all parameters listed below):
+		 * <li>{@link module:sap/base/i18n/Formatting.setABAPTimeFormat Formatting.setABAPTimeFormat} (all parameters listed below):
 		 * <ul>
-		 * <li><code>legacyTimeFormat</code></li>
+		 * <li><code>ABAPTimeFormat</code></li>
 		 * <li><code>"timeFormats-short"</code></li>
 		 * <li><code>"timeFormats-medium"</code></li>
 		 * <li><code>"dayPeriods-format-abbreviated"</code></li>
 		 * </ul>
 		 * </li>
-		 * <li>{@link module:sap/base/i18n/Formatting.setLegacyNumberFormat Formatting.setLegacyNumberFormat} (all parameters listed below):
+		 * <li>{@link module:sap/base/i18n/Formatting.setABAPNumberFormat Formatting.setABAPNumberFormat} (all parameters listed below):
 		 * <ul>
-		 * <li><code>legacyNumberFormat</code></li>
+		 * <li><code>ABAPNumberFormat</code></li>
 		 * <li><code>"symbols-latn-group"</code></li>
 		 * <li><code>"symbols-latn-decimal"</code></li>
 		 * </ul>
@@ -193,9 +217,9 @@ sap.ui.define([
 		 *
 		 * @typedef {object} module:sap/base/i18n/Formatting$ChangeEvent
 		 * @property {string} [languageTag] The formatting language tag.
-		 * @property {string} [legacyDateFormat] The legacy date format.
-		 * @property {string} [legacyTimeFormat] The legacy time format.
-		 * @property {string} [legacyNumberFormat] The legacy number format.
+		 * @property {string} [ABAPDateFormat] The ABAP date format.
+		 * @property {string} [ABAPTimeFormat] The ABAP time format.
+		 * @property {string} [ABAPNumberFormat] The ABAP number format.
 		 * @property {object[]} [legacyDateCalendarCustomizing] The legacy date calendar customizing.
 		 * @property {object} [calendarWeekNumbering] The calendar week numbering.
 		 * @property {object} [calendarType] The calendar type.
@@ -292,21 +316,21 @@ sap.ui.define([
 		 *
 		 * After changing the format locale, the framework tries to update localization
 		 * specific parts of the UI. See the documentation of
-		 * {@link module:sap/base/i18n/Localization.getLanguage Localization.getLanguage()}
+		 * {@link module:sap/base/i18n/Localization.setLanguage Localization.setLanguage()}
 		 * for details and restrictions.
 		 *
 		 * <b>Note</b>: When a language tag is set, it has higher priority than a number,
-		 * date or time format defined with a call to <code>setLegacyNumberFormat</code>,
-		 * <code>setLegacyDateFormat</code> or <code>setLegacyTimeFormat</code>.
+		 * date or time format defined with a call to <code>setABAPNumberFormat</code>,
+		 * <code>setABAPDateFormat</code> or <code>setABAPTimeFormat</code>.
 		 *
 		 * <b>Note</b>: See documentation of
-		 * {@link module:sap/base/i18n/Localization.getLanguage Localization.getLanguage()}
+		 * {@link module:sap/base/i18n/Localization.setLanguage Localization.setLanguage()}
 		 * for restrictions.
 		 *
 		 * @param {string|null} sLanguageTag the new BCP47 compliant language tag;
 		 *   case doesn't matter and underscores can be used instead of dashes to separate
 		 *   components (compatibility with Java Locale IDs)
-		 * @throws {Error} When <code>sLanguageTag</code> is given, but is not a valid BCP47 language
+		 * @throws {TypeError} When <code>sLanguageTag</code> is given, but is not a valid BCP47 language
 		 *   tag or Java locale identifier
 		 * @public
 		 * @since 1.120
@@ -328,24 +352,10 @@ sap.ui.define([
 			}
 		},
 
-		_set: function(sKey, oValue) {
-			BaseConfig._.invalidate();
-			const oOldValue = mSettings[sKey];
-			if ( oValue != null ) {
-				mSettings[sKey] = oValue;
-			} else {
-				delete mSettings[sKey];
-			}
-			// report a change only if old and new value differ (null/undefined are treated as the same value)
-			if ( (oOldValue != null || oValue != null) && !deepEqual(oOldValue, oValue) ) {
-				const bFireEvent = !mChanges;
-				mChanges ??= {};
-				mChanges[sKey] = oValue;
-				if (bFireEvent) {
-					fireChange();
-				}
-			}
-		},
+		/**
+		 * @deprecated As of Version 1.120
+		 */
+		_set: _set,
 
 		/**
 		 * Retrieves the custom units.
@@ -403,7 +413,7 @@ sap.ui.define([
 					"short": mUnits
 				};
 			}
-			Formatting._set("units", mUnitsshort);
+			_set("units", mUnitsshort);
 		},
 
 		/**
@@ -443,7 +453,7 @@ sap.ui.define([
 		 * @since 1.116.0
 		 */
 		setUnitMappings(mUnitMappings) {
-			Formatting._set("unitMappings", mUnitMappings);
+			_set("unitMappings", mUnitMappings);
 		},
 
 		/**
@@ -498,7 +508,7 @@ sap.ui.define([
 		 * See class {@link sap.ui.core.format.DateFormat} for details about the pattern syntax.
 		 *
 		 * After changing the date pattern, the framework tries to update localization
-		 * specific parts of the UI. See the documentation of {@link module:sap/base/i18n/Localization.getLanguage Localization.getLanguage()}
+		 * specific parts of the UI. See the documentation of {@link module:sap/base/i18n/Localization.setLanguage Localization.setLanguage()}
 		 * for details and restrictions.
 		 *
 		 * @param {"short"|"medium"|"long"|"full"} sStyle must be one of short, medium, long or full.
@@ -508,7 +518,7 @@ sap.ui.define([
 		 */
 		setDatePattern(sStyle, sPattern) {
 			check(sStyle == "short" || sStyle == "medium" || sStyle == "long" || sStyle == "full", "sStyle must be short, medium, long or full");
-			Formatting._set("dateFormats-" + sStyle, sPattern);
+			_set("dateFormats-" + sStyle, sPattern);
 		},
 
 		/**
@@ -534,7 +544,7 @@ sap.ui.define([
 		 *
 		 * After changing the time pattern, the framework tries to update localization
 		 * specific parts of the UI. See the documentation of
-		 * {@link module:sap/base/i18n/Localization.getLanguage Localization.getLanguage()}
+		 * {@link module:sap/base/i18n/Localization.setLanguage Localization.setLanguage()}
 		 * for details and restrictions.
 		 *
 		 * @param {"short"|"medium"|"long"|"full"} sStyle must be one of short, medium, long or full.
@@ -544,7 +554,7 @@ sap.ui.define([
 		 */
 		setTimePattern(sStyle, sPattern) {
 			check(sStyle == "short" || sStyle == "medium" || sStyle == "long" || sStyle == "full", "sStyle must be short, medium, long or full");
-			Formatting._set("timeFormats-" + sStyle, sPattern);
+			_set("timeFormats-" + sStyle, sPattern);
 		},
 
 		/**
@@ -579,7 +589,7 @@ sap.ui.define([
 		 *
 		 * After changing the number symbol, the framework tries to update localization
 		 * specific parts of the UI. See the documentation of
-		 * {@link module:sap/base/i18n/Localization.getLanguage Localization.getLanguage()}
+		 * {@link module:sap/base/i18n/Localization.setLanguage Localization.setLanguage()}
 		 * for details and restrictions.
 		 *
 		 * @param {"group"|"decimal"|"plusSign"|"minusSign"} sType the type of symbol
@@ -589,7 +599,7 @@ sap.ui.define([
 		 */
 		setNumberSymbol(sType, sSymbol) {
 			check(["group", "decimal", "plusSign", "minusSign"].includes(sType), "sType must be decimal, group, plusSign or minusSign");
-			Formatting._set("symbols-latn-" + sType, sSymbol);
+			_set("symbols-latn-" + sType, sSymbol);
 		},
 
 		/**
@@ -652,7 +662,7 @@ sap.ui.define([
 				check(typeof sCurrencyDigit === "string");
 				check(typeof mCurrencies[sCurrencyDigit] === "object");
 			});
-			Formatting._set("currency", mCurrencies);
+			_set("currency", mCurrencies);
 		},
 
 		/**
@@ -681,35 +691,43 @@ sap.ui.define([
 
 		_setDayPeriods(sWidth, aTexts) {
 			assert(sWidth == "narrow" || sWidth == "abbreviated" || sWidth == "wide", "sWidth must be narrow, abbreviated or wide");
-			Formatting._set("dayPeriods-format-" + sWidth, aTexts);
+			_set("dayPeriods-format-" + sWidth, aTexts);
 		},
 
 		/**
-		 * Returns the currently set legacy ABAP date format (its id) or undefined if none has been set.
+		 * Returns the currently set ABAP date format (its id) or undefined if none has been set.
 		 *
 		 * @returns {"1"|"2"|"3"|"4"|"5"|"6"|"7"|"8"|"9"|"A"|"B"|"C"|undefined} ID of the ABAP date format,
 		 *   if not set or set to <code>""</code>, <code>undefined</code> will be returned
 		 * @public
 		 * @since 1.120
 		 */
-		getLegacyDateFormat() {
-			const sLegacyDateFormat = oWritableConfig.get({
-				name: "sapUiLegacyDateFormat",
+		getABAPDateFormat() {
+			const sABAPDateFormat = oWritableConfig.get({
+				name: "sapUiABAPDateFormat",
 				type: BaseConfig.Type.String,
+				/**
+				 * @deprecated As of Version 1.120
+				 */
+				defaultValue: oWritableConfig.get({
+					name: "sapUiLegacyDateFormat",
+					type: BaseConfig.Type.String,
+					external: true
+				}),
 				external: true
 			});
-			return sLegacyDateFormat ? sLegacyDateFormat.toUpperCase() : undefined;
+			return sABAPDateFormat ? sABAPDateFormat.toUpperCase() : undefined;
 		},
 
 		/**
-		 * Allows to specify one of the legacy ABAP date formats.
+		 * Allows to specify one of the ABAP date formats.
 		 *
 		 * This method modifies the date patterns for 'short' and 'medium' style with the corresponding ABAP
 		 * format. When called with a null or undefined format id, any previously applied format will be removed.
 		 *
-		 * After changing the legacy date format, the framework tries to update localization
+		 * After changing the date format, the framework tries to update localization
 		 * specific parts of the UI. See the documentation of
-		 * {@link module:sap/base/i18n/Localization.getLanguage Localization.getLanguage()}
+		 * {@link module:sap/base/i18n/Localization.setLanguage Localization.setLanguage()}
 		 * for details and restrictions.
 		 *
 		 * @param {""|"1"|"2"|"3"|"4"|"5"|"6"|"7"|"8"|"9"|"A"|"B"|"C"} [sFormatId=""] ID of the ABAP date format,
@@ -718,15 +736,15 @@ sap.ui.define([
 		 * @public
 		 * @since 1.120
 		 */
-		setLegacyDateFormat(sFormatId) {
+		setABAPDateFormat(sFormatId) {
 			sFormatId = sFormatId ? String(sFormatId).toUpperCase() : "";
 			check(M_ABAP_DATE_FORMAT_PATTERN.hasOwnProperty(sFormatId), "sFormatId must be one of ['1','2','3','4','5','6','7','8','9','A','B','C'] or empty");
 			const bFireEvent = !mChanges;
-			const sOldFormat = Formatting.getLegacyDateFormat();
+			const sOldFormat = Formatting.getABAPDateFormat();
 			if (sOldFormat !== sFormatId) {
 				mChanges ??= {};
-				oWritableConfig.set("sapUiLegacyDateFormat", sFormatId);
-				mChanges.legacyDateFormat = sFormatId;
+				oWritableConfig.set("sapUiABAPDateFormat", sFormatId);
+				mChanges.ABAPDateFormat = sFormatId;
 				Formatting.setDatePattern("short", M_ABAP_DATE_FORMAT_PATTERN[sFormatId].pattern);
 				Formatting.setDatePattern("medium", M_ABAP_DATE_FORMAT_PATTERN[sFormatId].pattern);
 				if (bFireEvent) {
@@ -736,32 +754,40 @@ sap.ui.define([
 		},
 
 		/**
-		 * Returns the currently set legacy ABAP time format (its id) or undefined if none has been set.
+		 * Returns the currently set ABAP time format (its id) or undefined if none has been set.
 		 *
 		 * @returns {"0"|"1"|"2"|"3"|"4"|undefined} ID of the ABAP date format,
 		 *   if not set or set to <code>""</code>, <code>undefined</code> will be returned
 		 * @public
 		 * @since 1.120
 		 */
-		getLegacyTimeFormat() {
-			const sLegacyTimeFormat = oWritableConfig.get({
-				name: "sapUiLegacyTimeFormat",
+		getABAPTimeFormat() {
+			const sABAPTimeFormat = oWritableConfig.get({
+				name: "sapUiABAPTimeFormat",
 				type: BaseConfig.Type.String,
+				/**
+				 * @deprecated As of Version 1.120
+				 */
+				defaultValue: oWritableConfig.get({
+					name: "sapUiLegacyTimeFormat",
+					type: BaseConfig.Type.String,
+					external: true
+				}),
 				external: true
 			});
-			return sLegacyTimeFormat ? sLegacyTimeFormat.toUpperCase() : undefined;
+			return sABAPTimeFormat ? sABAPTimeFormat.toUpperCase() : undefined;
 		},
 
 		/**
-		 * Allows to specify one of the legacy ABAP time formats.
+		 * Allows to specify one of the ABAP time formats.
 		 *
 		 * This method sets the time patterns for 'short' and 'medium' style to the corresponding ABAP
 		 * formats and sets the day period texts to "AM"/"PM" or "am"/"pm" respectively. When called
 		 * with a null or undefined format id, any previously applied format will be removed.
 		 *
-		 * After changing the legacy time format, the framework tries to update localization
+		 * After changing the time format, the framework tries to update localization
 		 * specific parts of the UI. See the documentation of
-		 * {@link module:sap/base/i18n/Localization.getLanguage Localization.getLanguage()}
+		 * {@link module:sap/base/i18n/Localization.setLanguage Localization.setLanguage()}
 		 * for details and restrictions.
 		 *
 		 * @param {""|"0"|"1"|"2"|"3"|"4"} [sFormatId=""] ID of the ABAP time format,
@@ -770,15 +796,15 @@ sap.ui.define([
 		 * @public
 		 * @since 1.120
 		 */
-		setLegacyTimeFormat(sFormatId) {
+		setABAPTimeFormat(sFormatId) {
 			sFormatId = sFormatId || "";
 			check(M_ABAP_TIME_FORMAT_PATTERN.hasOwnProperty(sFormatId), "sFormatId must be one of ['0','1','2','3','4'] or empty");
 			const bFireEvent = !mChanges;
-			const sOldFormat = Formatting.getLegacyTimeFormat();
+			const sOldFormat = Formatting.getABAPTimeFormat();
 			if (sOldFormat !== sFormatId) {
 				mChanges ??= {};
-				oWritableConfig.set("sapUiLegacyTimeFormat", sFormatId);
-				mChanges.legacyTimeFormat = sFormatId;
+				oWritableConfig.set("sapUiABAPTimeFormat", sFormatId);
+				mChanges.ABAPTimeFormat = sFormatId;
 				Formatting.setTimePattern("short", M_ABAP_TIME_FORMAT_PATTERN[sFormatId]["short"]);
 				Formatting.setTimePattern("medium", M_ABAP_TIME_FORMAT_PATTERN[sFormatId]["medium"]);
 				Formatting._setDayPeriods("abbreviated", M_ABAP_TIME_FORMAT_PATTERN[sFormatId].dayPeriods);
@@ -789,31 +815,39 @@ sap.ui.define([
 		},
 
 		/**
-		 * Returns the currently set legacy ABAP number format (its id) or undefined if none has been set.
+		 * Returns the currently set ABAP number format (its id) or undefined if none has been set.
 		 *
 		 * @returns {" "|"X"|"Y"|undefined} ID of the ABAP number format,
 		 *   if not set or set to <code>""</code>, <code>undefined</code> will be returned
 		 * @public
 		 * @since 1.120
 		 */
-		getLegacyNumberFormat() {
-			const sLegacyNumberFormat = oWritableConfig.get({
-				name: "sapUiLegacyNumberFormat",
+		getABAPNumberFormat() {
+			const sABAPNumberFormat = oWritableConfig.get({
+				name: "sapUiABAPNumberFormat",
 				type: BaseConfig.Type.String,
+				/**
+				 * @deprecated As of Version 1.120
+				 */
+				defaultValue: oWritableConfig.get({
+					name: "sapUiLegacyNumberFormat",
+					type: BaseConfig.Type.String,
+					external: true
+				}),
 				external: true
 			});
-			return sLegacyNumberFormat ? sLegacyNumberFormat.toUpperCase() : undefined;
+			return sABAPNumberFormat ? sABAPNumberFormat.toUpperCase() : undefined;
 		},
 
 		/**
-		 * Allows to specify one of the legacy ABAP number format.
+		 * Allows to specify one of the ABAP number format.
 		 *
 		 * This method will modify the 'group' and 'decimal' symbols. When called with a null
 		 * or undefined format id, any previously applied format will be removed.
 		 *
-		 * After changing the legacy number format, the framework tries to update localization
+		 * After changing the number format, the framework tries to update localization
 		 * specific parts of the UI. See the documentation of
-		 * {@link module:sap/base/i18n/Localization.getLanguage Localization.getLanguage()}
+		 * {@link module:sap/base/i18n/Localization.setLanguage Localization.setLanguage()}
 		 * for details and restrictions.
 		 *
 		 * @param {""|" "|"X"|"Y"} [sFormatId=""] ID of the ABAP number format set,
@@ -822,15 +856,15 @@ sap.ui.define([
 		 * @public
 		 * @since 1.120
 		 */
-		setLegacyNumberFormat(sFormatId) {
+		setABAPNumberFormat(sFormatId) {
 			sFormatId = sFormatId ? sFormatId.toUpperCase() : "";
 			check(M_ABAP_NUMBER_FORMAT_SYMBOLS.hasOwnProperty(sFormatId), "sFormatId must be one of [' ','X','Y'] or empty");
 			const bFireEvent = !mChanges;
-			const sOldFormat = Formatting.getLegacyNumberFormat();
+			const sOldFormat = Formatting.getABAPNumberFormat();
 			if (sOldFormat !== sFormatId) {
 				mChanges ??= {};
-				oWritableConfig.set("sapUiLegacyNumberFormat", sFormatId);
-				mChanges.legacyNumberFormat = sFormatId;
+				oWritableConfig.set("sapUiABAPNumberFormat", sFormatId);
+				mChanges.ABAPNumberFormat = sFormatId;
 				Formatting.setNumberSymbol("group", M_ABAP_NUMBER_FORMAT_SYMBOLS[sFormatId].groupingSeparator);
 				Formatting.setNumberSymbol("decimal", M_ABAP_NUMBER_FORMAT_SYMBOLS[sFormatId].decimalSeparator);
 				if (bFireEvent) {
@@ -853,7 +887,7 @@ sap.ui.define([
 			check(Array.isArray(aMappings), "aMappings must be an Array");
 			const bFireEvent = !mChanges;
 			mChanges ??= {};
-			Formatting.aLegacyDateCalendarCustomizing = mChanges.legacyDateCalendarCustomizing = aMappings.slice();
+			aLegacyDateCalendarCustomizing = mChanges.legacyDateCalendarCustomizing = aMappings.slice();
 			if (bFireEvent) {
 				fireChange();
 			}
@@ -867,7 +901,6 @@ sap.ui.define([
 		 * @since 1.120
 		 */
 		getLegacyDateCalendarCustomizing() {
-			let aLegacyDateCalendarCustomizing = Formatting.aLegacyDateCalendarCustomizing;
 			if (aLegacyDateCalendarCustomizing) {
 				aLegacyDateCalendarCustomizing = aLegacyDateCalendarCustomizing.slice();
 			}
@@ -916,6 +949,7 @@ sap.ui.define([
 		 *
 		 * @returns {mSettings} The custom LocaleData settings object
 		 * @private
+		 * @ui5-restricted sap.ui.core
 		 * @since 1.116.0
 		 */
 		getCustomLocaleData() {
@@ -953,7 +987,7 @@ sap.ui.define([
 		 *
 		 * @param {module:sap/base/i18n/date/CalendarWeekNumbering} sCalendarWeekNumbering
 		 *   The calendar week numbering algorithm
-		 * @throws {Error}
+		 * @throws {TypeError}
 		 *   If <code>sCalendarWeekNumbering</code> is not a valid calendar week numbering algorithm,
 		 *   defined in {@link module:sap/base/i18n/date/CalendarWeekNumbering}
 		 *
@@ -1008,9 +1042,9 @@ sap.ui.define([
 				Log.warning("Parameter 'calendarType' is set to " + sCalendarType + " which isn't a valid value and therefore ignored. The calendar type is determined from format setting and current locale");
 			}
 
-			const sLegacyDateFormat = Formatting.getLegacyDateFormat();
+			const sABAPDateFormat = Formatting.getABAPDateFormat();
 
-			switch (sLegacyDateFormat) {
+			switch (sABAPDateFormat) {
 				case "1":
 				case "2":
 				case "3":
@@ -1062,18 +1096,18 @@ sap.ui.define([
 	}
 
 	function init() {
-		// init legacy formats
-		const sLegacyDateFormat = Formatting.getLegacyDateFormat();
-		if (sLegacyDateFormat !== undefined) {
-			Formatting.setLegacyDateFormat(sLegacyDateFormat);
+		// init ABAP formats
+		const sABAPDateFormat = Formatting.getABAPDateFormat();
+		if (sABAPDateFormat !== undefined) {
+			Formatting.setABAPDateFormat(sABAPDateFormat);
 		}
-		const sLegacyNumberFormat = Formatting.getLegacyNumberFormat();
-		if (sLegacyNumberFormat !== undefined) {
-			Formatting.setLegacyNumberFormat(sLegacyNumberFormat);
+		const sABAPNumberFormat = Formatting.getABAPNumberFormat();
+		if (sABAPNumberFormat !== undefined) {
+			Formatting.setABAPNumberFormat(sABAPNumberFormat);
 		}
-		const sLegacyTimeFormat = Formatting.getLegacyTimeFormat();
-		if (sLegacyTimeFormat !== undefined) {
-			Formatting.setLegacyTimeFormat(sLegacyTimeFormat);
+		const sABAPTimeFormat = Formatting.getABAPTimeFormat();
+		if (sABAPTimeFormat !== undefined) {
+			Formatting.setABAPTimeFormat(sABAPTimeFormat);
 		}
 	}
 

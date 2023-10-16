@@ -1,4 +1,7 @@
 /*global QUnit */
+/**
+ * @deprecated As of Version 1.120.
+ */
 sap.ui.define([
 	"sap/ui/core/ListItem", "sap/ui/core/Configuration"
 ], function(ListItem, Configuration) {

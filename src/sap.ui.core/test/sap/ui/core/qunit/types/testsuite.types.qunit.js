@@ -73,6 +73,9 @@ sap.ui.define(function () {
 				coverage : {
 					only : "sap/ui/core/format/NumberFormat"
 				},
+				qunit: {
+					reorder: false
+				},
 				title: "QUnit Page for sap/ui/core/format/NumberFormat"
 			},
 			NumberFormatCurrencies: {

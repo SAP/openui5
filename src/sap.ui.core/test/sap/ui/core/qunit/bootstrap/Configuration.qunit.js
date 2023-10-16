@@ -494,17 +494,16 @@ sap.ui.define([
 			{ param: 'y', expected: 'Y' }
 		].forEach(function (data) {
 			// setup
-			oStub && oStub.restore();
-			oStub = sinon.stub(BaseConfig, "get");
-			oStub.callsFake(function(mParameters) {
-				if (mParameters.name === "sapUiLegacyNumberFormat") {
+			BaseConfig._.invalidate();
+			oStub?.restore();
+			oStub = sinon.stub(URLConfigurationProvider, "get");
+			oStub.callsFake(function(sKey) {
+				if (sKey === "sapUiLegacyNumberFormat") {
 					return data.param;
 				} else {
-					return oStub.wrappedMethod.call(this, mParameters);
+					return oStub.wrappedMethod.call(this, sKey);
 				}
 			}.bind(this));
-			// call method under test
-			Configuration.setCore();
 
 			// verify results
 			assert.equal(Configuration.getFormatSettings().getLegacyNumberFormat(), data.expected, "Value of number format must be '" + data.expected + "'.");
@@ -513,7 +512,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Read 'sap-ui-legacy-date-format' from URL", function(assert) {
-		var oStub;
+		var oStub, oBaseStub;
 		[
 			{ param: '', expected: undefined },
 			{ param: '1', expected: '1' },
@@ -533,21 +532,28 @@ sap.ui.define([
 			{ param: 'c', expected: 'C' }
 		].forEach(function (data) {
 			// setup
-			oStub && oStub.restore();
-			oStub = sinon.stub(BaseConfig, "get");
-			oStub.callsFake(function(mParameters) {
-				if (mParameters.name === "sapUiLegacyDateFormat") {
+			BaseConfig._.invalidate();
+			oStub?.restore();
+			oStub = sinon.stub(URLConfigurationProvider, "get");
+			oStub.callsFake(function(sKey) {
+				if (sKey === "sapUiLegacyDateFormat") {
 					return data.param;
 				} else {
-					return oStub.wrappedMethod.call(this, mParameters);
+					return oStub.wrappedMethod.call(this, sKey);
 				}
 			}.bind(this));
-
-			Configuration.setCore();
+			//reset memory Provider
+			oBaseStub?.restore();
+			oBaseStub = sinon.stub(BaseConfig, "get");
+			oBaseStub.callsFake(function(mParameters) {
+				mParameters.provider = undefined;
+				return oBaseStub.wrappedMethod.call(this, mParameters);
+			}.bind(this));
 
 			assert.equal(Configuration.getFormatSettings().getLegacyDateFormat(), data.expected, "Value of date format must be '" + data.expected + "'.");
 		});
 		oStub.restore();
+		oBaseStub.restore();
 	});
 
 	QUnit.test("Read 'sap-ui-legacy-time-format' from URL", function(assert) {
@@ -563,7 +569,7 @@ sap.ui.define([
 		].forEach(function (data) {
 			// setup
 			BaseConfig._.invalidate();
-			oStub && oStub.restore();
+			oStub?.restore();
 			oStub = sinon.stub(URLConfigurationProvider, "get");
 			oStub.callsFake(function(key) {
 				if (key === "sapUiLegacyTimeFormat") {
@@ -573,14 +579,12 @@ sap.ui.define([
 				}
 			}.bind(this));
 			//reset memory Provider
-			oBaseStub && oBaseStub.restore();
+			oBaseStub?.restore();
 			oBaseStub = sinon.stub(BaseConfig, "get");
 			oBaseStub.callsFake(function(mParameters) {
 				mParameters.provider = undefined;
 				return oBaseStub.wrappedMethod.call(this, mParameters);
 			}.bind(this));
-
-			Configuration.setCore();
 
 			assert.equal(Configuration.getFormatSettings().getLegacyTimeFormat(), data.expected, "Value of time format must be '" + data.expected + "'.");
 		});
@@ -588,9 +592,7 @@ sap.ui.define([
 		oBaseStub.restore();
 	});
 
-	QUnit.module("CalendarWeekNumbering", {
-
-	});
+	QUnit.module("CalendarWeekNumbering");
 
 	QUnit.test("Read calendarWeekNumbering from URL", function(assert) {
 		// setup
@@ -609,9 +611,6 @@ sap.ui.define([
 			mParameters.provider = undefined;
 			return oBaseStub.wrappedMethod.call(this, mParameters);
 		}.bind(this));
-
-		// call method under test
-		Configuration.setCore();
 
 		// verify results
 		assert.equal(Configuration.getCalendarWeekNumbering(), CalendarWeekNumbering.ISO_8601,
@@ -637,9 +636,6 @@ sap.ui.define([
 			mParameters.provider = undefined;
 			return oBaseStub.wrappedMethod.call(this, mParameters);
 		}.bind(this));
-
-		// call method under test
-		Configuration.setCore();
 
 		// verify results
 		assert.equal(Configuration.getCalendarWeekNumbering(), CalendarWeekNumbering.Default,
@@ -903,7 +899,6 @@ sap.ui.define([
 				return oStub.wrappedMethod.call(this, sKey);
 			}
 		}.bind(this));
-		Configuration.setCore();
 		var sFlexibilityService = Configuration.getFlexibilityServices();
 		assert.deepEqual(sFlexibilityService, []);
 		oStub.restore();
