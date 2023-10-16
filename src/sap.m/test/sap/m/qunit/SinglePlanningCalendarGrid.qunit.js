@@ -405,6 +405,48 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("CalendarAppointment's getDomRef() returns proper DOM element", function(assert) {
+		// Prepare
+		var aAppointments = [
+				new CalendarAppointment("SPC-app-111", {
+					startDate: new Date(2023, 9, 16, 9, 0),
+					endDate: new Date(2023, 9, 16, 9, 30)
+				}),
+				new CalendarAppointment("SPC-app-11", {
+					startDate: new Date(2023, 9, 16, 9, 0),
+					endDate: new Date(2023, 9, 16, 9, 30)
+				}),
+				new CalendarAppointment("SPC-app-10", {
+					startDate: new Date(2023, 9, 16, 9, 0),
+					endDate: new Date(2023, 9, 16, 9, 30)
+				}),
+				new CalendarAppointment("SPC-app-1", {
+					startDate: new Date(2023, 9, 16, 9, 0),
+					endDate: new Date(2023, 9, 16, 9, 30)
+				}),
+				new CalendarAppointment("SPC-app-13", {
+					startDate: new Date(2023, 9, 16, 9, 0),
+					endDate: new Date(2023, 9, 16, 9, 30)
+				})
+			],
+			oStartDate = new Date(2023, 9, 16),
+			oSPCGrid = new SinglePlanningCalendarGrid({
+				startDate: oStartDate,
+				appointments: aAppointments
+			});
+
+		// arrange
+		oSPCGrid.placeAt("qunit-fixture");
+		oCore.applyChanges();
+
+		// assert
+		assert.strictEqual(aAppointments[1].getDomRef().getAttribute("id"), "SPC-app-11-0_1", "The returned DOM reference of the appointment with index 1 is correct.");
+		assert.strictEqual(aAppointments[3].getDomRef().getAttribute("id"), "SPC-app-1-0_3", "The returned DOM reference of the appointment with index 3 is correct.");
+
+		// cleanup
+		oSPCGrid.destroy();
+	});
+
 	QUnit.module("Events");
 
 	QUnit.test("appointmentSelect: select a single appointment", function (assert) {
