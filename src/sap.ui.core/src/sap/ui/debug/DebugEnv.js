@@ -38,6 +38,7 @@ sap.ui.define('sap/ui/debug/DebugEnv', [
 	 * @version ${version}
 	 * @private
 	 * @alias sap.ui.debug.DebugEnv
+	 * @deprecated As of Version 1.120
 	 */
 	var DebugEnv = function() {
 	};
