@@ -23,10 +23,6 @@
 				enableBusyIndicator="true"
 				ariaLabelledBy="title"
 				paste="onPaste">
-				<dependents>
-					<m:plugins.CellSelector id="cellSelector" />
-					<m:plugins.CopyProvider id="copyProvider" extractData=".extractData" copy=".onCopy" />
-				</dependents>
 				<plugins>
 					<plugins.MultiSelectionPlugin limit="100" enableNotification="true" selectionMode="MultiToggle"/>
 				</plugins>
