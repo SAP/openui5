@@ -9,9 +9,9 @@ sap.ui.define([
 "use strict";
 
 	/**
-	* @class OData-specific <code>TypeMap</code> configuration
+	* @class OData-specific {@link sap.ui.mdc.util.TypeMap TypeMap} configuration.
 	*
-	* <b>Note:</b> This <code>TypeMap</code> implementation contains the following types:
+	* <b>Note:</b> This {@link sap.ui.mdc.util.TypeMap TypeMap} implementation contains the following types:
 	*
 	* <ul>
 	* <li>{@link sap.ui.model.type.Boolean} (alias <code>Boolean</code>)</li>
@@ -109,18 +109,18 @@ sap.ui.define([
 
 	/*
 	 * For {@link sap.ui.model.odata.type.Currency} and {@link sap.ui.model.odata.type.Unit} the
-	 * CompositeBinding has 3 parts, Number, Currency/Unit and unit map.
-	 * On the first call of formatValue the unit map is analyzed and stored inside the
-	 * Type. Later, on parsing it is used. Without initializing the unit map parsing is
-	 * not working.
+	 * <code>CompositeBinding</code> consists of three parts, <code>Number</code>, <code>Currency</code>/<code>Unit</code> and <code>unit map</code>.
+	 * On the first call of <code>formatValue</code> the <code>unit map</code> is analyzed and stored inside the
+	 * <code>Type</code>. Later, it is used on parsing. The <code>unit map</code> parsing does not work
+	 * without initialization.
 	 *
-	 * In the sap.ui.mdc.Field the Type is created via Binding. So when the value of the Field
-	 * gets the unit map for the first time we need to initialize the type via formatValue.
-	 * (As no condition is created if there is no number or unit formatValue might not be called before
+	 * In the {@link sap.ui.mdc.Field} the <code>Type</code> is created via <code>Binding</code>. So when the value of the {@link sap.ui.mdc.Field Field}
+	 * gets the <code>unit map</code> for the first time we need to initialize the type via <code>formatValue</code>.
+	 * (As no condition is created if there is no number or unit <code>formatValue</code> might not be called before
 	 * first user input.)
 	 *
-	 * We return the given unit map in the TypeInitialization object to allow to initialize the "cloned"
-	 * Unit/Currency-Type (internally used by the two Input controls for number and unit) with the unit map.
+	 * We return the given <code>unit map</code> in the <code>TypeInitialization</code> <code>object</code> to allow to initialize the "cloned"
+	 * <code>Currency</code>/<code>Unit</code>-Type (internally used by the two <code>Input</code> controls for number and unit) with the <code>unit map</code>.
 	 */
 	ODataTypeMap.initializeTypeFromValue = function(oType, vValue) {
 

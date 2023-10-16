@@ -10,9 +10,9 @@ sap.ui.define([
 
 	/**
 	*
-	* Generic <code>TypeMap</code> configuration for simplistic usecases
+	* Generic {@link sap.ui.mdc.util.TypeMap TypeMap} configuration for simple use cases.
 	*
-	* <b>Note:</b> This <code>TypeMap</code> implementation contains the following types:
+	* <b>Note:</b> This {@link sap.ui.mdc.util.TypeMap TypeMap} implementation contains the following types:
 	*
 	* <ul>
 	* <li>{@link sap.ui.model.type.Boolean} (alias <code>Boolean</code>)</li>
