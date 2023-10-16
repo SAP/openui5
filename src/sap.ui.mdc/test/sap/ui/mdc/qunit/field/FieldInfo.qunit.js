@@ -13,7 +13,8 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/ui/mdc/Link",
 	"sap/ui/core/Core",
-	"sap/ui/core/Element"
+	"sap/ui/core/Element",
+	"sap/ui/mdc/enums/LinkType"
 ], function(
 	qutils,
 	Device,
@@ -27,7 +28,8 @@ sap.ui.define([
 	Button,
 	Link,
 	oCore,
-	Element) {
+	Element,
+	LinkType) {
 	"use strict";
 
 	let oMockServer;
@@ -169,7 +171,7 @@ sap.ui.define([
 				name: "test-resources/sap/ui/mdc/qunit/field/FieldInfoLinkDelegate",
 				payload: {
 					linkType: {
-						type: 1,
+						type: LinkType.DirectLink,
 						directLink: new LinkItem({
 							href: "#action01",
 							target: sTarget
@@ -200,7 +202,7 @@ sap.ui.define([
 				name: "test-resources/sap/ui/mdc/qunit/field/FieldInfoLinkDelegate",
 				payload: {
 					linkType: {
-						type: 1,
+						type: LinkType.DirectLink,
 						directLink: new LinkItem({
 							href: "#action01"
 						})

@@ -3,8 +3,9 @@
  */
 sap.ui.define([
 	"sap/ui/mdc/flp/FlpLinkDelegate",
-	"sap/ui/mdc/link/ContactDetails"
-], function (FlpLinkDelegate, ContactDetails) {
+	"sap/ui/mdc/link/ContactDetails",
+	"sap/ui/mdc/enums/LinkType"
+], function (FlpLinkDelegate, ContactDetails, LinkType) {
 	"use strict";
 
 	const SampleLinkDelegate = Object.assign({}, FlpLinkDelegate);
@@ -37,7 +38,7 @@ sap.ui.define([
 			return Promise.resolve(oPayload.linkType);
 		}
 		return Promise.resolve({
-			type: 2,
+			type: LinkType.Popover,
 			directLink: undefined
 		});
 	};
