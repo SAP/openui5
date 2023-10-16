@@ -8,7 +8,7 @@
  * ${version}
  */
 sap.ui.define([
-	'sap/ui/core/UIComponent', 'sap/ui/model/odata/v2/ODataModel', 'sap/ui/core/util/MockServer', 'testutils/other/FakeFlpConnector'
+	'sap/ui/core/UIComponent', 'sap/ui/model/odata/v2/ODataModel', 'sap/ui/core/util/MockServer', 'testutils/link/FakeFlpConnector'
 ], function(UIComponent, ODataModel, MockServer, FakeFlpConnector) {
 	"use strict";
 

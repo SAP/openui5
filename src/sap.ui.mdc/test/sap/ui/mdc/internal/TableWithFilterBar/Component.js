@@ -11,7 +11,7 @@ sap.ui.define([
 	"sap/ui/model/odata/type/String", // to have it loaded
 	"sap/ui/model/odata/type/TimeOfDay", // to have it loaded
 	"sap/ui/mdc/field/ConditionsType", // as used in XML view
-	"testutils/other/FakeFlpConnector",
+	"testutils/link/FakeFlpConnector",
 	"sap/base/util/LoaderExtensions",
 	"sap/m/routing/Router" // make sure Router is loaded
 ], function (

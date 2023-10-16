@@ -61,7 +61,6 @@
 			"sap.ui.mdc.FilterField",
 			"sap.ui.mdc.MultiValueField",
 			"sap.ui.mdc.link.Panel",
-			"sap.ui.mdc.link.ContactDetails",
 			"sap.ui.mdc.Chart",
 			"sap.ui.mdc.p13n.PersistenceProvider"
 			],
@@ -84,10 +83,6 @@
 			"sap.ui.mdc.field.ListFieldHelpItem",
 			"sap.ui.mdc.filterbar.aligned.FilterItemLayout",
 			"sap.ui.mdc.Link",
-			"sap.ui.mdc.link.ContactDetailsAddressItem",
-			"sap.ui.mdc.link.ContactDetailsEmailItem",
-			"sap.ui.mdc.link.ContactDetailsItem",
-			"sap.ui.mdc.link.ContactDetailsPhoneItem",
 			"sap.ui.mdc.link.LinkItem",
 			"sap.ui.mdc.link.PanelItem",
 			"sap.ui.mdc.link.SemanticObjectUnavailableAction",
@@ -1185,44 +1180,6 @@
 		 * @public
 		 */
 		axis3: "axis3"
-	};
-	/**
-	 * Defines supported address types in ContactDetails control.
-	 *
-	 * @enum {string}
-	 * @private
-	 * @since 1.64
-	 */
-	thisLib.ContactDetailsAddressType = {
-		work: "work",
-		home: "home",
-		preferred: "preferred"
-	};
-	/**
-	 * Defines supported email types in ContactDetails control.
-	 *
-	 * @enum {string}
-	 * @private
-	 * @since 1.64
-	 */
-	thisLib.ContactDetailsEmailType = {
-		work: "work",
-		home: "home",
-		preferred: "preferred"
-	};
-	/**
-	 * Defines supported phone types in ContactDetails control.
-	 *
-	 * @enum {string}
-	 * @private
-	 * @since 1.64
-	 */
-	thisLib.ContactDetailsPhoneType = {
-		work: "work",
-		home: "home",
-		cell: "cell",
-		fax: "fax",
-		preferred: "preferred"
 	};
 
 	/**

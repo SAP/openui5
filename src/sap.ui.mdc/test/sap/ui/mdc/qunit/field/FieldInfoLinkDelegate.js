@@ -3,7 +3,7 @@
  */
 sap.ui.define([
 	"sap/ui/mdc/flp/FlpLinkDelegate",
-	"sap/ui/mdc/link/ContactDetails",
+	"testutils/link/ContactDetails",
 	"sap/ui/mdc/enums/LinkType"
 ], function (FlpLinkDelegate, ContactDetails, LinkType) {
 	"use strict";
