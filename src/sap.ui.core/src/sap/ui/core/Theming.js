@@ -86,7 +86,6 @@ sap.ui.define([
 		/**
 		 * Allows setting the theme name
 		 * @param {string} sTheme the theme name
-		 * @return {this} <code>this</code> to allow method chaining
 		 * @public
 		 * @since 1.118
 		 */
@@ -117,7 +116,6 @@ sap.ui.define([
 					fireApplied({theme: sNewTheme});
 				}
 			}
-			return this;
 		},
 
 		/**
