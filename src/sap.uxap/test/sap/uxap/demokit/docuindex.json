@@ -68,7 +68,7 @@
 				"formFactors": "-",
 				"since": "1.77",
 				"samples": [
-					"sap.uxap.sample.ObjectPageWithPogressAndRatingIndicators",
+					"sap.uxap.sample.ObjectPageWithProgressAndRatingIndicators",
 					"sap.uxap.sample.ObjectPageWithLinksAndObjectStatus",
 					"sap.uxap.sample.ObjectPageSectionShowTitle"
 				]
@@ -310,8 +310,8 @@
 				"description": "ObjectPage sample with Header Container"
 			},
 			{
-				"id": "sap.uxap.sample.ObjectPageWithPogressAndRatingIndicators",
-				"name": "Object Page Header with Pogress Indicator and Rating Indicator",
+				"id": "sap.uxap.sample.ObjectPageProgressRatingIndicators",
+				"name": "Object Page Header with Progress Indicator and Rating Indicator",
 				"description": "ObjectPage sample with header content arranged using containers, called facets, ProgressIndicator and RatingIndicator."
 			},
 			{
