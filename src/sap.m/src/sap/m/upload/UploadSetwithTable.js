@@ -404,11 +404,11 @@ sap.ui.define([
 		this._filePreviewDialogControl = null;
 		this._oRb = Core.getLibraryResourceBundle("sap.m");
 		this._bPersoRegistered = false;
+		this._setIllustratedMessage();
 	};
 
 	UploadSetwithTable.prototype.onBeforeRendering = function() {
 		Table.prototype.onBeforeRendering.call(this);
-		this._setIllustratedMessage();
 	};
 
 	UploadSetwithTable.prototype.onAfterRendering = function() {
@@ -669,6 +669,36 @@ sap.ui.define([
 			this.getDefaultFileUploader().setDirectory(bDirectory);
 			if (bDirectory) {
 				this.setProperty("multiple", false); // disable multiple files selection when directory selection is enabled.
+			}
+		}
+		return this;
+	};
+
+	UploadSetwithTable.prototype.setNoDataIllustrationType = function (setIllustrationType) {
+		if (this.getNoDataIllustrationType() !== setIllustrationType) {
+			this.setProperty("noDataIllustrationType", setIllustrationType);
+			if (this._illustratedMessage) {
+				this._illustratedMessage.setIllustrationType(this.getNoDataIllustrationType());
+			}
+		}
+		return this;
+	};
+
+	UploadSetwithTable.prototype.setNoDataText = function(sNoDataTxt) {
+		if (this.getNoData() !== sNoDataTxt) {
+			this.setProperty("noDataText", sNoDataTxt);
+			if (this._illustratedMessage) {
+				this._illustratedMessage.setTitle(this.getNoDataText());
+			}
+		}
+		return this;
+	};
+
+	UploadSetwithTable.prototype.setNoDataDescription = function(sNoDataDescription) {
+		if (this.getNoDataDescription() !== sNoDataDescription) {
+			this.setProperty("noDataDescription", sNoDataDescription);
+			if (this._illustratedMessage) {
+				this._illustratedMessage.setDescription(this.getNoDataDescription());
 			}
 		}
 		return this;
