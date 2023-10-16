@@ -187,7 +187,8 @@ sap.ui.define([
 					MessageBox.Action.CANCEL
 				],
 				emphasizedAction: oLibraryBundle.getText("BTN_MODIFIED_VARIANT_SAVE"),
-				styleClass: Utils.getRtaStyleClassName()
+				styleClass: Utils.getRtaStyleClassName(),
+				id: "compVariantWarningDialog"
 			});
 		} else {
 			createCommandAndFireEvent.call(this, oVariantManagementOverlay, ["compVariantSwitch"], {

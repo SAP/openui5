@@ -197,6 +197,36 @@ sap.ui.define([
 					});
 				}
 			});
+		},
+
+		theModifiedIndicatorShouldBeDisplayed() {
+			return this.waitFor({
+				controlType: "sap.m.Text",
+				matchers(oDirtyIndicator) {
+					return !!oDirtyIndicator.getId().match(/-vm-modified/g);
+				},
+				success(oDirtyIndicator) {
+					Opa5.assert.ok(oDirtyIndicator[0].getVisible(), "Then the dirty indicator is visible.");
+					Opa5.assert.ok(oDirtyIndicator[0].getParent().getParent().getModified(), "Then the modified flag is set correctly");
+					Opa5.assert.equal(oDirtyIndicator[0].getText(), "*", "Then the text is set correctly");
+				},
+				errorMessage: "the modified variant indicator is not set correctly"
+			});
+		},
+
+		theModifiedIndicatorShouldBeHidden() {
+			return this.waitFor({
+				controlType: "sap.m.Text",
+				visible: false,
+				matchers(oDirtyIndicator) {
+					return !!oDirtyIndicator.getId().match(/-vm-modified/g);
+				},
+				success(oDirtyIndicator) {
+					Opa5.assert.notOk(oDirtyIndicator[0].getVisible(), "Then the dirty indicator is not visible.");
+					Opa5.assert.notOk(oDirtyIndicator[0].getParent().getParent().getModified(), "Then the modified flag is set correctly");
+				},
+				errorMessage: "the modified variant indicator is not set correctly"
+			});
 		}
 	};
 });
