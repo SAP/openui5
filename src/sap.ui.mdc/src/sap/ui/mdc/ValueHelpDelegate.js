@@ -364,10 +364,15 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns the content that is used for the autocomplete feature and for user input, if the entered text
+	 * leads to more than one filter result.
+	 *
 	 * @param {sap.ui.mdc.ValueHelp} oValueHelp The <code>ValueHelp</code> control instance
 	 * @param {sap.ui.mdc.valuehelp.base.ListContent} oContent <code>ValueHelp</code> content instance
 	 * @param {sap.ui.mdc.valuehelp.base.ItemForValueConfiguration} oConfig Configuration
 	 * @returns {sap.ui.model.Context} Promise resolving in the <code>Context</code> that's relevant'
+	 * @public
+	 * @since 1.120.0
 	 */
 	ValueHelpDelegate.getFirstMatch = function(oValueHelp, oContent, oConfig) {
 		return oContent.getRelevantContexts(oConfig)[0];

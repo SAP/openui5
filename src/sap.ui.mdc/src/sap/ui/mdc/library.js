@@ -242,11 +242,11 @@
 	 * @param {object} oControlEvent.getParameters
 	 * @param {boolean} oControlEvent.getParameters.leaveFocus Indicates that the source control should be focused again
 	 * @param {object} oControlEvent.getParameters.condition Provides the target condition of the navigation
-	 * @param {string} oControlEvent.getParameters.itemId Provides the navigated item's id (useful for aria attributes)
+	 * @param {string} oControlEvent.getParameters.itemId Provides the navigated item's ID (used for ARIA attributes)
 	 */
 
 	/**
-	 * This optional event is fired after an suggested item for typeahead was found.
+	 * This optional event is fired after a suggested item for type-ahead has been found.
 	 *
 	 * @name sap.ui.mdc.valuehelp.ITypeaheadContent#typeaheadSuggested
 	 * @event
@@ -254,8 +254,8 @@
 	 * @param {sap.ui.base.EventProvider} oControlEvent.getSource
 	 * @param {object} oControlEvent.getParameters
 	 * @param {object} oControlEvent.getParameters.condition Provides the target condition of the navigation
-	 * @param {string} oControlEvent.getParameters.filterValue Provides the used filter value. (As the event might fired asynchronously and the current user input might have changed.)
-	 * @param {string} oControlEvent.getParameters.itemId Provides the navigated item's id (useful for aria attributes)
+	 * @param {string} oControlEvent.getParameters.filterValue Provides the used filter value. (as the event might be fired asynchronously, and the current user input might have changed.)
+	 * @param {string} oControlEvent.getParameters.itemId Provides the navigated item's ID (used for ARIA attributes)
 	 * @since 1.120.0
 	 */
 
@@ -447,11 +447,11 @@
 	 * @param {object} oControlEvent.getParameters
 	 * @param {boolean} oControlEvent.getParameters.bLeaveFocus Indicates that the source control should be focused again
 	 * @param {object} oControlEvent.getParameters.condition Provides the target condition of the navigation
-	 * @param {string} oControlEvent.getParameters.itemId Provides the navigated item's id (useful for aria attributes)
+	 * @param {string} oControlEvent.getParameters.itemId Provides the navigated item's ID (used for ARIA attributes)
 	*/
 
 	/**
-	 * This optional event is fired after an suggested item for typeahead was found.
+	 * This optional event is fired after a suggested item for type-ahead has been found.
 	 *
 	 * @name sap.ui.mdc.valuehelp.ITypeaheadContainer#typeaheadSuggested
 	 * @event
@@ -459,7 +459,7 @@
 	 * @param {sap.ui.base.EventProvider} oControlEvent.getSource
 	 * @param {object} oControlEvent.getParameters
 	 * @param {object} oControlEvent.getParameters.condition Provides the target condition of the navigation
-	 * @param {string} oControlEvent.getParameters.itemId Provides the navigated item's id (useful for aria attributes)
+	 * @param {string} oControlEvent.getParameters.itemId Provides the navigated item's ID (used for ARIA attributes)
 	 * @since 1.120.0
 	 */
 

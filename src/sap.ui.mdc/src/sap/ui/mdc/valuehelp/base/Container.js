@@ -158,24 +158,24 @@ sap.ui.define([
 					}
 				},
 				/**
-				 * This event is fired after a suggested item was found for a typeahead
+				 * This event is fired after a suggested item has been found for a type-ahead.
 				 * @since 1.120.0
 				 */
 				typeaheadSuggested: {
 					parameters: {
 						/**
-						 * Suggested condition.
+						 * Suggested condition
 						 *
 						 * <b>Note:</b> A condition must have the structure of {@link sap.ui.mdc.condition.ConditionObject ConditionObject}.
 						 */
 						condition: { type: "object" },
 						/**
-						 * Used filter value.
-						 * (As the event might fired asynchronously and the current user input might have cahnged.)
+						 * Used filter value
+						 * (as the event might fire asynchronously, and the current user input might have changed.)
 						 */
 						filterValue: { type: "string" },
 						/**
-						 * ID of the suggested item. (This is needed to set the corresponding aria-attribute)
+						 * ID of the suggested item (This is needed to set the corresponding ARIA attribute)
 						 */
 						itemId: { type: "string" }
 					}
