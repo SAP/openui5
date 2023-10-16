@@ -841,13 +841,15 @@ sap.ui.define([
 		},
 		renderer: {
 			apiVersion: 2,
-			render: function(oRm, oControl) {
-				oRm.openStart("div", oControl);
+			render: function(oRm, oTable) {
+				oRm.openStart("div", oTable);
 				oRm.class("sapUiMdcTable");
-				oRm.style("height", "100%" /*TBD: Only needed for GridTable with Auto row count mode.*/);
-				oRm.style("width", oControl.getWidth());
+				oRm.style("width", oTable.getWidth());
+				oTable._getType().getTableStyleClasses().forEach((sStyleClass) => {
+					oRm.class(sStyleClass);
+				});
 				oRm.openEnd();
-				oRm.renderControl(oControl.getAggregation("_content"));
+				oRm.renderControl(oTable.getAggregation("_content"));
 				oRm.close("div");
 			}
 		}
@@ -1160,7 +1162,7 @@ sap.ui.define([
 		}
 
 		this._destroyDefaultType();
-		this.setAggregation("type", vType, true);
+		this.setAggregation("type", vType);
 
 		if (this._oTable) {
 			// store and remove the noData otherwise it gets destroyed
