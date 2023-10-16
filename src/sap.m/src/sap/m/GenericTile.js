@@ -1592,8 +1592,9 @@ sap.ui.define([
 			sAriaText = sAriaText.trim();
 			if (this.getLinkTileContents().length > 0) {
 				sAriaText += ("\n" + this._oRb.getText("GENERICTILE_LINK_TILE_CONTENT_DESCRIPTION"));
+			} else {
+				sAriaText += ("\n" + this._getSizeDescription());
 			}
-			sAriaText += ("\n" + this._getSizeDescription());
 		}
 		return sAriaText.trim();  // ARIA label set by the app, equal to tooltip
 	};
