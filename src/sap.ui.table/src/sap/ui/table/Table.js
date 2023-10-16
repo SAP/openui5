@@ -28,7 +28,8 @@ sap.ui.define([
 	"./plugins/SelectionModelSelection",
 	"sap/ui/thirdparty/jquery",
 	"sap/base/Log",
-	"sap/ui/core/Configuration"
+	"sap/ui/core/Configuration",
+	"sap/ui/core/library"
 ], function(
 	Device,
 	Control,
@@ -55,7 +56,8 @@ sap.ui.define([
 	SelectionModelSelectionPlugin,
 	jQuery,
 	Log,
-	Configuration
+	Configuration,
+	CoreLibrary
 ) {
 	"use strict";
 
@@ -63,7 +65,7 @@ sap.ui.define([
 	var NavigationMode = library.NavigationMode;
 	var SelectionMode = library.SelectionMode;
 	var SelectionBehavior = library.SelectionBehavior;
-	var SortOrder = library.SortOrder;
+	var SortOrder = CoreLibrary.SortOrder;
 	var VisibleRowCountMode = library.VisibleRowCountMode;
 	var Hook = TableUtils.Hook.Keys.Table;
 	var _private = TableUtils.createWeakMapFacade();
@@ -654,19 +656,18 @@ sap.ui.define([
 			sort: {
 				allowPreventDefault: true,
 				parameters: {
-
 					/**
-					 * sorted column.
+					 * The column for which the sorting is changed
 					 */
 					column: {type: "sap.ui.table.Column"},
 
 					/**
-					 * Sort Order
+					 * The new sort order
 					 */
-					sortOrder: {type: "sap.ui.table.SortOrder"},
+					sortOrder: {type: "sap.ui.core.SortOrder"},
 
 					/**
-					 * If column was added to sorter this is true. If new sort is started this is set to false
+					 * Indicates that the column is added to the list of sorted columns
 					 */
 					columnAdded: {type: "boolean"}
 				}
@@ -3110,7 +3111,7 @@ sap.ui.define([
 	 * Pushes the sorted column to array.
 	 *
 	 * @param {sap.ui.table.Column} oColumn Column to be sorted
-	 * @param {boolean} bAdd Set to true to add the new sort criterion to the existing sort criteria
+	 * @param {boolean} [bAdd = false] Set to true to add the new sort criterion to the existing sort criteria
 	 * @private
 	 */
 	Table.prototype.pushSortedColumn = function(oColumn, bAdd) {
@@ -3132,8 +3133,7 @@ sap.ui.define([
 
 	/**
 	 * Gets the sorted columns in the order in which sorting was performed through the {@link sap.ui.table.Table#sort} method and menus.
-	 * Does not reflect sorting at binding level or the columns sort visualization set with {@link sap.ui.table.Column#setSorted} and
-	 * {@link sap.ui.table.Column#setSortOrder}.
+	 * Does not reflect sorting at binding level or the columns sort visualization set with {@link sap.ui.table.Column#setSortOrder}.
 	 *
 	 * @see sap.ui.table.Table#sort
 	 * @returns {sap.ui.table.Column[]} Array of sorted columns
@@ -3145,31 +3145,31 @@ sap.ui.define([
 	};
 
 	/**
-	 * Sorts the given column ascending or descending.
+	 * Changes or removes sorting from the table.
 	 *
-	 * @param {sap.ui.table.Column | undefined} oColumn Column to be sorted or undefined to clear sorting
-	 * @param {sap.ui.table.SortOrder} oSortOrder Sort order of the column (if undefined the default will be ascending)
-	 * @param {boolean} bAdd Set to true to add the new sort criterion to the existing sort criteria
+	 * @param {sap.ui.table.Column} [oColumn] Column to be sorted or undefined to clear sorting
+	 * @param {sap.ui.core.SortOrder} [sSortOrder = sap.ui.core.SortOrder.Ascending] Sort order of the column
+	 * @param {boolean} [bAdd = false]
+	 *     Set to <code>true</code> to add the new sort criterion to the existing sort criteria, otherwise to replace it. If the sort order is
+	 *     <code>sap.ui.core.SortOrder.None</code>, this parameter has no effect, and only the sort criterion for this column is removed from the
+	 *     sort criteria.
 	 * @public
 	 */
-	Table.prototype.sort = function(oColumn, oSortOrder, bAdd) {
+	Table.prototype.sort = function(oColumn, sSortOrder, bAdd) {
 		if (!oColumn) {
-			// mimic the list binding sort API, if no column is provided, just restore the default sorting
-			// make sure to also update the sorted property to correctly indicate sorted columns
-			for (var i = 0; i < this._aSortedColumns.length; i++) {
-				this._aSortedColumns[i].setSorted(false);
-			}
-
-			var oBinding = this.getBinding();
-			if (oBinding) {
-				oBinding.sort();
-			}
-
+			// Mimic the list binding sort API. If no column is provided, restore the default sorting.
+			// Make sure to also update the "sortOrder" property to correctly indicate sorted columns.
+			this._aSortedColumns.forEach((oColumn) => {
+				/** @deprecated As of version 1.120 */
+				oColumn.setSorted(false);
+				oColumn.setSortOrder(SortOrder.None);
+			});
+			this.getBinding()?.sort();
 			this._aSortedColumns = [];
 		}
 
 		if (this.getColumns().indexOf(oColumn) >= 0) {
-			oColumn._sort(oSortOrder === SortOrder.Descending, bAdd);
+			oColumn._sort(sSortOrder ?? SortOrder.Ascending, bAdd);
 		}
 	};
 
@@ -3966,7 +3966,7 @@ sap.ui.define([
 	};
 
 	/**
-	 *
+	 * @deprecated As of version 1.115
 	 * @private
 	 */
 	Table.prototype._onPersoApplied = function() {
@@ -3976,7 +3976,7 @@ sap.ui.define([
 		var aSorters = [];//, aFilters = [];
 		for (var i = 0, l = aColumns.length; i < l; i++) {
 			var oColumn = aColumns[i];
-			if (oColumn.getSorted()) {
+			if (oColumn.getSorted() && oColumn.getSortOrder() !== SortOrder.None) {
 				aSorters.push(new Sorter(oColumn.getSortProperty(), oColumn.getSortOrder() === SortOrder.Descending));
 			}
 		}

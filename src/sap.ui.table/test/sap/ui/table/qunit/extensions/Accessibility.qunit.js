@@ -135,6 +135,7 @@ sap.ui.define([
 			oColumn.setSortProperty("SomeSortProperty");
 			oColumn.setFilterProperty("SomeFilterProperty");
 			oColumn.setSortOrder("Ascending");
+			/** @deprecated As of version 1.120 */
 			oColumn.setSorted(true);
 			oColumn.setFiltered(true);
 

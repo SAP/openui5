@@ -4,19 +4,16 @@
 
 sap.ui.define([
 	"./TableTypeBase",
-	"sap/ui/core/library",
 	"sap/m/table/Util",
 	"sap/ui/mdc/enums/TableRowCountMode"
 ], function(
 	TableTypeBase,
-	coreLibrary,
 	MTableUtil,
 	TableRowCountMode
 ) {
 	"use strict";
 
 	let InnerTable, InnerColumn, InnerRowAction, InnerRowActionItem, InnerFixedRowMode, InnerAutoRowMode, InnerRowSettings;
-	const SortOrder = coreLibrary.SortOrder;
 
 	/**
 	 * Constructor for a new <code>GridTableType</code>.
@@ -444,10 +441,7 @@ sap.ui.define([
 	};
 
 	GridTableType.prototype.updateSortIndicator = function(oColumn, sSortOrder) {
-		const oGridColumn = oColumn.getInnerColumn();
-
-		oGridColumn.setSorted(sSortOrder !== SortOrder.None);
-		oGridColumn.setSortOrder(sSortOrder === SortOrder.None ? undefined : sSortOrder);
+		oColumn.getInnerColumn().setSortOrder(sSortOrder);
 	};
 
 	GridTableType.prototype.getContextMenuParameters = function(oEvent) {

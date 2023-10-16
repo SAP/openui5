@@ -204,12 +204,7 @@ sap.ui.define([
 			items: new QuickSortItem(),
 			change: [function(oEvent) {
 				var sSortOrder = oEvent.getParameter("item").getSortOrder();
-
-				if (sSortOrder === CoreLibrary.SortOrder.None) {
-					this._oColumn._unsort();
-				} else {
-					this._oColumn._sort(sSortOrder === CoreLibrary.SortOrder.Descending, false);
-				}
+				this._oColumn._sort(sSortOrder, false);
 			}, this]
 		});
 	};
@@ -218,7 +213,7 @@ sap.ui.define([
 		var oItem = this._oQuickSort.getItems()[0];
 
 		oItem.setLabel(TableUtils.Column.getHeaderText(oColumn));
-		oItem.setSortOrder(oColumn.getSorted() ? oColumn.getSortOrder() : CoreLibrary.SortOrder.None);
+		oItem.setSortOrder(oColumn.getSortOrder());
 	};
 
 	MobileColumnHeaderMenuAdapter.prototype._prepareQuickFilter = function(oColumn) {

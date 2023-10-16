@@ -300,7 +300,8 @@ sap.ui.define([
 				controlType: "sap.ui.table.Column",
 				matchers: {
 					properties: {
-						sorted: bSorted
+						// eslint-disable-next-line no-nested-ternary
+						sortOrder: !bSorted ? "None" : (bDescending ? "Descending" : "Ascending")
 					}
 				},
 				success: function(aColumns) {
@@ -309,9 +310,7 @@ sap.ui.define([
 						return oSortedCol.getLabel().getText() === sHeader;
 					});
 
-					Opa5.assert.ok(oColumn, "Found a sorted column for: " + sHeader);
-					const bColumnSortedDescending = oColumn.getSortOrder() === "Descending";
-					Opa5.assert.equal(bColumnSortedDescending, !!bDescending, "Column is sorted " + bDescending ? "Descending" : "Ascending");
+					Opa5.assert.ok(oColumn, `Found column ${sHeader} with sort order ${oColumn.getSortOrder()}`);
 				}
 			});
 		},

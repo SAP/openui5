@@ -99,7 +99,7 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var SortOrder = library.SortOrder;
+	var SortOrder = CoreLibrary.SortOrder;
 	var SelectionMode = library.SelectionMode;
 	var VisibleRowCountMode = library.VisibleRowCountMode;
 	var NavigationMode = library.NavigationMode;
@@ -2137,14 +2137,18 @@ sap.ui.define([
 			var iFixedPartHeight;
 			var iScrollablePartHeight;
 
+			/** @deprecated As of version 1.120 */
 			oTable.getColumns()[1].setSorted(true);
+			oTable.getColumns()[1].setSortOrder(SortOrder.Ascending);
 			oTable.getColumns()[1].setFiltered(true);
 			iFixedPartHeight = aRowDomRefs[0].getBoundingClientRect().height;
 			iScrollablePartHeight = aRowDomRefs[1].getBoundingClientRect().height;
 			assert.ok(iFixedPartHeight > iHeightWithoutIcons, "Height increased after adding icons");
 			assert.strictEqual(iFixedPartHeight, iScrollablePartHeight, "Fixed and scrollable part have the same height after adding icons");
 
+			/** @deprecated As of version 1.120 */
 			oTable.getColumns()[1].setSorted(false);
+			oTable.getColumns()[1].setSortOrder(SortOrder.None);
 			oTable.getColumns()[1].setFiltered(false);
 			iFixedPartHeight = aRowDomRefs[0].getBoundingClientRect().height;
 			iScrollablePartHeight = aRowDomRefs[1].getBoundingClientRect().height;
@@ -2547,38 +2551,129 @@ sap.ui.define([
 		oTable.sort(aColumns[1], SortOrder.Descending, true);
 	});
 
-	QUnit.test("Sort Icon", function(assert) {
+	QUnit.test("#sort, #getSortedColumns, and 'sort' event", function(assert) {
 		var done = assert.async();
-		createSortingTableData();
 		var aColumns = oTable.getColumns();
+		var aSortEventParameters = [];
+
+		createSortingTableData();
+		oTable.attachSort((oEvent) => {
+			var mParameters = oEvent.getParameters();
+			delete mParameters.id;
+			aSortEventParameters.push(mParameters);
+		});
 
 		var fnHandler = function() {
-			var aSortedColumns = oTable.getSortedColumns();
-
-			assert.equal(aSortedColumns.length, 2, "Two columns sorted");
+			assert.deepEqual(oTable.getSortedColumns(), [aColumns[0], aColumns[1]], "Sorted columns");
+			/** @deprecated As of version 1.120 */
 			assert.ok(aColumns[0].getSorted(), "First column sorted");
+			/** @deprecated As of version 1.120 */
 			assert.ok(aColumns[1].getSorted(), "Second column sorted");
+			assert.strictEqual(aColumns[0].getSortOrder(), SortOrder.Ascending, "Sort order of first column");
+			assert.strictEqual(aColumns[1].getSortOrder(), SortOrder.Descending, "Sort order of second column");
 
+			assert.deepEqual(aSortEventParameters, [{
+				column: aColumns[0],
+				sortOrder: SortOrder.Ascending,
+				columnAdded: false
+			}, {
+				column: aColumns[1],
+				sortOrder: SortOrder.Descending,
+				columnAdded: true
+			}], "Sort events");
+
+			aSortEventParameters = [];
 			oTable.detachRowsUpdated(fnHandler);
 			oTable.attachRowsUpdated(fnHandler2);
-			// remove sorting
-			oTable.sort();
+			oTable.sort(aColumns[0], SortOrder.None);
 		};
 
 		var fnHandler2 = function() {
-			var aSortedColumns = oTable.getSortedColumns();
-
-			assert.equal(aSortedColumns.length, 0, "No column sorted");
-
+			assert.deepEqual(oTable.getSortedColumns(), [aColumns[1]], "Sorted columns");
+			/** @deprecated As of version 1.120 */
 			assert.ok(aColumns[0].getSorted() == false, "First column not sorted");
-			assert.ok(aColumns[1].getSorted() == false, "Second column not sorted");
+			/** @deprecated As of version 1.120 */
+			assert.ok(aColumns[1].getSorted() == true, "Second column sorted");
+			assert.strictEqual(aColumns[0].getSortOrder(), SortOrder.None, "Sort order of first column");
+			assert.strictEqual(aColumns[1].getSortOrder(), SortOrder.Descending, "Sort order of second column");
 
+			assert.deepEqual(aSortEventParameters, [{
+				column: aColumns[0],
+				sortOrder: SortOrder.None,
+				columnAdded: false
+			}], "Sort events");
+
+			aSortEventParameters = [];
 			oTable.detachRowsUpdated(fnHandler2);
+			oTable.attachRowsUpdated(fnHandler3);
+			oTable.sort(aColumns[0], SortOrder.Ascending);
+		};
+
+		var fnHandler3 = function() {
+			assert.deepEqual(oTable.getSortedColumns(), [aColumns[0]], "Sorted columns");
+			/** @deprecated As of version 1.120 */
+			assert.ok(aColumns[0].getSorted() == true, "First column sorted");
+			/** @deprecated As of version 1.120 */
+			assert.ok(aColumns[1].getSorted() == false, "Second column not sorted");
+			assert.strictEqual(aColumns[0].getSortOrder(), SortOrder.Ascending, "Sort order of first column");
+			assert.strictEqual(aColumns[1].getSortOrder(), SortOrder.None, "Sort order of second column");
+
+			assert.deepEqual(aSortEventParameters, [{
+				column: aColumns[0],
+				sortOrder: SortOrder.Ascending,
+				columnAdded: false
+			}], "Sort events");
+
+			aSortEventParameters = [];
+			oTable.detachRowsUpdated(fnHandler3);
+			oTable.attachRowsUpdated(fnHandler4);
+			oTable.sort(aColumns[1], SortOrder.Ascending);
+			oTable.sort(aColumns[0], SortOrder.None, true); // The second parameter should have no effect if sortOrder=None.
+		};
+
+		var fnHandler4 = function() {
+			assert.deepEqual(oTable.getSortedColumns(), [aColumns[1]], "Sorted columns");
+			/** @deprecated As of version 1.120 */
+			assert.ok(aColumns[0].getSorted() == false, "First column not sorted");
+			/** @deprecated As of version 1.120 */
+			assert.ok(aColumns[1].getSorted() == true, "Second column sorted");
+			assert.strictEqual(aColumns[0].getSortOrder(), SortOrder.None, "Sort order of first column");
+			assert.strictEqual(aColumns[1].getSortOrder(), SortOrder.Ascending, "Sort order of second column");
+
+			assert.deepEqual(aSortEventParameters, [{
+				column: aColumns[1],
+				sortOrder: SortOrder.Ascending,
+				columnAdded: false
+			}, {
+				column: aColumns[0],
+				sortOrder: SortOrder.None,
+				columnAdded: false
+			}], "Sort events");
+
+			aSortEventParameters = [];
+			oTable.detachRowsUpdated(fnHandler4);
+			oTable.attachRowsUpdated(fnHandler5);
+			oTable.sort();
+		};
+
+		var fnHandler5 = function() {
+			assert.deepEqual(oTable.getSortedColumns(), [], "Sorted columns");
+			/** @deprecated As of version 1.120 */
+			assert.ok(aColumns[0].getSorted() == false, "First column not sorted");
+			/** @deprecated As of version 1.120 */
+			assert.ok(aColumns[1].getSorted() == false, "Second column not sorted");
+			assert.strictEqual(aColumns[0].getSortOrder(), SortOrder.None, "Sort order of first column");
+			assert.strictEqual(aColumns[1].getSortOrder(), SortOrder.None, "Sort order of second column");
+
+			assert.deepEqual(aSortEventParameters, [], "Sort events"); // Calling Table#sort without arguments does not fire the sort event.
+
+			aSortEventParameters = [];
+			oTable.detachRowsUpdated(fnHandler5);
 			done();
 		};
 
 		oTable.attachRowsUpdated(fnHandler);
-		oTable.sort(aColumns[0], SortOrder.Ascending, false);
+		oTable.sort(aColumns[0], SortOrder.Ascending);
 		oTable.sort(aColumns[1], SortOrder.Descending, true);
 	});
 
@@ -3825,6 +3920,9 @@ sap.ui.define([
 		assert.equal(oTable._getItemNavigation().getFocusedDomRef(), oTable.getColumns()[0].getDomRef());
 	});
 
+	/**
+	 * @deprecated As of version 1.115
+	 */
 	QUnit.test("#_onPersoApplied", function(assert) {
 		var oColumn = oTable.getColumns()[0];
 		var oBinding = oTable.getBinding();

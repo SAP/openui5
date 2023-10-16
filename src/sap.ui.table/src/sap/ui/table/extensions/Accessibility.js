@@ -716,8 +716,12 @@ sap.ui.define([
 						mAttributes["aria-labelledby"].push(sTableId + "-ariafixedcolumn");
 					}
 
-					if (!bHasColSpan && oColumn && oColumn.getSorted()) {
-						mAttributes["aria-sort"] = oColumn.getSortOrder() === "Ascending" ? "ascending" : "descending";
+					if (!bHasColSpan && oColumn) {
+						mAttributes["aria-sort"] = oColumn.getSortOrder().toLowerCase();
+						/** @deprecated As of version 1.120 */
+						if (!oColumn.getSorted()) {
+							delete mAttributes["aria-sort"];
+						}
 					}
 
 					if (!bHasColSpan && oColumn) {

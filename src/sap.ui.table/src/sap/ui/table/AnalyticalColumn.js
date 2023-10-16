@@ -14,19 +14,18 @@ sap.ui.define([
 	'sap/ui/model/type/Time',
 	'./utils/TableUtils',
 	"sap/base/Log"
-],
-	function(
-		Column,
-		library,
-		Element,
-		BooleanType,
-		DateTime,
-		Float,
-		Integer,
-		Time,
-		TableUtils,
-		Log
-	) {
+], function(
+	Column,
+	library,
+	Element,
+	BooleanType,
+	DateTime,
+	Float,
+	Integer,
+	Time,
+	TableUtils,
+	Log
+) {
 	"use strict";
 
 	var GroupEventType = library.GroupEventType;
@@ -410,6 +409,13 @@ sap.ui.define([
 	// This column sets its own cell content visibility settings.
 	AnalyticalColumn.prototype._setCellContentVisibilitySettings = function() {};
 
-	return AnalyticalColumn;
+	AnalyticalColumn.prototype._applySorters = function() {
+		// The analytical info must be updated before sorting via the binding. The request will still be correct, but the binding
+		// will create its internal data structure based on the analytical info. We also do not need to get the contexts right
+		// now (therefore "true" is passed"), this will be done later in refreshRows.
+		this._updateTableAnalyticalInfo(true);
+		Column.prototype._applySorters.apply(this, arguments);
+	};
 
+	return AnalyticalColumn;
 });
