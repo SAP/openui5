@@ -20,11 +20,11 @@ sap.ui.define([
 	/**
 	 * Constructor for a new <code>TokenizerDisplay</code>.
 	 *
-	 * The <code>TokenizerDisplay</code> control enhances the {@link sap.m.Tokenizer Tokenizer} control to support diaply only tokens.
-	 *
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] Initial settings for the new control
-	 * @class The <code>TokenizerDisplay</code> control is used to render a Tokenizer inside a control based on {@link sap.ui.mdc.field.FieldBase FieldBase}.
+	 * @class
+	 * The <code>TokenizerDisplay</code> control is used to render a Tokenizer inside a control based on {@link sap.ui.mdc.field.FieldBase FieldBase}.
+	 * It enhances the {@link sap.m.Tokenizer Tokenizer} control to support display only tokens.
 	 * @extends sap.m.Tokenizer
 	 * @version ${version}
 	 * @constructor

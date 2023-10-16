@@ -54,13 +54,12 @@ sap.ui.define([
 	/**
 	 * Constructor for a new <code>ValueHelp</code>.
 	 *
+	 * @param {string} [sId] ID for the new element, generated automatically if no ID is given
+	 * @param {object} [mSettings] Initial settings for the new element
+	 * @class
 	 * The <code>ValueHelp</code> element can be assigned to the {@link sap.ui.mdc.Field Field}, {@link sap.ui.mdc.MultiValueField MultiValueField},
 	 * and {@link sap.ui.mdc.FilterField FilterField} controls using the <code>valueHelp</code> association. One <code>ValueHelp</code> element instance can be
 	 * assigned to multiple fields (like in different table rows). It should be placed in the control tree on the container holding the fields.
-	 *
-	 * @param {string} [sId] ID for the new element, generated automatically if no ID is given
-	 * @param {object} [mSettings] Initial settings for the new element
-	 * @class Element for the <code>ValueHelp</code> association in the {@link sap.ui.mdc.field.FieldBase FieldBase} controls.
 	 * @extends sap.ui.mdc.Element
 	 * @version ${version}
 	 * @constructor

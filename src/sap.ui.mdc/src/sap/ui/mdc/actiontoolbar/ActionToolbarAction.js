@@ -9,14 +9,15 @@ sap.ui.define([
 	"use strict";
 
 	/**
-	 * Constructor for a new ActionToolbarAction.<br>
-	 * <b>Note:</b><br>
-	 * The control is experimental and the API / behavior is not finalized. It should only be used internally in other mdc controls (e.g.
-	 * chart/table).<br>
+	 * Constructor for a new ActionToolbarAction.
 	 *
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] Initial settings for the new control
-	 * @class The action for an {@link sap.ui.mdc.ActionToolbar ActionToolbar} control with given layout information that determines where the wrapped control is displayed on the <code>ActionToolbar</code>.
+	 * @class
+	 * The action for an {@link sap.ui.mdc.ActionToolbar ActionToolbar} control with given layout information that determines where the wrapped control is displayed on the <code>ActionToolbar</code>.
+	 * <b>Note:</b>
+	 * The control is experimental and the API / behavior is not finalized. It should only be used internally in other mdc controls (e.g.
+	 * chart/table).
 	 * @extends sap.ui.core.Control
 	 * @author SAP SE
 	 * @version ${version}

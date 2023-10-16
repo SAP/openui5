@@ -14,12 +14,11 @@ sap.ui.define([
 	/**
 	 * Constructor for a new <code>FieldMultiInput</code>.
 	 *
-	 * The <code>FieldMultiInput</code> control enhances the {@link sap.m.MultiInput MultiInput} control to add ARIA attributes
-	 * and other {@link sap.ui.mdc.field.FieldBase FieldBase}-specific logic.
-	 *
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] Initial settings for the new control
-	 * @class The <code>FieldMultiInput</code> control is used to render a multi-input field inside a control based on {@link sap.ui.mdc.field.FieldBase FieldBase}.
+	 * @class
+	 * The <code>FieldMultiInput</code> control is used to render a multi-input field inside a control based on {@link sap.ui.mdc.field.FieldBase FieldBase}.
+	 * It enhances the {@link sap.m.MultiInput MultiInput} control to add ARIA attributes and other {@link sap.ui.mdc.field.FieldBase FieldBase}-specific logic.
 	 * @extends sap.m.MultiInput
 	 * @version ${version}
 	 * @constructor
