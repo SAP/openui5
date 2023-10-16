@@ -2,7 +2,7 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/ui/mdc/flp/FlpLinkDelegate"
+	"sap/ui/mdc/ushell/LinkDelegate"
 ], function(LinkDelegate) {
 	"use strict";
 

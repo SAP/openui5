@@ -137,7 +137,7 @@ sap.ui.define([
 			oCtrlProperties.fieldInfo = new Link({
 					sourceControl:"tFieldLinkTitle",
 					delegate: {
-						name: "sap/ui/mdc/flp/FlpLinkDelegate",
+						name: "sap/ui/mdc/ushell/LinkDelegate",
 						payload: {
 							semanticObjects: ["FakeFlpSemanticObject"],
 							mainSemanticObject: "FakeFlpSemanticObject"

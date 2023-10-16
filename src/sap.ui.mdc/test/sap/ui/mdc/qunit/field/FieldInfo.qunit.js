@@ -6,7 +6,7 @@ sap.ui.define([
 	"sap/ui/mdc/enums/FieldEditMode",
 	"sap/ui/mdc/Field",
 	"sap/ui/core/util/MockServer",
-	"testutils/link/FakeFlpConnector",
+	"testutils/link/FakeUShellConnector",
 	"sap/ui/model/odata/v2/ODataModel",
 	"sap/ui/mdc/link/LinkItem",
 	"sap/m/Button",
@@ -20,7 +20,7 @@ sap.ui.define([
 	FieldEditMode,
 	Field,
 	MockServer,
-	FakeFlpConnector,
+	FakeUShellConnector,
 	ODataModel,
 	LinkItem,
 	Button,
@@ -51,12 +51,12 @@ sap.ui.define([
 		oMockServer = null;
 	}
 
-	function enableFakeFlpConnector(oSetting) {
-		FakeFlpConnector.enableFakeConnector(oSetting);
+	function enableFakeUShellConnector(oSetting) {
+		FakeUShellConnector.enableFakeConnector(oSetting);
 	}
 
-	function disableFakeFlpConnector() {
-		FakeFlpConnector.disableFakeConnector();
+	function disableFakeUShellConnector() {
+		FakeUShellConnector.disableFakeConnector();
 	}
 
 	QUnit.module("sap.ui.mdc.field.FieldInfo: API", {
@@ -95,7 +95,7 @@ sap.ui.define([
 		},
 		afterEach: function() {
 			stopMockServer();
-			disableFakeFlpConnector();
+			disableFakeUShellConnector();
 			this.oField.destroy();
 			this.oODataModel.destroy();
 		}
@@ -106,7 +106,7 @@ sap.ui.define([
 		const done = assert.async();
 		oField.setFieldInfo(new Link({
 			delegate: {
-				name: "sap/ui/mdc/flp/FlpLinkDelegate",
+				name: "sap/ui/mdc/ushell/LinkDelegate",
 				payload: {
 					semanticObjects: ["SODummy"]
 				}
@@ -120,13 +120,13 @@ sap.ui.define([
 	};
 
 	QUnit.test("no semantic object, no content", function(assert) {
-		enableFakeFlpConnector({});
+		enableFakeUShellConnector({});
 
 		fnTestRenderAsAText(assert, this.oField);
 	});
 
 	QUnit.test("no semantic object, no content", function(assert) {
-		enableFakeFlpConnector({
+		enableFakeUShellConnector({
 			SO1: {
 				links: []
 			}
@@ -154,7 +154,7 @@ sap.ui.define([
 		},
 		afterEach: function() {
 			stopMockServer();
-			disableFakeFlpConnector();
+			disableFakeUShellConnector();
 			this.oField.destroy();
 			this.oODataModel.destroy();
 		}
@@ -163,7 +163,7 @@ sap.ui.define([
 	QUnit.test("direct link with target='_blank'", function(assert) {
 		const sTarget = "_blank";
 		const done = assert.async();
-		enableFakeFlpConnector({});
+		enableFakeUShellConnector({});
 		const oLink = new Link({
 			delegate: {
 				name: "test-resources/sap/ui/mdc/qunit/field/FieldInfoLinkDelegate",
@@ -194,7 +194,7 @@ sap.ui.define([
 	QUnit.test("item: with 'href'", function(assert) {
 		const sTarget = "_self";
 		const done = assert.async();
-		enableFakeFlpConnector({});
+		enableFakeUShellConnector({});
 		const oLink = new Link({
 			delegate: {
 				name: "test-resources/sap/ui/mdc/qunit/field/FieldInfoLinkDelegate",
@@ -240,7 +240,7 @@ sap.ui.define([
 		},
 		afterEach: function() {
 			stopMockServer();
-			disableFakeFlpConnector();
+			disableFakeUShellConnector();
 			this.oField.destroy();
 			this.oODataModel.destroy();
 		}
@@ -249,7 +249,7 @@ sap.ui.define([
 	QUnit.test("no links, no popover", function(assert) {
 		const done = assert.async();
 		const oField = this.oField;
-		enableFakeFlpConnector({
+		enableFakeUShellConnector({
 			SO1: {
 				links: []
 			}
@@ -300,7 +300,7 @@ sap.ui.define([
 		},
 		afterEach: function() {
 			stopMockServer();
-			disableFakeFlpConnector();
+			disableFakeUShellConnector();
 			this.oField.destroy();
 			this.oODataModel.destroy();
 		}
@@ -319,7 +319,7 @@ sap.ui.define([
 
 	/* Not needed as we navigate directly in case of a mdc.Link as FieldInfo. Keeping the coding in as we might implement other FieldInfos in the future.
 	QUnit.test("item: with 'text'", function(assert) {
-		enableFakeFlpConnector({});
+		enableFakeUShellConnector({});
 		var oField = this.oField;
 		var fnForPopoverAfterOpen = function(oFieldInfo) {
 			var oPopover = oFieldInfo.getDependents()[1];
@@ -357,7 +357,7 @@ sap.ui.define([
 	*/
 
 	QUnit.test("content", function(assert) {
-		enableFakeFlpConnector({});
+		enableFakeUShellConnector({});
 		const oField = this.oField;
 		const fnForPopoverAfterOpen = function(oFieldInfo) {
 			const oPopover = oFieldInfo.getDependents()[0];
@@ -389,7 +389,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("multiple content", function(assert) {
-		enableFakeFlpConnector({});
+		enableFakeUShellConnector({});
 		const oField = this.oField;
 		const fnForPopoverAfterOpen = function(oFieldInfo) {
 			const oPopover = oFieldInfo.getDependents()[0];

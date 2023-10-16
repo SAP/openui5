@@ -47,7 +47,7 @@
 								<mdc:Field id="IDField_C" value="{Category}" editMode="Display">
 									<mdc:fieldInfo>
 										<mdc:Link
-											delegate='\{ "name": "sap/ui/mdc/flp/FlpLinkDelegate", "payload": \{ "semanticObjects": ["appUnderTest_SemanticObjectCategory"], "mainSemanticObject": "appUnderTest_SemanticObjectCategory" \} \}'>
+											delegate='\{ "name": "sap/ui/mdc/ushell/LinkDelegate", "payload": \{ "semanticObjects": ["appUnderTest_SemanticObjectCategory"], "mainSemanticObject": "appUnderTest_SemanticObjectCategory" \} \}'>
 										</mdc:Link>
 									</mdc:fieldInfo>
 								</mdc:Field>

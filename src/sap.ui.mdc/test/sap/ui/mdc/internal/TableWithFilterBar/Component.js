@@ -11,7 +11,7 @@ sap.ui.define([
 	"sap/ui/model/odata/type/String", // to have it loaded
 	"sap/ui/model/odata/type/TimeOfDay", // to have it loaded
 	"sap/ui/mdc/field/ConditionsType", // as used in XML view
-	"testutils/link/FakeFlpConnector",
+	"testutils/link/FakeUShellConnector",
 	"sap/base/util/LoaderExtensions",
 	"sap/m/routing/Router" // make sure Router is loaded
 ], function (
@@ -27,7 +27,7 @@ sap.ui.define([
 	ODataStringType,
 	ODataTimeOfDayType,
 	ConditionsType,
-	FakeFlpConnector,
+	FakeUShellConnector,
 	LoaderExtensions,
 	Router
 ) {
@@ -51,10 +51,10 @@ sap.ui.define([
 			// call the init function of the parent
 			UIComponent.prototype.init.apply(this, arguments);
 			this.getRouter().initialize();
-			this.__initFakeFlpConnector();
+			this.__initFakeUShellConnector();
 		},
-		__initFakeFlpConnector: function() {
-			FakeFlpConnector.enableFakeConnector({
+		__initFakeUShellConnector: function() {
+			FakeUShellConnector.enableFakeConnector({
 				'FakeFlpSemanticObject': {
 					links: [
 						{
