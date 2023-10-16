@@ -1,5 +1,6 @@
 /* global QUnit */
 sap.ui.define([
+	"sap/base/i18n/Localization",
 	"sap/ui/test/opaQunit",
 	"sap/ui/test/Opa5",
 	"sap/ui/core/Lib",
@@ -10,6 +11,7 @@ sap.ui.define([
 	"./pages/AppPage",
 	"sap/ui/core/date/UI5Date"
 ], function(
+	Localization,
 	opaTest,
 	Opa5,
 	Lib
@@ -48,7 +50,7 @@ sap.ui.define([
 	}
 
 	function testLanguageDependentDateFormat(Then, sExpectedFormat, iColumnRow, sPropertyPath) {
-		var sCurrentLanguage = sap.ui.getCore().getConfiguration().getLanguage().toLocaleLowerCase();
+		var sCurrentLanguage = Localization.getLanguage().toLocaleLowerCase();
 		// This opa test will only be executed if the browser language is english
 		if (sCurrentLanguage === "en") {
 			Then.onTheManageAdaptationsDialogPage.iShouldSeeCorrectDateFormat(sExpectedFormat, iColumnRow, sPropertyPath);

@@ -4,15 +4,15 @@
 
 // Provides object sap.ui.dt.DOMUtil.
 sap.ui.define([
+	"sap/base/i18n/Localization",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/Device",
-	"sap/ui/core/Configuration",
 	"sap/ui/dom/jquery/zIndex",
 	"sap/ui/dom/jquery/scrollLeftRTL"
 ], function(
+	Localization,
 	jQuery,
-	Device,
-	Configuration
+	Device
 ) {
 	"use strict";
 
@@ -102,7 +102,7 @@ sap.ui.define([
 			mOffset.top -= (mParentOffset.top - (iScrollTop || 0));
 		}
 
-		if (Configuration.getRTL()) {
+		if (Localization.getRTL()) {
 			var iParentWidth = oParent ? oParent.offsetWidth : window.innerWidth;
 			// TODO: Workaround - remove when bug in Safari (issue 336512063) is solved
 			if (Device.browser.safari && !Device.browser.mobile && DOMUtil.hasVerticalScrollBar(oParent)) {
@@ -125,7 +125,7 @@ sap.ui.define([
 	 */
 	DOMUtil.getScrollLeft = function(oElement) {
 		if (
-			!Configuration.getRTL()
+			!Localization.getRTL()
 			|| !DOMUtil.hasHorizontalScrollBar(oElement)
 		) {
 			return oElement.scrollLeft;
