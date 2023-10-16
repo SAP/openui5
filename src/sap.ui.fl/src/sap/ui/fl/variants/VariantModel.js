@@ -264,15 +264,6 @@ sap.ui.define([
 		}
 	}
 
-	function setOriginalVariantProperties(oVariant) {
-		// Persist original properties, since they're mutated by sap.ui.fl.variants.VariantManagement
-		oVariant.originalTitle = oVariant.title;
-		oVariant.originalFavorite = oVariant.favorite;
-		oVariant.originalExecuteOnSelect = oVariant.executeOnSelect;
-		oVariant.originalVisible = oVariant.visible;
-		oVariant.originalContexts = oVariant.contexts;
-	}
-
 	function getVariant(aVariants, sVariantKey) {
 		return merge({}, aVariants.find(function(oCurrentVariant) {
 			return oCurrentVariant.key === sVariantKey;
@@ -352,7 +343,6 @@ sap.ui.define([
 				.find(function(oVariantToCheck) {
 					return oVariantToCheck.key === oVariant.key;
 				});
-				setOriginalVariantProperties(oVariant);
 				return Object.assign(
 					{},
 					oCurrentVariantData || {},
@@ -360,9 +350,7 @@ sap.ui.define([
 				);
 			});
 			oCurrentData[sVariantManagementKey].currentVariant = oVariantMapEntry.currentVariant;
-			oCurrentData[sVariantManagementKey].originalCurrentVariant = oVariantMapEntry.currentVariant;
 			oCurrentData[sVariantManagementKey].defaultVariant = oVariantMapEntry.defaultVariant;
-			oCurrentData[sVariantManagementKey].originalDefaultVariant = oVariantMapEntry.defaultVariant;
 			oCurrentData[sVariantManagementKey].modified = oVariantMapEntry.modified;
 		});
 		this.setData(oCurrentData);
@@ -478,7 +466,6 @@ sap.ui.define([
 			var oStandardVariant = getVariant(this.oData[sVMReference].variants, sVMReference);
 			// set executeOnSelect in model and State without creating a change
 			oStandardVariant.instance.setExecuteOnSelection(true);
-			this.oData[sVMReference].variants[0].originalExecuteOnSelect = true;
 			this.oData[sVMReference].variants[0].executeOnSelect = true;
 			return true;
 		}
