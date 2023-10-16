@@ -716,6 +716,11 @@ sap.ui.define([
 				bOnlyScVisible,
 				bOnlyMcVisible,
 				bOneVisible,
+				bShownSideContent = this.getShowSideContent(),
+				bShownMainContent = this.getShowMainContent(),
+				bOnlyScShown,
+				bOnlyMcShown,
+				bOneShown,
 				bFixedSC,
 				bSCNeverShow;
 
@@ -725,11 +730,14 @@ sap.ui.define([
 			bOnlyScVisible = !this._MCVisible && this._SCVisible;
 			bOnlyMcVisible = this._MCVisible && !this._SCVisible;
 			bOneVisible = bOnlyScVisible || bOnlyMcVisible;
+			bOnlyScShown = !bShownMainContent && bShownSideContent;
+			bOnlyMcShown = bShownMainContent && !bShownSideContent;
+			bOneShown = bOnlyScShown || bOnlyMcShown;
 
 			bFixedSC = this._fixedSideContent;
 			bSCNeverShow = this.getSideContentVisibility() === SideContentVisibility.NeverShow;
 
-			return ((bSameLine && bBothVisible) || bOneVisible || bFixedSC || bSCNeverShow);
+			return ((bSameLine && bBothVisible) || bOneVisible || bFixedSC || bSCNeverShow || bOneShown);
 		};
 
 		/**

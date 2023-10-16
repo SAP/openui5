@@ -1070,5 +1070,97 @@ sap.ui.define([
 			assert.ok(this._oDSC.$(SC_GRID_CELL_SELECTOR).hasClass(HIDDEN_CLASS), "Side content in invisible");
 		});
 
+		QUnit.module("Misc", {
+			beforeEach : function () {
+				this._oDSC = new DynamicSideContent({containerQuery: true});
+				this._oDSC.placeAt("qunit-fixture");
+				this.oFixture = document.getElementById("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+			},
+			afterEach : function () {
+				this._oDSC.destroy();
+				this._oDSC = null;
+				this._oFixture = null;
+			}
+		});
+
+		QUnit.test("_shouldSetHeight() on different breakpoints when only Main contents is shown",function(assert) {
+			// prepare
+			this._oDSC.setShowMainContent(true);
+			this._oDSC.setShowSideContent(false);
+			sap.ui.getCore().applyChanges();
+
+			// act
+			this.oFixture.style.width = "445px"; // S breakpoint
+			this._oDSC.invalidate();
+			sap.ui.getCore().applyChanges();
+
+			// assert
+			assert.ok(this._oDSC._shouldSetHeight(), "Should set height: 100%");
+
+			// act
+			this.oFixture.style.width = "745px"; // M breakpoint
+			this._oDSC.invalidate();
+			sap.ui.getCore().applyChanges();
+
+			// assert
+			assert.ok(this._oDSC._shouldSetHeight(), "Should set height: 100%");
+
+			// act
+			this.oFixture.style.width = "1045px"; // L breakpoint
+			this._oDSC.invalidate();
+			sap.ui.getCore().applyChanges();
+
+			// assert
+			assert.ok(this._oDSC._shouldSetHeight(), "Should set height: 100%");
+
+			// act
+			this.oFixture.style.width = "1445px"; // XL breakpoint
+			this._oDSC.invalidate();
+			sap.ui.getCore().applyChanges();
+
+			// assert
+			assert.ok(this._oDSC._shouldSetHeight(), "Should set height: 100%");
+		});
+
+		QUnit.test("_shouldSetHeight() on different breakpoints when only Side contents is shown",function(assert) {
+			// prepare
+			this._oDSC.setShowMainContent(false);
+			this._oDSC.setShowSideContent(true);
+			sap.ui.getCore().applyChanges();
+
+			// act
+			this.oFixture.style.width = "445px"; // S breakpoint
+			this._oDSC.invalidate();
+			sap.ui.getCore().applyChanges();
+
+			// assert
+			assert.ok(this._oDSC._shouldSetHeight(), "Should set height: 100%");
+
+			// act
+			this.oFixture.style.width = "745px"; // M breakpoint
+			this._oDSC.invalidate();
+			sap.ui.getCore().applyChanges();
+
+			// assert
+			assert.ok(this._oDSC._shouldSetHeight(), "Should set height: 100%");
+
+			// act
+			this.oFixture.style.width = "1045px"; // L breakpoint
+			this._oDSC.invalidate();
+			sap.ui.getCore().applyChanges();
+
+			// assert
+			assert.ok(this._oDSC._shouldSetHeight(), "Should set height: 100%");
+
+			// act
+			this.oFixture.style.width = "1445px"; // XL breakpoint
+			this._oDSC.invalidate();
+			sap.ui.getCore().applyChanges();
+
+			// assert
+			assert.ok(this._oDSC._shouldSetHeight(), "Should set height: 100%");
+		});
+
 	})(jQuery);
 });
