@@ -787,6 +787,28 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("requestParent: throws error if not a list binding's context", function (assert) {
+		const oNode = Context.create({/*oModel*/}, {/*oBinding*/}, "/foo");
+
+		assert.throws(function () {
+			// code under test
+			oNode.requestParent();
+		}, new Error("Not a list binding's context: " + oNode));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("requestParent", function (assert) {
+		const oBinding = {requestParent : mustBeMocked};
+		const oNode = Context.create({/*oModel*/}, oBinding, "/foo");
+
+		this.mock(oBinding).expects("requestParent").withExactArgs(sinon.match.same(oNode))
+			.returns("~oParentNodePromise~");
+
+		// code under test
+		assert.strictEqual(oNode.requestParent(), "~oParentNodePromise~");
+	});
+
+	//*********************************************************************************************
 	QUnit.test("getProperty", function (assert) {
 		var oBinding = {
 				checkSuspended : function () {}

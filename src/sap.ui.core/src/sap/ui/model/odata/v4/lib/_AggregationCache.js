@@ -797,6 +797,36 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns the index of a parent node
+	 *
+	 * @param {number} iIndex
+	 *   The index of the child node
+	 * @returns {number|null}
+	 *   The parent node's index, or -1 if the given node is a root node and thus has
+	 *   no parent
+	 * @throws {Error}
+	 *   If the index of a parent cannot be found
+	 *
+	 *
+	 * @public
+	 */
+	_AggregationCache.prototype.getParentIndex = function (iIndex) {
+		const iLevel = this.aElements[iIndex]["@$ui5.node.level"];
+
+		if (iLevel <= 1) {
+			return -1; // a root has no parent
+		}
+
+		for (; iIndex >= 0; iIndex -= 1) {
+			if (this.aElements[iIndex]["@$ui5.node.level"] < iLevel) {
+				return iIndex;
+			}
+		}
+
+		throw new Error("Unexpected error");
+	};
+
+	/**
 	 * @override
 	 * @see sap.ui.model.odata.v4.lib._Cache#getValue
 	 */
