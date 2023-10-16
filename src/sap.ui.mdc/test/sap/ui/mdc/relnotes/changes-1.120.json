@@ -3,6 +3,32 @@
     "date": "October 2023",
     "notes": [
       {
+        "id": "dd73e2f83d8720e0417cbb9c6a91f1b4fa822b79",
+        "type": "FEATURE",
+        "text": " CellSelector: Improve removal of selection"
+      },
+      {
+        "id": "b73e7d29361aeb52ad89c0f6301abc79899f9b11",
+        "type": "FEATURE",
+        "text": " Field: enable autocomplete"
+      },
+      {
+        "id": "0f4159b88e9467e11aaa6342c4c40a0261d51a8d",
+        "type": "FEATURE",
+        "text": " Deprecate static Object.isA and provide alternative"
+      },
+      {
+        "id": "af737bf18cb7461b28caad7f80e5edb4042ddd67",
+        "type": "FIX",
+        "text": " Field: value help announcement",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370094578"
+          }
+        ]
+      },
+      {
         "id": "776375fd969e8ceb03511fd70d82953c959d4ff2",
         "type": "FIX",
         "text": " MDC.Field: Prevent ValueHelp.shouldOpenOnFocus flow with programmatic focus",
@@ -12,6 +38,11 @@
             "reference": "2380109591"
           }
         ]
+      },
+      {
+        "id": "4d396df7fcb93824d899dfbb8f3bf657fd664fb5",
+        "type": "FEATURE",
+        "text": " CLDR upgrade to version 43.0.0"
       },
       {
         "id": "5d637ff0b6b246b74f8d3d26b6e5e4c99f8bcd8f",

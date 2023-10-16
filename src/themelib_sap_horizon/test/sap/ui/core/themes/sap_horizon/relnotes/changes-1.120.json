@@ -3,6 +3,33 @@
     "date": "October 2023",
     "notes": [
       {
+        "id": "4b864d99e6f6ab26a1ebb1d8aad73b78aacc3e09",
+        "type": "FIX",
+        "text": " sap.m.MenuButton: adjust toggled state color",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380105198"
+          }
+        ]
+      },
+      {
+        "id": "d71d4d81f61b1d24c53faa23e67c6840bcec1c06",
+        "type": "FIX",
+        "text": " sap.m.Button: adjust to horizon theme updates"
+      },
+      {
+        "id": "e4aa4f94c6571220c93e3b5fdacd600e03a21221",
+        "type": "FIX",
+        "text": " sap.m.SegmentedButton: align styles",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370083332"
+          }
+        ]
+      },
+      {
         "id": "809177bdc3eb28d90645b8b836335e4c7694701d",
         "type": "FEATURE",
         "text": " sap.tnt.SideNavigation: Added \"width\" property"

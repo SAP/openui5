@@ -3,6 +3,98 @@
     "date": "October 2023",
     "notes": [
       {
+        "id": "f75b7ec552c7b7af164c8e2e19f48c598de56e0b",
+        "type": "FIX",
+        "text": " Integration Cards: List Card Placeholders rendering is now improved",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370100591"
+          }
+        ]
+      },
+      {
+        "id": "85f0fc2e0b41223044bfacc7c5184e042a1b779e",
+        "type": "FIX",
+        "text": " sap.m.MenuButton: improve documentation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
+        "id": "dd73e2f83d8720e0417cbb9c6a91f1b4fa822b79",
+        "type": "FEATURE",
+        "text": " CellSelector: Improve removal of selection"
+      },
+      {
+        "id": "76ac965a95974f005ceb41ae8b06e70d9594ab1d",
+        "type": "FIX",
+        "text": " sap.m.DynamicDateRange: week-related options now return proper values",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370111064"
+          }
+        ]
+      },
+      {
+        "id": "d71d4d81f61b1d24c53faa23e67c6840bcec1c06",
+        "type": "FIX",
+        "text": " sap.m.Button: adjust to horizon theme updates"
+      },
+      {
+        "id": "1ce3e8496d7c490f761fc7e76d5e58ec890c7340",
+        "type": "FIX",
+        "text": " sap.m.DynamicDateRange: validation errors from value help are not propagated outside",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370093417"
+          }
+        ]
+      },
+      {
+        "id": "4762793636c4567c69be151fd86aaab223f9ea4b",
+        "type": "FIX",
+        "text": " SinglePlanningCalendarGrid: drag & drop preview placeholder is always correctly sized",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270111715"
+          }
+        ]
+      },
+      {
+        "id": "502a7782a9f159574e1616eeca9c9a31c7e599f4",
+        "type": "FIX",
+        "text": " CellSelector: Keyboard Shortcuts should not execute when in editable content",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370108423"
+          }
+        ]
+      },
+      {
+        "id": "0f4159b88e9467e11aaa6342c4c40a0261d51a8d",
+        "type": "FEATURE",
+        "text": " Deprecate static Object.isA and provide alternative"
+      },
+      {
+        "id": "d98acbb022eec6ba944ea491c9a5c1f34ea3a935",
+        "type": "FIX",
+        "text": " sap.m.ResponsivePopover: Set end button to pos 0 when no begin button is set",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380083135"
+          }
+        ]
+      },
+      {
         "id": "bf4241bf775d2301f6faccfb27683c91a096ad14",
         "type": "FIX",
         "text": " sap.m.PlanningCalendar: Fire intervalSelect event date from another month",
@@ -17,6 +109,11 @@
         "id": "9d90b44d13c6e48bfdc30c32b70cd7dacb51c80a",
         "type": "FEATURE",
         "text": "We've now introduced the linkTileContents aggregation that can render an icon and a link on the generic tile"
+      },
+      {
+        "id": "4d396df7fcb93824d899dfbb8f3bf657fd664fb5",
+        "type": "FEATURE",
+        "text": " CLDR upgrade to version 43.0.0"
       },
       {
         "id": "1a000459e4d3a46f77c8395d63e3679c524c3ff8",

@@ -3,6 +3,11 @@
     "date": "October 2023",
     "notes": [
       {
+        "id": "4d396df7fcb93824d899dfbb8f3bf657fd664fb5",
+        "type": "FEATURE",
+        "text": " CLDR upgrade to version 43.0.0"
+      },
+      {
         "id": "4a1901b28db224100432095c871615e2011423b1",
         "type": "FIX",
         "text": " sap.ui/unified/CalendarDateInterval: fixed dates row disappearance",

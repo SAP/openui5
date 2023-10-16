@@ -3,6 +3,50 @@
     "date": "October 2023",
     "notes": [
       {
+        "id": "f75b7ec552c7b7af164c8e2e19f48c598de56e0b",
+        "type": "FIX",
+        "text": " Integration Cards: List Card Placeholders rendering is now improved",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370100591"
+          }
+        ]
+      },
+      {
+        "id": "365f0a6844fb541a0892cfa3b2fe6d81aad19dfc",
+        "type": "FIX",
+        "text": " sap.f.GridList: Navigation matrix elements are included if they have DOM element",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400007493952023"
+          }
+        ]
+      },
+      {
+        "id": "e7d8aaa6bffa393073ad5c9b12d00eaaa70b16b2",
+        "type": "FIX",
+        "text": " sap.f.GridContainer: Keyboard navigation after focusItem() now continues from the focused item",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370101652"
+          }
+        ]
+      },
+      {
+        "id": "0b53fca1a59d3eda2935353797425e17d2eed29b",
+        "type": "FIX",
+        "text": " sap.f.FlexibleColumnLayoutSemanticHelper: Action buttons info corrected",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370106046"
+          }
+        ]
+      },
+      {
         "id": "4962fef59d0c1d90aef3a8b2d5bd4fee6f7dfd0f",
         "type": "FEATURE",
         "text": "sap.f.FlexibleColumnLayout: Allow resize columns by dragging"

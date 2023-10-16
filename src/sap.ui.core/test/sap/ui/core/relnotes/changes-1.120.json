@@ -3,9 +3,81 @@
     "date": "October 2023",
     "notes": [
       {
+        "id": "ab8cff615dd4c15615c1f38af82f1d94e24645eb",
+        "type": "FEATURE",
+        "text": " Deprecation of JSONView"
+      },
+      {
+        "id": "b84164d2753626cd82365cf3098e7677415e6f26",
+        "type": "FIX",
+        "text": " core/RenderManager: method 'icon' should output 'aria-hidden'",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370100449"
+          }
+        ]
+      },
+      {
+        "id": "8beda768dec49e5d5d965cf46a5c026c81e75dc5",
+        "type": "FEATURE",
+        "text": " sap.ui.model.odata.v4.ODataModel: Support for withCredentials no longer experimental"
+      },
+      {
+        "id": "861405134cedee0ec9a23e33e0a901954b3fb243",
+        "type": "FEATURE",
+        "text": " sap.ui.model.odata.v2.ODataTreeBinding: Support transitionMessagesOnly binding parameter"
+      },
+      {
+        "id": "733554a59968f6d3c256d1032071072e956e57f0",
+        "type": "FEATURE",
+        "text": " Deprecation of sap.ui.core.Configuration.AnimationMode"
+      },
+      {
+        "id": "179678259b52e8b4bce1d4435ad0bd5361bb7ca0",
+        "type": "FEATURE",
+        "text": " Deprecate FormatSettings in sap.ui.core.Configuration"
+      },
+      {
+        "id": "6e6fbccff68703cb9ca26840c70e56c6ab36963c",
+        "type": "FEATURE",
+        "text": " Deprecate APIs 'getAccessibility', 'getAnimationMode', and 'setAnimationMode' on sap.ui.core.Configuration."
+      },
+      {
+        "id": "45408145ead86c1f49954b69d97ac3ba3c356d49",
+        "type": "FIX",
+        "text": " core/InvisibleText: manually remove DOM when rendered in static UIArea",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370078544"
+          }
+        ]
+      },
+      {
+        "id": "3789dcce2c1c6e6c16f48256d12879120d66b339",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v2.ODataTreeBinding#expandNodeToLevel: keep siblings"
+      },
+      {
+        "id": "1b3dde326e0b3530fa090d7e7b3581547b6149e3",
+        "type": "FEATURE",
+        "text": " core/Configuration: deprecate fiori2Adaptation setting"
+      },
+      {
+        "id": "0f4159b88e9467e11aaa6342c4c40a0261d51a8d",
+        "type": "FEATURE",
+        "text": " Deprecate static Object.isA and provide alternative"
+      },
+      {
         "id": "55153ef81949f85a9e833a4f850eae3eef816a18",
         "type": "FEATURE",
         "text": " Introduce sap/base/i18n/Localization"
+      },
+      {
+        "id": "2a9386b09fd56e920117b93a525962078f1c28b6",
+        "type": "FEATURE",
+        "text": " Deprecate jQuery.sap.storage / jQuery.sap.util.UriParameters"
       },
       {
         "id": "a479cb2cdc16c6bf99b491866b796960579fe086",
@@ -17,6 +89,11 @@
             "reference": "2370100866"
           }
         ]
+      },
+      {
+        "id": "4d396df7fcb93824d899dfbb8f3bf657fd664fb5",
+        "type": "FEATURE",
+        "text": " CLDR upgrade to version 43.0.0"
       },
       {
         "id": "9cfe7f978f9f1205f9b2579a523fe33cafe1883d",

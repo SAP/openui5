@@ -3,6 +3,11 @@
     "date": "October 2023",
     "notes": [
       {
+        "id": "0f4159b88e9467e11aaa6342c4c40a0261d51a8d",
+        "type": "FEATURE",
+        "text": " Deprecate static Object.isA and provide alternative"
+      },
+      {
         "id": "860186690bd1cb9d44dc99001d67d2529ceb35c2",
         "type": "FIX",
         "text": " sap.uxap.ObjectPageHeader: Fixed rendering of image/avatar",
