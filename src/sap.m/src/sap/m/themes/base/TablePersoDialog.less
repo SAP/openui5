@@ -25,7 +25,8 @@ background-color: transparent;
 .sapMPersoDialog .sapMTableTBody:not(.sapMListTblHasPopin) > .sapMLIBSelected,
 .sapMPersoDialog .sapMTableTBody.sapMListTblHasPopin > .sapMLIBSelected + .sapMListTblSubRow,
 .sapMPersoDialog .sapMTableTBody:not(.sapMListTblHasPopin) > .sapMLIBSelected:last-child {
-	box-shadow: inset 0px -0.0625rem @sapUiListHoverBackground;
+	//Commented as of 1.119 --> causes issues in hcb theme, rather stick to the Table's default styling
+	//box-shadow: inset 0px -0.0625rem @sapUiListHoverBackground;
 }
 
 
@@ -35,7 +36,8 @@ background-color: transparent;
 .sapMPersoDialog .sapMListBGTranslucent .sapMLIB:not(.sapMLIBActive):not(.sapMLIBSelected):not(:hover).sapMListTblRow.sapMPersoDialogItemSelected:focus
 {
 	background-color: @sapUiListSelectionHoverBackground;
-	box-shadow: inset 0px -0.0625rem @sapUiListSelectionBorderColor;
+	//Commented as of 1.119 --> causes issues in hcb theme, rather stick to the Table's default styling
+	//box-shadow: inset 0px -0.0625rem @sapUiListSelectionBorderColor;
 }
 
 .sapMPersoDialog .sapMLIBActive .sapMText,
