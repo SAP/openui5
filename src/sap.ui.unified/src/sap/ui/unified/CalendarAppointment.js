@@ -268,7 +268,7 @@ sap.ui.define([
 			return document.getElementById(sSuffix ? this.getId() + "-" + this._sAppointmentPartSuffix + "-" + sSuffix : this.getId() + "-" + this._sAppointmentPartSuffix);
 		}
 
-		var oAppointmentParts = document.querySelectorAll(".sapUiCalendarRowApps[id^='" + this. getId() + "']");
+		var oAppointmentParts = document.querySelectorAll(".sapUiCalendarRowApps[id^='" + this. getId() + "-']");
 		return oAppointmentParts.length > 0 ? oAppointmentParts[0] : null;
 	};
 
