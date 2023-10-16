@@ -3,9 +3,6 @@ sap.ui.define([
 ], function (TypeMap) {
 	"use strict";
 
-	return {
-        getTypeMap: function() {
-            return TypeMap;
-        }
-    };
+	return { getTypeMap: () => TypeMap };
+
 }, /* bExport= */false);

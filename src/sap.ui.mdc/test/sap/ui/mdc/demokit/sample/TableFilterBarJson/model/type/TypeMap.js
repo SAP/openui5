@@ -11,4 +11,5 @@ sap.ui.define([
 	TypeMap.freeze();
 
 	return TypeMap;
-});
+
+}, /* bExport= */false);
