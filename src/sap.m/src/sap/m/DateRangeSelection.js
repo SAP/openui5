@@ -1179,10 +1179,8 @@ sap.ui.define([
 	DateRangeSelection.prototype._increaseDate = function (iNumber, sUnit) {
 		var sValue = this._$input.val(),
 			aDates = this._parseValue(sValue),
-			oFirstOldDate = aDates[0],
-			oSecondOldDate = aDates[1],
-			oFormat = _getFormatter.call(this),
-			sDelimiter = _getDelimiter.call(this),
+			oFirstOldDate = aDates[0] || null,
+			oSecondOldDate = aDates[1] || null,
 			iCurPos,
 			iFirstDateValueLen,
 			iSecondDateValueLen,
@@ -1203,12 +1201,18 @@ sap.ui.define([
 			return;
 		}
 
-		// Clear all spaces and delimiter characters at the beggining and at the end of the value string
-		// as they don't make the input to be considered invalid, but make the cursor position calculations wrong
-		sValue = _trim(sValue, [sDelimiter, " "]);
+		var oFormatOptions = { interval: true, singleIntervalValue: true, intervalDelimiter: _getDelimiter.call(this) };
+		oFormatOptions = this.getBinding("value")
+			? Object.assign(oFormatOptions, this.getBinding("value").getType().oFormatOptions)
+			: Object.assign(oFormatOptions, _getFormatter.call(this).oFormatOptions);
+
+		var oFormat = DateFormat.getDateInstance(oFormatOptions);
+
+		sValue = oFormat.format([oFirstOldDate, oSecondOldDate]);
 		iCurPos = this._$input.cursorPos();
-		iFirstDateValueLen = oFirstOldDate ? oFormat.format(oFirstOldDate).length : 0;
-		iSecondDateValueLen = oSecondOldDate ? oFormat.format(oSecondOldDate).length : 0;
+
+		iFirstDateValueLen = oFirstOldDate ? oFormat.format([oFirstOldDate, null]).length : 0;
+		iSecondDateValueLen = oSecondOldDate ? oFormat.format([oSecondOldDate, null]).length : 0;
 
 		iValueLen = sValue.length;
 		bFirstDate = iCurPos <= iFirstDateValueLen + 1;
