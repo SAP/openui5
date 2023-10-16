@@ -123,12 +123,12 @@ sap.ui.define([
 					}
 				} else {
 					aParams.forEach(function(aParams_) {
-						if (mSetting[aParams_[0].semanticObject]) {
-							aLinks.push([
-								mSetting[aParams_[0].semanticObject].links
-							]);
+						var oParam = Array.isArray(aParams_) ? aParams_[0] : aParams_;
+
+						if (mSetting[oParam.semanticObject]) {
+							aLinks.push(mSetting[oParam.semanticObject].links);
 						} else {
-							aLinks.push([[]]);
+							aLinks.push([]);
 						}
 					});
 				}
