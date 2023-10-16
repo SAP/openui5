@@ -361,5 +361,54 @@
         ]
       }
     ]
+  },
+  "1.108.21": {
+    "date": "October 2023",
+    "notes": [
+      {
+        "id": "1714aee8ccbeae1370ee524af25f6225a4dbc88c",
+        "type": "FIX",
+        "text": " sap.m.SegmentedButton: align styles",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370083332"
+          }
+        ]
+      },
+      {
+        "id": "78cfd5402356636fef165001a670e73207bdbdd9",
+        "type": "FIX",
+        "text": " sap.m.MenuButton: adjust toggled state color",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380105198"
+          }
+        ]
+      },
+      {
+        "id": "5b673e77084c26c75a6f56ff043c0fb901103690",
+        "type": "FIX",
+        "text": " sap.m.Button: adjust to horizon theme updates",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
+        "id": "7ce7b2b48dc8b31899f1e934ad5609e6401f0e64",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus: apply horizon theme updates",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      }
+    ]
   }
 }

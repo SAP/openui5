@@ -216,5 +216,21 @@
         ]
       }
     ]
+  },
+  "1.108.21": {
+    "date": "October 2023",
+    "notes": [
+      {
+        "id": "aa0d0b7088719aca5bc94efd736f58c0435fb72b",
+        "type": "FIX",
+        "text": " sap.m.Menu: removed max-width of the menu",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270039241"
+          }
+        ]
+      }
+    ]
   }
 }

@@ -115,5 +115,25 @@
         ]
       }
     ]
+  },
+  "1.108.21": {
+    "date": "October 2023",
+    "notes": [
+      {
+        "id": "d1998eebca5d5292f5d9cfc974d1d5f71df5b358",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Reset selectedSection corrected",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270142183"
+          },
+          {
+            "type": "BCP",
+            "reference": "2380051429"
+          }
+        ]
+      }
+    ]
   }
 }

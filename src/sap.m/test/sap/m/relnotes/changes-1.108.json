@@ -1300,5 +1300,98 @@
         ]
       }
     ]
+  },
+  "1.108.21": {
+    "date": "October 2023",
+    "notes": [
+      {
+        "id": "5b673e77084c26c75a6f56ff043c0fb901103690",
+        "type": "FIX",
+        "text": " sap.m.Button: adjust to horizon theme updates",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
+        "id": "191b9974d16b93c4b22e8e0d7004d47868f6a2e6",
+        "type": "FIX",
+        "text": " sap.m.Button: Uses correct active text parameters",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
+        "id": "4a5c901d1724264fcf9d07528729cae5b6d6d1c0",
+        "type": "FIX",
+        "text": " sap.m.DynamicDateRange: validation errors from value help are not propagated outside",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370093417"
+          }
+        ]
+      },
+      {
+        "id": "8284b649d507b5c8bd62c9354d6c98348183e03b",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: Fire intervalSelect event date from another month",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370094258"
+          }
+        ]
+      },
+      {
+        "id": "08ca220784a0bdf1ce7b11bb15c00e81a102bd8b",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: DateNavigation now uses firstDayOfWeek",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370093247"
+          }
+        ]
+      },
+      {
+        "id": "bbe706237e5590b07f6e41049d332bd3d7a10b38",
+        "type": "FIX",
+        "text": " sap.m.DateRangeSelection: Value is now formatted even if matching with previous value",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500006449282023"
+          }
+        ]
+      },
+      {
+        "id": "aa0d0b7088719aca5bc94efd736f58c0435fb72b",
+        "type": "FIX",
+        "text": " sap.m.Menu: removed max-width of the menu",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270039241"
+          }
+        ]
+      },
+      {
+        "id": "7ce7b2b48dc8b31899f1e934ad5609e6401f0e64",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus: apply horizon theme updates",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      }
+    ]
   }
 }
