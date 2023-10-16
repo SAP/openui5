@@ -807,6 +807,23 @@ function (
 		helpers.renderObject(oObjectPage);
 	});
 
+	QUnit.test("reset setSelectedSection when single visible section", function (assert) {
+		var oObjectPage = this.oObjectPage,
+			oSubSection = oFactory.getSubSection(1, oFactory.getBlocks()),
+			oSection = oFactory.getSection(1, null, oSubSection);
+
+		oObjectPage.setUseIconTabBar(false);
+
+		// single section only
+		oObjectPage.removeAllSections();
+		oObjectPage.addSection(oSection);
+
+		helpers.renderObject(oObjectPage);
+		oObjectPage.setSelectedSection(null);
+
+		assert.strictEqual(oObjectPage.getSelectedSection(), oSection.getId(), "selected section is correct");
+	});
+
 
 	QUnit.test("scroll to selected section on rerender", function (assert) {
 		var oObjectPage = this.oObjectPage,
