@@ -250,7 +250,7 @@ sap.ui.define([
 		}
 
 		var aItemsDomRefs = this.getItems().reduce(function (aAcc, oItem) {
-			if (oItem.getVisible()) {
+			if (oItem.getDomRef()) {
 				aAcc.push(oItem.getDomRef());
 			}
 
