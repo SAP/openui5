@@ -611,8 +611,12 @@ sap.ui.define([
 			if (!sTheme) {
 				sTheme = Theming.getTheme();
 			}
-			// Parameters.get() without arguments returns
-			// copy of complete default parameter set
+
+			/**
+			 * Parameters.get() without arguments returns
+			 * copy of complete default parameter set
+			 * @deprecated As of Version 1.120
+			 */
 			if (arguments.length === 0) {
 				Log.warning(
 					"Legacy variant usage of sap.ui.core.theming.Parameters.get API detected. Do not use the Parameters.get() API to retrieve ALL theming parameters, " +
@@ -646,7 +650,12 @@ sap.ui.define([
 				fnAsyncCallback = vName.callback;
 				aNames = typeof vName.name === "string" ? [vName.name] : vName.name;
 				bAsync = true;
-			} else {
+			}
+
+			/**
+			 * @deprecated As of Version 1.120
+			 */
+			if (!(vName instanceof Object && !Array.isArray(vName))) {
 				// legacy variant
 				if (typeof vName === "string") {
 					aNames = [vName];

@@ -13,6 +13,7 @@ sap.ui.define([
 	"sap/base/util/isEmptyObject",
 	"sap/base/util/isPlainObject",
 	'sap/base/util/LoaderExtensions',
+	'sap/base/util/fetch',
 	'sap/base/util/mixedFetch',
 	"sap/base/util/ObjectPath",
 	'sap/base/util/Version',
@@ -35,6 +36,7 @@ sap.ui.define([
 	isEmptyObject,
 	isPlainObject,
 	LoaderExtensions,
+	fetch,
 	mixedFetch,
 	ObjectPath,
 	Version,
@@ -727,9 +729,13 @@ sap.ui.define([
 
 			var sURL = getModulePath(this.name, "/library-preload.json");
 
-			return mixedFetch(sURL, {
+			/**
+			 * @deprecated As of Version 1.120
+			 */
+			fetch = mixedFetch ? mixedFetch : fetch;
+			return fetch(sURL, {
 				headers: {
-					Accept: mixedFetch.ContentTypes.JSON
+					Accept: fetch.ContentTypes.JSON
 				}
 			}, mOptions.sync).then(function(response) {
 				if (response.ok) {

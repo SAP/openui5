@@ -1220,7 +1220,12 @@ sap.ui.define([
 						});
 					}
 					return mFontRegistry[collectionName].metadataLoaded;
-				} else if (oConfig.metadataURI) {
+				}
+
+				/**
+				 * @deprecated As of Version 1.120
+				 */
+				if (!(async && !oConfig.metadata) && oConfig.metadataURI) {
 					if (mFontRegistry[collectionName].abortController) { // there is an async request ongoing
 						// the async request is aborted before the sync request is sent
 						mFontRegistry[collectionName].abortController.abort("Replaced by sync request");
@@ -1251,10 +1256,11 @@ sap.ui.define([
 					} catch (error) {
 						fnErrorCallback();
 					}
-				} else {
-					// pass on the configuration object
-					loadFont(oConfig.metadata);
+					return;
 				}
+
+				// pass on the configuration object
+				loadFont(oConfig.metadata);
 			}
 		};
 
