@@ -756,16 +756,15 @@ sap.ui.define([
 			// a set of private API is exposed for sap.ui.core restricted usage
 			publicMethods: [
 				// @public
-				//  - Init
-				"getConfiguration",
+				//  - Ready Promise
+				"ready",
 
 				// @private, @ui5-restricted sap.ui.core
 				//  - Init
 				"boot",
-				//  - Ready Promise
-				"ready",
 
 				// @deprecated
+				"getConfiguration",
 				"isMobile",
 				//  - Init & Plugins
 				"isInitialized","attachInit",
