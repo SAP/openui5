@@ -111,6 +111,22 @@ describe("sap.m.SinglePlanningCalendar", function() {
 		expect(takeScreenshot(oSPC)).toLookAs("focused_date");
 	});
 
+
+	it("should see appointments in August", function () {
+		var oSPC = element(by.id("SinglePlanningCalendar"));
+
+		// open menu
+		element(by.id("SinglePlanningCalendar-Header-ViewSwitch")).click();
+
+		// select month view
+		element(by.css(".sapUiSimpleFixFlexFlexContent ul.sapMSelectList .sapMSelectListItem:last-child")).click();
+
+		// click on next month button.
+		element(by.id("SinglePlanningCalendar-Header-NavToolbar-NextBtn-inner")).click();
+
+		expect(takeScreenshot(oSPC)).toLookAs("1_month_view_overflowing_appointments");
+	});
+
 	it("should scale factor in day view", function() {
 		var oSPC = element(by.id("SinglePlanningCalendar"));
 		element(by.id("SinglePlanningCalendar-Header-NavToolbar-PickerBtn")).click();
