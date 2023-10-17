@@ -4286,7 +4286,7 @@ sap.ui.define([
 			that = this;
 
 		if (!bBatch) {
-			bContent = !(oResponse.statusCode === 204 || oResponse.statusCode === '204');
+			bContent = !["204", "205"].includes(String(oResponse.statusCode));
 
 			sUri = oRequest.requestUri;
 			sPath = sUri.replace(this.sServiceUrl,"");
