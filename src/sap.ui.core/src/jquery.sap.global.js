@@ -18,7 +18,6 @@ sap.ui.define([
 
 	// former sap-ui-core.js dependencies
 	"sap/ui/Device",
-	"sap/ui/core/Configuration",
 
 	"sap/ui/thirdparty/jquery",
 	"ui5loader-autoconfig",
@@ -31,7 +30,6 @@ sap.ui.define([
 	LoaderExtensions,
 
 	Device,
-	Configuration,
 
 	jQuery /* , ui5loaderAutoconfig, jquerySapStubs */) {
 	"use strict";
