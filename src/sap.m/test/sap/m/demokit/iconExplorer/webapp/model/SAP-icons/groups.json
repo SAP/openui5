@@ -748,7 +748,8 @@
 				{ "name" : "pixelate" },
 				{ "name" : "validate" },
 				{ "name" : "keyboard-and-mouse" },
-				{ "name" : "touch" }
+				{ "name" : "touch" },
+				{ "name" : "ai" }
 			]
 		},
 		{
