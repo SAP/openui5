@@ -343,11 +343,6 @@ sap.ui.define([
 			var sKey = oEvent.getParameter("key") || oEvent.getParameter("item").getKey(),
 				bEventFiredFromSideNavigation = oEvent.getSource().isA("sap.tnt.SideNavigation");
 
-			if (this._getHeaderSubMenuItemKeys().includes(sKey)) {
-				this._headerItemSelectHandler(sKey);
-				return; // stay on the same page
-			}
-
 			// close the side navigation on phone devices
 			if (Device.system.phone && bEventFiredFromSideNavigation) {
 				this.onSideNavigationButtonPress();
@@ -1690,46 +1685,6 @@ sap.ui.define([
 				oClosingButton.setVisible(false);
 			} else {
 				oClosingButton.setVisible(true);
-			}
-		},
-
-		/**
-		 * Retrieves the keys of sub-menu items from 'Tools' drop-down menu.
-		 *
-		 * @returns {Array} An array containing the keys of the sub-menu items.
-		 */
-		_getHeaderSubMenuItemKeys: function () {
-			var aSubHeaderSubmenuItemKeys = [];
-
-			this._demoKitSubHeader.getTabFilters()
-				.find(function (oTab) {
-					return oTab.getId().includes("toolsTab");
-				})
-				.getItems().forEach(function (oItem) {
-					aSubHeaderSubmenuItemKeys.push(oItem.getKey());
-				});
-
-			return aSubHeaderSubmenuItemKeys;
-		},
-
-		/**
-		 * Event handler for selecting a sub-menu item from 'Tools' drop-down menu.
-		 * Opens a new tab with the corresponding URL.
-		 *
-		 * @param {string} sKey - The key of the selected item.
-		 * @returns {void}
-		 */
-		_headerItemSelectHandler: function (sKey) {
-			var items = [
-				{ key: "fioriTools", 	url: "https://help.sap.com/viewer/product/SAP_FIORI_tools/Latest/en-US" },
-				{ key: "iconExplorer", 	url: "test-resources/sap/m/demokit/iconExplorer/webapp/index.html" },
-				{ key: "ui5Inspector", 	url: "https://sap.github.io/ui5-inspector/" },
-				{ key: "ui5Tooling", 	url: "https://sap.github.io/ui5-tooling/stable/" }
-			];
-
-			var selectedItem = items.find(function (item) { return item.key === sKey; });
-			if (selectedItem) {
-				URLHelper.redirect(selectedItem.url, true);
 			}
 		},
 

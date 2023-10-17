@@ -245,12 +245,6 @@
 							key="tools"
 							icon="sap-icon://wrench"
 							text="{i18n>APP_TABHEADER_ITEM_TOOLS}">
-							<items>
-								<IconTabFilter key="fioriTools" text="{i18n>APP_TABHEADER_SUBITEM_FIORI_TOOLS}" />
-								<IconTabFilter key="iconExplorer" text="{i18n>APP_TABHEADER_SUBITEM_ICON_EXPLORER}" />
-								<IconTabFilter key="ui5Inspector" text="{i18n>APP_TABHEADER_SUBITEM_UI5_INSPECTOR}" />
-								<IconTabFilter key="ui5Tooling" text="{i18n>APP_TABHEADER_SUBITEM_UI5_TOOLING}" />
-							</items>
 						</IconTabFilter>
 					</items>
 				</IconTabHeader>
@@ -289,10 +283,6 @@
 						key="tools"
 						icon="sap-icon://wrench"
 						text="{i18n>APP_TABHEADER_ITEM_TOOLS}">
-						<tnt:NavigationListItem key="fioriTools" text="{i18n>APP_TABHEADER_SUBITEM_FIORI_TOOLS}" />
-						<tnt:NavigationListItem key="iconExplorer" text="{i18n>APP_TABHEADER_SUBITEM_ICON_EXPLORER}" />
-						<tnt:NavigationListItem key="ui5Inspector" text="{i18n>APP_TABHEADER_SUBITEM_UI5_INSPECTOR}" />
-						<tnt:NavigationListItem key="ui5Tooling" text="{i18n>APP_TABHEADER_SUBITEM_UI5_TOOLING}" />
 					</tnt:NavigationListItem>
 				</tnt:NavigationList>
 			</tnt:SideNavigation>
