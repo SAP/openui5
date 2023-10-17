@@ -7,7 +7,6 @@ sap.ui.define([
 	'sap/ui/model/FilterOperator',
 	'sap/ui/model/ParseException',
 	'sap/base/Log',
-	'sap/base/util/ObjectPath',
 	'sap/base/util/merge',
 	'sap/base/util/deepEqual',
 	'./Condition',
@@ -21,7 +20,6 @@ sap.ui.define([
 		FilterOperator,
 		ParseException,
 		Log,
-		ObjectPath,
 		merge,
 		deepEqual,
 		Condition,
@@ -684,9 +682,7 @@ sap.ui.define([
 
 			if (!oUsedType) {
 				// The used type must be required by the application.
-				const TypeClass = sType
-						? sap.ui.require(sType.replace(/\./g, "/")) || ObjectPath.get(sType)
-						: undefined;
+				const TypeClass = sap.ui.require(sType.replace(/\./g, "/"));
 				oUsedType = new TypeClass(oFormatOptions, oConstraints);
 				oUsedType._bCreatedByOperator = true; // to distinguish in Field between original type and Operator type on Operator change
 
