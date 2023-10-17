@@ -9,6 +9,7 @@ sap.ui.define([
 	"sap/ui/core/format/ListFormat",
 	"sap/ui/mdc/Table",
 	"sap/ui/mdc/table/Column",
+	"sap/ui/mdc/table/TableTypeBase",
 	"sap/ui/mdc/table/GridTableType",
 	"sap/ui/mdc/table/ResponsiveTableType",
 	"sap/ui/mdc/table/ResponsiveColumnSettings",
@@ -65,6 +66,7 @@ sap.ui.define([
 	ListFormat,
 	Table,
 	Column,
+	TableTypeBase,
 	GridTableType,
 	ResponsiveTableType,
 	ResponsiveColumnSettings,
@@ -211,20 +213,41 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Instantiate", function(assert) {
+	QUnit.test("Interfaces", function(assert) {
 		assert.ok(this.oTable.isA("sap.ui.mdc.IxState"));
 	});
 
 	QUnit.test("Rendering", function(assert) {
-		return this.oTable.initialized().then(function() {
-			assert.ok(!!this.oTable.getDomRef(), "Table is rendered.");
-			assert.ok(this.oTable.$().hasClass("sapUiMdcTable"), "Table has class sapUiMdcTable");
-			assert.equal(this.oTable.getDomRef().style.height, "100%", "Table has a default height");
-			assert.ok(!this.oTable.getDomRef().style.width, "Table has a no default width");
+		return this.oTable.initialized().then(() => {
+			const oDomRef = this.oTable.getDomRef();
+
+			assert.ok(!!oDomRef, "Table is rendered.");
+			assert.ok(oDomRef.classList.contains("sapUiMdcTable"), "Table has class sapUiMdcTable");
+			assert.ok(!oDomRef.style.width, "Table has a no default width");
+
 			this.oTable.setWidth("200px");
 			Core.applyChanges();
-			assert.equal(this.oTable.getDomRef().style.width, "200px", "Table has a custom width");
-		}.bind(this));
+			assert.equal(oDomRef.style.width, "200px", "Table has a custom width");
+
+			const TestTableType = TableTypeBase.extend("sap.ui.mdc.test.TestTableType", {
+				loadModules: function() {
+					return Promise.resolve();
+				},
+				getTableStyleClasses: function() {
+					return ["MyTestClassA", "MyTestClassB"];
+				}
+			});
+			this.oTable.setType(new TestTableType());
+
+			return this.oTable.initialized();
+		}).then(() => {
+			const oDomRef = this.oTable.getDomRef();
+
+			Core.applyChanges();
+			assert.ok(oDomRef.classList.contains("sapUiMdcTable"), "Table has class sapUiMdcTable if the type provides additional classes");
+			assert.ok(oDomRef.classList.contains("MyTestClassA"), "Table has class MyTestClassA provided by the type");
+			assert.ok(oDomRef.classList.contains("MyTestClassB"), "Table has class MyTestClassB provided by the type");
+		});
 	});
 
 	QUnit.test("Create UI5 Grid Table (default) after initialise", function(assert) {
@@ -797,97 +820,90 @@ sap.ui.define([
 		}.bind(this));
 	});
 
-	// Switch table type and test APIs
 	QUnit.test("Switch table type and test APIs", function(assert) {
-		const done = assert.async();
 		let fInnerTableDestroySpy, fInnerTemplateDestroySpy;
 
-		this.oTable.initialized().then(function() {
+		return this.oTable.initialized().then(() => {
 			fInnerTableDestroySpy = sinon.spy(this.oTable._oTable, "destroy");
+			assert.ok(fInnerTableDestroySpy.notCalled);
 
 			// Switch table
-			assert.ok(fInnerTableDestroySpy.notCalled);
 			this.oTable.setSelectionMode("Single");
 			this.oTable.setThreshold(10);
 			this.oTable.setType("ResponsiveTable");
 
 			assert.ok(fInnerTableDestroySpy.calledOnce);
+			return this.oTable.initialized();
+		}).then(() => {
+			assert.ok(this.oTable._oTable.isA("sap.m.Table"));
+			assert.ok(this.oTable._oRowTemplate);
+			assert.ok(this.oTable._oRowTemplate.isA("sap.m.ColumnListItem"));
+			assert.equal(this.oTable._oTable.getGrowingThreshold(), this.oTable.getThreshold());
+			fInnerTableDestroySpy = sinon.spy(this.oTable._oTable, "destroy");
+			fInnerTemplateDestroySpy = sinon.spy(this.oTable._oRowTemplate, "destroy");
 
-			this.oTable.initialized().then(function() {
-				assert.ok(this.oTable._oTable.isA("sap.m.Table"));
-				assert.ok(this.oTable._oRowTemplate);
-				assert.ok(this.oTable._oRowTemplate.isA("sap.m.ColumnListItem"));
-				assert.equal(this.oTable._oTable.getGrowingThreshold(), this.oTable.getThreshold());
-				fInnerTableDestroySpy = sinon.spy(this.oTable._oTable, "destroy");
-				fInnerTemplateDestroySpy = sinon.spy(this.oTable._oRowTemplate, "destroy");
+			// Setting same table type does nothing
+			this.oTable.setType("ResponsiveTable");
+			this.oTable.setSelectionMode("Multi");
 
-				// Setting same table type does nothing
-				this.oTable.setType("ResponsiveTable");
-				this.oTable.setSelectionMode("Multi");
+			assert.ok(fInnerTableDestroySpy.notCalled);
+			assert.ok(fInnerTemplateDestroySpy.notCalled);
+			assert.equal(this.oTable._oTable.getGrowingScrollToLoad(), false);
 
-				assert.ok(fInnerTableDestroySpy.notCalled);
-				assert.ok(fInnerTemplateDestroySpy.notCalled);
-				assert.equal(this.oTable._oTable.getGrowingScrollToLoad(), false);
+			this.oTable.setType(new ResponsiveTableType({
+				growingMode: "Scroll"
+			}));
 
-				this.oTable.setType(new ResponsiveTableType({
-					growingMode: "Scroll"
-				}));
+			assert.ok(fInnerTableDestroySpy.calledOnce);
+			assert.ok(fInnerTemplateDestroySpy.calledOnce);
 
-				assert.ok(fInnerTableDestroySpy.calledOnce);
-				assert.ok(fInnerTemplateDestroySpy.calledOnce);
+			return this.oTable.initialized();
+		}).then(() => {
+			fInnerTableDestroySpy = sinon.spy(this.oTable._oTable, "destroy");
+			fInnerTemplateDestroySpy = sinon.spy(this.oTable._oRowTemplate, "destroy");
 
-				return this.oTable.initialized();
-			}.bind(this)).then(function() {
-				fInnerTableDestroySpy = sinon.spy(this.oTable._oTable, "destroy");
-				fInnerTemplateDestroySpy = sinon.spy(this.oTable._oRowTemplate, "destroy");
+			// growingScrollToLoad of the inner table will be set
+			assert.equal(this.oTable._oTable.getGrowingScrollToLoad(), true);
+			// growing of inner table is set
+			assert.equal(this.oTable._oTable.getGrowing(), true);
 
-				// growingScrollToLoad of the inner table will be set
-				assert.equal(this.oTable._oTable.getGrowingScrollToLoad(), true);
-				// growing of inner table is set
-				assert.equal(this.oTable._oTable.getGrowing(), true);
+			// Updating the table type will update the properties on the table
+			this.oTable.getType().setGrowingMode("Basic");
 
-				// Updating the table type will update the properties on the table
-				this.oTable.getType().setGrowingMode("Basic");
+			assert.ok(fInnerTableDestroySpy.notCalled);
+			assert.ok(fInnerTemplateDestroySpy.notCalled);
+			// growingScrollToLoad of the inner table will be reset
+			assert.equal(this.oTable._oTable.getGrowingScrollToLoad(), false);
+			// growing of inner table is set
+			assert.equal(this.oTable._oTable.getGrowing(), true);
 
-				assert.ok(fInnerTableDestroySpy.notCalled);
-				assert.ok(fInnerTemplateDestroySpy.notCalled);
-				// growingScrollToLoad of the inner table will be reset
-				assert.equal(this.oTable._oTable.getGrowingScrollToLoad(), false);
-				// growing of inner table is set
-				assert.equal(this.oTable._oTable.getGrowing(), true);
+			// Updating the table type will update the properties on the table
+			this.oTable.getType().setGrowingMode("None");
 
-				// Updating the table type will update the properties on the table
-				this.oTable.getType().setGrowingMode("None");
+			assert.ok(fInnerTableDestroySpy.notCalled);
+			assert.ok(fInnerTemplateDestroySpy.notCalled);
+			// growingScrollToLoad of the inner table will be reset
+			assert.equal(this.oTable._oTable.getGrowingScrollToLoad(), false);
+			// growing of inner table is set
+			assert.equal(this.oTable._oTable.getGrowing(), false);
 
-				assert.ok(fInnerTableDestroySpy.notCalled);
-				assert.ok(fInnerTemplateDestroySpy.notCalled);
-				// growingScrollToLoad of the inner table will be reset
-				assert.equal(this.oTable._oTable.getGrowingScrollToLoad(), false);
-				// growing of inner table is set
-				assert.equal(this.oTable._oTable.getGrowing(), false);
-
-				this.oTable.setType("Table");
-				assert.ok(fInnerTableDestroySpy.calledOnce);
-				assert.ok(fInnerTemplateDestroySpy.calledOnce);
-				this.oTable.initialized().then(function() {
-					assert.ok(this.oTable._oTable.isA("sap.ui.table.Table"));
-					assert.ok(!this.oTable._oRowTemplate);
-					assert.equal(this.oTable._oTable.getThreshold(), this.oTable.getThreshold());
-					done();
-				}.bind(this));
-			}.bind(this));
-		}.bind(this));
+			this.oTable.setType("Table");
+			assert.ok(fInnerTableDestroySpy.calledOnce);
+			assert.ok(fInnerTemplateDestroySpy.calledOnce);
+			return this.oTable.initialized();
+		}).then(() => {
+			assert.ok(this.oTable._oTable.isA("sap.ui.table.Table"));
+			assert.ok(!this.oTable._oRowTemplate);
+			assert.equal(this.oTable._oTable.getThreshold(), this.oTable.getThreshold());
+		});
 	});
 
-	// Switch table type immediately
 	QUnit.test("Switch table type immediately after create", function(assert) {
-		const done = assert.async();
 		let fInnerTableDestroySpy, fInnerTemplateDestroySpy, fRowModeDestroySpy, bHideEmptyRows;
 
-		// Switch table immediately
 		this.oTable.setType("ResponsiveTable");
 
-		this.oTable.initialized().then(function() {
+		return this.oTable.initialized().then(() => {
 			assert.ok(this.oTable._oTable.isA("sap.m.Table"));
 			assert.ok(this.oTable._oRowTemplate.isA("sap.m.ColumnListItem"));
 			fInnerTableDestroySpy = sinon.spy(this.oTable._oTable, "destroy");
@@ -903,84 +919,83 @@ sap.ui.define([
 			assert.ok(fInnerTableDestroySpy.calledOnce);
 			assert.ok(fInnerTemplateDestroySpy.calledOnce);
 
-			this.oTable.initialized().then(function() {
-				assert.ok(this.oTable._oTable.isA("sap.ui.table.Table"));
-				assert.ok(!this.oTable._oRowTemplate);
-				assert.ok(this.oTable._oTable.getRowMode().isA("sap.ui.table.rowmodes.Auto"), "The inner GridTable has an auto row mode");
-				assert.equal(this.oTable._oTable.getRowMode().getMinRowCount(), 10);
+			return this.oTable.initialized();
+		}).then(() => {
+			assert.ok(this.oTable._oTable.isA("sap.ui.table.Table"));
+			assert.ok(!this.oTable._oRowTemplate);
+			assert.ok(this.oTable._oTable.getRowMode().isA("sap.ui.table.rowmodes.Auto"), "The inner GridTable has an auto row mode");
+			assert.equal(this.oTable._oTable.getRowMode().getMinRowCount(), 10);
 
-				fInnerTableDestroySpy = sinon.spy(this.oTable._oTable, "destroy");
-				fRowModeDestroySpy = sinon.spy(this.oTable._oTable.getRowMode(), "destroy");
-				bHideEmptyRows = this.oTable._oTable.getRowMode().getHideEmptyRows();
+			fInnerTableDestroySpy = sinon.spy(this.oTable._oTable, "destroy");
+			fRowModeDestroySpy = sinon.spy(this.oTable._oTable.getRowMode(), "destroy");
+			bHideEmptyRows = this.oTable._oTable.getRowMode().getHideEmptyRows();
 
-				this.oTable.setType(new GridTableType({
-					rowCountMode: "Fixed"
-				}));
+			this.oTable.setType(new GridTableType({
+				rowCountMode: "Fixed"
+			}));
 
-				assert.ok(fInnerTableDestroySpy.calledOnce);
-				assert.ok(fRowModeDestroySpy.calledOnce);
+			assert.ok(fInnerTableDestroySpy.calledOnce);
+			assert.ok(fRowModeDestroySpy.calledOnce);
 
-				return this.oTable.initialized();
-			}.bind(this)).then(function() {
-				fInnerTableDestroySpy = sinon.spy(this.oTable._oTable, "destroy");
+			return this.oTable.initialized();
+		}).then(() => {
+			fInnerTableDestroySpy = sinon.spy(this.oTable._oTable, "destroy");
 
-				// inner table is updated
-				assert.ok(this.oTable._oTable.getRowMode().isA("sap.ui.table.rowmodes.Fixed"), "The inner GridTable has a fixed row mode");
-				assert.equal(this.oTable._oTable.getRowMode().getRowCount(), 10);
-				assert.equal(this.oTable._oTable.getRowMode().getHideEmptyRows(), bHideEmptyRows);
+			// inner table is updated
+			assert.ok(this.oTable._oTable.getRowMode().isA("sap.ui.table.rowmodes.Fixed"), "The inner GridTable has a fixed row mode");
+			assert.equal(this.oTable._oTable.getRowMode().getRowCount(), 10);
+			assert.equal(this.oTable._oTable.getRowMode().getHideEmptyRows(), bHideEmptyRows);
 
-				// Updating the table type instance also updates properties
-				this.oTable.getType().setRowCount(3);
+			// Updating the table type instance also updates properties
+			this.oTable.getType().setRowCount(3);
 
-				assert.ok(fInnerTableDestroySpy.notCalled);
-				// inner table is updated
-				assert.ok(this.oTable._oTable.getRowMode().isA("sap.ui.table.rowmodes.Fixed"), "The inner GridTable has a fixed row mode");
-				assert.equal(this.oTable._oTable.getRowMode().getRowCount(), 3);
+			assert.ok(fInnerTableDestroySpy.notCalled);
+			// inner table is updated
+			assert.ok(this.oTable._oTable.getRowMode().isA("sap.ui.table.rowmodes.Fixed"), "The inner GridTable has a fixed row mode");
+			assert.equal(this.oTable._oTable.getRowMode().getRowCount(), 3);
 
-				fRowModeDestroySpy = sinon.spy(this.oTable._oTable.getRowMode(), "destroy");
-				bHideEmptyRows = !bHideEmptyRows;
-				this.oTable._oTable.getRowMode().setHideEmptyRows(bHideEmptyRows);
+			fRowModeDestroySpy = sinon.spy(this.oTable._oTable.getRowMode(), "destroy");
+			bHideEmptyRows = !bHideEmptyRows;
+			this.oTable._oTable.getRowMode().setHideEmptyRows(bHideEmptyRows);
 
-				// Updating the table type instance also updates properties of the inner table
-				this.oTable.getType().setRowCountMode("Auto");
+			// Updating the table type instance also updates properties of the inner table
+			this.oTable.getType().setRowCountMode("Auto");
 
-				assert.ok(fInnerTableDestroySpy.notCalled);
-				assert.ok(fRowModeDestroySpy.calledOnce);
-				// inner table is updated
-				assert.ok(this.oTable._oTable.getRowMode().isA("sap.ui.table.rowmodes.Auto"), "The inner GridTable has an auto row mode");
-				assert.equal(this.oTable._oTable.getRowMode().getMinRowCount(), 3);
-				assert.equal(this.oTable._oTable.getRowMode().getHideEmptyRows(), bHideEmptyRows);
+			assert.ok(fInnerTableDestroySpy.notCalled);
+			assert.ok(fRowModeDestroySpy.calledOnce);
+			// inner table is updated
+			assert.ok(this.oTable._oTable.getRowMode().isA("sap.ui.table.rowmodes.Auto"), "The inner GridTable has an auto row mode");
+			assert.equal(this.oTable._oTable.getRowMode().getMinRowCount(), 3);
+			assert.equal(this.oTable._oTable.getRowMode().getHideEmptyRows(), bHideEmptyRows);
 
-				// Updating the table type instance also updates properties of the inner table
-				this.oTable.getType().setRowCount(5);
+			// Updating the table type instance also updates properties of the inner table
+			this.oTable.getType().setRowCount(5);
 
-				// inner table is updated
-				assert.ok(this.oTable._oTable.getRowMode().isA("sap.ui.table.rowmodes.Auto"), "The inner GridTable has an auto row mode");
-				assert.equal(this.oTable._oTable.getRowMode().getMinRowCount(), 5);
+			// inner table is updated
+			assert.ok(this.oTable._oTable.getRowMode().isA("sap.ui.table.rowmodes.Auto"), "The inner GridTable has an auto row mode");
+			assert.equal(this.oTable._oTable.getRowMode().getMinRowCount(), 5);
 
-				// Updating the table type instance also updates properties of the inner table
-				this.oTable.getType().setRowCountMode("Fixed");
+			// Updating the table type instance also updates properties of the inner table
+			this.oTable.getType().setRowCountMode("Fixed");
 
-				assert.ok(fInnerTableDestroySpy.notCalled);
-				// inner table is updated
-				assert.ok(this.oTable._oTable.getRowMode().isA("sap.ui.table.rowmodes.Fixed"), "The inner GridTable has a fixed row mode");
-				assert.equal(this.oTable._oTable.getRowMode().getRowCount(), 5);
+			assert.ok(fInnerTableDestroySpy.notCalled);
+			// inner table is updated
+			assert.ok(this.oTable._oTable.getRowMode().isA("sap.ui.table.rowmodes.Fixed"), "The inner GridTable has a fixed row mode");
+			assert.equal(this.oTable._oTable.getRowMode().getRowCount(), 5);
 
-				fRowModeDestroySpy = sinon.spy(this.oTable._oTable.getRowMode(), "destroy");
+			fRowModeDestroySpy = sinon.spy(this.oTable._oTable.getRowMode(), "destroy");
 
-				// Setting same table type only updates properties
-				this.oTable.setType("Table");
+			// Setting same table type only updates properties
+			this.oTable.setType("Table");
 
-				assert.ok(fInnerTableDestroySpy.calledOnce);
-				assert.ok(fRowModeDestroySpy.calledOnce);
+			assert.ok(fInnerTableDestroySpy.calledOnce);
+			assert.ok(fRowModeDestroySpy.calledOnce);
 
-				return this.oTable.initialized();
-			}.bind(this)).then(function() {
-				assert.ok(this.oTable._oTable.getRowMode().isA("sap.ui.table.rowmodes.Auto"), "The inner GridTable has an auto row mode");
-				assert.equal(this.oTable._oTable.getRowMode().getMinRowCount(), 10);
-				done();
-			}.bind(this));
-		}.bind(this));
+			return this.oTable.initialized();
+		}).then(() => {
+			assert.ok(this.oTable._oTable.getRowMode().isA("sap.ui.table.rowmodes.Auto"), "The inner GridTable has an auto row mode");
+			assert.equal(this.oTable._oTable.getRowMode().getMinRowCount(), 10);
+		});
 	});
 
 	QUnit.test("bindRows with rowCount without wrapping dataReceived", function(assert) {

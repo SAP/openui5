@@ -24,9 +24,6 @@ sap.ui.define([
 				};
 			}
 		},
-		domRef: (oTable) => {
-			return oTable._oTable?.getDomRef() || oTable.getDomRef();
-		},
 		properties: {},
 		aggregations: {
 			_content: {
