@@ -319,6 +319,9 @@ function (
 		assert.ok(oInfo.children && oInfo.children.length === 7, 'Children'); // Only 7 children are visible, because 4 of them are hidden on L devices
 	});
 
+	/**
+	 * @deprecated As of version 1.120
+	 */
 	QUnit.module("Overflow hidden library specific support");
 
 	QUnit.test("Library gridHelper is defined", function (assert) {

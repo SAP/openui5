@@ -6008,6 +6008,9 @@ sap.ui.define([
 		bFinal: true /* This table helper wins, even when commons helper was set before */
 	});
 
+	/**
+	 * @deprecated As of version 1.120
+	 */
 	ObjectPath.set("sap.ui.layout.GridHelper", {
 		getLibrarySpecificClass: function () {
 			return "";
