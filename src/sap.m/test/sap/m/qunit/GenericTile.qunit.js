@@ -1094,6 +1094,8 @@ sap.ui.define([
 		//Arrange
 		oCore.getConfiguration().setRTL(true);
 
+		this.oGenericTile.invalidate();
+
 		//Act
 		oCore.applyChanges();
 
