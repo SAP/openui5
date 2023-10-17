@@ -1,6 +1,6 @@
 sap.ui.define([
 	"sap/ui/core/UIComponent",
-	"testutils/other/FakeFlpConnector"
+	"testutils/link/FakeFlpConnector"
 ], function (UIComponent,  FakeFlpConnector) {
 	"use strict";
 

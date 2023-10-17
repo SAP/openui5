@@ -4,11 +4,11 @@
 sap.ui.define([
     "sap/ui/mdc/LinkDelegate",
 	"sap/ui/mdc/link/LinkItem",
-	"sap/ui/mdc/link/ContactDetails",
-	"sap/ui/mdc/link/ContactDetailsItem",
-	"sap/ui/mdc/link/ContactDetailsPhoneItem",
-	"sap/ui/mdc/link/ContactDetailsEmailItem",
-	"sap/ui/mdc/link/ContactDetailsAddressItem"
+	"testutils/link/ContactDetails",
+	"testutils/link/ContactDetailsItem",
+	"testutils/link/ContactDetailsPhoneItem",
+	"testutils/link/ContactDetailsEmailItem",
+	"testutils/link/ContactDetailsAddressItem"
 ], function(LinkDelegate, LinkItem, ContactDetails, ContactDetailsItem, ContactDetailsPhoneItem, ContactDetailsEmailItem, ContactDetailsAddressItem) {
     "use strict";
 
