@@ -11,7 +11,7 @@ sap.ui.define([
         "sap/m/Title",
         "sap/ui/mdc/chart/ChartTypeButton",
         "./ChartSelectionDetails",
-        "sap/m/ToolbarSeparator",
+        "sap/ui/core/InvisibleText",
         "sap/m/OverflowToolbarLayoutData",
         "sap/ui/core/library",
         "sap/ui/Device",
@@ -27,7 +27,7 @@ sap.ui.define([
         Title,
         ChartTypeButton,
         ChartSelectionDetails,
-        ToolbarSeparator,
+        InvisibleText,
         OverflowToolbarLayoutData,
         coreLibrary,
         Device,
@@ -89,14 +89,21 @@ sap.ui.define([
          * @ui5-restricted sap.ui.mdc
          */
         ChartToolbar.prototype.createToolbarContent = function (oChart) {
+            this._oChart = oChart;
+
             //Keep track of chart buttons to enable them later on
             this._chartInternalButtonsToEnable = [];
+
+            this._oInvTitle = new InvisibleText(oChart.getId() + "-invTitle", {text: oChart.getHeader()});
+            this._oInvTitle.toStatic();
+			this.addAriaLabelledBy(this._oInvTitle);
 
             /**add beginning**/
             this._oTitle = new Title(oChart.getId() + "-title", {
                 text: oChart.getHeader(),
                 level: oChart.getHeaderLevel(),
-                width: oChart.getHeaderVisible() ? undefined : "0px"
+                titleStyle: oChart.getHeaderStyle(),
+                visible: oChart.getHeaderVisible()
             });
             this.addBegin(this._oTitle);
 
@@ -225,6 +232,7 @@ sap.ui.define([
                 this._chartInternalButtonsToEnable.push(this._oChartTypeBtn);
             }
 
+            this._updateVariantManagement();
         };
 
         /**
@@ -244,6 +252,8 @@ sap.ui.define([
 
                 this._oVariantManagement = oVariantManagement;
                 this.addBetween(this._oVariantManagement);
+
+                this._updateVariantManagement();
             }
 
         };
@@ -365,13 +375,32 @@ sap.ui.define([
 
         };
 
-        ChartToolbar.prototype._setHeaderLevel = function(sHeaderLevel) {
-            this._oTitle.setLevel(sHeaderLevel);
+        ChartToolbar.prototype._setHeader = function(sHeader) {
+            this._oTitle?.setText(sHeader);
+            this._oInvTitle?.setText(sHeader);
         };
 
-        ChartToolbar.prototype.setHeaderVisible = function(bVisible) {
-            if (this._oTitle) {
-                this._oTitle.setWidth(bVisible ? undefined : "0px");
+        ChartToolbar.prototype._setHeaderLevel = function(sHeaderLevel) {
+            this._oTitle?.setLevel(sHeaderLevel);
+            this._updateVariantManagement();
+        };
+
+        ChartToolbar.prototype._setHeaderStyle = function(sHeaderStyle) {
+            this._oTitle?.setTitleStyle(sHeaderStyle);
+            this._updateVariantManagement();
+        };
+
+        ChartToolbar.prototype._setHeaderVisible = function(bVisible) {
+            // this._oTitle?.setWidth(bVisible ? undefined : "0px");
+            this._oTitle?.setVisible(bVisible);
+            this._updateVariantManagement();
+        };
+
+        ChartToolbar.prototype._updateVariantManagement = function() {
+            if (this._oVariantManagement && this._oChart) {
+                this._oVariantManagement.setShowAsText(this._oChart.getHeaderVisible());
+                this._oVariantManagement.setTitleStyle(this._oChart.getHeaderStyle());
+                this._oVariantManagement.setHeaderLevel(this._oChart.getHeaderLevel());
             }
         };
 
@@ -381,6 +410,15 @@ sap.ui.define([
          */
         ChartToolbar.prototype.getSettingsButton = function() {
             return this._oSettingsBtn;
+        };
+
+        ChartToolbar.prototype.exit = function () {
+            ActionToolbar.prototype.exit.apply(this, arguments);
+
+            if (this._oInvTitle) {
+                this._oInvTitle.destroy();
+                this._oInvTitle = null;
+            }
         };
 
         return ChartToolbar;
