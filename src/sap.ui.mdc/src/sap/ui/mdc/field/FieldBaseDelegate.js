@@ -187,19 +187,35 @@ sap.ui.define([
 	};
 
 	/**
-	 * Determines the text and selection for autocomplete
+	 * Return object for the autocomplete feature.
 	 *
-	 * This function is called while typeahead into a {@link sap.ui.mdc.Field Field} or {@link sap.ui.mdc.FilterField FilterField} control.
+	 * @static
+	 * @constant
+	 * @typedef {object} sap.ui.mdc.field.AutocompleteInfo
+	 * @property {string} text Complete text that is shown in the field
+	 * @property {int} selectionStart Start of the selected text
+	 * @property {int} selectionEnd End of the selected text
+	 * @since: 1.120.0
+	 * @public
+	 */
+
+	/**
+	 * Determines the text and selection for the autocomplete functionality.
+	 *
+	 * This function is called during a user's type-ahead into a {@link sap.ui.mdc.Field Field} or {@link sap.ui.mdc.FilterField FilterField} control.
+	 *
+	 * During the programmatical selection of the text in the input field the browser moves the cursor to the beginning of the selection, so the selection should start after the text has been entered.
+	 * Otherwise this could lead to unwanted side effects.
 	 *
 	 * @param {sap.ui.mdc.field.FieldBase} oField <code>Field</code> control instance
 	 * @param {sap.ui.mdc.condition.ConditionObject} oCondition Condition
-	 * @param {string} sCurrentText Currently typed text. (Could be changed while the typeahed result is returned asynchronously.)
+	 * @param {string} sCurrentText Currently typed text (Could be changed when the type-ahed result is returned asynchronously.)
 	 * @param {string} sUsedText Text used to determine condition
 	 * @param {sap.ui.model.Type} oType Type of the value
 	 * @param {sap.ui.model.Type} oAdditionalType Type of the description
-	 * @returns {object} Object containing <code>text</code>, <code>selectionStart</code> and <code>selectionEnd</code>.
+	 * @returns {sap.ui.mdc.field.AutocompleteInfo} Object containing text and selection to show in field
 	 * @since: 1.120.0
-	 * @public
+	 * @private
 	 */
 	FieldBaseDelegate.getAutocomplete = function(oField, oCondition, sCurrentText, sUsedText, oType, oAdditionalType) {
 
