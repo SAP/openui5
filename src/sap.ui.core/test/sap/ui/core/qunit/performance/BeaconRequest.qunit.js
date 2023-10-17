@@ -1,4 +1,4 @@
-/*global QUnit, sinon*/
+/*global QUnit, sinon, Promise*/
 sap.ui.define(["sap/ui/performance/BeaconRequest", "sap/ui/Device"], function (BeaconRequest, Device) {
 	"use strict";
 
@@ -82,6 +82,14 @@ sap.ui.define(["sap/ui/performance/BeaconRequest", "sap/ui/Device"], function (B
 		QUnit.test("Send beacon on window close", function(assert) {
 			var done = assert.async();
 			assert.expect(2);
+			var resLoad, resArranged,
+				pLoaded = Promise.all([
+				new Promise(function(res) {
+					resLoad = res;
+				}), new Promise(function(res) {
+					resArranged = res;
+				})
+			]);
 
 			// setup iframe which will apply a stub on BeaconRequest#send to check
 			// if it is called on the iframe's window unload event - defined in
@@ -94,18 +102,26 @@ sap.ui.define(["sap/ui/performance/BeaconRequest", "sap/ui/Device"], function (B
 			function arranged(msg) {
 				assert.equal(msg.data.token, "arranged", "BeaconRequest#send has been replaced");
 				window.removeEventListener("message", arranged);
-				window.addEventListener("message", assertions);
-				oIframe.contentWindow.location.reload();
+				resArranged();
 			}
 
 			// checks the if the stub has been called
 			function assertions(msg) {
+				if (msg.data.token !== "called") {
+					return;
+				}
 				assert.equal(msg.data.token, "called", "BeaconRequest#send has been called");
 				window.removeEventListener("message", assertions);
 				done();
 			}
 
+			oIframe.onload = resLoad;
 			window.addEventListener("message", arranged);
+
+			pLoaded.then(function() {
+				window.addEventListener("message", assertions);
+				document.getElementById('qunit-fixture').removeChild(oIframe);
+			});
 		});
 
 		QUnit.test("Do not send beacon if the buffer is empty", function(assert) {
