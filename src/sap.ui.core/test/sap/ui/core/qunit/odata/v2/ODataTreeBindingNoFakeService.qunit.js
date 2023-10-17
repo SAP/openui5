@@ -1356,8 +1356,7 @@ sap.ui.define([
 		assert.strictEqual(oBinding.bSkipDataEvents, false);
 		assert.deepEqual(oBinding.mRequestHandles, {"~sNodeId-undefined-undefined-undefined": "~oReadHandle"});
 	});
-
-	//*********************************************************************************************
+	/** @deprecated As of version 1.120.0, reason OperationMode.Auto */
 	QUnit.test("_getCountForCollection: calls _getHeaders", function () {
 		const oBinding = {
 			sCountMode: CountMode.Inline,
@@ -1383,8 +1382,7 @@ sap.ui.define([
 		// code under test
 		ODataTreeBinding.prototype._getCountForCollection.call(oBinding);
 	});
-
-	//*********************************************************************************************
+	/** @deprecated As of version 1.120.0, reason OperationMode.Auto */
 	QUnit.test("_getCountForCollection: don't call _getHeaders for $count request", function () {
 		const oBinding = {
 			sCountMode: CountMode.Request,
