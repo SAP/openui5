@@ -16,6 +16,9 @@ sap.ui.define([
 	/**
 	 * Constructor for a new Uploader.
 	 *
+	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
+	 * @param {object} [mSettings] Initial settings for the new control
+	 *
 	 * @class
 	 * A basic implementation for uploading and downloading one or multiple files.
 	 *
