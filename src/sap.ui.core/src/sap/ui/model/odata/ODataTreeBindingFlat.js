@@ -793,6 +793,7 @@ sap.ui.define([
 			var sAbsolutePath = this.getResolvedPath();
 			if (sAbsolutePath) {
 				oRequest.oRequestHandle = this.oModel.read(sAbsolutePath, {
+					headers: this._getHeaders(),
 					urlParameters: aUrlParameters,
 					filters: [new Filter({
 						filters: aFilters,
@@ -1105,6 +1106,7 @@ sap.ui.define([
 			var sAbsolutePath = this.getResolvedPath();
 			if (sAbsolutePath) {
 				oRequest.oRequestHandle = this.oModel.read(sAbsolutePath, {
+					headers: this._getHeaders(),
 					urlParameters: aUrlParameters,
 					filters: [new Filter({
 						filters: aFilters,
@@ -1336,8 +1338,9 @@ sap.ui.define([
 			}
 
 			// construct multi-filter for level filter and application filters
-			var oNodeFilter = new Filter(this.oTreeProperties["hierarchy-node-for"], "EQ",
-											oParentNode.context.getProperty(this.oTreeProperties["hierarchy-node-for"]));
+			const sHierarchyNodeForProperty = this.oTreeProperties["hierarchy-node-for"];
+			const oNodeFilter = new Filter(sHierarchyNodeForProperty, "EQ",
+					oParentNode.context.getProperty(sHierarchyNodeForProperty));
 			var oLevelFilter = new Filter(this.oTreeProperties["hierarchy-level-for"], "LE", iLevel);
 			var aFilters = [oNodeFilter, oLevelFilter];
 			if (this.aApplicationFilters) {
@@ -1347,6 +1350,7 @@ sap.ui.define([
 			var sAbsolutePath = this.getResolvedPath();
 			if (sAbsolutePath) {
 				oRequest.oRequestHandle = this.oModel.read(sAbsolutePath, {
+					headers: this._getHeaders(),
 					urlParameters: aUrlParameters,
 					filters: [new Filter({
 						filters: aFilters,
@@ -3470,6 +3474,7 @@ sap.ui.define([
 		mUrlParameters.select = aSelect.join(",");
 
 		this.oModel.read(sResolvedPath, {
+			headers: this._getHeaders(),
 			filters : [new Filter({filters : aFilters, and : true})],
 			error : mParameters.error,
 			groupId : mParameters.groupId || this.sGroupId,
@@ -3507,6 +3512,7 @@ sap.ui.define([
 
 		// request the siblings position for moved nodes only as siblings position are already available for added nodes
 		this.oModel.read(oNode.context.getPath(), {
+			headers: this._getHeaders(),
 			urlParameters: this.oModel.createCustomParams(mUrlParameters),
 			// filters: [new Filter({
 			// 	filters: aFilters,
