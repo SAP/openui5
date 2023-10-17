@@ -761,7 +761,7 @@ sap.ui.define([
 		 * @see .getOrCreateExpandedObject
 		 */
 		getCollapsedObject : function (oGroupNode) {
-			return _Helper.getPrivateAnnotation(oGroupNode, "collapsed") || oFrozenCollapsed;
+			return _Helper.getPrivateAnnotation(oGroupNode, "collapsed", oFrozenCollapsed);
 		},
 
 		/**

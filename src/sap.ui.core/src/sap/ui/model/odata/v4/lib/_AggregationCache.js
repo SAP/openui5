@@ -174,7 +174,7 @@ sap.ui.define([
 			const iIndexInParentCache = oParentCache.removeElement(
 				_Helper.getPrivateAnnotation(oElement, "index", 0), sPredicate);
 			// remove the descendants in the parent cache (if any)
-			const iDescendants = _Helper.getPrivateAnnotation(oElement, "descendants") || 0;
+			const iDescendants = _Helper.getPrivateAnnotation(oElement, "descendants", 0);
 			for (let i = 0; i < iDescendants; i += 1) {
 				oParentCache.removeElement(iIndexInParentCache);
 			}
@@ -432,7 +432,7 @@ sap.ui.define([
 				iDescendants -= 1;
 				if (aElements[i]["@$ui5.node.isExpanded"] === false) {
 					// skip descendants of manually collapsed node
-					iDescendants -= _Helper.getPrivateAnnotation(aElements[i], "descendants") || 0;
+					iDescendants -= _Helper.getPrivateAnnotation(aElements[i], "descendants", 0);
 				}
 			}
 		}
