@@ -896,15 +896,12 @@ sap.ui.define([
 		/**
 		 * Returns the currently set customizing data for Islamic calendar support
 		 *
-		 * @returns {object[]} Returns an array contains the customizing data. Each element in the array has properties: dateFormat, islamicMonthStart, gregDate. For details, please see {@link #setLegacyDateCalendarCustomizing}
+		 * @returns {object[]|undefined} Returns an array contains the customizing data. Each element in the array has properties: dateFormat, islamicMonthStart, gregDate. For details, please see {@link #setLegacyDateCalendarCustomizing}
 		 * @public
 		 * @since 1.120
 		 */
 		getLegacyDateCalendarCustomizing() {
-			if (aLegacyDateCalendarCustomizing) {
-				aLegacyDateCalendarCustomizing = aLegacyDateCalendarCustomizing.slice();
-			}
-			return aLegacyDateCalendarCustomizing;
+			return aLegacyDateCalendarCustomizing?.slice() ?? undefined;
 		},
 
 		/**

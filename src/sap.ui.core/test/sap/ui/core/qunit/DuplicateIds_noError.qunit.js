@@ -1,6 +1,7 @@
 /*global QUnit */
 /**
- * @deprecated As of Version 1.120.
+ * @fileoverview
+ * @deprecated As of version 1.120.0
  */
 sap.ui.define([
 	"sap/ui/core/ListItem", "sap/ui/core/Configuration"
