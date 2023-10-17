@@ -473,7 +473,12 @@ sap.ui.define([
 		settings: {
 			async: {
 				create: createView,
-				spies: {}
+				spies: {
+					/**
+					 * @deprecated As of version 1.120
+					 */
+					requireSync: [sap.ui, "requireSync"]
+				}
 			}
 		},
 		runAssertions: function (oView, mSpies, assert, bAsync) {
@@ -495,7 +500,8 @@ sap.ui.define([
 					title: "item3"
 				}, {
 					title: "item4"
-				}]
+				}],
+				date: 1697125987000
 			});
 
 			oView.setModel(oModel);
@@ -511,6 +517,27 @@ sap.ui.define([
 			assert.strictEqual(oView.byId("formatterLocal").getText(), "TEST", "text is set");
 			assert.strictEqual(oView.byId("text").getText(), "text2", "text2 is set");
 			assert.strictEqual(oView.byId("type").getText(), "123.45678", "text is formatted with correct type");
+
+			var oController = oView.getController();
+			var oButtonPressSpy = this.spy(oController, "onButtonPress");
+
+			var oButton = oView.byId("button");
+			oButton.firePress();
+
+			assert.equal(oButtonPressSpy.callCount, 1, "Button's press handler is called");
+			sinon.assert.calledWith(oButtonPressSpy, "2023-10");
+
+			oButtonPressSpy.resetHistory();
+
+			var oButton1 = oView.byId("button1");
+			oButton1.firePress();
+
+			assert.equal(oButtonPressSpy.callCount, 1, "Button's press handler is called");
+			sinon.assert.calledWith(oButtonPressSpy, "2023");
+			/**
+			 * @deprecated As of version 1.120
+			 */
+			sinon.assert.notCalled(mSpies.requireSync);
 		}
 	}].forEach(function (oConfig) {
 		// Run async variant

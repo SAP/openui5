@@ -312,4 +312,13 @@ sap.ui.define(['sap/base/util/resolveReference'], function(resolveReference) {
 		var fn = resolveReference(".notExistMethod", {}, {preferDotContext: true});
 		assert.strictEqual(fn, undefined, "correction method was returned");
 	});
+
+	QUnit.test("resolve value from loaded module", async function(assert) {
+		var sModulePath = "util/testdata/MyModule";
+		await new Promise(function(resolve, reject) {
+			sap.ui.require([sModulePath], resolve, reject);
+		});
+		var sValue = resolveReference("util/testdata/MyModule", {}, {useProbingRequire: true});
+		assert.equal(sValue, "MyModule", "");
+	});
 });

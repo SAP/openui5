@@ -759,7 +759,7 @@ sap.ui.define([
 			function (assert) {
 				this.oSapUiMock.expects("require").on(sap.ui)
 					.atLeast(0) // only for the 1st run
-					.withArgs(["sap/ui/model/type/Boolean"]).callThrough();
+					.withArgs("sap/ui/model/type/Boolean").callThrough();
 				return this.check(assert, [
 					mvcView("t"),
 					'<t:if test="{path: \'/flag\', type: \'sap.ui.model.type.Boolean\'}">',
