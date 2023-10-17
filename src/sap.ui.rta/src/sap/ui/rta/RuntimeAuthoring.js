@@ -21,7 +21,7 @@ sap.ui.define([
 	"sap/ui/dt/Util",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
-	"sap/ui/fl/initial/_internal/config",
+	"sap/ui/fl/apply/api/FlexRuntimeInfoAPI",
 	"sap/ui/fl/initial/api/Version",
 	"sap/ui/fl/write/api/ContextBasedAdaptationsAPI",
 	"sap/ui/fl/write/api/ControlPersonalizationWriteAPI",
@@ -70,7 +70,7 @@ sap.ui.define([
 	DtUtil,
 	KeyCodes,
 	ManifestUtils,
-	config,
+	FlexRuntimeInfoAPI,
 	Version,
 	ContextBasedAdaptationsAPI,
 	ControlPersonalizationWriteAPI,
@@ -1536,7 +1536,7 @@ sap.ui.define([
 				var bVisualizationButtonVisible;
 				bVisualizationButtonVisible = !oUriParameters.has("fiori-tools-rta-mode")
 					|| oUriParameters.get("fiori-tools-rta-mode") === "false";
-				var bFeedbackButtonVisible = config.getFlexibilityServices().some(function(oFlexibilityService) {
+				var bFeedbackButtonVisible = FlexRuntimeInfoAPI.getConfiguredFlexServices().some(function(oFlexibilityService) {
 					return oFlexibilityService.connector !== "LocalStorageConnector";
 				});
 				this.bPersistedDataTranslatable = false;

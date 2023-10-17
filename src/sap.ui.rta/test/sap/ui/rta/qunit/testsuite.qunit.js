@@ -870,7 +870,8 @@ sap.ui.define([
 							qunit: "test-resources/sap/ui/rta/qunit/",
 							"sap.ui.rta.qunitrta": "test-resources/sap/ui/rta/internal/testdata/qunit_rta/",
 							"sap.ui.rta.test": "test-resources/sap/ui/rta/internal/testdata/rta/"
-						}
+						},
+						flexibilityServices: '[{"connector": "SessionStorageConnector"}]'
 					}
 				},
 				"RuntimeAuthoring-2": {
@@ -1016,7 +1017,8 @@ sap.ui.define([
 							qunit: "test-resources/sap/ui/rta/qunit/",
 							"sap.ui.rta.qunitrta": "test-resources/sap/ui/rta/internal/testdata/qunit_rta/",
 							"sap.ui.rta.test": "test-resources/sap/ui/rta/internal/testdata/rta/"
-						}
+						},
+						flexibilityServices: '[{"connector": "SessionStorageConnector"}]'
 					}
 				},
 				"util/BindingsExtractor": {

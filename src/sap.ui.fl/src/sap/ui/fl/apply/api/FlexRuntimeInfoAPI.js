@@ -8,6 +8,7 @@ sap.ui.define([
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/fl/apply/_internal/controlVariants/Utils",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
+	"sap/ui/fl/initial/_internal/FlexConfiguration",
 	"sap/ui/fl/ChangePersistenceFactory",
 	"sap/ui/fl/FlexControllerFactory",
 	"sap/ui/fl/Layer",
@@ -18,6 +19,7 @@ sap.ui.define([
 	JsControlTreeModifier,
 	VariantUtils,
 	ManifestUtils,
+	FlexConfiguration,
 	ChangePersistenceFactory,
 	FlexControllerFactory,
 	Layer,
@@ -165,6 +167,17 @@ sap.ui.define([
 		 */
 		getFlexReference(mPropertyBag) {
 			return ManifestUtils.getFlexReferenceForControl(mPropertyBag.element);
+		},
+
+		/**
+		 * Returns the configured Flexibility Services
+		 * @returns {object[]} Flexibility services configuration
+		 *
+		 * @private
+		 * @ui5-restricted sap.ui.rta
+		 */
+		getConfiguredFlexServices() {
+			return FlexConfiguration.getFlexibilityServices();
 		}
 	};
 
