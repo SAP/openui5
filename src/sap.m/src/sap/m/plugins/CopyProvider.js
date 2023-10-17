@@ -144,9 +144,9 @@ sap.ui.define(["./PluginBase", "sap/base/Log", "sap/ui/core/Core", "sap/base/str
 		}
 	}
 
-	function copyMatrixForSpreadSheet(aMatrix) {
+	function copyMatrixForSpreadSheet(oCopyProvider, aMatrix) {
 		if (!navigator.clipboard) {
-			throw new Error(this + " requires a secure context in order to access the clipboard API.");
+			throw new Error(oCopyProvider + " requires a secure context in order to access the clipboard API.");
 		}
 
 		var sClipboardText = aMatrix.map(function(aRows) {
@@ -247,7 +247,7 @@ sap.ui.define(["./PluginBase", "sap/base/Log", "sap/ui/core/Core", "sap/base/str
 	CopyProvider.prototype.getSelectionData = function() {
 		var oControl = this.getControl();
 		var fnExtractData = this.getExtractData();
-		if (!oControl || !fnExtractData || !navigator.clipboard) {
+		if (!oControl || !fnExtractData) {
 			return [];
 		}
 
@@ -328,7 +328,7 @@ sap.ui.define(["./PluginBase", "sap/base/Log", "sap/ui/core/Core", "sap/base/str
 			return Promise.resolve();
 		}
 
-		return copyMatrixForSpreadSheet(aSelectionData);
+		return copyMatrixForSpreadSheet(this, aSelectionData);
 	};
 
 	CopyProvider.prototype.onkeydown = function(oEvent) {

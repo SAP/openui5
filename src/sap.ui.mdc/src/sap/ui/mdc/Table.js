@@ -977,8 +977,8 @@ sap.ui.define([
 
 	Table.prototype.setCopyProvider = function(oCopyProvider) {
 		this.setAggregation("copyProvider", oCopyProvider, true);
-		if (window.isSecureContext && oCopyProvider && this._oToolbar && !Core.byId(this.getId() + "-copy")) {
-			this._oToolbar.insertEnd(this._getCopyButton(), 0);
+		if (window.isSecureContext && oCopyProvider && !Core.byId(this.getId() + "-copy")) {
+			this._oToolbar?.insertEnd(this._getCopyButton(), 0);
 		}
 		return this;
 	};
