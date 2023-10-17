@@ -11,7 +11,6 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	"sap/ui/events/PseudoEvents",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Configuration",
 	"sap/ui/core/InvisibleText",
 	"sap/ui/core/Lib"
 ],
@@ -24,7 +23,6 @@ sap.ui.define([
 		KeyCodes,
 		PseudoEvents,
 		jQuery,
-		Configuration,
 		InvisibleText,
 		CoreLib
 	) {
@@ -563,7 +561,7 @@ sap.ui.define([
 	SlideTile.prototype._scrollToTile = function (tileIndex) {
 		if (tileIndex >= 0) {
 			var oWrapperTo = this.$("wrapper-" + tileIndex);
-			var sDir = Configuration.getRTL() ? "right" : "left";
+			var sDir = undefined/*Configuration*/.getRTL() ? "right" : "left";
 
 			this._changeSizeTo(tileIndex);
 			oWrapperTo.css(sDir, "0rem");
@@ -606,7 +604,7 @@ sap.ui.define([
 		}
 
 		oWrapperTo = this.$("wrapper-" + this._iCurrentTile);
-		sDir = Configuration.getRTL() ? "right" : "left";
+		sDir = undefined/*Configuration*/.getRTL() ? "right" : "left";
 
 		var oCurrentTile = this.getTiles()[this._iCurrentTile];
 		if (oCurrentTile && oCurrentTile._isNavigateActionEnabled()) {

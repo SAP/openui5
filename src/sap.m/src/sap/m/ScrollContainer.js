@@ -9,8 +9,7 @@ sap.ui.define([
 	"sap/ui/core/delegate/ScrollEnablement",
 	"sap/ui/core/Element",
 	"./ScrollContainerRenderer",
-	"sap/ui/dom/denormalizeScrollBeginRTL",
-	"sap/ui/core/Configuration"
+	"sap/ui/dom/denormalizeScrollBeginRTL"
 ],
 	function(
 		library,
@@ -18,8 +17,7 @@ sap.ui.define([
 		ScrollEnablement,
 		Element,
 		ScrollContainerRenderer,
-		denormalizeScrollBeginRTL,
-		Configuration
+		denormalizeScrollBeginRTL
 	) {
 		"use strict";
 
@@ -158,7 +156,7 @@ sap.ui.define([
 				var oDomRef = this.getDomRef();
 				if (oDomRef) {
 					// only if rendered
-					if (Configuration.getRTL()) {
+					if (undefined/*Configuration*/.getRTL()) {
 						x = denormalizeScrollBeginRTL(x, oDomRef);
 					}
 					this._oScroller.scrollTo(x, y, time);

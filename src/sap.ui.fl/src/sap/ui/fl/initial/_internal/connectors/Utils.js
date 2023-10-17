@@ -4,12 +4,12 @@
 
 sap.ui.define([
 	"sap/ui/core/Lib",
-	"sap/base/security/encodeURLParameters",
-	"sap/ui/core/Configuration"
+	"sap/base/i18n/Localization",
+	"sap/base/security/encodeURLParameters"
 ], function(
 	Lib,
-	encodeURLParameters,
-	Configuration
+	Localization,
+	encodeURLParameters
 ) {
 	"use strict";
 
@@ -59,7 +59,7 @@ sap.ui.define([
 			if (!mParameters) {
 				throw new Error("No parameters map were passed");
 			}
-			mParameters["sap-language"] = Configuration.getLanguage();
+			mParameters["sap-language"] = Localization.getLanguage();
 		},
 
 		/**
@@ -72,7 +72,7 @@ sap.ui.define([
 			if (!mParameters) {
 				throw new Error("No parameters map were passed");
 			}
-			mParameters["sap-language"] = Configuration.getSAPLogonLanguage();
+			mParameters["sap-language"] = Localization.getSAPLogonLanguage();
 		},
 
 		/**

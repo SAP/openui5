@@ -4,7 +4,6 @@
 sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/base/ManagedObject",
-	"sap/ui/core/Configuration",
 	"sap/ui/model/FormatException",
 	"sap/ui/model/ParseException",
 	"sap/ui/model/ValidateException",
@@ -12,12 +11,11 @@ sap.ui.define([
 	"sap/ui/model/odata/type/Boolean",
 	"sap/ui/model/odata/type/ODataType",
 	"sap/ui/test/TestUtils"
-], function (Log, ManagedObject, Configuration, FormatException, ParseException, ValidateException,
-		JSONModel, BooleanType, ODataType, TestUtils) {
+], function(Log, ManagedObject, FormatException, ParseException, ValidateException, JSONModel, BooleanType, ODataType, TestUtils) {
 	/*global QUnit */
 	"use strict";
 
-	var sDefaultLanguage = Configuration.getLanguage();
+	var sDefaultLanguage = undefined/*Configuration*/.getLanguage();
 
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.type.Boolean", {
@@ -25,10 +23,10 @@ sap.ui.define([
 			this.oLogMock = this.mock(Log);
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
-			Configuration.setLanguage("en-US");
+			undefined/*Configuration*/.setLanguage("en-US");
 		},
 		afterEach : function () {
-			Configuration.setLanguage(sDefaultLanguage);
+			undefined/*Configuration*/.setLanguage(sDefaultLanguage);
 		}
 	});
 

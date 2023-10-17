@@ -17,15 +17,15 @@ sap.ui.define([
 	"sap/base/util/ObjectPath",
 	'sap/base/util/Version',
 	'sap/base/util/array/uniqueSort',
-	'sap/ui/Global', /* sap.ui.lazyRequire */
+	'sap/ui/Global',
+	/* sap.ui.lazyRequire */
 	'sap/ui/VersionInfo',
 	'sap/ui/base/DataType',
 	'sap/ui/base/EventProvider',
 	'sap/ui/base/Object',
 	'sap/ui/base/SyncPromise',
-	'sap/ui/core/Configuration',
 	'sap/ui/core/_UrlResolver'
-], function (
+], function(
 	assert,
 	BaseConfig,
 	Localization,
@@ -45,7 +45,6 @@ sap.ui.define([
 	EventProvider,
 	BaseObject,
 	SyncPromise,
-	Configuration,
 	_UrlResolver
 ) {
 	"use strict";
@@ -1845,7 +1844,7 @@ sap.ui.define([
 	 */
 	Library.getPreloadMode = function() {
 		// if debug sources are requested, then the preload feature must be deactivated
-		if (Configuration.getDebug() === true) {
+		if (undefined/*Configuration*/.getDebug() === true) {
 			return "";
 		}
 		// determine preload mode (e.g. resolve default or auto)

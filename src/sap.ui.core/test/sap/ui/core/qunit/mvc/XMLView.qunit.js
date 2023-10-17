@@ -16,9 +16,8 @@ sap.ui.define([
 	'sap/m/Panel',
 	'./AnyView.qunit',
 	'sap/ui/thirdparty/jquery',
-	"sap/ui/core/Configuration",
 	"sap/ui/qunit/utils/nextUIUpdate"
-], function(Log, ResourceBundle, Element, coreLibrary, Controller, View, XMLView, RenderManager, JSONModel, ResourceModel, VerticalLayout, XMLHelper, Button, Panel, testsuite, jQuery, Configuration, nextUIUpdate) {
+], function(Log, ResourceBundle, Element, coreLibrary, Controller, View, XMLView, RenderManager, JSONModel, ResourceModel, VerticalLayout, XMLHelper, Button, Panel, testsuite, jQuery, nextUIUpdate) {
 	"use strict";
 
 	// shortcut for sap.ui.core.mvc.ViewType
@@ -110,14 +109,14 @@ sap.ui.define([
 	}, /* bCheckViewData = */ true);
 
 
-	var sDefaultLanguage = Configuration.getLanguage();
+	var sDefaultLanguage = undefined/*Configuration*/.getLanguage();
 
 	QUnit.module("Apply settings", {
 		beforeEach : function () {
-			Configuration.setLanguage("en-US");
+			undefined/*Configuration*/.setLanguage("en-US");
 		},
 		afterEach : function () {
-			Configuration.setLanguage(sDefaultLanguage);
+			undefined/*Configuration*/.setLanguage(sDefaultLanguage);
 		}
 	});
 

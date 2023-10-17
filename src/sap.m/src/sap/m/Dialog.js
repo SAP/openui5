@@ -32,7 +32,6 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Core",
-	"sap/ui/core/Configuration",
 	"sap/ui/dom/units/Rem",
 	// jQuery Plugin "firstFocusableDomRef", "lastFocusableDomRef"
 	"sap/ui/dom/jquery/Focusable"
@@ -66,7 +65,6 @@ function(
 	Log,
 	jQuery,
 	Core,
-	Configuration,
 	Rem
 ) {
 	"use strict";
@@ -93,7 +91,7 @@ function(
 	var TitleAlignment = library.TitleAlignment;
 
 	var sAnimationMode = ControlBehavior.getAnimationMode();
-	var bUseAnimations = sAnimationMode !== Configuration.AnimationMode.none && sAnimationMode !== Configuration.AnimationMode.minimal;
+	var bUseAnimations = sAnimationMode !== undefined/*Configuration*/.AnimationMode.none && sAnimationMode !== undefined/*Configuration*/.AnimationMode.minimal;
 
 	// the time should be longer the longest transition in the CSS (200ms),
 	// because of focusing and transition related issues,
@@ -469,7 +467,7 @@ function(
 		return this._headerTitle ? this._headerTitle.getId() : false;
 	});
 
-	Dialog._bPaddingByDefault = (Configuration.getCompatibilityVersion("sapMDialogWithPadding").compareTo("1.16") < 0);
+	Dialog._bPaddingByDefault = (undefined/*Configuration*/.getCompatibilityVersion("sapMDialogWithPadding").compareTo("1.16") < 0);
 
 	Dialog._initIcons = function () {
 		if (Dialog._mIcons) {

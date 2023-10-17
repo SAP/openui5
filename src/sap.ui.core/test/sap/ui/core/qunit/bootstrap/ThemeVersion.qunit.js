@@ -3,9 +3,8 @@ sap.ui.define([
 	"sap/ui/thirdparty/URI",
 	"sap/ui/core/Theming",
 	"sap/ui/core/theming/Parameters",
-	"sap/ui/qunit/utils/waitForThemeApplied",
-	"sap/ui/core/Configuration"
-], function(URI, Theming, Parameters, waitForThemeApplied, Configuration) {
+	"sap/ui/qunit/utils/waitForThemeApplied"
+], function(URI, Theming, Parameters, waitForThemeApplied) {
 	"use strict";
 
 	// use options and version info as determined by ThemeVersion.beforeBootstrap.qunit.js
@@ -159,7 +158,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("RTL Change", function(assert) {
-		Configuration.setRTL(true);
+		undefined/*Configuration*/.setRTL(true);
 
 		var oLink = document.getElementById("sap-ui-theme-sap.ui.core");
 		var sHref = oLink.href;
@@ -181,7 +180,7 @@ sap.ui.define([
 			);
 		}
 
-		Configuration.setRTL(false);
+		undefined/*Configuration*/.setRTL(false);
 	});
 
 	return waitForThemeApplied();

@@ -21,11 +21,11 @@ sap.ui.define([
 	/**
 	 * Constructor for a new <code>FieldInfoBase</code>.
 	 *
-	 * This is the basis for link-features. If the link is pressed a popover might be opened.
-	 *
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] Initial settings for the new control
-	 * @class A <code>FieldInfoBase</code> element is a base class that shows any kind of information related to the <code>Field</code> control, for example, navigation targets or contact details.
+	 * @class
+	 * A <code>FieldInfoBase</code> element is a base class that shows any kind of information related to the <code>Field</code> control, for example, navigation targets or contact details.
+	 * This is the basis for link-features. If the link is pressed a popover might be opened.
 	 * @extends sap.ui.mdc.Element
 	 * @version ${version}
 	 * @constructor

@@ -1,5 +1,4 @@
 sap.ui.define([
-	"sap/ui/core/Configuration",
 	"sap/ui/core/IconPool",
 	"sap/ui/core/UIComponent",
 	"sap/ui/Device",
@@ -11,7 +10,6 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/VersionInfo"
 ], function(
-	Configuration,
 	IconPool,
 	UIComponent,
 	Device,
@@ -89,7 +87,7 @@ sap.ui.define([
 						fontFamily: "BusinessSuiteInAppSymbols"
 					};
 
-					if (Configuration.getTheme().includes("sap_horizon")) {
+					if (undefined/*Configuration*/.getTheme().includes("sap_horizon")) {
 						oBusinessSuiteConfig.fontURI = sap.ui.require.toUrl("sap/ushell/themes/base/fonts/horizon/");
 						oBusinessSuiteConfig.metadataURI = sap.ui.require.toUrl("sap/ushell/themes/base/fonts/") + oBusinessSuiteConfig.fontFamily + ".json";
 					} else {

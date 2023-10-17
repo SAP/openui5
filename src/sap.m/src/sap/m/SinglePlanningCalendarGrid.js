@@ -4,35 +4,34 @@
 
 // Provides control sap.m.SinglePlanningCalendarGrid.
 sap.ui.define([
-		'./SinglePlanningCalendarUtilities',
-		'./library',
-		'sap/ui/unified/DateRange',
-		'sap/ui/core/Control',
-		'sap/ui/core/LocaleData',
-		'sap/ui/core/Locale',
-		'sap/ui/core/InvisibleText',
-		'sap/ui/core/format/DateFormat',
-		'sap/ui/core/format/TimezoneUtil',
-		'sap/ui/core/Core',
-		'sap/ui/core/date/UniversalDate',
-		'sap/ui/core/dnd/DragDropInfo',
-		'sap/ui/unified/library',
-		'sap/ui/unified/calendar/DatesRow',
-		'sap/ui/unified/calendar/CalendarDate',
-		'sap/ui/unified/calendar/CalendarUtils',
-		'sap/ui/unified/DateTypeRange',
-		'sap/ui/events/KeyCodes',
-		'./SinglePlanningCalendarGridRenderer',
-		'sap/ui/core/delegate/ItemNavigation',
-		"sap/ui/thirdparty/jquery",
-		'./PlanningCalendarLegend',
-		'sap/ui/core/InvisibleMessage',
-		'sap/ui/core/library',
-		"sap/ui/core/date/CalendarUtils",
-		"sap/ui/core/Configuration",
-		"sap/ui/core/date/UI5Date"
-	],
-	function (
+	'./SinglePlanningCalendarUtilities',
+	'./library',
+	'sap/ui/unified/DateRange',
+	'sap/ui/core/Control',
+	'sap/ui/core/LocaleData',
+	'sap/ui/core/Locale',
+	'sap/ui/core/InvisibleText',
+	'sap/ui/core/format/DateFormat',
+	'sap/ui/core/format/TimezoneUtil',
+	'sap/ui/core/Core',
+	'sap/ui/core/date/UniversalDate',
+	'sap/ui/core/dnd/DragDropInfo',
+	'sap/ui/unified/library',
+	'sap/ui/unified/calendar/DatesRow',
+	'sap/ui/unified/calendar/CalendarDate',
+	'sap/ui/unified/calendar/CalendarUtils',
+	'sap/ui/unified/DateTypeRange',
+	'sap/ui/events/KeyCodes',
+	'./SinglePlanningCalendarGridRenderer',
+	'sap/ui/core/delegate/ItemNavigation',
+	"sap/ui/thirdparty/jquery",
+	'./PlanningCalendarLegend',
+	'sap/ui/core/InvisibleMessage',
+	'sap/ui/core/library',
+	"sap/ui/core/date/CalendarUtils",
+	"sap/ui/core/date/UI5Date"
+],
+	function(
 		SinglePlanningCalendarUtilities,
 		library,
 		DateRange,
@@ -58,7 +57,6 @@ sap.ui.define([
 		InvisibleMessage,
 		coreLibrary,
 		CalendarDateUtils,
-		Configuration,
 		UI5Date
 	) {
 		"use strict";
@@ -795,7 +793,7 @@ sap.ui.define([
 					oBrowserEvent.dataTransfer.setDragImage(getResizeGhost(), 0, 0);
 
 					var oGrid = oEvent.getParameter("target"),
-						bIsRtl = Configuration.getRTL(),
+						bIsRtl = undefined/*Configuration*/.getRTL(),
 						aIntervalPlaceholders = oGrid.getAggregation("_intervalPlaceholders"),
 						oFirstIntervalRectangle = aIntervalPlaceholders[0].getDomRef().getBoundingClientRect(),
 						iIntervalHeight = oFirstIntervalRectangle.height,
@@ -2113,7 +2111,7 @@ sap.ui.define([
 		 */
 		SinglePlanningCalendarGrid.prototype._getCoreLocaleId = function () {
 			if (!this._sLocale) {
-				this._sLocale = Configuration.getFormatSettings().getFormatLocale().toString();
+				this._sLocale = undefined/*Configuration*/.getFormatSettings().getFormatLocale().toString();
 			}
 
 			return this._sLocale;
@@ -2302,7 +2300,7 @@ sap.ui.define([
 		};
 
 		SinglePlanningCalendarGrid.prototype._createAppointmentsDndPlaceholders = function (oStartDate, iColumns) {
-			var bIsRtl = Configuration.getRTL(),
+			var bIsRtl = undefined/*Configuration*/.getRTL(),
 				i;
 
 			this._dndPlaceholdersMap = {};

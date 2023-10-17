@@ -8,11 +8,10 @@ sap.ui.define([
 	'sap/ui/core/LocaleData',
 	'sap/ui/unified/calendar/CalendarDate',
 	'sap/ui/unified/calendar/CalendarUtils',
-	'sap/ui/core/Configuration',
 	"sap/ui/core/date/CalendarUtils",
 	'sap/ui/core/Locale'
 ],
-function (library, SinglePlanningCalendarView, LocaleData, CalendarDate, CalendarUtils, Configuration, CalendarDateUtils, Locale) {
+function(library, SinglePlanningCalendarView, LocaleData, CalendarDate, CalendarUtils, CalendarDateUtils, Locale) {
 	"use strict";
 
 	/**
@@ -77,9 +76,9 @@ function (library, SinglePlanningCalendarView, LocaleData, CalendarDate, Calenda
 	 */
 	SinglePlanningCalendarWeekView.prototype.calculateStartDate = function (oStartDate) {
 
-		var sLocale = Configuration.getFormatSettings().getFormatLocale().toString();
+		var sLocale = undefined/*Configuration*/.getFormatSettings().getFormatLocale().toString();
 
-		var oLocaleData = LocaleData.getInstance(Configuration.getFormatSettings().getFormatLocale()),
+		var oLocaleData = LocaleData.getInstance(undefined/*Configuration*/.getFormatSettings().getFormatLocale()),
 			iFirstDayOfWeek = this.getFirstDayOfWeek();
 
 			if (iFirstDayOfWeek < 0 || iFirstDayOfWeek > 6) {

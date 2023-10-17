@@ -8,9 +8,8 @@ sap.ui.define([
 	"./AccessibilityRender",
 	"../utils/TableUtils",
 	"../library",
-	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Configuration"
-], function(ExtensionBase, AccRenderExtension, TableUtils, library, jQuery, Configuration) {
+	"sap/ui/thirdparty/jquery"
+], function(ExtensionBase, AccRenderExtension, TableUtils, library, jQuery) {
 	"use strict";
 
 	// shortcuts
@@ -716,8 +715,8 @@ sap.ui.define([
 						mAttributes["aria-labelledby"].push(sTableId + "-ariafixedcolumn");
 					}
 
-					if (!bHasColSpan && oColumn && oColumn.getSorted()) {
-						mAttributes["aria-sort"] = oColumn.getSortOrder() === "Ascending" ? "ascending" : "descending";
+					if (!bHasColSpan && oColumn) {
+						mAttributes["aria-sort"] = oColumn.getSortOrder().toLowerCase();
 					}
 
 					if (!bHasColSpan && oColumn) {
@@ -960,7 +959,7 @@ sap.ui.define([
 		 * @returns {string} The name of this extension.
 		 */
 		_init: function(oTable, sTableType, mSettings) {
-			this._accMode = Configuration.getAccessibility();
+			this._accMode = undefined/*Configuration*/.getAccessibility();
 			this._busyCells = [];
 
 			TableUtils.addDelegate(oTable, this);

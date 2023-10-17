@@ -3,7 +3,6 @@ sap.ui.define([
 	"sap/base/util/deepClone",
 	"sap/m/Label",
 	"sap/m/Input",
-	"sap/ui/core/Configuration",
 	"sap/ui/core/date/UI5Date",
 	"sap/ui/model/ChangeReason",
 	"sap/ui/model/BindingMode",
@@ -14,12 +13,10 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/type/Float",
 	"sap/ui/model/type/Date"
-], function (deepClone, Label, Input, Configuration, UI5Date, ChangeReason, BindingMode, FormatException,
-		ParseException, SimpleType, ValidateException, JSONModel, FloatType, DateType
-) {
+], function(deepClone, Label, Input, UI5Date, ChangeReason, BindingMode, FormatException, ParseException, SimpleType, ValidateException, JSONModel, FloatType, DateType) {
 	"use strict";
 
-	var sDefaultLanguage = Configuration.getLanguage();
+	var sDefaultLanguage = undefined/*Configuration*/.getLanguage();
 
 	var constTestData = {
 		name: "Peter",
@@ -97,12 +94,12 @@ sap.ui.define([
 			this.oModel = new JSONModel();
 			this.oModel.setData(this.currentTestData);
 			sap.ui.getCore().setModel(this.oModel);
-			Configuration.setLanguage("en-US");
+			undefined/*Configuration*/.setLanguage("en-US");
 		},
 		afterEach: function() {
 			sap.ui.getCore().setModel(null);
 			this.oModel.destroy();
-			Configuration.setLanguage(sDefaultLanguage);
+			undefined/*Configuration*/.setLanguage(sDefaultLanguage);
 		},
 		createPropertyBindings: function(path, property, context) {
 			// create bindings
@@ -288,12 +285,12 @@ sap.ui.define([
 			this.oModel = new JSONModel();
 			this.oModel.setData(this.currentTestData);
 			sap.ui.getCore().setModel(this.oModel);
-			Configuration.setLanguage("en-US");
+			undefined/*Configuration*/.setLanguage("en-US");
 		},
 		afterEach: function() {
 			sap.ui.getCore().setModel(null);
 			this.oModel.destroy();
-			Configuration.setLanguage(sDefaultLanguage);
+			undefined/*Configuration*/.setLanguage(sDefaultLanguage);
 		},
 		createPropertyBindings: function(path, property, context) {
 			// create bindings

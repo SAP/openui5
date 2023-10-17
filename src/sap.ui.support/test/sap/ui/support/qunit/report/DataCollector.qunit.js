@@ -5,9 +5,8 @@ sap.ui.define([
 	"sap/ui/support/supportRules/report/DataCollector",
 	"sap/ui/core/Component",
 	"sap/ui/core/UIComponent",
-	"sap/ui/core/Configuration",
 	"sap/ui/core/theming/ThemeManager"
-], function (Core, DataCollector, Component, UIComponent, Configuration, ThemeManager) {
+], function(Core, DataCollector, Component, UIComponent, ThemeManager) {
 		"use strict";
 
 		QUnit.module("Data collector", {
@@ -141,7 +140,7 @@ sap.ui.define([
 			// Arrange
 			var oGetLoadedLibrariesMock = sinon.stub(Core, "getLoadedLibraries").returns(["sap.m"]);
 			var oGetThemePathMock = sinon.stub(ThemeManager, "_getThemePath").returns("http://www.example.com/");
-			var oGetThemeMock = sinon.stub(Configuration, "getTheme").returns("fiori_3");
+			var oGetThemeMock = sinon.stub(undefined/*Configuration*/, "getTheme").returns("fiori_3");
 
 			this.DataCollector.getTechInfoJSON().then(function (oTechData) {
 				// Assert

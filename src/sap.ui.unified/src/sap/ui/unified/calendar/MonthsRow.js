@@ -17,7 +17,6 @@ sap.ui.define([
 	"sap/ui/dom/containsOrEquals",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/unified/DateRange",
-	"sap/ui/core/Configuration",
 	'sap/ui/core/Core',
 	"sap/ui/core/date/UI5Date"
 ], function(
@@ -34,7 +33,6 @@ sap.ui.define([
 	containsOrEquals,
 	jQuery,
 	DateRange,
-	Configuration,
 	Core,
 	UI5Date
 ) {
@@ -203,7 +201,7 @@ sap.ui.define([
 	};
 
 	MonthsRow.prototype._getPrimaryCalendarType = function(){
-		return this.getProperty("primaryCalendarType") || Configuration.getCalendarType();
+		return this.getProperty("primaryCalendarType") || undefined/*Configuration*/.getCalendarType();
 	};
 
 	MonthsRow.prototype.setSecondaryCalendarType = function (sCalendarType){
@@ -433,7 +431,7 @@ sap.ui.define([
 		if (oParent && oParent.getLocale) {
 			return oParent.getLocale();
 		} else if (!this._sLocale) {
-			this._sLocale = Configuration.getFormatSettings().getFormatLocale().toString();
+			this._sLocale = undefined/*Configuration*/.getFormatSettings().getFormatLocale().toString();
 		}
 
 		return this._sLocale;

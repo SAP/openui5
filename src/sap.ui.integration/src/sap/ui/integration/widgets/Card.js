@@ -895,6 +895,9 @@ sap.ui.define([
 				}
 
 				this._logSevereError(e.message);
+
+				// even if manifest processing or extension loading fails
+				// we want to show the maximum from the card which we can - like header, footer and etc.
 				this._applyManifest();
 			}.bind(this));
 	};

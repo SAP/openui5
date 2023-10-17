@@ -16,7 +16,6 @@ sap.ui.define([
 	'sap/base/util/isPlainObject',
 	'sap/base/util/LoaderExtensions',
 	'sap/base/config',
-	'sap/ui/core/Configuration',
 	'sap/ui/core/Supportability',
 	'sap/ui/core/Lib',
 	'./_UrlResolver'
@@ -34,7 +33,6 @@ sap.ui.define([
 		isPlainObject,
 		LoaderExtensions,
 		BaseConfig,
-		Configuration,
 		Supportability,
 		Library,
 		_UrlResolver
@@ -790,7 +788,7 @@ sap.ui.define([
 		// as this is expected to be only done by intension.
 		var oManifestUrl = new URI(sManifestUrl);
 		if (!oManifestUrl.hasQuery("sap-language")) {
-			var sValue = Configuration.getSAPLogonLanguage();
+			var sValue = undefined/*Configuration*/.getSAPLogonLanguage();
 			if (sValue) {
 				oManifestUrl.addQuery("sap-language", sValue);
 			}
@@ -817,7 +815,7 @@ sap.ui.define([
 			dataType: "json",
 			async: typeof bAsync !== "undefined" ? bAsync : false,
 			headers: {
-				"Accept-Language": Configuration.getLanguageTag()
+				"Accept-Language": undefined/*Configuration*/.getLanguageTag()
 			},
 			failOnError: typeof bFailOnError !== "undefined" ? bFailOnError : true
 		});

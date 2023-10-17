@@ -18,15 +18,15 @@ sap.ui.define([
 	const OverflowToolbarPriority = mobileLibrary.OverflowToolbarPriority;
 
 	/**
-	 * Constructor for a new ActionToolbar.<br>
-	 * <b>Note:</b><br>
-	 * The control is experimental and the API / behavior is not finalized. It should only be used internally in other mdc controls (e.g.
-	 * chart/table).<br>
-	 * The content aggregation of the control must not be used.
+	 * Constructor for a new ActionToolbar.
 	 *
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] initial settings for the new control
-	 * @class The column for the metadata driven table, that hold the template to be shown when the rows has data.
+	 * @class
+	 * The <code>ActionToolbar</code> control can be used in the {@link sap.ui.mdc.Chart Chart} and {@link sap.ui.mdc.Table Table}
+	 * controls to display actions. The control handles key user adaptation and positioning of the actions depending on the given layout information.
+	 * <b>Note:</b>
+	 * The content aggregation of the control must not be used.
 	 * @extends sap.m.OverflowToolbar
 	 * @author SAP SE
 	 * @version ${version}

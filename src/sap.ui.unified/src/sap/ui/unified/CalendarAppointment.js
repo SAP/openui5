@@ -12,7 +12,6 @@ sap.ui.define([
 	'./calendar/CalendarUtils',
 	'./library',
 	"sap/base/Log",
-	"sap/ui/core/Configuration",
 	"sap/ui/core/date/UI5Date"
 ],
 	function(
@@ -24,9 +23,8 @@ sap.ui.define([
 		CalendarUtils,
 		library,
 		Log,
-		Configuration,
 		UI5Date
-		) {
+	) {
 	"use strict";
 
 	/**
@@ -154,10 +152,10 @@ sap.ui.define([
 			oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m"),
 			oHourFormat = NumberFormat.getUnitInstance({
 				allowedUnits: ["duration-hour"]
-			}, Configuration.getFormatSettings().getFormatLocale()),
+			}, undefined/*Configuration*/.getFormatSettings().getFormatLocale()),
 			oMinuteFormat = NumberFormat.getUnitInstance({
 				allowedUnits: ["duration-minute"]
-			}, Configuration.getFormatSettings().getFormatLocale()),
+			}, undefined/*Configuration*/.getFormatSettings().getFormatLocale()),
 			iHour, iMinute, sHour, sMinute;
 
 		//have no intersection with the given day

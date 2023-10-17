@@ -15,10 +15,9 @@ sap.ui.define([
 	"sap/m/Text",
 	"sap/ui/Device",
 	"sap/ui/core/Core",
-	"sap/ui/core/Configuration",
 	"sap/ui/core/Control",
 	"sap/ui/core/library"
-], function (
+], function(
 	library,
 	Log,
 	Bar,
@@ -31,7 +30,6 @@ sap.ui.define([
 	Text,
 	Device,
 	Core,
-	Configuration,
 	Control,
 	coreLibrary
 ) {
@@ -179,7 +177,7 @@ sap.ui.define([
 			httpResponse: mSettings.httpResponse
 		});
 
-		if (sDetails && Configuration.getDebug()) {
+		if (sDetails && undefined/*Configuration*/.getDebug()) {
 			oBlockingMessage.setDetails(sDetails);
 		} else if (sDetails) {
 			Log.error(sDetails);

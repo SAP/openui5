@@ -29,7 +29,6 @@ sap.ui.define([
 	"sap/ui/unified/calendar/CustomYearPicker",
 	"sap/ui/core/LabelEnablement",
 	"sap/ui/unified/library",
-	"sap/ui/core/Configuration",
 	"sap/ui/unified/calendar/CalendarUtils",
 	"sap/ui/core/date/UI5Date",
 	"sap/ui/core/date/CalendarWeekNumbering",
@@ -61,7 +60,6 @@ sap.ui.define([
 		CustomYearPicker,
 		LabelEnablement,
 		unifiedLibrary,
-		Configuration,
 		CalendarUtils,
 		UI5Date,
 		CalendarWeekNumbering,
@@ -1506,7 +1504,7 @@ sap.ui.define([
 	};
 
 	DatePicker.prototype._getTimezone = function(bUseDefaultAsFallback) {
-		return Configuration.getTimezone();
+		return undefined/*Configuration*/.getTimezone();
 	};
 
 	/* sets cursor inside the input in order to focus it */

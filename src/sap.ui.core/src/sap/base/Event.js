@@ -50,7 +50,7 @@ sap.ui.define(() => {
 		 * @ui5-restricted sap/base/i18n sap.ui.core
 		 */
 		static getParameters(oEvent) {
-			return oEvent[EVENT_PARAMETERS_SYMBOL];
+			return Object.assign(Object.create(null), oEvent[EVENT_PARAMETERS_SYMBOL]);
 		}
 	}
 

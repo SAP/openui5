@@ -1,23 +1,22 @@
 /* global  QUnit */
 sap.ui.define([
-	"sap/ui/core/Configuration",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator"
-], function(Configuration, Filter, FilterOperator) {
+], function(Filter, FilterOperator) {
 	"use strict";
 
-	var sDefaultLanguage = Configuration.getLanguage();
+	var sDefaultLanguage = undefined/*Configuration*/.getLanguage();
 
 	QUnit.module("sap.ui.model.Filter", {
 		before() {
 			this.__ignoreIsolatedCoverage__ = true;
 		},
 		beforeEach : function () {
-			Configuration.setLanguage("en-US");
+			undefined/*Configuration*/.setLanguage("en-US");
 		},
 
 		afterEach : function () {
-			Configuration.setLanguage(sDefaultLanguage);
+			undefined/*Configuration*/.setLanguage(sDefaultLanguage);
 		}
 	});
 
@@ -91,7 +90,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("defaultComparator: localeCompare with language tag", function (assert) {
-		var oConfigurationMock = this.mock(Configuration);
+		var oConfigurationMock = this.mock(undefined/*Configuration*/);
 
 		oConfigurationMock.expects("getLanguageTag").withExactArgs().returns("foo");
 		this.mock(String.prototype).expects("localeCompare")
@@ -108,12 +107,12 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("defaultComparator: localeCompare for different locales", function (assert) {
-		Configuration.setLanguage("de");
+		undefined/*Configuration*/.setLanguage("de");
 
 		// code under test
 		assert.strictEqual(Filter.defaultComparator("ä", "z"), -1);
 
-		Configuration.setLanguage("sv");
+		undefined/*Configuration*/.setLanguage("sv");
 
 		// code under test
 		assert.strictEqual(Filter.defaultComparator("ä", "z"), 1);

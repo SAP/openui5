@@ -2,12 +2,11 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/ui/core/Configuration",
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/odata/ODataUtils",
 	"sap/ui/model/odata/type/DateTimeWithTimezone"
-], function (Configuration, Controller, JSONModel, ODataUtils, DateTimeWithTimezone) {
+], function(Controller, JSONModel, ODataUtils, DateTimeWithTimezone) {
 	"use strict";
 
 	return Controller.extend("sap.ui.core.sample.odata.types.v2.Time.Time", {
@@ -25,7 +24,7 @@ sap.ui.define([
 				+ " <code>\"Edm.Time\"</code>), for example <code>{ms: 41635000, __edmType:"
 				+ " \"Edm.Time\"}</code> for <code>11:33:55 AM</code>.</p>",
 			Time: null,
-			Timezone: Configuration.getTimezone()
+			Timezone: undefined/*Configuration*/.getTimezone()
 		}),
 
 		formatTime: function (vValue) {

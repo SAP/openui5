@@ -13,8 +13,7 @@ sap.ui.define([
 	"./testdata/TestPreprocessor",
 	"sap/base/Log",
 	"sap/base/strings/hash",
-	"sap/base/util/LoaderExtensions",
-	"sap/ui/core/Configuration"
+	"sap/base/util/LoaderExtensions"
 ], function(
 	BaseObject,
 	Cache,
@@ -29,8 +28,7 @@ sap.ui.define([
 	TestPreprocessor,
 	Log,
 	hash,
-	LoaderExtensions,
-	Configuration
+	LoaderExtensions
 ) {
 	"use strict";
 
@@ -206,7 +204,7 @@ sap.ui.define([
 
 		var getKeyParts = function(aKeys, sManifest, aUsedTerminologies) {
 			var sUsedTerminologies = aUsedTerminologies ? aUsedTerminologies.join("_") + "_" : "";
-			var sLanguageTag = Configuration.getLanguageTag(),
+			var sLanguageTag = undefined/*Configuration*/.getLanguageTag(),
 				sHashCode = hash(sManifest || "");
 			return "_" + sLanguageTag + "_" + sUsedTerminologies + sBuildTimeStamp + "_" + aKeys.join("_") + "(" + sHashCode + ")";
 		};

@@ -2,13 +2,11 @@
 
 sap.ui.define([
 	"sap/f/GridNavigationMatrix",
-	"sap/ui/qunit/utils/createAndAppendDiv",
-	"sap/ui/core/Configuration"
+	"sap/ui/qunit/utils/createAndAppendDiv"
 ],
-function (
+function(
 	GridNavigationMatrix,
-	createAndAppendDiv,
-	Configuration
+	createAndAppendDiv
 ) {
 	"use strict";
 
@@ -51,12 +49,12 @@ function (
 
 		assert.deepEqual(matrix, config.expectedMatrix, "Navigation matrix should be correct");
 
-		Configuration.setRTL(true);
+		undefined/*Configuration*/.setRTL(true);
 		matrix = GridNavigationMatrix.create(config.grid, Array.from(config.grid.children));
 
 		assert.deepEqual(matrix, config.expectedRTLMatrix, "Navigation matrix should be correct in RTL");
 
-		Configuration.setRTL(false);
+		undefined/*Configuration*/.setRTL(false);
 		config.grid.remove();
 	}
 

@@ -135,7 +135,6 @@ sap.ui.define([
 			oColumn.setSortProperty("SomeSortProperty");
 			oColumn.setFilterProperty("SomeFilterProperty");
 			oColumn.setSortOrder("Ascending");
-			oColumn.setSorted(true);
 			oColumn.setFiltered(true);
 
 			_oTable.setRowSettingsTemplate(new RowSettings({

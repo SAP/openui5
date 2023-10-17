@@ -1,18 +1,17 @@
 /*global QUnit*/
 sap.ui.define([
 	"sap/base/Log",
-	"sap/ui/core/Configuration",
 	"sap/ui/model/resource/ResourceModel"
-], function(Log, Configuration, ResourceModel) {
+], function(Log, ResourceModel) {
 	"use strict";
 
-	var sDefaultLanguage = Configuration.getLanguage();
+	var sDefaultLanguage = undefined/*Configuration*/.getLanguage();
 
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.resource.ResourcePropertyBinding", {
 		before : function () {
 			this.__ignoreIsolatedCoverage__ = true;
-			Configuration.setLanguage("en-US");
+			undefined/*Configuration*/.setLanguage("en-US");
 		},
 		beforeEach : function () {
 			this.oLogMock = this.mock(Log);
@@ -28,7 +27,7 @@ sap.ui.define([
 			sap.ui.getCore().setModel(null);
 		},
 		after : function () {
-			Configuration.setLanguage(sDefaultLanguage);
+			undefined/*Configuration*/.setLanguage(sDefaultLanguage);
 		}
 	});
 

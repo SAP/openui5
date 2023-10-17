@@ -8,9 +8,8 @@ sap.ui.define("sap/ui/core/sample/common/Helper", [
 	"sap/ui/test/actions/EnterText",
 	"sap/ui/test/actions/Press",
 	"sap/ui/test/matchers/Interactable",
-	"sap/ui/test/TestUtils",
-	"sap/ui/core/Configuration"
-], function (Log, Opa5, EnterText, Press, Interactable, TestUtils, Configuration) {
+	"sap/ui/test/TestUtils"
+], function(Log, Opa5, EnterText, Press, Interactable, TestUtils) {
 	"use strict";
 	var aCleanupTasks = [],
 		Helper;
@@ -466,20 +465,20 @@ sap.ui.define("sap/ui/core/sample/common/Helper", [
 		 * @param {function} [fnAfterEach] - Runs after each test
 		 */
 		qUnitModule : function (sName, iTestTimeout, fnBeforeEach, fnAfterEach) {
-			var sDefaultLanguage = Configuration.getLanguage(),
+			var sDefaultLanguage = undefined/*Configuration*/.getLanguage(),
 				iTimeoutBefore,
 				bSetTimeout = TestUtils.isRealOData() && iTestTimeout;
 
 			QUnit.module(sName, {
 				before : function () {
-					Configuration.setLanguage("en-US");
+					undefined/*Configuration*/.setLanguage("en-US");
 					if (bSetTimeout) {
 						iTimeoutBefore = QUnit.config.testTimeout;
 						QUnit.config.testTimeout = iTestTimeout * 1000;
 					}
 				},
 				after : function () {
-					Configuration.setLanguage(sDefaultLanguage);
+					undefined/*Configuration*/.setLanguage(sDefaultLanguage);
 					if (bSetTimeout) {
 						QUnit.config.testTimeout = iTimeoutBefore;
 					}

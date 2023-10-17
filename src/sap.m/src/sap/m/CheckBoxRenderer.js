@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['sap/ui/core/library', 'sap/ui/core/ValueStateSupport', 'sap/ui/Device', "sap/ui/core/Configuration"],
-	function(coreLibrary, ValueStateSupport, Device, Configuration) {
+sap.ui.define(['sap/ui/core/library', 'sap/ui/core/ValueStateSupport', 'sap/ui/Device'],
+	function(coreLibrary, ValueStateSupport, Device) {
 	"use strict";
 
 
@@ -158,7 +158,7 @@ sap.ui.define(['sap/ui/core/library', 'sap/ui/core/ValueStateSupport', 'sap/ui/D
 		oRm.close("div");
 		oRm.renderControl(oCbLabel);
 
-		if (sTooltip && Configuration.getAccessibility() && bEditableAndEnabled) {
+		if (sTooltip && undefined/*Configuration*/.getAccessibility() && bEditableAndEnabled) {
 			// for ARIA, the tooltip must be in a separate SPAN and assigned via aria-describedby.
 			// otherwise, JAWS does not read it.
 			oRm.openStart("span", sId + "-Descr");

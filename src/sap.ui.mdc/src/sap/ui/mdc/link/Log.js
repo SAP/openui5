@@ -4,9 +4,8 @@
 
 sap.ui.define([
 	'sap/ui/base/Object',
-	'sap/base/util/isEmptyObject',
-	"sap/ui/core/Configuration"
-], function(BaseObject, isEmptyObject, Configuration) {
+	'sap/base/util/isEmptyObject'
+], function(BaseObject, isEmptyObject) {
 	"use strict";
 
 	/**
@@ -154,7 +153,7 @@ sap.ui.define([
 		};
 		const fnSortByText = function(aArray) {
 			try {
-				const sLanguage = Configuration.getLocale().toString();
+				const sLanguage = undefined/*Configuration*/.getLocale().toString();
 				if (typeof window.Intl !== 'undefined') {
 					const oCollator = window.Intl.Collator(sLanguage, {
 						numeric: true

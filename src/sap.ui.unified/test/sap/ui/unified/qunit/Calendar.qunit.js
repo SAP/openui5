@@ -3,7 +3,6 @@
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/unified/Calendar",
-	"sap/ui/core/Configuration",
 	"sap/ui/unified/DateRange",
 	"sap/ui/unified/DateTypeRange",
 	"sap/ui/unified/CalendarLegend",
@@ -30,7 +29,6 @@ sap.ui.define([
 ], function(
 	qutils,
 	Calendar,
-	Configuration,
 	DateRange,
 	DateTypeRange,
 	CalendarLegend,
@@ -49,7 +47,7 @@ sap.ui.define([
 	jQuery,
 	oCore,
 	UI5Date
-	) {
+) {
 
 	"use strict";
 	// set language to en-US, since we have specific language strings tested
@@ -2916,7 +2914,7 @@ sap.ui.define([
 
 	QUnit.test("Islamic calendar year stays consistent", function(assert) {
 		// prepare
-		var oConfigStub = sinon.stub(Configuration, 'getCalendarType').returns("Islamic"),
+		var oConfigStub = sinon.stub(undefined/*Configuration*/, 'getCalendarType').returns("Islamic"),
 			oInitialDate = UI5Date.getInstance(2023, 7, 10),
 			oFocusedCalendarDate = CalendarDate.fromLocalJSDate(oInitialDate, CalendarType.Islamic),
 			oCal = new Calendar("CalTypeTest", {

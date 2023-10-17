@@ -17,7 +17,6 @@ sap.ui.define([
 	"sap/base/util/deepEqual",
 	"sap/base/Log",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Configuration",
 	'sap/ui/core/date/UI5Date',
 	'sap/ui/unified/calendar/CalendarUtils',
 	// jQuery Plugin "cursorPos"
@@ -36,7 +35,6 @@ sap.ui.define([
 	deepEqual,
 	Log,
 	jQuery,
-	Configuration,
 	UI5Date,
 	CalendarUtils
 ) {
@@ -401,7 +399,7 @@ sap.ui.define([
 
 	DateTimeField.prototype._getLocaleBasedPattern = function (sPlaceholder) {
 		return LocaleData.getInstance(
-			Configuration.getFormatSettings().getFormatLocale()
+			undefined/*Configuration*/.getFormatSettings().getFormatLocale()
 		).getDatePattern(sPlaceholder);
 	};
 
@@ -530,7 +528,7 @@ sap.ui.define([
 		}
 
 		if (!sCalendarType) {
-			sCalendarType = Configuration.getCalendarType();
+			sCalendarType = undefined/*Configuration*/.getCalendarType();
 		}
 
 		if (bDisplayFormat) {

@@ -1,13 +1,16 @@
 /*global QUnit */
+/**
+ * @deprecated As of Version 1.120.
+ */
 sap.ui.define([
-	"sap/ui/core/ListItem", "sap/ui/core/Configuration"
-], function(ListItem, Configuration) {
+	"sap/ui/core/ListItem"
+], function(ListItem) {
 	"use strict";
 
 	// check default settings
 	QUnit.test("Changed Settings", function(assert) {
 		assert.expect(1);
-		assert.equal(Configuration.getNoDuplicateIds(), false, "default setting should be: allow no duplicate IDs");
+		assert.equal(undefined/*Configuration*/.getNoDuplicateIds(), false, "default setting should be: allow no duplicate IDs");
 	});
 
 		// make sure initially there is no error

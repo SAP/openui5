@@ -4,10 +4,10 @@
 
 sap.ui.define([
 	"sap/base/util/uid",
-	"sap/ui/core/Configuration",
-	"sap/ui/fl/util/ManagedObjectModel" // used implicitly by oModifier.createControl() function
-], function (
-	uid, Configuration
+	// used implicitly by oModifier.createControl() function
+	"sap/ui/fl/util/ManagedObjectModel"
+], function(
+	uid
 ) {
 	"use strict";
 
@@ -28,7 +28,7 @@ sap.ui.define([
 		var sPropertyVisible = "";
 		var sOR = "";
 		var aMenuButtonModels = [];
-		var bIsRtl = Configuration.getRTL();
+		var bIsRtl = undefined/*Configuration*/.getRTL();
 		var aMenuButtonName = [];
 
 		return aButtons.reduce(function(oPreviousPromise, oButton, index) {

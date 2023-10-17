@@ -7,9 +7,8 @@ sap.ui.define([
 	"sap/ui/core/ComponentContainer",
 	"sap/ui/core/Element",
 	"sap/ui/core/Placeholder",
-	"sap/ui/core/library",
-	"sap/ui/core/Configuration"
-], function(Log, ManagedObjectMetadata, ComponentContainer, Element, Placeholder, coreLib, Configuration) {
+	"sap/ui/core/library"
+], function(Log, ManagedObjectMetadata, ComponentContainer, Element, Placeholder, coreLib) {
 	"use strict";
 
 	// shortcut for sap.ui.core.ComponentLifecycle

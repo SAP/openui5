@@ -5,14 +5,13 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/format/DateFormat",
 	"sap/m/ToolbarSpacer",
-	"sap/ui/table/library",
+	"sap/ui/core/library",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/date/UI5Date"
-], function(Log, Controller, Sorter, JSONModel, DateFormat, ToolbarSpacer, library, jQuery, UI5Date) {
+], function(Log, Controller, Sorter, JSONModel, DateFormat, ToolbarSpacer, CoreLibrary, jQuery, UI5Date) {
 	"use strict";
 
-	// shortcut for sap.ui.table.SortOrder
-	var SortOrder = library.SortOrder;
+	var SortOrder = CoreLibrary.SortOrder;
 
 	return Controller.extend("sap.ui.table.sample.Sorting.Controller", {
 
@@ -100,7 +99,7 @@ sap.ui.define([
 			var oCurrentColumn = oEvent.getParameter("column");
 			var oDeliveryDateColumn = this.byId("deliverydate");
 			if (oCurrentColumn != oDeliveryDateColumn) {
-				oDeliveryDateColumn.setSorted(false); //No multi-column sorting
+				oDeliveryDateColumn.setSortOrder(SortOrder.None); //No multi-column sorting
 				return;
 			}
 
@@ -110,7 +109,6 @@ sap.ui.define([
 			var oDateFormat = DateFormat.getDateInstance({pattern: "dd/MM/yyyy"});
 
 			this._resetSortingState(); //No multi-column sorting
-			oDeliveryDateColumn.setSorted(true);
 			oDeliveryDateColumn.setSortOrder(sOrder);
 
 			var oSorter = new Sorter(oDeliveryDateColumn.getSortProperty(), sOrder === SortOrder.Descending);
@@ -142,7 +140,7 @@ sap.ui.define([
 			var oTable = this.byId("table");
 			var aColumns = oTable.getColumns();
 			for (var i = 0; i < aColumns.length; i++) {
-				aColumns[i].setSorted(false);
+				aColumns[i].setSortOrder(SortOrder.None);
 			}
 		}
 

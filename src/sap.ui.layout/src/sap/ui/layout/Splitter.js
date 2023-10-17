@@ -13,7 +13,6 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/layout/SplitterLayoutData",
-	"sap/ui/core/Configuration",
 	"sap/ui/core/Core"
 ],
 	function(
@@ -27,7 +26,6 @@ sap.ui.define([
 		Log,
 		jQuery,
 		SplitterLayoutData,
-		Configuration,
 		Core
 	) {
 	"use strict";
@@ -162,7 +160,7 @@ sap.ui.define([
 		// Switch resizing parameters based on orientation - this must be done to initialize the values
 		this._initOrientationProperties();
 
-		this._bRtl = Configuration.getRTL();
+		this._bRtl = undefined/*Configuration*/.getRTL();
 
 		// Create bound listener functions for keyboard event handling
 		this._keyListeners = {

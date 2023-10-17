@@ -13,7 +13,6 @@ sap.ui.define([
 	'./ObjectMarker',
 	'./Text',
 	'./ObjectListItemRenderer',
-	'sap/ui/core/Configuration',
 	"sap/m/ImageHelper"
 ],
 function(
@@ -26,9 +25,8 @@ function(
 	ObjectMarker,
 	Text,
 	ObjectListItemRenderer,
-	Configuration,
 	ImageHelper
-	) {
+) {
 	"use strict";
 
 
@@ -201,7 +199,7 @@ function(
 
 	ObjectListItem.prototype.onAfterRendering = function() {
 		var oObjectNumber = this.getAggregation("_objectNumber"),
-			bPageRTL = Configuration.getRTL(),
+			bPageRTL = undefined/*Configuration*/.getRTL(),
 			sTextAlign = bPageRTL ? TextAlign.Left : TextAlign.Right;
 
 		if (oObjectNumber && oObjectNumber.getNumber()) { // adjust alignment according the design specification

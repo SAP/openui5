@@ -10,7 +10,6 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/core/ComponentContainer",
 	"sap/ui/core/UIComponent",
-	"sap/ui/core/Configuration",
 	"sap/m/Input",
 	"sap/m/Panel",
 	"sap/m/Text",
@@ -23,7 +22,7 @@ sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/events/KeyCodes"
 ],
-function (
+function(
 	$,
 	DynamicPageUtil,
 	DynamicPage,
@@ -34,7 +33,6 @@ function (
 	Core,
 	ComponentContainer,
 	UIComponent,
-	Configuration,
 	Input,
 	Panel,
 	Text,
@@ -931,7 +929,7 @@ function (
 			sOriginalMode = Core.getConfiguration().getAnimationMode();
 
 		//setup
-		Core.getConfiguration().setAnimationMode(Configuration.AnimationMode.none);
+		Core.getConfiguration().setAnimationMode(undefined/*Configuration*/.AnimationMode.none);
 
 		// Act: toggle to 'true'
 		this.oDynamicPage.setShowFooter(true);
@@ -946,7 +944,7 @@ function (
 		assert.ok($footerWrapper.hasClass("sapUiHidden"), "footer is hidden when the Animation mode is 'none'");
 
 		//setup
-		Core.getConfiguration().setAnimationMode(Configuration.AnimationMode.minimal);
+		Core.getConfiguration().setAnimationMode(undefined/*Configuration*/.AnimationMode.minimal);
 
 		// Act: toggle to 'true'
 		this.oDynamicPage.setShowFooter(true);
@@ -970,7 +968,7 @@ function (
 			oContentBoundingClientRect;
 
 		//setup
-		Core.getConfiguration().setAnimationMode(Configuration.AnimationMode.none);
+		Core.getConfiguration().setAnimationMode(undefined/*Configuration*/.AnimationMode.none);
 
 		// Act: toggle to 'true'
 		this.oDynamicPage.setShowFooter(true);

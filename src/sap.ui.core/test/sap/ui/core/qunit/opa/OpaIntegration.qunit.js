@@ -2,8 +2,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/test/Opa",
 	"sap/ui/test/opaQunit",
-	"sap/ui/qunit/qunit-junit",
-	"sap/ui/qunit/qunit-coverage"
+	"sap/ui/qunit/qunit-junit"
 ], function (jQuery, Opa, opaTest) {
 	"use strict";
 

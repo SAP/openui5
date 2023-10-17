@@ -22,13 +22,6 @@ sap.ui.define(function() {
 				title: "sap.ui.core: Duplicate ID checks"
 			},
 
-			DuplicateIds_noError: {
-				title: "sap.ui.core: Duplicate ID checks (with errors disabled)",
-				ui5: {
-					noDuplicateIds: false
-				}
-			},
-
 			ManagedObject: {
 				title: "sap.ui.base.ManagedObject"
 			},

@@ -665,10 +665,8 @@ function(
 		this.$().off("click");
 	};
 
-	/**
+	/*
 	 * Overwrites the onBeforeRendering.
-	 *
-	 * @public
 	 */
 	Input.prototype.onBeforeRendering = function() {
 		var sSelectedKey = this.getSelectedKey(),

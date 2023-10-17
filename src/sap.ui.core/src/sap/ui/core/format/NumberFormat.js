@@ -10,11 +10,9 @@ sap.ui.define([
 	'sap/ui/core/Supportability',
 	'sap/base/Log',
 	'sap/base/assert',
-	'sap/base/util/extend',
-	'sap/ui/core/Configuration'
-
+	'sap/base/util/extend'
 ],
-	function(BaseObject, Locale, LocaleData, Supportability, Log, assert, extend, Configuration) {
+	function(BaseObject, Locale, LocaleData, Supportability, Log, assert, extend) {
 	"use strict";
 
 
@@ -882,7 +880,7 @@ sap.ui.define([
 			oFormatOptions = undefined;
 		}
 		if (!oLocale) {
-			oLocale = Configuration.getFormatSettings().getFormatLocale();
+			oLocale = undefined/*Configuration*/.getFormatSettings().getFormatLocale();
 		}
 		oFormat.oLocale = oLocale;
 		oFormat.oLocaleData = LocaleData.getInstance(oLocale);
@@ -2280,7 +2278,7 @@ sap.ui.define([
 	 * @returns {boolean}
 	 */
 	function showTrailingCurrencyCode(oFormatOptions) {
-		var bShowTrailingCurrencyCodes = Configuration.getFormatSettings().getTrailingCurrencyCode();
+		var bShowTrailingCurrencyCodes = undefined/*Configuration*/.getFormatSettings().getTrailingCurrencyCode();
 		if (oFormatOptions) {
 
 			// overwritten by instance configuration
@@ -2815,7 +2813,7 @@ sap.ui.define([
 				sSymbol = sCurSymbol;
 				sRecognizedCurrency = sCurSymbol;
 			} else if (bCaseInsensitive) {
-				sLanguageTag = Configuration.getLanguageTag();
+				sLanguageTag = undefined/*Configuration*/.getLanguageTag();
 				sCurSymbolToUpperCase = sCurSymbol.toLocaleUpperCase(sLanguageTag);
 				iIndex = sValue.toLocaleUpperCase(sLanguageTag).indexOf(sCurSymbolToUpperCase);
 				if (iIndex >= 0) {
@@ -2883,7 +2881,7 @@ sap.ui.define([
 				// Match 3-letter iso code
 				aIsoMatches = sValue.match(/(^[A-Z]{3}|[A-Z]{3}$)/i);
 				oMatch.code = aIsoMatches
-					&& aIsoMatches[0].toLocaleUpperCase(Configuration.getLanguageTag());
+					&& aIsoMatches[0].toLocaleUpperCase(undefined/*Configuration*/.getLanguageTag());
 				oMatch.recognizedCurrency = aIsoMatches && aIsoMatches[0];
 			}
 		}

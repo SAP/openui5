@@ -2,8 +2,8 @@
  * ${copyright}
  */
 sap.ui.define(
-	["sap/ui/core/IconPool", "sap/ui/Device", "sap/ui/core/Core", "sap/ui/core/Configuration"],
-	function(IconPool, Device, Core, Configuration) {
+	["sap/ui/core/IconPool", "sap/ui/Device", "sap/ui/core/Core"],
+	function(IconPool, Device, Core) {
 		"use strict";
 
 		/* =========================================================== */
@@ -250,7 +250,7 @@ sap.ui.define(
 
 		RatingIndicatorRenderer.getIconURI = function(sState, oControl) {
 			if (
-				Configuration
+				undefined/*Configuration*/
 					.getTheme() === "sap_hcb"
 			) {
 				if (sState === "UNSELECTED" && (oControl.getEnabled() && !oControl.getDisplayOnly())) {

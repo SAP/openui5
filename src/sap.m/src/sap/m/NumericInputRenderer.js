@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(["sap/ui/core/Renderer", "./InputRenderer", "sap/ui/Device", "sap/ui/core/LabelEnablement", "sap/ui/core/Configuration"],
-	function(Renderer, InputRenderer, Device, LabelEnablement, Configuration) {
+sap.ui.define(["sap/ui/core/Renderer", "./InputRenderer", "sap/ui/Device", "sap/ui/core/LabelEnablement"],
+	function(Renderer, InputRenderer, Device, LabelEnablement) {
 	"use strict";
 
 	/**
@@ -27,7 +27,7 @@ sap.ui.define(["sap/ui/core/Renderer", "./InputRenderer", "sap/ui/Device", "sap/
 		// so we have to overwrite it by leaving only the text direction
 		// and the textAlign will be controlled by textAlign property of the StepInput
 
-		if (Configuration.getRTL()) {
+		if (undefined/*Configuration*/.getRTL()) {
 			oRm.attr("dir", "ltr");
 		}
 		// prevent rendering of aria-disabled attribute to avoid having

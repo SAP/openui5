@@ -4,10 +4,9 @@ sap.ui.define([
 	"sap/ui/qunit/qunit-css",
 	"sap/ui/thirdparty/qunit",
 	"sap/ui/qunit/qunit-junit",
-	"sap/ui/qunit/qunit-coverage",
 	"sap/ui/thirdparty/sinon",
 	"sap/ui/thirdparty/sinon-qunit"
-], function(qunitCss, qunit, qunitJunit, qunitCoverage, sinon, sinonQunit) {
+], function(qunitCss, qunit, qunitJunit, sinon, sinonQunit) {
 	'use strict';
 
 	sap.ui.require(

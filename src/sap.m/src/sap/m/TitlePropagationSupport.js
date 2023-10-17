@@ -3,8 +3,8 @@
  */
 
 // Provides helper sap.m.TitlePropagationSupport
-sap.ui.define(["sap/ui/core/Configuration"],
-	function(Configuration) {
+sap.ui.define([],
+	function() {
 		"use strict";
 
 		/**
@@ -80,7 +80,7 @@ sap.ui.define(["sap/ui/core/Configuration"],
 					oItem;
 
 				// Note: in case accessibility mode is off we don't need the propagation
-				if (!Configuration.getAccessibility() || !sTitleID || !aContent
+				if (!undefined/*Configuration*/.getAccessibility() || !sTitleID || !aContent
 					|| aContent.length === 0) {
 						return false;
 				}

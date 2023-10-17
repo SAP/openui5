@@ -15,12 +15,10 @@ sap.ui.define([
 	"sap/base/util/isEmptyObject",
 	"sap/base/util/uid",
 	"sap/ui/base/EventProvider",
-	"sap/ui/core/Configuration",
 	"sap/ui/core/cache/CacheManager",
 	"sap/ui/thirdparty/datajs"
 ],
-	function(Utils, AnnotationParser, assert, Log, each, extend, isEmptyObject, uid, EventProvider, Configuration,
-		CacheManager, OData) {
+	function(Utils, AnnotationParser, assert, Log, each, extend, isEmptyObject, uid, EventProvider, CacheManager, OData) {
 	"use strict";
 	/*eslint max-nested-callbacks: 0*/
 
@@ -1293,7 +1291,7 @@ sap.ui.define([
 				"sap-cancel-on-close": true
 			},
 			oLangHeader = {
-				"Accept-Language": Configuration.getLanguageTag()
+				"Accept-Language": undefined/*Configuration*/.getLanguageTag()
 			};
 
 		extend(oDefaultHeaders, this.mHeaders, oLangHeader);

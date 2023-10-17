@@ -1,9 +1,8 @@
 sap.ui.define([
 	"sap/ui/core/format/NumberFormat",
 	"sap/ui/core/mvc/Controller",
-	"sap/ui/model/json/JSONModel",
-	"sap/ui/core/Configuration"
-], function(NumberFormat, Controller, JSONModel, Configuration) {
+	"sap/ui/model/json/JSONModel"
+], function(NumberFormat, Controller, JSONModel) {
 	"use strict";
 
 	return Controller.extend("DateFormat", {
@@ -65,7 +64,7 @@ sap.ui.define([
 
 		onRTLChange: function(oEvent) {
 			var bState = oEvent.getParameter("state");
-			Configuration.setRTL(bState);
+			undefined/*Configuration*/.setRTL(bState);
 			this.getView().getModel().setProperty("/rtl", bState ? "RTL" : "LTR");
 		},
 

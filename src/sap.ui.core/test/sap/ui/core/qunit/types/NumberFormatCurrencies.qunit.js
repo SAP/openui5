@@ -3,9 +3,8 @@ sap.ui.define([
 	"sap/ui/core/format/NumberFormat",
 	"sap/ui/core/Locale",
 	"sap/ui/core/LocaleData",
-	"sap/base/Log",
-	"sap/ui/core/Configuration"
-], function (NumberFormat, Locale, LocaleData, Log, Configuration) {
+	"sap/base/Log"
+], function(NumberFormat, Locale, LocaleData, Log) {
 	"use strict";
 
 	var getCurrencyInstance = function(options, oLocale) {
@@ -270,7 +269,7 @@ sap.ui.define([
 		assert.strictEqual(oFormat.format(123456.789, "BTC"), "BTC\xa0" + "123,456.79", "123456.79 BTC");
 
 		// set custom currency digits
-		Configuration.getFormatSettings().setCustomCurrencies({
+		undefined/*Configuration*/.getFormatSettings().setCustomCurrencies({
 			"EUR": { "digits": 1 },
 			"JPY": { "digits": 3 },
 			"CZK": { "digits": 3 },
@@ -286,7 +285,7 @@ sap.ui.define([
 		assert.strictEqual(oFormat.format(123456.789, "BTC"), "BTC\xa0" + "123,456.78900", "123456.789 BTC");
 
 		// add custom currencies
-		Configuration.getFormatSettings().addCustomCurrencies({
+		undefined/*Configuration*/.getFormatSettings().addCustomCurrencies({
 			"DEFAULT": { "digits": 6 }
 		});
 		oFormat = getCurrencyInstance({
@@ -296,7 +295,7 @@ sap.ui.define([
 		assert.strictEqual(oFormat.format(123456.789, "MON"), "MON\xa0" + "123,456.789000", "123456.789 MON");
 
 		// reset custom currencies
-		Configuration.getFormatSettings().setCustomCurrencies();
+		undefined/*Configuration*/.getFormatSettings().setCustomCurrencies();
 
 		oFormat = getCurrencyInstance({
 			currencyCode: false
@@ -337,7 +336,7 @@ sap.ui.define([
 	QUnit.module("Custom currencies - Unknown currencies", {
 		afterEach: function() {
 			// reset global configuration
-			Configuration.getFormatSettings().setCustomCurrencies();
+			undefined/*Configuration*/.getFormatSettings().setCustomCurrencies();
 		}
 	});
 
@@ -379,7 +378,7 @@ sap.ui.define([
 	QUnit.module("Custom currencies - simple formatting", {
 		afterEach: function() {
 			// reset global configuration
-			Configuration.getFormatSettings().setCustomCurrencies();
+			undefined/*Configuration*/.getFormatSettings().setCustomCurrencies();
 		}
 	});
 
@@ -555,7 +554,7 @@ sap.ui.define([
 	QUnit.module("Custom currencies - currencyCode: false", {
 		afterEach: function() {
 			// reset global configuration
-			Configuration.getFormatSettings().setCustomCurrencies();
+			undefined/*Configuration*/.getFormatSettings().setCustomCurrencies();
 		}
 	});
 
@@ -575,7 +574,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Format with currency symbol with isoCode lookup", function (assert) {
-		Configuration.getFormatSettings().addCustomCurrencies({
+		undefined/*Configuration*/.getFormatSettings().addCustomCurrencies({
 			"BTC": {
 				"symbol": "Ƀ",
 				"decimals": 5
@@ -613,7 +612,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Format with currencies with symbol from global config", function (assert) {
-		Configuration.getFormatSettings().addCustomCurrencies({
+		undefined/*Configuration*/.getFormatSettings().addCustomCurrencies({
 			"BTC": {
 				symbol: "Ƀ"
 			},
@@ -641,7 +640,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Format with currencies from global config", function (assert) {
-		Configuration.getFormatSettings().addCustomCurrencies({
+		undefined/*Configuration*/.getFormatSettings().addCustomCurrencies({
 			"BTC": {
 				symbol: "Ƀ"
 			},
@@ -671,13 +670,13 @@ sap.ui.define([
 	QUnit.module("Custom currencies - exclusive behaviour", {
 		afterEach: function() {
 			// reset global configuration
-			Configuration.getFormatSettings().setCustomCurrencies();
+			undefined/*Configuration*/.getFormatSettings().setCustomCurrencies();
 		}
 	});
 
 	QUnit.test("Custom Currencies instance overwrites global configuration", function (assert) {
 		// global configuration
-		Configuration.getFormatSettings().addCustomCurrencies({
+		undefined/*Configuration*/.getFormatSettings().addCustomCurrencies({
 			"DOLLAR": {
 				"symbol": "$",
 				"digits": 5
@@ -714,7 +713,7 @@ sap.ui.define([
 	QUnit.module("Custom currencies - complex cases", {
 		afterEach: function() {
 			// reset global configuration
-			Configuration.getFormatSettings().setCustomCurrencies();
+			undefined/*Configuration*/.getFormatSettings().setCustomCurrencies();
 		}
 	});
 
@@ -1107,7 +1106,7 @@ sap.ui.define([
 	QUnit.module("Custom currencies - Ambiguous currency information", {
 		afterEach: function() {
 			// reset global configuration
-			Configuration.getFormatSettings().setCustomCurrencies();
+			undefined/*Configuration*/.getFormatSettings().setCustomCurrencies();
 		}
 	});
 
@@ -1153,7 +1152,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Duplicated symbol defined via custom currency", function(assert) {
-		Configuration.getFormatSettings().setCustomCurrencies({
+		undefined/*Configuration*/.getFormatSettings().setCustomCurrencies({
 			"EURO": {
 				"digits": 5,
 				"isoCode": "EUR"
@@ -1245,7 +1244,7 @@ sap.ui.define([
 	QUnit.module("Custom currencies - parseAsString: true", {
 		afterEach: function() {
 			// reset global configuration
-			Configuration.getFormatSettings().setCustomCurrencies();
+			undefined/*Configuration*/.getFormatSettings().setCustomCurrencies();
 		}
 	});
 
@@ -1354,7 +1353,7 @@ sap.ui.define([
 	QUnit.module("Standard Currency Formatting", {
 		afterEach: function() {
 			// reset global configuration
-			Configuration.getFormatSettings().setCustomCurrencies();
+			undefined/*Configuration*/.getFormatSettings().setCustomCurrencies();
 		}
 	});
 
@@ -2043,7 +2042,7 @@ sap.ui.define([
 	//*****************************************************************************************************************
 	QUnit.module("Support case insensitive input of currency codes", {
 		beforeEach : function () {
-			this.defaultLanguage = Configuration.getLanguage();
+			this.defaultLanguage = undefined/*Configuration*/.getLanguage();
 			this.oFormat = getCurrencyInstance({
 				customCurrencies : {
 					BTC : {digits : 2},
@@ -2062,10 +2061,10 @@ sap.ui.define([
 					BJC : {digits : 2, symbol : "$"}
 				}
 			});
-			Configuration.setLanguage("de-DE");
+			undefined/*Configuration*/.setLanguage("de-DE");
 		},
 		afterEach : function () {
-			Configuration.setLanguage(this.defaultLanguage);
+			undefined/*Configuration*/.setLanguage(this.defaultLanguage);
 		}
 	});
 

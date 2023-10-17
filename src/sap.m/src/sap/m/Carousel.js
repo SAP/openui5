@@ -8,7 +8,6 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/core/Control",
 	"sap/ui/core/Element",
-	"sap/ui/core/Configuration",
 	"sap/ui/Device",
 	"sap/ui/core/ResizeHandler",
 	"sap/ui/core/library",
@@ -22,13 +21,13 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/IconPool",
 	"./CarouselLayout",
-	"sap/ui/dom/jquery/Selectors" // provides jQuery custom selector ":sapTabbable"
-], function (
+	// provides jQuery custom selector ":sapTabbable"
+	"sap/ui/dom/jquery/Selectors"
+], function(
 	library,
 	Core,
 	Control,
 	Element,
-	Configuration,
 	Device,
 	ResizeHandler,
 	coreLibrary,

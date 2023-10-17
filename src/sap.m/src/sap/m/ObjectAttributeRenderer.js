@@ -1,8 +1,8 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(["sap/ui/core/library", "sap/ui/core/Configuration"],
-	function(coreLibrary, Configuration) {
+sap.ui.define(["sap/ui/core/library"],
+	function(coreLibrary) {
 	"use strict";
 
 
@@ -110,7 +110,7 @@ sap.ui.define(["sap/ui/core/library", "sap/ui/core/Configuration"],
 		oRm.openStart("span", oOA.getId() + "-colon");
 		oRm.class("sapMObjectAttributeColon");
 		oRm.openEnd();
-		if (Configuration.getLocale().getLanguage().toLowerCase() === "fr") {
+		if (undefined/*Configuration*/.getLocale().getLanguage().toLowerCase() === "fr") {
 			sColon = " " + sColon;
 		}
 		oRm.text(sColon);

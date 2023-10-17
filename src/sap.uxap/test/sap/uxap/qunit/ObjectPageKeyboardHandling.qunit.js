@@ -2,7 +2,6 @@
 sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Core",
-	"sap/ui/core/Configuration",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/Device",
@@ -11,8 +10,9 @@ sap.ui.define([
 	"sap/uxap/AnchorBar",
 	"sap/uxap/ObjectPageSubSection",
 	"sap/ui/core/Core",
-	"sap/ui/dom/jquery/Focusable" /* jQuery Plugin "firstFocusableDomRef" */],
-function(jQuery, Core, Configuration, KeyCodes, QUtils, Device, F6Navigation, XMLView, AnchorBar, ObjectPageSubSection, oCore) {
+	"sap/ui/dom/jquery/Focusable" /* jQuery Plugin "firstFocusableDomRef" */
+],
+function(jQuery, Core, KeyCodes, QUtils, Device, F6Navigation, XMLView, AnchorBar, ObjectPageSubSection, oCore) {
 	"use strict";
 
 	var sAnchorSelector = ".sapUxAPAnchorBarScrollContainer .sapUxAPAnchorBarButton";
@@ -700,7 +700,7 @@ function(jQuery, Core, Configuration, KeyCodes, QUtils, Device, F6Navigation, XM
 		assert.expect(3);
 
 		// Setup
-		Core.getConfiguration().setAnimationMode(Configuration.AnimationMode.none);
+		Core.getConfiguration().setAnimationMode(undefined/*Configuration*/.AnimationMode.none);
 		this.oScrollSpy.resetHistory();
 		this.oFocusSpy.resetHistory();
 
@@ -746,7 +746,7 @@ function(jQuery, Core, Configuration, KeyCodes, QUtils, Device, F6Navigation, XM
 		assert.expect(1);
 
 		// Setup
-		Core.getConfiguration().setAnimationMode(Configuration.AnimationMode.none);
+		Core.getConfiguration().setAnimationMode(undefined/*Configuration*/.AnimationMode.none);
 
 
 		// Check

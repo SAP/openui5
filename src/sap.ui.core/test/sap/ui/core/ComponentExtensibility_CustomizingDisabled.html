@@ -25,6 +25,9 @@
 		});
 		oCompCont.placeAt("content");
 
+		/**
+		 * @deprecated As of Version 1.120
+		 */
 		sap.ui.require(["sap/ui/core/Configuration"], function (Configuration) {
 			if (Configuration.getDisableCustomizing()) {
 				alert("Customizing is now disabled.");

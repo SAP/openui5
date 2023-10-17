@@ -2,9 +2,8 @@
 
 sap.ui.define([
 	"sap/m/BusyIndicator",
-	"sap/ui/core/Core",
-	"sap/ui/core/Configuration"
-], function (BusyIndicator, Core, Configuration) {
+	"sap/ui/core/Core"
+], function(BusyIndicator, Core) {
 	"use strict";
 
 	QUnit.module("sap.m.BusyIndicator API", {
@@ -275,7 +274,7 @@ sap.ui.define([
 		};
 
 		// act
-		Core.getConfiguration().setAnimationMode(Configuration.AnimationMode.none);
+		Core.getConfiguration().setAnimationMode(undefined/*Configuration*/.AnimationMode.none);
 		Core.applyChanges();
 
 		setTimeout(function () {

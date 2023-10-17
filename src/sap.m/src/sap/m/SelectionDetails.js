@@ -10,8 +10,7 @@ sap.ui.define([
 	'sap/ui/Device',
 	'sap/ui/core/library',
 	'./SelectionDetailsRenderer',
-	'sap/base/util/uid',
-	"sap/ui/core/Configuration"
+	'sap/base/util/uid'
 ],
 function(
 	library,
@@ -21,8 +20,7 @@ function(
 	Device,
 	CoreLibrary,
 	SelectionDetailsRenderer,
-	uid,
-	Configuration
+	uid
 ) {
 	"use strict";
 
@@ -367,7 +365,7 @@ function(
 
 			height = Math.min(SelectionDetails._POPOVER_MAX_HEIGHT, height);
 			oPopover._oControl._deregisterContentResizeHandler();
-			var bAnimationMode = Configuration.getAnimationMode() !== Configuration.AnimationMode.none;
+			var bAnimationMode = undefined/*Configuration*/.getAnimationMode() !== undefined/*Configuration*/.AnimationMode.none;
 			$PopoverContent.animate({
 				"height": Math.min(height, iMaxHeight)
 			}, bAnimationMode ? 100 : 0, function() {

@@ -7,7 +7,6 @@ sap.ui.define([
 	"sap/ui/core/date/UniversalDate",
 	"sap/ui/core/date/UI5Date",
 	"sap/ui/core/library",
-	"sap/ui/core/Configuration",
 	"sap/ui/core/Supportability",
 	"sap/ui/core/date/CalendarWeekNumbering",
 	"sap/ui/test/TestUtils",
@@ -17,8 +16,7 @@ sap.ui.define([
 	"sap/ui/core/date/Islamic",
 	"sap/ui/core/date/Japanese",
 	"sap/ui/core/date/Persian"
-], function (Log, extend, DateFormat, Locale, LocaleData, UniversalDate, UI5Date, library, Configuration,
-	Supportability, CalendarWeekNumbering, TestUtils) {
+], function(Log, extend, DateFormat, Locale, LocaleData, UniversalDate, UI5Date, library, Supportability, CalendarWeekNumbering, TestUtils) {
 	"use strict";
 	/* eslint-disable max-nested-callbacks */
 	/*global QUnit, sinon */
@@ -30,8 +28,8 @@ sap.ui.define([
 	const oDefaultDate = DateFormat.getInstance();
 	const oDefaultDateTime = DateFormat.getDateTimeInstance();
 	const oDefaultTime = DateFormat.getTimeInstance();
-	const sDefaultTimezone = Configuration.getTimezone();
-	const sDefaultLanguage = Configuration.getLanguage();
+	const sDefaultTimezone = undefined/*Configuration*/.getTimezone();
+	const sDefaultLanguage = undefined/*Configuration*/.getLanguage();
 
 	//*********************************************************************************************
 	QUnit.module("DateFormat instantiation and parseCldrDatePattern");
@@ -201,14 +199,14 @@ sap.ui.define([
 
 		QUnit.module("DateFormat format", {
 			beforeEach: function (assert) {
-				Configuration.setTimezone("Europe/Berlin");
+				undefined/*Configuration*/.setTimezone("Europe/Berlin");
 				var Log = sap.ui.require("sap/base/Log");
 				assert.ok(Log, "Log module should be available");
 				this.oErrorSpy = sinon.spy(Log, "error");
 			},
 			afterEach: function () {
 				this.oErrorSpy.restore();
-				Configuration.setTimezone(sDefaultTimezone);
+				undefined/*Configuration*/.setTimezone(sDefaultTimezone);
 			}
 		});
 
@@ -334,10 +332,10 @@ sap.ui.define([
 
 		QUnit.module("format relative with timezone America/Los_Angeles", {
 			beforeEach: function () {
-				Configuration.setTimezone("America/Los_Angeles");
+				undefined/*Configuration*/.setTimezone("America/Los_Angeles");
 			},
 			afterEach: function () {
-				Configuration.setTimezone(sDefaultTimezone);
+				undefined/*Configuration*/.setTimezone(sDefaultTimezone);
 			}
 		});
 
@@ -390,10 +388,10 @@ sap.ui.define([
 
 		QUnit.module("parse using pattern in UTC", {
 			beforeEach: function () {
-				Configuration.setTimezone("Etc/UTC");
+				undefined/*Configuration*/.setTimezone("Etc/UTC");
 			},
 			afterEach: function () {
-				Configuration.setTimezone(sDefaultTimezone);
+				undefined/*Configuration*/.setTimezone(sDefaultTimezone);
 			}
 		});
 
@@ -609,10 +607,10 @@ sap.ui.define([
 
 		QUnit.module("format Asia/Tokyo", {
 			beforeEach: function () {
-				Configuration.setTimezone("Asia/Tokyo");
+				undefined/*Configuration*/.setTimezone("Asia/Tokyo");
 			},
 			afterEach: function () {
-				Configuration.setTimezone(sDefaultTimezone);
+				undefined/*Configuration*/.setTimezone(sDefaultTimezone);
 			}
 		});
 
@@ -630,10 +628,10 @@ sap.ui.define([
 
 		QUnit.module("format with timezone Etc/UTC", {
 			beforeEach: function () {
-				Configuration.setTimezone("Etc/UTC");
+				undefined/*Configuration*/.setTimezone("Etc/UTC");
 			},
 			afterEach: function () {
-				Configuration.setTimezone(sDefaultTimezone);
+				undefined/*Configuration*/.setTimezone(sDefaultTimezone);
 			}
 		});
 
@@ -687,10 +685,10 @@ sap.ui.define([
 
 		QUnit.module("format with timezone Europe/Berlin", {
 			beforeEach: function () {
-				Configuration.setTimezone("Europe/Berlin");
+				undefined/*Configuration*/.setTimezone("Europe/Berlin");
 			},
 			afterEach: function () {
-				Configuration.setTimezone(sDefaultTimezone);
+				undefined/*Configuration*/.setTimezone(sDefaultTimezone);
 			}
 		});
 
@@ -740,10 +738,10 @@ sap.ui.define([
 
 		QUnit.module("format with timezone Asia/Calcutta", {
 			beforeEach: function () {
-				Configuration.setTimezone("Asia/Calcutta");
+				undefined/*Configuration*/.setTimezone("Asia/Calcutta");
 			},
 			afterEach: function () {
-				Configuration.setTimezone(sDefaultTimezone);
+				undefined/*Configuration*/.setTimezone(sDefaultTimezone);
 			}
 		});
 
@@ -909,11 +907,11 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.module("relative to", {
 		beforeEach: function () {
-			Configuration.setTimezone("Europe/Berlin");
+			undefined/*Configuration*/.setTimezone("Europe/Berlin");
 		},
 		afterEach: function () {
 			this.clock.restore();
-			Configuration.setTimezone(sDefaultTimezone);
+			undefined/*Configuration*/.setTimezone(sDefaultTimezone);
 		}
 	});
 
@@ -970,7 +968,7 @@ sap.ui.define([
 		},
 		afterEach: function () {
 			this.clock.restore();
-			Configuration.setTimezone(sDefaultTimezone);
+			undefined/*Configuration*/.setTimezone(sDefaultTimezone);
 		}
 	});
 
@@ -1004,7 +1002,7 @@ sap.ui.define([
 				// DateTimeFormat instances format "now" as "now"
 				oRelativeDateTimeFormat = DateFormat.getDateTimeInstance({relative: true}, new Locale("en"));
 
-			Configuration.setTimezone(oFixture.timezone);
+			undefined/*Configuration*/.setTimezone(oFixture.timezone);
 
 			// code under test
 			oDate = oRelativeDateFormat.parse("now");
@@ -1039,13 +1037,13 @@ sap.ui.define([
 
 		QUnit.module("German summer time 28.03.2021 (2h->3h) (offset: +2 -> +1)", {
 			beforeEach: function () {
-				Configuration.setTimezone("Europe/Berlin");
+				undefined/*Configuration*/.setTimezone("Europe/Berlin");
 				this.clock = sinon.useFakeTimers(UI5Date.getInstance("2021-03-27T23:30:00Z").getTime());
 				// 28.03 - 0:30 (GMT+1)
 			},
 			afterEach: function () {
 				this.clock.restore();
-				Configuration.setTimezone(sDefaultTimezone);
+				undefined/*Configuration*/.setTimezone(sDefaultTimezone);
 			}
 		});
 
@@ -1064,13 +1062,13 @@ sap.ui.define([
 
 		QUnit.module("German winter time 31.10.2021 (3h->2h) (offset: +1 -> +2)", {
 			beforeEach: function () {
-				Configuration.setTimezone("Europe/Berlin");
+				undefined/*Configuration*/.setTimezone("Europe/Berlin");
 				this.clock = sinon.useFakeTimers(UI5Date.getInstance("2021-10-30T22:30:00Z").getTime());
 				// 31.10 - 0:30 (GMT+2)
 			},
 			afterEach: function () {
 				this.clock.restore();
-				Configuration.setTimezone(sDefaultTimezone);
+				undefined/*Configuration*/.setTimezone(sDefaultTimezone);
 			}
 		});
 
@@ -1415,11 +1413,11 @@ sap.ui.define([
 				// 2 digit years require the current year to be fixed
 				// e.g. for pattern: "yyyy-MM-dd" with input "04-03-12" the result depends on the current year
 				this.clock = sinon.useFakeTimers(Date.UTC(2018, 7, 2, 11, 37));
-				Configuration.setTimezone("Europe/Berlin");
+				undefined/*Configuration*/.setTimezone("Europe/Berlin");
 			},
 			afterEach: function () {
 				this.clock.restore();
-				Configuration.setTimezone(sDefaultTimezone);
+				undefined/*Configuration*/.setTimezone(sDefaultTimezone);
 			}
 		});
 
@@ -1478,10 +1476,10 @@ sap.ui.define([
 				// 2 digit years require the current year to be fixed
 				// e.g. for pattern: "yyyy-MM-dd" with input "04-03-12" the result depends on the current year
 				this.clock = sinon.useFakeTimers(Date.UTC(2018, 7, 2, 11, 37));
-				Configuration.setTimezone("Europe/Berlin");
+				undefined/*Configuration*/.setTimezone("Europe/Berlin");
 			},
 			afterEach: function () {
-				Configuration.setTimezone(sDefaultTimezone);
+				undefined/*Configuration*/.setTimezone(sDefaultTimezone);
 				this.clock.restore();
 			}
 		});
@@ -2066,7 +2064,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("format and parse weekYear/weekInYear pattern with 2 digits", function (assert) {
-			Configuration.setLanguage("de_DE");
+			undefined/*Configuration*/.setLanguage("de_DE");
 			var oDateFormat = DateFormat.getDateInstance({
 				pattern: "YY'-'ww"
 			});
@@ -2079,11 +2077,11 @@ sap.ui.define([
 			assert.strictEqual(oDateFormat.format(UI5Date.getInstance(2015, 0, 5)), "15-02", "Date can be correctly formatted to '15-02'");
 			assert.strictEqual(oDateFormat.parse("15-02").valueOf(), UI5Date.getInstance(2015, 0, 5).valueOf(), "'15-02' can be correctly parsed");
 
-			Configuration.setLanguage("en_US");
+			undefined/*Configuration*/.setLanguage("en_US");
 		});
 
 		QUnit.test("format and parse weekYear/weekInYear pattern with language en-AU", function (assert) {
-			Configuration.setLanguage("en_AU");
+			undefined/*Configuration*/.setLanguage("en_AU");
 			var oDateFormat = DateFormat.getDateInstance({
 				pattern: "YYYY'-'ww'-'EE"
 			});
@@ -2098,7 +2096,7 @@ sap.ui.define([
 			assert.strictEqual(oDateFormat.format(oMondayDate), "2022-08-Mon", "Date can be correctly formatted to '2022-08-Mon'");
 			assert.deepEqual(oDateFormat.parse("2022-08-Mon"), oMondayDate, "'2022-08-Mon' can be correctly parsed");
 
-			Configuration.setLanguage("en_US");
+			undefined/*Configuration*/.setLanguage("en_US");
 		});
 
 		QUnit.test("format and parse weekYear/weekInYear pattern", function (assert) {
@@ -2110,7 +2108,7 @@ sap.ui.define([
 			// and the last week of the year always ends with December 31st.
 			aLocales = ["en_US"];
 			aLocales.forEach(function(sLocale) {
-				Configuration.setLanguage(sLocale);
+				undefined/*Configuration*/.setLanguage(sLocale);
 				oDateFormat = DateFormat.getDateInstance({
 					pattern: "Y-w"
 				});
@@ -2133,7 +2131,7 @@ sap.ui.define([
 			// and the first Saturday of a year is in calendar week 1 (minDays=1)
 			aLocales = ["en"];
 			aLocales.forEach(function(sLocale) {
-				Configuration.setLanguage(sLocale);
+				undefined/*Configuration*/.setLanguage(sLocale);
 				oDateFormat = DateFormat.getDateInstance({
 					pattern: "Y-w"
 				});
@@ -2157,7 +2155,7 @@ sap.ui.define([
 			// The week starts with Monday
 			aLocales = ["de_DE", "en_GB"];
 			aLocales.forEach(function(sLocale) {
-				Configuration.setLanguage(sLocale);
+				undefined/*Configuration*/.setLanguage(sLocale);
 				oDateFormat = DateFormat.getDateInstance({
 					pattern: "Y-w"
 				});
@@ -2175,7 +2173,7 @@ sap.ui.define([
 				assert.deepEqual(oDateFormat.parse("2016-52"), UI5Date.getInstance(2016, 11, 26), "Date can be correctly parsed to 29th of December 2016");
 			});
 
-			Configuration.setLanguage("en_US");
+			undefined/*Configuration*/.setLanguage("en_US");
 		});
 
 		QUnit.test("format and parse weekYear/weekInYear with configuration (ISO8601)", function (assert) {
@@ -2215,14 +2213,14 @@ sap.ui.define([
 			assert.strictEqual(oDateFormat.format(UI5Date.getInstance(2022, 0, 1)), "2022-1", "For 1st of January 2022 is week 1/2022");
 			assert.strictEqual(oDateFormat.format(UI5Date.getInstance(2021, 11, 31)), "2022-1", "For 1st of January 2022 is week 1/2022");
 
-			Configuration.setLanguage("en_US");
+			undefined/*Configuration*/.setLanguage("en_US");
 		});
 
 		QUnit.test("format and parse weekInYear and dayNumberOfWeek", function (assert) {
 			var oDate = UI5Date.getInstance(2016, 10, 13); // 13th, November, 2016, Sunday
 			var sPattern = "Y/ww/u";
 
-			Configuration.setLanguage("en_US");
+			undefined/*Configuration*/.setLanguage("en_US");
 			var oDateFormat = DateFormat.getDateInstance({
 				pattern: sPattern
 			});
@@ -2231,7 +2229,7 @@ sap.ui.define([
 			assert.strictEqual(oDateFormat.format(oDate), sFormatted, "13th, November 2016 Sunday is the first day of week 46 in en-US");
 			assert.deepEqual(oDateFormat.parse(sFormatted), oDate, "The formatted string can be correctly parsed to the same date");
 
-			Configuration.setLanguage("de_DE");
+			undefined/*Configuration*/.setLanguage("de_DE");
 			oDateFormat = DateFormat.getDateInstance({
 				pattern: sPattern
 			});
@@ -2240,14 +2238,14 @@ sap.ui.define([
 			assert.strictEqual(oDateFormat.format(oDate), sFormatted, "13th, November 2016 Sunday is the 7th day of week 45 in de-DE");
 			assert.deepEqual(oDateFormat.parse(sFormatted), oDate, "The formatted string can be correctly parsed to the same date");
 
-			Configuration.setLanguage("en_US");
+			undefined/*Configuration*/.setLanguage("en_US");
 		});
 
 		QUnit.test("format and parse dayName", function (assert) {
 			var oDate = UI5Date.getInstance(2018, 2, 23); // 23th, March, 2018, Friday
 			var sPattern = "yyyy-MM-dd EEEE";
 
-			Configuration.setLanguage("en_US");
+			undefined/*Configuration*/.setLanguage("en_US");
 			var oDateFormat = DateFormat.getDateInstance({
 				pattern: sPattern
 			});
@@ -2256,7 +2254,7 @@ sap.ui.define([
 			assert.strictEqual(oDateFormat.format(oDate), sFormatted, "23th, March, 2018, Friday in en-US");
 			assert.strictEqual(oDateFormat.parse(sFormatted).getTime(), oDate.getTime(), "The formatted string can be correctly parsed to the same date");
 
-			Configuration.setLanguage("de_DE");
+			undefined/*Configuration*/.setLanguage("de_DE");
 			oDateFormat = DateFormat.getDateInstance({
 				pattern: sPattern
 			});
@@ -2265,7 +2263,7 @@ sap.ui.define([
 			assert.strictEqual(oDateFormat.format(oDate), sFormatted, "2018-03-23 Freitag in de-DE");
 			assert.strictEqual(oDateFormat.parse(sFormatted).getTime(), oDate.getTime(), "The formatted string can be correctly parsed to the same date");
 
-			Configuration.setLanguage("en_US");
+			undefined/*Configuration*/.setLanguage("en_US");
 		});
 
 		QUnit.test("Parse precedence: day (d) over dayName (E)", function (assert) {
@@ -2332,7 +2330,7 @@ sap.ui.define([
 			assert.strictEqual(oDateFormat.format(oDate), sFormatted, "2018-12 Freitag in de-DE");
 			assert.strictEqual(oDateFormat.parse(sFormatted).getTime(), oDate.getTime(), "The formatted string can be correctly parsed");
 
-			Configuration.setLanguage("en_US");
+			undefined/*Configuration*/.setLanguage("en_US");
 		});
 
 
@@ -2356,7 +2354,7 @@ sap.ui.define([
 			assert.strictEqual(oDateFormat.format(oDate), sFormatted, "2016 Week 52 Sonntag in de-DE");
 			assert.deepEqual(oDateFormat.parse(sFormatted), oDate, "The formatted string can be correctly parsed");
 
-			Configuration.setLanguage("en_US");
+			undefined/*Configuration*/.setLanguage("en_US");
 		});
 
 	//*********************************************************************************************
@@ -2547,10 +2545,10 @@ sap.ui.define([
 
 		QUnit.module("Calendar Week precedence", {
 			beforeEach: function () {
-				Configuration.setLanguage("de_DE"); // ISO 8601
+				undefined/*Configuration*/.setLanguage("de_DE"); // ISO 8601
 			},
 			afterEach: function () {
-				Configuration.setLanguage(sDefaultLanguage);
+				undefined/*Configuration*/.setLanguage(sDefaultLanguage);
 			}
 		});
 
@@ -2596,7 +2594,7 @@ sap.ui.define([
 			assert.strictEqual(oDateFormat.format(oDate), "2021-1");
 
 			// configuration > locale
-			Configuration.setCalendarWeekNumbering(CalendarWeekNumbering.WesternTraditional);
+			undefined/*Configuration*/.setCalendarWeekNumbering(CalendarWeekNumbering.WesternTraditional);
 			oDateFormat = DateFormat.getDateInstance({
 				pattern: "Y-w"
 			});
@@ -2620,7 +2618,7 @@ sap.ui.define([
 			assert.strictEqual(oDateFormat.format(oDate), "2020-53");
 
 			// reset central calendar week config
-			Configuration.setCalendarWeekNumbering(CalendarWeekNumbering.Default);
+			undefined/*Configuration*/.setCalendarWeekNumbering(CalendarWeekNumbering.Default);
 		});
 
 		QUnit.test("calendar week configuration precedence 2021", function (assert) {
@@ -3005,7 +3003,7 @@ sap.ui.define([
 				timezone: "America/New_York", // -5
 				date: Date.UTC(1999, 2, 19, 4, 12, 11)
 			}].forEach(function(oFixture) {
-				Configuration.setTimezone(oFixture.timezone);
+				undefined/*Configuration*/.setTimezone(oFixture.timezone);
 				var oDate = UI5Date.getInstance(oFixture.date);
 
 				assert.strictEqual(oDateFormat.format(oDate), "Dhuʻl-Q. 30, 1419 AH",
@@ -3016,7 +3014,7 @@ sap.ui.define([
 
 				assert.strictEqual(oDateFormat.format(oDate), "Dhuʻl-H. 1, 1419 AH",
 					"succeeding month in " + oFixture.timezone);
-				Configuration.setTimezone(sDefaultTimezone);
+				undefined/*Configuration*/.setTimezone(sDefaultTimezone);
 			});
 		});
 
@@ -3047,10 +3045,10 @@ sap.ui.define([
 
 		QUnit.module("Islamic Date in other locales", {
 			beforeEach: function () {
-				Configuration.setCalendarType(CalendarType.Islamic);
+				undefined/*Configuration*/.setCalendarType(CalendarType.Islamic);
 			},
 			afterEach: function () {
-				Configuration.setCalendarType(null);
+				undefined/*Configuration*/.setCalendarType(null);
 			}
 		});
 
@@ -3107,7 +3105,7 @@ sap.ui.define([
 				timezone: "America/New_York",
 				date: Date.UTC(2019, 4, 1, 2, 12, 11)
 			}].forEach(function(oFixture) {
-				Configuration.setTimezone(oFixture.timezone);
+				undefined/*Configuration*/.setTimezone(oFixture.timezone);
 
 				// 2019-5-1 era change
 				var oDate1 = UI5Date.getInstance(oFixture.date);
@@ -3118,7 +3116,7 @@ sap.ui.define([
 				oDate1.setUTCHours(oDate1.getUTCHours() + 2);
 
 				assert.strictEqual(oDateFormat.format(oDate1), "令和元年5月1日", "new era in " + oFixture.timezone);
-				Configuration.setTimezone(sDefaultTimezone);
+				undefined/*Configuration*/.setTimezone(sDefaultTimezone);
 			});
 		});
 
@@ -3328,7 +3326,7 @@ sap.ui.define([
 				timezone: "America/New_York",
 				date: Date.UTC(1940, 3, 1, 4, 12, 11)
 			}].forEach(function(oFixture) {
-				Configuration.setTimezone(oFixture.timezone);
+				undefined/*Configuration*/.setTimezone(oFixture.timezone);
 				var oDate1 = UI5Date.getInstance(oFixture.date);
 
 				// Before 1941 new year started on 1st of April
@@ -3340,7 +3338,7 @@ sap.ui.define([
 
 				assert.strictEqual(oDateFormat.format(oDate1), "1 เม.ย. 2483",
 					"succeeding year in " + oFixture.timezone);
-				Configuration.setTimezone(sDefaultTimezone);
+				undefined/*Configuration*/.setTimezone(sDefaultTimezone);
 			});
 		});
 
@@ -4096,10 +4094,10 @@ sap.ui.define([
 
 		QUnit.module("Timezone pattern symbol VV", {
 			beforeEach: function () {
-				Configuration.setTimezone("Europe/Berlin");
+				undefined/*Configuration*/.setTimezone("Europe/Berlin");
 			},
 			afterEach: function () {
-				Configuration.setTimezone(sDefaultTimezone);
+				undefined/*Configuration*/.setTimezone(sDefaultTimezone);
 			}
 		});
 
@@ -4167,11 +4165,11 @@ sap.ui.define([
 			beforeEach: function () {
 				this.clock = sinon.useFakeTimers(UI5Date.getInstance("2021-10-09T02:37:00Z").getTime());
 				// Oct 8th 22:37 (New York -4 EDT)
-				Configuration.setTimezone("America/New_York");
+				undefined/*Configuration*/.setTimezone("America/New_York");
 			},
 			afterEach: function () {
 				this.clock.restore();
-				Configuration.setTimezone(sDefaultTimezone);
+				undefined/*Configuration*/.setTimezone(sDefaultTimezone);
 			}
 		});
 
@@ -4204,10 +4202,10 @@ sap.ui.define([
 
 		QUnit.module("DateFormat with timezone Australia/Sydney", {
 			beforeEach: function () {
-				Configuration.setTimezone("Australia/Sydney");
+				undefined/*Configuration*/.setTimezone("Australia/Sydney");
 			},
 			afterEach: function () {
-				Configuration.setTimezone(sDefaultTimezone);
+				undefined/*Configuration*/.setTimezone(sDefaultTimezone);
 			}
 		});
 
@@ -4272,10 +4270,10 @@ sap.ui.define([
 
 		QUnit.module("DateFormat with timezone Europe/Berlin", {
 			beforeEach: function () {
-				Configuration.setTimezone("Europe/Berlin");
+				undefined/*Configuration*/.setTimezone("Europe/Berlin");
 			},
 			afterEach: function () {
-				Configuration.setTimezone(sDefaultTimezone);
+				undefined/*Configuration*/.setTimezone(sDefaultTimezone);
 			}
 		});
 
@@ -4314,10 +4312,10 @@ sap.ui.define([
 
 		QUnit.module("DateFormat with timezone America/Adak", {
 			beforeEach: function () {
-				Configuration.setTimezone("America/Adak");
+				undefined/*Configuration*/.setTimezone("America/Adak");
 			},
 			afterEach: function () {
-				Configuration.setTimezone(sDefaultTimezone);
+				undefined/*Configuration*/.setTimezone(sDefaultTimezone);
 			}
 		});
 
@@ -4356,10 +4354,10 @@ sap.ui.define([
 
 		QUnit.module("DateFormat with timezone Pacific/Kiritimati", {
 			beforeEach: function () {
-				Configuration.setTimezone("Pacific/Kiritimati");
+				undefined/*Configuration*/.setTimezone("Pacific/Kiritimati");
 			},
 			afterEach: function () {
-				Configuration.setTimezone(sDefaultTimezone);
+				undefined/*Configuration*/.setTimezone(sDefaultTimezone);
 			}
 		});
 
@@ -4388,10 +4386,10 @@ sap.ui.define([
 
 		QUnit.module("DateFormat with timezone America/New_York", {
 			beforeEach: function () {
-				Configuration.setTimezone("America/New_York");
+				undefined/*Configuration*/.setTimezone("America/New_York");
 			},
 			afterEach: function () {
-				Configuration.setTimezone(sDefaultTimezone);
+				undefined/*Configuration*/.setTimezone(sDefaultTimezone);
 			}
 		});
 
@@ -4442,7 +4440,7 @@ sap.ui.define([
 				{timezone: "Pacific/Fiji",          expectedDate: "09.10.2021, 14:37:00"}, // +12:00
 				{timezone: "Pacific/Chatham",       expectedDate: "09.10.2021, 16:22:00"}  // +13:45
 			].forEach(function(oFixture) {
-				Configuration.setTimezone(oFixture.timezone);
+				undefined/*Configuration*/.setTimezone(oFixture.timezone);
 				var oDateFormat = DateFormat.getDateTimeInstance(new Locale("de"));
 				var sFormatted = oDateFormat.format(oDate);
 
@@ -4513,10 +4511,10 @@ sap.ui.define([
 
 		QUnit.module("DateFormat with timezone Europe/Berlin", {
 			beforeEach: function () {
-				Configuration.setTimezone("Europe/Berlin");
+				undefined/*Configuration*/.setTimezone("Europe/Berlin");
 			},
 			afterEach: function () {
-				Configuration.setTimezone(sDefaultTimezone);
+				undefined/*Configuration*/.setTimezone(sDefaultTimezone);
 			}
 		});
 
@@ -4606,12 +4604,12 @@ sap.ui.define([
 			this.oLogMock = this.mock(Log);
 			this.oLogMock.expects("error").never();
 			this.oLogMock.expects("warning").never();
-			Configuration.setLanguage("en_US");
-			Configuration.setTimezone("Europe/Berlin");
+			undefined/*Configuration*/.setLanguage("en_US");
+			undefined/*Configuration*/.setTimezone("Europe/Berlin");
 		},
 		afterEach: function () {
-			Configuration.setTimezone(sDefaultTimezone);
-			Configuration.setLanguage(sDefaultLanguage);
+			undefined/*Configuration*/.setTimezone(sDefaultTimezone);
+			undefined/*Configuration*/.setLanguage(sDefaultLanguage);
 		}
 	});
 
@@ -5218,7 +5216,7 @@ sap.ui.define([
 			parseRelative() {}
 		};
 		this.mock(DateFormat).expects("_normalize").withExactArgs("~value").returns("~normalizedValue");
-		this.mock(Configuration).expects("getTimezone").withExactArgs().returns("~timezone");
+		this.mock(undefined/*Configuration*/).expects("getTimezone").withExactArgs().returns("~timezone");
 		this.mock(oFormat).expects("parseRelative").withExactArgs("~normalizedValue", undefined)
 			.returns("~dateObject");
 

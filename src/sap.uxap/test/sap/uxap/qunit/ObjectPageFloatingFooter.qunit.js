@@ -1,13 +1,6 @@
 /*global QUnit*/
-sap.ui.define(["sap/ui/core/Core",
-               "sap/ui/core/Configuration",
-               "sap/ui/core/mvc/XMLView",
-			   "sap/m/OverflowToolbar",
-			   "sap/m/HBox",
-               "sap/uxap/ObjectPageLayout",
-			   "sap/uxap/ObjectPageSection",
-			   "sap/uxap/ObjectPageSubSection"],
-function (Core, Configuration, XMLView, OverflowToolbar, HBox, ObjectPageLayout, ObjectPageSection, ObjectPageSubSection) {
+sap.ui.define(["sap/ui/core/Core", "sap/ui/core/mvc/XMLView", "sap/m/OverflowToolbar", "sap/m/HBox", "sap/uxap/ObjectPageLayout", "sap/uxap/ObjectPageSection", "sap/uxap/ObjectPageSubSection"],
+function(Core, XMLView, OverflowToolbar, HBox, ObjectPageLayout, ObjectPageSection, ObjectPageSubSection) {
 	"use strict";
 
 	QUnit.module("ObjectPage - Rendering - Footer Visibility", {
@@ -118,7 +111,7 @@ function (Core, Configuration, XMLView, OverflowToolbar, HBox, ObjectPageLayout,
 			sOriginalMode = Core.getConfiguration().getAnimationMode();
 
 		//setup
-		Core.getConfiguration().setAnimationMode(Configuration.AnimationMode.none);
+		Core.getConfiguration().setAnimationMode(undefined/*Configuration*/.AnimationMode.none);
 
 		// Act: toggle to 'true'
 		this.oObjectPage.setShowFooter(true);
@@ -140,7 +133,7 @@ function (Core, Configuration, XMLView, OverflowToolbar, HBox, ObjectPageLayout,
 			sOriginalMode = Core.getConfiguration().getAnimationMode();
 
 		//setup
-		Core.getConfiguration().setAnimationMode(Configuration.AnimationMode.minimal);
+		Core.getConfiguration().setAnimationMode(undefined/*Configuration*/.AnimationMode.minimal);
 
 		// Act: toggle to 'true'
 		this.oObjectPage.setShowFooter(true);

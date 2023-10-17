@@ -6,10 +6,9 @@ sap.ui.define([
 	'sap/ui/core/date/UniversalDate',
 	'sap/ui/core/Locale',
 	'sap/ui/core/LocaleData',
-	'sap/base/assert',
-	'sap/ui/core/Configuration'
+	'sap/base/assert'
 ],
-	function (UniversalDate, Locale, LocaleData, assert, Configuration) {
+	function(UniversalDate, Locale, LocaleData, assert) {
 		"use strict";
 
 		function clone(oUniversalDate) {
@@ -197,7 +196,7 @@ sap.ui.define([
 		 */
 		UniversalDateUtils.getWeekStartDate = function (oUniversalDate, sLocale) {
 			var oLocale = sLocale ? new Locale(sLocale)
-					: Configuration.getFormatSettings().getFormatLocale(),
+					: undefined/*Configuration*/.getFormatSettings().getFormatLocale(),
 				oLocaleData = LocaleData.getInstance(oLocale),
 				iFirstDayOfWeek = oLocaleData.getFirstDayOfWeek();
 			oUniversalDate = oUniversalDate ? clone(oUniversalDate) : clone(UniversalDateUtils.createNewUniversalDate());
@@ -388,8 +387,8 @@ sap.ui.define([
 		 * @private
 		 */
 		 UniversalDateUtils._getDateFromWeekStartByDayOffset = function (sCalendarWeekNumbering, iDaysToAdd) {
-			var sCalendarType = Configuration.getCalendarType(),
-				oLocale = Configuration.getFormatSettings().getFormatLocale(),
+			var sCalendarType = undefined/*Configuration*/.getCalendarType(),
+				oLocale = undefined/*Configuration*/.getFormatSettings().getFormatLocale(),
 				oUniversalDate = UniversalDateUtils.createNewUniversalDate(),
 				oWeekAndYear = oUniversalDate.getWeek(oLocale, sCalendarWeekNumbering),
 				oFirstDateOfWeek = UniversalDate.getFirstDateOfWeek(sCalendarType, oWeekAndYear.year, oWeekAndYear.week,

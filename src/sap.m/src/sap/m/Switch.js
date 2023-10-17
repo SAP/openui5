@@ -11,8 +11,7 @@ sap.ui.define([
 	'sap/ui/core/theming/Parameters',
 	'sap/ui/events/KeyCodes',
 	'./SwitchRenderer',
-	"sap/base/assert",
-	"sap/ui/core/Configuration"
+	"sap/base/assert"
 ],
 function(
 	library,
@@ -22,9 +21,8 @@ function(
 	Parameters,
 	KeyCodes,
 	SwitchRenderer,
-	assert,
-	Configuration
-	) {
+	assert
+) {
 		"use strict";
 
 		// shortcut for sap.m.touch
@@ -159,7 +157,7 @@ function(
 			}
 
 			this._iCurrentPosition = iPosition;
-			this.getDomRef("inner").style[Configuration.getRTL() ? "right" : "left"] = iPosition + "px";
+			this.getDomRef("inner").style[undefined/*Configuration*/.getRTL() ? "right" : "left"] = iPosition + "px";
 			this._setTempState(Math.abs(iPosition) < Switch._SWAPPOINT);
 		};
 
@@ -346,7 +344,7 @@ function(
 			iPosition = ((this._iStartPressPosX - oTouch.pageX) * -1) + this._iPosition;
 
 			// RTL mirror
-			if (Configuration.getRTL()) {
+			if (undefined/*Configuration*/.getRTL()) {
 				iPosition = -iPosition;
 			}
 

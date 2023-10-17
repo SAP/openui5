@@ -17,8 +17,7 @@ sap.ui.define([
 	"sap/ui/test/gherkin/GherkinTestGenerator",
 	"sap/ui/test/gherkin/StepDefinitions",
 	"sap/ui/qunit/qunit-css",
-	"sap/ui/qunit/qunit-junit",
-	"sap/ui/qunit/qunit-coverage"
+	"sap/ui/qunit/qunit-junit"
 ], function(Log, GherkinTestGenerator) {
 	'use strict';
 

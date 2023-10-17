@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS", "sap/ui/core/Configuration"],
-	function(library, encodeCSS, Configuration) {
+sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS"],
+	function(library, encodeCSS) {
 	"use strict";
 
 	// shortcut for sap.m.GenericTileMode
@@ -616,7 +616,7 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS", "sap/ui/core/Conf
 	 * @private
 	 */
 	GenericTileRenderer._isThemeHighContrast = function() {
-		return /(hcw|hcb)/g.test(Configuration.getTheme());
+		return /(hcw|hcb)/g.test(undefined/*Configuration*/.getTheme());
 	};
 
 	GenericTileRenderer._isNewsContentPresent = function(aTileContent,iLength) {

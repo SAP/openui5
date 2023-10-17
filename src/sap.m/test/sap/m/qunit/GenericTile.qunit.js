@@ -29,13 +29,14 @@ sap.ui.define([
 	"sap/f/dnd/GridDropInfo",
 	"sap/ui/core/Core",
 	"sap/ui/core/Theming",
+	"sap/m/LinkTileContent",
 	/* jQuery custom selectors ":sapTabbable"*/
 	"sap/ui/dom/jquery/Selectors",
 	// used only indirectly
 	"sap/ui/events/jquery/EventExtension"
 ], function(jQuery, GenericTile, TileContent, NumericContent, ImageContent, Device, IntervalTrigger, ResizeHandler, GenericTileLineModeRenderer,
 			Button, Text, ScrollContainer, FlexBox, GenericTileRenderer, library, isEmptyObject, KeyCodes, oCore, GridContainerItemLayoutData,
-			GridContainerSettings, GridContainer, FormattedText, NewsContent, Parameters,qutils,DragInfo,GridDropInfo, Core, Theming) {
+			GridContainerSettings, GridContainer, FormattedText, NewsContent, Parameters,qutils,DragInfo,GridDropInfo, Core, Theming,LinkTileContent) {
 	"use strict";
 
 	// shortcut for sap.m.Size
@@ -5406,5 +5407,40 @@ sap.ui.define([
 		var oBoundingRectVertical = this.oGenericTile.getDropAreaRect("Vertical");
 		assert.equal(Math.abs(oBoundingRect.top - oBoundingRectVertical.top), OFFSET, "top updated");
 		assert.equal(Math.abs(oBoundingRectVertical.bottom - oBoundingRect.bottom), OFFSET, "bottom updated");
+	});
+	QUnit.module("GenericTile when linkTileContent is used", {
+		beforeEach: function () {
+			this.oGenericTile = new GenericTile({
+				id: "linkTile",
+				header: "Test Header",
+				subheader: "Test Subheader",
+				frameType: FrameType.TwoByOne,
+				linkTileContents:[
+					new LinkTileContent({iconSrc:"sap-icon://action-settings",linkText:"SAP"})
+				]
+			}).placeAt("qunit-fixture");
+			oCore.applyChanges();
+			this.isRepeatedTwice = function(sInputString, sWord) {
+				var sLowerInputString = sInputString.toLowerCase();
+				var sLowerWord = sWord.toLowerCase();
+
+				// Create a regular expression to match the word surrounded by word boundaries (\b)
+				var rRegularExprForWord = new RegExp(`\\b${sLowerWord}\\b`, 'g');
+
+				// Use the match method to find all occurrences of the word in the lowercased string
+				var aMatches = sLowerInputString.match(rRegularExprForWord);
+
+				// Check if the word is repeated twice by comparing the number of matches to 2
+				return aMatches.length === 1;
+			};
+		},
+		afterEach: function () {
+			this.oGenericTile.destroy();
+			this.oGenericTile = null;
+		}
+	});
+
+	QUnit.test("Announcement of text tile should only be done once", function (assert) {
+		assert.ok(this.isRepeatedTwice(this.oGenericTile.getDomRef().getAttribute("aria-label"),"tile"),"The word tile has been announced only once");
 	});
 });

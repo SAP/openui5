@@ -7,9 +7,8 @@
  */
 
 sap.ui.define([
-	"sap/ui/core/Configuration"
-], function (
-	Configuration
+], function(
+
 ) {
 	"use strict";
 
@@ -100,7 +99,7 @@ sap.ui.define([
 				fLeftOffsetInGrid,
 				fRightOffsetInGrid;
 
-			if (Configuration.getRTL()) {
+			if (undefined/*Configuration*/.getRTL()) {
 				iEndCol = -1;
 				iStartCol = oLayoutSizes.columns.length - 1;
 				fRightOffsetInGrid = oGridRect.right - oLayoutSizes.paddingRight - oItemRect.right;

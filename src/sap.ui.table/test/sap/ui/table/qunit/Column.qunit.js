@@ -1033,15 +1033,6 @@ sap.ui.define([
 		assert.equal(this.oColumn1.$().attr("aria-haspopup"), "dialog", "aria-haspopup was set correctly");
 	});
 
-	QUnit.test("_unsort", function(assert) {
-		this.oTable._aSortedColumns = [this.oColumn1, this.oColumn2];
-		var oApplySortersSpy = sinon.spy(this.oColumn1, "_applySorters");
-
-		this.oColumn1._unsort();
-		assert.deepEqual(this.oTable._aSortedColumns, [this.oColumn2], "The column is removed from _aSortedColumns");
-		assert.ok(oApplySortersSpy.calledOnce, "The sorters are applied");
-	});
-
 	QUnit.test("_getFilterState", function(assert) {
 		var oColumn1 = this.oColumn1;
 		oColumn1.setFilterValue("A");

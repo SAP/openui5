@@ -4,7 +4,6 @@ sap.ui.define([
 	// QUnit additions
 	"sap/ui/qunit/qunit-css",
 	"sap/ui/qunit/qunit-junit",
-	"sap/ui/qunit/qunit-coverage",
 	// Page Objects
 	"./pages/Home",
 	"./pages/Welcome",

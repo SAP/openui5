@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define(["sap/ui/core/Configuration"], function (Configuration) {
+sap.ui.define([], function() {
 	"use strict";
 
 	/**
@@ -15,7 +15,7 @@ sap.ui.define(["sap/ui/core/Configuration"], function (Configuration) {
 
 	ObjectPageSectionRenderer.render = function (oRm, oControl) {
 		var sTitle, bTitleVisible, bTitleAriaHidden,
-			bAccessibilityOn = Configuration.getAccessibility(),
+			bAccessibilityOn = undefined/*Configuration*/.getAccessibility(),
 			oLabelledBy = oControl.getAggregation("ariaLabelledBy"),
 			oHeading = oControl.getHeading(),
 			bWrapTitle = oControl.getWrapTitle();

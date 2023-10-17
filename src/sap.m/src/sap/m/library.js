@@ -6,61 +6,60 @@
  * Initialization Code and shared classes of library sap.m.
  */
 sap.ui.define([
-	"sap/ui/core/Lib",
-	"sap/ui/Device",
-	"sap/ui/base/DataType",
-	"sap/ui/base/EventProvider",
-	"sap/ui/core/Control",
-	"sap/base/util/ObjectPath",
-	"sap/ui/util/openWindow",
-	// library dependency
-	"sap/ui/core/library",
-	"sap/base/strings/capitalize",
-	"sap/ui/thirdparty/jquery",
-	"sap/base/assert",
-	"sap/base/Log",
-	"sap/base/util/defineLazyProperty",
-	"sap/base/security/encodeCSS",
-	"./AvatarShape",
-	"./AvatarSize",
-	"./AvatarType",
-	"./AvatarColor",
-	"./AvatarImageFitType",
-	"./IllustratedMessageSize",
-	"./IllustratedMessageType",
-	"./upload/UploaderHttpRequestMethod",
-	"sap/ui/core/theming/Parameters",
-	"sap/ui/core/LocaleData",
-	"sap/ui/core/Configuration",
-	"./Support" // referenced here to enable the Support feature
+ "sap/ui/core/Lib",
+ "sap/ui/Device",
+ "sap/ui/base/DataType",
+ "sap/ui/base/EventProvider",
+ "sap/ui/core/Control",
+ "sap/base/util/ObjectPath",
+ "sap/ui/util/openWindow",
+ // library dependency
+ "sap/ui/core/library",
+ "sap/base/strings/capitalize",
+ "sap/ui/thirdparty/jquery",
+ "sap/base/assert",
+ "sap/base/Log",
+ "sap/base/util/defineLazyProperty",
+ "sap/base/security/encodeCSS",
+ "./AvatarShape",
+ "./AvatarSize",
+ "./AvatarType",
+ "./AvatarColor",
+ "./AvatarImageFitType",
+ "./IllustratedMessageSize",
+ "./IllustratedMessageType",
+ "./upload/UploaderHttpRequestMethod",
+ "sap/ui/core/theming/Parameters",
+ "sap/ui/core/LocaleData",
+ // referenced here to enable the Support feature
+ "./Support"
 ],
 	function(
-	Library,
-	Device,
-	DataType,
-	EventProvider,
-	Control,
-	ObjectPath,
-	openWindow,
-	CoreLibrary,
-	capitalize,
-	jQuery,
-	assert,
-	Log,
-	defineLazyProperty,
-	encodeCSS,
-	AvatarShape,
-	AvatarSize,
-	AvatarType,
-	AvatarColor,
-	AvatarImageFitType,
-	IllustratedMessageSize,
-	IllustratedMessageType,
-	UploaderHttpRequestMethod,
-	Parameters,
-	LocaleData,
-	Configuration
-) {
+	 Library,
+	 Device,
+	 DataType,
+	 EventProvider,
+	 Control,
+	 ObjectPath,
+	 openWindow,
+	 CoreLibrary,
+	 capitalize,
+	 jQuery,
+	 assert,
+	 Log,
+	 defineLazyProperty,
+	 encodeCSS,
+	 AvatarShape,
+	 AvatarSize,
+	 AvatarType,
+	 AvatarColor,
+	 AvatarImageFitType,
+	 IllustratedMessageSize,
+	 IllustratedMessageType,
+	 UploaderHttpRequestMethod,
+	 Parameters,
+	 LocaleData
+	) {
 	 "use strict";
 
 	 /**
@@ -4935,7 +4934,7 @@ sap.ui.define([
 	  * @since 1.10
 	  */
 	 thisLib.getLocale = function() {
-		 var oLocale = Configuration.getFormatSettings().getFormatLocale();
+		 var oLocale = undefined/*Configuration*/.getFormatSettings().getFormatLocale();
 
 		 thisLib.getLocale = function() {
 			 return oLocale;

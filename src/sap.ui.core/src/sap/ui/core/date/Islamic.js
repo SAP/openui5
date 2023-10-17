@@ -3,8 +3,8 @@
  */
 
 // Provides class sap.ui.core.date.Islamic
-sap.ui.define(['./UniversalDate', '../CalendarType', 'sap/base/Log', './_Calendars', 'sap/ui/core/Configuration'],
-	function(UniversalDate, CalendarType, Log, _Calendars, Configuration) {
+sap.ui.define(['./UniversalDate', '../CalendarType', 'sap/base/Log', './_Calendars'],
+	function(UniversalDate, CalendarType, Log, _Calendars) {
 	"use strict";
 
 
@@ -210,9 +210,9 @@ sap.ui.define(['./UniversalDate', '../CalendarType', 'sap/base/Log', './_Calenda
 
 		oCustomizationMap = {};
 
-		sDateFormat = Configuration.getFormatSettings().getLegacyDateFormat();
+		sDateFormat = undefined/*Configuration*/.getFormatSettings().getLegacyDateFormat();
 		sDateFormat = _isSupportedIslamicCalendarType(sDateFormat) ? sDateFormat : "A"; // set "A" as a fall-back format always
-		oCustomizationJSON = Configuration.getFormatSettings().getLegacyDateCalendarCustomizing();
+		oCustomizationJSON = undefined/*Configuration*/.getFormatSettings().getLegacyDateCalendarCustomizing();
 		oCustomizationJSON = oCustomizationJSON || [];
 
 

@@ -6,10 +6,9 @@ sap.ui.define([
 	"sap/ui/base/Object",
 	"sap/ui/thirdparty/jquery",
 	"sap/base/Log",
-	"sap/ui/core/Configuration",
 	"sap/ui/core/Element"
 ],
-	function(BaseObject, jQuery, Log, Configuration, Element) {
+	function(BaseObject, jQuery, Log, Element) {
 	"use strict";
 
 	/**
@@ -603,7 +602,7 @@ sap.ui.define([
 		// note: this method can be improved, currently it handles most of the cases, but not all of them
 
 		// try around
-		var bIsRtl = Configuration.getRTL(),
+		var bIsRtl = undefined/*Configuration*/.getRTL(),
 			iIsRtlModifier = bIsRtl ? -1 : 1,
 			iStepX = 80 * iIsRtlModifier, // px
 			iStepY = 20, // px

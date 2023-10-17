@@ -13,8 +13,7 @@ sap.ui.define([
 	'sap/ui/Device',
 	'./ActionSheetRenderer',
 	'./Button',
-	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Configuration"
+	"sap/ui/thirdparty/jquery"
 ],
 	function(
 		Dialog,
@@ -26,8 +25,7 @@ sap.ui.define([
 		Device,
 		ActionSheetRenderer,
 		Button,
-		jQuery,
-		Configuration
+		jQuery
 	) {
 	"use strict";
 
@@ -507,7 +505,7 @@ sap.ui.define([
 	ActionSheet.prototype._addAriaHiddenTexts = function(oButton) {
 		var sButtonId = oButton.getId(),
 			oInvisibleText;
-		if (Configuration.getAccessibility()) {
+		if (undefined/*Configuration*/.getAccessibility()) {
 			oInvisibleText = new InvisibleText(sButtonId + "-actionSheetHiddenText");
 
 			this.addAggregation("_invisibleAriaTexts", oInvisibleText, false);

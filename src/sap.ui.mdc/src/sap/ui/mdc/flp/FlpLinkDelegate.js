@@ -10,8 +10,9 @@ sap.ui.define([
 	"sap/base/util/isPlainObject",
 	"sap/ui/mdc/link/SemanticObjectMapping",
 	"sap/ui/mdc/link/SemanticObjectMappingItem",
-	"sap/ui/mdc/link/SemanticObjectUnavailableAction"
-], function(LinkDelegate, LinkItem, Factory, Log, SapBaseLog, isPlainObject, SemanticObjectMapping, SemanticObjectMappingItem, SemanticObjectUnavailableAction) {
+	"sap/ui/mdc/link/SemanticObjectUnavailableAction",
+	"sap/ui/mdc/enums/LinkType"
+], function(LinkDelegate, LinkItem, Factory, Log, SapBaseLog, isPlainObject, SemanticObjectMapping, SemanticObjectMappingItem, SemanticObjectUnavailableAction, LinkType) {
 	"use strict";
 	/**
 	 * Extension of the Delegate for {@link sap.ui.mdc.Link}. This extension provides all historical featurs of the FlpLinkHandler.
@@ -115,7 +116,7 @@ sap.ui.define([
 		if (oPayload && oPayload.semanticObjects) {
 			return fnHasDistinctSemanticObject(oPayload.semanticObjects).then(function(bHasDisctinctSemanticObject) {
 				return Promise.resolve({
-					type: bHasDisctinctSemanticObject ? 2 : 0,
+					type: bHasDisctinctSemanticObject ? LinkType.Popover : LinkType.Text,
 					directLink: undefined
 				});
 			});

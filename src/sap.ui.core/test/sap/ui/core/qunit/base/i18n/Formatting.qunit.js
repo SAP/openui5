@@ -69,36 +69,36 @@ sap.ui.define([
 			"getLanguageTag should return new 'sap/base/i18n/LanguageTag' for LanguageTag 'de-x-aa-sapufmt'");
 	});
 
-	QUnit.test("getLegacyDateFormat", function(assert) {
+	QUnit.test("getABAPDateFormat", function(assert) {
 		assert.expect(2);
-		assert.strictEqual(Formatting.getLegacyDateFormat(), "2", "getLegacyDateFormat should return '2' as provided by URL");
+		assert.strictEqual(Formatting.getABAPDateFormat(), "2", "getABAPDateFormat should return '2' as provided by URL");
 		BaseConfig._.invalidate();
 		mConfigStubValues = {
-			"sapUiLegacyDateFormat": "a"
+			"sapUiABAPDateFormat": "a"
 		};
-		assert.strictEqual(Formatting.getLegacyDateFormat(), "A", "getLegacyDateFormat should return expected value 'A'");
+		assert.strictEqual(Formatting.getABAPDateFormat(), "A", "getABAPDateFormat should return expected value 'A'");
 	});
 
-	QUnit.test("getLegacyTimeFormat", function(assert) {
+	QUnit.test("getABAPTimeFormat", function(assert) {
 		assert.expect(2);
 
-		assert.strictEqual(Formatting.getLegacyTimeFormat(), "3", "getLegacyTimeFormat should return '3' as provided by URL");
+		assert.strictEqual(Formatting.getABAPTimeFormat(), "3", "getABAPTimeFormat should return '3' as provided by URL");
 		BaseConfig._.invalidate();
 		mConfigStubValues = {
-			"sapUiLegacyTimeFormat": "0"
+			"sapUiABAPTimeFormat": "0"
 		};
-		assert.strictEqual(Formatting.getLegacyTimeFormat(), "0", "getLegacyTimeFormat should return expected value '0'");
+		assert.strictEqual(Formatting.getABAPTimeFormat(), "0", "getABAPTimeFormat should return expected value '0'");
 	});
 
-	QUnit.test("getLegacyNumberFormat", function(assert) {
+	QUnit.test("getABAPNumberFormat", function(assert) {
 		assert.expect(2);
 
-		assert.strictEqual(Formatting.getLegacyNumberFormat(), "X", "getLegacyNumberFormat should return 'Y' as provided by URL");
+		assert.strictEqual(Formatting.getABAPNumberFormat(), "X", "getABAPNumberFormat should return 'Y' as provided by URL");
 		BaseConfig._.invalidate();
 		mConfigStubValues = {
-			"sapUiLegacyNumberFormat": "y"
+			"sapUiABAPNumberFormat": "y"
 		};
-		assert.strictEqual(Formatting.getLegacyNumberFormat(), "Y", "getLegacyNumberFormat should return expected value 'Y'");
+		assert.strictEqual(Formatting.getABAPNumberFormat(), "Y", "getABAPNumberFormat should return expected value 'Y'");
 	});
 
 	QUnit.test("getTrailingCurrencyCode", function(assert) {
@@ -148,9 +148,9 @@ sap.ui.define([
 			"Warning logged for invalid value of parameter 'calendarType'");
 		BaseConfig._.invalidate();
 		mConfigStubValues = {
-			"sapUiLegacyDateFormat": "a"
+			"sapUiABAPDateFormat": "a"
 		};
-		assert.strictEqual(Formatting.getCalendarType(), CalendarType.Islamic, "getCalendarType should return expected value 'Islamic' derived from legacyDateFormat");
+		assert.strictEqual(Formatting.getCalendarType(), CalendarType.Islamic, "getCalendarType should return expected value 'Islamic' derived from ABAPDateFormat");
 	});
 
 	QUnit.module("Formatting setter");
@@ -172,55 +172,55 @@ sap.ui.define([
 		Formatting.detachChange(formattingChanged);
 	});
 
-	QUnit.test("setLegacyDateFormat", function(assert) {
+	QUnit.test("setABAPDateFormat", function(assert) {
 		assert.expect(6);
 		function test(oEvent) {
 			assert.strictEqual(oEvent["dateFormats-medium"], "yyyy/MM/dd", "dateFormat event parameter set correctly");
 			assert.strictEqual(oEvent["dateFormats-short"], "yyyy/MM/dd", "dateFormat event parameter set correctly");
-			assert.strictEqual(oEvent["legacyDateFormat"], "B", "dateFormat event parameter set correctly");
-			assert.strictEqual(Formatting.getLegacyDateFormat(), "B", "getLegacyDateFormat should return expected value 'B'");
+			assert.strictEqual(oEvent["ABAPDateFormat"], "B", "dateFormat event parameter set correctly");
+			assert.strictEqual(Formatting.getABAPDateFormat(), "B", "getABAPDateFormat should return expected value 'B'");
 			assert.strictEqual(Formatting.getDatePattern("short"), "yyyy/MM/dd", "getDatePattern('short') should return expected value 'yyyy/MM/dd'");
 			assert.strictEqual(Formatting.getDatePattern("medium"), "yyyy/MM/dd", "getDatePattern('medium') should return expected value 'yyyy/MM/dd'");
 		}
 		Formatting.attachChange(test);
-		Formatting.setLegacyDateFormat("b");
+		Formatting.setABAPDateFormat("b");
 		// Setting same format again shouldn't trigger a change event
-		Formatting.setLegacyDateFormat("b");
+		Formatting.setABAPDateFormat("b");
 		Formatting.detachChange(test);
 	});
 
-	QUnit.test("setLegacyTimeFormat", function(assert) {
+	QUnit.test("setABAPTimeFormat", function(assert) {
 		assert.expect(7);
 		function test(oEvent) {
 			assert.strictEqual(oEvent["timeFormats-medium"], "KK:mm:ss a", "timeFormat event parameter set correctly");
 			assert.strictEqual(oEvent["timeFormats-short"], "KK:mm a", "timeFormat event parameter set correctly");
-			assert.strictEqual(oEvent["legacyTimeFormat"], "4", "timeFormat event parameter set correctly");
+			assert.strictEqual(oEvent["ABAPTimeFormat"], "4", "timeFormat event parameter set correctly");
 			assert.deepEqual(oEvent["dayPeriods-format-abbreviated"], ["am", "pm"], "timeFormat event parameter set correctly");
-			assert.strictEqual(Formatting.getLegacyTimeFormat(), "4", "getLegacyTimeFormat should return expected value 'B'");
+			assert.strictEqual(Formatting.getABAPTimeFormat(), "4", "getABAPTimeFormat should return expected value 'B'");
 			assert.strictEqual(Formatting.getTimePattern("short"), "KK:mm a", "getTimePattern('short') should return expected value 'KK:mm a'");
 			assert.strictEqual(Formatting.getTimePattern("medium"), "KK:mm:ss a", "getTimePattern('medium') should return expected value 'KK:mm:ss a'");
 		}
 		Formatting.attachChange(test);
-		Formatting.setLegacyTimeFormat("4");
+		Formatting.setABAPTimeFormat("4");
 		// Setting same format again shouldn't trigger a change event
-		Formatting.setLegacyTimeFormat("4");
+		Formatting.setABAPTimeFormat("4");
 		Formatting.detachChange(test);
 	});
 
-	QUnit.test("setLegacyNumberFormat", function(assert) {
+	QUnit.test("setABAPNumberFormat", function(assert) {
 		assert.expect(6);
 		function test(oEvent) {
 			assert.strictEqual(oEvent["symbols-latn-decimal"], ",", "numberFormat event parameter set correctly");
 			assert.strictEqual(oEvent["symbols-latn-group"], " ", "numberFormat event parameter set correctly");
-			assert.strictEqual(oEvent["legacyNumberFormat"], "Y", "numberFormat event parameter set correctly");
-			assert.strictEqual(Formatting.getLegacyNumberFormat(), "Y", "getLegacyNumberFormat should return expected value 'Y'");
+			assert.strictEqual(oEvent["ABAPNumberFormat"], "Y", "numberFormat event parameter set correctly");
+			assert.strictEqual(Formatting.getABAPNumberFormat(), "Y", "getABAPNumberFormat should return expected value 'Y'");
 			assert.strictEqual(Formatting.getNumberSymbol("group"), " ", "getNumberSymbol('group') should return expected value ' '");
 			assert.strictEqual(Formatting.getNumberSymbol("decimal"), ",", "getNumberSymbol('decimal') should return expected value ','");
 		}
 		Formatting.attachChange(test);
-		Formatting.setLegacyNumberFormat("y");
+		Formatting.setABAPNumberFormat("y");
 		// Setting same type again shouldn't trigger a change event
-		Formatting.setLegacyNumberFormat("y");
+		Formatting.setABAPNumberFormat("y");
 		Formatting.detachChange(test);
 	});
 
@@ -232,7 +232,7 @@ sap.ui.define([
 
 		assert.throws(function() {
 			Formatting.setTrailingCurrencyCode();
-		}, new Error("bTrailingCurrencyCode must be a boolean"), "setTrailingCurrencyCode with invalid parameter should throw an error");
+		}, new TypeError("bTrailingCurrencyCode must be a boolean"), "setTrailingCurrencyCode with invalid parameter should throw an error");
 	});
 
 	QUnit.test("setCalendarWeekNumbering", function(assert) {

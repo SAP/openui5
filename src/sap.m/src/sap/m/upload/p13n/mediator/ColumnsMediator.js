@@ -7,10 +7,9 @@ sap.ui.define(
 		"sap/m/upload/p13n/mediator/BaseMediator",
 		"sap/m/p13n/SelectionPanel",
 		"sap/m/upload/p13n/modules/CustomDataConfig",
-		"sap/ui/core/Configuration",
 		"sap/base/util/deepEqual"
 	],
-	function (BaseMediator, SelectionPanel, CustomDataConfig, Configuration, deepEqual) {
+	function(BaseMediator, SelectionPanel, CustomDataConfig, deepEqual) {
 		"use strict";
 
 		/**
@@ -65,7 +64,7 @@ sap.ui.define(
 			});
 
 			// Sort panel config
-			const sLocale = Configuration.getLocale().toString(),
+			const sLocale = undefined/*Configuration*/.getLocale().toString(),
 				oCollator = window.Intl.Collator(sLocale, {});
 			aPanelState.sort((mItem1, mItem2) => {
 				if (mItem1.visible && mItem2.visible) {

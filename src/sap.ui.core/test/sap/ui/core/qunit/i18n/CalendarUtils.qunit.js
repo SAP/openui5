@@ -2,11 +2,10 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/ui/core/Configuration",
 	"sap/ui/core/LocaleData",
 	"sap/ui/core/date/CalendarUtils",
 	"sap/ui/core/date/CalendarWeekNumbering"
-], function(Configuration, LocaleData, CalendarUtils, CalendarWeekNumbering) {
+], function(LocaleData, CalendarUtils, CalendarWeekNumbering) {
 	/*global QUnit */
 	"use strict";
 
@@ -46,7 +45,7 @@ sap.ui.define([
 
 		// avoid falsy unexpected call failure of getWeekConfigurationValues, see code under test
 		oCalendarUtilsMock.expects("getWeekConfigurationValues").withExactArgs(undefined, "~oLocale").callThrough();
-		this.mock(Configuration).expects("getCalendarWeekNumbering").withExactArgs().returns("ISO_8601");
+		this.mock(undefined/*Configuration*/).expects("getCalendarWeekNumbering").withExactArgs().returns("ISO_8601");
 		oCalendarUtilsMock.expects("getWeekConfigurationValues")
 			.withExactArgs("ISO_8601", "~oLocale").returns("~WeekConfig");
 

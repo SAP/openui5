@@ -3,9 +3,8 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/base/i18n/Localization",
 	"./highlighter",
-	"./formatter",
-	"sap/ui/core/Configuration"
-], function (Controller, JSONModel, Localization, highlighter, formatter, Configuration) {
+	"./formatter"
+], function(Controller, JSONModel, Localization, highlighter, formatter) {
 	"use strict";
 	return Controller.extend("sap.ui.demo.terminologies.App", {
 		formatter: formatter,
@@ -17,7 +16,7 @@ sap.ui.define([
 			}
 			var oUriParameters = new URLSearchParams(window.location.search);
 			var sManifest = oUriParameters.get("manifest") || "base";
-			var sLanguage = Configuration.getLanguage() || "de";
+			var sLanguage = undefined/*Configuration*/.getLanguage() || "de";
 
 			this.getView().setModel(new JSONModel({
 				terminologies: [

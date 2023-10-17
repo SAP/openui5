@@ -17,7 +17,6 @@ sap.ui.define([
 	"sap/base/util/deepEqual",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/unified/DateRange",
-	"sap/ui/core/Configuration",
 	"sap/ui/core/date/UI5Date"
 ], function(
 	Control,
@@ -33,7 +32,6 @@ sap.ui.define([
 	deepEqual,
 	jQuery,
 	DateRange,
-	Configuration,
 	UI5Date
 ) {
 	"use strict";
@@ -388,7 +386,7 @@ sap.ui.define([
 		if (oParent && oParent.getLocale) {
 			return oParent.getLocale();
 		} else if (!this._sLocale) {
-			this._sLocale = Configuration.getFormatSettings().getFormatLocale().toString();
+			this._sLocale = undefined/*Configuration*/.getFormatSettings().getFormatLocale().toString();
 		}
 
 		return this._sLocale;

@@ -10,9 +10,8 @@ sap.ui.define([
 	"sap/m/MessageBox",
 	"sap/ui/Device",
 	"sap/ui/fl/write/api/FieldExtensibility",
-	"sap/ui/core/Configuration",
 	"sap/ui/core/library"
-], function(P13nPropertyHelper, Button, Bar, Title, merge, MessageBox, Device, FieldExtensibility, Configuration, coreLibrary) {
+], function(P13nPropertyHelper, Button, Bar, Title, merge, MessageBox, Device, FieldExtensibility, coreLibrary) {
 	"use strict";
 
 	const oRB = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
@@ -255,7 +254,7 @@ sap.ui.define([
 			const sPositionAttribute = mP13nTypeSorting.position;
 			const sSelectedAttribute = mP13nTypeSorting.visible;
 
-			const sLocale = Configuration.getLocale().toString();
+			const sLocale = undefined/*Configuration*/.getLocale().toString();
 
 			const oCollator = window.Intl.Collator(sLocale, {});
 

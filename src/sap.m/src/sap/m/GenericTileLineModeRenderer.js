@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS", "sap/ui/thirdparty/jquery", "sap/ui/core/Configuration"],
-	function(library, encodeCSS, jQuery, Configuration) {
+sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS", "sap/ui/thirdparty/jquery"],
+	function(library, encodeCSS, jQuery) {
 	"use strict";
 
 	// shortcut for sap.m.GenericTileScope
@@ -41,7 +41,7 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS", "sap/ui/thirdpart
 		// Render a link when URL is provided, not in action scope and the state is enabled
 		var bRenderLink = oControl.getUrl() && !oControl._isInActionScope() && sState !== LoadState.Disabled;
 
-		this._bRTL = Configuration.getRTL();
+		this._bRTL = undefined/*Configuration*/.getRTL();
 
 		if (sScope === GenericTileScope.Actions) {
 			// given class only needs to be added if the tile's state is not disabled

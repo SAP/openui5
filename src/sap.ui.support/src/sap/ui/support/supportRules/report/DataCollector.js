@@ -11,12 +11,11 @@ sap.ui.define([
 	"sap/base/util/LoaderExtensions",
 	"sap/base/security/encodeXML",
 	"sap/ui/core/Component",
-	"sap/ui/core/Configuration",
 	"sap/ui/core/theming/ThemeManager",
 	"sap/ui/core/support/ToolsAPI",
 	"sap/ui/thirdparty/URI"
 ],
-	function (Core, VersionInfo, LoaderExtensions, encodeXML, Component, Configuration, ThemeManager, ToolsAPI, URI) {
+	function(Core, VersionInfo, LoaderExtensions, encodeXML, Component, ThemeManager, ToolsAPI, URI) {
 	"use strict";
 
 	/**
@@ -141,9 +140,9 @@ sap.ui.define([
 				// (e.g. "MyControl" instead of "com.example.MyControl").
 				continue;
 			}
-			var sPath = ThemeManager._getThemePath(n, Configuration.getTheme());
+			var sPath = ThemeManager._getThemePath(n, undefined/*Configuration*/.getTheme());
 			aResults.push({
-				theme : Configuration.getTheme(),
+				theme : undefined/*Configuration*/.getTheme(),
 				library: n,
 				relativePath: sPath,
 				absolutePath: URI(sPath).absoluteTo(document.location.origin + document.location.pathname).toString()

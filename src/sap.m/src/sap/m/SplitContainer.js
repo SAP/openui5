@@ -15,8 +15,7 @@ sap.ui.define([
 	'./SplitContainerRenderer',
 	"sap/ui/dom/containsOrEquals",
 	"sap/base/Log",
-	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Configuration"
+	"sap/ui/thirdparty/jquery"
 ],
 function(
 	library,
@@ -30,8 +29,7 @@ function(
 	SplitContainerRenderer,
 	containsOrEquals,
 	Log,
-	jQuery,
-	Configuration
+	jQuery
 ) {
 	"use strict";
 
@@ -502,7 +500,7 @@ function(
 		var that = this;
 
 		// Init static hidden text for ARIA
-		if (Configuration.getAccessibility() && !SplitContainer._sAriaPopupLabelId) {
+		if (undefined/*Configuration*/.getAccessibility() && !SplitContainer._sAriaPopupLabelId) {
 			SplitContainer._sAriaPopupLabelId = new InvisibleText({
 				text: '' // add empty string in order to prevent the redundant speech output
 			}).toStatic().getId();

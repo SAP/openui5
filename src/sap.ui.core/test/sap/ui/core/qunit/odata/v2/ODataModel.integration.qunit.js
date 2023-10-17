@@ -9,7 +9,6 @@ sap.ui.define([
 	"sap/ui/Device",
 	"sap/ui/base/ManagedObjectObserver",
 	"sap/ui/base/SyncPromise",
-	"sap/ui/core/Configuration",
 	"sap/ui/core/Core",
 	"sap/ui/core/library",
 	"sap/ui/core/Messaging",
@@ -33,19 +32,16 @@ sap.ui.define([
 	"sap/ui/model/xml/XMLModel",
 	"sap/ui/test/TestUtils",
 	"sap/ui/thirdparty/datajs",
-	"sap/ui/util/XMLHelper"
 	// load Table resources upfront to avoid loading times > 1 second for the first test using Table
 	// "sap/ui/table/Table"
-], function (Log, merge, uid, Input, Device, ManagedObjectObserver, SyncPromise, Configuration,
-		Core, coreLibrary, Messaging, UI5Date, Message, Controller, View, Rendering, BindingMode, Filter,
-		FilterOperator, FilterType, Model, Sorter, JSONModel, MessageModel, CountMode, MessageScope, Context,
-		ODataModel, XMLModel, TestUtils, datajs, XMLHelper) {
+	"sap/ui/util/XMLHelper"
+], function(Log, merge, uid, Input, Device, ManagedObjectObserver, SyncPromise, Core, coreLibrary, Messaging, UI5Date, Message, Controller, View, Rendering, BindingMode, Filter, FilterOperator, FilterType, Model, Sorter, JSONModel, MessageModel, CountMode, MessageScope, Context, ODataModel, XMLModel, TestUtils, datajs, XMLHelper) {
 	/*global QUnit, sinon*/
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0, quote-props: 0*/
 	"use strict";
 
-	var sDefaultLanguage = Configuration.getLanguage(),
-		sDefaultTimezone = Configuration.getTimezone(),
+	var sDefaultLanguage = undefined/*Configuration*/.getLanguage(),
+		sDefaultTimezone = undefined/*Configuration*/.getTimezone(),
 		MessageType = coreLibrary.MessageType, // shortcut for sap.ui.core.MessageType
 		NO_CONTENT = {/*204 no content*/},
 		sODataListBindingClassName = "sap.ui.model.odata.v2.ODataListBinding",
@@ -481,7 +477,7 @@ sap.ui.define([
 			// We use a formatter to check for property changes. However before the formatter is
 			// called, the value is passed through the type's formatValue
 			// (see PropertyBinding#_toExternalValue). Ensure that this result is predictable.
-			Configuration.setLanguage("en-US");
+			undefined/*Configuration*/.setLanguage("en-US");
 
 			// These metadata files are _always_ faked, the query option "realOData" is ignored
 			TestUtils.useFakeServer(this._oSandbox, "sap/ui/core", {
@@ -555,9 +551,9 @@ sap.ui.define([
 				this.oModel.destroy();
 			}
 			// reset the language
-			Configuration.setLanguage(sDefaultLanguage);
+			undefined/*Configuration*/.setLanguage(sDefaultLanguage);
 			// reset the time zone
-			Configuration.setTimezone(sDefaultTimezone);
+			undefined/*Configuration*/.setTimezone(sDefaultTimezone);
 		},
 
 		/**
@@ -8239,7 +8235,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 </FlexBox>',
 		that = this;
 
-		Configuration.setTimezone("Europe/London");
+		undefined/*Configuration*/.setTimezone("Europe/London");
 
 		this.expectHeadRequest()
 			.expectRequest("DateTimeWithTimezoneSet('1')", {

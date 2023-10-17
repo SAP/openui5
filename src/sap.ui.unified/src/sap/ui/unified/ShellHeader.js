@@ -7,10 +7,9 @@ sap.ui.define([
 	'sap/ui/core/Control',
 	'sap/ui/Device',
 	'sap/ui/core/theming/Parameters',
-	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Configuration"
+	"sap/ui/thirdparty/jquery"
 ],
-	function(library, Control, Device, Parameters, jQuery, Configuration) {
+	function(library, Control, Device, Parameters, jQuery) {
 	"use strict";
 
 
@@ -35,7 +34,7 @@ sap.ui.define([
 
 				rm.write("<div");
 				rm.writeAttribute("class", "sapUiUfdShellHeader");
-				if (Configuration.getAccessibility()) {
+				if (undefined/*Configuration*/.getAccessibility()) {
 					rm.writeAttribute("role", "toolbar");
 				}
 				rm.write(">");
@@ -58,7 +57,7 @@ sap.ui.define([
 			renderSearch: function(rm, oHeader) {
 				var oSearch = oHeader.getSearch();
 				rm.write("<div id='", oHeader.getId(), "-hdr-search'");
-				if (Configuration.getAccessibility()) {
+				if (undefined/*Configuration*/.getAccessibility()) {
 					rm.writeAttribute("role", "search");
 				}
 				rm.writeAttribute("class", "sapUiUfdShellSearch" + (oHeader.getSearchVisible() ? "" : " sapUiUfdShellHidden"));
@@ -98,7 +97,7 @@ sap.ui.define([
 					if (tooltip) {
 						rm.writeAttributeEscaped("title", tooltip);
 					}
-					if (Configuration.getAccessibility()) {
+					if (undefined/*Configuration*/.getAccessibility()) {
 						rm.writeAccessibilityState(aItems[i], {
 							role: "button",
 							selected: null,
@@ -121,7 +120,7 @@ sap.ui.define([
 					if (tooltip) {
 						rm.writeAttributeEscaped("title", tooltip);
 					}
-					if (Configuration.getAccessibility()) {
+					if (undefined/*Configuration*/.getAccessibility()) {
 						rm.writeAccessibilityState(oUser, {
 							role: "button"
 						});
@@ -173,7 +172,7 @@ sap.ui.define([
 	ShellHeader.prototype.init = function(){
 		var that = this;
 
-		this._rtl = Configuration.getRTL();
+		this._rtl = undefined/*Configuration*/.getRTL();
 
 		this._handleMediaChange = function(mParams){
 			if (!that.getDomRef()) {

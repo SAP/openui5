@@ -1,8 +1,8 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(["sap/ui/Device", "sap/ui/core/Configuration"],
-	function(Device, Configuration) {
+sap.ui.define(["sap/ui/Device"],
+	function(Device) {
 	"use strict";
 
 
@@ -26,7 +26,7 @@ sap.ui.define(["sap/ui/Device", "sap/ui/core/Configuration"],
 			aInvisibleTexts = oControl.getAggregation("_invisibleAriaTexts"),
 			oResourceBundle = sap.ui.getCore().getLibraryResourceBundle('sap.m'),
 			iButtonsCount = aActionButtons.length,
-			bAccessibilityOn = Configuration.getAccessibility(),
+			bAccessibilityOn = undefined/*Configuration*/.getAccessibility(),
 			iVisibleButtonCount = aActionButtons.filter(function (oButton) { return oButton.getVisible(); }).length,
 			oCurInvisibleText, i, bMixedButtons, oButton, iVisibleButtonTempCount = 1,
 			fnGetRelatedInvisibleText = function (oBtn) {

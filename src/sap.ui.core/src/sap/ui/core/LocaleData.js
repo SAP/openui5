@@ -12,10 +12,8 @@ sap.ui.define([
 	"sap/base/util/extend",
 	"sap/base/util/LoaderExtensions",
 	"sap/ui/base/Object",
-	"sap/ui/core/Configuration",
 	"sap/ui/core/date/CalendarWeekNumbering"
-], function(CalendarType, Locale, assert, LanguageTag, Localization, extend, LoaderExtensions, BaseObject,
-		Configuration, CalendarWeekNumbering) {
+], function(CalendarType, Locale, assert, LanguageTag, Localization, extend, LoaderExtensions, BaseObject, CalendarWeekNumbering) {
 	"use strict";
 
 	var rCIgnoreCase = /c/i,
@@ -2413,7 +2411,7 @@ sap.ui.define([
 	 */
 	function getCLDRCalendarName(sCalendarType) {
 		if (!sCalendarType) {
-			sCalendarType = Configuration.getCalendarType();
+			sCalendarType = undefined/*Configuration*/.getCalendarType();
 		}
 		return "ca-" + sCalendarType.toLowerCase();
 	}
@@ -2549,7 +2547,7 @@ sap.ui.define([
 	var CustomLocaleData = LocaleData.extend("sap.ui.core.CustomLocaleData", {
 		constructor: function(oLocale) {
 			LocaleData.apply(this, arguments);
-			this.mCustomData = Configuration.getFormatSettings().getCustomLocaleData();
+			this.mCustomData = undefined/*Configuration*/.getFormatSettings().getCustomLocaleData();
 		},
 
 		/**
@@ -2613,7 +2611,7 @@ sap.ui.define([
 		 * @since 1.113.0
 		 */
 		getFirstDayOfWeek: function() {
-			var sCalendarWeekNumbering = Configuration.getCalendarWeekNumbering();
+			var sCalendarWeekNumbering = undefined/*Configuration*/.getCalendarWeekNumbering();
 
 			if (sCalendarWeekNumbering === CalendarWeekNumbering.Default) {
 				return LocaleData.prototype.getFirstDayOfWeek.call(this);
@@ -2635,7 +2633,7 @@ sap.ui.define([
 		 * @since 1.113.0
 		 */
 		getMinimalDaysInFirstWeek: function() {
-			var sCalendarWeekNumbering = Configuration.getCalendarWeekNumbering();
+			var sCalendarWeekNumbering = undefined/*Configuration*/.getCalendarWeekNumbering();
 
 			if (sCalendarWeekNumbering === CalendarWeekNumbering.Default) {
 				return LocaleData.prototype.getMinimalDaysInFirstWeek.call(this);

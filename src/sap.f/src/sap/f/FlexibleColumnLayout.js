@@ -13,7 +13,6 @@ sap.ui.define([
 	"sap/ui/util/Storage",
 	"sap/m/library",
 	"sap/m/NavContainer",
-	"sap/ui/core/Configuration",
 	'sap/ui/dom/units/Rem',
 	"./FlexibleColumnLayoutRenderer",
 	"sap/base/Log",
@@ -21,7 +20,8 @@ sap.ui.define([
 	"sap/base/util/isEmptyObject",
 	"sap/base/util/merge",
 	"sap/ui/core/InvisibleMessage",
-	"sap/ui/dom/jquery/Focusable" // provides jQuery.fn.firstFocusableDomRef
+	// provides jQuery.fn.firstFocusableDomRef
+	"sap/ui/dom/jquery/Focusable"
 ], function(
 	jQuery,
 	library,
@@ -32,7 +32,6 @@ sap.ui.define([
 	Storage,
 	mobileLibrary,
 	NavContainer,
-	Configuration,
 	DomUnitsRem,
 	FlexibleColumnLayoutRenderer,
 	Log,
@@ -1429,7 +1428,7 @@ sap.ui.define([
 	};
 
 	FlexibleColumnLayout.prototype._getDefaultResizeOptions = function () {
-		var sAnimationMode = Configuration.getAnimationMode();
+		var sAnimationMode = undefined/*Configuration*/.getAnimationMode();
 		return {
 			layout: this.getLayout(),
 			previousLayout: this._getPreviousLayout(),
@@ -1437,7 +1436,7 @@ sap.ui.define([
 			updateDetailedActiveClasses: true,
 			updateContextualSettings: true,
 			updateMediaCSSClases: true,
-			hasAnimations: sAnimationMode !== Configuration.AnimationMode.none && sAnimationMode !== Configuration.AnimationMode.minimal
+			hasAnimations: sAnimationMode !== undefined/*Configuration*/.AnimationMode.none && sAnimationMode !== undefined/*Configuration*/.AnimationMode.minimal
 		};
 	};
 
@@ -1447,7 +1446,7 @@ sap.ui.define([
 
 	FlexibleColumnLayout.prototype._addDetailedActiveClasses = function (sLayout) {
 		var aColumns = FlexibleColumnLayout.COLUMN_ORDER.slice(),
-			bRtl = Configuration.getRTL(),
+			bRtl = undefined/*Configuration*/.getRTL(),
 			aActiveColumns = aColumns.filter(function (sColumn) {
 				return this._getColumnSizeForLayout(sColumn, sLayout) > 0;
 			}, this);
@@ -1468,7 +1467,7 @@ sap.ui.define([
 
 	FlexibleColumnLayout.prototype._onColumnSeparatorMoveStart = function (oEvent, oSeparator, bTouch) {
 		// needed to position the separator presizely
-		var bRtl = Configuration.getRTL(),
+		var bRtl = undefined/*Configuration*/.getRTL(),
 			iStartOffset = this._getDraggedSeparatorStartOffset(oSeparator, bRtl);
 
 		this._oDragInfo = {

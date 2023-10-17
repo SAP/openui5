@@ -5,14 +5,13 @@
 // Provides control sap.m.Panel.
 sap.ui.define([
 	'./library',
-	'sap/ui/core/Configuration',
 	'sap/ui/core/Control',
 	'sap/ui/core/IconPool',
 	'sap/ui/Device',
 	'./PanelRenderer',
 	'sap/m/Button'
 ],
-	function(library, Configuration, Control, IconPool, Device, PanelRenderer, Button) {
+	function(library, Control, IconPool, Device, PanelRenderer, Button) {
 	"use strict";
 
 	// shortcut for sap.m.PanelAccessibleRole
@@ -254,7 +253,7 @@ sap.ui.define([
 			this._oExpandButton = this._createExpandButton();
 		}
 
-		if (Configuration.getAccessibility()) {
+		if (undefined/*Configuration*/.getAccessibility()) {
 			this.$().attr("role", this.getAccessibleRole().toLowerCase());
 		}
 	};

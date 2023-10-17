@@ -21,7 +21,6 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/core/Fragment",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Configuration",
 	"sap/ui/core/Element",
 	"sap/ui/core/Supportability",
 	"sap/ui/core/Lib",
@@ -45,7 +44,6 @@ sap.ui.define([
 	Log,
 	Fragment,
 	jQuery,
-	Configuration,
 	Element,
 	Supportability,
 	Library,
@@ -444,7 +442,7 @@ sap.ui.define([
 				// enable or disable default option for version >= 1.48
 				var oCurrentItem = this._getControl("standardBootstrapURL", this._SUPPORT_ASSISTANT_POPOVER_ID).getItems()[0];
 				if (this._isVersionBiggerThanMinSupported()) {
-					var sAppVersion = Configuration.getVersion().toString();
+					var sAppVersion = undefined/*Configuration*/.getVersion().toString();
 					oCurrentItem.setText(oCurrentItem.getText().replace("[[version]]", sAppVersion));
 					oCurrentItem.setEnabled(true);
 				} else {
@@ -760,7 +758,7 @@ sap.ui.define([
 		 * @private
 		 */
 		_isVersionBiggerThanMinSupported: function () {
-			var oVersion = Configuration.getVersion();
+			var oVersion = undefined/*Configuration*/.getVersion();
 			if (oVersion && oVersion.compareTo(this._MIN_UI5VERSION_SUPPORT_ASSISTANT) >= 0) {
 				return true;
 			}

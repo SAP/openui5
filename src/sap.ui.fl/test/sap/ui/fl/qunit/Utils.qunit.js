@@ -1,8 +1,9 @@
 /* global QUnit */
 
 sap.ui.define([
-	"sap/ui/fl/apply/_internal/flexObjects/FlVariant",
-	"sap/ui/fl/apply/_internal/flexObjects/UIChange",
+	"sap/base/i18n/Localization",
+	"sap/base/util/isEmptyObject",
+	"sap/base/Log",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Scenario",
@@ -11,17 +12,15 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/ui/core/Component",
 	"sap/ui/core/UIComponent",
-	"sap/base/Log",
-	"sap/base/util/isEmptyObject",
-	"sap/ui/core/Configuration",
 	"sap/ui/core/Manifest",
 	"sap/ui/core/mvc/View",
 	"sap/base/util/restricted/_omit",
 	"sap/ui/thirdparty/sinon-4",
 	"test-resources/sap/ui/fl/qunit/FlQUnitUtils"
 ], function(
-	FlVariant,
-	UIChange,
+	Localization,
+	isEmptyObject,
+	Log,
 	Utils,
 	Layer,
 	Scenario,
@@ -30,9 +29,6 @@ sap.ui.define([
 	Button,
 	Component,
 	UIComponent,
-	Log,
-	isEmptyObject,
-	Configuration,
 	Manifest,
 	View,
 	_omit,
@@ -93,7 +89,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("getCurrentLanguage shall return the ISO 639-1 language of a RFC4646 language", function(assert) {
-			var oGetLanguageStub = sandbox.stub(Configuration, "getLanguage").returns("en-US");
+			var oGetLanguageStub = sandbox.stub(Localization, "getLanguage").returns("en-US");
 			assert.equal(Utils.getCurrentLanguage("en-us"), "EN");
 			oGetLanguageStub.returns("de");
 			assert.equal(Utils.getCurrentLanguage("de"), "DE");

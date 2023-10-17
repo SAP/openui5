@@ -2,13 +2,12 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/ui/core/Configuration",
 	"sap/ui/core/date/UI5Date",
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/odata/ODataUtils",
 	"sap/ui/model/odata/type/DateTimeWithTimezone"
-], function (Configuration, UI5Date, Controller, JSONModel, ODataUtils, DateTimeWithTimezone) {
+], function(UI5Date, Controller, JSONModel, ODataUtils, DateTimeWithTimezone) {
 	"use strict";
 
 	return Controller.extend("sap.ui.core.sample.odata.types.v2.DateTimeOffset.DateTimeOffset", {
@@ -28,7 +27,7 @@ sap.ui.define([
 				+ " are always transported between client and server in UTC (Coordinated Universal"
 				+ " Time).</p>",
 			Timestamp: null,
-			Timezone: Configuration.getTimezone()
+			Timezone: undefined/*Configuration*/.getTimezone()
 		}),
 
 		formatDate: function (vValue) {

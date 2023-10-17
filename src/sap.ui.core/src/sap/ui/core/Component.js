@@ -27,8 +27,7 @@ sap.ui.define([
 	'sap/base/strings/camelize',
 	'sap/ui/core/_UrlResolver',
 	'sap/ui/VersionInfo',
-	'sap/ui/core/mvc/ViewType',
-	'sap/ui/core/Configuration'
+	'sap/ui/core/mvc/ViewType'
 ], function(
 	Manifest,
 	ComponentMetadata,
@@ -53,8 +52,7 @@ sap.ui.define([
 	camelize,
 	_UrlResolver,
 	VersionInfo,
-	ViewType,
-	Configuration
+	ViewType
 ) {
 	"use strict";
 
@@ -455,25 +453,30 @@ sap.ui.define([
 	function getCustomizingComponent(vObject) {
 		var oComponent, sComponentId;
 
-		if (!Configuration.getDisableCustomizing()) {
-			if (typeof vObject === "string") {
-				sComponentId = vObject;
-			} else if (vObject && typeof vObject.isA === "function" && !vObject.isA("sap.ui.core.Component")) {
-				sComponentId = Component.getOwnerIdFor(vObject);
-			} else {
-				oComponent = vObject;
-			}
+		/**
+		 * deprecated as of Version 1.120
+		 */
+		if (BaseConfig.get({name: "sapUiXxDisableCustomizing", type: BaseConfig.Type.Boolean})) {
+			return oComponent;
+		}
 
-			if (sComponentId) {
-				oComponent = Component.get(sComponentId);
-			}
+		if (typeof vObject === "string") {
+			sComponentId = vObject;
+		} else if (vObject && typeof vObject.isA === "function" && !vObject.isA("sap.ui.core.Component")) {
+			sComponentId = Component.getOwnerIdFor(vObject);
+		} else {
+			oComponent = vObject;
+		}
 
-			if (oComponent) {
-				if (oComponent.getExtensionComponent) {
-					oComponent = oComponent.getExtensionComponent();
-					if (!oComponent) {
-						throw new Error("getExtensionComponent() must return an instance.");
-					}
+		if (sComponentId) {
+			oComponent = Component.get(sComponentId);
+		}
+
+		if (oComponent) {
+			if (oComponent.getExtensionComponent) {
+				oComponent = oComponent.getExtensionComponent();
+				if (!oComponent) {
+					throw new Error("getExtensionComponent() must return an instance.");
 				}
 			}
 		}
@@ -1555,7 +1558,7 @@ sap.ui.define([
 		var bMergeParent = mOptions.mergeParent;
 		var mCacheTokens = mOptions.cacheTokens || {};
 		var sLogComponentName = oComponent ? oComponent.getMetadata().getComponentName() : oManifest.getComponentName();
-		var oConfig = Configuration;
+		var oConfig = undefined/*Configuration*/;
 		var aActiveTerminologies = mOptions.activeTerminologies;
 
 		if (!mOptions.models) {
@@ -1693,7 +1696,7 @@ sap.ui.define([
 								var oAnnotationUri = new URI(oAnnotation.uri);
 
 								if (bIsV2Model || bIsV4Model) {
-									var sValueFromConfig = Configuration.getSAPLogonLanguage();
+									var sValueFromConfig = undefined/*Configuration*/.getSAPLogonLanguage();
 									if (!oAnnotationUri.hasQuery("sap-language") && sValueFromConfig) {
 										oAnnotationUri.setQuery("sap-language", sValueFromConfig);
 									}

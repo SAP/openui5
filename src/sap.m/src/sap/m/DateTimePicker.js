@@ -24,9 +24,9 @@ sap.ui.define([
 	'./Button',
 	'sap/ui/core/IconPool',
 	"sap/ui/core/Theming",
-	'sap/ui/core/Configuration',
 	'sap/ui/core/date/UI5Date',
-	'sap/ui/dom/jquery/cursorPos' // provides jQuery.fn.cursorPos
+	// provides jQuery.fn.cursorPos
+	'sap/ui/dom/jquery/cursorPos'
 ], function(
 	jQuery,
 	InputBase,
@@ -48,7 +48,6 @@ sap.ui.define([
 	Button,
 	IconPool,
 	Theming,
-	Configuration,
 	UI5Date
 ) {
 	"use strict";
@@ -766,7 +765,7 @@ sap.ui.define([
 		if (oFormatOptions.calendarType === undefined) {
 			oFormatOptions.calendarType = bDisplayFormat
 				? this.getDisplayFormatType()
-				: Configuration.getCalendarType();
+				: undefined/*Configuration*/.getCalendarType();
 		}
 
 		if (oFormatOptions.strictParsing === undefined) {

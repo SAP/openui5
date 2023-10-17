@@ -3,16 +3,15 @@
  */
 sap.ui.define([
 	"sap/base/Log",
-	"sap/ui/core/Configuration",
 	"sap/ui/model/odata/type/Currency",
 	"sap/ui/model/odata/type/UnitMixin",
 	"sap/ui/model/type/Currency"
-], function (Log, Configuration, Currency, applyUnitMixin, BaseCurrency) {
+], function(Log, Currency, applyUnitMixin, BaseCurrency) {
 	/*global QUnit*/
 	"use strict";
 	/*eslint max-nested-callbacks: 0 */
 
-	var sDefaultLanguage = Configuration.getLanguage();
+	var sDefaultLanguage = undefined/*Configuration*/.getLanguage();
 
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.type.Currency", {
@@ -20,10 +19,10 @@ sap.ui.define([
 			this.oLogMock = this.mock(Log);
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
-			Configuration.setLanguage("en-US");
+			undefined/*Configuration*/.setLanguage("en-US");
 		},
 		afterEach : function () {
-			Configuration.setLanguage(sDefaultLanguage);
+			undefined/*Configuration*/.setLanguage(sDefaultLanguage);
 		}
 	});
 

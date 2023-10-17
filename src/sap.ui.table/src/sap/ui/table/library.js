@@ -7,13 +7,13 @@
  */
 sap.ui.define([
 	"sap/ui/core/Core",
-	"sap/ui/model/TreeAutoExpandMode",
+	"sap/ui/model/TreeAutoExpandMode", // TODO: Remove in UI5 2.0
 	"sap/ui/table/rowmodes/Type",
 	"sap/ui/core/library", // library dependency
 	"sap/ui/unified/library" // library dependency
 ], function(
 	Core,
-	TreeAutoExpandMode,
+	TreeAutoExpandMode, // TODO: Remove in UI5 2.0
 	RowModeType
 ) {
  "use strict";
@@ -34,14 +34,13 @@ sap.ui.define([
 	 dependencies: ["sap.ui.core", "sap.ui.unified"],
 	 designtime: "sap/ui/table/designtime/library.designtime",
 	 types: [
-		 "sap.ui.table.NavigationMode",
-		 "sap.ui.table.RowActionType",
-		 "sap.ui.table.SelectionBehavior",
-		 "sap.ui.table.SelectionMode",
-		 "sap.ui.table.SortOrder",
-		 "sap.ui.table.VisibleRowCountMode",
-		 "sap.ui.table.TreeAutoExpandMode", /*Note: Only added here to ensure that a corresponding module is created automatically. Cannot be used as type for properties!*/
-		 "sap.ui.table.plugins.SelectionMode"
+	  "sap.ui.table.NavigationMode",
+	  "sap.ui.table.RowActionType",
+	  "sap.ui.table.SelectionBehavior",
+	  "sap.ui.table.SelectionMode",
+	  "sap.ui.table.VisibleRowCountMode",
+	  /*Note: Only added here to ensure that a corresponding module is created automatically. Cannot be used as type for properties!*/
+	  "sap.ui.table.plugins.SelectionMode"
 	 ],
 	 interfaces: [],
 	 controls: [
@@ -184,29 +183,6 @@ sap.ui.define([
  };
 
  /**
-  * Sort order of a column
-  *
-  * @version ${version}
-  * @enum {string}
-  * @public
-  */
- thisLib.SortOrder = {
-
-	 /**
-	  * Sort Order: ascending.
-	  * @public
-	  */
-	 Ascending: "Ascending",
-
-	 /**
-	  * Sort Order: descending.
-	  * @public
-	  */
-	 Descending: "Descending"
-
- };
-
- /**
   * VisibleRowCountMode of the table
   *
   * @version ${version}
@@ -302,47 +278,6 @@ sap.ui.define([
 	  */
 	 hideGroupedColumn: "hideGroupedColumn"
  };
-
- /**
-  * Enumeration of the <code>ResetAllMode</code> that can be used in a <code>TablePersoController</code>.
-  * @enum {string}
-  * @public
-  */
- thisLib.ResetAllMode = {
-
-	 /**
-	  * Default behavior of the <code>TablePersoDialog</code> Reset All button.
-	  * @public
-	  */
-	 Default: "Default",
-
-	 /**
-	  * Resets the table to the default of the attached <code>PersoService</code>.
-	  * @public
-	  */
-	 ServiceDefault: "ServiceDefault",
-
-	 /**
-	  * Resets the table to the result of <code>getResetPersData</code> of the attached <code>PersoService</code>.
-	  * @public
-	  */
-	 ServiceReset: "ServiceReset"
- };
-
- // map the new Column to the old ColumnHeader
- thisLib.ColumnHeader = thisLib.Column;
-
- // copy sap.ui.model.TreeAutoExpandMode onto the legacy type sap.ui.table.TreeAutoExpandMode
- /**
-  * Different modes for setting the auto expand mode on tree or analytical bindings.
-  *
-  * This is an alias for {@link sap.ui.model.TreeAutoExpandMode} and kept for compatibility reasons.
-  *
-  * @version ${version}
-  * @typedef {sap.ui.model.TreeAutoExpandMode}
-  * @public
-  */
- thisLib.TreeAutoExpandMode = TreeAutoExpandMode;
 
  if (!thisLib.plugins) {
 	 thisLib.plugins = {};

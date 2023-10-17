@@ -1222,9 +1222,8 @@ sap.ui.define([
 			this.oTable.setSortConditions(oSortConditions);
 			this.oTable.rebind();
 
-			assert.equal(aInnerColumns[0].getSorted(), true);
 			assert.equal(aInnerColumns[0].getSortOrder(), "Descending");
-			assert.equal(aInnerColumns[1].getSorted(), false);
+			assert.equal(aInnerColumns[1].getSortOrder(), "None");
 		}.bind(this));
 	});
 
@@ -2609,8 +2608,9 @@ sap.ui.define([
 	});
 
 	QUnit.test("copyProvider", function(assert) {
-		const oCopyProvider = new CopyProvider();
-		this.oTable.setCopyProvider(oCopyProvider);
+		const oClipboardStub = sinon.stub(window, "navigator").value({clipboard: {}});
+		const oSecureContextStub = sinon.stub(window, "isSecureContext").value(true);
+		this.oTable.setCopyProvider(new CopyProvider());
 
 		return this.oTable._fullyInitialized().then(function() {
 			assert.equal(this.oTable.getCopyProviderPluginOwner(), this.oTable._oTable, "The inner table is set as plugin owner for CopyProvider");
@@ -2624,6 +2624,24 @@ sap.ui.define([
 			const oCopyButton = Core.byId(this.oTable.getId() + "-copy");
 			assert.ok(oCopyButton, "Copy button is created");
 			assert.equal(this.oTable._oToolbar.indexOfEnd(oCopyButton), 0, "Copy button is added to the toolbar, as a first element of the end aggreagtion");
+
+			oClipboardStub.restore();
+			oSecureContextStub.restore();
+		}.bind(this));
+	});
+
+	QUnit.test("copyProvider in unsecure context", function(assert) {
+		const oClipboardStub = sinon.stub(window, "navigator").value({clipboard: undefined});
+		const oSecureContextStub = sinon.stub(window, "isSecureContext").value(false);
+		const oCopyProvider = new CopyProvider();
+		this.oTable.setCopyProvider(oCopyProvider);
+
+		return this.oTable._fullyInitialized().then(function() {
+			assert.strictEqual(this.oTable.getCopyProvider(), oCopyProvider, "CopyProvider aggregation is set");
+			assert.notOk(Core.byId(this.oTable.getId() + "-copy"), "Copy button is not created");
+
+			oClipboardStub.restore();
+			oSecureContextStub.restore();
 		}.bind(this));
 	});
 

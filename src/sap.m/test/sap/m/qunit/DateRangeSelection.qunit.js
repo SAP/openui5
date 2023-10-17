@@ -604,6 +604,46 @@ sap.ui.define([
 		assert.ok(oSpyLogError.notCalled, "Error is not logged");
 	});
 
+	QUnit.test("Change date with keyboard when 'value' binding with type is used", function(assert) {
+		// prepare
+		var oModel = new JSONModel({
+				start: UI5Date.getInstance(2022, 10, 10, 10, 15, 10),
+				end: UI5Date.getInstance(2022, 10, 15, 10, 15, 10)
+			}),
+			oDRS = new DateRangeSelection({
+				value: {
+					type: "sap.ui.model.type.DateInterval",
+					parts: [
+						{ path: "/start" },
+						{ path: "/end" }
+					],
+					formatOptions: {
+						format: "yMEd"
+					}
+				}
+			}),
+			oFakeEvent = {
+				target: {
+					id: oDRS.getId() + "-inner",
+					which: KeyCodes.PAGE_UP
+				},
+				preventDefault: function() {}
+			};
+		oDRS.setModel(oModel);
+		oDRS.placeAt("qunit-fixture");
+		oCore.applyChanges();
+		oDRS._$input.cursorPos(15);
+
+		// act
+		oDRS.onsappageup(oFakeEvent);
+
+		// assert
+		assert.equal(oDRS.getDateValue().getUTCDate(), 10, "Date is incremented");
+
+		// clean
+		oDRS.destroy();
+	});
+
 	QUnit.test("Change date with page up key when 'date' value isn't set", function(assert) {
 		// prepare
 		this.oDRS.setDateValue(null);

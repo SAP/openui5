@@ -1,8 +1,8 @@
 /*!
  * ${copyright}
  */
-/*global globalThis, QUnit */
-sap.ui.define([
+/*global QUnit */
+sap.ui.require([
 	"sap/base/config",
 	"sap/base/Log",
 	"sap/base/config/GlobalConfigurationProvider",

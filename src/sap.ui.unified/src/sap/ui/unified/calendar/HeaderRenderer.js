@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(["sap/ui/core/Configuration", "sap/ui/base/Object"],
-	function(Configuration, BaseObject) {
+sap.ui.define(["sap/ui/base/Object"],
+	function(BaseObject) {
 	"use strict";
 
 
@@ -24,7 +24,7 @@ sap.ui.define(["sap/ui/core/Configuration", "sap/ui/base/Object"],
 	 * @param {sap.ui.unified.calendar.Header} oHead an object representation of the control that should be rendered
 	 */
 	HeaderRenderer.render = function(oRm, oHead){
-		var sLanguage = Configuration.getLocale().getLanguage();
+		var sLanguage = undefined/*Configuration*/.getLocale().getLanguage();
 		var sTooltip = oHead.getTooltip_AsString();
 		var sId = oHead.getId();
 		var oRB = sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified");

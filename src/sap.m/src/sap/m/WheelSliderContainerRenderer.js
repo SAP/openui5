@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define(["sap/ui/Device", "sap/ui/core/Configuration"], function(Device, Configuration) {
+sap.ui.define(["sap/ui/Device"], function(Device) {
 	"use strict";
 
 	/**
@@ -24,7 +24,7 @@ sap.ui.define(["sap/ui/Device", "sap/ui/core/Configuration"], function(Device, C
 			sLabelText = oControl.getLabelText() || "",
 			oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m"),
 			iSliderIndex,
-			bRtl = Configuration.getRTL();
+			bRtl = undefined/*Configuration*/.getRTL();
 
 		oRM.openStart("div", oControl);
 		oRM.class("sapMWSContainer");

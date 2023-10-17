@@ -5,7 +5,6 @@
 sap.ui.define([
 	"sap/ui/Global",
 	"sap/ui/core/AnimationMode",
-	"sap/ui/core/Configuration",
 	"sap/ui/core/ControlBehavior",
 	"sap/ui/core/Element",
 	"sap/ui/core/ElementMetadata",
@@ -17,7 +16,6 @@ sap.ui.define([
 	function(
 		Global,
 		AnimationMode,
-		Configuration,
 		ControlBehavior,
 		Element,
 		ElementMetadata,
@@ -100,16 +98,16 @@ sap.ui.define([
 				configurationBootstrap: window['sap-ui-config'] || Object.create(null),
 				configurationComputed: {
 					theme: Theming.getTheme(),
-					language: Configuration.getLanguage(),
-					formatLocale: Configuration.getFormatLocale(),
+					language: undefined/*Configuration*/.getLanguage(),
+					formatLocale: undefined/*Configuration*/.getFormatLocale(),
 					accessibility: ControlBehavior.isAccessibilityEnabled(),
 					animation: (ControlBehavior.getAnimationMode() !== AnimationMode.minimal &&
 								ControlBehavior.getAnimationMode() !== AnimationMode.none),
-					rtl: Configuration.getRTL(),
+					rtl: undefined/*Configuration*/.getRTL(),
 					debug: Supportability.isDebugModeEnabled(),
 					inspect: Supportability.isControlInspectorEnabled(),
 					originInfo: Supportability.collectOriginInfo(),
-					noDuplicateIds: Configuration.getNoDuplicateIds()
+					noDuplicateIds: undefined/*Configuration*/.getNoDuplicateIds()
 				},
 				libraries: _getLibraries(),
 				loadedLibraries: _getLoadedLibraries(),

@@ -7,13 +7,11 @@ sap.ui.define([
 	"sap/ui/core/date/Japanese",
 	"sap/ui/core/date/UI5Date",
 	"sap/ui/core/CalendarType",
-	"sap/ui/core/Configuration",
 	"sap/ui/core/date/CalendarWeekNumbering"
-], function(Locale, UniversalDate, Gregorian, Islamic, Japanese, UI5Date, CalendarType,
-		Configuration, CalendarWeekNumbering) {
+], function(Locale, UniversalDate, Gregorian, Islamic, Japanese, UI5Date, CalendarType, CalendarWeekNumbering) {
 	"use strict";
 
-	const sLanguage = Configuration.getLanguage();
+	const sLanguage = undefined/*Configuration*/.getLanguage();
 	//next values must not overlap each other!
 	var year = 1400,
 		month = 3,
@@ -36,14 +34,14 @@ sap.ui.define([
 			this.__ignoreIsolatedCoverage__ = true;
 		},
 		beforeEach: function () {
-			Configuration.setLanguage("en-US");
-			this.oStubCalendarType = this.stub(Configuration, "getCalendarType");
+			undefined/*Configuration*/.setLanguage("en-US");
+			this.oStubCalendarType = this.stub(undefined/*Configuration*/, "getCalendarType");
 			this.oStubCalendarType.returns(CalendarType.Gregorian);
 			this.dateSpy = this.spy(window, 'Date');
 		},
 		afterEach: function () {
 			this.dateSpy.restore();
-			Configuration.setLanguage(sLanguage);
+			undefined/*Configuration*/.setLanguage(sLanguage);
 		}
 	});
 
@@ -309,7 +307,7 @@ sap.ui.define([
 	QUnit.test("setWeek/setUTCWeek", function (assert) {
 		this.dateSpy.restore();
 
-		Configuration.setLanguage("de-DE");
+		undefined/*Configuration*/.setLanguage("de-DE");
 		var oWeekObject = new UniversalDate(2023,0,1);
 		// ISO 8601 (de)
 		oWeekObject.setWeek({week: 0, year: 2021});
@@ -429,7 +427,7 @@ sap.ui.define([
 		this.dateSpy.restore();
 
 		let oWeekObject;
-		const oFormatSettings = Configuration.getFormatSettings();
+		const oFormatSettings = undefined/*Configuration*/.getFormatSettings();
 		const aFixtures = [
 			{
 				oInputDate: new UniversalDate(2020, 11, 21),
@@ -527,7 +525,7 @@ sap.ui.define([
 		this.dateSpy.restore();
 
 		let oWeekObject;
-		const oFormatSettings = Configuration.getFormatSettings();
+		const oFormatSettings = undefined/*Configuration*/.getFormatSettings();
 		const aLocales = [
 			{ language: "de", region: null },
 			{ language: "en", region: "GB" }
@@ -671,7 +669,7 @@ sap.ui.define([
 });
 
 	QUnit.test("getWeekByDate/getFirstDateOfWeek", function (assert) {
-		var oConfigurationMock = this.mock(Configuration);
+		var oConfigurationMock = this.mock(undefined/*Configuration*/);
 
 		this.dateSpy.restore();
 

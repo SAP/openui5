@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define(["sap/ui/Device", "sap/m/library", "sap/ui/core/Configuration"], function(Device, library, Configuration) {
+sap.ui.define(["sap/ui/Device", "sap/m/library"], function(Device, library) {
 		"use strict";
 
 		// shortcut for sap.m.SwitchType
@@ -35,8 +35,8 @@ sap.ui.define(["sap/ui/Device", "sap/m/library", "sap/ui/core/Configuration"], f
 				sTooltip = oSwitch.getTooltip_AsString(),
 				bEnabled = oSwitch.getEnabled(),
 				sName = oSwitch.getName(),
-				bAccessibilityEnabled = Configuration.getAccessibility(),
-				sAnimationMode = Configuration.getAnimationMode(),
+				bAccessibilityEnabled = undefined/*Configuration*/.getAccessibility(),
+				sAnimationMode = undefined/*Configuration*/.getAnimationMode(),
 				CSS_CLASS = SwitchRenderer.CSS_CLASS;
 
 			oRm.openStart("div", oSwitch);
@@ -62,7 +62,7 @@ sap.ui.define(["sap/ui/Device", "sap/m/library", "sap/ui/core/Configuration"], f
 			oRm.openStart("div", oSwitch.getId() + "-switch");
 			oRm.attr("aria-hidden", "true");
 			oRm.class(CSS_CLASS);
-			if (sAnimationMode !== Configuration.AnimationMode.none && sAnimationMode !== Configuration.AnimationMode.minimal) {
+			if (sAnimationMode !== undefined/*Configuration*/.AnimationMode.none && sAnimationMode !== undefined/*Configuration*/.AnimationMode.minimal) {
 				oRm.class(CSS_CLASS + "Trans");
 			}
 			oRm.class(bState ? CSS_CLASS + "On" : CSS_CLASS + "Off");

@@ -4,26 +4,24 @@
 sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/core/CalendarType",
-	"sap/ui/core/Configuration",
 	"sap/ui/core/format/DateFormat",
 	"sap/ui/model/odata/ODataUtils",
 	"sap/ui/model/odata/v4/ODataUtils",
 	"sap/ui/model/odata/v4/lib/_Batch",
 	"sap/ui/model/odata/v4/lib/_Helper"
-], function (Log, CalendarType, Configuration, DateFormat, BaseODataUtils, ODataUtils, _Batch,
-		_Helper) {
+], function(Log, CalendarType, DateFormat, BaseODataUtils, ODataUtils, _Batch, _Helper) {
 	"use strict";
 
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.v4.ODataUtils", {
 		beforeEach : function () {
-			this.sDefaultCalendarType = Configuration.getCalendarType();
+			this.sDefaultCalendarType = undefined/*Configuration*/.getCalendarType();
 			this.oLogMock = this.mock(Log);
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
 		},
 		afterEach : function () {
-			Configuration.setCalendarType(this.sDefaultCalendarType);
+			undefined/*Configuration*/.setCalendarType(this.sDefaultCalendarType);
 		}
 	});
 
@@ -66,7 +64,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("parseDate", function (assert) {
-		Configuration.setCalendarType(CalendarType.Japanese);
+		undefined/*Configuration*/.setCalendarType(CalendarType.Japanese);
 		ODataUtils._setDateTimeFormatter();
 
 		assert.strictEqual(ODataUtils.parseDate("2000-01-01").getTime(), Date.UTC(2000, 0, 1));
@@ -90,7 +88,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("parseDateTimeOffset", function (assert) {
-		Configuration.setCalendarType(CalendarType.Japanese);
+		undefined/*Configuration*/.setCalendarType(CalendarType.Japanese);
 		ODataUtils._setDateTimeFormatter();
 
 		assert.strictEqual(
@@ -135,7 +133,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("parseTimeOfDay", function (assert) {
-		Configuration.setCalendarType(CalendarType.Japanese);
+		undefined/*Configuration*/.setCalendarType(CalendarType.Japanese);
 		ODataUtils._setDateTimeFormatter();
 
 		assert.strictEqual(ODataUtils.parseTimeOfDay("23:59:59.123456789012").getTime(),

@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define(["sap/ui/core/Configuration"], function (Configuration) {
+sap.ui.define([], function() {
 	"use strict";
 
 	/**
@@ -15,7 +15,7 @@ sap.ui.define(["sap/ui/core/Configuration"], function (Configuration) {
 
 	ObjectPageSubSectionRenderer.render = function (oRm, oControl) {
 		var aActions, bHasTitle, bShowTitle, bHasTitleLine, bHasActions, bUseTitleOnTheLeft, bHasVisibleActions,
-			bAccessibilityOn = Configuration.getAccessibility(),
+			bAccessibilityOn = undefined/*Configuration*/.getAccessibility(),
 			oLabelledBy = oControl.getAggregation("ariaLabelledBy");
 
 		if (!oControl.getVisible() || !oControl._getInternalVisible()) {

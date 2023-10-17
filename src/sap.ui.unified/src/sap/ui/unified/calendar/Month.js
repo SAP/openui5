@@ -21,7 +21,6 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	"sap/ui/thirdparty/jquery",
 	'sap/ui/core/InvisibleMessage',
-	"sap/ui/core/Configuration",
 	"sap/ui/core/date/CalendarWeekNumbering",
 	"sap/ui/core/date/CalendarUtils",
 	'sap/ui/core/date/UI5Date',
@@ -44,7 +43,6 @@ sap.ui.define([
 	KeyCodes,
 	jQuery,
 	InvisibleMessage,
-	Configuration,
 	CalendarWeekNumbering,
 	CalendarDateUtils,
 	UI5Date,
@@ -555,7 +553,7 @@ sap.ui.define([
 		if (oParent && oParent.getLocale) {
 			return oParent.getLocale();
 		} else if (!this._sLocale) {
-			this._sLocale = Configuration.getFormatSettings().getFormatLocale().toString();
+			this._sLocale = undefined/*Configuration*/.getFormatSettings().getFormatLocale().toString();
 		}
 
 		return this._sLocale;
@@ -703,7 +701,7 @@ sap.ui.define([
 			return oParent._getPrimaryCalendarType();
 		}
 
-		return this.getProperty("primaryCalendarType") || Configuration.getCalendarType();
+		return this.getProperty("primaryCalendarType") || undefined/*Configuration*/.getCalendarType();
 	};
 
 	/*

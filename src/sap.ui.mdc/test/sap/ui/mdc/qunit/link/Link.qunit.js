@@ -6,8 +6,9 @@ sap.ui.define([
 	"sap/ui/mdc/Link",
 	"sap/m/MessageToast",
 	"sap/ui/core/Core",
-	"sap/m/Text"
-], function(QUnit, LinkItem, Button, Link, MessageToast, oCore, Text) {
+	"sap/m/Text",
+	"sap/ui/mdc/enums/LinkType"
+], function(QUnit, LinkItem, Button, Link, MessageToast, oCore, Text, LinkType) {
 	"use strict";
 
 	const aAdditionaLinkItems = [
@@ -628,7 +629,7 @@ sap.ui.define([
 						const oNewLinkPromise = new Promise(function(resolve) {
 							setTimeout(function() {
 								resolve({
-									type: 1,
+									type: LinkType.DirectLink,
 									directLink: new LinkItem({
 										text: "Link2",
 										href: "#Action02"
@@ -639,7 +640,7 @@ sap.ui.define([
 
 						const oLinkTypeObject = {
 							initialType: {
-								type: 0,
+								type: LinkType.Text,
 								directLink: null
 							},
 							runtimeType: oNewLinkPromise
@@ -673,15 +674,15 @@ sap.ui.define([
 
 	const aLinkTypes = [
 		{
-			type: 0,
+			type: LinkType.Text,
 			expectedHref: null
 		},
 		{
-			type: 1,
+			type: LinkType.DirectLink,
 			expectedHref: "#Action01"
 		},
 		{
-			type: 2,
+			type: LinkType.Popover,
 			expectedHref: null
 		}
 	];

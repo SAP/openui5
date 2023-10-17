@@ -2,7 +2,6 @@
 sap.ui.define([
 	"sap/base/Log",
 	"sap/base/util/deepEqual",
-	"sap/ui/core/Configuration",
 	"sap/ui/core/date/UI5Date",
 	"sap/ui/model/BindingMode",
 	"sap/ui/model/CompositeBinding",
@@ -17,13 +16,10 @@ sap.ui.define([
 	"sap/ui/model/type/Float",
 	"sap/ui/model/type/Integer",
 	"sap/ui/model/type/String"
-], function (Log, deepEqual, Configuration, UI5Date, BindingMode, CompositeBinding, CompositeType,
-		Context, ParseException, PropertyBinding, StaticBinding, ValidateException, JSONModel,
-		TypeDate, TypeFloat, TypeInteger, TypeString
-) {
+], function(Log, deepEqual, UI5Date, BindingMode, CompositeBinding, CompositeType, Context, ParseException, PropertyBinding, StaticBinding, ValidateException, JSONModel, TypeDate, TypeFloat, TypeInteger, TypeString) {
 	"use strict";
 
-	var sDefaultLanguage = Configuration.getLanguage(),
+	var sDefaultLanguage = undefined/*Configuration*/.getLanguage(),
 		MyCompositeType = CompositeType.extend("MyCompositeType", {
 		constructor: function() {
 			CompositeType.apply(this);
@@ -123,7 +119,7 @@ sap.ui.define([
 			this.__ignoreIsolatedCoverage__ = true;
 		},
 		beforeEach: function() {
-			Configuration.setLanguage("en-US");
+			undefined/*Configuration*/.setLanguage("en-US");
 			this.model = new JSONModel({
 				a: 1,
 				b: 2,
@@ -146,7 +142,7 @@ sap.ui.define([
 			this.binding3 = null;
 			this.composite = null;
 			// reset the language
-			Configuration.setLanguage(sDefaultLanguage);
+			undefined/*Configuration*/.setLanguage(sDefaultLanguage);
 		}
 	});
 
@@ -396,7 +392,7 @@ sap.ui.define([
 			this.__ignoreIsolatedCoverage__ = true;
 		},
 		beforeEach: function() {
-			Configuration.setLanguage("en-US");
+			undefined/*Configuration*/.setLanguage("en-US");
 			this.model = new JSONModel({
 				a: 1,
 				b: 2,
@@ -429,7 +425,7 @@ sap.ui.define([
 			this.compositeraw = null;
 			this.compositeinternal = null;
 			// reset the language
-			Configuration.setLanguage(sDefaultLanguage);
+			undefined/*Configuration*/.setLanguage(sDefaultLanguage);
 		}
 	});
 
@@ -594,7 +590,7 @@ sap.ui.define([
 			this.__ignoreIsolatedCoverage__ = true;
 		},
 		beforeEach: function() {
-			Configuration.setLanguage("en-US");
+			undefined/*Configuration*/.setLanguage("en-US");
 			this.model = new JSONModel({
 				a: 1,
 				obj: {
@@ -614,7 +610,7 @@ sap.ui.define([
 			this.binding3 = null;
 			this.composite = null;
 			// reset the language
-			Configuration.setLanguage(sDefaultLanguage);
+			undefined/*Configuration*/.setLanguage(sDefaultLanguage);
 		}
 	});
 
@@ -630,7 +626,7 @@ sap.ui.define([
 			this.__ignoreIsolatedCoverage__ = true;
 		},
 		beforeEach: function() {
-			Configuration.setLanguage("en-US");
+			undefined/*Configuration*/.setLanguage("en-US");
 			this.type = new TypeString();
 
 			this.model = new JSONModel({
@@ -659,7 +655,7 @@ sap.ui.define([
 			this.binding3 = null;
 			this.compositeUseInternalValue = null;
 			// reset the language
-			Configuration.setLanguage(sDefaultLanguage);
+			undefined/*Configuration*/.setLanguage(sDefaultLanguage);
 		}
 	});
 
@@ -762,7 +758,7 @@ sap.ui.define([
 			this.__ignoreIsolatedCoverage__ = true;
 		},
 		beforeEach: function() {
-			Configuration.setLanguage("en-US");
+			undefined/*Configuration*/.setLanguage("en-US");
 			this.model = new JSONModel({
 				a: "1",
 				b: "2",
@@ -790,7 +786,7 @@ sap.ui.define([
 			this.binding3 = null;
 			this.composite = null;
 			// reset the language
-			Configuration.setLanguage(sDefaultLanguage);
+			undefined/*Configuration*/.setLanguage(sDefaultLanguage);
 		}
 	});
 

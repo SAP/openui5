@@ -5,13 +5,11 @@ sap.ui.define([
 	"sap/base/i18n/Localization",
 	"sap/base/util/LoaderExtensions",
 	"sap/ui/core/CalendarType",
-	"sap/ui/core/Configuration",
 	"sap/ui/core/Locale",
 	"sap/ui/core/LocaleData",
 	"sap/ui/core/date/CalendarWeekNumbering",
 	"sap/ui/core/format/TimezoneUtil"
-], function(timezones, Log, Localization, LoaderExtensions, CalendarType, Configuration, Locale,
-		LocaleData, CalendarWeekNumbering, TimezoneUtil) {
+], function(timezones, Log, Localization, LoaderExtensions, CalendarType, Locale, LocaleData, CalendarWeekNumbering, TimezoneUtil) {
 	"use strict";
 
 	QUnit.module("Locale Data Loading", {
@@ -224,7 +222,7 @@ sap.ui.define([
 			this.oLogMock.expects("error").never();
 			this.oLogMock.expects("warning").never();
 			//ensure custom unit mappings and custom units are reset
-			this.oFormatSettings = Configuration.getFormatSettings();
+			this.oFormatSettings = undefined/*Configuration*/.getFormatSettings();
 			this.oFormatSettings.setUnitMappings();
 			this.oFormatSettings.setCustomUnits();
 
@@ -262,7 +260,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Calendar type should use the value set in configuration when getting calendar related values", function(assert) {
-		Configuration.setCalendarType(CalendarType.Islamic);
+		undefined/*Configuration*/.setCalendarType(CalendarType.Islamic);
 
 		var oLocaleData = LocaleData.getInstance(new Locale("en_US"));
 
@@ -275,11 +273,11 @@ sap.ui.define([
 		assert.deepEqual(oLocaleData.getDateTimePattern("short"), oLocaleData.getDateTimePattern("short", CalendarType.Islamic), "getDateTimePattern uses calendar type in configuration");
 		assert.deepEqual(oLocaleData.getEras("narrow"), oLocaleData.getEras("narrow", CalendarType.Islamic), "getEra uses calendar type in configuration");
 
-		Configuration.setCalendarType(null);
+		undefined/*Configuration*/.setCalendarType(null);
 	});
 
 	QUnit.test("Locale data with customization from format settings in configuration", function(assert) {
-		var oFormatSettings = Configuration.getFormatSettings();
+		var oFormatSettings = undefined/*Configuration*/.getFormatSettings();
 
 		oFormatSettings.setLegacyDateFormat("3");
 		var oLocaleData = LocaleData.getInstance(oFormatSettings.getFormatLocale());
@@ -489,7 +487,7 @@ sap.ui.define([
 	QUnit.test("CustomLocaleData with getUnitFormats", function(assert) {
 		var oLocaleData = LocaleData.getInstance(new Locale("en_US-x-sapufmt"));
 
-		var oFormatSettings = Configuration.getFormatSettings();
+		var oFormatSettings = undefined/*Configuration*/.getFormatSettings();
 		oFormatSettings.setCustomUnits({
 			"cats": {
 				"displayName": "kittens",
@@ -531,7 +529,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Unit Mappings", function(assert) {
-		var oFormatSettings = Configuration.getFormatSettings();
+		var oFormatSettings = undefined/*Configuration*/.getFormatSettings();
 
 		var mUnitMappings = {
 			"CAT": "cats",
@@ -572,7 +570,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Custom Units get/set/add", function(assert) {
-		var oFormatSettings = Configuration.getFormatSettings();
+		var oFormatSettings = undefined/*Configuration*/.getFormatSettings();
 
 		var mUnits = {
 			"cats": {
@@ -653,33 +651,33 @@ sap.ui.define([
 	QUnit.test("Currency Digits", function(assert) {
 
 		var oLocaleData = LocaleData.getInstance(
-			Configuration.getFormatSettings().getFormatLocale()
+			undefined/*Configuration*/.getFormatSettings().getFormatLocale()
 		);
 
 		assert.equal(oLocaleData.getCurrencyDigits("JPY"), 0, "number of digits for Japanese Yen");
 		assert.equal(oLocaleData.getCurrencyDigits("EUR"), 2, "number of digits for Euro");
 
-		Configuration.getFormatSettings().setCustomCurrencies({"JPY": {"digits": 3}});
+		undefined/*Configuration*/.getFormatSettings().setCustomCurrencies({"JPY": {"digits": 3}});
 		assert.equal(oLocaleData.getCurrencyDigits("JPY"), 3, "number of digits for Japanese Yen");
-		Configuration.getFormatSettings().setCustomCurrencies({"EUR": {"digits": 3}});
+		undefined/*Configuration*/.getFormatSettings().setCustomCurrencies({"EUR": {"digits": 3}});
 		assert.equal(oLocaleData.getCurrencyDigits("JPY"), 0, "number of digits for Japanese Yen");
 
-		Configuration.getFormatSettings().setCustomCurrencies();
+		undefined/*Configuration*/.getFormatSettings().setCustomCurrencies();
 		assert.equal(oLocaleData.getCurrencyDigits("JPY"), 0, "number of digits for Japanese Yen");
 
 
-		Configuration.getFormatSettings().addCustomCurrencies();
+		undefined/*Configuration*/.getFormatSettings().addCustomCurrencies();
 		assert.equal(oLocaleData.getCurrencyDigits("JPY"), 0, "number of digits for Japanese Yen");
 
-		Configuration.getFormatSettings().addCustomCurrencies({"EUR": {"digits": 3}});
+		undefined/*Configuration*/.getFormatSettings().addCustomCurrencies({"EUR": {"digits": 3}});
 		assert.equal(oLocaleData.getCurrencyDigits("EUR"), 3, "number of digits for Euro");
 		assert.equal(oLocaleData.getCurrencyDigits("JPY"), 0, "number of digits for Japanese Yen");
 
-		Configuration.getFormatSettings().addCustomCurrencies({"JPY": {"digits": 3}});
+		undefined/*Configuration*/.getFormatSettings().addCustomCurrencies({"JPY": {"digits": 3}});
 		assert.equal(oLocaleData.getCurrencyDigits("EUR"), 3, "number of digits for Euro");
 		assert.equal(oLocaleData.getCurrencyDigits("JPY"), 3, "number of digits for Japanese Yen");
 
-		Configuration.getFormatSettings().setCustomCurrencies();
+		undefined/*Configuration*/.getFormatSettings().setCustomCurrencies();
 		assert.equal(oLocaleData.getCurrencyDigits("EUR"), 2, "number of digits for Euro");
 		assert.equal(oLocaleData.getCurrencyDigits("JPY"), 0, "number of digits for Japanese Yen");
 	});
@@ -698,14 +696,14 @@ sap.ui.define([
 	});
 
 	QUnit.test("getCurrencySymbols", function(assert) {
-		Configuration.getFormatSettings().addCustomCurrencies({
+		undefined/*Configuration*/.getFormatSettings().addCustomCurrencies({
 			"BTC": {
 				symbol: "Ƀ"
 			}
 		});
 
 		var oLocaleData = LocaleData.getInstance(
-			Configuration.getFormatSettings().getFormatLocale()
+			undefined/*Configuration*/.getFormatSettings().getFormatLocale()
 		);
 
 		var oCurrencySymbols = oLocaleData.getCurrencySymbols();
@@ -1097,13 +1095,13 @@ sap.ui.define([
 		// code under test - min days in 1st week from CLDR
 		assert.strictEqual(oCustomLocaleData.getMinimalDaysInFirstWeek(), 1);
 
-		Configuration.setCalendarWeekNumbering(CalendarWeekNumbering.ISO_8601);
+		undefined/*Configuration*/.setCalendarWeekNumbering(CalendarWeekNumbering.ISO_8601);
 
 		// code under test - min days in 1st week from CalendarWeekNumbering.ISO_8601
 		assert.strictEqual(oCustomLocaleData.getMinimalDaysInFirstWeek(), 4);
 
 		// clean up configuration
-		Configuration.setCalendarWeekNumbering(CalendarWeekNumbering.Default);
+		undefined/*Configuration*/.setCalendarWeekNumbering(CalendarWeekNumbering.Default);
 	});
 
 	//*********************************************************************************************

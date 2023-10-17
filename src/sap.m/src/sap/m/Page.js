@@ -18,8 +18,7 @@ sap.ui.define([
 	"sap/ui/core/InvisibleText",
 	"./TitlePropagationSupport",
 	"./PageRenderer",
-	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Configuration"
+	"sap/ui/thirdparty/jquery"
 ],
 function(
 	library,
@@ -36,8 +35,7 @@ function(
 	InvisibleText,
 	TitlePropagationSupport,
 	PageRenderer,
-	jQuery,
-	Configuration
+	jQuery
 ) {
 		"use strict";
 
@@ -412,8 +410,8 @@ function(
 			}
 
 			var $footer = jQuery(this.getDomRef()).find(".sapMPageFooter").last(),
-				sAnimationMode = Configuration.getAnimationMode(),
-				bHasAnimations = sAnimationMode !== Configuration.AnimationMode.none && sAnimationMode !== Configuration.AnimationMode.minimal;
+				sAnimationMode = undefined/*Configuration*/.getAnimationMode(),
+				bHasAnimations = sAnimationMode !== undefined/*Configuration*/.AnimationMode.none && sAnimationMode !== undefined/*Configuration*/.AnimationMode.minimal;
 
 			if (!this.getFloatingFooter()) {
 				this.setProperty("showFooter", bShowFooter);

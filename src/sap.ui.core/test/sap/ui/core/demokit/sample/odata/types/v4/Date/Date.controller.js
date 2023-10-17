@@ -2,12 +2,11 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/ui/core/Configuration",
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/odata/type/DateTimeWithTimezone",
 	"sap/ui/model/odata/v4/ODataUtils"
-], function (Configuration, Controller, JSONModel, DateTimeWithTimezone, ODataUtils) {
+], function(Controller, JSONModel, DateTimeWithTimezone, ODataUtils) {
 	"use strict";
 
 	return Controller.extend("sap.ui.core.sample.odata.types.v4.Date.Date", {
@@ -25,7 +24,7 @@ sap.ui.define([
 				+ " control property.<br>"
 				+ " The model representation is a string like \"2022-12-31\".</p>",
 			EndDate: null,
-			Timezone: Configuration.getTimezone()
+			Timezone: undefined/*Configuration*/.getTimezone()
 		}),
 
 		formatDate: function (vValue) {

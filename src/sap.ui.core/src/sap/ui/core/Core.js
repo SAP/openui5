@@ -6,7 +6,6 @@
 sap.ui.define([
 	"./AnimationMode",
 	"./Component",
-	"./Configuration",
 	"./ControlBehavior",
 	"./Element",
 	"./ElementMetadata",
@@ -54,7 +53,6 @@ sap.ui.define([
 	function(
 		AnimationMode,
 		Component,
-		Configuration,
 		ControlBehavior,
 		Element,
 		ElementMetadata,
@@ -372,8 +370,6 @@ sap.ui.define([
 				}
 				sap.ui.loader.config({paths: paths});
 
-				Configuration.setCore(this);
-
 				// initialize frameOptions script (anti-clickjacking, etc.)
 				var oFrameOptionsConfig = BaseConfig.get({
 					name: "sapUiFrameOptionsConfig",
@@ -417,12 +413,6 @@ sap.ui.define([
 						this.aLibs.splice(i,1);
 					}
 					this.aLibs.unshift("sap.ui.core");
-				}
-
-				// enable LessSupport if specified in configuration
-				if (BaseConfig.get({name: "sapUiXxLesssupport", type: BaseConfig.Type.Boolean}) && !this.aModules.includes("sap.ui.core.plugin.LessSupport")) {
-					Log.info("Including LessSupport into declared modules");
-					this.aModules.push("sap.ui.core.plugin.LessSupport");
 				}
 
 				var sPreloadMode = Library.getPreloadMode();
@@ -735,7 +725,7 @@ sap.ui.define([
 		 */
 		Core.prototype._setupContentDirection = function() {
 			var METHOD = "sap.ui.core.Core",
-				sDir = Configuration.getRTL() ? "rtl" : "ltr";
+				sDir = undefined/*Configuration*/.getRTL() ? "rtl" : "ltr";
 
 			document.documentElement.setAttribute("dir", sDir); // webkit does not allow setting document.dir before the body exists
 			Log.info("Content direction set to '" + sDir + "'",null,METHOD);
@@ -797,7 +787,7 @@ sap.ui.define([
 
 			// append the lang info to the document (required for ARIA support)
 			var fnUpdateLangAttr = function() {
-				var oLocale = Configuration.getLocale();
+				var oLocale = undefined/*Configuration*/.getLocale();
 				oLocale ? html.setAttribute("lang", oLocale.toString()) : html.removeAttribute("lang");
 			};
 			fnUpdateLangAttr.call(this);
@@ -846,7 +836,7 @@ sap.ui.define([
 		 */
 		Core.prototype._boot = function(bAsync, fnCallback) {
 			// add CalendarClass to list of modules
-			this.aModules.push("sap/ui/core/date/" + Configuration.getCalendarType());
+			this.aModules.push("sap/ui/core/date/" + undefined/*Configuration*/.getCalendarType());
 
 			// load all modules now
 			if ( bAsync ) {
@@ -992,7 +982,6 @@ sap.ui.define([
 		 * @private
 		 */
 		Core.prototype.init = function() {
-
 			if (this.bInitialized) {
 				return;
 			}
@@ -1005,8 +994,6 @@ sap.ui.define([
 			Log.info("Initializing",null,METHOD);
 
 			Measurement.end("coreInit");
-
-			this._setBodyAccessibilityRole();
 
 			var sWaitForTheme = getWaitForTheme();
 
@@ -1073,15 +1060,6 @@ sap.ui.define([
 						}
 					}
 				}
-			}
-		};
-
-		Core.prototype._setBodyAccessibilityRole = function() {
-			var body = document.body;
-
-			//Add ARIA role 'application'
-			if (ControlBehavior.isAccessibilityEnabled() && Configuration.getAutoAriaBodyRole() && !body.getAttribute("role")) {
-				body.setAttribute("role", "application");
 			}
 		};
 
@@ -1208,9 +1186,10 @@ sap.ui.define([
 		 *
 		 * @return {sap.ui.core.Configuration} the Configuration of the current Core.
 		 * @public
+		 * @deprecated As of Version 1.120. Please see {@link sap.ui.core.Configuration Configuration} for the corrsponding replacements.
 		 */
 		Core.prototype.getConfiguration = function () {
-			return Configuration;
+			return undefined/*Configuration*/;
 		};
 
 		/**

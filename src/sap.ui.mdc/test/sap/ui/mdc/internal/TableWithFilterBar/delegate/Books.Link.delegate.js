@@ -3,8 +3,9 @@
  */
 sap.ui.define([
     "sap/ui/mdc/LinkDelegate",
-	"sap/ui/mdc/link/LinkItem"
-], function(LinkDelegate, LinkItem) {
+	"sap/ui/mdc/link/LinkItem",
+	"sap/ui/mdc/enums/LinkType"
+], function(LinkDelegate, LinkItem, LinkType) {
     "use strict";
 
     var SampleLinkDelegate = Object.assign({}, LinkDelegate);
@@ -15,7 +16,7 @@ sap.ui.define([
 			href: self.location.pathname + (self.location.search && self.location.search) +  "#/Authors/{path: 'author_ID', targetType: 'raw'}"
 		});
 		var oLinkType = {
-			type: 1,
+			type: LinkType.DirectLink,
 			directLink: oLinkItem
 		};
 		return Promise.resolve(oLinkType);

@@ -13,9 +13,10 @@ sap.ui.define([
 	'sap/ui/events/PseudoEvents',
 	'sap/ui/core/InvisibleText',
 	'sap/ui/core/Core',
-	'sap/ui/core/Configuration',
-	'sap/ui/core/IconPool', // required by RenderManager#icon
-	'sap/ui/dom/jquery/cursorPos' // provides jQuery.fn.cursorPos
+	// required by RenderManager#icon
+	'sap/ui/core/IconPool',
+	// provides jQuery.fn.cursorPos
+	'sap/ui/dom/jquery/cursorPos'
 ],
 	function(
 		ValueStateSupport,
@@ -26,8 +27,7 @@ sap.ui.define([
 		Log,
 		PseudoEvents,
 		InvisibleText,
-		Core,
-		Configuration
+		Core
 	) {
 	"use strict";
 
@@ -354,7 +354,7 @@ sap.ui.define([
 
 
 	MenuTextFieldItem.prototype._checkCursorPosForNav = function(bForward) {
-		var bRtl = Configuration.getRTL();
+		var bRtl = undefined/*Configuration*/.getRTL();
 		var bBack = bForward ? bRtl : !bRtl;
 		var $input = this.$("tf");
 		var iPos = $input.cursorPos();

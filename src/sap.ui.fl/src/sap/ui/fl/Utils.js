@@ -3,6 +3,7 @@
  */
 
 sap.ui.define([
+	"sap/base/i18n/Localization",
 	"sap/base/util/isPlainObject",
 	"sap/base/util/uid",
 	"sap/base/util/restricted/_isEqual",
@@ -15,9 +16,9 @@ sap.ui.define([
 	"sap/ui/fl/initial/_internal/config",
 	"sap/ui/fl/Scenario",
 	"sap/ui/thirdparty/hasher",
-	"sap/ui/core/mvc/View",
-	"sap/ui/core/Configuration"
+	"sap/ui/core/mvc/View"
 ], function(
+	Localization,
 	isPlainObject,
 	uid,
 	isEqual,
@@ -30,8 +31,7 @@ sap.ui.define([
 	config,
 	Scenario,
 	hasher,
-	View,
-	Configuration
+	View
 ) {
 	"use strict";
 
@@ -259,7 +259,7 @@ sap.ui.define([
 		 * @ui5-restricted sap.ui.fl
 		 */
 		getCurrentLanguage() {
-			const sLanguage = Configuration.getLanguage();
+			const sLanguage = Localization.getLanguage();
 			if (typeof sLanguage !== "string") {
 				return "";
 			}

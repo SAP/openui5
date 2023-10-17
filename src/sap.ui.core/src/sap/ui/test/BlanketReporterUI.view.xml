@@ -104,7 +104,7 @@
 							preserveDecimals : false}}"/>
 				</table:template>
 			</table:Column>
-			<table:Column filterProperty="name" sortProperty="name" sorted="true">
+			<table:Column filterProperty="name" sortProperty="name" sorted="true" sortOrder="Ascending">
 				<table:label>
 					<Text text="File"/>
 				</table:label>

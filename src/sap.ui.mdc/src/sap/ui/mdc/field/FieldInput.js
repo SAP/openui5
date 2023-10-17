@@ -14,12 +14,11 @@ sap.ui.define([
 	/**
 	 * Constructor for a new <code>FieldInput</code>.
 	 *
-	 * The <code>FieldInput</code> control enhances the {@link sap.m.Input Input} control to add ARIA attributes
-	 * and other {@link sap.ui.mdc.field.FieldBase FieldBase}-specific logic.
-	 *
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] Initial settings for the new control
-	 * @class The <code>FieldInput</code> control is used to render an input field inside a control based on {@link sap.ui.mdc.field.FieldBase FieldBase}.
+	 * @class
+	 * The <code>FieldInput</code> control is used to render an input field inside a control based on {@link sap.ui.mdc.field.FieldBase FieldBase}.
+	 * It enhances the {@link sap.m.Input Input} control to add ARIA attributes and other {@link sap.ui.mdc.field.FieldBase FieldBase}-specific logic.
 	 * @extends sap.m.Input
 	 * @version ${version}
 	 * @constructor

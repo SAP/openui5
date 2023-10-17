@@ -1,7 +1,6 @@
 sap.ui.define([
 	"sap/m/Bar",
 	"sap/m/Button",
-	"sap/ui/core/Configuration",
 	"sap/ui/core/Core",
 	"sap/ui/core/library",
 	"sap/ui/unified/DateTypeRange",
@@ -18,7 +17,6 @@ sap.ui.define([
 ], function(
 	Bar,
 	Button,
-	Configuration,
 	oCore,
 	coreLibrary,
 	DateTypeRange,
@@ -194,7 +192,7 @@ sap.ui.define([
 	app.placeAt("body");
 
 	function handleTimezoneButtonPress(e) {
-		Configuration.setTimezone(e.getSource().getText());
+		undefined/*Configuration*/.setTimezone(e.getSource().getText());
 		oCore.byId("DRS12").setValue("");
 	}
 });

@@ -7,11 +7,10 @@ sap.ui.define(
 		"sap/m/upload/p13n/mediator/BaseMediator",
 		"sap/m/p13n/GroupPanel",
 		"sap/m/upload/p13n/modules/CustomDataConfig",
-		"sap/ui/core/Configuration",
 		"sap/base/util/deepEqual",
 		"sap/ui/model/Sorter"
 	],
-	function (BaseMediator, GroupPanel, CustomDataConfig, Configuration, deepEqual, Sorter) {
+	function(BaseMediator, GroupPanel, CustomDataConfig, deepEqual, Sorter) {
 		"use strict";
 
 		 /**
@@ -66,7 +65,7 @@ sap.ui.define(
 			});
 
 			// Sort panel config
-			const sLocale = Configuration.getLocale().toString(),
+			const sLocale = undefined/*Configuration*/.getLocale().toString(),
 				oCollator = window.Intl.Collator(sLocale, {});
 			aPanelState.sort((mItem1, mItem2) => {
 				if (mItem1.grouped && mItem2.sorted) {

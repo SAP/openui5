@@ -2,8 +2,9 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/ui/mdc/LinkDelegate"
-], function(LinkDelegate) {
+	"sap/ui/mdc/LinkDelegate",
+	"sap/ui/mdc/enums/LinkType"
+], function(LinkDelegate, LinkType) {
 	"use strict";
 
 	const SampleLinkDelegate = Object.assign({}, LinkDelegate);
@@ -43,7 +44,7 @@ sap.ui.define([
 		}
 		return Promise.resolve({
 			linkType: {
-				type: 2,
+				type: LinkType.Popover,
 				directLink: undefined
 			},
 			newLinkTypePromise: null

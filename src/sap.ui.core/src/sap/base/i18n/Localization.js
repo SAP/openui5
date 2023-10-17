@@ -164,7 +164,7 @@ sap.ui.define([
 
 	function check(bCondition, sMessage) {
 		if ( !bCondition ) {
-			throw new Error(sMessage);
+			throw new TypeError(sMessage);
 		}
 	}
 
@@ -301,8 +301,10 @@ sap.ui.define([
 		 *                                    represented as en-US with a private extension
 		 * </pre>
 		 *
-		 * For a normalized BCP47 tag, call {@link #getLanguageTag} or call {@link #getLanguageTag} to get a
+		 * Call {@link moduel:sap/base/i18n/Localization.getLanguageTag getLanguageTag} to get a
 		 * {@link module:sap/base/i18n/LanguageTag LanguageTag} object matching the language.
+		 * For a normalized BCP47 tag, call {@link module:sap/base/i18n/LanguageTag.toString toString()}
+		 * on the returned <code>LanguageTag</code>
 		 *
 		 * @returns {string} Language string as configured
 		 * @public
@@ -376,8 +378,8 @@ sap.ui.define([
 		 * When the language can't be interpreted as a BCP47 language (using the relaxed syntax
 		 * described in {@link #getLanguage}, an error will be thrown.
 		 *
-		 * When the language has changed, the Core will fire its
-		 * {@link sap.ui.core.Core#event:localizationChanged localizationChanged} event.
+		 * When the language has changed, the Localization will fire its
+		 * {@link module:sap/base/i18n/Localization.change change} event.
 		 *
 		 *
 		 * <h3>Restrictions</h3>
@@ -412,7 +414,8 @@ sap.ui.define([
 		 *
 		 * config method does not accept SAP language codes for <code>sLanguage</code>. Instead, a second
 		 * parameter <code>sSAPLogonLanguage</code> can be provided with an SAP language code corresponding
-		 * to the given language. A given value will be returned by the {@link #getSAPLogonLanguage} method.
+		 * to the given language. A given value will be returned by the
+		 * {@link module:sap/base/i18n/Localization.getSAPLogonLanguage getSAPLogonLanguage} method.
 		 * It is up to the caller to provide a consistent pair of BCP47 language and SAP language code.
 		 * The SAP language code is only checked to be of length 2 and must consist of letters or digits only.
 		 *
@@ -424,7 +427,7 @@ sap.ui.define([
 		 *   if a value is specified, future calls to <code>getSAPLogonLanguage</code> will return that value;
 		 *   if no value is specified, the framework will use the ISO639 language part of <code>sLanguage</code>
 		 *   as SAP Logon language.
-		 * @throws {Error} When <code>sLanguage</code> can't be interpreted as a BCP47 language or when
+		 * @throws {TypeError} When <code>sLanguage</code> can't be interpreted as a BCP47 language or when
 		 *   <code>sSAPLanguage</code> is given and can't be interpreted as SAP language code.
 		 *
 		 * @see http://scn.sap.com/docs/DOC-14377
@@ -492,11 +495,11 @@ sap.ui.define([
 		 * For more information, see
 		 * {@link topic:6c9e61dc157a40c19460660ece8368bc Dates, Times, Timestamps, and Time Zones}.
 		 *
-		 * When the timezone has changed, the Core will fire its
-		 * {@link module:sap/base/i18n/Localization#event:change change} event.
+		 * When the timezone has changed, the Localization will fire its {@link #event:change change} event.
 		 *
-		 * @param {string|null} [sTimezone] IANA timezone ID, e.g. "America/New_York". Use <code>null</code> to reset the timezone to the browser's local timezone.
-		 *   An invalid IANA timezone ID will fall back to the browser's timezone.
+		 * @param {string|null} [sTimezone] IANA timezone ID, e.g. "America/New_York".
+		 * Use <code>null</code> to reset the timezone to the browser's local timezone.
+		 * An invalid IANA timezone ID will fall back to the browser's timezone.
 		 * @public
 		 * @since 1.120.0
 		 */
@@ -517,7 +520,7 @@ sap.ui.define([
 		/**
 		 * Returns a LanguageTag object for the current language.
 		 *
-		 * The LanguageTag is derived from the {@link #getLanguage language} property.
+		 * The LanguageTag is derived from {@link modue:sap/base/i18n/Localization.getLanguage Localization.getLanguage}.
 		 *
 		 * @returns {module:sap/base/i18n/LanguageTag} The LanguageTag
 		 * @public
@@ -575,9 +578,9 @@ sap.ui.define([
 		 *
 		 * After changing the character orientation mode, the framework tries
 		 * to update localization specific parts of the UI. See the documentation of
-		 * {@link #setLanguage} for details and restrictions.
+		 * {@link module:sap/base/i18n/Localization.setLanguage setLanguage} for details and restrictions.
 		 *
-		 * <b>Note</b>: See documentation of {@link #setLanguage} for restrictions.
+		 * <b>Note</b>: See documentation of {@link module:sap/base/i18n/Localization.setLanguage setLanguage} for restrictions.
 		 *
 		 * @param {boolean|null} bRTL new character orientation mode or <code>null</code>
 		 * @public

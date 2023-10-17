@@ -16,8 +16,7 @@ sap.ui.define([
 	'./SliderRenderer',
 	'./ResponsiveScale',
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/events/KeyCodes",
-	"sap/ui/core/Configuration"
+	"sap/ui/events/KeyCodes"
 ],
 function(
 	Control,
@@ -33,8 +32,7 @@ function(
 	SliderRenderer,
 	ResponsiveScale,
 	jQuery,
-	KeyCodes,
-	Configuration
+	KeyCodes
 ) {
 		"use strict";
 
@@ -551,7 +549,7 @@ function(
 			}
 
 			// update the position of the handle
-			oHandleDomRef.style[Configuration.getRTL() ? "right" : "left"] = sPerValue;
+			oHandleDomRef.style[undefined/*Configuration*/.getRTL() ? "right" : "left"] = sPerValue;
 
 			// update the position of the advanced tooltip
 			if (this.getShowAdvancedTooltip() && oTooltipContainer.getDomRef()) {
@@ -1072,7 +1070,7 @@ function(
 
 				fNewValue = (((oTouch.pageX - this._fSliderPaddingLeft - this._fSliderOffsetLeft) / this._fSliderWidth) * (this.getMax() - fMin)) +  fMin;
 
-				if (Configuration.getRTL()) {
+				if (undefined/*Configuration*/.getRTL()) {
 					fNewValue = this._convertValueToRtlMode(fNewValue);
 				}
 
@@ -1121,7 +1119,7 @@ function(
 				fNewValue = (((iPageX - this._fDiffX - this._fSliderOffsetLeft) / this._fSliderWidth) * (this.getMax() - fMin)) +  fMin;
 
 			// RTL mirror
-			if (Configuration.getRTL()) {
+			if (undefined/*Configuration*/.getRTL()) {
 				fNewValue = this._convertValueToRtlMode(fNewValue);
 			}
 

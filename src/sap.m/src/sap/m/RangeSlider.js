@@ -8,8 +8,7 @@ sap.ui.define([
     "./SliderUtilities",
     "./RangeSliderRenderer",
     "sap/ui/thirdparty/jquery",
-    "sap/ui/events/KeyCodes",
-    "sap/ui/core/Configuration"
+    "sap/ui/events/KeyCodes"
 ],
     function(
         InvisibleText,
@@ -18,8 +17,7 @@ sap.ui.define([
         SliderUtilities,
         RangeSliderRenderer,
         jQuery,
-        KeyCodes,
-        Configuration
+        KeyCodes
     ) {
         "use strict";
 
@@ -166,7 +164,7 @@ sap.ui.define([
         };
 
         RangeSlider.prototype.onBeforeRendering = function () {
-            this._bRTL = Configuration.getRTL();
+            this._bRTL = undefined/*Configuration*/.getRTL();
 
             var aRange = this.getRange();
 

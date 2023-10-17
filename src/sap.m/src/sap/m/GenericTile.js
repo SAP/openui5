@@ -21,11 +21,10 @@ sap.ui.define([
 	"sap/ui/core/theming/Parameters",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/library",
-	"sap/ui/core/Configuration",
 	"sap/ui/core/InvisibleText",
 	"sap/ui/core/Core",
 	"sap/ui/core/Theming"
-], function (
+], function(
 	library,
 	Control,
 	Text,
@@ -44,7 +43,6 @@ sap.ui.define([
 	Parameters,
 	jQuery,
 	coreLibrary,
-	Configuration,
 	InvisibleText,
 	Core,
 	Theming
@@ -988,7 +986,7 @@ sap.ui.define([
 			bLineBreak = this.$().is(":not(:first-child)") && iLines > 1,
 			$LineBreak = jQuery("<span><br></span>"),
 			i = 0,
-			bRTL = Configuration.getRTL(),
+			bRTL = undefined/*Configuration*/.getRTL(),
 			oEndMarkerPosition = $End.position();
 
 		if (bLineBreak) { //tile does not fit in line without breaking --> add line-break before tile
@@ -1617,8 +1615,9 @@ sap.ui.define([
 			sAriaText = sAriaText.trim();
 			if (this.getLinkTileContents().length > 0) {
 				sAriaText += ("\n" + this._oRb.getText("GENERICTILE_LINK_TILE_CONTENT_DESCRIPTION"));
+			} else {
+				sAriaText += ("\n" + this._getSizeDescription());
 			}
-			sAriaText += ("\n" + this._getSizeDescription());
 		}
 		return sAriaText.trim();  // ARIA label set by the app, equal to tooltip
 	};

@@ -21,8 +21,7 @@ sap.ui.define([
 	"sap/ui/dom/containsOrEquals",
 	"sap/base/util/deepEqual",
 	"sap/base/Log",
-	"sap/ui/unified/DateRange",
-	"sap/ui/core/Configuration"
+	"sap/ui/unified/DateRange"
 ], function(
 	Popover,
 	Device,
@@ -41,8 +40,7 @@ sap.ui.define([
 	containsOrEquals,
 	deepEqual,
 	Log,
-	DateRange,
-	Configuration
+	DateRange
 ) {
 		"use strict";
 
@@ -456,7 +454,7 @@ sap.ui.define([
 	CalendarMonthInterval.prototype.getLocale = function(){
 
 		if (!this._sLocale) {
-			this._sLocale = Configuration.getFormatSettings().getFormatLocale().toString();
+			this._sLocale = undefined/*Configuration*/.getFormatSettings().getFormatLocale().toString();
 		}
 
 		return this._sLocale;

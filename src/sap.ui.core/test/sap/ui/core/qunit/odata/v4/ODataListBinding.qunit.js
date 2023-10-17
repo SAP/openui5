@@ -4691,13 +4691,6 @@ sap.ui.define([
 			// code under test
 			oBinding.delete("~oGroupLock~", "~sEditUrl~", oContext);
 		}, new Error("Unsupported kept-alive context: ~toString~"));
-
-		oBinding.mParameters.$$aggregation = {expandTo : 2, hierarchyQualifier : "X"};
-
-		assert.throws(function () {
-			// code under test
-			oBinding.delete("~oGroupLock~", "~sEditUrl~", {/*oContext*/});
-		}, new Error("Unsupported $$aggregation.expandTo: 2"));
 	});
 
 	//*********************************************************************************************
@@ -8529,13 +8522,9 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-[0, 1].forEach(function (iNodeLevel) {
-	QUnit.test("getParent: given node is a root node with level: " + iNodeLevel, function (assert) {
+	QUnit.test("getParent: given node is a root node", function (assert) {
 		const oBinding = this.bindList("/EMPLOYEES");
-		const oNode = {
-			iIndex : 0,
-			getProperty : mustBeMocked
-		};
+		const oNode = {iIndex : 23};
 		// Note: autoExpandSelect at model would be required for hierarchyQualifier, but that leads
 		// too far
 		oBinding.mParameters = {
@@ -8544,15 +8533,15 @@ sap.ui.define([
 				hierarchyQualifier : "X"
 			}
 		};
-		oBinding.aContexts = [oNode];
+		oBinding.aContexts[23] = oNode;
+		oBinding.oCache = {getParentIndex : mustBeMocked};
 
-		this.mock(oNode).expects("getProperty").withExactArgs("@$ui5.node.level")
-			.returns(iNodeLevel);
+		this.mock(oBinding.oCache).expects("getParentIndex").withExactArgs(23)
+			.returns(-1);
 
 		// code under test
 		assert.strictEqual(oBinding.getParent(oNode), null);
 	});
-});
 
 	//*********************************************************************************************
 	QUnit.test("getParent: throws error if expandTo > 1", function (assert) {
@@ -8611,21 +8600,12 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("getParent", function (assert) {
 		const oBinding = this.bindList("/EMPLOYEES");
-		const oNode = {getProperty : mustBeMocked, iIndex : 7};
-		const oSiblingNode = {getProperty : mustBeMocked};
-		const oChildNode = {getProperty : mustBeMocked};
-		const oParentContext = {getProperty : mustBeMocked};
+		const oNode = {iIndex : 42};
+		const oParentContext = {};
 
-		oBinding.aContexts = [
-			{/*Root node*/}, //@$ui5.node.level 1
-			{}, // Level @$ui5.node.level 2
-			{}, // Level @$ui5.node.level 3
-			oParentContext,
-			oChildNode,
-			oSiblingNode,
-			undefined,
-			oNode
-		];
+		oBinding.aContexts[23] = oParentContext;
+		oBinding.aContexts[42] = oNode;
+		oBinding.oCache = {getParentIndex : mustBeMocked};
 
 		// Note: autoExpandSelect at model would be required for hierarchyQualifier, but that leads
 		// too far
@@ -8636,19 +8616,150 @@ sap.ui.define([
 			}
 		};
 
-		this.mock(oNode).expects("getProperty").withExactArgs("@$ui5.node.level").returns(5);
-		this.mock(oSiblingNode).expects("getProperty")
-			.withExactArgs("@$ui5.node.level")
-			.returns(5);
-		this.mock(oChildNode).expects("getProperty")
-			.withExactArgs("@$ui5.node.level")
-			.returns(6);
-		this.mock(oParentContext).expects("getProperty")
-			.withExactArgs("@$ui5.node.level")
-			.returns(4);
+		this.mock(oBinding.oCache).expects("getParentIndex").withExactArgs(42)
+			.returns(23);
 
 		// code under test
 		assert.strictEqual(oBinding.getParent(oNode), oParentContext);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("requestParent: Missing recursive hierarchy", function (assert) {
+		const oBinding = this.bindList("/EMPLOYEES");
+
+		assert.throws(function () {
+			// code under test
+			oBinding.requestParent();
+		}, new Error("Missing recursive hierarchy"));
+
+		oBinding.mParameters = {$$aggregation : {}};
+
+		assert.throws(function () {
+			// code under test
+			oBinding.requestParent();
+		}, new Error("Missing recursive hierarchy"));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("requestParent: throws error if expandTo > 1", function (assert) {
+		const oBinding = this.bindList("/EMPLOYEES");
+		// Note: autoExpandSelect at model would be required for hierarchyQualifier, but that leads
+		// too far
+		oBinding.mParameters = {
+			$$aggregation : {
+				expandTo : 2,
+				hierarchyQualifier : "X"
+			}
+		};
+
+		assert.throws(function () {
+			// code under test
+			oBinding.requestParent();
+		}, new Error("Unsupported $$aggregation.expandTo: 2"));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("requestParent: given node is not part of a recursive hierachy", function (assert) {
+		const oBinding = this.bindList("/EMPLOYEES");
+		const oNode = Context.create({/*oModel*/}, oBinding, "/EMPLOYEES('42')", 23);
+		// Note: autoExpandSelect at model would be required for hierarchyQualifier, but that leads
+		// too far
+		oBinding.mParameters = {
+			$$aggregation : {
+				expandTo : 1,
+				hierarchyQualifier : "X"
+			}
+		};
+
+		assert.throws(function () {
+			// code under test
+			oBinding.requestParent(oNode);
+		}, new Error("Not currently part of a recursive hierarchy: " + oNode));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("requestParent: given node is a root node", async function (assert) {
+		const oBinding = this.bindList("/EMPLOYEES");
+		const oNode = {iIndex : 23};
+		// Note: autoExpandSelect at model would be required for hierarchyQualifier, but that leads
+		// too far
+		oBinding.mParameters = {
+			$$aggregation : {
+				expandTo : 1,
+				hierarchyQualifier : "X"
+			}
+		};
+		oBinding.aContexts[23] = oNode;
+		oBinding.oCache = {getParentIndex : mustBeMocked};
+
+		this.mock(oBinding.oCache).expects("getParentIndex").withExactArgs(23)
+			.returns(-1);
+
+		// code under test
+		const oPromise = oBinding.requestParent(oNode);
+		assert.ok(oPromise instanceof Promise);
+		assert.strictEqual(await oPromise, null);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("requestParent", async function (assert) {
+		const oBinding = this.bindList("/EMPLOYEES");
+		const oNode = {iIndex : 42};
+		const oParentContext = {};
+
+		oBinding.aContexts[42] = oNode;
+		oBinding.oCache = {getParentIndex : mustBeMocked};
+
+		// Note: autoExpandSelect at model would be required for hierarchyQualifier, but that leads
+		// too far
+		oBinding.mParameters = {
+			$$aggregation : {
+				expandTo : 1,
+				hierarchyQualifier : "X"
+			}
+		};
+
+		this.mock(oBinding.oCache).expects("getParentIndex").withExactArgs(42)
+			.returns("~iParentIndex~");
+		this.mock(oBinding).expects("requestContexts").withExactArgs("~iParentIndex~", 1)
+			.resolves([oParentContext]);
+
+		// code under test
+		const oPromise = oBinding.requestParent(oNode);
+		assert.ok(oPromise instanceof Promise);
+		assert.strictEqual(await oPromise, oParentContext);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("requestParent: requestContexts rejects", function (assert) {
+		const oBinding = this.bindList("/EMPLOYEES");
+		const oNode = {iIndex : 42};
+
+		oBinding.aContexts[42] = oNode;
+		oBinding.oCache = {getParentIndex : mustBeMocked};
+
+		// Note: autoExpandSelect at model would be required for hierarchyQualifier, but that leads
+		// too far
+		oBinding.mParameters = {
+			$$aggregation : {
+				expandTo : 1,
+				hierarchyQualifier : "X"
+			}
+		};
+
+		this.mock(oBinding.oCache).expects("getParentIndex").withExactArgs(42)
+			.returns("~iParentIndex~");
+		const oError = new Error();
+		this.mock(oBinding).expects("requestContexts").withExactArgs("~iParentIndex~", 1)
+			.rejects(oError);
+
+		// code under test
+		return oBinding.requestParent(oNode)
+			.then(function () {
+				assert.ok(false);
+			}, function (oReturnedError) {
+				assert.strictEqual(oReturnedError, oError);
+			});
 	});
 
 	//*********************************************************************************************

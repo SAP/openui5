@@ -9,7 +9,6 @@ sap.ui.define([
 	"sap/base/util/deepEqual",
 	"sap/base/util/extend",
 	"sap/ui/core/CalendarType",
-	"sap/ui/core/Configuration",
 	"sap/ui/core/Core",
 	"sap/ui/core/Locale",
 	"sap/ui/core/LocaleData",
@@ -19,8 +18,7 @@ sap.ui.define([
 	"sap/ui/core/date/UI5Date",
 	"sap/ui/core/date/UniversalDate",
 	"sap/ui/core/format/TimezoneUtil"
-], function(Log, formatMessage, deepEqual, extend, CalendarType, Configuration, Core, Locale,
-		LocaleData, Supportability, CalendarUtils, CalendarWeekNumbering, UI5Date, UniversalDate, TimezoneUtil) {
+], function(Log, formatMessage, deepEqual, extend, CalendarType, Core, Locale, LocaleData, Supportability, CalendarUtils, CalendarWeekNumbering, UI5Date, UniversalDate, TimezoneUtil) {
 	"use strict";
 
 	/**
@@ -538,7 +536,7 @@ sap.ui.define([
 
 		// Get Locale and LocaleData to use
 		if (!oLocale) {
-			oLocale = Configuration.getFormatSettings().getFormatLocale();
+			oLocale = undefined/*Configuration*/.getFormatSettings().getFormatLocale();
 		}
 		oFormat.oLocale = oLocale;
 		oFormat.oLocaleData = LocaleData.getInstance(oLocale);
@@ -562,7 +560,7 @@ sap.ui.define([
 		oFormat.type = oInfo.type;
 
 		if (!oFormat.oFormatOptions.calendarType) {
-			oFormat.oFormatOptions.calendarType = Configuration.getCalendarType();
+			oFormat.oFormatOptions.calendarType = undefined/*Configuration*/.getCalendarType();
 		}
 
 		if (oFormat.oFormatOptions.firstDayOfWeek === undefined && oFormat.oFormatOptions.minimalDaysInFirstWeek !== undefined
@@ -2343,7 +2341,7 @@ sap.ui.define([
 		}
 
 		// default the timezone to the local timezone to always enforce the conversion
-		sTimezone = sTimezone || Configuration.getTimezone();
+		sTimezone = sTimezone || undefined/*Configuration*/.getTimezone();
 
 		if (Array.isArray(vJSDate)) {
 			if (!this.oFormatOptions.interval) {
@@ -2858,7 +2856,7 @@ sap.ui.define([
 		var sCalendarType = this.oFormatOptions.calendarType;
 
 		// default the timezone to the local timezone to always enforce the conversion
-		sTimezone = sTimezone || Configuration.getTimezone();
+		sTimezone = sTimezone || undefined/*Configuration*/.getTimezone();
 
 		if (bStrict === undefined) {
 			bStrict = this.oFormatOptions.strictParsing;
@@ -3448,7 +3446,7 @@ sap.ui.define([
 		oDate = getDate(iFullYear, 11, 31, 23, 59, 58, 123);
 
 		if (this.type === mDateFormatTypes.DATETIME_WITH_TIMEZONE) {
-			return [oDate, Configuration.getTimezone()];
+			return [oDate, undefined/*Configuration*/.getTimezone()];
 		}
 
 		if (this.oFormatOptions.interval) {

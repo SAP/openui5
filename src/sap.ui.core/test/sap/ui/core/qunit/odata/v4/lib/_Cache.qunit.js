@@ -980,6 +980,67 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("_Cache#removeElement: index only", function (assert) {
+		const oCache = new _Cache(this.oRequestor, "EMPLOYEES");
+		const oElement = {"@$ui5._" : {predicate : "('1')"}};
+		const oTransientElement = {
+			"@$ui5._" : {predicate : "('2')", transientPredicate : "($uid=id-1-23)"}
+		};
+		const aCacheData = [oTransientElement, "0", undefined, "2", undefined, oElement, "5"];
+		oCache.iLimit = 6;
+		oCache.iActiveElements = 1;
+		aCacheData.$byPredicate = {
+			"('1')" : oElement,
+			"('2')" : oTransientElement,
+			"($uid=id-1-23)" : oTransientElement,
+			"('5')" : "5"
+		};
+		aCacheData.$created = 1;
+
+		this.mock(_Cache).expects("getElementIndex").never();
+		this.mock(_Helper).expects("addToCount").thrice()
+			.withExactArgs(sinon.match.same(oCache.mChangeListeners), "",
+				sinon.match.same(aCacheData), -1);
+		const oCacheMock = this.mock(oCache);
+		oCacheMock.expects("adjustIndexes").withExactArgs("", sinon.match.same(aCacheData), 5, -1);
+
+		// code under test
+		oCache.removeElement(5, undefined, aCacheData);
+
+		assert.deepEqual(aCacheData, [oTransientElement, "0", undefined, "2", undefined, "5"]);
+		assert.deepEqual(aCacheData.$byPredicate, {
+			"('2')" : oTransientElement,
+			"($uid=id-1-23)" : oTransientElement,
+			"('5')" : "5"
+		});
+		assert.deepEqual(aCacheData.$created, 1);
+		assert.strictEqual(oCache.iLimit, 5);
+		assert.strictEqual(oCache.iActiveElements, 1);
+
+		oCacheMock.expects("adjustIndexes").withExactArgs("", sinon.match.same(aCacheData), 0, -1);
+
+		// code under test
+		oCache.removeElement(0, undefined, aCacheData);
+
+		assert.deepEqual(aCacheData, ["0", undefined, "2", undefined, "5"]);
+		assert.deepEqual(aCacheData.$byPredicate, {"('5')" : "5"});
+		assert.deepEqual(aCacheData.$created, 0);
+		assert.strictEqual(oCache.iLimit, 5);
+		assert.strictEqual(oCache.iActiveElements, 0);
+
+		oCacheMock.expects("adjustIndexes").withExactArgs("", sinon.match.same(aCacheData), 3, -1);
+
+		// code under test
+		oCache.removeElement(3, undefined, aCacheData);
+
+		assert.deepEqual(aCacheData, ["0", undefined, "2", "5"]);
+		assert.deepEqual(aCacheData.$byPredicate, {"('5')" : "5"});
+		assert.deepEqual(aCacheData.$created, 0);
+		assert.strictEqual(oCache.iLimit, 4);
+		assert.strictEqual(oCache.iActiveElements, 0);
+	});
+
+	//*********************************************************************************************
 ["", "~path~"].forEach(function (sPath) {
 	[false, true].forEach(function (bTransient) {
 		[false, true].forEach(function (bDefault) {
