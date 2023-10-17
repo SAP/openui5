@@ -17,7 +17,7 @@ sap.ui.require([
 	"sap/ui/test/autowaiter/_timeoutWaiter",
 	"sap/base/Log",
 	"sap/ui/qunit/qunit-junit",
-	"sap/ui/qunit/qunit-coverage"
+	"sap/ui/qunit/qunit-coverage-istanbul"
 ], function (Opa5, Opa, _OpaLogger, opaTest, PropertyStrictEquals, _timeoutWaiter, Log) {
 	"use strict";
 
