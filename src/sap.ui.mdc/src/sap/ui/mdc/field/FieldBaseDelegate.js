@@ -222,32 +222,37 @@ sap.ui.define([
 			sKey = oCondition.values[0];
 		}
 
-		if (oAdditionalType) {
-			sDescription = oAdditionalType.formatValue(oCondition.values[1], "string");
-		} else {
-			sDescription = oCondition.values[1];
-		}
-
-		// check if key or description match
+		// check if key match
 		const bKeyMatch = sKey.startsWith(sCurrentText);
-		const bDesctiptionMatch = sDescription.startsWith(sCurrentText);
+		let bDescriptionMatch = false;
+
+		if (oCondition.values.length > 1) { // as condition could only contain a key
+			if (oAdditionalType) {
+				sDescription = oAdditionalType.formatValue(oCondition.values[1], "string");
+			} else {
+				sDescription = oCondition.values[1];
+			}
+
+			// check if description match
+			bDescriptionMatch = sDescription.startsWith(sCurrentText);
+		}
 
 		if (sDisplay === FieldDisplay.Value) {
 			if (bKeyMatch) {
 				sOutput = sKey;
 			}
 		} else if (sDisplay === FieldDisplay.Description) {
-			if (bDesctiptionMatch) {
+			if (bDescriptionMatch) {
 				sOutput = sDescription;
 			}
 		} else if (sDisplay === FieldDisplay.ValueDescription) {
 			if (bKeyMatch) {
 				sOutput = sKey;
-			} else if (bDesctiptionMatch) {
+			} else if (bDescriptionMatch) {
 				sOutput = sDescription;
 			}
 		} else if (sDisplay === FieldDisplay.DescriptionValue) {
-			if (bDesctiptionMatch) {
+			if (bDescriptionMatch) {
 				sOutput = sDescription;
 			} else if (bKeyMatch) {
 				sOutput = sKey;
