@@ -2,17 +2,13 @@
  * ${copyright}
  */
 
-/**
- * @fileoverview
- * @deprecated As of version 1.120
- */
 sap.ui.define([
 	"sap/base/assert",
 	"sap/base/config",
 	"sap/base/Event",
 	"sap/base/Log",
-	"sap/base/i18n/Localization",
 	"sap/base/i18n/Formatting",
+	"sap/base/i18n/Localization",
 	"sap/base/util/Version",
 	"sap/ui/base/DesignTime",
 	"sap/ui/base/Object",
@@ -28,8 +24,8 @@ sap.ui.define([
 	BaseConfig,
 	BaseEvent,
 	Log,
-	Localization,
 	Formatting,
+	Localization,
 	Version,
 	DesignTime,
 	BaseObject,
