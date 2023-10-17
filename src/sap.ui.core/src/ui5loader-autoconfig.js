@@ -294,14 +294,17 @@
 			var sLocation = globalThis.location.search;
 			var urlParams = new URLSearchParams(sLocation);
 			urlParams.forEach(function(value, key) {
+				const bSapParam = /sap\-?([Uu]?i\-?)?/.test(key);
 				var sNormalizedKey = camelize(key);
-				if (!sNormalizedKey) {
+				if (sNormalizedKey) {
+					if (Object.hasOwn(oConfig, sNormalizedKey)) {
+						ui5loader._.logger.error("Configuration option '" + key + "' was already set by '" + mOriginalUrlParams[sNormalizedKey] + "' and will be ignored!");
+					} else {
+						oConfig[sNormalizedKey] = value;
+						mOriginalUrlParams[sNormalizedKey] = key;
+					}
+				} else if (bSapParam) {
 					ui5loader._.logger.error("Invalid configuration option '" + key + "' in url!");
-				} else if (Object.hasOwn(oConfig, sNormalizedKey)) {
-					ui5loader._.logger.error("Configuration option '" + key + "' was already set by '" + mOriginalUrlParams[sNormalizedKey] + "' and will be ignored!");
-				} else {
-					oConfig[sNormalizedKey] = value;
-					mOriginalUrlParams[sNormalizedKey] = key;
 				}
 			});
 			mOriginalUrlParams = undefined;
@@ -330,6 +333,7 @@
 			var allMetaTags = globalThis.document.querySelectorAll("meta");
 			allMetaTags.forEach(function(tag) {
 				var sNormalizedKey = camelize(tag.name);
+				const bSapParam = /sap\-?([Uu]?i\-?)?/.test(tag.name);
 				if (sNormalizedKey) {
 					if (Object.hasOwn(oConfig, sNormalizedKey)) {
 						ui5loader._.logger.error("Configuration option '" + tag.name + "' was already set by '" + mOriginalTagNames[sNormalizedKey] + "' and will be ignored!");
@@ -337,7 +341,7 @@
 						oConfig[sNormalizedKey] = tag.content;
 						mOriginalTagNames[sNormalizedKey] = tag.name;
 					}
-				} else if (tag.name) { // tags without explicit name (tag.name === "") are ignored silently
+				} else if (tag.name && bSapParam) { // tags without explicit name (tag.name === "") are ignored silently
 					ui5loader._.logger.error("Invalid configuration option '" + tag.name + "' in meta tag!");
 				}
 			});
