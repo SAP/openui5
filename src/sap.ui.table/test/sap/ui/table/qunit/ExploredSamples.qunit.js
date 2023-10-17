@@ -3,6 +3,8 @@ sap.ui.define([
 ], function(SampleTester) {
 	"use strict";
 
-	new SampleTester('sap.ui.table', [] /*Excludes*/).placeAt('content');
+	new SampleTester('sap.ui.table', [
+		"sap.ui.table.sample.SelectCopyPaste"
+	] /*Excludes*/).placeAt('content');
 
 });
