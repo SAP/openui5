@@ -2,7 +2,7 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/ui/mdc/flp/FlpLinkDelegate",
+	"sap/ui/mdc/ushell/LinkDelegate",
 	"sap/m/Button",
 	"sap/m/Dialog",
 	"sap/m/Text",

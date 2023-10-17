@@ -863,7 +863,7 @@
 							<mdc:table.Column id="id2" header="Title" propertyKey="title">
 								<mdc:Field id="F_title" delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' value="{path: 'title', type: 'sap.ui.model.odata.type.String', constraints: {maxLength: 1111}}" editMode="Display" multipleLines="true" width="100%">
 									<mdc:fieldInfo>
-										<mdc:Link sourceControl="fTitle" delegate='\{ "name": "sap/ui/mdc/flp/FlpLinkDelegate", "payload": \{
+										<mdc:Link sourceControl="fTitle" delegate='\{ "name": "sap/ui/mdc/ushell/LinkDelegate", "payload": \{
 												"semanticObjects": ["FakeFlpSemanticObject"],
 												"mainSemanticObject": "FakeFlpSemanticObject"
 											\} \}'></mdc:Link>

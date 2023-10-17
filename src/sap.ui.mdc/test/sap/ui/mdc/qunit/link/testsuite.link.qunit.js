@@ -49,8 +49,8 @@ sap.ui.define(function() {
 				title: "FieldInfo"
 			},
 
-			"link/FlpLinkDelegate": {
-				title: "FlpLinkDelegate"
+			"link/UShellLinkDelegate": {
+				title: "UShellLinkDelegate"
 			},
 
 			"link/opa/test/LinkPersonalization.opa": {

@@ -17,9 +17,8 @@ sap.ui.define([
 	 * @version ${version}
 	 * @constructor
 	 * @private
-	 * @since 1.60.0
+	 * @since 1.120
 	 * @alias sap.ui.mdc.link.SemanticObjectUnavailableAction
-	 * @deprecated since version 1.120 - please see {@link sap.ui.mdc.ushell.SemanticObjectUnavailableAction}
 	 */
 	const SemanticObjectUnavailableAction = Element.extend("sap.ui.mdc.link.SemanticObjectUnavailableAction", /** @lends sap.ui.mdc.link.SemanticObjectUnavailableAction.prototype */
 	{
