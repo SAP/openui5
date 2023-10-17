@@ -55,10 +55,6 @@
 	}
 }
 
-.sapUiForm .sapMCbBg { /* In forms, align left with '0.0625rem(1px)' ( the focus width) */
-	left: 1px; // Must be in pixels to behave correctly in IE
-}
-
 .sapMCbBg.sapMCbMarkChecked:before {
 	color: @sapUiSelected;
 }
@@ -70,6 +66,17 @@
 /* CheckBox focus */
 .sapMCb:focus {
 	outline: none;
+}
+
+/* In Form Checkbox needs to be left aligned to bi in line with other controls (as Form itself has a padding) */
+.sapUiForm {
+	.sapMCbBg {
+		left: 0;
+	}
+
+	.sapMCb {
+		padding-left: 2.0625rem; // to have right gap between checkbox and label
+	}
 }
 
 html.sap-desktop {
@@ -104,7 +111,7 @@ html.sap-desktop {
 	}
 
 	.sapUiForm .sapMCb:not(.sapMCbBgDis).sapMCbHasLabel:focus:before {
-		left: 0px; /* Cb in SimpleForm: left border adjustment */
+		left: -0.125rem;
 	}
 }
 
@@ -149,11 +156,19 @@ html.sap-desktop {
 
 /* Compact size */
 .sapUiSizeCompact{
-	.sapUiForm .sapMCbBg { /* In forms, align left with '0.0625rem(1px)' ( the focus width) */
-		left: 1px; // Must be in pixels to behave correctly in IE
-	}
 	.sapMCbBg {
 		border-radius: 0.125rem;
+	}
+
+	/* In Form Checkbox needs to be left aligned to bi in line with other controls (as Form itself has a padding) */
+	.sapUiForm {
+		.sapMCbBg {
+			left: 0;
+		}
+
+		.sapMCb {
+			padding-left: 1.5rem; // to have right gap between checkbox and label
+		}
 	}
 }
 
@@ -176,7 +191,7 @@ html.sap-desktop {
 		}
 
 		.sapUiForm .sapMCb:not(.sapMCbBgDis):focus:before {
-			left: 0px;
+			left: -0.125rem;
 		}
 
 		.sapMCbBg {

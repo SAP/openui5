@@ -167,6 +167,21 @@
 	border-radius: 0.5rem;
 }
 
+/* In Form Checkbox needs to be left aligned to bi in line with other controls (as Form itself has a padding) */
+.sapUiForm {
+	.sapMCbBg {
+		left: 0;
+	}
+
+	.sapMCb {
+		padding-left: 2.0625rem; // to have right gap between checkbox and label
+	}
+
+	.sapMCb:not(.sapMCbBgDis).sapMCbHasLabel:focus:before {
+		left: -0.25rem; /* more is not possible as this would cut off the focus border */
+	}
+}
+
 .sapUiSizeCompact {
 	.sapMCb {
 		height: 2rem;
@@ -206,5 +221,20 @@
 	.sapMCbDisplayOnly .sapMCbBg.sapMCbMark.sapMCbMarkChecked.sapMCbMarkPartiallyChecked {
 		top: 0.5625rem;
 		left: 0.5625rem;
+	}
+
+	/* In Form Checkbox needs to be left aligned to bi in line with other controls (as Form itself has a padding) */
+	.sapUiForm {
+		.sapMCbBg {
+			left: 0;
+		}
+
+		.sapMCb {
+			padding-left: 1.5rem; // to have right gap between checkbox and label
+		}
+
+		.sapMCb:not(.sapMCbBgDis).sapMCbHasLabel:focus:before {
+			left: -0.1875rem;
+		}
 	}
 }
