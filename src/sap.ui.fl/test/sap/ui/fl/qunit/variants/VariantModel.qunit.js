@@ -252,22 +252,8 @@ sap.ui.define([
 
 			var oVMData = this.oModel.getData()[sVMReference];
 			assert.strictEqual(oVMData.currentVariant, "variant1", "the currentVariant was set");
-			assert.strictEqual(oVMData.originalCurrentVariant, "variant1", "the originalCurrentVariant was set");
 			assert.strictEqual(oVMData.defaultVariant, "variant1", "the defaultVariant was set");
-			assert.strictEqual(oVMData.originalDefaultVariant, "variant1", "the originalDefaultVariant was set");
 			assert.strictEqual(oVMData.modified, false, "the modified flag was set");
-
-			oVMData.variants.forEach(function(oVariantEntry) {
-				assert.strictEqual(
-					oVariantEntry.originalExecuteOnSelect,
-					oVariantEntry.executeOnSelect,
-					"the originalExecuteOnSelect was set"
-				);
-				assert.strictEqual(oVariantEntry.originalFavorite, oVariantEntry.favorite, "the originalFavorite was set");
-				assert.strictEqual(oVariantEntry.originalTitle, oVariantEntry.title, "the originalTitle was set");
-				assert.strictEqual(oVariantEntry.originalVisible, oVariantEntry.visible, "the originalVisible was set");
-				assert.deepEqual(oVariantEntry.originalContexts, oVariantEntry.contexts, "the originalContexts was set");
-			});
 		});
 
 		QUnit.test("when destroy() is called", function(assert) {
@@ -381,26 +367,15 @@ sap.ui.define([
 
 			var oVMData = this.oModel.getData()[sVMReference];
 			assert.strictEqual(oVMData.currentVariant, "variant0", "the currentVariant was set");
-			assert.strictEqual(oVMData.originalCurrentVariant, "variant0", "the originalCurrentVariant was set");
 			assert.strictEqual(oVMData.defaultVariant, "variant2", "the defaultVariant was set");
-			assert.strictEqual(oVMData.originalDefaultVariant, "variant2", "the originalDefaultVariant was set");
 			assert.strictEqual(oVMData.modified, true, "the modified flag was set");
 
 			var oVariantEntry = oVMData.variants[2];
 			assert.strictEqual(oVariantEntry.executeOnSelect, false, "then executeOnSelect was updated");
-			assert.strictEqual(
-				oVariantEntry.originalExecuteOnSelect,
-				oVariantEntry.executeOnSelect,
-				"then originalExecuteOnSelect was set"
-			);
 			assert.strictEqual(oVariantEntry.favorite, true, "then favorite was updated");
-			assert.strictEqual(oVariantEntry.originalFavorite, oVariantEntry.favorite, "then originalFavorite was set");
 			assert.strictEqual(oVariantEntry.title, "variant B1", "then title was updated");
-			assert.strictEqual(oVariantEntry.originalTitle, oVariantEntry.title, "then originalTitle was set");
 			assert.strictEqual(oVariantEntry.visible, false, "then visible was updated");
-			assert.strictEqual(oVariantEntry.originalVisible, oVariantEntry.visible, "then originalVisible was set");
 			assert.deepEqual(oVariantEntry.contexts, { role: ["ADMINISTRATOR1"], country: ["DE1"] }, "then contexts were updated");
-			assert.deepEqual(oVariantEntry.originalContexts, oVariantEntry.contexts, "then originalContexts were set");
 		});
 
 		QUnit.test("when calling 'setModelPropertiesForControl'", function(assert) {
@@ -899,11 +874,6 @@ sap.ui.define([
 				"variant1",
 				"then initially current variant was correct before updating"
 			);
-			assert.strictEqual(
-				this.oModel.oData[sVMReference].originalCurrentVariant,
-				"variant1",
-				"then initially original current variant was correct before updating"
-			);
 
 			this.oModel.oData[sVMReference].updateVariantInURL = true;
 			return this.oModel.updateCurrentVariant({
@@ -959,11 +929,6 @@ sap.ui.define([
 				"variant1",
 				"then initially current variant was correct before updating"
 			);
-			assert.strictEqual(
-				this.oModel.oData[sVMReference].originalCurrentVariant,
-				"variant1",
-				"then initially original current variant was correct before updating"
-			);
 
 			var oSetVariantSwitchPromiseStub = sandbox.stub(this.oFlexController, "setVariantSwitchPromise");
 
@@ -1000,16 +965,11 @@ sap.ui.define([
 		});
 
 		QUnit.test("when calling 'updateCurrentVariant' twice without waiting for the first one to be failed and finished", function(assert) {
-			assert.expect(5);
+			assert.expect(4);
 			assert.strictEqual(
 				this.oModel.oData[sVMReference].currentVariant,
 				"variant1",
 				"then initially current variant was correct before updating"
-			);
-			assert.strictEqual(
-				this.oModel.oData[sVMReference].originalCurrentVariant,
-				"variant1",
-				"then initially original current variant was correct before updating"
 			);
 
 			var oSetVariantSwitchPromiseStub = sandbox.stub(this.oFlexController, "setVariantSwitchPromise");
@@ -2324,7 +2284,6 @@ sap.ui.define([
 			var oData = {
 				varMgmtRef1: {
 					defaultVariant: "variant1",
-					originalDefaultVariant: "variant1",
 					variants: [
 						{
 							author: VariantUtil.DEFAULT_AUTHOR,
@@ -2350,7 +2309,6 @@ sap.ui.define([
 			var oData = {
 				varMgmtRef1: {
 					defaultVariant: "variant1",
-					originalDefaultVariant: "variant1",
 					variants: [
 						{
 							author: VariantUtil.DEFAULT_AUTHOR,
@@ -2374,9 +2332,7 @@ sap.ui.define([
 		QUnit.test("when waitForVMControlInit is called before the control is initialized and with no variant data yet", function(assert) {
 			var oStandardVariant = {
 				currentVariant: this.sVMReference,
-				originalCurrentVariant: this.sVMReference,
 				defaultVariant: this.sVMReference,
-				originalDefaultVariant: this.sVMReference,
 				showExecuteOnSelection: false,
 				init: true,
 				modified: false,
@@ -2390,17 +2346,12 @@ sap.ui.define([
 					rename: false,
 					key: this.sVMReference,
 					title: "Standard",
-					originalTitle: "Standard",
 					favorite: true,
-					originalFavorite: true,
 					visible: true,
-					originalVisible: true,
 					executeOnSelect: false,
-					originalExecuteOnSelect: false,
 					author: VariantUtil.DEFAULT_AUTHOR,
 					sharing: "public",
-					contexts: {},
-					originalContexts: {}
+					contexts: {}
 				}]
 			};
 			var oReturnPromise = this.oModel.waitForVMControlInit(this.sVMReference).then(function() {
@@ -2683,9 +2634,7 @@ sap.ui.define([
 
 				var oData = this.oVariantModel.getData();
 				oData[this.sVMReference].defaultVariant = "variant1";
-				oData[this.sVMReference].originalDefaultVariant = "variant1";
 				oData[this.sVMReference].currentVariant = "variant1";
-				oData[this.sVMReference].originalCurrentVariant = "variant1";
 				this.oVariant1 = {
 					author: "Me",
 					key: "variant1",
@@ -3084,10 +3033,8 @@ sap.ui.define([
 			]).then(function() {
 				assert.strictEqual(fnCallback1.callCount, 1, "the callback was called");
 				assert.strictEqual(fnCallback1.lastCall.args[0].executeOnSelect, true, "the flag to apply automatically is set");
-				assert.strictEqual(fnCallback1.lastCall.args[0].originalExecuteOnSelect, true, "the flag to apply automatically is set");
 				assert.strictEqual(fnCallback2.callCount, 1, "the callback was called");
 				assert.strictEqual(fnCallback2.lastCall.args[0].executeOnSelect, true, "the flag to apply automatically is set");
-				assert.strictEqual(fnCallback2.lastCall.args[0].originalExecuteOnSelect, true, "the flag to apply automatically is set");
 			});
 		});
 
@@ -3136,11 +3083,6 @@ sap.ui.define([
 			]).then(function() {
 				assert.strictEqual(fnCallback1.callCount, 1, "the callback was called");
 				assert.strictEqual(fnCallback1.lastCall.args[0].executeOnSelect, false, "the flag to apply automatically is not set");
-				assert.strictEqual(
-					fnCallback1.lastCall.args[0].originalExecuteOnSelect,
-					false,
-					"the flag to apply automatically is not set"
-				);
 				assert.strictEqual(fnCallback2.callCount, 0, "the callback was not called");
 			});
 		});
