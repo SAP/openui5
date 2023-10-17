@@ -25891,9 +25891,10 @@ sap.ui.define([
 	// JIRA: CPOUI5ODATAV4-1920
 	// BCP: 2370011296
 	//
-	// While the root node 0 (Alpha) is still collapsed, a new root 9 (Aleph) is created; a side
-	// effect for all rows turns spliced nodes into placeholders, then 0 (Alpha) is expanded again
-	// and we scroll down to check that placeholders still cause proper requests w.r.t. indices.
+	// While the root node 0 (Alpha) is still collapsed, a new root 9 (Aleph) is created and a side
+	// effect for all rows (within the same $batch, JIRA: CPOUI5ODATAV4-2380) turns spliced nodes
+	// into placeholders. Then 0 (Alpha) is expanded again and we scroll down to check that
+	// placeholders still cause proper requests w.r.t. indices.
 	// JIRA: CPOUI5ODATAV4-2355
 	QUnit.test("Recursive Hierarchy: expand to 2, collapse & expand root etc.", function (assert) {
 		var oCollapsed,
@@ -26248,6 +26249,7 @@ sap.ui.define([
 			]);
 
 			that.expectRequest({
+					batchNo : 6,
 					method : "POST",
 					url : "EMPLOYEES",
 					payload : {
@@ -26256,10 +26258,19 @@ sap.ui.define([
 						Name : "Aleph"
 					}
 				}, {
-					AGE : 99,
+					AGE : 199, // side effect
 					ID : "9",
 					MANAGER_ID : null,
 					Name : "Aleph: ℵ" // side effect
+				})
+				.expectRequest({
+					batchNo : 6,
+					url : "EMPLOYEES?$select=AGE,ID&$filter=ID eq '0'"
+				}, {
+					value : [{
+						AGE : 160,
+						ID : "0"
+					}]
 				});
 
 			// code under test (JIRA: CPOUI5ODATAV4-2355)
@@ -26269,37 +26280,12 @@ sap.ui.define([
 
 			return Promise.all([
 				oNewRoot.created(),
-				that.waitForChanges(assert, "create new root")
-			]);
-		}).then(function () {
-			checkTable("new root created", assert, oTable, [
-				"/EMPLOYEES('9')",
-				"/EMPLOYEES('0')"
-			], [
-				[undefined, 1, "9", "", "Aleph: ℵ", 99],
-				[false, 1, "0", "", "Alpha", 60],
-				["", "", "", "", "", ""]
-			]);
-			assert.strictEqual(oNewRoot.isTransient(), false, "created persisted");
-
-			that.expectRequest("EMPLOYEES?$select=AGE,ID"
-					+ "&$filter=ID eq '9' or ID eq '0'&$top=2", {
-					value : [{
-						AGE : 199,
-						ID : "9"
-					}, {
-						AGE : 160,
-						ID : "0"
-					}]
-				});
-
-			return Promise.all([
 				// code under test
 				oListBinding.getHeaderContext().requestSideEffects(["AGE"]),
-				that.waitForChanges(assert, "side effect: AGE for all rows")
+				that.waitForChanges(assert, "create new root, side effect: AGE for all rows")
 			]);
 		}).then(function () {
-			checkTable("after side effect: AGE for all rows", assert, oTable, [
+			checkTable("new root created, after side effect: AGE for all rows", assert, oTable, [
 				"/EMPLOYEES('9')",
 				"/EMPLOYEES('0')"
 			], [
@@ -26307,6 +26293,7 @@ sap.ui.define([
 				[false, 1, "0", "", "Alpha", 160],
 				["", "", "", "", "", ""]
 			]);
+			assert.strictEqual(oNewRoot.isTransient(), false, "created persisted");
 
 			that.expectRequest("EMPLOYEES?$apply=orderby(AGE desc)"
 					+ "/com.sap.vocabularies.Hierarchy.v1.TopLevels(HierarchyNodes=$root/EMPLOYEES"
