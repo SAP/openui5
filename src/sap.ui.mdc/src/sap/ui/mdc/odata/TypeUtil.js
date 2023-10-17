@@ -4,9 +4,8 @@
 
 sap.ui.define([
 		'sap/ui/mdc/util/TypeUtil',
-		'sap/ui/mdc/enums/BaseType',
-		'sap/base/util/ObjectPath'
-	], function(BaseTypeUtil, BaseType, ObjectPath) {
+		'sap/ui/mdc/enums/BaseType'
+	], function(BaseTypeUtil, BaseType) {
 	"use strict";
 
 	/**
