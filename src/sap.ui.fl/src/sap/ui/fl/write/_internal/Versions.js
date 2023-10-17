@@ -255,6 +255,8 @@ sap.ui.define([
 		var bDirtyChanges = oModel.getProperty("/dirtyChanges");
 		oModel.setProperty("/dirtyChanges", true);
 		oModel.setProperty("/backendDraft", bVersioningEnabled && bDirtyChanges);
+		// Save can happen without a reload and the model must be kept up-to-date
+		oModel.setProperty("/persistedVersion", Version.Number.Draft);
 		oModel.updateDraftVersion();
 	};
 
