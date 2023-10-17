@@ -10,7 +10,6 @@ sap.ui.define([
 	"sap/ui/core/Element",
 	"sap/ui/core/Fragment",
 	"sap/ui/core/Popup",
-	"sap/ui/core/Core",
 	"sap/ui/fl/initial/_internal/config",
 	"sap/ui/fl/initial/api/Version",
 	"sap/ui/fl/write/api/ContextBasedAdaptationsAPI",
@@ -22,7 +21,8 @@ sap.ui.define([
 	"sap/ui/rta/toolbar/contextBased/SaveAsAdaptation",
 	"sap/ui/rta/toolbar/translation/Translation",
 	"sap/ui/rta/toolbar/versioning/Versioning",
-	"sap/ui/rta/Utils"
+	"sap/ui/rta/Utils",
+	"sap/ui/VersionInfo"
 ], function(
 	AdaptationRenderer,
 	Log,
@@ -31,7 +31,6 @@ sap.ui.define([
 	Element,
 	Fragment,
 	Popup,
-	Core,
 	config,
 	Version,
 	ContextBasedAdaptationsAPI,
@@ -43,7 +42,8 @@ sap.ui.define([
 	SaveAsAdaptation,
 	Translation,
 	Versioning,
-	Utils
+	Utils,
+	VersionInfo
 ) {
 	"use strict";
 
@@ -495,7 +495,7 @@ sap.ui.define([
 		return Base.prototype.hide.apply(this, aArgs);
 	};
 
-	Adaptation.prototype.showFeedbackForm = function() {
+	Adaptation.prototype.showFeedbackForm = async function() {
 		// Get Connector Type
 		var sConnector = config.getFlexibilityServices()[0].connector;
 
@@ -504,7 +504,8 @@ sap.ui.define([
 		var sURLPart2 = "SV_4MANxRymEIl9K06";
 		var sURL = sURLPart1 + sURLPart2;
 		var oUrlParams = new URLSearchParams();
-		oUrlParams.set("version", Core.getConfiguration().getVersion().toString());
+		const oVersion = await VersionInfo.load();
+		oUrlParams.set("version", oVersion.version);
 		oUrlParams.set("feature", (sConnector === "KeyUserConnector" ? "BTP" : "ABAP"));
 
 		var oFeedbackDialogModel = new JSONModel({

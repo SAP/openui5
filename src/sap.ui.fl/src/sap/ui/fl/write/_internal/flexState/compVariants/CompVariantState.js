@@ -339,7 +339,6 @@ sap.ui.define([
 			};
 			oChangeParameter.adaptationId = mPropertyBag.changeSpecificData?.adaptationId;
 			oChangeParameter.support.generator ||= `CompVariantState.${sChangeType}`;
-			oChangeParameter.support.sapui5Version = Core.getConfiguration().getVersion().toString();
 			oChange = FlexObjectFactory.createFromFileContent(oChangeParameter, UpdatableChange);
 			mCompVariantsMap.defaultVariants.push(oChange);
 			mCompVariantsMap.byId[oChange.getId()] = oChange;

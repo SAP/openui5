@@ -3,7 +3,6 @@
 sap.ui.define([
 	"sap/m/Button",
 	"sap/ui/rta/qunit/RtaQunitUtils",
-	"sap/ui/core/Core",
 	"sap/ui/core/Lib",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/initial/_internal/config",
@@ -22,12 +21,12 @@ sap.ui.define([
 	"sap/ui/rta/util/ReloadManager",
 	"sap/ui/rta/RuntimeAuthoring",
 	"sap/ui/rta/Utils",
+	"sap/ui/VersionInfo",
 	"sap/m/MessageBox",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	Button,
 	RtaQunitUtils,
-	Core,
 	Lib,
 	FlexState,
 	config,
@@ -46,6 +45,7 @@ sap.ui.define([
 	ReloadManager,
 	RuntimeAuthoring,
 	Utils,
+	VersionInfo,
 	MessageBox,
 	sinon
 ) {
@@ -837,7 +837,8 @@ sap.ui.define([
 				);
 				return this.oToolbar.showFeedbackForm();
 			}.bind(this))
-			.then(function() {
+			.then(async function() {
+				const oVersion = await VersionInfo.load();
 				var oIframeURL = new URL(this.oToolbar._oFeedbackDialog.getContent()[0].getBindingInfo("url").binding.getValue());
 				assert.ok(
 					oIframeURL.pathname.endsWith("SV_4MANxRymEIl9K06"),
@@ -845,7 +846,7 @@ sap.ui.define([
 				);
 				assert.strictEqual(
 					oIframeURL.searchParams.get("version"),
-					Core.getConfiguration().getVersion().toString(),
+					oVersion.version,
 					"then the proper version is passed"
 				);
 				assert.strictEqual(

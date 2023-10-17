@@ -29,8 +29,7 @@ sap.ui.define([
 		creation: "2022-07-04T08:05:48.561Z",
 		originalLanguage: "EN",
 		support: {
-			generator: "my.fancy.generator",
-			sapui5Version: Core.getConfiguration().getVersion().toString()
+			generator: "my.fancy.generator"
 		},
 		texts: {}
 	};

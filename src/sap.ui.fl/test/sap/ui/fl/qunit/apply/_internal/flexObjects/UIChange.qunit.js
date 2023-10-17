@@ -53,7 +53,6 @@ sap.ui.define([
 		},
 		namespace: "apps/sap.ui.demoapps.rta.fiorielements/changes/",
 		support: {
-			sapui5Version: Core.getConfiguration().getVersion().toString(),
 			generator: "sap.ui.rta.command"
 		},
 		variantReference: "myVariantReference"
