@@ -29587,6 +29587,7 @@ sap.ui.define([
 	//
 	// Create a new root via "@$ui5.node.parent" : null (JIRA: CPOUI5ODATAV4-2355)
 	// Move "Beta" to make it a root node (JIRA: CPOUI5ODATAV4-2399)
+	// Display NodeID on UI, request NodeID after creation (JIRA: CPOUI5ODATAV4-2381)
 	//
 	// "Refresh single" for stale elements; keep same context instance for created nodes throughout
 	// collapse and side effects.
@@ -29597,6 +29598,9 @@ sap.ui.define([
 
 		const oModel = this.createSpecialCasesModel({autoExpandSelect : true});
 		const sFriend = "/Artists(ArtistID='99',IsActiveEntity=false)/_Friend";
+		const sBaseUrl = sFriend.slice(1) + "?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels("
+			+ "HierarchyNodes=$root" + sFriend
+			+ ",HierarchyQualifier='OrgChart',NodeProperty='_/NodeID',Levels=1)";
 		const sView = `
 <t:Table id="table" rows="{path : '/Artists(ArtistID=\\'99\\',IsActiveEntity=false)/_Friend',
 		parameters : {
@@ -29609,13 +29613,11 @@ sap.ui.define([
 	<Text text="{= %{@$ui5.node.level} }"/>
 	<Text id="etag" text="{= %{@odata.etag} }"/>
 	<Text id="name" text="{Name}"/>
+	<Text id="id" text="{_/NodeID}"/>
 </t:Table>`;
 		const that = this;
 
-		this.expectRequest(sFriend.slice(1) + "?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels("
-				+ "HierarchyNodes=$root" + sFriend
-				+ ",HierarchyQualifier='OrgChart',NodeProperty='_/NodeID',Levels=1)"
-				+ "&$select=ArtistID,IsActiveEntity,Name,_/DrillState,_/NodeID"
+		this.expectRequest(sBaseUrl + "&$select=ArtistID,IsActiveEntity,Name,_/DrillState,_/NodeID"
 				+ "&$count=true&$skip=0&$top=3", {
 				"@odata.count" : "1",
 				value : [{
@@ -29642,11 +29644,12 @@ sap.ui.define([
 			checkTable("root is leaf", assert, oTable, [
 				sFriend + "(ArtistID='0',IsActiveEntity=false)"
 			], [
-				[undefined, undefined, 1, "etag0.0", "Alpha"],
-				["", "", "", "", ""],
-				["", "", "", "", ""]
+				[undefined, undefined, 1, "etag0.0", "Alpha", "0,false"],
+				["", "", "", "", "", ""],
+				["", "", "", "", "", ""]
 			]);
 			assert.strictEqual(oRoot.getIndex(), 0);
+			assert.deepEqual(oRoot.getObject("_"), {NodeID : "0,false"});
 
 			// code under test (JIRA: CPOUI5ODATAV4-2272)
 			const oLostChild = oListBinding.create({
@@ -29669,7 +29672,8 @@ sap.ui.define([
 						"@odata.etag" : "etag1.0",
 						ArtistID : "1",
 						IsActiveEntity : false,
-						Name : "Beta: β" // side effect
+						Name : "Beta: β", // side effect
+						_ : null // not available w/ RAP for a non-hierarchical request
 					});
 				}));
 
@@ -29689,14 +29693,24 @@ sap.ui.define([
 				sFriend + "(ArtistID='0',IsActiveEntity=false)",
 				sFriend + "($uid=...)"
 			], [
-				[undefined, true, 1, "etag0.0", "Alpha"],
-				[true, undefined, 2, "", "Beta"],
-				["", "", "", "", ""]
+				[undefined, true, 1, "etag0.0", "Alpha", "0,false"],
+				[true, undefined, 2, "", "Beta", ""],
+				["", "", "", "", "", ""]
 			]);
 			assert.strictEqual(oBeta.getIndex(), 1);
 
 			that.expectChange("etag", [, "etag1.0"])
-				.expectChange("name", [, "Beta: β"]);
+				.expectChange("name", [, "Beta: β"])
+				.expectRequest(sFriend.slice(1) + "?$apply=descendants($root" + sFriend
+					+ ",OrgChart,_/NodeID,filter(ArtistID eq '0' and IsActiveEntity eq false),1)"
+					+ "&$filter=ArtistID eq '1' and IsActiveEntity eq false&$select=_/NodeID", {
+					value : [{
+						"@odata.etag" : "n/a",
+						_ : {
+							NodeID : "1,false"
+						}
+					}]
+				});
 
 			fnRespond();
 
@@ -29709,9 +29723,9 @@ sap.ui.define([
 				sFriend + "(ArtistID='0',IsActiveEntity=false)",
 				sFriend + "(ArtistID='1',IsActiveEntity=false)"
 			], [
-				[undefined, true, 1, "etag0.0", "Alpha"],
-				[false, undefined, 2, "etag1.0", "Beta: β"],
-				["", "", "", "", ""]
+				[undefined, true, 1, "etag0.0", "Alpha", "0,false"],
+				[false, undefined, 2, "etag1.0", "Beta: β", "1,false"],
+				["", "", "", "", "", ""]
 			]);
 			assert.strictEqual(oBeta.getIndex(), 1);
 			assert.deepEqual(oBeta.getObject(), {
@@ -29720,7 +29734,10 @@ sap.ui.define([
 				"@odata.etag" : "etag1.0",
 				ArtistID : "1",
 				IsActiveEntity : false,
-				Name : "Beta: β"
+				Name : "Beta: β",
+				_ : {
+					NodeID : "1,false"
+				}
 			});
 			checkCreatedPersisted(assert, oBeta, oBetaCreated);
 
@@ -29744,10 +29761,21 @@ sap.ui.define([
 					"@odata.etag" : "etag2.0",
 					ArtistID : "2",
 					IsActiveEntity : false,
-					Name : "Gamma: γ" // side effect
+					Name : "Gamma: γ", // side effect
+					_ : null // not available w/ RAP for a non-hierarchical request
 				})
 				.expectChange("etag", [, "etag2.0"])
-				.expectChange("name", [, "Gamma: γ"]);
+				.expectChange("name", [, "Gamma: γ"])
+				.expectRequest(sFriend.slice(1) + "?$apply=descendants($root" + sFriend
+					+ ",OrgChart,_/NodeID,filter(ArtistID eq '0' and IsActiveEntity eq false),1)"
+					+ "&$filter=ArtistID eq '2' and IsActiveEntity eq false&$select=_/NodeID", {
+					value : [{
+						"@odata.etag" : "n/a",
+						_ : {
+							NodeID : "2,false"
+						}
+					}]
+				});
 
 			// code under test
 			oGamma = oListBinding.create({
@@ -29769,9 +29797,9 @@ sap.ui.define([
 				sFriend + "(ArtistID='2',IsActiveEntity=false)",
 				sFriend + "(ArtistID='1',IsActiveEntity=false)"
 			], [
-				[undefined, true, 1, "etag0.0", "Alpha"],
-				[false, undefined, 2, "etag2.0", "Gamma: γ"],
-				[false, undefined, 2, "etag1.0", "Beta: β"]
+				[undefined, true, 1, "etag0.0", "Alpha", "0,false"],
+				[false, undefined, 2, "etag2.0", "Gamma: γ", "2,false"],
+				[false, undefined, 2, "etag1.0", "Beta: β", "1,false"]
 			]);
 			checkCreatedPersisted(assert, oGamma, oGammaCreated);
 
@@ -29801,9 +29829,9 @@ sap.ui.define([
 				sFriend + "(ArtistID='1',IsActiveEntity=false)",
 				sFriend + "(ArtistID='2',IsActiveEntity=false)"
 			], [
-				[undefined, true, 1, "etag0.0", "Alpha"],
-				[false, true, 2, "etag1.0", "Beta: β"],
-				[false, undefined, 3, "etag2.1", "Gamma: γ"]
+				[undefined, true, 1, "etag0.0", "Alpha", "0,false"],
+				[false, true, 2, "etag1.0", "Beta: β", "1,false"],
+				[false, undefined, 3, "etag2.1", "Gamma: γ", "2,false"]
 			]);
 
 			assert.strictEqual(oBeta.getIndex(), 1);
@@ -29814,7 +29842,10 @@ sap.ui.define([
 				"@odata.etag" : "etag1.0",
 				ArtistID : "1",
 				IsActiveEntity : false,
-				Name : "Beta: β"
+				Name : "Beta: β",
+				_ : {
+					NodeID : "1,false"
+				}
 			});
 			checkCreatedPersisted(assert, oBeta, oBetaCreated);
 
@@ -29825,7 +29856,10 @@ sap.ui.define([
 				"@odata.etag" : "etag2.1", // updated
 				ArtistID : "2",
 				IsActiveEntity : false,
-				Name : "Gamma: γ"
+				Name : "Gamma: γ",
+				_ : {
+					NodeID : "2,false"
+				}
 			});
 			checkCreatedPersisted(assert, oGamma, oGammaCreated);
 
@@ -29857,12 +29891,12 @@ sap.ui.define([
 		}).then(function () {
 			checkTable("after move back", assert, oTable, [
 				sFriend + "(ArtistID='0',IsActiveEntity=false)",
-				sFriend + "(ArtistID='2',IsActiveEntity=false)",
+				sFriend + "(ArtistID='2',IsActiveEntity=false)", // moved *before* all created rows
 				sFriend + "(ArtistID='1',IsActiveEntity=false)"
 			], [
-				[undefined, true, 1, "etag0.0", "Alpha"],
-				[false, undefined, 2, "etag2.2", "Gamma: γ"], // moved *before* all created rows
-				[false, undefined, 2, "etag1.0", "Beta: β"]
+				[undefined, true, 1, "etag0.0", "Alpha", "0,false"],
+				[false, undefined, 2, "etag2.2", "Gamma: γ", "2,false"],
+				[false, undefined, 2, "etag1.0", "Beta: β", "1,false"]
 			]);
 
 			assert.strictEqual(oGamma.getIndex(), 1);
@@ -29872,7 +29906,10 @@ sap.ui.define([
 				"@odata.etag" : "etag2.2", // updated
 				ArtistID : "2",
 				IsActiveEntity : false,
-				Name : "Gamma: γ"
+				Name : "Gamma: γ",
+				_ : {
+					NodeID : "2,false"
+				}
 			});
 			checkCreatedPersisted(assert, oGamma, oGammaCreated);
 
@@ -29883,7 +29920,10 @@ sap.ui.define([
 				"@odata.etag" : "etag1.0",
 				ArtistID : "1",
 				IsActiveEntity : false,
-				Name : "Beta: β"
+				Name : "Beta: β",
+				_ : {
+					NodeID : "1,false"
+				}
 			});
 			checkCreatedPersisted(assert, oBeta, oBetaCreated);
 
@@ -29895,9 +29935,9 @@ sap.ui.define([
 			checkTable("after collapse", assert, oTable, [
 				sFriend + "(ArtistID='0',IsActiveEntity=false)"
 			], [
-				[undefined, false, 1, "etag0.0", "Alpha"],
-				["", "", "", "", ""],
-				["", "", "", "", ""]
+				[undefined, false, 1, "etag0.0", "Alpha", "0,false"],
+				["", "", "", "", "", ""],
+				["", "", "", "", "", ""]
 			]);
 			assert.strictEqual(oBeta.getModel(), oModel, "not destroyed by collapse");
 			assert.strictEqual(oGamma.getModel(), oModel, "not destroyed by collapse");
@@ -29921,6 +29961,9 @@ sap.ui.define([
 				that.waitForChanges(assert, "side effect: Name for all rows")
 			]);
 		}).then(function () {
+			// NodeID is not lost after requesting side effects with non-hierarchical requests
+			assert.deepEqual(oRoot.getObject("_"), {NodeID : "0,false"});
+
 			that.expectRequest(sFriend.slice(1) + "(ArtistID='2',IsActiveEntity=false)"
 					+ "?$select=ArtistID,IsActiveEntity,Name,_/DrillState,_/NodeID", {
 						"@odata.etag" : "etag2.3", // updated
@@ -29950,9 +29993,9 @@ sap.ui.define([
 				sFriend + "(ArtistID='2',IsActiveEntity=false)",
 				sFriend + "(ArtistID='1',IsActiveEntity=false)"
 			], [
-				[undefined, true, 1, "etag0.1", "Alpha #1"],
-				[false, undefined, 2, "etag2.3", "Gamma #1"],
-				[false, undefined, 2, "etag1.3", "Beta #1"]
+				[undefined, true, 1, "etag0.1", "Alpha #1", "0,false"],
+				[false, undefined, 2, "etag2.3", "Gamma #1", "2,false"],
+				[false, undefined, 2, "etag1.3", "Beta #1", "1,false"]
 			]);
 			const aCurrentContexts = oListBinding.getCurrentContexts();
 			assert.strictEqual(oRoot, aCurrentContexts[0]);
@@ -29967,7 +30010,9 @@ sap.ui.define([
 				ArtistID : "2",
 				IsActiveEntity : false,
 				Name : "Gamma #1",
-				_ : null // Note: NodeID still unknown
+				_ : {
+					NodeID : "2,false"
+				}
 			});
 			checkCreatedPersisted(assert, oGamma, oGammaCreated);
 
@@ -29979,7 +30024,9 @@ sap.ui.define([
 				ArtistID : "1",
 				IsActiveEntity : false,
 				Name : "Beta #1",
-				_ : null // Note: NodeID still unknown
+				_ : {
+					NodeID : "1,false"
+				}
 			});
 			checkCreatedPersisted(assert, oBeta, oBetaCreated);
 
@@ -30013,9 +30060,9 @@ sap.ui.define([
 				sFriend + "(ArtistID='2',IsActiveEntity=false)",
 				sFriend + "(ArtistID='1',IsActiveEntity=false)"
 			], [
-				[undefined, true, 1, "etag0.1", "Alpha #1"],
-				[false, true, 2, "etag2.3", "Gamma #1"],
-				[false, undefined, 3, "etag1.4", "Beta #1"]
+				[undefined, true, 1, "etag0.1", "Alpha #1", "0,false"],
+				[false, true, 2, "etag2.3", "Gamma #1", "2,false"],
+				[false, undefined, 3, "etag1.4", "Beta #1", "1,false"]
 			]);
 			const aCurrentContexts = oListBinding.getCurrentContexts();
 			assert.strictEqual(oRoot, aCurrentContexts[0]);
@@ -30031,7 +30078,9 @@ sap.ui.define([
 				ArtistID : "2",
 				IsActiveEntity : false,
 				Name : "Gamma #1",
-				_ : null // Note: NodeID still unknown
+				_ : {
+					NodeID : "2,false"
+				}
 			});
 			checkCreatedPersisted(assert, oGamma, oGammaCreated);
 
@@ -30043,7 +30092,9 @@ sap.ui.define([
 				ArtistID : "1",
 				IsActiveEntity : false,
 				Name : "Beta #1",
-				_ : null // Note: NodeID still unknown
+				_ : {
+					NodeID : "1,false"
+				}
 			});
 			checkCreatedPersisted(assert, oBeta, oBetaCreated);
 
@@ -30062,10 +30113,20 @@ sap.ui.define([
 					"@odata.etag" : "etag9.0",
 					ArtistID : "9",
 					IsActiveEntity : false,
-					Name : "Aleph: ℵ" // side effect
+					Name : "Aleph: ℵ", // side effect
+					_ : null // not available w/ RAP for a non-hierarchical request
 				})
 				.expectChange("etag", ["etag9.0"])
-				.expectChange("name", ["Aleph: ℵ"]);
+				.expectChange("name", ["Aleph: ℵ"])
+				.expectRequest(sBaseUrl
+					+ "&$filter=ArtistID eq '9' and IsActiveEntity eq false&$select=_/NodeID", {
+					value : [{
+						"@odata.etag" : "etag9.0",
+						_ : {
+							NodeID : "9,false"
+						}
+					}]
+				});
 
 			// code under test (JIRA: CPOUI5ODATAV4-2355)
 			oNewRoot = oListBinding.create({
@@ -30086,9 +30147,9 @@ sap.ui.define([
 				sFriend + "(ArtistID='2',IsActiveEntity=false)",
 				sFriend + "(ArtistID='1',IsActiveEntity=false)"
 			], [
-				[false, undefined, 1, "etag9.0", "Aleph: ℵ"],
-				[undefined, true, 1, "etag0.1", "Alpha #1"],
-				[false, true, 2, "etag2.3", "Gamma #1"]
+				[false, undefined, 1, "etag9.0", "Aleph: ℵ", "9,false"],
+				[undefined, true, 1, "etag0.1", "Alpha #1", "0,false"],
+				[false, true, 2, "etag2.3", "Gamma #1", "2,false"]
 			]);
 			checkCreatedPersisted(assert, oNewRoot);
 
@@ -30141,9 +30202,9 @@ sap.ui.define([
 				sFriend + "(ArtistID='2',IsActiveEntity=false)",
 				sFriend + "(ArtistID='1',IsActiveEntity=false)"
 			], [
-				[false, undefined, 1, "etag9.1", "Aleph #2"],
-				[undefined, true, 1, "etag0.2", "Alpha #2"],
-				[false, true, 2, "etag2.4", "Gamma #2"]
+				[false, undefined, 1, "etag9.1", "Aleph #2", "9,false"],
+				[undefined, true, 1, "etag0.2", "Alpha #2", "0,false"],
+				[false, true, 2, "etag2.4", "Gamma #2", "2,false"]
 			]);
 			assert.strictEqual(oBeta, oListBinding.getAllCurrentContexts()[3], "same instance");
 
@@ -30160,9 +30221,9 @@ sap.ui.define([
 				sFriend + "(ArtistID='2',IsActiveEntity=false)",
 				sFriend + "(ArtistID='1',IsActiveEntity=false)"
 			], [
-				[undefined, true, 1, "etag0.2", "Alpha #2"],
-				[false, true, 2, "etag2.4", "Gamma #2"],
-				[false, undefined, 3, "etag1.5", "Beta #2"]
+				[undefined, true, 1, "etag0.2", "Alpha #2", "0,false"],
+				[false, true, 2, "etag2.4", "Gamma #2", "2,false"],
+				[false, undefined, 3, "etag1.5", "Beta #2", "1,false"]
 			]);
 			assert.strictEqual(oBeta, oListBinding.getCurrentContexts()[2], "same instance");
 			checkCreatedPersisted(assert, oBeta, oBetaCreated);
@@ -30192,11 +30253,11 @@ sap.ui.define([
 
 			return that.checkAllContexts("after move Beta to make it a root node", assert,
 				oListBinding, ["@$ui5.context.isTransient", "@$ui5.node.isExpanded",
-					"@$ui5.node.level", "@odata.etag", "Name"], [
-					[false, undefined, 1, "etag1.6", "Beta #2"],
-					[false, undefined, 1, "etag9.1", "Aleph #2"],
-					[undefined, true, 1, "etag0.2", "Alpha #2"],
-					[false, undefined, 2, "etag2.4", "Gamma #2"]
+					"@$ui5.node.level", "@odata.etag", "Name", "_/NodeID"], [
+					[false, undefined, 1, "etag1.6", "Beta #2", "1,false"],
+					[false, undefined, 1, "etag9.1", "Aleph #2", "9,false"],
+					[undefined, true, 1, "etag0.2", "Alpha #2", "0,false"],
+					[false, undefined, 2, "etag2.4", "Gamma #2", "2,false"]
 				]);
 		});
 	});
@@ -30211,6 +30272,7 @@ sap.ui.define([
 	//
 	// Before deletion, the new node is maybe moved to make it a root (JIRA: CPOUI5ODATAV4-2400)
 	// Old vs. new format of RecursiveHierarchy annotation (JIRA: CPOUI5ODATAV4-2401)
+	// Display NodeID on UI, request NodeID after creation (JIRA: CPOUI5ODATAV4-2381)
 	//
 	// At first, create a new root node with a LimitedRank beyond all currently loaded nodes.
 	// Finally, it is also deleted.
@@ -30247,6 +30309,7 @@ make root = ${bMakeRoot}`;
 	<Text text="{= %{@$ui5.node.level} }"/>
 	<Text text="{ArtistID}"/>
 	<Text text="{Name}"/>
+	<Text id="id" text="{_/NodeID}"/>
 </t:Table>`;
 
 		// Note: hierarchy in server perspective
@@ -30294,8 +30357,8 @@ make root = ${bMakeRoot}`;
 			sFriend + "(ArtistID='0',IsActiveEntity=false)",
 			sFriend + "(ArtistID='1',IsActiveEntity=false)"
 		], [
-			[true, 1, "0", "Alpha"],
-			[undefined, 2, "1", "Beta"]
+			[true, 1, "0", "Alpha", "0,false"],
+			[undefined, 2, "1", "Beta", "1,false"]
 		], 10);
 		const oListBinding = oTable.getBinding("rows");
 		const oAlpha = oListBinding.getCurrentContexts()[0];
@@ -30321,13 +30384,15 @@ make root = ${bMakeRoot}`;
 			}, {
 				ArtistID : "8",
 				IsActiveEntity : false,
-				Name : "Aleph"
+				Name : "Aleph",
+				_ : null // not available w/ RAP for a non-hierarchical request
 			})
 			.expectRequest(sBaseUrl + "&$filter=ArtistID eq '8' and IsActiveEntity eq false"
-				+ "&$select=_/" + sLimitedRank, {
+				+ "&$select=_/" + sLimitedRank + ",_/NodeID", {
 				value : [{
 					_ : {
-						[sLimitedRank] : "10" // Edm.Int64
+						[sLimitedRank] : "10", // Edm.Int64
+						NodeID : "8,false"
 					}
 				}]
 			});
@@ -30345,8 +30410,8 @@ make root = ${bMakeRoot}`;
 			sFriend + "(ArtistID='0',IsActiveEntity=false)",
 			sFriend + "(ArtistID='1',IsActiveEntity=false)"
 		], [
-			[undefined, 1, "8", "Aleph"],
-			[true, 1, "0", "Alpha"]
+			[undefined, 1, "8", "Aleph", "8,false"],
+			[true, 1, "0", "Alpha", "0,false"]
 		], 11);
 
 		// 0 Alpha
@@ -30395,8 +30460,8 @@ make root = ${bMakeRoot}`;
 			sFriend + "(ArtistID='5',IsActiveEntity=false)",
 			sFriend + "(ArtistID='5.1',IsActiveEntity=false)"
 		], [
-			[true, 2, "5", "Zeta"],
-			[undefined, 3, "5.1", "Eta"]
+			[true, 2, "5", "Zeta", "5,false"],
+			[undefined, 3, "5.1", "Eta", "5.1,false"]
 		], 11);
 		const oZeta = oListBinding.getCurrentContexts()[0];
 
@@ -30436,8 +30501,8 @@ make root = ${bMakeRoot}`;
 			sFriend + "(ArtistID='5',IsActiveEntity=false)",
 			sFriend + "(ArtistID='6',IsActiveEntity=false)"
 		], [
-			[false, 2, "5", "Zeta"],
-			[undefined, 2, "6", "Iota"]
+			[false, 2, "5", "Zeta", "5,false"],
+			[undefined, 2, "6", "Iota", "6,false"]
 		], 9);
 
 		oTable.setFirstVisibleRow(1); // back to Alpha (Note: Aleph outside of view!)
@@ -30464,13 +30529,15 @@ make root = ${bMakeRoot}`;
 			}, {
 				ArtistID : "9",
 				IsActiveEntity : false,
-				Name : "New"
+				Name : "New",
+				_ : null // not available w/ RAP for a non-hierarchical request
 			})
 			.expectRequest(sBaseUrl + "&$filter=ArtistID eq '9' and IsActiveEntity eq false"
-				+ "&$select=_/" + sLimitedRank, {
+				+ "&$select=_/" + sLimitedRank + ",_/NodeID", {
 				value : [{
 					_ : {
-						[sLimitedRank] : "4" // Edm.Int64
+						[sLimitedRank] : "4", // Edm.Int64
+						NodeID : "9,false"
 					}
 				}]
 			});
@@ -30494,9 +30561,10 @@ make root = ${bMakeRoot}`;
 			sFriend + "(ArtistID='5',IsActiveEntity=false)",
 			sFriend + "(ArtistID='6',IsActiveEntity=false)"
 		], [
-			[true, 1, "0", "Alpha"],
-			[undefined, 2, "9", "New"]
+			[true, 1, "0", "Alpha", "0,false"],
+			[undefined, 2, "9", "New", "9,false"]
 		], 10);
+		assert.deepEqual(oNewChild.getObject("_"), {NodeID : "9,false"});
 
 		// code under test
 		oZeta.expand();
@@ -30625,19 +30693,19 @@ make root = ${bMakeRoot}`;
 			]);
 
 			await this.checkAllContexts("after make New a root node", assert, oListBinding,
-				["@$ui5.node.isExpanded", "@$ui5.node.level", "ArtistID", "Name"], [
-					[undefined, 1, "9", "New"],
-					[undefined, 1, "8", "Aleph"],
-					[true, 1, "0", "Alpha"],
-					[undefined, 2, "1", "Beta"],
-					[undefined, 2, "2", "Gamma"],
-					[undefined, 2, "3", "Delta"],
-					[undefined, 2, "4", "Epsilon"],
-					[true, 2, "5", "Zeta"],
-					[undefined, 3, "5.1", "Eta"],
-					[undefined, 3, "5.2", "Theta"],
-					[undefined, 2, "6", "Iota"],
-					[undefined, 2, "7", "Kappa"]
+				["@$ui5.node.isExpanded", "@$ui5.node.level", "ArtistID", "Name", "_/NodeID"], [
+					[undefined, 1, "9", "New", "9,false"],
+					[undefined, 1, "8", "Aleph", "8,false"],
+					[true, 1, "0", "Alpha", "0,false"],
+					[undefined, 2, "1", "Beta", "1,false"],
+					[undefined, 2, "2", "Gamma", "2,false"],
+					[undefined, 2, "3", "Delta", "3,false"],
+					[undefined, 2, "4", "Epsilon", "4,false"],
+					[true, 2, "5", "Zeta", "5,false"],
+					[undefined, 3, "5.1", "Eta", "5.1,false"],
+					[undefined, 3, "5.2", "Theta", "5.2,false"],
+					[undefined, 2, "6", "Iota", "6,false"],
+					[undefined, 2, "7", "Kappa", "7,false"]
 				]);
 		}
 
@@ -30653,17 +30721,17 @@ make root = ${bMakeRoot}`;
 		]);
 
 		await this.checkAllContexts("after deleting new nodes", assert, oListBinding,
-			["@$ui5.node.isExpanded", "@$ui5.node.level", "ArtistID", "Name"], [
-				[true, 1, "0", "Alpha"],
-				[undefined, 2, "1", "Beta"],
-				[undefined, 2, "2", "Gamma"],
-				[undefined, 2, "3", "Delta"],
-				[undefined, 2, "4", "Epsilon"],
-				[true, 2, "5", "Zeta"],
-				[undefined, 3, "5.1", "Eta"],
-				[undefined, 3, "5.2", "Theta"],
-				[undefined, 2, "6", "Iota"],
-				[undefined, 2, "7", "Kappa"]
+			["@$ui5.node.isExpanded", "@$ui5.node.level", "ArtistID", "Name", "_/NodeID"], [
+				[true, 1, "0", "Alpha", "0,false"],
+				[undefined, 2, "1", "Beta", "1,false"],
+				[undefined, 2, "2", "Gamma", "2,false"],
+				[undefined, 2, "3", "Delta", "3,false"],
+				[undefined, 2, "4", "Epsilon", "4,false"],
+				[true, 2, "5", "Zeta", "5,false"],
+				[undefined, 3, "5.1", "Eta", "5.1,false"],
+				[undefined, 3, "5.2", "Theta", "5.2,false"],
+				[undefined, 2, "6", "Iota", "6,false"],
+				[undefined, 2, "7", "Kappa", "7,false"]
 			]);
 	});
 	});
@@ -31028,6 +31096,7 @@ make root = ${bMakeRoot}`;
 	//
 	// Before deletion, Beta is maybe is maybe moved to make it a root (JIRA: CPOUI5ODATAV4-2400)
 	// Old vs. new format of RecursiveHierarchy annotation (JIRA: CPOUI5ODATAV4-2401)
+	// Request NodeID after creation (JIRA: CPOUI5ODATAV4-2381)
 [false, true].forEach((bMakeRoot) => {
 	["OldChart", "OrgChart"].forEach((sHierarchyQualifier) => {
 		const sTitle = `Recursive Hierarchy: expand all and move for ${sHierarchyQualifier};
@@ -31383,13 +31452,15 @@ make root = ${bMakeRoot}`;
 			}, {
 				ArtistID : "10",
 				IsActiveEntity : false,
-				Name : "Beth"
+				Name : "Beth",
+				_ : null // not available w/ RAP for a non-hierarchical request
 			})
 			.expectRequest(sBaseUrl + "&$filter=ArtistID eq '10' and IsActiveEntity eq false"
-				+ "&$select=_/" + sLimitedRank, {
+				+ "&$select=_/" + sLimitedRank + ",_/NodeID", {
 				value : [{
 					_ : {
-						[sLimitedRank] : "12" // Edm.Int64
+						[sLimitedRank] : "12", // Edm.Int64
+						NodeID : "10,false"
 					}
 				}]
 			});
@@ -31406,6 +31477,8 @@ make root = ${bMakeRoot}`;
 			oBethCreated,
 			this.waitForChanges(assert, "create new root Beth")
 		]);
+
+		assert.deepEqual(oBeth.getObject("_"), {NodeID : "10,false"});
 
 		await this.checkAllContexts("after create new root Beth", assert, oListBinding,
 			["@$ui5.node.isExpanded", "@$ui5.node.level", "ArtistID", "Name"], [
@@ -31427,13 +31500,15 @@ make root = ${bMakeRoot}`;
 			}, {
 				ArtistID : "10.1",
 				IsActiveEntity : false,
-				Name : "Gimel"
+				Name : "Gimel",
+				_ : null // not available w/ RAP for a non-hierarchical request
 			})
 			.expectRequest(sBaseUrl + "&$filter=ArtistID eq '10.1' and IsActiveEntity eq false"
-				+ "&$select=_/" + sLimitedRank, {
+				+ "&$select=_/" + sLimitedRank + ",_/NodeID", {
 				value : [{
 					_ : {
-						[sLimitedRank] : "13" // Edm.Int64
+						[sLimitedRank] : "13", // Edm.Int64
+						NodeID : "10.1,false"
 					}
 				}]
 			});
@@ -31452,6 +31527,8 @@ make root = ${bMakeRoot}`;
 			oGimelCreated,
 			this.waitForChanges(assert, "create new child Gimel")
 		]);
+
+		assert.deepEqual(oGimel.getObject("_"), {NodeID : "10.1,false"});
 
 		await this.checkAllContexts("after create new child Gimel", assert, oListBinding,
 			["@$ui5.node.isExpanded", "@$ui5.node.level", "ArtistID", "Name"], [
@@ -32195,10 +32272,20 @@ make root = ${bMakeRoot}`;
 				}, {
 					ArtistID : "11",
 					IsActiveEntity : false,
-					Name : "First new child" // side effect
+					Name : "First new child", // side effect
+					_ : null // not available w/ RAP for a non-hierarchical request
 				})
 				.expectChange("id", [, "11"])
-				.expectChange("name", [, "First new child"]);
+				.expectChange("name", [, "First new child"])
+				.expectRequest("Artists?$apply=descendants($root/Artists,OrgChart,_/NodeID"
+					+ ",filter(ArtistID eq '0' and IsActiveEntity eq false),1)"
+					+ "&$filter=ArtistID eq '11' and IsActiveEntity eq false&$select=_/NodeID", {
+					value : [{
+						_ : {
+							NodeID : "11,true"
+						}
+					}]
+				});
 
 			// code under test
 			const oChild = oListBinding.create({
@@ -32225,10 +32312,21 @@ make root = ${bMakeRoot}`;
 					"@odata.etag" : "etag2.0",
 					ArtistID : "12",
 					IsActiveEntity : false,
-					Name : "Second new child" // side effect
+					Name : "Second new child", // side effect
+					_ : null // not available w/ RAP for a non-hierarchical request
 				})
 				.expectChange("id", [, "12"])
-				.expectChange("name", [, "Second new child"]);
+				.expectChange("name", [, "Second new child"])
+				.expectRequest("Artists?$apply=descendants($root/Artists,OrgChart,_/NodeID"
+					+ ",filter(ArtistID eq '0' and IsActiveEntity eq false),1)"
+					+ "&$filter=ArtistID eq '12' and IsActiveEntity eq false&$select=_/NodeID", {
+					value : [{
+						"@odata.etag" : "etag2.0",
+						_ : {
+							NodeID : "12,true"
+						}
+					}]
+				});
 
 			// code under test
 			const oChild = oListBinding.create({

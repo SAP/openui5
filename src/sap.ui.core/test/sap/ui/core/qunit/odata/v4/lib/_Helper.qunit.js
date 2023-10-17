@@ -4114,6 +4114,28 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("inheritPathValue: bTolerateNull", function (assert) {
+		var oSource = {
+				bar : "n/a",
+				foo : {
+					bar : "<bar>"
+				}
+			},
+			oTarget = {
+				foo : null
+			};
+
+		// code under test
+		_Helper.inheritPathValue(["foo", "bar"], oSource, oTarget, true);
+
+		assert.deepEqual(oTarget, {
+			foo : {
+				bar : "<bar>"
+			}
+		});
+	});
+
+	//*********************************************************************************************
 	QUnit.test("decomposeError: w/o ContentID, w/o details, w/o target", function (assert) {
 		var oError = new Error("Message"),
 			aErrors;

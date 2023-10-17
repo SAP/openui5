@@ -2055,8 +2055,10 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("readGap: created persisted", function (assert) {
-		const oCache
-			= _AggregationCache.create(this.oRequestor, "~", "", {}, {hierarchyQualifier : "X"});
+		const oCache = _AggregationCache.create(this.oRequestor, "~", "", {}, {
+			hierarchyQualifier : "X",
+			$NodeProperty : "path/to/NodeID"
+		});
 		oCache.aElements = [,, "~oStartElement~"];
 		oCache.aElements.$byPredicate = {};
 		const oHelperMock = this.mock(_Helper);
@@ -2068,6 +2070,8 @@ sap.ui.define([
 		this.mock(oGroupLevelCache).expects("refreshSingle")
 			.withExactArgs("~oGroupLock~", "", -1, "~sPredicate~", true, false, "~fnDataRequested~")
 			.returns(SyncPromise.resolve(Promise.resolve("~oElement~")));
+		oHelperMock.expects("inheritPathValue")
+			.withExactArgs(["path", "to", "NodeID"], "~oStartElement~", "~oElement~", true);
 		oHelperMock.expects("copyPrivateAnnotation")
 			.withExactArgs("~oStartElement~", "context", "~oElement~");
 		this.mock(oCache).expects("addElements")
@@ -4185,18 +4189,14 @@ make root = ${bMakeRoot}`;
 		const oHelperMock = this.mock(_Helper);
 		oHelperMock.expects("getPrivateAnnotation").exactly(oParentNode ? 1 : 0)
 			.withExactArgs(sinon.match.same(oParentNode), "cache").returns("n/a");
-		const oGroupLock = {
-			getUnlockedCopy : mustBeMocked
-		};
-		this.mock(oGroupLock).expects("getUnlockedCopy").withExactArgs().returns("~unlockedCopy~");
 		const oCacheMock = this.mock(oCache);
-		oCacheMock.expects("requestRank").withExactArgs("~oChildNode~", "~unlockedCopy~")
+		oCacheMock.expects("requestRank").withExactArgs("~oChildNode~", "~oGroupLock~")
 			.resolves(17);
 		oCacheMock.expects("createGroupLevelCache").never();
 		oCacheMock.expects("restoreElement").never();
 		oCacheMock.expects("read").never();
 		this.mock(this.oRequestor).expects("request")
-			.withExactArgs("PATCH", "Foo('23')", sinon.match.same(oGroupLock), {
+			.withExactArgs("PATCH", "Foo('23')", "~oGroupLock~", {
 					"If-Match" : "~oChildNode~",
 					Prefer : "return=minimal"
 				}, {"myParent@odata.bind" : bMakeRoot ? null : "Foo('42')"},
@@ -4249,7 +4249,7 @@ make root = ${bMakeRoot}`;
 
 		// code under test
 		const iResult
-			= await oCache.move(oGroupLock, "Foo('23')", bMakeRoot ? undefined : "Foo('42')");
+			= await oCache.move("~oGroupLock~", "Foo('23')", bMakeRoot ? undefined : "Foo('42')");
 
 		assert.strictEqual(iResult, bNewParentExpanded === false ? 47 + 1 : 1);
 		assert.deepEqual(oCache.aElements,
@@ -4315,11 +4315,11 @@ make root = ${bMakeRoot}`;
 				bar : "~bar~",
 				foo : "~foo~"
 			};
-		const oGroupLock = {getUnlockedCopy : mustBeMocked};
 		const oPostBody = {};
 		const oCollectionCache = bInFirstLevel ? oCache.oFirstLevel : oGroupLevelCache;
+		let bNodePropertyCompleted = false;
 		this.mock(oCollectionCache).expects("create")
-			.withExactArgs(sinon.match.same(oGroupLock), "~oPostPathPromise~", "~sPath~",
+			.withExactArgs("~oGroupLock~", "~oPostPathPromise~", "~sPath~",
 				"~sTransientPredicate~", {bar : "~bar~", foo : "~foo~"}, false, "~fnErrorCallback~",
 				"~fnSubmitCallback~", sinon.match.func)
 			.callsFake(function () {
@@ -4329,16 +4329,34 @@ make root = ${bMakeRoot}`;
 				_Helper.setPrivateAnnotation(oEntityData, "postBody", oPostBody);
 				return new SyncPromise(function (resolve) {
 					setTimeout(function () {
+						var oNodeExpectation;
+
 						_Helper.setPrivateAnnotation(oEntityData, "predicate", "('ABC')");
 						if (bInFirstLevel) {
 							// Note: #calculateKeyPredicateRH doesn't know better :-(
 							oEntityData["@$ui5.node.level"] = 1;
 						}
-						that.mock(oGroupLock).expects("getUnlockedCopy").exactly(bExpandAll ? 1 : 0)
-							.withExactArgs().returns("~oGroupLockCopy~");
-						that.mock(oCache).expects("requestRank").exactly(bExpandAll ? 1 : 0)
-							.withExactArgs(sinon.match.same(oEntityData), "~oGroupLockCopy~")
-							.resolves("~iRank~");
+						const oRankExpectation = that.mock(oCache).expects("requestRank")
+							.exactly(bExpandAll ? 1 : 0)
+							.withExactArgs(sinon.match.same(oEntityData), "~oGroupLock~")
+							.callsFake(function () {
+								if (bExpandAll) {
+									Promise.resolve().then(function () {
+										assert.ok(oRankExpectation.called, "both called in sync");
+										assert.ok(oRankExpectation
+											.calledImmediatelyBefore(oNodeExpectation));
+									});
+								}
+								return Promise.resolve("~iRank~");
+							});
+						oNodeExpectation = that.mock(oCache).expects("requestNodeProperty")
+							.withExactArgs(sinon.match.same(oEntityData), "~oGroupLock~")
+							.returns(new Promise(function (resolve0) {
+								setTimeout(function () {
+									bNodePropertyCompleted = true;
+									resolve0();
+								});
+							}));
 						that.mock(oCache.oFirstLevel).expects("removeElement")
 							.exactly(bExpandAll ? 1 : 0).withExactArgs(0, "~sTransientPredicate~");
 						if (bExpandAll) {
@@ -4379,7 +4397,7 @@ make root = ${bMakeRoot}`;
 			.exactly(bInFirstLevel ? 1 : 0).withExactArgs(sinon.match.same(oEntityData), 3, +1);
 
 		// code under test
-		const oResult = oCache.create(oGroupLock, "~oPostPathPromise~", "~sPath~",
+		const oResult = oCache.create("~oGroupLock~", "~oPostPathPromise~", "~sPath~",
 			"~sTransientPredicate~", oEntityData, /*bAtEndOfCreated*/false, "~fnErrorCallback~",
 			"~fnSubmitCallback~");
 
@@ -4407,6 +4425,9 @@ make root = ${bMakeRoot}`;
 				"('ABC')" : oEntityData
 			});
 			assert.strictEqual(oCache.aElements.$count, 6);
+			if (!bExpandAll) {
+				assert.ok(bNodePropertyCompleted, "await #requestNodeProperty");
+			}
 
 			oCache.aElements[3] = oEntityData;
 			oCache.aElements.$byPredicate["~sTransientPredicate~"] = "n/a";
@@ -4448,6 +4469,7 @@ make root = ${bMakeRoot}`;
 				foo : "~foo~"
 			};
 		const oPostBody = {};
+		let bNodePropertyCompleted = false;
 		this.mock(oCache.oFirstLevel).expects("create")
 			.withExactArgs("~oGroupLock~", "~oPostPathPromise~", "~sPath~", "~sTransientPredicate~",
 				{bar : "~bar~", foo : "~foo~"},
@@ -4458,6 +4480,14 @@ make root = ${bMakeRoot}`;
 				return new SyncPromise(function (resolve) {
 					setTimeout(function () {
 						_Helper.setPrivateAnnotation(oEntityData, "predicate", "('ABC')");
+						oCacheMock.expects("requestNodeProperty")
+							.withExactArgs(sinon.match.same(oEntityData), "~oGroupLock~")
+							.returns(new Promise(function (resolve) {
+								setTimeout(function () {
+									bNodePropertyCompleted = true;
+									resolve();
+								});
+							}));
 						resolve();
 					});
 				});
@@ -4490,6 +4520,7 @@ make root = ${bMakeRoot}`;
 				"('ABC')" : oEntityData
 			});
 			assert.strictEqual(oCache.aElements.$count, 4);
+			assert.ok(bNodePropertyCompleted, "await #requestNodeProperty");
 
 			oCache.aElements[0] = oEntityData;
 
@@ -4669,21 +4700,23 @@ make root = ${bMakeRoot}`;
 });
 
 	//*********************************************************************************************
-["TEAM_ID desc", undefined].forEach((sOrderBy) => {
-	QUnit.test(`requestRank: ${sOrderBy}`, async function (assert) {
+	QUnit.test("requestProperties", async function (assert) {
 		const oCache = _AggregationCache.create(this.oRequestor, "Foo", "", {}, {
 			hierarchyQualifier : "X",
 			$LimitedRank : "~LimitedRank~",
 			$metaPath : "/meta/path"
 		});
-		this.mock(oCache.oFirstLevel).expects("getQueryOptions").withExactArgs()
+		const oParentCache = {getQueryOptions : mustBeMocked};
+		this.mock(_Helper).expects("getPrivateAnnotation").withExactArgs("~oElement~", "parent")
+			.returns(oParentCache);
+		this.mock(oParentCache).expects("getQueryOptions").withExactArgs()
 			.returns({
 				$$filterBeforeAggregate : "n/a",
 				$apply : "A.P.P.L.E.",
 				$count : "n/a",
 				$expand : "n/a",
 				$filter : "n/a",
-				$orderby : sOrderBy,
+				$orderby : "n/a",
 				$search : "n/a",
 				$select : ["n/a"],
 				foo : "bar",
@@ -4693,24 +4726,39 @@ make root = ${bMakeRoot}`;
 		this.mock(_Helper).expects("getKeyFilter")
 			.withExactArgs("~oElement~", "/meta/path", "~getTypes~").returns("~filter~");
 		this.mock(oCache.oRequestor).expects("buildQueryString")
-			.withExactArgs("/meta/path", sOrderBy ? {
+			.withExactArgs("/meta/path", {
 				$apply : "A.P.P.L.E.",
-				$filter : "~filter~",
-				$orderby : sOrderBy,
-				$select : "~LimitedRank~"
-			} : {
-				$apply : "A.P.P.L.E.",
-				$filter : "~filter~",
-				$select : "~LimitedRank~"
+				$filter : "~filter~"
 			}, false, true)
 			.returns("~queryString~");
+		const oGroupLock = {getUnlockedCopy : mustBeMocked};
+		this.mock(oGroupLock).expects("getUnlockedCopy").withExactArgs()
+			.returns("~oGroupLockCopy~");
 		this.mock(oCache.oRequestor).expects("request")
-			.withExactArgs("GET", "Foo~queryString~", "~oGroupLock~")
+			.withExactArgs("GET", "Foo~queryString~", "~oGroupLockCopy~", undefined, undefined,
+				undefined, undefined, "/meta/path", undefined, false, {$select : "~aSelect~"},
+				sinon.match.same(oCache))
 			.resolves({
 				"@odata.context" : "n/a",
 				"@odata.metadataEtag" : "W/...",
 				value : ["~oResult~"]
 			});
+
+		assert.strictEqual(
+			// code under test
+			await oCache.requestProperties("~oElement~", "~aSelect~", oGroupLock),
+			"~oResult~");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("requestRank", async function (assert) {
+		const oCache = _AggregationCache.create(this.oRequestor, "Foo", "", {}, {
+			hierarchyQualifier : "X",
+			$LimitedRank : "~LimitedRank~"
+		});
+		this.mock(oCache).expects("requestProperties")
+			.withExactArgs("~oElement~", ["~LimitedRank~"], "~oGroupLock~")
+			.resolves("~oResult~");
 		this.mock(_Helper).expects("drillDown").withExactArgs("~oResult~", "~LimitedRank~")
 			.returns("42");
 
@@ -4719,7 +4767,43 @@ make root = ${bMakeRoot}`;
 			await oCache.requestRank("~oElement~", "~oGroupLock~"),
 			42);
 	});
-});
+
+	//*********************************************************************************************
+	QUnit.test("requestNodeProperty", async function (assert) {
+		const oCache = _AggregationCache.create(this.oRequestor, "Foo", "", {}, {
+			hierarchyQualifier : "X",
+			$NodeProperty : "path/to/NodeID"
+		});
+		this.mock(_Helper).expects("drillDown").withExactArgs("~oElement~", "path/to/NodeID")
+			.returns(undefined);
+		this.mock(oCache).expects("requestProperties")
+			.withExactArgs("~oElement~", ["path/to/NodeID"], "~oGroupLock~")
+			.resolves("~oResult~");
+		this.mock(_Helper).expects("inheritPathValue")
+			.withExactArgs(["path", "to", "NodeID"], "~oResult~", "~oElement~", true);
+
+		assert.strictEqual(
+			// code under test
+			await oCache.requestNodeProperty("~oElement~", "~oGroupLock~"),
+			undefined, "without a defined result");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("requestNodeProperty: already available", async function (assert) {
+		const oCache = _AggregationCache.create(this.oRequestor, "Foo", "", {}, {
+			hierarchyQualifier : "X",
+			$NodeProperty : "path/to/NodeID"
+		});
+		this.mock(_Helper).expects("drillDown").withExactArgs("~oElement~", "path/to/NodeID")
+			.returns(""); // edge case :-)
+		this.mock(oCache).expects("requestProperties").never();
+		this.mock(_Helper).expects("inheritPathValue").never();
+
+		assert.strictEqual(
+			// code under test
+			await oCache.requestNodeProperty("~oElement~", "~oGroupLock~"),
+			undefined, "without a defined result");
+	});
 
 	//*********************************************************************************************
 [

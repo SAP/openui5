@@ -536,7 +536,10 @@ sap.ui.define([
 			oEntityData["@$ui5.node.level"] = iLevel;
 
 			if (this.oAggregation.expandTo >= Number.MAX_SAFE_INTEGER) { // "expand all"
-				const iRank = await this.requestRank(oEntityData, oGroupLock.getUnlockedCopy());
+				const [iRank] = await Promise.all([
+					this.requestRank(oEntityData, oGroupLock),
+					this.requestNodeProperty(oEntityData, oGroupLock)
+				]);
 
 				this.oFirstLevel.removeElement(0, sTransientPredicate);
 				_Helper.deletePrivateAnnotation(oEntityData, "transientPredicate");
@@ -545,6 +548,8 @@ sap.ui.define([
 				delete this.aElements.$byPredicate[sTransientPredicate];
 				_Helper.setPrivateAnnotation(oEntityData, "rank", iRank);
 				this.shiftRank(iIndex, +1);
+			} else {
+				await this.requestNodeProperty(oEntityData, oGroupLock);
 			}
 
 			return oEntityData;
@@ -1044,7 +1049,7 @@ sap.ui.define([
 			? _Helper.getPrivateAnnotation(oParentNode, "cache")
 			: this.oFirstLevel;
 		if (this.oAggregation.expandTo > 1) { // "expand all": GET LimitedRank
-			oReadPromise = this.requestRank(oChildNode, oGroupLock.getUnlockedCopy());
+			oReadPromise = this.requestRank(oChildNode, oGroupLock);
 		} else if (!oCache && oParentNode["@$ui5.node.isExpanded"] === false) {
 			oCache = this.createGroupLevelCache(oParentNode);
 			// @see #getExclusiveFilter
@@ -1438,6 +1443,8 @@ sap.ui.define([
 			const oPromise = oCache.refreshSingle(oGroupLock, "", -1, sPredicate,
 					/*bKeepAlive*/true, false, fnDataRequested)
 				.then((oElement) => {
+					_Helper.inheritPathValue(this.oAggregation.$NodeProperty.split("/"),
+						oStartElement, oElement, true); // keep NodeProperty
 					// make sure that ODLB reuses the same context instance
 					_Helper.copyPrivateAnnotation(oStartElement, "context", oElement);
 					this.addElements(oElement, iStart, oCache); // $skip index is undefined!
@@ -1505,12 +1512,67 @@ sap.ui.define([
 	};
 
 	/**
+	 * Requests and updates the NodeProperty ("the hierarchy node value") of the given element,
+	 * unless already available.
+	 *
+	 * @param {object} oElement - The element
+	 * @param {sap.ui.model.odata.v4.lib._GroupLock} oGroupLock
+	 *   An original lock for the group ID to be used for the GET request, to be cloned via
+	 *   {@link {sap.ui.model.odata.v4.lib._GroupLock#getUnlockedCopy}
+	 * @returns {Promise<void>}
+	 *   A promise which is resolved without a defined result in case of success, or
+	 *   rejected in case of an error
+	 *
+	 * @private
+	 */
+	_AggregationCache.prototype.requestNodeProperty = async function (oElement, oGroupLock) {
+		if (_Helper.drillDown(oElement, this.oAggregation.$NodeProperty) !== undefined) {
+			return; // already available
+		}
+
+		const oResult
+			= await this.requestProperties(oElement, [this.oAggregation.$NodeProperty], oGroupLock);
+
+		_Helper.inheritPathValue(this.oAggregation.$NodeProperty.split("/"), oResult, oElement,
+			true);
+	};
+
+	/**
+	 * Requests the given properties for the given element via a "mergeable GET".
+	 *
+	 * @param {object} oElement - The element
+	 * @param {string[]} aSelect - The relative paths to properties to be requested
+	 * @param {sap.ui.model.odata.v4.lib._GroupLock} oGroupLock
+	 *   An original lock for the group ID to be used for the GET request, to be cloned via
+	 *   {@link {sap.ui.model.odata.v4.lib._GroupLock#getUnlockedCopy}
+	 * @returns {Promise<number>}
+	 *   A promise which is resolved with the result object, or rejected in case of an error
+	 *
+	 * @private
+	 */
+	_AggregationCache.prototype.requestProperties = async function (oElement, aSelect, oGroupLock) {
+		const sMetaPath = this.oAggregation.$metaPath;
+		const mQueryOptions = {
+			$apply : _Helper.getPrivateAnnotation(oElement, "parent").getQueryOptions().$apply,
+			$filter : _Helper.getKeyFilter(oElement, sMetaPath, this.getTypes())
+		};
+		const sResourcePath = this.sResourcePath
+			+ this.oRequestor.buildQueryString(sMetaPath, mQueryOptions, false, true);
+		const oResult = await this.oRequestor.request("GET", sResourcePath,
+			oGroupLock.getUnlockedCopy(), undefined, undefined, undefined, undefined, sMetaPath,
+			undefined, false, {$select : aSelect}, this);
+
+		return oResult.value[0];
+	};
+
+	/**
 	 * Requests the (limited preorder) rank of the given element which must belong to
 	 * <code>this.oFirstLevel</code>.
 	 *
 	 * @param {object} oElement - The element
 	 * @param {sap.ui.model.odata.v4.lib._GroupLock} oGroupLock
-	 *   A lock for the group ID to be used for the GET request
+	 *   An original lock for the group ID to be used for the GET request, to be cloned via
+	 *   {@link {sap.ui.model.odata.v4.lib._GroupLock#getUnlockedCopy}
 	 * @returns {Promise<number>}
 	 *   A promise which is resolved with the (limited preorder) rank of the given element, or
 	 *   rejected in case of an error
@@ -1518,21 +1580,10 @@ sap.ui.define([
 	 * @private
 	 */
 	_AggregationCache.prototype.requestRank = async function (oElement, oGroupLock) {
-		const sMetaPath = this.oAggregation.$metaPath;
-		const {$apply, $orderby} = this.oFirstLevel.getQueryOptions();
-		const mQueryOptions = {
-			$apply,
-			$filter : _Helper.getKeyFilter(oElement, sMetaPath, this.getTypes()),
-			$select : this.oAggregation.$LimitedRank
-		};
-		if ($orderby) {
-			mQueryOptions.$orderby = $orderby;
-		}
-		const sResourcePath = this.sResourcePath
-			+ this.oRequestor.buildQueryString(sMetaPath, mQueryOptions, false, true);
-		const oResult = await this.oRequestor.request("GET", sResourcePath, oGroupLock);
+		const oResult
+			= await this.requestProperties(oElement, [this.oAggregation.$LimitedRank], oGroupLock);
 
-		return parseInt(_Helper.drillDown(oResult.value[0], this.oAggregation.$LimitedRank));
+		return parseInt(_Helper.drillDown(oResult, this.oAggregation.$LimitedRank));
 	};
 
 	/**
