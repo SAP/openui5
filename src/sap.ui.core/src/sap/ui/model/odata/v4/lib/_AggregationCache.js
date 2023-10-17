@@ -930,7 +930,7 @@ sap.ui.define([
 
 	/**
 	 * Determines the list of elements determined by the given predicates. All other elements are
-	 * turned into placeholders (lazily).
+	 * turned into placeholders (lazily), except transient ones.
 	 *
 	 * @param {string[]} aPredicates
 	 *   The key predicates of the elements to request side effects for
@@ -951,6 +951,10 @@ sap.ui.define([
 
 		return this.aElements.filter(function (oElement) {
 			var sPredicate = _Helper.getPrivateAnnotation(oElement, "predicate");
+
+			if (!sPredicate) {
+				return; // keep transient elements "as is"
+			}
 
 			if (mPredicates[sPredicate]) {
 				_AggregationHelper.markSplicedStale(oElement);
