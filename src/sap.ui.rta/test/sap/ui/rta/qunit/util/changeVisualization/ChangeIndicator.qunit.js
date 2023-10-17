@@ -578,7 +578,7 @@ sap.ui.define([
 				this.oChangeIndicator._oDetailModel.oData[0].description,
 				oRtaResourceBundle.getText(
 					"TXT_CHANGEVISUALIZATION_CHANGE_REMOVE",
-					"TestButton"
+					["TestButton"]
 				),
 				"then the description is the previously used generic text"
 			);
@@ -595,6 +595,7 @@ sap.ui.define([
 					createMockChange("someChangeId", this.oButton.getId(), "remove", "remove", mPayload)
 				]
 			});
+			await nextUIUpdate();
 
 			assert.ok(
 				this.oChangeIndicator.getDomRef().classList.contains("sapUiRtaChangeIndicatorVerticallyCentered"),
@@ -602,6 +603,7 @@ sap.ui.define([
 			);
 
 			this.oButtonOverlay.getDomRef().style.height = "100px";
+			this.oChangeIndicator.invalidate();
 			await nextUIUpdate();
 
 			assert.notOk(
