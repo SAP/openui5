@@ -57,9 +57,10 @@ sap.ui.define([
 			designtime: "sap/ui/fl/designtime/variants/VariantManagement.designtime",
 			properties: {
 				/**
-				 * Determines the intention of setting the current variant based on passed information.
+				 * Indicates whether the current variant is updated based on the passed information in the URL.
 				 * <p>
-				 * <b>Note:</b> The <code>VariantManagement</code> control does not react in any way to this property. It is used internally by the flexibility layer.
+				 * <b>Note:</b> The <code>VariantManagement</code> control itself is not affected by this property.
+				 * It is only used internally by the SAPUI5 flexibility layer.
 				 */
 				updateVariantInURL: {
 					type: "boolean",
@@ -67,9 +68,11 @@ sap.ui.define([
 					defaultValue: false
 				},
 				/**
-				 * When set to <code>false</code>, doesn't reset the <code>VariantManagement</code> control to the default variant, when its binding context is changed.
+				 * If set to <code>false</code>, it does not reset the <code>VariantManagement</code> control to the default variant
+				 * if its binding context is changed.
 				 * <p>
-				 * <b>Note:</b> The <code>VariantManagement</code> control does not react in any way to this property. It is used internally by the flexibility layer.
+				 * <b>Note:</b> The <code>VariantManagement</code> control itself is not affected by this property.
+				 * It is only used internally by the SAPUI5 flexibility layer.
 				 */
 				resetOnContextChange: {
 					type: "boolean",
@@ -85,7 +88,7 @@ sap.ui.define([
 					defaultValue: ""
 				},
 				/**
-				 * Indicated if the buttons on the 'My Views' are visible.
+				 * Indicates whether the buttons on My Views are visible.
 				 */
 				editable: {
 					type: "boolean",
@@ -93,7 +96,8 @@ sap.ui.define([
 					defaultValue: true
 				},
 				/**
-				 * Indicated if the defaulting functionality is enabled.
+				 * Indicates whether the functionality of setting a default variant is enabled.
+				 * The Default column in Manage Views and the Set as Default checkbox in Save View will be disabled if set to <code>false</code>.
 				 */
 				showSetAsDefault: {
 					type: "boolean",
@@ -102,7 +106,8 @@ sap.ui.define([
 				},
 
 				/**
-				 * Indicates that the control is in error state. If set to <code>true</code>, an error message will be displayed whenever the variant is opened.
+				 * Indicates whether the control is in error state.
+				 * If set to <code>true</code>, an error message will be displayed when the variant is opened.
 				 */
 				inErrorState: {
 					type: "boolean",
@@ -112,7 +117,6 @@ sap.ui.define([
 
 				/**
 				 * Determines the behavior for Apply Automatically if the standard variant is marked as the default variant.
-				 *
 				 */
 				executeOnSelectionForStandardDefault: {
 					type: "boolean",
@@ -121,9 +125,10 @@ sap.ui.define([
 				},
 
 				/**
-				 * Defines the Apply Automatically text for the standard variant in the Manage Views dialog if the application controls this behavior.
+				 * Defines the Apply Automatically text for the standard variant in the Manage Views dialog
+				 * if the application controls this behavior.
 				 * <p>
-				 * <b>Note:</b> the usage of this property is restricted to <code>sap.fe</code> components only.
+				 * <b>Note:</b> The usage of this property is restricted to <code>sap.fe</code> components only.
 				 */
 				displayTextForExecuteOnSelectionForStandardVariant: {
 					type: "string",
@@ -173,7 +178,7 @@ sap.ui.define([
 				initialized: {},
 
 				/**
-				 * This event is fired when the <i>Save View</i> dialog or the <i>Save As</i> dialog is closed with the save button.
+				 * This event is fired when the Save View dialog or the Save As dialog is closed with the Save button.
 				 */
 				save: {
 					parameters: {
@@ -185,7 +190,7 @@ sap.ui.define([
 						},
 
 						/**
-						 * Indicates if an existing variant is overwritten or if a new variant is created.
+						 * Indicates whether an existing variant is overwritten or whether a new variant is created
 						 */
 						overwrite: {
 							type: "boolean"
@@ -199,14 +204,14 @@ sap.ui.define([
 						},
 
 						/**
-						 * <i>Apply Automatically</i> indicator
+						 * Apply Automatically indicator
 						 */
 						execute: {
 							type: "boolean"
 						},
 
 						/**
-						 * Indicates the check box state for 'Public'.
+						 * Indicates the checkbox state for Public
 						 */
 						"public": {
 							type: "boolean"
@@ -220,8 +225,8 @@ sap.ui.define([
 						},
 
 						/**
-						 * Indicates the check box state for 'Create Tile'.
-						 * <br>Note:</br>This event parameter is used only internally.
+						 * Indicates the checkbox state for Create Tile
+						 * <b>Note:</b> This event parameter is used only internally.
 						 */
 						tile: {
 							type: "boolean"
@@ -230,18 +235,22 @@ sap.ui.define([
 				},
 
 				/**
-				 * This event is fired when users presses the cancel button inside <i>Save As</i> dialog.
+				 * This event is fired when users press the Cancel button inside the Save As dialog.
 				 */
 				cancel: {},
 
 				/**
-				 * This event is fired when users apply changes to variants in the <i>Manage Views</i> dialog.
+				 * This event is fired when users apply changes to variants in the Manage Views dialog.
 				 */
 
 				manage: {
 					parameters: {
 						/**
-						 * List of changed variants. Each entry contains a 'key' - the variant key and a 'name' - the new title of the variant
+						 * List of changed variants. Each entry contains the following data:
+						 * <ul>
+						 * <li>Key: the variant key</li>
+						 * <li>Name: the new title of the variant</li>
+						 * </ul>
 						 */
 						renamed: {
 							type: "object[]"
@@ -287,7 +296,7 @@ sap.ui.define([
 			associations: {
 
 				/**
-				 * Contains the ids of the controls for which the variant management is responsible.
+				 * Contains the IDs of the relevant controls for which the variant management is used.
 				 */
 				"for": {
 					type: "sap.ui.core.Control",
@@ -296,7 +305,7 @@ sap.ui.define([
 			},
 			aggregations: {
 				/**
-				 * Used for embedded vm
+				 * Used for embedded variant managment.
 				 */
 				_embeddedVM: {
 					type: "sap.m.VariantManagement",
@@ -317,7 +326,7 @@ sap.ui.define([
 		}
 	});
 
-	/*
+	/**
 	 * Constructs and initializes the <code>VariantManagement</code> control.
 	 */
 	VariantManagement.prototype.init = function() {
@@ -347,11 +356,11 @@ sap.ui.define([
 	};
 
 	/**
-	 * Required by the {@link sap.m.IOverflowToolbarContent} interface.
-	 * Registers invalidations event which is fired when width of the control is changed.
+	 * Registers an invalidation event that is fired when the width of the control is changed.
+	 * <b>Note:</b> This is required by the {@link sap.m.IOverflowToolbarContent} interface.
 	 *
 	 * @protected
-	 * @returns {{canOverflow: boolean, invalidationEvents: string[]}} Configuration information for the <code>sap.m.IOverflowToolbarContent</code> interface.
+	 * @returns {{canOverflow: boolean, invalidationEvents: string[]}} Configuration information for the {@link sap.m.IOverflowToolbarContent} interface
 	 */
 	VariantManagement.prototype.getOverflowToolbarConfig = function() {
 		return {
@@ -394,6 +403,7 @@ sap.ui.define([
 	VariantManagement.prototype.fireManage = function(oEvent) {
 		this._oVM.fireManage(oEvent);
 	};
+
 	VariantManagement.prototype.fireSave = function(oEvent) {
 		this._oVM.fireSave(oEvent);
 	};
@@ -590,13 +600,14 @@ sap.ui.define([
 	// / </EVENT FORWARDING>
 
 	// /<OVERWRITES>
-
 	VariantManagement.prototype._createSaveAsDialog = function() {
 		this._oVM._createSaveAsDialog();
 	};
+
 	VariantManagement.prototype._handleVariantSaveAs = function(sNewVariantName) {
 		this._oVM._handleVariantSaveAs(sNewVariantName);
 	};
+
 	VariantManagement.prototype.getFocusDomRef = function() {
 		if (this._oVM) {
 			return this._oVM.oVariantPopoverTrigger.getFocusDomRef();
@@ -614,13 +625,14 @@ sap.ui.define([
 	};
 
 	/**
-	 * Retrieves all variants.
+	 * Gets all variants.
 	 * @public
-	 * @returns {array} All variants. In case the model is not yet set, an empty array will be returned.
+	 * @returns {Array} All variants; if the model is not yet set, an empty array will be returned.
 	 */
 	VariantManagement.prototype.getVariants = function() {
 		return this._oVM ? this._oVM.getItems() : [];
 	};
+
 	VariantManagement.prototype.getVariantByKey = function(sKey) {
 		return this._oVM ? this._oVM._getItemByKey(sKey) : null;
 	};
@@ -652,8 +664,8 @@ sap.ui.define([
 
 	/**
  	 * Special handling of the rendering of this control.
-	 * @param {boolean} bValue defines the intended rendering
-	 * @returns {sap.ui.fl.variants.VariantManagement} the current instance
+	 * @param {boolean} bValue Defines the intended rendering
+	 * @returns {sap.ui.fl.variants.VariantManagement} The current instance
 	 * @private
 	 * @restricted sap.ui.mdc
  	 */
@@ -664,7 +676,7 @@ sap.ui.define([
 
 	/**
  	 * Special handling of the rendering of this control.
-	 * @returns {boolean} the current intend
+	 * @returns {boolean} The current intent
 	 * @private
 	 * @restricted sap.ui.mdc
  	 */
@@ -722,7 +734,7 @@ sap.ui.define([
 	/**
 	 * Sets the new selected variant.
 	 * @public
-	 * @param {string} sKey - Key of the variant that should be selected.
+	 * @param {string} sKey Key of the variant that is selected
 	 */
 	VariantManagement.prototype.setCurrentVariantKey = function(sKey) {
 		this._oVM.setSelectedKey(sKey);
@@ -731,7 +743,7 @@ sap.ui.define([
 	/**
 	 * Gets the currently selected variant key.
 	 * @public
-	 * @returns {string|null} Key of the currently selected variant. In case the model is not yet set <code>null</code> will be returned.
+	 * @returns {string|null} Key of the currently selected variant. In case the model is not yet set <code>null</code> will be returned
 	 */
 	VariantManagement.prototype.getCurrentVariantKey = function() {
 		return this._oVM.getSelectedKey();
@@ -746,15 +758,16 @@ sap.ui.define([
 	};
 
 	/**
-	 * Indicates the design mode was entered.
+	 * Indicates that the design mode was entered.
 	 * @private
 	 * @ui5-restricted sap.ui.fl, sap.ui.rta
 	 */
 	VariantManagement.prototype.enteringDesignMode = function() {
 		this._oVM.setDesignMode(true);
 	};
+
 	/**
-	 * Indicates the design mode was left.
+	 * Indicates that the design mode was left.
 	 * @private
 	 * @ui5-restricted sap.ui.fl, sap.ui.rta
 	 */
@@ -763,9 +776,9 @@ sap.ui.define([
 	};
 
 	/**
-	 * Determines if the current variant is modified.
+	 * Determines whether the current variant is modified.
 	 * @public
-	 * @returns {boolean} If the current variant is modified <code>true</code>, otherwise <code>false</code>
+	 * @returns {boolean} Returns <code>true</code>, if the current variant is modified, otherwise <code>false</code>
 	 */
 	VariantManagement.prototype.getModified = function() {
 		return this._oVM.getModified();
@@ -778,6 +791,7 @@ sap.ui.define([
 	VariantManagement.prototype.getStandardVariantKey = function() {
 		return this._oVM.getStandardVariantKey();
 	};
+
 	// / </OVERWRITES>
 
 	VariantManagement.prototype._getEmbeddedVM = function() {
@@ -949,13 +963,15 @@ sap.ui.define([
 	};
 
 	/**
-	 * Registration of a callback function. The provided callback function is executed to check if apply automatically on standard variant should be considered.
+	 * Registration of a callback function.
+	 * The provided callback function is executed to check if Apply Automatically on standard variant should be considered.
 	 * @private
 	 * @ui5-restricted sap.fe
 	 * @since 1.103
-	 * @param {function} fCallBack Called when standard variant must be applied. It determines if apply automatically on standard variant should be considered.
-	 * As a convenience the current variant will be passed to the callback. This variant instance may not be changed in any ways. It is only intended to provide certain variant information.
-	 * @returns {this} Reference to this in order to allow method chaining.
+	 * @param {function} fCallBack Called when standard variant must be applied. It determines if Apply Automatically on standard variant should be considered.
+	 * As a convenience the current variant will be passed to the callback.
+	 * This variant instance may not be changed in any ways. It is only intended to provide certain variant information.
+	 * @returns {this} Reference to this in order to allow method chaining
 	 */
 	VariantManagement.prototype.registerApplyAutomaticallyOnStandardVariant = function(fCallBack) {
 		this._fRegisteredApplyAutomaticallyOnStandardVariant = fCallBack;
@@ -964,11 +980,11 @@ sap.ui.define([
 	};
 
 	/**
-	 * Retrieves the apply automatically state for a variant.
+	 * Gets the Apply Automatically state for a variant.
 	 * @private
 	 * @ui5-restricted sap.ui.mdc
-	 * @param {object} oVariant the fl-variant object
-	 * @returns {boolean} apply automatically state
+	 * @param {object} oVariant The fl-variant object
+	 * @returns {boolean} Apply Automatically state
 	 */
 	VariantManagement.prototype.getApplyAutomaticallyOnVariant = function(oVariant) {
 		var bExecuteOnSelection = false;
@@ -1021,9 +1037,9 @@ sap.ui.define([
 
 	/**
 	 * Required by the {@link sap.m.IToolbarInteractiveControl} interface.
-	 * Determines if the Control is interactive.
+	 * Determines whether the control is interactive.
 	 *
-	 * @returns {boolean} If it is an interactive Control
+	 * @returns {boolean} Indicates whether the control is interactive
 	 *
 	 * @private
 	 * @ui5-restricted sap.m.OverflowToolBar, sap.m.Toolbar
