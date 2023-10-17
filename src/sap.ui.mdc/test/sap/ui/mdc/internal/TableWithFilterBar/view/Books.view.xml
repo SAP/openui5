@@ -836,9 +836,9 @@
 							</mdcat:ActionToolbarAction> -->
 						</mdc:actions>
 
-						<mdc:variant>
+						<!-- <mdc:variant>
 							<variants:VariantManagement id="IDVariantManagementOfChart" for="bookChart"/>
-						</mdc:variant>
+						</mdc:variant> -->
 
 						<mdc:items>
 							<mdcc:Item id="dim1" type="groupable" propertyKey="language_code" role="category" label="Languages"/>
@@ -847,9 +847,9 @@
 					</mdc:Chart>
 
 					<mdc:Table id="booksTable" header="Books" filter="booksFilterBar" enableExport="true" p13nMode="{=['Sort', 'Column', 'Filter', 'Group']}" delegate='\{"name": "sap/ui/v4demo/delegate/Books.Table.delegate", "payload": \{"collectionName": "Books"\}\}' showRowCount="true" rowPress="onRowPress" threshold="50" width="100%" enableAutoColumnWidth="true">
-						<mdc:variant>
+						<!-- <mdc:variant>
 							<variants:VariantManagement id="IDVariantManagementOfLocalTable" for="booksTable"/>
-						</mdc:variant>
+						</mdc:variant> -->
 
 						<mdc:actions>
 							<mdcat:ActionToolbarAction id="tableAction1">
