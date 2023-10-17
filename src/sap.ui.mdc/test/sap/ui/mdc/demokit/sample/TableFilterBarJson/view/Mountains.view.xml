@@ -42,8 +42,8 @@
 							propertyKey="name"
 							dataType="sap.ui.model.type.String"
 							conditions="{$filters>/conditions/name}"
-							delegate="{name: 'sap/ui/mdc/field/FieldBaseDelegate'}"
-							valueHelp="name-vh"/>
+							valueHelp="name-vh"
+							delegate="{name: 'sap/ui/mdc/field/FieldBaseDelegate'}"/>
 					</mdc:filterItems>
 					<mdc:dependents>
 						<core:Fragment fragmentName="mdc.sample.view.fragment.NameValueHelp" type="XML"/>
@@ -63,7 +63,8 @@
 				delegate="{
 					name: 'mdc/sample/delegate/JSONTableDelegate',
 					payload: {
-						bindingPath: 'mountains>/mountains'
+						bindingPath: 'mountains>/mountains',
+						searchKeys: ['name', 'range', 'parent_mountain', 'countries']
 					}
 				}">
 				<mdct:Column
