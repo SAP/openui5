@@ -409,7 +409,6 @@ sap.ui.define([
 				return;
 			}
 
-			this.getContentFactory().retrieveDataType();
 			FieldBase.prototype.checkCreateInternalContent.apply(this, arguments);
 		}
 

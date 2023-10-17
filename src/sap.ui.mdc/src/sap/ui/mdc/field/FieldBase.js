@@ -1906,7 +1906,7 @@ sap.ui.define([
 	 */
 	FieldBase.prototype.checkCreateInternalContent = function() {
 
-		if (!this.isFieldDestroyed() && this.getVisible() && this.getContentFactory().getDataType()) {
+		if (!this.isFieldDestroyed() && this.getVisible()) { // check if DataType provided needs to be in Field, FilterField, MultiValueField
 			_createInternalContentWrapper.call(this);
 		}
 

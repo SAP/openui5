@@ -41,7 +41,7 @@ sap.ui.define([
 
 	QUnit.module("Getters", {
 		before: function() {
-			this.oField = new FieldBase({});
+			this.oField = new FieldBase({visible: false}); // prevent creation of internal content as this initializest most ContentFactory functions
 			this.oContentFactory = this.oField.getContentFactory();
 		},
 		after: function() {
