@@ -1070,7 +1070,7 @@ function(
 			bNewFocusIsInSuggestionPopup = false,
 			bNewFocusIsInTokenizer = false,
 			bNewFocusIsInMultiInput = this.getDomRef() && containsOrEquals(this.getDomRef(), document.activeElement),
-			bFocusedOut = !bNewFocusIsInSuggestionPopup && oEvent.relatedControlId !== this.getId() && !bNewFocusIsInTokenizer,
+			bFocusedOut,
 			oRelatedControlDomRef,
 			bFocusIsInSelectedItemPopup;
 
@@ -1094,6 +1094,8 @@ function(
 		if (this._bIsValidating || this._bValueHelpOpen) {
 			return;
 		}
+
+		bFocusedOut = !bNewFocusIsInSuggestionPopup && oEvent.relatedControlId !== this.getId() && !bNewFocusIsInTokenizer;
 
 		if (bFocusedOut && ((this.isMobileDevice() && !this.getShowSuggestion()) || !this.isMobileDevice())) {
 			this._validateCurrentText(true);
