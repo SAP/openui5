@@ -10,7 +10,8 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/events/KeyCodes",
-	"sap/base/i18n/ResourceBundle"
+	"sap/base/i18n/ResourceBundle",
+	"qunit/designtime/EditorQunitUtils"
 ], function (
 	merge,
 	x,
@@ -22,7 +23,8 @@ sap.ui.define([
 	Core,
 	QUnitUtils,
 	KeyCodes,
-	ResourceBundle
+	ResourceBundle,
+	EditorQunitUtils
 ) {
 	"use strict";
 
@@ -34,42 +36,12 @@ sap.ui.define([
 	Core.getConfiguration().setLanguage("en");
 	document.body.className = document.body.className + " sapUiSizeCompact ";
 
-	function wait(ms) {
-		return new Promise(function (resolve) {
-			setTimeout(function () {
-				resolve();
-			}, ms || 1000);
-		});
-	}
-
 	QUnit.module("Layout", {
 		beforeEach: function () {
-			this.oHost = new Host("host");
-			this.oContextHost = new ContextHost("contexthost");
-
-			this.oEditor = new Editor();
-			var oContent = document.getElementById("content");
-			if (!oContent) {
-				oContent = document.createElement("div");
-				oContent.style.position = "absolute";
-				oContent.style.top = "200px";
-
-				oContent.setAttribute("id", "content");
-				document.body.appendChild(oContent);
-				document.body.style.zIndex = 1000;
-			}
-			this.oEditor.placeAt(oContent);
+			this.oEditor = EditorQunitUtils.beforeEachTest();
 		},
 		afterEach: function () {
-			this.oEditor.destroy();
-			this.oHost.destroy();
-			this.oContextHost.destroy();
-			sandbox.restore();
-			var oContent = document.getElementById("content");
-			if (oContent) {
-				oContent.innerHTML = "";
-				document.body.style.zIndex = "unset";
-			}
+			EditorQunitUtils.afterEachTest(this.oEditor, sandbox);
 		}
 	}, function () {
 		QUnit.test("No Wrap With Cols2", function (assert) {
@@ -98,8 +70,8 @@ sap.ui.define([
 				}
 			});
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
-					wait(1000).then(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
+					EditorQunitUtils.wait(1000).then(function () {
 						assert.ok(this.oEditor.isReady(), "Editor is ready");
 						var oPanel = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field");
 						var oHBox1 = oPanel.getContent()[0];
@@ -197,8 +169,8 @@ sap.ui.define([
 				}
 			});
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
-					wait(1000).then(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
+					EditorQunitUtils.wait(1000).then(function () {
 						assert.ok(this.oEditor.isReady(), "Editor is ready");
 						var oPanel = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field");
 						var oHBox1 = oPanel.getContent()[0].getItems()[0];
@@ -296,8 +268,8 @@ sap.ui.define([
 				}
 			});
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
-					wait(1000).then(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
+					EditorQunitUtils.wait(1000).then(function () {
 						assert.ok(this.oEditor.isReady(), "Editor is ready");
 						var oPanel = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field");
 						var oHBox1 = oPanel.getContent()[0];
@@ -395,8 +367,8 @@ sap.ui.define([
 				}
 			});
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
-					wait(1000).then(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
+					EditorQunitUtils.wait(1000).then(function () {
 						assert.ok(this.oEditor.isReady(), "Editor is ready");
 						var oPanel = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field");
 						var oHBox1 = oPanel.getContent()[0].getItems()[0];
@@ -494,8 +466,8 @@ sap.ui.define([
 				}
 			});
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
-					wait(1000).then(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
+					EditorQunitUtils.wait(1000).then(function () {
 						assert.ok(this.oEditor.isReady(), "Editor is ready");
 						var oPanel = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field");
 						var oHBox1 = oPanel.getContent()[0];
@@ -609,8 +581,8 @@ sap.ui.define([
 				}
 			});
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
-					wait(1000).then(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
+					EditorQunitUtils.wait(1000).then(function () {
 						assert.ok(this.oEditor.isReady(), "Editor is ready");
 						var oPanel = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field");
 						var oHBox1 = oPanel.getContent()[0].getItems()[0];
@@ -724,8 +696,8 @@ sap.ui.define([
 				}
 			});
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
-					wait(1000).then(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
+					EditorQunitUtils.wait(1000).then(function () {
 						assert.ok(this.oEditor.isReady(), "Editor is ready");
 						var oPanel = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field");
 						var oHBox1 = oPanel.getContent()[0];
@@ -839,8 +811,8 @@ sap.ui.define([
 				}
 			});
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
-					wait(1000).then(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
+					EditorQunitUtils.wait(1000).then(function () {
 						assert.ok(this.oEditor.isReady(), "Editor is ready");
 						var oPanel = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field");
 						var oHBox1 = oPanel.getContent()[0].getItems()[0];
@@ -931,32 +903,10 @@ sap.ui.define([
 
 	QUnit.module("Layout in sub group(panel)", {
 		beforeEach: function () {
-			this.oHost = new Host("host");
-			this.oContextHost = new ContextHost("contexthost");
-
-			this.oEditor = new Editor();
-			var oContent = document.getElementById("content");
-			if (!oContent) {
-				oContent = document.createElement("div");
-				oContent.style.position = "absolute";
-				oContent.style.top = "200px";
-
-				oContent.setAttribute("id", "content");
-				document.body.appendChild(oContent);
-				document.body.style.zIndex = 1000;
-			}
-			this.oEditor.placeAt(oContent);
+			this.oEditor = EditorQunitUtils.beforeEachTest();
 		},
 		afterEach: function () {
-			this.oEditor.destroy();
-			this.oHost.destroy();
-			this.oContextHost.destroy();
-			sandbox.restore();
-			var oContent = document.getElementById("content");
-			if (oContent) {
-				oContent.innerHTML = "";
-				document.body.style.zIndex = "unset";
-			}
+			EditorQunitUtils.afterEachTest(this.oEditor, sandbox);
 		}
 	}, function () {
 		QUnit.test("No Wrap With Cols2", function (assert) {
@@ -985,8 +935,8 @@ sap.ui.define([
 				}
 			});
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
-					wait(1000).then(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
+					EditorQunitUtils.wait(1000).then(function () {
 						assert.ok(this.oEditor.isReady(), "Editor is ready");
 						var oPanel = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field");
 						var oSubPanel = oPanel.getContent()[0].getAggregation("_field");
@@ -1088,8 +1038,8 @@ sap.ui.define([
 				}
 			});
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
-					wait(1000).then(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
+					EditorQunitUtils.wait(1000).then(function () {
 						assert.ok(this.oEditor.isReady(), "Editor is ready");
 						var oPanel = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field");
 						var oSubPanel = oPanel.getContent()[0].getAggregation("_field");
@@ -1191,8 +1141,8 @@ sap.ui.define([
 				}
 			});
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
-					wait(1000).then(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
+					EditorQunitUtils.wait(1000).then(function () {
 						assert.ok(this.oEditor.isReady(), "Editor is ready");
 						var oPanel = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field");
 						var oSubPanel = oPanel.getContent()[0].getAggregation("_field");
@@ -1294,8 +1244,8 @@ sap.ui.define([
 				}
 			});
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
-					wait(1000).then(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
+					EditorQunitUtils.wait(1000).then(function () {
 						assert.ok(this.oEditor.isReady(), "Editor is ready");
 						var oPanel = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field");
 						var oSubPanel = oPanel.getContent()[0].getAggregation("_field");
@@ -1397,8 +1347,8 @@ sap.ui.define([
 				}
 			});
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
-					wait(1000).then(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
+					EditorQunitUtils.wait(1000).then(function () {
 						assert.ok(this.oEditor.isReady(), "Editor is ready");
 						var oPanel = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field");
 						var oSubPanel = oPanel.getContent()[0].getAggregation("_field");
@@ -1516,8 +1466,8 @@ sap.ui.define([
 				}
 			});
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
-					wait(1000).then(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
+					EditorQunitUtils.wait(1000).then(function () {
 						assert.ok(this.oEditor.isReady(), "Editor is ready");
 						var oPanel = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field");
 						var oSubPanel = oPanel.getContent()[0].getAggregation("_field");
@@ -1635,8 +1585,8 @@ sap.ui.define([
 				}
 			});
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
-					wait(1000).then(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
+					EditorQunitUtils.wait(1000).then(function () {
 						assert.ok(this.oEditor.isReady(), "Editor is ready");
 						var oPanel = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field");
 						var oSubPanel = oPanel.getContent()[0].getAggregation("_field");
@@ -1754,8 +1704,8 @@ sap.ui.define([
 				}
 			});
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
-					wait(1000).then(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
+					EditorQunitUtils.wait(1000).then(function () {
 						assert.ok(this.oEditor.isReady(), "Editor is ready");
 						var oPanel = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field");
 						var oSubPanel = oPanel.getContent()[0].getAggregation("_field");
@@ -1850,32 +1800,10 @@ sap.ui.define([
 
 	QUnit.module("Layout in sub group(tab)", {
 		beforeEach: function () {
-			this.oHost = new Host("host");
-			this.oContextHost = new ContextHost("contexthost");
-
-			this.oEditor = new Editor();
-			var oContent = document.getElementById("content");
-			if (!oContent) {
-				oContent = document.createElement("div");
-				oContent.style.position = "absolute";
-				oContent.style.top = "200px";
-
-				oContent.setAttribute("id", "content");
-				document.body.appendChild(oContent);
-				document.body.style.zIndex = 1000;
-			}
-			this.oEditor.placeAt(oContent);
+			this.oEditor = EditorQunitUtils.beforeEachTest();
 		},
 		afterEach: function () {
-			this.oEditor.destroy();
-			this.oHost.destroy();
-			this.oContextHost.destroy();
-			sandbox.restore();
-			var oContent = document.getElementById("content");
-			if (oContent) {
-				oContent.innerHTML = "";
-				document.body.style.zIndex = "unset";
-			}
+			EditorQunitUtils.afterEachTest(this.oEditor, sandbox);
 		}
 	}, function () {
 		QUnit.test("No Wrap With Cols2", function (assert) {
@@ -1904,8 +1832,8 @@ sap.ui.define([
 				}
 			});
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
-					wait(1000).then(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
+					EditorQunitUtils.wait(1000).then(function () {
 						assert.ok(this.oEditor.isReady(), "Editor is ready");
 						var oPanel = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field");
 						var oSubTab = oPanel.getContent()[1].getAggregation("_field");
@@ -2007,8 +1935,8 @@ sap.ui.define([
 				}
 			});
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
-					wait(1000).then(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
+					EditorQunitUtils.wait(1000).then(function () {
 						assert.ok(this.oEditor.isReady(), "Editor is ready");
 						var oPanel = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field");
 						var oSubTab = oPanel.getContent()[1].getAggregation("_field");
@@ -2110,8 +2038,8 @@ sap.ui.define([
 				}
 			});
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
-					wait(1000).then(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
+					EditorQunitUtils.wait(1000).then(function () {
 						assert.ok(this.oEditor.isReady(), "Editor is ready");
 						var oPanel = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field");
 						var oSubTab = oPanel.getContent()[1].getAggregation("_field");
@@ -2213,8 +2141,8 @@ sap.ui.define([
 				}
 			});
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
-					wait(1000).then(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
+					EditorQunitUtils.wait(1000).then(function () {
 						assert.ok(this.oEditor.isReady(), "Editor is ready");
 						var oPanel = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field");
 						var oSubTab = oPanel.getContent()[1].getAggregation("_field");
@@ -2316,8 +2244,8 @@ sap.ui.define([
 				}
 			});
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
-					wait(1000).then(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
+					EditorQunitUtils.wait(1000).then(function () {
 						assert.ok(this.oEditor.isReady(), "Editor is ready");
 						var oPanel = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field");
 						var oSubTab = oPanel.getContent()[1].getAggregation("_field");
@@ -2435,8 +2363,8 @@ sap.ui.define([
 				}
 			});
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
-					wait(1000).then(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
+					EditorQunitUtils.wait(1000).then(function () {
 						assert.ok(this.oEditor.isReady(), "Editor is ready");
 						var oPanel = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field");
 						var oSubTab = oPanel.getContent()[1].getAggregation("_field");
@@ -2554,8 +2482,8 @@ sap.ui.define([
 				}
 			});
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
-					wait(1000).then(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
+					EditorQunitUtils.wait(1000).then(function () {
 						assert.ok(this.oEditor.isReady(), "Editor is ready");
 						var oPanel = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field");
 						var oSubTab = oPanel.getContent()[1].getAggregation("_field");
@@ -2673,8 +2601,8 @@ sap.ui.define([
 				}
 			});
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
-					wait(1000).then(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
+					EditorQunitUtils.wait(1000).then(function () {
 						assert.ok(this.oEditor.isReady(), "Editor is ready");
 						var oPanel = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field");
 						var oSubTab = oPanel.getContent()[1].getAggregation("_field");

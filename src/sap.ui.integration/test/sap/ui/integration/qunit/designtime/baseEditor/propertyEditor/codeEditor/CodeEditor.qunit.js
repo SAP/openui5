@@ -4,18 +4,18 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/integration/designtime/baseEditor/propertyEditor/codeEditor/CodeEditor",
 	"sap/ui/integration/designtime/baseEditor/BaseEditor",
-	"qunit/designtime/EditorQunitUtils",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/thirdparty/sinon-4",
-	"sap/base/util/deepEqual"
+	"sap/base/util/deepEqual",
+	"qunit/designtime/EditorQunitUtils"
 ], function (
 	Core,
 	CodeEditor,
 	BaseEditor,
-	EditorQunitUtils,
 	QUnitUtils,
 	sinon,
-	deepEqual
+	deepEqual,
+	EditorQunitUtils
 ) {
 	"use strict";
 
@@ -24,14 +24,6 @@ sap.ui.define([
 	function setCodeEditorValue (oCodeEditor, sInput) {
 		oCodeEditor.setValue(sInput);
 		Core.applyChanges();
-	}
-
-	function wait(ms) {
-		return new Promise(function (resolve) {
-			setTimeout(function () {
-				resolve();
-			}, ms || 1000);
-		});
 	}
 
 	QUnit.module("Code Editor: Given an editor config", {
@@ -218,7 +210,7 @@ sap.ui.define([
 				this.oCodeEditor._openCodeEditor.returnValues[0].then(function (oDialog) {
 					var oCodeEditor = oDialog.getContent()[0];
 					setCodeEditorValue(oCodeEditor, "{\"msg\": Hello World}");
-					wait().then(function () {
+					EditorQunitUtils.wait().then(function () {
 						assert.strictEqual(oDialog.getBeginButton().getEnabled(), false, "Then the changes cannot be saved");
 						fnDone();
 					});
@@ -236,7 +228,7 @@ sap.ui.define([
 					setCodeEditorValue(oDialog.getContent()[0], JSON.stringify({
 						msg: "Hello World"
 					}));
-					wait().then(function () {
+					EditorQunitUtils.wait().then(function () {
 						QUnitUtils.triggerEvent("tap", oDialog.getBeginButton().getDomRef());
 					});
 				});
@@ -259,7 +251,7 @@ sap.ui.define([
 					setCodeEditorValue(oCodeEditor, "{\"msg\":\n\n\t\"Hello World\"}");
 					QUnitUtils.triggerEvent("tap", oDialog.getCustomHeader().getContentLeft()[0].getDomRef());
 
-					wait().then(function () {
+					EditorQunitUtils.wait().then(function () {
 						assert.strictEqual(
 							oCodeEditor.getValue(),
 							JSON.stringify({

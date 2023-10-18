@@ -8,7 +8,8 @@ sap.ui.define([
 	"sap/base/util/deepEqual",
 	"sap/ui/core/util/MockServer",
 	"sap/ui/core/Core",
-	"sap/base/util/deepClone"
+	"sap/base/util/deepClone",
+	"qunit/designtime/EditorQunitUtils"
 ], function (
 	x,
 	Editor,
@@ -18,7 +19,8 @@ sap.ui.define([
 	deepEqual,
 	MockServer,
 	Core,
-	deepClone
+	deepClone,
+	EditorQunitUtils
 ) {
 	"use strict";
 
@@ -50,27 +52,6 @@ sap.ui.define([
 		}
 	};
 
-	function createEditor(sLanguage, oDesigntime) {
-		sLanguage = sLanguage || "en";
-		Core.getConfiguration().setLanguage(sLanguage);
-		var oEditor = new Editor({
-			designtime: oDesigntime
-		});
-		var oContent = document.getElementById("content");
-		if (!oContent) {
-			oContent = document.createElement("div");
-			oContent.style.position = "absolute";
-			oContent.style.top = "200px";
-			oContent.style.background = "white";
-
-			oContent.setAttribute("id", "content");
-			document.body.appendChild(oContent);
-			document.body.style.zIndex = 1000;
-		}
-		oEditor.placeAt(oContent);
-		return oEditor;
-	}
-
 	function destroyEditor(oEditor) {
 		oEditor.destroy();
 		var oContent = document.getElementById("content");
@@ -82,14 +63,6 @@ sap.ui.define([
 
 	Core.getConfiguration().setLanguage("en");
 	document.body.className = document.body.className + " sapUiSizeCompact ";
-
-	function wait(ms) {
-		return new Promise(function (resolve) {
-			setTimeout(function () {
-				resolve();
-			}, ms || 1000);
-		});
-	}
 
 	function cleanUUID(oValue) {
 		var oClonedValue = deepClone(oValue, 500);
@@ -129,13 +102,13 @@ sap.ui.define([
 		QUnit.test("syntax {{KEY}}: en", function (assert) {
 			var that = this;
 			return new Promise(function (resolve, reject) {
-				that.oEditor = createEditor("en");
+				that.oEditor = EditorQunitUtils.createEditor("en");
 				that.oEditor.setJson({
 					baseUrl: sBaseUrl,
 					host: "contexthost",
 					manifest: oManifestForObjectFieldsWithTranslation
 				});
-				that.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(that.oEditor).then(function () {
 					assert.ok(that.oEditor.isReady(), "Editor is ready");
 					var oLabel = that.oEditor.getAggregation("_formContent")[1];
 					var oField = that.oEditor.getAggregation("_formContent")[2];
@@ -159,9 +132,9 @@ sap.ui.define([
 					assert.ok(oAddButton.getVisible(), "Table toolbar: add button visible");
 					var oKeyColumn = oTable.getColumns()[1];
 					assert.equal(oKeyColumn.getLabel().getText(), "translated key en", "Column key: key label text translated");
-					wait().then(function () {
+					EditorQunitUtils.wait().then(function () {
 						oAddButton.firePress();
-						wait().then(function () {
+						EditorQunitUtils.wait().then(function () {
 							var oSimpleForm = oField._oObjectDetailsPopover.getContent()[0].getPages()[0].getContent()[0];
 							assert.ok(oSimpleForm.isA("sap.ui.layout.form.SimpleForm"), "Popover: Content is SimpleForm");
 							var oContents = oSimpleForm.getContent();
@@ -193,7 +166,7 @@ sap.ui.define([
 							var oCloseButtonInPopover = oField._oObjectDetailsPopover._oCloseButton;
 							assert.ok(!oCloseButtonInPopover.getVisible(), "Popover: close button not visible");
 							oAddButtonInPopover.firePress();
-							wait().then(function () {
+							EditorQunitUtils.wait().then(function () {
 								var oNewObject = {"icon": "sap-icon://add","text": "{i18n>TRANSLATED_TEXT01}","url": "http://","number": 0.5, "_dt": {"_selected": true}};
 								assert.equal(oTable.getBinding().getCount(), 9, "Table: value length is 9");
 								assert.ok(deepEqual(cleanUUID(oTable.getBinding().getContexts()[8].getObject()), oNewObject), "Table: new row data");
@@ -201,7 +174,7 @@ sap.ui.define([
 								assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), {"icon": "sap-icon://add","text": "{i18n>TRANSLATED_TEXT01}","url": "http://","number": 0.5}), "Field 1: Value changed");
 								// scroll to the bottom
 								oTable._getScrollExtension().getVerticalScrollbar().scrollTop = 200;
-								wait().then(function () {
+								EditorQunitUtils.wait().then(function () {
 									var oNewRow = oTable.getRows()[4];
 									assert.ok(deepEqual(cleanUUID(oNewRow.getBindingContext().getObject()), oNewObject), "Table: new row in the bottom");
 									var oTextCell = oNewRow.getCells()[3];
@@ -221,13 +194,13 @@ sap.ui.define([
 		QUnit.test("syntax {{KEY}}: fr", function (assert) {
 			var that = this;
 			return new Promise(function (resolve, reject) {
-				that.oEditor = createEditor("fr");
+				that.oEditor = EditorQunitUtils.createEditor("fr");
 				that.oEditor.setJson({
 					baseUrl: sBaseUrl,
 					host: "contexthost",
 					manifest: oManifestForObjectFieldsWithTranslation
 				});
-				that.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(that.oEditor).then(function () {
 					assert.ok(that.oEditor.isReady(), "Editor is ready");
 					var oLabel = that.oEditor.getAggregation("_formContent")[1];
 					var oField = that.oEditor.getAggregation("_formContent")[2];
@@ -251,9 +224,9 @@ sap.ui.define([
 					assert.ok(oAddButton.getVisible(), "Table toolbar: add button visible");
 					var oKeyColumn = oTable.getColumns()[1];
 					assert.equal(oKeyColumn.getLabel().getText(), "translated key France", "Column key: key label text translated");
-					wait().then(function () {
+					EditorQunitUtils.wait().then(function () {
 						oAddButton.firePress();
-						wait().then(function () {
+						EditorQunitUtils.wait().then(function () {
 							var oSimpleForm = oField._oObjectDetailsPopover.getContent()[0].getPages()[0].getContent()[0];
 							assert.ok(oSimpleForm.isA("sap.ui.layout.form.SimpleForm"), "Popover: Content is SimpleForm");
 							var oContents = oSimpleForm.getContent();
@@ -285,7 +258,7 @@ sap.ui.define([
 							var oCloseButtonInPopover = oField._oObjectDetailsPopover._oCloseButton;
 							assert.ok(!oCloseButtonInPopover.getVisible(), "Popover: close button not visible");
 							oAddButtonInPopover.firePress();
-							wait().then(function () {
+							EditorQunitUtils.wait().then(function () {
 								var oNewObject = {"icon": "sap-icon://add","text": "{i18n>TRANSLATED_TEXT01}","url": "http://","number": 0.5, "_dt": {"_selected": true}};
 								assert.equal(oTable.getBinding().getCount(), 9, "Table: value length is 9");
 								assert.ok(deepEqual(cleanUUID(oTable.getBinding().getContexts()[8].getObject()), oNewObject), "Table: new row data");
@@ -293,7 +266,7 @@ sap.ui.define([
 								assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), {"icon": "sap-icon://add","text": "{i18n>TRANSLATED_TEXT01}","url": "http://","number": 0.5}), "Field 1: Value changed");
 								// scroll to the bottom
 								oTable._getScrollExtension().getVerticalScrollbar().scrollTop = 200;
-								wait().then(function () {
+								EditorQunitUtils.wait().then(function () {
 									var oNewRow = oTable.getRows()[4];
 									assert.ok(deepEqual(cleanUUID(oNewRow.getBindingContext().getObject()), oNewObject), "Table: new row in the bottom");
 									var oTextCell = oNewRow.getCells()[3];
@@ -313,13 +286,13 @@ sap.ui.define([
 		QUnit.test("syntax {i18n>KEY}: en", function (assert) {
 			var that = this;
 			return new Promise(function (resolve, reject) {
-				that.oEditor = createEditor("en");
+				that.oEditor = EditorQunitUtils.createEditor("en");
 				that.oEditor.setJson({
 					baseUrl: sBaseUrl,
 					host: "contexthost",
 					manifest: oManifestForObjectFieldsWithTranslation
 				});
-				that.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(that.oEditor).then(function () {
 					assert.ok(that.oEditor.isReady(), "Editor is ready");
 					var oLabel = that.oEditor.getAggregation("_formContent")[1];
 					var oField = that.oEditor.getAggregation("_formContent")[2];
@@ -343,9 +316,9 @@ sap.ui.define([
 					assert.ok(oAddButton.getVisible(), "Table toolbar: add button visible");
 					var oKeyColumn = oTable.getColumns()[1];
 					assert.equal(oKeyColumn.getLabel().getText(), "translated key en", "Column key: key label text translated");
-					wait().then(function () {
+					EditorQunitUtils.wait().then(function () {
 						oAddButton.firePress();
-						wait().then(function () {
+						EditorQunitUtils.wait().then(function () {
 							var oSimpleForm = oField._oObjectDetailsPopover.getContent()[0].getPages()[0].getContent()[0];
 							assert.ok(oSimpleForm.isA("sap.ui.layout.form.SimpleForm"), "Popover: Content is SimpleForm");
 							var oContents = oSimpleForm.getContent();
@@ -378,7 +351,7 @@ sap.ui.define([
 							var oCloseButtonInPopover = oField._oObjectDetailsPopover._oCloseButton;
 							assert.ok(!oCloseButtonInPopover.getVisible(), "Popover: close button not visible");
 							oAddButtonInPopover.firePress();
-							wait().then(function () {
+							EditorQunitUtils.wait().then(function () {
 								var oNewObject = {"icon": "sap-icon://add","text": "{i18n>TRANSLATED_TEXT02}","url": "http://","number": 0.5, "_dt": {"_selected": true}};
 								assert.equal(oTable.getBinding().getCount(), 9, "Table: value length is 9");
 								assert.ok(deepEqual(cleanUUID(oTable.getBinding().getContexts()[8].getObject()), oNewObject), "Table: new row data");
@@ -386,7 +359,7 @@ sap.ui.define([
 								assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), {"icon": "sap-icon://add","text": "{i18n>TRANSLATED_TEXT02}","url": "http://","number": 0.5}), "Field 1: Value changed");
 								// scroll to the bottom
 								oTable._getScrollExtension().getVerticalScrollbar().scrollTop = 200;
-								wait().then(function () {
+								EditorQunitUtils.wait().then(function () {
 									var oNewRow = oTable.getRows()[4];
 									assert.ok(deepEqual(cleanUUID(oNewRow.getBindingContext().getObject()), oNewObject), "Table: new row in the bottom");
 									var oTextCell = oNewRow.getCells()[3];
@@ -406,13 +379,13 @@ sap.ui.define([
 		QUnit.test("syntax {i18n>KEY}: fr", function (assert) {
 			var that = this;
 			return new Promise(function (resolve, reject) {
-				that.oEditor = createEditor("fr");
+				that.oEditor = EditorQunitUtils.createEditor("fr");
 				that.oEditor.setJson({
 					baseUrl: sBaseUrl,
 					host: "contexthost",
 					manifest: oManifestForObjectFieldsWithTranslation
 				});
-				that.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(that.oEditor).then(function () {
 					assert.ok(that.oEditor.isReady(), "Editor is ready");
 					var oLabel = that.oEditor.getAggregation("_formContent")[1];
 					var oField = that.oEditor.getAggregation("_formContent")[2];
@@ -436,9 +409,9 @@ sap.ui.define([
 					assert.ok(oAddButton.getVisible(), "Table toolbar: add button visible");
 					var oKeyColumn = oTable.getColumns()[1];
 					assert.equal(oKeyColumn.getLabel().getText(), "translated key France", "Column key: key label text translated");
-					wait().then(function () {
+					EditorQunitUtils.wait().then(function () {
 						oAddButton.firePress();
-						wait().then(function () {
+						EditorQunitUtils.wait().then(function () {
 							var oSimpleForm = oField._oObjectDetailsPopover.getContent()[0].getPages()[0].getContent()[0];
 							assert.ok(oSimpleForm.isA("sap.ui.layout.form.SimpleForm"), "Popover: Content is SimpleForm");
 							var oContents = oSimpleForm.getContent();
@@ -471,7 +444,7 @@ sap.ui.define([
 							var oCloseButtonInPopover = oField._oObjectDetailsPopover._oCloseButton;
 							assert.ok(!oCloseButtonInPopover.getVisible(), "Popover: close button not visible");
 							oAddButtonInPopover.firePress();
-							wait().then(function () {
+							EditorQunitUtils.wait().then(function () {
 								var oNewObject = {"icon": "sap-icon://add","text": "{i18n>TRANSLATED_TEXT02}","url": "http://","number": 0.5, "_dt": {"_selected": true}};
 								assert.equal(oTable.getBinding().getCount(), 9, "Table: value length is 9");
 								assert.ok(deepEqual(cleanUUID(oTable.getBinding().getContexts()[8].getObject()), oNewObject), "Table: new row data");
@@ -479,7 +452,7 @@ sap.ui.define([
 								assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), {"icon": "sap-icon://add","text": "{i18n>TRANSLATED_TEXT02}","url": "http://","number": 0.5}), "Field 1: Value changed");
 								// scroll to the bottom
 								oTable._getScrollExtension().getVerticalScrollbar().scrollTop = 200;
-								wait().then(function () {
+								EditorQunitUtils.wait().then(function () {
 									var oNewRow = oTable.getRows()[4];
 									assert.ok(deepEqual(cleanUUID(oNewRow.getBindingContext().getObject()), oNewObject), "Table: new row in the bottom");
 									var oTextCell = oNewRow.getCells()[3];

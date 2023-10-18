@@ -7,7 +7,8 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/core/util/MockServer",
-	"./jsons/withDesigntime/sap.card/DataExtensionImpl"
+	"./jsons/withDesigntime/sap.card/DataExtensionImpl",
+	"qunit/designtime/EditorQunitUtils"
 ], function (
 	Editor,
 	Host,
@@ -16,7 +17,8 @@ sap.ui.define([
 	Core,
 	QUnitUtils,
 	MockServer,
-	DataExtensionImpl
+	DataExtensionImpl,
+	EditorQunitUtils
 ) {
 	"use strict";
 
@@ -26,35 +28,6 @@ sap.ui.define([
 	var sBaseUrl = "test-resources/sap/ui/integration/qunit/editor/jsons/withDesigntime/sap.card/";
 	Core.getConfiguration().setLanguage("en");
 	document.body.className = document.body.className + " sapUiSizeCompact ";
-
-	function wait(ms) {
-		return new Promise(function (resolve) {
-			setTimeout(function () {
-				resolve();
-			}, ms || 1000);
-		});
-	}
-
-	function createEditor(sLanguage, oDesigntime) {
-		sLanguage = sLanguage || "en";
-		Core.getConfiguration().setLanguage(sLanguage);
-		var oEditor = new Editor({
-			designtime: oDesigntime
-		});
-		var oContent = document.getElementById("content");
-		if (!oContent) {
-			oContent = document.createElement("div");
-			oContent.style.position = "absolute";
-			oContent.style.top = "200px";
-			oContent.style.background = "white";
-
-			oContent.setAttribute("id", "content");
-			document.body.appendChild(oContent);
-			document.body.style.zIndex = 1000;
-		}
-		oEditor.placeAt(oContent);
-		return oEditor;
-	}
 
 	function destroyEditor(oEditor) {
 		oEditor.destroy();
@@ -95,7 +68,7 @@ sap.ui.define([
 			};
 
 			return new Promise(function (resolve, reject) {
-				this.oEditor = createEditor("en", {
+				this.oEditor = EditorQunitUtils.createEditor("en", {
 					form: {
 						items: {
 							string1: {
@@ -142,11 +115,11 @@ sap.ui.define([
 					host: "contexthost",
 					manifest: oManifest
 				});
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var fTest1 = function () {
 						return new Promise(function (resolve) {
-							wait(500).then(function () {
+							EditorQunitUtils.wait(500).then(function () {
 								var oField1 = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field").getAggregation("content")[1];
 								oField1.getAggregation("_field").focus();
 								// sometimes the focus in not in the test browser, need to call the onfocusin function hardly to set the message strip
@@ -159,7 +132,7 @@ sap.ui.define([
 								assert.equal(oDefaultBundle.getText("EDITOR_VAL_TEXTREQ"), oMsgStrip.getText(), "Default Required String Text");
 								oField1._settingsButton.focus();
 								oField1.getAggregation("_field").setValue("12345678901");
-								wait(500).then(function () {
+								EditorQunitUtils.wait(500).then(function () {
 									oField1.getAggregation("_field").focus();
 									// sometimes the focus in not in the test browser, need to call the onfocusin function hardly to set the message strip
 									oField1.onfocusin();
@@ -169,7 +142,7 @@ sap.ui.define([
 									assert.equal(oDefaultBundle.getText("EDITOR_VAL_MAXLENGTH", [10]), oMsgStrip.getText(), "Default MaxLength String Text");
 									oField1._settingsButton.focus();
 									oField1.getAggregation("_field").setValue("1234567890");
-									wait(500).then(function () {
+									EditorQunitUtils.wait(500).then(function () {
 										oField1.getAggregation("_field").focus();
 										// sometimes the focus in not in the test browser, need to call the onfocusin function hardly to set the message strip
 										oField1.onfocusin();
@@ -192,7 +165,7 @@ sap.ui.define([
 							assert.equal(oMsgStrip.getDomRef().style.opacity, "0", "Message strip invisible");
 							oField1._settingsButton.focus();
 							oField1.getAggregation("_field").setValue("a");
-							wait(500).then(function () {
+							EditorQunitUtils.wait(500).then(function () {
 								oField1.getAggregation("_field").focus();
 								// sometimes the focus in not in the test browser, need to call the onfocusin function hardly to set the message strip
 								oField1.onfocusin();
@@ -202,7 +175,7 @@ sap.ui.define([
 								assert.equal(oI18nBundle.getText("string2err2", [1]), oMsgStrip.getText(), "Custom Validate Val text");
 								oField1._settingsButton.focus();
 								oField1.getAggregation("_field").setValue("111");
-								wait(500).then(function () {
+								EditorQunitUtils.wait(500).then(function () {
 									oField1.getAggregation("_field").focus();
 									// sometimes the focus in not in the test browser, need to call the onfocusin function hardly to set the message strip
 									oField1.onfocusin();
@@ -243,7 +216,7 @@ sap.ui.define([
 			};
 
 			return new Promise(function (resolve, reject) {
-				this.oEditor = createEditor("en", {
+				this.oEditor = EditorQunitUtils.createEditor("en", {
 					form: {
 						items: {
 							int1: {
@@ -305,11 +278,11 @@ sap.ui.define([
 					host: "contexthost",
 					manifest: oManifest
 				});
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var fTest1 = function () {
 						return new Promise(function (resolve) {
-							wait(500).then(function () {
+							EditorQunitUtils.wait(500).then(function () {
 								var oField1 = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field").getAggregation("content")[1];
 								oField1.getAggregation("_field").focus();
 								// sometimes the focus in not in the test browser, need to call the onfocusin function hardly to set the message strip
@@ -322,7 +295,7 @@ sap.ui.define([
 								assert.equal(oDefaultBundle.getText("EDITOR_VAL_MIN", [1]), oMsgStrip.getText(), "Default Min Number Text");
 								oField1._settingsButton.focus();
 								oField1.getAggregation("_field").setValue("11");
-								wait(500).then(function () {
+								EditorQunitUtils.wait(500).then(function () {
 									oField1.getAggregation("_field").focus();
 									// sometimes the focus in not in the test browser, need to call the onfocusin function hardly to set the message strip
 									oField1.onfocusin();
@@ -332,7 +305,7 @@ sap.ui.define([
 									assert.equal(oDefaultBundle.getText("EDITOR_VAL_MAX", [10]), oMsgStrip.getText(), "Default Max Number Text");
 									oField1._settingsButton.focus();
 									oField1.getAggregation("_field").setValue("1");
-									wait(500).then(function () {
+									EditorQunitUtils.wait(500).then(function () {
 										oField1.getAggregation("_field").focus();
 										// sometimes the focus in not in the test browser, need to call the onfocusin function hardly to set the message strip
 										oField1.onfocusin();
@@ -350,7 +323,7 @@ sap.ui.define([
 							oField1.getAggregation("_field").focus();
 							// sometimes the focus in not in the test browser, need to call the onfocusin function hardly to set the message strip
 							oField1.onfocusin();
-							wait(500).then(function () {
+							EditorQunitUtils.wait(500).then(function () {
 								var oMsgStrip = Core.byId(oField1.getAssociation("_messageStrip"));
 								assert.equal(oMsgStrip.getDomRef().style.opacity, "1", "Message strip visible");
 								assert.equal(oMsgStrip.getType(), "Error", "Message strip Error");
@@ -358,7 +331,7 @@ sap.ui.define([
 								assert.equal(oDefaultBundle.getText("EDITOR_VAL_MIN_E", [2]), oMsgStrip.getText(), "Default Exclusive Minimum Text");
 								oField1._settingsButton.focus();
 								oField1.getAggregation("_field").setValue("10");
-								wait(500).then(function () {
+								EditorQunitUtils.wait(500).then(function () {
 									oField1.getAggregation("_field").focus();
 									// sometimes the focus in not in the test browser, need to call the onfocusin function hardly to set the message strip
 									oField1.onfocusin();
@@ -369,7 +342,7 @@ sap.ui.define([
 									assert.equal(oDefaultBundle.getText("EDITOR_VAL_MAX_E", [10]), oMsgStrip.getText(), "Default Exclusive Maximum Text");
 									oField1._settingsButton.focus();
 									oField1.getAggregation("_field").setValue("5");
-									wait(500).then(function () {
+									EditorQunitUtils.wait(500).then(function () {
 										oField1.getAggregation("_field").focus();
 										// sometimes the focus in not in the test browser, need to call the onfocusin function hardly to set the message strip
 										oField1.onfocusin();
@@ -387,7 +360,7 @@ sap.ui.define([
 					}.bind(this);
 					var fTest3 = function () {
 						return new Promise(function (resolve) {
-							wait(500).then(function () {
+							EditorQunitUtils.wait(500).then(function () {
 								var oField1 = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field").getAggregation("content")[5];
 								oField1.getAggregation("_field").focus();
 								// sometimes the focus in not in the test browser, need to call the onfocusin function hardly to set the message strip
@@ -400,7 +373,7 @@ sap.ui.define([
 								assert.equal(oI18nBundle.getText("int1err1", [1]), oMsgStrip.getText(), "Custom Min Val text");
 								oField1._settingsButton.focus();
 								oField1.getAggregation("_field").setValue("5");
-								wait(500).then(function () {
+								EditorQunitUtils.wait(500).then(function () {
 									oField1.getAggregation("_field").focus();
 									// sometimes the focus in not in the test browser, need to call the onfocusin function hardly to set the message strip
 									oField1.onfocusin();
@@ -410,7 +383,7 @@ sap.ui.define([
 									assert.equal(oI18nBundle.getText("int1err2", [1]), oMsgStrip.getText(), "Custom Max Val text");
 									oField1._settingsButton.focus();
 									oField1.getAggregation("_field").setValue("3");
-									wait(500).then(function () {
+									EditorQunitUtils.wait(500).then(function () {
 										oField1.getAggregation("_field").focus();
 										// sometimes the focus in not in the test browser, need to call the onfocusin function hardly to set the message strip
 										oField1.onfocusin();
@@ -456,7 +429,7 @@ sap.ui.define([
 			};
 
 			return new Promise(function (resolve, reject) {
-				this.oEditor = createEditor("en", {
+				this.oEditor = EditorQunitUtils.createEditor("en", {
 					form: {
 						items: {
 							string1: {
@@ -477,13 +450,13 @@ sap.ui.define([
 					host: "contexthost",
 					manifest: oManifest
 				});
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					return new Promise(function (resolve) {
-						wait(500).then(function () {
+						EditorQunitUtils.wait(500).then(function () {
 							var oField1 = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field").getAggregation("content")[1];
 							oField1._settingsButton.focus();
-							wait(1000).then(function () {
+							EditorQunitUtils.wait(1000).then(function () {
 								oField1.getAggregation("_field").focus();
 								// sometimes the focus in not in the test browser, need to call the onfocusin function hardly to set the message strip
 								oField1.onfocusin();
@@ -495,7 +468,7 @@ sap.ui.define([
 								assert.equal(oDefaultBundle.getText("EDITOR_VAL_TEXTREQ"), oMsgStrip.getText(), "Default Required String Text");
 								oField1._settingsButton.focus();
 								oField1.getAggregation("_field").setValue("aa");
-								wait(500).then(function () {
+								EditorQunitUtils.wait(500).then(function () {
 									oField1.getAggregation("_field").focus();
 									// sometimes the focus in not in the test browser, need to call the onfocusin function hardly to set the message strip
 									oField1.onfocusin();
@@ -532,7 +505,7 @@ sap.ui.define([
 			};
 
 			return new Promise(function (resolve, reject) {
-				this.oEditor = createEditor("en", {
+				this.oEditor = EditorQunitUtils.createEditor("en", {
 					form: {
 						items: {
 							string1: {
@@ -569,13 +542,13 @@ sap.ui.define([
 					host: "contexthost",
 					manifest: oManifest
 				});
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					return new Promise(function (resolve) {
-						wait(500).then(function () {
+						EditorQunitUtils.wait(500).then(function () {
 							var oField1 = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field").getContent()[1];
 							oField1._settingsButton.focus();
-							wait(1000).then(function () {
+							EditorQunitUtils.wait(1000).then(function () {
 								oField1.getAggregation("_field").focus();
 								// sometimes the focus in not in the test browser, need to call the onfocusin function hardly to set the message strip
 								oField1.onfocusin();
@@ -587,7 +560,7 @@ sap.ui.define([
 								assert.equal(oDefaultBundle.getText("EDITOR_VAL_TEXTREQ"), oMsgStrip.getText(), "Default Required String Text");
 								oField1.getAggregation("_field").setSelectedIndex(1);
 								oField1.getAggregation("_field").fireChange({ selectedItem: oField1.getAggregation("_field").getItems()[1] });
-								wait(500).then(function () {
+								EditorQunitUtils.wait(500).then(function () {
 									oField1.getAggregation("_field").focus();
 									// sometimes the focus in not in the test browser, need to call the onfocusin function hardly to set the message strip
 									oField1.onfocusin();
@@ -624,7 +597,7 @@ sap.ui.define([
 			};
 
 			return new Promise(function (resolve, reject) {
-				this.oEditor = createEditor("en", {
+				this.oEditor = EditorQunitUtils.createEditor("en", {
 					form: {
 						items: {
 							integer: {
@@ -645,15 +618,15 @@ sap.ui.define([
 					host: "contexthost",
 					manifest: oManifest
 				});
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					return new Promise(function (resolve) {
-						wait(500).then(function () {
+						EditorQunitUtils.wait(500).then(function () {
 							var oField1 = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field").getAggregation("content")[1];
 							oField1._settingsButton.focus();
 							oField1.getAggregation("_field").setValue("");
 							oField1.getAggregation("_field").fireChange({ value: ""});
-							wait(1000).then(function () {
+							EditorQunitUtils.wait(1000).then(function () {
 								oField1.getAggregation("_field").focus();
 								// sometimes the focus in not in the test browser, need to call the onfocusin function hardly to set the message strip
 								oField1.onfocusin();
@@ -665,7 +638,7 @@ sap.ui.define([
 								assert.equal(oDefaultBundle.getText("EDITOR_VAL_NUMBERREQ"), oMsgStrip.getText(), "Default Required Integer Text");
 								oField1._settingsButton.focus();
 								oField1.getAggregation("_field").setValue("11");
-								wait(500).then(function () {
+								EditorQunitUtils.wait(500).then(function () {
 									oField1.getAggregation("_field").focus();
 									// sometimes the focus in not in the test browser, need to call the onfocusin function hardly to set the message strip
 									oField1.onfocusin();
@@ -702,7 +675,7 @@ sap.ui.define([
 			};
 
 			return new Promise(function (resolve, reject) {
-				this.oEditor = createEditor("en", {
+				this.oEditor = EditorQunitUtils.createEditor("en", {
 					form: {
 						items: {
 							number: {
@@ -723,15 +696,15 @@ sap.ui.define([
 					host: "contexthost",
 					manifest: oManifest
 				});
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					return new Promise(function (resolve) {
-						wait(500).then(function () {
+						EditorQunitUtils.wait(500).then(function () {
 							var oField1 = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field").getAggregation("content")[1];
 							oField1._settingsButton.focus();
 							oField1.getAggregation("_field").setValue("");
 							oField1.getAggregation("_field").fireChange({ value: ""});
-							wait(1000).then(function () {
+							EditorQunitUtils.wait(1000).then(function () {
 								oField1.getAggregation("_field").focus();
 								// sometimes the focus in not in the test browser, need to call the onfocusin function hardly to set the message strip
 								oField1.onfocusin();
@@ -743,7 +716,7 @@ sap.ui.define([
 								assert.equal(oDefaultBundle.getText("EDITOR_VAL_NUMBERREQ"), oMsgStrip.getText(), "Default Required Number Text");
 								oField1._settingsButton.focus();
 								oField1.getAggregation("_field").setValue("1.1");
-								wait(500).then(function () {
+								EditorQunitUtils.wait(500).then(function () {
 									oField1.getAggregation("_field").focus();
 									// sometimes the focus in not in the test browser, need to call the onfocusin function hardly to set the message strip
 									oField1.onfocusin();
@@ -791,7 +764,7 @@ sap.ui.define([
 			};
 
 			return new Promise(function (resolve, reject) {
-				this.oEditor = createEditor("en", {
+				this.oEditor = EditorQunitUtils.createEditor("en", {
 					"form": {
 						"items": {
 							"stringArrayParameter": {
@@ -827,14 +800,14 @@ sap.ui.define([
 					host: "contexthost",
 					manifest: oManifest
 				});
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					return new Promise(function (resolve) {
-						wait(500).then(function () {
+						EditorQunitUtils.wait(500).then(function () {
 							var oField1 = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field").getAggregation("content")[1];
 							oField1._settingsButton.focus();
 							var oMultiComboBox = oField1.getAggregation("_field");
-							wait(1000).then(function () {
+							EditorQunitUtils.wait(1000).then(function () {
 								oMultiComboBox.focus();
 								Core.applyChanges();
 								var oMsgStrip = Core.byId(oField1.getAssociation("_messageStrip"));
@@ -843,7 +816,7 @@ sap.ui.define([
 								assert.equal(oMsgStrip.getType(), "Error", "Message strip Error");
 								assert.equal(oDefaultBundle.getText("EDITOR_VAL_LISTREQ"), oMsgStrip.getText(), "Default Required List Text");
 								oMultiComboBox.setSelectedKeys(["key1"]);
-								wait(500).then(function () {
+								EditorQunitUtils.wait(500).then(function () {
 									oMultiComboBox.focus();
 									Core.applyChanges();
 									assert.equal(oMsgStrip.getDomRef().style.opacity, "0", "Message strip not visible");
@@ -878,7 +851,7 @@ sap.ui.define([
 			};
 
 			return new Promise(function (resolve, reject) {
-				this.oEditor = createEditor("en", {
+				this.oEditor = EditorQunitUtils.createEditor("en", {
 					"form": {
 						"items": {
 							"stringArrayParameter": {
@@ -921,14 +894,14 @@ sap.ui.define([
 					host: "contexthost",
 					manifest: oManifest
 				});
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					return new Promise(function (resolve) {
-						wait(500).then(function () {
+						EditorQunitUtils.wait(500).then(function () {
 							var oField1 = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field").getAggregation("content")[1];
 							oField1._settingsButton.focus();
 							var oMultiComboBox = oField1.getAggregation("_field");
-							wait(1000).then(function () {
+							EditorQunitUtils.wait(1000).then(function () {
 								oMultiComboBox.focus();
 								Core.applyChanges();
 								var oMsgStrip = Core.byId(oField1.getAssociation("_messageStrip"));
@@ -937,14 +910,14 @@ sap.ui.define([
 								assert.equal(oMsgStrip.getType(), "Error", "Message strip Error");
 								assert.equal(oDefaultBundle.getText("EDITOR_VAL_LISTMINLENGTH", 2), oMsgStrip.getText(), "Default Min List Text");
 								oMultiComboBox.setSelectedKeys(["key1"]);
-								wait(500).then(function () {
+								EditorQunitUtils.wait(500).then(function () {
 									oMultiComboBox.focus();
 									Core.applyChanges();
 									assert.equal(oMsgStrip.getDomRef().style.opacity, "1", "Message strip visible");
 									assert.equal(oMsgStrip.getType(), "Error", "Message strip Error");
 									assert.equal(oDefaultBundle.getText("EDITOR_VAL_LISTMINLENGTH", 2), oMsgStrip.getText(), "Default Min List Text");
 									oMultiComboBox.setSelectedKeys(["key1", "key2"]);
-									wait(500).then(function () {
+									EditorQunitUtils.wait(500).then(function () {
 										oMultiComboBox.focus();
 										Core.applyChanges();
 										assert.equal(oMsgStrip.getDomRef().style.opacity, "0", "Message strip not visible");
@@ -980,7 +953,7 @@ sap.ui.define([
 			};
 
 			return new Promise(function (resolve, reject) {
-				this.oEditor = createEditor("en", {
+				this.oEditor = EditorQunitUtils.createEditor("en", {
 					"form": {
 						"items": {
 							"stringArrayParameter": {
@@ -1023,14 +996,14 @@ sap.ui.define([
 					host: "contexthost",
 					manifest: oManifest
 				});
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					return new Promise(function (resolve) {
-						wait(500).then(function () {
+						EditorQunitUtils.wait(500).then(function () {
 							var oField1 = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field").getAggregation("content")[1];
 							oField1._settingsButton.focus();
 							var oMultiComboBox = oField1.getAggregation("_field");
-							wait(1000).then(function () {
+							EditorQunitUtils.wait(1000).then(function () {
 								oMultiComboBox.focus();
 								Core.applyChanges();
 								var oMsgStrip = Core.byId(oField1.getAssociation("_messageStrip"));
@@ -1039,7 +1012,7 @@ sap.ui.define([
 								assert.equal(oMsgStrip.getType(), "Error", "Message strip Error");
 								assert.equal(oDefaultBundle.getText("EDITOR_VAL_LISTMINLENGTH", 2), oMsgStrip.getText(), "Default Min List Text");
 								oMultiComboBox.setSelectedKeys(["key1"]);
-								wait(500).then(function () {
+								EditorQunitUtils.wait(500).then(function () {
 									oMultiComboBox.focus();
 									Core.applyChanges();
 									assert.equal(oMsgStrip.getDomRef().style.opacity, "1", "Message strip visible");
@@ -1047,7 +1020,7 @@ sap.ui.define([
 									assert.equal(oDefaultBundle.getText("EDITOR_VAL_LISTMINLENGTH", 2), oMsgStrip.getText(), "Default Min List Text");
 									oMultiComboBox.setSelectedKeys(["key1", "key2", "key3", "key4", "key5"]);
 									oField1._settingsButton.focus();
-									wait(500).then(function () {
+									EditorQunitUtils.wait(500).then(function () {
 										oMultiComboBox.focus();
 										Core.applyChanges();
 										assert.equal(oMsgStrip.getType(), "Error", "Message strip Error");
@@ -1106,38 +1079,15 @@ sap.ui.define([
 				}
 			]);
 			this.oMockServer.start();
-			this.oHost = new Host("host");
-			this.oContextHost = new ContextHost("contexthost");
-
-			this.oEditor = new Editor();
-			var oContent = document.getElementById("content");
-			if (!oContent) {
-				oContent = document.createElement("div");
-				oContent.style.position = "absolute";
-				oContent.style.top = "200px";
-
-				oContent.setAttribute("id", "content");
-				document.body.appendChild(oContent);
-				document.body.style.zIndex = 1000;
-			}
-			this.oEditor.placeAt(oContent);
+			this.oEditor = EditorQunitUtils.beforeEachTest();
 		},
 		afterEach: function () {
-			this.oEditor.destroy();
-			this.oMockServer.destroy();
-			this.oHost.destroy();
-			this.oContextHost.destroy();
-			sandbox.restore();
-			var oContent = document.getElementById("content");
-			if (oContent) {
-				oContent.innerHTML = "";
-				document.body.style.zIndex = "unset";
-			}
+			EditorQunitUtils.afterEachTest(this.oEditor, sandbox, this.oMockServer);
 		}
 	}, function () {
 		QUnit.test("boolean check", function (assert) {
 			return new Promise(function (resolve, reject) {
-				this.oEditor = createEditor("en", {
+				this.oEditor = EditorQunitUtils.createEditor("en", {
 					"form": {
 						"items": {
 							"stringArrayParameter": {
@@ -1194,14 +1144,14 @@ sap.ui.define([
 					host: "contexthost",
 					manifest: this.oManifest
 				});
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					return new Promise(function (resolve) {
-						wait(500).then(function () {
+						EditorQunitUtils.wait(500).then(function () {
 							var oField1 = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field").getAggregation("content")[1];
 							oField1._settingsButton.focus();
 							var oMultiComboBox = oField1.getAggregation("_field");
-							wait(1000).then(function () {
+							EditorQunitUtils.wait(1000).then(function () {
 								oMultiComboBox.focus();
 								Core.applyChanges();
 								var oMsgStrip = Core.byId(oField1.getAssociation("_messageStrip"));
@@ -1244,7 +1194,7 @@ sap.ui.define([
 						}
 					}
 				};
-				this.oEditor = createEditor("en", {
+				this.oEditor = EditorQunitUtils.createEditor("en", {
 					"form": {
 						"items": {
 							"stringArrayParameter": {
@@ -1301,14 +1251,14 @@ sap.ui.define([
 					host: "contexthost",
 					manifest: oManifest
 				});
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					return new Promise(function (resolve) {
-						wait(500).then(function () {
+						EditorQunitUtils.wait(500).then(function () {
 							var oField1 = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field").getAggregation("content")[1];
 							oField1._settingsButton.focus();
 							var oMultiComboBox = oField1.getAggregation("_field");
-							wait(1000).then(function () {
+							EditorQunitUtils.wait(1000).then(function () {
 								oMultiComboBox.focus();
 								Core.applyChanges();
 								var oMsgStrip = Core.byId(oField1.getAssociation("_messageStrip"));
@@ -1329,7 +1279,7 @@ sap.ui.define([
 
 		QUnit.test("min length check", function (assert) {
 			return new Promise(function (resolve, reject) {
-				this.oEditor = createEditor("en", {
+				this.oEditor = EditorQunitUtils.createEditor("en", {
 					"form": {
 						"items": {
 							"stringArrayParameter": {
@@ -1391,14 +1341,14 @@ sap.ui.define([
 					host: "contexthost",
 					manifest: this.oManifest
 				});
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					return new Promise(function (resolve) {
-						wait(500).then(function () {
+						EditorQunitUtils.wait(500).then(function () {
 							var oField1 = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field").getAggregation("content")[1];
 							oField1._settingsButton.focus();
 							var oMultiComboBox = oField1.getAggregation("_field");
-							wait(1000).then(function () {
+							EditorQunitUtils.wait(1000).then(function () {
 								oMultiComboBox.focus();
 								Core.applyChanges();
 								var oMsgStrip = Core.byId(oField1.getAssociation("_messageStrip"));
@@ -1407,7 +1357,7 @@ sap.ui.define([
 								assert.equal(oMsgStrip.getText(), "Please select at least 2 items!", "Message text correct");
 								oMultiComboBox.setSelectedKeys(["key1"]);
 								oField1._settingsButton.focus();
-								wait(500).then(function () {
+								EditorQunitUtils.wait(500).then(function () {
 									oMultiComboBox.focus();
 									Core.applyChanges();
 									assert.equal(oMsgStrip.getDomRef().style.opacity, "1", "Message strip visible");
@@ -1415,7 +1365,7 @@ sap.ui.define([
 									assert.equal(oMsgStrip.getText(), "Please select at least 2 items!", "Message text correct");
 									oMultiComboBox.setSelectedKeys(["key1", "key2"]);
 									oField1._settingsButton.focus();
-									wait(500).then(function () {
+									EditorQunitUtils.wait(500).then(function () {
 										oMultiComboBox.focus();
 										Core.applyChanges();
 										assert.equal(oMsgStrip.getDomRef().style.opacity, "0", "Message strip not visible");
@@ -1434,7 +1384,7 @@ sap.ui.define([
 
 		QUnit.test("max length check", function (assert) {
 			return new Promise(function (resolve, reject) {
-				this.oEditor = createEditor("en", {
+				this.oEditor = EditorQunitUtils.createEditor("en", {
 					"form": {
 						"items": {
 							"stringArrayParameter": {
@@ -1496,27 +1446,27 @@ sap.ui.define([
 					host: "contexthost",
 					manifest: this.oManifest
 				});
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					return new Promise(function (resolve) {
-						wait(500).then(function () {
+						EditorQunitUtils.wait(500).then(function () {
 							var oField1 = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field").getAggregation("content")[1];
 							oField1._settingsButton.focus();
 							var oMultiComboBox = oField1.getAggregation("_field");
-							wait(1000).then(function () {
+							EditorQunitUtils.wait(1000).then(function () {
 								oMultiComboBox.focus();
 								Core.applyChanges();
 								var oMsgStrip = Core.byId(oField1.getAssociation("_messageStrip"));
 								assert.equal(oMsgStrip.getDomRef().style.opacity, "0", "Message strip not visible");
 								oMultiComboBox.setSelectedKeys(["key1", "key2", "key3", "key4"]);
 								oField1._settingsButton.focus();
-								wait(500).then(function () {
+								EditorQunitUtils.wait(500).then(function () {
 									oMultiComboBox.focus();
 									Core.applyChanges();
 									assert.equal(oMsgStrip.getDomRef().style.opacity, "0", "Message strip not visible");
 									oMultiComboBox.setSelectedKeys(["key1", "key2", "key3", "key4", "key5"]);
 									oField1._settingsButton.focus();
-									wait(500).then(function () {
+									EditorQunitUtils.wait(500).then(function () {
 										oMultiComboBox.focus();
 										Core.applyChanges();
 										assert.equal(oMsgStrip.getDomRef().style.opacity, "1", "Message strip visible");
@@ -1537,7 +1487,7 @@ sap.ui.define([
 
 		QUnit.test("value range check 1", function (assert) {
 			return new Promise(function (resolve, reject) {
-				this.oEditor = createEditor("en", {
+				this.oEditor = EditorQunitUtils.createEditor("en", {
 					"form": {
 						"items": {
 							"stringArrayParameter": {
@@ -1607,14 +1557,14 @@ sap.ui.define([
 					host: "contexthost",
 					manifest: this.oManifest
 				});
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					return new Promise(function (resolve) {
-						wait(500).then(function () {
+						EditorQunitUtils.wait(500).then(function () {
 							var oField1 = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field").getAggregation("content")[1];
 							oField1._settingsButton.focus();
 							var oMultiComboBox = oField1.getAggregation("_field");
-							wait(1000).then(function () {
+							EditorQunitUtils.wait(1000).then(function () {
 								oMultiComboBox.focus();
 								Core.applyChanges();
 								var oMsgStrip = Core.byId(oField1.getAssociation("_messageStrip"));
@@ -1623,13 +1573,13 @@ sap.ui.define([
 								assert.equal(oMsgStrip.getText(), "Please select items in key1,key3,key6", "Message text correct");
 								oMultiComboBox.setSelectedKeys(["key1"]);
 								oField1._settingsButton.focus();
-								wait(500).then(function () {
+								EditorQunitUtils.wait(500).then(function () {
 									oMultiComboBox.focus();
 									Core.applyChanges();
 									assert.equal(oMsgStrip.getDomRef().style.opacity, "0", "Message strip not visible");
 									oMultiComboBox.setSelectedKeys(["key1", "key2", "key3"]);
 									oField1._settingsButton.focus();
-									wait(500).then(function () {
+									EditorQunitUtils.wait(500).then(function () {
 										oMultiComboBox.focus();
 										Core.applyChanges();
 										assert.equal(oMsgStrip.getDomRef().style.opacity, "1", "Message strip visible");
@@ -1650,7 +1600,7 @@ sap.ui.define([
 
 		QUnit.test("value range check 2", function (assert) {
 			return new Promise(function (resolve, reject) {
-				this.oEditor = createEditor("en", {
+				this.oEditor = EditorQunitUtils.createEditor("en", {
 					"form": {
 						"items": {
 							"stringArrayParameter": {
@@ -1720,14 +1670,14 @@ sap.ui.define([
 					host: "contexthost",
 					manifest: this.oManifest
 				});
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					return new Promise(function (resolve) {
-						wait(500).then(function () {
+						EditorQunitUtils.wait(500).then(function () {
 							var oField1 = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field").getAggregation("content")[1];
 							oField1._settingsButton.focus();
 							var oMultiComboBox = oField1.getAggregation("_field");
-							wait(1000).then(function () {
+							EditorQunitUtils.wait(1000).then(function () {
 								oMultiComboBox.focus();
 								Core.applyChanges();
 								var oMsgStrip = Core.byId(oField1.getAssociation("_messageStrip"));
@@ -1736,13 +1686,13 @@ sap.ui.define([
 								assert.equal(oMsgStrip.getText(), "Please select items in key1,key3,key6", "Message text correct");
 								oMultiComboBox.setSelectedKeys(["key1", "key3"]);
 								oField1._settingsButton.focus();
-								wait(500).then(function () {
+								EditorQunitUtils.wait(500).then(function () {
 									oMultiComboBox.focus();
 									Core.applyChanges();
 									assert.equal(oMsgStrip.getDomRef().style.opacity, "0", "Message strip not visible");
 									oMultiComboBox.setSelectedKeys(["key1", "key3", "key6"]);
 									oField1._settingsButton.focus();
-									wait(500).then(function () {
+									EditorQunitUtils.wait(500).then(function () {
 										oMultiComboBox.focus();
 										Core.applyChanges();
 										assert.equal(oMsgStrip.getDomRef().style.opacity, "0", "Message strip visible");
@@ -1761,7 +1711,7 @@ sap.ui.define([
 
 		QUnit.test("value range check 3", function (assert) {
 			return new Promise(function (resolve, reject) {
-				this.oEditor = createEditor("en", {
+				this.oEditor = EditorQunitUtils.createEditor("en", {
 					"form": {
 						"items": {
 							"stringArrayParameter": {
@@ -1831,14 +1781,14 @@ sap.ui.define([
 					host: "contexthost",
 					manifest: this.oManifest
 				});
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					return new Promise(function (resolve) {
-						wait(500).then(function () {
+						EditorQunitUtils.wait(500).then(function () {
 							var oField1 = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field").getAggregation("content")[1];
 							oField1._settingsButton.focus();
 							var oMultiComboBox = oField1.getAggregation("_field");
-							wait(1000).then(function () {
+							EditorQunitUtils.wait(1000).then(function () {
 								oMultiComboBox.focus();
 								Core.applyChanges();
 								var oMsgStrip = Core.byId(oField1.getAssociation("_messageStrip"));
@@ -1847,13 +1797,13 @@ sap.ui.define([
 								assert.equal(oMsgStrip.getText(), "Please select items in key1,key3,key6", "Message text correct");
 								oMultiComboBox.setSelectedKeys(["key1", "key3", "key6"]);
 								oField1._settingsButton.focus();
-								wait(500).then(function () {
+								EditorQunitUtils.wait(500).then(function () {
 									oMultiComboBox.focus();
 									Core.applyChanges();
 									assert.equal(oMsgStrip.getDomRef().style.opacity, "0", "Message strip not visible");
 									oMultiComboBox.setSelectedKeys(["key1", "key3", "key6", "key7"]);
 									oField1._settingsButton.focus();
-									wait(500).then(function () {
+									EditorQunitUtils.wait(500).then(function () {
 										oMultiComboBox.focus();
 										Core.applyChanges();
 										assert.equal(oMsgStrip.getDomRef().style.opacity, "1", "Message strip visible");
@@ -1911,38 +1861,15 @@ sap.ui.define([
 				}
 			]);
 			this.oMockServer.start();
-			this.oHost = new Host("host");
-			this.oContextHost = new ContextHost("contexthost");
-
-			this.oEditor = new Editor();
-			var oContent = document.getElementById("content");
-			if (!oContent) {
-				oContent = document.createElement("div");
-				oContent.style.position = "absolute";
-				oContent.style.top = "200px";
-
-				oContent.setAttribute("id", "content");
-				document.body.appendChild(oContent);
-				document.body.style.zIndex = 1000;
-			}
-			this.oEditor.placeAt(oContent);
+			this.oEditor = EditorQunitUtils.beforeEachTest();
 		},
 		afterEach: function () {
-			this.oEditor.destroy();
-			this.oMockServer.destroy();
-			this.oHost.destroy();
-			this.oContextHost.destroy();
-			sandbox.restore();
-			var oContent = document.getElementById("content");
-			if (oContent) {
-				oContent.innerHTML = "";
-				document.body.style.zIndex = "unset";
-			}
+			EditorQunitUtils.afterEachTest(this.oEditor, sandbox, this.oMockServer);
 		}
 	}, function () {
 		QUnit.test("checkbox", function (assert) {
 			return new Promise(function (resolve, reject) {
-				this.oEditor = createEditor("en", {
+				this.oEditor = EditorQunitUtils.createEditor("en", {
 					"form": {
 						"items": {
 							"boolean": {
@@ -1980,15 +1907,15 @@ sap.ui.define([
 					host: "contexthost",
 					manifest: this.oManifest
 				});
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					return new Promise(function (resolve) {
-						wait(1000).then(function () {
+						EditorQunitUtils.wait(1000).then(function () {
 							var oField1 = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field").getAggregation("content")[1];
 							var oCheckBox = oField1.getAggregation("_field");
 							assert.ok(!oCheckBox.getSelected(), "Selected is false");
 							oCheckBox.setSelected(true);
-							wait(1000).then(function () {
+							EditorQunitUtils.wait(1000).then(function () {
 								assert.ok(!oCheckBox.getSelected(), "Selected is false");
 								resolve();
 							});
@@ -2025,7 +1952,7 @@ sap.ui.define([
 				}
 			};
 			return new Promise(function (resolve, reject) {
-				this.oEditor = createEditor("en", {
+				this.oEditor = EditorQunitUtils.createEditor("en", {
 					"form": {
 						"items": {
 							"boolean": {
@@ -2063,15 +1990,15 @@ sap.ui.define([
 					host: "contexthost",
 					manifest: oManifest
 				});
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					return new Promise(function (resolve) {
-						wait(1000).then(function () {
+						EditorQunitUtils.wait(1000).then(function () {
 							var oField1 = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field").getAggregation("content")[1];
 							var oCheckBox = oField1.getAggregation("_field");
 							assert.ok(!oCheckBox.getSelected(), "Selected is false");
 							oCheckBox.setSelected(true);
-							wait(1000).then(function () {
+							EditorQunitUtils.wait(1000).then(function () {
 								assert.ok(!oCheckBox.getSelected(), "Selected is false");
 								resolve();
 							});
@@ -2086,7 +2013,7 @@ sap.ui.define([
 
 		QUnit.test("switch", function (assert) {
 			return new Promise(function (resolve, reject) {
-				this.oEditor = createEditor("en", {
+				this.oEditor = EditorQunitUtils.createEditor("en", {
 					"form": {
 						"items": {
 							"boolean": {
@@ -2134,15 +2061,15 @@ sap.ui.define([
 					host: "contexthost",
 					manifest: this.oManifest
 				});
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					return new Promise(function (resolve) {
-						wait(1000).then(function () {
+						EditorQunitUtils.wait(1000).then(function () {
 							var oField1 = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field").getAggregation("content")[1];
 							var oSwitch = oField1.getAggregation("_field");
 							assert.ok(!oSwitch.getState(), "State is false");
 							oSwitch.setState(true);
-							wait(1000).then(function () {
+							EditorQunitUtils.wait(1000).then(function () {
 								assert.ok(!oSwitch.getState(), "State is false");
 								resolve();
 							});
@@ -2179,7 +2106,7 @@ sap.ui.define([
 				}
 			};
 			return new Promise(function (resolve, reject) {
-				this.oEditor = createEditor("en", {
+				this.oEditor = EditorQunitUtils.createEditor("en", {
 					"form": {
 						"items": {
 							"boolean": {
@@ -2227,15 +2154,15 @@ sap.ui.define([
 					host: "contexthost",
 					manifest: oManifest
 				});
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					return new Promise(function (resolve) {
-						wait(1000).then(function () {
+						EditorQunitUtils.wait(1000).then(function () {
 							var oField1 = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field").getAggregation("content")[1];
 							var oSwitch = oField1.getAggregation("_field");
 							assert.ok(!oSwitch.getState(), "State is false");
 							oSwitch.setState(true);
-							wait(1000).then(function () {
+							EditorQunitUtils.wait(1000).then(function () {
 								assert.ok(!oSwitch.getState(), "State is false");
 								resolve();
 							});

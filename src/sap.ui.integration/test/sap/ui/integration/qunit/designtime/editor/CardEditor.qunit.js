@@ -14,7 +14,8 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	"sap/base/i18n/ResourceBundle",
 	"sap/ui/core/util/MockServer",
-	"./cards/DataExtensionImpl"
+	"./cards/DataExtensionImpl",
+	"qunit/designtime/EditorQunitUtils"
 ], function (
 	merge,
 	x,
@@ -30,7 +31,8 @@ sap.ui.define([
 	KeyCodes,
 	ResourceBundle,
 	MockServer,
-	DataExtensionImpl
+	DataExtensionImpl,
+	EditorQunitUtils
 ) {
 	"use strict";
 
@@ -39,14 +41,6 @@ sap.ui.define([
 
 	var sBaseUrl = "test-resources/sap/ui/integration/qunit/designtime/editor/cards/";
 
-	var iWaitTimeout = 1000;
-	function wait(ms) {
-		return new Promise(function (resolve) {
-			setTimeout(function () {
-				resolve();
-			}, ms || iWaitTimeout);
-		});
-	}
 	function createEditor(sLanguage, oDesigntime) {
 		sLanguage = sLanguage || "en";
 		Core.getConfiguration().setLanguage(sLanguage);
@@ -437,7 +431,7 @@ sap.ui.define([
 					assert.ok(oEmployeeField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
 					assert.ok(oEmployeeField.getAggregation("_field").isA("sap.m.ComboBox"), "Field: DataGotFromCardExtension is ComboBox");
 
-					wait(2 * iWaitTimeout).then(function () {
+					EditorQunitUtils.wait(2000).then(function () {
 						assert.equal(oCustomerField.getAggregation("_field").getItems().length, 4, "Field: DataGotFromExtensionRequest lenght is OK");
 						assert.equal(oEmployeeField.getAggregation("_field").getItems().length, 4, "Field: DataGotFromCardExtension lenght is OK");
 						resolve();
@@ -517,7 +511,7 @@ sap.ui.define([
 					assert.ok(oEmployeeField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
 					assert.ok(oEmployeeField.getAggregation("_field").isA("sap.m.ComboBox"), "Field: DataGotFromCardExtension is ComboBox");
 
-					wait(2 * iWaitTimeout).then(function () {
+					EditorQunitUtils.wait(2000).then(function () {
 						assert.equal(oCustomerField.getAggregation("_field").getItems().length, 4, "Field: DataGotFromExtensionRequest lenght is OK");
 						assert.equal(oEmployeeField.getAggregation("_field").getItems().length, 4, "Field: DataGotFromCardExtension lenght is OK");
 						resolve();
@@ -681,11 +675,11 @@ sap.ui.define([
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
 					return new Promise(function (resolve) {
-						wait(100).then(function () {
+						EditorQunitUtils.wait(100).then(function () {
 							var oField1 = this.oCardEditor.getAggregation("_formContent")[0].getAggregation("_field").getAggregation("content")[1];
 							oField1._settingsButton.focus();
 							var oMultiComboBox = oField1.getAggregation("_field");
-							wait(iWaitTimeout).then(function () {
+							EditorQunitUtils.wait().then(function () {
 								oMultiComboBox.focus();
 								// sometimes the focus in not in the test browser, need to call the onfocusin function hardly to set the message strip
 								oField1.onfocusin();
@@ -840,7 +834,7 @@ sap.ui.define([
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
 					return new Promise(function (resolve) {
-						wait(iWaitTimeout).then(function () {
+						EditorQunitUtils.wait().then(function () {
 							var oField1 = this.oCardEditor.getAggregation("_formContent")[0].getAggregation("_field").getAggregation("content")[1];
 							var oCheckBox = oField1.getAggregation("_field");
 							assert.ok(!oCheckBox.getSelected(), "Selected is false");
@@ -933,7 +927,7 @@ sap.ui.define([
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
 					return new Promise(function (resolve) {
-						wait(iWaitTimeout).then(function () {
+						EditorQunitUtils.wait().then(function () {
 							var oField1 = this.oCardEditor.getAggregation("_formContent")[0].getAggregation("_field").getAggregation("content")[1];
 							var oSwitch = oField1.getAggregation("_field");
 							assert.ok(!oSwitch.getState(), "State is false");
@@ -1673,7 +1667,7 @@ sap.ui.define([
 					var cardPreview = this.oCardEditor.getAggregation("_preview");
 					cardPreview.addEventDelegate({
 						onAfterRendering: function () {
-							wait().then(function () {
+							EditorQunitUtils.wait().then(function () {
 								assert.ok(cardPreview._oCardPreview.getCardHeader().shouldShowIcon(), "Preview Header icon is not hidden");
 								resolve();
 							});
@@ -1717,11 +1711,11 @@ sap.ui.define([
 					var cardPreview = this.oCardEditor.getAggregation("_preview");
 					cardPreview.addEventDelegate({
 						onAfterRendering: function () {
-							wait().then(function () {
+							EditorQunitUtils.wait().then(function () {
 								oSelect.setSelectedIndex(0);
 								oSelect.fireChange({ selectedItem: oSelect.getItems()[0] });
 								oSelect.focus();
-								wait().then(function () {
+								EditorQunitUtils.wait().then(function () {
 									assert.ok(!cardPreview._oCardPreview.getCardHeader().shouldShowIcon(), "Preview Header icon is hidden after selecing 'None'");
 									resolve();
 								});

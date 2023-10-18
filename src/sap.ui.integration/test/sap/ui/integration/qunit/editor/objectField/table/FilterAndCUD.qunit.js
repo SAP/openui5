@@ -74,14 +74,6 @@ sap.ui.define([
 	Core.getConfiguration().setLanguage("en");
 	document.body.className = document.body.className + " sapUiSizeCompact ";
 
-	function wait(ms) {
-		return new Promise(function (resolve) {
-			setTimeout(function () {
-				resolve();
-			}, ms || 1000);
-		});
-	}
-
 	function cleanUUID(oValue) {
 		var oClonedValue = deepClone(oValue, 500);
 		if (typeof oClonedValue === "string") {
@@ -212,7 +204,7 @@ sap.ui.define([
 			assert.ok(oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column enabled");
 			oKeyColumn = oTable.getColumns()[1];
 			oTable.filter(oKeyColumn, "new");
-			return wait();
+			return EditorQunitUtils.wait();
 		}).then(function () {
 			return EditorQunitUtils.openColumnMenu(oKeyColumn, assert);
 		}).then(function () {
@@ -221,7 +213,7 @@ sap.ui.define([
 			oInput = oMenu.getAggregation("_quickActions")[0].getQuickActions()[0].getContent()[0];
 			assert.equal(oInput.getValue(), "new", "Table: Key Column filter value OK");
 			oMenu.close();
-			return wait();
+			return EditorQunitUtils.wait();
 		}).then(function () {
 			assert.ok(deepEqual(cleanDT(oField._getCurrentProperty("value")), oValue), "Field 1: Value not changed after filtering");
 			assert.equal(oTable.getBinding().getCount(), 1, "Table: RowCount length is 1");
@@ -234,7 +226,7 @@ sap.ui.define([
 			var oAddButton = oToolbar.getContent()[1];
 			assert.ok(oAddButton.getVisible(), "Table toolbar: add button visible");
 			oAddButton.firePress();
-			return wait();
+			return EditorQunitUtils.wait();
 		}).then(function () {
 			var oSimpleForm = oField._oObjectDetailsPopover.getContent()[0].getPages()[0].getContent()[0];
 			assert.ok(oSimpleForm.isA("sap.ui.layout.form.SimpleForm"), "Field: Control is SimpleForm");
@@ -258,7 +250,7 @@ sap.ui.define([
 			assert.ok(deepEqual(cleanUUID(oFormField.getValue()), oUpdatedNewObject1), "SimpleForm field8: Has updated value");
 			var oAddButtonInPopover = oField._oObjectDetailsPopover._oAddButton;
 			oAddButtonInPopover.firePress();
-			return wait();
+			return EditorQunitUtils.wait();
 		}).then(function () {
 			assert.equal(oTable.getBinding().getCount(), 2, "Table: value length is 2");
 			assert.ok(deepEqual(cleanUUID(oTable.getBinding().getContexts()[1].getObject()), {
@@ -282,7 +274,7 @@ sap.ui.define([
 			}), "Field 1: Value changed");
 			oTable.filter(oKeyColumn, "");
 			assert.ok(!oKeyColumn.getFiltered(), "Table: Column Key is not filtered anymore");
-			return wait();
+			return EditorQunitUtils.wait();
 		}).then(function () {
 			assert.equal(oTable.getBinding().getCount(), 10, "Table: RowCount after removing filter");
 			oCell = oTable.getRows()[0].getCells()[0];
@@ -296,7 +288,7 @@ sap.ui.define([
 			}), "Field 1: Value");
 			// scroll to the bottom
 			oTable._getScrollExtension().getVerticalScrollbar().scrollTop = 200;
-			return wait();
+			return EditorQunitUtils.wait();
 		}).then(function () {
 			var oRow5 = oTable.getRows()[4];
 			var oSelectionCell5 = oRow5.getCells()[0];
@@ -358,7 +350,7 @@ sap.ui.define([
 			assert.ok(oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column enabled");
 			oKeyColumn = oTable.getColumns()[1];
 			oTable.filter(oKeyColumn, "new");
-			return wait();
+			return EditorQunitUtils.wait();
 		}).then(function() {
 			return EditorQunitUtils.openColumnMenu(oKeyColumn, assert);
 		}).then(function () {
@@ -367,7 +359,7 @@ sap.ui.define([
 			oInput = oMenu.getAggregation("_quickActions")[0].getQuickActions()[0].getContent()[0];
 			assert.equal(oInput.getValue(), "new", "Table: Key Column filter value OK");
 			oMenu.close();
-			return wait();
+			return EditorQunitUtils.wait();
 		}).then(function() {
 			assert.ok(deepEqual(cleanDT(oField._getCurrentProperty("value")), oValue), "Field 1: Value not changed after filtering");
 			assert.equal(oTable.getBinding().getCount(), 1, "Table: RowCount length is 1");
@@ -380,7 +372,7 @@ sap.ui.define([
 			var oAddButton = oToolbar.getContent()[1];
 			assert.ok(oAddButton.getVisible(), "Table toolbar: add button visible");
 			oAddButton.firePress();
-			return wait();
+			return EditorQunitUtils.wait();
 		}).then(function () {
 			var oSimpleForm = oField._oObjectDetailsPopover.getContent()[0].getPages()[0].getContent()[0];
 			assert.ok(oSimpleForm.isA("sap.ui.layout.form.SimpleForm"), "Field: Control is SimpleForm");
@@ -404,7 +396,7 @@ sap.ui.define([
 			assert.ok(deepEqual(cleanUUID(oFormField.getValue()), Object.assign(deepClone(oUpdatedNewObject1), {"key": "keyne01"})), "SimpleForm field8: Has updated value");
 			var oAddButtonInPopover = oField._oObjectDetailsPopover._oAddButton;
 			oAddButtonInPopover.firePress();
-			return wait();
+			return EditorQunitUtils.wait();
 		}).then(function () {
 			assert.equal(oTable.getBinding().getCount(), 1, "Table: value length is 1");
 			assert.ok(!oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column not enabled");
@@ -419,7 +411,7 @@ sap.ui.define([
 			}), "Field 1: Value changed");
 			oTable.filter(oKeyColumn, "");
 			assert.ok(!oKeyColumn.getFiltered(), "Table: Column Key is not filtered anymore");
-			return wait();
+			return EditorQunitUtils.wait();
 		}).then(function () {
 			assert.equal(oTable.getBinding().getCount(), 10, "Table: RowCount after removing filter");
 			oCell = oTable.getRows()[0].getCells()[0];
@@ -433,7 +425,7 @@ sap.ui.define([
 			}), "Field 1: Value");
 			// scroll to the bottom
 			oTable._getScrollExtension().getVerticalScrollbar().scrollTop = 200;
-			return wait();
+			return EditorQunitUtils.wait();
 		}).then(function () {
 			var oRow5 = oTable.getRows()[4];
 			var oSelectionCell5 = oRow5.getCells()[0];
@@ -499,7 +491,7 @@ sap.ui.define([
 			assert.equal(oToolbar.getContent().length, 7, "Table toolbar: content length");
 			oAddButton = oToolbar.getContent()[1];
 			assert.ok(oAddButton.getVisible(), "Table toolbar: add button visible");
-			return wait();
+			return EditorQunitUtils.wait();
 		}).then(function () {
 			oAddButton.firePress();
 			var oSimpleForm = oField._oObjectDetailsPopover.getContent()[0].getPages()[0].getContent()[0];
@@ -524,7 +516,7 @@ sap.ui.define([
 			assert.ok(deepEqual(cleanUUID(oFormField.getValue()), oUpdatedNewObject1), "SimpleForm field8: Has updated value");
 			var oAddButtonInPopover = oField._oObjectDetailsPopover._oAddButton;
 			oAddButtonInPopover.firePress();
-			return wait();
+			return EditorQunitUtils.wait();
 		}).then(function () {
 			assert.equal(oTable.getBinding().getCount(), 10, "Table: value length is 10");
 			assert.ok(deepEqual(cleanUUID(oTable.getBinding().getContexts()[9].getObject()), {
@@ -546,7 +538,7 @@ sap.ui.define([
 			assert.ok(oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column enabled");
 			oKeyColumn = oTable.getColumns()[1];
 			oTable.filter(oKeyColumn, "new");
-			return wait();
+			return EditorQunitUtils.wait();
 		}).then(function () {
 			return EditorQunitUtils.openColumnMenu(oKeyColumn, assert);
 		}).then(function () {
@@ -556,7 +548,7 @@ sap.ui.define([
 			oInput = oMenu.getAggregation("_quickActions")[0].getQuickActions()[0].getContent()[0];
 			assert.equal(oInput.getValue(), "new", "Table: Key Column filter value OK");
 			oMenu.close();
-			return wait();
+			return EditorQunitUtils.wait();
 		}).then(function () {
 			assert.ok(oKeyColumn.getFiltered(), "Table: Column Key is filtered");
 			assert.equal(oTable.getBinding().getCount(), 2, "Table: RowCount after filtering new");
@@ -584,7 +576,7 @@ sap.ui.define([
 				userInteraction: true
 			});
 			oEditButton.firePress();
-			return wait();
+			return EditorQunitUtils.wait();
 		}).then(function () {
 			var oAddButtonInPopover = oField._oObjectDetailsPopover._oAddButton;
 			assert.ok(!oAddButtonInPopover.getVisible(), "Popover: add button not visible");
@@ -691,7 +683,7 @@ sap.ui.define([
 				"number": 0.55
 			}), "SimpleForm field textArea: Has changed value");
 			oUpdateButtonInPopover.firePress();
-			return wait();
+			return EditorQunitUtils.wait();
 		}).then(function () {
 			assert.ok(deepEqual(cleanDT(oField._getCurrentProperty("value")), {
 				"icon": "sap-icon://add",
@@ -768,7 +760,7 @@ sap.ui.define([
 			assert.equal(oToolbar.getContent().length, 7, "Table toolbar: content length");
 			oAddButton = oToolbar.getContent()[1];
 			assert.ok(oAddButton.getVisible(), "Table toolbar: add button visible");
-			return wait();
+			return EditorQunitUtils.wait();
 		}).then(function () {
 			oAddButton.firePress();
 			var oSimpleForm = oField._oObjectDetailsPopover.getContent()[0].getPages()[0].getContent()[0];
@@ -793,7 +785,7 @@ sap.ui.define([
 			assert.ok(deepEqual(cleanUUID(oFormField.getValue()), oUpdatedNewObject1), "SimpleForm field8: Has updated value");
 			var oAddButtonInPopover = oField._oObjectDetailsPopover._oAddButton;
 			oAddButtonInPopover.firePress();
-			return wait();
+			return EditorQunitUtils.wait();
 		}).then(function () {
 			assert.equal(oTable.getBinding().getCount(), 10, "Table: value length is 10");
 			assert.ok(deepEqual(cleanUUID(oTable.getBinding().getContexts()[9].getObject()), {
@@ -823,7 +815,7 @@ sap.ui.define([
 			oInput = oMenu.getAggregation("_quickActions")[0].getQuickActions()[0].getContent()[0];
 			assert.equal(oInput.getValue(), "new", "Table: Key Column filter value OK");
 			oMenu.close();
-			return wait();
+			return EditorQunitUtils.wait();
 		}).then(function() {
 			assert.ok(oKeyColumn.getFiltered(), "Table: Column Key is filtered");
 			assert.equal(oTable.getBinding().getCount(), 2, "Table: RowCount after filtering new");
@@ -851,7 +843,7 @@ sap.ui.define([
 				userInteraction: true
 			});
 			oEditButton.firePress();
-			return wait();
+			return EditorQunitUtils.wait();
 		}).then(function () {
 			var oAddButtonInPopover = oField._oObjectDetailsPopover._oAddButton;
 			assert.ok(!oAddButtonInPopover.getVisible(), "Popover: add button not visible");
@@ -951,7 +943,7 @@ sap.ui.define([
 				"_dt": {"_selected": false}
 			})), "SimpleForm field8: Has updated value");
 			oUpdateButtonInPopover.firePress();
-			return wait();
+			return EditorQunitUtils.wait();
 		}).then(function () {
 			assert.ok(deepEqual(cleanDT(oField._getCurrentProperty("value")), {"icon": "sap-icon://add","text": "text","url": "http://","number": 0.5,"key": "keynew01"}), "Field 1: Value");
 			assert.equal(oTable.getBinding().getCount(), 1, "Table: value length is 1");
@@ -1010,7 +1002,7 @@ sap.ui.define([
 			assert.equal(oToolbar.getContent().length, 7, "Table toolbar: content length");
 			oAddButton = oToolbar.getContent()[1];
 			assert.ok(oAddButton.getVisible(), "Table toolbar: add button visible");
-			return wait();
+			return EditorQunitUtils.wait();
 		}).then(function() {
 			oAddButton.firePress();
 			var oSimpleForm = oField._oObjectDetailsPopover.getContent()[0].getPages()[0].getContent()[0];
@@ -1035,7 +1027,7 @@ sap.ui.define([
 			assert.ok(deepEqual(cleanUUID(oFormField.getValue()), oUpdatedNewObject1), "SimpleForm field8: Has updated value");
 			var oAddButtonInPopover = oField._oObjectDetailsPopover._oAddButton;
 			oAddButtonInPopover.firePress();
-			return wait();
+			return EditorQunitUtils.wait();
 		}).then(function () {
 			assert.equal(oTable.getBinding().getCount(), 10, "Table: value length is 10");
 			assert.ok(deepEqual(cleanUUID(oTable.getBinding().getContexts()[9].getObject()), {
@@ -1064,7 +1056,7 @@ sap.ui.define([
 			oInput = oMenu.getAggregation("_quickActions")[0].getQuickActions()[0].getContent()[0];
 			assert.equal(oInput.getValue(), "new", "Table: Key Column filter value OK");
 			oMenu.close();
-			return wait();
+			return EditorQunitUtils.wait();
 		}).then(function () {
 			assert.ok(oKeyColumn.getFiltered(), "Table: Column Key is filtered");
 			assert.equal(oTable.getBinding().getCount(), 2, "Table: RowCount after filtering new");
@@ -1107,7 +1099,7 @@ sap.ui.define([
 				userInteraction: true
 			});
 			oEditButton.firePress();
-			return wait();
+			return EditorQunitUtils.wait();
 		}).then(function () {
 			var oAddButtonInPopover = oField._oObjectDetailsPopover._oAddButton;
 			assert.ok(!oAddButtonInPopover.getVisible(), "Popover: add button not visible");
@@ -1201,7 +1193,7 @@ sap.ui.define([
 			assert.ok(oFormField.getEditable(), "SimpleForm Field8: Editable");
 			assert.ok(deepEqual(cleanUUID(oFormField.getValue()), Object.assign(deepClone(oChangedObject, 500), {"key": "keynew01"})), "SimpleForm field textArea: Has changed value");
 			oUpdateButtonInPopover.firePress();
-			return wait();
+			return EditorQunitUtils.wait();
 		}).then(function () {
 			assert.ok(deepEqual(cleanDT(oField._getCurrentProperty("value")), {
 				"text": "text01",
@@ -1281,7 +1273,7 @@ sap.ui.define([
 			assert.equal(oToolbar.getContent().length, 7, "Table toolbar: content length");
 			oAddButton = oToolbar.getContent()[1];
 			assert.ok(oAddButton.getVisible(), "Table toolbar: add button visible");
-			return wait();
+			return EditorQunitUtils.wait();
 		}).then(function() {
 			oAddButton.firePress();
 			var oSimpleForm = oField._oObjectDetailsPopover.getContent()[0].getPages()[0].getContent()[0];
@@ -1306,7 +1298,7 @@ sap.ui.define([
 			assert.ok(deepEqual(cleanUUID(oFormField.getValue()), oUpdatedNewObject1), "SimpleForm field8: Has updated value");
 			var oAddButtonInPopover = oField._oObjectDetailsPopover._oAddButton;
 			oAddButtonInPopover.firePress();
-			return wait();
+			return EditorQunitUtils.wait();
 		}).then(function () {
 			assert.equal(oTable.getBinding().getCount(), 10, "Table: value length is 10");
 			assert.ok(deepEqual(cleanUUID(oTable.getBinding().getContexts()[9].getObject()), {
@@ -1336,7 +1328,7 @@ sap.ui.define([
 			oInput = oMenu.getAggregation("_quickActions")[0].getQuickActions()[0].getContent()[0];
 			assert.equal(oInput.getValue(), "new", "Table: Key Column filter value OK");
 			oMenu.close();
-			return wait();
+			return EditorQunitUtils.wait();
 		}).then(function () {
 			assert.ok(oKeyColumn.getFiltered(), "Table: Column Key is filtered");
 			assert.equal(oTable.getBinding().getCount(), 2, "Table: RowCount after filtering new");
@@ -1379,7 +1371,7 @@ sap.ui.define([
 				userInteraction: true
 			});
 			oEditButton.firePress();
-			return wait();
+			return EditorQunitUtils.wait();
 		}).then(function () {
 			var oAddButtonInPopover = oField._oObjectDetailsPopover._oAddButton;
 			assert.ok(!oAddButtonInPopover.getVisible(), "Popover: add button not visible");
@@ -1473,7 +1465,7 @@ sap.ui.define([
 			assert.ok(oFormField.getEditable(), "SimpleForm Field8: Editable");
 			assert.ok(deepEqual(cleanUUID(oFormField.getValue()), Object.assign(deepClone(oChangedObject, 500), {"key": "keyne01"})), "SimpleForm field textArea: Has changed value");
 			oUpdateButtonInPopover.firePress();
-			return wait();
+			return EditorQunitUtils.wait();
 		}).then(function () {
 			assert.ok(deepEqual(cleanDT(oField._getCurrentProperty("value")), {
 				"text": "text01",
@@ -1547,7 +1539,7 @@ sap.ui.define([
 			assert.equal(oToolbar.getContent().length, 7, "Table toolbar: content length");
 			oAddButton = oToolbar.getContent()[1];
 			assert.ok(oAddButton.getVisible(), "Table toolbar: add button visible");
-			return wait();
+			return EditorQunitUtils.wait();
 		}).then(function() {
 			oAddButton.firePress();
 			var oSimpleForm = oField._oObjectDetailsPopover.getContent()[0].getPages()[0].getContent()[0];
@@ -1572,7 +1564,7 @@ sap.ui.define([
 			assert.ok(deepEqual(cleanUUID(oFormField.getValue()), oUpdatedNewObject1), "SimpleForm field8: Has updated value");
 			var oAddButtonInPopover = oField._oObjectDetailsPopover._oAddButton;
 			oAddButtonInPopover.firePress();
-			return wait();
+			return EditorQunitUtils.wait();
 		}).then(function () {
 			assert.equal(oTable.getBinding().getCount(), 10, "Table: value length is 10");
 			assert.ok(deepEqual(cleanUUID(oTable.getBinding().getContexts()[9].getObject()), {
@@ -1602,7 +1594,7 @@ sap.ui.define([
 			oInput = oMenu.getAggregation("_quickActions")[0].getQuickActions()[0].getContent()[0];
 			assert.equal(oInput.getValue(), "new", "Table: Key Column filter value OK");
 			oMenu.close();
-			return wait();
+			return EditorQunitUtils.wait();
 		}).then(function () {
 			assert.ok(oKeyColumn.getFiltered(), "Table: Column Key is filtered");
 			assert.equal(oTable.getBinding().getCount(), 2, "Table: RowCount after filtering new");
@@ -1639,13 +1631,13 @@ sap.ui.define([
 			assert.equal(oTable.getSelectedIndices()[0], 1, "Table: selected row 2");
 			assert.ok(oDeleteButton.getEnabled(), "Table toolbar: delete button enabled");
 			oDeleteButton.firePress();
-			return wait();
+			return EditorQunitUtils.wait();
 		}).then(function () {
 			var sMessageBoxId = document.querySelector(".sapMMessageBox").id;
 			var oMessageBox = Core.byId(sMessageBoxId);
 			var oOKButton = oMessageBox._getToolbar().getContent()[1];
 			oOKButton.firePress();
-			return wait();
+			return EditorQunitUtils.wait();
 		}).then(function () {
 			assert.ok(!oField._getCurrentProperty("value"), "Field 1: Value deleted");
 			assert.equal(oTable.getBinding().getCount(), 1, "Table: value length is 1");
@@ -1704,7 +1696,7 @@ sap.ui.define([
 			assert.equal(oToolbar.getContent().length, 7, "Table toolbar: content length");
 			oAddButton = oToolbar.getContent()[1];
 			assert.ok(oAddButton.getVisible(), "Table toolbar: add button visible");
-			return wait();
+			return EditorQunitUtils.wait();
 		}).then(function() {
 			oAddButton.firePress();
 			var oSimpleForm = oField._oObjectDetailsPopover.getContent()[0].getPages()[0].getContent()[0];
@@ -1729,7 +1721,7 @@ sap.ui.define([
 			assert.ok(deepEqual(cleanUUID(oFormField.getValue()), oUpdatedNewObject1), "SimpleForm field8: Has updated value");
 			var oAddButtonInPopover = oField._oObjectDetailsPopover._oAddButton;
 			oAddButtonInPopover.firePress();
-			return wait();
+			return EditorQunitUtils.wait();
 		}).then(function () {
 			assert.equal(oTable.getBinding().getCount(), 10, "Table: value length is 10");
 			assert.ok(deepEqual(cleanUUID(oTable.getBinding().getContexts()[9].getObject()), {
@@ -1759,7 +1751,7 @@ sap.ui.define([
 			oInput = oMenu.getAggregation("_quickActions")[0].getQuickActions()[0].getContent()[0];
 			assert.equal(oInput.getValue(), "new", "Table: Key Column filter value OK");
 			oMenu.close();
-			return wait();
+			return EditorQunitUtils.wait();
 		}).then(function () {
 			assert.ok(oKeyColumn.getFiltered(), "Table: Column Key is filtered");
 			assert.equal(oTable.getBinding().getCount(), 2, "Table: RowCount after filtering new");
@@ -1796,13 +1788,13 @@ sap.ui.define([
 			assert.equal(oTable.getSelectedIndices()[0], 0, "Table: selected row 1");
 			assert.ok(oDeleteButton.getEnabled(), "Table toolbar: delete button enabled");
 			oDeleteButton.firePress();
-			return wait();
+			return EditorQunitUtils.wait();
 		}).then(function () {
 			var sMessageBoxId = document.querySelector(".sapMMessageBox").id;
 			var oMessageBox = Core.byId(sMessageBoxId);
 			var oOKButton = oMessageBox._getToolbar().getContent()[1];
 			oOKButton.firePress();
-			return wait();
+			return EditorQunitUtils.wait();
 		}).then(function () {
 			assert.ok(deepEqual(cleanDT(oField._getCurrentProperty("value")), {"icon": "sap-icon://add","text": "text","url": "http://","number": 0.5,"key": "keynew01"}), "Field 1: Value");
 			assert.equal(oTable.getBinding().getCount(), 1, "Table: value length is 1");

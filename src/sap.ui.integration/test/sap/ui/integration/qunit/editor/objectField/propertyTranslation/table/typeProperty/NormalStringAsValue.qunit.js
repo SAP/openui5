@@ -7,7 +7,8 @@ sap.ui.define([
 	"./../../../../ContextHost",
 	"sap/base/util/deepEqual",
 	"sap/ui/core/Core",
-	"sap/base/util/deepClone"
+	"sap/base/util/deepClone",
+	"qunit/designtime/EditorQunitUtils"
 ], function (
 	x,
 	Editor,
@@ -16,7 +17,8 @@ sap.ui.define([
 	ContextHost,
 	deepEqual,
 	Core,
-	deepClone
+	deepClone,
+	EditorQunitUtils
 ) {
 	"use strict";
 	QUnit.config.reorder = false;
@@ -87,27 +89,6 @@ sap.ui.define([
 		}
 	};
 
-	function createEditor(sLanguage, oDesigntime) {
-		sLanguage = sLanguage || "en";
-		Core.getConfiguration().setLanguage(sLanguage);
-		var oEditor = new Editor({
-			designtime: oDesigntime
-		});
-		var oContent = document.getElementById("content");
-		if (!oContent) {
-			oContent = document.createElement("div");
-			oContent.style.position = "absolute";
-			oContent.style.top = "200px";
-			oContent.style.background = "white";
-
-			oContent.setAttribute("id", "content");
-			document.body.appendChild(oContent);
-			document.body.style.zIndex = 1000;
-		}
-		oEditor.placeAt(oContent);
-		return oEditor;
-	}
-
 	function destroyEditor(oEditor) {
 		oEditor.destroy();
 		var oContent = document.getElementById("content");
@@ -119,14 +100,6 @@ sap.ui.define([
 
 	Core.getConfiguration().setLanguage("en");
 	document.body.className = document.body.className + " sapUiSizeCompact ";
-
-	function wait(ms) {
-		return new Promise(function (resolve) {
-			setTimeout(function () {
-				resolve();
-			}, ms || 1000);
-		});
-	}
 
 	function cleanUUID(oValue) {
 		var oClonedValue = deepClone(oValue, 500);
@@ -166,13 +139,13 @@ sap.ui.define([
 		QUnit.test("update translation values and delete", function (assert) {
 			var that = this;
 			return new Promise(function (resolve, reject) {
-				that.oEditor = createEditor("en");
+				that.oEditor = EditorQunitUtils.createEditor("en");
 				that.oEditor.setJson({
 					baseUrl: sBaseUrl,
 					host: "contexthost",
 					manifest: oManifestForObjectFieldsWithTranslation
 				});
-				that.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(that.oEditor).then(function () {
 					assert.ok(that.oEditor.isReady(), "Editor is ready");
 					var oLabel = that.oEditor.getAggregation("_formContent")[1];
 					var oField = that.oEditor.getAggregation("_formContent")[2];
@@ -199,7 +172,7 @@ sap.ui.define([
 					oAddButton.onAfterRendering = function(oEvent) {
 						oAddButton.onAfterRendering = function () {};
 						oAddButton.firePress();
-						wait().then(function () {
+						EditorQunitUtils.wait().then(function () {
 							var oAddButtonInPopover = oField._oObjectDetailsPopover._oAddButton;
 							assert.ok(oAddButtonInPopover.getVisible(), "Popover: add button visible");
 							var oUpdateButtonInPopover = oField._oObjectDetailsPopover._oUpdateButton;
@@ -229,7 +202,7 @@ sap.ui.define([
 							assert.ok(oValueHelpIcon3.isA("sap.ui.core.Icon"), "SimpleForm field 3: Input value help icon");
 							assert.equal(oValueHelpIcon3.getSrc(), "sap-icon://translate", "SimpleForm field 3: Input value help icon src");
 							oValueHelpIcon3.firePress();
-							wait(1500).then(function () {
+							EditorQunitUtils.wait(1500).then(function () {
 								var oTranslationListPage3 = oField._oTranslationListPage;
 								var oSaveButton3 = oTranslationListPage3.getFooter().getContent()[1];
 								assert.ok(oSaveButton3.getVisible(), "TranslationListPage3 footer: save button visible");
@@ -259,11 +232,11 @@ sap.ui.define([
 										break;
 									}
 								}
-								wait().then(function () {
+								EditorQunitUtils.wait().then(function () {
 									assert.ok(oSaveButton3.getEnabled(), "TranslationListPage3 footer: save button enabled");
 									assert.ok(oResetButton3.getEnabled(), "TranslationListPage3 footer: reset button enabled");
 									oSaveButton3.firePress();
-									wait().then(function () {
+									EditorQunitUtils.wait().then(function () {
 										oLanguageItems3 = oTranslationListPage3.getContent()[0].getItems();
 										assert.equal(oLanguageItems3.length, 51, "oTranslationListPage3 Content: length");
 										for (var i = 0; i < oLanguageItems3.length; i++) {
@@ -284,13 +257,13 @@ sap.ui.define([
 										var sTranslationTextOfEN = oField.getTranslationValueInTexts("en", sUUID, "text");
 										assert.equal(sTranslationTextOfEN, "text en", "Texts: Translation text of EN correct");
 										oTranslationListPage3._navBtn.firePress();
-										wait().then(function () {
+										EditorQunitUtils.wait().then(function () {
 											oAddButtonInPopover.firePress();
-											wait().then(function () {
+											EditorQunitUtils.wait().then(function () {
 												assert.equal(oTable.getBinding().getCount(), 9, "Table: value length is 9");
 												// scroll to the bottom
 												oTable._getScrollExtension().getVerticalScrollbar().scrollTop = 200;
-												wait().then(function () {
+												EditorQunitUtils.wait().then(function () {
 													var oNewObjectValue = deepClone(oNewObject, 500);
 													delete oNewObjectValue._dt._selected;
 													assert.ok(deepEqual(oField._getCurrentProperty("value"), oNewObjectValue), "Field 1: Value changed to new object");
@@ -309,12 +282,12 @@ sap.ui.define([
 													});
 													assert.ok(oDeleteButton.getEnabled(), "Table toolbar: delete button enabled");
 													oDeleteButton.firePress();
-													wait().then(function () {
+													EditorQunitUtils.wait().then(function () {
 														var sMessageBoxId = document.querySelector(".sapMMessageBox").id;
 														var oMessageBox = Core.byId(sMessageBoxId);
 														var oOKButton = oMessageBox._getToolbar().getContent()[1];
 														oOKButton.firePress();
-														wait().then(function () {
+														EditorQunitUtils.wait().then(function () {
 															assert.equal(oTable.getBinding().getCount(), 8, "Table: value length is 8");
 															sTranslationTextOfEN = oField.getTranslationValueInTexts("en", sUUID, "text");
 															assert.ok(!sTranslationTextOfEN, "Texts: no value");
@@ -338,13 +311,13 @@ sap.ui.define([
 		QUnit.test("update translation values during adding new object, then cancel the add process", function (assert) {
 			var that = this;
 			return new Promise(function (resolve, reject) {
-				that.oEditor = createEditor("en");
+				that.oEditor = EditorQunitUtils.createEditor("en");
 				that.oEditor.setJson({
 					baseUrl: sBaseUrl,
 					host: "contexthost",
 					manifest: oManifestForObjectFieldsWithTranslation
 				});
-				that.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(that.oEditor).then(function () {
 					assert.ok(that.oEditor.isReady(), "Editor is ready");
 					var oLabel = that.oEditor.getAggregation("_formContent")[1];
 					var oField = that.oEditor.getAggregation("_formContent")[2];
@@ -371,7 +344,7 @@ sap.ui.define([
 					oAddButton.onAfterRendering = function(oEvent) {
 						oAddButton.onAfterRendering = function () {};
 						oAddButton.firePress();
-						wait().then(function () {
+						EditorQunitUtils.wait().then(function () {
 							var oAddButtonInPopover = oField._oObjectDetailsPopover._oAddButton;
 							assert.ok(oAddButtonInPopover.getVisible(), "Popover: add button visible");
 							var oUpdateButtonInPopover = oField._oObjectDetailsPopover._oUpdateButton;
@@ -401,7 +374,7 @@ sap.ui.define([
 							assert.ok(oValueHelpIcon3.isA("sap.ui.core.Icon"), "SimpleForm field 3: Input value help icon");
 							assert.equal(oValueHelpIcon3.getSrc(), "sap-icon://translate", "SimpleForm field 3: Input value help icon src");
 							oValueHelpIcon3.firePress();
-							wait(1500).then(function () {
+							EditorQunitUtils.wait(1500).then(function () {
 								var oTranslationListPage3 = oField._oTranslationListPage;
 								var oSaveButton3 = oTranslationListPage3.getFooter().getContent()[1];
 								assert.ok(oSaveButton3.getVisible(), "TranslationListPage3 footer: save button visible");
@@ -431,11 +404,11 @@ sap.ui.define([
 										break;
 									}
 								}
-								wait().then(function () {
+								EditorQunitUtils.wait().then(function () {
 									assert.ok(oSaveButton3.getEnabled(), "TranslationListPage3 footer: save button enabled");
 									assert.ok(oResetButton3.getEnabled(), "TranslationListPage3 footer: reset button enabled");
 									oSaveButton3.firePress();
-									wait().then(function () {
+									EditorQunitUtils.wait().then(function () {
 										oLanguageItems3 = oTranslationListPage3.getContent()[0].getItems();
 										assert.equal(oLanguageItems3.length, 51, "oTranslationListPage3 Content: length");
 										for (var i = 0; i < oLanguageItems3.length; i++) {
@@ -456,9 +429,9 @@ sap.ui.define([
 										var sTranslationTextOfEN = oField.getTranslationValueInTexts("en", sUUID, "text");
 										assert.equal(sTranslationTextOfEN, "text en", "Texts: Translation text of EN correct");
 										oTranslationListPage3._navBtn.firePress();
-										wait().then(function () {
+										EditorQunitUtils.wait().then(function () {
 											oCancelButtonInPopover.firePress();
-											wait().then(function () {
+											EditorQunitUtils.wait().then(function () {
 												assert.ok(deepEqual(oField._getCurrentProperty("value"), oValue03), "Field 1: Value");
 												sTranslationTextOfEN = oField.getTranslationValueInTexts("en", sUUID, "text");
 												assert.ok(!sTranslationTextOfEN, "Texts: no value");
@@ -478,13 +451,13 @@ sap.ui.define([
 		QUnit.test("change translation values but reset", function (assert) {
 			var that = this;
 			return new Promise(function (resolve, reject) {
-				that.oEditor = createEditor("en");
+				that.oEditor = EditorQunitUtils.createEditor("en");
 				that.oEditor.setJson({
 					baseUrl: sBaseUrl,
 					host: "contexthost",
 					manifest: oManifestForObjectFieldsWithTranslation
 				});
-				that.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(that.oEditor).then(function () {
 					assert.ok(that.oEditor.isReady(), "Editor is ready");
 					var oLabel = that.oEditor.getAggregation("_formContent")[1];
 					var oField = that.oEditor.getAggregation("_formContent")[2];
@@ -511,7 +484,7 @@ sap.ui.define([
 					oAddButton.onAfterRendering = function(oEvent) {
 						oAddButton.onAfterRendering = function () {};
 						oAddButton.firePress();
-						wait().then(function () {
+						EditorQunitUtils.wait().then(function () {
 							var oAddButtonInPopover = oField._oObjectDetailsPopover._oAddButton;
 							assert.ok(oAddButtonInPopover.getVisible(), "Popover: add button visible");
 							var oUpdateButtonInPopover = oField._oObjectDetailsPopover._oUpdateButton;
@@ -541,7 +514,7 @@ sap.ui.define([
 							assert.ok(oValueHelpIcon3.isA("sap.ui.core.Icon"), "SimpleForm field 3: Input value help icon");
 							assert.equal(oValueHelpIcon3.getSrc(), "sap-icon://translate", "SimpleForm field 3: Input value help icon src");
 							oValueHelpIcon3.firePress();
-							wait(1500).then(function () {
+							EditorQunitUtils.wait(1500).then(function () {
 								var oTranslationListPage3 = oField._oTranslationListPage;
 								var oSaveButton3 = oTranslationListPage3.getFooter().getContent()[1];
 								assert.ok(oSaveButton3.getVisible(), "TranslationListPage3 footer: save button visible");
@@ -571,11 +544,11 @@ sap.ui.define([
 										break;
 									}
 								}
-								wait().then(function () {
+								EditorQunitUtils.wait().then(function () {
 									assert.ok(oSaveButton3.getEnabled(), "TranslationListPage3 footer: save button enabled");
 									assert.ok(oResetButton3.getEnabled(), "TranslationListPage3 footer: reset button enabled");
 									oResetButton3.firePress();
-									wait().then(function () {
+									EditorQunitUtils.wait().then(function () {
 										assert.ok(!oSaveButton3.getEnabled(), "TranslationListPage3 footer: save button disabled");
 										assert.ok(!oResetButton3.getEnabled(), "TranslationListPage3 footer: reset button disabled");
 										oLanguageItems3 = oTranslationListPage3.getContent()[0].getItems();
@@ -608,13 +581,13 @@ sap.ui.define([
 		QUnit.test("update translation values and change property value to another normal value", function (assert) {
 			var that = this;
 			return new Promise(function (resolve, reject) {
-				that.oEditor = createEditor("en");
+				that.oEditor = EditorQunitUtils.createEditor("en");
 				that.oEditor.setJson({
 					baseUrl: sBaseUrl,
 					host: "contexthost",
 					manifest: oManifestForObjectFieldsWithTranslation
 				});
-				that.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(that.oEditor).then(function () {
 					assert.ok(that.oEditor.isReady(), "Editor is ready");
 					var oLabel = that.oEditor.getAggregation("_formContent")[1];
 					var oField = that.oEditor.getAggregation("_formContent")[2];
@@ -641,7 +614,7 @@ sap.ui.define([
 					oAddButton.onAfterRendering = function(oEvent) {
 						oAddButton.onAfterRendering = function () {};
 						oAddButton.firePress();
-						wait().then(function () {
+						EditorQunitUtils.wait().then(function () {
 							var oAddButtonInPopover = oField._oObjectDetailsPopover._oAddButton;
 							assert.ok(oAddButtonInPopover.getVisible(), "Popover: add button visible");
 							var oUpdateButtonInPopover = oField._oObjectDetailsPopover._oUpdateButton;
@@ -671,7 +644,7 @@ sap.ui.define([
 							assert.ok(oValueHelpIcon3.isA("sap.ui.core.Icon"), "SimpleForm field 3: Input value help icon");
 							assert.equal(oValueHelpIcon3.getSrc(), "sap-icon://translate", "SimpleForm field 3: Input value help icon src");
 							oValueHelpIcon3.firePress();
-							wait(1500).then(function () {
+							EditorQunitUtils.wait(1500).then(function () {
 								var oTranslationListPage3 = oField._oTranslationListPage;
 								var oSaveButton3 = oTranslationListPage3.getFooter().getContent()[1];
 								assert.ok(oSaveButton3.getVisible(), "TranslationListPage3 footer: save button visible");
@@ -701,11 +674,11 @@ sap.ui.define([
 										break;
 									}
 								}
-								wait().then(function () {
+								EditorQunitUtils.wait().then(function () {
 									assert.ok(oSaveButton3.getEnabled(), "TranslationListPage3 footer: save button enabled");
 									assert.ok(oResetButton3.getEnabled(), "TranslationListPage3 footer: reset button enabled");
 									oSaveButton3.firePress();
-									wait().then(function () {
+									EditorQunitUtils.wait().then(function () {
 										oLanguageItems3 = oTranslationListPage3.getContent()[0].getItems();
 										assert.equal(oLanguageItems3.length, 51, "oTranslationListPage3 Content: length");
 										for (var i = 0; i < oLanguageItems3.length; i++) {
@@ -726,10 +699,10 @@ sap.ui.define([
 										var sTranslationTextOfEN = oField.getTranslationValueInTexts("en", sUUID, "text");
 										assert.equal(sTranslationTextOfEN, "text en", "Texts: Translation text of EN correct");
 										oTranslationListPage3._navBtn.firePress();
-										wait().then(function () {
+										EditorQunitUtils.wait().then(function () {
 											oFormField3.setValue("string value 2");
 											oFormField3.fireChange({ value: "string value 2"});
-											wait().then(function () {
+											EditorQunitUtils.wait().then(function () {
 												oNewObject = JSON.parse(oTextArea.getValue());
 												assert.ok(deepEqual(cleanUUID(oNewObject), Object.assign(deepClone(oDefaultNewObject, 500), {"text": "string value 2"})), "SimpleForm: Value updated");
 												assert.equal(oFormField3.getValue(), "string value 2", "SimpleForm field 3: Has new value");
@@ -740,7 +713,7 @@ sap.ui.define([
 												sTranslationTextOfEN = oField.getTranslationValueInTexts("en", sUUID, "text");
 												assert.equal(sTranslationTextOfEN, "text en", "Texts: Translation text of EN correct");
 												oValueHelpIcon3.firePress();
-												wait().then(function () {
+												EditorQunitUtils.wait().then(function () {
 													oLanguageItems3 = oTranslationListPage3.getContent()[0].getItems();
 													assert.equal(oLanguageItems3.length, 51, "oTranslationPopover3 Content: length");
 													for (var i = 0; i < oLanguageItems3.length; i++) {
@@ -772,13 +745,13 @@ sap.ui.define([
 		QUnit.test("update translation values and change property value to {i18n>KEY} format", function (assert) {
 			var that = this;
 			return new Promise(function (resolve, reject) {
-				that.oEditor = createEditor("en");
+				that.oEditor = EditorQunitUtils.createEditor("en");
 				that.oEditor.setJson({
 					baseUrl: sBaseUrl,
 					host: "contexthost",
 					manifest: oManifestForObjectFieldsWithTranslation
 				});
-				that.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(that.oEditor).then(function () {
 					assert.ok(that.oEditor.isReady(), "Editor is ready");
 					var oLabel = that.oEditor.getAggregation("_formContent")[1];
 					var oField = that.oEditor.getAggregation("_formContent")[2];
@@ -805,7 +778,7 @@ sap.ui.define([
 					oAddButton.onAfterRendering = function(oEvent) {
 						oAddButton.onAfterRendering = function () {};
 						oAddButton.firePress();
-						wait().then(function () {
+						EditorQunitUtils.wait().then(function () {
 							var oAddButtonInPopover = oField._oObjectDetailsPopover._oAddButton;
 							assert.ok(oAddButtonInPopover.getVisible(), "Popover: add button visible");
 							var oUpdateButtonInPopover = oField._oObjectDetailsPopover._oUpdateButton;
@@ -835,7 +808,7 @@ sap.ui.define([
 							assert.ok(oValueHelpIcon3.isA("sap.ui.core.Icon"), "SimpleForm field 3: Input value help icon");
 							assert.equal(oValueHelpIcon3.getSrc(), "sap-icon://translate", "SimpleForm field 3: Input value help icon src");
 							oValueHelpIcon3.firePress();
-							wait(1500).then(function () {
+							EditorQunitUtils.wait(1500).then(function () {
 								var oTranslationListPage3 = oField._oTranslationListPage;
 								var oSaveButton3 = oTranslationListPage3.getFooter().getContent()[1];
 								assert.ok(oSaveButton3.getVisible(), "TranslationListPage3 footer: save button visible");
@@ -865,11 +838,11 @@ sap.ui.define([
 										break;
 									}
 								}
-								wait().then(function () {
+								EditorQunitUtils.wait().then(function () {
 									assert.ok(oSaveButton3.getEnabled(), "TranslationListPage3 footer: save button enabled");
 									assert.ok(oResetButton3.getEnabled(), "TranslationListPage3 footer: reset button enabled");
 									oSaveButton3.firePress();
-									wait().then(function () {
+									EditorQunitUtils.wait().then(function () {
 										oLanguageItems3 = oTranslationListPage3.getContent()[0].getItems();
 										assert.equal(oLanguageItems3.length, 51, "oTranslationListPage3 Content: length");
 										for (var i = 0; i < oLanguageItems3.length; i++) {
@@ -890,10 +863,10 @@ sap.ui.define([
 										var sTranslationTextOfEN = oField.getTranslationValueInTexts("en", sUUID, "text");
 										assert.equal(sTranslationTextOfEN, "text en", "Texts: Translation text of EN correct");
 										oTranslationListPage3._navBtn.firePress();
-										wait().then(function () {
+										EditorQunitUtils.wait().then(function () {
 											oFormField3.setValue("{i18n>string1}");
 											oFormField3.fireChange({ value: "{i18n>string1}"});
-											wait().then(function () {
+											EditorQunitUtils.wait().then(function () {
 												oNewObject = JSON.parse(oTextArea.getValue());
 												assert.ok(deepEqual(cleanUUID(oNewObject), Object.assign(deepClone(oDefaultNewObject, 500), {"text": "{i18n>string1}"})), "SimpleForm: Value updated");
 												assert.equal(oFormField3.getValue(), "{i18n>string1}", "SimpleForm field 3: Has new value");
@@ -904,7 +877,7 @@ sap.ui.define([
 												sTranslationTextOfEN = oField.getTranslationValueInTexts("en", sUUID, "text");
 												assert.equal(sTranslationTextOfEN, "text en", "Texts: Translation text of EN correct");
 												oValueHelpIcon3.firePress();
-												wait().then(function () {
+												EditorQunitUtils.wait().then(function () {
 													oLanguageItems3 = oTranslationListPage3.getContent()[0].getItems();
 													assert.equal(oLanguageItems3.length, 50, "oTranslationPopover3 Content: length");
 													for (var i = 0; i < oLanguageItems3.length; i++) {
