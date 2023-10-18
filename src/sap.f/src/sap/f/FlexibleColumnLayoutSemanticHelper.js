@@ -213,7 +213,7 @@ sap.ui.define([
 	 */
 
 	/**
-	 * Configures the target layouts of the navigation acion buttons in a column.
+	 * Configures the target layouts of the navigation action buttons in a column.
 	 *
 	 * @typedef {object} sap.f.FlexibleColumnLayoutSemanticHelper.NavigationActionsTargets
 	 *
