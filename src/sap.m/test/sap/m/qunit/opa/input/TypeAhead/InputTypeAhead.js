@@ -25,8 +25,8 @@ sap.ui.getCore().attachInit(function () {
 			onSuggest: function (event) {
 				const oControl = this.byId("iTypeAhead");
 				const value = event.getParameter("suggestValue");
-				if (value === "abxc") {
-					oControl.getModel().setProperty("/suggestions", [{ term: "busy indicator suggestion" }]);
+				if (value === "bgn") {
+					oControl.getModel().setProperty("/suggestions", [{ text: "bulgaria" }]);
 					setTimeout(() => {
 						oControl.getModel().setProperty("/suggestions", []);
 					}, 2000);

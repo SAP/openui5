@@ -39,24 +39,21 @@
 						</Input>
 						<Input id="iResult"/>
 						<Input id="iTypeAhead"
-						showSuggestion="true"
-						suggestionRows="{/suggestions}"
-						filterSuggests="false"
-						suggest=".onSuggest">
-						<suggestionColumns>
-                            <Column />
-                        </suggestionColumns>
-                        <suggestionRows>
-                            <ColumnListItem type="Active">
-                                <cells>
-                                    <CustomListItem type="Active">
-                                        <FlexBox alignItems="Center">
-                                            <Label text="{term}" />
-                                        </FlexBox>
-                                    </CustomListItem>
-                                </cells>
-                            </ColumnListItem>
-                        </suggestionRows>
+							showSuggestion="true"
+							suggestionRows="{/suggestions}"
+							filterSuggests="false"
+							suggest=".onSuggest"
+						>
+							<suggestionColumns>
+								<Column />
+							</suggestionColumns>
+							<suggestionRows>
+								<ColumnListItem type="Active">
+									<cells>
+										<Text text="{text}" />
+									</cells>
+								</ColumnListItem>
+							</suggestionRows>
 						</Input>
 					</VBox>
 				</Page>
