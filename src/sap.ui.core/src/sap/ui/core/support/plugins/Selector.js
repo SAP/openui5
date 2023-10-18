@@ -4,6 +4,7 @@
 
 // Provides class sap.ui.core.support.plugins.Selector (Selector support plugin)
 sap.ui.define([
+	"sap/ui/core/Element",
 	"sap/ui/core/Popup",
 	"sap/ui/core/RenderManager",
 	"sap/ui/core/StaticArea",
@@ -11,7 +12,7 @@ sap.ui.define([
 	"../Support",
 	"sap/ui/thirdparty/jquery",
 	"sap/base/util/uid"
-], function (Popup, RenderManager, StaticArea, Plugin, Support, jQuery, uid) {
+], function (Element, Popup, RenderManager, StaticArea, Plugin, Support, jQuery, uid) {
 	"use strict";
 
 		/**
