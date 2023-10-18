@@ -149,6 +149,9 @@ sap.ui.define([
 		// The variant model is fetched from the outer app component and applied on this component type.
 		if (Utils.isApplicationComponent(oComponent)) {
 			var sComponentId = oComponent.getId();
+			// TODO: remove this line when the maps and filtered response are always up to data
+			// Currently with the variants the maps are out of sync when the app gets loaded again without complete reload
+			FlexState.rebuildFilteredResponse(ManifestUtils.getFlexReferenceForControl(oComponent));
 			var oReturnPromise = FlexState.initialize({
 				componentId: sComponentId,
 				asyncHints: vConfig.asyncHints
