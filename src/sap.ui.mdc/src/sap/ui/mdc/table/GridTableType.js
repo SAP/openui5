@@ -462,5 +462,11 @@ sap.ui.define([
 		return aStyleClasses;
 	};
 
+	GridTableType.prototype.isSelectable = function() {
+		const bSelectionEnabled = this.getTable().getSelectionMode() !== "None" || this.getTable().getCellSelector();
+
+		return bSelectionEnabled;
+	};
+
 	return GridTableType;
 });
