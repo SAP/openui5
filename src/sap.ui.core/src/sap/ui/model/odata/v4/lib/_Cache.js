@@ -329,7 +329,7 @@ sap.ui.define([
 			sRootPathEnd = sPath.indexOf(")", sPath.indexOf("($uid=")) + 1,
 			// the root transient element of the deep create
 			oRoot = this.getValue(sPath.slice(0, sRootPathEnd)),
-			mSelectForMetaPath = _Helper.getPrivateAnnotation(oRoot, "select") || {},
+			mSelectForMetaPath = _Helper.getPrivateAnnotation(oRoot, "select", {}),
 			that = this;
 
 		function setPostBodyCollection() {
