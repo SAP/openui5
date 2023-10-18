@@ -409,6 +409,22 @@ sap.ui.define([
 			var GlobalConfigurationProvider = sap.ui.require("sap/base/config/GlobalConfigurationProvider");
 			GlobalConfigurationProvider.freeze();
 
+			/**
+			 * Legacy normalization of config parameters
+			 * @deprecated As of Version 1.120.0
+			 */
+			(() => {
+				const o = globalThis["sap-ui-config"];
+				for (const i in o) {
+					const v = o[i];
+					const il = i.toLowerCase();
+					if ( !Object.hasOwn(o, il) ) {
+						o[il] = v;
+						delete o[i];
+					}
+				}
+			})();
+
 			// register resourceRoots
 			const paths = {};
 			const oResourceRoots = BaseConfig.get({
