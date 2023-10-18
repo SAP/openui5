@@ -3,6 +3,77 @@
     "date": "October 2023",
     "notes": [
       {
+        "id": "8f4c93b5b2b092e9a1e54dcd91f3ef5d2b02fcd1",
+        "type": "FIX",
+        "text": " sap.m.Input: Type-ahead functionality corrected",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370105532"
+          }
+        ]
+      },
+      {
+        "id": "074c5ed765674e4e975a1f6c3c0c601f37db5fa9",
+        "type": "FEATURE",
+        "text": " sap.ui.core.IconPool: Update icon font v5.7 and v4.19"
+      },
+      {
+        "id": "2e7a018cd311c65314d8d06568f4b327dccbf0f5",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Condition for validating text calculated properly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370103234"
+          }
+        ]
+      },
+      {
+        "id": "aff01e6a7674d0ca15c81d3d2ae9bf0ba43e473c",
+        "type": "FIX",
+        "text": "sap.m.Carousel: f7 qunit is now correct",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370118746"
+          }
+        ]
+      },
+      {
+        "id": "341a1914cd32bc57ab46138914c8d20d5e83169e",
+        "type": "FIX",
+        "text": " sap.m.Input: Reopen Suggestion Popover when new data is bound",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370107738"
+          }
+        ]
+      },
+      {
+        "id": "6fc891f91c23a87ded04339bd5995f576dddd467",
+        "type": "FIX",
+        "text": " sap.ui.unified.CalendarAppointment: getDomRef() now returns proper DOM element",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500008495332023"
+          }
+        ]
+      },
+      {
+        "id": "07c1355d556630ffdf4c5e722b248aa06b85385c",
+        "type": "FIX",
+        "text": " sap.m.DateRangeSelection: adjust keyboard interaction",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270182080"
+          }
+        ]
+      },
+      {
         "id": "f75b7ec552c7b7af164c8e2e19f48c598de56e0b",
         "type": "FIX",
         "text": " Integration Cards: List Card Placeholders rendering is now improved",
@@ -25,9 +96,42 @@
         ]
       },
       {
+        "id": "04e6b41598055440a21f273bf8ee1852ead8c581",
+        "type": "FIX",
+        "text": " sap.m.RangeSlider: apply active state to tickmarks correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370096017"
+          }
+        ]
+      },
+      {
         "id": "dd73e2f83d8720e0417cbb9c6a91f1b4fa822b79",
         "type": "FEATURE",
         "text": " CellSelector: Improve removal of selection"
+      },
+      {
+        "id": "c7f74b0434b3a5d6acc6d7a3684202477de37124",
+        "type": "FIX",
+        "text": " sap.m.BusyIndicator: Position of the Busy Indicator in Bar is fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370091387"
+          }
+        ]
+      },
+      {
+        "id": "cb9455ca4b0090b4574283f04b2406f23224be22",
+        "type": "FIX",
+        "text": " sap.m.RadioButton: Circle is correctly aligned on RTL mode and Compact form factor",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370016563"
+          }
+        ]
       },
       {
         "id": "76ac965a95974f005ceb41ae8b06e70d9594ab1d",

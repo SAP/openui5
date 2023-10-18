@@ -3,6 +3,17 @@
     "date": "October 2023",
     "notes": [
       {
+        "id": "6fc891f91c23a87ded04339bd5995f576dddd467",
+        "type": "FIX",
+        "text": " sap.ui.unified.CalendarAppointment: getDomRef() now returns proper DOM element",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500008495332023"
+          }
+        ]
+      },
+      {
         "id": "4d396df7fcb93824d899dfbb8f3bf657fd664fb5",
         "type": "FEATURE",
         "text": " CLDR upgrade to version 43.0.0"

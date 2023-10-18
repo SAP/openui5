@@ -3,6 +3,58 @@
     "date": "October 2023",
     "notes": [
       {
+        "id": "cbb7e26fc583fb458decc15f2dbe027ab337583c",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v2.ODataModel#_processSuccess: RFC9110 (205) violation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370117404"
+          }
+        ]
+      },
+      {
+        "id": "8ec978bf445ff5ea29e2cc0e594929cb9b856d12",
+        "type": "FEATURE",
+        "text": " util/resolveReference: use probing-require before getting from global"
+      },
+      {
+        "id": "074c5ed765674e4e975a1f6c3c0c601f37db5fa9",
+        "type": "FEATURE",
+        "text": " sap.ui.core.IconPool: Update icon font v5.7 and v4.19"
+      },
+      {
+        "id": "14a8eb65a69a8754e48e7e28b54972337233e5a2",
+        "type": "FEATURE",
+        "text": " Deprecation of ManagedObject.create"
+      },
+      {
+        "id": "ae517d126c4689c195de71a65c93d20b90fc65e9",
+        "type": "FEATURE",
+        "text": " sap.ui.model.odata.ODataTreeBindingFlat: Support transitionMessagesOnly binding parameter"
+      },
+      {
+        "id": "e54fbd029fa033127d6bc7aa1fe85823a8d74114",
+        "type": "FIX",
+        "text": " routing.RouteInfo: make the value type complete",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370112658"
+          }
+        ]
+      },
+      {
+        "id": "98d2d075e54217e3864413b781b25c72aa34e56c",
+        "type": "FEATURE",
+        "text": " sap.ui.core: deprecate blanket-based code instrumentation"
+      },
+      {
+        "id": "8087bb8e0aee1b1bc24d02f4f320040f90fb171e",
+        "type": "FEATURE",
+        "text": " Deprecate sap.ui.core.Configuration and API 'getConfiguration' on sap.ui.core.Core"
+      },
+      {
         "id": "ab8cff615dd4c15615c1f38af82f1d94e24645eb",
         "type": "FEATURE",
         "text": " Deprecation of JSONView"
