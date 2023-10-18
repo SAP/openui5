@@ -48,7 +48,8 @@ sap.ui.define([
 		{text: "ABCD"     , description: "cat 06",  key: "006", icon: ""},
 		{text: "ABC"      , description: "cat 07",  key: "007", icon: ""},
 		{text: "AB"       , description: "cat 08",  key: "008", icon: ""},
-		{text: "A"        , description: "cat 09",  key: "009", icon: ""}
+		{text: "A"        , description: "cat 09",  key: "009", icon: ""},
+		{text: "Astro test"        , description: "cat 10",  key: "010", icon: ""}
 	];
 
 	function createSuggestionModel() {
