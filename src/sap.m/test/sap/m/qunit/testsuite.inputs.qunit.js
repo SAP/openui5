@@ -96,12 +96,39 @@ sap.ui.define([
 		}
 	};
 
+	var oOpaTests = {
+		"opa/input/InputTypeAheadOPA": {
+			title: "OPA Test Page for sap.m.Input",
+			ui5: {
+				libs: "sap.m",
+				language: "en"
+			},
+			qunit: {
+				version: 2
+			}
+		},
+		"opa/input/SuggestionRowsPopoverOPA": {
+			title: "OPA Test Page for sap.m.Input with tabular suggestions",
+			ui5: {
+				libs: "sap.m",
+				language: "en"
+			},
+			qunit: {
+				version: 2
+			}
+		}
+	};
+
 	aTestsToExecute.forEach(function (sTest) {
 		oConfig.tests[sTest] = ConfigMobile.tests[sTest];
 	});
 
-	for (var test in oInputUtilTests) {
+	for (const test in oInputUtilTests) {
 		oConfig.tests[test] = oInputUtilTests[test];
+	}
+
+	for (const test in oOpaTests) {
+		oConfig.tests[test] = oOpaTests[test];
 	}
 
 	return oConfig;
