@@ -40,17 +40,13 @@ sap.ui.define([
 	};
 
 	ODataV4ValueHelpDelegate.updateBindingInfo = function(oValueHelp, oContent, oBindingInfo) {
-		var oPayload;
-		if (oValueHelp) {
-			oPayload = oValueHelp.getPayload();
-		}
-		ValueHelpDelegate.updateBindingInfo(oPayload, oContent, oBindingInfo);
+		ValueHelpDelegate.updateBindingInfo(oValueHelp, oContent, oBindingInfo);
 
 		if (oContent.getFilterFields() === "$search"){
 			var oFilterBar = oContent._getPriorityFilterBar();
 			var sSearch = oContent.isTypeahead() ? oContent._getPriorityFilterValue() : oFilterBar && oFilterBar.getSearch();
 			if (this.adjustSearch) {
-				sSearch = this.adjustSearch(oPayload, oContent.isTypeahead(), sSearch);
+				sSearch = this.adjustSearch(oValueHelp, oContent.isTypeahead(), sSearch);
 			}
 			oBindingInfo.parameters.$search = sSearch || undefined;
 		}
@@ -70,12 +66,8 @@ sap.ui.define([
 	};
 
 	ODataV4ValueHelpDelegate.executeFilter = function(oValueHelp, oListBinding, iRequestedItems) {
-		var oPayload;
-		if (oValueHelp) {
-			oPayload = oValueHelp.getPayload();
-		}
 		oListBinding.getContexts(0, iRequestedItems);
-		return Promise.resolve(this.checkListBindingPending(oPayload, oListBinding, iRequestedItems)).then(function () {
+		return Promise.resolve(this.checkListBindingPending(oValueHelp, oListBinding, iRequestedItems)).then(function () {
 			return oListBinding;
 		});
 	};

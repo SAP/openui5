@@ -379,8 +379,10 @@ sap.ui.define([
                 },
                 associations: {
                     /**
-                     * Control or object that enables the chart to do filtering, such as {@link sap.ui.mdc.FilterBar}.
-                     * Also see {@link sap.ui.mdc.IFilter}.
+                     * Control or object that enables the chart to do filtering, such as {@link sap.ui.mdc.FilterBar}. See also
+                     * {@link sap.ui.mdc.IFilter}.
+                     *
+                     * Automatic filter generation only works in combination with a <code>sap.ui.mdc.FilterBar</code>.
                      *
                      * @since 1.88
                      */

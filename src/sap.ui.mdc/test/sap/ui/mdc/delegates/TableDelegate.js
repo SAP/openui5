@@ -33,35 +33,9 @@ sap.ui.define([
 		oBindingInfo.path = oBindingInfo.path || oMetadataInfo.collectionPath || "/" + oMetadataInfo.collectionName;
 		oBindingInfo.model = oBindingInfo.model || oMetadataInfo.model;
 
-		var oFilter = Element.getElementById(oMDCTable.getFilter());
-		var bFilterEnabled = oMDCTable.isFilteringEnabled();
-		var aFilters = [];
 		var oDataStateIndicator = oMDCTable.getDataStateIndicator();
-
-		if (bFilterEnabled) {
-			var aTableProperties = oMDCTable.getPropertyHelper().getProperties();
-			var oInnerFilterInfo = FilterUtil.getFilterInfo(TestTableDelegate.getTypeMap(), oMDCTable.getConditions(), aTableProperties);
-
-			if (oInnerFilterInfo.filters) {
-				aFilters.push(oInnerFilterInfo.filters);
-			}
-		}
-
-		if (oFilter) {
-			var mConditions = oFilter.getConditions();
-
-			if (mConditions) {
-				var aPropertiesMetadata = oFilter.getPropertyInfoSet ? oFilter.getPropertyInfoSet() : null;
-				var oFilterInfo = FilterUtil.getFilterInfo(TestTableDelegate.getTypeMap(), mConditions, aPropertiesMetadata);
-
-				if (oFilterInfo.filters) {
-					aFilters.push(oFilterInfo.filters);
-				}
-			}
-		}
-
 		if (!oDataStateIndicator || !oDataStateIndicator.isFiltering()) {
-			oBindingInfo.filters = new Filter(aFilters, true);
+			oBindingInfo.filters = this.getFilters(oMDCTable);
 		}
 	};
 
