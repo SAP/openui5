@@ -2232,7 +2232,11 @@ function(
 		var oList = oInput._getSuggestionsPopover() && oInput._getSuggestionsPopover().getItemsContainer();
 		var bDoTypeAhead = this._getEffectiveTypeAhead();
 
-		this._setTypedInValue(oDomRef.value.substring(0, oDomRef.selectionStart));
+		if (oDomRef.selectionStart !== oDomRef.selectionEnd) {
+			this._setTypedInValue(oDomRef.value.substring(0, oDomRef.selectionStart));
+		} else {
+			this._setTypedInValue(oDomRef.value);
+		}
 
 		// check if typeahead is already performed
 		if ((oInput && oInput.getValue().toLowerCase()) === (this._getProposedItemText() && this._getProposedItemText().toLowerCase())) {

@@ -629,6 +629,13 @@ sap.ui.define([
 					useFakeTimers: true
 				}
 			},
+			"opa/input/InputTypeAheadOPA": {
+				title: "OPA Test Page for sap.m.Input",
+				ui5: {
+					libs: "sap.m",
+					language: "en"
+				}
+			},
 			InstanceManager: {
 				title: "QUnit Page for sap.m.InstanceManager"
 			},
