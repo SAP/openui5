@@ -27,8 +27,8 @@ sap.ui.define([
 	"sap/ui/dom/containsOrEquals",
 	"sap/base/util/deepEqual",
 	"sap/base/Log",
-	"sap/ui/core/date/CalendarWeekNumbering",
-	"sap/ui/core/Configuration"
+	"sap/ui/core/Configuration",
+	"sap/ui/core/date/CalendarWeekNumbering"
 ], function(
 	CalendarType,
 	Control,
@@ -54,8 +54,8 @@ sap.ui.define([
 	containsOrEquals,
 	deepEqual,
 	Log,
-	CalendarWeekNumbering,
-	Configuration
+	Configuration,
+	CalendarWeekNumbering
 ) {
 	"use strict";
 
@@ -699,7 +699,7 @@ sap.ui.define([
 	Calendar.prototype.getLocale = function(){
 
 		if (!this._sLocale) {
-			this._sLocale = undefined/*Configuration*/.getFormatSettings().getFormatLocale().toString();
+			this._sLocale = Configuration.getFormatSettings().getFormatLocale().toString();
 		}
 
 		return this._sLocale;
@@ -908,7 +908,7 @@ sap.ui.define([
 	};
 
 	Calendar.prototype._getPrimaryCalendarType = function(){
-		return this.getProperty("primaryCalendarType") || undefined/*Configuration*/.getCalendarType();
+		return this.getProperty("primaryCalendarType") || Configuration.getCalendarType();
 	};
 
 	/**

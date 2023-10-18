@@ -5,7 +5,7 @@
 sap.ui.define([
 	"sap/ui/core/Lib",
 	"sap/ui/fl/apply/_internal/preprocessors/RegistrationDelegator",
-	"sap/ui/fl/initial/_internal/config",
+	"sap/ui/fl/initial/_internal/FlexConfiguration",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Scenario",
@@ -16,7 +16,7 @@ sap.ui.define([
 ], function(
 	Lib,
 	RegistrationDelegator,
-	config,
+	FlexConfiguration,
 	Utils,
 	Layer,
 	Scenario,
@@ -497,7 +497,7 @@ sap.ui.define([
  }
 
  if (_isTrialSystem()) {
-	 config.setFlexibilityServices([{
+	 FlexConfiguration.setFlexibilityServices([{
 		 connector: "LrepConnector",
 		 url: "/sap/bc/lrep",
 		 layers: []

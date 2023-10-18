@@ -9,8 +9,9 @@ sap.ui.define([
 	'sap/base/util/deepEqual',
 	'sap/m/p13n/SelectionPanel',
 	'sap/m/p13n/modules/xConfigAPI',
+	'sap/ui/core/Configuration',
 	'sap/ui/core/mvc/View'
-], function(diff, BaseObject, merge, deepEqual, SelectionPanel, xConfigAPI, View) {
+], function (diff, BaseObject, merge, deepEqual, SelectionPanel, xConfigAPI, Configuration, View) {
 	"use strict";
 
 	/**
@@ -661,7 +662,7 @@ sap.ui.define([
 		var sPositionAttribute = mP13nTypeSorting.position;
 		var sSelectedAttribute = mP13nTypeSorting.visible;
 
-		var sLocale = undefined/*Configuration*/.getLocale().toString();
+		var sLocale = Configuration.getLocale().toString();
 
 		var oCollator = window.Intl.Collator(sLocale, {});
 

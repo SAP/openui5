@@ -10,9 +10,10 @@ sap.ui.define([
 	'sap/m/Link',
 	'sap/m/Text',
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/util/defaultLinkTypes"
+	"sap/ui/util/defaultLinkTypes",
+	"sap/ui/core/Configuration"
 ],
-	function(Control, coreLibrary, library, Device, Log, Link, Text, jQuery, defaultLinkTypes) {
+	function(Control, coreLibrary, library, Device, Log, Link, Text, jQuery, defaultLinkTypes, Configuration) {
 	"use strict";
 
 
@@ -1046,7 +1047,7 @@ sap.ui.define([
 	ObjectHeaderRenderer._renderResponsiveMarkers = function(oRM, oControl) {
 		var aMarkers = [],
 			sTextDir = oControl.getTitleTextDirection(),
-			bPageRTL = undefined/*Configuration*/.getRTL();
+			bPageRTL = Configuration.getRTL();
 
 		// load markers based on control state
 		aMarkers = oControl._getVisibleMarkers();

@@ -25,10 +25,9 @@ sap.ui.define([
 	"sap/ui/dom/getScrollbarSize",
 	"sap/ui/events/KeyCodes",
 	"sap/base/Log",
-	// jQuery Plugin "firstFocusableDomRef", "lastFocusableDomRef"
-	"sap/ui/dom/jquery/Focusable",
-	// jQuery Plugin "rect"
-	"sap/ui/dom/jquery/rect"
+	"sap/ui/core/Configuration",
+	"sap/ui/dom/jquery/Focusable", // jQuery Plugin "firstFocusableDomRef", "lastFocusableDomRef"
+	"sap/ui/dom/jquery/rect" // jQuery Plugin "rect"
 ],
 	function(
 		Bar,
@@ -51,7 +50,8 @@ sap.ui.define([
 		jQuery,
 		getScrollbarSize,
 		KeyCodes,
-		Log
+		Log,
+		Configuration
 	) {
 		"use strict";
 
@@ -1210,7 +1210,7 @@ sap.ui.define([
 		 * @param {jQuery.Event} oEvent The event object
 		 */
 		Popover.prototype.onmousedown = function (oEvent) {
-			var bRTL = undefined/*Configuration*/.getRTL();
+			var bRTL = Configuration.getRTL();
 			if (!oEvent.target.classList || !oEvent.target.classList.contains("sapMPopoverResizeHandle")) {
 				return;
 			}
@@ -1355,7 +1355,7 @@ sap.ui.define([
 				iFlipOffset = oFlipPlacement === PlacementType.PreferredRightOrFlip ? Math.abs(iParentWidth) : -Math.abs(iParentWidth);
 			}
 
-			var bRtl = undefined/*Configuration*/.getRTL();
+			var bRtl = Configuration.getRTL();
 			var iOffsetX = iFlipOffset * (bRtl ? -1 : 1) + this.getOffsetX() * (bRtl ? -1 : 1);
 			return iOffsetX;
 		};
@@ -1486,7 +1486,7 @@ sap.ui.define([
 			var iPopoverWidth = this.$().outerWidth();
 			var bPreferredLeftOrFlip = this.getPlacement() === PlacementType.PreferredLeftOrFlip;
 			var bPreferredRightOrFlip = this.getPlacement() === PlacementType.PreferredRightOrFlip;
-			var bRtl = undefined/*Configuration*/.getRTL();
+			var bRtl = Configuration.getRTL();
 
 			if (bPreferredPlacementLeft && iLeftSpace > iPopoverWidth + this._arrowOffset) {
 					this._bHorizontalFlip = false;
@@ -1582,7 +1582,7 @@ sap.ui.define([
 			var $this = this.$();
 			var iHeight = $this.outerHeight();
 			var iWidth = $this.outerWidth();
-			var bRtl = undefined/*Configuration*/.getRTL();
+			var bRtl = Configuration.getRTL();
 
 			var $parent = jQuery(this._getOpenByDomRef());
 			var bHasParent = $parent[0] !== undefined;
@@ -1756,7 +1756,7 @@ sap.ui.define([
 		 */
 		Popover.prototype._recalculateMargins = function (sCalculatedPlacement, oPosParams) {
 			var fNewCalc;
-			var bRtl = undefined/*Configuration*/.getRTL();
+			var bRtl = Configuration.getRTL();
 
 			//make the popover never cover the control or dom node that opens the popover
 			switch (sCalculatedPlacement) {
@@ -1809,7 +1809,7 @@ sap.ui.define([
 				bOverRight = iPosToRightBorder < (oPosParams._fPopoverMarginRight + fScrollbarSize),
 				bOverTop = oPosParams._fPopoverOffset.top < oPosParams._fPopoverMarginTop,
 				bOverBottom = iPosToBottomBorder < oPosParams._fPopoverMarginBottom,
-				bRtl = undefined/*Configuration*/.getRTL();
+				bRtl = Configuration.getRTL();
 
 			if (bExceedHorizontal) {
 				iLeft = oPosParams._fPopoverMarginLeft;
@@ -1938,7 +1938,7 @@ sap.ui.define([
 		 */
 		Popover.prototype._getArrowOffsetCss = function (sCalculatedPlacement, oPosParams) {
 			var iPosArrow,
-				bRtl = undefined/*Configuration*/.getRTL();
+				bRtl = Configuration.getRTL();
 
 			// Recalculate Popover width and height because they can be changed after position adjustments
 			oPosParams._fPopoverWidth = oPosParams._$popover.outerWidth();

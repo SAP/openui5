@@ -2,10 +2,11 @@
 sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/core/CalendarType",
+	"sap/ui/core/Configuration",
 	"sap/ui/core/date/Japanese",
 	"sap/ui/core/date/UI5Date",
 	"sap/ui/core/date/UniversalDate"
-], function(Log, CalendarType, Japanese, UI5Date, UniversalDate) {
+], function(Log, CalendarType, Configuration, Japanese, UI5Date, UniversalDate) {
 	"use strict";
 
 	// Test data
@@ -25,7 +26,7 @@ sap.ui.define([
 		{Gregorian: {year: 2019, month: 4, day: 1}, Japanese: {era: 236, year: 1, month:4, day: 1}},
 		{Gregorian: {year: 2032, month: 9, day: 1}, Japanese: {era: 236, year: 14, month:9, day: 1}}
 	];
-	var sDefaultLanguage = undefined/*Configuration*/.getLanguage();
+	var sDefaultLanguage = Configuration.getLanguage();
 
 	//1. Instance related
 	QUnit.module("sap.ui.core.date.Japanese", {
@@ -36,10 +37,10 @@ sap.ui.define([
 			this.oLogMock = this.mock(Log);
 			this.oLogMock.expects("error").never();
 			this.oLogMock.expects("warning").never();
-			undefined/*Configuration*/.setLanguage("en_US");
+			Configuration.setLanguage("en_US");
 		},
 		afterEach: function () {
-			undefined/*Configuration*/.setLanguage(sDefaultLanguage);
+			Configuration.setLanguage(sDefaultLanguage);
 		}
 	});
 
@@ -363,7 +364,7 @@ sap.ui.define([
 				? new Japanese(Japanese.UTC(aYear, iMonth, iOneDay))
 				: new Japanese(aYear, iMonth, iOneDay);
 		}
-		undefined/*Configuration*/.setLanguage("de");
+		Configuration.setLanguage("de");
 		/*
 		 *    Januar 2022 (236, 4)
 		 * Week Mo Tu We Th Fr Sa Su

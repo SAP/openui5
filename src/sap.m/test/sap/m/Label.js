@@ -8,6 +8,7 @@ sap.ui.define([
 	"sap/m/Switch",
 	"sap/m/Text",
 	"sap/m/Toolbar",
+	"sap/ui/core/Configuration",
 	"sap/ui/core/Item",
 	"sap/ui/core/Core",
 	"sap/ui/layout/library",
@@ -26,6 +27,7 @@ sap.ui.define([
 	Switch,
 	MText,
 	Toolbar,
+	Configuration,
 	Item,
 	Core,
 	layoutLibrary,
@@ -397,7 +399,7 @@ sap.ui.define([
 					customTextOn: "RTL",
 					customTextOff: "LTR",
 					change: function (oEvent) {
-						undefined/*Configuration*/.setRTL(oEvent.getParameter("state"));
+						Configuration.setRTL(oEvent.getParameter("state"));
 					}
 				}),
 				new Switch("cozySwitch",{
@@ -446,7 +448,7 @@ sap.ui.define([
 					ariaLabelledBy: "localeSelectLbl",
 					change: function (oEvent) {
 						var sLanguage = oEvent.getParameter("selectedItem").getKey();
-						undefined/*Configuration*/.setLanguage(sLanguage);
+						Configuration.setLanguage(sLanguage);
 						oPage.invalidate();
 					}
 				})

@@ -3,6 +3,7 @@
  */
 sap.ui.define([
 	"sap/base/Log",
+	"sap/ui/core/Configuration",
 	"sap/ui/core/Control",
 	"sap/ui/core/date/UI5Date",
 	"sap/ui/core/format/DateFormat",
@@ -12,11 +13,12 @@ sap.ui.define([
 	"sap/ui/model/odata/type/ODataType",
 	"sap/ui/model/odata/type/Time",
 	"sap/ui/test/TestUtils"
-], function(Log, Control, UI5Date, DateFormat, FormatException, ParseException, ValidateException, ODataType, Time, TestUtils) {
+], function (Log, Configuration, Control, UI5Date, DateFormat, FormatException, ParseException,
+		ValidateException, ODataType, Time, TestUtils) {
 	/*global sinon, QUnit */
 	"use strict";
 
-	var sDefaultLanguage = undefined/*Configuration*/.getLanguage(),
+	var sDefaultLanguage = Configuration.getLanguage(),
 		oCircular = {};
 
 	oCircular.self = oCircular;
@@ -51,10 +53,10 @@ sap.ui.define([
 			this.oLogMock = this.mock(Log);
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
-			undefined/*Configuration*/.setLanguage("en-US");
+			Configuration.setLanguage("en-US");
 		},
 		afterEach : function () {
-			undefined/*Configuration*/.setLanguage(sDefaultLanguage);
+			Configuration.setLanguage(sDefaultLanguage);
 		}
 	});
 
@@ -170,7 +172,7 @@ sap.ui.define([
 		parseError(assert, oType, "foo", "not a time");
 		parseError(assert, oType, "1:69:30 AM", "invalid time");
 
-		undefined/*Configuration*/.setLanguage("de");
+		Configuration.setLanguage("de");
 		oType = new Time();
 		parseError(assert, oType, "24:00:00", "beyond time of day");
 	});
@@ -268,7 +270,7 @@ sap.ui.define([
 
 		oControl.bindProperty("tooltip", {path : "/unused", type : oType});
 		oType.formatValue(oValue, "string"); // ensure that a formatter exists
-		undefined/*Configuration*/.setLanguage("de");
+		Configuration.setLanguage("de");
 		assert.strictEqual(oType.formatValue(oValue, "string"), "13:53:49",
 			"adjusted to changed language");
 	});

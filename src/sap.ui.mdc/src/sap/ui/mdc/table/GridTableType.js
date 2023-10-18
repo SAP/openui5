@@ -451,5 +451,15 @@ sap.ui.define([
 		};
 	};
 
+	GridTableType.prototype.getTableStyleClasses = function() {
+		const aStyleClasses = TableTypeBase.prototype.getTableStyleClasses.apply(this, arguments);
+
+		if (this.getRowCountMode() === TableRowCountMode.Auto) {
+			aStyleClasses.push("sapUiMdcTableFitContainer");
+		}
+
+		return aStyleClasses;
+	};
+
 	return GridTableType;
 });

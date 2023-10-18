@@ -7,9 +7,10 @@ sap.ui.define([
 	'sap/ui/base/Object',
 	'sap/ui/core/Locale',
 	'sap/ui/core/LocaleData',
-	'sap/ui/core/format/NumberFormat'
+	'sap/ui/core/format/NumberFormat',
+	'sap/ui/core/Configuration'
 ],
-	function(BaseObject, Locale, LocaleData, NumberFormat) {
+	function(BaseObject, Locale, LocaleData, NumberFormat, Configuration) {
 	"use strict";
 
 
@@ -105,7 +106,7 @@ sap.ui.define([
 			oFormatOptions = undefined;
 		}
 		if (!oLocale) {
-			oLocale = undefined/*Configuration*/.getFormatSettings().getFormatLocale();
+			oLocale = Configuration.getFormatSettings().getFormatLocale();
 		}
 		oFormat.oLocale = oLocale;
 		oFormat.oLocaleData = LocaleData.getInstance(oLocale);

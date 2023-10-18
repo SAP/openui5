@@ -189,7 +189,7 @@ sap.ui.define([
 
                     /**
                      * Defines the sort conditions.<br>
-                     *
+                     * <b>Note:</b> This property must not be bound.<br>
                      * <b>Note:</b> This property is exclusively used for handling SAPUI5 flexibility changes. Do not use it for anything else.
                      *
                      * @since 1.88
@@ -276,6 +276,17 @@ sap.ui.define([
                     },
 
                     /**
+                     * Defines style of the header.
+                     * For more information, see {@link sap.m.Title#setTitleStyle}.
+                     * @since 1.120
+                     */
+                    headerStyle: {
+                        type: "sap.ui.core.TitleLevel",
+                        group: "Appearance"
+                        // defaultValue : TitleLevel.Auto
+                    },
+
+                    /**
                      * Determines whether the header text is shown in the chart. Regardless of its value, the given header text is used to label the chart
                      * correctly for accessibility purposes.
                      *
@@ -291,6 +302,10 @@ sap.ui.define([
                     /**
                      * This property describes the measures and dimensions visible in the chart.
                      * Changes in the personalization are also reflected here.
+                     * <b>Note:</b>
+				     * This aggregation is managed by the control, can only be populated during the definition in the XML view, and is not bindable.
+				     * Any changes of the initial aggregation content might result in undesired effects.
+				     * Changes of the aggregation have to be made with the {@link sap.ui.mdc.p13n.StateUtil StateUtil}.
                      */
                     items: {
                         type: "sap.ui.mdc.chart.Item",
@@ -299,6 +314,10 @@ sap.ui.define([
                     /**
                      * This aggregation describes actions that are added to the chart toolbar.<br>
                      * For more information, see {@link sap.ui.mdc.actiontoolbar.ActionToolbarAction}.
+                     * <b>Note:</b>
+				     * This aggregation is managed by the control, can only be populated during the definition in the XML view, and is not bindable.
+				     * Any changes of the initial aggregation content might result in undesired effects.
+				     * Changes of the aggregation have to be made with the {@link sap.ui.mdc.p13n.StateUtil StateUtil}.
                      */
                     actions: {
                         type: "sap.ui.core.Control",
@@ -1153,14 +1172,6 @@ sap.ui.define([
             return this;
         };
 
-        Chart.prototype.setHeaderVisible = function(bVisible) {
-            this.setProperty("headerVisible", bVisible, true);
-            if (this.getAggregation("_toolbar")) {
-                this.getAggregation("_toolbar").setHeaderVisible(bVisible);
-            }
-            return this;
-        };
-
         /**
          * Gets the managed object model.
          * @returns {sap.ui.model.base.ManagedObjectModel} the managed object model
@@ -1327,7 +1338,6 @@ sap.ui.define([
                 this.getAggregation("_toolbar").addVariantManagement(oControl);
             }
 
-
             return this;
         };
 
@@ -1358,12 +1368,43 @@ sap.ui.define([
             return Control.prototype.addAggregation.apply(this, ["actions", oControl]);
         };
 
+        Chart.prototype.setHeader = function(sHeader) {
+            this.setProperty("header", sHeader);
+
+            if (this.getAggregation("_toolbar")) {
+                this.getAggregation("_toolbar")._setHeader(sHeader);
+            }
+
+            return this;
+        };
+
         Chart.prototype.setHeaderLevel = function(sHeaderLevel) {
+            this.setProperty("headerLevel", sHeaderLevel);
+
             if (this.getAggregation("_toolbar")) {
                 this.getAggregation("_toolbar")._setHeaderLevel(sHeaderLevel);
             }
 
-            this.setProperty("headerLevel", sHeaderLevel);
+            return this;
+        };
+
+        Chart.prototype.setHeaderStyle = function(sHeaderStyle) {
+            this.setProperty("headerStyle", sHeaderStyle);
+
+            if (this.getAggregation("_toolbar")) {
+                this.getAggregation("_toolbar")._setHeaderStyle(sHeaderStyle);
+            }
+
+            return this;
+        };
+
+        Chart.prototype.setHeaderVisible = function(bVisible) {
+            this.setProperty("headerVisible", bVisible, true);
+
+            if (this.getAggregation("_toolbar")) {
+                this.getAggregation("_toolbar")._setHeaderVisible(bVisible);
+            }
+
             return this;
         };
 
@@ -1391,6 +1432,102 @@ sap.ui.define([
             }
 
         };
+
+        /**
+         * @name sap.ui.mdc.Chart#addAction
+         * @private
+         * @ui5-restricted sap.ui.mdc, sap.ui.fl
+         */
+
+        /**
+         * @name sap.ui.mdc.Chart#destroyActions
+         * @private
+         * @ui5-restricted sap.ui.mdc, sap.ui.fl
+         */
+
+        /**
+         * @name sap.ui.mdc.Chart#insertAction
+         * @private
+         * @ui5-restricted sap.ui.mdc, sap.ui.fl
+         */
+
+        /**
+         * @name sap.ui.mdc.Chart#removeAction
+         * @private
+         * @ui5-restricted sap.ui.mdc, sap.ui.fl
+         */
+
+        /**
+         * @name sap.ui.mdc.Chart#removeAllActions
+         * @private
+         * @ui5-restricted sap.ui.mdc, sap.ui.fl
+         */
+
+        /**
+         * @name sap.ui.mdc.Chart#addItem
+         * @private
+         * @ui5-restricted sap.ui.mdc, sap.ui.fl
+         */
+
+        /**
+         * @name sap.ui.mdc.Chart#destroyItems
+         * @private
+         * @ui5-restricted sap.ui.mdc, sap.ui.fl
+         */
+
+        /**
+         * @name sap.ui.mdc.Chart#insertItem
+         * @private
+         * @ui5-restricted sap.ui.mdc, sap.ui.fl
+         */
+
+        /**
+         * @name sap.ui.mdc.Chart#removeItem
+         * @private
+         * @ui5-restricted sap.ui.mdc, sap.ui.fl
+         */
+
+        /**
+         * @name sap.ui.mdc.Chart#removeAllItems
+         * @private
+         * @ui5-restricted sap.ui.mdc, sap.ui.fl
+         */
+
+        /**
+         * @name sap.ui.mdc.Chart#setSortConditions
+         * @private
+         * @ui5-restricted sap.ui.mdc, sap.ui.fl
+         */
+
+        /**
+         * @name sap.ui.mdc.Chart#getSortConditions
+         * @private
+         * @ui5-restricted sap.ui.mdc, sap.ui.fl
+         */
+
+        /**
+         * @name sap.ui.mdc.Chart#setFilterConditions
+         * @private
+         * @ui5-restricted sap.ui.mdc, sap.ui.fl
+         */
+
+        /**
+         * @name sap.ui.mdc.Chart#getFilterConditions
+         * @private
+         * @ui5-restricted sap.ui.mdc, sap.ui.fl
+         */
+
+        /**
+         * @name sap.ui.mdc.Chart#setPropertyInfo
+         * @private
+         * @ui5-restricted sap.ui.mdc, sap.ui.fl
+         */
+
+        /**
+         * @name sap.ui.mdc.Chart#getPropertyInfo
+         * @private
+         * @ui5-restricted sap.ui.mdc, sap.ui.fl
+         */
 
         return Chart;
     });

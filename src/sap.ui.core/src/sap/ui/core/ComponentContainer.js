@@ -9,7 +9,8 @@ sap.ui.define([
 	'./Component',
 	'./library',
 	"./ComponentContainerRenderer",
-	"sap/base/Log"
+	"sap/base/Log",
+	"sap/ui/core/Configuration"
 ],
 	function(
 		ManagedObject,
@@ -17,7 +18,8 @@ sap.ui.define([
 		Component,
 		library,
 		ComponentContainerRenderer,
-		Log
+		Log,
+		Configuration
 	) {
 	"use strict";
 

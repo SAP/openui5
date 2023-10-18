@@ -2,13 +2,13 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/ui/mdc/flp/FlpLinkDelegate",
-	"sap/ui/mdc/link/ContactDetails",
+	"sap/ui/mdc/ushell/LinkDelegate",
+	"testutils/link/ContactDetails",
 	"sap/ui/mdc/enums/LinkType"
-], function (FlpLinkDelegate, ContactDetails, LinkType) {
+], function (UShellLinkDelegate, ContactDetails, LinkType) {
 	"use strict";
 
-	const SampleLinkDelegate = Object.assign({}, FlpLinkDelegate);
+	const SampleLinkDelegate = Object.assign({}, UShellLinkDelegate);
 
 	SampleLinkDelegate.fetchAdditionalContent = function (oLink) {
 		const oPayload = oLink.getPayload();

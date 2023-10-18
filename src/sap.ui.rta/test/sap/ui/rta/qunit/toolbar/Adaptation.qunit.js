@@ -3,10 +3,9 @@
 sap.ui.define([
 	"sap/m/Button",
 	"sap/ui/rta/qunit/RtaQunitUtils",
-	"sap/ui/core/Core",
 	"sap/ui/core/Lib",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
-	"sap/ui/fl/initial/_internal/config",
+	"sap/ui/fl/apply/api/FlexRuntimeInfoAPI",
 	"sap/ui/fl/initial/api/Version",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/write/api/ContextBasedAdaptationsAPI",
@@ -22,15 +21,15 @@ sap.ui.define([
 	"sap/ui/rta/util/ReloadManager",
 	"sap/ui/rta/RuntimeAuthoring",
 	"sap/ui/rta/Utils",
+	"sap/ui/VersionInfo",
 	"sap/m/MessageBox",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	Button,
 	RtaQunitUtils,
-	Core,
 	Lib,
 	FlexState,
-	config,
+	FlexRuntimeInfoAPI,
 	Version,
 	Settings,
 	ContextBasedAdaptationsAPI,
@@ -46,6 +45,7 @@ sap.ui.define([
 	ReloadManager,
 	RuntimeAuthoring,
 	Utils,
+	VersionInfo,
 	MessageBox,
 	sinon
 ) {
@@ -812,7 +812,7 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("when being on a system with LocalStorageConnector", function(assert) {
-			sandbox.stub(config, "getFlexibilityServices").returns([
+			sandbox.stub(FlexRuntimeInfoAPI, "getConfiguredFlexServices").returns([
 				{connector: "LocalStorageConnector"}
 			]);
 			return createAndStartRTA.call(this).then(function() {
@@ -826,7 +826,7 @@ sap.ui.define([
 		QUnit.test("when being on a system with KeyUserConnector", function(assert) {
 			var sUrlSplit1 = "https:";
 			var sUrlSplit2 = "//example.com";
-			sandbox.stub(config, "getFlexibilityServices").returns([
+			sandbox.stub(FlexRuntimeInfoAPI, "getConfiguredFlexServices").returns([
 				{connector: "KeyUserConnector", url: sUrlSplit1 + sUrlSplit2}
 			]);
 			return createAndStartRTA.call(this)
@@ -837,7 +837,8 @@ sap.ui.define([
 				);
 				return this.oToolbar.showFeedbackForm();
 			}.bind(this))
-			.then(function() {
+			.then(async function() {
+				const oVersion = await VersionInfo.load();
 				var oIframeURL = new URL(this.oToolbar._oFeedbackDialog.getContent()[0].getBindingInfo("url").binding.getValue());
 				assert.ok(
 					oIframeURL.pathname.endsWith("SV_4MANxRymEIl9K06"),
@@ -845,7 +846,7 @@ sap.ui.define([
 				);
 				assert.strictEqual(
 					oIframeURL.searchParams.get("version"),
-					Core.getConfiguration().getVersion().toString(),
+					oVersion.version,
 					"then the proper version is passed"
 				);
 				assert.strictEqual(
@@ -859,7 +860,7 @@ sap.ui.define([
 		QUnit.test("when being on a system with LrepConnector", function(assert) {
 			var sUrlSplit1 = "https:";
 			var sUrlSplit2 = "//example.com";
-			sandbox.stub(config, "getFlexibilityServices").returns([
+			sandbox.stub(FlexRuntimeInfoAPI, "getConfiguredFlexServices").returns([
 				{ connector: "LrepConnector", url: sUrlSplit1 + sUrlSplit2}
 			]);
 			return createAndStartRTA.call(this)

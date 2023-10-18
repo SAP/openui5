@@ -10,6 +10,7 @@ sap.ui.define([
 	"sap/m/library",
 	"sap/ui/base/ManagedObjectObserver",
 	"sap/ui/core/ResizeHandler",
+	"sap/ui/core/Configuration",
 	"sap/ui/core/InvisibleText",
 	"sap/ui/core/delegate/ScrollEnablement",
 	"sap/ui/Device",
@@ -28,6 +29,7 @@ sap.ui.define([
 	mLibrary,
 	ManagedObjectObserver,
 	ResizeHandler,
+	Configuration,
 	InvisibleText,
 	ScrollEnablement,
 	Device,
@@ -679,7 +681,7 @@ sap.ui.define([
 		}
 
 		sAnimationMode = Core.getConfiguration().getAnimationMode();
-		bUseAnimations = sAnimationMode !== undefined/*Configuration*/.AnimationMode.none && sAnimationMode !== undefined/*Configuration*/.AnimationMode.minimal;
+		bUseAnimations = sAnimationMode !== Configuration.AnimationMode.none && sAnimationMode !== Configuration.AnimationMode.minimal;
 
 		if (exists(this.$contentFitContainer)) {
 			this.$contentFitContainer.toggleClass("sapFDynamicPageContentFitContainerFooterVisible", bShow);

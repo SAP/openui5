@@ -725,15 +725,6 @@ sap.ui.define([
 	 DataType.getType('int')
 	 );
 
-	 if (!thisLib.GridHelper) {
-		 thisLib.GridHelper = {
-			 getLibrarySpecificClass: function () {
-				 return "";
-			 },
-			 bFinal: false /* if true, the helper must not be overwritten by an other library */
-		 };
-	 }
-
 	 thisLib.cssgrid = thisLib.cssgrid || {};
 
 	 /**

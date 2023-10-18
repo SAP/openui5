@@ -13,6 +13,7 @@ sap.ui.define([
 	"sap/base/util/LoaderExtensions",
 	"sap/base/util/merge",
 	"sap/ui/base/ManagedObject",
+	"sap/ui/core/Configuration",
 	"sap/ui/core/Control",
 	"sap/ui/core/RenderManager",
 	"sap/ui/core/XMLTemplateProcessor",
@@ -34,6 +35,7 @@ sap.ui.define([
 		LoaderExtensions,
 		merge,
 		ManagedObject,
+		Configuration,
 		Control,
 		RenderManager,
 		XMLTemplateProcessor,
@@ -382,7 +384,7 @@ sap.ui.define([
 			return [
 				sComponentName || window.location.host + window.location.pathname,
 				oView.getId(),
-				undefined/*Configuration*/.getLanguageTag()
+				Configuration.getLanguageTag()
 			].concat(oRootComponent && oRootComponent.getActiveTerminologies() || []);
 		}
 

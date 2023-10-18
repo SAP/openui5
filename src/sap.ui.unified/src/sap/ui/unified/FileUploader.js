@@ -19,6 +19,7 @@ sap.ui.define([
 	'sap/base/Log',
 	'sap/base/security/encodeXML',
 	"sap/ui/thirdparty/jquery",
+	"sap/ui/core/Configuration",
 	"./FileUploaderHelper",
 	// jQuery Plugin "addAriaDescribedBy"
 	'sap/ui/dom/jquery/Aria'
@@ -36,6 +37,7 @@ sap.ui.define([
 	Log,
 	encodeXML,
 	jQuery,
+	Configuration,
 	FileUploaderHelper
 ) {
 	// shortcut for sap.ui.core.ValueState
@@ -615,7 +617,7 @@ sap.ui.define([
 		// check if sap.m library is used
 		this.bMobileLib = this.oBrowse.getMetadata().getName() == "sap.m.Button";
 
-		if (undefined/*Configuration*/.getAccessibility()) {
+		if (Configuration.getAccessibility()) {
 			if (!FileUploader.prototype._sAccText) {
 				var rb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified");
 				FileUploader.prototype._sAccText = rb.getText("FILEUPLOAD_ACC");

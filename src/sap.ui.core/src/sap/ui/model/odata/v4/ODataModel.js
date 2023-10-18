@@ -33,6 +33,7 @@ sap.ui.define([
 	"sap/base/assert",
 	"sap/base/Log",
 	"sap/ui/base/SyncPromise",
+	"sap/ui/core/Configuration",
 	"sap/ui/core/library",
 	"sap/ui/core/Messaging",
 	"sap/ui/core/Rendering",
@@ -44,7 +45,10 @@ sap.ui.define([
 	"sap/ui/model/Model",
 	"sap/ui/model/odata/OperationMode",
 	"sap/ui/thirdparty/URI"
-], function(ODataContextBinding, ODataListBinding, ODataMetaModel, ODataPropertyBinding, SubmitMode, _GroupLock, _Helper, _MetadataRequestor, _Parser, _Requestor, assert, Log, SyncPromise, coreLibrary, Messaging, Rendering, Supportability, CacheManager, Message, BindingMode, BaseContext, Model, OperationMode, URI) {
+], function (ODataContextBinding, ODataListBinding, ODataMetaModel, ODataPropertyBinding,
+		SubmitMode, _GroupLock, _Helper, _MetadataRequestor, _Parser, _Requestor, assert, Log,
+		SyncPromise, Configuration, coreLibrary, Messaging, Rendering, Supportability,
+		CacheManager, Message, BindingMode, BaseContext, Model, OperationMode, URI) {
 	"use strict";
 
 	var sClassName = "sap.ui.model.odata.v4.ODataModel",
@@ -254,7 +258,7 @@ sap.ui.define([
 	function constructor(mParameters) {
 		var sGroupId,
 			oGroupProperties,
-			sLanguageTag = undefined/*Configuration*/.getLanguageTag(),
+			sLanguageTag = Configuration.getLanguageTag(),
 			sODataVersion,
 			sParameter,
 			mQueryParams,

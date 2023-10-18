@@ -28,6 +28,7 @@ sap.ui.define([
 	"./plugins/SelectionModelSelection",
 	"sap/ui/thirdparty/jquery",
 	"sap/base/Log",
+	"sap/ui/core/Configuration",
 	"sap/ui/core/library"
 ], function(
 	Device,
@@ -55,6 +56,7 @@ sap.ui.define([
 	SelectionModelSelectionPlugin,
 	jQuery,
 	Log,
+	Configuration,
 	CoreLibrary
 ) {
 	"use strict";
@@ -139,7 +141,9 @@ sap.ui.define([
 			 * When the selection mode is changed, the current selection is removed.
 			 * <b>Note:</b> Since the group header visualization relies on the row selectors, the row selectors are always shown if the grouping
 			 * functionality (depends on table type) is enabled, even if <code>sap.ui.table.SelectionMode.None</code> is set.
-			 * <b>Note:</b> If a selection plugin is applied to the table, the selection mode is controlled by the plugin.
+			 * <b>Note:</b> The built-in selection API has limited functionality, especially when it is combined with paging (e.g. OData). Therefore,
+			 * it is recommended to use a selection plugin instead.
+			 * <b>Note:</b> If a selection plugin is used with the table, the selection mode is controlled by the plugin.
 			 */
 			selectionMode: {type: "sap.ui.table.SelectionMode", group: "Behavior", defaultValue: SelectionMode.MultiToggle},
 
@@ -384,6 +388,8 @@ sap.ui.define([
 			 * use {@link sap.ui.table.Table#getSelectedIndices} or the related function of the used selection plugin
 			 * if it exists.
 			 *
+			 * <b>Note:</b> The built-in selection API has limited functionality, especially when it is combined with paging (e.g. OData). Therefore,
+			 * it is recommended to use a selection plugin instead.
 			 * <b>Note:</b> If a selection plugin is used with the table, this event won't be fired.
 			 */
 			rowSelectionChange: {
@@ -742,7 +748,7 @@ sap.ui.define([
 		/*
 		 * Flag indicating whether the text direction is RTL. If <code>false</code>, the text direction is LTR.
 		 */
-		this._bRtlMode = undefined/*Configuration*/.getRTL();
+		this._bRtlMode = Configuration.getRTL();
 
 		/*
 		 * Flag indicating whether the rows are currently being bound. This is the time between #bindRows and the actual instantiation of the
@@ -931,7 +937,7 @@ sap.ui.define([
 		var pUpdateLocalizationInfo = Promise.resolve();
 
 		if (bRtlChanged) {
-			this._bRtlMode = undefined/*Configuration*/.getRTL();
+			this._bRtlMode = Configuration.getRTL();
 		}
 
 		if (bLangChanged) {
@@ -1489,6 +1495,9 @@ sap.ui.define([
 	 * @param {sap.ui.table.SelectionMode} sSelectionMode the selection mode, see sap.ui.table.SelectionMode
 	 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 	 * @public
+	 *
+	 * <b>Note:</b> The built-in selection API has limited functionality, especially when it is combined with paging (e.g. OData). Therefore,
+	 * it is recommended to use a selection plugin instead.
 	 */
 	Table.prototype.setSelectionMode = function(sSelectionMode) {
 		if (this._hasSelectionPlugin()) {
@@ -2287,7 +2296,7 @@ sap.ui.define([
 		var $this = this.$();
 		var sTableId = this.getId();
 
-		if (undefined/*Configuration*/.getAnimationMode() !== undefined/*Configuration*/.AnimationMode.none) {
+		if (Configuration.getAnimationMode() !== Configuration.AnimationMode.none) {
 			jQuery(document.body).on("webkitTransitionEnd." + sTableId + " transitionend." + sTableId,
 				function(oEvent) {
 					if (jQuery(oEvent.target).has($this).length > 0) {
@@ -2950,6 +2959,9 @@ sap.ui.define([
 	 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 	 * @throws {Error} If a selection plugin is applied
 	 * @public
+	 *
+	 * <b>Note:</b> The built-in selection API has limited functionality, especially when it is combined with paging (e.g. OData). Therefore,
+	 * it is recommended to use a selection plugin instead.
 	 */
 	Table.prototype.setSelectedIndex = function(iIndex) {
 		if (this._hasSelectionPlugin()) {
@@ -2966,6 +2978,9 @@ sap.ui.define([
 	 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 	 * @throws {Error} If a selection plugin is applied
 	 * @public
+	 *
+	 * <b>Note:</b> The built-in selection API has limited functionality, especially when it is combined with paging (e.g. OData). Therefore,
+	 * it is recommended to use a selection plugin instead.
 	 */
 	Table.prototype.clearSelection = function() {
 		if (this._hasSelectionPlugin()) {
@@ -2985,6 +3000,9 @@ sap.ui.define([
 	 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 	 * @throws {Error} If a selection plugin is applied
 	 * @public
+	 *
+	 * <b>Note:</b> The built-in selection API has limited functionality, especially when it is combined with paging (e.g. OData). Therefore,
+	 * it is recommended to use a selection plugin instead.
 	 */
 	Table.prototype.selectAll = function() {
 		if (this._hasSelectionPlugin()) {
@@ -3004,6 +3022,9 @@ sap.ui.define([
 	 * @returns {int[]} Selected indices
 	 * @throws {Error} If a selection plugin is applied
 	 * @public
+	 *
+	 * <b>Note:</b> The built-in selection API has limited functionality, especially when it is combined with paging (e.g. OData). Therefore,
+	 * it is recommended to use a selection plugin instead.
 	 */
 	Table.prototype.getSelectedIndices = function() {
 		if (this._hasSelectionPlugin()) {
@@ -3021,6 +3042,9 @@ sap.ui.define([
 	 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 	 * @throws {Error} If a selection plugin is applied
 	 * @public
+	 *
+	 * <b>Note:</b> The built-in selection API has limited functionality, especially when it is combined with paging (e.g. OData). Therefore,
+	 * it is recommended to use a selection plugin instead.
 	 */
 	Table.prototype.addSelectionInterval = function(iIndexFrom, iIndexTo) {
 		if (this._hasSelectionPlugin()) {
@@ -3039,6 +3063,9 @@ sap.ui.define([
 	 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 	 * @throws {Error} If a selection plugin is applied
 	 * @public
+	 *
+	 * <b>Note:</b> The built-in selection API has limited functionality, especially when it is combined with paging (e.g. OData). Therefore,
+	 * it is recommended to use a selection plugin instead.
 	 */
 	Table.prototype.setSelectionInterval = function(iIndexFrom, iIndexTo) {
 		if (this._hasSelectionPlugin()) {
@@ -3057,6 +3084,9 @@ sap.ui.define([
 	 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 	 * @throws {Error} If a selection plugin is applied
 	 * @public
+	 *
+	 * <b>Note:</b> The built-in selection API has limited functionality, especially when it is combined with paging (e.g. OData). Therefore,
+	 * it is recommended to use a selection plugin instead.
 	 */
 	Table.prototype.removeSelectionInterval = function(iIndexFrom, iIndexTo) {
 		if (this._hasSelectionPlugin()) {
@@ -3074,6 +3104,9 @@ sap.ui.define([
 	 * @returns {boolean} Whether the index is selected
 	 * @throws {Error} If a selection plugin is applied
 	 * @public
+	 *
+	 * <b>Note:</b> The built-in selection API has limited functionality, especially when it is combined with paging (e.g. OData). Therefore,
+	 * it is recommended to use a selection plugin instead.
 	 */
 	Table.prototype.isIndexSelected = function(iIndex) {
 		if (this._hasSelectionPlugin()) {

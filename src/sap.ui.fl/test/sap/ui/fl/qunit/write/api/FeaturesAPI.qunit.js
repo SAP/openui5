@@ -3,14 +3,14 @@
 sap.ui.define([
 	"sap/ui/fl/write/api/FeaturesAPI",
 	"sap/ui/fl/registry/Settings",
-	"sap/ui/fl/initial/_internal/config",
+	"sap/ui/fl/initial/_internal/FlexConfiguration",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	FeaturesAPI,
 	Settings,
-	config,
+	FlexConfiguration,
 	Layer,
 	Utils,
 	sinon

@@ -1396,7 +1396,8 @@ sap.ui.define([
 							"sap.ui.fl.testResources": "test-resources/sap/ui/fl/qunit/testResources",
 							delegates: "test-resources/sap/ui/mdc/delegates/"
 						},
-						libs: ["sap.ui.mdc"]
+						libs: ["sap.ui.mdc"],
+						flexibilityServices: '[{"connector": "SessionStorageConnector"}]'
 					},
 					qunit: {
 						reorder: false

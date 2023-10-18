@@ -203,14 +203,6 @@ sap.ui.define([
 			});
 		});
 
-		function updateSapui5VersionTo1(oFlexObject) {
-			oFlexObject.update({
-				support: {
-					sapui5Version: "1"
-				}
-			});
-		}
-
 		QUnit.test("does not store the default executeOnSelection and favorite and contexts", function(assert) {
 			var sPersistencyKey = "persistency.key";
 			sandbox.stub(Utils, "createDefaultFileName").returns("someFileName");
@@ -238,8 +230,6 @@ sap.ui.define([
 
 			assert.strictEqual(mCompVariantsMapForPersistencyKey.variants.length, 1, "then one entity was stored");
 
-			assert.ok(oAddedObject.getSupportInformation().sapui5Version, "the version was filled in the support");
-			updateSapui5VersionTo1(oAddedObject); // avoid broken tests with version changes
 			assert.strictEqual(oAddedObject.getName(), "newVariant", "the variant name is set correctly");
 			assert.strictEqual(mCompVariantsMapForPersistencyKey.variants[0], oAddedObject, "which is the returned entity");
 		});
@@ -275,8 +265,6 @@ sap.ui.define([
 
 			assert.strictEqual(mCompVariantsMapForPersistencyKey.variants.length, 1, "then one entity was stored");
 
-			assert.ok(oAddedObject.getSupportInformation().sapui5Version, "the version was filled in the support");
-			updateSapui5VersionTo1(oAddedObject); // avoid broken tests with version changes
 			assert.equal(oAddedObject.getSupportInformation().user, "test user", "the user name is set correctly");
 			assert.strictEqual(oAddedObject.getExecuteOnSelection(), true, "executeOnSelection is set");
 			assert.strictEqual(oAddedObject.getFavorite(), true, "favorite is set");

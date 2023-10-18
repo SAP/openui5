@@ -3,15 +3,17 @@
  */
 
 sap.ui.define([
+	"sap/base/util/ObjectPath",
+	"sap/ui/fl/apply/_internal/flexObjects/States",
 	"sap/ui/fl/initial/_internal/StorageUtils",
 	"sap/ui/fl/write/_internal/StorageFeaturesMerger",
-	"sap/ui/fl/apply/_internal/flexObjects/States",
-	"sap/base/util/ObjectPath"
+	"sap/ui/VersionInfo"
 ], function(
+	ObjectPath,
+	States,
 	StorageUtils,
 	StorageFeaturesMerger,
-	States,
-	ObjectPath
+	VersionInfo
 ) {
 	"use strict";
 
@@ -121,13 +123,14 @@ sap.ui.define([
 		return iChangeCreateIndex;
 	}
 
-	function prepareCondensingForConnector(mPropertyBag) {
+	async function prepareCondensingForConnector(mPropertyBag) {
 		var mCondense;
 		if (
 			mPropertyBag.allChanges
 			&& mPropertyBag.allChanges.length
 			&& mPropertyBag.condensedChanges
 		) {
+			await addVersionToFlexObjects(mPropertyBag.condensedChanges);
 			mCondense = {
 				namespace: mPropertyBag.allChanges[0].convertToFileContent().namespace,
 				layer: mPropertyBag.layer
@@ -193,6 +196,21 @@ sap.ui.define([
 		return mCondense;
 	}
 
+	async function addVersionToFlexObjects(aFlexObjects) {
+		const oVersionInfo = await VersionInfo.load();
+		const sVersion = oVersionInfo.version;
+		aFlexObjects.forEach((oFlexObject) => {
+			if (oFlexObject.isA && oFlexObject.isA("sap.ui.fl.apply._internal.flexObjects.FlexObject")) {
+				const oSupportInformation = oFlexObject.getSupportInformation();
+				oSupportInformation.sapui5Version ||= sVersion;
+				oFlexObject.setSupportInformation(oSupportInformation);
+			} else {
+				oFlexObject.support ||= {};
+				oFlexObject.support.sapui5Version ||= sVersion;
+			}
+		});
+	}
+
 	function _executeActionByName(sActionName, mPropertyBag) {
 		return _validateDraftScenario(mPropertyBag)
 		.then(_getConnectorConfigByLayer.bind(undefined, mPropertyBag.layer))
@@ -217,7 +235,8 @@ sap.ui.define([
 	 * @param {number} [nParentVersion] - Indicates if changes should be written as a draft and on which version the changes should be based on
 	 * @returns {Promise} Promise resolving as soon as the writing was completed or rejects in case of an error
 	 */
-	Storage.write = function(mPropertyBag) {
+	Storage.write = async function(mPropertyBag) {
+		await addVersionToFlexObjects(mPropertyBag.flexObjects);
 		return _executeActionByName("write", mPropertyBag);
 	};
 
@@ -234,32 +253,30 @@ sap.ui.define([
 	 * @param {number} [nParentVersion] - Indicates if changes should be written as a draft and on which version the changes should be based on
 	 * @returns {Promise} Promise resolving as soon as the writing was completed or was not needed; or rejects in case of an error
 	 */
-	Storage.condense = function(mPropertyBag) {
-		var mCondense = prepareCondensingForConnector(mPropertyBag);
+	Storage.condense = async function(mPropertyBag) {
+		const mProperties = Object.assign({}, mPropertyBag);
+		const mCondense = await prepareCondensingForConnector(mProperties);
 		if (!mCondense) {
 			return Promise.reject("No changes were provided");
 		}
-		if (
-			mCondense.create || mCondense.reorder || mCondense.update || mCondense.delete
-		) {
+		if (mCondense.create || mCondense.reorder || mCondense.update || mCondense.delete) {
 			var oCreatedChanges = [];
 			if (mCondense.create) {
 				oCreatedChanges = (mCondense.create.change ? mCondense.create.change : [])
 				.concat(mCondense.create.ctrl_variant ? mCondense.create.ctrl_variant : []);
 			}
-			mPropertyBag.flexObjects = mCondense;
-			return _executeActionByName("condense", mPropertyBag)
-			.then(function(oResult) {
-				if (oResult && oResult.status && oResult.status === 205 && oCreatedChanges.length) {
-					var aResponse = oCreatedChanges.map(function(oChange) {
-						return Object.values(oChange).pop();
-					});
-					oResult.response = aResponse;
-				}
-				return oResult;
-			});
+			mProperties.flexObjects = mCondense;
+
+			const oResult = await _executeActionByName("condense", mProperties);
+			if (oResult && oResult.status && oResult.status === 205 && oCreatedChanges.length) {
+				var aResponse = oCreatedChanges.map(function(oChange) {
+					return Object.values(oChange).pop();
+				});
+				oResult.response = aResponse;
+			}
+			return oResult;
 		}
-		return Promise.resolve();
+		return undefined;
 	};
 
 	/**

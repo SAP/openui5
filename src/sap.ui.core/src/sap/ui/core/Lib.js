@@ -13,19 +13,20 @@ sap.ui.define([
 	"sap/base/util/isEmptyObject",
 	"sap/base/util/isPlainObject",
 	'sap/base/util/LoaderExtensions',
+	'sap/base/util/fetch',
 	'sap/base/util/mixedFetch',
 	"sap/base/util/ObjectPath",
 	'sap/base/util/Version',
 	'sap/base/util/array/uniqueSort',
-	'sap/ui/Global',
-	/* sap.ui.lazyRequire */
+	'sap/ui/Global', /* sap.ui.lazyRequire */
 	'sap/ui/VersionInfo',
 	'sap/ui/base/DataType',
 	'sap/ui/base/EventProvider',
 	'sap/ui/base/Object',
 	'sap/ui/base/SyncPromise',
+	'sap/ui/core/Configuration',
 	'sap/ui/core/_UrlResolver'
-], function(
+], function (
 	assert,
 	BaseConfig,
 	Localization,
@@ -35,6 +36,7 @@ sap.ui.define([
 	isEmptyObject,
 	isPlainObject,
 	LoaderExtensions,
+	fetch,
 	mixedFetch,
 	ObjectPath,
 	Version,
@@ -45,6 +47,7 @@ sap.ui.define([
 	EventProvider,
 	BaseObject,
 	SyncPromise,
+	Configuration,
 	_UrlResolver
 ) {
 	"use strict";
@@ -726,9 +729,9 @@ sap.ui.define([
 
 			var sURL = getModulePath(this.name, "/library-preload.json");
 
-			return mixedFetch(sURL, {
+			return fetch(sURL, {
 				headers: {
-					Accept: mixedFetch.ContentTypes.JSON
+					Accept: fetch.ContentTypes.JSON
 				}
 			}, mOptions.sync).then(function(response) {
 				if (response.ok) {
@@ -1844,7 +1847,7 @@ sap.ui.define([
 	 */
 	Library.getPreloadMode = function() {
 		// if debug sources are requested, then the preload feature must be deactivated
-		if (undefined/*Configuration*/.getDebug() === true) {
+		if (Configuration.getDebug() === true) {
 			return "";
 		}
 		// determine preload mode (e.g. resolve default or auto)

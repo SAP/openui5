@@ -9,6 +9,7 @@ sap.ui.define(["sap/ui/core/mvc/Controller"], function(Controller) {
 		},
 		_format: function(sText) {
 			return sText.toUpperCase();
-		}
+		},
+		onButtonPress: function() {}
 	});
 });

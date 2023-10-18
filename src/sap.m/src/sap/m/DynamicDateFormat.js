@@ -11,9 +11,10 @@ sap.ui.define([
 	'sap/ui/core/LocaleData',
 	"sap/base/util/deepExtend",
 	"sap/ui/unified/calendar/CalendarUtils",
-	"./library"
+	"./library",
+	"sap/ui/core/Configuration"
 ],
-	function(UI5Date, DateFormat, NumberFormat, Locale, LocaleData, deepExtend, CalendarUtils, library) {
+	function(UI5Date, DateFormat, NumberFormat, Locale, LocaleData, deepExtend, CalendarUtils, library, Configuration) {
 		"use strict";
 
 		/**
@@ -150,7 +151,7 @@ sap.ui.define([
 			}
 
 			if (!oLocale) {
-				oLocale = undefined/*Configuration*/.getFormatSettings().getFormatLocale();
+				oLocale = Configuration.getFormatSettings().getFormatLocale();
 			}
 			oFormat.oLocale = oLocale;
 			oFormat.oLocaleData = LocaleData.getInstance(oLocale);

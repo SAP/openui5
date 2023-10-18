@@ -13,7 +13,8 @@ sap.ui.define([
 	"sap/m/Label",
 	"sap/ui/Device",
 	"sap/ui/core/date/UI5Date",
-	"sap/ui/core/date/CalendarWeekNumbering"
+	"sap/ui/core/date/CalendarWeekNumbering",
+	"sap/ui/core/Configuration"
 ], function(
 	DynamicDateRange,
 	DynamicDateOption,
@@ -28,7 +29,8 @@ sap.ui.define([
 	Label,
 	Device,
 	UI5Date,
-	CalendarWeekNumbering
+	CalendarWeekNumbering,
+	Configuration
 ) {
 	"use strict";
 
@@ -1510,7 +1512,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("DynamicDateRange.toDates method with timezones", function(assert) {
-		var oTimezoneStub = this.stub(undefined/*Configuration*/, 'getTimezone').returns("Pacific/Chatham"),
+		var oTimezoneStub = this.stub(Configuration, 'getTimezone').returns("Pacific/Chatham"),
 			myGetInstance = UI5Date.getInstance,
 			oCurrentDateStub = this.stub(UI5Date, 'getInstance'),
 			aDateRange;

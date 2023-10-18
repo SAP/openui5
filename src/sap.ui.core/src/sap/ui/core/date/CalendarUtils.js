@@ -5,8 +5,9 @@
 // Provides type sap.ui.core.date.CalendarUtils.
 sap.ui.define([
 	"sap/ui/core/date/CalendarWeekNumbering",
+	"sap/ui/core/Configuration",
 	"sap/ui/core/LocaleData"
-], function(CalendarWeekNumbering, LocaleData) {
+], function(CalendarWeekNumbering, Configuration, LocaleData) {
 	"use strict";
 
 	/**
@@ -49,7 +50,7 @@ sap.ui.define([
 			var oLocaleData, oWeekConfigurationValues;
 
 			if (!sCalendarWeekNumbering) {
-				return CalendarUtils.getWeekConfigurationValues(undefined/*Configuration*/.getCalendarWeekNumbering(), oLocale);
+				return CalendarUtils.getWeekConfigurationValues(Configuration.getCalendarWeekNumbering(), oLocale);
 			}
 
 			oWeekConfigurationValues = CalendarWeekNumbering.getWeekConfigurationValues(sCalendarWeekNumbering);
@@ -57,7 +58,7 @@ sap.ui.define([
 				return oWeekConfigurationValues;
 			}
 			if (sCalendarWeekNumbering === CalendarWeekNumbering.Default) {
-				oLocale = oLocale || undefined/*Configuration*/.getFormatSettings().getFormatLocale();
+				oLocale = oLocale || Configuration.getFormatSettings().getFormatLocale();
 				oLocaleData = LocaleData.getInstance(oLocale);
 				return {
 					firstDayOfWeek : oLocaleData.getFirstDayOfWeek(),

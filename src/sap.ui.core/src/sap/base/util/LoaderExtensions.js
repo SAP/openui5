@@ -7,12 +7,14 @@ sap.ui.define([
 	'sap/base/Log',
 	'sap/base/assert',
 	'sap/base/util/extend',
+	'sap/base/util/fetch',
 	'sap/base/util/mixedFetch'
 ], function(
 	XMLHelper,
 	Log,
 	assert,
 	extend,
+	fetch,
 	mixedFetch
 ) {
 	"use strict";
@@ -300,7 +302,7 @@ sap.ui.define([
 
 			var oHeaders = {};
 			if (sType) {
-				oHeaders["Accept"] = mixedFetch.ContentTypes[sType.toUpperCase()];
+				oHeaders["Accept"] = fetch.ContentTypes[sType.toUpperCase()];
 			}
 
 			sUrl = mOptions.url || sap.ui.loader._.getResourcePath(sResourceName);
@@ -309,7 +311,7 @@ sap.ui.define([
 				fnDone = LoaderExtensions.notifyResourceLoading();
 			}
 
-			var pResponse = mixedFetch(sUrl, {
+			var pResponse = fetch(sUrl, {
 				headers: Object.assign(oHeaders, mOptions.headers)
 			}, !mOptions.async)
 			.then(function(response) {

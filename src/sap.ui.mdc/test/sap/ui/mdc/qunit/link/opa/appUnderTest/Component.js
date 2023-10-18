@@ -8,8 +8,8 @@
  * ${version}
  */
 sap.ui.define([
-	'sap/ui/core/UIComponent', 'sap/ui/model/odata/v2/ODataModel', 'sap/ui/core/util/MockServer', 'testutils/other/FakeFlpConnector'
-], function(UIComponent, ODataModel, MockServer, FakeFlpConnector) {
+	'sap/ui/core/UIComponent', 'sap/ui/model/odata/v2/ODataModel', 'sap/ui/core/util/MockServer', 'testutils/link/FakeUShellConnector'
+], function(UIComponent, ODataModel, MockServer, FakeUShellConnector) {
 	"use strict";
 
 	return UIComponent.extend("appUnderTest.Component", {
@@ -28,12 +28,12 @@ sap.ui.define([
 		destroy: function() {
 			this.oMockServer.stop();
 			this.oMockServer.destroy();
-			FakeFlpConnector.disableFakeConnector();
+			FakeUShellConnector.disableFakeConnector();
 			// call the base component's destroy function
 			UIComponent.prototype.destroy.apply(this, arguments);
 		},
 		exit: function() {
-			FakeFlpConnector.disableFakeConnector();
+			FakeUShellConnector.disableFakeConnector();
 		},
 		startMockServer: function() {
 			const sMockServerUrl = "/odata/";
@@ -58,7 +58,7 @@ sap.ui.define([
 			}));
 		},
 		enableFakeFLP: function() {
-			FakeFlpConnector.enableFakeConnector({
+			FakeUShellConnector.enableFakeConnector({
 				'appUnderTest_SemanticObjectName': {
 					links: [
 						{

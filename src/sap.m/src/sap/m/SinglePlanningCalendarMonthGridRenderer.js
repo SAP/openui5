@@ -13,8 +13,9 @@ sap.ui.define([
 	'sap/ui/unified/library',
 	"sap/ui/core/date/CalendarUtils",
 	'sap/ui/core/Locale',
+	"sap/ui/core/Configuration",
 	"sap/ui/core/date/UI5Date"
-],
+	],
 	function(
 		CalendarDate,
 		CalendarUtils,
@@ -26,8 +27,9 @@ sap.ui.define([
 		unifiedLibrary,
 		CalendarDateUtils,
 		Locale,
+		Configuration,
 		UI5Date
-	) {
+		) {
 		"use strict";
 
 		// shortcut for sap.ui.unified.CalendarDayType

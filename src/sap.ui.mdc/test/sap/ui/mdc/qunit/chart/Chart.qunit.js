@@ -59,7 +59,7 @@ sap.ui.define([
 									collectionPath: "/testPath"
 								}
 							},
-							propertyInfo: [{ name: "name1" }, { name: "name2" }]
+							propertyInfo: [{ name: "name1", label: "name1", dataType: "String" }, { name: "name2", label: "name2", dataType: "String" }]
 						});
 					}
 				});
@@ -970,7 +970,7 @@ sap.ui.define([
 
 			this.oMDCChart.initialized().then(function () {
 
-				const oToolbarSpy = sinon.spy(this.oMDCChart.getAggregation("_toolbar"), "setHeaderVisible");
+				const oToolbarSpy = sinon.spy(this.oMDCChart.getAggregation("_toolbar"), "_setHeaderVisible");
 				assert.ok(this.oMDCChart.getHeaderVisible(), "Header is set to visible initially");
 
 				this.oMDCChart.setHeaderVisible(false);

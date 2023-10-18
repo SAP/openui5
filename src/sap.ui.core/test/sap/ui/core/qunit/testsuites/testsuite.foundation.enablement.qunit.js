@@ -116,7 +116,12 @@ sap.ui.define(function() {
 			},
 
 			"base/util/resolveReference": {
-				title: "QUnit Page for resolveReference"
+				title: "QUnit Page for resolveReference",
+				loader: {
+					paths: {
+						"util": "test-resources/sap/ui/core/qunit/base/util/"
+					}
+				}
 			},
 
 			"base/util/uid": {

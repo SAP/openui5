@@ -6,6 +6,7 @@
 sap.ui.define([
 	"./AnimationMode",
 	"./Component",
+	"./Configuration",
 	"./ControlBehavior",
 	"./Element",
 	"./ElementMetadata",
@@ -53,6 +54,7 @@ sap.ui.define([
 	function(
 		AnimationMode,
 		Component,
+		Configuration,
 		ControlBehavior,
 		Element,
 		ElementMetadata,
@@ -637,16 +639,15 @@ sap.ui.define([
 				// a set of private API is exposed for sap.ui.core restricted usage
 				publicMethods: [
 					// @public
-					//  - Init
-					"getConfiguration",
+					//  - Ready Promise
+					"ready",
 
 					// @private, @ui5-restricted sap.ui.core
 					//  - Init
 					"boot",
-					//  - Ready Promise
-					"ready",
 
 					// @deprecated
+					"getConfiguration",
 					"isMobile",
 					//  - Init & Plugins
 					"isInitialized","attachInit",
@@ -725,7 +726,7 @@ sap.ui.define([
 		 */
 		Core.prototype._setupContentDirection = function() {
 			var METHOD = "sap.ui.core.Core",
-				sDir = undefined/*Configuration*/.getRTL() ? "rtl" : "ltr";
+				sDir = Configuration.getRTL() ? "rtl" : "ltr";
 
 			document.documentElement.setAttribute("dir", sDir); // webkit does not allow setting document.dir before the body exists
 			Log.info("Content direction set to '" + sDir + "'",null,METHOD);
@@ -787,7 +788,7 @@ sap.ui.define([
 
 			// append the lang info to the document (required for ARIA support)
 			var fnUpdateLangAttr = function() {
-				var oLocale = undefined/*Configuration*/.getLocale();
+				var oLocale = Configuration.getLocale();
 				oLocale ? html.setAttribute("lang", oLocale.toString()) : html.removeAttribute("lang");
 			};
 			fnUpdateLangAttr.call(this);
@@ -836,7 +837,7 @@ sap.ui.define([
 		 */
 		Core.prototype._boot = function(bAsync, fnCallback) {
 			// add CalendarClass to list of modules
-			this.aModules.push("sap/ui/core/date/" + undefined/*Configuration*/.getCalendarType());
+			this.aModules.push("sap/ui/core/date/" + Configuration.getCalendarType());
 
 			// load all modules now
 			if ( bAsync ) {
@@ -1189,7 +1190,7 @@ sap.ui.define([
 		 * @deprecated As of Version 1.120. Please see {@link sap.ui.core.Configuration Configuration} for the corrsponding replacements.
 		 */
 		Core.prototype.getConfiguration = function () {
-			return undefined/*Configuration*/;
+			return Configuration;
 		};
 
 		/**

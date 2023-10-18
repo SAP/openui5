@@ -16,6 +16,7 @@ sap.ui.define([
 	"sap/base/util/deepEqual",
 	"sap/base/Log",
 	"sap/base/assert",
+	"sap/ui/core/Configuration",
 	"sap/ui/core/date/UI5Date",
 	"sap/ui/core/Core",
 	// jQuery Plugin "cursorPos"
@@ -34,6 +35,7 @@ sap.ui.define([
 		deepEqual,
 		Log,
 		assert,
+		Configuration,
 		UI5Date,
 		Core
 	) {
@@ -259,7 +261,7 @@ sap.ui.define([
 
 			if (!sPlaceholder) {
 				oBinding = this.getBinding("value");
-				oLocale = undefined/*Configuration*/.getFormatSettings().getFormatLocale();
+				oLocale = Configuration.getFormatSettings().getFormatLocale();
 				oLocaleData = LocaleData.getInstance(oLocale);
 
 				if (oBinding && oBinding.getType() && oBinding.getType().isA("sap.ui.model.type.DateInterval")) {
@@ -1241,7 +1243,7 @@ sap.ui.define([
 
 			if (!sDelimiter) {
 				if (!this._sLocaleDelimiter) {
-					var oLocale = undefined/*Configuration*/.getFormatSettings().getFormatLocale();
+					var oLocale = Configuration.getFormatSettings().getFormatLocale();
 					var oLocaleData = LocaleData.getInstance(oLocale);
 					var sPattern = oLocaleData.getIntervalPattern();
 					var iIndex1 = sPattern.indexOf("{0}") + 3;

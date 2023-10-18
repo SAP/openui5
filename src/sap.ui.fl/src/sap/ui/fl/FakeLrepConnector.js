@@ -3,12 +3,12 @@
  */
 
 sap.ui.define([
-	"sap/ui/fl/initial/_internal/config",
+	"sap/ui/fl/initial/_internal/FlexConfiguration",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/apply/_internal/connectors/ObjectStorageUtils",
 	"sap/ui/fl/write/_internal/connectors/ObjectPathConnector"
 ], function(
-	config,
+	FlexConfiguration,
 	FlexState,
 	ObjectStorageUtils,
 	ObjectPathConnector
@@ -22,7 +22,7 @@ sap.ui.define([
 	FakeLrepConnector.prototype = {};
 
 	FakeLrepConnector.setFlexibilityServicesAndClearCache = function(sStorageConnectorName, sInitialComponentJsonPath) {
-		this._oFlexibilityServices = config.getFlexibilityServices();
+		this._oFlexibilityServices = FlexConfiguration.getFlexibilityServices();
 
 		var aConnectorConfig = [];
 		if (sInitialComponentJsonPath) {
@@ -30,7 +30,7 @@ sap.ui.define([
 			aConnectorConfig.push({connector: "ObjectPathConnector"});
 		}
 		aConnectorConfig.push({connector: sStorageConnectorName});
-		config.setFlexibilityServices(aConnectorConfig);
+		FlexConfiguration.setFlexibilityServices(aConnectorConfig);
 		FlexState.clearState();
 	};
 
@@ -43,7 +43,7 @@ sap.ui.define([
 
 		// only reset the flexibility Services in case they were changes by the FakeConnector before
 		if (this._oFlexibilityServices) {
-			config.setFlexibilityServices(this._oFlexibilityServices);
+			FlexConfiguration.setFlexibilityServices(this._oFlexibilityServices);
 			delete this._oFlexibilityServices;
 		}
 	};

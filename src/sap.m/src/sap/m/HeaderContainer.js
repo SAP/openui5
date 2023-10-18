@@ -2,32 +2,30 @@
  * ${copyright}
  */
 sap.ui.define([
-	'./library',
-	'./Button',
-	'./ScrollContainer',
-	'sap/ui/core/Core',
-	'sap/ui/core/Control',
-	'sap/ui/core/Element',
-	'sap/ui/Device',
-	'sap/m/HeaderContainerItemNavigator',
-	'sap/ui/core/delegate/ItemNavigation',
-	'sap/ui/core/library',
-	'sap/ui/core/IntervalTrigger',
-	'sap/ui/core/Icon',
-	'./HeaderContainerRenderer',
-	"sap/base/Log",
-	"sap/ui/events/KeyCodes",
-	"sap/ui/events/PseudoEvents",
-	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Lib",
-	// jQuery Plugin "scrollLeftRTL"
-	"sap/ui/dom/jquery/scrollLeftRTL",
-	// jQuery Plugin "scrollRightRTL"
-	"sap/ui/dom/jquery/scrollRightRTL",
-	// jQuery custom selectors ":sapTabbable"
-	"sap/ui/dom/jquery/Selectors"
-],
-	function(
+		'./library',
+		'./Button',
+		'./ScrollContainer',
+		'sap/ui/core/Core',
+		'sap/ui/core/Control',
+		'sap/ui/core/Element',
+		'sap/ui/Device',
+		'sap/m/HeaderContainerItemNavigator',
+		'sap/ui/core/delegate/ItemNavigation',
+		'sap/ui/core/library',
+		'sap/ui/core/IntervalTrigger',
+		'sap/ui/core/Icon',
+		'./HeaderContainerRenderer',
+		"sap/base/Log",
+		"sap/ui/events/KeyCodes",
+		"sap/ui/events/PseudoEvents",
+		"sap/ui/thirdparty/jquery",
+		"sap/ui/core/Configuration",
+		"sap/ui/core/Lib",
+		"sap/ui/dom/jquery/scrollLeftRTL", // jQuery Plugin "scrollLeftRTL"
+		"sap/ui/dom/jquery/scrollRightRTL", // jQuery Plugin "scrollRightRTL"
+		"sap/ui/dom/jquery/Selectors" // jQuery custom selectors ":sapTabbable"
+	],
+	function (
 		library,
 		Button,
 		ScrollContainer,
@@ -45,6 +43,7 @@ sap.ui.define([
 		KeyCodes,
 		PseudoEvents,
 		jQuery,
+		Configuration,
 		CoreLib
 	) {
 		"use strict";
@@ -277,7 +276,7 @@ sap.ui.define([
 
 		HeaderContainer.prototype.init = function () {
 			this._aItemEnd = [];
-			this._bRtl = undefined/*Configuration*/.getRTL();
+			this._bRtl = Configuration.getRTL();
 			this._oRb = CoreLib.getResourceBundleFor("sap.m");
 			this._oScrollCntr = new ScrollContainer(this.getId() + "-scrl-cntnr", {
 				width: "100%",
@@ -441,7 +440,7 @@ sap.ui.define([
 		};
 
 		HeaderContainer.prototype.onAfterRendering = function () {
-			this._bRtl = undefined/*Configuration*/.getRTL();
+			this._bRtl = Configuration.getRTL();
 			this._checkOverflow();
 		};
 

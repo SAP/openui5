@@ -4,9 +4,10 @@
 sap.ui.define([
 	"sap/base/Log",
 	"sap/base/util/deepClone",
+	"sap/ui/core/Configuration",
 	"sap/ui/core/date/UI5Date",
 	"sap/ui/core/format/TimezoneUtil"
-], function(Log, deepClone, UI5Date, TimezoneUtil) {
+], function (Log, deepClone, Configuration, UI5Date, TimezoneUtil) {
 	/*global QUnit, sinon*/
 	"use strict";
 
@@ -162,7 +163,7 @@ sap.ui.define([
 		var oDateSpy, sResult,
 			oUI5Date = new UI5Date(oFixture.constructorArguments || [], oFixture.timezone);
 
-		this.mock(undefined/*Configuration*/).expects("getLanguageTag")
+		this.mock(Configuration).expects("getLanguageTag")
 			.withExactArgs()
 			.exactly(oFixture.locale ? 0 : 1)
 			.returns("en-US");
@@ -807,7 +808,7 @@ sap.ui.define([
 ].forEach(function (aArguments) {
 	var sTitle = "getInstance: same time zone, " + aArguments.length + " argument(s)";
 	QUnit.test(sTitle, function (assert) {
-		this.mock(undefined/*Configuration*/).expects("getTimezone")
+		this.mock(Configuration).expects("getTimezone")
 			.withExactArgs()
 			.returns("~Timezone");
 		this.mock(TimezoneUtil).expects("getLocalTimezone")
@@ -831,7 +832,7 @@ sap.ui.define([
 		var oUI5Date,
 			oMockedDate = {};
 
-		this.mock(undefined/*Configuration*/).expects("getTimezone").withExactArgs().returns("~configuredTimezone");
+		this.mock(Configuration).expects("getTimezone").withExactArgs().returns("~configuredTimezone");
 		this.mock(TimezoneUtil).expects("getLocalTimezone").withExactArgs().returns("~localTimezone");
 		this.mock(UI5Date).expects("_createDateInstance")
 			.withExactArgs(sinon.match(function (oArguments) {
@@ -1061,7 +1062,7 @@ sap.ui.define([
 			assert.strictEqual(oUI5Date.getDay(), iDay, "Weekday");
 		}
 
-		this.mock(undefined/*Configuration*/).expects("getTimezone")
+		this.mock(Configuration).expects("getTimezone")
 			.withExactArgs()
 			.atLeast(1)
 			.returns("Pacific/Fiji");
@@ -1205,7 +1206,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("checkDate", function (assert) {
 		var oDate = new Date(), // no need to use UI5Date.getInstance
-			oConfigurationMock = this.mock(undefined/*Configuration*/),
+			oConfigurationMock = this.mock(Configuration),
 			oTimezoneUtilMock = this.mock(TimezoneUtil);
 
 		// code under test

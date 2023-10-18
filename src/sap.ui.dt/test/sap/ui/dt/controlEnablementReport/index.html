@@ -18,10 +18,12 @@
 				"sap/ui/core/util/Export",
 				"sap/ui/core/util/ExportTypeCSV",
 				"sap/ui/core/Core",
-				"sap/ui/core/Element"
-			], function(LibraryScanner, Export, ExportTypeCSV, Core, Element) {
-				Core.ready().then(() => {
-					var aLibs = sap.ui.getVersionInfo().libraries.filter(function(sLib) {
+				"sap/ui/core/Element",
+				"sap/ui/VersionInfo"
+			], function(LibraryScanner, Export, ExportTypeCSV, Core, Element, VersionInfo) {
+				Core.ready().then(async () => {
+					const oVersionInfo = await VersionInfo.load();
+					var aLibs = oVersionInfo.libraries.filter(function(sLib) {
 						if (
 							sLib.name.indexOf("sap.ui.server") === -1 &&
 							sLib.name.indexOf("themelib_") === -1 &&

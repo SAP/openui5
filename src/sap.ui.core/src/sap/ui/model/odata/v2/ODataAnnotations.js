@@ -7,10 +7,11 @@ sap.ui.define([
 	"sap/base/assert",
 	"sap/base/util/extend",
 	"sap/ui/base/EventProvider",
+	"sap/ui/core/Configuration",
 	"sap/ui/core/cache/CacheManager",
 	"sap/ui/model/odata/AnnotationParser",
 	"sap/ui/thirdparty/jquery"
-], function(assert, extend, EventProvider, CacheManager, AnnotationParser, jQuery) {
+], function(assert, extend, EventProvider, Configuration, CacheManager, AnnotationParser, jQuery) {
 	"use strict";
 
 	///////////////////////////////////////////////// Class Definition /////////////////////////////////////////////////
@@ -825,7 +826,7 @@ sap.ui.define([
 	ODataAnnotations.prototype._getHeaders = function() {
 		//The 'sap-cancel-on-close' header marks the OData annotation request as cancelable. This helps to save resources at the back-end.
 		return extend({"sap-cancel-on-close": true}, this.getHeaders(), {
-			"Accept-Language": undefined/*Configuration*/.getLanguageTag() // Always overwrite
+			"Accept-Language": Configuration.getLanguageTag() // Always overwrite
 		});
 	};
 

@@ -1,77 +1,59 @@
+/* eslint-disable require-await */
 sap.ui.define([
 	"sap/ui/mdc/FilterBarDelegate",
 	"mdc/sample/model/metadata/JSONPropertyInfo",
-	"mdc/sample/delegate/JSONBaseDelegate",
 	"sap/ui/mdc/FilterField",
 	"sap/ui/core/Core",
-	"sap/ui/core/Fragment"
-], function (FilterBarDelegate, JSONPropertyInfo, JSONBaseDelegate, FilterField, Core, Fragment) {
+	"sap/ui/core/Fragment",
+	"mdc/sample/delegate/JSONBaseDelegate"
+], function (FilterBarDelegate, JSONPropertyInfo, FilterField, Core, Fragment,
+	JSONBaseDelegate) {
 	"use strict";
 
 	const JSONFilterBarDelegate = Object.assign({}, FilterBarDelegate, JSONBaseDelegate);
 
-	JSONFilterBarDelegate.fetchProperties = function () {
-		return Promise.resolve(JSONPropertyInfo);
+	JSONFilterBarDelegate.fetchProperties = async () => JSONPropertyInfo;
+
+	const _createValueHelp = (oFilterBar, sPropertyName) => {
+		const aKey = "mdc.sample.view.fragment.";
+		return Fragment.load({
+			name: aKey + oFilterBar.getPayload().valueHelp[sPropertyName]
+		}).then((oValueHelp) => {
+			oFilterBar.addDependent(oValueHelp);
+			return oValueHelp;
+		});
 	};
 
-	JSONFilterBarDelegate.addItem = function(oFilterBar, sPropertyName) {
-		const oProperty = JSONPropertyInfo.find((oPropertyInfo) => oPropertyInfo.name === sPropertyName);
-		return _addFilterField(oProperty, oFilterBar);
-	};
-
-	JSONFilterBarDelegate.removeItem = function(oFilterBar, oFilterField) {
-		oFilterField.destroy();
-		return Promise.resolve(true);
-	};
-
-	function _addFilterField(oProperty, oFilterBar) {
-		const sName = oProperty.name;
-		const sFilterFieldId = oFilterBar.getId() + "--filter--" + sName;
-		let oFilterField = Core.byId(sFilterFieldId);
-		let pFilterField;
-
-		if (oFilterField) {
-			pFilterField = Promise.resolve(oFilterField);
-		} else {
-			oFilterField = new FilterField(sFilterFieldId, {
-				dataType: oProperty.dataType,
-				conditions: "{$filters>/conditions/" + sName + '}',
-				propertyKey: sName,
-				required: oProperty.required,
-				label: oProperty.label,
-				maxConditions: oProperty.maxConditions,
-				delegate: { name: "sap/ui/mdc/field/FieldBaseDelegate", payload: {} }
-			});
-
-			if (oFilterBar.getPayload().valueHelp[sName]) {
-				pFilterField = _addValueHelp(oFilterBar, oFilterField, sName);
-			} else {
-				pFilterField = Promise.resolve(oFilterField);
-			}
-		}
-		return pFilterField;
-	}
-
-	function _addValueHelp(oFilterBar, oFilterField, sName) {
-		const oValueHelp = oFilterBar.getDependents().find((oD) => oD.getId().includes(sName));
-		let pFieldWithVH;
-
-		if (oValueHelp) {
+	const _createFilterField = async (sId, oProperty, oFilterBar) => {
+		const sPropertyName = oProperty.name;
+		const oFilterField = new FilterField(sId, {
+			dataType: oProperty.dataType,
+			conditions: "{$filters>/conditions/" + sPropertyName + '}',
+			propertyKey: sPropertyName,
+			required: oProperty.required,
+			label: oProperty.label,
+			maxConditions: oProperty.maxConditions,
+			delegate: {name: "sap/ui/mdc/field/FieldBaseDelegate", payload: {}}
+		});
+		if (oFilterBar.getPayload().valueHelp[sPropertyName]) {
+			const aDependents = oFilterBar.getDependents();
+			let oValueHelp = aDependents.find((oD) => oD.getId().includes(sPropertyName));
+			oValueHelp ??= await _createValueHelp(oFilterBar, sPropertyName);
 			oFilterField.setValueHelp(oValueHelp);
-			pFieldWithVH = Promise.resolve(oFilterField);
-		} else {
-			const sPath = "mdc.sample.view.fragment.";
-			pFieldWithVH = Fragment.load({
-				name: sPath + oFilterBar.getPayload().valueHelp[sName]
-			}).then(function(oValueHelp) {
-				oFilterBar.addDependent(oValueHelp);
-				oFilterField.setValueHelp(oValueHelp);
-				return oFilterField;
-			});
 		}
+		return oFilterField;
+	};
 
-		return pFieldWithVH;
-	}
+	JSONFilterBarDelegate.addItem = async (oFilterBar, sPropertyName) => {
+		const oProperty = JSONPropertyInfo.find((oPI) => oPI.name === sPropertyName);
+		const sId = oFilterBar.getId() + "--filter--" + sPropertyName;
+		return Core.byId(sId) ?? await _createFilterField(sId, oProperty, oFilterBar);
+	};
+
+	JSONFilterBarDelegate.removeItem = async (oFilterBar, oFilterField) => {
+		oFilterField.destroy();
+		return true; // allow default handling
+	};
 
 	return JSONFilterBarDelegate;
 }, /* bExport= */false);

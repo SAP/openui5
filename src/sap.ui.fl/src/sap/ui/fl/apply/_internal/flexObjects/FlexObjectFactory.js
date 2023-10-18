@@ -75,7 +75,6 @@ sap.ui.define([
 				command: mProperties.command,
 				compositeCommand: mProperties.compositeCommand,
 				generator: mProperties.generator,
-				sapui5Version: Core.getConfiguration().getVersion().toString(),
 				sourceChangeFileName: mProperties.support && mProperties.support.sourceChangeFileName,
 				sourceSystem: mProperties.sourceSystem,
 				sourceClient: mProperties.sourceClient,
@@ -118,8 +117,7 @@ sap.ui.define([
 		}
 		oNewFileContent.support = Object.assign(
 			{
-				generator: "FlexObjectFactory.createFromFileContent",
-				sapui5Version: Core.getConfiguration().getVersion().toString()
+				generator: "FlexObjectFactory.createFromFileContent"
 			},
 			oNewFileContent.support || {}
 		);

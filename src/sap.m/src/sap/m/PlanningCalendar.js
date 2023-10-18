@@ -29,6 +29,7 @@ sap.ui.define([
 	'sap/ui/core/dnd/DropInfo',
 	'sap/ui/core/dnd/DragDropInfo',
 	'sap/ui/core/format/DateFormat',
+	'sap/ui/core/Configuration',
 	'sap/ui/core/date/CalendarWeekNumbering',
 	'sap/ui/core/date/CalendarUtils',
 	'sap/ui/core/Locale',
@@ -51,8 +52,7 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/m/List",
 	"sap/ui/thirdparty/jquery",
-	// jQuery Plugin "control"
-	"sap/ui/dom/jquery/control"
+	"sap/ui/dom/jquery/control" // jQuery Plugin "control"
 ], function(
 	DateNavigation,
 	Control,
@@ -79,6 +79,7 @@ sap.ui.define([
 	DropInfo,
 	DragDropInfo,
 	DateFormat,
+	Configuration,
 	CalendarWeekNumbering,
 	CalendarDateUtils,
 	Locale,
@@ -1135,7 +1136,7 @@ sap.ui.define([
 	};
 
 	PlanningCalendar.prototype._getPrimaryCalendarType = function(){
-		return this.getProperty("primaryCalendarType") || undefined/*Configuration*/.getCalendarType();
+		return this.getProperty("primaryCalendarType") || Configuration.getCalendarType();
 	};
 
 	/**
@@ -2056,7 +2057,7 @@ sap.ui.define([
 	};
 
 	PlanningCalendar.prototype._updateWeekConfiguration = function() {
-		var sLocale = undefined/*Configuration*/.getFormatSettings().getFormatLocale().toString(),
+		var sLocale = Configuration.getFormatSettings().getFormatLocale().toString(),
 			sCalendarWeekNumbering = this.getCalendarWeekNumbering(),
 			iFirstDayOfWeek = this.getFirstDayOfWeek(),
 			oWeekConfiguration = CalendarDateUtils.getWeekConfigurationValues(sCalendarWeekNumbering, new Locale(sLocale));
@@ -2141,7 +2142,7 @@ sap.ui.define([
 			 * is because the dates are timezone irrelevant), it should be called with the local datetime values presented
 			 * as UTC ones(e.g. if oStartDate is 21 Dec 1981, 13:00 GMT+02:00, it will be converted to 21 Dec 1981, 13:00 GMT+00:00)
 			 */
-			var sLocale = undefined/*Configuration*/.getFormatSettings().getFormatLocale().toString(),
+			var sLocale = Configuration.getFormatSettings().getFormatLocale().toString(),
 				oWeekConfigurationValues = CalendarDateUtils.getWeekConfigurationValues(this.getCalendarWeekNumbering(), new Locale(sLocale)),
 				oFirstDateOfWeek,
 				oLocalDate;

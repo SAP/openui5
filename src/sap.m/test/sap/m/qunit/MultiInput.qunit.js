@@ -459,6 +459,32 @@ sap.ui.define([
 		oMI.destroy();
 	});
 
+	QUnit.test("Text validation on focus leave", function(assert) {
+		var oMI = new MultiInput({
+			tokens: [
+				new Token({text: "Long text"}),
+				new Token({text: "Very long text"}),
+				new Token({text: "Very, very long text"}),
+				new Token({text: "Very, very, very long text"})
+			]
+		}).placeAt( "qunit-fixture");
+		Core.applyChanges();
+
+		var oValidationSpy = this.spy(oMI, "_validateCurrentText");
+		var oFocusOutSpy = this.spy(oMI, "onsapfocusleave");
+
+		oMI.focus();
+		qutils.triggerKeydown(oMI.getFocusDomRef(), KeyCodes.ARROW_LEFT);
+		Core.applyChanges();
+
+		assert.strictEqual(oValidationSpy.callCount, 0, "_validateCurrentText not invoked when focused is moved to the tokenizer");
+		assert.strictEqual(oFocusOutSpy.callCount, 1, "onsapfocusleave is called");
+
+		oValidationSpy.restore();
+		oFocusOutSpy.restore();
+		oMI.destroy();
+	});
+
 	QUnit.test("test text validation on focus leave", function(assert) {
 		//arrange
 		var testTokenText = "C-Item";

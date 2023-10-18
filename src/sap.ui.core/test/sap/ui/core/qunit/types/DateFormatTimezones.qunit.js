@@ -1,23 +1,24 @@
 /*global QUnit*/
 sap.ui.define([
+	"sap/ui/core/Configuration",
 	"sap/ui/core/Locale",
 	"sap/ui/core/LocaleData",
 	"sap/ui/core/date/UI5Date",
 	"sap/ui/core/format/DateFormat",
 	"sap/ui/core/format/TimezoneUtil"
-], function(Locale, LocaleData, UI5Date, DateFormat, TimezoneUtil) {
+], function (Configuration, Locale, LocaleData, UI5Date, DateFormat, TimezoneUtil) {
 	"use strict";
 
-	var sDefaultTimezone = undefined/*Configuration*/.getTimezone();
+	var sDefaultTimezone = Configuration.getTimezone();
 
 	QUnit.module("DateTime format", {
 		beforeEach: function () {
-			this.sLanguage = undefined/*Configuration*/.getLanguage();
-			undefined/*Configuration*/.setLanguage("en_US");
+			this.sLanguage = Configuration.getLanguage();
+			Configuration.setLanguage("en_US");
 		},
 		afterEach: function () {
 			// Restore default locale
-			undefined/*Configuration*/.setLanguage(this.sLanguage);
+			Configuration.setLanguage(this.sLanguage);
 		}
 	});
 
@@ -62,14 +63,14 @@ sap.ui.define([
 
 	QUnit.module("DateTimeWithTimezone format en-US", {
 		beforeEach: function () {
-			undefined/*Configuration*/.setTimezone("Europe/Berlin");
-			this.sLanguage = undefined/*Configuration*/.getLanguage();
-			undefined/*Configuration*/.setLanguage("en_US");
+			Configuration.setTimezone("Europe/Berlin");
+			this.sLanguage = Configuration.getLanguage();
+			Configuration.setLanguage("en_US");
 		},
 		afterEach: function () {
 			// Restore default locale and timezone
-			undefined/*Configuration*/.setLanguage(this.sLanguage);
-			undefined/*Configuration*/.setTimezone(sDefaultTimezone);
+			Configuration.setLanguage(this.sLanguage);
+			Configuration.setTimezone(sDefaultTimezone);
 		}
 	});
 
@@ -144,14 +145,14 @@ sap.ui.define([
 
 	QUnit.module("DateTimeWithTimezone format de-DE", {
 		beforeEach: function () {
-			undefined/*Configuration*/.setTimezone("Europe/Berlin");
-			this.sLanguage = undefined/*Configuration*/.getLanguage();
-			undefined/*Configuration*/.setLanguage("de_DE");
+			Configuration.setTimezone("Europe/Berlin");
+			this.sLanguage = Configuration.getLanguage();
+			Configuration.setLanguage("de_DE");
 		},
 		afterEach: function () {
 			// Restore default locale and timezone
-			undefined/*Configuration*/.setLanguage(this.sLanguage);
-			undefined/*Configuration*/.setTimezone(sDefaultTimezone);
+			Configuration.setLanguage(this.sLanguage);
+			Configuration.setTimezone(sDefaultTimezone);
 		}
 	});
 
@@ -202,14 +203,14 @@ sap.ui.define([
 
 	QUnit.module("DateTimeWithTimezone format", {
 		beforeEach: function () {
-			undefined/*Configuration*/.setTimezone("Europe/Berlin");
-			this.sLanguage = undefined/*Configuration*/.getLanguage();
-			undefined/*Configuration*/.setLanguage("en_US");
+			Configuration.setTimezone("Europe/Berlin");
+			this.sLanguage = Configuration.getLanguage();
+			Configuration.setLanguage("en_US");
 		},
 		afterEach: function () {
 			// Restore default locale and timezone
-			undefined/*Configuration*/.setTimezone(sDefaultTimezone);
-			undefined/*Configuration*/.setLanguage(this.sLanguage);
+			Configuration.setTimezone(sDefaultTimezone);
+			Configuration.setLanguage(this.sLanguage);
 		}
 	});
 
@@ -336,12 +337,12 @@ sap.ui.define([
 
 	QUnit.module("DateTime parse", {
 		beforeEach: function () {
-			this.sLanguage = undefined/*Configuration*/.getLanguage();
-			undefined/*Configuration*/.setLanguage("en_US");
+			this.sLanguage = Configuration.getLanguage();
+			Configuration.setLanguage("en_US");
 		},
 		afterEach: function () {
 			// Restore default locale
-			undefined/*Configuration*/.setLanguage(this.sLanguage);
+			Configuration.setLanguage(this.sLanguage);
 		}
 	});
 
@@ -376,14 +377,14 @@ sap.ui.define([
 
 	QUnit.module("DateTimeWithTimezone parse en-US", {
 		beforeEach: function () {
-			undefined/*Configuration*/.setTimezone("Europe/Berlin");
-			this.sLanguage = undefined/*Configuration*/.getLanguage();
-			undefined/*Configuration*/.setLanguage("en_US");
+			Configuration.setTimezone("Europe/Berlin");
+			this.sLanguage = Configuration.getLanguage();
+			Configuration.setLanguage("en_US");
 		},
 		afterEach: function () {
 			// Restore default locale and timezone
-			undefined/*Configuration*/.setLanguage(this.sLanguage);
-			undefined/*Configuration*/.setTimezone(sDefaultTimezone);
+			Configuration.setLanguage(this.sLanguage);
+			Configuration.setTimezone(sDefaultTimezone);
 		}
 	});
 
@@ -558,14 +559,14 @@ sap.ui.define([
 
 	QUnit.module("DateTimeWithTimezone parse de-DE", {
 		beforeEach: function () {
-			undefined/*Configuration*/.setTimezone("Europe/Berlin");
-			this.sLanguage = undefined/*Configuration*/.getLanguage();
-			undefined/*Configuration*/.setLanguage("de_DE");
+			Configuration.setTimezone("Europe/Berlin");
+			this.sLanguage = Configuration.getLanguage();
+			Configuration.setLanguage("de_DE");
 		},
 		afterEach: function () {
 			// Restore default locale and timezone
-			undefined/*Configuration*/.setLanguage(this.sLanguage);
-			undefined/*Configuration*/.setTimezone(sDefaultTimezone);
+			Configuration.setLanguage(this.sLanguage);
+			Configuration.setTimezone(sDefaultTimezone);
 		}
 	});
 
@@ -681,12 +682,12 @@ sap.ui.define([
 
 	QUnit.module("DateTimeWithTimezone parse", {
 		beforeEach: function () {
-			this.sLanguage = undefined/*Configuration*/.getLanguage();
-			undefined/*Configuration*/.setLanguage("en_US");
+			this.sLanguage = Configuration.getLanguage();
+			Configuration.setLanguage("en_US");
 		},
 		afterEach: function () {
 			// Restore locale
-			undefined/*Configuration*/.setLanguage(this.sLanguage);
+			Configuration.setLanguage(this.sLanguage);
 		}
 	});
 
@@ -815,14 +816,14 @@ sap.ui.define([
 
 	QUnit.module("DateTimeWithTimezone integration - format and parse de-DE", {
 		beforeEach: function () {
-			undefined/*Configuration*/.setTimezone("Europe/Berlin");
-			this.sLanguage = undefined/*Configuration*/.getLanguage();
-			undefined/*Configuration*/.setLanguage("de_DE");
+			Configuration.setTimezone("Europe/Berlin");
+			this.sLanguage = Configuration.getLanguage();
+			Configuration.setLanguage("de_DE");
 		},
 		afterEach: function () {
 			// Restore default locale and timezone
-			undefined/*Configuration*/.setLanguage(this.sLanguage);
-			undefined/*Configuration*/.setTimezone(sDefaultTimezone);
+			Configuration.setLanguage(this.sLanguage);
+			Configuration.setTimezone(sDefaultTimezone);
 		}
 	});
 
@@ -878,12 +879,12 @@ sap.ui.define([
 
 	QUnit.module("DateTimeWithTimezone integration - format and parse", {
 		beforeEach: function () {
-			this.sLanguage = undefined/*Configuration*/.getLanguage();
-			undefined/*Configuration*/.setLanguage("en_US");
+			this.sLanguage = Configuration.getLanguage();
+			Configuration.setLanguage("en_US");
 		},
 		afterEach: function () {
 			// Restore locale
-			undefined/*Configuration*/.setLanguage(this.sLanguage);
+			Configuration.setLanguage(this.sLanguage);
 		}
 	});
 
@@ -1152,14 +1153,14 @@ sap.ui.define([
 
 	QUnit.module("DateTimeWithTimezone getDateTimeWithTimezoneInstance en-US", {
 		beforeEach: function () {
-			undefined/*Configuration*/.setTimezone("Europe/Berlin");
-			this.sLanguage = undefined/*Configuration*/.getLanguage();
-			undefined/*Configuration*/.setLanguage("en_US");
+			Configuration.setTimezone("Europe/Berlin");
+			this.sLanguage = Configuration.getLanguage();
+			Configuration.setLanguage("en_US");
 		},
 		afterEach: function () {
 			// Restore default locale and timezone
-			undefined/*Configuration*/.setLanguage(this.sLanguage);
-			undefined/*Configuration*/.setTimezone(sDefaultTimezone);
+			Configuration.setLanguage(this.sLanguage);
+			Configuration.setTimezone(sDefaultTimezone);
 		}
 	});
 

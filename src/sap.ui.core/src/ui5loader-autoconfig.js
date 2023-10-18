@@ -378,41 +378,60 @@
 		};
 
 		/**
+		 * Enum for available types of configuration entries.
+		 *
 		 * @enum {string}
 		 * @alias module:sap/base/config.Type
 		 * @private
+		 * @ui5-restricted sap.ui.core, sap.fl, sap.ui.intergration, sap.ui.export
 		 */
 		var TypeEnum = {
 			/**
 			 * defaultValue: false
+			 * @private
+			 * @ui5-restricted sap.ui.core, sap.fl, sap.ui.intergration, sap.ui.export
 			 */
 			"Boolean": "boolean",
 			/**
 			 * defaultValue: undefined
+			 * @private
+			 * @ui5-restricted sap.ui.core, sap.fl, sap.ui.intergration, sap.ui.export
 			 */
 			"Code": "code",
 			/**
 			 * defaultValue: 0
+			 * @private
+			 * @ui5-restricted sap.ui.core, sap.fl, sap.ui.intergration, sap.ui.export
 			 */
 			"Integer": "integer",
 			/**
 			 * defaultValue: ""
+			 * @private
+			 * @ui5-restricted sap.ui.core, sap.fl, sap.ui.intergration, sap.ui.export
 			 */
 			"String": "string",
 			/**
 			 * defaultValue: []
+			 * @private
+			 * @ui5-restricted sap.ui.core, sap.fl, sap.ui.intergration, sap.ui.export
 			 */
 			"StringArray": "string[]",
 			/**
 			 * defaultValue: []
+			 * @private
+			 * @ui5-restricted sap.ui.core, sap.fl, sap.ui.intergration, sap.ui.export
 			 */
 			"FunctionArray": "function[]",
 			/**
 			 * defaultValue: undefined
+			 * @private
+			 * @ui5-restricted sap.ui.core, sap.fl, sap.ui.intergration, sap.ui.export
 			 */
 			"Function": "function",
 			/**
 			 * defaultValue: {}
+			 * @private
+			 * @ui5-restricted sap.ui.core, sap.fl, sap.ui.intergration, sap.ui.export
 			 */
 			"Object":  "object"
 		};
@@ -596,7 +615,7 @@
 		 * @returns {any} Value of the configuration parameter
 		 * @throws {TypeError} Throws an error if the given parameter name does not match the definition.
 		 * @private
-		 * @ui5-restricted sap.ui.core.Core, jquery.sap.global
+		 * @ui5-restricted sap.ui.core, sap.fl, sap.ui.intergration, sap.ui.export
 		 */
 		function get(mOptions) {
 			if (typeof mOptions.name !== "string" || !rValidKey.test(mOptions.name)) {

@@ -4,18 +4,19 @@
 
 // Provides control sap.uxap.ObjectPageSectionBase.
 sap.ui.define([
-	"sap/ui/core/InvisibleText",
+    "sap/ui/core/InvisibleText",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Control",
 	"sap/ui/core/library",
 	"./library",
 	"sap/base/Log",
 	"sap/ui/events/KeyCodes",
+	"sap/ui/core/Configuration",
 	"sap/ui/layout/Grid",
 	"sap/ui/layout/GridData",
 	// jQuery Plugin "firstFocusableDomRef"
 	"sap/ui/dom/jquery/Focusable"
-], function(InvisibleText, jQuery, Control, coreLibrary, library, Log, KeyCodes, Grid, GridData) {
+], function(InvisibleText, jQuery, Control, coreLibrary, library, Log, KeyCodes, Configuration, Grid, GridData) {
 	"use strict";
 
 	// shortcut for sap.ui.core.TitleLevel
@@ -121,7 +122,7 @@ sap.ui.define([
 		this._isHidden = false;
 		this._oGridContentObserver = null;
 
-		this._bRtl = undefined/*Configuration*/.getRTL();
+		this._bRtl = Configuration.getRTL();
 	};
 
 	ObjectPageSectionBase.prototype.onAfterRendering = function () {

@@ -11,6 +11,31 @@ sap.ui.define([
 
 	const TestTableType = TableTypeBase.extend("sap.ui.mdc.test.TestTableType");
 
+	QUnit.module("API", {
+		beforeEach: function() {
+			this.createTable();
+		},
+		afterEach: function() {
+			this.destroyTable();
+		},
+		createTable: function() {
+			this.destroyTable();
+			this.oTable = new Table({
+				type: new TestTableType()
+			});
+			return this.oTable;
+		},
+		destroyTable: function() {
+			if (this.oTable) {
+				this.oTable.destroy();
+			}
+		}
+	});
+
+	QUnit.test("#getTableStyleClasses", function(assert) {
+		assert.deepEqual(this.oTable.getType().getTableStyleClasses(), []);
+	});
+
 	QUnit.module("Lifecycle of the ManagedObjectModel instance", {
 		beforeEach: function() {
 			this.createTable();

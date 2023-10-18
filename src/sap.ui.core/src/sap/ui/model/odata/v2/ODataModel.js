@@ -31,6 +31,7 @@ sap.ui.define([
 	"sap/base/util/uid",
 	"sap/base/util/UriParameters",
 	"sap/ui/base/SyncPromise",
+	"sap/ui/core/Configuration",
 	"sap/ui/core/library",
 	"sap/ui/core/Messaging",
 	"sap/ui/core/message/Message",
@@ -53,7 +54,14 @@ sap.ui.define([
 	"sap/ui/thirdparty/datajs",
 	"sap/ui/thirdparty/URI",
 	"sap/ui/util/isCrossOriginURL"
-], function(_CreatedContextsCache, Context, ODataAnnotations, ODataContextBinding, ODataListBinding, ODataTreeBinding, assert, Log, encodeURL, deepEqual, deepExtend, each, extend, isEmptyObject, isPlainObject, merge, uid, UriParameters, SyncPromise, coreLibrary, Messaging, Message, MessageParser, Supportability, _Helper, BindingMode, BaseContext, FilterProcessor, Model, CountMode, MessageScope, ODataMetadata, ODataMetaModel, ODataMessageParser, ODataPropertyBinding, ODataUtils, OperationMode, UpdateMethod, OData, URI, isCrossOriginURL) {
+], function(_CreatedContextsCache, Context, ODataAnnotations, ODataContextBinding, ODataListBinding,
+		ODataTreeBinding, assert, Log, encodeURL, deepEqual, deepExtend, each, extend,
+		isEmptyObject, isPlainObject, merge, uid, UriParameters, SyncPromise, Configuration,
+		coreLibrary, Messaging, Message, MessageParser, Supportability,  _Helper, BindingMode,
+		BaseContext, FilterProcessor, Model, CountMode, MessageScope, ODataMetadata, ODataMetaModel,
+		ODataMessageParser,	ODataPropertyBinding, ODataUtils, OperationMode, UpdateMethod, OData,
+		URI, isCrossOriginURL
+) {
 	"use strict";
 
 	var sClassName = "sap.ui.model.odata.v2.ODataModel",
@@ -496,7 +504,7 @@ sap.ui.define([
 					this.securityTokenAvailable();
 				}
 			}
-			this.oHeaders["Accept-Language"] = undefined/*Configuration*/.getLanguageTag();
+			this.oHeaders["Accept-Language"] = Configuration.getLanguageTag();
 
 			// set version to 2.0 because 1.0 does not support e.g. skip/top, inlinecount...
 			// states the version of the Open Data Protocol used by the client to generate the request.
@@ -4233,7 +4241,7 @@ sap.ui.define([
 			that = this;
 
 		if (!bBatch) {
-			bContent = !(oResponse.statusCode === 204 || oResponse.statusCode === '204');
+			bContent = !["204", "205"].includes(String(oResponse.statusCode));
 
 			sUri = oRequest.requestUri;
 			sPath = sUri.replace(this.sServiceUrl,"");

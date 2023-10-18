@@ -7,6 +7,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/base/ManagedObjectObserver",
 	"sap/ui/core/ResizeHandler",
+	"sap/ui/core/Configuration",
 	"sap/ui/core/Control",
 	"sap/ui/core/InvisibleText",
 	"sap/ui/Device",
@@ -36,6 +37,7 @@ sap.ui.define([
 	jQuery,
 	ManagedObjectObserver,
 	ResizeHandler,
+	Configuration,
 	Control,
 	InvisibleText,
 	Device,
@@ -2123,8 +2125,8 @@ sap.ui.define([
 		var oSection = this.oCore.byId(sId),
 			iSnapPosition,
 			oTargetSubSection,
-			bAnimationsEnabled = (undefined/*Configuration*/.getAnimationMode()
-				!== undefined/*Configuration*/.AnimationMode.none),
+			bAnimationsEnabled = (Configuration.getAnimationMode()
+				!== Configuration.AnimationMode.none),
 			bAnimatedScroll,
 			bSuppressLazyLoadingDuringScroll,
 			onBeforeScroll,
@@ -4418,7 +4420,7 @@ sap.ui.define([
 			return;
 		}
 
-		bUseAnimations = sAnimationMode !== undefined/*Configuration*/.AnimationMode.none && sAnimationMode !== undefined/*Configuration*/.AnimationMode.minimal;
+		bUseAnimations = sAnimationMode !== Configuration.AnimationMode.none && sAnimationMode !== Configuration.AnimationMode.minimal;
 
 		if (bUseAnimations) {
 			this._toggleFooterAnimation(bShow, oFooter);

@@ -1,8 +1,9 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(["sap/ui/core/library"],
-	function(coreLibrary) {
+sap.ui.define(["sap/ui/core/library",
+"sap/ui/core/Configuration"],
+	function(coreLibrary,  Configuration) {
 	"use strict";
 
 
@@ -35,8 +36,8 @@ sap.ui.define(["sap/ui/core/library"],
 			sTextDirectionLowerCase = oControl.getTextDirection().toLowerCase(),
 			sControlId = oControl.getId(),
 			bEnabled = oControl.getEnabled(),
-			sAnimationMode = undefined/*Configuration*/.getAnimationMode(),
-			bAnimate = sAnimationMode !== undefined/*Configuration*/.AnimationMode.none && sAnimationMode !== undefined/*Configuration*/.AnimationMode.minimal
+			sAnimationMode = Configuration.getAnimationMode(),
+			bAnimate = sAnimationMode !== Configuration.AnimationMode.none && sAnimationMode !== Configuration.AnimationMode.minimal
 				&& oControl.getDisplayAnimation();
 
 		// PI container

@@ -2,17 +2,18 @@
  * ${copyright}
  */
 sap.ui.define([
+	"sap/ui/core/Configuration",
 	"sap/ui/core/date/UI5Date",
 	"sap/ui/model/FormatException",
 	"sap/ui/model/ParseException",
 	"sap/ui/model/ValidateException",
 	"sap/ui/model/type/Date",
 	"sap/ui/test/TestUtils"
-], function(UI5Date, FormatException, ParseException, ValidateException, DateType, TestUtils) {
+], function (Configuration, UI5Date, FormatException, ParseException, ValidateException, DateType, TestUtils) {
 	/*global QUnit*/
 	"use strict";
 
-	var sDefaultLanguage = undefined/*Configuration*/.getLanguage();
+	var sDefaultLanguage = Configuration.getLanguage();
 
 	/**
 	 * Calls the <code>formatValue</code> function on the given date and checks that a FormatException
@@ -83,10 +84,10 @@ sap.ui.define([
 			this.__ignoreIsolatedCoverage__ = true;
 		},
 		beforeEach : function() {
-			undefined/*Configuration*/.setLanguage("en-US");
+			Configuration.setLanguage("en-US");
 		},
 		afterEach : function() {
-			undefined/*Configuration*/.setLanguage(sDefaultLanguage);
+			Configuration.setLanguage(sDefaultLanguage);
 		}
 	});
 

@@ -1,6 +1,7 @@
 /* global QUnit */
 
 sap.ui.define([
+	"sap/ui/core/Configuration",
 	"sap/ui/test/opaQunit",
 	"./pages/Home",
 	"./pages/Category",
@@ -8,10 +9,10 @@ sap.ui.define([
 	"./pages/Comparison",
 	"./pages/Cart",
 	"./pages/Welcome"
-], function(opaTest) {
+], function (Configuration, opaTest) {
 	"use strict";
 
-	var sDefaultLanguage = undefined/*Configuration*/.getLanguage(),
+	var sDefaultLanguage = Configuration.getLanguage(),
 		//List of product ids used
 		productOne = "HT-1254",
 		productTwo = "HT-1255",
@@ -19,10 +20,10 @@ sap.ui.define([
 
 	QUnit.module("Comparison Journey", {
 		before : function () {
-			undefined/*Configuration*/.setLanguage("en-US");
+			Configuration.setLanguage("en-US");
 		},
 		after : function () {
-			undefined/*Configuration*/.setLanguage(sDefaultLanguage);
+			Configuration.setLanguage(sDefaultLanguage);
 		}
 	});
 

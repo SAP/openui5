@@ -2,34 +2,62 @@
  * ${copyright}
  */
 sap.ui.define([
-	"./CalendarContentRenderer",
-	"sap/ui/core/ResizeHandler",
-	"sap/ui/integration/library",
-	"sap/ui/integration/cards/BaseContent",
-	"sap/ui/integration/util/BindingHelper",
-	"sap/ui/integration/util/BindingResolver",
-	"sap/f/cards/loading/CalendarPlaceholder",
-	"sap/f/CalendarAppointmentInCard",
-	"sap/f/CalendarInCard",
-	"sap/f/PlanningCalendarInCardLegend",
-	"sap/m/library",
-	"sap/m/Button",
-	"sap/m/FlexBox",
-	"sap/ui/core/format/DateFormat",
-	"sap/ui/core/Locale",
-	"sap/ui/core/LocaleData",
-	"sap/ui/model/Filter",
-	"sap/ui/model/FilterOperator",
-	"sap/ui/unified/calendar/CalendarDate",
-	"sap/ui/unified/calendar/CalendarUtils",
-	"sap/ui/unified/DateTypeRange",
-	"sap/ui/core/date/UniversalDate",
-	"sap/ui/unified/CalendarLegendItem",
-	"sap/ui/core/date/UI5Date",
-	"sap/ui/unified/DateRange",
-	"sap/ui/core/Core"
+		"./CalendarContentRenderer",
+		"sap/ui/core/ResizeHandler",
+		"sap/ui/integration/library",
+		"sap/ui/integration/cards/BaseContent",
+		"sap/ui/integration/util/BindingHelper",
+		"sap/ui/integration/util/BindingResolver",
+		"sap/f/cards/loading/CalendarPlaceholder",
+		"sap/f/CalendarAppointmentInCard",
+		"sap/f/CalendarInCard",
+		"sap/f/PlanningCalendarInCardLegend",
+		"sap/m/library",
+		"sap/m/Button",
+		"sap/m/FlexBox",
+		"sap/ui/core/format/DateFormat",
+		"sap/ui/core/Locale",
+		"sap/ui/core/LocaleData",
+		"sap/ui/model/Filter",
+		"sap/ui/model/FilterOperator",
+		"sap/ui/unified/calendar/CalendarDate",
+		"sap/ui/unified/calendar/CalendarUtils",
+		"sap/ui/unified/DateTypeRange",
+		"sap/ui/core/date/UniversalDate",
+		"sap/ui/unified/CalendarLegendItem",
+		"sap/ui/core/Configuration",
+		"sap/ui/core/date/UI5Date",
+		"sap/ui/unified/DateRange",
+		"sap/ui/core/Core"
 ],
-	function(CalendarContentRenderer, ResizeHandler, library, BaseContent, BindingHelper, BindingResolver, CalendarPlaceholder, CalendarAppointmentInCard, CalendarInCard, PlanningCalendarInCardLegend, mLibrary, Button, FlexBox, DateFormat, Locale, LocaleData, Filter, FilterOperator, CalendarDate, CalendarUtils, DateTypeRange, UniversalDate, CalendarLegendItem, UI5Date, DateRange, Core) {
+	function (CalendarContentRenderer,
+		ResizeHandler,
+		library,
+		BaseContent,
+		BindingHelper,
+		BindingResolver,
+		CalendarPlaceholder,
+		CalendarAppointmentInCard,
+		CalendarInCard,
+		PlanningCalendarInCardLegend,
+		mLibrary,
+		Button,
+		FlexBox,
+		DateFormat,
+		Locale,
+		LocaleData,
+		Filter,
+		FilterOperator,
+		CalendarDate,
+		CalendarUtils,
+		DateTypeRange,
+		UniversalDate,
+		CalendarLegendItem,
+		Configuration,
+		UI5Date,
+		DateRange,
+		Core
+		) {
 		"use strict";
 
 		var ActionArea = library.CardActionArea;
@@ -913,7 +941,7 @@ sap.ui.define([
 		function _getLocale() {
 
 			if (!this._sLocale) {
-				this._sLocale = undefined/*Configuration*/.getFormatSettings().getFormatLocale().toString();
+				this._sLocale = Configuration.getFormatSettings().getFormatLocale().toString();
 			}
 
 			return this._sLocale;

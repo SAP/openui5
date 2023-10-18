@@ -15,6 +15,7 @@ sap.ui.define([
 	"sap/m/AvatarShape",
 	"sap/m/AvatarSize",
 	"sap/ui/util/openWindow",
+	"sap/ui/core/Configuration",
 	"sap/ui/core/Lib"
 ],
 function(
@@ -30,8 +31,9 @@ function(
 	AvatarShape,
 	AvatarSize,
 	openWindow,
+	Configuration,
 	CoreLib
-) {
+	) {
 	"use strict";
 
 	// shortcut for sap.m.ListType
@@ -304,7 +306,7 @@ function(
 			return;
 		}
 
-		sTheme = undefined/*Configuration*/.getTheme();
+		sTheme = Configuration.getTheme();
 		oActionSheetPopover = event.getSource().getParent();
 		oActionSheetPopover.removeStyleClass("sapContrast sapContrastPlus");
 

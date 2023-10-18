@@ -27,10 +27,11 @@ sap.ui.define([
 	'sap/ui/core/library',
 	"sap/ui/core/date/CalendarWeekNumbering",
 	"sap/ui/core/date/CalendarUtils",
+	"sap/ui/core/Configuration",
 	"sap/ui/core/date/UI5Date",
 	"sap/ui/unified/DateRange"
-],
-	function(
+	],
+	function (
 		Control,
 		DateFormat,
 		CalendarDate,
@@ -54,6 +55,7 @@ sap.ui.define([
 		coreLibrary,
 		CalendarWeekNumbering,
 		CalendarDateUtils,
+		Configuration,
 		UI5Date,
 		DateRange
 	) {
@@ -492,7 +494,7 @@ sap.ui.define([
 
 			} else if (this._bCurrentWeekSelection && SinglePlanningCalendarSelectionMode.MultiSelect === this.getDateSelectionMode()){
 				var iStartDate = oStartDate.getDate(),
-					oWeekConfigurationValues = CalendarDateUtils.getWeekConfigurationValues(this.getCalendarWeekNumbering(), new Locale(undefined/*Configuration*/.getFormatSettings().getFormatLocale().toString())),
+					oWeekConfigurationValues = CalendarDateUtils.getWeekConfigurationValues(this.getCalendarWeekNumbering(), new Locale(Configuration.getFormatSettings().getFormatLocale().toString())),
 					iAPIFirstDayOfWeek = this.getFirstDayOfWeek(),
 					iFirstDayOfWeek,
 					iWeekStartDate;
@@ -750,7 +752,7 @@ sap.ui.define([
 			if (this.getFirstDayOfWeek() < 0 || this.getFirstDayOfWeek() > 6) {
 				oWeekConfigurationValues = CalendarDateUtils.getWeekConfigurationValues(
 					this.getCalendarWeekNumbering(),
-					new Locale(undefined/*Configuration*/.getFormatSettings().getFormatLocale().toString())
+					new Locale(Configuration.getFormatSettings().getFormatLocale().toString())
 				);
 
 				if (oWeekConfigurationValues) {

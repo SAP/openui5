@@ -28,6 +28,7 @@ sap.ui.define([
 	"sap/ui/core/InvisibleText",
 	'./Button',
 	"sap/ui/thirdparty/jquery",
+	"sap/ui/core/Configuration",
 	"sap/ui/core/date/UI5Date",
 	"sap/ui/core/Core"
 ],
@@ -56,6 +57,7 @@ function(
 	InvisibleText,
 	Button,
 	jQuery,
+	Configuration,
 	UI5Date,
 	Core
 ) {
@@ -1159,7 +1161,7 @@ function(
 		TimePicker.prototype._getLocale = function () {
 			var sLocaleId = this.getLocaleId();
 
-			return sLocaleId ? new Locale(sLocaleId) : undefined/*Configuration*/.getFormatSettings().getFormatLocale();
+			return sLocaleId ? new Locale(sLocaleId) : Configuration.getFormatSettings().getFormatLocale();
 		};
 
 		/**
@@ -1766,7 +1768,7 @@ function(
 		 */
 		 TimePicker.prototype._getLocaleBasedPattern = function (sPlaceholder) {
 			return LocaleData.getInstance(
-				undefined/*Configuration*/.getFormatSettings().getFormatLocale()
+				Configuration.getFormatSettings().getFormatLocale()
 			).getTimePattern(sPlaceholder);
 		};
 
@@ -2319,7 +2321,7 @@ function(
 		};
 
 		function getDefaultDisplayFormat() {
-			var oLocale = undefined/*Configuration*/.getFormatSettings().getFormatLocale(),
+			var oLocale = Configuration.getFormatSettings().getFormatLocale(),
 				oLocaleData = LocaleData.getInstance(oLocale);
 
 			return oLocaleData.getTimePattern(TimeFormatStyles.Medium);

@@ -16,6 +16,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/events/F6Navigation",
 	"./RenderManager",
+	"./Configuration",
 	"./EnabledPropagator",
 	"./Theming"
 ],
@@ -32,6 +33,7 @@ sap.ui.define([
 		jQuery,
 		F6Navigation,
 		RenderManager,
+		Configuration,
 		EnabledPropagator,
 		Theming
 	) {
@@ -1391,6 +1393,13 @@ sap.ui.define([
 		 * @private
 		 */
 		Element._CustomData = CustomData;
+
+		/**
+		 * Define CustomData class as the default for the built-in "customData" aggregation.
+		 * We need to do this here via the aggregation itself, since the CustomData class is
+		 * an Element subclass and thus cannot be directly referenced in Element's metadata definition.
+		 */
+		Element.getMetadata().getAggregation("customData").defaultClass = CustomData;
 
 		/*
 		 * Alternative implementation of <code>Element#data</code> which is applied after an element has been

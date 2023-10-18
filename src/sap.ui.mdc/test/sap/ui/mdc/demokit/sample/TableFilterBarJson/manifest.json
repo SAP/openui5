@@ -45,7 +45,7 @@
             "mdc.sample": "./"
         },
 		"dependencies": {
-			"minUI5Version": "1.118.0",
+			"minUI5Version": "1.120.0",
 			"libs": {
 				"sap.f": {},
 				"sap.m": {},

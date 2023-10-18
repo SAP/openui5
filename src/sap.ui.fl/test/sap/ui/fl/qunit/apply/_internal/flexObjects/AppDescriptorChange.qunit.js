@@ -26,7 +26,6 @@ sap.ui.define([
 		originalLanguage: "EN",
 		support: {
 			generator: "my.fancy.generator",
-			sapui5Version: Core.getConfiguration().getVersion().toString(),
 			compositeCommand: "composite"
 		},
 		texts: {}

@@ -41,6 +41,10 @@
 	left: 1px; // Must be in pixels to behave correctly in IE
 }
 
+.sapUiForm .sapMCb {
+	padding-left: 2.25rem; // to have right gap between checkbox and label
+}
+
 .sapMCbBg.sapMCbMarkChecked:before {
 	color: @sapUiSelected;
 }
@@ -123,6 +127,9 @@ html.sap-desktop {
 .sapUiSizeCompact{
 	.sapUiForm .sapMCbBg { /* In forms, align left with '0.0625rem(1px)' ( the focus width) */
 		left: 1px; // Must be in pixels to behave correctly in IE
+	}
+	.sapUiForm .sapMCb {
+		padding-left: 1.5625rem; // to have right gap between checkbox and label
 	}
 }
 

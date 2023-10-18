@@ -6,13 +6,15 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/model/odata/v4/ODataUtils",
 	"sap/ui/core/Core",
+	"sap/ui/core/Configuration",
 	"sap/base/util/fetch",
 	"sap/base/util/deepClone"
-], function(
+], function (
 	DataProvider,
 	Log,
 	ODataUtils,
 	Core,
+	Configuration,
 	fetch,
 	deepClone
 ) {

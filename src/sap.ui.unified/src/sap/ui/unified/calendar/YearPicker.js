@@ -18,7 +18,8 @@ sap.ui.define([
 	"sap/ui/core/date/UI5Date",
 	"./YearPickerRenderer",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/core/Configuration"
 ], function(
 	Control,
 	Device,
@@ -34,7 +35,8 @@ sap.ui.define([
 	UI5Date,
 	YearPickerRenderer,
 	KeyCodes,
-	jQuery
+	jQuery,
+	Configuration
 ) {
 	"use strict";
 
@@ -229,7 +231,7 @@ sap.ui.define([
 	};
 
 	YearPicker.prototype._getPrimaryCalendarType = function(){
-		return this.getProperty("primaryCalendarType") || undefined/*Configuration*/.getCalendarType();
+		return this.getProperty("primaryCalendarType") || Configuration.getCalendarType();
 	};
 
 	/**
@@ -522,7 +524,7 @@ sap.ui.define([
 		if (oParent && oParent._getLocale) {
 			return oParent._getLocale();
 		} else if (!this._sLocale) {
-			this._sLocale = undefined/*Configuration*/.getFormatSettings().getFormatLocale().toString();
+			this._sLocale = Configuration.getFormatSettings().getFormatLocale().toString();
 		}
 
 		return this._sLocale;

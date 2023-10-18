@@ -318,47 +318,4 @@ function (
 		assert.ok(oInfo.editable === undefined || oInfo.editable === null, 'Editable');
 		assert.ok(oInfo.children && oInfo.children.length === 7, 'Children'); // Only 7 children are visible, because 4 of them are hidden on L devices
 	});
-
-	QUnit.module("Overflow hidden library specific support");
-
-	QUnit.test("Library gridHelper is defined", function (assert) {
-		var oGridHelper = Library.GridHelper;
-		assert.ok(oGridHelper, "Grid helper is defined");
-		assert.strictEqual(typeof oGridHelper.getLibrarySpecificClass, "function",
-			"getLibrarySpecificClass function defined");
-		assert.strictEqual(oGridHelper.bFinal, true,
-			"GridHelper definition is final as in this test sap.m library is loaded");
-	});
-
-	QUnit.test("Applying library specific style class at construction time", function (assert) {
-		// Arrange
-		var oSpyMethod = this.stub(Library.GridHelper, "getLibrarySpecificClass").returns(""),
-			oSpyAddStyleClass = this.spy(Grid.prototype, "addStyleClass"),
-			oGrid;
-
-		// Act
-		oGrid = new Grid();
-
-		// Assert
-		assert.strictEqual(oSpyMethod.callCount, 1, "Method called once during construction");
-		assert.strictEqual(oSpyAddStyleClass.callCount, 0, "addStyleClass not called in mobile scenario");
-
-		// Cleanup
-		oGrid.destroy();
-
-		// Arrange - mock getLibrarySpecificClass differently to test non-mobile scenario
-		Library.GridHelper.getLibrarySpecificClass.returns("testClassName");
-		oSpyAddStyleClass.resetHistory();
-
-		// Act
-		oGrid = new Grid();
-
-		// Assert
-		assert.strictEqual(oSpyAddStyleClass.callCount, 1, "addStyleClass method called - non-mobile scenario");
-		assert.ok(oSpyAddStyleClass.calledWithExactly("testClassName"), "addStyleClass called with expected class name");
-		assert.ok(oSpyAddStyleClass.calledOn(oGrid), "Spy called on the tested instance");
-
-		// Cleanup
-		oGrid.destroy();
-	});
 });

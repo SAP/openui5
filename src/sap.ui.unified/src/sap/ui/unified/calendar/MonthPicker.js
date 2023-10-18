@@ -16,6 +16,7 @@ sap.ui.define([
 	"sap/ui/unified/DateRange",
 	'sap/ui/unified/calendar/CalendarUtils',
 	'sap/ui/unified/calendar/CalendarDate',
+	"sap/ui/core/Configuration",
 	"sap/ui/core/date/UI5Date"
 ], function(
 	Control,
@@ -30,6 +31,7 @@ sap.ui.define([
 	DateRange,
 	CalendarUtils,
 	CalendarDate,
+	Configuration,
 	UI5Date
 ) {
 	"use strict";
@@ -242,7 +244,7 @@ sap.ui.define([
 	};
 
 	MonthPicker.prototype._getPrimaryCalendarType = function(){
-		return this.getProperty("primaryCalendarType") || undefined/*Configuration*/.getCalendarType();
+		return this.getProperty("primaryCalendarType") || Configuration.getCalendarType();
 	};
 
 	MonthPicker.prototype._getSelectedDates = function() {
@@ -321,7 +323,7 @@ sap.ui.define([
 		if (oParent && oParent._getLocale) {
 			return oParent._getLocale();
 		} else if (!this._sLocale) {
-			this._sLocale = undefined/*Configuration*/.getFormatSettings().getFormatLocale().toString();
+			this._sLocale = Configuration.getFormatSettings().getFormatLocale().toString();
 		}
 
 		return this._sLocale;

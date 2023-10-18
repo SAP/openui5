@@ -4,15 +4,16 @@ sap.ui.define([
 	"sap/ui/core/Locale",
 	"sap/ui/core/LocaleData",
 	"sap/base/Log",
+	"sap/ui/core/Configuration",
 	"sap/ui/core/Supportability"
-], function(NumberFormat, Locale, LocaleData, Log, Supportability) {
+], function (NumberFormat, Locale, LocaleData, Log, Configuration, Supportability) {
 	"use strict";
 
 	/*eslint no-floating-decimal:0 */
 
 	var oDefaultInteger = NumberFormat.getIntegerInstance(),
 		oDefaultFloat = NumberFormat.getFloatInstance(),
-		sDefaultLanguage = undefined/*Configuration*/.getLanguage(),
+		sDefaultLanguage = Configuration.getLanguage(),
 		oCustomInteger = NumberFormat.getIntegerInstance({
 			maxIntegerDigits: 4,
 			minIntegerDigits: 2,
@@ -1316,7 +1317,7 @@ sap.ui.define([
 
 	QUnit.module("Unit Format", {
 		afterEach : function () {
-			undefined/*Configuration*/.setLanguage(sDefaultLanguage);
+			Configuration.setLanguage(sDefaultLanguage);
 		}
 	});
 
@@ -1711,14 +1712,14 @@ sap.ui.define([
 		assert.notStrictEqual("İ".toLocaleLowerCase("tr"), "İ".toLocaleLowerCase("en"));
 
 		// lower/upper case is locale dependent - language by configuration
-		undefined/*Configuration*/.setLanguage("tr");
+		Configuration.setLanguage("tr");
 		oFormat = NumberFormat.getUnitInstance();
 
 		assert.deepEqual(oFormat.parse("42 fit"), [42, "length-foot"]);
 		assert.deepEqual(oFormat.parse("42 FİT"), [42, "length-foot"]);
 
 		// lower/upper case is locale dependent - language by given locale, config is not used
-		undefined/*Configuration*/.setLanguage("en");
+		Configuration.setLanguage("en");
 		oFormat = NumberFormat.getUnitInstance({}, new Locale("tr"));
 
 		assert.deepEqual(oFormat.parse("42 fit"), [42, "length-foot"]);
@@ -1972,7 +1973,7 @@ sap.ui.define([
 			this.oLogWarningSpy = sinon.spy(Log, "warning");
 
 			//ensure custom unit mappings and custom units are reset
-			this.oFormatSettings = undefined/*Configuration*/.getFormatSettings();
+			this.oFormatSettings = Configuration.getFormatSettings();
 			this.oFormatSettings.setUnitMappings();
 			this.oFormatSettings.setCustomUnits();
 
@@ -1992,7 +1993,7 @@ sap.ui.define([
 
 
 	QUnit.test("Unit format custom pattern in config", function (assert) {
-		var oFormatSettings = undefined/*Configuration*/.getFormatSettings();
+		var oFormatSettings = Configuration.getFormatSettings();
 		var oConfigObject = {
 			"electric-inductance": {
 				"unitPattern-count-one": "{0} H",
@@ -2050,7 +2051,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Unit format with private FormatOptions parameter unitOptional active", function (assert) {
-		var oFormatSettings = undefined/*Configuration*/.getFormatSettings();
+		var oFormatSettings = Configuration.getFormatSettings();
 		var oConfigObject = {
 			"electric-inductance": {
 				"displayName": "H",
@@ -2070,7 +2071,7 @@ sap.ui.define([
 
 
 	QUnit.test("Unit parse with private FormatOptions parameter unitOptional active", function (assert) {
-		var oFormatSettings = undefined/*Configuration*/.getFormatSettings();
+		var oFormatSettings = Configuration.getFormatSettings();
 		var oConfigObject = {
 			"electric-inductance": {
 				"displayName": "H",
@@ -2089,7 +2090,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Unit parse custom pattern in config", function (assert) {
-		var oFormatSettings = undefined/*Configuration*/.getFormatSettings();
+		var oFormatSettings = Configuration.getFormatSettings();
 		var oConfigObject = {
 			"electric-inductance": {
 				"displayName": "H",
@@ -2149,7 +2150,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Unit format showNumber false custom Units from global configuration with only other pattern", function (assert) {
-		var oFormatSettings = undefined/*Configuration*/.getFormatSettings();
+		var oFormatSettings = Configuration.getFormatSettings();
 		var oConfigObject = {
 			"electric-inductance": {
 				"displayName": "H",
@@ -2167,7 +2168,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Unit format showNumber false custom Units from global configuration", function (assert) {
-		var oFormatSettings = undefined/*Configuration*/.getFormatSettings();
+		var oFormatSettings = Configuration.getFormatSettings();
 		var oConfigObject = {
 			"electric-inductance": {
 				"displayName": "H",
@@ -2571,7 +2572,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Unit format with global configuration overwritten by format instance", function (assert) {
-		var oFormatSettings = undefined/*Configuration*/.getFormatSettings();
+		var oFormatSettings = Configuration.getFormatSettings();
 		var oConfigObject = {
 			"steven": {
 				"unitPattern-count-one": "{0} tylr",

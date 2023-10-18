@@ -7,6 +7,7 @@ sap.ui.define([
 	"sap/m/Label",
 	"sap/m/Page",
 	"sap/m/ToggleButton",
+	"sap/ui/core/Configuration",
 	"sap/ui/core/Core",
 	"sap/ui/core/library",
 	"sap/ui/unified/DateTypeRange",
@@ -25,6 +26,7 @@ sap.ui.define([
 	Label,
 	Page,
 	ToggleButton,
+	Configuration,
 	oCore,
 	coreLibrary,
 	DateTypeRange,
@@ -44,7 +46,7 @@ sap.ui.define([
 	var ValueState = coreLibrary.ValueState;
 
 	oCore.ready(function() {
-		undefined/*Configuration*/.setLanguage("en-US");
+		Configuration.setLanguage("en-US");
 	});
 
 	var app = new App("myApp");

@@ -5,6 +5,7 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/m/Input",
 	"sap/m/Text",
+	"sap/ui/core/Configuration",
 	"sap/ui/core/library",
 	"sap/ui/core/Messaging",
 	"sap/ui/core/message/ControlMessageProcessor",
@@ -16,7 +17,8 @@ sap.ui.define([
 	"sap/ui/model/odata/v2/ODataModel",
 	"sap/ui/model/type/Currency",
 	"sap/ui/model/type/Float"
-], function(deepEqual, deepExtend, Button, Input, Text, library, Messaging, ControlMessageProcessor, Message, MockServer, VerticalLayout, DataState, JSONModel, ODataModel, Currency, Float) {
+], function(deepEqual, deepExtend, Button, Input, Text, Configuration, library, Messaging, ControlMessageProcessor,
+		Message, MockServer, VerticalLayout, DataState, JSONModel, ODataModel, Currency, Float) {
 	"use strict";
 
 	// shortcut for sap.ui.core.MessageType
@@ -59,17 +61,17 @@ sap.ui.define([
 		ODataModel.mServiceData = {};
 	}
 
-	var sDefaultLanguage = undefined/*Configuration*/.getLanguage();
+	var sDefaultLanguage = Configuration.getLanguage();
 
 	QUnit.module("ODataModelV2DataState ", {
 		beforeEach : function() {
-			undefined/*Configuration*/.setLanguage("en-US");
+			Configuration.setLanguage("en-US");
 			initServer();
 			oModel = initModel({tokenHandling:false, defaultBindingMode:"TwoWay"});
 			oModel.setUseBatch(true);
 		},
 		afterEach : function() {
-			undefined/*Configuration*/.setLanguage(sDefaultLanguage);
+			Configuration.setLanguage(sDefaultLanguage);
 			oModel.destroy();
 			oModel = undefined;
 			removeSharedMetadata();
@@ -554,14 +556,14 @@ sap.ui.define([
 
 	QUnit.module("New DataState Tests", {
 		beforeEach : function() {
-			undefined/*Configuration*/.setLanguage("en-US");
+			Configuration.setLanguage("en-US");
 			initServer();
 			oModel = initModel({tokenHandling:false, defaultBindingMode:"TwoWay"});
 			oModel.setUseBatch(true);
 
 		},
 		afterEach : function() {
-			undefined/*Configuration*/.setLanguage(sDefaultLanguage);
+			Configuration.setLanguage(sDefaultLanguage);
 			oModel.destroy();
 			oModel = undefined;
 			removeSharedMetadata();
@@ -816,14 +818,14 @@ sap.ui.define([
 
 	QUnit.module("Other Old DataState Tests", {
 		beforeEach : function() {
-			undefined/*Configuration*/.setLanguage("en-US");
+			Configuration.setLanguage("en-US");
 			initServer();
 			oModel = initModel({tokenHandling:false, defaultBindingMode:"TwoWay"});
 			oModel.setUseBatch(true);
 
 		},
 		afterEach : function() {
-			undefined/*Configuration*/.setLanguage(sDefaultLanguage);
+			Configuration.setLanguage(sDefaultLanguage);
 			oModel.destroy();
 			oModel = undefined;
 			removeSharedMetadata();

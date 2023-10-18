@@ -22,6 +22,7 @@ sap.ui.define([
 	"sap/ui/unified/CalendarAppointment",
 	'sap/ui/core/InvisibleMessage',
 	'sap/ui/core/library',
+	'sap/ui/core/Configuration',
 	"sap/ui/core/date/UI5Date"
 ], function(
 	Control,
@@ -42,6 +43,7 @@ sap.ui.define([
 	CalendarAppointment,
 	InvisibleMessage,
 	corelibrary,
+	Configuration,
 	UI5Date
 ) {
 	"use strict";
@@ -346,7 +348,7 @@ sap.ui.define([
 
 	CalendarRow.prototype.init = function(){
 
-		this._bRTL  = undefined/*Configuration*/.getRTL();
+		this._bRTL  = Configuration.getRTL();
 		this._oRb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified");
 
 		this._oFormatAria = DateFormat.getDateTimeInstance({
@@ -1008,7 +1010,7 @@ sap.ui.define([
 	function _getLocale(){
 
 		if (!this._sLocale) {
-			this._sLocale = undefined/*Configuration*/.getFormatSettings().getFormatLocale().toString();
+			this._sLocale = Configuration.getFormatSettings().getFormatLocale().toString();
 		}
 
 		return this._sLocale;

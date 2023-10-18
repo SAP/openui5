@@ -6,6 +6,7 @@ sap.ui.define([
 	"sap/base/util/JSTokenizer",
 	"sap/base/util/uid",
 	"sap/ui/base/SyncPromise",
+	"sap/ui/core/Configuration",
 	"sap/ui/model/BindingMode",
 	"sap/ui/model/ChangeReason",
 	"sap/ui/model/ClientListBinding",
@@ -27,7 +28,10 @@ sap.ui.define([
 	"sap/ui/model/odata/v4/lib/_MetadataRequestor",
 	"sap/ui/test/TestUtils",
 	"sap/ui/thirdparty/URI"
-], function(Log, JSTokenizer, uid, SyncPromise, BindingMode, ChangeReason, ClientListBinding, BaseContext, ContextBinding, Filter, FilterOperator, MetaModel, Model, PropertyBinding, Sorter, OperationMode, AnnotationHelper, Context, ODataMetaModel, ODataModel, ValueListType, _Helper, _MetadataRequestor, TestUtils, URI) {
+], function (Log, JSTokenizer, uid, SyncPromise, Configuration, BindingMode, ChangeReason,
+		ClientListBinding, BaseContext, ContextBinding, Filter, FilterOperator, MetaModel, Model,
+		PropertyBinding, Sorter, OperationMode, AnnotationHelper, Context, ODataMetaModel,
+		ODataModel, ValueListType, _Helper, _MetadataRequestor, TestUtils, URI) {
 	"use strict";
 
 	// Common := com.sap.vocabularies.Common.v1
@@ -1147,7 +1151,7 @@ sap.ui.define([
 			this.oLogMock = this.mock(Log);
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
-			this.mock(undefined/*Configuration*/).expects("getLanguageTag").atLeast(0).returns("ab-CD");
+			this.mock(Configuration).expects("getLanguageTag").atLeast(0).returns("ab-CD");
 
 			this.oModel = {
 				getReporter : function () {},

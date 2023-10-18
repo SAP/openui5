@@ -7,6 +7,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/apply/api/FlexRuntimeInfoAPI",
+	"sap/ui/fl/initial/_internal/FlexConfiguration",
 	"sap/ui/fl/FlexControllerFactory",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
@@ -19,6 +20,7 @@ sap.ui.define([
 	FlexState,
 	ManifestUtils,
 	FlexRuntimeInfoAPI,
+	FlexConfiguration,
 	FlexControllerFactory,
 	Layer,
 	Utils,
@@ -315,6 +317,18 @@ sap.ui.define([
 			assert.strictEqual(oBelongsToVMStub.callCount, 1, "the Util was called once");
 			assert.strictEqual(oBelongsToVMStub.firstCall.args[0], "element", "the Util was called with the correct property");
 			assert.strictEqual(sResult, "foo", "the function returns whatever the Util returns");
+		});
+	});
+
+	QUnit.module("getConfiguredFlexServices", {
+		afterEach() {
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("when called", function(assert) {
+			const aReturnValue = [{foo: "bar"}];
+			sandbox.stub(FlexConfiguration, "getFlexibilityServices").returns(aReturnValue);
+			assert.deepEqual(FlexRuntimeInfoAPI.getConfiguredFlexServices(), aReturnValue, "the function returns the configured value");
 		});
 	});
 

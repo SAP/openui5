@@ -334,8 +334,10 @@ sap.ui.define([
 	TableDelegate.initializeSelection = function(oTable) {
 		if (oTable._isOfType(TableType.Table, true)) {
 			return initializeGridTableSelection(oTable);
-		} else {
+		} else if (oTable._isOfType(TableType.ResponsiveTable)) {
 			return initializeResponsiveTableSelection(oTable);
+		} else {
+			return Promise.resolve();
 		}
 	};
 

@@ -1,6 +1,7 @@
 /*global QUnit, sinon */
 sap.ui.define([
 	'sap/ui/core/CalendarType',
+	'sap/ui/core/Configuration',
 	'sap/ui/core/Core',
 	'sap/ui/core/Lib',
 	'sap/ui/core/date/CalendarWeekNumbering',
@@ -12,9 +13,9 @@ sap.ui.define([
 	"sap/base/config/GlobalConfigurationProvider",
 	'../routing/HistoryUtils',
 	'sap/ui/base/config/URLConfigurationProvider',
-	// only used indirectly via Configuration.getCalendarType
-	'sap/ui/core/LocaleData'
-], function(CalendarType, Core, Library, CalendarWeekNumbering, TimezoneUtil, Theming, Security, BaseConfig, Log, GlobalConfigurationProvider, HistoryUtils, URLConfigurationProvider/*, LocaleData*/) {
+	'sap/ui/core/LocaleData' // only used indirectly via Configuration.getCalendarType
+], function(CalendarType, Configuration, Core, Library, CalendarWeekNumbering, TimezoneUtil, Theming, Security, BaseConfig, Log,
+		GlobalConfigurationProvider, HistoryUtils, URLConfigurationProvider/*, LocaleData*/) {
 	"use strict";
 
 	var browserUrl = {
@@ -34,7 +35,7 @@ sap.ui.define([
 		}
 	};
 
-	var AnimationMode = undefined/*Configuration*/.AnimationMode;
+	var AnimationMode = Configuration.AnimationMode;
 	let mConfigStubValues = {};
 
 	var sLocalTimezone = TimezoneUtil.getLocalTimezone();
@@ -53,8 +54,8 @@ sap.ui.define([
 
 	QUnit.test("Constructor", function(assert) {
 		var oLogSpy = sinon.stub(Log, "error");
-		var oConfiguration1 = new undefined/*Configuration*/();
-		var oConfiguration2 = new undefined/*Configuration*/();
+		var oConfiguration1 = new Configuration();
+		var oConfiguration2 = new Configuration();
 		var sExpectedErrorText = "Configuration is designed as a singleton and should not be created manually! " +
 			"Please require 'sap/ui/core/Configuration' instead and use the module export directly without using 'new'.";
 
@@ -79,7 +80,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("LegacyDateCalendarCustomizing", function(assert) {
-		var oFormatSettings = undefined/*Configuration*/.getFormatSettings();
+		var oFormatSettings = Configuration.getFormatSettings();
 
 		var aData = [{
 			"dateFormat": "A",
@@ -101,7 +102,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("getter and setter for option 'calendar'", function(assert) {
-		var oCfg = undefined/*Configuration*/,
+		var oCfg = Configuration,
 			oFormatSettings = oCfg.getFormatSettings();
 			oFormatSettings.setLegacyDateFormat();
 
@@ -167,13 +168,13 @@ sap.ui.define([
 	});
 
 	QUnit.test("getter and setter for option calendarWeekNumbering", function(assert) {
-		assert.strictEqual(undefined/*Configuration*/.getCalendarWeekNumbering(), CalendarWeekNumbering.Default);
+		assert.strictEqual(Configuration.getCalendarWeekNumbering(), CalendarWeekNumbering.Default);
 
-		assert.ok(undefined/*Configuration*/.setCalendarWeekNumbering(CalendarWeekNumbering.ISO_8601), undefined/*Configuration*/);
-		assert.strictEqual(undefined/*Configuration*/.getCalendarWeekNumbering(), CalendarWeekNumbering.ISO_8601);
+		assert.ok(Configuration.setCalendarWeekNumbering(CalendarWeekNumbering.ISO_8601), Configuration);
+		assert.strictEqual(Configuration.getCalendarWeekNumbering(), CalendarWeekNumbering.ISO_8601);
 
 		assert.throws(function() {
-			undefined/*Configuration*/.setCalendarWeekNumbering("invalid");
+			Configuration.setCalendarWeekNumbering("invalid");
 		}, new TypeError("Unsupported Enumeration value for calendarWeekNumbering, valid values are: "
 				+ "Default, ISO_8601, MiddleEastern, WesternTraditional"));
 	});
@@ -192,12 +193,11 @@ sap.ui.define([
 					this.changes.push(changes);
 				}.bind(this)
 			};
-			undefined/*Configuration*/.setRTL(null);
-			undefined/*Configuration*/.setLanguage("en");
-			undefined/*Configuration*/.setCalendarWeekNumbering(CalendarWeekNumbering.Default);
-			undefined/*Configuration*/.setCalendarType("Gregorian");
-			undefined/*Configuration*/.setCore(this.oCoreMock);
-			this.oConfig = undefined/*Configuration*/;
+			Configuration.setRTL(null);
+			Configuration.setLanguage("en");
+			Configuration.setCalendarWeekNumbering(CalendarWeekNumbering.Default);
+			Configuration.setCalendarType("Gregorian");
+			this.oConfig = Configuration;
 		}
 	});
 
@@ -505,7 +505,7 @@ sap.ui.define([
 			}.bind(this));
 
 			// verify results
-			assert.equal(undefined/*Configuration*/.getFormatSettings().getLegacyNumberFormat(), data.expected, "Value of number format must be '" + data.expected + "'.");
+			assert.equal(Configuration.getFormatSettings().getLegacyNumberFormat(), data.expected, "Value of number format must be '" + data.expected + "'.");
 		}.bind(this));
 		oStub.restore();
 	});
@@ -549,7 +549,7 @@ sap.ui.define([
 				return oBaseStub.wrappedMethod.call(this, mParameters);
 			}.bind(this));
 
-			assert.equal(undefined/*Configuration*/.getFormatSettings().getLegacyDateFormat(), data.expected, "Value of date format must be '" + data.expected + "'.");
+			assert.equal(Configuration.getFormatSettings().getLegacyDateFormat(), data.expected, "Value of date format must be '" + data.expected + "'.");
 		});
 		oStub.restore();
 		oBaseStub.restore();
@@ -585,7 +585,7 @@ sap.ui.define([
 				return oBaseStub.wrappedMethod.call(this, mParameters);
 			}.bind(this));
 
-			assert.equal(undefined/*Configuration*/.getFormatSettings().getLegacyTimeFormat(), data.expected, "Value of time format must be '" + data.expected + "'.");
+			assert.equal(Configuration.getFormatSettings().getLegacyTimeFormat(), data.expected, "Value of time format must be '" + data.expected + "'.");
 		});
 		oStub.restore();
 		oBaseStub.restore();
@@ -612,7 +612,7 @@ sap.ui.define([
 		}.bind(this));
 
 		// verify results
-		assert.equal(undefined/*Configuration*/.getCalendarWeekNumbering(), CalendarWeekNumbering.ISO_8601,
+		assert.equal(Configuration.getCalendarWeekNumbering(), CalendarWeekNumbering.ISO_8601,
 			'calendarWeekNumbering set via URL');
 		oStub.restore();
 		oBaseStub.restore();
@@ -637,7 +637,7 @@ sap.ui.define([
 		}.bind(this));
 
 		// verify results
-		assert.equal(undefined/*Configuration*/.getCalendarWeekNumbering(), CalendarWeekNumbering.Default,
+		assert.equal(Configuration.getCalendarWeekNumbering(), CalendarWeekNumbering.Default,
 			'no value in URL leads to default value');
 		oStub.restore();
 		oBaseStub.restore();
@@ -645,14 +645,14 @@ sap.ui.define([
 
 	QUnit.test("Read calendarWeekNumbering from URL - invalid value", function(assert) {
 		assert.throws(function() {
-			undefined/*Configuration*/.setCalendarWeekNumbering("invalid");
+			Configuration.setCalendarWeekNumbering("invalid");
 		}, new TypeError("Unsupported Enumeration value for calendarWeekNumbering, valid values are: "
 				+ "Default, ISO_8601, MiddleEastern, WesternTraditional"));
 	});
 
 	QUnit.module("Timezone", {
 		beforeEach: function(assert) {
-			undefined/*Configuration*/.setLanguage("en");
+			Configuration.setLanguage("en");
 			BaseConfig._.invalidate();
 		}
 	});
@@ -669,7 +669,7 @@ sap.ui.define([
 		});
 
 		// verify results
-		assert.equal(undefined/*Configuration*/.getTimezone(), 'America/Los_Angeles', 'America/Los_Angeles is set');
+		assert.equal(Configuration.getTimezone(), 'America/Los_Angeles', 'America/Los_Angeles is set');
 		oStub.restore();
 	});
 
@@ -684,7 +684,7 @@ sap.ui.define([
 		});
 
 		// verify results
-		assert.equal(undefined/*Configuration*/.getTimezone(), 'America/Los_Angeles', 'America/Los_Angeles is set');
+		assert.equal(Configuration.getTimezone(), 'America/Los_Angeles', 'America/Los_Angeles is set');
 		oStub.restore();
 	});
 
@@ -700,7 +700,7 @@ sap.ui.define([
 		});
 
 		// verify results
-		assert.equal(undefined/*Configuration*/.getTimezone(), sLocalTimezone, "fallback to '" + sLocalTimezone + "'");
+		assert.equal(Configuration.getTimezone(), sLocalTimezone, "fallback to '" + sLocalTimezone + "'");
 		oStub.restore();
 	});
 
@@ -731,7 +731,7 @@ sap.ui.define([
 	QUnit.test("Invalid animation mode", function(assert) {
 		this.mParams.sapUiAnimationMode = "someuUnsupportedStringValue";
 		assert.throws(
-			function() { undefined/*Configuration*/.getAnimationMode(); },
+			function() { Configuration.getAnimationMode(); },
 			new TypeError("Unsupported Enumeration value for sapUiAnimationMode, valid values are: full, basic, minimal, none"),
 			"Unsupported value for animation mode should throw an error."
 		);
@@ -743,7 +743,7 @@ sap.ui.define([
 				BaseConfig._.invalidate();
 				var sAnimationMode = AnimationMode[sAnimationModeKey];
 				this.mParams.sapUiAnimationMode = sAnimationMode;
-				assert.equal(undefined/*Configuration*/.getAnimationMode(), sAnimationMode, "Test for animation mode: " + sAnimationMode);
+				assert.equal(Configuration.getAnimationMode(), sAnimationMode, "Test for animation mode: " + sAnimationMode);
 			}
 		}
 	});
@@ -751,15 +751,15 @@ sap.ui.define([
 	QUnit.module("AnimationMode changes at runtime", {
 		before: function () {
 			this.getConfiguration = function () {
-				return undefined/*Configuration*/;
+				return Configuration;
 			};
 		},
 		beforeEach: function() {
 			// Restore default animation mode
-			undefined/*Configuration*/.setAnimationMode(AnimationMode.full);
+			Configuration.setAnimationMode(AnimationMode.full);
 		},
 		afterEach: function() {
-			undefined/*Configuration*/.setAnimationMode(AnimationMode.minimal);
+			Configuration.setAnimationMode(AnimationMode.minimal);
 		}
 	});
 
@@ -802,7 +802,7 @@ sap.ui.define([
 	QUnit.module("Flexibility Services & Connectors");
 
 	QUnit.test("Get the Flexibility Services", function(assert) {
-		var sFlexibilityService = undefined/*Configuration*/.getFlexibilityServices();
+		var sFlexibilityService = null;
 		assert.deepEqual(sFlexibilityService, [{connector: "LrepConnector", url: "/sap/bc/lrep"}]);
 	});
 
@@ -816,7 +816,7 @@ sap.ui.define([
 				return oStub.wrappedMethod.call(this, sKey);
 			}
 		}.bind(this));
-		var sFlexibilityService = undefined/*Configuration*/.getFlexibilityServices();
+		var sFlexibilityService = null;
 		assert.deepEqual(sFlexibilityService, []);
 		oStub.restore();
 	});
@@ -831,7 +831,7 @@ sap.ui.define([
 				return oStub.wrappedMethod.call(this, sKey);
 			}
 		}.bind(this));
-		var sFlexibilityService = undefined/*Configuration*/.getFlexibilityServices();
+		var sFlexibilityService = null;
 		assert.deepEqual(sFlexibilityService, []);
 		oStub.restore();
 	});
@@ -852,7 +852,7 @@ sap.ui.define([
 			}
 		}.bind(this));
 
-		var sFlexibilityService = undefined/*Configuration*/.getFlexibilityServices();
+		var sFlexibilityService = null;
 		assert.deepEqual(sFlexibilityService, aConfig);
 		oStub.restore();
 	});

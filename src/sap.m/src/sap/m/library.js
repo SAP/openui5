@@ -6,60 +6,61 @@
  * Initialization Code and shared classes of library sap.m.
  */
 sap.ui.define([
- "sap/ui/core/Lib",
- "sap/ui/Device",
- "sap/ui/base/DataType",
- "sap/ui/base/EventProvider",
- "sap/ui/core/Control",
- "sap/base/util/ObjectPath",
- "sap/ui/util/openWindow",
- // library dependency
- "sap/ui/core/library",
- "sap/base/strings/capitalize",
- "sap/ui/thirdparty/jquery",
- "sap/base/assert",
- "sap/base/Log",
- "sap/base/util/defineLazyProperty",
- "sap/base/security/encodeCSS",
- "./AvatarShape",
- "./AvatarSize",
- "./AvatarType",
- "./AvatarColor",
- "./AvatarImageFitType",
- "./IllustratedMessageSize",
- "./IllustratedMessageType",
- "./upload/UploaderHttpRequestMethod",
- "sap/ui/core/theming/Parameters",
- "sap/ui/core/LocaleData",
- // referenced here to enable the Support feature
- "./Support"
+	"sap/ui/core/Lib",
+	"sap/ui/Device",
+	"sap/ui/base/DataType",
+	"sap/ui/base/EventProvider",
+	"sap/ui/core/Control",
+	"sap/base/util/ObjectPath",
+	"sap/ui/util/openWindow",
+	// library dependency
+	"sap/ui/core/library",
+	"sap/base/strings/capitalize",
+	"sap/ui/thirdparty/jquery",
+	"sap/base/assert",
+	"sap/base/Log",
+	"sap/base/util/defineLazyProperty",
+	"sap/base/security/encodeCSS",
+	"./AvatarShape",
+	"./AvatarSize",
+	"./AvatarType",
+	"./AvatarColor",
+	"./AvatarImageFitType",
+	"./IllustratedMessageSize",
+	"./IllustratedMessageType",
+	"./upload/UploaderHttpRequestMethod",
+	"sap/ui/core/theming/Parameters",
+	"sap/ui/core/LocaleData",
+	"sap/ui/core/Configuration",
+	"./Support" // referenced here to enable the Support feature
 ],
 	function(
-	 Library,
-	 Device,
-	 DataType,
-	 EventProvider,
-	 Control,
-	 ObjectPath,
-	 openWindow,
-	 CoreLibrary,
-	 capitalize,
-	 jQuery,
-	 assert,
-	 Log,
-	 defineLazyProperty,
-	 encodeCSS,
-	 AvatarShape,
-	 AvatarSize,
-	 AvatarType,
-	 AvatarColor,
-	 AvatarImageFitType,
-	 IllustratedMessageSize,
-	 IllustratedMessageType,
-	 UploaderHttpRequestMethod,
-	 Parameters,
-	 LocaleData
-	) {
+	Library,
+	Device,
+	DataType,
+	EventProvider,
+	Control,
+	ObjectPath,
+	openWindow,
+	CoreLibrary,
+	capitalize,
+	jQuery,
+	assert,
+	Log,
+	defineLazyProperty,
+	encodeCSS,
+	AvatarShape,
+	AvatarSize,
+	AvatarType,
+	AvatarColor,
+	AvatarImageFitType,
+	IllustratedMessageSize,
+	IllustratedMessageType,
+	UploaderHttpRequestMethod,
+	Parameters,
+	LocaleData,
+	Configuration
+) {
 	 "use strict";
 
 	 /**
@@ -4934,7 +4935,7 @@ sap.ui.define([
 	  * @since 1.10
 	  */
 	 thisLib.getLocale = function() {
-		 var oLocale = undefined/*Configuration*/.getFormatSettings().getFormatLocale();
+		 var oLocale = Configuration.getFormatSettings().getFormatLocale();
 
 		 thisLib.getLocale = function() {
 			 return oLocale;
@@ -5755,14 +5756,6 @@ sap.ui.define([
 
 	 //implement table helper factory with m controls
 	 //possible is set before layout lib is loaded.
-	 /* -------------------------------------- */
-	 ObjectPath.set("sap.ui.layout.GridHelper", {
-		 getLibrarySpecificClass: function () {
-			 return "";
-		 },
-		 bFinal: true
-	 });
-
 	 /**
 	  * An object type that represents sap.m.upload.FilterPanel fields properties.
 	  * @typedef {object}

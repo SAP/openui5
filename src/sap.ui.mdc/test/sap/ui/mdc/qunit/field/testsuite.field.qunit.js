@@ -70,7 +70,7 @@ sap.ui.define(['../util/EnvHelper', "sap/base/util/merge"], function(EnvHelper, 
 				sinon: false,
 				loader: {
 					paths: {
-						"testutils/other": "test-resources/sap/ui/mdc/testutils/other"
+						"testutils/link": "test-resources/sap/ui/mdc/testutils/link"
 					}
 				}
 			},

@@ -5,15 +5,15 @@ QUnit.config.autostart = false;
 sap.ui.define([
 	"sap/ui/mdc/Link",
 	"sap/ui/mdc/link/LinkItem",
-	"testutils/other/FakeFlpConnector",
+	"testutils/link/FakeUShellConnector",
 	"sap/base/Log"
 ], function(Link,
 	LinkItem,
-	FakeFlpConnector,
+	FakeUShellConnector,
 	SapBaseLog) {
 	"use strict";
 
-	QUnit.module("sap.ui.mdc.flp.FlpLinkDelegate: API", {
+	QUnit.module("sap.ui.mdc.ushell.LinkDelegate: API", {
 		beforeEach: function() {
 			this.oLink = new Link();
 		},
@@ -38,7 +38,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.module("sap.ui.mdc.flp.FlpLinkDelegate: 'semanticObjects'", {
+	QUnit.module("sap.ui.mdc.ushell.LinkDelegate: 'semanticObjects'", {
 		beforeEach: function() {},
 		afterEach: function() {
 			// stopMockServer();
@@ -50,7 +50,7 @@ sap.ui.define([
 	QUnit.test("semanticObjects and semanticObjectMapping with empty collection", function(assert) {
 		this.oLink = new Link({
 			delegate: {
-				name: "sap/ui/mdc/flp/FlpLinkDelegate",
+				name: "sap/ui/mdc/ushell/LinkDelegate",
 				payload: {
 					semanticObjects: ["SO1"],
 					semanticObjectMappings: [
@@ -79,7 +79,7 @@ sap.ui.define([
 	QUnit.test("semanticObject and semanticObjectMapping with qualifier", function(assert) {
 		this.oLink = new Link({
 			delegate: {
-				name: "sap/ui/mdc/flp/FlpLinkDelegate",
+				name: "sap/ui/mdc/ushell/LinkDelegate",
 				payload: {
 					semanticObjects: ["SO1", "SOAdd"],
 					semanticObjectMappings: [
@@ -128,7 +128,7 @@ sap.ui.define([
 	QUnit.test("only semanticObject", function(assert) {
 		this.oLink = new Link({
 			delegate: {
-				name: "sap/ui/mdc/flp/FlpLinkDelegate",
+				name: "sap/ui/mdc/ushell/LinkDelegate",
 				payload: {
 					semanticObjects: ["SO1"]
 				}
@@ -147,7 +147,7 @@ sap.ui.define([
 		}.bind(this));
 	});
 
-	QUnit.module("sap.ui.mdc.flp.FlpLinkDelegate: calculateSemanticAttributes", {
+	QUnit.module("sap.ui.mdc.ushell.LinkDelegate: calculateSemanticAttributes", {
 		beforeEach: function() {
 			this.oContextObject = {
 				Category: "Monitor",
@@ -179,7 +179,7 @@ sap.ui.define([
 
 		_calculateSemanticAttributesOfLink(new Link({
 			delegate: {
-				name: "sap/ui/mdc/flp/FlpLinkDelegate",
+				name: "sap/ui/mdc/ushell/LinkDelegate",
 				payload: {}
 			}
 		})).then(function(aSemanticAttributes) {
@@ -189,7 +189,7 @@ sap.ui.define([
 
 		_calculateSemanticAttributesOfLink(new Link({
 			delegate: {
-				name: "sap/ui/mdc/flp/FlpLinkDelegate",
+				name: "sap/ui/mdc/ushell/LinkDelegate",
 				payload: {
 					semanticObjects: [""],
 					SemanticObjectMappings: []
@@ -209,7 +209,7 @@ sap.ui.define([
 
 		_calculateSemanticAttributesOfLink(new Link({
 			delegate: {
-				name: "sap/ui/mdc/flp/FlpLinkDelegate",
+				name: "sap/ui/mdc/ushell/LinkDelegate",
 				payload: {
 					semanticObjects: null,
 					semanticObjectMappings: []
@@ -229,7 +229,7 @@ sap.ui.define([
 
 		_calculateSemanticAttributesOfLink(new Link({
 			delegate: {
-				name: "sap/ui/mdc/flp/FlpLinkDelegate",
+				name: "sap/ui/mdc/ushell/LinkDelegate",
 				payload: {
 					semanticObjects: [
 						"SODefault"
@@ -251,7 +251,7 @@ sap.ui.define([
 
 		_calculateSemanticAttributesOfLink(new Link({
 			delegate: {
-				name: "sap/ui/mdc/flp/FlpLinkDelegate",
+				name: "sap/ui/mdc/ushell/LinkDelegate",
 				payload: {
 					semanticObjects: [
 						"SODefault"
@@ -268,7 +268,7 @@ sap.ui.define([
 
 		_calculateSemanticAttributesOfLink(new Link({
 			delegate: {
-				name: "sap/ui/mdc/flp/FlpLinkDelegate",
+				name: "sap/ui/mdc/ushell/LinkDelegate",
 				payload: {
 					semanticObjects: [
 						"SODefault"
@@ -285,7 +285,7 @@ sap.ui.define([
 
 		_calculateSemanticAttributesOfLink(new Link({
 			delegate: {
-				name: "sap/ui/mdc/flp/FlpLinkDelegate",
+				name: "sap/ui/mdc/ushell/LinkDelegate",
 				payload: {
 					semanticObjects: [
 						"SODefault", "SOAdditional"
@@ -325,7 +325,7 @@ sap.ui.define([
 
 		_calculateSemanticAttributesOfLink(new Link({
 			delegate: {
-				name: "sap/ui/mdc/flp/FlpLinkDelegate",
+				name: "sap/ui/mdc/ushell/LinkDelegate",
 				payload: {
 					semanticObjects: [
 						"SODefault"
@@ -347,7 +347,7 @@ sap.ui.define([
 
 		_calculateSemanticAttributesOfLink(new Link({
 			delegate: {
-				name: "sap/ui/mdc/flp/FlpLinkDelegate",
+				name: "sap/ui/mdc/ushell/LinkDelegate",
 				payload: {
 					semanticObjects: [
 						"SODefault"
@@ -391,7 +391,7 @@ sap.ui.define([
 
 		_calculateSemanticAttributesOfLink(new Link({
 			delegate: {
-				name: "sap/ui/mdc/flp/FlpLinkDelegate",
+				name: "sap/ui/mdc/ushell/LinkDelegate",
 				payload: {
 					semanticObjects: [
 						"SODefault", "SOAdditional"
@@ -437,9 +437,9 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.module("sap.ui.mdc.flp.FlpLinkDelegate: 'retrieveNavigationTargets'", {
+	QUnit.module("sap.ui.mdc.ushell.LinkDelegate: 'retrieveNavigationTargets'", {
 		beforeEach: function() {
-			FakeFlpConnector.enableFakeConnector({
+			FakeUShellConnector.enableFakeConnector({
 				SemanticObjectEmpty: {
 					links: []
 				},
@@ -477,17 +477,17 @@ sap.ui.define([
 			});
 		},
 		afterEach: function() {
-			FakeFlpConnector.disableFakeConnector();
+			FakeUShellConnector.disableFakeConnector();
 			this.oLink.destroy();
 		}
 	});
-	QUnit.test("CrossApplicationNavigation service not available", function(assert) {
-		const fnSapLogErrorSpy = sinon.spy(SapBaseLog, "error").withArgs("FlpLinkDelegate: Service 'CrossApplicationNavigation' or 'URLParsing' could not be obtained");
-		FakeFlpConnector.disableFakeConnector();
+	QUnit.test("Navigation service not available", function(assert) {
+		const fnSapLogErrorSpy = sinon.spy(SapBaseLog, "error").withArgs("LinkDelegate: Service 'CrossApplicationNavigation' or 'URLParsing' could not be obtained");
+		FakeUShellConnector.disableFakeConnector();
 		const done = assert.async();
 		this.oLink = new Link({
 			delegate: {
-				name: "sap/ui/mdc/flp/FlpLinkDelegate",
+				name: "sap/ui/mdc/ushell/LinkDelegate",
 				payload: {
 					semanticObjects: ["SemanticObjectEmpty"]
 				}
@@ -495,7 +495,7 @@ sap.ui.define([
 		});
 		this.oLink.awaitControlDelegate().then(function() {
 			this.oLink.getControlDelegate()._retrieveNavigationTargets("", {}, this.oLink.getDelegate().payload).then(function(aLinks, oOwnNavigationLink) {
-				assert.ok(fnSapLogErrorSpy.withArgs("FlpLinkDelegate: Service 'CrossApplicationNavigation' or 'URLParsing' could not be obtained").called);
+				assert.ok(fnSapLogErrorSpy.withArgs("LinkDelegate: Service 'CrossApplicationNavigation' or 'URLParsing' could not be obtained").called);
 				assert.equal(oOwnNavigationLink, null);
 				assert.deepEqual(aLinks, []);
 				done();
@@ -504,12 +504,12 @@ sap.ui.define([
 		}.bind(this));
 	});
 
-	QUnit.test("CrossApplicationNavigation service returns empty links", function(assert) {
+	QUnit.test("Navigation service returns empty links", function(assert) {
 		const fnSapLogErrorSpy = sinon.spy(SapBaseLog, "error");
 		const done = assert.async();
 		this.oLink = new Link({
 			delegate: {
-				name: "sap/ui/mdc/flp/FlpLinkDelegate",
+				name: "sap/ui/mdc/ushell/LinkDelegate",
 				payload: {
 					semanticObjects: ["SemanticObjectEmpty"]
 				}
@@ -527,11 +527,11 @@ sap.ui.define([
 		}.bind(this));
 	});
 
-	QUnit.test("CrossApplicationNavigation service returns one link with any action", function(assert) {
+	QUnit.test("Navigation service returns one link with any action", function(assert) {
 		const done = assert.async();
 		this.oLink = new Link({
 			delegate: {
-				name: "sap/ui/mdc/flp/FlpLinkDelegate",
+				name: "sap/ui/mdc/ushell/LinkDelegate",
 				payload: {
 					semanticObjects: ["SemanticObjectAnyAction"]
 				}
@@ -548,11 +548,11 @@ sap.ui.define([
 		}.bind(this));
 	});
 
-	QUnit.test("CrossApplicationNavigation service returns two links with any actions", function(assert) {
+	QUnit.test("Navigation service returns two links with any actions", function(assert) {
 		const done = assert.async();
 		this.oLink = new Link({
 			delegate: {
-				name: "sap/ui/mdc/flp/FlpLinkDelegate",
+				name: "sap/ui/mdc/ushell/LinkDelegate",
 				payload: {
 					semanticObjects: ["SemanticObjectTwoIntents"]
 				}
@@ -575,7 +575,7 @@ sap.ui.define([
 		const done = assert.async();
 		this.oLink = new Link({
 			delegate: {
-				name: "sap/ui/mdc/flp/FlpLinkDelegate",
+				name: "sap/ui/mdc/ushell/LinkDelegate",
 				payload: {
 					semanticObjects: [
 						"SemanticObjectDisplayFactSheet", "SemanticObjectTwoIntents"
@@ -598,9 +598,9 @@ sap.ui.define([
 		}.bind(this));
 	});
 
-	QUnit.module("sap.ui.mdc.flp.FlpLinkDelegate: 'retrieveNavigationTargets' and main item", {
+	QUnit.module("sap.ui.mdc.ushell.LinkDelegate: 'retrieveNavigationTargets' and main item", {
 		beforeEach: function() {
-			FakeFlpConnector.enableFakeConnector({
+			FakeUShellConnector.enableFakeConnector({
 				SemanticObjectDisplayFactSheet: {
 					links: [
 						{
@@ -613,14 +613,14 @@ sap.ui.define([
 			});
 		},
 		afterEach: function() {
-			FakeFlpConnector.disableFakeConnector();
+			FakeUShellConnector.disableFakeConnector();
 			this.oLink.destroy();
 		}
 	});
 
-	QUnit.module("sap.ui.mdc.flp.FlpLinkDelegate: 'semanticObjectUnavailableActions'", {
+	QUnit.module("sap.ui.mdc.ushell.LinkDelegate: 'semanticObjectUnavailableActions'", {
 		beforeEach: function() {
-			FakeFlpConnector.enableFakeConnector({
+			FakeUShellConnector.enableFakeConnector({
 				SemanticObjectTwoIntents: {
 					links: [
 						{
@@ -637,7 +637,7 @@ sap.ui.define([
 			});
 		},
 		afterEach: function() {
-			FakeFlpConnector.disableFakeConnector();
+			FakeUShellConnector.disableFakeConnector();
 			this.oLink.destroy();
 		}
 	});
@@ -646,7 +646,7 @@ sap.ui.define([
 		const done = assert.async();
 		this.oLink = new Link({
 			delegate: {
-				name: "sap/ui/mdc/flp/FlpLinkDelegate",
+				name: "sap/ui/mdc/ushell/LinkDelegate",
 				payload: {
 					semanticObjects: ["SemanticObjectTwoIntents"],
 					semanticObjectUnavailableActions: [{
@@ -674,7 +674,7 @@ sap.ui.define([
 		const done = assert.async();
 		this.oLink = new Link({
 			delegate: {
-				name: "sap/ui/mdc/flp/FlpLinkDelegate",
+				name: "sap/ui/mdc/ushell/LinkDelegate",
 				payload: {
 					semanticObjects: ["SemanticObjectTwoIntents"],
 					semanticObjectUnavailableActions: [{
@@ -697,19 +697,19 @@ sap.ui.define([
 		}.bind(this));
 	});
 
-	QUnit.module("sap.ui.mdc.flp.FlpLinkDelegate: log", {
+	QUnit.module("sap.ui.mdc.ushell.LinkDelegate: log", {
 		beforeEach: function() {
 			this.sLogLevel = SapBaseLog.getLevel();
 			SapBaseLog.setLevel(SapBaseLog.Level.TRACE);
 			this.oLink = new Link({
 				delegate: {
-					name: "test-resources/sap/ui/mdc/qunit/link/TestDelegate_FlpLinkDelegate",
+					name: "test-resources/sap/ui/mdc/qunit/link/TestDelegate_UShellLinkDelegate",
 					payload: {
 						semanticObjects: ["SOMainActionWithText"]
 					}
 				}
 			});
-			FakeFlpConnector.enableFakeConnector({
+			FakeUShellConnector.enableFakeConnector({
 				SOMainActionWithText: {
 					links: [
 						{
@@ -722,7 +722,7 @@ sap.ui.define([
 		},
 		afterEach: function() {
 			SapBaseLog.setLevel(this.sLogLevel);
-			FakeFlpConnector.disableFakeConnector();
+			FakeUShellConnector.disableFakeConnector();
 			this.oLink.destroy();
 		}
 	});
@@ -774,7 +774,7 @@ sap.ui.define([
 			this.sLogLevel = SapBaseLog.getLevel();
 			SapBaseLog.setLevel(SapBaseLog.Level.TRACE);
 			this.mTestData = {};
-			FakeFlpConnector.enableFakeConnectorForTesting({
+			FakeUShellConnector.enableFakeConnectorForTesting({
 				SOMainActionWithText: {
 					links: [
 						{
@@ -787,7 +787,7 @@ sap.ui.define([
 		},
 		afterEach: function() {
 			SapBaseLog.setLevel(this.sLogLevel);
-			FakeFlpConnector.disableFakeConnector();
+			FakeUShellConnector.disableFakeConnector();
 		}
 	});
 });

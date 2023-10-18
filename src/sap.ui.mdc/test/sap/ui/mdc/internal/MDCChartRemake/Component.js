@@ -1,7 +1,7 @@
 sap.ui.define([
 	"sap/ui/core/UIComponent",
-	"testutils/other/FakeFlpConnector"
-], function (UIComponent,  FakeFlpConnector) {
+	"testutils/link/FakeUShellConnector"
+], function (UIComponent,  FakeUShellConnector) {
 	"use strict";
 
 	return UIComponent.extend("sap.ui.v4demo.Component", {
@@ -16,10 +16,10 @@ sap.ui.define([
 
 			this.getRouter().initialize();
 
-			this.__initFakeFlpConnector();
+			this.__initFakeUShellConnector();
 		},
-		__initFakeFlpConnector: function() {
-			FakeFlpConnector.enableFakeConnector({
+		__initFakeUShellConnector: function() {
+			FakeUShellConnector.enableFakeConnector({
 				'FakeFlpSemanticObject': {
 					links: [
 						{

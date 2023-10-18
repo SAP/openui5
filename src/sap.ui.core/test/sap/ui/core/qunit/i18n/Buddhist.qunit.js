@@ -1,9 +1,10 @@
 /*global QUnit, sinon*/
 sap.ui.define([
 	"sap/base/Log",
+	"sap/ui/core/Configuration",
 	"sap/ui/core/date/Buddhist",
 	"sap/ui/core/date/UI5Date"
-], function(Log, Buddhist, UI5Date) {
+], function(Log, Configuration, Buddhist, UI5Date) {
 	"use strict";
 
 	// Test data
@@ -15,7 +16,7 @@ sap.ui.define([
 		{Gregorian: {year: 1902, month: 1, day: 13}, Buddhist: {year: 2444, month: 1, day: 13}},
 		{Gregorian: {year: 1902, month: 3, day: 13}, Buddhist: {year: 2445, month: 3, day: 13}}
 	];
-	var sDefaultLanguage = undefined/*Configuration*/.getLanguage();
+	var sDefaultLanguage = Configuration.getLanguage();
 
 	//1. Instance related
 	QUnit.module("sap.ui.core.date.Buddhist", {
@@ -26,10 +27,10 @@ sap.ui.define([
 			this.oLogMock = this.mock(Log);
 			this.oLogMock.expects("error").never();
 			this.oLogMock.expects("warning").never();
-			undefined/*Configuration*/.setLanguage("en_US");
+			Configuration.setLanguage("en_US");
 		},
 		afterEach: function () {
-			undefined/*Configuration*/.setLanguage(sDefaultLanguage);
+			Configuration.setLanguage(sDefaultLanguage);
 		}
 	});
 
@@ -264,7 +265,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("getWeek (de)", function (assert) {
-		undefined/*Configuration*/.setLanguage("de");
+		Configuration.setLanguage("de");
 		assert.deepEqual(new Buddhist(2565,0,1).getWeek(), {
 			"week": 51,
 			"year": 2564

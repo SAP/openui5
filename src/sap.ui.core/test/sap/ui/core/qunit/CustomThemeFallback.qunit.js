@@ -1,8 +1,9 @@
 sap.ui.define([
 	"sap/ui/core/Theming",
 	"sap/ui/core/theming/Parameters",
-	"sap/ui/qunit/utils/waitForThemeApplied"
-], function(Theming, Parameters, themeApplied) {
+	"sap/ui/qunit/utils/waitForThemeApplied",
+	"sap/ui/core/Configuration"
+], function(Theming, Parameters, themeApplied, Configuration) {
 	"use strict";
 	/* global QUnit */
 

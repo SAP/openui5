@@ -8,8 +8,9 @@
 sap.ui.define([
 	"sap/m/library",
 	"sap/m/Popover",
-	"sap/m/ValueStateHeader"
-], function(library, Popover, ValueStateHeader) {
+	"sap/m/ValueStateHeader",
+	"sap/ui/core/Configuration"
+], function (library, Popover, ValueStateHeader, Configuration) {
 	"use strict";
 
 	// shortcut for sap.m.PlacementType
@@ -24,7 +25,7 @@ sap.ui.define([
 		 * @returns {sap.m.Popover} The newly created picker.
 		 */
 		this.createPopover = function (oInput) {
-			var bRTL = undefined/*Configuration*/.getRTL();
+			var bRTL = Configuration.getRTL();
 			var that = this,
 				oPopover = new Popover(oInput.getId() + "-popup", {
 					showArrow: false,

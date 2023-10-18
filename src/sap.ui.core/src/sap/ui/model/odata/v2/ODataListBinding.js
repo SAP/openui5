@@ -1403,6 +1403,8 @@ sap.ui.define([
 	 *
 	 * @param {string} sFormat Value for the $format Parameter
 	 * @return {string} URL which can be used for downloading
+ 	 * @throws {Error} If this binding uses {@link sap.ui.model.Filter.NONE}
+	 *
 	 * @since 1.24
 	 * @public
 	 */
@@ -1410,6 +1412,9 @@ sap.ui.define([
 		var aParams = [],
 			sPath;
 
+		if (this.oCombinedFilter === Filter.NONE) {
+			throw new Error("Computation of download URL for binding with Filter.NONE not supported");
+		}
 		if (sFormat) {
 			aParams.push("$format=" + encodeURIComponent(sFormat));
 		}
@@ -1995,9 +2000,13 @@ sap.ui.define([
 	 *   given {@link sap.ui.core.message.Message} is considered. If no callback function is given,
 	 *   all messages are considered.
 	 * @returns {Promise<sap.ui.model.Filter|null>}
-	 *   A Promise that resolves with a {@link sap.ui.model.Filter} representing the entries with
-	 *   messages; it resolves with <code>null</code> if the binding is not resolved or if there is
-	 *   no message for any entry
+	 *   A Promise that resolves with an {@link sap.ui.model.Filter} representing the entries with
+	 *   messages, except in the following cases:
+	 *   <ul>
+	 *     <li> If only transient entries have messages, it resolves with {@link sap.ui.model.Filter.NONE}
+	 *     <li> If the binding is not resolved or if there is no message for any entry, it resolves with
+	 *     <code>null</code>
+	 *   </ul>
 	 *
 	 * @protected
 	 * @since 1.77.0

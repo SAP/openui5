@@ -12,6 +12,7 @@ sap.ui.define([
 	'./calendar/CalendarUtils',
 	'./library',
 	"sap/base/Log",
+	"sap/ui/core/Configuration",
 	"sap/ui/core/date/UI5Date"
 ],
 	function(
@@ -23,8 +24,9 @@ sap.ui.define([
 		CalendarUtils,
 		library,
 		Log,
+		Configuration,
 		UI5Date
-	) {
+		) {
 	"use strict";
 
 	/**
@@ -152,10 +154,10 @@ sap.ui.define([
 			oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m"),
 			oHourFormat = NumberFormat.getUnitInstance({
 				allowedUnits: ["duration-hour"]
-			}, undefined/*Configuration*/.getFormatSettings().getFormatLocale()),
+			}, Configuration.getFormatSettings().getFormatLocale()),
 			oMinuteFormat = NumberFormat.getUnitInstance({
 				allowedUnits: ["duration-minute"]
-			}, undefined/*Configuration*/.getFormatSettings().getFormatLocale()),
+			}, Configuration.getFormatSettings().getFormatLocale()),
 			iHour, iMinute, sHour, sMinute;
 
 		//have no intersection with the given day
@@ -266,7 +268,7 @@ sap.ui.define([
 			return document.getElementById(sSuffix ? this.getId() + "-" + this._sAppointmentPartSuffix + "-" + sSuffix : this.getId() + "-" + this._sAppointmentPartSuffix);
 		}
 
-		var oAppointmentParts = document.querySelectorAll(".sapUiCalendarRowApps[id^='" + this. getId() + "']");
+		var oAppointmentParts = document.querySelectorAll(".sapUiCalendarRowApps[id^='" + this. getId() + "-']");
 		return oAppointmentParts.length > 0 ? oAppointmentParts[0] : null;
 	};
 

@@ -10,6 +10,7 @@ sap.ui.define([
 	'sap/ui/core/Core',
 	'sap/ui/core/UIArea',
 	'sap/ui/core/Element',
+	'sap/ui/core/Configuration',
 	'sap/ui/core/Lib',
 	'sap/ui/core/Rendering',
 	'sap/ui/core/RenderManager',
@@ -17,7 +18,7 @@ sap.ui.define([
 	'sap/ui/core/theming/ThemeManager',
 	'sap/ui/qunit/utils/createAndAppendDiv',
 	"sap/ui/qunit/utils/nextUIUpdate"
-], function(ResourceBundle, Log, LoaderExtensions, ObjectPath, Device, Interface, VersionInfo, oCore, UIArea, Element, Library, Rendering, RenderManager, Theming, ThemeManager, createAndAppendDiv, nextUIUpdate) {
+], function(ResourceBundle, Log, LoaderExtensions, ObjectPath, Device, Interface, VersionInfo, oCore, UIArea, Element, Configuration, Library, Rendering, RenderManager, Theming, ThemeManager, createAndAppendDiv, nextUIUpdate) {
 	"use strict";
 
 	var privateLoaderAPI = sap.ui.loader._;
@@ -80,7 +81,7 @@ sap.ui.define([
 
 	QUnit.test("GetConfiguration", function(assert) {
 		assert.notStrictEqual(oCore.getConfiguration, undefined, "function getConfiguration on sap.ui.core.Core instance must be defined");
-		assert.ok(oCore.getConfiguration() === undefined/*Configuration*/, "calling getConfiguration on Core instance must deliver the Configuration singleton");
+		assert.ok(oCore.getConfiguration() === Configuration, "calling getConfiguration on Core instance must deliver the Configuration singleton");
 	});
 
 	QUnit.test("repeated instantiation", function(assert) {
@@ -524,7 +525,7 @@ sap.ui.define([
 
 	QUnit.module("loadLibrary", {
 		beforeEach: function(assert) {
-			assert.notOk(undefined/*Configuration*/.getDebug(), "debug mode must be deactivated to properly test library loading");
+			assert.notOk(Configuration.getDebug(), "debug mode must be deactivated to properly test library loading");
 			this.oLibraryGetPreloadStub = this.stub(Library, "getPreloadMode").returns("sync");
 		},
 		afterEach: function(assert) {

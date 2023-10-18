@@ -8,24 +8,9 @@ sap.ui.define([
 	"sap/ui/mdc/link/Log",
 	"sap/base/Log",
 	"sap/base/util/isPlainObject",
-	"sap/ui/mdc/link/SemanticObjectMapping",
-	"sap/ui/mdc/link/SemanticObjectMappingItem",
-	"sap/ui/mdc/link/SemanticObjectUnavailableAction",
 	"sap/ui/mdc/enums/LinkType"
-], function(LinkDelegate, LinkItem, Factory, Log, SapBaseLog, isPlainObject, SemanticObjectMapping, SemanticObjectMappingItem, SemanticObjectUnavailableAction, LinkType) {
+], function(LinkDelegate, LinkItem, Factory, Log, SapBaseLog, isPlainObject, LinkType) {
 	"use strict";
-	/**
-	 * Extension of the Delegate for {@link sap.ui.mdc.Link}. This extension provides all historical featurs of the FlpLinkHandler.
-	 * This class will determine NavigationTargets depending on the semanticObjects given by a payload
-	 * <b>Note:</b>
-	 * The class is experimental and the API/behaviour is not finalized and hence this should not be used for productive usage.
-	 * @author SAP SE
-	 * @private
-	 * @experimental
-	 * @since 1.74
-	 * @alias sap.ui.mdc.flp.FlpLinkDelegate
-	 */
-	const FlpLinkDelegate = Object.assign({}, LinkDelegate);
 
 	/**
 	 * Fetches the relevant {@link sap.ui.mdc.link.LinkItem} for the Link and returns them.
@@ -364,7 +349,7 @@ sap.ui.define([
 		const aSemanticObjectUnavailableActions = [];
 		if (oPayload.semanticObjectUnavailableActions) {
 			oPayload.semanticObjectUnavailableActions.forEach(function(oSemanticObjectUnavailableAction) {
-				aSemanticObjectUnavailableActions.push(new SemanticObjectUnavailableAction({
+				aSemanticObjectUnavailableActions.push(new undefined/*SemanticObjectUnavailableAction*/({
 					semanticObject: oSemanticObjectUnavailableAction.semanticObject,
 					actions: oSemanticObjectUnavailableAction.actions
 				}));
@@ -387,13 +372,13 @@ sap.ui.define([
 				aSemanticObjectMappingItems = [];
 				if (oSemanticObjectMapping.items) {
 					oSemanticObjectMapping.items.forEach(function(oSemanticObjectMappingItem) {
-						aSemanticObjectMappingItems.push(new SemanticObjectMappingItem({
+						aSemanticObjectMappingItems.push(new undefined/*SemanticObjectMappingItem*/({
 							key: oSemanticObjectMappingItem.key,
 							value: oSemanticObjectMappingItem.value
 						}));
 					});
 				}
-				aSemanticObjectMappings.push(new SemanticObjectMapping({
+				aSemanticObjectMappings.push(new undefined/*SemanticObjectMapping*/({
 					semanticObject: oSemanticObjectMapping.semanticObject,
 					items: aSemanticObjectMappingItems
 				}));

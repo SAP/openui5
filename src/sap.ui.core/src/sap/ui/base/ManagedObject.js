@@ -58,8 +58,10 @@ sap.ui.define([
 	 * The possible values for a setting depend on its kind:
 	 * <ul>
 	 * <li>for simple properties, the value has to match the documented type of the property (no type conversion occurs)</li>
-	 * <li>for 0..1 aggregations, the value has to be an instance of the aggregated type</li>
-	 * <li>for 0..n aggregations, the value has to be an array of instances of the aggregated type or a single instance</li>
+	 * <li>for 0..1 aggregations, the value has to be an instance of the aggregated type, or an object literal from which,
+	 * the default class of the aggregation (or the corresponding aggregation type as fallback) will be instantiated.</li>
+	 * <li>for 0..n aggregations, the value has to be an array of instances of the aggregated type, a single instance or
+	 * an object literal from which the default class will be instantiated.</li>
 	 * <li>for 0..1 associations, an instance of the associated type or an id (string) is accepted</li>
 	 * <li>for 0..n associations, an array of instances of the associated type or of IDs is accepted</li>
 	 * <li>for events, either a function (event handler) is accepted or an array of length 2
@@ -103,6 +105,13 @@ sap.ui.define([
 	 *
 	 * Note that when setting string values, any curly braces in those values need to be escaped, so they are not
 	 * interpreted as binding expressions. Use {@link #escapeSettingsValue} to do so.
+	 *
+	 * <b>Note:</b>
+	 * As of version 1.120, providing aggregation content via an object literal is deprecated,
+	 * in case the object's type is given via the property 'Type' as a string, or is derived via the defined type of the aggregation.
+	 * Additionally, as of version 1.120, a ManagedObject subclass can specify a <code>defaultClass</code>, e.g. for cases where only a single class is valid.
+	 * Please refer to the {@link sap.ui.base.ManagedObject.MetadataOptions.Aggregation Aggregation} documentation for more details on the
+	 * <code>defaultClass</code>.
 	 *
 	 * Besides the settings documented below, ManagedObject itself supports the following special settings:
 	 * <ul>
@@ -795,6 +804,8 @@ sap.ui.define([
 	 *
 	 * @property {string} [type='sap.ui.core.Control'] Type of the new aggregation. Must be the full global name of a ManagedObject subclass
 	 *     or a UI5 interface (in dot notation, e.g. 'sap.m.Button').
+	 * @property {function} [defaultClass] The default class for the aggregation. If aggregation content is created from a plain object
+	 *                                     and no explicit 'Type' is given (capital 'T'), the default class will be instantiated.
 	 * @property {boolean} [multiple=true] Whether the aggregation is a 0..1 (false) or a 0..n aggregation (true), defaults to true
 	 * @property {string} [singularName] Singular name for 0..n aggregations. For 0..n aggregations the name by convention should be the plural name.
 	 *     Methods affecting multiple objects in an aggregation will use the plural name (e.g. getItems(), whereas methods that deal with a single object will use
@@ -999,51 +1010,49 @@ sap.ui.define([
 	 *
 	 * If <code>vData</code> is a managed object already, that object is returned.
 	 * If <code>vData</code> is an object (literal), then a new object is created with <code>vData</code>
-	 * as settings. The type of the object is either determined by a property of name <code>Type</code>
-	 * (capital 'T') in the <code>vData</code> or by a property <code>type</code> (lower case 't')
-	 * in the <code>oKeyInfo</code> object. In both cases, the type can be specified by name (dot separated
-	 * name of the class) or by the constructor function of the class.
+	 * as settings.
+	 *
+	 * Deprecated usage, in case the type of the object is determined:
+	 * <ul>
+	 *    <li>by a property of name <code>Type</code> (capital 'T') in the <code>vData</code></li>
+	 *    <li>by a property <code>type</code> (lower case 't') in the <code>oKeyInfo</code> object</li>
+	 * </ul>
+	 *
+	 * In both cases, the type must be specified by the dot separated name of the class.
 	 *
 	 * @param {sap.ui.base.ManagedObject|object} vData
-	 *   The data to create the object from
+	 *   The data to create the object from. Used as constructor argument.
 	 * @param {sap.ui.base.ManagedObject.MetadataOptions.Aggregation} [oKeyInfo]
-	 *   Info object for the aggregation to which the created object will be added;
-	 *   serves as a fallback for determining the type of the object to be created
+	 *   Info object for the aggregation to which the created object will be added during an applySettings() call;
+	 *   serves as the source for determining the type of the object to be created;
+	 *   Please refer to the {@link sap.ui.base.ManagedObject.MetadataOptions.Aggregation} property 'defaultClass'
+	 *   for more information.
 	 * @param {object} [oScope]
 	 *   Scope object to resolve types and formatters in bindings
 	 * @returns {sap.ui.base.ManagedObject}
 	 *   The newly created <code>ManagedObject</code>
 	 * @throws {Error}
 	 *   When there's not enough type information to create an instance from the given data
-	 * @public
-	 * @static
-	 * @ts-skip
+	 * @private
 	 */
-	ManagedObject.create = function(vData, oKeyInfo, oScope) {
+	function makeObject(vData, oKeyInfo, oScope) {
 		if ( !vData || vData instanceof ManagedObject || typeof vData !== "object" || vData instanceof String) {
 			return vData;
 		}
 
-		function getClass(vType) {
-			if ( typeof vType === "function" ) {
-				return vType;
-			}
-			if (typeof vType === "string" ) {
-				return ObjectPath.get(vType);
-			}
-		}
+		let FnClass;
 
-		var fnClass = getClass(vData.Type) || getClass(oKeyInfo && oKeyInfo.type);
-		if ( typeof fnClass === "function" ) {
-			return new fnClass(vData, oScope);
+		FnClass ??= oKeyInfo?.defaultClass;
+
+		if ( typeof FnClass === "function" ) {
+			return new FnClass(vData, oScope);
 		}
 
 		// we don't know how to create the ManagedObject from vData, so fail
-		// extension points could be integrated here
 		var message = "Don't know how to create a ManagedObject from " + vData + " (" + (typeof vData) + ")";
 		Log.fatal(message);
 		throw new Error(message);
-	};
+	}
 
 	/**
 	 * A global preprocessor for the ID of a ManagedObject (used internally).
@@ -1167,7 +1176,6 @@ sap.ui.define([
 		var that = this,
 			oMetadata = this.getMetadata(),
 			mValidKeys = oMetadata.getJSONKeys(), // UID names required, they're part of the documented contract of applySettings
-			makeObject = ManagedObject.create,
 			preprocessor = ManagedObject._fnSettingsPreprocessor,
 			sKey, oValue, oKeyInfo;
 
@@ -3023,7 +3031,7 @@ sap.ui.define([
 		// string representation for templates is not supported
 		if (typeof oValue === "object" && oBindingInfo && oBindingInfo.template) {
 			// allow JSON syntax for templates
-			oBindingInfo.template = ManagedObject.create(oBindingInfo.template);
+			oBindingInfo.template = makeObject(oBindingInfo.template);
 		}
 		return oBindingInfo;
 	};

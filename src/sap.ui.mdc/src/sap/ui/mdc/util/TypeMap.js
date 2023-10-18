@@ -20,10 +20,10 @@ sap.ui.define([
 
 	/**
 	 * Configuration class for type-handling in MDC delegates.
-	 * Allows mapping of model-types to <code>sap.ui.mdc.enums.BaseType</code> and enables model-specific type configuration.
+	 * Allows mapping of model-types to {@link sap.ui.mdc.enums.BaseType} and enables model-specific type configuration.
 	 *
 	 * <b>Note:</b>
-	 * This utility is experimental and the API/behavior is not finalized and hence this should not be used for productive usage.
+	 * This utility is experimental and the API/behavior is not finalized. Hence, it should not be used for productive usage.
 	 *
 	 * @namespace
 	 * @author SAP SE
@@ -70,14 +70,14 @@ sap.ui.define([
 	};
 
 	/**
-	 * Sets a BaseType and an optional model- or scenario-specific configuration method for a given {@link sap.ui.model.SimpleType} ObjectPath string
+	 * Sets a {@link sap.ui.mdc.enums.BaseType BaseType} and an optional model- or scenario-specific configuration method for a given {@link sap.ui.model.SimpleType} <code>ObjectPath</code> <code>string</code>.
 	 *
 	 * As default <code>string</code> is returned.
 	 *
 	 * @final
-	 * @param {string} sType Objectpath string for {@link sap.ui.model.SimpleType}
-	 * @param {sap.ui.mdc.enums.BaseType|function} vBaseType BaseType fitting the given sType or method returning a BaseType based on type configuration
-	 * @param {function} [fnOptions] Optional customizing method for formatoptions and constraints. See {@link sap.ui.mdc.DefaultTypeMap} for examples.
+	 * @param {string} sType <code>Objectpath</code> <code>string</code> for {@link sap.ui.model.SimpleType}
+	 * @param {sap.ui.mdc.enums.BaseType|function} vBaseType {@link sap.ui.mdc.enums.BaseType BaseType} fitting the given <code>sType</code> parameter or method returning a {@link sap.ui.mdc.enums.BaseType BaseType} based on type configuration
+	 * @param {function} [fnOptions] Optional customizing method for format options and constraints. See {@link sap.ui.mdc.DefaultTypeMap} for examples.
 	 * @public
 	 */
 	TypeMap.set = function (sType, vBaseType, fnOptions) {
@@ -85,11 +85,11 @@ sap.ui.define([
 	};
 
 	/**
-	 * Allows alternative identifiers for Types, such as "Boolean" for "{@link sap.ui.model.type.Boolean}"
+	 * Allows alternative identifiers for types, such as "Boolean" for "{@link sap.ui.model.type.Boolean}".
 	 *
 	 * @final
-	 * @param {string} sType Objectpath string for {@link sap.ui.model.SimpleType}
-	 * @param {string} sAlias Alternative identifier for sType
+	 * @param {string} sType <code>Objectpath</code> <code>string</code> for {@link sap.ui.model.SimpleType}
+	 * @param {string} sAlias Alternative identifier for the <code>sType</code> parameter
 	 * @public
 	 */
 	TypeMap.setAlias = function (sType, sAlias) {
@@ -133,10 +133,10 @@ sap.ui.define([
 	};
 
 	 /**
-	 * Exports the TypeMap's current data
+	 * Exports the <code>TypeMap</code>'s current data.
 	 *
 	 * @final
-	 * @returns {Array} Array created from this TypeMap's internal map
+	 * @returns {Array} <code>Array</code> created from this <code>TypeMap</code>'s internal <code>Map</code>
 	 * @public
 	 */
 	TypeMap.export = function () {
@@ -144,10 +144,10 @@ sap.ui.define([
 	};
 
 	/**
-	 * Imports a TypeMap's data into another TypeMap
+	 * Imports a <code>TypeMap</code>'s data into another <code>TypeMap</code>.
 	 *
 	 * @final
-	 * @param {module:sap/ui/mdc/util/TypeMap} oTypeMap TypeMap to import
+	 * @param {module:sap/ui/mdc/util/TypeMap} oTypeMap <code>TypeMap</code> to import
 	 * @public
 	 */
 	TypeMap.import = function (oTypeMap) {
@@ -157,7 +157,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Prevents further manipulation of a TypeMap's data
+	 * Prevents further manipulation of a <code>TypeMap</code>'s data
 	 *
 	 * @final
 	 * @public
@@ -172,15 +172,15 @@ sap.ui.define([
 
 	/**
 	 * To determine which internal controls to render, the {@link sap.ui.mdc.Field Field}, {@link sap.ui.mdc.MultiValueField MultiValueField},
-	 * or {@link sap.ui.mdc.FilterField FilterField} controls need to know if the type represents a date, a number, or another {@link sap.ui.mdc.enums.BaseType BaseType}.
+	 * or {@link sap.ui.mdc.FilterField FilterField} controls need to know if the type represents a <code>date</code>, a <code>number</code>, or another {@link sap.ui.mdc.enums.BaseType BaseType}.
 	 *
-	 * As default, <code>String</code> is returned.
+	 * As default, <code>string</code> is returned.
 	 *
 	 * @final
 	 * @param {string} sType Given type string or {@link sap.ui.model.SimpleType}
-	 * @param {object} oFormatOptions Used <code>FormatOptions</code>
-	 * @param {object} oConstraints Used <code>Constraints</code>
-	 * @returns {sap.ui.mdc.enums.BaseType} output <code>Date</code>, <code>DateTime</code> or <code>Time</code>...
+	 * @param {object} oFormatOptions Used format options
+	 * @param {object} oConstraints Used constraints
+	 * @returns {sap.ui.mdc.enums.BaseType} Corresponding {@link sap.ui.mdc.enums.BaseType BaseType}, e.g. <code>Date</code>, <code>DateTime</code> or <code>Time</code>
 	 * @public
 	 */
 	TypeMap.getBaseType = function(sType, oFormatOptions, oConstraints) {
@@ -192,7 +192,7 @@ sap.ui.define([
 	 * Convenience method to retrieve the <code>BaseType</code> for a given {@link sap.ui.model.SimpleType SimpleType}.
 	 * @final
 	 * @param {sap.ui.model.SimpleType} oType Given type string or {@link sap.ui.model.SimpleType}
-	 * @returns {sap.ui.mdc.enums.BaseType} output <code>Date</code>, <code>DateTime</code> or <code>Time</code>...
+	 * @returns {sap.ui.mdc.enums.BaseType} Corresponding {@link sap.ui.mdc.enums.BaseType BaseType}, e.g. <code>Date</code>, <code>DateTime</code> or <code>Time</code>
 	 * @public
 	 */
 	TypeMap.getBaseTypeForType = function(oType) {
@@ -200,7 +200,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the data type class name for a given name or alias.
+	 * Gets the data type class name for a given name or alias.
 	 * @final
 	 * @param {string} sType Given model specific type
 	 * @returns {string} Data type name
@@ -211,12 +211,12 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns a data type class based on a given name.
+	 * Gets a data type class based on a given name.
 	 *
 	 * <b>Note:</b> The module of the data type needs to be loaded before.
 	 * @final
-	 * @param {string} sDataType Class path as string where each name is separated by '.'
-	 * @returns {function(new: sap.ui.model.SimpleType)} returns a dataType class
+	 * @param {string} sDataType Class path as <code>string</code> where each name is separated by '.'
+	 * @returns {function(new: sap.ui.model.SimpleType)} Corresponding data type class
 	 * @public
 	 */
 	TypeMap.getDataTypeClass = function(sDataType) {
@@ -231,14 +231,14 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns a data type instance based on a given object path, <code>FormatOptions</code>, and <code>Constraints</code>.
+	 * Gets a data type instance based on a given <code>ObjectPath</code>, <code>FormatOptions</code>, and <code>Constraints</code>.
 	 *
 	 * @final
-	 * @param {string} sDataType Class path as string where each name is separated by '.'
-	 * @param {object} [oFormatOptions] formatoptions for the dataType
-	 * @param {object} [oConstraints] constraints for the dataType
+	 * @param {string} sDataType Class path as <code>string</code> where each name is separated by '.'
+	 * @param {object} [oFormatOptions] Format options for the data type
+	 * @param {object} [oConstraints] Constraints for the data type
 	 * @param {object} [oOptions] Additional options for overrides
-	 * @returns {sap.ui.model.SimpleType} creates returns an instance of the resolved dataType
+	 * @returns {sap.ui.model.SimpleType} Instance of the resolved data type
 	 * @public
 	 */
 	TypeMap.getDataTypeInstance = function(sDataType, oFormatOptions, oConstraints, oOptions) {
@@ -251,12 +251,12 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns a type mapping configuration object for a given type string or {@link sap.ui.model.SimpleType SimpleType}.
+	 * Gets a type mapping configuration <code>object</code> for a given type <code>string</code> or {@link sap.ui.model.SimpleType SimpleType}.
 	 * @final
-	 * @param {string|sap.ui.model.SimpleType} vType Given dataType as string or type
-	 * @param {object} [oFormatOptions] formatoptions for the given dataType
-	 * @param {object} [oConstraints] constraints for the given dataType
-	 * @returns {sap.ui.mdc.TypeConfig} output returns typeConfig object
+	 * @param {string|sap.ui.model.SimpleType} vType Given data type as <code>string</code> or type
+	 * @param {object} [oFormatOptions] Format options for the given data type
+	 * @param {object} [oConstraints] Constraints for the given data type
+	 * @returns {sap.ui.mdc.TypeConfig} Type config <code>object</code>
 	 * @public
 	 */
 	TypeMap.getTypeConfig = function(vType, oFormatOptions, oConstraints) {
@@ -269,17 +269,17 @@ sap.ui.define([
 	};
 
 	/**
-	 * Converts a value into a string using a designated type.
+	 * Converts a value into a <code>string</code> using a designated type.
 	 *
 	 * The value is not checked for validity. The used values must be compatible with the used basic type.
 	 *
 	 * <b>Note:</b> Number types are not converted, the number conversion is done by the SAPUI5 Flexibility handling.
 	 * @final
-	 * @param {object} vValue typed value
+	 * @param {object} vValue Typed value
 	 * @param {string|sap.ui.model.SimpleType} vType Data type considered for conversion
-	 * @param {object} [oFormatOptions] formatoptions for the dataType
-	 * @param {object} [oConstraints] constraints for the dataType
-	 * @returns {string} converted value
+	 * @param {object} [oFormatOptions] Format options for the data type
+	 * @param {object} [oConstraints] Constraints for the data type
+	 * @returns {string} Converted value
 	 * @public
 	 */
 	TypeMap.externalizeValue = function(vValue, vType, oFormatOptions, oConstraints) {
@@ -312,17 +312,17 @@ sap.ui.define([
 	};
 
 	/**
-	 * Converts a string into a type-based value.
+	 * Converts a <code>string</code> into a type-based value.
 	 *
 	 * The value is not checked for validity. The used values must be compatible with the used basic type.
 	 *
-	 * <b>Note:</b> Number types are not converted, the number conversion is done by the SAPUI5 Flexibility handling.
+	 * <b>Note:</b> Number types are not converted. The number conversion is done by the SAPUI5 Flexibility handling.
 	 * @final
-	 * @param {string} vValue externalized value
+	 * @param {string} vValue Externalized value
 	 * @param {string|sap.ui.model.SimpleType} vType Data type considered for conversion
-	 * @param {object} [oFormatOptions] formatoptions for the dataType
-	 * @param {object} [oConstraints] constraints for the dataType
-	 * @returns {object} converted value
+	 * @param {object} [oFormatOptions] Format options for the data type
+	 * @param {object} [oConstraints] Constraints for the data type
+	 * @returns {object} Converted value
 	 * @public
 	 */
 	TypeMap.internalizeValue = function(vValue, vType, oFormatOptions, oConstraints) {
@@ -366,9 +366,9 @@ sap.ui.define([
 	};
 
 	/**
-	 * If the <code>Field</code> control is used, the used data type comes from the binding.
-	 * Some data types (like Currency or Unit) might need some initialization.
-	 * To initialize the internal ("cloned") Type later on, the result of this function
+	 * If the {@link sap.ui.mdc.Field Field} control is used, the used data type comes from the binding.
+	 * Some data types (like <code>Currency</code> or <code>Unit</code>) might need some initialization.
+	 * To initialize the internal ("cloned") type later on, the result of this function
 	 * is provided to <code>initializeInternalType</code>.
 	 *
 	 * @param {sap.ui.model.SimpleType} oType Type from binding
@@ -385,9 +385,9 @@ sap.ui.define([
 	};
 
 	/**
-	 * This function initializes the internal ("cloned") Type.
+	 * This function initializes the internal ("cloned") type.
 	 *
-	 * @param {sap.ui.model.SimpleType} oType original Type (e.g. from Binding)
+	 * @param {sap.ui.model.SimpleType} oType Original type (e.g. from Binding)
 	 * @param {object} oTypeInitialization Information needed to initialize internal type (created in <code>initializeTypeFromValue</code>)
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.field.FieldBase

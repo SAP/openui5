@@ -30,7 +30,8 @@
 					"sap.ui.table.sample.RowAction",
 					"sap.ui.table.sample.RowHighlights",
 					"sap.ui.table.sample.DnD",
-					"sap.m.sample.p13n.EngineGridTable"
+					"sap.m.sample.p13n.EngineGridTable",
+					"sap.ui.table.sample.SelectCopyPaste"
 				]
 			},
 			{
@@ -127,6 +128,10 @@
 				"id": "sap.ui.table.sample.DnD",
 				"name": "Drag and Drop",
 				"description": "Shows the different kinds of drag-and-drop capabilities."
+			}, {
+				"id": "sap.ui.table.sample.SelectCopyPaste",
+				"name": "Cell Selection, Copy & Paste",
+				"description": "Shows cell selection, copy and paste interaction in the table."
 			}
 		]
 	}

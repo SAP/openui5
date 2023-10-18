@@ -1,77 +1,72 @@
+/* eslint-disable require-await */
 sap.ui.define([
 	"sap/ui/mdc/TableDelegate",
 	"sap/ui/mdc/table/Column",
 	"sap/m/Text",
+	"sap/ui/core/Core",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
-	"sap/ui/core/Core",
 	"mdc/sample/model/metadata/JSONPropertyInfo",
 	"mdc/sample/delegate/JSONBaseDelegate"
 ], function (
-	TableDelegate, Column, Text, Filter, FilterOperator,
-	Core, JSONPropertyInfo, JSONBaseDelegate) {
+	TableDelegate, Column, Text, Core, Filter, FilterOperator, JSONPropertyInfo,
+	JSONBaseDelegate) {
 	"use strict";
 
 	const JSONTableDelegate = Object.assign({}, TableDelegate, JSONBaseDelegate);
 
-	JSONTableDelegate.fetchProperties = function () {
-		return Promise.resolve(JSONPropertyInfo.filter((oPropertyInfo) => oPropertyInfo.name !== "$search"));
+	JSONTableDelegate.fetchProperties = async () =>
+		JSONPropertyInfo.filter((oPI) => oPI.name !== "$search");
+
+	const _createColumn = (sId, oPropertyInfo) => {
+		const sPropertyName = oPropertyInfo.name;
+		return new Column(sId, {
+			propertyKey: sPropertyName,
+			header: oPropertyInfo.label,
+			template: new Text({
+				text: {
+					path: "mountains>" + sPropertyName,
+					type: oPropertyInfo.dataType
+				}
+			})
+		});
 	};
 
-	JSONTableDelegate.addItem = function (oTable, sPropertyName) {
-		const oPropertyInfo = JSONPropertyInfo.find((oPropertyInfo) => oPropertyInfo.name === sPropertyName);
-		return Promise.resolve(_addColumn(oPropertyInfo, oTable));
+	JSONTableDelegate.addItem = async (oTable, sPropertyName) => {
+		const oPropertyInfo = JSONPropertyInfo.find((oPI) => oPI.name === sPropertyName);
+		const sId = oTable.getId() + "---col-" + sPropertyName;
+		return Core.byId(sId) ?? await _createColumn(sId, oPropertyInfo);
 	};
 
-	function _addColumn(oPropertyInfo, oTable) {
-		const sName = oPropertyInfo.name;
-		const sId = oTable.getId() + "---col-" + sName;
-		let oColumn = Core.byId(sId);
-		if (!oColumn) {
-			oColumn = new Column(sId, {
-				propertyKey: sName,
-				header: oPropertyInfo.label,
-				template: new Text({
-					text: {
-						path: "mountains>" + sName,
-						type: oPropertyInfo.dataType
-					}
-				})
-			});
-		}
-		return oColumn;
-	}
-
-	JSONTableDelegate.removeItem = function(oTable, oColumn) {
+	JSONTableDelegate.removeItem = async (oTable, oColumn) => {
 		oColumn.destroy();
-		return Promise.resolve(true);
+		return true; // allow default handling
 	};
 
-	JSONTableDelegate.updateBindingInfo = function(oTable, oBindingInfo) {
-		TableDelegate.updateBindingInfo.apply(this, arguments);
+	JSONTableDelegate.updateBindingInfo = (oTable, oBindingInfo) => {
+		TableDelegate.updateBindingInfo.call(JSONTableDelegate, oTable, oBindingInfo);
 		oBindingInfo.path = oTable.getPayload().bindingPath;
+		oBindingInfo.templateShareable = true;
 	};
 
-	JSONTableDelegate.getFilters = function(oTable) {
-		const aSearchFilters = _createSearchFilters(Core.byId(oTable.getFilter()).getSearch());
-		return TableDelegate.getFilters(oTable).concat(aSearchFilters);
+	const _createSearchFilters = (sSearch, aKeys) => {
+		const aFilters = aKeys.map((aKey) => new Filter({
+			path: aKey,
+			operator: FilterOperator.Contains,
+			value1: sSearch
+		}));
+		return [new Filter(aFilters, false)];
 	};
 
-	function _createSearchFilters(sSearch) {
-		let aFilters = [];
-		if (sSearch) {
-			const aPaths = ["name", "range", "parent_mountain", "countries"];
-			aFilters = aPaths.map(function (sPath) {
-				return new Filter({
-					path: sPath,
-					operator: FilterOperator.Contains,
-					value1: sSearch
-				});
-			});
-			aFilters = [new Filter(aFilters, false)];
+	JSONTableDelegate.getFilters = (oTable) => {
+		const sSearch = Core.byId(oTable.getFilter()).getSearch();
+		const aKeys = oTable.getPayload().searchKeys;
+		let aFilters = TableDelegate.getFilters(oTable);
+		if (sSearch && aKeys) {
+			aFilters = aFilters.concat(_createSearchFilters(sSearch, aKeys));
 		}
 		return aFilters;
-	}
+	};
 
 	return JSONTableDelegate;
 }, /* bExport= */false);

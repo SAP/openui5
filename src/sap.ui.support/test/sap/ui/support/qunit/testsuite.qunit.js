@@ -15,7 +15,6 @@ sap.ui.define(function() {
 			ui5: {
 				language: "en-US",
 				rtl: false,
-				async: false,
 				libs: ["sap.ui.support"],
 				"xx-waitForTheme": true
 			},

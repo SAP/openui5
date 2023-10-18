@@ -145,12 +145,6 @@ sap.ui.define([
 	(function() {
 
 		Grid.prototype.init = function() {
-			// Library specific class
-			var sClass = library.GridHelper.getLibrarySpecificClass();
-			if (sClass) {
-				this.addStyleClass(sClass);
-			}
-
 			this._iBreakPointTablet = Device.media._predefinedRangeSets[Device.media.RANGESETS.SAP_STANDARD_EXTENDED].points[0];
 			this._iBreakPointDesktop = Device.media._predefinedRangeSets[Device.media.RANGESETS.SAP_STANDARD_EXTENDED].points[1];
 			this._iBreakPointLargeDesktop = Device.media._predefinedRangeSets[Device.media.RANGESETS.SAP_STANDARD_EXTENDED].points[2];

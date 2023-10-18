@@ -12,7 +12,6 @@ sap.ui.define([
 	'sap/ui/mdc/enums/OperatorName',
 	"sap/ui/fl/Utils",
 	"sap/ui/mdc/FilterBarDelegate",
-	'sap/base/util/ObjectPath',
 	'sap/base/util/merge',
 	'sap/ui/mdc/condition/FilterOperatorUtil',
 	"sap/ui/model/FilterOperator",
@@ -22,7 +21,7 @@ sap.ui.define([
 	'sap/base/Log',
 	'sap/ui/mdc/odata/v4/TypeMap',
 	'delegates/util/DelegateCache'
-	], function (ODataMetaModelUtil, FieldDisplay, OperatorName, FlUtils, FilterBarDelegate, ObjectPath, merge, FilterOperatorUtil, ModelOperator, Filter, IdentifierUtil, JsControlTreeModifier, Log, ODataV4TypeMap, DelegateCache) {
+	], function (ODataMetaModelUtil, FieldDisplay, OperatorName, FlUtils, FilterBarDelegate, merge, FilterOperatorUtil, ModelOperator, Filter, IdentifierUtil, JsControlTreeModifier, Log, ODataV4TypeMap, DelegateCache) {
 	"use strict";
 
 	var ODataFilterBarDelegate = Object.assign({}, FilterBarDelegate);

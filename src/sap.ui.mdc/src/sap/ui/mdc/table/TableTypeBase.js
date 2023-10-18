@@ -187,7 +187,6 @@ sap.ui.define([
 	TableTypeBase.prototype._onColumnInsert = function(oColumn) {
 	};
 
-	// To be implemented in the subclass
 	TableTypeBase.prototype.loadModules = function() {return Promise.reject(this + " does not implement #loadModules");};
 	TableTypeBase.prototype.updateTableByProperty = function(sProperty, vValue) {};
 	TableTypeBase.prototype.removeToolbar = function() {};
@@ -206,6 +205,7 @@ sap.ui.define([
 	TableTypeBase.prototype.createColumnResizeMenuItem = function() {};
 	TableTypeBase.prototype.updateRowActions = function() {};
 	TableTypeBase.prototype.updateSortIndicator = function(oColumn, sSortOrder) {};
+	TableTypeBase.prototype.getTableStyleClasses = function() {return [];};
 
 	return TableTypeBase;
 });

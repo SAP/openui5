@@ -12,9 +12,10 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	"sap/base/Log",
 	"sap/ui/thirdparty/jquery",
+	"sap/ui/core/Configuration",
 	'sap/ui/core/LabelEnablement'
 ],
-	function(library, Control, StaticArea, Parameters, RatingIndicatorRenderer, KeyCodes, Log, jQuery, LabelEnablement) {
+	function(library, Control, StaticArea, Parameters, RatingIndicatorRenderer, KeyCodes, Log, jQuery, Configuration, LabelEnablement) {
 	"use strict";
 
 
@@ -549,7 +550,7 @@ sap.ui.define([
 			oControlRoot = this.$(),
 			fControlPadding = (oControlRoot.innerWidth() - oControlRoot.width()) / 2,
 			oEventPosition,
-			bRtl = undefined/*Configuration*/.getRTL();
+			bRtl = Configuration.getRTL();
 
 		if (oEvent.targetTouches) {
 			oEventPosition = oEvent.targetTouches[0];

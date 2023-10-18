@@ -2,14 +2,16 @@
 
 sap.ui.define([
 	"sap/ui/core/Core",
+	"sap/ui/core/Configuration",
 	"sap/ui/integration/widgets/Card",
 	"sap/ui/integration/controls/BlockingMessage",
 	"sap/ui/integration/library",
 	"sap/ui/integration/util/ErrorHandler",
 	"sap/m/InstanceManager",
 	"sap/m/IllustratedMessageType"
-], function(
+], function (
 	Core,
+	Configuration,
 	Card,
 	BlockingMessage,
 	library,
@@ -72,7 +74,7 @@ sap.ui.define([
 	QUnit.test("Create message with details", function (assert) {
 		// Act
 		var done = assert.async(),
-			oDebugStub = sinon.stub(undefined/*Configuration*/, "getDebug").returns(true),
+			oDebugStub = sinon.stub(Configuration, "getDebug").returns(true),
 			mErrorInfo = {
 				type: BlockingMessage.Error,
 				illustrationType: IllustratedMessageType.NoData,
@@ -117,7 +119,7 @@ sap.ui.define([
 	QUnit.test("Create error message", function (assert) {
 		// Act
 		var done = assert.async(),
-			oDebugStub = sinon.stub(undefined/*Configuration*/, "getDebug").returns(true),
+			oDebugStub = sinon.stub(Configuration, "getDebug").returns(true),
 			mErrorInfo = {
 				illustrationType: IllustratedMessageType.NoData,
 				title: "Some Title",
@@ -162,7 +164,7 @@ sap.ui.define([
 	QUnit.test("Create data request error message", function (assert) {
 		// Act
 		var done = assert.async(),
-			oDebugStub = sinon.stub(undefined/*Configuration*/, "getDebug").returns(true),
+			oDebugStub = sinon.stub(Configuration, "getDebug").returns(true),
 			mErrorInfo = {
 				requestErrorParams: {
 					message: "Description",

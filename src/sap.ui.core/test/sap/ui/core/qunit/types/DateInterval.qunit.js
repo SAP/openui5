@@ -3,17 +3,19 @@
  */
 sap.ui.define([
 	"sap/base/Log",
+	"sap/ui/core/Configuration",
 	"sap/ui/core/date/UI5Date",
 	"sap/ui/model/FormatException",
 	"sap/ui/model/ParseException",
 	"sap/ui/model/ValidateException",
 	"sap/ui/model/type/DateInterval",
 	"sap/ui/test/TestUtils"
-], function(Log, UI5Date, FormatException, ParseException, ValidateException, DateInterval, TestUtils) {
+], function (Log, Configuration, UI5Date, FormatException, ParseException, ValidateException,
+		DateInterval, TestUtils) {
 	/*global QUnit*/
 	"use strict";
 
-	var sDefaultLanguage = undefined/*Configuration*/.getLanguage();
+	var sDefaultLanguage = Configuration.getLanguage();
 
 	/*
 	 * Calls the <code>formatValue</code> function on the given date interval and checks that a
@@ -87,10 +89,10 @@ sap.ui.define([
 			this.oLogMock = this.mock(Log);
 			this.oLogMock.expects("error").never();
 			this.oLogMock.expects("warning").never();
-			undefined/*Configuration*/.setLanguage("en-US");
+			Configuration.setLanguage("en-US");
 		},
 		afterEach : function() {
-			undefined/*Configuration*/.setLanguage(sDefaultLanguage);
+			Configuration.setLanguage(sDefaultLanguage);
 		}
 	});
 

@@ -331,8 +331,8 @@ sap.ui.define([
 
 			return new Promise(function (resolve) {
 				try {
-					sap.ui.require([sLibraryName.replace(/\./g, "/") + "/library.support"], function () {
-						fnProcessFile.call(that, sLibraryName);
+					sap.ui.require([sLibraryName.replace(/\./g, "/") + "/library.support"], function (oLibSupport) {
+						fnProcessFile.call(that, sLibraryName, oLibSupport);
 						resolve();
 					}, resolve);
 				} catch (ex) {
@@ -346,11 +346,11 @@ sap.ui.define([
 		 *
 		 * @private
 		 * @param {string} sLibName Name of the library from which to fetch a ruleset
+		 * @param {object} oLibSupport Export of the library.support file
 		 */
-		RuleSetLoader._fetchRuleSet = function (sLibName) {
+		RuleSetLoader._fetchRuleSet = function (sLibName, oLibSupport) {
 			try {
 				var sNormalizedLibName = sLibName.replace("." + sCustomSuffix, "").replace(".internal", ""),
-					oLibSupport = ObjectPath.get(sLibName).library.support,
 					oRuleSet = this._mRuleSets[sNormalizedLibName];
 
 				if (!oLibSupport) {
@@ -372,7 +372,6 @@ sap.ui.define([
 				}
 
 				this._mRuleSets[sNormalizedLibName] = oRuleSet;
-
 			} catch (e) {
 				Log.error("[" + constants.SUPPORT_ASSISTANT_NAME + "] Failed to load RuleSet for " + sLibName + " library", e);
 			}

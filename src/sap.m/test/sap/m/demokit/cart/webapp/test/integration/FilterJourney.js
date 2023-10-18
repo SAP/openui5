@@ -1,20 +1,21 @@
 /* global QUnit */
 
 sap.ui.define([
+	"sap/ui/core/Configuration",
 	"sap/ui/test/opaQunit",
 	"./pages/Home",
 	"./pages/Category"
-], function(opaTest) {
+], function (Configuration, opaTest) {
 	"use strict";
 
-	var sDefaultLanguage = undefined/*Configuration*/.getLanguage();
+	var sDefaultLanguage = Configuration.getLanguage();
 
 	QUnit.module("Filter Journey", {
 		before : function () {
-			undefined/*Configuration*/.setLanguage("en-US");
+			Configuration.setLanguage("en-US");
 		},
 		after : function () {
-			undefined/*Configuration*/.setLanguage(sDefaultLanguage);
+			Configuration.setLanguage(sDefaultLanguage);
 		}
 	});
 

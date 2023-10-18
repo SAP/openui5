@@ -4,6 +4,7 @@
 sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/base/SyncPromise",
+	"sap/ui/core/Configuration",
 	"sap/ui/core/Rendering",
 	"sap/ui/core/Supportability",
 	"sap/ui/core/cache/CacheManager",
@@ -24,7 +25,10 @@ sap.ui.define([
 	"sap/ui/model/odata/v4/lib/_Requestor",
 	"sap/ui/core/library",
 	"sap/ui/test/TestUtils"
-], function(Log, SyncPromise, Rendering, Supportability, CacheManager, Message, Messaging, Binding, BindingMode, BaseContext, Model, OperationMode, Context, ODataMetaModel, ODataModel, SubmitMode, _Helper, _MetadataRequestor, _Parser, _Requestor, library, TestUtils) {
+], function (Log, SyncPromise, Configuration, Rendering, Supportability, CacheManager, Message,
+		Messaging, Binding, BindingMode, BaseContext, Model, OperationMode, Context,
+		ODataMetaModel, ODataModel, SubmitMode, _Helper, _MetadataRequestor, _Parser, _Requestor,
+		library, TestUtils) {
 	"use strict";
 
 	var sClassName = "sap.ui.model.odata.v4.ODataModel",
@@ -38,7 +42,7 @@ sap.ui.define([
 			this.oLogMock = this.mock(Log);
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
-			this.mock(undefined/*Configuration*/).expects("getLanguageTag").atLeast(0).returns("ab-CD");
+			this.mock(Configuration).expects("getLanguageTag").atLeast(0).returns("ab-CD");
 		},
 
 		/**

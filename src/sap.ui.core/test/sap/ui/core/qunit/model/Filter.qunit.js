@@ -1,22 +1,23 @@
 /* global  QUnit */
 sap.ui.define([
+	"sap/ui/core/Configuration",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator"
-], function(Filter, FilterOperator) {
+], function(Configuration, Filter, FilterOperator) {
 	"use strict";
 
-	var sDefaultLanguage = undefined/*Configuration*/.getLanguage();
+	var sDefaultLanguage = Configuration.getLanguage();
 
 	QUnit.module("sap.ui.model.Filter", {
 		before() {
 			this.__ignoreIsolatedCoverage__ = true;
 		},
 		beforeEach : function () {
-			undefined/*Configuration*/.setLanguage("en-US");
+			Configuration.setLanguage("en-US");
 		},
 
 		afterEach : function () {
-			undefined/*Configuration*/.setLanguage(sDefaultLanguage);
+			Configuration.setLanguage(sDefaultLanguage);
 		}
 	});
 
@@ -90,7 +91,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("defaultComparator: localeCompare with language tag", function (assert) {
-		var oConfigurationMock = this.mock(undefined/*Configuration*/);
+		var oConfigurationMock = this.mock(Configuration);
 
 		oConfigurationMock.expects("getLanguageTag").withExactArgs().returns("foo");
 		this.mock(String.prototype).expects("localeCompare")
@@ -107,12 +108,12 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("defaultComparator: localeCompare for different locales", function (assert) {
-		undefined/*Configuration*/.setLanguage("de");
+		Configuration.setLanguage("de");
 
 		// code under test
 		assert.strictEqual(Filter.defaultComparator("ä", "z"), -1);
 
-		undefined/*Configuration*/.setLanguage("sv");
+		Configuration.setLanguage("sv");
 
 		// code under test
 		assert.strictEqual(Filter.defaultComparator("ä", "z"), 1);
@@ -758,4 +759,19 @@ sap.ui.define([
 		assert.strictEqual(typeof Filter.NONE.getTest(), "function");
 		assert.strictEqual(Filter.NONE.getTest()(), false);
 	});
+
+	//*********************************************************************************************
+[
+	{filters : [{}, Filter.NONE]},
+	[{}, Filter.NONE],
+	{condition : Filter.NONE}
+].forEach((oFixture, i) => {
+	QUnit.test("Filter.NONE passed to constructor, " + i, function(assert) {
+		assert.throws(() => {
+			// code under test
+			new Filter(oFixture);
+		}, new Error("Filter.NONE not allowed "
+			+ (oFixture.condition ? "as condition" : "in multiple filter")));
+	});
+});
 });

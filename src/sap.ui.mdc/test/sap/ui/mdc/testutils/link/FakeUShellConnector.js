@@ -8,33 +8,32 @@ sap.ui.define([
 	"use strict";
 
 	/**
-	 * @namespace FakeFlpConnector.
-	 * @name sap.ui.mdc.link.FakeFlpConnector
+	 * @namespace FakeUShellConnector.
+	 * @name sap.ui.mdc.testutils.link.FakeUShellConnector
 	 * @author SAP SE
 	 * @version ${version}
 	 * @private
-	 * @since 1.54.0
+	 * @since 1.120.0
 	 */
-	function FakeFlpConnector() {
-	}
+	function FakeUShellConnector() {}
 
-	FakeFlpConnector.enableFakeConnector = function(oSetting) {
-		if (FakeFlpConnector.getServiceReal) {
+	FakeUShellConnector.enableFakeConnector = function(oSetting) {
+		if (FakeUShellConnector.getServiceReal) {
 			return;
 		}
-		FakeFlpConnector.getServiceReal = Factory.getService;
-		Factory.getService = FakeFlpConnector._createFakeService(oSetting);
+		FakeUShellConnector.getServiceReal = Factory.getService;
+		Factory.getService = FakeUShellConnector._createFakeService(oSetting);
 	};
 
-	FakeFlpConnector.enableFakeConnectorForTesting = function(oSetting, mTestData) {
-		if (FakeFlpConnector.getServiceReal) {
+	FakeUShellConnector.enableFakeConnectorForTesting = function(oSetting, mTestData) {
+		if (FakeUShellConnector.getServiceReal) {
 			return;
 		}
-		FakeFlpConnector.getServiceReal = Factory.getService;
-		Factory.getService = FakeFlpConnector._createFakeService(oSetting, mTestData);
+		FakeUShellConnector.getServiceReal = Factory.getService;
+		Factory.getService = FakeUShellConnector._createFakeService(oSetting, mTestData);
 	};
 
-	FakeFlpConnector._createFakeService = function(oSetting, mTestData) {
+	FakeUShellConnector._createFakeService = function(oSetting, mTestData) {
 		return function(sServiceName) {
 			switch (sServiceName) {
 				case "CrossApplicationNavigation":
@@ -109,18 +108,18 @@ sap.ui.define([
 						}
 					};
 				default:
-					return FakeFlpConnector.getServiceReal(sServiceName);
+					return FakeUShellConnector.getServiceReal(sServiceName);
 			}
 		};
 	};
 
-	FakeFlpConnector.disableFakeConnector = function() {
-		if (FakeFlpConnector.getServiceReal) {
-			Factory.getService = FakeFlpConnector.getServiceReal;
-			FakeFlpConnector.getServiceReal = undefined;
+	FakeUShellConnector.disableFakeConnector = function() {
+		if (FakeUShellConnector.getServiceReal) {
+			Factory.getService = FakeUShellConnector.getServiceReal;
+			FakeUShellConnector.getServiceReal = undefined;
 		}
 	};
 
-	return FakeFlpConnector;
+	return FakeUShellConnector;
 
 }, true);

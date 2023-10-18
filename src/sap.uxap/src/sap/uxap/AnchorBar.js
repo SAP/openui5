@@ -21,8 +21,10 @@ sap.ui.define([
 	"./library",
 	"sap/uxap/AnchorBarRenderer",
 	"sap/base/Log",
+	"sap/ui/core/Configuration",
 	"sap/ui/dom/jquery/scrollLeftRTL"
-], function(jQuery, Button, MenuButton, mobileLibrary, Toolbar, IconPool, Item, ResizeHandler, ScrollEnablement, HorizontalLayout, Device, CustomData, Control, HierarchicalSelect, library, AnchorBarRenderer, Log) {
+], function (jQuery, Button, MenuButton, mobileLibrary, Toolbar, IconPool, Item, ResizeHandler, ScrollEnablement,
+		HorizontalLayout, Device, CustomData, Control, HierarchicalSelect, library, AnchorBarRenderer, Log, Configuration) {
 	"use strict";
 
 	// shortcut for sap.m.SelectType
@@ -135,7 +137,7 @@ sap.ui.define([
 		this._oSectionInfo = {};    //keep scrolling info on sections
 		this._oScroller = null;
 		this._sSelectedKey = null; // keep track of sap.uxap.HierarchicalSelect selected key
-		this._bRtl = undefined/*Configuration*/.getRTL();
+		this._bRtl = Configuration.getRTL();
 
 		//there are 2 different uses cases:
 		//case 1: on a real phone we don't need the scrolling anchorBar, just the hierarchicalSelect
@@ -433,12 +435,12 @@ sap.ui.define([
 
 		oScrollButton.addEventDelegate({
 			onAfterRendering: function () {
-				if (undefined/*Configuration*/.getTheme() != "sap_hcb") {
+				if (Configuration.getTheme() != "sap_hcb") {
 					this.$().attr("tabindex", -1);
 				}
 			},
 			onThemeChanged: function () {
-				if (undefined/*Configuration*/.getTheme() == "sap_hcb") {
+				if (Configuration.getTheme() == "sap_hcb") {
 					this.$().removeAttr("tabindex");
 				} else {
 					this.$().attr("tabindex", -1);

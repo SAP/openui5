@@ -465,7 +465,7 @@ sap.ui.define([
 				 * Defines the aggregate conditions.
 				 *
 				 * <b>Note</b>: This property must not be bound.<br>
-				 * <b>Note:</b> This property is exclusively used for handling SAPUI5 flexibility changes.
+				 * <b>Note:</b> This property is exclusively used for handling SAPUI5 flexibility changes. Do not use it otherwise.
 				 *
 				 * @since 1.87
 				 */
@@ -607,6 +607,10 @@ sap.ui.define([
 				},
 				/**
 				 * Columns of the table.
+				 * <b>Note:</b>
+				 * This aggregation is managed by the control, can only be populated during the definition in the XML view, and is not bindable.
+				 * Any changes of the initial aggregation content might result in undesired effects.
+				 * Changes of the aggregation have to be made with the {@link sap.ui.mdc.p13n.StateUtil StateUtil}.
 				 */
 				columns: {
 					type: "sap.ui.mdc.table.Column",
@@ -627,6 +631,10 @@ sap.ui.define([
 
 				/**
 				 * Additional/external actions available for the table.
+				 * <b>Note:</b>
+				 * This aggregation is managed by the control, can only be populated during the definition in the XML view, and is not bindable.
+				 * Any changes of the initial aggregation content might result in undesired effects.
+				 * Changes of the aggregation have to be made with the {@link sap.ui.mdc.p13n.StateUtil StateUtil}.
 				 */
 				actions: {
 					type: "sap.ui.core.Control",
@@ -837,13 +845,15 @@ sap.ui.define([
 		},
 		renderer: {
 			apiVersion: 2,
-			render: function(oRm, oControl) {
-				oRm.openStart("div", oControl);
+			render: function(oRm, oTable) {
+				oRm.openStart("div", oTable);
 				oRm.class("sapUiMdcTable");
-				oRm.style("height", "100%" /*TBD: Only needed for GridTable with Auto row count mode.*/);
-				oRm.style("width", oControl.getWidth());
+				oRm.style("width", oTable.getWidth());
+				oTable._getType().getTableStyleClasses().forEach((sStyleClass) => {
+					oRm.class(sStyleClass);
+				});
 				oRm.openEnd();
-				oRm.renderControl(oControl.getAggregation("_content"));
+				oRm.renderControl(oTable.getAggregation("_content"));
 				oRm.close("div");
 			}
 		}
@@ -971,8 +981,8 @@ sap.ui.define([
 
 	Table.prototype.setCopyProvider = function(oCopyProvider) {
 		this.setAggregation("copyProvider", oCopyProvider, true);
-		if (window.isSecureContext && oCopyProvider && this._oToolbar && !Core.byId(this.getId() + "-copy")) {
-			this._oToolbar.insertEnd(this._getCopyButton(), 0);
+		if (window.isSecureContext && oCopyProvider && !Core.byId(this.getId() + "-copy")) {
+			this._oToolbar?.insertEnd(this._getCopyButton(), 0);
 		}
 		return this;
 	};
@@ -1156,7 +1166,7 @@ sap.ui.define([
 		}
 
 		this._destroyDefaultType();
-		this.setAggregation("type", vType, true);
+		this.setAggregation("type", vType);
 
 		if (this._oTable) {
 			// store and remove the noData otherwise it gets destroyed
@@ -3042,6 +3052,126 @@ sap.ui.define([
 			}
 		}
 	};
+
+	/**
+	 * @name sap.ui.mdc.Table#addAction
+	 * @private
+	 * @ui5-restricted sap.ui.mdc, sap.ui.fl
+	 */
+
+	/**
+	 * @name sap.ui.mdc.Table#destroyActions
+	 * @private
+	 * @ui5-restricted sap.ui.mdc, sap.ui.fl
+	 */
+
+	/**
+	 * @name sap.ui.mdc.Table#insertAction
+	 * @private
+	 * @ui5-restricted sap.ui.mdc, sap.ui.fl
+	 */
+
+	/**
+	 * @name sap.ui.mdc.Table#removeAction
+	 * @private
+	 * @ui5-restricted sap.ui.mdc, sap.ui.fl
+	 */
+
+	/**
+	 * @name sap.ui.mdc.Table#removeAllActions
+	 * @private
+	 * @ui5-restricted sap.ui.mdc, sap.ui.fl
+	 */
+
+	/**
+	 * @name sap.ui.mdc.Table#addColumn
+	 * @private
+	 * @ui5-restricted sap.ui.mdc, sap.ui.fl
+	 */
+
+	/**
+	 * @name sap.ui.mdc.Table#destroyColumns
+	 * @private
+	 * @ui5-restricted sap.ui.mdc, sap.ui.fl
+	 */
+
+	/**
+	 * @name sap.ui.mdc.Table#insertColumn
+	 * @private
+	 * @ui5-restricted sap.ui.mdc, sap.ui.fl
+	 */
+
+	/**
+	 * @name sap.ui.mdc.Table#removeColumn
+	 * @private
+	 * @ui5-restricted sap.ui.mdc, sap.ui.fl
+	 */
+
+	/**
+	 * @name sap.ui.mdc.Table#removeAllColumns
+	 * @private
+	 * @ui5-restricted sap.ui.mdc, sap.ui.fl
+	 */
+
+	/**
+	 * @name sap.ui.mdc.Table#setSortConditions
+	 * @private
+	 * @ui5-restricted sap.ui.mdc, sap.ui.fl
+	 */
+
+	/**
+	 * @name sap.ui.mdc.Table#getSortConditions
+	 * @private
+	 * @ui5-restricted sap.ui.mdc, sap.ui.fl
+	 */
+
+	/**
+	 * @name sap.ui.mdc.Table#setFilterConditions
+	 * @private
+	 * @ui5-restricted sap.ui.mdc, sap.ui.fl
+	 */
+
+	/**
+	 * @name sap.ui.mdc.Table#getFilterConditions
+	 * @private
+	 * @ui5-restricted sap.ui.mdc, sap.ui.fl
+	 */
+
+	/**
+	 * @name sap.ui.mdc.Table#setGroupConditions
+	 * @private
+	 * @ui5-restricted sap.ui.mdc, sap.ui.fl
+	 */
+
+	/**
+	 * @name sap.ui.mdc.Table#getGroupConditions
+	 * @private
+	 * @ui5-restricted sap.ui.mdc, sap.ui.fl
+	 */
+
+	/**
+	 * @name sap.ui.mdc.Table#setAggregateConditions
+	 * @private
+	 * @ui5-restricted sap.ui.mdc, sap.ui.fl
+	 */
+
+	/**
+	 * @name sap.ui.mdc.Table#getAggregateConditions
+	 * @private
+	 * @ui5-restricted sap.ui.mdc, sap.ui.fl
+	 */
+
+	/**
+	 * @name sap.ui.mdc.Table#setPropertyInfo
+	 * @private
+	 * @ui5-restricted sap.ui.mdc, sap.ui.fl
+	 */
+
+	/**
+	 * @name sap.ui.mdc.Table#getPropertyInfo
+	 * @private
+	 * @ui5-restricted sap.ui.mdc, sap.ui.fl
+	 */
 
 	return Table;
 });

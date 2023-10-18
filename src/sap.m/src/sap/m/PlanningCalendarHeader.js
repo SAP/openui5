@@ -19,6 +19,7 @@ sap.ui.define([
 	'sap/ui/unified/calendar/CustomMonthPicker',
 	'sap/ui/unified/calendar/CustomYearPicker',
 	'sap/ui/unified/calendar/IndexPicker',
+	'sap/ui/core/Configuration',
 	'sap/ui/core/date/CalendarWeekNumbering',
 	'sap/ui/unified/calendar/CalendarDate',
 	'sap/ui/core/IconPool',
@@ -43,6 +44,7 @@ function(
 	CustomMonthPicker,
 	CustomYearPicker,
 	IndexPicker,
+	Configuration,
 	CalendarWeekNumbering,
 	CalendarDate,
 	IconPool,
@@ -668,7 +670,7 @@ function(
 			var $Popover = this._oPopup.$();
 			var iOffsetX = Math.floor(($Popover.width() - this._oPickerBtn.$().width()) / 2);
 
-			this._oPopup.setOffsetX(undefined/*Configuration*/.getRTL() ? iOffsetX : -iOffsetX);
+			this._oPopup.setOffsetX(Configuration.getRTL() ? iOffsetX : -iOffsetX);
 
 			var iOffsetY = this._oPickerBtn.$().height();
 

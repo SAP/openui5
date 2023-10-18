@@ -3,8 +3,9 @@
  */
 sap.ui.define([
 	"sap/ui/core/library",
-	"sap/ui/core/Core"
-], function(coreLibrary, Core) {
+	"sap/ui/core/Core",
+	"sap/ui/core/Configuration"
+], function(coreLibrary, Core, Configuration) {
 	"use strict";
 
 	// shortcut for sap.ui.core.Orientation
@@ -31,8 +32,8 @@ sap.ui.define([
 	SplitterRenderer.render = function(oRm, oSplitter) {
 		var bHorizontal = oSplitter.getOrientation() === Orientation.Horizontal,
 			sOrientationClass = bHorizontal ? "sapUiLoSplitterH" : "sapUiLoSplitterV",
-			sAnimationMode = undefined/*Configuration*/.getAnimationMode(),
-			bHasAnimations = sAnimationMode !== undefined/*Configuration*/.AnimationMode.none && sAnimationMode !== undefined/*Configuration*/.AnimationMode.minimal;
+			sAnimationMode = Configuration.getAnimationMode(),
+			bHasAnimations = sAnimationMode !== Configuration.AnimationMode.none && sAnimationMode !== Configuration.AnimationMode.minimal;
 
 		// Make sure we have the main element available before rendering the children so we can use
 		// the element width to calculate before rendering the children.

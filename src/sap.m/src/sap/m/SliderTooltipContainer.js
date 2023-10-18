@@ -8,7 +8,8 @@ sap.ui.define([
 	'sap/ui/core/Control',
 	'sap/ui/core/Popup',
 	'./SliderTooltipContainerRenderer',
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/core/Configuration"
 ],
 function(
 	Library,
@@ -16,7 +17,8 @@ function(
 	Control,
 	Popup,
 	SliderTooltipContainerRenderer,
-	jQuery
+	jQuery,
+	Configuration
 ) {
 		"use strict";
 
@@ -79,7 +81,7 @@ function(
 			this._bClosedFromOverflow = false;
 
 			// indicates whether RTL is switched on
-			this._bRtl = undefined/*Configuration*/.getRTL();
+			this._bRtl = Configuration.getRTL();
 		};
 
 		SliderTooltipContainer.prototype._handleTabNavigation = function (oEvent) {
@@ -351,7 +353,7 @@ function(
 		};
 
 		SliderTooltipContainer.prototype.onBeforeRendering = function () {
-			this._bRtl = undefined/*Configuration*/.getRTL();
+			this._bRtl = Configuration.getRTL();
 		};
 
 		SliderTooltipContainer.prototype.exit = function () {

@@ -8,7 +8,7 @@ sap.ui.define([
 	"use strict";
 
 	/**
-	 * Constructor for a new SemanticObjectMapping.
+	 * Constructor for a new SemanticObjectUnavailableAction.
 	 *
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] initial settings for the new control
@@ -17,29 +17,25 @@ sap.ui.define([
 	 * @version ${version}
 	 * @constructor
 	 * @private
-	 * @since 1.58.0
-	 * @alias sap.ui.mdc.link.SemanticObjectMapping
+	 * @since 1.120
+	 * @alias sap.ui.mdc.link.SemanticObjectUnavailableAction
 	 */
-	const SemanticObjectMapping = Element.extend("sap.ui.mdc.link.SemanticObjectMapping", /** @lends sap.ui.mdc.link.SemanticObjectMapping.prototype */
+	const SemanticObjectUnavailableAction = Element.extend("sap.ui.mdc.link.SemanticObjectUnavailableAction", /** @lends sap.ui.mdc.link.SemanticObjectUnavailableAction.prototype */
 	{
 		metadata: {
 			library: "sap.ui.mdc",
 			properties: {
 				semanticObject: {
 					type: "string"
-				}
-			},
-			defaultAggregation: "items",
-			aggregations: {
-				items: {
-					type: "sap.ui.mdc.link.SemanticObjectMappingItem",
-					multiple: true,
-					singularName: "item"
+				},
+				actions: {
+					type: "string[]",
+					defaultValue: []
 				}
 			}
 		}
 	});
 
-	return SemanticObjectMapping;
+	return SemanticObjectUnavailableAction;
 
 });

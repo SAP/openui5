@@ -252,9 +252,9 @@ function(
 		}
 	};
 
-	/**
+	/*
 	 * Destroys all related objects to the RadioButton
-	 * @public
+	 * @protected
 	 */
 	RadioButton.prototype.exit = function() {
 		var sGroupName = this.getGroupName(),

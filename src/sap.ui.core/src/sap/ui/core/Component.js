@@ -27,7 +27,8 @@ sap.ui.define([
 	'sap/base/strings/camelize',
 	'sap/ui/core/_UrlResolver',
 	'sap/ui/VersionInfo',
-	'sap/ui/core/mvc/ViewType'
+	'sap/ui/core/mvc/ViewType',
+	'sap/ui/core/Configuration'
 ], function(
 	Manifest,
 	ComponentMetadata,
@@ -52,7 +53,8 @@ sap.ui.define([
 	camelize,
 	_UrlResolver,
 	VersionInfo,
-	ViewType
+	ViewType,
+	Configuration
 ) {
 	"use strict";
 
@@ -1558,7 +1560,7 @@ sap.ui.define([
 		var bMergeParent = mOptions.mergeParent;
 		var mCacheTokens = mOptions.cacheTokens || {};
 		var sLogComponentName = oComponent ? oComponent.getMetadata().getComponentName() : oManifest.getComponentName();
-		var oConfig = undefined/*Configuration*/;
+		var oConfig = Configuration;
 		var aActiveTerminologies = mOptions.activeTerminologies;
 
 		if (!mOptions.models) {
@@ -1696,7 +1698,7 @@ sap.ui.define([
 								var oAnnotationUri = new URI(oAnnotation.uri);
 
 								if (bIsV2Model || bIsV4Model) {
-									var sValueFromConfig = undefined/*Configuration*/.getSAPLogonLanguage();
+									var sValueFromConfig = Configuration.getSAPLogonLanguage();
 									if (!oAnnotationUri.hasQuery("sap-language") && sValueFromConfig) {
 										oAnnotationUri.setQuery("sap-language", sValueFromConfig);
 									}

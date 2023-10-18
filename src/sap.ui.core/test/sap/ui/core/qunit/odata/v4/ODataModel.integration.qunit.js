@@ -7,12 +7,12 @@ sap.ui.define([
 	"sap/m/ColumnListItem",
 	"sap/m/CustomListItem",
 	"sap/m/FlexBox",
-	// hopefully speed up sap.m.plugins.DataStateIndicator#showMessage
-	"sap/m/MessageStrip",
+	"sap/m/MessageStrip", // hopefully speed up sap.m.plugins.DataStateIndicator#showMessage
 	"sap/m/Text",
 	"sap/ui/Device",
 	"sap/ui/base/EventProvider",
 	"sap/ui/base/SyncPromise",
+	"sap/ui/core/Configuration",
 	"sap/ui/core/Messaging",
 	"sap/ui/core/Rendering",
 	"sap/ui/core/Supportability",
@@ -36,14 +36,18 @@ sap.ui.define([
 	"sap/ui/util/XMLHelper",
 	// load Table resources upfront to avoid loading times > 1 second for the first test using Table
 	"sap/ui/table/Table"
-], function(Log, uid, ColumnListItem, CustomListItem, FlexBox, _MessageStrip, Text, Device, EventProvider, SyncPromise, Messaging, Rendering, Supportability, Controller, View, ChangeReason, Filter, FilterOperator, FilterType, Sorter, OperationMode, AnnotationHelper, ODataListBinding, ODataMetaModel, ODataModel, ODataPropertyBinding, ValueListType, _Helper, Security, TestUtils, XMLHelper) {
+], function (Log, uid, ColumnListItem, CustomListItem, FlexBox, _MessageStrip, Text,
+		Device, EventProvider, SyncPromise, Configuration, Messaging, Rendering, Supportability,
+		Controller, View, ChangeReason, Filter, FilterOperator, FilterType, Sorter, OperationMode,
+		AnnotationHelper, ODataListBinding, ODataMetaModel, ODataModel, ODataPropertyBinding,
+		ValueListType, _Helper, Security, TestUtils, XMLHelper) {
 	/*eslint no-sparse-arrays: 0, "max-len": ["error", {"code": 100,
 		"ignorePattern": "/sap/opu/odata4/|\" :$|\" : \\{$|\\{meta>"}], */
 	"use strict";
 
 	var sContext = "sap.ui.model.odata.v4.Context",
 		rCountTrue = /[?&]\$count=true/, // $count=true, but not inside $expand
-		sDefaultLanguage = undefined/*Configuration*/.getLanguage(),
+		sDefaultLanguage = Configuration.getLanguage(),
 		fnFireEvent = EventProvider.prototype.fireEvent,
 		sODCB = "sap.ui.model.odata.v4.ODataContextBinding",
 		sODLB = "sap.ui.model.odata.v4.ODataListBinding",
@@ -622,7 +626,7 @@ sap.ui.define([
 			// We use a formatter to check for property changes. However before the formatter is
 			// called, the value is passed through the type's formatValue
 			// (see PropertyBinding#_toExternalValue). Ensure that this result is predictable.
-			undefined/*Configuration*/.setLanguage("en-US");
+			Configuration.setLanguage("en-US");
 
 			this.oLogMock = this.mock(Log);
 			this.oLogMock.expects("warning")
@@ -687,7 +691,7 @@ sap.ui.define([
 				}
 				Messaging.removeAllMessages();
 				// reset the language
-				undefined/*Configuration*/.setLanguage(sDefaultLanguage);
+				Configuration.setLanguage(sDefaultLanguage);
 			}
 
 			if (getGroupLocks().length) {

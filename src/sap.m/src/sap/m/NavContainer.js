@@ -5,16 +5,17 @@
 // Provides control sap.m.NavContainer.
 sap.ui.define([
 	'./library',
+	"sap/ui/core/Configuration",
 	'sap/ui/core/Control',
 	"sap/ui/core/Core",
 	'sap/ui/core/RenderManager',
 	'./NavContainerRenderer',
 	"sap/ui/thirdparty/jquery",
 	"sap/base/Log",
-	// jQuery Plugin "firstFocusableDomRef"
-	"sap/ui/dom/jquery/Focusable"
+	"sap/ui/dom/jquery/Focusable" // jQuery Plugin "firstFocusableDomRef"
 ], function(
 	library,
+	Configuration,
 	Control,
 	Core,
 	RenderManager,
@@ -321,8 +322,8 @@ sap.ui.define([
 	};
 
 	var fnGetDelay = function (iDelay) {
-		var sAnimationMode = undefined/*Configuration*/.getAnimationMode(),
-			bUseAnimations = sAnimationMode !== undefined/*Configuration*/.AnimationMode.none && sAnimationMode !== undefined/*Configuration*/.AnimationMode.minimal;
+		var sAnimationMode = Configuration.getAnimationMode(),
+			bUseAnimations = sAnimationMode !== Configuration.AnimationMode.none && sAnimationMode !== Configuration.AnimationMode.minimal;
 
 		return bUseAnimations ? iDelay : 0;
 	},

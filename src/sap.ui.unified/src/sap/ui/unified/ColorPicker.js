@@ -20,6 +20,7 @@ sap.ui.define([
 	"./ColorPickerHelper",
 	"sap/base/Log",
 	"sap/ui/thirdparty/jquery",
+	"sap/ui/core/Configuration",
 	"sap/ui/Global"
 ], function(
 	Library,
@@ -37,7 +38,8 @@ sap.ui.define([
 	ColorPickerRenderer,
 	ColorPickerHelper,
 	Log,
-	jQuery
+	jQuery,
+	Configuration
 ) {
 	"use strict";
 
@@ -559,7 +561,7 @@ sap.ui.define([
 		this.RGB = {r: 0, g: 0, b: 0};
 
 		// check if we are in RTL mode
-		this.bRtl = undefined/*Configuration*/.getRTL();
+		this.bRtl = Configuration.getRTL();
 
 		this.data("sap-ui-fastnavgroup", "true", true); // Define group for F6 handling
 
@@ -613,7 +615,7 @@ sap.ui.define([
 			}
 		},
 		init: function() {
-			this.bRtl = undefined/*Configuration*/.getRTL();
+			this.bRtl = Configuration.getRTL();
 		},
 		exit: function() {
 			if (this._sResizeListener) {
@@ -1763,7 +1765,7 @@ sap.ui.define([
 		}
 
 		// calculate x if we are in RTL mode
-		if (undefined/*Configuration*/.getRTL()) {
+		if (Configuration.getRTL()) {
 			iX = this._iCPBoxSize - iX;
 		}
 		iY = Math.round((1 - this.oSatField.getValue() / 100.0) * this._iCPBoxSize);

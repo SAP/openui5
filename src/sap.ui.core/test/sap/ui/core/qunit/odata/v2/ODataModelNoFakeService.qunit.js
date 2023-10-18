@@ -4,6 +4,7 @@
 sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/base/SyncPromise",
+	"sap/ui/core/Configuration",
 	"sap/ui/core/Messaging",
 	"sap/ui/core/date/UI5Date",
 	"sap/ui/core/message/Message",
@@ -25,7 +26,11 @@ sap.ui.define([
 	"sap/ui/model/odata/v2/ODataListBinding",
 	"sap/ui/model/odata/v2/ODataModel",
 	"sap/ui/model/odata/v2/ODataTreeBinding"
-], function(Log, SyncPromise, Messaging, UI5Date, Message, _Helper, BaseContext, FilterProcessor, Model, _ODataMetaModelUtils, CountMode, MessageScope, ODataMessageParser, ODataMetaModel, ODataPropertyBinding, ODataUtils, _CreatedContextsCache, Context, ODataAnnotations, ODataContextBinding, ODataListBinding, ODataModel, ODataTreeBinding) {
+], function (Log, SyncPromise, Configuration, Messaging, UI5Date, Message, _Helper, BaseContext,
+		FilterProcessor, Model, _ODataMetaModelUtils, CountMode, MessageScope, ODataMessageParser,
+		ODataMetaModel, ODataPropertyBinding, ODataUtils, _CreatedContextsCache, Context,
+		ODataAnnotations, ODataContextBinding, ODataListBinding, ODataModel, ODataTreeBinding
+) {
 	/*global QUnit,sinon*/
 	/*eslint camelcase: 0, max-nested-callbacks: 0, no-warning-comments: 0*/
 	"use strict";
@@ -126,7 +131,7 @@ sap.ui.define([
 			this.mock(oMetadata.oMetadata).expects("isLoaded").withExactArgs().returns(true);
 			this.mock(ODataAnnotations.prototype).expects("addSource")
 				.withExactArgs(["~annotationURI"]);
-			this.mock(undefined/*Configuration*/).expects("getLanguageTag").withExactArgs().returns("~languageTag");
+			this.mock(Configuration).expects("getLanguageTag").withExactArgs().returns("~languageTag");
 			if (oFixture.sExpectedRequestedWithHeader) {
 				oExpectedHeaders["X-Requested-With"] = oFixture.sExpectedRequestedWithHeader;
 			}
@@ -200,7 +205,7 @@ sap.ui.define([
 				.withExactArgs(oFixture.parameter
 					? "~annotationURI"
 					: [{type : "xml", data : sinon.match.instanceOf(Promise)}, "~annotationURI"]);
-			this.mock(undefined/*Configuration*/).expects("getLanguageTag").withExactArgs().returns("~languageTag");
+			this.mock(Configuration).expects("getLanguageTag").withExactArgs().returns("~languageTag");
 
 			// code under test
 			var oModel = new ODataModel(mParameters);
@@ -269,7 +274,7 @@ sap.ui.define([
 			this.mock(ODataModel.prototype).expects("_initializeMetadata").withExactArgs();
 			this.mock(ODataAnnotations.prototype).expects("addSource")
 				.withExactArgs([{type : "xml", data : sinon.match.instanceOf(Promise)}]);
-			this.mock(undefined/*Configuration*/).expects("getLanguageTag").withExactArgs().returns("~languageTag");
+			this.mock(Configuration).expects("getLanguageTag").withExactArgs().returns("~languageTag");
 
 			// code under test
 			const oModel = new ODataModel(mParameters);
@@ -1598,59 +1603,61 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("_processSuccess: _updateChangedEntity is called correctly", function (assert) {
-		var mEntityTypes = {},
-			oModel = {
-				oMetadata : {
-					_getEntityTypeByPath : function () {}
+	[204, "204", 205, "205"].forEach(function (vStatusCode, i){
+		QUnit.test("_processSuccess: _updateChangedEntity is called correctly, #" + i, function (assert) {
+			var mEntityTypes = {},
+				oModel = {
+					oMetadata : {
+						_getEntityTypeByPath : function () {}
+					},
+					sServiceUrl : "/service/",
+					_createEventInfo : function () {},
+					_decreaseDeferredRequestCount : function () {},
+					_getEntity : function () {},
+					_normalizePath : function () {},
+					_parseResponse : function () {},
+					_updateChangedEntity : function () {},
+					_updateETag : function () {},
+					decreaseLaundering : function () {},
+					fireRequestCompleted : function () {}
 				},
-				sServiceUrl : "/service/",
-				_createEventInfo : function () {},
-				_decreaseDeferredRequestCount : function () {},
-				_getEntity : function () {},
-				_normalizePath : function () {},
-				_parseResponse : function () {},
-				_updateChangedEntity : function () {},
-				_updateETag : function () {},
-				decreaseLaundering : function () {},
-				fireRequestCompleted : function () {}
-			},
-			oModelMock = this.mock(oModel),
-			oRequest = {
-				data : "requestData",
-				key : "key",
-				requestUri : "/service/path"
-			},
-			oResponse = {statusCode : 204};
+				oModelMock = this.mock(oModel),
+				oRequest = {
+					data : "requestData",
+					key : "key",
+					requestUri : "/service/path"
+				},
+				oResponse = {statusCode : vStatusCode};
 
-		oModelMock.expects("_normalizePath").withExactArgs("/path").returns("normalizedPath");
-		this.mock(oModel.oMetadata).expects("_getEntityTypeByPath")
-			.withExactArgs("normalizedPath")
-			.returns({/*oEntityType*/});
-		oModelMock.expects("_normalizePath")
-			.withExactArgs("/path", undefined, true)
-			.returns("/normalizedCanonicalPath");
-		oModelMock.expects("decreaseLaundering")
-			.withExactArgs("/normalizedCanonicalPath","requestData");
-		oModelMock.expects("_decreaseDeferredRequestCount")
-			.withExactArgs(sinon.match.same(oRequest));
-		oModelMock.expects("_getEntity").withExactArgs("key").returns({__metadata : {}});
-		oModelMock.expects("_updateChangedEntity")
-			.withExactArgs("normalizedCanonicalPath", "requestData");
-		oModelMock.expects("_parseResponse")
-			.withExactArgs(sinon.match.same(oResponse), sinon.match.same(oRequest),
-				/*mLocalGetEntities*/ {}, {normalizedCanonicalPath : sinon.match.same(oRequest)});
-		oModelMock.expects("_updateETag")
-			.withExactArgs(sinon.match.same(oRequest), sinon.match.same(oResponse));
-		oModelMock.expects("_createEventInfo")
-			.withExactArgs(sinon.match.same(oRequest), sinon.match.same(oResponse), "aRequests")
-			.returns("oEventInfo");
-		oModelMock.expects("fireRequestCompleted").withExactArgs("oEventInfo");
+			oModelMock.expects("_normalizePath").withExactArgs("/path").returns("normalizedPath");
+			this.mock(oModel.oMetadata).expects("_getEntityTypeByPath")
+				.withExactArgs("normalizedPath")
+				.returns({/*oEntityType*/});
+			oModelMock.expects("_normalizePath")
+				.withExactArgs("/path", undefined, true)
+				.returns("/normalizedCanonicalPath");
+			oModelMock.expects("decreaseLaundering")
+				.withExactArgs("/normalizedCanonicalPath","requestData");
+			oModelMock.expects("_decreaseDeferredRequestCount")
+				.withExactArgs(sinon.match.same(oRequest));
+			oModelMock.expects("_getEntity").withExactArgs("key").returns({__metadata : {}});
+			oModelMock.expects("_updateChangedEntity")
+				.withExactArgs("normalizedCanonicalPath", "requestData");
+			oModelMock.expects("_parseResponse")
+				.withExactArgs(sinon.match.same(oResponse), sinon.match.same(oRequest),
+					/*mLocalGetEntities*/ {}, {normalizedCanonicalPath : sinon.match.same(oRequest)});
+			oModelMock.expects("_updateETag")
+				.withExactArgs(sinon.match.same(oRequest), sinon.match.same(oResponse));
+			oModelMock.expects("_createEventInfo")
+				.withExactArgs(sinon.match.same(oRequest), sinon.match.same(oResponse), "aRequests")
+				.returns("oEventInfo");
+			oModelMock.expects("fireRequestCompleted").withExactArgs("oEventInfo");
 
-		// code under test
-		ODataModel.prototype._processSuccess.call(oModel, oRequest, oResponse,
-			/*fnSuccess*/ undefined, /*mGetEntities*/ {}, /*mChangeEntities*/ {}, mEntityTypes,
-			/*bBatch*/ false, "aRequests");
+			// code under test
+			ODataModel.prototype._processSuccess.call(oModel, oRequest, oResponse,
+				/*fnSuccess*/ undefined, /*mGetEntities*/ {}, /*mChangeEntities*/ {}, mEntityTypes,
+				/*bBatch*/ false, "aRequests");
+		});
 	});
 
 	//*********************************************************************************************

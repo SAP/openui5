@@ -3,27 +3,28 @@
  */
 
 sap.ui.define([
-	'sap/ui/unified/calendar/CalendarUtils',
-	'sap/ui/unified/calendar/CalendarDate',
-	'sap/ui/unified/CalendarLegend',
-	'sap/ui/unified/CalendarLegendRenderer',
+    'sap/ui/unified/calendar/CalendarUtils',
+    'sap/ui/unified/calendar/CalendarDate',
+    'sap/ui/unified/CalendarLegend',
+    'sap/ui/unified/CalendarLegendRenderer',
 	'sap/ui/core/library',
-	'sap/ui/unified/library',
-	"sap/base/Log",
-	'sap/ui/core/InvisibleText',
-	'sap/ui/core/date/UI5Date'
+    'sap/ui/unified/library',
+    "sap/base/Log",
+    'sap/ui/core/InvisibleText',
+    'sap/ui/core/date/UI5Date',
+    "sap/ui/core/Configuration"
 ],
 	function(
-		CalendarUtils,
-		CalendarDate,
-		CalendarLegend,
-		CalendarLegendRenderer,
-		coreLibrary,
-		library,
-		Log,
-		InvisibleText,
-		UI5Date
-	) {
+        CalendarUtils,
+        CalendarDate,
+        CalendarLegend,
+        CalendarLegendRenderer,
+        coreLibrary,
+        library,
+        Log,
+        InvisibleText,
+        UI5Date,
+        Configuration) {
 	"use strict";
 
 

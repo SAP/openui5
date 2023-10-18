@@ -3,13 +3,13 @@
 sap.ui.define([
 	"sap/base/util/merge",
 	"sap/ui/core/Component",
+	"sap/ui/fl/initial/_internal/FlexConfiguration",
 	"sap/ui/fl/apply/_internal/connectors/ObjectStorageUtils",
 	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
 	"sap/ui/fl/initial/_internal/connectors/KeyUserConnector",
 	"sap/ui/fl/initial/_internal/connectors/LrepConnector",
 	"sap/ui/fl/initial/_internal/connectors/PersonalizationConnector",
 	"sap/ui/fl/initial/_internal/connectors/StaticFileConnector",
-	"sap/ui/fl/initial/_internal/config",
 	"sap/ui/fl/initial/_internal/Storage",
 	"sap/ui/fl/initial/_internal/StorageUtils",
 	"sap/ui/fl/initial/api/Version",
@@ -21,13 +21,13 @@ sap.ui.define([
 ], function(
 	merge,
 	Component,
+	FlexConfiguration,
 	ObjectStorageUtils,
 	FlexObjectFactory,
 	KeyUserConnector,
 	LrepConnector,
 	PersonalizationConnector,
 	StaticFileConnector,
-	config,
 	Storage,
 	StorageUtils,
 	Version,
@@ -75,7 +75,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("Given 2 connectors provide their own cacheKey values", function(assert) {
-			sandbox.stub(config, "getFlexibilityServices").returns([
+			sandbox.stub(FlexConfiguration, "getFlexibilityServices").returns([
 				{connector: "KeyUserConnector", layers: [Layer.CUSTOMER]},
 				{connector: "PersonalizationConnector", layers: [Layer.USER]}
 			]);
@@ -84,12 +84,12 @@ sap.ui.define([
 
 			return Storage.loadFlexData({reference: "app.id"}).then(function(oResult) {
 				assert.deepEqual(oResult, merge(StorageUtils.getEmptyFlexDataResponse(), {cacheKey: "abc123"}));
-				config.getFlexibilityServices.restore();
+				FlexConfiguration.getFlexibilityServices.restore();
 			});
 		});
 
 		QUnit.test("Given 2 connectors provide url and path properties", function(assert) {
-			sandbox.stub(config, "getFlexibilityServices").returns([
+			sandbox.stub(FlexConfiguration, "getFlexibilityServices").returns([
 				{connector: "ObjectPathConnector", path: "path/to/data"},
 				{connector: "PersonalizationConnector", url: "url/to/something"}
 			]);
@@ -99,7 +99,7 @@ sap.ui.define([
 			return Storage.loadFlexData({reference: "app.id"}).then(function() {
 				assert.equal(oObjectStorageStub.lastCall.args[0].path, "path/to/data", "the path parameter was passed");
 				assert.equal(oPersoStub.lastCall.args[0].url, "url/to/something", "the url parameter was passed");
-				config.getFlexibilityServices.restore();
+				FlexConfiguration.getFlexibilityServices.restore();
 			});
 		});
 
@@ -645,7 +645,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("Given two connectors are provided and one is in charge of all layers and a draft layer is set", function(assert) {
-			sandbox.stub(config, "getFlexibilityServices").returns([
+			sandbox.stub(FlexConfiguration, "getFlexibilityServices").returns([
 				{connector: "JsObjectConnector", layers: []},
 				{connector: "LrepConnector", layers: ["ALL"]}
 			]);
@@ -665,7 +665,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("Given two connectors are provided and one is in charge of a draft layer provided by a url parameter", function(assert) {
-			sandbox.stub(config, "getFlexibilityServices").returns([
+			sandbox.stub(FlexConfiguration, "getFlexibilityServices").returns([
 				{connector: "KeyUserConnector", layers: [Layer.CUSTOMER]},
 				{connector: "JsObjectConnector", layers: [Layer.USER]}
 			]);
@@ -686,7 +686,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("Given two connectors are provided and one is in charge of all layers and a draft layer provided by a url parameter", function(assert) {
-			sandbox.stub(config, "getFlexibilityServices").returns([
+			sandbox.stub(FlexConfiguration, "getFlexibilityServices").returns([
 				{connector: "JsObjectConnector", layers: []},
 				{connector: "LrepConnector", layers: ["ALL"]}
 			]);
@@ -707,7 +707,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("Given one connector are provided version parameter are not set in url parameter", function(assert) {
-			sandbox.stub(config, "getFlexibilityServices").returns([
+			sandbox.stub(FlexConfiguration, "getFlexibilityServices").returns([
 				{connector: "KeyUserConnector", layers: [Layer.CUSTOMER]}
 			]);
 
@@ -767,7 +767,7 @@ sap.ui.define([
 
 	QUnit.module("Storage with a custom & broken connector", {
 		beforeEach() {
-			sandbox.stub(config, "getFlexibilityServices").returns([{
+			sandbox.stub(FlexConfiguration, "getFlexibilityServices").returns([{
 				loadConnector: "my/connectors/BrokenInitialConnector",
 				layers: []}
 			]);
