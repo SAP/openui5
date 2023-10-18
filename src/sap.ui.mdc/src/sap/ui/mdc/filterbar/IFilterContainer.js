@@ -8,7 +8,7 @@ sap.ui.define([
 	"use strict";
 
 	/**
-	 * @class The <code>IFilterContainer</code> is the base container for the visualization of the filter items in the filter bar.
+	 * @class The <code>IFilterContainer</code> is the base container for the visualization of the filter items in the {@link sap.ui.mdc.FilterBar FilterBar} control.
 	 * @public
 	 * @since 1.61.0
 	 * @alias sap.ui.mdc.filterbar.IFilterContainer
@@ -25,7 +25,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Getter for the inner layout item.
+	 * Gets the inner layout item.
 	 * @returns {sap.ui.core.Control} Control instance of the inner layout item
 	 * @public
 	 */
@@ -53,7 +53,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the inner controls of the layout item.
+	 * Gets the inner controls of the layout item.
 	 * @returns {sap.ui.mdc.FilterField[]} Array of all inner controls in the layout item
 	 * @public
 	 */

@@ -31,7 +31,7 @@ sap.ui.define([
 	 * Constructor for a new AdaptationFilterBar.
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] initial settings for the new control
-	 * @class The <code>AdaptationFilterBar</code> control is used for a lightweight FilterBar implementation for p13n use cases.
+	 * @class The <code>AdaptationFilterBar</code> control is used for a lightweight {@link sap.ui.mdc.FilterBar FilterBar} control implementation for p13n use cases.
 	 * The <code>AdaptationFilterBar</code> should only be used if the consuming control implements at least the <code>IFilterSource</code>
 	 * interface to provide basic filter functionality.
 	 *
@@ -289,9 +289,7 @@ sap.ui.define([
 	/**
 	 *
 	 * Please note that the provided model should be created with {@link sap.ui.mdc.p13n.P13nBuilder}
-	 *
 	 * @param {object[]} aP13nData Necessary data to display and create <code>FilterColumnLayout</code> instances.
-	 *
 	 */
 	AdaptationFilterBar.prototype.setP13nData = function(aP13nData) {
 		this.oAdaptationData = aP13nData;
@@ -335,7 +333,6 @@ sap.ui.define([
 
 	/**
 	 * Method which will initialize the <code>AdaptationFilterBar</code> and create the required FilterFields
-	 *
 	 * @returns {Promise} A Promise which resolves once all FilterFields are ready and added to the <code>filterItems</code> aggregation
 	 */
 	AdaptationFilterBar.prototype.createFilterFields = function(){
@@ -372,7 +369,7 @@ sap.ui.define([
 					//Currently the IFilter interface is being used to identify if a more complex personalization is required, this is
 					//as of now only part for the sap.ui.mdc.FilterBar, as the AdaptationFilterBar will allow to select FilterFields in advance.
 					//This logic requires a cloning logic, as there is a mix of parent/child filterFields which is not the case if the adaptaitonControl
-					//does only provide Filter capabilities via an inenr FilterBar (such as the Table inbuilt filtering)
+					//does only provide Filter capabilities via an inner FilterBar (such as the Table inbuilt filtering)
 					if (this._checkAdvancedParent(oAdaptationControl)) {
 						if (oFilterField._bTemporaryOriginal) {
 							delete oFilterFieldPromise._bTemporaryOriginal;
@@ -421,7 +418,6 @@ sap.ui.define([
 	/**
 	 * This method checks whether a FilterField is already present on the parent and will return this
 	 * instead of requesting a new one.
-	 *
 	 * @param {object} oItem Corresponding item in the AdaptaitonModel
 	 * @param {object} oFilterDelegate Parent filter delegate
 	 *
@@ -492,9 +488,9 @@ sap.ui.define([
 
 	/**
 	 *
-	 * @param {sap.ui.mdc.Control} oControl the mdc control instance
-	 * @param {boolean} bSuppressInvalidate suppress invalidation
-	 * @return {sap.ui.mdc.filterbar.p13n.AdaptationFilterBar} this
+	 * @param {sap.ui.mdc.Control} oControl Instance of the new control
+	 * @param {boolean} bSuppressInvalidate If <code>true</code>, the property is not marked as changed
+	 * @return {sap.ui.mdc.filterbar.p13n.AdaptationFilterBar} Reference to <code>this</code> to allow method chaining
 	 */
 	AdaptationFilterBar.prototype.setAdaptationControl = function(oControl, bSuppressInvalidate) {
 

@@ -124,24 +124,30 @@ sap.ui.define([
 
 		function visitElements(aElements, bSkipByPredicate = false, iLevelOffset = 0,
 				iIndexOffset = 0) {
-			aElements.forEach((oElement) => {
+			aElements.forEach((oElement, i) => {
 				let iIndex = _Helper.getPrivateAnnotation(oElement, "index");
 				// Note: "@$ui5.node.level" is outdated after #move!
 				const iLevel = oElement["@$ui5.node.level"] + iLevelOffset;
 				const oParent = aParentByLevel[iLevel];
-				if (oParent === aParentByLevel[0]) {
+				if (oParent === aParentByLevel[0] && iIndex !== undefined) {
 					iIndex += iIndexOffset;
 				}
 				const bPlaceholder = _Helper.hasPrivateAnnotation(oElement, "placeholder");
 
 				if (oParent) {
 					strictEqual(_Helper.getPrivateAnnotation(oElement, "parent"), oParent,
-						`${sTitle}: "parent" @ level ${iLevel}, index ${iIndex}`);
-					strictEqual(oParent.aElements.indexOf(oElement),
-						bPlaceholder
-						? -1
-						: iIndex,
-						`${sTitle}: "index" @ level ${iLevel}, index ${iIndex}`);
+						`${sTitle}: "parent" @ level ${iLevel}, #${i}`);
+					if ("@$ui5.context.isTransient" in oElement) {
+						strictEqual(iIndex, undefined,
+							`${sTitle}: created persisted @ level ${iLevel}, #${i}`);
+					} else if (bPlaceholder) {
+						strictEqual(oParent.aElements.indexOf(oElement), -1,
+							`${sTitle}: placeholder @ level ${iLevel}, #${i}`);
+					} else {
+						strictEqual(iIndex,
+							oParent.aElements.indexOf(oElement) - oParent.aElements.$created,
+							`${sTitle}: $skip index @ level ${iLevel}, #${i}`);
+					}
 				} else {
 					assert.ok(false, `${sTitle}: no known parent for level ${iLevel}`);
 				}
@@ -169,7 +175,7 @@ sap.ui.define([
 				const aSpliced = _Helper.getPrivateAnnotation(oElement, "spliced");
 				if (aSpliced) {
 					visitElements(aSpliced, true, iLevel + 1 - aSpliced[0]["@$ui5.node.level"],
-						iIndex + 1 - _Helper.getPrivateAnnotation(aSpliced[0], "index"));
+						iIndex - aSpliced.$index);
 				}
 			});
 		}
@@ -29328,6 +29334,10 @@ sap.ui.define([
 	// JIRA: CPOUI5ODATAV4-2226
 	//
 	// Create a new root via "@$ui5.node.parent" : null (JIRA: CPOUI5ODATAV4-2355)
+	//
+	// "Refresh single" for stale elements; keep same context instance for created nodes throughout
+	// collapse and side effects.
+	// JIRA: CPOUI5ODATAV4-2374
 	QUnit.test("Recursive Hierarchy: create new children, move 'em", function (assert) {
 		var oBeta, oBetaCreated, oGamma, oGammaCreated, oListBinding, oNewRoot, fnRespond, oRoot,
 			oTable;
@@ -29642,6 +29652,8 @@ sap.ui.define([
 				["", "", "", "", ""],
 				["", "", "", "", ""]
 			]);
+			assert.strictEqual(oBeta.getModel(), oModel, "not destroyed by collapse");
+			assert.strictEqual(oGamma.getModel(), oModel, "not destroyed by collapse");
 
 			that.expectRequest(sFriend.slice(1) + "?$select=ArtistID,IsActiveEntity,Name,_/NodeID"
 					+ "&$filter=ArtistID eq '0' and IsActiveEntity eq false", {
@@ -29656,38 +29668,28 @@ sap.ui.define([
 				.expectChange("etag", ["etag0.1"])
 				.expectChange("name", ["Alpha #1"]);
 
-			oBeta = oGamma = null; // Note: side effect eventually destroys these!
-
 			return Promise.all([
 				// code under test
 				oListBinding.getHeaderContext().requestSideEffects(["Name"]),
 				that.waitForChanges(assert, "side effect: Name for all rows")
 			]);
 		}).then(function () {
-			that.expectRequest(sFriend.slice(1) + "?$apply=descendants($root" + sFriend
-					+ ",OrgChart,_/NodeID,filter(ArtistID eq '0' and IsActiveEntity eq false),1)"
-					+ "&$select=ArtistID,IsActiveEntity,Name,_/DrillState,_/NodeID"
-					+ "&$skip=0&$top=2", {
-					value : [{ //TODO Gamma might not be $skip=0!
+			that.expectRequest(sFriend.slice(1) + "(ArtistID='2',IsActiveEntity=false)"
+					+ "?$select=ArtistID,IsActiveEntity,Name,_/DrillState,_/NodeID", {
 						"@odata.etag" : "etag2.3", // updated
 						ArtistID : "2",
 						IsActiveEntity : false,
 						Name : "Gamma #1", // "side effect"
-						_ : {
-							DrillState : "leaf",
-							NodeID : "2,false"
-						}
-					}, {
+						_ : null // not available w/ RAP for a non-hierarchical request
+					})
+				.expectRequest(sFriend.slice(1) + "(ArtistID='1',IsActiveEntity=false)"
+					+ "?$select=ArtistID,IsActiveEntity,Name,_/DrillState,_/NodeID", {
 						"@odata.etag" : "etag1.3", // updated
 						ArtistID : "1",
 						IsActiveEntity : false,
 						Name : "Beta #1", // "side effect"
-						_ : {
-							DrillState : "leaf",
-							NodeID : "1,false"
-						}
-					}]
-				})
+						_ : null // not available w/ RAP for a non-hierarchical request
+					})
 				.expectChange("etag", [, "etag2.3", "etag1.3"])
 				.expectChange("name", [, "Gamma #1", "Beta #1"]);
 
@@ -29702,39 +29704,39 @@ sap.ui.define([
 				sFriend + "(ArtistID='1',IsActiveEntity=false)"
 			], [
 				[undefined, true, 1, "etag0.1", "Alpha #1"],
-				[undefined, undefined, 2, "etag2.3", "Gamma #1"],
-				[undefined, undefined, 2, "etag1.3", "Beta #1"]
+				[false, undefined, 2, "etag2.3", "Gamma #1"],
+				[false, undefined, 2, "etag1.3", "Beta #1"]
 			]);
-			[, oGamma, oBeta] = oListBinding.getCurrentContexts();
+			const aCurrentContexts = oListBinding.getCurrentContexts();
+			assert.strictEqual(oRoot, aCurrentContexts[0]);
+			assert.strictEqual(oGamma, aCurrentContexts[1]);
+			assert.strictEqual(oBeta, aCurrentContexts[2]);
 
 			assert.strictEqual(oGamma.getIndex(), 1);
 			assert.deepEqual(oGamma.getObject(), {
+				"@$ui5.context.isTransient" : false,
 				"@$ui5.node.level" : 2,
 				"@odata.etag" : "etag2.3",
 				ArtistID : "2",
 				IsActiveEntity : false,
 				Name : "Gamma #1",
-				_ : {
-					NodeID : "2,false"
-				}
+				_ : null // Note: NodeID still unknown
 			});
-			assert.strictEqual(oGamma.isTransient(), undefined, "persisted");
-			assert.strictEqual(oGamma.created(), undefined);
+			assert.strictEqual(oGamma.isTransient(), false, "created persisted");
+			assert.strictEqual(oGamma.created(), oGammaCreated, "unchanged");
 
 			assert.strictEqual(oBeta.getIndex(), 2);
 			assert.deepEqual(oBeta.getObject(), {
-				// "@$ui5.context.isTransient" deleted by #requestSideEffects/#expand
+				"@$ui5.context.isTransient" : false,
 				"@$ui5.node.level" : 2,
 				"@odata.etag" : "etag1.3",
 				ArtistID : "1",
 				IsActiveEntity : false,
 				Name : "Beta #1",
-				_ : {
-					NodeID : "1,false"
-				}
+				_ : null // Note: NodeID still unknown
 			});
-			assert.strictEqual(oBeta.isTransient(), undefined, "persisted");
-			assert.strictEqual(oBeta.created(), undefined);
+			assert.strictEqual(oBeta.isTransient(), false, "created persisted");
+			assert.strictEqual(oBeta.created(), oBetaCreated, "unchanged");
 
 			return Promise.all([
 				// code under test
@@ -29767,7 +29769,7 @@ sap.ui.define([
 				sFriend + "(ArtistID='1',IsActiveEntity=false)"
 			], [
 				[undefined, true, 1, "etag0.1", "Alpha #1"],
-				[undefined, true, 2, "etag2.3", "Gamma #1"],
+				[false, true, 2, "etag2.3", "Gamma #1"],
 				[false, undefined, 3, "etag1.4", "Beta #1"]
 			]);
 			const aCurrentContexts = oListBinding.getCurrentContexts();
@@ -29777,33 +29779,30 @@ sap.ui.define([
 
 			assert.strictEqual(oGamma.getIndex(), 1);
 			assert.deepEqual(oGamma.getObject(), {
+				"@$ui5.context.isTransient" : false,
 				"@$ui5.node.isExpanded" : true,
 				"@$ui5.node.level" : 2,
 				"@odata.etag" : "etag2.3",
 				ArtistID : "2",
 				IsActiveEntity : false,
 				Name : "Gamma #1",
-				_ : {
-					NodeID : "2,false"
-				}
+				_ : null // Note: NodeID still unknown
 			});
-			assert.strictEqual(oGamma.isTransient(), undefined, "persisted");
-			assert.strictEqual(oGamma.created(), undefined);
+			assert.strictEqual(oGamma.isTransient(), false, "created persisted");
+			assert.strictEqual(oGamma.created(), oGammaCreated, "unchanged");
 
 			assert.strictEqual(oBeta.getIndex(), 2); // unchanged by #move
 			assert.deepEqual(oBeta.getObject(), {
-				"@$ui5.context.isTransient" : false, // "moved"
+				"@$ui5.context.isTransient" : false,
 				"@$ui5.node.level" : 3,
 				"@odata.etag" : "etag1.4",
 				ArtistID : "1",
 				IsActiveEntity : false,
 				Name : "Beta #1",
-				_ : {
-					NodeID : "1,false"
-				}
+				_ : null // Note: NodeID still unknown
 			});
 			assert.strictEqual(oBeta.isTransient(), false, "created persisted");
-			assert.ok(oBeta.created() instanceof Promise);
+			assert.strictEqual(oBeta.created(), oBetaCreated, "unchanged");
 
 			return oBeta.created(); // to prove that it's not rejected
 		}).then(function () {
@@ -29846,9 +29845,83 @@ sap.ui.define([
 			], [
 				[false, undefined, 1, "etag9.0", "Aleph: ℵ"],
 				[undefined, true, 1, "etag0.1", "Alpha #1"],
-				[undefined, true, 2, "etag2.3", "Gamma #1"]
+				[false, true, 2, "etag2.3", "Gamma #1"]
 			]);
 			assert.strictEqual(oNewRoot.isTransient(), false, "created persisted");
+
+			that.expectRequest(sFriend.slice(1) + "?$select=ArtistID,IsActiveEntity,Name,_/NodeID"
+					+ "&$filter=ArtistID eq '9' and IsActiveEntity eq false"
+					+ " or ArtistID eq '0' and IsActiveEntity eq false"
+					+ " or ArtistID eq '2' and IsActiveEntity eq false"
+					+ " or ArtistID eq '1' and IsActiveEntity eq false"
+					+ "&$top=4", {
+					value : [{
+						"@odata.etag" : "etag9.1",
+						ArtistID : "9",
+						IsActiveEntity : false,
+						Name : "Aleph #2",
+						_ : null // not available w/ RAP for a non-hierarchical request
+					}, {
+						"@odata.etag" : "etag0.2",
+						ArtistID : "0",
+						IsActiveEntity : false,
+						Name : "Alpha #2",
+						_ : null // not available w/ RAP for a non-hierarchical request
+					}, {
+						"@odata.etag" : "etag2.4",
+						ArtistID : "2",
+						IsActiveEntity : false,
+						Name : "Gamma #2",
+						_ : null // not available w/ RAP for a non-hierarchical request
+					}, {
+						"@odata.etag" : "etag1.5",
+						ArtistID : "1",
+						IsActiveEntity : false,
+						Name : "Beta #2",
+						_ : null // not available w/ RAP for a non-hierarchical request
+					}]
+				})
+				.expectChange("etag", ["etag9.1", "etag0.2", "etag2.4"])
+				.expectChange("name", ["Aleph #2", "Alpha #2", "Gamma #2"]);
+
+			return Promise.all([
+				// code under test
+				oListBinding.getHeaderContext().requestSideEffects(["Name"]),
+				that.waitForChanges(assert, "side effect again: Name for all rows")
+			]);
+		}).then(function () {
+			checkTable("after side effect again: Name for all rows", assert, oTable, [
+				sFriend + "(ArtistID='9',IsActiveEntity=false)",
+				sFriend + "(ArtistID='0',IsActiveEntity=false)",
+				sFriend + "(ArtistID='2',IsActiveEntity=false)",
+				sFriend + "(ArtistID='1',IsActiveEntity=false)"
+			], [
+				[false, undefined, 1, "etag9.1", "Aleph #2"],
+				[undefined, true, 1, "etag0.2", "Alpha #2"],
+				[false, true, 2, "etag2.4", "Gamma #2"]
+			]);
+			assert.strictEqual(oBeta, oListBinding.getAllCurrentContexts()[3], "same instance");
+
+			that.expectChange("etag", [, "etag0.2", "etag2.4", "etag1.5"])
+				.expectChange("name", [, "Alpha #2", "Gamma #2", "Beta #2"]);
+
+			oTable.setFirstVisibleRow(1);
+
+			return that.waitForChanges(assert, "scroll down to Beta");
+		}).then(function () {
+			checkTable("after scroll down to Beta", assert, oTable, [
+				sFriend + "(ArtistID='9',IsActiveEntity=false)",
+				sFriend + "(ArtistID='0',IsActiveEntity=false)",
+				sFriend + "(ArtistID='2',IsActiveEntity=false)",
+				sFriend + "(ArtistID='1',IsActiveEntity=false)"
+			], [
+				[undefined, true, 1, "etag0.2", "Alpha #2"],
+				[false, true, 2, "etag2.4", "Gamma #2"],
+				[false, undefined, 3, "etag1.5", "Beta #2"]
+			]);
+			assert.strictEqual(oBeta, oListBinding.getCurrentContexts()[2], "same instance");
+			assert.strictEqual(oBeta.isTransient(), false, "created persisted");
+			assert.strictEqual(oBeta.created(), oBetaCreated, "unchanged");
 		});
 	});
 

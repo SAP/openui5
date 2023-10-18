@@ -4128,7 +4128,8 @@ sap.ui.define([
 	{index : 1, keepAlive : false, lateQueryOptions : false},
 	{index : 1, keepAlive : false, lateQueryOptions : true},
 	{index : 1, keepAlive : true, lateQueryOptions : false},
-	{index : 1, keepAlive : true, lateQueryOptions : true}
+	{index : 1, keepAlive : true, lateQueryOptions : true},
+	{index : -1, keepAlive : false, lateQueryOptions : false}
 ].forEach(function (oFixture) {
 	["", "EMPLOYEE_2_EQUIPMENTS"].forEach(function (sPath) {
 		// undefined => no $select at all ;-)
@@ -4240,7 +4241,9 @@ sap.ui.define([
 					sinon.match.same(oResponse), sinon.match.same(mTypeForMetaPath), sPath,
 					bMessagesAlreadySelected === false && bMessagesAnnotated);
 
-			return oPromise;
+			return oPromise.then(function (oResult) {
+				assert.strictEqual(oResult, oResponse);
+			});
 		});
 	});
 		});
@@ -6122,8 +6125,9 @@ sap.ui.define([
 
 	//*********************************************************************************************
 [false, true].forEach(function (bSideEffectsRefresh) {
-	var sTitle = "CollectionCache#read: persisted inline creation rows; side-effects refresh = "
-			+ bSideEffectsRefresh;
+	[false, true].forEach(function (bIndexIsSkip) {
+		var sTitle = "CollectionCache#read: persisted inline creation rows; side-effects refresh = "
+				+ bSideEffectsRefresh + "; 'index' is $skip = " + bIndexIsSkip;
 
 	QUnit.test(sTitle, function (assert) {
 		var oCache = this.createCache("Employees"),
@@ -6153,19 +6157,22 @@ sap.ui.define([
 			oCache.oBackup = {};
 		}
 		this.mock(ODataUtils).expects("_getReadIntervals")
-			.withExactArgs(sinon.match.same(aElements), 0, 100, iExpectedPrefetch, 5 + 0)
+			.withExactArgs(sinon.match.same(aElements), bIndexIsSkip ? 5 : 0, 100,
+				iExpectedPrefetch, 5 + 0)
 			.returns([]); // test is all about iExpectedPrefetch, skip the rest...
 		this.oRequestorMock.expects("waitForBatchResponseReceived").never();
 		this.mock(oCache).expects("requestElements").never();
 		this.mock(oGroupLock).expects("unlock").withExactArgs();
 
 		// code under test
-		return oCache.read(0, 100, 0, oGroupLock).then(function (oResult) {
-			assert.deepEqual(oResult, {
-				"@odata.context" : undefined,
-				value : aElements
+		return oCache.read(0, 100, 0, oGroupLock, null, bIndexIsSkip)
+			.then(function (oResult) {
+				assert.deepEqual(oResult, {
+					"@odata.context" : undefined,
+					value : bIndexIsSkip ? [] : aElements
+				});
 			});
-		});
+	});
 	});
 });
 
@@ -6262,13 +6269,13 @@ sap.ui.define([
 		this.mock(oCache).expects("requestElements").never();
 
 		// code under test
-		oPromise = oCache.read(10, 20, 30, oGroupLock, fnDataRequested);
+		oPromise = oCache.read(10, 20, 30, oGroupLock, fnDataRequested, "~bIndexIsSkip~");
 
 		assert.strictEqual(oPromise.isPending(), true);
 
 		this.mock(oCache).expects("read")
 			.withExactArgs(10, 20, 30, sinon.match.same(oGroupLock),
-				sinon.match.same(fnDataRequested))
+				sinon.match.same(fnDataRequested), "~bIndexIsSkip~")
 			.returns(42);
 		fnResolve();
 
@@ -7752,11 +7759,11 @@ sap.ui.define([
 		this.mock(oCache).expects("requestElements").never(); // not yet
 
 		// code under test
-		oPromise = oCache.read(0, 10, 42, "group", fnDataRequested);
+		oPromise = oCache.read(0, 10, 42, "group", fnDataRequested, "~bIndexIsSkip~");
 
 		// expect "back to start" in order to repeat check for $tail
 		this.mock(oCache).expects("read")
-			.withExactArgs(0, 10, 42, "group", sinon.match.same(fnDataRequested))
+			.withExactArgs(0, 10, 42, "group", sinon.match.same(fnDataRequested), "~bIndexIsSkip~")
 			.returns(oNewPromise);
 		fnResolve();
 
@@ -12625,7 +12632,8 @@ sap.ui.define([
 
 	//*********************************************************************************************
 [undefined, "($uid=id-1-23)"].forEach((sTransientPredicate) => {
-	QUnit.test(`CollectionCache#drop, ${sTransientPredicate}`, function (assert) {
+	[undefined, true].forEach((bIndexIsSkip) => {
+	QUnit.test(`CollectionCache#drop, ${sTransientPredicate}, ${bIndexIsSkip}`, function (assert) {
 		const oCache = this.createCache("Employees");
 		oCache.aElements[23] = "~b~";
 		oCache.aElements.$byPredicate = {
@@ -12643,7 +12651,7 @@ sap.ui.define([
 			.withExactArgs("~b~", "transientPredicate").returns(sTransientPredicate);
 
 		// code under test
-		oCache.drop(23, "('b')");
+		oCache.drop(bIndexIsSkip ? 23 - 7 : 23, "('b')", bIndexIsSkip);
 
 		assert.strictEqual(23 in oCache.aElements, false);
 		assert.strictEqual("('b')" in oCache.aElements.$byPredicate, false);
@@ -12654,6 +12662,7 @@ sap.ui.define([
 		assert.strictEqual(oCache.aElements.$created, sTransientPredicate ? 6 : 7);
 		assert.strictEqual(oCache.iActiveElements, sTransientPredicate ? 4 : 5);
 		assert.strictEqual(oCache.iLimit, sTransientPredicate ? 43 : 42);
+	});
 	});
 });
 

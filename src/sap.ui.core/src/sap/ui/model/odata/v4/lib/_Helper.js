@@ -1625,16 +1625,18 @@ sap.ui.define([
 		 * @param {string} sAnnotation
 		 *   The unqualified name of a private client-side instance annotation (hidden inside
 		 *   namespace "@$ui5._")
+		 * @param {any} [vDefault]
+		 *   The default value to be used instead of <code>undefined</code>
 		 * @returns {any}
-		 *   The annotation's value or <code>undefined</code> if no such annotation exists (e.g.
+		 *   The annotation's value or the given default if no such annotation exists (e.g.
 		 *   because the private namespace object does not exist)
 		 *
 		 * @public
 		 */
-		getPrivateAnnotation : function (oObject, sAnnotation) {
-			var oPrivateNamespace = oObject["@$ui5._"];
+		getPrivateAnnotation : function (oObject, sAnnotation, vDefault) {
+			const vResult = oObject["@$ui5._"]?.[sAnnotation];
 
-			return oPrivateNamespace && oPrivateNamespace[sAnnotation];
+			return vResult === undefined ? vDefault : vResult;
 		},
 
 		/**

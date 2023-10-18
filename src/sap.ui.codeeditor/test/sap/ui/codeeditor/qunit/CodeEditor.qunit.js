@@ -4,11 +4,19 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/ui/core/Core",
 	"sap/ui/core/Lib",
-	"sap/ui/qunit/utils/nextUIUpdate"
-], function (CodeEditor, Button, Core, Library, nextUIUpdate) {
+	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/qunit/utils/createAndAppendDiv"
+], function (CodeEditor, Button, Core, Library, nextUIUpdate, createAndAppendDiv) {
 	"use strict";
 
-	var DOM_RENDER_LOCATION = "qunit-fixture";
+	var DOM_RENDER_LOCATION = "content";
+	createAndAppendDiv(DOM_RENDER_LOCATION);
+
+	function nextAceEditorRendering(oCodeEditor) {
+		return new Promise((res) => {
+			oCodeEditor._oEditor.renderer.once("afterRender", res);
+		});
+	}
 
 	QUnit.module("Init", {
 		beforeEach: async function () {
@@ -136,23 +144,28 @@ sap.ui.define([
 		this.oCodeEditor.setValue(sText);
 		this.oCodeEditor.setVisible(true);
 		this.oCodeEditor.setWidth("300px");
-
-		await nextUIUpdate();
-
+		await nextAceEditorRendering(this.oCodeEditor);
 		var fInitialScrollbarPos = this.oCodeEditor._oEditor.getSession().getScrollTop();
+		assert.strictEqual(fInitialScrollbarPos, 0, "Initial scroll position should be 0");
+
+		// Act
 		this.oCodeEditor._oEditor.gotoLine(Infinity, Infinity, false); // go to last line, last char, do not animate
+		await nextAceEditorRendering(this.oCodeEditor);
 
 		// Assert
 		var fNewScrollbarPos = this.oCodeEditor._oEditor.getSession().getScrollTop();
+		assert.ok(fNewScrollbarPos > fInitialScrollbarPos, "Scroll position should be larger than initial");
 		assert.notStrictEqual(fInitialScrollbarPos, fNewScrollbarPos, "scrollbar position changed after calling gotoLine");
 
 		// Act
 		this.oCodeEditor.invalidate();
-		await nextUIUpdate.runSync(); // TODO Why does the next assertion not hold true with async rendering?
+		await nextAceEditorRendering(this.oCodeEditor);
 
 		// Assert
-		var fUnchangedScrollbarPos = this.oCodeEditor._oEditor.getSession().getScrollTop();
-		assert.strictEqual(fNewScrollbarPos, fUnchangedScrollbarPos, "scrollbar position remains the same after rerendering");
+		var fPrevScrollbarPos = fNewScrollbarPos;
+		fNewScrollbarPos = this.oCodeEditor._oEditor.getSession().getScrollTop();
+
+		assert.strictEqual(fNewScrollbarPos, fPrevScrollbarPos, "scrollbar position remains the same after rerendering");
 	});
 
 	QUnit.test("Method getInternalEditorInstance", function (assert) {

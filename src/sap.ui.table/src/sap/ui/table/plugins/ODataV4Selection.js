@@ -358,7 +358,7 @@ sap.ui.define([
 
 	function isContextSelectable(oContext) {
 		var bIsTree = "hierarchyQualifier" in (oContext.getBinding().getAggregation() || {});
-		return (bIsTree || oContext.getProperty("@$ui5.node.isExpanded") === undefined) && !oContext.getProperty("@$ui5.node.isTotal");
+		return bIsTree || (oContext.getProperty("@$ui5.node.isExpanded") === undefined && !oContext.getProperty("@$ui5.node.isTotal"));
 	}
 
 	ODataV4Selection.prototype.clearSelection = function() {

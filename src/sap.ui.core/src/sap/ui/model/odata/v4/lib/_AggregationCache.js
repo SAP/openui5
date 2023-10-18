@@ -159,10 +159,10 @@ sap.ui.define([
 		}
 
 		const oParentCache = _Helper.getPrivateAnnotation(oElement, "parent");
-		const iIndexInParentCache = _Helper.getPrivateAnnotation(oElement, "index");
 		if (oElement["@$ui5.context.isTransient"]) {
 			// cancel the create (no callback function necessary)
-			return oParentCache._delete(oGroupLock, sEditUrl, "" + iIndexInParentCache);
+			return oParentCache._delete(oGroupLock, sEditUrl,
+				_Helper.getPrivateAnnotation(oElement, "transientPredicate"));
 		}
 
 		return SyncPromise.resolve(
@@ -171,7 +171,8 @@ sap.ui.define([
 			// the element might have moved due to parallel insert/delete
 			iIndex = _Cache.getElementIndex(this.aElements, sPredicate, iIndex);
 			// remove in parent cache
-			oParentCache.removeElement(iIndexInParentCache, sPredicate);
+			const iIndexInParentCache = oParentCache.removeElement(
+				_Helper.getPrivateAnnotation(oElement, "index", 0), sPredicate);
 			// remove the descendants in the parent cache (if any)
 			const iDescendants = _Helper.getPrivateAnnotation(oElement, "descendants") || 0;
 			for (let i = 0; i < iDescendants; i += 1) {
@@ -184,8 +185,10 @@ sap.ui.define([
 				// make parent a leaf (the direct predecessor)
 				this.makeLeaf(this.aElements[iIndex - 1]);
 			}
+			if (!("@$ui5.context.isTransient" in oElement)) {
+				this.shiftIndex(iIndex, -iOffset);
+			}
 			// remove in this cache
-			this.shiftIndex(iIndex, -iOffset);
 			this.removeElement(iIndex, sPredicate);
 			// notify caller
 			fnCallback(iIndex, -1);
@@ -203,8 +206,8 @@ sap.ui.define([
 	 *   The group level cache which the given elements have been read from; omit it only for grand
 	 *   totals or separate subtotals
 	 * @param {number} [iStart]
-	 *   The index of the first element within the cache's collection; omit it only if no group
-	 *   level cache is given
+	 *   The $skip index of the first given element within the cache's collection; omit it only if
+	 *   no group level cache is given or for a single created element (where it is always unknown)
 	 * @throws {Error}
 	 *   In case an unexpected element or placeholder would be overwritten, if the given offset is
 	 *   negative, if a resulting array index is out of bounds, in case of a duplicate predicate, or
@@ -221,15 +224,15 @@ sap.ui.define([
 		function addElement(oElement, i) {
 			var oOldElement = aElements[iOffset + i],
 				oKeptElement,
-				sPredicate = _Helper.getPrivateAnnotation(oElement, "transientPredicate")
-					|| _Helper.getPrivateAnnotation(oElement, "predicate");
+				sPredicate = _Helper.getPrivateAnnotation(oElement, "predicate"),
+				sTransientPredicate = _Helper.getPrivateAnnotation(oElement, "transientPredicate");
 
 			if (oOldElement) { // check before overwriting
 				if (oOldElement === oElement) {
 					return;
 				}
 				_AggregationHelper.beforeOverwritePlaceholder(oOldElement, oElement, oCache,
-					iStart + i, sNodeProperty);
+					iStart === undefined ? undefined : iStart + i, sNodeProperty);
 			} else if (iOffset + i >= aElements.length) {
 				throw new Error("Array index out of bounds: " + (iOffset + i));
 			}
@@ -249,12 +252,23 @@ sap.ui.define([
 				} // else: ETag changed, ignore kept element!
 			}
 
-			aElements.$byPredicate[sPredicate] = aElements[iOffset + i] = oElement;
+			if (sPredicate) {
+				aElements.$byPredicate[sPredicate] = oElement;
+			}
+			if (sTransientPredicate) {
+				aElements.$byPredicate[sTransientPredicate] = oElement;
+			}
+			aElements[iOffset + i] = oElement;
 
+			// remember index & parent for #requestSideEffects
 			if (oCache) {
-				// remember index & parent for #requestSideEffects
-				_Helper.setPrivateAnnotation(oElement, "index", iStart + i);
 				_Helper.setPrivateAnnotation(oElement, "parent", oCache);
+			}
+
+			if (sTransientPredicate) { // created
+				iStart -= 1; // "shift" index of non-created elements behind this one
+			} else {
+				_Helper.setPrivateAnnotation(oElement, "index", iStart + i);
 			}
 		}
 
@@ -378,7 +392,9 @@ sap.ui.define([
 			delete aElements.$byPredicate[
 				_Helper.getPrivateAnnotation(aElements[i], "transientPredicate")];
 		}
-		_Helper.setPrivateAnnotation(oGroupNode, "spliced", aElements.splice(iIndex + 1, iCount));
+		const aSpliced = aElements.splice(iIndex + 1, iCount);
+		aSpliced.$index = _Helper.getPrivateAnnotation(oGroupNode, "index");
+		_Helper.setPrivateAnnotation(oGroupNode, "spliced", aSpliced);
 		aElements.$count -= iCount;
 
 		return iCount;
@@ -489,14 +505,13 @@ sap.ui.define([
 		}
 
 		delete oEntityData["@$ui5.node.parent"];
-		const oResult = oCache.create(oGroupLock, oPostPathPromise, sPath, sTransientPredicate,
+		const oPromise = oCache.create(oGroupLock, oPostPathPromise, sPath, sTransientPredicate,
 			oEntityData, bAtEndOfCreated, fnErrorCallback, fnSubmitCallback, function onCancel() {
-				this.shiftIndex(iIndex, -1);
 				aElements.$count -= 1;
 				delete aElements.$byPredicate[
 					_Helper.getPrivateAnnotation(oEntityData, "transientPredicate")];
 				aElements.splice(aElements.indexOf(oEntityData), 1);
-			}.bind(this));
+			});
 
 		if (sParentPath) {
 			// add @odata.bind to POST body only
@@ -509,13 +524,10 @@ sap.ui.define([
 			: 1;
 
 		aElements.splice(iIndex, 0, null); // create a gap
-		this.addElements(oEntityData, iIndex, oCache, 0);
+		this.addElements(oEntityData, iIndex, oCache); // $skip index is undefined!
 		aElements.$count += 1;
-		// increase "index" for all children of oCache;
-		// oParentNode is expanded, thus all such nodes or placeholders are inside aElements
-		this.shiftIndex(iIndex, +1);
 
-		return oResult.then(function () {
+		return oPromise.then(function () {
 			aElements.$byPredicate[_Helper.getPrivateAnnotation(oEntityData, "predicate")]
 				= oEntityData;
 
@@ -621,8 +633,7 @@ sap.ui.define([
 			iCount = aSpliced.length;
 			this.aElements.$count = aOldElements.$count + iCount;
 			const iLevelDiff = oGroupNode["@$ui5.node.level"] + 1 - aSpliced[0]["@$ui5.node.level"];
-			const iIndexDiff = _Helper.getPrivateAnnotation(oGroupNode, "index") + 1
-				- _Helper.getPrivateAnnotation(aSpliced[0], "index");
+			const iIndexDiff = _Helper.getPrivateAnnotation(oGroupNode, "index") - aSpliced.$index;
 			aSpliced.forEach(function (oElement) {
 				var sPredicate = _Helper.getPrivateAnnotation(oElement, "predicate");
 
@@ -1009,19 +1020,16 @@ sap.ui.define([
 				/*fnSubmit*/null, function fnCancel() { /*nothing to do*/ }),
 			oReadPromise
 		]).then(([oPatchResult, _oReadResult]) => {
+			const iOldIndex = this.aElements.indexOf(oChildNode);
 			// update the cache with the PATCH response (Note: "@odata.etag" is optional!)
 			_Helper.updateExisting(this.mChangeListeners, sChildPredicate, oChildNode, {
 				"@odata.etag" : oPatchResult["@odata.etag"],
 				"@$ui5.node.level" : oParentNode["@$ui5.node.level"] + 1
 			});
 
-			const iOldIndex = this.aElements.indexOf(oChildNode);
-			this.shiftIndex(iOldIndex, -1);
-			this.aElements.splice(iOldIndex, 1);
-
 			// remove original element from its cache's collection
 			const oOldParentCache = _Helper.getPrivateAnnotation(oChildNode, "parent");
-			oOldParentCache.removeElement(_Helper.getPrivateAnnotation(oChildNode, "index"),
+			oOldParentCache.removeElement(_Helper.getPrivateAnnotation(oChildNode, "index", 0),
 				sChildPredicate);
 			if (oOldParentCache.getValue("$count") === 0) { // last child has gone
 				const oOldParent = this.aElements[iOldIndex - 1];
@@ -1031,16 +1039,18 @@ sap.ui.define([
 			}
 
 			// once oChildNode has moved, it should look 'created' because of its new position
+			_Helper.deletePrivateAnnotation(oChildNode, "index");
 			if (!_Helper.hasPrivateAnnotation(oChildNode, "transientPredicate")) {
 				_Helper.setPrivateAnnotation(oChildNode, "transientPredicate",
 					sTransientPredicate);
 				this.aElements.$byPredicate[sTransientPredicate] = oChildNode;
 				_Helper.updateAll(this.mChangeListeners, sChildPredicate, oChildNode,
 					{"@$ui5.context.isTransient" : false});
+				this.shiftIndex(iOldIndex, -1); // only shift indices after non-created ones
 			}
+			this.aElements.splice(iOldIndex, 1);
 
 			let iResult = 1;
-			_Helper.setPrivateAnnotation(oChildNode, "index", 0);
 			if (oReadPromise) {
 				_Helper.setPrivateAnnotation(oChildNode, "parent", oCache);
 				_Helper.setPrivateAnnotation(oParentNode, "cache", oCache);
@@ -1071,7 +1081,6 @@ sap.ui.define([
 				} else {
 					this.aElements.splice(iNewIndex, 0, oChildNode);
 				}
-				this.shiftIndex(iNewIndex, +1); // relies on "parent" & "@$ui5.node.level"!
 			}
 
 			return iResult;
@@ -1178,6 +1187,7 @@ sap.ui.define([
 						&& _Helper.getPrivateAnnotation(oElement, "index")
 							!== _Helper.getPrivateAnnotation(this.aElements[i - 1], "index") + 1) {
 					// Note: w/ side effect, indices might not be consecutive => split gap
+					// Note: an undefined "index" causes a split gap, which is important!
 					readGap(iGapStart, i);
 					iGapStart = i;
 				}
@@ -1320,7 +1330,8 @@ sap.ui.define([
 	};
 
 	/**
-	 * Reads the given gap from the given cache and replaces the gap with the read's result.
+	 * Reads the given gap from the given cache and replaces the gap with the read's result. This
+	 * method may be used for single created persisted elements in order to refresh them.
 	 *
 	 * @param {sap.ui.model.odata.v4.lib._CollectionCache} oCache
 	 *   The collection cache to read data from
@@ -1336,40 +1347,51 @@ sap.ui.define([
 	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise which is resolved without a defined result when the read is finished, or
 	 *   rejected in case of an error
-	 * @throws {Error} If index of placeholder at start of gap is less than 0, or if end of gap is
-	 *   before start
+	 * @throws {Error} If index of placeholder at start of gap is less than 0, if end of gap is
+	 *   before start, or if more than a single created persisted element is read
 	 *
 	 * @private
 	 */
 	_AggregationCache.prototype.readGap = function (oCache, iStart, iEnd, oGroupLock,
 			fnDataRequested) {
-		var sPredicate,
-			oPromise,
-			mQueryOptions = oCache.getQueryOptions(),
-			iIndex = _Helper.getPrivateAnnotation(this.aElements[iStart], "index"),
-			oStartElement = this.aElements[iStart],
-			i,
-			that = this;
+		const oStartElement = this.aElements[iStart];
+		const iIndex = _Helper.getPrivateAnnotation(oStartElement, "index");
+		if (iIndex === undefined) {
+			if (iEnd - iStart !== 1) {
+				throw new Error("Not just a single created persisted");
+			}
+			const sPredicate = _Helper.getPrivateAnnotation(oStartElement, "predicate");
+			const oPromise = oCache.refreshSingle(oGroupLock, "", -1, sPredicate,
+					/*bKeepAlive*/true, false, fnDataRequested)
+				.then((oElement) => {
+					// make sure that ODLB reuses the same context instance
+					_Helper.copyPrivateAnnotation(oStartElement, "context", oElement);
+					this.addElements(oElement, iStart, oCache); // $skip index is undefined!
+				});
+			this.aElements.$byPredicate[sPredicate] = oPromise;
+			return oPromise;
+		}
 
+		const mQueryOptions = oCache.getQueryOptions();
 		if (mQueryOptions.$count) { // $count not needed anymore, 1st read was done by #expand
 			delete mQueryOptions.$count;
 			oCache.setQueryOptions(mQueryOptions, true);
 		}
 
-		oPromise = oCache.read(iIndex, iEnd - iStart, 0, oGroupLock, fnDataRequested)
-			.then(function (oResult) {
+		const oPromise = oCache.read(iIndex, iEnd - iStart, 0, oGroupLock, fnDataRequested, true)
+			.then((oResult) => {
 				// Note: this code must be idempotent, it might well run twice!
 				var bGapHasMoved = false,
 					oError;
 
 				// Note: aElements[iGapStart] may have changed by a parallel operation
-				if (oStartElement !== that.aElements[iStart]
-						&& oResult.value[0] !== that.aElements[iStart]) {
+				if (oStartElement !== this.aElements[iStart]
+						&& oResult.value[0] !== this.aElements[iStart]) {
 					// start of the gap has moved meanwhile
 					bGapHasMoved = true;
-					iStart = that.aElements.indexOf(oStartElement);
+					iStart = this.aElements.indexOf(oStartElement);
 					if (iStart < 0) {
-						iStart = that.aElements.indexOf(oResult.value[0]);
+						iStart = this.aElements.indexOf(oResult.value[0]);
 						if (iStart < 0) {
 							oError = new Error("Collapse before read has finished");
 							oError.canceled = true;
@@ -1378,7 +1400,7 @@ sap.ui.define([
 					}
 				}
 
-				that.addElements(oResult.value, iStart, oCache, iIndex);
+				this.addElements(oResult.value, iStart, oCache, iIndex);
 
 				if (bGapHasMoved) {
 					oError = new Error("Collapse or expand before read has finished");
@@ -1387,8 +1409,8 @@ sap.ui.define([
 				}
 			});
 		if (oPromise.isPending()) {
-			for (i = iStart; i < iEnd; i += 1) {
-				sPredicate = _Helper.getPrivateAnnotation(this.aElements[i], "predicate");
+			for (let i = iStart; i < iEnd; i += 1) {
+				const sPredicate = _Helper.getPrivateAnnotation(this.aElements[i], "predicate");
 
 				if (sPredicate) {
 					this.aElements.$byPredicate[sPredicate] = oPromise;
@@ -1473,8 +1495,9 @@ sap.ui.define([
 	};
 
 	/**
-	 * Shifts the "index" of all siblings (nodes or placeholders) after the node at the given index
-	 * by the given offset.
+	 * Shifts the $skip "index" of all siblings (nodes or placeholders) after the node at the given
+	 * index by the given offset, except for created elements (where it is always
+	 * <code>undefined</code>).
 	 *
 	 * @param {number} iIndex
 	 *   Index in <code>this.aElements</code> of a node
@@ -1490,8 +1513,10 @@ sap.ui.define([
 		for (let i = iIndex + 1; i < aElements.length; i += 1) {
 			const oSibling = aElements[i];
 			if (_Helper.getPrivateAnnotation(oSibling, "parent") === oCache) {
-				_Helper.setPrivateAnnotation(oSibling, "index",
-					_Helper.getPrivateAnnotation(oSibling, "index") + iOffset);
+				const iIndex = _Helper.getPrivateAnnotation(oSibling, "index");
+				if (iIndex !== undefined) {
+					_Helper.setPrivateAnnotation(oSibling, "index", iIndex + iOffset);
+				}
 			}
 			if (oCache !== this.oFirstLevel
 					&& oSibling["@$ui5.node.level"] < oNode["@$ui5.node.level"]) {
@@ -1517,8 +1542,8 @@ sap.ui.define([
 	/**
 	 * Turns the given element, which has the given predicate, into a placeholder which keeps all
 	 * private annotations plus the hierarchy node value. The original element is removed from its
-	 * corresponding cache and must not be used any longer. Created persisted elements lose their
-	 * special treatment!
+	 * corresponding cache and must not be used any longer. Created persisted elements do not lose
+	 * their special treatment!
 	 *
 	 * @param {object} oElement - An element
 	 * @param {string} sPredicate - Its predicate
@@ -1534,8 +1559,10 @@ sap.ui.define([
 		_AggregationHelper.markSplicedStale(oElement);
 		delete this.aElements.$byPredicate[sPredicate];
 		// drop original element from its cache's collection
-		_Helper.getPrivateAnnotation(oElement, "parent")
-			.drop(_Helper.getPrivateAnnotation(oElement, "index"), sPredicate);
+		const iIndex = _Helper.getPrivateAnnotation(oElement, "index");
+		if (iIndex !== undefined) {
+			_Helper.getPrivateAnnotation(oElement, "parent").drop(iIndex, sPredicate, true);
+		} // else: special handling inside #readGap
 	};
 
 	//*********************************************************************************************

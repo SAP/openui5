@@ -54,9 +54,9 @@ sap.ui.define([
 	const ValueState = coreLibrary.ValueState;
 
 	/**
-	 * Constructor for a new FilterBarBase.
+	 * Constructor for a new <code>FilterBarBase</code> control.
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
-	 * @param {object} [mSettings] initial settings for the new control
+	 * @param {object} [mSettings] Initial settings for the new control
 	 * @class The <code>FilterBarBase</code> control is the base for filter displaying controls in MDC.
 	 * @extends sap.ui.mdc.Control
 	 * @author SAP SE
@@ -81,7 +81,7 @@ sap.ui.define([
 
 				/**
 				 * Defines the path to the metadata retrieval class for the <code>FilterBarBase</code> control.
-				 * It basically identifies the {@link sap.ui.mdc.FilterBarDelegate FilterBarDelegate} file that provides the required APIs to create the filter bar content.<br>
+				 * It basically identifies the {@link sap.ui.mdc.FilterBarDelegate FilterBarDelegate} file that provides the required APIs to create the content of the {@link sap.ui.mdc.FilterBar FilterBar} control.<br>
 				 * <b>Note:</b> Ensure that the related file can be requested (any required library has to be loaded before that).<br>
 				 * <b>Note:</b> This property must not be bound.
 				 * @since 1.74
@@ -97,7 +97,7 @@ sap.ui.define([
 
 						/**
 						 * Contains the mandatory information about the metamodel name <code>modelName</code> and the main data part in its <code>collectionName</code>.<br>
-						 * <b>Note:</b> Additional information relevant for the specific {@link sap.ui.mdc.FilterBarDelegate FilterBarDelegate} implementation might be included but is of no relevance for the filter bar itself.
+						 * <b>Note:</b> Additional information relevant for the specific {@link sap.ui.mdc.FilterBarDelegate FilterBarDelegate} implementation might be included but is of no relevance for the {@link sap.ui.mdc.FilterBar FilterBar} control itself.
 						 */
 						payload: {
 							modelName: undefined,
@@ -118,7 +118,7 @@ sap.ui.define([
 				},
 
 				/**
-				 * Displays possible errors during the search in a message box.
+				 * Indicates whether possible errors during the search in a message box are displayed.
 				 * @since 1.74
 				 * Since version 1.111 replaced by the new validation handling of {@link sap.ui.mdc.FilterBarDelegate#determineValidationState determineValidationState} and {@link sap.ui.mdc.FilterBarDelegate#visualizeValidationState visualizeValidationState}.
 				 */
@@ -129,7 +129,7 @@ sap.ui.define([
 				},
 
 				/**
-				 * Determines whether the Go button is visible in the filter bar.<br>
+				 * Indicates whether the Go button is visible in the {@link sap.ui.mdc.FilterBar FilterBar} control.<br>
 				 * <b>Note</b>: If the <code>liveMode</code> property is set to <code>true</code>, it is ignored.
 				 */
 				showGoButton: {
@@ -206,7 +206,7 @@ sap.ui.define([
 				},
 
 				/**
-				 * Internal hidden aggregation to hold the inner layout.
+				 * Contains the internal hidden aggregation to hold the inner layout.
 				 */
 				layout: {
 					type: "sap.ui.mdc.filterbar.IFilterContainer",
@@ -216,7 +216,7 @@ sap.ui.define([
 			},
 			associations: {
 				/**
-				 *  {@link sap.ui.fl.variants.VariantManagement VariantManagement} control for the filter bar.
+				 *  {@link sap.ui.fl.variants.VariantManagement VariantManagement} control for the {@link sap.ui.mdc.FilterBar FilterBar} control.
 				 * <b>Note</b>: This association is only required to get information from {@link topic:a8e55aa2f8bc4127923b20685a6d1621 SAPUI5 Flexibility}
 				 * whenever a variant was applied, with 'apply automatically' set to <code>true</code>.
 				 * <b>Note</b>: This association must only be assigned once.
@@ -230,7 +230,7 @@ sap.ui.define([
 
 				/**
 				 * This event is fired when the Go button is pressed or after a condition change, when <code>liveMode</code> is active.
-				 * <b>Note</b>: This event should never be executed programmatically. It is triggered internally by the filter bar after a <code>triggerSearch</code> has been executed
+				 * <b>Note</b>: This event should never be executed programmatically. It is triggered internally by the {@link sap.ui.mdc.FilterBar FilterBar} after the <code>triggerSearch</code> function has been executed.
 				 */
 				search: {
 					parameters: {
@@ -331,12 +331,14 @@ sap.ui.define([
 	};
 
 	/**
-	 * Interface for inner layout creation, needs to: provide three variables on the FilterBarBase derivation:
-	 *
-	 * _cLayoutItem, the class which is being used to create FilterItems
-	 * _oFilterBarLayout, instance of the layout which needs to be a IFilterContainer derivation
-	 *
-	 * In addition the aggregation "layout" of the FilterBarBase derivation should be set to the created instance of _oFilterBarLayout
+	 * Interface for inner layout creation.
+	 * Three variables must be provided for the <code>FilterBarBase</code> derivation:
+	 * <ul>
+	 * <li>_cLayoutItem, the class that is used to create FilterItems</li>
+	 * <li>_oFilterBarLayout, instance of the layout that needs to be a IFilterContainer derivation</li>
+	 * <li>_btnAdapt, instance of the Adapt Filters button that shows the filter dialog</li>
+	 * </ul>
+	 * In addition, the <code>layout<code> aggregation of the <code>FilterBarBase</code> derivation should be set to the created instance of <code>_oFilterBarLayout<code> variable.
 	 */
 	FilterBarBase.prototype._createInnerLayout = function() {
 		this._cLayoutItem = null;
@@ -383,15 +385,15 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the name of the inner <code>FilterBarBase</code> condition model.
-	 * @returns {string} Name of the inner <code>FilterBarBase</code> condition model
+	 * Returns the name of the inner condition model of the <code>FilterBarBase</code> control.
+	 * @returns {string} Name of the inner condition model of the <code>FilterBarBase</code> control
 	 */
 	FilterBarBase.prototype.getConditionModelName = function() {
 		return this._getConditionModelName();
 	};
 
 	FilterBarBase.prototype._getConditionModelName = function() {
-		return  FilterBarBase.CONDITION_MODEL_NAME;
+		return FilterBarBase.CONDITION_MODEL_NAME;
 	};
 
 	FilterBarBase.prototype._createConditionModel = function() {
@@ -425,30 +427,29 @@ sap.ui.define([
 	};
 
 	/**
-	 * Determines whether the default behavior of the <code>suspendSelection</code> property is overruled. This can only happen during the suspension of the selection.
+	 * Determines whether the default behavior of the <code>suspendSelection</code> property is overruled.
+	 * This can only happen during the suspension of the selection.
 	 * If this property is set to <code>true</code>, a possible queue of search requests is ignored during the final <code>suspendSelection</code> operation.
 	 * Once the suspension of the selection is over, this value will be set to <code>false</code>.
 	 *
 	 * @private
 	 * @ui5-restricted sap.fe
-	 * @param {boolean} bValue Indicates if set to <code>true</code> that the default behavior is to be ignored
-	 *
+	 * @param {boolean} bValue If set to <code>true</code> the default behavior is ignored
 	 */
 	FilterBarBase.prototype.setIgnoreQueuing = function(bValue) {
 		this._bIgnoreQueuing = bValue;
 	};
 
 	/**
-	 * Determines whether the default behavior of the <code>suspendSelection</code> property is overruled.
+	 * Indicates whether the default behavior of the <code>suspendSelection</code> property is overruled.
 	 *
 	 * @private
 	 * @ui5-restricted sap.fe
-	 * @returns {boolean} Indicator that determines if default behavior of  <code>suspendSelection</code> is overruled
+	 * @returns {boolean} Indicates whether the default behavior of the <code>suspendSelection</code> property is overruled
 	 */
 	FilterBarBase.prototype.getIgnoreQueuing = function() {
 		return this._bIgnoreQueuing;
 	};
-
 
 	FilterBarBase.prototype.setSuspendSelection = function(bValue) {
 
@@ -473,7 +474,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the external conditions of the inner condition model.
+	 * Gets the external conditions of the inner condition model.
 	 * <b>Note:</b> This API returns only attributes related to the {@link sap.ui.mdc.FilterBar#setP13nMode p13nMode} property configuration.
 	 *
 	 * @public
@@ -498,11 +499,11 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the labels of all filters with a value assignment.
+	 * Gets the labels of all filters with a value assignment.
 	 *
-	 * Note: filters annotated with hiddenFilters will not be considered
+	 * <b>Note:</b> Filters annotated with <code>hiddenFilters</code> will not be considered.
 	 *
-	 * @returns {Array} array of labels of filters with value assignment
+	 * @returns {string[]} Array of labels of filters with value assignment
 	 * @public
 	 */
 	FilterBarBase.prototype.getAssignedFilterNames = function() {
@@ -527,7 +528,6 @@ sap.ui.define([
 
 		return aFilterNames;
 	};
-
 
 
 	FilterBarBase.prototype._getAssignedFiltersText = function() {
@@ -607,31 +607,32 @@ sap.ui.define([
 
 
 	/**
-	 * Returns a summary string that contains information about the filters currently assigned.
-	 * The method returns the text summary for the expanded and collapsed states of the filter bar.<br>
+	 * Gets a summary string that contains information about the filters currently assigned.
+	 * The method returns the text summary for the expanded and collapsed states of the {@link sap.ui.mdc.FilterBar FilterBar} control.<br>
 	 * <br>
-	 * <b>Example for collapsed filter bar</b>:<br>
+	 * @example
+	 * <b>Example for the collapsed <code>FilterBar<code> control</b>:<br>
 	 * <i>3 filters active: Company Code, Fiscal Year, Customer</i>
 	 *
-	 * <b>Example for expanded filter bar</b>:<br>
+	 * <b>Example for the expanded <code>FilterBar<code> control</b>:<br>
 	 * <i>3 filters active (1 hidden)</i>
 	 *
 	 * @public
 	 * @returns {map} A map containing the text information
-	 * @returns {map.filtersText} A string that is displayed if the filter bar is collapsed
-	 * @returns {map.filtersTextExpanded} A string that is displayed if the filter bar is expanded
+	 * @returns {map.filtersText} A string that is displayed if the {@link sap.ui.mdc.FilterBar FilterBar} control is collapsed
+	 * @returns {map.filtersTextExpanded} A string that is displayed if the {@link sap.ui.mdc.FilterBar FilterBar} control is expanded
 	 */
 	FilterBarBase.prototype.getAssignedFiltersText = function() {
 		return this._getAssignedFiltersText();
 	};
 
 	/**
-	 * Triggers updates for the assigned filters such as the text & count of active filters.
-	 * Orchestrates the central events of the FilterBarBase in addition.
+	 * Triggers updates for the assigned filters, such as the <code>text</code> and <code>count</code> properties of active filters.
+	 * Orchestrates the central events of the <code>FilterBarBase</code> control in addition.
 	 * @private
 	 * @param {object} mReportSettings Settings to control specific events
-	 * @param {object} mReportSettings.triggerFilterUpdate Determines if a filtersChange event should be fired
-	 * @param {object} mReportSettings.triggerSearch Determines if a search event should be fired
+	 * @param {object} mReportSettings.triggerFilterUpdate Indicates if a filtersChange event is fired
+	 * @param {object} mReportSettings.triggerSearch Indicates if a search event is fired
 	 */
 	FilterBarBase.prototype._reportModelChange = function(mReportSettings) {
 
@@ -647,10 +648,12 @@ sap.ui.define([
 		}
 	};
 
+	/**
+	 * @returns {sap.ui.mdc.util.PropertyInfo[]}
+	 */
 	FilterBarBase.prototype.getPropertyInfoSet = function() {
 		return this.getPropertyHelper() ? this.getPropertyHelper().getProperties() : [];
 	};
-
 
 	FilterBarBase.prototype._addConditionChange = function(pConditionState) {
 		this._aOngoingChangeAppliance.push(this.getEngine().createChanges({
@@ -698,7 +701,6 @@ sap.ui.define([
 		}
 
 	};
-
 
 	FilterBarBase.prototype._toExternal = function(oProperty, oCondition) {
 		let oConditionExternal = merge({}, oCondition);
@@ -858,7 +860,7 @@ sap.ui.define([
 	/**
 	 * Triggers the search.
 	 * @public
-	 * @returns {Promise} In case the property {@link sap.ui.mdc.FilterBarBase#setSuspendSelection suspendSelection} is set to <code>true</code> the method will be immediatelly resolved, otherwise it returns the result of the {@link sap.ui.mdc.FilterBarBase#validate} call.
+	 * @returns {Promise} If the {@link sap.ui.mdc.FilterBarBase#setSuspendSelection suspendSelection} property is set to <code>true</code>, the method will be immediately resolved, otherwise it returns the result of the {@link sap.ui.mdc.FilterBarBase#validate} call.
 	 */
 	FilterBarBase.prototype.triggerSearch = function() {
 		if (this.getSuspendSelection()) {
@@ -876,7 +878,7 @@ sap.ui.define([
 	 * Returns a <code>Promise</code> for the asynchronous validation of filters.
 	 *
 	 * @public
-	 * @param {boolean} bSuppressSearch Determines if the <code>search</code> event is triggered after successful validation
+	 * @param {boolean} bSuppressSearch Indicates whether the <code>search</code> event is triggered after successful validation
 	 * @returns {Promise} Returns a <code>Promise</code> that resolves after the validation of erroneous fields has been propagated.
 	 *
 	 */
@@ -938,6 +940,7 @@ sap.ui.define([
 
 		return vRetErrorState;
 	};
+
 	FilterBarBase.prototype._getRequiredFilterFieldValueText = function(oFilterField) {
 		if (oFilterField) {
 			return this._oRb.getText("filterbar.REQUIRED_FILTER_VALUE_MISSING", [oFilterField.getLabel()]);
@@ -1009,6 +1012,7 @@ sap.ui.define([
 	FilterBarBase.prototype._hasAppliancePromises = function() {
 		return (this._aOngoingChangeAppliance && (this._aOngoingChangeAppliance.length > 0)) ? this._aOngoingChangeAppliance.slice() : null;
 	};
+
 	FilterBarBase.prototype._handleFilterItemSubmit = function(oEvent) {
 
 		const oPromise = oEvent.getParameter("promise");
@@ -1062,13 +1066,13 @@ sap.ui.define([
 		this._aFIChanges.push({ name: sFilterName, promise: oEvent.getParameter("promise")});
 	};
 
-	 /**
-	  * Checks the validation status of the filter fields.
-	  * <b>Note:</b><br>
-	  * This method returns the current inner state of the filter bar.
-	  * @public
-	  * @returns {sap.ui.mdc.enums.FilterBarValidationStatus} Returns the validation status
-	  */
+	/**
+	 * Checks the validation status of the filter fields.
+	 * <b>Note:</b>
+	 * This method returns the current inner state of the {@link sap.ui.mdc.FilterBar FilterBar}.
+	 * @public
+	 * @returns {sap.ui.mdc.enums.FilterBarValidationStatus} Contains the validation status
+	 */
 	FilterBarBase.prototype.checkFilters = function() {
 		let vRetErrorState = this._checkAsyncValidation();
 		if (vRetErrorState !== FilterBarValidationStatus.NoError) {
@@ -1170,80 +1174,77 @@ sap.ui.define([
 		}
 	};
 
-	 FilterBarBase.prototype._determineValidationState = function() {
-		 return this.awaitControlDelegate().then(function(oDelegate) {
-			 return oDelegate.determineValidationState(this, this.checkFilters());
-		 }.bind(this));
-	 };
+	FilterBarBase.prototype._determineValidationState = function() {
+		return this.awaitControlDelegate().then(function(oDelegate) {
+			return oDelegate.determineValidationState(this, this.checkFilters());
+		}.bind(this));
+	};
 
-	 FilterBarBase.prototype._visualizeValidationState = function(nValidationStatus) {
-		 if (this._oDelegate) {
-			 this._oDelegate.visualizeValidationState(this, { status: nValidationStatus});
-		 }
-	 };
+	FilterBarBase.prototype._visualizeValidationState = function(nValidationStatus) {
+		if (this._oDelegate) {
+			this._oDelegate.visualizeValidationState(this, { status: nValidationStatus});
+		}
+	};
 
-	 /**
-	  * Returns the corresponding library text.
-	  * @private
-	  * @param {string} sKey Key of the text
-	  * @returns {string} relevant text from the message bundle
-	  */
-	 FilterBarBase.prototype.getText = function(sKey) {
-		 return this._oRb.getText(sKey);
-	 };
+	/**
+	 * Gets the corresponding library text.
+	 * @private
+	 * @param {string} sKey Key of the text
+	 * @returns {string} Relevant text from the message bundle
+	 */
+	FilterBarBase.prototype.getText = function(sKey) {
+		return this._oRb.getText(sKey);
+	};
 
+	FilterBarBase.prototype._restartCheckAndNotify = function(bFireSearch) {
+		const vRetErrorState = this.checkFilters();
+		this._checkAndNotify(bFireSearch, vRetErrorState);
+	};
 
-	 FilterBarBase.prototype._restartCheckAndNotify = function(bFireSearch) {
-		 const vRetErrorState = this.checkFilters();
-		 this._checkAndNotify(bFireSearch, vRetErrorState);
-	 };
+	FilterBarBase.prototype._checkAndNotify = function(bFireSearch, vRetErrorState) {
+		const fnCheckAndFireSearch = function() {
+			if (bFireSearch) {
+				const oObj = {
+					reason: this._sReason ? this._sReason : ReasonMode.Unclear
+				};
+				this._sReason = ReasonMode.Unclear;
 
-	 FilterBarBase.prototype._checkAndNotify = function(bFireSearch, vRetErrorState) {
-		 const fnCheckAndFireSearch = function() {
-			 if (bFireSearch) {
-					const oObj = {
-						reason: this._sReason ? this._sReason : ReasonMode.Unclear
-					};
-					this._sReason = ReasonMode.Unclear;
+				this.fireSearch(oObj);
+			}
+		}.bind(this);
 
-					this.fireSearch(oObj);
-			 }
-		 }.bind(this);
+		const fnCleanup = function() {
+			this._bFieldInErrorState = false;
+			this._oValidationPromise = null;
+			this._fRejectedSearchPromise = null;
+			this._fResolvedSearchPromise = null;
+		}.bind(this);
 
-		 const fnCleanup = function() {
-			 this._bFieldInErrorState = false;
-			 this._oValidationPromise = null;
-			 this._fRejectedSearchPromise = null;
-			 this._fResolvedSearchPromise = null;
-		 }.bind(this);
+		if (vRetErrorState === FilterBarValidationStatus.AsyncValidation) {
+			this._handleAsyncValidation(bFireSearch, this._restartCheckAndNotify.bind(this));
+			return;
+		}
 
-		 if (vRetErrorState === FilterBarValidationStatus.AsyncValidation) {
-			 this._handleAsyncValidation(bFireSearch, this._restartCheckAndNotify.bind(this));
-			 return;
-		 }
+		if (vRetErrorState === FilterBarValidationStatus.OngoingChangeAppliance) {
+			this._handleOngoingChangeAppliance(bFireSearch, this._restartCheckAndNotify.bind(this));
+			return;
+		}
 
-		 if (vRetErrorState === FilterBarValidationStatus.OngoingChangeAppliance) {
-			 this._handleOngoingChangeAppliance(bFireSearch, this._restartCheckAndNotify.bind(this));
-			 return;
-		 }
+		if (vRetErrorState === FilterBarValidationStatus.NoError) {
+			if (this._fResolvedSearchPromise) {
+				fnCheckAndFireSearch();
+				this._fResolvedSearchPromise();
+			}
+		} else if (this._fRejectedSearchPromise) {
+			this._setFocusOnFirstErroneousField();
+			this._fRejectedSearchPromise();
+		}
 
-		 if (vRetErrorState === FilterBarValidationStatus.NoError) {
-			 if (this._fResolvedSearchPromise) {
-				 fnCheckAndFireSearch();
-				 this._fResolvedSearchPromise();
-			 }
-		 } else if (this._fRejectedSearchPromise) {
-			 this._setFocusOnFirstErroneousField();
-			 this._fRejectedSearchPromise();
-		 }
+		this._visualizeValidationState(vRetErrorState);
+		fnCleanup();
+	};
 
-		 this._visualizeValidationState(vRetErrorState);
-		 fnCleanup();
-	 };
-
-	 // Executes the search.
-	 FilterBarBase.prototype._validate = function(bFireSearch) {
-
+	FilterBarBase.prototype._validate = function(bFireSearch) {
 		const fnCleanup = function() {
 			this._oValidationPromise = null;
 			this._fRejectedSearchPromise = null;
@@ -1261,8 +1262,9 @@ sap.ui.define([
 	};
 
 	/**
-	 * Assigns conditions to the inner condition model.
-	 * <br><b>Note:</b>This method is only called for filling the in parameters for value help scenarios.
+	 * Sets conditions to the inner condition model.
+	 * <br><b>Note:</b>
+	 * This method is only called for filling in the parameters for value help scenarios.
 	 * @private
 	 * @param {map} mConditions A map containing the conditions
 	 */
@@ -1274,7 +1276,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the conditions of the inner condition model.
+	 * Gets the conditions of the inner condition model.
 	 * @private
 	 * @returns {map} A map containing the conditions
 	 */
@@ -1283,7 +1285,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the state of initialization.
+	 * Gets the state of initialization.
 	 * This method does not trigger the retrieval of the metadata.
 	 * @private
 	 * @returns {Promise} Resolves after the initial filters have been applied
@@ -1293,7 +1295,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the state of initialization.
+	 * Gets the state of initialization.
 	 * This method does not trigger the retrieval of the metadata.
 	 * @public
 	 * @returns {Promise} Resolves after the initial filters have been applied
@@ -1304,7 +1306,7 @@ sap.ui.define([
 
 
 	/**
-	 * Returns the state of initialization.
+	 * Gets the state of initialization.
 	 * This method triggers the retrieval of the metadata.
 	 * @public
 	 * @returns {Promise} Resolves after the initial filters have been applied and the metadata has been obtained
@@ -1318,9 +1320,9 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the conditions of the inner condition model.
+	 * Gets the conditions of the inner condition model.
 	 * @private
-	 * @param {object} oModel containing the conditions.
+	 * @param {object} oModel Contains the conditions
 	 * @param {boolean} bDoNotExternalize Indicates if the returned conditions are in an external format
 	 * @param {boolean} bKeepAllValues Indicates if the returned conditions include empty arrays rather then removing them
 	 * @returns {map} A map containing the conditions
@@ -1371,8 +1373,8 @@ sap.ui.define([
 	/**
 	 * Called whenever modification occured through personalization change appliance
 	 *
-	 * @param {string[]} aAffectedControllers Array of affected Engine controllers during appliance
-	 * @returns {Promise} Resolving after modification changes processed by the FilterBarBase
+	 * @param {string[]} aAffectedControllers Array of affected engine controllers during appliance
+	 * @returns {Promise} Resolves after modification changes have been processed by the <code>FilterBarBase</code>
 	 * @private
 	 */
 	FilterBarBase.prototype._onModifications = function(aAffectedControllers) {
@@ -1456,7 +1458,6 @@ sap.ui.define([
 		return this._getModelConditions(this._getConditionModel(), false);
 	};
 
-
 	FilterBarBase.prototype._getRequiredPropertyNames = function() {
 		const aReqFilterNames = [];
 
@@ -1468,7 +1469,6 @@ sap.ui.define([
 
 		return aReqFilterNames;
 	};
-
 
 	FilterBarBase.prototype._getNonRequiredPropertyNames = function() {
 		const aNonReqFilterNames = [];
@@ -1610,6 +1610,7 @@ sap.ui.define([
 	FilterBarBase.prototype._getFilterItemLayout = function(oFilterField) {
 		return this._getFilterItemLayoutByName(oFilterField.getPropertyKey());
 	};
+
 	FilterBarBase.prototype._getFilterItemLayoutByName = function(sFieldPath) {
 		let oFilterItemLayout = null;
 
@@ -1697,7 +1698,6 @@ sap.ui.define([
 		return this;
 	};
 
-
 	FilterBarBase.prototype._getNonHiddenPropertyInfoSet = function() {
 		const aVisibleProperties = [];
 		this.getPropertyInfoSet().every(function(oProperty) {
@@ -1714,7 +1714,6 @@ sap.ui.define([
 		return aVisibleProperties;
 	};
 
-
 	FilterBarBase.prototype._getNonHiddenPropertyByName = function(sName) {
 		let oProperty = null;
 		this._getNonHiddenPropertyInfoSet().some(function(oProp) {
@@ -1727,7 +1726,6 @@ sap.ui.define([
 
 		return oProperty;
 	};
-
 
 	FilterBarBase.prototype._cleanUpFilterFieldInErrorStateByName = function(sFieldName) {
 		let oFilterField = null;
@@ -1872,7 +1870,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the external conditions.
+	 * Gets the external conditions.
 	 *
 	 * @public
 	 * @returns {map} Map containing the external conditions
@@ -1887,7 +1885,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the value of the basic search condition.
+	 * Gets the value of the basic search condition.
 	 *
 	 * @public
 	 * @returns {string} Value of search condition or empty

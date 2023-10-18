@@ -219,6 +219,14 @@ sap.ui.define([
 				}
 			},
 
+			"opa/input/SuggestionRowsPopoverOPA": {
+				title: "OPA Test Page for sap.m.Input with tabular suggestions",
+				ui5: {
+					libs: "sap.m",
+					language: "en"
+				}
+			},
+
 			CustomTreeItem: {
 				title: "QUnit Page for sap.m.CustomTreeItem",
 				coverage: {
@@ -672,6 +680,14 @@ sap.ui.define([
 				title: "QUnit tests: sap.m.InputBase",
 				sinon: {
 					useFakeTimers: true
+				}
+			},
+
+			"opa/input/InputTypeAheadOPA": {
+				title: "OPA Test Page for sap.m.Input",
+				ui5: {
+					libs: "sap.m",
+					language: "en"
 				}
 			},
 

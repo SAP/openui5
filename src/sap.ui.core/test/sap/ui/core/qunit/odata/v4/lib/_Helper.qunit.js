@@ -2266,13 +2266,21 @@ sap.ui.define([
 	QUnit.test("getPrivateAnnotation", function (assert) {
 		var oObject = {
 				"@$ui5._" : {
+					null : null,
 					transient : "foo"
 				}
 			};
 
 		assert.strictEqual(_Helper.getPrivateAnnotation({}, "foo"), undefined);
+		assert.strictEqual(_Helper.getPrivateAnnotation({}, "foo", "~default~"), "~default~");
 		assert.strictEqual(_Helper.getPrivateAnnotation(oObject, "foo"), undefined);
+		assert.strictEqual(_Helper.getPrivateAnnotation(oObject, "foo", "~default~"), "~default~");
+		assert.strictEqual(_Helper.getPrivateAnnotation(oObject, "null", "~default~"), null);
 		assert.strictEqual(_Helper.getPrivateAnnotation(oObject, "transient"), "foo");
+
+		assert.throws(function () {
+			_Helper.getPrivateAnnotation(null, "foo", "~default~");
+		}, TypeError);
 	});
 
 	//*********************************************************************************************

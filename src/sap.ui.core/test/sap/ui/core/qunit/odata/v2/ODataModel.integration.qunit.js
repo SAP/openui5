@@ -20846,7 +20846,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				} else {
 					const aCurrentMessages = Messaging.getMessageModel().getObject("/");
 					aCurrentMessages.some((oMessage) => {
-						if ("" === oCreatedContext.getPath() + "/ItemPosition") {
+						if (oMessage.getTargets()[0] === oCreatedContext.getPath() + "/ItemPosition") {
 							Messaging.removeMessages(oMessage);
 							aExpectedMessages = aExpectedMessages.slice(0, 1);
 							return true;

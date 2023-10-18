@@ -15,7 +15,7 @@ sap.ui.define([],
 		};
 
 		/**
-		 * CSS class to be applied to the HTML root element of the FilterBar control.
+		 * CSS class to be applied to the HTML root element of the {@link sap.ui.mdc.FilterBar FilterBar} control.
 		 *
 		 * @readonly
 		 * @const {string}
