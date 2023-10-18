@@ -3,18 +3,16 @@
  */
 
 sap.ui.define([
-	"sap/ui/mdc/ValueHelpDelegate",
-	'sap/base/Log',
+	"../../ValueHelpDelegate",
 	'sap/ui/model/FilterType',
-	'sap/base/util/deepEqual',
-	'sap/ui/mdc/odata/v4/TypeMap'
+	'sap/ui/mdc/odata/v4/TypeMap',
+	'../../util/PayloadSearchKeys'
 
 ], function(
 	ValueHelpDelegate,
-	Log,
 	FilterType,
-	deepEqual,
-	ODataV4TypeMap
+	ODataV4TypeMap,
+	PayloadSearchKeys
 ) {
 	"use strict";
 
@@ -26,7 +24,7 @@ sap.ui.define([
 	 * @author SAP SE
 	 * @public
 	 * @since 1.95.0
-	 * @extends module:sap/ui/mdc/ValueHelpDelegate
+	 * @extends module:delegates/ValueHelpDelegate
 	 * @alias module:delegates/odata/v4/ValueHelpDelegate
 	 */
 	var ODataV4ValueHelpDelegate = Object.assign({}, ValueHelpDelegate);
@@ -36,24 +34,26 @@ sap.ui.define([
 	};
 
 	ODataV4ValueHelpDelegate.isSearchSupported = function(oValueHelp, oContent, oListBinding) {
-		return !!oListBinding.changeParameters;
+		if (PayloadSearchKeys.inUse(oValueHelp)) {
+			return PayloadSearchKeys.isEnabled(oValueHelp, oContent);
+		} else if (oListBinding) {
+			return !!oListBinding.changeParameters;
+		} else {
+			return true; // We are optimistic as long as no binding is available, as mdc.Table only creates it's binding on rendering w. autoBindOnInit=false.
+		}
 	};
 
 	ODataV4ValueHelpDelegate.updateBindingInfo = function(oValueHelp, oContent, oBindingInfo) {
 		ValueHelpDelegate.updateBindingInfo(oValueHelp, oContent, oBindingInfo);
 
-		if (oContent.getFilterFields() === "$search"){
-			var oFilterBar = oContent._getPriorityFilterBar();
-			var sSearch = oContent.isTypeahead() ? oContent._getPriorityFilterValue() : oFilterBar && oFilterBar.getSearch();
-			if (this.adjustSearch) {
-				sSearch = this.adjustSearch(oValueHelp, oContent.isTypeahead(), sSearch);
-			}
+		if (!PayloadSearchKeys.inUse(oValueHelp) && oContent.isSearchSupported()){
+			const sSearch = this.adjustSearch ? this.adjustSearch(oValueHelp, oContent.isTypeahead(), oContent.getSearch()) : oContent.getSearch();
 			oBindingInfo.parameters.$search = sSearch || undefined;
 		}
 	};
 
 	ODataV4ValueHelpDelegate.updateBinding = function(oValueHelp, oListBinding, oBindingInfo) {
-		var oRootBinding = oListBinding.getRootBinding() || oListBinding;
+		const oRootBinding = oListBinding.getRootBinding() || oListBinding;
 		if (!oRootBinding.isSuspended()) {
 			oRootBinding.suspend();
 		}

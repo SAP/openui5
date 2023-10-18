@@ -6,10 +6,10 @@
 	xmlns:vhc="sap.ui.mdc.valuehelp.content"
 	xmlns:vhfb="sap.ui.mdc.filterbar.vh">
 
-	<mdc:ValueHelp id="range-vh" delegate="{name: 'sap/ui/mdc/ValueHelpDelegate', payload: {}}">
+	<mdc:ValueHelp id="range-vh" delegate="{name: 'mdc/sample/delegate/JSONValueHelpDelegate', payload: {searchKeys: ['range']}}">
 		<mdc:typeahead>
 			<vh:Popover title="Range">
-				<vhc:MTable keyPath="range" filterFields="*range*">
+				<vhc:MTable keyPath="range" >
 					<Table id="range-vh-table" items='{path : "mountains>/ranges"}' width="30rem">
 						<columns>
 							<Column>

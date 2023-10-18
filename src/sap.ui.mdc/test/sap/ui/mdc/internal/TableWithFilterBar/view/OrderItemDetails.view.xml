@@ -56,7 +56,7 @@
 										<mdc:ValueHelp id="FH4" delegate='\{"name": "sap/ui/v4demo/delegate/ValueHelp.delegate", "payload": \{\}\}'>
 											<mdc:typeahead>
 												<mdcv:Popover title="Book">
-													<mdcvc:MTable keyPath="ID" descriptionPath="title" filterFields="$search">
+													<mdcvc:MTable keyPath="ID" descriptionPath="title" >
 														<Table items='{path : "/Books", length: 10}' width="30rem" mode="SingleSelectMaster">
 															<columns>
 																<Column width="5rem">
@@ -78,7 +78,7 @@
 											</mdc:typeahead>
 											<mdc:dialog>
 												<mdcv:Dialog title="Book">
-													<mdcvc:MDCTable keyPath="ID" descriptionPath="title" filterFields="$search" forceBind="true">
+													<mdcvc:MDCTable keyPath="ID" descriptionPath="title"  forceBind="true">
 														<mdc:Table id="FH4--mdc--gridtable"
 															autoBindOnInit="false"
 															width="100%"
@@ -108,7 +108,7 @@
 										<mdc:ValueHelp id="FH5" delegate='\{"name": "sap/ui/v4demo/delegate/ValueHelp.delegate", "payload": \{\}\}'>
 											<mdc:typeahead>
 												<mdcv:Popover title="Parent ID">
-													<mdcvc:MTable keyPath="ID" filterFields="$search">
+													<mdcvc:MTable keyPath="ID" >
 														<Table items='{path : "/Orders"}' width="30rem"  growing="true" growingScrollToLoad="true" growingThreshold="20" mode="SingleSelectMaster">
 															<columns>
 																<Column width="5rem">

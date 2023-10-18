@@ -33,7 +33,7 @@
 					delegate='\{"name": "delegates/odata/v4/ValueHelpDelegate", "payload": \{\}\}'>
 					<mdc:typeahead>
 						<mdcv:Popover id="VH1-Pop" title="Book Title">
-							<mdcvc:MTable id="VH1-Pop-Cont" keyPath="ID" descriptionPath="title" filterFields="$search" useAsValueHelp="false">
+							<mdcvc:MTable id="VH1-Pop-Cont" keyPath="ID" descriptionPath="title"  useAsValueHelp="false">
 								<Table id="VH1-Pop-Table" items='{path : "/Books", length: 10}' width="20rem" mode="MultiSelect">
 									<columns>
 										<Column>
@@ -61,7 +61,7 @@
 					</mdc:typeahead>
 					<mdc:dialog>
 						<mdcv:Dialog id="VH1-Dia" title="Book Title">
-							<mdcvc:MDCTable id="VH1-Dia-Cont" keyPath="ID" descriptionPath="title" filterFields="$search">
+							<mdcvc:MDCTable id="VH1-Dia-Cont" keyPath="ID" descriptionPath="title" >
 								<mdc:Table id="VH1-Dia-Table" autoBindOnInit="true" selectionMode="Multi" p13nMode="Column,Sort" width="100%"
 									delegate='\{"name": "delegates/odata/v4/TableDelegate", "payload": \{"collectionName": "Books"\}\}'
 									threshold="50">

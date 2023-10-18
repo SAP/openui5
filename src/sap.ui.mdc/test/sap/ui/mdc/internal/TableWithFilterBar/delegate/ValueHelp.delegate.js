@@ -4,15 +4,11 @@
 
 sap.ui.define([
 	"delegates/odata/v4/ValueHelpDelegate",
-	'sap/ui/mdc/p13n/StateUtil',
-	'sap/ui/mdc/condition/Condition',
 	'sap/ui/mdc/condition/FilterOperatorUtil',
-	'sap/ui/mdc/enums/ConditionValidated',
 	'sap/ui/mdc/enums/ValueHelpSelectionType',
-	'sap/ui/core/Core',
 	'sap/base/util/deepEqual'
 ], function(
-	ODataV4ValueHelpDelegate, StateUtil, Condition, FilterOperatorUtil, ConditionValidated, ValueHelpSelectionType, Core, deepEqual
+	ODataV4ValueHelpDelegate, FilterOperatorUtil, ValueHelpSelectionType, deepEqual
 ) {
 	"use strict";
 

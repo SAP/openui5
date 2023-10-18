@@ -59,14 +59,14 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("_getPriorityFilterBar", function(assert) {
+	QUnit.test("getActiveFilterBar", function(assert) {
 		const fnDone = assert.async();
 		oContent._createDefaultFilterBar().then(function () {
-			let oFilterBar = oContent._getPriorityFilterBar();
+			let oFilterBar = oContent.getActiveFilterBar();
 			assert.equal(oFilterBar, oContent.getAggregation("_defaultFilterBar"), "returns defaultFilterBar if none is set");
 			const oMyFilterBar = new FilterBar();
 			oContent.setFilterBar(oMyFilterBar);
-			oFilterBar = oContent._getPriorityFilterBar();
+			oFilterBar = oContent.getActiveFilterBar();
 			assert.equal(oFilterBar, oMyFilterBar, "returns dedicated filterbar, if available");
 			fnDone();
 		});

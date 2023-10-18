@@ -284,7 +284,7 @@ sap.ui.define([
 
 
 		return oContentPromise.then(function (oContent) {
-			return oMdcTableWrapper._retrievePromise("listBinding").then(function () {
+			return oMdcTableWrapper.awaitListBinding().then(function () {
 				const oSelectionPlugin = oTable._oTable._getSelectionPlugin();
 
 				return oSelectionPlugin.setSelectedIndex(2).then(function () {
@@ -335,7 +335,7 @@ sap.ui.define([
 
 
 		return oPrepareContentPromise.then(function (oContent) {
-			return oMdcTableWrapper._retrievePromise("listBinding").then(function () {
+			return oMdcTableWrapper.awaitListBinding().then(function () {
 				const oSelectionPlugin = oTable._oTable._getSelectionPlugin();
 
 				return oSelectionPlugin.addSelectionInterval(0,2).then(function () {
@@ -399,7 +399,7 @@ sap.ui.define([
 		sinon.spy(oMdcTableWrapper, "_fireSelect");
 
 		return oContentPromise.then(function (oContent) {
-			return oMdcTableWrapper._retrievePromise("listBinding").then(function () {
+			return oMdcTableWrapper.awaitListBinding().then(function () {
 
 				oTable._oTable._getSelectionPlugin().fireSelectionChange({
 					rowIndices: [2],
@@ -441,7 +441,7 @@ sap.ui.define([
 		sinon.spy(oMdcTableWrapper, "_fireSelect");
 
 		return oContentPromise.then(function (oContent) {
-			return oMdcTableWrapper._retrievePromise("listBinding").then(function () {
+			return oMdcTableWrapper.awaitListBinding().then(function () {
 				const oInnerTable = oTable._oTable;
 				const aTableItems = oInnerTable && oInnerTable.getItems();
 
@@ -495,7 +495,7 @@ sap.ui.define([
 		sinon.spy(oMdcTableWrapper, "_fireSelect");
 
 		return oContentPromise.then(function (oContent) {
-			return oMdcTableWrapper._retrievePromise("listBinding").then(function () {
+			return oMdcTableWrapper.awaitListBinding().then(function () {
 				const oInnerTable = oTable._oTable;
 				const aTableItems = oInnerTable && oInnerTable.getItems();
 

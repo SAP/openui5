@@ -33,7 +33,7 @@
 				\}\}'>
 				<mdc:typeahead>
 					<mdcv:Popover title="Genre">
-						<mdcvc:MTable id="GenreTypeAhead" keyPath="code" descriptionPath="title" filterFields="$search" useAsValueHelp="false">
+						<mdcvc:MTable id="GenreTypeAhead" keyPath="code" descriptionPath="title"  useAsValueHelp="false">
 							<Table id="GenreTypeAheadTable" items='{path : "/Genres", length: 10, parameters: {$select: ["classification_code"]}}' width="30rem" mode="SingleSelectMaster">
 								<columns>
 									<Column>
@@ -61,7 +61,7 @@
 				</mdc:typeahead>
 				<mdc:dialog>
 					<mdcv:Dialog title="Genre">
-						<mdcvc:MDCTable id="GenreDialog" keyPath="code" descriptionPath="title" filterFields="$search">
+						<mdcvc:MDCTable id="GenreDialog" keyPath="code" descriptionPath="title" >
 							<mdcvc:filterBar>
 								<vhfb:FilterBar id="GenreDialog-FB" liveMode="false" delegate='\{"name": "delegates/GenericVhFilterBarDelegate", "payload": \{"collectionName": ""\}\}' >
 									<vhfb:filterItems>
@@ -103,7 +103,7 @@
 				\}\}'>
 				<mdc:typeahead>
 					<mdcv:Popover title="Subgenre">
-						<mdcvc:MTable id="SubGenreTypeAhead" keyPath="code" descriptionPath="title" filterFields="$search" useAsValueHelp="false">
+						<mdcvc:MTable id="SubGenreTypeAhead" keyPath="code" descriptionPath="title"  useAsValueHelp="false">
 							<Table id="SubGenreTypeAheadTable" items='{path : "/SubGenres", length: 10, parameters: {$select: ["classification_code", "genre_code"]}}' width="30rem" mode="SingleSelectMaster">
 								<columns>
 									<Column>
@@ -137,7 +137,7 @@
 				</mdc:typeahead>
 				<mdc:dialog>
 					<mdcv:Dialog title="Subgenre">
-						<mdcvc:MDCTable id="SubGenreDialog" keyPath="code" descriptionPath="title" filterFields="$search">
+						<mdcvc:MDCTable id="SubGenreDialog" keyPath="code" descriptionPath="title" >
 							<mdcvc:filterBar>
 								<vhfb:FilterBar id="SubGenreDialog-FB" liveMode="false" delegate='\{"name": "delegates/GenericVhFilterBarDelegate", "payload": \{"collectionName": ""\}\}' >
 									<vhfb:filterItems>

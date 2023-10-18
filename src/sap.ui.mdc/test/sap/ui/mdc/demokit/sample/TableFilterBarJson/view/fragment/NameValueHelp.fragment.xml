@@ -7,10 +7,10 @@
 	xmlns:vhc="sap.ui.mdc.valuehelp.content"
 	xmlns:vhfb="sap.ui.mdc.filterbar.vh">
 
-	<mdc:ValueHelp id="name-vh" delegate="{name: 'sap/ui/mdc/ValueHelpDelegate', payload: {}}">
+	<mdc:ValueHelp id="name-vh" delegate="{name: 'mdc/sample/delegate/JSONValueHelpDelegate', payload: {searchKeys: ['name']}}">
 		<mdc:typeahead>
 			<vh:Popover title="Name">
-				<vhc:MTable keyPath="name" filterFields="*name*">
+				<vhc:MTable keyPath="name" >
 					<Table id="name-vht-table" items='{path : "mountains>/mountains", length: 10}'
 						width="30rem">
 						<columns>

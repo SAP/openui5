@@ -109,7 +109,7 @@ sap.ui.define([
 
 	MDCTable.prototype._handleUpdateFinished = function (oEvent) {
 		if (this._oTable) {
-			this._handleRowBinding();
+			this.resolveListBinding();
 			if (!this._bQueryingContexts) {
 				// In every case update table selection state for eventual newly loaded contexts
 				this._setTableSelectionState();
@@ -119,13 +119,6 @@ sap.ui.define([
 
 	MDCTable.prototype._handleUpdateFinishedThrottled = _throttle(MDCTable.prototype._handleUpdateFinished, 100, {leading: false});
 
-	MDCTable.prototype._handleRowBinding = function () {
-		const oRowBinding = this._oTable.getRowBinding();
-		if (oRowBinding) {
-			this._resolvePromise("listBinding", oRowBinding);
-		}
-	};
-
 	MDCTable.prototype.observeChanges = function (oChanges) {
 		if (oChanges.name === "table") { // outer table
 			const oTable = oChanges.child;
@@ -133,10 +126,10 @@ sap.ui.define([
 				this._oTable.detachEvent('_bindingChange', this._handleUpdateFinishedThrottled, this);
 				this._oTable.detachEvent('selectionChange', this._handleSelectionChange, this);
 				this._oTable = null;
+				this.resetListBinding();
 			} else {
 				this._oTable = oTable;
-				this._addPromise("listBinding");
-				this._handleRowBinding();
+				this.resolveListBinding();
 				if (this._oTable.getAutoBindOnInit()) {
 					Log.warning("Usage of autobound tables may lead to unnecessary requests.");
 				} else if (this.getForceBind()) {
@@ -235,7 +228,7 @@ sap.ui.define([
 					this._oFilterBarVBox.addStyleClass("sapMdcValueHelpPanelFilterbar");
 					this._oFilterBarVBox._oWrapper = this;
 					this._oFilterBarVBox.getItems = function () {
-						const oFilterBar = this._oWrapper._getPriorityFilterBar.call(this._oWrapper);
+						const oFilterBar = this._oWrapper.getActiveFilterBar.call(this._oWrapper);
 						const aItems = oFilterBar ? [oFilterBar] : [];
 						return aItems;
 					};
@@ -270,7 +263,7 @@ sap.ui.define([
 
 				this.setAggregation("displayContent", this._oContentLayout);
 
-				if (!this._getPriorityFilterBar()) {
+				if (!this.getActiveFilterBar()) {
 					return this._createDefaultFilterBar().then(function () {
 						this._oFilterBarVBox.invalidate(); // to rerender if FilterBar added
 						return this._oContentLayout;
@@ -292,7 +285,7 @@ sap.ui.define([
 			const oTableType = this._oTable._getType();
 
 			// Connect filterBar
-			const oFilterBar = this._getPriorityFilterBar();
+			const oFilterBar = this.getActiveFilterBar();
 			if (oFilterBar && this._oTable.getFilter() !== oFilterBar.getId()) {
 				this._oTable.setFilter(oFilterBar);
 			}

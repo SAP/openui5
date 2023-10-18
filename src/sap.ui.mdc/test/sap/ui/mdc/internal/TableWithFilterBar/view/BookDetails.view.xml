@@ -50,7 +50,7 @@
 												delegate='\{"name": "sap/ui/v4demo/delegate/Books.AuthorVH.delegate", "payload": \{\}\}'>
 												<mdc:typeahead>
 													<mdcv:Popover id="FH1-Popover" title="Author ID">
-														<mdcvc:MTable id="FH1-Popover-MTable" keyPath="ID" descriptionPath="name" filterFields="$search">
+														<mdcvc:MTable id="FH1-Popover-MTable" keyPath="ID" descriptionPath="name" >
 															<Table id="mTable1" items='{path : "/Authors", length: 10}' width="30rem" mode="SingleSelectMaster">
 																<columns>
 																	<Column width="5rem">
@@ -78,7 +78,7 @@
 												</mdc:typeahead>
 												<mdc:dialog>
 													<mdcv:Dialog id="FH1-Dialog" title="Author ID">
-														<mdcvc:MDCTable id="FH1-Dialog-MDCTable" keyPath="ID" descriptionPath="name" filterFields="$search" forceBind="true">
+														<mdcvc:MDCTable id="FH1-Dialog-MDCTable" keyPath="ID" descriptionPath="name"  forceBind="true">
 															<mdcvc:filterBar>
 																<vhfb:FilterBar id="FH1-Dialog-MDCTable--default-FB" liveMode="false" delegate='\{"name": "delegates/GenericVhFilterBarDelegate", "payload": \{\}\}'>
 																	<vhfb:basicSearchField>
@@ -197,7 +197,7 @@
 										\}\}'>
 										<mdc:typeahead>
 											<mdcv:Popover title="Genre">
-												<mdcvc:MTable id="genreTypeAhead" keyPath="code" descriptionPath="title" filterFields="$search">
+												<mdcvc:MTable id="genreTypeAhead" keyPath="code" descriptionPath="title" >
 													<Table id="mTable1_genre" items='{path : "/Genres", length: 10, parameters: {$select: ["classification_code"]}}' width="30rem" mode="SingleSelectMaster">
 														<columns>
 															<Column width="10rem">
@@ -231,7 +231,7 @@
 										</mdc:typeahead>
 										<mdc:dialog>
 											<mdcv:Dialog title="Genre">
-												<mdcvc:MDCTable id="genreDialog" keyPath="code" descriptionPath="title" filterFields="$search" forceBind="true">
+												<mdcvc:MDCTable id="genreDialog" keyPath="code" descriptionPath="title"  forceBind="true">
 													<mdc:Table id="FHGenre-MDCTable"
 														autoBindOnInit="false"
 														width="100%"
@@ -276,7 +276,7 @@
 										\}\}'>
 										<mdc:typeahead>
 											<mdcv:Popover title="Sub Genre">
-												<mdcvc:MTable id="subGenreTypeAhead" keyPath="code" descriptionPath="title" filterFields="$search">
+												<mdcvc:MTable id="subGenreTypeAhead" keyPath="code" descriptionPath="title" >
 													<Table id="mTable1_subgenre" items='{path : "/SubGenres", length: 10, parameters: {$select: ["classification_code", "genre_code"]}}' width="30rem" mode="SingleSelectMaster">
 														<columns>
 															<Column width="10rem">
@@ -316,7 +316,7 @@
 										</mdc:typeahead>
 										<mdc:dialog>
 											<mdcv:Dialog title="Sub Genre">
-												<mdcvc:MDCTable id="subGenreDialog" keyPath="code" descriptionPath="title" filterFields="$search" forceBind="true">
+												<mdcvc:MDCTable id="subGenreDialog" keyPath="code" descriptionPath="title"  forceBind="true">
 													<mdcvc:filterBar>
 														<vhfb:FilterBar id="subGenreDialog-FB" liveMode="false" delegate='\{"name": "delegates/GenericVhFilterBarDelegate", "payload": \{"collectionName": ""\}\}' >
 															<vhfb:basicSearchField>

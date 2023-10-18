@@ -64,6 +64,8 @@ sap.ui.define([
 				 * The properties need to be separated by commas and enclosed by "*" characters. (<code>"*Property1,Property2*"</code>)
 				 *
 				 * If it is empty, no suggestion is available.
+				 *
+				 * @deprecated since 1.121.0 - please see <code>{@link sap.ui.mdc.ValueHelpDelegate.isSearchSupported isSearchSupported}</code>
 				 */
 				filterFields: {
 					type: "string",
@@ -126,12 +128,35 @@ sap.ui.define([
 		ListContent.prototype.init.apply(this, arguments);
 		this._oResourceBundle = Library.getResourceBundleFor("sap.ui.mdc");
 		this._oObserver.observe(this, {
-			properties: ["filterFields"],
 			aggregations: ["_defaultFilterBar", "filterBar"]
 		});
 
-		Engine.getInstance().defaultProviderRegistry.attach(this, PersistenceMode.Transient);
+		/**
+		 *  @deprecated since 1.121.0
+		 */
+		this._oObserver.observe(this, {
+			properties: ["filterFields"]
+		});
 
+		Engine.getInstance().defaultProviderRegistry.attach(this, PersistenceMode.Transient);
+		this.resetListBinding();
+	};
+
+	FilterableListContent.prototype.resetListBinding = function () {
+		return this._addPromise("listBinding");
+	};
+
+	FilterableListContent.prototype.awaitListBinding = function () {
+		return this._retrievePromise("listBinding");
+	};
+
+	FilterableListContent.prototype.resolveListBinding = function () {
+		const oListBinding = this.getListBinding();
+		if (oListBinding) {
+			this._resolvePromise("listBinding", oListBinding);
+			this._updateBasicSearchField();
+			return oListBinding;
+		}
 	};
 
 	FilterableListContent.prototype.handleFilterValueUpdate = function (oChanges) {
@@ -285,7 +310,6 @@ sap.ui.define([
 				liveMode: false, // !oWrapper.isSuspended(), // if suspended, no live search
 				showGoButton: true
 			});
-			_setBasicSearch.call(this, oFilterBar);
 			this.setAggregation("_defaultFilterBar", oFilterBar, true);
 			return oFilterBar;
 		}.bind(this));
@@ -298,38 +322,53 @@ sap.ui.define([
 
 	};
 
-	function _setBasicSearch(oFilterBar) {
-		const oExistingBasicSearchField = oFilterBar.getBasicSearchField();
-		const sFilterFields =  this.getFilterFields();
-		if (!oExistingBasicSearchField && sFilterFields) { // TODO: use isSearchSupported but here Delegate needs to be loaded
-			if (!this._oSearchField) {
-				return loadModules([
-					"sap/ui/mdc/FilterField"
-				]).then(function (aModules){
-					if (!oFilterBar.isDestroyed()) {
-						const FilterField = aModules[0];
-						this._oSearchField = new FilterField(this.getId() + "-search", {
-							conditions: "{$filters>/conditions/" + sFilterFields + "}",
-							propertyKey: sFilterFields,
-							placeholder:"{$i18n>filterbar.SEARCH}",
-							label:"{$i18n>filterbar.SEARCH}", // TODO: do we want a label?
-							maxConditions: 1,
-							width: "50%"
-						});
-						this._oSearchField._bCreatedByValueHelp = true;
-						_setBasicSearch.call(this, oFilterBar);
-					}
-				}.bind(this));
+	FilterableListContent.prototype._updateBasicSearchField = function () {
+		const oFilterBar = this.getActiveFilterBar();
+		if (oFilterBar) {
+			const oExistingBasicSearchField = oFilterBar.getBasicSearchField();
+
+			let bSearchSupported = this.isSearchSupported();
+			let sSearchPath = "$search";
+
+			/**
+			 *  @deprecated since 1.121.0
+			 */
+			if (!this.isPropertyInitial("filterFields")) {
+				sSearchPath = this.getFilterFields();
+				bSearchSupported = !!sSearchPath;
 			}
-			oFilterBar.setBasicSearchField(this._oSearchField);
-		} else if (oExistingBasicSearchField) {
-			if (sFilterFields) {
-				oExistingBasicSearchField.setConditions([]); // initialize search field
-			} else if (oExistingBasicSearchField._bCreatedByValueHelp) {
-				oFilterBar.setBasicSearchField(); // remove to reuse on other FilterBar
+
+			if (!oExistingBasicSearchField && bSearchSupported) {
+				if (!this._oSearchField) {
+					return loadModules([
+						"sap/ui/mdc/FilterField"
+					]).then(function (aModules){
+						if (!oFilterBar.isDestroyed()) {
+							const FilterField = aModules[0];
+							this._oSearchField = new FilterField(this.getId() + "-search", {
+								conditions: "{$filters>/conditions/" + sSearchPath + "}",
+								propertyKey: sSearchPath,
+								placeholder:"{$i18n>filterbar.SEARCH}",
+								label:"{$i18n>filterbar.SEARCH}", // TODO: do we want a label?
+								maxConditions: 1,
+								width: "50%"
+							});
+							this._oSearchField._bCreatedByValueHelp = true;
+							this._updateBasicSearchField();
+						}
+					}.bind(this));
+				}
+				oFilterBar.setBasicSearchField(this._oSearchField);
+				oExistingBasicSearchField.setConditions([]);
+			} else if (oExistingBasicSearchField) {
+				if (bSearchSupported) {
+					//oExistingBasicSearchField.setConditions([]); // initialize search field
+				} else if (oExistingBasicSearchField._bCreatedByValueHelp) {
+					oFilterBar.setBasicSearchField(); // remove to reuse on other FilterBar
+				}
 			}
 		}
-	}
+	};
 
 	FilterableListContent.prototype.onContainerClose = function () {
 		this._setLocalFilterValue(undefined);
@@ -338,8 +377,11 @@ sap.ui.define([
 	/**
 	 * Gets the currently used <code>FilterBar</code> control.
 	 * @returns {sap.ui.mdc.filterbar.vh.FilterBar} FilterBar
+	 *
+	 * @since: 1.121.0
+	 * @protected
 	 */
-	FilterableListContent.prototype._getPriorityFilterBar = function () {
+	FilterableListContent.prototype.getActiveFilterBar = function () {
 		return this.getFilterBar() || this.getAggregation("_defaultFilterBar");
 	};
 
@@ -351,7 +393,7 @@ sap.ui.define([
 				oFilterBar = oChanges.child;
 				let oDefaultFilterBar;
 				if (oChanges.mutation === "insert") {
-					_setBasicSearch.call(this, oFilterBar);
+					this._updateBasicSearchField();
 					this._assignCollectiveSearchSelect();
 
 					if (oChanges.name !== "_defaultFilterBar" || !this.getFilterBar()) { // DefaultFilterBar only used if no other FilterBar assigned
@@ -380,12 +422,13 @@ sap.ui.define([
 						}
 					}
 				}
-			} else if (oChanges.name === "filterFields") {
-				// check if search fields needs to be removed or added
-				oFilterBar = this._getPriorityFilterBar();
-				if (oFilterBar) {
-					_setBasicSearch.call(this, oFilterBar);
-				}
+			}
+
+			/**
+			 *  @deprecated since 1.121.0
+			 */
+			if (oChanges.name === "filterFields") {
+				this._updateBasicSearchField();
 			}
 		}
 		ListContent.prototype.observeChanges.apply(this, arguments);
@@ -419,7 +462,7 @@ sap.ui.define([
 	 * @returns {sap.ui.core.control} control
 	 */
 	FilterableListContent.prototype.getInitialFocusedControl = function() {
-		return this._getPriorityFilterBar().getInitialFocusedControl();
+		return this.getActiveFilterBar().getInitialFocusedControl();
 	};
 
 	/**
@@ -479,16 +522,17 @@ sap.ui.define([
 
 	FilterableListContent.prototype.isSearchSupported = function () {
 
-		const sFilterFields = this.getFilterFields();
-		let bSearchSupported = !!sFilterFields;
-		if (sFilterFields === "$search") {
-			const oListBinding = this.getListBinding();
-			const oDelegate = this.getValueHelpDelegate();
-			const oDelegatePayload = this.getValueHelpInstance();
-			bSearchSupported = oDelegate && oDelegate.isSearchSupported(oDelegatePayload, this, oListBinding);
+		/**
+		 *  @deprecated since 1.121.0
+		 */
+		if (!this.isPropertyInitial("filterFields")) {
+			const sFilterFields = this.getFilterFields();
+			if (sFilterFields !== "$search") {
+				return !!sFilterFields;
+			}
 		}
 
-		return bSearchSupported;
+		return !!this.isValueHelpDelegateInitialized() && !!this.getValueHelpDelegate()?.isSearchSupported(this.getValueHelpInstance(), this, this.getListBinding());
 	};
 
 	/**
@@ -505,7 +549,7 @@ sap.ui.define([
 	};
 
 	FilterableListContent.prototype._assignCollectiveSearchSelect = function () {
-		const oFilterBar = this._getPriorityFilterBar();
+		const oFilterBar = this.getActiveFilterBar();
 		if (oFilterBar.setCollectiveSearch) {
 			oFilterBar.setCollectiveSearch(this._oCollectiveSearchSelect); // remove it if empty
 		}
@@ -520,17 +564,25 @@ sap.ui.define([
 	 */
 	FilterableListContent.prototype.onBeforeShow = function(bInitial) {
 		if (bInitial) {
+			this._updateBasicSearchField();
 			const oDelegate = this.getValueHelpDelegate();
 			return Promise.resolve(oDelegate && oDelegate.getFilterConditions(this.getValueHelpInstance(), this)).then(function (oConditions) {
 				this._oInitialFilterConditions = oConditions;
 
-				const oFilterBar = this._getPriorityFilterBar();
+				const oFilterBar = this.getActiveFilterBar();
 				if (oFilterBar) { // apply initial conditions to filterbar if existing
-					const sFilterFields = this.getFilterFields();
+					let sSearchPath = "$search";
+					/**
+					 *  @deprecated since 1.121.0
+					 */
+					if (!this.isPropertyInitial("filterFields")) {
+						sSearchPath = this.getFilterFields();
+					}
+
 					const oNewConditions = merge({}, this._oInitialFilterConditions);
-					return Promise.resolve(!oNewConditions[sFilterFields] && StateUtil.retrieveExternalState(oFilterBar).then(function (oState) {
+					return Promise.resolve(!oNewConditions[sSearchPath] && StateUtil.retrieveExternalState(oFilterBar).then(function (oState) {
 						if (bInitial) {
-							_addSearchConditionToConditionMap(oNewConditions, sFilterFields, this._getPriorityFilterValue());
+							_addSearchConditionToConditionMap(oNewConditions, sSearchPath, this.getSearch());
 							return StateUtil.diffState(oFilterBar, oState, {filter: oNewConditions});
 						}
 					}.bind(this))).then(function (oStateDiff) {
@@ -591,10 +643,11 @@ sap.ui.define([
 	/**
 	 * Gets the currently used filter value.
 	 * @returns {string} filter value
-	 * @private
-	 * @ui5-restricted sap.ui.mdc.ValueHelpDelegate
+	 *
+	 * @since: 1.121.0
+	 * @protected
 	 */
-	FilterableListContent.prototype._getPriorityFilterValue = function() {
+	FilterableListContent.prototype.getSearch = function() {
 		const sLocalFilterValue = this._getLocalFilterValue();
 
 		if (typeof sLocalFilterValue !== 'undefined') {
@@ -617,8 +670,8 @@ sap.ui.define([
 		});
 	};
 
-	function _addSearchConditionToConditionMap(oConditions, sFilterFields, sFilterValue) {
-		oConditions[sFilterFields] = sFilterValue ? [Condition.createCondition(OperatorName.Contains, [sFilterValue], undefined, undefined, ConditionValidated.NotValidated)] : [];
+	function _addSearchConditionToConditionMap(oConditions, sSearchPath, sFilterValue) {
+		oConditions[sSearchPath] = sFilterValue ? [Condition.createCondition(OperatorName.Contains, [sFilterValue], undefined, undefined, ConditionValidated.NotValidated)] : [];
 		return;
 	}
 

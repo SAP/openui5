@@ -31,7 +31,7 @@
 				delegate='\{"name": "sap/ui/v4demo/delegate/openson/ValueHelp.delegate", "payload": \{\}\}'>
 				<mdc:typeahead>
 					<mdcv:Popover title="Test1" opensOnClick="true">
-						<mdcvc:MTable keyPath="ID" descriptionPath="name" filterFields="$search">
+						<mdcvc:MTable keyPath="ID" descriptionPath="name" >
 							<Table items='{path : "/Authors", length: 10}' mode="{= ${settings>/maxConditions} === -1 ? 'MultiSelect' : 'SingleSelectMaster'}" width="30rem">
 								<columns>
 									<Column width="5rem">
@@ -59,7 +59,7 @@
 				</mdc:typeahead>
 				<mdc:dialog>
 					<mdcv:Dialog title="MDC Table with ui.Table">
-						<mdcvc:MDCTable id="mdcTableContent1" keyPath="ID" descriptionPath="name" filterFields="$search" group="group1" title="Default Search Template">
+						<mdcvc:MDCTable id="mdcTableContent1" keyPath="ID" descriptionPath="name"  group="group1" title="Default Search Template">
 							<mdcvc:filterBar>
 								<vhfb:FilterBar id="mdcFilterbar1" liveMode="false" delegate="{name: 'delegates/GenericVhFilterBarDelegate', payload: {}}">
 									<vhfb:basicSearchField>
