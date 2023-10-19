@@ -1833,6 +1833,14 @@ sap.ui.define([
 
 			} else if (!bHorizontalScrolling && (mOptions.scrollDirection === ScrollDirection.VERTICAL
 												 || mOptions.scrollDirection === ScrollDirection.BOTH)) {
+
+				if (oEvent.target instanceof window.HTMLTextAreaElement) {
+					var oTextAreaRef = oEvent.target;
+					if (oTextAreaRef.clientHeight < oTextAreaRef.scrollHeight) {
+						return;
+					}
+				}
+
 				var oVSb = oScrollExtension.getVerticalScrollbar();
 				var oVerticalScrollPosition = _private(this).oVerticalScrollPosition;
 
