@@ -1,6 +1,7 @@
 /* global QUnit */
 
 sap.ui.define([
+	"sap/ui/dt/ElementDesignTimeMetadata",
 	"sap/ui/dt/ElementOverlay",
 	"sap/ui/dt/DesignTime",
 	"sap/ui/dt/OverlayRegistry",
@@ -11,6 +12,7 @@ sap.ui.define([
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/dom/jquery/scrollLeftRTL"
 ], function(
+	ElementDesignTimeMetadata,
 	ElementOverlay,
 	DesignTime,
 	OverlayRegistry,
@@ -34,7 +36,9 @@ sap.ui.define([
 			this.oOverlay = new ElementOverlay({
 				element: this.oButton,
 				isRoot: true,
-				designTimeMetadata: {}
+				designTimeMetadata: new ElementDesignTimeMetadata({
+					data: {}
+				})
 			});
 			this.oOverlay.attachEventOnce("init", function() {
 				this.oOverlay.placeInOverlayContainer();
